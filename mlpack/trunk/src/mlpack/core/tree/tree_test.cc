@@ -7,6 +7,7 @@
 #include "bounds.h"
 #include "spacetree.h"
 #include <mlpack/core/kernels/lmetric.h>
+#include <vector>
 
 #define BOOST_TEST_MODULE Tree_Test
 #include <boost/test/unit_test.hpp>
@@ -878,34 +879,144 @@ BOOST_AUTO_TEST_CASE(tree_count_mismatch) {
   BOOST_REQUIRE(root_node.right()->right()->count() == 1);
 }
 
+typedef BinarySpaceTree<HRectBound<3> > TreeType;
+
+bool CheckPointBounds(TreeType* node, const arma::mat& data);
+void GenerateVectorOfTree(TreeType* node, size_t depth, std::vector<TreeType*>* v);
+bool DoBoundsIntersect(HRectBound<3>&a, HRectBound<3>&b, size_t ia, size_t ib);
 
 BOOST_AUTO_TEST_CASE(kd_tree_test) {
-  size_t max_points = 10000;
-  size_t dimensions = 3;
+  size_t max_runs = 20;
+  size_t point_increments = 5000;
+
   // Generate the dataset.
   srand(time(NULL));
-  size_t size = rand() % max_points;
-  arma::mat dataset = arma::mat(dimensions, size);
-  arma::mat datacopy;
+  
+  //Reset the leaf size as other tests have been naughty
+  //Also a leaf size of 20 makes the test take too long
+  IO::GetParam<int>("tree/leaf_size") = 200;
 
-  // Mappings for post-sort verification of data.
-  std::vector<size_t> new_to_old;
-  std::vector<size_t> old_to_new;
+  for(size_t run = 0; run < max_runs; run++) {
 
-  // Generate data.
-  dataset.randu(dimensions, size);
-  datacopy = dataset;
+    size_t dimensions = run+2;
+    size_t max_points = (run+1) * point_increments;
 
-  // Check validity of tree data
-  BinarySpaceTree<HRectBound<2> > root(dataset, new_to_old, old_to_new);
+    size_t size = max_points;
+    arma::mat dataset = arma::mat(dimensions, size);
+    arma::mat datacopy;
 
-  BOOST_REQUIRE_EQUAL(root.count(), size);
+    // Mappings for post-sort verification of data.
+    std::vector<size_t> new_to_old;
+    std::vector<size_t> old_to_new;
 
-  for(size_t i = 0; i < size; i++) {
-    for(size_t j = 0; j < dimensions; j++) {
-      // Check mappings.
-      BOOST_REQUIRE_EQUAL(dataset(j, i), datacopy(j, new_to_old[i]));
-      BOOST_REQUIRE_EQUAL(dataset(j, old_to_new[i]), datacopy(j, i));
+    // Generate data.
+    dataset.randu();
+    datacopy = dataset;
+
+    // Check validity of tree data
+    TreeType root(dataset, new_to_old, old_to_new);
+    
+    BOOST_REQUIRE_EQUAL(root.count(), size);
+    for(size_t i = 0; i < size; i++) {
+      for(size_t j = 0; j < dimensions; j++) {
+        // Check mappings.
+        BOOST_REQUIRE_EQUAL(dataset(j, i), datacopy(j, new_to_old[i]));
+        BOOST_REQUIRE_EQUAL(dataset(j, old_to_new[i]), datacopy(j, i));
+      }
+    }
+
+    //Now check that each point is contained inside of all bounds above it.
+    CheckPointBounds(&root, dataset); 
+
+    //Now check that no peers overlap.
+    std::vector<TreeType*> v;
+    GenerateVectorOfTree(&root, 1, &v);
+    //Starting with the first pair
+    size_t depth = 2;
+    //Compare each peer against every other peer
+    while(depth < v.size()) {  
+      for(size_t i = depth; i < 2*depth && i < v.size(); i++)
+        for(size_t j = depth; j < 2*depth && j < v.size(); j++) 
+          if(v[i] != NULL && v[j] != NULL && i != j)  
+            BOOST_REQUIRE(!DoBoundsIntersect(v[i]->bound(), v[j]->bound(), i, j));
+         
+      std::cout << "Run: " << run << " @ depth "<< depth << ":" << v.size() << std::endl;
+      depth = 2*depth;
     }
   }
+
+  IO::GetParam<int>("tree/leaf_size") = 20;
 }
+
+//Recursively checks that each node contains all points that it claims to have.
+bool CheckPointBounds(TreeType* node, const arma::mat& data)
+{
+  if(node == NULL) //We have passed a leaf node
+    return true;
+
+  BinarySpaceTree<HRectBound<3> >* left = node->left();
+  BinarySpaceTree<HRectBound<3> >* right = node->right();
+
+  HRectBound<3> bound = node->bound();
+
+  size_t begin = node->begin();
+  size_t count = node->count();
+ 
+  //Check that each point which this tree claims is actually inside the tree.
+  for(size_t index = begin; index < begin+count; index++) {
+    if(!bound.Contains(data.col(index)))
+      return false;
+  }
+  
+  return CheckPointBounds(left, data) && CheckPointBounds(right, data);
+}
+
+bool DoBoundsIntersect(HRectBound<3>&a, HRectBound<3>&b, size_t ia, size_t ib) {
+  size_t dimensionality = a.dim();  //Should equal 3
+
+  Range r_a;
+  Range r_b;
+
+  for(size_t i = 0; i < dimensionality; i++) {
+    r_a = a[i];
+    r_b = b[i];
+    if(r_a < r_b || r_a > r_b) //If a does not overlap b at all
+      return false;
+  }
+  std::cout << "A[" << ia << "] B[" << ib << "]" << std::endl;
+  std::cout << "A: [" << r_a.lo << "," << r_a.hi << "]" << std::endl;
+  std::cout << "B: [" << r_b.lo << "," << r_b.hi << "]" << std::endl;
+  return true; 
+}
+
+void GenerateVectorOfTree(TreeType* node, 
+    size_t depth, std::vector<TreeType*>* v)
+{
+  if(v->size() < depth) 
+    v->resize(2*depth, NULL);
+  
+  if(node == NULL)
+    return;
+  
+  (*v)[depth] = node;
+
+  if(node->left() != NULL)
+    GenerateVectorOfTree(node->left(), depth*2, v);
+  if(node->right() != NULL)
+    GenerateVectorOfTree(node->right(), depth*2 + 1, v);
+
+  return;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
