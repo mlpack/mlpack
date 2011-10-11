@@ -68,7 +68,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 
   // Walk the tree before entering parallel.
   distributed_tasks.WalkReferenceTree(
-    metric, problem_->global(), *world_, 4 * omp_get_num_threads(),
+    metric, problem_->global(), *world_,
     &hashed_essential_reference_subtrees_to_send);
 
   // OpenMP parallel region. The master thread is the only one that is
@@ -109,7 +109,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
       QuerySubTableLockListType::iterator checked_out_query_subtable;
       distributed_tasks.DequeueTask(
         *world_, thread_id, metric,
-        4 * omp_get_num_threads(),
         & hashed_essential_reference_subtrees_to_send,
         problem_->global(), num_tasks_to_dequeue,
         &found_task, &checked_out_query_subtable);
