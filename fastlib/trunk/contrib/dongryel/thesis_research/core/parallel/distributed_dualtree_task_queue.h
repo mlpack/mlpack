@@ -1069,13 +1069,11 @@ class DistributedDualtreeTaskQueue {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
       // Walk the reference tree.
-      if(thread_id == omp_get_num_threads() - 1) {
-        this->WalkReferenceTree(
-          metric_in,
-          global_in,
-          world,
-          hashed_essential_reference_subtrees_to_send);
-      }
+      this->WalkReferenceTree(
+        metric_in,
+        global_in,
+        world,
+        hashed_essential_reference_subtrees_to_send);
 
       // If the number of available task is less than the number of
       // running threads, try to get one.
