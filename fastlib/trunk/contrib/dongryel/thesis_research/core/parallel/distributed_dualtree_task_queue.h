@@ -389,9 +389,6 @@ class DistributedDualtreeTaskQueue {
           hashed_essential_reference_subtrees_to_send,
           const_cast<DistributedDualtreeTaskQueueType *>(this));
         tree_walk_time_ += tree_walk_timer_.elapsed();
-        printf("After walking the reference tree on %d: %d %d\n",
-               world.rank(), this->num_remaining_tasks(),
-               query_subtables_.size());
       }
     }
 
