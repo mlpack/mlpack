@@ -495,8 +495,6 @@ class DistributedDualtreeTaskQueue {
       checked_out_query_subtables_.erase(query_subtable_lock);
 
       // Update the load balancing status.
-      printf("Process %d has %lu remaining.\n", world.rank(),
-             remaining_local_computation_);
       table_exchange_.turn_on_load_balancing(
         world, remaining_local_computation_) ;
     }
