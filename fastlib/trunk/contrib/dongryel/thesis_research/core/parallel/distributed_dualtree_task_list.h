@@ -19,12 +19,12 @@ namespace parallel {
 
 template < typename DistributedTableType,
          typename TaskPriorityQueueType,
-         typename ProblemType >
+         typename DistributedProblemType >
 class DistributedDualtreeTaskQueue;
 
 template < typename DistributedTableType,
          typename TaskPriorityQueueType,
-         typename ProblemType >
+         typename DistributedProblemType >
 class DistributedDualtreeTaskList {
 
   public:
@@ -41,7 +41,8 @@ class DistributedDualtreeTaskList {
 
     typedef core::parallel::DistributedDualtreeTaskQueue <
     DistributedTableType,
-    TaskPriorityQueueType, ProblemType > DistributedDualtreeTaskQueueType;
+    TaskPriorityQueueType,
+    DistributedProblemType > DistributedDualtreeTaskQueueType;
 
     typedef int ValueType;
 

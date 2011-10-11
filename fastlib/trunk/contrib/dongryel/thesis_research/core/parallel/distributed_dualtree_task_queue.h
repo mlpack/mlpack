@@ -24,9 +24,13 @@ namespace parallel {
 
 template < typename DistributedTableType,
          typename TaskPriorityQueueType,
-         typename ProblemType >
+         typename DistributedProblemType >
 class DistributedDualtreeTaskQueue {
   public:
+
+    /** @brief The associated serial problem type.
+     */
+    typedef typename DistributedProblemType::ProblemType ProblemType;
 
     /** @brief The associated query result type.
      */
@@ -59,29 +63,37 @@ class DistributedDualtreeTaskQueue {
     /** @brief The table exchange type.
      */
     typedef core::parallel::TableExchange <
-    DistributedTableType, TaskPriorityQueueType, ProblemType > TableExchangeType;
+    DistributedTableType,
+    TaskPriorityQueueType,
+    DistributedProblemType > TableExchangeType;
 
     /** @brief The type of the distributed task queue.
      */
     typedef core::parallel::DistributedDualtreeTaskQueue <
     DistributedTableType,
-    TaskPriorityQueueType, ProblemType > DistributedDualtreeTaskQueueType;
+    TaskPriorityQueueType,
+    DistributedProblemType > DistributedDualtreeTaskQueueType;
 
     typedef typename TaskPriorityQueueType::value_type TaskType;
 
     typedef core::parallel::DistributedDualtreeTaskList <
     DistributedTableType,
-    TaskPriorityQueueType, ProblemType > TaskListType;
+    TaskPriorityQueueType,
+    DistributedProblemType > TaskListType;
 
     friend class QuerySubTableLock <
-        DistributedTableType, TaskPriorityQueueType, ProblemType >;
+      DistributedTableType,
+      TaskPriorityQueueType,
+        DistributedProblemType >;
 
   friend class core::parallel::DistributedDualtreeTaskList <
-        DistributedTableType, TaskPriorityQueueType, ProblemType >;
+      DistributedTableType,
+      TaskPriorityQueueType,
+        DistributedProblemType >;
 
   typedef class QuerySubTableLock <
       DistributedTableType, TaskPriorityQueueType,
-        ProblemType > QuerySubTableLockType;
+        DistributedProblemType > QuerySubTableLockType;
 
     typedef std::list< boost::intrusive_ptr< QuerySubTableLockType > >
     QuerySubTableLockListType;
@@ -142,7 +154,7 @@ class DistributedDualtreeTaskQueue {
      *         reference subtable messages.
      */
     core::parallel::ReferenceTreeWalker <
-    DistributedTableType > reference_tree_walker_;
+    DistributedTableType, DistributedProblemType > reference_tree_walker_;
 
     /** @brief The remaining global computation being kept track on
      *         this MPI process. If this reaches zero, then this
@@ -358,7 +370,6 @@ class DistributedDualtreeTaskQueue {
       const GlobalType &global_in,
       boost::mpi::communicator &world,
       int max_hashed_subtrees_to_queue,
-      TreeType *global_qnode,
       std::vector <
       SubTableRouteRequestType >
       * hashed_essential_reference_subtrees_to_send) {
@@ -375,8 +386,12 @@ class DistributedDualtreeTaskQueue {
         tree_walk_timer_.restart();
         reference_tree_walker_.Walk(
           metric_in, global_in, world, max_hashed_subtrees_to_queue,
-          global_qnode, hashed_essential_reference_subtrees_to_send, this);
+          hashed_essential_reference_subtrees_to_send,
+          const_cast<DistributedDualtreeTaskQueueType *>(this));
         tree_walk_time_ += tree_walk_timer_.elapsed();
+        printf("After walking the reference tree on %d: %d %d\n",
+               world.rank(), this->num_remaining_tasks(),
+               query_subtables_.size());
       }
     }
 
@@ -1044,11 +1059,16 @@ class DistributedDualtreeTaskQueue {
     /** @brief Dequeues a task, optionally locking a query subtree
      *         associated with it.
      */
-    template<typename MetricType>
+    template<typename MetricType, typename GlobalType>
     void DequeueTask(
       boost::mpi::communicator &world,
       int thread_id,
       const MetricType &metric_in,
+      int max_hashed_subtrees_to_queue,
+      std::vector <
+      SubTableRouteRequestType > *
+      hashed_essential_reference_subtrees_to_send,
+      const GlobalType &global_in,
       int max_num_tasks_to_check_out,
       std::pair< std::vector<TaskType> , int> *task_out,
       typename QuerySubTableLockListType::iterator
@@ -1056,6 +1076,14 @@ class DistributedDualtreeTaskQueue {
 
       // Lock the task queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
+
+      // Walk the reference tree.
+      this->WalkReferenceTree(
+        metric_in,
+        global_in,
+        world,
+        max_hashed_subtrees_to_queue,
+        hashed_essential_reference_subtrees_to_send);
 
       // If the number of available task is less than the number of
       // running threads, try to get one.

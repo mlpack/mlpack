@@ -229,12 +229,14 @@ class DistributedDualtreeDfs {
      */
     boost::mpi::communicator *world_;
 
-  private:
+  public:
 
     typedef core::parallel::DistributedDualtreeTaskQueue <
     DistributedTableType,
-    FinePriorityQueueType, ProblemType > DistributedDualtreeTaskQueueType;
+    FinePriorityQueueType,
+    DistributedProblemType > DistributedDualtreeTaskQueueType;
 
+  private:
     template<typename MetricType>
     void ComputeEssentialReferenceSubtrees_(
       const MetricType &metric_in,

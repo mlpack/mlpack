@@ -13,10 +13,14 @@
 namespace core {
 namespace parallel {
 
-template< typename DistributedTableType >
+template< typename DistributedTableType, typename DistributedProblemType >
 class ReferenceTreeWalker {
 
   public:
+
+    /** @brief The associated serial problem type.
+     */
+    typedef typename DistributedProblemType::ProblemType ProblemType;
 
     /** @brief The table type used in the exchange process.
      */
@@ -25,6 +29,10 @@ class ReferenceTreeWalker {
     /** @brief The iterator type.
      */
     typedef typename TableType::TreeIterator TreeIteratorType;
+
+    /** @brief The global type used in the distributed problem.
+     */
+    typedef typename DistributedProblemType::GlobalType GlobalType;
 
     /** @brief The tree type used in the exchange process.
      */
@@ -117,14 +125,13 @@ class ReferenceTreeWalker {
     /** @brief Walks the local reference tree to generate more
      *         messages to send.
      */
-    template < typename MetricType, typename GlobalType,
+    template < typename MetricType,
              typename DistributedDualtreeTaskQueueType >
     void Walk(
       const MetricType &metric_in,
       const GlobalType &global_in,
       boost::mpi::communicator &world,
       int max_hashed_subtrees_to_queue,
-      TreeType *global_qnode,
       std::vector < SubTableRouteRequestType >
       *hashed_essential_reference_subtrees_to_send,
       DistributedDualtreeTaskQueueType *distributed_tasks_in) {
@@ -133,6 +140,11 @@ class ReferenceTreeWalker {
       if(trace_.empty()) {
         return;
       }
+
+      // Temporary variables.
+      TreeType *first_partner = NULL, *second_partner = NULL;
+      core::math::Range first_squared_distance_range;
+      core::math::Range second_squared_distance_range;
 
       do {
 
@@ -220,14 +232,23 @@ class ReferenceTreeWalker {
                 }
               } // qnode leaf, rnode leaf.
               else {
+                core::gnp::DualtreeDfs<ProblemType>::Heuristic(
+                  metric_in,
+                  global_query_node,
+                  local_reference_node->left(),
+                  local_reference_node->right(),
+                  &first_partner,
+                  first_squared_distance_range,
+                  &second_partner,
+                  second_squared_distance_range);
                 trace_.push_back(
                   std::pair <
                   TreeType *, TreeType * > (
-                    global_query_node, local_reference_node->left()));
+                    global_query_node, first_partner));
                 trace_.push_front(
                   std::pair <
                   TreeType *, TreeType * > (
-                    global_query_node, local_reference_node->right()));
+                    global_query_node, second_partner));
               } // qnode leaf, rnode non-leaf.
             } // end of query node being a leaf.
 
@@ -235,24 +256,42 @@ class ReferenceTreeWalker {
 
               if(local_reference_node->count() <= max_reference_subtree_size_ ||
                   local_reference_node->is_leaf()) {
+                core::gnp::DualtreeDfs<ProblemType>::Heuristic(
+                  metric_in,
+                  local_reference_node,
+                  global_query_node->left(),
+                  global_query_node->right(),
+                  &first_partner,
+                  first_squared_distance_range,
+                  &second_partner,
+                  second_squared_distance_range);
                 trace_.push_back(
                   std::pair <
                   TreeType *, TreeType * > (
-                    global_query_node->left(), local_reference_node));
+                    first_partner, local_reference_node));
                 trace_.push_front(
                   std::pair <
                   TreeType *, TreeType * > (
-                    global_query_node->right(), local_reference_node));
+                    second_partner, local_reference_node));
               } // qnode non-leaf, rnode leaf.
               else {
+                core::gnp::DualtreeDfs<ProblemType>::Heuristic(
+                  metric_in,
+                  global_query_node,
+                  local_reference_node->left(),
+                  local_reference_node->right(),
+                  &first_partner,
+                  first_squared_distance_range,
+                  &second_partner,
+                  second_squared_distance_range);
                 trace_.push_back(
                   std::pair <
                   TreeType *, TreeType * > (
-                    global_query_node, local_reference_node->left()));
+                    global_query_node, first_partner));
                 trace_.push_front(
                   std::pair <
                   TreeType *, TreeType * > (
-                    global_query_node, local_reference_node->right()));
+                    global_query_node, second_partner));
               } // qnode, rnode non-leaves.
             } // end of non-leaf qnode case.
           } // end of non-prunable case.
@@ -262,7 +301,8 @@ class ReferenceTreeWalker {
             ((world.size() == 1 &&
               static_cast<int>(essential_reference_subtrees_[world.rank()].size()) >= max_hashed_subtrees_to_queue) ||
              (world.size() > 1 &&
-              static_cast<int>(hashed_essential_reference_subtrees_to_send->size()) >= max_hashed_subtrees_to_queue) ||
+              static_cast<int>(hashed_essential_reference_subtrees_to_send->size()) >= max_hashed_subtrees_to_queue &&
+              static_cast<int>(essential_reference_subtrees_[world.rank()].size()) >= omp_get_max_threads()) ||
              trace_.empty());
 
           if(! should_terminate) {
@@ -280,7 +320,8 @@ class ReferenceTreeWalker {
           ((world.size() == 1 &&
             static_cast<int>(essential_reference_subtrees_[world.rank()].size()) >= max_hashed_subtrees_to_queue) ||
            (world.size() > 1 &&
-            static_cast<int>(hashed_essential_reference_subtrees_to_send->size()) >= max_hashed_subtrees_to_queue) ||
+            static_cast<int>(hashed_essential_reference_subtrees_to_send->size()) >= max_hashed_subtrees_to_queue &&
+            static_cast<int>(essential_reference_subtrees_[world.rank()].size()) >= omp_get_max_threads()) ||
            trace_.empty());
         if(should_terminate) {
           break;

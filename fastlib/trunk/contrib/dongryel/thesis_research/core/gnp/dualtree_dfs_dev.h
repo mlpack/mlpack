@@ -372,7 +372,7 @@ void DualtreeDfs<ProblemType>::Summarize_(
 
 template<typename ProblemType>
 template<typename MetricType>
-void DualtreeDfs<ProblemType>::Heuristic_(
+void DualtreeDfs<ProblemType>::Heuristic(
   const MetricType &metric,
   typename ProblemType::TableType::TreeType *node,
   typename ProblemType::TableType::TreeType *first_candidate,
@@ -465,7 +465,7 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
       core::math::Range squared_distance_range_first,
            squared_distance_range_second;
       typename ProblemType::TableType::TreeType *rnode_second;
-      Heuristic_(
+      Heuristic(
         metric, qnode, rnode->left(), rnode->right(),
         &rnode_first, squared_distance_range_first,
         &rnode_second, squared_distance_range_second);
@@ -508,7 +508,7 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
     core::math::Range
     squared_distance_range_first, squared_distance_range_second;
     typename ProblemType::TableType::TreeType *qnode_second;
-    Heuristic_(
+    Heuristic(
       metric, rnode, qnode_left, qnode_right,
       &qnode_first, squared_distance_range_first,
       &qnode_second, squared_distance_range_second);
@@ -530,7 +530,7 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
     core::math::Range
     squared_distance_range_first, squared_distance_range_second;
     typename ProblemType::TableType::TreeType *rnode_second;
-    Heuristic_(
+    Heuristic(
       metric, qnode_left, rnode->left(), rnode->right(),
       &rnode_first, squared_distance_range_first,
       &rnode_second, squared_distance_range_second);
@@ -547,7 +547,7 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
         failure_probability : failure_probability / 2.0,
         squared_distance_range_second, query_results);
 
-    Heuristic_(
+    Heuristic(
       metric, qnode_right, rnode->left(), rnode->right(),
       &rnode_first, squared_distance_range_first,
       &rnode_second, squared_distance_range_second);

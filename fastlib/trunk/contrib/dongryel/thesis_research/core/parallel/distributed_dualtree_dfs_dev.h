@@ -115,18 +115,14 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
           metric, *world_, hashed_essential_reference_subtrees_to_send);
       }
 
-      // Any thread can walk the reference tree to queue up more
-      // messages.
-      distributed_tasks.WalkReferenceTree(
-        metric, problem_->global(), *world_, 4 * omp_get_num_threads(),
-        query_table_->get_tree(),
-        & hashed_essential_reference_subtrees_to_send);
-
       // After enqueing, everyone else tries to dequeue the tasks.
       typename DistributedDualtreeTaskQueueType::
       QuerySubTableLockListType::iterator checked_out_query_subtable;
       distributed_tasks.DequeueTask(
-        *world_, thread_id, metric, num_tasks_to_dequeue,
+        *world_, thread_id, metric,
+        4 * omp_get_num_threads(),
+        & hashed_essential_reference_subtrees_to_send,
+        problem_->global(), num_tasks_to_dequeue,
         &found_task, &checked_out_query_subtable);
 
       // If found something to run on, then call the serial dual-tree
