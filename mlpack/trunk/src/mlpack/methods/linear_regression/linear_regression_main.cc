@@ -64,6 +64,7 @@ int main(int argc, char* argv[]) {
   arma::rowvec predictions;
 
   linear_regression::LinearRegression lr(predictors, responses);
+  lr.run();
   lr.predict(predictions, points);
 
   //data.row(n_rows) = predictions;
