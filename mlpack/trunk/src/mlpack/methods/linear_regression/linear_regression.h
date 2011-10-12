@@ -10,7 +10,7 @@ namespace linear_regression {
  */
 class LinearRegression {
   public:
-    /** Create and initialize parameters. y=BX, this creates B.
+    /** Initialize parameters. 
      *  @param predictors X, matrix of data points to create B with.
      *  @ param responses y, the measured data for each point in X
      */ 
@@ -19,6 +19,11 @@ class LinearRegression {
     /** Destructor - no work done.
      */
     ~LinearRegression();
+
+    /** Create regression coefficients.
+     * y=BX, this creates B.
+     **/
+    void run();
 
     /** Calculate y_i for each data point in points.
      *  @param predictions y, will contain calculated values on completion.
@@ -36,6 +41,16 @@ class LinearRegression {
      * Initialized and filled by constructor to hold the least squares solution.
      */
     arma::vec parameters;
+
+    /** The X values.
+     * The regressor values.
+     */
+    arma::mat& predictors;
+
+    /** The y values for the predictors.
+     * The response variables, corresponding to points in X.
+     */
+    const arma::colvec& responses;
 
 };
 
