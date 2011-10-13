@@ -976,7 +976,9 @@ class DistributedDualtreeTaskQueue {
 
     /** @brief Initializes the task queue.
      */
+    template<typename MetricType>
     void Init(
+      const MetricType &metric_in,
       boost::mpi::communicator &world,
       int max_subtree_size_in,
       bool do_load_balancing_in,
@@ -989,6 +991,7 @@ class DistributedDualtreeTaskQueue {
 
       // Initialize the reference tree walker.
       reference_tree_walker_.Init(
+        metric_in,
         world,
         query_table_in,
         reference_table_in->local_table(),

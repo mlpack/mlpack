@@ -61,7 +61,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 
   // For each process, initialize the distributed task object.
   distributed_tasks.Init(
-    *world_, max_subtree_size_, do_load_balancing_,
+    metric, *world_, max_subtree_size_, do_load_balancing_,
     query_table_, reference_table_, query_results,
     omp_get_max_threads(), weak_scaling_measuring_mode_,
     max_num_reference_points_to_pack_per_process_);
