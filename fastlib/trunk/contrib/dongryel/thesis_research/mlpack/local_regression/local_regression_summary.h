@@ -68,13 +68,13 @@ class LocalRegressionSummary {
 
     arma::vec right_hand_side_u_;
 
-    double pruned_l_;
+    unsigned long int pruned_l_;
 
     double left_hand_side_used_error_u_;
 
     double right_hand_side_used_error_u_;
 
-    void Seed(double initial_pruned_in) {
+    void Seed(unsigned long int initial_pruned_in) {
       pruned_l_ += initial_pruned_in;
     }
 
@@ -212,20 +212,23 @@ class LocalRegressionSummary {
         }
       }
 
+      unsigned long int denominator =
+        global.effective_num_reference_points() - pruned_l_;
+      if(global.is_monochromatic() && denominator >= 1) {
+        denominator--;
+      }
       double right_hand_side_for_left =
         delta.pruned_ * (
           global.adjusted_relative_error() * lower_bound_l1_norm_for_left +
           global.effective_num_reference_points() * global.absolute_error() -
           left_hand_side_used_error_u_) /
-        static_cast<double>(
-          global.effective_num_reference_points() - pruned_l_);
+        static_cast<double>(denominator);
       double right_hand_side_for_right =
         delta.pruned_ * (
           global.adjusted_relative_error() * lower_bound_l1_norm_for_right +
           global.effective_num_reference_points() * global.absolute_error() -
           right_hand_side_used_error_u_) /
-        static_cast<double>(
-          global.effective_num_reference_points() - pruned_l_);
+        static_cast<double>(denominator);
 
       // Prunable by finite-difference.
       return left_hand_side_for_left <= right_hand_side_for_left &&
@@ -253,7 +256,7 @@ class LocalRegressionSummary {
       left_hand_side_u_.zeros();
       right_hand_side_l_.zeros();
       right_hand_side_u_.zeros();
-      pruned_l_ = 0.0;
+      pruned_l_ = 0;
       left_hand_side_used_error_u_ = 0.0;
       right_hand_side_used_error_u_ = 0.0;
     }
@@ -270,7 +273,7 @@ class LocalRegressionSummary {
       left_hand_side_u_.fill(- std::numeric_limits<double>::max());
       right_hand_side_l_.fill(std::numeric_limits<double>::max());
       right_hand_side_u_.fill(- std::numeric_limits<double>::max());
-      pruned_l_ = std::numeric_limits<double>::max();
+      pruned_l_ = std::numeric_limits<unsigned long int>::max();
       left_hand_side_used_error_u_ = 0.0;
       right_hand_side_used_error_u_ = 0.0;
     }

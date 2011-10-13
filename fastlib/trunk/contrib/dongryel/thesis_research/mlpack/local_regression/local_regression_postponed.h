@@ -55,7 +55,7 @@ class LocalRegressionPostponed {
 
     /** @brief The amount of pruned quantities.
      */
-    double pruned_;
+    unsigned long int pruned_;
 
     /** @brief The upper bound on the used error on the left hand
      *         side.
@@ -146,7 +146,7 @@ class LocalRegressionPostponed {
       right_hand_side_l_.set_total_num_terms(total_num_terms);
       right_hand_side_e_.set_total_num_terms(total_num_terms);
       right_hand_side_u_.set_total_num_terms(total_num_terms);
-      pruned_ = static_cast<double>(total_num_terms);
+      pruned_ = rnode->count();
 
       // Used error is zero.
       left_hand_side_used_error_ = 0.0;
@@ -280,7 +280,7 @@ class LocalRegressionPostponed {
       right_hand_side_l_.SetZero();
       right_hand_side_e_.SetZero();
       right_hand_side_u_.SetZero();
-      pruned_ = 0.0;
+      pruned_ = 0;
       left_hand_side_used_error_ = 0.0;
       right_hand_side_used_error_ = 0.0;
     }

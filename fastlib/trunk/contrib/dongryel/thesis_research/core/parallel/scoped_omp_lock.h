@@ -22,6 +22,7 @@ class scoped_omp_lock {
     }
 
     scoped_omp_lock(omp_lock_t *lock_in) {
+      lock_ = NULL;
       if(omp_get_num_threads() > 1) {
         lock_ = lock_in;
         omp_set_lock(lock_);
@@ -46,6 +47,7 @@ class scoped_omp_nest_lock {
     }
 
     scoped_omp_nest_lock(omp_nest_lock_t *lock_in) {
+      lock_ = NULL;
       if(omp_get_num_threads() > 1) {
         lock_ = lock_in;
         omp_set_nest_lock(lock_);

@@ -138,17 +138,17 @@ class KdeSummary {
 
     double densities_u_;
 
-    double pruned_l_;
+    unsigned long int pruned_l_;
 
     double used_error_u_;
 
-    void Seed(double initial_pruned_in) {
+    void Seed(unsigned long int initial_pruned_in) {
       pruned_l_ += initial_pruned_in;
     }
 
     void Print() const {
       printf("Lower bound/upper bound on the densities: [ %g %g ], "
-             "Lower bound on the pruned components: %g, "
+             "Lower bound on the pruned components: %lu, "
              "Upper bound on the used error: %g\n",
              densities_l_, densities_u_, pruned_l_, used_error_u_);
     }
@@ -252,14 +252,16 @@ class KdeSummary {
           query_results->densities_l_[qpoint_index] + correction.mid() +
           postponed.densities_l_;
         double left_hand_side = correction.width() * 0.5;
+        double denominator = global.effective_num_reference_points() -
+                             query_results->pruned_[qpoint_index];
+        if(global.is_monochromatic() && denominator >= 1.0) {
+          denominator -= 1.0;
+        }
         double right_hand_side =
           rnode->count() * (
             global.relative_error() * modified_densities_l +
             global.effective_num_reference_points() * global.absolute_error() -
-            used_error_u_) /
-          static_cast<double>(
-            global.effective_num_reference_points() -
-            query_results->pruned_[qpoint_index]);
+            used_error_u_) / denominator;
 
         // Prunable if the left hand side is less than right hand side.
         prunable = (left_hand_side <= right_hand_side);
@@ -278,13 +280,15 @@ class KdeSummary {
       ResultType *query_results) const {
 
       double left_hand_side = delta.used_error_;
+      double denominator = global.effective_num_reference_points() - pruned_l_;
+      if(global.is_monochromatic() && denominator >= 1.0) {
+        denominator -= 1.0;
+      }
       double right_hand_side =
         rnode->count() * (
           global.relative_error() * densities_l_ +
           global.effective_num_reference_points() * global.absolute_error() -
-          used_error_u_) /
-        static_cast<double>(
-          global.effective_num_reference_points() - pruned_l_);
+          used_error_u_) / denominator;
 
       // Prunable by finite-difference.
       if(left_hand_side <= right_hand_side) {

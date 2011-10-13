@@ -345,15 +345,15 @@ class TestDistributed_Kde {
       // have been encountered.
       DistributedTableType *distributed_reference_table =
         distributed_kde_arguments.reference_table_;
-      int total_num_points = 0;
+      unsigned long int total_num_points = 0;
       for(int i = 0; i < world.size(); i++) {
         total_num_points += distributed_reference_table->local_n_entries(i);
       }
       for(int i = 0; i < distributed_kde_result.pruned_.size(); i++) {
-        if(distributed_kde_result.pruned_[i] != total_num_points - 1) {
+        if(distributed_kde_result.pruned_[i] != total_num_points) {
           std::cerr << "Not all reference point have been accounted for.\n";
           std::cerr << "Got " << distributed_kde_result.pruned_[i] <<
-                    " instead of " << total_num_points - 1 << "\n";
+                    " instead of " << total_num_points << "\n";
           exit(-1);
         }
       }

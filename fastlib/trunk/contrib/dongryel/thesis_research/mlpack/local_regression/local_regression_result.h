@@ -82,7 +82,7 @@ class LocalRegressionResult {
 
     /** @brief The number of points pruned per each query.
      */
-    core::parallel::MapVector<double> pruned_;
+    core::parallel::MapVector<unsigned long int> pruned_;
 
     /** @brief The amount of maximum error incurred per each query for
      *         the left hand side.
@@ -221,7 +221,7 @@ class LocalRegressionResult {
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
-    void Seed(int qpoint_index, double initial_pruned_in) {
+    void Seed(int qpoint_index, unsigned long int initial_pruned_in) {
       pruned_[qpoint_index] += initial_pruned_in;
     }
 
@@ -244,7 +244,7 @@ class LocalRegressionResult {
       core::parallel::MapVector <
       core::monte_carlo::MeanVariancePairVector >::iterator
       right_hand_side_u_it = right_hand_side_u_.get_iterator();
-      core::parallel::MapVector <double>::iterator
+      core::parallel::MapVector <unsigned long int>::iterator
       pruned_it = pruned_.get_iterator();
       core::parallel::MapVector <double>::iterator
       left_hand_side_used_error_it =
@@ -264,7 +264,7 @@ class LocalRegressionResult {
         right_hand_side_l_it->SetZero();
         right_hand_side_e_it->SetZero();
         right_hand_side_u_it->SetZero();
-        (*pruned_it) = 0.0;
+        (*pruned_it) = 0;
         (*left_hand_side_used_error_it) = 0.0;
         (*right_hand_side_used_error_it) = 0.0;
       }
@@ -348,11 +348,11 @@ class LocalRegressionResult {
       FILE *file_output = fopen(file_name.c_str(), "w+");
       core::parallel::MapVector<double>::iterator regression_estimates_it =
         regression_estimates_.get_iterator();
-      core::parallel::MapVector<double>::iterator pruned_it =
+      core::parallel::MapVector<unsigned long int>::iterator pruned_it =
         pruned_.get_iterator();
       for(; regression_estimates_it.HasNext(); regression_estimates_it++,
           pruned_it++) {
-        fprintf(file_output, "%g %g\n", *regression_estimates_it, *pruned_it);
+        fprintf(file_output, "%g %lu\n", *regression_estimates_it, *pruned_it);
       }
       fclose(file_output);
     }

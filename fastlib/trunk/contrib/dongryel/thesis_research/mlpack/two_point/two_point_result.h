@@ -111,7 +111,7 @@ namespace mlpack {
       } // ApplyProbabalisticDelta
       
       
-      void Seed(int qpoint_index, double initial_pruned_in) {
+      void Seed(int qpoint_index, unsigned long initial_pruned_in) {
         
       }
       
