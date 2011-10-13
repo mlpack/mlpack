@@ -128,19 +128,25 @@ DualtreeDfs<ProblemType>::iterator<IteratorMetricType>::iterator(
   // Initialize an empty trace for the computation and the query
   // root/reference root pair into the trace.
   trace_.Init();
-  trace_.push_back(IteratorArgType(
-                     metric_in, query_table_,
-                     query_table_->get_tree(),
-                     reference_table_,
-                     reference_table_->get_tree()));
+  trace_.push_back(
+    IteratorArgType(
+      metric_in, query_table_,
+      engine_in.query_start_node(),
+      reference_table_,
+      engine_in.reference_start_node()));
 }
 
 template<typename ProblemType>
 template<typename IteratorMetricType>
-void DualtreeDfs<ProblemType>::iterator<IteratorMetricType>::operator++() {
+bool DualtreeDfs<ProblemType>::iterator<IteratorMetricType>::operator++() {
+
+  // If the stack is empty, we are done.
+  if(trace_.empty()) {
+    return false;
+  }
 
   // Push a blank argument to the trace for making the exit phase.
-  if(trace_.empty() || (! trace_.front().is_empty_argument())) {
+  if((! trace_.front().is_empty_argument())) {
     trace_.push_front(IteratorArgType());
   }
 
@@ -273,6 +279,8 @@ void DualtreeDfs<ProblemType>::iterator<IteratorMetricType>::operator++() {
     trace_.pop_back();
 
   } // end of the while loop.
+
+  return true;
 }
 
 template<typename ProblemType>

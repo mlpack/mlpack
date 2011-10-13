@@ -163,7 +163,7 @@ class DualtreeDfs {
 
         /** @brief Step forward the iterator.
          */
-        void operator++();
+        bool operator++();
 
         /** @brief Dereference the computed results.
          */
@@ -312,10 +312,14 @@ class DualtreeDfs {
      */
     DualtreeDfs();
 
+    TreeType *query_start_node() const;
+
     /** @brief Sets the starting query node for the dual-tree
      *         computation.
      */
     void set_query_start_node(TreeType *query_start_node_in);
+
+    TreeType *reference_start_node() const;
 
     /** @brief Sets the starting reference node for the dual-tree
      *         computation.

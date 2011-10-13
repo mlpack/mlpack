@@ -23,9 +23,21 @@ void DualtreeDfs<ProblemType>::set_query_start_node(
 }
 
 template<typename ProblemType>
+typename core::gnp::DualtreeDfs<ProblemType>::TreeType *
+DualtreeDfs<ProblemType>::query_start_node() const {
+  return query_start_node_;
+}
+
+template<typename ProblemType>
 void DualtreeDfs<ProblemType>::set_reference_start_node(
   TreeType *reference_start_node_in) {
   reference_start_node_ = reference_start_node_in;
+}
+
+template<typename ProblemType>
+typename core::gnp::DualtreeDfs<ProblemType>::TreeType *
+DualtreeDfs<ProblemType>::reference_start_node() const {
+  return reference_start_node_;
 }
 
 template<typename ProblemType>

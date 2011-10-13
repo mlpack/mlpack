@@ -146,8 +146,15 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
           sub_engine.set_reference_start_node(task_starting_rnode);
 
           // Fire away the computation.
-          sub_engine.Compute(
-            metric, found_task.first[i].query_result(), false);
+          typename core::gnp::DualtreeDfs<ProblemType>::template iterator< MetricType > sub_engine_it =
+            sub_engine.get_iterator(
+              metric,
+              found_task.first[i].query_result());
+          while(++sub_engine_it) {
+          }
+
+          //sub_engine.Compute(
+          //metric, found_task.first[i].query_result(), false);
 
           // Synchronize the sub-result with the MPI result owned by the
           // current process.
