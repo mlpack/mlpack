@@ -145,7 +145,7 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "  epan, gaussian"
   )(
     "leaf_size",
-    boost::program_options::value<int>()->default_value(4),
+    boost::program_options::value<int>()->default_value(40),
     "Maximum number of points at a leaf of the tree."
   )(
     "max_num_work_to_dequeue_per_stage_in",
@@ -153,7 +153,7 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "The number of work items to dequeue per process."
   )(
     "max_subtree_size_in",
-    boost::program_options::value<int>()->default_value(20),
+    boost::program_options::value<int>()->default_value(20000),
     "The maximum size of the subtree to serialize at a given moment."
   )(
     "measure_weak_scaling",
@@ -190,7 +190,7 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "Generate the datasets on the fly of the specified dimension."
   )(
     "random_generate_n_entries",
-    boost::program_options::value<int>()->default_value(1000),
+    boost::program_options::value<int>()->default_value(100000),
     "Generate the datasets on the fly of the specified number of points."
   )(
     "random_seed_in",
@@ -388,7 +388,7 @@ bool DistributedKdeArgumentParser::ParseArguments(
   arguments_out->metric_ = new core::metric_kernels::LMetric<2>();
 
   // Parse the load balancing option.
-  arguments_out->do_load_balancing_ = (true || vm.count("do_load_balancing") > 0);
+  arguments_out->do_load_balancing_ = (vm.count("do_load_balancing") > 0);
 
   // Parse the weak scaling measuring option.
   arguments_out->measure_weak_scaling_ =
@@ -440,7 +440,7 @@ bool DistributedKdeArgumentParser::ParseArguments(
     (core::table::global_m_file_) ?
     core::table::global_m_file_->Construct<DistributedTableType>() :
     new DistributedTableType();
-  if(true || vm.count("random_generate") > 0) {
+  if(vm.count("random_generate") > 0) {
     std::stringstream reference_file_name_sstr;
     reference_file_name_sstr << vm["references_in"].as<std::string>() <<
                              world.rank();
