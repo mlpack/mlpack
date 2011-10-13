@@ -69,8 +69,7 @@ class TableExchange {
 
     /** @brief The load balance request routing type.
      */
-    typedef core::parallel::RouteRequest <
-    std::pair< bool, unsigned long int> > LoadBalanceRouteRequestType;
+    typedef core::parallel::RouteRequest < unsigned long int > LoadBalanceRouteRequestType;
 
     /** @brief The distributed task queue associated with this
      *         exchange mechanism.
@@ -121,7 +120,7 @@ class TableExchange {
     /** @brief The boolean flag per each MPI prcess signifying it
      *         needs load balancing.
      */
-    std::vector< std::pair<bool, unsigned long int> > needs_load_balancing_;
+    std::vector< unsigned long int > needs_load_balancing_;
 
     /** @brief The queued-up termination messages held by the current
      *         MPI process.
@@ -398,12 +397,21 @@ class TableExchange {
 
       } // end of dequeuing flush requests.
 
+      // Need to constantly update other processes about the current
+      // progress on the self.
+      message_cache_[ world.rank()].load_balance_route().Init(world);
+      message_cache_[ world.rank()].load_balance_route().add_destinations(world);
+      needs_load_balancing_[ world.rank()] =
+        task_queue_->remaining_local_computation();
+      message_cache_[ world.rank()].load_balance_route().object() =
+        needs_load_balancing_[ world.rank()];
+      message_cache_[ world.rank()].load_balance_route().set_object_is_valid_flag(true);
+
       // If the current neighbor has less task than the self and the
       // neighbor is in need of more tasks, then donate one query
       // subtable.
-      if(needs_load_balancing_[ neighbor ].first &&
-          needs_load_balancing_[ neighbor ].second * 4 <
-          needs_load_balancing_[ world.rank()].second) {
+      if(needs_load_balancing_[ neighbor ] * 4 <
+          needs_load_balancing_[ world.rank()]) {
         task_queue_->PrepareExtraTaskList(
           world, metric_in, neighbor,
           & message_cache_[ world.rank()].extra_task_route().object());
@@ -490,16 +498,6 @@ class TableExchange {
         new_self_send_request_object.extrinsic_prune_route().Init(world);
         new_self_send_request_object.extrinsic_prune_route().add_destinations(world);
         new_self_send_request_object.extrinsic_prune_route().object() = 0;
-      }
-
-      // If load-balancing is on, then need to constantly update other
-      // processes about the current progress on the self.
-      if(do_load_balancing_) {
-        new_self_send_request_object.load_balance_route().Init(world);
-        new_self_send_request_object.load_balance_route().add_destinations(world);
-        new_self_send_request_object.load_balance_route().object() =
-          needs_load_balancing_[ world.rank()];
-        new_self_send_request_object.load_balance_route().set_object_is_valid_flag(true);
       }
 
       // Set the originating rank of the message.
@@ -791,6 +789,8 @@ class TableExchange {
       total_num_locks_ = 0;
     }
 
+    /** @brief Finds the local reference node by its ID.
+     */
     TreeType *FindByBeginCount(int begin_in, int count_in) {
       return reference_table_->local_table()->get_tree()->FindByBeginCount(begin_in, count_in);
     }
@@ -845,10 +845,7 @@ class TableExchange {
     void turn_on_load_balancing(
       boost::mpi::communicator &world,
       unsigned long int remaining_local_computation_in) {
-
-      needs_load_balancing_[ world.rank()] =
-        std::pair <
-        bool, int > (true, remaining_local_computation_in);
+      needs_load_balancing_[ world.rank()] = remaining_local_computation_in;
     }
 
     /** @brief Initialize the all-to-some exchange object with a
@@ -865,7 +862,7 @@ class TableExchange {
       // Load balancing option.
       needs_load_balancing_.resize(world.size());
       for(int i = 0; i < world.size(); i++) {
-        needs_load_balancing_[i] = std::pair<bool, unsigned long int>(false, 0);
+        needs_load_balancing_[i] = 0;
       }
       do_load_balancing_ = do_load_balancing_in;
 
@@ -964,13 +961,13 @@ class TableExchange {
           message_send_request_.begin(),
           message_send_request_.begin() + num_subtables_to_exchange);
 
+        // Generate more tasks.
+        task_queue_->GenerateTasks(world, metric_in, received_subtable_ids);
+
         // Post-cleanup.
         this->PostCleanupStage_(
           world, num_subtables_to_exchange,
           lower_bound_send, lower_bound_receive);
-
-        // Generate more tasks.
-        task_queue_->GenerateTasks(world, metric_in, received_subtable_ids);
 
         // Increment the stage when done, and turn off the stage flag.
         stage_ = (stage_ + 1) % max_stage_;
