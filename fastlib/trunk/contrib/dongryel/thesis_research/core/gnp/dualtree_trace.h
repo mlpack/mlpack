@@ -26,6 +26,8 @@ class DualtreeTrace {
 
   public:
 
+    /** @brief Returns the $i$-th element.
+     */
     const ArgType &operator[](int i) {
       return trace_[i];
     }
@@ -84,14 +86,31 @@ class DualtreeTrace {
       return trace_.empty();
     }
 
+    /** @brief Returns the size of the trace.
+     */
     int size() const {
       return trace_.size();
+    }
+
+    /** @brief Reserves the size of dequeue.
+     */
+    void reserve(int reserve_size) {
+      int prev_size = trace_.size();
+      trace_.resize(reserve_size);
+      trace_.resize(prev_size);
     }
 
     /** @brief Initialize the dual-tree trace.
      */
     void Init() {
       trace_.resize(0);
+    }
+
+    /** @brief Initializes the dual-tree trace with the given reserve
+     *         size.
+     */
+    void Init(int reserve_size) {
+      this->reserve(reserve_size);
     }
 };
 }
