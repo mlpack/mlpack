@@ -964,6 +964,13 @@ class DistributedDualtreeTaskQueue {
       return tasks_[probe_index]->size();
     }
 
+    int num_query_subtables() const {
+      core::parallel::scoped_omp_nest_lock lock(
+        &(const_cast <
+          DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
+      return tasks_.size();
+    }
+
     /** @brief Returns whether we are performing the load balancing or
      *         not.
      */
@@ -1012,6 +1019,8 @@ class DistributedDualtreeTaskQueue {
 
       // Initialize the other member variables.
       tasks_.resize(query_subtables_.size());
+      std::cerr << "Process " << world.rank() << " got " <<
+                query_subtables_.size() << " grain query subtrees.\n";
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
 
         // Set up the query subtable.
