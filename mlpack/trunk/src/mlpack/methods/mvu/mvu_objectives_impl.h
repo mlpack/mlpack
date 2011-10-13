@@ -17,6 +17,7 @@
  */
 #include <errno.h>
 #include <fastlib/fx/io.h>
+#include<log.h>
 
 void MaxVariance::Init(arma::mat& data) {
 
@@ -25,9 +26,9 @@ void MaxVariance::Init(arma::mat& data) {
   new_dimension_ = mlpack::IO::GetParam<int>("optfun/new_dimension");
   num_of_points_ = data.n_cols;
 
-  mlpack::IO::Info << "Data loaded..." << std::endl;
-  mlpack::IO::Info << "Nearest neighbor constraints..." << std::endl;
-  mlpack::IO::Info << "Building tree with data..." << std::endl;
+  mlpack::Log::Info << "Data loaded..." << std::endl;
+  mlpack::Log::Info << "Nearest neighbor constraints..." << std::endl;
+  mlpack::Log::Info << "Building tree with data..." << std::endl;
 
   if (knns_ == 0) {
     allknn_.Init(&data, leaf_size_, MAX_KNNS); 
@@ -35,19 +36,19 @@ void MaxVariance::Init(arma::mat& data) {
     allknn_.Init(&data, leaf_size_, knns_); 
   }
 
-  mlpack::IO::Info << "Tree built..." << std::endl;
+  mlpack::Log::Info << "Tree built..." << std::endl;
 
-  mlpack::IO::Info << "Computing neighborhoods..." << std::endl;
+  mlpack::Log::Info << "Computing neighborhoods..." << std::endl;
 
   arma::Col<size_t> from_tree_neighbors;
   arma::vec          from_tree_distances;
   allknn_.ComputeNeighbors(from_tree_neighbors,
                            from_tree_distances);
 
-  mlpack::IO::Info << "Neighborhoods computed..." << std::endl;
+  mlpack::Log::Info << "Neighborhoods computed..." << std::endl;
 
   if (knns_ == 0) { // automatically estimate the correct number for k
-    mlpack::IO::Info << "Auto-tuning the knn..." << std::endl;
+    mlpack::Log::Info << "Auto-tuning the knn..." << std::endl;
 
     MaxVarianceUtils::EstimateKnns(from_tree_neighbors,
         from_tree_distances,
@@ -56,10 +57,10 @@ void MaxVariance::Init(arma::mat& data) {
         data.n_rows,
         knns_); 
 
-    mlpack::IO::Info << "Optimum knns is " << knns_;
+    mlpack::Log::Info << "Optimum knns is " << knns_;
     mlpack::IO::GetParam<int>("optfun/optimum_knns") = knns_;
 
-    mlpack::IO::Info << "Consolidating neighbors..." << std::endl;
+    mlpack::Log::Info << "Consolidating neighbors..." << std::endl;
 
     MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
         from_tree_distances,
@@ -69,7 +70,7 @@ void MaxVariance::Init(arma::mat& data) {
         nearest_distances_,
         num_of_nearest_pairs_);
   } else { 
-    mlpack::IO::Info << "Consolidating neighbors..." << std::endl;
+    mlpack::Log::Info << "Consolidating neighbors..." << std::endl;
     MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
         from_tree_distances,
         knns_,
@@ -87,7 +88,7 @@ void MaxVariance::Init(arma::mat& data) {
   }
   sum_of_furthest_distances_ = -max_nearest_distance * std::pow(data.n_cols, 2);
  
-  mlpack::IO::Info << "Lower bound for optimization is " << sum_of_furthest_distances_ << std::endl;
+  mlpack::Log::Info << "Lower bound for optimization is " << sum_of_furthest_distances_ << std::endl;
   mlpack::IO::GetParam<int>("optfun/num_of_constraints") = num_of_nearest_pairs_;
   mlpack::IO::GetParam<double>("optfun/lower_optimal_bound") = sum_of_furthest_distances_;
 }
@@ -102,7 +103,7 @@ void MaxVariance::Init() {
   // STUPID?  YEAH?  IS THAT IT? //RAWR, RAGE AT INANIMATE TEXT.. RAWR?
   FILE *fp = fopen(nearest_neighbor_file.c_str(), "r");
   if (fp == NULL) {
-    mlpack::IO::Fatal << "Error while opening " << 
+    mlpack::Log::Fatal << "Error while opening " << 
       nearest_neighbor_file.c_str() << "..." << strerror(errno) << std::endl;
   }
   nearest_neighbor_pairs_.clear();
@@ -133,7 +134,7 @@ void MaxVariance::Init() {
   }
   sum_of_furthest_distances_ = -max_nearest_distance * std::pow(num_of_points_, 2);
 
-  mlpack::IO::Info << "Lower bound for optimization is " <<
+  mlpack::Log::Info << "Lower bound for optimization is " <<
     sum_of_furthest_distances_ << std::endl;
   mlpack::IO::GetParam<int>("optfun/num_of_constraints") = 
     num_of_nearest_pairs_;
@@ -231,7 +232,7 @@ void MaxVariance::set_sigma(double sigma) {
 
 bool MaxVariance::IsDiverging(double objective) {
   if (objective < sum_of_furthest_distances_) {
-    mlpack::IO::Info << "objective(" << objective 
+    mlpack::Log::Info << "objective(" << objective 
       << ") < sum_of_furthest_distances (" << sum_of_furthest_distances_ 
       << ")" << std::endl;
 
@@ -269,9 +270,9 @@ void MaxFurthestNeighbors::Init(arma::mat& data) {
   knns_ = mlpack::IO::GetParam<int>("optfun/knns");
   leaf_size_ = mlpack::IO::GetParam<int>("optfun/leaf_size");
 
-  mlpack::IO::Info << "Data loaded..." << std::endl;
-  mlpack::IO::Info << "Nearest neighbor constraints..." << std::endl;
-  mlpack::IO::Info << "Building tree with data..." << std::endl;
+  mlpack::Log::Info << "Data loaded..." << std::endl;
+  mlpack::Log::Info << "Nearest neighbor constraints..." << std::endl;
+  mlpack::Log::Info << "Building tree with data..." << std::endl;
 
   if (knns_ == 0) {
      allknn_.Init(&data, leaf_size_, MAX_KNNS); 
@@ -279,18 +280,18 @@ void MaxFurthestNeighbors::Init(arma::mat& data) {
     allknn_.Init(&data, leaf_size_, knns_); 
   }
 
-  mlpack::IO::Info << "Tree built ..." << std::endl;
-  mlpack::IO::Info << "Computing neighborhoods ..." << std::endl
+  mlpack::Log::Info << "Tree built ..." << std::endl;
+  mlpack::Log::Info << "Computing neighborhoods ..." << std::endl
 
   arma::Col<size_t> from_tree_neighbors;
   arma::vec from_tree_distances;
   allknn_.ComputeNeighbors(from_tree_neighbors,
                            from_tree_distances);
 
-  mlpack::IO::Info << "Neighborhoods computed..." << std::endl;
+  mlpack::Log::Info << "Neighborhoods computed..." << std::endl;
 
   if (knns_ == 0) { // automatically select k
-    mlpack::IO::Info << "Auto-tuning the knn..." << std::endl;
+    mlpack::Log::Info << "Auto-tuning the knn..." << std::endl;
     MaxVarianceUtils::EstimateKnns(from_tree_neighbors,
                                    from_tree_distances,
                                    MAX_KNNS, 
@@ -298,7 +299,7 @@ void MaxFurthestNeighbors::Init(arma::mat& data) {
                                    data.n_rows,
                                    knns_); 
 
-    mlpack::IO::Info << "Optimum knns is " << knns_ << std::endl;
+    mlpack::Log::Info << "Optimum knns is " << knns_ << std::endl;
     mlpack::IO::GetParam<int>("optfun/optimum_knns") = knns_;
     MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
                                            from_tree_distances,
@@ -308,7 +309,7 @@ void MaxFurthestNeighbors::Init(arma::mat& data) {
                                            nearest_distances_,
                                            num_of_nearest_pairs_);
   } else { 
-    mlpack::IO::Info << "Consolidating neighbors..." << std::endl;
+    mlpack::Log::Info << "Consolidating neighbors..." << std::endl;
     MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
                                            from_tree_distances,
                                            knns_,
@@ -329,13 +330,13 @@ void MaxFurthestNeighbors::Init(arma::mat& data) {
 
   eq_lagrange_mult_.ones(num_of_nearest_pairs_);
   
-  mlpack::IO::Info <<("Furthest neighbor constraints...\n");
-  mlpack::IO::Info <<("Building tree with data...\n");
+  mlpack::Log::Info <<("Furthest neighbor constraints...\n");
+  mlpack::Log::Info <<("Building tree with data...\n");
 
   allkfn_.Init(&data, leaf_size_, 1); 
 
-  mlpack::IO::Info <<("Tree built...\n");
-  mlpack::IO::Info <<("Computing furthest neighborhoods...\n");
+  mlpack::Log::Info <<("Tree built...\n");
+  mlpack::Log::Info <<("Computing furthest neighborhoods...\n");
 
   // mem:: madness?
 //  from_tree_neighbors.Renew();
@@ -343,8 +344,8 @@ void MaxFurthestNeighbors::Init(arma::mat& data) {
   allkfn_.ComputeNeighbors(from_tree_neighbors,
                            from_tree_distances);
 
-  mlpack::IO::Info << "Furthest neighbors computed..." << std::endl;
-  mlpack::IO::Info << "Consolidating neighbors..." << std::endl;
+  mlpack::Log::Info << "Furthest neighbors computed..." << std::endl;
+  mlpack::Log::Info << "Consolidating neighbors..." << std::endl;
 
   MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
                                          from_tree_distances,
@@ -360,7 +361,7 @@ void MaxFurthestNeighbors::Init(arma::mat& data) {
   }
   sum_of_furthest_distances_ = -(max_nearest_distance * data.n_cols * num_of_furthest_pairs_);
  
-  mlpack::IO::Info << "Lower bound for optimization: " << 
+  mlpack::Log::Info << "Lower bound for optimization: " << 
     sum_of_furthest_distances_ << std::endl;
   mlpack::IO::GetParam<double>("optfun/lower_optimal_bound") = sum_of_furthest_distances_;
 }
@@ -382,7 +383,7 @@ void MaxFurthestNeighbors::Init() {
   // need to use data::Load()
   FILE *fp = fopen(nearest_neighbor_file.c_str(), "r");
   if (fp == NULL) {
-    mlpack::IO::Fatal << "Error while opening " << 
+    mlpack::Log::Fatal << "Error while opening " << 
       nearest_neighbor_file.c_str() << "..." << 
       strerror(errno) << std::endl;
   }
@@ -409,7 +410,7 @@ void MaxFurthestNeighbors::Init() {
   fclose(fp);
   fp = fopen(furthest_neighbor_file.c_str(), "r");
   if (fp == NULL) {
-    mlpack::IO::Fatal << "Error while opening " << 
+    mlpack::Log::Fatal << "Error while opening " << 
       furthest_neighbor_file.c_str() << "..." << 
       strerror(errno) << std::endl;
   }
@@ -431,7 +432,7 @@ void MaxFurthestNeighbors::Init() {
   }
   sum_of_furthest_distances_ = -(max_nearest_distance * num_of_points_ * num_of_points_);
  
-  mlpack::IO::Info << "Lower bound for optimization: " << 
+  mlpack::Log::Info << "Lower bound for optimization: " << 
     sum_of_furthest_distances_ << std::endl;
   mlpack::IO::GetParam<int>("optfun/num_of_constraints") = num_of_nearest_pairs_;
   mlpack::IO::GetParam<double>("optfun/lower_optimal_bound") = sum_of_furthest_distances_;
@@ -542,7 +543,7 @@ void MaxFurthestNeighbors::set_lagrange_mult(double val) {
 
 bool MaxFurthestNeighbors::IsDiverging(double objective) {
   if (objective < sum_of_furthest_distances_) {
-    mlpack::IO::Info << "objective(" << objective 
+    mlpack::Log::Info << "objective(" << objective 
       << ") < sum_of_furthest_distances (" << sum_of_furthest_distances_ 
       << ")" << std::endl;
     return true;
@@ -568,7 +569,7 @@ bool MaxFurthestNeighbors::IsOptimizationOver(arma::mat& coordinates,
   ComputeFeasibilityError(coordinates, infeasibility1_);
   if (infeasibility1_ < desired_feasibility_error_ || 
       fabs(infeasibility1_ - previous_infeasibility1_) < infeasibility_tolerance_)  {
-    mlpack::IO::Info << "Optimization is over" << std::endl;
+    mlpack::Log::Info << "Optimization is over" << std::endl;
     return true;
   } else {
     previous_infeasibility1_ = infeasibility1_;
@@ -655,7 +656,7 @@ void MaxVarianceUtils::EstimateKnns(const arma::Col<size_t>& nearest_neighbors,
       loocv_score += log(probability);
       mean_band += nearest_distances[(i * maximum_knns) + k];
     }
-    mlpack::IO::Info << "Knn=%i," << k
+    mlpack::Log::Info << "Knn=%i," << k
       << "mean_band=%lg," << mean_band/num_of_points 
       << "score=%lg," << loocv_score
       << "dimension=%i" << dimension << std::endl;

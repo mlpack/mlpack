@@ -24,7 +24,7 @@ void RidgeRegression::BuildCovariance_
 (const arma::mat &input_data, const arma::Col<size_t> *predictor_indices,
  const arma::mat& predictions_in) {
 
-  //mlpack::IO::Info << "RidgeRegression::BuildCovariance_:starting." << std::endl;
+  //mlpack::Log::Info << "RidgeRegression::BuildCovariance_:starting." << std::endl;
 
   // Initialize the covariance matrix to the zero matrix.
   covariance_.zeros(input_data.n_rows + 1, input_data.n_rows + 1);
@@ -92,7 +92,7 @@ void RidgeRegression::BuildCovariance_
       }
     }
   }
-  //mlpack::IO::Info << "RidgeRegression::BuildCovariance_:complete." << std::endl;
+  //mlpack::Log::Info << "RidgeRegression::BuildCovariance_:complete." << std::endl;
 }
 
 void RidgeRegression::ExtractDesignMatrixSubset_
@@ -165,14 +165,14 @@ RidgeRegression::RidgeRegression(const arma::mat &predictors,
                            const arma::mat &predictions,
 			   bool use_normal_equation_method) {
   if (predictors.n_cols < predictors.n_rows)
-    mlpack::IO::Fatal << "The number of columns (" << predictors.n_cols <<
+    mlpack::Log::Fatal << "The number of columns (" << predictors.n_cols <<
         ") must be less than or equal to the number of the rows (" <<
         predictors.n_rows << ")." << std::endl;
   if (predictions.n_rows > 1)
-    mlpack::IO::Fatal << "The current implementation only supports "
+    mlpack::Log::Fatal << "The current implementation only supports "
         "one-dimensional predictions." << std::endl;
   if (predictors.n_cols != predictions.n_cols)
-    mlpack::IO::Fatal << "Predictors and predictions must have the same number "
+    mlpack::Log::Fatal << "Predictors and predictions must have the same number "
         "of columns (" << predictors.n_cols << " != " << predictions.n_cols <<
         ")." << std::endl;
 
@@ -289,7 +289,7 @@ void RidgeRegression::QRRegress
 (double lambda, const arma::Col<size_t> *predictor_indices) {
 
   // THIS FUNCTION DOES NOT TAKE lambda into ACCOUNT YET! FIX ME!
-  //mlpack::IO::Info << "QRRegress: starting." << std::endl;
+  //mlpack::Log::Info << "QRRegress: starting." << std::endl;
 
   // At this point, QR should not be used when the covariance based
   // method is used! Only do QR on the design matrix.
@@ -300,7 +300,7 @@ void RidgeRegression::QRRegress
   arma::qr(q,r,extracted_design_matrix_subset); // Sets q and r to have 0 elements on failure
 
  // if(q.n_elem == 0) {
-    //mlpack::IO::Info << "QRRegress: QR decomposition encountered problems!" << std::endl;
+    //mlpack::Log::Info << "QRRegress: QR decomposition encountered problems!" << std::endl;
   //}
 
   // Multiply the target training values by the Q^T and solve the
@@ -311,13 +311,13 @@ void RidgeRegression::QRRegress
   factors_.reset();
   factors_ = arma::solve(r,q_transpose_y);
 
-  //mlpack::IO::Info << "QRRegress: complete." << std::endl;
+  //mlpack::Log::Info << "QRRegress: complete." << std::endl;
 }
 
 void RidgeRegression::SVDRegress
 (double lambda, const arma::Col<size_t> *predictor_indices) {
 
-  //mlpack::IO::Info << "SVDRegress: starting." << std::endl;
+  //mlpack::Log::Info << "SVDRegress: starting." << std::endl;
 
   arma::vec singular_values;
   arma::mat v_t, u;
@@ -330,7 +330,7 @@ void RidgeRegression::SVDRegress
 		      predictors_->n_rows:
 		      (predictor_indices->n_elem));
 
-  //mlpack::IO::Info << "SVDRegress: complete." << std::endl;
+  //mlpack::Log::Info << "SVDRegress: complete." << std::endl;
 }
 
 void RidgeRegression::ExtractSubspace_
@@ -398,7 +398,7 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
 					       double lambda_max,
 					       size_t num) {
   if (lambda_min > lambda_max)
-    mlpack::IO::Fatal << "lambda_max (" << lambda_max << ") must be larger than"
+    mlpack::Log::Fatal << "lambda_max (" << lambda_max << ") must be larger than"
         " lambda_min (" << lambda_min << ")." << std::endl;
 
   double step = (lambda_max - lambda_min) / num;
@@ -470,7 +470,7 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
   }
   mlpack::IO::GetParam<double>("reg/cross_validation_score") =  min_score;
 
-  //mlpack::IO::Info << "The optimal lamda: " <<  lambda_min + min_index * step << std::endl;
+  //mlpack::Log::Info << "The optimal lamda: " <<  lambda_min + min_index * step << std::endl;
 
 
   // Using the best lambda, compute the linear model.
@@ -485,7 +485,7 @@ void RidgeRegression::FeatureSelectedRegression
  const arma::mat &original_target_training_values,
  arma::Col<size_t> *output_predictor_indices) {
 
-  //mlpack::IO::Info << "Starting VIF-based feature selection." << std::endl;
+  //mlpack::Log::Info << "Starting VIF-based feature selection." << std::endl;
 
   double lambda = mlpack::IO::GetParam<double>("ridge/lambda"); //Default value, 0.0
   double variance_inflation_factor_threshold =
@@ -594,7 +594,7 @@ void RidgeRegression::FeatureSelectedRegression
   // SVDRegress(lambda, output_predictor_indices);
   QRRegress(lambda, output_predictor_indices);
 
-  //mlpack::IO::Info << "VIF feature selection complete." << std::endl;
+  //mlpack::Log::Info << "VIF feature selection complete." << std::endl;
 }
 
 double RidgeRegression::ComputeSquareError() {

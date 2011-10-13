@@ -10,6 +10,7 @@
 
 
 #include "../../../fastlib/fx/io.h"
+#include<log.h>
 
 namespace tree_gen_metric_tree_private {
 
@@ -99,11 +100,11 @@ namespace tree_gen_metric_tree_private {
         old_from_new[right] = t;
       }
       
-      mlpack::IO::Assert(left <= right);
+      mlpack::Log::Assert(left <= right);
       right--;
     }
     
-    mlpack::IO::Assert(left == right + 1);
+    mlpack::Log::Assert(left == right + 1);
 
     return left_count;
   }

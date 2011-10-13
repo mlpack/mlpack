@@ -64,7 +64,7 @@ void NelderMead::Eval(arma::mat& pts) {
     }
 
     if (num_func_eval > NMAX) {
-      IO::Warn << "Nelder-Mead: Maximum number of function evaluations "
+      Log::Warn << "Nelder-Mead: Maximum number of function evaluations "
           "exceeded." << std::endl;
       break;
     }
@@ -269,7 +269,7 @@ void QuasiNewton::Eval(arma::vec& pt) {
     xi = -hessian * grad;
   }
 
-  IO::Warn << "Too many iterations in Quasi-Newton: giving up." << std::endl;
+  Log::Warn << "Too many iterations in Quasi-Newton: giving up." << std::endl;
 }
 
 void QuasiNewton::LineSearch_(arma::vec& pold, long double fold,

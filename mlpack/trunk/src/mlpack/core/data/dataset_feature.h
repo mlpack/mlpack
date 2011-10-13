@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "../io/io.h"
+#include "../io/log.h"
 #include "../file/textfile.h"
 
 /**
@@ -136,7 +137,7 @@ class DatasetFeature {
    * @param value the number of the value
    */
   const std::string& value_name(int value) const {
-    mlpack::IO::Assert(type_ == NOMINAL);
+    mlpack::Log::Assert(type_ == NOMINAL);
     return value_names_[value];
   }
 

@@ -555,7 +555,7 @@ double MaxIP::ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
 
   if (mlpack::IO::HasParam("maxip/dual_tree")) {
     // do dual-tree search
-    mlpack::IO::Info << "DUAL-TREE Search: " << std::endl;
+    mlpack::Log::Info << "DUAL-TREE Search: " << std::endl;
 
     ComputeNeighborsRecursion_(query_tree_, reference_tree_,
 			       MaxNodeIP_(query_tree_, reference_tree_));
@@ -571,7 +571,7 @@ double MaxIP::ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
 
   } else {
     // do single-tree search
-    mlpack::IO::Info << "SINGLE-TREE Search: " << std::endl;
+    mlpack::Log::Info << "SINGLE-TREE Search: " << std::endl;
 
     for (query_ = 0; query_ < queries_.n_cols; ++query_) {
       ComputeNeighborsRecursion_(reference_tree_, 
@@ -587,12 +587,12 @@ double MaxIP::ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
     }
   }
 
-  mlpack::IO::Info << "Tree-based Search - Number of prunes: " 
+  mlpack::Log::Info << "Tree-based Search - Number of prunes: " 
 		   << number_of_prunes_ << std::endl;
-  mlpack::IO::Info << "\t \t Avg. # of DC: " 
+  mlpack::Log::Info << "\t \t Avg. # of DC: " 
 		   << (double) distance_computations_ 
     / (double) queries_.n_cols << std::endl;
-  mlpack::IO::Info << "\t \t Avg. # of SD: " 
+  mlpack::Log::Info << "\t \t Avg. # of SD: " 
 		   << (double) split_decisions_ 
     / (double) queries_.n_cols << std::endl;
 
@@ -617,12 +617,12 @@ double MaxIP::ComputeNaive(arma::Col<size_t>* resulting_neighbors,
     (*ips)(query*knns_+ i%knns_) = max_ips_(i);
   }
     
-  mlpack::IO::Info << "Brute-force Search - Number of prunes: " 
+  mlpack::Log::Info << "Brute-force Search - Number of prunes: " 
 		   << number_of_prunes_ << std::endl;
-  mlpack::IO::Info << "\t \t Avg. # of DC: " 
+  mlpack::Log::Info << "\t \t Avg. # of DC: " 
 		   << (double) distance_computations_ 
     / (double) queries_.n_cols << std::endl;
-  mlpack::IO::Info << "\t \t Avg. # of SD: " 
+  mlpack::Log::Info << "\t \t Avg. # of SD: " 
 		   << (double) split_decisions_ 
     / (double) queries_.n_cols << std::endl;
 

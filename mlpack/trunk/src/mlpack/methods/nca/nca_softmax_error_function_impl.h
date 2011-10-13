@@ -121,7 +121,7 @@ void SoftmaxErrorFunction<Kernel>::Precalculate(const arma::mat& coordinates) {
   // Clean up any bad values.
   for (size_t i = 0; i < stretched_dataset_.n_cols; i++) {
     if (denominators_[i] == 0.0) {
-      IO::Debug << "Denominator of p_{" << i << ", j} is 0." << std::endl;
+      Log::Debug << "Denominator of p_{" << i << ", j} is 0." << std::endl;
 
       // Set to usable values.
       denominators_[i] = std::numeric_limits<double>::infinity();

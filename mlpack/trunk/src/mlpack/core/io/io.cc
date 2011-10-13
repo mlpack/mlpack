@@ -1,4 +1,5 @@
 #include "io.h"
+#include "log.h"
 
 #include <list>
 #include <boost/program_options.hpp>
@@ -23,30 +24,10 @@
 
 #include "option.h"
 
-#define BASH_RED "\033[0;31m"
-#define BASH_GREEN "\033[0;32m"
-#define BASH_YELLOW "\033[0;33m"
-#define BASH_CYAN "\033[0;36m"
-#define BASH_CLEAR "\033[0m"
-
 using namespace mlpack;
 using namespace mlpack::io;
 
 IO* IO::singleton = NULL;
-
-#ifdef DEBUG
-PrefixedOutStream IO::Debug = PrefixedOutStream(std::cout,
-    BASH_CYAN "[DEBUG] " BASH_CLEAR);
-#else
-NullOutStream IO::Debug = NullOutStream();
-#endif
-PrefixedOutStream IO::Info = PrefixedOutStream(std::cout,
-    BASH_GREEN "[INFO ] " BASH_CLEAR, true /* unless --verbose */, false);
-PrefixedOutStream IO::Warn = PrefixedOutStream(std::cout,
-    BASH_YELLOW "[WARN ] " BASH_CLEAR, false, false);
-PrefixedOutStream IO::Fatal = PrefixedOutStream(std::cerr,
-    BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
-std::ostream& IO::cout = std::cout;
 
 /* For clarity, we will alias boost's namespace */
 namespace po = boost::program_options;
@@ -85,10 +66,10 @@ IO::~IO() {
   // Did the user ask for verbose output?  If so we need to print everything.
   // But only if the user did not ask for help or info.
   if (GetParam<bool>("verbose")) {
-    Info << "Execution parameters:" << std::endl;
+    Log::Info << "Execution parameters:" << std::endl;
     hierarchy.PrintLeaves();
 
-    Info << "Program timers:" << std::endl;
+    Log::Info << "Program timers:" << std::endl;
     hierarchy.PrintTimers();
   }
 
@@ -96,7 +77,7 @@ IO::~IO() {
   // options.  This way this output doesn't show up inexplicably for someone who
   // may not have wanted it there (i.e. in Boost unit tests).
   if (did_parse)
-    Debug << "Compiled with debugging symbols." << std::endl;
+    Log::Debug << "Compiled with debugging symbols." << std::endl;
 
   return;
 }
@@ -154,17 +135,6 @@ void IO::AddFlag(const char* identifier,
   //Add the option to boost program_options
   desc.add_options()
     (path.c_str(), po::value<bool>()->implicit_value(true), description);
-}
-
-void IO::Assert(bool condition) {
-  AssertMessage(condition, "Assert failed.");
-}
-
-void IO::AssertMessage(bool condition, const char* message) {
-  if(!condition) {
-    IO::Debug << message << std::endl;
-    exit(1);
-  }
 }
 
 /*
@@ -313,7 +283,7 @@ void IO::ParseCommandLine(int argc, char** line) {
   try {
     po::store(po::parse_command_line(argc, line, desc), vmap);
   } catch(std::exception& ex) {
-    IO::Fatal << ex.what() << std::endl;
+    Log::Fatal << ex.what() << std::endl;
   }
   // Flush the buffer, make sure changes are propagated to vmap
   po::notify(vmap);
@@ -337,7 +307,7 @@ void IO::ParseStream(std::istream& stream) {
   try {
     po::store(po::parse_config_file(stream, desc), vmap);
   } catch (std::exception& ex) {
-    IO::Fatal << ex.what() << std::endl;
+    Log::Fatal << ex.what() << std::endl;
   }
   // Flush the buffer, make sure changes are propagated to vmap
   po::notify(vmap);
@@ -402,8 +372,8 @@ void IO::DefaultMessages() {
   if (GetParam<bool>("help")) {
     // A little snippet about the program itself, if we have it.
     if (GetSingleton().doc != &empty_program_doc) {
-      cout << GetSingleton().doc->programName << std::endl << std::endl;
-      cout << "  " << OptionsHierarchy::HyphenateString(
+      std::cout << GetSingleton().doc->programName << std::endl << std::endl;
+      std::cout << "  " << OptionsHierarchy::HyphenateString(
         GetSingleton().doc->documentation, 2) << std::endl << std::endl;
     }
 
@@ -419,17 +389,17 @@ void IO::DefaultMessages() {
       if(node != NULL)
         node->PrintNodeHelp();
       else
-        IO::Fatal << "Invalid parameter: " << str << std::endl;
+        Log::Fatal << "Invalid parameter: " << str << std::endl;
       exit(0);
     }
   }
   if (GetParam<bool>("verbose"))
-    Info.ignoreInput = false;
+    Log::Info.ignoreInput = false;
 
   // Notify the user if we are debugging.  This is not done in the constructor
   // because the output streams may not be set up yet.  We also don't want this
   // message twice if the user just asked for help or information.
-  Debug << "Compiled with debugging symbols." << std::endl;
+  Log::Debug << "Compiled with debugging symbols." << std::endl;
 }
 
 /*
@@ -447,7 +417,7 @@ void IO::RequiredOptions() {
   for (iter = rOpt.begin(); iter != rOpt.end(); iter++) {
   std::string str = *iter;
   if (!vmap.count(str)) // If a required option isn't there...
-      IO::Fatal << "Required option --" << iter->c_str() << " is undefined."
+      Log::Fatal << "Required option --" << iter->c_str() << " is undefined."
           << std::endl;
   }
 }

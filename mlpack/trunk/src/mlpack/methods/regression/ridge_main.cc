@@ -70,16 +70,16 @@ int main(int argc, char** argv) {
 
   arma::mat predictors;
   if (data::Load(predictors_file.c_str(), predictors) == false) {
-    IO::Fatal << "Unable to open file " << predictors_file << std::endl;
+    Log::Fatal << "Unable to open file " << predictors_file << std::endl;
   }
 
   arma::mat predictions;
   if (data::Load(predictions_file.c_str(), predictions) == false) {
-    IO::Fatal << "Unable to open file " << predictions_file << std::endl;
+    Log::Fatal << "Unable to open file " << predictions_file << std::endl;
   }
 
   RidgeRegression engine;
-  IO::Info << "Computing Regression..." << std::endl;
+  Log::Info << "Computing Regression..." << std::endl;
 
 
   if(mode == "regress") {
@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
     engine.QRRegress(lambda_min);
   }
   else if(mode == "cvregress") {
-     IO::Info << "Crossvalidating for the optimal lambda in ["
+     Log::Info << "Crossvalidating for the optimal lambda in ["
 	<<  lambda_min << " " << lambda_max << " ] "
      	<< "by trying " << num_lambdas_to_cv << " values..." << std::endl;
 
@@ -98,7 +98,7 @@ int main(int argc, char** argv) {
   }
   else if(mode == "fsregress") {
 
-    IO::Info << "Feature selection based regression." << std::endl;
+    Log::Info << "Feature selection based regression." << std::endl;
 
     arma::mat predictor_indices_intermediate;
     arma::mat prune_predictor_indices_intermediate;
@@ -108,11 +108,11 @@ int main(int argc, char** argv) {
       IO::GetParam<std::string>("ridge/prune_predictor_indices");
     if(data::Load(predictor_indices_file.c_str(),
 	  predictor_indices_intermediate) == false) {
-      IO::Fatal << "Unable to open file " << prune_predictor_indices_file << std::endl;
+      Log::Fatal << "Unable to open file " << prune_predictor_indices_file << std::endl;
     }
     if(data::Load(prune_predictor_indices_file.c_str(),
 	  prune_predictor_indices_intermediate) == false) {
-      IO::Fatal << "Unable to open file " << prune_predictor_indices_file << std::endl;
+      Log::Fatal << "Unable to open file " << prune_predictor_indices_file << std::endl;
     }
 
     arma::Col<size_t> predictor_indices;
@@ -127,14 +127,14 @@ int main(int argc, char** argv) {
     }
   }
 
-  IO::Info << "Ridge Regression Model Training Complete!" << std::endl;
+  Log::Info << "Ridge Regression Model Training Complete!" << std::endl;
   double square_error = engine.ComputeSquareError();
-  IO::Info << "Square Error: " << square_error << std::endl;
+  Log::Info << "Square Error: " << square_error << std::endl;
   IO::GetParam<double>("ridge/square error") = square_error;
   arma::mat factors;
   engine.factors(&factors);
   std::string factors_file = IO::GetParam<std::string>("ridge/factors");
-  IO::Info << "Saving factors..." << std::endl;
+  Log::Info << "Saving factors..." << std::endl;
   data::Save(factors_file.c_str(), factors);
 
   return 0;

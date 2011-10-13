@@ -112,8 +112,8 @@ namespace npt {
       SplitData_();
       
       for (int i = 0; i < num_resampling_regions_; i++) {
-        mlpack::IO::Info << "Region " << i <<": " << data_mats_[i]->n_cols;
-        mlpack::IO::Info << " points.\n";
+        mlpack::Log::Info << "Region " << i <<": " << data_mats_[i]->n_cols;
+        mlpack::Log::Info << " points.\n";
       }
       
       

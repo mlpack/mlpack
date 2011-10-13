@@ -48,7 +48,7 @@ void npt::GenericNptAlg<TMatcher>::DepthFirstRecursion_(NodeTuple& nodes) {
     if (nodes.CheckSymmetry(nodes.ind_to_split(), true)) {
       // do left recursion
       
-      //mlpack::IO::Info << "recursing\n";
+      //mlpack::Log::Info << "recursing\n";
       
       NodeTuple left_child(nodes, true);
       DepthFirstRecursion_(left_child);
@@ -57,13 +57,13 @@ void npt::GenericNptAlg<TMatcher>::DepthFirstRecursion_(NodeTuple& nodes) {
     // TODO: should I count these
     /*
     else {
-      mlpack::IO::Info << "symmetry prune\n";
+      mlpack::Log::Info << "symmetry prune\n";
     }
      */
     // right child
     if (nodes.CheckSymmetry(nodes.ind_to_split(), false)) {
       
-      //mlpack::IO::Info << "recursing\n";
+      //mlpack::Log::Info << "recursing\n";
 
       NodeTuple right_child(nodes, false);
       DepthFirstRecursion_(right_child);
@@ -71,7 +71,7 @@ void npt::GenericNptAlg<TMatcher>::DepthFirstRecursion_(NodeTuple& nodes) {
     }
     /*
     else {
-      mlpack::IO::Info << "symmetry prune\n";
+      mlpack::Log::Info << "symmetry prune\n";
     }
      */
   
@@ -99,7 +99,7 @@ void npt::GenericNptAlg<TMatcher>::Compute() {
     
   } // for i
 */
-  //mlpack::IO::Info << "filled in node_list\n";
+  //mlpack::Log::Info << "filled in node_list\n";
   
   /*
   data_tree_root_->Print();
@@ -118,8 +118,8 @@ void npt::GenericNptAlg<TMatcher>::Compute() {
   else {
     DepthFirstRecursion_(nodes);
   }
-    //mlpack::IO::Info << "generic num_base_cases: " << num_base_cases_ << "\n";
-  //mlpack::IO::Info << "generic num_prunes: " << num_prunes_ << "\n";
+    //mlpack::Log::Info << "generic num_base_cases: " << num_base_cases_ << "\n";
+  //mlpack::Log::Info << "generic num_prunes: " << num_prunes_ << "\n";
   
 } // Compute
 

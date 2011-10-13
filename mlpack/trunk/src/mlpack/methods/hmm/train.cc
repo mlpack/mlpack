@@ -74,16 +74,16 @@ const fx_module_doc hmm_train_main_doc = {
 };*/
 
 void usage() {
-  IO::Warn << "Usage:" << std::endl;
-  IO::Warn << "  train --type=={discrete|gaussian|mixture} OPTION" << std::endl;
-  IO::Warn << "[OPTIONS]" << std::endl;
-  IO::Warn << "  --algorithm={baumwelch|viterbi} : algorithm used for training, default Baum-Welch" << std::endl;
-  IO::Warn << "  --seqfile=file   : file contains input sequences" << std::endl;
-  IO::Warn << "  --guess=file     : file contains guess HMM profile" << std::endl;
-  IO::Warn << "  --numstate=NUM   : if no guess profile is specified, at least specify the number of state" << std::endl;
-  IO::Warn << "  --profile=file   : output file for estimated HMM profile" << std::endl;
-  IO::Warn << "  --maxiter=NUM    : maximum number of iteration, default=500" << std::endl;
-  IO::Warn << "  --tolerance=NUM  : error tolerance on log-likelihood, default=1e-3" << std::endl;
+  Log::Warn << "Usage:" << std::endl;
+  Log::Warn << "  train --type=={discrete|gaussian|mixture} OPTION" << std::endl;
+  Log::Warn << "[OPTIONS]" << std::endl;
+  Log::Warn << "  --algorithm={baumwelch|viterbi} : algorithm used for training, default Baum-Welch" << std::endl;
+  Log::Warn << "  --seqfile=file   : file contains input sequences" << std::endl;
+  Log::Warn << "  --guess=file     : file contains guess HMM profile" << std::endl;
+  Log::Warn << "  --numstate=NUM   : if no guess profile is specified, at least specify the number of state" << std::endl;
+  Log::Warn << "  --profile=file   : output file for estimated HMM profile" << std::endl;
+  Log::Warn << "  --maxiter=NUM    : maximum number of iteration, default=500" << std::endl;
+  Log::Warn << "  --tolerance=NUM  : error tolerance on log-likelihood, default=1e-3" << std::endl;
 }
 
 int main(int argc, char* argv[]) {
@@ -97,12 +97,12 @@ int main(int argc, char* argv[]) {
     else if (strcmp(algorithm,"viterbi") == 0)
       s = train_viterbi();
     else {
-      IO::Fatal << "Unrecognized algorithm: must be baumwelch or viterbi!";
+      Log::Fatal << "Unrecognized algorithm: must be baumwelch or viterbi!";
       s = false;
     }
   }
   else {
-    IO::Fatal << "Unrecognized type: must be: discrete | gaussian | mixture!";
+    Log::Fatal << "Unrecognized type: must be: discrete | gaussian | mixture!";
     s = false;
   }
   if (!(s)) usage();
@@ -160,12 +160,12 @@ bool train_baumwelch_mixture() {
 
   if (IO::HasParam("hmm/guess")) { // guessed parameters in a file
     const char* guess = IO::GetParam<std::string>("hmm/guess").c_str();
-    IO::Info << "Load parameters from file " << guess << std::endl;
+    Log::Info << "Load parameters from file " << guess << std::endl;
     hmm.InitFromFile(guess);
   }
   else {
     hmm.Init();
-    IO::Fatal <<"Automatic initialization not supported !!!";
+    Log::Fatal <<"Automatic initialization not supported !!!";
     return false;
   }
 
@@ -194,14 +194,14 @@ bool train_baumwelch_gaussian() {
 
   if (IO::HasParam("hmm/guess")) { // guessed parameters in a file
     const char* guess = IO::GetParam<std::string>("hmm/guess").c_str();
-    IO::Info << "Load parameters from file " << guess << std::endl;
+    Log::Info << "Load parameters from file " << guess << std::endl;
     hmm.InitFromFile(guess);
   }
   else { // otherwise initialized using information from the data
     int numstate = IO::GetParam<int>("hmm/numstate");
-    IO::Info << "Generate HMM parameters: NUMSTATE = " << numstate << std::endl;
+    Log::Info << "Generate HMM parameters: NUMSTATE = " << numstate << std::endl;
     hmm.InitFromData(seqs, numstate);
-    IO::Info << "Done." << std::endl;
+    Log::Info << "Done." << std::endl;
   }
 
   int maxiter = IO::GetParam<int>("hmm/maxiter");
@@ -232,12 +232,12 @@ bool train_baumwelch_discrete() {
 
   if (IO::HasParam("hmm/guess")) { // guessed parameters in a file
     const char* guess = IO::GetParam<std::string>("hmm/guess").c_str();
-    IO::Info << "Load HMM parameters from file " << guess << std::endl;
+    Log::Info << "Load HMM parameters from file " << guess << std::endl;
     hmm.InitFromFile(guess);
   }
   else { // otherwise randomly initialized using information from the data
     int numstate = IO::GetParam<int>("hmm/numstate");
-    IO::Info << "Randomly generate parameters: NUMSTATE = " << numstate << std::endl;
+    Log::Info << "Randomly generate parameters: NUMSTATE = " << numstate << std::endl;
     hmm.InitFromData(seqs, numstate);
   }
 
@@ -267,11 +267,11 @@ bool train_viterbi_mixture() {
 
   if (IO::HasParam("hmm/guess")) { // guessed parameters in a file
     const char* guess = IO::GetParam<std::string>("hmm/guess").c_str();
-    IO::Info << "Load parameters from file " << guess << std::endl;
+    Log::Info << "Load parameters from file " << guess << std::endl;
     hmm.InitFromFile(guess);
   } else {
     hmm.Init();
-    IO::Info << "Automatic initialization not supported !!!" << std::endl;
+    Log::Info << "Automatic initialization not supported !!!" << std::endl;
     return false;
   }
 
@@ -287,7 +287,7 @@ bool train_viterbi_mixture() {
 
 bool train_viterbi_gaussian() {
   if (!IO::HasParam("hmm/seqfile")) {
-    IO::Fatal << "--seqfile must be defined." << std::endl;
+    Log::Fatal << "--seqfile must be defined." << std::endl;
     return false;
   }
 
@@ -301,12 +301,12 @@ bool train_viterbi_gaussian() {
 
   if (IO::HasParam("hmm/guess")) { // guessed parameters in a file
     const char* guess = IO::GetParam<std::string>("hmm/guess").c_str();
-    IO::Info << "Load parameters from file " << guess << std::endl;
+    Log::Info << "Load parameters from file " << guess << std::endl;
     hmm.InitFromFile(guess);
   }
   else { // otherwise initialized using information from the data
     int numstate = IO::GetParam<int>("hmm/numstate");
-    IO::Info << "Generate parameters: NUMSTATE = " << numstate << std::endl;
+    Log::Info << "Generate parameters: NUMSTATE = " << numstate << std::endl;
     hmm.InitFromData(seqs, numstate);
   }
 
@@ -337,7 +337,7 @@ bool train_viterbi_discrete() {
   if (IO::HasParam("hmm/guess")) { // guessed parameters in a file
     std::vector<arma::mat> matlst;
     const char* guess = IO::GetParam<std::string>("hmm/guess").c_str();
-    IO::Info << "Load parameters from file " << guess << std::endl;
+    Log::Info << "Load parameters from file " << guess << std::endl;
     hmm.InitFromFile(guess);
   }
   else { // otherwise randomly initialized using information from the data

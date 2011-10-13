@@ -51,7 +51,7 @@ namespace npt {
     matcher_(matcher_in), trees_(trees_in)
     {
       
-      //mlpack::IO::Info << "generic alg constructor.\n";
+      //mlpack::Log::Info << "generic alg constructor.\n";
       
       num_prunes_ = 0;
       num_base_cases_ = 0;
@@ -70,8 +70,8 @@ namespace npt {
     
     void PrintStats() {
      
-      mlpack::IO::Info << "num_prunes: " << num_prunes_ << "\n";
-      mlpack::IO::Info << "num_base_cases: " << num_base_cases_ << "\n";
+      mlpack::Log::Info << "num_prunes: " << num_prunes_ << "\n";
+      mlpack::Log::Info << "num_base_cases: " << num_base_cases_ << "\n";
       
     }
     

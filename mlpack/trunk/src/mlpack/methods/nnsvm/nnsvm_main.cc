@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
   /* Training Mode, need training data */
   if (mode == "train" || mode == "train_test")
   {
-    IO::Debug << "Non-Negativity Constrained SVM Training... " << std::endl;
+    Log::Debug << "Non-Negativity Constrained SVM Training... " << std::endl;
 
     std::string trainFile = IO::GetParam<std::string>("nnsvm/train_data");
     // Load training data
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
     if (data::Load(trainFile.c_str(), dataSet) == false) // TODO:param_req
     {
       /* TODO: eventually, we need better exception handling */
-      IO::Debug << "Could not open " << trainFile << " for reading" << std::endl;
+      Log::Debug << "Could not open " << trainFile << " for reading" << std::endl;
       return 1;
     }
 
@@ -65,18 +65,18 @@ int main(int argc, char *argv[])
           IO::GetParam<int>("nnsvm/max_iter"));
 
       IO::StartTimer("nnsvm/nnsvm_train");
-      IO::Debug << "nnsvm_train_time" << IO::GetParam<timeval>("nnsvm/nnsvm_train").tv_usec / 1e6 << std::endl;
+      Log::Debug << "nnsvm_train_time" << IO::GetParam<timeval>("nnsvm/nnsvm_train").tv_usec / 1e6 << std::endl;
       /* training and testing, thus no need to load model from file */
       if (mode=="train_test")
       {
-        IO::Debug << "Non-Negativity SVM Classifying... " << std::endl;
+        Log::Debug << "Non-Negativity SVM Classifying... " << std::endl;
         /* Load testing data */
         std::string testFile = IO::GetParam<std::string>("nnsvm/test_data");
         arma::mat testset;
         if (data::Load(testFile.c_str(), testset) == false) // TODO:param_req
         {
           /* TODO: eventually, we need better exception handling */
-          IO::Debug << "Could not open " << testFile << " for reading" <<
+          Log::Debug << "Could not open " << testFile << " for reading" <<
             std::endl;
           return 1;
         }
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
   /* Testing(offline) Mode, need loading model file and testing data */
   else if (mode == "test")
   {
-    IO::Debug << "Non-Negativity Constrained SVM Classifying... " << std::endl;
+    Log::Debug << "Non-Negativity Constrained SVM Classifying... " << std::endl;
 
     /* Load testing data */
     arma::mat testset;

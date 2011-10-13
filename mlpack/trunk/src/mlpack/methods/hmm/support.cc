@@ -87,7 +87,7 @@ namespace hmm_support {
   double MyMulExpert(const arma::vec& x, const arma::mat& A, const arma::vec& y) {
     size_t M = A.n_rows;
     size_t N = A.n_cols;
-    mlpack::IO::AssertMessage((M == x.n_elem && N == y.n_elem), "MyMulExpert: sizes do not match");
+    mlpack::Log::Assert((M == x.n_elem && N == y.n_elem), "MyMulExpert: sizes do not match");
 
     double s = 0;
     for (size_t i = 0; i < M; i++)
@@ -312,7 +312,7 @@ namespace hmm_support {
         tokenizeString(reader.Peek(), ", \t", num_str);
 //       reader.Peek().Split(", \t", &num_str);
 
-        mlpack::IO::Assert(num_str.size() == n_cols);
+        mlpack::Log::Assert(num_str.size() == n_cols);
 
         std::istringstream is;
         for (size_t i = 0; i < n_cols; i++) {

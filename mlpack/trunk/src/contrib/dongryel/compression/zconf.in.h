@@ -288,7 +288,8 @@ typedef uLong FAR uLongf;
 #  include <sys/types.h> /* for off_t */
 #  include <unistd.h>    /* for SEEK_* and off_t */
 #  ifdef VMS
-#    include <unixio.h>   /* for off_t */
+#    include <unixio.h>
+#include<log.h>   /* for off_t */
 #  endif
 #  define z_off_t off_t
 #endif

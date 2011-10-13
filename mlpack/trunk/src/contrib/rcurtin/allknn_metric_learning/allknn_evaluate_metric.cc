@@ -78,13 +78,13 @@ int main(int argc, char* argv[]) {
   diag_weights.zeros();
   diag_weights.diag() = weights.col(0);
 
-  IO::Info << "Applying weights..." << endl;
+  Log::Info << "Applying weights..." << endl;
 
   // Apply weights to query and reference sets.
   references = diag_weights * references;
   queries = diag_weights * queries;
 
-  IO::Info << "Building trees..." << endl;
+  Log::Info << "Building trees..." << endl;
 
   // Now we need to actually run the k-nearest neighbors computation.
   AllkNN allknn(queries, references);
@@ -92,7 +92,7 @@ int main(int argc, char* argv[]) {
   arma::Mat<index_t> neighbors;
   arma::mat distances;
 
-  IO::Info << "Computing neighbors..." << endl;
+  Log::Info << "Computing neighbors..." << endl;
 
   allknn.ComputeNeighbors(neighbors, distances);
 
@@ -102,19 +102,19 @@ int main(int argc, char* argv[]) {
   arma::Col<int> class_counts(61);
   arma::Col<int> class_scores(61);
 
-  IO::Info << "Evaluating nearest neighbor class guesses..." << endl;
+  Log::Info << "Evaluating nearest neighbor class guesses..." << endl;
 
   index_t knns = IO::GetParam<int>("neighbor_search/k");
 
   int correct = EvaluateClassCorrect(neighbors, knns, ref_labels, query_labels,
       class_counts, class_scores);
 
-  IO::Info << "Query set total: " << correct << " correct out of " << 
+  Log::Info << "Query set total: " << correct << " correct out of " << 
       (neighbors.n_elem / knns) << "; " << ((double) correct / (double)
       (neighbors.n_elem / knns) * 100) << "%% classified correctly." << endl;
 
   for (int i = 0; i < class_counts.n_elem; i++) {
-    IO::Info << "Class " << i << ": " << class_scores[i] << " correct out of "
+    Log::Info << "Class " << i << ": " << class_scores[i] << " correct out of "
         << class_counts[i] << ": " << (((double) class_scores[i] / (double)
         class_counts[i]) * 100) << "%% classified correctly." << endl;
   }

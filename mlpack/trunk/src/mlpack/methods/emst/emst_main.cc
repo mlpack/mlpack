@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
 
 
   if (using_thor) {
-    IO::Warn << "thor is not yet supported" << std::endl;
+    Log::Warn << "thor is not yet supported" << std::endl;
   }
   else {
 
@@ -109,14 +109,14 @@ int main(int argc, char* argv[]) {
      */
       if (is_correct == 0) {
 
-        IO::Warn << "Naive check failed!" << std::endl <<
+        Log::Warn << "Naive check failed!" << std::endl <<
         "Edge lists are different." << std::endl << std::endl;
 
         // Check if the outputs have the same length
         if (IO::GetParam<double>("naive/total_squared_length") !=
            IO::GetParam<double>("naive/total_squared_length")) {
 
-          IO::Fatal << "Total lengths are different! "
+          Log::Fatal << "Total lengths are different! "
              << " One algorithm has failed." << std::endl;
 
           return 1;
@@ -127,14 +127,14 @@ int main(int argc, char* argv[]) {
           // uniquely defined for some point sets.  For example, an equilateral
           // triangle has three minimum spanning trees.  It is possible for
           // naive and DTB to find different spanning trees in this case.
-          IO::Info << "Total lengths are the same.";
-          IO::Info << "It is possible the point set";
-          IO::Info << "has more than one minimum spanning tree." << std::endl;
+          Log::Info << "Total lengths are the same.";
+          Log::Info << "It is possible the point set";
+          Log::Info << "has more than one minimum spanning tree." << std::endl;
         }
 
       }
       else {
-        IO::Info << "Naive and DualTreeBoruvka produced the same MST." <<
+        Log::Info << "Naive and DualTreeBoruvka produced the same MST." <<
           std::endl << std::endl;
       }
 

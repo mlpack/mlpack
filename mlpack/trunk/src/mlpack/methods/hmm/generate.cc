@@ -77,13 +77,13 @@ int main(int argc, char* argv[]) {
     else if (strcmp(type, "mixture")==0)
       s = generate_mixture();
     else {
-      IO::Fatal << "Unrecognized type: must be: " <<
+      Log::Fatal << "Unrecognized type: must be: " <<
 		"discrete | gaussian | mixture !!!" << std::endl;
       return true;
     }
   }
   else {
-    IO::Fatal << "Unrecognized type: must be: " <<
+    Log::Fatal << "Unrecognized type: must be: " <<
 		"discrete | gaussian | mixture  !!!" << std::endl;
     s = false;
   }
@@ -92,20 +92,20 @@ int main(int argc, char* argv[]) {
 }
 
 void usage() {
-  IO::Info << std::endl << "Usage:" << std::endl;
-  IO::Info << "  generate --hmm/type=={discrete|gaussian|mixture} OPTIONS" << std::endl;
-  IO::Info << "[OPTIONS]" << std::endl;
-  IO::Info << "  --hmm/profile=file   : file contains HMM profile" << std::endl;
-  IO::Info << "  --hmm/length=NUM     : sequence length" << std::endl;
-  IO::Info << "  --hmm/lenmax=NUM     : maximum sequence length, default = length" << std::endl;
-  IO::Info << "  --hmm/numseq=NUM     : number of sequence" << std::endl;
-  IO::Info << "  --hmm/seqfile=file   : output file for generated sequences" << std::endl;
-  IO::Info << "  --hmm/statefile=file : output file for generated state sequences" << std::endl;
+  Log::Info << std::endl << "Usage:" << std::endl;
+  Log::Info << "  generate --hmm/type=={discrete|gaussian|mixture} OPTIONS" << std::endl;
+  Log::Info << "[OPTIONS]" << std::endl;
+  Log::Info << "  --hmm/profile=file   : file contains HMM profile" << std::endl;
+  Log::Info << "  --hmm/length=NUM     : sequence length" << std::endl;
+  Log::Info << "  --hmm/lenmax=NUM     : maximum sequence length, default = length" << std::endl;
+  Log::Info << "  --hmm/numseq=NUM     : number of sequence" << std::endl;
+  Log::Info << "  --hmm/seqfile=file   : output file for generated sequences" << std::endl;
+  Log::Info << "  --hmm/statefile=file : output file for generated state sequences" << std::endl;
 }
 
 bool generate_mixture() {
   if (!IO::HasParam("hmm/profile")) {
-    IO::Fatal << "--hmm/profile must be defined." << std::endl;
+    Log::Fatal << "--hmm/profile must be defined." << std::endl;
     return false;
   }
   const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
@@ -115,8 +115,8 @@ bool generate_mixture() {
   const char* seqout = IO::GetParam<std::string>("hmm/seqfile").c_str();
   const char* stateout = IO::GetParam<std::string>("hmm/statefile").c_str();
 
-  IO::AssertMessage(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
-  IO::AssertMessage(numseq > 0, "NUMSEQ must be positive");
+  IO::Assert(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
+  IO::Assert(numseq > 0, "NUMSEQ must be positive");
 
   double step = (double) (seqlmax - seqlen) / numseq;
 
@@ -125,12 +125,12 @@ bool generate_mixture() {
 
   TextWriter w_seq, w_state;
   if (!(w_seq.Open(seqout))) {
-    IO::Warn << "Couldn't open '" << seqout << "' for writing." << std::endl;
+    Log::Warn << "Couldn't open '" << seqout << "' for writing." << std::endl;
     return false;
   }
 
   if (!(w_state.Open(stateout))) {
-    IO::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
+    Log::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
     return false;
   }
 
@@ -154,7 +154,7 @@ bool generate_mixture() {
 
 bool generate_gaussian() {
   if (!IO::HasParam("hmm/profile")) {
-    IO::Fatal << "--hmm/profile must be defined." << std::endl;
+    Log::Fatal << "--hmm/profile must be defined." << std::endl;
     return false;
   }
   const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
@@ -164,8 +164,8 @@ bool generate_gaussian() {
   const char* seqout = IO::GetParam<std::string>("hmm/seqfile").c_str();
   const char* stateout = IO::GetParam<std::string>("hmm/statefile").c_str();
 
-  IO::AssertMessage(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
-  IO::AssertMessage(numseq > 0, "NUMSEQ must be positive");
+  IO::Assert(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
+  IO::Assert(numseq > 0, "NUMSEQ must be positive");
 
   double step = (double) (seqlmax - seqlen) / numseq;
 
@@ -174,12 +174,12 @@ bool generate_gaussian() {
 
   TextWriter w_seq, w_state;
   if (!(w_seq.Open(seqout))) {
-    IO::Warn << "Couldn't open '" << seqout << "' for writing." << std::endl;
+    Log::Warn << "Couldn't open '" << seqout << "' for writing." << std::endl;
     return false;
   }
 
   if (!(w_state.Open(stateout))) {
-    IO::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
+    Log::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
     return false;
   }
 
@@ -201,7 +201,7 @@ bool generate_gaussian() {
 
 bool generate_discrete() {
   if (!IO::HasParam("hmm/profile")) {
-    IO::Fatal << "--hmm/profile must be defined." << std::endl;
+    Log::Fatal << "--hmm/profile must be defined." << std::endl;
     return false;
   }
   const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
@@ -211,8 +211,8 @@ bool generate_discrete() {
   const char* seqout = IO::GetParam<std::string>("hmm/seqfile").c_str();
   const char* stateout = IO::GetParam<std::string>("hmm/statefile").c_str();
 
-  IO::AssertMessage(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
-  IO::AssertMessage(numseq > 0, "NUMSEQ must be positive");
+  IO::Assert(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
+  IO::Assert(numseq > 0, "NUMSEQ must be positive");
 
   double step = (double) (seqlmax - seqlen) / numseq;
 
@@ -221,12 +221,12 @@ bool generate_discrete() {
 
   TextWriter w_seq, w_state;
   if (!(w_seq.Open(seqout))) {
-    IO::Warn << "Couldn't open '" << seqout << "' for writing." << std::endl;
+    Log::Warn << "Couldn't open '" << seqout << "' for writing." << std::endl;
     return false;
   }
 
   if (!(w_state.Open(stateout))) {
-    IO::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
+    Log::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
     return false;
   }
 

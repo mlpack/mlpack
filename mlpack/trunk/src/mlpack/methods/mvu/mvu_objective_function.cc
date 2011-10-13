@@ -17,7 +17,7 @@ using mlpack::neighbor::AllkNN;
 
 MVUObjectiveFunction::MVUObjectiveFunction() {
   // Need to set initial point?  I guess this will be the initial matrix...
-  IO::Fatal << "Initialized MVUObjectiveFunction all wrong." << std::endl;
+  Log::Fatal << "Initialized MVUObjectiveFunction all wrong." << std::endl;
 }
 
 MVUObjectiveFunction::MVUObjectiveFunction(arma::mat& initial_point) :

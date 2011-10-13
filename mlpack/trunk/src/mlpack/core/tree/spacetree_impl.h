@@ -12,6 +12,7 @@
 // In case it wasn't included already for some reason.
 #include "spacetree.h"
 #include <mlpack/core/io/io.h>
+#include "../io/log.h"
 
 namespace mlpack {
 namespace tree {
@@ -175,8 +176,8 @@ const BinarySpaceTree<Bound, Statistic>*
 BinarySpaceTree<Bound, Statistic>::FindByBeginCount(size_t begin_q,
                                                     size_t count_q) const {
 
-  mlpack::IO::Assert(begin_q >= begin_);
-  mlpack::IO::Assert(count_q <= count_);
+  mlpack::Log::Assert(begin_q >= begin_);
+  mlpack::Log::Assert(count_q <= count_);
   if (begin_ == begin_q && count_ == count_q)
     return this;
   else if (is_leaf())
@@ -203,8 +204,8 @@ BinarySpaceTree<Bound, Statistic>*
 BinarySpaceTree<Bound, Statistic>::FindByBeginCount(size_t begin_q,
                                                     size_t count_q) {
 
-  mlpack::IO::Assert(begin_q >= begin_);
-  mlpack::IO::Assert(count_q <= count_);
+  mlpack::Log::Assert(begin_q >= begin_);
+  mlpack::Log::Assert(count_q <= count_);
   if (begin_ == begin_q && count_ == count_q)
     return this;
   else if (is_leaf())

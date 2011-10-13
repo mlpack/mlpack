@@ -6,6 +6,7 @@
 #include "contrib/dongryel/nested_summation_template/function.h"
 #include "contrib/dongryel/nested_summation_template/operator.h"
 #include "contrib/dongryel/nested_summation_template/ratio.h"
+#include<log.h>
 #include "contrib/dongryel/nested_summation_template/sum.h"
 
 template<typename TKernel>

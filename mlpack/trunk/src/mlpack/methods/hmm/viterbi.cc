@@ -67,29 +67,29 @@ int main(int argc, char* argv[]) {
     else if (strcmp(type, "mixture") == 0)
       s = viterbi_mixture();
     else {
-      IO::Warn << "Unrecognized type: must be: discrete | gaussian | mixture!" << std::endl;
+      Log::Warn << "Unrecognized type: must be: discrete | gaussian | mixture!" << std::endl;
       s = false;
     }
   }
   else {
-    IO::Warn << "Unrecognized type: must be: discrete | gaussian | mixture!";
+    Log::Warn << "Unrecognized type: must be: discrete | gaussian | mixture!";
     s = false;
   }
   if (!(s)) usage();
 }
 
 void usage() {
-  IO::Warn << "Usage:" << std::endl;
-  IO::Warn << "  viterbi --type=={discrete|gaussian|mixture} OPTIONS" << std::endl;
-  IO::Warn << "[OPTIONS]" << std::endl;
-  IO::Warn << "  --profile=file   : file contains HMM profile" << std::endl;
-  IO::Warn << "  --seqfile=file   : file contains input sequences" << std::endl;
-  IO::Warn << "  --statefile=file : output file for state sequences" << std::endl;
+  Log::Warn << "Usage:" << std::endl;
+  Log::Warn << "  viterbi --type=={discrete|gaussian|mixture} OPTIONS" << std::endl;
+  Log::Warn << "[OPTIONS]" << std::endl;
+  Log::Warn << "  --profile=file   : file contains HMM profile" << std::endl;
+  Log::Warn << "  --seqfile=file   : file contains input sequences" << std::endl;
+  Log::Warn << "  --statefile=file : output file for state sequences" << std::endl;
 }
 
 bool viterbi_mixture() {
   if (!IO::HasParam("hmm/profile")) {
-    IO::Fatal << "--profile must be defined." << std::endl;
+    Log::Fatal << "--profile must be defined." << std::endl;
     return false;
   }
   const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
@@ -104,7 +104,7 @@ bool viterbi_mixture() {
 
   TextWriter w_state;
   if (!(w_state.Open(stateout))) {
-    IO::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
+    Log::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
     return false;
   }
 
@@ -123,7 +123,7 @@ bool viterbi_mixture() {
 
 bool viterbi_gaussian() {
   if (!IO::HasParam("hmm/profile")) {
-    IO::Fatal << "--profile must be defined." << std::endl;
+    Log::Fatal << "--profile must be defined." << std::endl;
     return false;
   }
   const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
@@ -138,7 +138,7 @@ bool viterbi_gaussian() {
 
   TextWriter w_state;
   if (!(w_state.Open(stateout))) {
-    IO::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
+    Log::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
     return false;
   }
 
@@ -156,7 +156,7 @@ bool viterbi_gaussian() {
 
 bool viterbi_discrete() {
   if (!IO::HasParam("hmm/profile")) {
-    IO::Fatal << "--profile must be defined." << std::endl;
+    Log::Fatal << "--profile must be defined." << std::endl;
     return false;
   }
   const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
@@ -172,7 +172,7 @@ bool viterbi_discrete() {
 
   TextWriter w_state;
   if (!(w_state.Open(stateout))) {
-    IO::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
+    Log::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
     return false;
   }
 

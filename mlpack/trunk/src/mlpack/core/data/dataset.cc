@@ -110,7 +110,7 @@ bool Dataset::InitFromFile(const char *fname) {
   } else {
     matrix_ = 0.0; // 0x0 matrix
     info_.Init();
-    mlpack::IO::Warn << " Could not open file " << fname << " for reading. " << std::endl;
+    mlpack::Log::Warn << " Could not open file " << fname << " for reading. " << std::endl;
     return false;
   }
 }
@@ -134,7 +134,7 @@ bool Dataset::WriteCsv(std::string fname, bool header) const {
   TextWriter writer;
 
   if (!(writer.Open(fname.c_str()))) {
-    mlpack::IO::Warn << "Couldn't open " << fname.c_str() << " for writing. " << std::endl;
+    mlpack::Log::Warn << "Couldn't open " << fname.c_str() << " for writing. " << std::endl;
     return false;
   } else {
     if (header) {
@@ -149,7 +149,7 @@ bool Dataset::WriteArff(std::string fname) const {
   TextWriter writer;
 
   if (!(writer.Open(fname.c_str()))) {
-    mlpack::IO::Warn << "Couldn't open " << fname.c_str() << " for writing. " << std::endl;
+    mlpack::Log::Warn << "Couldn't open " << fname.c_str() << " for writing. " << std::endl;
     return false;
   } else {
     info_.WriteArffHeader(writer);
@@ -200,8 +200,8 @@ void Dataset::SplitTrainTest(int folds, int fold_number,
         sizeof(double) * n_features());
   }
 
-  mlpack::IO::Assert(i_train == train.n_points());
-  mlpack::IO::Assert(i_test == test.n_points());
+  mlpack::Log::Assert(i_train == train.n_points());
+  mlpack::Log::Assert(i_test == test.n_points());
 }
 
 bool data::Load(const char *fname, arma::mat& matrix) {
@@ -219,7 +219,7 @@ bool data::Load(const char *fname, arma::mat& matrix) {
       result = info.ReadMatrix(reader, matrix);
     }
   } else {
-    mlpack::IO::Warn << "Could not open file " << fname << " for reading." << std::endl;
+    mlpack::Log::Warn << "Could not open file " << fname << " for reading." << std::endl;
     return false;
   }
 
@@ -234,7 +234,7 @@ bool data::Save(const char *fname, const arma::mat& matrix) {
   info.InitContinuous(matrix.n_rows);
 
   if (!(writer.Open(fname))) {
-    mlpack::IO::Warn << "Couldn't open " << fname << " for writing. " << std::endl;
+    mlpack::Log::Warn << "Couldn't open " << fname << " for writing. " << std::endl;
     return false;
   }
 
@@ -252,7 +252,7 @@ bool data::Save(const char *fname, const arma::Col<size_t>& index_vector,
   // in fact, I'm not even doing this anywhere near similarly to the other way
 
   // ensure our vectors are the same size
-  mlpack::IO::Assert(index_vector.n_elem == data_vector.n_elem);
+  mlpack::Log::Assert(index_vector.n_elem == data_vector.n_elem);
 
   // open our output file
   std::ofstream out;

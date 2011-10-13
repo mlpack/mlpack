@@ -305,11 +305,11 @@ void npt::SingleMatcher::OutputResults() {
     
     // i is the number of random points in the tuple
     std::string this_string(label_string, i, tuple_size_);
-    mlpack::IO::Info << this_string << ": ";
+    mlpack::Log::Info << this_string << ": ";
     
-    mlpack::IO::Info << results_[i] << "\n";
+    mlpack::Log::Info << results_[i] << "\n";
     
-    //mlpack::IO::Info << "\n\n";
+    //mlpack::Log::Info << "\n\n";
     
   } // for i
   

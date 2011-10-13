@@ -169,10 +169,10 @@ class DualTreeBoruvka {
   void AddEdge_(size_t e1, size_t e2, double distance) {
 
     //EdgePair edge;
-    mlpack::IO::AssertMessage((e1 != e2),
+    mlpack::Log::Assert((e1 != e2),
         "Indices are equal in DualTreeBoruvka.add_edge(...)");
 
-    mlpack::IO::AssertMessage((distance >= 0.0),
+    mlpack::Log::Assert((distance >= 0.0),
         "Negative distance input in DualTreeBoruvka.add_edge(...)");
 
     if (e1 < e2) {
@@ -241,7 +241,7 @@ class DualTreeBoruvka {
 
           if (distance < neighbors_distances_[query_component_index]) {
 
-            mlpack::IO::Assert(query_index != reference_index);
+            mlpack::Log::Assert(query_index != reference_index);
 
             neighbors_distances_[query_component_index] = distance;
             neighbors_in_component_[query_component_index] = query_index;
@@ -260,7 +260,7 @@ class DualTreeBoruvka {
 
     } // for query_index
 
-    mlpack::IO::Assert(new_upper_bound >= 0.0);
+    mlpack::Log::Assert(new_upper_bound >= 0.0);
     return new_upper_bound;
 
   } // ComputeBaseCase_
@@ -283,7 +283,7 @@ class DualTreeBoruvka {
                  reference_node->stat().component_membership())) {
       //pruned by component membership
 
-      mlpack::IO::Assert(reference_node->stat().component_membership() >= 0);
+      mlpack::Log::Assert(reference_node->stat().component_membership() >= 0);
 
       number_component_prunes_++;
     }
@@ -306,8 +306,8 @@ class DualTreeBoruvka {
         query_node->bound().MinDistance(reference_node->left()->bound());
       double right_dist =
         query_node->bound().MinDistance(reference_node->right()->bound());
-      mlpack::IO::Assert(left_dist >= 0.0);
-      mlpack::IO::Assert(right_dist >= 0.0);
+      mlpack::Log::Assert(left_dist >= 0.0);
+      mlpack::Log::Assert(right_dist >= 0.0);
 
       if (left_dist < right_dist) {
         ComputeNeighborsRecursion_(query_node,
@@ -429,7 +429,7 @@ class DualTreeBoruvka {
 
     SortEdges_();
 
-    mlpack::IO::Assert(number_of_edges_ == number_of_points_ - 1);
+    mlpack::Log::Assert(number_of_edges_ == number_of_points_ - 1);
     results.set_size(3, number_of_edges_);
 
     if (!do_naive_) {
@@ -487,7 +487,7 @@ class DualTreeBoruvka {
       for (size_t i = tree->begin(); i < tree->end(); i++) {
         if (new_membership != connections_.Find(i)) {
           new_membership = -1;
-          mlpack::IO::Assert(tree->stat().component_membership() < 0);
+          mlpack::Log::Assert(tree->stat().component_membership() < 0);
           return;
         }
       }
@@ -530,16 +530,16 @@ class DualTreeBoruvka {
     fx_result_int(module_, "number_r_recursions", number_r_recursions_);
     fx_result_int(module_, "number_both_recursions", number_both_recursions_);*/
     // TODO, not sure how I missed this last time.
-    mlpack::IO::Info << "total_squared_length" << total_dist_ << std::endl;
-    mlpack::IO::Info << "number_of_points" << number_of_points_ << std::endl;
-    mlpack::IO::Info << "dimension" << data_points_.n_rows << std::endl;
-    mlpack::IO::Info << "number_of_loops" << std::endl;
-    mlpack::IO::Info << "number_distance_prunes" << std::endl;
-    mlpack::IO::Info << "number_component_prunes" << std::endl;
-    mlpack::IO::Info << "number_leaf_computations" << std::endl;
-    mlpack::IO::Info << "number_q_recursions" << std::endl;
-    mlpack::IO::Info << "number_r_recursions" << std::endl;
-    mlpack::IO::Info << "number_both_recursions" << std::endl;
+    mlpack::Log::Info << "total_squared_length" << total_dist_ << std::endl;
+    mlpack::Log::Info << "number_of_points" << number_of_points_ << std::endl;
+    mlpack::Log::Info << "dimension" << data_points_.n_rows << std::endl;
+    mlpack::Log::Info << "number_of_loops" << std::endl;
+    mlpack::Log::Info << "number_distance_prunes" << std::endl;
+    mlpack::Log::Info << "number_component_prunes" << std::endl;
+    mlpack::Log::Info << "number_leaf_computations" << std::endl;
+    mlpack::Log::Info << "number_q_recursions" << std::endl;
+    mlpack::Log::Info << "number_r_recursions" << std::endl;
+    mlpack::Log::Info << "number_both_recursions" << std::endl;
   } // OutputResults_
 
   /////////// Public Functions ///////////////////
@@ -618,7 +618,7 @@ class DualTreeBoruvka {
 
       Cleanup_();
 
-      IO::Info << "number_of_loops = " << number_of_loops_ << std::endl;
+      Log::Info << "number_of_loops = " << number_of_loops_ << std::endl;
     }
 
     IO::StopTimer("emst/MST_computation");

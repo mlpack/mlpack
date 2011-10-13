@@ -135,7 +135,7 @@ int main(int argc, char* argv[]) {
   
   if (IO::HasParam("do_naive")) {
     
-    IO::Info << "\nDoing naive.\n";
+    Log::Info << "\nDoing naive.\n";
     
     IO::StartTimer("naive_time");
     
@@ -148,11 +148,11 @@ int main(int argc, char* argv[]) {
       naive_alg.ComputeCounts();
       
       generator.matcher(i).print("Matcher: ");
-      IO::Info << std::endl << "Naive num tuples: " << std::endl;
+      Log::Info << std::endl << "Naive num tuples: " << std::endl;
       
       naive_alg.print_num_tuples();
       
-      IO::Info << std::endl << std::endl;
+      Log::Info << std::endl << std::endl;
       
     }
     
@@ -166,7 +166,7 @@ int main(int argc, char* argv[]) {
   
   if (IO::HasParam("do_single_bandwidth")) {
     
-    IO::Info << "\nDoing single bandwidth.\n";
+    Log::Info << "\nDoing single bandwidth.\n";
 
     IO::StartTimer("single_bandwidth_time");
     
@@ -184,11 +184,11 @@ int main(int argc, char* argv[]) {
 
       
       generator.matcher(i).print("Matcher: ");
-      IO::Info << std::endl << "Single bandwidth num tuples: " << std::endl;
+      Log::Info << std::endl << "Single bandwidth num tuples: " << std::endl;
       
       single_alg.print_num_tuples();
       
-      IO::Info << std::endl << std::endl;
+      Log::Info << std::endl << std::endl;
       
     }
       
@@ -201,7 +201,7 @@ int main(int argc, char* argv[]) {
   
   if (IO::HasParam("do_perm_free")) {
     
-    IO::Info << "\nDoing permutation free.\n";
+    Log::Info << "\nDoing permutation free.\n";
 
     IO::StartTimer("perm_free_time");
     
@@ -214,9 +214,9 @@ int main(int argc, char* argv[]) {
       alg.Compute();
       
       generator.matcher(i).print("Matcher: ");
-      IO::Info << "\nPerm Free num tuples: " << std::endl;
+      Log::Info << "\nPerm Free num tuples: " << std::endl;
       alg.print_num_tuples();
-      IO::Info << std::endl << std::endl;
+      Log::Info << std::endl << std::endl;
       
     }
     
@@ -227,7 +227,7 @@ int main(int argc, char* argv[]) {
 
   if (IO::HasParam("do_multi")) {
     
-    IO::Info << "\nDoing Multi Bandwidth\n";
+    Log::Info << "\nDoing Multi Bandwidth\n";
 
         
     IO::StartTimer("multi_time");

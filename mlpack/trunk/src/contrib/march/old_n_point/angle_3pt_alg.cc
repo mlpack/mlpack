@@ -74,7 +74,7 @@ void npt::Angle3ptAlg::BaseCase_(std::vector<NptNode*>& node_list) {
         
         if (valid_r1 >= 0) {
           
-          //mlpack::IO::Info << "Found valid tuple\n";
+          //mlpack::Log::Info << "Found valid tuple\n";
           
           double weight_i = i_is_random_ ? random_weights_[i] : data_weights_[i];
           double weight_j = j_is_random_ ? random_weights_[j] : data_weights_[j];
@@ -192,8 +192,8 @@ void npt::Angle3ptAlg::OutputResults() {
   
   matcher_.PrintNumPrunes();
   
-  mlpack::IO::Info << "num prunes: " << num_prunes_ << "\n";
-  mlpack::IO::Info << "num base cases: " << num_base_cases_ << "\n";
+  mlpack::Log::Info << "num prunes: " << num_prunes_ << "\n";
+  mlpack::Log::Info << "num base cases: " << num_base_cases_ << "\n";
   
   std::string d_string(tuple_size_, 'D');
   std::string r_string(tuple_size_, 'R');
@@ -205,24 +205,24 @@ void npt::Angle3ptAlg::OutputResults() {
     
     // i is the number of random points in the tuple
     std::string this_string(label_string, i, tuple_size_);
-    mlpack::IO::Info << this_string << "\n";
+    mlpack::Log::Info << this_string << "\n";
     
     for (size_t j = 0; j < results_[i].size(); j++) {
       
       for (size_t k = 0; k < results_[i][j].size(); k++) {
         
-        mlpack::IO::Info << "Matcher: ";
-        mlpack::IO::Info << "R1: " << r1_[j] << ", ";
-        mlpack::IO::Info << "R2: " << (r1_[j] * r2_multiplier_) << ", ";
-        mlpack::IO::Info << "theta: " << thetas_[k] << ": ";
+        mlpack::Log::Info << "Matcher: ";
+        mlpack::Log::Info << "R1: " << r1_[j] << ", ";
+        mlpack::Log::Info << "R2: " << (r1_[j] * r2_multiplier_) << ", ";
+        mlpack::Log::Info << "theta: " << thetas_[k] << ": ";
         
-        mlpack::IO::Info << results_[i][j][k] << "\n";
+        mlpack::Log::Info << results_[i][j][k] << "\n";
         
       } // for k
       
     } // for j
     
-    mlpack::IO::Info << "\n\n";
+    mlpack::Log::Info << "\n\n";
     
   } // for i
   

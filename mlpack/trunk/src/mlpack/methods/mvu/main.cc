@@ -19,6 +19,7 @@
 #include <string>
 #include "fastlib/fastlib.h"
 #include <fastlib/fx/io.h>
+#include<log.h>
 #include "mvu_objectives.h"
 #include "fastlib/optimization/lbfgs/lbfgs.h"
 /**
@@ -82,9 +83,9 @@ int main(int argc, char *argv[]){
     Matrix data_mat;
     std::string data_file=IO::GetParam<std::string>("lbfgs/data_file");
     if (data::Load(data_file.c_str(), &data_mat)==false) {
-      IO::Fatal << "Didn't manage to load " << data_file.c_str()) << std::endl;
+      Log::Fatal << "Didn't manage to load " << data_file.c_str()) << std::endl;
     }
-    IO::Info << "Removing the mean., centering data..." << std::endl;
+    Log::Info << "Removing the mean., centering data..." << std::endl;
     OptUtils::RemoveMean(&data_mat);
   
  
@@ -93,14 +94,14 @@ int main(int argc, char *argv[]){
     bool pca_init=IO::HasParam("lbfgs/pca_init");
     Matrix *initial_data=NULL;
     if (pca_preprocess==true) {
-      IO::Info << "Preprocessing with pca") << std::endl;
+      Log::Info << "Preprocessing with pca") << std::endl;
       Matrix temp;
       OptUtils::SVDTransform(data_mat, &temp, pca_dimension);
       data_mat.Destruct();
       data_mat.Own(&temp);
     }
     if (pca_init==true) {
-      IO::Info << "Preprocessing with pca" << std::endl;
+      Log::Info << "Preprocessing with pca" << std::endl;
       initial_data = new Matrix();
       size_t new_dimension=IO::GetParam<int>("lbfgs/new_dimension");
       OptUtils::SVDTransform(data_mat, initial_data, new_dimension);
@@ -121,7 +122,7 @@ int main(int argc, char *argv[]){
       }
       engine.ComputeLocalOptimumBFGS();
       if (data::Save(result_file.c_str(), *engine.coordinates())==false) {
-        IO::Fatal << "Didn't manage to save " << result_file.c_str() << std::endl;
+        Log::Fatal << "Didn't manage to save " << result_file.c_str() << std::endl;
       }
       done=true;
     }
@@ -138,12 +139,12 @@ int main(int argc, char *argv[]){
       }
       engine.ComputeLocalOptimumBFGS();
       if (data::Save(result_file.c_str(), *engine.coordinates())==false) {
-        IO::Fatal << "Didn't manage to save " << result_file.c_str() << std::endl;
+        Log::Fatal << "Didn't manage to save " << result_file.c_str() << std::endl;
       }
       done=true;
     }
     if (done==false) {
-      IO::Fatal << "The method you provided " << optimized_function.c_str() <<
+      Log::Fatal << "The method you provided " << optimized_function.c_str() <<
         " is not supported" << std::endl;
     }
     if (pca_init==true) {
@@ -167,7 +168,7 @@ int main(int argc, char *argv[]){
       engine.Init(&opt_function, l_bfgs_node);
       engine.ComputeLocalOptimumBFGS();
       if (data::Save(result_file.c_str(), *engine.coordinates())==false) {
-        IO::Fatal << "Didn't manage to save " << result_file << std::endl;
+        Log::Fatal << "Didn't manage to save " << result_file << std::endl;
       }
       done=true;
     }
@@ -182,12 +183,12 @@ int main(int argc, char *argv[]){
       engine.Init(&opt_function, l_bfgs_node);
       engine.ComputeLocalOptimumBFGS();
       if (data::Save(result_file.c_str(), *engine.coordinates())==false) {
-        IO::Fatal << "Didn't manage to save " << result_file.c_str() << std::endl;
+        Log::Fatal << "Didn't manage to save " << result_file.c_str() << std::endl;
       }
       done=true;
     }
     if (done==false) {
-       IO::Fatal << "The method you provided " << optimized_function.c_str() <<
+       Log::Fatal << "The method you provided " << optimized_function.c_str() <<
         " is not supported" << std::endl;
     }
   }

@@ -8,6 +8,7 @@
 #include <string>
 #include <map>
 #include <stdio.h>
+#include<log.h>
 #include <errno.h>
 #include <unistd.h>
 #include <mlpack/core.h>

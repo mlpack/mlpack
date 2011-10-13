@@ -459,18 +459,18 @@ void npt::AngleMatcher::OutputResults() {
     
     for (size_t k = 0; k < results_[j].size(); k++) {
       
-      mlpack::IO::Info << "Matcher: ";
-      mlpack::IO::Info << "R1: " << short_sides_[j] << ", ";
-      mlpack::IO::Info << "R2: " << (short_sides_[j] * long_side_multiplier_) << ", ";
-      mlpack::IO::Info << "theta: " << thetas_[k] << ": ";
+      mlpack::Log::Info << "Matcher: ";
+      mlpack::Log::Info << "R1: " << short_sides_[j] << ", ";
+      mlpack::Log::Info << "R2: " << (short_sides_[j] * long_side_multiplier_) << ", ";
+      mlpack::Log::Info << "theta: " << thetas_[k] << ": ";
       
-      mlpack::IO::Info << results_[j][k] << "\n";
+      mlpack::Log::Info << results_[j][k] << "\n";
       
     } // for k
     
   } // for j
   
-  mlpack::IO::Info << "\n\n";
+  mlpack::Log::Info << "\n\n";
   
 
   

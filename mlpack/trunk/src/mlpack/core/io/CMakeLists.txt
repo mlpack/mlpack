@@ -18,6 +18,8 @@ set(SOURCES
   prefixedoutstream.h
   prefixedoutstream.cc
   prefixedoutstream_impl.h
+  log.h
+  log.cc
 )
 
 # add directory name to sources

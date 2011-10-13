@@ -70,14 +70,14 @@ namespace npt {
     {
       
       /*
-      mlpack::IO::Info << "constructing child.\n";
-      mlpack::IO::Info << "parent: " << parent.node_list(0);
-      mlpack::IO::Info << ", " << parent.node_list(1) << ", ";
-      mlpack::IO::Info << parent.node_list(2) << "\n";
+      mlpack::Log::Info << "constructing child.\n";
+      mlpack::Log::Info << "parent: " << parent.node_list(0);
+      mlpack::Log::Info << ", " << parent.node_list(1) << ", ";
+      mlpack::Log::Info << parent.node_list(2) << "\n";
       
-      mlpack::IO::Info << "child (before update): " << node_list_[0];
-      mlpack::IO::Info << ", " << parent.node_list_[1] << ", ";
-      mlpack::IO::Info << node_list_[2] << "\n\n";
+      mlpack::Log::Info << "child (before update): " << node_list_[0];
+      mlpack::Log::Info << ", " << parent.node_list_[1] << ", ";
+      mlpack::Log::Info << node_list_[2] << "\n\n";
       */
       
       /*
@@ -88,7 +88,7 @@ namespace npt {
           parent.node_list(2)->begin() == 0 &&
           parent.node_list(2)->count() == 93) {
         
-        mlpack::IO::Info << "found it.\n";
+        mlpack::Log::Info << "found it.\n";
         
       }
        */

@@ -171,7 +171,7 @@ void SVM<TKernel>::SVM_C_Train_(size_t learner_typeid, arma::mat& dataset) {
         /* TODO: we can make this much more efficient */
         smo.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); /* get support vectors */
       } else
-        IO::Fatal << "--svm/opt: Unknown optimization method." << std::endl;
+        Log::Fatal << "--svm/opt: Unknown optimization method." << std::endl;
 
       ct++;
     }
@@ -261,7 +261,7 @@ void SVM<TKernel>::SVM_R_Train_(size_t learner_typeid, arma::mat& dataset) {
     models_[0].bias_ = smo.Bias(); /* bias */
     smo.GetSV(dataset_index, models_[0].coef_, trainset_sv_indicator_); /* get support vectors */
   } else
-    IO::Fatal << "--svm/opt: Unknown optimization method." << std::endl;
+    Log::Fatal << "--svm/opt: Unknown optimization method." << std::endl;
 
   /* Get index list of support vectors */
   for (i = 0; i < n_data_; i++) {
@@ -433,7 +433,7 @@ template<typename TKernel>
 void SVM<TKernel>::BatchPredict(size_t learner_typeid, arma::mat& testset, std::string predictedvalue_filename) {
   FILE *fp = fopen(predictedvalue_filename.c_str(), "w");
   if (fp == NULL) {
-    IO::Warn << "Failed to open '" << predictedvalue_filename
+    Log::Warn << "Failed to open '" << predictedvalue_filename
         << "' for writing." << std::endl;
   }
   size_t err_ct = 0;
@@ -450,14 +450,14 @@ void SVM<TKernel>::BatchPredict(size_t learner_typeid, arma::mat& testset, std::
   fclose(fp);
 
   /* calculate testing error */
-  IO::Info << err_ct << " out of " << (size_t) testset.n_rows
+  Log::Info << err_ct << " out of " << (size_t) testset.n_rows
       << " misclassified." << std::endl;
-  IO::Info << "Testing error is "
+  Log::Info << "Testing error is "
       << (double(err_ct) / double(testset.n_rows)) * 100.0
       << "%; accuracy is "
       << (1 - double(err_ct) / double(testset.n_rows)) * 100.0
       << "%." << std::endl;
-  IO::Info << "Results saved in " << predictedvalue_filename << "."
+  Log::Info << "Results saved in " << predictedvalue_filename << "."
       << std::endl;
 }
 
@@ -486,7 +486,7 @@ void SVM<TKernel>::SaveModel_(size_t learner_typeid, std::string model_filename)
   std::ofstream f(model_filename.c_str());
 
   if (!f.is_open())
-    IO::Fatal << "Cannot save trained SVM model to file " << model_filename
+    Log::Fatal << "Cannot save trained SVM model to file " << model_filename
         << "." << std::endl;
 
   size_t i, j;
@@ -576,7 +576,7 @@ void SVM<TKernel>::LoadModel_(size_t learner_typeid, std::string model_filename)
   /* load model file */
   FILE *fp = fopen(model_filename.c_str(), "r");
   if (fp == NULL) {
-    IO::Fatal << "Cannot open SVM model file '" << model_filename << "'."
+    Log::Fatal << "Cannot open SVM model file '" << model_filename << "'."
         << std::endl;
   }
 

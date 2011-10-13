@@ -56,52 +56,52 @@ void npt::SingleResults::PrintResults() {
   label_string+=d_string;
   label_string+=r_string;
   
-  mlpack::IO::Info << "Multi-angle Resampling Results: \n\n";
+  mlpack::Log::Info << "Multi-angle Resampling Results: \n\n";
   
   for (int region_ind = 0; region_ind < num_regions_; region_ind++) {
     
-    mlpack::IO::Info << "Resampling region " << region_ind << "\n";
+    mlpack::Log::Info << "Resampling region " << region_ind << "\n";
     
     for (int num_random = 0; num_random < tuple_size_; num_random++) {
       
       std::string this_string(label_string, num_random, tuple_size_);
-      mlpack::IO::Info << this_string << ": \n";
+      mlpack::Log::Info << this_string << ": \n";
       
       for (int r1_ind = 0; r1_ind < num_r1_; r1_ind++) {
         
         for (int theta_ind = 0; theta_ind < num_theta_; theta_ind++) {
           
-          mlpack::IO::Info << "r1: " << r1_vec_[r1_ind] << ", theta: ";
-          mlpack::IO::Info << theta_vec_[theta_ind] << ": ";
-          mlpack::IO::Info << results_[region_ind][num_random][r1_ind][theta_ind];
-          mlpack::IO::Info << "\n";
+          mlpack::Log::Info << "r1: " << r1_vec_[r1_ind] << ", theta: ";
+          mlpack::Log::Info << theta_vec_[theta_ind] << ": ";
+          mlpack::Log::Info << results_[region_ind][num_random][r1_ind][theta_ind];
+          mlpack::Log::Info << "\n";
           
         } // for theta
         
       } // for r1_ind
       
-      mlpack::IO::Info << "\n";
+      mlpack::Log::Info << "\n";
       
     } // for num_random
     
   } // for region_ind
   
-  mlpack::IO::Info << "\nRRR results: \n";
+  mlpack::Log::Info << "\nRRR results: \n";
   
   for (int r1_ind = 0; r1_ind < num_r1_; r1_ind++) {
     
     for (int theta_ind = 0; theta_ind < num_theta_; theta_ind++) {
       
-      mlpack::IO::Info << "r1: " << r1_vec_[r1_ind] << ", theta: ";
-      mlpack::IO::Info << theta_vec_[theta_ind] << ": ";
-      mlpack::IO::Info << RRR_result_[r1_ind][theta_ind];
-      mlpack::IO::Info << "\n";
+      mlpack::Log::Info << "r1: " << r1_vec_[r1_ind] << ", theta: ";
+      mlpack::Log::Info << theta_vec_[theta_ind] << ": ";
+      mlpack::Log::Info << RRR_result_[r1_ind][theta_ind];
+      mlpack::Log::Info << "\n";
       
     } // for theta
     
   } // for r1_ind
   
-  mlpack::IO::Info << "\n";
+  mlpack::Log::Info << "\n";
   
   
 } // PrintREsults()

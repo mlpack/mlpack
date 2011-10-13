@@ -132,7 +132,7 @@ namespace npt {
     data_mat_list_(data_in), data_weights_list_(weights_in) 
     {
       
-      //mlpack::IO::Info << "Starting construction of angle matcher.\n";
+      //mlpack::Log::Info << "Starting construction of angle matcher.\n";
       
       tuple_size_ = 3;
       num_base_cases_ = 0;
@@ -219,63 +219,63 @@ namespace npt {
       
       
       /*
-      mlpack::IO::Info << "r1_lower_sqr_: ";
+      mlpack::Log::Info << "r1_lower_sqr_: ";
       for (int i = 0; i < r1_lower_sqr_.size(); i++) {
         
-        mlpack::IO::Info << sqrt(r1_lower_sqr_[i]) << ", ";
+        mlpack::Log::Info << sqrt(r1_lower_sqr_[i]) << ", ";
         
       }
-      mlpack::IO::Info << "\n";
+      mlpack::Log::Info << "\n";
 
-      mlpack::IO::Info << "r1_upper_sqr_: ";
+      mlpack::Log::Info << "r1_upper_sqr_: ";
       for (int i = 0; i < r1_upper_sqr_.size(); i++) {
         
-        mlpack::IO::Info << sqrt(r1_upper_sqr_[i]) << ", ";
+        mlpack::Log::Info << sqrt(r1_upper_sqr_[i]) << ", ";
         
       }
-      mlpack::IO::Info << "\n";
+      mlpack::Log::Info << "\n";
       
       
-      mlpack::IO::Info << "r2_lower_sqr_: ";
+      mlpack::Log::Info << "r2_lower_sqr_: ";
       for (int i = 0; i < r2_lower_sqr_.size(); i++) {
         
-        mlpack::IO::Info << sqrt(r2_lower_sqr_[i]) << ", ";
+        mlpack::Log::Info << sqrt(r2_lower_sqr_[i]) << ", ";
         
       }
-      mlpack::IO::Info << "\n";
+      mlpack::Log::Info << "\n";
       
-      mlpack::IO::Info << "r2_upper_sqr_: ";
+      mlpack::Log::Info << "r2_upper_sqr_: ";
       for (int i = 0; i < r2_upper_sqr_.size(); i++) {
         
-        mlpack::IO::Info << sqrt(r2_upper_sqr_[i]) << ", ";
+        mlpack::Log::Info << sqrt(r2_upper_sqr_[i]) << ", ";
         
       }
-      mlpack::IO::Info << "\n";
+      mlpack::Log::Info << "\n";
       
 
       for (int i = 0; i < r3_lower_sqr_.size(); i++) {
-        mlpack::IO::Info << "r3_lower_sqr_[" << i << "]: ";
+        mlpack::Log::Info << "r3_lower_sqr_[" << i << "]: ";
         for (int j = 0; j < r3_lower_sqr_[i].size(); j++) {
           
-          mlpack::IO::Info << sqrt(r3_lower_sqr_[i][j]) << ", ";
+          mlpack::Log::Info << sqrt(r3_lower_sqr_[i][j]) << ", ";
           
         }
-        mlpack::IO::Info << "\n";
+        mlpack::Log::Info << "\n";
       }
 
       
       for (int i = 0; i < r3_upper_sqr_.size(); i++) {
-        mlpack::IO::Info << "r3_upper_sqr_[" << i << "]: ";
+        mlpack::Log::Info << "r3_upper_sqr_[" << i << "]: ";
         for (int j = 0; j < r3_upper_sqr_[i].size(); j++) {
           
-          mlpack::IO::Info << sqrt(r3_upper_sqr_[i][j]) << ", ";
+          mlpack::Log::Info << sqrt(r3_upper_sqr_[i][j]) << ", ";
           
         }
-        mlpack::IO::Info << "\n";
+        mlpack::Log::Info << "\n";
       }
       
-      mlpack::IO::Info << "longest side: " << longest_possible_side_sqr_ << "\n";
-      mlpack::IO::Info << "shortest side: " << shortest_possible_side_sqr_ << "\n";
+      mlpack::Log::Info << "longest side: " << longest_possible_side_sqr_ << "\n";
+      mlpack::Log::Info << "shortest side: " << shortest_possible_side_sqr_ << "\n";
       
        */
        
@@ -321,18 +321,18 @@ namespace npt {
     void PrintNumPrunes() {
      
       /*
-      mlpack::IO::Info << "Num r1 prunes: " << num_r1_prunes_ << "\n";
-      mlpack::IO::Info << "Num r3 prunes: " << num_r3_prunes_ << "\n";
-      mlpack::IO::Info << "Num min area prunes: " << num_min_area_prunes_ << "\n";
-      mlpack::IO::Info << "Num max area prunes: " << num_max_area_prunes_ << "\n";
+      mlpack::Log::Info << "Num r1 prunes: " << num_r1_prunes_ << "\n";
+      mlpack::Log::Info << "Num r3 prunes: " << num_r3_prunes_ << "\n";
+      mlpack::Log::Info << "Num min area prunes: " << num_min_area_prunes_ << "\n";
+      mlpack::Log::Info << "Num max area prunes: " << num_max_area_prunes_ << "\n";
       */
       
-      mlpack::IO::Info << "Num large r1 prunes: " << num_large_r1_prunes_ << "\n";
-      mlpack::IO::Info << "Num small r1 prunes: " << num_small_r1_prunes_ << "\n";
-      mlpack::IO::Info << "Num large r3 prunes: " << num_large_r3_prunes_ << "\n";
-      mlpack::IO::Info << "Num large r2 prunes: " << num_large_r2_prunes_ << "\n";
-      mlpack::IO::Info << "Num small r2 prunes: " << num_small_r2_prunes_ << "\n";
-      mlpack::IO::Info << "Num base cases: " << num_base_cases_ << "\n";
+      mlpack::Log::Info << "Num large r1 prunes: " << num_large_r1_prunes_ << "\n";
+      mlpack::Log::Info << "Num small r1 prunes: " << num_small_r1_prunes_ << "\n";
+      mlpack::Log::Info << "Num large r3 prunes: " << num_large_r3_prunes_ << "\n";
+      mlpack::Log::Info << "Num large r2 prunes: " << num_large_r2_prunes_ << "\n";
+      mlpack::Log::Info << "Num small r2 prunes: " << num_small_r2_prunes_ << "\n";
+      mlpack::Log::Info << "Num base cases: " << num_base_cases_ << "\n";
       
     }
     

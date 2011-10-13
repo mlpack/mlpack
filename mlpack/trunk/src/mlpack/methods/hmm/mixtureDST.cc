@@ -85,7 +85,7 @@ void MixtureGauss::InitFromFile(const char* mean_fn, const char* covs_fn, const 
     data::Load(covs_fn, covsmat);
 
     mat2arrlstmat(N, covsmat, covs);
-    mlpack::IO::AssertMessage(K == covs.size(), "MixtureGauss::InitFromFile(): sizes do not match!");
+    mlpack::Log::Assert(K == covs.size(), "MixtureGauss::InitFromFile(): sizes do not match!");
   } else {
     for (size_t i = 0; i < means.size(); i++) {
       arma::mat m(N, N);
@@ -102,7 +102,7 @@ void MixtureGauss::InitFromFile(const char* mean_fn, const char* covs_fn, const 
     arma::mat priormat;
     data::Load(prior_fn, priormat);
 
-    mlpack::IO::AssertMessage(K == priormat.n_cols, "MixtureGauss::InitFromFile(): sizes do not match!");
+    mlpack::Log::Assert(K == priormat.n_cols, "MixtureGauss::InitFromFile(): sizes do not match!");
 
     prior.set_size(K);
 
@@ -126,7 +126,7 @@ void MixtureGauss::InitFromFile(const char* mean_fn, const char* covs_fn, const 
 }
 
 void MixtureGauss::InitFromProfile(const std::vector<arma::mat>& matlst, size_t start, size_t N) {
-  mlpack::IO::Assert(matlst[start].n_cols == 1);
+  mlpack::Log::Assert(matlst[start].n_cols == 1);
   arma::vec tmp = matlst[start].unsafe_col(0);
   prior = tmp;
 
@@ -134,8 +134,8 @@ void MixtureGauss::InitFromProfile(const std::vector<arma::mat>& matlst, size_t 
 
   size_t K = prior.n_elem;
   for (size_t i = start + 1; i < start + (2 * K + 1); i += 2) {
-    mlpack::IO::Assert(matlst[i].n_rows == N && matlst[i].n_cols == 1);
-    mlpack::IO::Assert(matlst[i + 1].n_rows == N && matlst[i + 1].n_cols == N);
+    mlpack::Log::Assert(matlst[i].n_rows == N && matlst[i].n_cols == 1);
+    mlpack::Log::Assert(matlst[i + 1].n_rows == N && matlst[i + 1].n_cols == N);
 
     arma::vec m = matlst[i].unsafe_col(0);
     means.push_back(m);

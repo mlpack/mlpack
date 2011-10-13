@@ -2,6 +2,7 @@
 #define MLPACK_IO_OPTION_IMPL_H
 
 #include "io.h"
+#include "log.h"
 
 namespace mlpack {
 

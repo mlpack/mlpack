@@ -301,24 +301,24 @@ void npt::MultiBandwidthAlg::OutputResults() {
     
     // i is the number of random points in the tuple
     std::string this_string(label_string, i, tuple_size_);
-    mlpack::IO::Info << this_string << "\n";
+    mlpack::Log::Info << this_string << "\n";
     
     for (size_t j = 0; j < results_[i].size(); j++) {
       
       std::vector<size_t> matcher_ind(num_bands_.size());
       FindMatcherInd_(j, matcher_ind);
       
-      mlpack::IO::Info << "Matcher: ";
+      mlpack::Log::Info << "Matcher: ";
       for (size_t k = 0; k < matcher_ind.size(); k++) {
         
-        mlpack::IO::Info << matcher_.matcher_dists(k, matcher_ind[k]) << ", ";
+        mlpack::Log::Info << matcher_.matcher_dists(k, matcher_ind[k]) << ", ";
         
       } // for k
-      mlpack::IO::Info << ": " << results_[i][j] << "\n";
+      mlpack::Log::Info << ": " << results_[i][j] << "\n";
       
     } // for j
     
-    mlpack::IO::Info << "\n\n";
+    mlpack::Log::Info << "\n\n";
     
   } // for i
   

@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
   } else if (learner_name == "svm_de") { // One Class Support Vector Machine
     learner_typeid = 2;
   } else {
-    IO::Fatal << "--svm/learner_name: Unknown learner name (valid: 'svm_c',"
+    Log::Fatal << "--svm/learner_name: Unknown learner name (valid: 'svm_c',"
         " 'svm_r', 'svm_de')." << std::endl;
   }
 
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
   if (mode == "train" || mode == "train_test") {
     arma::mat dataSet;
     std::string trainFile = IO::GetParam<std::string>("svm/train_data");
-    IO::Info << "Training SVM..." << std::endl;
+    Log::Info << "Training SVM..." << std::endl;
 
     /* Load training data */
     if (data::Load(trainFile.c_str(), dataSet) == false)
@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
       svm.InitTrain(learner_typeid, dataSet);
       /* training and testing, thus no need to load model from file */
       if (mode == "train_test") {
-        IO::Info << "Making predictions with SVM model..." << std::endl;
+        Log::Info << "Making predictions with SVM model..." << std::endl;
 
         /* Load testing data */
         arma::mat dataSet;
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
       svm.InitTrain(learner_typeid, dataSet);
       /* training and testing, thus no need to load model from file */
       if (mode == "train_test") {
-        IO::Info << "Making predictions with SVM model..." << std::endl;
+        Log::Info << "Making predictions with SVM model..." << std::endl;
 
         /* Load testing data */
         arma::mat dataSet;
@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
 
   /* Testing(offline) Mode, need loading model file and testing data */
   else if (mode == "test") {
-    IO::Info << "Making predictions with SVM model..." << std::endl;
+    Log::Info << "Making predictions with SVM model..." << std::endl;
 
     /* Load testing data */
     arma::mat dataSet;
