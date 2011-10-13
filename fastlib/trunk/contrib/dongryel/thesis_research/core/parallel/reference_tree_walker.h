@@ -431,7 +431,7 @@ class ReferenceTreeWalker {
       core::math::Range squared_distance_range =
         query_table_->get_tree()->bound().RangeDistanceSq(
           metric_in, local_reference_table_->get_tree()->bound());
-      trace_.Init();
+      trace_.Init(100000);
       trace_.push_back(
         boost::tuple <
         TreeType *, TreeType *, core::math::Range > (
