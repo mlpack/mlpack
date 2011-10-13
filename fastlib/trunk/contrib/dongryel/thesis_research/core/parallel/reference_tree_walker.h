@@ -68,7 +68,8 @@ class ReferenceTreeWalker {
     std::vector< unsigned long int >
     num_reference_points_assigned_per_process_;
 
-    core::gnp::DualtreeTrace< std::pair<TreeType *, TreeType *> > trace_;
+    core::gnp::DualtreeTrace <
+    boost::tuple< TreeType *, TreeType *, core::math::Range > > trace_;
 
     bool weak_scaling_measuring_mode_;
 
@@ -152,26 +153,27 @@ class ReferenceTreeWalker {
         bool should_terminate = false;
 
         // Push a blank argument to the trace for making the exit phase.
-        if(trace_.front().first != NULL) {
-          trace_.push_front(std::pair<TreeType *, TreeType *>(NULL, NULL));
+        if(trace_.front().get<0>() != NULL) {
+          trace_.push_front(
+            boost::tuple <
+            TreeType *, TreeType *, core::math::Range > (
+              NULL, NULL, core::math::Range()));
         }
 
         // Pop the next item to visit in the list.
-        std::pair<TreeType *, TreeType *> args = trace_.back();
+        boost::tuple <
+        TreeType *, TreeType *, core::math::Range > args = trace_.back();
         trace_.pop_back();
 
         while(
-          trace_.empty() == false && args.second != NULL) {
+          trace_.empty() == false && args.get<0>() != NULL) {
 
           // Get the arguments.
-          TreeType *global_query_node = args.first;
-          TreeType *local_reference_node = args.second;
-          core::math::Range squared_distance_range =
-            global_query_node->bound().RangeDistanceSq(
-              metric_in, local_reference_node->bound());
+          TreeType *global_query_node = args.get<0>();
+          TreeType *local_reference_node = args.get<1>();
 
           // Determine if the pair can be pruned.
-          if(global_in.ConsiderExtrinsicPrune(squared_distance_range)) {
+          if(global_in.ConsiderExtrinsicPrune(args.get<2>())) {
             typename TableType::TreeIterator qnode_it =
               query_table_->get_node_iterator(global_query_node);
             while(qnode_it.HasNext()) {
@@ -180,7 +182,6 @@ class ReferenceTreeWalker {
               extrinsic_prunes_[query_process_id] +=
                 local_reference_node->count();
             }
-
           } // end of prunable case.
 
           // Non-prunable-case.
@@ -242,13 +243,15 @@ class ReferenceTreeWalker {
                   &second_partner,
                   second_squared_distance_range);
                 trace_.push_back(
-                  std::pair <
-                  TreeType *, TreeType * > (
-                    global_query_node, first_partner));
+                  boost::tuple <
+                  TreeType *, TreeType *, core::math::Range > (
+                    global_query_node, first_partner,
+                    first_squared_distance_range));
                 trace_.push_front(
-                  std::pair <
-                  TreeType *, TreeType * > (
-                    global_query_node, second_partner));
+                  boost::tuple <
+                  TreeType *, TreeType *, core::math::Range > (
+                    global_query_node, second_partner,
+                    second_squared_distance_range));
               } // qnode leaf, rnode non-leaf.
             } // end of query node being a leaf.
 
@@ -266,13 +269,15 @@ class ReferenceTreeWalker {
                   &second_partner,
                   second_squared_distance_range);
                 trace_.push_back(
-                  std::pair <
-                  TreeType *, TreeType * > (
-                    first_partner, local_reference_node));
+                  boost::tuple <
+                  TreeType *, TreeType *, core::math::Range > (
+                    first_partner, local_reference_node,
+                    first_squared_distance_range));
                 trace_.push_front(
-                  std::pair <
-                  TreeType *, TreeType * > (
-                    second_partner, local_reference_node));
+                  boost::tuple <
+                  TreeType *, TreeType *, core::math::Range > (
+                    second_partner, local_reference_node,
+                    second_squared_distance_range));
               } // qnode non-leaf, rnode leaf.
               else {
                 core::gnp::DualtreeDfs<ProblemType>::Heuristic(
@@ -285,13 +290,15 @@ class ReferenceTreeWalker {
                   &second_partner,
                   second_squared_distance_range);
                 trace_.push_back(
-                  std::pair <
-                  TreeType *, TreeType * > (
-                    global_query_node->left(), first_partner));
+                  boost::tuple <
+                  TreeType *, TreeType *, core::math::Range > (
+                    global_query_node->left(), first_partner,
+                    first_squared_distance_range));
                 trace_.push_front(
-                  std::pair <
-                  TreeType *, TreeType * > (
-                    global_query_node->left(), second_partner));
+                  boost::tuple <
+                  TreeType *, TreeType *, core::math::Range > (
+                    global_query_node->left(), second_partner,
+                    second_squared_distance_range));
 
                 core::gnp::DualtreeDfs<ProblemType>::Heuristic(
                   metric_in,
@@ -303,13 +310,15 @@ class ReferenceTreeWalker {
                   &second_partner,
                   second_squared_distance_range);
                 trace_.push_back(
-                  std::pair <
-                  TreeType *, TreeType * > (
-                    global_query_node->right(), first_partner));
+                  boost::tuple <
+                  TreeType *, TreeType *, core::math::Range > (
+                    global_query_node->right(), first_partner,
+                    first_squared_distance_range));
                 trace_.push_front(
-                  std::pair <
-                  TreeType *, TreeType * > (
-                    global_query_node->right(), second_partner));
+                  boost::tuple <
+                  TreeType *, TreeType *, core::math::Range > (
+                    global_query_node->right(), second_partner,
+                    second_squared_distance_range));
               } // qnode, rnode non-leaves.
             } // end of non-leaf qnode case.
           } // end of non-prunable case.
@@ -387,7 +396,9 @@ class ReferenceTreeWalker {
 
     /** @brief Initializes the reference tree walker.
      */
+    template<typename MetricType>
     void Init(
+      const MetricType &metric_in,
       boost::mpi::communicator &world,
       DistributedTableType *query_table_in,
       TableType *local_reference_table_in,
@@ -417,11 +428,15 @@ class ReferenceTreeWalker {
         num_reference_points_assigned_per_process_.end(), 0);
 
       // Initialize the stack.
+      core::math::Range squared_distance_range =
+        query_table_->get_tree()->bound().RangeDistanceSq(
+          metric_in, local_reference_table_->get_tree()->bound());
       trace_.Init();
       trace_.push_back(
-        std::pair <
-        TreeType *, TreeType * > (
-          query_table_->get_tree(), local_reference_table_->get_tree()));
+        boost::tuple <
+        TreeType *, TreeType *, core::math::Range > (
+          query_table_->get_tree(), local_reference_table_->get_tree(),
+          squared_distance_range));
 
       // Initialize the extrinsic prune counts.
       extrinsic_prunes_.resize(world.size());
