@@ -6,8 +6,8 @@
  * of parameters.  Each node can have an arbitrary number of children.
  */
 
-#ifndef OPTIONSHIERARCHY_H
-#define OPTIONSHIERARCHY_H
+#ifndef OPTCLINSHIERARCHY_H
+#define OPTCLINSHIERARCHY_H
 
 #include <map>
 #include <string>

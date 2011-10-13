@@ -1,9 +1,9 @@
-#ifndef INSIDE_MATRIX_FACTORIZED_LOCAL_EXPANSION_H
+#ifndef INSIDE_MATRIX_FACTORIZED_LOCAL_EXPANSCLIN_H
 #error "This is not a public header file!"
 #endif
 
-#ifndef MATRIX_FACTORIZED_LOCAL_EXPANSION_IMPL_H
-#define MATRIX_FACTORIZED_LOCAL_EXPANSION_IMPL_H
+#ifndef MATRIX_FACTORIZED_LOCAL_EXPANSCLIN_IMPL_H
+#define MATRIX_FACTORIZED_LOCAL_EXPANSCLIN_IMPL_H
 
 template<typename TKernelAux>
 void MatrixFactorizedLocalExpansion<TKernelAux>::PrintDebug

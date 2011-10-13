@@ -2,25 +2,25 @@
  * @file io_deleter.h
  * @author Ryan Curtin
  *
- * Extremely simple class whose only job is to delete the existing IO object at
+ * Extremely simple class whose only job is to delete the existing CLI object at
  * the end of execution.  This is meant to allow the user to avoid typing
- * 'IO::Destroy()' at the end of their program.  The file also defines a static
- * IODeleter class, which will be initialized at the beginning of the program
- * and deleted at the end.  The destructor destroys the IO singleton.
+ * 'CLI::Destroy()' at the end of their program.  The file also defines a static
+ * CLIDeleter class, which will be initialized at the beginning of the program
+ * and deleted at the end.  The destructor destroys the CLI singleton.
  */
-#ifndef __MLPACK_IO_IO_DELETER_H
-#define __MLPACK_IO_IO_DELETER_H
+#ifndef __MLPACK_CLI_CLI_DELETER_H
+#define __MLPACK_CLI_CLI_DELETER_H
 
 namespace mlpack {
 namespace io {
 
-class IODeleter {
+class CLIDeleter {
  public:
-  IODeleter();
-  ~IODeleter();
+  CLIDeleter();
+  ~CLIDeleter();
 };
 
-static IODeleter io_deleter;
+static CLIDeleter io_deleter;
 
 }; // namespace io
 }; // namespace mlpack

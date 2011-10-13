@@ -903,7 +903,7 @@ void ApproxNN::Init(const Matrix& references_in,
   // Instead of NULL, it is possible to specify an array new_from_old_
   query_tree_ = NULL;
 
-  // FIX THIS FOR SINGLE TREE VERSION WHEN NEEDED 
+  // FIX THIS FOR SINGLE TREE VERSCLIN WHEN NEEDED 
 
   reference_tree_
     = tree::MakeKdTreeMidpoint<TreeType>(references_, 

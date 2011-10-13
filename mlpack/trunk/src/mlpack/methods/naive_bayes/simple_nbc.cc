@@ -28,7 +28,7 @@ SimpleNaiveBayesClassifier::SimpleNaiveBayesClassifier(const arma::mat& data)
 
   // updating the variables, private and local, according to
   // the number of features and classes present in the data
-  number_of_classes_ = mlpack::IO::GetParam<int>("nbc/classes");
+  number_of_classes_ = mlpack::CLI::GetParam<int>("nbc/classes");
   class_probabilities_.set_size(number_of_classes_);
   means_.set_size(number_features,number_of_classes_);
   variances_.set_size(number_features,number_of_classes_);
@@ -36,8 +36,8 @@ SimpleNaiveBayesClassifier::SimpleNaiveBayesClassifier(const arma::mat& data)
   Log::Info << number_examples << " examples with " << number_features
     << " features each" << std::endl;
 
-  IO::GetParam<int>("nbc/features") = number_features;
-  IO::GetParam<int>("nbc/examples") = number_examples;
+  CLI::GetParam<int>("nbc/features") = number_features;
+  CLI::GetParam<int>("nbc/examples") = number_examples;
 
   // calculating the class probabilities as well as the
   // sample mean and variance for each of the features
@@ -86,7 +86,7 @@ void SimpleNaiveBayesClassifier::Classify(const arma::mat& test_data, arma::vec&
   Log::Info << test_data.n_cols << " test cases with " << number_features
     << " features each" << std::endl;
 
-  IO::GetParam<int>("nbc/tests") = test_data.n_cols;
+  CLI::GetParam<int>("nbc/tests") = test_data.n_cols;
   // Calculating the joint probability for each of the data points
   // for each of the classes
 

@@ -5,8 +5,8 @@
  * @bug No known bugs.
  */
 
-#ifndef MATRIX_FACTORIZED_LOCAL_EXPANSION
-#define MATRIX_FACTORIZED_LOCAL_EXPANSION
+#ifndef MATRIX_FACTORIZED_LOCAL_EXPANSCLIN
+#define MATRIX_FACTORIZED_LOCAL_EXPANSCLIN
 
 #include "fastlib/fastlib.h"
 
@@ -228,8 +228,8 @@ class MatrixFactorizedLocalExpansion {
 
 };
 
-#define INSIDE_MATRIX_FACTORIZED_LOCAL_EXPANSION_H
+#define INSIDE_MATRIX_FACTORIZED_LOCAL_EXPANSCLIN_H
 #include "matrix_factorized_local_expansion_impl.h"
-#undef INSIDE_MATRIX_FACTORIZED_LOCAL_EXPANSION_H
+#undef INSIDE_MATRIX_FACTORIZED_LOCAL_EXPANSCLIN_H
 
 #endif

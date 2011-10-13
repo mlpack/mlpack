@@ -1,5 +1,5 @@
-#ifndef CROSS_VALIDATION_H
-#define CROSS_VALIDATION_H
+#ifndef CROSS_VALIDATCLIN_H
+#define CROSS_VALIDATCLIN_H
 
 #include "naive_kde_local_polynomial.h"
 #include "naive_kde.h"
@@ -118,7 +118,7 @@ template <typename TKernel> class CrossValidation{
     double n=rset_.n_cols();
   
     //NOTE: WE ARE DEALING WITH A 1-D CASE ONLY. THE LOCAL LEAST
-    //SQUARES EQUATIONS ARE NOT GENERAL
+    //SQUARES EQUATCLINS ARE NOT GENERAL
 
     double bw=bandwidth_.get(0,b);
     double total_value=0;

@@ -30,7 +30,7 @@ double MaxIP::MaxNodeIP_(TreeType* reference_node) {
 
   double max_cos_qr = 1.0;
 
-  if (mlpack::IO::HasParam("maxip/angle_prune")) { 
+  if (mlpack::CLI::HasParam("maxip/angle_prune")) { 
     // tighter bound of \max_{r \in B_p^R} <q,r> 
     //    = |q| \max_{r \in B_p^R} |r| cos <qr 
     //    \leq |q| \max_{r \in B_p^R} |r| \max_{r \in B_p^R} cos <qr 
@@ -89,7 +89,7 @@ double MaxIP::MaxNodeIP_(CTreeType* query_node,
 
   double max_cos_qp = 1.0;
 
-  if (mlpack::IO::HasParam("maxip/angle_prune")) { 
+  if (mlpack::CLI::HasParam("maxip/angle_prune")) { 
 
     if (rad <= c_norm) {
       // cos <pq = cos_phi
@@ -311,7 +311,7 @@ void MaxIP::ComputeNeighborsRecursion_(CTreeType* query_node,
     // Pruned
     number_of_prunes_++;
 
-    if (IO::HasParam("maxip/check_prune"))
+    if (CLI::HasParam("maxip/check_prune"))
       CheckPrune(query_node, reference_node);
   }
   // node->is_leaf() works as one would expect
@@ -415,7 +415,7 @@ void MaxIP::Init(const arma::mat& queries_in,
   split_decisions_ = 0;
     
   // Get the leaf size from the module
-  leaf_size_ = mlpack::IO::GetParam<int>("maxip/leaf_size");
+  leaf_size_ = mlpack::CLI::GetParam<int>("maxip/leaf_size");
   // Make sure the leaf size is valid
   assert(leaf_size_ > 0);
     
@@ -427,7 +427,7 @@ void MaxIP::Init(const arma::mat& queries_in,
   assert(queries_.n_rows == references_.n_rows);
     
   // K-nearest neighbors initialization
-  knns_ = mlpack::IO::GetParam<int>("maxip/knns");
+  knns_ = mlpack::CLI::GetParam<int>("maxip/knns");
 
   // Initialize the list of nearest neighbor candidates
   max_ip_indices_ 
@@ -438,7 +438,7 @@ void MaxIP::Init(const arma::mat& queries_in,
   max_ips_ = 0.0 * arma::ones<arma::vec>(queries_.n_cols * knns_, 1);
 
   // We'll time tree building
-  mlpack::IO::StartTimer("tree_building");
+  mlpack::CLI::StartTimer("tree_building");
 
   reference_tree_
     = proximity::MakeGenMetricTree<TreeType>(references_, 
@@ -446,7 +446,7 @@ void MaxIP::Init(const arma::mat& queries_in,
 					     &old_from_new_references_,
 					     NULL);
     
-  if (mlpack::IO::HasParam("maxip/dual_tree")) {
+  if (mlpack::CLI::HasParam("maxip/dual_tree")) {
     query_tree_
       = proximity::MakeGenCosineTree<CTreeType>(queries_,
 						leaf_size_,
@@ -462,7 +462,7 @@ void MaxIP::Init(const arma::mat& queries_in,
     query_norms_(i) = arma::norm(queries_.col(i), 2);
       
   // Stop the timer we started above
-  mlpack::IO::StopTimer("tree_building");
+  mlpack::CLI::StopTimer("tree_building");
 
 } // Init
 
@@ -482,7 +482,7 @@ void MaxIP::InitNaive(const arma::mat& queries_in,
   assert(queries_.n_rows == references_.n_rows);
     
   // K-nearest neighbors initialization
-  knns_ = mlpack::IO::GetParam<int>("maxip/knns");
+  knns_ = mlpack::CLI::GetParam<int>("maxip/knns");
   
   // Initialize the list of nearest neighbor candidates
   max_ip_indices_
@@ -497,7 +497,7 @@ void MaxIP::InitNaive(const arma::mat& queries_in,
   leaf_size_ = std::max(queries_.n_cols, references_.n_cols) + 1;
 
   // We'll time tree building
-  mlpack::IO::StartTimer("tree_building");
+  mlpack::CLI::StartTimer("tree_building");
     
   reference_tree_
     = proximity::MakeGenMetricTree<TreeType>(references_, 
@@ -506,7 +506,7 @@ void MaxIP::InitNaive(const arma::mat& queries_in,
 					     NULL);
 
   // Stop the timer we started above
-  mlpack::IO::StopTimer("tree_building");
+  mlpack::CLI::StopTimer("tree_building");
     
 } // InitNaive
   
@@ -530,7 +530,7 @@ void MaxIP::WarmInit(size_t knns) {
   max_ips_ = 0.0 * arma::ones<arma::vec>(queries_.n_cols * knns_, 1);
 
   // need to reset the querystats in the Query Tree
-  if (mlpack::IO::HasParam("maxip/dual_tree"))
+  if (mlpack::CLI::HasParam("maxip/dual_tree"))
     if (query_tree_ != NULL)
       reset_tree_(query_tree_);
 
@@ -553,7 +553,7 @@ double MaxIP::ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
   resulting_neighbors->set_size(max_ips_.n_elem);
   ips->set_size(max_ips_.n_elem);
 
-  if (mlpack::IO::HasParam("maxip/dual_tree")) {
+  if (mlpack::CLI::HasParam("maxip/dual_tree")) {
     // do dual-tree search
     mlpack::Log::Info << "DUAL-TREE Search: " << std::endl;
 

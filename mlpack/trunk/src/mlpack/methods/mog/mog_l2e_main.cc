@@ -35,22 +35,22 @@ PARAM_STRING("output", "The file into which the output is to be written into",
 using namespace mlpack;
 
 int main(int argc, char* argv[]) {
-  IO::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, argv);
 
   ////// READING PARAMETERS AND LOADING DATA //////
   arma::mat data_points;
-  data::Load(IO::GetParam<std::string>("mog_l2e/data").c_str(), data_points);
+  data::Load(CLI::GetParam<std::string>("mog_l2e/data").c_str(), data_points);
 
-  ////// MIXTURE OF GAUSSIANS USING L2 ESTIMATION //////
-  size_t number_of_gaussians = IO::GetParam<int>("mog_l2e/k");
-  IO::GetParam<int>("mog_l2e/d") = data_points.n_rows;
-  size_t dimension = IO::GetParam<int>("mog_l2e/d");
+  ////// MIXTURE OF GAUSSIANS USING L2 ESTIMATCLIN //////
+  size_t number_of_gaussians = CLI::GetParam<int>("mog_l2e/k");
+  CLI::GetParam<int>("mog_l2e/d") = data_points.n_rows;
+  size_t dimension = CLI::GetParam<int>("mog_l2e/d");
 
   ////// RUNNING AN OPTIMIZER TO MINIMIZE THE L2 ERROR //////
-  const char *opt_method = IO::GetParam<std::string>("opt/method").c_str();
+  const char *opt_method = CLI::GetParam<std::string>("opt/method").c_str();
   size_t param_dim = (number_of_gaussians * (dimension + 1) * (dimension + 2)
       / 2 - 1);
-  IO::GetParam<int>("opt/param_space_dim") = param_dim;
+  CLI::GetParam<int>("opt/param_space_dim") = param_dim;
 
   size_t optim_flag = (strcmp(opt_method, "NelderMead") == 0 ? 1 : 0);
   MoGL2E mog;
@@ -60,21 +60,21 @@ int main(int argc, char* argv[]) {
     NelderMead opt;
 
     ////// Initializing the optimizer //////
-    IO::StartTimer("opt/init_opt");
+    CLI::StartTimer("opt/init_opt");
     opt.Init(MoGL2E::L2ErrorForOpt, data_points);
-    IO::StopTimer("opt/init_opt");
+    CLI::StopTimer("opt/init_opt");
 
     ////// Getting starting points for the optimization //////
     arma::mat pts(param_dim, param_dim + 1);
 
-    IO::StartTimer("opt/get_init_pts");
+    CLI::StartTimer("opt/get_init_pts");
     MoGL2E::MultiplePointsGenerator(pts, data_points, number_of_gaussians);
-    IO::StopTimer("opt/get_init_pts");
+    CLI::StopTimer("opt/get_init_pts");
 
     ////// The optimization //////
-    IO::StartTimer("opt/optimizing");
+    CLI::StartTimer("opt/optimizing");
     opt.Eval(pts);
-    IO::StopTimer("opt/optimizing");
+    CLI::StopTimer("opt/optimizing");
 
     ////// Making model with the optimal parameters //////
     // This is a stupid way to do it and putting the 0s there ensures it will
@@ -85,21 +85,21 @@ int main(int argc, char* argv[]) {
     QuasiNewton opt;
 
     ////// Initializing the optimizer //////
-    IO::StartTimer("opt/init_opt");
+    CLI::StartTimer("opt/init_opt");
     opt.Init(MoGL2E::L2ErrorForOpt, data_points);
-    IO::StopTimer("opt/init_opt");
+    CLI::StopTimer("opt/init_opt");
 
     ////// Getting starting point for the optimization //////
     arma::vec pt(param_dim);
 
-    IO::StartTimer("opt/get_init_pt");
+    CLI::StartTimer("opt/get_init_pt");
     MoGL2E::InitialPointGenerator(pt, data_points, number_of_gaussians);
-    IO::StopTimer("opt/get_init_pt");
+    CLI::StopTimer("opt/get_init_pt");
 
     ////// The optimization //////
-    IO::StartTimer("opt/optimizing");
+    CLI::StartTimer("opt/optimizing");
     opt.Eval(pt);
-    IO::StopTimer("opt/optimizing");
+    CLI::StopTimer("opt/optimizing");
 
     ////// Making model with optimal parameters //////
     // This is a stupid way to do it and putting the 0s there ensures it will

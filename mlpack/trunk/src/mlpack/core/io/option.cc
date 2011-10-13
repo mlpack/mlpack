@@ -2,7 +2,7 @@
  * @file option.cc
  * @author Ryan Curtin
  * 
- * Implementation of the ProgramDoc class.  The class registers itself with IO
+ * Implementation of the ProgramDoc class.  The class registers itself with CLI
  * when constructed.
  */
 #include "io.h"
@@ -16,18 +16,18 @@ using namespace std;
 
 /***
  * Construct a ProgramDoc object.  When constructed, it will register itself
- * with IO.  A fatal error will be thrown if more than one is constructed.
+ * with CLI.  A fatal error will be thrown if more than one is constructed.
  *
  * @param programName Short string representing the name of the program.
  * @param documentation Long string containing documentation on how to use the
  *    program and what it is.  No newline characters are necessary; this is
- *    taken care of by IO later.
+ *    taken care of by CLI later.
  */
 ProgramDoc::ProgramDoc(std::string programName, std::string documentation, 
   std::string defaultModule) :
     programName(programName), documentation(documentation), 
     defaultModule(defaultModule) {
 
-  // Register this with IO.
-  IO::RegisterProgramDoc(this);
+  // Register this with CLI.
+  CLI::RegisterProgramDoc(this);
 }

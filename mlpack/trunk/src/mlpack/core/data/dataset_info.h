@@ -115,7 +115,7 @@ class DatasetInfo {
   /**
    * Initialize explicitly from an ARFF file.
    *
-   * ARFF LIMITATIONS: Values cannot have spaces or commas, even with quotes;
+   * ARFF LIMITATCLINS: Values cannot have spaces or commas, even with quotes;
    * 'string' data type not supported (nominal is supported).
    *
    * You might just use InitFromFile, which will guess the type for you.
@@ -149,7 +149,7 @@ class DatasetInfo {
   /**
    * Populates a matrix from a file, given the internal data model.
    *
-   * ARFF LIMITATIONS: Values cannot have spaces or commas, even with quotes;
+   * ARFF LIMITATCLINS: Values cannot have spaces or commas, even with quotes;
    * 'string' data type not supported (nominal is supported).
    *
    * @param reader the reader to get lines from

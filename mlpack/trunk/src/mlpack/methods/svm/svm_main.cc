@@ -39,12 +39,12 @@ using namespace mlpack::svm;
 */
 int main(int argc, char *argv[])
 {
-  IO::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, argv);
   srand(time(NULL));
 
-  string mode = IO::GetParam<std::string>("svm/mode");
-  string kernel = IO::GetParam<std::string>("svm/kernel");
-  string learner_name = IO::GetParam<std::string>("svm/learner_name");
+  string mode = CLI::GetParam<std::string>("svm/mode");
+  string kernel = CLI::GetParam<std::string>("svm/kernel");
+  string learner_name = CLI::GetParam<std::string>("svm/learner_name");
   size_t learner_typeid = 0;
 
   if (learner_name == "svm_c") { // Support Vector Classfication
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 //    if (kernel == "linear") {
 //      GeneralCrossValidator< SVM<SVMLinearKernel> > cross_validator;
 //      /* Initialize n_folds_, confusion_matrix_; k_cv: number of cross-validation folds, need k_cv>1 */
-//      cross_validator.Init(learner_typeid, IO::GetParam<int>("svm/k_cv"), &cvset, NULL, "svm");
+//      cross_validator.Init(learner_typeid, CLI::GetParam<int>("svm/k_cv"), &cvset, NULL, "svm");
 //      /* k_cv folds cross validation; (true): do training set permutation */
 //      cross_validator.Run(true);
 //      //cross_validator.confusion_matrix().PrintDebug("confusion matrix");
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 //    else if (kernel == "gaussian") {
 //      GeneralCrossValidator< SVM<SVMRBFKernel> > cross_validator;
 //      /* Initialize n_folds_, confusion_matrix_; k_cv: number of cross-validation folds */
-//      cross_validator.Init(learner_typeid, IO::GetParam<int>("svm/k_cv"), &cvset, NULL, "svm");
+//      cross_validator.Init(learner_typeid, CLI::GetParam<int>("svm/k_cv"), &cvset, NULL, "svm");
 //      /* k_cv folds cross validation; (true): do training set permutation */
 //      cross_validator.Run(true);
 //      //cross_validator.confusion_matrix().PrintDebug("confusion matrix");
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 
   if (mode == "train" || mode == "train_test") {
     arma::mat dataSet;
-    std::string trainFile = IO::GetParam<std::string>("svm/train_data");
+    std::string trainFile = CLI::GetParam<std::string>("svm/train_data");
     Log::Info << "Training SVM..." << std::endl;
 
     /* Load training data */
@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
 
         /* Load testing data */
         arma::mat dataSet;
-        std::string testFile = IO::GetParam<std::string>("svm/test_data");
+        std::string testFile = CLI::GetParam<std::string>("svm/test_data");
         if (data::Load(testFile.c_str(), dataSet) == false)
           return 1;
 
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 
         /* Load testing data */
         arma::mat dataSet;
-        std::string testFile = IO::GetParam<std::string>("svm/test_data");
+        std::string testFile = CLI::GetParam<std::string>("svm/test_data");
         if (data::Load(testFile.c_str(), dataSet) == false)
           return 1;
 
@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 
     /* Load testing data */
     arma::mat dataSet;
-    std::string testFile = IO::GetParam<std::string>("svm/test_data");
+    std::string testFile = CLI::GetParam<std::string>("svm/test_data");
     if (data::Load(testFile.c_str(), dataSet) == false)
       return 1;
 

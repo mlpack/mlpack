@@ -16,7 +16,7 @@
 #include <mlpack/core/kernels/lmetric.h>
 #include "sort_policies/nearest_neighbor_sort.h"
 
-// Define IO parameters for the NeighborSearch class.
+// Define CLI parameters for the NeighborSearch class.
 PARAM_MODULE("neighbor_search",
     "Parameters for the distance-based neighbor search.");
 PARAM_INT("k", "Number of neighbors to search for.", "neighbor_search", 5);

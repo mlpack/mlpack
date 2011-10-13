@@ -24,8 +24,8 @@ void NNSVM<TKernel>::Init(const arma::mat& dataset, size_t n_classes, size_t c, 
   // c; default:10
   param_.c_ = c;
   // budget parameter, controls # of support vectors; default: # of data samples
-  if(!mlpack::IO::HasParam("nnsvm/b"))
-    mlpack::IO::GetParam<double>("nnsvm/b") = dataset.n_rows;
+  if(!mlpack::CLI::HasParam("nnsvm/b"))
+    mlpack::CLI::GetParam<double>("nnsvm/b") = dataset.n_rows;
 
   param_.b_ = b;
   // tolerance: eps, default: 1.0e-6
@@ -57,16 +57,16 @@ void NNSVM<TKernel>::InitTrain(
   /* # of features = # of rows in data matrix - 1, as last row is for labels*/
   num_features_ = dataset.n_rows - 1;
   mlpack::Log::Assert(n_classes == 2, "SVM is only a binary classifier");
-  mlpack::IO::GetParam<std::string>("kernel_type") = typeid(TKernel).name();
+  mlpack::CLI::GetParam<std::string>("kernel_type") = typeid(TKernel).name();
 
   /* Initialize parameters c_, budget_, eps_, max_iter_, VTA_, alpha_, error_, thresh_ */
   NNSMO<Kernel> nnsmo;
   nnsmo.Init(dataset, param_.c_, param_.b_, param_.eps_, param_.max_iter_);
 
   /* 2-classes NNSVM training using NNSMO */
-  mlpack::IO::StartTimer("nnsvm/nnsvm_train");
+  mlpack::CLI::StartTimer("nnsvm/nnsvm_train");
   nnsmo.Train();
-  mlpack::IO::StopTimer("nnsvm/nnsvm_train");
+  mlpack::CLI::StopTimer("nnsvm/nnsvm_train");
 
   /* Get the trained bi-class model */
   nnsmo.GetNNSVM(support_vectors_, model_.sv_coef_, model_.w_);

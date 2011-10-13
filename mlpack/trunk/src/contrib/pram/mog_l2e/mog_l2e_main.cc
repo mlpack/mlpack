@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
   Matrix data_points;
   data::Load(data_filename, &data_points);
 
-  ////// MIXTURE OF GAUSSIANS USING L2 ESTIMATION //////
+  ////// MIXTURE OF GAUSSIANS USING L2 ESTIMATCLIN //////
 
   datanode *mog_l2e_module = fx_submodule(NULL, "mog_l2e");
   size_t number_of_gaussians = fx_param_int(mog_l2e_module, "K", 1);

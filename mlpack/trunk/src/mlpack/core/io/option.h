@@ -4,12 +4,12 @@
  *
  * The Option class is used to facilitate compile-time instantiation
  * of parameters (or more specifically, at program start up).  This should
- * not be used outside of IO itself.  The ProgramDoc class is used to facilitate
+ * not be used outside of CLI itself.  The ProgramDoc class is used to facilitate
  * compile-time instantiation of overall program documentation (basically, what
  * the program is called and some basic outline of the program).
  */
-#ifndef MLPACK_IO_OPTION_H
-#define MLPACK_IO_OPTION_H
+#ifndef MLPACK_CLI_OPTCLIN_H
+#define MLPACK_CLI_OPTCLIN_H
 
 #include <string>
 
@@ -20,7 +20,7 @@ class Option {
  public:
   /***
    * Construct an Option object.  When constructed, it will register
-   * itself with IO.
+   * itself with CLI.
    *
    * @param ignoreTemplate Whether or not the template type matters for
    *       this option.  Essentially differs options with no value (flags)
@@ -42,7 +42,7 @@ class Option {
 
   /**
    * Constructs an Option object.  When constructed, it will register a flag
-   * with IO.
+   * with CLI.
    *
    * @param identifier The name of the option (no dashes in front); for
    * 	--help, we would pass "help"
@@ -59,12 +59,12 @@ class ProgramDoc {
  public:
   /***
    * Construct a ProgramDoc object.  When constructed, it will register itself
-   * with IO.
+   * with CLI.
    *
    * @param programName Short string representing the name of the program.
    * @param documentation Long string containing documentation on how to use the
    *    program and what it is.  No newline characters are necessary; this is
-   *    taken care of by IO later.
+   *    taken care of by CLI later.
    */
   ProgramDoc(std::string programName, std::string documentation,
     std::string defaultModule);

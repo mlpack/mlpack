@@ -12,8 +12,8 @@
  * @author Ryan Curtin
  */
 
-#ifndef __OPTIMIZATION_TEST_FUNCTIONS_H
-#define __OPTIMIZATION_TEST_FUNCTIONS_H
+#ifndef __OPTIMIZATCLIN_TEST_FUNCTCLINS_H
+#define __OPTIMIZATCLIN_TEST_FUNCTCLINS_H
 
 #include <mlpack/core/io/io.h>
 #include <mlpack/core/io/log.h>

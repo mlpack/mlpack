@@ -5,7 +5,7 @@
  * Model.
  *
  * Usage:
- *   generate --type=TYPE --profile=PROFILE [OPTIONS]
+ *   generate --type=TYPE --profile=PROFILE [OPTCLINS]
  * See the usage() function for complete option list
  */
 
@@ -77,8 +77,8 @@ int main(int argc, char* argv[]) {
 
 void usage() {
   printf("\nUsage:\n");
-  printf("  generate --type=={discrete|gaussian|mixture} OPTIONS\n");
-  printf("[OPTIONS]\n");
+  printf("  generate --type=={discrete|gaussian|mixture} OPTCLINS\n");
+  printf("[OPTCLINS]\n");
   printf("  --profile=file   : file contains HMM profile\n");
   printf("  --length=NUM     : sequence length\n");
   printf("  --lenmax=NUM     : maximum sequence length, default = length\n");

@@ -19,8 +19,8 @@
  *     (AAAI-06), 2006.
  */
 
-#ifndef __MLPACK_MVU_OBJECTIVE_FUNCTION_H
-#define __MLPACK_MVU_OBJECTIVE_FUNCTION_H
+#ifndef __MLPACK_MVU_OBJECTIVE_FUNCTCLIN_H
+#define __MLPACK_MVU_OBJECTIVE_FUNCTCLIN_H
 
 #include <fastlib/fastlib.h>
 #include <armadillo>

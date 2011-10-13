@@ -1,5 +1,5 @@
-#ifndef MLPACK_IO_PREFIXED_OUT_STREAM_IMPL_H
-#define MLPACK_IO_PREFIXED_OUT_STREAM_IMPL_H
+#ifndef MLPACK_CLI_PREFIXED_OUT_STREAM_IMPL_H
+#define MLPACK_CLI_PREFIXED_OUT_STREAM_IMPL_H
 
 template<typename T>
 PrefixedOutStream& PrefixedOutStream::operator<<(T s) {
@@ -79,4 +79,4 @@ void PrefixedOutStream::PrefixIfNeeded() {
   }
 }
 
-#endif //MLPACK_IO_PREFIXED_OUT_STREAM_IMPL_H
+#endif //MLPACK_CLI_PREFIXED_OUT_STREAM_IMPL_H

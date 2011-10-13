@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef MATCHER_GENERATION_H
-#define MATCHER_GENERATION_H
+#ifndef MATCHER_GENERATCLIN_H
+#define MATCHER_GENERATCLIN_H
 
 #include "fastlib/fastlib.h"
 

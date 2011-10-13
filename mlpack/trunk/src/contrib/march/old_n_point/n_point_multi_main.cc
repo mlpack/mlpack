@@ -41,11 +41,11 @@ using namespace mlpack;
 
 int main(int argc, char* argv[]) {
 
-  IO::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, argv);
   
   // read in data and parameters
   
-  std::string data_filename = IO::GetParam<std::string>("data");
+  std::string data_filename = CLI::GetParam<std::string>("data");
   arma::mat data_in, data_mat;
   data_in.load(data_filename, arma::raw_ascii);
   
@@ -62,15 +62,15 @@ int main(int argc, char* argv[]) {
   
   arma::colvec weights;  
   //if (fx_param_exists(NULL, "weights")) {
-  if (IO::HasParam("weighted_computation")) {
-    weights.load(IO::GetParam<std::string>("weights"));
+  if (CLI::HasParam("weighted_computation")) {
+    weights.load(CLI::GetParam<std::string>("weights"));
   }
   else {
     weights.set_size(data_mat.n_cols);
     weights.fill(1.0);
   }
   
-  std::string random_filename = IO::GetParam<std::string>("random");
+  std::string random_filename = CLI::GetParam<std::string>("random");
   
   arma::mat random_in, random_mat;
   random_in.load(random_filename, arma::raw_ascii);
@@ -88,8 +88,8 @@ int main(int argc, char* argv[]) {
   
   arma::colvec random_weights;  
   //if (fx_param_exists(NULL, "weights")) {
-  if (IO::HasParam("weighted_computation")) {
-    random_weights.load(IO::GetParam<std::string>("random_weights"));
+  if (CLI::HasParam("weighted_computation")) {
+    random_weights.load(CLI::GetParam<std::string>("random_weights"));
   }
   else {
     random_weights.set_size(random_mat.n_cols);
@@ -100,11 +100,11 @@ int main(int argc, char* argv[]) {
   
   // input format: each row is a pair (min, max, num)
 
-  double bandwidth = IO::GetParam<double>("bandwidth");
+  double bandwidth = CLI::GetParam<double>("bandwidth");
   
   //std::string matcher_filename = fx_param_str(NULL, "matchers",
   //                                            "test_matchers.csv");
-  std::string matcher_filename = IO::GetParam<std::string>("matchers");
+  std::string matcher_filename = CLI::GetParam<std::string>("matchers");
   
   arma::mat matcher_mat;
   matcher_mat.load(matcher_filename, arma::raw_ascii);
@@ -133,11 +133,11 @@ int main(int argc, char* argv[]) {
   
   // run algorithm
   
-  if (IO::HasParam("do_naive")) {
+  if (CLI::HasParam("do_naive")) {
     
     Log::Info << "\nDoing naive.\n";
     
-    IO::StartTimer("naive_time");
+    CLI::StartTimer("naive_time");
     
     
     for (size_t i = 0; i < generator.num_matchers(); i++) {
@@ -156,19 +156,19 @@ int main(int argc, char* argv[]) {
       
     }
     
-    IO::StopTimer("naive_time");
+    CLI::StopTimer("naive_time");
     
   } // do naive
   
   
-  size_t leaf_size = (size_t)IO::GetParam<int>("leaf_size");
+  size_t leaf_size = (size_t)CLI::GetParam<int>("leaf_size");
   
   
-  if (IO::HasParam("do_single_bandwidth")) {
+  if (CLI::HasParam("do_single_bandwidth")) {
     
     Log::Info << "\nDoing single bandwidth.\n";
 
-    IO::StartTimer("single_bandwidth_time");
+    CLI::StartTimer("single_bandwidth_time");
     
     
     for (size_t i = 0; i < generator.num_matchers(); i++) {
@@ -192,18 +192,18 @@ int main(int argc, char* argv[]) {
       
     }
       
-    IO::StopTimer("single_bandwidth_time");
+    CLI::StopTimer("single_bandwidth_time");
     
     
   } // single bandwidth
   
   
   
-  if (IO::HasParam("do_perm_free")) {
+  if (CLI::HasParam("do_perm_free")) {
     
     Log::Info << "\nDoing permutation free.\n";
 
-    IO::StartTimer("perm_free_time");
+    CLI::StartTimer("perm_free_time");
     
     for (size_t i = 0; i < generator.num_matchers(); i++) {
       
@@ -220,17 +220,17 @@ int main(int argc, char* argv[]) {
       
     }
     
-    IO::StopTimer("perm_free_time");
+    CLI::StopTimer("perm_free_time");
     
   } // perm free
   
 
-  if (IO::HasParam("do_multi")) {
+  if (CLI::HasParam("do_multi")) {
     
     Log::Info << "\nDoing Multi Bandwidth\n";
 
         
-    IO::StartTimer("multi_time");
+    CLI::StartTimer("multi_time");
     
     MultiBandwidthAlg alg(data_mat, weights, random_mat, random_weights, 
                           leaf_size, tuple_size,
@@ -240,7 +240,7 @@ int main(int argc, char* argv[]) {
     
     alg.OutputResults();
 
-    IO::StopTimer("multi_time");
+    CLI::StopTimer("multi_time");
     
   } // multi
 

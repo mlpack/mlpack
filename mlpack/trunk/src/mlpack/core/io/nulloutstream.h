@@ -1,5 +1,5 @@
-#ifndef MLPACK_IO_NULL_OUT_STREAM_H
-#define MLPACK_IO_NULL_OUT_STREAM_H
+#ifndef MLPACK_CLI_NULL_OUT_STREAM_H
+#define MLPACK_CLI_NULL_OUT_STREAM_H
 
 #include <iostream>
 #include <streambuf>
@@ -10,7 +10,7 @@ namespace io {
 
 /***
  * The NullOutStream is used in place of regular PrefixOutStreams for
- * the IO debug output when DEBUG symbols are not defined.  It does nothing
+ * the CLI debug output when DEBUG symbols are not defined.  It does nothing
  * Hopefully the optimizer will realize this and optimize it out.
  */
 class NullOutStream {
@@ -55,4 +55,4 @@ class NullOutStream {
 } // namespace io
 } // namespace mlpack
 
-#endif //MLPACK_IO_NULL_OUT_STREAM_H
+#endif //MLPACK_CLI_NULL_OUT_STREAM_H

@@ -1,5 +1,5 @@
-#ifndef RATIO_H
-#define RATIO_H
+#ifndef RATCLI_H
+#define RATCLI_H
 
 #include "operator.h"
 

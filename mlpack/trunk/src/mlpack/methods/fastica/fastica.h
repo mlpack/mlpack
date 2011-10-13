@@ -27,7 +27,7 @@ namespace fastica {
 #define SKEW 30
 
 #define SYMMETRIC 0
-#define DEFLATION 1
+#define DEFLATCLIN 1
 
 /***
  * Parameters for FastICA.
@@ -436,15 +436,15 @@ class FastICA {
     d = X.n_rows;
     n = X.n_cols;
 
-    long seed = mlpack::IO::GetParam<int>("fastica/seed") + clock() + time(0);
+    long seed = mlpack::CLI::GetParam<int>("fastica/seed") + clock() + time(0);
     srand48(seed);
 
 
     const char* string_approach =
-      mlpack::IO::GetParam<std::string>("fastica/approach").c_str();
+      mlpack::CLI::GetParam<std::string>("fastica/approach").c_str();
     if(strcasecmp(string_approach, "deflation") == 0) {
       mlpack::Log::Info << "Using Deflation approach ";
-      approach_ = DEFLATION;
+      approach_ = DEFLATCLIN;
     }
     else if(strcasecmp(string_approach, "symmetric") == 0) {
       mlpack::Log::Info << "Using Symmetric approach ";
@@ -456,7 +456,7 @@ class FastICA {
     }
 
     const char* string_nonlinearity =
-      mlpack::IO::GetParam<std::string>("fastica/nonlinearity").c_str();
+      mlpack::CLI::GetParam<std::string>("fastica/nonlinearity").c_str();
     if(strcasecmp(string_nonlinearity, "logcosh") == 0) {
       mlpack::Log::Info << "with log cosh nonlinearity." << std::endl;
       nonlinearity_ = LOGCOSH;
@@ -481,7 +481,7 @@ class FastICA {
     //const size_t first_eig_ = fx_param_int(module_, "first_eig", 1);
     // for now, the last eig must be d, and num_of IC must be d, until I have time to incorporate PCA into this code
     //const size_t last_eig_ = fx_param_int(module_, "last_eig", d);
-    num_of_IC_ = mlpack::IO::GetParam<int>("fastica/num_of_IC");
+    num_of_IC_ = mlpack::CLI::GetParam<int>("fastica/num_of_IC");
     if(num_of_IC_ < 1 || num_of_IC_ > d) {
       mlpack::Log::Fatal << "ERROR: num_of_IC = " << num_of_IC_ <<
           " must be >= 1 and <= dimensionality of data" << std::endl;
@@ -489,29 +489,29 @@ class FastICA {
       return false;
     }
 
-    fine_tune_ = mlpack::IO::GetParam<bool>("fastica/fine_tune");
-    a1_ = mlpack::IO::GetParam<double>("fastica/a1");
-    a2_ = mlpack::IO::GetParam<double>("fastica/a2");
-    mu_ = mlpack::IO::GetParam<double>("fastica/mu");
-    stabilization_ = mlpack::IO::GetParam<bool>("fastica/stabilization");
-    epsilon_ = mlpack::IO::GetParam<double>("fastica/epsilon");
+    fine_tune_ = mlpack::CLI::GetParam<bool>("fastica/fine_tune");
+    a1_ = mlpack::CLI::GetParam<double>("fastica/a1");
+    a2_ = mlpack::CLI::GetParam<double>("fastica/a2");
+    mu_ = mlpack::CLI::GetParam<double>("fastica/mu");
+    stabilization_ = mlpack::CLI::GetParam<bool>("fastica/stabilization");
+    epsilon_ = mlpack::CLI::GetParam<double>("fastica/epsilon");
 
     size_t int_max_num_iterations =
-      mlpack::IO::GetParam<int>("fastica/max_num_iterations");
+      mlpack::CLI::GetParam<int>("fastica/max_num_iterations");
     if(int_max_num_iterations < 0) {
       mlpack::Log::Fatal << "max_num_iterations (" << int_max_num_iterations
           << ") must be greater than or equal to 0!" << std::endl;
     }
     max_num_iterations_ = (size_t) int_max_num_iterations;
 
-    size_t int_max_fine_tune = mlpack::IO::GetParam<int>("fastica/max_fine_tune");
+    size_t int_max_fine_tune = mlpack::CLI::GetParam<int>("fastica/max_fine_tune");
     if(int_max_fine_tune < 0) {
       mlpack::Log::Fatal << "max_fine_tune (" << int_max_fine_tune
           << ") must be greater than or equal to 0!" << std::endl;
     }
     max_fine_tune_ = (size_t) int_max_fine_tune;
 
-    percent_cut_ = mlpack::IO::GetParam<double>("fastica/percent_cut");
+    percent_cut_ = mlpack::CLI::GetParam<double>("fastica/percent_cut");
     if((percent_cut_ < 0) || (percent_cut_ > 1)) {
       mlpack::Log::Fatal << "percent_cut (" << percent_cut_ << ") must be "
           "between 0 and 1!" << std::endl;
@@ -1108,7 +1108,7 @@ class FastICA {
 			       X, B, W,
 			       whitening_matrix);
     }
-    else if(approach_ == DEFLATION) {
+    else if(approach_ == DEFLATCLIN) {
       ret_val =
 	DeflationFixedPointICA(stabilization_enabled, fine_tuning_enabled,
 			       mu_orig, mu_k, failure_limit,

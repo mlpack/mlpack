@@ -1,13 +1,13 @@
-#ifndef MLPACK_IO_IO_IMPL_H
-#define MLPACK_IO_IO_IMPL_H
+#ifndef MLPACK_CLI_CLI_IMPL_H
+#define MLPACK_CLI_CLI_IMPL_H
 
-//Include option.h here because it requires IO but is also templated
+//Include option.h here because it requires CLI but is also templated
 #include "option.h"
 
 namespace mlpack {
 
 /**
-* @brief Adds a parameter to IO, making it accessibile via GetParam &
+* @brief Adds a parameter to CLI, making it accessibile via GetParam &
 *     CheckValue.
 *
 * @tparam T The type of the parameter.
@@ -19,15 +19,15 @@ namespace mlpack {
 *   unless the parameter is specified.
 */
 template<typename T>
-void IO::Add(const char* identifier,
+void CLI::Add(const char* identifier,
              const char* description,
              const char* parent,
              bool required) {
 
-  po::options_description& desc = IO::GetSingleton().desc;
+  po::options_description& desc = CLI::GetSingleton().desc;
   //Generate the full pathname and insert the node into the hierarchy
   std::string tmp = TYPENAME(T);
-  std::string path = IO::GetSingleton().ManageHierarchy(identifier, parent,
+  std::string path = CLI::GetSingleton().ManageHierarchy(identifier, parent,
     tmp, description);
 
   //Add the option to boost program_options
@@ -49,10 +49,10 @@ void IO::Add(const char* identifier,
  * @param identifier The full pathname of the parameter.
  *
  * @return The value of the parameter.
- *   Use IO::CheckValue to determine if it's valid.
+ *   Use CLI::CheckValue to determine if it's valid.
  */
 template<typename T>
-T& IO::GetParam(const char* identifier) {
+T& CLI::GetParam(const char* identifier) {
   // Used to ensure we have a valid value
   T tmp = T();
 

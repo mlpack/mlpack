@@ -563,20 +563,20 @@ class DualTreeBoruvka {
     number_of_edges_ = 0;
     data_points_ = data; // copy
 
-    do_naive_ = IO::GetParam<bool>("naive/do_naive");
+    do_naive_ = CLI::GetParam<bool>("naive/do_naive");
 
     if (!do_naive_) {
       // Default leaf size is 1
       // This gives best pruning empirically
       // Use leaf_size=1 unless space is a big concern
-      IO::GetParam<int>("tree/leaf_size") =
-          IO::GetParam<size_t>("naive/leaf_size");
+      CLI::GetParam<int>("tree/leaf_size") =
+          CLI::GetParam<size_t>("naive/leaf_size");
 
-      IO::StartTimer("naive/tree_building");
+      CLI::StartTimer("naive/tree_building");
 
       tree_ = new DTBTree(data_points_, old_from_new_permutation_);
 
-      IO::StopTimer("naive/tree_building");
+      CLI::StopTimer("naive/tree_building");
     }
     else {
       tree_ = NULL;
@@ -609,7 +609,7 @@ class DualTreeBoruvka {
    */
   void ComputeMST(arma::mat& results) {
 
-    IO::StartTimer("emst/MST_computation");
+    CLI::StartTimer("emst/MST_computation");
 
     while (number_of_edges_ < (number_of_points_ - 1)) {
       ComputeNeighbors_();
@@ -621,7 +621,7 @@ class DualTreeBoruvka {
       Log::Info << "number_of_loops = " << number_of_loops_ << std::endl;
     }
 
-    IO::StopTimer("emst/MST_computation");
+    CLI::StopTimer("emst/MST_computation");
 
 //    if (results != NULL) {
 

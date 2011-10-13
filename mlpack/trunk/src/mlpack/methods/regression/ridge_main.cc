@@ -45,28 +45,28 @@ PARAM_INT("num_lambdas", "The number of lamdas to try for CV (set to 1 by defaul
  "ridge", 1);
 
 int main(int argc, char** argv) {
-  IO::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, argv);
 
-  double lambda_min = IO::GetParam<double>("ridge/lambda_min");
-  double lambda_max = IO::GetParam<double>("ridge/lambda_max");
-  int num_lambdas_to_cv = IO::GetParam<int>("ridge/num_lambdas");
+  double lambda_min = CLI::GetParam<double>("ridge/lambda_min");
+  double lambda_max = CLI::GetParam<double>("ridge/lambda_max");
+  int num_lambdas_to_cv = CLI::GetParam<int>("ridge/num_lambdas");
 
-  std::string mode = IO::GetParam<std::string>("ridge/mode");
+  std::string mode = CLI::GetParam<std::string>("ridge/mode");
   if(lambda_min == lambda_max) {
     num_lambdas_to_cv = 1;
     if(mode == "crossvalidate") {
-      IO::GetParam<std::string>("ridge/mode") = "regress";
-      mode = IO::GetParam<std::string>("ridge/mode");
+      CLI::GetParam<std::string>("ridge/mode") = "regress";
+      mode = CLI::GetParam<std::string>("ridge/mode");
     }
   }
   else {
-    IO::GetParam<std::string>("ridge/mode") = "cvregress";
-    mode = IO::GetParam<std::string>("ridge/mode");
+    CLI::GetParam<std::string>("ridge/mode") = "cvregress";
+    mode = CLI::GetParam<std::string>("ridge/mode");
   }
 
   // Read the dataset and its labels.
-  std::string predictors_file = IO::GetParam<std::string>("ridge/predictors");
-  std::string predictions_file = IO::GetParam<std::string>("ridge/predictions");
+  std::string predictors_file = CLI::GetParam<std::string>("ridge/predictors");
+  std::string predictions_file = CLI::GetParam<std::string>("ridge/predictions");
 
   arma::mat predictors;
   if (data::Load(predictors_file.c_str(), predictors) == false) {
@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
   if(mode == "regress") {
 
     engine = RidgeRegression(predictors, predictions,
-		IO::GetParam<std::string>("ridge/inversion_method") == "normalsvd");
+		CLI::GetParam<std::string>("ridge/inversion_method") == "normalsvd");
     engine.QRRegress(lambda_min);
   }
   else if(mode == "cvregress") {
@@ -103,9 +103,9 @@ int main(int argc, char** argv) {
     arma::mat predictor_indices_intermediate;
     arma::mat prune_predictor_indices_intermediate;
     std::string predictor_indices_file =
-      IO::GetParam<std::string>("ridge/predictor_indices");
+      CLI::GetParam<std::string>("ridge/predictor_indices");
     std::string prune_predictor_indices_file =
-      IO::GetParam<std::string>("ridge/prune_predictor_indices");
+      CLI::GetParam<std::string>("ridge/prune_predictor_indices");
     if(data::Load(predictor_indices_file.c_str(),
 	  predictor_indices_intermediate) == false) {
       Log::Fatal << "Unable to open file " << prune_predictor_indices_file << std::endl;
@@ -130,10 +130,10 @@ int main(int argc, char** argv) {
   Log::Info << "Ridge Regression Model Training Complete!" << std::endl;
   double square_error = engine.ComputeSquareError();
   Log::Info << "Square Error: " << square_error << std::endl;
-  IO::GetParam<double>("ridge/square error") = square_error;
+  CLI::GetParam<double>("ridge/square error") = square_error;
   arma::mat factors;
   engine.factors(&factors);
-  std::string factors_file = IO::GetParam<std::string>("ridge/factors");
+  std::string factors_file = CLI::GetParam<std::string>("ridge/factors");
   Log::Info << "Saving factors..." << std::endl;
   data::Save(factors_file.c_str(), factors);
 

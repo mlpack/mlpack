@@ -542,7 +542,7 @@ void HCY<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   /* Building kd trees. Here we choose balanced median-split kd-trees */
 
   // Only copy data, but not labels
-  // CAUTION: THESE 2 DATA MATRICES of the bi-classes dataset_in WILL BE REARRANGED AFTER BUILDING TREES
+  // CAUTCLIN: THESE 2 DATA MATRICES of the bi-classes dataset_in WILL BE REARRANGED AFTER BUILDING TREES
   Matrix datamatrix_pos; // alias for the data matrix of the positive class 1, excluding last label row
   Matrix datamatrix_neg; // alias for the data matrix of the negative class -1, excluding last label row
   ArrayList<size_t> kdtree_old_from_new_pos; // not used

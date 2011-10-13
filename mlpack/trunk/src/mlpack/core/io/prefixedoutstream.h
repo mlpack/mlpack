@@ -1,5 +1,5 @@
-#ifndef MLPACK_IO_PREFIXED_OUT_STREAM_H
-#define MLPACK_IO_PREFIXED_OUT_STREAM_H
+#ifndef MLPACK_CLI_PREFIXED_OUT_STREAM_H
+#define MLPACK_CLI_PREFIXED_OUT_STREAM_H
 
 #include <iostream>
 #include <iomanip>
@@ -28,7 +28,7 @@ namespace io {
  * [TEST] Hello world I like 7.5...Continue
  * [TEST] After the CR
  *
- * These objects are used for the IO logging levels (DEBUG, INFO, WARN, and
+ * These objects are used for the CLI logging levels (DEBUG, INFO, WARN, and
  * FATAL).
  */
 class PrefixedOutStream {

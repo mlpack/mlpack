@@ -7,8 +7,8 @@
  * uses the L-BFGS optimizer.
  */
 
-#ifndef __OPTIMIZATION_AUG_LAGRANGIAN_H
-#define __OPTIMIZATION_AUG_LAGRANGIAN_H
+#ifndef __OPTIMIZATCLIN_AUG_LAGRANGIAN_H
+#define __OPTIMIZATCLIN_AUG_LAGRANGIAN_H
 
 #include <mlpack/core.h>
 

@@ -44,7 +44,7 @@ const fx_module_doc param_doc = {
 class DualPhysicsSystem{
 
   static const int FREE = 0;
-  static const int PERIODIC = 1;
+  static const int PERCLIDIC = 1;
   static const int FIXED = 2;
   static const int CUTOFF = 0;
   static const int POTENTIAL = 1;
@@ -80,7 +80,7 @@ private:
   void TwoBodyForce_(ParticleTree* left, ParticleTree* right){ 
     Vector force;
     la::SubInit(right->stat().centroid_, left->stat().centroid_, &force);
-    if (boundary_ == PERIODIC){
+    if (boundary_ == PERCLIDIC){
       AdjustVector_(&force);
     }
     double dist, coef = 0, temp;
@@ -105,7 +105,7 @@ private:
     atoms_.MakeColumnSubvector(left, 0, 3, &left_vec);
     atoms_.MakeColumnSubvector(right, 0, 3, &right_vec);
     la::SubInit(right_vec, left_vec, &delta_r);
-    if (boundary_ == PERIODIC){
+    if (boundary_ == PERCLIDIC){
       AdjustVector_(&delta_r);
     }
     double dist = sqrt(la::Dot(delta_r, delta_r));
@@ -291,7 +291,7 @@ private:
     ForceError err_q2;
     err_q2.Copy(err_q);    
     double d1, d2;
-    if (boundary_ == PERIODIC){
+    if (boundary_ == PERCLIDIC){
       d1 = ref->bound().PeriodicMinDistanceSq(query->left()->bound(), 
 					      dimensions_);
       d2 = ref->bound().PeriodicMinDistanceSq(query->right()->bound(), 
@@ -316,7 +316,7 @@ private:
     int result = 0;
     if (prune_ == CUTOFF){
       double a_min;   
-      if (boundary_ == PERIODIC){
+      if (boundary_ == PERCLIDIC){
 	a_min = sqrt(i->bound().PeriodicMinDistanceSq(j->bound(),dimensions_));
       } else {
 	a_min = sqrt(i->bound().MinDistanceSq(j->bound()));   
@@ -503,7 +503,7 @@ private:
   void RaddistExternal_(RadDist* raddist, ParticleTree* query, 
 			ParticleTree* ref){    
     double r_min;
-    if (boundary_ == PERIODIC){
+    if (boundary_ == PERCLIDIC){
       r_min = sqrt(query->bound().PeriodicMinDistanceSq(ref->bound(),
 							dimensions_));
     } else {    
@@ -541,7 +541,7 @@ private:
 	atoms_.MakeColumnSubvector(i, 0, 3, &left_vec);
 	atoms_.MakeColumnSubvector(j, 0, 3, &right_vec);
 	la::SubInit(right_vec, left_vec, &delta_r);
-	if (boundary_ == PERIODIC){
+	if (boundary_ == PERCLIDIC){
 	  AdjustVector_(&delta_r);
 	}
 	double dist = sqrt(la::Dot(delta_r, delta_r));
@@ -558,7 +558,7 @@ private:
 	  atoms_.MakeColumnSubvector(i, 0, 3, &left_vec);
 	  atoms_.MakeColumnSubvector(j, 0, 3, &right_vec);
 	  la::SubInit(right_vec, left_vec, &delta_r);
-	  if (boundary_ == PERIODIC){
+	  if (boundary_ == PERCLIDIC){
 	    AdjustVector_(&delta_r);
 	  }
 	  double dist = sqrt(la::Dot(delta_r, delta_r));
@@ -597,7 +597,7 @@ public:
     dims[0] = 0;
     dims[1] = 1;
     dims[2] = 2;
-    boundary_ = fx_param_int(param, "bc", PERIODIC);
+    boundary_ = fx_param_int(param, "bc", PERCLIDIC);
     dimensions_.Init(3);
     dimensions_[0] = fx_param_double(param, "lx", 60);
     dimensions_[1] = fx_param_double(param, "ly", 60);
@@ -803,7 +803,7 @@ public:
       atoms_.MakeColumnSubvector(j, 0, 3, &pos_1);
       comp_sys->atoms_.MakeColumnSubvector(i, 0, 3, &pos_2);
       la::SubInit(pos_1, pos_2, &delta_r);
-      if (boundary_ == PERIODIC){
+      if (boundary_ == PERCLIDIC){
 	AdjustVector_(&delta_r);
       }
       rms_deviation = rms_deviation + la::Dot(delta_r, delta_r);; 
@@ -845,7 +845,7 @@ public:
 	j = old_from_new_map_[j];
       }
       atoms_.MakeColumnSubvector(j, 0, 3, &temp);
-      if (boundary_ == PERIODIC){
+      if (boundary_ == PERCLIDIC){
 	AdjustVector_(&temp);
       }
       fprintf(fp, " %16.8f, %16.8f, %16.8f \n", temp[0], temp[1], temp[2]);   

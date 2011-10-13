@@ -55,13 +55,13 @@ int main(int argc, char *argv[]) {
   using namespace mlpack;
   using namespace fastica;
 
-  IO::ParseCommandLine(argc, argv);
-  const char* data = IO::GetParam<std::string>("fastica/input_file").c_str();
+  CLI::ParseCommandLine(argc, argv);
+  const char* data = CLI::GetParam<std::string>("fastica/input_file").c_str();
   data::Load(data, X);
 
-  const char* ic_filename = IO::GetParam<std::string>("fastica/ic_file").c_str();
+  const char* ic_filename = CLI::GetParam<std::string>("fastica/ic_file").c_str();
   const char* unmixing_filename =
-    IO::GetParam<std::string>("fastica/unmixing_file").c_str();
+    CLI::GetParam<std::string>("fastica/unmixing_file").c_str();
 
   FastICA fastica;
 

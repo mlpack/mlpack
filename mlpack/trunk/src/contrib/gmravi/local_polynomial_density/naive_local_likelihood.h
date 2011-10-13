@@ -212,7 +212,7 @@ template <typename TKernel> class NaiveLocalLikelihood{
 	      
 	    }
 	  else{
-	    /*  printf("WRONG CALCULATIONS.........\n");
+	    /*  printf("WRONG CALCULATCLINS.........\n");
 
 	    printf("kernel contrib with product is %f\n",
 	    fabs(kernel_contrib_with_product));

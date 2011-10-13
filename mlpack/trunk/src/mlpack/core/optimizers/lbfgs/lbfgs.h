@@ -5,8 +5,8 @@
  *  @file lbfgs.h
  */
 
-#ifndef OPTIMIZATION_LBFGS_H
-#define OPTIMIZATION_LBFGS_H
+#ifndef OPTIMIZATCLIN_LBFGS_H
+#define OPTIMIZATCLIN_LBFGS_H
 
 #include <mlpack/core.h>
 

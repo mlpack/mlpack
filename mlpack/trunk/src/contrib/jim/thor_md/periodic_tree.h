@@ -1,5 +1,5 @@
-#ifndef PERIODIC_TREE_H
-#define PERIODIC_TREE_H
+#ifndef PERCLIDIC_TREE_H
+#define PERCLIDIC_TREE_H
 
 #include <fastlib/fastlib.h>
 #include "fastlib/tree/bounds.h"

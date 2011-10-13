@@ -1,5 +1,5 @@
-#ifndef FUNCTION_H
-#define FUNCTION_H
+#ifndef FUNCTCLIN_H
+#define FUNCTCLIN_H
 
 #include "fastlib/fastlib.h"
 #include "operator.h"

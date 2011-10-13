@@ -14,7 +14,7 @@ void OCASSMO::get_dual_solution(Vector &return_val){
   return_val.CopyValues(alpha_vec_);
 }
 
-//////////////*** SMO OPTIMIZATION PROBLEM//////////////////////////
+//////////////*** SMO OPTIMIZATCLIN PROBLEM//////////////////////////
 
 /** This simply resets the position of the variable that we are
  *  currently examining. So that we recalculate its position.
@@ -1322,9 +1322,9 @@ void OCASSMO::SMOMainRoutine_(){
   bool examine_all_subgradients=true;
 
   int num_iterations=0;
-  int MAX_NUM_ITERATIONS=200000;
+  int MAX_NUM_ITERATCLINS=200000;
   while((num_changed>0||examine_all_subgradients)&&num_iterations<
-	MAX_NUM_ITERATIONS){
+	MAX_NUM_ITERATCLINS){
 
     //printf("hi....\n");
     
@@ -1381,8 +1381,8 @@ void OCASSMO::SMOMainRoutine_(){
     num_iterations++;
   }
 
-  if(num_iterations==MAX_NUM_ITERATIONS){
-    printf("CAUTION: SMO used all iterations\n");
+  if(num_iterations==MAX_NUM_ITERATCLINS){
+    printf("CAUTCLIN: SMO used all iterations\n");
 
     printf("lambda=%f,bandwidth=%f...\n",
 	   lambda_reg_const_,smoothing_kernel_bandwidth_);

@@ -47,7 +47,7 @@ const fx_module_doc param_doc = {
 class ThorMD {
   
   static const int FREE = 0;
-  static const int PERIODIC = 1;
+  static const int PERCLIDIC = 1;
   static const int FIXED = 2;
   static const int CUTOFF = 0;
   static const int POTENTIAL = 1;
@@ -112,8 +112,8 @@ class ThorMD {
      */
     void Init(datanode *module) {
       // Bounding Box
-      bound_type_ = fx_param_int(module, "bc", PERIODIC);
-      if (bound_type_ == PERIODIC){
+      bound_type_ = fx_param_int(module, "bc", PERCLIDIC);
+      if (bound_type_ == PERCLIDIC){
 	box_size_.Init(3);
 	box_size_[0] = fx_param_double(module, "lx", 60);
 	box_size_[1] = fx_param_double(module, "ly", box_size_[0]);
@@ -183,7 +183,7 @@ class ThorMD {
       vel_.Init(3);
       axilrod_.Init(2);     
       coefs_.Init( (param.potential_).n_terms());      
-      if (param.bound_type_ == PERIODIC){
+      if (param.bound_type_ == PERCLIDIC){
 	crossing_.Init(3);
 	crossing_.SetZero();
       } else {
@@ -601,7 +601,7 @@ class ThorMD {
       double bound;
       if (param.prune_type_ == CUTOFF){
 	// Check distances
-	if (param.bound_type_ == PERIODIC){
+	if (param.bound_type_ == PERCLIDIC){
 	  bound = prdc::MinDistanceSq(r_node.bound(), q.pos_,
 					  param.box_size_);
 	} else {
@@ -715,7 +715,7 @@ class ThorMD {
       if (param.prune_type_ == CUTOFF){
 	// Check distances
 	double dij, djk, dki;
-	if (param.bound_type_ == PERIODIC){
+	if (param.bound_type_ == PERCLIDIC){
 	  dij = prdc::MinDistanceSq(r_node2.bound(), q.pos_, param.box_size_);
 	  dki = prdc::MinDistanceSq(r_node1.bound(), q.pos_, param.box_size_);
 	  djk = prdc::MinDistanceSq(r_node2.bound(), r_node1.bound(), 
@@ -823,7 +823,7 @@ class ThorMD {
       if (param.prune_type_ == CUTOFF){
 	// compute distance bound between two nodes
 	double dist;
-	if (likely(param.bound_type_ == PERIODIC)){
+	if (likely(param.bound_type_ == PERCLIDIC)){
 	  dist = prdc::MinDistanceSq(q_node.bound(), r_node.bound(), 
 					 param.box_size_);	
 	} else {
@@ -859,7 +859,7 @@ class ThorMD {
 
       if (param.prune_type_ == CUTOFF) {
 	double dij, djk, dki;
-	if (likely(param.bound_type_ == PERIODIC)){
+	if (likely(param.bound_type_ == PERCLIDIC)){
 	  dij = prdc::MinDistanceSq(q_node.bound(), r_node1.bound(), 
 				    param.box_size_);	 
 	  dki = prdc::MinDistanceSq(q_node.bound(), r_node2.bound(), 
@@ -966,7 +966,7 @@ class ThorMD {
     static double Heuristic(const Param& param, const QNode& q_node,
 			    const RNode& r_node, const Delta& delta) {
       double dist;
-      if (likely(param.bound_type_ == PERIODIC)){
+      if (likely(param.bound_type_ == PERCLIDIC)){
 	dist = prdc::MinDistanceSq(r_node.bound(), q_node.bound(),
 				   param.box_size_);
       } else {
@@ -979,7 +979,7 @@ class ThorMD {
 			    const RNode& r_node1, const RNode& r_node2, 
 			    const Delta& delta) {
       double dist;
-      if (likely(param.bound_type_ == PERIODIC)){
+      if (likely(param.bound_type_ == PERCLIDIC)){
 	return 1;
 	/*
 	dist = 
@@ -1138,7 +1138,7 @@ class ThorMD {
       for (size_t i = 0; i < parameters_.query_count_; i++,
 	     result_iter.Next(), points_iter.Next()) {
 	(*points_iter).Accelerate((*result_iter).old_acceleration_, time_step);
-	if (parameters_.bound_type_ ==PERIODIC){
+	if (parameters_.bound_type_ ==PERCLIDIC){
 	  (*points_iter).MapBack(parameters_.box_size_);
 	}
       }

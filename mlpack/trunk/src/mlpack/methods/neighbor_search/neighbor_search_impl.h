@@ -23,8 +23,8 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& queries_in,
     queries_(queries_in.memptr(), queries_in.n_rows, queries_in.n_cols,
         !alias_matrix),
     kernel_(kernel),
-    naive_(IO::GetParam<bool>("neighbor_search/naive_mode")),
-    dual_mode_(!(naive_ || IO::GetParam<bool>("neighbor_search/single_mode"))),
+    naive_(CLI::GetParam<bool>("neighbor_search/naive_mode")),
+    dual_mode_(!(naive_ || CLI::GetParam<bool>("neighbor_search/single_mode"))),
     number_of_prunes_(0) {
 
   // C++0x will allow us to call out to other constructors so we can avoid this
@@ -32,11 +32,11 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& queries_in,
 
   // Get the leaf size; naive ensures that the entire tree is one node
   if (naive_)
-    IO::GetParam<int>("tree/leaf_size") =
+    CLI::GetParam<int>("tree/leaf_size") =
         std::max(queries_.n_cols, references_.n_cols);
 
   // K-nearest neighbors initialization
-  knns_ = IO::GetParam<int>("neighbor_search/k");
+  knns_ = CLI::GetParam<int>("neighbor_search/k");
 
   // Initialize the list of nearest neighbor candidates
   neighbor_indices_.set_size(knns_, queries_.n_cols);
@@ -46,7 +46,7 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& queries_in,
   neighbor_distances_.fill(SortPolicy::WorstDistance());
 
   // We'll time tree building
-  IO::StartTimer("neighbor_search/tree_building");
+  CLI::StartTimer("neighbor_search/tree_building");
 
   // This call makes each tree from a matrix, leaf size, and two arrays
   // that record the permutation of the data points
@@ -54,7 +54,7 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& queries_in,
   reference_tree_ = new TreeType(references_, old_from_new_references_);
 
   // Stop the timer we started above
-  IO::StopTimer("neighbor_search/tree_building");
+  CLI::StopTimer("neighbor_search/tree_building");
 }
 
 // We call an advanced constructor of arma::mat which allows us to alias a
@@ -68,17 +68,17 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& references_in,
     queries_(references_.memptr(), references_.n_rows, references_.n_cols,
         false),
     kernel_(kernel),
-    naive_(IO::GetParam<bool>("neighbor_search/naive_mode")),
-    dual_mode_(!(naive_ || IO::GetParam<bool>("neighbor_search/single_mode"))),
+    naive_(CLI::GetParam<bool>("neighbor_search/naive_mode")),
+    dual_mode_(!(naive_ || CLI::GetParam<bool>("neighbor_search/single_mode"))),
     number_of_prunes_(0) {
 
   // Get the leaf size from the module
   if (naive_)
-    IO::GetParam<int>("tree/leaf_size") =
+    CLI::GetParam<int>("tree/leaf_size") =
         std::max(queries_.n_cols, references_.n_cols);
 
   // K-nearest neighbors initialization
-  knns_ = IO::GetParam<int>("neighbor_search/k");
+  knns_ = CLI::GetParam<int>("neighbor_search/k");
 
   // Initialize the list of nearest neighbor candidates
   neighbor_indices_.set_size(knns_, references_.n_cols);
@@ -88,7 +88,7 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& references_in,
   neighbor_distances_.fill(SortPolicy::WorstDistance());
 
   // We'll time tree building
-  IO::StartTimer("neighbor_search/tree_building");
+  CLI::StartTimer("neighbor_search/tree_building");
 
   // This call makes each tree from a matrix, leaf size, and two arrays
   // that record the permutation of the data points
@@ -97,7 +97,7 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& references_in,
   reference_tree_ = new TreeType(references_, old_from_new_references_);
 
   // Stop the timer we started above
-  IO::StopTimer("neighbor_search/tree_building");
+  CLI::StopTimer("neighbor_search/tree_building");
 }
 
 /**
@@ -366,7 +366,7 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeNeighbors(
       arma::Mat<size_t>& resulting_neighbors,
       arma::mat& distances) {
 
-  IO::StartTimer("neighbor_search/computing_neighbors");
+  CLI::StartTimer("neighbor_search/computing_neighbors");
   if (naive_) {
     // Run the base case computation on all nodes
     if (query_tree_)
@@ -405,7 +405,7 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeNeighbors(
     }
   }
 
-  IO::StopTimer("neighbor_search/computing_neighbors");
+  CLI::StopTimer("neighbor_search/computing_neighbors");
 
   // We need to initialize the results list before filling it
   resulting_neighbors.set_size(neighbor_indices_.n_rows,

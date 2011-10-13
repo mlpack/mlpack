@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(TestCaseAngleResampling) {
 
 int main (int argc, char* argv[]) {
 
-  mlpack::IO::ParseCommandLine(argc, argv);
+  mlpack::CLI::ParseCommandLine(argc, argv);
   
   npt::TestAngleResampling angle_test;
 

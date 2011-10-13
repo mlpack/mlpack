@@ -37,7 +37,7 @@
 extern "C" {
 #endif
 
-#define ZLIB_VERSION "1.2.3"
+#define ZLIB_VERSCLIN "1.2.3"
 #define ZLIB_VERNUM 0x1230
 
 /*
@@ -175,15 +175,15 @@ typedef gz_header FAR *gz_headerp;
 #define Z_DATA_ERROR   (-3)
 #define Z_MEM_ERROR    (-4)
 #define Z_BUF_ERROR    (-5)
-#define Z_VERSION_ERROR (-6)
+#define Z_VERSCLIN_ERROR (-6)
 /* Return codes for the compression/decompression functions. Negative
  * values are errors, positive values are used for special but normal events.
  */
 
-#define Z_NO_COMPRESSION         0
+#define Z_NO_COMPRESSCLIN         0
 #define Z_BEST_SPEED             1
-#define Z_BEST_COMPRESSION       9
-#define Z_DEFAULT_COMPRESSION  (-1)
+#define Z_BEST_COMPRESSCLIN       9
+#define Z_DEFAULT_COMPRESSCLIN  (-1)
 /* compression levels */
 
 #define Z_FILTERED            1
@@ -210,7 +210,7 @@ typedef gz_header FAR *gz_headerp;
                         /* basic functions */
 
 ZEXTERN const char * ZEXPORT zlibVersion OF((void));
-/* The application can compare zlibVersion and ZLIB_VERSION for consistency.
+/* The application can compare zlibVersion and ZLIB_VERSCLIN for consistency.
    If the first character differs, the library code actually used is
    not compatible with the zlib.h header file used by the application.
    This check is automatically made by deflateInit and inflateInit.
@@ -224,16 +224,16 @@ ZEXTERN int ZEXPORT deflateInit OF((z_streamp strm, int level));
    If zalloc and zfree are set to Z_NULL, deflateInit updates them to
    use default allocation functions.
 
-     The compression level must be Z_DEFAULT_COMPRESSION, or between 0 and 9:
+     The compression level must be Z_DEFAULT_COMPRESSCLIN, or between 0 and 9:
    1 gives best speed, 9 gives best compression, 0 gives no compression at
    all (the input data is simply copied a block at a time).
-   Z_DEFAULT_COMPRESSION requests a default compromise between speed and
+   Z_DEFAULT_COMPRESSCLIN requests a default compromise between speed and
    compression (currently equivalent to level 6).
 
      deflateInit returns Z_OK if success, Z_MEM_ERROR if there was not
    enough memory, Z_STREAM_ERROR if level is not a valid compression level,
-   Z_VERSION_ERROR if the zlib library version (zlib_version) is incompatible
-   with the version assumed by the caller (ZLIB_VERSION).
+   Z_VERSCLIN_ERROR if the zlib library version (zlib_version) is incompatible
+   with the version assumed by the caller (ZLIB_VERSCLIN).
    msg is set to null if there is no error message.  deflateInit does not
    perform any compression: this will be done by deflate().
 */
@@ -352,7 +352,7 @@ ZEXTERN int ZEXPORT inflateInit OF((z_streamp strm));
    use default allocation functions.
 
      inflateInit returns Z_OK if success, Z_MEM_ERROR if there was not enough
-   memory, Z_VERSION_ERROR if the zlib library version is incompatible with the
+   memory, Z_VERSCLIN_ERROR if the zlib library version is incompatible with the
    version assumed by the caller.  msg is set to null if there is no error
    message. inflateInit does not perform any decompression apart from reading
    the zlib header if present: this will be done by inflate().  (So next_in and
@@ -870,7 +870,7 @@ ZEXTERN int ZEXPORT inflateBackInit OF((z_streamp strm, int windowBits,
 
      inflateBackInit will return Z_OK on success, Z_STREAM_ERROR if any of
    the paramaters are invalid, Z_MEM_ERROR if the internal state could not
-   be allocated, or Z_VERSION_ERROR if the version of the library does not
+   be allocated, or Z_VERSCLIN_ERROR if the version of the library does not
    match the version of the header file.
 */
 
@@ -1329,17 +1329,17 @@ ZEXTERN int ZEXPORT inflateBackInit_ OF((z_streamp strm, int windowBits,
                                          const char *version,
                                          int stream_size));
 #define deflateInit(strm, level) \
-        deflateInit_((strm), (level),       ZLIB_VERSION, sizeof(z_stream))
+        deflateInit_((strm), (level),       ZLIB_VERSCLIN, sizeof(z_stream))
 #define inflateInit(strm) \
-        inflateInit_((strm),                ZLIB_VERSION, sizeof(z_stream))
+        inflateInit_((strm),                ZLIB_VERSCLIN, sizeof(z_stream))
 #define deflateInit2(strm, level, method, windowBits, memLevel, strategy) \
         deflateInit2_((strm),(level),(method),(windowBits),(memLevel),\
-                      (strategy),           ZLIB_VERSION, sizeof(z_stream))
+                      (strategy),           ZLIB_VERSCLIN, sizeof(z_stream))
 #define inflateInit2(strm, windowBits) \
-        inflateInit2_((strm), (windowBits), ZLIB_VERSION, sizeof(z_stream))
+        inflateInit2_((strm), (windowBits), ZLIB_VERSCLIN, sizeof(z_stream))
 #define inflateBackInit(strm, windowBits, window) \
         inflateBackInit_((strm), (windowBits), (window), \
-        ZLIB_VERSION, sizeof(z_stream))
+        ZLIB_VERSCLIN, sizeof(z_stream))
 
 
 #if !defined(ZUTIL_H) && !defined(NO_DUMMY_DECL)

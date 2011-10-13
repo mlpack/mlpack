@@ -21,9 +21,9 @@
 
 void MaxVariance::Init(arma::mat& data) {
 
-  knns_ = mlpack::IO::GetParam<int>("optfun/knns");
-  leaf_size_ = mlpack::IO::GetParam<int>("optfun/leaf_size");
-  new_dimension_ = mlpack::IO::GetParam<int>("optfun/new_dimension");
+  knns_ = mlpack::CLI::GetParam<int>("optfun/knns");
+  leaf_size_ = mlpack::CLI::GetParam<int>("optfun/leaf_size");
+  new_dimension_ = mlpack::CLI::GetParam<int>("optfun/new_dimension");
   num_of_points_ = data.n_cols;
 
   mlpack::Log::Info << "Data loaded..." << std::endl;
@@ -58,7 +58,7 @@ void MaxVariance::Init(arma::mat& data) {
         knns_); 
 
     mlpack::Log::Info << "Optimum knns is " << knns_;
-    mlpack::IO::GetParam<int>("optfun/optimum_knns") = knns_;
+    mlpack::CLI::GetParam<int>("optfun/optimum_knns") = knns_;
 
     mlpack::Log::Info << "Consolidating neighbors..." << std::endl;
 
@@ -89,15 +89,15 @@ void MaxVariance::Init(arma::mat& data) {
   sum_of_furthest_distances_ = -max_nearest_distance * std::pow(data.n_cols, 2);
  
   mlpack::Log::Info << "Lower bound for optimization is " << sum_of_furthest_distances_ << std::endl;
-  mlpack::IO::GetParam<int>("optfun/num_of_constraints") = num_of_nearest_pairs_;
-  mlpack::IO::GetParam<double>("optfun/lower_optimal_bound") = sum_of_furthest_distances_;
+  mlpack::CLI::GetParam<int>("optfun/num_of_constraints") = num_of_nearest_pairs_;
+  mlpack::CLI::GetParam<double>("optfun/lower_optimal_bound") = sum_of_furthest_distances_;
 }
 
 void MaxVariance::Init() {
 
-  new_dimension_ = mlpack::IO::GetParam<int>("optfun/new_dimension");
-  std::string nearest_neighbor_file = mlpack::IO::GetParam<std::string>("optfun/nearest_neighbor_file");
-  std::string furthest_neighbor_file = mlpack::IO::GetParam<std::string>("optfun/furthest_neighbor_file");
+  new_dimension_ = mlpack::CLI::GetParam<int>("optfun/new_dimension");
+  std::string nearest_neighbor_file = mlpack::CLI::GetParam<std::string>("optfun/nearest_neighbor_file");
+  std::string furthest_neighbor_file = mlpack::CLI::GetParam<std::string>("optfun/furthest_neighbor_file");
 
   // WHY ARE WE NOT USING DATA::LOAD()?  IS IT BECAUSE WE SUFFER FROM THE
   // STUPID?  YEAH?  IS THAT IT? //RAWR, RAGE AT INANIMATE TEXT.. RAWR?
@@ -136,9 +136,9 @@ void MaxVariance::Init() {
 
   mlpack::Log::Info << "Lower bound for optimization is " <<
     sum_of_furthest_distances_ << std::endl;
-  mlpack::IO::GetParam<int>("optfun/num_of_constraints") = 
+  mlpack::CLI::GetParam<int>("optfun/num_of_constraints") = 
     num_of_nearest_pairs_;
-  mlpack::IO::GetParam<double("optfun/lower_optimal_bound") = 
+  mlpack::CLI::GetParam<double("optfun/lower_optimal_bound") = 
     sum_of_furthest_distances_;
 }
 
@@ -258,17 +258,17 @@ void MaxVariance::GiveInitMatrix(arma::mat& init_data) {
 ///////////////////////////////////////////////////////////////
 void MaxFurthestNeighbors::Init(arma::mat& data) {
   module_ = module;
-  new_dimension_ = mlpack::IO::GetParam<int>("optfun/new_dimension");
+  new_dimension_ = mlpack::CLI::GetParam<int>("optfun/new_dimension");
   num_of_points_ = data.n_cols;
 
   infeasibility1_ = DBL_MAX;
   previous_infeasibility1_ = DBL_MAX;
-  desired_feasibility_error_ = mlpack::IO::GetParam<double>("optfun/desired_feasibility_error");
-  grad_tolerance_ = mlpack::IO::GetParam<double>("optfun/grad_tolerance");
-  infeasibility_tolerance_=  mlpack::IO::GetParam<double>("optfun/infeasibility_tolerance");
+  desired_feasibility_error_ = mlpack::CLI::GetParam<double>("optfun/desired_feasibility_error");
+  grad_tolerance_ = mlpack::CLI::GetParam<double>("optfun/grad_tolerance");
+  infeasibility_tolerance_=  mlpack::CLI::GetParam<double>("optfun/infeasibility_tolerance");
 
-  knns_ = mlpack::IO::GetParam<int>("optfun/knns");
-  leaf_size_ = mlpack::IO::GetParam<int>("optfun/leaf_size");
+  knns_ = mlpack::CLI::GetParam<int>("optfun/knns");
+  leaf_size_ = mlpack::CLI::GetParam<int>("optfun/leaf_size");
 
   mlpack::Log::Info << "Data loaded..." << std::endl;
   mlpack::Log::Info << "Nearest neighbor constraints..." << std::endl;
@@ -300,7 +300,7 @@ void MaxFurthestNeighbors::Init(arma::mat& data) {
                                    knns_); 
 
     mlpack::Log::Info << "Optimum knns is " << knns_ << std::endl;
-    mlpack::IO::GetParam<int>("optfun/optimum_knns") = knns_;
+    mlpack::CLI::GetParam<int>("optfun/optimum_knns") = knns_;
     MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
                                            from_tree_distances,
                                            MAX_KNNS,
@@ -326,7 +326,7 @@ void MaxFurthestNeighbors::Init(arma::mat& data) {
 //    sum_of_nearest_distances_ += std::pow(nearest_distances_[i], 2.0);
 //  sum_of_nearest_distances_ = std::pow(sum_of_nearest_distances_, 0.5);
 
-  mlpack::IO::GetParam<int>("optfun/num_of_constraints") = num_of_nearest_pairs_;
+  mlpack::CLI::GetParam<int>("optfun/num_of_constraints") = num_of_nearest_pairs_;
 
   eq_lagrange_mult_.ones(num_of_nearest_pairs_);
   
@@ -363,22 +363,22 @@ void MaxFurthestNeighbors::Init(arma::mat& data) {
  
   mlpack::Log::Info << "Lower bound for optimization: " << 
     sum_of_furthest_distances_ << std::endl;
-  mlpack::IO::GetParam<double>("optfun/lower_optimal_bound") = sum_of_furthest_distances_;
+  mlpack::CLI::GetParam<double>("optfun/lower_optimal_bound") = sum_of_furthest_distances_;
 }
 
 void MaxFurthestNeighbors::Init() {
-  new_dimension_ = mlpack::IO::GetParam<int>("optfun/new_dimension");
+  new_dimension_ = mlpack::CLI::GetParam<int>("optfun/new_dimension");
 
   infeasibility1_ = DBL_MAX;
   previous_infeasibility1_ = DBL_MAX;
-  desired_feasibility_error_ = mlpack::IO::GetParam<double>("optfun/desired_feasibility_error");
-  grad_tolerance_ = mlpack::IO::GetParam<double>("optfun/grad_tolerance");
-  infeasibility_tolerance_=  mlpack::IO::GetParam<double>("optfun/infeasibility_tolerance");
+  desired_feasibility_error_ = mlpack::CLI::GetParam<double>("optfun/desired_feasibility_error");
+  grad_tolerance_ = mlpack::CLI::GetParam<double>("optfun/grad_tolerance");
+  infeasibility_tolerance_=  mlpack::CLI::GetParam<double>("optfun/infeasibility_tolerance");
 
   std::string nearest_neighbor_file = 
-    mlpack::IO::GetParam<std::string>("optfun/nearest_neighbor_file");
+    mlpack::CLI::GetParam<std::string>("optfun/nearest_neighbor_file");
   std::string furthest_neighbor_file = 
-    mlpack::IO::GetParam<std::string>("optfun/furthest_neighbor_file");
+    mlpack::CLI::GetParam<std::string>("optfun/furthest_neighbor_file");
 
   // need to use data::Load()
   FILE *fp = fopen(nearest_neighbor_file.c_str(), "r");
@@ -434,8 +434,8 @@ void MaxFurthestNeighbors::Init() {
  
   mlpack::Log::Info << "Lower bound for optimization: " << 
     sum_of_furthest_distances_ << std::endl;
-  mlpack::IO::GetParam<int>("optfun/num_of_constraints") = num_of_nearest_pairs_;
-  mlpack::IO::GetParam<double>("optfun/lower_optimal_bound") = sum_of_furthest_distances_;
+  mlpack::CLI::GetParam<int>("optfun/num_of_constraints") = num_of_nearest_pairs_;
+  mlpack::CLI::GetParam<double>("optfun/lower_optimal_bound") = sum_of_furthest_distances_;
 }
 
 void MaxFurthestNeighbors::Destruct() {

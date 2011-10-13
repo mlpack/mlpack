@@ -1055,7 +1055,7 @@ class HMM {
 	converged = true;
       }
       else if(iteration_num > max_iterations) {
-	//FATAL("MAX ITERATIONS EXCEEDED");
+	//FATAL("MAX ITERATCLINS EXCEEDED");
 	converged = true;
       }
       else {

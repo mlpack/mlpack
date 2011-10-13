@@ -34,16 +34,16 @@ using namespace mlpack::nnsvm;
 */
 int main(int argc, char *argv[])
 {
-  IO::ParseCommandLine(argc, argv);
-  std::string mode = IO::GetParam<std::string>("nnsvm/mode");
-  std::string kernel = IO::GetParam<std::string>("nnsvm/kernel");
+  CLI::ParseCommandLine(argc, argv);
+  std::string mode = CLI::GetParam<std::string>("nnsvm/mode");
+  std::string kernel = CLI::GetParam<std::string>("nnsvm/kernel");
 
   /* Training Mode, need training data */
   if (mode == "train" || mode == "train_test")
   {
     Log::Debug << "Non-Negativity Constrained SVM Training... " << std::endl;
 
-    std::string trainFile = IO::GetParam<std::string>("nnsvm/train_data");
+    std::string trainFile = CLI::GetParam<std::string>("nnsvm/train_data");
     // Load training data
     arma::mat dataSet;
     if (data::Load(trainFile.c_str(), dataSet) == false) // TODO:param_req
@@ -59,19 +59,19 @@ int main(int argc, char *argv[])
       NNSVM<LinearKernel> nnsvm;
 
       nnsvm.InitTrain(dataSet, 2,
-          (int) IO::GetParam<double>("nnsvm/c"),
-          (int) IO::GetParam<double>("nnsvm/b"),
-          IO::GetParam<double>("nnsvm/eps"),
-          IO::GetParam<int>("nnsvm/max_iter"));
+          (int) CLI::GetParam<double>("nnsvm/c"),
+          (int) CLI::GetParam<double>("nnsvm/b"),
+          CLI::GetParam<double>("nnsvm/eps"),
+          CLI::GetParam<int>("nnsvm/max_iter"));
 
-      IO::StartTimer("nnsvm/nnsvm_train");
-      Log::Debug << "nnsvm_train_time" << IO::GetParam<timeval>("nnsvm/nnsvm_train").tv_usec / 1e6 << std::endl;
+      CLI::StartTimer("nnsvm/nnsvm_train");
+      Log::Debug << "nnsvm_train_time" << CLI::GetParam<timeval>("nnsvm/nnsvm_train").tv_usec / 1e6 << std::endl;
       /* training and testing, thus no need to load model from file */
       if (mode=="train_test")
       {
         Log::Debug << "Non-Negativity SVM Classifying... " << std::endl;
         /* Load testing data */
-        std::string testFile = IO::GetParam<std::string>("nnsvm/test_data");
+        std::string testFile = CLI::GetParam<std::string>("nnsvm/test_data");
         arma::mat testset;
         if (data::Load(testFile.c_str(), testset) == false) // TODO:param_req
         {

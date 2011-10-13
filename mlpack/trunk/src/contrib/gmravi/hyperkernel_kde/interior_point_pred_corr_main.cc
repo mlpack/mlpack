@@ -129,7 +129,7 @@ int main(int argc, char *argv[]){
 
   //Lets do least squares cv for naive kde
 
-  /////////////// NAIVE KDE AND CROSSVALIDATION////////////
+  /////////////// NAIVE KDE AND CROSSVALIDATCLIN////////////
   
   //Get the minimum bandwidth for naive kde using least squares
   //crossvalidation
@@ -289,7 +289,7 @@ int main(int argc, char *argv[]){
        
        for(size_t k=0;k<num_lambda;k++){
 	 
-	printf("ITERATION:i=%d,j=%d,k=%d..\n",i,j,k);
+	printf("ITERATCLIN:i=%d,j=%d,k=%d..\n",i,j,k);
 	printf("sigma=%f,sigma_h=%f...\n",sigma_vec[i],sigma_h_vec[j]);
 	fx_set_param_double(ipc,"sigma",sigma_vec[i]);
 	fx_set_param_double(ipc,"sigma_h",sigma_h_vec[j]);      

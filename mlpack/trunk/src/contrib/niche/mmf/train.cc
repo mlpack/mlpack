@@ -7,7 +7,7 @@
  * It use two algorithm: Baum-Welch (EM) and Viterbi
  *
  * Usage:
- *   train --type=TYPE --profile=PROFILE --seqfile=FILE [OPTIONS]
+ *   train --type=TYPE --profile=PROFILE --seqfile=FILE [OPTCLINS]
  * See the usage() function for complete option list
  */
 
@@ -55,8 +55,8 @@ const fx_module_doc hmm_train_main_doc = {
 
 void usage() {
   printf("\nUsage:\n"
-	 "  train --type=={discrete|gaussian|mixture} OPTION\n"
-	 "[OPTIONS]\n"
+	 "  train --type=={discrete|gaussian|mixture} OPTCLIN\n"
+	 "[OPTCLINS]\n"
 	 "  --algorithm={baumwelch|viterbi} : algorithm used for training, default Baum-Welch\n"
 	 "  --seqfile=file   : file contains input sequences\n"
 	 "  --guess=file     : file contains guess HMM profile\n"

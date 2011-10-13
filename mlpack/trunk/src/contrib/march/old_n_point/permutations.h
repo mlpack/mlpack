@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef PERMUTATIONS_H
-#define PERMUTATIONS_H
+#ifndef PERMUTATCLINS_H
+#define PERMUTATCLINS_H
 
 # include "fastlib/fastlib.h"
 

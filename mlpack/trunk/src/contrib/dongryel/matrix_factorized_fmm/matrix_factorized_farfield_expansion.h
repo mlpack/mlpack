@@ -8,8 +8,8 @@
  * @bug No known bugs.
  */
 
-#ifndef MATRIX_FACTORIZED_FARFIELD_EXPANSION
-#define MATRIX_FACTORIZED_FARFIELD_EXPANSION
+#ifndef MATRIX_FACTORIZED_FARFIELD_EXPANSCLIN
+#define MATRIX_FACTORIZED_FARFIELD_EXPANSCLIN
 
 #include "fastlib/fastlib.h"
 #include "kernel_aux.h"
@@ -234,8 +234,8 @@ class MatrixFactorizedFarFieldExpansion {
 
 };
 
-#define INSIDE_MATRIX_FACTORIZED_FARFIELD_EXPANSION_H
+#define INSIDE_MATRIX_FACTORIZED_FARFIELD_EXPANSCLIN_H
 #include "matrix_factorized_farfield_expansion_impl.h"
-#undef INSIDE_MATRIX_FACTORIZED_FARFIELD_EXPANSION_H
+#undef INSIDE_MATRIX_FACTORIZED_FARFIELD_EXPANSCLIN_H
 
 #endif

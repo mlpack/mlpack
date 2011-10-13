@@ -320,20 +320,20 @@ void OptionsHierarchy::PrintNode() {
   Log::Info << "  " << nodeData.node << " = " ;
   
   if (nodeData.tname == TYPENAME(bool))
-    Log::Info << boolalpha << IO::GetParam<bool>(nodeData.node.c_str());
+    Log::Info << boolalpha << CLI::GetParam<bool>(nodeData.node.c_str());
   else if (nodeData.tname == TYPENAME(int))
-    Log::Info << IO::GetParam<int>(nodeData.node.c_str());
+    Log::Info << CLI::GetParam<int>(nodeData.node.c_str());
   else if (nodeData.tname == TYPENAME(std::string)) {
-    std::string value = IO::GetParam<std::string>(nodeData.node.c_str());
+    std::string value = CLI::GetParam<std::string>(nodeData.node.c_str());
     if (value == "")
       value = "\"\""; // So that the user isn't presented with an empty space.
     Log::Info << value;
   } else if (nodeData.tname == TYPENAME(float))
-    Log::Info << IO::GetParam<float>(nodeData.node.c_str());
+    Log::Info << CLI::GetParam<float>(nodeData.node.c_str());
   else if (nodeData.tname == TYPENAME(double))
-    Log::Info << IO::GetParam<double>(nodeData.node.c_str());
+    Log::Info << CLI::GetParam<double>(nodeData.node.c_str());
   else if (nodeData.tname == TYPENAME(timeval)) {
-    timeval& t = IO::GetParam<timeval>(nodeData.node.c_str());
+    timeval& t = CLI::GetParam<timeval>(nodeData.node.c_str());
     Log::Info << t.tv_sec << "." << std::setw(6) << std::setfill('0') 
         << t.tv_usec << "s";
     // Also output convenient day/hr/min/sec.

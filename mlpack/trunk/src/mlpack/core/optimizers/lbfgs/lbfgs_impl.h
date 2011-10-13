@@ -5,8 +5,8 @@
  *  @file lbfgs_impl.h
  */
 
-#ifndef OPTIMIZATION_LBFGS_IMPL_H
-#define OPTIMIZATION_LBFGS_IMPL_H
+#ifndef OPTIMIZATCLIN_LBFGS_IMPL_H
+#define OPTIMIZATCLIN_LBFGS_IMPL_H
 
 namespace mlpack {
 namespace optimization {
@@ -65,7 +65,7 @@ template<typename FunctionType>
 bool L_BFGS<FunctionType>::GradientNormTooSmall_(const arma::mat& gradient) {
   double norm = arma::norm(gradient, 2);
 
-  return (norm < IO::GetParam<double>("lbfgs/min_gradient_norm"));
+  return (norm < CLI::GetParam<double>("lbfgs/min_gradient_norm"));
 }
 
 /***
@@ -102,7 +102,7 @@ bool L_BFGS<FunctionType>::LineSearch_(double& function_value,
 
   // Unit linear approximation to the decrease in function value.
   double linear_approx_function_value_decrease =
-      IO::GetParam<double>("lbfgs/armijo_constant") * 
+      CLI::GetParam<double>("lbfgs/armijo_constant") * 
       initial_search_direction_dot_gradient;
 
   // The number of iteration in the search.
@@ -128,7 +128,7 @@ bool L_BFGS<FunctionType>::LineSearch_(double& function_value,
       // Check Wolfe's condition.
       double search_direction_dot_gradient =
           arma::dot(gradient, search_direction);
-      double wolfe = IO::GetParam<double>("lbfgs/wolfe");
+      double wolfe = CLI::GetParam<double>("lbfgs/wolfe");
 
       if(search_direction_dot_gradient < wolfe *
           initial_search_direction_dot_gradient) {
@@ -145,9 +145,9 @@ bool L_BFGS<FunctionType>::LineSearch_(double& function_value,
 
     // Terminate when the step size gets too small or too big or it
     // exceeds the max number of iterations.
-    if((step_size < IO::GetParam<double>("lbfgs/min_step")) || 
-       (step_size > IO::GetParam<double>("lbfgs/max_step")) ||
-       (num_iterations >= IO::GetParam<int>("lbfgs/max_line_search_trials"))) {
+    if((step_size < CLI::GetParam<double>("lbfgs/min_step")) || 
+       (step_size > CLI::GetParam<double>("lbfgs/max_step")) ||
+       (num_iterations >= CLI::GetParam<int>("lbfgs/max_line_search_trials"))) {
       return false;
     }
 

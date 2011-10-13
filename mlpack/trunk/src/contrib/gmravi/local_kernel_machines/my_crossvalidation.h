@@ -1,6 +1,6 @@
 #include "utils.h"
-#ifndef MY_CROSSVALIDATION_H
-#define MY_CROSSVALIDATION_H
+#ifndef MY_CROSSVALIDATCLIN_H
+#define MY_CROSSVALIDATCLIN_H
 
 
 /////////////////// Set up the parameters for Crossvalidation//////////////////////

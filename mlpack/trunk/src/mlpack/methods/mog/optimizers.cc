@@ -21,10 +21,10 @@ void NelderMead::Eval(arma::mat& pts) {
   arma::vec param_passed;
 
   // Default value is 1e-5.
-  long double tol = IO::GetParam<double>("opt/tolerance");
+  long double tol = CLI::GetParam<double>("opt/tolerance");
 
   // Default value is 50000.
-  size_t NMAX = IO::GetParam<int>("opt/MAX_FUNC_EVAL");
+  size_t NMAX = CLI::GetParam<int>("opt/MAX_FUNC_EVAL");
 
   param_passed.set_size(dim);
   psum.set_size(dim);
@@ -122,7 +122,7 @@ void NelderMead::Eval(arma::mat& pts) {
       --num_func_eval;
   }
 
-  IO::GetParam<int>("opt/func_evals") = num_func_eval;
+  CLI::GetParam<int>("opt/func_evals") = num_func_eval;
 }
 
 long double NelderMead::ModSimplex_(arma::mat& pts, arma::vec& y,
@@ -152,7 +152,7 @@ void QuasiNewton::Eval(arma::vec& pt) {
   size_t n = dimension(), iters;
   size_t i, its;
   // Default value is 200.
-  size_t MAXIMUM_ITERATIONS = IO::GetParam<int>("opt/MAX_ITERS");
+  size_t MAXIMUM_ITERATCLINS = CLI::GetParam<int>("opt/MAX_ITERS");
 
   long double temp_1, temp_2, temp_3, temp_4, f_previous, f_min,
     maximum_step_length, sum = 0.0, sumdg, sumxi, temp, test;
@@ -161,16 +161,16 @@ void QuasiNewton::Eval(arma::vec& pt) {
   arma::mat hessian;
 
   // Default value is 3.0e-8.
-  double EPSILON = IO::GetParam<double>("opt/EPSILON");
+  double EPSILON = CLI::GetParam<double>("opt/EPSILON");
 
   // Default value is 1.0e-5.
-  double TOLERANCE = IO::GetParam<double>("optTOLERANCE");
+  double TOLERANCE = CLI::GetParam<double>("optTOLERANCE");
 
   // Default value is 100.
-  double MAX_STEP_SIZE = IO::GetParam<double>("opt/MAX_STEP_SIZE");
+  double MAX_STEP_SIZE = CLI::GetParam<double>("opt/MAX_STEP_SIZE");
 
   // Default value is 1.0e-7.
-  double g_tol = IO::GetParam<double>("opt/gtol");
+  double g_tol = CLI::GetParam<double>("opt/gtol");
 
   dgrad.set_size(n);
   grad.set_size(n);
@@ -195,7 +195,7 @@ void QuasiNewton::Eval(arma::vec& pt) {
 
   maximum_step_length = MAX_STEP_SIZE * fmax;
 
-  for (its = 0; its < MAXIMUM_ITERATIONS; its++) {
+  for (its = 0; its < MAXIMUM_ITERATCLINS; its++) {
     dgrad = grad;
     LineSearch_(pold, f_previous, grad, xi,
                 pnew, f_min, maximum_step_length);
@@ -218,7 +218,7 @@ void QuasiNewton::Eval(arma::vec& pt) {
 
     if (test < TOLERANCE) {
       iters = its;
-      IO::GetParam<int>("opt/iters") = iters;
+      CLI::GetParam<int>("opt/iters") = iters;
       return;
     }
 
@@ -241,7 +241,7 @@ void QuasiNewton::Eval(arma::vec& pt) {
 
     if (test < g_tol) {
       iters = its;
-      IO::GetParam<int>("opt/iters") = iters;
+      CLI::GetParam<int>("opt/iters") = iters;
       return;
     }
 

@@ -1,5 +1,5 @@
-#ifndef DISTRIBUTION_H
-#define DISTRIBUTION_H
+#ifndef DISTRIBUTCLIN_H
+#define DISTRIBUTCLIN_H
 
 class Distribution {
  public:
@@ -49,11 +49,11 @@ class Distribution {
   }
 
   void PrintDebug(char *name) {
-    printf("----- DISTRIBUTION %s -----\n", name);
+    printf("----- DISTRIBUTCLIN %s -----\n", name);
     mu_.PrintDebug("mu");
     sigma_.PrintDebug("sigma");
   }
 };
 
 
-#endif /* DISTRIBUTION_H */
+#endif /* DISTRIBUTCLIN_H */

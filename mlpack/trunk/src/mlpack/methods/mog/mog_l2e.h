@@ -245,7 +245,7 @@ class MoGL2E {
     }
   }
 
-  ////// THE GET FUNCTIONS //////
+  ////// THE GET FUNCTCLINS //////
   std::vector<arma::vec>& mu() {
     return mu_;
   }
@@ -290,7 +290,7 @@ class MoGL2E {
     return d_sigma_[i];
   }
 
-  ////// THE SET FUNCTIONS //////
+  ////// THE SET FUNCTCLINS //////
 
   void set_mu(size_t i, const arma::vec& mu) {
     assert(i < number_of_gaussians_);

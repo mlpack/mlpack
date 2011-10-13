@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef ANGLE_MATCHER_GENERATION_H 
-#define ANGLE_MATCHER_GENERATION_H
+#ifndef ANGLE_MATCHER_GENERATCLIN_H 
+#define ANGLE_MATCHER_GENERATCLIN_H
 
 #include <mlpack/core.h>
 

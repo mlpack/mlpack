@@ -40,11 +40,11 @@ int main(int argc, char* argv[]) {
 
   //Log::Info << "parsing command line\n";
   
-  IO::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, argv);
   
   //Log::Info << "parsing complete\n";
   
-  std::string data_filename = IO::GetParam<std::string>("data");
+  std::string data_filename = CLI::GetParam<std::string>("data");
   arma::mat data_in, data_mat;
   data_in.load(data_filename, arma::raw_ascii);
   
@@ -60,15 +60,15 @@ int main(int argc, char* argv[]) {
 
   arma::colvec weights;  
   //if (fx_param_exists(NULL, "weights")) {
-  if (IO::HasParam("weighted_computation")) {
-    weights.load(IO::GetParam<std::string>("weights"));
+  if (CLI::HasParam("weighted_computation")) {
+    weights.load(CLI::GetParam<std::string>("weights"));
   }
   else {
     weights.set_size(data_mat.n_cols);
     weights.fill(1.0);
   }
   
-  std::string random_filename = IO::GetParam<std::string>("random");
+  std::string random_filename = CLI::GetParam<std::string>("random");
   
   arma::mat random_in, random_mat;
   random_in.load(random_filename, arma::raw_ascii);
@@ -87,8 +87,8 @@ int main(int argc, char* argv[]) {
   
   arma::colvec random_weights;  
   //if (fx_param_exists(NULL, "weights")) {
-  if (IO::HasParam("weighted_computation")) {
-    random_weights.load(IO::GetParam<std::string>("random_weights"));
+  if (CLI::HasParam("weighted_computation")) {
+    random_weights.load(CLI::GetParam<std::string>("random_weights"));
   }
   else {
     random_weights.set_size(random_mat.n_cols);
@@ -97,12 +97,12 @@ int main(int argc, char* argv[]) {
   
   Log::Info << "Finished reading in data.\n";
   
-  double bin_thickness_factor = IO::GetParam<double>("bin_thickness_factor");
-  double r2_multiplier = IO::GetParam<double>("r2_multiplier");
+  double bin_thickness_factor = CLI::GetParam<double>("bin_thickness_factor");
+  double r2_multiplier = CLI::GetParam<double>("r2_multiplier");
   
-  size_t leaf_size = (size_t)IO::GetParam<int>("leaf_size");
+  size_t leaf_size = (size_t)CLI::GetParam<int>("leaf_size");
   
-  std::string matcher_filename = IO::GetParam<std::string>("matchers");
+  std::string matcher_filename = CLI::GetParam<std::string>("matchers");
   arma::mat matcher_mat;
   matcher_mat.load(matcher_filename, arma::raw_ascii);
 
@@ -165,9 +165,9 @@ int main(int argc, char* argv[]) {
   /////////////////////////////////////////////////////////////////////
   
   // do multi-angle alg
-  if (IO::HasParam("do_angle")) {
+  if (CLI::HasParam("do_angle")) {
   
-    IO::StartTimer("angle_time");
+    CLI::StartTimer("angle_time");
     
     Log::Info << "initializing angle matcher.\n";
     
@@ -192,19 +192,19 @@ int main(int argc, char* argv[]) {
     angle_matcher.OutputResults();
     Log::Info << "\n\n";
     
-    IO::StopTimer("angle_time");
+    CLI::StopTimer("angle_time");
   
   } // do angle
   
   // do single bandwidth alg
-  if (IO::HasParam("do_single_bandwidth")) {
+  if (CLI::HasParam("do_single_bandwidth")) {
     
     AngleMatcherGenerator generator(r1_vec, r2_multiplier, theta_vec, 
                                     bin_thickness_factor);
     
     Log::Info << "Single Bandwidth Results: \n";
     
-    IO::StartTimer("single_bandwidth_time");
+    CLI::StartTimer("single_bandwidth_time");
     
     
     
@@ -246,7 +246,7 @@ int main(int argc, char* argv[]) {
       
     } // for r1_ind
     
-    IO::StopTimer("single_bandwidth_time");
+    CLI::StopTimer("single_bandwidth_time");
     
     Log::Info << "\n\n";
     

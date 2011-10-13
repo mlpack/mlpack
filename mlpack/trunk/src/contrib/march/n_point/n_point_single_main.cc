@@ -45,14 +45,14 @@ using namespace npt;
 int main(int argc, char* argv[]) {
 
   //fx_init(argc, argv, NULL);
-  IO::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, argv);
   
   Log::Info << "Parsed command line.\n";
   
   // read in data and parameters
   
   //std::string data_filename = fx_param_str(NULL, "data", "test_npt_pts.csv");
-  std::string data_filename = IO::GetParam<std::string>("data");
+  std::string data_filename = CLI::GetParam<std::string>("data");
   
   arma::mat data_in, data_mat;
   data_in.load(data_filename, arma::raw_ascii);
@@ -72,12 +72,12 @@ int main(int argc, char* argv[]) {
   arma::colvec weights;  
   //if (fx_param_exists(NULL, "weights")) {
   
-  //bool has_weights = IO::HasParam("weighted_computation");
+  //bool has_weights = CLI::HasParam("weighted_computation");
   //Log::Info << "has_weights: " << has_weights << "\n";
   
-  //if (IO::HasParam("weighted_computation")) {
-  if (IO::GetParam<bool>("weighted_computation")) {
-    weights.load(IO::GetParam<std::string>("weights"));
+  //if (CLI::HasParam("weighted_computation")) {
+  if (CLI::GetParam<bool>("weighted_computation")) {
+    weights.load(CLI::GetParam<std::string>("weights"));
   }
   else {
     weights.set_size(data_mat.n_cols);
@@ -87,9 +87,9 @@ int main(int argc, char* argv[]) {
   
   arma::mat random_mat;
   arma::colvec random_weights;
-  if (IO::GetParam<bool>("two_sets")) {
-  //if (IO::HasParam("random")) {
-    std::string random_filename = IO::GetParam<std::string>("random");
+  if (CLI::GetParam<bool>("two_sets")) {
+  //if (CLI::HasParam("random")) {
+    std::string random_filename = CLI::GetParam<std::string>("random");
     
     arma::mat random_in;
     random_in.load(random_filename, arma::raw_ascii);
@@ -108,10 +108,10 @@ int main(int argc, char* argv[]) {
     
     arma::colvec random_weights;  
     //if (fx_param_exists(NULL, "weights")) {
-    if (IO::GetParam<bool>("weighted_computation")) {
+    if (CLI::GetParam<bool>("weighted_computation")) {
       
-  //  if (IO::HasParam("weighted_computation")) {
-      random_weights.load(IO::GetParam<std::string>("random_weights"));
+  //  if (CLI::HasParam("weighted_computation")) {
+      random_weights.load(CLI::GetParam<std::string>("random_weights"));
     }
     else {
       random_weights.set_size(random_mat.n_cols);
@@ -124,12 +124,12 @@ int main(int argc, char* argv[]) {
   
   arma::mat matcher_lower_bounds, matcher_upper_bounds;
   
-  matcher_lower_bounds.load(IO::GetParam<std::string>("matcher_lower_bounds"));
-  matcher_upper_bounds.load(IO::GetParam<std::string>("matcher_upper_bounds"));
+  matcher_lower_bounds.load(CLI::GetParam<std::string>("matcher_lower_bounds"));
+  matcher_upper_bounds.load(CLI::GetParam<std::string>("matcher_upper_bounds"));
   
   //std::cout << "loaded bounds\n";
   
-  int num_random = IO::GetParam<int>("num_random");
+  int num_random = CLI::GetParam<int>("num_random");
   
   int tuple_size = matcher_lower_bounds.n_cols;
   
@@ -154,18 +154,18 @@ int main(int argc, char* argv[]) {
   // run algorithm
   
   //if (fx_param_exists(NULL, "do_single_bandwidth")) {
-  if (IO::GetParam<bool>("do_single_bandwidth")) {
-  //if (IO::HasParam("do_single_bandwidth")) {
+  if (CLI::GetParam<bool>("do_single_bandwidth")) {
+  //if (CLI::HasParam("do_single_bandwidth")) {
     
     //std::cout << "Doing single bandwidth.\n";
     Log::Info << "Doing single bandwidth.\n";
 
     //fx_timer_start(NULL, "single_bandwidth_time");
-    IO::StartTimer("single_bandwidth_time");
+    CLI::StartTimer("single_bandwidth_time");
     
     // Build the trees
     
-    //IO::GetParam<int>("tree/leaf_size") = 100;
+    //CLI::GetParam<int>("tree/leaf_size") = 100;
     
     std::vector<size_t> old_from_new_data;
     std::vector<size_t> old_from_new_random;
@@ -197,7 +197,7 @@ int main(int argc, char* argv[]) {
     alg.Compute();
     
     //fx_timer_stop(NULL, "single_bandwidth_time");
-    IO::StopTimer("single_bandwidth_time");
+    CLI::StopTimer("single_bandwidth_time");
     
     //std::cout << "\nSingle Bandwidth num tuples: " << single_alg.num_tuples() << "\n\n";
     Log::Info << std::endl << "Single bandwidth num tuples: " <<  matcher.results();
@@ -207,16 +207,16 @@ int main(int argc, char* argv[]) {
   } // single bandwidth
   
   //if (fx_param_exists(NULL, "do_naive")) {
-  //if (IO::HasParam("do_naive")) {
-  if (IO::GetParam<bool>("do_naive")) {
+  //if (CLI::HasParam("do_naive")) {
+  if (CLI::GetParam<bool>("do_naive")) {
     //std::cout << "Doing naive.\n";
     
     Log::Info << "Doing naive." << std::endl;
     
     //fx_timer_start(NULL, "naive_time");
-    IO::StartTimer("naive_time");
+    CLI::StartTimer("naive_time");
     
-    IO::GetParam<int>("tree/leaf_size") = std::max(data_mat.n_cols, 
+    CLI::GetParam<int>("tree/leaf_size") = std::max(data_mat.n_cols, 
                                                    random_mat.n_cols);
     
     std::vector<size_t> old_from_new_data;
@@ -254,7 +254,7 @@ int main(int argc, char* argv[]) {
     
     
     //fx_timer_stop(NULL, "naive_time");
-    IO::StopTimer("naive_time");
+    CLI::StopTimer("naive_time");
     
     //std::cout << "\nNaive num tuples: " << naive_alg.num_tuples() << "\n\n";
     Log::Info << std::endl << "Naive num tuples: " << matcher.results();
@@ -268,12 +268,12 @@ int main(int argc, char* argv[]) {
   
   /*
   //if (fx_param_exists(NULL, "do_perm_free")) {
-  if (IO::HasParam("do_perm_free")) {
+  if (CLI::HasParam("do_perm_free")) {
     
     Log::Info << "Doing permutation free.\n";
 
     //fx_timer_start(NULL, "perm_free_time");
-    IO::StartTimer("perm_free_time");
+    CLI::StartTimer("perm_free_time");
     
     PermFreeAlg alg(data_mat, weights, random_mat, random_weights, leaf_size, 
                     matcher_dists, bandwidth);
@@ -281,7 +281,7 @@ int main(int argc, char* argv[]) {
     alg.Compute();
     
     //fx_timer_stop(NULL, "perm_free_time");
-    IO::StopTimer("perm_free_time");
+    CLI::StopTimer("perm_free_time");
     
     Log::Info << "\nPerm Free num tuples: " << std::endl;
     alg.print_num_tuples();

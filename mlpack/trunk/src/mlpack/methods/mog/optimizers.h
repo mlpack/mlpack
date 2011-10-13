@@ -70,7 +70,7 @@ class NelderMead {
             arma::mat& data) {
     data_ = data;
     func_ptr_ = fun;
-    dimension_ = mlpack::IO::GetParam<int>("opt/param_space_dim");
+    dimension_ = mlpack::CLI::GetParam<int>("opt/param_space_dim");
   }
 
   const arma::mat& data() {
@@ -127,7 +127,7 @@ class QuasiNewton {
             arma::mat& data) {
     data_ = data;
     func_ptr_ = fun;
-    dimension_ = mlpack::IO::GetParam<int>("opt/param_space_dim");
+    dimension_ = mlpack::CLI::GetParam<int>("opt/param_space_dim");
   }
 
   const arma::mat& data() {

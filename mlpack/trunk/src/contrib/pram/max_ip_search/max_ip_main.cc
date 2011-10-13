@@ -45,11 +45,11 @@ void count_mismatched_neighbors(arma::Col<size_t>, arma::vec,
 
 int main (int argc, char *argv[]) {
 
-  IO::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, argv);
 
   arma::mat rdata, qdata;
-  string rfile = IO::GetParam<string>("r");
-  string qfile = IO::GetParam<string>("q");
+  string rfile = CLI::GetParam<string>("r");
+  string qfile = CLI::GetParam<string>("q");
 
   Log::Info << "Loading files..." << endl;
   if (!data::Load(rfile.c_str(), rdata))
@@ -68,34 +68,34 @@ int main (int argc, char *argv[]) {
   arma::Col<size_t> nac, exc;
   arma::vec din, die;
 
-  size_t knns = IO::GetParam<int>("maxip/knns");
+  size_t knns = CLI::GetParam<int>("maxip/knns");
 
   double naive_comp, fast_comp;
 
 
   // exit(0);
   // Naive computation
-  if (IO::HasParam("donaive")) {
+  if (CLI::HasParam("donaive")) {
     MaxIP naive;
     Log::Info << "Brute computation" << endl;
     Log::Info << "Initializing...." << endl;
 
-    IO::StartTimer("naive_init");
+    CLI::StartTimer("naive_init");
     naive.InitNaive(qdata, rdata);
-    IO::StopTimer("naive_init");
+    CLI::StopTimer("naive_init");
     Log::Info << "Initialized." << endl;
 
     Log::Info << "Computing Max IP....." << endl;
-    IO::StartTimer("naive_search");
+    CLI::StartTimer("naive_search");
     naive_comp = naive.ComputeNaive(&nac, &din);
-    IO::StopTimer("naive_search");
+    CLI::StopTimer("naive_search");
     Log::Info << "Max IP Computed." << endl;
 
-    if (IO::HasParam("print_results")) {
-      FILE *fp=fopen(IO::GetParam<string>("maxip_file").c_str(), "w");
+    if (CLI::HasParam("print_results")) {
+      FILE *fp=fopen(CLI::GetParam<string>("maxip_file").c_str(), "w");
       if (fp == NULL)
 	Log::Fatal << "Error while opening " 
-		  << IO::GetParam<string>("maxip_file")
+		  << CLI::GetParam<string>("maxip_file")
 		  << endl;
 // 		  << "..." << strerror(errno);
 
@@ -115,27 +115,27 @@ int main (int argc, char *argv[]) {
   //Log::Info << "Comparing results for " << nac.n_elem << " queries." << endl;
 
   // Exact computation
-  if (IO::HasParam("dofastexact")) {
+  if (CLI::HasParam("dofastexact")) {
     MaxIP fast_exact;
     Log::Info << "Tree-based computation" << endl;
     Log::Info << "Initializing...." << endl;
 
-    IO::StartTimer("fast_init");
+    CLI::StartTimer("fast_init");
     fast_exact.Init(qdata, rdata);
-    IO::StopTimer("fast_init");
+    CLI::StopTimer("fast_init");
     Log::Info << "Initialized." << endl;
 
     Log::Info << "Computing tree-based Max IP....." << endl;
-    IO::StartTimer("fast_search");
+    CLI::StartTimer("fast_search");
     fast_comp = fast_exact.ComputeNeighbors(&exc, &die);
-    IO::StopTimer("fast_search");
+    CLI::StopTimer("fast_search");
     Log::Info << "Tree-based Max IP Computed." << endl;
 
-    if (IO::HasParam("print_results")) {
-      FILE *fp=fopen(IO::GetParam<string>("maxip_file").c_str(), "w");
+    if (CLI::HasParam("print_results")) {
+      FILE *fp=fopen(CLI::GetParam<string>("maxip_file").c_str(), "w");
       if (fp == NULL)
 	Log::Fatal << "Error while opening " 
-		  << IO::GetParam<string>("maxip_file") 
+		  << CLI::GetParam<string>("maxip_file") 
 		  << endl;
 // 		  << "..." << strerror(errno);
 
@@ -152,12 +152,12 @@ int main (int argc, char *argv[]) {
 
   //   compare_neighbors(&neighbor_indices, &dist_sq, &exc, &die);
 
-  if (IO::HasParam("donaive") && IO::HasParam("dofastexact")) {
+  if (CLI::HasParam("donaive") && CLI::HasParam("dofastexact")) {
     count_mismatched_neighbors(nac, din, exc, die);
     Log::Warn << "Speed of fast-exact over naive: "
 	     << naive_comp << " / " << (float) fast_comp << " = "
 	     <<(float) (naive_comp / fast_comp) << endl;
-  } else if (IO::HasParam("dofastexact")) {
+  } else if (CLI::HasParam("dofastexact")) {
     Log::Warn << "Speed of fast-exact over naive: "
 	     << rdata.n_cols  << " / " << (float) fast_comp << " = "
 	     <<(float) (rdata.n_cols / fast_comp) << endl;
