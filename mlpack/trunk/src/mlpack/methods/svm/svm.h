@@ -113,7 +113,7 @@ class SVMRBFKernel {
 
   SVMRBFKernel() { /*TODO: NULL->node */
     kpara_.resize(2,0);
-    kpara_[0] = mlpack::IO::GetParam<double>("svm/sigma"); /*sigma */
+    kpara_[0] = mlpack::CLI::GetParam<double>("svm/sigma"); /*sigma */
     kpara_[1] = -1.0 / (2 * pow(kpara_[0], 2)); /*gamma */
   }
 

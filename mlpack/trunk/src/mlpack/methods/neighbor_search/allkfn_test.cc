@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
 
   // We will loop through three times, one for each method of performing the
   // calculation.  We'll always use 10 neighbors, so set that parameter.
-  IO::GetParam<int>("neighbor_search/k") = 10;
+  CLI::GetParam<int>("neighbor_search/k") = 10;
   for (int i = 0; i < 3; i++) {
     AllkFN* allkfn;
     arma::mat data_mutable = data;
@@ -46,12 +46,12 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
         allkfn = new AllkFN(data_mutable);
         break;
       case 1: // Use the single-tree method.
-        IO::GetParam<bool>("neighbor_search/single_mode") = true;
+        CLI::GetParam<bool>("neighbor_search/single_mode") = true;
         allkfn = new AllkFN(data_mutable);
         break;
       case 2: // Use the naive method.
-        IO::GetParam<bool>("neighbor_search/single_mode") = false;
-        IO::GetParam<bool>("neighbor_search/naive_mode") = true;
+        CLI::GetParam<bool>("neighbor_search/single_mode") = false;
+        CLI::GetParam<bool>("neighbor_search/naive_mode") = true;
         allkfn = new AllkFN(data_mutable);
         break;
     }
@@ -332,11 +332,11 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_1) {
   arma::mat naive_query(data_for_tree_);
   arma::mat naive_references(data_for_tree_);
 
-  IO::GetParam<bool>("neighbor_search/naive_mode") = false;
-  IO::GetParam<bool>("neighbor_search/single_mode") = false;
+  CLI::GetParam<bool>("neighbor_search/naive_mode") = false;
+  CLI::GetParam<bool>("neighbor_search/single_mode") = false;
   AllkFN allkfn_(dual_query, dual_references);
 
-  IO::GetParam<bool>("neighbor_search/naive_mode") = true;
+  CLI::GetParam<bool>("neighbor_search/naive_mode") = true;
   AllkFN naive_(naive_query, naive_references);
 
   arma::Mat<size_t> resulting_neighbors_tree;
@@ -371,11 +371,11 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_2) {
   arma::mat dual_references(data_for_tree_);
   arma::mat naive_references(data_for_tree_);
 
-  IO::GetParam<bool>("neighbor_search/naive_mode") = false;
-  IO::GetParam<bool>("neighbor_search/single_mode") = false;
+  CLI::GetParam<bool>("neighbor_search/naive_mode") = false;
+  CLI::GetParam<bool>("neighbor_search/single_mode") = false;
   AllkFN allkfn_(dual_references);
 
-  IO::GetParam<bool>("neighbor_search/naive_mode") = true;
+  CLI::GetParam<bool>("neighbor_search/naive_mode") = true;
   AllkFN naive_(naive_references);
 
   arma::Mat<size_t> resulting_neighbors_tree;
@@ -409,12 +409,12 @@ BOOST_AUTO_TEST_CASE(single_tree_vs_naive) {
   arma::mat single_query(data_for_tree_);
   arma::mat naive_query(data_for_tree_);
 
-  IO::GetParam<bool>("neighbor_search/naive_mode") = false;
-  IO::GetParam<bool>("neighbor_search/single_mode") = true;
+  CLI::GetParam<bool>("neighbor_search/naive_mode") = false;
+  CLI::GetParam<bool>("neighbor_search/single_mode") = true;
   AllkFN allkfn_(single_query);
 
-  IO::GetParam<bool>("neighbor_search/naive_mode") = true;
-  IO::GetParam<bool>("neighbor_search/single_mode") = false;
+  CLI::GetParam<bool>("neighbor_search/naive_mode") = true;
+  CLI::GetParam<bool>("neighbor_search/single_mode") = false;
   AllkFN naive_(naive_query);
 
   arma::Mat<size_t> resulting_neighbors_tree;

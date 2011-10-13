@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_CASE(test_test) {
 }
 */
 
-  //IO::GetParam<>() = ;
+  //CLI::GetParam<>() = ;
 
 /**
  *  Creates the data to train and test with and prints it to stdout.
@@ -37,11 +37,11 @@ void setup() {
     return;
   first = false;
 
-  IO::GetParam<bool>("svm/shrink") = true;
-  IO::GetParam<double>("svm/epsilon") = .1;
-  IO::GetParam<double>("svm/sigma") = 1;
+  CLI::GetParam<bool>("svm/shrink") = true;
+  CLI::GetParam<double>("svm/epsilon") = .1;
+  CLI::GetParam<double>("svm/sigma") = 1;
   // Protect the test from taking forever
-  IO::GetParam<size_t>("svm/n_iter") = 10000;
+  CLI::GetParam<size_t>("svm/n_iter") = 10000;
 
   matrix <<
     7.19906628001437787e-01 << 1.83250823399634477e+00 << 0 << arma::endr <<

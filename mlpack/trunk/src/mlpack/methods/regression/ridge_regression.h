@@ -1,5 +1,5 @@
-#ifndef RIDGE_REGRESSION_H_
-#define RIDGE_REGRESSION_H_
+#ifndef RIDGE_REGRESSCLIN_H_
+#define RIDGE_REGRESSCLIN_H_
 
 #include <mlpack/core.h>
 #include "ridge_regression_util.h"

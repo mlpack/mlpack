@@ -18,10 +18,10 @@ PARAM_FLAG("some_flag", "some test flag", "");
 
 int main (int argc, char *argv[]) {
 
-  IO::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, argv);
 
   arma::mat rdata;
-  string rfile = IO::GetParam<string>("r");
+  string rfile = CLI::GetParam<string>("r");
 
   Log::Info << "Loading files..." << endl;
   if (!data::Load(rfile.c_str(), rdata)) 
@@ -41,13 +41,13 @@ int main (int argc, char *argv[]) {
 					      &old_from_new_data,
 					      NULL);
 
-  if (IO::HasParam("xx_print_tree")) {
+  if (CLI::HasParam("xx_print_tree")) {
     test_tree->Print();
   } else {
     Log::Info << "Tree built" << endl;
   }
 
-  if (IO::HasParam("some_flag"))
+  if (CLI::HasParam("some_flag"))
     printf("The flag is working!\n");
 }
 

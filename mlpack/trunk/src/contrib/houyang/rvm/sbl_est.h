@@ -47,7 +47,7 @@ const size_t PRUNE_POINT = 50;
 // Terminate estimation when no log-alpha value changes by more than this
 const double MIN_DELTA_LOGALPHA = 1.0e-3;
 
-const double STOP_CRITERION = 1.0e-6;
+const double STOP_CRITERCLIN = 1.0e-6;
 
 const double LAMBDA_MIN	= pow(2.0, -8.0);
 

@@ -14,8 +14,8 @@
  *
  * ============================================================================
 */
-#ifndef __RIDGE_REGRESSION_IMPL_H
-#define __RIDGE_REGRESSION_IMPL_H
+#ifndef __RIDGE_REGRESSCLIN_IMPL_H
+#define __RIDGE_REGRESSCLIN_IMPL_H
 
 namespace mlpack {
 namespace regression {
@@ -288,7 +288,7 @@ void RidgeRegression::ComputeLinearModel_
 void RidgeRegression::QRRegress
 (double lambda, const arma::Col<size_t> *predictor_indices) {
 
-  // THIS FUNCTION DOES NOT TAKE lambda into ACCOUNT YET! FIX ME!
+  // THIS FUNCTCLIN DOES NOT TAKE lambda into ACCOUNT YET! FIX ME!
   //mlpack::Log::Info << "QRRegress: starting." << std::endl;
 
   // At this point, QR should not be used when the covariance based
@@ -468,7 +468,7 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
       min_index = i;
     }
   }
-  mlpack::IO::GetParam<double>("reg/cross_validation_score") =  min_score;
+  mlpack::CLI::GetParam<double>("reg/cross_validation_score") =  min_score;
 
   //mlpack::Log::Info << "The optimal lamda: " <<  lambda_min + min_index * step << std::endl;
 
@@ -487,9 +487,9 @@ void RidgeRegression::FeatureSelectedRegression
 
   //mlpack::Log::Info << "Starting VIF-based feature selection." << std::endl;
 
-  double lambda = mlpack::IO::GetParam<double>("ridge/lambda"); //Default value, 0.0
+  double lambda = mlpack::CLI::GetParam<double>("ridge/lambda"); //Default value, 0.0
   double variance_inflation_factor_threshold =
-    mlpack::IO::GetParam<double>("ridge/vif_threshold"); //Default value, 8.0;
+    mlpack::CLI::GetParam<double>("ridge/vif_threshold"); //Default value, 8.0;
   bool done_flag = false;
   arma::Col<size_t> *current_predictor_indices = new arma::Col<size_t>();
   arma::Col<size_t> *current_prune_predictor_indices = new

@@ -5,8 +5,8 @@
  * Implementation of the stochastic neighbor assignment probability error
  * function (the "softmax error").
  */
-#ifndef __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_H
-#define __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_H
+#ifndef __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTCLIN_H
+#define __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTCLIN_H
 
 #include <armadillo>
 #include <map>

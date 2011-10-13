@@ -1,17 +1,17 @@
-#ifndef INTERIOR_POINT_PRED_CORR2_H
-#define INTERIOR_POINT_PRED_CORR2_H
+#ifndef INTERCLIR_POINT_PRED_CORR2_H
+#define INTERCLIR_POINT_PRED_CORR2_H
 #include "ichol_dynamic.h"
 #include "fastlib/fastlib.h"
 #include "dte.h"
 #include "special_la.h"
 #define CALCULATED 1
 #define NOT_CALCULATED 0
-//#define UPDATE_FRACTION 0.05
+//#define UPDATE_FRACTCLIN 0.05
 #define EPSILON 0.01
-#define NUM_ITERATIONS 15
+#define NUM_ITERATCLINS 15
 #define SPARSITY_THRESHOLD 0.1
 #define SMALL_STEP pow(10,-7)
-#define MAX_NUM_ITERATIONS 150
+#define MAX_NUM_ITERATCLINS 150
 
 class HKInteriorPointPredictorCorrector{
   
@@ -1407,7 +1407,7 @@ class HKInteriorPointPredictorCorrector{
     double gap;
     double gap_ratio=DBL_MAX;
     size_t status=-1;
-    while(status==-1&&num_iterations_<MAX_NUM_ITERATIONS){ 
+    while(status==-1&&num_iterations_<MAX_NUM_ITERATCLINS){ 
 
       //With the current values for $\beta,\gamma$ calculate $\mu
 
@@ -1477,7 +1477,7 @@ class HKInteriorPointPredictorCorrector{
       
      
       
-      printf("Finished ITERATION=%d...\n\n",num_iterations_);
+      printf("Finished ITERATCLIN=%d...\n\n",num_iterations_);
       
       num_iterations_++;
       

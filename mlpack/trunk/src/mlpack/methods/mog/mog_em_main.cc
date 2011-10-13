@@ -34,29 +34,29 @@ PARAM_STRING("output", "The file into which the output is to be written into.",
 using namespace mlpack;
 
 int main(int argc, char* argv[]) {
-  IO::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, argv);
 
   ////// READING PARAMETERS AND LOADING DATA //////
   arma::mat data_points;
-  data::Load(IO::GetParam<std::string>("mog/data").c_str(), data_points);
+  data::Load(CLI::GetParam<std::string>("mog/data").c_str(), data_points);
 
   ////// MIXTURE OF GAUSSIANS USING EM //////
   MoGEM mog;
 
-  IO::GetParam<int>("mog/k") = 1;
-  IO::GetParam<int>("mog/d") = data_points.n_rows;
+  CLI::GetParam<int>("mog/k") = 1;
+  CLI::GetParam<int>("mog/d") = data_points.n_rows;
 
   ////// Timing the initialization of the mixture model //////
-  IO::StartTimer("mog/model_init");
+  CLI::StartTimer("mog/model_init");
   mog.Init(1, data_points.n_rows);
-  IO::StopTimer("mog/model_init");
+  CLI::StopTimer("mog/model_init");
 
   ////// Computing the parameters of the model using the EM algorithm //////
   std::vector<double> results;
 
-  IO::StartTimer("mog/EM");
+  CLI::StartTimer("mog/EM");
   mog.ExpectationMaximization(data_points);
-  IO::StopTimer("mog/EM");
+  CLI::StopTimer("mog/EM");
 
   mog.Display();
   mog.OutputResults(results);

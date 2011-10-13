@@ -1,5 +1,5 @@
-#ifndef FASTLIB_DISCRETE_DISTRIBUTION_H
-#define FASTLIB_DISCRETE_DISTRIBUTION_H
+#ifndef FASTLIB_DISCRETE_DISTRIBUTCLIN_H
+#define FASTLIB_DISCRETE_DISTRIBUTCLIN_H
 #include "fastlib/fastlib.h"
 class DiscreteDST {
   Vector p;

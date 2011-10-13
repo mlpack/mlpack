@@ -16,8 +16,8 @@
  * =====================================================================================
  */
 
-#ifndef MVU_CLASSIFICATION_H_
-#define MVU_CLASSIFICATION_H_
+#ifndef MVU_CLASSIFICATCLIN_H_
+#define MVU_CLASSIFICATCLIN_H_
 
 #include "fastlib/fastlib.h"
 #include "mlpack/allknn/allknn.h"

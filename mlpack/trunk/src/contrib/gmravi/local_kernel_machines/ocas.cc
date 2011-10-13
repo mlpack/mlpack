@@ -34,8 +34,8 @@ void OCAS::Optimize(){
   double approximate_value_w_smo_at_t;
   double objective_value_w_smo_at_t;
 
-  int MAX_NUM_ITERATIONS=200;
-  while(num_iterations<MAX_NUM_ITERATIONS&&fabs(gap)>0.0001){
+  int MAX_NUM_ITERATCLINS=200;
+  while(num_iterations<MAX_NUM_ITERATCLINS&&fabs(gap)>0.0001){
     
        
     // OCAS requires us to solve a QP problem where the
@@ -201,9 +201,9 @@ void OCAS::Optimize(){
   printf("objective_value_w_smo_at_t=%f..\n",objective_value_w_smo_at_t);
   printf("gap=%f...\n",gap);
 
-  if(num_iterations==MAX_NUM_ITERATIONS){
+  if(num_iterations==MAX_NUM_ITERATCLINS){
 
-    printf("CAUTION:OCAS Required %d iterations...\n",num_iterations); 
+    printf("CAUTCLIN:OCAS Required %d iterations...\n",num_iterations); 
     printf("lambda=%f,smoothing_kernel_bandwidth=%f..\n",
 	   lambda_reg_const_,smoothing_kernel_bandwidth_);
     printf("gap=%f..\n",gap);

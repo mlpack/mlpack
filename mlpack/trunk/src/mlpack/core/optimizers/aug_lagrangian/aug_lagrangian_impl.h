@@ -6,8 +6,8 @@
  * method).
  */
 
-#ifndef __OPTIMIZATION_AUG_LAGRANGIAN_IMPL_H
-#define __OPTIMIZATION_AUG_LAGRANGIAN_IMPL_H
+#ifndef __OPTIMIZATCLIN_AUG_LAGRANGIAN_IMPL_H
+#define __OPTIMIZATCLIN_AUG_LAGRANGIAN_IMPL_H
 
 #include <mlpack/core/optimizers/lbfgs/lbfgs.h>
 
@@ -84,14 +84,14 @@ bool AugLagrangian<LagrangianFunction>::Optimize(int num_iterations,
       f.lambda_ = lambda;
 
       // We also update the penalty threshold to be a factor of the current
-      // penalty.  TODO: this factor should be a parameter (from IO).  The value
+      // penalty.  TODO: this factor should be a parameter (from CLI).  The value
       // of 0.25 is taken from Burer and Monteiro (2002).
       penalty_threshold = 0.25 * penalty;
       Log::Debug << "Lagrange multiplier estimates updated." << std::endl;
 
     } else {
       // We multiply sigma by a constant value.  TODO: this factor should be a
-      // parameter (from IO).  The value of 10 is taken from Burer and Monteiro
+      // parameter (from CLI).  The value of 10 is taken from Burer and Monteiro
       // (2002).
       sigma *= 10;
       f.sigma_ = sigma;

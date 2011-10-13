@@ -1,5 +1,5 @@
-#ifndef MLPACK_IO_LOG_H
-#define MLPACK_IO_LOG_H
+#ifndef MLPACK_CLI_LOG_H
+#define MLPACK_CLI_LOG_H
 
 #include "prefixedoutstream.h"
 #include "nulloutstream.h"

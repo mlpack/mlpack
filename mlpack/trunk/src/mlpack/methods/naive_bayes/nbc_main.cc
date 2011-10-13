@@ -72,43 +72,43 @@ using namespace naive_bayes;
 
 int main(int argc, char* argv[]) {
 
-  IO::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, argv);
 
   ////// READING PARAMETERS AND LOADING DATA //////
 
-  const char *training_data_filename = IO::GetParam<std::string>("nbc/train").c_str();
+  const char *training_data_filename = CLI::GetParam<std::string>("nbc/train").c_str();
   arma::mat training_data;
   data::Load(training_data_filename, training_data);
 
-  const char *testing_data_filename = IO::GetParam<std::string>("nbc/test").c_str();
+  const char *testing_data_filename = CLI::GetParam<std::string>("nbc/test").c_str();
   arma::mat testing_data;
   data::Load(testing_data_filename, testing_data);
 
-  ////// SIMPLE NAIVE BAYES CLASSIFICATION ASSUMING THE DATA TO BE UNIFORMLY DISTRIBUTED //////
+  ////// SIMPLE NAIVE BAYES CLASSIFICATCLIN ASSUMING THE DATA TO BE UNIFORMLY DISTRIBUTED //////
 
   ////// Timing the training of the Naive Bayes Classifier //////
-  IO::StartTimer("nbc/training");
+  CLI::StartTimer("nbc/training");
 
   ////// Create and train the classifier
   SimpleNaiveBayesClassifier nbc = SimpleNaiveBayesClassifier(training_data);
 
   ////// Stop training timer //////
-  IO::StopTimer("nbc/training");
+  CLI::StopTimer("nbc/training");
 
   ////// Timing the testing of the Naive Bayes Classifier //////
   ////// The variable that contains the result of the classification
   arma::vec results;
 
-  IO::StartTimer("nbc/testing");
+  CLI::StartTimer("nbc/testing");
 
   ////// Calling the function that classifies the test data
   nbc.Classify(testing_data, results);
 
   ////// Stop testing timer //////
-  IO::StopTimer("nbc/testing");
+  CLI::StopTimer("nbc/testing");
 
   ////// OUTPUT RESULTS //////
-  std::string output_filename = IO::GetParam<std::string>("nbc/output");
+  std::string output_filename = CLI::GetParam<std::string>("nbc/output");
 
   data::Save(output_filename.c_str(), results);
 

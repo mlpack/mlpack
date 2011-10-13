@@ -1,5 +1,5 @@
-#ifndef CUR_DECOMPOSITION_H
-#define CUR_DECOMPOSITION_H
+#ifndef CUR_DECOMPOSITCLIN_H
+#define CUR_DECOMPOSITCLIN_H
 
 #include "fastlib/fastlib.h"
 

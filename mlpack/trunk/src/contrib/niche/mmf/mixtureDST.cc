@@ -154,7 +154,7 @@ void MixtureGauss::InitFromProfile(const ArrayList<Matrix>& matlst, int start, i
 void MixtureGauss::print_mixture(const char* s) const {
   int K = means.size();
   printf("%s - Mixture (%d)\n", s, K);
-  print_vector(prior, "  PRIOR");
+  print_vector(prior, "  PRCLIR");
   for (int i = 0; i < K; i++) {
     printf("  CLUSTER %d:\n", i);
     print_vector(means[i], "  MEANS");

@@ -57,7 +57,7 @@ bool npt::TestAngleResampling::StressTest() {
   
   // Generate a random matcher and matcher thickness multiplier
   
-  mlpack::IO::GetParam<int>("tree/leaf_size") = num_leaves_gen();
+  mlpack::CLI::GetParam<int>("tree/leaf_size") = num_leaves_gen();
   
   printf("generating matchers \n");
   

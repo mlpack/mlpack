@@ -1,5 +1,5 @@
-#ifndef RIDGE_REGRESSION_UTIL_H
-#define RIDGE_REGRESSION_UTIL_H
+#ifndef RIDGE_REGRESSCLIN_UTIL_H
+#define RIDGE_REGRESSCLIN_UTIL_H
 
 #include "ridge_regression.h"
 

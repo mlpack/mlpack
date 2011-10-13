@@ -5,7 +5,7 @@
 void QuasiNewton::Eval(double *pt){
 
   size_t n = dimension(), iters;
-  size_t i, its, MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",500);
+  size_t i, its, MAXIMUM_ITERATCLINS = fx_param_int(opt_module_,"MAX_ITERS",500);
   long double temp_1, temp_2, temp_3, temp_4, f_previous, f_min, 
     maximum_step_length, sum = 0.0, sumdg, sumxi, temp, test;
   Vector dgrad, grad, hdgrad, xi;
@@ -41,7 +41,7 @@ void QuasiNewton::Eval(double *pt){
   }
   maximum_step_length = MAX_STEP_SIZE*fmax;
 
-  for(its = 0; its < MAXIMUM_ITERATIONS; its++) {
+  for(its = 0; its < MAXIMUM_ITERATCLINS; its++) {
       
     dgrad.CopyValues(grad);
     LineSearch_(pold, f_previous, &grad, &xi,
@@ -218,7 +218,7 @@ void QuasiNewton::LineSearch_(Vector pold, long double fold, Vector *grad,
 void GradientDescent::Eval(double *pt){
 
   size_t iters;
-  size_t MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",100);
+  size_t MAXIMUM_ITERATCLINS = fx_param_int(opt_module_,"MAX_ITERS",100);
   double EPSILON = fx_param_double(opt_module_, "EPSILON", 1.0e-5);
   fx_format_param(opt_module_, "TOLERANCE", "%lf", 0.001);
   double TOLERANCE = fx_param_double_req(opt_module_, "TOLERANCE");
@@ -248,7 +248,7 @@ void GradientDescent::Eval(double *pt){
   // \theta_{k+1} = \theta_k - 
   //                alpha * \nabla_\theta f(X,\theta_k) / scale;
 
-  for (iters = 0; iters < MAXIMUM_ITERATIONS; iters++) {
+  for (iters = 0; iters < MAXIMUM_ITERATCLINS; iters++) {
 
     scale = sqrt(la::Dot(grad, grad));
     gamma = - alpha / scale;
@@ -289,7 +289,7 @@ void GradientDescent::Eval(double *pt){
 void SGD::Eval(double *pt){
 
   size_t iters;
-  size_t MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",100);
+  size_t MAXIMUM_ITERATCLINS = fx_param_int(opt_module_,"MAX_ITERS",100);
   double EPSILON = fx_param_double(opt_module_, "EPSILON", 1.0e-5);
   fx_format_param(opt_module_, "TOLERANCE", "%lf", 0.001);
   double TOLERANCE = fx_param_double_req(opt_module_, "TOLERANCE");
@@ -323,7 +323,7 @@ void SGD::Eval(double *pt){
   // \theta_{t+1} = \theta_t - 
   //                alpha * \nabla_\theta f(X_t,\theta_t) / scale;
 
-  for (iters = 0; iters < MAXIMUM_ITERATIONS; iters++) {
+  for (iters = 0; iters < MAXIMUM_ITERATCLINS; iters++) {
 
     // Now going through the data batchwise
     for (size_t in = 0; in < num_batch; in++) {
@@ -382,7 +382,7 @@ void SGD::Eval(double *pt){
 void SMD::Eval(double *pt){
 
   size_t iters;
-  size_t MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",100);
+  size_t MAXIMUM_ITERATCLINS = fx_param_int(opt_module_,"MAX_ITERS",100);
   // double EPSILON = fx_param_double(opt_module_, "EPSILON", 1.0e-2);
   double TOLERANCE = fx_param_double(opt_module_, "TOLERANCE", 1.0e-2);
   size_t dim = fx_param_int_req(opt_module_, "param_space_dim");
@@ -433,7 +433,7 @@ void SMD::Eval(double *pt){
   data_batched.Destruct();
   PermuteMatrix_(data(), &data_batched);
 
-  for (iters = 0; iters < MAXIMUM_ITERATIONS; iters++) {
+  for (iters = 0; iters < MAXIMUM_ITERATCLINS; iters++) {
 
     // Now going through the data batchwise
     for (size_t in = 0; in < num_batch; in++) {

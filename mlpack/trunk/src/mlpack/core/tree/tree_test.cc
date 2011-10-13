@@ -863,7 +863,7 @@ BOOST_AUTO_TEST_CASE(tree_count_mismatch) {
                       "3.0 4.0 6.0 7.0 1.0 2.0 ";
 
   // Leaf size of 1.
-  IO::GetParam<int>("tree/leaf_size") = 1;
+  CLI::GetParam<int>("tree/leaf_size") = 1;
   BinarySpaceTree<HRectBound<2> > root_node(dataset);
 
   BOOST_REQUIRE(root_node.count() == 6);
@@ -918,7 +918,7 @@ BOOST_AUTO_TEST_CASE(kd_tree_test) {
 
   // Reset the leaf size as other tests have been naughty.
   // Also, a leaf size of 20 makes the test take too long.
-  IO::GetParam<int>("tree/leaf_size") = 20;
+  CLI::GetParam<int>("tree/leaf_size") = 20;
 
   for(size_t run = 0; run < max_runs; run++) {
     size_t dimensions = run + 2;
@@ -972,7 +972,7 @@ BOOST_AUTO_TEST_CASE(kd_tree_test) {
   }
 
   // Reset it to the default value at the end of the test.
-  IO::GetParam<int>("tree/leaf_size") = 20;
+  CLI::GetParam<int>("tree/leaf_size") = 20;
 }
 
 // Recursively checks that each node contains all points that it claims to have.

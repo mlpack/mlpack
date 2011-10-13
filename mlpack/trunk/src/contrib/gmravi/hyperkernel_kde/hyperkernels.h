@@ -24,7 +24,7 @@ class GaussianHyperKernel{
     //Initialize the gaussian kenels
 
     //THIS HAS TO CHANGE ACCORDINGLY AS PRODUCT KERNEL FOR
-    //MULTIDIMENSIONAL CASE
+    //MULTIDIMENSCLINAL CASE
     gk_intra_.Init(sigma*sqrt(2),num_dims_);
 
     double sqrt_sum_sqd_bw=sqrt(sigma_h_*sigma_h_+sigma_*sigma_);

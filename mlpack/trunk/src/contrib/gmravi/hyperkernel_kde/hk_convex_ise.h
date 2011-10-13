@@ -309,7 +309,7 @@ class HkConvexIse{
   //Form linear constraint naively
   /*void FormLinearConstraintNaively_(){
     
-  //THIS HAS TO CHANGE FOR A MULTIDIMENSIONAL SETTING..........
+  //THIS HAS TO CHANGE FOR A MULTIDIMENSCLINAL SETTING..........
     
   GaussianKernel gk;
   double bandwidth=sqrt(6*sigma_*sigma_+4*sigma_h_*sigma_h_);

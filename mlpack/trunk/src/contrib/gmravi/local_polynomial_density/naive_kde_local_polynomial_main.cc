@@ -146,7 +146,7 @@ int main(int argc, char *argv[]){
   }
   printf("Will start local polynomial calculations...\n");
 
-  /////////////////LOCAL POLYNOMIAL KDE CALCULATIONS///////////////
+  /////////////////LOCAL POLYNOMIAL KDE CALCULATCLINS///////////////
 
   NaiveKdeLP <ErfDiffKernel> naive_kde_lp;
   /*printf("Will call init functio.....\n");
@@ -169,7 +169,7 @@ int main(int argc, char *argv[]){
     naive_kde_lp.Compare(true_density,boundary_points);
   }
 
-  ////////////////////GET RESULTS OF POLYNOMIAL KDE CALCULATIONS///////////
+  ////////////////////GET RESULTS OF POLYNOMIAL KDE CALCULATCLINS///////////
 
   naive_kde_lp_results.Init(query.n_cols());
   naive_kde_lp.get_density_estimates(naive_kde_lp_results);

@@ -71,17 +71,17 @@ PROGRAM_INFO("MVU", "This program computes the Maximum Variance Unfolding and\
 using namespace mlpack;
 
 int main(int argc, char *argv[]){
-  IO::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, argv);
 
   std::string optimized_function=
-    IO::GetParam<std::string>("lbfgs/optimized_function");
+    CLI::GetParam<std::string>("lbfgs/optimized_function");
   // this is sort of a hack and it has to be eliminated in the final version
-  size_t new_dimension=IO::GetParam<int>("lbfgs/new_dimension");
-  IO::GetParam<int>("lbfgs/new_dimension") = new_dimension;
+  size_t new_dimension=CLI::GetParam<int>("lbfgs/new_dimension");
+  CLI::GetParam<int>("lbfgs/new_dimension") = new_dimension;
   
-  if (!IO::HasParam("optfun/nearest_neighbor_file")) {
+  if (!CLI::HasParam("optfun/nearest_neighbor_file")) {
     Matrix data_mat;
-    std::string data_file=IO::GetParam<std::string>("lbfgs/data_file");
+    std::string data_file=CLI::GetParam<std::string>("lbfgs/data_file");
     if (data::Load(data_file.c_str(), &data_mat)==false) {
       Log::Fatal << "Didn't manage to load " << data_file.c_str()) << std::endl;
     }
@@ -89,9 +89,9 @@ int main(int argc, char *argv[]){
     OptUtils::RemoveMean(&data_mat);
   
  
-    bool pca_preprocess=IO::HasParam("lbfgs/pca_pre");
-    size_t pca_dimension=IO::GetParam<int>("lgfgs/pca_dim");
-    bool pca_init=IO::HasParam("lbfgs/pca_init");
+    bool pca_preprocess=CLI::HasParam("lbfgs/pca_pre");
+    size_t pca_dimension=CLI::GetParam<int>("lgfgs/pca_dim");
+    bool pca_init=CLI::HasParam("lbfgs/pca_init");
     Matrix *initial_data=NULL;
     if (pca_preprocess==true) {
       Log::Info << "Preprocessing with pca") << std::endl;
@@ -103,13 +103,13 @@ int main(int argc, char *argv[]){
     if (pca_init==true) {
       Log::Info << "Preprocessing with pca" << std::endl;
       initial_data = new Matrix();
-      size_t new_dimension=IO::GetParam<int>("lbfgs/new_dimension");
+      size_t new_dimension=CLI::GetParam<int>("lbfgs/new_dimension");
       OptUtils::SVDTransform(data_mat, initial_data, new_dimension);
     }
   
     //we need to insert the number of points
-    IO::GetParam<int>("lbfgs/num_of_points") = data_mat.n_cols();
-    std::string result_file=IO::GetParam<std::string>("lbfgs/result_file"); 
+    CLI::GetParam<int>("lbfgs/num_of_points") = data_mat.n_cols();
+    std::string result_file=CLI::GetParam<std::string>("lbfgs/result_file"); 
     bool done=false;
     
     if (optimized_function == "mvu") {
@@ -131,7 +131,7 @@ int main(int argc, char *argv[]){
       opt_function.Init(optfun_node, data_mat);
       //opt_function.set_lagrange_mult(0.0);
       Lbfgs<MaxFurthestNeighbors> engine;
-      IO::GetParam<bool>("lbfgs/use_default_termination") = false;
+      CLI::GetParam<bool>("lbfgs/use_default_termination") = false;
       engine.Init(&opt_function, l_bfgs_node);
       if (pca_init==true) {
         la::Scale(1e-1, initial_data);
@@ -154,7 +154,7 @@ int main(int argc, char *argv[]){
   } else {
     // This is for nadeem
     
-    std::string result_file=IO::GetParam<std::string>("lbfgs/result_file");
+    std::string result_file=CLI::GetParam<std::string>("lbfgs/result_file");
     bool done=false;
     
     if (optimized_function == "mvu") {
@@ -162,7 +162,7 @@ int main(int argc, char *argv[]){
       opt_function.Init(optfun_node);
       Matrix init_mat;
       //we need to insert the number of points
-      IO::GetParam<int>("lbfgs/num_of_points") = opt_function.num_of_points();
+      CLI::GetParam<int>("lbfgs/num_of_points") = opt_function.num_of_points();
 
       Lbfgs<MaxVariance> engine;
       engine.Init(&opt_function, l_bfgs_node);
@@ -176,8 +176,8 @@ int main(int argc, char *argv[]){
       MaxFurthestNeighbors opt_function;
       opt_function.Init(optfun_node);
       //we need to insert the number of points
-      IO::GetParam<int>("lbfgs/num_of_points") = opt_function.num_of_points();
-      IO::GetParam<bool>("lbfgs/use_default_termination") = false;
+      CLI::GetParam<int>("lbfgs/num_of_points") = opt_function.num_of_points();
+      CLI::GetParam<bool>("lbfgs/use_default_termination") = false;
 
       Lbfgs<MaxFurthestNeighbors> engine;
       engine.Init(&opt_function, l_bfgs_node);

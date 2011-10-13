@@ -2,7 +2,7 @@
  * @file io_test.cc
  * @author Matthew Amidon, Ryan Curtin
  *
- * Test for the IO input parameter system.
+ * Test for the CLI input parameter system.
  */
 #include "optionshierarchy.h"
 #include "io.h"
@@ -15,7 +15,7 @@
 
 #define DEFAULT_INT 42
 
-#define BOOST_TEST_MODULE IO_Test
+#define BOOST_TEST_MODULE CLI_Test
 #include <boost/test/unit_test.hpp>
 
 #define BASH_RED "\033[0;31m"
@@ -63,30 +63,30 @@ BOOST_AUTO_TEST_CASE(TestHierarchy) {
 }
 
 /***
- * @brief Tests that IO works as intended, namely that IO::Add
+ * @brief Tests that CLI works as intended, namely that CLI::Add
  *   propagates successfully.
  *
- * @return True indicating all is well with IO::Add, false otherwise.
+ * @return True indicating all is well with CLI::Add, false otherwise.
  */
-BOOST_AUTO_TEST_CASE(TestIOAdd) {
-  // Check that the IO::HasParam returns false if no value has been specified
+BOOST_AUTO_TEST_CASE(TestCLIAdd) {
+  // Check that the CLI::HasParam returns false if no value has been specified
   // on the commandline and ignores any programmatical assignments.
-  IO::Add<bool>("bool", "True or False", "global");
-  BOOST_REQUIRE_EQUAL(IO::HasParam("global/bool"), false);
-  IO::GetParam<bool>("global/bool") = true;
-  // IO::HasParam should return true.
-  BOOST_REQUIRE_EQUAL(IO::HasParam("global/bool"), true);
+  CLI::Add<bool>("bool", "True or False", "global");
+  BOOST_REQUIRE_EQUAL(CLI::HasParam("global/bool"), false);
+  CLI::GetParam<bool>("global/bool") = true;
+  // CLI::HasParam should return true.
+  BOOST_REQUIRE_EQUAL(CLI::HasParam("global/bool"), true);
 
   //Check the description of our variable.
-  BOOST_REQUIRE_EQUAL(IO::GetDescription("global/bool").compare(
+  BOOST_REQUIRE_EQUAL(CLI::GetDescription("global/bool").compare(
       std::string("True or False")) , 0);
   // Check that SanitizeString is sanitary.
-  std::string tmp = IO::SanitizeString("/foo/bar/fizz");
+  std::string tmp = CLI::SanitizeString("/foo/bar/fizz");
   BOOST_REQUIRE_EQUAL(tmp.compare(std::string("foo/bar/fizz/")),0);
 }
 
 /***
- * Test the output of IO.  We will pass bogus input to a stringstream so that
+ * Test the output of CLI.  We will pass bogus input to a stringstream so that
  * none of it gets to the screen.
  */
 BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamBasic) {
@@ -116,20 +116,20 @@ BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamBasic) {
 
 /**
  * @brief Tests that the various PARAM_* macros work properly
- * @return True indicating that all is well with IO & Options.
+ * @return True indicating that all is well with CLI & Options.
  */
 BOOST_AUTO_TEST_CASE(TestOption) {
-  // This test will involve creating an option, and making sure IO reflects
+  // This test will involve creating an option, and making sure CLI reflects
   // this.
   PARAM(int, "test", "test desc", "test_parent", DEFAULT_INT, false);
 
-  // Does IO reflect this?
-  BOOST_REQUIRE_EQUAL(IO::HasParam("test_parent/test"), true);
+  // Does CLI reflect this?
+  BOOST_REQUIRE_EQUAL(CLI::HasParam("test_parent/test"), true);
 
   std::string desc = std::string("test desc");
 
-  BOOST_REQUIRE_EQUAL(IO::GetDescription("test_parent/test"), "test desc");
-  BOOST_REQUIRE_EQUAL(IO::GetParam<int>("test_parent/test"), DEFAULT_INT);
+  BOOST_REQUIRE_EQUAL(CLI::GetDescription("test_parent/test"), "test desc");
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<int>("test_parent/test"), DEFAULT_INT);
 }
 
 /***
@@ -138,13 +138,13 @@ BOOST_AUTO_TEST_CASE(TestOption) {
 BOOST_AUTO_TEST_CASE(TestBooleanOption) {
   PARAM_FLAG("flag_test", "flag test description", "test_parent");
 
-  BOOST_REQUIRE_EQUAL(IO::HasParam("test_parent/flag_test"), false);
+  BOOST_REQUIRE_EQUAL(CLI::HasParam("test_parent/flag_test"), false);
 
-  BOOST_REQUIRE_EQUAL(IO::GetDescription("test_parent/flag_test"),
+  BOOST_REQUIRE_EQUAL(CLI::GetDescription("test_parent/flag_test"),
       "flag test description");
 
-  // Now check that IO reflects that it is false by default.
-  BOOST_REQUIRE_EQUAL(IO::GetParam<bool>("test_parent/flag_test"), false);
+  // Now check that CLI reflects that it is false by default.
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("test_parent/flag_test"), false);
 }
 
 

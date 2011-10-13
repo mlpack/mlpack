@@ -206,7 +206,7 @@ class Dataset {
   /**
    * Reads in an ARFF or CSV/WSV file.
    *
-   * ARFF LIMITATIONS: Values cannot have spaces or commas, even with quotes;
+   * ARFF LIMITATCLINS: Values cannot have spaces or commas, even with quotes;
    * 'string' data type not supported (nominal is supported).
    *
    * @param fname the name of an ARFF, CSV, or whitespace-separated
@@ -216,7 +216,7 @@ class Dataset {
   /**
    * Reads in an ARFF or CSV/WSV file.
    *
-   * ARFF LIMITATIONS: Values cannot have spaces or commas, even with quotes;
+   * ARFF LIMITATCLINS: Values cannot have spaces or commas, even with quotes;
    * 'string' data type not supported (nominal is supported).
    *
    * @param reader a line reader opened on a CSV or WSV or ARFF file

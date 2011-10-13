@@ -1,6 +1,6 @@
 
-#ifndef FASTLIB_GAUSSIAN_DISTRIBUTION_H
-#define FASTLIB_GAUSSIAN_DISTRIBUTION_H
+#ifndef FASTLIB_GAUSSIAN_DISTRIBUTCLIN_H
+#define FASTLIB_GAUSSIAN_DISTRIBUTCLIN_H
 #include <fastlib/fastlib.h>
 
 class GaussianDistribution {

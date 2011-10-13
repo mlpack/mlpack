@@ -27,10 +27,10 @@ using namespace mlpack;
 using namespace mlpack::emst;
 
 int main(int argc, char* argv[]) {
-  IO::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, argv);
 
   // For when I implement a thor version
-  bool using_thor = IO::GetParam<bool>("emst/using_thor");
+  bool using_thor = CLI::GetParam<bool>("emst/using_thor");
 
 
   if (using_thor) {
@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
 
     ///////////////// READ IN DATA //////////////////////////////////
 
-    std::string data_file_name = IO::GetParam<std::string>("emst/input_file");
+    std::string data_file_name = CLI::GetParam<std::string>("emst/input_file");
 
     arma::mat data_points;
     data::Load(data_file_name.c_str(), data_points);
@@ -54,10 +54,10 @@ int main(int argc, char* argv[]) {
     dtb.ComputeMST(results);
 
     //////////////// Check against naive //////////////////////////
-    if (IO::GetParam<bool>("naive/do_naive")) {
+    if (CLI::GetParam<bool>("naive/do_naive")) {
 
       DualTreeBoruvka naive;
-      IO::GetParam<bool>("naive/do_naive") = true;
+      CLI::GetParam<bool>("naive/do_naive") = true;
 
       naive.Init(data_points);
 
@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
 
       /* Compare the naive output to the DTB output */
 
-      IO::StartTimer("naive/comparison");
+      CLI::StartTimer("naive/comparison");
 
 
       // Check if the edge lists are the same
@@ -113,8 +113,8 @@ int main(int argc, char* argv[]) {
         "Edge lists are different." << std::endl << std::endl;
 
         // Check if the outputs have the same length
-        if (IO::GetParam<double>("naive/total_squared_length") !=
-           IO::GetParam<double>("naive/total_squared_length")) {
+        if (CLI::GetParam<double>("naive/total_squared_length") !=
+           CLI::GetParam<double>("naive/total_squared_length")) {
 
           Log::Fatal << "Total lengths are different! "
              << " One algorithm has failed." << std::endl;
@@ -138,10 +138,10 @@ int main(int argc, char* argv[]) {
           std::endl << std::endl;
       }
 
-      IO::StopTimer("naive/comparison");
+      CLI::StopTimer("naive/comparison");
 
       std::string naive_output_filename =
-          IO::GetParam<std::string>("naive/output_file");
+          CLI::GetParam<std::string>("naive/output_file");
 
       data::Save(naive_output_filename.c_str(), naive_results);
     }
@@ -149,7 +149,7 @@ int main(int argc, char* argv[]) {
     //////////////// Output the Results ////////////////
 
     std::string output_filename =
-        IO::GetParam<std::string>("emst/output_file");
+        CLI::GetParam<std::string>("emst/output_file");
 
     data::Save(output_filename.c_str(), results);
 

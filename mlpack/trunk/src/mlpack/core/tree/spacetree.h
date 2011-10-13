@@ -31,10 +31,10 @@ PARAM_INT("leaf_size", "Leaf size used during tree construction.", "tree", 20);
  *
  * This tree does take one command line parameter, which is the leaf size to be
  * used.  You can set this at runtime with --tree/leaf_size [leaf_size].  You
- * can also set it in your program using IO:
+ * can also set it in your program using CLI:
  *
  * @code
- *   IO::GetParam<int>("tree/leaf_size") = target_leaf_size;
+ *   CLI::GetParam<int>("tree/leaf_size") = target_leaf_size;
  * @endcode
  *
  * @tparam TBound The bound used for each node.  The valid types of bounds and

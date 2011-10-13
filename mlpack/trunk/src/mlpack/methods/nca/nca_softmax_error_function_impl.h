@@ -4,8 +4,8 @@
  *
  * Implementation of the Softmax error function.
  */
-#ifndef __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_IMPL_H
-#define __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_IMPL_H
+#ifndef __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTCLIN_IMPL_H
+#define __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTCLIN_IMPL_H
 
 #include "nca_softmax_error_function.h"
 

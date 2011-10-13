@@ -6,7 +6,7 @@
  * Model.
  *
  * Usage:
- *   viterbi --type=TYPE --profile=PROFILE --seqfile=FILE [OPTIONS]
+ *   viterbi --type=TYPE --profile=PROFILE --seqfile=FILE [OPTCLINS]
  * See the usage() function for complete option list
  */
 
@@ -73,8 +73,8 @@ int main(int argc, char* argv[]) {
 void usage() {
   printf("\n"
 	 "Usage:\n"
-	 "  viterbi --type=={discrete|gaussian|mixture} OPTIONS\n"
-	 "[OPTIONS]\n"
+	 "  viterbi --type=={discrete|gaussian|mixture} OPTCLINS\n"
+	 "[OPTCLINS]\n"
 	 "  --profile=file   : file contains HMM profile\n"
 	 "  --seqfile=file   : file contains input sequences\n"
 	 "  --statefile=file : output file for state sequences\n"

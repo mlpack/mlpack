@@ -351,7 +351,7 @@ void SMO<TKernel>::Train(int learner_typeid, arma::mat* dataset_in) {
   grad_bar_.set_size(n_alpha_);
   grad_bar_.zeros();
 
-  do_shrinking_ = IO::GetParam<bool>("svm/shrink");
+  do_shrinking_ = CLI::GetParam<bool>("svm/shrink");
   ct_shrinking_ = std::min(n_data_, SMO_NUM_FOR_SHRINKING);
   if (do_shrinking_) {
     for (i = 0; i < n_alpha_; i++) {

@@ -124,7 +124,7 @@ class RVM {
   int num_data_;
   int num_features_;
 
-  // FOR RVM CLASSIFICATION ONLY
+  // FOR RVM CLASSIFICATCLIN ONLY
   /* number of classes */
   int num_classes_;
   /* list of labels, double type, but may be converted to integers.

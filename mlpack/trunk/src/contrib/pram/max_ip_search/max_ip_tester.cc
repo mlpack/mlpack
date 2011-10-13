@@ -38,11 +38,11 @@ size_t count_mismatched_neighbors(arma::vec, size_t,
 
 int main (int argc, char *argv[]) {
 
-  IO::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, argv);
 
   arma::mat rdata, qdata;
-  string rfile = IO::GetParam<string>("r");
-  string qfile = IO::GetParam<string>("q");
+  string rfile = CLI::GetParam<string>("r");
+  string qfile = CLI::GetParam<string>("q");
 
   Log::Warn << "Loading files..." << endl;
   if (!data::Load(rfile.c_str(), rdata))
@@ -59,8 +59,8 @@ int main (int argc, char *argv[]) {
 
 
 
-  size_t knns = IO::GetParam<int>("maxip/knns");
-  size_t max_k = IO::GetParam<int>("max_k");
+  size_t knns = CLI::GetParam<int>("maxip/knns");
+  size_t max_k = CLI::GetParam<int>("max_k");
   arma::vec speedups(max_k);
 
   MaxIP naive, fast_exact;
@@ -68,7 +68,7 @@ int main (int argc, char *argv[]) {
   arma::Col<size_t> nac;
   arma::vec din;
 
-  if (IO::HasParam("check_nn")) { 
+  if (CLI::HasParam("check_nn")) { 
     Log::Warn << "Starting naive computation..." <<endl;
     naive.InitNaive(qdata, rdata);
     naive.WarmInit(max_k);
@@ -88,7 +88,7 @@ int main (int argc, char *argv[]) {
     arma::vec die;
     double fast_comp = fast_exact.ComputeNeighbors(&exc, &die);
 
-    if (IO::HasParam("check_nn")) {
+    if (CLI::HasParam("check_nn")) {
       size_t errors = count_mismatched_neighbors(din, max_k, die, knns);
 
       if (errors > 0) {
@@ -109,8 +109,8 @@ int main (int argc, char *argv[]) {
   Log::Warn << "Search completed for all values of k...printing results now"
 	   << endl;
 
-  if (IO::HasParam("print_speedups")) {
-    string speedup_file = IO::GetParam<string>("speedup_file");
+  if (CLI::HasParam("print_speedups")) {
+    string speedup_file = CLI::GetParam<string>("speedup_file");
     speedups.save(speedup_file, arma::raw_ascii);
   }
 }  // end main

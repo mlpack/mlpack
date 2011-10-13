@@ -5,7 +5,7 @@
  * according to a Hidden Markov  Model.
  *
  * Usage:
- *   loglik --type=TYPE --profile=PROFILE [OPTIONS]
+ *   loglik --type=TYPE --profile=PROFILE [OPTCLINS]
  * See the usage() function for complete option list
  */
 #include <mlpack/core.h>
@@ -57,11 +57,11 @@ PARAM_MODULE("hmm", "This is a program computing log-likelihood of data \nsequen
 }; */
 
 int main(int argc, char* argv[]) {
-  IO::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, argv);
 
   bool s = true;
-  if (IO::HasParam("hmm/type")) {
-    const char* type = IO::GetParam<std::string>("hmm/type").c_str();
+  if (CLI::HasParam("hmm/type")) {
+    const char* type = CLI::GetParam<std::string>("hmm/type").c_str();
     if (strcmp(type, "discrete")==0)
       s = loglik_discrete();
     else if (strcmp(type, "gaussian")==0)
@@ -83,21 +83,21 @@ int main(int argc, char* argv[]) {
 void usage() {
   Log::Warn << "\n" << std::endl;
   Log::Warn << "Usage:\n" << std::endl;
-  Log::Warn << "  loglik --type=={discrete|gaussian|mixture} OPTIONS" << std::endl;
-  Log::Warn << "[OPTIONS]" << std::endl;
+  Log::Warn << "  loglik --type=={discrete|gaussian|mixture} OPTCLINS" << std::endl;
+  Log::Warn << "[OPTCLINS]" << std::endl;
   Log::Warn << "  --profile==file   : file contains HMM profile" << std::endl;
   Log::Warn << "  --seqfile==file   : file contains input sequences" << std::endl;
   Log::Warn << "  --logfile==file   : output file for log-likelihood of the sequences" << std::endl;
 }
 
 bool loglik_mixture() {
-  if (!IO::HasParam("hmm/profile")) {
+  if (!CLI::HasParam("hmm/profile")) {
     Log::Warn << "--profile must be defined." << std::endl;
     return false;
   }
-  const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
-  const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str();
-  const char* logout = IO::GetParam<std::string>("hmm/logfile").c_str();
+  const char* profile = CLI::GetParam<std::string>("hmm/profile").c_str();
+  const char* seqin = CLI::GetParam<std::string>("hmm/seqfile").c_str();
+  const char* logout = CLI::GetParam<std::string>("hmm/logfile").c_str();
 
   MixtureofGaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -121,13 +121,13 @@ bool loglik_mixture() {
 }
 
 bool loglik_gaussian() {
-  if (!IO::HasParam("hmm/profile")) {
+  if (!CLI::HasParam("hmm/profile")) {
     Log::Warn << "--profile must be defined." << std::endl;
     return false;
   }
-  const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
-  const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str();
-  const char* logout = IO::GetParam<std::string>("hmm/logfile").c_str();
+  const char* profile = CLI::GetParam<std::string>("hmm/profile").c_str();
+  const char* seqin = CLI::GetParam<std::string>("hmm/seqfile").c_str();
+  const char* logout = CLI::GetParam<std::string>("hmm/logfile").c_str();
 
   GaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -151,13 +151,13 @@ bool loglik_gaussian() {
 }
 
 bool loglik_discrete() {
-  if (!IO::HasParam("hmm/profile")) {
+  if (!CLI::HasParam("hmm/profile")) {
     Log::Warn << "--profile must be defined." << std::endl;
     return false;
   }
-  const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
-  const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str();
-  const char* logout = IO::GetParam<std::string>("hmm/logfile").c_str();
+  const char* profile = CLI::GetParam<std::string>("hmm/profile").c_str();
+  const char* seqin = CLI::GetParam<std::string>("hmm/seqfile").c_str();
+  const char* logout = CLI::GetParam<std::string>("hmm/logfile").c_str();
 
   DiscreteHMM hmm;
   hmm.InitFromFile(profile);

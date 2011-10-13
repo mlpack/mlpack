@@ -15,7 +15,7 @@
   #include <winsock.h> //timeval on windows
   #include <windows.h> //GetSystemTimeAsFileTime on windows
 //gettimeofday has no equivalent will need to write extra code for that.
-  #if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
+  #if defined(_MSC_VER) || defined(_MSC_EXTENSCLINS)
     #define DELTA_EPOCH_IN_MICROSECS 11644473600000000Ui64
   #else
     #define DELTA_EPOCH_IN_MICROSECS 11644473600000000ULL
@@ -27,7 +27,7 @@
 using namespace mlpack;
 using namespace mlpack::io;
 
-IO* IO::singleton = NULL;
+CLI* CLI::singleton = NULL;
 
 /* For clarity, we will alias boost's namespace */
 namespace po = boost::program_options;
@@ -37,7 +37,7 @@ static ProgramDoc empty_program_doc = ProgramDoc("", "", "");
 
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
-IO::IO() : desc("Allowed Options") , hierarchy("Allowed Options"),
+CLI::CLI() : desc("Allowed Options") , hierarchy("Allowed Options"),
     did_parse(false), doc(&empty_program_doc) {
   return;
 }
@@ -47,19 +47,19 @@ IO::IO() : desc("Allowed Options") , hierarchy("Allowed Options"),
  *
  * @param optionsName Name of the module, as far as boost is concerned.
  */
-IO::IO(std::string& optionsName) :
+CLI::CLI(std::string& optionsName) :
     desc(optionsName.c_str()), hierarchy(optionsName.c_str()),
     did_parse(false), doc(&empty_program_doc) {
   return;
 }
 
 // Private copy constructor; don't want copies floating around.
-IO::IO(const IO& other) : desc(other.desc),
+CLI::CLI(const CLI& other) : desc(other.desc),
     did_parse(false), doc(&empty_program_doc) {
   return;
 }
 
-IO::~IO() {
+CLI::~CLI() {
   // Terminate the program timer.
   StopTimer("total_time");
 
@@ -94,17 +94,17 @@ IO::~IO() {
  * @param parent Full pathname of a parent module, default is root node.
  * @param required Indicates if parameter must be set on command line.
  */
-void IO::Add(const char* identifier,
+void CLI::Add(const char* identifier,
              const char* description,
              const char* parent,
              bool required) {
 
-  po::options_description& desc = IO::GetSingleton().desc;
+  po::options_description& desc = CLI::GetSingleton().desc;
 
   // Generate the full pathname and insert the node into the hierarchy.
   std::string tmp = TYPENAME(bool);
   std::string path =
-    IO::GetSingleton().ManageHierarchy(identifier, parent, tmp, description);
+    CLI::GetSingleton().ManageHierarchy(identifier, parent, tmp, description);
 
   // Add the option to boost::program_options.
   desc.add_options()
@@ -119,18 +119,18 @@ void IO::Add(const char* identifier,
 
 
 /*
- * @brief Adds a flag paramater to IO.
+ * @brief Adds a flag paramater to CLI.
  */
 
-void IO::AddFlag(const char* identifier,
+void CLI::AddFlag(const char* identifier,
                  const char* description,
                  const char* parent) {
-  po::options_description& desc = IO::GetSingleton().desc;
+  po::options_description& desc = CLI::GetSingleton().desc;
 
   //Generate the full pathname and insert node into the hierarchy
   std::string tname = TYPENAME(bool);
   std::string path =
-    IO::GetSingleton().ManageHierarchy(identifier, parent, tname, description);
+    CLI::GetSingleton().ManageHierarchy(identifier, parent, tname, description);
 
   //Add the option to boost program_options
   desc.add_options()
@@ -142,7 +142,7 @@ void IO::AddFlag(const char* identifier,
  *
  * @param identifier The name of the parameter in question.
  */
-bool IO::HasParam(const char* identifier) {
+bool CLI::HasParam(const char* identifier) {
   std::string key = std::string(identifier);
   
   //Does the parameter exist at all?
@@ -151,11 +151,11 @@ bool IO::HasParam(const char* identifier) {
 
   //Lets check if the parameter is boolean, if it is we just want to see 
   //If it was passed at program initiation.
-  OptionsHierarchy* node = IO::GetSingleton().hierarchy.FindNode(key);
+  OptionsHierarchy* node = CLI::GetSingleton().hierarchy.FindNode(key);
   if(node) {//Sanity check
     OptionsData data = node->GetNodeData();
     if(data.tname == std::string(TYPENAME(bool))) //Actually check if its bool
-      return IO::GetParam<bool>(identifier);
+      return CLI::GetParam<bool>(identifier);
   }
 
   //Return true if we have a defined value for identifier
@@ -171,7 +171,7 @@ bool IO::HasParam(const char* identifier) {
  * @param argv 2D array of the parameter strings themselves
  * @return some valid modified strings
  */
-std::vector<std::string> IO::InsertDefaultModule(int argc, char** argv) {
+std::vector<std::string> CLI::InsertDefaultModule(int argc, char** argv) {
   std::vector<std::string> ret;
   std::string path = GetSingleton().doc->defaultModule;
   path = SanitizeString(path.c_str());
@@ -197,7 +197,7 @@ std::vector<std::string> IO::InsertDefaultModule(int argc, char** argv) {
  * @param identifier Name of the node in question.
  * @return Description of the node in question.
  */
-std::string IO::GetDescription(const char* identifier) {
+std::string CLI::GetDescription(const char* identifier) {
   std::string tmp = std::string(identifier);
   OptionsHierarchy* h = GetSingleton().hierarchy.FindNode(tmp);
 
@@ -208,15 +208,15 @@ std::string IO::GetDescription(const char* identifier) {
   return d.desc;
 }
 
-std::vector<std::string> IO::GetFolder(const char* folder) {
+std::vector<std::string> CLI::GetFolder(const char* folder) {
   std::string str = folder;
   return GetSingleton().hierarchy.GetRelativePaths(str);
 }
 
 //Returns the sole instance of this class
-IO& IO::GetSingleton() {
+CLI& CLI::GetSingleton() {
   if (singleton == NULL) {
-    singleton = new IO();
+    singleton = new CLI();
   }
   return *singleton;
 }
@@ -230,7 +230,7 @@ IO& IO::GetSingleton() {
  * @param tname String identifier of the parameter's type.
  * @param desc String description of the parameter.
  */
-std::string IO::ManageHierarchy(const char* id,
+std::string CLI::ManageHierarchy(const char* id,
                                 const char* parent,
                                 std::string& tname,
                                 const char* desc) {
@@ -252,7 +252,7 @@ std::string IO::ManageHierarchy(const char* id,
  * @param tname String identifier of the parameter's type (TYPENAME(T)).
  * @param desc String description of the parameter (optional).
  */
-void IO::AddToHierarchy(std::string& path, std::string& tname,
+void CLI::AddToHierarchy(std::string& path, std::string& tname,
                         const char* desc) {
   // Make sure we don't overwrite any data.
   if (hierarchy.FindNode(path) != NULL)
@@ -272,7 +272,7 @@ void IO::AddToHierarchy(std::string& path, std::string& tname,
  * @param argc The number of arguments on the commandline.
  * @param argv The array of arguments as strings
  */
-void IO::ParseCommandLine(int argc, char** line) {
+void CLI::ParseCommandLine(int argc, char** line) {
   po::variables_map& vmap = GetSingleton().vmap;
   po::options_description& desc = GetSingleton().desc;
 
@@ -299,7 +299,7 @@ void IO::ParseCommandLine(int argc, char** line) {
  *
  * @param stream The stream to be parsed.
  */
-void IO::ParseStream(std::istream& stream) {
+void CLI::ParseStream(std::istream& stream) {
   po::variables_map& vmap = GetSingleton().vmap;
   po::options_description& desc = GetSingleton().desc;
 
@@ -323,7 +323,7 @@ void IO::ParseStream(std::istream& stream) {
  * Parses the values given on the command line,
  * overriding any default values.
  */
-void IO::UpdateGmap() {
+void CLI::UpdateGmap() {
   std::map<std::string, boost::any>& gmap = GetSingleton().globalValues;
   po::variables_map& vmap = GetSingleton().vmap;
 
@@ -343,7 +343,7 @@ void IO::UpdateGmap() {
  *
  * @param doc Pointer to the ProgramDoc object.
  */
-void IO::RegisterProgramDoc(ProgramDoc* doc) {
+void CLI::RegisterProgramDoc(ProgramDoc* doc) {
   // Only register the doc if it is not the dummy object we created at the
   // beginning of the file (as a default value in case this is never called).
   if (doc != &empty_program_doc)
@@ -351,11 +351,11 @@ void IO::RegisterProgramDoc(ProgramDoc* doc) {
 }
 
 /***
- * Destroy the IO object.  This resets the pointer to the singleton, so in case
+ * Destroy the CLI object.  This resets the pointer to the singleton, so in case
  * someone tries to access it after destruction, a new one will be made (the
  * program will not fail).
  */
-void IO::Destroy() {
+void CLI::Destroy() {
   if (singleton != NULL) {
     delete singleton;
     singleton = NULL; // Reset pointer.
@@ -367,7 +367,7 @@ void IO::Destroy() {
  * If found, will print out the appropriate information
  * and kill the program.
  */
-void IO::DefaultMessages() {
+void CLI::DefaultMessages() {
   // Default help message
   if (GetParam<bool>("help")) {
     // A little snippet about the program itself, if we have it.
@@ -408,7 +408,7 @@ void IO::DefaultMessages() {
  * If they havent, prints an error message and kills the
  * program.
  */
-void IO::RequiredOptions() {
+void CLI::RequiredOptions() {
   po::variables_map& vmap = GetSingleton().vmap;
   std::list<std::string> rOpt = GetSingleton().requiredOptions;
 
@@ -423,13 +423,13 @@ void IO::RequiredOptions() {
 }
 
 /* Prints out the current hierachy */
-void IO::Print() {
-  IO::GetSingleton().hierarchy.PrintAll();
+void CLI::Print() {
+  CLI::GetSingleton().hierarchy.PrintAll();
 }
 
 /* Cleans up input pathnames, rendering strings such as /foo/bar
       and foo/bar/ equivalent inputs */
-std::string IO::SanitizeString(const char* str) {
+std::string CLI::SanitizeString(const char* str) {
   if (str != NULL) {
     std::string p(str);
     //Lets sanity check string, remove superfluous '/' prefixes
@@ -450,7 +450,7 @@ std::string IO::SanitizeString(const char* str) {
  *
  * @param timerName The name of the timer in question.
  */
-void IO::StartTimer(const char* timerName) {
+void CLI::StartTimer(const char* timerName) {
   // Don't want to actually document the timer, the user can do that if he wants
   timeval tmp;
 
@@ -462,7 +462,7 @@ void IO::StartTimer(const char* timerName) {
   // already started, a user couldn't get to the documentation anyway.
   std::string name(timerName);
   std::string tname = TYPENAME(timeval);
-  IO::GetSingleton().AddToHierarchy(name, tname);
+  CLI::GetSingleton().AddToHierarchy(name, tname);
 
 #ifndef _WIN32
   gettimeofday(&tmp, NULL);
@@ -480,7 +480,7 @@ void IO::StartTimer(const char* timerName) {
  *
  * @param timerName The name of the timer in question.
  */
-void IO::StopTimer(const char* timerName) {
+void CLI::StopTimer(const char* timerName) {
   timeval delta, b, &a = GetParam<timeval>(timerName);
 
 #ifndef _WIN32
@@ -494,7 +494,7 @@ void IO::StopTimer(const char* timerName) {
 }
 
 #ifdef _WIN32
-void IO::FileTimeToTimeVal(timeval* tv) {
+void CLI::FileTimeToTimeVal(timeval* tv) {
   FILETIME ftime;
   uint64_t ptime = 0;
 

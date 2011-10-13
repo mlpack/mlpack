@@ -41,16 +41,16 @@ using namespace std;
 // Main method.
 //
 int main(int argc, char* argv[]) {
-  IO::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, argv);
 
   string reference_file =
-      IO::GetParam<string>("allknn_evaluate_metric/reference_file");
+      CLI::GetParam<string>("allknn_evaluate_metric/reference_file");
   string query_file =
-      IO::GetParam<string>("allknn_evaluate_metric/query_file");
+      CLI::GetParam<string>("allknn_evaluate_metric/query_file");
   string weights_file =
-      IO::GetParam<string>("allknn_evaluate_metric/weights_file");
+      CLI::GetParam<string>("allknn_evaluate_metric/weights_file");
   string output_file =
-      IO::GetParam<string>("allknn_evaluate_metric/output_file");
+      CLI::GetParam<string>("allknn_evaluate_metric/output_file");
 
   arma::mat references;
   data::Load(reference_file.c_str(), references);
@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
 
   Log::Info << "Evaluating nearest neighbor class guesses..." << endl;
 
-  index_t knns = IO::GetParam<int>("neighbor_search/k");
+  index_t knns = CLI::GetParam<int>("neighbor_search/k");
 
   int correct = EvaluateClassCorrect(neighbors, knns, ref_labels, query_labels,
       class_counts, class_scores);

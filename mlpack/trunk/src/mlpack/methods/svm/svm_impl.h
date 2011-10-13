@@ -34,7 +34,7 @@ template<typename TKernel>
 void SVM<TKernel>::Init(size_t learner_typeid, arma::mat& dataset){
   learner_typeid_ = learner_typeid;
 
-  opt_method_ = IO::GetParam<std::string>("svm/opt"); /*Default "smo" optimization method: default using SMO */
+  opt_method_ = CLI::GetParam<std::string>("svm/opt"); /*Default "smo" optimization method: default using SMO */
 
   n_data_ = dataset.n_cols;
   /* # of features == # of row - 1, exclude the last row (for labels) */
@@ -60,24 +60,24 @@ void SVM<TKernel>::Init(size_t learner_typeid, arma::mat& dataset){
   param_.kernel_.GetName(param_.kernelname_);
   param_.kerneltypeid_ = param_.kernel_.GetTypeId();
   /* working set selection scheme. default: 1st order expansion */
-  param_.wss_ = IO::GetParam<double>("svm/wss");
+  param_.wss_ = CLI::GetParam<double>("svm/wss");
   /* whether do L1-SVM(1) or L2-SVM (2) */
-  param_.hinge_sqhinge_ = IO::GetParam<size_t>("svm/hinge"); /* Default value 1 */
+  param_.hinge_sqhinge_ = CLI::GetParam<size_t>("svm/hinge"); /* Default value 1 */
   param_.hinge_sqhinge_ = 1;
 
   /* accuracy for optimization */
-  param_.accuracy_ = IO::GetParam<double>("svm/accuracy"); /* Default value 1e-4 */
+  param_.accuracy_ = CLI::GetParam<double>("svm/accuracy"); /* Default value 1e-4 */
   /* number of iterations */
-  param_.n_iter_ = IO::GetParam<size_t>("svm/n_iter"); /* Default value 100000000 */
+  param_.n_iter_ = CLI::GetParam<size_t>("svm/n_iter"); /* Default value 100000000 */
 
   /* tradeoff parameter for C-SV */
-  param_.C_ = IO::GetParam<double>("svm/c");
-  param_.Cp_ = IO::GetParam<double>("svm/c_p");
-  param_.Cn_ = IO::GetParam<double>("svm/c_n");
+  param_.C_ = CLI::GetParam<double>("svm/c");
+  param_.Cp_ = CLI::GetParam<double>("svm/c_p");
+  param_.Cn_ = CLI::GetParam<double>("svm/c_n");
 
   if (learner_typeid == 1) { /* for SVM_R only */
     /* the "epsilon", default: 0.1 */
-    param_.epsilon_ = IO::GetParam<double>("svm/epsilon");
+    param_.epsilon_ = CLI::GetParam<double>("svm/epsilon");
   } else if (learner_typeid == 2) { /* SVM_DE */ }
 }
 
@@ -162,9 +162,9 @@ void SVM<TKernel>::SVM_C_Train_(size_t learner_typeid, arma::mat& dataset) {
 
         /* Initialize kernel */
         /* 2-classes SVM training using SMO */
-        IO::StartTimer("svm/train_smo");
+        CLI::StartTimer("svm/train_smo");
         smo.Train(learner_typeid, &dataset_bi);
-        IO::StopTimer("svm/train_smo");
+        CLI::StopTimer("svm/train_smo");
 
         /* Get the trained bi-class model */
         models_[ct].bias_ = smo.Bias(); /* bias */

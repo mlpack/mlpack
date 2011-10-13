@@ -265,7 +265,7 @@ class QuasiNewton {
   void Eval(double *pt){
 
     size_t n = dimension(), iters;
-    size_t i, its, MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",200);
+    size_t i, its, MAXIMUM_ITERATCLINS = fx_param_int(opt_module_,"MAX_ITERS",200);
     long double temp_1, temp_2, temp_3, temp_4, f_previous, f_min, 
       maximum_step_length, sum = 0.0, sumdg, sumxi, temp, test;
     Vector dgrad, grad, hdgrad, xi;
@@ -301,7 +301,7 @@ class QuasiNewton {
     }
     maximum_step_length = MAX_STEP_SIZE*fmax;
 
-    for(its = 0; its < MAXIMUM_ITERATIONS; its++) {
+    for(its = 0; its < MAXIMUM_ITERATCLINS; its++) {
       
       dgrad.CopyValues(grad);
       LineSearch_(pold, f_previous, &grad, &xi,

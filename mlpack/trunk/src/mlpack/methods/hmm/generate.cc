@@ -5,7 +5,7 @@
  * Model.
  *
  * Usage:
- *   generate --type=TYPE --profile=PROFILE [OPTIONS]
+ *   generate --type=TYPE --profile=PROFILE [OPTCLINS]
  * See the usage() function for complete option list
  */
 #include <mlpack/core.h>
@@ -66,10 +66,10 @@ PARAM_MODULE("hmm", "This is a program generating sequences from HMM models.");
 
 int main(int argc, char* argv[]) {
 
-  IO::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, argv);
   bool s = true;
-  if (IO::HasParam("hmm/type")) {
-    const char* type = IO::GetParam<std::string>("hmm/type").c_str();
+  if (CLI::HasParam("hmm/type")) {
+    const char* type = CLI::GetParam<std::string>("hmm/type").c_str();
     if (strcmp(type, "discrete")==0)
       s = generate_discrete();
     else if (strcmp(type, "gaussian")==0)
@@ -93,8 +93,8 @@ int main(int argc, char* argv[]) {
 
 void usage() {
   Log::Info << std::endl << "Usage:" << std::endl;
-  Log::Info << "  generate --hmm/type=={discrete|gaussian|mixture} OPTIONS" << std::endl;
-  Log::Info << "[OPTIONS]" << std::endl;
+  Log::Info << "  generate --hmm/type=={discrete|gaussian|mixture} OPTCLINS" << std::endl;
+  Log::Info << "[OPTCLINS]" << std::endl;
   Log::Info << "  --hmm/profile=file   : file contains HMM profile" << std::endl;
   Log::Info << "  --hmm/length=NUM     : sequence length" << std::endl;
   Log::Info << "  --hmm/lenmax=NUM     : maximum sequence length, default = length" << std::endl;
@@ -104,19 +104,19 @@ void usage() {
 }
 
 bool generate_mixture() {
-  if (!IO::HasParam("hmm/profile")) {
+  if (!CLI::HasParam("hmm/profile")) {
     Log::Fatal << "--hmm/profile must be defined." << std::endl;
     return false;
   }
-  const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
-  const int seqlen = IO::GetParam<int>("hmm/length");
-  const int seqlmax = IO::GetParam<int>("hmm/lenmax");
-  const int numseq = IO::GetParam<int>("hmm/numseq");
-  const char* seqout = IO::GetParam<std::string>("hmm/seqfile").c_str();
-  const char* stateout = IO::GetParam<std::string>("hmm/statefile").c_str();
+  const char* profile = CLI::GetParam<std::string>("hmm/profile").c_str();
+  const int seqlen = CLI::GetParam<int>("hmm/length");
+  const int seqlmax = CLI::GetParam<int>("hmm/lenmax");
+  const int numseq = CLI::GetParam<int>("hmm/numseq");
+  const char* seqout = CLI::GetParam<std::string>("hmm/seqfile").c_str();
+  const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str();
 
-  IO::Assert(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
-  IO::Assert(numseq > 0, "NUMSEQ must be positive");
+  Log::Assert(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
+  Log::Assert(numseq > 0, "NUMSEQ must be positive");
 
   double step = (double) (seqlmax - seqlen) / numseq;
 
@@ -153,19 +153,19 @@ bool generate_mixture() {
 }
 
 bool generate_gaussian() {
-  if (!IO::HasParam("hmm/profile")) {
+  if (!CLI::HasParam("hmm/profile")) {
     Log::Fatal << "--hmm/profile must be defined." << std::endl;
     return false;
   }
-  const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
-  const int seqlen = IO::GetParam<int>("hmm/length");
-  const int seqlmax = IO::GetParam<int>("hmm/lenmax");
-  const int numseq = IO::GetParam<int>("hmm/numseq");
-  const char* seqout = IO::GetParam<std::string>("hmm/seqfile").c_str();
-  const char* stateout = IO::GetParam<std::string>("hmm/statefile").c_str();
+  const char* profile = CLI::GetParam<std::string>("hmm/profile").c_str();
+  const int seqlen = CLI::GetParam<int>("hmm/length");
+  const int seqlmax = CLI::GetParam<int>("hmm/lenmax");
+  const int numseq = CLI::GetParam<int>("hmm/numseq");
+  const char* seqout = CLI::GetParam<std::string>("hmm/seqfile").c_str();
+  const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str();
 
-  IO::Assert(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
-  IO::Assert(numseq > 0, "NUMSEQ must be positive");
+  Log::Assert(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
+  Log::Assert(numseq > 0, "NUMSEQ must be positive");
 
   double step = (double) (seqlmax - seqlen) / numseq;
 
@@ -200,19 +200,19 @@ bool generate_gaussian() {
 }
 
 bool generate_discrete() {
-  if (!IO::HasParam("hmm/profile")) {
+  if (!CLI::HasParam("hmm/profile")) {
     Log::Fatal << "--hmm/profile must be defined." << std::endl;
     return false;
   }
-  const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
-  const int seqlen = IO::GetParam<int>("hmm/length");
-  const int seqlmax = IO::GetParam<int>("hmm/lenmax");
-  const int numseq = IO::GetParam<int>("hmm/numseq");
-  const char* seqout = IO::GetParam<std::string>("hmm/seqfile").c_str();
-  const char* stateout = IO::GetParam<std::string>("hmm/statefile").c_str();
+  const char* profile = CLI::GetParam<std::string>("hmm/profile").c_str();
+  const int seqlen = CLI::GetParam<int>("hmm/length");
+  const int seqlmax = CLI::GetParam<int>("hmm/lenmax");
+  const int numseq = CLI::GetParam<int>("hmm/numseq");
+  const char* seqout = CLI::GetParam<std::string>("hmm/seqfile").c_str();
+  const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str();
 
-  IO::Assert(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
-  IO::Assert(numseq > 0, "NUMSEQ must be positive");
+  Log::Assert(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
+  Log::Assert(numseq > 0, "NUMSEQ must be positive");
 
   double step = (double) (seqlmax - seqlen) / numseq;
 

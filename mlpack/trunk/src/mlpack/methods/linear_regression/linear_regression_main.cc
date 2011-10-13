@@ -20,14 +20,14 @@ int main(int argc, char* argv[]) {
   arma::mat predictors, file, points;
 
   // Handle parameters
-  IO::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, argv);
 
   const std::string train_name =
-    IO::GetParam<std::string>("linear_regression/train");
+    CLI::GetParam<std::string>("linear_regression/train");
   const std::string test_name =
-    IO::GetParam<std::string>("linear_regression/test");
+    CLI::GetParam<std::string>("linear_regression/test");
   const std::string response_name =
-    IO::GetParam<std::string>("linear_regression/responses");
+    CLI::GetParam<std::string>("linear_regression/responses");
 
   data::Load(train_name.c_str(), file);
   size_t n_cols = file.n_cols,

@@ -157,7 +157,7 @@ void MixtureGauss::InitFromProfile(const std::vector<arma::mat>& matlst, size_t 
 void MixtureGauss::print_mixture(const char* s) const {
   size_t K = means.size();
   printf("%s - Mixture (%zu)\n", s, K);
-  print_vector(prior, "  PRIOR");
+  print_vector(prior, "  PRCLIR");
   for (size_t i = 0; i < K; i++) {
     printf("  CLUSTER %zu:\n", i);
     print_vector(means[i], "  MEANS");

@@ -1,5 +1,5 @@
-#ifndef MLPACK_LINEAR_REGRESSION_H
-#define MLPACK_LINEAR_REGRESSION_H
+#ifndef MLPACK_LINEAR_REGRESSCLIN_H
+#define MLPACK_LINEAR_REGRESSCLIN_H
 
 #include <mlpack/core.h>
 namespace mlpack {

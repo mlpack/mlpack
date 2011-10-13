@@ -92,11 +92,11 @@
 #  define UNALIGNED_OK
 #endif
 
-#ifdef __STDC_VERSION__
+#ifdef __STDC_VERSCLIN__
 #  ifndef STDC
 #    define STDC
 #  endif
-#  if __STDC_VERSION__ >= 199901L
+#  if __STDC_VERSCLIN__ >= 199901L
 #    ifndef STDC99
 #      define STDC99
 #    endif

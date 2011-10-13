@@ -37,12 +37,12 @@ using namespace npt;
 int main(int argc, char* argv[]) {
 
   //fx_init(argc, argv, NULL);
-  IO::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, argv);
   
   // read in data and parameters
   
   //std::string data_filename = fx_param_str(NULL, "data", "test_npt_pts.csv");
-  std::string data_filename = IO::GetParam<std::string>("data");
+  std::string data_filename = CLI::GetParam<std::string>("data");
   
   arma::mat data_in, data_mat;
   data_in.load(data_filename, arma::raw_ascii);
@@ -60,8 +60,8 @@ int main(int argc, char* argv[]) {
   
   arma::colvec weights;  
   //if (fx_param_exists(NULL, "weights")) {
-  if (IO::HasParam("weighted_computation")) {
-    weights.load(IO::GetParam<std::string>("weights"));
+  if (CLI::HasParam("weighted_computation")) {
+    weights.load(CLI::GetParam<std::string>("weights"));
   }
   else {
     weights.set_size(data_mat.n_cols);
@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
   }
   
   
-  std::string random_filename = IO::GetParam<std::string>("random");
+  std::string random_filename = CLI::GetParam<std::string>("random");
   
   arma::mat random_in, random_mat;
   random_in.load(random_filename, arma::raw_ascii);
@@ -87,8 +87,8 @@ int main(int argc, char* argv[]) {
   
   arma::colvec random_weights;  
   //if (fx_param_exists(NULL, "weights")) {
-  if (IO::HasParam("weighted_computation")) {
-    random_weights.load(IO::GetParam<std::string>("random_weights"));
+  if (CLI::HasParam("weighted_computation")) {
+    random_weights.load(CLI::GetParam<std::string>("random_weights"));
   }
   else {
     random_weights.set_size(random_mat.n_cols);
@@ -101,9 +101,9 @@ int main(int argc, char* argv[]) {
   arma::mat matcher_dists;
   //matcher_dists.load(fx_param_str(NULL, "matcher_dists", 
   //                                "test_matcher_dists.csv"));
-  matcher_dists.load(IO::GetParam<std::string>("matcher_dists"));
+  matcher_dists.load(CLI::GetParam<std::string>("matcher_dists"));
   //double bandwidth = fx_param_double(NULL, "bandwidth", 0.05);
-  double bandwidth = IO::GetParam<double>("bandwidth");
+  double bandwidth = CLI::GetParam<double>("bandwidth");
   
   //std::cout << "loaded bounds\n";
   
@@ -111,13 +111,13 @@ int main(int argc, char* argv[]) {
   // run algorithm
   
   //if (fx_param_exists(NULL, "do_naive")) {
-  if (IO::HasParam("do_naive")) {
+  if (CLI::HasParam("do_naive")) {
     //std::cout << "Doing naive.\n";
     
     Log::Info << "Doing naive." << std::endl;
     
     //fx_timer_start(NULL, "naive_time");
-    IO::StartTimer("naive_time");
+    CLI::StartTimer("naive_time");
     
     NaiveAlg naive_alg(data_mat, weights, random_mat, 
                        random_weights, matcher_dists, bandwidth);
@@ -125,7 +125,7 @@ int main(int argc, char* argv[]) {
     naive_alg.ComputeCounts();
     
     //fx_timer_stop(NULL, "naive_time");
-    IO::StopTimer("naive_time");
+    CLI::StopTimer("naive_time");
     
     //std::cout << "\nNaive num tuples: " << naive_alg.num_tuples() << "\n\n";
     Log::Info << std::endl << "Naive num tuples: " << std::endl;
@@ -139,16 +139,16 @@ int main(int argc, char* argv[]) {
   /*
   
   //size_t leaf_size = fx_param_int(NULL, "leaf_size", 1);
-  size_t leaf_size = (size_t)IO::GetParam<int>("leaf_size");
+  size_t leaf_size = (size_t)CLI::GetParam<int>("leaf_size");
   
   //if (fx_param_exists(NULL, "do_single_bandwidth")) {
-  if (IO::HasParam("do_single_bandwidth")) {
+  if (CLI::HasParam("do_single_bandwidth")) {
     
     //std::cout << "Doing single bandwidth.\n";
     Log::Info << "Doing single bandwidth.\n";
 
     //fx_timer_start(NULL, "single_bandwidth_time");
-    IO::StartTimer("single_bandwidth_time");
+    CLI::StartTimer("single_bandwidth_time");
     
     SingleBandwidthAlg single_alg(data_mat, weights, random_mat, 
                                   random_weights, leaf_size, 
@@ -157,7 +157,7 @@ int main(int argc, char* argv[]) {
     single_alg.ComputeCounts();
     
     //fx_timer_stop(NULL, "single_bandwidth_time");
-    IO::StopTimer("single_bandwidth_time");
+    CLI::StopTimer("single_bandwidth_time");
     
     //std::cout << "\nSingle Bandwidth num tuples: " << single_alg.num_tuples() << "\n\n";
     Log::Info << std::endl << "Single bandwidth num tuples: " << std::endl;
@@ -170,12 +170,12 @@ int main(int argc, char* argv[]) {
   
   
   //if (fx_param_exists(NULL, "do_perm_free")) {
-  if (IO::HasParam("do_perm_free")) {
+  if (CLI::HasParam("do_perm_free")) {
     
     Log::Info << "Doing permutation free.\n";
 
     //fx_timer_start(NULL, "perm_free_time");
-    IO::StartTimer("perm_free_time");
+    CLI::StartTimer("perm_free_time");
     
     PermFreeAlg alg(data_mat, weights, random_mat, random_weights, leaf_size, 
                     matcher_dists, bandwidth);
@@ -183,7 +183,7 @@ int main(int argc, char* argv[]) {
     alg.Compute();
     
     //fx_timer_stop(NULL, "perm_free_time");
-    IO::StopTimer("perm_free_time");
+    CLI::StopTimer("perm_free_time");
     
     Log::Info << "\nPerm Free num tuples: " << std::endl;
     alg.print_num_tuples();

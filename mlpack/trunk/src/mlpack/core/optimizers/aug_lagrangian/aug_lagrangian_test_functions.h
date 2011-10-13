@@ -4,8 +4,8 @@
  * Define a test function for the augmented Lagrangian method.
  */
 
-#ifndef __AUG_LAGRANGIAN_TEST_FUNCTIONS_H
-#define __AUG_LAGRANGIAN_TEST_FUNCTIONS_H
+#ifndef __AUG_LAGRANGIAN_TEST_FUNCTCLINS_H
+#define __AUG_LAGRANGIAN_TEST_FUNCTCLINS_H
 
 #include <mlpack/core/io/io.h>
 #include <mlpack/core/io/log.h>

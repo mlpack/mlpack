@@ -203,7 +203,7 @@ bool TTree::FindSplit_(Matrix& x, Vector& y, size_t total_n,
 
 
 
-// FIX THIS FUNCTION
+// FIX THIS FUNCTCLIN
 void TTree::SplitData_(Matrix& x, Vector& y, 
 		       size_t split_dim, double split_val,
 		       Matrix *x_l, Vector *y_l,

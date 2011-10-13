@@ -41,11 +41,11 @@ PARAM_STRING_REQ("output_file", "File to output CSV-formatted results into.",
     "");
 
 int main(int argc, char *argv[]) {
-  // Give IO the command line parameters the user passed in.
-  IO::ParseCommandLine(argc, argv);
+  // Give CLI the command line parameters the user passed in.
+  CLI::ParseCommandLine(argc, argv);
 
-  string reference_file = IO::GetParam<string>("reference_file");
-  string output_file = IO::GetParam<string>("output_file");
+  string reference_file = CLI::GetParam<string>("reference_file");
+  string output_file = CLI::GetParam<string>("output_file");
 
   arma::mat reference_data;
 
@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
 
   // Sanity check on k value: must be greater than 0, must be less than the
   // number of reference points.
-  size_t k = IO::GetParam<int>("neighbor_search/k");
+  size_t k = CLI::GetParam<int>("neighbor_search/k");
   if ((k <= 0) || (k >= reference_data.n_cols)) {
     Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less ";
     Log::Fatal << "than the number of reference points (";
@@ -67,15 +67,15 @@ int main(int argc, char *argv[]) {
   }
 
   // Sanity check on leaf size.
-  if (IO::GetParam<int>("tree/leaf_size") <= 0) {
-    Log::Fatal << "Invalid leaf size: " << IO::GetParam<int>("allknn/leaf_size")
+  if (CLI::GetParam<int>("tree/leaf_size") <= 0) {
+    Log::Fatal << "Invalid leaf size: " << CLI::GetParam<int>("allknn/leaf_size")
         << endl;
   }
 
   AllkFN* allkfn = NULL;
 
-  if (IO::GetParam<string>("query_file") != "") {
-    string query_file = IO::GetParam<string>("query_file");
+  if (CLI::GetParam<string>("query_file") != "") {
+    string query_file = CLI::GetParam<string>("query_file");
     arma::mat query_data;
 
     if (data::Load(query_file.c_str(), query_data) == false)

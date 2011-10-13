@@ -167,7 +167,7 @@ public:
   int Apply (const Epetra_MultiVector &X, Epetra_MultiVector &Y) const {
     
         
-    // FAST SUMMATION CODE
+    // FAST SUMMATCLIN CODE
     Vector weights_vector;
     Vector results;
     weights_vector.Init(n_points_);
@@ -189,7 +189,7 @@ public:
     }
     //printf("\n");
     
-    // END FAST SUMMATION CODE
+    // END FAST SUMMATCLIN CODE
     
 
     /*
@@ -379,7 +379,7 @@ void SolveLinearSystem(Matrix references, Vector rhs, double bandwidth, double s
 
   iterative_solver.SetProblem(linear_problem);
 
-  int options[AZ_OPTIONS_SIZE];
+  int options[AZ_OPTCLINS_SIZE];
   double params[AZ_PARAMS_SIZE];
   AZ_defaults(options, params);
 

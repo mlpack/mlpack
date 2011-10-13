@@ -96,7 +96,7 @@ bool npt::TestSingleBandwidth::StressTest() {
   
   int leaf_size = num_leaves_gen();
   
-  mlpack::IO::GetParam<int>("tree/leaf_size") = leaf_size;
+  mlpack::CLI::GetParam<int>("tree/leaf_size") = leaf_size;
   
   mlpack::Log::Info << "Leaf size: " << leaf_size << "\n";
   
@@ -104,7 +104,7 @@ bool npt::TestSingleBandwidth::StressTest() {
   NptNode* data_tree = new NptNode(data_mat, old_from_new_data);
   NptNode* random_tree = new NptNode(random_mat, old_from_new_random);
   
-  mlpack::IO::GetParam<int>("tree/leaf_size") = std::max(num_data_points,
+  mlpack::CLI::GetParam<int>("tree/leaf_size") = std::max(num_data_points,
                                                  num_random_points);
   
   NptNode* naive_data_tree = new NptNode(data_mat, naive_old_from_new_data);

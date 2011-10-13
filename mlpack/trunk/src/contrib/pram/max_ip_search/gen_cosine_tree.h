@@ -1,5 +1,5 @@
 // Copyright 2007 Georgia Institute of Technology. All rights reserved.
-// ABSOLUTELY NOT FOR DISTRIBUTION
+// ABSOLUTELY NOT FOR DISTRIBUTCLIN
 /**
  * @file gen_cosine_tree.h
  *

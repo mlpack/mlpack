@@ -568,7 +568,7 @@ class AllkNNBallTree {
 	query_tree_vec_.push_back(single_point_tree);
 	old_from_new_queries_.Renew();
       }
-      if (tree_learning_) { // UNDER CONSTRUCTION: recursively learning the reference tree using the kNN graph already generated
+      if (tree_learning_) { // UNDER CONSTRUCTCLIN: recursively learning the reference tree using the kNN graph already generated
 	// Load diagonal of degree matrix D
 	Matrix D; // it's actually the diagonal of D
 	String degree_matrix_filename = fx_param_str_req(NULL, "degree_fn");

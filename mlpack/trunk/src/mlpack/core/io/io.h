@@ -2,13 +2,13 @@
  * @file io.h
  * @author Matthew Amidon
  *
- * This file implements the IO subsystem which is intended to replace FX.
+ * This file implements the CLI subsystem which is intended to replace FX.
  * This can be used more or less regardless of context.  In the future,
  * it might be expanded to include file I/O.
  */
 
-#ifndef MLPACK_IO_IO_H
-#define MLPACK_IO_IO_H
+#ifndef MLPACK_CLI_CLI_H
+#define MLPACK_CLI_CLI_H
 
 #include <boost/program_options.hpp>
 #include <boost/any.hpp>
@@ -30,7 +30,7 @@
  * @param NAME Short string representing the name of the program.
  * @param DESC Long string describing what the program does and possibly a
  *     simple usage example.  Newlines should not be used here; this is taken
- *     care of by IO.
+ *     care of by CLI.
  * @param DEF_MOD A default module to use for parameters, mostly just to save
  *     excess typing.
  */
@@ -135,7 +135,7 @@ namespace mlpack {
 // program being run.
 class ProgramDoc;
 
-class IO {
+class CLI {
  public:
   /*
    * Adds a parameter to the hierarchy. Use char* and not
@@ -288,14 +288,14 @@ class IO {
   static void RegisterProgramDoc(ProgramDoc* doc);
 
   /***
-   * Destroy the IO object.  This resets the pointer to the singleton, so in
+   * Destroy the CLI object.  This resets the pointer to the singleton, so in
    * case someone tries to access it after destruction, a new one will be made
    * (the program will not fail).
    */
   static void Destroy();
 
   // Destructor
-  ~IO();
+  ~CLI();
 
  private:
   // The documentation and names of options
@@ -315,9 +315,9 @@ class IO {
   std::map<std::string, boost::any> globalValues;
 
   // The singleton, obviously
-  static IO* singleton;
+  static CLI* singleton;
 
-  // True if IO was used to parse command line options.
+  // True if CLI was used to parse command line options.
   bool did_parse;
 
  public:
@@ -334,7 +334,7 @@ class IO {
    *
    * Returns the singleton instance for use in the static methods
    */
-  static IO& GetSingleton();
+  static CLI& GetSingleton();
 
   /*
    * Properly formats strings such that there aren't too few or too many '/'s.
@@ -370,17 +370,17 @@ class IO {
 #endif
 
   /* Make the constructor private, to preclude unauthorized instances */
-  IO();
+  CLI();
 
   /*
    * Initialize desc with a particular name.
    *
    * @param optionsName Name of the module, as far as boost is concerned.
    */
-  IO(std::string& optionsName);
+  CLI(std::string& optionsName);
 
   // Private copy constructor; don't want copies floating around.
-  IO(const IO& other);
+  CLI(const CLI& other);
 };
 
 }; // namespace mlpack

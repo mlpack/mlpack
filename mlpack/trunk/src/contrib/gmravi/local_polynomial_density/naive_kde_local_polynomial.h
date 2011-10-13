@@ -150,7 +150,7 @@ template <typename MyTKernel> class NaiveKdeLP{
    double root_mean_sqd_error=sqrt(mean_sqd_error);
    double boundary_root_mean_sqd_error=sqrt(boundary_mean_sqd_error);
    
-    printf("RESULTS FOR LOCAL POLYNOMIAL EXPANSION.....\n");
+    printf("RESULTS FOR LOCAL POLYNOMIAL EXPANSCLIN.....\n");
     
     printf("Total root mean squared error is %f\n",root_mean_sqd_error);
     printf("Boundary root mean squared error is %f\n",
@@ -241,7 +241,7 @@ template <typename MyTKernel> class NaiveKdeLP{
 
    bandwidth_.CopyValues(bwidth);
 
-   //printf("BANDWIDTH BEING USED FOR LOCAL POLYNOMIAL EXPANSION IS\n");
+   //printf("BANDWIDTH BEING USED FOR LOCAL POLYNOMIAL EXPANSCLIN IS\n");
    //bandwidth_.PrintDebug();
 
    //initialize the kernel

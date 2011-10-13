@@ -9,8 +9,8 @@
  * unionfind.Find(x) returns the index of the component containing point x.
  */
 
-#ifndef UNION_FIND_H
-#define UNION_FIND_H
+#ifndef UNCLIN_FIND_H
+#define UNCLIN_FIND_H
 
 #include <mlpack/core.h>
 

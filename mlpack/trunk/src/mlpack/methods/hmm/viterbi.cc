@@ -6,7 +6,7 @@
  * Model.
  *
  * Usage:
- *   viterbi --type=TYPE --profile=PROFILE --seqfile=FILE [OPTIONS]
+ *   viterbi --type=TYPE --profile=PROFILE --seqfile=FILE [OPTCLINS]
  * See the usage() function for complete option list
  */
 #include <mlpack/core.h>
@@ -55,11 +55,11 @@ PARAM_MODULE("hmm", "This is a program computing th emost probable state\n seque
 }; */
 
 int main(int argc, char* argv[]) {
-  IO::ParseCommandLine(argc, argv);
+  CLI::ParseCommandLine(argc, argv);
 
   bool s = true;
-  if (IO::HasParam("hmm/type")) {
-    const char* type = IO::GetParam<std::string>("hmm/type").c_str();
+  if (CLI::HasParam("hmm/type")) {
+    const char* type = CLI::GetParam<std::string>("hmm/type").c_str();
     if (strcmp(type, "discrete") == 0)
       s = viterbi_discrete();
     else if (strcmp(type, "gaussian") == 0)
@@ -80,21 +80,21 @@ int main(int argc, char* argv[]) {
 
 void usage() {
   Log::Warn << "Usage:" << std::endl;
-  Log::Warn << "  viterbi --type=={discrete|gaussian|mixture} OPTIONS" << std::endl;
-  Log::Warn << "[OPTIONS]" << std::endl;
+  Log::Warn << "  viterbi --type=={discrete|gaussian|mixture} OPTCLINS" << std::endl;
+  Log::Warn << "[OPTCLINS]" << std::endl;
   Log::Warn << "  --profile=file   : file contains HMM profile" << std::endl;
   Log::Warn << "  --seqfile=file   : file contains input sequences" << std::endl;
   Log::Warn << "  --statefile=file : output file for state sequences" << std::endl;
 }
 
 bool viterbi_mixture() {
-  if (!IO::HasParam("hmm/profile")) {
+  if (!CLI::HasParam("hmm/profile")) {
     Log::Fatal << "--profile must be defined." << std::endl;
     return false;
   }
-  const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
-  const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str(); //"seq.mix.out");
-  const char* stateout = IO::GetParam<std::string>("hmm/statefile").c_str(); //"state.viterbi.mix.out");
+  const char* profile = CLI::GetParam<std::string>("hmm/profile").c_str();
+  const char* seqin = CLI::GetParam<std::string>("hmm/seqfile").c_str(); //"seq.mix.out");
+  const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str(); //"state.viterbi.mix.out");
 
   MixtureofGaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -122,13 +122,13 @@ bool viterbi_mixture() {
 }
 
 bool viterbi_gaussian() {
-  if (!IO::HasParam("hmm/profile")) {
+  if (!CLI::HasParam("hmm/profile")) {
     Log::Fatal << "--profile must be defined." << std::endl;
     return false;
   }
-  const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
-  const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str(); //"seq.gauss.out");
-  const char* stateout = IO::GetParam<std::string>("hmm/statefile").c_str(); //"state.viterbi.gauss.out");
+  const char* profile = CLI::GetParam<std::string>("hmm/profile").c_str();
+  const char* seqin = CLI::GetParam<std::string>("hmm/seqfile").c_str(); //"seq.gauss.out");
+  const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str(); //"state.viterbi.gauss.out");
 
   GaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -155,13 +155,13 @@ bool viterbi_gaussian() {
 }
 
 bool viterbi_discrete() {
-  if (!IO::HasParam("hmm/profile")) {
+  if (!CLI::HasParam("hmm/profile")) {
     Log::Fatal << "--profile must be defined." << std::endl;
     return false;
   }
-  const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
-  const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str(); //"seq.out");
-  const char* stateout = IO::GetParam<std::string>("hmm/statefile").c_str(); //"state.viterbi.out");
+  const char* profile = CLI::GetParam<std::string>("hmm/profile").c_str();
+  const char* seqin = CLI::GetParam<std::string>("hmm/seqfile").c_str(); //"seq.out");
+  const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str(); //"state.viterbi.out");
 
   DiscreteHMM hmm;
 

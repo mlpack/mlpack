@@ -5,7 +5,7 @@
  * according to a Hidden Markov  Model.
  *
  * Usage:
- *   loglik --type=TYPE --profile=PROFILE [OPTIONS]
+ *   loglik --type=TYPE --profile=PROFILE [OPTCLINS]
  * See the usage() function for complete option list
  */
 
@@ -72,8 +72,8 @@ int main(int argc, char* argv[]) {
 void usage() {
   printf("\n"
 	 "Usage:\n"
-	 "  loglik --type=={discrete|gaussian|mixture} OPTIONS\n"
-	 "[OPTIONS]\n"
+	 "  loglik --type=={discrete|gaussian|mixture} OPTCLINS\n"
+	 "[OPTCLINS]\n"
 	 "  --profile==file   : file contains HMM profile\n"
 	 "  --seqfile==file   : file contains input sequences\n"
 	 "  --logfile==file   : output file for log-likelihood of the sequences\n"

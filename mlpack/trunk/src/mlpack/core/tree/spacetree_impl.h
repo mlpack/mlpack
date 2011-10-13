@@ -303,7 +303,7 @@ void BinarySpaceTree<Bound, Statistic>::SplitNode(arma::mat& data) {
     bound_ |= data.unsafe_col(i);
 
   // Now, check if we need to split at all.
-  if (count_ <= (size_t) IO::GetParam<int>("tree/leaf_size"))
+  if (count_ <= (size_t) CLI::GetParam<int>("tree/leaf_size"))
     return; // We can't split this.
 
   // Figure out which dimension to split on.
@@ -350,7 +350,7 @@ void BinarySpaceTree<Bound, Statistic>::SplitNode(
     bound_ |= data.unsafe_col(i);
 
   // First, check if we need to split at all.
-  if (count_ <= (size_t) IO::GetParam<int>("tree/leaf_size"))
+  if (count_ <= (size_t) CLI::GetParam<int>("tree/leaf_size"))
     return; // We can't split this.
 
   // Figure out which dimension to split on.

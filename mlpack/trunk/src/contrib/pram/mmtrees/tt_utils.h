@@ -71,7 +71,7 @@ namespace tt_utils {
 
   struct datanode *tt_util_module;
 
-  // FIX THIS FUNCTION: To permute the y value as well
+  // FIX THIS FUNCTCLIN: To permute the y value as well
   void PermuteMatrix(const Matrix& input, const Vector& y,
 		     Matrix *output, Vector * oy) {
 

@@ -32,7 +32,7 @@ MVUObjectiveFunction::MVUObjectiveFunction(arma::mat& initial_point) :
 //  std::cout << neighbor_distances_;
 
   // Now shrink the point matrix to the correct target size.
-  int dimension = 2; // Get this from IO: TODO.
+  int dimension = 2; // Get this from CLI: TODO.
   initial_point_ = initial_point;
   initial_point_.shed_rows(2, initial_point.n_rows - 1);
 
