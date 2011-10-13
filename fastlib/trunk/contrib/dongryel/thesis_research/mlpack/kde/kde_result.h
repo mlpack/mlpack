@@ -39,7 +39,7 @@ class KdeResult {
 
     /** @brief The number of points pruned per each query.
      */
-    ContainerType pruned_;
+    core::parallel::MapVector<unsigned long int> pruned_;
 
     /** @brief The amount of maximum error incurred per each query.
      */
@@ -155,7 +155,7 @@ class KdeResult {
     /** @brief Seeds the given query reuslt with the initial number of
      *         pruned reference points.
      */
-    void Seed(int qpoint_index, double initial_pruned_in) {
+    void Seed(int qpoint_index, unsigned long int initial_pruned_in) {
       pruned_[qpoint_index] += initial_pruned_in;
     }
 
@@ -208,11 +208,11 @@ class KdeResult {
         densities_.get_iterator();
       core::parallel::MapVector<double>::iterator densities_u_it =
         densities_u_.get_iterator();
-      core::parallel::MapVector<double>::iterator pruned_it =
+      core::parallel::MapVector<unsigned long int>::iterator pruned_it =
         pruned_.get_iterator();
       for(; densities_it.HasNext(); densities_l_it++, densities_it++,
           densities_u_it++, pruned_it++) {
-        fprintf(file_output, "%g %g %g %g\n", *densities_l_it,
+        fprintf(file_output, "%g %g %g %lu\n", *densities_l_it,
                 *densities_it, *densities_u_it, *pruned_it);
       }
       fclose(file_output);
@@ -269,7 +269,7 @@ class KdeResult {
         densities_.get_iterator();
       core::parallel::MapVector<double>::iterator densities_u_it =
         densities_u_.get_iterator();
-      core::parallel::MapVector<double>::iterator pruned_it =
+      core::parallel::MapVector<unsigned long int>::iterator pruned_it =
         pruned_.get_iterator();
       core::parallel::MapVector<double>::iterator used_error_it =
         used_error_.get_iterator();

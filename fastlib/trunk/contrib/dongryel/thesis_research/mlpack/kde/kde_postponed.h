@@ -43,7 +43,7 @@ class KdePostponed {
 
     /** @brief The amount of pruned quantities.
      */
-    double pruned_;
+    unsigned long int pruned_;
 
     /** @brief The upper bound on the used error.
      */
@@ -90,12 +90,10 @@ class KdePostponed {
     void Init(
       const GlobalType &global_in, TreeType *qnode, TreeType *rnode,
       bool qnode_and_rnode_are_equal) {
-      int rnode_count =
-        (global_in.is_monochromatic() && qnode_and_rnode_are_equal) ?
-        rnode->count() - 1 : rnode->count();
+      int rnode_count = rnode->count();
       densities_l_ = densities_u_ = 0.0;
       densities_e_ = 0.0;
-      pruned_ = static_cast<double>(rnode_count);
+      pruned_ = static_cast<unsigned long int>(rnode_count);
       used_error_ = 0.0;
     }
 

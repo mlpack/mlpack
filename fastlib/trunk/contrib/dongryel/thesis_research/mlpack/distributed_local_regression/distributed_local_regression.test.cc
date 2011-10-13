@@ -349,17 +349,17 @@ class TestDistributedLocalRegression {
       // have been encountered.
       DistributedTableType *distributed_reference_table =
         distributed_local_regression_arguments.reference_table_;
-      int total_num_points = 0;
+      unsigned long int total_num_points = 0;
       for(int i = 0; i < world.size(); i++) {
         total_num_points += distributed_reference_table->local_n_entries(i);
       }
-      typename core::parallel::MapVector<double>::iterator pruned_it =
+      typename core::parallel::MapVector<unsigned long int>::iterator pruned_it =
         distributed_local_regression_result.pruned_.get_iterator();
       for(; pruned_it.HasNext(); pruned_it++) {
-        if((*pruned_it) != total_num_points - 1) {
+        if((*pruned_it) != total_num_points) {
           std::cerr << "Not all reference point have been accounted for.\n";
           std::cerr << "Got " << (*pruned_it) <<
-                    " instead of " << total_num_points - 1 << "\n";
+                    " instead of " << total_num_points << "\n";
           exit(-1);
         }
       }

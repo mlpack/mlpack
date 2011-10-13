@@ -57,7 +57,7 @@ class KdeDelta {
                      global.kernel().EvalUnnormOnSq(squared_distance_range.hi);
       densities_u_ = rnode_count *
                      global.kernel().EvalUnnormOnSq(squared_distance_range.lo);
-      pruned_ = static_cast<double>(rnode_count);
+      pruned_ = rnode->count();
       used_error_ = 0.5 * (densities_u_ - densities_l_);
     }
 };

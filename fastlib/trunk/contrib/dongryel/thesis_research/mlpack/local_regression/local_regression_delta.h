@@ -28,7 +28,7 @@ class LocalRegressionDelta {
 
     core::monte_carlo::MeanVariancePairVector right_hand_side_u_;
 
-    double pruned_;
+    unsigned long int pruned_;
 
     double left_hand_side_used_error_;
 
@@ -77,7 +77,8 @@ class LocalRegressionDelta {
       right_hand_side_l_.SetZero();
       right_hand_side_e_.SetZero();
       right_hand_side_u_.SetZero();
-      pruned_ = left_hand_side_used_error_ = right_hand_side_used_error_ = 0.0;
+      pruned_ = 0;
+      left_hand_side_used_error_ = right_hand_side_used_error_ = 0.0;
       query_deltas_ = NULL;
     }
 
@@ -198,7 +199,7 @@ class LocalRegressionDelta {
         }
       }
 
-      pruned_ = static_cast<double>(total_num_terms);
+      pruned_ = rnode->count();
       left_hand_side_used_error_ =
         0.5 * left_hand_side_max_deviation * total_num_terms;
       right_hand_side_used_error_ =
