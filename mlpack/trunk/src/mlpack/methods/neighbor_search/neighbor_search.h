@@ -28,7 +28,7 @@ PARAM_FLAG("naive_mode", "If set, use naive computations (no trees).  This "
 namespace mlpack {
 namespace neighbor {
 
-/***
+/**
  * The NeighborSearch class is a template class for performing distance-based
  * neighbor searches.  It takes a query dataset and a reference dataset (or just
  * a reference dataset) and finds the k neighbors which have the 'best' distance
@@ -38,6 +38,7 @@ namespace neighbor {
  * used and the sort function used.  Prototypes for the two policy classes are
  * given below.
  *
+ * @code
  * class Kernel {
  *  public:
  *   Kernel(); // Default constructor is necessary.
@@ -45,7 +46,9 @@ namespace neighbor {
  *   // Evaluate the kernel function on these two vectors.
  *   double Evaluate(arma::vec&, arma::vec&);
  * };
+ * @endcode
  *
+ * @code
  * class SortPolicy {
  *  public:
  *   // Return the index in the list where the new distance should be inserted,
@@ -72,6 +75,7 @@ namespace neighbor {
  *   static inline const double WorstDistance();
  *   static inline const double BestDistance();
  * };
+ * @endcode
  *
  * @tparam Kernel The kernel function.  Must provide a default constructor and
  *   a function 'double Evaluate(arma::vec&, arma::vec&)'.
@@ -83,10 +87,9 @@ template<typename Kernel = mlpack::kernel::SquaredEuclideanDistance,
 class NeighborSearch {
 
   /**
-  * Extra data for each node in the tree.  For all nearest neighbors,
-  * each node only
-  * needs its upper bound on its nearest neighbor distances.
-  */
+   * Extra data for each node in the tree.  For all nearest neighbors,
+   * each node only needs its upper bound on its nearest neighbor distances.
+   */
   class QueryStat {
 
    public:
@@ -94,10 +97,6 @@ class NeighborSearch {
      * The bound on the node's neighbor distances.
      */
     double bound_;
-
-    // In addition to any member variables for the statistic, all stat
-    // classes need two Init
-    // functions, one for leaves and one for non-leaves.
 
     /**
      * Initialization function used in tree-building when initializing
@@ -108,12 +107,13 @@ class NeighborSearch {
       // The bound starts at the worst possible distance.
       bound_ = SortPolicy::WorstDistance();
     }
-
   }; //class QueryStat
 
-  // TreeType are BinarySpaceTrees where the data are bounded by
-  // Euclidean bounding boxes, the data are stored in a Matrix,
-  // and each node has a QueryStat for its bound.
+  /***
+   * TreeType are BinarySpaceTrees where the data are bounded by Euclidean
+   * bounding boxes, the data are stored in a Matrix, and each node has a
+   * QueryStat for its bound.  The bound should be configurable...
+   */
   typedef tree::BinarySpaceTree<bound::HRectBound<2>, QueryStat> TreeType;
 
  private:
@@ -204,7 +204,7 @@ class NeighborSearch {
                                       TreeType* reference_node,
                                       double lower_bound);
 
-  /***
+  /**
    * Perform a recursion only on the reference tree; the query point is given.
    * This method is similar to ComputeBaseCase_().
    */
@@ -212,7 +212,7 @@ class NeighborSearch {
                                         TreeType* reference_node,
                                         double& best_dist_so_far);
 
-  /***
+  /**
    * Helper function to insert a point into the neighbors and distances
    * matrices.
    *
