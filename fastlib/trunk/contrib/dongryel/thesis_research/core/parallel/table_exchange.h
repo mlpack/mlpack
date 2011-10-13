@@ -58,14 +58,14 @@ class TableExchange {
     typedef core::parallel::RouteRequest <
     unsigned long int > EnergyRouteRequestType;
 
-    /** @brief The extra task routing type (for load balancing).
-     */
-    typedef
-    core::parallel::RouteRequest <
-    core::parallel::DistributedDualtreeTaskList <
+    typedef core::parallel::DistributedDualtreeTaskList <
     DistributedTableType,
     TaskPriorityQueueType,
-    DistributedProblemType > > ExtraTaskRouteRequestType;
+    DistributedProblemType > ExtraTaskListType;
+
+    /** @brief The extra task routing type (for load balancing).
+     */
+    typedef core::parallel::RouteRequest < ExtraTaskListType > ExtraTaskRouteRequestType;
 
     /** @brief The load balance request routing type.
      */
@@ -83,7 +83,6 @@ class TableExchange {
      */
     typedef core::parallel::MessageType <
     EnergyRouteRequestType,
-    ExtraTaskRouteRequestType,
     LoadBalanceRouteRequestType,
     SubTableRouteRequestType  > MessageType;
 
@@ -92,6 +91,8 @@ class TableExchange {
     /** @brief Whether to do load balancing.
      */
     bool do_load_balancing_;
+
+    bool try_load_balancing_;
 
     bool enter_stage_;
 
@@ -235,14 +236,6 @@ class TableExchange {
         }
       }
 
-      // Free the list of reference subtables exported to other processes.
-      for(unsigned int i = 0; i < post_free_cache_list_.size(); i++) {
-        this->ReleaseCache(
-          world, post_free_cache_list_[i].first,
-          post_free_cache_list_[i].second);
-      }
-      post_free_cache_list_.resize(0);
-
       // Free the list of flush subtables.
       for(unsigned int i = 0; i < post_free_flush_list_.size(); i++) {
         message_cache_[
@@ -252,14 +245,52 @@ class TableExchange {
         extra_receive_slots_.push_back(post_free_flush_list_[i]);
       }
       post_free_flush_list_.resize(0);
+    }
 
-      if(message_cache_[
-            world.rank()].extra_task_route().object_is_valid() &&
-          message_cache_[
-            world.rank()].extra_task_route().num_destinations() == 0) {
-        message_cache_[
-          world.rank()].extra_task_route().set_object_is_valid_flag(false) ;
+    template<typename MetricType>
+    void LoadBalance_(
+      boost::mpi::communicator &world, const MetricType &metric_in,
+      unsigned int neighbor) {
+
+      // If the current neighbor has less task than the self and the
+      // neighbor is in need of more tasks, then donate one query
+      // subtable.
+      ExtraTaskListType export_list;
+      ExtraTaskListType import_list;
+      if(needs_load_balancing_[ neighbor ] * 4 <
+          needs_load_balancing_[ world.rank()]) {
+        task_queue_->PrepareExtraTaskList(
+          world, metric_in, neighbor, & export_list);
+        export_list.ExportPostFreeCacheList(&post_free_cache_list_);
       }
+      boost::mpi::request send_request =
+        world.isend(
+          neighbor, core::parallel::MessageTag::EXTRA_TASK_LIST, export_list);
+
+      while(true) {
+        if(boost::optional< boost::mpi::status > l_status =
+              world.iprobe(
+                neighbor,
+                core::parallel::MessageTag::EXTRA_TASK_LIST)) {
+
+          world.recv(
+            neighbor, core::parallel::MessageTag::EXTRA_TASK_LIST, import_list);
+          break;
+        }
+      }
+      send_request.wait();
+
+      // Get extra task from the neighboring process if
+      // available.
+      import_list.Export(world, metric_in, neighbor, task_queue_);
+
+      // Free the list of reference subtables exported to other processes.
+      for(unsigned int i = 0; i < post_free_cache_list_.size(); i++) {
+        this->ReleaseCache(
+          world, post_free_cache_list_[i].first,
+          post_free_cache_list_[i].second);
+      }
+      post_free_cache_list_.resize(0);
     }
 
     template<typename MetricType>
@@ -365,15 +396,6 @@ class TableExchange {
                 route_request.load_balance_route().object();
             }
 
-            // Get extra task from the neighboring process if
-            // available.
-            if(tmp_route_request.extra_task_route().remove_from_destination_list(world.rank()) &&
-                tmp_route_request.extra_task_route().object_is_valid()) {
-              tmp_route_request.extra_task_route().object().Export(
-                world, metric_in,
-                tmp_route_request.originating_rank(), task_queue_);
-            }
-
           } // end of load balancing case.
 
         } // end of acknowledging a routing request.
@@ -399,31 +421,15 @@ class TableExchange {
 
       // Need to constantly update other processes about the current
       // progress on the self.
-      message_cache_[ world.rank()].load_balance_route().Init(world);
-      message_cache_[ world.rank()].load_balance_route().add_destinations(world);
+      if(stage_ == 0) {
+        message_cache_[ world.rank()].load_balance_route().Init(world);
+        message_cache_[ world.rank()].load_balance_route().add_destinations(world);
+      }
       needs_load_balancing_[ world.rank()] =
         task_queue_->remaining_local_computation();
       message_cache_[ world.rank()].load_balance_route().object() =
         needs_load_balancing_[ world.rank()];
       message_cache_[ world.rank()].load_balance_route().set_object_is_valid_flag(true);
-
-      // If the current neighbor has less task than the self and the
-      // neighbor is in need of more tasks, then donate one query
-      // subtable.
-      if(needs_load_balancing_[ neighbor ] * 4 <
-          needs_load_balancing_[ world.rank()]) {
-        task_queue_->PrepareExtraTaskList(
-          world, metric_in, neighbor,
-          & message_cache_[ world.rank()].extra_task_route().object());
-        message_cache_[
-          world.rank()].extra_task_route().object().ExportPostFreeCacheList(&post_free_cache_list_);
-        message_cache_ [
-          world.rank()].extra_task_route().set_object_is_valid_flag(true);
-        message_cache_[
-          world.rank()].extra_task_route().add_destination(neighbor);
-        message_cache_[
-          world.rank()].extra_task_route().set_stage(stage_);
-      }
     }
 
     void BufferInitialStageMessage_(
@@ -509,7 +515,9 @@ class TableExchange {
     /** @brief Tests whether the current MPI process can enter the
      *         given stage of the recursive-doubling exchange process.
      */
-    bool ReadyForStage_(boost::mpi::communicator &world) {
+    template<typename MetricType>
+    bool ReadyForStage_(
+      const MetricType &metric_in, boost::mpi::communicator &world) {
 
       // Find out the neighbor of the next stage.
       unsigned int num_test = 1 << stage_;
@@ -519,6 +527,12 @@ class TableExchange {
       unsigned int neighbor = world.rank() ^ num_test;
       unsigned int test_lower_bound_for_receive =
         (neighbor >> stage_) << stage_;
+
+      // Load balance if necessary.
+      if(do_load_balancing_ && try_load_balancing_) {
+        LoadBalance_(world, metric_in, previous_neighbor);
+        try_load_balancing_ = false;
+      }
 
       // If there are non-flushed imported query subtables, wait they
       // are out of the active status.
@@ -590,7 +604,9 @@ class TableExchange {
       // Reset the test index on the self, if passing.
       if(ready_flag) {
         last_fail_index_ = 0;
+        try_load_balancing_ = true;
       }
+
       return ready_flag ;
     }
 
@@ -689,8 +705,6 @@ class TableExchange {
         receive_slot].subtable_route().object().set_cache_block_id(receive_slot);
       message_cache_[
         receive_slot ].flush_route().set_object_is_valid_flag(false);
-      message_cache_[
-        receive_slot ].extra_task_route().set_object_is_valid_flag(false);
       message_cache_[
         receive_slot ].set_do_load_balancing_flag(do_load_balancing_);
 
@@ -865,6 +879,7 @@ class TableExchange {
         needs_load_balancing_[i] = 0;
       }
       do_load_balancing_ = do_load_balancing_in;
+      try_load_balancing_ = true;
 
       // Set the pointer to the task queue.
       task_queue_ = task_queue_in;
@@ -977,7 +992,7 @@ class TableExchange {
 
       // Do post-flushes before entering.
       if(! enter_stage_) {
-        enter_stage_ = this->ReadyForStage_(world);
+        enter_stage_ = this->ReadyForStage_(metric_in, world);
       }
     }
 };
