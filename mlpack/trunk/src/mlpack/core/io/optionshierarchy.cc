@@ -1,5 +1,6 @@
 #include "optionshierarchy.h"
 #include "io.h"
+#include "../io/log.h"
 #include <iostream>
 #include <iomanip>
 
@@ -316,24 +317,24 @@ void OptionsHierarchy::PrintTimers() {
  * Prints a node and its value.
  */
 void OptionsHierarchy::PrintNode() {
-  IO::Info << "  " << nodeData.node << " = " ;
+  Log::Info << "  " << nodeData.node << " = " ;
   
   if (nodeData.tname == TYPENAME(bool))
-    IO::Info << boolalpha << IO::GetParam<bool>(nodeData.node.c_str());
+    Log::Info << boolalpha << IO::GetParam<bool>(nodeData.node.c_str());
   else if (nodeData.tname == TYPENAME(int))
-    IO::Info << IO::GetParam<int>(nodeData.node.c_str());
+    Log::Info << IO::GetParam<int>(nodeData.node.c_str());
   else if (nodeData.tname == TYPENAME(std::string)) {
     std::string value = IO::GetParam<std::string>(nodeData.node.c_str());
     if (value == "")
       value = "\"\""; // So that the user isn't presented with an empty space.
-    IO::Info << value;
+    Log::Info << value;
   } else if (nodeData.tname == TYPENAME(float))
-    IO::Info << IO::GetParam<float>(nodeData.node.c_str());
+    Log::Info << IO::GetParam<float>(nodeData.node.c_str());
   else if (nodeData.tname == TYPENAME(double))
-    IO::Info << IO::GetParam<double>(nodeData.node.c_str());
+    Log::Info << IO::GetParam<double>(nodeData.node.c_str());
   else if (nodeData.tname == TYPENAME(timeval)) {
     timeval& t = IO::GetParam<timeval>(nodeData.node.c_str());
-    IO::Info << t.tv_sec << "." << std::setw(6) << std::setfill('0') 
+    Log::Info << t.tv_sec << "." << std::setw(6) << std::setfill('0') 
         << t.tv_usec << "s";
     // Also output convenient day/hr/min/sec.
     int days = t.tv_sec / 86400; // Integer division rounds down.
@@ -344,37 +345,37 @@ void OptionsHierarchy::PrintNode() {
     // No output if it didn't even take a minute.
     if (!(days == 0 && hours == 0 && minutes == 0)) {
       bool output = false; // Denotes if we have output anything yet.
-      IO::Info << " (";
+      Log::Info << " (";
       // Only output units if they have nonzero values (yes, a bit tedious).
       if (days > 0) {
-        IO::Info << days << " days";
+        Log::Info << days << " days";
         output = true;
       }
       if (hours > 0) {
         if (output)
-          IO::Info << ", ";
-        IO::Info << hours << " hrs";
+          Log::Info << ", ";
+        Log::Info << hours << " hrs";
         output = true;
       }
       if (minutes > 0) {
         if (output)
-          IO::Info << ", ";
-        IO::Info << minutes << " mins";
+          Log::Info << ", ";
+        Log::Info << minutes << " mins";
         output = true;
       }
       if (seconds > 0) {
         if (output)
-          IO::Info << ", ";
-        IO::Info << seconds << "." << std::setw(1) << (t.tv_usec / 100000) << 
+          Log::Info << ", ";
+        Log::Info << seconds << "." << std::setw(1) << (t.tv_usec / 100000) << 
             " secs";
         output = true;
       }
 
-      IO::Info << ")";
+      Log::Info << ")";
     }
   }
   
-  IO::Info << endl;
+  Log::Info << endl;
 }
 
 /* 

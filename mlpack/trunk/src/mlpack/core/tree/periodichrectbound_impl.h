@@ -14,6 +14,7 @@
 
 #include "../math/math_lib.h"
 #include "../io/io.h"
+#include "../io/log.h"
 
 namespace mlpack {
 namespace bound {
@@ -140,7 +141,7 @@ double PeriodicHRectBound<t_pow>::MinDistance(
     const PeriodicHRectBound& other) const {
   double sum = 0;
 
-  mlpack::IO::Assert(dim_ == other.dim_);
+  mlpack::Log::Assert(dim_ == other.dim_);
 
   for (size_t d = 0; d < dim_; d++){
     double v = 0, d1, d2, d3;
@@ -191,7 +192,7 @@ double PeriodicHRectBound<t_pow>::MaxDistance(
     const PeriodicHRectBound& other) const {
   double sum = 0;
 
-  mlpack::IO::Assert(dim_ == other.dim_);
+  mlpack::Log::Assert(dim_ == other.dim_);
 
   for (size_t d = 0; d < dim_; d++){
     double v = box_[d] / 2.0;
@@ -215,7 +216,7 @@ Range PeriodicHRectBound<t_pow>::RangeDistance(const arma::vec& point) const {
   double sum_lo = 0;
   double sum_hi = 0;
 
-  mlpack::IO::Assert(point.n_elem == dim_);
+  mlpack::Log::Assert(point.n_elem == dim_);
 
   double v1, v2, v_lo, v_hi;
   for(size_t d = 0; d < dim_; d++) {
@@ -247,7 +248,7 @@ Range PeriodicHRectBound<t_pow>::RangeDistance(
   double sum_lo = 0;
   double sum_hi = 0;
 
-  mlpack::IO::Assert(dim_ == other.dim_);
+  mlpack::Log::Assert(dim_ == other.dim_);
 
   double v1, v2, v_lo, v_hi;
   for (size_t d = 0; d < dim_; d++) {

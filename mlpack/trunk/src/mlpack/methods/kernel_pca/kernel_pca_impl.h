@@ -34,16 +34,16 @@ void KernelPCA::Destruct() {
 }
 
 void KernelPCA::ComputeNeighborhoods() {
-  IO::Info << "Building tree..." << std::endl;
+  Log::Info << "Building tree..." << std::endl;
   fflush(stdout);
   arma::Col<size_t> resulting_neighbors;
   arma::vec  distances;
-  IO::Info << "Computing Neighborhoods" << std::endl;
+  Log::Info << "Computing Neighborhoods" << std::endl;
   allknn_.ComputeNeighbors(resulting_neighbors,
                            distances);
   FILE *fp=fopen("allnn.txt", "w");
   if (fp==NULL) {
-    IO::Fatal << "Unable to open allnn for exporting the results, error "
+    Log::Fatal << "Unable to open allnn for exporting the results, error "
 		<< strerror(errno) << std::endl;
  }
   for(size_t i=0; i<resulting_neighbors.n_rows; i++) {
@@ -65,7 +65,7 @@ void KernelPCA::ComputeGeneralKernelPCA(DISTANCEKERNEL kernel,
   temp.fill(1.0);
   kernel_matrix_.SetDiagonal(temp);
   kernel_matrix_.EndLoading();
-  IO::Info << "Computing eigen values..." << std::endl;
+  Log::Info << "Computing eigen values..." << std::endl;
   kernel_matrix_.Eig(num_of_eigenvalues,
                      "LM",
                      eigen_vectors,
@@ -86,7 +86,7 @@ void KernelPCA::SaveToTextFile(std::string file,
   lam_file.append(".lambdas");
   FILE *fp = fopen(vec_file.c_str(), "w");
   if (fp==NULL) {
-    IO::Fatal << "Unable to open file " << vec_file.c_str()
+    Log::Fatal << "Unable to open file " << vec_file.c_str()
 	      << ", error: " << strerrer(errno) << std::endl;
   }
   for(size_t i=0; i<eigen_vectors.n_rows; i++) {
@@ -98,7 +98,7 @@ void KernelPCA::SaveToTextFile(std::string file,
   fclose(fp);
   fp = fopen(lam_file.c_str(), "w");
   if (fp==NULL) {
-    IO::Fatal << "Unable to open file " << lam_file.c_str()
+    Log::Fatal << "Unable to open file " << lam_file.c_str()
 	      << ", error: " << strerror(errno) << std::endl;
   }
   for(size_t i=0; i<(size_t)eigen_values.n_rows; i++) {
@@ -110,7 +110,7 @@ void KernelPCA::SaveToTextFile(std::string file,
 void KernelPCA::EstimateBandwidth(double *bandwidth) {
   FILE *fp=fopen("allnn.txt", "r");
   if (fp==NULL) {
-     IO::Fatal << "Unable to open allnn.txt, error " << strerror(errno) << std::endl;
+     Log::Fatal << "Unable to open allnn.txt, error " << strerror(errno) << std::endl;
   }
   uint64_t_t p1, p2;
   double dist;
@@ -132,7 +132,7 @@ void KernelPCA::ComputeLLE(size_t num_of_eigenvalues,
                            arma::vec *eigen_values) {
   FILE *fp=fopen("allnn.txt", "r");
   if (fp==NULL) {
-     IO::Fatal << "Unable to open allnn.txt, error " << strerror(errno) << std::endl;
+     Log::Fatal << "Unable to open allnn.txt, error " << strerror(errno) << std::endl;
   }
   uint64_t_t p1, p2;
   double dist;
@@ -197,7 +197,7 @@ void KernelPCA::ComputeLLE(size_t num_of_eigenvalues,
   }
   kernel_matrix_.Negate();
   kernel_matrix_.SetDiagonal(1.0);
-  IO::Warn << "Computing eigen values ... " << std::endl;
+  Log::Warn << "Computing eigen values ... " << std::endl;
   SparseMatrix kernel_matrix1;
   kernel_matrix_.ToFile("i_w.txt");
   kernel_matrix_.EndLoading();

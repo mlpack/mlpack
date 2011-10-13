@@ -9,6 +9,7 @@
 
 //#include "fastlib/fastlib.h"
 //#include <fastlib/fx/io.h>
+#include<log.h>
 
 #include <mlpack/core.h>
 
@@ -46,7 +47,7 @@ int main(int argc, char* argv[]) {
   //fx_init(argc, argv, NULL);
   IO::ParseCommandLine(argc, argv);
   
-  IO::Info << "Parsed command line.\n";
+  Log::Info << "Parsed command line.\n";
   
   // read in data and parameters
   
@@ -72,7 +73,7 @@ int main(int argc, char* argv[]) {
   //if (fx_param_exists(NULL, "weights")) {
   
   //bool has_weights = IO::HasParam("weighted_computation");
-  //IO::Info << "has_weights: " << has_weights << "\n";
+  //Log::Info << "has_weights: " << has_weights << "\n";
   
   //if (IO::HasParam("weighted_computation")) {
   if (IO::GetParam<bool>("weighted_computation")) {
@@ -157,7 +158,7 @@ int main(int argc, char* argv[]) {
   //if (IO::HasParam("do_single_bandwidth")) {
     
     //std::cout << "Doing single bandwidth.\n";
-    IO::Info << "Doing single bandwidth.\n";
+    Log::Info << "Doing single bandwidth.\n";
 
     //fx_timer_start(NULL, "single_bandwidth_time");
     IO::StartTimer("single_bandwidth_time");
@@ -199,9 +200,9 @@ int main(int argc, char* argv[]) {
     IO::StopTimer("single_bandwidth_time");
     
     //std::cout << "\nSingle Bandwidth num tuples: " << single_alg.num_tuples() << "\n\n";
-    IO::Info << std::endl << "Single bandwidth num tuples: " <<  matcher.results();
+    Log::Info << std::endl << "Single bandwidth num tuples: " <<  matcher.results();
     
-    IO::Info << std::endl << std::endl;
+    Log::Info << std::endl << std::endl;
     
   } // single bandwidth
   
@@ -210,7 +211,7 @@ int main(int argc, char* argv[]) {
   if (IO::GetParam<bool>("do_naive")) {
     //std::cout << "Doing naive.\n";
     
-    IO::Info << "Doing naive." << std::endl;
+    Log::Info << "Doing naive." << std::endl;
     
     //fx_timer_start(NULL, "naive_time");
     IO::StartTimer("naive_time");
@@ -256,9 +257,9 @@ int main(int argc, char* argv[]) {
     IO::StopTimer("naive_time");
     
     //std::cout << "\nNaive num tuples: " << naive_alg.num_tuples() << "\n\n";
-    IO::Info << std::endl << "Naive num tuples: " << matcher.results();
+    Log::Info << std::endl << "Naive num tuples: " << matcher.results();
     
-    IO::Info << std::endl << std::endl;
+    Log::Info << std::endl << std::endl;
     
   } // do naive
   
@@ -269,7 +270,7 @@ int main(int argc, char* argv[]) {
   //if (fx_param_exists(NULL, "do_perm_free")) {
   if (IO::HasParam("do_perm_free")) {
     
-    IO::Info << "Doing permutation free.\n";
+    Log::Info << "Doing permutation free.\n";
 
     //fx_timer_start(NULL, "perm_free_time");
     IO::StartTimer("perm_free_time");
@@ -282,9 +283,9 @@ int main(int argc, char* argv[]) {
     //fx_timer_stop(NULL, "perm_free_time");
     IO::StopTimer("perm_free_time");
     
-    IO::Info << "\nPerm Free num tuples: " << std::endl;
+    Log::Info << "\nPerm Free num tuples: " << std::endl;
     alg.print_num_tuples();
-    IO::Info << std::endl << std::endl;
+    Log::Info << std::endl << std::endl;
     
     
   } // perm free

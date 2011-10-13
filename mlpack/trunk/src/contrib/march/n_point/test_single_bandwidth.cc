@@ -56,10 +56,10 @@ bool npt::TestSingleBandwidth::StressTest() {
   printf("generating tuple size\n");
   int tuple_size = tuple_size_gen();
   
-  mlpack::IO::Info << "====Running Test===\n";
-  mlpack::IO::Info << "Tuple size: " << tuple_size << "\n";
-  mlpack::IO::Info << "Num data points: " << num_data_points << "\n";
-  mlpack::IO::Info << "Num random points: " << num_random_points << "\n";
+  mlpack::Log::Info << "====Running Test===\n";
+  mlpack::Log::Info << "Tuple size: " << tuple_size << "\n";
+  mlpack::Log::Info << "Num data points: " << num_data_points << "\n";
+  mlpack::Log::Info << "Num random points: " << num_random_points << "\n";
   
   
   // Generate a random data set
@@ -98,7 +98,7 @@ bool npt::TestSingleBandwidth::StressTest() {
   
   mlpack::IO::GetParam<int>("tree/leaf_size") = leaf_size;
   
-  mlpack::IO::Info << "Leaf size: " << leaf_size << "\n";
+  mlpack::Log::Info << "Leaf size: " << leaf_size << "\n";
   
   printf("building trees\n");
   NptNode* data_tree = new NptNode(data_mat, old_from_new_data);
@@ -166,8 +166,8 @@ bool npt::TestSingleBandwidth::StressTest() {
     // Get and store the result
     tree_results[num_random] = tree_matcher.results();
     
-    mlpack::IO::Info << "tree_results[" << num_random << "]: ";
-    mlpack::IO::Info << tree_results[num_random] << "\n";
+    mlpack::Log::Info << "tree_results[" << num_random << "]: ";
+    mlpack::Log::Info << tree_results[num_random] << "\n";
     
     
     printf("Running naive algorithm, iteration %d\n", num_random);
@@ -183,8 +183,8 @@ bool npt::TestSingleBandwidth::StressTest() {
     
     naive_results[num_random] = naive_matcher.results();
     
-    mlpack::IO::Info << "naive_results[" << num_random << "]: ";
-    mlpack::IO::Info << naive_results[num_random] << "\n";
+    mlpack::Log::Info << "naive_results[" << num_random << "]: ";
+    mlpack::Log::Info << naive_results[num_random] << "\n";
 
     
     // Compare results
@@ -192,14 +192,14 @@ bool npt::TestSingleBandwidth::StressTest() {
     
     if (!results_match) {
       
-      //mlpack::IO::Info << "Results fail to match for num_random: ";
-      //mlpack::IO::Info << num_random << "\n";
+      //mlpack::Log::Info << "Results fail to match for num_random: ";
+      //mlpack::Log::Info << num_random << "\n";
       printf("Results fail to match\n");
       
       
     }
     
-    mlpack::IO::Info << "\n\n";
+    mlpack::Log::Info << "\n\n";
     
   } // for num_random
     

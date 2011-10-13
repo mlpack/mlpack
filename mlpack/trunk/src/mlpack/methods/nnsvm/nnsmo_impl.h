@@ -157,7 +157,7 @@ double NNSMO<TKernel>::CalculateDF_(size_t i, size_t j, double error_j)
   //2. compute L, H of alpha_j
   if (s < 0)
   {
-    mlpack::IO::Assert(s == -1);
+    mlpack::Log::Assert(s == -1);
     r = alpha_j - alpha_i; // target values are not equal
   }
   else
@@ -236,7 +236,7 @@ bool NNSMO<TKernel>::TakeStep_(size_t i, size_t j, double error_j)
   //2. compute L, H of alpha_j
   if (s < 0)
   {
-    mlpack::IO::Assert(s == -1);
+    mlpack::Log::Assert(s == -1);
     r = alpha_j - alpha_i; // target values are not equal
   }
   else

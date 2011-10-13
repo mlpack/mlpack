@@ -10,6 +10,7 @@
  */
 #include "io_deleter.h"
 #include "io.h"
+#include "../io/log.h"
 
 using namespace mlpack;
 using namespace mlpack::io;

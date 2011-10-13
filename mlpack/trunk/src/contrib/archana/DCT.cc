@@ -1,4 +1,5 @@
 #include "stdio.h"
+#include<log.h>
 #include "math.h"
 #include "fastlib/fastlib.h"
 #include "dataset.h"

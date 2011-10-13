@@ -443,38 +443,38 @@ class FastICA {
     const char* string_approach =
       mlpack::IO::GetParam<std::string>("fastica/approach").c_str();
     if(strcasecmp(string_approach, "deflation") == 0) {
-      mlpack::IO::Info << "Using Deflation approach ";
+      mlpack::Log::Info << "Using Deflation approach ";
       approach_ = DEFLATION;
     }
     else if(strcasecmp(string_approach, "symmetric") == 0) {
-      mlpack::IO::Info << "Using Symmetric approach ";
+      mlpack::Log::Info << "Using Symmetric approach ";
       approach_ = SYMMETRIC;
     }
     else {
-      mlpack::IO::Fatal << "Approach must be 'deflation' or 'symmetric'!" <<
+      mlpack::Log::Fatal << "Approach must be 'deflation' or 'symmetric'!" <<
           std::endl;
     }
 
     const char* string_nonlinearity =
       mlpack::IO::GetParam<std::string>("fastica/nonlinearity").c_str();
     if(strcasecmp(string_nonlinearity, "logcosh") == 0) {
-      mlpack::IO::Info << "with log cosh nonlinearity." << std::endl;
+      mlpack::Log::Info << "with log cosh nonlinearity." << std::endl;
       nonlinearity_ = LOGCOSH;
     }
     else if(strcasecmp(string_nonlinearity, "gauss") == 0) {
-      mlpack::IO::Info << "with Gaussian nonlinearity." << std::endl;
+      mlpack::Log::Info << "with Gaussian nonlinearity." << std::endl;
       nonlinearity_ = GAUSS;
     }
     else if(strcasecmp(string_nonlinearity, "kurtosis") == 0) {
-      mlpack::IO::Info << "with kurtosis nonlinearity." << std::endl;
+      mlpack::Log::Info << "with kurtosis nonlinearity." << std::endl;
       nonlinearity_ = KURTOSIS;
     }
     else if(strcasecmp(string_nonlinearity, "skew") == 0) {
-      mlpack::IO::Info << "with skew nonlinearity." << std::endl;
+      mlpack::Log::Info << "with skew nonlinearity." << std::endl;
       nonlinearity_ = SKEW;
     }
     else {
-      mlpack::IO::Fatal << "Nonlinearity is not one of {logcosh, gauss, "
+      mlpack::Log::Fatal << "Nonlinearity is not one of {logcosh, gauss, "
           "kurtosis, skew}!" << std::endl;
     }
 
@@ -483,7 +483,7 @@ class FastICA {
     //const size_t last_eig_ = fx_param_int(module_, "last_eig", d);
     num_of_IC_ = mlpack::IO::GetParam<int>("fastica/num_of_IC");
     if(num_of_IC_ < 1 || num_of_IC_ > d) {
-      mlpack::IO::Fatal << "ERROR: num_of_IC = " << num_of_IC_ <<
+      mlpack::Log::Fatal << "ERROR: num_of_IC = " << num_of_IC_ <<
           " must be >= 1 and <= dimensionality of data" << std::endl;
 
       return false;
@@ -499,21 +499,21 @@ class FastICA {
     size_t int_max_num_iterations =
       mlpack::IO::GetParam<int>("fastica/max_num_iterations");
     if(int_max_num_iterations < 0) {
-      mlpack::IO::Fatal << "max_num_iterations (" << int_max_num_iterations
+      mlpack::Log::Fatal << "max_num_iterations (" << int_max_num_iterations
           << ") must be greater than or equal to 0!" << std::endl;
     }
     max_num_iterations_ = (size_t) int_max_num_iterations;
 
     size_t int_max_fine_tune = mlpack::IO::GetParam<int>("fastica/max_fine_tune");
     if(int_max_fine_tune < 0) {
-      mlpack::IO::Fatal << "max_fine_tune (" << int_max_fine_tune
+      mlpack::Log::Fatal << "max_fine_tune (" << int_max_fine_tune
           << ") must be greater than or equal to 0!" << std::endl;
     }
     max_fine_tune_ = (size_t) int_max_fine_tune;
 
     percent_cut_ = mlpack::IO::GetParam<double>("fastica/percent_cut");
     if((percent_cut_ < 0) || (percent_cut_ > 1)) {
-      mlpack::IO::Fatal << "percent_cut (" << percent_cut_ << ") must be "
+      mlpack::Log::Fatal << "percent_cut (" << percent_cut_ << ") must be "
           "between 0 and 1!" << std::endl;
     }
     return true;
@@ -586,7 +586,7 @@ class FastICA {
 	  min_abs_cos = current_cos;
       }
 
-      mlpack::IO::Debug << "delta = " << (1 - min_abs_cos) << std::endl;
+      mlpack::Log::Debug << "delta = " << (1 - min_abs_cos) << std::endl;
 
       if(1 - min_abs_cos < epsilon_) {
 	if(fine_tuning_enabled && not_fine) {
@@ -613,7 +613,7 @@ class FastICA {
 	  }
 	}
 
-        mlpack::IO::Debug << "stabilization delta = " << (1 - min_abs_cos2) <<
+        mlpack::Log::Debug << "stabilization delta = " << (1 - min_abs_cos2) <<
             std::endl;
 
 	if((stroke == 0) && (1 - min_abs_cos2 < epsilon_)) {
@@ -746,13 +746,13 @@ class FastICA {
       }
 
       default:
-        mlpack::IO::Fatal << "Invalid contrast function: used_nonlinearity = "
+        mlpack::Log::Fatal << "Invalid contrast function: used_nonlinearity = "
             << used_nonlinearity << "." << std::endl;
 	exit(false);
       }
     }
 
-    mlpack::IO::Warn << "No convergence after " << max_num_iterations_
+    mlpack::Log::Warn << "No convergence after " << max_num_iterations_
         << " steps." << std::endl;
 
     // orthogonalize B via: newB = B * (B' * B) ^ -.5;
@@ -781,7 +781,7 @@ class FastICA {
     size_t num_failures = 0;
 
     while(round < num_of_IC_) {
-      mlpack::IO::Info << "Estimating IC " << (round + 1) << std::endl;
+      mlpack::Log::Info << "Estimating IC " << (round + 1) << std::endl;
       mu_ = mu_orig;
       used_nonlinearity = g_orig;
       stroke = 0;
@@ -814,7 +814,7 @@ class FastICA {
 	    round++;
 	    num_failures++;
 	    if(num_failures > failure_limit) {
-              mlpack::IO::Warn << "Too many failures to converge (" << num_failures <<
+              mlpack::Log::Warn << "Too many failures to converge (" << num_failures <<
                   ").  Giving up." << std::endl;
 	      return false;
 	    }
@@ -845,7 +845,7 @@ class FastICA {
 	    converged = true;
 	}
 
-        mlpack::IO::Debug << "delta = " << std::min(delta1, delta2) << std::endl;
+        mlpack::Log::Debug << "delta = " << std::min(delta1, delta2) << std::endl;
 
 	if(converged) {
 	  if(fine_tuning_enabled & not_fine) {
@@ -1007,7 +1007,7 @@ class FastICA {
 	}
 
 	default:
-          mlpack::IO::Fatal << "Invalid contrast function: used_nonlinearity = " <<
+          mlpack::Log::Fatal << "Invalid contrast function: used_nonlinearity = " <<
               used_nonlinearity << "." << std::endl;
 	}
 
@@ -1030,7 +1030,7 @@ class FastICA {
   size_t FixedPointICA(const arma::mat& X, arma::mat& whitening_matrix, arma::mat& W) {
     // ensure default values are passed into this function if the user doesn't care about certain parameters
     if(d < num_of_IC_) {
-      mlpack::IO::Warn << "Must have num_of_IC <= dimension!" << std::endl;
+      mlpack::Log::Warn << "Must have num_of_IC <= dimension!" << std::endl;
       W.set_size(0);
       return false;
     }
@@ -1039,12 +1039,12 @@ class FastICA {
 
     if((percent_cut_ > 1) || (percent_cut_ < 0)) {
       percent_cut_ = 1;
-      mlpack::IO::Info << "Setting percent_cut to 1." << std::endl;
+      mlpack::Log::Info << "Setting percent_cut to 1." << std::endl;
     }
     else if(percent_cut_ < 1) {
       if((percent_cut_ * n) < 1000) {
 	percent_cut_ = std::min(1000 / (double) n, (double) 1);
-        mlpack::IO::Warn << "Setting percent_cut to " << std::setw(4) << percent_cut_
+        mlpack::Log::Warn << "Setting percent_cut to " << std::setw(4) << percent_cut_
             << " (" << (size_t) floor(percent_cut_ * n) << " samples)."
             << std::endl;
       }

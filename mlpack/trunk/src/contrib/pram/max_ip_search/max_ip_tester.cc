@@ -44,16 +44,16 @@ int main (int argc, char *argv[]) {
   string rfile = IO::GetParam<string>("r");
   string qfile = IO::GetParam<string>("q");
 
-  IO::Warn << "Loading files..." << endl;
+  Log::Warn << "Loading files..." << endl;
   if (!data::Load(rfile.c_str(), rdata))
-    IO::Fatal << "Reference file "<< rfile << " not found." << endl;
+    Log::Fatal << "Reference file "<< rfile << " not found." << endl;
 
   if (!data::Load(qfile.c_str(), qdata)) 
-    IO::Fatal << "Query file " << qfile << " not found." << endl;
+    Log::Fatal << "Query file " << qfile << " not found." << endl;
 
-  IO::Warn << "File loaded..." << endl;
+  Log::Warn << "File loaded..." << endl;
   
-  IO::Warn << "R(" << rdata.n_rows << ", " << rdata.n_cols 
+  Log::Warn << "R(" << rdata.n_rows << ", " << rdata.n_cols 
 	   << "), Q(" << qdata.n_rows << ", " << qdata.n_cols 
 	   << ")" << endl;
 
@@ -69,14 +69,14 @@ int main (int argc, char *argv[]) {
   arma::vec din;
 
   if (IO::HasParam("check_nn")) { 
-    IO::Warn << "Starting naive computation..." <<endl;
+    Log::Warn << "Starting naive computation..." <<endl;
     naive.InitNaive(qdata, rdata);
     naive.WarmInit(max_k);
     naive_comp = naive.ComputeNaive(&nac, &din);
-    IO::Warn << "Naive computation done..." << endl;
+    Log::Warn << "Naive computation done..." << endl;
   }
 
-  IO::Warn << "Starting loop for Fast Exact Search." << endl;
+  Log::Warn << "Starting loop for Fast Exact Search." << endl;
 
   fast_exact.Init(qdata, rdata);
 
@@ -92,7 +92,7 @@ int main (int argc, char *argv[]) {
       size_t errors = count_mismatched_neighbors(din, max_k, die, knns);
 
       if (errors > 0) {
-	IO::Warn << knns << "-NN error: " << errors << " / "
+	Log::Warn << knns << "-NN error: " << errors << " / "
 		 << exc.n_elem << endl;
       }
     }
@@ -106,7 +106,7 @@ int main (int argc, char *argv[]) {
 
   printf("\n");
 
-  IO::Warn << "Search completed for all values of k...printing results now"
+  Log::Warn << "Search completed for all values of k...printing results now"
 	   << endl;
 
   if (IO::HasParam("print_speedups")) {

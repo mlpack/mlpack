@@ -13,6 +13,7 @@
 #include <contrib/niche/pegasos/pegasos.h>
 
 //#include <stdio.h>
+#include<log.h>
 //#include <unistd.h>
 //#include <stdlib.h>
 //#include <math.h>

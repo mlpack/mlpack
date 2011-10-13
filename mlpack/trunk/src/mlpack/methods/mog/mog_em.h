@@ -155,34 +155,34 @@ class MoGEM {
    */
   void Display() {
     // Output the model parameters as the omega, mu and sigma
-    IO::Info << " Omega : [ ";
+    Log::Info << " Omega : [ ";
     for (size_t i = 0; i < number_of_gaussians_; i++) {
-      IO::Info << omega_[i] << " ";
+      Log::Info << omega_[i] << " ";
     }
-    IO::Info << "]" << std::endl;
+    Log::Info << "]" << std::endl;
 
-    IO::Info << " Mu : " << std::endl << "[";
+    Log::Info << " Mu : " << std::endl << "[";
     for (size_t i = 0; i < number_of_gaussians_; i++) {
       for (size_t j = 0; j < dimension_ ; j++) {
-        IO::Info << (mu_[i])[j];
+        Log::Info << (mu_[i])[j];
       }
-      IO::Info << ";";
+      Log::Info << ";";
       if (i == (number_of_gaussians_ - 1)) {
-        IO::Info << "\b]" << std::endl;
+        Log::Info << "\b]" << std::endl;
       }
     }
-    IO::Info << "Sigma : ";
+    Log::Info << "Sigma : ";
     for (size_t i = 0; i < number_of_gaussians_; i++) {
-      IO::Info << std::endl << "[";
+      Log::Info << std::endl << "[";
       for (size_t j = 0; j < dimension_ ; j++) {
         for(size_t k = 0; k < dimension_ ; k++) {
-          IO::Info << (sigma_[i])(j, k);
+          Log::Info << (sigma_[i])(j, k);
         }
-        IO::Info << ";";
+        Log::Info << ";";
       }
-      IO::Info << "\b]";
+      Log::Info << "\b]";
     }
-    IO::Info << std::endl;
+    Log::Info << std::endl;
   }
 
   /**

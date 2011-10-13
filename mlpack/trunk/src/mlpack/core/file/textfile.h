@@ -14,6 +14,7 @@
 #define FILE_TEXTFILE_H
 
 #include "../io/io.h"
+#include "../io/log.h"
 
 #include <cstdio>
 #include <ctype.h>
@@ -323,8 +324,8 @@ class TextWriter {
    */
   ~TextWriter() {
     if (f_) {
-      mlpack::IO::Assert(fclose(f_) >= 0);
-      mlpack::IO::AssertMessage(fclose(f_) >= 0, "File close failed!");
+      mlpack::Log::Assert(fclose(f_) >= 0);
+      mlpack::Log::Assert(fclose(f_) >= 0, "File close failed!");
     }
     f_ = NULL;
   }

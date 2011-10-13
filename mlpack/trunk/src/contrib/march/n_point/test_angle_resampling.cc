@@ -35,10 +35,10 @@ bool npt::TestAngleResampling::StressTest() {
   int num_dimensions = 3;
   int tuple_size = 3;
   
-  mlpack::IO::Info << "====Running Test===\n";
-  mlpack::IO::Info << "Tuple size: " << tuple_size << "\n";
-  mlpack::IO::Info << "Num data points: " << num_data_points << "\n";
-  mlpack::IO::Info << "Num random points: " << num_random_points << "\n";
+  mlpack::Log::Info << "====Running Test===\n";
+  mlpack::Log::Info << "Tuple size: " << tuple_size << "\n";
+  mlpack::Log::Info << "Num data points: " << num_data_points << "\n";
+  mlpack::Log::Info << "Num random points: " << num_random_points << "\n";
   
   
   // Generate a random data set
@@ -147,8 +147,8 @@ bool npt::TestAngleResampling::StressTest() {
   
   if (!results_match) {
   
-    //mlpack::IO::Info << "Results fail to match for num_random: ";
-    //mlpack::IO::Info << num_random << "\n";
+    //mlpack::Log::Info << "Results fail to match for num_random: ";
+    //mlpack::Log::Info << num_random << "\n";
     printf("Results fail to match\n");
     
   

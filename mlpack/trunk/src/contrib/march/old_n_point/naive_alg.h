@@ -93,8 +93,8 @@ namespace npt {
         
         // i is the number of random points in the tuple
         std::string this_string(label_string, i, tuple_size_);
-        mlpack::IO::Info << this_string << ": ";
-        mlpack::IO::Info << num_tuples_[i] << std::endl;
+        mlpack::Log::Info << this_string << ": ";
+        mlpack::Log::Info << num_tuples_[i] << std::endl;
         
       } // for i
       

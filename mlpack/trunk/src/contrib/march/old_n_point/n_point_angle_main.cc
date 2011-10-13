@@ -38,11 +38,11 @@ using namespace mlpack;
 
 int main(int argc, char* argv[]) {
 
-  //IO::Info << "parsing command line\n";
+  //Log::Info << "parsing command line\n";
   
   IO::ParseCommandLine(argc, argv);
   
-  //IO::Info << "parsing complete\n";
+  //Log::Info << "parsing complete\n";
   
   std::string data_filename = IO::GetParam<std::string>("data");
   arma::mat data_in, data_mat;
@@ -95,7 +95,7 @@ int main(int argc, char* argv[]) {
     random_weights.fill(1.0);
   }
   
-  IO::Info << "Finished reading in data.\n";
+  Log::Info << "Finished reading in data.\n";
   
   double bin_thickness_factor = IO::GetParam<double>("bin_thickness_factor");
   double r2_multiplier = IO::GetParam<double>("r2_multiplier");
@@ -144,7 +144,7 @@ int main(int argc, char* argv[]) {
     theta_vec[0] = theta_min;
   }
   
-  IO::Info << "Finished setting up matchers, starting algorithm.\n";
+  Log::Info << "Finished setting up matchers, starting algorithm.\n";
   
   // The trees just get re-used over and over
   
@@ -156,7 +156,7 @@ int main(int argc, char* argv[]) {
                                      old_from_new_random);
   
   
-  mlpack::IO::Info << "Trees built.\n";
+  mlpack::Log::Info << "Trees built.\n";
   
   // IMPORTANT: need to permute weights here
 
@@ -169,28 +169,28 @@ int main(int argc, char* argv[]) {
   
     IO::StartTimer("angle_time");
     
-    IO::Info << "initializing angle matcher.\n";
+    Log::Info << "initializing angle matcher.\n";
     
     AngleMatcher angle_matcher(data_mat, weights, 
                                random_mat, random_weights,
                                r1_vec, r2_multiplier,
                                theta_vec, bin_thickness_factor);
     
-    IO::Info << "Initializing angle alg.\n";
+    Log::Info << "Initializing angle alg.\n";
     
     GenericNptAlg<AngleMatcher> angle_alg(data_tree, random_tree, 
                                           angle_matcher);
     
-    IO::Info << "Computing angle alg.\n";
+    Log::Info << "Computing angle alg.\n";
     
     angle_alg.Compute();
     
     //now, the matcher has the data
     
     // output the results
-    IO::Info << "3pt Angle Results: \n";
+    Log::Info << "3pt Angle Results: \n";
     angle_matcher.OutputResults();
-    IO::Info << "\n\n";
+    Log::Info << "\n\n";
     
     IO::StopTimer("angle_time");
   
@@ -202,7 +202,7 @@ int main(int argc, char* argv[]) {
     AngleMatcherGenerator generator(r1_vec, r2_multiplier, theta_vec, 
                                     bin_thickness_factor);
     
-    IO::Info << "Single Bandwidth Results: \n";
+    Log::Info << "Single Bandwidth Results: \n";
     
     IO::StartTimer("single_bandwidth_time");
     
@@ -232,14 +232,14 @@ int main(int argc, char* argv[]) {
   
         single_alg.Compute();
         
-        IO::Info << "R1 = " << r1_vec[r1_ind] << ", ";
-        IO::Info << "Theta = " << theta_vec[theta_ind] << ", ";
-        //IO::Info << "Single alg num_tuples: \n";
+        Log::Info << "R1 = " << r1_vec[r1_ind] << ", ";
+        Log::Info << "Theta = " << theta_vec[theta_ind] << ", ";
+        //Log::Info << "Single alg num_tuples: \n";
         
         single_matcher.OutputResults();
         single_alg.PrintStats();
         
-        IO::Info << "\n";
+        Log::Info << "\n";
         
         
       } // for theta_ind
@@ -248,7 +248,7 @@ int main(int argc, char* argv[]) {
     
     IO::StopTimer("single_bandwidth_time");
     
-    IO::Info << "\n\n";
+    Log::Info << "\n\n";
     
   } // doing single bandwidth
   

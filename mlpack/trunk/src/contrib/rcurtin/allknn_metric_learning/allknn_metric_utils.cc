@@ -205,7 +205,7 @@ int mlpack::neighbor::metric::EvaluateClassCorrect(
     int classvote = ClassifyKNN(classifieds);
     int index = query_labels[i];
     if (index > num_classes || index < 0)
-      IO::Fatal << "Bizarre index " << index << " (i " << i << ", label "
+      Log::Fatal << "Bizarre index " << index << " (i " << i << ", label "
           << query_labels[i] << ")." << std::endl;
 
     if(classvote == index) {

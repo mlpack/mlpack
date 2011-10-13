@@ -109,7 +109,7 @@ int main(int argc, char* argv[]) {
   }
 
   long double error = mog.L2Error(data_points);
-  IO::Info << "Minimum L2 error achieved: " << error << "." << std::endl;
+  Log::Info << "Minimum L2 error achieved: " << error << "." << std::endl;
   mog.Display();
 
   std::vector<double> results;

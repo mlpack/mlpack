@@ -7,6 +7,7 @@
 #include "allknn_balltree.h"
 #include "fastlib/base/test.h"
 #include <stdio.h>
+#include<log.h>
 #include <stdlib.h>
 
 // Parameters

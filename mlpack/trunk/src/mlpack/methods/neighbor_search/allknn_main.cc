@@ -53,22 +53,22 @@ int main(int argc, char *argv[]) {
   arma::mat distances;
 
   if (data::Load(reference_file.c_str(), reference_data) == false)
-    IO::Fatal << "Reference file " << reference_file << " not found." << endl;
+    Log::Fatal << "Reference file " << reference_file << " not found." << endl;
 
-  IO::Info << "Loaded reference data from " << reference_file << endl;
+  Log::Info << "Loaded reference data from " << reference_file << endl;
 
   // Sanity check on k value: must be greater than 0, must be less than the
   // number of reference points.
   size_t k = IO::GetParam<int>("neighbor_search/k");
   if ((k <= 0) || (k >= reference_data.n_cols)) {
-    IO::Fatal << "Invalid k: " << k << "; must be greater than 0 and less ";
-    IO::Fatal << "than the number of reference points (";
-    IO::Fatal << reference_data.n_cols << ")." << endl;
+    Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less ";
+    Log::Fatal << "than the number of reference points (";
+    Log::Fatal << reference_data.n_cols << ")." << endl;
   }
 
   // Sanity check on leaf size.
   if (IO::GetParam<int>("tree/leaf_size") <= 0) {
-    IO::Fatal << "Invalid leaf size: " << IO::GetParam<int>("allknn/leaf_size")
+    Log::Fatal << "Invalid leaf size: " << IO::GetParam<int>("allknn/leaf_size")
         << endl;
   }
 
@@ -79,25 +79,25 @@ int main(int argc, char *argv[]) {
     arma::mat query_data;
 
     if (data::Load(query_file.c_str(), query_data) == false)
-      IO::Fatal << "Query file " << query_file << " not found" << endl;
+      Log::Fatal << "Query file " << query_file << " not found" << endl;
 
-    IO::Info << "Query data loaded from " << query_file << endl;
+    Log::Info << "Query data loaded from " << query_file << endl;
 
-    IO::Info << "Building query and reference trees..." << endl;
+    Log::Info << "Building query and reference trees..." << endl;
     allknn = new AllkNN(query_data, reference_data);
 
   } else {
-    IO::Info << "Building reference tree..." << endl;
+    Log::Info << "Building reference tree..." << endl;
     allknn = new AllkNN(reference_data);
   }
 
-  IO::Info << "Tree(s) built." << endl;
+  Log::Info << "Tree(s) built." << endl;
 
-  IO::Info << "Computing " << k << " nearest neighbors..." << endl;
+  Log::Info << "Computing " << k << " nearest neighbors..." << endl;
   allknn->ComputeNeighbors(neighbors, distances);
 
-  IO::Info << "Neighbors computed." << endl;
-  IO::Info << "Exporting results..." << endl;
+  Log::Info << "Neighbors computed." << endl;
+  Log::Info << "Exporting results..." << endl;
 
   // Should be using data::Save or a related function instead of being written
   // by hand.
@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
 
     out.close();
   } catch(exception& e) {
-    IO::Fatal << "Error while opening " << output_file << ": " << e.what()
+    Log::Fatal << "Error while opening " << output_file << ": " << e.what()
         << endl;
   }
 

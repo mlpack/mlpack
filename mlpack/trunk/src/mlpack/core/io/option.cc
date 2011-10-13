@@ -6,6 +6,7 @@
  * when constructed.
  */
 #include "io.h"
+#include "../io/log.h"
 #include "option.h"
 
 #include <string>

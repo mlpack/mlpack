@@ -53,7 +53,7 @@ void InfomaxICA::applyICA(const arma::mat& dataset) {
       current_cos = w_delta(w_prev, w_);
     }
   } else
-    IO::Fatal << "Window size must be less than number of instances."
+    Log::Fatal << "Window size must be less than number of instances."
         << std::endl;
 }
 
@@ -169,9 +169,9 @@ arma::mat InfomaxICA::sqrtm(const arma::mat& m) {
       arma::mat tm1 = u * S;
       output = tm1 * trans(u);
     } else
-      IO::Warn << "InfomaxICA sqrtm: SVD failed." << std::endl;
+      Log::Warn << "InfomaxICA sqrtm: SVD failed." << std::endl;
   } else
-    IO::Warn << "InfomaxICA sqrtm: Cholesky decomposition failed." << std::endl;
+    Log::Warn << "InfomaxICA sqrtm: Cholesky decomposition failed." << std::endl;
 
   return output;
 }
@@ -182,7 +182,7 @@ double InfomaxICA::w_delta(const arma::mat& w_prev, const arma::mat& w_pres) {
   arma::vec delta = reshape(temp, temp.n_rows * temp.n_cols, 1);
   double delta_dot = arma::dot(delta, delta);
 
-  IO::Info << "w change: " << delta_dot << std::endl;
+  Log::Info << "w change: " << delta_dot << std::endl;
   return delta_dot;
 }
 

@@ -8,6 +8,7 @@
 #define MATH_MATH_LIB_H
 
 #include "../io/io.h"
+#include "../io/log.h"
 
 #include <math.h>
 #include <float.h>

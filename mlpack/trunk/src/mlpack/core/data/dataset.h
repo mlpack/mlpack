@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "../io/io.h"
+#include "../io/log.h"
 #include "../file/textfile.h"
 #include "../col/tokenizer.h"
 
@@ -136,7 +137,7 @@ class Dataset {
   int get_int(size_t feature, size_t point) const {
     double d = get(feature, point);
     int i = int(d);
-    mlpack::IO::Assert(d == double(i));
+    mlpack::Log::Assert(d == double(i));
     return i;
   }
 

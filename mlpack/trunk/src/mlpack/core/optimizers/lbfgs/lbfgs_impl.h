@@ -309,13 +309,13 @@ bool L_BFGS<FunctionType>::Optimize(int num_iterations, arma::mat& iterate) {
   // The main optimization loop.
   for(int it_num = 0; optimize_until_convergence || it_num < num_iterations;
       it_num++) {
-    IO::Debug << "L-BFGS iteration " << it_num << "; objective " <<
+    Log::Debug << "L-BFGS iteration " << it_num << "; objective " <<
         function_.Evaluate(iterate) << "." << std::endl;
 
     // Break when the norm of the gradient becomes too small.
     if(GradientNormTooSmall_(gradient)) {
       success = true; // We have found the minimum.
-      IO::Debug << "L-BFGS gradient norm too small (terminating)." << std::endl;
+      Log::Debug << "L-BFGS gradient norm too small (terminating)." << std::endl;
       break;
     }
 

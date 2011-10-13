@@ -52,6 +52,7 @@ Copyright (c) 2000-2003 ZIB & Loebel.   All rights reserved.
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
+#include<log.h>
 #include <limits.h>
 #include <string.h>
 #include <errno.h>

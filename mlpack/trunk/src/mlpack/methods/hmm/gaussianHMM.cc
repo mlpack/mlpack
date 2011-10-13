@@ -14,14 +14,14 @@ namespace hmm {
 using namespace hmm_support;
 
 void GaussianHMM::setModel(const arma::mat& transmission,  const std::vector<arma::vec>& list_mean_vec, const std::vector<arma::mat>& list_covariance_mat) {
-  mlpack::IO::Assert(transmission.n_rows == transmission.n_cols);
-  mlpack::IO::Assert(transmission.n_rows == list_mean_vec.size());
-  mlpack::IO::Assert(transmission.n_rows == list_covariance_mat.size());
+  mlpack::Log::Assert(transmission.n_rows == transmission.n_cols);
+  mlpack::Log::Assert(transmission.n_rows == list_mean_vec.size());
+  mlpack::Log::Assert(transmission.n_rows == list_covariance_mat.size());
 
   for (size_t i = 1; i < list_mean_vec.size(); i++) {
-    mlpack::IO::Assert(list_mean_vec[0].n_elem == list_covariance_mat[i].n_rows);
-    mlpack::IO::Assert(list_mean_vec[0].n_elem == list_covariance_mat[i].n_cols);
-    mlpack::IO::Assert(list_mean_vec[0].n_elem == list_mean_vec[i].n_elem);
+    mlpack::Log::Assert(list_mean_vec[0].n_elem == list_covariance_mat[i].n_rows);
+    mlpack::Log::Assert(list_mean_vec[0].n_elem == list_covariance_mat[i].n_cols);
+    mlpack::Log::Assert(list_mean_vec[0].n_elem == list_mean_vec[i].n_elem);
   }
 
   transmission_ = transmission;
@@ -35,13 +35,13 @@ void GaussianHMM::Init(const arma::mat& transmission, const std::vector<arma::ve
   list_mean_vec_ = list_mean_vec;
   list_covariance_mat_ = list_covariance_mat;
 
-  mlpack::IO::Assert(transmission.n_rows == transmission.n_cols);
-  mlpack::IO::Assert(transmission.n_rows == list_mean_vec.size());
-  mlpack::IO::Assert(transmission.n_rows == list_covariance_mat.size());
+  mlpack::Log::Assert(transmission.n_rows == transmission.n_cols);
+  mlpack::Log::Assert(transmission.n_rows == list_mean_vec.size());
+  mlpack::Log::Assert(transmission.n_rows == list_covariance_mat.size());
   for (size_t i = 1; i < list_mean_vec.size(); i++) {
-    mlpack::IO::Assert(list_mean_vec[0].n_elem == list_covariance_mat[i].n_rows);
-    mlpack::IO::Assert(list_mean_vec[0].n_elem == list_covariance_mat[i].n_cols);
-    mlpack::IO::Assert(list_mean_vec[0].n_elem == list_mean_vec[i].n_elem);
+    mlpack::Log::Assert(list_mean_vec[0].n_elem == list_covariance_mat[i].n_rows);
+    mlpack::Log::Assert(list_mean_vec[0].n_elem == list_covariance_mat[i].n_cols);
+    mlpack::Log::Assert(list_mean_vec[0].n_elem == list_mean_vec[i].n_elem);
   }
 
   CalculateInverse();
@@ -49,7 +49,7 @@ void GaussianHMM::Init(const arma::mat& transmission, const std::vector<arma::ve
 
 void GaussianHMM::InitFromFile(const char* profile) {
   if (!(GaussianHMM::LoadProfile(profile, transmission_, list_mean_vec_, list_covariance_mat_)))
-    mlpack::IO::Fatal << "Couldn't open " << profile << " for reading." <<
+    mlpack::Log::Fatal << "Couldn't open " << profile << " for reading." <<
         std::endl;
 
   list_inverse_cov_mat_ = list_covariance_mat_;
@@ -204,16 +204,16 @@ bool GaussianHMM::LoadProfile(const char* profile, arma::mat& trans, std::vector
   if (!(load_matrix_list(profile, matlst)))
     return false;
 
-  mlpack::IO::Assert(matlst.size() > 0);
+  mlpack::Log::Assert(matlst.size() > 0);
 
   trans = matlst[0];
   size_t M = trans.n_rows; // num of states
-  mlpack::IO::Assert(matlst.size() == (2 * M + 1));
+  mlpack::Log::Assert(matlst.size() == (2 * M + 1));
   size_t N = matlst[1].n_rows; // dimension
 
   for (size_t i = 1; i < (2 * M + 1); i += 2) {
-    mlpack::IO::Assert(matlst[i].n_rows == N && matlst[i].n_cols == 1);
-    mlpack::IO::Assert(matlst[i + 1].n_rows == N && matlst[i + 1].n_cols == N);
+    mlpack::Log::Assert(matlst[i].n_rows == N && matlst[i].n_cols == 1);
+    mlpack::Log::Assert(matlst[i + 1].n_rows == N && matlst[i + 1].n_cols == N);
 
     arma::vec m = matlst[i].unsafe_col(0);
 
@@ -227,18 +227,18 @@ bool GaussianHMM::LoadProfile(const char* profile, arma::mat& trans, std::vector
 bool GaussianHMM::SaveProfile(const char* profile, const arma::mat& trans, const std::vector<arma::vec>& means, const std::vector<arma::mat>& covs) {
   TextWriter w_pro;
   if (!(w_pro.Open(profile))) {
-    mlpack::IO::Warn << "Couldn't open " << profile << " for writing." <<
+    mlpack::Log::Warn << "Couldn't open " << profile << " for writing." <<
         std::endl;
     return false;
   }
 
   size_t M = trans.n_rows; // num of states
-  mlpack::IO::Assert(means.size() == M && covs.size() == M);
+  mlpack::Log::Assert(means.size() == M && covs.size() == M);
   size_t N = means[0].n_elem; // dimension
   print_matrix(w_pro, trans, "% transmission", "%f,");
   for (size_t i = 0; i < M; i++) {
-    mlpack::IO::Assert(means[i].n_elem == N);
-    mlpack::IO::Assert(covs[i].n_rows == N && covs[i].n_cols == N);
+    mlpack::Log::Assert(means[i].n_elem == N);
+    mlpack::Log::Assert(covs[i].n_rows == N && covs[i].n_cols == N);
     char s[100];
     sprintf(s, "%% mean - state %zu", i);
     print_vector(w_pro, means[i], s, "%f,");
@@ -250,7 +250,7 @@ bool GaussianHMM::SaveProfile(const char* profile, const arma::mat& trans, const
 }
 
 void GaussianHMM::GenerateInit(size_t L, const arma::mat& trans, const std::vector<arma::vec>& means, const std::vector<arma::mat>& covs, arma::mat& seq, arma::vec& states){
-  mlpack::IO::AssertMessage((trans.n_rows == trans.n_cols && trans.n_rows == means.size() && trans.n_rows == covs.size()),
+  mlpack::Log::Assert((trans.n_rows == trans.n_cols && trans.n_rows == means.size() && trans.n_rows == covs.size()),
       "GaussianHMM::GenerateInit(): matrix sizes do not match");
 
   arma::mat trsum;
@@ -294,7 +294,7 @@ void GaussianHMM::GenerateInit(size_t L, const arma::mat& trans, const std::vect
 }
 
 void GaussianHMM::EstimateInit(const arma::mat& seq, const arma::vec& states, arma::mat& trans, std::vector<arma::vec>& means, std::vector<arma::mat>& covs) {
-  mlpack::IO::AssertMessage((seq.n_cols == states.n_elem), "GaussianHMM::EstimateInit(): sequence and states length must be the same");
+  mlpack::Log::Assert((seq.n_cols == states.n_elem), "GaussianHMM::EstimateInit(): sequence and states length must be the same");
 
   size_t M = 0;
   for (size_t i = 0; i < seq.n_cols; i++) {
@@ -306,7 +306,7 @@ void GaussianHMM::EstimateInit(const arma::mat& seq, const arma::vec& states, ar
 }
 
 void GaussianHMM::EstimateInit(size_t numStates, const arma::mat& seq, const arma::vec& states, arma::mat& trans, std::vector<arma::vec>& means, std::vector<arma::mat>& covs) {
-  mlpack::IO::AssertMessage((seq.n_cols == states.n_elem), "GaussianHMM::EstimateInit(): sequence and states length must be the same");
+  mlpack::Log::Assert((seq.n_cols == states.n_elem), "GaussianHMM::EstimateInit(): sequence and states length must be the same");
 
   size_t N = seq.n_rows; // emission vector length
   size_t M = numStates;  // number of states
@@ -418,7 +418,7 @@ void GaussianHMM::BackwardProcedure(size_t L, const arma::mat& trans, const arma
 double GaussianHMM::Decode(size_t L, const arma::mat& trans, const arma::mat& emis_prob, arma::mat& pstates, arma::mat& fs, arma::mat& bs, arma::vec& scales) {
   size_t M = trans.n_rows;
 
-  mlpack::IO::AssertMessage((L == pstates.n_cols && L == fs.n_cols && L == bs.n_cols &&
+  mlpack::Log::Assert((L == pstates.n_cols && L == fs.n_cols && L == bs.n_cols &&
 		    M == trans.n_cols && M == emis_prob.n_rows),
                     "GaussianHMM::Decode(): sizes do not match");
 
@@ -448,7 +448,7 @@ double GaussianHMM::ViterbiInit(const arma::mat& trans, const arma::mat& emis_pr
 
 double GaussianHMM::ViterbiInit(size_t L, const arma::mat& trans, const arma::mat& emis_prob, arma::vec& states) {
   size_t M = trans.n_rows;
-  mlpack::IO::AssertMessage((M == trans.n_cols && M == emis_prob.n_rows),
+  mlpack::Log::Assert((M == trans.n_cols && M == emis_prob.n_rows),
       "GaussianHMM::ViterbitInit(): sizes do not match");
 
   states.set_size(L);
@@ -580,7 +580,7 @@ void GaussianHMM::TrainViterbi(const std::vector<arma::mat>& seqs, arma::mat& gu
   size_t L = -1;
   size_t M = guessTR.n_rows;
   size_t N = guessME[0].n_elem;
-  mlpack::IO::AssertMessage((M == guessTR.n_cols && M == guessME.size() && M == guessCO.size()),
+  mlpack::Log::Assert((M == guessTR.n_cols && M == guessME.size() && M == guessCO.size()),
       "GaussianHMM::TrainViterbi(): sizes do not match");
 
   for (size_t i = 0; i < seqs.size(); i++) {
@@ -677,7 +677,7 @@ void GaussianHMM::Train(const std::vector<arma::mat>& seqs, arma::mat& guessTR, 
   size_t M = guessTR.n_rows;
   size_t N = guessME[0].n_elem;
 
-  mlpack::IO::AssertMessage((M == guessTR.n_cols && M == guessME.size() && M == guessCO.size()),
+  mlpack::Log::Assert((M == guessTR.n_cols && M == guessME.size() && M == guessCO.size()),
     "GaussianHMM::Train(): sizes do not match");
 
   for (size_t i = 0; i < seqs.size(); i++) {

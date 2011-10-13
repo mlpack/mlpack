@@ -69,30 +69,30 @@ int main(int argc, char* argv[]) {
     else if (strcmp(type, "mixture")==0)
       s = loglik_mixture();
     else {
-      IO::Info << "Unrecognized type: must be: discrete | gaussian | mixture !!!";
+      Log::Info << "Unrecognized type: must be: discrete | gaussian | mixture !!!";
       s = false;
     }
   }
   else {
-    IO::Info << "Unrecognized type: must be: discrete | gaussian | mixture  !!!";
+    Log::Info << "Unrecognized type: must be: discrete | gaussian | mixture  !!!";
     s = false;
   }
   if (!(s)) usage();
 }
 
 void usage() {
-  IO::Warn << "\n" << std::endl;
-  IO::Warn << "Usage:\n" << std::endl;
-  IO::Warn << "  loglik --type=={discrete|gaussian|mixture} OPTIONS" << std::endl;
-  IO::Warn << "[OPTIONS]" << std::endl;
-  IO::Warn << "  --profile==file   : file contains HMM profile" << std::endl;
-  IO::Warn << "  --seqfile==file   : file contains input sequences" << std::endl;
-  IO::Warn << "  --logfile==file   : output file for log-likelihood of the sequences" << std::endl;
+  Log::Warn << "\n" << std::endl;
+  Log::Warn << "Usage:\n" << std::endl;
+  Log::Warn << "  loglik --type=={discrete|gaussian|mixture} OPTIONS" << std::endl;
+  Log::Warn << "[OPTIONS]" << std::endl;
+  Log::Warn << "  --profile==file   : file contains HMM profile" << std::endl;
+  Log::Warn << "  --seqfile==file   : file contains input sequences" << std::endl;
+  Log::Warn << "  --logfile==file   : output file for log-likelihood of the sequences" << std::endl;
 }
 
 bool loglik_mixture() {
   if (!IO::HasParam("hmm/profile")) {
-    IO::Warn << "--profile must be defined." << std::endl;
+    Log::Warn << "--profile must be defined." << std::endl;
     return false;
   }
   const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
@@ -107,7 +107,7 @@ bool loglik_mixture() {
 
   TextWriter w_log;
   if (!(w_log.Open(logout))) {
-    IO::Warn << "Couldn't open '" << logout << "' for writing." << std::endl;
+    Log::Warn << "Couldn't open '" << logout << "' for writing." << std::endl;
     return false;
   }
 
@@ -122,7 +122,7 @@ bool loglik_mixture() {
 
 bool loglik_gaussian() {
   if (!IO::HasParam("hmm/profile")) {
-    IO::Warn << "--profile must be defined." << std::endl;
+    Log::Warn << "--profile must be defined." << std::endl;
     return false;
   }
   const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
@@ -137,7 +137,7 @@ bool loglik_gaussian() {
 
   TextWriter w_log;
   if (!(w_log.Open(logout))) {
-    IO::Warn << "Couldn't open '"<< logout <<"' for writing." << std::endl;
+    Log::Warn << "Couldn't open '"<< logout <<"' for writing." << std::endl;
     return false;
   }
 
@@ -152,7 +152,7 @@ bool loglik_gaussian() {
 
 bool loglik_discrete() {
   if (!IO::HasParam("hmm/profile")) {
-    IO::Warn << "--profile must be defined." << std::endl;
+    Log::Warn << "--profile must be defined." << std::endl;
     return false;
   }
   const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
@@ -167,7 +167,7 @@ bool loglik_discrete() {
 
   TextWriter w_log;
   if (!(w_log.Open(logout))) {
-    IO::Warn << "Couldn't open '"<< logout <<"' for writing." << std::endl;
+    Log::Warn << "Couldn't open '"<< logout <<"' for writing." << std::endl;
     return false;
   }
 

@@ -42,20 +42,20 @@ bool AugLagrangian<LagrangianFunction>::Optimize(int num_iterations,
   for (int i = 0; i < function_.NumConstraints(); i++)
     penalty += std::pow(function_.EvaluateConstraint(i, coordinates), 2);
 
-  IO::Debug << "Penalty is " << penalty << " (threshold " << penalty_threshold
+  Log::Debug << "Penalty is " << penalty << " (threshold " << penalty_threshold
       << ")." << std::endl;
 
   // The odd comparison allows user to pass num_iterations = 0 (i.e. no limit on
   // number of iterations).
   int it;
   for (it = 0; it != (num_iterations - 1); it++) {
-    IO::Debug << "AugLagrangian on iteration " << it
+    Log::Debug << "AugLagrangian on iteration " << it
         << ", starting with objective "  << last_objective << "." << std::endl;
 
     // Use L-BFGS to optimize this function for the given lambda and sigma.
     L_BFGS<AugLagrangianFunction> lbfgs(f, num_basis_);
     if(!lbfgs.Optimize(0, coordinates)) {
-      IO::Debug << "L-BFGS reported an error during optimization." << std::endl;
+      Log::Debug << "L-BFGS reported an error during optimization." << std::endl;
     }
 
     // Check if we are done with the entire optimization (the threshold we are
@@ -74,7 +74,7 @@ bool AugLagrangian<LagrangianFunction>::Optimize(int num_iterations,
     for (int i = 0; i < function_.NumConstraints(); i++)
       penalty += std::pow(function_.EvaluateConstraint(i, coordinates), 2);
 
-    IO::Debug << "Penalty is " << penalty << " (threshold " << penalty_threshold
+    Log::Debug << "Penalty is " << penalty << " (threshold " << penalty_threshold
         << ")." << std::endl;
     if (penalty < penalty_threshold) { // We update lambda.
       // We use the update: lambda_{k + 1} = lambda_k - sigma * c(coordinates),
@@ -87,7 +87,7 @@ bool AugLagrangian<LagrangianFunction>::Optimize(int num_iterations,
       // penalty.  TODO: this factor should be a parameter (from IO).  The value
       // of 0.25 is taken from Burer and Monteiro (2002).
       penalty_threshold = 0.25 * penalty;
-      IO::Debug << "Lagrange multiplier estimates updated." << std::endl;
+      Log::Debug << "Lagrange multiplier estimates updated." << std::endl;
 
     } else {
       // We multiply sigma by a constant value.  TODO: this factor should be a
@@ -95,7 +95,7 @@ bool AugLagrangian<LagrangianFunction>::Optimize(int num_iterations,
       // (2002).
       sigma *= 10;
       f.sigma_ = sigma;
-      IO::Debug << "Updated sigma to " << sigma << "." << std::endl;
+      Log::Debug << "Updated sigma to " << sigma << "." << std::endl;
     }
   }
 
@@ -117,7 +117,7 @@ double AugLagrangian<LagrangianFunction>::AugLagrangianFunction::Evaluate(
     const arma::mat& coordinates) {
   // The augmented Lagrangian is evaluated as
   //   f(x) + {-lambda_i * c_i(x) + (sigma / 2) c_i(x)^2} for all constraints
-//  IO::Debug << "Evaluating augmented Lagrangian." << std::endl;
+//  Log::Debug << "Evaluating augmented Lagrangian." << std::endl;
   double objective = function_.Evaluate(coordinates);
 
   // Now loop over constraints.
@@ -127,7 +127,7 @@ double AugLagrangian<LagrangianFunction>::AugLagrangianFunction::Evaluate(
         sigma_ * std::pow(constraint, 2) / 2;
   }
 
-//  IO::Warn << "Overall objective is " << objective << "." << std::endl;
+//  Log::Warn << "Overall objective is " << objective << "." << std::endl;
 
   return objective;
 }
@@ -139,7 +139,7 @@ void AugLagrangian<LagrangianFunction>::AugLagrangianFunction::Gradient(
   // f'(x) + {(-lambda_i + sigma * c_i(x)) * c'_i(x)} for all constraints
 //  gradient.zeros();
   function_.Gradient(coordinates, gradient);
-//  IO::Debug << "Objective function gradient norm is "
+//  Log::Debug << "Objective function gradient norm is "
 //      << arma::norm(gradient, 2) << "." << std::endl;
 //  std::cout << gradient << std::endl;
 
@@ -151,12 +151,12 @@ void AugLagrangian<LagrangianFunction>::AugLagrangianFunction::Gradient(
     arma::mat tmp_gradient;
     tmp_gradient = (-lambda_[i] + sigma_ *
         function_.EvaluateConstraint(i, coordinates)) * constraint_gradient;
-//    IO::Debug << "Gradient for constraint " << i << " (with lambda = "
+//    Log::Debug << "Gradient for constraint " << i << " (with lambda = "
 //        << lambda_[i] << ") is " << std::endl;
 //    std::cout << tmp_gradient;
     gradient += tmp_gradient;
   }
-//  IO::Debug << "Overall gradient norm is " << arma::norm(gradient, 2) << "."
+//  Log::Debug << "Overall gradient norm is " << arma::norm(gradient, 2) << "."
 //      << std::endl;
 //  std::cout << gradient << std::endl;
 }

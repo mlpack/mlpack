@@ -364,7 +364,7 @@ void SMO<TKernel>::Train(int learner_typeid, arma::mat* dataset_in) {
     }
   }
 
-  IO::Info << "SMO initialization done." << std::endl;
+  Log::Info << "SMO initialization done." << std::endl;
 
   // Begin SMO iterations
   ct_iter_ = 0;
@@ -389,7 +389,7 @@ void SMO<TKernel>::Train(int learner_typeid, arma::mat* dataset_in) {
     if (stop_condition == 1) {// optimality reached
       // Calculate the bias term
       CalcBias_();
-      IO::Info << "SMO has achieved accuracy " << accuracy_
+      Log::Info << "SMO has achieved accuracy " << accuracy_
           << " in " << ct_iter_ << " iterations and can now terminate."
           << std::endl;
       break;
@@ -397,7 +397,7 @@ void SMO<TKernel>::Train(int learner_typeid, arma::mat* dataset_in) {
     else if (stop_condition == 2) {// max num of iterations exceeded
       // Calculate the bias term
       CalcBias_();
-      IO::Warn << "SMO has exceeded " << ct_iter_ << " iterations.  Gap: "
+      Log::Warn << "SMO has exceeded " << ct_iter_ << " iterations.  Gap: "
           << gap_ << "." << std::endl;
       break;
     }
@@ -841,7 +841,7 @@ void SMO<TKernel>::GetSV(std::vector<size_t> &dataset_index, std::vector<double>
       }
     }
 
-    IO::Info << "Number of support vectors: " << n_sv_ << "." << std::endl;
+    Log::Info << "Number of support vectors: " << n_sv_ << "." << std::endl;
 
   }
   else if (learner_typeid_ == 1) {// SVM_R

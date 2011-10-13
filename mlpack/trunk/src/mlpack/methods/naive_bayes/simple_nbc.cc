@@ -33,7 +33,7 @@ SimpleNaiveBayesClassifier::SimpleNaiveBayesClassifier(const arma::mat& data)
   means_.set_size(number_features,number_of_classes_);
   variances_.set_size(number_features,number_of_classes_);
 
-  IO::Info << number_examples << " examples with " << number_features
+  Log::Info << number_examples << " examples with " << number_features
     << " features each" << std::endl;
 
   IO::GetParam<int>("nbc/features") = number_features;
@@ -76,14 +76,14 @@ void SimpleNaiveBayesClassifier::Classify(const arma::mat& test_data, arma::vec&
 
   // Checking that the number of features in the test data is same
   // as in the training data
-  IO::Assert(test_data.n_rows - 1 == means_.n_rows);
+  Log::Assert(test_data.n_rows - 1 == means_.n_rows);
 
   arma::vec tmp_vals(number_of_classes_);
   size_t number_features = test_data.n_rows - 1;
 
   results.zeros(test_data.n_cols);
 
-  IO::Info << test_data.n_cols << " test cases with " << number_features
+  Log::Info << test_data.n_cols << " test cases with " << number_features
     << " features each" << std::endl;
 
   IO::GetParam<int>("nbc/tests") = test_data.n_cols;

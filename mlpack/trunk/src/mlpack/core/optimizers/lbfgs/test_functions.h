@@ -16,6 +16,7 @@
 #define __OPTIMIZATION_TEST_FUNCTIONS_H
 
 #include <mlpack/core/io/io.h>
+#include <mlpack/core/io/log.h>
 
 // To fulfill the template policy class 'FunctionType', we must implement
 // the following:

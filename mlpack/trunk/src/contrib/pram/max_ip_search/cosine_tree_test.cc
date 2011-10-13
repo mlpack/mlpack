@@ -23,11 +23,11 @@ int main (int argc, char *argv[]) {
   arma::mat rdata;
   string rfile = IO::GetParam<string>("r");
 
-  IO::Info << "Loading files..." << endl;
+  Log::Info << "Loading files..." << endl;
   if (!data::Load(rfile.c_str(), rdata)) 
-    IO::Fatal << "Data file " << rfile << " not found!" << endl;
+    Log::Fatal << "Data file " << rfile << " not found!" << endl;
 
-  IO::Info << "Files loaded." << endl
+  Log::Info << "Files loaded." << endl
 	   << "Data (" << rdata.n_rows << ", "
 	   << rdata.n_cols << ")" << endl;
 
@@ -44,7 +44,7 @@ int main (int argc, char *argv[]) {
   if (IO::HasParam("xx_print_tree")) {
     test_tree->Print();
   } else {
-    IO::Info << "Tree built" << endl;
+    Log::Info << "Tree built" << endl;
   }
 
   if (IO::HasParam("some_flag"))

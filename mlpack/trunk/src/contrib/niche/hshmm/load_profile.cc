@@ -1,6 +1,7 @@
 #include "fastlib/fastlib.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include<log.h>
 #include <math.h>
 
 using namespace std;

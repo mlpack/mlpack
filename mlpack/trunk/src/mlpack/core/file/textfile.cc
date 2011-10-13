@@ -12,6 +12,7 @@
 #include "textfile.h"
 
 #include "../io/io.h"
+#include "../io/log.h"
 #include <ctype.h>
 #include <iostream>
 
@@ -400,7 +401,7 @@ void TextTokenizer::Gobble() {
 
   next_ = &token.front();
 
-  mlpack::IO::Assert(next_.length() == strlen(next_.c_str()));
+  mlpack::Log::Assert(next_.length() == strlen(next_.c_str()));
 }
 
 bool TextWriter::Printf(const char *format, ...) {

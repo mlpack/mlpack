@@ -8,6 +8,7 @@
 #define __AUG_LAGRANGIAN_TEST_FUNCTIONS_H
 
 #include <mlpack/core/io/io.h>
+#include <mlpack/core/io/log.h>
 #include <armadillo>
 
 namespace mlpack {

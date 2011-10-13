@@ -39,7 +39,7 @@ public:
      */
     void Init(size_t lesser, size_t greater, double dist) {
 
-      mlpack::IO::AssertMessage(lesser != greater,
+      mlpack::Log::Assert(lesser != greater,
           "indices equal when creating EdgePair, lesser == greater");
       lesser_index_ = lesser;
       greater_index_ = greater;

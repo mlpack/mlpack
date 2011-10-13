@@ -182,20 +182,6 @@ class IO {
                       const char* parent);
 
   /*
-   * Checks if the specified condition is true.
-   * If not, halts program execution and prints a standard error message.
-   * Does nothing in non-debug mode.
-   */
-  static void Assert(bool condition);
-
-  /*
-   * Checks if the specified condition is true.
-   * If not, halts program execution and prints a custom error message.
-   * Does nothing in non-debug mode.
-   */
-  static void AssertMessage(bool condition, const char* message);
-
-  /*
    * See if the specified flag was found while parsing.
    *
    * @param identifier The name of the parameter in question.
@@ -257,20 +243,6 @@ class IO {
 
   /* Prints out the current hierachy */
   static void Print();
-
-// We only use PrefixedOutStream if the program is compiled with debug symbols.
-#ifdef DEBUG
-  // Prints debug output with the appropriate tag.
-  static io::PrefixedOutStream Debug;
-#else
-  // Dumps debug output into the bit nether regions.
-  static io::NullOutStream Debug;
-#endif
-  // Prints output with their respective tags of [INFO], [WARN], and [FATAL]
-  static io::PrefixedOutStream Info;
-  static io::PrefixedOutStream Warn;
-  static io::PrefixedOutStream Fatal;
-  static std::ostream& cout;
 
   /*
    * Checks that all parameters specified as required

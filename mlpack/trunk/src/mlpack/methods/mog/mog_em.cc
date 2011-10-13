@@ -142,7 +142,7 @@ void MoGEM::ExpectationMaximization(const arma::mat& data_points) {
   }
   set_omega(omega);
 
-  IO::Info << "Log likelihood value of the estimated model: " << best_l << "."
+  Log::Info << "Log likelihood value of the estimated model: " << best_l << "."
       << std::endl;
   return;
 }

@@ -15,8 +15,8 @@ using namespace hmm_support;
 
 void MixtureofGaussianHMM::setModel(const arma::mat& transmission,
 				    const std::vector<MixtureGauss>& list_mixture_gauss) {
-  mlpack::IO::Assert(transmission.n_rows == transmission.n_cols);
-  mlpack::IO::Assert(transmission.n_rows == list_mixture_gauss.size());
+  mlpack::Log::Assert(transmission.n_rows == transmission.n_cols);
+  mlpack::Log::Assert(transmission.n_rows == list_mixture_gauss.size());
 
   transmission_ = transmission;
   list_mixture_gauss_ = list_mixture_gauss;
@@ -24,7 +24,7 @@ void MixtureofGaussianHMM::setModel(const arma::mat& transmission,
 
 void MixtureofGaussianHMM::InitFromFile(const char* profile) {
   if (!(MixtureofGaussianHMM::LoadProfile(profile, transmission_, list_mixture_gauss_)))
-    mlpack::IO::Fatal << "Couldn't open " << profile << " for reading." <<
+    mlpack::Log::Fatal << "Couldn't open " << profile << " for reading." <<
         std::endl;
 }
 
@@ -140,11 +140,11 @@ void MixtureofGaussianHMM::TrainViterbi(const std::vector<arma::mat>& list_data_
 bool MixtureofGaussianHMM::LoadProfile(const char* profile, arma::mat& trans, std::vector<MixtureGauss>& mixs) {
   std::vector<arma::mat> matlst;
   if (!(load_matrix_list(profile, matlst))) {
-    mlpack::IO::Warn << "Couldn't open " << profile << " for reading." <<
+    mlpack::Log::Warn << "Couldn't open " << profile << " for reading." <<
         std::endl;
     return false;
   }
-  mlpack::IO::Assert(matlst.size() >= 4); // at least 1 trans, 1 prior, 1 mean, 1 cov
+  mlpack::Log::Assert(matlst.size() >= 4); // at least 1 trans, 1 prior, 1 mean, 1 cov
   trans = matlst[0];
   size_t M = trans.n_rows; // num of states
   size_t N = matlst[2].n_rows; // dimension
@@ -152,7 +152,7 @@ bool MixtureofGaussianHMM::LoadProfile(const char* profile, arma::mat& trans, st
   for (size_t i = 0; i < M; i++) {
     size_t K = matlst[p].n_rows; // num of clusters
     //DEBUG: printf("load p=%d K=%d\n", p, K);
-    mlpack::IO::Assert(matlst.size() > p + 2 * K);
+    mlpack::Log::Assert(matlst.size() > p + 2 * K);
     MixtureGauss mix;
     mix.InitFromProfile(matlst, p, N);
     mixs.push_back(mix);
@@ -165,7 +165,7 @@ bool MixtureofGaussianHMM::LoadProfile(const char* profile, arma::mat& trans, st
 bool MixtureofGaussianHMM::SaveProfile(const char* profile, const arma::mat& trans, const std::vector<MixtureGauss>& mixs) {
   TextWriter w_pro;
   if (!(w_pro.Open(profile))) {
-    mlpack::IO::Warn << "Couldn't open " << profile << " for writing." <<
+    mlpack::Log::Warn << "Couldn't open " << profile << " for writing." <<
         std::endl;
     return false;
   }
@@ -188,7 +188,7 @@ bool MixtureofGaussianHMM::SaveProfile(const char* profile, const arma::mat& tra
 }
 
 void MixtureofGaussianHMM::GenerateInit(size_t L, const arma::mat& trans, const std::vector<MixtureGauss>& mixs, arma::mat& seq, arma::vec& states){
-  mlpack::IO::AssertMessage((trans.n_rows == trans.n_cols && trans.n_rows == mixs.size()),
+  mlpack::Log::Assert((trans.n_rows == trans.n_cols && trans.n_rows == mixs.size()),
       "MixtureOfGaussianHMM::GenerateInit(): matrices sizes do not match");
 
   arma::mat trsum;
@@ -231,7 +231,7 @@ void MixtureofGaussianHMM::GenerateInit(size_t L, const arma::mat& trans, const 
 }
 
 void MixtureofGaussianHMM::EstimateInit(size_t numStates, size_t numClusters, const arma::mat& seq, const arma::vec& states, arma::mat& trans, std::vector<MixtureGauss>& mixs) {
-  mlpack::IO::AssertMessage((seq.n_cols == states.n_elem),
+  mlpack::Log::Assert((seq.n_cols == states.n_elem),
       "MixtureOfGaussianHMM::EstimateInit(): sequence and states length must be the same");
 
   size_t N = seq.n_rows; // emission vector length
@@ -296,7 +296,7 @@ void MixtureofGaussianHMM::EstimateInit(size_t numStates, size_t numClusters, co
 }
 
 void MixtureofGaussianHMM::EstimateInit(size_t NumClusters, const arma::mat& seq, const arma::vec& states, arma::mat& trans, std::vector<MixtureGauss>& mixs) {
-  mlpack::IO::AssertMessage((seq.n_cols == states.n_elem),
+  mlpack::Log::Assert((seq.n_cols == states.n_elem),
       "MixtureofGaussianHMM::EstimateInit(): sequence and states length must be the same");
 
   size_t M = 0;
@@ -347,7 +347,7 @@ void MixtureofGaussianHMM::Train(const std::vector<arma::mat>& seqs, arma::mat& 
   size_t L = -1;
   size_t M = guessTR.n_rows;
 
-  mlpack::IO::AssertMessage((M == guessTR.n_cols && M == guessMG.size()),
+  mlpack::Log::Assert((M == guessTR.n_cols && M == guessMG.size()),
       "MixtureofGaussianHMM::Train(): sizes do not match");
 
   for (size_t i = 0; i < seqs.size(); i++) {
@@ -450,7 +450,7 @@ void MixtureofGaussianHMM::Train(const std::vector<arma::mat>& seqs, arma::mat& 
 void MixtureofGaussianHMM::TrainViterbi(const std::vector<arma::mat>& seqs, arma::mat& guessTR, std::vector<MixtureGauss>& guessMG, size_t max_iter, double tol) {
   size_t L = -1;
   size_t M = guessTR.n_rows;
-  mlpack::IO::AssertMessage((M == guessTR.n_cols && M == guessMG.size()),
+  mlpack::Log::Assert((M == guessTR.n_cols && M == guessMG.size()),
       "MixtureofGaussianHMM::TrainViterbi(): sizes do not match");
 
   for (size_t i = 0; i < seqs.size(); i++)

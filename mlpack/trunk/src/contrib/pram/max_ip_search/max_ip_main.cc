@@ -51,16 +51,16 @@ int main (int argc, char *argv[]) {
   string rfile = IO::GetParam<string>("r");
   string qfile = IO::GetParam<string>("q");
 
-  IO::Info << "Loading files..." << endl;
+  Log::Info << "Loading files..." << endl;
   if (!data::Load(rfile.c_str(), rdata))
-    IO::Fatal << "Reference file "<< rfile << " not found." << endl;
+    Log::Fatal << "Reference file "<< rfile << " not found." << endl;
 
   if (!data::Load(qfile.c_str(), qdata)) 
-    IO::Fatal << "Query file " << qfile << " not found." << endl;
+    Log::Fatal << "Query file " << qfile << " not found." << endl;
 
-  IO::Info << "File loaded..." << endl;
+  Log::Info << "File loaded..." << endl;
   
-  IO::Info << "R(" << rdata.n_rows << ", " << rdata.n_cols 
+  Log::Info << "R(" << rdata.n_rows << ", " << rdata.n_cols 
 	   << "), Q(" << qdata.n_rows << ", " << qdata.n_cols 
 	   << ")" << endl;
 
@@ -77,24 +77,24 @@ int main (int argc, char *argv[]) {
   // Naive computation
   if (IO::HasParam("donaive")) {
     MaxIP naive;
-    IO::Info << "Brute computation" << endl;
-    IO::Info << "Initializing...." << endl;
+    Log::Info << "Brute computation" << endl;
+    Log::Info << "Initializing...." << endl;
 
     IO::StartTimer("naive_init");
     naive.InitNaive(qdata, rdata);
     IO::StopTimer("naive_init");
-    IO::Info << "Initialized." << endl;
+    Log::Info << "Initialized." << endl;
 
-    IO::Info << "Computing Max IP....." << endl;
+    Log::Info << "Computing Max IP....." << endl;
     IO::StartTimer("naive_search");
     naive_comp = naive.ComputeNaive(&nac, &din);
     IO::StopTimer("naive_search");
-    IO::Info << "Max IP Computed." << endl;
+    Log::Info << "Max IP Computed." << endl;
 
     if (IO::HasParam("print_results")) {
       FILE *fp=fopen(IO::GetParam<string>("maxip_file").c_str(), "w");
       if (fp == NULL)
-	IO::Fatal << "Error while opening " 
+	Log::Fatal << "Error while opening " 
 		  << IO::GetParam<string>("maxip_file")
 		  << endl;
 // 		  << "..." << strerror(errno);
@@ -109,32 +109,32 @@ int main (int argc, char *argv[]) {
       fclose(fp);
     }  
 
-    //IO::Info << "Comparing results for " << nac.n_elem << " queries." << endl;
+    //Log::Info << "Comparing results for " << nac.n_elem << " queries." << endl;
   }
 
-  //IO::Info << "Comparing results for " << nac.n_elem << " queries." << endl;
+  //Log::Info << "Comparing results for " << nac.n_elem << " queries." << endl;
 
   // Exact computation
   if (IO::HasParam("dofastexact")) {
     MaxIP fast_exact;
-    IO::Info << "Tree-based computation" << endl;
-    IO::Info << "Initializing...." << endl;
+    Log::Info << "Tree-based computation" << endl;
+    Log::Info << "Initializing...." << endl;
 
     IO::StartTimer("fast_init");
     fast_exact.Init(qdata, rdata);
     IO::StopTimer("fast_init");
-    IO::Info << "Initialized." << endl;
+    Log::Info << "Initialized." << endl;
 
-    IO::Info << "Computing tree-based Max IP....." << endl;
+    Log::Info << "Computing tree-based Max IP....." << endl;
     IO::StartTimer("fast_search");
     fast_comp = fast_exact.ComputeNeighbors(&exc, &die);
     IO::StopTimer("fast_search");
-    IO::Info << "Tree-based Max IP Computed." << endl;
+    Log::Info << "Tree-based Max IP Computed." << endl;
 
     if (IO::HasParam("print_results")) {
       FILE *fp=fopen(IO::GetParam<string>("maxip_file").c_str(), "w");
       if (fp == NULL)
-	IO::Fatal << "Error while opening " 
+	Log::Fatal << "Error while opening " 
 		  << IO::GetParam<string>("maxip_file") 
 		  << endl;
 // 		  << "..." << strerror(errno);
@@ -154,11 +154,11 @@ int main (int argc, char *argv[]) {
 
   if (IO::HasParam("donaive") && IO::HasParam("dofastexact")) {
     count_mismatched_neighbors(nac, din, exc, die);
-    IO::Warn << "Speed of fast-exact over naive: "
+    Log::Warn << "Speed of fast-exact over naive: "
 	     << naive_comp << " / " << (float) fast_comp << " = "
 	     <<(float) (naive_comp / fast_comp) << endl;
   } else if (IO::HasParam("dofastexact")) {
-    IO::Warn << "Speed of fast-exact over naive: "
+    Log::Warn << "Speed of fast-exact over naive: "
 	     << rdata.n_cols  << " / " << (float) fast_comp << " = "
 	     <<(float) (rdata.n_cols / fast_comp) << endl;
   }
@@ -169,7 +169,7 @@ int main (int argc, char *argv[]) {
 //                        arma::Col<size_t> *b, 
 //                        arma::vec *db) {
   
-//   IO::Info << "Comparing results for %zud queries", a->size());
+//   Log::Info << "Comparing results for %zud queries", a->size());
 //   DEBUG_SAME_SIZE(a->size(), b->size());
 //   size_t *x = a->begin();
 //   size_t *y = a->end();
@@ -186,19 +186,19 @@ void count_mismatched_neighbors(arma::Col<size_t> a,
  				arma::vec da,
  				arma::Col<size_t> b, 
  				arma::vec db) {
-  IO::Warn << "Comparing results for " << a.n_elem << " queries." << endl;
+  Log::Warn << "Comparing results for " << a.n_elem << " queries." << endl;
   assert(a.n_elem == b.n_elem);
   size_t count_mismatched = 0;
 
-//   IO::Warn << "Mismatches: " << endl;
+//   Log::Warn << "Mismatches: " << endl;
   for(size_t i = 0; i < a.n_elem;  i++) {
     if (da(i) != db(i)) {
       ++count_mismatched;
-      IO::Warn << da(i) - db(i) << endl;
+      Log::Warn << da(i) - db(i) << endl;
     }
   }
 
-  IO::Warn << count_mismatched << " / " << a.n_elem
+  Log::Warn << count_mismatched << " / " << a.n_elem
 	    << " errors." << endl;
 
 }
