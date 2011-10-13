@@ -16,7 +16,6 @@ namespace parallel {
  */
 template <
 typename EnergyRouteRequestType,
-         typename ExtraTaskRouteRequestType,
          typename LoadBalanceRouteRequestType,
          typename SubTableRouteRequestType
          >
@@ -31,8 +30,6 @@ class MessageType {
     bool do_load_balancing_;
 
     EnergyRouteRequestType energy_route_;
-
-    ExtraTaskRouteRequestType extra_task_route_;
 
     EnergyRouteRequestType extrinsic_prune_route_;
 
@@ -76,7 +73,6 @@ class MessageType {
 
     int next_destination(boost::mpi::communicator &comm) {
       energy_route_.next_destination(comm);
-      extra_task_route_.next_destination(comm);
       extrinsic_prune_route_.next_destination(comm);
       flush_route_.next_destination(comm);
       load_balance_route_.next_destination(comm);
@@ -89,14 +85,6 @@ class MessageType {
 
     int originating_rank() const {
       return originating_rank_;
-    }
-
-    ExtraTaskRouteRequestType &extra_task_route() {
-      return extra_task_route_;
-    }
-
-    const ExtraTaskRouteRequestType &extra_task_route() const {
-      return extra_task_route_;
     }
 
     LoadBalanceRouteRequestType &load_balance_route() {
@@ -144,7 +132,6 @@ class MessageType {
       ar & energy_route_;
       ar & extrinsic_prune_route_;
       if(do_load_balancing_) {
-        ar & extra_task_route_;
         ar & flush_route_;
         ar & load_balance_route_;
       }
