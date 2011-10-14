@@ -37,7 +37,8 @@ class KdeDelta {
     }
 
     void SetZero() {
-      densities_l_ = densities_u_ = pruned_ = used_error_ = 0;
+      densities_l_ = densities_u_ = used_error_ = 0;
+      pruned_ = 0;
       order_farfield_to_local_ = -1;
       order_farfield_ = -1;
       order_local_ = -1;
