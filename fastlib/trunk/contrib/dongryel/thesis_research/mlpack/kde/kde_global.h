@@ -166,7 +166,7 @@ class KdeGlobal {
       probability_ = 1.0;
       kernel_aux_ = NULL;
       kernel_aux_is_alias_ = false;
-      effective_num_reference_points_ = 0.0;
+      effective_num_reference_points_ = 0;
       mult_const_ = 0.0;
       query_table_ = NULL;
       reference_table_ = NULL;

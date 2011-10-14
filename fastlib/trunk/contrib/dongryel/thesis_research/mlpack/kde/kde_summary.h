@@ -316,7 +316,7 @@ class KdeSummary {
     void StartReaccumulate() {
       densities_l_ = std::numeric_limits<double>::max();
       densities_u_ = 0;
-      pruned_l_ = densities_l_;
+      pruned_l_ = static_cast<unsigned long int>(densities_l_);
       used_error_u_ = 0;
     }
 
