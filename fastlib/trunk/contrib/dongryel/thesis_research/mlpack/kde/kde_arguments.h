@@ -27,7 +27,7 @@ class KdeArguments {
 
     TableType *query_table_;
 
-    double effective_num_reference_points_;
+    unsigned long int effective_num_reference_points_;
 
     double bandwidth_;
 
@@ -93,7 +93,7 @@ class KdeArguments {
       leaf_size_ = 0;
       reference_table_ = NULL;
       query_table_ = NULL;
-      effective_num_reference_points_ = 0.0;
+      effective_num_reference_points_ = 0;
       bandwidth_ = 0.0;
       absolute_error_ = 0.0;
       relative_error_ = 0.0;
