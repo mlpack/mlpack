@@ -20,7 +20,7 @@ class KdeDelta {
 
     double densities_u_;
 
-    double pruned_;
+    unsigned long int pruned_;
 
     double used_error_;
 
