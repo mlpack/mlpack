@@ -212,7 +212,7 @@ class KdePostponed {
       densities_l_ = 0.0;
       densities_e_ = 0.0;
       densities_u_ = 0.0;
-      pruned_ = 0.0;
+      pruned_ = 0;
       used_error_ = 0.0;
     }
 

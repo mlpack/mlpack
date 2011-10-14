@@ -72,7 +72,7 @@ class KdeStatistic {
       summary_.SetZero();
     }
 
-    void Seed(double initial_pruned_in) {
+    void Seed(unsigned long int initial_pruned_in) {
       postponed_.SetZero();
       summary_.Seed(initial_pruned_in);
     }
