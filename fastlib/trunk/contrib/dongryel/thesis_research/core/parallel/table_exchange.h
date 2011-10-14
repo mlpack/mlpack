@@ -115,22 +115,29 @@ class TableExchange {
           }
         }
 
-        void Init(
+        void Refresh(
           boost::mpi::communicator &world,
           unsigned int stage, bool for_sending,
           std::vector< MessageType > &message_cache_alias) {
-
-          num_aliases_ = (1 << stage);
           unsigned int neighbor = world.rank() ^(1 << stage);
           unsigned int lower_bound =
             (for_sending) ? ((world.rank() >> stage) << stage) :
             ((neighbor >> stage) << stage) ;
-          boost::scoped_array< MessageType * > tmp_array(
-            new  MessageType * [ num_aliases_ ]);
-          array_.swap(tmp_array);
           for(unsigned int j = 0; j < num_aliases_; j++) {
             array_[j] = &(message_cache_alias[j + lower_bound ]);
           }
+        }
+
+        void Init(
+          boost::mpi::communicator &world,
+          unsigned int stage, bool for_sending,
+          std::vector< MessageType > &message_cache_alias) {
+          num_aliases_ = (1 << stage);
+          boost::scoped_array< MessageType * > tmp_array(
+            new  MessageType * [ num_aliases_ ]);
+          array_.swap(tmp_array);
+          this->Refresh(
+            world, stage, for_sending, message_cache_alias);
         }
 
         template<class Archive>
@@ -758,6 +765,7 @@ class TableExchange {
     /** @brief Pushes subtables received from load-balancing.
      */
     int push_subtable(
+      boost::mpi::communicator &world,
       SubTableType &subtable_in, int num_referenced_as_reference_set) {
       int receive_slot;
       if(extra_receive_slots_.size() > 0) {
@@ -765,7 +773,15 @@ class TableExchange {
         extra_receive_slots_.pop_back();
       }
       else {
+        MessageType *prev_address = &(message_cache_[0]);
         message_cache_.resize(message_cache_.size() + 1);
+        bool address_changed = (prev_address != (& (message_cache_[0])));
+        if(address_changed) {
+          for(unsigned int i = 0; i < max_stage_; i++) {
+            alias_receive_slots_[i].Refresh(world, i, false, message_cache_);
+            alias_send_slots_[i].Refresh(world, i, true, message_cache_);
+          }
+        }
         message_locks_.resize(message_locks_.size() + 1);
         receive_slot = message_cache_.size() - 1;
       }
