@@ -1,4 +1,4 @@
-/***
+/**
  * @file nca_softmax_impl.h
  * @author Ryan Curtin
  *

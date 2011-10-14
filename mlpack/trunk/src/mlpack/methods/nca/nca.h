@@ -1,7 +1,19 @@
-/***
+/**
  * @file nca.h
  * @author Ryan Curtin
  *
+ * Declaration of NCA class (Neighborhood Components Analysis).
+ */
+#ifndef __MLPACK_METHODS_NCA_NCA_H
+#define __MLPACK_METHODS_NCA_NCA_H
+
+#include <mlpack/core.h>
+#include <mlpack/core/kernels/lmetric.h>
+
+namespace mlpack {
+namespace nca {
+
+/**
  * An implementation of Neighborhood Components Analysis, both a linear
  * dimensionality reduction technique and a distance learning technique.  The
  * method seeks to improve k-nearest-neighbor classification on a dataset by
@@ -22,19 +34,10 @@
  *   year = {2004}
  * }
  */
-#ifndef __MLPACK_METHODS_NCA_NCA_H
-#define __MLPACK_METHODS_NCA_NCA_H
-
-#include <mlpack/core.h>
-#include <mlpack/core/kernels/lmetric.h>
-
-namespace mlpack {
-namespace nca {
-
 template<typename Kernel>
 class NCA {
  public:
-  /***
+  /**
    * Construct the Neighborhood Components Analysis object.  This simply stores
    * the reference to the dataset, before the actual optimization is performed.
    *
@@ -42,7 +45,7 @@ class NCA {
    */
   NCA(const arma::mat& dataset, const arma::uvec& labels);
 
-  /***
+  /**
    * Perform Neighborhood Components Analysis.  The output distance learning
    * matrix is written into the passed reference.
    *
