@@ -387,7 +387,7 @@ bool DistributedKdeArgumentParser::ParseArguments(
   // Compute the suffix.
   std::string world_rank_suffix;
   std::stringstream world_rank_suffix_sstr;
-  int max_num_digits = static_cast<int>(ceil(log(world.size())));
+  int max_num_digits = static_cast<int>(ceil(log10(world.size())));
   world_rank_suffix_sstr << world.rank();
   int additional_zeros = max_num_digits -
                          strlen(world_rank_suffix_sstr.str().c_str());
