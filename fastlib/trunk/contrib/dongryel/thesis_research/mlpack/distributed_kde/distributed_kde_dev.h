@@ -224,6 +224,9 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "use_memory_mapped_file",
     "Use memory mapped file for out-of-core computations."
   )(
+    "do_not_use_suffix_in_file_name",
+    "Do not assume suffixes when reading in the number."
+  )(
     "weak_scaling_factor",
     boost::program_options::value<double>()->default_value(0.05),
     "The percentage of reference points to consider in weak scaling measuring."
@@ -469,6 +472,15 @@ bool DistributedKdeArgumentParser::ParseArguments(
     arguments_out->reference_table_->Init(random_reference_dataset, world);
   }
   else {
+
+    // This part will be fixed once distributed file reader is
+    // finished.
+    if(vm.count("do_not_use_suffix_in_file_name") == 0) {
+      std::stringstream reference_file_name_sstr;
+      reference_file_name_sstr << vm["references_in"].as<std::string>() <<
+                               world_rank_suffix;
+      reference_file_name = reference_file_name_sstr.str();
+    }
     std::cerr << "Reading in the reference set: " <<
               reference_file_name << "\n";
     arguments_out->reference_table_->Init(
