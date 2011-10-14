@@ -381,6 +381,20 @@ bool DistributedKdeArgumentParser::ParseArguments(
   mlpack::distributed_kde::DistributedKdeArguments <
   DistributedTableType > *arguments_out) {
 
+  // Compute the suffix.
+  std::string world_rank_suffix;
+  std::stringstream world_rank_suffix_sstr;
+  int max_num_digits = static_cast<int>(ceil(log(world.size())));
+  world_rank_suffix_sstr << world.rank();
+  int additional_zeros = max_num_digits -
+                         strlen(world_rank_suffix_sstr.str().c_str());
+  world_rank_suffix_sstr.str("");
+  for(int i = 0; i < additional_zeros; i++) {
+    world_rank_suffix_sstr << "0";
+  }
+  world_rank_suffix_sstr << world.rank();
+  world_rank_suffix = world_rank_suffix_sstr.str();
+
   // Define the table type.
   typedef typename DistributedTableType::TableType TableType;
 
@@ -411,7 +425,7 @@ bool DistributedKdeArgumentParser::ParseArguments(
   if(vm.count("random_generate_n_entries") > 0) {
     std::stringstream densities_out_sstr;
     densities_out_sstr << vm["densities_out"].as<std::string>() <<
-                       world.rank();
+                       world_rank_suffix;
     arguments_out->densities_out_ = densities_out_sstr.str();
   }
 
@@ -443,7 +457,7 @@ bool DistributedKdeArgumentParser::ParseArguments(
   if(vm.count("random_generate") > 0) {
     std::stringstream reference_file_name_sstr;
     reference_file_name_sstr << vm["references_in"].as<std::string>() <<
-                             world.rank();
+                             world_rank_suffix;
     reference_file_name = reference_file_name_sstr.str();
     TableType *random_reference_dataset =
       (core::table::global_m_file_) ?
@@ -474,7 +488,7 @@ bool DistributedKdeArgumentParser::ParseArguments(
     if(vm.count("random_generate") > 0) {
       std::stringstream query_file_name_sstr;
       query_file_name_sstr << vm["queries_in"].as<std::string>() <<
-                           world.rank();
+                           world_rank_suffix;
       query_file_name = query_file_name_sstr.str();
       TableType *random_query_dataset =
         (core::table::global_m_file_) ?
