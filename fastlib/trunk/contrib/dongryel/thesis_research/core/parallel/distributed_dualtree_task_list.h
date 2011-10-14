@@ -262,7 +262,7 @@ class DistributedDualtreeTaskList {
         (sub_tables_[i].get<0>())->set_originating_rank(source_rank_in);
         assigned_cache_indices.push_back(
           distributed_task_queue_->push_subtable(
-            *(sub_tables_[i].get<0>()), sub_tables_[i].get<2>()));
+            world, *(sub_tables_[i].get<0>()), sub_tables_[i].get<2>()));
       }
 
       // Now push in the task list for each query subtable.

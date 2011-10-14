@@ -645,11 +645,13 @@ class DistributedDualtreeTaskQueue {
      *         the given number of times.
      */
     int push_subtable(
-      SubTableType &subtable_in, int num_referenced_as_reference_set) {
+      boost::mpi::communicator &world,
+      SubTableType &subtable_in,
+      int num_referenced_as_reference_set) {
 
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       return table_exchange_.push_subtable(
-               subtable_in, num_referenced_as_reference_set);
+               world, subtable_in, num_referenced_as_reference_set);
     }
 
     /** @brief Prepares a list of overflowing tasks that are to be
