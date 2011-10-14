@@ -10,6 +10,7 @@
 
 #include <boost/intrusive_ptr.hpp>
 #include <boost/mpi.hpp>
+#include <boost/scoped_array.hpp>
 #include "core/parallel/distributed_dualtree_task_queue.h"
 #include "core/parallel/message_tag.h"
 #include "core/parallel/route_request.h"
@@ -92,8 +93,14 @@ class TableExchange {
      */
     bool do_load_balancing_;
 
+    /** @brief Whether to try load balancing has been tried in this
+     *         stage.
+     */
     bool try_load_balancing_;
 
+    /** @brief Whether the process can enter the current recursive
+     *         doubling stage.
+     */
     bool enter_stage_;
 
     /** @brief For query subtables received from other processes and
@@ -155,8 +162,15 @@ class TableExchange {
      */
     std::vector< int > message_locks_;
 
+    /** @brief The list of cache slots that must be released after
+     *         tasks are exported.
+     */
     std::vector< std::pair<int, int> > post_free_cache_list_;
 
+    /** @brief The list of cache slots that must be freed after the
+     *         occupying imported query subtable is written back to
+     *         its origin.
+     */
     std::vector< int > post_free_flush_list_;
 
     /** @brief The task queue associated with the current MPI process.
