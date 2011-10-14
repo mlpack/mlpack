@@ -301,7 +301,7 @@ class DualtreeDfs {
       TableType *query_table_in,
       TreeType *qnode,
       typename ProblemType::ResultType *query_results,
-      double initial_pruned_in);
+      unsigned long int initial_pruned_in);
 
     /** @brief Preprocesses the reference tree.
      */

@@ -217,7 +217,7 @@ void DualtreeDfs<ProblemType>::PreProcess(
   TableType *query_table_in,
   typename ProblemType::TableType::TreeType *qnode,
   typename ProblemType::ResultType *query_results,
-  double initial_pruned) {
+  unsigned long int initial_pruned) {
 
   typename ProblemType::StatisticType &qnode_stat = qnode->stat();
   qnode_stat.Seed(initial_pruned);
