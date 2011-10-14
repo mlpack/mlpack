@@ -119,7 +119,7 @@ void DualtreeDfs<ProblemType>::Compute(
       problem_->global(), reference_start_node_);
 
     // Then the query tree.
-    PreProcess(query_table_, query_table_->get_tree(), query_results, 0.0);
+    PreProcess(query_table_, query_table_->get_tree(), query_results, 0);
   }
 
   if(problem_->global().is_monochromatic() &&
