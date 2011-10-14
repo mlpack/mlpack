@@ -25,12 +25,12 @@ class TranslateToNonnegative {
       std::vector<double> mins(
         table_in->n_attributes(), std::numeric_limits<double>::max());
 
-#pragma omp parallel
+      #pragma omp parallel
       {
         std::vector<double> local_mins(
           table_in->n_attributes(), std::numeric_limits<double>::max());
 
-#pragma omp for
+        #pragma omp for
         for(int i = 0; i < table_in->n_entries(); i++) {
           arma::vec point;
           table_in->get(i, &point);
@@ -40,7 +40,7 @@ class TranslateToNonnegative {
         }
 
         // The final reduction.
-#pragma omp critical
+        #pragma omp critical
         {
           for(int d = 0; d < table_in->n_attributes(); d++) {
             mins[d] = std::min(local_mins[d], mins[d]);
@@ -49,7 +49,7 @@ class TranslateToNonnegative {
       } // end of parallel region.
 
       // Now shift by the minimum along each coordinate.
-#pragma omp parallel for
+      #pragma omp parallel for
       for(int i = 0; i < table_in->n_entries(); i++) {
         arma::vec point;
         table_in->get(i, &point);
@@ -73,7 +73,7 @@ class Standardize {
       std::vector<double> standard_deviations(table_in->n_attributes(), 0.0);
       int accum_count = 0;
 
-#pragma omp parallel
+      #pragma omp parallel
       {
         // Means and standard deviations of each dimension.
         std::vector<double> local_means(table_in->n_attributes(), 0.0);
@@ -83,7 +83,7 @@ class Standardize {
         // Loop through each point in the table and compute
         // means/standard_deviations for each dimension.
         int local_count = 0;
-#pragma omp for
+        #pragma omp for
         for(int i = 0; i < table_in->n_entries(); i++) {
           arma::vec point;
           table_in->get(i, &point);
@@ -98,7 +98,7 @@ class Standardize {
           }
         }
 
-#pragma omp critical
+        #pragma omp critical
         {
           for(int d = 0; d < table_in->n_attributes(); d++) {
             double delta = local_means[d] - means[d];
@@ -121,7 +121,7 @@ class Standardize {
       }
 
       // Now transform each point in parallel.
-#pragma omp parallel for
+      #pragma omp parallel for
       for(int i = 0; i < table_in->n_entries(); i++) {
         arma::vec point;
         table_in->get(i, &point);
@@ -149,14 +149,14 @@ class UnitHypercube {
 
       // Loop through each point in the table and compute
       // mins/maxs for each dimension.
-#pragma omp parallel
+      #pragma omp parallel
       {
         std::vector<double> local_minimums(
           table_in->n_attributes(), std::numeric_limits<double>::max());
         std::vector<double> local_maximums(
           table_in->n_attributes(), -std::numeric_limits<double>::max());
 
-#pragma omp for
+        #pragma omp for
         for(int i = 0; i < table_in->n_entries(); i++) {
           arma::vec point;
           table_in->get(i, &point);
@@ -166,7 +166,7 @@ class UnitHypercube {
           }
         }
 
-#pragma omp critical
+        #pragma omp critical
         {
           for(int d = 0; d < table_in->n_attributes(); d++) {
             minimums[d] = std::min(local_minimums[d], minimums[d]);
@@ -176,7 +176,7 @@ class UnitHypercube {
       } // end of the parallel region.
 
       // Now transform each point in parallel.
-#pragma omp parallel for
+      #pragma omp parallel for
       for(int i = 0; i < table_in->n_entries(); i++) {
         arma::vec point;
         table_in->get(i, &point);

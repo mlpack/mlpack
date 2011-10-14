@@ -24,7 +24,7 @@ class RandomDatasetGenerator {
 
       random_dataset->Init(num_dimensions, num_points, rank);
 
-#pragma omp parallel for
+      #pragma omp parallel for
       for(int j = 0; j < num_points; j++) {
         arma::vec point;
         random_dataset->get(j, &point);

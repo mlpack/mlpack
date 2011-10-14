@@ -756,7 +756,7 @@ class GeneralBinarySpaceTree {
       }
       while(true);
 
-#pragma omp parallel for
+      #pragma omp parallel for
       for(int i = 0; i < static_cast<int>(parallel_tasks.size()); i++) {
         TreeType *active_node = parallel_tasks[i].first;
         if(parallel_tasks[i].second) {
@@ -798,7 +798,7 @@ class GeneralBinarySpaceTree {
       // If the node is just too small or we have reached the maximum
       // number of leaf nodes allowed, then do not split.
       bool constructed_leaf_node = false;
-#pragma omp critical
+      #pragma omp critical
       {
         constructed_leaf_node =
           (node->count() <= leaf_size ||
@@ -817,7 +817,7 @@ class GeneralBinarySpaceTree {
                          leaf_size, old_from_new, core::table::global_m_file_);
 
         if(can_cut) {
-#pragma omp critical
+          #pragma omp critical
           {
             (*current_num_leaf_nodes)++;
             (*num_nodes) = (*num_nodes) + 2;

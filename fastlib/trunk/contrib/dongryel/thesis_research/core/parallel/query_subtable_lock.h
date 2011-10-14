@@ -64,7 +64,7 @@ class QuerySubTableLock {
      */
     typedef QuerySubTableLock <
     DistributedTableType, TaskPriorityQueueType,
-                        DistributedProblemType > QuerySubTableLockType;
+                          DistributedProblemType > QuerySubTableLockType;
 
     /** @brief The MPI rank of the process holding the query subtable.
      */

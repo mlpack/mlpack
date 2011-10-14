@@ -130,7 +130,8 @@ class GenKdTree {
       // Build the bounds for the kd-tree.
       int num_threads =
         std::max(1, omp_get_max_threads() / omp_get_num_threads());
-#pragma omp parallel num_threads( num_threads )
+      omp_set_num_threads(num_threads);
+      #pragma omp parallel
       {
         // The local accumulants.
         int local_left_count = 0;
@@ -139,7 +140,7 @@ class GenKdTree {
         local_left_bound.Init(left_bound.dim());
         local_right_bound.Init(right_bound.dim());
 
-#pragma omp for nowait
+        #pragma omp for nowait
         for(int left = first; left < end; left++) {
 
           // Make alias of the current point.
@@ -159,7 +160,7 @@ class GenKdTree {
         } // end of for-loop.
 
         // Final reduction.
-#pragma omp critical
+        #pragma omp critical
         {
           (*left_count) += local_left_count;
           left_bound |= local_left_bound;
@@ -177,14 +178,15 @@ class GenKdTree {
       int end = first + count;
       int num_threads =
         std::max(1, omp_get_max_threads() / omp_get_num_threads());
-#pragma omp parallel num_threads( num_threads )
+      omp_set_num_threads(num_threads);
+      #pragma omp parallel
       {
         // Local variable for accumulating the bound information for a
         // thread.
         BoundType local_bound;
         local_bound.Init(bounds->dim());
 
-#pragma omp for nowait
+        #pragma omp for nowait
         for(int i = first; i < end; i++) {
           arma::vec col;
           core::table::MakeColumnVector(matrix, i, &col);
@@ -192,7 +194,7 @@ class GenKdTree {
         }
 
         // The final reduction.
-#pragma omp critical
+        #pragma omp critical
         {
           (*bounds) |= local_bound;
         } // end of omp critical.

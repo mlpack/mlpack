@@ -187,7 +187,7 @@ class RandomFeature {
       int grain_size = table_in.n_entries() / num_threads;
 
       // OpenMP parallel region.
-#pragma omp parallel
+      #pragma omp parallel
       {
         int i = omp_get_thread_num();
         int begin = i * grain_size;
@@ -233,7 +233,7 @@ class RandomFeature {
       // The block size.
       int grain_size = table_in.n_entries() / num_threads;
 
-#pragma omp parallel
+      #pragma omp parallel
       {
         int i = omp_get_thread_num();
         int begin = i * grain_size;
@@ -377,7 +377,7 @@ class RandomFeature {
           for(unsigned int k = 0; k < weights_in.n_rows; k++) {
             double weight = weights_in.at(k, (*random_combination)[i]);
             average_transformation->get(k, j).push_back(
-              weight *(
+              weight * (
                 cos(dot_product) - global_mean.get(0, j).sample_mean()));
             average_transformation->get(
               k, j + num_random_fourier_features).push_back(
