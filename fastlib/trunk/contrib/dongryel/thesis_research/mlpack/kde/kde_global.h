@@ -282,7 +282,8 @@ class KdeGlobal {
     void Init(
       TableType *reference_table_in,
       TableType *query_table_in,
-      double effective_num_reference_points_in, KernelAuxType *kernel_aux_in,
+      unsigned long int effective_num_reference_points_in,
+      KernelAuxType *kernel_aux_in,
       double bandwidth_in, MeanVariancePairListType *mean_variance_pair_in,
       const bool is_monochromatic,
       double relative_error_in, double absolute_error_in, double probability_in,
