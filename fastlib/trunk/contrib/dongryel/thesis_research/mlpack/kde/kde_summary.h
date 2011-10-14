@@ -244,7 +244,8 @@ class KdeSummary {
         (*delta.mean_variance_pair_)[qpoint_index].scaled_interval(
           delta.pruned_, num_standard_deviations, &correction);
         correction.lo = std::max(correction.lo, 0.0);
-        correction.hi = std::min(correction.hi, delta.pruned_);
+        correction.hi = std::min(
+                          correction.hi, static_cast<double>(delta.pruned_));
 
         // Technically, though not correct, just use the mid point of
         // the Monte Carlo contribution.
