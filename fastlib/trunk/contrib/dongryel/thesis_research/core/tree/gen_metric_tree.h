@@ -197,13 +197,14 @@ class GenMetricTree {
 
       int num_threads =
         std::max(1, omp_get_max_threads() / omp_get_num_threads());
-#pragma omp parallel num_threads( num_threads )
+      omp_set_num_threads(num_threads);
+      #pragma omp parallel
       {
         // Local variables used for reduction.
         int local_furthest_index = -1;
         double local_furthest_distance = -1.0;
 
-#pragma omp for nowait
+        #pragma omp for nowait
         for(int i = begin; i < end; i++) {
           arma::vec point;
           core::table::MakeColumnVector(matrix, i, &point);
@@ -217,7 +218,7 @@ class GenMetricTree {
         } // end of for-loop.
 
         // Reduction.
-#pragma omp critical
+        #pragma omp critical
         {
           if(local_furthest_distance > (*furthest_distance)) {
             *furthest_distance = local_furthest_distance;
@@ -287,12 +288,13 @@ class GenMetricTree {
       // The number of threads.
       int num_threads =
         std::max(1, omp_get_max_threads() / omp_get_num_threads());
-#pragma omp parallel num_threads( num_threads )
+      omp_set_num_threads(num_threads);
+      #pragma omp parallel
       {
         arma::vec local_sum;
         local_sum.zeros(bound_ref.n_elem);
 
-#pragma omp for nowait
+        #pragma omp for nowait
         for(int i = begin; i < end; i++) {
           arma::vec col_point;
           core::table::MakeColumnVector(matrix, i, &col_point);
@@ -300,7 +302,7 @@ class GenMetricTree {
         }
 
         // Final reduction.
-#pragma omp critical
+        #pragma omp critical
         {
           bound_ref += local_sum;
         } // end omp critical.
@@ -351,11 +353,11 @@ class GenMetricTree {
       left_membership->resize(end - first);
       *left_count = 0;
 
-#pragma omp parallel
+      #pragma omp parallel
       {
         int local_left_count = 0;
 
-#pragma omp for
+        #pragma omp for
         for(int left = first; left < end; left++) {
 
           // Make alias of the current point.
@@ -379,7 +381,7 @@ class GenMetricTree {
         }
 
         // Final reduction.
-#pragma omp critical
+        #pragma omp critical
         {
           (*left_count) += local_left_count;
         } // end of omp critical.

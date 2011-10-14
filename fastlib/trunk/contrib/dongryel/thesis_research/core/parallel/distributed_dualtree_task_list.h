@@ -259,7 +259,6 @@ class DistributedDualtreeTaskList {
       // Get a free slot for each subtable.
       std::vector<int> assigned_cache_indices;
       for(unsigned int i = 0; i < sub_tables_.size(); i++) {
-        KeyType subtable_id =  sub_tables_[i].get<0>()->subtable_id();
         (sub_tables_[i].get<0>())->set_originating_rank(source_rank_in);
         assigned_cache_indices.push_back(
           distributed_task_queue_->push_subtable(
