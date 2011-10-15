@@ -157,7 +157,7 @@ class RouteRequest {
       destinations_.push_back(new_dest_in);
 
       // Compute the least significant differing bit.
-      for(unsigned int i = 0; i < max_stage_; i++) {
+      for(unsigned int i = 0; i < last_ready_stage_; i++) {
         unsigned int mask = (1 << i);
         unsigned int new_dest_in_masked = (new_dest_in & mask);
         unsigned int rank_masked = (rank_ & mask);

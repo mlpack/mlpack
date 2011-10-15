@@ -505,8 +505,10 @@ class TableExchange {
             int dequeued_pos = it->second;
             SubTableRouteRequestType &route_request =
               hashed_essential_reference_subtrees_to_send[ dequeued_pos ].first;
+
             message_cache_[ world.rank() ].subtable_route().Init(world, route_request);
             message_cache_[ world.rank() ].subtable_route().set_object_is_valid_flag(true);
+	    message_cache_[ world.rank() ].subtable_route().set_stage( stage_ );
 
             // Remove the dequeued from the hash.
             reverse_hash_map.erase(it);
