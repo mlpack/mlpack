@@ -978,7 +978,7 @@ class TableExchange {
       enter_stage_ = true;
 
       // The maximum number of neighbors.
-      max_stage_ = static_cast<unsigned int>(log2(world.size()));
+      max_stage_ = core::math::RoundLogBaseTwo(world.size());
 
       // Set the reference distributed table.
       reference_table_ = reference_table_in;

@@ -86,7 +86,7 @@ class RouteRequest {
         const_cast < RouteRequestType * >(this);
       this_modifiable->rank_ = comm.rank();
       this_modifiable->max_stage_ =
-        static_cast< unsigned int >(ceil(log2(comm.size())));
+        core::math::RoundLogBaseTwo(comm.size());
       this_modifiable->ComputeNextDestination_();
       return next_destination_;
     }
@@ -246,7 +246,7 @@ class RouteRequest {
      */
     void Init(boost::mpi::communicator &comm) {
       destinations_.resize(0);
-      max_stage_ = static_cast<unsigned int>(ceil(log2(comm.size())));
+      max_stage_ = core::math::RoundLogBaseTwo(comm.size());
       object_is_valid_ = false;
       rank_ = comm.rank();
       stage_ = 0;
@@ -258,7 +258,7 @@ class RouteRequest {
       boost::mpi::communicator &comm,
       const RouteRequestType &source_in) {
       destinations_ = source_in.destinations();
-      max_stage_ = static_cast<unsigned int>(ceil(log2(comm.size())));
+      max_stage_ = core::math::RoundLogBaseTwo(comm.size());
       next_destination_ = source_in.next_destination(comm);
       num_routed_ = 0;
       rank_ = comm.rank();

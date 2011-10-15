@@ -353,21 +353,13 @@ T SphereVolume(T r, int d) {
 }
 
 template<typename T>
-T LeastSignificantDifferingBit(
-  int a, int b, int starting_lower_index, int upper_limit_inclusive_index) {
-
-  int mask = 1 << starting_lower_index;
-  int return_position = -1;
-  for(
-    int i = starting_lower_index; i <= upper_limit_inclusive_index; i++,
-    mask = mask << 1) {
-
-    if((a ^ mask) != (b ^ mask)) {
-      return_position = i;
-      break;
-    }
+unsigned int RoundLogBaseTwo(T num) {
+  unsigned int acc = 0;
+  unsigned int num_casted = static_cast<unsigned int>(num);
+  for(; num_casted > 1 ;  num_casted = num_casted >> 1) {
+    acc++;
   }
-  return return_position;
+  return acc;
 }
 }
 }
