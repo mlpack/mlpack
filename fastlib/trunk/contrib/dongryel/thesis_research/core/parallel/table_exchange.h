@@ -488,29 +488,72 @@ class TableExchange {
     void BufferImmediateMessage_(
       boost::mpi::communicator &world,
       const MetricType &metric_in,
-      unsigned int neighbor) {
+      unsigned int neighbor,
+      std::vector <
+      std::pair <
+      SubTableRouteRequestType,
+      typename std::multimap<int, int>::iterator > >
+      &hashed_essential_reference_subtrees_to_send,
+      std::multimap<int, int> &reverse_hash_map) {
 
-      // If any of the queued up flush requests is ready to be sent
-      // out, then send out.
-      if((! message_cache_[
-            world.rank()].flush_route().object_is_valid()) &&
-          queued_up_query_subtables_.size() > 0) {
+      if(message_cache_[world.rank()].subtable_route().num_destinations() == 0) {
+        for(unsigned int trial = stage_; trial < max_stage_; trial++) {
+          if(reverse_hash_map.count(trial) > 0) {
 
-        this->DequeueFlushRequest_(world, stage_);
+            // Found a subtable send request to dequeue.
+            typename std::map<int, int>::iterator it = reverse_hash_map.find(trial);
+            int dequeued_pos = it->second;
+            SubTableRouteRequestType &route_request =
+              hashed_essential_reference_subtrees_to_send[ dequeued_pos ].first;
+            message_cache_[ world.rank() ].subtable_route().Init(world, route_request);
+            message_cache_[ world.rank() ].subtable_route().set_object_is_valid_flag(true);
 
-      } // end of dequeuing flush requests.
+            // Remove the dequeued from the hash.
+            reverse_hash_map.erase(it);
 
-      // Need to constantly update other processes about the current
-      // progress on the self.
-      if(stage_ == 0) {
-        message_cache_[ world.rank()].load_balance_route().Init(world);
-        message_cache_[ world.rank()].load_balance_route().add_destinations(world);
+            // Move the back one to the position and correct the mapping.
+            if(dequeued_pos !=
+                static_cast<int>(
+                  hashed_essential_reference_subtrees_to_send.size()) - 1) {
+              reverse_hash_map.erase(
+                hashed_essential_reference_subtrees_to_send.back().second);
+              hashed_essential_reference_subtrees_to_send[ dequeued_pos ] =
+                hashed_essential_reference_subtrees_to_send.back();
+              hashed_essential_reference_subtrees_to_send[ dequeued_pos ].second =
+                reverse_hash_map.insert(
+                  std::pair<int, int>(
+                    hashed_essential_reference_subtrees_to_send[
+                      dequeued_pos ].first.last_ready_stage(), dequeued_pos));
+            }
+            hashed_essential_reference_subtrees_to_send.pop_back();
+            break;
+          }
+        }
       }
-      needs_load_balancing_[ world.rank()] =
-        task_queue_->remaining_local_computation();
-      message_cache_[ world.rank()].load_balance_route().object() =
-        needs_load_balancing_[ world.rank()];
-      message_cache_[ world.rank()].load_balance_route().set_object_is_valid_flag(true);
+
+      if(do_load_balancing_) {
+        // If any of the queued up flush requests is ready to be sent
+        // out, then send out.
+        if((! message_cache_[
+              world.rank()].flush_route().object_is_valid()) &&
+            queued_up_query_subtables_.size() > 0) {
+
+          this->DequeueFlushRequest_(world, stage_);
+
+        } // end of dequeuing flush requests.
+
+        // Need to constantly update other processes about the current
+        // progress on the self.
+        if(stage_ == 0) {
+          message_cache_[ world.rank()].load_balance_route().Init(world);
+          message_cache_[ world.rank()].load_balance_route().add_destinations(world);
+        }
+        needs_load_balancing_[ world.rank()] =
+          task_queue_->remaining_local_computation();
+        message_cache_[ world.rank()].load_balance_route().object() =
+          needs_load_balancing_[ world.rank()];
+        message_cache_[ world.rank()].load_balance_route().set_object_is_valid_flag(true);
+      }
     }
 
     void BufferInitialStageMessage_(
@@ -525,29 +568,6 @@ class TableExchange {
       // The status and the object to be copied onto.
       MessageType &new_self_send_request_object =
         message_cache_[ world.rank()];
-      if(hashed_essential_reference_subtrees_to_send.size() > 0) {
-
-        // Examine the back of the route request list.
-        SubTableRouteRequestType &route_request =
-          hashed_essential_reference_subtrees_to_send.back().first;
-
-        // Prepare the initial subtable to send.
-        new_self_send_request_object.subtable_route().Init(
-          world, route_request);
-        new_self_send_request_object.subtable_route().set_object_is_valid_flag(true);
-
-        // Pop it from the route request list and remove it from the
-        // hash.
-        reverse_hash_map.erase(
-          hashed_essential_reference_subtrees_to_send.back().second);
-        hashed_essential_reference_subtrees_to_send.pop_back();
-      }
-      else {
-
-        // Prepare an empty message.
-        new_self_send_request_object.subtable_route().Init(world);
-        new_self_send_request_object.subtable_route().add_destinations(world);
-      }
 
       // Handle the overall computation messages.
       if(queued_up_completed_computation_.size() > 0) {
@@ -1061,8 +1081,10 @@ class TableExchange {
 
         // Send any of the queued up messages that can be sent
         // immediately in this stage.
-        if(do_load_balancing_) {
-          this->BufferImmediateMessage_(world, metric_in, neighbor);
+        {
+          this->BufferImmediateMessage_(
+            world, metric_in, neighbor,
+            hashed_essential_reference_subtrees_to_send, reverse_hash_map);
         }
 
         for(unsigned int i = 0; i < num_subtables_to_exchange; i++) {
