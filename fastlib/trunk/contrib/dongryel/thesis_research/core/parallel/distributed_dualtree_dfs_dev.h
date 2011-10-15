@@ -56,8 +56,11 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 
   // The number of reference subtrees to receive and to send in total.
   std::vector <
-  core::parallel::RouteRequest<SubTableType> >
-  hashed_essential_reference_subtrees_to_send;
+  std::pair <
+  core::parallel::RouteRequest< SubTableType>,
+       typename std::multimap<int, int>::iterator > >
+       hashed_essential_reference_subtrees_to_send;
+  std::multimap<int, int> reverse_hash_map;
 
   // For each process, initialize the distributed task object.
   distributed_tasks.Init(
@@ -69,7 +72,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   // Walk the tree before entering parallel.
   distributed_tasks.WalkReferenceTree(
     metric, problem_->global(), *world_,
-    &hashed_essential_reference_subtrees_to_send);
+    &hashed_essential_reference_subtrees_to_send,
+    &reverse_hash_map);
 
   // OpenMP parallel region. The master thread is the only one that is
   // allowed to make MPI calls (sending and receiving reference
@@ -101,7 +105,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
       // Only the master thread makes MPI calls.
       if(thread_id == 0 && world_->size() > 1) {
         distributed_tasks.SendReceive(
-          metric, *world_, hashed_essential_reference_subtrees_to_send);
+          metric, *world_, hashed_essential_reference_subtrees_to_send,
+          reverse_hash_map);
       }
 
       // After enqueing, everyone else tries to dequeue the tasks.
@@ -110,6 +115,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
       distributed_tasks.DequeueTask(
         *world_, thread_id, metric,
         & hashed_essential_reference_subtrees_to_send,
+        & reverse_hash_map,
         problem_->global(), num_tasks_to_dequeue,
         &found_task, &checked_out_query_subtable);
 

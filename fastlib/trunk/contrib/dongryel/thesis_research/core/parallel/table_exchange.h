@@ -11,6 +11,7 @@
 #include <boost/intrusive_ptr.hpp>
 #include <boost/mpi.hpp>
 #include <boost/scoped_array.hpp>
+#include <map>
 #include "core/parallel/distributed_dualtree_task_queue.h"
 #include "core/parallel/message_tag.h"
 #include "core/parallel/route_request.h"
@@ -515,8 +516,11 @@ class TableExchange {
     void BufferInitialStageMessage_(
       boost::mpi::communicator &world,
       std::vector <
-      SubTableRouteRequestType >
-      &hashed_essential_reference_subtrees_to_send) {
+      std::pair <
+      SubTableRouteRequestType,
+      typename std::multimap<int, int>::iterator > >
+      &hashed_essential_reference_subtrees_to_send,
+      std::multimap<int, int> &reverse_hash_map) {
 
       // The status and the object to be copied onto.
       MessageType &new_self_send_request_object =
@@ -525,14 +529,17 @@ class TableExchange {
 
         // Examine the back of the route request list.
         SubTableRouteRequestType &route_request =
-          hashed_essential_reference_subtrees_to_send.back();
+          hashed_essential_reference_subtrees_to_send.back().first;
 
         // Prepare the initial subtable to send.
         new_self_send_request_object.subtable_route().Init(
           world, route_request);
         new_self_send_request_object.subtable_route().set_object_is_valid_flag(true);
 
-        // Pop it from the route request list.
+        // Pop it from the route request list and remove it from the
+        // hash.
+        reverse_hash_map.erase(
+          hashed_essential_reference_subtrees_to_send.back().second);
         hashed_essential_reference_subtrees_to_send.pop_back();
       }
       else {
@@ -1023,7 +1030,11 @@ class TableExchange {
       const MetricType &metric_in,
       boost::mpi::communicator &world,
       std::vector <
-      SubTableRouteRequestType > &hashed_essential_reference_subtrees_to_send) {
+      std::pair <
+      SubTableRouteRequestType,
+      typename std::multimap<int, int>::iterator > >
+      &hashed_essential_reference_subtrees_to_send,
+      std::multimap<int, int> &reverse_hash_map) {
 
       // Proceed with the stage, if ready.
       if((! task_queue_->can_terminate(world)) && enter_stage_) {
@@ -1044,7 +1055,8 @@ class TableExchange {
         // to be sent out.
         if(stage_ == 0) {
           this->BufferInitialStageMessage_(
-            world, hashed_essential_reference_subtrees_to_send);
+            world, hashed_essential_reference_subtrees_to_send,
+            reverse_hash_map);
         } // end of checking whether the stage is 0.
 
         // Send any of the queued up messages that can be sent
