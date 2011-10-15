@@ -370,8 +370,11 @@ class DistributedDualtreeTaskQueue {
       const GlobalType &global_in,
       boost::mpi::communicator &world,
       std::vector <
-      SubTableRouteRequestType >
-      * hashed_essential_reference_subtrees_to_send) {
+      std::pair <
+      SubTableRouteRequestType,
+      typename std::multimap<int, int>::iterator > >
+      * hashed_essential_reference_subtrees_to_send,
+      std::multimap<int, int> * reverse_hash_map) {
 
       // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
@@ -381,6 +384,7 @@ class DistributedDualtreeTaskQueue {
         reference_tree_walker_.Walk(
           metric_in, global_in, world, 10 * omp_get_num_threads(),
           hashed_essential_reference_subtrees_to_send,
+          reverse_hash_map,
           const_cast<DistributedDualtreeTaskQueueType *>(this));
         tree_walk_time_ += tree_walk_timer_.elapsed();
       }
@@ -745,7 +749,11 @@ class DistributedDualtreeTaskQueue {
       const MetricType &metric_in,
       boost::mpi::communicator &world,
       std::vector <
-      SubTableRouteRequestType > &hashed_essential_reference_subtrees_to_send) {
+      std::pair <
+      SubTableRouteRequestType,
+      typename std::multimap<int, int>::iterator
+      > > &hashed_essential_reference_subtrees_to_send,
+      std::multimap<int, int> &reverse_hash_map) {
 
       // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
@@ -753,7 +761,8 @@ class DistributedDualtreeTaskQueue {
       // Move data around (query subtable flushes, reference subtable
       // forwarding, etc.).
       table_exchange_.SendReceive(
-        metric_in, world, hashed_essential_reference_subtrees_to_send);
+        metric_in, world, hashed_essential_reference_subtrees_to_send,
+        reverse_hash_map);
     }
 
     /** @brief Generates extra tasks using the received reference
@@ -1021,8 +1030,6 @@ class DistributedDualtreeTaskQueue {
 
       // Initialize the other member variables.
       tasks_.resize(query_subtables_.size());
-      std::cerr << "Process " << world.rank() << " got " <<
-                query_subtables_.size() << " grain query subtrees.\n";
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
 
         // Set up the query subtable.
@@ -1071,8 +1078,12 @@ class DistributedDualtreeTaskQueue {
       int thread_id,
       const MetricType &metric_in,
       std::vector <
-      SubTableRouteRequestType > *
+      std::pair <
+      SubTableRouteRequestType,
+      typename std::multimap<int, int>::iterator
+      > > *
       hashed_essential_reference_subtrees_to_send,
+      std::multimap< int, int > *reverse_hash_map,
       const GlobalType &global_in,
       int max_num_tasks_to_check_out,
       std::pair< std::vector<TaskType> , int> *task_out,
@@ -1087,7 +1098,8 @@ class DistributedDualtreeTaskQueue {
         metric_in,
         global_in,
         world,
-        hashed_essential_reference_subtrees_to_send);
+        hashed_essential_reference_subtrees_to_send,
+        reverse_hash_map);
 
       // If the number of available task is less than the number of
       // running threads, try to get one.

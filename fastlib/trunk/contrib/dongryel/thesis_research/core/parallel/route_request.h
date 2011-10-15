@@ -45,6 +45,11 @@ class RouteRequest {
      */
     int rank_;
 
+    /** @brief The last stage in which this route request can be sent
+     *         out.
+     */
+    unsigned int last_ready_stage_;
+
     /** @brief The object to be routed.
      */
     ObjectType object_;
@@ -60,6 +65,10 @@ class RouteRequest {
     }
 
   public:
+
+    unsigned int last_ready_stage() const {
+      return last_ready_stage_;
+    }
 
     unsigned int max_stage() const {
       return max_stage_;
@@ -124,6 +133,7 @@ class RouteRequest {
       next_destination_ = 0;
       object_is_valid_ = false;
       rank_ = 0;
+      last_ready_stage_ = 0;
       stage_ = 0;
     }
 
@@ -145,12 +155,23 @@ class RouteRequest {
 
     void add_destination(int new_dest_in) {
       destinations_.push_back(new_dest_in);
+
+      // Compute the least significant differing bit.
+      for(unsigned int i = 0; i < max_stage_; i++) {
+        unsigned int mask = (1 << i);
+        unsigned int new_dest_in_masked = (new_dest_in & mask);
+        unsigned int rank_masked = (rank_ & mask);
+        if(new_dest_in_masked != rank_masked) {
+          last_ready_stage_ = i;
+          break;
+        }
+      }
     }
 
     void add_destinations(boost::mpi::communicator &comm) {
       for(int i = 0; i < comm.size(); i++) {
         if(i != comm.rank()) {
-          destinations_.push_back(i);
+          this->add_destination(i);
         }
       }
     }
@@ -249,6 +270,7 @@ class RouteRequest {
       max_stage_ = core::math::RoundLogBaseTwo(comm.size());
       object_is_valid_ = false;
       rank_ = comm.rank();
+      last_ready_stage_ = max_stage_;
       stage_ = 0;
     }
 
@@ -264,6 +286,7 @@ class RouteRequest {
       rank_ = comm.rank();
       object_ = source_in.object();
       object_is_valid_ = source_in.object_is_valid();
+      last_ready_stage_ = source_in.last_ready_stage();
       stage_ = source_in.stage();
     }
 };

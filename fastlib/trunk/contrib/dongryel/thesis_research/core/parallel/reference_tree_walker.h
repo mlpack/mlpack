@@ -80,34 +80,58 @@ class ReferenceTreeWalker {
       const std::pair<int, int> &local_rnode_id,
       int query_process_id,
       std::vector <
-      core::parallel::RouteRequest<SubTableType> > *
-      hashed_essential_reference_subtrees) {
+      std::pair <
+      core::parallel::RouteRequest<SubTableType>,
+      typename std::multimap<int, int>::iterator > > *
+      hashed_essential_reference_subtrees,
+      std::multimap<int, int> *reverse_hash_map) {
 
       // May consider using a STL map to speed up the hashing.
       int found_index = -1;
+      bool new_add = false;
       for(int i = hashed_essential_reference_subtrees->size() - 1;
           i >= 0; i--) {
-        if((*hashed_essential_reference_subtrees)[i].object().
+        if((*hashed_essential_reference_subtrees)[i].first.object().
             has_same_subtable_id(local_rnode_id)) {
           found_index = i;
           break;
         }
       }
       if(found_index < 0) {
+        new_add = true;
         hashed_essential_reference_subtrees->resize(
           hashed_essential_reference_subtrees->size() + 1);
         found_index = hashed_essential_reference_subtrees->size() - 1;
-        (*hashed_essential_reference_subtrees)[ found_index ].Init(world);
+        (*hashed_essential_reference_subtrees)[ found_index ].first.Init(world);
         (*hashed_essential_reference_subtrees)[
-          found_index].object().Init(
+          found_index].first.object().Init(
             local_reference_table_,
             local_reference_table_->get_tree()->FindByBeginCount(
               local_rnode_id.first, local_rnode_id.second), false);
         (*hashed_essential_reference_subtrees)[
-          found_index].set_object_is_valid_flag(true);
+          found_index].first.set_object_is_valid_flag(true);
       }
+
+      int previous_last_ready_stage =
+        (*hashed_essential_reference_subtrees)[
+          found_index].first.last_ready_stage();
       (*hashed_essential_reference_subtrees)[
-        found_index].add_destination(query_process_id);
+        found_index].first.add_destination(query_process_id);
+      int new_last_ready_stage =
+        (*hashed_essential_reference_subtrees)[
+          found_index].first.last_ready_stage();
+      if(new_add) {
+        (*hashed_essential_reference_subtrees)[found_index].second =
+          reverse_hash_map->insert(
+            std::pair<int, int> (new_last_ready_stage, found_index));
+      }
+      else if(previous_last_ready_stage != new_last_ready_stage) {
+        reverse_hash_map->erase(
+          (*hashed_essential_reference_subtrees)[found_index].second);
+        (*hashed_essential_reference_subtrees)[found_index].second =
+          reverse_hash_map->insert(
+            std::pair<int, int> (new_last_ready_stage, found_index));
+      }
     }
 
   public:
@@ -133,8 +157,12 @@ class ReferenceTreeWalker {
       const GlobalType &global_in,
       boost::mpi::communicator &world,
       int max_hashed_subtrees_to_queue,
-      std::vector < SubTableRouteRequestType >
+      std::vector <
+      std::pair <
+      SubTableRouteRequestType,
+      typename std::multimap<int, int>::iterator > >
       *hashed_essential_reference_subtrees_to_send,
+      std::multimap<int, int> *reverse_hash_map,
       DistributedDualtreeTaskQueueType *distributed_tasks_in) {
 
       // Return if the walk is done.
@@ -221,7 +249,8 @@ class ReferenceTreeWalker {
                     if(query_process_id != world.rank()) {
                       HashSendList_(
                         world, local_rnode_id, query_process_id,
-                        hashed_essential_reference_subtrees_to_send);
+                        hashed_essential_reference_subtrees_to_send,
+                        reverse_hash_map);
                     }
                   } // non-prune case.
 
