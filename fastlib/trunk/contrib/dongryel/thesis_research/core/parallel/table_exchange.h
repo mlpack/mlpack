@@ -253,7 +253,6 @@ class TableExchange {
     void DequeueFlushRequest_(
       boost::mpi::communicator &world, int dequeue_stage) {
 
-      message_cache_[world.rank()].flush_route().Init(world);
       message_cache_[
         world.rank()].flush_route().object().Alias(
           message_cache_[
@@ -789,7 +788,6 @@ class TableExchange {
       message_locks_[ receive_slot ] = 0;
 
       // Steal the pointer owned by the incoming subtable.
-      message_cache_[receive_slot].subtable_route().Init(world);
       message_cache_[receive_slot].subtable_route().object() = subtable_in;
       message_cache_[receive_slot].subtable_route().set_object_is_valid_flag(true);
       message_cache_[
