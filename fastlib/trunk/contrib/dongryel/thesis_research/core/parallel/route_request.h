@@ -249,6 +249,7 @@ class RouteRequest {
      */
     void operator=(const RouteRequestType &route_request_in) {
       destinations_ = route_request_in.destinations();
+      last_ready_stage_ = route_request_in.last_ready_stage();
       max_stage_ = route_request_in.max_stage();
       num_routed_ = route_request_in.num_routed();
       rank_ = route_request_in.rank();
