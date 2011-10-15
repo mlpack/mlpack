@@ -485,7 +485,7 @@ class TableExchange {
     }
 
     template<typename MetricType>
-    void BufferMessages_(
+    void BufferImmediateMessage_(
       boost::mpi::communicator &world,
       const MetricType &metric_in,
       unsigned int neighbor,
@@ -495,48 +495,6 @@ class TableExchange {
       typename std::multimap<int, int>::iterator > >
       &hashed_essential_reference_subtrees_to_send,
       std::multimap<int, int> &reverse_hash_map) {
-
-      // The status and the object to be copied onto.
-      MessageType &new_self_send_request_object =
-        message_cache_[ world.rank()];
-
-      // Handle the overall computation messages.
-      if(new_self_send_request_object.energy_route().num_destinations() == 0) {
-        if(queued_up_completed_computation_.size() > 0) {
-
-          // Examine the back of the route request list.
-          EnergyRouteRequestType &route_request =
-            queued_up_completed_computation_.back();
-
-          // Prepare the initial subtable to send.
-          new_self_send_request_object.energy_route().Init(
-            world, route_request);
-          new_self_send_request_object.energy_route().set_object_is_valid_flag(true);
-          new_self_send_request_object.energy_route().set_stage(stage_);
-
-          // Pop it from the route request list.
-          queued_up_completed_computation_.pop_back();
-        }
-      }
-
-      if(new_self_send_request_object.extrinsic_prune_route().num_destinations() == 0) {
-        // Handle the extrinsic prune messages.
-        if(queued_up_extrinsic_prunes_.size() > 0) {
-
-          // Examine the back of the route request list.
-          EnergyRouteRequestType &route_request =
-            queued_up_extrinsic_prunes_.back();
-
-          // Prepare the initial subtable to send.
-          new_self_send_request_object.extrinsic_prune_route().Init(
-            world, route_request);
-          new_self_send_request_object.extrinsic_prune_route().set_object_is_valid_flag(true);
-          new_self_send_request_object.extrinsic_prune_route().set_stage(stage_);
-
-          // Pop it from the route request list.
-          queued_up_extrinsic_prunes_.pop_back();
-        }
-      }
 
       if(message_cache_[world.rank()].subtable_route().num_destinations() == 0) {
         for(unsigned int trial = stage_; trial < max_stage_; trial++) {
@@ -597,6 +555,58 @@ class TableExchange {
         message_cache_[ world.rank()].load_balance_route().object() =
           needs_load_balancing_[ world.rank()];
         message_cache_[ world.rank()].load_balance_route().set_object_is_valid_flag(true);
+      }
+    }
+
+    void BufferInitialStageMessage_(
+      boost::mpi::communicator &world,
+      std::vector <
+      std::pair <
+      SubTableRouteRequestType,
+      typename std::multimap<int, int>::iterator > >
+      &hashed_essential_reference_subtrees_to_send,
+      std::multimap<int, int> &reverse_hash_map) {
+
+      // The status and the object to be copied onto.
+      MessageType &new_self_send_request_object =
+        message_cache_[ world.rank()];
+
+      // Handle the overall computation messages.
+      if(new_self_send_request_object.energy_route().num_destinations() == 0) {
+        if(queued_up_completed_computation_.size() > 0) {
+
+          // Examine the back of the route request list.
+          EnergyRouteRequestType &route_request =
+            queued_up_completed_computation_.back();
+
+          // Prepare the initial subtable to send.
+          new_self_send_request_object.energy_route().Init(
+            world, route_request);
+          new_self_send_request_object.energy_route().set_object_is_valid_flag(true);
+          new_self_send_request_object.energy_route().set_stage(stage_);
+
+          // Pop it from the route request list.
+          queued_up_completed_computation_.pop_back();
+        }
+      }
+
+      if(new_self_send_request_object.extrinsic_prune_route().num_destinations() == 0) {
+        // Handle the extrinsic prune messages.
+        if(queued_up_extrinsic_prunes_.size() > 0) {
+
+          // Examine the back of the route request list.
+          EnergyRouteRequestType &route_request =
+            queued_up_extrinsic_prunes_.back();
+
+          // Prepare the initial subtable to send.
+          new_self_send_request_object.extrinsic_prune_route().Init(
+            world, route_request);
+          new_self_send_request_object.extrinsic_prune_route().set_object_is_valid_flag(true);
+          new_self_send_request_object.extrinsic_prune_route().set_stage(stage_);
+
+          // Pop it from the route request list.
+          queued_up_extrinsic_prunes_.pop_back();
+        }
       }
 
       // Set the originating rank of the message.
@@ -1055,11 +1065,21 @@ class TableExchange {
         // Clear the list of received subtables in this round.
         received_subtable_ids.resize(0);
 
+        // At the start of each phase (stage == 0), dequeue messages
+        // to be sent out.
+        if(stage_ == 0) {
+          this->BufferInitialStageMessage_(
+            world, hashed_essential_reference_subtrees_to_send,
+            reverse_hash_map);
+        } // end of checking whether the stage is 0.
+
         // Send any of the queued up messages that can be sent
         // immediately in this stage.
-        this->BufferMessages_(
-          world, metric_in, neighbor,
-          hashed_essential_reference_subtrees_to_send, reverse_hash_map);
+        {
+          this->BufferImmediateMessage_(
+            world, metric_in, neighbor,
+            hashed_essential_reference_subtrees_to_send, reverse_hash_map);
+        }
 
         for(unsigned int i = 0; i < num_subtables_to_exchange; i++) {
           unsigned int subtable_send_index = i + lower_bound_send;
