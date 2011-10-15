@@ -27,6 +27,10 @@ class RouteRequest {
      */
     std::vector<int> destinations_;
 
+    /** @brief The maximum stage.
+     */
+    unsigned int max_stage_;
+
     /** @brief An internal variable to keep track of the number of
      *         destinations passed to the next routing destination.
      */
@@ -57,6 +61,10 @@ class RouteRequest {
 
   public:
 
+    unsigned int max_stage() const {
+      return max_stage_;
+    }
+
     void set_object_is_valid_flag(bool flag_in) {
       object_is_valid_ = flag_in;
     }
@@ -77,6 +85,8 @@ class RouteRequest {
       RouteRequestType *this_modifiable =
         const_cast < RouteRequestType * >(this);
       this_modifiable->rank_ = comm.rank();
+      this_modifiable->max_stage_ =
+        static_cast< unsigned int >(ceil(log(comm.size())));
       this_modifiable->ComputeNextDestination_();
       return next_destination_;
     }
@@ -109,6 +119,7 @@ class RouteRequest {
 
     RouteRequest() {
       destinations_.resize(0);
+      max_stage_ = 0;
       num_routed_ = 0;
       next_destination_ = 0;
       object_is_valid_ = false;
@@ -149,6 +160,9 @@ class RouteRequest {
       RouteRequestType *this_modifiable =
         const_cast< RouteRequestType * >(this);
 
+      // Save max stage.
+      ar & max_stage_;
+
       // Count how many messages were routed.
       std::vector<int> filtered;
 
@@ -169,7 +183,7 @@ class RouteRequest {
       }
 
       // Increment the stage.
-      this_modifiable->stage_++;
+      this_modifiable->stage_ = (this_modifiable->stage_ + 1) % max_stage_;
       ar & stage_;
 
       // Save the object, only if the number of routed messages is
@@ -183,6 +197,9 @@ class RouteRequest {
 
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
+
+      // Load max stage.
+      ar & max_stage_;
 
       // Load the size.
       int size;
@@ -211,6 +228,7 @@ class RouteRequest {
      */
     void operator=(const RouteRequestType &route_request_in) {
       destinations_ = route_request_in.destinations();
+      max_stage_ = route_request_in.max_stage();
       num_routed_ = route_request_in.num_routed();
       rank_ = route_request_in.rank();
       object_ = route_request_in.object();
@@ -228,6 +246,7 @@ class RouteRequest {
      */
     void Init(boost::mpi::communicator &comm) {
       destinations_.resize(0);
+      max_stage_ = static_cast<unsigned int>(ceil(log(comm.size())));
       object_is_valid_ = false;
       rank_ = comm.rank();
       stage_ = 0;
@@ -239,6 +258,7 @@ class RouteRequest {
       boost::mpi::communicator &comm,
       const RouteRequestType &source_in) {
       destinations_ = source_in.destinations();
+      max_stage_ = static_cast<unsigned int>(ceil(log(comm.size())));
       next_destination_ = source_in.next_destination(comm);
       num_routed_ = 0;
       rank_ = comm.rank();
