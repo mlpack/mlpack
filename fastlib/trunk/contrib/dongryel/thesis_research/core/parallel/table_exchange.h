@@ -572,53 +572,45 @@ class TableExchange {
         message_cache_[ world.rank()];
 
       // Handle the overall computation messages.
-      if(queued_up_completed_computation_.size() > 0) {
+      if(new_self_send_request_object.energy_route().num_destinations() == 0) {
+        if(queued_up_completed_computation_.size() > 0) {
 
-        // Examine the back of the route request list.
-        EnergyRouteRequestType &route_request =
-          queued_up_completed_computation_.back();
+          // Examine the back of the route request list.
+          EnergyRouteRequestType &route_request =
+            queued_up_completed_computation_.back();
 
-        // Prepare the initial subtable to send.
-        new_self_send_request_object.energy_route().Init(
-          world, route_request);
+          // Prepare the initial subtable to send.
+          new_self_send_request_object.energy_route().Init(
+            world, route_request);
+          new_self_send_request_object.energy_route().set_object_is_valid_flag(true);
+          new_self_send_request_object.energy_route().set_stage(stage_);
 
-        // Pop it from the route request list.
-        queued_up_completed_computation_.pop_back();
-      }
-      else {
-
-        // Prepare an empty message for the energy portion.
-        new_self_send_request_object.energy_route().Init(world);
-        new_self_send_request_object.energy_route().add_destinations(world);
-        new_self_send_request_object.energy_route().object() = 0;
+          // Pop it from the route request list.
+          queued_up_completed_computation_.pop_back();
+        }
       }
 
-      // Handle the extrinsic prune messages.
-      if(queued_up_extrinsic_prunes_.size() > 0) {
+      if(new_self_send_request_object.extrinsic_prune_route().num_destinations() == 0) {
+        // Handle the extrinsic prune messages.
+        if(queued_up_extrinsic_prunes_.size() > 0) {
 
-        // Examine the back of the route request list.
-        EnergyRouteRequestType &route_request =
-          queued_up_extrinsic_prunes_.back();
+          // Examine the back of the route request list.
+          EnergyRouteRequestType &route_request =
+            queued_up_extrinsic_prunes_.back();
 
-        // Prepare the initial subtable to send.
-        new_self_send_request_object.extrinsic_prune_route().Init(
-          world, route_request);
+          // Prepare the initial subtable to send.
+          new_self_send_request_object.extrinsic_prune_route().Init(
+            world, route_request);
+          new_self_send_request_object.extrinsic_prune_route().set_object_is_valid_flag(true);
+          new_self_send_request_object.extrinsic_prune_route().set_stage(stage_);
 
-        // Pop it from the route request list.
-        queued_up_extrinsic_prunes_.pop_back();
-      }
-      else {
-
-        // Prepare an empty message for the extrinsic prune portion.
-        new_self_send_request_object.extrinsic_prune_route().Init(world);
-        new_self_send_request_object.extrinsic_prune_route().add_destinations(world);
-        new_self_send_request_object.extrinsic_prune_route().object() = 0;
+          // Pop it from the route request list.
+          queued_up_extrinsic_prunes_.pop_back();
+        }
       }
 
       // Set the originating rank of the message.
       new_self_send_request_object.set_originating_rank(world.rank());
-      new_self_send_request_object.energy_route().set_object_is_valid_flag(true);
-      new_self_send_request_object.extrinsic_prune_route().set_object_is_valid_flag(true);
     }
 
     /** @brief Tests whether the current MPI process can enter the
