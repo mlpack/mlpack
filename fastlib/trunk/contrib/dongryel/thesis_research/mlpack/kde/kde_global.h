@@ -16,7 +16,8 @@ class ConsiderExtrinsicPruneTrait {
   public:
     static bool Compute(
       const KernelAuxType &kernel_aux_in,
-      const core::math::Range &squared_distance_range_in) {
+      const core::math::Range &squared_distance_range_in,
+      double absolute_error) {
       return false;
     }
 };
@@ -27,10 +28,13 @@ class ConsiderExtrinsicPruneTrait <
   public:
     static bool Compute(
       const mlpack::series_expansion::EpanKernelMultivariateAux &kernel_aux_in,
-      const core::math::Range &squared_distance_range_in) {
+      const core::math::Range &squared_distance_range_in,
+      double absolute_error) {
 
       return
-        kernel_aux_in.kernel().bandwidth_sq() <= squared_distance_range_in.lo;
+        kernel_aux_in.kernel().bandwidth_sq() <= squared_distance_range_in.lo ||
+        kernel_aux_in.kernel().EvalUnnormOnSq(squared_distance_range_in.lo) <=
+        absolute_error ;
     }
 };
 
@@ -114,7 +118,7 @@ class KdeGlobal {
 
       return
         ConsiderExtrinsicPruneTrait<KernelAuxType>::Compute(
-          *kernel_aux_, squared_distance_range);
+          *kernel_aux_, squared_distance_range, absolute_error_ );
     }
 
     /** @brief Returns whether the computation is monochromatic or
