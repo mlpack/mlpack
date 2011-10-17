@@ -626,14 +626,14 @@ class GeneralBinarySpaceTree {
       const BoundType &bound,
       const arma::mat &matrix_in,
       std::vector< std::vector<int> > *assigned_point_indices,
-      std::vector<int> *membership_counts_per_process) {
+      std::vector<int> *membership_counts_per_process ) {
 
       // Perform tree-spec specific task first.
-      int left_count;
+      int left_count = 0;
       std::deque<bool> left_membership;
       if(!  TreeSpecType::AttemptSplitting(
             comm, metric_in, bound, matrix_in,
-            &left_count, &left_membership)) {
+            &left_count, &left_membership )) {
         return false;
       }
 
@@ -659,17 +659,23 @@ class GeneralBinarySpaceTree {
         }
       }
 
-      // Check whether the local assignment is ok.
-      bool assignment_is_ok =
-        (comm.rank() < comm.size() / 2) ?
-        (left_count > 0) : (left_count < static_cast<int>(matrix_in.n_cols));
+      int right_count = left_membership.size() - left_count;
+      int total_left_count;
+      int total_right_count;
+      boost::mpi::all_reduce( comm, left_count, total_left_count, std::plus<int>() );
+      boost::mpi::all_reduce( comm, right_count, total_right_count, std::plus<int>() );
 
-      // Do an all-reduction to check whether the assignment is ok.
-      bool global_assignment_is_ok = true;
-      boost::mpi::all_reduce(
-        comm, assignment_is_ok, global_assignment_is_ok,
-        std::logical_and<bool>());
-
+      // Check whether the global assignment is ok.
+      bool global_assignment_is_ok = 
+	abs( total_left_count - total_right_count ) <= (total_left_count + total_right_count) / 8;
+      if( ! global_assignment_is_ok ) {
+	if( total_left_count < total_right_count ) {
+	  const_cast<BoundType &>(bound).MoveRight();
+	}
+	else {
+	  const_cast<BoundType &>(bound).MoveLeft();
+	}
+      }
       return global_assignment_is_ok;
     }
 

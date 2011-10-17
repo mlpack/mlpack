@@ -42,6 +42,12 @@ class BallBound {
       return center_.n_elem > 0;
     }
 
+  void MoveLeft() {
+  }
+
+  void MoveRight() {
+  }
+
     /** @brief The Assignment operator.
      */
     void operator=(const BallBound &ball_bound_in) {
