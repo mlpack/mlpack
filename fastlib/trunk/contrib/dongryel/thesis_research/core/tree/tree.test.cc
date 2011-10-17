@@ -100,7 +100,7 @@ class TestTree {
       TableType original_table;
       original_table.Init(references_in, 0, &weights_in);
       core::metric_kernels::LMetric<2> l2_metric;
-      reordered_table.IndexData(l2_metric, leaf_size);
+      reordered_table.IndexData(l2_metric, leaf_size, 0);
       for(int i = 0; i < reordered_table.n_entries(); i++) {
         arma::vec reordered_point;
         double reordered_weight;
