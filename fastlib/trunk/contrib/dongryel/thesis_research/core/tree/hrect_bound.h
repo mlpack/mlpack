@@ -43,29 +43,29 @@ class HrectBound {
 
   public:
 
-  void MoveLeft() {
-    double widest_dim_length = -1.0;
-    int widest_dim = -1;
-    for(int i = 0; i < dim_; i++) {
-      if( widest_dim_length < bounds_[i].width() ) {
-	widest_dim_length = bounds_[i].width();
-	widest_dim = i;
+    void MoveLeft() {
+      double widest_dim_length = -1.0;
+      int widest_dim = -1;
+      for(int i = 0; i < dim_; i++) {
+        if(widest_dim_length < bounds_[i].width()) {
+          widest_dim_length = bounds_[i].width();
+          widest_dim = i;
+        }
       }
+      bounds_[widest_dim].hi = bounds_[widest_dim].mid();
     }
-    bounds_[widest_dim].hi = bounds_[widest_dim].mid();
-  }
 
-  void MoveRight() {
-    double widest_dim_length = -1.0;
-    int widest_dim = -1;
-    for(int i = 0; i < dim_; i++) {
-      if( widest_dim_length < bounds_[i].width() ) {
-	widest_dim_length = bounds_[i].width();
-	widest_dim = i;
-      }     
+    void MoveRight() {
+      double widest_dim_length = -1.0;
+      int widest_dim = -1;
+      for(int i = 0; i < dim_; i++) {
+        if(widest_dim_length < bounds_[i].width()) {
+          widest_dim_length = bounds_[i].width();
+          widest_dim = i;
+        }
+      }
+      bounds_[widest_dim].lo = bounds_[widest_dim].mid();
     }
-    bounds_[widest_dim].lo = bounds_[widest_dim].mid();
-  }
 
     /** @brief Returns whether the bound has been initialized or not.
      */
