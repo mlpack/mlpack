@@ -98,18 +98,18 @@ class VanillaDistributedTreeBuilder {
         // Find the split.
         std::vector< std::vector<int> > assigned_point_indices;
         std::vector<int> membership_counts_per_process;
-	bool can_cut = false;
-        while( ! ( can_cut =
-          TreeType::AttemptSplitting(
-            current_comm, metric_in, bound,
-            distributed_table_->local_table()->data(),
-            &assigned_point_indices, &membership_counts_per_process) ) ) {
-	  
-	  for(unsigned int clear = 0; clear < assigned_point_indices.size(); clear++) {
-	    assigned_point_indices[clear].resize(0);
-	    membership_counts_per_process[clear] = 0;
-	  }
-	}
+        bool can_cut = false;
+        while(!(can_cut =
+                  TreeType::AttemptSplitting(
+                    current_comm, metric_in, bound,
+                    distributed_table_->local_table()->data(),
+                    &assigned_point_indices, &membership_counts_per_process))) {
+
+          for(unsigned int clear = 0; clear < assigned_point_indices.size(); clear++) {
+            assigned_point_indices[clear].resize(0);
+            membership_counts_per_process[clear] = 0;
+          }
+        }
 
         if(can_cut) {
 

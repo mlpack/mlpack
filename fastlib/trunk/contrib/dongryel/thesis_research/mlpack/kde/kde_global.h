@@ -118,7 +118,7 @@ class KdeGlobal {
 
       return
         ConsiderExtrinsicPruneTrait<KernelAuxType>::Compute(
-          *kernel_aux_, squared_distance_range, absolute_error_ );
+          *kernel_aux_, squared_distance_range, absolute_error_);
     }
 
     /** @brief Returns whether the computation is monochromatic or

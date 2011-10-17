@@ -42,11 +42,11 @@ class BallBound {
       return center_.n_elem > 0;
     }
 
-  void MoveLeft() {
-  }
+    void MoveLeft() {
+    }
 
-  void MoveRight() {
-  }
+    void MoveRight() {
+    }
 
     /** @brief The Assignment operator.
      */

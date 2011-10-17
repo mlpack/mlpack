@@ -349,7 +349,7 @@ class GenMetricTree {
       int first, int end,
       BoundType &left_bound, BoundType &right_bound,
       int *left_count, std::deque<bool> *left_membership,
-      bool favor_balance = false ) {
+      bool favor_balance = false) {
 
       left_membership->resize(end - first);
       *left_count = 0;
@@ -388,36 +388,36 @@ class GenMetricTree {
         } // end of omp critical.
       } // end of omp parallel.
 
-      if( favor_balance ) {
-	int count = end - first;
-	if( (*left_count) <= count / 4 ) {
-	  
-	  // Steal from the right.
-	  for(int i = 0; i < count; i++) {
-	    if( ! ( (*left_membership)[i] )  ) {
-	      (*left_count)++;
-	      (*left_membership)[i] = true;
-	    }
-	    int current_right_count = count - (*left_count);
-	    if( abs( (*left_count ) - current_right_count ) < count / 8 ) {
-	      break;
-	    }
-	  }
-	}
-	else if( (*left_count) >= count / 4 * 3 ) {
-	  
-	  // Steal from the left.
-	  for(int i = 0; i < count; i++) {
-	    if( (*left_membership)[i] ) {
-	      (*left_count)--;
-	      (*left_membership)[i] = false;
-	    }
-	    int current_right_count = count - (*left_count);
-	    if( abs( (*left_count ) - current_right_count ) < count / 8 ) {
-	      break;
-	    }
-	  }
-	}
+      if(favor_balance) {
+        int count = end - first;
+        if((*left_count) <= count / 4) {
+
+          // Steal from the right.
+          for(int i = 0; i < count; i++) {
+            if(!((*left_membership)[i])) {
+              (*left_count)++;
+              (*left_membership)[i] = true;
+            }
+            int current_right_count = count - (*left_count);
+            if(abs((*left_count) - current_right_count) < count / 8) {
+              break;
+            }
+          }
+        }
+        else if((*left_count) >= count / 4 * 3) {
+
+          // Steal from the left.
+          for(int i = 0; i < count; i++) {
+            if((*left_membership)[i]) {
+              (*left_count)--;
+              (*left_membership)[i] = false;
+            }
+            int current_right_count = count - (*left_count);
+            if(abs((*left_count) - current_right_count) < count / 8) {
+              break;
+            }
+          }
+        }
       }
     }
 
@@ -495,7 +495,7 @@ class GenMetricTree {
       right_bound.center() = global_furthest_from_furthest_random_row_vec.first;
       ComputeMemberships(
         metric_in, matrix_in, 0, matrix_in.n_cols, left_bound, right_bound,
-        left_count, left_membership, true );
+        left_count, left_membership, true);
 
       return true;
     }
