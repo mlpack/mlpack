@@ -68,6 +68,10 @@ while ~converged
   fprintf('DICTIONARY PERTURBATION LEARNING STEP\n');
   Q = UpdateSparseCodes(type, (X - D * S)', S', lambda_Q, Q', alpha, beta)';
 
+  fprintf('norm(Q) = %f\t||Q||_1 = %f\t%f%% sparsity\n', ...
+	  norm(Q), sum(sum(abs(Q))), (nnz(Q) / prod(size(Q))) * 100);
+
+
   %fprintf('DONE LEARNING DICTIONARY\n');
   %pause;
 
