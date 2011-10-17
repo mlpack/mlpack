@@ -7,7 +7,9 @@ tf_normalized = normcols(tf);
 
 n_atoms = 10;
 
-opts = statset('Display','iter', 'MaxIter', 20);
+opts = statset('Display','iter', 'MaxIter', 30);
+disp(opts);
+disp('hi');
 %opts = statset('Display', 'iter');
 [IDX C] = kmeans(tf_normalized', n_atoms, 'Options', opts);
 C_normalized = full(normcols(C'));
