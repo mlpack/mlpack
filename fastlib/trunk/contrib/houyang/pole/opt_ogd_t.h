@@ -1,7 +1,7 @@
 //***********************************************************
 //* Online Kernel Gradient Descent with Transformed Features
-//* Hua Ouyang 03/23/2011
-//* Example: ./pole_pt -d svmguide1 -m ogdt --transform fourier_rbf --calc_loss 1 --comm 1 -c 100 -b 1 --bias 1 -e 50 --sigma 3 --trdim 1000 --threads 2
+//* Examples:
+//* ./pole_pt -d svmguide1 -m togd_str --transform fourier_rbf --calc_loss 1 --comm 1 -c 100 -b 1 --bias 1 -e 50 --sigma 3 --trdim 1000 --threads 2 --strongness 0.8
 //***********************************************************
 #ifndef OPT_OGD_T_H
 #define OPT_OGD_T_H
@@ -19,6 +19,7 @@ class OGDT : public Learner {
     OGDT<TTransform> *Lp_;
   };
   vector<Svector> w_pool_; // shared memory for weight vectors of each thread
+  vector<Svector> w_avg_pool_; // shared memory for averaged weight vec over iterations
   vector<Svector> m_pool_; // shared memory for messages
   vector<double>  b_pool_; // shared memory for bias term
  private:
@@ -67,10 +68,11 @@ void* OGDT<TTransform>::OgdTThread(void *in_par) {
   T_IDX tid = par->id_;
   OGDT* Lp = (OGDT *)par->Lp_;
   Example* exs[Lp->mb_size_];
+  Svector ext; // random feature
+  double update = 0.0;
   Svector uv; // update vector
   double ub = 0.0; // for bias
-  Svector ext; // random feature
-
+  
   while (true) {
     switch (Lp->t_state_[tid]) {
     case 0: // waiting to read data
@@ -85,15 +87,43 @@ void* OGDT<TTransform>::OgdTThread(void *in_par) {
       Lp->t_state_[tid] = 1;
       break;
     case 1: // predict and local update
-      //--- local update: regularization part
       double eta;
       Lp->t_n_it_[tid] = Lp->t_n_it_[tid] + 1;
-      if (Lp->reg_type_ == 2) {
-	eta= 1.0 / (Lp->reg_factor_ * Lp->t_n_it_[tid]);
+      uv.Clear(); ub = 0.0;
+      // Make prediction and get loss
+      for (T_IDX b = 0; b<Lp->mb_size_; b++) {
+        Lp->T_.Tr(*exs[b], ext);
+        /*
+        // calculate w_avg and make logs
+        Lp->w_avg_pool_[tid] *= (Lp->t_n_it_[tid] - 1.0);
+        Lp->w_avg_pool_[tid] += Lp->w_pool_[tid];
+        Lp->w_avg_pool_[tid] *= (1.0/Lp->t_n_it_[tid]);
+        */
+        Lp->w_avg_pool_[tid] = Lp->w_pool_[tid];
+        double pred_val = Lp->LinearPredictBias(Lp->w_avg_pool_[tid], 
+                                                ext, Lp->b_pool_[tid]);
+        Lp->MakeLog(tid, ext, exs[b]->y_, pred_val);
+        update = Lp->LF_->GetUpdate(pred_val, (double)exs[b]->y_);
+        // subgradient of loss function
+        uv.SparseAddExpertOverwrite(update, ext);
+        ub += update;
+      }
+
+      //----------------- step sizes for OGD_T ---------------
+      // Assuming strong convexity
+      if (Lp->opt_name_ == "togd_str") {
+        eta= Lp->strongness_ / (Lp->reg_factor_ * Lp->t_n_it_[tid]);
+      }
+      // Assuming general convexity
+      else if (Lp->opt_name_ == "togd") {
+        eta = Lp->dbound_ / sqrt(Lp->t_n_it_[tid]);
       }
       else {
-	eta = 1.0 / sqrt(Lp->t_n_it_[tid]);
+        cout << "ERROR! Unkown TOGD method."<< endl;
+        exit(1);
       }
+
+      //--- local update: regularization part
       if (Lp->reg_type_ == 2) {
 	// [- \lambda \eta w_i^t],  L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
 	Lp->w_pool_[tid] *= 1.0 - eta * Lp->reg_factor_;
@@ -101,17 +131,6 @@ void* OGDT<TTransform>::OgdTThread(void *in_par) {
 	if (Lp->use_bias_) {
 	  Lp->b_pool_[tid] = Lp->b_pool_[tid] *(1.0 - eta * Lp->reg_factor_);
 	}
-      }
-      //--- local update: subgradient of loss function
-      uv.Clear(); ub = 0.0;
-      for (T_IDX b = 0; b<Lp->mb_size_; b++) {
-        Lp->T_.Tr(*exs[b], ext);
-	double pred_val = Lp->LinearPredictBias(Lp->w_pool_[tid], 
-						ext, Lp->b_pool_[tid]);
-	Lp->MakeLog(tid, ext, exs[b]->y_, pred_val);
-	double update = Lp->LF_->GetUpdate(pred_val, (double)exs[b]->y_);
-	uv.SparseAddExpertOverwrite(update, ext);
-        ub += update;
       }
       // update bias
       if (Lp->use_bias_) {
@@ -156,6 +175,7 @@ void OGDT<TTransform>::Learn() {
   t_init_ = 1.0 / (eta0_ * reg_factor_);
   // init parameters
   w_pool_.resize(n_thread_);
+  w_avg_pool_.resize(n_thread_);
   m_pool_.resize(n_thread_);
   b_pool_.resize(n_thread_);
 

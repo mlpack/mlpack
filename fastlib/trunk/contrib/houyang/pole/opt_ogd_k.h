@@ -19,6 +19,7 @@ class OGDK : public Learner {
   };
   TKernel K_;
   vector<Svector> w_pool_; // shared memory for weight vectors of each thread
+  vector<Svector> w_avg_pool_; // shared memory for averaged weight vec over iterations
   vector<Svector> m_pool_; // shared memory for messages
   vector<double>  b_pool_; // shared memory for bias term
  private:
@@ -44,16 +45,16 @@ OGDK<TKernel>::OGDK() {
 
 template <typename TKernel>
 void OGDK<TKernel>::OgdKCommUpdate(T_IDX tid) {
-  if (comm_method_ == 1) { // fully connected graph
-    for (T_IDX h=0; h<n_thread_; h++) {
-      if (h != tid) {
-	w_pool_[tid] += m_pool_[h];
-      }
+    if (comm_method_ == 1) { // fully connected graph
+        for (T_IDX h=0; h<n_thread_; h++) {
+            if (h != tid) {
+                w_pool_[tid] += m_pool_[h];
+            }
+        }
+        w_pool_[tid] /= n_thread_;
     }
-    w_pool_[tid] /= n_thread_;
-  }
-  else { // no communication
-  }
+    else { // no communication
+    }
 }
 
 // In Distributed OGDK, thread states are defined as:
@@ -66,6 +67,7 @@ void* OGDK<TKernel>::OgdKThread(void *in_par) {
   T_IDX tid = par->id_;
   OGDK* Lp = (OGDK *)par->Lp_;
   Example* exs[Lp->mb_size_];
+  double update = 0.0;
   Svector uv; // update vector
   double ub = 0.0; // for bias
 
@@ -83,32 +85,52 @@ void* OGDK<TKernel>::OgdKThread(void *in_par) {
       Lp->t_state_[tid] = 1;
       break;
     case 1: // predict and local update
-      //--- local update: regularization part
       double eta;
       Lp->t_n_it_[tid] = Lp->t_n_it_[tid] + 1;
-      if (Lp->reg_type_ == 2) {
-	eta= 1.0 / (Lp->reg_factor_ * Lp->t_n_it_[tid]);
+
+      // Make prediction and get loss
+      for (T_IDX b = 0; b<Lp->mb_size_; b++) {
+        /*
+        // calculate w_avg and make logs
+        Lp->w_avg_pool_[tid] *= (Lp->t_n_it_[tid] - 1.0);
+        Lp->w_avg_pool_[tid] += Lp->w_pool_[tid];
+        Lp->w_avg_pool_[tid] *= (1.0/Lp->t_n_it_[tid]);
+        */
+        Lp->w_avg_pool_[tid] = Lp->w_pool_[tid];
+        double pred_val = Lp->LinearPredictBias(Lp->w_avg_pool_[tid], 
+                                                *exs[b], Lp->b_pool_[tid]);
+        Lp->MakeLog(tid, exs[b], pred_val);
+        update = Lp->LF_->GetUpdate(pred_val, (double)exs[b]->y_);
+      }
+      
+      //----------------- step sizes for KOGD ---------------
+      // Assuming strong convexity
+      if (Lp->opt_name_ == "kogd_str") {
+        eta= Lp->strongness_ / (Lp->reg_factor_ * Lp->t_n_it_[tid]);
+      }
+      // Assuming general convexity
+      else if (Lp->opt_name_ == "kogd") {
+        eta = Lp->dbound_ / sqrt(Lp->t_n_it_[tid]);
       }
       else {
-	eta = 1.0 / sqrt(Lp->t_n_it_[tid]);
+        cout << "ERROR! Unkown KOGD method."<< endl;
+        exit(1);
       }
-      if (Lp->reg_type_ == 2) {
-	// [- \lambda \eta w_i^t],  L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
-	Lp->w_pool_[tid] *= 1.0 - eta * Lp->reg_factor_;
-	// update bias term
-	if (Lp->use_bias_) {
-	  Lp->b_pool_[tid] = Lp->b_pool_[tid] *(1.0 - eta * Lp->reg_factor_);
-	}
-      }
+
       //--- local update: subgradient of loss function
       uv.Clear(); ub = 0.0;
       for (T_IDX b = 0; b<Lp->mb_size_; b++) {
-	double pred_val = Lp->LinearPredictBias(Lp->w_pool_[tid], 
-						*exs[b], Lp->b_pool_[tid]);
-	Lp->MakeLog(tid, exs[b], pred_val);
-	double update = Lp->LF_->GetUpdate(pred_val, (double)exs[b]->y_);
 	uv.SparseAddExpertOverwrite(update, *exs[b]);
         ub += update;
+      }
+      //--- local update: regularization part
+      if (Lp->reg_type_ == 2) {
+        // [- \lambda \eta w_i^t],  L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
+        Lp->w_pool_[tid] *= (1.0 - eta * Lp->reg_factor_);
+        // update bias term
+        if (Lp->use_bias_) {
+          Lp->b_pool_[tid] = Lp->b_pool_[tid] *(1.0 - eta * Lp->reg_factor_);
+        }
       }
       // update bias
       if (Lp->use_bias_) {
@@ -120,6 +142,7 @@ void* OGDK<TKernel>::OgdKThread(void *in_par) {
       //boost::this_thread::sleep(boost::posix_time::microseconds(1));
       // send message out
       Lp->m_pool_[tid] = Lp->w_pool_[tid];
+
       //--- wait till all threads send their messages
       pthread_barrier_wait(&Lp->barrier_msg_all_sent_);
       Lp->t_state_[tid] = 2;
@@ -148,6 +171,7 @@ void OGDK<TKernel>::Learn() {
   t_init_ = 1.0 / (eta0_ * reg_factor_);
   // init parameters
   w_pool_.resize(n_thread_);
+  w_avg_pool_.resize(n_thread_);
   m_pool_.resize(n_thread_);
   b_pool_.resize(n_thread_);
 
