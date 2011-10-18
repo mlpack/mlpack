@@ -1,4 +1,4 @@
-#include <fastlib/fastlib.h>
+#include <mlpack/core.h>
 #include "exact_max_ip.h"
 
 #include <string>

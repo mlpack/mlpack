@@ -13,7 +13,9 @@
 #define GENERAL_SPACETREE_H
 
 #include <assert.h>
-#include <fastlib/fastlib.h>
+#include <mlpack/core.h>
+#include <mlpack/core/tree/statistic.h>
+//#include <mlpack/core.h>
 
 /**
  * A binary space partitioning tree, such as KD or ball tree.

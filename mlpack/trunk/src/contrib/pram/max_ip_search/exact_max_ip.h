@@ -7,7 +7,9 @@
 #define EXACT_MAX_IP_H
 
 #include <assert.h>
-#include <fastlib/fastlib.h>
+#include <mlpack/core.h>
+#include <mlpack/core/tree/bounds.h>
+#include <mlpack/core/tree/statistic.h>
 #include <vector>
 #include <armadillo>
 #include "general_spacetree.h"
@@ -108,6 +110,7 @@ private:
 
   // The total number of prunes.
   size_t number_of_prunes_;
+  size_t ball_has_origin_;
 
   // A permutation of the indices for tree building.
   arma::Col<size_t> old_from_new_queries_;
@@ -200,6 +203,10 @@ private:
 				  double upper_bound_ip);
 
   void reset_tree_(CTreeType *tree);
+
+  size_t SortValue(double value);
+
+  void InsertNeighbor(size_t pos, size_t point_ind, double value);
 
   /////////////// Public Functions ////////////////////
 public:
