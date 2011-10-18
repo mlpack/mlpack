@@ -101,7 +101,8 @@ void Pole::ParseArgs(int argc, char *argv[]) {
         exit(1);
       }
     }
-    else if (m_["method"] == "oeg") {
+    // oeg_str, oeg
+    else if (m_["method"].substr(0,3) == "oeg") {
       L_ = new OEG;
     }
     else if (m_["method"] == "dwm_i" || m_["method"] == "dwm_a") {

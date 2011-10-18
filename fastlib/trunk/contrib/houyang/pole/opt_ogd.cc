@@ -1,8 +1,13 @@
 //***********************************************************
 //* Online Gradient Descent
+//*
 //* Examples:
-//* ./pole_pt -d regression_sim_noise_1 --random 0 -m ogd_str --type regression --reg 2 -l squared --calc_loss 1 --bias 1 --lambda 0.0001 --threads 1 -i 4000 --strongness 0.0000008
+//* ./pole_pt -d regression_sim_noise_1 --random 0 -m ogd_str --type regression --reg 2 -l squared --calc_loss 1 --bias 1 --lambda 0.0001 --threads 1 -i 4000 --strongness 130
 //* ./pole_pt -d regression_sim_noise_1 --random 0 -m ogd --type regression --reg 2 -l squared --calc_loss 1 --bias 1 --lambda 0.0001 --threads 1 -i 4000 --dbound 0.002
+//* ./pole_pt -d svmguide1 --random 1 -m ogd_str --type classification -l hinge --reg 2 --calc_loss 1 --bias 1 --lambda 0.01 --threads 1 -e 600 --strongness 1000
+//* ./pole_pt -d svmguide1 --random 1 -m ogd --type classification -l hinge --reg 2 --calc_loss 1 --bias 1 --lambda 0.01 --threads 1 -e 600 --dbound 0.025
+//* ./pole_pt -d svmguide1 --random 1 -m ogd_str --type classification -l squared --reg 2 --calc_loss 1 --bias 1 -c 100 --threads 1 -e 600 --strongness 20000
+//* ./pole_pt -d svmguide1 --random 1 -m ogd_str --type classification -l logistic --reg 2 --calc_loss 1 --bias 1 -c 100 --threads 1 -e 600 --strongness 50
 //***********************************************************
 #include "opt_ogd.h"
 
@@ -76,8 +81,9 @@ void* OGD::OgdThread(void *in_par) {
       //----------------- step sizes for OGD ---------------
       // Assuming strong convexity: ogd_str
       if (Lp->opt_name_ == "ogd_str") {
-        eta= Lp->strongness_ / (Lp->reg_factor_ * Lp->t_n_it_[tid]);
+        eta = 1 / (Lp->strongness_*Lp->t_n_it_[tid]);
       }
+      // Assuming general convexity: ogd
       else if (Lp->opt_name_ == "ogd") {
         eta = Lp->dbound_ / sqrt(Lp->t_n_it_[tid]);
       }

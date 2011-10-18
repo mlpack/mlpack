@@ -1,9 +1,14 @@
 //***********************************************************
 //* Online Noise Adaptive Stochastic Approximation
+//*
 //* Examples:
-//* ./pole_pt -d regression_sim_noise_1 --random 0 -m nasa_str --type regression --reg 2 -l squared --calc_loss 1 --bias 1 --lambda 0.0001 --threads 1 -i 4000 --strongness 0.0000001 
+//* ./pole_pt -d regression_sim_noise_1 --random 0 -m nasa_str --type regression --reg 2 -l squared --calc_loss 1 --bias 1 --lambda 0.0001 --threads 1 -i 4000 --strongness 1000
 //* ./pole_pt -d regression_sim_noise_1 --random 0 -m nasa --type regression --reg 2 -l squared --calc_loss 1 --bias 1 --lambda 0.0001 --threads 1 -i 4000 --dbound 0.6
-//* ./pole_pt -d regression_sim_noise_1 --random 0 -m nasa_g --type regression --reg 2 -l squared --calc_loss 1 --bias 1 --lambda 0.0001 --threads 1 -i 2000 --dbound 0.7
+//* ./pole_pt -d regression_sim_noise_1 --random 0 -m nasa_g --type regression --reg 2 -l squared --calc_loss 1 --bias 1 --lambda 0.0001 --threads 1 -i 4000 --dbound 0.7
+//* ./pole_pt -d svmguide1 --random 1 -m nasa_str --type classification -l hinge --reg 2 --calc_loss 1 --bias 1 --lambda 0.01  --threads 1 -e 600 --strongness 6.5
+//* ./pole_pt -d svmguide1 --random 1 -m nasa --type classification -l hinge --reg 2 --calc_loss 1 --bias 1 --lambda 0.01 --threads 1 -e 600 --dbound 1.5
+//* ./pole_pt -d svmguide1 --random 1 -m nasa_str --type classification -l squared --reg 2 --calc_loss 1 --bias 1 -c 100 --threads 1 -e 600 --strongness 40000
+//* ./pole_pt -d svmguide1 --random 1 -m nasa_str --type classification -l logistic --reg 2 --calc_loss 1 --bias 1 -c 100 --threads 1 -e 600 --strongness 20
 //***********************************************************
 #include "opt_nasa.h"
 
@@ -123,21 +128,21 @@ void* NASA::NasaThread(void *in_par) {
           // NASA for strongly convex
           if (Lp->opt_name_ == "nasa_str") {
               if (Lp->sum_deltasq_pool_[tid] < 1.0) {
-                  eta = Lp->strongness_ / Lp->reg_factor_;
+                  eta = 1 / Lp->strongness_;
               }
               else {
                   //cout <<Lp->sum_deltasq_pool_[tid] << endl;
-                  eta = Lp->strongness_ * Lp->max_deltasq_pool_[tid] / 
-                      (Lp->reg_factor_ * Lp->sum_deltasq_pool_[tid]);
+                  eta = Lp->max_deltasq_pool_[tid] / 
+                      (Lp->strongness_ * Lp->sum_deltasq_pool_[tid]);
               }
           }
           // NASA_g for strongly convex
           else if (Lp->opt_name_ == "nasa_str_g") {
               if (Lp->sum_gdsq_pool_[tid] < 1.0)
-                  eta = Lp->strongness_ / Lp->reg_factor_;
+                  eta = 1 / Lp->strongness_;
               else
-                  eta = Lp->strongness_ * Lp->max_gdsq_pool_[tid] / 
-                      (Lp->reg_factor_ * Lp->sum_gdsq_pool_[tid]);
+                  eta = Lp->max_gdsq_pool_[tid] / 
+                      (Lp->strongness_ * Lp->sum_gdsq_pool_[tid]);
           }
           else {
               cout << "ERROR! Unkown NASA method."<< endl;

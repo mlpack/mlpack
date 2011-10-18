@@ -106,7 +106,7 @@ void* OGDK<TKernel>::OgdKThread(void *in_par) {
       //----------------- step sizes for KOGD ---------------
       // Assuming strong convexity
       if (Lp->opt_name_ == "kogd_str") {
-        eta= Lp->strongness_ / (Lp->reg_factor_ * Lp->t_n_it_[tid]);
+        eta = 1 / (Lp->strongness_ * Lp->t_n_it_[tid]);
       }
       // Assuming general convexity
       else if (Lp->opt_name_ == "kogd") {
