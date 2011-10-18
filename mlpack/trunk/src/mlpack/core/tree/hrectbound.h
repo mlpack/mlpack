@@ -13,6 +13,7 @@
 #define __TREE_HRECTBOUND_H
 
 #include <armadillo>
+#include "mlpack/core/math/range.h"
 
 namespace mlpack {
 namespace bound {

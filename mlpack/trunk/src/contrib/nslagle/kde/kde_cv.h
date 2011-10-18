@@ -1,13 +1,15 @@
 #ifndef KDE_CV_H
 #define KDE_CV_H
 
-#include "contrib/dongryel/proximity_project/general_spacetree.h"
-#include "contrib/dongryel/proximity_project/gen_kdtree.h"
-#include "contrib/dongryel/nested_summation_template/function.h"
-#include "contrib/dongryel/nested_summation_template/operator.h"
-#include "contrib/dongryel/nested_summation_template/ratio.h"
-#include<log.h>
-#include "contrib/dongryel/nested_summation_template/sum.h"
+#include "mlpack/core/tree/hrectbound.h"
+
+#include "../proximity_project/general_spacetree.h"
+#include "../proximity_project/gen_kdtree.h"
+#include "../nested_summation_template/function.h"
+#include "../nested_summation_template/operator.h"
+#include "../nested_summation_template/ratio.h"
+//#include <log.h>
+#include "../nested_summation_template/sum.h"
 
 template<typename TKernel>
 class KdeCV {
@@ -16,7 +18,7 @@ class KdeCV {
 
   /** @brief The type of the tree used for the algorithm.
    */
-  typedef GeneralBinarySpaceTree<DHrectBound<2>, Matrix > TreeType;
+  typedef GeneralBinarySpaceTree<bound::HRectBound<2>, arma::mat > TreeType;
 
   /** @brief The root of the operator.
    */
@@ -28,11 +30,11 @@ class KdeCV {
 
   /** @brief The list of datasets associated with the operation.
    */
-  ArrayList<Matrix *> datasets_;
+  std::vector<arma::mat> datasets_;
 
   /** @brief The copy of the reference set.
    */
-  Matrix reference_set_;
+  arma::mat reference_set_;
 
   /** @brief The tree used for the stratified sampling.
    */
@@ -41,37 +43,44 @@ class KdeCV {
  public:
 
   void set_bandwidth(double bandwidth_in) {
-    
+
   }
 
-  void Init(const Matrix &reference_set_in) {
+  void Init(const arma::mat &reference_set_in) {
 
     // Make a copy of the dataset and make a tree out of it.
-    reference_set_.Copy(reference_set_in);
+    reference_set_ = arma::mat(reference_set_in.n_rows, reference_set_in.n_cols);
+    for (size_t row = 0; row < reference_set_in.n_rows; ++row)
+    {
+      for (size_t column = 0; column < reference_set_in.n_cols; ++column)
+      {
+        reference_set_(row,column) = reference_set_in(row, column);
+      }
+    }
     data_root_ = proximity::MakeGenKdTree<double, TreeType,
-      proximity::GenKdTreeMedianSplitter>(reference_set_, 40, 
-					  (ArrayList<size_t> *) NULL, NULL);
+      proximity::GenKdTreeMedianSplitter>(reference_set_, 40,
+					  (std::vector<size_t> *) NULL, NULL);
 
     // Push in the pointer twice for the dataset since the query
     // equals the reference...
-    datasets_.Init(2);
-    datasets_[0] = &reference_set_;
-    datasets_[1] = &reference_set_;
+    datasets_.resize(2);
+    datasets_[0] = reference_set_;
+    datasets_[1] = reference_set_;
 
     // Allocate the kernel function...
     KernelFunction<TKernel> *kernel_function = new KernelFunction<TKernel>();
-    kernel_function->Init(-1, &restrictions_, &datasets_, true, false);
+    kernel_function->Init(-1, restrictions_, datasets_, true, false);
 
     // Just initialize to some bandwidths for a moment...
     kernel_function->InitKernelFunction(0, 1, 0.1);
 
     // Allocate the inner sum.
     Sum *inner_sum = new Sum();
-    inner_sum->Init(1, &restrictions_, &datasets_, true, false);
+    inner_sum->Init((size_t)1, restrictions_, datasets_, true, false);
 
     // Allocate the outer sum.
     operator_root_ = new Sum();
-    operator_root_->Init(0, &restrictions_, &datasets_, true, false);
+    operator_root_->Init((size_t)0, restrictions_, datasets_, true, false);
     
     // The outer sum owns the inner sum, which owns the kernel
     // function.
@@ -91,8 +100,8 @@ class KdeCV {
     return 0;
   }
 
-  double NaiveCompute() {
-    
+  double NaiveCompute()
+  {
     // Set of dataset indices that have been chosen throughout the
     // computation; this acts as a stack of arguments.
     std::map<size_t, size_t> constant_dataset_indices;
@@ -100,21 +109,24 @@ class KdeCV {
     return operator_root_->NaiveCompute(constant_dataset_indices);
   }
 
-  double BaseNaiveCompute() {
-
+  double BaseNaiveCompute()
+  {
     double sum = 0.0;
     TKernel kernel;
     kernel.Init(0.1);
-    const Matrix &references = *(datasets_[0]);
-    for(size_t i = 0; i < references.n_cols(); i++) {
-      const double *point_i = references.GetColumnPtr(i);
-      for(size_t j = 0; j < references.n_cols(); j++) {
-	const double *point_j = references.GetColumnPtr(j);
-	int dimension = references.n_rows();
-	
-	double dsqd = la::DistanceSqEuclidean(dimension, point_i, point_j);
-	
-	sum += kernel.EvalUnnormOnSq(dsqd);
+    const arma::mat references = datasets_[0];
+    int dimension = references.n_rows;
+    for(size_t i = 0; i < references.n_cols; i++)
+    {
+      for(size_t j = 0; j < references.n_cols; j++)
+      {
+        double dsqd = 0.0;
+        for (size_t d = 0; d < dimension; ++d)
+        {
+          double diff = references(d,i) - references(d,j);
+          dsqd += diff * diff;
+        }
+        sum += kernel.EvalUnnormOnSq(dsqd);
       }
     }
     return sum;

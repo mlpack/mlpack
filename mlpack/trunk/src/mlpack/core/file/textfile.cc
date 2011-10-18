@@ -283,7 +283,7 @@ void TextTokenizer::Error(const char *format, ...) {
 void TextTokenizer::Error_(const char *msg, const std::vector<char>& token) {
   next_type_ = INVALID;
 
-  printf("size is %li, token[0] = %d\n", token.size(), token[0]);
+  printf("size is %zu, token[0] = %d\n", token.size(), token[0]);
   Error("%s", msg);
   next_.clear();
 }

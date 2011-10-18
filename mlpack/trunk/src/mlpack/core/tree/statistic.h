@@ -17,11 +17,12 @@
  *
  * @experimental
  */
+template <class TDataset>
 class EmptyStatistic {
   public:
     EmptyStatistic() {}
     ~EmptyStatistic() {}
-  
+
     /**
      * Initializes by taking statistics on raw data.
      */
