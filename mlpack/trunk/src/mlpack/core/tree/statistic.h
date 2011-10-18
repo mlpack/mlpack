@@ -17,7 +17,7 @@
  *
  * @experimental
  */
-template <class TDataset>
+// TODO: determine how to handle this template <class TDataset>
 class EmptyStatistic {
   public:
     EmptyStatistic() {}
