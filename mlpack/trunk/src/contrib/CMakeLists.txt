@@ -19,12 +19,12 @@ set(DIRS
 #   houyang
 #   huijing
 #   jim
-#   march
-#   niche
+   march
+   niche
    nslagle
 #   nvasil
 #   pagarwal
-#   pram
+   pram
 #   rcurtin
 #   rriegel
 #   soyeon
