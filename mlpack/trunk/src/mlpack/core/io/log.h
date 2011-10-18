@@ -9,16 +9,16 @@
 namespace mlpack {
 
 /*
- * This class focuses on facilitating formatted output to the terminal.
+ * This class facilitates formatted output to the terminal.
  */
 class Log {
- public:  
+ public:
   /*
    * Checks if the specified condition is true.
    * If not, halts program execution and prints a custom error message.
    * Does nothing in non-debug mode.
    */
-  static void Assert(bool condition, 
+  static void Assert(bool condition,
       const char* message="Assert Failed.");
 
 

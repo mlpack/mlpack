@@ -51,7 +51,7 @@
  *
  *   - Ryan Curtin <gth671b@mail.gatech.edu>
  *   - James Cline <james.cline@gatech.edu>
- *   - Neil Slagle <npslagle@gmail.com>
+ *   - Neil Slagle <nslagle3@gatech.edu>
  *   - Matthew Amidon <mamidon@gatech.edu>
  *   - Vlad Grantcharov <vlad321@gatech.edu>
  *   - Ajinkya Kale <kaleajinkya@gmail.com>

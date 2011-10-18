@@ -117,6 +117,5 @@ int main(int argc, char *argv[]) {
     Log::Fatal << "Error while opening " << output_file << ": " << e.what()
         << endl;
   }
-
   delete allknn;
 }
