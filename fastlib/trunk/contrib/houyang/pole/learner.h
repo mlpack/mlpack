@@ -63,6 +63,8 @@ class Learner {
   double sigma_; // sigma in Gaussian RBF kernel
   T_IDX trdim_; // dimension for transformed features
   int    comm_method_; // How agents communicate with each other
+  double dbound_; // Upper bound for D_{psi,X}(x_t, x^*).
+  double strongness_; // strongly convex constant
  private:
   pthread_mutex_t mutex_ex_;
 
