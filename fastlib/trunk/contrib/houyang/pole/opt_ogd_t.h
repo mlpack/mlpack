@@ -1,7 +1,8 @@
 //***********************************************************
 //* Online Kernel Gradient Descent with Transformed Features
 //* Examples:
-//* ./pole_pt -d svmguide1 -m togd_str --transform fourier_rbf --calc_loss 1 --comm 1 -c 100 -b 1 --bias 1 -e 50 --sigma 3 --trdim 1000 --threads 2 --strongness 0.8
+//* ./pole_pt -d svmguide1 -m togd_str --transform fourier_rbf --calc_loss 1 --comm 1 --lambda 0.01 -b 1 --bias 1 -e 50 --sigma 3 --trdim 1000 --threads 1 --strongness 0.0125
+//* ./pole_pt -d svmguide1 -m togd --transform fourier_rbf --calc_loss 1 --comm 1 --lambda 0.01 -b 1 --bias 1 -e 50 --sigma 3 --trdim 1000 --threads 1 --random 1 --dbound 0.08
 //***********************************************************
 #ifndef OPT_OGD_T_H
 #define OPT_OGD_T_H
@@ -112,7 +113,7 @@ void* OGDT<TTransform>::OgdTThread(void *in_par) {
       //----------------- step sizes for OGD_T ---------------
       // Assuming strong convexity
       if (Lp->opt_name_ == "togd_str") {
-        eta= Lp->strongness_ / (Lp->reg_factor_ * Lp->t_n_it_[tid]);
+        eta = 1 / (Lp->strongness_ * Lp->t_n_it_[tid]);
       }
       // Assuming general convexity
       else if (Lp->opt_name_ == "togd") {

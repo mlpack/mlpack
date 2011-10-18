@@ -1,4 +1,10 @@
-
+//***********************************************************
+//* Online Exponentiated Gradient
+//*
+//* Examples:
+//* ./pole_pt -d svmguide1 -m oeg_str --type classification -l hinge --calc_loss 1 --bias 1 --comm 1 -c 100 -b 1 -e 600 --threads 1 --strongness 60000
+//* ./pole_pt -d svmguide1 -m oeg --type classification -l hinge --calc_loss 1 --bias 1 --comm 1 -c 100 -b 1 -e 600 --threads 1 --dbound 0.025
+//***********************************************************
 #include "opt_oeg.h"
 
 struct thread_par {
@@ -70,15 +76,21 @@ void* OEG::OegThread(void *in_par) {
     case 1: // predict and local update
       double eta;
       Lp->t_n_it_[tid] = Lp->t_n_it_[tid] + 1;
-      /*
-      if (Lp->reg_type_ == 2) {
-	eta= 1.0 / (Lp->reg_factor_ * Lp->t_n_it_[tid]);
+
+      //----------------- step sizes for OEG ---------------
+      // Assuming strong convexity: oeg_str
+      if (Lp->opt_name_ == "oeg_str") {
+        eta = 1 / (Lp->strongness_*Lp->t_n_it_[tid]);
+      }
+      // Assuming general convexity: oeg
+      else if (Lp->opt_name_ == "oeg") {
+        eta = Lp->dbound_ / sqrt(Lp->t_n_it_[tid]);
       }
       else {
-	eta = 1.0 / sqrt(Lp->t_n_it_[tid]);
+        cout << "ERROR! Unkown OEG method."<< endl;
+        exit(1);
       }
-      */
-      eta = 1.0 / Lp->t_n_it_[tid];
+
       //--- local update: subgradient of loss function
       uv.Clear(); ub = 0.0;
       for (T_IDX b = 0; b<Lp->mb_size_; b++) {
@@ -129,8 +141,8 @@ void OEG::Learn() {
   pthread_barrier_init(&barrier_msg_all_sent_, NULL, n_thread_);
   pthread_barrier_init(&barrier_msg_all_used_, NULL, n_thread_);
   // init learning rate
-  eta0_ = sqrt(TR_->Size());
-  t_init_ = 1.0 / (eta0_ * reg_factor_);
+  //eta0_ = sqrt(TR_->Size());
+  //t_init_ = 1.0 / (eta0_ * reg_factor_);
   // init parameters
   w_p_pool_.resize(n_thread_);
   w_n_pool_.resize(n_thread_);
