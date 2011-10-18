@@ -11,7 +11,7 @@
 #ifndef TREE_DCONEBOUND_H
 #define TREE_DCONEBOUND_H
 
-#include "fastlib/math/math_lib.h"
+#include "mlpack/core/math/math_lib.h"
 
 // Awaiting transition
 #include "cosine.h"

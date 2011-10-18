@@ -9,7 +9,8 @@
 #define GEN_METRIC_TREE_IMPL_H
 
 #include <assert.h>
-#include <fastlib/fastlib.h>
+#include <mlpack/core.h>
+#include <mlpack/core/tree/bounds.h>
 #include <armadillo>
 
 namespace tree_gen_metric_tree_private {

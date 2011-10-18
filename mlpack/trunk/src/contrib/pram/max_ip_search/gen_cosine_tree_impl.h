@@ -8,7 +8,7 @@
 #define GEN_COSINE_TREE_IMPL_H
 
 #include <assert.h>
-#include <fastlib/fastlib.h>
+#include <mlpack/core.h>
 #include <armadillo>
 #include "cosine.h"
 

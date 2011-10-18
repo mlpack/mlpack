@@ -80,10 +80,10 @@ int main (int argc, char *argv[]) {
 
   fast_exact.Init(qdata, rdata);
 
-  printf("k = "); fflush(NULL);
+//   printf("k = "); fflush(NULL);
   for (knns = 1; knns <= max_k; knns++) {
 
-    printf("%zu", knns); fflush(NULL);
+    printf("k = %zu", knns); fflush(NULL);
     arma::Col<size_t> exc;
     arma::vec die;
     double fast_comp = fast_exact.ComputeNeighbors(&exc, &die);
@@ -98,10 +98,11 @@ int main (int argc, char *argv[]) {
     }
 
     speedups(knns -1) = naive_comp / fast_comp;
+    printf(": %lg\n", speedups(knns -1));
 
     fast_exact.WarmInit(knns+1);
-    for (size_t i = 0; i < ceil(log10(knns + 0.001)); i++)
-      printf("\b"); fflush(NULL);
+//     for (size_t i = 0; i < ceil(log10(knns + 0.001)); i++)
+//       printf("\b"); fflush(NULL);
   }
 
   printf("\n");

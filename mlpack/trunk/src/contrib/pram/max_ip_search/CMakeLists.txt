@@ -37,7 +37,7 @@ add_executable(max_ip_main
    max_ip_main.cc
 )
 target_link_libraries(max_ip_main
-   fastlib
+   #fastlib
    mlpack
    mlpack_contrib
 )
@@ -62,4 +62,15 @@ target_link_libraries(cosine_tree_test
    fastlib
    mlpack
    mlpack_contrib
+)
+
+# The code to compute the rank for the given query 
+# and reference sets 
+add_executable(rank_computer
+   EXCLUDE_FROM_ALL
+   pairwise_dists.cc
+)
+target_link_libraries(rank_computer
+   #fastlib
+   mlpack
 )

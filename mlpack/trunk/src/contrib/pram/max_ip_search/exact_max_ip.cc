@@ -55,6 +55,8 @@ double MaxIP::MaxNodeIP_(TreeType* reference_node) {
 	// return negative values as well
 	max_cos_qr = std::max(cos_qp_max_pr, 0.0);
       }
+    } else { 
+      ball_has_origin_++;
     }
 
   }
@@ -118,6 +120,8 @@ double MaxIP::MaxNodeIP_(CTreeType* query_node,
 	  max_cos_qp = std::max(cos_phi_theta_w, 0.0);
 	}
       }
+    } else {
+      ball_has_origin_++;
     }
   }
 
@@ -133,39 +137,44 @@ void MaxIP::ComputeBaseCase_(TreeType* reference_node) {
   assert(query_ < queries_.n_cols);
 
     
-  std::vector<std::pair<double, size_t> > candidates(knns_);
+//   std::vector<std::pair<double, size_t> > candidates(knns_);
 
   // Get the query point from the matrix
-  arma::vec q = queries_.col(query_); 
+  arma::vec q = queries_.unsafe_col(query_); 
 
-  size_t ind = query_*knns_;
-  for(size_t i = 0; i < knns_; i++)
-    candidates[i] = std::make_pair(max_ips_(ind+i),
-				   max_ip_indices_(ind+i));
+//   size_t ind = query_*knns_;
+//   for(size_t i = 0; i < knns_; i++)
+//     candidates[i] = std::make_pair(max_ips_(ind+i),
+// 				   max_ip_indices_(ind+i));
     
   // We'll do the same for the references
   for (size_t reference_index = reference_node->begin(); 
        reference_index < reference_node->end(); reference_index++) {
 
-    arma::vec rpoint = references_.col(reference_index);
+    arma::vec rpoint = references_.unsafe_col(reference_index);
 
     // We'll use arma to find the inner product of the two vectors
     // +1
     double ip = arma::dot(q, rpoint);
     // If the reference point is greater than the current candidate, 
     // we'll update the candidate
-    if (ip > max_ips_(ind+knns_-1)) {
-      candidates.push_back(std::make_pair(ip, reference_index));
+//     if (ip > max_ips_(ind+knns_-1)) {
+//       candidates.push_back(std::make_pair(ip, reference_index));
+//     }
+    size_t insert_position = SortValue(ip);
+
+    if (insert_position != (size_t() -1)) {
+      InsertNeighbor(insert_position, reference_index, ip);
     }
   } // for reference_index
 
-  std::sort(candidates.begin(), candidates.end());
-  std::reverse(candidates.begin(), candidates.end());
-  for(size_t i = 0; i < knns_; i++) {
-    max_ips_(ind+i) = candidates[i].first;
-    max_ip_indices_(ind+i) = candidates[i].second;
-  }
-  candidates.clear();
+//   std::sort(candidates.begin(), candidates.end());
+//   std::reverse(candidates.begin(), candidates.end());
+//   for(size_t i = 0; i < knns_; i++) {
+//     max_ips_(ind+i) = candidates[i].first;
+//     max_ip_indices_(ind+i) = candidates[i].second;
+//   }
+//   candidates.clear();
 
   // for now the query lower bounds are accessed from 
   // the variable 'max_ips_(query_ * knns_ + knns_ - 1)'
@@ -174,6 +183,46 @@ void MaxIP::ComputeBaseCase_(TreeType* reference_node) {
     += reference_node->end() - reference_node->begin();
          
 } // ComputeBaseCase_
+
+size_t MaxIP::SortValue(double value) {
+
+  // The first element in the list is the nearest neighbor.  We only want to
+  // insert if the new distance is less than the last element in the list.
+  size_t ind = query_ * knns_;
+  if (value <  max_ips_(ind + knns_ -1))
+    return (size_t() - 1); // Do not insert.
+
+  // Search from the beginning.  This may not be the best way.
+  for (size_t i = 0; i < knns_; i++) {
+    if (value > max_ips_(ind + i))
+      return i;
+  }
+
+  // Control should never reach here.
+  return (size_t() - 1);
+
+}
+
+void MaxIP::InsertNeighbor(size_t pos, size_t point_ind, double value) {
+
+  size_t ind = query_ * knns_;
+  // We only memmove() if there is actually a need to shift something.
+  if (pos < (knns_ - 1)) {
+    size_t len = (knns_ - 1) - pos;
+
+    memmove(max_ips_.memptr() + ind + (pos + 1),
+	    max_ips_.memptr() + ind + pos,
+	    sizeof(double) * len);
+    memmove(max_ip_indices_.memptr() + ind + (pos + 1),
+	    max_ip_indices_.memptr() + ind + pos,
+	    sizeof(size_t) * len);
+  }
+
+  // Now put the new information in the right index.
+  max_ips_(query_ * knns_ + pos) = value;
+  max_ip_indices_(query_ * knns_ + pos) = point_ind;
+
+}
 
 
 void MaxIP::ComputeNeighborsRecursion_(TreeType* reference_node, 
@@ -411,6 +460,7 @@ void MaxIP::Init(const arma::mat& queries_in,
     
   // track the number of prunes and computations
   number_of_prunes_ = 0;
+  ball_has_origin_ = 0;
   distance_computations_ = 0;
   split_decisions_ = 0;
     
@@ -475,6 +525,7 @@ void MaxIP::InitNaive(const arma::mat& queries_in,
     
   // track the number of prunes and computations
   number_of_prunes_ = 0;
+  ball_has_origin_ = 0;
   distance_computations_ = 0;
   split_decisions_ = 0;
     
@@ -515,6 +566,7 @@ void MaxIP::WarmInit(size_t knns) {
     
   // track the number of prunes and computations
   number_of_prunes_ = 0;
+  ball_has_origin_ = 0;
   distance_computations_ = 0;
   split_decisions_ = 0;
     
@@ -563,8 +615,13 @@ double MaxIP::ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
     for (size_t i = 0; i < max_ips_.n_elem; i++) {
       size_t query = old_from_new_queries_(i / knns_);
       assert(max_ip_indices_(i) != (size_t) -1 || max_ips_(i) == 0.0);
-      (*resulting_neighbors)(query*knns_+ i%knns_)
-	= old_from_new_references_(max_ip_indices_(i));
+
+      if (max_ip_indices_(i) != (size_t) -1)
+	(*resulting_neighbors)(query*knns_+ i%knns_)
+	  = old_from_new_references_(max_ip_indices_(i));
+      else 
+	(*resulting_neighbors)(query*knns_+ i%knns_) = -1;
+
       (*ips)(query*knns_+ i%knns_) = max_ips_(i);
     }
 
