@@ -1,0 +1,7 @@
+//***********************************************************
+//* Weighted Majority
+//***********************************************************
+
+Examples:
+
+./pole_pt -d cod-rna -m dwm_a --type classification --calc_loss 1 --comm 1 -b 1 --threads 1 --alpha 0.9 -p 8 -i 6000
