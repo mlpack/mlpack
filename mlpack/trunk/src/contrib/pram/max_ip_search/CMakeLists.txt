@@ -20,6 +20,8 @@ set(SOURCES
    # Max-inner-product search class
    exact_max_ip.h
    exact_max_ip.cc
+   approx_max_ip.h
+   approx_max_ip.cc
 )
 
 # add directory name to sources
@@ -48,7 +50,7 @@ add_executable(max_ip_tester
    max_ip_tester.cc
 )
 target_link_libraries(max_ip_tester
-   fastlib
+   #fastlib
    mlpack
    mlpack_contrib
 )
@@ -59,7 +61,7 @@ add_executable(cosine_tree_test
    cosine_tree_test.cc
 )
 target_link_libraries(cosine_tree_test
-   fastlib
+   #fastlib
    mlpack
    mlpack_contrib
 )
