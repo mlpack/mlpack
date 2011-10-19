@@ -18,6 +18,6 @@ int main(int argc, char *argv[]) {
   
   cout << "--------------------------------------------" << endl;
   cout << "Total time: " << duration << endl;
-  cout << "Total time in ms: " << duration.total_milliseconds() << endl;
+  cout << "Total time in ms: " << duration.total_milliseconds() << endl << endl;
 
 }
