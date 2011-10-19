@@ -1,10 +1,10 @@
 /**
- * @file exact_max_ip.h
+ * @file approx_max_ip.h
  *
  */
 
-#ifndef EXACT_MAX_IP_H
-#define EXACT_MAX_IP_H
+#ifndef APPROX_MAX_IP_H
+#define APPROX_MAX_IP_H
 
 #include <assert.h>
 #include <mlpack/core.h>
@@ -19,69 +19,90 @@
 
 using namespace mlpack;
 
-PARAM_MODULE("maxip", "Parameters for the class that "
+PARAM_MODULE("approx_maxip", "Parameters for the class that "
 	     "builds a tree on the reference set and "
-	     "searches for the maximum inner product "
+	     "searches for the approximate maximum inner product "
 	     "by the branch-and-bound method.");
 
 PARAM_INT("knns", "The number of top innner products required",
-	  "maxip", 1);
+	  "approx_maxip", 1);
+PARAM_DOUBLE("epsilon", "The rank error in terms of the \% of "
+	     "reference set size", "approx_maxip", 1.0);
+PARAM_DOUBLE("alpha", "The error probability",
+	     "approx_maxip", 0.95);
+PARAM_INT("sample_limit", "The maximum number of samples allowed "
+	  "when the node can be approximated by sampling.", 
+	  "approx_maxip", 20);
 PARAM_INT("leaf_size", "The leaf size for the ball-tree", 
-	  "maxip", 20);
+	  "approx_maxip", 20);
 
 PARAM_FLAG("angle_prune", "The flag to trigger the tighter"
-	   " pruning using the angles as well", "maxip");
+	   " pruning using the angles as well", "approx_maxip");
 PARAM_FLAG("dual_tree", "The flag to trigger dual-tree "
 	   "computation, using a cosine tree for the "
-	   "queries.", "maxip");
+	   "queries.", "approx_maxip");
 
 PARAM_FLAG("check_prune", "The flag to trigger the "
-	   "checking of the prune.", "maxip");
-
-
-
-//   {"tree_building", FX_TIMER, FX_CUSTOM, NULL,
-//    " The timer to record the time taken to build" 
-//    " the query and the reference tree.\n"},
-//   {"tree_building_approx", FX_TIMER, FX_CUSTOM, NULL,
-//    " The timer to record the time taken to build" 
-//    " the query and the reference tree for InitApprox.\n"},
-//   {"computing_sample_sizes", FX_TIMER, FX_CUSTOM, NULL,
-//    " The timer to compute the sample sizes.\n"},
-
-
+	   "checking of the prune.", "approx_maxip");
 /**
  * Performs maximum-inner-product-search. 
  * This class will build the trees and 
  * perform the recursive  computation.
  */
-class MaxIP {
+class ApproxMaxIP {
   
   //////////////////////////// Nested Classes /////////////////////////
   class QueryStat {
   private:
     double bound_;
+    size_t total_points_;
+    size_t samples_;
 
   public:
     double bound() { return bound_; }
+    size_t samples() { return samples_; }
+    size_t total_points() { return total_points_; }
+
 
     void set_bound(double bound) { 
       bound_ = bound;
     }
 
+    void set_total_points(size_t points) { 
+      total_points_ = points;
+    }
+
+    void set_samples(size_t points) { 
+      samples_ = points;
+    }
+
+    void add_total_points(size_t points) { 
+      total_points_ += points;
+    }
+
+    void add_samples(size_t points) { 
+      samples_ += points;
+    }
+
     QueryStat() {
       bound_ = 0.0;
+      total_points_ = 0;
+      samples_ = 0;
     }
 
     ~QueryStat() {}
 
     void Init(const arma::mat& data, size_t begin, size_t count) {
       bound_ = 0.0;
+      total_points_ = 0;
+      samples_ = 0;
     }
 
     void Init(const arma::mat& data, size_t begin, size_t count,
 	      QueryStat& left_stat, QueryStat& right_stat) {
       bound_ = 0.0;
+      total_points_ = 0;
+      samples_ = 0;
     }
   }; // QueryStat
 
@@ -130,6 +151,16 @@ private:
   size_t split_decisions_;
 
 
+  // Approx search stuff
+  arma::Col<size_t> sample_sizes_;
+  size_t rank_approx_;
+  double epsilon_;
+
+  size_t sample_limit_;
+  size_t min_samples_per_q_;
+
+  size_t query_samples_needed_;
+
   /////////////////////////////// Constructors ////////////////////////
   
 public:
@@ -139,7 +170,7 @@ public:
    * responsible for ensuring that the object is ready
    * to be destroyed safely.  
    */
-  MaxIP() {
+  ApproxMaxIP() {
     reference_tree_ = NULL;
     query_tree_ = NULL;
   } 
@@ -148,7 +179,7 @@ public:
    * The tree is the only member we are responsible for deleting.
    * The others will take care of themselves.  
    */
-  ~MaxIP() {
+  ~ApproxMaxIP() {
     if (reference_tree_ != NULL) 
       delete reference_tree_;
  
@@ -173,28 +204,110 @@ private:
    */
   double MaxNodeIP_(CTreeType *query_node, TreeType* reference_node);
 
+
   /**
-   * Performs exhaustive computation at the leaves.  
+   * This function computes the probability of
+   * a particular quantile given the set and sample sizes
+   * Computes P(d_(1) <= d_(1+rank_approx))
    */
+  double ComputeProbability_(size_t set_size,
+                             size_t sample_size,
+                             size_t rank_approx);
+
+  /**
+   * This function computes the probability of
+   * a particular quantile given the set and sample sizes
+   * Computes P(d_(k) <= d_(rank_approx))
+   */
+  double ComputeProbability_(size_t set_size,
+                             size_t sample_size, size_t k,
+                             size_t rank_approx);
+  /**
+   * This function computes the minimum sample sizes
+   * required to obtain the approximate rank with
+   * a given probability (alpha).
+   * 
+   * It assumes that the ArrayList<size_t> *samples
+   * has been initialized to length N.
+   */
+  void ComputeSampleSizes_(size_t rank_approx, double alpha,
+                           arma::Col<size_t> *samples);
+
+  void ComputeSampleSizes_(size_t rank_approx, double alpha,
+                           size_t k, arma::Col<size_t> *samples);
+
+  /**
+   * Performs exhaustive approximate computation
+   * between two nodes.
+   */
+  void ComputeApproxBaseCase_(TreeType* reference_node);
+
+  void ComputeApproxBaseCase_(CTreeType* query_node,
+                              TreeType* reference_node);
+
   void ComputeBaseCase_(TreeType* reference_node);
 
-  /**
-   * Dual-tree: Performs exhaustive computation between two leaves.  
-   */
-  void ComputeBaseCase_(CTreeType* query_node, TreeType* reference_node);
-  
-  /**
-   * The recursive function
-   */
-  void ComputeNeighborsRecursion_(TreeType* reference_node, 
-				  double upper_bound_ip);
+  void ComputeBaseCase_(CTreeType* query_node,
+			TreeType* reference_node);
 
   /**
-   * Dual-tree: The recursive function
+   * The recursive function for the approximate computation
    */
-  void ComputeNeighborsRecursion_(CTreeType* query_node,
-				  TreeType* reference_node, 
-				  double upper_bound_ip);
+  void ComputeApproxRecursion_(TreeType* reference_node, 
+                               double upper_bound_ip);
+
+  void ComputeApproxRecursion_(CTreeType* query_node,
+                               TreeType* reference_node, 
+                               double upper_bound_ip);
+
+  // decides whether a reference node is small enough
+  // to approximate by sampling
+  inline bool is_base(TreeType* tree) {
+    if (sample_sizes_[tree->end() - tree->begin() -1]
+        > sample_limit_) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  // decides whether a query (node) has enough
+  // samples that we can approximate the rest by
+  // just picking a small number of samples
+  inline bool is_almost_satisfied() {
+    if (query_samples_needed_ > sample_limit_) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  inline bool is_almost_satisfied(CTreeType* tree) {
+    if (tree->stat().samples() + sample_limit_
+        < min_samples_per_q_) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  // check if the query (node) has enough samples
+  inline bool is_done() {
+    if (query_samples_needed_ > 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  inline bool is_done(CTreeType* tree) {
+    if (tree->stat().samples() < min_samples_per_q_) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
 
   void reset_tree_(CTreeType *tree);
 
@@ -209,7 +322,8 @@ public:
    * Note: we are initializing with const references to prevent 
    * local copies of the data.
    */
-  void Init(const arma::mat& queries_in, const arma::mat& references_in);
+  void InitApprox(const arma::mat& queries_in, 
+		  const arma::mat& references_in);
 
   void Destruct() {
     if (reference_tree_ != NULL)
@@ -219,32 +333,19 @@ public:
       delete query_tree_;
   }
 
-  /**
-   * Initializes the AllNN structure for naive computation.  
-   * This means that we simply ignore the tree building.
-   */
-  void InitNaive(const arma::mat& queries_in, 
-		 const arma::mat& references_in);
-
   /*
    *
    */
-  void WarmInit(size_t knns);
+  void WarmInitApprox(size_t knns, double epsilon);
 
   /**
    * Computes the nearest neighbors and stores them in *results
    */
-  double ComputeNeighbors(arma::Mat<size_t>* resulting_neighbors,
-			  arma::mat* ips);
-  
-  /**
-   * Does the entire computation naively
-   */
-  double ComputeNaive(arma::Mat<size_t>* resulting_neighbors,
-		      arma::mat* ips);
 
+  double ComputeApprox(arma::Mat<size_t>* resulting_neighbors,
+		       arma::mat* ips);
 
   void CheckPrune(CTreeType* query_node, TreeType* ref_node);
-}; //class MaxIP
+}; //class ApproxMaxIP
 
 #endif
