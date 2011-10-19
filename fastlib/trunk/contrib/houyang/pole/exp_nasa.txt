@@ -18,6 +18,8 @@ Examples:
 ./pole_pt -d heart_scale --random 1 -m nasa_str --type classification -l hinge --reg 2 --calc_loss 1 --bias 1 --lambda 0.00001 --threads 1 -e 3000 --strongness 2.3
 ./pole_pt -d heart_scale --random 1 -m nasa --type classification -l hinge --reg 2 --calc_loss 1 --bias 1 --lambda 1 --threads 1 -e 3000 --dbound 0.06
 
+./pole_pt -d gamma_train --random 1 -m nasa --type classification -l hinge --reg 2 --calc_loss 1 --bias 1 --lambda 0.001 --threads 1 -e 1 --dbound 0.05
+
 ----------------------------Regression-----------------------------------
 ./pole_pt -d regression_sim_noise_1 --random 0 -m nasa_str --type regression --reg 2 -l squared --calc_loss 1 --bias 1 --lambda 0.0001 --threads 1 -i 4000 --strongness 1000
 ./pole_pt -d regression_sim_noise_1 --random 0 -m nasa --type regression --reg 2 -l squared --calc_loss 1 --bias 1 --lambda 0.0001 --threads 1 -i 4000 --dbound 0.6
