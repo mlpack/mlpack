@@ -1,9 +1,5 @@
 //***********************************************************
 //* Online Exponentiated Gradient
-//*
-//* Examples:
-//* ./pole_pt -d svmguide1 -m oeg_str --type classification -l hinge --calc_loss 1 --bias 1 --comm 1 -c 100 -b 1 -e 600 --threads 1 --strongness 60000
-//* ./pole_pt -d svmguide1 -m oeg --type classification -l hinge --calc_loss 1 --bias 1 --comm 1 -c 100 -b 1 -e 600 --threads 1 --dbound 0.025
 //***********************************************************
 #include "opt_oeg.h"
 
