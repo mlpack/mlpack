@@ -24,7 +24,7 @@ set(DIRS
    nslagle
 #   nvasil
 #   pagarwal
-   pram
+#   pram
 #   rcurtin
 #   rriegel
 #   soyeon
