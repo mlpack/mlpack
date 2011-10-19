@@ -6,6 +6,7 @@ Learner::Learner() {
 }
 
 Learner::~Learner() {
+/*
   if (TR_)
     delete TR_;
   if (VA_)
@@ -16,6 +17,7 @@ Learner::~Learner() {
     delete LF_;
   if (LOG_)
     delete LOG_;
+*/
 }
 
 ////////////////////////////
