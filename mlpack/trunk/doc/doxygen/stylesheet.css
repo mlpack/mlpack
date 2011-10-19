@@ -866,4 +866,35 @@ div.tabs a {
 div.tabs span {
   padding-bottom: 0.25em;
   padding-top: 0.25em;
+  color: #ffffff !important;
+}
+
+div.tabs ul {
+  display: inline;
+  font-size: 100%;
+  padding-top: 0em;
+}
+
+/* I want the menus to display directly below the Trac menu. */
+#content {
+  padding-top: 0px;
+  margin-top: 0px;
+}
+
+div.tabs {
+  margin-bottom: 0px;
+  background-image: none;
+}
+
+div.nav {
+  border-bottom: 1px solid #808080;
+}
+
+/*** Fix the weird size of the menus */
+#mainnav {
+  font-size: 100% !important;
+}
+
+div#main div.nav {
+  min-height: 2em !important; /** We must have the right height. */
 }
