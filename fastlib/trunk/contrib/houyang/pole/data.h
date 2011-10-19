@@ -43,6 +43,7 @@ class Data {
   bool SorN(int c);
  public:
   Data(string fn, T_IDX port, bool random);
+  ~Data();
   T_IDX Size();
   bool ReadFileInfo();
   void ReadFromFile();

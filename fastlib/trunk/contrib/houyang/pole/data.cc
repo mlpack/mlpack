@@ -13,6 +13,12 @@ Data::Data(string fn, T_IDX port, bool random) :
   max_ft_idx_(0), max_n_nz_ft_(0), max_l_ln_(0) {
 }
 
+///////////////
+// Destruction
+///////////////
+Data::~Data() {
+}
+
 //////////////////////
 // Number of examples
 //////////////////////
