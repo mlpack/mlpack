@@ -128,7 +128,7 @@ HTML_OUTPUT            = html
 HTML_FILE_EXTENSION    = .html
 HTML_HEADER            =
 HTML_FOOTER            =
-HTML_STYLESHEET        =
+HTML_STYLESHEET        = doc/doxygen/stylesheet.css
 HTML_ALIGN_MEMBERS     = YES
 GENERATE_HTMLHELP      = NO
 CHM_FILE               =
@@ -228,7 +228,8 @@ CALLER_GRAPH           = NO
 GRAPHICAL_HIERARCHY    = YES
 DIRECTORY_GRAPH        = YES
 DOT_IMAGE_FORMAT       = png
-DOT_PATH               =
+# Hack dark color support in through the dot path.  Kind of cheating...
+DOT_PATH               = dot -Gbgcolor=black
 DOTFILE_DIRS           =
 MAX_DOT_GRAPH_WIDTH    = 800
 MAX_DOT_GRAPH_HEIGHT   = 600
