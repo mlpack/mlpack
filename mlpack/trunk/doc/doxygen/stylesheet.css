@@ -842,3 +842,28 @@ dl.bug
 .tablist li.current:hover {
   background: #BB2222 !important;
 }
+
+/***
+ * For trac-doxygen; these rules won't apply otherwise.
+ */
+div.tabs span {
+  background-image: none !important;
+  background: #000000 !important;
+  border-right: 1px solid #333333;
+  height: auto !important;
+  padding-bottom: 0.25em;
+  padding-top: 0.25em;
+  line-height: 1em !important;
+}
+
+div.tabs a {
+  background-image: none !important;
+  background: #000000 !important;
+  border-bottom: none !important;
+  font-size: 100% !important;
+}
+
+div.tabs span {
+  padding-bottom: 0.25em;
+  padding-top: 0.25em;
+}
