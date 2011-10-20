@@ -140,7 +140,6 @@ void NNSVM<TKernel>::LoadModel(arma::mat& testset, std::string modelfilename)
   char cmd[80];
   size_t i, j;
   double temp_f;
-  char kernel_name[1024];
   while (1)
   {
     fscanf(fp, "%80s", cmd);
