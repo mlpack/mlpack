@@ -86,7 +86,9 @@ WARN_LOGFILE           =
 INPUT                  = ./src/mlpack
 FILE_PATTERNS          = *.c \
                          *.cc \
-                         *.h
+                         *.h \
+                         *.hpp \
+                         *.cpp
 RECURSIVE              = YES
 EXCLUDE                =
 EXCLUDE_SYMLINKS       = YES
