@@ -348,6 +348,7 @@ void MixedLogitDCM<TableType, DistributionType>::Init(
   // for each person.
   train_table_.Init(
     arguments_in.attribute_table_,
+    arguments_in.attribute_dimensions_,
     arguments_in.decisions_table_,
     arguments_in.num_alternatives_table_);
 
@@ -355,6 +356,7 @@ void MixedLogitDCM<TableType, DistributionType>::Init(
   if(arguments_in.test_attribute_table_ != NULL) {
     test_table_.Init(
       arguments_in.test_attribute_table_,
+      arguments_in.attribute_dimensions_,
       arguments_in.test_decisions_table_,
       arguments_in.test_num_alternatives_table_);
   }

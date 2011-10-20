@@ -60,10 +60,10 @@ class ConstantDistribution {
     }
 
     static void Init(
-      int num_attributes_in, int *num_parameters_out,
+      const std::vector<int> &attribute_dimensions_in, int *num_parameters_out,
       PrivateData *private_data_out) {
 
-      *num_parameters_out = num_attributes_in;
+      *num_parameters_out = attribute_dimensions_in[0];
     }
 };
 }

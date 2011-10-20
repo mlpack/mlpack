@@ -163,9 +163,11 @@ class GaussianDistribution {
     }
 
     static void Init(
-      int num_attributes_in, int *num_parameters_out,
+      const std::vector<int> & attribute_dimensions_in,
+      int *num_parameters_out,
       PrivateData *private_data_out) {
 
+      int num_attributes_in = attribute_dimensions_in[0];
       *num_parameters_out = num_attributes_in * (num_attributes_in + 3) / 2;
       private_data_out->cholesky_factor_dimension_ = num_attributes_in;
       private_data_out->num_cholesky_factor_entries_ =

@@ -26,6 +26,10 @@ class MixedLogitDCMArguments {
      */
     TableType *attribute_table_;
 
+    /** @brief The dimensions of each component of an attribute.
+     */
+    std::vector<int> attribute_dimensions_;
+
     /** @brief The decision per each person.
      */
     TableType *decisions_table_;
