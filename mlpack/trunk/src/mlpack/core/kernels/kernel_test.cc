@@ -9,8 +9,7 @@
 #include "mahalanobis_distance.h"
 #include "cosine_distance.hpp"
 #include "gaussian_kernel.hpp"
-
-#include "kernel.h"
+#include "linear_kernel.hpp"
 
 #define BOOST_TEST_MODULE Kernel Test
 #include <boost/test/unit_test.hpp>

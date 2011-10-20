@@ -5,8 +5,8 @@
  * This implements the cosine distance (or cosine similarity) between two
  * vectors, which is a measure of the angle between the two vectors.
  */
-#ifndef __MLPACK_CORE_KERNELS_COSINE_DISTANCE_H
-#define __MLPACK_CORE_KERNELS_COSINE_DISTANCE_H
+#ifndef __MLPACK_CORE_KERNELS_COSINE_DISTANCE_HPP
+#define __MLPACK_CORE_KERNELS_COSINE_DISTANCE_HPP
 
 #include <armadillo>
 
