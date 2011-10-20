@@ -22,11 +22,15 @@ class GaussianDistribution {
     class PrivateData {
       public:
 
+        std::vector<int> attribute_dimensions_;
+
         int cholesky_factor_dimension_;
 
         int num_cholesky_factor_entries_;
 
         std::vector<int> nonzero_column_indices_;
+
+        std::vector<int> row_blocks_;
 
         std::vector<int> start_indices_;
 
@@ -35,6 +39,8 @@ class GaussianDistribution {
          *         gradient with respect to parameter.
          */
         arma::vec cached_solution_;
+
+        arma::vec cached_diagonal_solution_;
 
         arma::mat cholesky_factor_;
 
@@ -94,13 +100,33 @@ class GaussianDistribution {
 
       // Solve. The right hand side is basically beta_vector shifted
       // by the means.
-      arma::vec mean_vector(
+      arma::vec mean_vector_cholesky_part_alias(
         const_cast<arma::vec &>(parameters).memptr(),
-        beta_vector.n_elem, false);
-      arma::vec right_hand_side = beta_vector - mean_vector;
+        private_data->cholesky_factor_dimension_, false);
+      arma::vec beta_vector_cholesky_part_alias(
+        const_cast<arma::vec &>(beta_vector).memptr(),
+        private_data->cholesky_factor_dimension_, false);
+      arma::vec right_hand_side = beta_vector_cholesky_part_alias -
+                                  mean_vector_cholesky_part_alias;
       private_data->cached_solution_ =
         arma::solve(
           private_data->cholesky_factor_, right_hand_side);
+
+      // Solve the diagonal component as well.
+      arma::vec mean_vector_diag_part_alias(
+        const_cast<arma::vec &>(parameters).memptr() +
+        private_data->attribute_dimensions_[0] +
+        private_data->attribute_dimensions_[1],
+        private_data->attribute_dimensions_[2] , false);
+      arma::vec beta_vector_diag_part_alias(
+        const_cast<arma::vec &>(beta_vector).memptr() +
+        private_data->attribute_dimensions_[0] +
+        private_data->attribute_dimensions_[1],
+        private_data->attribute_dimensions_[2] , false);
+      arma::vec diag_right_hand_side = beta_vector_diag_part_alias -
+                                       mean_vector_diag_part_alias;
+      private_data->cached_diagonal_solution_ =
+        diag_right_hand_side / mean_vector_diag_part_alias;
     }
 
     /** @brief Returns the (row, col)-th entry of
@@ -111,10 +137,8 @@ class GaussianDistribution {
       const arma::vec &parameters, const arma::vec &beta_vector,
       int row_index, int col_index) {
 
-      int num_attributes = beta_vector.n_elem;
-
       // Upper half of $K \times K$ block is the identity matrix.
-      if(row_index < num_attributes) {
+      if(row_index < private_data.row_blocks_[0]) {
         if(row_index == col_index) {
           return 1.0;
         }
@@ -123,8 +147,8 @@ class GaussianDistribution {
         }
       }
 
-      // Lower half.
-      else {
+      // The second part.
+      else if(row_index < private_data.row_blocks_[1]) {
 
         // Locate the non-zero column for this row. If the col_index
         // matches this index, then return a non-zero value.
@@ -140,6 +164,41 @@ class GaussianDistribution {
           return 0.0;
         }
       }
+
+      // The third part,
+      else if(row_index < private_data.row_blocks_[2]) {
+        if(row_index - private_data.row_blocks_[1] +
+            private_data.attribute_dimensions_[0] == col_index) {
+          return 1.0;
+        }
+        else {
+          return 0.0;
+        }
+      }
+
+      // The fourth part,
+      else if(row_index < private_data.row_blocks_[3]) {
+        if(row_index - private_data.row_blocks_[2] +
+            private_data.attribute_dimensions_[0] +
+            private_data.attribute_dimensions_[1] == col_index) {
+          return 1.0;
+        }
+        else {
+          return 0.0;
+        }
+      }
+      else {
+        if(row_index - private_data.row_blocks_[3]  +
+            private_data.attribute_dimensions_[0] +
+            private_data.attribute_dimensions_[1] == col_index) {
+          return private_data.cached_diagonal_solution_[
+                   row_index - private_data.row_blocks_[3] ];
+        }
+        else {
+          return 0.0;
+        }
+      }
+      return 0.0;
     }
 
     /** @brief Draws a new $\beta$ from the Gaussian distribution.
@@ -167,9 +226,22 @@ class GaussianDistribution {
       int *num_parameters_out,
       PrivateData *private_data_out) {
 
-      int num_attributes_in = attribute_dimensions_in[0];
-      *num_parameters_out = num_attributes_in * (num_attributes_in + 3) / 2;
-      private_data_out->cholesky_factor_dimension_ = num_attributes_in;
+      private_data_out->attribute_dimensions_ = attribute_dimensions_in;
+      private_data_out->row_blocks_.push_back(attribute_dimensions_in[0]);
+      private_data_out->row_blocks_.push_back(
+        private_data_out->row_blocks_.back() +
+        attribute_dimensions_in[0] * (attribute_dimensions_in[0] + 1) / 2);
+      private_data_out->row_blocks_.push_back(
+        private_data_out->row_blocks_.back() + attribute_dimensions_in[1]);
+      private_data_out->row_blocks_.push_back(
+        private_data_out->row_blocks_.back() + attribute_dimensions_in[2]);
+      private_data_out->row_blocks_.push_back(
+        private_data_out->row_blocks_.back() + attribute_dimensions_in[2]);
+
+      *num_parameters_out =
+        attribute_dimensions_in[0] * (attribute_dimensions_in[0] + 3) / 2 +
+        attribute_dimensions_in[1] + 2 * attribute_dimensions_in[2] ;
+      private_data_out->cholesky_factor_dimension_ = attribute_dimensions_in[0];
       private_data_out->num_cholesky_factor_entries_ =
         (private_data_out->cholesky_factor_dimension_) *
         (private_data_out->cholesky_factor_dimension_ + 1) / 2;
