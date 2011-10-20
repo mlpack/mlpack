@@ -63,6 +63,8 @@
  *   - Hua Ouyang <houyang@gatech.edu>
  *   - Long Quoc Tran <tqlong@gmail.com>
  *   - Noah Kauffman <notoriousnoah@gmail.com>
+ *   - Guillermo Colon <gcolon7@mail.gatech.edu>
+ *   - Wei Guan <wguan@cc.gatech.edu>
  */
 
 // First, standard includes.
@@ -98,6 +100,5 @@
 #include <mlpack/core/io/io.h>
 #include <mlpack/core/io/log.h>
 #include <mlpack/core/arma_extend/arma_extend.h>
-#include <mlpack/core/kernels/kernel.h>
 
 #endif
