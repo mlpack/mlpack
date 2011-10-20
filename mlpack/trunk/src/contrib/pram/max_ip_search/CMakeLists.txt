@@ -39,7 +39,6 @@ add_executable(max_ip_main
    max_ip_main.cc
 )
 target_link_libraries(max_ip_main
-   #fastlib
    mlpack
    mlpack_contrib
 )
@@ -50,7 +49,16 @@ add_executable(max_ip_tester
    max_ip_tester.cc
 )
 target_link_libraries(max_ip_tester
-   #fastlib
+   mlpack
+   mlpack_contrib
+)
+
+# the single/dual tree approximate-search tester
+add_executable(approx_tester
+   EXCLUDE_FROM_ALL
+   approx_tester.cc
+)
+target_link_libraries(approx_tester
    mlpack
    mlpack_contrib
 )
@@ -61,7 +69,6 @@ add_executable(cosine_tree_test
    cosine_tree_test.cc
 )
 target_link_libraries(cosine_tree_test
-   #fastlib
    mlpack
    mlpack_contrib
 )
@@ -73,6 +80,5 @@ add_executable(rank_computer
    pairwise_dists.cc
 )
 target_link_libraries(rank_computer
-   #fastlib
    mlpack
 )
