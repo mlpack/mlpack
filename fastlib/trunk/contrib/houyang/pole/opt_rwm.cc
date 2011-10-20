@@ -26,7 +26,7 @@ void RWM::CommUpdate(T_IDX tid) {
 	for (T_IDX h=0; h<n_thread_; h++) {
 	  if (h != tid) {
 	    w_pool_[tid].Fs_[p].v_ = w_pool_[tid].Fs_[p].v_ * 
-	      pow(alpha_, accu_msg_[tid].Fs_[p].v_);
+	      pow(alpha_, (double)accu_msg_[tid].Fs_[p].v_);
 	  }
 	}
       }
@@ -51,7 +51,7 @@ void RWM::CommUpdate(T_IDX tid) {
 	for (T_IDX h=0; h<n_thread_; h++) {
 	  if (adj_m_(h,tid) == 1) {
 	    w_pool_[tid].Fs_[p].v_ = w_pool_[tid].Fs_[p].v_ * 
-	      pow(alpha_, accu_msg_[tid].Fs_[p].v_);
+	      pow(alpha_, (double)accu_msg_[tid].Fs_[p].v_);
 	  }
 	}
       }
