@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
   gaussian_kernel.hpp
-  linear_kernel.h
+  linear_kernel.hpp
   lmetric.h
   lmetric.cc
   mahalanobis_distance.h
