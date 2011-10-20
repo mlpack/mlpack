@@ -3,9 +3,9 @@
  *
  * Test file for NNSVM class
  */
-#include <mlpack/core.h>
 #include <iostream>
 #include "nnsvm.h"
+#include <mlpack/core/kernels/linear_kernel.hpp>
 
 #define BOOST_TEST_MODULE NNSVM Test
 #include <boost/test/unit_test.hpp>

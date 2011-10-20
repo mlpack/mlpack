@@ -17,6 +17,7 @@
 #include <iostream>
 #include "nnsvm.h"
 #include <mlpack/core.h>
+#include <mlpack/core/kernels/linear_kernel.hpp>
 
 PARAM_STRING_REQ("mode", "operating mode: train, train_test, or test", "nnsvm");
 PARAM_STRING_REQ("kernel", "kernel type: linear (currently supported)", "nnsvm");

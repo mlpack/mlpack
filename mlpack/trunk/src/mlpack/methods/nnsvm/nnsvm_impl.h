@@ -19,8 +19,6 @@ void NNSVM<TKernel>::Init(const arma::mat& dataset, size_t n_classes)
 template<typename TKernel>
 void NNSVM<TKernel>::Init(const arma::mat& dataset, size_t n_classes, size_t c, size_t b, double eps, size_t max_iter)
 {
-  param_.kernel_.GetName(param_.kernelname_);
-  param_.kerneltypeid_ = param_.kernel_.GetTypeId();
   // c; default:10
   param_.c_ = c;
   // budget parameter, controls # of support vectors; default: # of data samples
@@ -56,17 +54,17 @@ void NNSVM<TKernel>::InitTrain(
   Init(dataset, n_classes, c, b, eps, max_iter);
   /* # of features = # of rows in data matrix - 1, as last row is for labels*/
   num_features_ = dataset.n_rows - 1;
-  mlpack::Log::Assert(n_classes == 2, "SVM is only a binary classifier");
-  mlpack::CLI::GetParam<std::string>("kernel_type") = typeid(TKernel).name();
+  Log::Assert(n_classes == 2, "SVM is only a binary classifier");
+  CLI::GetParam<std::string>("kernel_type") = typeid(TKernel).name();
 
   /* Initialize parameters c_, budget_, eps_, max_iter_, VTA_, alpha_, error_, thresh_ */
   NNSMO<Kernel> nnsmo;
   nnsmo.Init(dataset, param_.c_, param_.b_, param_.eps_, param_.max_iter_);
 
   /* 2-classes NNSVM training using NNSMO */
-  mlpack::CLI::StartTimer("nnsvm/nnsvm_train");
+  CLI::StartTimer("nnsvm/nnsvm_train");
   nnsmo.Train();
-  mlpack::CLI::StopTimer("nnsvm/nnsvm_train");
+  CLI::StopTimer("nnsvm/nnsvm_train");
 
   /* Get the trained bi-class model */
   nnsmo.GetNNSVM(support_vectors_, model_.sv_coef_, model_.w_);
@@ -97,8 +95,6 @@ void NNSVM<TKernel>::SaveModel(std::string modelfilename)
   }
 
   fprintf(fp, "svm_type svm_c\n"); // TODO: svm-mu, svm-regression...
-  fprintf(fp, "kernel_name %s\n", param_.kernelname_.c_str());
-  fprintf(fp, "kernel_typeid %zu\n", param_.kerneltypeid_);
   // save kernel parameters
  // param_.kernel_.SaveParam(fp);
   fprintf(fp, "total_num_sv %zu\n", model_.num_sv_);
@@ -155,15 +151,6 @@ void NNSVM<TKernel>::LoadModel(arma::mat& testset, std::string modelfilename)
       {
         fprintf(stderr, "SVM_C\n");
       }
-    }
-    else if (strcmp(cmd, "kernel_name") == 0)
-    {
-      fscanf(fp, "%80s", &kernel_name[0]);
-      param_.kernelname_ = std::string(kernel_name);
-    }
-    else if (strcmp(cmd, "kernel_typeid") == 0)
-    {
-      fscanf(fp, "%zu", &param_.kerneltypeid_);
     }
     else if (strcmp(cmd, "total_num_sv") == 0)
     {
