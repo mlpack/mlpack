@@ -7,7 +7,8 @@
 
 #include "lmetric.h"
 #include "mahalanobis_distance.h"
-#include "cosine_distance.h"
+#include "cosine_distance.hpp"
+#include "gaussian_kernel.hpp"
 
 #include "kernel.h"
 
