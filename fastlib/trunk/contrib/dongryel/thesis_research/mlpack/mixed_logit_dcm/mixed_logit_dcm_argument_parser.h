@@ -35,6 +35,12 @@ class MixedLogitDCMArgumentParser {
         boost::program_options::value<std::string>(),
         "REQUIRED file containing the vector of attributes."
       )(
+        "attribute_dimensions_in",
+        boost::program_options::value< std::vector<int> > (),
+        "REQUIRED for Gaussian distribution: the dimension of random parameters"
+        " with full covariance matrix, the dimension of fixed parameters, then "
+        "the dimension of random parameters with variance only."
+      )(
         "decisions_in",
         boost::program_options::value<std::string>(),
         "REQUIRED file containing the decision per each person."
@@ -231,6 +237,31 @@ class MixedLogitDCMArgumentParser {
       arguments_out->attribute_table_->Init(
         vm["attributes_in"].as<std::string>());
       std::cout << "Finished reading in the attributes set.\n";
+
+      // Validate the attribute dimensions.
+      if(vm["distribution_in"].as<std::string>() == "diag_gaussian" ||
+          vm["distribution_in"].as<std::string>() == "constant") {
+        arguments_out->attribute_dimensions_.resize(0);
+        arguments_out->attribute_dimensions_.push_back(
+          arguments_out->attribute_table_->n_attributes());
+      }
+      else {
+        arguments_out->attribute_dimensions_ =
+          vm["attribute_dimensions_in"].as< std::vector<int> > ();
+        if(arguments_out->attribute_dimensions_.size() != 3) {
+          std::cerr << "--attribute_dimensions_in expects three numbers for "
+                    << "the full Gaussian case.\n";
+          exit(0);
+        }
+        if(arguments_out->attribute_dimensions_[0] +
+            arguments_out->attribute_dimensions_[1] +
+            arguments_out->attribute_dimensions_[2] !=
+            arguments_out->attribute_table_->n_attributes()) {
+          std::cerr << "The sum of --attribute dimensions_in do not match "
+                    << "the number of attributes.\n";
+          exit(0);
+        }
+      }
 
       // Parse the number of discrete choices per each person.
       std::cout << "Reading in the number of alternatives: " <<

@@ -42,6 +42,11 @@ class DCMTable {
      */
     TableType *attribute_table_;
 
+    /** @brief Describe the component-wise dimension of each
+     *         attribute.
+     */
+    std::vector<int> attribute_dimensions_;
+
     /** @brief The index of the discrete choice and the number of
      *         discrete choices made by each person (in a
      *         column-oriented matrix table form).
@@ -208,12 +213,14 @@ class DCMTable {
      */
     void Init(
       TableType *attribute_table_in,
+      const std::vector<int> &attribute_dimensions_in,
       TableType *decisions_table_in,
       TableType *num_alternatives_table_in) {
 
       // Set the incoming attributes table and the number of choices
       // per person in the list.
       attribute_table_ = attribute_table_in;
+      attribute_dimensions_ = attribute_dimensions_in;
       decisions_table_ = decisions_table_in;
       num_alternatives_table_ = num_alternatives_table_in;
 
@@ -226,7 +233,7 @@ class DCMTable {
       }
 
       // Initialize the distribution.
-      distribution_.Init(attribute_table_->n_attributes());
+      distribution_.Init(attribute_dimensions_);
 
       // Initialize a randomly shuffled vector of indices for sampling
       // the outer term in the simulated log-likelihood.

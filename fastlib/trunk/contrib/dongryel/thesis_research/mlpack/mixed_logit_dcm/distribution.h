@@ -110,9 +110,9 @@ class Distribution {
 
     /** @brief Initializes the distribution.
      */
-    void Init(int num_attributes_in) {
+    void Init(const std::vector<int> &attribute_dimensions_in) {
       DistributionType::Init(
-        num_attributes_in, &num_parameters_, &private_data_);
+        attribute_dimensions_in, &num_parameters_, &private_data_);
     }
 
     /** @brief Computes $\bar{X}_i \bar{L}_i(\beta)$ for a given

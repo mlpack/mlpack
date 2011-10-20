@@ -123,9 +123,10 @@ class DiagonalGaussianDistribution {
     }
 
     static void Init(
-      int num_attributes_in, int *num_parameters_out,
+      const std::vector<int> &attribute_dimensions_in, int *num_parameters_out,
       PrivateData *private_data_out) {
 
+      int num_attributes_in = attribute_dimensions_in[0];
       *num_parameters_out = num_attributes_in * 2;
       private_data_out->solution_dimension_ = num_attributes_in;
     }
