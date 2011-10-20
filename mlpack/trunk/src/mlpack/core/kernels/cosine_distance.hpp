@@ -13,24 +13,30 @@
 namespace mlpack {
 namespace kernel {
 
-/***
+/**
  * The cosine distance (or cosine similarity).  It is defined by
  *
- *   d(a, b) = 1 - (a * b) / (|| a || * || b ||)
+ * @f[
+ * d(a, b) = 1 - \frac{a^T b}{|| a || || b ||}
+ * @f]
  *
  * and this class assumes the standard L2 inner product.  In the future it may
- * support more...
+ * support more.
  */
 class CosineDistance {
  public:
-  /***
+  /**
    * Default constructor does nothing, but is required to satisfy the Kernel
    * policy.
    */
   CosineDistance() { }
 
-  /***
-   * Computes the distance between two points.
+  /**
+   * Computes the cosine distance between two points.
+   *
+   * @param a First vector.
+   * @param b Second vector.
+   * @return d(a, b).
    */
   static double Evaluate(const arma::vec& a, const arma::vec& b);
 };

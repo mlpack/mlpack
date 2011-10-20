@@ -51,7 +51,8 @@ class GaussianKernel
    */
   double Evaluate(const arma::vec& a, const arma::vec& b) const {
     // The precalculation of gamma saves us some little computation time.
-    return exp(gamma * arma::norm(b - a));
+    arma::vec diff = b - a;
+    return exp(gamma * arma::dot(diff, diff));
   }
 
  private:

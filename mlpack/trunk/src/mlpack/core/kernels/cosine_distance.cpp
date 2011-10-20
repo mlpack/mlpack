@@ -1,10 +1,10 @@
-/***
+/**
  * @file cosine_distance.cc
  * @author Ryan Curtin
  *
  * This implements the cosine distance.
  */
-#include "cosine_distance.h"
+#include "cosine_distance.hpp"
 
 using namespace mlpack;
 using namespace mlpack::kernel;
