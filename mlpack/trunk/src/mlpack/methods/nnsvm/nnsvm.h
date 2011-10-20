@@ -45,8 +45,6 @@ class NNSVM
   struct NNSVM_PARAMETERS
   {
     TKernel kernel_;
-    std::string kernelname_;
-    size_t kerneltypeid_;
     double c_;
     size_t b_;
     double eps_; //tolerance
