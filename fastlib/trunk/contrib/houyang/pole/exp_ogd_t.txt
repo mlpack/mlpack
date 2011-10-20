@@ -3,6 +3,12 @@
 //***********************************************************
 
 Examples:
+================================ Online learning ================================
 
 ./pole_pt -d svmguide1 -m togd_str --transform fourier_rbf --calc_loss 1 --comm 1 --lambda 0.01 -b 1 --bias 1 -e 50 --sigma 3 --trdim 1000 --threads 1 --strongness 0.0125
+251933 0.988773
 ./pole_pt -d svmguide1 -m togd --transform fourier_rbf --calc_loss 1 --comm 1 --lambda 0.01 -b 1 --bias 1 -e 50 --sigma 3 --trdim 1000 --threads 1 --random 1 --dbound 0.08
+16011.1 0.983231
+
+================================ Batch learning ================================
+

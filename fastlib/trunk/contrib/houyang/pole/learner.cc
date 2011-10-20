@@ -17,12 +17,26 @@ Learner::Learner() {
 // Destruction
 ///////////////
 Learner::~Learner() {
-  if (TR_)
+  if (TR_ && (!TE_)) { // only training data
     delete TR_;
+  }
+  else if (TR_ && TE_) {
+    if (TR_ == TE_) { // training == testing
+      delete TR_;
+    }
+    else { // both training & testing data loaded
+      delete TR_;
+      delete TE_;
+    }
+  }
+  else if (TE_) { // only testing data
+    delete TE_;
+  }
+  else {
+    // no training nor testing data loaded
+  }
   if (VA_)
     delete VA_;
-  if (TE_)
-    delete TE_;
   if (LF_)
     delete LF_;
   if (LOG_)
@@ -67,12 +81,38 @@ void Learner::ParallelLearn() {
   Learn();
 }
 
-///////////////
-// Thread join
-///////////////
+
+//////////////////////////
+// Parallel Testing
+//////////////////////////
+void Learner::ParallelTest() {
+  TE_->used_ct_ = 0; // in case that TR_==TE_
+  // init for parallelism
+  ThreadsTest_.resize(n_thread_test_);
+  t_test_n_used_examples_.resize(n_thread_test_);
+  t_test_loss_.resize(n_thread_test_);
+  t_test_err_.resize(n_thread_test_);
+  pthread_mutex_init(&mutex_ex_test_, NULL);
+  
+  // begin testing
+  Test();
+}
+
+////////////////////////
+// Training Thread join
+////////////////////////
 void Learner::FinishThreads() {
   for (T_IDX i=0; i<n_thread_; i++) {
     pthread_join(Threads_[i], NULL);
+  }
+}
+
+////////////////////////
+// Testing Thread join
+////////////////////////
+void Learner::FinishThreadsTest() {
+  for (T_IDX i=0; i<n_thread_test_; i++) {
+    pthread_join(ThreadsTest_[i], NULL);
   }
 }
 
@@ -91,9 +131,6 @@ void Learner::SerialLearn() {
 // Online Learning
 ///////////////////
 void Learner::OnlineLearn() {
-  if (v_)
-    cout << "Online learning" << endl;
-
   // Get input data
   if (read_port_) {
     TR_ = new Data(NULL, port_, false);
@@ -118,9 +155,6 @@ void Learner::OnlineLearn() {
 // Batch Learning  and Testing
 ///////////////////////////////
 void Learner::BatchLearn() {
-  if (v_)
-    cout << "Batch learning" << endl;
-
   // Training
   if (fn_learn_ != "") {
     TR_ = new Data(fn_learn_, 0, random_data_);
@@ -136,9 +170,10 @@ void Learner::BatchLearn() {
   if (fn_predict_ != "") {
     if (fn_predict_ == fn_learn_) {
       TE_ = TR_;
+      //cout << "Training file is the same as testing file." << endl;
     }
     else {
-      TE_ = new Data(fn_predict_, 0, false);
+      TE_ = new Data(fn_predict_, 0, false); // no need to permute testing data
       TE_->ReadFromFile();
     }
   }
@@ -146,7 +181,7 @@ void Learner::BatchLearn() {
     cout << "No testing file provided!" << endl;
     exit(1);
   }
-  Test();
+  ParallelTest();
 }
 
 ///////////////////////////////
@@ -183,6 +218,24 @@ bool Learner::GetImmedExample(Data *D, Example** x_p, T_IDX tid) {
   }
   else {
     pthread_mutex_unlock(&mutex_ex_);
+    return false;
+  }
+}
+
+///////////////////////////////
+// Get a testing example
+///////////////////////////////
+bool Learner::GetTestExample(Data *D, Example** x_p, T_IDX tid) {
+  pthread_mutex_lock(&mutex_ex_test_);
+  if (D->used_ct_ < D->Size()) {
+    (*x_p) = D->GetExample(D->used_ct_);
+    t_test_n_used_examples_[tid] = t_test_n_used_examples_[tid] + 1;
+
+    pthread_mutex_unlock(&mutex_ex_test_);
+    return true;
+  }
+  else {
+    pthread_mutex_unlock(&mutex_ex_test_);
     return false;
   }
 }

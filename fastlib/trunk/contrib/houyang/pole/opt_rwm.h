@@ -30,11 +30,11 @@ class RWM : public Learner {
   void Test();
  private:
   void TrainWeak();
-  static void* RwmThread(void *par);
-  void RwmCommUpdate(T_IDX tid);
-  void MakeLog(T_IDX tid, T_LBL true_lbl, T_LBL pred_lbl, 
+  static void* LearnThread(void *par);
+  void CommUpdate(T_IDX tid);
+  void MakeLearnLog(T_IDX tid, T_LBL true_lbl, T_LBL pred_lbl, 
                vector<T_LBL> &exp_pred);
-  void SaveLog();
+  void SaveLearnLog();
 };
 
 #endif

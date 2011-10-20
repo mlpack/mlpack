@@ -88,6 +88,7 @@ bool Data::ReadFileInfo() {
 // Read file
 //////////////
 void Data::ReadFromFile() {
+  cout << "--------------Loading data from file----------------" << endl;
   // determine file format and read other info
   if ((fp_ = fopen (fn_.c_str(), "r")) == NULL) {
     cout << "Cannot open input file: " << fn_ << " !"<< endl;
@@ -97,7 +98,7 @@ void Data::ReadFromFile() {
     cout << "Input file " << fn_ << "might be corrupted!" << endl;
     exit(1);
   }
-  cout << "Read examples from " << fn_ << "...";
+  cout << "File name: " << fn_ << "...";
   // read data
   if (ff_ == svmlight) {
     InitFromSvmlight();
@@ -275,5 +276,6 @@ void Data::InitFromArff() {
 
 
 void Data::ReadFromPort() {
+  cout << "---------------Loading data from port-------------------" << endl;
   // TODO: probabaly parallel read from different ports
 }

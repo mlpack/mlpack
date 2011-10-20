@@ -9,10 +9,10 @@ struct thread_par {
 };
 
 OEG::OEG() {
-  cout << "---Online Exponentiated Gradient---" << endl;
+  cout << "<<<< Online/Stochastic Exponentiated Gradient >>>>" << endl;
 }
 
-void OEG::OegCommUpdate(T_IDX tid) {
+void OEG::CommUpdate(T_IDX tid) {
   if (comm_method_ == 1) { // fully connected graph
     for (T_IDX h=0; h<n_thread_; h++) {
       if (h != tid) {
@@ -48,7 +48,7 @@ void OEG::OegCommUpdate(T_IDX tid) {
 // 0: waiting to read data
 // 1: data read, predict and send message(e.g. calc subgradient)
 // 2: msg sent done, waiting to receive messages from other agents and update
-void* OEG::OegThread(void *in_par) {
+void* OEG::LearnThread(void *in_par) {
   thread_par* par = (thread_par*) in_par;
   T_IDX tid = par->id_;
   OEG* Lp = (OEG *)par->Lp_;
@@ -94,7 +94,7 @@ void* OEG::OegThread(void *in_par) {
 	Svector w;
 	w.SparseSubtract(Lp->w_p_pool_[tid], Lp->w_n_pool_[tid]);
 	double pred_val = Lp->LinearPredictBias(w, *exs[b], bias);
-	Lp->MakeLog(tid, &w, bias, exs[b], pred_val);
+	Lp->MakeLearnLog(tid, &w, bias, exs[b], pred_val);
 	double update = Lp->LF_->GetUpdate(pred_val, (double)exs[b]->y_);
 	uv.SparseAddExpertOverwrite(update, *exs[b]);
         ub += update;
@@ -119,7 +119,7 @@ void* OEG::OegThread(void *in_par) {
       break;
     case 2: // communicate and update using other's msg
       // update using received messages
-      Lp->OegCommUpdate(tid);
+      Lp->CommUpdate(tid);
       // wait till all threads used messages they received
       pthread_barrier_wait(&Lp->barrier_msg_all_used_);
       // communication done
@@ -162,17 +162,17 @@ void OEG::Learn() {
     t_loss_[t] = 0;
     t_err_[t] = 0;
     // begin learning iterations
-    pthread_create(&Threads_[t], NULL, &OEG::OegThread, (void*)&pars[t]);
+    pthread_create(&Threads_[t], NULL, &OEG::LearnThread, (void*)&pars[t]);
   }
 
   FinishThreads();
-  SaveLog();
+  SaveLearnLog();
 }
 
 void OEG::Test() {
 }
 
-void OEG::MakeLog(T_IDX tid, Svector *w, double bias, Example *x, double pred_val) {
+void OEG::MakeLearnLog(T_IDX tid, Svector *w, double bias, Example *x, double pred_val) {
   if (calc_loss_) {
     // Calc loss
     t_loss_[tid] = t_loss_[tid] + LF_->GetLoss(pred_val, (double)x->y_);
@@ -197,7 +197,8 @@ void OEG::MakeLog(T_IDX tid, Svector *w, double bias, Example *x, double pred_va
   }
 }
 
-void OEG::SaveLog() {
+void OEG::SaveLearnLog() {
+  cout << "-----------------Online Prediction------------------" << endl;
   if (calc_loss_) {
     // intermediate logs
     if (n_log_ > 0) {
@@ -253,5 +254,8 @@ void OEG::SaveLog() {
       cout << "Total mispredictions: " << t_m << ", accuracy: " << 
 	1.0-(double)t_m/(double)t_s<< endl;
     }
+  }
+  else {
+    cout << "Online prediction results are not shown." << endl;
   }
 }

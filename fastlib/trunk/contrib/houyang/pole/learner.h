@@ -35,14 +35,22 @@ class Learner {
   bool   calc_loss_; // calculate total loss
   T_IDX  n_log_; // How many log points
   // thread properties and statistics
-  T_IDX  n_thread_; // number of threads for learning
-  vector<pthread_t> Threads_;
-  vector<T_IDX> t_state_; // thread state
-  vector<double> t_n_it_; // nubmer of iterations
-  vector<T_IDX> t_n_used_examples_;
-  vector<double> t_loss_; // thread loss
-  vector<T_IDX> t_err_; // thread error
-  vector<Vec_d>  t_exp_err_; // expert error on each thread
+  T_IDX  n_thread_; // number of threads for training
+  T_IDX  n_thread_test_; // number of threads for testing
+  vector<pthread_t> Threads_; // threads for training
+  vector<pthread_t> ThreadsTest_; // threads for testing
+
+  vector<T_IDX> t_state_; // thread state for training
+  vector<double> t_n_it_; // nubmer of iterations for training
+  vector<T_IDX> t_n_used_examples_; // for training
+  vector<double> t_loss_; // thread loss for training
+  vector<T_IDX> t_err_; // thread error for training
+  vector<Vec_d>  t_exp_err_; // expert error on each thread for training
+
+  vector<T_IDX> t_test_n_used_examples_; // for testing
+  vector<double> t_test_loss_; // thread loss for testing
+  vector<T_IDX> t_test_err_; // thread error for testing
+
   // for iterations
   T_IDX  epoch_ct_; // epoch counter
   T_IDX  n_epoch_; // number of learning epochs
@@ -66,7 +74,8 @@ class Learner {
   double dbound_; // Upper bound for D_{psi,X}(x_t, x^*).
   double strongness_; // strongly convex constant
  private:
-  pthread_mutex_t mutex_ex_;
+  pthread_mutex_t mutex_ex_; // for loading training data
+  pthread_mutex_t mutex_ex_test_; // for loading testing data
 
  public:
   Learner();
@@ -74,11 +83,14 @@ class Learner {
   
   void OnlineLearn();
   void BatchLearn();
+
   void ParallelLearn();
-  //void SerialLearn();
+  void ParallelTest();
   void FinishThreads();
+  void FinishThreadsTest();
 
   bool GetImmedExample(Data *D, Example **ex, T_IDX tid);
+  bool GetTestExample(Data *D, Example **ex, T_IDX tid);
 
   virtual void Learn() {};
   virtual void Test() {};
