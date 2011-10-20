@@ -82,7 +82,7 @@ class ExampleKernel {
    * The default constructor, which takes no parameters.  Because our simple
    * example kernel has no internal parameters that need to be stored, the
    * constructor does not need to do anything.  For a more complex example, see
-   * the GaussianRBFKernel, which stores an internal parameter.
+   * the GaussianKernel, which stores an internal parameter.
    */
   ExampleKernel() { }
 
@@ -90,7 +90,11 @@ class ExampleKernel {
    * Evaluates the kernel function for two given vectors.  In this case, because
    * our simple example kernel has no internal parameters, we can declare the
    * function static.  For a more complex example which cannot be declared
-   * static, see the GaussianRBFKernel, which stores an internal parameter.
+   * static, see the GaussianKernel, which stores an internal parameter.
+   *
+   * @param a First vector.
+   * @param b Second vector.
+   * @return K(a, b).
    */
   static double Evaluate(const arma::vec& a, const arma::vec& b) { return 0; }
 };
