@@ -50,5 +50,7 @@ Examples:
 
 ================================ Batch learning ================================
 ./pole_pt --batch 1 -d svmguide1 -t svmguide1 --random 1 -m ogd --type classification -l hinge --reg 2 --bias 1 --lambda 0.01 --threads_test 2 -e 600 --dbound 0.025
-544.43 0.944642
+485.553 0.939786 1.72
 
+./pole_pt --batch 1 -d rcv1_train.binary -t rcv1_test.binary --random 1 -m ogd --type classification -l hinge --reg 2 --bias 1 --lambda 0.00001 --threads_test 4 -e 1 --dbound 17
+92298.2 0.95138 2:19.310817
