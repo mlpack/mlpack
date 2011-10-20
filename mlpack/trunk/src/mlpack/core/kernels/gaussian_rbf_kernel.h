@@ -21,7 +21,7 @@ class GaussianRBFKernel
   /**
    * Given a value for sigma, sets gamma.
    */
-  GaussianRBFKernel(double sigma) : gamma(2.0 * pow(sigma, -2.0)) { }
+  GaussianRBFKernel(double sigma) : gamma(-0.5 * pow(sigma, -2.0)) { }
 
   /**
    * Evaluation of kernel.
