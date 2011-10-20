@@ -6,26 +6,34 @@
 namespace mlpack {
 namespace kernel {
 
-/***
- * Class for Gaussian RBF Kernel
+/**
+ * The Gaussian radial basis function kernel.
+ * This should be documented better.
  */
 class GaussianRBFKernel
 {
-  private:
-  double gamma;
+ public:
+  /**
+   * Default constructor; sets gamma to 0.5.
+   */
+  GaussianRBFKernel() : gamma(0.5) { }
 
-  public:
-  GaussianRBFKernel() { gamma = .5; }
-  GaussianRBFKernel(double sigma) {
-    gamma = -1.0 / (2 * pow(sigma, 2.0));
-  }
-  /* Kernel value evaluation */
-  double Evaluate(const arma::vec& a, const arma::vec& b) const
-  {
+  /**
+   * Given a value for sigma, sets gamma.
+   */
+  GaussianRBFKernel(double sigma) : gamma(2.0 * pow(sigma, -2.0)) { }
+
+  /**
+   * Evaluation of kernel.
+   */
+  double Evaluate(const arma::vec& a, const arma::vec& b) const {
     arma::vec diff = b - a;
     double distance_squared = arma::dot(diff, diff);
     return exp(gamma * distance_squared);
   }
+
+ private:
+  double gamma;
 };
 
 }; // namespace kernel
