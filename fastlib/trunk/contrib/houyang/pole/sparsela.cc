@@ -344,7 +344,7 @@ Svector& Svector::operator^=(double p) {
   else {
     for (vector<Feature>::iterator it = Fs_.begin(); it < Fs_.end(); it++) {
       if (it->v_ != 1.0) {
-        it->v_ = pow(it->v_, p);
+        it->v_ = pow((double)it->v_, p);
       }
     }
     return *this;
