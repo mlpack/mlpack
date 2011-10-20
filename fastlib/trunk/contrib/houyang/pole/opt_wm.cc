@@ -10,10 +10,10 @@ struct thread_par {
 };
 
 WM::WM() {
-  cout << "---Distributed Weighted Majority---" << endl;
+  cout << "<<<< Weighted Majority >>>>" << endl;
 }
 
-void WM::WmCommUpdate(T_IDX tid) {
+void WM::CommUpdate(T_IDX tid) {
   if (comm_method_ == 1) {
     if (opt_name_ == "dwm_i") {
       for (T_IDX h=0; h<n_thread_; h++) {
@@ -44,7 +44,7 @@ void WM::WmCommUpdate(T_IDX tid) {
 // 0: waiting to read data
 // 1: data read, predict and send message(e.g. calc subgradient)
 // 2: msg sent done, waiting to receive messages from other agents and update
-void* WM::WmThread(void *in_par) {
+void* WM::LearnThread(void *in_par) {
   thread_par* par = (thread_par*) in_par;
   T_IDX tid = par->id_;
   WM* Lp = (WM *)par->Lp_;
@@ -94,7 +94,7 @@ void* WM::WmThread(void *in_par) {
 	    Lp->w_pool_[tid].Fs_[p].v_ = Lp->w_pool_[tid].Fs_[p].v_ * Lp->alpha_;
 	  }
 	}
-	Lp->MakeLog(tid, exs[b]->y_, pred_lbl, exp_pred);
+	Lp->MakeLearnLog(tid, exs[b]->y_, pred_lbl, exp_pred);
       }
       // dummy calculation time
       //boost::this_thread::sleep(boost::posix_time::microseconds(1));
@@ -105,7 +105,7 @@ void* WM::WmThread(void *in_par) {
       Lp->t_state_[tid] = 2;
       break;
     case 2: // communicate and update using received msg
-      Lp->WmCommUpdate(tid);
+      Lp->CommUpdate(tid);
       // wait till all threads used messages they received
       pthread_barrier_wait(&Lp->barrier_msg_all_used_);
       // communication done
@@ -179,17 +179,17 @@ void WM::Learn() {
       t_exp_err_[p][t] = 0;
     }
     // begin learning iterations
-    pthread_create(&Threads_[t], NULL, &WM::WmThread, (void*)&pars[t]);
+    pthread_create(&Threads_[t], NULL, &WM::LearnThread, (void*)&pars[t]);
   }
 
   FinishThreads();
-  SaveLog();
+  SaveLearnLog();
 }
 
 void WM::Test() {
 }
 
-void WM::MakeLog(T_IDX tid, T_LBL true_lbl, T_LBL pred_lbl, 
+void WM::MakeLearnLog(T_IDX tid, T_LBL true_lbl, T_LBL pred_lbl, 
                  vector<T_LBL> &exp_pred) {
   if (calc_loss_) {
     // Calc # of misclassifications
@@ -216,7 +216,8 @@ void WM::MakeLog(T_IDX tid, T_LBL true_lbl, T_LBL pred_lbl,
   } 
 }
 
-void WM::SaveLog() {
+void WM::SaveLearnLog() {
+  cout << "-----------------Online Prediction------------------" << endl;
   if (calc_loss_) {
     // intermediate logs
     if (n_log_ > 0) {
@@ -276,5 +277,8 @@ void WM::SaveLog() {
       cout << "Total mispredictions: " << t_m << ", accuracy: " 
            << 1.0-(double)t_m/(double)t_s<< endl;
     }
+  }
+  else {
+    cout << "Online prediction results are not shown." << endl;
   }
 }

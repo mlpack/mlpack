@@ -31,20 +31,20 @@ class OGDK : public Learner {
   void Learn();
   void Test();
  private:
-  static void* OgdKThread(void *par);
-  void OgdKCommUpdate(T_IDX tid);
-  void MakeLog(T_IDX tid, Example *x, double pred_val);
-  void SaveLog();
+  static void* LearnThread(void *par);
+  void CommUpdate(T_IDX tid);
+  void MakeLearnLog(T_IDX tid, Example *x, double pred_val);
+  void SaveLearnLog();
 };
 
 
 template <typename TKernel>
 OGDK<TKernel>::OGDK() {
-  cout << "---Online Kernel Gradient Descent---" << endl;
+  cout << "<<<< Online/Stochastic Kernel Gradient Descent >>>>" << endl;
 }
 
 template <typename TKernel>
-void OGDK<TKernel>::OgdKCommUpdate(T_IDX tid) {
+void OGDK<TKernel>::CommUpdate(T_IDX tid) {
     if (comm_method_ == 1) { // fully connected graph
         for (T_IDX h=0; h<n_thread_; h++) {
             if (h != tid) {
@@ -62,7 +62,7 @@ void OGDK<TKernel>::OgdKCommUpdate(T_IDX tid) {
 // 1: data read, predict and send message(e.g. calc subgradient)
 // 2: msg sent done, waiting to receive messages from other agents and update
 template <typename TKernel>
-void* OGDK<TKernel>::OgdKThread(void *in_par) {
+void* OGDK<TKernel>::LearnThread(void *in_par) {
   thread_par* par = (thread_par*) in_par;
   T_IDX tid = par->id_;
   OGDK* Lp = (OGDK *)par->Lp_;
@@ -99,7 +99,7 @@ void* OGDK<TKernel>::OgdKThread(void *in_par) {
         Lp->w_avg_pool_[tid] = Lp->w_pool_[tid];
         double pred_val = Lp->LinearPredictBias(Lp->w_avg_pool_[tid], 
                                                 *exs[b], Lp->b_pool_[tid]);
-        Lp->MakeLog(tid, exs[b], pred_val);
+        Lp->MakeLearnLog(tid, exs[b], pred_val);
         update = Lp->LF_->GetUpdate(pred_val, (double)exs[b]->y_);
       }
       
@@ -148,7 +148,7 @@ void* OGDK<TKernel>::OgdKThread(void *in_par) {
       Lp->t_state_[tid] = 2;
       break;
     case 2: // communicate and update using received msg
-      Lp->OgdKCommUpdate(tid);
+      Lp->CommUpdate(tid);
       // wait till all threads used messages they received
       pthread_barrier_wait(&Lp->barrier_msg_all_used_);
       // communication done
@@ -188,11 +188,11 @@ void OGDK<TKernel>::Learn() {
     t_loss_[t] = 0;
     t_err_[t] = 0;
     // begin learning iterations
-    pthread_create(&Threads_[t], NULL, &OGDK::OgdKThread, (void*)&pars[t]);
+    pthread_create(&Threads_[t], NULL, &OGDK::LearnThread, (void*)&pars[t]);
   }
 
   FinishThreads();
-  SaveLog();
+  SaveLearnLog();
 }
 
 template <typename TKernel>
@@ -200,7 +200,7 @@ void OGDK<TKernel>::Test() {
 }
 
 template <typename TKernel>
-void OGDK<TKernel>::MakeLog(T_IDX tid, Example *x, double pred_val) {
+void OGDK<TKernel>::MakeLearnLog(T_IDX tid, Example *x, double pred_val) {
   if (calc_loss_) {
     // Calc loss
     t_loss_[tid] = t_loss_[tid] + LF_->GetLoss(pred_val, (double)x->y_);
@@ -231,7 +231,8 @@ void OGDK<TKernel>::MakeLog(T_IDX tid, Example *x, double pred_val) {
 }
 
 template <typename TKernel>
-void OGDK<TKernel>::SaveLog() {
+void OGDK<TKernel>::SaveLearnLog() {
+  cout << "-----------------Online Prediction------------------" << endl;
   if (calc_loss_) {
     // intermediate logs
     if (n_log_ > 0) {
@@ -287,6 +288,9 @@ void OGDK<TKernel>::SaveLog() {
       cout << "Total mispredictions: " << t_m << ", accuracy: " << 
 	1.0-(double)t_m/(double)t_s<< endl;
     }
+  }
+  else {
+    cout << "Online prediction results are not shown." << endl;
   }
 }
 

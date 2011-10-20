@@ -1,29 +1,54 @@
 //***********************************************************
-//* Online Gradient Descent
+//* Online/Stochastic Gradient Descent
 //***********************************************************
 
 Examples:
-----------------------Classification: SVM----------------------------------------
+================================ Online learning ================================
+
+-----------------Classification: SVM-------------------------
 ./pole_pt -d svmguide1 --random 1 -m ogd_str --type classification -l hinge --reg 2 --calc_loss 1 --bias 1 --lambda 0.01 --threads 1 -e 600 --strongness 1000
+828396 0.820137 1.82
 ./pole_pt -d svmguide1 --random 1 -m ogd --type classification -l hinge --reg 2 --calc_loss 1 --bias 1 --lambda 0.01 --threads 1 -e 600 --dbound 0.025
+400046 0.924532 1.87
 ./pole_pt -d svmguide1 --random 1 -m ogd_str --type classification -l squared --reg 2 --calc_loss 1 --bias 1 -c 100 --threads 1 -e 600 --strongness 20000
-./pole_pt -d svmguide1 --random 1 -m ogd_str --type classification -l logistic --reg 2 --calc_loss 1 --bias 1 -c 100 --threads 1 -e 600 --strongness 50
+1.11531e+06 0.812182 1.83
+./pole_pt -d svmguide1 --random 1 -m ogd_str --type classification -l logistic --reg 2 --calc_loss 1 --bias 1 -c 100 --threads 1 -e 600 --strongness 30
+613444 0.835525 2.17
 
 ./pole_pt -d rcv1_train.binary --random 1 -m ogd_str --type classification -l hinge --reg 2 --calc_loss 1 --bias 1 --lambda 0.00001 --threads 1 -e 1 --strongness 0.024
+11143.8 0.814001 10.9
 ./pole_pt -d rcv1_train.binary --random 1 -m ogd --type classification -l hinge --reg 2 --calc_loss 1 --bias 1 --lambda 0.00001 --threads 1 -e 1 --dbound 17
+3705.9 0.938247 7.44
 
 ./pole_pt -d ijcnn1 --random 1 -m ogd_str --type classification -l hinge --reg 2 --calc_loss 1 --bias 1 --lambda 0.00001 --threads 1 -e 100 --strongness 2.8
+999239 0.902921 11.74
 ./pole_pt -d ijcnn1 --random 1 -m ogd --type classification -l hinge --reg 2 --calc_loss 1 --bias 1 --lambda 0.00001 --threads 1 -e 100 --dbound 4
+859361 0.924147 7.92
 
 ./pole_pt -d heart_scale --random 1 -m ogd_str --type classification -l hinge --reg 2 --calc_loss 1 --bias 1 --lambda 0.00001 --threads 1 -e 3000 --strongness 2.4
+298673 0.848065 0.85
 ./pole_pt -d heart_scale --random 1 -m ogd --type classification -l hinge --reg 2 --calc_loss 1 --bias 1 --lambda 1 --threads 1 -e 3000 --dbound 0.02
+539736 0.840596 0.95
 
+./pole_pt -d gamma_train --random 1 -m ogd_str --type classification -l hinge --reg 2 --calc_loss 1 --bias 1 --lambda 0.001 --threads 1 -e 1 --strongness 0.0028
+1.29626e+07 0.77548 8:35.85
 ./pole_pt -d gamma_train --random 1 -m ogd --type classification -l hinge --reg 2 --calc_loss 1 --bias 1 --lambda 0.001 --threads 1 -e 1 --dbound 0.03
+255474 0.78616 29.99
 
 ----------------------------Regression-----------------------------------
-./pole_pt -d regression_sim_noise_1 --random 0 -m ogd_str --type regression --reg 2 -l squared --calc_loss 1 --bias 1 --lambda 0.0001 --threads 1 -i 4000 --strongness 130
-./pole_pt -d regression_sim_noise_1 --random 0 -m ogd --type regression --reg 2 -l squared --calc_loss 1 --bias 1 --lambda 0.0001 --threads 1 -i 4000 --dbound 0.002
-
 ./pole_pt -d abalone --random 1 -m ogd_str --type regression --reg 2 -l squared --calc_loss 1 --bias 1 --lambda 0.01 --threads 1 -e 10 --strongness 12.3
+459597 0.07
 ./pole_pt -d abalone --random 1 -m ogd --type regression --reg 2 -l squared --calc_loss 1 --bias 1 --lambda 0.01 --threads 1 -e 10 --dbound 0.2
+275918 0.07
+
+./pole_pt -d regression_sim_noise_1 --random 0 -m ogd_str --type regression --reg 2 -l squared --calc_loss 1 --bias 1 --lambda 0.0001 --threads 1 -i 4000 --strongness 130
+155770 0.03
+./pole_pt -d regression_sim_noise_1 --random 0 -m ogd --type regression --reg 2 -l squared --calc_loss 1 --bias 1 --lambda 0.0001 --threads 1 -i 4000 --dbound 0.002
+18466.8 0.03
+
+
+
+================================ Batch learning ================================
+./pole_pt --batch 1 -d svmguide1 -t svmguide1 --random 1 -m ogd --type classification -l hinge --reg 2 --bias 1 --lambda 0.01 --threads_test 2 -e 600 --dbound 0.025
+544.43 0.944642
 

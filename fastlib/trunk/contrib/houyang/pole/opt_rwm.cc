@@ -10,10 +10,10 @@ struct thread_par {
 };
 
 RWM::RWM() {
-  cout << "---Distributed Weighted Majority---" << endl;
+  cout << "<<<< Randomized Weighted Majority >>>>" << endl;
 }
 
-void RWM::RwmCommUpdate(T_IDX tid) {
+void RWM::CommUpdate(T_IDX tid) {
   accu_msg_[tid] = m_pool_[tid];
   if (comm_method_ == 1) {
     if (opt_name_ == "drwm_i") {
@@ -72,7 +72,7 @@ void RWM::RwmCommUpdate(T_IDX tid) {
 // 0: waiting to read data
 // 1: data read, predict and send message(e.g. calc subgradient)
 // 2: msg sent done, waiting to receive messages from other agents and update
-void* RWM::RwmThread(void *in_par) {
+void* RWM::LearnThread(void *in_par) {
   thread_par* par = (thread_par*) in_par;
   T_IDX tid = par->id_;
   RWM* Lp = (RWM *)par->Lp_;
@@ -128,7 +128,7 @@ void* RWM::RwmThread(void *in_par) {
 	  }
 	}
 
-	Lp->MakeLog(tid, exs[b]->y_, pred_lbl, exp_pred);
+	Lp->MakeLearnLog(tid, exs[b]->y_, pred_lbl, exp_pred);
 	
 	// send message out	
 	Lp->m_pool_[tid].SetAll(0.0);
@@ -146,7 +146,7 @@ void* RWM::RwmThread(void *in_par) {
       Lp->t_state_[tid] = 2;
       break;
     case 2: // communicate and update using received msg
-      Lp->RwmCommUpdate(tid);
+      Lp->CommUpdate(tid);
       // wait till all threads used messages they received
       pthread_barrier_wait(&Lp->barrier_msg_all_used_);
       // communication done
@@ -259,17 +259,17 @@ void RWM::Learn() {
       t_exp_err_[p][t] = 0;
     }
     // begin learning iterations
-    pthread_create(&Threads_[t], NULL, &RWM::RwmThread, (void*)&pars[t]);
+    pthread_create(&Threads_[t], NULL, &RWM::LearnThread, (void*)&pars[t]);
   }
 
   FinishThreads();
-  SaveLog();
+  SaveLearnLog();
 }
 
 void RWM::Test() {
 }
 
-void RWM::MakeLog(T_IDX tid, T_LBL true_lbl, T_LBL pred_lbl, 
+void RWM::MakeLearnLog(T_IDX tid, T_LBL true_lbl, T_LBL pred_lbl, 
                  vector<T_LBL> &exp_pred) {
   if (calc_loss_) {
     // Calc # of misclassifications
@@ -296,7 +296,8 @@ void RWM::MakeLog(T_IDX tid, T_LBL true_lbl, T_LBL pred_lbl,
   } 
 }
 
-void RWM::SaveLog() {
+void RWM::SaveLearnLog() {
+  cout << "-----------------Online Prediction------------------" << endl;
   if (calc_loss_) {
     // intermediate logs
     if (n_log_ > 0) {
@@ -356,5 +357,8 @@ void RWM::SaveLog() {
       cout << "Total mispredictions: " << t_m << ", accuracy: " 
            << 1.0-(double)t_m/(double)t_s<< endl;
     }
+  }
+  else {
+    cout << "Online prediction results are not shown." << endl;
   }
 }

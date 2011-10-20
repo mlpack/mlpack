@@ -22,10 +22,13 @@ class OGD : public Learner {
   void Learn();
   void Test();
  private:
-  static void* OgdThread(void *par);
-  void OgdCommUpdate(T_IDX tid);
-  void MakeLog(T_IDX tid, Example *x, double pred_val);
-  void SaveLog();
+  static void* LearnThread(void *par); // for learning
+  static void* TestThread(void *par); // for prediction
+  void CommUpdate(T_IDX tid);
+  void MakeLearnLog(T_IDX tid, Example *x, double pred_val);
+  void MakeTestLog(T_IDX tid, Example *x, double pred_val);
+  void SaveLearnLog();
+  void SaveTestLog();
 };
 
 #endif

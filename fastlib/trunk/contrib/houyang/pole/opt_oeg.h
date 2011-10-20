@@ -24,10 +24,11 @@ class OEG : public Learner {
   void Learn();
   void Test();
  private:
-  static void* OegThread(void *par);
-  void OegCommUpdate(T_IDX tid);
-  void MakeLog(T_IDX tid, Svector *w, double bias, Example *x, double pred_val);
-  void SaveLog();
+  static void* LearnThread(void *par); // for learning
+  //static void* TestThread(void *par); // for prediction
+  void CommUpdate(T_IDX tid);
+  void MakeLearnLog(T_IDX tid, Svector *w, double bias, Example *x, double pred_val);
+  void SaveLearnLog();
 };
 
 #endif

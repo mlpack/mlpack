@@ -1,5 +1,5 @@
 //***********************************************************
-//* Online Noise Adaptive Stochastic Approximation
+//* Online/Stochastic Noise Adaptive Stochastic Approximation
 //***********************************************************
 #include "opt_nasa.h"
 
@@ -9,10 +9,10 @@ struct thread_par {
 };
 
 NASA::NASA() {
-  cout << "---Online Noise Adaptive Stochastic Approximation---" << endl;
+  cout << "<<<< Online/Stochastic Noise Adaptive Stochastic Approximation >>>>" << endl;
 }
 
-void NASA::NasaCommUpdate(T_IDX tid) {
+void NASA::CommUpdate(T_IDX tid) {
     if (comm_method_ == 1) { // fully connected graph
         for (T_IDX h=0; h<n_thread_; h++) {
             if (h != tid) {
@@ -25,11 +25,15 @@ void NASA::NasaCommUpdate(T_IDX tid) {
     }
 }
 
+////////////////////////////////////////////////////////////////
+// Thread for Batch training, or Online learning
+//
 // In Distributed NASA, thread states are defined as:
 // 0: waiting to read data
 // 1: data read, predict and send message(e.g. calc subgradient)
 // 2: msg sent done, waiting to receive messages from other agents and update
-void* NASA::NasaThread(void *in_par) {
+////////////////////////////////////////////////////////////////
+void* NASA::LearnThread(void *in_par) {
   thread_par* par = (thread_par*) in_par;
   T_IDX tid = par->id_;
   NASA* Lp = (NASA *)par->Lp_;
@@ -66,7 +70,7 @@ void* NASA::NasaThread(void *in_par) {
 	Lp->w_avg_pool_[tid] = Lp->w_pool_[tid];
 	double pred_val = Lp->LinearPredictBias(Lp->w_avg_pool_[tid], 
 						*exs[b], Lp->b_pool_[tid]);
-	Lp->MakeLog(tid, exs[b], pred_val);
+	Lp->MakeLearnLog(tid, exs[b], pred_val);
 	update = Lp->LF_->GetUpdate(pred_val, (double)exs[b]->y_);
         
 	// For NASA
@@ -188,7 +192,7 @@ void* NASA::NasaThread(void *in_par) {
       Lp->t_state_[tid] = 2;
       break;
     case 2: // communicate and update using received msg
-      Lp->NasaCommUpdate(tid);
+      Lp->CommUpdate(tid);
       // wait till all threads used messages they received
       pthread_barrier_wait(&Lp->barrier_msg_all_used_);
       // communication done
@@ -239,17 +243,49 @@ void NASA::Learn() {
     t_loss_[t] = 0;
     t_err_[t] = 0;
     // begin learning iterations
-    pthread_create(&Threads_[t], NULL, &NASA::NasaThread, (void*)&pars[t]);
+    pthread_create(&Threads_[t], NULL, &NASA::LearnThread, (void*)&pars[t]);
   }
 
   FinishThreads();
-  SaveLog();
+  SaveLearnLog();
 }
 
+void* NASA::TestThread(void *in_par) {
+  thread_par* par = (thread_par*) in_par;
+  T_IDX tid = par->id_;
+  NASA* Lp = (NASA *)par->Lp_;
+  Example* exs[1];
+
+  while (true) {
+    if ( Lp->GetTestExample(Lp->TE_, exs, tid) ) { // new test example read
+      // testing using Thread[0]'s w & b. TODO...
+      double pred_val = Lp->LinearPredictBias(Lp->w_avg_pool_[0], 
+                                              *exs[0], Lp->b_pool_[0]);
+      Lp->MakeTestLog(tid, exs[0], pred_val);
+    }
+    else { // all testing examples are used
+      return NULL;
+    }
+  }
+  return NULL;
+}
+
+// for batch prediction
 void NASA::Test() {
+  thread_par pars[n_thread_test_];
+  for (T_IDX t = 0; t < n_thread_test_; t++) {
+    pars[t].id_ = t;
+    pars[t].Lp_ = this;
+    t_test_n_used_examples_[t] = 0;
+    t_test_loss_[t] = 0;
+    t_test_err_[t] = 0;
+    pthread_create(&ThreadsTest_[t], NULL, &NASA::TestThread, (void*)&pars[t]);
+  }
+  FinishThreadsTest();
+  SaveTestLog();
 }
 
-void NASA::MakeLog(T_IDX tid, Example *x, double pred_val) {
+void NASA::MakeLearnLog(T_IDX tid, Example *x, double pred_val) {
   if (calc_loss_) {
       //cout << t_n_it_[tid] <<" |pred: " << pred_val <<", y: " << (double)x->y_ << endl;
     // Calc loss
@@ -280,7 +316,8 @@ void NASA::MakeLog(T_IDX tid, Example *x, double pred_val) {
   }
 }
 
-void NASA::SaveLog() {
+void NASA::SaveLearnLog() {
+  cout << "-----------------Online Prediction------------------" << endl;
   if (calc_loss_) {
     // intermediate logs
     if (n_log_ > 0) {
@@ -336,5 +373,58 @@ void NASA::SaveLog() {
       cout << "Total mispredictions: " << t_m << ", accuracy: " << 
 	1.0-(double)t_m/(double)t_s<< endl;
     }
+  }
+  else {
+    cout << "Online prediction results are not shown." << endl;
+  }
+}
+
+void NASA::MakeTestLog(T_IDX tid, Example *x, double pred_val) {
+  //cout << "pred: " << pred_val <<", y: " << (double)x->y_ << endl;
+  t_test_loss_[tid] = t_test_loss_[tid] + LF_->GetLoss(pred_val, (double)x->y_);
+  // testing using Thread[0]'s w. TODO...
+  if (reg_type_ == 2 && reg_factor_ != 0) {
+    //L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
+    t_loss_[tid] = t_loss_[tid] + 
+      0.5 * reg_factor_ * w_avg_pool_[0].SparseSqL2Norm();
+  }
+  // for classification only: calc # of misclassifications
+  if (type_ == "classification") {
+    // testing using Thread[0]'s w & b. TODO...
+    T_LBL pred_lbl = LinearPredictBiasLabelBinary(w_avg_pool_[0], *x, b_pool_[0]);
+    //cout << x->y_ << " : " << pred_lbl << endl;
+    if (pred_lbl != x->y_) {
+      t_test_err_[tid] =  t_test_err_[tid] + 1;
+    }
+  }
+}
+
+void NASA::SaveTestLog() {
+  cout << "-----------------Batch Testing----------------------" << endl;
+  // final loss
+  double t_l = 0.0;
+  for (T_IDX t = 0; t < n_thread_test_; t++) {
+    if (t_test_n_used_examples_[t] > 0) {
+      t_l += t_test_loss_[t];
+      cout << "t"<< t << ": " << t_test_n_used_examples_[t] 
+           << " samples processed. Loss: " << t_test_loss_[t]<< endl;
+    }
+  }
+  cout << "Total loss: " << t_l << endl;
+
+  // prediction accuracy for classifications
+  if (type_ == "classification") {
+    T_IDX t_m = 0, t_s = 0;
+    for (T_IDX t = 0; t < n_thread_test_; t++) {
+      if (t_test_n_used_examples_[t] > 0) {
+        t_m += t_test_err_[t];
+        t_s += t_test_n_used_examples_[t];
+        cout << "t"<< t << ": " << t_test_n_used_examples_[t] << 
+          " samples processed. Misprediction: " << t_test_err_[t]<< ", accuracy: "
+             << 1.0-(double)t_test_err_[t]/(double)t_test_n_used_examples_[t] << endl;
+      }
+    }
+    cout << "Total mispredictions: " << t_m << ". Overall accuracy: " << 
+      1.0-(double)t_m/(double)t_s<< endl;
   }
 }

@@ -30,20 +30,20 @@ class OGDT : public Learner {
   void Learn();
   void Test();
  private:
-  static void* OgdTThread(void *par);
-  void OgdTCommUpdate(T_IDX tid);
-  void MakeLog(T_IDX tid, const Svector &x, T_LBL y, double pred_val);
-  void SaveLog();
+  static void* LearnThread(void *par);
+  void CommUpdate(T_IDX tid);
+  void MakeLearnLog(T_IDX tid, const Svector &x, T_LBL y, double pred_val);
+  void SaveLearnLog();
 };
 
 
 template <typename TTransform>
 OGDT<TTransform>::OGDT() {
-  cout << "---Online Kernel Gradient Descent using Transformed Features---" << endl;
+  cout << "<<<< Online/Stochastic Kernel Gradient Descent using Transformed Features >>>>" << endl;
 }
 
 template <typename TTransform>
-void OGDT<TTransform>::OgdTCommUpdate(T_IDX tid) {
+void OGDT<TTransform>::CommUpdate(T_IDX tid) {
   if (comm_method_ == 1) { // fully connected graph
     for (T_IDX h=0; h<n_thread_; h++) {
       if (h != tid) {
@@ -61,7 +61,7 @@ void OGDT<TTransform>::OgdTCommUpdate(T_IDX tid) {
 // 1: data read, predict and send message(e.g. calc subgradient)
 // 2: msg sent done, waiting to receive messages from other agents and update
 template <typename TTransform>
-void* OGDT<TTransform>::OgdTThread(void *in_par) {
+void* OGDT<TTransform>::LearnThread(void *in_par) {
   thread_par* par = (thread_par*) in_par;
   T_IDX tid = par->id_;
   OGDT* Lp = (OGDT *)par->Lp_;
@@ -100,7 +100,7 @@ void* OGDT<TTransform>::OgdTThread(void *in_par) {
         Lp->w_avg_pool_[tid] = Lp->w_pool_[tid];
         double pred_val = Lp->LinearPredictBias(Lp->w_avg_pool_[tid], 
                                                 ext, Lp->b_pool_[tid]);
-        Lp->MakeLog(tid, ext, exs[b]->y_, pred_val);
+        Lp->MakeLearnLog(tid, ext, exs[b]->y_, pred_val);
         update = Lp->LF_->GetUpdate(pred_val, (double)exs[b]->y_);
         // subgradient of loss function
         uv.SparseAddExpertOverwrite(update, ext);
@@ -145,7 +145,7 @@ void* OGDT<TTransform>::OgdTThread(void *in_par) {
       Lp->t_state_[tid] = 2;
       break;
     case 2: // communicate and update using received msg
-      Lp->OgdTCommUpdate(tid);
+      Lp->CommUpdate(tid);
       // wait till all threads used messages they received
       pthread_barrier_wait(&Lp->barrier_msg_all_used_);
       // communication done
@@ -190,11 +190,11 @@ void OGDT<TTransform>::Learn() {
     t_loss_[t] = 0;
     t_err_[t] = 0;
     // begin learning iterations
-    pthread_create(&Threads_[t], NULL, &OGDT::OgdTThread, (void*)&pars[t]);
+    pthread_create(&Threads_[t], NULL, &OGDT::LearnThread, (void*)&pars[t]);
   }
 
   FinishThreads();
-  SaveLog();
+  SaveLearnLog();
 }
 
 template <typename TTransform>
@@ -202,7 +202,7 @@ void OGDT<TTransform>::Test() {
 }
 
 template <typename TTransform>
-void OGDT<TTransform>::MakeLog(T_IDX tid, const Svector &x, T_LBL y, double pred_val) {
+void OGDT<TTransform>::MakeLearnLog(T_IDX tid, const Svector &x, T_LBL y, double pred_val) {
   if (calc_loss_) {
     // Calc loss
     t_loss_[tid] = t_loss_[tid] + LF_->GetLoss(pred_val, (double)y);
@@ -233,7 +233,8 @@ void OGDT<TTransform>::MakeLog(T_IDX tid, const Svector &x, T_LBL y, double pred
 }
 
 template <typename TTransform>
-void OGDT<TTransform>::SaveLog() {
+void OGDT<TTransform>::SaveLearnLog() {
+  cout << "-----------------Online Prediction------------------" << endl;
   if (calc_loss_) {
     // intermediate logs
     if (n_log_ > 0) {
@@ -289,6 +290,9 @@ void OGDT<TTransform>::SaveLog() {
       cout << "Total mispredictions: " << t_m << ", accuracy: " << 
 	1.0-(double)t_m/(double)t_s<< endl;
     }
+  }
+  else {
+    cout << "Online prediction results are not shown." << endl;
   }
 }
 

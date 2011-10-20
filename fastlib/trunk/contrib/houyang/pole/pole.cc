@@ -126,77 +126,79 @@ void Pole::ParseArgs(int argc, char *argv[]) {
   po::options_description desc("POLE (Parallel Online Learning Experiments) options");
   // Declare supported options
   desc.add_options()
-      ("help,h","Produce help message")
-      ("method,m", po::value<string>(&L_->opt_name_)->default_value(""), 
-       "Optimization method [ogd, kogd, togd, nasa, oeg, dwm_i, dwm_a, drwm_i, or drwm_d].")
-      ("batch", po::value<bool>(&batch_)->default_value(false),
-       "Online leaing or Batch learning. Default: Online.")
-      ("threads", po::value<T_IDX>(&L_->n_thread_)->default_value(1), 
-       "Number of threads. Default: 1 thread.")
-      ("data_learn,d", po::value<string>(&L_->fn_learn_)->default_value(""), 
-       "File name of training example set.")
-      ("data_predict,t", po::value<string>(&L_->fn_predict_)->default_value(""), 
-       "File name of predicting example set.")
-      ("epoches,e", po::value<T_IDX>(&L_->n_epoch_)->default_value(0), 
-       "Number of training epoches. Default: 0 epoch.")
-      ("iterations,i", po::value<T_IDX>(&L_->n_iter_res_)->default_value(0), 
-       "Number of training iterations besides epoches. Default: 0.")
-      ("reg", po::value<int>(&L_->reg_type_)->default_value(2), 
-       "Which regularization term to use. Default: 2(squared l2 norm).")
-      ("lambda", po::value<double>(&L_->reg_factor_), 
-       "Regularization factor ('lambda' in avg_loss + lambda * regularization). No default value.")
-      ("C,c", po::value<double>(&L_->reg_C_)->default_value(1.0), 
-       "Cost factor C ('C' in regularization + C*avg_loss). Default: 1.0.")
-      ("type", po::value<string>(&L_->type_)->default_value("classification"), 
-       "Type of learning: classification or regression or others. Default: classification.")
-      ("loss_function,l", po::value<string>(&L_->lf_name_)->default_value("hinge"), 
-       "Loss function to be used. Default: squared. Available: squared, hinge, logistic and quantile.")
-      ("bias", po::value<bool>(&L_->use_bias_)->default_value(false),
-       "Add a bias term to examples.")
-      ("dbound", po::value<double>(&L_->dbound_)->default_value(1.0),
-       "Upper bound for D_{psi,X}(x_t, x^*).")
-      ("strongness", po::value<double>(&L_->strongness_)->default_value(1.0),
-       "Strongly convex constant.")
-      ("experts,p", po::value<T_IDX>(&L_->n_expert_)->default_value(1), 
-       "Number of experts. Default: 0.")
-      ("weak_learner", po::value<string>(&L_->wl_name_)->default_value("stump"), 
-       "Name of weak learner. Default: decision stump.")
-      ("alpha", po::value<double>(&L_->alpha_)->default_value(0.5), 
-       "Multiplication factor in Weighte Majority. Default: 0.5.")
-      ("kernel,k", po::value<string>(&L_->kernel_name_)->default_value("linear"), 
-       "Kernel (linear, rbf). Default: linear kernel.")
-      ("sigma", po::value<double>(&L_->sigma_)->default_value(1.0), 
-       "Sigma in Gaussian RBF kernel. Default: 1.0.")
-      ("transform,r", po::value<string>(&L_->kernel_name_)->default_value("fourier_rbf"), 
-       "Transform of original data vectors (fourier_rbf). Default: fourier transform of rbf kernel.")
-      ("trdim", po::value<T_IDX>(&L_->trdim_)->default_value(1000), 
-       "Dimension for transformed features. Default: 1000.")
-      ("comm", po::value<int>(&L_->comm_method_)->default_value(1), 
-       "How agents communicate with each other. Default: 1(full connected).")
-      ("mini_batch,b", po::value<T_IDX>(&L_->mb_size_)->default_value(1), 
-       "Size of a mini-batch. Default: 1.")
-      ("random", po::value<bool>(&L_->random_data_)->default_value(true), 
-       "Randomly permute the input examples.")
-      ("read_port", po::value<bool>(&L_->read_port_)->default_value(false), 
-       "Read data parallelly with training.")
-      ("num_port_sources", po::value<T_IDX>(&L_->n_source_)->default_value(0), 
-       "Number of sources for daemon socket input.")
-      ("port", po::value<T_IDX>(&L_->port_)->default_value(0),
-       "Port to listen on.")
-      ("calc_loss", po::value<bool>(&L_->calc_loss_)->default_value(false), 
-       "Calculate total loss.")
-      ("log", po::value<T_IDX>(&L_->n_log_)->default_value(0), 
-       "How many log points. Default: 0(no logging).")
-      ("verbose,v", po::value<bool>(&L_->v_)->default_value(false), 
-       "Verbose debug info.");
+    ("help,h","Produce help message")
+    ("method,m", po::value<string>(&L_->opt_name_)->default_value(""), 
+     "Optimization method [ogd, kogd, togd, nasa, oeg, dwm_i, dwm_a, drwm_i, or drwm_d].")
+    ("batch", po::value<bool>(&batch_)->default_value(false),
+     "Online leaing or Batch learning. Default: Online.")
+    ("threads", po::value<T_IDX>(&L_->n_thread_)->default_value(1), 
+     "Number of threads for training. Default: 1 thread.")
+    ("threads_test", po::value<T_IDX>(&L_->n_thread_test_)->default_value(1), 
+     "Number of threads for testing. Default: 1 thread.")
+    ("data_learn,d", po::value<string>(&L_->fn_learn_)->default_value(""), 
+     "File name of training example set.")
+    ("data_predict,t", po::value<string>(&L_->fn_predict_)->default_value(""), 
+     "File name of predicting example set.")
+    ("epoches,e", po::value<T_IDX>(&L_->n_epoch_)->default_value(0), 
+     "Number of training epoches. Default: 0 epoch.")
+    ("iterations,i", po::value<T_IDX>(&L_->n_iter_res_)->default_value(0), 
+     "Number of training iterations besides epoches. Default: 0.")
+    ("reg", po::value<int>(&L_->reg_type_)->default_value(2), 
+     "Which regularization term to use. Default: 2(squared l2 norm).")
+    ("lambda", po::value<double>(&L_->reg_factor_), 
+     "Regularization factor ('lambda' in avg_loss + lambda * regularization). No default value.")
+    ("C,c", po::value<double>(&L_->reg_C_)->default_value(1.0), 
+     "Cost factor C ('C' in regularization + C*avg_loss). Default: 1.0.")
+    ("type", po::value<string>(&L_->type_)->default_value("classification"), 
+     "Type of learning: classification or regression or others. Default: classification.")
+    ("loss_function,l", po::value<string>(&L_->lf_name_)->default_value("hinge"), 
+     "Loss function to be used. Default: squared. Available: squared, hinge, logistic and quantile.")
+    ("bias", po::value<bool>(&L_->use_bias_)->default_value(false),
+     "Add a bias term to examples.")
+    ("dbound", po::value<double>(&L_->dbound_)->default_value(1.0),
+     "Upper bound for D_{psi,X}(x_t, x^*).")
+    ("strongness", po::value<double>(&L_->strongness_)->default_value(1.0),
+     "Strongly convex constant.")
+    ("experts,p", po::value<T_IDX>(&L_->n_expert_)->default_value(1), 
+     "Number of experts. Default: 0.")
+    ("weak_learner", po::value<string>(&L_->wl_name_)->default_value("stump"), 
+     "Name of weak learner. Default: decision stump.")
+    ("alpha", po::value<double>(&L_->alpha_)->default_value(0.5), 
+     "Multiplication factor in Weighte Majority. Default: 0.5.")
+    ("kernel,k", po::value<string>(&L_->kernel_name_)->default_value("linear"), 
+     "Kernel (linear, rbf). Default: linear kernel.")
+    ("sigma", po::value<double>(&L_->sigma_)->default_value(1.0), 
+     "Sigma in Gaussian RBF kernel. Default: 1.0.")
+    ("transform,r", po::value<string>(&L_->kernel_name_)->default_value("fourier_rbf"), 
+     "Transform of original data vectors (fourier_rbf). Default: fourier transform of rbf kernel.")
+    ("trdim", po::value<T_IDX>(&L_->trdim_)->default_value(1000), 
+     "Dimension for transformed features. Default: 1000.")
+    ("comm", po::value<int>(&L_->comm_method_)->default_value(1), 
+     "How agents communicate with each other. Default: 1(full connected).")
+    ("mini_batch,b", po::value<T_IDX>(&L_->mb_size_)->default_value(1), 
+     "Size of a mini-batch. Default: 1.")
+    ("random", po::value<bool>(&L_->random_data_)->default_value(true), 
+     "Randomly permute the input examples.")
+    ("read_port", po::value<bool>(&L_->read_port_)->default_value(false), 
+     "Read data parallelly with training.")
+    ("num_port_sources", po::value<T_IDX>(&L_->n_source_)->default_value(0), 
+     "Number of sources for daemon socket input.")
+    ("port", po::value<T_IDX>(&L_->port_)->default_value(0),
+     "Port to listen on.")
+    ("calc_loss", po::value<bool>(&L_->calc_loss_)->default_value(false), 
+     "Calculate total loss.")
+    ("log", po::value<T_IDX>(&L_->n_log_)->default_value(0), 
+     "How many log points. Default: 0(no logging).")
+    ("verbose,v", po::value<bool>(&L_->v_)->default_value(false), 
+     "Verbose debug info.");
 
   po::positional_options_description p;
   po::variables_map vm;
   po::store(po::command_line_parser(argc, argv).options(desc).positional(p).run(), vm);
   po::notify(vm);
   if (vm.count("help") || argc == 1) {
-      cerr << "\n" << desc << "\n";
-      exit(1);
+    cerr << "\n" << desc << "\n";
+    exit(1);
   }
   
   if (L_->lf_name_ == "squared") {
