@@ -17,7 +17,7 @@ Learner::Learner() {
 // Destruction
 ///////////////
 Learner::~Learner() {
-  if (TR_ && (!TE_)) { // only training data
+  if (TR_ && (TE_ == NULL)) { // only training data
     delete TR_;
   }
   else if (TR_ && TE_) {
@@ -29,7 +29,7 @@ Learner::~Learner() {
       delete TE_;
     }
   }
-  else if (TE_) { // only testing data
+  else if (TE_ && (TR_ == NULL)) { // only testing data
     delete TE_;
   }
   else {
