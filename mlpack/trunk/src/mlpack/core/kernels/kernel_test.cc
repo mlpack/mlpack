@@ -210,12 +210,12 @@ BOOST_AUTO_TEST_CASE(linear_kernel_orthogonal) {
   BOOST_REQUIRE_CLOSE(lk.Evaluate(b,a), 0, 1e-5);
 }
 
-BOOST_AUTO_TEST_CASE(gaussian_rbf_kernel) {
+BOOST_AUTO_TEST_CASE(gaussian_kernel) {
   arma::vec a = "1 0 0";
   arma::vec b = "0 1 0";
   arma::vec c = "0 0 1";
 
-  GaussianRBFKernel gk(.5);
+  GaussianKernel gk(.5);
   BOOST_REQUIRE_CLOSE(gk.Evaluate(a,b), .018315638888734, 1e-5);
   BOOST_REQUIRE_CLOSE(gk.Evaluate(b,a), .018315638888734, 1e-5);
   BOOST_REQUIRE_CLOSE(gk.Evaluate(a,c), .018315638888734, 1e-5);
