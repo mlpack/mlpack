@@ -22,17 +22,18 @@ PROGRAM_INFO("Approx IP Tester", "This program "
 PARAM_STRING_REQ("r", "The reference set", "");
 PARAM_STRING_REQ("q", "The set of queries", "");
 
-PARAM_INT("max_k", "The max value of knns to be tried.", "", 1);
-
 PARAM_STRING("klist", "The comma-separated list of values of"
-	     " 'k' to be tried.", "", "");
+	     " k to be tried.", "", "");
 
-PARAM_STRING_REQ("epslist", "The comma-separated list of epsilons", "");
+PARAM_STRING_REQ("epslist", "The comma-separated list of epsilons",
+	     "");
 // PARAM_STRING_REQ("alphas", "The comma-separated list of alphas", "");
 
-PARAM_INT("reps", "The number of times the rank-approximate"
-	  " algorithm is to be repeated for the same setting.",
-	  "", 1);
+// PARAM_INT("reps", "The number of times the rank-approximate"
+// 	  " algorithm is to be repeated for the same setting.",
+// 	  "", 1);
+
+PARAM_INT("max_k", "The max value of knns to be tried.", "", 1);
 
 PARAM_STRING("rank_file", "The file containing the ranks.",
 	     "", "");
@@ -41,9 +42,6 @@ PARAM_STRING("rank_file", "The file containing the ranks.",
 // 	     " for the different values of k.", "", "speedups.txt");
 // PARAM_FLAG("print_speedups", "The flag to trigger the printing of"
 // 	   " speedups.", "");
-
-// PARAM_FLAG("check_nn", "The flag to trigger the checking"
-// 	   " of the results by doing the naive computation.", "");
 
 
 /**
@@ -176,31 +174,49 @@ int main (int argc, char *argv[]) {
 	    << endl;
 
   // computing the precision values and the median ranks from the results
-  vector<double> avg_precisions;
-  vector<size_t> median_ranks;
+  vector<double> avg_precisions1, avg_precisions2;
+  vector<size_t> median_ranks2, median_ranks2;
 
-  if (CLI::HasParam("rank_file"))
-    compute_error(all_solutions, rdata.n_cols,
-		  &avg_precisions, &median_ranks);
-  else
-    compute_error(all_solutions, rdata, qdata,
-		  &avg_precisions, &median_ranks);
+  //  if (CLI::HasParam("rank_file"))
+  compute_error(all_solutions, rdata.n_cols,
+		&avg_precisions1, &median_ranks1);
+  //else
+  compute_error(all_solutions, rdata, qdata,
+		&avg_precisions2, &median_ranks2);
 
   // print the results here somehow
-  assert(avg_precisions.size() == number_of_ks * num_eps);
-  assert(median_ranks.size() == number_of_ks * num_eps);
-  assert(avg_precisions.size() == all_th_speedups.size());
+  assert(avg_precisions1.size() == number_of_ks * num_eps);
+  assert(median_ranks1.size() == number_of_ks * num_eps);
+  assert(avg_precisions1.size() == all_th_speedups.size());
+
+  assert(avg_precisions2.size() == number_of_ks * num_eps);
+  assert(median_ranks2.size() == number_of_ks * num_eps);
+  assert(avg_precisions2.size() == all_th_speedups.size());
+
 
   printf("k, epsilon, precision, median rank, th_speedup\n");
   for (size_t i = 0; i < number_of_ks; i++) {
     for (size_t j = 0; j < num_eps; j++) {
 
       printf("%zu, %lg, %lg, %zu, %lg\n", ks(i), eps(j),
-	     avg_precisions[i * num_eps + j],
-	     median_ranks[i*num_eps + j],
+	     avg_precisions1[i * num_eps + j],
+	     median_ranks1[i*num_eps + j],
 	     all_th_speedups[i*num_eps + j]); fflush(NULL);
     }
   }
+
+  printf("-------------------\n"
+	 "k, epsilon, precision, median rank, th_speedup\n");
+  for (size_t i = 0; i < number_of_ks; i++) {
+    for (size_t j = 0; j < num_eps; j++) {
+
+      printf("%zu, %lg, %lg, %zu, %lg\n", ks(i), eps(j),
+	     avg_precisions2[i * num_eps + j],
+	     median_ranks2[i*num_eps + j],
+	     all_th_speedups[i*num_eps + j]); fflush(NULL);
+    }
+  }
+
 }  // end main
 
 

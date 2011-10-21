@@ -22,6 +22,8 @@ set(SOURCES
    exact_max_ip.cc
    approx_max_ip.h
    approx_max_ip.cc
+   # checking nn utils
+   check_nn_utils.h
 )
 
 # add directory name to sources
@@ -39,6 +41,16 @@ add_executable(max_ip_main
    max_ip_main.cc
 )
 target_link_libraries(max_ip_main
+   mlpack
+   mlpack_contrib
+)
+
+# the single/dual tree approx trial
+add_executable(approx_ip_main
+   EXCLUDE_FROM_ALL
+   approx_ip_main.cc
+)
+target_link_libraries(approx_ip_main
    mlpack
    mlpack_contrib
 )
@@ -81,4 +93,15 @@ add_executable(rank_computer
 )
 target_link_libraries(rank_computer
    mlpack
+)
+
+# The code to compute the rank for the given query 
+# and reference sets 
+add_executable(rank_inverter
+   EXCLUDE_FROM_ALL
+   rank_matrix_inverter.cc
+)
+target_link_libraries(rank_inverter
+   mlpack
+   mlpack_contrib
 )

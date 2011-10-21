@@ -26,14 +26,15 @@ PARAM_MODULE("approx_maxip", "Parameters for the class that "
 
 PARAM_INT("knns", "The number of top innner products required",
 	  "approx_maxip", 1);
+PARAM_INT("leaf_size", "The leaf size for the ball-tree", 
+	  "approx_maxip", 20);
+
 PARAM_DOUBLE("epsilon", "The rank error in terms of the \% of "
 	     "reference set size", "approx_maxip", 1.0);
 PARAM_DOUBLE("alpha", "The error probability",
 	     "approx_maxip", 0.95);
 PARAM_INT("sample_limit", "The maximum number of samples allowed "
 	  "when the node can be approximated by sampling.", 
-	  "approx_maxip", 20);
-PARAM_INT("leaf_size", "The leaf size for the ball-tree", 
 	  "approx_maxip", 20);
 
 PARAM_FLAG("angle_prune", "The flag to trigger the tighter"

@@ -15,6 +15,8 @@ PARAM_STRING_REQ("r", "The reference set", "");
 PARAM_STRING_REQ("q", "The set of queries", "");
 PARAM_STRING_REQ("rank_matrix", "The file where the rank "
 		 "matrix would be written in.", "");
+PARAM_STRING("ip_mat_file", "The file where the ip "
+	     "matrix would be written in.", "", "");
 
 PARAM_FLAG("large_scale", "The flag to trigger the "
 	   "large scale computation where you go "
@@ -113,15 +115,17 @@ int main (int argc, char *argv[]) {
     arma::mat ip_mat = arma::trans(qdata) * rdata;
 
 
-    Log::Info << "DISTANCES COMPUTED!" << endl;
+    Log::Info << "IPs COMPUTED!" << endl;
+    if (CLI::HasParam("ip_mat_file")) {
+      string ip_file = CLI::GetParam<string>("ip_mat_file");
+      ip_mat.save(ip_file, arma::raw_ascii);
+    }
 
-//     printf("H1\n"); fflush(NULL);
     // do it with a loop over the queries.
     for (size_t i = 0; i < qdata.n_cols; i++) {
 
       // obtaining the ips
       arma::vec ip_q = arma::trans(ip_mat.row(i));
-//       printf("H2\n"); fflush(NULL);
       assert(ip_q.n_elem == rdata.n_cols);
 
 
