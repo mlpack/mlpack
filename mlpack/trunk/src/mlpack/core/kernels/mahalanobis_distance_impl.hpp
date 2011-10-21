@@ -12,8 +12,12 @@
 namespace mlpack {
 namespace kernel {
 
+/**
+ * Specialization for non-rooted case.
+ */
 template<>
-double MahalanobisDistance<false>::Evaluate(arma::vec& a, arma::vec& b) {
+double MahalanobisDistance<false>::Evaluate(const arma::vec& a,
+                                            const arma::vec& b) {
   // Check if covariance matrix has been initialized.
   if (covariance_.n_rows == 0)
     covariance_ = arma::eye<arma::mat>(a.n_elem, a.n_elem);
@@ -23,8 +27,13 @@ double MahalanobisDistance<false>::Evaluate(arma::vec& a, arma::vec& b) {
   return out[0];
 }
 
+/**
+ * Specialization for rooted case.  This requires one extra evaluation of
+ * sqrt().
+ */
 template<>
-double MahalanobisDistance<true>::Evaluate(arma::vec& a, arma::vec& b) {
+double MahalanobisDistance<true>::Evaluate(const arma::vec& a,
+                                           const arma::vec& b) {
   // Check if covariance matrix has been initialized.
   if (covariance_.n_rows == 0)
     covariance_ = arma::eye<arma::mat>(a.n_elem, a.n_elem);

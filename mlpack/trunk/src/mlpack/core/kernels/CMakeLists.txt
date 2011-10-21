@@ -7,8 +7,8 @@ set(SOURCES
   linear_kernel.hpp
   lmetric.h
   lmetric.cc
-  mahalanobis_distance.h
-  mahalanobis_distance_impl.h
+  mahalanobis_distance.hpp
+  mahalanobis_distance_impl.hpp
   cosine_distance.hpp
   cosine_distance.cpp
 )
