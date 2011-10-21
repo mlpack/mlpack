@@ -16,8 +16,7 @@ int main(int argc, char *argv[]) {
   ptime time_end(microsec_clock::local_time());
   time_duration duration(time_end - time_start);
   
-  cout << "-----------------------Timing------------------------" << endl;
-  cout << "Total time: " << duration << endl;
-  cout << "Total time in ms: " << duration.total_milliseconds() << endl << endl;
+  cout << "Total wall-clock time: " << duration << endl;
+  cout << "Total wall-clock in ms: " << duration.total_milliseconds() << endl << endl;
 
 }

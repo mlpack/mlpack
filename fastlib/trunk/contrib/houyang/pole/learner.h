@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cmath>
 #include <pthread.h>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "data.h"
 #include "loss.h"
@@ -13,6 +14,7 @@
 typedef vector<T_IDX> Vec_d;
 
 using namespace std;
+using namespace boost::posix_time;
 
 class Learner {
  public:
@@ -74,6 +76,7 @@ class Learner {
   int    comm_method_; // How agents communicate with each other
   double dbound_; // Upper bound for D_{psi,X}(x_t, x^*).
   double strongness_; // strongly convex constant
+
  private:
   pthread_mutex_t mutex_ex_; // for loading training data
   pthread_mutex_t mutex_ex_test_; // for loading testing data
