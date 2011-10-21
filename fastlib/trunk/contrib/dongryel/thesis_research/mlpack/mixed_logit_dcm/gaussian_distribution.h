@@ -226,7 +226,10 @@ class GaussianDistribution {
       int *num_parameters_out,
       PrivateData *private_data_out) {
 
+      // Set the dimensions.
       private_data_out->attribute_dimensions_ = attribute_dimensions_in;
+
+      // Set up the block limits for the gradient.
       private_data_out->row_blocks_.push_back(attribute_dimensions_in[0]);
       private_data_out->row_blocks_.push_back(
         private_data_out->row_blocks_.back() +
@@ -260,18 +263,21 @@ class GaussianDistribution {
       int add = private_data_out->cholesky_factor_dimension_ - 1;
       int row_num = 0;
       int start = 0;
+      int num_resets = 0;
       for(int i = 0; i < private_data_out->num_cholesky_factor_entries_; i++) {
         if(i == limit) {
           limit += add;
           add--;
-          row_num++;
+          row_num = 0;
+          num_resets++;
           start = i;
         }
         private_data_out->nonzero_column_indices_[
-          private_data_out->cholesky_factor_dimension_ + i] = row_num;
+          private_data_out->cholesky_factor_dimension_ + i] = row_num + num_resets;
         private_data_out->start_indices_[
           private_data_out->cholesky_factor_dimension_ + i] =
             private_data_out->cholesky_factor_dimension_ + start;
+        row_num++;
       }
     }
 };
