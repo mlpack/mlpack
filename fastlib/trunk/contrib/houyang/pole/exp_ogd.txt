@@ -56,5 +56,5 @@ Examples:
 92298.2 0.95138 2:19.310817
 
 ./pole_pt --batch 1 -d gamma_train --td_ratio 0.1 --random 1 -m ogd --type classification -l hinge --reg 2 --bias 1 --lambda 0.001 --threads_test 4 -e 1 --dbound 0.03
-24020.2 0.79676 8:40.99
+24191.7 0.79598 2.64
 

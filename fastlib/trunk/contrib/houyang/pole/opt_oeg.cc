@@ -234,7 +234,7 @@ void OEG::SaveLearnLog() {
       cout << "t"<< t << ": " << t_n_used_examples_[t] 
 	   << " samples processed. Loss: " << t_loss_[t]<< endl;
     }
-    cout << "Total loss: " << t_l << endl;
+    cout << "Total online loss: " << t_l << endl;
 
     // prediction accuracy for classifications
     if (type_ == "classification") {
@@ -246,7 +246,7 @@ void OEG::SaveLearnLog() {
 	  " samples processed. Misprediction: " << t_err_[t]<< ", accuracy: "<< 
 	  1.0-(double)t_err_[t]/(double)t_n_used_examples_[t] << endl;
       }
-      cout << "Total mispredictions: " << t_m << ", accuracy: " << 
+      cout << "Total online mispredictions: " << t_m << ", accuracy: " << 
 	1.0-(double)t_m/(double)t_s<< endl;
     }
   }
