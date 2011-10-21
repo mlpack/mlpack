@@ -350,7 +350,7 @@ void NASA::SaveLearnLog() {
       cout << "t"<< t << ": " << t_n_used_examples_[t] 
 	   << " samples processed. Loss: " << t_loss_[t]<< endl;
     }
-    cout << "Total loss: " << t_l << endl;
+    cout << "Total online loss: " << t_l << endl;
 
     // prediction accuracy for classifications
     if (type_ == "classification") {
@@ -362,7 +362,7 @@ void NASA::SaveLearnLog() {
 	  " samples processed. Misprediction: " << t_err_[t]<< ", accuracy: "
              << 1.0-(double)t_err_[t]/(double)t_n_used_examples_[t] << endl;
       }
-      cout << "Total mispredictions: " << t_m << ", accuracy: " << 
+      cout << "Total online mispredictions: " << t_m << ", accuracy: " << 
 	1.0-(double)t_m/(double)t_s<< endl;
     }
   }
@@ -401,7 +401,7 @@ void NASA::SaveTestLog() {
            << " samples processed. Loss: " << t_test_loss_[t]<< endl;
     }
   }
-  cout << "Total loss: " << t_l << endl;
+  cout << "Total testing loss: " << t_l << endl;
 
   // prediction accuracy for classifications
   if (type_ == "classification") {
@@ -415,7 +415,9 @@ void NASA::SaveTestLog() {
              << 1.0-(double)t_test_err_[t]/(double)t_test_n_used_examples_[t] << endl;
       }
     }
-    cout << "Total mispredictions: " << t_m << ". Overall accuracy: " << 
-      1.0-(double)t_m/(double)t_s<< endl;
+    cout << "Total testing mispredictions: " << t_m << endl;
+    cout << "Overall testing error: " << (double)t_m/(double)t_s
+         << ". Overall testing accuracy: " << 1.0-(double)t_m/(double)t_s
+         << endl;
   }
 }
