@@ -101,7 +101,7 @@ typedef LMetric<2, false> SquaredEuclideanDistance;
 /***
  * The Euclidean (L2) distance.
  */
-typedef LMetric<2, true> EuclideanDistance;a
+typedef LMetric<2, true> EuclideanDistance;
 
 }; // namespace kernel
 }; // namespace mlpack

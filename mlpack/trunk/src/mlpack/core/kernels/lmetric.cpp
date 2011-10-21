@@ -4,7 +4,7 @@
  *
  * Implementation of template specializations of LMetric class.
  */
-#include "lmetric.h"
+#include "lmetric.hpp"
 
 namespace mlpack {
 namespace kernel {
