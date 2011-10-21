@@ -142,14 +142,16 @@ double ApproxMaxIP::ComputeProbability_(size_t set_size,
   temp_b = arma::ones<arma::vec>(rank_approx + 1);
 
   // calculating the temp_b
-  temp_b(rank_approx) = 1.0;
-  size_t i, j = 1;
-  for (i = rank_approx-1; i > (size_t) -1; i--, j++) {
+  size_t j = 1;
+  size_t i = rank_approx - 1;
+
+  do {
     double frac = (double)(set_size-(sample_size-1)-j)
       / (double)(set_size - j);
     temp_b(i) = temp_b(i+1) * frac;
-  }
-  assert(j == rank_approx + 1);
+    j++; i--;
+  } while (i > 0);
+  assert(j == rank_approx);
 
   // computing the sum and the product with n/N
   sum = arma::dot(temp_a, temp_b);
@@ -929,7 +931,7 @@ void ApproxMaxIP::InitApprox(const arma::mat& queries_in,
   rank_approx_ = (size_t) (epsilon_ * (double)references_.n_cols / 100.0);
 
   mlpack::Log::Info << "Rank Approximation: " << epsilon_ 
-		    << "%% or " << rank_approx_
+		    << "% or " << rank_approx_
 		    << " with prob. " << alpha << std::endl;
 
 
@@ -987,7 +989,7 @@ void ApproxMaxIP::WarmInitApprox(size_t knns, double epsilon) {
   rank_approx_ = (size_t) (epsilon_ * (double)references_.n_cols / 100.0);
 
   mlpack::Log::Info << "Rank Approximation: " << epsilon_ 
-		    << "%% or " << rank_approx_
+		    << "% or " << rank_approx_
 		    << " with prob. " << alpha << std::endl;
 
 

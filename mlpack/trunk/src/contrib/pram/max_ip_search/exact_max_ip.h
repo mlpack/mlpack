@@ -6,6 +6,8 @@
 #ifndef EXACT_MAX_IP_H
 #define EXACT_MAX_IP_H
 
+// #define NDEBUG
+
 #include <assert.h>
 #include <mlpack/core.h>
 #include <mlpack/core/tree/bounds.h>
@@ -37,17 +39,9 @@ PARAM_FLAG("dual_tree", "The flag to trigger dual-tree "
 
 PARAM_FLAG("check_prune", "The flag to trigger the "
 	   "checking of the prune.", "maxip");
-
-
-
-//   {"tree_building", FX_TIMER, FX_CUSTOM, NULL,
-//    " The timer to record the time taken to build" 
-//    " the query and the reference tree.\n"},
-//   {"tree_building_approx", FX_TIMER, FX_CUSTOM, NULL,
-//    " The timer to record the time taken to build" 
-//    " the query and the reference tree for InitApprox.\n"},
-//   {"computing_sample_sizes", FX_TIMER, FX_CUSTOM, NULL,
-//    " The timer to compute the sample sizes.\n"},
+PARAM_FLAG("alt_dual_traversal", "The flag to trigger the "
+	   "alternate dual tree traversal using angles.",
+	   "maxip");
 
 
 /**
@@ -61,34 +55,91 @@ class MaxIP {
   class QueryStat {
   private:
     double bound_;
+    double center_norm_;
 
   public:
     double bound() { return bound_; }
+    double center_norm() { return center_norm_; }
 
     void set_bound(double bound) { 
       bound_ = bound;
     }
 
+    void set_center_norm(double val) {
+      center_norm_ = val; 
+    }
+
     QueryStat() {
       bound_ = 0.0;
+      center_norm_ = 0.0;
     }
 
     ~QueryStat() {}
 
     void Init(const arma::mat& data, size_t begin, size_t count) {
       bound_ = 0.0;
+      center_norm_ = 0.0;
     }
 
     void Init(const arma::mat& data, size_t begin, size_t count,
 	      QueryStat& left_stat, QueryStat& right_stat) {
       bound_ = 0.0;
+      center_norm_ = 0.0;
     }
   }; // QueryStat
+
+  class RefStat {
+  private:
+    double cosine_origin_;
+    double sine_origin_;
+    double dist_to_origin_;
+
+  public:
+    double cosine_origin() { return cosine_origin_; }
+    double sine_origin() { return sine_origin_; }
+    double dist_to_origin() { return dist_to_origin_; }
+
+
+    void set_angles(double val, size_t type = 0) { 
+      if (type == 0) { // given value is the cosine
+	cosine_origin_ = val;
+	sine_origin_ = std::sqrt(1 - val * val);
+      } else { // the given value is the sine
+	sine_origin_ = val;
+	cosine_origin_ = std::sqrt(1 - val * val);
+      }
+    }
+
+    void set_dist_to_origin(double val) {
+      dist_to_origin_ = val;
+    }
+
+    // FILL OUT THE INIT FUNCTIONS APPROPRIATELY LATER
+    RefStat() {
+      cosine_origin_ = 0.0;
+      sine_origin_ = 0.0;
+      dist_to_origin_ = 0.0;
+    }
+
+    ~RefStat() {}
+    void Init(const arma::mat& data, size_t begin, size_t count) {
+      cosine_origin_ = 0.0;
+      sine_origin_ = 0.0;
+      dist_to_origin_ = 0.0;
+    }
+
+    void Init(const arma::mat& data, size_t begin, size_t count,
+	      RefStat& left_stat, RefStat& right_stat) {
+      cosine_origin_ = 0.0;
+      sine_origin_ = 0.0;
+      dist_to_origin_ = 0.0;
+    }
+  }; // RefStat
 
   // TreeType are BinarySpaceTrees where the data are bounded by 
   // Euclidean bounding boxes, the data are stored in a Matrix, 
   // and each node has a QueryStat for its bound.
-  typedef GeneralBinarySpaceTree<DBallBound<>, arma::mat> TreeType;
+  typedef GeneralBinarySpaceTree<DBallBound<>, arma::mat, RefStat> TreeType;
   typedef GeneralBinarySpaceTree<DConeBound<>, arma::mat, QueryStat> CTreeType;
    
   
@@ -197,6 +248,8 @@ private:
 				  double upper_bound_ip);
 
   void reset_tree_(CTreeType *tree);
+  void set_angles_in_balls_(TreeType *tree);
+  void set_norms_in_cones_(CTreeType *tree);
 
   size_t SortValue(double value);
 
