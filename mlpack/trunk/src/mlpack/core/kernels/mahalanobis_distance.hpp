@@ -67,7 +67,7 @@ class MahalanobisDistance {
    * @param a First vector.
    * @param b Second vector.
    */
-  double Evaluate(const arma::vec& a, const arma::vec& b) const;
+  double Evaluate(const arma::vec& a, const arma::vec& b);
 
   /**
    * Access the covariance matrix.
