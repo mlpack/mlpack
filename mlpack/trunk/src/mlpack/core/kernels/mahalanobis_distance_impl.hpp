@@ -7,7 +7,7 @@
 #ifndef __MLPACK_CORE_KERNELS_MAHALANOBIS_DISTANCE_IMPL_H
 #define __MLPACK_CORE_KERNELS_MAHALANOBIS_DISTANCE_IMPL_H
 
-#include "mahalanobis_distance.h"
+#include "mahalanobis_distance.hpp"
 
 namespace mlpack {
 namespace kernel {

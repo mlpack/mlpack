@@ -5,8 +5,8 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   gaussian_kernel.hpp
   linear_kernel.hpp
-  lmetric.h
-  lmetric.cc
+  lmetric.hpp
+  lmetric.cpp
   mahalanobis_distance.hpp
   mahalanobis_distance_impl.hpp
   cosine_distance.hpp
