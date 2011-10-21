@@ -5,7 +5,7 @@
  * Executable for Neighborhood Components Analysis.
  */
 #include <mlpack/core.h>
-#include <mlpack/core/kernels/lmetric.h>
+#include <mlpack/core/kernels/lmetric.hpp>
 
 #include "nca.h"
 

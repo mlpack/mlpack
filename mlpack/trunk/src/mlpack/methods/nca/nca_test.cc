@@ -6,7 +6,7 @@
  * the softmax error function).
  */
 #include <mlpack/core.h>
-#include <mlpack/core/kernels/lmetric.h>
+#include <mlpack/core/kernels/lmetric.hpp>
 #include "nca.h"
 
 #define BOOST_TEST_MODULE Neighborhood Components Analysis Test

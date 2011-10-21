@@ -12,7 +12,7 @@
 // In case someone included this directly.
 #include "neighbor_search.h"
 
-#include <mlpack/core/kernels/lmetric.h>
+#include <mlpack/core/kernels/lmetric.hpp>
 
 #include "sort_policies/nearest_neighbor_sort.h"
 #include "sort_policies/furthest_neighbor_sort.h"
