@@ -11,7 +11,7 @@
 #define TREE_DBALLBOUND_H
 
 #include <mlpack/core/math/math_lib.h>
-#include <mlpack/core/kernels/lmetric.h>
+#include <mlpack/core/kernels/lmetric.hpp>
 #include <armadillo>
 
 /**
