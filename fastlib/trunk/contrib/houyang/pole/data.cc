@@ -7,6 +7,7 @@
 ///////////////
 Data::Data(string fn, T_IDX port, bool random) : 
   fn_(fn), port_(port), random_(random), 
+  size_first_(0), size_second_(0), 
   used_ct_(0), n_ln_(0), 
   max_ft_idx_(0), max_n_nz_ft_(0), max_l_ln_(0) {
 }
@@ -118,6 +119,7 @@ void Data::ReadFromFile() {
     RandomPermute();
     cout << "random permute examples...";
   }
+
   cout << "done. " << endl << Size() << " examples loaded." 
        << " Max dimension: " << max_ft_idx_ << "."<< endl;
   fclose(fp_);
@@ -278,4 +280,5 @@ void Data::InitFromArff() {
 void Data::ReadFromPort() {
   cout << "---------------Loading data from port-------------------" << endl;
   // TODO: probabaly parallel read from different ports
+  size_first_ = Size(); size_second_ = 0;
 }

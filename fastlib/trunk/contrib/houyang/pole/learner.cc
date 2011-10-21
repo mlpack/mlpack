@@ -48,18 +48,18 @@ Learner::~Learner() {
 ////////////////////////////
 void Learner::ParallelLearn() {
   // determine number of epochs and residual iterations
-  if (n_iter_res_ >= TR_->Size()) {
-    n_epoch_ += (T_IDX)(n_iter_res_ / TR_->Size());
-    n_iter_res_ %= TR_->Size();
+  if (n_iter_res_ >= TR_->size_first_) {
+    n_epoch_ += (T_IDX)(n_iter_res_ / TR_->size_first_);
+    n_iter_res_ %= TR_->size_first_;
   }
-  T_IDX left_ct = (n_epoch_ * TR_->Size() + n_iter_res_) % (n_thread_ * mb_size_);
+  T_IDX left_ct = (n_epoch_ * TR_->size_first_ + n_iter_res_) % (n_thread_ * mb_size_);
   if ( left_ct > 0)
     n_iter_res_ += (n_thread_ * mb_size_ - left_ct);
   cout << "n_epo= " << n_epoch_ << ", n_iter_res= " << n_iter_res_ << endl;
   // init for intermediate logs
   epoch_ct_ = 0;
   if (n_log_ > 0) {
-    T_IDX t_int = (T_IDX)floor( (n_epoch_*TR_->Size() + n_iter_res_)/(n_thread_ * n_log_) );
+    T_IDX t_int = (T_IDX)floor( (n_epoch_*TR_->size_first_ + n_iter_res_)/(n_thread_ * n_log_) );
     LOG_ = new Log(n_thread_, n_log_, t_int, n_expert_, opt_name_);
   }
   // init for parallelism
@@ -70,6 +70,16 @@ void Learner::ParallelLearn() {
   t_loss_.resize(n_thread_);
   t_err_.resize(n_thread_);
   pthread_mutex_init(&mutex_ex_, NULL);
+
+  // init thread statistics
+  for (T_IDX t= 0; t<n_thread_; t++) {
+    t_state_[t] = 0;
+    t_n_it_[t] = 0;
+    t_n_used_examples_[t] = 0;
+    t_loss_[t] = 0;
+    t_err_[t] = 0;
+  }
+
   // for expert-advice learning methods
   if (opt_name_ == "dwm_i" || opt_name_ == "dwm_a" || opt_name_ == "drwm_i" || opt_name_ == "drwm_r") {
     t_exp_err_.resize(n_expert_);
@@ -86,13 +96,19 @@ void Learner::ParallelLearn() {
 // Parallel Testing
 //////////////////////////
 void Learner::ParallelTest() {
-  TE_->used_ct_ = 0; // in case that TR_==TE_
   // init for parallelism
   ThreadsTest_.resize(n_thread_test_);
   t_test_n_used_examples_.resize(n_thread_test_);
   t_test_loss_.resize(n_thread_test_);
   t_test_err_.resize(n_thread_test_);
   pthread_mutex_init(&mutex_ex_test_, NULL);
+
+  // init thread statistics
+  for (T_IDX t= 0; t<n_thread_test_; t++) {
+    t_test_n_used_examples_[t] = 0;
+    t_test_loss_[t] = 0;
+    t_test_err_[t] = 0;
+  }
   
   // begin testing
   Test();
@@ -135,11 +151,13 @@ void Learner::OnlineLearn() {
   if (read_port_) {
     TR_ = new Data(NULL, port_, false);
     TR_->ReadFromPort();
+    TR_->size_first_ = TR_->Size(); TR_->size_second_ = 0;
   }
   else {
     if (fn_learn_ != "") {
       TR_ = new Data(fn_learn_, 0, random_data_);
       TR_->ReadFromFile();
+      TR_->size_first_ = TR_->Size(); TR_->size_second_ = 0;
     }
     else {
       cout << "No input file name provided!" << endl;
@@ -159,41 +177,65 @@ void Learner::BatchLearn() {
   if (fn_learn_ != "") {
     TR_ = new Data(fn_learn_, 0, random_data_);
     TR_->ReadFromFile();
+    if (td_ratio_ == 0.0) {
+      TR_->size_first_ = TR_->Size(); TR_->size_second_ = 0;
+    }
+    else { // first part for training, second part for testing
+      TR_->size_second_ = ceil(TR_->Size() * td_ratio_); // for testing
+      TR_->size_first_ = TR_->Size() - TR_->size_second_; // for training
+      cout << "Subset of "<< TR_->size_first_ << " samples are used for learning." << endl;
+    }
   }
   else {
-    cout << "No training file provided!" << endl;
+    cout << "ERROR!!! No training file provided!" << endl << endl;
     exit(1);
   }
   ParallelLearn();
 
   // Testing
+  cout << "-----------------Batch Testing----------------------" << endl;
   if (fn_predict_ != "") {
     if (fn_predict_ == fn_learn_) {
+      cout << "---------------------------------------------------" << endl;
+      cout << "WARNING: Testing file is the same as training file." << endl;
+      cout << "---------------------------------------------------" << endl;
+      TR_->size_first_ = 0; TR_->size_second_ = TR_->Size();
+      TR_->used_ct_ = 0;
       TE_ = TR_;
-      //cout << "Training file is the same as testing file." << endl;
     }
     else {
       TE_ = new Data(fn_predict_, 0, false); // no need to permute testing data
       TE_->ReadFromFile();
+      TE_->size_first_ = 0; TE_->size_second_ = TE_->Size();
     }
   }
   else {
-    cout << "No testing file provided!" << endl;
-    exit(1);
+    if (td_ratio_ == 0.0) { // ratio (of the training set) for testing data
+      cout << "ERROR!!! No testing file provided!" << endl << endl;
+      exit(1);
+    }
+    else {
+      TR_->size_second_ = ceil(TR_->Size() * td_ratio_); // for testing
+      TR_->size_first_ = TR_->Size() - TR_->size_second_; // for training
+      TR_->used_ct_ = 0;
+      TE_ = TR_;
+      cout << "No testing file provided! "<< endl;
+      cout << "Subset of "<< TR_->size_second_ << " samples are used for testing." << endl;
+    }
   }
   ParallelTest();
 }
 
-///////////////////////////////
-// Get an immediate example
-///////////////////////////////
-bool Learner::GetImmedExample(Data *D, Example** x_p, T_IDX tid) {
+////////////////////////////////////
+// Get an immediate training example
+////////////////////////////////////
+bool Learner::GetTrainExample(Data *D, Example** x_p, T_IDX tid) {
   T_IDX ring_idx = 0;
   pthread_mutex_lock(&mutex_ex_);
   
   if (epoch_ct_ < n_epoch_) {
-    ring_idx = D->used_ct_ % D->Size();
-    if ( ring_idx == (D->Size()-1) ) { // one epoch finished
+    ring_idx = D->used_ct_ % D->size_first_;
+    if ( ring_idx == (D->size_first_-1) ) { // one epoch finished
       epoch_ct_ ++;
       // To mimic the online learning senario, in each epoch, 
       // we randomly permutate the dataset, indexed by old_from_new
@@ -208,7 +250,7 @@ bool Learner::GetImmedExample(Data *D, Example** x_p, T_IDX tid) {
     return true;
   }
   else if (iter_res_ct_ < n_iter_res_) {
-    ring_idx = D->used_ct_ % D->Size();
+    ring_idx = D->used_ct_ % D->size_first_;
     (*x_p) = D->GetExample(ring_idx);
     t_n_used_examples_[tid] = t_n_used_examples_[tid] + 1;
     iter_res_ct_ ++;
@@ -227,8 +269,8 @@ bool Learner::GetImmedExample(Data *D, Example** x_p, T_IDX tid) {
 ///////////////////////////////
 bool Learner::GetTestExample(Data *D, Example** x_p, T_IDX tid) {
   pthread_mutex_lock(&mutex_ex_test_);
-  if (D->used_ct_ < D->Size()) {
-    (*x_p) = D->GetExample(D->used_ct_);
+  if ( (D->size_first_+D->used_ct_) < D->Size() ) {
+    (*x_p) = D->GetExample(D->size_first_ + D->used_ct_);
     t_test_n_used_examples_[tid] = t_test_n_used_examples_[tid] + 1;
 
     pthread_mutex_unlock(&mutex_ex_test_);

@@ -27,6 +27,7 @@ class Learner {
   bool   read_port_; // read data from port or file
   string fn_learn_;
   string fn_predict_;
+  double td_ratio_; // ratio (of the training set) for testing data
   // for los function
   Loss   *LF_;
   string lf_name_;
@@ -89,7 +90,7 @@ class Learner {
   void FinishThreads();
   void FinishThreadsTest();
 
-  bool GetImmedExample(Data *D, Example **ex, T_IDX tid);
+  bool GetTrainExample(Data *D, Example **ex, T_IDX tid);
   bool GetTestExample(Data *D, Example **ex, T_IDX tid);
 
   virtual void Learn() {};
