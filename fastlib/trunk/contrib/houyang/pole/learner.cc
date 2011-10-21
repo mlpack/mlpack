@@ -165,8 +165,13 @@ void Learner::OnlineLearn() {
     }
   }
 
-  // Learning
-  ParallelLearn();
+  ptime time_learn_start(microsec_clock::local_time());
+  ParallelLearn(); // Learning
+  ptime time_learn_end(microsec_clock::local_time());
+  time_duration learn_time(time_learn_end - time_learn_start);
+  cout << "-----------------------Timing------------------------" << endl;
+  cout << "Online learning time: " << learn_time << endl;
+  cout << "Online learning time in ms: " << learn_time.total_milliseconds() << endl;
 }
 
 ///////////////////////////////
@@ -190,8 +195,12 @@ void Learner::BatchLearn() {
     cout << "ERROR!!! No training file provided!" << endl << endl;
     exit(1);
   }
-  ParallelLearn();
-
+  
+  ptime time_train_start(microsec_clock::local_time());
+  ParallelLearn(); // training
+  ptime time_train_end(microsec_clock::local_time());
+  time_duration train_time(time_train_end - time_train_start);
+  
   // Testing
   cout << "-----------------Batch Testing----------------------" << endl;
   if (fn_predict_ != "") {
@@ -223,7 +232,17 @@ void Learner::BatchLearn() {
       cout << "Subset of "<< TR_->size_second_ << " samples are used for testing." << endl;
     }
   }
-  ParallelTest();
+
+  ptime time_test_start(microsec_clock::local_time());
+  ParallelTest(); // testing
+  ptime time_test_end(microsec_clock::local_time());
+  time_duration test_time(time_test_end - time_test_start);
+
+  cout << "-----------------------Timing------------------------" << endl;
+  cout << "Batch training time: " << train_time << endl;
+  cout << "Batch training time in ms: " << train_time.total_milliseconds() << endl;
+  cout << "Batch testing time: " << test_time << endl;
+  cout << "Batch testing time in ms: " << test_time.total_milliseconds() << endl;
 }
 
 ////////////////////////////////////
