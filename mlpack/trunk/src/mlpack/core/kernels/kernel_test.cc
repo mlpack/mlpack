@@ -5,8 +5,8 @@
  * Tests for the various kernel classes.
  */
 
-#include "lmetric.h"
-#include "mahalanobis_distance.h"
+#include "lmetric.hpp"
+#include "mahalanobis_distance.hpp"
 #include "cosine_distance.hpp"
 #include "gaussian_kernel.hpp"
 #include "linear_kernel.hpp"
