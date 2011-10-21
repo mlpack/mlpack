@@ -59,7 +59,7 @@ void Pole::ParseArgs(int argc, char *argv[]) {
     }
 
     if (m_["method"] == "null") {
-      cout << "ERROR! Optimization method needs to be specified!" << endl;
+      cout << "ERROR! Optimization method needs to be specified!" << endl << endl;
       exit(1);
     }
     // ogd_str, ogd
@@ -73,7 +73,7 @@ void Pole::ParseArgs(int argc, char *argv[]) {
     // kogd_str, kogd
     else if (m_["method"].substr(0,4) == "kogd") {
       if (m_["kernel"] == "null") {
-        cout << "ERROR! Kernel type needs to be specified for KOGD!" << endl;
+        cout << "ERROR! Kernel type needs to be specified for KOGD!" << endl << endl;
         exit(1);
       }
       else if (m_["kernel"] == "linear") {
@@ -83,21 +83,21 @@ void Pole::ParseArgs(int argc, char *argv[]) {
         L_ = new OGDK<RBFKernel>;
       }
       else {
-        cout << "ERROR! Kernel type needs to be [lienar, gaussian]" << endl;
+        cout << "ERROR! Kernel type needs to be [lienar, gaussian]" << endl << endl;
         exit(1);
       }
     }
     // togd_str, togd
     else if (m_["method"].substr(0,4) == "togd") {
       if (m_["transform"] == "null") {
-	cout << "ERROR! Transform type needs to be specified for OGDT!" << endl;
+	cout << "ERROR! Transform type needs to be specified for OGDT!" << endl << endl;
         exit(1);
       }
       else if (m_["transform"] == "fourier_rbf") {
 	L_ = new OGDT<FourierRBFTransform>;
       }
       else {
-	cout << "ERROR! Transform type needs to be [fourier_rbf]" << endl;
+	cout << "ERROR! Transform type needs to be [fourier_rbf]" << endl << endl;
         exit(1);
       }
     }
@@ -115,7 +115,7 @@ void Pole::ParseArgs(int argc, char *argv[]) {
       L_ = new Learner;
     }
     else {
-      cout << "ERROR! Only support methods: [ogd, kogd, togd, nasa, oeg, dwm_i, dwm_a, drwm_i or drwm_r]!" << endl;
+      cout << "ERROR! Not in supported methods: [ogd, kogd, togd, nasa, oeg, dwm_i, dwm_a, drwm_i or drwm_r]!" << endl << endl;
       exit(1);
     }
   }
@@ -139,6 +139,8 @@ void Pole::ParseArgs(int argc, char *argv[]) {
      "File name of training example set.")
     ("data_predict,t", po::value<string>(&L_->fn_predict_)->default_value(""), 
      "File name of predicting example set.")
+    ("td_ratio", po::value<double>(&L_->td_ratio_)->default_value(0.0), 
+     "Ratio (of the training set) for testing data. Only meaningful in batch learning. Default: 0.")
     ("epoches,e", po::value<T_IDX>(&L_->n_epoch_)->default_value(0), 
      "Number of training epoches. Default: 0 epoch.")
     ("iterations,i", po::value<T_IDX>(&L_->n_iter_res_)->default_value(0), 
@@ -288,6 +290,14 @@ void Pole::ArgsSanityCheck() {
   if (L_->n_log_ >0 && L_->calc_loss_ == false) {
     L_->calc_loss_ = true;
   }
+
+  if (L_->td_ratio_ < 0) {
+    cout << "td_ratio should not be negative! Using default value: 0." << endl;
+    L_->td_ratio_ = 0.0;
+  }
+
+  if ( (!batch_) && (L_->td_ratio_ != 0) )
+    L_->td_ratio_ = 0; // td_ratio_ is meaningful only for batch learning
 }
 
 void Pole::Run() {

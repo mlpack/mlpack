@@ -7,7 +7,7 @@ Examples:
 
 ./pole_pt -d svmguide1 -m oeg_str --type classification -l hinge --calc_loss 1 --bias 1 --comm 1 -c 100 -b 1 -e 600 --threads 1 --strongness 60000
 740956 0.832764 2.48
-./pole_pt -d svmguide1 -m oeg --type classification -l hinge --calc_loss 1 --bias 1 --comm 1 -c 100 -b 1 -e 600 --threads 1 --dbound 0.025
-776092 0.922759 2.27
+./pole_pt -d svmguide1 -m oeg --type classification -l hinge --calc_loss 1 --bias 1 --comm 1 -c 100 -b 1 -e 600 --threads 1 --dbound 0.05
+291125 0.945813 2.68
 
 ================================ Batch learning ================================

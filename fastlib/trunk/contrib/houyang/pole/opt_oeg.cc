@@ -60,7 +60,7 @@ void* OEG::LearnThread(void *in_par) {
     switch (Lp->t_state_[tid]) {
     case 0: // waiting to read data
       for (T_IDX b = 0; b<Lp->mb_size_; b++) {
-	if ( Lp->GetImmedExample(Lp->TR_, exs+b, tid) ) { // new example read
+	if ( Lp->GetTrainExample(Lp->TR_, exs+b, tid) ) { // new example read
 	  //exs[b]->Print();
 	}
 	else { // all epoches finished
@@ -149,18 +149,13 @@ void OEG::Learn() {
 
   thread_par pars[n_thread_];
   for (T_IDX t = 0; t < n_thread_; t++) {
-    // init thread parameters and statistics
+    // init thread parameters
     pars[t].id_ = t;
     pars[t].Lp_ = this;
     b_p_pool_[t] = 0.5*reg_C_/(TR_->max_ft_idx_+1);
     b_n_pool_[t] = 0.5*reg_C_/(TR_->max_ft_idx_+1);
     w_p_pool_[t].SetAllResize(TR_->max_ft_idx_, 0.5*reg_C_/(TR_->max_ft_idx_+1));
     w_n_pool_[t].SetAllResize(TR_->max_ft_idx_, 0.5*reg_C_/(TR_->max_ft_idx_+1));
-    t_state_[t] = 0;
-    t_n_it_[t] = t_init_;
-    t_n_used_examples_[t] = 0;
-    t_loss_[t] = 0;
-    t_err_[t] = 0;
     // begin learning iterations
     pthread_create(&Threads_[t], NULL, &OEG::LearnThread, (void*)&pars[t]);
   }

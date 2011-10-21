@@ -7,7 +7,7 @@ Examples:
 
 -----------------Classification: SVM-------------------------
 ./pole_pt -d svmguide1 --random 1 -m ogd_str --type classification -l hinge --reg 2 --calc_loss 1 --bias 1 --lambda 0.01 --threads 1 -e 600 --strongness 1000
-828396 0.820137 1.82
+704788 0.83474 1.82
 ./pole_pt -d svmguide1 --random 1 -m ogd --type classification -l hinge --reg 2 --calc_loss 1 --bias 1 --lambda 0.01 --threads 1 -e 600 --dbound 0.025
 400046 0.924532 1.87
 ./pole_pt -d svmguide1 --random 1 -m ogd_str --type classification -l squared --reg 2 --calc_loss 1 --bias 1 -c 100 --threads 1 -e 600 --strongness 20000

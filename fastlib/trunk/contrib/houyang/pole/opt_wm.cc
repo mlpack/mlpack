@@ -55,7 +55,7 @@ void* WM::LearnThread(void *in_par) {
     switch (Lp->t_state_[tid]) {
     case 0: // waiting to read data
       for (T_IDX b = 0; b<Lp->mb_size_; b++) {
-	if ( Lp->GetImmedExample(Lp->TR_, exs+b, tid) ) { // new example read
+	if ( Lp->GetTrainExample(Lp->TR_, exs+b, tid) ) { // new example read
 	  //exs[b]->Print();
 	}
 	else { // all epoches finished
@@ -166,15 +166,10 @@ void WM::Learn() {
 
   thread_par pars[n_thread_];
   for (T_IDX t = 0; t < n_thread_; t++) {
-    // init thread parameters and statistics
+    // init thread parameters
     pars[t].id_ = t;
     pars[t].Lp_ = this;
     w_pool_[t].SetAllResize(n_expert_, TR_->Size()*n_epoch_+n_iter_res_);
-    t_state_[t] = 0;
-    t_n_it_[t] = 0;
-    t_n_used_examples_[t] = 0;
-    t_loss_[t] = 0;
-    t_err_[t] = 0;
     for (T_IDX p = 0; p < n_expert_; p++) {
       t_exp_err_[p][t] = 0;
     }

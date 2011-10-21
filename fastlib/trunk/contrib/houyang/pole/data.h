@@ -27,6 +27,8 @@ class Data {
   // data properties
   vector<Example> EXs_; // examples
   vector<T_IDX> rnd_i_; // index for randomly permuted examples
+  T_IDX size_first_; // number of samples for first part
+  T_IDX size_second_; // number of samples for second part
   T_IDX used_ct_; // counter for number of times examples are used
   // data file properties
   FileFormat ff_; 
@@ -44,7 +46,7 @@ class Data {
  public:
   Data(string fn, T_IDX port, bool random);
   ~Data();
-  T_IDX Size();
+  T_IDX Size(); // total number of samples in the data file == size_first_ + size_second_
   bool ReadFileInfo();
   void ReadFromFile();
   void ReadFromPort();
