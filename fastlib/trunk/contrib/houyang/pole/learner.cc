@@ -186,7 +186,7 @@ void Learner::BatchLearn() {
       TR_->size_first_ = TR_->Size(); TR_->size_second_ = 0;
     }
     else { // first part for training, second part for testing
-      TR_->size_second_ = ceil(TR_->Size() * td_ratio_); // for testing
+      TR_->size_second_ = (T_IDX)ceil(TR_->Size() * td_ratio_); // for testing
       TR_->size_first_ = TR_->Size() - TR_->size_second_; // for training
       cout << "Subset of "<< TR_->size_first_ << " samples are used for learning." << endl;
     }
@@ -224,7 +224,7 @@ void Learner::BatchLearn() {
       exit(1);
     }
     else {
-      TR_->size_second_ = ceil(TR_->Size() * td_ratio_); // for testing
+      TR_->size_second_ = (T_IDX)ceil(TR_->Size() * td_ratio_); // for testing
       TR_->size_first_ = TR_->Size() - TR_->size_second_; // for training
       TR_->used_ct_ = 0;
       TE_ = TR_;
