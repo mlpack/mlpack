@@ -8,7 +8,7 @@
 #define __MLPACK_METHODS_NCA_NCA_H
 
 #include <mlpack/core.h>
-#include <mlpack/core/kernels/lmetric.h>
+#include <mlpack/core/kernels/lmetric.hpp>
 
 namespace mlpack {
 namespace nca {

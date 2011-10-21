@@ -13,7 +13,7 @@
 #include <vector>
 #include <string>
 
-#include <mlpack/core/kernels/lmetric.h>
+#include <mlpack/core/kernels/lmetric.hpp>
 #include "sort_policies/nearest_neighbor_sort.h"
 
 // Define CLI parameters for the NeighborSearch class.
