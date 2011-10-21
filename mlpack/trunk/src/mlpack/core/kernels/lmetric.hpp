@@ -16,11 +16,34 @@ namespace mlpack {
 namespace kernel {
 
 /**
- * An L-metric for vector spaces.  The Evaluate() function computes the L-norm
- * of the given power on the two given vectors.  If t_take_root is true, the
- * rooted distance will be returned.  This is slightly faster to compute.
+ * The L_p metric for arbitrary integer p, with an option to take the root.
  *
- * @tparam t_pow Power of norm; i.e. t_pow = 1 gives the L1-norm (Manhattan
+ * This class implements the standard L_p metric for two arbitary vectors @f$ x
+ * @f$ and @f$ y @f$ of dimensionality @f$ n @f$:
+ *
+ * @f[
+ * d(x, y) = \left( \sum_{i = 1}^{n} | x_i - y_i |^p \right)^{\frac{1}{p}}.
+ * @f]
+ *
+ * The value of p is given as a template parameter.
+ *
+ * In addition, the function @f$ d(x, y) @f$ can be simplified, neglecting the
+ * p-root calculation.  This is done by specifying the t_take_root template
+ * parameter to be false.  Then,
+ *
+ * @f[
+ * d(x, y) = \sum_{i = 1}^{n} | x_i - y_i |^p
+ * @f]
+ *
+ * It is faster to compute that distance, so t_take_root is by default off.
+ *
+ * A few convenience typedefs are given:
+ *
+ *  - ManhattanDistance
+ *  - EuclideanDistance
+ *  - SquaredEuclideanDistance
+ *
+ * @tparam t_pow Power of metric; i.e. t_pow = 1 gives the L1-norm (Manhattan
  *   distance).
  * @tparam t_take_root If true, the t_pow'th root of the result is taken before
  *   it is returned.  In the case of the L2-norm (t_pow = 2), when t_take_root
@@ -42,6 +65,9 @@ class LMetric {
   static double Evaluate(const arma::vec& a, const arma::vec& b);
 };
 
+// Doxygen will not include this specialization.
+//! @cond
+
 // The implementation is not split into a _impl.h file because it is so simple;
 // the unspecialized implementation of the one function is given below.
 // Unspecialized implementation.  This should almost never be used...
@@ -58,6 +84,8 @@ double LMetric<t_pow, t_take_root>::Evaluate(const arma::vec& a,
   return pow(sum, (1.0 / t_pow));
 }
 
+//! @endcond
+
 // Convenience typedefs.
 
 /***
@@ -73,7 +101,7 @@ typedef LMetric<2, false> SquaredEuclideanDistance;
 /***
  * The Euclidean (L2) distance.
  */
-typedef LMetric<2, true> EuclideanDistance;
+typedef LMetric<2, true> EuclideanDistance;a
 
 }; // namespace kernel
 }; // namespace mlpack
