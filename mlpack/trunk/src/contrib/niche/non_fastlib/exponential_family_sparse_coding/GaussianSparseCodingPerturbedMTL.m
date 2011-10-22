@@ -15,7 +15,7 @@ if nargin < 7
   D_initial = [];
 end
 
-verbosity = 1;
+verbosity = 2;
 
 obj_tol = 1e-6;
 
@@ -100,7 +100,7 @@ n_times_little_improv = 0;
 
 while ~converged
   iteration_num = iteration_num + 1;
-  if verbosity == 1
+  if verbosity >= 1
     fprintf('PSC Iteration %d\n', iteration_num);
   end
   
@@ -165,8 +165,13 @@ while ~converged
                              % to make MATLAB not complain about
                              % the parfor statement below
     parfor i = 1:n_dims
-      l1_prob_sol = lars(S(:,inds)', XmodT(:,i), 'LASSO', -lambda_Q, true, S_ST)';
-      Q_t(i,:) = l1_prob_sol(:,end)';
+      % LASSO
+      %l1_prob_sol = lars(S(:,inds)', XmodT(:,i), 'LASSO', -lambda_Q, true, S_ST)';
+      %Q_t(i,:) = l1_prob_sol(:,end)';
+
+      % least squares with negativity constraints and penalization
+      % by sum of negative components
+      Q_t(i,:) = sparse_neg(S(:,inds)', XmodT(:,i), lambda_Q);
     end
     Q{t} = Q_t;
     Dmod{t} = D + Q{t};
@@ -217,7 +222,7 @@ while ~converged
 						  point_inds);
 
   obj_val_improv = last_obj_val - cur_obj_val;
-  if verbosity == 1
+  if verbosity >= 1
     fprintf('\t\tIMPROVEMENT: %e\n', ...
 	    obj_val_improv);
   end

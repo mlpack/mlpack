@@ -68,7 +68,7 @@ n_times_little_improv = 0;
 
 while ~converged
   iteration_num = iteration_num + 1;
-  if verbosity == 1
+  if verbosity >= 1
     fprintf('PSC Iteration %d\n', iteration_num);
   end
   
@@ -111,9 +111,15 @@ while ~converged
   S_ST = S * S';
   parfor i = 1:n_dims
     X_residT_i = X_residT(:,i);
+
+    % LASSO
+    %l1_prob_sol = lars(S', X_residT_i, 'LASSO', -lambda_Q, true, S_ST)';
+    %Q(i,:) = l1_prob_sol(:,end)';
+
+    % least squares with negativity constraints and penalization by
+    % sum of negative components
+    Q(i,:) = sparse_neg(S', X_residT_i, lambda_Q);
     
-    l1_prob_sol = lars(S', X_residT_i, 'LASSO', -lambda_Q, true, S_ST)';
-    Q(i,:) = l1_prob_sol(:,end)';
   end
   Dmod = D + Q;
   if verbosity == 2
@@ -141,11 +147,12 @@ while ~converged
     fprintf('\t\t\tObjective value: %f\n', ...
 	    ComputeGaussianFullObjectivePerturbed(D, Q, S, X, lambda_S, lambda_Q));
   end
-    
+
+  
   cur_obj_val = ComputeGaussianFullObjectivePerturbed(D, Q, S, X, lambda_S, lambda_Q);
 
   obj_val_improv = last_obj_val - cur_obj_val;
-  if verbosity == 1
+  if verbosity >= 1
     fprintf('\t\tIMPROVEMENT: %e\n', ...
 	    obj_val_improv);
   end
@@ -157,8 +164,7 @@ while ~converged
   last_obj_val = cur_obj_val;
   
   
-  % check convergence criterion - temporarily just 10 iterations
-  % for debugging
+  % check convergence criterion
   if n_times_little_improv >= 1
     fprintf('Converged after %d iterations\n', iteration_num);
     converged = true;
