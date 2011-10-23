@@ -26,8 +26,35 @@ class TestMixedLogitDCM {
 
   private:
 
+    template<typename DistributionType>
+    void InitializeDistribution_(
+      const std::string &distribution_name,
+      mlpack::mixed_logit_dcm::Distribution <
+      DistributionType > *distribution_out) {
+
+      if(distribution_name == "constant") {
+        std::vector<int> attribute_dimensions(
+          1, mlpack::mixed_logit_dcm::num_attributes_);
+        distribution_out->Init(attribute_dimensions);
+      }
+      else if(distribution_name == "diag_gaussian") {
+        std::vector<int> attribute_dimensions(
+          1, mlpack::mixed_logit_dcm::num_attributes_);
+        distribution_out->Init(attribute_dimensions) ;
+      }
+      else if(distribution_name == "full_gaussian") {
+        std::vector<int> attribute_dimensions(3, 0);
+        attribute_dimensions[0] = mlpack::mixed_logit_dcm::num_attributes_ / 3;
+        attribute_dimensions[1] = attribute_dimensions[0];
+        attribute_dimensions[2] = mlpack::mixed_logit_dcm::num_attributes_ -
+                                  attribute_dimensions[0] - attribute_dimensions[1];
+        distribution_out->Init(attribute_dimensions);
+      }
+    }
+
     template<typename TableType>
     void GenerateRandomDataset_(
+      const std::string &distribution_name,
       TableType *random_attribute_dataset,
       TableType *random_decisions_dataset,
       TableType *random_num_alternatives_dataset) {
@@ -80,7 +107,8 @@ class TestMixedLogitDCM {
           // Randomly choose the number of attributes and the number
           // of people and the number of discrete choices per each
           // person.
-          mlpack::mixed_logit_dcm::num_attributes_ = core::math::RandInt(3, 5);
+          mlpack::mixed_logit_dcm::num_attributes_ =
+            core::math::RandInt(10, 20);
           mlpack::mixed_logit_dcm::num_people_ = core::math::RandInt(50, 70);
           mlpack::mixed_logit_dcm::num_discrete_choices_.resize(
             mlpack::mixed_logit_dcm::num_people_);
@@ -160,7 +188,10 @@ class TestMixedLogitDCM {
       TableType random_attribute_table;
       TableType random_decisions_table;
       TableType random_num_alternatives_table;
+      mlpack::mixed_logit_dcm::Distribution<DistributionType> distribution;
+      InitializeDistribution_(distribution_name, &distribution);
       GenerateRandomDataset_(
+        distribution_name,
         &random_attribute_table,
         &random_decisions_table,
         &random_num_alternatives_table);
