@@ -392,8 +392,6 @@ void MixedLogitDCM<TableType, DistributionType>::Test(
       arma::vec random_beta;
       test_table_.distribution().DrawBeta(
         result_out->trained_parameters(), &random_beta);
-      test_table_.distribution().SamplingAccumulatePrecompute(
-        result_out->trained_parameters(), random_beta);
 
       // Given the beta vector, compute the choice probabilities.
       arma::vec choice_probabilities;
