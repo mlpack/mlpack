@@ -29,6 +29,21 @@ class Distribution {
 
     typename DistributionType::PrivateData private_data_;
 
+  private:
+
+    /** @brief This function is called before each beta sample is used
+     *         to accumulate the simulated probabilities and the
+     *         gradient/Hessians.
+     */
+    void SamplingAccumulatePrecompute_(
+      const arma::vec &parameters, const arma::vec &beta_vector) const {
+
+      DistributionType::SamplingAccumulatePrecompute(
+        parameters, beta_vector,
+        const_cast <
+        typename DistributionType::PrivateData * >(&private_data_));
+    }
+
   public:
 
     /** @brief Initializes the number of parameters to zero.
@@ -45,19 +60,6 @@ class Distribution {
 
       DistributionType::SetupDistribution(
         parameters,
-        const_cast <
-        typename DistributionType::PrivateData * >(&private_data_));
-    }
-
-    /** @brief This function is called before each beta sample is used
-     *         to accumulate the simulated probabilities and the
-     *         gradient/Hessians.
-     */
-    void SamplingAccumulatePrecompute(
-      const arma::vec &parameters, const arma::vec &beta_vector) const {
-
-      DistributionType::SamplingAccumulatePrecompute(
-        parameters, beta_vector,
         const_cast <
         typename DistributionType::PrivateData * >(&private_data_));
     }
@@ -104,8 +106,8 @@ class Distribution {
      */
     void DrawBeta(
       const arma::vec &parameters, arma::vec *beta_out) const {
-
       DistributionType::DrawBeta(private_data_, parameters, beta_out);
+      this->SamplingAccumulatePrecompute_(parameters, *beta_out);
     }
 
     /** @brief Initializes the distribution.

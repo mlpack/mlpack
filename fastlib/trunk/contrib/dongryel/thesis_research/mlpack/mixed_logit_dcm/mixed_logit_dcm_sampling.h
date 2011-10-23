@@ -255,8 +255,6 @@ class MixedLogitDCMSampling {
         // Draw a beta from the parameter theta and add it to the
         // sample pool.
         dcm_table_->distribution().DrawBeta(parameters_, &random_beta);
-        dcm_table_->distribution().SamplingAccumulatePrecompute(
-          parameters_, random_beta);
         this->AddIntegrationSample_(person_index, random_beta);
 
       } // end of looping each new beta sample.
