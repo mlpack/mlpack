@@ -246,6 +246,11 @@ class MixedLogitDCMArgumentParser {
           arguments_out->attribute_table_->n_attributes());
       }
       else {
+        if(vm.count("attribute_dimensions_in") == 0) {
+          std::cerr << "The full Gaussian distribution requires " <<
+                    "--attribute_dimensions_in parameter.\n";
+          exit(0);
+        }
         arguments_out->attribute_dimensions_ =
           vm["attribute_dimensions_in"].as< std::vector<int> > ();
         if(arguments_out->attribute_dimensions_.size() != 3) {
