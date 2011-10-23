@@ -61,14 +61,15 @@ void* OGD::LearnThread(void *in_par) {
             
       // Make prediction and get loss
       for (T_IDX b = 0; b<Lp->mb_size_; b++) {
-        /*
-        // calculate w_avg and make logs
-        Lp->w_avg_pool_[tid] *= (Lp->t_n_it_[tid] - 1.0);
-        Lp->w_avg_pool_[tid] += Lp->w_pool_[tid];
-        Lp->w_avg_pool_[tid] *= (1.0/Lp->t_n_it_[tid]);
-        */
-        Lp->w_avg_pool_[tid] = Lp->w_pool_[tid];
-        double pred_val = Lp->LinearPredictBias(Lp->w_avg_pool_[tid], 
+        // for batch: calculate w_avg
+        if (Lp->batch_) {
+          Lp->w_avg_pool_[tid] *= (Lp->t_n_it_[tid] - 1.0);
+          Lp->w_avg_pool_[tid] += Lp->w_pool_[tid];
+          Lp->w_avg_pool_[tid] *= (1.0/Lp->t_n_it_[tid]);
+          //Lp->w_avg_pool_[tid] = Lp->w_pool_[tid];
+        }
+        // online prediction
+        double pred_val = Lp->LinearPredictBias(Lp->w_pool_[tid], 
                                                 *exs[b], Lp->b_pool_[tid]);
         Lp->MakeLearnLog(tid, exs[b], pred_val);
         update = Lp->LF_->GetUpdate(pred_val, (double)exs[b]->y_);
@@ -82,6 +83,15 @@ void* OGD::LearnThread(void *in_par) {
       // Assuming general convexity: ogd
       else if (Lp->opt_name_ == "ogd") {
         eta = Lp->dbound_ / sqrt(Lp->t_n_it_[tid]);
+      }
+      else if (Lp->opt_name_ == "ogd_str_a") { // Xu's Averaged SGD
+        // 1/( M(1+t\lambda_0/M)^2/3 )
+        eta = 1 / ( Lp->dbound_ * pow(1+Lp->strongness_*Lp->t_n_it_[tid]/Lp->dbound_, 2/3) );
+      }
+      // Assuming general convexity: ogd
+      else if (Lp->opt_name_ == "ogd_a") { // Xu's Averaged SGD
+        // 1/( M(1+t\lambda_0/M)^3/4 )
+        eta = 1 / ( Lp->dbound_ * pow(1+Lp->strongness_*Lp->t_n_it_[tid]/Lp->dbound_, 0.75) );
       }
       else {
         cout << "ERROR! Unkown OGD method."<< endl;
@@ -170,7 +180,7 @@ void* OGD::TestThread(void *in_par) {
 
   while (true) {
     if ( Lp->GetTestExample(Lp->TE_, exs, tid) ) { // new test example read
-      // testing using Thread[0]'s w & b. TODO...
+      // testing using Thread[0]'s running-averaged w & b. TODO...
       double pred_val = Lp->LinearPredictBias(Lp->w_avg_pool_[0], 
                                               *exs[0], Lp->b_pool_[0]);
       Lp->MakeTestLog(tid, exs[0], pred_val);
@@ -203,11 +213,11 @@ void OGD::MakeLearnLog(T_IDX tid, Example *x, double pred_val) {
     if (reg_type_ == 2 && reg_factor_ != 0) {
       //L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
       t_loss_[tid] = t_loss_[tid] + 
-        0.5 * reg_factor_ * w_avg_pool_[tid].SparseSqL2Norm();
+        0.5 * reg_factor_ * w_pool_[tid].SparseSqL2Norm();
     }
     // for classification only: calc # of misclassifications
     if (type_ == "classification") {
-      T_LBL pred_lbl = LinearPredictBiasLabelBinary(w_avg_pool_[tid], *x, b_pool_[tid]);
+      T_LBL pred_lbl = LinearPredictBiasLabelBinary(w_pool_[tid], *x, b_pool_[tid]);
       //cout << x->y_ << " : " << pred_lbl << endl;
       if (pred_lbl != x->y_) {
 	t_err_[tid] =  t_err_[tid] + 1;
@@ -292,7 +302,7 @@ void OGD::SaveLearnLog() {
 void OGD::MakeTestLog(T_IDX tid, Example *x, double pred_val) {
   //cout << "pred: " << pred_val <<", y: " << (double)x->y_ << endl;
   t_test_loss_[tid] = t_test_loss_[tid] + LF_->GetLoss(pred_val, (double)x->y_);
-  // testing using Thread[0]'s w. TODO...
+  // testing using Thread[0]'s running-averaged w. TODO...
   if (reg_type_ == 2 && reg_factor_ != 0) {
     //L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
     t_loss_[tid] = t_loss_[tid] + 

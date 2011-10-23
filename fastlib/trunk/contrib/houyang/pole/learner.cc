@@ -11,6 +11,7 @@ Learner::Learner() {
   TE_ = NULL;
   LF_ = NULL;
   LOG_ = NULL;
+  batch_ = false; // default: online learning
 }
 
 ///////////////

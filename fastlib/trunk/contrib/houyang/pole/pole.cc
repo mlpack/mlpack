@@ -305,6 +305,7 @@ void Pole::Run() {
     L_->OnlineLearn();
   }
   else { // Batch Learning
+    L_->batch_ = true;
     L_->BatchLearn();
   }
 }
