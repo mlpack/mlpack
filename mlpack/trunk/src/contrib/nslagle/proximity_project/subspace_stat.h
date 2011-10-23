@@ -1,7 +1,7 @@
 #ifndef SUBSPACE_STAT_H
 #define SUBSPACE_STAT_H
 
-#include "fastlib/fastlib.h"
+#include "mlpack/core.h"
 
 class SubspaceStat {
   

@@ -5,12 +5,8 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#include <fastlib/fastlib.h>
+#include <mlpack/core.h>
 #include <armadillo>
-
-
-#include "../../../fastlib/fx/io.h"
-#include<log.h>
 
 namespace tree_gen_metric_tree_private {
 

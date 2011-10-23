@@ -28,7 +28,7 @@ namespace proximity {
   public:
     template<typename T, typename TKdTree>
     static double ChooseKdTreeSplitValue(const arma::Mat<T>& matrix,
-					 TKdTree *node, int split_dim) {
+           TKdTree *node, int split_dim) {
       return node->bound().get(split_dim).mid();
     }
 
@@ -50,35 +50,35 @@ namespace proximity {
       T *b_dbl = (T *) b;
 
       if(*a_dbl < *b_dbl) {
-	return -1;
+  return -1;
       }
       else if(*a_dbl > *b_dbl) {
-	return 1;
+  return 1;
       }
       else {
-	return 0;
+  return 0;
       }
     }
 
   public:
     template<typename T, typename TKdTree>
     static double ChooseKdTreeSplitValue(const arma::Mat<T>& matrix,
-					 TKdTree *node, int split_dim) {
+           TKdTree *node, int split_dim) {
       std::vector<T> coordinate_vals;
       coordinate_vals.resize (node->count());
       for(size_t i = node->begin(); i < node->end(); i++) {
-	coordinate_vals[i - node->begin()] = matrix(split_dim, i);
+  coordinate_vals[i - node->begin()] = matrix(split_dim, i);
       }
 
       // sort coordinate value
       qsort(&coordinate_vals[0], node->count(), sizeof(T),
-	    &GenKdTreeMedianSplitter::qsort_compar<T>);
+      &GenKdTreeMedianSplitter::qsort_compar<T>);
 
       double split_val = (double) coordinate_vals[node->count() / 2];
       if(split_val == coordinate_vals[0] ||
-	 split_val == coordinate_vals[node->count() - 1]) {
-	split_val = 0.5 * (coordinate_vals[0] +
-			   coordinate_vals[node->count() - 1]);
+   split_val == coordinate_vals[node->count() - 1]) {
+  split_val = 0.5 * (coordinate_vals[0] +
+         coordinate_vals[node->count() - 1]);
       }
 
       return split_val;
@@ -93,7 +93,7 @@ namespace proximity {
       coordinate_vals.Init(node->count());
       for(size_t i = node->begin(); i < node->end(); i++) {
         coordinate_vals[i - node->begin()] =
-	  lower_limit_matrix.get(split_dim, i);
+    lower_limit_matrix.get(split_dim, i);
       }
 
       // sort coordinate value
@@ -128,11 +128,11 @@ namespace proximity {
    */
   template<typename T, typename TKdTree, typename TKdTreeSplitter>
   TKdTree *MakeGenKdTree(arma::Mat<T>& matrix, size_t leaf_size,
-			 std::vector<size_t> *old_from_new = NULL,
-			 std::vector<size_t> *new_from_old = NULL)
+       std::vector<size_t> *old_from_new = NULL,
+       std::vector<size_t> *new_from_old = NULL)
   {
 
-    TKdTree *node = new TKdTree();
+    TKdTree *node = new TKdTree(matrix.n_rows);
     size_t* old_from_new_ptr;
 
     if (old_from_new)
@@ -151,7 +151,7 @@ namespace proximity {
     node->Init(0, matrix.n_cols);
     //node->bound().Init(matrix.n_rows);
     tree_gen_kdtree_private::FindBoundFromMatrix(matrix, 0, matrix.n_cols,
-						 &node->bound());
+             &node->bound());
 
     tree_gen_kdtree_private::SplitGenKdTree<T, TKdTree, TKdTreeSplitter>
       (matrix, node, leaf_size, old_from_new_ptr);

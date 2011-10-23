@@ -16,7 +16,7 @@
 
 #include "general_spacetree.h"
 
-#include "fastlib/base/common.h"
+#include "mlpack/core.h"
 
 #include "gen_metric_tree_impl.h"
 

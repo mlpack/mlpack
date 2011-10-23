@@ -72,8 +72,8 @@ class Strata {
       // Repeat until the priority queue is not empty and we have
       // still more nodes to expand...
     } while(frontier.size() > 0 &&
-	    total_num_stratum < num_stratum_desired &&
-	    frontier.size() < num_stratum_desired - total_num_stratum);
+      total_num_stratum < num_stratum_desired &&
+      frontier.size() < num_stratum_desired - total_num_stratum);
 
     // Fill up the rest of the remaining strata by popping the
     // priority queue.
@@ -107,7 +107,7 @@ class Strata {
    */
   template<typename TreeType>
   void Init(TreeType *root_in, size_t num_times_replicated,
-	    double fraction_desired) {
+      double fraction_desired) {
 
     // Set the total number of terms.
     //node_list.Init();
@@ -139,23 +139,23 @@ class Strata {
         node_list[node_list.size() - 1].hi = popped_node->end();
       }
       else {
-	total_n_tuples_so_far -= 
-	  binomial_coefficient(popped_node->count() - 1,
-				    num_times_replicated);
-	total_n_tuples_so_far +=
-	  binomial_coefficient(popped_node->left()->count() - 1,
-				    num_times_replicated);
-	total_n_tuples_so_far +=
-	  binomial_coefficient(popped_node->right()->count() - 1,
-				    num_times_replicated);
-	frontier.push(popped_node->left());
-	frontier.push(popped_node->right());
+  total_n_tuples_so_far -= 
+    binomial_coefficient(popped_node->count() - 1,
+            num_times_replicated);
+  total_n_tuples_so_far +=
+    binomial_coefficient(popped_node->left()->count() - 1,
+            num_times_replicated);
+  total_n_tuples_so_far +=
+    binomial_coefficient(popped_node->right()->count() - 1,
+            num_times_replicated);
+  frontier.push(popped_node->left());
+  frontier.push(popped_node->right());
       }
 
       // Repeat until the priority queue is not empty and we have
       // still more nodes to expand...
     } while(frontier.size() > 0 && total_n_tuples_so_far >
-	    fraction_desired * total_n_tuples_on_root);
+      fraction_desired * total_n_tuples_on_root);
 
     // Empty the priority queue.
     while(!frontier.empty()) {
