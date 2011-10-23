@@ -288,9 +288,12 @@ bool Learner::GetTrainExample(Data *D, Example** x_p, T_IDX tid) {
 // Get a testing example
 ///////////////////////////////
 bool Learner::GetTestExample(Data *D, Example** x_p, T_IDX tid) {
+  T_IDX ring_idx = 0;
   pthread_mutex_lock(&mutex_ex_test_);
+
   if ( (D->size_first_+D->used_ct_) < D->Size() ) {
-    (*x_p) = D->GetExample(D->size_first_ + D->used_ct_);
+    ring_idx = D->size_first_ + D->used_ct_;
+    (*x_p) = D->GetExample(ring_idx);
     t_test_n_used_examples_[tid] = t_test_n_used_examples_[tid] + 1;
 
     pthread_mutex_unlock(&mutex_ex_test_);
