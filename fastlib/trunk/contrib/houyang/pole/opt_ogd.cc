@@ -37,16 +37,16 @@ void* OGD::LearnThread(void *in_par) {
   thread_par* par = (thread_par*) in_par;
   T_IDX tid = par->id_;
   OGD* Lp = (OGD *)par->Lp_;
-  Example* exs[Lp->mb_size_];
+  vector<Example*> exs(Lp->mb_size_, NULL);
   double update = 0.0;
   Svector uv; // update vector
   double ub = 0.0; // for bias
-
+  
   while (true) {
     switch (Lp->t_state_[tid]) {
     case 0: // waiting to read data
       for (T_IDX b = 0; b<Lp->mb_size_; b++) {
-        if ( Lp->GetTrainExample(Lp->TR_, exs+b, tid) ) { // new example read
+        if ( Lp->GetTrainExample(Lp->TR_, &exs[b], tid) ) { // new example read
           //exs[b]->Print();
         }
         else { // all epoches finished
@@ -176,10 +176,10 @@ void* OGD::TestThread(void *in_par) {
   thread_par* par = (thread_par*) in_par;
   T_IDX tid = par->id_;
   OGD* Lp = (OGD *)par->Lp_;
-  Example* exs[1];
+  vector<Example*> exs(1,NULL);
 
   while (true) {
-    if ( Lp->GetTestExample(Lp->TE_, exs, tid) ) { // new test example read
+    if ( Lp->GetTestExample(Lp->TE_, &exs[0], tid) ) { // new test example read
       // testing using Thread[0]'s running-averaged w & b. TODO...
       double pred_val = Lp->LinearPredictBias(Lp->w_avg_pool_[0], 
                                               *exs[0], Lp->b_pool_[0]);

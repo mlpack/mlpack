@@ -56,6 +56,8 @@ Examples:
 
 ./pole_pt --batch 1 -d rcv1_train.binary -t rcv1_test.binary --random 1 -m ogd --type classification -l hinge --reg 2 --bias 1 --lambda 0.00001 --threads_test 4 -e 1 --dbound 17
 92298.2 0.95138 2:19.310817
+./pole_pt --batch 1 -d rcv1_train.binary -t rcv1_test.binary --random 1 -m ogd_a --type classification -l hinge --reg 2 --bias 1 --lambda 0.00001 --threads_test 4 -e 1 --dbound 1 --strongness 0.00001
+84932.1 0.952893 4.61
 
 ./pole_pt --batch 1 -d gamma_train --td_ratio 0.1 --random 1 -m ogd --type classification -l hinge --reg 2 --bias 1 --lambda 0.001 --threads_test 4 -e 1 --dbound 0.03
 24191.7 0.79598 2.64

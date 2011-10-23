@@ -76,7 +76,7 @@ void* RWM::LearnThread(void *in_par) {
   thread_par* par = (thread_par*) in_par;
   T_IDX tid = par->id_;
   RWM* Lp = (RWM *)par->Lp_;
-  Example* exs[Lp->mb_size_];
+  vector<Example*> exs(Lp->mb_size_, NULL);
   vector<T_LBL> exp_pred(Lp->n_expert_, 0.0);
   RandomNumber rnd;
 
@@ -84,7 +84,7 @@ void* RWM::LearnThread(void *in_par) {
     switch (Lp->t_state_[tid]) {
     case 0: // waiting to read data
       for (T_IDX b = 0; b<Lp->mb_size_; b++) {
-	if ( Lp->GetTrainExample(Lp->TR_, exs+b, tid) ) { // new example read
+	if ( Lp->GetTrainExample(Lp->TR_, &exs[b], tid) ) { // new example read
 	  //exs[b]->Print();
 	}
 	else { // all epoches finished
