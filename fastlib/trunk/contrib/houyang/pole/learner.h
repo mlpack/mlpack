@@ -24,6 +24,7 @@ class Learner {
   Data *VA_; // validation set
   Data *TE_; // testing set
 
+  bool   batch_; // batch learning or not
   bool   random_data_;
   T_IDX  n_source_, port_;
   bool   read_port_; // read data from port or file
