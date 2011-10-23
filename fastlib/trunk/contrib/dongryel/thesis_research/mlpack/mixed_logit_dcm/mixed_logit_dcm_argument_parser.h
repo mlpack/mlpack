@@ -136,6 +136,8 @@ class MixedLogitDCMArgumentParser {
         boost::program_options::value<std::string>()->default_value("cauchy"),
         "OPTIONAL Trust region search method.  One of:\n"
         "  cauchy, dogleg, steihaug"
+      )(
+        "simple_output", "Reduce the amount of outputs to a bare minimum."
       );
 
       boost::program_options::command_line_parser clp(args);
@@ -362,6 +364,9 @@ class MixedLogitDCMArgumentParser {
         core::math::global_random_number_state_.set_seed(
           arguments_out->random_seed_);
       }
+
+      // Parse whether to simplify output.
+      arguments_out->simple_output_ = (vm.count("simple_output") > 0);
 
       // Parse the true parameter values, if available.
       if(vm.count("true_parameters_in") > 0) {

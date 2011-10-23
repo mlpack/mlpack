@@ -114,6 +114,10 @@ class MixedLogitDCMArguments {
      */
     std::string error_compute_method_;
 
+    /** @brief Whether to output a bare minimum amount.
+     */
+    bool simple_output_;
+
     /** @brief Stores the true parameter values.
      */
     TableType *true_parameters_table_;
@@ -138,6 +142,7 @@ class MixedLogitDCMArguments {
       integration_sample_error_threshold_ = 0;
       max_trust_region_radius_ = 0;
       random_seed_ = 0;
+      simple_output_ = false;
       true_parameters_table_ = NULL;
     }
 

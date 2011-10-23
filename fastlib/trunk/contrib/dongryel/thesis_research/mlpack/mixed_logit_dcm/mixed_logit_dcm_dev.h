@@ -283,7 +283,9 @@ void MixedLogitDCM<TableType, DistributionType>::UpdateSampleAllocation_(
   SamplingType *first_sample,
   SamplingType *additional_sample) const {
 
-  std::cerr << "    Updating the number of samples...\n";
+  if(! arguments_in.simple_output_) {
+    std::cerr << "    Updating the number of samples...\n";
+  }
 
   std::vector<double> tmp_vector(first_sample->num_active_people());
   double total_sample_variance = 0.0;
@@ -494,8 +496,10 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
   // The initial trust region radius is set to the 10 % of the maximum
   // trust region radius.
   double current_radius = 0.1 * arguments_in.max_trust_region_radius_;
-  std::cerr << "The initial maximum trust region radius is set to " <<
-            current_radius << "\n";
+  if(! arguments_in.simple_output_) {
+    std::cerr << "The initial maximum trust region radius is set to " <<
+              current_radius << "\n";
+  }
 
   // Enter the trust region loop.
   int num_iterations = 0;
@@ -506,20 +510,26 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
     int max_num_samples;
     double avg_num_samples;
     double variance;
-    std::cerr << "\n##########################################################\n";
-    std::cerr << "\nIteration #: " << num_outer_iterations << "\n";
-    std::cerr << "\n##########################################################\n";
+
+    if(! arguments_in.simple_output_) {
+      std::cerr << "\n##########################################################\n";
+      std::cerr << "\nIteration #: " << num_outer_iterations << "\n";
+      std::cerr << "\n##########################################################\n";
+    }
     num_outer_iterations++;
 
     iterate->num_integration_samples_stat(
       &min_num_samples, &max_num_samples, &avg_num_samples, &variance);
-    std::cerr << "\nThe current iterate uses the minimum of " <<
-              min_num_samples << " samples per person and";
-    std::cerr << " and the maximum of " << max_num_samples <<
-              " samples per person and the average of " <<
-              avg_num_samples << " and the sample variance of " <<
-              variance << "\n";
-    iterate->parameters().print();
+
+    if(! arguments_in.simple_output_) {
+      std::cerr << "\nThe current iterate uses the minimum of " <<
+                min_num_samples << " samples per person and";
+      std::cerr << " and the maximum of " << max_num_samples <<
+                " samples per person and the average of " <<
+                avg_num_samples << " and the sample variance of " <<
+                variance << "\n";
+      iterate->parameters().print();
+    }
 
     // Obtain the step direction by solving Equation 4.3
     // approximately.
@@ -561,19 +571,23 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
 
     // Print the function value at the true parameter optionally.
     if(iterate_at_true_parameters != NULL) {
-      std::cerr << "The current function value (with " <<
-                iterate->num_active_people() <<
-                " people using the true parameter) : " <<
-                iterate_function_value_at_true_parameter << "; ";
+      if(! arguments_in.simple_output_) {
+        std::cerr << "The current function value (with " <<
+                  iterate->num_active_people() <<
+                  " people using the true parameter) : " <<
+                  iterate_function_value_at_true_parameter << "; ";
+      }
     }
-    std::cerr << "The current function value (with " <<
-              iterate->num_active_people() << " people) : " <<
-              iterate_function_value << "; ";
-    std::cerr << "The function value at the next iterate: " <<
-              next_iterate_function_value << "; ";
-    std::cerr << "The model reduction ratio: " << model_reduction_ratio << "\n";
-    std::cerr << "The decrease predicted by the trust region model: " <<
-              decrease_predicted_by_model << "\n";
+    if(! arguments_in.simple_output_) {
+      std::cerr << "The current function value (with " <<
+                iterate->num_active_people() << " people) : " <<
+                iterate_function_value << "; ";
+      std::cerr << "The function value at the next iterate: " <<
+                next_iterate_function_value << "; ";
+      std::cerr << "The model reduction ratio: " << model_reduction_ratio << "\n";
+      std::cerr << "The decrease predicted by the trust region model: " <<
+                decrease_predicted_by_model << "\n";
+    }
 
     // Compute the data sample error and the integration sample error.
     double data_sample_error = this->DataSampleError_(*iterate, *next_iterate);
@@ -598,10 +612,11 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
     // If we are not ready to terminate yet, then consider one of the
     // three options. (1) Increase the data sample size; (2) Increase
     // the integration sample size; (3) Do a step to the new iterate.
-
-    std::cerr << "Data sample error: " << sqrt(data_sample_error) <<
-              " ; integration sample error: " <<
-              sqrt(integration_sample_error) << "\n";
+    if(! arguments_in.simple_output_) {
+      std::cerr << "Data sample error: " << sqrt(data_sample_error) <<
+                " ; integration sample error: " <<
+                sqrt(integration_sample_error) << "\n";
+    }
 
     // Increase the data sample size.
     if(iterate->num_active_people() < train_table_.num_people() &&
@@ -621,8 +636,10 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
       int num_additional_people =
         std::min(std::max(1, predicted_increase), max_allowable_people);
 
-      std::cerr << "  Adding " << num_additional_people <<
-                " additional people.\n";
+      if(! arguments_in.simple_output_) {
+        std::cerr << "  Adding " << num_additional_people <<
+                  " additional people.\n";
+      }
 
       iterate->AddActivePeople(
         num_additional_people, initial_num_integration_samples);
@@ -673,21 +690,26 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
     // next iterate based on the trust region optimization.
     if(model_reduction_ratio < 0.10) {
       current_radius = p_norm / 2.0;
-      std::cerr << "  Setting the trust region radius to: " <<
-                current_radius << "\n";
+      if(! arguments_in.simple_output_) {
+        std::cerr << "  Setting the trust region radius to: " <<
+                  current_radius << "\n";
+      }
     }
     else {
       if(model_reduction_ratio > 0.80 &&
           fabs(p_norm - current_radius) <= 0.001) {
         current_radius = 2.0 * current_radius;
-        std::cerr << "  Increasing the trust region radius to: " <<
-                  current_radius << "\n";
+        if(! arguments_in.simple_output_) {
+          std::cerr << "  Increasing the trust region radius to: " <<
+                    current_radius << "\n";
+        }
       }
     }
     const double eta = 0.05;
     if(model_reduction_ratio > eta) {
-
-      std::cerr << "  Accepting the trust region iterate...\n";
+      if(! arguments_in.simple_output_) {
+        std::cerr << "  Accepting the trust region iterate...\n";
+      }
 
       // Accept the next iterate.
       delete iterate;
@@ -702,7 +724,9 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
     }
     else {
 
-      std::cerr << "  Discarding the trust region iterate...\n";
+      if(! arguments_in.simple_output_) {
+        std::cerr << "  Discarding the trust region iterate...\n";
+      }
 
       // Delete the discarded iterate.
       delete next_iterate;
@@ -735,22 +759,28 @@ bool MixedLogitDCM<TableType, DistributionType>::TerminationConditionReached_(
 
     (*num_iterations)++;
     if(*num_iterations >= arguments_in.max_num_iterations_) {
-      std::cerr << "Exceeding the maximum number of iterations of " <<
-                arguments_in.max_num_iterations_ << " so terminating...\n";
+      if(! arguments_in.simple_output_) {
+        std::cerr << "Exceeding the maximum number of iterations of " <<
+                  arguments_in.max_num_iterations_ << " so terminating...\n";
+      }
       return true;
     }
 
-    std::cerr << "  Testing the termination condition...\n";
+    if(! arguments_in.simple_output_) {
+      std::cerr << "  Testing the termination condition...\n";
+    }
     double predicted_objective_value_improvement_threshold =
       arguments_in.gradient_norm_threshold_ * sqrt(integration_sample_error);
-    std::cerr << "    Comparing the predicted objective function improvement "
-              "against the sampling error: " <<
-              predicted_objective_value_improvement
-              << " against " <<
-              predicted_objective_value_improvement_threshold << "\n";
-    std::cerr << "    Comparing the sampling error against its threshold: " <<
-              sqrt(integration_sample_error) << " against " <<
-              arguments_in.integration_sample_error_threshold_ << "\n";
+    if(! arguments_in.simple_output_) {
+      std::cerr << "    Comparing the predicted objective function improvement "
+                "against the sampling error: " <<
+                predicted_objective_value_improvement
+                << " against " <<
+                predicted_objective_value_improvement_threshold << "\n";
+      std::cerr << "    Comparing the sampling error against its threshold: " <<
+                sqrt(integration_sample_error) << " against " <<
+                arguments_in.integration_sample_error_threshold_ << "\n";
+    }
 
     // If the predicted improvement in the objective value is less
     // than the integration sample error and the integration sample
@@ -766,8 +796,10 @@ bool MixedLogitDCM<TableType, DistributionType>::TerminationConditionReached_(
         arma::dot(gradient, gradient) +
         arguments_in.gradient_norm_threshold_ * sqrt(gradient_error);
 
-      std::cerr << "    The upper bound on the gradient squared error: " <<
-                squared_gradient_error_upper_bound << "\n";
+      if(! arguments_in.simple_output_) {
+        std::cerr << "    The upper bound on the gradient squared error: " <<
+                  squared_gradient_error_upper_bound << "\n";
+      }
       if(squared_gradient_error_upper_bound <= 0.001) {
         return true;
       }
