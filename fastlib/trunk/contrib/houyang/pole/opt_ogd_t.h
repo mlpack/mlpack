@@ -65,7 +65,7 @@ void* OGDT<TTransform>::LearnThread(void *in_par) {
   thread_par* par = (thread_par*) in_par;
   T_IDX tid = par->id_;
   OGDT* Lp = (OGDT *)par->Lp_;
-  Example* exs[Lp->mb_size_];
+  vector<Example*> exs(Lp->mb_size_, NULL);
   Svector ext; // random feature
   double update = 0.0;
   Svector uv; // update vector
@@ -75,7 +75,7 @@ void* OGDT<TTransform>::LearnThread(void *in_par) {
     switch (Lp->t_state_[tid]) {
     case 0: // waiting to read data
       for (T_IDX b = 0; b<Lp->mb_size_; b++) {
-	if ( Lp->GetTrainExample(Lp->TR_, exs+b, tid) ) { // new example read
+	if ( Lp->GetTrainExample(Lp->TR_, &exs[b], tid) ) { // new example read
 	  //exs[b]->Print();
 	}
 	else { // all epoches finished
