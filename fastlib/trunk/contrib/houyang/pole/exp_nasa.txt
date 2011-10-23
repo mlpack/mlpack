@@ -59,6 +59,9 @@ Examples:
 
 ./pole_pt --batch 1 -d gamma_train --td_ratio 0.1 --random 1 -m nasa --type classification -l hinge --reg 2 --bias 1 --lambda 0.001 --threads_test 4 -e 1 --dbound 1.0
 23961.5 0.7977 7.01
+./pole_pt --batch 1 -d gamma_train --td_ratio 0.2 --random 1 -m nasa --type classification -l hinge --reg 2 --bias 1 --lambda 0.001 --threads_test 4 -e 1 --dbound 0.9
+47895.5 0.79817 6.36
+./pole_pt --batch 1 -d gamma_train --td_ratio 0.2 --random 1 -m nasa --type classification -l hinge --reg 2 --bias 1 --lambda 0.001 --threads_test 4 -e 1 --dbound 2500
 
 ./pole_pt --batch 1 -d alpha_train --td_ratio 0.5 --random 1 -m nasa --type classification -l hinge --reg 2 --bias 1 --lambda 0.00001 --threads_test 4 -e 1 --dbound 35
 135521 0.775012 3.91
