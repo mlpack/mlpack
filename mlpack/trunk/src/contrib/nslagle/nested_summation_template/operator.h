@@ -118,7 +118,7 @@ class Operator {
 
   virtual ~Operator() {
   }
-  
+
   const std::map<size_t, std::vector<size_t> > restrictions() {
     return restrictions_;
   }
@@ -168,7 +168,7 @@ class Operator {
     restrictions_ = restrictions_in;
     datasets_ = datasets_in;
     is_positive_ = is_positive_in;
-    should_be_inverted_ = should_be_inverted_in;   
+    should_be_inverted_ = should_be_inverted_in;
   }
 
 };

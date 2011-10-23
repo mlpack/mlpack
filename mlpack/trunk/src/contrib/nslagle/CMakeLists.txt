@@ -2,9 +2,10 @@ cmake_minimum_required(VERSION 2.8)
 
 # we just want to recurse into the child directories here
 set(DIRS
-   #kde
-   #nested_summation_template
-   #proximity_project
+   myKDE
+   kdeDL
+   nested_summation_template
+   proximity_project
 )
 
 foreach(dir ${DIRS})

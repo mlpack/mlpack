@@ -14,6 +14,10 @@
 #include <mlpack/core.h>
 #include "mlpack/core/tree/statistic.h"
 
+#define _lineStr(x) # x
+#define lineStr(x) _lineStr(x)
+#define assertMsg __FILE__":" lineStr(__LINE__)
+
 /**
  * A binary space partitioning tree, such as KD or ball tree.
  *
@@ -27,7 +31,7 @@
  */
 template<class TBound,
          class TDataset,
-         class TStatistic = EmptyStatistic<TDataset> >
+         class TStatistic = EmptyStatistic >
 class GeneralBinarySpaceTree {
   public:
   typedef TBound Bound;
@@ -42,12 +46,12 @@ class GeneralBinarySpaceTree {
   Statistic stat_;
 
   public:
-  /*
-  GeneralBinarySpaceTree() {
-    DEBUG_ONLY(begin_ = BIG_BAD_NUMBER);
-    DEBUG_ONLY(count_ = BIG_BAD_NUMBER);
-    DEBUG_POISON_PTR(left_);
-    DEBUG_POISON_PTR(right_);
+  GeneralBinarySpaceTree(size_t dimension) {
+    bound_ = Bound (dimension);
+    //DEBUG_ONLY(begin_ = BIG_BAD_NUMBER);
+    //DEBUG_ONLY(count_ = BIG_BAD_NUMBER);
+    //DEBUG_POISON_PTR(left_);
+    //DEBUG_POISON_PTR(right_);
   }
 
   ~GeneralBinarySpaceTree() {
@@ -55,15 +59,15 @@ class GeneralBinarySpaceTree {
       delete left_;
       delete right_;
     }
-    DEBUG_ONLY(begin_ = BIG_BAD_NUMBER);
-    DEBUG_ONLY(count_ = BIG_BAD_NUMBER);
-    DEBUG_POISON_PTR(left_);
-    DEBUG_POISON_PTR(right_);
+    //DEBUG_ONLY(begin_ = BIG_BAD_NUMBER);
+    //DEBUG_ONLY(count_ = BIG_BAD_NUMBER);
+    //DEBUG_POISON_PTR(left_);
+    //DEBUG_POISON_PTR(right_);
   }
-  */
 
   void Init(size_t begin_in, size_t count_in) {
-    mlpack::Log::Assert(begin_ == ~((size_t)0));
+    //mlpack::Log::Info << "the beginning " << begin_ << std::endl;
+    //mlpack::Log::Assert(begin_ == ~((size_t)0), assertMsg);
     left_ = NULL;
     right_ = NULL;
     begin_ = begin_in;
@@ -83,8 +87,8 @@ class GeneralBinarySpaceTree {
    */
   const GeneralBinarySpaceTree* FindByBeginCount
   (size_t begin_q, size_t count_q) const {
-    mlpack::Log::Assert(begin_q >= begin_);
-    mlpack::Log::Assert(count_q <= count_);
+    mlpack::Log::Assert(begin_q >= begin_, assertMsg);
+    mlpack::Log::Assert(count_q <= count_, assertMsg);
     if (begin_ == begin_q && count_ == count_q) {
       return this;
     } else if (unlikely(is_leaf())) {
@@ -109,8 +113,8 @@ class GeneralBinarySpaceTree {
    */
   GeneralBinarySpaceTree* FindByBeginCount
   (size_t begin_q, size_t count_q) {
-    mlpack::Log::Assert(begin_q >= begin_);
-    mlpack::Log::Assert(count_q <= count_);
+    mlpack::Log::Assert(begin_q >= begin_, assertMsg);
+    mlpack::Log::Assert(count_q <= count_, assertMsg);
     if (begin_ == begin_q && count_ == count_q) {
       return this;
     } else if (unlikely(is_leaf())) {
@@ -206,11 +210,11 @@ class GeneralBinarySpaceTree {
   void Print() const {
     if (!is_leaf()) {
       printf("internal node: %d to %d: %d points total\n",
-	     begin_, begin_ + count_ - 1, count_);
+       begin_, begin_ + count_ - 1, count_);
     }
     else {
       printf("leaf node: %d to %d: %d points total\n",
-	     begin_, begin_ + count_ - 1, count_);
+       begin_, begin_ + count_ - 1, count_);
     }
 
     if (!is_leaf()) {
