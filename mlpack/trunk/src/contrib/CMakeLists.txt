@@ -21,7 +21,7 @@ set(DIRS
 #   jim
    march
    niche
-   nslagle
+#   nslagle
 #   nvasil
 #   pagarwal
 #   pram
