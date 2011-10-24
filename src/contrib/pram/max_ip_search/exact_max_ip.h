@@ -21,29 +21,6 @@
 
 using namespace mlpack;
 
-PARAM_MODULE("maxip", "Parameters for the class that "
-	     "builds a tree on the reference set and "
-	     "searches for the maximum inner product "
-	     "by the branch-and-bound method.");
-
-PARAM_INT("knns", "The number of top innner products required",
-	  "maxip", 1);
-PARAM_INT("leaf_size", "The leaf size for the ball-tree", 
-	  "maxip", 20);
-
-PARAM_FLAG("angle_prune", "The flag to trigger the tighter"
-	   " pruning using the angles as well", "maxip");
-PARAM_FLAG("dual_tree", "The flag to trigger dual-tree "
-	   "computation, using a cosine tree for the "
-	   "queries.", "maxip");
-
-PARAM_FLAG("check_prune", "The flag to trigger the "
-	   "checking of the prune.", "maxip");
-PARAM_FLAG("alt_dual_traversal", "The flag to trigger the "
-	   "alternate dual tree traversal using angles.",
-	   "maxip");
-
-
 /**
  * Performs maximum-inner-product-search. 
  * This class will build the trees and 
@@ -299,5 +276,28 @@ public:
 
   void CheckPrune(CTreeType* query_node, TreeType* ref_node);
 }; //class MaxIP
+
+
+PARAM_MODULE("maxip", "Parameters for the class that "
+	     "builds a tree on the reference set and "
+	     "searches for the maximum inner product "
+	     "by the branch-and-bound method.");
+
+PARAM_INT("knns", "The number of top innner products required",
+	  "maxip", 1);
+PARAM_INT("leaf_size", "The leaf size for the ball-tree", 
+	  "maxip", 20);
+
+PARAM_FLAG("angle_prune", "The flag to trigger the tighter"
+	   " pruning using the angles as well", "maxip");
+PARAM_FLAG("dual_tree", "The flag to trigger dual-tree "
+	   "computation, using a cosine tree for the "
+	   "queries.", "maxip");
+
+PARAM_FLAG("check_prune", "The flag to trigger the "
+	   "checking of the prune.", "maxip");
+PARAM_FLAG("alt_dual_traversal", "The flag to trigger the "
+	   "alternate dual tree traversal using angles.",
+	   "maxip");
 
 #endif

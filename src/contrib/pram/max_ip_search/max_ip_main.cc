@@ -144,14 +144,14 @@ int main (int argc, char *argv[]) {
 	      << rdata.n_cols  << " / " << (float) fast_comp << " = "
 	      <<(float) (rdata.n_cols / fast_comp) << endl;
 
-    if (CLI::HasParam("rank_file")) {
+    if (CLI::GetParam<string>("rank_file") != "") {
       string rank_file = CLI::GetParam<string>("rank_file");
       check_nn_utils::compute_error(rank_file,  rdata.n_cols, &exc);
     } else {
       check_nn_utils::compute_error(&rdata, &qdata, &exc);
     }
   } else if (CLI::HasParam("donaive")) {
-    if (CLI::HasParam("rank_file")) {
+    if (CLI::GetParam<string>("rank_file") != "") {
       string rank_file = CLI::GetParam<string>("rank_file");
       check_nn_utils::compute_error(rank_file,  rdata.n_cols, &nac);
     } else {

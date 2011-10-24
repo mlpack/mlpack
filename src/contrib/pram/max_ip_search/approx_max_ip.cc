@@ -28,7 +28,7 @@ double ApproxMaxIP::MaxNodeIP_(TreeType* reference_node) {
 
   double max_cos_qr = 1.0;
 
-  if (mlpack::CLI::HasParam("maxip/angle_prune")) { 
+  if (mlpack::CLI::HasParam("approx_maxip/angle_prune")) { 
     // tighter bound of \max_{r \in B_p^R} <q,r> 
     //    = |q| \max_{r \in B_p^R} |r| cos <qr 
     //    \leq |q| \max_{r \in B_p^R} |r| \max_{r \in B_p^R} cos <qr 
@@ -89,7 +89,7 @@ double ApproxMaxIP::MaxNodeIP_(CTreeType* query_node,
 
   double max_cos_qp = 1.0;
 
-  if (mlpack::CLI::HasParam("maxip/angle_prune")) { 
+  if (mlpack::CLI::HasParam("approx_maxip/angle_prune")) { 
 
     if (rad <= c_norm) {
       // cos <pq = cos_phi
@@ -650,7 +650,7 @@ void ApproxMaxIP::ComputeApproxRecursion_(CTreeType* query_node,
     // Pruned
     number_of_prunes_++;
 
-    if (CLI::HasParam("maxip/check_prune"))
+    if (CLI::HasParam("approx_maxip/check_prune"))
       CheckPrune(query_node, reference_node);
 
     // add appropriate effective number of samples
@@ -697,7 +697,7 @@ void ApproxMaxIP::ComputeApproxRecursion_(CTreeType* query_node,
       size_t extra_points_encountered
 	= query_node->stat().total_points()
 	- query_node->left()->stat().total_points();
-      assert(extra_points_encountered > size_t() -1);
+      assert(extra_points_encountered >= 0);
 
       if (extra_points_encountered > 0) {
 	query_node->left()->stat().add_total_points(extra_points_encountered);
@@ -706,7 +706,7 @@ void ApproxMaxIP::ComputeApproxRecursion_(CTreeType* query_node,
 	  = query_node->stat().samples()
 	  - std::max(query_node->left()->stat().samples(),
 		     query_node->right()->stat().samples());
-	assert(extra_points_sampled > size_t(-1) );
+	assert(extra_points_sampled >= 0);
 	query_node->left()->stat().add_samples(extra_points_sampled);
 	query_node->right()->stat().add_samples(extra_points_sampled);
       }
@@ -728,7 +728,7 @@ void ApproxMaxIP::ComputeApproxRecursion_(CTreeType* query_node,
       query_node->stat().set_total_points(
 	  query_node->left()->stat().total_points());
 
-      assert(query_node->stat().samples() < 
+      assert(query_node->stat().samples() <= 
 	     std::min(query_node->left()->stat().samples(),
 		      query_node->right()->stat().samples()));
       query_node->stat().set_samples(std::min(query_node->left()->stat().samples(),
@@ -779,7 +779,7 @@ void ApproxMaxIP::ComputeApproxRecursion_(CTreeType* query_node,
     size_t extra_points_encountered
       = query_node->stat().total_points()
       - query_node->left()->stat().total_points();
-    assert(extra_points_encountered > size_t(-1));
+    assert(extra_points_encountered >= 0);
 
     if (extra_points_encountered > 0) {
       query_node->left()->stat().add_total_points(extra_points_encountered);
@@ -788,7 +788,7 @@ void ApproxMaxIP::ComputeApproxRecursion_(CTreeType* query_node,
 	= query_node->stat().samples()
 	- std::max(query_node->left()->stat().samples(),
 		   query_node->right()->stat().samples());
-      assert(extra_points_sampled > size_t(-1));
+      assert(extra_points_sampled >= 0);
       query_node->left()->stat().add_samples(extra_points_sampled);
       query_node->right()->stat().add_samples(extra_points_sampled);
     }
@@ -841,7 +841,7 @@ void ApproxMaxIP::ComputeApproxRecursion_(CTreeType* query_node,
     query_node->stat().set_total_points(
 	query_node->left()->stat().total_points());
 
-    assert(query_node->stat().samples() < 
+    assert(query_node->stat().samples() <= 
 	   std::min(query_node->left()->stat().samples(),
 		    query_node->right()->stat().samples()));
     query_node->stat().set_samples(
@@ -937,10 +937,15 @@ void ApproxMaxIP::InitApprox(const arma::mat& queries_in,
 
   sample_sizes_.set_size(references_.n_cols);
 
-  if (knns_ == 1)
-    ComputeSampleSizes_(rank_approx_, alpha, &sample_sizes_);
-  else
-    ComputeSampleSizes_(rank_approx_, alpha, knns_, &sample_sizes_);
+  if (rank_approx_ > 1) {
+    if (knns_ == 1)
+      ComputeSampleSizes_(rank_approx_, alpha, &sample_sizes_);
+    else
+      ComputeSampleSizes_(rank_approx_, alpha, knns_, &sample_sizes_);
+  } else {
+    for (size_t i = 0; i < sample_sizes_.n_elem; i++)
+      sample_sizes_[i] = i+1;
+  }
 
   mlpack::Log::Info << "n: " << sample_sizes_[references_.n_cols -1]
 		    << std::endl;
@@ -996,10 +1001,15 @@ void ApproxMaxIP::WarmInitApprox(size_t knns, double epsilon) {
   // free(sample_sizes_);
   sample_sizes_.zeros();
 
-  if (knns_ == 1)
-    ComputeSampleSizes_(rank_approx_, alpha, &sample_sizes_);
-  else
-    ComputeSampleSizes_(rank_approx_, alpha, knns_, &sample_sizes_);
+  if (rank_approx_ > 1) {
+    if (knns_ == 1)
+      ComputeSampleSizes_(rank_approx_, alpha, &sample_sizes_);
+    else
+      ComputeSampleSizes_(rank_approx_, alpha, knns_, &sample_sizes_);
+  } else {
+    for (size_t i = 0; i < sample_sizes_.n_elem; i++)
+      sample_sizes_[i] = i+1;
+  }
 
   mlpack::Log::Info << "n: " << sample_sizes_[references_.n_cols -1]
 		    << std::endl;
@@ -1061,6 +1071,8 @@ double ApproxMaxIP::ComputeApprox(arma::Mat<size_t>* resulting_neighbors,
 
     CLI::StartTimer("approx_maxip/fast_single");
     for (query_ = 0; query_ < queries_.n_cols; ++query_) {
+      query_samples_needed_ = min_samples_per_q_;
+
       ComputeApproxRecursion_(reference_tree_, 
 			      MaxNodeIP_(reference_tree_));
     }
