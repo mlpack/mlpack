@@ -20,35 +20,35 @@ namespace mixed_logit_dcm {
 
 int num_attributes_;
 int num_people_;
-std::vector<int> num_discrete_choices_;
+std::vector<int> attribute_dimensions_;
 
 class TestMixedLogitDCM {
 
   private:
 
-    template<typename DistributionType>
-    void InitializeDistribution_(
-      const std::string &distribution_name,
-      mlpack::mixed_logit_dcm::Distribution <
-      DistributionType > *distribution_out) {
+    void InitializeAttributeDimensions_(
+      const std::string &distribution_name) {
 
       if(distribution_name == "constant") {
-        std::vector<int> attribute_dimensions(
-          1, mlpack::mixed_logit_dcm::num_attributes_);
-        distribution_out->Init(attribute_dimensions);
+        mlpack::mixed_logit_dcm::attribute_dimensions_.resize(1);
+        mlpack::mixed_logit_dcm::attribute_dimensions_[0] =
+          mlpack::mixed_logit_dcm::num_attributes_;
       }
       else if(distribution_name == "diag_gaussian") {
-        std::vector<int> attribute_dimensions(
-          1, mlpack::mixed_logit_dcm::num_attributes_);
-        distribution_out->Init(attribute_dimensions) ;
+        mlpack::mixed_logit_dcm::attribute_dimensions_.resize(1);
+        mlpack::mixed_logit_dcm::attribute_dimensions_[0] =
+          mlpack::mixed_logit_dcm::num_attributes_;
       }
       else if(distribution_name == "full_gaussian") {
-        std::vector<int> attribute_dimensions(3, 0);
-        attribute_dimensions[0] = mlpack::mixed_logit_dcm::num_attributes_ / 3;
-        attribute_dimensions[1] = attribute_dimensions[0];
-        attribute_dimensions[2] = mlpack::mixed_logit_dcm::num_attributes_ -
-                                  attribute_dimensions[0] - attribute_dimensions[1];
-        distribution_out->Init(attribute_dimensions);
+        mlpack::mixed_logit_dcm::attribute_dimensions_.resize(3);
+        mlpack::mixed_logit_dcm::attribute_dimensions_[0] =
+          mlpack::mixed_logit_dcm::num_attributes_ / 3;
+        mlpack::mixed_logit_dcm::attribute_dimensions_[1] =
+          mlpack::mixed_logit_dcm::attribute_dimensions_[0];
+        mlpack::mixed_logit_dcm::attribute_dimensions_[2] =
+          mlpack::mixed_logit_dcm::num_attributes_ -
+          mlpack::mixed_logit_dcm::attribute_dimensions_[0] -
+          mlpack::mixed_logit_dcm::attribute_dimensions_[1];
       }
     }
 
@@ -59,43 +59,7 @@ class TestMixedLogitDCM {
       TableType *random_decisions_dataset,
       TableType *random_num_alternatives_dataset) {
 
-      // Find the total number of discrete choices.
-      int total_num_attributes =
-        std::accumulate(
-          mlpack::mixed_logit_dcm::num_discrete_choices_.begin(),
-          mlpack::mixed_logit_dcm::num_discrete_choices_.end(), 0);
 
-      random_attribute_dataset->Init(
-        mlpack::mixed_logit_dcm::num_attributes_, total_num_attributes);
-
-      for(int j = 0; j < total_num_attributes; j++) {
-        arma::vec point;
-        random_attribute_dataset->get(j, &point);
-        for(int i = 0; i < mlpack::mixed_logit_dcm::num_attributes_; i++) {
-          point[i] = core::math::Random(0.1, 1.0);
-        }
-      }
-
-      random_num_alternatives_dataset->Init(
-        1, mlpack::mixed_logit_dcm::num_people_);
-      for(int j = 0; j < mlpack::mixed_logit_dcm::num_people_; j++) {
-        arma::vec point;
-        random_num_alternatives_dataset->get(j, &point);
-
-        // This is the number of discrete choices for the given
-        // person.
-        point[0] = mlpack::mixed_logit_dcm::num_discrete_choices_[j];
-      }
-      random_decisions_dataset->Init(
-        1, mlpack::mixed_logit_dcm::num_people_);
-      for(int j = 0; j < mlpack::mixed_logit_dcm::num_people_; j++) {
-        arma::vec point;
-        random_decisions_dataset->get(j, &point);
-
-        // This is the discrete choice index of the given person.
-        point[0] = core::math::RandInt(
-                     mlpack::mixed_logit_dcm::num_discrete_choices_[j]) + 1;
-      }
     }
 
   public:
@@ -110,12 +74,6 @@ class TestMixedLogitDCM {
           mlpack::mixed_logit_dcm::num_attributes_ =
             core::math::RandInt(10, 20);
           mlpack::mixed_logit_dcm::num_people_ = core::math::RandInt(50, 70);
-          mlpack::mixed_logit_dcm::num_discrete_choices_.resize(
-            mlpack::mixed_logit_dcm::num_people_);
-          for(int j = 0; j < mlpack::mixed_logit_dcm::num_people_; j++) {
-            mlpack::mixed_logit_dcm::num_discrete_choices_[j] =
-              core::math::RandInt(3, 7);
-          }
 
           switch(k) {
             case 0:
@@ -185,19 +143,14 @@ class TestMixedLogitDCM {
                 mlpack::mixed_logit_dcm::num_people_ << "\n";
 
       // Generate the random dataset and save it.
-      TableType random_attribute_table;
-      TableType random_decisions_table;
-      TableType random_num_alternatives_table;
-      mlpack::mixed_logit_dcm::Distribution<DistributionType> distribution;
-      InitializeDistribution_(distribution_name, &distribution);
-      GenerateRandomDataset_(
-        distribution_name,
-        &random_attribute_table,
-        &random_decisions_table,
-        &random_num_alternatives_table);
-      random_attribute_table.Save(attributes_in);
-      random_decisions_table.Save(decisions_in);
-      random_num_alternatives_table.Save(num_alternatives_in);
+      mlpack::mixed_logit_dcm::DCMTable <
+      TableType, DistributionType > random_dcm_table;
+      InitializeAttributeDimensions_(distribution_name);
+      random_dcm_table.GenerateRandomDataset(
+        mlpack::mixed_logit_dcm::num_people_,
+        mlpack::mixed_logit_dcm::num_attributes_,
+        mlpack::mixed_logit_dcm::attribute_dimensions_);
+      random_dcm_table.Save(attributes_in, decisions_in, num_alternatives_in);
 
       // Parse the mixed logit DCM arguments.
       mlpack::mixed_logit_dcm::MixedLogitDCMArguments<TableType> arguments;

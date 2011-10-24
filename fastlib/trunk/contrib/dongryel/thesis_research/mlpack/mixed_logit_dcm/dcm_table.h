@@ -74,6 +74,79 @@ class DCMTable {
 
   public:
 
+    /** @brief Save the DCM table to files.
+     */
+    void Save(
+      const std::string &attribute_file_name_in,
+      const std::string &decision_file_name_in,
+      const std::string &num_alternative_file_name_in) const {
+      attribute_table_->Save(attribute_file_name_in);
+      decisions_table_->Save(decision_file_name_in);
+      num_alternatives_table_->Save(num_alternative_file_name_in);
+    }
+
+    /** @brief Generates a random dataset for test cases.
+     */
+    void GenerateRandomDataset(
+      int random_num_people_in, int random_num_attributes_in,
+      const std::vector<int> &random_attribute_dimensions_in) {
+
+      // The randomly generated set of tables.
+      TableType *random_attribute_dataset = new TableType();
+      TableType *random_num_alternatives_dataset = new TableType();
+      TableType *random_decisions_dataset = new TableType();
+
+      // Generate a random set of available number of discrete choices
+      // per each person.
+      std::vector<int> random_num_discrete_choices(random_num_people_in);
+      for(int j = 0; j < random_num_people_in; j++) {
+        random_num_discrete_choices[j] = core::math::RandInt(3, 7);
+      }
+
+      // Find the total number of discrete choices.
+      int total_num_discrete_choices =
+        std::accumulate(
+          random_num_discrete_choices.begin(),
+          random_num_discrete_choices.end(), 0);
+
+      // Initialize the attribute dataset.
+      random_attribute_dataset->Init(
+        random_num_attributes_in, total_num_discrete_choices);
+      for(int j = 0; j < total_num_discrete_choices; j++) {
+        arma::vec point;
+        random_attribute_dataset->get(j, &point);
+        for(int i = 0; i < random_num_attributes_in; i++) {
+          point[i] = core::math::Random(0.1, 1.0);
+        }
+      }
+
+      // Initialize the number of alternatives table.
+      random_num_alternatives_dataset->Init(
+        1, random_num_people_in);
+      for(int j = 0; j < random_num_people_in; j++) {
+        arma::vec point;
+        random_num_alternatives_dataset->get(j, &point);
+
+        // This is the number of discrete choices for the given
+        // person.
+        point[0] = random_num_discrete_choices[j];
+      }
+      random_decisions_dataset->Init(1, random_num_people_in);
+      for(int j = 0; j < random_num_people_in; j++) {
+        arma::vec point;
+        random_decisions_dataset->get(j, &point);
+
+        // This is the discrete choice index of the given person.
+        point[0] = core::math::RandInt(
+                     random_num_discrete_choices[j]) + 1;
+      }
+
+      // Call the Init function.
+      this->Init(
+        random_attribute_dataset, random_attribute_dimensions_in,
+        random_decisions_dataset, random_num_alternatives_dataset);
+    }
+
     /** @brief Computes the choice probability vector for the
      *         person_index-th person for each of his/her potential
      *         choices given the vector $\beta$. This is $P_{i,j}$ in
@@ -155,7 +228,7 @@ class DCMTable {
       return distribution_;
     }
 
-    /** @brief Returns the number of pepole choosing the given
+    /** @brief Returns the number of people choosing the given
      *         discrete choice.
      */
     int num_people_per_discrete_choice(int discrete_choice_index) const {
