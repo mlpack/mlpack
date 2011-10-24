@@ -1,9 +1,0 @@
-@article{hyvarinen1999far,
-  title={{Fast and robust fixed-point algorithms for independent componentanalysis}},
-  author={Hyvarinen, A.},
-  journal={Neural Networks, IEEE Transactions on},
-  volume={10},
-  number={3},
-  pages={626--634},
-  year={1999}
-}
