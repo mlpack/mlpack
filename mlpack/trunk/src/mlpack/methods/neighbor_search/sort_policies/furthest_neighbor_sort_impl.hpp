@@ -1,12 +1,12 @@
 /***
- * @file nearest_neighbor_sort_impl.h
+ * @file nearest_neighbor_sort_impl.hpp
  * @author Ryan Curtin
  *
- * Implementation of templated methods for the NearestNeighborSort SortPolicy
+ * Implementation of templated methods for the FurthestNeighborSort SortPolicy
  * class for the NeighborSearch class.
  */
-#ifndef __MLPACK_NEIGHBOR_FURTHEST_NEIGHBOR_SORT_IMPL_H
-#define __MLPACK_NEIGHBOR_FURTHEST_NEIGHBOR_SORT_IMPL_H
+#ifndef __MLPACK_NEIGHBOR_FURTHEST_NEIGHBOR_SORT_IMPL_HPP
+#define __MLPACK_NEIGHBOR_FURTHEST_NEIGHBOR_SORT_IMPL_HPP
 
 #include <mlpack/core/kernels/lmetric.hpp>
 
@@ -14,16 +14,18 @@ namespace mlpack {
 namespace neighbor {
 
 template<typename TreeType>
-double FurthestNeighborSort::BestNodeToNodeDistance(TreeType* query_node,
-                                                    TreeType* reference_node) {
+double FurthestNeighborSort::BestNodeToNodeDistance(
+    const TreeType* query_node,
+    const TreeType* reference_node) {
   // This is not implemented yet for the general case because the trees do not
   // accept arbitrary distance metrics.
   return query_node->bound().MaxDistance(reference_node->bound());
 }
 
 template<typename TreeType>
-double FurthestNeighborSort::BestPointToNodeDistance(const arma::vec& point,
-                                                     TreeType* reference_node) {
+double FurthestNeighborSort::BestPointToNodeDistance(
+    const arma::vec& point,
+    const TreeType* reference_node) {
   // This is not implemented yet for the general case because the trees do not
   // accept arbitrary distance metrics.
   return reference_node->bound().MaxDistance(point);

@@ -1,4 +1,4 @@
-/***
+/**
  * @file sort_policy_test.cc
  * @author Ryan Curtin
  *
@@ -9,8 +9,8 @@
 #include <mlpack/core/tree/spacetree.h>
 
 // Classes to test.
-#include "nearest_neighbor_sort.h"
-#include "furthest_neighbor_sort.h"
+#include "nearest_neighbor_sort.hpp"
+#include "furthest_neighbor_sort.hpp"
 
 #define BOOST_TEST_MODULE SortPolicy Test
 #include <boost/test/unit_test.hpp>
