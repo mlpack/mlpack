@@ -1,4 +1,0 @@
-version=3
-
-opts="downloadurlmangle=s/$/jenkins.war/,filenamemangle=s/.*(\d+\.\d+).*/jenkins-$1\.war/" \
-http://ftp.osuosl.org/pub/jenkins/war/ (\d+\.\d+)/ debian bash debian/war-pack.sh
