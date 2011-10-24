@@ -19,6 +19,7 @@ PARAM_INT("d", "The number of dimensions of the data on which the mixture "
     "model is to be fit.", "mog_l2e", 0);
 
 namespace mlpack {
+namespace gmm {
 
 /**
  * A Gaussian mixture model class.
@@ -497,6 +498,7 @@ class MoGL2E {
   }
 };
 
+}; // namespace gmm
 }; // namespace mlpack
 
 #endif

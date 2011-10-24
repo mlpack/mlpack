@@ -11,6 +11,7 @@
 #include "kmeans.h"
 
 using namespace mlpack;
+using namespace gmm;
 
 long double MoGL2E::L2Error(const arma::mat& data) {
   long double reg, fit, l2e;

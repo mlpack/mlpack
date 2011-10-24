@@ -18,6 +18,7 @@ PARAM_INT("d", "The number of dimensions of the data on which the mixture "
     "model is to be fit.", "mog", 0);
 
 namespace mlpack {
+namespace gmm {
 
 /**
  * A Gaussian mixture model class.
@@ -211,6 +212,7 @@ class MoGEM {
                             const arma::vec& weights);
 };
 
+}; // namespace gmm
 }; // namespace mlpack
 
 #endif
