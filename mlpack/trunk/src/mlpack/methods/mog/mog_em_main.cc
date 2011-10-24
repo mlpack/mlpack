@@ -32,6 +32,7 @@ PARAM_STRING("output", "The file into which the output is to be written into.",
     "mog", "output.csv");
 
 using namespace mlpack;
+using namespace mlpack::gmm;
 
 int main(int argc, char* argv[]) {
   CLI::ParseCommandLine(argc, argv);

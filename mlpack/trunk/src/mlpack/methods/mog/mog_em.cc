@@ -11,6 +11,7 @@
 #include "kmeans.h"
 
 using namespace mlpack;
+using namespace gmm;
 
 void MoGEM::ExpectationMaximization(const arma::mat& data_points) {
   // Declaration of the variables */
