@@ -1,15 +1,14 @@
 /***
- * @file nearest_neighbor_sort.cc
- * @author Ryan Curitn
+ * @file nearest_neighbor_sort.cpp
+ * @author Ryan Curtin
  *
- * Implementation of the simple NearestNeighborSort policy class.
+ * Implementation of the simple FurthestNeighborSort policy class.
  */
-
-#include "furthest_neighbor_sort.h"
+#include "furthest_neighbor_sort.hpp"
 
 using namespace mlpack::neighbor;
 
-size_t FurthestNeighborSort::SortDistance(arma::vec& list,
+size_t FurthestNeighborSort::SortDistance(const arma::vec& list,
                                           double new_distance) {
   // The first element in the list is the nearest neighbor.  We only want to
   // insert if the new distance is greater than the last element in the list.

@@ -5,11 +5,12 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   neighbor_search.h
   neighbor_search_impl.h
-  sort_policies/nearest_neighbor_sort.h
-  sort_policies/nearest_neighbor_sort.cc
-  sort_policies/nearest_neighbor_sort_impl.h
-  sort_policies/furthest_neighbor_sort.h
-  sort_policies/furthest_neighbor_sort.cc
+  sort_policies/nearest_neighbor_sort.hpp
+  sort_policies/nearest_neighbor_sort.cpp
+  sort_policies/nearest_neighbor_sort_impl.hpp
+  sort_policies/furthest_neighbor_sort.hpp
+  sort_policies/furthest_neighbor_sort.cpp
+  sort_policies/furthest_neighbor_sort_impl.hpp
   typedef.h
 )
 

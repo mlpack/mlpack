@@ -14,7 +14,7 @@
 #include <string>
 
 #include <mlpack/core/kernels/lmetric.hpp>
-#include "sort_policies/nearest_neighbor_sort.h"
+#include "sort_policies/nearest_neighbor_sort.hpp"
 
 // Define CLI parameters for the NeighborSearch class.
 PARAM_MODULE("neighbor_search",
@@ -41,42 +41,43 @@ namespace neighbor /** Neighbor-search routines.  These include
  *
  * The template parameters Kernel and SortPolicy define the distance function
  * used and the sort function used.  More information on those classes can be
- * found in the kernel::ExampleKernel class and the ExampleSortPolicy class.
+ * found in the kernel::ExampleKernel class and the NearestNeighborSort class.
+ *
+ * This class has several parameters configurable by the CLI interface:
+ *
+ * @param neighbor_search/k Parameters for the distance-based neighbor search.
+ * @param neighbor_search/single_mode If set, single-tree mode will be used
+ *     (instead of dual-tree mode).
+ * @param neighbor_search/naive_mode If set, naive computation will be used (no
+ *     trees). This overrides the single_mode flag.
  *
  * @tparam Kernel The kernel function; see kernel::ExampleKernel.
- * @tparam SortPolicy The sort policy for distances; see ExampleSortPolicy.
+ * @tparam SortPolicy The sort policy for distances; see NearestNeighborSort.
  */
 template<typename Kernel = mlpack::kernel::SquaredEuclideanDistance,
          typename SortPolicy = NearestNeighborSort>
 class NeighborSearch {
 
   /**
-   * Extra data for each node in the tree.  For all nearest neighbors,
-   * each node only needs its upper bound on its nearest neighbor distances.
+   * Extra data for each node in the tree.  For neighbor searches, each node
+   * only needs to store a bound on neighbor distances.
    */
   class QueryStat {
 
    public:
-    /**
-     * The bound on the node's neighbor distances.
-     */
+    //! The bound on the node's neighbor distances.
     double bound_;
 
     /**
-     * Initialization function used in tree-building when initializing
-     * a leaf node.  For allnn, needs no additional information
-     * at the time of tree building.
+     * Initialize the statistic with the worst possible distance according to
+     * our sorting policy.
      */
-    QueryStat() {
-      // The bound starts at the worst possible distance.
-      bound_ = SortPolicy::WorstDistance();
-    }
+    QueryStat() : bound_(SortPolicy::WorstDistance()) { }
   };
 
   /**
-   * TreeType are BinarySpaceTrees where the data are bounded by Euclidean
-   * bounding boxes, the data are stored in a Matrix, and each node has a
-   * QueryStat for its bound.  The bound should be configurable...
+   * Simple typedef for the trees, which use a bound and a QueryStat (to store
+   * distances for each node).  The bound should be configurable...
    */
   typedef tree::BinarySpaceTree<bound::HRectBound<2>, QueryStat> TreeType;
 
