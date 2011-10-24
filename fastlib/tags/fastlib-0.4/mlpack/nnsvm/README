@@ -1,1 +1,0 @@
-NNSVM is short for Non-Negativity constrained Support Vector Machine. It adds non-negativity constraints to the weight vector of the original SVM optimization problem. The motivation is that, in some applications of weight learning, weights are required to be non-negative.

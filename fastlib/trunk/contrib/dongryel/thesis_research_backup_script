@@ -1,2 +1,0 @@
-#!/bin/bash
-tar czvf thesis_research.tar.gz --exclude=bin --exclude=.svn thesis_research
