@@ -10,6 +10,9 @@
 
 #include <mlpack/core.h>
 
+namespace mlpack {
+namespace optimization {
+
 PARAM_MODULE("lbfgs", "Options for the L-BFGS optimizer, which uses a "
     "back-tracing line search to determine the step size to take.");
 
@@ -25,9 +28,6 @@ PARAM_DOUBLE("wolfe", "Parameter for detecting the Wolfe condition.", "lbfgs",
     0.9);
 PARAM_DOUBLE("min_gradient_norm", "Minimum gradient norm required to continue "
     "the optimization.", "lbfgs", 1e-10);
-
-namespace mlpack {
-namespace optimization {
 
 template<typename FunctionType>
 class L_BFGS {
