@@ -35,7 +35,7 @@ PARAM_DOUBLE("alpha", "The error probability",
 	     "approx_maxip", 0.95);
 PARAM_INT("sample_limit", "The maximum number of samples allowed "
 	  "when the node can be approximated by sampling.", 
-	  "approx_maxip", 20);
+	  "approx_maxip", 15);
 
 PARAM_FLAG("angle_prune", "The flag to trigger the tighter"
 	   " pruning using the angles as well", "approx_maxip");
