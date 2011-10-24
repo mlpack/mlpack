@@ -16,6 +16,11 @@
 #include <mlpack/core/kernels/lmetric.hpp>
 #include "sort_policies/nearest_neighbor_sort.hpp"
 
+namespace mlpack {
+namespace neighbor /** Neighbor-search routines.  These include
+                    * all-nearest-neighbors and all-furthest-neighbors
+                    * searches. */ {
+
 // Define CLI parameters for the NeighborSearch class.
 PARAM_MODULE("neighbor_search",
     "Parameters for the distance-based neighbor search.");
@@ -24,11 +29,6 @@ PARAM_FLAG("single_mode", "If set, use single-tree mode (instead of "
     "dual-tree).", "neighbor_search");
 PARAM_FLAG("naive_mode", "If set, use naive computations (no trees).  This "
     "overrides the single_mode flag.", "neighbor_search");
-
-namespace mlpack {
-namespace neighbor /** Neighbor-search routines.  These include
-                    * all-nearest-neighbors and all-furthest-neighbors
-                    * searches. */ {
 
 /**
  * The NeighborSearch class is a template class for performing distance-based
