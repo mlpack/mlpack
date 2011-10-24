@@ -26,61 +26,25 @@ PARAM_FLAG("naive_mode", "If set, use naive computations (no trees).  This "
     "overrides the single_mode flag.", "neighbor_search");
 
 namespace mlpack {
-namespace neighbor {
+namespace neighbor /** Neighbor-search routines.  These include
+                    * all-nearest-neighbors and all-furthest-neighbors
+                    * searches. */ {
 
 /**
  * The NeighborSearch class is a template class for performing distance-based
  * neighbor searches.  It takes a query dataset and a reference dataset (or just
- * a reference dataset) and finds the k neighbors which have the 'best' distance
- * according to a given sorting policy.
+ * a reference dataset) and, for each point in the query dataset, finds the k
+ * neighbors in the reference dataset which have the 'best' distance according
+ * to a given sorting policy.  A constructor is given which takes only a
+ * reference dataset, and if that constructor is used, the given reference
+ * dataset is also used as the query dataset.
  *
  * The template parameters Kernel and SortPolicy define the distance function
- * used and the sort function used.  Prototypes for the two policy classes are
- * given below.
+ * used and the sort function used.  More information on those classes can be
+ * found in the kernel::ExampleKernel class and the ExampleSortPolicy class.
  *
- * @code
- * class Kernel {
- *  public:
- *   Kernel(); // Default constructor is necessary.
- *
- *   // Evaluate the kernel function on these two vectors.
- *   double Evaluate(arma::vec&, arma::vec&);
- * };
- * @endcode
- *
- * @code
- * class SortPolicy {
- *  public:
- *   // Return the index in the list where the new distance should be inserted,
- *   // or size_t() - 1 if it should not be inserted (i.e. if it is not any
- *   // better than any of the existing points in the list).  The list is sorted
- *   // such that the best point is first in the list.  The actual insertion is
- *   // not performed.
- *   static size_t SortDistance(arma::vec& list, double new_distance);
- *
- *   // Return whether or not value is "better" than ref.
- *   static inline bool IsBetter(const double value, const double ref);
- *
- *   // Return the best possible distance between two nodes.
- *   template<typename TreeType>
- *   static double BestNodeToNodeDistacne(TreeType* query_node,
- *                                        TreeType* reference_node);
- *
- *   // Return the best possible distance between a node and a point.
- *   template<typename TreeType>
- *   static double BestPointToNodeDistance(const arma::vec& query_point,
- *                                         TreeType* reference_node);
- *
- *   // Return the worst or best possible distance for this sort policy.
- *   static inline const double WorstDistance();
- *   static inline const double BestDistance();
- * };
- * @endcode
- *
- * @tparam Kernel The kernel function.  Must provide a default constructor and
- *   a function 'double Evaluate(arma::vec&, arma::vec&)'.
- * @tparam SortPolicy The sort policy for distances.  See
- *   sort_policies/nearest_neighbor_sort.h for an example.
+ * @tparam Kernel The kernel function; see kernel::ExampleKernel.
+ * @tparam SortPolicy The sort policy for distances; see ExampleSortPolicy.
  */
 template<typename Kernel = mlpack::kernel::SquaredEuclideanDistance,
          typename SortPolicy = NearestNeighborSort>
@@ -107,9 +71,9 @@ class NeighborSearch {
       // The bound starts at the worst possible distance.
       bound_ = SortPolicy::WorstDistance();
     }
-  }; //class QueryStat
+  };
 
-  /***
+  /**
    * TreeType are BinarySpaceTrees where the data are bounded by Euclidean
    * bounding boxes, the data are stored in a Matrix, and each node has a
    * QueryStat for its bound.  The bound should be configurable...
@@ -117,88 +81,124 @@ class NeighborSearch {
   typedef tree::BinarySpaceTree<bound::HRectBound<2>, QueryStat> TreeType;
 
  private:
-  // These will store our data sets.
+  //! Reference dataset.
   arma::mat references_;
+  //! Query dataset (may not be given).
   arma::mat queries_;
 
-  // Instantiation of kernel (potentially not necessary).
+  //! Instantiation of kernel.
   Kernel kernel_;
 
-  // Pointers to the roots of the two trees.
+  //! Pointer to the root of the reference tree.
   TreeType* reference_tree_;
+  //! Pointer to the root of the query tree (might not exist).
   TreeType* query_tree_;
 
-  // A permutation of the indices for tree building.
+  //! Permutations of query points during tree building.
   std::vector<size_t> old_from_new_queries_;
+  //! Permutations of reference points during tree building.
   std::vector<size_t> old_from_new_references_;
 
+  //! Indicates if O(n^2) naive search is being used.
   bool naive_;
+  //! Indicates if dual-tree search is being used (opposed to single-tree).
   bool dual_mode_;
 
-  // The number of points in a leaf
+  //! Number of points in a leaf.
   size_t leaf_size_;
 
-  // number of nearest neighbrs
+  //! Number of neighbors to compute.
   size_t knns_;
 
-  // The total number of prunes.
+  //! Total number of pruned nodes during the neighbor search.
   size_t number_of_prunes_;
 
-  // The distance to the candidate nearest neighbor for each query
+  //! The distance to the candidate nearest neighbor for each query
   arma::mat neighbor_distances_;
 
-  // The indices of the candidate nearest neighbor for each query
+  //! The indices of the candidate nearest neighbor for each query
   arma::Mat<size_t> neighbor_indices_;
 
  public:
   /**
-   * Initialize the NeighborSearch object.  If only a reference dataset is
-   * given, it is assumed that the query set is also the reference set.
-   * Optionally, an initialized kernel can be passed in, for cases where the
-   * kernel has internal data (i.e. the Mahalanobis distance).
+   * Initialize the NeighborSearch object, passing both a query and reference
+   * dataset.  An initialized distance metric can be given, for cases where the
+   * metric has internal data (i.e. the distance::MahalanobisDistance class).
    *
    * @param queries_in Set of query points.
    * @param references_in Set of reference points.
    * @param alias_matrix If true, alias the passed matrices instead of copying
    *     them.  While this lowers memory footprint and computational load, the
-   *     matrices will be modified during the tree-building process!
+   *     points in the matrices will be rearranged during the tree-building
+   *     process!  Defaults to false.
    * @param kernel An optional instance of the Kernel class.
    */
   NeighborSearch(arma::mat& queries_in, arma::mat& references_in,
                  bool alias_matrix = false, Kernel kernel = Kernel());
+
+  /**
+   * Initialize the NeighborSearch object, passing only one dataset.  In this
+   * case, the query dataset is equivalent to the reference dataset, with one
+   * caveat: for any point, the returned list of neighbors will not include
+   * itself.  An initialized distance metric can be given, for cases where the
+   * metric has internal data (i.e. the distance::MahalanobisDistance class).
+   *
+   * @param references_in Set of reference points.
+   * @param alias_matrix If true, alias the passed matrices instead of copying
+   *     them.  While this lowers memory footprint and computational load, the
+   *     points in the matrices will be rearranged during the tree-building
+   *     process!  Defaults to false.
+   * @param kernel An optional instance of the Kernel class.
+   */
   NeighborSearch(arma::mat& references_in, bool alias_matrix = false,
                  Kernel kernel = Kernel());
 
   /**
-   * The tree is the only member we are responsible for deleting.  The others
-   * will take care of themselves.
+   * Delete the NeighborSearch object. The tree is the only member we are
+   * responsible for deleting.  The others will take care of themselves.
    */
   ~NeighborSearch();
 
   /**
-   * Computes the nearest neighbors and stores the output in the given arrays.
-   * For an AllkNN object with knns_ set to 5 (i.e. calculate the five nearest
-   * neighbors), resulting_neighbors[0] through resulting_neighbors[4] are the
-   * five nearest neighbors of query point 0.
+   * Compute the nearest neighbors and store the output in the given matrices.
+   * The matrices will be set to the size of n columns by k rows, where n is the
+   * number of points in the query dataset and k is the number of neighbors
+   * being searched for.
    *
-   * @param resulting_neighbors List of nearest neighbors
-   * @param distances Distance of nearest neighbors
+   * The parameter k is set through the CLI interface, not in the arguments to
+   * this method; this allows users to specify k on the command line
+   * ("--neighbor_search/k").  See the CLI documentation for further information
+   * on how to use this functionality.
+   *
+   * @param resulting_neighbors Matrix storing lists of neighbors for each query
+   *     point.
+   * @param distances Matrix storing distances of neighbors for each query
+   *     point.
    */
   void ComputeNeighbors(arma::Mat<size_t>& resulting_neighbors,
                         arma::mat& distances);
 
  private:
   /**
-   * Performs exhaustive computation between two leaves, comparing every node in
+   * Perform exhaustive computation between two leaves, comparing every node in
    * the leaf to the other leaf to find the furthest neighbor.  The
-   * neighbor_indices_ and neighbor_distances_ arrays will be updated with the
+   * neighbor_indices_ and neighbor_distances_ matrices will be updated with the
    * changed information.
+   *
+   * @param query_node Node in query tree.  This should be a leaf
+   *     (bottom-level).
+   * @param reference_node Node in reference tree.  This should be a leaf
+   *     (bottom-level).
    */
   void ComputeBaseCase_(TreeType* query_node, TreeType* reference_node);
 
   /**
    * Recurse down the trees, computing base case computations when the leaves
    * are reached.
+   *
+   * @param query_node Node in query tree.
+   * @param reference_node Node in reference tree.
+   * @param lower_bound The lower bound; if above this, we can prune.
    */
   void ComputeDualNeighborsRecursion_(TreeType* query_node,
                                       TreeType* reference_node,
@@ -207,14 +207,19 @@ class NeighborSearch {
   /**
    * Perform a recursion only on the reference tree; the query point is given.
    * This method is similar to ComputeBaseCase_().
+   *
+   * @param point_id Index of query point.
+   * @param point The query point.
+   * @param reference_node Reference node.
+   * @param best_dist_so_far Best distance to a node so far -- used for pruning.
    */
   void ComputeSingleNeighborsRecursion_(size_t point_id, arma::vec& point,
                                         TreeType* reference_node,
                                         double& best_dist_so_far);
 
   /**
-   * Helper function to insert a point into the neighbors and distances
-   * matrices.
+   * Insert a point into the neighbors and distances matrices; this is a helper
+   * function.
    *
    * @param query_index Index of point whose neighbors we are inserting into.
    * @param pos Position in list to insert into.
