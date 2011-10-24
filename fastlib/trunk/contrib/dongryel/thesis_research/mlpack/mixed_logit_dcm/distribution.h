@@ -46,6 +46,14 @@ class Distribution {
 
   public:
 
+    /** @brief Generates a distribution-specified random parameter
+     *         set.
+     */
+    void GenerateRandomParameters(arma::vec *random_parameters_out) {
+      DistributionType::GenerateRandomParameters(
+        num_parameters_, private_data_, random_parameters_out);
+    }
+
     /** @brief Initializes the number of parameters to zero.
      */
     Distribution() {
