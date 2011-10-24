@@ -38,6 +38,20 @@ class DiagonalGaussianDistribution {
 
   public:
 
+    static void GenerateRandomParameters(
+      int num_parameters_in,  const PrivateData &private_data_in,
+      arma::vec *random_parameters_out) {
+
+      // The first half is for the mean (any number), the second half
+      // is for the standard deviation (positive number).
+      for(int i = 0; i < num_parameters_in / 2; i++) {
+        (*random_parameters_out)[i] = core::math::Random(-5.0, 5.0);
+      }
+      for(int i = num_parameters_in / 2; i < num_parameters_in; i++) {
+        (*random_parameters_out)[i] = core::math::Random(0.3, 1.0);
+      }
+    }
+
     /** @brief This function is called whenever the parameter changes.
      */
     static void SetupDistribution(

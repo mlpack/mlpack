@@ -23,6 +23,17 @@ class ConstantDistribution {
 
   public:
 
+    static void GenerateRandomParameters(
+      int num_parameters_in, const PrivateData &private_data_in,
+      arma::vec *random_parameters_out) {
+
+      // No parameter restriction here.
+      random_parameters_out->set_size(num_parameters_in);
+      for(int i = 0; i < num_parameters_in; i++) {
+        (*random_parameters_out)[i] = core::math::Random(-5.0, 5.0);
+      }
+    }
+
     static void SetupDistribution(
       const arma::vec &parameters, PrivateData *private_data) {
 

@@ -81,6 +81,40 @@ class GaussianDistribution {
 
   public:
 
+    static void GenerateRandomParameters(
+      int num_parameters_in, const PrivateData &private_data_in,
+      arma::vec *random_parameters_out) {
+
+      // A random mean vector.
+      for(int i = 0; i < private_data_in.row_blocks_[0]; i++) {
+        (*random_parameters_out)[i] = core::math::Random(-5.0, 5.0);
+      }
+
+      // A random Cholesky factor.
+      for(int i = private_data_in.row_blocks_[0];
+          i < private_data_in.row_blocks_[1]; i++) {
+        (*random_parameters_out)[i] = 1.0;
+      }
+
+      // A random fixed parameter.
+      for(int i = private_data_in.row_blocks_[1];
+          i < private_data_in.row_blocks_[2]; i++) {
+        (*random_parameters_out)[i] = core::math::Random(-5.0, 5.0);
+      }
+
+      // A random mean vector.
+      for(int i = private_data_in.row_blocks_[2];
+          i < private_data_in.row_blocks_[3]; i++) {
+        (*random_parameters_out)[i] = core::math::Random(-5.0, 5.0);
+      }
+
+      // A random variance vector.
+      for(int i = private_data_in.row_blocks_[3];
+          i < private_data_in.row_blocks_[4]; i++) {
+        (*random_parameters_out)[i] = core::math::Random(0.3, 1.0);
+      }
+    }
+
     /** @brief This function is called whenever the parameter changes.
      */
     static void SetupDistribution(
