@@ -3,11 +3,11 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files that we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-  io.h
-  io_impl.h
-  io.cc
-  io_deleter.h
-  io_deleter.cc
+  cli.hpp
+  cli_impl.hpp
+  cli.cpp
+  cli_deleter.hpp
+  cli_deleter.cpp
   option.h
   option_impl.h
   option.cc
@@ -33,11 +33,11 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # test executable
-add_executable(io_test
-   io_test.cc
+add_executable(cli_test
+   cli_test.cpp
 )
 # link dependencies of test executable
-target_link_libraries(io_test
+target_link_libraries(cli_test
    mlpack
    boost_program_options
    boost_unit_test_framework

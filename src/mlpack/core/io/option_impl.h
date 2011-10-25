@@ -1,13 +1,13 @@
 #ifndef MLPACK_CLI_OPTCLIN_IMPL_H
 #define MLPACK_CLI_OPTCLIN_IMPL_H
 
-#include "io.h"
+#include "cli.hpp"
 #include "log.h"
 
 namespace mlpack {
 
 /*
- * @brief Registers a parameter with CLI.  
+ * @brief Registers a parameter with CLI.
  *    This allows the registration of parameters at program start.
  */
 template<typename N>
@@ -41,4 +41,4 @@ Option<N>::Option(const char* identifier,
 
 }; // namespace mlpack
 
-#endif 
+#endif

@@ -1,12 +1,11 @@
 /***
  * @file option.cc
  * @author Ryan Curtin
- * 
+ *
  * Implementation of the ProgramDoc class.  The class registers itself with CLI
  * when constructed.
  */
-#include "io.h"
-#include "../io/log.h"
+#include "cli.hpp"
 #include "option.h"
 
 #include <string>
@@ -23,9 +22,9 @@ using namespace std;
  *    program and what it is.  No newline characters are necessary; this is
  *    taken care of by CLI later.
  */
-ProgramDoc::ProgramDoc(std::string programName, std::string documentation, 
+ProgramDoc::ProgramDoc(std::string programName, std::string documentation,
   std::string defaultModule) :
-    programName(programName), documentation(documentation), 
+    programName(programName), documentation(documentation),
     defaultModule(defaultModule) {
 
   // Register this with CLI.
