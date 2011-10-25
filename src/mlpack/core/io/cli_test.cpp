@@ -5,7 +5,7 @@
  * Test for the CLI input parameter system.
  */
 #include "optionshierarchy.h"
-#include "io.h"
+#include "cli.hpp"
 #include "../io/log.h"
 
 #include <mlpack/core.h>

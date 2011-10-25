@@ -1,4 +1,4 @@
-#include "io.h"
+#include "cli.hpp"
 #include "log.h"
 
 #include <list>
@@ -144,12 +144,12 @@ void CLI::AddFlag(const char* identifier,
  */
 bool CLI::HasParam(const char* identifier) {
   std::string key = std::string(identifier);
-  
+
   //Does the parameter exist at all?
   int isInVmap = GetSingleton().vmap.count(key);
   int isInGmap = GetSingleton().globalValues.count(key);
 
-  //Lets check if the parameter is boolean, if it is we just want to see 
+  //Lets check if the parameter is boolean, if it is we just want to see
   //If it was passed at program initiation.
   OptionsHierarchy* node = CLI::GetSingleton().hierarchy.FindNode(key);
   if(node) {//Sanity check

@@ -8,9 +8,8 @@
  * CLIDeleter class, which will be initialized at the beginning of the program
  * and deleted at the end.  The destructor destroys the CLI singleton.
  */
-#include "io_deleter.h"
-#include "io.h"
-#include "../io/log.h"
+#include "cli_deleter.hpp"
+#include "cli.hpp"
 
 using namespace mlpack;
 using namespace mlpack::io;
