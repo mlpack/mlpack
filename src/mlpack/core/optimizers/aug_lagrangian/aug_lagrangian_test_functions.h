@@ -8,7 +8,7 @@
 #define __AUG_LAGRANGIAN_TEST_FUNCTCLINS_H
 
 #include <mlpack/core/io/cli.hpp>
-#include <mlpack/core/io/log.h>
+#include <mlpack/core/io/log.hpp>
 #include <armadillo>
 
 namespace mlpack {

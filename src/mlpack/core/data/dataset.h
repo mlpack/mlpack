@@ -16,7 +16,7 @@
 #include <vector>
 
 #include "../io/cli.hpp"
-#include "../io/log.h"
+#include "../io/log.hpp"
 #include "../file/textfile.h"
 #include "../col/tokenizer.h"
 

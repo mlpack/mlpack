@@ -12,7 +12,7 @@
 // In case it wasn't included already for some reason.
 #include "spacetree.h"
 #include <mlpack/core/io/cli.hpp>
-#include <mlpack/core/io/log.h>
+#include <mlpack/core/io/log.hpp>
 
 namespace mlpack {
 namespace tree {

@@ -13,7 +13,7 @@
 #include <math.h>
 
 #include "../math/math_lib.h"
-#include "../io/log.h"
+#include "../io/log.hpp"
 
 namespace mlpack {
 namespace bound {
