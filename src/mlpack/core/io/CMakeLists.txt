@@ -8,6 +8,8 @@ set(SOURCES
   cli.cpp
   cli_deleter.hpp
   cli_deleter.cpp
+  log.hpp
+  log.cpp
   option.h
   option_impl.h
   option.cc
@@ -18,8 +20,6 @@ set(SOURCES
   prefixedoutstream.h
   prefixedoutstream.cc
   prefixedoutstream_impl.h
-  log.h
-  log.cc
 )
 
 # add directory name to sources

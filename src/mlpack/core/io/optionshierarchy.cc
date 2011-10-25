@@ -1,6 +1,6 @@
 #include "optionshierarchy.h"
 #include "cli.hpp"
-#include "log.h"
+#include "log.hpp"
 #include <iostream>
 #include <iomanip>
 

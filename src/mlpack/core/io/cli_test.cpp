@@ -6,7 +6,7 @@
  */
 #include "optionshierarchy.h"
 #include "cli.hpp"
-#include "../io/log.h"
+#include "log.hpp"
 
 #include <mlpack/core.h>
 #include <iostream>
