@@ -13,7 +13,7 @@
 #ifndef FILE_TEXTFILE_H
 #define FILE_TEXTFILE_H
 
-#include "../io/io.h"
+#include "../io/cli.hpp"
 #include "../io/log.h"
 
 #include <cstdio>

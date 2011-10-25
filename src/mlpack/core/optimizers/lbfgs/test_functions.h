@@ -15,7 +15,7 @@
 #ifndef __OPTIMIZATCLIN_TEST_FUNCTCLINS_H
 #define __OPTIMIZATCLIN_TEST_FUNCTCLINS_H
 
-#include <mlpack/core/io/io.h>
+#include <mlpack/core/io/cli.hpp>
 #include <mlpack/core/io/log.h>
 
 // To fulfill the template policy class 'FunctionType', we must implement

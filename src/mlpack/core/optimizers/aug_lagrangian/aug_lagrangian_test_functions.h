@@ -7,7 +7,7 @@
 #ifndef __AUG_LAGRANGIAN_TEST_FUNCTCLINS_H
 #define __AUG_LAGRANGIAN_TEST_FUNCTCLINS_H
 
-#include <mlpack/core/io/io.h>
+#include <mlpack/core/io/cli.hpp>
 #include <mlpack/core/io/log.h>
 #include <armadillo>
 

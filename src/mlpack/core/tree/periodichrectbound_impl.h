@@ -4,8 +4,8 @@
  * Implementation of periodic hyper-rectangle bound policy class.
  * Template parameter t_pow is the metric to use; use 2 for Euclidian (L2).
  */
-#ifndef __MLPACK_CORE_TREE_PERCLIDICHRECTBOUND_IMPL_H
-#define __MLPACK_CORE_TREE_PERCLIDICHRECTBOUND_IMPL_H
+#ifndef __MLPACK_CORE_TREE_PERIODICHRECTBOUND_IMPL_H
+#define __MLPACK_CORE_TREE_PERIODICHRECTBOUND_IMPL_H
 
 // In case it has not already been included.
 #include "periodichrectbound.h"
@@ -13,7 +13,6 @@
 #include <math.h>
 
 #include "../math/math_lib.h"
-#include "../io/io.h"
 #include "../io/log.h"
 
 namespace mlpack {
