@@ -11,7 +11,7 @@
 
 #include "textfile.h"
 
-#include "../io/io.h"
+#include "../io/cli.hpp"
 #include "../io/log.h"
 #include <ctype.h>
 #include <iostream>

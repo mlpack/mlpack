@@ -7,7 +7,7 @@
 #ifndef MATH_MATH_LIB_H
 #define MATH_MATH_LIB_H
 
-#include "../io/io.h"
+#include "../io/cli.hpp"
 #include "../io/log.h"
 
 #include <math.h>
