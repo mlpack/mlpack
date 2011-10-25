@@ -15,6 +15,9 @@
 
 #include <armadillo>
 
+namespace mlpack {
+namespace bound {
+
 /**
  * Determines if a point is within the bound.
  */
@@ -164,6 +167,9 @@ template<typename TMetric, typename TPoint>
 double DBallBound<TMetric, TPoint>::MidDistance(const Point& point) const {
   return Metric::Evaluate(center_, point);
 }
+
+}; // namespace bound
+}; // namespace mlpack
 
 #endif
 
