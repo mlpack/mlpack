@@ -97,7 +97,7 @@
 #include <mlpack/core/model/save_restore_model.hpp>
 #include <mlpack/core/file/textfile.h>
 #include <mlpack/core/io/cli.hpp>
-#include <mlpack/core/io/log.h>
+#include <mlpack/core/io/log.hpp>
 #include <mlpack/core/arma_extend/arma_extend.h>
 
 #endif
