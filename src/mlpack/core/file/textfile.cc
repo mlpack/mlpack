@@ -12,7 +12,7 @@
 #include "textfile.h"
 
 #include "../io/cli.hpp"
-#include "../io/log.h"
+#include "../io/log.hpp"
 #include <ctype.h>
 #include <iostream>
 

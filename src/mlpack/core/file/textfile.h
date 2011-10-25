@@ -14,7 +14,7 @@
 #define FILE_TEXTFILE_H
 
 #include "../io/cli.hpp"
-#include "../io/log.h"
+#include "../io/log.hpp"
 
 #include <cstdio>
 #include <ctype.h>
