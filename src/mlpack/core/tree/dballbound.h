@@ -14,6 +14,9 @@
 #include <mlpack/core/kernels/lmetric.hpp>
 #include <armadillo>
 
+namespace mlpack {
+namespace bound {
+
 /**
  * Ball bound that works in arbitrary metric spaces.
  *
@@ -126,6 +129,9 @@ class DBallBound {
     double MidDistanceSq(const DBallBound& other) const;
     double MidDistance(const Point& point) const;
 };
+
+}; // namespace bound
+}; // namespace mlpack
 
 #include "dballbound_impl.h"
 
