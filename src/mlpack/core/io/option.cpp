@@ -1,19 +1,20 @@
-/***
- * @file option.cc
+/**
+ * @file option.cpp
  * @author Ryan Curtin
  *
  * Implementation of the ProgramDoc class.  The class registers itself with CLI
  * when constructed.
  */
 #include "cli.hpp"
-#include "option.h"
+#include "option.hpp"
 
 #include <string>
 
 using namespace mlpack;
+using namespace mlpack::io;
 using namespace std;
 
-/***
+/**
  * Construct a ProgramDoc object.  When constructed, it will register itself
  * with CLI.  A fatal error will be thrown if more than one is constructed.
  *
@@ -21,12 +22,14 @@ using namespace std;
  * @param documentation Long string containing documentation on how to use the
  *    program and what it is.  No newline characters are necessary; this is
  *    taken care of by CLI later.
+ * @param defaultModule Name of the default module.
  */
-ProgramDoc::ProgramDoc(std::string programName, std::string documentation,
-  std::string defaultModule) :
-    programName(programName), documentation(documentation),
+ProgramDoc::ProgramDoc(const std::string programName,
+                       const std::string documentation,
+                       const std::string defaultModule) :
+    programName(programName),
+    documentation(documentation),
     defaultModule(defaultModule) {
-
   // Register this with CLI.
   CLI::RegisterProgramDoc(this);
 }

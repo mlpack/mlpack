@@ -1,13 +1,19 @@
-#ifndef MLPACK_CLI_OPTCLIN_IMPL_H
-#define MLPACK_CLI_OPTCLIN_IMPL_H
+/**
+ * @file option_impl.hpp
+ * @author Matthew Amidon
+ *
+ * Implementation of template functions for the Option class.
+ */
+#ifndef MLPACK_CLI_OPTION_IMPL_HPP
+#define MLPACK_CLI_OPTION_IMPL_HPP
 
 #include "cli.hpp"
 
 namespace mlpack {
+namespace io {
 
-/*
- * @brief Registers a parameter with CLI.
- *    This allows the registration of parameters at program start.
+/**
+ * Registers a parameter with CLI.
  */
 template<typename N>
 Option<N>::Option(bool ignoreTemplate,
@@ -28,8 +34,8 @@ Option<N>::Option(bool ignoreTemplate,
 }
 
 
-/*
- * @brief Registers a flag parameter with CLI.
+/**
+ * Registers a flag parameter with CLI.
  */
 template<typename N>
 Option<N>::Option(const char* identifier,
@@ -38,6 +44,7 @@ Option<N>::Option(const char* identifier,
   CLI::AddFlag(identifier, description, parent);
 }
 
+}; // namespace io
 }; // namespace mlpack
 
 #endif

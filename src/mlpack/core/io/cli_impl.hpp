@@ -1,8 +1,8 @@
 #ifndef MLPACK_CLI_CLI_IMPL_H
 #define MLPACK_CLI_CLI_IMPL_H
 
-//Include option.h here because it requires CLI but is also templated
-#include "option.h"
+// Include option.hpp here because it requires CLI but is also templated.
+#include "option.hpp"
 
 namespace mlpack {
 
