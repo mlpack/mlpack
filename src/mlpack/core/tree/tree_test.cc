@@ -13,6 +13,7 @@
 #include <boost/test/unit_test.hpp>
 
 using namespace mlpack;
+using namespace mlpack::math;
 using namespace mlpack::tree;
 using namespace mlpack::kernel;
 using namespace mlpack::bound;

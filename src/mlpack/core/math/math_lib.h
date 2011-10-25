@@ -18,6 +18,7 @@
  * The hope is that this should contain most of the useful math routines
  * you can think of.  Currently, this is very sparse.
  */
+namespace mlpack {
 namespace math {
   /**
    * Forces a number to be non-negative, turning negative numbers into zero.
@@ -80,6 +81,7 @@ namespace math {
   inline int RandInt(int lo, int hi_exclusive) {
     return (rand() % (hi_exclusive - lo)) + lo;
   }
-};
+}; // namespace math
+}; // namespace mlpack
 
 #endif

@@ -10,8 +10,7 @@
 #define BOOST_TEST_MODULE Math_Test
 #include <boost/test/unit_test.hpp>
 
-//using namespace mlpack;
-//using namespace mlpack::math;
+using namespace mlpack;
 using namespace math;
 
 /***

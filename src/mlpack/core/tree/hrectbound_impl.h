@@ -19,6 +19,7 @@
 namespace mlpack {
 namespace bound {
 
+using namespace mlpack::math;
 /**
  * Empty constructor
  */

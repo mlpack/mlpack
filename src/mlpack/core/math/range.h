@@ -8,6 +8,9 @@
 #ifndef __MATH_RANGE_H
 #define __MATH_RANGE_H
 
+namespace mlpack {
+namespace math {
+
 /**
  * Simple real-valued range.
  */
@@ -77,5 +80,8 @@ class Range {
    */
   bool Contains(double d) const;
 };
+
+}; // namespace math
+}; // namespace mlpack
 
 #endif
