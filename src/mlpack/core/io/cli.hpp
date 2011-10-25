@@ -45,8 +45,8 @@
  * @param DEF_MOD A default module to use for parameters, mostly just to save
  *     excess typing.
  */
-#define PROGRAM_INFO(NAME, DESC, DEF_MOD) static mlpack::ProgramDoc \
-    io_programdoc_dummy_object = mlpack::ProgramDoc(NAME, DESC, DEF_MOD);
+#define PROGRAM_INFO(NAME, DESC, DEF_MOD) static mlpack::io::ProgramDoc \
+    io_programdoc_dummy_object = mlpack::io::ProgramDoc(NAME, DESC, DEF_MOD);
 
 /**
  * Define a flag parameter.
@@ -345,12 +345,12 @@
  * @param REQ Whether or not parameter is required (boolean value).
  */
 #ifdef __COUNTER__
-  #define PARAM(T, ID, DESC, PARENT, DEF, REQ) static mlpack::Option<T> \
+  #define PARAM(T, ID, DESC, PARENT, DEF, REQ) static mlpack::io::Option<T> \
       JOIN(io_option_dummy_object_, __COUNTER__) \
       (false, DEF, ID, DESC, PARENT, REQ);
 
   /** @cond Don't document internal macros. */
-  #define PARAM_FLAG_INTERNAL(ID, DESC, PARENT) static mlpack::Option<bool> \
+  #define PARAM_FLAG_INTERNAL(ID, DESC, PARENT) static mlpack::io::Option<bool>\
   JOIN(__io_option_flag_object_, __COUNTER__) (ID, DESC, PARENT);
   /** @endcond */
 
@@ -360,7 +360,7 @@
    * @param ID Name of the module.
    * @param DESC Description of the module (1-2 sentences).
    */
-  #define PARAM_MODULE(ID, DESC) static mlpack::Option<int> \
+  #define PARAM_MODULE(ID, DESC) static mlpack::io::Option<int> \
       JOIN(io_option_module_dummy_object_, __COUNTER__) (true, 0, ID, DESC, \
       NULL);
 #else
@@ -368,12 +368,12 @@
   // don't think we can absolutely guarantee success, but it should be "good
   // enough".  We use the __LINE__ macro and the type of the parameter to try
   // and get a good guess at something unique.
-  #define PARAM(T, ID, DESC, PARENT, DEF, REQ) static mlpack::Option<T> \
+  #define PARAM(T, ID, DESC, PARENT, DEF, REQ) static mlpack::io::Option<T> \
       JOIN(JOIN(io_option_dummy_object_, __LINE__), opt) (false, DEF, ID, \
       DESC, PARENT, REQ);
 
   /** @cond Don't document internal macros. */
-  #define PARAM_FLAG_INTERNAL(ID, DESC, PARENT) static mlpack::Option<bool> \
+  #define PARAM_FLAG_INTERNAL(ID, DESC, PARENT) static mlpack::io::Option<bool>\
       JOIN(__io_option_flag_object_, __LINE__) (ID, DESC, PARENT);
   /** @endcond */
 
@@ -383,7 +383,7 @@
    * @param ID Name of the module.
    * @param DESC Description of the module (1-2 sentences).
    */
-  #define PARAM_MODULE(ID, DESC) static mlpack::Option<int> \
+  #define PARAM_MODULE(ID, DESC) static mlpack::io::Option<int> \
       JOIN(JOIN(io_option_dummy_object_, __LINE__), mod) (true, 0, ID, DESC, \
       NULL);
 
@@ -400,7 +400,9 @@ namespace mlpack {
 
 // Externally defined in option.hpp, this class holds information about the
 // program being run.
+namespace io {
 class ProgramDoc;
+};
 
 /**
  * @brief Parses the command line for parameters and holds user-specified
@@ -519,13 +521,14 @@ class ProgramDoc;
  *
  * @note
  * Care is needed when defining options.  Because the PARAM_*() macros expand to
- * a global object definition (of type CLI::Option) whose constructor adds the
- * parameter to the hierarchy, the parameters defined in any included file will
- * be added to the program--and the documentation for those options will appear
- * when --help is given. For this reason, mlpack/core.h does not include more
- * than the core components necessary to write MLPACK code.  Care is required so
- * that only the files which are absolutely necessary are included, so as to
- * avoid cluttering the documentation with irrelevant options.
+ * a global object definition (of type mlpack::io::Option) whose constructor
+ * adds the parameter to the hierarchy, the parameters defined in any included
+ * file will be added to the program--and the documentation for those options
+ * will appear when --help is given. For this reason, mlpack/core.h does not
+ * include more than the core components necessary to write MLPACK code.  Care
+ * is required so that only the files which are absolutely necessary are
+ * included, so as to avoid cluttering the documentation with irrelevant
+ * options.
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -696,7 +699,7 @@ class CLI {
    *
    * @param doc Pointer to the ProgramDoc object.
    */
-  static void RegisterProgramDoc(ProgramDoc* doc);
+  static void RegisterProgramDoc(io::ProgramDoc* doc);
 
   /**
    * Destroy the CLI object.  This resets the pointer to the singleton, so in
@@ -735,7 +738,7 @@ class CLI {
 
  public:
   //! Pointer to the ProgramDoc object.
-  ProgramDoc *doc;
+  io::ProgramDoc *doc;
 
  private:
   /**

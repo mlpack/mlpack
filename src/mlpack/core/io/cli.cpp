@@ -22,7 +22,7 @@
   #endif
 #endif //_WIN32
 
-#include "option.h"
+#include "option.hpp"
 
 using namespace mlpack;
 using namespace mlpack::io;

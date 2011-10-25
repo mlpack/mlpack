@@ -10,9 +10,9 @@ set(SOURCES
   cli_deleter.cpp
   log.hpp
   log.cpp
-  option.h
-  option_impl.h
-  option.cc
+  option.hpp
+  option_impl.hpp
+  option.cpp
   optionshierarchy.h
   optionshierarchy.cc
   nulloutstream.h
