@@ -1,5 +1,5 @@
 #include "cli.hpp"
-#include "log.h"
+#include "log.hpp"
 
 #include <list>
 #include <boost/program_options.hpp>

@@ -2,7 +2,6 @@
 #define MLPACK_CLI_OPTCLIN_IMPL_H
 
 #include "cli.hpp"
-#include "log.h"
 
 namespace mlpack {
 
