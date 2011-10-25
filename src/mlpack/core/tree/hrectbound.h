@@ -60,8 +60,8 @@ class HRectBound {
   /**
    * Sets and gets the range for a particular dimension.
    */
-  Range& operator[](size_t i);
-  const Range operator[](size_t i) const;
+  math::Range& operator[](size_t i);
+  const math::Range operator[](size_t i) const;
 
   /**
    * Calculates the centroid of the range, placing it into the given vector.
@@ -95,12 +95,12 @@ class HRectBound {
   /**
    * Calculates minimum and maximum bound-to-bound squared distance.
    */
-  Range RangeDistance(const HRectBound& other) const;
+  math::Range RangeDistance(const HRectBound& other) const;
 
   /**
    * Calculates minimum and maximum bound-to-point squared distance.
    */
-  Range RangeDistance(const arma::vec& point) const;
+  math::Range RangeDistance(const arma::vec& point) const;
 
   /**
    * Expands this region to include a new point.
@@ -119,7 +119,7 @@ class HRectBound {
 
  private:
   size_t dim_;
-  Range *bounds_;
+  math::Range *bounds_;
 };
 
 }; // namespace bound

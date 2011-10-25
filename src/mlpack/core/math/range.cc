@@ -6,6 +6,9 @@
 #include "range.h"
 #include <float.h>
 
+namespace mlpack {
+namespace math {
+
 /**
  * Initialize the range to 0.
  */
@@ -143,3 +146,6 @@ bool Range::operator>(const Range& rhs) const {
 bool Range::Contains(double d) const {
   return d >= lo && d <= hi;
 }
+
+}; // namesapce math
+}; // namespace mlpack
