@@ -11,15 +11,17 @@
  *
  */
 
-#ifndef DTB_H
-#define DTB_H
+#ifndef __MLPACK_METHODS_EMST_DTB_HPP
+#define __MLPACK_METHODS_EMST_DTB_HPP
 
-#include "emst.h"
+#include "emst.hpp"
 
 #include <mlpack/core.h>
 #include <mlpack/core/tree/bounds.hpp>
 #include <mlpack/core/tree/spacetree.hpp>
 #include <mlpack/core/kernels/lmetric.hpp>
+
+PARAM(size_t, "leaf_size", "Size of the leaves.", "naive", 1, false);
 
 namespace mlpack {
 namespace emst {
@@ -639,6 +641,4 @@ class DualTreeBoruvka {
 }; // namespace emst
 }; // namespace mlpack
 
-PARAM(size_t, "leaf_size", "Size of the leaves.", "naive", 1, false);
-
-#endif // inclusion guards
+#endif // __MLPACK_METHODS_EMST_DTB_HPP

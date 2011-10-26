@@ -7,12 +7,12 @@
 * algorithms.
 */
 
-#ifndef EMST_H
-#define EMST_H
+#ifndef __MLPACK_METHODS_EMST_EMST_HPP
+#define __MLPACK_METHODS_EMST_EMST_HPP
 
 #include <mlpack/core.h>
 
-#include "union_find.h"
+#include "union_find.hpp"
 
 namespace mlpack {
 namespace emst {
@@ -76,4 +76,4 @@ public:
 }; // namespace emst
 }; // namespace mlpack
 
-#endif
+#endif // __MLPACK_METHODS_EMST_EMST_HPP

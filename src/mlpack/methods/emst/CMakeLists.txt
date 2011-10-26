@@ -4,10 +4,10 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
    # union_find
-   union_find.h
+   union_find.hpp
    # dtb
-   dtb.h
-   emst.h
+   dtb.hpp
+   emst.hpp
 )
 
 # Add directory name to sources.
@@ -20,14 +20,14 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_executable(emst
-  emst_main.cc
+  emst_main.cpp
 )
 target_link_libraries(emst
   mlpack
 )
 
 add_executable(union_find_test
-  union_find_test.cc
+  union_find_test.cpp
 )
 target_link_libraries(union_find_test
   mlpack
