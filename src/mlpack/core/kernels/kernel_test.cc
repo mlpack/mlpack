@@ -206,8 +206,8 @@ BOOST_AUTO_TEST_CASE(linear_kernel_orthogonal) {
   arma::vec b = "0 0 1";
 
   LinearKernel lk;
-  BOOST_REQUIRE_CLOSE(lk.Evaluate(a,b), 0, 1e-5);
-  BOOST_REQUIRE_CLOSE(lk.Evaluate(b,a), 0, 1e-5);
+  BOOST_REQUIRE_SMALL(lk.Evaluate(a,b), 1e-5);
+  BOOST_REQUIRE_SMALL(lk.Evaluate(b,a), 1e-5);
 }
 
 BOOST_AUTO_TEST_CASE(gaussian_kernel) {
