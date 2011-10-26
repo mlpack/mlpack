@@ -1,5 +1,12 @@
-#ifndef MLPACK_CLI_NULL_OUT_STREAM_H
-#define MLPACK_CLI_NULL_OUT_STREAM_H
+/**
+ * @file nulloutstream.hpp
+ * @author Ryan Curtin
+ * @author Matthew Amidon
+ *
+ * Definition of the NullOutStream class.
+ */
+#ifndef __MLPACK_CORE_IO_NULL_OUT_STREAM_HPP
+#define __MLPACK_CORE_IO_NULL_OUT_STREAM_HPP
 
 #include <iostream>
 #include <streambuf>
@@ -8,51 +15,63 @@
 namespace mlpack {
 namespace io {
 
-/***
- * The NullOutStream is used in place of regular PrefixOutStreams for
- * the CLI debug output when DEBUG symbols are not defined.  It does nothing
- * Hopefully the optimizer will realize this and optimize it out.
+/**
+ * Used for Log::Debug when not compiled with debugging symbols.  This class
+ * does nothing and should be optimized out entirely by the compiler.
  */
 class NullOutStream {
  public:
   /**
-   * @brief Does nothing.  Just like everything else in this nothing class.
+   * Does nothing.
    */
-  NullOutStream();  
-  NullOutStream(const NullOutStream& other);
+  NullOutStream();
 
   /**
-   * @brief None of these functions do anything. 
-   *
-   * @param val Value to have nothing done with it.
-   *
-   * @return Reference to do nothing in the future.
+   * Does nothing.
    */
+  NullOutStream(const NullOutStream& other);
+
+  //! Does nothing.
   NullOutStream& operator<<(bool val);
+  //! Does nothing.
   NullOutStream& operator<<(short val);
+  //! Does nothing.
   NullOutStream& operator<<(unsigned short val);
+  //! Does nothing.
   NullOutStream& operator<<(int val);
+  //! Does nothing.
   NullOutStream& operator<<(unsigned int val);
+  //! Does nothing.
   NullOutStream& operator<<(long val);
+  //! Does nothing.
   NullOutStream& operator<<(unsigned long val);
+  //! Does nothing.
   NullOutStream& operator<<(float val);
+  //! Does nothing.
   NullOutStream& operator<<(double val);
+  //! Does nothing.
   NullOutStream& operator<<(long double val);
+  //! Does nothing.
   NullOutStream& operator<<(void* val);
+  //! Does nothing.
   NullOutStream& operator<<(const char* str);
+  //! Does nothing.
   NullOutStream& operator<<(std::string& str);
+  //! Does nothing.
   NullOutStream& operator<<(std::streambuf* sb);
+  //! Does nothing.
   NullOutStream& operator<<(std::ostream& (*pf) (std::ostream&));
+  //! Does nothing.
   NullOutStream& operator<<(std::ios& (*pf) (std::ios&));
+  //! Does nothing.
   NullOutStream& operator<<(std::ios_base& (*pf) (std::ios_base&));
 
+  //! Does nothing.
   template<typename T>
-  NullOutStream& operator<<(T s) {
-    return *this;
-  }
- };
+  NullOutStream& operator<<(T s) { return *this; }
+};
 
 } // namespace io
 } // namespace mlpack
 
-#endif //MLPACK_CLI_NULL_OUT_STREAM_H
+#endif

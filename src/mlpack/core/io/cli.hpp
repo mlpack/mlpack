@@ -1,4 +1,4 @@
-/***
+/**
  * @file cli.hpp
  * @author Matthew Amidon
  *
@@ -6,8 +6,8 @@
  * This can be used more or less regardless of context.  In the future,
  * it might be expanded to include file I/O.
  */
-#ifndef MLPACK_CORE_IO_CLI_HPP
-#define MLPACK_CORE_IO_CLI_HPP
+#ifndef __MLPACK_CORE_IO_CLI_HPP
+#define __MLPACK_CORE_IO_CLI_HPP
 
 #include <boost/program_options.hpp>
 #include <boost/any.hpp>
@@ -17,8 +17,6 @@
 #include <list>
 
 #include "optionshierarchy.hpp"
-#include "prefixedoutstream.h"
-#include "nulloutstream.h"
 #include "cli_deleter.hpp" // To make sure we can delete the singleton.
 
 /**

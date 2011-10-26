@@ -1,5 +1,12 @@
-#ifndef MLPACK_CLI_PREFIXED_OUT_STREAM_IMPL_H
-#define MLPACK_CLI_PREFIXED_OUT_STREAM_IMPL_H
+/**
+ * @file prefixedoutstream.hpp
+ * @author Ryan Curtin
+ * @author Matthew Amidon
+ *
+ * Implementation of templated PrefixedOutStream member functions.
+ */
+#ifndef __MLPACK_CORE_IO_PREFIXED_OUT_STREAM_IMPL_HPP
+#define __MLPACK_CORE_IO_PREFIXED_OUT_STREAM_IMPL_HPP
 
 template<typename T>
 PrefixedOutStream& PrefixedOutStream::operator<<(T s) {

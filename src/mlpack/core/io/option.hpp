@@ -5,8 +5,8 @@
  * Definition of the Option class, which is used to define parameters which are
  * used by CLI.  The ProgramDoc class also resides here.
  */
-#ifndef MLPACK_CLI_OPTION_H
-#define MLPACK_CLI_OPTION_H
+#ifndef __MLPACK_CORE_IO_OPTION_HPP
+#define __MLPACK_CORE_IO_OPTION_HPP
 
 #include <string>
 

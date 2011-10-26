@@ -1,4 +1,11 @@
-#include "prefixedoutstream.h"
+/**
+ * @file prefixedoutstream.cpp
+ * @author Ryan Curtin
+ * @author Matthew Amidon
+ *
+ * Implementation of PrefixedOutStream methods.
+ */
+#include "prefixedoutstream.hpp"
 
 #include <string>
 #include <iostream>
@@ -8,7 +15,7 @@
 
 using namespace mlpack::io;
 
-/***
+/**
  * These are all necessary because gcc's template mechanism does not seem smart
  * enough to figure out what I want to pass into operator<< without these.  That
  * may not be the actual case, but it works when these is here.
