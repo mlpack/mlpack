@@ -5,7 +5,7 @@
  *
  * @author Ryan Curtin
  */
-#include "test_functions.h"
+#include "test_functions.hpp"
 
 using namespace mlpack::optimization::test;
 

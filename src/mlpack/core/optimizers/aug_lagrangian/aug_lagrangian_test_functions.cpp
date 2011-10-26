@@ -5,7 +5,7 @@
  * Implementation of AugLagrangianTestFunction class.
  */
 
-#include "aug_lagrangian_test_functions.h"
+#include "aug_lagrangian_test_functions.hpp"
 
 using namespace mlpack;
 using namespace mlpack::optimization;

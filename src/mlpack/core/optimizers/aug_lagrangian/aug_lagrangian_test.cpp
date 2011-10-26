@@ -7,8 +7,8 @@
  */
 
 #include <mlpack/core.h>
-#include "aug_lagrangian.h"
-#include "aug_lagrangian_test_functions.h"
+#include "aug_lagrangian.hpp"
+#include "aug_lagrangian_test_functions.hpp"
 
 #define BOOST_TEST_MODULE Augmented Lagrangian Test
 #include <boost/test/unit_test.hpp>
