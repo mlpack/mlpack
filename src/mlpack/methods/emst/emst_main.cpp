@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
     std::string data_file_name = CLI::GetParam<std::string>("emst/input_file");
 
     arma::mat data_points;
-    data::Load(data_file_name.c_str(), data_points);
+    data_points.load(data_file_name.c_str());
 
     /////////////// Initialize DTB //////////////////////
     DualTreeBoruvka dtb;
@@ -143,7 +143,7 @@ int main(int argc, char* argv[]) {
       std::string naive_output_filename =
           CLI::GetParam<std::string>("naive/output_file");
 
-      data::Save(naive_output_filename.c_str(), naive_results);
+      naive_results.save(naive_output_filename.c_str());
     }
 
     //////////////// Output the Results ////////////////
@@ -151,7 +151,7 @@ int main(int argc, char* argv[]) {
     std::string output_filename =
         CLI::GetParam<std::string>("emst/output_file");
 
-    data::Save(output_filename.c_str(), results);
+    results.save(output_filename.c_str());
 
   }// end else (if using_thor)
 

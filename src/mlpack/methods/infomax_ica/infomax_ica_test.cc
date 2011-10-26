@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE(SqrtM) {
   int bb_ = 5;
   double epsilonb_ = 0.001;
 
-  data::Load("fake.arff", testdatab_);
+  testdatab_.load("fake.arff");
 
   InfomaxICA icab_(lambdab_, bb_, epsilonb_);
 
@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(TestCov) {
 
   // load some test data that has been verified using the matlab
   // implementation of infomax
-  data::Load("fake.arff", testdata_);
+  testdata_.load("fake.arff");
 
   InfomaxICA ica_(lambda_, b_, epsilon_);
   ica_.sampleCovariance(testdata_);
@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(TestICA) {
 
   // load some test data that has been verified using the matlab
   // implementation of infomax
-  data::Load("fake.arff", testdata_);
+  testdata_.load("fake.arff");
 
   InfomaxICA ica_(lambda_, b_, epsilon_);
   arma::mat unmixing;

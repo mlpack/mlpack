@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
   const std::string response_name =
     CLI::GetParam<std::string>("linear_regression/responses");
 
-  data::Load(train_name.c_str(), file);
+  file.load(train_name.c_str());
   size_t n_cols = file.n_cols,
 	 n_rows = file.n_rows;
 
@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
   else {
     predictors = file;
     // The initial predictors for y, Nx1
-    data::Load(response_name.c_str(), responses);
+    responses.load(response_name.c_str());
     if(responses.n_rows > 1) {
       std::cerr << "Error: The responses must have one column.\n";
       return 0;
@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  data::Load(test_name.c_str(), points);
+  points.load(test_name.c_str());
   if(points.n_rows != n_rows) {
       std::cerr << "Error: The test data must have the same number of cols as\
  the training file.\n";
