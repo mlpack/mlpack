@@ -1,5 +1,5 @@
 #include <mlpack/core.h>
-#include "linear_regression.h"
+#include "linear_regression.hpp"
 
 using namespace mlpack;
 

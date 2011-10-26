@@ -1,5 +1,5 @@
 #include <mlpack/core.h>
-#include "linear_regression.h"
+#include "linear_regression.hpp"
 
 #define BOOST_TEST_MODULE Test_Linear_regression_Main
 #include <boost/test/unit_test.hpp>

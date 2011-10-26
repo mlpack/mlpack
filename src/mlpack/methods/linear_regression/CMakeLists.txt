@@ -4,10 +4,8 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
 set(SOURCES
-  linear_regression.h
-  linear_regression.cc
-#  linear_regression_main.cc
-#  linear_regression_test.cc
+  linear_regression.hpp
+  linear_regression.cpp
 )
 
 # add directory name to sources
@@ -20,7 +18,7 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_executable(linear_regression
-  linear_regression_main.cc
+  linear_regression_main.cpp
 )
 target_link_libraries(linear_regression
   mlpack
@@ -28,7 +26,7 @@ target_link_libraries(linear_regression
 
 # test executable
 add_executable(linear_regression_test
-  linear_regression_test.cc
+  linear_regression_test.cpp
 )
 target_link_libraries(linear_regression_test
   mlpack
