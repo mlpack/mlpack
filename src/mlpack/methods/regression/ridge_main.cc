@@ -69,12 +69,12 @@ int main(int argc, char** argv) {
   std::string predictions_file = CLI::GetParam<std::string>("ridge/predictions");
 
   arma::mat predictors;
-  if (data::Load(predictors_file.c_str(), predictors) == false) {
+  if (predictors.load(predictors_file.c_str()) == false) {
     Log::Fatal << "Unable to open file " << predictors_file << std::endl;
   }
 
   arma::mat predictions;
-  if (data::Load(predictions_file.c_str(), predictions) == false) {
+  if (predictions.load(predictions_file.c_str()) == false) {
     Log::Fatal << "Unable to open file " << predictions_file << std::endl;
   }
 
@@ -106,12 +106,10 @@ int main(int argc, char** argv) {
       CLI::GetParam<std::string>("ridge/predictor_indices");
     std::string prune_predictor_indices_file =
       CLI::GetParam<std::string>("ridge/prune_predictor_indices");
-    if(data::Load(predictor_indices_file.c_str(),
-	  predictor_indices_intermediate) == false) {
+    if (predictor_indices_intermediate.load(predictor_indices_file.c_str()) == false) {
       Log::Fatal << "Unable to open file " << prune_predictor_indices_file << std::endl;
     }
-    if(data::Load(prune_predictor_indices_file.c_str(),
-	  prune_predictor_indices_intermediate) == false) {
+    if (prune_predictor_indices_intermediate.load(prune_predictor_indices_file.c_str()) == false) {
       Log::Fatal << "Unable to open file " << prune_predictor_indices_file << std::endl;
     }
 
@@ -135,7 +133,8 @@ int main(int argc, char** argv) {
   engine.factors(&factors);
   std::string factors_file = CLI::GetParam<std::string>("ridge/factors");
   Log::Info << "Saving factors..." << std::endl;
-  data::Save(factors_file.c_str(), factors);
+  factors.save(factors_file.c_str());
+//  data::Save(factors_file.c_str(), factors);
 
   return 0;
 }

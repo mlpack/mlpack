@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
 
   ////// READING PARAMETERS AND LOADING DATA //////
   arma::mat data_points;
-  data::Load(CLI::GetParam<std::string>("mog_l2e/data").c_str(), data_points);
+  data_points.load(CLI::GetParam<std::string>("mog_l2e/data").c_str());
 
   ////// MIXTURE OF GAUSSIANS USING L2 ESTIMATCLIN //////
   size_t number_of_gaussians = CLI::GetParam<int>("mog_l2e/k");

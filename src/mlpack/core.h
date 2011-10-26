@@ -90,7 +90,6 @@
 #include <armadillo>
 
 // Now MLPACK-specific includes.
-#include <mlpack/core/data/dataset.h>
 #include <mlpack/core/math/math_lib.hpp>
 #include <mlpack/core/math/range.hpp>
 #include <mlpack/core/model/model.hpp>

@@ -1,5 +1,6 @@
 #include <mlpack/core.h>
 #include <mlpack/core/kernels/lmetric.hpp>
+#include "../../core/col/tokenizer.h"
 
 #include "support.h"
 

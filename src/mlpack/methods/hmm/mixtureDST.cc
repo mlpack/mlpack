@@ -75,14 +75,14 @@ void MixtureGauss::Init(size_t K, const arma::mat& data, const std::vector<size_
 
 void MixtureGauss::InitFromFile(const char* mean_fn, const char* covs_fn, const char* prior_fn) {
   arma::mat meansmat;
-  data::Load(mean_fn, meansmat);
+  meansmat.load(mean_fn);
 
   mat2arrlst(meansmat, means);
   size_t N = means[0].n_elem;
   size_t K = means.size();
   if (covs_fn != NULL) {
     arma::mat covsmat;
-    data::Load(covs_fn, covsmat);
+    covsmat.load(covs_fn);
 
     mat2arrlstmat(N, covsmat, covs);
     mlpack::Log::Assert(K == covs.size(), "MixtureGauss::InitFromFile(): sizes do not match!");
@@ -100,7 +100,7 @@ void MixtureGauss::InitFromFile(const char* mean_fn, const char* covs_fn, const 
 
   if (prior_fn != NULL) {
     arma::mat priormat;
-    data::Load(prior_fn, priormat);
+    priormat.load(prior_fn);
 
     mlpack::Log::Assert(K == priormat.n_cols, "MixtureGauss::InitFromFile(): sizes do not match!");
 

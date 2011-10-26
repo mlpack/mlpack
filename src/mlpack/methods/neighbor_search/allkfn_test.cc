@@ -323,7 +323,7 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_1) {
   arma::mat data_for_tree_;
 
   // Hard-coded filename: bad!
-  if (data::Load("test_data_3_1000.csv", data_for_tree_) != true)
+  if (data_for_tree_.load("test_data_3_1000.csv") !=true )
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with.
@@ -364,7 +364,7 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_2) {
 
   // Hard-coded filename: bad!
   // Code duplication: also bad!
-  if (data::Load("test_data_3_1000.csv", data_for_tree_) != true)
+  if (data_for_tree_.quiet_load("test_data_3_1000.csv") !=true )
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with (may not be necessary with no ALIAS_MATRIX?).
@@ -403,7 +403,7 @@ BOOST_AUTO_TEST_CASE(single_tree_vs_naive) {
 
   // Hard-coded filename: bad!
   // Code duplication: also bad!
-  if (data::Load("test_data_3_1000.csv", data_for_tree_) != true)
+  if (data_for_tree_.load("test_data_3_1000.csv") !=true )
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   arma::mat single_query(data_for_tree_);

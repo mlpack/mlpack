@@ -15,8 +15,8 @@ BOOST_AUTO_TEST_CASE(SimpleNBCTest) {
   size_t number_of_classes_ = 2;
 
   arma::mat train_data, train_res, calc_mat;
-  data::Load(filename_train_, train_data);
-  data::Load(train_result_, train_res);
+  train_data.load(filename_train_);
+  train_res.load(train_result_);
 
   CLI::GetParam<int>("nbc/classes") = number_of_classes_;
   SimpleNaiveBayesClassifier nbc_test_(train_data);
@@ -41,9 +41,8 @@ BOOST_AUTO_TEST_CASE(SimpleNBCTest) {
 
   arma::mat test_data, test_res;
   arma::vec test_res_vec, calc_vec;
-  data::Load(filename_test_, test_data);
-  data::Load(test_result_, test_res);
-
+  test_data.load(filename_test_);
+  test_res.load(test_result_);
   nbc_test_.Classify(test_data, calc_vec);
 
   size_t number_of_datum = test_data.n_cols;

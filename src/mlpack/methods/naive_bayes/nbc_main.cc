@@ -78,11 +78,11 @@ int main(int argc, char* argv[]) {
 
   const char *training_data_filename = CLI::GetParam<std::string>("nbc/train").c_str();
   arma::mat training_data;
-  data::Load(training_data_filename, training_data);
+  training_data.load(training_data_filename);
 
   const char *testing_data_filename = CLI::GetParam<std::string>("nbc/test").c_str();
   arma::mat testing_data;
-  data::Load(testing_data_filename, testing_data);
+  testing_data.load(testing_data_filename);
 
   ////// SIMPLE NAIVE BAYES CLASSIFICATCLIN ASSUMING THE DATA TO BE UNIFORMLY DISTRIBUTED //////
 
@@ -110,7 +110,7 @@ int main(int argc, char* argv[]) {
   ////// OUTPUT RESULTS //////
   std::string output_filename = CLI::GetParam<std::string>("nbc/output");
 
-  data::Save(output_filename.c_str(), results);
+  results.save(output_filename.c_str());
 
   return 1;
 }

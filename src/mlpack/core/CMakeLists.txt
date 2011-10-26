@@ -2,7 +2,6 @@
 set(DIRS
   arma_extend
   col
-  data
   file
   io
   kernels
