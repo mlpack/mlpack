@@ -12,6 +12,9 @@
 
 #define ARGSTR(a) a,#a
 
+using namespace mlpack;
+using namespace model;
+
 /***
  * We must override the purely virtual method solve; the
  *  overridden saveModel and loadModel enable testing

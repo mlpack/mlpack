@@ -3,6 +3,9 @@
 
 #include <mlpack/core.h>
 
+namespace mlpack {
+namespace nnsvm {
+
 /* TODO: I don't actually want these to be public */
 /* but sometimes we should provide freedoms for our advanced users */
 const double NNSMO_ZERO = 1.0e-8;
@@ -147,6 +150,9 @@ class NNSMO
       fprintf(stderr, "Kernel Stop\n");
     }
 };
+
+}; // namespace nnsvm
+}; // namespace mlpack
 
 #include "nnsmo_impl.h"
 
