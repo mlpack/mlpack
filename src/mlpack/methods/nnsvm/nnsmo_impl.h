@@ -1,6 +1,9 @@
 #ifndef NNSMO_IMPL_H
 #define NNSMO_IMPL_H
 
+namespace mlpack {
+namespace nnsvm {
+
 // return the support vector, the support alpha vector and the weight vector of the trained NNSVM
 template<typename TKernel>
 void NNSMO<TKernel>::GetNNSVM(arma::mat& support_vectors, arma::vec& support_alpha, arma::vec& w) const
@@ -333,4 +336,8 @@ bool NNSMO<TKernel>::TakeStep_(size_t i, size_t j, double error_j)
 
   return true;
 }
+
+}; // namespace nnsvm
+}; // namespace mlpack
+
 #endif

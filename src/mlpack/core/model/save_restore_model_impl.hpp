@@ -1,9 +1,9 @@
-#ifndef SAVE_RESTORE_MODEL_HPP
+#ifndef __MLPACK_CORE_MODEL_SAVE_RESTORE_MODEL_HPP
 #error "Do not include this header directly."
 #endif
 
-using namespace mlpack;
-using namespace mlpack::model;
+namespace mlpack {
+namespace model {
 
 template<typename T>
 T& SaveRestoreModel::loadParameter (T& t, std::string name)
@@ -28,3 +28,7 @@ void SaveRestoreModel::saveParameter (T& t, std::string name)
   output << t;
   parameters[name] = output.str();
 }
+
+}; // namespace model
+}; // namespace mlpack
+
