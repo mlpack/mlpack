@@ -6,8 +6,8 @@
  * @author Nishant Mehta
  */
 
-#ifndef LIN_ALG_H
-#define LIN_ALG_H
+#ifndef __MLPACK_METHODS_FASTICA_LIN_ALG_HPP
+#define __MLPACK_METHODS_FASTICA_LIN_ALG_HPP
 
 #include <mlpack/core.h>
 
@@ -191,4 +191,4 @@ namespace linalg__private {
 }; // fastica
 }; // mlpack
 
-#endif /* LIN_ALG_H */
+#endif // __MLPACK_METHODS_FASTICA_LIN_ALG_HPP
