@@ -32,7 +32,7 @@ PeriodicHRectBound<t_pow>::PeriodicHRectBound() :
  */
 template<int t_pow>
 PeriodicHRectBound<t_pow>::PeriodicHRectBound(arma::vec box) :
-      bounds_(new Range[box.n_rows]),
+      bounds_(new math::Range[box.n_rows]),
       dim_(box.n_rows),
       box_(box) { /* nothing to do */ }
 
@@ -78,14 +78,14 @@ void PeriodicHRectBound<t_pow>::SetBoxSize(arma::vec box) {
 template<int t_pow>
 void PeriodicHRectBound<t_pow>::Clear() {
   for (size_t i = 0; i < dim_; i++)
-    bounds_[i] = Range();
+    bounds_[i] = math::Range();
 }
 
 /**
  * Gets the range for a particular dimension.
  */
 template<int t_pow>
-const Range PeriodicHRectBound<t_pow>::operator[](size_t i) const {
+const math::Range PeriodicHRectBound<t_pow>::operator[](size_t i) const {
   return bounds_[i];
 }
 
@@ -93,7 +93,7 @@ const Range PeriodicHRectBound<t_pow>::operator[](size_t i) const {
  * Sets the range for the given dimension.
  */
 template<int t_pow>
-Range& PeriodicHRectBound<t_pow>::operator[](size_t i) {
+math::Range& PeriodicHRectBound<t_pow>::operator[](size_t i) {
   return bounds_[i];
 }
 
@@ -211,7 +211,7 @@ double PeriodicHRectBound<t_pow>::MaxDistance(
  * Calculates minimum and maximum bound-to-point squared distance.
  */
 template<int t_pow>
-Range PeriodicHRectBound<t_pow>::RangeDistance(const arma::vec& point) const {
+math::Range PeriodicHRectBound<t_pow>::RangeDistance(const arma::vec& point) const {
   double sum_lo = 0;
   double sum_hi = 0;
 
@@ -234,7 +234,7 @@ Range PeriodicHRectBound<t_pow>::RangeDistance(const arma::vec& point) const {
     sum_hi += pow(v_hi, (double) t_pow);
   }
 
-  return Range(pow(sum_lo, 2.0 / (double) t_pow),
+  return math::Range(pow(sum_lo, 2.0 / (double) t_pow),
                 pow(sum_hi, 2.0 / (double) t_pow));
 }
 
@@ -242,7 +242,7 @@ Range PeriodicHRectBound<t_pow>::RangeDistance(const arma::vec& point) const {
  * Calculates minimum and maximum bound-to-bound squared distance.
  */
 template<int t_pow>
-Range PeriodicHRectBound<t_pow>::RangeDistance(
+math::Range PeriodicHRectBound<t_pow>::RangeDistance(
     const PeriodicHRectBound& other) const {
   double sum_lo = 0;
   double sum_hi = 0;
@@ -266,7 +266,7 @@ Range PeriodicHRectBound<t_pow>::RangeDistance(
     sum_hi += pow(v_hi, (double) t_pow);
   }
 
-  return Range(pow(sum_lo, 2.0 / (double) t_pow),
+  return math::Range(pow(sum_lo, 2.0 / (double) t_pow),
                 pow(sum_hi, 2.0 / (double) t_pow));
 }
 

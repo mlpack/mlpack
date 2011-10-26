@@ -99,8 +99,8 @@ class DBallBound {
      *
      * Example: bound1.MinDistanceSq(other) for minimum squared distance.
      */
-    Range RangeDistance(const DBallBound& other) const;
-    Range RangeDistanceSq(const DBallBound& other) const;
+    math::Range RangeDistance(const DBallBound& other) const;
+    math::Range RangeDistanceSq(const DBallBound& other) const;
 
     /**
      * Calculates closest-to-their-midpoint bounding box distance,
