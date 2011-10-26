@@ -1,5 +1,5 @@
-#ifndef MLPACK_LINEAR_REGRESSCLIN_H
-#define MLPACK_LINEAR_REGRESSCLIN_H
+#ifndef __MLPACK_METHODS_LINEAR_REGRESSCLIN_HPP
+#define __MLPACK_METHODS_LINEAR_REGRESSCLIN_HPP
 
 #include <mlpack/core.h>
 namespace mlpack {
@@ -57,5 +57,4 @@ class LinearRegression {
 }; // namespace linear_regression
 }; // namespace mlpack
 
-
-#endif
+#endif // __MLPACK_METHODS_LINEAR_REGRESSCLIN_HPP
