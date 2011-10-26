@@ -4,8 +4,8 @@
  * Includes all basic FASTlib non-vector math utilities.
  */
 
-#ifndef MATH_MATH_LIB_H
-#define MATH_MATH_LIB_H
+#ifndef __MLPACK_CORE_MATH_MATH_LIB_HPP
+#define __MLPACK_CORE_MATH_MATH_LIB_HPP
 
 #include "../io/cli.hpp"
 #include "../io/log.hpp"
@@ -84,4 +84,4 @@ namespace math {
 }; // namespace math
 }; // namespace mlpack
 
-#endif
+#endif // __MLPACK_CORE_MATH_MATH_LIB_HPP

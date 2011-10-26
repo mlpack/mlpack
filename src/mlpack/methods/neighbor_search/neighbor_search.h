@@ -8,8 +8,8 @@
 #define __MLPACK_NEIGHBOR_SEARCH_H
 
 #include <mlpack/core.h>
-#include <mlpack/core/tree/bounds.h>
-#include <mlpack/core/tree/spacetree.h>
+#include <mlpack/core/tree/bounds.hpp>
+#include <mlpack/core/tree/spacetree.hpp>
 #include <vector>
 #include <string>
 

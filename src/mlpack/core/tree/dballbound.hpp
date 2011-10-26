@@ -7,10 +7,10 @@
  * @experimental
  */
 
-#ifndef TREE_DBALLBOUND_H
-#define TREE_DBALLBOUND_H
+#ifndef __MLPACK_CORE_TREE_DBALLBOUND_HPP
+#define __MLPACK_CORE_TREE_DBALLBOUND_HPP
 
-#include <mlpack/core/math/math_lib.h>
+#include <mlpack/core/math/math_lib.hpp>
 #include <mlpack/core/kernels/lmetric.hpp>
 #include <armadillo>
 
@@ -133,6 +133,6 @@ class DBallBound {
 }; // namespace bound
 }; // namespace mlpack
 
-#include "dballbound_impl.h"
+#include "dballbound_impl.hpp"
 
-#endif
+#endif // __MLPACK_CORE_TREE_DBALLBOUND_HPP

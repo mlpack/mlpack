@@ -6,11 +6,11 @@
  * @experimental
  */
 
-#ifndef TREE_SPACETREE_IMPL_H
-#define TREE_SPACETREE_IMPL_H
+#ifndef __MLPACK_CORE_TREE_SPACETREE_IMPL_HPP
+#define __MLPACK_CORE_TREE_SPACETREE_IMPL_HPP
 
 // In case it wasn't included already for some reason.
-#include "spacetree.h"
+#include "spacetree.hpp"
 #include <mlpack/core/io/cli.hpp>
 #include <mlpack/core/io/log.hpp>
 
@@ -480,4 +480,4 @@ size_t BinarySpaceTree<Bound, Statistic>::GetSplitIndex(
 }; // namespace tree
 }; // namespace mlpack
 
-#endif
+#endif // __MLPACK_CORE_TREE_SPACETREE_IMPL_HPP

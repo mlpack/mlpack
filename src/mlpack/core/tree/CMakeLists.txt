@@ -3,15 +3,15 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-  bounds.h
-  dballbound.h
-  dballbound_impl.h
-  hrectbound.h
-  hrectbound_impl.h
-  periodichrectbound.h
-  periodichrectbound_impl.h
-  spacetree.h
-  statistic.h
+  bounds.hpp
+  dballbound.hpp
+  dballbound_impl.hpp
+  hrectbound.hpp
+  hrectbound_impl.hpp
+  periodichrectbound.hpp
+  periodichrectbound_impl.hpp
+  spacetree.hpp
+  statistic.hpp
 )
 
 # add directory name to sources
@@ -25,7 +25,7 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # test executable
 add_executable(tree_test
-  tree_test.cc
+  tree_test.cpp
 )
 # link dependencies of test executable
 target_link_libraries(tree_test

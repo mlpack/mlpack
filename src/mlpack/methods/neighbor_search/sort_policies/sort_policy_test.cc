@@ -5,8 +5,8 @@
  * Tests for each of the implementations of the SortPolicy class.
  */
 #include <mlpack/core.h>
-#include <mlpack/core/tree/bounds.h>
-#include <mlpack/core/tree/spacetree.h>
+#include <mlpack/core/tree/bounds.hpp>
+#include <mlpack/core/tree/spacetree.hpp>
 
 // Classes to test.
 #include "nearest_neighbor_sort.hpp"

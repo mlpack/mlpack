@@ -3,9 +3,9 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-  math_lib.h
-  range.h
-  range.cc
+  math_lib.hpp
+  range.hpp
+  range.cpp
 )
 
 # add directory name to sources
@@ -18,7 +18,7 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_executable(math_test
-  math_test.cc
+  math_test.cpp
 )
 target_link_libraries(math_test
   mlpack

@@ -91,8 +91,8 @@
 
 // Now MLPACK-specific includes.
 #include <mlpack/core/data/dataset.h>
-#include <mlpack/core/math/math_lib.h>
-#include <mlpack/core/math/range.h>
+#include <mlpack/core/math/math_lib.hpp>
+#include <mlpack/core/math/range.hpp>
 #include <mlpack/core/model/model.hpp>
 #include <mlpack/core/model/save_restore_model.hpp>
 #include <mlpack/core/file/textfile.h>
