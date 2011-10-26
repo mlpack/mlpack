@@ -66,8 +66,8 @@ class PeriodicHRectBound {
   /**
    * Sets and gets the range for a particular dimension.
    */
-  Range& operator[](size_t i);
-  const Range operator[](size_t i) const;
+  math::Range& operator[](size_t i);
+  const math::Range operator[](size_t i) const;
 
   /***
    * Calculates the centroid of the range.  This does not factor in periodic
@@ -107,13 +107,13 @@ class PeriodicHRectBound {
    * Calculates minimum and maximum bound-to-point squared distance in the
    * periodic bound case.
    */
-  Range RangeDistance(const arma::vec& point) const;
+  math::Range RangeDistance(const arma::vec& point) const;
 
   /**
    * Calculates minimum and maximum bound-to-bound squared distance in the
    * periodic bound case.
    */
-  Range RangeDistance(const PeriodicHRectBound& other) const;
+  math::Range RangeDistance(const PeriodicHRectBound& other) const;
 
   /**
    * Expands this region to include a new point.
@@ -131,7 +131,7 @@ class PeriodicHRectBound {
   bool Contains(const arma::vec& point) const;
 
  private:
-  Range *bounds_;
+  math::Range *bounds_;
   size_t dim_;
   arma::vec box_;
 };

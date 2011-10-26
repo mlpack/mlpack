@@ -19,7 +19,6 @@
 namespace mlpack {
 namespace bound {
 
-using namespace mlpack::math;
 /**
  * Empty constructor
  */
@@ -35,7 +34,7 @@ HRectBound<t_pow>::HRectBound() :
 template<int t_pow>
 HRectBound<t_pow>::HRectBound(size_t dimension) :
     dim_(dimension),
-    bounds_(new Range[dim_]) { /* nothing to do */ }
+    bounds_(new math::Range[dim_]) { /* nothing to do */ }
 
 /***
  * Copy constructor necessary to prevent memory leaks.
@@ -43,7 +42,7 @@ HRectBound<t_pow>::HRectBound(size_t dimension) :
 template<int t_pow>
 HRectBound<t_pow>::HRectBound(const HRectBound& other) :
     dim_(other.dim()),
-    bounds_(new Range[dim_]) {
+    bounds_(new math::Range[dim_]) {
   // Copy other bounds over.
   for (size_t i = 0; i < dim_; i++)
     bounds_[i] = other[i];
@@ -60,7 +59,7 @@ HRectBound<t_pow>& HRectBound<t_pow>::operator=(const HRectBound& other) {
   // We can't just copy the bounds_ pointer like the default copy constructor
   // will!
   dim_ = other.dim();
-  bounds_ = new Range[dim_];
+  bounds_ = new math::Range[dim_];
   for (size_t i = 0; i < dim_; i++)
     bounds_[i] = other[i];
 
@@ -82,7 +81,7 @@ HRectBound<t_pow>::~HRectBound() {
 template<int t_pow>
 void HRectBound<t_pow>::Clear() {
   for (size_t i = 0; i < dim_; i++) {
-    bounds_[i] = Range();
+    bounds_[i] = math::Range();
   }
 }
 
@@ -90,7 +89,7 @@ void HRectBound<t_pow>::Clear() {
  * Gets the range for a particular dimension.
  */
 template<int t_pow>
-const Range HRectBound<t_pow>::operator[](size_t i) const {
+const math::Range HRectBound<t_pow>::operator[](size_t i) const {
   return bounds_[i];
 }
 
@@ -98,7 +97,7 @@ const Range HRectBound<t_pow>::operator[](size_t i) const {
  * Sets the range for the given dimension.
  */
 template<int t_pow>
-Range& HRectBound<t_pow>::operator[](size_t i) {
+math::Range& HRectBound<t_pow>::operator[](size_t i) {
   return bounds_[i];
 }
 
@@ -126,7 +125,7 @@ double HRectBound<t_pow>::MinDistance(const arma::vec& point) const {
   assert(point.n_elem == dim_);
 
   double sum = 0;
-  const Range* mbound = bounds_;
+  const math::Range* mbound = bounds_;
 
   double lower, higher;
   for(size_t d = 0; d < dim_; d++) {
@@ -158,8 +157,8 @@ double HRectBound<t_pow>::MinDistance(const HRectBound& other) const {
   assert(dim_ == other.dim_);
 
   double sum = 0;
-  const Range* mbound = bounds_;
-  const Range* obound = other.bounds_;
+  const math::Range* mbound = bounds_;
+  const math::Range* obound = other.bounds_;
 
   double lower, higher;
   for (size_t d = 0; d < dim_; d++) {
@@ -221,7 +220,7 @@ double HRectBound<t_pow>::MaxDistance(const HRectBound& other) const {
  * Calculates minimum and maximum bound-to-bound squared distance.
  */
 template<int t_pow>
-Range HRectBound<t_pow>::RangeDistance(const HRectBound& other) const {
+math::Range HRectBound<t_pow>::RangeDistance(const HRectBound& other) const {
   double sum_lo = 0;
   double sum_hi = 0;
 
@@ -244,7 +243,7 @@ Range HRectBound<t_pow>::RangeDistance(const HRectBound& other) const {
     sum_hi += pow(v_hi, (double) t_pow);
   }
 
-  return Range(pow(sum_lo, 2.0 / (double) t_pow),
+  return math::Range(pow(sum_lo, 2.0 / (double) t_pow),
                 pow(sum_hi, 2.0 / (double) t_pow));
 }
 
@@ -252,7 +251,7 @@ Range HRectBound<t_pow>::RangeDistance(const HRectBound& other) const {
  * Calculates minimum and maximum bound-to-point squared distance.
  */
 template<int t_pow>
-Range HRectBound<t_pow>::RangeDistance(const arma::vec& point) const {
+math::Range HRectBound<t_pow>::RangeDistance(const arma::vec& point) const {
   double sum_lo = 0;
   double sum_hi = 0;
 
@@ -280,7 +279,7 @@ Range HRectBound<t_pow>::RangeDistance(const arma::vec& point) const {
     sum_hi += pow(v_hi, (double) t_pow);
   }
 
-  return Range(pow(sum_lo, 2.0 / (double) t_pow),
+  return math::Range(pow(sum_lo, 2.0 / (double) t_pow),
                 pow(sum_hi, 2.0 / (double) t_pow));
 }
 
