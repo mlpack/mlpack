@@ -1,5 +1,5 @@
-#ifndef NNSVM_IMPL_H
-#define NNSVM_IMPL_H
+#ifndef __MLPACK_METHODS_NNSVM_NNSVM_IMPL_HPP
+#define __MLPACK_METHODS_NNSVM_NNSVM_IMPL_HPP
 
 namespace mlpack {
 namespace nnsvm {
@@ -261,4 +261,4 @@ void NNSVM<TKernel>::LoadModelBatchClassify(arma::mat& testset, std::string mode
 }; // namespace nnsvm
 }; // namespace mlpack
 
-#endif
+#endif // __MLPACK_METHODS_NNSVM_NNSVM_IMPL_HPP

@@ -1,5 +1,5 @@
-#ifndef U_NNSVM_NNSMO_H
-#define U_NNSVM_NNSMO_H
+#ifndef __MLPACK_METHODS_NNSVM_NNSMO_HPP
+#define __MLPACK_METHODS_NNSVM_NNSMO_HPP
 
 #include <mlpack/core.h>
 
@@ -154,6 +154,6 @@ class NNSMO
 }; // namespace nnsvm
 }; // namespace mlpack
 
-#include "nnsmo_impl.h"
+#include "nnsmo_impl.hpp"
 
-#endif
+#endif // __MLPACK_METHODS_NNSVM_NNSMO_HPP
