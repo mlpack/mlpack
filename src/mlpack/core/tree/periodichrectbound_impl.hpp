@@ -4,15 +4,15 @@
  * Implementation of periodic hyper-rectangle bound policy class.
  * Template parameter t_pow is the metric to use; use 2 for Euclidian (L2).
  */
-#ifndef __MLPACK_CORE_TREE_PERIODICHRECTBOUND_IMPL_H
-#define __MLPACK_CORE_TREE_PERIODICHRECTBOUND_IMPL_H
+#ifndef __MLPACK_CORE_TREE_PERIODICHRECTBOUND_IMPL_HPP
+#define __MLPACK_CORE_TREE_PERIODICHRECTBOUND_IMPL_HPP
 
 // In case it has not already been included.
-#include "periodichrectbound.h"
+#include "periodichrectbound.hpp"
 
 #include <math.h>
 
-#include "../math/math_lib.h"
+#include "../math/math_lib.hpp"
 #include "../io/log.hpp"
 
 namespace mlpack {
@@ -314,4 +314,4 @@ bool PeriodicHRectBound<t_pow>::Contains(const arma::vec& point) const {
 }; // namespace bound
 }; // namespace mlpack
 
-#endif
+#endif // __MLPACK_CORE_TREE_PERIODICHRECTBOUND_IMPL_HPP

@@ -7,8 +7,8 @@
  * @experimental
  */
 
-#ifndef TREE_DBALLBOUND_IMPL_H
-#define TREE_DBALLBOUND_IMPL_H
+#ifndef __MLPACK_CORE_TREE_DBALLBOUND_IMPL_HPP
+#define __MLPACK_CORE_TREE_DBALLBOUND_IMPL_HPP
 
 // Awaiting transition
 #include <mlpack/core/kernels/lmetric.hpp>
@@ -171,5 +171,4 @@ double DBallBound<TMetric, TPoint>::MidDistance(const Point& point) const {
 }; // namespace bound
 }; // namespace mlpack
 
-#endif
-
+#endif // __MLPACK_CORE_TREE_DBALLBOUND_IMPL_HPP

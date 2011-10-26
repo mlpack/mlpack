@@ -4,8 +4,8 @@
  * Tests for LAPACK integration.
  */
 
-#include "bounds.h"
-#include "spacetree.h"
+#include "bounds.hpp"
+#include "spacetree.hpp"
 #include <mlpack/core/kernels/lmetric.hpp>
 #include <vector>
 

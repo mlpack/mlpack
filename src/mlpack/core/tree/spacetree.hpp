@@ -6,10 +6,10 @@
  * @experimental
  */
 
-#ifndef TREE_SPACETREE_H
-#define TREE_SPACETREE_H
+#ifndef __MLPACK_CORE_TREE_SPACETREE_HPP
+#define __MLPACK_CORE_TREE_SPACETREE_HPP
 
-#include "statistic.h"
+#include "statistic.hpp"
 
 #include <armadillo>
 
@@ -196,6 +196,6 @@ class BinarySpaceTree {
 }; // namespace mlpack
 
 // Include implementation.
-#include "spacetree_impl.h"
+#include "spacetree_impl.hpp"
 
-#endif
+#endif // __MLPACK_CORE_TREE_SPACETREE_HPP

@@ -4,8 +4,8 @@
  *
  * Tests for everything in the math:: namespace.
  */
-#include "range.h"
-#include "math_lib.h"
+#include "range.hpp"
+#include "math_lib.hpp"
 
 #define BOOST_TEST_MODULE Math_Test
 #include <boost/test/unit_test.hpp>

@@ -3,7 +3,7 @@
  *
  * Implementation of the Range class.
  */
-#include "range.h"
+#include "range.hpp"
 #include <float.h>
 
 namespace mlpack {

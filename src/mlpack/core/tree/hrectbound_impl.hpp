@@ -6,15 +6,15 @@
  *
  * @experimental
  */
-#ifndef __TREE_HRECTBOUND_IMPL_H
-#define __TREE_HRECTBOUND_IMPL_H
+#ifndef __MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP
+#define __MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP
 
 #include <math.h>
 
-#include "../math/math_lib.h"
+#include "../math/math_lib.hpp"
 
 // In case it has not been included yet.
-#include "hrectbound.h"
+#include "hrectbound.hpp"
 
 namespace mlpack {
 namespace bound {
@@ -328,4 +328,4 @@ bool HRectBound<t_pow>::Contains(const arma::vec& point) const {
 }; // namespace bound
 }; // namespace mlpack
 
-#endif
+#endif // __MLPACK_CORE_TREE_HRECTBOUND_IMPL_HPP

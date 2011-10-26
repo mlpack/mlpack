@@ -17,8 +17,8 @@
 #include "emst.h"
 
 #include <mlpack/core.h>
-#include <mlpack/core/tree/bounds.h>
-#include <mlpack/core/tree/spacetree.h>
+#include <mlpack/core/tree/bounds.hpp>
+#include <mlpack/core/tree/spacetree.hpp>
 #include <mlpack/core/kernels/lmetric.hpp>
 
 namespace mlpack {

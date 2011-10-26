@@ -9,11 +9,11 @@
  * @experimental
  */
 
-#ifndef __TREE_HRECTBOUND_H
-#define __TREE_HRECTBOUND_H
+#ifndef __MLPACK_CORE_TREE_HRECTBOUND_HPP
+#define __MLPACK_CORE_TREE_HRECTBOUND_HPP
 
 #include <armadillo>
-#include "mlpack/core/math/range.h"
+#include "mlpack/core/math/range.hpp"
 
 namespace mlpack {
 namespace bound {
@@ -125,6 +125,6 @@ class HRectBound {
 }; // namespace bound
 }; // namespace mlpack
 
-#include "hrectbound_impl.h"
+#include "hrectbound_impl.hpp"
 
-#endif
+#endif // __MLPACK_CORE_TREE_HRECTBOUND_HPP

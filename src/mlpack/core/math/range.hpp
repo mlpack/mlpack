@@ -5,8 +5,8 @@
  * and upper bound.
  */
 
-#ifndef __MATH_RANGE_H
-#define __MATH_RANGE_H
+#ifndef __MLPACK_CORE_MATH_RANGE_HPP
+#define __MLPACK_CORE_MATH_RANGE_HPP
 
 namespace mlpack {
 namespace math {
@@ -84,4 +84,4 @@ class Range {
 }; // namespace math
 }; // namespace mlpack
 
-#endif
+#endif // __MLPACK_CORE_MATH_RANGE_HPP

@@ -8,8 +8,8 @@
  * @experimental
  */
 
-#ifndef TREE_STATISTIC_H
-#define TREE_STATISTIC_H
+#ifndef __MLPACK_CORE_TREE_STATISTIC_HPP
+#define __MLPACK_CORE_TREE_STATISTIC_HPP
 
 /**
  * Empty statistic if you are not interested in storing statistics in your
@@ -37,4 +37,4 @@ class EmptyStatistic {
         const EmptyStatistic& left_stat, const EmptyStatistic& right_stat) { }
 };
 
-#endif
+#endif // __MLPACK_CORE_TREE_STATISTIC_HPP
