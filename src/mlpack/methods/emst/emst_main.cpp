@@ -8,7 +8,7 @@
  * @author Bill March (march@gatech.edu)
 */
 
-#include "dtb.h"
+#include "dtb.hpp"
 
 #include <mlpack/core.h>
 

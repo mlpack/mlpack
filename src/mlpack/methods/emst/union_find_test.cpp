@@ -6,7 +6,7 @@
  * Unit tests for the Union-Find data structure.
  */
 
-#include "union_find.h"
+#include "union_find.hpp"
 
 #include <mlpack/core.h>
 

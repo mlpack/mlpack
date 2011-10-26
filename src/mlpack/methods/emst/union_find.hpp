@@ -9,8 +9,8 @@
  * unionfind.Find(x) returns the index of the component containing point x.
  */
 
-#ifndef UNCLIN_FIND_H
-#define UNCLIN_FIND_H
+#ifndef __MLPACK_METHODS_EMST_UNION_FIND_HPP
+#define __MLPACK_METHODS_EMST_UNION_FIND_HPP
 
 #include <mlpack/core.h>
 
@@ -108,4 +108,4 @@ public:
 }; // namespace emst
 }; // namespace mlpack
 
-#endif
+#endif // __MLPACK_METHODS_EMST_UNION_FIND_HPP
