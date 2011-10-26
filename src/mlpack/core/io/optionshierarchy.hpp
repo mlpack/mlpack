@@ -1,13 +1,12 @@
 /***
- * @file optionshierarchy.h
+ * @file optionshierarchy.hpp
  * @author Matthew Amidon
  *
  * This file holds the OptionsHierarchy class, which is a tree
  * of parameters.  Each node can have an arbitrary number of children.
  */
-
-#ifndef OPTCLINSHIERARCHY_H
-#define OPTCLINSHIERARCHY_H
+#ifndef __MLPACK_CORE_IO_OPTIONSHIERARCHY_HPP
+#define __MLPACK_CORE_IO_OPTIONSHIERARCHY_HPP
 
 #include <map>
 #include <string>
@@ -16,29 +15,38 @@
 namespace mlpack {
 namespace io {
 
-/* Aids in the extensibility of OptionsHierarchy by
-   focusing the potential changes into one structure. */
+/**
+ * Aids in the extensibility of OptionsHierarchy by focusing the potential
+ * changes into one structure.
+ */
 struct OptionsData {
-  /* Name of this node */
+  //! Name of this node.
   std::string node;
-  /* Description of this node, if any */
+  //! Description of this node, if any.
   std::string desc;
-  /* Type information of this node */
+  //! Type information of this node.
   std::string tname;
 };
 
-
+/**
+ * A node in the hierarchy of parameters used by CLI.  Each node holds
+ * information about itself and can have any number of children, each with
+ * unique names.
+ */
 class OptionsHierarchy {
  private:
-   /* Holds all node specific data */
+  //! Holds all node specific data.
   OptionsData nodeData;
 
-  /* Map of this node's children.  All children should have a
-     corresponding OptionsHierarchy, hence the references */
+  //! Convenience typedef.
   typedef std::map<std::string, OptionsHierarchy> ChildMap;
+
+  //! Map of this node's children, which should each have a corresponding
+  //! OptionsHierarchy object.
   ChildMap children;
 
-  /* Returns the name foo in the pathname foo/bar/fizz
+  /**
+   * Returns the name foo in the pathname foo/bar/fizz.
    *
    * @param pathname The full pathname of the parameter,
    *   eg foo/bar in foo/bar.
@@ -48,7 +56,7 @@ class OptionsHierarchy {
    */
   std::string GetName(std::string& pathname);
 
-  /* Returns the path bar/fizz in the pathname foo/bar/fizz
+  /* Returns the path bar/fizz in the pathname foo/bar/fizz.
    *
    * @param pathname The full pathname of the parameter,
    *   eg foo/bar in foo/bar.
@@ -59,29 +67,33 @@ class OptionsHierarchy {
   std::string GetPath(std::string& pathname);
 
  public:
-  /* Constructs an empty OptionsHierarchy node. */
+  /**
+   * Constructs an empty OptionsHierarchy node.
+   */
   OptionsHierarchy();
 
-  /*
-   * Constructs an empty OptionsHierarchy node
+  /**
+   * Constructs an empty OptionsHierarchy node with the given name.
    *
    * @param name The name of the node to be created.
    */
   OptionsHierarchy(const char* name);
 
-  /*
-   * Constructs an equivalent node to the given one.
+  /**
+   * Copies the given node.
    *
-   * @param other The node to be copied
+   * @param other The node to be copied.
    */
   OptionsHierarchy(const OptionsHierarchy& other);
 
-  /*
+  /**
    * Destroys the node.
    */
   ~OptionsHierarchy();
 
-  /*
+  /**
+   * Add a node as a child of this node.
+   *
    * Will never fail, as given paths are relative to current node
    * and will be generated if not found.
    *
@@ -90,7 +102,9 @@ class OptionsHierarchy {
    */
   void AppendNode(std::string& pathname, std::string& tname);
 
-  /*
+  /**
+   * Add a node as a child of this node.
+   *
    * Will never fail, as given paths are relative to current node
    * and will be generated if not found.
    *
@@ -101,7 +115,9 @@ class OptionsHierarchy {
   void AppendNode(std::string& pathname, std::string& tname,
                   std::string& description);
 
-  /*
+  /**
+   * Add a node as a child of this node.
+   *
    * Will never fail, as given paths are relative to current node
    * and will be generated if not found.
    *
@@ -113,7 +129,7 @@ class OptionsHierarchy {
   void AppendNode(std::string& pathname, std::string& tname,
                   std::string& description, OptionsData& data);
 
-  /*
+  /**
    * Returns the various data associated with a node.  Passed by copy,
    * since this is only for unit testing.
    *
@@ -122,7 +138,7 @@ class OptionsHierarchy {
    */
   OptionsData GetNodeData();
 
-  /*
+  /**
    * Returns a vector containing the relative pathnames of nodes subordinant
    * to the one specified.
    *
@@ -133,37 +149,35 @@ class OptionsHierarchy {
   std::vector<std::string> GetRelativePaths(std::string& pathname);
   std::vector<std::string> GetRelativePathsHelper(OptionsHierarchy& node);
 
-  /*
-   * Will return the node associated with a pathname
+  /**
+   * Will return the node associated with a pathname.
    *
-   * @param pathname The full pathname of the node,
-   *   eg foo/bar in foo/bar.
+   * @param pathname The full pathname of the node, e.g. foo/bar in foo/bar.
    *
-   * @return Pointer to the node with that pathname,
-   *   null if not found.
+   * @return Pointer to the node with that pathname, null if not found.
    */
   OptionsHierarchy* FindNode(std::string& pathname);
   OptionsHierarchy* FindNodeHelper(std::string& pathname, std::string& target);
 
   /* Print functions */
-  // Prints a single node, and outlines relations
+  //! Prints a single node, and outlines relations.
   void Print();
 
-  // Prints all nodes, plus their data
+  //! Prints all nodes, plus their data.
   void PrintAll();
-  // Prints a node and its data
+  //! Prints a node and its data.
   void PrintNode();
 
-  // Prints all nodes, plus their description
+  //! Prints all nodes, plus their description.
   void PrintAllHelp();
-  // Prints a node and its description
+  //! Prints a node and its description.
   void PrintNodeHelp();
 
-  // Prints the leaves of a node
+  //! Prints the leaves of a node.
   void PrintLeaves();
-  // Prints the timers of a node
+  //! Prints the timers of a node.
   void PrintTimers();
-  // Prints the branches of a node
+  //! Prints the branches of a node.
   void PrintBranches();
 
   /**
@@ -172,6 +186,8 @@ class OptionsHierarchy {
    *
    * @param str String to hyphenate (splits are on ' ').
    * @param padding Amount of padding on the left for each new line.
+   *
+   * @return Hyphenated string with newlines.
    */
   static std::string HyphenateString(std::string str, int padding);
 };

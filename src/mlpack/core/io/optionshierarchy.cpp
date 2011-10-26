@@ -1,4 +1,10 @@
-#include "optionshierarchy.h"
+/**
+ * @file optionshierarchy.cpp
+ * @author Matthew Amidon
+ *
+ * Implementation of OptionsHierarchy class.
+ */
+#include "optionshierarchy.hpp"
 #include "cli.hpp"
 #include "log.hpp"
 #include <iostream>
