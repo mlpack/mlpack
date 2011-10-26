@@ -11,12 +11,12 @@
  *
  * @author Nishant Mehta
  */
-#ifndef FASTICA_H
-#define FASTICA_H
+#ifndef __MLPACK_METHODS_FASTICA_FASTICA_HPP
+#define __MLPACK_METHODS_FASTICA_FASTICA_HPP
 
 #include <mlpack/core.h>
 
-#include "lin_alg.h"
+#include "lin_alg.hpp"
 
 namespace mlpack {
 namespace fastica {
@@ -1176,4 +1176,4 @@ class FastICA {
 }; // namespace fastica
 }; // namespace mlpack
 
-#endif /* FASTICA_H */
+#endif // __MLPACK_METHODS_FASTICA_FASTICA_HPP

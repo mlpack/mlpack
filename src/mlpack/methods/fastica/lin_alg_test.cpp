@@ -9,7 +9,7 @@
  */
 #include <mlpack/core.h>
 
-#include "lin_alg.h"
+#include "lin_alg.hpp"
 
 using namespace arma;
 using namespace mlpack;

@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-   fastica.h
-   lin_alg.h
+   fastica.hpp
+   lin_alg.hpp
 )
 
 # Add directory name to sources.
@@ -17,16 +17,16 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_executable(fastica
-  fastica_main.cc
-  lin_alg.h
+  fastica_main.cpp
+  lin_alg.hpp
 )
 target_link_libraries(fastica
   mlpack
 )
 
 add_executable(lin_alg_test
-  lin_alg.h
-  lin_alg_test.cc
+  lin_alg.hpp
+  lin_alg_test.cpp
 )
 target_link_libraries(lin_alg_test
   mlpack

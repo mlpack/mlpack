@@ -7,7 +7,7 @@
  *
  * @author Nishant Mehta
  */
-#include "fastica.h"
+#include "fastica.hpp"
 
 /**
  * Here are usage instructions for this implementation of FastICA. Default values are given
