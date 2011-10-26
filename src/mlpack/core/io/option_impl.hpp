@@ -4,8 +4,8 @@
  *
  * Implementation of template functions for the Option class.
  */
-#ifndef MLPACK_CLI_OPTION_IMPL_HPP
-#define MLPACK_CLI_OPTION_IMPL_HPP
+#ifndef __MLPACK_CORE_IO_OPTION_IMPL_HPP
+#define __MLPACK_CORE_IO_OPTION_IMPL_HPP
 
 #include "cli.hpp"
 

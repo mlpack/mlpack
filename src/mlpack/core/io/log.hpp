@@ -4,11 +4,11 @@
  *
  * Definition of the Log class.
  */
-#ifndef MLPACK_CORE_IO_LOG_HPP
-#define MLPACK_CORE_IO_LOG_HPP
+#ifndef __MLPACK_CORE_IO_LOG_HPP
+#define __MLPACK_CORE_IO_LOG_HPP
 
-#include "prefixedoutstream.h"
-#include "nulloutstream.h"
+#include "prefixedoutstream.hpp"
+#include "nulloutstream.hpp"
 
 namespace mlpack {
 

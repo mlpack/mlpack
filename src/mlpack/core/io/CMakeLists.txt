@@ -15,11 +15,11 @@ set(SOURCES
   option.cpp
   optionshierarchy.hpp
   optionshierarchy.cpp
-  nulloutstream.h
-  nulloutstream.cc
-  prefixedoutstream.h
-  prefixedoutstream.cc
-  prefixedoutstream_impl.h
+  nulloutstream.hpp
+  nulloutstream.cpp
+  prefixedoutstream.hpp
+  prefixedoutstream.cpp
+  prefixedoutstream_impl.hpp
 )
 
 # add directory name to sources
