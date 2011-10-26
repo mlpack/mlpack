@@ -4,7 +4,7 @@
  *
  * Test for the CLI input parameter system.
  */
-#include "optionshierarchy.h"
+#include "optionshierarchy.hpp"
 #include "cli.hpp"
 #include "log.hpp"
 
