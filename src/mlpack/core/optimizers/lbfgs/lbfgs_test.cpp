@@ -7,8 +7,8 @@
  */
 
 #include <mlpack/core.h>
-#include "lbfgs.h"
-#include "test_functions.h"
+#include "lbfgs.hpp"
+#include "test_functions.hpp"
 
 #define BOOST_TEST_MODULE L-BFGS Test
 #include <boost/test/unit_test.hpp>

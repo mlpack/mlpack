@@ -4,8 +4,8 @@
  * Define a test function for the augmented Lagrangian method.
  */
 
-#ifndef __AUG_LAGRANGIAN_TEST_FUNCTCLINS_H
-#define __AUG_LAGRANGIAN_TEST_FUNCTCLINS_H
+#ifndef __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP
+#define __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP
 
 #include <mlpack/core/io/cli.hpp>
 #include <mlpack/core/io/log.hpp>
@@ -131,4 +131,4 @@ class LovaszThetaSDP {
   arma::mat initial_point_;
 };
 
-#endif
+#endif // __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP

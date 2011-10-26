@@ -5,8 +5,8 @@
  *  @file lbfgs.h
  */
 
-#ifndef OPTIMIZATCLIN_LBFGS_H
-#define OPTIMIZATCLIN_LBFGS_H
+#ifndef __MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
+#define __MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
 
 #include <mlpack/core.h>
 
@@ -149,6 +149,6 @@ class L_BFGS {
 }; // namespace optimization
 }; // namespace mlpack
 
-#include "lbfgs_impl.h"
+#include "lbfgs_impl.hpp"
 
-#endif
+#endif // __MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP

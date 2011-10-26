@@ -6,10 +6,10 @@
  * method).
  */
 
-#ifndef __OPTIMIZATCLIN_AUG_LAGRANGIAN_IMPL_H
-#define __OPTIMIZATCLIN_AUG_LAGRANGIAN_IMPL_H
+#ifndef __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_IMPL_HPP
+#define __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_IMPL_HPP
 
-#include <mlpack/core/optimizers/lbfgs/lbfgs.h>
+#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -170,4 +170,4 @@ const arma::mat& AugLagrangian<LagrangianFunction>::AugLagrangianFunction::
 }; // namespace optimization
 }; // namespace mlpack
 
-#endif
+#endif // __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_IMPL_HPP

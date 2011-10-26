@@ -12,8 +12,8 @@
  * @author Ryan Curtin
  */
 
-#ifndef __OPTIMIZATCLIN_TEST_FUNCTCLINS_H
-#define __OPTIMIZATCLIN_TEST_FUNCTCLINS_H
+#ifndef __MLPAC_CORE_OPTIMIZERS_LBFGS_TEST_FUNCTIONS_HPP
+#define __MLPAC_CORE_OPTIMIZERS_LBFGS_TEST_FUNCTIONS_HPP
 
 #include <mlpack/core/io/cli.hpp>
 #include <mlpack/core/io/log.hpp>
@@ -146,4 +146,4 @@ class RosenbrockWoodFunction {
 }; // namespace optimization
 }; // namespace mlpack
 
-#endif
+#endif // __MLPAC_CORE_OPTIMIZERS_LBFGS_TEST_FUNCTIONS_HPP

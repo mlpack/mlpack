@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 2.8)
 
 set(SOURCES
-  aug_lagrangian.h
-  aug_lagrangian_impl.h
-  aug_lagrangian_test_functions.h
-  aug_lagrangian_test_functions.cc
+  aug_lagrangian.hpp
+  aug_lagrangian_impl.hpp
+  aug_lagrangian_test_functions.hpp
+  aug_lagrangian_test_functions.cpp
 )
 
 set(DIR_SRCS)
@@ -17,7 +17,7 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 # test executable
 add_executable(aug_lagrangian_test
   EXCLUDE_FROM_ALL
-  aug_lagrangian_test.cc
+  aug_lagrangian_test.cpp
 )
 target_link_libraries(aug_lagrangian_test
   mlpack

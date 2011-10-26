@@ -7,8 +7,8 @@
  * uses the L-BFGS optimizer.
  */
 
-#ifndef __OPTIMIZATCLIN_AUG_LAGRANGIAN_H
-#define __OPTIMIZATCLIN_AUG_LAGRANGIAN_H
+#ifndef __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP
+#define __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP
 
 #include <mlpack/core.h>
 
@@ -77,6 +77,6 @@ class AugLagrangian {
 }; // namespace optimization
 }; // namespace mlpack
 
-#include "aug_lagrangian_impl.h"
+#include "aug_lagrangian_impl.hpp"
 
-#endif
+#endif // __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP

@@ -5,8 +5,8 @@
  *  @file lbfgs_impl.h
  */
 
-#ifndef OPTIMIZATCLIN_LBFGS_IMPL_H
-#define OPTIMIZATCLIN_LBFGS_IMPL_H
+#ifndef __MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_IMPL_HPP
+#define __MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_IMPL_HPP
 
 namespace mlpack {
 namespace optimization {
@@ -349,4 +349,4 @@ bool L_BFGS<FunctionType>::Optimize(int num_iterations, arma::mat& iterate) {
 }; // namespace optimization
 }; // namespace mlpack
 
-#endif
+#endif // __MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_IMPL_HPP
