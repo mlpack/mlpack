@@ -16,7 +16,7 @@
 #include <string>
 #include <list>
 
-#include "optionshierarchy.h"
+#include "optionshierarchy.hpp"
 #include "prefixedoutstream.h"
 #include "nulloutstream.h"
 #include "cli_deleter.hpp" // To make sure we can delete the singleton.
