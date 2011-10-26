@@ -15,7 +15,7 @@
  * @see nnsmo.h
  */
 #include <iostream>
-#include "nnsvm.h"
+#include "nnsvm.hpp"
 #include <mlpack/core.h>
 #include <mlpack/core/kernels/linear_kernel.hpp>
 

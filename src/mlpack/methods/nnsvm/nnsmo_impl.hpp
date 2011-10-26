@@ -1,5 +1,5 @@
-#ifndef NNSMO_IMPL_H
-#define NNSMO_IMPL_H
+#ifndef __MLPACK_METHODS_NNSVM_NNSMO_IMPL_HPP
+#define __MLPACK_METHODS_NNSVM_NNSMO_IMPL_HPP
 
 namespace mlpack {
 namespace nnsvm {
@@ -340,4 +340,4 @@ bool NNSMO<TKernel>::TakeStep_(size_t i, size_t j, double error_j)
 }; // namespace nnsvm
 }; // namespace mlpack
 
-#endif
+#endif // __MLPACK_METHODS_NNSVM_NNSMO_IMPL_HPP

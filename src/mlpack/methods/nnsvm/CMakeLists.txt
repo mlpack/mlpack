@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-  nnsmo.h
-  nnsmo_impl.h
-  nnsvm.h
-  nnsvm_impl.h
+  nnsmo.hpp
+  nnsmo_impl.hpp
+  nnsvm.hpp
+  nnsvm_impl.hpp
 )
 
 # Add directory name to sources.
@@ -19,7 +19,7 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_executable(nnsvm_test
-  nnsvm_test.cc
+  nnsvm_test.cpp
 )
 target_link_libraries(nnsvm_test
   mlpack
@@ -27,7 +27,7 @@ target_link_libraries(nnsvm_test
 )
 
 add_executable(nnsvm
-  nnsvm_main.cc
+  nnsvm_main.cpp
 )
 target_link_libraries(nnsvm
   mlpack

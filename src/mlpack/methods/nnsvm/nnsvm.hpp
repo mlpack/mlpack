@@ -6,13 +6,13 @@
  *
  * @see nnsmo.h
  */
-#ifndef U_NNSVM_NNSVM_H
-#define U_NNSVM_NNSVM_H
+#ifndef __MLPACK_METHODS_NNSVM_NNSVM_HPP
+#define __MLPACK_METHODS_NNSVM_NNSVM_HPP
 
 #include <mlpack/core.h>
 #include <typeinfo>
 
-#include "nnsmo.h"
+#include "nnsmo.hpp"
 
 PARAM_DOUBLE("c", "Undocumented", "nnsvm", 10.0);
 PARAM_DOUBLE("eps", "Undocumented", "nnsvm", 1.0e-6);
@@ -74,6 +74,6 @@ class NNSVM
 }; // namespace nnsvm
 }; // namespace mlpack
 
-#include "nnsvm_impl.h"
+#include "nnsvm_impl.hpp"
 
-#endif
+#endif // __MLPACK_METHODS_NNSVM_NNSVM_HPP
