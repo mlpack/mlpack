@@ -298,12 +298,16 @@ void ApproxMaxIP::ComputeSampleSizes_(size_t rank_approx,
     do {
       n = (size_t) (beta * (double)(set_size)) +1;
       (*samples)(--set_size) = n;
-    } while (set_size > rank_approx);
+//     } while (set_size > rank_approx);
+    } while (set_size > 0);
     
-    while (set_size > 0) {
-      set_size--;
-      (*samples)(set_size) = std::min(k, set_size + 1);
-    }
+
+    // Maybe we do not do this, this is throwing things off
+    // Let's try removing this
+//     while (set_size > 0) {
+//       set_size--;
+//       (*samples)(set_size) = std::min(k, set_size + 1);
+//     }
   } else {
     while (set_size > 0) {
       set_size--;
@@ -321,6 +325,10 @@ void ApproxMaxIP::ComputeApproxBaseCase_(TreeType* reference_node) {
    
   // Check that the pointers are not NULL
   assert(reference_node != NULL);
+  if (!CLI::HasParam("approx_maxip/no_tree"))
+    assert(reference_node->is_leaf() 
+ 	   || is_base(reference_node)
+	   || is_almost_satisfied());
 
   // Obtain the number of samples to be obtained
   size_t set_size
@@ -332,7 +340,12 @@ void ApproxMaxIP::ComputeApproxBaseCase_(TreeType* reference_node) {
 //     = min_samples_per_q_ - query_node->stat().samples();
 
   sample_size = std::min(sample_size, query_samples_needed_);
-  assert(sample_size <= sample_limit_);
+
+  if (!CLI::HasParam("approx_maxip/no_tree")) {
+//     printf("Leaf size: %zu, Sample size: %zu\n", 
+// 	   set_size, sample_size); fflush(NULL);
+    assert(sample_size <= sample_limit_);
+  }
 
 
   // Get the query point from the matrix
@@ -582,11 +595,44 @@ void ApproxMaxIP::CheckPrune(CTreeType* query_node, TreeType* ref_node) {
 }
 
 
+void ApproxMaxIP::CheckPrune(TreeType* ref_node) {
+
+  size_t missed_nns = 0;
+  double max_ip = 0.0;
+
+  // Get the query point from the matrix
+  arma::vec q = queries_.unsafe_col(query_);
+
+  double min_ip = max_ips_(knns_ -1, query_); 
+
+  // We'll do the same for the references
+  for (size_t reference_index = ref_node->begin(); 
+       reference_index < ref_node->end(); reference_index++) {
+
+    arma::vec r = references_.unsafe_col(reference_index);
+
+    double ip_r = arma::dot(q, r);
+    if (ip_r > min_ip)
+      missed_nns++;
+
+    if (ip_r > max_ip)
+      max_ip = ip_r;
+    
+  } // for reference_index
+
+  if (missed_nns > 0) 
+    printf("Prune %zu - Missed candidates: %zu\n"
+	   "QLBound: %lg, QRBound: %lg, ActualQRBound: %lg\n",
+	   number_of_prunes_, missed_nns,
+	   min_ip, MaxNodeIP_(ref_node), max_ip);
+
+}
+
 void ApproxMaxIP::ComputeApproxRecursion_(TreeType* reference_node, 
 					  double upper_bound_ip) {
 
   assert(reference_node != NULL);
-  //assert(upper_bound_ip == MaxNodeIP_(reference_node));
+  //  assert(upper_bound_ip == MaxNodeIP_(reference_node));
 
 
   // check if the query has enough number of samples
@@ -594,15 +640,22 @@ void ApproxMaxIP::ComputeApproxRecursion_(TreeType* reference_node,
     if (upper_bound_ip < max_ips_(knns_ -1, query_)) { 
       // Pruned by distance
       number_of_prunes_++;
+
+      if (CLI::HasParam("approx_maxip/check_prune"))
+	CheckPrune(reference_node);
+
       query_samples_needed_ 
 	-= sample_sizes_[reference_node->end()
 			 - reference_node->begin() - 1];
 
     } else if (reference_node->is_leaf()) {
-      // base case for the single tree case
+	// base case for the single tree case
       ComputeBaseCase_(reference_node);
       query_samples_needed_
 	-= (reference_node->end() - reference_node->begin());
+
+      // trying to see if this was the issue (DIDN'T WORK)
+      // ComputeApproxBaseCase_(reference_node);
 
     } else if (is_base(reference_node)) {
       // base case for the approximate case
@@ -611,25 +664,26 @@ void ApproxMaxIP::ComputeApproxRecursion_(TreeType* reference_node,
     } else if (is_almost_satisfied()) {
       // base case for the approximate case
       ComputeApproxBaseCase_(reference_node);
-
-    } else {
+    }  else {
       // Recurse on both as above
       double left_ip = MaxNodeIP_(reference_node->left());
       double right_ip = MaxNodeIP_(reference_node->right());
-
+      
       if (left_ip > right_ip) {
 	ComputeApproxRecursion_(reference_node->left(), 
-				   left_ip);
+				left_ip);
 	ComputeApproxRecursion_(reference_node->right(),
-				   right_ip);
+				right_ip);
       } else {
 	ComputeApproxRecursion_(reference_node->right(),
-				   right_ip);
+				right_ip);
 	ComputeApproxRecursion_(reference_node->left(), 
-				   left_ip);
+				left_ip);
       }
     }    
-  }  
+  } else {
+//     assert(query_samples_needed_ <= 0);
+  }
 } // ComputeApproxRecursion_
 
 
@@ -704,7 +758,7 @@ void ApproxMaxIP::ComputeApproxRecursion_(CTreeType* query_node,
 	query_node->right()->stat().add_total_points(extra_points_encountered);
 	size_t extra_points_sampled
 	  = query_node->stat().samples()
-	  - std::max(query_node->left()->stat().samples(),
+	  - std::min(query_node->left()->stat().samples(),
 		     query_node->right()->stat().samples());
 	assert(extra_points_sampled >= 0);
 	query_node->left()->stat().add_samples(extra_points_sampled);
@@ -727,6 +781,11 @@ void ApproxMaxIP::ComputeApproxRecursion_(CTreeType* query_node,
 	     >  query_node->stat().total_points());
       query_node->stat().set_total_points(
 	  query_node->left()->stat().total_points());
+
+//       printf("%zu: L:%zu, R:%zu\n", query_node->stat().samples(),
+// 	     query_node->left()->stat().samples(),
+// 	     query_node->right()->stat().samples()); fflush(NULL);
+
 
       assert(query_node->stat().samples() <= 
 	     std::min(query_node->left()->stat().samples(),
@@ -786,7 +845,7 @@ void ApproxMaxIP::ComputeApproxRecursion_(CTreeType* query_node,
       query_node->right()->stat().add_total_points(extra_points_encountered);
       size_t extra_points_sampled
 	= query_node->stat().samples()
-	- std::max(query_node->left()->stat().samples(),
+	- std::min(query_node->left()->stat().samples(),
 		   query_node->right()->stat().samples());
       assert(extra_points_sampled >= 0);
       query_node->left()->stat().add_samples(extra_points_sampled);
@@ -1073,8 +1132,15 @@ double ApproxMaxIP::ComputeApprox(arma::Mat<size_t>* resulting_neighbors,
     for (query_ = 0; query_ < queries_.n_cols; ++query_) {
       query_samples_needed_ = min_samples_per_q_;
 
-      ComputeApproxRecursion_(reference_tree_, 
-			      MaxNodeIP_(reference_tree_));
+      if (CLI::HasParam("approx_maxip/no_tree")) {
+	// ComputeApproxBaseCase_(reference_tree_);
+	ComputeApproxBaseCase_(reference_tree_->left());
+	ComputeApproxBaseCase_(reference_tree_->right());
+      } else 
+	ComputeApproxRecursion_(reference_tree_, 
+				MaxNodeIP_(reference_tree_));
+
+//       assert(!(query_samples_needed_ > 0));
     }
     CLI::StopTimer("approx_maxip/fast_single");
 

@@ -45,6 +45,9 @@ PARAM_FLAG("dual_tree", "The flag to trigger dual-tree "
 
 PARAM_FLAG("check_prune", "The flag to trigger the "
 	   "checking of the prune.", "approx_maxip");
+
+PARAM_FLAG("no_tree", "The flag to trigger the tree-less "
+	   "rank-approximate search.", "approx_maxip");
 /**
  * Performs maximum-inner-product-search. 
  * This class will build the trees and 
@@ -251,6 +254,9 @@ private:
   void ComputeBaseCase_(CTreeType* query_node,
 			TreeType* reference_node);
 
+
+
+
   /**
    * The recursive function for the approximate computation
    */
@@ -347,6 +353,7 @@ public:
 		       arma::mat* ips);
 
   void CheckPrune(CTreeType* query_node, TreeType* ref_node);
+  void CheckPrune(TreeType* reference_node);
 }; //class ApproxMaxIP
 
 #endif

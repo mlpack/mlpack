@@ -64,7 +64,7 @@ int main (int argc, char *argv[]) {
     max_k = ks(number_of_ks -1);
   }
 
-  arma::vec eps(25);
+  arma::vec eps(100);
   // arma::vec als(10);
   size_t num_eps = 0; //, num_als = 0;
 
@@ -78,11 +78,19 @@ int main (int argc, char *argv[]) {
 
   free(pch);
 
-  Log::Info << number_of_ks << " values for k," << endl
+  Log::Warn << number_of_ks << " values for k," << endl
 	    << num_eps << " values for epsilon." << endl;
 
 
   Log::Warn << "Starting loop for Fast Approx-Search." << endl;
+
+  // If you did multiple repetitions, put the loop here 
+  // have the following:
+  // size_t total_reps = CLI::GetParam<int>("reps");
+  // arma::mat res = arma::zeros<arma::mat>(number_of_ks * num_eps, 5);
+  // for (size_t reps = 0; reps < total_reps; reps++) {
+
+
 
   ApproxMaxIP fast_approx;
   vector< arma::Mat<size_t>* > all_solutions;
@@ -147,14 +155,77 @@ int main (int argc, char *argv[]) {
   assert(median_ranks.size() == number_of_ks * num_eps);
   assert(avg_precisions.size() == all_th_speedups.size());
 
-  printf("k\te\tp\tmr\tth_sp\n");
-  for (size_t i = 0; i < number_of_ks; i++) {
-    for (size_t j = 0; j < num_eps; j++) {
 
-      printf("%zu\t%lg\t%lg\t%zu\t%lg\n", ks(i), eps(j),
-	     avg_precisions[i * num_eps + j],
-	     median_ranks[i * num_eps + j],
-	     all_th_speedups[i * num_eps + j]); fflush(NULL);
+
+  // If we are performing reps, we have to make sure 
+  // that the check_nn_utils::compute_error() is called
+  // only once (especially for the Yahoo data set)
+
+
+//   for (size_t i = 0; i < number_of_ks; i++) {
+//     for (size_t j = 0; j < num_eps; j++) {
+
+//       res(i * num_eps + j, 0) += (double)  ks(i);
+//       res(i * num_eps + j, 1) += eps(j);
+// 	 res(i * num_eps + j, 2) += avg_precisions[i * num_eps + j];
+// 	 res(i * num_eps + j, 3) += (double) median_ranks[i * num_eps + j];
+// 	 res(i * num_eps + j, 4) += all_th_speedups[i * num_eps + j]);
+//     }
+//   }
+
+
+// } // reps-loop
+//   if (CLI::GetParam<string>("res_file") != "") {
+  
+//     string res_file = GetParam<string>("res_file");
+//     FILE *res_fp = fopen(res_file.c_str(), "w");
+//     for (size_t i = 0; i < res.n_rows; i++) {
+//       for (size_t j = 0; j < res.n_cols; j++) {
+// 	    fprintf(res_fp, "%lg", res(i, j) / (double) total_reps);
+//          if (j == res.n_cols -1)
+//            fprintf(res_fp, "\n");
+//          else
+//            fprintf(res_fp, ",");
+//       }
+//     }
+//   } else {
+
+//     printf("k\te\tp\tmr\tth_sp\n");
+//     for (size_t i = 0; i < res.n_rows; i++) {
+//       for (size_t j = 0; j < res.n_cols; j++) {
+// 	    printf("%lg", res(i, j) / (double) total_reps);
+//          if (j == res.n_cols -1)
+//            printf("\n");
+//          else
+//            printf(",");
+//       }
+//     }
+//   }
+
+
+
+  if (CLI::GetParam<string>("res_file") != "") {
+  
+    string res_file = CLI::GetParam<string>("res_file");
+    FILE *res_fp = fopen(res_file.c_str(), "w");
+    for (size_t i = 0; i < number_of_ks; i++)
+      for (size_t j = 0; j < num_eps; j++)
+	fprintf(res_fp, "%zu,%lg,%lg,%zu,%lg\n", ks(i), eps(j),
+		avg_precisions[i * num_eps + j],
+		median_ranks[i * num_eps + j],
+		all_th_speedups[i * num_eps + j]);
+  
+  } else {
+
+    printf("k\te\tp\tmr\tth_sp\n");
+    for (size_t i = 0; i < number_of_ks; i++) {
+      for (size_t j = 0; j < num_eps; j++) {
+
+	printf("%zu\t%lg\t%lg\t%zu\t%lg\n", ks(i), eps(j),
+	       avg_precisions[i * num_eps + j],
+	       median_ranks[i * num_eps + j],
+	       all_th_speedups[i * num_eps + j]); fflush(NULL);
+      }
     }
   }
 }  // end main
@@ -177,11 +248,13 @@ PARAM_STRING_REQ("epslist", "The comma-separated list of epsilons",
 	     "");
 // PARAM_STRING("alphas", "The comma-separated list of alphas", "");
 
-// PARAM_INT("reps", "The number of times the rank-approximate"
-//  	  " algorithm is to be repeated for the same setting.",
-//  	  "", 1);
+PARAM_INT("reps", "The number of times the rank-approximate"
+	  " algorithm is to be repeated for the same setting.",
+  	  "", 1);
 
 PARAM_INT("max_k", "The max value of knns to be tried.", "", 1);
 
 PARAM_STRING("rank_file", "The file containing the ranks.",
+	     "", "");
+PARAM_STRING("res_file", "The file where the results are to be written.",
 	     "", "");
