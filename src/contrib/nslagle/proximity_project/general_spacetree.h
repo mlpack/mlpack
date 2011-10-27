@@ -12,7 +12,7 @@
 #define TREE_GENERAL_SPACETREE_H
 
 #include <mlpack/core.h>
-#include "mlpack/core/tree/statistic.h"
+#include "mlpack/core/tree/statistic.hpp"
 
 #define _lineStr(x) # x
 #define lineStr(x) _lineStr(x)

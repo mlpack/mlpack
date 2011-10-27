@@ -13,20 +13,20 @@ void DualtreeVKde<TKernel>::DualtreeVKdeBase_(Tree *qnode, Tree *rnode,
   qnode->stat().ResetBoundStatistics();
 
   // Compute unnormalized sum for each query point.
-  for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+  for(size_t q = qnode->begin(); q < qnode->end(); q++) {
 
     // Incorporate the postponed information.
     DualtreeKdeCommon::AddPostponed(qnode, q, this);
 
     // Get the query point.
-    const double *q_col = qset_.GetColumnPtr(q);
-    for(index_t r = rnode->begin(); r < rnode->end(); r++) {
+    const arma::vec q_col = qset_.unsafe_col(q);
+    for(size_t r = rnode->begin(); r < rnode->end(); r++) {
       
       // Get the reference point.
-      const double *r_col = rset_.GetColumnPtr(r);
+      const arma::vec r_col = rset_.unsafe_col(r);
       
       // pairwise distance and kernel value
-      double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
+      double dsqd = kernel::LMetric<2,false>::Evaluate (q_col, r_col);
       double kernel_value = kernels_[r].EvalUnnormOnSq(dsqd);
       double weighted_kernel_value = rset_weights_[r] * kernel_value;
       
@@ -53,7 +53,7 @@ void DualtreeVKde<TKernel>::DualtreeVKdeBase_(Tree *qnode, Tree *rnode,
 }
 
 template<typename TKernel>
-double DualtreeVKde<TKernel>::EvalUnnormOnSq_(index_t reference_point_index,
+double DualtreeVKde<TKernel>::EvalUnnormOnSq_(size_t reference_point_index,
 					      double squared_distance) {
   return kernels_[reference_point_index].
     EvalUnnormOnSq(squared_distance);
@@ -70,8 +70,8 @@ bool DualtreeVKde<TKernel>::DualtreeVKdeCanonical_
   double used_error = 0, n_pruned = 0;
   
   // temporary variable for holding distance/kernel value bounds
-  DRange dsqd_range;
-  DRange kernel_value_range;
+  Range dsqd_range;
+  Range kernel_value_range;
   
   // First compute distance/kernel value bounds.
   dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
@@ -278,7 +278,7 @@ void DualtreeVKde<TKernel>::PreProcess(Tree *node, bool reference_side) {
       node->stat().weight_sum_ = 0;
 
       // Reset the minimum/maximum bandwidths owned by the node.
-      for(index_t i = node->begin(); i < node->end(); i++) {
+      for(size_t i = node->begin(); i < node->end(); i++) {
 	node->stat().min_bandwidth_kernel_.Init
 	  (std::min(sqrt(node->stat().min_bandwidth_kernel_.bandwidth_sq()),
 		    sqrt(kernels_[i].bandwidth_sq())));
@@ -303,7 +303,7 @@ void DualtreeVKde<TKernel>::PostProcess(Tree *qnode) {
     // we can refine it to better bounds.
     qstat.ResetBoundStatistics();
 
-    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+    for(size_t q = qnode->begin(); q < qnode->end(); q++) {
 
       // Add all postponed quantities.
       DualtreeKdeCommon::AddPostponed(qnode, q, this);

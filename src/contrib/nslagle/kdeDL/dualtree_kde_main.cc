@@ -6,33 +6,36 @@
  */
 
 #include "mlpack/core.h"
+#include "mlpack/core/kernels/gaussian_kernel.hpp"
 #include "dataset_scaler.h"
 #include "dualtree_kde.h"
 #include "dualtree_vkde.h"
 #include "naive_kde.h"
 
-void VariableBandwidthKde(Matrix &queries, Matrix &references, 
-			  Matrix &reference_weights, 
+using namespace mlpack::kernel;
+
+void VariableBandwidthKde(arma::mat &queries, arma::mat &references, 
+			  arma::mat &reference_weights, 
 			  bool queries_equal_references,
 			  struct datanode *kde_module) {
 
   // flag for determining whether to compute naively
-  bool do_naive = fx_param_exists(kde_module, "do_naive");
+  bool do_naive = CLI::HasParam("do_naive");
 
-  if(!strcmp(fx_param_str(kde_module, "kernel", "gaussian"), "gaussian")) {
-    
-    Vector fast_kde_results;
-    
+  if(!strcmp(CLI::GetParam<std::string>("kernel").c_str(), "gaussian")) {
+
+    arma::vec fast_kde_results;
+
     // for O(p^D) expansion
-    if(fx_param_exists(kde_module, "multiplicative_expansion")) {
-      
+    if(CLI::HasParam("multiplicative_expansion")) {
+
       printf("O(p^D) expansion KDE\n");
       DualtreeVKde<GaussianKernel> fast_kde;
       fast_kde.Init(queries, references, reference_weights,
 		    queries_equal_references, kde_module);
       fast_kde.Compute(&fast_kde_results);
-      
-      if(fx_param_exists(kde_module, "fast_kde_output")) {
+
+      if(CLI::HasParam("fast_kde_output")) {
 	fast_kde.PrintDebug();
       }
     }
@@ -46,7 +49,7 @@ void VariableBandwidthKde(Matrix &queries, Matrix &references,
 		    queries_equal_references, kde_module);
       fast_kde.Compute(&fast_kde_results);
       
-      if(true || fx_param_exists(kde_module, "fast_kde_output")) {
+      if(true || CLI::HasParam("fast_kde_output")) {
 	fast_kde.PrintDebug();
       }
     }
@@ -56,59 +59,59 @@ void VariableBandwidthKde(Matrix &queries, Matrix &references,
       naive_kde.Init(queries, references, reference_weights, kde_module);
       naive_kde.Compute();
       
-      if(true || fx_param_exists(kde_module, "naive_kde_output")) {
+      if(true || CLI::HasParam("naive_kde_output")) {
 	naive_kde.PrintDebug();
       }
       naive_kde.ComputeMaximumRelativeError(fast_kde_results);
     }
   }
-  else if(!strcmp(fx_param_str(kde_module, "kernel", "epan"), "epan")) {
-    DualtreeVKde<EpanKernel> fast_kde;
-    Vector fast_kde_results;
-
-    fast_kde.Init(queries, references, reference_weights,
-		  queries_equal_references, kde_module);
-    fast_kde.Compute(&fast_kde_results);
-    
-    if(fx_param_exists(kde_module, "fast_kde_output")) {
-      fast_kde.PrintDebug();
-    }
-
-    if(do_naive) {
-      NaiveKde<EpanKernel> naive_kde;
-      naive_kde.Init(queries, references, reference_weights, kde_module);
-      naive_kde.Compute();
-      
-      if(fx_param_exists(kde_module, "naive_kde_output")) {
-	naive_kde.PrintDebug();
-      }
-      naive_kde.ComputeMaximumRelativeError(fast_kde_results);
-    }
-  }
+//  else if(!strcmp(CLI::GetParam<std::string>("kernel").c_str(), "epan")) {
+//    DualtreeVKde<EpanKernel> fast_kde;
+//    arma::vec fast_kde_results;
+//
+//    fast_kde.Init(queries, references, reference_weights,
+//		  queries_equal_references, kde_module);
+//    fast_kde.Compute(&fast_kde_results);
+//    
+//    if(CLI::HasParam("fast_kde_output")) {
+//      fast_kde.PrintDebug();
+//    }
+//
+//    if(do_naive) {
+//      NaiveKde<EpanKernel> naive_kde;
+//      naive_kde.Init(queries, references, reference_weights, kde_module);
+//      naive_kde.Compute();
+//      
+//      if(CLI::HasParam("naive_kde_output")) {
+//	naive_kde.PrintDebug();
+//      }
+//      naive_kde.ComputeMaximumRelativeError(fast_kde_results);
+//    }
+//  }
 }
 
-void FixedBandwidthKde(Matrix &queries, Matrix &references, 
-		       Matrix &reference_weights, 
+void FixedBandwidthKde(arma::mat &queries, arma::mat &references, 
+		       arma::mat &reference_weights, 
 		       bool queries_equal_references,
 		       struct datanode *kde_module) {
 
   // flag for determining whether to compute naively
-  bool do_naive = fx_param_exists(kde_module, "do_naive");
+  bool do_naive = CLI::HasParam("do_naive");
 
-  if(!strcmp(fx_param_str(kde_module, "kernel", "gaussian"), "gaussian")) {
+  if(!strcmp(CLI::GetParam<std::string>("kernel").c_str(), "gaussian")) {
     
-    Vector fast_kde_results;
+    arma::vec fast_kde_results;
     
     // for O(p^D) expansion
-    if(fx_param_exists(kde_module, "multiplicative_expansion")) {
+    if(CLI::HasParam("multiplicative_expansion")) {
       
       printf("O(p^D) expansion KDE\n");
-      DualtreeKde<GaussianKernelMultAux> fast_kde;
+      DualtreeKde<kernel::GaussianKernel> fast_kde;
       fast_kde.Init(queries, references, reference_weights,
 		    queries_equal_references, kde_module);
       fast_kde.Compute(&fast_kde_results);
       
-      if(fx_param_exists(kde_module, "fast_kde_output")) {
+      if(CLI::HasParam("fast_kde_output")) {
 	fast_kde.PrintDebug();
       }
     }
@@ -117,12 +120,12 @@ void FixedBandwidthKde(Matrix &queries, Matrix &references,
     else {
       
       printf("O(D^p) expansion KDE\n");
-      DualtreeKde<GaussianKernelAux> fast_kde;
+      DualtreeKde<kernel::GaussianKernel> fast_kde;
       fast_kde.Init(queries, references, reference_weights,
 		    queries_equal_references, kde_module);
       fast_kde.Compute(&fast_kde_results);
       
-      if(true || fx_param_exists(kde_module, "fast_kde_output")) {
+      if(true || CLI::HasParam("fast_kde_output")) {
 	fast_kde.PrintDebug();
       }
     }
@@ -132,36 +135,36 @@ void FixedBandwidthKde(Matrix &queries, Matrix &references,
       naive_kde.Init(queries, references, reference_weights, kde_module);
       naive_kde.Compute();
       
-      if(true || fx_param_exists(kde_module, "naive_kde_output")) {
+      if(true || CLI::HasParam("naive_kde_output")) {
 	naive_kde.PrintDebug();
       }
       naive_kde.ComputeMaximumRelativeError(fast_kde_results);
     }
-    
-  }
-  else if(!strcmp(fx_param_str(kde_module, "kernel", "epan"), "epan")) {
-    DualtreeKde<EpanKernelAux> fast_kde;
-    Vector fast_kde_results;
 
-    fast_kde.Init(queries, references, reference_weights,
-		  queries_equal_references, kde_module);
-    fast_kde.Compute(&fast_kde_results);
-    
-    if(fx_param_exists(kde_module, "fast_kde_output")) {
-      fast_kde.PrintDebug();
-    }
-    
-    if(do_naive) {
-      NaiveKde<EpanKernel> naive_kde;
-      naive_kde.Init(queries, references, reference_weights, kde_module);
-      naive_kde.Compute();
-      
-      if(fx_param_exists(kde_module, "naive_kde_output")) {
-	naive_kde.PrintDebug();
-      }
-      naive_kde.ComputeMaximumRelativeError(fast_kde_results);
-    }
   }
+//  else if(!strcmp(CLI::GetParam<std::string>("kernel").c_str(), "epan")) {
+//    DualtreeKde<EpanKernelAux> fast_kde;
+//    arma::vec fast_kde_results;
+//
+//    fast_kde.Init(queries, references, reference_weights,
+//		  queries_equal_references, kde_module);
+//    fast_kde.Compute(&fast_kde_results);
+//
+//    if(CLI::HasParam("fast_kde_output")) {
+//      fast_kde.PrintDebug();
+//    }
+//    
+//    if(do_naive) {
+//      NaiveKde<EpanKernel> naive_kde;
+//      naive_kde.Init(queries, references, reference_weights, kde_module);
+//      naive_kde.Compute();
+//      
+//      if(CLI::HasParam("naive_kde_output")) {
+//	naive_kde.PrintDebug();
+//      }
+//      naive_kde.ComputeMaximumRelativeError(fast_kde_results);
+//    }
+//  }
 }
 
 /**
@@ -237,7 +240,7 @@ void FixedBandwidthKde(Matrix &queries, Matrix &references,
 int main(int argc, char *argv[]) {
 
   // initialize FastExec (parameter handling stuff)
-  fx_init(argc, argv, &kde_main_doc);
+  CLI::ParseCommandLine(argc, argv);
 
   ////////// READING PARAMETERS AND LOADING DATA /////////////////////
 
@@ -245,56 +248,56 @@ int main(int argc, char *argv[]) {
   // of this as creating a new folder named "kde_module" under the
   // root directory (NULL) for the Kde object to work inside.  Here,
   // we initialize it with all parameters defined "--kde/...=...".
-  struct datanode* kde_module = fx_submodule(fx_root, "kde");
+  struct datanode* kde_module = NULL;
 
   // The reference data file is a required parameter.
-  const char* references_file_name = fx_param_str_req(fx_root, "data");
+  std::string references_file_name = CLI::GetParam<std::string>("data");
 
   // The query data file defaults to the references.
-  const char* queries_file_name =
-    fx_param_str(fx_root, "query", references_file_name);
+  std::string queries_file_name =
+    CLI::GetParam<std::string>("query");
   
   // Query and reference datasets, reference weight dataset.
-  Matrix references;
-  Matrix reference_weights;
-  Matrix queries;
+  arma::mat references;
+  arma::mat reference_weights;
+  arma::mat queries;
 
   // Flag for telling whether references are equal to queries
   bool queries_equal_references = 
-    !strcmp(queries_file_name, references_file_name);
+    !strcmp(queries_file_name.c_str(), references_file_name.c_str());
 
-  // data::Load inits a matrix with the contents of a .csv or .arff.
-  data::Load(references_file_name, &references);  
+  // data::Load inits a arma::mat with the contents of a .csv or .arff.
+  data::Load(references_file_name.c_str(), references);
   if(queries_equal_references) {
-    queries.Alias(references);
+    queries = references;
   }
   else {
-    data::Load(queries_file_name, &queries);
+    data::Load(queries_file_name.c_str(), queries);
   }
 
   // If the reference weight file name is specified, then read in,
   // otherwise, initialize to uniform weights.
-  if(fx_param_exists(fx_root, "dwgts")) {
-    data::Load(fx_param_str(fx_root, "dwgts", NULL), &reference_weights);
+  if(CLI::HasParam("dwgts")) {
+    data::Load(CLI::GetParam<std::string>("dwgts").c_str(), reference_weights);
   }
   else {
-    reference_weights.Init(1, references.n_cols());
-    reference_weights.SetAll(1);
+    reference_weights = arma::mat(1, references.n_cols);
+    reference_weights.fill(1);
   }
-  
+
   // Confirm whether the user asked for scaling of the dataset
-  if(!strcmp(fx_param_str(kde_module, "scaling", "none"), "range")) {
+  if(!strcmp(CLI::GetParam<std::string>("scaling").c_str(), "range")) {
     DatasetScaler::ScaleDataByMinMax(queries, references,
                                      queries_equal_references);
   }
-  else if(!strcmp(fx_param_str(kde_module, "scaling", "none"), 
+  else if(!strcmp(CLI::GetParam<std::string>("scaling").c_str(),
 		  "standardize")) {
-    DatasetScaler::StandardizeData(queries, references, 
+    DatasetScaler::StandardizeData(queries, references,
 				   queries_equal_references);
   }
 
   // By default, we want to run the fixed-bandwidth KDE.
-  if(!strcmp(fx_param_str(kde_module, "mode", "fixedbw"), "variablebw")) {
+  if(!strcmp(CLI::GetParam<std::string>("mode").c_str(), "variablebw")) {
     VariableBandwidthKde(queries, references, reference_weights, 
 			 queries_equal_references, kde_module);
   }
@@ -303,6 +306,5 @@ int main(int argc, char *argv[]) {
 		      queries_equal_references, kde_module);
   }
 
-  fx_done(fx_root);
   return 0;
 }

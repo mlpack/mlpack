@@ -61,7 +61,7 @@
 #define INSIDE_DUALTREE_VKDE_H
 
 #include "mlpack/core.h"
-#include "mlpack/core/tree/spacetree.h"
+#include "mlpack/core/tree/spacetree.hpp"
 //#include "contrib/dongryel/proximity_project/gen_metric_tree.h"
 //#include "dualtree_kde_common.h"
 //#include "kde_stat.h"
@@ -196,12 +196,12 @@ class DualtreeVKde {
   /** @brief The permutation mapping indices of queries_ to original
    *         order.
    */
-  std::vector<size_t> old_from_new_queries_;
+  arma::Col<size_t> old_from_new_queries_;
   
   /** @brief The permutation mapping indices of references_ to
    *         original order.
    */
-  std::vector<size_t> old_from_new_references_;
+  arma::Col<size_t> old_from_new_references_;
 
   ////////// Private Member Functions //////////
 
@@ -393,7 +393,7 @@ class DualtreeVKde {
     // the reference tree.
     CLI::StartTimer("tree_d");
     rroot_ = proximity::MakeGenMetricTree<Tree>(rset_, leaflen,
-						&old_from_new_references_, 
+						old_from_new_references_,
 						NULL);
     DualtreeKdeCommon::ShuffleAccordingToPermutation
       (rset_weights_, old_from_new_references_);
@@ -404,35 +404,34 @@ class DualtreeVKde {
     }
     else {
       qroot_ = proximity::MakeGenMetricTree<Tree>(qset_, leaflen,
-						  &old_from_new_queries_, 
+						  &old_from_new_queries_,
 						  NULL);
     }
     CLI::StopTimer("tree_d");
-    
+
     // Initialize the density lists
-    densities_l_ = arma::vec(qset_.n_cols());
-    densities_e_ = arma::vec(qset_.n_cols());
-    densities_u_ = arma::vec(qset_.n_cols());
+    densities_l_ = arma::vec(qset_.n_cols);
+    densities_e_ = arma::vec(qset_.n_cols);
+    densities_u_ = arma::vec(qset_.n_cols);
 
     // Initialize the error accounting stuff.
-    used_error_ = arma::vec(qset_.n_cols());
-    n_pruned_ = arma::vec(qset_.n_cols());
+    used_error_ = arma::vec(qset_.n_cols);
+    n_pruned_ = arma::vec(qset_.n_cols);
 
     // Initialize the kernels for each reference point.
     int knns = CLI::GetParam<int>("knn");
-    AllkNN all_knn;
+    AllkNN all_knn = AllkNN(rset_, 20);
     kernels_.Init(rset_.n_cols());
-    all_knn.Init(rset_, 20, knns);
-    std::vector<size_t> resulting_neighbors;
-    std::vector<double> squared_distances;    
+    arma::Mat<size_t> resulting_neighbors;
+    arma::mat squared_distances;    
 
-    fx_timer_start(fx_root, "bandwidth_initialization");
-    all_knn.ComputeNeighbors(&resulting_neighbors, &squared_distances);
+    CLI::StartTimer("bandwidth_initialization");
+    all_knn.ComputeNeighbors(resulting_neighbors, squared_distances);
 
     for(size_t i = 0; i < squared_distances.size(); i += knns) {
       kernels_[i / knns].Init(sqrt(squared_distances[i + knns - 1]));
     }
-    fx_timer_stop(fx_root, "bandwidth_initialization");
+    CLI::StopTimer("bandwidth_initialization");
 
     // Renormalize the reference weights according to the bandwidths
     // that have been chosen.
@@ -455,14 +454,14 @@ class DualtreeVKde {
     FILE *stream = stdout;
     const char *fname = NULL;
 
-    if((fname = fx_param_str(module_, "fast_kde_output", 
-			     "fast_kde_output.txt")) != NULL) {
+    if((fname = CLI::GetParam<std::string>("fast_kde_output")) != NULL)
+    {
       stream = fopen(fname, "w+");
     }
     for(size_t q = 0; q < qset_.n_cols(); q++) {
       fprintf(stream, "%g\n", densities_e_[q]);
     }
-    
+
     if(stream != stdout) {
       fclose(stream);
     }
