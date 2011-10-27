@@ -8,8 +8,10 @@
  * @experimental
  */
 
-#ifndef __MLPACK_CORE_TREE_STATISTIC_HPP
-#define __MLPACK_CORE_TREE_STATISTIC_HPP
+#ifndef TREE_STATISTIC_H
+#define TREE_STATISTIC_H
+
+#include <armadillo>
 
 /**
  * Empty statistic if you are not interested in storing statistics in your
@@ -36,4 +38,4 @@ class EmptyStatistic {
         const EmptyStatistic& left_stat, const EmptyStatistic& right_stat) { }
 };
 
-#endif // __MLPACK_CORE_TREE_STATISTIC_HPP
+#endif

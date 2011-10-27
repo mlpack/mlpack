@@ -92,8 +92,7 @@
 // Now MLPACK-specific includes.
 #include <mlpack/core/math/math_lib.hpp>
 #include <mlpack/core/math/range.hpp>
-#include <mlpack/core/model/model.hpp>
-#include <mlpack/core/model/save_restore_model.hpp>
+#include <mlpack/core/utilities/save_restore_utility.hpp>
 #include <mlpack/core/file/textfile.h>
 #include <mlpack/core/io/cli.hpp>
 #include <mlpack/core/io/log.hpp>

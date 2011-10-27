@@ -1,12 +1,21 @@
-#ifndef __MLPACK_CORE_MODEL_SAVE_RESTORE_MODEL_HPP
+/**
+ * @file utilities/save_restore_utility_impl.hpp
+ * @author Neil Slagle
+ *
+ * The SaveRestoreUtility provides helper functions in saving and
+ *   restoring models.  The current output file type is XML.
+ *
+ * @experimental
+ */
+#ifndef SAVE_RESTORE_MODEL_HPP
 #error "Do not include this header directly."
 #endif
 
-namespace mlpack {
-namespace model {
+using namespace mlpack;
+using namespace mlpack::utilities;
 
 template<typename T>
-T& SaveRestoreModel::loadParameter (T& t, std::string name)
+T& SaveRestoreUtility::LoadParameter (T& t, std::string name)
 {
   std::map<std::string, std::string>::iterator it = parameters.find (name);
   if (it != parameters.end ())
@@ -22,13 +31,9 @@ T& SaveRestoreModel::loadParameter (T& t, std::string name)
   }
 }
 template<typename T>
-void SaveRestoreModel::saveParameter (T& t, std::string name)
+void SaveRestoreUtility::SaveParameter (T& t, std::string name)
 {
   std::ostringstream output;
   output << t;
   parameters[name] = output.str();
 }
-
-}; // namespace model
-}; // namespace mlpack
-
