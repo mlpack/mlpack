@@ -1,5 +1,5 @@
 /***
- * @file math_test.cc
+ * @file math_test.cpp
  * @author Ryan Curtin
  *
  * Tests for everything in the math:: namespace.
@@ -16,7 +16,8 @@ using namespace math;
 /***
  * Verify that the empty constructor creates an empty range.
  */
-BOOST_AUTO_TEST_CASE(RangeEmptyConstructor) {
+BOOST_AUTO_TEST_CASE(RangeEmptyConstructor)
+{
   Range x = Range();
 
   // Just verify that it is empty.
@@ -27,7 +28,8 @@ BOOST_AUTO_TEST_CASE(RangeEmptyConstructor) {
  * Verify that the point constructor correctly creates a range that is just a
  * point.
  */
-BOOST_AUTO_TEST_CASE(RangePointConstructor) {
+BOOST_AUTO_TEST_CASE(RangePointConstructor)
+{
   Range x(10.0);
 
   BOOST_REQUIRE_CLOSE(x.lo, x.hi, 1e-25);
@@ -39,7 +41,8 @@ BOOST_AUTO_TEST_CASE(RangePointConstructor) {
 /***
  * Verify that the range constructor correctly creates the range.
  */
-BOOST_AUTO_TEST_CASE(RangeConstructor) {
+BOOST_AUTO_TEST_CASE(RangeConstructor)
+{
   Range x(0.5, 5.5);
 
   BOOST_REQUIRE_CLOSE(x.lo, 0.5, 1e-25);
@@ -49,7 +52,8 @@ BOOST_AUTO_TEST_CASE(RangeConstructor) {
 /***
  * Test that we get the width correct.
  */
-BOOST_AUTO_TEST_CASE(RangeWidth) {
+BOOST_AUTO_TEST_CASE(RangeWidth)
+{
   Range x(0.0, 10.0);
 
   BOOST_REQUIRE_CLOSE(x.width(), 10.0, 1e-20);
@@ -74,7 +78,8 @@ BOOST_AUTO_TEST_CASE(RangeWidth) {
 /**
  * Test that we get the midpoint correct.
  */
-BOOST_AUTO_TEST_CASE(RangeMidpoint) {
+BOOST_AUTO_TEST_CASE(RangeMidpoint)
+{
   Range x(0.0, 10.0);
 
   BOOST_REQUIRE_CLOSE(x.mid(), 5.0, 1e-5);
@@ -87,7 +92,8 @@ BOOST_AUTO_TEST_CASE(RangeMidpoint) {
 /***
  * Test that we can expand to include other ranges correctly.
  */
-BOOST_AUTO_TEST_CASE(RangeIncludeOther) {
+BOOST_AUTO_TEST_CASE(RangeIncludeOther)
+{
   // We need to test both |= and |.
   // We have three cases: non-overlapping; overlapping; equivalent, and then a
   // couple permutations (switch left with right and make sure it still works).
@@ -163,7 +169,8 @@ BOOST_AUTO_TEST_CASE(RangeIncludeOther) {
 /***
  * Test that we can 'and' ranges correctly.
  */
-BOOST_AUTO_TEST_CASE(RangeIntersectOther) {
+BOOST_AUTO_TEST_CASE(RangeIntersectOther)
+{
   // We need to test both &= and &.
   // We have three cases: non-overlapping, overlapping; equivalent, and then a
   // couple permutations (switch left with right and make sure it still works).
@@ -223,10 +230,11 @@ BOOST_AUTO_TEST_CASE(RangeIntersectOther) {
   BOOST_REQUIRE_CLOSE(w.hi, 4.0, 1e-5);
 }
 
-/***
+/**
  * Test multiplication of a range with a double.
  */
-BOOST_AUTO_TEST_CASE(RangeMultiply) {
+BOOST_AUTO_TEST_CASE(RangeMultiply)
+{
   // We need to test both * and *=, as well as both cases of *.
   // We'll try with a couple of numbers: -1, 0, 2.
   // And we'll have a couple of cases for bounds: strictly less than zero;
@@ -350,10 +358,11 @@ BOOST_AUTO_TEST_CASE(RangeMultiply) {
   BOOST_REQUIRE_CLOSE(w.hi, 10.0, 1e-5);
 }
 
-/***
+/**
  * Test equality operator.
  */
-BOOST_AUTO_TEST_CASE(RangeEquality) {
+BOOST_AUTO_TEST_CASE(RangeEquality)
+{
   // Three cases: non-overlapping, overlapping, equivalent.  We should also
   // consider empty ranges, which are not necessarily equal...
   Range x(0.0, 2.0);
@@ -383,10 +392,11 @@ BOOST_AUTO_TEST_CASE(RangeEquality) {
   // because we are not forcing behavior for that.
 }
 
-/***
+/**
  * Test inequality operator.
  */
-BOOST_AUTO_TEST_CASE(RangeInequality) {
+BOOST_AUTO_TEST_CASE(RangeInequality)
+{
   // We will use the same three cases as the RangeEquality test.
   Range x(0.0, 2.0);
   Range y(3.0, 5.0);
@@ -412,10 +422,11 @@ BOOST_AUTO_TEST_CASE(RangeInequality) {
   BOOST_REQUIRE_EQUAL((y != x), false);
 }
 
-/***
+/**
  * Test strict less-than operator.
  */
-BOOST_AUTO_TEST_CASE(RangeStrictLessThan) {
+BOOST_AUTO_TEST_CASE(RangeStrictLessThan)
+{
   // Three cases: non-overlapping, overlapping, and equivalent.
   Range x(0.0, 2.0);
   Range y(3.0, 5.0);
@@ -434,10 +445,11 @@ BOOST_AUTO_TEST_CASE(RangeStrictLessThan) {
   BOOST_REQUIRE_EQUAL((y < x), false);
 }
 
-/***
+/**
  * Test strict greater-than operator.
  */
-BOOST_AUTO_TEST_CASE(RangeStrictGreaterThan) {
+BOOST_AUTO_TEST_CASE(RangeStrictGreaterThan)
+{
   // Three cases: non-overlapping, overlapping, and equivalent.
   Range x(0.0, 2.0);
   Range y(3.0, 5.0);
@@ -456,10 +468,11 @@ BOOST_AUTO_TEST_CASE(RangeStrictGreaterThan) {
   BOOST_REQUIRE_EQUAL((y > x), false);
 }
 
-/***
+/**
  * Test the Contains() operator.
  */
-BOOST_AUTO_TEST_CASE(RangeContains) {
+BOOST_AUTO_TEST_CASE(RangeContains)
+{
   // We have three Range cases: strictly less than 0; overlapping 0; and
   // strictly greater than 0.  Then the numbers we check can be the same three
   // cases, including one greater than and one less than the range.  This should
