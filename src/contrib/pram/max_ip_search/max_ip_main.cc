@@ -55,6 +55,9 @@ int main (int argc, char *argv[]) {
 
   Log::Info << "File loaded..." << endl;
   
+  rdata = arma::trans(rdata);
+  qdata = arma::trans(qdata);
+
   Log::Info << "R(" << rdata.n_rows << ", " << rdata.n_cols 
 	   << "), Q(" << qdata.n_rows << ", " << qdata.n_cols 
 	   << ")" << endl;
@@ -63,10 +66,7 @@ int main (int argc, char *argv[]) {
   arma::Mat<size_t> nac, exc;
   arma::mat din, die;
 
-  //size_t knns = CLI::GetParam<int>("maxip/knns");
-
   double naive_comp, fast_comp;
-
 
   // Naive computation
   if (CLI::HasParam("donaive")) {
