@@ -6,12 +6,12 @@
 #ifndef EXACT_MAX_IP_H
 #define EXACT_MAX_IP_H
 
-// #define NDEBUG
+#define NDEBUG
 
 #include <assert.h>
 #include <mlpack/core.h>
-#include <mlpack/core/tree/bounds.h>
-#include <mlpack/core/tree/statistic.h>
+#include <mlpack/core/tree/bounds.hpp>
+#include <mlpack/core/tree/statistic.hpp>
 #include <vector>
 #include <armadillo>
 #include "general_spacetree.h"
@@ -116,7 +116,7 @@ class MaxIP {
   // TreeType are BinarySpaceTrees where the data are bounded by 
   // Euclidean bounding boxes, the data are stored in a Matrix, 
   // and each node has a QueryStat for its bound.
-  typedef GeneralBinarySpaceTree<DBallBound<>, arma::mat, RefStat> TreeType;
+  typedef GeneralBinarySpaceTree<bound::DBallBound<>, arma::mat, RefStat> TreeType;
   typedef GeneralBinarySpaceTree<DConeBound<>, arma::mat, QueryStat> CTreeType;
    
   
@@ -289,6 +289,8 @@ PARAM_INT("leaf_size", "The leaf size for the ball-tree",
 	  "maxip", 20);
 
 PARAM_FLAG("angle_prune", "The flag to trigger the tighter"
+	   " pruning using the angles as well", "maxip");
+PARAM_FLAG("alt_angle_prune", "The flag to trigger the tighter-er"
 	   " pruning using the angles as well", "maxip");
 PARAM_FLAG("dual_tree", "The flag to trigger dual-tree "
 	   "computation, using a cosine tree for the "

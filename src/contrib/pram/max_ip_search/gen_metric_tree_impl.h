@@ -10,7 +10,7 @@
 
 #include <assert.h>
 #include <mlpack/core.h>
-#include <mlpack/core/tree/bounds.h>
+#include <mlpack/core/tree/bounds.hpp>
 #include <armadillo>
 
 namespace tree_gen_metric_tree_private {

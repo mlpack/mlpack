@@ -11,7 +11,7 @@
 #ifndef TREE_DCONEBOUND_H
 #define TREE_DCONEBOUND_H
 
-#include "mlpack/core/math/math_lib.h"
+#include "mlpack/core/math/range.hpp"
 
 // Awaiting transition
 #include "cosine.h"
@@ -101,7 +101,7 @@ class DConeBound {
      *
      * Example: bound1.MinDistanceSq(other) for minimum squared distance.
      */
-    Range RangeCosine(const DConeBound& other) const;
+    mlpack::math::Range RangeCosine(const DConeBound& other) const;
 
     /**
      * Calculates closest-to-their-midpoint bounding box distance,

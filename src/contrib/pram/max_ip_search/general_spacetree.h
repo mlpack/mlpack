@@ -14,7 +14,7 @@
 
 #include <assert.h>
 #include <mlpack/core.h>
-#include <mlpack/core/tree/statistic.h>
+#include <mlpack/core/tree/statistic.hpp>
 //#include <mlpack/core.h>
 
 /**

@@ -47,10 +47,10 @@ int main (int argc, char *argv[]) {
   string qfile = CLI::GetParam<string>("q");
 
   Log::Info << "Loading files..." << endl;
-  if (!data::Load(rfile.c_str(), rdata))
+  if (rdata.load(rfile.c_str()) == false)
     Log::Fatal << "Reference file "<< rfile << " not found." << endl;
 
-  if (!data::Load(qfile.c_str(), qdata)) 
+  if (qdata.load(qfile.c_str()) == false) 
     Log::Fatal << "Query file " << qfile << " not found." << endl;
 
   Log::Info << "File loaded..." << endl;
@@ -60,12 +60,12 @@ int main (int argc, char *argv[]) {
 	   << ")" << endl;
 
 
-  arma::Mat<size_t> nac, exc, apc;
-  arma::mat din, die, dia;
+  arma::Mat<size_t> nac, exc;
+  arma::mat din, die;
 
   //size_t knns = CLI::GetParam<int>("maxip/knns");
 
-  double naive_comp, fast_comp, approx_comp;
+  double naive_comp, fast_comp;
 
 
   // Naive computation
