@@ -11,7 +11,9 @@
 #define DATASET_SCALER_H
 
 #include <mlpack/core.h>
-#include <mlpack/core/tree/bounds.h>
+#include <mlpack/core/tree/bounds.hpp>
+
+using namespace mlpack::math;
 
 /** @brief A static class providing utilities for scaling the query
  *         and the reference datasets.

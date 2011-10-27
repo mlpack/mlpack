@@ -65,7 +65,7 @@
 #define INSIDE_DUALTREE_KDE_H
 
 #include "mlpack/core.h"
-#include "mlpack/core/tree/spacetree.h"
+#include "mlpack/core/tree/spacetree.hpp"
 //#include "contrib/nslagle/series_expansion/farfield_expansion.h"
 //#include "contrib/nslagle/series_expansion/local_expansion.h"
 //#include "contrib/nslagle/series_expansion/mult_farfield_expansion.h"
@@ -121,6 +121,10 @@ PARAM_MODULE ("dualtree_kde",
  *    fast_kde.Compute(&results);
  *  @endcode
  */
+
+using namespace mlpack::tree;
+using namespace mlpack::bound;
+
 template<typename TKernelAux>
 class DualtreeKde {
 
@@ -244,7 +248,7 @@ class DualtreeKde {
   /** @brief The permutation mapping indices of references_ to
    *         original order.
    */
-  std::vector<size_t> old_from_new_references_;
+  arma::Col<size_t> old_from_new_references_;
 
   ////////// Private Member Functions //////////
 
