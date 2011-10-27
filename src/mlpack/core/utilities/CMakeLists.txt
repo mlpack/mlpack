@@ -3,11 +3,10 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-    model.hpp
-    save_restore_model.cpp
-    save_restore_model.hpp
-    save_restore_model_impl.hpp
-    save_restore_model_test.cpp
+    save_restore_utility.cpp
+    save_restore_utility.hpp
+    save_restore_utility.hpp
+    save_restore_utility.cpp
 )
 
 # add directory name to sources
@@ -20,10 +19,10 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # add test executable
-add_executable(save_restore_model_test
-  save_restore_model_test.cpp
+add_executable(save_restore_utility_test
+  save_restore_utility_test.cpp
 )
-target_link_libraries(save_restore_model_test
+target_link_libraries(save_restore_utility_test
   mlpack
   boost_unit_test_framework
   xml2

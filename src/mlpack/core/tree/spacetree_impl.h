@@ -6,15 +6,16 @@
  * @experimental
  */
 
-#ifndef __MLPACK_CORE_TREE_SPACETREE_IMPL_HPP
-#define __MLPACK_CORE_TREE_SPACETREE_IMPL_HPP
+#ifndef TREE_SPACETREE_IMPL_H
+#define TREE_SPACETREE_IMPL_H
 
 // Try to prevent direct inclusion
-#ifndef __MLPACK_CORE_TREE_SPACETREE_HPP
+#ifndef TREE_SPACETREE_H
 #error "Do not include this header directly."
 #endif
 
-#include "mlpack/core/io/log.hpp"
+#include <mlpack/core/io/io.h>
+#include "../io/log.h"
 
 namespace mlpack {
 namespace tree {
@@ -482,4 +483,4 @@ size_t BinarySpaceTree<Bound, Statistic>::GetSplitIndex(
 }; // namespace tree
 }; // namespace mlpack
 
-#endif // __MLPACK_CORE_TREE_SPACETREE_IMPL_HPP
+#endif

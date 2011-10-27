@@ -1,16 +1,17 @@
 /**
- * @file spacetree.hpp
+ * @file spacetree.h
  *
  * Generalized space partitioning tree.
  *
  * @experimental
  */
 
-#ifndef __MLPACK_CORE_TREE_SPACETREE_HPP
-#define __MLPACK_CORE_TREE_SPACETREE_HPP
+#ifndef TREE_SPACETREE_H
+#define TREE_SPACETREE_H
 
-#include "statistic.hpp"
+#include "statistic.h"
 
+#include <mlpack/core.h>
 #include <armadillo>
 
 namespace mlpack {
@@ -196,6 +197,6 @@ class BinarySpaceTree {
 }; // namespace mlpack
 
 // Include implementation.
-#include "spacetree_impl.hpp"
+#include "spacetree_impl.h"
 
-#endif // __MLPACK_CORE_TREE_SPACETREE_HPP
+#endif

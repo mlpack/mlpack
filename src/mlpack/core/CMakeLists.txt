@@ -6,9 +6,9 @@ set(DIRS
   io
   kernels
   math
-  model
   optimizers
   tree
+  utilities
 )
 
 foreach(dir ${DIRS})

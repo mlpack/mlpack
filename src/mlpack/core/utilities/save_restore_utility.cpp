@@ -1,9 +1,18 @@
-#include "save_restore_model.hpp"
+/**
+ * @file utilities/save_restore_utility.cpp
+ * @author Neil Slagle
+ *
+ * The SaveRestoreUtility provides helper functions in saving and
+ *   restoring models.  The current output file type is XML.
+ *
+ * @experimental
+ */
+#include "save_restore_utility.hpp"
 
 using namespace mlpack;
-using namespace model;
+using namespace utilities;
 
-bool SaveRestoreModel::readFile (std::string filename)
+bool SaveRestoreUtility::ReadFile (std::string filename)
 {
   xmlDocPtr xmlDocTree = NULL;
   if (NULL == (xmlDocTree = xmlReadFile (filename.c_str(), NULL, 0)))
@@ -13,11 +22,11 @@ bool SaveRestoreModel::readFile (std::string filename)
   xmlNodePtr root = xmlDocGetRootElement (xmlDocTree);
   parameters.clear();
 
-  recurseOnNodes (root->children);
+  RecurseOnNodes (root->children);
   xmlFreeDoc (xmlDocTree);
   return true;
 }
-void SaveRestoreModel::recurseOnNodes (xmlNode* n)
+void SaveRestoreUtility::RecurseOnNodes (xmlNode* n)
 {
   xmlNodePtr current = NULL;
   for (current = n; current; current = current->next)
@@ -28,10 +37,10 @@ void SaveRestoreModel::recurseOnNodes (xmlNode* n)
       parameters[(const char*) current->name] = (const char*) content;
       xmlFree (content);
     }
-    recurseOnNodes (current->children);
+    RecurseOnNodes (current->children);
   }
 }
-bool SaveRestoreModel::writeFile (std::string filename)
+bool SaveRestoreUtility::WriteFile (std::string filename)
 {
   bool success = false;
   xmlDocPtr xmlDocTree = xmlNewDoc (BAD_CAST "1.0");
@@ -55,7 +64,7 @@ bool SaveRestoreModel::writeFile (std::string filename)
   xmlFreeDoc (xmlDocTree);
   return success;
 }
-arma::mat& SaveRestoreModel::loadParameter (arma::mat& matrix, std::string name)
+arma::mat& SaveRestoreUtility::LoadParameter (arma::mat& matrix, std::string name)
 {
   std::map<std::string, std::string>::iterator it = parameters.find (name);
   if (it != parameters.end ())
@@ -111,7 +120,19 @@ arma::mat& SaveRestoreModel::loadParameter (arma::mat& matrix, std::string name)
     errx (1, "Missing the correct name\n");
   }
 }
-char SaveRestoreModel::loadParameter (char c, std::string name)
+std::string SaveRestoreUtility::LoadParameter (std::string str, std::string name)
+{
+  std::map<std::string, std::string>::iterator it = parameters.find (name);
+  if (it != parameters.end ())
+  {
+    return (*it).second;
+  }
+  else
+  {
+    errx (1, "Missing the correct name\n");
+  }
+}
+char SaveRestoreUtility::LoadParameter (char c, std::string name)
 {
   int temp;
   std::map<std::string, std::string>::iterator it = parameters.find (name);
@@ -127,14 +148,14 @@ char SaveRestoreModel::loadParameter (char c, std::string name)
     errx (1, "Missing the correct name\n");
   }
 }
-void SaveRestoreModel::saveParameter (char c, std::string name)
+void SaveRestoreUtility::SaveParameter (char c, std::string name)
 {
   int temp = (int) c;
   std::ostringstream output;
   output << temp;
   parameters[name] = output.str();
 }
-void SaveRestoreModel::saveParameter (arma::mat& mat, std::string name)
+void SaveRestoreUtility::SaveParameter (arma::mat& mat, std::string name)
 {
   std::ostringstream output;
   size_t columns = mat.n_cols;
