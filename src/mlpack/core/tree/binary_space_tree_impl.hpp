@@ -1,20 +1,16 @@
 /**
- * @file spacetree_impl.h
+ * @file binary_space_tree_impl.hpp
  *
  * Implementation of generalized space partitioning tree.
- *
- * @experimental
  */
+#ifndef __MLPACK_CORE_TREE_BINARY_SPACE_TREE_IMPL_HPP
+#define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_IMPL_HPP
 
-#ifndef __MLPACK_CORE_TREE_SPACETREE_IMPL_HPP
-#define __MLPACK_CORE_TREE_SPACETREE_IMPL_HPP
+// In case it wasn't included already for some reason.
+#include "binary_space_tree.hpp"
 
-// Try to prevent direct inclusion
-#ifndef __MLPACK_CORE_TREE_SPACETREE_HPP
-#error "Do not include this header directly."
-#endif
-
-#include "mlpack/core/io/log.hpp"
+#include <mlpack/core/io/cli.hpp>
+#include <mlpack/core/io/log.hpp>
 
 namespace mlpack {
 namespace tree {
@@ -149,7 +145,7 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree() :
   // Nothing to do.
 }
 
-/***
+/**
  * Deletes this node, deallocating the memory for the children and calling their
  * destructors in turn.  This will invalidate any pointers or references to any
  * nodes which are children of this one.
@@ -482,4 +478,4 @@ size_t BinarySpaceTree<Bound, Statistic>::GetSplitIndex(
 }; // namespace tree
 }; // namespace mlpack
 
-#endif // __MLPACK_CORE_TREE_SPACETREE_IMPL_HPP
+#endif
