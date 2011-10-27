@@ -8,8 +8,8 @@
 
 #include <assert.h>
 #include <mlpack/core.h>
-#include <mlpack/core/tree/bounds.h>
-#include <mlpack/core/tree/statistic.h>
+#include <mlpack/core/tree/bounds.hpp>
+#include <mlpack/core/tree/statistic.hpp>
 #include <vector>
 #include <armadillo>
 #include "general_spacetree.h"
@@ -113,7 +113,7 @@ class ApproxMaxIP {
   // TreeType are BinarySpaceTrees where the data are bounded by 
   // Euclidean bounding boxes, the data are stored in a Matrix, 
   // and each node has a QueryStat for its bound.
-  typedef GeneralBinarySpaceTree<DBallBound<>, arma::mat> TreeType;
+  typedef GeneralBinarySpaceTree<bound::DBallBound<>, arma::mat> TreeType;
   typedef GeneralBinarySpaceTree<DConeBound<>, arma::mat, QueryStat> CTreeType;
    
   

@@ -19,15 +19,12 @@ double MaxIP::MaxNodeIP_(TreeType* reference_node) {
   arma::vec q = queries_.col(query_);
   arma::vec centroid = reference_node->bound().center();
 
-//   // +1: Can be cached in the reference tree
-//   double c_norm = arma::norm(centroid, 2);
+  // +1: Can be cached in the reference tree
   double c_norm = reference_node->stat().dist_to_origin();
 
   assert(arma::norm(q, 2) == query_norms_(query_));
 
   double rad = std::sqrt(reference_node->bound().radius());
-
-  double max_cos_qr = 1.0;
 
   if (mlpack::CLI::HasParam("maxip/angle_prune")) { 
     // tighter bound of \max_{r \in B_p^R} <q,r> 
@@ -36,14 +33,13 @@ double MaxIP::MaxNodeIP_(TreeType* reference_node) {
     //    \leq |q| (|p|+R) if <qp \leq \max_r <pr
     //    \leq |q| (|p|+R) cos( <qp - \max_r <pr ) otherwise
 
+    double max_cos_qr = 1.0;
     if (rad <= c_norm) {
       // +1
       double cos_qp = arma::dot(q, centroid) 
 	/ (query_norms_(query_) * c_norm);
       double sin_qp = std::sqrt(1 - cos_qp * cos_qp);
 
-//       double max_sin_pr = rad / c_norm;
-//       double min_cos_pr = std::sqrt(1 - max_sin_pr * max_sin_pr);
       double max_sin_pr = reference_node->stat().sine_origin();
       double min_cos_pr = reference_node->stat().cosine_origin();;
 
@@ -60,14 +56,25 @@ double MaxIP::MaxNodeIP_(TreeType* reference_node) {
       ball_has_origin_++;
     }
 
-  }
+    return (query_norms_(query_) * (c_norm + rad) * max_cos_qr);
+  } // angle-prune
 
+  if (mlpack::CLI::HasParam("maxip/alt_angle_prune")) { 
+    // tighter bound of \max_{r \in B_p^R} <q,r> 
+    //    = |q| \max_{r \in B_p^R} |r| cos <qr 
+    //    \leq  |q| (|p| cos <qp + R )  (closed-form solution 
+    // the maximization above (I think it is correct))
+    //    = ( <q, p> + |p| R )
+
+    // +1
+    return (arma::dot(q, centroid) + (query_norms_(query_) * rad));
+  } // alt-angle-prune
+  
   // Otherwise :
   // simple bound of \max_{r \in B_p^R} <q,r> 
   //    = |q| \max_{r \in B_p^R} |r| cos <qr 
   //    \leq |q| \max_{r \in B_p^R} |r| \leq |q| (|p|+R)
-
-  return (query_norms_(query_) * (c_norm + rad) * max_cos_qr);
+  return (query_norms_(query_) * (c_norm + rad));
 }
 
 double MaxIP::MaxNodeIP_(CTreeType* query_node,
@@ -128,9 +135,22 @@ double MaxIP::MaxNodeIP_(CTreeType* query_node,
     } else {
       ball_has_origin_++;
     }
-  }
+    return ((c_norm + rad) * max_cos_qp);
+  } // angle-prune
 
-  return ((c_norm + rad) * max_cos_qp);
+  if (mlpack::CLI::HasParam("maxip/alt_angle_prune")) { 
+    // using the closed-form-maximization,
+    // |p| cos (phi - w) + R
+      // +1
+    double c_norm_cos_phi = arma::dot(q, centroid) / q_norm;
+    double c_norm_sin_phi = std::sqrt(c_norm * c_norm 
+				      - c_norm_cos_phi * c_norm_cos_phi);
+
+    return (c_norm_cos_phi * cos_w + c_norm_sin_phi * sin_w + rad);
+  } // alt-angle-prune
+
+  return (c_norm + rad);
+
 }
 
 
@@ -642,7 +662,10 @@ void MaxIP::set_angles_in_balls_(TreeType* tree) {
   double rad = std::sqrt(tree->bound().radius());
   
   tree->stat().set_dist_to_origin(c_norm);
-  tree->stat().set_angles(rad / c_norm, (size_t) 1);
+  if (rad <= c_norm)
+    tree->stat().set_angles(rad / c_norm, (size_t) 1);
+  else
+    tree->stat().set_angles(-1.0, (size_t) 0);
 
   // traverse down the children
   if (!tree->is_leaf()) {

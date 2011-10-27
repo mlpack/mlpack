@@ -162,8 +162,8 @@ double DConeBound<TMetric, TPoint>::MinCosine(const DConeBound& other) const {
  * Calculates minimum and maximum bound-to-bound cosine.
  */
 template<typename TMetric, typename TPoint>
-Range DConeBound<TMetric, TPoint>::RangeCosine(const DConeBound& other) const {
-  return Range(MinCosine(other), MaxCosine(other));
+mlpack::math::Range DConeBound<TMetric, TPoint>::RangeCosine(const DConeBound& other) const {
+  return mlpack::math::Range(MinCosine(other), MaxCosine(other));
 }
 
 /**
