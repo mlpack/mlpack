@@ -6,7 +6,7 @@
  */
 #include <mlpack/core.h>
 #include <mlpack/core/tree/bounds.hpp>
-#include <mlpack/core/tree/spacetree.hpp>
+#include <mlpack/core/tree/binary_space_tree.hpp>
 
 // Classes to test.
 #include "nearest_neighbor_sort.hpp"

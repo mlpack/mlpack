@@ -12,7 +12,7 @@
 
 #include <math.h>
 
-#include "../math/math_lib.hpp"
+#include "../math/math_misc.hpp"
 #include "../io/log.hpp"
 
 namespace mlpack {
