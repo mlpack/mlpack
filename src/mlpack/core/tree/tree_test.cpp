@@ -5,7 +5,7 @@
  */
 
 #include "bounds.hpp"
-#include "spacetree.hpp"
+#include "binary_space_tree.hpp"
 #include <mlpack/core/kernels/lmetric.hpp>
 #include <vector>
 
