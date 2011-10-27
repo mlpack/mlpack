@@ -12,7 +12,7 @@ using namespace std;
 PROGRAM_INFO("Approx-maximum Inner Product", "This program "
   	     "returns the approx-maximum inner product for a "
   	     "given query over a set of points (references).", 
- 	     "");
+ 	     "approx_maxip");
 
 PARAM_STRING_REQ("r", "The reference set", "");
 PARAM_STRING_REQ("q", "The set of queries", "");
@@ -111,8 +111,15 @@ int main (int argc, char *argv[]) {
 	      << rdata.n_cols  << " / " << (float) approx_comp << " = "
 	      <<(float) (rdata.n_cols / approx_comp) << endl;
 
+
     if (CLI::GetParam<string>("rank_file") != "") {
       string rank_file = CLI::GetParam<string>("rank_file");
+      double epsilon = CLI::GetParam<double>("approx_maxip/epsilon");
+      double alpha = CLI::GetParam<double>("approx_maxip/alpha");
+
+      check_nn_utils::check_rank_bound(rank_file, rdata.n_cols,
+				       epsilon, alpha, &apc);
+
       check_nn_utils::compute_error(rank_file,  rdata.n_cols, &apc);
     } else {
       check_nn_utils::compute_error(&rdata, &qdata, &apc);
