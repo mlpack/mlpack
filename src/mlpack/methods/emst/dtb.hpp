@@ -4,10 +4,10 @@
  * @author Bill March (march@gatech.edu)
  *
  * Contains an implementation of the DualTreeBoruvka algorithm for finding a
- * Euclidean Minimum Spanning Tree.  
+ * Euclidean Minimum Spanning Tree.
  *
  * Citation: March, W. B.; Ram, P.; and Gray, A. G.  Fast Euclidean Minimum Spanning
- * Tree: Algorithm, Analysis, Applications.  In KDD, 2010.  
+ * Tree: Algorithm, Analysis, Applications.  In KDD, 2010.
  *
  */
 
@@ -18,7 +18,7 @@
 
 #include <mlpack/core.h>
 #include <mlpack/core/tree/bounds.hpp>
-#include <mlpack/core/tree/spacetree.hpp>
+#include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/kernels/lmetric.hpp>
 
 PARAM(size_t, "leaf_size", "Size of the leaves.", "naive", 1, false);
