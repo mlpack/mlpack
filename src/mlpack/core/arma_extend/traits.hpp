@@ -1,7 +1,7 @@
 // Extra traits to support u64 and s64 until that patch is applied to the
 // Armadillo sources.
 
-#if ARMA_VERSION_MAJOR > 2 || \
+#if ARMA_VERSION_MAJOR < 1 || \
     (ARMA_VERSION_MAJOR == 1 && ARMA_VERSION_MINOR <= 2)
 // For old Armadillo versions ( <= 1.2.0 ), all we have to do is define these
 // two structs which say these element types are supported.
