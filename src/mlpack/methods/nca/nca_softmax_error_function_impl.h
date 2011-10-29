@@ -18,7 +18,8 @@ SoftmaxErrorFunction<Kernel>::SoftmaxErrorFunction(const arma::mat& dataset,
                                                    const arma::uvec& labels,
                                                    Kernel kernel) :
   dataset_(dataset), labels_(labels), kernel_(kernel),
-  last_coordinates_(dataset.n_rows, dataset.n_rows)
+  last_coordinates_(dataset.n_rows, dataset.n_rows),
+  precalculated_(false)
 { /* nothing to do */ }
 
 template<typename Kernel>
@@ -82,7 +83,8 @@ arma::mat SoftmaxErrorFunction<Kernel>::GetInitialPoint() {
 template<typename Kernel>
 void SoftmaxErrorFunction<Kernel>::Precalculate(const arma::mat& coordinates) {
   // Make sure the calculation is necessary.
-  if (accu(coordinates == last_coordinates_) == coordinates.n_elem)
+  if ((accu(coordinates == last_coordinates_) == coordinates.n_elem) &&
+      precalculated_)
     return; // No need to calculate; we already have this stuff saved.
 
   // Coordinates are different; save the new ones, and stretch the dataset.
@@ -128,6 +130,9 @@ void SoftmaxErrorFunction<Kernel>::Precalculate(const arma::mat& coordinates) {
       p_[i] = 0;
     }
   }
+
+  // We've done a precalculation.  Mark it as done.
+  precalculated_ = true;
 }
 
 }; // namespace nca

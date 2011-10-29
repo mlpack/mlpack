@@ -77,6 +77,9 @@ class SoftmaxErrorFunction {
   arma::vec p_; // Holds calculated p_i.
   arma::vec denominators_; // Holds denominators for calculation of p_ij.
 
+  //! False is nothing has ever been precalculated (only at construction time).
+  bool precalculated_;
+
   /**
    * Precalculate the denominators and numerators that will make up the p_ij,
    * but only if the coordinates matrix is different than the last coordinates
