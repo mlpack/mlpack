@@ -6,9 +6,9 @@
 #ifndef __MLPACK_CORE_TREE_BINARY_SPACE_TREE_HPP
 #define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_HPP
 
-#include "statistic.hpp"
+#include <mlpack/core.h>
 
-#include <armadillo>
+#include "statistic.hpp"
 
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {

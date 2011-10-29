@@ -13,7 +13,6 @@
 #include <string>
 #include <streambuf>
 #include <boost/lexical_cast.hpp>
-#include <armadillo>
 
 namespace mlpack {
 namespace io {

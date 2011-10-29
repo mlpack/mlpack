@@ -8,7 +8,7 @@
 #ifndef __MLPACK_CORE_KERNELS_COSINE_DISTANCE_HPP
 #define __MLPACK_CORE_KERNELS_COSINE_DISTANCE_HPP
 
-#include <armadillo>
+#include <mlpack/core.h>
 
 namespace mlpack {
 namespace kernel {

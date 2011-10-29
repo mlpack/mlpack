@@ -6,14 +6,13 @@
  *
  * @experimental
  */
-
 #ifndef __MLPACK_CORE_TREE_DBALLBOUND_IMPL_HPP
 #define __MLPACK_CORE_TREE_DBALLBOUND_IMPL_HPP
 
+#include <mlpack/core.h>
+
 // Awaiting transition
 #include <mlpack/core/kernels/lmetric.hpp>
-
-#include <armadillo>
 
 namespace mlpack {
 namespace bound {

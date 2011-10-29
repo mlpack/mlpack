@@ -7,7 +7,7 @@
 #ifndef __MLPACK_CORE_KERNELS_MAHALANOBIS_DISTANCE_H
 #define __MLPACK_CORE_KERNELS_MAHALANOBIS_DISTANCE_H
 
-#include <armadillo>
+#include <mlpack/core.h>
 
 namespace mlpack {
 namespace kernel {

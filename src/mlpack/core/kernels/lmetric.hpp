@@ -10,7 +10,7 @@
 #ifndef __MLPACK_CORE_KERNELS_LMETRIC_H
 #define __MLPACK_CORE_KERNELS_LMETRIC_H
 
-#include <armadillo>
+#include <mlpack/core.h>
 
 namespace mlpack {
 namespace kernel {

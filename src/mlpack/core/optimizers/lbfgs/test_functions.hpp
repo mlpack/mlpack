@@ -15,8 +15,7 @@
 #ifndef __MLPAC_CORE_OPTIMIZERS_LBFGS_TEST_FUNCTIONS_HPP
 #define __MLPAC_CORE_OPTIMIZERS_LBFGS_TEST_FUNCTIONS_HPP
 
-#include <mlpack/core/io/cli.hpp>
-#include <mlpack/core/io/log.hpp>
+#include <mlpack/core.h>
 
 // To fulfill the template policy class 'FunctionType', we must implement
 // the following:

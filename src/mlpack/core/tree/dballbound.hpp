@@ -10,9 +10,9 @@
 #ifndef __MLPACK_CORE_TREE_DBALLBOUND_HPP
 #define __MLPACK_CORE_TREE_DBALLBOUND_HPP
 
+#include <mlpack/core.h>
 #include <mlpack/core/math/math_misc.hpp>
 #include <mlpack/core/kernels/lmetric.hpp>
-#include <armadillo>
 
 namespace mlpack {
 namespace bound {
