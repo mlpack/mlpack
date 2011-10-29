@@ -963,10 +963,10 @@ void ApproxMaxIP::InitApprox(const arma::mat& queries_in,
     
   if (mlpack::CLI::HasParam("approx_maxip/dual_tree")) {
     query_tree_
-      = proximity::MakeGenCosineTree<CTreeType>(queries_,
-						leaf_size_,
-						&old_from_new_queries_,
-						NULL);
+      = proximity::MakeGenConeTree<CTreeType>(queries_,
+					      leaf_size_,
+					      &old_from_new_queries_,
+					      NULL);
   }
 
   // Stop the timer we started above
