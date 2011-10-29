@@ -8,7 +8,7 @@
 #ifndef __MLPACK_CORE_KERNELS_EXAMPLE_KERNEL_H
 #define __MLPACK_CORE_KERNELS_EXAMPLE_KERNEL_H
 
-#include <armadillo>
+#include <mlpack/core.h>
 
 namespace mlpack {
 

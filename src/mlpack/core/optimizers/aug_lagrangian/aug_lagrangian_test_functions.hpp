@@ -7,9 +7,7 @@
 #ifndef __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP
 #define __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP
 
-#include <mlpack/core/io/cli.hpp>
-#include <mlpack/core/io/log.hpp>
-#include <armadillo>
+#include <mlpack/core.h>
 
 namespace mlpack {
 namespace optimization {

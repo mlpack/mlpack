@@ -9,7 +9,7 @@
 #ifndef __MLPACK_CORE_TREE_PERCLIDICHRECTBOUND_HPP
 #define __MLPACK_CORE_TREE_PERCLIDICHRECTBOUND_HPP
 
-#include <armadillo>
+#include <mlpack/core.h>
 
 namespace mlpack {
 namespace bound {

@@ -20,7 +20,7 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#include <armadillo>
+#include <mlpack/core.h>
 #include <boost/tokenizer.hpp>
 
 namespace mlpack {

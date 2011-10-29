@@ -12,8 +12,8 @@
 #ifndef __MLPACK_CORE_TREE_HRECTBOUND_HPP
 #define __MLPACK_CORE_TREE_HRECTBOUND_HPP
 
-#include <armadillo>
-#include "mlpack/core/math/range.hpp"
+#include <mlpack/core.h>
+#include <mlpack/core/math/range.hpp>
 
 namespace mlpack {
 namespace bound {
