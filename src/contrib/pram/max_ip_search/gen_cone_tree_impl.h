@@ -1,18 +1,18 @@
-/** @file gen_cosine_tree_impl.h
+/** @file gen_cone_tree_impl.h
  *
- *  Implementation for the regular pointer-style cosine-tree builder.
+ *  Implementation for the regular pointer-style cone-tree builder.
  *
  *  @author Parikshit Ram (pram@cc.gatech.edu)
  */
-#ifndef GEN_COSINE_TREE_IMPL_H
-#define GEN_COSINE_TREE_IMPL_H
+#ifndef GEN_CONE_TREE_IMPL_H
+#define GEN_CONE_TREE_IMPL_H
 
 #include <assert.h>
 #include <mlpack/core.h>
 #include <armadillo>
 #include "cosine.h"
 
-namespace tree_gen_cosine_tree_private {
+namespace tree_gen_cone_tree_private {
 
   size_t FurthestColumnIndex(const arma::vec& pivot,
 			     const arma::mat& matrix, 
@@ -21,11 +21,10 @@ namespace tree_gen_cosine_tree_private {
     
   // This function assumes that we have points embedded in Euclidean
   // space. The representative point (center) is chosen as the mean 
-  // of the all unit directions of all the vectors in this set.
+  // of the all the vectors in this set.
 
-  // fixed!!
   template<typename TBound>
-  void MakeLeafCosineTreeNode(const arma::mat& matrix,
+    void MakeLeafConeTreeNode(const arma::mat& matrix,
 			      size_t begin, size_t count,
 			      TBound *bounds) {
 
@@ -38,9 +37,6 @@ namespace tree_gen_cosine_tree_private {
  	    / arma::norm(matrix.unsafe_col(i), 2));
     }
     bounds->center() /= (double) count;
-//     bounds->center() /= arma::norm(bounds->center(), 2);
-
-//     printf("c_norm: %lg\n", arma::norm(bounds->center(), 2));
 
     double furthest_cosine;
     FurthestColumnIndex(bounds->center(), matrix, begin, count,
@@ -49,11 +45,10 @@ namespace tree_gen_cosine_tree_private {
   }
   
 
-  // fixed until compiled
   template<typename TBound>
-  size_t MatrixPartition(arma::mat& matrix, size_t first, size_t count,
-			  TBound &left_bound, TBound &right_bound,
-			  size_t *old_from_new) {
+    size_t MatrixPartition(arma::mat& matrix, size_t first, size_t count,
+			   TBound &left_bound, TBound &right_bound,
+			   size_t *old_from_new) {
     
     size_t end = first + count;
     size_t left_count = 0;
@@ -126,22 +121,18 @@ namespace tree_gen_cosine_tree_private {
   }
 	
 
-  // fixed
-  template<typename TCosineTree>
-  bool AttemptSplitting(arma::mat& matrix,
-			TCosineTree *node,
-			TCosineTree **left, 
-			TCosineTree **right, 
-			size_t leaf_size,
-			size_t *old_from_new) {
+  template<typename TConeTree>
+    bool AttemptSplitting(arma::mat& matrix,
+			  TConeTree *node,
+			  TConeTree **left, 
+			  TConeTree **right, 
+			  size_t leaf_size,
+			  size_t *old_from_new) {
 
     // Pick a random row.
     size_t random_row 
       = math::RandInt(node->begin(),
 		      node->begin() + node->count());
-
-    // why is this here?
-    // random_row = node->begin();
 
     arma::vec random_row_vec = matrix.unsafe_col(random_row);
 
@@ -159,18 +150,14 @@ namespace tree_gen_cosine_tree_private {
       FurthestColumnIndex(furthest_from_random_row_vec, matrix, node->begin(),
 			  node->count(), &furthest_from_furthest_cosine);
     arma::vec furthest_from_furthest_random_row_vec =
-       matrix.unsafe_col(furthest_from_furthest_random_row);
+      matrix.unsafe_col(furthest_from_furthest_random_row);
 
     if(furthest_from_furthest_cosine > (1.0 - DBL_EPSILON)) {
       // everything in a really tight narrow cone
       return false;
     } else {
-      *left = new TCosineTree();
-      *right = new TCosineTree();
-
-      // not necessary, vec::operator=() takes care of resetting the size
-//      ((*left)->bound().center()).set_size(matrix.n_rows);
-//      ((*right)->bound().center()).set_size(matrix.n_rows);
+      *left = new TConeTree();
+      *right = new TConeTree();
 
       ((*left)->bound().center()) = furthest_from_random_row_vec;
       ((*right)->bound().center()) = furthest_from_furthest_random_row_vec;
@@ -187,10 +174,9 @@ namespace tree_gen_cosine_tree_private {
     return true;
   }
 
-  // fixed
-  template<typename TCosineTree>
-  void CombineBounds(arma::mat& matrix, TCosineTree *node,
-		     TCosineTree *left, TCosineTree *right) {
+  template<typename TConeTree>
+    void CombineBounds(arma::mat& matrix, TConeTree *node,
+		       TConeTree *left, TConeTree *right) {
     
     // First clear the internal node center.
     node->bound().center().zeros();
@@ -199,9 +185,6 @@ namespace tree_gen_cosine_tree_private {
     node->bound().center() += left->count() * left->bound().center();
     node->bound().center() += right->count() * right->bound().center();
     node->bound().center() /= (double) node->count();
-//     node->bound().center() /= arma::norm(node->bound().center(), 2);
-    
-//     printf("c_norm: %lg\n", arma::norm(node->bound().center(), 2));
 
     double left_min_cosine, right_min_cosine;
     FurthestColumnIndex(node->bound().center(), matrix, left->begin(), 
@@ -212,17 +195,17 @@ namespace tree_gen_cosine_tree_private {
   }
 
   // fixed
-  template<typename TCosineTree>
-  void SplitGenCosineTree(arma::mat& matrix, TCosineTree *node,
+  template<typename TConeTree>
+    void SplitGenConeTree(arma::mat& matrix, TConeTree *node,
 			  size_t leaf_size, size_t *old_from_new) {
     
-    TCosineTree *left = NULL;
-    TCosineTree *right = NULL;
+    TConeTree *left = NULL;
+    TConeTree *right = NULL;
 
     // If the node is just too small, then do not split.
     if(node->count() < leaf_size) {
-      MakeLeafCosineTreeNode(matrix, node->begin(), node->count(),
-			     &(node->bound()));
+      MakeLeafConeTreeNode(matrix, node->begin(), node->count(),
+			   &(node->bound()));
     }
     
     // Otherwise, attempt to split.
@@ -231,13 +214,13 @@ namespace tree_gen_cosine_tree_private {
 				      leaf_size, old_from_new);
       
       if(can_cut) {
-	SplitGenCosineTree(matrix, left, leaf_size, old_from_new);
-	SplitGenCosineTree(matrix, right, leaf_size, old_from_new);
+	SplitGenConeTree(matrix, left, leaf_size, old_from_new);
+	SplitGenConeTree(matrix, right, leaf_size, old_from_new);
 	CombineBounds(matrix, node, left, right);
       }
       else {
-	MakeLeafCosineTreeNode(matrix, node->begin(),
-			       node->count(), &(node->bound()));
+	MakeLeafConeTreeNode(matrix, node->begin(),
+			     node->count(), &(node->bound()));
       }
     }
     

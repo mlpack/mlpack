@@ -95,7 +95,6 @@ double MaxIP::MaxNodeIP_(CTreeType* query_node,
   arma::vec centroid = reference_node->bound().center();
 
   // +1: can be cached in the reference tree
-//   double c_norm = arma::norm(centroid, 2);
   double c_norm = reference_node->stat().dist_to_origin();
   double rad = std::sqrt(reference_node->bound().radius());
 
@@ -111,8 +110,6 @@ double MaxIP::MaxNodeIP_(CTreeType* query_node,
       double sin_phi = std::sqrt(1 - cos_phi * cos_phi);
 
       // max_r sin <pr = sin_theta
-//       double sin_theta = rad / c_norm;
-//       double cos_theta = std::sqrt(1 - sin_theta * sin_theta);
       double sin_theta = reference_node->stat().sine_origin();
       double cos_theta = reference_node->stat().cosine_origin();
 
@@ -133,20 +130,37 @@ double MaxIP::MaxNodeIP_(CTreeType* query_node,
 	}
       }
     } else {
-      ball_has_origin_++;
+      ball_has_origin_ += query_node->end() - query_node->begin();
     }
     return ((c_norm + rad) * max_cos_qp);
   } // angle-prune
 
   if (mlpack::CLI::HasParam("maxip/alt_angle_prune")) { 
+    // HAVE TO WORK THIS OUT AND CHECK IT ANALYTICALLY
     // using the closed-form-maximization,
     // |p| cos (phi - w) + R
-      // +1
-    double c_norm_cos_phi = arma::dot(q, centroid) / q_norm;
-    double c_norm_sin_phi = std::sqrt(c_norm * c_norm 
-				      - c_norm_cos_phi * c_norm_cos_phi);
 
-    return (c_norm_cos_phi * cos_w + c_norm_sin_phi * sin_w + rad);
+    // +1
+    double cos_phi = arma::dot(q, centroid) / (c_norm * q_norm);
+    double sin_phi = std::sqrt(1 - cos_phi * cos_phi);
+
+    if (cos_phi < cos_w) { 
+     
+      return (c_norm * (cos_phi * cos_w + sin_phi * sin_w) + rad);
+
+    } else {
+      // phi < w; hence the query cone has the centroid
+      // so no useful bounding
+
+      cone_has_centroid_ += query_node->end() - query_node->begin();
+
+      // maybe trigger a flag which lets the peep know that 
+      // query cone too wide
+      // Although, not sure how that will benefit since the 
+      // current traversal kind of takes care of this.
+
+      return (c_norm + rad);
+    }
   } // alt-angle-prune
 
   return (c_norm + rad);
@@ -356,7 +370,7 @@ void MaxIP::ComputeNeighborsRecursion_(CTreeType* query_node,
 
   if (upper_bound_p_cos_pq < query_node->stat().bound()) { 
     // Pruned
-    number_of_prunes_++;
+    number_of_prunes_ += query_node->end() - query_node->begin();
 
     if (CLI::HasParam("maxip/check_prune"))
       CheckPrune(query_node, reference_node);
@@ -512,6 +526,7 @@ void MaxIP::Init(const arma::mat& queries_in,
   // track the number of prunes and computations
   number_of_prunes_ = 0;
   ball_has_origin_ = 0;
+  cone_has_centroid_ = 0;
   distance_computations_ = 0;
   split_decisions_ = 0;
     
@@ -550,10 +565,10 @@ void MaxIP::Init(const arma::mat& queries_in,
    
   if (mlpack::CLI::HasParam("maxip/dual_tree")) {
     query_tree_
-      = proximity::MakeGenCosineTree<CTreeType>(queries_,
-						leaf_size_,
-						&old_from_new_queries_,
-						NULL);
+      = proximity::MakeGenConeTree<CTreeType>(queries_,
+					      leaf_size_,
+					      &old_from_new_queries_,
+					      NULL);
     set_norms_in_cones_(query_tree_);
   }
 
@@ -579,6 +594,7 @@ void MaxIP::InitNaive(const arma::mat& queries_in,
   // track the number of prunes and computations
   number_of_prunes_ = 0;
   ball_has_origin_ = 0;
+  cone_has_centroid_ = 0;
   distance_computations_ = 0;
   split_decisions_ = 0;
     
@@ -620,6 +636,7 @@ void MaxIP::WarmInit(size_t knns) {
   // track the number of prunes and computations
   number_of_prunes_ = 0;
   ball_has_origin_ = 0;
+  cone_has_centroid_ = 0;
   distance_computations_ = 0;
   split_decisions_ = 0;
     
@@ -763,14 +780,15 @@ double MaxIP::ComputeNeighbors(arma::Mat<size_t>* resulting_neighbors,
     }
   }
 
-  mlpack::Log::Info << "Tree-based Search - Number of prunes: " 
+  mlpack::Log::Warn << "Tree-based Search - Number of prunes: " 
 		    << number_of_prunes_ << ", Ball has origin: "
-		    << ball_has_origin_ << std::endl;
+		    << ball_has_origin_ << ", Cone has centroid: "
+		    << cone_has_centroid_ << std::endl;
   mlpack::Log::Info << "\t \t Avg. # of DC: " 
-		   << (double) distance_computations_ 
+		    << (double) distance_computations_ 
     / (double) queries_.n_cols << std::endl;
   mlpack::Log::Info << "\t \t Avg. # of SD: " 
-		   << (double) split_decisions_ 
+		    << (double) split_decisions_ 
     / (double) queries_.n_cols << std::endl;
 
   return (double) (distance_computations_ + split_decisions_)
@@ -808,12 +826,12 @@ double MaxIP::ComputeNaive(arma::Mat<size_t>* resulting_neighbors,
   }
 
   mlpack::Log::Info << "Brute-force Search - Number of prunes: " 
-		   << number_of_prunes_ << std::endl;
+		    << number_of_prunes_ << std::endl;
   mlpack::Log::Info << "\t \t Avg. # of DC: " 
-		   << (double) distance_computations_ 
+		    << (double) distance_computations_ 
     / (double) queries_.n_cols << std::endl;
   mlpack::Log::Info << "\t \t Avg. # of SD: " 
-		   << (double) split_decisions_ 
+		    << (double) split_decisions_ 
     / (double) queries_.n_cols << std::endl;
 
   return (double) (distance_computations_ + split_decisions_)

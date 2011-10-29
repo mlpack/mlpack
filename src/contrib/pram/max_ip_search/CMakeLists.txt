@@ -10,13 +10,18 @@ set(SOURCES
    gen_metric_tree.h
    gen_metric_tree_impl.h
    gen_metric_tree_impl.cc
-   # Cosine tree
+   # Cone bound
    cosine.h
    dconebound.h
    dconebound_impl.h
-   gen_cosine_tree.h
-   gen_cosine_tree_impl.h
-   gen_cosine_tree_impl.cc
+   # Cosine tree
+   #gen_cosine_tree.h
+   #gen_cosine_tree_impl.h
+   #gen_cosine_tree_impl.cc
+   # cone tree
+   gen_cone_tree.h
+   gen_cone_tree_impl.h
+   gen_cone_tree_impl.cc
    # Max-inner-product search class
    exact_max_ip.h
    exact_max_ip.cc

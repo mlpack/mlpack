@@ -15,7 +15,7 @@
 #include "general_spacetree.h"
 #include "gen_metric_tree.h"
 #include "dconebound.h"
-#include "gen_cosine_tree.h"
+#include "gen_cone_tree.h"
 
 using namespace mlpack;
 
@@ -40,7 +40,7 @@ PARAM_INT("sample_limit", "The maximum number of samples allowed "
 PARAM_FLAG("angle_prune", "The flag to trigger the tighter"
 	   " pruning using the angles as well", "approx_maxip");
 PARAM_FLAG("dual_tree", "The flag to trigger dual-tree "
-	   "computation, using a cosine tree for the "
+	   "computation, using a cone tree for the "
 	   "queries.", "approx_maxip");
 
 PARAM_FLAG("check_prune", "The flag to trigger the "

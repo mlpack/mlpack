@@ -6,7 +6,7 @@
 #ifndef EXACT_MAX_IP_H
 #define EXACT_MAX_IP_H
 
-#define NDEBUG
+//#define NDEBUG
 
 #include <assert.h>
 #include <mlpack/core.h>
@@ -17,7 +17,7 @@
 #include "general_spacetree.h"
 #include "gen_metric_tree.h"
 #include "dconebound.h"
-#include "gen_cosine_tree.h"
+#include "gen_cone_tree.h"
 
 using namespace mlpack;
 
@@ -137,6 +137,7 @@ private:
   // The total number of prunes.
   size_t number_of_prunes_;
   size_t ball_has_origin_;
+  size_t cone_has_centroid_;
 
   // A permutation of the indices for tree building.
   arma::Col<size_t> old_from_new_queries_;
@@ -293,7 +294,7 @@ PARAM_FLAG("angle_prune", "The flag to trigger the tighter"
 PARAM_FLAG("alt_angle_prune", "The flag to trigger the tighter-er"
 	   " pruning using the angles as well", "maxip");
 PARAM_FLAG("dual_tree", "The flag to trigger dual-tree "
-	   "computation, using a cosine tree for the "
+	   "computation, using a cone tree for the "
 	   "queries.", "maxip");
 
 PARAM_FLAG("check_prune", "The flag to trigger the "

@@ -45,11 +45,14 @@ int main (int argc, char *argv[]) {
   string qfile = CLI::GetParam<string>("q");
 
   Log::Info << "Loading files..." << endl;
-  if (!data::Load(rfile.c_str(), rdata))
+  if (rdata.load(rfile.c_str()) == false)
     Log::Fatal << "Reference file "<< rfile << " not found." << endl;
-
-  if (!data::Load(qfile.c_str(), qdata)) 
+  
+  if (qdata.load(qfile.c_str()) == false)
     Log::Fatal << "Query file " << qfile << " not found." << endl;
+
+  rdata = arma::trans(rdata);
+  qdata ==arma::trans(qdata);
 
   Log::Info << "File loaded..." << endl;
   
