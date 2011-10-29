@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
     Log::Info << "Training SVM..." << std::endl;
 
     /* Load training data */
-    if (dataSet.load(trainFile.c_str()) == false)
+    if (!dataSet.load(trainFile.c_str(), arma::auto_detect, false, true))
       return 1;
 
     /* Begin SVM Training | Training and Testing */
@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
         /* Load testing data */
         arma::mat dataSet;
         std::string testFile = CLI::GetParam<std::string>("svm/test_data");
-        if (dataSet.load(testFile.c_str()) == false)
+        if (!dataSet.load(testFile.c_str(), arma::auto_detect, false, true))
           return 1;
 
         svm.BatchPredict(learner_typeid, dataSet, "predicted_values");
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
         /* Load testing data */
         arma::mat dataSet;
         std::string testFile = CLI::GetParam<std::string>("svm/test_data");
-        if (dataSet.load(testFile.c_str()) == false)
+        if (!dataSet.load(testFile.c_str(), arma::auto_detect, false, true))
           return 1;
 
         svm.BatchPredict(learner_typeid, dataSet, "predicted_values"); // TODO:param_req

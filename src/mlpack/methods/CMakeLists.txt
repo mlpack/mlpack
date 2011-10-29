@@ -9,7 +9,7 @@ set(DIRS
   # kernel_pca # (required sparse and is known to not work or compile)
   linear_regression
   mog
-  # mvu  # (currently known to not work)
+  mvu  # (currently known to not work)
   naive_bayes
   nca
   neighbor_search

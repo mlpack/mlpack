@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
   double epsilon = CLI::GetParam<double>("info/epsilon");
 
   arma::mat dataset;
-  dataset.load(data_file_name);
+  dataset.load(data_file_name, arma::auto_detect, false, true);
 
   InfomaxICA ica(lambda, B, epsilon);
   ica.applyICA(dataset);

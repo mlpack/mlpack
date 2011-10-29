@@ -5,8 +5,8 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   mvu.h
   mvu_impl.h
-  mvu_objective_function.h
-  mvu_objective_function.cc
+#  mvu_objective_function.h
+#  mvu_objective_function.cc
 )
 
 # Add directory name to sources.
@@ -19,7 +19,7 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_executable(ncmvu
-  main.cc
+  mvu_main.cpp
 )
 target_link_libraries(ncmvu
   mlpack

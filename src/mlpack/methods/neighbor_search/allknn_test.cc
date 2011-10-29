@@ -313,7 +313,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
   }
 }
 
-/***
+/**
  * Test the dual-tree nearest-neighbors method with the naive method.  This
  * uses both a query and reference dataset.
  *
@@ -323,7 +323,8 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_1) {
   arma::mat data_for_tree_;
 
   // Hard-coded filename: bad!
-  if (data_for_tree_.load("test_data_3_1000.csv") !=true )
+  if (!data_for_tree_.load("test_data_3_1000.csv", arma::auto_detect, false,
+      true))
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with.
@@ -356,7 +357,7 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_1) {
   }
 }
 
-/***
+/**
  * Test the dual-tree nearest-neighbors method with the naive method.  This uses
  * only a reference dataset.
  *
@@ -367,7 +368,8 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_2) {
 
   // Hard-coded filename: bad!
   // Code duplication: also bad!
-  if (data_for_tree_.load("test_data_3_1000.csv") !=true )
+  if (!data_for_tree_.load("test_data_3_1000.csv", arma::auto_detect, false,
+      true))
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with (may not be necessary with no ALIAS_MATRIX?).
@@ -397,7 +399,7 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_2) {
   }
 }
 
-/***
+/**
  * Test the single-tree nearest-neighbors method with the naive method.  This
  * uses only a reference dataset.
  *
@@ -408,7 +410,8 @@ BOOST_AUTO_TEST_CASE(single_tree_vs_naive) {
 
   // Hard-coded filename: bad!
   // Code duplication: also bad!
-  if (data_for_tree_.load("test_data_3_1000.csv") !=true )
+  if (!data_for_tree_.load("test_data_3_1000.csv", arma::auto_detect, false,
+      true))
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with (may not be necessary with no ALIAS_MATRIX?).

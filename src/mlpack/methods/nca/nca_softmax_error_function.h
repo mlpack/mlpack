@@ -8,8 +8,7 @@
 #ifndef __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTCLIN_H
 #define __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTCLIN_H
 
-#include <armadillo>
-#include <map>
+#include <mlpack/core.h>
 
 namespace mlpack {
 namespace nca {

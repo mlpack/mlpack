@@ -143,7 +143,8 @@ int main(int argc, char* argv[]) {
       std::string naive_output_filename =
           CLI::GetParam<std::string>("naive/output_file");
 
-      naive_results.save(naive_output_filename.c_str());
+      naive_results.save(naive_output_filename.c_str(), arma::csv_ascii, false,
+          true);
     }
 
     //////////////// Output the Results ////////////////
@@ -151,7 +152,7 @@ int main(int argc, char* argv[]) {
     std::string output_filename =
         CLI::GetParam<std::string>("emst/output_file");
 
-    results.save(output_filename.c_str());
+    results.save(output_filename.c_str(), arma::csv_ascii, false, true);
 
   }// end else (if using_thor)
 
