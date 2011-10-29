@@ -22,8 +22,7 @@
 #ifndef __MLPACK_MVU_OBJECTIVE_FUNCTCLIN_H
 #define __MLPACK_MVU_OBJECTIVE_FUNCTCLIN_H
 
-#include <fastlib/fastlib.h>
-#include <armadillo>
+#include <mlpack/core.h>
 
 namespace mlpack {
 namespace mvu {
@@ -42,7 +41,7 @@ namespace mvu {
  *
  * max (R * R^T) subject to
  *  (1) sum (R * R^T) = 0
- *  (2) (R R^T)_ii - 2 (R R^T)_ij + (R R^T)_jj = || x_i - x_j ||^2 ; 
+ *  (2) (R R^T)_ii - 2 (R R^T)_ij + (R R^T)_jj = || x_i - x_j ||^2 ;
  *        for all (i, j) nearest neighbors
  *
  * Now, our optimization problem is easier.  The total number of constraints is

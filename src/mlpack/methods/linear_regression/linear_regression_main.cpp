@@ -29,9 +29,9 @@ int main(int argc, char* argv[]) {
   const std::string response_name =
     CLI::GetParam<std::string>("linear_regression/responses");
 
-  file.load(train_name.c_str());
+  file.load(train_name.c_str(), arma::auto_detect, false, true);
   size_t n_cols = file.n_cols,
-	 n_rows = file.n_rows;
+         n_rows = file.n_rows;
 
   if(response_name == "") {
     predictors = file.submat(0,0, n_rows-2, n_cols-1);
@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
   else {
     predictors = file;
     // The initial predictors for y, Nx1
-    responses.load(response_name.c_str());
+    responses.load(response_name.c_str(), arma::auto_detect, false, true);
     if(responses.n_rows > 1) {
       std::cerr << "Error: The responses must have one column.\n";
       return 0;
@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  points.load(test_name.c_str());
+  points.load(test_name.c_str(), arma::auto_detect, false, true);
   if(points.n_rows != n_rows) {
       std::cerr << "Error: The test data must have the same number of cols as\
  the training file.\n";

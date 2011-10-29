@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
 
   CLI::ParseCommandLine(argc, argv);
   const char* data = CLI::GetParam<std::string>("fastica/input_file").c_str();
-  X.load(data);
+  X.load(data, arma::auto_detect, false, true);
 
   const char* ic_filename = CLI::GetParam<std::string>("fastica/ic_file").c_str();
   const char* unmixing_filename =
@@ -69,9 +69,9 @@ int main(int argc, char *argv[]) {
   if(fastica.Init(X) == true) {
     arma::mat W, Y;
     if(fastica.DoFastICA(W, Y) == true) {
-      Y.save(ic_filename);
+      Y.save(ic_filename, arma::csv_ascii, false, true);
       arma::mat Z = trans(W);
-      Z.save(unmixing_filename);
+      Z.save(unmixing_filename, arma::csv_ascii, false, true);
       success_status = true;
       mlpack::Log::Debug << W << std::endl;
     }

@@ -69,12 +69,14 @@ int main(int argc, char** argv) {
   std::string predictions_file = CLI::GetParam<std::string>("ridge/predictions");
 
   arma::mat predictors;
-  if (predictors.load(predictors_file.c_str()) == false) {
+  if (predictors.load(predictors_file.c_str(), arma::auto_detect, false, true)
+      == false) {
     Log::Fatal << "Unable to open file " << predictors_file << std::endl;
   }
 
   arma::mat predictions;
-  if (predictions.load(predictions_file.c_str()) == false) {
+  if (predictions.load(predictions_file.c_str(), arma::auto_detect, false, true)
+      == false) {
     Log::Fatal << "Unable to open file " << predictions_file << std::endl;
   }
 
@@ -83,15 +85,14 @@ int main(int argc, char** argv) {
 
 
   if(mode == "regress") {
-
     engine = RidgeRegression(predictors, predictions,
-		CLI::GetParam<std::string>("ridge/inversion_method") == "normalsvd");
+        CLI::GetParam<std::string>("ridge/inversion_method") == "normalsvd");
     engine.QRRegress(lambda_min);
   }
   else if(mode == "cvregress") {
      Log::Info << "Crossvalidating for the optimal lambda in ["
-	<<  lambda_min << " " << lambda_max << " ] "
-     	<< "by trying " << num_lambdas_to_cv << " values..." << std::endl;
+        <<  lambda_min << " " << lambda_max << " ] "
+        << "by trying " << num_lambdas_to_cv << " values..." << std::endl;
 
     engine = RidgeRegression(predictors, predictions);
     engine.CrossValidatedRegression(lambda_min, lambda_max, num_lambdas_to_cv);
@@ -106,10 +107,14 @@ int main(int argc, char** argv) {
       CLI::GetParam<std::string>("ridge/predictor_indices");
     std::string prune_predictor_indices_file =
       CLI::GetParam<std::string>("ridge/prune_predictor_indices");
-    if (predictor_indices_intermediate.load(predictor_indices_file.c_str()) == false) {
-      Log::Fatal << "Unable to open file " << prune_predictor_indices_file << std::endl;
+    if (predictor_indices_intermediate.load(predictor_indices_file.c_str(),
+        arma::auto_detect, false, true) == false) {
+      Log::Fatal << "Unable to open file " << prune_predictor_indices_file
+          << std::endl;
     }
-    if (prune_predictor_indices_intermediate.load(prune_predictor_indices_file.c_str()) == false) {
+    if (prune_predictor_indices_intermediate.load(
+        prune_predictor_indices_file.c_str(), arma::auto_detect, false, true)
+        == false) {
       Log::Fatal << "Unable to open file " << prune_predictor_indices_file << std::endl;
     }
 
@@ -119,9 +124,9 @@ int main(int argc, char** argv) {
     { // Convert from double rowvec -> size_t colvec
       typedef arma::Col<size_t> size_t_vec;
       predictor_indices = arma::conv_to<size_t_vec>::
-                          from(predictor_indices_intermediate.row(0));
+          from(predictor_indices_intermediate.row(0));
       prune_predictor_indices = arma::conv_to<size_t_vec>::
-	                        from(prune_predictor_indices_intermediate.row(0));
+          from(prune_predictor_indices_intermediate.row(0));
     }
   }
 
@@ -133,8 +138,7 @@ int main(int argc, char** argv) {
   engine.factors(&factors);
   std::string factors_file = CLI::GetParam<std::string>("ridge/factors");
   Log::Info << "Saving factors..." << std::endl;
-  factors.save(factors_file.c_str());
-//  data::Save(factors_file.c_str(), factors);
+  factors.save(factors_file.c_str(), arma::csv_ascii, false, true);
 
   return 0;
 }

@@ -11,8 +11,7 @@
 #ifndef __MLPACK_MVU_H
 #define __MLPACK_MVU_H
 
-#include <fastlib/fastlib.h>
-#include <armadillo>
+#include <mlpack/core.h>
 
 namespace mlpack {
 namespace mvu {

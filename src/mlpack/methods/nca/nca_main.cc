@@ -25,7 +25,8 @@ int main(int argc, char* argv[]) {
   CLI::ParseCommandLine(argc, argv);
 
   arma::mat data;
-  data.load(CLI::GetParam<string>("input_file").c_str());
+  data.load(CLI::GetParam<string>("input_file").c_str(), arma::auto_detect,
+      false, true);
 
   arma::uvec labels(data.n_cols);
   for (size_t i = 0; i < data.n_cols; i++)
@@ -39,5 +40,6 @@ int main(int argc, char* argv[]) {
 
   nca.LearnDistance(distance);
 
-  distance.save(CLI::GetParam<string>("output_file").c_str());
+  distance.save(CLI::GetParam<string>("output_file").c_str(), arma::csv_ascii,
+      false, true);
 }

@@ -8,7 +8,7 @@
 #ifndef __MLPACK_MVU_IMPL_H
 #define __MLPACK_MVU_IMPL_H
 
-#include <fastlib/optimization/aug_lagrangian/aug_lagrangian.h>
+#include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
 
 namespace mlpack {
 namespace mvu {
