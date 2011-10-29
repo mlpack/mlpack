@@ -86,16 +86,13 @@
   #define M_PI 3.141592653589793238462643383279
 #endif
 
-// And then the Armadillo library.
-#include <armadillo>
-
 // Now MLPACK-specific includes.
+#include <mlpack/core/arma_extend/arma_extend.h> // Includes Armadillo.
+#include <mlpack/core/io/log.hpp>
+#include <mlpack/core/io/cli.hpp>
 #include <mlpack/core/math/math_misc.hpp>
 #include <mlpack/core/math/range.hpp>
 #include <mlpack/core/utilities/save_restore_utility.hpp>
 #include <mlpack/core/file/textfile.h>
-#include <mlpack/core/io/cli.hpp>
-#include <mlpack/core/io/log.hpp>
-#include <mlpack/core/arma_extend/arma_extend.h>
 
 #endif
