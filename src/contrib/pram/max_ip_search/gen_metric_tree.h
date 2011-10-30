@@ -14,6 +14,8 @@
 #ifndef GEN_METRIC_TREE_H
 #define GEN_METRIC_TREE_H
 
+#define NDEBUG
+
 #include "general_spacetree.h"
 #include "gen_metric_tree_impl.h"
 

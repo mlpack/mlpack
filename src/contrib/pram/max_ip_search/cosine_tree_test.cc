@@ -1,8 +1,11 @@
 #include <armadillo>
 #include <string>
 #include "general_spacetree.h"
-#include "dconebound.h"
+// #include "dconebound.h"
+// #include "gen_cosine_tree.h"
+#include "dcosinebound.h"
 #include "gen_cosine_tree.h"
+
 
 using namespace mlpack;
 using namespace std;
@@ -32,21 +35,20 @@ int main (int argc, char *argv[]) {
 
   rdata = arma::trans(rdata);
 
-  typedef GeneralBinarySpaceTree<DConeBound<>, arma::mat> CTreeType;
+  typedef GeneralBinarySpaceTree<DCosineBound<>, arma::mat> CTreeType;
 
   arma::Col<size_t> old_from_new_data;
 
   CTreeType *test_tree
     = proximity::MakeGenCosineTree<CTreeType>(rdata, 20,
-					      &old_from_new_data,
-					      NULL);
+					      &old_from_new_data); //,
+// 					      NULL);
 
   if (CLI::HasParam("print_tree")) {
     test_tree->Print();
   } else {
     Log::Info << "Tree built" << endl;
   }
-
 } // end main
 
 

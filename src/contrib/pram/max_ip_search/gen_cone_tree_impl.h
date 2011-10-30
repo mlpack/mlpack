@@ -7,6 +7,8 @@
 #ifndef GEN_CONE_TREE_IMPL_H
 #define GEN_CONE_TREE_IMPL_H
 
+#define NDEBUG
+
 #include <assert.h>
 #include <mlpack/core.h>
 #include <armadillo>

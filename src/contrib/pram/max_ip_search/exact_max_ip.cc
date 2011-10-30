@@ -77,7 +77,9 @@ double MaxIP::MaxNodeIP_(TreeType* reference_node) {
   return (query_norms_(query_) * (c_norm + rad));
 }
 
-double MaxIP::MaxNodeIP_(CTreeType* query_node,
+
+// CONE TREE
+double MaxIP::MaxNodeIP_(CTreeTypeA* query_node,
 			 TreeType* reference_node) {
 
   // counting the split decisions 
@@ -85,16 +87,15 @@ double MaxIP::MaxNodeIP_(CTreeType* query_node,
 
   // min_{q', q} cos <qq' = cos_w
   arma::vec q = query_node->bound().center();
+
+  // FOR CONE TREE
   double cos_w = query_node->bound().radius();
   double sin_w = query_node->bound().radius_conjugate();
 
-  // +1: Can cache it in the query tree
-  //  double q_norm = arma::norm(q, 2);
   double q_norm = query_node->stat().center_norm();
 
   arma::vec centroid = reference_node->bound().center();
 
-  // +1: can be cached in the reference tree
   double c_norm = reference_node->stat().dist_to_origin();
   double rad = std::sqrt(reference_node->bound().radius());
 
@@ -150,6 +151,77 @@ double MaxIP::MaxNodeIP_(CTreeType* query_node,
 
     } else {
       // phi < w; hence the query cone has the centroid
+      // so no useful bounding
+
+      cone_has_centroid_ += query_node->end() - query_node->begin();
+
+      // maybe trigger a flag which lets the peep know that 
+      // query cone too wide
+      // Although, not sure how that will benefit since the 
+      // current traversal kind of takes care of this.
+
+      return (c_norm + rad);
+    }
+  } // alt-angle-prune
+
+  return (c_norm + rad);
+}
+
+
+// COSINE TREE
+double MaxIP::MaxNodeIP_(CTreeTypeB* query_node,
+			 TreeType* reference_node) {
+
+  // counting the split decisions 
+  split_decisions_++;
+
+  // min_{q', q} cos <qq' = cos_w
+  arma::vec q = query_node->bound().center();
+
+  // FOR COSINE TREE
+  double cos_w_min = query_node->bound().rad_min();
+  double cos_w_max = query_node->bound().rad_max();
+
+  double q_norm = query_node->stat().center_norm();
+
+  arma::vec centroid = reference_node->bound().center();
+
+  double c_norm = reference_node->stat().dist_to_origin();
+  double rad = std::sqrt(reference_node->bound().radius());
+
+  if (mlpack::CLI::HasParam("maxip/alt_angle_prune")) { 
+    // HAVE TO WORK THIS OUT AND CHECK IT ANALYTICALLY
+    // using the closed-form-maximization,
+    // |p| cos (phi - w) + R
+
+    double cos_phi, sin_phi;
+
+    if (!reference_node->stat().has_cos_phi()) {
+      // +1
+      cos_phi = arma::dot(q, centroid) / (c_norm * q_norm);
+      reference_node->stat().set_cos_phi(cos_phi);
+    } else {
+      cos_phi = reference_node->stat().cos_phi();
+      split_decisions_--;
+    }
+
+    sin_phi = std::sqrt(1 - cos_phi * cos_phi);
+    
+    if (cos_phi < cos_w_min) { 
+     
+      // bound with cos(phi - w_min)
+      double sin_w_min = std::sqrt(1 - cos_w_min * cos_w_min);
+      return (c_norm * (cos_phi * cos_w_min + sin_phi * sin_w_min) + rad);
+
+    } else if (cos_phi > cos_w_max) {
+
+      // bound with cos (w_max - phi)
+      double sin_w_max = std::sqrt(1 - cos_w_max * cos_w_max);
+      return (c_norm * (cos_phi * cos_w_max + sin_phi * sin_w_max) + rad);
+
+    } else {
+      // cos w_min < cos phi < cos w_max; 
+      // hence the query cone has the centroid
       // so no useful bounding
 
       cone_has_centroid_ += query_node->end() - query_node->begin();
@@ -273,7 +345,52 @@ void MaxIP::ComputeNeighborsRecursion_(TreeType* reference_node,
 } // ComputeNeighborsRecursion_
 
 
-void MaxIP::ComputeBaseCase_(CTreeType* query_node, 
+// CONE TREE
+void MaxIP::ComputeBaseCase_(CTreeTypeA* query_node, 
+			     TreeType* reference_node) {
+
+  // Check that the pointers are not NULL
+  assert(reference_node != NULL);
+  assert(reference_node->is_leaf());
+  assert(query_node != NULL);
+
+  // query node may not be a leaf
+  //  assert(query_node->is_leaf());
+
+  // Used to find the query node's new lower bound
+  double query_worst_p_cos_pq = DBL_MAX;
+  bool new_bound = false;
+    
+  // Iterating over the queries individually
+  for (query_ = query_node->begin();
+       query_ < query_node->end(); query_++) {
+
+    // checking if this node has potential
+    double query_to_node_max_ip = MaxNodeIP_(reference_node);
+
+    if (query_to_node_max_ip > max_ips_(knns_ -1, query_))
+      // this node has potential
+      ComputeBaseCase_(reference_node);
+
+    double p_cos_pq = max_ips_(knns_ -1, query_)
+      / query_norms_(query_);
+
+    if (query_worst_p_cos_pq > p_cos_pq) {
+      query_worst_p_cos_pq = p_cos_pq;
+      new_bound = true;
+    }
+  } // for query_
+  
+  // Update the lower bound for the query_node
+  if (new_bound) 
+    query_node->stat().set_bound(query_worst_p_cos_pq);
+
+} // ComputeBaseCase_
+
+
+
+// COSINE TREE
+void MaxIP::ComputeBaseCase_(CTreeTypeB* query_node, 
 			     TreeType* reference_node) {
 
   // Check that the pointers are not NULL
@@ -315,7 +432,8 @@ void MaxIP::ComputeBaseCase_(CTreeType* query_node,
 } // ComputeBaseCase_
   
 
-void MaxIP::CheckPrune(CTreeType* query_node, TreeType* ref_node) {
+// CONE TREE
+void MaxIP::CheckPrune(CTreeTypeA* query_node, TreeType* ref_node) {
 
   size_t missed_nns = 0;
   double max_p_cos_pq = 0.0;
@@ -360,7 +478,57 @@ void MaxIP::CheckPrune(CTreeType* query_node, TreeType* ref_node) {
 
 }
 
-void MaxIP::ComputeNeighborsRecursion_(CTreeType* query_node,
+
+
+// COSINE TREE
+void MaxIP::CheckPrune(CTreeTypeB* query_node, TreeType* ref_node) {
+
+  size_t missed_nns = 0;
+  double max_p_cos_pq = 0.0;
+  double min_p_cos_pq = DBL_MAX;
+
+  // Iterating over the queries individually
+  for (query_ = query_node->begin();
+       query_ < query_node->end(); query_++) {
+
+    // Get the query point from the matrix
+    arma::vec q = queries_.unsafe_col(query_);
+
+    double p_cos_qp = max_ips_(knns_ -1, query_) / query_norms_(query_);
+    if (min_p_cos_pq > p_cos_qp)
+      min_p_cos_pq = p_cos_qp;
+
+    // We'll do the same for the references
+    for (size_t reference_index = ref_node->begin(); 
+	 reference_index < ref_node->end(); reference_index++) {
+
+      arma::vec r = references_.unsafe_col(reference_index);
+
+      double ip = arma::dot(q, r);
+      if (ip > max_ips_(knns_-1, query_))
+	missed_nns++;
+
+      double p_cos_pq = ip / query_norms_(query_);
+
+      if (p_cos_pq > max_p_cos_pq)
+	max_p_cos_pq = p_cos_pq;
+      
+    } // for reference_index
+  } // for query_
+  
+  if (missed_nns > 0 || query_node->stat().bound() != min_p_cos_pq) 
+    printf("Prune %zu - Missed candidates: %zu\n"
+	   "QLBound: %lg, ActualQLBound: %lg\n"
+	   "QRBound: %lg, ActualQRBound: %lg\n",
+	   number_of_prunes_, missed_nns,
+	   query_node->stat().bound(), min_p_cos_pq, 
+	   MaxNodeIP_(query_node, ref_node), max_p_cos_pq);
+
+}
+
+
+// CONE TREE
+void MaxIP::ComputeNeighborsRecursion_(CTreeTypeA* query_node,
 				       TreeType* reference_node, 
 				       double upper_bound_p_cos_pq) {
 
@@ -517,7 +685,151 @@ void MaxIP::ComputeNeighborsRecursion_(CTreeType* query_node,
     } // alt-traversal
   } // All cases of dual-tree traversal
 } // ComputeNeighborsRecursion_
+
+
+
+// COSINE TREE
+void MaxIP::ComputeNeighborsRecursion_(CTreeTypeB* query_node,
+				       TreeType* reference_node, 
+				       double upper_bound_p_cos_pq) {
+
+  assert(query_node != NULL);
+  assert(reference_node != NULL);
+  //assert(upper_bound_p_cos_pq == MaxNodeIP_(query_node, reference_node));
+
+  if (upper_bound_p_cos_pq < query_node->stat().bound()) { 
+    // Pruned
+    number_of_prunes_ += query_node->end() - query_node->begin();
+
+    if (CLI::HasParam("maxip/check_prune"))
+      CheckPrune(query_node, reference_node);
+  }
+  // node->is_leaf() works as one would expect
+  else if (query_node->is_leaf() && reference_node->is_leaf()) {
+    // Base Case
+    ComputeBaseCase_(query_node, reference_node);
+  } else if (query_node->is_leaf()) {
+    // Only query is a leaf
+      
+
+    if (CLI::HasParam("maxip/alt_dual_traversal")) {
+      // Trying to do single-tree on the leaves
+
+      // Used to find the query node's new lower bound
+      double query_worst_p_cos_pq = DBL_MAX;
+      bool new_bound = false;
+    
+      // Iterating over the queries individually
+      for (query_ = query_node->begin();
+	   query_ < query_node->end(); query_++) {
+
+	// checking if this node has potential
+	double query_to_node_max_ip = MaxNodeIP_(reference_node);
+
+	if (query_to_node_max_ip > max_ips_(knns_ -1, query_))
+	  // this node has potential
+	  ComputeNeighborsRecursion_(reference_node, query_to_node_max_ip);
+
+	double p_cos_pq = max_ips_(knns_ -1, query_)
+	  / query_norms_(query_);
+
+	if (query_worst_p_cos_pq > p_cos_pq) {
+	  query_worst_p_cos_pq = p_cos_pq;
+	  new_bound = true;
+	}
+      } // for query_
   
+      // Update the lower bound for the query_node
+      if (new_bound) 
+	query_node->stat().set_bound(query_worst_p_cos_pq);
+    } else {
+
+      // We'll order the computation by distance 
+      double left_p_cos_pq = MaxNodeIP_(query_node,
+					reference_node->left());
+      double right_p_cos_pq = MaxNodeIP_(query_node,
+					 reference_node->right());
+      
+      if (left_p_cos_pq > right_p_cos_pq) {
+	ComputeNeighborsRecursion_(query_node, reference_node->left(), 
+				   left_p_cos_pq);
+	ComputeNeighborsRecursion_(query_node, reference_node->right(), 
+				   right_p_cos_pq);
+      } else {
+	ComputeNeighborsRecursion_(query_node, reference_node->right(), 
+				   right_p_cos_pq);
+	ComputeNeighborsRecursion_(query_node, reference_node->left(), 
+				   left_p_cos_pq);
+      }
+    } // alt-traversal
+  } else if (reference_node->is_leaf()) {
+    // Only reference is a leaf 
+    double left_p_cos_pq
+      = MaxNodeIP_(query_node->left(), reference_node);
+    double right_p_cos_pq
+      = MaxNodeIP_(query_node->right(), reference_node);
+      
+    ComputeNeighborsRecursion_(query_node->left(), reference_node, 
+			       left_p_cos_pq);
+    ComputeNeighborsRecursion_(query_node->right(), reference_node, 
+			       right_p_cos_pq);
+      
+    // We need to update the upper bound based on the new upper bounds of 
+    // the children
+    query_node->stat().set_bound(std::min(query_node->left()->stat().bound(),
+					  query_node->right()->stat().bound()));
+  } else {
+
+    // Recurse on both as above
+    double left_p_cos_pq = MaxNodeIP_(query_node->left(), 
+				      reference_node->left());
+    double right_p_cos_pq = MaxNodeIP_(query_node->left(), 
+				       reference_node->right());
+      
+    if (left_p_cos_pq > right_p_cos_pq) {
+      ComputeNeighborsRecursion_(query_node->left(),
+				 reference_node->left(), 
+				 left_p_cos_pq);
+      ComputeNeighborsRecursion_(query_node->left(),
+				 reference_node->right(), 
+				 right_p_cos_pq);
+    } else {
+      ComputeNeighborsRecursion_(query_node->left(),
+				 reference_node->right(), 
+				 right_p_cos_pq);
+      ComputeNeighborsRecursion_(query_node->left(),
+				 reference_node->left(), 
+				 left_p_cos_pq);
+    }
+
+    left_p_cos_pq = MaxNodeIP_(query_node->right(),
+			       reference_node->left());
+    right_p_cos_pq = MaxNodeIP_(query_node->right(), 
+				reference_node->right());
+      
+    if (left_p_cos_pq > right_p_cos_pq) {
+      ComputeNeighborsRecursion_(query_node->right(),
+				 reference_node->left(), 
+				 left_p_cos_pq);
+      ComputeNeighborsRecursion_(query_node->right(),
+				 reference_node->right(), 
+				 right_p_cos_pq);
+    } else {
+      ComputeNeighborsRecursion_(query_node->right(),
+				 reference_node->right(), 
+				 right_p_cos_pq);
+      ComputeNeighborsRecursion_(query_node->right(),
+				 reference_node->left(), 
+				 left_p_cos_pq);
+    }
+      
+    // Update the upper bound as above
+    query_node->stat().set_bound(std::min(query_node->left()->stat().bound(),
+					  query_node->right()->stat().bound()));
+  } // All cases of dual-tree traversal
+} // ComputeNeighborsRecursion_
+
+
 
 void MaxIP::Init(const arma::mat& queries_in,
 		 const arma::mat& references_in) {
@@ -564,12 +876,27 @@ void MaxIP::Init(const arma::mat& queries_in,
   set_angles_in_balls_(reference_tree_);
    
   if (mlpack::CLI::HasParam("maxip/dual_tree")) {
-    query_tree_
-      = proximity::MakeGenConeTree<CTreeType>(queries_,
-					      leaf_size_,
-					      &old_from_new_queries_,
-					      NULL);
-    set_norms_in_cones_(query_tree_);
+
+    if (mlpack::CLI::HasParam("maxip/alt_tree")) { 
+      
+      // using cosine tree 
+      query_tree_B_
+	= proximity::MakeGenCosineTree<CTreeTypeB>(queries_,
+						   leaf_size_,
+						   &old_from_new_queries_,
+						   NULL);
+      set_norms_in_cones_(query_tree_B_);
+    
+    } else {
+      
+      // using cone tree
+      query_tree_A_
+	= proximity::MakeGenConeTree<CTreeTypeA>(queries_,
+						 leaf_size_,
+						 &old_from_new_queries_,
+						 NULL);
+      set_norms_in_cones_(query_tree_A_);
+    }
   }
 
   // saving the query norms beforehand to use 
@@ -652,15 +979,50 @@ void MaxIP::WarmInit(size_t knns) {
   max_ips_ =  0.0 * arma::ones<arma::mat>(knns_, queries_.n_cols);
 
   // need to reset the querystats in the Query Tree
-  if (mlpack::CLI::HasParam("maxip/dual_tree"))
-    if (query_tree_ != NULL)
-      reset_tree_(query_tree_);
+  if (mlpack::CLI::HasParam("maxip/dual_tree")) 
+    if (mlpack::CLI::HasParam("maxip/alt_tree")) {
+      if (query_tree_B_ != NULL) 
+	reset_tree_(query_tree_B_);
+
+      reset_tree_(reference_tree_);
+    
+    } else {
+	if (query_tree_A_ != NULL)
+	  reset_tree_(query_tree_A_);
+    }
+
 
 } // WarmInit
 
-void MaxIP::reset_tree_(CTreeType* tree) {
+void MaxIP::reset_tree_(CTreeTypeA* tree) {
   assert(tree != NULL);
   tree->stat().set_bound(0.0);
+
+  if (!tree->is_leaf()) {
+    reset_tree_(tree->left());
+    reset_tree_(tree->right());
+  }
+
+  return;
+} // reset_tree_
+
+
+void MaxIP::reset_tree_(CTreeTypeB* tree) {
+  assert(tree != NULL);
+  tree->stat().set_bound(0.0);
+
+  if (!tree->is_leaf()) {
+    reset_tree_(tree->left());
+    reset_tree_(tree->right());
+  }
+
+  return;
+} // reset_tree_
+
+
+void MaxIP::reset_tree_(TreeType* tree) {
+  assert(tree != NULL);
+  tree->stat().reset();
 
   if (!tree->is_leaf()) {
     reset_tree_(tree->left());
@@ -694,7 +1056,23 @@ void MaxIP::set_angles_in_balls_(TreeType* tree) {
 } // set_angles_in_balls_
 
 
-void MaxIP::set_norms_in_cones_(CTreeType* tree) {
+void MaxIP::set_norms_in_cones_(CTreeTypeA* tree) {
+
+  assert(tree != NULL);
+
+  // set up node stats
+  tree->stat().set_center_norm(arma::norm(tree->bound().center(), 2));
+
+  // traverse down the children
+  if (!tree->is_leaf()) {
+    set_norms_in_cones_(tree->left());
+    set_norms_in_cones_(tree->right());
+  }
+
+  return;
+} // set_norms_in_cones_
+
+void MaxIP::set_norms_in_cones_(CTreeTypeB* tree) {
 
   assert(tree != NULL);
 
@@ -711,6 +1089,8 @@ void MaxIP::set_norms_in_cones_(CTreeType* tree) {
 } // set_norms_in_cones_
 
 
+
+
 double MaxIP::ComputeNeighbors(arma::Mat<size_t>* resulting_neighbors,
 			       arma::mat* ips) {
 
@@ -722,8 +1102,14 @@ double MaxIP::ComputeNeighbors(arma::Mat<size_t>* resulting_neighbors,
 
 
     CLI::StartTimer("maxip/fast_dual");
-    ComputeNeighborsRecursion_(query_tree_, reference_tree_,
-			       MaxNodeIP_(query_tree_, reference_tree_));
+
+    if (mlpack::CLI::HasParam("maxip/alt_tree"))
+      ComputeNeighborsRecursion_(query_tree_B_, reference_tree_,
+				 MaxNodeIP_(query_tree_B_, reference_tree_));
+    else
+      ComputeNeighborsRecursion_(query_tree_A_, reference_tree_,
+				 MaxNodeIP_(query_tree_A_, reference_tree_));
+    
     CLI::StopTimer("maxip/fast_dual");
 
     resulting_neighbors->set_size(max_ip_indices_.n_rows,

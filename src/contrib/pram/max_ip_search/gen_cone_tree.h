@@ -11,6 +11,7 @@
 #ifndef GEN_CONE_TREE_H
 #define GEN_CONE_TREE_H
 
+#define NDEBUG
 
 #include "general_spacetree.h"
 #include "gen_cone_tree_impl.h"
