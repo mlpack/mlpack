@@ -8,6 +8,8 @@
 #ifndef GEN_METRIC_TREE_IMPL_H
 #define GEN_METRIC_TREE_IMPL_H
 
+#define NDEBUG
+
 #include <assert.h>
 #include <mlpack/core.h>
 #include <mlpack/core/tree/bounds.hpp>

@@ -6,7 +6,7 @@
 #ifndef EXACT_MAX_IP_H
 #define EXACT_MAX_IP_H
 
-//#define NDEBUG
+#define NDEBUG
 
 #include <assert.h>
 #include <mlpack/core.h>
@@ -18,6 +18,8 @@
 #include "gen_metric_tree.h"
 #include "dconebound.h"
 #include "gen_cone_tree.h"
+#include "dcosinebound.h"
+#include "gen_cosine_tree.h"
 
 using namespace mlpack;
 
@@ -70,11 +72,15 @@ class MaxIP {
     double cosine_origin_;
     double sine_origin_;
     double dist_to_origin_;
+    bool has_cos_phi_;
+    double cos_phi_;
 
   public:
     double cosine_origin() { return cosine_origin_; }
     double sine_origin() { return sine_origin_; }
     double dist_to_origin() { return dist_to_origin_; }
+    bool has_cos_phi() { return has_cos_phi_; }
+    double cos_phi() { return cos_phi_; }
 
 
     void set_angles(double val, size_t type = 0) { 
@@ -91,11 +97,23 @@ class MaxIP {
       dist_to_origin_ = val;
     }
 
+    void set_cos_phi(double cos_phi) {
+      cos_phi_ = cos_phi;
+      has_cos_phi_ = true;
+    }
+
+    void reset() {
+      cos_phi_ = -1.0;
+      has_cos_phi_ = false;
+    }
+
     // FILL OUT THE INIT FUNCTIONS APPROPRIATELY LATER
     RefStat() {
       cosine_origin_ = 0.0;
       sine_origin_ = 0.0;
       dist_to_origin_ = 0.0;
+      has_cos_phi_ = false;
+      cos_phi_ = -1.0;
     }
 
     ~RefStat() {}
@@ -103,6 +121,8 @@ class MaxIP {
       cosine_origin_ = 0.0;
       sine_origin_ = 0.0;
       dist_to_origin_ = 0.0;
+      has_cos_phi_ = false;
+      cos_phi_ = -1.0;
     }
 
     void Init(const arma::mat& data, size_t begin, size_t count,
@@ -110,6 +130,8 @@ class MaxIP {
       cosine_origin_ = 0.0;
       sine_origin_ = 0.0;
       dist_to_origin_ = 0.0;
+      has_cos_phi_ = false;
+      cos_phi_ = -1.0;
     }
   }; // RefStat
 
@@ -117,7 +139,8 @@ class MaxIP {
   // Euclidean bounding boxes, the data are stored in a Matrix, 
   // and each node has a QueryStat for its bound.
   typedef GeneralBinarySpaceTree<bound::DBallBound<>, arma::mat, RefStat> TreeType;
-  typedef GeneralBinarySpaceTree<DConeBound<>, arma::mat, QueryStat> CTreeType;
+  typedef GeneralBinarySpaceTree<DConeBound<>, arma::mat, QueryStat> CTreeTypeA;
+  typedef GeneralBinarySpaceTree<DCosineBound<>, arma::mat, QueryStat> CTreeTypeB;
    
   
   /////////////////////////////// Members ////////////////////////////
@@ -132,7 +155,8 @@ private:
 
   // Pointers to the roots of the two trees.
   TreeType* reference_tree_;
-  CTreeType* query_tree_;
+  CTreeTypeA* query_tree_A_;
+  CTreeTypeB* query_tree_B_;
 
   // The total number of prunes.
   size_t number_of_prunes_;
@@ -170,7 +194,8 @@ public:
    */
   MaxIP() {
     reference_tree_ = NULL;
-    query_tree_ = NULL;
+    query_tree_A_ = NULL;
+    query_tree_B_ = NULL;
   } 
   
   /**
@@ -181,8 +206,12 @@ public:
     if (reference_tree_ != NULL) 
       delete reference_tree_;
  
-    if (query_tree_ != NULL)
-      delete query_tree_;
+    if (query_tree_A_ != NULL)
+      delete query_tree_A_;
+
+    if (query_tree_B_ != NULL)
+      delete query_tree_B_;
+
   }
     
   /////////////////////////// Helper Functions //////////////////////
@@ -200,7 +229,8 @@ private:
    * ignoring the norm of any query.
    * So it is computing \max_(q,r) |r| cos <qr.
    */
-  double MaxNodeIP_(CTreeType *query_node, TreeType* reference_node);
+  double MaxNodeIP_(CTreeTypeA *query_node, TreeType* reference_node);
+  double MaxNodeIP_(CTreeTypeB *query_node, TreeType* reference_node);
 
   /**
    * Performs exhaustive computation at the leaves.  
@@ -210,7 +240,8 @@ private:
   /**
    * Dual-tree: Performs exhaustive computation between two leaves.  
    */
-  void ComputeBaseCase_(CTreeType* query_node, TreeType* reference_node);
+  void ComputeBaseCase_(CTreeTypeA* query_node, TreeType* reference_node);
+  void ComputeBaseCase_(CTreeTypeB* query_node, TreeType* reference_node);
   
   /**
    * The recursive function
@@ -221,13 +252,20 @@ private:
   /**
    * Dual-tree: The recursive function
    */
-  void ComputeNeighborsRecursion_(CTreeType* query_node,
+  void ComputeNeighborsRecursion_(CTreeTypeA* query_node,
 				  TreeType* reference_node, 
 				  double upper_bound_ip);
 
-  void reset_tree_(CTreeType *tree);
+  void ComputeNeighborsRecursion_(CTreeTypeB* query_node,
+				  TreeType* reference_node, 
+				  double upper_bound_ip);
+
+  void reset_tree_(CTreeTypeA *tree);
+  void reset_tree_(CTreeTypeB *tree);
+  void reset_tree_(TreeType *tree);
   void set_angles_in_balls_(TreeType *tree);
-  void set_norms_in_cones_(CTreeType *tree);
+  void set_norms_in_cones_(CTreeTypeA *tree);
+  void set_norms_in_cones_(CTreeTypeB *tree);
 
   size_t SortValue(double value);
 
@@ -246,8 +284,10 @@ public:
     if (reference_tree_ != NULL)
       delete reference_tree_;
     
-    if (query_tree_ != NULL)
-      delete query_tree_;
+    if (query_tree_A_ != NULL)
+      delete query_tree_A_;
+    if (query_tree_B_ != NULL)
+      delete query_tree_B_;
   }
 
   /**
@@ -275,7 +315,8 @@ public:
 		      arma::mat* ips);
 
 
-  void CheckPrune(CTreeType* query_node, TreeType* ref_node);
+  void CheckPrune(CTreeTypeA* query_node, TreeType* ref_node);
+  void CheckPrune(CTreeTypeB* query_node, TreeType* ref_node);
 }; //class MaxIP
 
 
@@ -293,9 +334,13 @@ PARAM_FLAG("angle_prune", "The flag to trigger the tighter"
 	   " pruning using the angles as well", "maxip");
 PARAM_FLAG("alt_angle_prune", "The flag to trigger the tighter-er"
 	   " pruning using the angles as well", "maxip");
+
 PARAM_FLAG("dual_tree", "The flag to trigger dual-tree "
 	   "computation, using a cone tree for the "
 	   "queries.", "maxip");
+PARAM_FLAG("alt_tree", "The flag to trigger the "
+	   "alternate query tree.",
+	   "maxip");
 
 PARAM_FLAG("check_prune", "The flag to trigger the "
 	   "checking of the prune.", "maxip");

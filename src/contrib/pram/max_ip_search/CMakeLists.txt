@@ -10,14 +10,17 @@ set(SOURCES
    gen_metric_tree.h
    gen_metric_tree_impl.h
    gen_metric_tree_impl.cc
-   # Cone bound
+
    cosine.h
+
+   # Cosine tree
+   dcosinebound.h
+   gen_cosine_tree.h
+   gen_cosine_tree_impl.h
+   #gen_cosine_tree_impl.cc
+   # Cone bound
    dconebound.h
    dconebound_impl.h
-   # Cosine tree
-   #gen_cosine_tree.h
-   #gen_cosine_tree_impl.h
-   #gen_cosine_tree_impl.cc
    # cone tree
    gen_cone_tree.h
    gen_cone_tree_impl.h

@@ -7,6 +7,8 @@
 #ifndef GEN_COSINE_TREE_IMPL_H
 #define GEN_COSINE_TREE_IMPL_H
 
+#define NDEBUG
+
 #include <assert.h>
 #include <mlpack/core.h>
 #include <armadillo>
@@ -14,119 +16,24 @@
 
 namespace tree_gen_cosine_tree_private {
 
-  size_t FurthestColumnIndex(const arma::vec& pivot,
-			     const arma::mat& matrix, 
-			     size_t begin, size_t count,
-			     double *furthest_cosine);
-    
-  // This function assumes that we have points embedded in Euclidean
-  // space. The representative point (center) is chosen as the mean 
-  // of the all unit directions of all the vectors in this set.
-
-  // fixed!!
+  // not compiled
   template<typename TBound>
   void MakeLeafCosineTreeNode(const arma::mat& matrix,
 			      size_t begin, size_t count,
 			      TBound *bounds) {
 
-    bounds->center().zeros();
 
-    size_t end = begin + count;
-    for (size_t i = begin; i < end; i++) {
-      bounds->center() 
-	+= (matrix.unsafe_col(i)
- 	    / arma::norm(matrix.unsafe_col(i), 2));
-    }
-    bounds->center() /= (double) count;
-//     bounds->center() /= arma::norm(bounds->center(), 2);
-
-//     printf("c_norm: %lg\n", arma::norm(bounds->center(), 2));
-
-    double furthest_cosine;
-    FurthestColumnIndex(bounds->center(), matrix, begin, count,
-			&furthest_cosine);
-    bounds->set_radius(furthest_cosine);
+    arma::vec cosine_vec(count);
+    
+    for (size_t i = 0; i < count; i++)
+      cosine_vec(i) = Cosine::Evaluate(bounds->center(), 
+				       matrix.unsafe_col(i + begin));
+    
+    bounds->set_radius(arma::min(cosine_vec), arma::max(cosine_vec));
   }
   
 
-  // fixed until compiled
-  template<typename TBound>
-  size_t MatrixPartition(arma::mat& matrix, size_t first, size_t count,
-			  TBound &left_bound, TBound &right_bound,
-			  size_t *old_from_new) {
-    
-    size_t end = first + count;
-    size_t left_count = 0;
-
-    std::vector<bool> left_membership;
-    left_membership.reserve(count);
-    
-    for (size_t left = first; left < end; left++) {
-
-      // Make alias of the current point.
-      arma::vec point = matrix.unsafe_col(left);
-
-      // Compute the cosines from the two pivots.
-      double cosine_from_left_pivot =
-	Cosine::Evaluate(point, left_bound.center());
-      double cosine_from_right_pivot =
-	Cosine::Evaluate(point, right_bound.center());
-
-      // We swap if the point is more angled away from the left pivot.
-      if(cosine_from_left_pivot < cosine_from_right_pivot) {	
-	left_membership[left - first] = false;
-      } else {
-	left_membership[left - first] = true;
-	left_count++;
-      }
-    }
-
-    size_t left = first;
-    size_t right = first + count - 1;
-    
-    /* At any point:
-     *
-     *   everything < left is correct
-     *   everything > right is correct
-     */
-    for (;;) {
-      while (left_membership[left - first] && (left <= right)) {
-        left++;
-      }
-
-      while (!left_membership[right - first] && (left <= right)) {
-        right--;
-      }
-
-      if (left > right) {
-        /* left == right + 1 */
-        break;
-      }
-
-      // Swap the left vector with the right vector.
-      matrix.swap_cols(left, right);
-
-      bool tmp = left_membership[left - first];
-      left_membership[left - first] = left_membership[right - first];
-      left_membership[right - first] = tmp;
-      
-      if (old_from_new) {
-        size_t t = old_from_new[left];
-        old_from_new[left] = old_from_new[right];
-        old_from_new[right] = t;
-      }
-      
-      assert(left <= right);
-      right--;
-    }
-    
-    assert(left == right + 1);
-
-    return left_count;
-  }
-	
-
-  // fixed
+  // not compiled
   template<typename TCosineTree>
   bool AttemptSplitting(arma::mat& matrix,
 			TCosineTree *node,
@@ -135,83 +42,100 @@ namespace tree_gen_cosine_tree_private {
 			size_t leaf_size,
 			size_t *old_from_new) {
 
-    // Pick a random row.
-    size_t random_row 
-      = math::RandInt(node->begin(),
-		      node->begin() + node->count());
+    // obtain the list of cosine values to all the points
+    // in the set
+    arma::vec cosine_vec(node->count());
 
-    // why is this here?
-    // random_row = node->begin();
+    for (size_t i = 0; i < node->count(); i++)
+      cosine_vec(i)
+	= Cosine::Evaluate(node->bound().center(),
+			   matrix.unsafe_col(i + node->begin()));
 
-    arma::vec random_row_vec = matrix.unsafe_col(random_row);
-
-    // Now figure out the furthest point from the random row picked
-    // above.
-    double furthest_cosine;
-    size_t furthest_from_random_row =
-      FurthestColumnIndex(random_row_vec, matrix, node->begin(), node->count(),
-			  &furthest_cosine);
-    arma::vec furthest_from_random_row_vec = matrix.unsafe_col(furthest_from_random_row);
-
-    // Then figure out the furthest point from the furthest point.
-    double furthest_from_furthest_cosine;
-    size_t furthest_from_furthest_random_row =
-      FurthestColumnIndex(furthest_from_random_row_vec, matrix, node->begin(),
-			  node->count(), &furthest_from_furthest_cosine);
-    arma::vec furthest_from_furthest_random_row_vec =
-       matrix.unsafe_col(furthest_from_furthest_random_row);
-
-    if(furthest_from_furthest_cosine > (1.0 - DBL_EPSILON)) {
-      // everything in a really tight narrow cone
+    if(arma::max(cosine_vec) - arma::min(cosine_vec) < DBL_EPSILON) {
+      // everything in a really tight narrow co-axial cone-ring
       return false;
     } else {
       *left = new TCosineTree();
       *right = new TCosineTree();
 
-      // not necessary, vec::operator=() takes care of resetting the size
-//      ((*left)->bound().center()).set_size(matrix.n_rows);
-//      ((*right)->bound().center()).set_size(matrix.n_rows);
+      ((*left)->bound().center()) = node->bound().center();
+      ((*right)->bound().center()) = node->bound().center();
 
-      ((*left)->bound().center()) = furthest_from_random_row_vec;
-      ((*right)->bound().center()) = furthest_from_furthest_random_row_vec;
+      node->bound().set_radius(arma::min(cosine_vec), arma::max(cosine_vec));
 
-      size_t left_count
-	= MatrixPartition(matrix, node->begin(), node->count(),
-			  (*left)->bound(), (*right)->bound(),
-			  old_from_new);
+//       printf("%lg, %lg\n", node->bound().rad_min(), node->bound().rad_max());
+
+      size_t first = node->begin();
+      size_t end = first + node->count();
+      size_t left_count = 0;
+
+      double median_cosine_value = arma::median(cosine_vec);
+
+      std::vector<bool> left_membership;
+      left_membership.reserve(node->count());
+    
+      for (size_t left_ind = first; left_ind < end; left_ind++) {
+	  
+	if(cosine_vec(left_ind - first) < median_cosine_value) {	
+	  // the outer ring
+	  left_membership[left_ind - first] = false;
+	} else {
+	  // the inner ring
+	  left_membership[left_ind - first] = true;
+	  left_count++;
+	}
+      }
+
+      size_t left_ind = first;
+      size_t right_ind = end - 1;
+    
+      /* At any point:
+       *
+       *   everything < left_ind is correct
+       *   everything > right_ind is correct
+       */
+      for (;;) {
+	while (left_membership[left_ind - first] && (left_ind <= right_ind)) {
+	  left_ind++;
+	}
+
+	while (!left_membership[right_ind - first] && (left_ind <= right_ind)) {
+	  right_ind--;
+	}
+
+	if (left_ind > right_ind) {
+	  /* left == right_ind + 1 */
+	  break;
+	}
+
+	// Swap the left vector with the right_ind vector.
+	matrix.swap_cols(left_ind, right_ind);
+
+	bool tmp = left_membership[left_ind - first];
+	left_membership[left_ind - first] = left_membership[right_ind - first];
+	left_membership[right_ind - first] = tmp;
+      
+	if (old_from_new) {
+	  size_t t = old_from_new[left_ind];
+	  old_from_new[left_ind] = old_from_new[right_ind];
+	  old_from_new[right_ind] = t;
+	}
+      
+	assert(left_ind <= right_ind);
+	right_ind--;
+      }
+    
+      assert(left_ind == right_ind + 1);
 
       (*left)->Init(node->begin(), left_count);
       (*right)->Init(node->begin() + left_count, node->count() - left_count);
+	
+      return true;    
     }
-
-    return true;
   }
 
-  // fixed
-  template<typename TCosineTree>
-  void CombineBounds(arma::mat& matrix, TCosineTree *node,
-		     TCosineTree *left, TCosineTree *right) {
-    
-    // First clear the internal node center.
-    node->bound().center().zeros();
 
-    // Compute the weighted sum of the two pivots
-    node->bound().center() += left->count() * left->bound().center();
-    node->bound().center() += right->count() * right->bound().center();
-    node->bound().center() /= (double) node->count();
-//     node->bound().center() /= arma::norm(node->bound().center(), 2);
-    
-//     printf("c_norm: %lg\n", arma::norm(node->bound().center(), 2));
-
-    double left_min_cosine, right_min_cosine;
-    FurthestColumnIndex(node->bound().center(), matrix, left->begin(), 
-			left->count(), &left_min_cosine);
-    FurthestColumnIndex(node->bound().center(), matrix, right->begin(), 
-			right->count(), &right_min_cosine);    
-    node->bound().set_radius(std::min(left_min_cosine, right_min_cosine));
-  }
-
-  // fixed
+  // not compiled
   template<typename TCosineTree>
   void SplitGenCosineTree(arma::mat& matrix, TCosineTree *node,
 			  size_t leaf_size, size_t *old_from_new) {
@@ -233,7 +157,6 @@ namespace tree_gen_cosine_tree_private {
       if(can_cut) {
 	SplitGenCosineTree(matrix, left, leaf_size, old_from_new);
 	SplitGenCosineTree(matrix, right, leaf_size, old_from_new);
-	CombineBounds(matrix, node, left, right);
       }
       else {
 	MakeLeafCosineTreeNode(matrix, node->begin(),

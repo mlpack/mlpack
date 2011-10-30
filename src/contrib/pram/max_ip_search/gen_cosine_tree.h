@@ -11,6 +11,10 @@
 #ifndef GEN_COSINE_TREE_H
 #define GEN_COSINE_TREE_H
 
+#define NDEBUG
+
+#include <armadillo>
+#include <assert.h>
 
 #include "general_spacetree.h"
 #include "gen_cosine_tree_impl.h"
@@ -59,6 +63,10 @@ namespace proximity {
 
     node->Init(0, matrix.n_cols);
     node->bound().center().set_size(matrix.n_rows);
+    node->bound().center() = arma::mean(matrix, 1);
+
+    assert(node->bound().center().n_elem == matrix.n_rows); 
+
     tree_gen_cosine_tree_private::SplitGenCosineTree<TCosineTree>
       (matrix, node, leaf_size, old_from_new_ptr);
     
