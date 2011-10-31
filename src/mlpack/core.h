@@ -93,6 +93,6 @@
 #include <mlpack/core/math/math_misc.hpp>
 #include <mlpack/core/math/range.hpp>
 #include <mlpack/core/utilities/save_restore_utility.hpp>
-#include <mlpack/core/file/textfile.h>
+#include <mlpack/core/file/textfile.hpp>
 
 #endif

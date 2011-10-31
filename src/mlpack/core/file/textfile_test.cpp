@@ -1,4 +1,4 @@
-#include "textfile.h"
+#include "textfile.hpp"
 #include <math.h>
 
 #define BOOST_TEST_MODULE TextFileTest
@@ -17,6 +17,7 @@
 }*/
 
 BOOST_AUTO_TEST_CASE(Test2) {
+  using namespace mlpack;
   const char *fname = "tmpfile.txt";
   TextWriter writer;
   

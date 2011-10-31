@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files that we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-   textfile.h
-   textfile.cc
+   textfile.hpp
+   textfile.cpp
 )
 
 # add directory name to sources
@@ -18,7 +18,7 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # test executable
 add_executable(textfile_test
-  textfile_test.cc
+  textfile_test.cpp
 )
 # dependencies of test executable
 target_link_libraries(textfile_test
