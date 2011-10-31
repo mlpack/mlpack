@@ -1,13 +1,14 @@
 /**
  * @author Parikshit Ram (pram@cc.gatech.edu)
- * @file optimizers.cc
+ * @file optimizers.cpp
  *
  * Implementation of the optimizers
  */
 #include <mlpack/core.h>
-#include "optimizers.h"
+#include "optimizers.hpp"
 
 using namespace mlpack;
+using namespace gmm;
 
 void NelderMead::Eval(arma::mat& pts) {
   size_t dim = dimension();

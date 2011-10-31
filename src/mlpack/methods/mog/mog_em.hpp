@@ -5,8 +5,8 @@
  * Defines a Gaussian Mixture model and
  * estimates the parameters of the model
  */
-#ifndef __MLPACK_METHODS_MOG_MOG_EM_H
-#define __MLPACK_METHODS_MOG_MOG_EM_H
+#ifndef __MLPACK_METHODS_MOG_MOG_EM_HPP
+#define __MLPACK_METHODS_MOG_MOG_EM_HPP
 
 #include <mlpack/core.h>
 
@@ -215,4 +215,4 @@ class MoGEM {
 }; // namespace gmm
 }; // namespace mlpack
 
-#endif
+#endif // __MLPACK_METHODS_MOG_MOG_EM_HPP

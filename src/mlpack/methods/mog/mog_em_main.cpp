@@ -1,6 +1,6 @@
 /**
  * @author Parikshit Ram (pram@cc.gatech.edu)
- * @file mog_em_main.cc
+ * @file mog_em_main.cpp
  *
  * This program test drives the parametric estimation
  * of a Gaussian Mixture model using maximum likelihood.
@@ -20,7 +20,7 @@
  * defaults to 'ouotput.csv'
  *
  */
-#include "mog_em.h"
+#include "mog_em.hpp"
 
 PROGRAM_INFO("Mixture of Gaussians",
     "This program takes a parametric estimate of a Gaussian mixture model (GMM)"
