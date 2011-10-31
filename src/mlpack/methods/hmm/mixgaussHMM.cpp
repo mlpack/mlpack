@@ -163,6 +163,7 @@ bool MixtureofGaussianHMM::LoadProfile(const char* profile, arma::mat& trans, st
 }
 
 bool MixtureofGaussianHMM::SaveProfile(const char* profile, const arma::mat& trans, const std::vector<MixtureGauss>& mixs) {
+  /** need something better
   TextWriter w_pro;
   if (!(w_pro.Open(profile))) {
     mlpack::Log::Warn << "Couldn't open " << profile << " for writing." <<
@@ -183,6 +184,7 @@ bool MixtureofGaussianHMM::SaveProfile(const char* profile, const arma::mat& tra
       print_matrix(w_pro, mixs[i].get_cov(k), s, "%E,");
     }
   }
+  */
 
   return true;
 }

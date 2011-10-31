@@ -225,6 +225,7 @@ bool GaussianHMM::LoadProfile(const char* profile, arma::mat& trans, std::vector
 }
 
 bool GaussianHMM::SaveProfile(const char* profile, const arma::mat& trans, const std::vector<arma::vec>& means, const std::vector<arma::mat>& covs) {
+  /** need something better
   TextWriter w_pro;
   if (!(w_pro.Open(profile))) {
     mlpack::Log::Warn << "Couldn't open " << profile << " for writing." <<
@@ -245,6 +246,7 @@ bool GaussianHMM::SaveProfile(const char* profile, const arma::mat& trans, const
     sprintf(s, "%% covariance - state%zu", i);
     print_matrix(w_pro, covs[i], s, "%f,");
   }
+  */
 
   return true;
 }

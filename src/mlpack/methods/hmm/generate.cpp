@@ -123,6 +123,7 @@ bool generate_mixture() {
   MixtureofGaussianHMM hmm;
   hmm.InitFromFile(profile);
 
+  /** need something better
   TextWriter w_seq, w_state;
   if (!(w_seq.Open(seqout))) {
     Log::Warn << "Couldn't open '" << seqout << "' for writing." << std::endl;
@@ -147,6 +148,7 @@ bool generate_mixture() {
     sprintf(s, "%% state sequence %d", i);
     print_vector(w_state, states, s, "%.0f,");
   }
+  */
 
   //printf("---END---");
   return true;
@@ -172,6 +174,7 @@ bool generate_gaussian() {
   GaussianHMM hmm;
   hmm.InitFromFile(profile);
 
+  /** need something better
   TextWriter w_seq, w_state;
   if (!(w_seq.Open(seqout))) {
     Log::Warn << "Couldn't open '" << seqout << "' for writing." << std::endl;
@@ -196,6 +199,8 @@ bool generate_gaussian() {
     sprintf(s, "%% state sequence %d", i);
     print_vector(w_state, states, s, "%.0f,");
   }
+  */
+
   return true;
 }
 
@@ -219,6 +224,7 @@ bool generate_discrete() {
   DiscreteHMM hmm;
   hmm.InitFromFile(profile);
 
+  /** need something better
   TextWriter w_seq, w_state;
   if (!(w_seq.Open(seqout))) {
     Log::Warn << "Couldn't open '" << seqout << "' for writing." << std::endl;
@@ -242,5 +248,6 @@ bool generate_discrete() {
     sprintf(s, "%% state sequence %d", i);
     print_vector(w_state, states, s, "%.0f,");
   }
+  */
   return true;
 }

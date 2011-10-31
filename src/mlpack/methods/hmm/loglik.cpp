@@ -105,6 +105,7 @@ bool loglik_mixture() {
   std::vector<arma::mat> seqs;
   load_matrix_list(seqin, seqs);
 
+  /** need something better
   TextWriter w_log;
   if (!(w_log.Open(logout))) {
     Log::Warn << "Couldn't open '" << logout << "' for writing." << std::endl;
@@ -116,6 +117,7 @@ bool loglik_mixture() {
 
   for (size_t i = 0; i < seqs.size(); i++)
     w_log.Printf("%f\n", list_loglik[i]);
+  */
 
   return true;
 }
@@ -135,6 +137,7 @@ bool loglik_gaussian() {
   std::vector<arma::mat> seqs;
   load_matrix_list(seqin, seqs);
 
+  /** need something better
   TextWriter w_log;
   if (!(w_log.Open(logout))) {
     Log::Warn << "Couldn't open '"<< logout <<"' for writing." << std::endl;
@@ -146,6 +149,7 @@ bool loglik_gaussian() {
 
   for (size_t i = 0; i < seqs.size(); i++)
     w_log.Printf("%f\n", list_loglik[i]);
+  */
 
   return true;
 }
@@ -165,6 +169,7 @@ bool loglik_discrete() {
   std::vector<arma::vec> seqs;
   load_vector_list(seqin, seqs);
 
+  /** need something better
   TextWriter w_log;
   if (!(w_log.Open(logout))) {
     Log::Warn << "Couldn't open '"<< logout <<"' for writing." << std::endl;
@@ -176,6 +181,7 @@ bool loglik_discrete() {
 
   for (size_t i = 0; i < seqs.size(); i++)
     w_log.Printf("%f\n", list_loglik[i]);
+  */
 
   return true;
 }

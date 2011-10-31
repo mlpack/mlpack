@@ -31,14 +31,8 @@ namespace hmm_support {
   /** Print a matrix to stdout */
   void print_matrix(const arma::mat& a, const char* msg);
 
-  /** Print a matrix to a TextWriter object */
-  void print_matrix(TextWriter& writer, const arma::mat& a, const char* msg, const char* format = "%f,");
-
   /** Print a vector to stdout */
   void print_vector(const arma::vec& a, const char* msg);
-
-  /** Print a vector to a TextWriter object */
-  void print_vector(TextWriter& writer, const arma::vec& a, const char* msg, const char* format = "%f,");
 
   /** Compute the centroids and label the samples by K-means algorithm */
   bool kmeans(const std::vector<arma::mat>& data, size_t num_clusters,
