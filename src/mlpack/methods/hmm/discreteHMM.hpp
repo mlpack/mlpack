@@ -7,8 +7,8 @@
  * algorithm and Viterbi-like algorithm for parameter estimation. It can also
  * generate sequences from a Hidden Markov  Model.
  */
-#ifndef __MLPACK_METHODS_HMM_DISCRETE_HMM_H
-#define __MLPACK_METHODS_HMM_DISCRETE_HMM_H
+#ifndef __MLPACK_METHODS_HMM_DISCRETE_HMM_HPP
+#define __MLPACK_METHODS_HMM_DISCRETE_HMM_HPP
 
 #include <mlpack/core.h>
 
@@ -150,4 +150,4 @@ class DiscreteHMM {
 }; // namespace hmm
 }; // namespace mlpack
 
-#endif
+#endif // __MLPACK_METHODS_HMM_DISCRETE_HMM_HPP

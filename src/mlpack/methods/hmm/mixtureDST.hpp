@@ -9,8 +9,8 @@
  * parameters (i.e mean and covariance) and the prior probabilities.
  *
  */
-#ifndef __MLPACK_METHODS_HMM_MIXTURE_GAUSSIAN_H
-#define __MLPACK_METHODS_HMM_MIXTURE_GAUSSIAN_H
+#ifndef __MLPACK_METHODS_HMM_MIXTURE_GAUSSIAN_HPP
+#define __MLPACK_METHODS_HMM_MIXTURE_GAUSSIAN_HPP
 
 #include <mlpack/core.h>
 
@@ -168,4 +168,4 @@ class MixtureGauss {
 }; // namespace hmm
 }; // namespace mlpack
 
-#endif
+#endif // __MLPACK_METHODS_HMM_MIXTURE_GAUSSIAN_HPP
