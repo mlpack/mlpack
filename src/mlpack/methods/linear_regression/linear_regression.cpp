@@ -27,7 +27,9 @@ LinearRegression::LinearRegression(const std::string& filename)
   parameters.load(filename);
 }
 
-LinearRegression::~LinearRegression() {}
+LinearRegression::~LinearRegression()
+{
+}
 
 void LinearRegression::predict(arma::rowvec& predictions, const arma::mat& points)
 {
@@ -39,15 +41,18 @@ void LinearRegression::predict(arma::rowvec& predictions, const arma::mat& point
 
   predictions.set_size(n_cols);
   predictions += parameters(0);
-  for(size_t i = 1; i < n_rows; ++i) {
-    for(size_t j = 0; j < n_cols; ++j) {
+  for(size_t i = 1; i < n_rows; ++i)
+  {
+    for(size_t j = 0; j < n_cols; ++j)
+    {
       predictions(j) += parameters(i) * points(i-1,j);
       
     }
   }
 }
 
-arma::vec LinearRegression::getParameters() {
+arma::vec LinearRegression::getParameters()
+{
   return parameters;
 }
 

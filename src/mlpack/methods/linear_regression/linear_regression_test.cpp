@@ -8,7 +8,8 @@
  * Creates two 10x3 random matrices and one 10x1 "results" matrix.
  * Finds B in y=BX with one matrix, then predicts against the other.
  */
-BOOST_AUTO_TEST_CASE(LinearRegressionTest) {
+BOOST_AUTO_TEST_CASE(LinearRegressionTest)
+{
   // predictors, points are 10x3 matrices
   arma::mat predictors, points;
 
@@ -28,7 +29,8 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTest) {
   // Create y
   responses.zeros(10);
   // Create a second "class" for the first cluster of points
-  for(size_t i = 0; i < 5; ++i) {
+  for(size_t i = 0; i < 5; ++i)
+  {
     responses(i) = 1;
   }
   responses += 1; // "classes" are 2,1
@@ -42,7 +44,8 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTest) {
   // Output result and verify we have less than .5 error from "correct" value
   // for each point
   std::cout << points << '\n' << predictions << '\n';
-  for(size_t i = 0; i < predictions.n_cols; ++i) {
+  for(size_t i = 0; i < predictions.n_cols; ++i)
+  {
     assert( fabs(predictions(i) - responses(i)) < .5);
   }
 }
