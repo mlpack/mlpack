@@ -37,7 +37,6 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTest) {
 
   // Initialize and predict
   mlpack::linear_regression::LinearRegression lr(predictors, responses);
-  lr.run();
   lr.predict(predictions, points);
 
   // Output result and verify we have less than .5 error from "correct" value

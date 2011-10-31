@@ -4,11 +4,8 @@ namespace mlpack {
 namespace linear_regression {
 
 LinearRegression::LinearRegression(arma::mat& predictors,
-  const arma::colvec& responses) :
-  predictors(predictors), responses(responses) { }
-
-void LinearRegression::run() {
-
+  const arma::colvec& responses)
+{
   size_t n_cols, n_rows;
 
   n_cols = predictors.n_cols;
@@ -25,9 +22,15 @@ void LinearRegression::run() {
     predictors * responses;
 }
 
+LinearRegression::LinearRegression(const std::string& filename)
+{
+  parameters.load(filename);
+}
+
 LinearRegression::~LinearRegression() {}
 
-void LinearRegression::predict(arma::rowvec& predictions, const arma::mat& points) {
+void LinearRegression::predict(arma::rowvec& predictions, const arma::mat& points)
+{
   size_t n_cols, n_rows;
   n_cols = points.n_cols;
   n_rows = points.n_rows;
@@ -48,6 +51,16 @@ arma::vec LinearRegression::getParameters() {
   return parameters;
 }
 
+
+bool LinearRegression::load(const std::string& filename)
+{
+  return parameters.load(filename);
+}
+
+bool LinearRegression::save(const std::string& filename)
+{
+  return parameters.save(filename);
+}
 
 }; // namespace linear_regression
 }; // namespace mlpack

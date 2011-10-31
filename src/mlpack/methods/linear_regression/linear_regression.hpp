@@ -10,20 +10,19 @@ namespace linear_regression {
  */
 class LinearRegression {
   public:
-    /** Initialize parameters. 
+    /** Creates the model.
      *  @param predictors X, matrix of data points to create B with.
-     *  @ param responses y, the measured data for each point in X
+     *  @param responses y, the measured data for each point in X
      */ 
     LinearRegression(arma::mat& predictors, const arma::colvec& responses);
 
-    /** Destructor - no work done.
+    /** Initialize the model from a file.
+     *  @param filename the name of the file to load the model from.
      */
-    ~LinearRegression();
+    LinearRegression(const std::string& filename);
 
-    /** Create regression coefficients.
-     * y=BX, this creates B.
-     **/
-    void run();
+    /** Destructor - no work done. */
+    ~LinearRegression();
 
     /** Calculate y_i for each data point in points.
      *  @param predictions y, will contain calculated values on completion.
@@ -31,26 +30,26 @@ class LinearRegression {
      */
     void predict(arma::rowvec& predictions, const arma::mat& points);
 
-    /** Returns B.
+    /** Returns the model.
      * @return the parameters which describe the least squares solution.
      */
     arma::vec getParameters();
+
+    /** Saves the model.
+     *  @param filename the name of the file to load the model from.
+     */
+    bool save(const std::string& filename);
+
+    /** Loads the model.
+     *  @param filename the name of the file to load the model from.
+     */
+    bool load(const std::string& filename);
 
   private:
     /** The calculated B.
      * Initialized and filled by constructor to hold the least squares solution.
      */
     arma::vec parameters;
-
-    /** The X values.
-     * The regressor values.
-     */
-    arma::mat& predictors;
-
-    /** The y values for the predictors.
-     * The response variables, corresponding to points in X.
-     */
-    const arma::colvec& responses;
 
 };
 
