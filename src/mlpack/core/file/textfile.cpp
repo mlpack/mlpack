@@ -1,5 +1,5 @@
 /**
- * @file textfile.cc
+ * @file textfile.cpp
  *
  * Implementations for the text-based file I/O helper classes.
  *
@@ -9,12 +9,14 @@
  *
  */
 
-#include "textfile.h"
+#include "textfile.hpp"
 
 #include "../io/cli.hpp"
 #include "../io/log.hpp"
 #include <ctype.h>
 #include <iostream>
+
+using namespace mlpack;
 
 /*
 char *TextTokenizer::ReadLine() {

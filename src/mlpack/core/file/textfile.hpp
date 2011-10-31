@@ -1,5 +1,5 @@
 /**
- * @file textfile.h
+ * @file textfile.hpp
  *
  * Small wrappers for text files.
  * The most useful thing here is the ReadLine function.
@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef FILE_TEXTFILE_H
-#define FILE_TEXTFILE_H
+#ifndef __MLPACK_CORE_FILE_TEXTFILE_HPP
+#define __MLPACK_CORE_FILE_TEXTFILE_HPP
 
 #include "../io/cli.hpp"
 #include "../io/log.hpp"
@@ -22,6 +22,8 @@
 
 #include <string>
 #include <vector>
+
+namespace mlpack {
 
 /**
  * Helper for reading text files.
@@ -384,4 +386,6 @@ class TextWriter {
   }
 };
 
-#endif
+}; // namespace mlpack
+
+#endif // __MLPACK_CORE_FILE_TEXTFILE_HPP
