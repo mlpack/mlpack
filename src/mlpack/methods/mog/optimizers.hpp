@@ -1,12 +1,12 @@
 /**
  * @author Parikshit Ram (pram@cc.gatech.edu)
- * @file optimizers.h
+ * @file optimizers.hpp
  *
  * Declares classes for two types of optimizer
  *
  */
-#ifndef __MLPACK_METHODS_MOG_OPTIMIZERS_H
-#define __MLPACK_METHODS_MOG_OPTIMIZERS_H
+#ifndef __MLPACK_METHODS_MOG_OPTIMIZERS_HPP
+#define __MLPACK_METHODS_MOG_OPTIMIZERS_HPP
 
 #include <mlpack/core.h>
 
@@ -27,6 +27,9 @@ PARAM_DOUBLE("MAX_STEP_SIZE", "The maximum step size in the direction of the gra
 PARAM_DOUBLE("tolerance", "Undocumented parameter", "opt", 1.0e-5);
 
 PARAM_MODULE("opt", "This file contains two optimizers.");
+
+namespace mlpack {
+namespace gmm {
 
 /**
  * An optimizer using the Nelder Mead method,
@@ -144,4 +147,7 @@ class QuasiNewton {
                    long double maximum_step_length);
 };
 
-#endif
+}; // namespace gmm
+}; // namespace mlpack
+
+#endif // __MLPACK_METHODS_MOG_OPTIMIZERS_HPP

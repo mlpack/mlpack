@@ -1,14 +1,17 @@
 /**
  * @author Parikshit Ram (pram@cc.gatech.edu)
- * @file mog_em.h
+ * @file kmeans.hpp
  *
  * Defines a Gaussian Mixture model and
  * estimates the parameters of the model
  */
-#ifndef __MLPACK_METHODS_MOG_KMEANS_H
-#define __MLPACK_METHODS_MOG_KMEANS_H
+#ifndef __MLPACK_METHODS_MOG_KMEANS_HPP
+#define __MLPACK_METHODS_MOG_KMEANS_HPP
 
 #include <mlpack/core.h>
+
+namespace mlpack {
+namespace gmm {
 
 /**
  * This function computes the k-means of the data and stores the calculated
@@ -22,5 +25,7 @@ void KMeans(const arma::mat& data,
             std::vector<arma::vec>& means,
             std::vector<arma::mat>& covars,
             arma::vec& weights);
+}; // namespace gmm
+}; // namespace mlpack
 
-#endif
+#endif // __MLPACK_METHODS_MOG_KMEANS_HPP

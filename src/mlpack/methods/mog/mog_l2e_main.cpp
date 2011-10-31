@@ -1,6 +1,6 @@
 /**
  * @author Parikshit Ram (pram@cc.gatech.edu)
- * @file mog_l2e_main.cc
+ * @file mog_l2e_main.cpp
  *
  * This program test drives the L2 estimation
  * of a Gaussian Mixture model.
@@ -20,8 +20,8 @@
  * defaults to 'output.csv'
  *
  */
-#include "mog_l2e.h"
-#include "optimizers.h"
+#include "mog_l2e.hpp"
+#include "optimizers.hpp"
 
 PROGRAM_INFO("Mixture of Gaussians",
     "This program takes a parametric estimate of a Gaussian mixture model (GMM)"

@@ -1,13 +1,13 @@
 /**
  * @author Parikshit Ram (pram@cc.gatech.edu)
- * @file mog_l2e.h
+ * @file mog_l2e.hpp
  *
  * Defines a Gaussian Mixture model and
  * estimates the parameters of the model
  *
  */
-#ifndef __MLPACK_METHODS_MOG_MOG_L2E_H
-#define __MLPACK_METHODS_MOG_MOG_L2E_H
+#ifndef __MLPACK_METHODS_MOG_MOG_L2E_HPP
+#define __MLPACK_METHODS_MOG_MOG_L2E_HPP
 
 #include <mlpack/core.h>
 
@@ -501,4 +501,4 @@ class MoGL2E {
 }; // namespace gmm
 }; // namespace mlpack
 
-#endif
+#endif // __MLPACK_METHODS_MOG_MOG_L2E_HPP

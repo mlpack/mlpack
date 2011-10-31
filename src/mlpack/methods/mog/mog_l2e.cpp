@@ -1,14 +1,14 @@
 /**
  * @author Parikshit Ram (pram@cc.gatech.edu)
- * @file mog_l2e.cc
+ * @file mog_l2e.cpp
  *
  * Implementation for L2 loss function, and
  * also some initial points generator
  *
  */
-#include "mog_l2e.h"
-#include "phi.h"
-#include "kmeans.h"
+#include "mog_l2e.hpp"
+#include "phi.hpp"
+#include "kmeans.hpp"
 
 using namespace mlpack;
 using namespace gmm;

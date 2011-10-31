@@ -1,11 +1,14 @@
 /**
  * @author Parikshit Ram (pram@cc.gatech.edu)
- * @file phi.h
+ * @file phi.hpp
  *
  * This file computes the Gaussian probability
  * density function
  */
 #include <mlpack/core.h>
+
+namespace mlpack {
+namespace gmm {
 
 /**
  * Calculates the multivariate Gaussian probability density function
@@ -121,3 +124,6 @@ long double phi(const arma::vec& x,
 
   return f;
 }
+
+}; // namespace gmm
+}; // namespace mlpack
