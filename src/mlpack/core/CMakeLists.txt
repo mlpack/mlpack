@@ -1,8 +1,6 @@
 # All we have to do is recurse into the subdirectories.
 set(DIRS
   arma_extend
-  col
-  file
   io
   kernels
   math
