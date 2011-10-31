@@ -1,6 +1,5 @@
 #include <mlpack/core.h>
 #include <mlpack/core/kernels/lmetric.hpp>
-#include "../../core/col/tokenizer.h"
 
 #include "support.hpp"
 
@@ -26,28 +25,11 @@ namespace hmm_support {
     }
   }
 
-  void print_matrix(TextWriter& writer, const arma::mat& a, const char* msg, const char* format) {
-    writer.Printf("%s - Matrix (%d x %d) = \n", msg, a.n_rows, a.n_cols);
-    for (size_t j = 0; j < a.n_cols; j++) {
-      for (size_t i = 0; i < a.n_rows; i++)
-	writer.Printf(format, a(i, j));
-
-      writer.Printf("\n");
-    }
-  }
-
   void print_vector(const arma::vec& a, const char* msg) {
     printf("%s - Vector (%d) = \n", msg, a.n_elem);
     for (size_t i = 0; i < a.n_elem; i++)
       printf("%8.4f", a[i]);
     printf("\n");
-  }
-
-  void print_vector(TextWriter& writer, const arma::vec& a, const char* msg, const char* format) {
-    writer.Printf("%s - Vector (%d) = \n", msg, a.n_elem);
-    for (size_t i = 0; i < a.n_elem; i++)
-      writer.Printf(format, a[i]);
-    writer.Printf("\n");
   }
 
   double RAND_NORMAL_01() {
@@ -272,149 +254,8 @@ namespace hmm_support {
     }
   }
 
-  bool skip_blank(TextLineReader& reader) {
-    for (;;) {
-      if (!reader.MoreLines())
-        return false;
-//      char* pos = reader.Peek().begin();
-
-      std::string::iterator pos = reader.Peek().begin();
-      while (*pos == ' ' || *pos == ',' || *pos == '\t')
-	pos++;
-
-      if (*pos == '\0' || *pos == '%')
-        reader.Gobble();
-      else
-        break;
-    }
-    return true;
-  }
-
-  bool read_matrix(TextLineReader& reader, arma::mat& matrix) {
-    if (!skip_blank(reader)) { // EOF ?
-      matrix.set_size(0, 0);
-      return false;
-    } else {
-      size_t n_rows = 0;
-      size_t n_cols = 0;
-      bool is_done;
-
-      // How many columns ?
-      std::vector<std::string> num_str;
-      tokenizeString(reader.Peek(), ", \t", num_str);
-      n_cols = num_str.size();
-
-      std::vector<double> num_double;
-
-      for(;;) { // read each rows
-        n_rows++;
-        // deprecated: double* point = num_double.AddBack(n_cols);
-        std::vector<std::string> num_str;
-        tokenizeString(reader.Peek(), ", \t", num_str);
-//       reader.Peek().Split(", \t", &num_str);
-
-        mlpack::Log::Assert(num_str.size() == n_cols);
-
-        std::istringstream is;
-        for (size_t i = 0; i < n_cols; i++) {
-          double d;
-          is.str(num_str[i]);
-          if( !(is >> d ) )
-            abort();
-          num_double.push_back(d);
-        }
-
-        is_done = false;
-
-        reader.Gobble();
-
-        for (;;) {
-	  if (!reader.MoreLines()) {
-	    is_done = true;
-	    break;
-	  }
-          std::string::iterator pos = reader.Peek().begin();
-
-          while (*pos == ' ' || *pos == '\t')
-	    pos++;
-
-          if (*pos == '\0')
-            reader.Gobble();
-	  else if (*pos == '%') {
-	    is_done = true;
-	    break;
-	  }
-	  else
-            break;
-        }
-
-        if (is_done) {
-          std::vector<double> empty;
-          num_double.swap(empty);
-
-          //FIXME
-//	  matrix->Own(num_double.ReleasePtr(), n_cols, n_rows);
-
-          return true;
-        }
-      }
-    }
-  }
-
-  bool read_vector(TextLineReader& reader, arma::vec& vec) {
-    if (!skip_blank(reader)) { // EOF ?
-      vec.set_size(0);
-      return false;
-    }
-
-    std::vector<double> num_double;
-
-    for(;;) { // read each rows
-      bool is_done = false;
-
-      std::vector<std::string> num_str;
-      tokenizeString(reader.Peek(), ", \t", num_str);
-
-      // deprecated: double* point = num_double.AddBack(num_str.size());
-
-      std::istringstream is;
-      for (size_t i = 0; i < num_str.size(); i++) {
-        double d;
-        is.str(num_str[i]);
-        if( !(is >> d) )
-          abort();
-      }
-
-      reader.Gobble();
-
-      for (;;) {
-        if (!reader.MoreLines()) {
-	  is_done = true;
-	  break;
-	}
-        std::string::iterator pos = reader.Peek().begin();
-	while (*pos == ' ' || *pos == '\t')
-	  pos++;
-	if (*pos == '\0')
-          reader.Gobble();
-	else if (*pos == '%') {
-	  is_done = true;
-	  break;
-	} else
-          break;
-      }
-
-      if (is_done) {
-        //num_double.Trim();
-        // FIXME
-//	vec->Own(num_double.ReleasePtr(), length);
-
-        return true;
-      }
-    }
-  }
-
   bool load_matrix_list(const char* filename, std::vector<arma::mat>& matlst) {
+    /** need something better
     TextLineReader reader;
     if (!(reader.Open(filename)))
       return false;
@@ -425,11 +266,13 @@ namespace hmm_support {
       else
         break;
     } while (1);
+    */
 
     return true;
   }
 
   bool load_vector_list(const char* filename, std::vector<arma::vec>& veclst) {
+    /** need something better
     TextLineReader reader;
     if (!(reader.Open(filename)))
       return false;
@@ -441,6 +284,7 @@ namespace hmm_support {
       else
         break;
     } while (1);
+    */
 
     return true;
   }

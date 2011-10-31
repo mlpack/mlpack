@@ -102,6 +102,7 @@ bool viterbi_mixture() {
   std::vector<arma::mat> seqs;
   load_matrix_list(seqin, seqs);
 
+  /** need something better
   TextWriter w_state;
   if (!(w_state.Open(stateout))) {
     Log::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
@@ -117,6 +118,7 @@ bool viterbi_mixture() {
     sprintf(s, "%% viterbi state sequence %zu", i);
     print_vector(w_state, states, s, "%.0f,");
   }
+  */
 
   return true;
 }
@@ -136,6 +138,7 @@ bool viterbi_gaussian() {
   std::vector<arma::mat> seqs;
   load_matrix_list(seqin, seqs);
 
+  /** need something better
   TextWriter w_state;
   if (!(w_state.Open(stateout))) {
     Log::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
@@ -150,6 +153,7 @@ bool viterbi_gaussian() {
     sprintf(s, "%% viterbi state sequence %zu", i);
     print_vector(w_state, states, s, "%.0f,");
   }
+  */
 
   return true;
 }
@@ -170,6 +174,7 @@ bool viterbi_discrete() {
   std::vector<arma::vec> seqs;
   load_vector_list(seqin, seqs);
 
+  /** need something better
   TextWriter w_state;
   if (!(w_state.Open(stateout))) {
     Log::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
@@ -185,6 +190,7 @@ bool viterbi_discrete() {
     sprintf(s, "%% viterbi state sequence %zu", i);
     print_vector(w_state, states, s, "%.0f,");
   }
+  */
 
   return true;
 }

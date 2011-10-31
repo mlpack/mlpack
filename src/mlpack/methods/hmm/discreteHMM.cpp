@@ -75,6 +75,7 @@ void DiscreteHMM::LoadProfile(const char* profile) {
 }
 
 void DiscreteHMM::SaveProfile(const char* profile) const {
+  /*** need something better
   TextWriter w_pro;
   if (!(w_pro.Open(profile))) {
     mlpack::Log::Warn << "Couldn't open " << profile << " for writing." <<
@@ -84,6 +85,7 @@ void DiscreteHMM::SaveProfile(const char* profile) const {
 
   print_matrix(w_pro, transmission_, "%% transmission", "%f,");
   print_matrix(w_pro, emission_, "%% emission", "%f,");
+  */
 }
 
 void DiscreteHMM::GenerateSequence(size_t length, arma::vec& data_seq, arma::vec& state_seq) const {
