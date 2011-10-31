@@ -8,7 +8,8 @@ namespace linear_regression {
 /** 
  *  A simple linear regresion algorithm using ordinary least squares.
  */
-class LinearRegression {
+class LinearRegression
+{
   public:
     /** Creates the model.
      *  @param predictors X, matrix of data points to create B with.
