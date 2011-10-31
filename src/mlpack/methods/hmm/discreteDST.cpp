@@ -1,6 +1,6 @@
 #include <mlpack/core.h>
-#include "discreteDST.h"
-#include "support.h"
+#include "discreteDST.hpp"
+#include "support.hpp"
 
 namespace mlpack {
 namespace hmm {

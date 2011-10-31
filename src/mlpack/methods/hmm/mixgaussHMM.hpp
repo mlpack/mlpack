@@ -10,7 +10,7 @@
 #define __MLPACK_METHODS_HMM_MIXGAUSS_HMM_H
 
 #include <mlpack/core.h>
-#include "mixtureDST.h"
+#include "mixtureDST.hpp"
 
 namespace mlpack {
 namespace hmm {

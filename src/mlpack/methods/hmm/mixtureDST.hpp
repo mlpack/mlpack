@@ -14,7 +14,7 @@
 
 #include <mlpack/core.h>
 
-#include "support.h"
+#include "support.hpp"
 
 namespace mlpack {
 namespace hmm {

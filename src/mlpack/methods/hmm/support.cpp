@@ -2,7 +2,7 @@
 #include <mlpack/core/kernels/lmetric.hpp>
 #include "../../core/col/tokenizer.h"
 
-#include "support.h"
+#include "support.hpp"
 
 namespace mlpack {
 namespace hmm {

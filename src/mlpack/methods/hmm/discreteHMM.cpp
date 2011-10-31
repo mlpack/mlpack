@@ -5,8 +5,8 @@
  */
 #include <mlpack/core.h>
 
-#include "support.h"
-#include "discreteHMM.h"
+#include "support.hpp"
+#include "discreteHMM.hpp"
 
 namespace mlpack {
 namespace hmm {

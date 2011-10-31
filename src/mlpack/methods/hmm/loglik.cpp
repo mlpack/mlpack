@@ -10,11 +10,11 @@
  */
 #include <mlpack/core.h>
 
-#include "support.h"
-#include "discreteHMM.h"
-#include "gaussianHMM.h"
-#include "mixgaussHMM.h"
-#include "mixtureDST.h"
+#include "support.hpp"
+#include "discreteHMM.hpp"
+#include "gaussianHMM.hpp"
+#include "mixgaussHMM.hpp"
+#include "mixtureDST.hpp"
 
 using namespace mlpack;
 using namespace hmm;
