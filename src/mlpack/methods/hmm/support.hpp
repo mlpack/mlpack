@@ -1,5 +1,5 @@
-#ifndef __MLPACK_METHODS_HMM_SUPPORT_H
-#define __MLPACK_METHODS_HMM_SUPPORT_H
+#ifndef __MLPACK_METHODS_HMM_SUPPORT_HPP
+#define __MLPACK_METHODS_HMM_SUPPORT_HPP
 
 #include <mlpack/core.h>
 
@@ -71,5 +71,4 @@ namespace hmm_support {
 }; // namespace hmm
 }; // namespace mlpack
 
-#endif
-
+#endif // __MLPACK_METHODS_HMM_SUPPORT_HPP

@@ -30,4 +30,4 @@ class DiscreteDST {
 }; // namespace hmm
 }; // namespace mlpack
 
-#endif // __MLPACK_METHODS_HMM_DISCRETE_DISTRIBUTINO_HPP
+#endif // __MLPACK_METHODS_HMM_DISCRETE_DISTRIBUTION_HPP

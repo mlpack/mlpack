@@ -7,8 +7,8 @@
  * parameter estimation. It can also generate sequences from a Hidden Markov
  * Model.
  */
-#ifndef __MLPACK_METHODS_HMM_GAUSSIAN_HMM_H
-#define __MLPACK_METHODS_HMM_GAUSSIAN_HMM_H
+#ifndef __MLPACK_METHODS_HMM_GAUSSIAN_HMM_HPP
+#define __MLPACK_METHODS_HMM_GAUSSIAN_HMM_HPP
 
 #include <mlpack/core.h>
 
@@ -200,4 +200,4 @@ class GaussianHMM {
 }; // namespace hmm
 }; // namespace mlpack
 
-#endif
+#endif // __MLPACK_METHODS_HMM_GAUSSIAN_HMM_HPP
