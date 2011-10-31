@@ -25,6 +25,7 @@
 
 BOOST_AUTO_TEST_CASE(TestCaseSingleBandwidth) {
 
+  
   printf("making test class\n");
   npt::TestSingleBandwidth single_test;
   printf("running tests\n");

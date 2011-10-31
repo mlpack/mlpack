@@ -11,8 +11,8 @@
 #define NODE_TUPLE_H
 
 #include <mlpack/core.h>
-#include <mlpack/core/tree/bounds.h>
-#include <mlpack/core/tree/spacetree.h>
+#include <mlpack/core/tree/bounds.hpp>
+#include <mlpack/core/tree/binary_space_tree.hpp>
 
 /*
  *  This class holds an ordered tuple of n tree nodes (for an n-point 
@@ -26,11 +26,11 @@
  *
  */
 
+using namespace mlpack;
 
 namespace npt {
 
-  typedef mlpack::tree::BinarySpaceTree<mlpack::bound::HRectBound<2>, 
-                                        arma::mat> NptNode;
+  typedef tree::BinarySpaceTree<bound::HRectBound<2> > NptNode;
   
   // this is now just responsible for checking symmetry
   class NodeTuple { 

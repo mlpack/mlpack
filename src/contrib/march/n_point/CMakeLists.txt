@@ -14,6 +14,8 @@ set(SOURCES
   angle_results.cc  
   efficient_resampling.h
   efficient_resampling.cc
+  generate_random_problem.h
+  generate_random_problem.cc
   generic_npt_alg.h
   generic_npt_alg_impl.h
   naive_resampling.h
@@ -82,6 +84,16 @@ target_link_libraries(angle_resampling_test
 #	mlpack
 	mlpack_contrib
 	boost_unit_test_framework
+	boost_random
+)
+
+add_executable(two_point_timing
+	EXCLUDE_FROM_ALL
+	two_point_timing.cc
+)
+target_link_libraries(two_point_timing
+#	mlpack
+	mlpack_contrib
 	boost_random
 )
 

@@ -15,8 +15,8 @@
 
 #include "boost/multi_array.hpp"
 #include "node_tuple.h"
-#include <mlpack/core/tree/bounds.h>
-#include <mlpack/core/tree/spacetree.h>
+//#include <mlpack/core/tree/bounds.h>
+//#include <mlpack/core/tree/spacetree.h>
 
 /*
  *  Takes in the parameters for an angle-based set of matchers (r1, r2_mult,
@@ -40,7 +40,7 @@
 // only satisfy one
 
 // IMPORTANT: I think I'm assuming that r2 is enough larger than r1 that there
-// isn't any overlap
+// isn't any overlap - NOT true any more
 
 namespace npt {
 
