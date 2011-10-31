@@ -9,7 +9,7 @@
 
 //#include "fastlib/fastlib.h"
 //#include <fastlib/fx/io.h>
-#include<log.h>
+//#include<mlpack/log.h>
 
 #include <mlpack/core.h>
 
