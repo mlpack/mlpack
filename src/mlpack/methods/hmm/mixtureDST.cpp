@@ -5,8 +5,8 @@
  */
 #include <mlpack/core.h>
 
-#include "support.h"
-#include "mixtureDST.h"
+#include "support.hpp"
+#include "mixtureDST.hpp"
 
 namespace mlpack {
 namespace hmm {

@@ -5,8 +5,8 @@
  */
 #include <mlpack/core.h>
 
-#include "support.h"
-#include "gaussianHMM.h"
+#include "support.hpp"
+#include "gaussianHMM.hpp"
 
 namespace mlpack {
 namespace hmm {

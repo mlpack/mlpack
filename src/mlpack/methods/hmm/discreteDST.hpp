@@ -1,5 +1,5 @@
-#ifndef __MLPACK_METHODS_HMM_DISCRETE_DISTRIBUTCLIN_H
-#define __MLPACK_METHODS_HMM_DISCRETE_DISTRIBUTCLIN_H
+#ifndef __MLPACK_METHODS_HMM_DISCRETE_DISTRIBUTION_HPP
+#define __MLPACK_METHODS_HMM_DISCRETE_DISTRIBUTION_HPP
 
 #include <mlpack/core.h>
 
@@ -30,4 +30,4 @@ class DiscreteDST {
 }; // namespace hmm
 }; // namespace mlpack
 
-#endif
+#endif // __MLPACK_METHODS_HMM_DISCRETE_DISTRIBUTINO_HPP
