@@ -10,11 +10,12 @@
 #ifndef GENERATE_RANDOM_PROBLEM_H
 #define GENERATE_RANDOM_PROBLEM_H
 
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
-#include <boost/random/uniform_real_distribution.hpp>
-#include <boost/random/uniform_01.hpp>
-#include <boost/random/variate_generator.hpp>
+//#include <boost/random/mersenne_twister.hpp>
+//#include <boost/random/uniform_int_distribution.hpp>
+//#include <boost/random/uniform_real_distribution.hpp>
+//#include <boost/random/uniform_01.hpp>
+//#include <boost/random/variate_generator.hpp>
+#include <boost/random.hpp>
 
 #include <mlpack/core.h>
 

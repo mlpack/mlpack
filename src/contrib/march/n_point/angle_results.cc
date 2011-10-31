@@ -62,8 +62,9 @@ void npt::AngleResults::ProcessResults(std::vector<int>& region_ids,
         }
       } // check the invalid region ids
       
-      AddResult_(i, num_random, matcher.results());
-      
+      if (!skip_me) {
+        AddResult_(i, num_random, matcher.results());
+      }
     } // for i
     
   }
