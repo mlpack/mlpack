@@ -4,7 +4,7 @@
  * @author Bill March (march@gatech.edu)
  *
  * Contains an implementation of the DualTreeBoruvka algorithm for finding a
- * Euclidean Minimum Spanning Tree.
+ * Euclidean Minimum Spanning Tree using the kd-tree data structure.
  *
  * Citation: March, W. B.; Ram, P.; and Gray, A. G.  Fast Euclidean Minimum Spanning
  * Tree: Algorithm, Analysis, Applications.  In KDD, 2010.
@@ -21,16 +21,8 @@
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/kernels/lmetric.hpp>
 
-PARAM(size_t, "leaf_size", "Size of the leaves.", "naive", 1, false);
-
 namespace mlpack {
 namespace emst {
-
-/*
-const fx_submodule_doc dtb_submodules[] = {
-FX_SUBMODULE_DOC_DONE
-};
- */
 
 /**
 * A Stat class for use with fastlib's trees.  This one only stores two values.
@@ -43,10 +35,11 @@ FX_SUBMODULE_DOC_DONE
  * points in this node.  If points in this node are in different components,
  * this value will be negative.
  */
+  
 class DTBStat {
  private:
   double max_neighbor_distance_;
-  size_t component_membership_;
+  int component_membership_;
 
  public:
   void set_max_neighbor_distance(double distance) {
@@ -57,11 +50,11 @@ class DTBStat {
     return max_neighbor_distance_;
   }
 
-  void set_component_membership(size_t membership) {
+  void set_component_membership(int membership) {
     component_membership_ = membership;
   }
 
-  size_t component_membership() {
+  int component_membership() {
     return component_membership_;
   }
 
@@ -108,8 +101,6 @@ class DTBStat {
  */
 class DualTreeBoruvka {
 
-//  FORBID_ACCIDENTAL_COPIES(DualTreeBoruvka);
-
  public:
   // For now, everything is in Euclidean space
   static const size_t metric = 2;
@@ -144,7 +135,7 @@ class DualTreeBoruvka {
   size_t number_r_recursions_;
   size_t number_both_recursions_;
 
-  int do_naive_;
+  bool do_naive_;
 
   DTBTree* tree_;
 
@@ -286,6 +277,9 @@ class DualTreeBoruvka {
       //pruned by component membership
 
       mlpack::Log::Assert(reference_node->stat().component_membership() >= 0);
+               
+      mlpack::Log::Info << query_node->stat().component_membership() << "q mem\n";
+      mlpack::Log::Info << reference_node->stat().component_membership() << "r mem\n";
 
       number_component_prunes_++;
     }
@@ -411,7 +405,7 @@ class DualTreeBoruvka {
 
   struct SortEdgesHelper_ {
     bool operator() (const EdgePair& pairA, const EdgePair& pairB) {
-      return (pairA.distance() > pairB.distance());
+      return (pairA.distance() < pairB.distance());
     }
   } SortFun;
 
@@ -432,29 +426,33 @@ class DualTreeBoruvka {
     SortEdges_();
 
     mlpack::Log::Assert(number_of_edges_ == number_of_points_ - 1);
-    results.set_size(3, number_of_edges_);
+    results.set_size(number_of_edges_, 3);
 
+    // need to unpermute the point labels
     if (!do_naive_) {
       for (size_t i = 0; i < (number_of_points_ - 1); i++) {
 
-        edges_[i].set_lesser_index(old_from_new_permutation_[edges_[i]
-          .lesser_index()]);
+        // Make sure the edge list stores the smaller index first to 
+        // make checking correctness easier
+        size_t ind1, ind2;
+        ind1 = old_from_new_permutation_[edges_[i].lesser_index()];
+        ind2 = old_from_new_permutation_[edges_[i].greater_index()];
+        
+        edges_[i].set_lesser_index(std::min(ind1, ind2));
+        edges_[i].set_greater_index(std::max(ind1, ind2));
 
-        edges_[i].set_greater_index(old_from_new_permutation_[edges_[i]
-          .greater_index()]);
-
-        results(0, i) = edges_[i].lesser_index();
-        results(1, i) = edges_[i].greater_index();
-        results(2, i) = sqrt(edges_[i].distance());
+        results(i, 0) = edges_[i].lesser_index();
+        results(i, 1) = edges_[i].greater_index();
+        results(i, 2) = sqrt(edges_[i].distance());
 
       }
     }
     else {
 
       for (size_t i = 0; i < number_of_edges_; i++) {
-        results(0, i) = edges_[i].lesser_index();
-        results(1, i) = edges_[i].greater_index();
-        results(2, i) = sqrt(edges_[i].distance());
+        results(i, 0) = edges_[i].lesser_index();
+        results(i, 1) = edges_[i].greater_index();
+        results(i, 2) = sqrt(edges_[i].distance());
       }
 
     }
@@ -532,9 +530,10 @@ class DualTreeBoruvka {
     fx_result_int(module_, "number_r_recursions", number_r_recursions_);
     fx_result_int(module_, "number_both_recursions", number_both_recursions_);*/
     // TODO, not sure how I missed this last time.
-    mlpack::Log::Info << "total_squared_length" << total_dist_ << std::endl;
-    mlpack::Log::Info << "number_of_points" << number_of_points_ << std::endl;
-    mlpack::Log::Info << "dimension" << data_points_.n_rows << std::endl;
+    mlpack::Log::Info << "Total squared length: " << total_dist_ << std::endl;
+    mlpack::Log::Info << "Number of points: " << number_of_points_ << std::endl;
+    mlpack::Log::Info << "Dimension: " << data_points_.n_rows << std::endl;
+    /*
     mlpack::Log::Info << "number_of_loops" << std::endl;
     mlpack::Log::Info << "number_distance_prunes" << std::endl;
     mlpack::Log::Info << "number_component_prunes" << std::endl;
@@ -542,6 +541,10 @@ class DualTreeBoruvka {
     mlpack::Log::Info << "number_q_recursions" << std::endl;
     mlpack::Log::Info << "number_r_recursions" << std::endl;
     mlpack::Log::Info << "number_both_recursions" << std::endl;
+     */
+    
+    mlpack::CLI::GetParam<double>("dtb/total_squared_length") = total_dist_;
+    
   } // OutputResults_
 
   /////////// Public Functions ///////////////////
@@ -554,11 +557,9 @@ class DualTreeBoruvka {
 
 
   /**
-   * Takes in a reference to the data set and a module.  Copies the data,
+   * Takes in a reference to the data set.  Copies the data,
    * builds the tree, and initializes all of the member variables.
    *
-   * This module will be checked for the optional parameters "leaf_size" and
-   * "do_naive".
    */
   void Init(const arma::mat& data) {
 
@@ -572,17 +573,20 @@ class DualTreeBoruvka {
       // This gives best pruning empirically
       // Use leaf_size=1 unless space is a big concern
       CLI::GetParam<int>("tree/leaf_size") =
-          CLI::GetParam<size_t>("naive/leaf_size");
+          CLI::GetParam<int>("emst/leaf_size");
 
-      Timers::StartTimer("naive/tree_building");
+      Timers::StartTimer("emst/tree_building");
 
       tree_ = new DTBTree(data_points_, old_from_new_permutation_);
 
-      Timers::StopTimer("naive/tree_building");
+      Timers::StopTimer("emst/tree_building");
+      
     }
     else {
+      
       tree_ = NULL;
       old_from_new_permutation_.resize(0);
+      
     }
 
     number_of_points_ = data_points_.n_cols;
@@ -614,23 +618,30 @@ class DualTreeBoruvka {
     Timers::StartTimer("emst/MST_computation");
 
     while (number_of_edges_ < (number_of_points_ - 1)) {
+      
       ComputeNeighbors_();
 
       AddAllEdges_();
 
       Cleanup_();
 
-      Log::Info << "number_of_loops = " << number_of_loops_ << std::endl;
+      
+      Log::Info << "Finished loop number: " << number_of_loops_ << std::endl;
+      Log::Info << number_of_edges_ << " edges found so far.\n\n";
+      /*
+      Log::Info << number_leaf_computations_ << " base cases.\n";
+      Log::Info << number_distance_prunes_ << " distance prunes.\n";
+      Log::Info << number_component_prunes_ << " component prunes.\n";
+      Log::Info << number_r_recursions_ << " reference recursions.\n";
+      Log::Info << number_q_recursions_ << " query recursions.\n";
+      Log::Info << number_both_recursions_ << " dual recursions.\n\n";
+      */
+      
     }
 
     Timers::StopTimer("emst/MST_computation");
 
-//    if (results != NULL) {
-
-      EmitResults_(results);
-
-//    }
-
+    EmitResults_(results);
 
     OutputResults_();
 
