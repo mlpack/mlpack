@@ -33,3 +33,11 @@ target_link_libraries(union_find_test
   mlpack
   boost_unit_test_framework
 )
+
+add_executable(emst_test
+  emst_test.cc
+)
+target_link_libraries(emst_test
+  mlpack
+  boost_unit_test_framework
+)
