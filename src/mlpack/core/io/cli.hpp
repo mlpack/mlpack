@@ -9,15 +9,16 @@
 #ifndef __MLPACK_CORE_IO_CLI_HPP
 #define __MLPACK_CORE_IO_CLI_HPP
 
-#include <boost/program_options.hpp>
-#include <boost/any.hpp>
+#include <list>
 #include <iostream>
 #include <map>
 #include <string>
-#include <list>
 
-#include "optionshierarchy.hpp"
+#include <boost/any.hpp>
+#include <boost/program_options.hpp>
+
 #include "cli_deleter.hpp" // To make sure we can delete the singleton.
+#include "optionshierarchy.hpp"
 
 /**
  * Document an executable and set a default module.  Only one

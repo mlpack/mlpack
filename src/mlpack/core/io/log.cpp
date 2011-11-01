@@ -4,8 +4,9 @@
  *
  * Implementation of the Log class.
  */
-#include "log.hpp"
 #include <iostream>
+
+#include "log.hpp"
 
 // Color code escape sequences.
 #define BASH_RED "\033[0;31m"

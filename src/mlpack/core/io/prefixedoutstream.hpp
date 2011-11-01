@@ -12,6 +12,7 @@
 #include <iomanip>
 #include <string>
 #include <streambuf>
+
 #include <boost/lexical_cast.hpp>
 
 namespace mlpack {

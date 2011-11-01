@@ -10,6 +10,8 @@
 
 #include <string>
 
+#include "cli.hpp"
+
 namespace mlpack {
 namespace io {
 
