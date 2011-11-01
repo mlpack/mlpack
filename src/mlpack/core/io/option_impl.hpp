@@ -11,8 +11,10 @@
 #ifndef __MLPACK_CORE_IO_OPTION_IMPL_HPP
 #define __MLPACK_CORE_IO_OPTION_IMPL_HPP
 
-namespace mlpack {
-namespace io {
+namespace mlpack
+{
+namespace io
+{
 
 /**
  * Registers a parameter with CLI.
@@ -23,10 +25,12 @@ Option<N>::Option(bool ignoreTemplate,
                 const char* identifier,
                 const char* description,
                 const char* parent,
-                bool required) {
+                bool required)
+{
   if (ignoreTemplate)
     CLI::Add(identifier, description, parent, required);
-  else {
+  else
+  {
     CLI::Add<N>(identifier, description, parent, required);
 
     // Create the full pathname to set the default value.
@@ -42,7 +46,8 @@ Option<N>::Option(bool ignoreTemplate,
 template<typename N>
 Option<N>::Option(const char* identifier,
                   const char* description,
-                  const char* parent) {
+                  const char* parent)
+{
   CLI::AddFlag(identifier, description, parent);
 }
 

@@ -10,7 +10,8 @@
 #include "prefixedoutstream.hpp"
 #include "nulloutstream.hpp"
 
-namespace mlpack {
+namespace mlpack
+{
 
 /**
  * Provides a convenient way to give formatted output.
@@ -44,7 +45,8 @@ namespace mlpack {
  *
  * @see PrefixedOutStream, NullOutStream, CLI
  */
-class Log {
+class Log
+{
  public:
   /**
    * Checks if the specified condition is true.

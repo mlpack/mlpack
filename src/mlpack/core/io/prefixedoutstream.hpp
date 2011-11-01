@@ -15,8 +15,10 @@
 
 #include <boost/lexical_cast.hpp>
 
-namespace mlpack {
-namespace io {
+namespace mlpack
+{
+namespace io
+{
 
 /**
  * Allows us to output to an ostream with a prefix at the beginning of each
@@ -43,7 +45,8 @@ namespace io {
  * These objects are used for the mlpack::Log levels (DEBUG, INFO, WARN, and
  * FATAL).
  */
-class PrefixedOutStream {
+class PrefixedOutStream
+{
  public:
   /**
    * Set up the PrefixedOutStream.

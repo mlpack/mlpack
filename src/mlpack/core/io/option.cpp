@@ -29,7 +29,8 @@ ProgramDoc::ProgramDoc(const std::string programName,
                        const std::string defaultModule) :
     programName(programName),
     documentation(documentation),
-    defaultModule(defaultModule) {
+    defaultModule(defaultModule)
+{
   // Register this with CLI.
   CLI::RegisterProgramDoc(this);
 }

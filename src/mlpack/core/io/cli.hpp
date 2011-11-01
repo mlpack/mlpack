@@ -395,7 +395,8 @@
 
 namespace po = boost::program_options;
 
-namespace mlpack {
+namespace mlpack 
+{
 
 // Externally defined in option.hpp, this class holds information about the
 // program being run.
@@ -537,7 +538,8 @@ class ProgramDoc;
  * collisions are still possible, and they produce bizarre error messages. See
  * http://mlpack.org/ticket/74 for more information.
  */
-class CLI {
+class CLI 
+{
  public:
   /**
    * Adds a parameter to the hierarchy; use the PARAM_*() macros instead of this

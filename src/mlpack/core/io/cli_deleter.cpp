@@ -17,14 +17,16 @@ using namespace mlpack::io;
 /***
  * Empty constructor that does nothing.
  */
-CLIDeleter::CLIDeleter() {
+CLIDeleter::CLIDeleter()
+{
   /* nothing to do */
 }
 
 /***
  * This destructor deletes the CLI singleton.
  */
-CLIDeleter::~CLIDeleter() {
+CLIDeleter::~CLIDeleter()
+{
   // Delete the singleton!
   CLI::Destroy();
 }

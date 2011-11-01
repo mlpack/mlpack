@@ -12,14 +12,17 @@
 #include <string>
 #include <vector>
 
-namespace mlpack {
-namespace io {
+namespace mlpack
+{
+namespace io
+{
 
 /**
  * Aids in the extensibility of OptionsHierarchy by focusing the potential
  * changes into one structure.
  */
-struct OptionsData {
+struct OptionsData
+{
   //! Name of this node.
   std::string node;
   //! Description of this node, if any.
@@ -33,7 +36,8 @@ struct OptionsData {
  * information about itself and can have any number of children, each with
  * unique names.
  */
-class OptionsHierarchy {
+class OptionsHierarchy
+{
  private:
   //! Holds all node specific data.
   OptionsData nodeData;
