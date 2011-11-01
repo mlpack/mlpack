@@ -68,7 +68,8 @@ class NullOutStream {
 
   //! Does nothing.
   template<typename T>
-  NullOutStream& operator<<(T s) { return *this; }
+  NullOutStream& operator<<(T s)
+  { return *this; }
 };
 
 } // namespace io

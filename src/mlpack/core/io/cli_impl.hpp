@@ -14,7 +14,8 @@
 //Include option.hpp here because it requires CLI but is also templated.
 #include "option.hpp"
 
-namespace mlpack {
+namespace mlpack 
+{
 
 /**
  * @brief Adds a parameter to CLI, making it accessibile via GetParam &
@@ -32,7 +33,8 @@ template<typename T>
 void CLI::Add(const char* identifier,
              const char* description,
              const char* parent,
-             bool required) {
+             bool required) 
+{
 
   po::options_description& desc = CLI::GetSingleton().desc;
   // Generate the full pathname and insert the node into the hierarchy.
@@ -61,7 +63,8 @@ void CLI::Add(const char* identifier,
  *     valid.
  */
 template<typename T>
-T& CLI::GetParam(const char* identifier) {
+T& CLI::GetParam(const char* identifier)
+{
   // Used to ensure we have a valid value.
   T tmp = T();
 
@@ -71,13 +74,15 @@ T& CLI::GetParam(const char* identifier) {
   po::variables_map& vmap = GetSingleton().vmap;
 
   // If we have the option, set its value.
-  if (vmap.count(key) && !gmap.count(key)) {
+  if (vmap.count(key) && !gmap.count(key))
+  {
     gmap[key] = boost::any(vmap[identifier].as<T>());
   }
 
   // We may have whatever is on the commandline, but what if the programmer has
   // made modifications?
-  if (!gmap.count(key)) { // The programmer hasn't done anything; register it
+  if (!gmap.count(key))
+  { // The programmer hasn't done anything; register it
     gmap[key] = boost::any(tmp);
     *boost::any_cast<T>(&gmap[key]) = tmp;
   }

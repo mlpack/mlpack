@@ -37,12 +37,15 @@ std::ostream& Log::cout = std::cout;
 
 // Only do anything for Assert() if in debugging mode.
 #ifdef DEBUG
-void Log::Assert(bool condition, const char* message) {
-  if(!condition) {
+void Log::Assert(bool condition, const char* message)
+{
+  if(!condition)
+  {
     Log::Debug << message << std::endl;
     exit(1);
   }
 }
 #else
-void Log::Assert(bool condition, const char* message) { }
+void Log::Assert(bool condition, const char* message)
+{ }
 #endif

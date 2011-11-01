@@ -12,8 +12,10 @@
 
 #include "cli.hpp"
 
-namespace mlpack {
-namespace io {
+namespace mlpack
+{
+namespace io
+{
 
 /**
  * A static object whose constructor registers a parameter with the CLI class.
@@ -24,7 +26,8 @@ namespace io {
  * @see core/io/cli.hpp, mlpack::CLI
  */
 template<typename N>
-class Option {
+class Option
+{
  public:
   /**
    * Construct an Option object.  When constructed, it will register
@@ -71,7 +74,8 @@ class Option {
  *
  * @see core/io/cli.hpp, mlpack::CLI
  */
-class ProgramDoc {
+class ProgramDoc
+{
  public:
   /**
    * Construct a ProgramDoc object.  When constructed, it will register itself

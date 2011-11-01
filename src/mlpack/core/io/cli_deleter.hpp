@@ -7,8 +7,10 @@
 #ifndef __MLPACK_CORE_IO_CLI_DELETER_HPP
 #define __MLPACK_CORE_IO_CLI_DELETER_HPP
 
-namespace mlpack {
-namespace io {
+namespace mlpack
+{
+namespace io
+{
 
 /**
  * Extremely simple class whose only job is to delete the existing CLI object at
@@ -17,7 +19,8 @@ namespace io {
  * CLIDeleter class, which will be initialized at the beginning of the program
  * and deleted at the end.  The destructor destroys the CLI singleton.
  */
-class CLIDeleter {
+class CLIDeleter
+{
  public:
   CLIDeleter();
   ~CLIDeleter();
