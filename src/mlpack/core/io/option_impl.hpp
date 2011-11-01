@@ -4,10 +4,12 @@
  *
  * Implementation of template functions for the Option class.
  */
+#ifndef __MLPACK_CORE_IO_OPTION_HPP
+#error "Do not include this file directly."
+#endif
+
 #ifndef __MLPACK_CORE_IO_OPTION_IMPL_HPP
 #define __MLPACK_CORE_IO_OPTION_IMPL_HPP
-
-#include "cli.hpp"
 
 namespace mlpack {
 namespace io {

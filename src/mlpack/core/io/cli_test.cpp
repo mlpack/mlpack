@@ -4,17 +4,19 @@
  *
  * Test for the CLI input parameter system.
  */
-#include "optionshierarchy.hpp"
-#include "cli.hpp"
-#include "log.hpp"
 
-#include <mlpack/core.h>
 #include <iostream>
 #include <sstream>
 #include <sys/time.h>
 
+#include "optionshierarchy.hpp"
+#include "cli.hpp"
+#include "log.hpp"
+#include <mlpack/core.h>
+
 #define DEFAULT_INT 42
 
+//Include unit tests down here since we just have to
 #define BOOST_TEST_MODULE CLI_Test
 #include <boost/test/unit_test.hpp>
 

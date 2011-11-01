@@ -5,13 +5,13 @@
  *
  * Implementation of PrefixedOutStream methods.
  */
-#include "prefixedoutstream.hpp"
-
 #include <string>
 #include <iostream>
 #include <streambuf>
 #include <string.h>
 #include <stdlib.h>
+
+#include "prefixedoutstream.hpp"
 
 using namespace mlpack::io;
 

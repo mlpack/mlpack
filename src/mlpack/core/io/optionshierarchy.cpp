@@ -4,11 +4,12 @@
  *
  * Implementation of OptionsHierarchy class.
  */
-#include "optionshierarchy.hpp"
+#include <iomanip>
+#include <iostream>
+
 #include "cli.hpp"
 #include "log.hpp"
-#include <iostream>
-#include <iomanip>
+#include "optionshierarchy.hpp"
 
 using namespace std;
 using namespace mlpack::io;
