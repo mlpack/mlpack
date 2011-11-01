@@ -670,22 +670,6 @@ class CLI {
   static std::string SanitizeString(const char* str);
 
   /**
-   * Initializes a timer, available like a normal value specified on
-   * the command line.  Timers are of type timeval.
-   *
-   * @param timerName The name of the timer in question.
-   */
-  static void StartTimer(const char* timerName);
-
-  /**
-   * Halts the timer, and replaces its value with the amount of time elapsed
-   * since the timer was started.
-   *
-   * @param timerName The name of the timer in question.
-   */
-  static void StopTimer(const char* timerName);
-
-  /**
    * Parses the values given on the command line, overriding any default values.
    */
   static void UpdateGmap();

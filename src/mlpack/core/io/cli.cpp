@@ -1,5 +1,6 @@
 #include "cli.hpp"
 #include "log.hpp"
+#include "../utilities/timers.hpp"
 
 #include <list>
 #include <boost/program_options.hpp>
@@ -61,7 +62,7 @@ CLI::CLI(const CLI& other) : desc(other.desc),
 
 CLI::~CLI() {
   // Terminate the program timer.
-  StopTimer("total_time");
+  Timers::StopTimer("total_time");
 
   // Did the user ask for verbose output?  If so we need to print everything.
   // But only if the user did not ask for help or info.
@@ -70,7 +71,10 @@ CLI::~CLI() {
     hierarchy.PrintLeaves();
 
     Log::Info << "Program timers:" << std::endl;
-    hierarchy.PrintTimers();
+    std::map<std::string, timeval> times = Timers::GetAllTimers();
+    std::map<std::string, timeval>::iterator iter;
+    for(iter = times.begin(); iter != times.end(); iter++)
+      Timers::PrintTimer(iter->first.c_str());
   }
 
   // Notify the user if we are debugging, but only if we actually parsed the
@@ -291,7 +295,7 @@ void CLI::ParseCommandLine(int argc, char** line) {
   DefaultMessages();
   RequiredOptions();
 
-  StartTimer("total_time");
+  Timers::StartTimer("total_time");
 }
 
 /*
@@ -316,7 +320,7 @@ void CLI::ParseStream(std::istream& stream) {
   DefaultMessages();
   RequiredOptions();
 
-  StartTimer("total_time");
+  Timers::StartTimer("total_time");
 }
 
 /*
@@ -444,78 +448,7 @@ std::string CLI::SanitizeString(const char* str) {
   return std::string("");
 }
 
-/*
- * Initializes a timer, available like a normal value specified on
- * the command line.  Timers are of type timval
- *
- * @param timerName The name of the timer in question.
- */
-void CLI::StartTimer(const char* timerName) {
-  // Don't want to actually document the timer, the user can do that if he wants
-  timeval tmp;
 
-  tmp.tv_sec = 0;
-  tmp.tv_usec = 0;
-
-  // Also add it to the hierarchy for printing at the end of execution.
-  // We don't have any documentation, so omit it.  Since program execution
-  // already started, a user couldn't get to the documentation anyway.
-  std::string name(timerName);
-  std::string tname = TYPENAME(timeval);
-  CLI::GetSingleton().AddToHierarchy(name, tname);
-
-#ifndef _WIN32
-  gettimeofday(&tmp, NULL);
-#else
-  FileTimeToTimeVal(&tmp);
-#endif
-
-
-  GetParam<timeval>(timerName) = tmp;
-}
-
-/*
- * Halts the timer, and replaces it's value with
- * the delta time from it's start
- *
- * @param timerName The name of the timer in question.
- */
-void CLI::StopTimer(const char* timerName) {
-  timeval delta, b, &a = GetParam<timeval>(timerName);
-
-#ifndef _WIN32
-  gettimeofday(&b, NULL);
-#else
-  FileTimeToTimeVal(&b);
-#endif
-  //Calculate the delta time
-  timersub(&b, &a, &delta);
-  a = delta;
-}
-
-#ifdef _WIN32
-void CLI::FileTimeToTimeVal(timeval* tv) {
-  FILETIME ftime;
-  uint64_t ptime = 0;
-
-  //Acquire the filetime
-  GetSystemTimeAsFileTime(&ftime);
-
-
-  //Now convert FILETIME to timeval
-  //FILETIME records time in 100 nsec intervals gettimeofday in microsecs
-  //FILETIME starts it's epoch January 1 1601; not January 1 1970
-  ptime |= ftime.dwHighDateTime;
-  ptime = ptime << 32;
-  ptime |= ftime.dwLowDateTime;
-  ptime /= 10;  //Convert from 100 nsec INTERVALS to microseconds
-  ptime -= DELTA_EPOC_IN_MICROSECONDS; //Subtract difference from 1970 & 1601
-
-  //Convert from microseconds to seconds
-  tv.tv_sec = (long)(ptime/1000000UL);
-  tv.tv_usec = (long)(ptime%1000000UL);
-}
-#endif //Win32
 
 // Add help parameter.
 PARAM_FLAG("help", "Default help info.", "");
