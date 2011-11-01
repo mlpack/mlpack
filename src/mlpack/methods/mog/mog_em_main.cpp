@@ -49,16 +49,16 @@ int main(int argc, char* argv[]) {
   CLI::GetParam<int>("mog/d") = data_points.n_rows;
 
   ////// Timing the initialization of the mixture model //////
-  CLI::StartTimer("mog/model_init");
+  Timers::StartTimer("mog/model_init");
   mog.Init(1, data_points.n_rows);
-  CLI::StopTimer("mog/model_init");
+  Timers::StopTimer("mog/model_init");
 
   ////// Computing the parameters of the model using the EM algorithm //////
   std::vector<double> results;
 
-  CLI::StartTimer("mog/EM");
+  Timers::StartTimer("mog/EM");
   mog.ExpectationMaximization(data_points);
-  CLI::StopTimer("mog/EM");
+  Timers::StopTimer("mog/EM");
 
   mog.Display();
   mog.OutputResults(results);
