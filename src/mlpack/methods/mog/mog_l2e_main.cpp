@@ -62,21 +62,21 @@ int main(int argc, char* argv[]) {
     NelderMead opt;
 
     ////// Initializing the optimizer //////
-    CLI::StartTimer("opt/init_opt");
+    Timers::StartTimer("opt/init_opt");
     opt.Init(MoGL2E::L2ErrorForOpt, data_points);
-    CLI::StopTimer("opt/init_opt");
+    Timers::StopTimer("opt/init_opt");
 
     ////// Getting starting points for the optimization //////
     arma::mat pts(param_dim, param_dim + 1);
 
-    CLI::StartTimer("opt/get_init_pts");
+    Timers::StartTimer("opt/get_init_pts");
     MoGL2E::MultiplePointsGenerator(pts, data_points, number_of_gaussians);
-    CLI::StopTimer("opt/get_init_pts");
+    Timers::StopTimer("opt/get_init_pts");
 
     ////// The optimization //////
-    CLI::StartTimer("opt/optimizing");
+    Timers::StartTimer("opt/optimizing");
     opt.Eval(pts);
-    CLI::StopTimer("opt/optimizing");
+    Timers::StopTimer("opt/optimizing");
 
     ////// Making model with the optimal parameters //////
     // This is a stupid way to do it and putting the 0s there ensures it will
@@ -87,21 +87,21 @@ int main(int argc, char* argv[]) {
     QuasiNewton opt;
 
     ////// Initializing the optimizer //////
-    CLI::StartTimer("opt/init_opt");
+    Timers::StartTimer("opt/init_opt");
     opt.Init(MoGL2E::L2ErrorForOpt, data_points);
-    CLI::StopTimer("opt/init_opt");
+    Timers::StopTimer("opt/init_opt");
 
     ////// Getting starting point for the optimization //////
     arma::vec pt(param_dim);
 
-    CLI::StartTimer("opt/get_init_pt");
+    Timers::StartTimer("opt/get_init_pt");
     MoGL2E::InitialPointGenerator(pt, data_points, number_of_gaussians);
-    CLI::StopTimer("opt/get_init_pt");
+    Timers::StopTimer("opt/get_init_pt");
 
     ////// The optimization //////
-    CLI::StartTimer("opt/optimizing");
+    Timers::StartTimer("opt/optimizing");
     opt.Eval(pt);
-    CLI::StopTimer("opt/optimizing");
+    Timers::StopTimer("opt/optimizing");
 
     ////// Making model with optimal parameters //////
     // This is a stupid way to do it and putting the 0s there ensures it will

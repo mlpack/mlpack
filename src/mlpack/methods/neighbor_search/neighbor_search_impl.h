@@ -46,7 +46,7 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& queries_in,
   neighbor_distances_.fill(SortPolicy::WorstDistance());
 
   // We'll time tree building
-  CLI::StartTimer("neighbor_search/tree_building");
+  Timers::StartTimer("neighbor_search/tree_building");
 
   // This call makes each tree from a matrix, leaf size, and two arrays
   // that record the permutation of the data points
@@ -54,7 +54,7 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& queries_in,
   reference_tree_ = new TreeType(references_, old_from_new_references_);
 
   // Stop the timer we started above
-  CLI::StopTimer("neighbor_search/tree_building");
+  Timers::StopTimer("neighbor_search/tree_building");
 }
 
 // We call an advanced constructor of arma::mat which allows us to alias a
@@ -88,7 +88,7 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& references_in,
   neighbor_distances_.fill(SortPolicy::WorstDistance());
 
   // We'll time tree building
-  CLI::StartTimer("neighbor_search/tree_building");
+  Timers::StartTimer("neighbor_search/tree_building");
 
   // This call makes each tree from a matrix, leaf size, and two arrays
   // that record the permutation of the data points
@@ -97,7 +97,7 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& references_in,
   reference_tree_ = new TreeType(references_, old_from_new_references_);
 
   // Stop the timer we started above
-  CLI::StopTimer("neighbor_search/tree_building");
+  Timers::StopTimer("neighbor_search/tree_building");
 }
 
 /**
@@ -366,7 +366,7 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeNeighbors(
       arma::Mat<size_t>& resulting_neighbors,
       arma::mat& distances) {
 
-  CLI::StartTimer("neighbor_search/computing_neighbors");
+  Timers::StartTimer("neighbor_search/computing_neighbors");
   if (naive_) {
     // Run the base case computation on all nodes
     if (query_tree_)
@@ -405,7 +405,7 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeNeighbors(
     }
   }
 
-  CLI::StopTimer("neighbor_search/computing_neighbors");
+  Timers::StopTimer("neighbor_search/computing_neighbors");
 
   // We need to initialize the results list before filling it
   resulting_neighbors.set_size(neighbor_indices_.n_rows,

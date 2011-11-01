@@ -8,9 +8,9 @@
  * @author Bill March (march@gatech.edu)
 */
 
-#include "dtb.hpp"
 
 #include <mlpack/core.h>
+#include "dtb.hpp"
 
 PARAM_FLAG("using_thor", "For when an implementation of thor is around",
     "emst");
@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
 
       /* Compare the naive output to the DTB output */
 
-      CLI::StartTimer("naive/comparison");
+      Timers::StartTimer("naive/comparison");
 
 
       // Check if the edge lists are the same
@@ -138,7 +138,7 @@ int main(int argc, char* argv[]) {
           std::endl << std::endl;
       }
 
-      CLI::StopTimer("naive/comparison");
+      Timers::StopTimer("naive/comparison");
 
       std::string naive_output_filename =
           CLI::GetParam<std::string>("naive/output_file");
