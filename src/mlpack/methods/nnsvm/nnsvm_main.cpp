@@ -47,12 +47,8 @@ int main(int argc, char *argv[])
     std::string trainFile = CLI::GetParam<std::string>("nnsvm/train_data");
     // Load training data
     arma::mat dataSet;
-    if (!dataSet.load(trainFile.c_str(), arma::auto_detect, false, true))
-    {
-      /* TODO: eventually, we need better exception handling */
-      Log::Debug << "Could not open " << trainFile << " for reading" << std::endl;
+    if (!data::Load(trainFile.c_str(), dataSet))
       return 1;
-    }
 
     // Begin NNSVM Training
     if (kernel == "linear")
@@ -74,13 +70,9 @@ int main(int argc, char *argv[])
         /* Load testing data */
         std::string testFile = CLI::GetParam<std::string>("nnsvm/test_data");
         arma::mat testset;
-        if (!testset.load(testFile.c_str(), arma::auto_detect, false, true))
-        {
-          /* TODO: eventually, we need better exception handling */
-          Log::Debug << "Could not open " << testFile << " for reading" <<
-            std::endl;
+        if (!data::Load(testFile.c_str(), testset))
           return 1;
-        }
+
         nnsvm.BatchClassify(testset, "testlabels");
       }
     }

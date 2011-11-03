@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE(TestWhitenUsingEig) {
   // We are loading a matrix from an external file... bad choice.
   mat tmp, tmp_centered, whitened, whitening_matrix;
 
-  tmp.load("trainSet.csv", arma::auto_detect, false, true);
+  data::Load("trainSet.csv", tmp);
   Center(tmp, tmp_centered);
   WhitenUsingEig(tmp_centered, whitened, whitening_matrix);
 
@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(TestOrthogonalize) {
   // Generate a random matrix; then, orthogonalize it and test if it's
   // orthogonal.
   mat tmp, orth;
-  tmp.load("fake.csv", arma::auto_detect, false, true);
+  data::Load("fake.csv", tmp);
   Orthogonalize(tmp, orth);
 
   // test orthogonality

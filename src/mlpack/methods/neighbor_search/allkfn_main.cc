@@ -50,8 +50,7 @@ int main(int argc, char *argv[]) {
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  if (!reference_data.load(reference_file.c_str(), arma::auto_detect, false,
-      true))
+  if (!data::Load(reference_file.c_str(), reference_data))
     Log::Fatal << "Reference file " << reference_file << "not found." << endl;
 
   Log::Info << "Loaded reference data from " << reference_file << endl;
@@ -67,8 +66,8 @@ int main(int argc, char *argv[]) {
 
   // Sanity check on leaf size.
   if (CLI::GetParam<int>("tree/leaf_size") <= 0) {
-    Log::Fatal << "Invalid leaf size: " << CLI::GetParam<int>("allknn/leaf_size")
-        << endl;
+    Log::Fatal << "Invalid leaf size: "
+        << CLI::GetParam<int>("allknn/leaf_size") << endl;
   }
 
   AllkFN* allkfn = NULL;
@@ -77,7 +76,7 @@ int main(int argc, char *argv[]) {
     string query_file = CLI::GetParam<string>("query_file");
     arma::mat query_data;
 
-    if(!query_data.load(query_file.c_str(), arma::auto_detect, false, true))
+    if (!data::Load(query_file.c_str(), query_data))
       Log::Fatal << "Query file " << query_file << " not found" << endl;
 
     Log::Info << "Query data loaded from " << query_file << endl;

@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE(SqrtM) {
   int bb_ = 5;
   double epsilonb_ = 0.001;
 
-  testdatab_.load("fake.csv", arma::auto_detect, false, true);
+  data::Load("fake.csv", testdatab_);
 
   InfomaxICA icab_(lambdab_, bb_, epsilonb_);
 
@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(TestCov) {
 
   // load some test data that has been verified using the matlab
   // implementation of infomax
-  testdata_.load("fake.csv", arma::auto_detect, false, true);
+  data::Load("fake.csv", testdata_);
 
   InfomaxICA ica_(lambda_, b_, epsilon_);
   ica_.sampleCovariance(testdata_);
@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(TestICA) {
 
   // load some test data that has been verified using the matlab
   // implementation of infomax
-  testdata_.load("fake.csv", arma::auto_detect, false, true);
+  data::Load("fake.csv", testdata_);
 
   InfomaxICA ica_(lambda_, b_, epsilon_);
   arma::mat unmixing;
