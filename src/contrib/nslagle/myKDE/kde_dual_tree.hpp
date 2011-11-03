@@ -10,6 +10,8 @@
 #include <mlpack/core/tree/hrectbound.hpp>
 #include <mlpack/core/math/range.hpp>
 
+#define PRIORITY_MAX DBL_MAX
+
 namespace mlpack
 {
 namespace kde
@@ -19,11 +21,12 @@ struct queueNode
 {
   TTree* T;
   TTree* Q;
-  arma::vec du;
-  arma::vec dl;
+  size_t QIndex;
+  arma::vec deltaLower;
+  arma::vec deltaUpper;
   double priority;
-  double bLower;
-  double bUpper;
+  size_t bLowerIndex;
+  size_t bUpperIndex;
 };
 class QueueNodeCompare
 {
@@ -39,7 +42,6 @@ class QueueNodeCompare
       return (lhs.priority<rhs.priority);
   }
 };
-
 
 template <typename TKernel = kernel::GaussianKernel,
           typename TTree = tree::BinarySpaceTree<bound::HRectBound<2> > >
@@ -69,7 +71,7 @@ class KdeDualTree
                       std::vector<struct queueNode>,
                       QueueNodeCompare> nodePriorityQueue;
   size_t bandwidthCount;
-  std::set<double> bandwidths;
+  std::vector<double> bandwidths;
   size_t levelsInTree;
   size_t queryTreeSize;
 
@@ -77,7 +79,7 @@ class KdeDualTree
   void MultiBandwidthDualTree();
   void MultiBandwidthDualTreeBase(TTree* Q,
                                   TTree* T, size_t QIndex,
-                                  std::set<double> remainingBandwidths);
+                                  size_t lowerBIndex, size_t upperBIndex);
   double GetPriority(TTree* nodeQ, TTree* nodeT)
   {
     return nodeQ->bound().MinDistance(*nodeT);
@@ -86,6 +88,7 @@ class KdeDualTree
   {
     return levelsInTree - node->levelsBelow();
   }
+  void Winnow(size_t bLower, size_t bUpper, size_t* newLower, size_t* newUpper);
  public:
   /* the two data sets are different */
   KdeDualTree (arma::mat& referenceData, arma::mat& queryData);
