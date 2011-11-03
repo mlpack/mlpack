@@ -39,8 +39,7 @@ int main(int argc, char* argv[]) {
 
   ////// READING PARAMETERS AND LOADING DATA //////
   arma::mat data_points;
-  data_points.load(CLI::GetParam<std::string>("mog/data").c_str(),
-      arma::auto_detect, false, true);
+  data::Load(CLI::GetParam<std::string>("mog/data").c_str(), data_points, true);
 
   ////// MIXTURE OF GAUSSIANS USING EM //////
   MoGEM mog;

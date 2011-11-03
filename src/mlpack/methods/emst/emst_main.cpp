@@ -3,10 +3,10 @@
  *
  * Calls the DualTreeBoruvka algorithm from dtb.h
  * Can optionally call Naive Boruvka's method
- * 
- * For algorithm details, see: 
+ *
+ * For algorithm details, see:
  * March, W.B., Ram, P., and Gray, A.G.
- * Fast Euclidean Minimum Spanning Tree: Algorithm, Analysis, Applications. 
+ * Fast Euclidean Minimum Spanning Tree: Algorithm, Analysis, Applications.
  * In KDD, 2010.
  *
  * @author Bill March (march@gatech.edu)
@@ -36,40 +36,38 @@ int main(int argc, char* argv[]) {
   std::string data_file_name = CLI::GetParam<std::string>("emst/input_file");
 
   Log::Info << "Reading in data.\n";
-  
+
   arma::mat data_points;
-  data_points.load(data_file_name.c_str());
-  
+  data::Load(data_file_name.c_str(), data_points, true);
+
   // Do naive
   if (CLI::GetParam<bool>("naive/do_naive")) {
-    
+
     Log::Info << "Running naive algorithm.\n";
-    
+
     DualTreeBoruvka naive;
     //CLI::GetParam<bool>("naive/do_naive") = true;
-    
+
     naive.Init(data_points);
-    
+
     arma::mat naive_results;
     naive.ComputeMST(naive_results);
-    
+
     std::string naive_output_filename =
     CLI::GetParam<std::string>("naive/output_file");
-    
-    naive_results.save(naive_output_filename.c_str(), arma::csv_ascii, false,
-                       true);
-    
+
+    data::Save(naive_output_filename.c_str(), naive_results, true);
   }
   else {
-  
+
     Log::Info << "Data read, building tree.\n";
 
     /////////////// Initialize DTB //////////////////////
     DualTreeBoruvka dtb;
     dtb.Init(data_points);
-    
+
     Log::Info << "Tree built, running algorithm.\n\n";
-    
+
     ////////////// Run DTB /////////////////////
     arma::mat results;
 
@@ -81,8 +79,7 @@ int main(int argc, char* argv[]) {
     std::string output_filename =
         CLI::GetParam<std::string>("emst/output_file");
 
-    results.save(output_filename.c_str(), arma::csv_ascii, false, true);
-    
+    data::Save(output_filename.c_str(), results, true);
   }
 
   return 0;
