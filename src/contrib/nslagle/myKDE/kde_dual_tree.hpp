@@ -46,6 +46,7 @@ template <typename TKernel = kernel::GaussianKernel,
 class KdeDualTree
 {
  private:
+  TKernel kernel;
   /* possibly, these refer to the same object */
   TTree* referenceRoot;
   TTree* queryRoot;
@@ -58,7 +59,7 @@ class KdeDualTree
   arma::mat upperBoundQPointByBandwidth;
   arma::mat lowerBoundQPointByBandwidth;
   arma::mat upperBoundQNodeByBandwidth;
-  arma::mat lowerBoundQPointByBandwidth;
+  arma::mat lowerBoundQNodeByBandwidth;
   /* relative estimate to limit bandwidth calculations */
   double delta;
   /* relative error with respect to the density estimate */
@@ -75,7 +76,7 @@ class KdeDualTree
   void SetDefaults();
   void MultiBandwidthDualTree();
   void MultiBandwidthDualTreeBase(TTree* Q,
-                                  TTree* T,
+                                  TTree* T, size_t QIndex,
                                   std::set<double> remainingBandwidths);
   double GetPriority(TTree* nodeQ, TTree* nodeT)
   {
