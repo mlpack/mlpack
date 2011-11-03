@@ -1,0 +1,30 @@
+cmake_minimum_required(VERSION 2.8)
+
+# Define the files that we need to compile.
+# Anything not in this list will not be compiled into MLPACK.
+set(SOURCES
+  load.hpp
+  load_impl.hpp
+  save.hpp
+  save_impl.hpp
+)
+
+# add directory name to sources
+set(DIR_SRCS)
+foreach(file ${SOURCES})
+    set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+endforeach()
+
+# Append sources (with directory name) to list of all MLPACK sources (used at
+# parent scope).
+set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+
+# test executable
+add_executable(load_save_test
+   load_save_test.cpp
+)
+# link dependencies of test executable
+target_link_libraries(load_save_test
+   mlpack
+   boost_unit_test_framework
+)
