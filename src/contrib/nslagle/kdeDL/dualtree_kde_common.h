@@ -97,7 +97,7 @@ class DualtreeKdeCommon {
    *  @param permutation The permutation.
    */
   static void ShuffleAccordingToPermutation
-  (arma::vec &v, const arma::Col<size_t> &permutation) {
+  (arma::vec &v, const std::vector<size_t> &permutation) {
     
     arma::vec v_tmp(v.size());
     for(size_t i = 0; i < v_tmp.size(); i++) {

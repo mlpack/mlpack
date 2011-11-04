@@ -12,6 +12,7 @@
 #include "dualtree_vkde.h"
 #include "naive_kde.h"
 
+using namespace mlpack;
 using namespace mlpack::kernel;
 
 void VariableBandwidthKde(arma::mat &queries, arma::mat &references, 
@@ -267,18 +268,18 @@ int main(int argc, char *argv[]) {
     !strcmp(queries_file_name.c_str(), references_file_name.c_str());
 
   // data::Load inits a arma::mat with the contents of a .csv or .arff.
-  data::Load(references_file_name.c_str(), references);
+  references.load(references_file_name.c_str());
   if(queries_equal_references) {
     queries = references;
   }
   else {
-    data::Load(queries_file_name.c_str(), queries);
+    queries.load(queries_file_name.c_str());
   }
 
   // If the reference weight file name is specified, then read in,
   // otherwise, initialize to uniform weights.
   if(CLI::HasParam("dwgts")) {
-    data::Load(CLI::GetParam<std::string>("dwgts").c_str(), reference_weights);
+    reference_weights.load(CLI::GetParam<std::string>("dwgts").c_str());
   }
   else {
     reference_weights = arma::mat(1, references.n_cols);

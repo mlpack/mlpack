@@ -65,7 +65,7 @@
 #define INSIDE_DUALTREE_KDE_H
 
 #include "mlpack/core.h"
-#include "mlpack/core/tree/spacetree.hpp"
+#include "mlpack/core/tree/binary_space_tree.hpp"
 //#include "contrib/nslagle/series_expansion/farfield_expansion.h"
 //#include "contrib/nslagle/series_expansion/local_expansion.h"
 //#include "contrib/nslagle/series_expansion/mult_farfield_expansion.h"
@@ -248,7 +248,7 @@ class DualtreeKde {
   /** @brief The permutation mapping indices of references_ to
    *         original order.
    */
-  arma::Col<size_t> old_from_new_references_;
+  std::vector<size_t> old_from_new_references_;
 
   ////////// Private Member Functions //////////
 
@@ -342,13 +342,13 @@ class DualtreeKde {
 //    }
 //    else {
 //      NOTIFY("Using the default dimension of %d", qset_.n_rows);
-      mult_const_ = 1.0 / ka_.kernel_.CalcNormConstant(qset_.n_rows);
+      mult_const_ = 1.0;// / ka_.kernel_.CalcNormConstant(qset_.n_rows);
 //    }
 
     // Set accuracy parameters.
     relative_error_ = CLI::GetParam<double>("relative_error");
-    threshold_ = CLI::GetParam<double>("threshold") *
-      ka_.kernel_.CalcNormConstant(qset_.n_rows);
+    threshold_ = CLI::GetParam<double>("threshold");
+     // *      ka_.kernel_.CalcNormConstant(qset_.n_rows);
     
     // initialize the lower and upper bound densities
     densities_l_.zeros();
@@ -365,7 +365,7 @@ class DualtreeKde {
       num_local_prunes_ = 0;
 
     printf("\nStarting fast KDE on bandwidth value of %g...\n",
-	   sqrt(ka_.kernel_.bandwidth_sq()));
+	   sqrt(ka_.Bandwidth()));
     CLI::StartTimer ("fast_kde_compute");
 
     // Preprocessing step for initializing series expansion objects
@@ -417,7 +417,7 @@ class DualtreeKde {
       (&queries == &references);
 
     // Read in the number of points owned by a leaf.
-    int leaflen = CLI::GetParam<int>("leaflen");
+    // TODO :int leaflen = CLI::GetParam<int>("leaflen");
 
     // Copy reference dataset and reference weights and compute its
     // sum.
@@ -455,9 +455,7 @@ class DualtreeKde {
     // weights according to the permutation of the reference set in
     // the reference tree.
     CLI::StartTimer("tree_d");
-    rroot_ = proximity::MakeGenMetricTree<Tree>(rset_, leaflen,
-						&old_from_new_references_, 
-						NULL);
+    rroot_ = new Tree(rset_, /*leaflen,*/old_from_new_references_);
     DualtreeKdeCommon::ShuffleAccordingToPermutation
       (rset_weights_, old_from_new_references_);
 
@@ -466,12 +464,10 @@ class DualtreeKde {
       old_from_new_queries_ = old_from_new_references_;
     }
     else {
-      qroot_ = proximity::MakeGenMetricTree<Tree>(qset_, leaflen,
-						  &old_from_new_queries_, 
-						  NULL);
+      qroot_ = new Tree(qset_, /*leaflen,*/ old_from_new_queries_);
     }
     CLI::StopTimer("tree_d");
-    
+
     // Initialize the density lists
     densities_l_ = arma::vec(qset_.n_cols);
     densities_e_ = arma::vec(qset_.n_cols);
@@ -497,35 +493,35 @@ class DualtreeKde {
       {
         order = 7;
       }
-      ka_.Init(bandwidth, order, qset_.n_rows);
+      ka_ = kernel::GaussianKernel(bandwidth);// order, qset_.n_rows);
     }
     else if(qset_.n_rows <= 3) {
       if (!hasOrder)
       {
         order = 5;
       }
-      ka_.Init(bandwidth, order, qset_.n_rows);
+      ka_ = kernel::GaussianKernel(bandwidth);//, order, qset_.n_rows);
     }
     else if(qset_.n_rows <= 5) {
       if (!hasOrder)
       {
         order = 3;
       }
-      ka_.Init(bandwidth, order, qset_.n_rows);
+      ka_ = kernel::GaussianKernel(bandwidth);//, order, qset_.n_rows);
     }
     else if(qset_.n_rows <= 6) {
       if (!hasOrder)
       {
         order = 1;
       }
-      ka_.Init(bandwidth, order, qset_.n_rows);
+      ka_ = kernel::GaussianKernel(bandwidth);//, order, qset_.n_rows);
     }
     else {
       if (!hasOrder)
       {
         order = 0;
       }
-      ka_.Init(bandwidth, order, qset_.n_rows);
+      ka_ = kernel::GaussianKernel(bandwidth);//, order, qset_.n_rows);
     }
   }
 
@@ -534,7 +530,7 @@ class DualtreeKde {
     FILE *stream = stdout;
     const char *fname = NULL;
 
-    if((fname = CLI::GetParam<std::string>("fast_kde_output")) != NULL) {
+    if((fname = CLI::GetParam<std::string>("fast_kde_output").c_str()) != NULL) {
       stream = fopen(fname, "w+");
     }
     for(size_t q = 0; q < qset_.n_cols; q++) {

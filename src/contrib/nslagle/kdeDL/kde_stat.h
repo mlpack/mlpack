@@ -200,12 +200,12 @@ class KdeStat {
   /** @brief The far field expansion created by the reference points
    *         in this node.
    */
-  typename TKernelAux::TFarFieldExpansion farfield_expansion_;
-    
+  // TODO: typename TKernelAux::TFarFieldExpansion farfield_expansion_;
+
   /** @brief The local expansion stored in this node.
    */
-  typename TKernelAux::TLocalExpansion local_expansion_;
-    
+  // TODO :typename TKernelAux::TLocalExpansion local_expansion_;
+
   /** @brief The subspace associated with this node.
    */
   //SubspaceStat subspace_;
@@ -213,9 +213,9 @@ class KdeStat {
   /** @brief Gets the weight sum.
    */
   double get_weight_sum() {
-    return farfield_expansion_.get_weight_sum();
+    return 0.0;//farfield_expansion_.get_weight_sum();
   }
- 
+
   /** @brief Adds the other postponed contributions.
    */
   void AddPostponed(const KdeStat& parent_stat) {
@@ -281,8 +281,8 @@ class KdeStat {
   }
     
   void Init(const TKernelAux &ka) {
-    farfield_expansion_.Init(ka);
-    local_expansion_.Init(ka);
+    // TODO: farfield_expansion_.Init(ka);
+    // TODO: local_expansion_.Init(ka);
   }
     
   void Init(const arma::mat& dataset, size_t &start, size_t &count) {
@@ -300,8 +300,8 @@ class KdeStat {
     
   void Init(const arma::vec& center, const TKernelAux &ka) {
       
-    farfield_expansion_.Init(center, ka);
-    local_expansion_.Init(center, ka);
+    // TODO: farfield_expansion_.Init(center, ka);
+    // TODO: local_expansion_.Init(center, ka);
     Init();
   }
     

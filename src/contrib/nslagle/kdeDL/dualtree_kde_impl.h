@@ -27,7 +27,7 @@ void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode,
       
       // pairwise distance and kernel value
       double dsqd = kernel::LMetric<2,false>::Evaluate (q_col, r_col);
-      double kernel_value = ka_.kernel_.EvalUnnormOnSq(dsqd);
+      double kernel_value = ka_.kernel_.Evaluate(q_col,r_col);//EvalUnnormOnSq(dsqd);
       double weighted_kernel_value = rset_weights_[r] * kernel_value;
       
       densities_l_[q] += weighted_kernel_value;
