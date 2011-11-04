@@ -4,6 +4,7 @@ include_directories(..) # <mlpack/[whatever]>
 set(DIRS
   core
   methods
+  tests
 )
 
 foreach(dir ${DIRS})
