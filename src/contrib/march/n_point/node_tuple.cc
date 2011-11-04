@@ -23,7 +23,7 @@
 bool npt::NodeTuple::CheckSymmetry(size_t split_ind, bool is_left) {
   
   
-  int start_point;
+  int start_point = -1;
   int end_point = tuple_size_;
   
   // This uses the assumption that the symmetry was correct before
@@ -47,6 +47,8 @@ bool npt::NodeTuple::CheckSymmetry(size_t split_ind, bool is_left) {
       break;
     }
   }
+  
+  assert(start_point >= 0);
   
   // only check the new node for symmetry with respect to the others
   if (is_left) {
