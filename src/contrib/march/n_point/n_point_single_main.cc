@@ -160,8 +160,7 @@ int main(int argc, char* argv[]) {
     //std::cout << "Doing single bandwidth.\n";
     Log::Info << "Doing single bandwidth.\n";
 
-    //fx_timer_start(NULL, "single_bandwidth_time");
-    CLI::StartTimer("single_bandwidth_time");
+    Timers::StartTimer("single_bandwidth_time");
     
     // Build the trees
     
@@ -196,8 +195,7 @@ int main(int argc, char* argv[]) {
     
     alg.Compute();
     
-    //fx_timer_stop(NULL, "single_bandwidth_time");
-    CLI::StopTimer("single_bandwidth_time");
+    Timers::StopTimer("single_bandwidth_time");
     
     //std::cout << "\nSingle Bandwidth num tuples: " << single_alg.num_tuples() << "\n\n";
     Log::Info << std::endl << "Single bandwidth num tuples: " <<  matcher.results();
@@ -214,7 +212,7 @@ int main(int argc, char* argv[]) {
     Log::Info << "Doing naive." << std::endl;
     
     //fx_timer_start(NULL, "naive_time");
-    CLI::StartTimer("naive_time");
+    Timers::StartTimer("naive_time");
     
     CLI::GetParam<int>("tree/leaf_size") = std::max(data_mat.n_cols, 
                                                    random_mat.n_cols);
@@ -253,8 +251,7 @@ int main(int argc, char* argv[]) {
     alg.Compute();
     
     
-    //fx_timer_stop(NULL, "naive_time");
-    CLI::StopTimer("naive_time");
+    Timers::StopTimer("naive_time");
     
     //std::cout << "\nNaive num tuples: " << naive_alg.num_tuples() << "\n\n";
     Log::Info << std::endl << "Naive num tuples: " << matcher.results();

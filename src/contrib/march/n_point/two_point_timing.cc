@@ -17,6 +17,7 @@
 
 PARAM_INT_REQ("num_points", "The size of the computation to run", NULL);
 PARAM_INT("tuple_size", "The order of the correlation to time", NULL, 2);
+PARAM_FLAG("save_data", "If specified, the data are written to a file", NULL);
 
 using namespace mlpack;
 using namespace npt;
@@ -35,6 +36,15 @@ int main(int argc, char* argv[]) {
   arma::mat data_mat(3, num_points);
   problem_gen.GenerateRandomSet(data_mat);
   
+  if (CLI::HasParam("save_data")) {
+    std::string data_name("timing_data.csv");
+    arma::mat data_trans = trans(data_mat);
+    data_trans.save(data_name, arma::raw_ascii);
+    
+    return 0;
+    
+  }
+  
   arma::colvec weights(num_points);
 
   arma::mat matcher_lower_bounds(tuple_size, tuple_size);
@@ -42,7 +52,9 @@ int main(int argc, char* argv[]) {
   
   problem_gen.GenerateRandomMatcher(matcher_lower_bounds, matcher_upper_bounds);
   
-  CLI::StartTimer("single_bandwidth_time");
+  
+  
+  Timers::StartTimer("single_bandwidth_time");
   
   std::vector<size_t> old_from_new_data;
   
@@ -76,7 +88,12 @@ int main(int argc, char* argv[]) {
   alg.Compute();
   
   
-  CLI::StopTimer("single_bandwidth_time");
+  Timers::StopTimer("single_bandwidth_time");
+  
+  Log::Info << std::endl << "lower bounds: ";
+  Log::Info << std::endl << matcher_lower_bounds << std::endl;
+  Log::Info << "upper bounds: ";
+  Log::Info << std::endl << matcher_upper_bounds << std::endl;
   
   Log::Info << std::endl << "Single bandwidth num tuples: " <<  matcher.results();
   
