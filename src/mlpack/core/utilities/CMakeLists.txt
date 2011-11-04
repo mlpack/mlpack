@@ -5,8 +5,6 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
     save_restore_utility.cpp
     save_restore_utility.hpp
-    save_restore_utility.hpp
-    save_restore_utility.cpp
     timers.hpp
     timers.cpp
 )
