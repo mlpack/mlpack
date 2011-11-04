@@ -98,16 +98,16 @@ class NaiveKde {
     printf("\nStarting naive KDE...\n");
     CLI::StartTimer("naive_kde_compute");
 
-    for(size_t q = 0; q < qset_.n_cols(); q++) {
+    for(size_t q = 0; q < qset_.n_cols; q++) {
       
       const arma::vec q_col = qset_.unsafe_col(q);
 
       // Compute unnormalized sum first.
-      for(size_t r = 0; r < rset_.n_cols(); r++) {
+      for(size_t r = 0; r < rset_.n_cols; r++) {
 	const arma::vec r_col = rset_.unsafe_col(r);
 	double dsqd = kernel::LMetric<2,false>::Evaluate(q_col, r_col);
 	
-	densities_[q] += rset_weights_[r] * kernels_[r].EvalUnnormOnSq(dsqd);
+	densities_[q] += rset_weights_[r] * kernels_[r].Evaluate(q_col,r_col);//EvalUnnormOnSq(dsqd);
       }
 
       // Then normalize it.
@@ -127,16 +127,16 @@ class NaiveKde {
     printf("\nStarting naive KDE...\n");
     CLI::StartTimer("naive_kde_compute");
 
-    for(size_t q = 0; q < qset_.n_cols(); q++) {
+    for(size_t q = 0; q < qset_.n_cols; q++) {
       
       const arma::vec q_col = qset_.unsafe_col(q);
       
       // Compute unnormalized sum.
-      for(size_t r = 0; r < rset_.n_cols(); r++) {
+      for(size_t r = 0; r < rset_.n_cols; r++) {
 	const arma::vec r_col = rset_.unsafe_col(r);
-	double dsqd = kernel::LMetric<2,false>::Evaluate (q_col, r_col);
+	//double dsqd = kernel::LMetric<2,false>::Evaluate (q_col, r_col);
 	
-	densities_[q] += rset_weights_[r] * kernels_[r].EvalUnnormOnSq(dsqd);
+	densities_[q] += rset_weights_[r] * kernels_[r].Evaluate(q_col,r_col);//EvalUnnormOnSq(dsqd);
       }
       // Then, normalize it.
       densities_[q] /= norm_const_;
@@ -148,7 +148,7 @@ class NaiveKde {
   void Init(arma::mat &qset, arma::mat &rset, struct datanode *module_in) {
 
     // Use the uniform weights for a moment.
-    arma::mat uniform_weights(1, rset.n_cols());
+    arma::mat uniform_weights(1, rset.n_cols);
     uniform_weights.fill(1.0);
 
     Init(qset, rset, uniform_weights, module_in);
@@ -184,7 +184,7 @@ class NaiveKde {
         rset_(r,c) = rset(r,c);
       }
     }
-    rset_weights_ = arma::vec(reference_weights.n_cols());
+    rset_weights_ = arma::vec(reference_weights.n_cols);
     for(size_t i = 0; i < rset_weights_.size(); i++)
     {
       rset_weights_[i] = reference_weights(0, i);
@@ -197,20 +197,20 @@ class NaiveKde {
     }
 
     // Get bandwidth and compute the normalizing constant.
-    kernels_.Init(rset_.n_cols());
-    if(!strcmp(CLI::GetParam<std::string>("mode").c_str(), "variablebw")) {
-
+    if(!strcmp(CLI::GetParam<std::string>("mode").c_str(), "variablebw"))
+    {
       // Initialize the kernels for each reference point.
       int knns = CLI::GetParam<int>("knn");
-      AllkNN all_knn = AllkNN(rset_, 20, knns);
+      AllkNN all_knn = AllkNN(rset_, knns);
       arma::Mat<size_t> resulting_neighbors;
       arma::mat squared_distances;
 
       CLI::StartTimer("bandwidth_initialization");
       all_knn.ComputeNeighbors(resulting_neighbors, squared_distances);
 
-      for(size_t i = 0; i < squared_distances.size(); i += knns) {
-	kernels_[i / knns].Init(sqrt(squared_distances[i + knns - 1]));
+      for(size_t i = 0; i < squared_distances.size(); i += knns)
+      {
+        kernels_.push_back(kernel::GaussianKernel(sqrt(squared_distances[i + knns - 1])));
       }
       CLI::StopTimer("bandwidth_initialization");
 
@@ -218,30 +218,32 @@ class NaiveKde {
       // that have been chosen.
       double min_norm_const = DBL_MAX;
       for(size_t i = 0; i < rset_weights_.size(); i++) {
-	double norm_const = kernels_[i].CalcNormConstant(qset_.n_rows());
+	double norm_const = kernels_[i].Normalizer();//CalcNormConstant(qset_.n_rows());
 	min_norm_const = std::min(min_norm_const, norm_const);
       }
       for(size_t i = 0; i < rset_weights_.size(); i++) {
-	double norm_const = kernels_[i].CalcNormConstant(qset_.n_rows());
+	double norm_const = kernels_[i].Normalizer();//CalcNormConstant(qset_.n_rows());
 	rset_weights_[i] *= (min_norm_const / norm_const);
       }
-      
+
       // Compute normalization constant.
       norm_const_ = weight_sum * min_norm_const;
     }
-    else {
-      for(size_t i = 0; i < kernels_.size(); i++) {
-	kernels_[i].Init(CLI::GetParam<double>("bandwidth"));
+    else
+    {
+      for(size_t i = 0; i < kernels_.size(); i++)
+      {
+        kernels_[i] = kernel::GaussianKernel(CLI::GetParam<double>("bandwidth"));
       }
-      norm_const_ = kernels_[0].CalcNormConstant(qset_.n_rows()) * weight_sum;
+      norm_const_ = kernels_[0].Normalizer();//CalcNormConstant(qset_.n_rows()) * weight_sum;
     }
 
     // Allocate density storage.
-    densities_ = arma::vec(qset.n_cols());
+    densities_ = arma::vec(qset.n_cols);
     densities_.zeros();
   }
 
-  /** @brief Output KDE results to a stream 
+  /** @brief Output KDE results to a stream
    *
    *  If the user provided "--naive_kde_output=" argument, then the
    *  output will be directed to a file whose name is provided after
@@ -254,10 +256,10 @@ class NaiveKde {
     const char *fname = NULL;
 
     {
-      fname = CLI::GetParam<std::string>("naive_kde_output");
+      fname = CLI::GetParam<std::string>("naive_kde_output").c_str();
       stream = fopen(fname, "w+");
     }
-    for(size_t q = 0; q < qset_.n_cols(); q++) {
+    for(size_t q = 0; q < qset_.n_cols; q++) {
       fprintf(stream, "%g\n", densities_[q]);
     }
     

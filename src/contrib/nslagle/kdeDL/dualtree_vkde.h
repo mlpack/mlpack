@@ -61,9 +61,9 @@
 #define INSIDE_DUALTREE_VKDE_H
 
 #include "mlpack/core.h"
-#include "mlpack/core/tree/spacetree.hpp"
+#include "mlpack/core/tree/binary_space_tree.hpp"
 //#include "contrib/dongryel/proximity_project/gen_metric_tree.h"
-//#include "dualtree_kde_common.h"
+#include "dualtree_kde_common.h"
 //#include "kde_stat.h"
 #include "mlpack/methods/neighbor_search/neighbor_search.h"
 
@@ -196,12 +196,12 @@ class DualtreeVKde {
   /** @brief The permutation mapping indices of queries_ to original
    *         order.
    */
-  arma::Col<size_t> old_from_new_queries_;
+  std::vector<size_t> old_from_new_queries_;
   
   /** @brief The permutation mapping indices of references_ to
    *         original order.
    */
-  arma::Col<size_t> old_from_new_references_;
+  std::vector<size_t> old_from_new_references_;
 
   ////////// Private Member Functions //////////
 
@@ -287,7 +287,7 @@ class DualtreeVKde {
     // Set accuracy parameters.
     relative_error_ = CLI::GetParam<double>("relative_error");
     threshold_ = CLI::GetParam<double>("threshold") *
-      kernels_[0].CalcNormConstant(qset_.n_rows());
+      kernels_[0].Normalizer();//CalcNormConstant(qset_.n_rows);
     
     // initialize the lower and upper bound densities
     densities_l_.zeros();
@@ -352,7 +352,7 @@ class DualtreeVKde {
       (&queries == &references);
 
     // read in the number of points owned by a leaf
-    int leaflen = CLI::GetParam<int>("leaflen");
+    //TODO int leaflen = CLI::GetParam<int>("leaflen");
 
     // Copy reference dataset and reference weights and compute its
     // sum. rset_weight_sum_ should be the raw sum of the reference
@@ -392,9 +392,7 @@ class DualtreeVKde {
     // weights according to the permutation of the reference set in
     // the reference tree.
     CLI::StartTimer("tree_d");
-    rroot_ = proximity::MakeGenMetricTree<Tree>(rset_, leaflen,
-						old_from_new_references_,
-						NULL);
+    rroot_ = new Tree(rset_, /*leaflen,*/ old_from_new_references_);
     DualtreeKdeCommon::ShuffleAccordingToPermutation
       (rset_weights_, old_from_new_references_);
 
@@ -403,9 +401,7 @@ class DualtreeVKde {
       old_from_new_queries_ = old_from_new_references_;
     }
     else {
-      qroot_ = proximity::MakeGenMetricTree<Tree>(qset_, leaflen,
-						  &old_from_new_queries_,
-						  NULL);
+      qroot_ = new Tree(qset_, /*leaflen*/ old_from_new_queries_);
     }
     CLI::StopTimer("tree_d");
 
@@ -420,16 +416,16 @@ class DualtreeVKde {
 
     // Initialize the kernels for each reference point.
     int knns = CLI::GetParam<int>("knn");
-    AllkNN all_knn = AllkNN(rset_, 20);
-    kernels_.Init(rset_.n_cols());
+    AllkNN all_knn = AllkNN(rset_, knns);
     arma::Mat<size_t> resulting_neighbors;
-    arma::mat squared_distances;    
+    arma::mat squared_distances;
 
     CLI::StartTimer("bandwidth_initialization");
     all_knn.ComputeNeighbors(resulting_neighbors, squared_distances);
 
-    for(size_t i = 0; i < squared_distances.size(); i += knns) {
-      kernels_[i / knns].Init(sqrt(squared_distances[i + knns - 1]));
+    for(size_t i = 0; i < squared_distances.size(); i += knns)
+    {
+      kernels_.push_back(kernel::GaussianKernel(sqrt(squared_distances[i + knns - 1])));
     }
     CLI::StopTimer("bandwidth_initialization");
 
@@ -437,11 +433,11 @@ class DualtreeVKde {
     // that have been chosen.
     double min_norm_const = DBL_MAX;
     for(size_t i = 0; i < rset_weights_.size(); i++) {
-      double norm_const = kernels_[i].CalcNormConstant(qset_.n_rows());
+      double norm_const = kernels_[i].Normalizer();//CalcNormConstant(qset_.n_rows);
       min_norm_const = std::min(min_norm_const, norm_const);
     }
     for(size_t i = 0; i < rset_weights_.size(); i++) {
-      double norm_const = kernels_[i].CalcNormConstant(qset_.n_rows());
+      double norm_const = kernels_[i].Normalizer();//CalcNormConstant(qset_.n_rows);
       rset_weights_[i] *= (min_norm_const / norm_const);
     }
 
@@ -454,11 +450,11 @@ class DualtreeVKde {
     FILE *stream = stdout;
     const char *fname = NULL;
 
-    if((fname = CLI::GetParam<std::string>("fast_kde_output")) != NULL)
+    if((fname = CLI::GetParam<std::string>("fast_kde_output").c_str()) != NULL)
     {
       stream = fopen(fname, "w+");
     }
-    for(size_t q = 0; q < qset_.n_cols(); q++) {
+    for(size_t q = 0; q < qset_.n_cols; q++) {
       fprintf(stream, "%g\n", densities_e_[q]);
     }
 

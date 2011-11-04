@@ -4,9 +4,9 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
 set(SOURCES
-  test_tree.cc
   kde_dual_tree.hpp
   kde_dual_tree_impl.hpp
+  test_kde_dual_tree.cpp
 )
 
 # add directory name to sources
@@ -18,10 +18,10 @@ endforeach()
 set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # link dependencies of test executable
-add_executable(test_tree
+add_executable(test_kde_dual_tree
    EXCLUDE_FROM_ALL
-   test_tree.cc
+   test_kde_dual_tree.cpp
 )
-target_link_libraries(test_tree
+target_link_libraries(test_kde_dual_tree
    mlpack
 )

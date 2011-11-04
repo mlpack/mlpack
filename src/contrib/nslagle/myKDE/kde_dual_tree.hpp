@@ -2,7 +2,7 @@
 #define KDE_DUAL_TREE_HPP
 
 #include <iostream>
-#include <priority_queue>
+#include <queue>
 
 #include <mlpack/core.h>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
@@ -17,6 +17,7 @@ namespace mlpack
 namespace kde
 {
 /* structure within the priority queue */
+template <typename TTree = tree::BinarySpaceTree<bound::HRectBound<2> > >
 struct queueNode
 {
   TTree* T;
@@ -28,13 +29,14 @@ struct queueNode
   size_t bLowerIndex;
   size_t bUpperIndex;
 };
+template <typename TTree = tree::BinarySpaceTree<bound::HRectBound<2> > >
 class QueueNodeCompare
 {
   bool reverse;
  public:
   QueueNodeCompare(const bool& revparam=false) : reverse(revparam) {}
-  bool operator() (const struct queueNode& lhs,
-                   const struct queueNode& rhs) const
+  bool operator() (const struct queueNode<TTree>& lhs,
+                   const struct queueNode<TTree>& rhs) const
   {
     if (reverse)
       return (lhs.priority>rhs.priority);
@@ -52,6 +54,8 @@ class KdeDualTree
   /* possibly, these refer to the same object */
   TTree* referenceRoot;
   TTree* queryRoot;
+  std::map<void*, size_t> nodeIndices;
+  size_t nextAvailableNodeIndex;
   std::vector<size_t> referenceShuffledIndices;
   std::vector<size_t> queryShuffledIndices;
   arma::mat referenceData;
@@ -66,17 +70,19 @@ class KdeDualTree
   double delta;
   /* relative error with respect to the density estimate */
   double epsilon;
-  math::Range bandwidths;
-  std::priority_queue<struct queueNode,
-                      std::vector<struct queueNode>,
-                      QueueNodeCompare> nodePriorityQueue;
+  std::priority_queue<struct queueNode<TTree>,
+                      std::vector<struct queueNode<TTree> >,
+                      QueueNodeCompare<TTree> > nodePriorityQueue;
   size_t bandwidthCount;
   std::vector<double> bandwidths;
+  std::vector<double> inverseBandwidths;
+  double lowBandwidth;
+  double highBandwidth;
   size_t levelsInTree;
   size_t queryTreeSize;
 
   void SetDefaults();
-  void MultiBandwidthDualTree();
+  size_t MultiBandwidthDualTree();
   void MultiBandwidthDualTreeBase(TTree* Q,
                                   TTree* T, size_t QIndex,
                                   size_t lowerBIndex, size_t upperBIndex);
@@ -88,22 +94,24 @@ class KdeDualTree
   {
     return levelsInTree - node->levelsBelow();
   }
-  void Winnow(size_t bLower, size_t bUpper, size_t* newLower, size_t* newUpper);
+  void Winnow(size_t level, size_t* newLower, size_t* newUpper);
  public:
   /* the two data sets are different */
   KdeDualTree (arma::mat& referenceData, arma::mat& queryData);
   /* the reference data is also the query data */
   KdeDualTree (arma::mat& referenceData);
+  std::vector<double> Calculate();
   /* setters and getters */
-  const math::Range& BandwidthRange() const { return bandwidthRange; }
   const size_t& BandwidthCount() const { return bandwidthCount; }
   const double& Delta() const { return delta; }
   const double& Epsilon() const { return epsilon; }
+  const double& LowBandwidth() const { return lowBandwidth; }
+  const double& HighBandwidth() const { return highBandwidth; }
 
-  void BandwidthRange(double l, double u) { bandwidthRange = math::Range(l,u); }
   size_t& BandwidthCount() { return bandwidthCount; }
   double& Delta() { return delta; }
   double& Epsilon() { return epsilon; }
+  void SetBandwidthBounds(double l, double u);
 };
 }; /* end namespace kde */
 }; /* end namespace mlpack */
