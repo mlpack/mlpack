@@ -59,8 +59,10 @@ template<typename TKernel, typename TTree>
 std::vector<double> KdeDualTree<TKernel, TTree>::Calculate()
 {
   /* calculate the bandwidths */
+  std::cout << "epsilon=" << epsilon << std::endl;
   bandwidths.clear();
   inverseBandwidths.clear();
+  bestLevelByBandwidth.clear();
 
   if (bandwidthCount > 1)
   {
@@ -69,12 +71,14 @@ std::vector<double> KdeDualTree<TKernel, TTree>::Calculate()
     {
       bandwidths.push_back(lowBandwidth + bandwidthDelta * bIndex);
       inverseBandwidths.push_back(1.0 / bandwidths.back());
+      bestLevelByBandwidth.push_back(-1);
     }
   }
   else
   {
     bandwidths.push_back(lowBandwidth);
     inverseBandwidths.push_back(1.0 / lowBandwidth);
+    bestLevelByBandwidth.push_back(-1);
   }
 
   /* resize the critical matrices */
@@ -126,9 +130,11 @@ std::vector<double> KdeDualTree<TKernel, TTree>::Calculate()
 
   for (size_t bIndex = 0; bIndex < bandwidthCount; ++bIndex)
   {
-    double currentLogLikelihood = (upperBoundLevelByBandwidth(finalLevel,bIndex) +
-                                   lowerBoundLevelByBandwidth(finalLevel,bIndex)) / 2.0;
-    std::cout << bandwidths[bIndex] << "," << inverseBandwidths[bIndex] << "," << currentLogLikelihood << std::endl;
+    double currentLogLikelihood = (upperBoundLevelByBandwidth(
+                                     bestLevelByBandwidth[bIndex],bIndex) +
+                                   lowerBoundLevelByBandwidth(
+                                     bestLevelByBandwidth[bIndex],bIndex)) / 2.0;
+    std::cout << bandwidths[bIndex] << "," << inverseBandwidths[bIndex] << "," << currentLogLikelihood << "; RANGE " << lowerBoundLevelByBandwidth(bestLevelByBandwidth[bIndex],bIndex) << ", " << upperBoundLevelByBandwidth(bestLevelByBandwidth[bIndex],bIndex) << std::endl;
     if (currentLogLikelihood > maxLogLikelihood)
     {
       maxLogLikelihood = currentLogLikelihood;
@@ -198,22 +204,20 @@ size_t KdeDualTree<TKernel, TTree>::MultiBandwidthDualTree()
          bIndex <= queueCurrent.bUpperIndex;
          ++bIndex)
     {
-      if (abs(lowerBoundLevelByBandwidth(v,bIndex)) > DBL_EPSILON)
+      double constraint = abs((upperBoundLevelByBandwidth(v,bIndex) -
+                           lowerBoundLevelByBandwidth(v,bIndex)) /
+                           lowerBoundLevelByBandwidth(v,bIndex));
+      if (constraint >= epsilon)
       {
-        double constraint = abs((upperBoundLevelByBandwidth(v,bIndex) -
-                             lowerBoundLevelByBandwidth(v,bIndex)) /
-                             lowerBoundLevelByBandwidth(v,bIndex));
-        if (constraint > epsilon)
-        {
-          epsilonCondition = false;
-          break;
-        }
+        epsilonCondition = false;
+        break;
       }
       else
       {
-        /* we haven't set this lower bound */
-        epsilonCondition = false;
-        break;
+        if (bestLevelByBandwidth[bIndex] == (size_t)-1)
+        {
+          bestLevelByBandwidth[bIndex] = v;
+        }
       }
     }
     /* return */
@@ -301,23 +305,25 @@ size_t KdeDualTree<TKernel, TTree>::MultiBandwidthDualTree()
         /* the continue forces us to undo the previous node */
         continue;
       }
-      else
-      {
-        /* winnow according to the delta conditions */
-        std::vector<bool>::iterator bIt = deltaCondition.begin();
-        while (*bIt && bIt != deltaCondition.end())
-        {
-          ++bIt;
-          ++bLower;
-        }
-        bIt = deltaCondition.end();
-        --bIt;
-        while (*bIt && bIt != deltaCondition.begin())
-        {
-          --bIt;
-          --bUpper;
-        }
-      }
+//      else
+//      {
+//        /* winnow according to the delta conditions */
+//        std::vector<bool>::iterator bIt = deltaCondition.begin();
+//        while (*bIt && bIt != deltaCondition.end())
+//        {
+//          ++bIt;
+//          //bestLevelByBandwidth[bLower] = v;
+//          ++bLower;
+//        }
+//        bIt = deltaCondition.end();
+//        --bIt;
+//        while (*bIt && bIt != deltaCondition.begin())
+//        {
+//          --bIt;
+//          //bestLevelByBandwidth[bUpper] = v;
+//          --bUpper;
+//        }
+//      }
     }
     else /* the priority exceeds the maximum available; back the node out */
     {
@@ -433,29 +439,20 @@ void KdeDualTree<TKernel, TTree>::Winnow(size_t level,
                                          size_t* bUpper)
 {
   size_t bIndex = *bLower;
-  double constraint = delta;
+  double constraint = epsilon;
   bool enteredTheLoop = false;
   /* bring the lower up */
-  if (abs(lowerBoundLevelByBandwidth(level,bIndex)) > DBL_EPSILON)
+  constraint = abs((upperBoundLevelByBandwidth(level,bIndex) -
+                lowerBoundLevelByBandwidth(level,bIndex)) /
+                lowerBoundLevelByBandwidth(level,bIndex));
+  while (constraint < epsilon && bIndex <= *bUpper)
   {
+    enteredTheLoop = true;
+    bestLevelByBandwidth[bIndex] = level;
+    ++bIndex;
     constraint = abs((upperBoundLevelByBandwidth(level,bIndex) -
                   lowerBoundLevelByBandwidth(level,bIndex)) /
                   lowerBoundLevelByBandwidth(level,bIndex));
-  }
-  while (constraint < delta && bIndex <= *bUpper)
-  {
-    enteredTheLoop = true;
-    ++bIndex;
-    if (lowerBoundLevelByBandwidth(level,bIndex) > DBL_EPSILON)
-    {
-      constraint = (upperBoundLevelByBandwidth(level,bIndex) -
-                    lowerBoundLevelByBandwidth(level,bIndex)) /
-                    lowerBoundLevelByBandwidth(level,bIndex);
-    }
-    else
-    {
-      break;
-    }
   }
   if (enteredTheLoop)
   {
@@ -463,29 +460,20 @@ void KdeDualTree<TKernel, TTree>::Winnow(size_t level,
   }
 
   bIndex = *bUpper;
-  constraint = delta;
+  constraint = epsilon;
   enteredTheLoop = false;
   /* bring the lower up */
-  if (abs(lowerBoundLevelByBandwidth(level,bIndex)) > DBL_EPSILON)
+  constraint = abs((upperBoundLevelByBandwidth(level,bIndex) -
+                lowerBoundLevelByBandwidth(level,bIndex)) /
+                lowerBoundLevelByBandwidth(level,bIndex));
+  while (constraint < epsilon && bIndex >= *bLower)
   {
+    enteredTheLoop = true;
+    bestLevelByBandwidth[bIndex] = level;
+    --bIndex;
     constraint = abs((upperBoundLevelByBandwidth(level,bIndex) -
                   lowerBoundLevelByBandwidth(level,bIndex)) /
                   lowerBoundLevelByBandwidth(level,bIndex));
-  }
-  while (constraint < delta && bIndex >= *bLower)
-  {
-    enteredTheLoop = true;
-    --bIndex;
-    if (lowerBoundLevelByBandwidth(level,bIndex) > DBL_EPSILON)
-    {
-      constraint = (upperBoundLevelByBandwidth(level,bIndex) -
-                    lowerBoundLevelByBandwidth(level,bIndex)) /
-                    lowerBoundLevelByBandwidth(level,bIndex);
-    }
-    else
-    {
-      break;
-    }
   }
   if (enteredTheLoop)
   {
@@ -529,7 +517,7 @@ void KdeDualTree<TKernel, TTree>::MultiBandwidthDualTreeBase(TTree* Q,
     }
     for (size_t bIndex = lowerBIndex; bIndex <= upperBIndex; ++bIndex)
     {
-      upperBoundQPointByBandwidth(q, bIndex) -= sizeOfTNode;
+      upperBoundQPointByBandwidth(q, bIndex) -= inverseBandwidths[bIndex] * sizeOfTNode;
     }
   }
   for (size_t bIndex = lowerBIndex; bIndex <= upperBIndex; ++bIndex)

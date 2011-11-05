@@ -59,7 +59,7 @@ class KdeDualTree
   size_t nextAvailableNodeIndex;
   std::vector<size_t> referenceShuffledIndices;
   std::vector<size_t> queryShuffledIndices;
-  arma::Mat<size_t> touched;
+  std::vector<size_t> bestLevelByBandwidth;
   arma::mat referenceData;
   arma::mat queryData;
   arma::mat upperBoundLevelByBandwidth;
