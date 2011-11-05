@@ -28,6 +28,7 @@ struct queueNode
   double priority;
   size_t bLowerIndex;
   size_t bUpperIndex;
+  size_t QLevel;
 };
 template <typename TTree = tree::BinarySpaceTree<bound::HRectBound<2> > >
 class QueueNodeCompare
@@ -39,9 +40,9 @@ class QueueNodeCompare
                    const struct queueNode<TTree>& rhs) const
   {
     if (reverse)
-      return (lhs.priority>rhs.priority);
-    else
       return (lhs.priority<rhs.priority);
+    else
+      return (lhs.priority>rhs.priority);
   }
 };
 
@@ -58,6 +59,7 @@ class KdeDualTree
   size_t nextAvailableNodeIndex;
   std::vector<size_t> referenceShuffledIndices;
   std::vector<size_t> queryShuffledIndices;
+  arma::Mat<size_t> touched;
   arma::mat referenceData;
   arma::mat queryData;
   arma::mat upperBoundLevelByBandwidth;
@@ -85,7 +87,8 @@ class KdeDualTree
   size_t MultiBandwidthDualTree();
   void MultiBandwidthDualTreeBase(TTree* Q,
                                   TTree* T, size_t QIndex,
-                                  size_t lowerBIndex, size_t upperBIndex);
+                                  size_t lowerBIndex, size_t upperBIndex,
+                                  size_t levelOfQ);
   double GetPriority(TTree* nodeQ, TTree* nodeT)
   {
     return nodeQ->bound().MinDistance(*nodeT);
