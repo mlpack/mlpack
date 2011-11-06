@@ -10,7 +10,7 @@
 #include <mlpack/core/tree/hrectbound.hpp>
 #include <mlpack/core/math/range.hpp>
 
-#define PRIORITY_MAX DBL_MAX
+#define PRIORITY_MAX (DBL_MAX/2.0)
 
 namespace mlpack
 {
@@ -84,6 +84,7 @@ class KdeDualTree
   size_t queryTreeSize;
 
   void SetDefaults();
+  double Priority(TTree* Q, TTree* T);
   size_t MultiBandwidthDualTree();
   void MultiBandwidthDualTreeBase(TTree* Q,
                                   TTree* T, size_t QIndex,
