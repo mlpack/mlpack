@@ -172,6 +172,7 @@ size_t KdeDualTree<TKernel, TTree>::MultiBandwidthDualTree()
   /* current level */
   size_t v = 0;
   std::cout << "levels = " << queryRoot->levelsBelow() << std::endl;
+  std::cout << "treeSize = " << queryRoot->treeSize() << std::endl;
   while (!nodePriorityQueue.empty())
   {
     /* get the first structure in the queue */
@@ -186,6 +187,7 @@ size_t KdeDualTree<TKernel, TTree>::MultiBandwidthDualTree()
     arma::vec deltaUpper = queueCurrent.deltaUpper;
     /* v is the level of the Q node */
     v = queueCurrent.QLevel;
+    //std::cout << v << ":: range " << lowerBoundLevelByBandwidth(v,0) << ", " << upperBoundLevelByBandwidth(v,0) << std::endl;
     size_t bUpper = queueCurrent.bUpperIndex;
     size_t bLower = queueCurrent.bLowerIndex;
     /* check to see whether we've reached the epsilon condition */
@@ -364,24 +366,34 @@ size_t KdeDualTree<TKernel, TTree>::MultiBandwidthDualTree()
     {
       MultiBandwidthDualTreeBase(Q, T, QIndex, bLower, bUpper, queueCurrent.QLevel);
     }
-    double priority = Priority(Q,T);
-    if (!Q->is_leaf() && !T->is_leaf())
+    else
     {
+      /* we must manipulate the leaf nodes since the tree levels might not match */
+      double priority = Priority(Q,T);
       //std::cout << "QIndex for the current non-leaf : " << QIndex << std::endl;
       TTree* QLeft = Q->left();
       TTree* QRight = Q->right();
-      if (nodeIndices.find(QLeft) == nodeIndices.end())
+      size_t QLeftIndex = -1;
+      size_t QRightIndex = -1;
+      size_t allOrNode = 0;
+      if (QLeft)
       {
-        nodeIndices[QLeft] = nextAvailableNodeIndex;
-        ++nextAvailableNodeIndex;
+        if (nodeIndices.find(QLeft) == nodeIndices.end())
+        {
+          nodeIndices[QLeft] = nextAvailableNodeIndex;
+          ++nextAvailableNodeIndex;
+        }
+        QLeftIndex = (*(nodeIndices.find(QLeft))).second;
       }
-      if (nodeIndices.find(QRight) == nodeIndices.end())
+      if (QRight)
       {
-        nodeIndices[QRight] = nextAvailableNodeIndex;
-        ++nextAvailableNodeIndex;
+        if (nodeIndices.find(QRight) == nodeIndices.end())
+        {
+          nodeIndices[QRight] = nextAvailableNodeIndex;
+          ++nextAvailableNodeIndex;
+        }
+        QRightIndex = (*(nodeIndices.find(QRight))).second;
       }
-      size_t QLeftIndex = (*(nodeIndices.find(QLeft))).second;
-      size_t QRightIndex = (*(nodeIndices.find(QRight))).second;
       arma::vec leftLeftLower(deltaLower.n_rows);
       arma::vec leftLeftUpper(deltaUpper.n_rows);
       arma::vec leftRightLower(deltaLower.n_rows);
@@ -403,23 +415,52 @@ size_t KdeDualTree<TKernel, TTree>::MultiBandwidthDualTree()
       }
       //std::cout << "deltaUpper address " << &deltaUpper << "\n";
       //std::cout << "leftLeftUpper address " << &leftLeftUpper << "\n";
+      /* TODO TODO: we need to figure out node to node comparisons when one is a leaf and the other isn't */
+      if (Q->is_leaf() && !T->is_leaf())
+      {
+        std::cout << "Q is a leaf, T is NOT\n";
+      }
+      if (!Q->is_leaf() && T->is_leaf())
+      {
+        std::cout << "T is a leaf, Q is NOT\n";
+      }
 
-      struct queueNode<TTree> leftLeft =
-      {T->left(),Q->left(), QLeftIndex, leftLeftLower,
-        leftLeftUpper, priority, bLower, bUpper, queueCurrent.QLevel + 1};
-      struct queueNode<TTree> leftRight =
-      {T->left(),Q->right(), QRightIndex, leftRightLower,
-        leftRightUpper, priority, bLower, bUpper, queueCurrent.QLevel + 1};
-      struct queueNode<TTree> rightLeft =
-      {T->right(),Q->left(), QLeftIndex, rightLeftLower,
-        rightLeftUpper, priority, bLower, bUpper, queueCurrent.QLevel + 1};
-      struct queueNode<TTree> rightRight =
-      {T->right(),Q->right(), QRightIndex, rightRightLower,
-        rightRightUpper, priority, bLower, bUpper, queueCurrent.QLevel + 1};
-      nodePriorityQueue.push(leftLeft);
-      nodePriorityQueue.push(leftRight);
-      nodePriorityQueue.push(rightLeft);
-      nodePriorityQueue.push(rightRight);
+      if (Q->left() && T->left())
+      {
+        struct queueNode<TTree> leftLeft =
+        {T->left(),Q->left(), QLeftIndex, leftLeftLower,
+          leftLeftUpper, priority, bLower, bUpper, queueCurrent.QLevel + 1};
+        nodePriorityQueue.push(leftLeft);
+        ++allOrNode;
+      }
+      if (Q->left() && T->right())
+      {
+        struct queueNode<TTree> leftRight =
+        {T->left(),Q->right(), QRightIndex, leftRightLower,
+          leftRightUpper, priority, bLower, bUpper, queueCurrent.QLevel + 1};
+        nodePriorityQueue.push(leftRight);
+        ++allOrNode;
+      }
+      if (Q->right() && T->left())
+      {
+        struct queueNode<TTree> rightLeft =
+        {T->right(),Q->left(), QLeftIndex, rightLeftLower,
+          rightLeftUpper, priority, bLower, bUpper, queueCurrent.QLevel + 1};
+        nodePriorityQueue.push(rightLeft);
+        ++allOrNode;
+      }
+      if (Q->right() && T->right())
+      {
+        struct queueNode<TTree> rightRight =
+        {T->right(),Q->right(), QRightIndex, rightRightLower,
+          rightRightUpper, priority, bLower, bUpper, queueCurrent.QLevel + 1};
+        nodePriorityQueue.push(rightRight);
+        ++allOrNode;
+      }
+      if (allOrNode != 0 && allOrNode != 4)
+      {
+        std::cout << "unbalanced tree\n";
+      }
     }
   }
   MADEIT;
