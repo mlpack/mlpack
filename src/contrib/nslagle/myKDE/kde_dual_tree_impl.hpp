@@ -91,7 +91,7 @@ std::vector<double> KdeDualTree<TKernel, TTree>::Calculate()
     arma::vec col2 = lowerBoundLevelByBandwidth.unsafe_col(bIndex);
     col.fill(queryRoot->count() * log(inverseBandwidths[bIndex]));
     col2.fill(queryRoot->count() *
-                           (log(DBL_EPSILON) + log(inverseBandwidths[bIndex])));
+                           (log(DBL_EPSILON)/* + log(inverseBandwidths[bIndex])*/));
   }
 
   upperBoundQPointByBandwidth.zeros(queryRoot->count(),bandwidthCount);
@@ -110,12 +110,9 @@ std::vector<double> KdeDualTree<TKernel, TTree>::Calculate()
   lowerBoundQNodeByBandwidth.zeros(queryTreeSize,bandwidthCount);
 
   arma::vec dl;
-  arma::vec du(bandwidthCount);
+  arma::vec du;
   dl.zeros(bandwidthCount);
-  for (size_t bIndex = 0; bIndex < bandwidthCount; ++bIndex)
-  {
-    du(bIndex) = referenceRoot->count() * inverseBandwidths[bIndex];
-  }
+  du.zeros(bandwidthCount);
   struct queueNode<TTree> firstNode =
       {referenceRoot,queryRoot, nextAvailableNodeIndex, dl, du,
         Priority(queryRoot, referenceRoot), 0, bandwidthCount - 1, 0};
@@ -187,7 +184,11 @@ size_t KdeDualTree<TKernel, TTree>::MultiBandwidthDualTree()
     arma::vec deltaUpper = queueCurrent.deltaUpper;
     /* v is the level of the Q node */
     v = queueCurrent.QLevel;
+    //std::cout << "priority= " << queueCurrent.priority << std::endl;
+    //if (lowerBoundLevelByBandwidth(v,0) > upperBoundLevelByBandwidth(v,0)) continue;
     //std::cout << v << ":: range " << lowerBoundLevelByBandwidth(v,0) << ", " << upperBoundLevelByBandwidth(v,0) << std::endl;
+    //std::cout << "upper QNode\n" << upperBoundQNodeByBandwidth << std::endl;
+    //std::cout << "lower QNode\n" << lowerBoundQNodeByBandwidth << std::endl;
     size_t bUpper = queueCurrent.bUpperIndex;
     size_t bLower = queueCurrent.bLowerIndex;
     /* check to see whether we've reached the epsilon condition */
@@ -217,12 +218,14 @@ size_t KdeDualTree<TKernel, TTree>::MultiBandwidthDualTree()
     {
       return v;
     }
-    /* we didn't meet the criteria; let's narrow the bandwidth range */
+    /* we didn't meet the criteria; let's hide bandwidths
+     *   already meeting the stopping criteria */
     Winnow(v, &bLower, &bUpper);
     if (queueCurrent.priority < PRIORITY_MAX)
     {
       double dMin = pow(Q->bound().MinDistance(T->bound()), 0.5);
       double dMax = pow(Q->bound().MaxDistance(T->bound()), 0.5);
+      //std::cout << "dmin, dmax " << dMin << ", " << dMax << std::endl;
       /* iterate through the remaining bandwidths */
       bool meetsDeltaCondition = true;
       std::vector<bool> deltaCondition;
@@ -233,8 +236,16 @@ size_t KdeDualTree<TKernel, TTree>::MultiBandwidthDualTree()
         double du = sizeOfTNode * inverseBandwidth * kernel.Evaluate(dMin * inverseBandwidth);
         deltaLower(bIndex) = dl;
         deltaUpper(bIndex) = du - inverseBandwidth * sizeOfTNode;
+        /* if the delta range changes the lower bound of the Q node by less than 100(delta)%,
+         *   add the new ranges (otherwise, we're not at the resolution we want);
+         *   observe--this indicates that the T node can't contribute more than
+         *   100(delta)% of a change to the lower or upper bound of Q, so recursing further
+         *   won't necessarily move us more quickly to the epsilon condition; thus,
+         *   just add T's contribution and lock out any of T's descendants with respect
+         *   to the current Q */
         if (fabs((du - dl)/(lowerBoundQNodeByBandwidth(QIndex, bIndex) + dl)) < delta)
         {
+          std::cout << "do we ever meet delta?\n";
           for (size_t q = Q->begin(); q < Q->end(); ++q)
           {
             lowerBoundQPointByBandwidth(q,bIndex) += deltaLower(bIndex);
@@ -242,8 +253,8 @@ size_t KdeDualTree<TKernel, TTree>::MultiBandwidthDualTree()
           }
           /* subtract the current log-likelihood */
           upperBoundLevelByBandwidth(v, bIndex) -=
-              sizeOfQNode * log(upperBoundQNodeByBandwidth(QIndex, bIndex)/ referenceRoot->count());
-          double value = lowerBoundQNodeByBandwidth(QIndex, bIndex) / referenceRoot->count();
+              sizeOfQNode * log(upperBoundQNodeByBandwidth(QIndex, bIndex));
+          double value = lowerBoundQNodeByBandwidth(QIndex, bIndex);
           if (value > DBL_EPSILON)
           {
             lowerBoundLevelByBandwidth(v, bIndex) -=
@@ -252,15 +263,15 @@ size_t KdeDualTree<TKernel, TTree>::MultiBandwidthDualTree()
           else
           {
             lowerBoundLevelByBandwidth(v, bIndex) -=
-                sizeOfQNode * (log(DBL_EPSILON) - log(referenceRoot->count()));
+                sizeOfQNode * log(DBL_EPSILON);
           }
           /* adjust the current inner portion */
           lowerBoundQNodeByBandwidth(QIndex, bIndex) += deltaLower(bIndex);
           upperBoundQNodeByBandwidth(QIndex, bIndex) += deltaUpper(bIndex);
           /* add the corrected log-likelihood */
           upperBoundLevelByBandwidth(v, bIndex) +=
-              sizeOfQNode * log(upperBoundQNodeByBandwidth(QIndex, bIndex) / referenceRoot->count());
-          value = lowerBoundQNodeByBandwidth(QIndex, bIndex) / referenceRoot->count();
+              sizeOfQNode * log(upperBoundQNodeByBandwidth(QIndex, bIndex));
+          value = lowerBoundQNodeByBandwidth(QIndex, bIndex);
           if (value > DBL_EPSILON)
           {
             lowerBoundLevelByBandwidth(v, bIndex) +=
@@ -269,7 +280,7 @@ size_t KdeDualTree<TKernel, TTree>::MultiBandwidthDualTree()
           else
           {
             lowerBoundLevelByBandwidth(v, bIndex) +=
-                sizeOfQNode * (log(DBL_EPSILON) - log(referenceRoot->count()));
+                sizeOfQNode * log(DBL_EPSILON);
           }
         }
         /* check the delta condition with the new values */
@@ -290,17 +301,18 @@ size_t KdeDualTree<TKernel, TTree>::MultiBandwidthDualTree()
         /* adjust the current structure, then reinsert it into the queue */
         queueCurrent.deltaLower = deltaLower;
         queueCurrent.deltaUpper = deltaUpper;
-        queueCurrent.bUpperIndex = bUpper;
         queueCurrent.bLowerIndex = bLower;
+        queueCurrent.bUpperIndex = bUpper;
         queueCurrent.priority = Priority(Q,T) + PRIORITY_MAX;
         nodePriorityQueue.push(queueCurrent);
         /* the continue forces us to undo the previous node eventually
-         *   if we don't escape first */
+         *   if we don't escape first; we don't need to recurse on this node unless
+         *   we undo it later */
         continue;
       }
       else
       {
-        /* winnow according to the delta conditions */
+        /* winnow according to the delta conditions; hide those bandwidths downward */
         std::vector<bool>::iterator bIt = deltaCondition.begin();
         while (*bIt && bIt != deltaCondition.end())
         {
@@ -331,8 +343,8 @@ size_t KdeDualTree<TKernel, TTree>::MultiBandwidthDualTree()
         }
         /* subtract the current log-likelihood */
         upperBoundLevelByBandwidth(v, bIndex) -=
-            sizeOfQNode * log(upperBoundQNodeByBandwidth(QIndex, bIndex) / referenceRoot->count());
-        double value = lowerBoundQNodeByBandwidth(QIndex, bIndex) / referenceRoot->count();
+            sizeOfQNode * log(upperBoundQNodeByBandwidth(QIndex, bIndex));
+        double value = lowerBoundQNodeByBandwidth(QIndex, bIndex);
         if (value > DBL_EPSILON)
         {
           lowerBoundLevelByBandwidth(v, bIndex) -=
@@ -341,15 +353,15 @@ size_t KdeDualTree<TKernel, TTree>::MultiBandwidthDualTree()
         else
         {
           lowerBoundLevelByBandwidth(v, bIndex) -=
-              sizeOfQNode * (log(DBL_EPSILON) - log(referenceRoot->count()));
+              sizeOfQNode * log(DBL_EPSILON);
         }
         /* adjust the current inner portion */
         lowerBoundQNodeByBandwidth(QIndex, bIndex) += deltaLower(bIndex);
         upperBoundQNodeByBandwidth(QIndex, bIndex) += deltaUpper(bIndex);
         /* add the corrected log-likelihood */
         upperBoundLevelByBandwidth(v, bIndex) +=
-            sizeOfQNode * log(upperBoundQNodeByBandwidth(QIndex, bIndex) / referenceRoot->count());
-        value = lowerBoundQNodeByBandwidth(QIndex, bIndex) / referenceRoot->count();
+            sizeOfQNode * log(upperBoundQNodeByBandwidth(QIndex, bIndex));
+        value = lowerBoundQNodeByBandwidth(QIndex, bIndex);
         if (lowerBoundQNodeByBandwidth(QIndex, bIndex) > DBL_EPSILON)
         {
           lowerBoundLevelByBandwidth(v, bIndex) +=
@@ -358,11 +370,11 @@ size_t KdeDualTree<TKernel, TTree>::MultiBandwidthDualTree()
         else
         {
           lowerBoundLevelByBandwidth(v, bIndex) +=
-              sizeOfQNode * (log(DBL_EPSILON) - log(referenceRoot->count()));
+              sizeOfQNode * log(DBL_EPSILON);
         }
       }
     }
-    if (Q->is_leaf() && T->is_leaf())
+    if (Q->is_leaf() || T->is_leaf())
     {
       MultiBandwidthDualTreeBase(Q, T, QIndex, bLower, bUpper, queueCurrent.QLevel);
     }
@@ -375,7 +387,6 @@ size_t KdeDualTree<TKernel, TTree>::MultiBandwidthDualTree()
       TTree* QRight = Q->right();
       size_t QLeftIndex = -1;
       size_t QRightIndex = -1;
-      size_t allOrNode = 0;
       if (QLeft)
       {
         if (nodeIndices.find(QLeft) == nodeIndices.end())
@@ -402,7 +413,7 @@ size_t KdeDualTree<TKernel, TTree>::MultiBandwidthDualTree()
       arma::vec rightLeftUpper(deltaUpper.n_rows);
       arma::vec rightRightLower(deltaLower.n_rows);
       arma::vec rightRightUpper(deltaUpper.n_rows);
-      for (size_t index = 0; index < deltaLower.n_cols; ++index)
+      for (size_t index = 0; index < deltaLower.n_rows; ++index)
       {
         leftLeftLower(index) = deltaLower(index);
         leftLeftUpper(index) = deltaUpper(index);
@@ -418,48 +429,45 @@ size_t KdeDualTree<TKernel, TTree>::MultiBandwidthDualTree()
       /* TODO TODO: we need to figure out node to node comparisons when one is a leaf and the other isn't */
       if (Q->is_leaf() && !T->is_leaf())
       {
-        std::cout << "Q is a leaf, T is NOT\n";
+//        struct queueNode<TTree> TLeft =
+//        {T->left(),Q, QIndex, leftLeftLower,
+//          leftLeftUpper, priority, bLower, bUpper, queueCurrent.QLevel};
+//        nodePriorityQueue.push(TLeft);
+//        struct queueNode<TTree> TRight =
+//        {T->right(),Q, QIndex, leftRightLower,
+//          leftRightUpper, priority, bLower, bUpper, queueCurrent.QLevel};
+//        nodePriorityQueue.push(TRight);
       }
-      if (!Q->is_leaf() && T->is_leaf())
+      else if (!Q->is_leaf() && T->is_leaf())
       {
-        std::cout << "T is a leaf, Q is NOT\n";
+//        struct queueNode<TTree> QLeft =
+//        {T,Q->left(), QIndex, leftLeftLower,
+//          leftLeftUpper, priority, bLower, bUpper, queueCurrent.QLevel + 1};
+//        nodePriorityQueue.push(QLeft);
+//        struct queueNode<TTree> QRight =
+//        {T,Q->right(), QLeftIndex, leftRightLower,
+//          leftRightUpper, priority, bLower, bUpper, queueCurrent.QLevel + 1};
+//        nodePriorityQueue.push(QRight);
       }
-
-      if (Q->left() && T->left())
+      else
       {
+        /* neither are leaves; simply recurse on both */
         struct queueNode<TTree> leftLeft =
         {T->left(),Q->left(), QLeftIndex, leftLeftLower,
           leftLeftUpper, priority, bLower, bUpper, queueCurrent.QLevel + 1};
         nodePriorityQueue.push(leftLeft);
-        ++allOrNode;
-      }
-      if (Q->left() && T->right())
-      {
         struct queueNode<TTree> leftRight =
         {T->left(),Q->right(), QRightIndex, leftRightLower,
           leftRightUpper, priority, bLower, bUpper, queueCurrent.QLevel + 1};
         nodePriorityQueue.push(leftRight);
-        ++allOrNode;
-      }
-      if (Q->right() && T->left())
-      {
         struct queueNode<TTree> rightLeft =
         {T->right(),Q->left(), QLeftIndex, rightLeftLower,
           rightLeftUpper, priority, bLower, bUpper, queueCurrent.QLevel + 1};
         nodePriorityQueue.push(rightLeft);
-        ++allOrNode;
-      }
-      if (Q->right() && T->right())
-      {
         struct queueNode<TTree> rightRight =
         {T->right(),Q->right(), QRightIndex, rightRightLower,
           rightRightUpper, priority, bLower, bUpper, queueCurrent.QLevel + 1};
         nodePriorityQueue.push(rightRight);
-        ++allOrNode;
-      }
-      if (allOrNode != 0 && allOrNode != 4)
-      {
-        std::cout << "unbalanced tree\n";
       }
     }
   }
@@ -533,11 +541,31 @@ void KdeDualTree<TKernel, TTree>::MultiBandwidthDualTreeBase(TTree* Q,
 {
   size_t sizeOfTNode = T->count();
   size_t sizeOfQNode = Q->count();
+  /*for (size_t bIndex = lowerBIndex; bIndex <= upperBIndex; ++bIndex)
+  {
+    for (size_t q = Q->begin(); q < Q->end(); ++q)
+    {
+      upperBoundLevelByBandwidth(levelOfQ, bIndex) -=
+          log(upperBoundQPointByBandwidth(q, bIndex));
+      double value = lowerBoundQPointByBandwidth(q, bIndex);
+      if (value > DBL_EPSILON)
+      {
+        lowerBoundLevelByBandwidth(levelOfQ, bIndex) -=
+            log(value);
+      }
+      else
+      {
+        lowerBoundLevelByBandwidth(levelOfQ, bIndex) -=
+            log(DBL_EPSILON);
+      }
+    }
+  }*/
   for (size_t q = Q->begin(); q < Q->end(); ++q)
   {
     arma::vec queryPoint = queryData.unsafe_col(q);
     for (size_t t = T->begin(); t < T->end(); ++t)
     {
+      //std::cout << "q,t" << q << "," << t << std::endl;
       arma::vec diff = queryPoint - referenceData.unsafe_col(t);
       double dist = pow(arma::dot(diff, diff), 0.5);
       size_t bandwidthIndex = upperBIndex + 1;
@@ -545,9 +573,9 @@ void KdeDualTree<TKernel, TTree>::MultiBandwidthDualTreeBase(TTree* Q,
       {
         --bandwidthIndex;
         double inverseBandwidth = inverseBandwidths[bandwidthIndex];
-        double scaledProduct = dist * inverseBandwidth;
         /* TODO: determine the power of the incoming argument */
-        double contribution = inverseBandwidth * kernel.Evaluate(scaledProduct);
+        double contribution = inverseBandwidth *
+                              kernel.Evaluate(inverseBandwidth * dist);
         if (contribution > DBL_EPSILON)
         {
           upperBoundQPointByBandwidth(q, bandwidthIndex) += contribution;
@@ -555,6 +583,7 @@ void KdeDualTree<TKernel, TTree>::MultiBandwidthDualTreeBase(TTree* Q,
         }
         else
         {
+          std::cout << "we broke!\n";
           break;
         }
       }
@@ -564,13 +593,33 @@ void KdeDualTree<TKernel, TTree>::MultiBandwidthDualTreeBase(TTree* Q,
       upperBoundQPointByBandwidth(q, bIndex) -= inverseBandwidths[bIndex] * sizeOfTNode;
     }
   }
+  /*for (size_t bIndex = lowerBIndex; bIndex <= upperBIndex; ++bIndex)
+  {
+    for (size_t q = Q->begin(); q < Q->end(); ++q)
+    {
+      upperBoundLevelByBandwidth(levelOfQ, bIndex) +=
+          log(upperBoundQPointByBandwidth(q, bIndex));
+      double value = lowerBoundQPointByBandwidth(q, bIndex);
+      if (value > DBL_EPSILON)
+      {
+        lowerBoundLevelByBandwidth(levelOfQ, bIndex) +=
+            log(value);
+      }
+      else
+      {
+        lowerBoundLevelByBandwidth(levelOfQ, bIndex) +=
+            log(DBL_EPSILON);
+      }
+    }
+  }*/
   for (size_t bIndex = lowerBIndex; bIndex <= upperBIndex; ++bIndex)
   {
     /* subtract out the current log-likelihood amount for this Q node so we can readjust
      *   the Q node bounds by the current bandwidth */
+    std::cout << "BEFORE========\n" << lowerBoundLevelByBandwidth << std::endl << upperBoundLevelByBandwidth << std::endl;
     upperBoundLevelByBandwidth(levelOfQ, bIndex) -=
-        sizeOfQNode * log(upperBoundQNodeByBandwidth(QIndex, bIndex) / referenceRoot->count());
-    double value = lowerBoundQNodeByBandwidth(QIndex, bIndex) / referenceRoot->count();
+        sizeOfQNode * log(upperBoundQNodeByBandwidth(QIndex, bIndex));
+    double value = lowerBoundQNodeByBandwidth(QIndex, bIndex);
     if (value > DBL_EPSILON)
     {
       lowerBoundLevelByBandwidth(levelOfQ, bIndex) -=
@@ -579,10 +628,8 @@ void KdeDualTree<TKernel, TTree>::MultiBandwidthDualTreeBase(TTree* Q,
     else
     {
       lowerBoundLevelByBandwidth(levelOfQ, bIndex) -=
-          sizeOfQNode * (log(DBL_EPSILON) - log(referenceRoot->count()));
+          sizeOfQNode * log(DBL_EPSILON);
     }
-    arma::vec upperBound = upperBoundQPointByBandwidth.unsafe_col(bIndex);
-    arma::vec lowerBound = lowerBoundQPointByBandwidth.unsafe_col(bIndex);
     double minimumLower = lowerBoundQPointByBandwidth(Q->begin(), bIndex);
     double maximumUpper = upperBoundQPointByBandwidth(Q->begin(), bIndex);
     for (size_t q = Q->begin(); q < Q->end(); ++q)
@@ -603,8 +650,8 @@ void KdeDualTree<TKernel, TTree>::MultiBandwidthDualTreeBase(TTree* Q,
     upperBoundQNodeByBandwidth(QIndex, bIndex) = maximumUpper;/* -
                                    inverseBandwidths[bIndex] * sizeOfTNode;*/
     upperBoundLevelByBandwidth(levelOfQ, bIndex) +=
-        sizeOfQNode * log(upperBoundQNodeByBandwidth(QIndex, bIndex) / referenceRoot->count());
-    value = lowerBoundQNodeByBandwidth(QIndex, bIndex) / referenceRoot->count();
+        sizeOfQNode * log(upperBoundQNodeByBandwidth(QIndex, bIndex));
+    value = lowerBoundQNodeByBandwidth(QIndex, bIndex);
     if (value > DBL_EPSILON)
     {
       lowerBoundLevelByBandwidth(levelOfQ, bIndex) +=
@@ -613,8 +660,9 @@ void KdeDualTree<TKernel, TTree>::MultiBandwidthDualTreeBase(TTree* Q,
     else
     {
       lowerBoundLevelByBandwidth(levelOfQ, bIndex) +=
-          sizeOfQNode * (log(DBL_EPSILON) - log(referenceRoot->count()));
+          sizeOfQNode * log(DBL_EPSILON);
     }
+    std::cout << "AFTER========\n" << lowerBoundLevelByBandwidth << std::endl << upperBoundLevelByBandwidth << std::endl;
   }
 }
 template<typename TKernel, typename TTree>
