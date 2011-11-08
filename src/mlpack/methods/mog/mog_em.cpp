@@ -13,157 +13,146 @@
 using namespace mlpack;
 using namespace gmm;
 
-void MoGEM::ExpectationMaximization(const arma::mat& data_points) {
-  // Declaration of the variables */
-  size_t num_points;
-  size_t dim, num_gauss;
-  double sum, tmp;
-  std::vector<arma::vec> mu_temp, mu;
-  std::vector<arma::mat> sigma_temp, sigma;
-  arma::vec omega_temp, omega, x;
-  arma::mat cond_prob;
-  long double l, l_old, best_l, INFTY = 99999, TINY = 1.0e-10;
+void MoGEM::ExpectationMaximization(const arma::mat& data)
+{
+  // Create temporary models and set to the right size.
+  std::vector<arma::vec> means_trial(gaussians, arma::vec(dimension));
+  std::vector<arma::mat> covariances_trial(gaussians,
+      arma::mat(dimension, dimension));
+  arma::vec weights_trial(gaussians);
 
-  // Initializing values
-  dim = dimension();
-  num_gauss = number_of_gaussians();
-  num_points = data_points.n_cols;
+  arma::mat cond_prob(gaussians, data.n_cols);
 
-  // Initializing the number of the vectors and matrices
-  // according to the parameters input
-  mu_temp.resize(num_gauss);
-  mu.resize(num_gauss);
-  sigma_temp.resize(num_gauss);
-  sigma.resize(num_gauss);
-  omega_temp.set_size(num_gauss);
-  omega.set_size(num_gauss);
+  long double l, l_old, best_l, TINY = 1.0e-10;
 
-  // Allocating size to the vectors and matrices
-  // according to the dimensionality of the data
-  for(size_t i = 0; i < num_gauss; i++) {
-    mu_temp[i].set_size(dim);
-    mu[i].set_size(dim);
-    sigma_temp[i].set_size(dim, dim);
-    sigma[i].set_size(dim, dim);
-  }
-  x.set_size(dim);
-  cond_prob.set_size(num_gauss, num_points);
+  best_l = -DBL_MAX;
 
-  best_l = -INFTY;
-  size_t restarts = 0;
-  // performing 5 restarts and choosing the best from them
-  while (restarts < 5) {
+  // We will perform five trials, and then save the trial with the best result
+  // as our trained model.
+  for (size_t iteration = 0; iteration < 5; iteration++)
+  {
+    // Use k-means to find initial values for the parameters.
+    KMeans(data, gaussians, means_trial, covariances_trial, weights_trial);
 
-    // assign initial values to 'mu', 'sig' and 'omega' using k-means
-    KMeans(data_points, num_gauss, mu_temp, sigma_temp, omega_temp);
+    Log::Warn << "K-Means results:" << std::endl;
+    for (size_t i = 0; i < gaussians; i++)
+    {
+      Log::Warn << "Mean " << i << ":" << std::endl;
+      Log::Warn << means_trial[i] << std::endl;
+      Log::Warn << "Covariance " << i << ":" << std::endl;
+      Log::Warn << covariances_trial[i] << std::endl;
+    }
+    Log::Warn << "Weights: " << std::endl << weights_trial << std::endl;
 
-    l_old = -INFTY;
+    // Calculate the log likelihood of the model.
+    l = Loglikelihood(data, means_trial, covariances_trial, weights_trial);
 
-    // calculates the loglikelihood value
-    l = Loglikelihood(data_points, mu_temp, sigma_temp, omega_temp);
+    l_old = -DBL_MAX;
 
-    // added a check here to see if any
-    // significant change is being made
-    // at every iteration
-    while (l - l_old > TINY) {
-      // calculating the conditional probabilities
-      // of choosing a particular gaussian given
-      // the data and the present theta value
-      for (size_t j = 0; j < num_points; j++) {
-        x = data_points.col(j);
-        sum = 0;
-        for (size_t i = 0; i < num_gauss; i++) {
-          tmp = phi(x, mu_temp[i], sigma_temp[i]) * omega_temp[i];
-          cond_prob(i, j) = tmp;
-          sum += tmp;
+    // Iterate to update the model until no more improvement is found.
+    size_t max_iterations = 1000;
+    size_t iteration = 0;
+    while (std::abs(l - l_old) > TINY && iteration < max_iterations)
+    {
+      Log::Warn << "Iteration " << iteration << std::endl;
+      // Calculate the conditional probabilities of choosing a particular
+      // Gaussian given the data and the present theta value.
+      for (size_t j = 0; j < data.n_cols; j++)
+      {
+        for (size_t i = 0; i < gaussians; i++)
+        {
+          cond_prob(i, j) = phi(data.unsafe_col(j), means_trial[i],
+              covariances_trial[i]) * weights_trial[i];
         }
-        for (size_t i = 0; i < num_gauss; i++) {
-          tmp = cond_prob(i, j);
-          cond_prob(i, j) = tmp / sum;
-        }
+
+        // Normalize column to have sum probability of one.
+        cond_prob.col(j) /= arma::sum(cond_prob.col(j));
       }
 
-      // calculating the new value of the mu
-      // using the updated conditional probabilities
-      for (size_t i = 0; i < num_gauss; i++) {
-        sum = 0;
-        mu_temp[i].zeros();
-        for (size_t j = 0; j < num_points; j++) {
-          x = data_points.col(j);
-          mu_temp[i] = cond_prob(i, j) * x;
-          sum += cond_prob(i, j);
-        }
-        mu_temp[i] /= sum;
+      // Store the sums of each row because they are used multiple times.
+      arma::vec prob_row_sums = arma::sum(cond_prob, 1 /* row-wise */);
+
+      // Calculate the new value of the means using the updated conditional
+      // probabilities.
+      for (size_t i = 0; i < gaussians; i++)
+      {
+        means_trial[i].zeros();
+        for (size_t j = 0; j < data.n_cols; j++)
+          means_trial[i] += cond_prob(i, j) * data.col(j);
+
+        means_trial[i] /= prob_row_sums[i];
       }
 
-      // calculating the new value of the sig
-      // using the updated conditional probabilities
-      // and the updated mu
-      for (size_t i = 0; i < num_gauss; i++) {
-        sum = 0;
-        sigma_temp[i].zeros();
-        for (size_t j = 0; j < num_points; j++) {
-          arma::mat co, ro, c;
-          c.set_size(dim, dim);
-          x = data_points.col(j);
-          x -= mu_temp[i];
-          c = x * trans(x);
-          sigma_temp[i] += cond_prob(i, j) * c;
-          sum += cond_prob(i, j);
+      // Calculate the new value of the covariances using the updated
+      // conditional probabilities and the updated means.
+      for (size_t i = 0; i < gaussians; i++)
+      {
+        covariances_trial[i].zeros();
+        for (size_t j = 0; j < data.n_cols; j++)
+        {
+          arma::vec tmp = data.col(j) - means_trial[i];
+          covariances_trial[i] += cond_prob(i, j) * (tmp * trans(tmp));
         }
-        sigma_temp[i] /= sum;
+
+        covariances_trial[i] /= prob_row_sums[i];
       }
 
-      // calculating the new values for omega
-      // using the updated conditional probabilities
-      arma::vec identity_vector;
-      identity_vector.set_size(num_points);
-      identity_vector = (1.0 / num_points);
-      omega_temp = cond_prob * identity_vector;
+      // Calculate the new values for omega using the updated conditional
+      // probabilities.
+      weights_trial = prob_row_sums / data.n_cols;
+/*
+      Log::Warn << "Estimated weights:" << std::endl << weights_trial
+          << std::endl;
 
+      for (size_t i = 0; i < gaussians; i++)
+      {
+//        Log::Warn << "Estimated mean " << i << ":" << std::endl;
+//        Log::Warn << means_trial[i] << std::endl;
+        Log::Warn << "Estimated covariance " << i << ":" << std::endl;
+        Log::Warn << covariances_trial[i] << std::endl;
+      }
+*/
+
+      // Update values of l; calculate new log-likelihood.
       l_old = l;
-      l = Loglikelihood(data_points, mu_temp, sigma_temp, omega_temp);
+      l = Loglikelihood(data, means_trial, covariances_trial, weights_trial);
+
+      Log::Warn << "Improved log likelihood to " << l << std::endl;
+
+      iteration++;
     }
 
-    // putting a check to see if the best one is chosen
-    if (l > best_l) {
+    // The trial model is trained.  Is it better than our existing model?
+    if (l > best_l)
+    {
       best_l = l;
-      for (size_t i = 0; i < num_gauss; i++) {
-        mu[i] = mu_temp[i];
-        sigma[i] = sigma_temp[i];
-      }
-      omega = omega_temp;
-    }
-    restarts++;
-  }
 
-  for (size_t i = 0; i < num_gauss; i++) {
-    set_mu(i, mu[i]);
-    set_sigma(i, sigma[i]);
+      means = means_trial;
+      covariances = covariances_trial;
+      weights = weights_trial;
+    }
   }
-  set_omega(omega);
 
   Log::Info << "Log likelihood value of the estimated model: " << best_l << "."
       << std::endl;
   return;
 }
 
-long double MoGEM::Loglikelihood(const arma::mat& data_points,
-                                 const std::vector<arma::vec>& means,
-                                 const std::vector<arma::mat>& covars,
-                                 const arma::vec& weights) {
-  size_t i, j;
-  arma::vec x;
-  long double likelihood, loglikelihood = 0;
+long double MoGEM::Loglikelihood(const arma::mat& data,
+                                 const std::vector<arma::vec>& means_l,
+                                 const std::vector<arma::mat>& covariances_l,
+                                 const arma::vec& weights_l) const
+{
+  long double loglikelihood = 0;
+  long double likelihood;
 
-  x.set_size(data_points.n_rows);
-
-  for (j = 0; j < data_points.n_cols; j++) {
-    x = data_points.col(j);
+  for (size_t j = 0; j < data.n_cols; j++)
+  {
     likelihood = 0;
-    for(i = 0; i < number_of_gaussians_; i++) {
-      likelihood += weights(i) * phi(x, means[i], covars[i]);
-    }
+    for(size_t i = 0; i < gaussians; i++)
+      likelihood += weights_l(i) * phi(data.unsafe_col(j), means_l[i],
+          covariances_l[i]);
+
     loglikelihood += log(likelihood);
   }
 

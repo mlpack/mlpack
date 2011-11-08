@@ -5,10 +5,29 @@
  * This file computes the Gaussian probability
  * density function
  */
+#ifndef __MLPACK_METHODS_MOG_PHI_HPP
+#define __MLPACK_METHODS_MOG_PHI_HPP
+
 #include <mlpack/core.h>
 
 namespace mlpack {
 namespace gmm {
+
+/**
+ * Calculates the univariate Gaussian probability density function
+ *
+ * Example use:
+ * @code
+ * double x, mean, var;
+ * ....
+ * long double f = phi(x, mean, var);
+ * @endcode
+ */
+inline long double phi(const double x, const double mean, const double var)
+{
+  return exp(-1.0 * ((x - mean) * (x - mean) / (2 * var)))
+      / sqrt(2 * M_PI * var);
+}
 
 /**
  * Calculates the multivariate Gaussian probability density function
@@ -21,51 +40,22 @@ namespace gmm {
  * long double f = phi(x, mean, cov);
  * @endcode
  */
-long double phi(const arma::vec& x,
-                const arma::vec& mean,
-                const arma::mat& cov) {
-  long double cdet, f;
-  double exponent;
-  size_t dim;
-  arma::mat cinv = inv(cov);
-  arma::vec diff, tmp;
+inline long double phi(const arma::vec& x,
+                       const arma::vec& mean,
+                       const arma::mat& cov)
+{
+  arma::vec diff = mean - x;
 
-  dim = x.n_elem;
-  cdet = det(cov);
+  arma::vec exponent = -0.5 * trans(diff) * inv(cov) * diff;
 
-  if (cdet < 0)
-    cdet = -cdet;
-
-  diff = mean - x;
-  tmp = cinv * diff;
-  exponent = dot(diff, tmp);
-
-  long double tmp1, tmp2;
-  tmp1 = 1 / pow(2 * M_PI, dim / 2);
-  tmp2 = 1 / sqrt(cdet);
-  f = (tmp1 * tmp2 * exp(-exponent / 2));
-
-  return f;
+  // TODO: What if det(cov) < 0?
+  return pow(2 * M_PI, (double) x.n_elem / -2.0) * pow(det(cov), -0.5) *
+      exp(exponent[0]);
 }
 
 /**
- * Calculates the univariate Gaussian probability density function
- *
- * Example use:
- * @code
- * double x, mean, var;
- * ....
- * long double f = phi(x, mean, var);
- * @endcode
- */
-long double phi(const double x, const double mean, const double var) {
-  return exp(-1.0 * ((x - mean) * (x - mean) / (2 * var)))
-      / sqrt(2 * M_PI * var);
-}
-
-/**
- * Calculates the multivariate Gaussian probability density function
- * and also the gradients with respect to the mean and the variance
+ * Calculates the multivariate Gaussian probability density function and also
+ * the gradients with respect to the mean and the variance.
  *
  * Example use:
  * @code
@@ -75,55 +65,40 @@ long double phi(const double x, const double mean, const double var) {
  * long double f = phi(x, mean, cov, d_cov, &g_mean, &g_cov);
  * @endcode
  */
-long double phi(const arma::vec& x,
-                const arma::vec& mean,
-                const arma::mat& cov,
-                const std::vector<arma::mat>& d_cov,
-                arma::vec& g_mean,
-                arma::vec& g_cov) {
-  long double cdet, f;
-  double exponent;
-  size_t dim;
+inline long double phi(const arma::vec& x,
+                       const arma::vec& mean,
+                       const arma::mat& cov,
+                       const std::vector<arma::mat>& d_cov,
+                       arma::vec& g_mean,
+                       arma::vec& g_cov)
+{
+  // We don't call out to another version of the function to avoid inverting the
+  // covariance matrix more than once.
   arma::mat cinv = inv(cov);
-  arma::vec diff, tmp;
 
-  dim = x.n_elem;
-  cdet = det(cov);
+  arma::vec diff = mean - x;
+  arma::vec exponent = -0.5 * trans(diff) * inv(cov) * diff;
 
-  if (cdet < 0)
-    cdet = -cdet;
+  long double f = pow(2 * M_PI, (double) x.n_elem / 2) * pow(det(cov), -0.5)
+      * exp(exponent[0]);
 
-  diff = mean - x;
-  tmp = cinv * diff;
-  exponent = dot(diff, tmp);
+  // Calculate the g_mean values; this is a (1 x dim) vector.
+  arma::vec invDiff = cinv * diff;
+  g_mean = f * invDiff;
 
-  long double tmp1, tmp2;
-  tmp1 = 1 / pow(2 * M_PI, dim / 2);
-  tmp2 = 1 / sqrt(cdet);
-  f = (tmp1 * tmp2 * exp(-exponent / 2));
+  // Calculate the g_cov values; this is a (1 x (dim * (dim + 1) / 2)) vector.
+  for (size_t i = 0; i < d_cov.size(); i++)
+  {
+    arma::mat inv_d = cinv * d_cov[i];
 
-  // Calculating the g_mean values  which would be a (1 X dim) vector
-  g_mean = f * tmp;
-
-  // Calculating the g_cov values which would be a (1 X (dim*(dim+1)/2)) vector
-  arma::vec g_cov_tmp(d_cov.size());
-  for (size_t i = 0; i < d_cov.size(); i++) {
-    arma::vec tmp_d;
-    arma::mat inv_d;
-    long double tmp_d_cov_d_r;
-
-    tmp_d = d_cov[i] * tmp;
-    tmp_d_cov_d_r = dot(tmp_d,tmp);
-    inv_d = cinv * d_cov[i];
-    for (size_t j = 0; j < dim; j++)
-      tmp_d_cov_d_r += inv_d(j, j);
-    g_cov_tmp[i] = f * tmp_d_cov_d_r / 2;
+    g_cov[i] = f * dot(d_cov[i] * invDiff, invDiff) +
+        accu((cinv * d_cov[i]).diag()) / 2;
   }
-
-  g_cov = g_cov_tmp;
 
   return f;
 }
 
 }; // namespace gmm
 }; // namespace mlpack
+
+#endif

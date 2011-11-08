@@ -42,3 +42,12 @@ add_executable(mog_l2e
 target_link_libraries(mog_l2e
   mlpack
 )
+
+# Test executable.
+add_executable(gmm_test
+  gmm_test.cpp
+)
+target_link_libraries(gmm_test
+  mlpack
+  boost_unit_test_framework
+)

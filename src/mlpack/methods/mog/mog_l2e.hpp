@@ -2,9 +2,7 @@
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @file mog_l2e.hpp
  *
- * Defines a Gaussian Mixture model and
- * estimates the parameters of the model
- *
+ * Defines a Gaussian Mixture model and estimates the parameters of the model.
  */
 #ifndef __MLPACK_METHODS_MOG_MOG_L2E_HPP
 #define __MLPACK_METHODS_MOG_MOG_L2E_HPP
@@ -24,17 +22,15 @@ namespace gmm {
 /**
  * A Gaussian mixture model class.
  *
- * This class uses L2 loss function to
- * estimate the parameters of a gaussian mixture
- * model on a given data.
+ * This class uses L2 loss function to estimate the parameters of a gaussian
+ * mixture model on a given data.
  *
- * The parameters are converted for optimization
- * to maintain the following facts:
- * - the weights sum to one
- *  - for this, the weights were parameterized using
- *    the logistic function
- * - the covariance matrix is always positive definite
- *  - for this, the Cholesky decomposition is used
+ * The parameters are converted for optimization to maintain the following
+ * facts:
+ * - the weights sum to one; for this, the weights were parameterized using
+ *     the logistic function
+ * - the covariance matrix is always positive definite; for this, the Cholesky
+ *     decomposition is used
  *
  * Example use:
  *
@@ -51,42 +47,30 @@ namespace gmm {
 class MoGL2E {
  private:
   // The parameters of the Mixture model
-  std::vector<arma::vec> mu_;
-  std::vector<arma::mat> sigma_;
-  arma::vec omega_;
-  size_t number_of_gaussians_;
-  size_t dimension_;
+  size_t gaussians;
+  size_t dimension;
+  std::vector<arma::vec> means;
+  std::vector<arma::mat> covariances;
+  arma::vec weights;
 
   // The differential for the paramterization
   // for optimization
-  arma::mat d_omega_;
-  std::vector<std::vector<arma::mat> > d_sigma_;
+  arma::mat weightsGradients;
+  std::vector<std::vector<arma::mat> > covariancesGradients;
 
  public:
 
-  MoGL2E() { }
+  MoGL2E(size_t gaussians, size_t dimension) :
+    gaussians(gaussians),
+    dimension(dimension),
+    means(gaussians),
+    covariances(gaussians) { /* nothing to do */ }
 
-  ~MoGL2E() { }
-
-  void Init(size_t num_gauss, size_t dimension) {
-    // Destruct everything to initialize afresh
-    mu_.clear();
-    sigma_.clear();
-    d_sigma_.clear();
-
-    // Initialize the private variables
-    number_of_gaussians_ = num_gauss;
-    dimension_ = dimension;
-
-    // Resize the vector of vectors and matrices
-    mu_.resize(number_of_gaussians_);
-    sigma_.resize(number_of_gaussians_);
-  }
-
-  void Resize_d_sigma_() {
-    d_sigma_.resize(number_of_gaussians_);
-    for(size_t i = 0; i < number_of_gaussians_; i++)
-      d_sigma_[i].resize(dimension_ * (dimension_ + 1) / 2);
+  void Resize_d_sigma_()
+  {
+    d_sigma_.resize(gaussians);
+    for(size_t i = 0; i < gaussians; i++)
+      d_sigma_[i].resize(dimension * (dimension + 1) / 2);
   }
 
   /**
@@ -109,7 +93,8 @@ class MoGL2E {
     arma::mat lower_triangle_matrix;
     double sum, s_min = 0.01;
 
-    Init(num_mods, dimension);
+    gaussians = num_mods;
+    this->dimension = dimension;
     lower_triangle_matrix.set_size(dimension, dimension);
 
     // calculating the omega values
@@ -118,34 +103,34 @@ class MoGL2E {
     sum = accu(temp_array);
 
     temp_array /= sum;
-    set_omega(temp_array);
+    weights = temp_array;
 
     // calculating the mu values
-    for(size_t k = 0; k < num_mods; k++) {
+    for(size_t k = 0; k < gaussians; k++) {
       for(size_t j = 0; j < dimension; j++) {
         temp_mu[j] = theta[num_mods + (k * dimension) + j - 1];
       }
-      set_mu(k, temp_mu);
+      means[k] = temp_mu;
     }
 
     // calculating the sigma values
     // using a lower triangular matrix and its transpose
     // to obtain a positive definite symmetric matrix
     arma::mat sigma_temp(dimension, dimension);
-    for(size_t k = 0; k < num_mods; k++) {
+    for(size_t k = 0; k < gaussians; k++) {
       lower_triangle_matrix.zeros();
       for(size_t j = 0; j < dimension; j++) {
         for(size_t i = 0; i < j; i++) {
-          lower_triangle_matrix(j, i) = theta[(num_mods - 1)
-              + (num_mods * dimension) + k * (dimension * (dimension + 1) / 2)
+          lower_triangle_matrix(j, i) = theta[(gaussians - 1)
+              + (gaussians * dimension) + k * (dimension * (dimension + 1) / 2)
               + (j * (j + 1) / 2) + i];
         }
-        lower_triangle_matrix(j, j) = theta[(num_mods - 1)
-            + (num_mods * dimension) + k * (dimension * (dimension + 1) / 2)
+        lower_triangle_matrix(j, j) = theta[(gaussians - 1)
+            + (gaussians * dimension) + k * (dimension * (dimension + 1) / 2)
             + (j * (j + 1) / 2) + j] + s_min;
       }
       sigma_temp = lower_triangle_matrix * trans(lower_triangle_matrix);
-      set_sigma(k, sigma_temp);
+      covariances[k] = sigma_temp;
     }
   }
 
@@ -170,7 +155,8 @@ class MoGL2E {
     arma::mat lower_triangle_matrix;
     double sum, s_min = 0.01;
 
-    Init(num_mods, dimension);
+    gaussians = num_mods;
+    this->dimension = dimension;
     lower_triangle_matrix.set_size(dimension, dimension);
 
     // calculating the omega values
@@ -179,21 +165,21 @@ class MoGL2E {
     sum = accu(temp_array);
 
     temp_array /= sum;
-    set_omega(temp_array);
+    weights = temp_array;
 
     // calculating the d_omega values
     arma::mat d_omega_temp(num_mods - 1, num_mods);
     d_omega_temp.zeros();
     for (size_t i = 0; i < num_mods - 1; i++) {
       for (size_t j = 0; j < i; j++) {
-        d_omega_temp(i, j) = -(omega_[i] * omega_[j]);
-        d_omega_temp(j, i) = -(omega_[i] * omega_[j]);
+        d_omega_temp(i, j) = -(weights[i] * weights[j]);
+        d_omega_temp(j, i) = -(weights[i] * weights[j]);
       }
-      d_omega_temp(i, i) = omega_[i] * (1 - omega_[i]);
+      d_omega_temp(i, i) = weights[i] * (1 - weights[i]);
     }
 
     for (size_t i = 0; i < num_mods - 1; i++)
-      d_omega_temp(i, num_mods - 1) = -(omega_[i] * omega_[num_mods - 1]);
+      d_omega_temp(i, num_mods - 1) = -(weights[i] * weights[num_mods - 1]);
 
     set_d_omega(d_omega_temp);
 
@@ -201,7 +187,7 @@ class MoGL2E {
     for (size_t k = 0; k < num_mods; k++) {
       for (size_t j = 0; j < dimension; j++)
         temp_mu[j] = theta[num_mods + (k * dimension) + j - 1];
-      set_mu(k, temp_mu);
+      means[k] = temp_mu;
     }
     // d_mu is not computed because it is implicitly known
     // since no parameterization is applied on them
@@ -216,20 +202,20 @@ class MoGL2E {
 
     // calculating the sigma values
     arma::mat sigma_temp(dimension, dimension);
-    for (size_t k = 0; k < num_mods; k++) {
+    for (size_t k = 0; k < gaussians; k++) {
       lower_triangle_matrix.zeros();
       for (size_t j = 0; j < dimension; j++) {
         for (size_t i = 0; i < j; i++) {
-          lower_triangle_matrix(j, i) = theta[(num_mods - 1)
-              + (num_mods * dimension) + k * (dimension * (dimension + 1) / 2)
+          lower_triangle_matrix(j, i) = theta[(gaussians - 1)
+              + (gaussians * dimension) + k * (dimension * (dimension + 1) / 2)
               + (j * (j + 1) / 2) + i];
         }
-        lower_triangle_matrix(j, j) = theta[(num_mods - 1)
-            + (num_mods * dimension) + k * (dimension * (dimension + 1) / 2)
+        lower_triangle_matrix(j, j) = theta[(gaussians - 1)
+            + (gaussians * dimension) + k * (dimension * (dimension + 1) / 2)
             + (j * (j + 1) / 2) + j] + s_min;
       }
       sigma_temp = lower_triangle_matrix * trans(lower_triangle_matrix);
-      set_sigma(k, sigma_temp);
+      covariances[k] = sigma_temp;
 
       // calculating the d_sigma values
       for (size_t i = 0; i < dimension; i++) {
@@ -246,39 +232,6 @@ class MoGL2E {
     }
   }
 
-  ////// THE GET FUNCTCLINS //////
-  std::vector<arma::vec>& mu() {
-    return mu_;
-  }
-
-  std::vector<arma::mat>& sigma() {
-    return sigma_;
-  }
-
-  arma::vec& omega() {
-    return omega_;
-  }
-
-  size_t number_of_gaussians() {
-    return number_of_gaussians_;
-  }
-
-  size_t dimension() {
-    return dimension_;
-  }
-
-  arma::vec& mu(size_t i) {
-    return mu_[i] ;
-  }
-
-  arma::mat& sigma(size_t i) {
-    return sigma_[i];
-  }
-
-  double omega(size_t i) {
-    return omega_[i];
-  }
-
   arma::mat& d_omega() {
     return d_omega_;
   }
@@ -289,28 +242,6 @@ class MoGL2E {
 
   std::vector<arma::mat>& d_sigma(size_t i) {
     return d_sigma_[i];
-  }
-
-  ////// THE SET FUNCTCLINS //////
-
-  void set_mu(size_t i, const arma::vec& mu) {
-    assert(i < number_of_gaussians_);
-    assert(mu.n_elem == dimension_);
-
-    mu_[i] = mu;
-  }
-
-  void set_sigma(size_t i, const arma::mat& sigma) {
-    assert(i < number_of_gaussians_);
-    assert(sigma.n_rows == dimension_);
-    assert(sigma.n_cols == dimension_);
-
-    sigma_[i] = sigma;
-  }
-
-  void set_omega(const arma::vec& omega) {
-    assert(omega.n_elem == number_of_gaussians_);
-    omega_ = omega;
   }
 
   void set_d_omega(const arma::mat& d_omega) {
@@ -333,58 +264,20 @@ class MoGL2E {
   void OutputResults(std::vector<double>& results) {
 
     // Initialize the size of the output array
-    results.resize(number_of_gaussians_ * (1 + dimension_ * (1 + dimension_)));
+    results.resize(gaussians * (1 + dimension * (1 + dimension)));
 
     // Copy values to the array from the private variables of the class
-    for (size_t i = 0; i < number_of_gaussians_; i++) {
-      results[i] = omega_[i];
-      for (size_t j = 0; j < dimension_; j++) {
-        results[number_of_gaussians_ + (i * dimension_) + j] = (mu_[i])[j];
-          for (size_t k = 0; k < dimension_; k++) {
-            results[number_of_gaussians_ * (1 + dimension_)
-               + (i * dimension_ * dimension_) + (j * dimension_)
-               + k] = (sigma_[i])(j, k);
+    for (size_t i = 0; i < gaussians; i++) {
+      results[i] = weights[i];
+      for (size_t j = 0; j < dimension; j++) {
+        results[gaussians + (i * dimension) + j] = (means[i])[j];
+          for (size_t k = 0; k < dimension; k++) {
+            results[gaussians * (1 + dimension)
+               + (i * dimension * dimension) + (j * dimension)
+               + k] = (covariances[i])(j, k);
         }
       }
     }
-  }
-
-  /**
-   * This function prints the parameters of the model
-   *
-   * @code
-   * mog.Display();
-   * @endcode
-   */
-  void Display() {
-    // Output the model parameters as the omega, mu and sigma
-    Log::Info << " Omega : [ ";
-    for (size_t i = 0; i < number_of_gaussians_; i++) {
-      Log::Info << omega_[i];
-    }
-    Log::Info << "]" << std::endl;
-    Log::Info << " Mu : " << std::endl << "[";
-    for (size_t i = 0; i < number_of_gaussians_; i++) {
-      for (size_t j = 0; j < dimension_ ; j++) {
-        Log::Info << (mu_[i])[j];
-      }
-      Log::Info << ";";
-      if (i == (number_of_gaussians_ - 1)) {
-        Log::Info << "\b]" << std::endl;
-      }
-    }
-    Log::Info << "Sigma : ";
-    for (size_t i = 0; i < number_of_gaussians_; i++) {
-      Log::Info << std::endl << "[";
-      for (size_t j = 0; j < dimension_ ; j++) {
-        for (size_t k = 0; k < dimension_ ; k++) {
-          Log::Info << (sigma_[i])(j, k);
-        }
-        Log::Info << ";";
-      }
-      Log::Info << "\b]";
-    }
-    Log::Info << std::endl;
   }
 
   /**
@@ -475,10 +368,10 @@ class MoGL2E {
    */
   static long double L2ErrorForOpt(const arma::vec& params,
                                    const arma::mat& data) {
-    MoGL2E model;
     size_t num_gauss = (params.n_elem + 1) * 2 /
         ((data.n_rows + 1) * (data.n_rows + 2));
 
+    MoGL2E model(num_gauss, data.n_rows);
     model.MakeModel(num_gauss, data.n_rows, params);
 
     return model.L2Error(data);
@@ -488,10 +381,10 @@ class MoGL2E {
                                    const arma::mat& data,
                                    arma::vec& gradient) {
 
-    MoGL2E model;
     size_t num_gauss = (params.n_elem + 1) * 2 /
         ((data.n_rows + 1) * (data.n_rows + 2));
 
+    MoGL2E model(num_gauss, data.n_rows);
     model.MakeModelWithGradients(num_gauss, data.n_rows, params);
 
     return model.L2Error(data, gradient);
