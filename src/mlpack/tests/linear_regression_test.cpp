@@ -3,7 +3,7 @@
 
 #include <boost/test/unit_test.hpp>
 
-BOOST_AUTO_TEST_SUITE(LinearRegressonTest);
+BOOST_AUTO_TEST_SUITE(LinearRegressionTest);
 
   /**
    * Creates two 10x3 random matrices and one 10x1 "results" matrix.
@@ -42,13 +42,10 @@ BOOST_AUTO_TEST_SUITE(LinearRegressonTest);
     mlpack::linear_regression::LinearRegression lr(predictors, responses);
     lr.predict(predictions, points);
 
-    // Output result and verify we have less than .5 error from "correct" value
+    // Output result and verify we have less than 35% error from "correct" value
     // for each point
-    std::cout << points << '\n' << predictions << '\n';
     for(size_t i = 0; i < predictions.n_cols; ++i)
-    {
-      assert( fabs(predictions(i) - responses(i)) < .5);
-    }
+      BOOST_REQUIRE_CLOSE(predictions(i), responses(i), 35);
   }
 
 BOOST_AUTO_TEST_SUITE_END();
