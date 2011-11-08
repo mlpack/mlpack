@@ -24,11 +24,3 @@ add_executable(svm
 target_link_libraries(svm
   mlpack
 )
-
-add_executable(svm_test
-  svm_test.cc
-)
-target_link_libraries(svm_test
-  mlpack
-  boost_unit_test_framework
-)

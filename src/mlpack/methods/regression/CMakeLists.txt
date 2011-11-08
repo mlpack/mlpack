@@ -17,14 +17,6 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(ridge_regression_test
-  ridge_regression_test.cc
-)
-target_link_libraries(ridge_regression_test
-  mlpack
-  boost_unit_test_framework
-)
-
 add_executable(ridge_regression
   ridge_main.cc
 )

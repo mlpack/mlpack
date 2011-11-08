@@ -9,10 +9,9 @@
 #include <mlpack/core/tree/binary_space_tree.hpp>
 
 // Classes to test.
-#include "nearest_neighbor_sort.hpp"
-#include "furthest_neighbor_sort.hpp"
+#include <mlpack/methods/neighbor_search/sort_policies/nearest_neighbor_sort.hpp>
+#include <mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp>
 
-#define BOOST_TEST_MODULE SortPolicy Test
 #include <boost/test/unit_test.hpp>
 
 using namespace mlpack;

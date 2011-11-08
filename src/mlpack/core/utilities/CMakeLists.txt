@@ -17,13 +17,3 @@ endforeach()
 # Append sources (with directory name) to list of all MLPACK sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-# add test executable
-add_executable(save_restore_utility_test
-  save_restore_utility_test.cpp
-)
-target_link_libraries(save_restore_utility_test
-  mlpack
-  boost_unit_test_framework
-  xml2
-)

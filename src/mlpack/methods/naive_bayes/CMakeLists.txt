@@ -22,11 +22,3 @@ add_executable(nbc
 target_link_libraries(nbc
   mlpack
 )
-
-add_executable(nbc_test
-  nbc_test.cc
-)
-target_link_libraries(nbc_test
-  mlpack
-  boost_unit_test_framework
-)
