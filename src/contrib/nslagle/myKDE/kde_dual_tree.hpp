@@ -85,6 +85,7 @@ class KdeDualTree
 
   void SetDefaults();
   double Priority(TTree* Q, TTree* T);
+  size_t NaiveLogLikelihood();
   size_t MultiBandwidthDualTree();
   void MultiBandwidthDualTreeBase(TTree* Q,
                                   TTree* T, size_t QIndex,
