@@ -112,13 +112,13 @@ bool generate_mixture() {
   const int seqlen = CLI::GetParam<int>("hmm/length");
   const int seqlmax = CLI::GetParam<int>("hmm/lenmax");
   const int numseq = CLI::GetParam<int>("hmm/numseq");
-  const char* seqout = CLI::GetParam<std::string>("hmm/seqfile").c_str();
-  const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str();
+  //const char* seqout = CLI::GetParam<std::string>("hmm/seqfile").c_str();
+  //const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str();
 
   Log::Assert(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
   Log::Assert(numseq > 0, "NUMSEQ must be positive");
 
-  double step = (double) (seqlmax - seqlen) / numseq;
+  //double step = (double) (seqlmax - seqlen) / numseq;
 
   MixtureofGaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -163,13 +163,13 @@ bool generate_gaussian() {
   const int seqlen = CLI::GetParam<int>("hmm/length");
   const int seqlmax = CLI::GetParam<int>("hmm/lenmax");
   const int numseq = CLI::GetParam<int>("hmm/numseq");
-  const char* seqout = CLI::GetParam<std::string>("hmm/seqfile").c_str();
-  const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str();
+  //const char* seqout = CLI::GetParam<std::string>("hmm/seqfile").c_str();
+  //const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str();
 
   Log::Assert(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
   Log::Assert(numseq > 0, "NUMSEQ must be positive");
 
-  double step = (double) (seqlmax - seqlen) / numseq;
+  //double step = (double) (seqlmax - seqlen) / numseq;
 
   GaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -213,13 +213,13 @@ bool generate_discrete() {
   const int seqlen = CLI::GetParam<int>("hmm/length");
   const int seqlmax = CLI::GetParam<int>("hmm/lenmax");
   const int numseq = CLI::GetParam<int>("hmm/numseq");
-  const char* seqout = CLI::GetParam<std::string>("hmm/seqfile").c_str();
-  const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str();
+  //const char* seqout = CLI::GetParam<std::string>("hmm/seqfile").c_str();
+  //const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str();
 
   Log::Assert(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
   Log::Assert(numseq > 0, "NUMSEQ must be positive");
 
-  double step = (double) (seqlmax - seqlen) / numseq;
+  //double step = (double) (seqlmax - seqlen) / numseq;
 
   DiscreteHMM hmm;
   hmm.InitFromFile(profile);

@@ -97,7 +97,7 @@ bool loglik_mixture() {
   }
   const char* profile = CLI::GetParam<std::string>("hmm/profile").c_str();
   const char* seqin = CLI::GetParam<std::string>("hmm/seqfile").c_str();
-  const char* logout = CLI::GetParam<std::string>("hmm/logfile").c_str();
+  //const char* logout = CLI::GetParam<std::string>("hmm/logfile").c_str();
 
   MixtureofGaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -129,7 +129,7 @@ bool loglik_gaussian() {
   }
   const char* profile = CLI::GetParam<std::string>("hmm/profile").c_str();
   const char* seqin = CLI::GetParam<std::string>("hmm/seqfile").c_str();
-  const char* logout = CLI::GetParam<std::string>("hmm/logfile").c_str();
+  //const char* logout = CLI::GetParam<std::string>("hmm/logfile").c_str();
 
   GaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -161,7 +161,7 @@ bool loglik_discrete() {
   }
   const char* profile = CLI::GetParam<std::string>("hmm/profile").c_str();
   const char* seqin = CLI::GetParam<std::string>("hmm/seqfile").c_str();
-  const char* logout = CLI::GetParam<std::string>("hmm/logfile").c_str();
+  //const char* logout = CLI::GetParam<std::string>("hmm/logfile").c_str();
 
   DiscreteHMM hmm;
   hmm.InitFromFile(profile);
