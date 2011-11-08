@@ -25,19 +25,3 @@ add_executable(emst
 target_link_libraries(emst
   mlpack
 )
-
-add_executable(union_find_test
-  union_find_test.cpp
-)
-target_link_libraries(union_find_test
-  mlpack
-  boost_unit_test_framework
-)
-
-add_executable(emst_test
-  emst_test.cc
-)
-target_link_libraries(emst_test
-  mlpack
-  boost_unit_test_framework
-)

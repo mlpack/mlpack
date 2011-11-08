@@ -24,11 +24,3 @@ add_executable(nca
 target_link_libraries(nca
   mlpack
 )
-
-add_executable(nca_test
-  nca_test.cc
-)
-target_link_libraries(nca_test
-  mlpack
-  boost_unit_test_framework
-)

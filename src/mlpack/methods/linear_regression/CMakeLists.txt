@@ -23,12 +23,3 @@ add_executable(linear_regression
 target_link_libraries(linear_regression
   mlpack
 )
-
-# test executable
-add_executable(linear_regression_test
-  linear_regression_test.cpp
-)
-target_link_libraries(linear_regression_test
-  mlpack
-  boost_unit_test_framework
-)

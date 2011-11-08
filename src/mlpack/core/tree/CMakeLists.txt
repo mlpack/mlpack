@@ -23,13 +23,3 @@ endforeach()
 # Append sources (with directory name) to list of all MLPACK sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-# test executable
-add_executable(tree_test
-  tree_test.cpp
-)
-# link dependencies of test executable
-target_link_libraries(tree_test
-  mlpack
-  boost_unit_test_framework
-)

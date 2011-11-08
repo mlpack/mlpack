@@ -18,14 +18,6 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(nnsvm_test
-  nnsvm_test.cpp
-)
-target_link_libraries(nnsvm_test
-  mlpack
-  boost_unit_test_framework
-)
-
 add_executable(nnsvm
   nnsvm_main.cpp
 )

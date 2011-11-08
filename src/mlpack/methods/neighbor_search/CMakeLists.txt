@@ -23,14 +23,6 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(allknn_test
-  allknn_test.cc
-)
-target_link_libraries(allknn_test
-  mlpack
-  boost_unit_test_framework
-)
-
 add_executable(allknn
   allknn_main.cc
 )
@@ -38,25 +30,9 @@ target_link_libraries(allknn
   mlpack
 )
 
-add_executable(allkfn_test
-  allkfn_test.cc
-)
-target_link_libraries(allkfn_test
-  mlpack
-  boost_unit_test_framework
-)
-
 add_executable(allkfn
   allkfn_main.cc
 )
 target_link_libraries(allkfn
   mlpack
-)
-
-add_executable(sort_policy_test
-  sort_policies/sort_policy_test.cc
-)
-target_link_libraries(sort_policy_test
-  mlpack
-  boost_unit_test_framework
 )

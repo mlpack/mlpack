@@ -23,12 +23,3 @@ add_executable(fastica
 target_link_libraries(fastica
   mlpack
 )
-
-add_executable(lin_alg_test
-  lin_alg.hpp
-  lin_alg_test.cpp
-)
-target_link_libraries(lin_alg_test
-  mlpack
-  boost_unit_test_framework
-)

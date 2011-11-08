@@ -16,14 +16,6 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(infomax_ica_test
-  infomax_ica_test.cc
-)
-target_link_libraries(infomax_ica_test
-  mlpack
-  boost_unit_test_framework
-)
-
 add_executable(infomax_ica
   main.cc
 )
