@@ -113,3 +113,12 @@ target_link_libraries(rank_inverter
    mlpack
    mlpack_contrib
 )
+
+add_executable(new_pair_dist
+   EXCLUDE_FROM_ALL
+   new_pairwise_dists.cc
+)
+target_link_libraries(new_pair_dist
+   mlpack
+   mlpack_contrib
+)

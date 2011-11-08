@@ -236,8 +236,6 @@ namespace check_nn_utils {
     } // query-loop
 
 
-    fclose(rank_fp);
-
     double pdone = 100;
 
     if (pdone >= done_sky * perc_done) {
@@ -251,6 +249,7 @@ namespace check_nn_utils {
     printf("\n");fflush(NULL);
 
     Log::Info << "Errors Computed!" << endl;
+
 
 
 //     double avg_precision = (double) all_correct 
@@ -280,6 +279,8 @@ namespace check_nn_utils {
 	      << median_rank << endl
 	      << "TCC: " << total_considerable_candidates
 	      << endl;
+
+    fclose(rank_fp);
 
   }
 

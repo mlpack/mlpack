@@ -35,10 +35,14 @@ class MaxIP {
   private:
     double bound_;
     double center_norm_;
+    double cosine_origin_;
+    double sine_origin_;
 
   public:
     double bound() { return bound_; }
     double center_norm() { return center_norm_; }
+    double cosine_origin() { return cosine_origin_; }
+    double sine_origin() { return sine_origin_; }
 
     void set_bound(double bound) { 
       bound_ = bound;
@@ -48,9 +52,21 @@ class MaxIP {
       center_norm_ = val; 
     }
 
+   void set_angles(double val, size_t type = 0) { 
+      if (type == 0) { // given value is the cosine
+	cosine_origin_ = val;
+	sine_origin_ = std::sqrt(1 - val * val);
+      } else { // the given value is the sine
+	sine_origin_ = val;
+	cosine_origin_ = std::sqrt(1 - val * val);
+      }
+    }
+
     QueryStat() {
       bound_ = 0.0;
       center_norm_ = 0.0;
+      cosine_origin_ = 0.0;
+      sine_origin_ = 0.0;
     }
 
     ~QueryStat() {}
@@ -58,27 +74,31 @@ class MaxIP {
     void Init(const arma::mat& data, size_t begin, size_t count) {
       bound_ = 0.0;
       center_norm_ = 0.0;
+      cosine_origin_ = 0.0;
+      sine_origin_ = 0.0;
     }
 
     void Init(const arma::mat& data, size_t begin, size_t count,
 	      QueryStat& left_stat, QueryStat& right_stat) {
       bound_ = 0.0;
       center_norm_ = 0.0;
+      cosine_origin_ = 0.0;
+      sine_origin_ = 0.0;
     }
   }; // QueryStat
 
   class RefStat {
   private:
+    double center_norm_;
     double cosine_origin_;
     double sine_origin_;
-    double dist_to_origin_;
     bool has_cos_phi_;
     double cos_phi_;
 
   public:
     double cosine_origin() { return cosine_origin_; }
     double sine_origin() { return sine_origin_; }
-    double dist_to_origin() { return dist_to_origin_; }
+    double center_norm() { return center_norm_; }
     bool has_cos_phi() { return has_cos_phi_; }
     double cos_phi() { return cos_phi_; }
 
@@ -93,8 +113,8 @@ class MaxIP {
       }
     }
 
-    void set_dist_to_origin(double val) {
-      dist_to_origin_ = val;
+    void set_center_norm(double val) {
+      center_norm_ = val;
     }
 
     void set_cos_phi(double cos_phi) {
@@ -111,7 +131,7 @@ class MaxIP {
     RefStat() {
       cosine_origin_ = 0.0;
       sine_origin_ = 0.0;
-      dist_to_origin_ = 0.0;
+      center_norm_ = 0.0;
       has_cos_phi_ = false;
       cos_phi_ = -1.0;
     }
@@ -120,7 +140,7 @@ class MaxIP {
     void Init(const arma::mat& data, size_t begin, size_t count) {
       cosine_origin_ = 0.0;
       sine_origin_ = 0.0;
-      dist_to_origin_ = 0.0;
+      center_norm_ = 0.0;
       has_cos_phi_ = false;
       cos_phi_ = -1.0;
     }
@@ -129,7 +149,7 @@ class MaxIP {
 	      RefStat& left_stat, RefStat& right_stat) {
       cosine_origin_ = 0.0;
       sine_origin_ = 0.0;
-      dist_to_origin_ = 0.0;
+      center_norm_ = 0.0;
       has_cos_phi_ = false;
       cos_phi_ = -1.0;
     }
@@ -141,6 +161,7 @@ class MaxIP {
   typedef GeneralBinarySpaceTree<bound::DBallBound<>, arma::mat, RefStat> TreeType;
   typedef GeneralBinarySpaceTree<DConeBound<>, arma::mat, QueryStat> CTreeTypeA;
   typedef GeneralBinarySpaceTree<DCosineBound<>, arma::mat, QueryStat> CTreeTypeB;
+  typedef GeneralBinarySpaceTree<bound::DBallBound<>, arma::mat, QueryStat> TreeTypeA;
    
   
   /////////////////////////////// Members ////////////////////////////
@@ -157,6 +178,8 @@ private:
   TreeType* reference_tree_;
   CTreeTypeA* query_tree_A_;
   CTreeTypeB* query_tree_B_;
+
+  TreeTypeA* query_tree_;
 
   // The total number of prunes.
   size_t number_of_prunes_;
@@ -196,6 +219,7 @@ public:
     reference_tree_ = NULL;
     query_tree_A_ = NULL;
     query_tree_B_ = NULL;
+    query_tree_ = NULL;
   } 
   
   /**
@@ -211,6 +235,9 @@ public:
 
     if (query_tree_B_ != NULL)
       delete query_tree_B_;
+
+    if (query_tree_ != NULL)
+      delete query_tree_;
 
   }
     
@@ -231,6 +258,7 @@ private:
    */
   double MaxNodeIP_(CTreeTypeA *query_node, TreeType* reference_node);
   double MaxNodeIP_(CTreeTypeB *query_node, TreeType* reference_node);
+  double MaxNodeIP_(TreeTypeA *query_node, TreeType* reference_node);
 
   /**
    * Performs exhaustive computation at the leaves.  
@@ -242,6 +270,7 @@ private:
    */
   void ComputeBaseCase_(CTreeTypeA* query_node, TreeType* reference_node);
   void ComputeBaseCase_(CTreeTypeB* query_node, TreeType* reference_node);
+  void ComputeBaseCase_(TreeTypeA* query_node, TreeType* reference_node);
   
   /**
    * The recursive function
@@ -260,10 +289,18 @@ private:
 				  TreeType* reference_node, 
 				  double upper_bound_ip);
 
+  void ComputeNeighborsRecursion_(TreeTypeA* query_node,
+				  TreeType* reference_node, 
+				  double upper_bound_ip);
+
   void reset_tree_(CTreeTypeA *tree);
   void reset_tree_(CTreeTypeB *tree);
+  void reset_tree_(TreeTypeA *tree);
   void reset_tree_(TreeType *tree);
+
   void set_angles_in_balls_(TreeType *tree);
+  void set_angles_in_balls_(TreeTypeA *tree);
+
   void set_norms_in_cones_(CTreeTypeA *tree);
   void set_norms_in_cones_(CTreeTypeB *tree);
 
@@ -288,6 +325,8 @@ public:
       delete query_tree_A_;
     if (query_tree_B_ != NULL)
       delete query_tree_B_;
+    if (query_tree_ != NULL)
+      delete query_tree_;
   }
 
   /**
@@ -317,6 +356,7 @@ public:
 
   void CheckPrune(CTreeTypeA* query_node, TreeType* ref_node);
   void CheckPrune(CTreeTypeB* query_node, TreeType* ref_node);
+  void CheckPrune(TreeTypeA* query_node, TreeType* ref_node);
 }; //class MaxIP
 
 
@@ -329,6 +369,8 @@ PARAM_INT("knns", "The number of top innner products required",
 	  "maxip", 1);
 PARAM_INT("leaf_size", "The leaf size for the ball-tree", 
 	  "maxip", 20);
+PARAM_DOUBLE("qleaf_size", "The leaf size for the query-tree", 
+	     "maxip", 0.0);
 
 PARAM_FLAG("angle_prune", "The flag to trigger the tighter"
 	   " pruning using the angles as well", "maxip");
@@ -341,6 +383,10 @@ PARAM_FLAG("dual_tree", "The flag to trigger dual-tree "
 PARAM_FLAG("alt_tree", "The flag to trigger the "
 	   "alternate query tree.",
 	   "maxip");
+PARAM_FLAG("alt_tree2", "The flag to trigger the "
+	   "yet another alternate query tree.",
+	   "maxip");
+
 
 PARAM_FLAG("check_prune", "The flag to trigger the "
 	   "checking of the prune.", "maxip");

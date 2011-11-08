@@ -31,8 +31,8 @@ PARAM_FLAG("donaive", "The flag to trigger the naive "
 PARAM_FLAG("dofastexact", "The flag to trigger the tree-based"
 	   " search algorithm", "");
 
-// PARAM_FLAG("print_results", "The flag to trigger the "
-// 	   "printing of the output", "");
+PARAM_FLAG("check_results", "The flag to trigger the "
+ 	   "checking of the output", "");
 
 // PARAM_STRING("maxip_file", "The file where the output "
 // 	     "will be written into", "", "results.txt");
@@ -116,46 +116,48 @@ int main (int argc, char *argv[]) {
     fast_comp = fast_exact.ComputeNeighbors(&exc, &die);
     Log::Info << "Tree-based Max IP Computed." << endl;
 
-//     if (CLI::HasParam("print_results")) {
-//       FILE *fp=fopen(CLI::GetParam<string>("maxip_file").c_str(), "w");
-//       if (fp == NULL)
-// 	Log::Fatal << "Error while opening " 
-// 		  << CLI::GetParam<string>("maxip_file") 
-// 		  << endl;
-
-//       for(size_t i = 0 ; i < exc.n_elem / knns ; i++) {
-//         fprintf(fp, "%zu", i);
-//         for(size_t j = 0; j < knns; j++)
-//           fprintf(fp, ", %zu, %lg", 
-//                   exc(i*knns+j), die(i*knns+j));
-//         fprintf(fp, "\n");
-//       }
-//       fclose(fp);
-//     }
-  }
-
-  if (CLI::HasParam("donaive") && CLI::HasParam("dofastexact")) {
-    check_nn_utils::count_mismatched_neighbors(nac, din, exc, die);
-    Log::Warn << "Speed of fast-exact over naive: "
-	      << naive_comp << " / " << (float) fast_comp << " = "
-	      <<(float) (naive_comp / fast_comp) << endl;
-  } else if (CLI::HasParam("dofastexact")) {
     Log::Warn << "Speed of fast-exact over naive: "
 	      << rdata.n_cols  << " / " << (float) fast_comp << " = "
 	      <<(float) (rdata.n_cols / fast_comp) << endl;
 
-    if (CLI::GetParam<string>("rank_file") != "") {
-      string rank_file = CLI::GetParam<string>("rank_file");
-      check_nn_utils::compute_error(rank_file,  rdata.n_cols, &exc);
-    } else {
-      check_nn_utils::compute_error(&rdata, &qdata, &exc);
-    }
-  } else if (CLI::HasParam("donaive")) {
-    if (CLI::GetParam<string>("rank_file") != "") {
-      string rank_file = CLI::GetParam<string>("rank_file");
-      check_nn_utils::compute_error(rank_file,  rdata.n_cols, &nac);
-    } else {
-      check_nn_utils::compute_error(&rdata, &qdata, &nac);
+    //     if (CLI::HasParam("print_results")) {
+    //       FILE *fp=fopen(CLI::GetParam<string>("maxip_file").c_str(), "w");
+    //       if (fp == NULL)
+    // 	Log::Fatal << "Error while opening " 
+    // 		  << CLI::GetParam<string>("maxip_file") 
+    // 		  << endl;
+
+    //       for(size_t i = 0 ; i < exc.n_elem / knns ; i++) {
+    //         fprintf(fp, "%zu", i);
+    //         for(size_t j = 0; j < knns; j++)
+    //           fprintf(fp, ", %zu, %lg", 
+    //                   exc(i*knns+j), die(i*knns+j));
+    //         fprintf(fp, "\n");
+    //       }
+    //       fclose(fp);
+    //     }
+  }
+
+  if (CLI::HasParam("check_results")) {
+    if (CLI::HasParam("donaive") && CLI::HasParam("dofastexact")) {
+      check_nn_utils::count_mismatched_neighbors(nac, din, exc, die);
+      Log::Warn << "Speed of fast-exact over naive: "
+		<< naive_comp << " / " << (float) fast_comp << " = "
+		<<(float) (naive_comp / fast_comp) << endl;
+    } else if (CLI::HasParam("dofastexact")) {
+      if (CLI::GetParam<string>("rank_file") != "") {
+	string rank_file = CLI::GetParam<string>("rank_file");
+	check_nn_utils::compute_error(rank_file,  rdata.n_cols, &exc);
+      } else {
+	check_nn_utils::compute_error(&rdata, &qdata, &exc);
+      }
+    } else if (CLI::HasParam("donaive")) {
+      if (CLI::GetParam<string>("rank_file") != "") {
+	string rank_file = CLI::GetParam<string>("rank_file");
+	check_nn_utils::compute_error(rank_file,  rdata.n_cols, &nac);
+      } else {
+	check_nn_utils::compute_error(&rdata, &qdata, &nac);
+      }
     }
   }
 }
