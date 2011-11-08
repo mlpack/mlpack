@@ -94,7 +94,7 @@ bool viterbi_mixture() {
   }
   const char* profile = CLI::GetParam<std::string>("hmm/profile").c_str();
   const char* seqin = CLI::GetParam<std::string>("hmm/seqfile").c_str(); //"seq.mix.out");
-  const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str(); //"state.viterbi.mix.out");
+  //const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str(); //"state.viterbi.mix.out");
 
   MixtureofGaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -130,7 +130,7 @@ bool viterbi_gaussian() {
   }
   const char* profile = CLI::GetParam<std::string>("hmm/profile").c_str();
   const char* seqin = CLI::GetParam<std::string>("hmm/seqfile").c_str(); //"seq.gauss.out");
-  const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str(); //"state.viterbi.gauss.out");
+  //const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str(); //"state.viterbi.gauss.out");
 
   GaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -165,7 +165,7 @@ bool viterbi_discrete() {
   }
   const char* profile = CLI::GetParam<std::string>("hmm/profile").c_str();
   const char* seqin = CLI::GetParam<std::string>("hmm/seqfile").c_str(); //"seq.out");
-  const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str(); //"state.viterbi.out");
+  //const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str(); //"state.viterbi.out");
 
   DiscreteHMM hmm;
 
