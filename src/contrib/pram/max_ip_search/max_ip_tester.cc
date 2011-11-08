@@ -1,8 +1,10 @@
-#include <fastlib/fastlib.h>
+#include <armadillo>
+#include <string>
+
+#include <mlpack/core.h>
+
 #include "exact_max_ip.h"
 
-#include <string>
-#include <armadillo>
 
 using namespace mlpack;
 using namespace std;
@@ -53,11 +55,14 @@ int main (int argc, char *argv[]) {
   string qfile = CLI::GetParam<string>("q");
 
   Log::Warn << "Loading files..." << endl;
-  if (!data::Load(rfile.c_str(), rdata))
+  if (rdata.load(rfile.c_str()) == false)
     Log::Fatal << "Reference file "<< rfile << " not found." << endl;
 
-  if (!data::Load(qfile.c_str(), qdata)) 
+  if (qdata.load(qfile.c_str()) == false) 
     Log::Fatal << "Query file " << qfile << " not found." << endl;
+
+  rdata = arma::trans(rdata);
+  qdata = arma::trans(qdata);
 
   Log::Warn << "File loaded..." << endl;
   
@@ -65,116 +70,88 @@ int main (int argc, char *argv[]) {
 	   << "), Q(" << qdata.n_rows << ", " << qdata.n_cols 
 	   << ")" << endl;
 
+ 
+  arma::Col<size_t> ks(10);
+  size_t max_k = 1, number_of_ks = 1;
+  ks(0) = 1;
 
 
-  if (CLI::HasParam("max_k")) {
+  if (CLI::GetParam<int>("max_k") != 1) {
 
-    MaxIP naive, fast_exact;
-    double naive_comp = (double) rdata.n_cols;
-    arma::Mat<size_t> nac;
-    arma::mat din;
+    max_k = CLI::GetParam<int>("max_k");
+    number_of_ks = max_k;
+    ks.set_size(number_of_ks);
 
-    size_t max_k = CLI::GetParam<int>("max_k");
-    arma::vec speedups(max_k);
+    for (size_t i = 0; i < max_k; i++)
+      ks(i) = i+1;
+  } else if (CLI::GetParam<string>("k_values") != "") {
 
-    if (CLI::HasParam("check_nn")) { 
-      Log::Warn << "Starting naive computation..." <<endl;
-      naive.InitNaive(qdata, rdata);
-      naive.WarmInit(max_k);
-      naive_comp = naive.ComputeNaive(&nac, &din);
-      Log::Warn << "Naive computation done..." << endl;
-    }
-
-    Log::Warn << "Starting loop for Fast Exact Search." << endl;
-
-    fast_exact.Init(qdata, rdata);
-
-    for (knns = 1; knns <= max_k; knns++) {
-
-      printf("k = %zu", knns); fflush(NULL);
-      arma::Mat<size_t> exc;
-      arma::mat die;
-      double fast_comp = fast_exact.ComputeNeighbors(&exc, &die);
-
-      if (CLI::HasParam("check_nn")) {
-	size_t errors = count_mismatched_neighbors(din, max_k, die, knns);
-
-	if (errors > 0) {
-	  Log::Warn << knns << "-NN error: " << errors << " / "
-		    << exc.n_elem << endl;
-	}
-      }
-
-      speedups(knns -1) = naive_comp / fast_comp;
-      printf(": %lg\n", speedups(knns -1));
-
-      fast_exact.WarmInit(knns+1);
-    }
-
-    printf("\n");
-  }
-
-  if (CLI::HasParam("k_values")) {
-
-    MaxIP naive, fast_exact;
-    double naive_comp = (double) rdata.n_cols;
-    arma::Col<size_t> nac;
-    arma::vec din;
-
-    size_t number_of_ks = 0;
+    number_of_ks = 0;
     string k_values = CLI::GetParam<string>("k_values");
-    arma::Col<size_t> ks(10);
 
-    char *temp = (char *) k_values.c_str();
-    char *pch = strtok(temp, ",");
+
+    char *pch = strtok((char *) k_values.c_str(), ",");
     while (pch != NULL) {
       ks(number_of_ks++) = atoi(pch);
       pch = strtok(NULL, ",");
     }
 
-    arma::vec speedups(number_of_ks);
-
-    if (CLI::HasParam("check_nn")) { 
-      Log::Warn << "Starting naive computation..." <<endl;
-      naive.InitNaive(qdata, rdata);
-      naive.WarmInit(ks(number_of_ks - 1));
-      naive_comp = naive.ComputeNaive(&nac, &din);
-      Log::Warn << "Naive computation done..." << endl;
-    }
-
-    Log::Warn << "Starting loop for Fast Exact Search." << endl;
-
-    fast_exact.Init(qdata, rdata);
-
-    for (size_t knns = 0; knns < number_of_ks; knns++) {
-
-      printf("k = %zu", ks(knns)); fflush(NULL);
-      arma::Col<size_t> exc;
-      arma::vec die;
-      double fast_comp = fast_exact.ComputeNeighbors(&exc, &die);
-
-      if (CLI::HasParam("check_nn")) {
-	size_t errors = count_mismatched_neighbors(din, ks(number_of_ks -1),
-						   die, ks(knns));
-
-	if (errors > 0) {
-	  Log::Warn << ks(knns) << "-NN error: " << errors << " / "
-		    << exc.n_elem << endl;
-	}
-      }
-
-      speedups(knns -1) = naive_comp / fast_comp;
-      printf(": %lg\n", speedups(knns -1));
-
-      if (knns < number_of_ks - 1)
-	fast_exact.WarmInit(ks(knns+1));
-    }
-
-    printf("\n");
+    free(pch);
+    max_k = ks(number_of_ks -1);
   }
+
+  MaxIP naive, fast_exact;
+  double naive_comp = (double) rdata.n_cols;
+  arma::Mat<size_t> nac;
+  arma::mat din;
+
+  arma::vec speedups(number_of_ks);
+
+  if (CLI::HasParam("check_nn")) { 
+    Log::Warn << "Starting naive computation..." <<endl;
+    naive.InitNaive(qdata, rdata);
+    naive.WarmInit(ks(number_of_ks - 1));
+    naive_comp = naive.ComputeNaive(&nac, &din);
+    Log::Warn << "Naive computation done..." << endl;
+  }
+
+  Log::Warn << "Starting loop for Fast Exact Search." << endl;
+
+  fast_exact.Init(qdata, rdata);
+
+  for (size_t knns = 0; knns < number_of_ks; knns++) {
+    
+    arma::Mat<size_t> exc;
+    arma::mat die;
+    double fast_comp = fast_exact.ComputeNeighbors(&exc, &die);
+
+//     printf("Search done %lg\n", fast_comp); fflush(NULL);
+
+    if (CLI::HasParam("check_nn")) {
+      size_t errors = count_mismatched_neighbors(din, ks(number_of_ks -1),
+						 die, ks(knns));
+
+      if (errors > 0) {
+	Log::Warn << ks(knns) << "-NN error: " << errors << " / "
+		  << exc.n_elem << endl;
+      }
+    }
+
+    speedups(knns) = naive_comp / fast_comp;
+    printf("k = %zu", ks(knns)); fflush(NULL);
+    printf(": %lg\n", speedups(knns)); fflush(NULL);
+
+    if (knns < number_of_ks - 1)
+      fast_exact.WarmInit(ks(knns+1));
+
+    exc.reset();
+    die.reset();
+  }
+
+  printf("\n");
   
   Log::Warn << "Search completed for all values of k...printing results now"
-	   << endl;
+	    << endl;
 
 //   if (CLI::HasParam("print_speedups")) {
 //     string speedup_file = CLI::GetParam<string>("speedup_file");
