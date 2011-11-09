@@ -10,11 +10,6 @@
 #ifndef __ARMA_EXTEND_H
 #define __ARMA_EXTEND_H
 
-// Define our own extensions.  These will be included in Cube_bones.hpp (or
-// Cube_proto.hpp) and Mat_bones.hpp (or Mat_meat.hpp).
-#define ARMA_EXTRA_MAT_PROTO mlpack/core/arma_extend/Mat_extra_bones.hpp
-#define ARMA_EXTRA_MAT_PROTO mlpack/core/arma_extend/Mat_extra_bones.hpp
-
 #include <armadillo>
 
 // To get CSV support on versions of Armadillo prior to 2.0.0, we'll do this.  I
@@ -35,9 +30,6 @@ namespace arma {
   #include "glue_ccov_proto.hpp"
   #include "glue_ccov_meat.hpp"
   #include "fn_ccov.hpp"
-
-  // Implementation of load and save functions allowing transposes.
-  #include "Mat_extra_meat.hpp"
 };
 
 #endif
