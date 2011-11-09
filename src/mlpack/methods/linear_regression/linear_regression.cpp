@@ -39,7 +39,7 @@ void LinearRegression::predict(arma::rowvec& predictions, const arma::mat& point
 
   assert(n_rows == parameters.n_rows - 1);
 
-  predictions.set_size(n_cols);
+  predictions.zeros(n_cols);
   predictions += parameters(0);
   for(size_t i = 1; i < n_rows; ++i)
   {
