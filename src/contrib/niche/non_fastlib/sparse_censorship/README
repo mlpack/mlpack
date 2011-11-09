@@ -1,3 +1,0 @@
-This is not in fastlib because Armadillo doesn't handle sparse
-
-This will implement an extension of Sparse Additive Generative Models of Text for sparse coding of topics (each document is described by a small number of topics) and a censor model tied to publishers (each topic is further modified by a publisher-specific modifier of that topic; this is intended to capture censorship).
