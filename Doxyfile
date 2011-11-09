@@ -63,7 +63,7 @@ SORT_BY_SCOPE_NAME     = YES
 SORT_MEMBERS_CTORS_1ST = YES
 GENERATE_TODOLIST      = NO
 GENERATE_TESTLIST      = NO
-GENERATE_BUGLIST       = NO
+GENERATE_BUGLIST       = YES
 GENERATE_DEPRECATEDLIST= NO
 ENABLED_SECTIONS       =
 MAX_INITIALIZER_LINES  = 30
@@ -95,6 +95,7 @@ EXCLUDE_SYMLINKS       = YES
 EXCLUDE_PATTERNS       = */build/* \
                          */test/* \
                          */arma_extend/* \
+                         */.svn/* \
                          *_impl.cc \
                          *_impl.h \
                          *_test.cc
