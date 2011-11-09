@@ -3,8 +3,6 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-  Mat_extra_bones.hpp
-  Mat_extra_meat.hpp
   arma_extend.h
   fn_ccov.hpp
   glue_ccov_meat.hpp
