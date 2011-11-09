@@ -24,7 +24,6 @@ BOOST_AUTO_TEST_SUITE(LinearRegressionTest);
     // We'll randomly select some coefficients for the linear response.
     arma::vec coeffs;
     coeffs.randu(4);
-    coeffs(0) = 0;
 
     // Now generate each point.
     for (size_t row = 0; row < 3; row++)
@@ -51,14 +50,8 @@ BOOST_AUTO_TEST_SUITE(LinearRegressionTest);
 
     // Output result and verify we have less than 5% error from "correct" value
     // for each point
-    std::cout << "Actual model:\n" << coeffs << '\n';
-    std::cout << "Parameters:\n" << lr.getParameters() << '\n';
-    std::cout << "Predictors:\n" << predictors << '\n';
-    std::cout << "Points:\n" << points << '\n' << "Predictions:\n"
-        << predictions << '\n';
-    std::cout << "Correct:\n" << responses << '\n';
     for(size_t i = 0; i < predictions.n_cols; ++i)
-      BOOST_REQUIRE_CLOSE(predictions(i), responses(i), 5);
+      BOOST_REQUIRE_SMALL(predictions(i) - responses(i), .05);
   }
 
 BOOST_AUTO_TEST_SUITE_END();
