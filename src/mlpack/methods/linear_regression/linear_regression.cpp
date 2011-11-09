@@ -13,25 +13,28 @@ LinearRegression::LinearRegression(arma::mat& predictors,
    * We add a row of ones to get a_0, where x_0^0 = 1, the intercept.
    */
 
-  // The number of columns and rows
-  size_t n_cols, n_rows;
+  // The number of rows
+  size_t n_cols;
 
   n_cols = predictors.n_cols;
-  n_rows = predictors.n_rows;
 
   // Add a row of ones, to get the intercept
   arma::rowvec ones;
   ones.ones(n_cols);
   predictors.insert_rows(0,ones);
-  // We have an additional row, now
-  ++n_rows;
 
   // Set the parameters to the correct size, all zeros.
   parameters.zeros(n_cols);
 
-  // inverse( A^T * A ) * A^T * responses, where A = predictors
-  parameters = arma::inv((predictors * arma::trans(predictors))) *
-    predictors * responses;
+  // Compute the QR decomposition
+  arma::mat Q, R;
+  arma::qr(Q,R,arma::trans(predictors));
+
+  // Compute the parameters, R*B=Q^T*responses
+  arma::solve( parameters, R, arma::trans(Q)*responses);
+
+  // Remove the added row.
+  predictors.shed_row(0);
 }
 
 LinearRegression::LinearRegression(const std::string& filename)
@@ -56,8 +59,11 @@ void LinearRegression::predict(arma::rowvec& predictions, const arma::mat& point
   predictions.zeros(n_cols);
   // Set to a_0
   predictions += parameters(0);
-  for(size_t i = 1; i < n_rows; ++i)
+
+  // Iterate through the dimensions
+  for(size_t i = 1; i < n_rows+1; ++i)
   {
+    // Iterate through the datapoints
     for(size_t j = 0; j < n_cols; ++j)
     {
       // Add in the next term: a_i * x_i
