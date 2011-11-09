@@ -97,8 +97,7 @@ BOOST_AUTO_TEST_SUITE(EmstTest);
 
     // Hard-coded filename: bad!
     // Code duplication: also bad!
-    if (!input_data.load("test_data_3_1000.csv", arma::auto_detect, false,
-        true))
+    if (!data::Load("test_data_3_1000.csv", input_data))
       BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
     // Set up matrices to work with (may not be necessary with no ALIAS_MATRIX?).
