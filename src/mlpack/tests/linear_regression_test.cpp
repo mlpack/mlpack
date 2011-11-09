@@ -24,6 +24,7 @@ BOOST_AUTO_TEST_SUITE(LinearRegressionTest);
     // We'll randomly select some coefficients for the linear response.
     arma::vec coeffs;
     coeffs.randu(4);
+    coeffs(0) = 0;
 
     // Now generate each point.
     for (size_t row = 0; row < 3; row++)
