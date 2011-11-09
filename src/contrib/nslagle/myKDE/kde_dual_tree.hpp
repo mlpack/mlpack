@@ -82,6 +82,7 @@ class KdeDualTree
   double highBandwidth;
   size_t levelsInTree;
   size_t queryTreeSize;
+  std::set<size_t> qNodesAsLeaves;
 
   void SetDefaults();
   double Priority(TTree* Q, TTree* T);
@@ -99,7 +100,7 @@ class KdeDualTree
   {
     return levelsInTree - node->levelsBelow();
   }
-  void Winnow(size_t level, size_t* newLower, size_t* newUpper);
+  bool Winnow(size_t level, size_t* newLower, size_t* newUpper);
  public:
   /* the two data sets are different */
   KdeDualTree (arma::mat& referenceData, arma::mat& queryData);
