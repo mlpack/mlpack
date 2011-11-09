@@ -13,7 +13,6 @@ find_package(Pthreads REQUIRED)
 find_package(Armadillo 2.0.0 REQUIRED)
 find_package(LibXml2 REQUIRED)
 
-
 # libxml2 requires some special handling
 find_package(PkgConfig)
 
@@ -95,5 +94,3 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
 
 ## recurse
 add_subdirectory(src/mlpack) # mlpack
-add_subdirectory(src/contrib) # mlpack_contrib
-#add_subdirectory(physpack) # physpack  ## do not build by default
