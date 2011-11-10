@@ -1,5 +1,5 @@
 /**
- * @file sort_policy_test.cc
+ * @file sort_policy_test.cpp
  * @author Ryan Curtin
  *
  * Tests for each of the implementations of the SortPolicy class.
@@ -18,41 +18,48 @@ using namespace mlpack;
 using namespace mlpack::neighbor;
 using namespace mlpack::bound;
 
+BOOST_AUTO_TEST_SUITE(SortPolicyTest);
+
 // Tests for NearestNeighborSort
 
-/***
+/**
  * Ensure the best distance for nearest neighbors is 0.
  */
-BOOST_AUTO_TEST_CASE(nns_best_distance) {
+BOOST_AUTO_TEST_CASE(nns_best_distance)
+{
   BOOST_REQUIRE(NearestNeighborSort::BestDistance() == 0);
 }
 
-/***
+/**
  * Ensure the worst distance for nearest neighbors is DBL_MAX.
  */
-BOOST_AUTO_TEST_CASE(nns_worst_distance) {
+BOOST_AUTO_TEST_CASE(nns_worst_distance)
+{
   BOOST_REQUIRE(NearestNeighborSort::WorstDistance() == DBL_MAX);
 }
 
-/***
+/**
  * Make sure the comparison works for values strictly less than the reference.
  */
-BOOST_AUTO_TEST_CASE(nns_is_better_strict) {
+BOOST_AUTO_TEST_CASE(nns_is_better_strict)
+{
   BOOST_REQUIRE(NearestNeighborSort::IsBetter(5.0, 6.0) == true);
 }
 
-/***
+/**
  * Warn in case the comparison is not strict.
  */
-BOOST_AUTO_TEST_CASE(nns_is_better_not_strict) {
+BOOST_AUTO_TEST_CASE(nns_is_better_not_strict)
+{
   BOOST_WARN(NearestNeighborSort::IsBetter(6.0, 6.0) == true);
 }
 
-/***
+/**
  * A simple test case of where to insert when all the values in the list are
  * DBL_MAX.
  */
-BOOST_AUTO_TEST_CASE(nns_sort_distance_all_dbl_max) {
+BOOST_AUTO_TEST_CASE(nns_sort_distance_all_dbl_max)
+{
   arma::vec list(5);
   list.fill(DBL_MAX);
 
@@ -60,11 +67,12 @@ BOOST_AUTO_TEST_CASE(nns_sort_distance_all_dbl_max) {
   BOOST_REQUIRE(NearestNeighborSort::SortDistance(list, 5.0) == 0);
 }
 
-/***
+/**
  * Another test case, where we are just putting the new value in the middle of
  * the list.
  */
-BOOST_AUTO_TEST_CASE(nns_sort_distance_2) {
+BOOST_AUTO_TEST_CASE(nns_sort_distance_2)
+{
   arma::vec list(3);
   list[0] = 0.66;
   list[1] = 0.89;
@@ -78,11 +86,12 @@ BOOST_AUTO_TEST_CASE(nns_sort_distance_2) {
       (size_t() - 1));
 }
 
-/***
+/**
  * Very simple sanity check to ensure that bounds are working alright.  We will
  * use a one-dimensional bound for simplicity.
  */
-BOOST_AUTO_TEST_CASE(nns_node_to_node_distance) {
+BOOST_AUTO_TEST_CASE(nns_node_to_node_distance)
+{
   // Well, there's no easy way to make HRectBounds the way we want, so we have
   // to make them and then expand the region to include new points.
   tree::BinarySpaceTree<HRectBound<2>, arma::mat> node_one;
@@ -128,11 +137,12 @@ BOOST_AUTO_TEST_CASE(nns_node_to_node_distance) {
       &node_two), 0.0, 1e-5);
 }
 
-/***
+/**
  * Another very simple sanity check for the point-to-node case, again in one
  * dimension.
  */
-BOOST_AUTO_TEST_CASE(nns_point_to_node_distance) {
+BOOST_AUTO_TEST_CASE(nns_point_to_node_distance)
+{
   // Well, there's no easy way to make HRectBounds the way we want, so we have
   // to make them and then expand the region to include new points.
   arma::vec utility(1);
@@ -166,39 +176,44 @@ BOOST_AUTO_TEST_CASE(nns_point_to_node_distance) {
 
 // Tests for FurthestNeighborSort
 
-/***
+/**
  * Ensure the best distance for furthest neighbors is DBL_MAX.
  */
-BOOST_AUTO_TEST_CASE(fns_best_distance) {
+BOOST_AUTO_TEST_CASE(fns_best_distance)
+{
   BOOST_REQUIRE(FurthestNeighborSort::BestDistance() == DBL_MAX);
 }
 
-/***
+/**
  * Ensure the worst distance for furthest neighbors is 0.
  */
-BOOST_AUTO_TEST_CASE(fns_worst_distance) {
+BOOST_AUTO_TEST_CASE(fns_worst_distance)
+{
   BOOST_REQUIRE(FurthestNeighborSort::WorstDistance() == 0);
 }
 
-/***
+/**
  * Make sure the comparison works for values strictly less than the reference.
  */
-BOOST_AUTO_TEST_CASE(fns_is_better_strict) {
+BOOST_AUTO_TEST_CASE(fns_is_better_strict)
+{
   BOOST_REQUIRE(FurthestNeighborSort::IsBetter(5.0, 4.0) == true);
 }
 
-/***
+/**
  * Warn in case the comparison is not strict.
  */
-BOOST_AUTO_TEST_CASE(fns_is_better_not_strict) {
+BOOST_AUTO_TEST_CASE(fns_is_better_not_strict)
+{
   BOOST_WARN(FurthestNeighborSort::IsBetter(6.0, 6.0) == true);
 }
 
-/***
+/**
  * A simple test case of where to insert when all the values in the list are
  * 0.
  */
-BOOST_AUTO_TEST_CASE(fns_sort_distance_all_zero) {
+BOOST_AUTO_TEST_CASE(fns_sort_distance_all_zero)
+{
   arma::vec list(5);
   list.fill(0);
 
@@ -206,11 +221,12 @@ BOOST_AUTO_TEST_CASE(fns_sort_distance_all_zero) {
   BOOST_REQUIRE(FurthestNeighborSort::SortDistance(list, 5.0) == 0);
 }
 
-/***
+/**
  * Another test case, where we are just putting the new value in the middle of
  * the list.
  */
-BOOST_AUTO_TEST_CASE(fns_sort_distance_2) {
+BOOST_AUTO_TEST_CASE(fns_sort_distance_2)
+{
   arma::vec list(3);
   list[0] = 1.14;
   list[1] = 0.89;
@@ -224,11 +240,12 @@ BOOST_AUTO_TEST_CASE(fns_sort_distance_2) {
       (size_t() - 1));
 }
 
-/***
+/**
  * Very simple sanity check to ensure that bounds are working alright.  We will
  * use a one-dimensional bound for simplicity.
  */
-BOOST_AUTO_TEST_CASE(fns_node_to_node_distance) {
+BOOST_AUTO_TEST_CASE(fns_node_to_node_distance)
+{
   // Well, there's no easy way to make HRectBounds the way we want, so we have
   // to make them and then expand the region to include new points.
   arma::vec utility(1);
@@ -273,11 +290,12 @@ BOOST_AUTO_TEST_CASE(fns_node_to_node_distance) {
       &node_two), (1.5 * 1.5), 1e-5);
 }
 
-/***
+/**
  * Another very simple sanity check for the point-to-node case, again in one
  * dimension.
  */
-BOOST_AUTO_TEST_CASE(fns_point_to_node_distance) {
+BOOST_AUTO_TEST_CASE(fns_point_to_node_distance)
+{
   // Well, there's no easy way to make HRectBounds the way we want, so we have
   // to make them and then expand the region to include new points.
   arma::vec utility(1);
@@ -308,3 +326,5 @@ BOOST_AUTO_TEST_CASE(fns_point_to_node_distance) {
   BOOST_REQUIRE_CLOSE(FurthestNeighborSort::BestPointToNodeDistance(point,
       &node), 0.25, 1e-5);
 }
+
+BOOST_AUTO_TEST_SUITE_END();
