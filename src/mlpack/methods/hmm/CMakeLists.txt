@@ -13,6 +13,8 @@ set(SOURCES
   mixtureDST.cpp
   support.hpp
   support.cpp
+  hmm.hpp
+  hmm_impl.hpp
 )
 
 # Add directory name to sources.
