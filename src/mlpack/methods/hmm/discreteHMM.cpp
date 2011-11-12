@@ -326,7 +326,7 @@ void DiscreteHMM::BackwardProcedure(const arma::vec& seq, const arma::mat& trans
   for (size_t i = 0; i < M; i++)
     bs(i, L - 1) = 1.0;
 
-  for (size_t t = L - 2; t >= 0; t--) {
+  for (size_t t = L - 2; t + 1 > 0; t--) {
     size_t e = (size_t) seq[t + 1];
     for (size_t i = 0; i < M; i++) {
       for (size_t j = 0; j < M; j++)
@@ -422,7 +422,7 @@ double DiscreteHMM::ViterbiInit(size_t L, const arma::vec& seq, const arma::mat&
     }
 
   states[L - 1] = bestPtr;
-  for (size_t t = L - 2; t >= 0; t--)
+  for (size_t t = L - 2; t + 1 > 0; t--)
     states[t] = w((size_t) states[t + 1], t + 1);
 
   return bestVal;
