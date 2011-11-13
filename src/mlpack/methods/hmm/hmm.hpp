@@ -53,11 +53,24 @@ class HMM
   HMM(const arma::mat& transition, const arma::mat& emission);
 
   /**
-   * Estimate the transition and emission matrices.
+   * Train the model using the Baum-Welch algorithm, with only the given
+   * unlabeled observations.  Instead of giving a guess transition and emission
+   * matrix here, do that in the constructor.
+   *
+   * @param dataSeq Vector of observation sequences.
    */
-  void EstimateModel(const std::vector<arma::vec>& data_seq);
-  void EstimateModel(const std::vector<arma::vec>& data_seq,
-                     const std::vector<arma::vec>& state_seq);
+  void Train(const std::vector<arma::vec>& dataSeq);
+
+  /**
+   * Train the model using the given labeled observations; the transition and
+   * emission matrices are directly estimated.
+   *
+   * @param dataSeq Vector of observation sequences.
+   * @param stateSeq Vector of state sequences, corresponding to each
+   *    observation.
+   */
+  void Train(const std::vector<arma::vec>& dataSeq,
+             const std::vector<arma::Col<size_t> >& stateSeq);
 
   /**
    * Generate a random data sequence of the given length.  The data sequence is
@@ -88,10 +101,16 @@ class HMM
   double LogLikelihood(const arma::vec& data_seq) const;
 
   /**
-   * Compute the most probable hidden state sequence for a given data sequence.
-   * Needs a better name.
+   * Compute the most probable hidden state sequence for the given data
+   * sequence, using the Viterbi algorithm, returning the log-likelihood of the
+   * most likely state sequence.
+   *
+   * @param dataSeq Sequence of observations.
+   * @param stateSeq Vector in which the most probable state sequence will be
+   *    stored.
+   * @return Log-likelihood of most probable state sequence.
    */
-  double Viterbi(const arma::vec& data_seq, arma::Col<size_t>& state_seq) const;
+  double Predict(const arma::vec& data_seq, arma::Col<size_t>& stateSeq) const;
 
   /**
    * Return the transition matrix.
