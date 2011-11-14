@@ -201,6 +201,77 @@ double HMM<Distribution>::Estimate(const arma::vec& data_seq,
 }
 
 /**
+ * Generate a random data sequence of a given length.  The data sequence is
+ * stored in the dataSequence parameter, and the state sequence is stored in
+ * the stateSequence parameter.
+ */
+template<typename Distribution>
+void HMM<Distribution>::Generate(const size_t length,
+                                 arma::vec& dataSequence,
+                                 arma::Col<size_t>& stateSequence,
+                                 const size_t startState) const
+{
+  // Set vectors to the right size.
+  stateSequence.set_size(length);
+  dataSequence.set_size(length);
+
+  // Set start state (default is 0).
+  stateSequence[0] = startState;
+
+  // Choose first emission state.
+  double randValue = (double) rand() / (double) RAND_MAX;
+
+  // We just have to find where our random value sits in the probability
+  // distribution of emissions for our starting state.
+  double probSum = 0;
+  for (size_t em = 0; em < emission.n_rows; em++)
+  {
+    probSum += emission(em, startState);
+    if (randValue <= probSum)
+    {
+      dataSequence[0] = em;
+      break;
+    }
+  }
+
+  // Now choose the states and emissions for the rest of the sequence.
+  for (size_t t = 1; t < length; t++)
+  {
+    // First choose the hidden state.
+    randValue = (double) rand() / (double) RAND_MAX;
+
+    // Now find where our random value sits in the probability distribution of
+    // state changes.
+    probSum = 0;
+    for (size_t st = 0; st < transition.n_rows; st++)
+    {
+      probSum += transition(st, stateSequence[t - 1]);
+      if (randValue <= probSum)
+      {
+        stateSequence[t] = st;
+        break;
+      }
+    }
+
+    // Now choose the emission.
+    randValue = (double) rand() / (double) RAND_MAX;
+
+    // Now find where our random value sits in the probability distribution of
+    // emissions for the state we just chose.
+    probSum = 0;
+    for (size_t em = 0; em < emission.n_rows; em++)
+    {
+      probSum += emission(em, stateSequence[t]);
+      if (randValue <= probSum)
+      {
+        dataSequence[t] = em;
+        break;
+      }
+    }
+  }
+}
+
+/**
  * Compute the most probable hidden state sequence for the given observation
  * using the Viterbi algorithm. Returns the log-likelihood of the most likely
  * sequence.
