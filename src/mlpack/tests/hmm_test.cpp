@@ -274,20 +274,20 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
 
   hmm.Train(observations);
 
-  // Only require 0.75% tolerance, because this is a little fuzzier.
-  BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 0), 0.5, 0.75);
-  BOOST_REQUIRE_CLOSE(hmm.Transition()(1, 0), 0.5, 0.75);
-  BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 1), 0.5, 0.75);
-  BOOST_REQUIRE_CLOSE(hmm.Transition()(1, 1), 0.5, 0.75);
+  // Only require 1.25% tolerance, because this is a little fuzzier.
+  BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 0), 0.5, 1.25);
+  BOOST_REQUIRE_CLOSE(hmm.Transition()(1, 0), 0.5, 1.25);
+  BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 1), 0.5, 1.25);
+  BOOST_REQUIRE_CLOSE(hmm.Transition()(1, 1), 0.5, 1.25);
 
-  BOOST_REQUIRE_CLOSE(hmm.Emission()(0, 0), 0.4, 0.75);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()(1, 0), 0.6, 0.75);
-  BOOST_REQUIRE_SMALL(hmm.Emission()(2, 0), 0.75);
-  BOOST_REQUIRE_SMALL(hmm.Emission()(3, 0), 0.75);
-  BOOST_REQUIRE_SMALL(hmm.Emission()(0, 1), 0.75);
-  BOOST_REQUIRE_SMALL(hmm.Emission()(1, 1), 0.75);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()(2, 1), 0.2, 0.75);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()(3, 1), 0.8, 0.75);
+  BOOST_REQUIRE_CLOSE(hmm.Emission()(0, 0), 0.4, 1.25);
+  BOOST_REQUIRE_CLOSE(hmm.Emission()(1, 0), 0.6, 1.25);
+  BOOST_REQUIRE_SMALL(hmm.Emission()(2, 0), 1.25);
+  BOOST_REQUIRE_SMALL(hmm.Emission()(3, 0), 1.25);
+  BOOST_REQUIRE_SMALL(hmm.Emission()(0, 1), 1.25);
+  BOOST_REQUIRE_SMALL(hmm.Emission()(1, 1), 1.25);
+  BOOST_REQUIRE_CLOSE(hmm.Emission()(2, 1), 0.2, 1.25);
+  BOOST_REQUIRE_CLOSE(hmm.Emission()(3, 1), 0.8, 1.25);
 }
 
 BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
