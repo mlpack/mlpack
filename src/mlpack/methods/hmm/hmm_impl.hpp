@@ -320,7 +320,7 @@ double HMM<Distribution>::Predict(const arma::vec& dataSeq,
  * Compute the log-likelihood of the given data sequence.
  */
 template<typename Distribution>
-void HMM<Distribution>::LogLikelihood(const arma::vec& dataSeq) const
+double HMM<Distribution>::LogLikelihood(const arma::vec& dataSeq) const
 {
   arma::mat forward;
   arma::vec scales;
