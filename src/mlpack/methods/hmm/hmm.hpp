@@ -98,11 +98,6 @@ class HMM
                 const size_t startState = 0) const;
 
   /**
-   * Compute the log-likelihood of a sequence.
-   */
-  double LogLikelihood(const arma::vec& data_seq) const;
-
-  /**
    * Compute the most probable hidden state sequence for the given data
    * sequence, using the Viterbi algorithm, returning the log-likelihood of the
    * most likely state sequence.
@@ -112,7 +107,15 @@ class HMM
    *    stored.
    * @return Log-likelihood of most probable state sequence.
    */
-  double Predict(const arma::vec& data_seq, arma::Col<size_t>& stateSeq) const;
+  double Predict(const arma::vec& dataSeq, arma::Col<size_t>& stateSeq) const;
+
+  /**
+   * Compute the log-likelihood of the given data sequence.
+   *
+   * @param dataSeq Data sequence to evaluate the likelihood of.
+   * @return Log-likelihood of the given sequence.
+   */
+  double LogLikelihood(const arma::vec& dataSeq) const;
 
   /**
    * Return the transition matrix.
