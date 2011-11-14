@@ -42,7 +42,6 @@ template<typename Distribution>
 void HMM<Distribution>::Train(const std::vector<arma::vec>& dataSeq)
 {
   // We should allow a guess at the transition and emission matrices.
-
   double loglik = 0;
   double oldLoglik = 0;
 
@@ -317,7 +316,24 @@ double HMM<Distribution>::Predict(const arma::vec& dataSeq,
   return log(stateProb(stateSeq[dataSeq.n_elem - 1], dataSeq.n_elem - 1));
 }
 
+/**
+ * Compute the log-likelihood of the given data sequence.
+ */
+template<typename Distribution>
+void HMM<Distribution>::LogLikelihood(const arma::vec& dataSeq) const
+{
+  arma::mat forward;
+  arma::vec scales;
 
+  Forward(dataSeq, scales, forward);
+
+  // The log-likelihood is the log of the scales for each time step.
+  return accu(log(scales));
+}
+
+/**
+ * The Forward procedure (part of the Forward-Backward algorithm).
+ */
 template<typename Distribution>
 void HMM<Distribution>::Forward(const arma::vec& dataSeq,
                                 arma::vec& scales,
