@@ -73,19 +73,6 @@ class HMM
              const std::vector<arma::Col<size_t> >& stateSeq);
 
   /**
-   * Generate a random data sequence of the given length.  The data sequence is
-   * stored in the data_sequence parameter, and the state sequence is stored in
-   * the state_sequence parameter.
-   *
-   * @param length Length of random sequence to generate.
-   * @param data_sequence Vector to store data in.
-   * @param state_sequence Vector to store states in.
-   */
-  void GenerateSequence(const size_t length,
-                        arma::vec& data_sequence,
-                        arma::vec& state_sequence) const;
-
-  /**
    * Estimate the probabilities of each hidden state at each time step for each
    * given data observation.
    */
@@ -94,6 +81,21 @@ class HMM
                   arma::mat& forward_prob_mat,
                   arma::mat& backward_prob_mat,
                   arma::vec& scale_vec) const;
+
+  /**
+   * Generate a random data sequence of the given length.  The data sequence is
+   * stored in the data_sequence parameter, and the state sequence is stored in
+   * the state_sequence parameter.
+   *
+   * @param length Length of random sequence to generate.
+   * @param dataSequence Vector to store data in.
+   * @param stateSequence Vector to store states in.
+   * @param startState Hidden state to start sequence in (default 0).
+   */
+  void Generate(const size_t length,
+                arma::vec& dataSequence,
+                arma::Col<size_t>& stateSequence,
+                const size_t startState = 0) const;
 
   /**
    * Compute the log-likelihood of a sequence.
