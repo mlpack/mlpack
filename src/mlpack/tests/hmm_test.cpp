@@ -327,7 +327,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
     for (size_t em = 0; em < 6; em++)
     {
       sumProb += emission(em, states[n][0]);
-      if (sumProb > obs)
+      if (sumProb >= obs)
       {
         observations[n][0] = em;
         break;
@@ -346,7 +346,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
       for (size_t st = 0; st < 3; st++)
       {
         sumProb += transition(st, states[n][t - 1]);
-        if (sumProb > state)
+        if (sumProb >= state)
         {
           states[n][t] = st;
           break;
@@ -358,7 +358,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
       for (size_t em = 0; em < 6; em++)
       {
         sumProb += emission(em, states[n][t]);
-        if (sumProb > obs)
+        if (sumProb >= obs)
         {
           observations[n][t] = em;
           break;
