@@ -274,20 +274,20 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
 
   hmm.Train(observations);
 
-  // Only require 1.25% tolerance, because this is a little fuzzier.
-  BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 0), 0.5, 1.25);
-  BOOST_REQUIRE_CLOSE(hmm.Transition()(1, 0), 0.5, 1.25);
-  BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 1), 0.5, 1.25);
-  BOOST_REQUIRE_CLOSE(hmm.Transition()(1, 1), 0.5, 1.25);
+  // Only require 2.5% tolerance, because this is a little fuzzier.
+  BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 0), 0.5, 2.5);
+  BOOST_REQUIRE_CLOSE(hmm.Transition()(1, 0), 0.5, 2.5);
+  BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 1), 0.5, 2.5);
+  BOOST_REQUIRE_CLOSE(hmm.Transition()(1, 1), 0.5, 2.5);
 
-  BOOST_REQUIRE_CLOSE(hmm.Emission()(0, 0), 0.4, 1.25);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()(1, 0), 0.6, 1.25);
-  BOOST_REQUIRE_SMALL(hmm.Emission()(2, 0), 1.25);
-  BOOST_REQUIRE_SMALL(hmm.Emission()(3, 0), 1.25);
-  BOOST_REQUIRE_SMALL(hmm.Emission()(0, 1), 1.25);
-  BOOST_REQUIRE_SMALL(hmm.Emission()(1, 1), 1.25);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()(2, 1), 0.2, 1.25);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()(3, 1), 0.8, 1.25);
+  BOOST_REQUIRE_CLOSE(hmm.Emission()(0, 0), 0.4, 2.5);
+  BOOST_REQUIRE_CLOSE(hmm.Emission()(1, 0), 0.6, 2.5);
+  BOOST_REQUIRE_SMALL(hmm.Emission()(2, 0), 2.5);
+  BOOST_REQUIRE_SMALL(hmm.Emission()(3, 0), 2.5);
+  BOOST_REQUIRE_SMALL(hmm.Emission()(0, 1), 2.5);
+  BOOST_REQUIRE_SMALL(hmm.Emission()(1, 1), 2.5);
+  BOOST_REQUIRE_CLOSE(hmm.Emission()(2, 1), 0.2, 2.5);
+  BOOST_REQUIRE_CLOSE(hmm.Emission()(3, 1), 0.8, 2.5);
 }
 
 BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
@@ -375,15 +375,55 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
 
   // We can't use % tolerance here because percent error increases as the actual
   // value gets very small.  So, instead, we just ensure that every value is no
-  // more than 0.004 away from the actual value.
+  // more than 0.009 away from the actual value.
   for (size_t row = 0; row < hmm.Transition().n_rows; row++)
     for (size_t col = 0; col < hmm.Transition().n_cols; col++)
       BOOST_REQUIRE_SMALL(hmm.Transition()(row, col) - transition(row, col),
-          0.004);
+          0.009);
 
   for (size_t row = 0; row < hmm.Emission().n_rows; row++)
     for (size_t col = 0; col < hmm.Emission().n_cols; col++)
-      BOOST_REQUIRE_SMALL(hmm.Emission()(row, col) - emission(row, col), 0.004);
+      BOOST_REQUIRE_SMALL(hmm.Emission()(row, col) - emission(row, col), 0.009);
+}
+
+/**
+ * Make sure the Generate() function works for a uniformly distributed HMM;
+ * we'll take many samples just to make sure.
+ */
+BOOST_AUTO_TEST_CASE(DiscreteHMMSimpleGenerateTest)
+{
+  // Very simple HMM.  4 emissions with equal probability and 2 states with
+  // equal probability.  The default transition and emission matrices satisfy
+  // this property.
+  HMM<int> hmm(2, 4);
+
+  // Now generate a really, really long sequence.
+  arma::vec dataSeq;
+  arma::Col<size_t> stateSeq;
+
+  hmm.Generate(100000, dataSeq, stateSeq);
+
+  // Now find the empirical probabilities of each state.
+  arma::vec emissionProb(4);
+  for (size_t em = 0; em < 4; em++)
+    emissionProb[em] = accu(dataSeq == em);
+
+  arma::vec stateProb(2);
+  for (size_t st = 0; st < 2; st++)
+    stateProb[st] = accu(stateSeq == st);
+
+  // Normalize so these are probabilities.
+  emissionProb /= accu(emissionProb);
+  stateProb /= accu(stateProb);
+
+  // Now check that the probabilities are right.  2% tolerance.
+  BOOST_REQUIRE_CLOSE(emissionProb[0], 0.25, 2.0);
+  BOOST_REQUIRE_CLOSE(emissionProb[1], 0.25, 2.0);
+  BOOST_REQUIRE_CLOSE(emissionProb[2], 0.25, 2.0);
+  BOOST_REQUIRE_CLOSE(emissionProb[3], 0.25, 2.0);
+
+  BOOST_REQUIRE_CLOSE(stateProb[0], 0.50, 2.0);
+  BOOST_REQUIRE_CLOSE(stateProb[1], 0.50, 2.0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
