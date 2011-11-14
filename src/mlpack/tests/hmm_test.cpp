@@ -478,4 +478,26 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
           8.0);
 }
 
+BOOST_AUTO_TEST_CASE(DiscreteHMMLogLikelihoodTest)
+{
+  // Create a simple HMM with three states and four emissions.
+  arma::mat transition("0.5 0.0 0.1;"
+                       "0.2 0.6 0.2;"
+                       "0.3 0.4 0.7");
+  arma::mat emission("0.75 0.0  0.1;"
+                     "0.25 0.25 0.4;"
+                     "0.0  0.25 0.4;"
+                     "0.0  0.5  0.1");
+
+  HMM<int> hmm(transition, emission);
+
+  // Now generate some sequences and check that the log-likelihood is the same
+  // as MATLAB gives for this HMM.
+  BOOST_REQUIRE_CLOSE(hmm.LogLikelihood("0 1 2 3"), -4.9887223949, 1e-5);
+  BOOST_REQUIRE_CLOSE(hmm.LogLikelihood("1 2 0 0"), -6.0288487077, 1e-5);
+  BOOST_REQUIRE_CLOSE(hmm.LogLikelihood("3 3 3 3"), -5.5544000018, 1e-5);
+  BOOST_REQUIRE_CLOSE(hmm.LogLikelihood("0 2 2 1 2 3 0 0 1 3 1 0 0 3 1 2 2"),
+      -24.51556128368, 1e-5);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
