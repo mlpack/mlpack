@@ -200,6 +200,21 @@ double HMM<Distribution>::Estimate(const arma::vec& data_seq,
 }
 
 /**
+ * Estimate the probabilities of each hidden state at each time step for each
+ * given data observation.
+ */
+template<typename Distribution>
+double HMM<Distribution>::Estimate(const arma::vec& dataSeq,
+                                   arma::mat& stateProb) const
+{
+  // We don't need to save these.
+  arma::mat forwardProb, backwardProb;
+  arma::vec scales;
+
+  return Estimate(dataSeq, stateProb, forwardProb, backwardProb, scales);
+}
+
+/**
  * Generate a random data sequence of a given length.  The data sequence is
  * stored in the dataSequence parameter, and the state sequence is stored in
  * the stateSequence parameter.
