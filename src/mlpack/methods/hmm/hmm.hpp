@@ -74,13 +74,40 @@ class HMM
 
   /**
    * Estimate the probabilities of each hidden state at each time step for each
-   * given data observation.
+   * given data observation, using the Forward-Backward algorithm.  Each matrix
+   * which is returned has columns equal to the number of data observations, and
+   * rows equal to the number of hidden states in the model.  The log-likelihood
+   * of the most probable sequence is returned.
+   *
+   * @param dataSeq Sequence of observations.
+   * @param stateProb Matrix in which the probabilities of each state at each
+   *    time interval will be stored.
+   * @param forwardProb Matrix in which the forward probabilities of each state
+   *    at each time interval will be stored.
+   * @param backwardProb Matrix in which the backward probabilities of each
+   *    state at each time interval will be stored.
+   * @param scales Vector in which the scaling factors at each time interval
+   *    will be stored.
+   * @return Log-likelihood of most likely state sequence.
    */
-  double Estimate(const arma::vec& data_seq,
-                  arma::mat& state_prob_mat,
-                  arma::mat& forward_prob_mat,
-                  arma::mat& backward_prob_mat,
-                  arma::vec& scale_vec) const;
+  double Estimate(const arma::vec& dataSeq,
+                  arma::mat& stateProb,
+                  arma::mat& forwardProb,
+                  arma::mat& backwardProb,
+                  arma::vec& scales) const;
+
+  /**
+   * Estimate the probabilities of each hidden state at each time step of each
+   * given data observation, using the Forward-Backward algorithm.  The returned
+   * matrix of state probabilities has columns equal to the number of data
+   * observations, and rows equal to the number of hidden states in the model.
+   * The log-likelihood of the most probable sequence is returned.
+   *
+   * @param dataSeq Sequence of observations.
+   * @param stateProb Probabilities of each state at each time interval.
+   * @return Log-likelihood of most likely state sequence.
+   */
+  double Estimate(const arma::vec& dataSeq, arma::mat& stateProb) const;
 
   /**
    * Generate a random data sequence of the given length.  The data sequence is
