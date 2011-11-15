@@ -431,7 +431,6 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMSimpleGenerateTest)
  */
 BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
 {
-  srand(time(NULL));
   // 6 emissions, 4 states.  Random transition and emission probability.
   arma::mat transition(4, 4);
   arma::mat emission(6, 4);
@@ -466,16 +465,16 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
   HMM<int> hmm2(4, 6);
   hmm2.Train(sequences, states);
 
-  // Check that training gives the same result.  8% tolerance.
+  // Check that training gives the same result.  Exact tolerance of 0.005.
   for (size_t row = 0; row < 4; row++)
     for (size_t col = 0; col < 4; col++)
-      BOOST_REQUIRE_CLOSE(hmm.Transition()(row, col),
-          hmm2.Transition()(row, col), 8.0);
+      BOOST_REQUIRE_SMALL(hmm.Transition()(row, col) -
+          hmm2.Transition()(row, col), 0.005);
 
   for (size_t row = 0; row < 6; row++)
     for (size_t col = 0; col < 4; col++)
-      BOOST_REQUIRE_CLOSE(hmm.Emission()(row, col), hmm2.Emission()(row, col),
-          8.0);
+      BOOST_REQUIRE_SMALL(hmm.Emission()(row, col) - hmm2.Emission()(row, col),
+          0.005);
 }
 
 BOOST_AUTO_TEST_CASE(DiscreteHMMLogLikelihoodTest)
