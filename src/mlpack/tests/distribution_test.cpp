@@ -22,6 +22,11 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionConstructorTest)
   DiscreteDistribution d(5);
 
   BOOST_REQUIRE_EQUAL(d.Probabilities().n_elem, 5);
+  BOOST_REQUIRE_CLOSE(d.Probability(0), 0.2, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability(1), 0.2, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability(2), 0.2, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability(3), 0.2, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability(4), 0.2, 1e-5);
 }
 
 /**
