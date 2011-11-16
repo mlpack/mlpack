@@ -52,8 +52,18 @@ class DiscreteDistribution
    *
    * @param probabilities Probabilities of each possible observation.
    */
-  DiscreteDistribution(const arma::vec& probabilities) :
-      probabilities(probabilities) { /* nothing to do */ }
+  DiscreteDistribution(const arma::vec& probabilities)
+  {
+    // We must be sure that our distribution is normalized.
+    double sum = accu(probabilities);
+    if (sum > 0)
+      this->probabilities = probabilities / sum;
+    else
+    {
+      this->probabilities.set_size(probabilities.n_elem);
+      this->probabilities.fill(1 / probabilities.n_elem);
+    }
+  }
 
   /**
    * Return the probability of the given observation.  If the observation is
