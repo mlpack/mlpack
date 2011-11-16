@@ -14,7 +14,39 @@ namespace mlpack {
 namespace hmm {
 
 /**
- * A class that represents a Hidden Markov Model.
+ * A class that represents a Hidden Markov Model with an arbitrary type of
+ * emission distribution.  This HMM class supports training (supervised and
+ * unsupervised), prediction of state sequences via the Viterbi algorithm,
+ * estimation of state probabilities, generation of random sequences, and
+ * calculation of the log-likelihood of a given sequence.
+ *
+ * The template parameter, Distribution, specifies the distribution which the
+ * emissions follow.  The class should implement the following functions:
+ *
+ * @code
+ * class Distribution
+ * {
+ *  public:
+ *   // The type of observation used by this distribution.
+ *   typedef something DataType;
+ *
+ *   // Return the probability of the given observation.
+ *   double Probability(const DataType& observation) const;
+ *
+ *   // Estimate the distribution based on the given observations.
+ *   void Estimate(const std::vector<DataType>& observations);
+ *
+ *   // Estimate the distribution based on the given observations, given also
+ *   // the probability of each observation coming from this distribution.
+ *   void Estimate(const std::vector<DataType>& observations,
+ *                 const std::vector<double>& probabilities);
+ * };
+ * @endcode
+ *
+ * See the mlpack::distribution::DiscreteDistribution class for an example.  One
+ * would use the DiscreteDistribution class when the observations are
+ * non-negative integers.  Other distributions could be Gaussians, a mixture of
+ * Gaussians (GMM), or any other probability distribution.
  */
 template<typename Distribution>
 class HMM
