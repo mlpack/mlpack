@@ -16,7 +16,7 @@ set(SOURCES
   hmm.hpp
   hmm_impl.hpp
   distributions/discrete_distribution.hpp
-  distributions/discrete_distribution_impl.hpp
+  distributions/discrete_distribution.cpp
 )
 
 # Add directory name to sources.
