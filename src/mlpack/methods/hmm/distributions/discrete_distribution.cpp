@@ -22,6 +22,9 @@ size_t DiscreteDistribution::Random() const
   for (size_t obs = 0; obs < probabilities.n_elem; obs++)
     if ((sumProb += probabilities[obs]) >= randObs)
       return obs;
+
+  // This shouldn't happen.
+  return probabilities.n_elem - 1;
 }
 
 /**
