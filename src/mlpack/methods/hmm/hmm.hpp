@@ -9,6 +9,7 @@
 #define __MLPACK_METHODS_HMM_HMM_HPP
 
 #include <mlpack/core.h>
+#include "distributions/discrete_distribution.hpp"
 
 namespace mlpack {
 namespace hmm {
@@ -48,7 +49,7 @@ namespace hmm {
  * non-negative integers.  Other distributions could be Gaussians, a mixture of
  * Gaussians (GMM), or any other probability distribution.
  */
-template<typename Distribution>
+template<typename Distribution = distribution::DiscreteDistribution>
 class HMM
 {
  private:
