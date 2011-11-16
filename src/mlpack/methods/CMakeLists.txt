@@ -4,11 +4,11 @@ cmake_minimum_required(VERSION 2.8)
 set(DIRS
   emst
   fastica
+  #gmm
   hmm
   infomax_ica
   # kernel_pca # (required sparse and is known to not work or compile)
   linear_regression
-  #mog (in progress)
   #mvu  # (currently known to not work)
   naive_bayes
   nca

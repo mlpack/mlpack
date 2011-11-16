@@ -166,7 +166,8 @@ long double MoGL2E::RegularizationTerm_(arma::vec& g_reg)
   return reg;
 }
 
-long double MoGL2E::GoodnessOfFitTerm_(const arma::mat& data) {
+long double MoGL2E::GoodnessOfFitTerm_(const arma::mat& data)
+{
   long double fit;
   arma::mat phi_x(gaussians, data.n_cols);
   arma::vec identity_vector;
@@ -183,7 +184,8 @@ long double MoGL2E::GoodnessOfFitTerm_(const arma::mat& data) {
 }
 
 long double MoGL2E::GoodnessOfFitTerm_(const arma::mat& data,
-                                       arma::vec& g_fit) {
+                                       arma::vec& g_fit)
+{
   long double fit;
   arma::mat phi_x(gaussians, data.n_cols);
   arma::vec weights_l, x, y, identity_vector;
@@ -197,7 +199,8 @@ long double MoGL2E::GoodnessOfFitTerm_(const arma::mat& data,
   g_mu.resize(gaussians);
   g_sigma.resize(gaussians);
 
-  for(size_t k = 0; k < gaussians; k++) {
+  for(size_t k = 0; k < gaussians; k++)
+  {
     g_mu[k].zeros(dimension);
     g_sigma[k].zeros(dimension * (dimension + 1) / 2);
 
@@ -227,7 +230,9 @@ long double MoGL2E::GoodnessOfFitTerm_(const arma::mat& data,
   for (size_t k = 0; k < g_omega.n_elem; k++)
     tmp_g_fit[k] = g_omega[k];
   j = g_omega.n_elem;
-  for (size_t k = 0; k < gaussians; k++) {
+
+  for (size_t k = 0; k < gaussians; k++)
+  {
     for (size_t i = 0; i < dimension; i++)
       tmp_g_fit[j + (k * dimension) + i] = (g_mu[k])[i];
 
@@ -243,16 +248,18 @@ long double MoGL2E::GoodnessOfFitTerm_(const arma::mat& data,
 
 void MoGL2E::MultiplePointsGenerator(arma::mat& points,
                                      const arma::mat& d,
-                                     size_t number_of_components) {
-
+                                     size_t number_of_components)
+{
   size_t i, j, x;
 
   for (i = 0; i < points.n_rows; i++)
     for (j = 0; j < points.n_cols - 1; j++)
       points(i, j) = (rand() % 20001) / 1000 - 10;
 
-  for (i = 0; i < points.n_rows; i++) {
-    for (j = 0; j < points.n_cols; j++) {
+  for (i = 0; i < points.n_rows; i++)
+  {
+    for (j = 0; j < points.n_cols; j++)
+    {
       arma::vec tmp_mu = d.col(rand() % d.n_cols);
       for (x = 0; x < d.n_rows; x++)
         points(i, number_of_components - 1 + (j * d.n_rows) + x) = tmp_mu[x];
@@ -270,7 +277,8 @@ void MoGL2E::MultiplePointsGenerator(arma::mat& points,
 
 void MoGL2E::InitialPointGenerator(arma::vec& theta,
                                    const arma::mat& data,
-                                   size_t k_comp) {
+                                   size_t k_comp)
+{
   std::vector<arma::vec> means_l;
   std::vector<arma::mat> covars;
   arma::vec weights_l;
@@ -282,19 +290,22 @@ void MoGL2E::InitialPointGenerator(arma::vec& theta,
 
   theta.set_size(k_comp);
 
-  for (size_t i = 0; i < k_comp; i++) {
+  for (size_t i = 0; i < k_comp; i++)
+  {
     means_l[i].set_size(data.n_rows);
     covars[i].set_size(data.n_rows, data.n_rows);
   }
 
   KMeans(data, k_comp, means_l, covars, weights_l);
 
-  for (size_t k = 0; k < k_comp - 1; k++) {
+  for (size_t k = 0; k < k_comp - 1; k++)
+  {
     noise = (double) (rand() % 10000) / (double) 1000;
     theta[k] = noise - 5;
   }
 
-  for (size_t k = 0; k < k_comp; k++) {
+  for (size_t k = 0; k < k_comp; k++)
+  {
     for (size_t j = 0; j < data.n_rows; j++)
       theta[k_comp - 1 + k * data.n_rows + j] = (means_l[k])[j];
 
