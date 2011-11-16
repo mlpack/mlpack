@@ -23,18 +23,21 @@ class HMM
   //! Transition probability matrix.
   arma::mat transition;
 
-  //! Emission probability matrix (for each state).
-  arma::mat emission;
+  //! Set of emission probability distributions; one for each state.
+  std::vector<Distribution> emission;
 
  public:
+  //! Convenience typedef for the type of observation we are using.
+  typedef typename Distribution::DataType Observation;
+
   /**
    * Create the Hidden Markov Model with the given number of hidden states and
-   * the given number of emission states.
+   * the given default distribution for emissions.
    *
    * @param states Number of states.
-   * @param emissions Number of possible emissions.
+   * @param emissions Default distribution for emissions.
    */
-  HMM(const size_t states, const size_t emissions);
+  HMM(const size_t states, const Distribution emissions);
 
   /**
    * Create the Hidden Markov Model with the given transition matrix and the
@@ -50,7 +53,7 @@ class HMM
    * @param transition Transition matrix.
    * @param emission Emission probability matrix.
    */
-  HMM(const arma::mat& transition, const arma::mat& emission);
+  HMM(const arma::mat& transition, const std::vector<Distribution>& emission);
 
   /**
    * Train the model using the Baum-Welch algorithm, with only the given
@@ -59,7 +62,7 @@ class HMM
    *
    * @param dataSeq Vector of observation sequences.
    */
-  void Train(const std::vector<arma::vec>& dataSeq);
+  void Train(const std::vector<std::vector<Observation> >& dataSeq);
 
   /**
    * Train the model using the given labeled observations; the transition and
@@ -69,8 +72,8 @@ class HMM
    * @param stateSeq Vector of state sequences, corresponding to each
    *    observation.
    */
-  void Train(const std::vector<arma::vec>& dataSeq,
-             const std::vector<arma::Col<size_t> >& stateSeq);
+  void Train(const std::vector<std::vector<Observation> >& dataSeq,
+             const std::vector<std::vector<size_t> >& stateSeq);
 
   /**
    * Estimate the probabilities of each hidden state at each time step for each
@@ -90,7 +93,7 @@ class HMM
    *    will be stored.
    * @return Log-likelihood of most likely state sequence.
    */
-  double Estimate(const arma::vec& dataSeq,
+  double Estimate(const std::vector<Observation>& dataSeq,
                   arma::mat& stateProb,
                   arma::mat& forwardProb,
                   arma::mat& backwardProb,
@@ -107,7 +110,8 @@ class HMM
    * @param stateProb Probabilities of each state at each time interval.
    * @return Log-likelihood of most likely state sequence.
    */
-  double Estimate(const arma::vec& dataSeq, arma::mat& stateProb) const;
+  double Estimate(const std::vector<Observation>& dataSeq,
+                  arma::mat& stateProb) const;
 
   /**
    * Generate a random data sequence of the given length.  The data sequence is
@@ -120,8 +124,8 @@ class HMM
    * @param startState Hidden state to start sequence in (default 0).
    */
   void Generate(const size_t length,
-                arma::vec& dataSequence,
-                arma::Col<size_t>& stateSequence,
+                std::vector<Observation>& dataSequence,
+                std::vector<size_t>& stateSequence,
                 const size_t startState = 0) const;
 
   /**
@@ -134,7 +138,8 @@ class HMM
    *    stored.
    * @return Log-likelihood of most probable state sequence.
    */
-  double Predict(const arma::vec& dataSeq, arma::Col<size_t>& stateSeq) const;
+  double Predict(const std::vector<Observation>& dataSeq,
+                 std::vector<size_t>& stateSeq) const;
 
   /**
    * Compute the log-likelihood of the given data sequence.
@@ -142,7 +147,7 @@ class HMM
    * @param dataSeq Data sequence to evaluate the likelihood of.
    * @return Log-likelihood of the given sequence.
    */
-  double LogLikelihood(const arma::vec& dataSeq) const;
+  double LogLikelihood(const std::vector<Observation>& dataSeq) const;
 
   /**
    * Return the transition matrix.
@@ -155,22 +160,46 @@ class HMM
   arma::mat& Transition() { return transition; }
 
   /**
-   * Return the emission probability matrix.
+   * Return the emission distributions.
    */
-  const arma::mat& Emission() const { return emission; }
+  const std::vector<Distribution>& Emission() const { return emission; }
 
   /**
    * Return a modifiable emission probability matrix reference.
    */
-  arma::mat& Emission() { return emission; }
+  std::vector<Distribution>& Emission() { return emission; }
 
  private:
   // Helper functions.
 
-  void Forward(const arma::vec& data_seq, arma::vec& scales, arma::mat& fs)
-      const;
-  void Backward(const arma::vec& data_seq, const arma::vec& scales,
-                arma::mat& bs) const;
+  /**
+   * The Forward algorithm (part of the Forward-Backward algorithm).  Computes
+   * forward probabilities for each state for each observation in the given data
+   * sequence.  The returned matrix has rows equal to the number of hidden
+   * states and columns equal to the number of observations.
+   *
+   * @param dataSeq Data sequence to compute probabilities for.
+   * @param scales Vector in which scaling factors will be saved.
+   * @param forwardProb Matrix in which forward probabilities will be saved.
+   */
+  void Forward(const std::vector<Observation>& dataSeq,
+               arma::vec& scales,
+               arma::mat& forwardProb) const;
+
+  /**
+   * The Backward algorithm (part of the Forward-Backward algorithm).  Computes
+   * backward probabilities for each state for each observation in the given
+   * data sequence, using the scaling factors found (presumably) by Forward().
+   * The returned matrix has rows equal to the number of hidden states and
+   * columns equal to the number of observations.
+   *
+   * @param dataSeq Data sequence to compute probabilities for.
+   * @param scales Vector of scaling factors.
+   * @param backwardProb Matrix in which backward probabilities will be saved.
+   */
+  void Backward(const std::vector<Observation>& dataSeq,
+                const arma::vec& scales,
+                arma::mat& backwardProb) const;
 };
 
 }; // namespace hmm
