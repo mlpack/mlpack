@@ -25,6 +25,15 @@ namespace distribution {
 class DiscreteDistribution
 {
  public:
+  //! The type of data which this distribution uses; in our case, non-negative
+  //! integers represent observations.
+  typedef size_t DataType;
+
+  /**
+   * Default constructor, which creates a distribution that has no observations.
+   */
+  DiscreteDistribution() { /* nothing to do */ }
+
   /**
    * Define the discrete distribution as having numObservations possible
    * observations.  The probability in each state will be set to (1 /
@@ -33,7 +42,8 @@ class DiscreteDistribution
    * @param numObservations Number of possible observations this distribution
    *    can have.
    */
-  DiscreteDistribution(size_t numObservations);
+  DiscreteDistribution(size_t numObservations) : probabilities(numObservations)
+  { /* nothing to do */ }
 
   /**
    * Return the probability of the given observation.  If the observation is
@@ -43,14 +53,51 @@ class DiscreteDistribution
    * @param observation Observation to return the probability of.
    * @return Probability of the given observation.
    */
-  double Probability(size_t observation);
+  double Probability(size_t observation) const
+  {
+    return probabilities(observation);
+  }
+
+  /**
+   * Return a randomly generated observation according to the probability
+   * distribution defined by this object.
+   *
+   * @return Random observation.
+   */
+  size_t Random() const;
+
+  /**
+   * Estimate the probability distribution directly from the given observations.
+   *
+   * @param observations List of observations.
+   */
+  void Estimate(const std::vector<size_t> observations);
+
+  /**
+   * Estimate the probability distribution from the given observations, taking
+   * into account the probability of each observation actually being from this
+   * distribution.
+   *
+   * @param observations List of observations.
+   * @param probabilities List of probabilities that each observation is
+   *    actually from this distribution.
+   */
+  void Estimate(const std::vector<size_t> observations,
+                const std::vector<double> probabilities);
+
+  /**
+   * Return the vector of probabilities.
+   */
+  const arma::vec& Probabilities() const { return probabilities; }
+
+  /**
+   * Set the vector of probabilities correctly.  The vector will be normalized.
+   */
+  void Probabilities(const arma::vec& probabilities);
 
  private:
-  arma::vec probability;
+  arma::vec probabilities;
 };
-
-// Include inline implementation.
-#include "discrete_distribution_impl.hpp"
 
 }; // namespace distribution
 }; // namespace mlpack
