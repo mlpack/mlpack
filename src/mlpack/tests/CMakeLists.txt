@@ -15,6 +15,7 @@ add_executable(mlpack_test
   allkfn_test.cpp
   allknn_test.cpp
   cli_test.cpp
+  distribution_test.cpp
   emst_test.cpp
   hmm_test.cpp
   infomax_ica_test.cpp
