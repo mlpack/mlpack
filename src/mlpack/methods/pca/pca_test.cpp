@@ -40,11 +40,11 @@ int main(int argc, char *argv[])
   //MLPACK data set is organized with rows as attributes and columns as data
   //points. Hence the need to transpose the matrix before applying Armadillo's
   //princomp PCA api
-  mat trans_data = arma::trans(data);
+  //mat trans_data = arma::trans(data);
   mlpack::pca::PCA p;
-  p.Apply(trans_data, coeff, score);
+  p.Apply(data, 2);
 
-  n_rows = data.n_rows;
+  /*n_rows = data.n_rows;
   n_cols = data.n_cols;
 
   //verify the PCA results based on the loadings(coeff matrix) and the score
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
       assert(fabs(coeff_actual(i, j) - coeff(i, j)) < 0.0001);
       assert(fabs(score_actual(i, j) - score(i, j)) < 0.0001);
     }
-  }
+  }*/
 
   return 0;
 }
