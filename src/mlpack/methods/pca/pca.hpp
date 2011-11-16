@@ -14,24 +14,37 @@ class PCA
   PCA();
 
   /**
-   * Apply Armadillo's Principal Component Analysis to the provided data set.
+   * Apply Principal Component Analysis to the provided data set.
    *
    * @param data - Data matrix
-   * @param coeff - PCA Loadings
-   * @param score - contains the coordinates of the original data in the new coordinate system defined by the principal components
+   * @param transformedData - Data with PCA applied
+   * @param eigVal - contains eigen values in a column vector
+   * @param coeff - PCA Loadings/Coeffs/EigenVectors
    */
-  void Apply(arma::mat& data, const int newDimension);
+  void Apply(const arma::mat& data, arma::mat& transformedData, arma::vec&
+             eigVal, arma::mat& coeff);
+
+  /**
+   * Apply Principal Component Analysis to the provided data set.
+   *
+   * @param data - Data matrix
+   * @param transformedData - Data with PCA applied
+   * @param eigVal - contains eigen values in a column vector
+   */
   void Apply(const arma::mat& data, arma::mat& transformedData,
              arma::vec& eigVal);
-  void Apply(const arma::mat& data, arma::mat& transformedData, arma::vec&
-             eigVal, arma::mat& coeffs);
 
-
-  /*
-
-
-  // And for someone who wants even more.
-  ;*/
+  /**
+   * Apply Dimensionality Reduction using Principal Component Analysis
+   * to the provided data set.
+   *
+   * @param data - M x N Data matrix
+   * @param newDimension - matrix consisting of N column vectors,
+   * where each vector is the projection of the corresponding data vector
+   * from data matrix onto the basis vectors contained in the columns of
+   * coeff/eigen vector matrix with only newDimension number of columns chosen.
+   */
+  void Apply(arma::mat& data, const int newDimension);
 
   /**
    * Delete PCA object
