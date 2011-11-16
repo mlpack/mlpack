@@ -20,7 +20,18 @@ class PCA
    * @param coeff - PCA Loadings
    * @param score - contains the coordinates of the original data in the new coordinate system defined by the principal components
    */
-  void Apply(const arma::mat& data, arma::mat& coeff, arma::mat& score);
+  void Apply(arma::mat& data, const int newDimension);
+  void Apply(const arma::mat& data, arma::mat& transformedData,
+             arma::vec& eigVal);
+  void Apply(const arma::mat& data, arma::mat& transformedData, arma::vec&
+             eigVal, arma::mat& coeffs);
+
+
+  /*
+
+
+  // And for someone who wants even more.
+  ;*/
 
   /**
    * Delete PCA object
