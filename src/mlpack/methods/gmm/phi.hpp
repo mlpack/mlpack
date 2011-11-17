@@ -109,7 +109,7 @@ inline void phi(const arma::mat& x,
                 arma::vec& probabilities)
 {
   // Column i of 'diffs' is the difference between x.col(i) and the mean.
-  arma::mat diffs = x - (mean * arma::ones<arma::rowvec>(x.n_elem));
+  arma::mat diffs = x - (mean * arma::ones<arma::rowvec>(x.n_cols));
 
   // Now, we only want to calculate the diagonal elements of (diffs' * cov^-1 *
   // diffs).  We just don't need any of the other elements.  We can calculate
