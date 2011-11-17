@@ -62,9 +62,9 @@ void NNSVM<TKernel>::InitTrain(
   nnsmo.Init(dataset, param_.c_, param_.b_, param_.eps_, param_.max_iter_);
 
   /* 2-classes NNSVM training using NNSMO */
-  Timers::StartTimer("nnsvm/nnsvm_train");
+  Timers::Start("nnsvm/nnsvm_train");
   nnsmo.Train();
-  Timers::StopTimer("nnsvm/nnsvm_train");
+  Timers::Stop("nnsvm/nnsvm_train");
 
   /* Get the trained bi-class model */
   nnsmo.GetNNSVM(support_vectors_, model_.sv_coef_, model_.w_);

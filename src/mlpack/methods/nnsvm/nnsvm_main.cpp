@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
           CLI::GetParam<double>("nnsvm/eps"),
           CLI::GetParam<int>("nnsvm/max_iter"));
 
-      Timers::StartTimer("nnsvm/nnsvm_train");
+      Timers::Start("nnsvm/nnsvm_train");
       Log::Debug << "nnsvm_train_time" << CLI::GetParam<timeval>("nnsvm/nnsvm_train").tv_usec / 1e6 << std::endl;
       /* training and testing, thus no need to load model from file */
       if (mode=="train_test")
