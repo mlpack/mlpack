@@ -13,12 +13,12 @@ std::map<std::string, timeval> Timers::GetAllTimers() {
   return timers;
 }
 
-timeval Timers::Get(const char* timerName) {
+timeval Timers::GetTimer(const char* timerName) {
   std::string name(timerName);
   return timers[name];
 }
 
-void Timers::Print(const char* timerName) {
+void Timers::PrintTimer(const char* timerName) {
   std::string name=timerName;
   timeval&t=timers[name];
   Log::Info<<t.tv_sec<<"."<<std::setw(6)<<std::setfill('0')
@@ -63,7 +63,7 @@ void Timers::Print(const char* timerName) {
   Log::Info << std::endl;
 }
 
-void Timers::Start(const char* timerName) {
+void Timers::StartTimer(const char* timerName) {
   //Don't want to actually document the timer
   std::string name(timerName);
   timeval tmp;
@@ -79,7 +79,7 @@ void Timers::Start(const char* timerName) {
   timers[name] = tmp;
 }
 
-void Timers::Stop(const char* timerName) {
+void Timers::StopTimer(const char* timerName) {
   std::string name(timerName);
   timeval delta, b, a = timers[name];
 
@@ -94,7 +94,7 @@ void Timers::Stop(const char* timerName) {
 }
 
 #ifdef _WIN32
-void Timers::FileTimeToTimeVal(timeval* tv) { 
+void Timers::FileTimeToTimeVal(timeval* tv) {
   FILETIME ftime;
   uint64_t ptime = 0;
   //Acquire the file time

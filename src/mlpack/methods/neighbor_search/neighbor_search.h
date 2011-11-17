@@ -9,7 +9,7 @@
 
 #include <mlpack/core.h>
 #include <mlpack/core/tree/bounds.hpp>
-#include <mlpack/core/tree/binary_space_tree_crtp.hpp>
+#include <mlpack/core/tree/binary_space_tree.hpp>
 #include <vector>
 #include <string>
 
@@ -54,8 +54,7 @@ PARAM_FLAG("naive_mode", "If set, use naive computations (no trees).  This "
  * @tparam Kernel The kernel function; see kernel::ExampleKernel.
  * @tparam SortPolicy The sort policy for distances; see NearestNeighborSort.
  */
-template<typename T1 = arma::mat, 
-         typename Kernel = mlpack::kernel::SquaredEuclideanDistance,
+template<typename Kernel = mlpack::kernel::SquaredEuclideanDistance,
          typename SortPolicy = NearestNeighborSort>
 class NeighborSearch {
 
@@ -80,13 +79,13 @@ class NeighborSearch {
    * Simple typedef for the trees, which use a bound and a QueryStat (to store
    * distances for each node).  The bound should be configurable...
    */
-  typedef tree::BinarySpaceTree<T1, bound::HRectBound<2>, QueryStat> TreeType;
+  typedef tree::BinarySpaceTree<bound::HRectBound<2>, QueryStat> TreeType;
 
  private:
   //! Reference dataset.
-  arma::Base<typename T1::elem_type, T1> references_;
+  arma::mat references_;
   //! Query dataset (may not be given).
-  arma::Base<typename T1::elem_type, T1> queries_;
+  arma::mat queries_;
 
   //! Instantiation of kernel.
   Kernel kernel_;
@@ -135,8 +134,7 @@ class NeighborSearch {
    *     process!  Defaults to false.
    * @param kernel An optional instance of the Kernel class.
    */
-  NeighborSearch(arma::Base<typename T1::elem_type, T1>& queries_in,
-                 arma::Base<typename T1::elem_type, T1>&references_in,
+  NeighborSearch(arma::mat& queries_in, arma::mat& references_in,
                  bool alias_matrix = false, Kernel kernel = Kernel());
 
   /**
@@ -153,8 +151,8 @@ class NeighborSearch {
    *     process!  Defaults to false.
    * @param kernel An optional instance of the Kernel class.
    */
-  NeighborSearch(arma::Base<typename T1::elem_type, T1>& references_in, 
-                 bool alias_matrix = false, Kernel kernel = Kernel());
+  NeighborSearch(arma::mat& references_in, bool alias_matrix = false,
+                 Kernel kernel = Kernel());
 
   /**
    * Delete the NeighborSearch object. The tree is the only member we are
@@ -216,8 +214,7 @@ class NeighborSearch {
    * @param reference_node Reference node.
    * @param best_dist_so_far Best distance to a node so far -- used for pruning.
    */
-  void ComputeSingleNeighborsRecursion_(size_t point_id, 
-                                        arma::Col<typename T1::elem_type>& point,
+  void ComputeSingleNeighborsRecursion_(size_t point_id, arma::vec& point,
                                         TreeType* reference_node,
                                         double& best_dist_so_far);
 

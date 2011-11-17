@@ -62,9 +62,7 @@ class LMetric {
   /**
    * Computes the distance between two points.
    */
-  template<typename elem_type>
-  static double Evaluate(const arma::Col<elem_type>& a, 
-                         const arma::Col<elem_type>& b);
+  static double Evaluate(const arma::vec& a, const arma::vec& b);
 };
 
 // Doxygen will not include this specialization.
@@ -74,9 +72,8 @@ class LMetric {
 // the unspecialized implementation of the one function is given below.
 // Unspecialized implementation.  This should almost never be used...
 template<int t_pow, bool t_take_root>
-template<typename elem_type>
-double LMetric<t_pow, t_take_root>::Evaluate(const arma::Col<elem_type>& a,
-                                             const arma::Col<elem_type>& b) {
+double LMetric<t_pow, t_take_root>::Evaluate(const arma::vec& a,
+                                             const arma::vec& b) {
   double sum = 0;
   for (size_t i = 0; i < a.n_elem; i++)
     sum += pow(fabs(a[i] - b[i]), t_pow);

@@ -11,9 +11,7 @@ namespace kernel {
 
 // L1-metric specializations; the root doesn't matter.
 template<>
-template<typename elem_type>
-double LMetric<1, true>::Evaluate(const arma::Col<elem_type>& a, 
-                                  const arma::Col<elem_type>& b) {
+double LMetric<1, true>::Evaluate(const arma::vec& a, const arma::vec& b) {
   double sum = 0;
   for (size_t i = 0; i < a.n_elem; i++)
     sum += fabs(a[i] - b[i]);
@@ -22,9 +20,7 @@ double LMetric<1, true>::Evaluate(const arma::Col<elem_type>& a,
 }
 
 template<>
-template<typename elem_type>
-double LMetric<1, false>::Evaluate(const arma::Col<elem_type>& a, 
-                                   const arma::Col<elem_type>& b) {
+double LMetric<1, false>::Evaluate(const arma::vec& a, const arma::vec& b) {
   double sum = 0;
   for (size_t i = 0; i < a.n_elem; i++)
     sum += fabs(a[i] - b[i]);
@@ -34,9 +30,7 @@ double LMetric<1, false>::Evaluate(const arma::Col<elem_type>& a,
 
 // L2-metric specializations.
 template<>
-template<typename elem_type>
-double LMetric<2, true>::Evaluate(const arma::Col<elem_type>& a, 
-                                  const arma::Col<elem_type>& b) {
+double LMetric<2, true>::Evaluate(const arma::vec& a, const arma::vec& b) {
   double sum = 0;
   for (size_t i = 0; i < a.n_elem; i++)
     sum += pow(a[i] - b[i], 2.0); // fabs() not necessary when squaring.
@@ -45,9 +39,7 @@ double LMetric<2, true>::Evaluate(const arma::Col<elem_type>& a,
 }
 
 template<>
-template<typename elem_type>
-double LMetric<2, false>::Evaluate(const arma::Col<elem_type>& a, 
-                                   const arma::Col<elem_type>& b) {
+double LMetric<2, false>::Evaluate(const arma::vec& a, const arma::vec& b) {
   double sum = 0;
   for (size_t i = 0; i < a.n_elem; i++)
     sum += pow(a[i] - b[i], 2.0);
@@ -57,9 +49,7 @@ double LMetric<2, false>::Evaluate(const arma::Col<elem_type>& a,
 
 // L3-metric specialization (not very likely to be used, but just in case).
 template<>
-template<typename elem_type>
-double LMetric<3, true>::Evaluate(const arma::Col<elem_type>& a, 
-                                  const arma::Col<elem_type>& b) {
+double LMetric<3, true>::Evaluate(const arma::vec& a, const arma::vec& b) {
   double sum = 0;
   for (size_t i = 0; i < a.n_elem; i++)
     sum += pow(fabs(a[i] - b[i]), 3.0);
@@ -68,9 +58,7 @@ double LMetric<3, true>::Evaluate(const arma::Col<elem_type>& a,
 }
 
 template<>
-template<typename elem_type>
-double LMetric<3, false>::Evaluate(const arma::Col<elem_type>& a, 
-                                   const arma::Col<elem_type>& b) {
+double LMetric<3, false>::Evaluate(const arma::vec& a, const arma::vec& b) {
   double sum = 0;
   for (size_t i = 0; i < a.n_elem; i++)
     sum += pow(fabs(a[i] - b[i]), 3.0);
@@ -79,4 +67,4 @@ double LMetric<3, false>::Evaluate(const arma::Col<elem_type>& a,
 }
 
 }; // namespace kernel
-}; // namespace mlpack 
+}; // namespace mlpack
