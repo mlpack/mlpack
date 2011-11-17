@@ -87,25 +87,25 @@ int main(int argc, char* argv[]) {
   ////// SIMPLE NAIVE BAYES CLASSIFICATCLIN ASSUMING THE DATA TO BE UNIFORMLY DISTRIBUTED //////
 
   ////// Timing the training of the Naive Bayes Classifier //////
-  Timers::StartTimer("nbc/training");
+  Timers::Start("nbc/training");
 
   ////// Create and train the classifier
   SimpleNaiveBayesClassifier nbc = SimpleNaiveBayesClassifier(training_data);
 
   ////// Stop training timer //////
-  Timers::StopTimer("nbc/training");
+  Timers::Stop("nbc/training");
 
   ////// Timing the testing of the Naive Bayes Classifier //////
   ////// The variable that contains the result of the classification
   arma::vec results;
 
-  Timers::StartTimer("nbc/testing");
+  Timers::Start("nbc/testing");
 
   ////// Calling the function that classifies the test data
   nbc.Classify(testing_data, results);
 
   ////// Stop testing timer //////
-  Timers::StopTimer("nbc/testing");
+  Timers::Stop("nbc/testing");
 
   ////// OUTPUT RESULTS //////
   std::string output_filename = CLI::GetParam<std::string>("nbc/output");
