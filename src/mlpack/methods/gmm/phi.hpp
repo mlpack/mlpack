@@ -92,10 +92,36 @@ inline long double phi(const arma::vec& x,
     arma::mat inv_d = cinv * d_cov[i];
 
     g_cov[i] = f * dot(d_cov[i] * invDiff, invDiff) +
-        accu((cinv * d_cov[i]).diag()) / 2;
+        accu(inv_d.diag()) / 2;
   }
 
   return f;
+}
+
+/**
+ * Calculates the multivariate Gaussian probability density function for each
+ * data point (column) in the given matrix, with respect to the given mean and
+ * variance.
+ */
+inline void phi(const arma::mat& x,
+                const arma::vec& mean,
+                const arma::mat& cov,
+                arma::vec& probabilities)
+{
+  // Column i of 'diffs' is the difference between x.col(i) and the mean.
+  arma::mat diffs = x - (mean * arma::ones<arma::rowvec>(x.n_elem));
+
+  // Now, we only want to calculate the diagonal elements of (diffs' * cov^-1 *
+  // diffs).  We just don't need any of the other elements.  We can calculate
+  // the right hand part of the equation (instead of the left side) so that
+  // later we are referencing columns, not rows -- that is faster.
+  arma::mat rhs = -0.5 * inv(cov) * diffs;
+  arma::vec exponents(x.n_cols); // We will now fill this.
+  for (size_t i = 0; i < x.n_cols; i++)
+    exponents(i) = accu(diffs.col(i) % rhs.col(i));
+
+  probabilities = pow(2 * M_PI, (double) mean.n_elem / -2.0) *
+      pow(det(cov), -0.5) * exp(exponents);
 }
 
 }; // namespace gmm
