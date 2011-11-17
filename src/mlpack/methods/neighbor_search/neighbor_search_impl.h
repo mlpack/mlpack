@@ -1,4 +1,4 @@
-/**
+ /**
  * @file neighbor_search.cc
  *
  * Implementation of AllkNN class to perform all-nearest-neighbors on two
