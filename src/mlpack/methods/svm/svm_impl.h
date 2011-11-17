@@ -162,9 +162,9 @@ void SVM<TKernel>::SVM_C_Train_(size_t learner_typeid, arma::mat& dataset) {
 
         /* Initialize kernel */
         /* 2-classes SVM training using SMO */
-        Timers::Start("svm/train_smo");
+        Timers::StartTimer("svm/train_smo");
         smo.Train(learner_typeid, &dataset_bi);
-        Timers::Stop("svm/train_smo");
+        Timers::StopTimer("svm/train_smo");
 
         /* Get the trained bi-class model */
         models_[ct].bias_ = smo.Bias(); /* bias */

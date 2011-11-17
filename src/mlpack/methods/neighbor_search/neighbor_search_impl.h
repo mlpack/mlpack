@@ -1,4 +1,4 @@
- /**
+/**
  * @file neighbor_search.cc
  *
  * Implementation of AllkNN class to perform all-nearest-neighbors on two
@@ -13,13 +13,15 @@ using namespace mlpack::neighbor;
 
 // We call an advanced constructor of arma::mat which allows us to alias a
 // matrix (if the user has asked for that).
-template<typename T1, typename Kernel, typename SortPolicy>
-NeighborSearch<T1, Kernel, SortPolicy>::NeighborSearch(arma::Base<typename T1::elem_type, T1>& queries_in,
-                                                   arma::Base<typename T1::elem_type, T1>& references_in,
+template<typename Kernel, typename SortPolicy>
+NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& queries_in,
+                                                   arma::mat& references_in,
                                                    bool alias_matrix,
                                                    Kernel kernel) :
-    references_(references_in),     //Need to figure out how to push alias
-    queries_(queries_in),
+    references_(references_in.memptr(), references_in.n_rows,
+        references_in.n_cols, !alias_matrix),
+    queries_(queries_in.memptr(), queries_in.n_rows, queries_in.n_cols,
+        !alias_matrix),
     kernel_(kernel),
     naive_(CLI::GetParam<bool>("neighbor_search/naive_mode")),
     dual_mode_(!(naive_ || CLI::GetParam<bool>("neighbor_search/single_mode"))),
@@ -31,20 +33,20 @@ NeighborSearch<T1, Kernel, SortPolicy>::NeighborSearch(arma::Base<typename T1::e
   // Get the leaf size; naive ensures that the entire tree is one node
   if (naive_)
     CLI::GetParam<int>("tree/leaf_size") =
-        std::max(queries_.get_ref().n_cols, references_.get_ref().n_cols);
+        std::max(queries_.n_cols, references_.n_cols);
 
   // K-nearest neighbors initialization
   knns_ = CLI::GetParam<int>("neighbor_search/k");
 
   // Initialize the list of nearest neighbor candidates
-  neighbor_indices_.set_size(knns_, queries_.get_ref().n_cols);
+  neighbor_indices_.set_size(knns_, queries_.n_cols);
 
   // Initialize the vector of upper bounds for each point.
-  neighbor_distances_.set_size(knns_, queries_.get_ref().n_cols);
+  neighbor_distances_.set_size(knns_, queries_.n_cols);
   neighbor_distances_.fill(SortPolicy::WorstDistance());
 
   // We'll time tree building
-  Timers::Start("neighbor_search/tree_building");
+  Timers::StartTimer("neighbor_search/tree_building");
 
   // This call makes each tree from a matrix, leaf size, and two arrays
   // that record the permutation of the data points
@@ -52,16 +54,20 @@ NeighborSearch<T1, Kernel, SortPolicy>::NeighborSearch(arma::Base<typename T1::e
   reference_tree_ = new TreeType(references_, old_from_new_references_);
 
   // Stop the timer we started above
-  Timers::Stop("neighbor_search/tree_building");
+  Timers::StopTimer("neighbor_search/tree_building");
 }
 
 // We call an advanced constructor of arma::mat which allows us to alias a
 // matrix (if the user has asked for that).
-template<typename T1, typename Kernel, typename SortPolicy>
-NeighborSearch<T1, Kernel, SortPolicy>::NeighborSearch(arma::Base<typename T1::elem_type, T1>& references_in,
+template<typename Kernel, typename SortPolicy>
+NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& references_in,
                                                    bool alias_matrix,
                                                    Kernel kernel) :
-    references_(references_in), queries_(references_), kernel_(kernel),
+    references_(references_in.memptr(), references_in.n_rows,
+        references_in.n_cols, !alias_matrix),
+    queries_(references_.memptr(), references_.n_rows, references_.n_cols,
+        false),
+    kernel_(kernel),
     naive_(CLI::GetParam<bool>("neighbor_search/naive_mode")),
     dual_mode_(!(naive_ || CLI::GetParam<bool>("neighbor_search/single_mode"))),
     number_of_prunes_(0) {
@@ -69,20 +75,20 @@ NeighborSearch<T1, Kernel, SortPolicy>::NeighborSearch(arma::Base<typename T1::e
   // Get the leaf size from the module
   if (naive_)
     CLI::GetParam<int>("tree/leaf_size") =
-        std::max(queries_.get_ref().n_cols, references_.get_ref().n_cols);
+        std::max(queries_.n_cols, references_.n_cols);
 
   // K-nearest neighbors initialization
   knns_ = CLI::GetParam<int>("neighbor_search/k");
 
   // Initialize the list of nearest neighbor candidates
-  neighbor_indices_.set_size(knns_, references_.get_ref().n_cols);
+  neighbor_indices_.set_size(knns_, references_.n_cols);
 
   // Initialize the vector of upper bounds for each point.
-  neighbor_distances_.set_size(knns_, references_.get_ref().n_cols);
+  neighbor_distances_.set_size(knns_, references_.n_cols);
   neighbor_distances_.fill(SortPolicy::WorstDistance());
 
   // We'll time tree building
-  Timers::Start("neighbor_search/tree_building");
+  Timers::StartTimer("neighbor_search/tree_building");
 
   // This call makes each tree from a matrix, leaf size, and two arrays
   // that record the permutation of the data points
@@ -91,15 +97,15 @@ NeighborSearch<T1, Kernel, SortPolicy>::NeighborSearch(arma::Base<typename T1::e
   reference_tree_ = new TreeType(references_, old_from_new_references_);
 
   // Stop the timer we started above
-  Timers::Stop("neighbor_search/tree_building");
+  Timers::StopTimer("neighbor_search/tree_building");
 }
 
 /**
  * The tree is the only member we are responsible for deleting.  The others will
  * take care of themselves.
  */
-template<typename T1, typename Kernel, typename SortPolicy>
-NeighborSearch<T1, Kernel, SortPolicy>::~NeighborSearch() {
+template<typename Kernel, typename SortPolicy>
+NeighborSearch<Kernel, SortPolicy>::~NeighborSearch() {
   if (reference_tree_ != query_tree_)
     delete reference_tree_;
   if (query_tree_ != NULL)
@@ -109,8 +115,8 @@ NeighborSearch<T1, Kernel, SortPolicy>::~NeighborSearch() {
 /**
  * Performs exhaustive computation between two leaves.
  */
-template<typename T1, typename Kernel, typename SortPolicy>
-void NeighborSearch<T1, Kernel, SortPolicy>::ComputeBaseCase_(
+template<typename Kernel, typename SortPolicy>
+void NeighborSearch<Kernel, SortPolicy>::ComputeBaseCase_(
       TreeType* query_node,
       TreeType* reference_node) {
   // Used to find the query node's new upper bound
@@ -122,11 +128,10 @@ void NeighborSearch<T1, Kernel, SortPolicy>::ComputeBaseCase_(
       query_index < query_node->end(); query_index++) {
 
     // Get the query point from the matrix
-    arma::Col<typename T1::elem_type> query_point = 
-      queries_.get_ref().unsafe_col(query_index);
+    arma::vec query_point = queries_.unsafe_col(query_index);
 
-    double query_to_node_distance = SortPolicy::BestPointToNodeDistance
-      (query_point, reference_node);
+    double query_to_node_distance =
+      SortPolicy::BestPointToNodeDistance(query_point, reference_node);
 
     if (SortPolicy::IsBetter(query_to_node_distance,
         neighbor_distances_(knns_ - 1, query_index))) {
@@ -137,8 +142,7 @@ void NeighborSearch<T1, Kernel, SortPolicy>::ComputeBaseCase_(
         // Confirm that points do not identify themselves as neighbors
         // in the monochromatic case
         if (reference_node != query_node || reference_index != query_index) {
-          arma::Col<typename T1::elem_type> reference_point = 
-            references_.get_ref().unsafe_col(reference_index);
+          arma::vec reference_point = references_.unsafe_col(reference_index);
 
           double distance = kernel_.Evaluate(query_point, reference_point);
 
@@ -170,8 +174,8 @@ void NeighborSearch<T1, Kernel, SortPolicy>::ComputeBaseCase_(
 /**
  * The recursive function for dual tree
  */
-template<typename T1, typename Kernel, typename SortPolicy>
-void NeighborSearch<T1, Kernel, SortPolicy>::ComputeDualNeighborsRecursion_(
+template<typename Kernel, typename SortPolicy>
+void NeighborSearch<Kernel, SortPolicy>::ComputeDualNeighborsRecursion_(
       TreeType* query_node,
       TreeType* reference_node,
       double lower_bound) {
@@ -284,10 +288,10 @@ void NeighborSearch<T1, Kernel, SortPolicy>::ComputeDualNeighborsRecursion_(
 
 } // ComputeDualNeighborsRecursion_
 
-template<typename T1, typename Kernel, typename SortPolicy>
-void NeighborSearch<T1, Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
+template<typename Kernel, typename SortPolicy>
+void NeighborSearch<Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
       size_t point_id,
-      arma::Col<typename T1::elem_type>& point,
+      arma::vec& point,
       TreeType* reference_node,
       double& best_dist_so_far) {
 
@@ -298,11 +302,9 @@ void NeighborSearch<T1, Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
         reference_index < reference_node->end(); reference_index++) {
       // Confirm that points do not identify themselves as neighbors
       // in the monochromatic case
-      // SpMat does NOT currently implement memptr
-      if (!(references_.get_ref().memptr() == queries_.get_ref().memptr() && 
+      if (!(references_.memptr() == queries_.memptr() &&
             reference_index == point_id)) {
-        arma::Col<typename T1::elem_type> reference_point = 
-          references_.get_ref().unsafe_col(reference_index);
+        arma::vec reference_point = references_.unsafe_col(reference_index);
 
         double distance = kernel_.Evaluate(point, reference_point);
 
@@ -320,10 +322,10 @@ void NeighborSearch<T1, Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
     best_dist_so_far = neighbor_distances_(knns_ - 1, point_id);
   } else {
     // We'll order the computation by distance.
-    double left_distance = SortPolicy::BestPointToNodeDistance 
-      (point, reference_node->left());
-    double right_distance = SortPolicy::BestPointToNodeDistance
-      (point, reference_node->right());
+    double left_distance = SortPolicy::BestPointToNodeDistance(point,
+        reference_node->left());
+    double right_distance = SortPolicy::BestPointToNodeDistance(point,
+        reference_node->right());
 
     // Recurse in the best direction first.
     if (SortPolicy::IsBetter(left_distance, right_distance)) {
@@ -359,12 +361,12 @@ void NeighborSearch<T1, Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
  * Computes the best neighbors and stores them in resulting_neighbors and
  * distances.
  */
-template<typename T1, typename Kernel, typename SortPolicy>
-void NeighborSearch<T1, Kernel, SortPolicy>::ComputeNeighbors(
+template<typename Kernel, typename SortPolicy>
+void NeighborSearch<Kernel, SortPolicy>::ComputeNeighbors(
       arma::Mat<size_t>& resulting_neighbors,
       arma::mat& distances) {
 
-  Timers::Start("neighbor_search/computing_neighbors");
+  Timers::StartTimer("neighbor_search/computing_neighbors");
   if (naive_) {
     // Run the base case computation on all nodes
     if (query_tree_)
@@ -383,23 +385,19 @@ void NeighborSearch<T1, Kernel, SortPolicy>::ComputeNeighbors(
             reference_tree_));
       }
     } else {
-      size_t chunk = queries_.get_ref().n_cols / 10;
+      size_t chunk = queries_.n_cols / 10;
 
       for(size_t i = 0; i < 10; i++) {
         for(size_t j = 0; j < chunk; j++) {
-          arma::Col<typename T1::elem_type> point = 
-            queries_.get_ref().unsafe_col(i * chunk + j);
-
+          arma::vec point = queries_.unsafe_col(i * chunk + j);
           double best_dist_so_far = SortPolicy::WorstDistance();
           ComputeSingleNeighborsRecursion_(i * chunk + j, point,
               reference_tree_, best_dist_so_far);
         }
       }
-      for(size_t i = 0; i < queries_.get_ref().n_cols % 10; i++) {
-        size_t ind = (queries_.get_ref().n_cols / 10) * 10 + i;
-        arma::Col<typename T1::elem_type> point = 
-          queries_.get_ref().unsafe_col(ind);
-
+      for(size_t i = 0; i < queries_.n_cols % 10; i++) {
+        size_t ind = (queries_.n_cols / 10) * 10 + i;
+        arma::vec point = queries_.unsafe_col(ind);
         double best_dist_so_far = SortPolicy::WorstDistance();
         ComputeSingleNeighborsRecursion_(ind, point, reference_tree_,
             best_dist_so_far);
@@ -407,7 +405,7 @@ void NeighborSearch<T1, Kernel, SortPolicy>::ComputeNeighbors(
     }
   }
 
-  Timers::Stop("neighbor_search/computing_neighbors");
+  Timers::StopTimer("neighbor_search/computing_neighbors");
 
   // We need to initialize the results list before filling it
   resulting_neighbors.set_size(neighbor_indices_.n_rows,
@@ -442,8 +440,8 @@ void NeighborSearch<T1, Kernel, SortPolicy>::ComputeNeighbors(
  * @param neighbor Index of reference point which is being inserted.
  * @param distance Distance from query point to reference point.
  */
-template<typename T1, typename Kernel, typename SortPolicy>
-void NeighborSearch<T1, Kernel, SortPolicy>::InsertNeighbor(size_t query_index,
+template<typename Kernel, typename SortPolicy>
+void NeighborSearch<Kernel, SortPolicy>::InsertNeighbor(size_t query_index,
                                                         size_t pos,
                                                         size_t neighbor,
                                                         double distance) {

@@ -1,4 +1,4 @@
-#include "cli.hpp"
+#include "cli.hpp" 
 #include "log.hpp"
 #include "../utilities/timers.hpp"
 
@@ -59,10 +59,10 @@ CLI::CLI(const CLI& other) : desc(other.desc),
     did_parse(false), doc(&empty_program_doc) {
   return;
 }
- 
+
 CLI::~CLI() {
   // Terminate the program timer.
-  Timers::Stop("total_time");
+  Timers::StopTimer("total_time");
 
   // Did the user ask for verbose output?  If so we need to print everything.
   // But only if the user did not ask for help or info.
@@ -75,7 +75,7 @@ CLI::~CLI() {
     std::map<std::string, timeval>::iterator iter;
     for(iter = times.begin(); iter != times.end(); iter++) {
       Log::Info << iter->first << " -- ";
-      Timers::Print(iter->first.c_str()); 
+      Timers::PrintTimer(iter->first.c_str());
     }
   }
 
@@ -297,7 +297,7 @@ void CLI::ParseCommandLine(int argc, char** line) {
   DefaultMessages();
   RequiredOptions();
 
-  Timers::Start("total_time");
+  Timers::StartTimer("total_time");
 }
 
 /*
@@ -322,7 +322,7 @@ void CLI::ParseStream(std::istream& stream) {
   DefaultMessages();
   RequiredOptions();
 
-  Timers::Start("total_time");
+  Timers::StartTimer("total_time");
 }
 
 /*
@@ -424,7 +424,7 @@ void CLI::RequiredOptions() {
   std::string str = *iter;
   if (!vmap.count(str)) 
   {// If a required option isn't there...
-    Timers::Stop("total_time"); //Execution stop here, pretty much.
+    Timers::StopTimer("total_time"); //Execution stop here, pretty much.
     Log::Fatal << "Required option --" << str.c_str() << " is undefined." 
       << std::endl;
   }

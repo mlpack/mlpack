@@ -73,8 +73,7 @@ class HRectBound {
   /**
    * Calculates minimum bound-to-point squared distance.
    */
-  template<typename elem_type>
-  double MinDistance(const arma::Col<elem_type>& point) const;
+  double MinDistance(const arma::vec& point) const;
 
   /**
    * Calculates minimum bound-to-bound squared distance.
@@ -86,8 +85,7 @@ class HRectBound {
   /**
    * Calculates maximum bound-to-point squared distance.
    */
-  template<typename elem_type>
-  double MaxDistance(const arma::Col<elem_type>& point) const;
+  double MaxDistance(const arma::vec& point) const;
 
   /**
    * Computes maximum distance.
@@ -107,8 +105,7 @@ class HRectBound {
   /**
    * Expands this region to include a new point.
    */
-  template<typename elem_type>
-  HRectBound& operator|=(const arma::Col<elem_type>& vector);
+  HRectBound& operator|=(const arma::vec& vector);
 
   /**
    * Expands this region to encompass another bound.

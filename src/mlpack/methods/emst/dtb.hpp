@@ -575,11 +575,11 @@ class DualTreeBoruvka {
       CLI::GetParam<int>("tree/leaf_size") =
           CLI::GetParam<int>("emst/leaf_size");
 
-      Timers::Start("emst/tree_building");
+      Timers::StartTimer("emst/tree_building");
 
       tree_ = new DTBTree(data_points_, old_from_new_permutation_);
 
-      Timers::Stop("emst/tree_building");
+      Timers::StopTimer("emst/tree_building");
       
     }
     else {
@@ -615,7 +615,7 @@ class DualTreeBoruvka {
    */
   void ComputeMST(arma::mat& results) {
 
-    Timers::Start("emst/MST_computation");
+    Timers::StartTimer("emst/MST_computation");
 
     while (number_of_edges_ < (number_of_points_ - 1)) {
       
@@ -639,7 +639,7 @@ class DualTreeBoruvka {
       
     }
 
-    Timers::Stop("emst/MST_computation");
+    Timers::StopTimer("emst/MST_computation");
 
     EmitResults_(results);
 

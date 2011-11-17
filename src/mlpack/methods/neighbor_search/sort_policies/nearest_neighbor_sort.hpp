@@ -68,8 +68,8 @@ class NearestNeighborSort {
    * this is the minimum distance between the tree node and the point using the
    * given distance function.
    */
-  template<typename elem_type, typename TreeType>
-  static double BestPointToNodeDistance(const arma::Col<elem_type>& query_point,
+  template<typename TreeType>
+  static double BestPointToNodeDistance(const arma::vec& query_point,
                                         const TreeType* reference_node);
 
   /**

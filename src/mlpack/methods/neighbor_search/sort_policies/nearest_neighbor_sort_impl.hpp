@@ -22,9 +22,9 @@ double NearestNeighborSort::BestNodeToNodeDistance(
   return query_node->bound().MinDistance(reference_node->bound());
 }
 
-template<typename elem_type, typename TreeType>
+template<typename TreeType>
 double NearestNeighborSort::BestPointToNodeDistance(
-    const arma::Col<elem_type>& point,
+    const arma::vec& point,
     const TreeType* reference_node) {
   // This is not implemented yet for the general case because the trees do not
   // accept arbitrary distance metrics.

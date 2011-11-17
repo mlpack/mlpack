@@ -31,7 +31,7 @@ class Timers {
   *
   * @param timerName The name of the timer in question.
   */
-  static timeval Get(const char* timerName);
+  static timeval GetTimer(const char* timerName);
 
  /*
   * Prints the specified timer.  If it took longer than a minute to complete
@@ -39,7 +39,7 @@ class Timers {
   *
   * @param timerName The name of the timer in question.
   */
-  static void Print(const char* timerName);
+  static void PrintTimer(const char* timerName);
 
  /*
   * Initializes a timer, available like a normal value specified on
@@ -47,7 +47,7 @@ class Timers {
   *
   * @param timerName The name of the timer in question.
   */
-  static void Start(const char* timerName);
+  static void StartTimer(const char* timerName);
 
  /*
   * Halts the timer, and replaces it's value with
@@ -55,7 +55,7 @@ class Timers {
   *
   * @param timerName The name of the timer in question.
   */
-  static void Stop(const char* timerName);
+  static void StopTimer(const char* timerName);
  private:
   static std::map<std::string, timeval> timers;
 

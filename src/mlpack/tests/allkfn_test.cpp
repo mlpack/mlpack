@@ -10,11 +10,6 @@
 using namespace mlpack;
 using namespace mlpack::neighbor;
 
-#define ELEM double
-#define CONTAINER arma::Mat<ELEM>
-
-typedef NeighborSearch<CONTAINER, kernel::SquaredEuclideanDistance, FurthestNeighborSort> bAllkFN;
-
 BOOST_AUTO_TEST_SUITE(AllkFNTest);
 
 /**
@@ -28,7 +23,7 @@ BOOST_AUTO_TEST_SUITE(AllkFNTest);
 BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test)
 {
   // Set up our data.
-  CONTAINER data(1, 11);
+  arma::mat data(1, 11);
   data[0] = 0.05; // Row addressing is unnecessary (they are all 0).
   data[1] = 0.35;
   data[2] = 0.15;
@@ -46,23 +41,21 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test)
   CLI::GetParam<int>("neighbor_search/k") = 10;
   for (int i = 0; i < 3; i++)
   {
-    //AllkFN* allkfn;
-    bAllkFN* allkfn;
-
-    arma::Col<ELEM> data_mutable = data;
+    AllkFN* allkfn;
+    arma::mat data_mutable = data;
     switch(i)
     {
       case 0: // Use the dual-tree method.
-        allkfn = new bAllkFN(data_mutable);
+        allkfn = new AllkFN(data_mutable);
         break;
       case 1: // Use the single-tree method.
         CLI::GetParam<bool>("neighbor_search/single_mode") = true;
-        allkfn = new bAllkFN(data_mutable);
+        allkfn = new AllkFN(data_mutable);
         break;
       case 2: // Use the naive method.
         CLI::GetParam<bool>("neighbor_search/single_mode") = false;
         CLI::GetParam<bool>("neighbor_search/naive_mode") = true;
-        allkfn = new bAllkFN(data_mutable);
+        allkfn = new AllkFN(data_mutable);
         break;
     }
 
