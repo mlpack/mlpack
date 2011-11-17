@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
   string reference_file = CLI::GetParam<string>("reference_file");
   string output_file = CLI::GetParam<string>("output_file");
 
-  arma::mat reference_data;
+  arma::vec reference_data;
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
 
   if (CLI::GetParam<string>("query_file") != "") {
     string query_file = CLI::GetParam<string>("query_file");
-    arma::mat query_data;
+    arma::vec query_data;
 
     if (!data::Load(query_file.c_str(), query_data))
       Log::Fatal << "Query file " << query_file << " not found" << endl;

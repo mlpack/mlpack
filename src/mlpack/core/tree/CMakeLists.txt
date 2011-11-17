@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   binary_space_tree.hpp
   binary_space_tree_impl.hpp
+  binary_space_tree_crtp.hpp
+  binary_space_tree_impl_crtp.hpp
   bounds.hpp
   dballbound.hpp
   dballbound_impl.hpp

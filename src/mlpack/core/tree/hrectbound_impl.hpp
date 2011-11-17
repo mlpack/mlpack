@@ -121,7 +121,8 @@ void HRectBound<t_pow>::Centroid(arma::vec& centroid) const {
  * Calculates minimum bound-to-point squared distance.
  */
 template<int t_pow>
-double HRectBound<t_pow>::MinDistance(const arma::vec& point) const {
+template<typename elem_type>
+double HRectBound<t_pow>::MinDistance(const arma::Col<elem_type>& point) const {
   assert(point.n_elem == dim_);
 
   double sum = 0;
@@ -181,7 +182,8 @@ double HRectBound<t_pow>::MinDistance(const HRectBound& other) const {
  * Calculates maximum bound-to-point squared distance.
  */
 template<int t_pow>
-double HRectBound<t_pow>::MaxDistance(const arma::vec& point) const {
+template<typename elem_type>
+double HRectBound<t_pow>::MaxDistance(const arma::Col<elem_type>& point) const {
   double sum = 0;
 
   assert(point.n_elem == dim_);
@@ -287,7 +289,8 @@ math::Range HRectBound<t_pow>::RangeDistance(const arma::vec& point) const {
  * Expands this region to include a new point.
  */
 template<int t_pow>
-HRectBound<t_pow>& HRectBound<t_pow>::operator|=(const arma::vec& vector) {
+template<typename elem_type>
+HRectBound<t_pow>& HRectBound<t_pow>::operator|=(const arma::Col<elem_type>& vector) {
   Log::Assert(vector.n_elem == dim_);
 
   for (size_t i = 0; i < dim_; i++) {
