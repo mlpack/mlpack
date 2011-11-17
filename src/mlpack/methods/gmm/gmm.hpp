@@ -10,12 +10,12 @@
 
 #include <mlpack/core.h>
 
-PARAM_MODULE("mog", "Parameters for the Gaussian mixture model.");
+PARAM_MODULE("gmm", "Parameters for the Gaussian mixture model.");
 
-PARAM_INT("k", "The number of Gaussians in the mixture model (defaults to 1).",
-    "mog", 1);
-PARAM_INT("d", "The number of dimensions of the data on which the mixture "
-    "model is to be fit.", "mog", 0);
+PARAM_INT("gaussians", "The number of Gaussians in the mixture model (default "
+    "1).", "gmm", 1);
+PARAM_INT("dimension", "The number of dimensions of the data on which the "
+    "mixture model is to be fit.", "gmm", 0);
 
 namespace mlpack {
 namespace gmm {
@@ -31,14 +31,14 @@ namespace gmm {
  * Example use:
  *
  * @code
- * MoGEM mog;
+ * GMM mog;
  * ArrayList<double> results;
  *
  * mog.Init(number_of_gaussians, dimension);
  * mog.ExpectationMaximization(data, &results, optim_flag);
  * @endcode
  */
-class MoGEM {
+class GMM {
  private:
   //! The number of Gaussians in the model.
   size_t gaussians;
@@ -59,7 +59,7 @@ class MoGEM {
    * @param gaussians Number of Gaussians in this GMM.
    * @param dimension Dimensionality of each Gaussian.
    */
-  MoGEM(size_t gaussians, size_t dimension) :
+  GMM(size_t gaussians, size_t dimension) :
       gaussians(gaussians),
       dimension(dimension),
       means(gaussians),
