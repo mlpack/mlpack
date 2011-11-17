@@ -90,8 +90,6 @@ void KMeans(const arma::mat& data,
     {
       if (counts[i] == 0)
       {
-        Log::Warn << "Cluster " << i << " is empty." << std::endl;
-
         // Strategy: take the furthest point from the cluster with highest
         // variance.  So, we need the variance of each cluster.
         arma::vec variances;
@@ -127,12 +125,6 @@ void KMeans(const arma::mat& data,
             }
           }
         }
-
-        Log::Warn << "Taking point " << point << " from cluster " << cluster
-            << std::endl;
-        Log::Warn << "Point: " << std::endl << data.col(point) << std::endl;
-        Log::Warn << "Cluster centroid: " << std::endl;
-        Log::Warn << centroids.col(cluster) << std::endl;
 
         // Take that point and add it to the empty cluster.
         counts[cluster]--;
