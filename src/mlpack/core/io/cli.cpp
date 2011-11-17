@@ -59,7 +59,7 @@ CLI::CLI(const CLI& other) : desc(other.desc),
     did_parse(false), doc(&empty_program_doc) {
   return;
 }
-
+ 
 CLI::~CLI() {
   // Terminate the program timer.
   Timers::Stop("total_time");

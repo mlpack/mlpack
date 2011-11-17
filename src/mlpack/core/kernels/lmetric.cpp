@@ -79,4 +79,4 @@ double LMetric<3, false>::Evaluate(const arma::Col<elem_type>& a,
 }
 
 }; // namespace kernel
-}; // namespace mlpack
+}; // namespace mlpack 
