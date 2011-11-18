@@ -14,8 +14,6 @@ PARAM_MODULE("gmm", "Parameters for the Gaussian mixture model.");
 
 PARAM_INT("gaussians", "The number of Gaussians in the mixture model (default "
     "1).", "gmm", 1);
-PARAM_INT("dimension", "The number of dimensions of the data on which the "
-    "mixture model is to be fit.", "gmm", 0);
 
 namespace mlpack {
 namespace gmm {
