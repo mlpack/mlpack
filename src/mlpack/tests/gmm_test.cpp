@@ -205,7 +205,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
 
   // Build each Gaussian individually.
   size_t point = 0;
-  for (int i = 0; i < gaussians; i++)
+  for (size_t i = 0; i < gaussians; i++)
   {
     arma::mat gaussian;
     gaussian.randn(dims, counts[i]);
@@ -241,16 +241,16 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
   arma::uvec sort_try = sort_index(gmm.Weights());
 
   // Check the model to see that it is correct.
-  for (int i = 0; i < gaussians; i++)
+  for (size_t i = 0; i < gaussians; i++)
   {
     // Check the mean.
-    for (int j = 0; j < dims; j++)
+    for (size_t j = 0; j < dims; j++)
       BOOST_REQUIRE_CLOSE((gmm.Means()[sort_try[i]])[j],
           (means[sort_ref[i]])[j], 1e-5);
 
     // Check the covariance.
-    for (int row = 0; row < dims; row++)
-      for (int col = 0; col < dims; col++)
+    for (size_t row = 0; row < dims; row++)
+      for (size_t col = 0; col < dims; col++)
         BOOST_REQUIRE_CLOSE((gmm.Covariances()[sort_try[i]])(row, col),
             (covars[sort_ref[i]])(row, col), 1e-5);
 
