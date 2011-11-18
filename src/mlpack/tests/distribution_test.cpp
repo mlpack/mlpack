@@ -62,10 +62,10 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionRandomTest)
   // Normalize.
   actualProb /= accu(actualProb);
 
-  // 5% tolerance, because this can be a noisy process.
-  BOOST_REQUIRE_CLOSE(actualProb(0), 0.3, 5.0);
-  BOOST_REQUIRE_CLOSE(actualProb(1), 0.6, 5.0);
-  BOOST_REQUIRE_CLOSE(actualProb(2), 0.1, 5.0);
+  // 8% tolerance, because this can be a noisy process.
+  BOOST_REQUIRE_CLOSE(actualProb(0), 0.3, 8.0);
+  BOOST_REQUIRE_CLOSE(actualProb(1), 0.6, 8.0);
+  BOOST_REQUIRE_CLOSE(actualProb(2), 0.1, 8.0);
 }
 
 /**
