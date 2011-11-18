@@ -31,11 +31,11 @@ void GMM::ExpectationMaximization(const arma::mat& data)
   // as our trained model.
   for (size_t iter = 0; iter < 10; iter++)
   {
-    // Use k-means to find initial values for the parameters.
     KMeans(data, gaussians, means_trial, covariances_trial, weights_trial);
 
-    // Calculate the log likelihood of the model.
     l = Loglikelihood(data, means_trial, covariances_trial, weights_trial);
+
+    Log::Info << "K-means log-likelihood: " << l << std::endl;
 
     l_old = -DBL_MAX;
 
@@ -60,31 +60,22 @@ void GMM::ExpectationMaximization(const arma::mat& data)
         cond_prob.row(i) /= accu(cond_prob.row(i));
 
       // Store the sum of the probability of each state over all the data.
-      arma::vec prob_row_sums = arma::sum(cond_prob, 0 /* column-wise */);
+      arma::vec prob_row_sums = trans(arma::sum(cond_prob, 0 /* columnwise */));
 
       // Calculate the new value of the means using the updated conditional
       // probabilities.
       for (size_t i = 0; i < gaussians; i++)
       {
-        means_trial[i].zeros();
-        for (size_t j = 0; j < data.n_cols; j++)
-          means_trial[i] += cond_prob(j, i) * data.col(j);
+        means_trial[i] = (data * cond_prob.col(i)) / prob_row_sums[i];
 
-        means_trial[i] /= prob_row_sums[i];
-      }
+        // Calculate the new value of the covariances using the updated
+        // conditional probabilities and the updated means.
+        arma::mat tmp = data - (means_trial[i] *
+            arma::ones<arma::rowvec>(data.n_cols));
+        arma::mat tmp_b = tmp % (arma::ones<arma::vec>(data.n_rows) *
+            trans(cond_prob.col(i)));
 
-      // Calculate the new value of the covariances using the updated
-      // conditional probabilities and the updated means.
-      for (size_t i = 0; i < gaussians; i++)
-      {
-        covariances_trial[i].zeros();
-        for (size_t j = 0; j < data.n_cols; j++)
-        {
-          arma::vec tmp = data.col(j) - means_trial[i];
-          covariances_trial[i] += cond_prob(j, i) * (tmp * trans(tmp));
-        }
-
-        covariances_trial[i] /= prob_row_sums[i];
+        covariances_trial[i] = (tmp * trans(tmp_b)) / prob_row_sums[i];
       }
 
       // Calculate the new values for omega using the updated conditional
@@ -98,7 +89,7 @@ void GMM::ExpectationMaximization(const arma::mat& data)
       iteration++;
     }
 
-    Log::Warn << "Likelihood of iteration " << iter << " (total " << iteration
+    Log::Info << "Likelihood of iteration " << iter << " (total " << iteration
         << " iterations): " << l << std::endl;
 
     // The trial model is trained.  Is it better than our existing model?
@@ -123,17 +114,18 @@ long double GMM::Loglikelihood(const arma::mat& data,
                                const arma::vec& weights_l) const
 {
   long double loglikelihood = 0;
-  long double likelihood;
 
-  for (size_t j = 0; j < data.n_cols; j++)
+  arma::vec phis;
+  arma::mat likelihoods(gaussians, data.n_cols);
+  for (size_t i = 0; i < gaussians; i++)
   {
-    likelihood = 0;
-    for(size_t i = 0; i < gaussians; i++)
-      likelihood += weights_l(i) * phi(data.unsafe_col(j), means_l[i],
-          covariances_l[i]);
-
-    loglikelihood += log(likelihood);
+    phi(data, means_l[i], covariances_l[i], phis);
+    likelihoods.row(i) = weights_l(i) * trans(phis);
   }
+
+  // Now sum over every point.
+  for (size_t j = 0; j < data.n_cols; j++)
+    loglikelihood += log(accu(likelihoods.col(j)));
 
   return loglikelihood;
 }
