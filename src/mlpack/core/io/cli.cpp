@@ -74,7 +74,7 @@ CLI::~CLI() {
     std::map<std::string, timeval> times = Timers::GetAllTimers();
     std::map<std::string, timeval>::iterator iter;
     for(iter = times.begin(); iter != times.end(); iter++) {
-      Log::Info << iter->first << " -- ";
+      Log::Info << "  " << iter->first << ": ";
       Timers::PrintTimer(iter->first.c_str());
     }
   }
@@ -422,10 +422,10 @@ void CLI::RequiredOptions() {
   std::list<std::string>::iterator iter;
   for (iter = rOpt.begin(); iter != rOpt.end(); iter++) {
   std::string str = *iter;
-  if (!vmap.count(str)) 
+  if (!vmap.count(str))
   {// If a required option isn't there...
     Timers::StopTimer("total_time"); //Execution stop here, pretty much.
-    Log::Fatal << "Required option --" << str.c_str() << " is undefined." 
+    Log::Fatal << "Required option --" << str.c_str() << " is undefined."
       << std::endl;
   }
   }
