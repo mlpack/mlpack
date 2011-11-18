@@ -42,7 +42,7 @@ class DiscreteDistribution
    * @param numObservations Number of possible observations this distribution
    *    can have.
    */
-  DiscreteDistribution(size_t numObservations) :
+  DiscreteDistribution(const size_t numObservations) :
       probabilities(arma::ones<arma::vec>(numObservations) / numObservations)
   { /* nothing to do */ }
 
