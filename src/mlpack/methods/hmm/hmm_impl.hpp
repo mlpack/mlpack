@@ -64,7 +64,7 @@ void HMM<Distribution>::Train(
 
     // Loop over each sequence.
     std::vector<std::vector<double> > emissionProb(transition.n_cols);
-    std::vector<std::vector<size_t> > emissionList(transition.n_cols);
+    std::vector<std::vector<Observation> > emissionList(transition.n_cols);
     for (size_t seq = 0; seq < dataSeq.size(); seq++)
     {
       arma::mat stateProb;
@@ -145,7 +145,7 @@ void HMM<Distribution>::Train(
 
   // Estimate the transition and emission matrices directly from the
   // observations.
-  std::vector<std::vector<size_t> > emissionList(transition.n_cols);
+  std::vector<std::vector<Observation> > emissionList(transition.n_cols);
   for (size_t seq = 0; seq < dataSeq.size(); seq++)
   {
     // Simple error checking.
