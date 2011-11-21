@@ -360,7 +360,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
 
   // Now that our data is generated, we give the HMM the labeled data to train
   // on.
-  HMM<DiscreteDistribution> hmm(3, 6);
+  HMM<DiscreteDistribution> hmm(3, DiscreteDistribution(6));
 
   hmm.Train(observations, states);
 
@@ -580,6 +580,130 @@ BOOST_AUTO_TEST_CASE(GaussianHMMSimpleTest)
   // Check that each prediction is right.
   for (size_t i = 0; i < 1000; i++)
     BOOST_REQUIRE_EQUAL(predictedClasses[i], classes[i]);
+}
+
+/**
+ * Ensure that Gaussian HMMs can be trained properly, for the labeled training
+ * case and also for the unlabeled training case.
+ */
+BOOST_AUTO_TEST_CASE(GaussianHMMTrainTest)
+{
+  srand(time(NULL));
+
+  // Four emission Gaussians and three internal states.  The goal is to estimate
+  // the transition matrix correctly, and each distribution correctly.
+  std::vector<GaussianDistribution> emission;
+  emission.push_back(GaussianDistribution("0.0 0.0 0.0", "1.0 0.2 0.2;"
+                                                         "0.2 1.5 0.0;"
+                                                         "0.2 0.0 1.1"));
+  emission.push_back(GaussianDistribution("2.0 1.0 5.0", "0.7 0.3 0.0;"
+                                                         "0.3 2.6 0.0;"
+                                                         "0.0 0.0 1.0"));
+  emission.push_back(GaussianDistribution("5.0 0.0 0.5", "1.0 0.0 0.0;"
+                                                         "0.0 1.0 0.0;"
+                                                         "0.0 0.0 1.0"));
+
+  arma::mat transition("0.3 0.5 0.7;"
+                       "0.3 0.4 0.1;"
+                       "0.4 0.1 0.2");
+
+  // Now generate observations.
+  std::vector<std::vector<arma::vec> > observations(100);
+  std::vector<std::vector<size_t> > states(100);
+
+  for (size_t obs = 0; obs < 100; obs++)
+  {
+    observations[obs].resize(1000);
+    states[obs].resize(1000);
+
+    // Always start in state zero.
+    states[obs][0] = 0;
+    observations[obs][0] = emission[0].Random();
+
+    for (size_t t = 1; t < 1000; t++)
+    {
+      // Choose the state.
+      double randValue = (double) rand() / (double) RAND_MAX;
+      double probSum = 0;
+      for (size_t state = 0; state < 3; state++)
+      {
+        probSum += transition(state, states[obs][t - 1]);
+        if (probSum >= randValue)
+        {
+          states[obs][t] = state;
+          break;
+        }
+      }
+
+      // Now choose the emission.
+      observations[obs][t] = emission[states[obs][t]].Random();
+    }
+  }
+
+  // Now that the data is generated, train the HMM.
+  HMM<GaussianDistribution> hmm(3, GaussianDistribution(3));
+
+  hmm.Train(observations, states);
+
+  // We use an absolute tolerance of 0.01 for the transition matrices.
+  // Check that the transition matrix is correct.
+  for (size_t row = 0; row < 3; row++)
+    for (size_t col = 0; col < 3; col++)
+      BOOST_REQUIRE_SMALL(transition(row, col) - hmm.Transition()(row, col),
+          0.01);
+
+  // Check that each distribution is correct.
+  for (size_t dist = 0; dist < 3; dist++)
+  {
+    // Check that the mean is correct.  Absolute tolerance of 0.04.
+    for (size_t dim = 0; dim < 3; dim++)
+      BOOST_REQUIRE_SMALL(hmm.Emission()[dist].Mean()(dim) -
+          emission[dist].Mean()(dim), 0.04);
+
+    // Check that the covariance is correct.  Absolute tolerance of 0.075.
+    for (size_t row = 0; row < 3; row++)
+      for (size_t col = 0; col < 3; col++)
+        BOOST_REQUIRE_SMALL(hmm.Emission()[dist].Covariance()(row, col) -
+            emission[dist].Covariance()(row, col), 0.075);
+  }
+
+  // Now let's try it all again, but this time, unlabeled.  Everything will fail
+  // if we don't have a decent guess at the Gaussians, so we'll take a "poor"
+  // guess at it ourselves.  I won't use K-Means because we can't afford to add
+  // the instability of that to our test.  We'll leave the covariances as the
+  // identity.
+  HMM<GaussianDistribution> hmm2(3, GaussianDistribution(3));
+  hmm2.Emission()[0].Mean() = "0.3 -0.2 0.1"; // Actual: [0 0 0].
+  hmm2.Emission()[1].Mean() = "1.0 1.4 3.2";  // Actual: [2 1 5].
+  hmm2.Emission()[2].Mean() = "3.1 -0.2 6.1"; // Actual: [5 0 5].
+
+  // We'll only use 20 observation sequences to try and keep training time
+  // shorter.
+  observations.resize(20);
+
+  hmm.Train(observations);
+
+  // We use an absolute tolerance of 0.01 for the transition matrices.
+  // Check that the transition matrix is correct.
+  for (size_t row = 0; row < 3; row++)
+    for (size_t col = 0; col < 3; col++)
+      BOOST_REQUIRE_SMALL(transition(row, col) - hmm.Transition()(row, col),
+          0.01);
+
+  // Check that each distribution is correct.
+  for (size_t dist = 0; dist < 3; dist++)
+  {
+    // Check that the mean is correct.  Absolute tolerance of 0.04.
+    for (size_t dim = 0; dim < 3; dim++)
+      BOOST_REQUIRE_SMALL(hmm.Emission()[dist].Mean()(dim) -
+          emission[dist].Mean()(dim), 0.04);
+
+    // Check that the covariance is correct.  Absolute tolerance of 0.075.
+    for (size_t row = 0; row < 3; row++)
+      for (size_t col = 0; col < 3; col++)
+        BOOST_REQUIRE_SMALL(hmm.Emission()[dist].Covariance()(row, col) -
+            emission[dist].Covariance()(row, col), 0.075);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();
