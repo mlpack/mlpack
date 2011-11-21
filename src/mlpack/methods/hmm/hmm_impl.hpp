@@ -283,19 +283,23 @@ double HMM<Distribution>::Predict(const std::vector<Observation>& dataSeq,
   // don't use log-likelihoods to save that little bit of time, but we'll
   // calculate the log-likelihood at the end of it all.
   stateSeq.resize(dataSeq.size());
-  arma::mat stateProb(transition.n_rows, dataSeq.size());
+  arma::mat logStateProb(transition.n_rows, dataSeq.size());
+
+  // Store the logs of the transposed transition matrix.  This is because we
+  // will be using the rows of the transition matrix.
+  arma::mat logTrans(log(trans(transition)));
 
   // The calculation of the first state is slightly different; the probability
   // of the first state being state j is the maximum probability that the state
   // came to be j from another state.
-  stateProb.col(0).zeros();
+  logStateProb.col(0).zeros();
   for (size_t state = 0; state < transition.n_rows; state++)
-    stateProb[state] = transition(state, 0) *
-        emission[state].Probability(dataSeq[0]);
+    logStateProb[state] = log(transition(state, 0) *
+        emission[state].Probability(dataSeq[0]));
 
   // Store the best first state.
   arma::u32 index;
-  stateProb.unsafe_col(0).max(index);
+  logStateProb.unsafe_col(0).max(index);
   stateSeq[0] = index;
 
   for (size_t t = 1; t < dataSeq.size(); t++)
@@ -305,16 +309,17 @@ double HMM<Distribution>::Predict(const std::vector<Observation>& dataSeq,
     // being the previous state.
     for (size_t j = 0; j < transition.n_rows; j++)
     {
-      arma::vec prob = stateProb.col(t - 1) % trans(transition.row(j));
-      stateProb(j, t) = prob.max() * emission[j].Probability(dataSeq[t]);
+      arma::vec prob = logStateProb.col(t - 1) + logTrans.col(j);
+      logStateProb(j, t) = prob.max() +
+          log(emission[j].Probability(dataSeq[t]));
     }
 
     // Store the best state.
-    stateProb.unsafe_col(t).max(index);
+    logStateProb.unsafe_col(t).max(index);
     stateSeq[t] = index;
   }
 
-  return log(stateProb(stateSeq[dataSeq.size() - 1], dataSeq.size() - 1));
+  return logStateProb(stateSeq[dataSeq.size() - 1], dataSeq.size() - 1);
 }
 
 /**
