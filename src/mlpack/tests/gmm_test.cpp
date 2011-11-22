@@ -125,9 +125,6 @@ BOOST_AUTO_TEST_CASE(MultipointMultivariatePhiTest)
  */
 BOOST_AUTO_TEST_CASE(GMMTrainEMOneGaussian)
 {
-  // Initialize random seed.
-  srand(time(NULL));
-
   for (size_t iterations = 0; iterations < 4; iterations++)
   {
     // Determine random covariance and mean.
