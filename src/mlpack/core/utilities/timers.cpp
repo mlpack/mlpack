@@ -20,43 +20,43 @@ timeval Timers::GetTimer(const char* timerName) {
 
 void Timers::PrintTimer(const char* timerName) {
   std::string name=timerName;
-  timeval&t=timers[name];
-  Log::Info<<t.tv_sec<<"."<<std::setw(6)<<std::setfill('0')
-    <<t.tv_usec<<"s";
+  timeval& t = timers[name];
+  Log::Info << t.tv_sec << "." << std::setw(6) << std::setfill('0')
+    << t.tv_usec << "s";
 
-  //Alsooutputconvenientday/hr/min/sec.
+  //Also output convenient day/hr/min/sec.
 
-  int days=t.tv_sec/86400;//Integerdivisionroundsdown.
-  int hours=(t.tv_sec%86400)/3600;
-  int minutes=(t.tv_sec%3600)/60;
-  int seconds=(t.tv_sec%60);
-  //Nooutputifitdidn'teventakeaminute.
-  if(!(days==0&&hours==0&&minutes==0)){
-    bool output=false;//Denotesifwehaveoutputanythingyet.
-    Log::Info<<"(";
-    //Onlyoutputunitsiftheyhavenonzerovalues(yes,abittedious).
-    if(days>0){
-      Log::Info<<days<<"days";
-      output=true;
+  int days = t.tv_sec/86400; //Integerdivisionroundsdown.
+  int hours = (t.tv_sec%86400) / 3600;
+  int minutes = (t.tv_sec%3600) / 60;
+  int seconds = (t.tv_sec%60);
+  //No output if it didn't even take a minute.
+  if ( !(days == 0 && hours == 0 && minutes == 0) ){
+    bool output = false;//Denotesifwehaveoutputanythingyet.
+    Log::Info << "(";
+    //Only output units if they have nonzero values (yes, a bit tedious).
+    if ( days>0 ){
+      Log::Info << days << "days";
+      output = true;
     }
-    if(hours>0){
-      if(output)
-        Log::Info<<",";
-      Log::Info<<hours<<"hrs";
-      output=true;
+    if ( hours>0 ){
+      if( output )
+        Log::Info << ",";
+      Log::Info << hours <<"hrs";
+      output = true;
     }
-    if(minutes>0){
-      if(output)
-        Log::Info<<",";
-      Log::Info<<minutes<<"mins";
-      output=true;
+    if ( minutes>0 ){
+      if ( output )
+        Log::Info << ",";
+      Log::Info << minutes << "mins";
+      output = true;
     }
-    if(seconds>0){
-      if(output)
-        Log::Info<<",";
-      Log::Info<<seconds<<"."<<std::setw(1)<<(t.tv_usec/100000)<<
+    if ( seconds>0 ){
+      if ( output )
+        Log::Info << ",";
+      Log::Info << seconds << "." << std::setw(1) << (t.tv_usec/100000) <<
         "secs";
-      output=true;
+      output = true;
     }
     Log::Info<<")";
   }  
