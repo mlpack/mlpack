@@ -579,7 +579,12 @@ BOOST_AUTO_TEST_CASE(GaussianHMMSimpleTest)
 
   // Check that each prediction is right.
   for (size_t i = 0; i < 1000; i++)
+  {
     BOOST_REQUIRE_EQUAL(predictedClasses[i], classes[i]);
+
+    // The probability of the wrong class should be infinitesimal.
+    BOOST_REQUIRE_SMALL(stateProb((classes[i] + 1) % 2, i), 0.001);
+  }
 }
 
 /**
@@ -760,3 +765,4 @@ BOOST_AUTO_TEST_CASE(GaussianHMMGenerateTest)
 }
 
 BOOST_AUTO_TEST_SUITE_END();
+
