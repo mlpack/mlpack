@@ -193,7 +193,6 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionProbabilityTest)
  */
 BOOST_AUTO_TEST_CASE(GaussianDistributionRandomTest)
 {
-  srand(time(NULL));
   arma::vec mean("1.0 2.25");
   arma::mat cov("0.85 0.60;"
                 "0.60 1.45");

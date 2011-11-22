@@ -593,8 +593,6 @@ BOOST_AUTO_TEST_CASE(GaussianHMMSimpleTest)
  */
 BOOST_AUTO_TEST_CASE(GaussianHMMTrainTest)
 {
-  srand(time(NULL));
-
   // Four emission Gaussians and three internal states.  The goal is to estimate
   // the transition matrix correctly, and each distribution correctly.
   std::vector<GaussianDistribution> emission;

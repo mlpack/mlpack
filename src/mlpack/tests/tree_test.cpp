@@ -342,8 +342,6 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistanceBound)
  */
 BOOST_AUTO_TEST_CASE(HRectBoundRangeDistanceBound)
 {
-  srand(time(NULL));
-
   for (int i = 0; i < 50; i++)
   {
     size_t dim = rand() % 20;
@@ -395,8 +393,6 @@ BOOST_AUTO_TEST_CASE(HRectBoundRangeDistanceBound)
  */
 BOOST_AUTO_TEST_CASE(HRectBoundRangeDistancePoint)
 {
-  srand(time(NULL));
-
   for (int i = 0; i < 20; i++)
   {
     size_t dim = rand() % 20;
@@ -941,9 +937,6 @@ BOOST_AUTO_TEST_CASE(kd_tree_test)
 
   size_t max_runs = 10; // Ten total tests.
   size_t point_increments = 1000; // Range is from 2000 points to 11000.
-
-  // Generate the dataset.
-  srand(time(NULL));
 
   // Reset the leaf size as other tests have been naughty.
   // Also, a leaf size of 20 makes the test take too long.
