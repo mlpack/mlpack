@@ -1,17 +1,16 @@
 /**
  * @file fastica_main.cc
+ * @author Nishant Mehta
  *
  * Demonstrates usage of fastica.h
  *
  * @see fastica.h
- *
- * @author Nishant Mehta
  */
 #include "fastica.hpp"
 
 /**
- * Here are usage instructions for this implementation of FastICA. Default values are given
- * to the right in parentheses.
+ * Here are usage instructions for this implementation of FastICA. Default
+ * values are given to the right in parentheses.
  *
  * Parameters specific to this driver:
  *
@@ -19,12 +18,14 @@
  *   @param ic_filename = independent components results filename (ic.dat)
  *   @param unmixing_filename = unmixing matrix results filename (unmixing.dat)
  *
- * Parameters specific to fastica.h (should be preceded by 'fastica/' on the command line):
+ * Parameters specific to fastica.h (should be preceded by 'fastica/' on the
+ * command line):
  *
- *   @param seed = (long) seed to the random number generator (clock() + time(0))
+ *   @param seed = seed to the random number generator (clock() + time(0))
  *   @param approach = {deflation, symmetric} (deflation)
  *   @param nonlinearity = {logcosh, gauss, kurtosis, skew} (logcosh)
- *   @param num_of_IC = integer constant for number of independent components to find (dimensionality of data)
+ *   @param num_of_IC = integer constant for number of independent components to
+ *      find (dimensionality of data)
  *   @param fine_tune = {true, false} (false)
  *   @param a1 = numeric constant for logcosh nonlinearity (1)
  *   @param a2 = numeric constant for gauss nonlinearity (1)
@@ -33,7 +34,8 @@
  *   @param epsilon = threshold for convergence (0.0001)
  *   @param max_num_iterations = maximum number of fixed-point iterations
  *   @param max_fine_tune = maximum number of fine-tuning iterations
- *   @param percent_cut = number in [0,1] indicating percent data to use in stabilization updates (1)
+ *   @param percent_cut = number in [0,1] indicating percent data to use in
+ *       stabilization updates (1)
  *
  * Example use:
  *
@@ -50,25 +52,30 @@ PARAM_STRING_REQ("input_file", "File containing input data.", "fastica");
 PARAM_STRING("ic_file", "File containing IC data.", "fastica", "ic.dat");
 PARAM_STRING("unmixing_file", "File containing unmixing data.", "fastica", "unmixing.dat");
 
-int main(int argc, char *argv[]) {
+using namespace mlpack;
+using namespace mlpack::fastica;
+
+int main(int argc, char *argv[])
+{
   arma::mat X;
-  using namespace mlpack;
-  using namespace fastica;
 
   CLI::ParseCommandLine(argc, argv);
   const char* data = CLI::GetParam<std::string>("fastica/input_file").c_str();
   data::Load(data, X);
 
-  const char* ic_filename = CLI::GetParam<std::string>("fastica/ic_file").c_str();
+  const char* ic_filename =
+      CLI::GetParam<std::string>("fastica/ic_file").c_str();
   const char* unmixing_filename =
-    CLI::GetParam<std::string>("fastica/unmixing_file").c_str();
+      CLI::GetParam<std::string>("fastica/unmixing_file").c_str();
 
   FastICA fastica;
 
   int success_status = false;
-  if(fastica.Init(X) == true) {
+  if (fastica.Init(X) == true)
+  {
     arma::mat W, Y;
-    if(fastica.DoFastICA(W, Y) == true) {
+    if (fastica.DoFastICA(W, Y) == true)
+    {
       data::Save(ic_filename, Y, true);
       arma::mat Z = trans(W);
       data::Save(unmixing_filename, Z, true);
@@ -77,10 +84,8 @@ int main(int argc, char *argv[]) {
     }
   }
 
-
-  if(success_status == false) {
-    mlpack::Log::Debug << "FAILED!" << std::endl;
-  }
+  if (success_status == false)
+    Log::Fatal << "FastICA failed." << std::endl;
 
   return success_status;
 }

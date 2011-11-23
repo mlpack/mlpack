@@ -1,5 +1,6 @@
 /**
  * @file fastica.h
+ * @author Nishant Mehta
  *
  * FastICA Algorithm
  *
@@ -8,8 +9,6 @@
  * functions. For sample usage, see accompanying file fastica_main.cc
  *
  * @see fastica_main.cc
- *
- * @author Nishant Mehta
  */
 #ifndef __MLPACK_METHODS_FASTICA_FASTICA_HPP
 #define __MLPACK_METHODS_FASTICA_FASTICA_HPP
@@ -27,9 +26,9 @@ namespace fastica {
 #define SKEW 30
 
 #define SYMMETRIC 0
-#define DEFLATCLIN 1
+#define DEFLATION 1
 
-/***
+/**
  * Parameters for FastICA.
  */
 PARAM_INT("seed", "Seed for the random number generator.", "fastica", 0);
@@ -71,98 +70,94 @@ using namespace mlpack;
  * This class takes in a D by N data matrix and runs FastICA, for number
  * of dimensions D and number of samples N
  */
-class FastICA {
-
+class FastICA
+{
  private:
-
-  /** Module used to pass parameters into the FastICA object */
-  struct datanode* module_;
-
-  /** data */
+  //! data
   arma::mat X;
 
-  /** Optimization approach to use (deflation vs symmetric) */
+  //! Optimization approach to use (deflation vs symmetric).
   size_t approach_;
 
-  /** Nonlinearity (contrast function) to use for evaluating independence */
+  //! Nonlinearity (contrast function) to use for evaluating independence.
   size_t nonlinearity_;
 
   //const size_t first_eig;
   //const size_t last_eig;
 
-  /** number of independent components to find */
+  //! Number of independent components to find.
   size_t num_of_IC_;
 
-  /** whether to enable fine tuning */
+  //! Whether to enable fine tuning.
   bool fine_tune_;
 
-  /** constant used for log cosh nonlinearity */
+  //! Constant used for log cosh nonlinearity.
   double a1_;
 
-  /** constant used for Gauss nonlinearity */
+  //! Constant used for Gauss nonlinearity.
   double a2_;
 
-  /** constant used for fine tuning */
+  //! Constant used for fine tuning.
   double mu_;
 
-  /** whether to enable stabilization */
+  //! Whether to enable stabilization.
   bool stabilization_;
 
-  /** threshold for convergence */
+  //! Threshold for convergence.
   double epsilon_;
 
-  /** maximum number of iterations beore giving up */
+  //! Maximum number of iterations beore giving up.
   size_t max_num_iterations_;
 
-  /** maximum number of times to fine tune */
+  //! Maximum number of times to fine tune.
   size_t max_fine_tune_;
 
-  /** for stabilization, percent of data to include in random draw */
+  //! For stabilization; percent of data to include in random draw.
   double percent_cut_;
 
-
-
   /**
-   * Symmetric Newton-Raphson using log cosh contrast function
+   * Symmetric Newton-Raphson using log cosh contrast function.
    */
-  void SymmetricLogCoshUpdate_(const size_t n, const arma::mat& X, arma::mat& B) {
+  void SymmetricLogCoshUpdate_(const size_t n, const arma::mat& X, arma::mat& B)
+  {
     arma::mat hyp_tan, col_vector, msum;
 
     hyp_tan = trans(X) * B;
-    // elementwise tanh()
-    for(size_t i = 0; i < hyp_tan.n_elem; i++)
+
+    // Elementwise tanh().
+    for (size_t i = 0; i < hyp_tan.n_elem; i++)
       hyp_tan[i] = tanh(a1_ * hyp_tan[i]);
 
     col_vector.set_size(d);
     col_vector.fill(a1_);
 
-    // take the squared L2 norm of the hyp_tan matrix rows (sum each squared
-    // element) and subtract n
+    // Take the squared L2 norm of the hyp_tan matrix rows (sum each squared
+    // element) and subtract n.
     msum = sum(pow(hyp_tan, 2), 1) - n;
     B %= col_vector * msum; // % is the schur product (elementwise multiply)
     B += (X * hyp_tan);
     B /= (1 / (double) n); // scale
   }
 
-
   /**
-   * Fine-tuned Symmetric Newton-Raphson using log cosh contrast
-   * function
+   * Fine-tuned Symmetric Newton-Raphson using log cosh contrast function.
    */
-  void SymmetricLogCoshFineTuningUpdate_(size_t n, const arma::mat& X, arma::mat& B) {
+  void SymmetricLogCoshFineTuningUpdate_(size_t n, const arma::mat& X,
+      arma::mat& B)
+  {
     arma::mat Y, hyp_tan, Beta, Beta_Diag, D, msum;
 
     Y = trans(X) * B;
     hyp_tan.set_size(Y.n_rows, Y.n_cols);
-    // elementwise tanh()
+    // Elementwise tanh().
     for(size_t i = 0; i < hyp_tan.n_elem; i++)
       hyp_tan[i] = tanh(a1_ * Y[i]);
-    Beta = sum(Y % hyp_tan, 1); // sum columns of elementwise multiplication
+    Beta = sum(Y % hyp_tan, 1); // Sum columns of elementwise multiplication.
 
-    // take squared L2 norm of hyp_tan matrix rows and subtract n
+    // Take squared L2 norm of hyp_tan matrix rows and subtract n.
     msum = sum(pow(hyp_tan, 2), 1) - n;
-    msum *= a1_; // scale
-    msum += Beta; // elementwise addition
+    msum *= a1_; // Scale.
+    msum += Beta; // Elementwise addition.
 
     D.zeros(msum.n_elem, msum.n_elem);
     D.diag() = pow(msum, -1);
@@ -173,11 +168,13 @@ class FastICA {
     B += mu_ * ((B * ((trans(Y) * hyp_tan) - Beta_Diag)) * D);
   }
 
-
   /**
-   * Symmetric Newton-Raphson using Gaussian contrast function
+   * Symmetric Newton-Raphson using Gaussian contrast function.
    */
-  void SymmetricGaussUpdate_(size_t n, const arma::mat& X, arma::mat& B) {
+  void SymmetricGaussUpdate_(size_t n,
+                             const arma::mat& X,
+                             arma::mat& B)
+  {
     arma::mat U, U_squared, ex, col_vector;
 
     U = trans(X) * B;
@@ -196,9 +193,12 @@ class FastICA {
 
 
   /**
-   * Fine-tuned Symmetric Newton-Raphson using Gaussian contrast function
+   * Fine-tuned Symmetric Newton-Raphson using Gaussian contrast function.
    */
-  void SymmetricGaussFineTuningUpdate_(size_t n, const arma::mat X, arma::mat& B) {
+  void SymmetricGaussFineTuningUpdate_(size_t n,
+                                       const arma::mat X,
+                                       arma::mat& B)
+  {
     arma::mat Y, Y_squared_a2, ex, gauss, D, Beta;
     arma::vec Beta_vector, sum_vector;
 
@@ -214,31 +214,33 @@ class FastICA {
     sum_vector = sum((Y_squared_a2 - 1) % ex, 1);
 
 
-    //D = diag(1 ./ (Beta + sum((Y_squared_a2 - 1) .* ex)))
+    // D = diag(1 ./ (Beta + sum((Y_squared_a2 - 1) .* ex))).
     D.zeros(d, d);
     D.diag() = 1 / (Beta_vector + sum_vector);
 
     Beta.zeros(d, d);
     Beta.diag() = Beta_vector;
 
-    //B = B + myy * B * (Y' * gauss - diag(Beta)) * D;
+    // B = B + myy * B * (Y' * gauss - diag(Beta)) * D.
     B += mu_ * ((B * (trans(Y) * gauss - Beta)) * D);
   }
 
-
   /**
-   * Symmetric Newton-Raphson using kurtosis contrast function
+   * Symmetric Newton-Raphson using kurtosis contrast function.
    */
-  void SymmetricKurtosisUpdate_(size_t n, const arma::mat X, arma::mat& B) {
+  void SymmetricKurtosisUpdate_(size_t n, const arma::mat X, arma::mat& B)
+  {
     B *= -3;
     B += (X * pow(trans(X) * B, 3)) / (double) n;
   }
 
-
   /**
-   * Fine-tuned Symmetric Newton-Raphson using kurtosis contrast function
+   * Fine-tuned Symmetric Newton-Raphson using kurtosis contrast function.
    */
-  void SymmetricKurtosisFineTuningUpdate_(size_t n, const arma::mat& X, arma::mat& B) {
+  void SymmetricKurtosisFineTuningUpdate_(size_t n,
+                                          const arma::mat& X,
+                                          arma::mat& B)
+  {
     arma::mat Y, G_pow_3, Beta_Diag, D, temp1, temp2, temp3;
     arma::vec Beta, D_vector;
 
@@ -256,20 +258,22 @@ class FastICA {
     B += mu_ * ((B * ((trans(Y) * G_pow_3) - Beta_Diag)) * D);
   }
 
-
   /**
-   * Symmetric Newton-Raphson using skew contrast function
+   * Symmetric Newton-Raphson using skew contrast function.
    */
-  void SymmetricSkewUpdate_(size_t n, const arma::mat& X, arma::mat& B) {
+  void SymmetricSkewUpdate_(size_t n, const arma::mat& X, arma::mat& B)
+  {
     B = X * pow((trans(X) * B), 2);
     B /= (double) n;
   }
 
-
   /**
    * Fine-tuned Symmetric Newton-Raphson using skew contrast function
    */
-  void SymmetricSkewFineTuningUpdate_(size_t n, const arma::mat& X, arma::mat& B) {
+  void SymmetricSkewFineTuningUpdate_(size_t n,
+                                      const arma::mat& X,
+                                      arma::mat& B)
+  {
     arma::mat Y, G_skew, Beta_Diag, D_vector, D, temp1, temp2, temp3;
     arma::vec Beta;
 
@@ -284,15 +288,15 @@ class FastICA {
     B = mu_ * ((B * ((trans(Y) * G_skew) - Beta)) * D);
   }
 
-
   /**
    * Deflation Newton-Raphson using log cosh contrast function
    */
-  void DeflationLogCoshUpdate_(size_t n, const arma::mat& X, arma::vec& w) {
+  void DeflationLogCoshUpdate_(size_t n, const arma::mat& X, arma::vec& w)
+  {
     arma::vec hyp_tan, temp1;
 
     hyp_tan = trans(X) * w;
-    for(size_t i = 0; i < hyp_tan.n_elem; i++)
+    for (size_t i = 0; i < hyp_tan.n_elem; i++)
       hyp_tan[i] = tanh(a1_ * hyp_tan[i]);
 
     w *= a1_ * (accu(pow(hyp_tan, 2)) - n);
@@ -300,15 +304,17 @@ class FastICA {
     w /= (double) n;
   }
 
-
   /**
    * Fine-tuned Deflation Newton-Raphson using log cosh contrast function
    */
-  void DeflationLogCoshFineTuningUpdate_(size_t n, const arma::mat& X, arma::vec& w) {
+  void DeflationLogCoshFineTuningUpdate_(size_t n,
+                                         const arma::mat& X,
+                                         arma::vec& w)
+  {
     arma::vec hyp_tan, X_hyp_tan;
 
     hyp_tan = trans(X) * w;
-    for(size_t i = 0; i < hyp_tan.n_elem; i++)
+    for (size_t i = 0; i < hyp_tan.n_elem; i++)
       hyp_tan[i] = tanh(a1_ * hyp_tan[i]);
 
     X_hyp_tan = X * hyp_tan;
@@ -318,32 +324,36 @@ class FastICA {
     w += mu_ * scale * (X_hyp_tan - (beta * w));
   }
 
-
   /**
-   * Deflation Newton-Raphson using Gaussian contrast function
+   * Deflation Newton-Raphson using Gaussian contrast function.
    */
-  void DeflationGaussUpdate_(size_t n, const arma::mat& X, arma::vec& w) {
+  void DeflationGaussUpdate_(size_t n,
+                             const arma::mat& X,
+                             arma::vec& w)
+  {
     arma::vec u, u_sq, u_sq_a, ex;
 
     u = trans(X) * w;
     u_sq = pow(u, 2);
     u_sq_a = -a2_ * u_sq;
-    // u is gauss
+    // u is gauss.
     ex = exp(u_sq_a / 2.0);
     u = (ex % u);
     ex += (ex % u_sq_a);
-    // ex is dGauss
+    // ex is dGauss.
 
     w *= -accu(ex);
     w += (X * u);
     w /= (double) n;
   }
 
-
   /**
-   * Fine-tuned Deflation Newton-Raphson using Gaussian contrast function
+   * Fine-tuned Deflation Newton-Raphson using Gaussian contrast function.
    */
-  void DeflationGaussFineTuningUpdate_(size_t n, const arma::mat& X, arma::vec& w) {
+  void DeflationGaussFineTuningUpdate_(size_t n,
+                                       const arma::mat& X,
+                                       arma::vec& w)
+  {
     arma::vec u, u_sq, u_sq_a, ex, x_gauss;
 
     u = trans(X) * w;
@@ -351,9 +361,9 @@ class FastICA {
     u_sq_a = -a2_ * u_sq;
     ex = exp(u_sq_a / 2.0);
     u = (ex % u);
-    // u is gauss
+    // u is gauss.
     ex += (u_sq_a % ex);
-    // ex is dGauss
+    // ex is dGauss.
 
     x_gauss = X * u;
 
@@ -363,22 +373,24 @@ class FastICA {
     w += mu_ * scale * (x_gauss - (beta * w));
   }
 
-
   /**
-   * Deflation Newton-Raphson using kurtosis contrast function
+   * Deflation Newton-Raphson using kurtosis contrast function.
    */
-  void DeflationKurtosisUpdate_(size_t n, const arma::mat& X, arma::vec& w) {
+  void DeflationKurtosisUpdate_(size_t n, const arma::mat& X, arma::vec& w)
+  {
     arma::vec temp1, temp2;
 
     w *= -3;
     w += (X * pow(trans(X) * w, 3)) / (double) n;
   }
 
-
   /**
-   * Fine-tuned Deflation Newton-Raphson using kurtosis contrast function
+   * Fine-tuned Deflation Newton-Raphson using kurtosis contrast function.
    */
-  void DeflationKurtosisFineTuningUpdate_(size_t n, const arma::mat& X, arma::vec& w) {
+  void DeflationKurtosisFineTuningUpdate_(size_t n,
+                                          const arma::mat& X,
+                                          arma::vec& w)
+  {
     arma::vec EXG_pow_3, Beta_w, temp1;
 
     EXG_pow_3 = (X * pow(trans(X) * w, 3)) / (double) n;
@@ -387,22 +399,24 @@ class FastICA {
     w += (mu_ / (beta - 3)) * ((beta * w) - EXG_pow_3);
   }
 
-
   /**
-   * Deflation Newton-Raphson using skew contrast function
+   * Deflation Newton-Raphson using skew contrast function.
    */
-  void DeflationSkewUpdate_(size_t n, const arma::mat& X, arma::vec& w) {
+  void DeflationSkewUpdate_(size_t n, const arma::mat& X, arma::vec& w)
+  {
     arma::vec temp1;
 
     w = X * pow(trans(X) * w, 2);
     w /= (double) n;
   }
 
-
   /**
    * Fine-tuned Deflation Newton-Raphson using skew contrast function
    */
-  void DeflationSkewFineTuningUpdate_(size_t n, const arma::mat& X, arma::vec& w) {
+  void DeflationSkewFineTuningUpdate_(size_t n,
+                                      const arma::mat& X,
+                                      arma::vec& w)
+  {
     arma::vec EXG_skew;
 
     EXG_skew = X * pow(trans(X) * w, 2);
@@ -413,13 +427,10 @@ class FastICA {
     w += (mu_ / beta) * ((beta * w) - EXG_skew);
   }
 
-
-
  public:
-
-  /** number of dimensions (components) in original data */
+  //! Number of dimensions (components) in original data.
   size_t d;
-  /** number of samples of original data */
+  //! number of samples of original data.
   size_t n;
 
   /**
@@ -430,8 +441,8 @@ class FastICA {
   /**
    * Initializes the FastICA object by obtaining everything the algorithm needs
    */
-  size_t Init(arma::mat& X_in) {
-
+  size_t Init(arma::mat& X_in)
+  {
     X = X_in;
     d = X.n_rows;
     n = X.n_cols;
@@ -439,51 +450,58 @@ class FastICA {
     long seed = mlpack::CLI::GetParam<int>("fastica/seed") + clock() + time(0);
     srand48(seed);
 
-
     const char* string_approach =
-      mlpack::CLI::GetParam<std::string>("fastica/approach").c_str();
-    if(strcasecmp(string_approach, "deflation") == 0) {
-      mlpack::Log::Info << "Using Deflation approach ";
-      approach_ = DEFLATCLIN;
+        mlpack::CLI::GetParam<std::string>("fastica/approach").c_str();
+    if (strcasecmp(string_approach, "deflation") == 0)
+    {
+      Log::Info << "Using Deflation approach ";
+      approach_ = DEFLATION;
     }
-    else if(strcasecmp(string_approach, "symmetric") == 0) {
-      mlpack::Log::Info << "Using Symmetric approach ";
+    else if (strcasecmp(string_approach, "symmetric") == 0)
+    {
+      Log::Info << "Using Symmetric approach ";
       approach_ = SYMMETRIC;
     }
-    else {
-      mlpack::Log::Fatal << "Approach must be 'deflation' or 'symmetric'!" <<
-          std::endl;
+    else
+    {
+      Log::Fatal << "Approach must be 'deflation' or 'symmetric'!" << std::endl;
     }
 
     const char* string_nonlinearity =
       mlpack::CLI::GetParam<std::string>("fastica/nonlinearity").c_str();
-    if(strcasecmp(string_nonlinearity, "logcosh") == 0) {
-      mlpack::Log::Info << "with log cosh nonlinearity." << std::endl;
+    if (strcasecmp(string_nonlinearity, "logcosh") == 0)
+    {
+      Log::Info << "with log cosh nonlinearity." << std::endl;
       nonlinearity_ = LOGCOSH;
     }
-    else if(strcasecmp(string_nonlinearity, "gauss") == 0) {
-      mlpack::Log::Info << "with Gaussian nonlinearity." << std::endl;
+    else if (strcasecmp(string_nonlinearity, "gauss") == 0)
+    {
+      Log::Info << "with Gaussian nonlinearity." << std::endl;
       nonlinearity_ = GAUSS;
     }
-    else if(strcasecmp(string_nonlinearity, "kurtosis") == 0) {
-      mlpack::Log::Info << "with kurtosis nonlinearity." << std::endl;
+    else if (strcasecmp(string_nonlinearity, "kurtosis") == 0)
+    {
+      Log::Info << "with kurtosis nonlinearity." << std::endl;
       nonlinearity_ = KURTOSIS;
     }
-    else if(strcasecmp(string_nonlinearity, "skew") == 0) {
-      mlpack::Log::Info << "with skew nonlinearity." << std::endl;
+    else if (strcasecmp(string_nonlinearity, "skew") == 0)
+    {
+      Log::Info << "with skew nonlinearity." << std::endl;
       nonlinearity_ = SKEW;
     }
-    else {
-      mlpack::Log::Fatal << "Nonlinearity is not one of {logcosh, gauss, "
-          "kurtosis, skew}!" << std::endl;
+    else
+    {
+      Log::Fatal << "Nonlinearity is not one of {logcosh, gauss, kurtosis, "
+          "skew}!" << std::endl;
     }
 
     //const size_t first_eig_ = fx_param_int(module_, "first_eig", 1);
     // for now, the last eig must be d, and num_of IC must be d, until I have time to incorporate PCA into this code
     //const size_t last_eig_ = fx_param_int(module_, "last_eig", d);
     num_of_IC_ = mlpack::CLI::GetParam<int>("fastica/num_of_IC");
-    if(num_of_IC_ < 1 || num_of_IC_ > d) {
-      mlpack::Log::Fatal << "ERROR: num_of_IC = " << num_of_IC_ <<
+    if (num_of_IC_ < 1 || num_of_IC_ > d)
+    {
+      Log::Fatal << "ERROR: num_of_IC = " << num_of_IC_ <<
           " must be >= 1 and <= dimensionality of data" << std::endl;
 
       return false;
@@ -498,75 +516,89 @@ class FastICA {
 
     size_t int_max_num_iterations =
       mlpack::CLI::GetParam<int>("fastica/max_num_iterations");
-    if(int_max_num_iterations < 0) {
-      mlpack::Log::Fatal << "max_num_iterations (" << int_max_num_iterations
+    if(int_max_num_iterations < 0)
+    {
+      Log::Fatal << "max_num_iterations (" << int_max_num_iterations
           << ") must be greater than or equal to 0!" << std::endl;
     }
     max_num_iterations_ = (size_t) int_max_num_iterations;
 
-    size_t int_max_fine_tune = mlpack::CLI::GetParam<int>("fastica/max_fine_tune");
-    if(int_max_fine_tune < 0) {
-      mlpack::Log::Fatal << "max_fine_tune (" << int_max_fine_tune
+    size_t int_max_fine_tune =
+        mlpack::CLI::GetParam<int>("fastica/max_fine_tune");
+    if(int_max_fine_tune < 0)
+    {
+      Log::Fatal << "max_fine_tune (" << int_max_fine_tune
           << ") must be greater than or equal to 0!" << std::endl;
     }
     max_fine_tune_ = (size_t) int_max_fine_tune;
 
     percent_cut_ = mlpack::CLI::GetParam<double>("fastica/percent_cut");
-    if((percent_cut_ < 0) || (percent_cut_ > 1)) {
-      mlpack::Log::Fatal << "percent_cut (" << percent_cut_ << ") must be "
+    if ((percent_cut_ < 0) || (percent_cut_ > 1))
+    {
+      Log::Fatal << "percent_cut (" << percent_cut_ << ") must be "
           "between 0 and 1!" << std::endl;
     }
     return true;
   }
 
-
   // NOTE: these functions currently are public because some of them can
   //       serve as utilities that actually should be moved to lin_alg.h
-
 
   /**
    * Return Select indices < max according to probability equal to parameter
    * percentage, and return indices in a Vector
    */
-  size_t RandomSubMatrix(size_t n, double percent_cut, const arma::mat& X, arma::mat& X_sub) {
+  size_t RandomSubMatrix(size_t n,
+                         double percent_cut,
+                         const arma::mat& X,
+                         arma::mat& X_sub)
+  {
     std::vector<size_t> colnums;
-    for(size_t i = 0; i < X.n_cols; i++) {
-      if(drand48() <= percent_cut) // add column
+    for (size_t i = 0; i < X.n_cols; i++)
+    {
+      if (drand48() <= percent_cut) // Add column.
         colnums.push_back(i);
     }
 
-    // now that we have all the column numbers we want, assemble the random
-    // submatrix
+    // Now that we have all the column numbers we want, assemble the random
+    // submatrix.
     X_sub.set_size(X.n_rows, colnums.size());
-    for(size_t i = 0; i < colnums.size(); i++)
+    for (size_t i = 0; i < colnums.size(); i++)
       X_sub.col(i) = X.col(colnums[i]);
 
     return colnums.size();
   }
 
-
   /**
    * Run FastICA using Symmetric approach
    */
   size_t SymmetricFixedPointICA(bool stabilization_enabled,
-			     bool fine_tuning_enabled,
-			     double mu_orig, double mu_k, size_t failure_limit,
-			     size_t used_nonlinearity, size_t g_fine, double stroke,
-			     bool not_fine, bool taking_long,
-			     size_t initial_state_mode,
-			     const arma::mat& X, arma::mat& B, arma::mat& W,
-			     arma::mat& whitening_matrix) {
-
-    if(initial_state_mode == 0) {
-      //generate random B
+                                bool fine_tuning_enabled,
+                                double mu_orig,
+                                double mu_k,
+                                size_t failure_limit,
+                                size_t used_nonlinearity,
+                                size_t g_fine,
+                                double stroke,
+                                bool not_fine,
+                                bool taking_long,
+                                size_t initial_state_mode,
+                                const arma::mat& X,
+                                arma::mat& B,
+                                arma::mat& W,
+                                arma::mat& whitening_matrix)
+  {
+    if (initial_state_mode == 0)
+    {
+      // Generate random B.
       B.set_size(d, num_of_IC_);
-      for(size_t i = 0; i < num_of_IC_; i++) {
+      for (size_t i = 0; i < num_of_IC_; i++)
+      {
         arma::vec temp_fail = B.col(i);
-	RandVector(temp_fail);
+        RandVector(temp_fail);
         B.col(i) = temp_fail; // slow slow slow: TODO
       }
     }
-
 
     arma::mat B_old, B_old2;
 
@@ -574,214 +606,234 @@ class FastICA {
     B_old2.zeros(d, num_of_IC_);
 
     // Main algorithm: iterate until convergence (or maximum iterations)
-    for(size_t round = 1; round <= max_num_iterations_; round++) {
+    for (size_t round = 1; round <= max_num_iterations_; round++)
+    {
       Orthogonalize(B);
 
       arma::mat B_delta_cov;
       B_delta_cov = trans(B) * B_old;
       double min_abs_cos = DBL_MAX;
-      for(size_t i = 0; i < d; i++) {
-	double current_cos = fabs(B_delta_cov(i, i));
-	if(current_cos < min_abs_cos)
-	  min_abs_cos = current_cos;
+      for (size_t i = 0; i < d; i++)
+      {
+        double current_cos = fabs(B_delta_cov(i, i));
+        if (current_cos < min_abs_cos)
+          min_abs_cos = current_cos;
       }
 
-      mlpack::Log::Debug << "delta = " << (1 - min_abs_cos) << std::endl;
+      Log::Debug << "delta = " << (1 - min_abs_cos) << std::endl;
 
-      if(1 - min_abs_cos < epsilon_) {
-	if(fine_tuning_enabled && not_fine) {
-	  not_fine = false;
-	  used_nonlinearity = g_fine;
-	  mu_ = mu_k * mu_orig;
-	  B_old.zeros(d, num_of_IC_);
-	  B_old2.zeros(d, num_of_IC_);
-	}
-	else {
+      if (1 - min_abs_cos < epsilon_)
+      {
+        if (fine_tuning_enabled && not_fine)
+        {
+          not_fine = false;
+          used_nonlinearity = g_fine;
+          mu_ = mu_k * mu_orig;
+          B_old.zeros(d, num_of_IC_);
+          B_old2.zeros(d, num_of_IC_);
+        }
+        else
+        {
           W = trans(B) * whitening_matrix;
-	  return true;
-	}
+          return true;
+        }
       }
-      else if(stabilization_enabled) {
-
-	arma::mat B_delta_cov2;
+      else if (stabilization_enabled)
+      {
+        arma::mat B_delta_cov2;
         B_delta_cov2 = trans(B) * B_old2;
-	double min_abs_cos2 = DBL_MAX;
-	for(size_t i = 0; i < d; i++) {
-	  double current_cos2 = fabs(B_delta_cov2(i, i));
-	  if(current_cos2 < min_abs_cos2) {
-	    min_abs_cos2 = current_cos2;
-	  }
-	}
+        double min_abs_cos2 = DBL_MAX;
+        for (size_t i = 0; i < d; i++)
+        {
+          double current_cos2 = fabs(B_delta_cov2(i, i));
+          if (current_cos2 < min_abs_cos2)
+          {
+            min_abs_cos2 = current_cos2;
+          }
+        }
 
-        mlpack::Log::Debug << "stabilization delta = " << (1 - min_abs_cos2) <<
+        Log::Debug << "stabilization delta = " << (1 - min_abs_cos2) <<
             std::endl;
 
-	if((stroke == 0) && (1 - min_abs_cos2 < epsilon_)) {
-	  stroke = mu_;
-	  mu_ *= .5;
-	  if((used_nonlinearity % 2) == 0) {
-	    used_nonlinearity += 1;
-	  }
-	}
-	else if(stroke > 0) {
-	  mu_ = stroke;
-	  stroke = 0;
+        if ((stroke == 0) && (1 - min_abs_cos2 < epsilon_))
+        {
+          stroke = mu_;
+          mu_ *= .5;
+          if ((used_nonlinearity % 2) == 0)
+          {
+            used_nonlinearity += 1;
+          }
+        }
+        else if (stroke > 0)
+        {
+          mu_ = stroke;
+          stroke = 0;
 
-	  if((mu_ == 1) && ((used_nonlinearity % 2) != 0)) {
-	    used_nonlinearity -= 1;
-	  }
-	}
-	else if((!taking_long) &&
-		(round > ((double) max_num_iterations_ / 2))) {
-	  taking_long = true;
-	  mu_ *= .5;
-	  if((used_nonlinearity % 2) == 0) {
-	    used_nonlinearity += 1;
-	  }
-	}
+          if ((mu_ == 1) && ((used_nonlinearity % 2) != 0))
+          {
+            used_nonlinearity -= 1;
+          }
+        }
+        else if ((!taking_long) &&
+            (round > ((double) max_num_iterations_ / 2)))
+        {
+          taking_long = true;
+          mu_ *= .5;
+          if ((used_nonlinearity % 2) == 0)
+          {
+            used_nonlinearity += 1;
+          }
+        }
       }
 
       B_old2 = B_old;
       B_old = B;
 
-      // show progress here, (the lack of code means no progress shown for now)
+      // Show progress here, (the lack of code means no progress shown for now).
 
-      // use Newton-Raphson method to update B
-      switch(used_nonlinearity) {
+      // Use Newton-Raphson method to update B.
+      switch (used_nonlinearity)
+      {
+        case LOGCOSH:
+          SymmetricLogCoshUpdate_(n, X, B);
+          break;
 
-      case LOGCOSH: {
-	SymmetricLogCoshUpdate_(n, X, B);
-	break;
-      }
+        case LOGCOSH + 1:
+          SymmetricLogCoshFineTuningUpdate_(n, X, B);
+          break;
 
-      case LOGCOSH + 1: {
-	SymmetricLogCoshFineTuningUpdate_(n, X, B);
-	break;
-      }
+        case LOGCOSH + 2:
+        {
+          arma::mat X_sub;
+          size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
+          SymmetricLogCoshUpdate_(num_selected, X_sub, B);
+          break;
+        }
 
-      case LOGCOSH + 2: {
-	arma::mat X_sub;
-	size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
-	SymmetricLogCoshUpdate_(num_selected, X_sub, B);
-	break;
-      }
+        case LOGCOSH + 3:
+        {
+          arma::mat X_sub;
+          size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
+          SymmetricLogCoshFineTuningUpdate_(num_selected, X_sub, B);
+          break;
+        }
 
-      case LOGCOSH + 3: {
-        arma::mat X_sub;
-	size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
-	SymmetricLogCoshFineTuningUpdate_(num_selected, X_sub, B);
-	break;
-      }
+        case GAUSS:
+          SymmetricGaussUpdate_(n, X, B);
+          break;
 
-      case GAUSS: {
-	SymmetricGaussUpdate_(n, X, B);
-	break;
-      }
+        case GAUSS + 1:
+          SymmetricGaussFineTuningUpdate_(n, X, B);
+          break;
 
-      case GAUSS + 1: {
-	SymmetricGaussFineTuningUpdate_(n, X, B);
-	break;
-      }
+        case GAUSS + 2:
+        {
+          arma::mat X_sub;
+          size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
+          SymmetricGaussUpdate_(num_selected, X_sub, B);
+          break;
+        }
 
-      case GAUSS + 2: {
-	arma::mat X_sub;
-	size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
-	SymmetricGaussUpdate_(num_selected, X_sub, B);
-	break;
-      }
+        case GAUSS + 3:
+        {
+          arma::mat X_sub;
+          size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
+          SymmetricGaussFineTuningUpdate_(num_selected, X_sub, B);
+          break;
+        }
 
-      case GAUSS + 3: {
-	arma::mat X_sub;
-	size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
-	SymmetricGaussFineTuningUpdate_(num_selected, X_sub, B);
-	break;
-      }
+        case KURTOSIS:
+          SymmetricKurtosisUpdate_(n, X, B);
+          break;
 
-      case KURTOSIS: {
-	SymmetricKurtosisUpdate_(n, X, B);
-	break;
-      }
+        case KURTOSIS + 1:
+          SymmetricKurtosisFineTuningUpdate_(n, X, B);
+          break;
 
-      case KURTOSIS + 1: {
-	SymmetricKurtosisFineTuningUpdate_(n, X, B);
-	break;
-      }
+        case KURTOSIS + 2:
+        {
+          arma::mat X_sub;
+          size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
+          SymmetricKurtosisUpdate_(num_selected, X_sub, B);
+          break;
+        }
 
-      case KURTOSIS + 2: {
-	arma::mat X_sub;
-	size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
-	SymmetricKurtosisUpdate_(num_selected, X_sub, B);
-	break;
-      }
+        case KURTOSIS + 3:
+        {
+          arma::mat X_sub;
+          size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
+          SymmetricKurtosisFineTuningUpdate_(num_selected, X_sub, B);
+          break;
+        }
 
-      case KURTOSIS + 3: {
-	arma::mat X_sub;
-	size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
-	SymmetricKurtosisFineTuningUpdate_(num_selected, X_sub, B);
-	break;
-      }
+        case SKEW:
+          SymmetricSkewUpdate_(n, X, B);
+          break;
 
-      case SKEW: {
-	SymmetricSkewUpdate_(n, X, B);
-	break;
-      }
+        case SKEW + 1:
+          SymmetricSkewFineTuningUpdate_(n, X, B);
+          break;
 
-      case SKEW + 1: {
-	SymmetricSkewFineTuningUpdate_(n, X, B);
-	break;
-      }
+        case SKEW + 2:
+        {
+          arma::mat X_sub;
+          size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
+          SymmetricSkewUpdate_(num_selected, X_sub, B);
+          break;
+        }
 
-      case SKEW + 2: {
-	arma::mat X_sub;
-	size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
-	SymmetricSkewUpdate_(num_selected, X_sub, B);
-	break;
-      }
+        case SKEW + 3:
+        {
+          arma::mat X_sub;
+          size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
+          SymmetricSkewFineTuningUpdate_(num_selected, X_sub, B);
+          break;
+        }
 
-      case SKEW + 3: {
-	arma::mat X_sub;
-	size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
-	SymmetricSkewFineTuningUpdate_(num_selected, X_sub, B);
-	break;
-      }
-
-      default:
-        mlpack::Log::Fatal << "Invalid contrast function: used_nonlinearity = "
-            << used_nonlinearity << "." << std::endl;
-	exit(false);
+        default:
+          Log::Fatal << "Invalid contrast function: used_nonlinearity: "
+              << used_nonlinearity << "." << std::endl;
       }
     }
 
-    mlpack::Log::Warn << "No convergence after " << max_num_iterations_
-        << " steps." << std::endl;
+    Log::Warn << "No convergence after " << max_num_iterations_ << " steps." <<
+        std::endl;
 
-    // orthogonalize B via: newB = B * (B' * B) ^ -.5;
+    // Orthogonalize B via: newB = B * (B' * B) ^ -.5;
     Orthogonalize(B);
     W = trans(whitening_matrix) * B;
 
     return true;
   }
 
-
   /**
    * Run FastICA using Deflation approach
    */
   size_t DeflationFixedPointICA(bool stabilization_enabled,
- 			     bool fine_tuning_enabled,
-			     double mu_orig, double mu_k, size_t failure_limit,
-			     size_t used_nonlinearity, size_t g_orig, size_t g_fine,
-			     double stroke, bool not_fine, bool taking_long,
-			     size_t initial_state_mode,
-			     const arma::mat& X, arma::mat& B, arma::mat& W,
-			     arma::mat& whitening_matrix) {
-
+                                bool fine_tuning_enabled,
+                                double mu_orig,
+                                double mu_k,
+                                size_t failure_limit,
+                                size_t used_nonlinearity,
+                                size_t g_orig,
+                                size_t g_fine,
+                                double stroke,
+                                bool not_fine,
+                                bool taking_long,
+                                size_t initial_state_mode,
+                                const arma::mat& X,
+                                arma::mat& B,
+                                arma::mat& W,
+                                arma::mat& whitening_matrix)
+  {
     B.zeros(d, d);
 
     size_t round = 0;
     size_t num_failures = 0;
 
-    while(round < num_of_IC_) {
-      mlpack::Log::Info << "Estimating IC " << (round + 1) << std::endl;
+    while (round < num_of_IC_)
+    {
+      Log::Info << "Estimating IC " << (round + 1) << std::endl;
       mu_ = mu_orig;
       used_nonlinearity = g_orig;
       stroke = 0;
@@ -790,10 +842,10 @@ class FastICA {
       size_t end_fine_tuning = 0;
 
       arma::vec w(d);
-      if(initial_state_mode == 0)
-	RandVector(w);
+      if (initial_state_mode == 0)
+        RandVector(w);
 
-      for(size_t i = 0; i < round; i++)
+      for (size_t i = 0; i < round; i++)
         w -= dot(B.col(i), w) * B.col(i);
       w /= sqrt(dot(w, w)); // normalize
 
@@ -803,216 +855,238 @@ class FastICA {
 
       size_t i = 1;
       size_t gabba = 1;
-      while(i <= max_num_iterations_ + gabba) {
-
-	for(size_t j = 0; j < round; j++)
+      while (i <= max_num_iterations_ + gabba)
+      {
+        for (size_t j = 0; j < round; j++)
           w -= dot(B.col(j), w) * B.col(j);
-	w /= sqrt(dot(w, w)); // normalize
+        w /= sqrt(dot(w, w)); // normalize
 
-	if(not_fine) {
-	  if(i == (max_num_iterations_ + 1)) {
-	    round++;
-	    num_failures++;
-	    if(num_failures > failure_limit) {
-              mlpack::Log::Warn << "Too many failures to converge (" << num_failures <<
+        if (not_fine)
+        {
+          if (i == (max_num_iterations_ + 1))
+          {
+            round++;
+            num_failures++;
+            if (num_failures > failure_limit)
+            {
+              Log::Warn << "Too many failures to converge (" << num_failures <<
                   ").  Giving up." << std::endl;
-	      return false;
-	    }
-	    break;
-	  }
-	}
-	else {
-	  if(i >= end_fine_tuning) {
-	    w_old = w;
-	  }
-	}
+              return false;
+            }
+            break;
+          }
+        }
+        else
+        {
+          if (i >= end_fine_tuning)
+          {
+            w_old = w;
+          }
+        }
 
-	// check for convergence
-	bool converged = false;
-	arma::vec w_diff = w_old - w;
+        // Check for convergence.
+        bool converged = false;
+        arma::vec w_diff = w_old - w;
 
-	double delta1 = dot(w_diff, w_diff);
-	double delta2 = DBL_MAX;
+        double delta1 = dot(w_diff, w_diff);
+        double delta2 = DBL_MAX;
 
-	if(delta1 < epsilon_) {
-	  converged = true;
-	} else {
+        if (delta1 < epsilon_)
+        {
+          converged = true;
+        }
+        else
+        {
           w_diff = w_old + w;
 
-	  delta2 = dot(w_diff, w_diff);
+          delta2 = dot(w_diff, w_diff);
 
-	  if(delta2 < epsilon_)
-	    converged = true;
-	}
+          if (delta2 < epsilon_)
+            converged = true;
+        }
 
-        mlpack::Log::Debug << "delta = " << std::min(delta1, delta2) << std::endl;
+        Log::Debug << "delta = " << std::min(delta1, delta2) << std::endl;
 
-	if(converged) {
-	  if(fine_tuning_enabled & not_fine) {
-	    not_fine = false;
-	    gabba = max_fine_tune_;
-	    w_old.zeros();
-	    w_old2.zeros();
-	    used_nonlinearity = g_fine;
-	    mu_ = mu_k * mu_orig;
+        if (converged)
+        {
+          if (fine_tuning_enabled & not_fine)
+          {
+            not_fine = false;
+            gabba = max_fine_tune_;
+            w_old.zeros();
+            w_old2.zeros();
+            used_nonlinearity = g_fine;
+            mu_ = mu_k * mu_orig;
 
-	    end_fine_tuning = max_fine_tune_ + i;
-	  }
-	  else {
-	    num_failures = 0;
+            end_fine_tuning = max_fine_tune_ + i;
+          }
+          else
+          {
+            num_failures = 0;
 
-	    B.col(round) = w;
+            B.col(round) = w;
             W.col(round) = trans(whitening_matrix) * w;
 
-	    break; // this line is intended to take us to the next IC
-	  }
-	}
-	else if(stabilization_enabled) {
-	  converged = false;
+            break; // this line is intended to take us to the next IC
+          }
+        }
+        else if (stabilization_enabled)
+        {
+          converged = false;
           w_diff = w_old2 - w;
 
-	  if(dot(w_diff, w_diff) < epsilon_) {
-	    converged = true;
-	  } else {
+          if (dot(w_diff, w_diff) < epsilon_)
+          {
+            converged = true;
+          }
+          else
+          {
             w_diff = w_old2 + w;
 
-	    if(dot(w_diff, w_diff) < epsilon_) {
-	      converged = true;
-	    }
-	  }
+            if (dot(w_diff, w_diff) < epsilon_)
+            {
+              converged = true;
+            }
+          }
 
-	  if((stroke == 0) && converged) {
-	    stroke = mu_;
-	    mu_ *= .5;
-	    if((used_nonlinearity % 2) == 0) {
-	      used_nonlinearity++;
-	    }
-	  }
-	  else if(stroke != 0) {
-	    mu_ = stroke;
-	    stroke = 0;
-	    if((mu_ == 1) && ((used_nonlinearity % 2) != 0)) {
-	      used_nonlinearity--;
-	    }
-	  }
-	  else if(not_fine && (!taking_long) &&
-		  (i > ((double) max_num_iterations_ / 2))) {
-	    taking_long = true;
-	    mu_ *= .5;
-	    if((used_nonlinearity % 2) == 0) {
-	      used_nonlinearity++;
-	    }
-	  }
-	}
+          if ((stroke == 0) && converged)
+          {
+            stroke = mu_;
+            mu_ *= .5;
+            if ((used_nonlinearity % 2) == 0)
+            {
+              used_nonlinearity++;
+            }
+          }
+          else if (stroke != 0)
+          {
+            mu_ = stroke;
+            stroke = 0;
+            if ((mu_ == 1) && ((used_nonlinearity % 2) != 0))
+            {
+              used_nonlinearity--;
+            }
+          }
+          else if (not_fine && (!taking_long) &&
+                   (i > ((double) max_num_iterations_ / 2)))
+          {
+            taking_long = true;
+            mu_ *= .5;
+            if ((used_nonlinearity % 2) == 0)
+            {
+              used_nonlinearity++;
+            }
+          }
+        }
 
-	w_old2 = w_old;
-	w_old = w;
+        w_old2 = w_old;
+        w_old = w;
 
-	switch(used_nonlinearity) {
+        switch (used_nonlinearity)
+        {
+          case LOGCOSH:
+            DeflationLogCoshUpdate_(n, X, w);
+            break;
 
-	case LOGCOSH: {
-	  DeflationLogCoshUpdate_(n, X, w);
-	  break;
-	}
+          case LOGCOSH + 1:
+            DeflationLogCoshFineTuningUpdate_(n, X, w);
+            break;
 
-	case LOGCOSH + 1: {
-	  DeflationLogCoshFineTuningUpdate_(n, X, w);
-	  break;
-	}
+          case LOGCOSH + 2:
+          {
+            arma::mat X_sub;
+            size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
+            DeflationLogCoshUpdate_(num_selected, X_sub, w);
+            break;
+          }
 
-	case LOGCOSH + 2: {
-	  arma::mat X_sub;
-	  size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
-	  DeflationLogCoshUpdate_(num_selected, X_sub, w);
-	  break;
-	}
+          case LOGCOSH + 3:
+          {
+            arma::mat X_sub;
+            size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
+            DeflationLogCoshFineTuningUpdate_(num_selected, X_sub, w);
+            break;
+          }
 
-	case LOGCOSH + 3: {
-	  arma::mat X_sub;
-	  size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
-	  DeflationLogCoshFineTuningUpdate_(num_selected, X_sub, w);
-	  break;
-	}
+          case GAUSS:
+            DeflationGaussUpdate_(n, X, w);
+            break;
 
-	case GAUSS: {
-	  DeflationGaussUpdate_(n, X, w);
-	  break;
-	}
+          case GAUSS + 1:
+            DeflationGaussFineTuningUpdate_(n, X, w);
+            break;
 
-	case GAUSS + 1: {
-	  DeflationGaussFineTuningUpdate_(n, X, w);
-	  break;
-	}
+          case GAUSS + 2:
+          {
+            arma::mat X_sub;
+            size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
+            DeflationGaussUpdate_(num_selected, X_sub, w);
+            break;
+          }
 
-	case GAUSS + 2: {
-	  arma::mat X_sub;
-	  size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
-	  DeflationGaussUpdate_(num_selected, X_sub, w);
-	  break;
-	}
+          case GAUSS + 3:
+          {
+            arma::mat X_sub;
+            size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
+            DeflationGaussFineTuningUpdate_(num_selected, X_sub, w);
+            break;
+          }
 
-	case GAUSS + 3: {
-	  arma::mat X_sub;
-	  size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
-	  DeflationGaussFineTuningUpdate_(num_selected, X_sub, w);
-	  break;
-	}
+          case KURTOSIS:
+            DeflationKurtosisUpdate_(n, X, w);
+            break;
 
-	case KURTOSIS: {
-	  DeflationKurtosisUpdate_(n, X, w);
-	  break;
-	}
+          case KURTOSIS + 1:
+            DeflationKurtosisFineTuningUpdate_(n, X, w);
+            break;
 
-	case KURTOSIS + 1: {
-	  DeflationKurtosisFineTuningUpdate_(n, X, w);
-	  break;
-	}
+          case KURTOSIS + 2:
+          {
+            arma::mat X_sub;
+            size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
+            DeflationKurtosisUpdate_(num_selected, X_sub, w);
+            break;
+          }
 
-	case KURTOSIS + 2: {
-	  arma::mat X_sub;
-	  size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
-	  DeflationKurtosisUpdate_(num_selected, X_sub, w);
-	  break;
-	}
+          case KURTOSIS + 3:
+          {
+            arma::mat X_sub;
+            size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
+            DeflationKurtosisFineTuningUpdate_(num_selected, X_sub, w);
+            break;
+          }
 
-	case KURTOSIS + 3: {
-	  arma::mat X_sub;
-	  size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
-	  DeflationKurtosisFineTuningUpdate_(num_selected, X_sub, w);
-	  break;
-	}
+          case SKEW:
+            DeflationSkewUpdate_(n, X, w);
+            break;
 
-	case SKEW: {
-	  DeflationSkewUpdate_(n, X, w);
-	  break;
-	}
+          case SKEW + 1:
+            DeflationSkewFineTuningUpdate_(n, X, w);
+            break;
 
-	case SKEW + 1: {
-	  DeflationSkewFineTuningUpdate_(n, X, w);
-	  break;
-	}
+          case SKEW + 2:
+          {
+            arma::mat X_sub;
+            size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
+            DeflationSkewUpdate_(num_selected, X_sub, w);
+            break;
+          }
 
-	case SKEW + 2: {
-	  arma::mat X_sub;
-	  size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
-	  DeflationSkewUpdate_(num_selected, X_sub, w);
-	  break;
-	}
+          case SKEW + 3:
+          {
+            arma::mat X_sub;
+            size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
+            DeflationSkewFineTuningUpdate_(num_selected, X_sub, w);
+            break;
+          }
 
-	case SKEW + 3: {
-	  arma::mat X_sub;
-	  size_t num_selected = RandomSubMatrix(n, percent_cut_, X, X_sub);
-	  DeflationSkewFineTuningUpdate_(num_selected, X_sub, w);
-	  break;
-	}
-
-	default:
-          mlpack::Log::Fatal << "Invalid contrast function: used_nonlinearity = " <<
-              used_nonlinearity << "." << std::endl;
-	}
+          default:
+            Log::Fatal << "Invalid contrast function: used_nonlinearity = " <<
+                used_nonlinearity << "." << std::endl;
+        }
 
         w /= sqrt(dot(w, w)); // normalize
-	i++;
+        i++;
       }
       round++;
     }
@@ -1020,31 +1094,38 @@ class FastICA {
     return true;
   }
 
-
   /**
    * Verify the validity of some settings, set some parameters needed by
    * the algorithm, and run the fixed-point FastICA algorithm using either
    * the specified approach
    * @pre{ X is a d by n data matrix, for d dimensions and n samples}
    */
-  size_t FixedPointICA(const arma::mat& X, arma::mat& whitening_matrix, arma::mat& W) {
-    // ensure default values are passed into this function if the user doesn't care about certain parameters
-    if(d < num_of_IC_) {
-      mlpack::Log::Warn << "Must have num_of_IC <= dimension!" << std::endl;
+  size_t FixedPointICA(const arma::mat& X,
+                       arma::mat& whitening_matrix,
+                       arma::mat& W)
+  {
+    // Ensure default values are passed into this function if the user doesn't
+    // care about certain parameters.
+    if (d < num_of_IC_)
+    {
+      Log::Warn << "Must have num_of_IC <= dimension!" << std::endl;
       W.set_size(0);
       return false;
     }
 
     W.set_size(d, num_of_IC_);
 
-    if((percent_cut_ > 1) || (percent_cut_ < 0)) {
+    if ((percent_cut_ > 1) || (percent_cut_ < 0))
+    {
       percent_cut_ = 1;
-      mlpack::Log::Info << "Setting percent_cut to 1." << std::endl;
+      Log::Info << "Setting percent_cut to 1." << std::endl;
     }
-    else if(percent_cut_ < 1) {
-      if((percent_cut_ * n) < 1000) {
-	percent_cut_ = std::min(1000 / (double) n, (double) 1);
-        mlpack::Log::Warn << "Setting percent_cut to " << std::setw(4) << percent_cut_
+    else if (percent_cut_ < 1)
+    {
+      if ((percent_cut_ * n) < 1000)
+      {
+        percent_cut_ = std::min(1000 / (double) n, (double) 1);
+        Log::Warn << "Setting percent_cut to " << std::setw(4) << percent_cut_
             << " (" << (size_t) floor(percent_cut_ * n) << " samples)."
             << std::endl;
       }
@@ -1052,36 +1133,40 @@ class FastICA {
 
     size_t g_orig = nonlinearity_;
 
-    if(percent_cut_ != 1) {
+    if (percent_cut_ != 1)
       g_orig += 2;
-    }
 
-    if(mu_ != 1) {
+    if (mu_ != 1)
       g_orig += 1;
-    }
 
     bool fine_tuning_enabled = true;
     size_t g_fine;
 
-    if(fine_tune_) {
+    if (fine_tune_)
+    {
       g_fine = nonlinearity_ + 1;
-    } else {
-      if(mu_ != 1)
-	g_fine = g_orig;
+    }
+    else
+    {
+      if (mu_ != 1)
+        g_fine = g_orig;
       else
-	g_fine = g_orig + 1;
+        g_fine = g_orig + 1;
 
       fine_tuning_enabled = false;
     }
 
     bool stabilization_enabled;
-    if(stabilization_) {
+    if (stabilization_)
+    {
       stabilization_enabled = true;
-    } else {
-      if(mu_ != 1)
-	stabilization_enabled = true;
+    }
+    else
+    {
+      if (mu_ != 1)
+        stabilization_enabled = true;
       else
-	stabilization_enabled = false;
+        stabilization_enabled = false;
     }
 
     double mu_orig = mu_;
@@ -1099,23 +1184,23 @@ class FastICA {
 
     size_t ret_val = false;
 
-    if(approach_ == SYMMETRIC) {
+    if (approach_ == SYMMETRIC)
+    {
       ret_val =
-	SymmetricFixedPointICA(stabilization_enabled, fine_tuning_enabled,
-			       mu_orig, mu_k, failure_limit,
-			       used_nonlinearity, g_fine, stroke,
-			       not_fine, taking_long, initial_state_mode,
-			       X, B, W,
-			       whitening_matrix);
+          SymmetricFixedPointICA(stabilization_enabled, fine_tuning_enabled,
+                                 mu_orig, mu_k, failure_limit,
+                                 used_nonlinearity, g_fine, stroke,
+                                 not_fine, taking_long, initial_state_mode,
+                                 X, B, W, whitening_matrix);
     }
-    else if(approach_ == DEFLATCLIN) {
+    else if (approach_ == DEFLATION)
+    {
       ret_val =
-	DeflationFixedPointICA(stabilization_enabled, fine_tuning_enabled,
-			       mu_orig, mu_k, failure_limit,
-			       used_nonlinearity, g_orig, g_fine,
-			       stroke, not_fine, taking_long, initial_state_mode,
-			       X, B, W,
-			       whitening_matrix);
+          DeflationFixedPointICA(stabilization_enabled, fine_tuning_enabled,
+                                 mu_orig, mu_k, failure_limit,
+                                 used_nonlinearity, g_orig, g_fine, stroke,
+                                 not_fine, taking_long, initial_state_mode,
+                                 X, B, W, whitening_matrix);
     }
 
     return ret_val;
@@ -1126,7 +1211,8 @@ class FastICA {
    * Runs FastICA Algorithm on matrix X and sets W to unmixing matrix and Y to
    * independent components matrix, such that \f$ X = W * Y \f$
    */
-  size_t DoFastICA(arma::mat& W, arma::mat& Y) {
+  size_t DoFastICA(arma::mat& W, arma::mat& Y)
+  {
     arma::mat X_centered, X_whitened, whitening_matrix;
 
     Center(X, X_centered);
@@ -1159,15 +1245,12 @@ class FastICA {
     tmpw.row(4) = -whitening_matrix.row(1);
     whitening_matrix = tmpw;*/
 
-    size_t ret_val =
-      FixedPointICA(X_whitened, whitening_matrix, W);
+    size_t ret_val = FixedPointICA(X_whitened, whitening_matrix, W);
 
-    if(ret_val == true) {
+    if (ret_val == true)
       Y = trans(W) * X;
-    }
-    else {
+    else
       Y.set_size(0);
-    }
 
     return ret_val;
   }
