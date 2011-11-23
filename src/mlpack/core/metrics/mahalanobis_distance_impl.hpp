@@ -17,13 +17,14 @@ namespace metric {
  */
 template<>
 double MahalanobisDistance<false>::Evaluate(const arma::vec& a,
-                                            const arma::vec& b) {
+                                            const arma::vec& b)
+{
   // Check if covariance matrix has been initialized.
-  if (covariance_.n_rows == 0)
-    covariance_ = arma::eye<arma::mat>(a.n_elem, a.n_elem);
+  if (covariance.n_rows == 0)
+    covariance = arma::eye<arma::mat>(a.n_elem, a.n_elem);
 
   arma::vec m = (a - b);
-  arma::mat out = trans(m) * covariance_ * m; // 1x1
+  arma::mat out = trans(m) * covariance * m; // 1x1
   return out[0];
 }
 
@@ -33,17 +34,18 @@ double MahalanobisDistance<false>::Evaluate(const arma::vec& a,
  */
 template<>
 double MahalanobisDistance<true>::Evaluate(const arma::vec& a,
-                                           const arma::vec& b) {
+                                           const arma::vec& b)
+{
   // Check if covariance matrix has been initialized.
-  if (covariance_.n_rows == 0)
-    covariance_ = arma::eye<arma::mat>(a.n_elem, a.n_elem);
+  if (covariance.n_rows == 0)
+    covariance = arma::eye<arma::mat>(a.n_elem, a.n_elem);
 
   arma::vec m = (a - b);
-  arma::mat out = trans(m) * covariance_ * m; // 1x1;
+  arma::mat out = trans(m) * covariance * m; // 1x1;
   return sqrt(out[0]);
 }
 
-}; // namespace distance
+}; // namespace metric
 }; // namespace mlpack
 
 #endif
