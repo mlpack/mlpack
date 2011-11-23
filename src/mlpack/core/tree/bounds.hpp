@@ -14,7 +14,8 @@
 
 #include <mlpack/core/math/math_misc.hpp>
 #include <mlpack/core/math/range.hpp>
-#include <mlpack/core/kernels/lmetric.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
+
 #include "hrectbound.hpp"
 #include "periodichrectbound.hpp"
 #include "dballbound.hpp"

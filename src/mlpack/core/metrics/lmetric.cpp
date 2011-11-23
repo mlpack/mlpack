@@ -7,7 +7,7 @@
 #include "lmetric.hpp"
 
 namespace mlpack {
-namespace kernel {
+namespace metric {
 
 // L1-metric specializations; the root doesn't matter.
 template<>
