@@ -43,14 +43,15 @@ namespace metric {
  *   faster to leave this at the default of false.
  */
 template<bool t_take_root = false>
-class MahalanobisDistance {
+class MahalanobisDistance
+{
  public:
   /**
    * Initialize the Mahalanobis distance with the empty matrix as covariance.
    * Because we don't actually know the size of the vectors we will be using, we
    * delay creation of the covariance matrix until evaluation.
    */
-  MahalanobisDistance() : covariance_(0, 0) { }
+  MahalanobisDistance() : covariance(0, 0) { }
 
   /**
    * Initialize the Mahalanobis distance with the given covariance matrix.  The
@@ -58,7 +59,7 @@ class MahalanobisDistance {
    *
    * @param covariance The covariance matrix to use for this distance.
    */
-  MahalanobisDistance(const arma::mat& covariance) : covariance_(covariance) { }
+  MahalanobisDistance(const arma::mat& covariance) : covariance(covariance) { }
 
   /**
    * Evaluate the distance between the two given points using this Mahalanobis
@@ -74,18 +75,18 @@ class MahalanobisDistance {
    *
    * @return Constant reference to the covariance matrix.
    */
-  const arma::mat& GetCovariance() const { return covariance_; }
+  const arma::mat& Covariance() const { return covariance; }
 
   /**
    * Modify the covariance matrix.
    *
    * @return Reference to the covariance matrix.
    */
-  arma::mat& GetCovariance() { return covariance_; }
+  arma::mat& Covariance() { return covariance; }
 
  private:
   //! The covariance matrix associated with this distance.
-  arma::mat covariance_;
+  arma::mat covariance;
 };
 
 }; // namespace distance

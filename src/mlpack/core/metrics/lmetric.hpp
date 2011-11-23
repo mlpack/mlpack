@@ -51,7 +51,8 @@ namespace metric {
  *   t_take_root = false, because one fewer call to pow() is required.
  */
 template<int t_pow, bool t_take_root = false>
-class LMetric {
+class LMetric
+{
  public:
   /***
    * Default constructor does nothing, but is required to satisfy the Kernel
@@ -73,7 +74,8 @@ class LMetric {
 // Unspecialized implementation.  This should almost never be used...
 template<int t_pow, bool t_take_root>
 double LMetric<t_pow, t_take_root>::Evaluate(const arma::vec& a,
-                                             const arma::vec& b) {
+                                             const arma::vec& b)
+{
   double sum = 0;
   for (size_t i = 0; i < a.n_elem; i++)
     sum += pow(fabs(a[i] - b[i]), t_pow);
@@ -103,7 +105,7 @@ typedef LMetric<2, false> SquaredEuclideanDistance;
  */
 typedef LMetric<2, true> EuclideanDistance;
 
-}; // namespace distance
+}; // namespace metric
 }; // namespace mlpack
 
 #endif
