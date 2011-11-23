@@ -1,4 +1,4 @@
-/***
+/**
  * @file aug_lagrangian.h
  * @author Ryan Curtin
  *
@@ -15,7 +15,7 @@
 namespace mlpack {
 namespace optimization {
 
-/***
+/**
  * The AugLagrangian class implements the Augmented Lagrangian method of
  * optimization.  In this scheme, a penalty term is added to the Lagrangian.
  * This method is also called the "method of multipliers".
@@ -35,7 +35,8 @@ namespace optimization {
  * value for the given coordinates.
  */
 template<typename LagrangianFunction>
-class AugLagrangian {
+class AugLagrangian
+{
  public:
   AugLagrangian(LagrangianFunction& function_in, int num_basis);
       // not sure what to do here yet
@@ -48,14 +49,15 @@ class AugLagrangian {
   LagrangianFunction& function_;
   int num_basis_;
 
-  /***
+  /**
    * This is a utility class, which we will pass to L-BFGS during the
    * optimization.  We use a utility class so that we do not have to expose
    * Evaluate() and Gradient() to the AugLagrangian public interface; instead,
    * with a private class, these methods are correctly protected (since they
    * should not be being used anywhere else).
    */
-  class AugLagrangianFunction {
+  class AugLagrangianFunction
+  {
    public:
     AugLagrangianFunction(LagrangianFunction& function_in,
                           arma::vec& lambda_in,

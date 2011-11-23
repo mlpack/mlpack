@@ -1,18 +1,19 @@
-/***
- * @file aug_lagrangian_test.h
+/**
+ * @file aug_lagrangian_test_functions.hpp
+ * @author Ryan Curtin
  *
- * Define a test function for the augmented Lagrangian method.
+ * Define test functions for the augmented Lagrangian method.
  */
 
-#ifndef __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP
-#define __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP
+#ifndef __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP
+#define __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP
 
 #include <mlpack/core.h>
 
 namespace mlpack {
 namespace optimization {
 
-/***
+/**
  * This function is taken from "Practical Mathematical Optimization" (Snyman),
  * section 5.3.8 ("Application of the Augmented Lagrangian Method").  It has
  * only one constraint.
@@ -20,7 +21,8 @@ namespace optimization {
  * The minimum that satisfies the constraint is x = [1, 4], with an objective
  * value of 70.
  */
-class AugLagrangianTestFunction {
+class AugLagrangianTestFunction
+{
  public:
   AugLagrangianTestFunction();
   AugLagrangianTestFunction(const arma::mat& initial_point);
@@ -41,7 +43,7 @@ class AugLagrangianTestFunction {
   arma::mat initial_point_;
 };
 
-/***
+/**
  * This function is taken from M. Gockenbach's lectures on general nonlinear
  * programs, found at:
  * http://www.math.mtu.edu/~msgocken/ma5630spring2003/lectures/nlp/nlp.pdf
@@ -52,7 +54,8 @@ class AugLagrangianTestFunction {
  * The minimum that satisfies the two constraints is given as
  *   x = [0.12288, -1.1078, 0.015100], with an objective value of about 29.634.
  */
-class GockenbachFunction {
+class GockenbachFunction
+{
  public:
   GockenbachFunction();
   GockenbachFunction(const arma::mat& initial_point);
@@ -73,10 +76,9 @@ class GockenbachFunction {
   arma::mat initial_point_;
 };
 
-}; // namespace optimization
-}; // namespace mlpack
 
-/***
+
+/**
  * This function is the Lovasz-Theta semidefinite program, as implemented in the
  * following paper:
  *
@@ -96,11 +98,12 @@ class GockenbachFunction {
  * coordinates given to the Evaluate(), Gradient(), EvaluateConstraint(), and
  * GradientConstraint() functions.
  */
-class LovaszThetaSDP {
+class LovaszThetaSDP
+{
  public:
   LovaszThetaSDP();
 
-  /***
+  /**
    * Initialize the Lovasz-Theta SDP with the given set of edges.  The edge
    * matrix should consist of rows of two dimensions, where dimension 0 is the
    * first vertex of the edge and dimension 1 is the second edge (or vice versa,
@@ -129,4 +132,7 @@ class LovaszThetaSDP {
   arma::mat initial_point_;
 };
 
-#endif // __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP
+}; // namespace optimization
+}; // namespace mlpack
+
+#endif // __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP
