@@ -12,10 +12,8 @@
 #include <string>
 #include <vector>
 
-namespace mlpack
-{
-namespace io
-{
+namespace mlpack {
+namespace io {
 
 /**
  * Aids in the extensibility of OptionsHierarchy by focusing the potential

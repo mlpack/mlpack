@@ -4,17 +4,14 @@
  *
  * Implementation of template functions for the Option class.
  */
-#ifndef __MLPACK_CORE_IO_OPTION_HPP
-#error "Do not include this file directly."
-#endif
-
 #ifndef __MLPACK_CORE_IO_OPTION_IMPL_HPP
 #define __MLPACK_CORE_IO_OPTION_IMPL_HPP
 
-namespace mlpack
-{
-namespace io
-{
+// Just in case it has not been included.
+#include "option.hpp"
+
+namespace mlpack {
+namespace io {
 
 /**
  * Registers a parameter with CLI.
@@ -28,13 +25,17 @@ Option<N>::Option(bool ignoreTemplate,
                 bool required)
 {
   if (ignoreTemplate)
+  {
     CLI::Add(identifier, description, parent, required);
+  }
   else
   {
     CLI::Add<N>(identifier, description, parent, required);
 
     // Create the full pathname to set the default value.
-    std::string pathname = CLI::SanitizeString(parent) + std::string(identifier);
+    std::string pathname = CLI::SanitizeString(parent) +
+        std::string(identifier);
+
     CLI::GetParam<N>(pathname.c_str()) = defaultValue;
   }
 }

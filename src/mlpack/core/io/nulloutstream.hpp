@@ -5,8 +5,8 @@
  *
  * Definition of the NullOutStream class.
  */
-#ifndef __MLPACK_CORE_IO_NULL_OUT_STREAM_HPP
-#define __MLPACK_CORE_IO_NULL_OUT_STREAM_HPP
+#ifndef __MLPACK_CORE_IO_NULLOUTSTREAM_HPP
+#define __MLPACK_CORE_IO_NULLOUTSTREAM_HPP
 
 #include <iostream>
 #include <streambuf>
@@ -24,47 +24,49 @@ class NullOutStream {
   /**
    * Does nothing.
    */
-  NullOutStream();
+  NullOutStream() { }
 
   /**
    * Does nothing.
    */
-  NullOutStream(const NullOutStream& other);
+  NullOutStream(const NullOutStream& other) { }
 
   //! Does nothing.
-  NullOutStream& operator<<(bool val);
+  NullOutStream& operator<<(bool val) { return *this; }
   //! Does nothing.
-  NullOutStream& operator<<(short val);
+  NullOutStream& operator<<(short val) { return *this; }
   //! Does nothing.
-  NullOutStream& operator<<(unsigned short val);
+  NullOutStream& operator<<(unsigned short val) { return *this; }
   //! Does nothing.
-  NullOutStream& operator<<(int val);
+  NullOutStream& operator<<(int val) { return *this; }
   //! Does nothing.
-  NullOutStream& operator<<(unsigned int val);
+  NullOutStream& operator<<(unsigned int val) { return *this; }
   //! Does nothing.
-  NullOutStream& operator<<(long val);
+  NullOutStream& operator<<(long val) { return *this; }
   //! Does nothing.
-  NullOutStream& operator<<(unsigned long val);
+  NullOutStream& operator<<(unsigned long val) { return *this; }
   //! Does nothing.
-  NullOutStream& operator<<(float val);
+  NullOutStream& operator<<(float val) { return *this; }
   //! Does nothing.
-  NullOutStream& operator<<(double val);
+  NullOutStream& operator<<(double val) { return *this; }
   //! Does nothing.
-  NullOutStream& operator<<(long double val);
+  NullOutStream& operator<<(long double val) { return *this; }
   //! Does nothing.
-  NullOutStream& operator<<(void* val);
+  NullOutStream& operator<<(void* val) { return *this; }
   //! Does nothing.
-  NullOutStream& operator<<(const char* str);
+  NullOutStream& operator<<(const char* str) { return *this; }
   //! Does nothing.
-  NullOutStream& operator<<(std::string& str);
+  NullOutStream& operator<<(std::string& str) { return *this; }
   //! Does nothing.
-  NullOutStream& operator<<(std::streambuf* sb);
+  NullOutStream& operator<<(std::streambuf* sb) { return *this; }
   //! Does nothing.
-  NullOutStream& operator<<(std::ostream& (*pf) (std::ostream&));
+  NullOutStream& operator<<(std::ostream& (*pf) (std::ostream&))
+  { return *this; }
   //! Does nothing.
-  NullOutStream& operator<<(std::ios& (*pf) (std::ios&));
+  NullOutStream& operator<<(std::ios& (*pf) (std::ios&)) { return *this; }
   //! Does nothing.
-  NullOutStream& operator<<(std::ios_base& (*pf) (std::ios_base&));
+  NullOutStream& operator<<(std::ios_base& (*pf) (std::ios_base&))
+  { return *this; }
 
   //! Does nothing.
   template<typename T>

@@ -25,7 +25,7 @@ OptionsHierarchy::OptionsHierarchy() : children()
   return;
 }
 
-/*
+/**
  * Constructs an empty OptionsHierarchy node
  *
  * @param name The name of the node to be created.
@@ -38,7 +38,7 @@ OptionsHierarchy::OptionsHierarchy(const char* name) : children()
   return;
 }
 
-/*
+/**
  * Constructs an equivalent node to the given one.
  *
  * @param other The node to be copied
@@ -48,7 +48,7 @@ OptionsHierarchy::OptionsHierarchy(const OptionsHierarchy& other)
   return;
 }
 
-/*
+/**
  * Destroys the node.
  */
 OptionsHierarchy::~OptionsHierarchy()
@@ -56,7 +56,7 @@ OptionsHierarchy::~OptionsHierarchy()
   return;
 }
 
-/*
+/**
  * Will never fail, as given paths are relative to current node
  * and will be generated if not found.
  *
@@ -73,7 +73,7 @@ void OptionsHierarchy::AppendNode(string& pathname, string& tname)
   AppendNode(pathname, tname, tmp, d);
 }
 
-/*
+/**
  * Will never fail, as given paths are relative to current node
  * and will be generated if not found.
  *
@@ -92,7 +92,7 @@ void OptionsHierarchy::AppendNode(string& pathname,
   AppendNode(pathname, tname, description, d);
 }
 
-/*
+/**
  * Will never fail, as given paths are relative to current node
  * and will be generated if not found.
  *
@@ -106,7 +106,8 @@ void OptionsHierarchy::AppendNode(string& pathname, string& tname,
 {
   string name = GetName(pathname);
   string path = GetPath(pathname);
-  //Append the new name, if it isn't already there
+
+  // Append the new name, if it isn't already there.
   if (children.count(name) == 0)
     children[name] = OptionsHierarchy(name.c_str());
 
@@ -116,10 +117,11 @@ void OptionsHierarchy::AppendNode(string& pathname, string& tname,
     return;
   }
 
-  //Recurse until path is done
+  // Recurse until path is done.
   children[name].AppendNode(path, tname, description, data);
 }
-/*
+
+/**
  * Will return the node associated with a pathname
  *
  * @param pathname The full pathname of the node,
@@ -148,7 +150,7 @@ OptionsHierarchy* OptionsHierarchy::FindNodeHelper(string& pathname,
   return NULL;
 }
 
-/*
+/**
  * Returns the various data associated with a node.  Passed by copy,
  * since this is only for unit testing.
  *
@@ -160,24 +162,26 @@ OptionsData OptionsHierarchy::GetNodeData()
   return nodeData;
 }
 
-/* Returns the path bar/fizz in the pathname foo/bar/fizz
-  *
-  * @param pathname The full pathname of the parameter,
-  *   eg foo/bar in foo/bar.
-  *
-  * @return The identifiers of all nodes after the next node in the path,
-  *   eg fizz/bar in foo/fizz/bar.
-  */
+/**
+ * Returns the path bar/fizz in the pathname foo/bar/fizz
+ *
+ * @param pathname The full pathname of the parameter, e.g. foo/bar in foo/bar.
+ *
+ * @return The identifiers of all nodes after the next node in the path,
+ *   eg fizz/bar in foo/fizz/bar.
+ */
 string OptionsHierarchy::GetPath(string& pathname)
 {
-  //Want to make sure we return a valid string
+  // Make sure we return a valid string.
   if (pathname.find('/') == pathname.npos)
     return string("");
-  //Get the rest of the node name Eg foo/bar in root/foo/bar
-  return pathname.substr(pathname.find('/')+1,pathname.length());
+
+  // Get the rest of the node name Eg foo/bar in root/foo/bar.
+  return pathname.substr(pathname.find('/') + 1,pathname.length());
 }
 
-/* Returns the name foo in the pathname foo/bar/fizz
+/**
+ * Returns the name foo in the pathname foo/bar/fizz
  *
  * @param pathname The full pathname of the parameter,
  *   eg foo/bar in foo/bar.
@@ -187,15 +191,15 @@ string OptionsHierarchy::GetPath(string& pathname)
  */
 string OptionsHierarchy::GetName(string& pathname)
 {
-  //Want to makesure we return a valid string
+  // Make sure we return a valid string.
   if (pathname.find('/') == pathname.npos)
     return pathname;
-  //Get the topmost node name in this path Eg root in root/foo/bar
+
+  // Get the topmost node name in this path Eg root in root/foo/bar.
   return pathname.substr(0, pathname.find('/'));
 }
 
-
-/*
+/**
  * Obtains a vector containing relative pathnames of nodes subordinant to
  * the one specified in the parameter.
  *
@@ -208,27 +212,27 @@ std::vector<std::string>
 {
   std::vector<std::string> ret;
 
-  //Obtain the starting node.
+  // Obtain the starting node.
   OptionsHierarchy* node = FindNode(pathname);
   if(node == NULL)
     return ret;
 
-  //Start adding it's children etc.
+  // Start adding its children.
   return GetRelativePathsHelper(*node);
 }
 
-std::vector<std::string>
-  OptionsHierarchy::GetRelativePathsHelper(OptionsHierarchy& node)
+std::vector<std::string> OptionsHierarchy::GetRelativePathsHelper(
+    OptionsHierarchy& node)
 {
   std::vector<std::string> ret;
   std::vector<std::string> tmp;
 
   tmp.push_back(node.nodeData.node);
   ChildMap::iterator iter;
-  for(iter = node.children.begin(); iter != node.children.end(); iter++)
+  for (iter = node.children.begin(); iter != node.children.end(); iter++)
     tmp = GetRelativePathsHelper((*iter).second);
 
-  while(tmp.size())
+  while (tmp.size())
   {
     ret.push_back(tmp.back());
     tmp.pop_back();
@@ -236,15 +240,16 @@ std::vector<std::string>
 
   return ret;
 }
-/*
- * Prints a node, followed by it's entries and submodules.
+
+/**
+ * Prints a node, followed by its entries and submodules.
  */
 void OptionsHierarchy::Print()
 {
-  //Print the node, append '/' if that node is not a leaf
+  // Print the node, append '/' if that node is not a leaf.
   PrintNode();
 
-  //Begin formatted output
+  // Begin formatted output.
   cout << "Entries:" << endl;
   PrintLeaves();
 
@@ -252,7 +257,7 @@ void OptionsHierarchy::Print()
   PrintBranches();
 }
 
-/*
+/**
  * Prints every node and it's value, if any.
  */
 void OptionsHierarchy::PrintAll()
@@ -265,7 +270,7 @@ void OptionsHierarchy::PrintAll()
   }
 }
 
-/*
+/**
  * Prints every node and it's description.
  */
 void OptionsHierarchy::PrintAllHelp()
@@ -278,6 +283,7 @@ void OptionsHierarchy::PrintAllHelp()
 
   // Now print all the children.
   map<string, OptionsHierarchy>::iterator iter;
+
   // First print modules.
   for (iter = children.begin(); iter != children.end(); iter++)
   {
@@ -328,7 +334,8 @@ void OptionsHierarchy::PrintLeaves()
       // timer.
       if (iter->second.nodeData.tname != TYPENAME(timeval))
         iter->second.PrintNode();
-    } else
+    }
+    else
     {
       iter->second.PrintLeaves();
     }
@@ -345,7 +352,8 @@ void OptionsHierarchy::PrintTimers()
     {
       if (iter->second.nodeData.tname == TYPENAME(timeval))
         iter->second.PrintNode();
-    } else
+    }
+    else
     {
       iter->second.PrintTimers();
     }
@@ -369,7 +377,8 @@ void OptionsHierarchy::PrintNode()
     if (value == "")
       value = "\"\""; // So that the user isn't presented with an empty space.
     Log::Info << value;
-  } else if (nodeData.tname == TYPENAME(float))
+  }
+  else if (nodeData.tname == TYPENAME(float))
     Log::Info << CLI::GetParam<float>(nodeData.node.c_str());
   else if (nodeData.tname == TYPENAME(double))
     Log::Info << CLI::GetParam<double>(nodeData.node.c_str());
@@ -425,7 +434,7 @@ void OptionsHierarchy::PrintNode()
   Log::Info << endl;
 }
 
-/*
+/**
  * Prints a node and its description.  The format is similar to that help given
  * by the ImageMagick suite of programs.
  */
@@ -480,7 +489,8 @@ void OptionsHierarchy::PrintNodeHelp()
       cout << HyphenateString(nodeData.desc, 30) << endl;
     else
       cout << "Undocumented option." << endl;
-  } else
+  }
+  else
   {
     cout << endl << std::string(30, ' ');
     if (nodeData.desc.length() > 0)
@@ -518,7 +528,8 @@ string OptionsHierarchy::HyphenateString(string str, int padding)
       if (str.length() - pos < margin)
       {
         splitpos = str.length(); // The rest fits on one line.
-      } else
+      }
+      else
       {
         splitpos = str.rfind(' ', margin + pos); // Find nearest space.
         if (splitpos <= pos || splitpos == string::npos) // Not found.
