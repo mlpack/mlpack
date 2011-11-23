@@ -4,7 +4,7 @@ namespace mlpack {
 namespace linear_regression {
 
 LinearRegression::LinearRegression(arma::mat& predictors,
-  const arma::colvec& responses)
+                                   const arma::colvec& responses)
 {
 
   /*
@@ -32,7 +32,7 @@ LinearRegression::LinearRegression(arma::mat& predictors,
   arma::mat Q, R;
   arma::qr(Q, R, arma::trans(predictors));
 
-  // We compute the parameters, B, like so: 
+  // We compute the parameters, B, like so:
   // R * B = Q^T * responses
   // B = Q^T * responses * R^-1
   arma::solve(parameters, R, arma::trans(Q) * responses);
@@ -47,10 +47,10 @@ LinearRegression::LinearRegression(const std::string& filename)
 }
 
 LinearRegression::~LinearRegression()
-{
-}
+{ }
 
-void LinearRegression::predict(arma::rowvec& predictions, const arma::mat& points)
+void LinearRegression::predict(arma::rowvec& predictions,
+                               const arma::mat& points)
 {
   // We get the number of columns and rows of the dataset.
   size_t n_cols, n_rows;
@@ -65,13 +65,13 @@ void LinearRegression::predict(arma::rowvec& predictions, const arma::mat& point
   predictions += parameters(0);
 
   // Now we iterate through the dimensions of the data and parameters.
-  for(size_t i = 1; i < n_rows + 1; ++i)
+  for (size_t i = 1; i < n_rows + 1; ++i)
   {
     // Now we iterate through each row, or point, of the data.
-    for(size_t j = 0; j < n_cols; ++j)
+    for (size_t j = 0; j < n_cols; ++j)
     {
-      // Increment each prediction value by x_i * a_i, or the next dimensional 
-      // coefficient and x value. 
+      // Increment each prediction value by x_i * a_i, or the next dimensional
+      // coefficient and x value.
       predictions(j) += parameters(i) * points(i - 1, j);
 
     }
