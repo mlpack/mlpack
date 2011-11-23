@@ -24,7 +24,7 @@ bool first = true;
  */
 void setup()
 {
-  if(!first)
+  if (!first)
     return;
   first = false;
 
@@ -72,7 +72,7 @@ void setup()
 template<typename T>
 void verify(size_t learner_typeid, arma::mat& data, SVM<T>& svm)
 {
-  for(size_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; i++)
   {
     arma::vec testvec = data.col(i);
 
@@ -99,7 +99,8 @@ void verify(size_t learner_typeid, arma::mat& data, SVM<T>& svm)
  * Trains a classifier with a gaussian kernel and checks predictions against
  * classes.
  */
-BOOST_AUTO_TEST_CASE(svm_classification_gaussian_kernel_test) {
+BOOST_AUTO_TEST_CASE(svm_classification_gaussian_kernel_test)
+{
   setup();
 
   arma::mat trainingdata;
