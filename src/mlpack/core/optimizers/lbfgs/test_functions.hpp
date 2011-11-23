@@ -1,5 +1,6 @@
-/***
- * test_functions.h
+/**
+ * @file test_functions.h
+ * @author Ryan Curtin
  *
  * A collection of functions to test optimizers (in this case, L-BFGS).  These
  * come from the following paper:
@@ -8,12 +9,9 @@
  *  Jorge J. Moré, Burton S. Garbow, and Kenneth E. Hillstrom. 1981.
  *  ACM Trans. Math. Softw. 7, 1 (March 1981), 17-41.
  *  http://portal.acm.org/citation.cfm?id=355934.355936
- *
- * @author Ryan Curtin
  */
-
-#ifndef __MLPAC_CORE_OPTIMIZERS_LBFGS_TEST_FUNCTIONS_HPP
-#define __MLPAC_CORE_OPTIMIZERS_LBFGS_TEST_FUNCTIONS_HPP
+#ifndef __MLPACK_CORE_OPTIMIZERS_LBFGS_TEST_FUNCTIONS_HPP
+#define __MLPACK_CORE_OPTIMIZERS_LBFGS_TEST_FUNCTIONS_HPP
 
 #include <mlpack/core.h>
 
@@ -31,12 +29,11 @@
 // use either internally but the L-BFGS method requires arma::mat& to be passed
 // (C++ does not allow implicit reference casting to subclasses).
 
-// these names should probably be changed later
 namespace mlpack {
 namespace optimization {
 namespace test {
 
-/***
+/**
  * The Rosenbrock function, defined by
  *  f(x) = f1(x) + f2(x)
  *  f1(x) = 100 (x2 - x1^2)^2
@@ -48,7 +45,8 @@ namespace test {
  * "An automatic method for finding the greatest or least value of a function."
  *   H.H. Rosenbrock.  1960.  Comput. J. 3., 175-184.
  */
-class RosenbrockFunction {
+class RosenbrockFunction
+{
  public:
   RosenbrockFunction(); // initialize initial point
 
@@ -61,7 +59,7 @@ class RosenbrockFunction {
   arma::mat initial_point;
 };
 
-/***
+/**
  * The Wood function, defined by
  *  f(x) = f1(x) + f2(x) + f3(x) + f4(x) + f5(x) + f6(x)
  *  f1(x) = 100 (x2 - x1^2)^2
@@ -90,7 +88,7 @@ class WoodFunction {
   arma::mat initial_point;
 };
 
-/***
+/**
  * The Generalized Rosenbrock function in n dimensions, defined by
  *  f(x) = sum_i^{n - 1} (f(i)(x))
  *  f_i(x) = 100 * (x_i^2 - x_{i + 1})^2 + (1 - x_i)^2
@@ -101,7 +99,8 @@ class WoodFunction {
  * "An analysis of the behavior of a glass of genetic adaptive systems."
  *   K.A. De Jong.  Ph.D. thesis, University of Michigan, 1975.
  */
-class GeneralizedRosenbrockFunction {
+class GeneralizedRosenbrockFunction
+{
  public:
   /***
    * Set the dimensionality of the extended Rosenbrock function.
@@ -120,13 +119,13 @@ class GeneralizedRosenbrockFunction {
   int n; // Dimensionality
 };
 
-
-/***
+/**
  * The Generalized Rosenbrock function in 4 dimensions with the Wood Function in
  * four dimensions.  In this function we are actually optimizing a 2x4 matrix of
  * coordinates, not a vector.
  */
-class RosenbrockWoodFunction {
+class RosenbrockWoodFunction
+{
  public:
   RosenbrockWoodFunction(); // initialize initial point
 
