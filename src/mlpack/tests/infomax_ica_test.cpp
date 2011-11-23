@@ -4,7 +4,7 @@
  * Test for the infomax ICA method.
  */
 #include <mlpack/core.h>
-#include <mlpack/methods/infomax_ica/infomax_ica.h>
+#include <mlpack/methods/infomax_ica/infomax_ica.hpp>
 
 #include <boost/test/unit_test.hpp>
 
