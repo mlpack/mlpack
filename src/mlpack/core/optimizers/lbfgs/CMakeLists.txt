@@ -13,14 +13,3 @@ foreach(file ${SOURCES})
 endforeach()
 
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-# test executable
-add_executable(lbfgs_test
-  EXCLUDE_FROM_ALL
-  lbfgs_test.cpp
-)
-# link dependencies of test executable
-target_link_libraries(lbfgs_test
-  mlpack
-  boost_unit_test_framework
-)

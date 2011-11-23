@@ -1,10 +1,10 @@
-/** @author Dongryeol Lee
+/**
+ * @file lbfgs.hpp
+ * @author Dongryeol Lee
+ * @author Ryan Curtin
  *
- *  @brief The generic L-BFGS optimizer.
- *
- *  @file lbfgs.h
+ * The generic L-BFGS optimizer.
  */
-
 #ifndef __MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
 #define __MLPACK_CORE_OPTIMIZERS_LBFGS_LBFGS_HPP
 
@@ -30,9 +30,10 @@ PARAM_DOUBLE("min_gradient_norm", "Minimum gradient norm required to continue "
     "the optimization.", "lbfgs", 1e-10);
 
 template<typename FunctionType>
-class L_BFGS {
+class L_BFGS
+{
  public:
-  /***
+  /**
    * Initialize the L-BFGS object.  Copy the function we will be optimizing
    * and set the size of the memory for the algorithm.
    *
@@ -41,7 +42,7 @@ class L_BFGS {
    */
   L_BFGS(FunctionType& function_in, int num_basis);
 
-  /***
+  /**
    * Return the point where the lowest function value has been found.
    *
    * @return arma::vec representing the point and a double with the function
@@ -49,7 +50,7 @@ class L_BFGS {
    */
   const std::pair<arma::mat, double>& min_point_iterate() const;
 
-  /***
+  /**
    * Use L-BFGS to optimize the given function, starting at the given iterate
    * point and performing no more than the specified number of maximum
    * iterations.  The given starting point will be modified to store the
@@ -61,17 +62,23 @@ class L_BFGS {
   bool Optimize(int num_iterations, arma::mat& iterate);
 
  private:
+  //! Internal copy of the function we are optimizing.
   FunctionType function_;
 
+  //! Position of the new iterate.
   arma::mat new_iterate_tmp_;
-  arma::cube s_lbfgs_; // stores all the s matrices in memory
-  arma::cube y_lbfgs_; // stores all the y matrices in memory
+  //! Stores all the s matrices in memory.
+  arma::cube s_lbfgs_;
+  //! Stores all the y matrices in memory.
+  arma::cube y_lbfgs_;
 
+  //! Size of memory for this L-BFGS optimizer.
   int num_basis_;
 
+  //! Best point found so far.
   std::pair<arma::mat, double> min_point_iterate_;
 
-  /***
+  /**
    * Evaluate the function at the given iterate point and store the result if it
    * is a new minimum.
    *
@@ -79,7 +86,7 @@ class L_BFGS {
    */
   double Evaluate_(const arma::mat& iterate);
 
-  /***
+  /**
    * Calculate the scaling factor gamma which is used to scale the Hessian
    * approximation matrix.  See method M3 in Section 4 of Liu and Nocedal
    * (1989).
@@ -88,7 +95,7 @@ class L_BFGS {
    */
   double ChooseScalingFactor_(int iteration_num, const arma::mat& gradient);
 
-  /***
+  /**
    * Check to make sure that the norm of the gradient is not smaller than 1e-5.
    * Currently that value is not configurable.
    *
@@ -96,7 +103,7 @@ class L_BFGS {
    */
   bool GradientNormTooSmall_(const arma::mat& gradient);
 
-  /***
+  /**
    * Perform a back-tracking line search along the search direction to
    * calculate a step size satisfying the Wolfe conditions.  The parameter
    * iterate will be modified if the method is successful.
@@ -115,7 +122,7 @@ class L_BFGS {
                    const arma::mat& search_direction,
                    double& step_size);
 
-  /***
+  /**
    * Find the L-BFGS search direction.
    *
    * @param gradient The gradient at the current point
@@ -128,7 +135,7 @@ class L_BFGS {
                         double scaling_factor,
                         arma::mat& search_direction);
 
-  /***
+  /**
    * Update the vectors y_bfgs_ and s_bfgs_, which store the differences
    * between the iterate and old iterate and the differences between the
    * gradient and the old gradient, respectively.

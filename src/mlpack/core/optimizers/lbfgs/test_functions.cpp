@@ -1,9 +1,8 @@
-/***
- * test_functions.cc
- *
- * Implementations of the test functions defined in test_functions.h.
- *
+/**
+ * @file test_functions.cpp
  * @author Ryan Curtin
+ *
+ * Implementations of the test functions defined in test_functions.hpp.
  */
 #include "test_functions.hpp"
 
@@ -13,16 +12,18 @@ using namespace mlpack::optimization::test;
 // RosenbrockFunction implementation
 //
 
-RosenbrockFunction::RosenbrockFunction() {
+RosenbrockFunction::RosenbrockFunction()
+{
   initial_point.set_size(2, 1);
   initial_point[0] = -1.2;
   initial_point[1] = 1;
 }
 
-/***
+/**
  * Calculate the objective function.
  */
-double RosenbrockFunction::Evaluate(const arma::mat& coordinates) {
+double RosenbrockFunction::Evaluate(const arma::mat& coordinates)
+{
   double x1 = coordinates[0];
   double x2 = coordinates[1];
 
@@ -32,23 +33,25 @@ double RosenbrockFunction::Evaluate(const arma::mat& coordinates) {
   return objective;
 }
 
-/***
+/**
  * Calculate the gradient.
  */
 void RosenbrockFunction::Gradient(const arma::mat& coordinates,
-                                  arma::mat& gradient) {
+                                  arma::mat& gradient)
+{
   // f'_{x1}(x) = -2 (1 - x1) + 400 (x1^3 - (x2 x1))
   // f'_{x2}(x) = 200 (x2 - x1^2)
 
   double x1 = coordinates[0];
   double x2 = coordinates[1];
- 
+
   gradient.set_size(2, 1);
   gradient[0] = -2 * (1 - x1) + 400 * (std::pow(x1, 3) - x2 * x1);
   gradient[1] = 200 * (x2 - std::pow(x1, 2));
 }
 
-const arma::mat& RosenbrockFunction::GetInitialPoint() {
+const arma::mat& RosenbrockFunction::GetInitialPoint()
+{
   return initial_point;
 }
 
@@ -56,7 +59,8 @@ const arma::mat& RosenbrockFunction::GetInitialPoint() {
 // WoodFunction implementation
 //
 
-WoodFunction::WoodFunction() {
+WoodFunction::WoodFunction()
+{
   initial_point.set_size(4, 1);
   initial_point[0] = -3;
   initial_point[1] = -1;
@@ -64,10 +68,11 @@ WoodFunction::WoodFunction() {
   initial_point[3] = -1;
 }
 
-/***
+/**
  * Calculate the objective function.
  */
-double WoodFunction::Evaluate(const arma::mat& coordinates) {
+double WoodFunction::Evaluate(const arma::mat& coordinates)
+{
   // For convenience; we assume these temporaries will be optimized out.
   double x1 = coordinates[0];
   double x2 = coordinates[1];
@@ -84,11 +89,12 @@ double WoodFunction::Evaluate(const arma::mat& coordinates) {
   return objective;
 }
 
-/***
+/**
  * Calculate the gradient.
  */
 void WoodFunction::Gradient(const arma::mat& coordinates,
-                            arma::mat& gradient) {
+                            arma::mat& gradient)
+{
   // For convenience; we assume these temporaries will be optimized out.
   double x1 = coordinates[0];
   double x2 = coordinates[1];
@@ -108,7 +114,8 @@ void WoodFunction::Gradient(const arma::mat& coordinates,
       (1 / 5) * (x2 - x4);
 }
 
-const arma::mat& WoodFunction::GetInitialPoint() {
+const arma::mat& WoodFunction::GetInitialPoint()
+{
   return initial_point;
 }
 
@@ -116,9 +123,11 @@ const arma::mat& WoodFunction::GetInitialPoint() {
 // GeneralizedRosenbrockFunction implementation
 //
 
-GeneralizedRosenbrockFunction::GeneralizedRosenbrockFunction(int n) : n(n) {
+GeneralizedRosenbrockFunction::GeneralizedRosenbrockFunction(int n) : n(n)
+{
   initial_point.set_size(n, 1);
-  for (int i = 0; i < n; i++) { // Set to [-1.2 1 -1.2 1 ...].
+  for (int i = 0; i < n; i++) // Set to [-1.2 1 -1.2 1 ...].
+  {
     if (i % 2 == 1)
       initial_point[i] = -1.2;
     else
@@ -126,12 +135,14 @@ GeneralizedRosenbrockFunction::GeneralizedRosenbrockFunction(int n) : n(n) {
   }
 }
 
-/***
+/**
  * Calculate the objective function.
  */
-double GeneralizedRosenbrockFunction::Evaluate(const arma::mat& coordinates) {
+double GeneralizedRosenbrockFunction::Evaluate(const arma::mat& coordinates)
+{
   double fval = 0;
-  for (int i = 0; i < (n - 1); i++) {
+  for (int i = 0; i < (n - 1); i++)
+  {
     fval += 100 * std::pow(std::pow(coordinates[i], 2) -
         coordinates[i + 1], 2) + std::pow(1 - coordinates[i], 2);
   }
@@ -139,24 +150,28 @@ double GeneralizedRosenbrockFunction::Evaluate(const arma::mat& coordinates) {
   return fval;
 }
 
-/***
+/**
  * Calculate the gradient.
  */
 void GeneralizedRosenbrockFunction::Gradient(const arma::mat& coordinates,
-                                             arma::mat& gradient) {
+                                             arma::mat& gradient)
+{
   gradient.set_size(n);
-  for(int i = 0; i < (n - 1); i++) {
-    gradient[i] = 400 * (std::pow(coordinates[i], 3) - coordinates[i] * 
+  for (int i = 0; i < (n - 1); i++)
+  {
+    gradient[i] = 400 * (std::pow(coordinates[i], 3) - coordinates[i] *
         coordinates[i + 1]) + 2 * (coordinates[i] - 1);
-    if(i > 0)
+
+    if (i > 0)
       gradient[i] += 200 * (coordinates[i] - std::pow(coordinates[i - 1], 2));
   }
 
   gradient[n - 1] = 200 * (coordinates[n - 1] -
-      std::pow(coordinates[n - 2], 2)); 
+      std::pow(coordinates[n - 2], 2));
 }
 
-const arma::mat& GeneralizedRosenbrockFunction::GetInitialPoint() {
+const arma::mat& GeneralizedRosenbrockFunction::GetInitialPoint()
+{
   return initial_point;
 }
 
@@ -164,16 +179,18 @@ const arma::mat& GeneralizedRosenbrockFunction::GetInitialPoint() {
 // RosenbrockWoodFunction implementation
 //
 
-RosenbrockWoodFunction::RosenbrockWoodFunction() : rf(4), wf() {
+RosenbrockWoodFunction::RosenbrockWoodFunction() : rf(4), wf()
+{
   initial_point.set_size(4, 2);
   initial_point.col(0) = rf.GetInitialPoint();
   initial_point.col(1) = wf.GetInitialPoint();
 }
 
-/***
+/**
  * Calculate the objective function.
  */
-double RosenbrockWoodFunction::Evaluate(const arma::mat& coordinates) {
+double RosenbrockWoodFunction::Evaluate(const arma::mat& coordinates)
+{
   double objective = rf.Evaluate(coordinates.col(0)) +
                      wf.Evaluate(coordinates.col(1));
 
@@ -184,9 +201,10 @@ double RosenbrockWoodFunction::Evaluate(const arma::mat& coordinates) {
  * Calculate the gradient.
  */
 void RosenbrockWoodFunction::Gradient(const arma::mat& coordinates,
-                                      arma::mat& gradient) {
+                                      arma::mat& gradient)
+{
   gradient.set_size(4, 2);
-  
+
   arma::vec grf(4);
   arma::vec gwf(4);
 
@@ -197,6 +215,7 @@ void RosenbrockWoodFunction::Gradient(const arma::mat& coordinates,
   gradient.col(1) = gwf;
 }
 
-const arma::mat& RosenbrockWoodFunction::GetInitialPoint() {
+const arma::mat& RosenbrockWoodFunction::GetInitialPoint()
+{
   return initial_point;
 }
