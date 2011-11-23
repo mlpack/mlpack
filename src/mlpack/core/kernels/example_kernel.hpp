@@ -76,7 +76,8 @@ namespace kernel {
  * is necessary.
  * @endnote
  */
-class ExampleKernel {
+class ExampleKernel
+{
  public:
   /**
    * The default constructor, which takes no parameters.  Because our simple

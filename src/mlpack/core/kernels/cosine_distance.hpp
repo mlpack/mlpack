@@ -1,5 +1,5 @@
-/***
- * @file cosine_distance.h
+/**
+ * @file cosine_distance.hpp
  * @author Ryan Curtin
  *
  * This implements the cosine distance (or cosine similarity) between two
@@ -23,7 +23,8 @@ namespace kernel {
  * and this class assumes the standard L2 inner product.  In the future it may
  * support more.
  */
-class CosineDistance {
+class CosineDistance
+{
  public:
   /**
    * Default constructor does nothing, but is required to satisfy the Kernel
