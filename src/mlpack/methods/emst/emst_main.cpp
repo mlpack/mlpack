@@ -1,5 +1,5 @@
 /**
-* @file emst.cc
+ * @file emst.cc
  *
  * Calls the DualTreeBoruvka algorithm from dtb.h
  * Can optionally call Naive Boruvka's method
@@ -10,7 +10,7 @@
  * In KDD, 2010.
  *
  * @author Bill March (march@gatech.edu)
-*/
+ */
 
 #include "dtb.hpp"
 
@@ -27,10 +27,9 @@ PARAM_DOUBLE("total_squared_length", "Squared length of the computed tree.", "dt
 using namespace mlpack;
 using namespace mlpack::emst;
 
-int main(int argc, char* argv[]) {
-
+int main(int argc, char* argv[])
+{
   CLI::ParseCommandLine(argc, argv);
-
 
   ///////////////// READ IN DATA //////////////////////////////////
   std::string data_file_name = CLI::GetParam<std::string>("emst/input_file");
@@ -41,8 +40,8 @@ int main(int argc, char* argv[]) {
   data::Load(data_file_name.c_str(), data_points, true);
 
   // Do naive
-  if (CLI::GetParam<bool>("naive/do_naive")) {
-
+  if (CLI::GetParam<bool>("naive/do_naive"))
+  {
     Log::Info << "Running naive algorithm.\n";
 
     DualTreeBoruvka naive;
@@ -58,8 +57,8 @@ int main(int argc, char* argv[]) {
 
     data::Save(naive_output_filename.c_str(), naive_results, true);
   }
-  else {
-
+  else
+  {
     Log::Info << "Data read, building tree.\n";
 
     /////////////// Initialize DTB //////////////////////
@@ -83,5 +82,4 @@ int main(int argc, char* argv[]) {
   }
 
   return 0;
-
 }
