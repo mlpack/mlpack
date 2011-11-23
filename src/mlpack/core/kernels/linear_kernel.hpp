@@ -24,7 +24,8 @@ namespace kernel {
  *
  * This kernel has no parameters and therefore the evaluation can be static.
  */
-class LinearKernel {
+class LinearKernel
+{
  public:
   /**
    * This constructor does nothing; the linear kernel has no parameters to
@@ -40,7 +41,8 @@ class LinearKernel {
    * @param b Second vector.
    * @return K(a, b).
    */
-  static double Evaluate(const arma::vec& a, const arma::vec& b) {
+  static double Evaluate(const arma::vec& a, const arma::vec& b)
+  {
     return arma::dot(a, b);
   }
 };

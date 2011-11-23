@@ -49,7 +49,8 @@ class GaussianKernel
    * @return K(a, b) using the bandwidth (@f$\sigma@f$) specified in the
    *   constructor.
    */
-  double Evaluate(const arma::vec& a, const arma::vec& b) const {
+  double Evaluate(const arma::vec& a, const arma::vec& b) const
+  {
     // The precalculation of gamma saves us some little computation time.
     arma::vec diff = b - a;
     return exp(gamma * arma::dot(diff, diff));
