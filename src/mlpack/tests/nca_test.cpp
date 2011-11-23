@@ -6,13 +6,13 @@
  * the softmax error function).
  */
 #include <mlpack/core.h>
-#include <mlpack/core/kernels/lmetric.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/nca/nca.h>
 
 #include <boost/test/unit_test.hpp>
 
 using namespace mlpack;
-using namespace mlpack::kernel;
+using namespace mlpack::metric;
 using namespace mlpack::nca;
 
 //
