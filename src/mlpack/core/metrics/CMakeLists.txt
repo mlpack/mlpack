@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-  gaussian_kernel.hpp
-  linear_kernel.hpp
-  cosine_distance.hpp
-  cosine_distance.cpp
+  lmetric.hpp
+  lmetric.cpp
+  mahalanobis_distance.hpp
+  mahalanobis_distance_impl.hpp
 )
 
 # add directory name to sources

@@ -12,7 +12,7 @@
 
 #include <mlpack/core.h>
 #include <mlpack/core/math/math_misc.hpp>
-#include <mlpack/core/kernels/lmetric.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
 
 namespace mlpack {
 namespace bound {
@@ -25,7 +25,7 @@ namespace bound {
  * To initialize this, set the radius with @c set_radius
  * and set the point by initializing @c point() directly.
  */
-template<typename TMetric = mlpack::kernel::SquaredEuclideanDistance, typename TPoint = arma::vec>
+template<typename TMetric = mlpack::metric::SquaredEuclideanDistance, typename TPoint = arma::vec>
 class DBallBound {
   public:
     typedef TPoint Point;

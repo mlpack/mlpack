@@ -4,13 +4,13 @@
  *
  * Implementation of the Mahalanobis distance.
  */
-#ifndef __MLPACK_CORE_KERNELS_MAHALANOBIS_DISTANCE_IMPL_H
-#define __MLPACK_CORE_KERNELS_MAHALANOBIS_DISTANCE_IMPL_H
+#ifndef __MLPACK_CORE_METRICS_MAHALANOBIS_DISTANCE_IMPL_HPP
+#define __MLPACK_CORE_METRICS_MAHALANOBIS_DISTANCE_IMPL_HPP
 
 #include "mahalanobis_distance.hpp"
 
 namespace mlpack {
-namespace kernel {
+namespace metric {
 
 /**
  * Specialization for non-rooted case.
@@ -43,7 +43,7 @@ double MahalanobisDistance<true>::Evaluate(const arma::vec& a,
   return sqrt(out[0]);
 }
 
-};
-};
+}; // namespace distance
+}; // namespace mlpack
 
 #endif

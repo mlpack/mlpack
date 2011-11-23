@@ -7,13 +7,13 @@
  *
  * This also gives several convenience typedefs for commonly used L-metrics.
  */
-#ifndef __MLPACK_CORE_KERNELS_LMETRIC_H
-#define __MLPACK_CORE_KERNELS_LMETRIC_H
+#ifndef __MLPACK_CORE_METRICS_LMETRIC_HPP
+#define __MLPACK_CORE_METRICS_LMETRIC_HPP
 
 #include <mlpack/core.h>
 
 namespace mlpack {
-namespace kernel {
+namespace metric {
 
 /**
  * The L_p metric for arbitrary integer p, with an option to take the root.
@@ -103,7 +103,7 @@ typedef LMetric<2, false> SquaredEuclideanDistance;
  */
 typedef LMetric<2, true> EuclideanDistance;
 
-}; // namespace kernel
+}; // namespace distance
 }; // namespace mlpack
 
 #endif

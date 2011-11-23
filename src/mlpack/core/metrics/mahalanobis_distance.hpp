@@ -4,13 +4,13 @@
  *
  * The Mahalanobis distance.
  */
-#ifndef __MLPACK_CORE_KERNELS_MAHALANOBIS_DISTANCE_H
-#define __MLPACK_CORE_KERNELS_MAHALANOBIS_DISTANCE_H
+#ifndef __MLPACK_CORE_METRICS_MAHALANOBIS_DISTANCE_HPP
+#define __MLPACK_CORE_METRICS_MAHALANOBIS_DISTANCE_HPP
 
 #include <mlpack/core.h>
 
 namespace mlpack {
-namespace kernel {
+namespace metric {
 
 /**
  * The Mahalanobis distance, which is essentially a stretched Euclidean
@@ -88,7 +88,7 @@ class MahalanobisDistance {
   arma::mat covariance_;
 };
 
-}; // namespace kernel
+}; // namespace distance
 }; // namespace mlpack
 
 #include "mahalanobis_distance_impl.hpp"

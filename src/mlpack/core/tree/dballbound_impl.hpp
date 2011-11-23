@@ -11,9 +11,6 @@
 
 #include <mlpack/core.h>
 
-// Awaiting transition
-#include <mlpack/core/kernels/lmetric.hpp>
-
 namespace mlpack {
 namespace bound {
 

@@ -5,6 +5,7 @@ set(DIRS
   io
   kernels
   math
+  metrics
   optimizers
   tree
   utilities
