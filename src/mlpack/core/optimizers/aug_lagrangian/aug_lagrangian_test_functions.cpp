@@ -1,5 +1,5 @@
 /**
- * @file aug_lagrangian_test_functions.cc
+ * @file aug_lagrangian_test_functions.cpp
  * @author Ryan Curtin
  *
  * Implementation of AugLagrangianTestFunction class.
@@ -13,18 +13,21 @@ using namespace mlpack::optimization;
 //
 // AugLagrangianTestFunction
 //
-AugLagrangianTestFunction::AugLagrangianTestFunction() {
+AugLagrangianTestFunction::AugLagrangianTestFunction()
+{
   // Set the initial point to be (0, 0).
   initial_point_.zeros(2, 1);
 }
 
 AugLagrangianTestFunction::AugLagrangianTestFunction(
       const arma::mat& initial_point) :
-    initial_point_(initial_point) {
+    initial_point_(initial_point)
+{
   // Nothing to do.
 }
 
-double AugLagrangianTestFunction::Evaluate(const arma::mat& coordinates) {
+double AugLagrangianTestFunction::Evaluate(const arma::mat& coordinates)
+{
   // f(x) = 6 x_1^2 + 4 x_1 x_2 + 3 x_2^2
   return ((6 * std::pow(coordinates[0], 2)) +
           (4 * (coordinates[0] * coordinates[1])) +
@@ -32,7 +35,8 @@ double AugLagrangianTestFunction::Evaluate(const arma::mat& coordinates) {
 }
 
 void AugLagrangianTestFunction::Gradient(const arma::mat& coordinates,
-                                         arma::mat& gradient) {
+                                         arma::mat& gradient)
+{
   // f'_x1(x) = 12 x_1 + 4 x_2
   // f'_x2(x) = 4 x_1 + 6 x_2
   gradient.set_size(2, 1);
@@ -42,7 +46,8 @@ void AugLagrangianTestFunction::Gradient(const arma::mat& coordinates,
 }
 
 double AugLagrangianTestFunction::EvaluateConstraint(int index,
-    const arma::mat& coordinates) {
+    const arma::mat& coordinates)
+{
   // We return 0 if the index is wrong (not 0).
   if (index != 0)
     return 0;
@@ -52,7 +57,8 @@ double AugLagrangianTestFunction::EvaluateConstraint(int index,
 }
 
 void AugLagrangianTestFunction::GradientConstraint(int index,
-    const arma::mat& coordinates, arma::mat& gradient) {
+    const arma::mat& coordinates, arma::mat& gradient)
+{
   // If the user passed an invalid index (not 0), we will return a zero
   // gradient.
   gradient.zeros(2, 1);
@@ -67,18 +73,21 @@ void AugLagrangianTestFunction::GradientConstraint(int index,
 //
 // GockenbachFunction
 //
-GockenbachFunction::GockenbachFunction() {
+GockenbachFunction::GockenbachFunction()
+{
   // Set the initial point to (0, 0, 1).
   initial_point_.zeros(3, 1);
   initial_point_[2] = 1;
 }
 
 GockenbachFunction::GockenbachFunction(const arma::mat& initial_point) :
-    initial_point_(initial_point) {
+    initial_point_(initial_point)
+{
   // Nothing to do.
 }
 
-double GockenbachFunction::Evaluate(const arma::mat& coordinates) {
+double GockenbachFunction::Evaluate(const arma::mat& coordinates)
+{
   // f(x) = (x_1 - 1)^2 + 2 (x_2 + 2)^2 + 3(x_3 + 3)^2
   return ((std::pow(coordinates[0] - 1, 2)) +
           (2 * std::pow(coordinates[1] + 2, 2)) +
@@ -86,7 +95,8 @@ double GockenbachFunction::Evaluate(const arma::mat& coordinates) {
 }
 
 void GockenbachFunction::Gradient(const arma::mat& coordinates,
-                                  arma::mat& gradient) {
+                                  arma::mat& gradient)
+{
   // f'_x1(x) = 2 (x_1 - 1)
   // f'_x2(x) = 4 (x_2 + 2)
   // f'_x3(x) = 6 (x_3 + 3)
@@ -98,10 +108,12 @@ void GockenbachFunction::Gradient(const arma::mat& coordinates,
 }
 
 double GockenbachFunction::EvaluateConstraint(int index,
-                                              const arma::mat& coordinates) {
+                                              const arma::mat& coordinates)
+{
   double constraint = 0;
 
-  switch(index) {
+  switch (index)
+  {
     case 0: // g(x) = (x_3 - x_2 - x_1 - 1) = 0
       constraint = (coordinates[2] - coordinates[1] - coordinates[0] - 1);
       break;
@@ -120,10 +132,12 @@ double GockenbachFunction::EvaluateConstraint(int index,
 
 void GockenbachFunction::GradientConstraint(int index,
                                             const arma::mat& coordinates,
-                                            arma::mat& gradient) {
+                                            arma::mat& gradient)
+{
   gradient.zeros(3, 1);
 
-  switch(index) {
+  switch (index)
+  {
     case 0:
       // g'_x1(x) = -1
       // g'_x2(x) = -1
@@ -150,13 +164,15 @@ LovaszThetaSDP::LovaszThetaSDP() : edges_(0), vertices_(0), initial_point_(0, 0)
 { }
 
 LovaszThetaSDP::LovaszThetaSDP(const arma::mat& edges) : edges_(edges),
-    initial_point_(0, 0) {
+    initial_point_(0, 0)
+{
   // Calculate V by finding the maximum index in the edges matrix.
   vertices_ = max(max(edges_)) + 1;
 //  Log::Debug << vertices_ << " vertices in graph." << std::endl;
 }
 
-double LovaszThetaSDP::Evaluate(const arma::mat& coordinates) {
+double LovaszThetaSDP::Evaluate(const arma::mat& coordinates)
+{
   // The objective is equal to -Tr(ones * X) = -Tr(ones * (R^T * R)).
   // This can be simplified into the negative sum of (R^T * R).
 //  Log::Debug << "Evaluting objective function with coordinates:" << std::endl;
@@ -174,7 +190,8 @@ double LovaszThetaSDP::Evaluate(const arma::mat& coordinates) {
 }
 
 void LovaszThetaSDP::Gradient(const arma::mat& coordinates,
-                              arma::mat& gradient) {
+                              arma::mat& gradient)
+{
 //  Log::Debug << "Evaluating gradient. " << std::endl;
 
   // The gradient of -Tr(ones * X) is equal to -2 * ones * R
@@ -186,14 +203,17 @@ void LovaszThetaSDP::Gradient(const arma::mat& coordinates,
 //  std::cout << gradient;
 }
 
-int LovaszThetaSDP::NumConstraints() {
+int LovaszThetaSDP::NumConstraints()
+{
   // Each edge is a constraint, and we have the constraint Tr(X) = 1.
   return edges_.n_cols + 1;
 }
 
 double LovaszThetaSDP::EvaluateConstraint(int index,
-                                          const arma::mat& coordinates) {
-  if (index == 0) { // This is the constraint Tr(X) = 1.
+                                          const arma::mat& coordinates)
+{
+  if (index == 0) // This is the constraint Tr(X) = 1.
+  {
     double sum = -1; // Tr(X) - 1 = 0, so we prefix the subtraction.
     for (size_t i = 0; i < coordinates.n_cols; i++)
       sum += dot(coordinates.col(i), coordinates.col(i));
@@ -214,9 +234,11 @@ double LovaszThetaSDP::EvaluateConstraint(int index,
 
 void LovaszThetaSDP::GradientConstraint(int index,
                                         const arma::mat& coordinates,
-                                        arma::mat& gradient) {
+                                        arma::mat& gradient)
+{
 //  Log::Debug << "Gradient of constraint " << index << " is " << std::endl;
-  if (index == 0) { // This is the constraint Tr(X) = 1.
+  if (index == 0) // This is the constraint Tr(X) = 1.
+  {
     gradient = 2 * coordinates; // d/dX (Tr(R^T R)) = 2 R.
 //    std::cout << gradient;
     return;
@@ -244,7 +266,8 @@ void LovaszThetaSDP::GradientConstraint(int index,
 //  std::cout << gradient;
 }
 
-const arma::mat& LovaszThetaSDP::GetInitialPoint() {
+const arma::mat& LovaszThetaSDP::GetInitialPoint()
+{
   if (initial_point_.n_rows != 0 && initial_point_.n_cols != 0)
     return initial_point_; // It has already been calculated.
 
@@ -275,8 +298,10 @@ const arma::mat& LovaszThetaSDP::GetInitialPoint() {
 
   // Now we set the entries of the initial matrix according to the formula given
   // in Section 4 of Monteiro and Burer.
-  for (size_t i = 0; i < r; i++) {
-    for (size_t j = 0; j < (size_t) vertices_; j++) {
+  for (size_t i = 0; i < r; i++)
+  {
+    for (size_t j = 0; j < (size_t) vertices_; j++)
+    {
       if (i == j)
         initial_point_(i, j) = sqrt(1.0 / r) + sqrt(1.0 / (vertices_ * m));
       else

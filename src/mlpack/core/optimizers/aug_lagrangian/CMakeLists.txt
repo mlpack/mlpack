@@ -13,13 +13,3 @@ foreach(file ${SOURCES})
 endforeach()
 
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-# test executable
-add_executable(aug_lagrangian_test
-  EXCLUDE_FROM_ALL
-  aug_lagrangian_test.cpp
-)
-target_link_libraries(aug_lagrangian_test
-  mlpack
-  boost_unit_test_framework
-)
