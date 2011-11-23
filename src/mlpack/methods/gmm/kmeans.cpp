@@ -7,7 +7,7 @@
  */
 #include "kmeans.hpp"
 
-#include <mlpack/core/kernels/lmetric.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
 
 namespace mlpack {
 namespace gmm {
@@ -62,7 +62,7 @@ void KMeans(const arma::mat& data,
 
       for (size_t j = 0; j < value_of_k; j++)
       {
-        double distance = kernel::SquaredEuclideanDistance::Evaluate(
+        double distance = metric::SquaredEuclideanDistance::Evaluate(
             data.unsafe_col(i), centroids.unsafe_col(j));
 
         if (distance < min_distance)
@@ -115,7 +115,7 @@ void KMeans(const arma::mat& data,
         {
           if (assignments[j] == cluster)
           {
-            double d = kernel::SquaredEuclideanDistance::Evaluate(
+            double d = metric::SquaredEuclideanDistance::Evaluate(
                 data.unsafe_col(j), centroids.unsafe_col(cluster));
 
             if (d >= distance)

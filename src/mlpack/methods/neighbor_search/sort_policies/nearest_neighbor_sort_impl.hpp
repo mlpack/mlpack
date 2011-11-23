@@ -8,8 +8,6 @@
 #ifndef __MLPACK_NEIGHBOR_NEAREST_NEIGHBOR_SORT_IMPL_HPP
 #define __MLPACK_NEIGHBOR_NEAREST_NEIGHBOR_SORT_IMPL_HPP
 
-#include <mlpack/core/kernels/lmetric.hpp>
-
 namespace mlpack {
 namespace neighbor {
 

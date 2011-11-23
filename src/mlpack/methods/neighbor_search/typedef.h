@@ -12,7 +12,7 @@
 // In case someone included this directly.
 #include "neighbor_search.h"
 
-#include <mlpack/core/kernels/lmetric.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
 
 #include "sort_policies/nearest_neighbor_sort.hpp"
 #include "sort_policies/furthest_neighbor_sort.hpp"
@@ -26,7 +26,7 @@ namespace neighbor {
  * neighbors.  Squared distances are used because they are slightly faster than
  * non-squared distances (they have one fewer call to sqrt()).
  */
-typedef NeighborSearch<kernel::SquaredEuclideanDistance, NearestNeighborSort>
+typedef NeighborSearch<metric::SquaredEuclideanDistance, NearestNeighborSort>
     AllkNN;
 
 /**
@@ -35,7 +35,7 @@ typedef NeighborSearch<kernel::SquaredEuclideanDistance, NearestNeighborSort>
  * neighbors.  Squared distances are used because they are slightly faster than
  * non-squared distances (they have one fewer call to sqrt()).
  */
-typedef NeighborSearch<kernel::SquaredEuclideanDistance, FurthestNeighborSort>
+typedef NeighborSearch<metric::SquaredEuclideanDistance, FurthestNeighborSort>
     AllkFN;
 
 }; // namespace neighbor

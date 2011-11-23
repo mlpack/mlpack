@@ -5,7 +5,7 @@
  * Executable for Neighborhood Components Analysis.
  */
 #include <mlpack/core.h>
-#include <mlpack/core/kernels/lmetric.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
 
 #include "nca.h"
 
@@ -18,7 +18,7 @@ PARAM_STRING_REQ("output_file", "Output file for learned distance matrix.", "");
 
 using namespace mlpack;
 using namespace mlpack::nca;
-using namespace mlpack::kernel;
+using namespace mlpack::metric;
 using namespace std;
 
 int main(int argc, char* argv[]) {
