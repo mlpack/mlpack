@@ -11,11 +11,10 @@
 #ifndef __MLPACK_CORE_IO_CLI_IMPL_HPP
 #define __MLPACK_CORE_IO_CLI_IMPL_HPP
 
-//Include option.hpp here because it requires CLI but is also templated.
+// Include option.hpp here because it requires CLI but is also templated.
 #include "option.hpp"
 
-namespace mlpack 
-{
+namespace mlpack {
 
 /**
  * @brief Adds a parameter to CLI, making it accessibile via GetParam &
@@ -33,7 +32,7 @@ template<typename T>
 void CLI::Add(const char* identifier,
              const char* description,
              const char* parent,
-             bool required) 
+             bool required)
 {
 
   po::options_description& desc = CLI::GetSingleton().desc;
@@ -75,17 +74,17 @@ T& CLI::GetParam(const char* identifier)
 
   // If we have the option, set its value.
   if (vmap.count(key) && !gmap.count(key))
-  {
     gmap[key] = boost::any(vmap[identifier].as<T>());
-  }
 
   // We may have whatever is on the commandline, but what if the programmer has
   // made modifications?
   if (!gmap.count(key))
-  { // The programmer hasn't done anything; register it
+  {
+    // The programmer hasn't done anything; register it.
     gmap[key] = boost::any(tmp);
     *boost::any_cast<T>(&gmap[key]) = tmp;
   }
+
   tmp = *boost::any_cast<T>(&gmap[key]);
   return *boost::any_cast<T>(&gmap[key]);
 }

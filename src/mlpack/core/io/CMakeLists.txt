@@ -16,7 +16,6 @@ set(SOURCES
   optionshierarchy.hpp
   optionshierarchy.cpp
   nulloutstream.hpp
-  nulloutstream.cpp
   prefixedoutstream.hpp
   prefixedoutstream.cpp
   prefixedoutstream_impl.hpp

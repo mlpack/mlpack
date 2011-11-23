@@ -1,4 +1,4 @@
-/***
+/**
  * @file option.hpp
  * @author Matthew Amidon
  *
@@ -12,10 +12,8 @@
 
 #include "cli.hpp"
 
-namespace mlpack
-{
-namespace io
-{
+namespace mlpack {
+namespace io {
 
 /**
  * A static object whose constructor registers a parameter with the CLI class.

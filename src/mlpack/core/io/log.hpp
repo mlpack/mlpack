@@ -10,8 +10,7 @@
 #include "prefixedoutstream.hpp"
 #include "nulloutstream.hpp"
 
-namespace mlpack
-{
+namespace mlpack {
 
 /**
  * Provides a convenient way to give formatted output.
@@ -53,8 +52,7 @@ class Log
    * If not, halts program execution and prints a custom error message.
    * Does nothing in non-debug mode.
    */
-  static void Assert(bool condition,
-      const char* message="Assert Failed.");
+  static void Assert(bool condition, const char* message = "Assert Failed.");
 
 
   // We only use PrefixedOutStream if the program is compiled with debug
@@ -66,6 +64,7 @@ class Log
   //! Dumps debug output into the bit nether regions.
   static io::NullOutStream Debug;
 #endif
+
   //! Prints informational messages if --verbose is specified, prefixed with
   //! [INFO ].
   static io::PrefixedOutStream Info;

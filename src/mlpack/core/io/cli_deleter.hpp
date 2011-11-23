@@ -7,10 +7,8 @@
 #ifndef __MLPACK_CORE_IO_CLI_DELETER_HPP
 #define __MLPACK_CORE_IO_CLI_DELETER_HPP
 
-namespace mlpack
-{
-namespace io
-{
+namespace mlpack {
+namespace io {
 
 /**
  * Extremely simple class whose only job is to delete the existing CLI object at

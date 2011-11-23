@@ -5,8 +5,8 @@
  *
  * Declaration of the PrefixedOutStream class.
  */
-#ifndef __MLPACK_CORE_IO_PREFIXED_OUT_STREAM_HPP
-#define __MLPACK_CORE_IO_PREFIXED_OUT_STREAM_HPP
+#ifndef __MLPACK_CORE_IO_PREFIXEDOUTSTREAM_HPP
+#define __MLPACK_CORE_IO_PREFIXEDOUTSTREAM_HPP
 
 #include <iostream>
 #include <iomanip>
@@ -15,10 +15,8 @@
 
 #include <boost/lexical_cast.hpp>
 
-namespace mlpack
-{
-namespace io
-{
+namespace mlpack {
+namespace io {
 
 /**
  * Allows us to output to an ostream with a prefix at the beginning of each

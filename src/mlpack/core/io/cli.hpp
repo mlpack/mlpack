@@ -395,14 +395,15 @@
 
 namespace po = boost::program_options;
 
-namespace mlpack 
-{
+namespace mlpack {
+
+namespace io {
 
 // Externally defined in option.hpp, this class holds information about the
 // program being run.
-namespace io {
 class ProgramDoc;
-};
+
+}; // namespace io
 
 /**
  * @brief Parses the command line for parameters and holds user-specified
@@ -538,7 +539,7 @@ class ProgramDoc;
  * collisions are still possible, and they produce bizarre error messages. See
  * http://mlpack.org/ticket/74 for more information.
  */
-class CLI 
+class CLI
 {
  public:
   /**

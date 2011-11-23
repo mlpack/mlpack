@@ -1,4 +1,4 @@
-/***
+/**
  * @file io_deleter.cc
  * @author Ryan Curtin
  *
