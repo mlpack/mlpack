@@ -44,7 +44,8 @@ PARAM_INT("leaf_size", "Leaf size used during tree construction.", "tree", 20);
  */
 template<typename Bound,
          typename Statistic = EmptyStatistic>
-class BinarySpaceTree {
+class BinarySpaceTree
+{
  private:
   //! The left child node.
   BinarySpaceTree *left_;

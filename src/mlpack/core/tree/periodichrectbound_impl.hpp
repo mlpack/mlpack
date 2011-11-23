@@ -25,7 +25,8 @@ template<int t_pow>
 PeriodicHRectBound<t_pow>::PeriodicHRectBound() :
       bounds_(NULL),
       dim_(0),
-      box_(/* empty */) { /* nothing to do */ }
+      box_(/* empty */)
+{ /* nothing to do */ }
 
 /**
  * Specifies the box size, but not dimensionality.
@@ -34,13 +35,15 @@ template<int t_pow>
 PeriodicHRectBound<t_pow>::PeriodicHRectBound(arma::vec box) :
       bounds_(new math::Range[box.n_rows]),
       dim_(box.n_rows),
-      box_(box) { /* nothing to do */ }
+      box_(box)
+{ /* nothing to do */ }
 
 /***
  * Copy constructor.
  */
 template<int t_pow>
-PeriodicHRectBound<t_pow>::PeriodicHRectBound(const PeriodicHRectBound& other) {
+PeriodicHRectBound<t_pow>::PeriodicHRectBound(const PeriodicHRectBound& other)
+{
   // not done yet
 }
 
@@ -49,7 +52,8 @@ PeriodicHRectBound<t_pow>::PeriodicHRectBound(const PeriodicHRectBound& other) {
  */
 template<int t_pow>
 PeriodicHRectBound<t_pow>& PeriodicHRectBound<t_pow>::operator=(
-    const PeriodicHRectBound& other) {
+    const PeriodicHRectBound& other)
+{
   // not done yet
 
   return *this;
@@ -59,7 +63,8 @@ PeriodicHRectBound<t_pow>& PeriodicHRectBound<t_pow>::operator=(
  * Destructor: clean up memory
  */
 template<int t_pow>
-PeriodicHRectBound<t_pow>::~PeriodicHRectBound() {
+PeriodicHRectBound<t_pow>::~PeriodicHRectBound()
+{
   if(bounds_)
     delete[] bounds_;
 }
@@ -68,7 +73,8 @@ PeriodicHRectBound<t_pow>::~PeriodicHRectBound() {
  * Modifies the box_ to the desired dimenstions.
  */
 template<int t_pow>
-void PeriodicHRectBound<t_pow>::SetBoxSize(arma::vec box) {
+void PeriodicHRectBound<t_pow>::SetBoxSize(arma::vec box)
+{
   box_ = box;
 }
 
@@ -76,7 +82,8 @@ void PeriodicHRectBound<t_pow>::SetBoxSize(arma::vec box) {
  * Resets all dimensions to the empty set.
  */
 template<int t_pow>
-void PeriodicHRectBound<t_pow>::Clear() {
+void PeriodicHRectBound<t_pow>::Clear()
+{
   for (size_t i = 0; i < dim_; i++)
     bounds_[i] = math::Range();
 }
@@ -85,7 +92,8 @@ void PeriodicHRectBound<t_pow>::Clear() {
  * Gets the range for a particular dimension.
  */
 template<int t_pow>
-const math::Range PeriodicHRectBound<t_pow>::operator[](size_t i) const {
+const math::Range PeriodicHRectBound<t_pow>::operator[](size_t i) const
+{
   return bounds_[i];
 }
 
@@ -93,18 +101,20 @@ const math::Range PeriodicHRectBound<t_pow>::operator[](size_t i) const {
  * Sets the range for the given dimension.
  */
 template<int t_pow>
-math::Range& PeriodicHRectBound<t_pow>::operator[](size_t i) {
+math::Range& PeriodicHRectBound<t_pow>::operator[](size_t i)
+{
   return bounds_[i];
 }
 
 /** Calculates the midpoint of the range */
 template<int t_pow>
-void PeriodicHRectBound<t_pow>::Centroid(arma::vec& centroid) const {
+void PeriodicHRectBound<t_pow>::Centroid(arma::vec& centroid) const
+{
   // set size correctly if necessary
-  if(!(centroid.n_elem == dim_))
+  if (!(centroid.n_elem == dim_))
     centroid.set_size(dim_);
 
-  for(size_t i = 0; i < dim_; i++)
+  for (size_t i = 0; i < dim_; i++)
     centroid(i) = bounds_[i].mid();
 }
 
@@ -112,18 +122,22 @@ void PeriodicHRectBound<t_pow>::Centroid(arma::vec& centroid) const {
  * Calculates minimum bound-to-point squared distance.
  */
 template<int t_pow>
-double PeriodicHRectBound<t_pow>::MinDistance(const arma::vec& point) const {
+double PeriodicHRectBound<t_pow>::MinDistance(const arma::vec& point) const
+{
   double sum = 0;
 
-  for (size_t d = 0; d < dim_; d++){
+  for (size_t d = 0; d < dim_; d++)
+  {
     double a = point[d];
     double v = 0, bh;
     bh = bounds_[d].hi - bounds_[d].lo;
     bh = bh - floor(bh / box_[d]) * box_[d];
     a = a - bounds_[d].lo;
     a = a - floor(a / box_[d]) * box_[d];
+
     if (bh > a)
       v = std::min( a - bh, box_[d]-a);
+
     sum += pow(v, (double) t_pow);
   }
 
@@ -137,22 +151,32 @@ double PeriodicHRectBound<t_pow>::MinDistance(const arma::vec& point) const {
  */
 template<int t_pow>
 double PeriodicHRectBound<t_pow>::MinDistance(
-    const PeriodicHRectBound& other) const {
+    const PeriodicHRectBound& other) const
+{
   double sum = 0;
 
   mlpack::Log::Assert(dim_ == other.dim_);
 
   for (size_t d = 0; d < dim_; d++){
     double v = 0, d1, d2, d3;
-    d1 = ((bounds_[d].hi > bounds_[d].lo) | (other.bounds_[d].hi > other.bounds_[d].lo)) *
-      std::min(other.bounds_[d].lo - bounds_[d].hi, bounds_[d].lo - other.bounds_[d].hi);
-    d2 = ((bounds_[d].hi > bounds_[d].lo) & (other.bounds_[d].hi > other.bounds_[d].lo)) *
-      std::min(other.bounds_[d].lo - bounds_[d].hi, bounds_[d].lo - other.bounds_[d].hi + box_[d]);
-    d3 = ((bounds_[d].hi > bounds_[d].lo) & (other.bounds_[d].hi > other.bounds_[d].lo)) *
-      std::min(other.bounds_[d].lo - bounds_[d].hi + box_[d], bounds_[d].lo - other.bounds_[d].hi);
+    d1 = ((bounds_[d].hi > bounds_[d].lo) |
+          (other.bounds_[d].hi > other.bounds_[d].lo)) *
+        std::min(other.bounds_[d].lo - bounds_[d].hi,
+                 bounds_[d].lo - other.bounds_[d].hi);
+    d2 = ((bounds_[d].hi > bounds_[d].lo) &
+          (other.bounds_[d].hi > other.bounds_[d].lo)) *
+        std::min(other.bounds_[d].lo - bounds_[d].hi,
+                 bounds_[d].lo - other.bounds_[d].hi + box_[d]);
+    d3 = ((bounds_[d].hi > bounds_[d].lo) &
+          (other.bounds_[d].hi > other.bounds_[d].lo)) *
+        std::min(other.bounds_[d].lo - bounds_[d].hi + box_[d],
+                 bounds_[d].lo - other.bounds_[d].hi);
+
     v = (d1 + fabs(d1)) + (d2 + fabs(d2)) + (d3 + fabs(d3));
+
     sum += pow(v, (double) t_pow);
   }
+
   return pow(sum, 2.0 / (double) t_pow) / 4.0;
 }
 
@@ -160,26 +184,35 @@ double PeriodicHRectBound<t_pow>::MinDistance(
  * Calculates maximum bound-to-point squared distance.
  */
 template<int t_pow>
-double PeriodicHRectBound<t_pow>::MaxDistance(const arma::vec& point) const {
+double PeriodicHRectBound<t_pow>::MaxDistance(const arma::vec& point) const
+{
   double sum = 0;
 
-  for (size_t d = 0; d < dim_; d++) {
+  for (size_t d = 0; d < dim_; d++)
+  {
     double b = point[d];
     double v = box_[d] / 2.0;
     double ah, al;
+
     ah = bounds_[d].hi - b;
     ah = ah - floor(ah / box_[d]) * box_[d];
-    if (ah < v) {
+
+    if (ah < v)
+    {
       v = ah;
-    } else {
+    }
+    else
+    {
       al = bounds_[d].lo - b;
       al = al - floor(al / box_[d]) * box_[d];
-      if (al > v) {
+
+      if (al > v)
         v = (2 * v) - al;
-      }
     }
+
     sum += pow(fabs(v), (double) t_pow);
   }
+
   return pow(sum, 2.0 / (double) t_pow);
 }
 
@@ -188,14 +221,17 @@ double PeriodicHRectBound<t_pow>::MaxDistance(const arma::vec& point) const {
  */
 template<int t_pow>
 double PeriodicHRectBound<t_pow>::MaxDistance(
-    const PeriodicHRectBound& other) const {
+    const PeriodicHRectBound& other) const
+{
   double sum = 0;
 
   mlpack::Log::Assert(dim_ == other.dim_);
 
-  for (size_t d = 0; d < dim_; d++){
+  for (size_t d = 0; d < dim_; d++)
+  {
     double v = box_[d] / 2.0;
     double dh, dl;
+
     dh = bounds_[d].hi - other.bounds_[d].lo;
     dh = dh - floor(dh / box_[d]) * box_[d];
     dl = other.bounds_[d].hi - bounds_[d].lo;
@@ -204,6 +240,7 @@ double PeriodicHRectBound<t_pow>::MaxDistance(
 
     sum += pow(v, (double) t_pow);
   }
+
   return pow(sum, 2.0 / (double) t_pow);
 }
 
@@ -211,21 +248,27 @@ double PeriodicHRectBound<t_pow>::MaxDistance(
  * Calculates minimum and maximum bound-to-point squared distance.
  */
 template<int t_pow>
-math::Range PeriodicHRectBound<t_pow>::RangeDistance(const arma::vec& point) const {
+math::Range PeriodicHRectBound<t_pow>::RangeDistance(
+    const arma::vec& point) const
+{
   double sum_lo = 0;
   double sum_hi = 0;
 
   mlpack::Log::Assert(point.n_elem == dim_);
 
   double v1, v2, v_lo, v_hi;
-  for(size_t d = 0; d < dim_; d++) {
+  for (size_t d = 0; d < dim_; d++)
+  {
     v1 = bounds_[d].lo - point[d];
     v2 = point[d] - bounds_[d].hi;
-    // one of v1 or v2 is negative
-    if(v1 >= 0) {
+    // One of v1 or v2 is negative.
+    if (v1 >= 0)
+    {
       v_hi = -v2;
       v_lo = v1;
-    } else {
+    }
+    else
+    {
       v_hi = -v1;
       v_lo = v2;
     }
@@ -235,7 +278,7 @@ math::Range PeriodicHRectBound<t_pow>::RangeDistance(const arma::vec& point) con
   }
 
   return math::Range(pow(sum_lo, 2.0 / (double) t_pow),
-                pow(sum_hi, 2.0 / (double) t_pow));
+      pow(sum_hi, 2.0 / (double) t_pow));
 }
 
 /**
@@ -243,23 +286,28 @@ math::Range PeriodicHRectBound<t_pow>::RangeDistance(const arma::vec& point) con
  */
 template<int t_pow>
 math::Range PeriodicHRectBound<t_pow>::RangeDistance(
-    const PeriodicHRectBound& other) const {
+    const PeriodicHRectBound& other) const
+{
   double sum_lo = 0;
   double sum_hi = 0;
 
   mlpack::Log::Assert(dim_ == other.dim_);
 
   double v1, v2, v_lo, v_hi;
-  for (size_t d = 0; d < dim_; d++) {
+  for (size_t d = 0; d < dim_; d++)
+  {
     v1 = other.bounds_[d].lo - bounds_[d].hi;
     v2 = bounds_[d].lo - other.bounds_[d].hi;
-    // one of v1 or v2 is negative
-    if(v1 >= v2) {
-      v_hi = -v2; // make it nonnegative
-      v_lo = (v1 > 0) ? v1 : 0; // force to be 0 if negative
-    } else {
-      v_hi = -v1; // make it nonnegative
-      v_lo = (v2 > 0) ? v2 : 0; // force to be 0 if negative
+    // One of v1 or v2 is negative.
+    if(v1 >= v2)
+    {
+      v_hi = -v2; // Make it nonnegative.
+      v_lo = (v1 > 0) ? v1 : 0; // Force to be 0 if negative.
+    }
+    else
+    {
+      v_hi = -v1; // Make it nonnegative.
+      v_lo = (v2 > 0) ? v2 : 0; // Force to be 0 if negative.
     }
 
     sum_lo += pow(v_lo, (double) t_pow);
@@ -267,7 +315,7 @@ math::Range PeriodicHRectBound<t_pow>::RangeDistance(
   }
 
   return math::Range(pow(sum_lo, 2.0 / (double) t_pow),
-                pow(sum_hi, 2.0 / (double) t_pow));
+      pow(sum_hi, 2.0 / (double) t_pow));
 }
 
 /**
@@ -275,12 +323,12 @@ math::Range PeriodicHRectBound<t_pow>::RangeDistance(
  */
 template<int t_pow>
 PeriodicHRectBound<t_pow>& PeriodicHRectBound<t_pow>::operator|=(
-    const arma::vec& vector) {
+    const arma::vec& vector)
+{
   assert(vector.n_elem == dim_);
 
-  for (size_t i = 0; i < dim_; i++) {
+  for (size_t i = 0; i < dim_; i++)
     bounds_[i] |= vector[i];
-  }
 
   return *this;
 }
@@ -290,7 +338,8 @@ PeriodicHRectBound<t_pow>& PeriodicHRectBound<t_pow>::operator|=(
  */
 template<int t_pow>
 PeriodicHRectBound<t_pow>& PeriodicHRectBound<t_pow>::operator|=(
-    const PeriodicHRectBound& other) {
+    const PeriodicHRectBound& other)
+{
   assert(other.dim_ == dim_);
 
   for (size_t i = 0; i < dim_; i++)
@@ -303,7 +352,8 @@ PeriodicHRectBound<t_pow>& PeriodicHRectBound<t_pow>::operator|=(
  * Determines if a point is within this bound.
  */
 template<int t_pow>
-bool PeriodicHRectBound<t_pow>::Contains(const arma::vec& point) const {
+bool PeriodicHRectBound<t_pow>::Contains(const arma::vec& point) const
+{
   for (size_t i = 0; i < point.n_elem; i++)
     if (!bounds_[i].Contains(point(i)))
       return false;

@@ -17,7 +17,8 @@
  *
  * @experimental
  */
-class EmptyStatistic {
+class EmptyStatistic
+{
   public:
     EmptyStatistic() {}
     ~EmptyStatistic() {}

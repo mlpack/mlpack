@@ -1,5 +1,5 @@
 /**
- * @file tree/hrectbound.h
+ * @file hrectbound.hpp
  *
  * Bounds that are useful for binary space partitioning trees.
  *
@@ -8,7 +8,6 @@
  *
  * @experimental
  */
-
 #ifndef __MLPACK_CORE_TREE_HRECTBOUND_HPP
 #define __MLPACK_CORE_TREE_HRECTBOUND_HPP
 
@@ -24,7 +23,8 @@ namespace bound {
  * Template parameter t_pow is the metric to use; use 2 for Euclidean (L2).
  */
 template<int t_pow = 2>
-class HRectBound {
+class HRectBound
+{
  public:
   /**
    * Empty constructor; creates a bound of dimensionality 0.

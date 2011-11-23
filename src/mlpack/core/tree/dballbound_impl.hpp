@@ -1,5 +1,5 @@
 /**
- * @file tree/dballbound_impl.h
+ * @file dballbound_impl.hpp
  *
  * Bounds that are useful for binary space partitioning trees.
  * Implementation of DBallBound ball bound metric policy class.
@@ -18,7 +18,8 @@ namespace bound {
  * Determines if a point is within the bound.
  */
 template<typename TMetric, typename TPoint>
-bool DBallBound<TMetric, TPoint>::Contains(const Point& point) const {
+bool DBallBound<TMetric, TPoint>::Contains(const Point& point) const
+{
   return MidDistance(point) <= radius_;
 }
 
@@ -30,7 +31,8 @@ bool DBallBound<TMetric, TPoint>::Contains(const Point& point) const {
  * is needed.
  */
 template<typename TMetric, typename TPoint>
-void DBallBound<TMetric, TPoint>::CalculateMidpoint(Point *centroid) const {
+void DBallBound<TMetric, TPoint>::CalculateMidpoint(Point *centroid) const
+{
   (*centroid) = center_;
 }
 
@@ -38,12 +40,14 @@ void DBallBound<TMetric, TPoint>::CalculateMidpoint(Point *centroid) const {
  * Calculates minimum bound-to-point squared distance.
  */
 template<typename TMetric, typename TPoint>
-double DBallBound<TMetric, TPoint>::MinDistance(const Point& point) const {
+double DBallBound<TMetric, TPoint>::MinDistance(const Point& point) const
+{
   return math::ClampNonNegative(MidDistance(point) - radius_);
 }
 
 template<typename TMetric, typename TPoint>
-double DBallBound<TMetric, TPoint>::MinDistanceSq(const Point& point) const {
+double DBallBound<TMetric, TPoint>::MinDistanceSq(const Point& point) const
+{
   return std::pow(MinDistance(point), 2);
 }
 
@@ -51,13 +55,15 @@ double DBallBound<TMetric, TPoint>::MinDistanceSq(const Point& point) const {
  * Calculates minimum bound-to-bound squared distance.
  */
 template<typename TMetric, typename TPoint>
-double DBallBound<TMetric, TPoint>::MinDistance(const DBallBound& other) const {
+double DBallBound<TMetric, TPoint>::MinDistance(const DBallBound& other) const
+{
   double delta = MidDistance(other.center_) - radius_ - other.radius_;
   return math::ClampNonNegative(delta);
 }
 
 template<typename TMetric, typename TPoint>
-double DBallBound<TMetric, TPoint>::MinDistanceSq(const DBallBound& other) const {
+double DBallBound<TMetric, TPoint>::MinDistanceSq(const DBallBound& other) const
+{
   return std::pow(MinDistance(other), 2);
 }
 
@@ -65,12 +71,14 @@ double DBallBound<TMetric, TPoint>::MinDistanceSq(const DBallBound& other) const
  * Computes maximum distance.
  */
 template<typename TMetric, typename TPoint>
-double DBallBound<TMetric, TPoint>::MaxDistance(const Point& point) const {
+double DBallBound<TMetric, TPoint>::MaxDistance(const Point& point) const
+{
   return MidDistance(point) + radius_;
 }
 
 template<typename TMetric, typename TPoint>
-double DBallBound<TMetric, TPoint>::MaxDistanceSq(const Point& point) const {
+double DBallBound<TMetric, TPoint>::MaxDistanceSq(const Point& point) const
+{
   return std::pow(MaxDistance(point), 2);
 }
 
@@ -78,12 +86,14 @@ double DBallBound<TMetric, TPoint>::MaxDistanceSq(const Point& point) const {
  * Computes maximum distance.
  */
 template<typename TMetric, typename TPoint>
-double DBallBound<TMetric, TPoint>::MaxDistance(const DBallBound& other) const {
+double DBallBound<TMetric, TPoint>::MaxDistance(const DBallBound& other) const
+{
   return MidDistance(other.center_) + radius_ + other.radius_;
 }
 
 template<typename TMetric, typename TPoint>
-double DBallBound<TMetric, TPoint>::MaxDistanceSq(const DBallBound& other) const {
+double DBallBound<TMetric, TPoint>::MaxDistanceSq(const DBallBound& other) const
+{
   return std::pow(MaxDistance(other), 2);
 }
 
@@ -93,7 +103,9 @@ double DBallBound<TMetric, TPoint>::MaxDistanceSq(const DBallBound& other) const
  * Example: bound1.MinDistanceSq(other) for minimum squared distance.
  */
 template<typename TMetric, typename TPoint>
-math::Range DBallBound<TMetric, TPoint>::RangeDistance(const DBallBound& other) const {
+math::Range DBallBound<TMetric, TPoint>::RangeDistance(
+    const DBallBound& other) const
+{
   double delta = MidDistance(other.center_);
   double sumradius = radius_ + other.radius_;
   return math::Range(
@@ -102,7 +114,9 @@ math::Range DBallBound<TMetric, TPoint>::RangeDistance(const DBallBound& other) 
 }
 
 template<typename TMetric, typename TPoint>
-math::Range DBallBound<TMetric, TPoint>::RangeDistanceSq(const DBallBound& other) const {
+math::Range DBallBound<TMetric, TPoint>::RangeDistanceSq(
+    const DBallBound& other) const
+{
   double delta = MidDistance(other.center_);
   double sumradius = radius_ + other.radius_;
   return math::Range(
@@ -122,13 +136,15 @@ math::Range DBallBound<TMetric, TPoint>::RangeDistanceSq(const DBallBound& other
  * </code>
  */
 template<typename TMetric, typename TPoint>
-double DBallBound<TMetric, TPoint>::MinToMid(const DBallBound& other) const {
+double DBallBound<TMetric, TPoint>::MinToMid(const DBallBound& other) const
+{
   double delta = MidDistance(other.center_) - radius_;
   return math::ClampNonNegative(delta);
 }
 
 template<typename TMetric, typename TPoint>
-double DBallBound<TMetric, TPoint>::MinToMidSq(const DBallBound& other) const {
+double DBallBound<TMetric, TPoint>::MinToMidSq(const DBallBound& other) const
+{
   return std::pow(MinToMid(other), 2);
 }
 
@@ -136,13 +152,17 @@ double DBallBound<TMetric, TPoint>::MinToMidSq(const DBallBound& other) const {
  * Computes minimax distance, where the other node is trying to avoid me.
  */
 template<typename TMetric, typename TPoint>
-double DBallBound<TMetric, TPoint>::MinimaxDistance(const DBallBound& other) const {
+double DBallBound<TMetric, TPoint>::MinimaxDistance(
+    const DBallBound& other) const
+{
   double delta = MidDistance(other.center_) + other.radius_ - radius_;
   return math::ClampNonNegative(delta);
 }
 
 template<typename TMetric, typename TPoint>
-double DBallBound<TMetric, TPoint>::MinimaxDistanceSq(const DBallBound& other) const {
+double DBallBound<TMetric, TPoint>::MinimaxDistanceSq(
+    const DBallBound& other) const
+{
   return std::pow(MinimaxDistance(other), 2);
 }
 
@@ -150,17 +170,20 @@ double DBallBound<TMetric, TPoint>::MinimaxDistanceSq(const DBallBound& other) c
  * Calculates midpoint-to-midpoint bounding box distance.
  */
 template<typename TMetric, typename TPoint>
-double DBallBound<TMetric, TPoint>::MidDistance(const DBallBound& other) const {
+double DBallBound<TMetric, TPoint>::MidDistance(const DBallBound& other) const
+{
   return MidDistance(other.center_);
 }
 
 template<typename TMetric, typename TPoint>
-double DBallBound<TMetric, TPoint>::MidDistanceSq(const DBallBound& other) const {
+double DBallBound<TMetric, TPoint>::MidDistanceSq(const DBallBound& other) const
+{
   return std::pow(MidDistance(other), 2);
 }
 
 template<typename TMetric, typename TPoint>
-double DBallBound<TMetric, TPoint>::MidDistance(const Point& point) const {
+double DBallBound<TMetric, TPoint>::MidDistance(const Point& point) const
+{
   return Metric::Evaluate(center_, point);
 }
 

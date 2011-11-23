@@ -20,7 +20,8 @@ namespace bound {
  * Template parameter t_pow is the metric to use; use 2 for Euclidean (L2).
  */
 template<int t_pow = 2>
-class PeriodicHRectBound {
+class PeriodicHRectBound
+{
  public:
   /**
    * Empty constructor.
