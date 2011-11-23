@@ -1,5 +1,5 @@
 #include <mlpack/core.h>
-#include <mlpack/core/kernels/lmetric.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
 
 #include "support.hpp"
 
@@ -138,7 +138,8 @@ namespace hmm_support {
 
           for (j = 0; j < num_clusters; j++) {
             double distance =
-                mlpack::kernel::LMetric<2>::Evaluate(data_i_Vec, centroids_[j]);
+                mlpack::metric::LMetric<2>::Evaluate(data_i_Vec,
+                centroids_[j]);
 
             if (distance < min_distance) {
               labels_[i] = j;
@@ -212,7 +213,7 @@ namespace hmm_support {
 
         for (j = 0; j < num_clusters; j++) {
 	  double distance =
-              mlpack::kernel::LMetric<2>::Evaluate(data_i_Vec, centroids_[j]);
+              mlpack::metric::LMetric<2>::Evaluate(data_i_Vec, centroids_[j]);
           if (distance < min_distance) {
 	    labels_[i] = j;
 	    min_distance = distance;

@@ -13,7 +13,7 @@
 #include <vector>
 #include <string>
 
-#include <mlpack/core/kernels/lmetric.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
 #include "sort_policies/nearest_neighbor_sort.hpp"
 
 namespace mlpack {
@@ -54,7 +54,7 @@ PARAM_FLAG("naive_mode", "If set, use naive computations (no trees).  This "
  * @tparam Kernel The kernel function; see kernel::ExampleKernel.
  * @tparam SortPolicy The sort policy for distances; see NearestNeighborSort.
  */
-template<typename Kernel = mlpack::kernel::SquaredEuclideanDistance,
+template<typename Kernel = mlpack::metric::SquaredEuclideanDistance,
          typename SortPolicy = NearestNeighborSort>
 class NeighborSearch {
 
