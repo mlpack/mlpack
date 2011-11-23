@@ -5,7 +5,7 @@
  */
 #include <mlpack/core/tree/bounds.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
-#include <mlpack/core/kernels/lmetric.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
 #include <vector>
 
 #include <boost/test/unit_test.hpp>
@@ -13,7 +13,7 @@
 using namespace mlpack;
 using namespace mlpack::math;
 using namespace mlpack::tree;
-using namespace mlpack::kernel;
+using namespace mlpack::metric;
 using namespace mlpack::bound;
 
 BOOST_AUTO_TEST_SUITE(TreeTest);

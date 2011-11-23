@@ -4,8 +4,8 @@
  *
  * Tests for the various kernel classes.
  */
-#include <mlpack/core/kernels/lmetric.hpp>
-#include <mlpack/core/kernels/mahalanobis_distance.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/metrics/mahalanobis_distance.hpp>
 #include <mlpack/core/kernels/cosine_distance.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
@@ -14,6 +14,7 @@
 
 using namespace mlpack;
 using namespace mlpack::kernel;
+using namespace mlpack::metric;
 
 BOOST_AUTO_TEST_SUITE(KernelTest);
 
