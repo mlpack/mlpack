@@ -1,5 +1,5 @@
 /**
- * @file infomax_ica.h
+ * @file infomax_ica.hpp
  * @author Chip Mappus
  *
  * Yet another infomax ICA implementation.
@@ -12,8 +12,8 @@
  * http://www.cnl.salk.edu/~tony/ica.html
  *
  */
-#ifndef U_INFOMAX_ICA
-#define U_INFOMAX_ICA
+#ifndef __MLPACK_METHODS_INFOMAX_ICA_INFOMAX_ICA_HPP
+#define __MLPACK_METHODS_INFOMAX_ICA_INFOMAX_ICA_HPP
 
 #include <mlpack/core.h>
 
@@ -34,11 +34,8 @@ class TestInfomaxICA; // forward reference
  *   ica->getUnmixing(west);
  * @endcode
  */
-
-class InfomaxICA {
-
-  friend class TestInfomaxICA;
-
+class InfomaxICA
+{
  public:
   InfomaxICA();
   InfomaxICA(double lambda, size_t B, double epsilon);

@@ -1,11 +1,12 @@
 /**
- * @file main.cc
+ * @file main.cpp
  * @author Chip Mappus
  *
- * main for using infomax ICA method.
+ * Main function for using infomax ICA method.
  */
 #include <mlpack/core.h>
-#include "infomax_ica.h"
+
+#include "infomax_ica.hpp"
 
 PARAM_STRING_REQ("data", "The name of the file containing mixture data.",
     "info");
@@ -13,7 +14,8 @@ PARAM_STRING_REQ("data", "The name of the file containing mixture data.",
 using namespace mlpack;
 using namespace infomax_ica;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
   CLI::ParseCommandLine(argc, argv);
 
   const char *data_file_name = CLI::GetParam<std::string>("info/data").c_str();
