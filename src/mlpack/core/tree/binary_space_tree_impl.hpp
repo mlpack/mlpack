@@ -24,7 +24,8 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(arma::mat& data) :
     begin_(0), /* This root node starts at index 0, */
     count_(data.n_cols), /* and spans all of the dataset. */
     bound_(data.n_rows),
-    stat_() {
+    stat_()
+{
   // Do the actual splitting of this node.
   SplitNode(data);
 }
@@ -38,7 +39,8 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
     begin_(0),
     count_(data.n_cols),
     bound_(data.n_rows),
-    stat_() {
+    stat_()
+{
   // Initialize old_from_new correctly.
   old_from_new.resize(data.n_cols);
   for (size_t i = 0; i < data.n_cols; i++)
@@ -58,7 +60,8 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
     begin_(0),
     count_(data.n_cols),
     bound_(data.n_rows),
-    stat_() {
+    stat_()
+{
   // Initialize the old_from_new vector correctly.
   old_from_new.resize(data.n_cols);
   for (size_t i = 0; i < data.n_cols; i++)
@@ -83,7 +86,8 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
     begin_(begin_in),
     count_(count_in),
     bound_(data.n_rows),
-    stat_() {
+    stat_()
+{
   // Perform the actual splitting.
   SplitNode(data);
 }
@@ -99,7 +103,8 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
     begin_(begin_in),
     count_(count_in),
     bound_(data.n_rows),
-    stat_() {
+    stat_()
+{
   // Hopefully the vector is initialized correctly!  We can't check that
   // entirely but we can do a minor sanity check.
   assert(old_from_new.size() == data.n_cols);
@@ -120,7 +125,8 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
     begin_(begin_in),
     count_(count_in),
     bound_(data.n_rows),
-    stat_() {
+    stat_()
+{
   // Hopefully the vector is initialized correctly!  We can't check that
   // entirely but we can do a minor sanity check.
   assert(old_from_new.size() == data.n_cols);
@@ -141,7 +147,8 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree() :
     begin_(0),
     count_(0),
     bound_(),
-    stat_() {
+    stat_()
+{
   // Nothing to do.
 }
 
@@ -151,7 +158,8 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree() :
  * nodes which are children of this one.
  */
 template<typename Bound, typename Statistic>
-BinarySpaceTree<Bound, Statistic>::~BinarySpaceTree() {
+BinarySpaceTree<Bound, Statistic>::~BinarySpaceTree()
+{
   if (left_)
     delete left_;
   if (right_)
@@ -172,8 +180,8 @@ BinarySpaceTree<Bound, Statistic>::~BinarySpaceTree() {
 template<typename Bound, typename Statistic>
 const BinarySpaceTree<Bound, Statistic>*
 BinarySpaceTree<Bound, Statistic>::FindByBeginCount(size_t begin_q,
-                                                    size_t count_q) const {
-
+                                                    size_t count_q) const
+{
   mlpack::Log::Assert(begin_q >= begin_);
   mlpack::Log::Assert(count_q <= count_);
   if (begin_ == begin_q && count_ == count_q)
@@ -200,8 +208,8 @@ BinarySpaceTree<Bound, Statistic>::FindByBeginCount(size_t begin_q,
 template<typename Bound, typename Statistic>
 BinarySpaceTree<Bound, Statistic>*
 BinarySpaceTree<Bound, Statistic>::FindByBeginCount(size_t begin_q,
-                                                    size_t count_q) {
-
+                                                    size_t count_q)
+{
   mlpack::Log::Assert(begin_q >= begin_);
   mlpack::Log::Assert(count_q <= count_);
   if (begin_ == begin_q && count_ == count_q)
@@ -215,27 +223,32 @@ BinarySpaceTree<Bound, Statistic>::FindByBeginCount(size_t begin_q,
 }
 
 template<typename Bound, typename Statistic>
-const Bound& BinarySpaceTree<Bound, Statistic>::bound() const {
+inline const Bound& BinarySpaceTree<Bound, Statistic>::bound() const
+{
   return bound_;
 }
 
 template<typename Bound, typename Statistic>
-Bound& BinarySpaceTree<Bound, Statistic>::bound() {
+inline Bound& BinarySpaceTree<Bound, Statistic>::bound()
+{
   return bound_;
 }
 
 template<typename Bound, typename Statistic>
-const Statistic& BinarySpaceTree<Bound, Statistic>::stat() const {
+inline const Statistic& BinarySpaceTree<Bound, Statistic>::stat() const
+{
   return stat_;
 }
 
 template<typename Bound, typename Statistic>
-Statistic& BinarySpaceTree<Bound, Statistic>::stat() {
+inline Statistic& BinarySpaceTree<Bound, Statistic>::stat()
+{
   return stat_;
 }
 
 template<typename Bound, typename Statistic>
-bool BinarySpaceTree<Bound, Statistic>::is_leaf() const {
+inline bool BinarySpaceTree<Bound, Statistic>::is_leaf() const
+{
   return !left_;
 }
 
@@ -243,9 +256,9 @@ bool BinarySpaceTree<Bound, Statistic>::is_leaf() const {
  * Gets the left branch of the tree.
  */
 template<typename Bound, typename Statistic>
-BinarySpaceTree<Bound, Statistic>*
-BinarySpaceTree<Bound, Statistic>::left() const {
-  // TODO: Const correctness
+inline BinarySpaceTree<Bound, Statistic>*
+BinarySpaceTree<Bound, Statistic>::left() const
+{
   return left_;
 }
 
@@ -253,9 +266,9 @@ BinarySpaceTree<Bound, Statistic>::left() const {
  * Gets the right branch.
  */
 template<typename Bound, typename Statistic>
-BinarySpaceTree<Bound, Statistic>*
-BinarySpaceTree<Bound, Statistic>::right() const {
-  // TODO: Const correctness
+inline BinarySpaceTree<Bound, Statistic>*
+BinarySpaceTree<Bound, Statistic>::right() const
+{
   return right_;
 }
 
@@ -263,7 +276,8 @@ BinarySpaceTree<Bound, Statistic>::right() const {
  * Gets the index of the begin point of this subset.
  */
 template<typename Bound, typename Statistic>
-size_t BinarySpaceTree<Bound, Statistic>::begin() const {
+inline size_t BinarySpaceTree<Bound, Statistic>::begin() const
+{
   return begin_;
 }
 
@@ -271,7 +285,8 @@ size_t BinarySpaceTree<Bound, Statistic>::begin() const {
  * Gets the index one beyond the last index in the series.
  */
 template<typename Bound, typename Statistic>
-size_t BinarySpaceTree<Bound, Statistic>::end() const {
+inline size_t BinarySpaceTree<Bound, Statistic>::end() const
+{
   return begin_ + count_;
 }
 
@@ -279,22 +294,26 @@ size_t BinarySpaceTree<Bound, Statistic>::end() const {
  * Gets the number of points in this subset.
  */
 template<typename Bound, typename Statistic>
-size_t BinarySpaceTree<Bound, Statistic>::count() const {
+inline size_t BinarySpaceTree<Bound, Statistic>::count() const
+{
   return count_;
 }
 
 template<typename Bound, typename Statistic>
-void BinarySpaceTree<Bound, Statistic>::Print() const {
-  printf("node: %d to %d: %d points total\n",
-      begin_, begin_ + count_ - 1, count_);
-  if (!is_leaf()) {
+void BinarySpaceTree<Bound, Statistic>::Print() const
+{
+  printf("node: %d to %d: %d points total\n", begin_, begin_ + count_ - 1,
+      count_);
+  if (!is_leaf())
+  {
     left_->Print();
     right_->Print();
   }
 }
 
 template<typename Bound, typename Statistic>
-void BinarySpaceTree<Bound, Statistic>::SplitNode(arma::mat& data) {
+void BinarySpaceTree<Bound, Statistic>::SplitNode(arma::mat& data)
+{
   // This should be a single function for Bound.
   // We need to expand the bounds of this node properly.
   for (size_t i = begin_; i < (begin_ + count_); i++)
@@ -309,10 +328,12 @@ void BinarySpaceTree<Bound, Statistic>::SplitNode(arma::mat& data) {
   double max_width = -1;
 
   // Find the split dimension.
-  for (size_t d = 0; d < data.n_rows; d++) {
+  for (size_t d = 0; d < data.n_rows; d++)
+  {
     double width = bound_[d].width();
 
-    if (width > max_width) {
+    if (width > max_width)
+    {
       max_width = width;
       split_dim = d;
     }
@@ -341,7 +362,8 @@ void BinarySpaceTree<Bound, Statistic>::SplitNode(arma::mat& data) {
 template<typename Bound, typename Statistic>
 void BinarySpaceTree<Bound, Statistic>::SplitNode(
     arma::mat& data,
-    std::vector<size_t>& old_from_new) {
+    std::vector<size_t>& old_from_new)
+{
   // This should be a single function for Bound.
   // We need to expand the bounds of this node properly.
   for (size_t i = begin_; i < (begin_ + count_); i++)
@@ -356,10 +378,12 @@ void BinarySpaceTree<Bound, Statistic>::SplitNode(
   double max_width = -1;
 
   // Find the split dimension.
-  for (size_t d = 0; d < data.n_rows; d++) {
+  for (size_t d = 0; d < data.n_rows; d++)
+  {
     double width = bound_[d].width();
 
-    if (width > max_width) {
+    if (width > max_width)
+    {
       max_width = width;
       split_dim = d;
     }
@@ -389,7 +413,8 @@ template<typename Bound, typename Statistic>
 size_t BinarySpaceTree<Bound, Statistic>::GetSplitIndex(
     arma::mat& data,
     int split_dim,
-    double split_val) {
+    double split_val)
+{
   // This method modifies the input dataset.  We loop both from the left and
   // right sides of the points contained in this node.  The points less than
   // split_val should be on the left side of the matrix, and the points greater
@@ -404,7 +429,8 @@ size_t BinarySpaceTree<Bound, Statistic>::GetSplitIndex(
   while ((data(split_dim, right) >= split_val) && (left <= right))
     right--;
 
-  while(left <= right) {
+  while(left <= right)
+  {
     // Swap columns.
     data.swap_cols(left, right);
 
@@ -432,7 +458,8 @@ size_t BinarySpaceTree<Bound, Statistic>::GetSplitIndex(
     arma::mat& data,
     int split_dim,
     double split_val,
-    std::vector<size_t>& old_from_new) {
+    std::vector<size_t>& old_from_new)
+{
   // This method modifies the input dataset.  We loop both from the left and
   // right sides of the points contained in this node.  The points less than
   // split_val should be on the left side of the matrix, and the points greater
@@ -447,7 +474,8 @@ size_t BinarySpaceTree<Bound, Statistic>::GetSplitIndex(
   while ((data(split_dim, right) >= split_val) && (left <= right))
     right--;
 
-  while(left <= right) {
+  while(left <= right)
+  {
     // Swap columns.
     data.swap_cols(left, right);
 
