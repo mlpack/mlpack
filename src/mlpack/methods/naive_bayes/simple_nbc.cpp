@@ -6,7 +6,7 @@
  * the features.  It is assumed that the features have been sampled from a
  * Gaussian PDF.
  */
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 #include "simple_nbc.hpp"
 

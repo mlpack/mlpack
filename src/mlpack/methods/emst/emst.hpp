@@ -9,7 +9,7 @@
 #ifndef __MLPACK_METHODS_EMST_EMST_HPP
 #define __MLPACK_METHODS_EMST_EMST_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 #include "union_find.hpp"
 

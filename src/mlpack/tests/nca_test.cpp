@@ -5,7 +5,7 @@
  * Unit tests for Neighborhood Components Analysis and related code (including
  * the softmax error function).
  */
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/nca/nca.hpp>
 

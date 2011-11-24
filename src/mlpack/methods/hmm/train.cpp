@@ -10,7 +10,7 @@
  *   train --type=TYPE --profile=PROFILE --seqfile=FILE [OPTCLINS]
  * See the usage() function for complete option list
  */
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 #include "support.hpp"
 #include "discreteHMM.hpp"

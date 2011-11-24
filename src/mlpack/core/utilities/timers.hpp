@@ -1,6 +1,6 @@
 #ifndef MLPACK_TIMERS_H
 #define MLPACK_TIMERS_H
- 
+
 #include <map>
 #include <string>
 
@@ -26,7 +26,7 @@ class Timers {
   */
   static std::map<std::string, timeval> GetAllTimers();
 
- /* 
+ /*
   * Returns a copy of the timer specified.
   *
   * @param timerName The name of the timer in question.

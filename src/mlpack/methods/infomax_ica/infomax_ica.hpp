@@ -15,7 +15,7 @@
 #ifndef __MLPACK_METHODS_INFOMAX_ICA_INFOMAX_ICA_HPP
 #define __MLPACK_METHODS_INFOMAX_ICA_INFOMAX_ICA_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace infomax_ica {

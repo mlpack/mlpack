@@ -1,5 +1,8 @@
 include_directories(..) # <mlpack/[whatever]>
 
+# Add core.hpp to list of sources.
+set(${MLPACK_SRCS} ${MLPACK_SRCS} "core.hpp")
+
 ## Recurse into both core/ and methods/.
 set(DIRS
   core

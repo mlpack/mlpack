@@ -8,7 +8,7 @@
 #ifndef __MLPACK_METHODS_FASTICA_LIN_ALG_HPP
 #define __MLPACK_METHODS_FASTICA_LIN_ALG_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 #define max_rand_i 100000
 

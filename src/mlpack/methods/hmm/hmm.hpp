@@ -8,7 +8,7 @@
 #ifndef __MLPACK_METHODS_HMM_HMM_HPP
 #define __MLPACK_METHODS_HMM_HMM_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 #include "distributions/discrete_distribution.hpp"
 
 namespace mlpack {

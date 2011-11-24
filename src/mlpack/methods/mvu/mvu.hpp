@@ -10,7 +10,7 @@
 #ifndef __MLPACK_METHODS_MVU_MVU_HPP
 #define __MLPACK_METHODS_VU_MVU_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace mvu {

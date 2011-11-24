@@ -14,7 +14,7 @@
 
 #include "dtb.hpp"
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 PARAM_STRING_REQ("input_file", "Data input file.", "emst");
 PARAM_STRING("output_file", "Data output file.  Stored as an edge list.", "emst", "emst_output.csv");

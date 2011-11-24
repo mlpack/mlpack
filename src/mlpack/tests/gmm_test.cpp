@@ -4,7 +4,7 @@
  *
  * Test for the Gaussian Mixture Model class.
  */
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 #include <mlpack/methods/gmm/gmm.hpp>
 #include <mlpack/methods/gmm/phi.hpp>

@@ -6,7 +6,7 @@
  */
 #include <mlpack/methods/emst/union_find.hpp>
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 #include <boost/test/unit_test.hpp>
 
 using namespace mlpack;

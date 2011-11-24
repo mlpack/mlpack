@@ -9,7 +9,7 @@
 #ifndef __MLPACK_METHODS_NBC_SIMPLE_NBC_HPP
 #define __MLPACK_METHODS_NBC_SIMPLE_NBC_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 #include <mlpack/methods/gmm/phi.hpp>
 
 namespace mlpack {

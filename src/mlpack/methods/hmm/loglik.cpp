@@ -8,7 +8,7 @@
  *   loglik --type=TYPE --profile=PROFILE [OPTCLINS]
  * See the usage() function for complete option list
  */
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 #include "support.hpp"
 #include "discreteHMM.hpp"

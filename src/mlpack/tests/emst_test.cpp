@@ -3,7 +3,7 @@
  *
  * Test file for EMST methods.
  */
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 #include <mlpack/methods/emst/dtb.hpp>
 #include <boost/test/unit_test.hpp>
 

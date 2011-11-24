@@ -9,7 +9,7 @@
 #ifndef __MLPACK_CORE_KERNELS_GAUSSIAN_KERNEL_HPP
 #define __MLPACK_CORE_KERNELS_GAUSSIAN_KERNEL_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace kernel {

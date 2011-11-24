@@ -8,7 +8,7 @@
 #ifndef __MLPACK_METHODS_MOG_MOG_EM_HPP
 #define __MLPACK_METHODS_MOG_MOG_EM_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 PARAM_MODULE("gmm", "Parameters for the Gaussian mixture model.");
 

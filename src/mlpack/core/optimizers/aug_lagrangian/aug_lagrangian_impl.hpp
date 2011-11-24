@@ -1,5 +1,5 @@
-/***
- * @file aug_lagrangian.cc
+/**
+ * @file aug_lagrangian_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of AugLagrangian class (Augmented Lagrangian optimization

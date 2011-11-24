@@ -21,7 +21,7 @@
 #ifndef __MLPACK_METHODS_MVU_MVU_OBJECTIVE_FUNCTION_H
 #define __MLPACK_METHODS_MVU_MVU_OBJECTIVE_FUNCTION_H
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace mvu {

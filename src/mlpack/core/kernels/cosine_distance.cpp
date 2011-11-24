@@ -1,5 +1,5 @@
 /**
- * @file cosine_distance.cc
+ * @file cosine_distance.cpp
  * @author Ryan Curtin
  *
  * This implements the cosine distance.

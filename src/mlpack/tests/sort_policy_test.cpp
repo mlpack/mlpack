@@ -4,7 +4,7 @@
  *
  * Tests for each of the implementations of the SortPolicy class.
  */
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 #include <mlpack/core/tree/bounds.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
 

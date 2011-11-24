@@ -6,7 +6,7 @@
 #ifndef __MLPACK_CORE_TREE_BINARY_SPACE_TREE_HPP
 #define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 #include "statistic.hpp"
 

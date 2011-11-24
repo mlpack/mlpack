@@ -8,7 +8,7 @@
 #ifndef __MLPACK_METHODS_MOG_PHI_HPP
 #define __MLPACK_METHODS_MOG_PHI_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace gmm {

@@ -8,7 +8,7 @@
 #ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_HPP
 #define __MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 #include <mlpack/core/tree/bounds.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <vector>

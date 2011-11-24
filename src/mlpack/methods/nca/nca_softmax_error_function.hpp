@@ -8,7 +8,7 @@
 #ifndef __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_HPP
 #define __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace nca {

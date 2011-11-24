@@ -5,7 +5,7 @@
  * Implementation of the AllkFN executable.  Allows some number of standard
  * options.
  */
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 #include <string>
 #include <fstream>

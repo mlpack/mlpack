@@ -4,7 +4,7 @@
  *
  * Main function for least-squares linear regression.
  */
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 #include "linear_regression.hpp"
 
 using namespace mlpack;
