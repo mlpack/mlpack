@@ -13,6 +13,26 @@
 using namespace mlpack;
 using namespace gmm;
 
+double GMM::Probability(const arma::vec& observation) const
+{
+  // Sum the probability for each Gaussian in our mixture (and we have to
+  // multiply by the prior for each Gaussian too).
+  double sum = 0;
+  for (size_t i = 0; i < gaussians; i++)
+    sum += weights[i] * phi(observation, means[i], covariances[i]);
+
+  return sum;
+}
+
+/**
+ * Return a randomly generated observation according to the probability
+ * distribution defined by this object.
+ */
+arma::vec GMM::Random() const
+{
+  return "0 0";
+}
+
 void GMM::ExpectationMaximization(const arma::mat& data)
 {
   // Create temporary models and set to the right size.
