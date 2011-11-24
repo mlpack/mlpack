@@ -4,7 +4,7 @@
  *
  * Main function for using infomax ICA method.
  */
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 #include "infomax_ica.hpp"
 

@@ -12,7 +12,7 @@
 #include <mlpack/core/io/optionshierarchy.hpp>
 #include <mlpack/core/io/cli.hpp>
 #include <mlpack/core/io/log.hpp>
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 #define DEFAULT_INT 42
 

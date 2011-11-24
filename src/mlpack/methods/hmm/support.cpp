@@ -1,4 +1,4 @@
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 
 #include "support.hpp"

@@ -10,7 +10,7 @@
 #ifndef __MLPACK_CORE_TREE_DBALLBOUND_HPP
 #define __MLPACK_CORE_TREE_DBALLBOUND_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 #include <mlpack/core/math/math_misc.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 

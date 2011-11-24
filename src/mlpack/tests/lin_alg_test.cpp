@@ -7,7 +7,7 @@
  *
  * @author Ryan Curtin
  */
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 #include <mlpack/methods/fastica/lin_alg.hpp>
 
 #include <boost/test/unit_test.hpp>

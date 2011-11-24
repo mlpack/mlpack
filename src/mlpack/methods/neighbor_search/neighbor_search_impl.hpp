@@ -8,7 +8,7 @@
 #ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_IMPL_HPP
 #define __MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_IMPL_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 using namespace mlpack::neighbor;
 

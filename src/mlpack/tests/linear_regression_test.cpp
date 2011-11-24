@@ -3,7 +3,7 @@
  *
  * Test for linear regression.
  */
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 #include <mlpack/methods/linear_regression/linear_regression.hpp>
 
 #include <boost/test/unit_test.hpp>

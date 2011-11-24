@@ -5,7 +5,7 @@
  * specified data set.
  */
 #include "pca.hpp"
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 #include <iostream>
 
 using namespace std;

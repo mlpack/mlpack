@@ -1,5 +1,5 @@
 /**
- * @file lmetric.h
+ * @file lmetric.hpp
  * @author Ryan Curtin
  *
  * Generalized L-metric, allowing both squared distances to be returned as well
@@ -10,7 +10,7 @@
 #ifndef __MLPACK_CORE_METRICS_LMETRIC_HPP
 #define __MLPACK_CORE_METRICS_LMETRIC_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace metric {

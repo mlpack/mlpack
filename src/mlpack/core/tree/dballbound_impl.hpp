@@ -9,7 +9,7 @@
 #ifndef __MLPACK_CORE_TREE_DBALLBOUND_IMPL_HPP
 #define __MLPACK_CORE_TREE_DBALLBOUND_IMPL_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace bound {

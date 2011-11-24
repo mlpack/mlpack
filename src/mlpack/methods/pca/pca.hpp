@@ -4,7 +4,7 @@
  * Defines the PCA class to perform Principal Components Analysis on the
  * specified data set.
  */
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 namespace mlpack {
 namespace pca {
 

@@ -3,7 +3,7 @@
  *
  * Test file for AllkNN class.
  */
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <boost/test/unit_test.hpp>
 

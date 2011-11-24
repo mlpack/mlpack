@@ -10,7 +10,7 @@
 #ifndef __MLPACK_METHODS_HMM_GAUSSIAN_HMM_HPP
 #define __MLPACK_METHODS_HMM_GAUSSIAN_HMM_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace hmm {

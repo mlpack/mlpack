@@ -11,7 +11,7 @@
 #ifndef __MLPACK_CORE_TREE_HRECTBOUND_HPP
 #define __MLPACK_CORE_TREE_HRECTBOUND_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 #include <mlpack/core/math/range.hpp>
 
 namespace mlpack {

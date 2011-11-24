@@ -6,7 +6,7 @@
  * aug_lagrangian_test_functions.h.
  */
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
 #include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian_test_functions.hpp>
 #include <boost/test/unit_test.hpp>

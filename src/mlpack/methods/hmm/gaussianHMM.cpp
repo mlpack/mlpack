@@ -3,7 +3,7 @@
  *
  * This file contains the implementation of functions in gaussianHMM.h
  */
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 #include "support.hpp"
 #include "gaussianHMM.hpp"

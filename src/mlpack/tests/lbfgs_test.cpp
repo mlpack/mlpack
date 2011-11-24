@@ -5,7 +5,7 @@
  *
  * @author Ryan Curtin (gth671b@mail.gatech.edu)
  */
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
 #include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
 

@@ -13,7 +13,7 @@
 #ifndef __MLPACK_METHODS_FASTICA_FASTICA_HPP
 #define __MLPACK_METHODS_FASTICA_FASTICA_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 #include "lin_alg.hpp"
 

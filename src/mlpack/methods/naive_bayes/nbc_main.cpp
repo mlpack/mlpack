@@ -23,7 +23,7 @@
  * This file will contain the classes to which the corresponding data points in
  * the testing data.
  */
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 #include "simple_nbc.hpp"
 

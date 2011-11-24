@@ -7,7 +7,7 @@
 #ifndef __MLPACK_METHODS_NCA_NCA_HPP
 #define __MLPACK_METHODS_NCA_NCA_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 
 namespace mlpack {

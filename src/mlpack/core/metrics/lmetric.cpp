@@ -1,4 +1,4 @@
-/***
+/**
  * @file lmetric.cpp
  * @author Ryan Curtin
  *

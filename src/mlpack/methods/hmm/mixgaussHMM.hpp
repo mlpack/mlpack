@@ -9,7 +9,7 @@
 #ifndef __MLPACK_METHODS_HMM_MIXGAUSS_HMM_HPP
 #define __MLPACK_METHODS_HMM_MIXGAUSS_HMM_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 #include "mixtureDST.hpp"
 
 namespace mlpack {

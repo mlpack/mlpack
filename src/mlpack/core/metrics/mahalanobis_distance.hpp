@@ -7,7 +7,7 @@
 #ifndef __MLPACK_CORE_METRICS_MAHALANOBIS_DISTANCE_HPP
 #define __MLPACK_CORE_METRICS_MAHALANOBIS_DISTANCE_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace metric {

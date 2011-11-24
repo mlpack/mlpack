@@ -1,5 +1,5 @@
 /**
- * @file test_functions.h
+ * @file test_functions.hpp
  * @author Ryan Curtin
  *
  * A collection of functions to test optimizers (in this case, L-BFGS).  These
@@ -13,7 +13,7 @@
 #ifndef __MLPACK_CORE_OPTIMIZERS_LBFGS_TEST_FUNCTIONS_HPP
 #define __MLPACK_CORE_OPTIMIZERS_LBFGS_TEST_FUNCTIONS_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 // To fulfill the template policy class 'FunctionType', we must implement
 // the following:

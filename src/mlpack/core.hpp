@@ -1,11 +1,11 @@
 /***
- * @file mlpack_core.h
+ * @file core.hpp
  *
  * Include all of the base components required to write MLPACK methods, and the
  * main MLPACK Doxygen documentation.
  */
-#ifndef __MLPACK_CORE_H
-#define __MLPACK_CORE_H
+#ifndef __MLPACK_CORE_HPP
+#define __MLPACK_CORE_HPP
 
 /**
  * @mainpage MLPACK Documentation

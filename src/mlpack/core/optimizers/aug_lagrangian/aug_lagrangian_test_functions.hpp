@@ -4,11 +4,10 @@
  *
  * Define test functions for the augmented Lagrangian method.
  */
-
 #ifndef __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP
 #define __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_TEST_FUNCTIONS_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace optimization {

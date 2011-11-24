@@ -1,5 +1,5 @@
 /**
- * @file aug_lagrangian.h
+ * @file aug_lagrangian.hpp
  * @author Ryan Curtin
  *
  * Definition of AugLagrangian class, which implements the Augmented Lagrangian
@@ -10,7 +10,7 @@
 #ifndef __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP
 #define __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace optimization {

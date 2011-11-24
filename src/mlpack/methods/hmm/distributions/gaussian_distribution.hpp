@@ -7,7 +7,7 @@
 #ifndef __MLPACK_METHODS_HMM_DISTRIBUTIONS_GAUSSIAN_DISTRIBUTION_HPP
 #define __MLPACK_METHODS_HMM_DISTRIBUTIONS_GAUSSIAN_DISTRIBUTION_HPP
 
-#include <mlpack/core.h>
+#include <mlpack/core.hpp>
 // Should be somewhere else, maybe in core.
 #include <mlpack/methods/gmm/phi.hpp>
 
