@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-  simple_nbc.cc
-  phi.cc
+  simple_nbc.hpp
+  simple_nbc.cpp
 )
 
 # Add directory name to sources.
@@ -17,7 +17,7 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_executable(nbc
-  nbc_main.cc
+  nbc_main.cpp
 )
 target_link_libraries(nbc
   mlpack
