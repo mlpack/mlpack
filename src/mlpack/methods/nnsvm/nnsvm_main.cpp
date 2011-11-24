@@ -1,18 +1,19 @@
 /**
- * @file nnsvm.cc
+ * @file nnsvm_main.cpp
  *
- * This file contains main routines for performing
- * NNSVM (Non-Negativity constrained SVM) training
- * NNSMO algorithm is employed.
+ * This file contains main routines for performing NNSVM (Non-Negativity
+ * constrained SVM) training NNSMO algorithm is employed.
  *
  * It currently support "train", "train-test", "test" mode with "linear" kernel
  * Example:
- *  nnsvm --mode=train --train_data=toy1.csv --kernel=linear --c=10.0 --eps=0.000001 --max_iter=1000
- *  nnsvm --mode=train_test --train_data=toy1.csv --test_data=toy2.csv --kernel=linear --c=10.0 --max_iter=1000
+ *  nnsvm --mode=train --train_data=toy1.csv --kernel=linear --c=10.0
+ *  --eps=0.000001 --max_iter=1000
+ *  nnsvm --mode=train_test --train_data=toy1.csv --test_data=toy2.csv
+ *  --kernel=linear --c=10.0 --max_iter=1000
  *  nnsvm --mode=test --train_data=toy2.csv --kernel=linear
  *
- * @see nnsvm.h
- * @see nnsmo.h
+ * @see nnsvm.hpp
+ * @see nnsmo.hpp
  */
 #include <iostream>
 #include "nnsvm.hpp"
@@ -20,19 +21,21 @@
 #include <mlpack/core/kernels/linear_kernel.hpp>
 
 PARAM_STRING_REQ("mode", "operating mode: train, train_test, or test", "nnsvm");
-PARAM_STRING_REQ("kernel", "kernel type: linear (currently supported)", "nnsvm");
-PARAM_STRING_REQ("train_data", "name of the file containing the training data", "nnsvm");
+PARAM_STRING_REQ("kernel", "kernel type: linear (currently supported)",
+    "nnsvm");
+PARAM_STRING_REQ("train_data", "name of the file containing the training data",
+    "nnsvm");
 
 using namespace mlpack;
 using namespace mlpack::kernel;
 using namespace mlpack::nnsvm;
 
 /**
-* NNSVM training - Main function
-*
-* @param: argc
-* @param: argv
-*/
+ * NNSVM training - Main function
+ *
+ * @param: argc
+ * @param: argv
+ */
 int main(int argc, char *argv[])
 {
   CLI::ParseCommandLine(argc, argv);
@@ -62,9 +65,11 @@ int main(int argc, char *argv[])
           CLI::GetParam<int>("nnsvm/max_iter"));
 
       Timers::StartTimer("nnsvm/nnsvm_train");
-      Log::Debug << "nnsvm_train_time" << CLI::GetParam<timeval>("nnsvm/nnsvm_train").tv_usec / 1e6 << std::endl;
+      Log::Debug << "nnsvm_train_time"
+          << CLI::GetParam<timeval>("nnsvm/nnsvm_train").tv_usec / 1e6
+          << std::endl;
       /* training and testing, thus no need to load model from file */
-      if (mode=="train_test")
+      if (mode == "train_test")
       {
         Log::Debug << "Non-Negativity SVM Classifying... " << std::endl;
         /* Load testing data */
@@ -77,7 +82,7 @@ int main(int argc, char *argv[])
       }
     }
   }
-  /* Testing(offline) Mode, need loading model file and testing data */
+  /* Testing (offline) Mode, need loading model file and testing data */
   else if (mode == "test")
   {
     Log::Debug << "Non-Negativity Constrained SVM Classifying... " << std::endl;
@@ -90,7 +95,7 @@ int main(int argc, char *argv[])
     {
       NNSVM<LinearKernel> nnsvm;
       nnsvm.Init(testset, 2);
-      nnsvm.LoadModelBatchClassify(testset, "nnsvm_model", "testlabels"); // TODO:param_req
+      nnsvm.LoadModelBatchClassify(testset, "nnsvm_model", "testlabels");
     }
   }
   return 0;
