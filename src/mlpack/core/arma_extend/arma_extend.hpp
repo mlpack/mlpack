@@ -1,5 +1,6 @@
 /***
- * @file arma_extend.h
+ * @file arma_extend.hpp
+ * @author Ryan Curtin
  *
  * Include Armadillo extensions which currently are not part of the main
  * Armadillo codebase.
