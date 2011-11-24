@@ -22,20 +22,20 @@ BOOST_AUTO_TEST_SUITE(GMMTest);
 BOOST_AUTO_TEST_CASE(UnivariatePhiTest)
 {
   // Simple case.
-  BOOST_REQUIRE_CLOSE(phi(0.0, 0.0, 1.0), 0.398942280401433, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(0.0, 0.0, 1.0), 0.398942280401433l, 1e-5);
 
   // A few more cases...
-  BOOST_REQUIRE_CLOSE(phi(0.0, 0.0, 2.0), 0.282094791773878, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(0.0, 0.0, 2.0), 0.282094791773878l, 1e-5);
 
-  BOOST_REQUIRE_CLOSE(phi(1.0, 0.0, 1.0), 0.241970724519143, 1e-5);
-  BOOST_REQUIRE_CLOSE(phi(-1.0, 0.0, 1.0), 0.241970724519143, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(1.0, 0.0, 1.0), 0.241970724519143l, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(-1.0, 0.0, 1.0), 0.241970724519143l, 1e-5);
 
-  BOOST_REQUIRE_CLOSE(phi(1.0, 0.0, 2.0), 0.219695644733861, 1e-5);
-  BOOST_REQUIRE_CLOSE(phi(-1.0, 0.0, 2.0), 0.219695644733861, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(1.0, 0.0, 2.0), 0.219695644733861l, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(-1.0, 0.0, 2.0), 0.219695644733861l, 1e-5);
 
-  BOOST_REQUIRE_CLOSE(phi(1.0, 1.0, 1.0), 0.398942280401433, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(1.0, 1.0, 1.0), 0.398942280401433l, 1e-5);
 
-  BOOST_REQUIRE_CLOSE(phi(-1.0, 1.0, 2.0), 0.103776874355149, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(-1.0, 1.0, 2.0), 0.103776874355149l, 1e-5);
 }
 
 /**
@@ -48,31 +48,31 @@ BOOST_AUTO_TEST_CASE(MultivariatePhiTest)
   arma::mat cov = "1 0; 0 1";
   arma::vec x = "0 0";
 
-  BOOST_REQUIRE_CLOSE(phi(x, mean, cov), 0.159154943091895, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(x, mean, cov), 0.159154943091895l, 1e-5);
 
   cov = "2 0; 0 2";
 
-  BOOST_REQUIRE_CLOSE(phi(x, mean, cov), 0.0795774715459477, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(x, mean, cov), 0.0795774715459477l, 1e-5);
 
   x = "1 1";
 
-  BOOST_REQUIRE_CLOSE(phi(x, mean, cov), 0.0482661763150270, 1e-5);
-  BOOST_REQUIRE_CLOSE(phi(-x, mean, cov), 0.0482661763150270, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(x, mean, cov), 0.0482661763150270l, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(-x, mean, cov), 0.0482661763150270l, 1e-5);
 
   mean = "1 1";
 
-  BOOST_REQUIRE_CLOSE(phi(x, mean, cov), 0.0795774715459477, 1e-5);
-  BOOST_REQUIRE_CLOSE(phi(-x, -mean, cov), 0.0795774715459477, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(x, mean, cov), 0.0795774715459477l, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(-x, -mean, cov), 0.0795774715459477l, 1e-5);
 
   cov = "2 1.5; 1 4";
 
-  BOOST_REQUIRE_CLOSE(phi(x, mean, cov), 0.0624257046546403, 1e-5);
-  BOOST_REQUIRE_CLOSE(phi(-x, -mean, cov), 0.0624257046546403, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(x, mean, cov), 0.0624257046546403l, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(-x, -mean, cov), 0.0624257046546403l, 1e-5);
 
   x = "-1 4";
 
-  BOOST_REQUIRE_CLOSE(phi(x, mean, cov), 0.00144014867515135, 1e-5);
-  BOOST_REQUIRE_CLOSE(phi(-x, mean, cov), 0.00133352162064845, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(x, mean, cov), 0.00144014867515135l, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(-x, mean, cov), 0.00133352162064845l, 1e-5);
 
   // Higher-dimensional case.
   x = "0 1 2 3 4";
@@ -83,10 +83,10 @@ BOOST_AUTO_TEST_CASE(MultivariatePhiTest)
         "1 0 1 7 0;"
         "2 0 1 1 6";
 
-  BOOST_REQUIRE_CLOSE(phi(x, mean, cov), 1.02531207499358e-6, 1e-5);
-  BOOST_REQUIRE_CLOSE(phi(-x, -mean, cov), 1.02531207499358e-6, 1e-5);
-  BOOST_REQUIRE_CLOSE(phi(x, -mean, cov), 1.06784794079363e-8, 1e-5);
-  BOOST_REQUIRE_CLOSE(phi(-x, mean, cov), 1.06784794079363e-8, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(x, mean, cov), 1.02531207499358e-6l, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(-x, -mean, cov), 1.02531207499358e-6l, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(x, -mean, cov), 1.06784794079363e-8l, 1e-5);
+  BOOST_REQUIRE_CLOSE(phi(-x, mean, cov), 1.06784794079363e-8l, 1e-5);
 }
 
 /**
