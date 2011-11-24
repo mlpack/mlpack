@@ -14,7 +14,6 @@ set(DIRS
   pca
   neighbor_search
   nnsvm
-  regression
   svm
 )
 
