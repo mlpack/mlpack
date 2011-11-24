@@ -87,7 +87,7 @@
 #endif
 
 // Now MLPACK-specific includes.
-#include <mlpack/core/arma_extend/arma_extend.h> // Includes Armadillo.
+#include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.
 #include <mlpack/core/io/log.hpp>
 #include <mlpack/core/io/cli.hpp>
 #include <mlpack/core/data/load.hpp>
