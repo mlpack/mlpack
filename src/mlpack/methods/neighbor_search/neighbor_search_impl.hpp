@@ -1,11 +1,12 @@
 /**
- * @file neighbor_search.cc
+ * @file neighbor_search_impl.hpp
+ * @author Ryan Curtin
  *
- * Implementation of AllkNN class to perform all-nearest-neighbors on two
- * specified data sets.
+ * Implementation of Neighbor-Search class to perform all-nearest-neighbors on
+ * two specified data sets.
  */
-#ifndef __MLPACK_NEIGHBOR_SEARCH_IMPL_H
-#define __MLPACK_NEIGHBOR_SEARCH_IMPL_H
+#ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_IMPL_HPP
+#define __MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_IMPL_HPP
 
 #include <mlpack/core.h>
 
@@ -25,9 +26,9 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& queries_in,
     kernel_(kernel),
     naive_(CLI::GetParam<bool>("neighbor_search/naive_mode")),
     dual_mode_(!(naive_ || CLI::GetParam<bool>("neighbor_search/single_mode"))),
-    number_of_prunes_(0) {
-
-  // C++0x will allow us to call out to other constructors so we can avoid this
+    number_of_prunes_(0)
+{
+  // C++11 will allow us to call out to other constructors so we can avoid this
   // copypasta problem.
 
   // Get the leaf size; naive ensures that the entire tree is one node
@@ -70,8 +71,8 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& references_in,
     kernel_(kernel),
     naive_(CLI::GetParam<bool>("neighbor_search/naive_mode")),
     dual_mode_(!(naive_ || CLI::GetParam<bool>("neighbor_search/single_mode"))),
-    number_of_prunes_(0) {
-
+    number_of_prunes_(0)
+{
   // Get the leaf size from the module
   if (naive_)
     CLI::GetParam<int>("tree/leaf_size") =
@@ -105,7 +106,8 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& references_in,
  * take care of themselves.
  */
 template<typename Kernel, typename SortPolicy>
-NeighborSearch<Kernel, SortPolicy>::~NeighborSearch() {
+NeighborSearch<Kernel, SortPolicy>::~NeighborSearch()
+{
   if (reference_tree_ != query_tree_)
     delete reference_tree_;
   if (query_tree_ != NULL)
@@ -118,30 +120,33 @@ NeighborSearch<Kernel, SortPolicy>::~NeighborSearch() {
 template<typename Kernel, typename SortPolicy>
 void NeighborSearch<Kernel, SortPolicy>::ComputeBaseCase_(
       TreeType* query_node,
-      TreeType* reference_node) {
-  // Used to find the query node's new upper bound
+      TreeType* reference_node)
+{
+  // Used to find the query node's new upper bound.
   double query_worst_distance = SortPolicy::BestDistance();
 
   // node->begin() is the index of the first point in the node,
-  // node->end is one past the last index
+  // node->end is one past the last index.
   for (size_t query_index = query_node->begin();
-      query_index < query_node->end(); query_index++) {
-
-    // Get the query point from the matrix
+      query_index < query_node->end(); query_index++)
+  {
+    // Get the query point from the matrix.
     arma::vec query_point = queries_.unsafe_col(query_index);
 
     double query_to_node_distance =
       SortPolicy::BestPointToNodeDistance(query_point, reference_node);
 
     if (SortPolicy::IsBetter(query_to_node_distance,
-        neighbor_distances_(knns_ - 1, query_index))) {
-      // We'll do the same for the references
+        neighbor_distances_(knns_ - 1, query_index)))
+    {
+      // We'll do the same for the references.
       for (size_t reference_index = reference_node->begin();
-          reference_index < reference_node->end(); reference_index++) {
-
+          reference_index < reference_node->end(); reference_index++)
+      {
         // Confirm that points do not identify themselves as neighbors
-        // in the monochromatic case
-        if (reference_node != query_node || reference_index != query_index) {
+        // in the monochromatic case.
+        if (reference_node != query_node || reference_index != query_index)
+        {
           arma::vec reference_point = references_.unsafe_col(reference_index);
 
           double distance = kernel_.Evaluate(query_point, reference_point);
@@ -152,10 +157,9 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeBaseCase_(
           size_t insert_position =  SortPolicy::SortDistance(query_dist,
               distance);
 
-          if (insert_position != (size_t() - 1)) {
+          if (insert_position != (size_t() - 1))
             InsertNeighbor(query_index, insert_position, reference_index,
                 distance);
-          }
         }
       }
     }
@@ -172,25 +176,28 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeBaseCase_(
 } // ComputeBaseCase_
 
 /**
- * The recursive function for dual tree
+ * The recursive function for dual tree.
  */
 template<typename Kernel, typename SortPolicy>
 void NeighborSearch<Kernel, SortPolicy>::ComputeDualNeighborsRecursion_(
       TreeType* query_node,
       TreeType* reference_node,
-      double lower_bound) {
-
-  if (SortPolicy::IsBetter(query_node->stat().bound_, lower_bound)) {
+      double lower_bound)
+{
+  if (SortPolicy::IsBetter(query_node->stat().bound_, lower_bound))
+  {
     number_of_prunes_++; // Pruned by distance; the nodes cannot be any closer
     return;              // than the already established lower bound.
   }
 
-  if (query_node->is_leaf() && reference_node->is_leaf()) {
+  if (query_node->is_leaf() && reference_node->is_leaf())
+  {
     ComputeBaseCase_(query_node, reference_node); // Base case: both are leaves.
     return;
   }
 
-  if (query_node->is_leaf()) {
+  if (query_node->is_leaf())
+  {
     // We must keep descending down the reference node to get to a leaf.
 
     // We'll order the computation by distance; descend in the direction of less
@@ -200,12 +207,15 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeDualNeighborsRecursion_(
     double right_distance = SortPolicy::BestNodeToNodeDistance(query_node,
         reference_node->right());
 
-    if (SortPolicy::IsBetter(left_distance, right_distance)) {
+    if (SortPolicy::IsBetter(left_distance, right_distance))
+    {
       ComputeDualNeighborsRecursion_(query_node, reference_node->left(),
           left_distance);
       ComputeDualNeighborsRecursion_(query_node, reference_node->right(),
           right_distance);
-    } else {
+    }
+    else
+    {
       ComputeDualNeighborsRecursion_(query_node, reference_node->right(),
           right_distance);
       ComputeDualNeighborsRecursion_(query_node, reference_node->left(),
@@ -214,7 +224,8 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeDualNeighborsRecursion_(
     return;
   }
 
-  if (reference_node->is_leaf()) {
+  if (reference_node->is_leaf())
+  {
     // We must descend down the query node to get to a leaf.
     double left_distance = SortPolicy::BestNodeToNodeDistance(
         query_node->left(), reference_node);
@@ -247,12 +258,15 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeDualNeighborsRecursion_(
       reference_node->right());
 
   // Recurse on query_node->left() first.
-  if (SortPolicy::IsBetter(left_distance, right_distance)) {
+  if (SortPolicy::IsBetter(left_distance, right_distance))
+  {
     ComputeDualNeighborsRecursion_(query_node->left(), reference_node->left(),
         left_distance);
     ComputeDualNeighborsRecursion_(query_node->left(), reference_node->right(),
         right_distance);
-  } else {
+  }
+  else
+  {
     ComputeDualNeighborsRecursion_(query_node->left(), reference_node->right(),
         right_distance);
     ComputeDualNeighborsRecursion_(query_node->left(), reference_node->left(),
@@ -265,12 +279,15 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeDualNeighborsRecursion_(
       reference_node->right());
 
   // Now recurse on query_node->right().
-  if (SortPolicy::IsBetter(left_distance, right_distance)) {
+  if (SortPolicy::IsBetter(left_distance, right_distance))
+  {
     ComputeDualNeighborsRecursion_(query_node->right(), reference_node->left(),
         left_distance);
     ComputeDualNeighborsRecursion_(query_node->right(), reference_node->right(),
         right_distance);
-  } else {
+  }
+  else
+  {
     ComputeDualNeighborsRecursion_(query_node->right(), reference_node->right(),
         right_distance);
     ComputeDualNeighborsRecursion_(query_node->right(), reference_node->left(),
@@ -293,17 +310,19 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
       size_t point_id,
       arma::vec& point,
       TreeType* reference_node,
-      double& best_dist_so_far) {
-
-  if (reference_node->is_leaf()) {
-    // Base case: reference node is a leaf
-
+      double& best_dist_so_far)
+{
+  if (reference_node->is_leaf())
+  {
+    // Base case: reference node is a leaf.
     for (size_t reference_index = reference_node->begin();
-        reference_index < reference_node->end(); reference_index++) {
+        reference_index < reference_node->end(); reference_index++)
+    {
       // Confirm that points do not identify themselves as neighbors
       // in the monochromatic case
       if (!(references_.memptr() == queries_.memptr() &&
-            reference_index == point_id)) {
+            reference_index == point_id))
+      {
         arma::vec reference_point = references_.unsafe_col(reference_index);
 
         double distance = kernel_.Evaluate(point, reference_point);
@@ -320,7 +339,9 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
     } // for reference_index
 
     best_dist_so_far = neighbor_distances_(knns_ - 1, point_id);
-  } else {
+  }
+  else
+  {
     // We'll order the computation by distance.
     double left_distance = SortPolicy::BestPointToNodeDistance(point,
         reference_node->left());
@@ -328,7 +349,8 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
         reference_node->right());
 
     // Recurse in the best direction first.
-    if (SortPolicy::IsBetter(left_distance, right_distance)) {
+    if (SortPolicy::IsBetter(left_distance, right_distance))
+    {
       if (SortPolicy::IsBetter(best_dist_so_far, left_distance))
         number_of_prunes_++; // Prune; no possibility of finding a better point.
       else
@@ -341,7 +363,9 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
         ComputeSingleNeighborsRecursion_(point_id, point,
             reference_node->right(), best_dist_so_far);
 
-    } else {
+    }
+    else
+    {
       if (SortPolicy::IsBetter(best_dist_so_far, right_distance))
         number_of_prunes_++; // Prune; no possibility of finding a better point.
       else
@@ -364,38 +388,51 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
 template<typename Kernel, typename SortPolicy>
 void NeighborSearch<Kernel, SortPolicy>::ComputeNeighbors(
       arma::Mat<size_t>& resulting_neighbors,
-      arma::mat& distances) {
-
+      arma::mat& distances)
+{
   Timers::StartTimer("neighbor_search/computing_neighbors");
-  if (naive_) {
+  if (naive_)
+  {
     // Run the base case computation on all nodes
     if (query_tree_)
       ComputeBaseCase_(query_tree_, reference_tree_);
     else
       ComputeBaseCase_(reference_tree_, reference_tree_);
-  } else {
-    if (dual_mode_) {
+  }
+  else
+  {
+    if (dual_mode_)
+    {
       // Start on the root of each tree
-      if (query_tree_) {
+      if (query_tree_)
+      {
         ComputeDualNeighborsRecursion_(query_tree_, reference_tree_,
             SortPolicy::BestNodeToNodeDistance(query_tree_, reference_tree_));
-      } else {
+      }
+      else
+      {
         ComputeDualNeighborsRecursion_(reference_tree_, reference_tree_,
             SortPolicy::BestNodeToNodeDistance(reference_tree_,
             reference_tree_));
       }
-    } else {
+    }
+    else
+    {
       size_t chunk = queries_.n_cols / 10;
 
-      for(size_t i = 0; i < 10; i++) {
-        for(size_t j = 0; j < chunk; j++) {
+      for (size_t i = 0; i < 10; i++)
+      {
+        for (size_t j = 0; j < chunk; j++)
+        {
           arma::vec point = queries_.unsafe_col(i * chunk + j);
           double best_dist_so_far = SortPolicy::WorstDistance();
           ComputeSingleNeighborsRecursion_(i * chunk + j, point,
               reference_tree_, best_dist_so_far);
         }
       }
-      for(size_t i = 0; i < queries_.n_cols % 10; i++) {
+
+      for (size_t i = 0; i < queries_.n_cols % 10; i++)
+      {
         size_t ind = (queries_.n_cols / 10) * 10 + i;
         arma::vec point = queries_.unsafe_col(ind);
         double best_dist_so_far = SortPolicy::WorstDistance();
@@ -413,17 +450,24 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeNeighbors(
   distances.set_size(neighbor_distances_.n_rows, neighbor_distances_.n_cols);
 
   // We need to map the indices back from how they have been permuted
-  if (query_tree_ != NULL) {
-    for (size_t i = 0; i < neighbor_indices_.n_cols; i++) {
-      for (size_t k = 0; k < neighbor_indices_.n_rows; k++) {
+  if (query_tree_ != NULL)
+  {
+    for (size_t i = 0; i < neighbor_indices_.n_cols; i++)
+    {
+      for (size_t k = 0; k < neighbor_indices_.n_rows; k++)
+      {
         resulting_neighbors(k, old_from_new_queries_[i]) =
             old_from_new_references_[neighbor_indices_(k, i)];
         distances(k, old_from_new_queries_[i]) = neighbor_distances_(k, i);
       }
     }
-  } else {
-    for (size_t i = 0; i < neighbor_indices_.n_cols; i++) {
-      for (size_t k = 0; k < neighbor_indices_.n_rows; k++) {
+  }
+  else
+  {
+    for (size_t i = 0; i < neighbor_indices_.n_cols; i++)
+    {
+      for (size_t k = 0; k < neighbor_indices_.n_rows; k++)
+      {
         resulting_neighbors(k, old_from_new_references_[i]) =
             old_from_new_references_[neighbor_indices_(k, i)];
         distances(k, old_from_new_references_[i]) = neighbor_distances_(k, i);
@@ -444,9 +488,11 @@ template<typename Kernel, typename SortPolicy>
 void NeighborSearch<Kernel, SortPolicy>::InsertNeighbor(size_t query_index,
                                                         size_t pos,
                                                         size_t neighbor,
-                                                        double distance) {
+                                                        double distance)
+{
   // We only memmove() if there is actually a need to shift something.
-  if (pos < (knns_ - 1)) {
+  if (pos < (knns_ - 1))
+  {
     int len = (knns_ - 1) - pos;
     memmove(neighbor_distances_.colptr(query_index) + (pos + 1),
         neighbor_distances_.colptr(query_index) + pos,

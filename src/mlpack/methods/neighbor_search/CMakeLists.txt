@@ -3,15 +3,15 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-  neighbor_search.h
-  neighbor_search_impl.h
+  neighbor_search.hpp
+  neighbor_search_impl.hpp
   sort_policies/nearest_neighbor_sort.hpp
   sort_policies/nearest_neighbor_sort.cpp
   sort_policies/nearest_neighbor_sort_impl.hpp
   sort_policies/furthest_neighbor_sort.hpp
   sort_policies/furthest_neighbor_sort.cpp
   sort_policies/furthest_neighbor_sort_impl.hpp
-  typedef.h
+  typedef.hpp
 )
 
 # Add directory name to sources.
@@ -24,14 +24,14 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_executable(allknn
-  allknn_main.cc
+  allknn_main.cpp
 )
 target_link_libraries(allknn
   mlpack
 )
 
 add_executable(allkfn
-  allkfn_main.cc
+  allkfn_main.cpp
 )
 target_link_libraries(allkfn
   mlpack
