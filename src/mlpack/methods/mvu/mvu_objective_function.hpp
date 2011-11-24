@@ -1,5 +1,5 @@
-/***
- * @file mvu_objective_function.h
+/**
+ * @file mvu_objective_function.hpp
  * @author Ryan Curtin
  *
  * This file defines the standard MVU objective function, implemented to fulfill
@@ -18,16 +18,15 @@
  *     the Twenty-First National Conference on Artificial Intelligence
  *     (AAAI-06), 2006.
  */
-
-#ifndef __MLPACK_MVU_OBJECTIVE_FUNCTCLIN_H
-#define __MLPACK_MVU_OBJECTIVE_FUNCTCLIN_H
+#ifndef __MLPACK_METHODS_MVU_MVU_OBJECTIVE_FUNCTION_H
+#define __MLPACK_METHODS_MVU_MVU_OBJECTIVE_FUNCTION_H
 
 #include <mlpack/core.h>
 
 namespace mlpack {
 namespace mvu {
 
-/***
+/**
  * The MVU objective function.  This is a reformulation of the SDP proposed
  * originally by Weinberger and Saul.  Their original formulation was:
  *
@@ -47,7 +46,8 @@ namespace mvu {
  * Now, our optimization problem is easier.  The total number of constraints is
  * equal to the number of points multiplied by the number of nearest neighbors.
  */
-class MVUObjectiveFunction {
+class MVUObjectiveFunction
+{
  public:
   MVUObjectiveFunction();
   MVUObjectiveFunction(arma::mat& initial_point);

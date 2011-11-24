@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-  mvu.h
-  mvu_impl.h
-#  mvu_objective_function.h
-#  mvu_objective_function.cc
+  mvu.hpp
+  mvu_impl.hpp
+#  mvu_objective_function.hpp
+#  mvu_objective_function.cpp
 )
 
 # Add directory name to sources.
