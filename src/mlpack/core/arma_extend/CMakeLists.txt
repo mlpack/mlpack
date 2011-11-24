@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-  arma_extend.h
+  arma_extend.hpp
   fn_ccov.hpp
   glue_ccov_meat.hpp
   glue_ccov_proto.hpp
