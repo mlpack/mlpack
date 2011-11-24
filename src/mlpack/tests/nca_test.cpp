@@ -7,7 +7,7 @@
  */
 #include <mlpack/core.h>
 #include <mlpack/core/metrics/lmetric.hpp>
-#include <mlpack/methods/nca/nca.h>
+#include <mlpack/methods/nca/nca.hpp>
 
 #include <boost/test/unit_test.hpp>
 
