@@ -10,7 +10,7 @@
 #define __MLPACK_CORE_DATA_SAVE_HPP
 
 #include <mlpack/core/io/log.hpp>
-#include <mlpack/core/arma_extend/arma_extend.h> // Includes Armadillo.
+#include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.
 #include <string>
 
 namespace mlpack {
