@@ -1,11 +1,10 @@
-/***
- * @file mvu_objective_function.cc
+/**
+ * @file mvu_objective_function.cpp
  * @author Ryan Curtin
  *
  * Implementation of the MVUObjectiveFunction class.
  */
-
-#include "mvu_objective_function.h"
+#include "mvu_objective_function.hpp"
 
 #include <mlpack/neighbor_search/neighbor_search.h>
 #include <mlpack/fastica/lin_alg.h>
@@ -15,13 +14,15 @@ using namespace mlpack::mvu;
 
 using mlpack::neighbor::AllkNN;
 
-MVUObjectiveFunction::MVUObjectiveFunction() {
+MVUObjectiveFunction::MVUObjectiveFunction()
+{
   // Need to set initial point?  I guess this will be the initial matrix...
   Log::Fatal << "Initialized MVUObjectiveFunction all wrong." << std::endl;
 }
 
 MVUObjectiveFunction::MVUObjectiveFunction(arma::mat& initial_point) :
-    num_neighbors_(5) {
+    num_neighbors_(5)
+{
   // We will calculate the nearest neighbors of this dataset.
   AllkNN allknn(initial_point);
 
@@ -42,7 +43,8 @@ MVUObjectiveFunction::MVUObjectiveFunction(arma::mat& initial_point) :
 //  initial_point_ = tmp;
 }
 
-double MVUObjectiveFunction::Evaluate(const arma::mat& coordinates) {
+double MVUObjectiveFunction::Evaluate(const arma::mat& coordinates)
+{
   // We replaced the SDP constraint (K > 0) with (K = R^T R) so now our
   // objective function is simply that (and R is our coordinate matrix).  Since
   // the problem is a maximization problem, we simply negate the objective
@@ -57,28 +59,34 @@ double MVUObjectiveFunction::Evaluate(const arma::mat& coordinates) {
 }
 
 void MVUObjectiveFunction::Gradient(const arma::mat& coordinates,
-                                    arma::mat& gradient) {
+                                    arma::mat& gradient)
+{
   // Our objective, f(R) = sum_{ij} (R^T R)_ij, is differentiable into
   //   f'(R) = 2 * R.
-  NOTIFY("Coordinates are ");
-  std::cout << coordinates;
+  Log::Info << "Coordinates are:\n" << coordinates;
+
   gradient = 2 * coordinates;
-  NOTIFY("Calculated gradient is ");
+
+  Log::Info << "Calculated gradient is\n" << gradient;
+
   std::cout << gradient;
 }
 
 double MVUObjectiveFunction::EvaluateConstraint(int index,
-                                                const arma::mat& coordinates) {
-  if (index == 0) {
+                                                const arma::mat& coordinates)
+{
+  if (index == 0)
+  {
     // We are considering the first constraint:
     //   sum (R^T * R) = 0
 
     // This is a naive implementation; we may be able to improve upon it
     // significantly by avoiding the actual calculation of the Gram matrix
     // (R^T * R).
-    if (accu(trans(coordinates) * coordinates) > 0) {
-        NOTIFY("Constraint 0 is nonzero: %lf",
-            accu(trans(coordinates) * coordinates));
+    if (accu(trans(coordinates) * coordinates) > 0)
+    {
+      Log::Debug << "Constraint 0 is nonzero: " <<
+          accu(trans(coordinates) * coordinates) << std::endl;
     }
 
     return accu(trans(coordinates) * coordinates);
@@ -102,7 +110,7 @@ double MVUObjectiveFunction::EvaluateConstraint(int index,
 
   // We must remember the actual distance between points.
 //  NOTIFY("Index %d: i is %d, j is %d", index, i, j);
-//  NOTIFY("Neighbor %d: distance of %lf", index - 1, 
+//  NOTIFY("Neighbor %d: distance of %lf", index - 1,
 //      neighbor_distances_[index - 1]);
 //  NOTIFY("rrt_ii: %lf; rrt_ij: %lf; rrt_jj: %lf", rrt_ii, rrt_ij, rrt_jj);
 //  NOTIFY("r_i: ");
@@ -110,11 +118,13 @@ double MVUObjectiveFunction::EvaluateConstraint(int index,
 //  NOTIFY("r_j: ");
 //  std::cout << coordinates.col(j);
 //  NOTIFY("LHS: %lf", (rrt_ii - 2 * rrt_ij + rrt_jj));
-  
-  if (((rrt_ii - 2 * rrt_ij + rrt_jj) - 
-      neighbor_distances_[index - 1]) > 1e-5) {
-    NOTIFY("Constraint %d is nonzero:  %lf", index,
-        ((rrt_ii - 2 * rrt_ij + rrt_jj) - neighbor_distances_[index - 1]));
+
+  if (((rrt_ii - 2 * rrt_ij + rrt_jj) -
+      neighbor_distances_[index - 1]) > 1e-5)
+  {
+    Log::Debug << "Constraint " << index << " is nonzero: " <<
+        ((rrt_ii - 2 * rrt_ij + rrt_jj) - neighbor_distances_[index - 1])
+        << std::endl;
   }
 
   return ((rrt_ii - 2 * rrt_ij + rrt_jj) - neighbor_distances_[index - 1]);
@@ -122,15 +132,17 @@ double MVUObjectiveFunction::EvaluateConstraint(int index,
 
 void MVUObjectiveFunction::GradientConstraint(int index,
                                               const arma::mat& coordinates,
-                                              arma::mat& gradient) {
+                                              arma::mat& gradient)
+{
   // Set gradient to 0 (we will add to it).
   gradient.zeros(coordinates.n_rows, coordinates.n_cols);
-  
+
   // Return 0 for any constraints which are out of bounds.
   if (index >= NumConstraints() || index < 0)
     return;
 
-  if (index == 0) {
+  if (index == 0)
+  {
     // We consider the gradient of the first constraint:
     //   sum (R^T * R) = 0
     // It is eventually worked out that
@@ -143,7 +155,7 @@ void MVUObjectiveFunction::GradientConstraint(int index,
     //  gradient.col(i) += accu(coordinates.col(i)); // sum_i (R_xi)
     arma::mat ones(gradient.n_cols, gradient.n_cols);
     gradient = coordinates * ones;
-    
+
     return;
   }
 
