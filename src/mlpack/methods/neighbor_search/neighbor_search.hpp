@@ -1,11 +1,12 @@
 /**
- * @file neighbor_search.h
+ * @file neighbor_search.hpp
+ * @author Ryan Curtin
  *
  * Defines the AllkNN class to perform all-k-nearest-neighbors on two specified
  * data sets.
  */
-#ifndef __MLPACK_NEIGHBOR_SEARCH_H
-#define __MLPACK_NEIGHBOR_SEARCH_H
+#ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_HPP
+#define __MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_HPP
 
 #include <mlpack/core.h>
 #include <mlpack/core/tree/bounds.hpp>
@@ -56,14 +57,14 @@ PARAM_FLAG("naive_mode", "If set, use naive computations (no trees).  This "
  */
 template<typename Kernel = mlpack::metric::SquaredEuclideanDistance,
          typename SortPolicy = NearestNeighborSort>
-class NeighborSearch {
-
+class NeighborSearch
+{
   /**
    * Extra data for each node in the tree.  For neighbor searches, each node
    * only needs to store a bound on neighbor distances.
    */
-  class QueryStat {
-
+  class QueryStat
+  {
    public:
     //! The bound on the node's neighbor distances.
     double bound_;
@@ -236,9 +237,9 @@ class NeighborSearch {
 }; // namespace mlpack
 
 // Include implementation.
-#include "neighbor_search_impl.h"
+#include "neighbor_search_impl.hpp"
 
 // Include convenience typedefs.
-#include "typedef.h"
+#include "typedef.hpp"
 
 #endif

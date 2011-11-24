@@ -1,30 +1,30 @@
 /**
- * @file main.cc
+ * @file allknn_main.cpp
+ * @author Ryan Curtin
  *
  * Implementation of the AllkNN executable.  Allows some number of standard
  * options.
- *
- * @author Ryan Curtin
  */
 #include <mlpack/core.h>
-#include "neighbor_search.h"
 
 #include <string>
 #include <fstream>
 #include <iostream>
+
+#include "neighbor_search.hpp"
 
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::neighbor;
 
 // Information about the program itself.
-PROGRAM_INFO("All K-Furthest-Neighbors",
-    "This program will calculate the all k-furthest-neighbors of a set of "
+PROGRAM_INFO("All K-Nearest-Neighbors",
+    "This program will calculate the all k-nearest-neighbors of a set of "
     "points. You may specify a separate set of reference points and query "
     "points, or just a reference set which will be used as both the reference "
     "and query set."
     "\n\n"
-    "For example, the following will calculate the 5 furthest neighbors of each"
+    "For example, the following will calculate the 5 nearest neighbors of each"
     "point in 'input.csv' and store the results in 'output.csv':"
     "\n\n"
     "$ allknn --neighbor_search/k=5 --reference_file=input.csv\n"
@@ -38,7 +38,8 @@ PARAM_STRING("query_file", "CSV file containing query points (optional).",
 PARAM_STRING_REQ("output_file", "File to output CSV-formatted results into.",
     "");
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
   // Give CLI the command line parameters the user passed in.
   CLI::ParseCommandLine(argc, argv);
 
@@ -51,28 +52,31 @@ int main(int argc, char *argv[]) {
   arma::mat distances;
 
   if (!data::Load(reference_file.c_str(), reference_data))
-    Log::Fatal << "Reference file " << reference_file << "not found." << endl;
+    Log::Fatal << "Reference file " << reference_file << " not found." << endl;
 
   Log::Info << "Loaded reference data from " << reference_file << endl;
 
   // Sanity check on k value: must be greater than 0, must be less than the
   // number of reference points.
   size_t k = CLI::GetParam<int>("neighbor_search/k");
-  if ((k <= 0) || (k >= reference_data.n_cols)) {
+  if ((k <= 0) || (k >= reference_data.n_cols))
+  {
     Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less ";
     Log::Fatal << "than the number of reference points (";
     Log::Fatal << reference_data.n_cols << ")." << endl;
   }
 
   // Sanity check on leaf size.
-  if (CLI::GetParam<int>("tree/leaf_size") <= 0) {
+  if (CLI::GetParam<int>("tree/leaf_size") <= 0)
+  {
     Log::Fatal << "Invalid leaf size: "
         << CLI::GetParam<int>("allknn/leaf_size") << endl;
   }
 
-  AllkFN* allkfn = NULL;
+  AllkNN* allknn = NULL;
 
-  if (CLI::GetParam<string>("query_file") != "") {
+  if (CLI::GetParam<string>("query_file") != "")
+  {
     string query_file = CLI::GetParam<string>("query_file");
     arma::mat query_data;
 
@@ -82,39 +86,46 @@ int main(int argc, char *argv[]) {
     Log::Info << "Query data loaded from " << query_file << endl;
 
     Log::Info << "Building query and reference trees..." << endl;
-    allkfn = new AllkFN(query_data, reference_data);
+    allknn = new AllkNN(query_data, reference_data);
 
-  } else {
+  }
+  else
+  {
     Log::Info << "Building reference tree..." << endl;
-    allkfn = new AllkFN(reference_data);
+    allknn = new AllkNN(reference_data);
   }
 
   Log::Info << "Tree(s) built." << endl;
 
   Log::Info << "Computing " << k << " nearest neighbors..." << endl;
-  allkfn->ComputeNeighbors(neighbors, distances);
+  allknn->ComputeNeighbors(neighbors, distances);
 
   Log::Info << "Neighbors computed." << endl;
   Log::Info << "Exporting results..." << endl;
 
   // Should be using data::Save or a related function instead of being written
   // by hand.
-  try {
+  try
+  {
     ofstream out(output_file.c_str());
 
-    for (size_t col = 0; col < neighbors.n_cols; col++) {
+    for (size_t col = 0; col < neighbors.n_cols; col++)
+    {
       out << col << ", ";
-      for (size_t j = 0; j < (k - 1) /* last is special case */; j++) {
+      for (size_t j = 0; j < (k - 1) /* last is special case */; j++)
+      {
         out << neighbors(j, col) << ", " << distances(j, col) << ", ";
       }
       out << neighbors((k - 1), col) << ", " << distances((k - 1), col) << endl;
     }
 
     out.close();
-  } catch(exception& e) {
+  }
+  catch (exception& e)
+  {
     Log::Fatal << "Error while opening " << output_file << ": " << e.what()
         << endl;
   }
 
-  delete allkfn;
+  delete allknn;
 }

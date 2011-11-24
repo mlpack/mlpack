@@ -1,5 +1,5 @@
 /**
- * @file typedef.h
+ * @file typedef.hpp
  * @author Ryan Curtin
  *
  * Simple typedefs describing template instantiations of the NeighborSearch
@@ -10,7 +10,7 @@
 #define __MLPACK_NEIGHBOR_SEARCH_TYPEDEF_H
 
 // In case someone included this directly.
-#include "neighbor_search.h"
+#include "neighbor_search.hpp"
 
 #include <mlpack/core/metrics/lmetric.hpp>
 

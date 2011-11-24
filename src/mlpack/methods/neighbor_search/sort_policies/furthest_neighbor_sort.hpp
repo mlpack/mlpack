@@ -5,8 +5,8 @@
  * Implementation of the SortPolicy class for NeighborSearch; in this case, the
  * furthest neighbors are those that are most important.
  */
-#ifndef __MLPACK_NEIGHBOR_FURTHEST_NEIGHBOR_SORT_HPP
-#define __MLPACK_NEIGHBOR_FURTHEST_NEIGHBOR_SORT_HPP
+#ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_FURTHEST_NEIGHBOR_SORT_HPP
+#define __MLPACK_METHODS_NEIGHBOR_SEARCH_FURTHEST_NEIGHBOR_SORT_HPP
 
 #include <mlpack/core.h>
 
@@ -19,7 +19,8 @@ namespace neighbor {
  * minimum distance is the best (so, when used with NeighborSearch, the output
  * is furthest neighbors).
  */
-class FurthestNeighborSort {
+class FurthestNeighborSort
+{
  public:
   /**
    * Return the index in the vector where the new distance should be inserted,
@@ -46,7 +47,8 @@ class FurthestNeighborSort {
    *
    * @return bool indicating whether or not (value > ref).
    */
-  static inline bool IsBetter(const double value, const double ref) {
+  static inline bool IsBetter(const double value, const double ref)
+  {
     return (value > ref);
   }
 

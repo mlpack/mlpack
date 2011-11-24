@@ -1,12 +1,12 @@
-/***
+/**
  * @file nearest_neighbor_sort.hpp
  * @author Ryan Curtin
  *
  * Implementation of the SortPolicy class for NeighborSearch; in this case, the
  * nearest neighbors are those that are most important.
  */
-#ifndef __MLPACK_NEIGHBOR_NEAREST_NEIGHBOR_SORT_HPP
-#define __MLPACK_NEIGHBOR_NEAREST_NEIGHBOR_SORT_HPP
+#ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_SORT_HPP
+#define __MLPACK_METHODS_NEIGHBOR_SEARCH_NEAREST_NEIGHBOR_SORT_HPP
 
 #include <mlpack/core.h>
 
@@ -23,7 +23,8 @@ namespace neighbor {
  * SortPolicy.  All of the methods implemented here must be implemented by any
  * other SortPolicy classes.
  */
-class NearestNeighborSort {
+class NearestNeighborSort
+{
  public:
   /**
    * Return the index in the vector where the new distance should be inserted,
@@ -50,7 +51,8 @@ class NearestNeighborSort {
    *
    * @return bool indicating whether or not (value < ref).
    */
-  static inline bool IsBetter(const double value, const double ref) {
+  static inline bool IsBetter(const double value, const double ref)
+  {
     return (value < ref);
   }
 

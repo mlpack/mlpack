@@ -1,4 +1,4 @@
-/***
+/**
  * @file nearest_neighbor_sort_impl.hpp
  * @author Ryan Curtin
  *
@@ -14,7 +14,8 @@ namespace neighbor {
 template<typename TreeType>
 double NearestNeighborSort::BestNodeToNodeDistance(
     const TreeType* query_node,
-    const TreeType* reference_node) {
+    const TreeType* reference_node)
+{
   // This is not implemented yet for the general case because the trees do not
   // accept arbitrary distance metrics.
   return query_node->bound().MinDistance(reference_node->bound());
@@ -23,7 +24,8 @@ double NearestNeighborSort::BestNodeToNodeDistance(
 template<typename TreeType>
 double NearestNeighborSort::BestPointToNodeDistance(
     const arma::vec& point,
-    const TreeType* reference_node) {
+    const TreeType* reference_node)
+{
   // This is not implemented yet for the general case because the trees do not
   // accept arbitrary distance metrics.
   return reference_node->bound().MinDistance(point);
