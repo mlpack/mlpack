@@ -1,5 +1,5 @@
 /**
- * @file nca_main.cc
+ * @file nca_main.cpp
  * @author Ryan Curtin
  *
  * Executable for Neighborhood Components Analysis.
@@ -7,7 +7,7 @@
 #include <mlpack/core.h>
 #include <mlpack/core/metrics/lmetric.hpp>
 
-#include "nca.h"
+#include "nca.hpp"
 
 // Define parameters.
 PROGRAM_INFO("Neighborhood Components Analysis",
@@ -21,7 +21,8 @@ using namespace mlpack::nca;
 using namespace mlpack::metric;
 using namespace std;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
   CLI::ParseCommandLine(argc, argv);
 
   arma::mat data;

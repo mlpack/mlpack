@@ -7,7 +7,8 @@
 #ifndef __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTCLIN_IMPL_H
 #define __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTCLIN_IMPL_H
 
-#include "nca_softmax_error_function.h"
+// In case it hasn't been included already.
+#include "nca_softmax_error_function.hpp"
 
 namespace mlpack {
 namespace nca {
@@ -23,7 +24,8 @@ SoftmaxErrorFunction<Kernel>::SoftmaxErrorFunction(const arma::mat& dataset,
 { /* nothing to do */ }
 
 template<typename Kernel>
-double SoftmaxErrorFunction<Kernel>::Evaluate(const arma::mat& coordinates) {
+double SoftmaxErrorFunction<Kernel>::Evaluate(const arma::mat& coordinates)
+{
   // Calculate the denominators and numerators, if necessary.
   Precalculate(coordinates);
 
@@ -33,7 +35,8 @@ double SoftmaxErrorFunction<Kernel>::Evaluate(const arma::mat& coordinates) {
 
 template<typename Kernel>
 void SoftmaxErrorFunction<Kernel>::Gradient(const arma::mat& coordinates,
-                                            arma::mat& gradient) {
+                                            arma::mat& gradient)
+{
   // Calculate the denominators and numerators, if necessary.
   Precalculate(coordinates);
 
@@ -51,8 +54,10 @@ void SoftmaxErrorFunction<Kernel>::Gradient(const arma::mat& coordinates,
   //     (p_i p_ik + p_k p_ki) x_ik x_ik^T
   arma::mat sum;
   sum.zeros(stretched_dataset_.n_rows, stretched_dataset_.n_rows);
-  for (size_t i = 0; i < stretched_dataset_.n_cols; i++) {
-    for (size_t k = (i + 1); k < stretched_dataset_.n_cols; k++) {
+  for (size_t i = 0; i < stretched_dataset_.n_cols; i++)
+  {
+    for (size_t k = (i + 1); k < stretched_dataset_.n_cols; k++)
+    {
       // Calculate p_ik and p_ki first.
       double eval = exp(-kernel_.Evaluate(stretched_dataset_.unsafe_col(i),
                                           stretched_dataset_.unsafe_col(k)));
@@ -76,12 +81,14 @@ void SoftmaxErrorFunction<Kernel>::Gradient(const arma::mat& coordinates,
 }
 
 template<typename Kernel>
-arma::mat SoftmaxErrorFunction<Kernel>::GetInitialPoint() {
+arma::mat SoftmaxErrorFunction<Kernel>::GetInitialPoint()
+{
   return arma::eye<arma::mat>(dataset_.n_rows, dataset_.n_rows);
 }
 
 template<typename Kernel>
-void SoftmaxErrorFunction<Kernel>::Precalculate(const arma::mat& coordinates) {
+void SoftmaxErrorFunction<Kernel>::Precalculate(const arma::mat& coordinates)
+{
   // Make sure the calculation is necessary.
   if ((accu(coordinates == last_coordinates_) == coordinates.n_elem) &&
       precalculated_)
@@ -99,8 +106,10 @@ void SoftmaxErrorFunction<Kernel>::Precalculate(const arma::mat& coordinates) {
   // order of O((n * (n + 1)) / 2), which really isn't all that great.
   p_.zeros(stretched_dataset_.n_cols);
   denominators_.zeros(stretched_dataset_.n_cols);
-  for (size_t i = 0; i < stretched_dataset_.n_cols; i++) {
-    for (size_t j = (i + 1); j < stretched_dataset_.n_cols; j++) {
+  for (size_t i = 0; i < stretched_dataset_.n_cols; i++)
+  {
+    for (size_t j = (i + 1); j < stretched_dataset_.n_cols; j++)
+    {
       // Evaluate exp(-K(x_i, x_j)).
       double eval = exp(-kernel_.Evaluate(stretched_dataset_.unsafe_col(i),
                                           stretched_dataset_.unsafe_col(j)));
@@ -110,7 +119,8 @@ void SoftmaxErrorFunction<Kernel>::Precalculate(const arma::mat& coordinates) {
       denominators_[j] += eval;
 
       // If i and j are the same class, add to numerator of both.
-      if (labels_[i] == labels_[j]) {
+      if (labels_[i] == labels_[j])
+      {
         p_[i] += eval;
         p_[j] += eval;
       }
@@ -121,8 +131,10 @@ void SoftmaxErrorFunction<Kernel>::Precalculate(const arma::mat& coordinates) {
   p_ /= denominators_;
 
   // Clean up any bad values.
-  for (size_t i = 0; i < stretched_dataset_.n_cols; i++) {
-    if (denominators_[i] == 0.0) {
+  for (size_t i = 0; i < stretched_dataset_.n_cols; i++)
+  {
+    if (denominators_[i] == 0.0)
+    {
       Log::Debug << "Denominator of p_{" << i << ", j} is 0." << std::endl;
 
       // Set to usable values.

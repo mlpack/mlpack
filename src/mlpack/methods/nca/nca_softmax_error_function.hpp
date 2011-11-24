@@ -1,12 +1,12 @@
 /**
- * @file nca_softmax.h
+ * @file nca_softmax_error_function.hpp
  * @author Ryan Curtin
  *
  * Implementation of the stochastic neighbor assignment probability error
  * function (the "softmax error").
  */
-#ifndef __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTCLIN_H
-#define __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTCLIN_H
+#ifndef __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_HPP
+#define __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_HPP
 
 #include <mlpack/core.h>
 
@@ -29,7 +29,8 @@ namespace nca {
  * the best way to use this.
  */
 template<typename Kernel>
-class SoftmaxErrorFunction {
+class SoftmaxErrorFunction
+{
  public:
   /**
    * Initialize with the given kernel; useful when the kernel has some state to
@@ -99,6 +100,6 @@ class SoftmaxErrorFunction {
 }; // namespace mlpack
 
 // Include implementation.
-#include "nca_softmax_error_function_impl.h"
+#include "nca_softmax_error_function_impl.hpp"
 
 #endif
