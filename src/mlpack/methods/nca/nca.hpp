@@ -1,11 +1,11 @@
 /**
- * @file nca.h
+ * @file nca.hpp
  * @author Ryan Curtin
  *
  * Declaration of NCA class (Neighborhood Components Analysis).
  */
-#ifndef __MLPACK_METHODS_NCA_NCA_H
-#define __MLPACK_METHODS_NCA_NCA_H
+#ifndef __MLPACK_METHODS_NCA_NCA_HPP
+#define __MLPACK_METHODS_NCA_NCA_HPP
 
 #include <mlpack/core.h>
 #include <mlpack/core/metrics/lmetric.hpp>
@@ -35,7 +35,8 @@ namespace nca {
  * }
  */
 template<typename Kernel>
-class NCA {
+class NCA
+{
  public:
   /**
    * Construct the Neighborhood Components Analysis object.  This simply stores
@@ -62,6 +63,6 @@ class NCA {
 }; // namespace mlpack
 
 // Include the implementation.
-#include "nca_impl.h"
+#include "nca_impl.hpp"
 
 #endif

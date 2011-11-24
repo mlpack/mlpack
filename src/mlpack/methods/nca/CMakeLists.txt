@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-  nca.h
-  nca_impl.h
-  nca_softmax_error_function.h
-  nca_softmax_error_function_impl.h
+  nca.hpp
+  nca_impl.hpp
+  nca_softmax_error_function.hpp
+  nca_softmax_error_function_impl.hpp
 )
 
 # Add directory name to sources.
@@ -19,7 +19,7 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_executable(nca
-  nca_main.cc
+  nca_main.cpp
 )
 target_link_libraries(nca
   mlpack
