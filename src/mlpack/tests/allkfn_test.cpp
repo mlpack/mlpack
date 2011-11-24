@@ -4,7 +4,7 @@
  * Tests for AllkFN (all-k-furthest-neighbors).
  */
 #include <mlpack/core.h>
-#include <mlpack/methods/neighbor_search/neighbor_search.h>
+#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <boost/test/unit_test.hpp>
 
 using namespace mlpack;
