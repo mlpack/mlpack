@@ -84,48 +84,27 @@ class GMM {
   //! Return a reference to the a priori weights of each Gaussian.
   arma::vec& Weights() { return weights; }
 
+
   /**
-   * This function outputs the parameters of the model
-   * to an arraylist of doubles
+   * Return the probability that the given observation came from this
+   * distribution.
    *
-   * @code
-   * ArrayList<double> results;
-   * mog.OutputResults(&results);
-   * @endcode
+   * @param observation Observation to evaluate the probability of.
    */
-  void OutputResults(std::vector<double>& results)
-  {
-    // Initialize the size of the output array
-    results.resize(gaussians * (1 + dimension * (1 + dimension)));
-
-    // Copy values to the array from the private variables of the class
-    for (size_t i = 0; i < gaussians; i++)
-    {
-      results[i] = weights[i];
-      for (size_t j = 0; j < dimension; j++)
-      {
-        results[gaussians + (i * dimension) + j] = (means[i])[j];
-        for (size_t k = 0; k < dimension; k++)
-        {
-          results[gaussians * (1 + dimension) +
-              (i * dimension * dimension) + (j * dimension) + k] =
-              (covariances[i])(j, k);
-        }
-      }
-    }
-  }
+  double Probability(const arma::vec& observation) const;
 
   /**
-   * This function calculates the parameters of the model
-   * using the Maximum Likelihood function via the
-   * Expectation Maximization (EM) Algorithm.
+   * Return a randomly generated observation according to the probability
+   * distribution defined by this object.
    *
-   * @code
-   * MoG mog;
-   * Matrix data = "the data on which you want to fit the model";
-   * ArrayList<double> results;
-   * mog.ExpectationMaximization(data, &results);
-   * @endcode
+   * @return Random observation from this GMM.
+   */
+  arma::vec Random() const;
+
+  /**
+   * This function estimates the parameters of the Gaussian Mixture Model using
+   * the Maximum Likelihood estimator, via the EM (Expectation Maximization)
+   * algorithm.
    */
   void ExpectationMaximization(const arma::mat& data_points);
 

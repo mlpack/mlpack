@@ -11,10 +11,8 @@ set(DIRS
   #mvu  # (currently known to not work)
   naive_bayes
   nca
-  pca
   neighbor_search
-  nnsvm
-  svm
+  pca
 )
 
 foreach(dir ${DIRS})
