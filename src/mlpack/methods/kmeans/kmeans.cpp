@@ -1,16 +1,15 @@
 /**
- * @author Parikshit Ram (pram@cc.gatech.edu)
  * @file kmeans.cpp
+ * @author Parikshit Ram (pram@cc.gatech.edu)
  *
  * Implementation for the K-means method for getting an initial point.
- *
  */
 #include "kmeans.hpp"
 
 #include <mlpack/core/metrics/lmetric.hpp>
 
 namespace mlpack {
-namespace gmm {
+namespace kmeans {
 
 void KMeans(const arma::mat& data,
             const size_t value_of_k,

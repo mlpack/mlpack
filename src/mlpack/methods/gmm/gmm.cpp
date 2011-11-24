@@ -8,10 +8,12 @@
  */
 #include "gmm.hpp"
 #include "phi.hpp"
-#include "kmeans.hpp"
+
+#include <mlpack/methods/kmeans/kmeans.hpp>
 
 using namespace mlpack;
-using namespace gmm;
+using namespace mlpack::gmm;
+using namespace mlpack::kmeans;
 
 double GMM::Probability(const arma::vec& observation) const
 {
