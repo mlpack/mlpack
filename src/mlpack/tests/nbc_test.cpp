@@ -4,7 +4,7 @@
  * Test for the Naive Bayes classifier.
  */
 #include <mlpack/core.h>
-#include <mlpack/methods/naive_bayes/simple_nbc.h>
+#include <mlpack/methods/naive_bayes/simple_nbc.hpp>
 
 #include <boost/test/unit_test.hpp>
 
