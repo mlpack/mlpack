@@ -1,10 +1,10 @@
 /**
- * @file nnsvm.h
+ * @file nnsvm.hpp
  *
  * This head file contains functions for performing NNSVM training.
  * NNSMO algorithm is employed.
  *
- * @see nnsmo.h
+ * @see nnsmo.hpp
  */
 #ifndef __MLPACK_METHODS_NNSVM_NNSVM_HPP
 #define __MLPACK_METHODS_NNSVM_NNSVM_HPP
@@ -36,11 +36,11 @@ struct nnsvm_model
 template<typename TKernel>
 class NNSVM
 {
-  public:
-    typedef TKernel Kernel;
+ public:
+  typedef TKernel Kernel;
 
-  private:
-    struct nnsvm_model model_;
+ private:
+  struct nnsvm_model model_;
 
   struct NNSVM_PARAMETERS
   {
@@ -55,20 +55,32 @@ class NNSVM
   arma::mat support_vectors_;
   size_t num_features_;
 
-  public:
-    void Init(const arma::mat& dataset, size_t n_classes);
-    void Init(const arma::mat& dataset, size_t n_classes, size_t c, size_t b, double eps, size_t max_iter);
-    void InitTrain(const arma::mat& dataset, size_t n_classes);
-    void InitTrain(const arma::mat& dataset, size_t n_classes, size_t c, size_t b, double eps, size_t max_iter);
-    void SaveModel(std::string modelfilename);
-    void LoadModel(arma::mat& testset, std::string modelfilename);
-    size_t Classify(const arma::vec& vector);
-    void BatchClassify(arma::mat& testset, std::string testlabelfilename);
-    void LoadModelBatchClassify(arma::mat& testset, std::string modelfilename, std::string testlabelfilename);
-    double getThreshold() { return model_.thresh_; }
-    size_t getSupportVectorCount() { return model_.num_sv_; }
-    const arma::vec getSupportVectorCoefficients() { return model_.sv_coef_; }
-    const arma::vec getWeightVector() { return model_.w_; }
+ public:
+  void Init(const arma::mat& dataset, size_t n_classes);
+  void Init(const arma::mat& dataset,
+            size_t n_classes,
+            size_t c,
+            size_t b,
+            double eps,
+            size_t max_iter);
+  void InitTrain(const arma::mat& dataset, size_t n_classes);
+  void InitTrain(const arma::mat& dataset,
+                 size_t n_classes,
+                 size_t c,
+                 size_t b,
+                 double eps,
+                 size_t max_iter);
+  void SaveModel(std::string modelfilename);
+  void LoadModel(arma::mat& testset, std::string modelfilename);
+  size_t Classify(const arma::vec& vector);
+  void BatchClassify(arma::mat& testset, std::string testlabelfilename);
+  void LoadModelBatchClassify(arma::mat& testset,
+                              std::string modelfilename,
+                              std::string testlabelfilename);
+  double getThreshold() { return model_.thresh_; }
+  size_t getSupportVectorCount() { return model_.num_sv_; }
+  const arma::vec getSupportVectorCoefficients() { return model_.sv_coef_; }
+  const arma::vec getWeightVector() { return model_.w_; }
 };
 
 }; // namespace nnsvm

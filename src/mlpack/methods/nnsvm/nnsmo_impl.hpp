@@ -1,3 +1,8 @@
+/**
+ * @file nnsmo_impl.hpp
+ *
+ * Implementation of the non-negative SMO algorithm.
+ */
 #ifndef __MLPACK_METHODS_NNSVM_NNSMO_IMPL_HPP
 #define __MLPACK_METHODS_NNSVM_NNSMO_IMPL_HPP
 
@@ -6,7 +11,9 @@ namespace nnsvm {
 
 // return the support vector, the support alpha vector and the weight vector of the trained NNSVM
 template<typename TKernel>
-void NNSMO<TKernel>::GetNNSVM(arma::mat& support_vectors, arma::vec& support_alpha, arma::vec& w) const
+void NNSMO<TKernel>::GetNNSVM(arma::mat& support_vectors,
+                              arma::vec& support_alpha,
+                              arma::vec& w) const
 {
   size_t n_support = 0;
   size_t i_support = 0;
@@ -37,7 +44,7 @@ void NNSMO<TKernel>::GetNNSVM(arma::mat& support_vectors, arma::vec& support_alp
   }
 
   w.set_size(n_feature_);
-  for(size_t s = 0; s < n_feature_; s++)
+  for (size_t s = 0; s < n_feature_; s++)
     w[s] = math::ClampNonNegative(VTA_[s]);
 }
 
@@ -60,29 +67,26 @@ void NNSMO<TKernel>::Train()
     num_changed = TrainIteration_(examine_all);
 
     if (examine_all)
-    {
       examine_all = false;
-    }
     else if (num_changed == 0)
-    {
       examine_all = true;
-    }
 
-	//if exceed the maximum number of iterations, finished
+    //if exceed the maximum number of iterations, finished
     if (++n_iter == max_iter_)
     {
       fprintf(stderr, "Max iterations Reached! \n");
       break;
     }
 
-	//for every max(n_data_, 1000) iterations, show progress
+    //for every max(n_data_, 1000) iterations, show progress
     if (n_iter % counter == 0 )
       fprintf(stderr, ".");
   }
 
   //compute the final objective value
   double obj = sum_alpha_ - w_square_sum_/2;
-  fprintf(stderr, "iter=%zu, %zu, %f, %f, %f, obj=%f \n", n_iter, num_changed, thresh_, sum_alpha_, w_square_sum_, obj);
+  fprintf(stderr, "iter=%zu, %zu, %f, %f, %f, obj=%f \n", n_iter, num_changed,
+      thresh_, sum_alpha_, w_square_sum_, obj);
 }
 
 //NNSMO training iteration
@@ -94,16 +98,16 @@ size_t NNSMO<TKernel>::TrainIteration_(bool examine_all)
   for (size_t i = 0; i < n_data_; i++)
   {
     if ((examine_all || !IsBound_(alpha_[i])) && TryChange_(i))
-    {
       num_changed++;
-    }
   }
+
   return num_changed;
 }
 
 // try to find the working set
-//	outer loop: alpha_j, KKT violation
-//	inner loop: alpha_i, maximum objective value increase with respective to alpha_i, j
+//  outer loop: alpha_j, KKT violation
+//  inner loop: alpha_i, maximum objective value increase with respective to
+//  alpha_i, j
 template<typename TKernel>
 bool NNSMO<TKernel>::TryChange_(size_t j)
 {
@@ -113,9 +117,7 @@ bool NNSMO<TKernel>::TryChange_(size_t j)
 
   if (!((rj < -NNSMO_TOLERANCE && alpha_[j] < c_)
       || (rj > NNSMO_TOLERANCE && alpha_[j] > 0)))
-  {
     return false; // nothing to change
-  }
 
   // first try the one we suspect to have the largest yield
   size_t i = -1;
@@ -129,20 +131,21 @@ bool NNSMO<TKernel>::TryChange_(size_t j)
       i = k;
     }
   }
+
   if (i != (size_t) -1 && TakeStep_(i, j, error_j))
   {
     return true;
   }
 
-
   return false;
 }
 
-//compute the increase of objective value with respect to updating of alpha_i, alpha_j
+// Compute the increase of objective value with respect to updating of alpha_i,
+// alpha_j
 template<typename TKernel>
 double NNSMO<TKernel>::CalculateDF_(size_t i, size_t j, double error_j)
 {
-  //1. check i,j
+  // 1. check i,j
   if (i == j)
   {
     return -1;
@@ -157,7 +160,7 @@ double NNSMO<TKernel>::CalculateDF_(size_t i, size_t j, double error_j)
   double error_i = Error_(i);
   double r;
 
-  //2. compute L, H of alpha_j
+  // 2. compute L, H of alpha_j
   if (s < 0)
   {
     mlpack::Log::Assert(s == -1);
@@ -167,6 +170,7 @@ double NNSMO<TKernel>::CalculateDF_(size_t i, size_t j, double error_j)
   {
     r = alpha_j + alpha_i - c_; // target values are equal
   }
+
   l = math::ClampNonNegative(r);
   u = c_ + math::ClampNonPositive(r);
 
@@ -176,7 +180,7 @@ double NNSMO<TKernel>::CalculateDF_(size_t i, size_t j, double error_j)
     return -1;
   }
 
-  //3. compute eta using cached kernel values
+  // 3. compute eta using cached kernel values
   double kii = EvalKernel_(i, i);
   double kij = EvalKernel_(i, j);
   double kjj = EvalKernel_(j, j);
@@ -196,12 +200,12 @@ double NNSMO<TKernel>::CalculateDF_(size_t i, size_t j, double error_j)
   double delta_alpha_j = alpha_j - alpha_[j];
 
   // check if there is progress
-  if (fabs(delta_alpha_j) < eps_*(alpha_j + alpha_[j] + eps_))
+  if (fabs(delta_alpha_j) < eps_ * (alpha_j + alpha_[j] + eps_))
   {
     return -1;
   }
 
-  //4. compute increase of objective value
+  // 4. compute increase of objective value
   arma::vec w(n_feature_);
   for (size_t s = 0; s < n_feature_; s++)
   {
@@ -210,13 +214,14 @@ double NNSMO<TKernel>::CalculateDF_(size_t i, size_t j, double error_j)
   }
   w_square_sum_ = dot(w, w);
   double delta_f = w_square_sum_ / 2;
-  if(yi != yj)
+  if (yi != yj)
     delta_f += 2* delta_alpha_j;
 
   return delta_f;
 }
 
-// update alpha_i, alpha_j, as well as the VTA_, negation of intercept: thresh_ and the error cache: error_
+// Update alpha_i, alpha_j, as well as the VTA_, negation of intercept: thresh_
+// and the error cache: error_
 template<typename TKernel>
 bool NNSMO<TKernel>::TakeStep_(size_t i, size_t j, double error_j)
 {
@@ -255,7 +260,7 @@ bool NNSMO<TKernel>::TakeStep_(size_t i, size_t j, double error_j)
     return false;
   }
 
-  //3. compute eta using cached kernel values
+  // 3. compute eta using cached kernel values
   double kii = EvalKernel_(i, i);
   double kij = EvalKernel_(i, j);
   double kjj = EvalKernel_(j, j);
@@ -296,7 +301,7 @@ bool NNSMO<TKernel>::TakeStep_(size_t i, size_t j, double error_j)
   double delta_alpha_i = alpha_i - alpha_[i];
   delta_alpha_j = alpha_j - alpha_[j];
 
-  //4. update VTA_, w_square_sum_
+  // 4. update VTA_, w_square_sum_
   arma::vec w(n_feature_);
   for (size_t s = 0; s < n_feature_; s++)
   {
@@ -330,9 +335,7 @@ bool NNSMO<TKernel>::TakeStep_(size_t i, size_t j, double error_j)
 
   // update error cache using the new threshold
   for (size_t k = 0; k < n_data_ ; k++)
-  {
     error_[k] -= thresh_;
-  }
 
   return true;
 }
