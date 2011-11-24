@@ -28,7 +28,6 @@ add_executable(mlpack_test
   nbc_test.cpp
   nca_test.cpp
   nnsvm_test.cpp
-  ridge_regression_test.cpp
   save_restore_utility_test.cpp
   sort_policy_test.cpp
   svm_test.cpp
