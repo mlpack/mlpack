@@ -17,10 +17,11 @@ add_executable(mlpack_test
   cli_test.cpp
   distribution_test.cpp
   emst_test.cpp
-  gmm_test.cpp
+#  gmm_test.cpp
   hmm_test.cpp
   infomax_ica_test.cpp
   kernel_test.cpp
+  kmeans_test.cpp
   lin_alg_test.cpp
   linear_regression_test.cpp
   load_save_test.cpp
