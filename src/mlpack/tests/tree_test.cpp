@@ -224,6 +224,10 @@ BOOST_AUTO_TEST_CASE(HRectBoundMinDistanceBound)
 
   BOOST_REQUIRE_SMALL(b.MinDistance(c), 1e-5);
   BOOST_REQUIRE_SMALL(c.MinDistance(b), 1e-5);
+
+  // Now we must be sure that the minimum distance to itself is 0.
+  BOOST_REQUIRE_SMALL(b.MinDistance(b), 1e-5);
+  BOOST_REQUIRE_SMALL(c.MinDistance(c), 1e-5);
 }
 
 /**
