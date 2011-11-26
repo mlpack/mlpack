@@ -8,6 +8,7 @@
 #include <mlpack/methods/pca/pca.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include <boost/test/floating_point_comparison.hpp>
 
 BOOST_AUTO_TEST_SUITE(PcaTest);
 
@@ -40,7 +41,7 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTest)
   {
     for(int j = 0; j < n_cols; j++)
     {
-      assert(fabs(eigVal(i, j) - eigVal1(i, j)) < 0.0001);
+      BOOST_REQUIRE_SMALL(fabs(eigVal(i, j) - eigVal1(i, j)), 0.0001);
     }
   }
 }
