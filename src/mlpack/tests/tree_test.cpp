@@ -328,6 +328,11 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistanceBound)
   BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 100.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c.MaxDistance(b), 100.0, 1e-5);
 
+  // Identical bounds.  This will be the sum of the squared widths in each
+  // dimension.
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(b), 46.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(c), 162.0, 1e-5);
+
   // One last additional case.  If the bound encloses only one point, the
   // maximum distance between it and itself is 0.
   HRectBound<2> d(2);
