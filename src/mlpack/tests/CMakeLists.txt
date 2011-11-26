@@ -17,7 +17,7 @@ add_executable(mlpack_test
   cli_test.cpp
   distribution_test.cpp
   emst_test.cpp
-#  gmm_test.cpp
+  gmm_test.cpp
   hmm_test.cpp
   infomax_ica_test.cpp
   kernel_test.cpp
