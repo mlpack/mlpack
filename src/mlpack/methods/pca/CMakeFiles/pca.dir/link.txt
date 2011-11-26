@@ -1,0 +1,1 @@
+/usr/bin/c++    -g -Wall -O0 -pg   -pg CMakeFiles/pca.dir/pca_test.cpp.o  -o ../../../../bin/pca -rdynamic ../../../../lib/libmlpack.a -larmadillo -llapack -lblas -lboost_program_options -lxml2 
