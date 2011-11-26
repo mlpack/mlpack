@@ -49,11 +49,51 @@ void GMM::ExpectationMaximization(const arma::mat& data)
 
   best_l = -DBL_MAX;
 
+  KMeans k; // Default KMeans parameters, for now.
+
   // We will perform ten trials, and then save the trial with the best result
   // as our trained model.
   for (size_t iter = 0; iter < 10; iter++)
   {
-    KMeans(data, gaussians, means_trial, covariances_trial, weights_trial);
+    arma::Col<size_t> assignments;
+
+    k.Cluster(data, gaussians, assignments);
+
+    // Clear the weights, covariances, and means, before we recalculate them.
+    weights_trial.zeros();
+    for (size_t i = 0; i < gaussians; i++)
+    {
+      means_trial[i].zeros();
+      covariances_trial[i].zeros();
+    }
+
+    // From the assignments, generate our means, covariances, and weights.
+    for (size_t i = 0; i < data.n_cols; i++)
+    {
+      size_t cluster = assignments[i];
+
+      // Add this to the relevant mean.
+      means_trial[cluster] += data.col(i);
+
+      // And add it to the relative covariance matrix.
+      covariances_trial[cluster] += data.col(i) * trans(data.col(i));
+
+      // Now add one to the weights (we will normalize).
+      weights_trial[cluster]++;
+    }
+
+    // Now normalize the means, covariances, and weights.
+    for (size_t i = 0; i < gaussians; i++)
+    {
+      // Normalize mean.
+      means_trial[i] /= weights_trial[i];
+
+      // Normalize covariance (use unbiased estimator).
+      covariances_trial[i] /= (weights_trial[i] - 1);
+    }
+
+    // Finally, normalize weights.
+    weights_trial /= accu(weights_trial);
 
     l = Loglikelihood(data, means_trial, covariances_trial, weights_trial);
 
