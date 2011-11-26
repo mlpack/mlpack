@@ -28,11 +28,11 @@ add_executable(mlpack_test
   math_test.cpp
   nbc_test.cpp
   nca_test.cpp
+  pca_test.cpp
   save_restore_utility_test.cpp
   sort_policy_test.cpp
   tree_test.cpp
   union_find_test.cpp
-  pca_test.cpp
 )
 # link dependencies of test executable
 target_link_libraries(mlpack_test
