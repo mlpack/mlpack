@@ -1,23 +1,22 @@
 /**
  * @file pca_test.cpp
+ * @author Ajinkya Kale
  *
- * Test file for PCA class
- *
+ * Test file for PCA class.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/pca/pca.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include <boost/test/floating_point_comparison.hpp>
 
-BOOST_AUTO_TEST_SUITE(PcaTest);
+BOOST_AUTO_TEST_SUITE(PCATest);
 
 using namespace std;
 using namespace arma;
 using namespace mlpack;
 using namespace mlpack::pca;
 
-BOOST_AUTO_TEST_CASE(LinearRegressionTest)
+BOOST_AUTO_TEST_CASE(ArmaComparisonPCATest)
 {
   int n_rows;
   int n_cols;
@@ -28,20 +27,22 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTest)
 
   mat data = randu<mat>(100,100);
 
-  mlpack::pca::PCA p;
+  PCA p;
 
   p.Apply(data, score1, eigVal1, coeff1);
-  princomp(coeff, score, eigVal, trans(data)); score = trans(score); coeff = trans(coeff);
+  princomp(coeff, score, eigVal, trans(data));
+  score = trans(score);
+  coeff = trans(coeff);
 
   n_rows = eigVal.n_rows;
   n_cols = eigVal.n_cols;
 
-  //verify the PCA results based on the eigen Values
+  // Verify the PCA results based on the eigenvalues.
   for(int i = 0; i < n_rows; i++)
   {
     for(int j = 0; j < n_cols; j++)
     {
-      BOOST_REQUIRE_SMALL(fabs(eigVal(i, j) - eigVal1(i, j)), 0.0001);
+      BOOST_REQUIRE_CLOSE(eigVal(i, j), eigVal1(i, j), 1e-5);
     }
   }
 }
