@@ -32,6 +32,7 @@ add_executable(mlpack_test
   sort_policy_test.cpp
   tree_test.cpp
   union_find_test.cpp
+  pca_test.cpp
 )
 # link dependencies of test executable
 target_link_libraries(mlpack_test
