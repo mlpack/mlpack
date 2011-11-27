@@ -19,3 +19,11 @@ endforeach()
 # Append sources (with directory name) to list of all MLPACK sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+
+# The main K-Means executable.
+add_executable(kmeans
+  kmeans_main.cpp
+)
+target_link_libraries(kmeans
+  mlpack
+)
