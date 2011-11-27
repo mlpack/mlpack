@@ -1,10 +1,15 @@
 /**
  * @file pca.hpp
+ * @author Ajinkya Kale
  *
  * Defines the PCA class to perform Principal Components Analysis on the
  * specified data set.
  */
+#ifndef __MLPACK_METHODS_PCA_PCA_HPP
+#define __MLPACK_METHODS_PCA_PCA_HPP
+
 #include <mlpack/core.hpp>
+
 namespace mlpack {
 namespace pca {
 
@@ -55,3 +60,5 @@ class PCA
 
 }; // namespace pca
 }; // namespace mlpack
+
+#endif
