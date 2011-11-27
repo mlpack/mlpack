@@ -1,5 +1,5 @@
 /**
- * @file kmeans.cpp
+ * @file kmeans_impl.hpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Ryan Curtin
  *
@@ -15,11 +15,22 @@ namespace kmeans {
 /**
  * Construct the K-Means object.
  */
-KMeans::KMeans(const double overclusteringFactor,
-               const bool allowEmptyClusters,
-               const size_t maxIterations) :
-    allowEmptyClusters(allowEmptyClusters),
-    maxIterations(maxIterations)
+template<typename DistanceMetric,
+         typename InitialPartitionPolicy,
+         typename EmptyClusterPolicy>
+KMeans<
+    DistanceMetric,
+    InitialPartitionPolicy,
+    EmptyClusterPolicy>::
+KMeans(const size_t maxIterations,
+       const double overclusteringFactor,
+       const DistanceMetric metric,
+       const InitialPartitionPolicy partitioner,
+       const EmptyClusterPolicy emptyClusterAction) :
+    maxIterations(maxIterations),
+    metric(metric),
+    partitioner(partitioner),
+    emptyClusterAction(emptyClusterAction)
 {
   // Validate overclustering factor.
   if (overclusteringFactor < 1.0)
@@ -38,20 +49,21 @@ KMeans::KMeans(const double overclusteringFactor,
  * Perform K-Means clustering on the data, returning a list of cluster
  * assignments.
  */
-void KMeans::Cluster(const arma::mat& data,
-                     const size_t clusters,
-                     arma::Col<size_t>& assignments) const
+template<typename DistanceMetric,
+         typename InitialPartitionPolicy,
+         typename EmptyClusterPolicy>
+void KMeans<
+    DistanceMetric,
+    InitialPartitionPolicy,
+    EmptyClusterPolicy>::
+Cluster(const arma::mat& data,
+        const size_t clusters,
+        arma::Col<size_t>& assignments) const
 {
   // Make sure we have more points than clusters.
   if (clusters > data.n_cols)
-  {
-    if (allowEmptyClusters)
-      Log::Warn << "KMeans::Cluster(): more clusters requested than points "
-          << "given.  Empty clusters may result." << std::endl;
-    else
-      Log::Fatal << "KMeans::Cluster(): more clusters requested than points "
-          << "given, and empty clusters not allowed.  Terminating.\n";
-  }
+    Log::Warn << "KMeans::Cluster(): more clusters requested than points given."
+        << std::endl;
 
   // Make sure our overclustering factor is valid.
   size_t actualClusters = size_t(overclusteringFactor * clusters);
@@ -65,10 +77,8 @@ void KMeans::Cluster(const arma::mat& data,
   // Now, the initial assignments.  First determine if they are necessary.
   if (assignments.n_elem != data.n_cols)
   {
-    // No guesses were given.  Generate random assignments.  Each cluster will
-    // have the same number of points.
-    assignments = arma::shuffle(arma::linspace<arma::Col<size_t> >(0,
-        actualClusters - 1, data.n_cols));
+    // Use the partitioner to come up with the partition assignments.
+    partitioner.Cluster(data, actualClusters, assignments);
   }
 
   // Centroids of each cluster.  Each column corresponds to a centroid.
@@ -77,8 +87,8 @@ void KMeans::Cluster(const arma::mat& data,
   arma::Col<size_t> counts(actualClusters);
 
   // Set counts correctly.
-  for (size_t i = 0; i < actualClusters; i++)
-    counts[i] = accu(assignments == i);
+  for (size_t i = 0; i < assignments.n_elem; i++)
+    counts[assignments[i]]++;
 
   size_t changedAssignments = 0;
   size_t iteration = 0;
@@ -130,56 +140,11 @@ void KMeans::Cluster(const arma::mat& data,
 
     // If we are not allowing empty clusters, then check that all of our
     // clusters have points.
-    if (!allowEmptyClusters)
-    {
-      for (size_t i = 0; i < actualClusters; i++)
-      {
-        if (counts[i] == 0)
-        {
-          // Strategy: take the furthest point from the cluster with highest
-          // variance.  So, we need the variance of each cluster.
-          arma::vec variances;
-          variances.zeros(actualClusters);
-          for (size_t j = 0; j < data.n_cols; j++)
-            variances[assignments[j]] += var(data.col(j));
+    for (size_t i = 0; i < actualClusters; i++)
+      if (counts[i] == 0)
+        changedAssignments += emptyClusterAction.EmptyCluster(data, i,
+            centroids, counts, assignments);
 
-          size_t cluster;
-          double maxVar = 0;
-          for (size_t j = 0; j < actualClusters; j++)
-          {
-            if (variances[j] > maxVar)
-            {
-              cluster = j;
-              maxVar = variances[j];
-            }
-          }
-
-          // Now find the furthest point.
-          size_t point = data.n_cols; // Invalid.
-          double distance = 0;
-          for (size_t j = 0; j < data.n_cols; j++)
-          {
-            if (assignments[j] == cluster)
-            {
-              double d = metric::SquaredEuclideanDistance::Evaluate(
-                  data.unsafe_col(j), centroids.unsafe_col(cluster));
-
-              if (d >= distance)
-              {
-                distance = d;
-                point = j;
-              }
-            }
-          }
-
-          // Take that point and add it to the empty cluster.
-          counts[cluster]--;
-          counts[i]++;
-          assignments[point] = i;
-          changedAssignments++;
-        }
-      }
-    }
     iteration++;
 
   } while (changedAssignments > 0 && iteration != maxIterations);

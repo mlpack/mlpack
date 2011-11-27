@@ -3,8 +3,12 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
+  allow_empty_clusters.hpp
   kmeans.hpp
-  kmeans.cpp
+  kmeans_impl.hpp
+  max_variance_new_cluster.hpp
+  max_variance_new_cluster.cpp
+  random_partition.hpp
 )
 
 # Add directory name to sources.
