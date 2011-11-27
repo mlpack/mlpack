@@ -75,21 +75,22 @@ void GMM::ExpectationMaximization(const arma::mat& data)
       // Add this to the relevant mean.
       means_trial[cluster] += data.col(i);
 
-      // And add it to the relative covariance matrix.
+      // Add this to the relevant covariance.
       covariances_trial[cluster] += data.col(i) * trans(data.col(i));
 
       // Now add one to the weights (we will normalize).
       weights_trial[cluster]++;
     }
 
-    // Now normalize the means, covariances, and weights.
+    // Now normalize the mean and covariance.
     for (size_t i = 0; i < gaussians; i++)
     {
-      // Normalize mean.
+      covariances_trial[i] -= means_trial[i] * trans(means_trial[i]) /
+          weights_trial[i];
+
       means_trial[i] /= weights_trial[i];
 
-      // Normalize covariance (use unbiased estimator).
-      covariances_trial[i] /= (weights_trial[i] - 1);
+      covariances_trial[i] /= (weights_trial[i] > 1) ? weights_trial[i] : 1;
     }
 
     // Finally, normalize weights.
