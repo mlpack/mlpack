@@ -85,6 +85,7 @@ Cluster(const arma::mat& data,
   arma::mat centroids(data.n_rows, actualClusters);
   // Counts of points in each cluster.
   arma::Col<size_t> counts(actualClusters);
+  counts.zeros();
 
   // Set counts correctly.
   for (size_t i = 0; i < assignments.n_elem; i++)

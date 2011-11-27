@@ -58,5 +58,9 @@ size_t MaxVarianceNewCluster::EmptyCluster(const arma::mat& data,
   clusterCounts[emptyCluster]++;
   assignments[furthestPoint] = emptyCluster;
 
+  // Output some debugging information.
+  Log::Debug << "Point " << furthestPoint << " assigned to empty cluster " <<
+      emptyCluster << ".\n";
+
   return 1; // We only changed one point.
 }
