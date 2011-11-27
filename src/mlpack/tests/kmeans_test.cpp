@@ -5,6 +5,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/kmeans/kmeans.hpp>
+#include <mlpack/methods/kmeans/allow_empty_clusters.hpp>
 
 #include <boost/test/unit_test.hpp>
 
@@ -50,7 +51,7 @@ arma::mat kMeansData("  0.0   0.0;" // Class 1.
  */
 BOOST_AUTO_TEST_CASE(KMeansNoOverclusteringTest)
 {
-  KMeans kmeans(1.0); // No overclustering.
+  KMeans<> kmeans; // No overclustering.
 
   arma::Col<size_t> assignments;
   kmeans.Cluster(trans(kMeansData), 3, assignments);
@@ -85,7 +86,7 @@ BOOST_AUTO_TEST_CASE(KMeansNoOverclusteringTest)
  */
 BOOST_AUTO_TEST_CASE(KMeansOverclusteringTest)
 {
-  KMeans kmeans; // Default.
+  KMeans<> kmeans(1000, 4.0); // Overclustering factor of 4.0.
 
   arma::Col<size_t> assignments;
   kmeans.Cluster(trans(kMeansData), 3, assignments);
@@ -113,6 +114,95 @@ BOOST_AUTO_TEST_CASE(KMeansOverclusteringTest)
 
   for (size_t i = 20; i < 30; i++)
     BOOST_REQUIRE_EQUAL(assignments(i), thirdClass);
+}
+
+/**
+ * Make sure the empty cluster policy class does nothing.
+ */
+BOOST_AUTO_TEST_CASE(AllowEmptyClusterTest)
+{
+  arma::Col<size_t> assignments;
+  assignments.randu(30);
+  arma::Col<size_t> assignmentsOld = assignments;
+
+  arma::mat centroids;
+  centroids.randu(30, 3); // This doesn't matter.
+
+  arma::Col<size_t> counts(3);
+  counts[0] = accu(assignments == 0);
+  counts[1] = accu(assignments == 1);
+  counts[2] = 0;
+  arma::Col<size_t> countsOld = counts;
+
+  // Make sure the method doesn't modify any points.
+  BOOST_REQUIRE_EQUAL(AllowEmptyClusters::EmptyCluster(kMeansData, 2, centroids,
+      counts, assignments), 0);
+
+  // Make sure no assignments were changed.
+  for (size_t i = 0; i < assignments.n_elem; i++)
+    BOOST_REQUIRE_EQUAL(assignments[i], assignmentsOld[i]);
+
+  // Make sure no counts were changed.
+  for (size_t i = 0; i < 3; i++)
+    BOOST_REQUIRE_EQUAL(counts[i], countsOld[i]);
+}
+
+/**
+ * Make sure the max variance method finds the correct point.
+ */
+BOOST_AUTO_TEST_CASE(MaxVarianceNewClusterTest)
+{
+  // Five points.
+  arma::mat data("0.4 1.0 5.0 -2.0 -2.5;"
+                 "1.0 0.8 0.7  5.1  5.2;");
+
+  // Point 2 is the mis-clustered point we're looking for to be moved.
+  arma::Col<size_t> assignments("0 0 0 1 1");
+
+  arma::mat centroids(2, 3);
+  centroids.col(0) = (1.0 / 3.0) * (data.col(0) + data.col(1) + data.col(2));
+  centroids.col(1) = 0.5 * (data.col(3) + data.col(4));
+  centroids(0, 2) = 0;
+  centroids(1, 2) = 0;
+
+  arma::Col<size_t> counts("3 2 0");
+
+  // This should only change one point.
+  BOOST_REQUIRE_EQUAL(MaxVarianceNewCluster::EmptyCluster(data, 2, centroids,
+      counts, assignments), 1);
+
+  // Ensure that the cluster assignments are right.
+  BOOST_REQUIRE_EQUAL(assignments[0], 0);
+  BOOST_REQUIRE_EQUAL(assignments[1], 0);
+  BOOST_REQUIRE_EQUAL(assignments[2], 2);
+  BOOST_REQUIRE_EQUAL(assignments[3], 1);
+  BOOST_REQUIRE_EQUAL(assignments[4], 1);
+
+  // Ensure that the counts are right.
+  BOOST_REQUIRE_EQUAL(counts[0], 2);
+  BOOST_REQUIRE_EQUAL(counts[1], 2);
+  BOOST_REQUIRE_EQUAL(counts[2], 1);
+}
+
+/**
+ * Make sure the random partitioner seems to return valid results.
+ */
+BOOST_AUTO_TEST_CASE(RandomPartitionTest)
+{
+  arma::mat data;
+  data.randu(2, 1000); // One thousand points.
+
+  arma::Col<size_t> assignments;
+
+  // We'll ask for 18 clusters (arbitrary).
+  RandomPartition::Cluster(data, 18, assignments);
+
+  // Ensure that the right number of assignments were given.
+  BOOST_REQUIRE_EQUAL(assignments.n_elem, 1000);
+
+  // Ensure that no value is greater than 17 (the maximum valid cluster).
+  for (size_t i = 0; i < 1000; i++)
+    BOOST_REQUIRE_LT(assignments[i], 18);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
