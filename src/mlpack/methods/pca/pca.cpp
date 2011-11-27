@@ -1,5 +1,6 @@
 /**
  * @file pca.cpp
+ * @author Ajinkya Kale
  *
  * Implementation of PCA class to perform Principal Components Analysis on the
  * specified data set.
