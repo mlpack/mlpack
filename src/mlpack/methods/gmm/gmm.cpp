@@ -49,7 +49,7 @@ void GMM::ExpectationMaximization(const arma::mat& data)
 
   best_l = -DBL_MAX;
 
-  KMeans k; // Default KMeans parameters, for now.
+  KMeans<> k; // Default KMeans parameters, for now.
 
   // We will perform ten trials, and then save the trial with the best result
   // as our trained model.
