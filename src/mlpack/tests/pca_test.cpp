@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(ArmaComparisonPCATest)
   {
     for(int j = 0; j < n_cols; j++)
     {
-      BOOST_REQUIRE_CLOSE(eigVal(i, j), eigVal1(i, j), 1e-5);
+      BOOST_REQUIRE_SMALL(eigVal(i, j) - eigVal1(i, j), 0.0001);
     }
   }
 }
