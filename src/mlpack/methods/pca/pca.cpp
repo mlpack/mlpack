@@ -35,8 +35,8 @@ void PCA::Apply(const arma::mat& data, arma::mat& transformedData,
   arma::eig_sym(eigVal, coeffs, covMat);
 
   int n_eigVal = eigVal.n_elem;
-  for(int i = 0; i < floor(n_eigVal/2); i++)
-    eigVal.swap_rows(i, (n_eigVal-1)-i);
+  for(int i = 0; i < floor(n_eigVal / 2); i++)
+    eigVal.swap_rows(i, (n_eigVal - 1) - i);
 
   coeffs = arma::fliplr(coeffs);
   transformedData = trans(coeffs) * data;
@@ -60,8 +60,8 @@ void PCA::Apply(const arma::mat& data, arma::mat& transformedData,
   arma::eig_sym(eigVal, eigVec, covMat);
 
   int n_eigVal = eigVal.n_elem;
-  for(int i = 0; i < floor(n_eigVal/2); i++)
-    eigVal.swap_rows(i, (n_eigVal-1)-i);
+  for(int i = 0; i < floor(n_eigVal / 2); i++)
+    eigVal.swap_rows(i, (n_eigVal - 1) - i);
 
   eigVec = arma::fliplr(eigVec);
   transformedData = trans(eigVec) * data;
