@@ -92,7 +92,7 @@ void PCA::Apply(arma::mat& data, const int newDimension)
     eigVal.swap_rows(i, (n_eigVal-1)-i);
 
   eigVec = arma::fliplr(eigVec);
-  eigVec.shed_cols(newDimension, eigVec.n_cols - 1);
+  eigVec.shed_cols(newDimension-1, eigVec.n_cols-1);
   data = trans(eigVec) * data;
 }
 
