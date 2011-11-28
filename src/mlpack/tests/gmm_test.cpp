@@ -212,8 +212,11 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
     means[i] -= 0.5;
     means[i] *= 50;
 
+    // We need to make sure the covariance is positive definite.  We will take a
+    // random matrix C and then set our covariance to 4 * C * C', which will be
+    // positive semidefinite.
     covars[i].randu(dims, dims);
-    covars[i] *= 2;
+    covars[i] *= 4 * trans(covars[i]);
 
     data.cols(point, point + counts[i] - 1) = (covars[i] * gaussian + means[i]
         * arma::ones<arma::rowvec>(counts[i]));
