@@ -16,11 +16,11 @@ using namespace arma;
 using namespace mlpack;
 using namespace mlpack::pca;
 
+/**
+ * Compare the output of our PCA implementation with Armadillo's.
+ */
 BOOST_AUTO_TEST_CASE(ArmaComparisonPCATest)
 {
-  int n_rows;
-  int n_cols;
-
   mat coeff, coeff1;
   vec eigVal, eigVal1;
   mat score, score1;
@@ -31,20 +31,36 @@ BOOST_AUTO_TEST_CASE(ArmaComparisonPCATest)
 
   p.Apply(data, score1, eigVal1, coeff1);
   princomp(coeff, score, eigVal, trans(data));
-  score = trans(score);
-  coeff = trans(coeff);
-
-  n_rows = eigVal.n_rows;
-  n_cols = eigVal.n_cols;
 
   // Verify the PCA results based on the eigenvalues.
-  for(int i = 0; i < n_rows; i++)
-  {
-    for(int j = 0; j < n_cols; j++)
-    {
+  for(size_t i = 0; i < eigVal.n_rows; i++)
+    for(size_t j = 0; j < eigVal.n_cols; j++)
       BOOST_REQUIRE_SMALL(eigVal(i, j) - eigVal1(i, j), 0.0001);
-    }
-  }
 }
+
+/**
+ * Test that dimensionality reduction with PCA works the same way MATLAB does
+ * (which should be correct!).
+ *
+BOOST_AUTO_TEST_CASE(PCADimensionalityReductionTest)
+{
+  // Fake, simple dataset.  The results we will compare against are from MATLAB.
+  mat data("1 0 2 3 9;"
+           "5 2 8 4 8;"
+           "6 7 3 1 8");
+
+  // Now run PCA to reduce the dimensionality.
+  PCA p;
+  p.Apply(data, 2); // Reduce to 2 dimensions.
+
+  // Compare with correct results.
+  mat correct("-1.53781086 -3.51358020 -0.16139887 -1.87706634  7.08985628;"
+              " 1.29937798  3.45762685 -2.69910005 -3.15620704  1.09830225");
+
+  for (size_t row = 0; row < 2; row++)
+    for (size_t col = 0; col < 5; col++)
+      BOOST_REQUIRE_CLOSE(data(row, col), correct(row, col), 1e-3);
+}
+*/
 
 BOOST_AUTO_TEST_SUITE_END();
