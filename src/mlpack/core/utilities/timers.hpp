@@ -1,5 +1,11 @@
-#ifndef MLPACK_TIMERS_H
-#define MLPACK_TIMERS_H
+/**
+ * @file timers.hpp
+ * @author Matthew Amidon
+ *
+ * Timers for MLPACK.
+ */
+#ifndef __MLPACK_CORE_UTILITIES_TIMERS_HPP
+#define __MLPACK_CORE_UTILITIES_TIMERS_HPP
 
 #include <map>
 #include <string>
@@ -19,53 +25,55 @@
 
 namespace mlpack {
 
-class Timers {
+class Timers
+{
  public:
- /*
-  * Returns a copy of all the timers used via this interface.
-  */
+  /**
+   * Returns a copy of all the timers used via this interface.
+   */
   static std::map<std::string, timeval> GetAllTimers();
 
- /*
-  * Returns a copy of the timer specified.
-  *
-  * @param timerName The name of the timer in question.
-  */
+  /**
+   * Returns a copy of the timer specified.
+   *
+   * @param timerName The name of the timer in question.
+   */
   static timeval GetTimer(const char* timerName);
 
- /*
-  * Prints the specified timer.  If it took longer than a minute to complete
-  * the timer will be displayed in days, hours, and minutes as well.
-  *
-  * @param timerName The name of the timer in question.
-  */
+  /**
+   * Prints the specified timer.  If it took longer than a minute to complete
+   * the timer will be displayed in days, hours, and minutes as well.
+   *
+   * @param timerName The name of the timer in question.
+   */
   static void PrintTimer(const char* timerName);
 
- /*
-  * Initializes a timer, available like a normal value specified on
-  * the command line.  Timers are of type timval
-  *
-  * @param timerName The name of the timer in question.
-  */
+  /**
+   * Initializes a timer, available like a normal value specified on
+   * the command line.  Timers are of type timval
+   *
+   * @param timerName The name of the timer in question.
+   */
   static void StartTimer(const char* timerName);
 
- /*
-  * Halts the timer, and replaces it's value with
-  * the delta time from it's start
-  *
-  * @param timerName The name of the timer in question.
-  */
+  /**
+   * Halts the timer, and replaces it's value with
+   * the delta time from it's start
+   *
+   * @param timerName The name of the timer in question.
+   */
   static void StopTimer(const char* timerName);
+
  private:
   static std::map<std::string, timeval> timers;
 
   void FileTimeToTimeVal(timeval* tv);
 
-  //Don't want any instances floating around.
+  // Don't want any instances floating around.
   Timers();
   ~Timers();
 };
 
-}; //namespace mlpack
+}; // namespace mlpack
 
-#endif //MLPACK_TIMERS_H
+#endif // __MLPACK_CORE_UTILITIES_TIMERS_HPP
