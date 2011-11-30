@@ -15,10 +15,10 @@ using namespace mlpack;
 using namespace mlpack::utilities;
 
 template<typename T>
-T& SaveRestoreUtility::LoadParameter (T& t, std::string name)
+T& SaveRestoreUtility::LoadParameter(T& t, std::string name)
 {
-  std::map<std::string, std::string>::iterator it = parameters.find (name);
-  if (it != parameters.end ())
+  std::map<std::string, std::string>::iterator it = parameters.find(name);
+  if (it != parameters.end())
   {
     std::string value = (*it).second;
     std::istringstream input (value);
@@ -27,11 +27,11 @@ T& SaveRestoreUtility::LoadParameter (T& t, std::string name)
   }
   else
   {
-    errx (1, "Missing the correct name\n");
+    Log::Fatal << "Missing the correct name\n";
   }
 }
 template<typename T>
-void SaveRestoreUtility::SaveParameter (T& t, std::string name)
+void SaveRestoreUtility::SaveParameter(T& t, std::string name)
 {
   std::ostringstream output;
   output << t;
