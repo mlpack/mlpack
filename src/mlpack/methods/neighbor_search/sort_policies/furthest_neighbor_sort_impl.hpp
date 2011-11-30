@@ -18,7 +18,7 @@ double FurthestNeighborSort::BestNodeToNodeDistance(
 {
   // This is not implemented yet for the general case because the trees do not
   // accept arbitrary distance metrics.
-  return query_node->bound().MaxDistance(reference_node->bound());
+  return query_node->Bound().MaxDistance(reference_node->Bound());
 }
 
 template<typename TreeType>
@@ -28,7 +28,7 @@ double FurthestNeighborSort::BestPointToNodeDistance(
 {
   // This is not implemented yet for the general case because the trees do not
   // accept arbitrary distance metrics.
-  return reference_node->bound().MaxDistance(point);
+  return reference_node->Bound().MaxDistance(point);
 }
 
 }; // namespace neighbor

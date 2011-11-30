@@ -55,7 +55,7 @@ PARAM_FLAG("naive_mode", "If set, use naive computations (no trees).  This "
  * @tparam Kernel The kernel function; see kernel::ExampleKernel.
  * @tparam SortPolicy The sort policy for distances; see NearestNeighborSort.
  */
-template<typename Kernel = mlpack::metric::SquaredEuclideanDistance,
+template<typename MetricType = mlpack::metric::SquaredEuclideanDistance,
          typename SortPolicy = NearestNeighborSort>
 class NeighborSearch
 {
@@ -89,7 +89,7 @@ class NeighborSearch
   arma::mat queries_;
 
   //! Instantiation of kernel.
-  Kernel kernel_;
+  MetricType kernel_;
 
   //! Pointer to the root of the reference tree.
   TreeType* reference_tree_;
@@ -136,7 +136,7 @@ class NeighborSearch
    * @param kernel An optional instance of the Kernel class.
    */
   NeighborSearch(arma::mat& queries_in, arma::mat& references_in,
-                 bool alias_matrix = false, Kernel kernel = Kernel());
+                 bool alias_matrix = false, MetricType kernel = MetricType());
 
   /**
    * Initialize the NeighborSearch object, passing only one dataset.  In this
@@ -153,7 +153,7 @@ class NeighborSearch
    * @param kernel An optional instance of the Kernel class.
    */
   NeighborSearch(arma::mat& references_in, bool alias_matrix = false,
-                 Kernel kernel = Kernel());
+                 MetricType kernel = MetricType());
 
   /**
    * Delete the NeighborSearch object. The tree is the only member we are
