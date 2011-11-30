@@ -29,6 +29,7 @@ T& SaveRestoreUtility::LoadParameter(T& t, std::string name)
   {
     Log::Fatal << "Missing the correct name\n";
   }
+  return t;
 }
 template<typename T>
 void SaveRestoreUtility::SaveParameter(T& t, std::string name)

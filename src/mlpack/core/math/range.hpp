@@ -7,8 +7,6 @@
 #ifndef __MLPACK_CORE_MATH_RANGE_HPP
 #define __MLPACK_CORE_MATH_RANGE_HPP
 
-#include <vector>
-
 namespace mlpack {
 namespace math {
 
