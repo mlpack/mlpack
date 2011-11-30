@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundEmptyConstructor)
 {
   HRectBound<2> b;
 
-  BOOST_REQUIRE_EQUAL(b.dim(), 0);
+  BOOST_REQUIRE_EQUAL(b.Dim(), 0);
 }
 
 /**
@@ -36,18 +36,18 @@ BOOST_AUTO_TEST_CASE(HRectBoundDimConstructor)
 {
   HRectBound<2> b(2); // We'll do this with 2 and 5 dimensions.
 
-  BOOST_REQUIRE_EQUAL(b.dim(), 2);
-  BOOST_REQUIRE_SMALL(b[0].width(), 1e-5);
-  BOOST_REQUIRE_SMALL(b[1].width(), 1e-5);
+  BOOST_REQUIRE_EQUAL(b.Dim(), 2);
+  BOOST_REQUIRE_SMALL(b[0].Width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[1].Width(), 1e-5);
 
   b = HRectBound<2>(5);
 
-  BOOST_REQUIRE_EQUAL(b.dim(), 5);
-  BOOST_REQUIRE_SMALL(b[0].width(), 1e-5);
-  BOOST_REQUIRE_SMALL(b[1].width(), 1e-5);
-  BOOST_REQUIRE_SMALL(b[2].width(), 1e-5);
-  BOOST_REQUIRE_SMALL(b[3].width(), 1e-5);
-  BOOST_REQUIRE_SMALL(b[4].width(), 1e-5);
+  BOOST_REQUIRE_EQUAL(b.Dim(), 5);
+  BOOST_REQUIRE_SMALL(b[0].Width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[1].Width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[2].Width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[3].Width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[4].Width(), 1e-5);
 }
 
 /**
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundCopyConstructor)
 
   HRectBound<2> c(b);
 
-  BOOST_REQUIRE_EQUAL(c.dim(), 2);
+  BOOST_REQUIRE_EQUAL(c.Dim(), 2);
   BOOST_REQUIRE_SMALL(c[0].lo, 1e-5);
   BOOST_REQUIRE_CLOSE(c[0].hi, 2.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c[1].lo, 2.0, 1e-5);
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundAssignmentOperator)
 
   c = b;
 
-  BOOST_REQUIRE_EQUAL(c.dim(), 2);
+  BOOST_REQUIRE_EQUAL(c.Dim(), 2);
   BOOST_REQUIRE_SMALL(c[0].lo, 1e-5);
   BOOST_REQUIRE_CLOSE(c[0].hi, 2.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c[1].lo, 2.0, 1e-5);
@@ -101,8 +101,8 @@ BOOST_AUTO_TEST_CASE(HRectBoundClear)
   // Now we just need to make sure that we clear the range.
   b.Clear();
 
-  BOOST_REQUIRE_SMALL(b[0].width(), 1e-5);
-  BOOST_REQUIRE_SMALL(b[1].width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[0].Width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[1].Width(), 1e-5);
 }
 
 /**
@@ -150,9 +150,9 @@ BOOST_AUTO_TEST_CASE(HRectBoundMinDistancePoint)
   // This will be the Euclidean squared distance.
   BOOST_REQUIRE_CLOSE(b.MinDistance(point), 95.0, 1e-5);
 
-  // test our filtering condition
-  size_t ind[] = {1,3};
-  std::vector<size_t> indices (ind, ind + sizeof (ind) / sizeof (size_t));
+  // Test our filtering condition.
+  size_t ind[] = {1, 3};
+  std::vector<size_t> indices(ind, ind + sizeof (ind) / sizeof (size_t));
 
   BOOST_REQUIRE_CLOSE(b.MinDistance(point, indices), 26.0, 1e-5);
 
@@ -163,7 +163,6 @@ BOOST_AUTO_TEST_CASE(HRectBoundMinDistancePoint)
   point = "1.0 2.0 0.0 -2.0 1.5";
 
   BOOST_REQUIRE_SMALL(b.MinDistance(point), 1e-5);
-
 }
 
 /**
@@ -197,9 +196,9 @@ BOOST_AUTO_TEST_CASE(HRectBoundMinDistanceBound)
   BOOST_REQUIRE_CLOSE(b.MinDistance(c), 22.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c.MinDistance(b), 22.0, 1e-5);
 
-  // test our filtering condition
-  size_t ind[] = {1,3};
-  std::vector<size_t> indices (ind, ind + sizeof (ind) / sizeof (size_t));
+  // Test our filtering condition.
+  size_t ind[] = {1, 3};
+  std::vector<size_t> indices(ind, ind + sizeof (ind) / sizeof (size_t));
 
   BOOST_REQUIRE_CLOSE(b.MinDistance(c, indices), 17.0, 1e-5);
 
@@ -263,7 +262,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistancePoint)
 
   arma::vec point = "-2.0 0.0 10.0 3.0 3.0";
 
-  // test our filtering condition
+  // Test our filtering condition.
   size_t ind[] = {1,3};
   std::vector<size_t> indices (ind, ind + sizeof (ind) / sizeof (size_t));
 
@@ -312,7 +311,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistanceBound)
   BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 210.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c.MaxDistance(b), 210.0, 1e-5);
 
-  // test our filtering condition
+  // Test our filtering condition.
   size_t ind[] = {1,3};
   std::vector<size_t> indices (ind, ind + sizeof (ind) / sizeof (size_t));
 
@@ -668,7 +667,7 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundEmptyConstructor)
 {
   PeriodicHRectBound<2> b;
 
-  BOOST_REQUIRE_EQUAL(b.dim(), 0);
+  BOOST_REQUIRE_EQUAL(b.Dim(), 0);
   BOOST_REQUIRE_EQUAL(b.box().n_elem, 0);
 }
 
@@ -680,21 +679,21 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundBoxConstructor)
 {
   PeriodicHRectBound<2> b(arma::vec("5 6"));
 
-  BOOST_REQUIRE_EQUAL(b.dim(), 2);
-  BOOST_REQUIRE_SMALL(b[0].width(), 1e-5);
-  BOOST_REQUIRE_SMALL(b[1].width(), 1e-5);
+  BOOST_REQUIRE_EQUAL(b.Dim(), 2);
+  BOOST_REQUIRE_SMALL(b[0].Width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[1].Width(), 1e-5);
   BOOST_REQUIRE_EQUAL(b.box().n_elem, 2);
   BOOST_REQUIRE_CLOSE(b.box()[0], 5.0, 1e-5);
   BOOST_REQUIRE_CLOSE(b.box()[1], 6.0, 1e-5);
 
   PeriodicHRectBound<2> d(arma::vec("2 3 4 5 6"));
 
-  BOOST_REQUIRE_EQUAL(d.dim(), 5);
-  BOOST_REQUIRE_SMALL(d[0].width(), 1e-5);
-  BOOST_REQUIRE_SMALL(d[1].width(), 1e-5);
-  BOOST_REQUIRE_SMALL(d[2].width(), 1e-5);
-  BOOST_REQUIRE_SMALL(d[3].width(), 1e-5);
-  BOOST_REQUIRE_SMALL(d[4].width(), 1e-5);
+  BOOST_REQUIRE_EQUAL(d.Dim(), 5);
+  BOOST_REQUIRE_SMALL(d[0].Width(), 1e-5);
+  BOOST_REQUIRE_SMALL(d[1].Width(), 1e-5);
+  BOOST_REQUIRE_SMALL(d[2].Width(), 1e-5);
+  BOOST_REQUIRE_SMALL(d[3].Width(), 1e-5);
+  BOOST_REQUIRE_SMALL(d[4].Width(), 1e-5);
   BOOST_REQUIRE_EQUAL(d.box().n_elem, 5);
   BOOST_REQUIRE_CLOSE(d.box()[0], 2.0, 1e-5);
   BOOST_REQUIRE_CLOSE(d.box()[1], 3.0, 1e-5);
@@ -714,7 +713,7 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundCopyConstructor)
 
   PeriodicHRectBound<2> c(b);
 
-  BOOST_REQUIRE_EQUAL(c.dim(), 2);
+  BOOST_REQUIRE_EQUAL(c.Dim(), 2);
   BOOST_REQUIRE_SMALL(c[0].lo, 1e-5);
   BOOST_REQUIRE_CLOSE(c[0].hi, 2.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c[1].lo, 2.0, 1e-5);
@@ -737,7 +736,7 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundAssignmentOperator)
 
   c = b;
 
-  BOOST_REQUIRE_EQUAL(c.dim(), 2);
+  BOOST_REQUIRE_EQUAL(c.Dim(), 2);
   BOOST_REQUIRE_SMALL(c[0].lo, 1e-5);
   BOOST_REQUIRE_CLOSE(c[0].hi, 2.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c[1].lo, 2.0, 1e-5);
@@ -776,8 +775,8 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundClear)
   // Now we just need to make sure that we clear the range.
   b.Clear();
 
-  BOOST_REQUIRE_SMALL(b[0].width(), 1e-5);
-  BOOST_REQUIRE_SMALL(b[1].width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[0].Width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[1].Width(), 1e-5);
 }*/
 
 /**
@@ -918,23 +917,22 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMinDistancePoint)
 BOOST_AUTO_TEST_CASE(tree_count_mismatch)
 {
   arma::mat dataset = "2.0 5.0 9.0 4.0 8.0 7.0;"
-    "3.0 4.0 6.0 7.0 1.0 2.0 ";
+                      "3.0 4.0 6.0 7.0 1.0 2.0 ";
 
   // Leaf size of 1.
-  CLI::GetParam<int>("tree/leaf_size") = 1;
-  BinarySpaceTree<HRectBound<2> > root_node(dataset);
+  BinarySpaceTree<HRectBound<2> > root_node(dataset, 1);
 
-  BOOST_REQUIRE(root_node.count() == 6);
-  BOOST_REQUIRE(root_node.left()->count() == 3);
-  BOOST_REQUIRE(root_node.left()->left()->count() == 2);
-  BOOST_REQUIRE(root_node.left()->left()->left()->count() == 1);
-  BOOST_REQUIRE(root_node.left()->left()->right()->count() == 1);
-  BOOST_REQUIRE(root_node.left()->right()->count() == 1);
-  BOOST_REQUIRE(root_node.right()->count() == 3);
-  BOOST_REQUIRE(root_node.right()->left()->count() == 2);
-  BOOST_REQUIRE(root_node.right()->left()->left()->count() == 1);
-  BOOST_REQUIRE(root_node.right()->left()->right()->count() == 1);
-  BOOST_REQUIRE(root_node.right()->right()->count() == 1);
+  BOOST_REQUIRE(root_node.Count() == 6);
+  BOOST_REQUIRE(root_node.Left()->Count() == 3);
+  BOOST_REQUIRE(root_node.Left()->Left()->Count() == 2);
+  BOOST_REQUIRE(root_node.Left()->Left()->Left()->Count() == 1);
+  BOOST_REQUIRE(root_node.Left()->Left()->Right()->Count() == 1);
+  BOOST_REQUIRE(root_node.Left()->Right()->Count() == 1);
+  BOOST_REQUIRE(root_node.Right()->Count() == 3);
+  BOOST_REQUIRE(root_node.Right()->Left()->Count() == 2);
+  BOOST_REQUIRE(root_node.Right()->Left()->Left()->Count() == 1);
+  BOOST_REQUIRE(root_node.Right()->Left()->Right()->Count() == 1);
+  BOOST_REQUIRE(root_node.Right()->Right()->Count() == 1);
 }
 
 // Forward declaration of methods we need for the next test.
@@ -972,10 +970,7 @@ BOOST_AUTO_TEST_CASE(kd_tree_test)
   size_t max_runs = 10; // Ten total tests.
   size_t point_increments = 1000; // Range is from 2000 points to 11000.
 
-  // Reset the leaf size as other tests have been naughty.
-  // Also, a leaf size of 20 makes the test take too long.
-  CLI::GetParam<int>("tree/leaf_size") = 20;
-
+  // We use the default leaf size of 20.
   for(size_t run = 0; run < max_runs; run++)
   {
     size_t dimensions = run + 2;
@@ -997,7 +992,7 @@ BOOST_AUTO_TEST_CASE(kd_tree_test)
     TreeType root(dataset, new_to_old, old_to_new);
 
     // Ensure the size of the tree is correct.
-    BOOST_REQUIRE_EQUAL(root.count(), size);
+    BOOST_REQUIRE_EQUAL(root.Count(), size);
 
     // Check the forward and backward mappings for correctness.
     for(size_t i = 0; i < size; i++)
@@ -1024,7 +1019,7 @@ BOOST_AUTO_TEST_CASE(kd_tree_test)
       for (size_t i = depth; i < 2 * depth && i < v.size(); i++)
         for (size_t j = i + 1; j < 2 * depth && j < v.size(); j++)
           if (v[i] != NULL && v[j] != NULL)
-            BOOST_REQUIRE(!DoBoundsIntersect(v[i]->bound(), v[j]->bound(),
+            BOOST_REQUIRE(!DoBoundsIntersect(v[i]->Bound(), v[j]->Bound(),
                   i, j));
 
       depth *= 2;
@@ -1033,20 +1028,14 @@ BOOST_AUTO_TEST_CASE(kd_tree_test)
 
   arma::mat dataset = arma::mat(25, 1000);
   for (size_t col = 0; col < dataset.n_cols; ++col)
-  {
     for (size_t row = 0; row < dataset.n_rows; ++row)
-    {
       dataset(row, col) = row + col;
-    }
-  }
-  TreeType root(dataset);
-  // check the tree size
-  BOOST_REQUIRE_EQUAL(root.TreeSize(), 127);
-  // check the tree depth
-  BOOST_REQUIRE_EQUAL(root.TreeDepth(), 7);
 
-  // Reset it to the default value at the end of the test.
-  CLI::GetParam<int>("tree/leaf_size") = 20;
+  TreeType root(dataset);
+  // Check the tree size.
+  BOOST_REQUIRE_EQUAL(root.TreeSize(), 127);
+  // Check the tree depth.
+  BOOST_REQUIRE_EQUAL(root.TreeDepth(), 7);
 }
 
 // Recursively checks that each node contains all points that it claims to have.
@@ -1056,16 +1045,16 @@ bool CheckPointBounds(TreeType* node, const arma::mat& data)
   if (node == NULL) // We have passed a leaf node.
     return true;
 
-  TreeType* left = node->left();
-  TreeType* right = node->right();
+  TreeType* left = node->Left();
+  TreeType* right = node->Right();
 
-  size_t begin = node->begin();
-  size_t count = node->count();
+  size_t begin = node->Begin();
+  size_t count = node->Count();
 
   // Check that each point which this tree claims is actually inside the tree.
-  for (size_t index = begin; index < begin+count; index++)
+  for (size_t index = begin; index < begin + count; index++)
   {
-    if (!node->bound().Contains(data.col(index)))
+    if (!node->Bound().Contains(data.col(index)))
       return false;
   }
 
@@ -1077,7 +1066,7 @@ bool DoBoundsIntersect(HRectBound<t_pow>& a,
                        HRectBound<t_pow>& b,
                        size_t ia,
                        size_t ib) {
-  size_t dimensionality = a.dim();
+  size_t dimensionality = a.Dim();
 
   Range r_a;
   Range r_b;
@@ -1107,8 +1096,8 @@ void GenerateVectorOfTree(TreeType* node,
   v[depth] = node;
 
   // Recurse to the left and right children.
-  GenerateVectorOfTree(node->left(), depth * 2, v);
-  GenerateVectorOfTree(node->right(), depth * 2 + 1, v);
+  GenerateVectorOfTree(node->Left(), depth * 2, v);
+  GenerateVectorOfTree(node->Right(), depth * 2 + 1, v);
 
   return;
 }
