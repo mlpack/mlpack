@@ -48,14 +48,14 @@ bool Load(const std::string& filename, arma::Mat<eT>& matrix, bool fatal)
     return false;
   }
 
-  bool unknown_type = false;
+  bool unknownType = false;
   arma::file_type loadType;
   std::string stringType;
 
   if (extension == "csv")
   {
-    load_type = arma::csv_ascii;
-    string_type = "CSV data";
+    loadType = arma::csv_ascii;
+    stringType = "CSV data";
   }
   else if (extension == "txt")
   {
@@ -117,7 +117,7 @@ bool Load(const std::string& filename, arma::Mat<eT>& matrix, bool fatal)
       loadType = arma::raw_binary;
     }
 
-    delete[] raw_header;
+    delete[] rawHeader;
   }
   else if (extension == "pgm")
   {
@@ -150,7 +150,7 @@ bool Load(const std::string& filename, arma::Mat<eT>& matrix, bool fatal)
     Log::Info << "Loading '" << filename << "' as " << stringType << "."
         << std::endl;
 
-  bool success = matrix.load(stream, load_type);
+  bool success = matrix.load(stream, loadType);
 
   if (!success)
   {
