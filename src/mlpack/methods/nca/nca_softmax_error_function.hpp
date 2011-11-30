@@ -65,7 +65,7 @@ class SoftmaxErrorFunction
   /**
    * Get the initial point.
    */
-  arma::mat GetInitialPoint();
+  const arma::mat GetInitialPoint() const;
 
  private:
   const arma::mat& dataset_;
