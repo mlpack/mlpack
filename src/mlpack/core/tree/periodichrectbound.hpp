@@ -62,7 +62,7 @@ class PeriodicHRectBound
   void Clear();
 
   /** Gets the dimensionality */
-  size_t dim() const { return dim_; }
+  size_t Dim() const { return dim_; }
 
   /**
    * Sets and gets the range for a particular dimension.

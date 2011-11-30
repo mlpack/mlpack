@@ -115,7 +115,7 @@ void PeriodicHRectBound<t_pow>::Centroid(arma::vec& centroid) const
     centroid.set_size(dim_);
 
   for (size_t i = 0; i < dim_; i++)
-    centroid(i) = bounds_[i].mid();
+    centroid(i) = bounds_[i].Mid();
 }
 
 /**

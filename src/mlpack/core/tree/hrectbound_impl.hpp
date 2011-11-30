@@ -24,8 +24,8 @@ namespace bound {
  */
 template<int t_pow>
 HRectBound<t_pow>::HRectBound() :
-    dim_(0),
-    bounds_(NULL)
+    dim(0),
+    bounds(NULL)
 { /* nothing to do */ }
 
 /**
@@ -33,9 +33,9 @@ HRectBound<t_pow>::HRectBound() :
  * set.
  */
 template<int t_pow>
-HRectBound<t_pow>::HRectBound(size_t dimension) :
-    dim_(dimension),
-    bounds_(new math::Range[dim_])
+HRectBound<t_pow>::HRectBound(const size_t dimension) :
+    dim(dimension),
+    bounds(new math::Range[dim])
 { /* nothing to do */ }
 
 /***
@@ -43,12 +43,12 @@ HRectBound<t_pow>::HRectBound(size_t dimension) :
  */
 template<int t_pow>
 HRectBound<t_pow>::HRectBound(const HRectBound& other) :
-    dim_(other.dim()),
-    bounds_(new math::Range[dim_])
+    dim(other.Dim()),
+    bounds(new math::Range[dim])
 {
   // Copy other bounds over.
-  for (size_t i = 0; i < dim_; i++)
-    bounds_[i] = other[i];
+  for (size_t i = 0; i < dim; i++)
+    bounds[i] = other[i];
 }
 
 /***
@@ -57,15 +57,15 @@ HRectBound<t_pow>::HRectBound(const HRectBound& other) :
 template<int t_pow>
 HRectBound<t_pow>& HRectBound<t_pow>::operator=(const HRectBound& other)
 {
-  if (bounds_)
-    delete[] bounds_;
+  if (bounds)
+    delete[] bounds;
 
   // We can't just copy the bounds_ pointer like the default copy constructor
   // will!
-  dim_ = other.dim();
-  bounds_ = new math::Range[dim_];
-  for (size_t i = 0; i < dim_; i++)
-    bounds_[i] = other[i];
+  dim = other.Dim();
+  bounds = new math::Range[dim];
+  for (size_t i = 0; i < dim; i++)
+    bounds[i] = other[i];
 
   return *this;
 }
@@ -76,8 +76,8 @@ HRectBound<t_pow>& HRectBound<t_pow>::operator=(const HRectBound& other)
 template<int t_pow>
 HRectBound<t_pow>::~HRectBound()
 {
-  if (bounds_)
-    delete[] bounds_;
+  if (bounds)
+    delete[] bounds;
 }
 
 /**
@@ -86,26 +86,26 @@ HRectBound<t_pow>::~HRectBound()
 template<int t_pow>
 void HRectBound<t_pow>::Clear()
 {
-  for (size_t i = 0; i < dim_; i++)
-    bounds_[i] = math::Range();
+  for (size_t i = 0; i < dim; i++)
+    bounds[i] = math::Range();
 }
 
 /**
  * Gets the range for a particular dimension.
  */
 template<int t_pow>
-const math::Range HRectBound<t_pow>::operator[](size_t i) const
+inline const math::Range& HRectBound<t_pow>::operator[](const size_t i) const
 {
-  return bounds_[i];
+  return bounds[i];
 }
 
 /**
  * Sets the range for the given dimension.
  */
 template<int t_pow>
-math::Range& HRectBound<t_pow>::operator[](size_t i)
+inline math::Range& HRectBound<t_pow>::operator[](const size_t i)
 {
-  return bounds_[i];
+  return bounds[i];
 }
 
 /***
@@ -117,11 +117,11 @@ template<int t_pow>
 void HRectBound<t_pow>::Centroid(arma::vec& centroid) const
 {
   // set size correctly if necessary
-  if (!(centroid.n_elem == dim_))
-    centroid.set_size(dim_);
+  if (!(centroid.n_elem == dim))
+    centroid.set_size(dim);
 
-  for (size_t i = 0; i < dim_; i++)
-    centroid(i) = bounds_[i].mid();
+  for (size_t i = 0; i < dim; i++)
+    centroid(i) = bounds[i].Mid();
 }
 
 /**
@@ -130,25 +130,25 @@ void HRectBound<t_pow>::Centroid(arma::vec& centroid) const
 template<int t_pow>
 double HRectBound<t_pow>::MinDistance(const arma::vec& point) const
 {
-  Log::Assert(point.n_elem == dim_);
+  Log::Assert(point.n_elem == dim);
 
   double sum = 0;
 
   double lower, higher;
-  for (size_t dimension = 0; dimension < dim_; dimension++)
+  for (size_t d = 0; d < dim; d++)
   {
-    lower = bounds_[dimension].lo - point[dimension];
-    higher = point[dimension] - bounds_[dimension].hi;
+    lower = bounds[d].lo - point[d];
+    higher = point[d] - bounds[d].hi;
 
-    // since only one of 'lower' or 'higher' is negative, if we add each's
+    // Since only one of 'lower' or 'higher' is negative, if we add each's
     // absolute value to itself and then sum those two, our result is the
-    // nonnegative half of the equation times two; then we raise to power t_pow
+    // nonnegative half of the equation times two; then we raise to power t_pow.
     sum += pow((lower + fabs(lower)) + (higher + fabs(higher)), (double) t_pow);
   }
 
-  // now take the t_pow'th root (but make sure our result is squared); then
+  // Now take the t_pow'th root (but make sure our result is squared); then
   // divide by four to cancel out the constant of 2 (which has been squared now)
-  // that was introduced earlier
+  // that was introduced earlier.
   return pow(sum, 2.0 / (double) t_pow) / 4.0;
 }
 
@@ -160,7 +160,7 @@ template<int t_pow>
 double HRectBound<t_pow>::MinDistance(const arma::vec& point,
                                       const std::vector<size_t>& indices) const
 {
-  Log::Assert(point.n_elem == dim_);
+  Log::Assert(point.n_elem == dim);
 
   double sum = 0.0;
 
@@ -168,20 +168,21 @@ double HRectBound<t_pow>::MinDistance(const arma::vec& point,
   for (size_t index = 0; index < indices.size(); index++)
   {
     size_t dimension = indices[index];
-    lower = bounds_[dimension].lo - point[dimension];
-    higher = point[dimension] - bounds_[dimension].hi;
+    lower = bounds[dimension].lo - point[dimension];
+    higher = point[dimension] - bounds[dimension].hi;
 
-    // since at least one of 'lower' or 'higher' is negative, if we add each's
+    // Since at least one of 'lower' or 'higher' is negative, if we add each's
     // absolute value to itself and then sum those two, our result is the
-    // nonnegative half of the equation times two; then we raise to power t_pow
+    // nonnegative half of the equation times two; then we raise to power t_pow.
     sum += pow((lower + fabs(lower)) + (higher + fabs(higher)), (double) t_pow);
   }
 
-  // now take the t_pow'th root (but make sure our result is squared); then
+  // Now take the t_pow'th root (but make sure our result is squared); then
   // divide by four to cancel out the constant of 2 (which has been squared now)
-  // that was introduced earlier
+  // that was introduced earlier.
   return pow(sum, 2.0 / (double) t_pow) / 4.0;
 }
+
 /**
  * Calculates minimum bound-to-bound squared distance.
  *
@@ -190,28 +191,32 @@ double HRectBound<t_pow>::MinDistance(const arma::vec& point,
 template<int t_pow>
 double HRectBound<t_pow>::MinDistance(const HRectBound& other) const
 {
-  Log::Assert(dim_ == other.dim_);
+  Log::Assert(dim == other.dim);
 
-  double sum = 0.0;
-  double lower = 0.0;
-  double higher = 0.0;
+  double sum = 0;
+  const math::Range* mbound = bounds;
+  const math::Range* obound = other.bounds;
 
-  for(size_t dimension = 0; dimension < dim_; dimension++)
+  double lower, higher;
+  for (size_t d = 0; d < dim; d++)
   {
-    lower = bounds_[dimension].lo - other.bounds_[dimension].hi;
-    higher = other.bounds_[dimension].lo - bounds_[dimension].hi;
-
-    // since at least one of 'lower' or 'higher' is negative, if we add each's
-    // absolute value to itself and then sum those two, our result is the
-    // nonnegative half of the equation times two; then we raise to power t_pow
+    lower = obound->lo - mbound->hi;
+    higher = mbound->lo - obound->hi;
+    // We invoke the following:
+    //   x + fabs(x) = max(x * 2, 0)
+    //   (x * 2)^2 / 4 = x^2
     sum += pow((lower + fabs(lower)) + (higher + fabs(higher)), (double) t_pow);
+
+    // Move bound pointers.
+    mbound++;
+    obound++;
   }
 
   return pow(sum, 2.0 / (double) t_pow) / 4.0;
 }
+
 /**
- * Calculates minimum bound-to-bound squared distance,
- *   filtered by indices.
+ * Calculates minimum bound-to-bound squared distance, filtered by indices.
  *
  * Example: bound1.MinDistanceSq(other, indices) for minimum squared distance.
  */
@@ -219,21 +224,20 @@ template<int t_pow>
 double HRectBound<t_pow>::MinDistance(const HRectBound& other,
                                       const std::vector<size_t>& indices) const
 {
-  Log::Assert(dim_ == other.dim_);
+  Log::Assert(dim == other.dim);
 
   double sum = 0.0;
-  double lower = 0.0;
-  double higher = 0.0;
+  double lower, higher;
 
-  for(size_t index = 0; index < indices.size(); index++)
+  for (size_t index = 0; index < indices.size(); index++)
   {
     size_t dimension = indices[index];
-    lower = bounds_[dimension].lo - other.bounds_[dimension].hi;
-    higher = other.bounds_[dimension].lo - bounds_[dimension].hi;
+    lower = bounds[dimension].lo - other.bounds[dimension].hi;
+    higher = other.bounds[dimension].lo - bounds[dimension].hi;
 
-    // since only one of 'lower' or 'higher' is negative, if we add each's
+    // Since only one of 'lower' or 'higher' is negative, if we add each's
     // absolute value to itself and then sum those two, our result is the
-    // nonnegative half of the equation times two; then we raise to power t_pow
+    // nonnegative half of the equation times two; then we raise to power t_pow.
     sum += pow((lower + fabs(lower)) + (higher + fabs(higher)), (double) t_pow);
   }
 
@@ -246,24 +250,22 @@ double HRectBound<t_pow>::MinDistance(const HRectBound& other,
 template<int t_pow>
 double HRectBound<t_pow>::MaxDistance(const arma::vec& point) const
 {
-  double sum = 0.0;
-  double lower, higher;
+  double sum = 0;
 
-  Log::Assert(point.n_elem == dim_);
+  Log::Assert(point.n_elem == dim);
 
-  for (size_t dimension = 0; dimension < dim_; dimension++)
+  for (size_t d = 0; d < dim; d++)
   {
-    lower = fabs(point[dimension] - bounds_[dimension].lo);
-    higher = fabs(point[dimension] - bounds_[dimension].hi);
-
-    sum += pow(fabs(higher-lower) + higher + lower, (double) t_pow);
+    double v = fabs(std::max(point[d] - bounds[d].lo,
+                             bounds[d].hi - point[d]));
+    sum += pow(v, (double) t_pow);
   }
 
-  return pow(sum, 2.0 / (double) t_pow) / 4.0;
+  return pow(sum, 2.0 / (double) t_pow);
 }
+
 /**
- * Calculates maximum bound-to-point squared distance,
- *   filtered by indices.
+ * Calculates maximum bound-to-point squared distance, filtered by indices.
  */
 template<int t_pow>
 double HRectBound<t_pow>::MaxDistance(const arma::vec& point,
@@ -272,15 +274,15 @@ double HRectBound<t_pow>::MaxDistance(const arma::vec& point,
   double sum = 0.0;
   double lower, higher;
 
-  Log::Assert(point.n_elem == dim_);
+  Log::Assert(point.n_elem == dim);
 
   for (size_t index = 0; index < indices.size(); index++)
   {
     size_t dimension = indices[index];
-    lower = fabs(point[dimension] - bounds_[dimension].lo);
-    higher = fabs(point[dimension] - bounds_[dimension].hi);
+    lower = fabs(point[dimension] - bounds[dimension].lo);
+    higher = fabs(point[dimension] - bounds[dimension].hi);
 
-    sum += pow(fabs(higher-lower) + higher + lower, (double) t_pow);
+    sum += pow(fabs(higher - lower) + higher + lower, (double) t_pow);
   }
 
   return pow(sum, 2.0 / (double) t_pow) / 4.0;
@@ -292,20 +294,19 @@ double HRectBound<t_pow>::MaxDistance(const arma::vec& point,
 template<int t_pow>
 double HRectBound<t_pow>::MaxDistance(const HRectBound& other) const
 {
-  double sum = 0.0;
-  double lower, higher;
+  double sum = 0;
 
-  Log::Assert(other.dim_ == dim_);
+  Log::Assert(dim == other.dim);
 
-  for (size_t dimension = 0; dimension < dim_; dimension++)
+  double v;
+  for (size_t d = 0; d < dim; d++)
   {
-    lower = fabs(other.bounds_[dimension].hi - bounds_[dimension].lo);
-    higher = fabs(other.bounds_[dimension].lo - bounds_[dimension].hi);
-
-    sum += pow(fabs(higher-lower) + higher + lower, (double) t_pow);
+    v = fabs(std::max(other.bounds[d].hi - bounds[d].lo,
+                      bounds[d].hi - other.bounds[d].lo));
+    sum += pow(v, (double) t_pow); // v is non-negative.
   }
 
-  return pow(sum, 2.0 / (double) t_pow) / 4.0;
+  return pow(sum, 2.0 / (double) t_pow);
 }
 
 /**
@@ -319,53 +320,54 @@ double HRectBound<t_pow>::MaxDistance(const HRectBound& other,
   double sum = 0.0;
   double lower, higher;
 
-  Log::Assert(other.dim_ == dim_);
+  Log::Assert(other.dim == dim);
 
   for (size_t index = 0; index < indices.size(); index++)
   {
     size_t dimension = indices[index];
-    lower = fabs(other.bounds_[dimension].hi - bounds_[dimension].lo);
-    higher = fabs(other.bounds_[dimension].lo - bounds_[dimension].hi);
+    lower = fabs(other.bounds[dimension].hi - bounds[dimension].lo);
+    higher = fabs(other.bounds[dimension].lo - bounds[dimension].hi);
 
     sum += pow(fabs(higher-lower) + higher + lower, (double) t_pow);
   }
 
   return pow(sum, 2.0 / (double) t_pow) / 4.0;
 }
+
 /**
  * Calculates minimum and maximum bound-to-bound squared distance.
  */
 template<int t_pow>
 math::Range HRectBound<t_pow>::RangeDistance(const HRectBound& other) const
 {
-  double sum_lo = 0;
-  double sum_hi = 0;
+  double loSum = 0;
+  double hiSum = 0;
 
-  Log::Assert(dim_ == other.dim_);
+  Log::Assert(dim == other.dim);
 
-  double v1, v2, v_lo, v_hi;
-  for (size_t d = 0; d < dim_; d++)
+  double v1, v2, vLo, vHi;
+  for (size_t d = 0; d < dim; d++)
   {
-    v1 = other.bounds_[d].lo - bounds_[d].hi;
-    v2 = bounds_[d].lo - other.bounds_[d].hi;
+    v1 = other.bounds[d].lo - bounds[d].hi;
+    v2 = bounds[d].lo - other.bounds[d].hi;
     // One of v1 or v2 is negative.
     if (v1 >= v2)
     {
-      v_hi = -v2; // Make it nonnegative.
-      v_lo = (v1 > 0) ? v1 : 0; // Force to be 0 if negative.
+      vHi = -v2; // Make it nonnegative.
+      vLo = (v1 > 0) ? v1 : 0; // Force to be 0 if negative.
     }
     else
     {
-      v_hi = -v1; // Make it nonnegative.
-      v_lo = (v2 > 0) ? v2 : 0; // Force to be 0 if negative.
+      vHi = -v1; // Make it nonnegative.
+      vLo = (v2 > 0) ? v2 : 0; // Force to be 0 if negative.
     }
 
-    sum_lo += pow(v_lo, (double) t_pow);
-    sum_hi += pow(v_hi, (double) t_pow);
+    loSum += pow(vLo, (double) t_pow);
+    hiSum += pow(vHi, (double) t_pow);
   }
 
-  return math::Range(pow(sum_lo, 2.0 / (double) t_pow),
-      pow(sum_hi, 2.0 / (double) t_pow));
+  return math::Range(pow(loSum, 2.0 / (double) t_pow),
+                     pow(hiSum, 2.0 / (double) t_pow));
 }
 
 /**
@@ -374,42 +376,42 @@ math::Range HRectBound<t_pow>::RangeDistance(const HRectBound& other) const
 template<int t_pow>
 math::Range HRectBound<t_pow>::RangeDistance(const arma::vec& point) const
 {
-  double sum_lo = 0;
-  double sum_hi = 0;
+  double loSum = 0;
+  double hiSum = 0;
 
-  Log::Assert(point.n_elem == dim_);
+  Log::Assert(point.n_elem == dim);
 
-  double v1, v2, v_lo, v_hi;
-  for(size_t d = 0; d < dim_; d++)
+  double v1, v2, vLo, vHi;
+  for (size_t d = 0; d < dim; d++)
   {
-    v1 = bounds_[d].lo - point[d]; // Negative if point[d] > lo.
-    v2 = point[d] - bounds_[d].hi; // Negative if point[d] < hi.
+    v1 = bounds[d].lo - point[d]; // Negative if point[d] > lo.
+    v2 = point[d] - bounds[d].hi; // Negative if point[d] < hi.
     // One of v1 or v2 (or both) is negative.
     if (v1 >= 0) // point[d] <= bounds_[d].lo.
     {
-      v_hi = -v2; // v2 will be larger but must be negated.
-      v_lo = v1;
+      vHi = -v2; // v2 will be larger but must be negated.
+      vLo = v1;
     }
     else // point[d] is between lo and hi, or greater than hi.
     {
       if (v2 >= 0)
       {
-        v_hi = -v1; // v1 will be larger, but must be negated.
-        v_lo = v2;
+        vHi = -v1; // v1 will be larger, but must be negated.
+        vLo = v2;
       }
       else
       {
-        v_hi = -std::min(v1, v2); // Both are negative, but we need the larger.
-        v_lo = 0;
+        vHi = -std::min(v1, v2); // Both are negative, but we need the larger.
+        vLo = 0;
       }
     }
 
-    sum_lo += pow(v_lo, (double) t_pow);
-    sum_hi += pow(v_hi, (double) t_pow);
+    loSum += pow(vLo, (double) t_pow);
+    hiSum += pow(vHi, (double) t_pow);
   }
 
-  return math::Range(pow(sum_lo, 2.0 / (double) t_pow),
-      pow(sum_hi, 2.0 / (double) t_pow));
+  return math::Range(pow(loSum, 2.0 / (double) t_pow),
+                     pow(hiSum, 2.0 / (double) t_pow));
 }
 
 /**
@@ -418,10 +420,10 @@ math::Range HRectBound<t_pow>::RangeDistance(const arma::vec& point) const
 template<int t_pow>
 HRectBound<t_pow>& HRectBound<t_pow>::operator|=(const arma::vec& vector)
 {
-  Log::Assert(vector.n_elem == dim_);
+  Log::Assert(vector.n_elem == dim);
 
-  for (size_t i = 0; i < dim_; i++)
-    bounds_[i] |= vector[i];
+  for (size_t i = 0; i < dim; i++)
+    bounds[i] |= vector[i];
 
   return *this;
 }
@@ -432,10 +434,10 @@ HRectBound<t_pow>& HRectBound<t_pow>::operator|=(const arma::vec& vector)
 template<int t_pow>
 HRectBound<t_pow>& HRectBound<t_pow>::operator|=(const HRectBound& other)
 {
-  Log::Assert(other.dim_ == dim_);
+  assert(other.dim == dim);
 
-  for (size_t i = 0; i < dim_; i++)
-    bounds_[i] |= other.bounds_[i];
+  for (size_t i = 0; i < dim; i++)
+    bounds[i] |= other.bounds[i];
 
   return *this;
 }
@@ -448,7 +450,7 @@ bool HRectBound<t_pow>::Contains(const arma::vec& point) const
 {
   for (size_t i = 0; i < point.n_elem; i++)
   {
-    if (!bounds_[i].Contains(point(i)))
+    if (!bounds[i].Contains(point(i)))
       return false;
   }
 
