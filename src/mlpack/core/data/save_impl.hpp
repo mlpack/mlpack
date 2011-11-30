@@ -51,28 +51,28 @@ bool Save(const std::string& filename, const arma::Mat<eT>& matrix, bool fatal)
   }
 
   bool unknown_type = false;
-  arma::file_type save_type;
-  std::string string_type;
+  arma::file_type saveType;
+  std::string stringType;
 
   if (extension == "csv")
   {
-    save_type = arma::csv_ascii;
-    string_type = "CSV data";
+    saveType = arma::csv_ascii;
+    stringType = "CSV data";
   }
   else if (extension == "txt")
   {
-    save_type = arma::raw_ascii;
-    string_type = "raw ASCII formatted data";
+    saveType = arma::raw_ascii;
+    stringType = "raw ASCII formatted data";
   }
   else if (extension == "bin")
   {
-    save_type = arma::arma_binary;
-    string_type = "Armadillo binary formatted data";
+    saveType = arma::arma_binary;
+    stringType = "Armadillo binary formatted data";
   }
   else if (extension == "pgm")
   {
-    save_type = arma::pgm_binary;
-    string_type = "PGM data";
+    saveType = arma::pgm_binary;
+    stringType = "PGM data";
   }
   else
   {
@@ -91,13 +91,13 @@ bool Save(const std::string& filename, const arma::Mat<eT>& matrix, bool fatal)
   }
 
   // Try to save the file.
-  Log::Info << "Saving " << string_type << " to '" << filename << "'."
+  Log::Info << "Saving " << stringType << " to '" << filename << "'."
       << std::endl;
 
   // Transpose the matrix.
   arma::Mat<eT> tmp = trans(matrix);
 
-  if (!tmp.quiet_save(stream, save_type))
+  if (!tmp.quiet_save(stream, saveType))
   {
     if (fatal)
       Log::Fatal << "Save to '" << filename << "' failed." << std::endl;

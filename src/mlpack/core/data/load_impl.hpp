@@ -49,8 +49,8 @@ bool Load(const std::string& filename, arma::Mat<eT>& matrix, bool fatal)
   }
 
   bool unknown_type = false;
-  arma::file_type load_type;
-  std::string string_type;
+  arma::file_type loadType;
+  std::string stringType;
 
   if (extension == "csv")
   {
@@ -65,72 +65,72 @@ bool Load(const std::string& filename, arma::Mat<eT>& matrix, bool fatal)
 
     // This is taken from load_auto_detect() in diskio_meat.hpp
     const std::string ARMA_MAT_TXT = "ARMA_MAT_TXT";
-    char* raw_header = new char[ARMA_MAT_TXT.length() + 1];
+    char* rawHeader = new char[ARMA_MAT_TXT.length() + 1];
     std::streampos pos = stream.tellg();
 
-    stream.read(raw_header, std::streamsize(ARMA_MAT_TXT.length()));
-    raw_header[ARMA_MAT_TXT.length()] = '\0';
+    stream.read(rawHeader, std::streamsize(ARMA_MAT_TXT.length()));
+    rawHeader[ARMA_MAT_TXT.length()] = '\0';
     stream.clear();
     stream.seekg(pos); // Reset stream position after peeking.
 
-    if (std::string(raw_header) == ARMA_MAT_TXT)
+    if (std::string(rawHeader) == ARMA_MAT_TXT)
     {
-      load_type = arma::arma_ascii;
-      string_type = "Armadillo ASCII formatted data";
+      loadType = arma::arma_ascii;
+      stringType = "Armadillo ASCII formatted data";
     }
     else // It's not arma_ascii.  Now we let Armadillo guess.
     {
-      load_type = arma::diskio::guess_file_type(stream);
+      loadType = arma::diskio::guess_file_type(stream);
 
-      if (load_type == arma::raw_ascii) // Raw ASCII (space-separated).
-        string_type = "raw ASCII formatted data";
-      else if (load_type == arma::csv_ascii) // CSV can be .txt too.
-        string_type = "CSV data";
+      if (loadType == arma::raw_ascii) // Raw ASCII (space-separated).
+        stringType = "raw ASCII formatted data";
+      else if (loadType == arma::csv_ascii) // CSV can be .txt too.
+        stringType = "CSV data";
       else // Unknown .txt... we will throw an error.
-        unknown_type = true;
+        unknownType = true;
     }
 
-    delete[] raw_header;
+    delete[] rawHeader;
   }
   else if (extension == "bin")
   {
     // This could be raw binary or Armadillo binary (binary with header).  We
     // will check to see if it is Armadillo binary.
     const std::string ARMA_MAT_BIN = "ARMA_MAT_BIN";
-    char *raw_header = new char[ARMA_MAT_BIN.length() + 1];
+    char *rawHeader = new char[ARMA_MAT_BIN.length() + 1];
 
     std::streampos pos = stream.tellg();
 
-    stream.read(raw_header, std::streamsize(ARMA_MAT_BIN.length()));
-    raw_header[ARMA_MAT_BIN.length()] = '\0';
+    stream.read(rawHeader, std::streamsize(ARMA_MAT_BIN.length()));
+    rawHeader[ARMA_MAT_BIN.length()] = '\0';
     stream.clear();
     stream.seekg(pos); // Reset stream position after peeking.
 
-    if (std::string(raw_header) == ARMA_MAT_BIN)
+    if (std::string(rawHeader) == ARMA_MAT_BIN)
     {
-      string_type = "Armadillo binary formatted data";
-      load_type = arma::arma_binary;
+      stringType = "Armadillo binary formatted data";
+      loadType = arma::arma_binary;
     }
     else // We can only assume it's raw binary.
     {
-      string_type = "raw binary formatted data";
-      load_type = arma::raw_binary;
+      stringType = "raw binary formatted data";
+      loadType = arma::raw_binary;
     }
 
     delete[] raw_header;
   }
   else if (extension == "pgm")
   {
-    load_type = arma::pgm_binary;
-    string_type = "PGM data";
+    loadType = arma::pgm_binary;
+    stringType = "PGM data";
   }
   else // Unknown extension...
   {
-    unknown_type = true;
+    unknownType = true;
   }
 
   // Provide error if we don't know the type.
-  if (unknown_type)
+  if (unknownType)
   {
     if (fatal)
       Log::Fatal << "Unable to detect type of '" << filename << "'; "
@@ -143,11 +143,11 @@ bool Load(const std::string& filename, arma::Mat<eT>& matrix, bool fatal)
   }
 
   // Try to load the file; but if it's raw_binary, it could be a problem.
-  if (load_type == arma::raw_binary)
-    Log::Warn << "Loading '" << filename << "' as " << string_type << "; "
+  if (loadType == arma::raw_binary)
+    Log::Warn << "Loading '" << filename << "' as " << stringType << "; "
         << "but this may not be the actual filetype!" << std::endl;
   else
-    Log::Info << "Loading '" << filename << "' as " << string_type << "."
+    Log::Info << "Loading '" << filename << "' as " << stringType << "."
         << std::endl;
 
   bool success = matrix.load(stream, load_type);
