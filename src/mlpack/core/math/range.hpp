@@ -28,25 +28,25 @@ class Range
    *
    * @param point Point that this range will enclose.
    */
-  Range(double point);
+  Range(const double point);
 
   /**
    * Initializes to specified range.
    *
-   * @param lo_in Lower bound of the range.
-   * @param hi_in Upper bound of the range.
+   * @param lo Lower bound of the range.
+   * @param hi Upper bound of the range.
    */
-  Range(double lo_in, double hi_in);
+  Range(const double lo, const double hi);
 
   /**
    * Gets the span of the range (hi - lo).
    */
-  double width() const;
+  double Width() const;
 
   /**
    * Gets the midpoint of this range.
    */
-  double mid() const;
+  double Mid() const;
 
   /**
    * Expands this range to include another range.
@@ -134,7 +134,7 @@ class Range
    *
    * @param d Point to check.
    */
-  bool Contains(double d) const;
+  bool Contains(const double d) const;
 
 };
 

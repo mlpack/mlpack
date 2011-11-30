@@ -18,19 +18,19 @@ Range::Range() :
 /**
  * Initialize a range to enclose only the given point.
  */
-Range::Range(double point) :
+Range::Range(const double point) :
     lo(point), hi(point) { /* nothing else to do */ }
 
 /**
  * Initializes the range to the specified values.
  */
-Range::Range(double lo_in, double hi_in) :
-    lo(lo_in), hi(hi_in) { /* nothing else to do */ }
+Range::Range(const double lo, const double hi) :
+    lo(lo), hi(hi) { /* nothing else to do */ }
 
 /**
  * Gets the span of the range, hi - lo.  Returns 0 if the range is negative.
  */
-double Range::width() const
+double Range::Width() const
 {
   if (lo < hi)
     return (hi - lo);
@@ -41,7 +41,7 @@ double Range::width() const
 /**
  * Gets the midpoint of this range.
  */
-double Range::mid() const
+double Range::Mid() const
 {
   return (hi + lo) / 2;
 }
@@ -157,7 +157,7 @@ bool Range::operator>(const Range& rhs) const
 /**
  * Determines if a point is contained within the range.
  */
-bool Range::Contains(double d) const
+bool Range::Contains(const double d) const
 {
   return d >= lo && d <= hi;
 }
