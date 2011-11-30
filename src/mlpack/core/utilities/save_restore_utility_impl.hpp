@@ -32,9 +32,50 @@ T& SaveRestoreUtility::LoadParameter(T& t, std::string name)
   return t;
 }
 template<typename T>
+std::vector<T>& SaveRestoreUtility::LoadParameter(std::vector<T>& v, std::string name)
+{
+  std::map<std::string, std::string>::iterator it = parameters.find(name);
+  if (it != parameters.end())
+  {
+    v.clear();
+    std::string value = (*it).second;
+    boost::char_separator<char> sep (",");
+    boost::tokenizer<boost::char_separator<char> > tok (value, sep);
+    std::list<std::list<double> > rows;
+    for (boost::tokenizer<boost::char_separator<char> >::iterator
+           tokIt = tok.begin();
+         tokIt != tok.end();
+         ++tokIt)
+    {
+      T t;
+      std::istringstream iss (*tokIt);
+      iss >> t;
+      v.push_back(t);
+    }
+  }
+  else
+  {
+    Log::Fatal << "Failed to load the parameter " << name << std::endl;
+  }
+  return v;
+}
+template<typename T>
 void SaveRestoreUtility::SaveParameter(T& t, std::string name)
 {
   std::ostringstream output;
   output << t;
   parameters[name] = output.str();
+}
+
+template<typename T>
+void SaveRestoreUtility::SaveParameter(std::vector<T>& t, std::string name)
+{
+  std::ostringstream output;
+  for (size_t index = 0; index < t.size(); ++index)
+  {
+    output << t[index] << ",";
+  }
+  std::string vectorAsStr = output.str();
+  vectorAsStr.erase(vectorAsStr.length() - 1);
+  parameters[name] = vectorAsStr;
 }
