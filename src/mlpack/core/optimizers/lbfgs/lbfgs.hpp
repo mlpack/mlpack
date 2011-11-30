@@ -37,10 +37,26 @@ class L_BFGS
    * Initialize the L-BFGS object.  Copy the function we will be optimizing
    * and set the size of the memory for the algorithm.
    *
-   * @param function_in Instance of function to be optimized
-   * @param num_basis Number of memory points to be stored
+   * @param function Instance of function to be optimized
+   * @param numBasis Number of memory points to be stored
+   * @param armijoConstant Controls the accuracy of the line search routine for
+   *     determining the Armijo condition.
+   * @param wolfe Parameter for detecting the Wolfe condition.
+   * @param minGradientNorm Minimum gradient norm required to continue the
+   *     optimization.
+   * @param maxLineSearchTrials The maximum number of trials for the line search
+   *     (before giving up).
+   * @param minStep The minimum step of the line search.
+   * @param maxStep The maximum step of the line search.
    */
-  L_BFGS(FunctionType& function_in, int num_basis);
+  L_BFGS(const FunctionType& function,
+         const size_t numBasis,
+         const double armijoConstant = 1e-4,
+         const double wolfe = 0.9,
+         const double minGradientNorm = 1e-10,
+         const size_t maxLineSearchTrials = 50,
+         const double minStep = 1e-20,
+         const double maxStep = 1e20);
 
   /**
    * Return the point where the lowest function value has been found.
@@ -48,7 +64,7 @@ class L_BFGS
    * @return arma::vec representing the point and a double with the function
    *     value at that point.
    */
-  const std::pair<arma::mat, double>& min_point_iterate() const;
+  const std::pair<arma::mat, double>& MinPointIterate() const;
 
   /**
    * Use L-BFGS to optimize the given function, starting at the given iterate
@@ -56,27 +72,39 @@ class L_BFGS
    * iterations.  The given starting point will be modified to store the
    * finishing point of the algorithm.
    *
-   * @param num_iterations Maximum number of iterations to perform
+   * @param maxIterations Maximum number of iterations to perform
    * @param iterate Starting point (will be modified)
    */
-  bool Optimize(int num_iterations, arma::mat& iterate);
+  bool Optimize(const size_t maxIterations, arma::mat& iterate);
 
  private:
   //! Internal copy of the function we are optimizing.
-  FunctionType function_;
+  FunctionType function;
 
   //! Position of the new iterate.
-  arma::mat new_iterate_tmp_;
+  arma::mat newIterateTmp;
   //! Stores all the s matrices in memory.
-  arma::cube s_lbfgs_;
+  arma::cube s;
   //! Stores all the y matrices in memory.
-  arma::cube y_lbfgs_;
+  arma::cube y;
 
   //! Size of memory for this L-BFGS optimizer.
-  int num_basis_;
+  size_t numBasis;
+  //! Parameter for determining the Armijo condition.
+  double armijoConstant;
+  //! Parameter for detecting the Wolfe condition.
+  double wolfe;
+  //! Minimum gradient norm required to continue the optimization.
+  double minGradientNorm;
+  //! Maximum number of trials for the line search.
+  size_t maxLineSearchTrials;
+  //! Minimum step of the line search.
+  double minStep;
+  //! Maximum step of the line search.
+  double maxStep;
 
   //! Best point found so far.
-  std::pair<arma::mat, double> min_point_iterate_;
+  std::pair<arma::mat, double> minPointIterate;
 
   /**
    * Evaluate the function at the given iterate point and store the result if it
@@ -84,7 +112,7 @@ class L_BFGS
    *
    * @return The value of the function
    */
-  double Evaluate_(const arma::mat& iterate);
+  double Evaluate(const arma::mat& iterate);
 
   /**
    * Calculate the scaling factor gamma which is used to scale the Hessian
@@ -93,34 +121,35 @@ class L_BFGS
    *
    * @return The calculated scaling factor
    */
-  double ChooseScalingFactor_(int iteration_num, const arma::mat& gradient);
+  double ChooseScalingFactor(const size_t iterationNum,
+                             const arma::mat& gradient);
 
   /**
    * Check to make sure that the norm of the gradient is not smaller than 1e-5.
    * Currently that value is not configurable.
    *
-   * @return (norm < 1e-5)
+   * @return (norm < minGradientNorm)
    */
-  bool GradientNormTooSmall_(const arma::mat& gradient);
+  bool GradientNormTooSmall(const arma::mat& gradient);
 
   /**
    * Perform a back-tracking line search along the search direction to
    * calculate a step size satisfying the Wolfe conditions.  The parameter
    * iterate will be modified if the method is successful.
    *
-   * @param function_value Value of the function at the initial point
+   * @param functionValue Value of the function at the initial point
    * @param iterate The initial point to begin the line search from
    * @param gradient The gradient at the initial point
-   * @param search_direction A vector specifying the search direction
-   * @param step_size Variable the calculated step size will be stored in
+   * @param searchDirection A vector specifying the search direction
+   * @param stepSize Variable the calculated step size will be stored in
    *
    * @return false if no step size is suitable, true otherwise.
    */
-  bool LineSearch_(double& function_value,
-                   arma::mat& iterate,
-                   arma::mat& gradient,
-                   const arma::mat& search_direction,
-                   double& step_size);
+  bool LineSearch(double& functionValue,
+                  arma::mat& iterate,
+                  arma::mat& gradient,
+                  const arma::mat& searchDirection,
+                  double& stepSize);
 
   /**
    * Find the L-BFGS search direction.
@@ -130,27 +159,27 @@ class L_BFGS
    * @param scaling_factor Scaling factor to use (see ChooseScalingFactor_())
    * @param search_direction Vector to store search direction in
    */
-  void SearchDirection_(const arma::mat& gradient,
-                        int iteration_num,
-                        double scaling_factor,
-                        arma::mat& search_direction);
+  void SearchDirection(const arma::mat& gradient,
+                       const size_t iterationNum,
+                       const double scalingFactor,
+                       arma::mat& searchDirection);
 
   /**
-   * Update the vectors y_bfgs_ and s_bfgs_, which store the differences
+   * Update the y and s matrices, which store the differences
    * between the iterate and old iterate and the differences between the
    * gradient and the old gradient, respectively.
    *
-   * @param iteration_num Iteration number
+   * @param iterationNum Iteration number
    * @param iterate Current point
-   * @param old_iterate Point at last iteration
+   * @param oldIterate Point at last iteration
    * @param gradient Gradient at current point (iterate)
-   * @param old_gradient Gradient at last iteration point (old_iterate)
+   * @param oldGradient Gradient at last iteration point (oldIterate)
    */
-  void UpdateBasisSet_(int iteration_num,
-                       const arma::mat& iterate,
-                       const arma::mat& old_iterate,
-                       const arma::mat& gradient,
-                       const arma::mat& old_gradient);
+  void UpdateBasisSet(const size_t iterationNum,
+                      const arma::mat& iterate,
+                      const arma::mat& oldIterate,
+                      const arma::mat& gradient,
+                      const arma::mat& oldGradient);
 };
 
 }; // namespace optimization
