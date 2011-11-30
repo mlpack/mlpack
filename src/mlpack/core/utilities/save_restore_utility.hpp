@@ -11,7 +11,6 @@
 #ifndef SAVE_RESTORE_MODEL_HPP
 #define SAVE_RESTORE_MODEL_HPP
 
-#include <err.h>
 #include <list>
 #include <map>
 #include <sstream>
@@ -20,8 +19,8 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#include <mlpack/core.hpp>
 #include <boost/tokenizer.hpp>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace utilities {
@@ -54,6 +53,11 @@ class SaveRestoreUtility
   template<typename T>
   T& LoadParameter(T& t, std::string name);
   /**
+   * LoadParameter loads a parameter from the parameters map.
+   */
+  template<typename T>
+  std::vector<T>& LoadParameter(std::vector<T>& v, std::string name);
+  /**
    * LoadParameter loads a character from the parameters map.
    */
   char LoadParameter(char c, std::string name);
@@ -71,6 +75,11 @@ class SaveRestoreUtility
   template<typename T>
   void SaveParameter(T& t, std::string name);
   /**
+   * SaveParameter saves a parameter to the parameters map.
+   */
+  template<typename T>
+  void SaveParameter(std::vector<T>& v, std::string name);
+  /**
    * SaveParameter saves a character to the parameters map.
    */
   void SaveParameter(char c, std::string name);
@@ -79,7 +88,7 @@ class SaveRestoreUtility
    */
   void SaveParameter(arma::mat& mat, std::string name);
 };
-} /* namespace model */
+} /* namespace utilities */
 } /* namespace mlpack */
 
 #include "save_restore_utility_impl.hpp"

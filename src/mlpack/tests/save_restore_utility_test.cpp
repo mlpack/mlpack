@@ -100,6 +100,27 @@ BOOST_AUTO_TEST_CASE(save_basic_types)
   delete sRM;
 }
 
+BOOST_AUTO_TEST_CASE(save_restore_std_vector)
+{
+  size_t numbers[] = {0,3,6,2,6};
+  std::vector<size_t> vec (numbers,
+                           numbers + sizeof (numbers) / sizeof (size_t));
+  SaveRestoreUtility* sRM = new SaveRestoreUtility();
+
+  sRM->SaveParameter(ARGSTR(vec));
+
+  sRM->WriteFile("test_std_vector_type.xml");
+
+  sRM->ReadFile("test_std_vector_type.xml");
+
+  std::vector<size_t> loadee = sRM->LoadParameter(ARGSTR(vec));
+
+  for (size_t index = 0; index < loadee.size(); ++index)
+  {
+    BOOST_REQUIRE_EQUAL(numbers[index], loadee[index]);
+  }
+}
+
 /**
  * Test the arma::mat functionality.
  */
