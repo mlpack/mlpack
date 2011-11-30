@@ -50,7 +50,7 @@ bool Save(const std::string& filename, const arma::Mat<eT>& matrix, bool fatal)
     return false;
   }
 
-  bool unknown_type = false;
+  bool unknownType = false;
   arma::file_type saveType;
   std::string stringType;
 
@@ -76,11 +76,11 @@ bool Save(const std::string& filename, const arma::Mat<eT>& matrix, bool fatal)
   }
   else
   {
-    unknown_type = true;
+    unknownType = true;
   }
 
   // Provide error if we don't know the type.
-  if (unknown_type)
+  if (unknownType)
   {
     if (fatal)
       Log::Fatal << "Unable to determine format to save to from filename '"
