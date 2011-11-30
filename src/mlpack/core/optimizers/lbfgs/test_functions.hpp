@@ -53,7 +53,7 @@ class RosenbrockFunction
   double Evaluate(const arma::mat& coordinates);
   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
 
-  const arma::mat& GetInitialPoint();
+  const arma::mat& GetInitialPoint() const;
 
  private:
   arma::mat initial_point;
@@ -82,7 +82,7 @@ class WoodFunction {
   double Evaluate(const arma::mat& coordinates);
   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
 
-  const arma::mat& GetInitialPoint();
+  const arma::mat& GetInitialPoint() const;
 
  private:
   arma::mat initial_point;
@@ -112,7 +112,7 @@ class GeneralizedRosenbrockFunction
   double Evaluate(const arma::mat& coordinates);
   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
 
-  const arma::mat& GetInitialPoint();
+  const arma::mat& GetInitialPoint() const;
 
  private:
   arma::mat initial_point;
@@ -132,7 +132,7 @@ class RosenbrockWoodFunction
   double Evaluate(const arma::mat& coordinates);
   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
 
-  const arma::mat& GetInitialPoint();
+  const arma::mat& GetInitialPoint() const;
 
  private:
   arma::mat initial_point;
