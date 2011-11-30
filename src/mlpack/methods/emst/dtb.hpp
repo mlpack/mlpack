@@ -263,77 +263,77 @@ class DualTreeBoruvka
                                   double incoming_distance)
   {
     // Check for a distance prune.
-    if (query_node->stat().max_neighbor_distance() < incoming_distance)
+    if (query_node->Stat().max_neighbor_distance() < incoming_distance)
     {
       // Pruned by distance.
       number_distance_prunes_++;
     }
     // Check for a component prune.
-    else if ((query_node->stat().component_membership() >= 0)
-        && (query_node->stat().component_membership() ==
-            reference_node->stat().component_membership()))
+    else if ((query_node->Stat().component_membership() >= 0)
+        && (query_node->Stat().component_membership() ==
+            reference_node->Stat().component_membership()))
     {
       // Pruned by component membership.
-      mlpack::Log::Assert(reference_node->stat().component_membership() >= 0);
-      mlpack::Log::Info << query_node->stat().component_membership()
+      mlpack::Log::Assert(reference_node->Stat().component_membership() >= 0);
+      mlpack::Log::Info << query_node->Stat().component_membership()
           << "q mem\n";
-      mlpack::Log::Info << reference_node->stat().component_membership()
+      mlpack::Log::Info << reference_node->Stat().component_membership()
           << "r mem\n";
 
       number_component_prunes_++;
     }
-    else if (query_node->is_leaf() && reference_node->is_leaf()) // Base case.
+    else if (query_node->IsLeaf() && reference_node->IsLeaf()) // Base case.
     {
-      double new_bound = ComputeBaseCase_(query_node->begin(),
-          query_node->end(), reference_node->begin(), reference_node->end());
+      double new_bound = ComputeBaseCase_(query_node->Begin(),
+          query_node->End(), reference_node->Begin(), reference_node->End());
 
-      query_node->stat().set_max_neighbor_distance(new_bound);
+      query_node->Stat().set_max_neighbor_distance(new_bound);
     }
-    else if (query_node->is_leaf()) // Other recursive calls.
+    else if (query_node->IsLeaf()) // Other recursive calls.
     {
       // Recurse on reference_node only.
       number_r_recursions_++;
 
       double left_dist =
-          query_node->bound().MinDistance(reference_node->left()->bound());
+          query_node->Bound().MinDistance(reference_node->Left()->Bound());
       double right_dist =
-          query_node->bound().MinDistance(reference_node->right()->bound());
+          query_node->Bound().MinDistance(reference_node->Right()->Bound());
       mlpack::Log::Assert(left_dist >= 0.0);
       mlpack::Log::Assert(right_dist >= 0.0);
 
       if (left_dist < right_dist)
       {
-        ComputeNeighborsRecursion_(query_node, reference_node->left(),
+        ComputeNeighborsRecursion_(query_node, reference_node->Left(),
             left_dist);
-        ComputeNeighborsRecursion_(query_node, reference_node->right(),
+        ComputeNeighborsRecursion_(query_node, reference_node->Right(),
             right_dist);
       }
       else
       {
-        ComputeNeighborsRecursion_(query_node, reference_node->right(),
+        ComputeNeighborsRecursion_(query_node, reference_node->Right(),
             right_dist);
-        ComputeNeighborsRecursion_(query_node, reference_node->left(),
+        ComputeNeighborsRecursion_(query_node, reference_node->Left(),
             left_dist);
       }
     }
-    else if (reference_node->is_leaf())
+    else if (reference_node->IsLeaf())
     {
       // Recurse on query_node only.
       number_q_recursions_++;
 
       double left_dist =
-          query_node->left()->bound().MinDistance(reference_node->bound());
+          query_node->Left()->Bound().MinDistance(reference_node->Bound());
       double right_dist =
-          query_node->right()->bound().MinDistance(reference_node->bound());
+          query_node->Right()->Bound().MinDistance(reference_node->Bound());
 
-      ComputeNeighborsRecursion_(query_node->left(), reference_node, left_dist);
-      ComputeNeighborsRecursion_(query_node->right(), reference_node,
+      ComputeNeighborsRecursion_(query_node->Left(), reference_node, left_dist);
+      ComputeNeighborsRecursion_(query_node->Right(), reference_node,
           right_dist);
 
       // Update query_node's stat.
-      query_node->stat().set_max_neighbor_distance(
-          std::max(query_node->left()->stat().max_neighbor_distance(),
-          query_node->right()->stat().max_neighbor_distance()));
+      query_node->Stat().set_max_neighbor_distance(
+          std::max(query_node->Left()->Stat().max_neighbor_distance(),
+          query_node->Right()->Stat().max_neighbor_distance()));
 
     }
     else
@@ -341,49 +341,49 @@ class DualTreeBoruvka
       // Recurse on both.
       number_both_recursions_++;
 
-      double left_dist = query_node->left()->bound().MinDistance(
-          reference_node->left()->bound());
-      double right_dist = query_node->left()->bound().MinDistance(
-          reference_node->right()->bound());
+      double left_dist = query_node->Left()->Bound().MinDistance(
+          reference_node->Left()->Bound());
+      double right_dist = query_node->Left()->Bound().MinDistance(
+          reference_node->Right()->Bound());
 
       if (left_dist < right_dist)
       {
-        ComputeNeighborsRecursion_(query_node->left(), reference_node->left(),
+        ComputeNeighborsRecursion_(query_node->Left(), reference_node->Left(),
             left_dist);
-        ComputeNeighborsRecursion_(query_node->left(), reference_node->right(),
+        ComputeNeighborsRecursion_(query_node->Left(), reference_node->Right(),
             right_dist);
       }
       else
       {
-        ComputeNeighborsRecursion_(query_node->left(), reference_node->right(),
+        ComputeNeighborsRecursion_(query_node->Left(), reference_node->Right(),
             right_dist);
-        ComputeNeighborsRecursion_(query_node->left(), reference_node->left(),
+        ComputeNeighborsRecursion_(query_node->Left(), reference_node->Left(),
             left_dist);
       }
 
-      left_dist = query_node->right()->bound().MinDistance(
-          reference_node->left()->bound());
-      right_dist = query_node->right()->bound().MinDistance(
-          reference_node->right()->bound());
+      left_dist = query_node->Right()->Bound().MinDistance(
+          reference_node->Left()->Bound());
+      right_dist = query_node->Right()->Bound().MinDistance(
+          reference_node->Right()->Bound());
 
       if (left_dist < right_dist)
       {
-        ComputeNeighborsRecursion_(query_node->right(), reference_node->left(),
+        ComputeNeighborsRecursion_(query_node->Right(), reference_node->Left(),
             left_dist);
-        ComputeNeighborsRecursion_(query_node->right(), reference_node->right(),
+        ComputeNeighborsRecursion_(query_node->Right(), reference_node->Right(),
             right_dist);
       }
       else
       {
-        ComputeNeighborsRecursion_(query_node->right(), reference_node->right(),
+        ComputeNeighborsRecursion_(query_node->Right(), reference_node->Right(),
             right_dist);
-        ComputeNeighborsRecursion_(query_node->right(), reference_node->left(),
+        ComputeNeighborsRecursion_(query_node->Right(), reference_node->Left(),
             left_dist);
       }
 
-      query_node->stat().set_max_neighbor_distance(
-          std::max(query_node->left()->stat().max_neighbor_distance(),
-          query_node->right()->stat().max_neighbor_distance()));
+      query_node->Stat().set_max_neighbor_distance(
+          std::max(query_node->Left()->Stat().max_neighbor_distance(),
+          query_node->Right()->Stat().max_neighbor_distance()));
     }
   } // ComputeNeighborsRecursion_
 
@@ -465,35 +465,35 @@ class DualTreeBoruvka
    */
   void CleanupHelper_(DTBTree* tree)
   {
-    tree->stat().set_max_neighbor_distance(DBL_MAX);
+    tree->Stat().set_max_neighbor_distance(DBL_MAX);
 
-    if (!tree->is_leaf())
+    if (!tree->IsLeaf())
     {
-      CleanupHelper_(tree->left());
-      CleanupHelper_(tree->right());
+      CleanupHelper_(tree->Left());
+      CleanupHelper_(tree->Right());
 
-      if ((tree->left()->stat().component_membership() >= 0)
-          && (tree->left()->stat().component_membership() ==
-              tree->right()->stat().component_membership()))
+      if ((tree->Left()->Stat().component_membership() >= 0)
+          && (tree->Left()->Stat().component_membership() ==
+              tree->Right()->Stat().component_membership()))
       {
-        tree->stat().set_component_membership(tree->left()->stat().
+        tree->Stat().set_component_membership(tree->Left()->Stat().
             component_membership());
       }
     }
     else
     {
-      size_t new_membership = connections_.Find(tree->begin());
+      size_t new_membership = connections_.Find(tree->Begin());
 
-      for (size_t i = tree->begin(); i < tree->end(); i++)
+      for (size_t i = tree->Begin(); i < tree->End(); i++)
       {
         if (new_membership != connections_.Find(i))
         {
           new_membership = -1;
-          mlpack::Log::Assert(tree->stat().component_membership() < 0);
+          mlpack::Log::Assert(tree->Stat().component_membership() < 0);
           return;
         }
       }
-      tree->stat().set_component_membership(new_membership);
+      tree->Stat().set_component_membership(new_membership);
     }
   } // CleanupHelper_
 
