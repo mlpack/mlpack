@@ -107,7 +107,7 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
 {
   // Hopefully the vector is initialized correctly!  We can't check that
   // entirely but we can do a minor sanity check.
-  assert(old_from_new.size() == data.n_cols);
+  Log::Assert(old_from_new.size() == data.n_cols);
 
   // Perform the actual splitting.
   SplitNode(data, old_from_new);
@@ -129,7 +129,7 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
 {
   // Hopefully the vector is initialized correctly!  We can't check that
   // entirely but we can do a minor sanity check.
-  assert(old_from_new.size() == data.n_cols);
+  Log::Assert(old_from_new.size() == data.n_cols);
 
   // Perform the actual splitting.
   SplitNode(data, old_from_new);
@@ -188,10 +188,12 @@ BinarySpaceTree<Bound, Statistic>::FindByBeginCount(size_t begin_q,
     return this;
   else if (is_leaf())
     return NULL;
-  else if (begin_q < right_->begin_)
+  else if (begin_q < left_->end_)
     return left_->FindByBeginCount(begin_q, count_q);
-  else
+  else if (right_)
     return right_->FindByBeginCount(begin_q, count_q);
+  else
+    return NULL;
 }
 
 /**
@@ -216,10 +218,89 @@ BinarySpaceTree<Bound, Statistic>::FindByBeginCount(size_t begin_q,
     return this;
   else if (is_leaf())
     return NULL;
-  else if (begin_q < right_->begin_)
+  else if (begin_q < left_->end_)
     return left_->FindByBeginCount(begin_q, count_q);
-  else
+  else if (right_)
     return right_->FindByBeginCount(begin_q, count_q);
+  else
+    return NULL;
+}
+
+template<typename Bound, typename Statistic>
+size_t BinarySpaceTree<Bound, Statistic>::ExtendTree(size_t level)
+{
+  --level;
+  /* return the number of nodes duplicated */
+  size_t nodesDuplicated = 0;
+  if (level > 0)
+  {
+    if (!left_)
+    {
+      left_ = CopyMe();
+      ++nodesDuplicated;
+    }
+    nodesDuplicated += left_->ExtendTree(level);
+    if (right_)
+    {
+      nodesDuplicated += right_->ExtendTree(level);
+    }
+  }
+  return nodesDuplicated;
+}
+
+/* TODO: we can likely calculate this earlier, then store the
+ *   result in a private member variable; for now, we can
+ *   just calculate as needed...
+ *
+ *   Also, perhaps we should rewrite these recursive functions
+ *     to avoid exceeding the stack limit
+ */
+
+template<typename Bound, typename Statistic>
+size_t BinarySpaceTree<Bound, Statistic>::TreeSize() const
+{
+  size_t size = 1;
+  if (is_leaf())
+  {
+    return size;
+  }
+  else
+  {
+    size += this->left()->TreeSize();
+    if (right_)
+    {
+      size += this->right()->TreeSize();
+    }
+  }
+  return size;
+}
+
+template<typename Bound, typename Statistic>
+size_t BinarySpaceTree<Bound, Statistic>::TreeDepth() const
+{
+  size_t levels = 1;
+  if (is_leaf())
+  {
+    return levels;
+  }
+  else
+  {
+    size_t rightLevels = 0;
+    if (right_)
+    {
+      rightLevels = right_->TreeDepth();
+    }
+    size_t leftLevels = left_->TreeDepth();
+    if (leftLevels > rightLevels)
+    {
+      levels += leftLevels;
+    }
+    else
+    {
+      levels += rightLevels;
+    }
+  }
+  return levels;
 }
 
 template<typename Bound, typename Statistic>
@@ -300,14 +381,16 @@ inline size_t BinarySpaceTree<Bound, Statistic>::count() const
 }
 
 template<typename Bound, typename Statistic>
-void BinarySpaceTree<Bound, Statistic>::Print() const
-{
-  printf("node: %d to %d: %d points total\n", begin_, begin_ + count_ - 1,
-      count_);
+void BinarySpaceTree<Bound, Statistic>::Print() const {
+  printf("node: %d to %d: %d points total\n",
+      begin_, begin_ + count_ - 1, count_);
   if (!is_leaf())
   {
     left_->Print();
-    right_->Print();
+    if (right_)
+    {
+      right_->Print();
+    }
   }
 }
 
@@ -339,18 +422,16 @@ void BinarySpaceTree<Bound, Statistic>::SplitNode(arma::mat& data)
     }
   }
 
-  // Split in the middle of that dimension.
-  double split_val = bound_[split_dim].mid();
-
   if (max_width == 0) // All these points are the same.  We can't split.
     return;
 
-  // Perform the actual splitting.  This will order the dataset such that points
-  // with value in dimension split_dim less than or equal to split_val are on
-  // the left of split_col, and points with value in dimension split_dim greater
-  // than split_val are on the right side of split_col.
-  size_t split_col = GetSplitIndex(data, split_dim, split_val);
+  double split_value = bound_[split_dim].mid();
 
+  // Perform the actual splitting.  This will order the dataset such that points
+  // with value in dimension split_dim less than or equal to split_value are on
+  // the left of split_col, and points with value in dimension split_dim greater
+  // than split_value are on the right side of split_col.
+  size_t split_col = GetSplitIndex(data, split_dim, split_value);
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
   left_ = new BinarySpaceTree<Bound, Statistic>(data, begin_,
@@ -375,7 +456,7 @@ void BinarySpaceTree<Bound, Statistic>::SplitNode(
 
   // Figure out which dimension to split on.
   size_t split_dim = data.n_rows; // Indicate invalid by max_dim + 1.
-  double max_width = -1;
+  double max_width = -DBL_MAX;
 
   // Find the split dimension.
   for (size_t d = 0; d < data.n_rows; d++)
@@ -389,17 +470,19 @@ void BinarySpaceTree<Bound, Statistic>::SplitNode(
     }
   }
 
-  // Split in the middle of that dimension.
-  double split_val = bound_[split_dim].mid();
-
   if (max_width == 0) // All these points are the same.  We can't split.
     return;
 
+  // Split in the middle of that dimension.
+  size_t split_col = -1;
+  double split_value = -DBL_MAX;
+
+  split_value = bound_[split_dim].mid();
   // Perform the actual splitting.  This will order the dataset such that points
-  // with value in dimension split_dim less than or equal to split_val are on
+  // with value in dimension split_dim less than or equal to split_value are on
   // the left of split_col, and points with value in dimension split_dim greater
-  // than split_val are on the right side of split_col.
-  size_t split_col = GetSplitIndex(data, split_dim, split_val, old_from_new);
+  // than split_value are on the right side of split_col.
+  split_col = GetSplitIndex(data, split_dim, split_value, old_from_new);
 
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
@@ -448,7 +531,7 @@ size_t BinarySpaceTree<Bound, Statistic>::GetSplitIndex(
       right--;
   }
 
-  assert(left == right + 1);
+  Log::Assert(left == right + 1);
 
   return left;
 }
@@ -498,7 +581,7 @@ size_t BinarySpaceTree<Bound, Statistic>::GetSplitIndex(
       right--;
   }
 
-  assert(left == right + 1);
+  Log::Assert(left == right + 1);
 
   return left;
 }

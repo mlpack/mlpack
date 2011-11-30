@@ -36,48 +36,48 @@ class SaveRestoreUtility
   /**
    * RecurseOnNodes performs a depth first search of the XML tree.
    */
-  void RecurseOnNodes (xmlNode* n);
+  void RecurseOnNodes(xmlNode* n);
  public:
   SaveRestoreUtility() {}
   ~SaveRestoreUtility() { parameters.clear(); }
   /**
    * ReadFile reads an XML tree from a file.
    */
-  bool ReadFile (std::string filename);
+  bool ReadFile(std::string filename);
   /**
    * WriteFile writes the XML tree to a file.
    */
-  bool WriteFile (std::string filename);
+  bool WriteFile(std::string filename);
   /**
    * LoadParameter loads a parameter from the parameters map.
    */
   template<typename T>
-  T& LoadParameter (T& t, std::string name);
+  T& LoadParameter(T& t, std::string name);
   /**
    * LoadParameter loads a character from the parameters map.
    */
-  char LoadParameter (char c, std::string name);
+  char LoadParameter(char c, std::string name);
   /**
    * LoadParameter loads a string from the parameters map.
    */
-  std::string LoadParameter (std::string str, std::string name);
+  std::string LoadParameter(std::string str, std::string name);
   /**
    * LoadParameter loads an arma::mat from the parameters map.
    */
-  arma::mat& LoadParameter (arma::mat& matrix, std::string name);
+  arma::mat& LoadParameter(arma::mat& matrix, std::string name);
   /**
    * SaveParameter saves a parameter to the parameters map.
    */
   template<typename T>
-  void SaveParameter (T& t, std::string name);
+  void SaveParameter(T& t, std::string name);
   /**
    * SaveParameter saves a character to the parameters map.
    */
-  void SaveParameter (char c, std::string name);
+  void SaveParameter(char c, std::string name);
   /**
    * SaveParameter saves an arma::mat to the parameters map.
    */
-  void SaveParameter (arma::mat& mat, std::string name);
+  void SaveParameter(arma::mat& mat, std::string name);
 };
 } /* namespace model */
 } /* namespace mlpack */

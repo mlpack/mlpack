@@ -4,7 +4,8 @@
  *
  * Implementation of the Log class.
  */
-#include <iostream>
+#include <cxxabi.h>
+#include <execinfo.h>
 
 #include "log.hpp"
 
@@ -41,7 +42,71 @@ void Log::Assert(bool condition, const char* message)
 {
   if(!condition)
   {
+    void* array[25];
+    size_t size = backtrace (array, sizeof(array)/sizeof(void*));
+    char** messages = backtrace_symbols(array, size);
+
+    // skip first stack frame (points here)
+    for (size_t i = 1; i < size && messages != NULL; ++i)
+    {
+      char *mangled_name = 0, *offset_begin = 0, *offset_end = 0;
+
+      // find parantheses and +address offset surrounding mangled name
+      for (char *p = messages[i]; *p; ++p)
+      {
+        if (*p == '(')
+        {
+          mangled_name = p;
+        }
+        else if (*p == '+')
+        {
+          offset_begin = p;
+        }
+        else if (*p == ')')
+        {
+          offset_end = p;
+          break;
+        }
+      }
+
+      // if the line could be processed, attempt to demangle the symbol
+      if (mangled_name && offset_begin && offset_end &&
+          mangled_name < offset_begin)
+      {
+        *mangled_name++ = '\0';
+        *offset_begin++ = '\0';
+        *offset_end++ = '\0';
+
+        int status;
+        char* real_name = abi::__cxa_demangle(mangled_name, 0, 0, &status);
+
+        // if demangling is successful, output the demangled function name
+        if (status == 0)
+        {
+          Log::Debug << "[bt]: (" << i << ") " << messages[i] << " : "
+                    << real_name << "+" << offset_begin << offset_end
+                    << std::endl;
+
+        }
+        // otherwise, output the mangled function name
+        else
+        {
+          Log::Debug << "[bt]: (" << i << ") " << messages[i] << " : "
+                    << mangled_name << "+" << offset_begin << offset_end
+                    << std::endl;
+        }
+        free(real_name);
+      }
+      // otherwise, print the whole line
+      else
+      {
+          Log::Debug << "[bt]: (" << i << ") " << messages[i] << std::endl;
+      }
+    }
     Log::Debug << message << std::endl;
+    free(messages);
+
+    //backtrace_symbols_fd (array, size, 2);
     exit(1);
   }
 }

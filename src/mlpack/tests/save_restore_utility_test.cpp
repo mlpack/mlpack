@@ -27,24 +27,24 @@ class SaveRestoreTest
     saveRestore = SaveRestoreUtility();
   }
 
-  bool SaveModel (std::string filename)
+  bool SaveModel(std::string filename)
   {
-    saveRestore.SaveParameter (anInt, "anInt");
-    return saveRestore.WriteFile (filename);
+    saveRestore.SaveParameter(anInt, "anInt");
+    return saveRestore.WriteFile(filename);
   }
 
-  bool LoadModel (std::string filename)
+  bool LoadModel(std::string filename)
   {
-    bool success = saveRestore.ReadFile (filename);
+    bool success = saveRestore.ReadFile(filename);
     if (success)
     {
-      anInt = saveRestore.LoadParameter (anInt, "anInt");
+      anInt = saveRestore.LoadParameter(anInt, "anInt");
     }
     return success;
   }
 
-  const size_t AnInt () { return anInt; }
-  void AnInt (size_t s) { this->anInt = s; }
+  const size_t AnInt() { return anInt; }
+  void AnInt(size_t s) { this->anInt = s; }
 };
 
 /**

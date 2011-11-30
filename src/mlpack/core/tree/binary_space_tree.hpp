@@ -214,6 +214,9 @@ class BinarySpaceTree
   //! Return whether or not this node is a leaf (true if it has no children).
   bool is_leaf() const;
 
+  //! Fills the tree to the specified level
+  size_t ExtendTree(size_t level);
+
   /**
    * Gets the left child of this node.
    */
@@ -223,6 +226,17 @@ class BinarySpaceTree
    * Gets the right child of this node.
    */
   BinarySpaceTree *right() const;
+
+  /**
+   * Obtains the number of nodes in the tree, starting with this
+   * */
+  size_t TreeSize() const;
+
+  /**
+   * Obtains the number of levels below this node in the tree, starting with
+   *   this
+   * */
+  size_t TreeDepth() const;
 
   /**
    * Gets the index of the beginning point of this subset.
@@ -242,6 +256,18 @@ class BinarySpaceTree
   void Print() const;
 
  private:
+  /* hidden copy constructor, available only to fill (pad) the tree to a specified level */
+  BinarySpaceTree(size_t begin, size_t count, Bound bound, Statistic stat) :
+    left_(NULL),
+    right_(NULL),
+    begin_(begin),
+    count_(count),
+    bound_(bound),
+    stat_(stat) {}
+  BinarySpaceTree* CopyMe()
+  {
+     return new BinarySpaceTree(begin_,count_,bound_,stat_);
+  }
   /**
    * Splits the current node, assigning its left and right children recursively.
    *

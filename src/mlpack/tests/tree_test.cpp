@@ -150,6 +150,12 @@ BOOST_AUTO_TEST_CASE(HRectBoundMinDistancePoint)
   // This will be the Euclidean squared distance.
   BOOST_REQUIRE_CLOSE(b.MinDistance(point), 95.0, 1e-5);
 
+  // test our filtering condition
+  size_t ind[] = {1,3};
+  std::vector<size_t> indices (ind, ind + sizeof (ind) / sizeof (size_t));
+
+  BOOST_REQUIRE_CLOSE(b.MinDistance(point, indices), 26.0, 1e-5);
+
   point = "2.0 5.0 2.0 -5.0 1.0";
 
   BOOST_REQUIRE_SMALL(b.MinDistance(point), 1e-5);
@@ -157,6 +163,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundMinDistancePoint)
   point = "1.0 2.0 0.0 -2.0 1.5";
 
   BOOST_REQUIRE_SMALL(b.MinDistance(point), 1e-5);
+
 }
 
 /**
@@ -189,6 +196,12 @@ BOOST_AUTO_TEST_CASE(HRectBoundMinDistanceBound)
 
   BOOST_REQUIRE_CLOSE(b.MinDistance(c), 22.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c.MinDistance(b), 22.0, 1e-5);
+
+  // test our filtering condition
+  size_t ind[] = {1,3};
+  std::vector<size_t> indices (ind, ind + sizeof (ind) / sizeof (size_t));
+
+  BOOST_REQUIRE_CLOSE(b.MinDistance(c, indices), 17.0, 1e-5);
 
   // The other bound is on the edge of the bound.
   c[0] = Range(-2.0, 0.0);
@@ -250,6 +263,12 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistancePoint)
 
   arma::vec point = "-2.0 0.0 10.0 3.0 3.0";
 
+  // test our filtering condition
+  size_t ind[] = {1,3};
+  std::vector<size_t> indices (ind, ind + sizeof (ind) / sizeof (size_t));
+
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(point, indices), 89.0, 1e-5);
+
   // This will be the Euclidean squared distance.
   BOOST_REQUIRE_CLOSE(b.MaxDistance(point), 253.0, 1e-5);
 
@@ -292,6 +311,12 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistanceBound)
 
   BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 210.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c.MaxDistance(b), 210.0, 1e-5);
+
+  // test our filtering condition
+  size_t ind[] = {1,3};
+  std::vector<size_t> indices (ind, ind + sizeof (ind) / sizeof (size_t));
+
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(c, indices), 136.0, 1e-5);
 
   // The other bound is on the edge of the bound.
   c[0] = Range(-2.0, 0.0);
@@ -1005,6 +1030,20 @@ BOOST_AUTO_TEST_CASE(kd_tree_test)
       depth *= 2;
     }
   }
+
+  arma::mat dataset = arma::mat(25, 1000);
+  for (size_t col = 0; col < dataset.n_cols; ++col)
+  {
+    for (size_t row = 0; row < dataset.n_rows; ++row)
+    {
+      dataset(row, col) = row + col;
+    }
+  }
+  TreeType root(dataset);
+  // check the tree size
+  BOOST_REQUIRE_EQUAL(root.TreeSize(), 127);
+  // check the tree depth
+  BOOST_REQUIRE_EQUAL(root.TreeDepth(), 7);
 
   // Reset it to the default value at the end of the test.
   CLI::GetParam<int>("tree/leaf_size") = 20;

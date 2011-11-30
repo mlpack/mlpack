@@ -155,7 +155,7 @@ double PeriodicHRectBound<t_pow>::MinDistance(
 {
   double sum = 0;
 
-  mlpack::Log::Assert(dim_ == other.dim_);
+  Log::Assert(dim_ == other.dim_);
 
   for (size_t d = 0; d < dim_; d++){
     double v = 0, d1, d2, d3;
@@ -225,7 +225,7 @@ double PeriodicHRectBound<t_pow>::MaxDistance(
 {
   double sum = 0;
 
-  mlpack::Log::Assert(dim_ == other.dim_);
+  Log::Assert(dim_ == other.dim_);
 
   for (size_t d = 0; d < dim_; d++)
   {
@@ -254,7 +254,7 @@ math::Range PeriodicHRectBound<t_pow>::RangeDistance(
   double sum_lo = 0;
   double sum_hi = 0;
 
-  mlpack::Log::Assert(point.n_elem == dim_);
+  Log::Assert(point.n_elem == dim_);
 
   double v1, v2, v_lo, v_hi;
   for (size_t d = 0; d < dim_; d++)
@@ -291,7 +291,7 @@ math::Range PeriodicHRectBound<t_pow>::RangeDistance(
   double sum_lo = 0;
   double sum_hi = 0;
 
-  mlpack::Log::Assert(dim_ == other.dim_);
+  Log::Assert(dim_ == other.dim_);
 
   double v1, v2, v_lo, v_hi;
   for (size_t d = 0; d < dim_; d++)
@@ -325,7 +325,7 @@ template<int t_pow>
 PeriodicHRectBound<t_pow>& PeriodicHRectBound<t_pow>::operator|=(
     const arma::vec& vector)
 {
-  assert(vector.n_elem == dim_);
+  Log::Assert(vector.n_elem == dim_);
 
   for (size_t i = 0; i < dim_; i++)
     bounds_[i] |= vector[i];
@@ -340,7 +340,7 @@ template<int t_pow>
 PeriodicHRectBound<t_pow>& PeriodicHRectBound<t_pow>::operator|=(
     const PeriodicHRectBound& other)
 {
-  assert(other.dim_ == dim_);
+  Log::Assert(other.dim_ == dim_);
 
   for (size_t i = 0; i < dim_; i++)
     bounds_[i] |= other.bounds_[i];

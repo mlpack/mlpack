@@ -74,6 +74,11 @@ class HRectBound
    * Calculates minimum bound-to-point squared distance.
    */
   double MinDistance(const arma::vec& point) const;
+  /**
+   * Calculates minimum bound-to-point squared distance.
+   */
+  double MinDistance(const arma::vec& point,
+                     const std::vector<size_t>& indices) const;
 
   /**
    * Calculates minimum bound-to-bound squared distance.
@@ -81,16 +86,33 @@ class HRectBound
    * Example: bound1.MinDistanceSq(other) for minimum squared distance.
    */
   double MinDistance(const HRectBound& other) const;
+  /**
+   * Calculates minimum bound-to-bound squared distance.
+   *
+   * Example: bound1.MinDistanceSq(other) for minimum squared distance.
+   */
+  double MinDistance(const HRectBound& other,
+                     const std::vector<size_t>& indices) const;
 
   /**
    * Calculates maximum bound-to-point squared distance.
    */
   double MaxDistance(const arma::vec& point) const;
+  /**
+   * Computes maximum distance.
+   */
+  double MaxDistance(const arma::vec& point,
+                     const std::vector<size_t>& indices) const;
 
   /**
    * Computes maximum distance.
    */
   double MaxDistance(const HRectBound& other) const;
+  /**
+   * Computes maximum distance.
+   */
+  double MaxDistance(const HRectBound& other,
+                     const std::vector<size_t>& indices) const;
 
   /**
    * Calculates minimum and maximum bound-to-bound squared distance.

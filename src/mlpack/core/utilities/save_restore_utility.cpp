@@ -12,70 +12,70 @@
 using namespace mlpack;
 using namespace utilities;
 
-bool SaveRestoreUtility::ReadFile (std::string filename)
+bool SaveRestoreUtility::ReadFile(std::string filename)
 {
   xmlDocPtr xmlDocTree = NULL;
-  if (NULL == (xmlDocTree = xmlReadFile (filename.c_str(), NULL, 0)))
+  if (NULL == (xmlDocTree = xmlReadFile(filename.c_str(), NULL, 0)))
   {
-    errx (1, "Clearly, we couldn't load the XML file\n");
+    Log::Fatal << "Clearly, we couldn't load the XML file\n";
   }
-  xmlNodePtr root = xmlDocGetRootElement (xmlDocTree);
+  xmlNodePtr root = xmlDocGetRootElement(xmlDocTree);
   parameters.clear();
 
-  RecurseOnNodes (root->children);
-  xmlFreeDoc (xmlDocTree);
+  RecurseOnNodes(root->children);
+  xmlFreeDoc(xmlDocTree);
   return true;
 }
-void SaveRestoreUtility::RecurseOnNodes (xmlNode* n)
+void SaveRestoreUtility::RecurseOnNodes(xmlNode* n)
 {
   xmlNodePtr current = NULL;
   for (current = n; current; current = current->next)
   {
     if (current->type == XML_ELEMENT_NODE)
     {
-      xmlChar* content = xmlNodeGetContent (current);
+      xmlChar* content = xmlNodeGetContent(current);
       parameters[(const char*) current->name] = (const char*) content;
-      xmlFree (content);
+      xmlFree(content);
     }
-    RecurseOnNodes (current->children);
+    RecurseOnNodes(current->children);
   }
 }
-bool SaveRestoreUtility::WriteFile (std::string filename)
+bool SaveRestoreUtility::WriteFile(std::string filename)
 {
   bool success = false;
-  xmlDocPtr xmlDocTree = xmlNewDoc (BAD_CAST "1.0");
+  xmlDocPtr xmlDocTree = xmlNewDoc(BAD_CAST "1.0");
   xmlNodePtr root = xmlNewNode(NULL, BAD_CAST "root");
   xmlNodePtr child = NULL;
 
-  xmlDocSetRootElement (xmlDocTree, root);
+  xmlDocSetRootElement(xmlDocTree, root);
 
   for (std::map<std::string, std::string>::iterator it = parameters.begin();
        it != parameters.end();
        ++it)
   {
-    child = xmlNewChild (root, NULL,
-                         BAD_CAST (*it).first.c_str(),
-                         BAD_CAST (*it).second.c_str());
+    child = xmlNewChild(root, NULL,
+                        BAD_CAST(*it).first.c_str(),
+                        BAD_CAST(*it).second.c_str());
     /* TODO: perhaps we'll add more later?
-     * xmlNewProp (child, BAD_CAST "attr", BAD_CAST "add more addibutes?"); */
+     * xmlNewProp(child, BAD_CAST "attr", BAD_CAST "add more addibutes?"); */
   }
   /* save the file */
-  xmlSaveFormatFileEnc (filename.c_str(), xmlDocTree, "UTF-8", 1);
-  xmlFreeDoc (xmlDocTree);
+  xmlSaveFormatFileEnc(filename.c_str(), xmlDocTree, "UTF-8", 1);
+  xmlFreeDoc(xmlDocTree);
   return success;
 }
-arma::mat& SaveRestoreUtility::LoadParameter (arma::mat& matrix, std::string name)
+arma::mat& SaveRestoreUtility::LoadParameter(arma::mat& matrix, std::string name)
 {
-  std::map<std::string, std::string>::iterator it = parameters.find (name);
-  if (it != parameters.end ())
+  std::map<std::string, std::string>::iterator it = parameters.find(name);
+  if (it != parameters.end())
   {
     std::string value = (*it).second;
     boost::char_separator<char> sep ("\n");
     boost::tokenizer<boost::char_separator<char> > tok (value, sep);
     std::list<std::list<double> > rows;
     for (boost::tokenizer<boost::char_separator<char> >::iterator
-           tokIt = tok.begin ();
-         tokIt != tok.end ();
+           tokIt = tok.begin();
+         tokIt != tok.end();
          ++tokIt)
     {
       std::string row = *tokIt;
@@ -84,28 +84,28 @@ arma::mat& SaveRestoreUtility::LoadParameter (arma::mat& matrix, std::string nam
         tokInner (row, sepComma);
       std::list<double> rowList;
       for (boost::tokenizer<boost::char_separator<char> >::iterator
-             tokInnerIt = tokInner.begin ();
-             tokInnerIt != tokInner.end ();
+             tokInnerIt = tokInner.begin();
+             tokInnerIt != tokInner.end();
              ++tokInnerIt)
       {
         double element;
         std::istringstream iss (*tokInnerIt);
         iss >> element;
-        rowList.push_back (element);
+        rowList.push_back(element);
       }
-      rows.push_back (rowList);
+      rows.push_back(rowList);
     }
-    matrix.zeros (rows.size (), (*(rows.begin ())).size ());
+    matrix.zeros(rows.size(), (*(rows.begin())).size());
     size_t rowCounter = 0;
     size_t columnCounter = 0;
-    for (std::list<std::list<double> >::iterator rowIt = rows.begin ();
-         rowIt != rows.end ();
+    for (std::list<std::list<double> >::iterator rowIt = rows.begin();
+         rowIt != rows.end();
          ++rowIt)
     {
       std::list<double> row = *rowIt;
       columnCounter = 0;
-      for (std::list<double>::iterator elementIt = row.begin ();
-           elementIt != row.end ();
+      for (std::list<double>::iterator elementIt = row.begin();
+           elementIt != row.end();
            ++elementIt)
       {
         matrix(rowCounter, columnCounter) = *elementIt;
@@ -117,26 +117,28 @@ arma::mat& SaveRestoreUtility::LoadParameter (arma::mat& matrix, std::string nam
   }
   else
   {
-    errx (1, "Missing the correct name\n");
+    Log::Fatal << "Missing the correct name\n";
   }
+  return matrix;
 }
-std::string SaveRestoreUtility::LoadParameter (std::string str, std::string name)
+std::string SaveRestoreUtility::LoadParameter(std::string str, std::string name)
 {
-  std::map<std::string, std::string>::iterator it = parameters.find (name);
-  if (it != parameters.end ())
+  std::map<std::string, std::string>::iterator it = parameters.find(name);
+  if (it != parameters.end())
   {
     return (*it).second;
   }
   else
   {
-    errx (1, "Missing the correct name\n");
+    Log::Fatal << "Missing the correct name\n";
   }
+  return "";
 }
-char SaveRestoreUtility::LoadParameter (char c, std::string name)
+char SaveRestoreUtility::LoadParameter(char c, std::string name)
 {
   int temp;
-  std::map<std::string, std::string>::iterator it = parameters.find (name);
-  if (it != parameters.end ())
+  std::map<std::string, std::string>::iterator it = parameters.find(name);
+  if (it != parameters.end())
   {
     std::string value = (*it).second;
     std::istringstream input (value);
@@ -145,17 +147,18 @@ char SaveRestoreUtility::LoadParameter (char c, std::string name)
   }
   else
   {
-    errx (1, "Missing the correct name\n");
+    Log::Fatal << "Missing the correct name\n";
   }
+  return 0;
 }
-void SaveRestoreUtility::SaveParameter (char c, std::string name)
+void SaveRestoreUtility::SaveParameter(char c, std::string name)
 {
   int temp = (int) c;
   std::ostringstream output;
   output << temp;
   parameters[name] = output.str();
 }
-void SaveRestoreUtility::SaveParameter (arma::mat& mat, std::string name)
+void SaveRestoreUtility::SaveParameter(arma::mat& mat, std::string name)
 {
   std::ostringstream output;
   size_t columns = mat.n_cols;
