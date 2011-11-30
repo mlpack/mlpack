@@ -35,7 +35,7 @@ class HRectBound
    * Initializes to specified dimensionality with each dimension the empty
    * set.
    */
-  HRectBound(size_t dimension);
+  HRectBound(const size_t dimension);
 
   /***
    * Copy constructor; necessary to prevent memory leaks.
@@ -55,13 +55,13 @@ class HRectBound
   void Clear();
 
   /** Gets the dimensionality */
-  size_t dim() const { return dim_; }
+  size_t Dim() const { return dim; }
 
   /**
    * Sets and gets the range for a particular dimension.
    */
-  math::Range& operator[](size_t i);
-  const math::Range operator[](size_t i) const;
+  math::Range& operator[](const size_t i);
+  const math::Range& operator[](const size_t i) const;
 
   /**
    * Calculates the centroid of the range, placing it into the given vector.
@@ -140,8 +140,8 @@ class HRectBound
   bool Contains(const arma::vec& point) const;
 
  private:
-  size_t dim_;
-  math::Range *bounds_;
+  size_t dim;
+  math::Range* bounds;
 };
 
 }; // namespace bound
