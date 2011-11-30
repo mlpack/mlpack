@@ -98,40 +98,40 @@ BOOST_AUTO_TEST_CASE(nns_node_to_node_distance)
   arma::vec utility(1);
   utility[0] = 0;
 
-  node_one.bound() = HRectBound<2>(1);
-  node_one.bound() |= utility;
+  node_one.Bound() = HRectBound<2>(1);
+  node_one.Bound() |= utility;
   utility[0] = 1;
-  node_one.bound() |= utility;
+  node_one.Bound() |= utility;
 
   tree::BinarySpaceTree<HRectBound<2>, arma::mat> node_two;
-  node_two.bound() = HRectBound<2>(1);
+  node_two.Bound() = HRectBound<2>(1);
 
   utility[0] = 5;
-  node_two.bound() |= utility;
+  node_two.Bound() |= utility;
   utility[0] = 6;
-  node_two.bound() |= utility;
+  node_two.Bound() |= utility;
 
   // This should use the L2 squared distance.
   BOOST_REQUIRE_CLOSE(NearestNeighborSort::BestNodeToNodeDistance(&node_one,
       &node_two), 16.0, 1e-5);
 
   // And another just to be sure, from the other side.
-  node_two.bound().Clear();
+  node_two.Bound().Clear();
   utility[0] = -2;
-  node_two.bound() |= utility;
+  node_two.Bound() |= utility;
   utility[0] = -1;
-  node_two.bound() |= utility;
+  node_two.Bound() |= utility;
 
   // Again, the distance is the L2 squared distance.
   BOOST_REQUIRE_CLOSE(NearestNeighborSort::BestNodeToNodeDistance(&node_one,
       &node_two), 1.0, 1e-5);
 
   // Now, when the bounds overlap.
-  node_two.bound().Clear();
+  node_two.Bound().Clear();
   utility[0] = -0.5;
-  node_two.bound() |= utility;
+  node_two.Bound() |= utility;
   utility[0] = 0.5;
-  node_two.bound() |= utility;
+  node_two.Bound() |= utility;
 
   BOOST_REQUIRE_CLOSE(NearestNeighborSort::BestNodeToNodeDistance(&node_one,
       &node_two), 0.0, 1e-5);
@@ -149,10 +149,10 @@ BOOST_AUTO_TEST_CASE(nns_point_to_node_distance)
   utility[0] = 0;
 
   tree::BinarySpaceTree<HRectBound<2>, arma::mat> node;
-  node.bound() = HRectBound<2>(1);
-  node.bound() |= utility;
+  node.Bound() = HRectBound<2>(1);
+  node.Bound() |= utility;
   utility[0] = 1;
-  node.bound() |= utility;
+  node.Bound() |= utility;
 
   arma::vec point(1);
   point[0] = -0.5;
@@ -252,39 +252,39 @@ BOOST_AUTO_TEST_CASE(fns_node_to_node_distance)
   utility[0] = 0;
 
   tree::BinarySpaceTree<HRectBound<2>, arma::mat> node_one;
-  node_one.bound() = HRectBound<2>(1);
-  node_one.bound() |= utility;
+  node_one.Bound() = HRectBound<2>(1);
+  node_one.Bound() |= utility;
   utility[0] = 1;
-  node_one.bound() |= utility;
+  node_one.Bound() |= utility;
 
   tree::BinarySpaceTree<HRectBound<2>, arma::mat> node_two;
-  node_two.bound() = HRectBound<2>(1);
+  node_two.Bound() = HRectBound<2>(1);
   utility[0] = 5;
-  node_two.bound() |= utility;
+  node_two.Bound() |= utility;
   utility[0] = 6;
-  node_two.bound() |= utility;
+  node_two.Bound() |= utility;
 
   // This should use the L2 squared distance.
   BOOST_REQUIRE_CLOSE(FurthestNeighborSort::BestNodeToNodeDistance(&node_one,
       &node_two), 36.0, 1e-5);
 
   // And another just to be sure, from the other side.
-  node_two.bound().Clear();
+  node_two.Bound().Clear();
   utility[0] = -2;
-  node_two.bound() |= utility;
+  node_two.Bound() |= utility;
   utility[0] = -1;
-  node_two.bound() |= utility;
+  node_two.Bound() |= utility;
 
   // Again, the distance is the L2 squared distance.
   BOOST_REQUIRE_CLOSE(FurthestNeighborSort::BestNodeToNodeDistance(&node_one,
       &node_two), 9.0, 1e-5);
 
   // Now, when the bounds overlap.
-  node_two.bound().Clear();
+  node_two.Bound().Clear();
   utility[0] = -0.5;
-  node_two.bound() |= utility;
+  node_two.Bound() |= utility;
   utility[0] = 0.5;
-  node_two.bound() |= utility;
+  node_two.Bound() |= utility;
 
   BOOST_REQUIRE_CLOSE(FurthestNeighborSort::BestNodeToNodeDistance(&node_one,
       &node_two), (1.5 * 1.5), 1e-5);
@@ -302,10 +302,10 @@ BOOST_AUTO_TEST_CASE(fns_point_to_node_distance)
   utility[0] = 0;
 
   tree::BinarySpaceTree<HRectBound<2>, arma::mat> node;
-  node.bound() = HRectBound<2>(1);
-  node.bound() |= utility;
+  node.Bound() = HRectBound<2>(1);
+  node.Bound() |= utility;
   utility[0] = 1;
-  node.bound() |= utility;
+  node.Bound() |= utility;
 
   arma::vec point(1);
   point[0] = -0.5;

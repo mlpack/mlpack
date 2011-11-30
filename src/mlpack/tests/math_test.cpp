@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(RangePointConstructor)
   Range x(10.0);
 
   BOOST_REQUIRE_CLOSE(x.lo, x.hi, 1e-25);
-  BOOST_REQUIRE_SMALL(x.width(), 1e-5);
+  BOOST_REQUIRE_SMALL(x.Width(), 1e-5);
   BOOST_REQUIRE_CLOSE(x.lo, 10.0, 1e-25);
   BOOST_REQUIRE_CLOSE(x.hi, 10.0, 1e-25);
 }
@@ -56,23 +56,23 @@ BOOST_AUTO_TEST_CASE(RangeWidth)
 {
   Range x(0.0, 10.0);
 
-  BOOST_REQUIRE_CLOSE(x.width(), 10.0, 1e-20);
+  BOOST_REQUIRE_CLOSE(x.Width(), 10.0, 1e-20);
 
   // Make it empty.
   x.hi = 0.0;
 
-  BOOST_REQUIRE_SMALL(x.width(), 1e-5);
+  BOOST_REQUIRE_SMALL(x.Width(), 1e-5);
 
   // Make it negative.
   x.hi = -2.0;
 
-  BOOST_REQUIRE_SMALL(x.width(), 1e-5);
+  BOOST_REQUIRE_SMALL(x.Width(), 1e-5);
 
   // Just one more test.
   x.lo = -5.2;
   x.hi = 5.2;
 
-  BOOST_REQUIRE_CLOSE(x.width(), 10.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(x.Width(), 10.4, 1e-5);
 }
 
 /**
@@ -82,11 +82,11 @@ BOOST_AUTO_TEST_CASE(RangeMidpoint)
 {
   Range x(0.0, 10.0);
 
-  BOOST_REQUIRE_CLOSE(x.mid(), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(x.Mid(), 5.0, 1e-5);
 
   x.lo = -5.0;
 
-  BOOST_REQUIRE_CLOSE(x.mid(), 2.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(x.Mid(), 2.5, 1e-5);
 }
 
 /**
@@ -182,16 +182,16 @@ BOOST_AUTO_TEST_CASE(RangeIntersectOther)
   z &= y;
   w = x & y;
 
-  BOOST_REQUIRE_SMALL(z.width(), 1e-5);
-  BOOST_REQUIRE_SMALL(w.width(), 1e-5);
+  BOOST_REQUIRE_SMALL(z.Width(), 1e-5);
+  BOOST_REQUIRE_SMALL(w.Width(), 1e-5);
 
   // Reverse operator precedence.
   z = y;
   z &= x;
   w = y & x;
 
-  BOOST_REQUIRE_SMALL(z.width(), 1e-5);
-  BOOST_REQUIRE_SMALL(w.width(), 1e-5);
+  BOOST_REQUIRE_SMALL(z.Width(), 1e-5);
+  BOOST_REQUIRE_SMALL(w.Width(), 1e-5);
 
   // Now make them overlapping.
   x = Range(0.0, 3.5);
