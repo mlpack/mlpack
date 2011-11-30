@@ -81,7 +81,7 @@ void SoftmaxErrorFunction<Kernel>::Gradient(const arma::mat& coordinates,
 }
 
 template<typename Kernel>
-arma::mat SoftmaxErrorFunction<Kernel>::GetInitialPoint()
+const arma::mat SoftmaxErrorFunction<Kernel>::GetInitialPoint() const
 {
   return arma::eye<arma::mat>(dataset_.n_rows, dataset_.n_rows);
 }
