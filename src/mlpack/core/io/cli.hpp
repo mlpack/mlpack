@@ -18,7 +18,6 @@
 #include <boost/program_options.hpp>
 
 #include "cli_deleter.hpp" // To make sure we can delete the singleton.
-#include "optionshierarchy.hpp"
 
 /**
  * Document an executable and set a default module.  Only one
@@ -406,6 +405,22 @@ class ProgramDoc;
 }; // namespace io
 
 /**
+ * Aids in the extensibility of OptionsHierarchy by focusing the potential
+ * changes into one structure.
+ */
+struct ParamData
+{
+  //! Name of this parameter.
+  std::string name;
+  //! Description of this parameter, if any.
+  std::string desc;
+  //! Type information of this parameter.
+  std::string tname;
+  //! The actual value of this parameter.
+  boost::any value;
+};
+
+/**
  * @brief Parses the command line for parameters and holds user-specified
  *     parameters.
  *
@@ -601,16 +616,6 @@ class CLI
   static void DefaultMessages();
 
   /**
-   * Takes all nodes at or below the specified module and returns a list of
-   * their pathnames.
-   *
-   * @param folder The module to start gathering nodes at.
-   *
-   * @return A list of pathnames to everything at or below folder.
-   */
-  static std::vector<std::string> GetFolder(const char* folder);
-
-  /**
    * Grab the value of type T found while parsing.  You can set the value using
    * this reference safely.
    *
@@ -703,9 +708,6 @@ class CLI
   //! The documentation and names of options.
   po::options_description desc;
 
-  //! Stores a relative index of path names.
-  io::OptionsHierarchy hierarchy;
-
   //! Values of the options given by user.
   po::variables_map vmap;
 
@@ -714,7 +716,8 @@ class CLI
 
   //! Map of global values; stored here instead of in OptionsHierarchy for ease
   //! of implementation.
-  std::map<std::string, boost::any> globalValues;
+  typedef std::map<std::string, ParamData> gmap_t;
+  gmap_t globalValues;
 
   //! The singleton itself.
   static CLI* singleton;
@@ -740,31 +743,6 @@ class CLI
    * @return The singleton instance for use in the static methods.
    */
   static CLI& GetSingleton();
-
-  /**
-   * Properly formats strings such that there aren't too few or too many '/'s.
-   *
-   * @param id The name of the parameter, eg bar in foo/bar.
-   * @param parent The full name of the parameter's parent,
-   *   eg foo/bar in foo/bar/buzz.
-   * @param tname String identifier of the parameter's type.
-   * @param description String description of the parameter.
-   */
-  std::string ManageHierarchy(const char* id,
-                              const char* parent,
-                              std::string& tname,
-                              const char* desc = "");
-
-  /**
-   * Add a parameter to the hierarchy.  We assume the string has already been
-   * sanity-checked.
-   *
-   * @param path Full pathname of the parameter (parent/parameter).
-   * @param tname String identifier of the parameter's type (TYPENAME(T)).
-   * @param desc String description of the parameter (optional).
-   */
-  void AddToHierarchy(std::string& path, std::string& tname,
-                      const char* desc = "");
 
 #ifdef _WIN32
   /**
