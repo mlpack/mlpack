@@ -32,9 +32,6 @@ SimpleNaiveBayesClassifier::SimpleNaiveBayesClassifier(const arma::mat& data)
   Log::Info << number_examples << " examples with " << number_features
       << " features each" << std::endl;
 
-  CLI::GetParam<int>("nbc/features") = number_features;
-  CLI::GetParam<int>("nbc/examples") = number_examples;
-
   // Calculate the class probabilities as well as the sample mean and variance
   // for each of the features with respect to each of the labels.
   for (size_t i = 0; i < number_of_classes_; i++ )
@@ -89,7 +86,6 @@ void SimpleNaiveBayesClassifier::Classify(const arma::mat& test_data,
   Log::Info << test_data.n_cols << " test cases with " << number_features
       << " features each" << std::endl;
 
-  CLI::GetParam<int>("nbc/tests") = test_data.n_cols;
   // Calculate the joint probability for each of the data points for each of the
   // classes.
 
