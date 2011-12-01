@@ -25,8 +25,9 @@ BOOST_AUTO_TEST_CASE(SimpleNBCTest)
   data::Load(filename_train_, train_data, true);
   data::Load(train_result_, train_res, true);
 
-  CLI::GetParam<int>("nbc/classes") = number_of_classes_;
-  SimpleNaiveBayesClassifier nbc_test_(train_data);
+  //Does not actually grab number_of_classes from the command line, as this
+  //is a boost unit test.
+  SimpleNaiveBayesClassifier nbc_test_(train_data, number_of_classes_);
 
   size_t number_of_features = nbc_test_.means_.n_rows;
   calc_mat.zeros(2 * number_of_features + 1, number_of_classes_);

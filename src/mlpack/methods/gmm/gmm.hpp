@@ -10,11 +10,6 @@
 
 #include <mlpack/core.hpp>
 
-PARAM_MODULE("gmm", "Parameters for the Gaussian mixture model.");
-
-PARAM_INT("gaussians", "The number of Gaussians in the mixture model (default "
-    "1).", "gmm", 1);
-
 namespace mlpack {
 namespace gmm {
 
