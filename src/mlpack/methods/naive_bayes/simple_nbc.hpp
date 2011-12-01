@@ -16,9 +16,6 @@ namespace mlpack {
 namespace naive_bayes {
 
 PARAM_INT_REQ("classes", "The number of classes present in the data.", "nbc");
-PARAM_INT("features", "The number of features in the data.", "nbc", 0);
-PARAM_INT("examples", "The number of examples in the training set.", "nbc", 0);
-PARAM_INT("tests", "The number of data points in the test set.", "nbc", 0);
 
 PARAM_MODULE("nbc", "Trains the classifier using the training set "
     "and outputs the results for the test set.");
