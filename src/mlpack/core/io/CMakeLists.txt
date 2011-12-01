@@ -13,8 +13,6 @@ set(SOURCES
   option.hpp
   option_impl.hpp
   option.cpp
-  optionshierarchy.hpp
-  optionshierarchy.cpp
   nulloutstream.hpp
   prefixedoutstream.hpp
   prefixedoutstream.cpp

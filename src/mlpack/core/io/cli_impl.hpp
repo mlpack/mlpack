@@ -36,10 +36,7 @@ void CLI::Add(const char* identifier,
 {
 
   po::options_description& desc = CLI::GetSingleton().desc;
-  // Generate the full pathname and insert the node into the hierarchy.
-  std::string tmp = TYPENAME(T);
-  std::string path = CLI::GetSingleton().ManageHierarchy(identifier, parent,
-    tmp, description);
+  std::string path = identifier;
 
   // Add the option to boost program_options.
   desc.add_options()
@@ -69,24 +66,20 @@ T& CLI::GetParam(const char* identifier)
 
   // Used to index into the globalValues map.
   std::string key = std::string(identifier);
-  std::map<std::string, boost::any>& gmap = GetSingleton().globalValues;
-  po::variables_map& vmap = GetSingleton().vmap;
-
-  // If we have the option, set its value.
-  if (vmap.count(key) && !gmap.count(key))
-    gmap[key] = boost::any(vmap[identifier].as<T>());
+  gmap_t& gmap = GetSingleton().globalValues;
+  //po::variables_map& vmap = GetSingleton().vmap;
 
   // We may have whatever is on the commandline, but what if the programmer has
   // made modifications?
   if (!gmap.count(key))
   {
     // The programmer hasn't done anything; register it.
-    gmap[key] = boost::any(tmp);
-    *boost::any_cast<T>(&gmap[key]) = tmp;
+    gmap[key] = ParamData();
+    gmap[key].value = boost::any(tmp);
+    *boost::any_cast<T>(&gmap[key].value) = tmp;
   }
 
-  tmp = *boost::any_cast<T>(&gmap[key]);
-  return *boost::any_cast<T>(&gmap[key]);
+  return *boost::any_cast<T>(&gmap[key].value);
 }
 
 }; // namespace mlpack
