@@ -27,6 +27,8 @@
 
 #include "simple_nbc.hpp"
 
+PARAM_INT_REQ("classes", "The number of classes present in the data.", "nbc");
+
 PARAM_STRING_REQ("train", "A file containing the training set", "nbc");
 PARAM_STRING_REQ("test", "A file containing the test set", "nbc");
 PARAM_STRING("output", "The file in which the output of the test would "
@@ -56,9 +58,12 @@ int main(int argc, char* argv[])
   arma::mat testing_data;
   data::Load(testing_data_filename, testing_data, true);
 
+  size_t number_of_classes_ = CLI::GetParam<size_t>("nbc/classes");
+
   // Create and train the classifier.
   Timers::StartTimer("nbc/training");
-  SimpleNaiveBayesClassifier nbc = SimpleNaiveBayesClassifier(training_data);
+  SimpleNaiveBayesClassifier nbc = SimpleNaiveBayesClassifier(training_data,
+      number_of_classes_);
   Timers::StopTimer("nbc/training");
 
   // Timing the running of the Naive Bayes Classifier.

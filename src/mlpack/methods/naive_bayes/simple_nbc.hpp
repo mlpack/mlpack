@@ -15,11 +15,6 @@
 namespace mlpack {
 namespace naive_bayes {
 
-PARAM_INT_REQ("classes", "The number of classes present in the data.", "nbc");
-
-PARAM_MODULE("nbc", "Trains the classifier using the training set "
-    "and outputs the results for the test set.");
-
 /**
  * A classification class. The class labels are assumed
  * to be positive integers - 0,1,2,....
@@ -77,7 +72,7 @@ class SimpleNaiveBayesClassifier
    * SimpleNaiveBayesClassifier nbc(training_data, nbc_module);
    * @endcode
    */
-  SimpleNaiveBayesClassifier(const arma::mat& data);
+  SimpleNaiveBayesClassifier(const arma::mat& data, size_t classes);
 
   /**
    * Default constructor, you need to use the other one.
