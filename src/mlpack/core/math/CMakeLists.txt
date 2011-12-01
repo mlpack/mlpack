@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
+  lin_alg.hpp
   math_misc.hpp
   range.hpp
   range.cpp
