@@ -37,7 +37,7 @@ int main(int argc, char** argv)
 
   // Find out what dimension we want.
   size_t newDimension = dataset.n_rows; // No reduction, by default.
-  if (CLI::HasParam("new_dimensionality"))
+  if (CLI::GetParam<int>("new_dimensionality") != 0)
   {
     // Validate the parameter.
     newDimension = (size_t) CLI::GetParam<int>("new_dimensionality");
