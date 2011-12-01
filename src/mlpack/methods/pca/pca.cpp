@@ -29,9 +29,16 @@ void PCA::Apply(const arma::mat& data, arma::mat& transformedData,
            arma::vec& eigVal, arma::mat& coeffs)
 {
   arma::mat transData = trans(data);
-  arma::vec means = mean(data, 1);
-  arma::mat meanSubData = data - means * arma::ones<arma::rowvec>(data.n_cols);
-  arma::mat covMat = ccov(meanSubData);
+  /*
+   * centering and scaling of data - commented out for now.
+   * transData.print("DATA : ");
+  arma::rowvec means = mean(transData, 0);
+  means.print("MEANS : ");
+  arma::mat meanSubData = transData;// - arma::ones<arma::colvec>(data.n_rows) * means;
+  meanSubData.print("CENTERED : ");
+  arma::mat scaledData = meanSubData;// / (arma::ones<arma::colvec>(data.n_rows) * stddev(meanSubData, 0, 0));
+  scaledData.print("SCALED : ");*/
+  arma::mat covMat = cov(transData); // should be this -> cov(scaledData);
   arma::eig_sym(eigVal, coeffs, covMat);
 
   int n_eigVal = eigVal.n_elem;
