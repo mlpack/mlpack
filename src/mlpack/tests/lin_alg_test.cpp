@@ -1,21 +1,19 @@
 /**
- * lin_alg_test.cpp
+ * @file lin_alg_test.cpp
+ * @author Ryan Curtin
  *
  * Simple tests for things in the linalg__private namespace.
  * Partly so I can be sure that my changes are working.
  * Move to boost unit testing framework at some point.
- *
- * @author Ryan Curtin
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/fastica/lin_alg.hpp>
+#include <mlpack/core/math/lin_alg.hpp>
 
 #include <boost/test/unit_test.hpp>
 
 using namespace arma;
 using namespace mlpack;
-using namespace mlpack::fastica;
-using namespace mlpack::fastica::linalg__private;
+using namespace mlpack::math;
 
 BOOST_AUTO_TEST_SUITE(LinAlgTest);
 

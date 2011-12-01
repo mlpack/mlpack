@@ -22,7 +22,7 @@ add_executable(mlpack_test
   infomax_ica_test.cpp
   kernel_test.cpp
   kmeans_test.cpp
-  #lin_alg_test.cpp
+  lin_alg_test.cpp
   linear_regression_test.cpp
   load_save_test.cpp
   math_test.cpp
