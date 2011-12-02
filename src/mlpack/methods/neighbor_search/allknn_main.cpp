@@ -16,6 +16,7 @@
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::neighbor;
+using namespace mlpack::tree;
 
 // Information about the program itself.
 PROGRAM_INFO("All K-Nearest-Neighbors",
@@ -25,107 +26,160 @@ PROGRAM_INFO("All K-Nearest-Neighbors",
     "and query set."
     "\n\n"
     "For example, the following will calculate the 5 nearest neighbors of each"
-    "point in 'input.csv' and store the results in 'output.csv':"
+    "point in 'input.csv' and store the distances in 'distances.csv' and the "
+    "neighbors in 'neighbors.csv':"
     "\n\n"
-    "$ allknn --neighbor_search/k=5 --reference_file=input.csv\n"
-    "  --output_file=output.csv", "neighbor_search");
+    "$ allknn --k=5 --reference_file=input.csv --distances_file=distances.csv\n"
+    "  --neighbors_file=neighbors.csv"
+    "\n\n"
+    "The output files are organized such that row i and column j in the "
+    "neighbors output file corresponds to the index of the point in the "
+    "reference set which is the i'th nearest neighbor from the point in the "
+    "query set with index j.  Row i and column j in the distances output file "
+    "corresponds to the distance between those two points.", "");
 
 // Define our input parameters that this program will take.
-PARAM_STRING_REQ("reference_file", "CSV file containing the reference dataset.",
+PARAM_STRING_REQ("reference_file", "File containing the reference dataset.",
     "");
-PARAM_STRING("query_file", "CSV file containing query points (optional).",
-    "", "");
-PARAM_STRING_REQ("output_file", "File to output CSV-formatted results into.",
-    "");
+PARAM_STRING("query_file", "File containing query points (optional).", "", "");
+PARAM_STRING_REQ("distances_file", "File to output distances into.", "");
+PARAM_STRING_REQ("neighbors_file", "File to output neighbors into.", "");
+
+PARAM_INT("leaf_size", "Leaf size for tree building.", "", 20);
+PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "");
+PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
+    "dual-tree search.", "");
+PARAM_INT_REQ("k", "Number of furthest neighbors to find.", "");
 
 int main(int argc, char *argv[])
 {
   // Give CLI the command line parameters the user passed in.
   CLI::ParseCommandLine(argc, argv);
 
-  string reference_file = CLI::GetParam<string>("reference_file");
-  string output_file = CLI::GetParam<string>("output_file");
+  // Get all the parameters.
+  string referenceFile = CLI::GetParam<string>("reference_file");
+  string outputFile = CLI::GetParam<string>("output_file");
 
-  arma::mat reference_data;
+  string distancesFile = CLI::GetParam<string>("distances_file");
+  string neighborsFile = CLI::GetParam<string>("neighbors_file");
+
+  int leafSize = CLI::GetParam<int>("leaf_size");
+
+  size_t k = CLI::GetParam<int>("k");
+
+  bool naive = CLI::HasParam("naive");
+  bool singleMode = CLI::HasParam("single_mode");
+
+  arma::mat referenceData;
+  if (!data::Load(referenceFile.c_str(), referenceData))
+    Log::Fatal << "Reference file " << referenceFile << "not found." << endl;
+
+  Log::Info << "Loaded reference data from " << referenceFile << endl;
+
+  // Sanity check on k value: must be greater than 0, must be less than the
+  // number of reference points.
+  if ((k <= 0) || (k >= referenceData.n_cols))
+  {
+    Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less ";
+    Log::Fatal << "than the number of reference points (";
+    Log::Fatal << referenceData.n_cols << ")." << endl;
+  }
+
+  // Sanity check on leaf size.
+  if (leafSize < 0)
+  {
+    Log::Fatal << "Invalid leaf size: " << leafSize << ".  Must be greater "
+        "than or equal to 0." << endl;
+  }
+
+  // Naive mode overrides single mode.
+  if (singleMode && naive)
+  {
+    Log::Warn << "--single_mode ignored because --naive is present." << endl;
+  }
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  if (!data::Load(reference_file.c_str(), reference_data))
-    Log::Fatal << "Reference file " << reference_file << " not found." << endl;
-
-  Log::Info << "Loaded reference data from " << reference_file << endl;
-
-  // Sanity check on k value: must be greater than 0, must be less than the
-  // number of reference points.
-  size_t k = CLI::GetParam<int>("neighbor_search/k");
-  if ((k <= 0) || (k >= reference_data.n_cols))
-  {
-    Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less ";
-    Log::Fatal << "than the number of reference points (";
-    Log::Fatal << reference_data.n_cols << ")." << endl;
-  }
-
-  // Sanity check on leaf size.
-  if (CLI::GetParam<int>("tree/leaf_size") <= 0)
-  {
-    Log::Fatal << "Invalid leaf size: "
-        << CLI::GetParam<int>("allknn/leaf_size") << endl;
-  }
-
+  // Because we may construct it differently, we need a pointer.
   AllkNN* allknn = NULL;
+
+  // Mappings for when we build the tree.
+  std::vector<size_t> oldFromNewRefs;
+
+  // Build trees by hand, so we can save memory: if we pass a tree to
+  // NeighborSearch, it does not copy the matrix.
+  Log::Info << "Building reference tree..." << endl;
+  Timers::StartTimer("neighbor_search/tree_building");
+
+  BinarySpaceTree<bound::HRectBound<2>, QueryStat<NearestNeighborSort> >
+      refTree(referenceData, oldFromNewRefs, leafSize);
+
+  Timers::StopTimer("neighbor_search/tree_building");
+
+  std::vector<size_t> oldFromNewQueries;
 
   if (CLI::GetParam<string>("query_file") != "")
   {
-    string query_file = CLI::GetParam<string>("query_file");
-    arma::mat query_data;
+    string queryFile = CLI::GetParam<string>("query_file");
+    arma::mat queryData;
 
-    if (!data::Load(query_file.c_str(), query_data))
-      Log::Fatal << "Query file " << query_file << " not found" << endl;
+    if (!data::Load(queryFile.c_str(), queryData))
+      Log::Fatal << "Query file " << queryFile << " not found" << endl;
 
-    Log::Info << "Query data loaded from " << query_file << endl;
+    Log::Info << "Query data loaded from " << queryFile << endl;
 
-    Log::Info << "Building query and reference trees..." << endl;
-    allknn = new AllkNN(query_data, reference_data);
+    Log::Info << "Building query tree..." << endl;
 
+    // Build trees by hand, so we can save memory: if we pass a tree to
+    // NeighborSearch, it does not copy the matrix.
+    Timers::StartTimer("neighbor_search/tree_building");
+
+    BinarySpaceTree<bound::HRectBound<2>, QueryStat<NearestNeighborSort> >
+        queryTree(queryData, oldFromNewRefs, leafSize);
+
+    Timers::StopTimer("neighbor_search/tree_building");
+
+    allknn = new AllkNN(referenceData, queryData, naive, singleMode, 20,
+        &refTree, &queryTree);
+
+    Log::Info << "Tree built." << endl;
   }
   else
   {
-    Log::Info << "Building reference tree..." << endl;
-    allknn = new AllkNN(reference_data);
-  }
+    allknn = new AllkNN(referenceData, naive, singleMode, 20, &refTree);
 
-  Log::Info << "Tree(s) built." << endl;
+    Log::Info << "Trees built." << endl;
+  }
 
   Log::Info << "Computing " << k << " nearest neighbors..." << endl;
-  allknn->ComputeNeighbors(neighbors, distances);
+  allknn->ComputeNeighbors(k, neighbors, distances);
 
   Log::Info << "Neighbors computed." << endl;
-  Log::Info << "Exporting results..." << endl;
 
-  // Should be using data::Save or a related function instead of being written
-  // by hand.
-  try
+  // We have to map back to the original indices from before the tree
+  // construction.
+  Log::Info << "Re-mapping indices..." << endl;
+
+  arma::mat distancesOut(distances.n_rows, distances.n_cols);
+  arma::Mat<size_t> neighborsOut(neighbors.n_rows, neighbors.n_cols);
+
+  // Do the actual remapping.
+  for (size_t i = 0; i < distances.n_cols; i++)
   {
-    ofstream out(output_file.c_str());
+    // Map distances (copy a column).
+    distancesOut.col(oldFromNewQueries[i]) = distances.col(i);
 
-    for (size_t col = 0; col < neighbors.n_cols; col++)
+    // Map indices of neighbors.
+    for (size_t j = 0; j < distances.n_rows; j++)
     {
-      out << col << ", ";
-      for (size_t j = 0; j < (k - 1) /* last is special case */; j++)
-      {
-        out << neighbors(j, col) << ", " << distances(j, col) << ", ";
-      }
-      out << neighbors((k - 1), col) << ", " << distances((k - 1), col) << endl;
+      neighborsOut(j, oldFromNewQueries[i]) = oldFromNewRefs[neighbors(j, i)];
     }
+  }
 
-    out.close();
-  }
-  catch (exception& e)
-  {
-    Log::Fatal << "Error while opening " << output_file << ": " << e.what()
-        << endl;
-  }
+  // Save output.
+  data::Save(distancesFile, distances);
+  data::Save(neighborsFile, neighbors);
 
   delete allknn;
 }

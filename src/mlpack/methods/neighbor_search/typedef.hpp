@@ -26,7 +26,7 @@ namespace neighbor {
  * neighbors.  Squared distances are used because they are slightly faster than
  * non-squared distances (they have one fewer call to sqrt()).
  */
-typedef NeighborSearch<metric::SquaredEuclideanDistance, NearestNeighborSort>
+typedef NeighborSearch<NearestNeighborSort, metric::SquaredEuclideanDistance>
     AllkNN;
 
 /**
@@ -35,7 +35,7 @@ typedef NeighborSearch<metric::SquaredEuclideanDistance, NearestNeighborSort>
  * neighbors.  Squared distances are used because they are slightly faster than
  * non-squared distances (they have one fewer call to sqrt()).
  */
-typedef NeighborSearch<metric::SquaredEuclideanDistance, FurthestNeighborSort>
+typedef NeighborSearch<FurthestNeighborSort, metric::SquaredEuclideanDistance>
     AllkFN;
 
 }; // namespace neighbor
