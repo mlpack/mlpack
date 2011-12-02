@@ -13,22 +13,6 @@
 namespace mlpack {
 namespace optimization {
 
-PARAM_MODULE("lbfgs", "Options for the L-BFGS optimizer, which uses a "
-    "back-tracing line search to determine the step size to take.");
-
-PARAM_DOUBLE("armijo_constant", "Controls the accuracy of the line search "
-    "routine for determining the Armijo condition.", "lbfgs", 1e-4);
-PARAM_DOUBLE("min_step", "The minimum step of the line search.", "lbfgs",
-    1e-20);
-PARAM_DOUBLE("max_step", "The maximum step of the line search.", "lbfgs",
-    1e20);
-PARAM_INT("max_line_search_trials", "The maximum number of trials for the line "
-    "search.", "lbfgs", 50);
-PARAM_DOUBLE("wolfe", "Parameter for detecting the Wolfe condition.", "lbfgs",
-    0.9);
-PARAM_DOUBLE("min_gradient_norm", "Minimum gradient norm required to continue "
-    "the optimization.", "lbfgs", 1e-10);
-
 template<typename FunctionType>
 class L_BFGS
 {
