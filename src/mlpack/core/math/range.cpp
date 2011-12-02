@@ -162,5 +162,13 @@ bool Range::Contains(const double d) const
   return d >= lo && d <= hi;
 }
 
+/**
+ * Determines if this range overlaps with another range.
+ */
+bool Range::Contains(const Range& r) const
+{
+  return lo <= r.hi;
+}
+
 }; // namesapce math
 }; // namespace mlpack
