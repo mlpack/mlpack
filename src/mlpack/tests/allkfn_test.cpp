@@ -38,31 +38,27 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test)
 
   // We will loop through three times, one for each method of performing the
   // calculation.  We'll always use 10 neighbors, so set that parameter.
-  CLI::GetParam<int>("neighbor_search/k") = 10;
   for (int i = 0; i < 3; i++)
   {
     AllkFN* allkfn;
     arma::mat data_mutable = data;
-    switch(i)
+    switch (i)
     {
-      case 0: // Use the dual-tree method.
-        allkfn = new AllkFN(data_mutable);
+      case 2: // Use the dual-tree method.
+        allkfn = new AllkFN(data_mutable, false, false, 1);
         break;
       case 1: // Use the single-tree method.
-        CLI::GetParam<bool>("neighbor_search/single_mode") = true;
-        allkfn = new AllkFN(data_mutable);
+        allkfn = new AllkFN(data_mutable, false, true, 1);
         break;
-      case 2: // Use the naive method.
-        CLI::GetParam<bool>("neighbor_search/single_mode") = false;
-        CLI::GetParam<bool>("neighbor_search/naive_mode") = true;
-        allkfn = new AllkFN(data_mutable);
+      case 0: // Use the naive method.
+        allkfn = new AllkFN(data_mutable, true);
         break;
     }
 
     // Now perform the actual calculation.
     arma::Mat<size_t> neighbors;
     arma::mat distances;
-    allkfn->ComputeNeighbors(neighbors, distances);
+    allkfn->ComputeNeighbors(10, neighbors, distances);
 
     // Now the exhaustive check for correctness.  This will be long.  We must
     // also remember that the distances returned are squared distances.  As a
@@ -336,20 +332,17 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_1)
   arma::mat naive_query(data_for_tree_);
   arma::mat naive_references(data_for_tree_);
 
-  CLI::GetParam<bool>("neighbor_search/naive_mode") = false;
-  CLI::GetParam<bool>("neighbor_search/single_mode") = false;
   AllkFN allkfn_(dual_query, dual_references);
 
-  CLI::GetParam<bool>("neighbor_search/naive_mode") = true;
-  AllkFN naive_(naive_query, naive_references);
+  AllkFN naive_(naive_query, naive_references, true);
 
   arma::Mat<size_t> resulting_neighbors_tree;
   arma::mat distances_tree;
-  allkfn_.ComputeNeighbors(resulting_neighbors_tree, distances_tree);
+  allkfn_.ComputeNeighbors(15, resulting_neighbors_tree, distances_tree);
 
   arma::Mat<size_t> resulting_neighbors_naive;
   arma::mat distances_naive;
-  naive_.ComputeNeighbors(resulting_neighbors_naive, distances_naive);
+  naive_.ComputeNeighbors(15, resulting_neighbors_naive, distances_naive);
 
   for (size_t i = 0; i < resulting_neighbors_tree.n_elem; i++)
   {
@@ -373,24 +366,21 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_2)
   if (!data::Load("test_data_3_1000.csv", data_for_tree_))
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
-  // Set up matrices to work with (may not be necessary with no ALIAS_MATRIX?).
+  // Set up matrices to work with.
   arma::mat dual_references(data_for_tree_);
   arma::mat naive_references(data_for_tree_);
 
-  CLI::GetParam<bool>("neighbor_search/naive_mode") = false;
-  CLI::GetParam<bool>("neighbor_search/single_mode") = false;
   AllkFN allkfn_(dual_references);
 
-  CLI::GetParam<bool>("neighbor_search/naive_mode") = true;
-  AllkFN naive_(naive_references);
+  AllkFN naive_(naive_references, true);
 
   arma::Mat<size_t> resulting_neighbors_tree;
   arma::mat distances_tree;
-  allkfn_.ComputeNeighbors(resulting_neighbors_tree, distances_tree);
+  allkfn_.ComputeNeighbors(15, resulting_neighbors_tree, distances_tree);
 
   arma::Mat<size_t> resulting_neighbors_naive;
   arma::mat distances_naive;
-  naive_.ComputeNeighbors(resulting_neighbors_naive, distances_naive);
+  naive_.ComputeNeighbors(15, resulting_neighbors_naive, distances_naive);
 
   for (size_t i = 0; i < resulting_neighbors_tree.n_elem; i++)
   {
@@ -417,21 +407,17 @@ BOOST_AUTO_TEST_CASE(single_tree_vs_naive)
   arma::mat single_query(data_for_tree_);
   arma::mat naive_query(data_for_tree_);
 
-  CLI::GetParam<bool>("neighbor_search/naive_mode") = false;
-  CLI::GetParam<bool>("neighbor_search/single_mode") = true;
-  AllkFN allkfn_(single_query);
+  AllkFN allkfn_(single_query, false, true);
 
-  CLI::GetParam<bool>("neighbor_search/naive_mode") = true;
-  CLI::GetParam<bool>("neighbor_search/single_mode") = false;
-  AllkFN naive_(naive_query);
+  AllkFN naive_(naive_query, true);
 
   arma::Mat<size_t> resulting_neighbors_tree;
   arma::mat distances_tree;
-  allkfn_.ComputeNeighbors(resulting_neighbors_tree, distances_tree);
+  allkfn_.ComputeNeighbors(15, resulting_neighbors_tree, distances_tree);
 
   arma::Mat<size_t> resulting_neighbors_naive;
   arma::mat distances_naive;
-  naive_.ComputeNeighbors(resulting_neighbors_naive, distances_naive);
+  naive_.ComputeNeighbors(15, resulting_neighbors_naive, distances_naive);
 
   for (size_t i = 0; i < resulting_neighbors_tree.n_elem; i++)
   {
