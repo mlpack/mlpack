@@ -265,8 +265,6 @@ class BinarySpaceTree
    */
   size_t Count() const;
 
-  void Print() const;
-
  private:
   /**
    * Private copy constructor, available only to fill (pad) the tree to a
