@@ -19,7 +19,6 @@ add_executable(mlpack_test
   emst_test.cpp
   gmm_test.cpp
   hmm_test.cpp
-  infomax_ica_test.cpp
   kernel_test.cpp
   kmeans_test.cpp
   lin_alg_test.cpp
