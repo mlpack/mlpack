@@ -110,10 +110,8 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive)
   dtb.ComputeMST(dual_results);
 
   // Set naive mode.
-  CLI::GetParam<bool>("naive/do_naive") = true;
-
   DualTreeBoruvka dtb_naive;
-  dtb_naive.Init(naive_data);
+  dtb_naive.Init(naive_data, true);
 
   arma::mat naive_results;
   dtb_naive.ComputeMST(naive_results);
@@ -123,9 +121,9 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive)
 
   for (size_t i = 0; i < dual_results.n_rows; i++)
   {
-    BOOST_REQUIRE(dual_results(i,0) == naive_results(i,0));
-    BOOST_REQUIRE(dual_results(i,1) == naive_results(i,1));
-    BOOST_REQUIRE_CLOSE(dual_results(i,2), naive_results(i,2), 1e-5);
+    BOOST_REQUIRE(dual_results(i, 0) == naive_results(i, 0));
+    BOOST_REQUIRE(dual_results(i, 1) == naive_results(i, 1));
+    BOOST_REQUIRE_CLOSE(dual_results(i, 2), naive_results(i, 2), 1e-5);
   }
 }
 
