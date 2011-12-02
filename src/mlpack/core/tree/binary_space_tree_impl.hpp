@@ -367,17 +367,6 @@ inline size_t BinarySpaceTree<BoundType, StatisticType>::Count() const
 }
 
 template<typename BoundType, typename StatisticType>
-void BinarySpaceTree<BoundType, StatisticType>::Print() const
-{
-  printf("node: %d to %d: %d points total\n", begin, begin + count - 1,
-      count);
-  if (left)
-    left->Print();
-  if (right)
-    right->Print();
-}
-
-template<typename BoundType, typename StatisticType>
 void BinarySpaceTree<BoundType, StatisticType>::SplitNode(arma::mat& data)
 {
   // This should be a single function for Bound.
