@@ -136,6 +136,15 @@ class Range
    */
   bool Contains(const double d) const;
 
+  /**
+   * Determines if another range overlaps with this one.
+   *
+   * @param r Other range.
+   *
+   * @return true if ranges overlap at all.
+   */
+  bool Contains(const Range& r) const;
+
 };
 
 }; // namespace math
