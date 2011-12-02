@@ -315,7 +315,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::ComputeBaseCase(
     arma::vec queryPoint = querySet.unsafe_col(queryIndex);
 
     double queryToNodeDistance =
-      SortPolicy::BestPointToNodeDistance(queryPoint, referenceNode);
+        SortPolicy::BestPointToNodeDistance(queryPoint, referenceNode);
 
     if (SortPolicy::IsBetter(queryToNodeDistance,
         distances(distances.n_rows - 1, queryIndex)))
