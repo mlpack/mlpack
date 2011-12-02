@@ -1,15 +1,16 @@
 /**
- * @file statistic.h
+ * @file statistic.hpp
  *
- * Home for the concept of tree statistics.
+ * Definition of the policy type for the statistic class.
  *
  * You should define your own statistic that looks like EmptyStatistic.
- *
- * @experimental
  */
 
 #ifndef __MLPACK_CORE_TREE_STATISTIC_HPP
 #define __MLPACK_CORE_TREE_STATISTIC_HPP
+
+namespace mlpack {
+namespace tree {
 
 /**
  * Empty statistic if you are not interested in storing statistics in your
@@ -36,5 +37,8 @@ class EmptyStatistic
     void Init(const arma::mat& dataset, size_t start, size_t count,
         const EmptyStatistic& left_stat, const EmptyStatistic& right_stat) { }
 };
+
+}; // namespace tree
+}; // namespace mlpack
 
 #endif // __MLPACK_CORE_TREE_STATISTIC_HPP
