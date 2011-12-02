@@ -44,13 +44,13 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test)
     arma::mat data_mutable = data;
     switch (i)
     {
-      case 2: // Use the dual-tree method.
+      case 0: // Use the dual-tree method.
         allkfn = new AllkFN(data_mutable, false, false, 1);
         break;
       case 1: // Use the single-tree method.
         allkfn = new AllkFN(data_mutable, false, true, 1);
         break;
-      case 0: // Use the naive method.
+      case 2: // Use the naive method.
         allkfn = new AllkFN(data_mutable, true);
         break;
     }
