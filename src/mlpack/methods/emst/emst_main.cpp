@@ -45,9 +45,8 @@ int main(int argc, char* argv[])
     Log::Info << "Running naive algorithm.\n";
 
     DualTreeBoruvka naive;
-    //CLI::GetParam<bool>("naive/do_naive") = true;
 
-    naive.Init(data_points);
+    naive.Init(data_points, true);
 
     arma::mat naive_results;
     naive.ComputeMST(naive_results);
@@ -62,8 +61,9 @@ int main(int argc, char* argv[])
     Log::Info << "Data read, building tree.\n";
 
     /////////////// Initialize DTB //////////////////////
+    size_t leafSize = CLI::GetParam<int>("emst/leaf_size");
     DualTreeBoruvka dtb;
-    dtb.Init(data_points);
+    dtb.Init(data_points, false, leafSize);
 
     Log::Info << "Tree built, running algorithm.\n\n";
 

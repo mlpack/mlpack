@@ -543,7 +543,6 @@ class DualTreeBoruvka
     mlpack::Log::Info << "number_both_recursions" << std::endl;
      */
 
-    mlpack::CLI::GetParam<double>("dtb/total_squared_length") = total_dist_;
   } // OutputResults_
 
   /////////// Public Functions ///////////////////
@@ -557,24 +556,21 @@ class DualTreeBoruvka
    * Takes in a reference to the data set.  Copies the data, builds the tree,
    * and initializes all of the member variables.
    */
-  void Init(const arma::mat& data)
+  void Init(const arma::mat& data, bool naive = false, size_t leafSize = 1)
   {
     number_of_edges_ = 0;
     data_points_ = data; // copy
 
-    do_naive_ = CLI::GetParam<bool>("naive/do_naive");
+    do_naive_ = naive;
 
     if (!do_naive_)
     {
       // Default leaf size is 1
       // This gives best pruning empirically
       // Use leaf_size=1 unless space is a big concern
-      CLI::GetParam<int>("tree/leaf_size") =
-          CLI::GetParam<int>("emst/leaf_size");
-
       Timers::StartTimer("emst/tree_building");
 
-      tree_ = new DTBTree(data_points_, old_from_new_permutation_);
+      tree_ = new DTBTree(data_points_, old_from_new_permutation_, leafSize);
 
       Timers::StopTimer("emst/tree_building");
     }
