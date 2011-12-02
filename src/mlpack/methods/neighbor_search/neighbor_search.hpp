@@ -2,8 +2,8 @@
  * @file neighbor_search.hpp
  * @author Ryan Curtin
  *
- * Defines the AllkNN class to perform all-k-nearest-neighbors on two specified
- * data sets.
+ * Defines the NeighborSearch class, which performs an abstract
+ * nearest-neighbor-like query on two datasets.
  */
 #ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_HPP
 #define __MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_HPP
