@@ -13,32 +13,40 @@ using namespace mlpack::distribution;
  * Return a randomly generated observation according to the probability
  * distribution defined by this object.
  */
-size_t DiscreteDistribution::Random() const
+arma::vec DiscreteDistribution::Random() const
 {
   // Generate a random number.
   double randObs = (double) rand() / (double) RAND_MAX;
+  arma::vec result(1);
 
   double sumProb = 0;
   for (size_t obs = 0; obs < probabilities.n_elem; obs++)
+  {
     if ((sumProb += probabilities[obs]) >= randObs)
-      return obs;
+    {
+      result[0] = obs;
+      return result;
+    }
+  }
 
   // This shouldn't happen.
-  return probabilities.n_elem - 1;
+  result[0] = probabilities.n_elem - 1;
+  return result;
 }
 
 /**
  * Estimate the probability distribution directly from the given observations.
  */
-void DiscreteDistribution::Estimate(const std::vector<size_t> observations)
+void DiscreteDistribution::Estimate(const arma::mat& observations)
 {
   // Clear old probabilities.
   probabilities.zeros();
 
-  // Add the probability of each observation.
-  for (std::vector<size_t>::const_iterator it = observations.begin();
-       it != observations.end(); it++)
-    probabilities(*it)++;
+  // Add the probability of each observation.  The addition of 0.5 to the
+  // observation is to turn the default flooring operation of the size_t cast
+  // into a rounding operation.
+  for (size_t i = 0; i < observations.n_cols; i++)
+    probabilities((size_t) (observations(0, i) + 0.5))++;
 
   // Now normalize the distribution.
   double sum = accu(probabilities);
@@ -52,15 +60,17 @@ void DiscreteDistribution::Estimate(const std::vector<size_t> observations)
  * Estimate the probability distribution from the given observations when also
  * given probabilities that each observation is from this distribution.
  */
-void DiscreteDistribution::Estimate(const std::vector<size_t> observations,
-                                    const std::vector<double> probObs)
+void DiscreteDistribution::Estimate(const arma::mat& observations,
+                                    const arma::vec& probObs)
 {
   // Clear old probabilities.
   probabilities.zeros();
 
-  // Add the probability of each observation.
-  for (size_t i = 0; i < observations.size(); i++)
-    probabilities(observations[i]) += probObs[i];
+  // Add the probability of each observation.  The addition of 0.5 to the
+  // observation is to turn the default flooring operation of the size_t cast
+  // into a rounding observation.
+  for (size_t i = 0; i < observations.n_cols; i++)
+    probabilities((size_t) (observations(0, i) + 0.5)) += probObs[i];
 
   // Now normalize the distribution.
   double sum = accu(probabilities);

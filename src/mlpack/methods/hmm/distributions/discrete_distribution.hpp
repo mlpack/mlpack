@@ -14,21 +14,30 @@ namespace mlpack {
 namespace distribution {
 
 /**
- * A discrete distribution where the only observations are of type size_t.  This
- * is useful (for example) with discrete Hidden Markov Models, where
- * observations are non-negative integers representing specific emissions.
+ * A discrete distribution where the only observations are discrete
+ * observations.  This is useful (for example) with discrete Hidden Markov
+ * Models, where observations are non-negative integers representing specific
+ * emissions.
  *
  * No bounds checking is performed for observations, so if an invalid
  * observation is passed (i.e. observation > numObservations), a crash will
  * probably occur.
+ *
+ * This distribution only supports one-dimensional observations, so when passing
+ * an arma::vec as an observation, it should only have one dimension
+ * (vec.n_rows == 1).  Any additional dimensions will simply be ignored.
+ *
+ * @note
+ * This class, like every other class in MLPACK, uses arma::vec to represent
+ * observations.  While a discrete distribution only has positive integers
+ * (size_t) as observations, these can be converted to doubles (which is what
+ * arma::vec holds).  This distribution internally converts those doubles back
+ * into size_t before comparisons.
+ * @endnote
  */
 class DiscreteDistribution
 {
  public:
-  //! The type of data which this distribution uses; in our case, non-negative
-  //! integers represent observations.
-  typedef size_t DataType;
-
   /**
    * Default constructor, which creates a distribution that has no observations.
    */
@@ -66,6 +75,11 @@ class DiscreteDistribution
   }
 
   /**
+   * Get the dimensionality of the distribution.
+   */
+  size_t Dimensionality() const { return 1; }
+
+  /**
    * Return the probability of the given observation.  If the observation is
    * greater than the number of possible observations, then a crash will
    * probably occur -- bounds checking is not performed.
@@ -73,25 +87,30 @@ class DiscreteDistribution
    * @param observation Observation to return the probability of.
    * @return Probability of the given observation.
    */
-  double Probability(size_t observation) const
+  double Probability(const arma::vec& observation) const
   {
-    return probabilities(observation);
+    // Adding 0.5 helps ensure that we cast the floating point to a size_t
+    // correctly.
+    return probabilities((size_t) (observation[0] + 0.5));
   }
 
   /**
-   * Return a randomly generated observation according to the probability
-   * distribution defined by this object.
+   * Return a randomly generated observation (one-dimensional vector; one
+   * observation) according to the probability distribution defined by this
+   * object.
    *
    * @return Random observation.
    */
-  size_t Random() const;
+  arma::vec Random() const;
 
   /**
    * Estimate the probability distribution directly from the given observations.
+   * If any of the observations is greater than numObservations, a crash is
+   * likely to occur.
    *
    * @param observations List of observations.
    */
-  void Estimate(const std::vector<size_t> observations);
+  void Estimate(const arma::mat& observations);
 
   /**
    * Estimate the probability distribution from the given observations, taking
@@ -102,8 +121,8 @@ class DiscreteDistribution
    * @param probabilities List of probabilities that each observation is
    *    actually from this distribution.
    */
-  void Estimate(const std::vector<size_t> observations,
-                const std::vector<double> probabilities);
+  void Estimate(const arma::mat& observations,
+                const arma::vec& probabilities);
 
   /**
    * Return the vector of probabilities.
