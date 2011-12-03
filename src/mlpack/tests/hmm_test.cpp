@@ -41,14 +41,8 @@ BOOST_AUTO_TEST_CASE(SimpleDiscreteHMMTestViterbi)
   // Now let's take a sequence and find what the most likely state is.
   // We'll use the sequence [U U N U U] (U = umbrella, N = no umbrella) like on
   // p. 547.
-  std::vector<size_t> observation;
-  observation.push_back(0);
-  observation.push_back(0);
-  observation.push_back(1);
-  observation.push_back(0);
-  observation.push_back(0);
-
-  std::vector<size_t> states;
+  arma::mat observation = "0 0 1 0 0";
+  arma::Col<size_t> states;
   hmm.Predict(observation, states);
 
   // Check each state.
@@ -79,18 +73,8 @@ BOOST_AUTO_TEST_CASE(BorodovskyHMMTestViterbi)
   HMM<DiscreteDistribution> hmm(transition, emission);
 
   // GGCACTGAA.
-  std::vector<size_t> observation(9);
-  observation[0] = 2;
-  observation[1] = 2;
-  observation[2] = 1;
-  observation[3] = 0;
-  observation[4] = 1;
-  observation[5] = 3;
-  observation[6] = 2;
-  observation[7] = 0;
-  observation[8] = 0;
-
-  std::vector<size_t> states;
+  arma::mat observation("2 2 1 0 1 3 2 0 0");
+  arma::Col<size_t> states;
   hmm.Predict(observation, states);
 
   // Most probable path is HHHLLLLLL.
@@ -112,17 +96,7 @@ BOOST_AUTO_TEST_CASE(BorodovskyHMMTestViterbi)
  */
 BOOST_AUTO_TEST_CASE(ForwardBackwardTwoState)
 {
-  std::vector<size_t> obs(10);
-  obs[0] = 3;
-  obs[1] = 3;
-  obs[2] = 2;
-  obs[3] = 1;
-  obs[4] = 1;
-  obs[5] = 1;
-  obs[6] = 1;
-  obs[7] = 3;
-  obs[8] = 3;
-  obs[9] = 1;
+  arma::mat obs("3 3 2 1 1 1 1 3 3 1");
 
   arma::mat transition("0.1 0.9; 0.4 0.6");
   std::vector<DiscreteDistribution> emis(2);
@@ -173,15 +147,16 @@ BOOST_AUTO_TEST_CASE(SimplestBaumWelchDiscreteHMM)
   // Don't yet require a useful distribution.  1 state, 1 emission.
   HMM<DiscreteDistribution> hmm(1, DiscreteDistribution(1));
 
-  std::vector<std::vector<size_t> > observations;
-  observations.push_back(std::vector<size_t>(8, 0)); // 8 zeros.
-  observations.push_back(std::vector<size_t>(7, 0)); // 7 zeros.
-  observations.push_back(std::vector<size_t>(12, 0)); // 12 zeros.
-  observations.push_back(std::vector<size_t>(10, 0)); // 10 zeros.
+  std::vector<arma::mat> observations;
+  // Different lengths for each observation sequence.
+  observations.push_back("0 0 0 0 0 0 0 0"); // 8 zeros.
+  observations.push_back("0 0 0 0 0 0 0"); // 7 zeros.
+  observations.push_back("0 0 0 0 0 0 0 0 0 0 0 0"); // 12 zeros.
+  observations.push_back("0 0 0 0 0 0 0 0 0 0"); // 10 zeros.
 
   hmm.Train(observations);
 
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability(0), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("0"), 1.0, 1e-5);
   BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 0), 1.0, 1e-5);
 }
 
@@ -196,21 +171,24 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM)
 
   // P(each emission) = 0.5.
   // I've been careful to make P(first emission = 0) = P(first emission = 1).
-  std::vector<std::vector<size_t> > observations;
-  size_t obs[6][12] = {{0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1},
-                       {0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1},
-                       {1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0},
-                       {1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0},
-                       {0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1},
-                       {1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0}};
-
-  for (size_t i = 0; i < 18; i++)
-    observations.push_back(std::vector<size_t>(obs[i % 6], obs[i % 6] + 12));
+  std::vector<arma::mat> observations;
+  observations.push_back("0 1 0 1 0 1 0 1 0 1 0 1");
+  observations.push_back("0 0 0 0 0 0 1 1 1 1 1 1");
+  observations.push_back("1 1 1 1 1 1 0 0 0 0 0 0");
+  observations.push_back("1 1 1 0 0 0 1 1 1 0 0 0");
+  observations.push_back("0 0 1 1 0 0 0 0 1 1 1 1");
+  observations.push_back("1 1 1 0 0 0 1 1 1 0 0 0");
+  observations.push_back("0 1 0 1 0 1 0 1 0 1 0 1");
+  observations.push_back("0 0 0 0 0 0 1 1 1 1 1 1");
+  observations.push_back("1 1 1 1 1 1 0 0 0 0 0 0");
+  observations.push_back("1 1 1 0 0 0 1 1 1 0 0 0");
+  observations.push_back("0 0 1 1 0 0 0 0 1 1 1 1");
+  observations.push_back("1 1 1 0 0 0 1 1 1 0 0 0");
 
   hmm.Train(observations);
 
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability(0), 0.5, 1e-5);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability(1), 0.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("0"), 0.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("1"), 0.5, 1e-5);
   BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 0), 1.0, 1e-5);
 }
 
@@ -238,12 +216,12 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
   //   [0.5 0.5]]
 
   // Generate observations randomly by hand.  This is kinda ugly, but it works.
-  std::vector<std::vector<size_t> > observations;
+  std::vector<arma::mat> observations;
   size_t obsNum = 250; // Number of observations.
   size_t obsLen = 500; // Number of elements in each observation.
   for (size_t i = 0; i < obsNum; i++)
   {
-    std::vector<size_t> observation(obsLen);
+    arma::mat observation(1, obsLen);
 
     size_t state = 0;
     size_t emission = 0;
@@ -278,7 +256,7 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
           break;
       }
 
-      observation[obs] = emission;
+      observation(0, obs) = emission;
     }
 
     observations.push_back(observation);
@@ -292,14 +270,14 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
   BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 1), 0.5, 2.5);
   BOOST_REQUIRE_CLOSE(hmm.Transition()(1, 1), 0.5, 2.5);
 
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability(0), 0.4, 2.5);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability(1), 0.6, 2.5);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[0].Probability(2), 2.5);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[0].Probability(3), 2.5);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[1].Probability(0), 2.5);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[1].Probability(1), 2.5);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[1].Probability(2), 0.2, 2.5);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[1].Probability(3), 0.8, 2.5);
+  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("0"), 0.4, 2.5);
+  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("1"), 0.6, 2.5);
+  BOOST_REQUIRE_SMALL(hmm.Emission()[0].Probability("2"), 2.5);
+  BOOST_REQUIRE_SMALL(hmm.Emission()[0].Probability("3"), 2.5);
+  BOOST_REQUIRE_SMALL(hmm.Emission()[1].Probability("0"), 2.5);
+  BOOST_REQUIRE_SMALL(hmm.Emission()[1].Probability("1"), 2.5);
+  BOOST_REQUIRE_CLOSE(hmm.Emission()[1].Probability("2"), 0.2, 2.5);
+  BOOST_REQUIRE_CLOSE(hmm.Emission()[1].Probability("3"), 0.8, 2.5);
 }
 
 BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
@@ -321,19 +299,19 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
   size_t obsNum = 250;
   size_t obsLen = 800;
 
-  std::vector<std::vector<size_t> > observations(obsNum);
-  std::vector<std::vector<size_t> > states(obsNum);
+  std::vector<arma::mat> observations(obsNum);
+  std::vector<arma::Col<size_t> > states(obsNum);
 
   for (size_t n = 0; n < obsNum; n++)
   {
-    observations[n].resize(obsLen);
-    states[n].resize(obsLen);
+    observations[n].set_size(1, obsLen);
+    states[n].set_size(obsLen);
 
     // Random starting state.
     states[n][0] = rand() % 3;
 
     // Random starting observation.
-    observations[n][0] = emission[states[n][0]].Random();
+    observations[n].col(0) = emission[states[n][0]].Random();
 
     // Now the rest of the observations.
     for (size_t t = 1; t < obsLen; t++)
@@ -354,7 +332,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
       }
 
       // Decide observation.
-      observations[n][t] = emission[states[n][t]].Random();
+      observations[n].col(t) = emission[states[n][t]].Random();
     }
   }
 
@@ -373,10 +351,16 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
           0.009);
 
   for (size_t col = 0; col < hmm.Emission().size(); col++)
+  {
     for (size_t row = 0; row < hmm.Emission()[col].Probabilities().n_elem;
         row++)
-      BOOST_REQUIRE_SMALL(hmm.Emission()[col].Probability(row) -
-          emission[col].Probability(row), 0.009);
+    {
+      arma::vec obs(1);
+      obs[0] = row;
+      BOOST_REQUIRE_SMALL(hmm.Emission()[col].Probability(obs) -
+          emission[col].Probability(obs), 0.009);
+    }
+  }
 }
 
 /**
@@ -391,8 +375,8 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMSimpleGenerateTest)
   HMM<DiscreteDistribution> hmm(2, DiscreteDistribution(4));
 
   // Now generate a really, really long sequence.
-  std::vector<size_t> dataSeq;
-  std::vector<size_t> stateSeq;
+  arma::mat dataSeq;
+  arma::Col<size_t> stateSeq;
 
   hmm.Generate(100000, dataSeq, stateSeq);
 
@@ -401,7 +385,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMSimpleGenerateTest)
   arma::vec stateProb(2);
   for (size_t i = 0; i < 100000; i++)
   {
-    emissionProb[dataSeq[i]]++;
+    emissionProb[(size_t) dataSeq.col(i)[0] + 0.5]++;
     stateProb[stateSeq[i]]++;
   }
 
@@ -419,7 +403,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMSimpleGenerateTest)
   BOOST_REQUIRE_CLOSE(stateProb[1], 0.50, 2.0);
 }
 
-/***
+/**
  * More complex test for Generate().
  */
 BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
@@ -444,8 +428,8 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
   // We'll create a bunch of sequences.
   int numSeq = 400;
   int numObs = 3000;
-  std::vector<std::vector<size_t> > sequences(numSeq);
-  std::vector<std::vector<size_t> > states(numSeq);
+  std::vector<arma::mat> sequences(numSeq);
+  std::vector<arma::Col<size_t> > states(numSeq);
   for (int i = 0; i < numSeq; i++)
   {
     // Random starting state.
@@ -465,9 +449,15 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
           hmm2.Transition()(row, col), 0.005);
 
   for (size_t row = 0; row < 6; row++)
+  {
+    arma::vec obs(1);
+    obs[0] = row;
     for (size_t col = 0; col < 4; col++)
-      BOOST_REQUIRE_SMALL(hmm.Emission()[col].Probability(row) -
-          hmm2.Emission()[col].Probability(row), 0.005);
+    {
+      BOOST_REQUIRE_SMALL(hmm.Emission()[col].Probability(obs) -
+          hmm2.Emission()[col].Probability(obs), 0.005);
+    }
+  }
 }
 
 BOOST_AUTO_TEST_CASE(DiscreteHMMLogLikelihoodTest)
@@ -485,44 +475,11 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLogLikelihoodTest)
 
   // Now generate some sequences and check that the log-likelihood is the same
   // as MATLAB gives for this HMM.
-  std::vector<size_t> seq(4);
-  seq[0] = 0;
-  seq[1] = 1;
-  seq[2] = 2;
-  seq[3] = 3;
-  BOOST_REQUIRE_CLOSE(hmm.LogLikelihood(seq), -4.9887223949, 1e-5);
-
-  seq[0] = 1;
-  seq[1] = 2;
-  seq[2] = 0;
-  seq[3] = 0;
-  BOOST_REQUIRE_CLOSE(hmm.LogLikelihood(seq), -6.0288487077, 1e-5);
-
-  seq[0] = 3;
-  seq[1] = 3;
-  seq[2] = 3;
-  seq[3] = 3;
-  BOOST_REQUIRE_CLOSE(hmm.LogLikelihood(seq), -5.5544000018, 1e-5);
-
-  seq.resize(17);
-  seq[0] = 0;
-  seq[1] = 2;
-  seq[2] = 2;
-  seq[3] = 1;
-  seq[4] = 2;
-  seq[5] = 3;
-  seq[6] = 0;
-  seq[7] = 0;
-  seq[8] = 1;
-  seq[9] = 3;
-  seq[10] = 1;
-  seq[11] = 0;
-  seq[12] = 0;
-  seq[13] = 3;
-  seq[14] = 1;
-  seq[15] = 2;
-  seq[16] = 2;
-  BOOST_REQUIRE_CLOSE(hmm.LogLikelihood(seq), -24.51556128368, 1e-5);
+  BOOST_REQUIRE_CLOSE(hmm.LogLikelihood("0 1 2 3"), -4.9887223949, 1e-5);
+  BOOST_REQUIRE_CLOSE(hmm.LogLikelihood("1 2 0 0"), -6.0288487077, 1e-5);
+  BOOST_REQUIRE_CLOSE(hmm.LogLikelihood("3 3 3 3"), -5.5544000018, 1e-5);
+  BOOST_REQUIRE_CLOSE(hmm.LogLikelihood("0 2 2 1 2 3 0 0 1 3 1 0 0 3 1 2 2"),
+      -24.51556128368, 1e-5);
 }
 
 /**
@@ -549,12 +506,12 @@ BOOST_AUTO_TEST_CASE(GaussianHMMSimpleTest)
   HMM<GaussianDistribution> hmm(transition, emission);
 
   // Now, generate some sequences.
-  std::vector<arma::vec> observations(1000);
-  std::vector<size_t> classes(1000);
+  arma::mat observations(2, 1000);
+  arma::Col<size_t> classes(1000);
 
   // 1000-observations sequence.
   classes[0] = 0;
-  observations[0] = g1.Random();
+  observations.col(0) = g1.Random();
   for (size_t i = 1; i < 1000; i++)
   {
     double randValue = (double) rand() / (double) RAND_MAX;
@@ -565,13 +522,13 @@ BOOST_AUTO_TEST_CASE(GaussianHMMSimpleTest)
       classes[i] = classes[i - 1];
 
     if (classes[i] == 0)
-      observations[i] = g1.Random();
+      observations.col(i) = g1.Random();
     else
-      observations[i] = g2.Random();
+      observations.col(i) = g2.Random();
   }
 
   // Now predict the sequence.
-  std::vector<size_t> predictedClasses;
+  arma::Col<size_t> predictedClasses;
   arma::mat stateProb;
 
   hmm.Predict(observations, predictedClasses);
@@ -611,17 +568,17 @@ BOOST_AUTO_TEST_CASE(GaussianHMMTrainTest)
                        "0.4 0.1 0.2");
 
   // Now generate observations.
-  std::vector<std::vector<arma::vec> > observations(100);
-  std::vector<std::vector<size_t> > states(100);
+  std::vector<arma::mat> observations(100);
+  std::vector<arma::Col<size_t> > states(100);
 
   for (size_t obs = 0; obs < 100; obs++)
   {
-    observations[obs].resize(1000);
-    states[obs].resize(1000);
+    observations[obs].set_size(3, 1000);
+    states[obs].set_size(1000);
 
     // Always start in state zero.
     states[obs][0] = 0;
-    observations[obs][0] = emission[0].Random();
+    observations[obs].col(0) = emission[0].Random();
 
     for (size_t t = 1; t < 1000; t++)
     {
@@ -639,7 +596,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMTrainTest)
       }
 
       // Now choose the emission.
-      observations[obs][t] = emission[states[obs][t]].Random();
+      observations[obs].col(t) = emission[states[obs][t]].Random();
     }
   }
 
@@ -724,8 +681,8 @@ BOOST_AUTO_TEST_CASE(GaussianHMMGenerateTest)
   hmm.Emission()[2] = GaussianDistribution("-2.0 1.0", "2.0 0.1; 0.1 1.0");
 
   // Now we will generate a long sequence.
-  std::vector<std::vector<arma::vec> > observations(1);
-  std::vector<std::vector<size_t> > states(1);
+  std::vector<arma::mat> observations(1);
+  std::vector<arma::Col<size_t> > states(1);
 
   // Start in state 1 (no reason).
   hmm.Generate(10000, observations[0], states[0], 1);
