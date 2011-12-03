@@ -23,11 +23,11 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionConstructorTest)
   DiscreteDistribution d(5);
 
   BOOST_REQUIRE_EQUAL(d.Probabilities().n_elem, 5);
-  BOOST_REQUIRE_CLOSE(d.Probability(0), 0.2, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Probability(1), 0.2, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Probability(2), 0.2, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Probability(3), 0.2, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Probability(4), 0.2, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("0"), 0.2, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("1"), 0.2, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("2"), 0.2, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("3"), 0.2, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("4"), 0.2, 1e-5);
 }
 
 /**
@@ -39,11 +39,11 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionProbabilityTest)
 
   d.Probabilities("0.2 0.4 0.1 0.1 0.2");
 
-  BOOST_REQUIRE_CLOSE(d.Probability(0), 0.2, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Probability(1), 0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Probability(2), 0.1, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Probability(3), 0.1, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Probability(4), 0.2, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("0"), 0.2, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("1"), 0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("2"), 0.1, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("3"), 0.1, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("4"), 0.2, 1e-5);
 }
 
 /**
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionRandomTest)
   arma::vec actualProb(3);
 
   for (size_t i = 0; i < 10000; i++)
-    actualProb(d.Random())++;
+    actualProb((size_t) d.Random()[0] + 0.5)++;
 
   // Normalize.
   actualProb /= accu(actualProb);
@@ -76,22 +76,14 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionEstimateTest)
 {
   DiscreteDistribution d(4);
 
-  std::vector<size_t> obs;
-  obs.push_back(0);
-  obs.push_back(0);
-  obs.push_back(1);
-  obs.push_back(1);
-  obs.push_back(2);
-  obs.push_back(2);
-  obs.push_back(2);
-  obs.push_back(3);
+  arma::mat obs("0 0 1 1 2 2 2 3");
 
   d.Estimate(obs);
 
-  BOOST_REQUIRE_CLOSE(d.Probability(0), 0.25, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Probability(1), 0.25, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Probability(2), 0.375, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Probability(3), 0.125, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("0"), 0.25, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("1"), 0.25, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("2"), 0.375, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("3"), 0.125, 1e-5);
 }
 
 /**
@@ -101,23 +93,15 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionEstimateProbTest)
 {
   DiscreteDistribution d(3);
 
-  std::vector<size_t> obs;
-  obs.push_back(0);
-  obs.push_back(0);
-  obs.push_back(1);
-  obs.push_back(2);
+  arma::mat obs("0 0 1 2");
 
-  std::vector<double> prob;
-  prob.push_back(0.25);
-  prob.push_back(0.25);
-  prob.push_back(0.5);
-  prob.push_back(1.0);
+  arma::vec prob("0.25 0.25 0.5 1.0");
 
   d.Estimate(obs, prob);
 
-  BOOST_REQUIRE_CLOSE(d.Probability(0), 0.25, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Probability(1), 0.25, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Probability(2), 0.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("0"), 0.25, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("1"), 0.25, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Probability("2"), 0.5, 1e-5);
 }
 
 /**
@@ -230,22 +214,18 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionEstimateTest)
                 "4.0 0.1 0.0 9.1");
 
   // Now generate the observations.
-  std::vector<arma::vec> observations;
+  arma::mat observations(4, 10000);
 
   arma::mat transChol = trans(chol(cov));
   for (size_t i = 0; i < 10000; i++)
-    observations.push_back(transChol * arma::randn<arma::vec>(4) + mean);
+    observations.col(i) = transChol * arma::randn<arma::vec>(4) + mean;
 
   // Now estimate.
   GaussianDistribution d;
 
   // Find actual mean and covariance of data.
-  arma::mat data(4, 10000);
-  for (size_t i = 0; i < 10000; i++)
-    data.col(i) = observations[i];
-
-  arma::vec actualMean = arma::mean(data, 1);
-  arma::mat actualCov = ccov(data);
+  arma::vec actualMean = arma::mean(observations, 1);
+  arma::mat actualCov = ccov(observations);
 
   d.Estimate(observations);
 
