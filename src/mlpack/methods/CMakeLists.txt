@@ -12,6 +12,7 @@ set(DIRS
   nca
   neighbor_search
   pca
+  range_search
 )
 
 foreach(dir ${DIRS})
