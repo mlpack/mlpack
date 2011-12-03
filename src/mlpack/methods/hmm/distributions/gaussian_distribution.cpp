@@ -20,14 +20,14 @@ arma::vec GaussianDistribution::Random() const
  *
  * @param observations List of observations.
  */
-void GaussianDistribution::Estimate(const std::vector<arma::vec> observations)
+void GaussianDistribution::Estimate(const arma::mat& observations)
 {
   // Calculate the mean and covariance with each point.  Because this is a
   // std::vector and not a matrix, this is a little more difficult.
-  if (observations.size() > 0)
+  if (observations.n_cols > 0)
   {
-    mean.zeros(observations[0].n_elem);
-    covariance.zeros(observations[0].n_elem, observations[0].n_elem);
+    mean.zeros(observations.n_rows);
+    covariance.zeros(observations.n_rows, observations.n_rows);
   }
   else // This will end up just being empty.
   {
@@ -36,22 +36,22 @@ void GaussianDistribution::Estimate(const std::vector<arma::vec> observations)
   }
 
   // Calculate the mean.
-  for (size_t i = 0; i < observations.size(); i++)
-    mean += observations[i];
+  for (size_t i = 0; i < observations.n_cols; i++)
+    mean += observations.col(i);
 
   // Normalize the mean.
-  mean /= observations.size();
+  mean /= observations.n_cols;
 
   // Now calculate the covariance.
-  for (size_t i = 0; i < observations.size(); i++)
+  for (size_t i = 0; i < observations.n_cols; i++)
   {
-    arma::vec obsNoMean = observations[i] - mean;
+    arma::vec obsNoMean = observations.col(i) - mean;
     covariance += obsNoMean * trans(obsNoMean);
   }
 
   // Finish estimating the covariance by normalizing, with the (1 / (n - 1)) so
   // that it is the unbiased estimator.
-  covariance /= (observations.size() - 1);
+  covariance /= (observations.n_cols - 1);
 }
 
 /**
@@ -59,13 +59,13 @@ void GaussianDistribution::Estimate(const std::vector<arma::vec> observations)
  * account the probability of each observation actually being from this
  * distribution.
  */
-void GaussianDistribution::Estimate(const std::vector<arma::vec> observations,
-                                    const std::vector<double> probabilities)
+void GaussianDistribution::Estimate(const arma::mat& observations,
+                                    const arma::vec& probabilities)
 {
-  if (observations.size() > 0)
+  if (observations.n_cols > 0)
   {
-    mean.zeros(observations[0].n_elem);
-    covariance.zeros(observations[0].n_elem, observations[0].n_elem);
+    mean.zeros(observations.n_rows);
+    covariance.zeros(observations.n_rows, observations.n_rows);
   }
   else // This will end up just being empty.
   {
@@ -77,9 +77,9 @@ void GaussianDistribution::Estimate(const std::vector<arma::vec> observations,
 
   // First calculate the mean, and save the sum of all the probabilities for
   // later normalization.
-  for (size_t i = 0; i < observations.size(); i++)
+  for (size_t i = 0; i < observations.n_cols; i++)
   {
-    mean += probabilities[i] * observations[i];
+    mean += probabilities[i] * observations.col(i);
     sumProb += probabilities[i];
   }
 
@@ -87,9 +87,9 @@ void GaussianDistribution::Estimate(const std::vector<arma::vec> observations,
   mean /= sumProb;
 
   // Now find the covariance.
-  for (size_t i = 0; i < observations.size(); i++)
+  for (size_t i = 0; i < observations.n_cols; i++)
   {
-    arma::vec obsNoMean = observations[i] - mean;
+    arma::vec obsNoMean = observations.col(i) - mean;
     covariance += probabilities[i] * (obsNoMean * trans(obsNoMean));
   }
 

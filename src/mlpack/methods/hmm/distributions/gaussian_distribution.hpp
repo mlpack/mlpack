@@ -23,9 +23,6 @@ class GaussianDistribution
   arma::mat covariance;
 
  public:
-  //! The type of data which this distribution uses.
-  typedef arma::vec DataType;
-
   /**
    * Default constructor, which creates a Gaussian with zero dimension.
    */
@@ -44,6 +41,9 @@ class GaussianDistribution
    */
   GaussianDistribution(const arma::vec& mean, const arma::mat& covariance) :
       mean(mean), covariance(covariance) { /* nothing to do */ }
+
+  //! Return the dimensionality of this distribution.
+  size_t Dimensionality() const { return mean.n_elem; }
 
   /**
    * Return the probability of the given observation.
@@ -66,15 +66,15 @@ class GaussianDistribution
    *
    * @param observations List of observations.
    */
-  void Estimate(const std::vector<arma::vec> observations);
+  void Estimate(const arma::mat& observations);
 
   /**
    * Estimate the Gaussian distribution from the given observations, taking into
    * account the probability of each observation actually being from this
    * distribution.
    */
-  void Estimate(const std::vector<arma::vec> observations,
-                const std::vector<double> probabilities);
+  void Estimate(const arma::mat& observations,
+                const arma::vec& probabilities);
 
   /**
    * Return the mean.
