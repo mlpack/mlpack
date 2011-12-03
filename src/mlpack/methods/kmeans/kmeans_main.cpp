@@ -59,7 +59,7 @@ int main(int argc, char** argv)
   }
 
   double overclustering = CLI::GetParam<double>("overclustering");
-  if (overclustering < 1)
+  if (overclustering < 0)
   {
     Log::Fatal << "Invalid value for overclustering (" << overclustering <<
         ")! Must be greater than or equal to 1." << std::endl;
