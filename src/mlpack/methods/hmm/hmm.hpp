@@ -60,9 +60,6 @@ class HMM
   std::vector<Distribution> emission;
 
  public:
-  //! Convenience typedef for the type of observation we are using.
-  typedef typename Distribution::DataType Observation;
-
   /**
    * Create the Hidden Markov Model with the given number of hidden states and
    * the given default distribution for emissions.
@@ -95,7 +92,7 @@ class HMM
    *
    * @param dataSeq Vector of observation sequences.
    */
-  void Train(const std::vector<std::vector<Observation> >& dataSeq);
+  void Train(const std::vector<arma::mat>& dataSeq);
 
   /**
    * Train the model using the given labeled observations; the transition and
@@ -105,8 +102,8 @@ class HMM
    * @param stateSeq Vector of state sequences, corresponding to each
    *    observation.
    */
-  void Train(const std::vector<std::vector<Observation> >& dataSeq,
-             const std::vector<std::vector<size_t> >& stateSeq);
+  void Train(const std::vector<arma::mat>& dataSeq,
+             const std::vector<arma::Col<size_t> >& stateSeq);
 
   /**
    * Estimate the probabilities of each hidden state at each time step for each
@@ -126,7 +123,7 @@ class HMM
    *    will be stored.
    * @return Log-likelihood of most likely state sequence.
    */
-  double Estimate(const std::vector<Observation>& dataSeq,
+  double Estimate(const arma::mat& dataSeq,
                   arma::mat& stateProb,
                   arma::mat& forwardProb,
                   arma::mat& backwardProb,
@@ -143,7 +140,7 @@ class HMM
    * @param stateProb Probabilities of each state at each time interval.
    * @return Log-likelihood of most likely state sequence.
    */
-  double Estimate(const std::vector<Observation>& dataSeq,
+  double Estimate(const arma::mat& dataSeq,
                   arma::mat& stateProb) const;
 
   /**
@@ -157,8 +154,8 @@ class HMM
    * @param startState Hidden state to start sequence in (default 0).
    */
   void Generate(const size_t length,
-                std::vector<Observation>& dataSequence,
-                std::vector<size_t>& stateSequence,
+                arma::mat& dataSequence,
+                arma::Col<size_t>& stateSequence,
                 const size_t startState = 0) const;
 
   /**
@@ -171,8 +168,8 @@ class HMM
    *    stored.
    * @return Log-likelihood of most probable state sequence.
    */
-  double Predict(const std::vector<Observation>& dataSeq,
-                 std::vector<size_t>& stateSeq) const;
+  double Predict(const arma::mat& dataSeq,
+                 arma::Col<size_t>& stateSeq) const;
 
   /**
    * Compute the log-likelihood of the given data sequence.
@@ -180,7 +177,7 @@ class HMM
    * @param dataSeq Data sequence to evaluate the likelihood of.
    * @return Log-likelihood of the given sequence.
    */
-  double LogLikelihood(const std::vector<Observation>& dataSeq) const;
+  double LogLikelihood(const arma::mat& dataSeq) const;
 
   /**
    * Return the transition matrix.
@@ -215,7 +212,7 @@ class HMM
    * @param scales Vector in which scaling factors will be saved.
    * @param forwardProb Matrix in which forward probabilities will be saved.
    */
-  void Forward(const std::vector<Observation>& dataSeq,
+  void Forward(const arma::mat& dataSeq,
                arma::vec& scales,
                arma::mat& forwardProb) const;
 
@@ -230,9 +227,12 @@ class HMM
    * @param scales Vector of scaling factors.
    * @param backwardProb Matrix in which backward probabilities will be saved.
    */
-  void Backward(const std::vector<Observation>& dataSeq,
+  void Backward(const arma::mat& dataSeq,
                 const arma::vec& scales,
                 arma::mat& backwardProb) const;
+
+  //! Dimensionality of observations.
+  size_t dimensionality;
 };
 
 }; // namespace hmm
