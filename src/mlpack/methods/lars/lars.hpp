@@ -1,4 +1,4 @@
-/** @file lars.h
+/** @file lars.hpp
  *
  *  This file implements Least Angle Regression and the LASSO
  *
@@ -125,7 +125,7 @@ class Lars {
   void CholeskyDelete(u32 col_to_kill);
 };
 
-#include "lars_impl.h"
+#include "lars_impl.hpp"
 #undef INSIDE_LARS_H
 
 #endif
