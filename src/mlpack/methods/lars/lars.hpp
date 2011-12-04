@@ -1,129 +1,118 @@
-/** @file lars.hpp
+/**
+ * @file lars.hpp
+ * @author Nishant Mehta (niche)
  *
- *  This file implements Least Angle Regression and the LASSO
- *
- *  @author Nishant Mehta (niche)
- *  @bug No known bugs
+ * Definition of the LARS class, which performs Least Angle Regression and the
+ * LASSO.
  */
+#ifndef __MLPACK_METHODS_LARS_LARS_HPP
+#define __MLPACK_METHODS_LARS_LARS_HPP
 
-// beta is the estimator
-// y_hat is the prediction from the current estimator
-
-#ifndef LARS_H
-#define LARS_H
-
-#define INSIDE_LARS_H
-
-#include <float.h>
+#include <mlpack/core.hpp>
 
 #define EPS 1e-16
 
-using namespace arma;
-using namespace std;
+namespace mlpack {
+namespace lars {
 
+// beta is the estimator
+// responseshat is the prediction from the current estimator
 
-class Lars {
+class LARS {
  private:
-  mat X_;
-  vec y_;
+  arma::mat data;
+  arma::vec responses;
 
-  u32 n_;
-  u32 p_;
-  
-  vec Xty_;
-  mat Gram_;
-  mat R_; // upper triangular cholesky factor, initially 0 by 0 matrix
-  
-  bool use_cholesky_;
-  
-  bool lasso_;
-  double lambda_1_;
-  
-  bool elastic_net_;
-  double lambda_2_;
-  
-  std::vector<vec> beta_path_;
-  std::vector<double> lambda_path_;
-  
-  u32 n_active_;
-  std::vector<u32> active_set_;
-  std::vector<bool> is_active_;
-  
-  
+  arma::vec xtResponses;
+  arma::mat gram;
+  //! Upper triangular cholesky factor; initially 0x0 arma::matrix.
+  arma::mat utriCholFactor;
+
+  bool useCholesky;
+
+  bool lasso;
+  double lambda1;
+
+  bool elasticNet;
+  double lambda2;
+
+  std::vector<arma::vec> betaPath;
+  std::vector<double> lambdaPath;
+
+  arma::u32 nActive;
+  std::vector<arma::u32> activeSet;
+  std::vector<bool> isActive;
+
  public:
-  Lars();
-  ~Lars() { }
-  
-  
-  void Init(double* X_mem, double* y_mem, u32 n, u32 p,
-	    bool use_cholesky, double lambda_1, double lambda_2);
-  
-  void Init(double* X_mem, double* y_mem, u32 n, u32 p,
-	    bool use_cholesky, double lambda_1);
-  
-  void Init(double* X_mem, double* y_mem, u32 n, u32 p,
-	    bool use_cholesky);
-  
-  void Init(const mat& X, const vec& y,
-	    bool use_cholesky, double lambda_1, double lambda_2);
+  LARS(const arma::mat& data,
+       const arma::vec& responses,
+       const bool useCholesky);
 
-  void Init(const mat& X, const vec& y,
-	    bool use_cholesky, double lambda_1);
-  
-  void Init(const mat& X, const vec& y,
-	    bool use_cholesky);
-  
-  void SetGram(double* Gram_mem, u32 p);
-  
-  void SetGram(const mat& Gram);
-  
+  LARS(const arma::mat& data,
+       const arma::vec& responses,
+       const bool useCholesky,
+       const double lambda1);
+
+  LARS(const arma::mat& data,
+       const arma::vec& responses,
+       const bool useCholesky,
+       const double lambda1,
+       const double lambda2);
+
+  ~LARS() { }
+
+  void SetGram(const arma::mat& Gram);
+
   void ComputeGram();
-  
+
   void ComputeXty();
-  
-  void UpdateX(const std::vector<int>& col_inds, const mat& new_cols);
-  
+
+  void UpdateX(const std::vector<int>& col_inds, const arma::mat& new_cols);
+
   void UpdateGram(const std::vector<int>& col_inds);
-  
+
   void UpdateXty(const std::vector<int>& col_inds);
-  
+
   void PrintGram();
-  
-  void SetY(const vec& y);
-  
+
+  void SetY(const arma::vec& y);
+
   void PrintY();
 
-  const std::vector<u32> active_set();
-  
-  const std::vector<vec> beta_path();
-  
-  const std::vector<double> lambda_path();
-  
-  void SetDesiredLambda(double lambda_1);
-  
-  void DoLARS();
-  
-  void Solution(vec& beta);
-  
-  void GetCholFactor(mat& R);
-  
-  void Deactivate(u32 active_var_ind);
+  const std::vector<arma::u32> active_set();
 
-  void Activate(u32 var_ind);
-  
-  void ComputeYHatDirection(const vec& beta_direction,
-			    vec& y_hat_direction);
-  
+  const std::vector<arma::vec> beta_path();
+
+  const std::vector<double> lambda_path();
+
+  void SetDesiredLambda(double lambda1);
+
+  void DoLARS();
+
+  void Solution(arma::vec& beta);
+
+  void GetCholFactor(arma::mat& R);
+
+  void Deactivate(arma::u32 active_var_ind);
+
+  void Activate(arma::u32 var_ind);
+
+  void ComputeYHatDirection(const arma::vec& beta_direction,
+                            arma::vec& responseshat_direction);
+
   void InterpolateBeta();
-  
-  void CholeskyInsert(const vec& new_x, const mat& X);
-  
-  void CholeskyInsert(const vec& new_x, const vec& new_Gram_col);
-  
-  void GivensRotate(const vec& x, vec& rotated_x, mat& G);
-  
-  void CholeskyDelete(u32 col_to_kill);
+
+  void CholeskyInsert(const arma::vec& new_x, const arma::mat& X);
+
+  void CholeskyInsert(const arma::vec& new_x, const arma::vec& newGramCol);
+
+  void GivensRotate(const arma::vec& x, arma::vec& rotated_x, arma::mat& G);
+
+  void CholeskyDelete(arma::u32 col_to_kill);
 };
+
+}; // namespace lars
+}; // namespace mlpack
 
 #include "lars_impl.hpp"
 #undef INSIDE_LARS_H
