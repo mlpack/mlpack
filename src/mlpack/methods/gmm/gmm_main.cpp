@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
 
   ////// Computing the parameters of the model using the EM algorithm //////
   Timers::StartTimer("gmm/em");
-  gmm.ExpectationMaximization(data_points);
+  gmm.Estimate(data_points);
   Timers::StopTimer("gmm/em");
 
   ////// OUTPUT RESULTS //////
