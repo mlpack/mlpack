@@ -27,7 +27,7 @@ namespace gmm {
  * GMM mog;
  * ArrayList<double> results;
  *
- * mog.Init(number_of_gaussians, dimension);
+ * mog.Init(number_of_gaussians, dimensionality);
  * mog.ExpectationMaximization(data, &results, optim_flag);
  * @endcode
  */
@@ -36,7 +36,7 @@ class GMM {
   //! The number of Gaussians in the model.
   size_t gaussians;
   //! The dimensionality of the model.
-  size_t dimension;
+  size_t dimensionality;
   //! Vector of means; one for each Gaussian.
   std::vector<arma::vec> means;
   //! Vector of covariances; one for each Gaussian.
@@ -46,23 +46,47 @@ class GMM {
 
  public:
   /**
+   * Create an empty Gaussian Mixture Model, with zero gaussians.
+   */
+  GMM() :
+    gaussians(0),
+    dimensionality(0) { /* nothing to do */ }
+
+  /**
    * Create a GMM with the given number of Gaussians, each of which have the
    * specified dimensionality.
    *
    * @param gaussians Number of Gaussians in this GMM.
-   * @param dimension Dimensionality of each Gaussian.
+   * @param dimensionality Dimensionality of each Gaussian.
    */
-  GMM(size_t gaussians, size_t dimension) :
+  GMM(size_t gaussians, size_t dimensionality) :
       gaussians(gaussians),
-      dimension(dimension),
-      means(gaussians),
-      covariances(gaussians) { /* nothing to do */ }
+      dimensionality(dimensionality),
+      means(gaussians, arma::vec(dimensionality)),
+      covariances(gaussians, arma::mat(dimensionality, dimensionality)),
+      weights(gaussians) { /* nothing to do */ }
+
+  /**
+   * Create a GMM with the given means, covariances, and weights.
+   *
+   * @param means Means of the model.
+   * @param covariances Covariances of the model.
+   * @param weights Weights of the model.
+   */
+  GMM(const std::vector<arma::vec>& means,
+      const std::vector<arma::mat>& covariances,
+      const arma::vec& weights) :
+      gaussians(means.size()),
+      dimensionality((means.size() > 0) ? means[0].n_elem : 0),
+      means(means),
+      covariances(covariances),
+      weights(weights) { /* nothing to do */ }
 
   //! Return the number of gaussians in the model.
-  const size_t Gaussians() { return gaussians; }
+  size_t Gaussians() const { return gaussians; }
 
   //! Return the dimensionality of the model.
-  const size_t Dimension() { return dimension; }
+  size_t Dimensionality() const { return dimensionality; }
 
   //! Return a const reference to the vector of means (mu).
   const std::vector<arma::vec>& Means() const { return means; }
@@ -78,7 +102,6 @@ class GMM {
   const arma::vec& Weights() const { return weights; }
   //! Return a reference to the a priori weights of each Gaussian.
   arma::vec& Weights() { return weights; }
-
 
   /**
    * Return the probability that the given observation came from this
@@ -97,25 +120,63 @@ class GMM {
   arma::vec Random() const;
 
   /**
-   * This function estimates the parameters of the Gaussian Mixture Model using
-   * the Maximum Likelihood estimator, via the EM (Expectation Maximization)
-   * algorithm.
+   * Estimate the probability distribution directly from the given observations,
+   * using the EM algorithm to obtain the Maximum Likelihood parameter.
+   *
+   * @param observations Observations of the model.
    */
-  void ExpectationMaximization(const arma::mat& data_points);
+  void Estimate(const arma::mat& observations);
 
   /**
-   * This function computes the loglikelihood of model.
-   * This function is used by the 'ExpectationMaximization'
-   * function.
+   * Estimate the probability distribution directly from the given observations,
+   * taking into account the probability of each observation actually being from
+   * this distribution.
    *
+   * @param observations Observations of the model.
+   * @param probability Probability of each observation.
    */
-  long double Loglikelihood(const arma::mat& data_points,
-                            const std::vector<arma::vec>& means,
-                            const std::vector<arma::mat>& covars,
-                            const arma::vec& weights) const;
+  void Estimate(const arma::mat& observations,
+                const arma::vec& probabilities);
+
+ private:
+  /**
+   * This function computes the loglikelihood of the given model.  This function
+   * is used by GMM::Estimate().
+   *
+   * @param dataPoints Observations to calculate the likelihood for.
+   * @param means Means of the given mixture model.
+   * @param covars Covariances of the given mixture model.
+   * @param weights Weights of the given mixture model.
+   */
+  double Loglikelihood(const arma::mat& dataPoints,
+                       const std::vector<arma::vec>& means,
+                       const std::vector<arma::mat>& covars,
+                       const arma::vec& weights) const;
+
+  /**
+   * This function uses the given clustering class and initializes means,
+   * covariances, and weights into the passed objects based on the assignments
+   * of the clustering class.
+   *
+   * @param clusterer Initialized clustering class (must implement void
+   *      Cluster(const arma::mat&, arma::Col<size_t>&)
+   * @param data Dataset to perform clustering on.
+   * @param means Vector to store means in.
+   * @param covars Vector to store covariances in.
+   * @param weights Vector to store weights in.
+   */
+  template<typename ClusteringType>
+  void InitialClustering(const ClusteringType& clusterer,
+                         const arma::mat& data,
+                         std::vector<arma::vec>& means,
+                         std::vector<arma::mat>& covars,
+                         arma::vec& weights) const;
 };
 
 }; // namespace gmm
 }; // namespace mlpack
+
+// Include implementation.
+#include "gmm_impl.hpp"
 
 #endif

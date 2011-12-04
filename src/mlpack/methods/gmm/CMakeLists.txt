@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
   gmm.hpp
+  gmm_impl.hpp
   gmm.cpp
   phi.hpp
 )
