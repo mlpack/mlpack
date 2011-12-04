@@ -6,6 +6,7 @@ set(DIRS
   gmm
   hmm
   kmeans
+  lars
   linear_regression
   #mvu  # (currently known to not work)
   naive_bayes
