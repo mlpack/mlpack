@@ -1,21 +1,19 @@
-/** @file test.cc
+/**
+ * @file test.cpp
+ * @author Nishant Mehta (niche)
  *
- *  Test Driver file for testing various parts of LARS
- *
- *  @author Nishant Mehta (niche)
+ * Test Driver file for testing various parts of LARS
  */
 
-#include <fastlib/fastlib.h>
+#include <mlpack/core.hpp>
 #include <armadillo>
 
-#include "lars.h"
+#include "lars.hpp"
 
 #define ERROR_TOL 1e-13
 
-
 using namespace arma;
 using namespace std;
-
 
 bool TestElasticNet(bool use_cholesky, double lambda_1, double lambda_2) {
   mat X;
