@@ -7,7 +7,7 @@
 
 #include <armadillo>
 
-#include "lars.h"
+#include "lars.hpp"
 
 #define ERROR_TOL 1e-13
 

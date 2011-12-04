@@ -6,10 +6,8 @@ cmake_minimum_required(VERSION 2.8)
 # In this library, these are specified twice, once here, and once for the individual library it belongs to, so make sure
 # that you have files in both sections
 set(SOURCES
-   # for lars
-   lars.h
-   lars_impl.h
-   dummy.cc
+   lars.hpp
+   lars_impl.hpp
 )
 
 # add directory name to sources
@@ -22,28 +20,25 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # The executable for LARS
 add_executable(lars
-    main.cc
+  lars_main.cpp
 )
 
 target_link_libraries(lars
-  ${MLPACK_LIBRARY}
-  contrib_niche
+  mlpack
 )
 
 add_executable(test_chol
-    one_test_chol.cc
+  one_test_chol.cpp
 )
 
 target_link_libraries(test_chol
-  ${MLPACK_LIBRARY}
-  contrib_niche
+  mlpack
 )
 
 add_executable(test_gram
-    one_test_gram.cc
+  one_test_gram.cpp
 )
 
 target_link_libraries(test_gram
-  ${MLPACK_LIBRARY}
-  contrib_niche
+  mlpack
 )
