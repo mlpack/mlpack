@@ -13,6 +13,7 @@ set(DIRS
   nca
   neighbor_search
   pca
+  radical
   range_search
 )
 
