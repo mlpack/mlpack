@@ -13,13 +13,12 @@ foreach(file ${SOURCES})
   set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
 # append sources (with directory name) to list of all MLPACK sources (used at the parent scope)
-set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_executable(radical
     radical_main.cpp
 )
 
 target_link_libraries(radical
-  ${MLPACK_LIBRARY}
-  contrib_niche
+  mlpack
 )
