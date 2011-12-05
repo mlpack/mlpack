@@ -58,7 +58,7 @@ void LARS::SetGram(const arma::mat& Gram) {
 void LARS::ComputeGram()
 {
   if (elasticNet)
-    gram = trans(data) * data + lambda2 * arma::eye(data.n_rows, data.n_rows);
+    gram = trans(data) * data + lambda2 * arma::eye(data.n_cols, data.n_cols);
   else
     gram = trans(data) * data;
 }
@@ -155,13 +155,13 @@ void LARS::DoLARS()
   // set up active set variables
   nActive = 0;
   activeSet = std::vector<arma::u32>(0);
-  isActive = std::vector<bool>(data.n_rows);
+  isActive = std::vector<bool>(data.n_cols);
   fill(isActive.begin(), isActive.end(), false);
 
   // initialize responseshat and beta
-  arma::vec beta = arma::zeros(data.n_rows);
-  arma::vec responseshat = arma::zeros(data.n_cols);
-  arma::vec responseshat_direction = arma::vec(data.n_cols);
+  arma::vec beta = arma::zeros(data.n_cols);
+  arma::vec responseshat = arma::zeros(data.n_rows);
+  arma::vec responseshat_direction = arma::vec(data.n_rows);
 
   bool lassocond = false;
 
@@ -179,7 +179,7 @@ void LARS::DoLARS()
 
   betaPath.push_back(beta);
   lambdaPath.push_back(max_corr);
-
+  
   // don't even start!
   if (max_corr < lambda1)
   {
@@ -187,17 +187,17 @@ void LARS::DoLARS()
     return;
   }
 
-  //arma::u32 data.n_colsiterations_run = 0;
+  //arma::u32 data.n_rowsiterations_run = 0;
   // MAIN LOOP
-  while ((nActive < data.n_rows) && (max_corr > EPS))
+  while ((nActive < data.n_cols) && (max_corr > EPS))
   {
-    //data.n_colsiterations_run++;
-    //printf("iteration %d\t", data.n_colsiterations_run);
+    //data.n_rowsiterations_run++;
+    //printf("iteration %d\t", data.n_rowsiterations_run);
 
     // explicit computation of max correlation, among inactive indices
     change_ind = -1;
     max_corr = 0;
-    for (arma::u32 i = 0; i < data.n_rows; i++)
+    for (arma::u32 i = 0; i < data.n_cols; i++)
     {
       if (!isActive[i])
       {
@@ -281,10 +281,10 @@ void LARS::DoLARS()
     double gamma = max_corr / normalization;
 
     // if not all variables are active
-    if (nActive < data.n_rows)
+    if (nActive < data.n_cols)
     {
       // compute correlations with direction
-      for (arma::u32 ind = 0; ind < data.n_rows; ind++)
+      for (arma::u32 ind = 0; ind < data.n_cols; ind++)
       {
         if (isActive[ind])
         {
@@ -322,7 +322,7 @@ void LARS::DoLARS()
       {
         //printf("%d: gap = %e\tbeta(%d) = %e\n",
         //    activeSet[active_ind_to_kick_out],
-        //    gamma - lassobound_odata.n_colsgamma,
+        //    gamma - lassobound_odata.n_rowsgamma,
         //    activeSet[active_ind_to_kick_out],
         //    beta(activeSet[active_ind_to_kick_out]));
         gamma = lassobound_on_gamma;
