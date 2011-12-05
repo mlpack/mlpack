@@ -166,12 +166,11 @@ void LARS::DoLARS()
   bool lassocond = false;
 
   // used for elastic net
-  double sqrt_lambda_2 = -1;
-  if (elasticNet)
-    sqrt_lambda_2 = sqrt(lambda2);
-  else
-    lambda2 = -1; // for no particular reason
-
+  if(!elasticNet)
+  {
+    lambda2 = 0; // just in case it is accidentally used, the code still will be correct
+  }
+  
   arma::vec corr = xtResponses;
   arma::vec abs_corr = abs(corr);
   arma::u32 change_ind;
