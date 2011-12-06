@@ -32,7 +32,23 @@ double GMM::Probability(const arma::vec& observation) const
  */
 arma::vec GMM::Random() const
 {
-  return "0 0";
+  // Determine which Gaussian it will be coming from.
+  double gaussRand = (double) rand() / (double) RAND_MAX;
+  size_t gaussian;
+
+  double sumProb = 0;
+  for (size_t g = 0; g < gaussians; g++)
+  {
+    sumProb += weights(g);
+    if (gaussRand <= sumProb)
+    {
+      gaussian = g;
+      break;
+    }
+  }
+
+  return trans(chol(covariances[gaussian])) *
+      arma::randn<arma::vec>(dimensionality) + means[gaussian];
 }
 
 void GMM::Estimate(const arma::mat& data)
