@@ -7,7 +7,8 @@ set(SOURCES
    union_find.hpp
    # dtb
    dtb.hpp
-   emst.hpp
+   dtb_impl.hpp
+   edge_pair.hpp
 )
 
 # Add directory name to sources.
