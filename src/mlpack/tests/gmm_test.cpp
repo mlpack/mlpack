@@ -302,8 +302,6 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMSingleGaussianWithProbability)
  */
 BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
 {
-  srand(time(NULL));
-
   // We'll have three Gaussian distributions from this mixture, and one Gaussian
   // not from this mixture (but we'll put some observations from it in).
   distribution::GaussianDistribution d1("0.0 1.0 0.0", "1.0 0.0 0.5;"
@@ -403,8 +401,6 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
  */
 BOOST_AUTO_TEST_CASE(GMMRandomTest)
 {
-  srand(time(NULL));
-
   // Simple GMM distribution.
   GMM gmm(2, 2);
   gmm.Weights() = arma::vec("0.40 0.60");
