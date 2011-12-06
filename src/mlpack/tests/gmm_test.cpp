@@ -238,25 +238,25 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
   GMM gmm(gaussians, dims);
   gmm.Estimate(data);
 
-  arma::uvec sort_ref = sort_index(weights);
-  arma::uvec sort_try = sort_index(gmm.Weights());
+  arma::uvec sortRef = sort_index(weights);
+  arma::uvec sortTry = sort_index(gmm.Weights());
 
   // Check the model to see that it is correct.
   for (size_t i = 0; i < gaussians; i++)
   {
     // Check the mean.
     for (size_t j = 0; j < dims; j++)
-      BOOST_REQUIRE_CLOSE((gmm.Means()[sort_try[i]])[j],
-          (means[sort_ref[i]])[j], 1e-5);
+      BOOST_REQUIRE_CLOSE((gmm.Means()[sortTry[i]])[j],
+          (means[sortRef[i]])[j], 1e-5);
 
     // Check the covariance.
     for (size_t row = 0; row < dims; row++)
       for (size_t col = 0; col < dims; col++)
-        BOOST_REQUIRE_CLOSE((gmm.Covariances()[sort_try[i]])(row, col),
-            (covars[sort_ref[i]])(row, col), 1e-5);
+        BOOST_REQUIRE_CLOSE((gmm.Covariances()[sortTry[i]])(row, col),
+            (covars[sortRef[i]])(row, col), 1e-5);
 
     // Check the weight.
-    BOOST_REQUIRE_CLOSE(gmm.Weights()[sort_try[i]], weights[sort_ref[i]],
+    BOOST_REQUIRE_CLOSE(gmm.Weights()[sortTry[i]], weights[sortRef[i]],
         1e-5);
   }
 }
@@ -265,10 +265,8 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
  * Train a single-gaussian mixture, but using the overload of Estimate() where
  * probabilities of the observation are given.
  */
-BOOST_AUTO_TEST_CASE(GMMEMTrainSingleGaussianWithProbability)
+BOOST_AUTO_TEST_CASE(GMMTrainEMSingleGaussianWithProbability)
 {
-  srand(time(NULL));
-
   // Generate observations from a Gaussian distribution.
   distribution::GaussianDistribution d("0.5 1.0", "1.0 0.3; 0.3 1.0");
 
@@ -296,6 +294,106 @@ BOOST_AUTO_TEST_CASE(GMMEMTrainSingleGaussianWithProbability)
   BOOST_REQUIRE_CLOSE(g.Covariances()[0](1, 1), 1.0, 7.0);
 
   BOOST_REQUIRE_CLOSE(g.Weights()[0], 1.0, 1e-5);
+}
+
+/**
+ * Train a multi-Gaussian mixture, using the overload of Estimate() where
+ * probabilities of the observation are given.
+ */
+BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
+{
+  srand(time(NULL));
+
+  // We'll have three Gaussian distributions from this mixture, and one Gaussian
+  // not from this mixture (but we'll put some observations from it in).
+  distribution::GaussianDistribution d1("0.0 1.0 0.0", "1.0 0.0 0.5;"
+                                                       "0.0 0.8 0.1;"
+                                                       "0.5 0.1 1.0");
+  distribution::GaussianDistribution d2("2.0 -1.0 5.0", "3.0 0.0 0.5;"
+                                                        "0.0 1.2 0.2;"
+                                                        "0.5 0.2 1.3");
+  distribution::GaussianDistribution d3("0.0 5.0 -3.0", "2.0 0.0 0.0;"
+                                                        "0.0 0.3 0.0;"
+                                                        "0.0 0.0 1.0");
+  distribution::GaussianDistribution d4("4.0 2.0 2.0", "1.5 0.6 0.5;"
+                                                       "0.6 1.1 0.1;"
+                                                       "0.0 0.1 1.0");
+
+  // Now we'll generate points and probabilities.  1500 points.  Slower than I
+  // would like...
+  arma::mat points(3, 1500);
+  arma::vec probabilities(1500);
+
+  for (size_t i = 0; i < 1500; i++)
+  {
+    double randValue = (double) rand() / (double) RAND_MAX;
+
+    if (randValue <= 0.20) // p(d1) = 0.20
+      points.col(i) = d1.Random();
+    else if (randValue <= 0.50) // p(d2) = 0.30
+      points.col(i) = d2.Random();
+    else if (randValue <= 0.90) // p(d3) = 0.40
+      points.col(i) = d3.Random();
+    else // p(d4) = 0.10
+      points.col(i) = d4.Random();
+
+    // Set the probability right.  If it came from this mixture, it should be
+    // 0.97 plus or minus a little bit of noise.  If not, then it should be 0.03
+    // plus or minus a little bit of noise.  The base probability (minus the
+    // noise) is parameterizable for easy modification of the test.
+    double confidence = 0.995;
+    double perturbation = 0.01 * (((double) rand() / (double) RAND_MAX) - 0.5);
+
+    if (randValue <= 0.90)
+      probabilities(i) = confidence + perturbation;
+    else
+      probabilities(i) = (1 - confidence) + perturbation;
+  }
+
+  // Now train the model.
+  GMM g(3, 3); // 3 dimensions, 3 components.
+
+  g.Estimate(points, probabilities);
+
+  // Now check the results.  We need to order by weights so that when we do the
+  // checking, things will be correct.
+  arma::uvec sortedIndices = sort_index(g.Weights());
+
+  // The tolerances in our checks are quite large, but it is good to remember
+  // that we introduced a fair amount of random noise into this whole process.
+
+  // First Gaussian (g1).
+  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[0]] - 0.2222222222222, 0.075);
+
+  for (size_t i = 0; i < 3; i++)
+    BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[0]][i] - d1.Mean()[i]), 0.25);
+
+  for (size_t row = 0; row < 3; row++)
+    for (size_t col = 0; col < 3; col++)
+      BOOST_REQUIRE_SMALL((g.Covariances()[sortedIndices[0]](row, col) -
+          d1.Covariance()(row, col)), 0.60); // Big tolerance!  Lots of noise.
+
+  // Second Gaussian (g2).
+  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[1]] - 0.3333333333333, 0.075);
+
+  for (size_t i = 0; i < 3; i++)
+    BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[1]][i] - d2.Mean()[i]), 0.25);
+
+  for (size_t row = 0; row < 3; row++)
+    for (size_t col = 0; col < 3; col++)
+      BOOST_REQUIRE_SMALL((g.Covariances()[sortedIndices[1]](row, col) -
+          d2.Covariance()(row, col)), 0.55); // Big tolerance!  Lots of noise.
+
+  // Third Gaussian (g3).
+  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[2]] - 0.4444444444444, 0.1);
+
+  for (size_t i = 0; i < 3; i++)
+    BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[2]][i] - d3.Mean()[i]), 0.25);
+
+  for (size_t row = 0; row < 3; row++)
+    for (size_t col = 0; col < 3; col++)
+      BOOST_REQUIRE_SMALL((g.Covariances()[sortedIndices[2]](row, col) -
+          d3.Covariance()(row, col)), 0.50); // Big tolerance!  Lots of noise.
 }
 
 BOOST_AUTO_TEST_SUITE_END();
