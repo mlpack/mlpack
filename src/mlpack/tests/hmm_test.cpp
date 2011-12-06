@@ -729,8 +729,6 @@ BOOST_AUTO_TEST_CASE(GaussianHMMGenerateTest)
  */
 BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
 {
-  srand(time(NULL));
-
   // We will use two GMMs; one with two components and one with three.
   std::vector<GMM> gmms(2);
   gmms[0] = GMM(2, 2);
@@ -789,6 +787,12 @@ BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
   for (size_t i = 0; i < 1000; i++)
     BOOST_REQUIRE_EQUAL(predictions[i], states[i]);
 }
+
+/**
+ * Test that GMM-based HMMs can train on models correctly using labeled training
+ * data.
+ */
+
 
 BOOST_AUTO_TEST_SUITE_END();
 
