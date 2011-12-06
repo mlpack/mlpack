@@ -50,7 +50,14 @@ class GMM {
    */
   GMM() :
     gaussians(0),
-    dimensionality(0) { /* nothing to do */ }
+    dimensionality(0)
+  {
+    // Warn the user.  They probably don't want to do this.  If this constructor
+    // is being used (because it is required by some template classes), the user
+    // should know that it is potentially dangerous.
+    Log::Warn << "GMM::GMM(): no parameters given; Estimate() will fail "
+        << "unless parameters are set." << std::endl;
+  }
 
   /**
    * Create a GMM with the given number of Gaussians, each of which have the
