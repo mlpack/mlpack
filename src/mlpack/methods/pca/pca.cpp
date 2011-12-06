@@ -13,7 +13,9 @@ using namespace std;
 namespace mlpack {
 namespace pca {
 
-PCA::PCA()
+PCA::PCA(const bool centerData, const bool scaleData) :
+      centerData_(centerData),
+      scaleData_(scaleData)
 {
 }
 
@@ -29,16 +31,19 @@ void PCA::Apply(const arma::mat& data, arma::mat& transformedData,
            arma::vec& eigVal, arma::mat& coeffs)
 {
   arma::mat transData = trans(data);
-  /*
-   * centering and scaling of data - commented out for now.
-   * transData.print("DATA : ");
-  arma::rowvec means = mean(transData, 0);
-  means.print("MEANS : ");
-  arma::mat meanSubData = transData;// - arma::ones<arma::colvec>(data.n_rows) * means;
-  meanSubData.print("CENTERED : ");
-  arma::mat scaledData = meanSubData;// / (arma::ones<arma::colvec>(data.n_rows) * stddev(meanSubData, 0, 0));
-  scaledData.print("SCALED : ");*/
-  arma::mat covMat = cov(transData); // should be this -> cov(scaledData);
+
+  if(centerData_)
+  {
+    arma::rowvec means = arma::mean(transData, 0);
+    transData = transData - arma::ones<arma::colvec>(transData.n_rows) * means;
+  }
+
+  if(scaleData_)
+  {
+    transData = transData / (arma::ones<arma::colvec>(transData.n_rows) * stddev(transData, 0, 0));
+  }
+
+  arma::mat covMat = cov(transData);
   arma::eig_sym(eigVal, coeffs, covMat);
 
   int n_eigVal = eigVal.n_elem;
@@ -47,6 +52,8 @@ void PCA::Apply(const arma::mat& data, arma::mat& transformedData,
 
   coeffs = arma::fliplr(coeffs);
   transformedData = trans(coeffs) * data;
+  arma::colvec transformedDataMean = arma::mean(transformedData, 1);
+  transformedData = transformedData - (transformedDataMean * arma::ones<arma::rowvec>(transformedData.n_cols));
 }
 
 /**
@@ -59,19 +66,9 @@ void PCA::Apply(const arma::mat& data, arma::mat& transformedData,
 void PCA::Apply(const arma::mat& data, arma::mat& transformedData,
            arma::vec& eigVal)
 {
-  arma::mat transData = trans(data);
-  arma::vec means = mean(data, 1);
-  arma::mat meanSubData = data - means * arma::ones<arma::rowvec>(data.n_cols);
-  arma::mat covMat = ccov(meanSubData);
-  arma::mat eigVec;
-  arma::eig_sym(eigVal, eigVec, covMat);
-
-  int n_eigVal = eigVal.n_elem;
-  for(int i = 0; i < floor(n_eigVal / 2); i++)
-    eigVal.swap_rows(i, (n_eigVal - 1) - i);
-
-  eigVec = arma::fliplr(eigVec);
-  transformedData = trans(eigVec) * data;
+  arma::mat coeffs;
+  Apply(data, transformedData,
+              eigVal, coeffs);
 }
 
 /**
@@ -86,21 +83,13 @@ void PCA::Apply(const arma::mat& data, arma::mat& transformedData,
  */
 void PCA::Apply(arma::mat& data, const int newDimension)
 {
-  arma::mat transData = trans(data);
-  arma::vec means = mean(data, 1);
-  arma::mat meanSubData = data - means * arma::ones<arma::rowvec>(data.n_cols);
-  arma::mat covMat = ccov(meanSubData);
-  arma::mat eigVec;
+  arma::mat coeffs;
   arma::vec eigVal;
-  arma::eig_sym(eigVal, eigVec, covMat);
 
-  int n_eigVal = eigVal.n_elem;
-  for(int i = 0; i < floor(n_eigVal / 2); i++)
-    eigVal.swap_rows(i, (n_eigVal - 1) - i);
+  Apply(data, data, eigVal, coeffs);
 
-  eigVec = arma::fliplr(eigVec);
-  eigVec.shed_cols(newDimension - 1, eigVec.n_cols - 1);
-  data = trans(eigVec) * data;
+  if(newDimension < coeffs.n_rows && newDimension > 0)
+    data.shed_rows(newDimension, data.n_rows - 1);
 }
 
 PCA::~PCA()
