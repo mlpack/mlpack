@@ -109,7 +109,7 @@ int main(int argc, char** argv)
   }
   else
   {
-    if (CLI::HasParam("only_labels"))
+    if (CLI::HasParam("labels_only"))
     {
       // Save only the labels.
       string output_file = CLI::GetParam<string>("output_file");
