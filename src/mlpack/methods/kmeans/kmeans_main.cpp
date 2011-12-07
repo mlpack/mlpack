@@ -59,7 +59,7 @@ int main(int argc, char** argv)
   }
 
   double overclustering = CLI::GetParam<double>("overclustering");
-  if (overclustering < 0)
+  if (overclustering < 1)
   {
     Log::Fatal << "Invalid value for overclustering (" << overclustering <<
         ")! Must be greater than or equal to 1." << std::endl;
@@ -102,7 +102,7 @@ int main(int argc, char** argv)
     for (size_t i = 0; i < assignments.n_elem; i++)
       converted(i) = (double) assignments(i);
 
-    dataset.insert_rows(dataset.n_rows, converted);
+    dataset.insert_rows(dataset.n_rows, trans(converted));
 
     // Save the dataset.
     data::Save(input_file.c_str(), dataset);
@@ -123,7 +123,7 @@ int main(int argc, char** argv)
       for (size_t i = 0; i < assignments.n_elem; i++)
         converted(i) = (double) assignments(i);
 
-      dataset.insert_rows(dataset.n_rows, converted);
+      dataset.insert_rows(dataset.n_rows, trans(converted));
 
       // Now save, in the different file.
       string output_file = CLI::GetParam<string>("output_file");
