@@ -13,8 +13,8 @@
 PROGRAM_INFO("Neighborhood Components Analysis",
     "documentation not done yet");
 
-PARAM_STRING_REQ("input_file", "Input dataset to run NCA on.", "");
-PARAM_STRING_REQ("output_file", "Output file for learned distance matrix.", "");
+PARAM_STRING_REQ("input_file", "Input dataset to run NCA on.", "I");
+PARAM_STRING_REQ("output_file", "Output file for learned distance matrix.", "O");
 
 using namespace mlpack;
 using namespace mlpack::nca;

@@ -40,15 +40,15 @@ PROGRAM_INFO("All K-Furthest-Neighbors",
 
 // Define our input parameters that this program will take.
 PARAM_STRING_REQ("reference_file", "File containing the reference dataset.",
-    "");
-PARAM_STRING("query_file", "File containing query points (optional).", "", "");
-PARAM_STRING_REQ("distances_file", "File to output distances into.", "");
-PARAM_STRING_REQ("neighbors_file", "File to output neighbors into.", "");
+    "R");
+PARAM_STRING("query_file", "File containing query points (optional).", "Q", "");
+PARAM_STRING_REQ("distances_file", "File to output distances into.", "D");
+PARAM_STRING_REQ("neighbors_file", "File to output neighbors into.", "N");
 
-PARAM_INT("leaf_size", "Leaf size for tree building.", "", 20);
-PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "");
+PARAM_INT("leaf_size", "Leaf size for tree building.", "L", 20);
+PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
-    "dual-tree search.", "");
+    "dual-tree search.", "S");
 PARAM_INT_REQ("k", "Number of furthest neighbors to find.", "");
 
 int main(int argc, char *argv[])
