@@ -25,7 +25,6 @@ public:
     return matX;
   }
   
-  void WhitenX(arma::mat& matWhitening);
   void CopyAndPerturb(arma::mat& XNew, const arma::mat& matX);
   double Vasicek(const arma::vec& x);
   double DoRadical2D(const arma::mat& matX);
@@ -39,6 +38,8 @@ private:
   size_t m; // for Vasicek's m-spacing estimator
   
   arma::mat matX;
+  
+  void WhitenX(arma::mat& matWhitening);
   
 };
 
