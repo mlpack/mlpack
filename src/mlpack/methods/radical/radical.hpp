@@ -14,31 +14,29 @@
 #include <stdio.h>
 #include<float.h>
 
-using namespace arma;
 using namespace std;
 
 class Radical {
 public:
-  Radical();
-  
-  void Init(double noiseStdDev, u32 nReplicates, u32 nAngles, u32 nSweeps,
-	    const mat& X);
-  mat GetX();
-  void WhitenX(mat& Whitening);
-  void CopyAndPerturb(mat& XNew, const mat& X);
-  double Vasicek(const vec& x);
-  double DoRadical2D(const mat& X);
-  void DoRadical(mat& Y, mat& W);
+  Radical(double noiseStdDev, size_t nReplicates, size_t nAngles, size_t nSweeps,
+	  const arma::mat& matX);
+
+  arma::mat GetX();
+  void WhitenX(arma::mat& matWhitening);
+  void CopyAndPerturb(arma::mat& XNew, const arma::mat& matX);
+  double Vasicek(const arma::vec& x);
+  double DoRadical2D(const arma::mat& matX);
+  void DoRadical(arma::mat& matY, arma::mat& matW);
   
 private:
   double noiseStdDev;
-  u32 nReplicates;
-  u32 nAngles;
-  u32 nSweeps;
-  u32 m; // for Vasicek's m-spacing estimator
+  size_t nReplicates;
+  size_t nAngles;
+  size_t nSweeps;
+  size_t m; // for Vasicek's m-spacing estimator
   
-  mat X;
-
+  arma::mat matX;
+  
 };
 
 #endif
