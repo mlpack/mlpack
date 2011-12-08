@@ -25,51 +25,24 @@ bool generate_gaussian();
 bool generate_mixture();
 void usage();
 
-/*const fx_entry_doc hmm_generate_main_entries[] = {
-  {"type", FX_REQUIRED, FX_STR, NULL,
-   "  HMM type : discrete | gaussian | mixture.\n"},
-  {"profile", FX_REQUIRED, FX_STR, NULL,
-   "  A file containing HMM profile.\n"},
-  {"length", FX_PARAM, FX_INT, NULL,
-   "  Sequence length, default = 10.\n"},
-  {"lenmax", FX_PARAM, FX_INT, NULL,
-   "  Maximum sequence length, default = length\n"},
-  {"numseq", FX_PARAM, FX_INT, NULL,
-   "  Number of sequance, default = 10.\n"},
-  {"seqfile", FX_PARAM, FX_STR, NULL,
-   "  Output file for the generated sequences.\n"},
-  {"statefile", FX_PARAM, FX_STR, NULL,
-   "  Output file for the generated state sequences.\n"},
-  FX_ENTRY_DOC_DONE
-}; */
-
-PARAM_STRING_REQ("type", "HMM type : discrete | gaussian | mixture.", "hmm");
-PARAM_STRING_REQ("profile", "A file containing HMM profile.", "hmm");
-PARAM_STRING_REQ("seqfile", "Output file for the generated sequences.", "hmm");
+PARAM_STRING_REQ("type", "HMM type : discrete | gaussian | mixture.", "");
+PARAM_STRING_REQ("profile", "A file containing HMM profile.", "");
+PARAM_STRING_REQ("seqfile", "Output file for the generated sequences.", "");
 PARAM_STRING_REQ("statefile", "Output file for the generated state sequences.",
-		"hmm");
+		"");
 
-PARAM_INT("length", "Sequence length, default = 10.", "hmm", 10);
-PARAM_INT("lenmax", "Maximum sequence length, default = 10", "hmm", 10);
-PARAM_INT("numseq", "Number of sequance, default = 10.\n", "hmm", 10);
+PARAM_INT("length", "Sequence length, default = 10.", "", 10);
+PARAM_INT("lenmax", "Maximum sequence length, default = 10", "", 10);
+PARAM_INT("numseq", "Number of sequance, default = 10.\n", "", 10);
 
 PARAM_MODULE("hmm", "This is a program generating sequences from HMM models.");
-
-/* const fx_submodule_doc hmm_generate_main_submodules[] = {
-  FX_SUBMODULE_DOC_DONE
-}; */
-
-/* const fx_module_doc hmm_generate_main_doc = {
-  hmm_generate_main_entries, hmm_generate_main_submodules,
-  "This is a program generating sequences from HMM models.\n"
-}; */
 
 int main(int argc, char* argv[]) {
 
   CLI::ParseCommandLine(argc, argv);
   bool s = true;
-  if (CLI::HasParam("hmm/type")) {
-    const char* type = CLI::GetParam<std::string>("hmm/type").c_str();
+  if (CLI::HasParam("type")) {
+    const char* type = CLI::GetParam<std::string>("type").c_str();
     if (strcmp(type, "discrete")==0)
       s = generate_discrete();
     else if (strcmp(type, "gaussian")==0)
@@ -93,25 +66,25 @@ int main(int argc, char* argv[]) {
 
 void usage() {
   Log::Info << std::endl << "Usage:" << std::endl;
-  Log::Info << "  generate --hmm/type=={discrete|gaussian|mixture} OPTCLINS" << std::endl;
+  Log::Info << "  generate --type=={discrete|gaussian|mixture} OPTCLINS" << std::endl;
   Log::Info << "[OPTCLINS]" << std::endl;
-  Log::Info << "  --hmm/profile=file   : file contains HMM profile" << std::endl;
-  Log::Info << "  --hmm/length=NUM     : sequence length" << std::endl;
-  Log::Info << "  --hmm/lenmax=NUM     : maximum sequence length, default = length" << std::endl;
-  Log::Info << "  --hmm/numseq=NUM     : number of sequence" << std::endl;
-  Log::Info << "  --hmm/seqfile=file   : output file for generated sequences" << std::endl;
-  Log::Info << "  --hmm/statefile=file : output file for generated state sequences" << std::endl;
+  Log::Info << "  --profile=file   : file contains HMM profile" << std::endl;
+  Log::Info << "  --length=NUM     : sequence length" << std::endl;
+  Log::Info << "  --lenmax=NUM     : maximum sequence length, default = length" << std::endl;
+  Log::Info << "  --numseq=NUM     : number of sequence" << std::endl;
+  Log::Info << "  --seqfile=file   : output file for generated sequences" << std::endl;
+  Log::Info << "  --statefile=file : output file for generated state sequences" << std::endl;
 }
 
 bool generate_mixture() {
-  if (!CLI::HasParam("hmm/profile")) {
-    Log::Fatal << "--hmm/profile must be defined." << std::endl;
+  if (!CLI::HasParam("profile")) {
+    Log::Fatal << "--profile must be defined." << std::endl;
     return false;
   }
-  const char* profile = CLI::GetParam<std::string>("hmm/profile").c_str();
-  const int seqlen = CLI::GetParam<int>("hmm/length");
-  const int seqlmax = CLI::GetParam<int>("hmm/lenmax");
-  const int numseq = CLI::GetParam<int>("hmm/numseq");
+  const char* profile = CLI::GetParam<std::string>("profile").c_str();
+  const int seqlen = CLI::GetParam<int>("length");
+  const int seqlmax = CLI::GetParam<int>("lenmax");
+  const int numseq = CLI::GetParam<int>("numseq");
   //const char* seqout = CLI::GetParam<std::string>("hmm/seqfile").c_str();
   //const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str();
 
@@ -155,14 +128,14 @@ bool generate_mixture() {
 }
 
 bool generate_gaussian() {
-  if (!CLI::HasParam("hmm/profile")) {
-    Log::Fatal << "--hmm/profile must be defined." << std::endl;
+  if (!CLI::HasParam("profile")) {
+    Log::Fatal << "--profile must be defined." << std::endl;
     return false;
   }
-  const char* profile = CLI::GetParam<std::string>("hmm/profile").c_str();
-  const int seqlen = CLI::GetParam<int>("hmm/length");
-  const int seqlmax = CLI::GetParam<int>("hmm/lenmax");
-  const int numseq = CLI::GetParam<int>("hmm/numseq");
+  const char* profile = CLI::GetParam<std::string>("profile").c_str();
+  const int seqlen = CLI::GetParam<int>("length");
+  const int seqlmax = CLI::GetParam<int>("lenmax");
+  const int numseq = CLI::GetParam<int>("numseq");
   //const char* seqout = CLI::GetParam<std::string>("hmm/seqfile").c_str();
   //const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str();
 
@@ -205,14 +178,14 @@ bool generate_gaussian() {
 }
 
 bool generate_discrete() {
-  if (!CLI::HasParam("hmm/profile")) {
-    Log::Fatal << "--hmm/profile must be defined." << std::endl;
+  if (!CLI::HasParam("profile")) {
+    Log::Fatal << "--profile must be defined." << std::endl;
     return false;
   }
-  const char* profile = CLI::GetParam<std::string>("hmm/profile").c_str();
-  const int seqlen = CLI::GetParam<int>("hmm/length");
-  const int seqlmax = CLI::GetParam<int>("hmm/lenmax");
-  const int numseq = CLI::GetParam<int>("hmm/numseq");
+  const char* profile = CLI::GetParam<std::string>("profile").c_str();
+  const int seqlen = CLI::GetParam<int>("length");
+  const int seqlmax = CLI::GetParam<int>("lenmax");
+  const int numseq = CLI::GetParam<int>("numseq");
   //const char* seqout = CLI::GetParam<std::string>("hmm/seqfile").c_str();
   //const char* stateout = CLI::GetParam<std::string>("hmm/statefile").c_str();
 

@@ -41,7 +41,7 @@ NeighborSearch(const arma::mat& referenceSet,
 
   // We'll time tree building, but only if we are building trees.
   if (!referenceTree || !queryTree)
-    Timers::StartTimer("neighbor_search/tree_building");
+    Timers::StartTimer("tree_building");
 
   if (!referenceTree)
   {
@@ -66,7 +66,7 @@ NeighborSearch(const arma::mat& referenceSet,
 
   // Stop the timer we started above (if we need to).
   if (!referenceTree || !queryTree)
-    Timers::StopTimer("neighbor_search/tree_building");
+    Timers::StopTimer("tree_building");
 }
 
 // Construct the object.
@@ -93,7 +93,7 @@ NeighborSearch(const arma::mat& referenceSet,
   // We'll time tree building, but only if we are building trees.
   if (!referenceTree)
   {
-    Timers::StartTimer("neighbor_search/tree_building");
+    Timers::StartTimer("tree_building");
 
     // Construct as a naive object if we need to.
     if (naive)
@@ -104,7 +104,7 @@ NeighborSearch(const arma::mat& referenceSet,
           leafSize);
 
     // Stop the timer we started above.
-    Timers::StopTimer("neighbor_search/tree_building");
+    Timers::StopTimer("tree_building");
   }
 }
 
@@ -131,7 +131,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::ComputeNeighbors(
     arma::Mat<size_t>& resultingNeighbors,
     arma::mat& distances)
 {
-  Timers::StartTimer("neighbor_search/computing_neighbors");
+  Timers::StartTimer("computing_neighbors");
 
   // If we have built the trees ourselves, then we will have to map all the
   // indices back to their original indices when this computation is finished.
@@ -203,7 +203,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::ComputeNeighbors(
     }
   }
 
-  Timers::StopTimer("neighbor_search/computing_neighbors");
+  Timers::StopTimer("computing_neighbors");
 
   // Now, do we need to do mapping of indices?
   if (!ownReferenceTree && !ownQueryTree)

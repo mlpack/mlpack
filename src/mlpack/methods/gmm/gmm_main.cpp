@@ -8,10 +8,10 @@
 
 PROGRAM_INFO("GMM",
     "This program takes a parametric estimate of a Gaussian mixture model (GMM)"
-    " using the EM algorithm to find the maximum likelihood estimate.", "");
+    " using the EM algorithm to find the maximum likelihood estimate.");
 
 PARAM_STRING_REQ("data", "A file containing the data on which the model has to "
-    "be fit.", "gmm");
+    "be fit.", "");
 PARAM_INT("gaussians", "g", "", 1);
 
 using namespace mlpack;
@@ -22,15 +22,15 @@ int main(int argc, char* argv[]) {
 
   ////// READING PARAMETERS AND LOADING DATA //////
   arma::mat data_points;
-  data::Load(CLI::GetParam<std::string>("gmm/data").c_str(), data_points, true);
+  data::Load(CLI::GetParam<std::string>("data").c_str(), data_points, true);
 
   ////// MIXTURE OF GAUSSIANS USING EM //////
   GMM gmm(CLI::GetParam<int>("gaussians"), data_points.n_rows);
 
   ////// Computing the parameters of the model using the EM algorithm //////
-  Timers::StartTimer("gmm/em");
+  Timers::StartTimer("em");
   gmm.Estimate(data_points);
-  Timers::StopTimer("gmm/em");
+  Timers::StopTimer("em");
 
   ////// OUTPUT RESULTS //////
   // We need a better solution for this.  So, currently, we do nothing.

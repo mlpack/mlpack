@@ -19,7 +19,7 @@ PROGRAM_INFO("K-Means Clustering", "This program performs K-Means clustering "
     "a column of labels in the file containing the input dataset or in a "
     "separate file.  Empty clusters are not allowed by default; when a cluster "
     "becomes empty, the point furthest from the centroid of the cluster with "
-    "maximum variance is taken to fill that cluster.", "");
+    "maximum variance is taken to fill that cluster.");
 
 PARAM_STRING_REQ("input_file", "Input dataset to perform clustering on.", "");
 PARAM_INT_REQ("clusters", "Number of clusters to find.", "");

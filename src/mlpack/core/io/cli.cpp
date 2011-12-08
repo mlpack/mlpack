@@ -40,7 +40,7 @@ CLI* CLI::singleton = NULL;
 namespace po = boost::program_options;
 
 // Fake ProgramDoc in case none is supplied.
-static ProgramDoc empty_program_doc = ProgramDoc("", "", "");
+static ProgramDoc empty_program_doc = ProgramDoc("", "");
 
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
@@ -75,17 +75,17 @@ CLI::~CLI()
 
   // Did the user ask for verbose output?  If so we need to print everything.
   // But only if the user did not ask for help or info.
-  if (GetParam<bool>("verbose"))
+  if (HasParam("verbose"))
   {
     Log::Info << "Execution parameters:" << std::endl;
-    //hierarchy.PrintLeaves(), todo replace functionality;
+    Print();
 
     Log::Info << "Program timers:" << std::endl;
     std::map<std::string, timeval> times = Timers::GetAllTimers();
     std::map<std::string, timeval>::iterator iter;
     for (iter = times.begin(); iter != times.end(); iter++)
     {
-      Log::Info << "  " << iter->first << ": ";
+      Log::Info << "\t" << iter->first << ": ";
       Timers::PrintTimer(iter->first.c_str());
     }
   }
@@ -107,23 +107,42 @@ CLI::~CLI()
  *
  * @param identifier The name of the parameter.
  * @param description Short string description of the parameter.
- * @param parent Full pathname of a parent module, default is root node.
+ * @param alias An alias for the parameter.
  * @param required Indicates if parameter must be set on command line.
  */
 void CLI::Add(const char* identifier,
              const char* description,
-             const char* parent,
+             const char* alias,
              bool required)
 {
   po::options_description& desc = CLI::GetSingleton().desc;
 
-  // Generate the full pathname and insert the node into the hierarchy.
   std::string tmp = TYPENAME(bool);
   std::string path = identifier;
+  std::string stringAlias = alias;
+  std::string prog_opt_id = path; //Use boost's syntax for aliasing.
 
-  // Add the option to boost::program_options.
+  //deal with a required alias
+  if (stringAlias.length()) {
+    amap_t& amap = GetSingleton().aliasValues;
+    amap[stringAlias] = path;
+    prog_opt_id = path + "," + alias;
+  }
+
+  //Add the option to boost::program_options.
   desc.add_options()
-    (path.c_str(), description);
+    (prog_opt_id.c_str(), description);
+
+  //Make sure the description etc ends up in gmap
+  gmap_t& gmap = GetSingleton().globalValues;
+  ParamData data;
+  data.desc = description;
+  data.tname = "";
+  data.name = path;
+  data.isFlag = false;
+  data.wasPassed = false;
+
+  gmap[path] = data;
 
   // If the option is required, add it to the required options list.
   if (required)
@@ -137,16 +156,35 @@ void CLI::Add(const char* identifier,
  */
 void CLI::AddFlag(const char* identifier,
                  const char* description,
-                 const char* parent)
+                 const char* alias)
 {
   po::options_description& desc = CLI::GetSingleton().desc;
 
-  //Generate the full pathname and insert node into the hierarchy
   std::string path = identifier;
+  std::string stringAlias = alias;
+  std::string prog_opt_id = path;
+
+  //Deal with a required alias
+  if (stringAlias.length()) {
+    amap_t& amap = GetSingleton().aliasValues;
+    amap[stringAlias] = path;
+    prog_opt_id = path + "," + alias;
+  }
 
   // Add the option to boost::program_options.
   desc.add_options()
-    (path.c_str(), po::value<bool>()->implicit_value(true), description);
+    (prog_opt_id.c_str(), po::value<bool>()->implicit_value(true), description);
+
+  // Add the proper metadata in gmap.
+  gmap_t& gmap = GetSingleton().globalValues;
+  ParamData data;
+  data.desc = description;
+  data.tname = TYPENAME(bool);
+  data.name = path;
+  data.isFlag = true;
+  data.wasPassed = false;
+
+  gmap[path] = data;
 }
 
 /**
@@ -157,19 +195,24 @@ void CLI::AddFlag(const char* identifier,
 bool CLI::HasParam(const char* identifier)
 {
   po::variables_map vmap = GetSingleton().vmap;
-  gmap_t gmap = GetSingleton().globalValues;
-  std::string key = std::string(identifier);
+  gmap_t& gmap = GetSingleton().globalValues;
+  std::string key = identifier;
+
+  //Take any possible alias into account
+  amap_t& amap = GetSingleton().aliasValues;  
+  if (amap.count(key))
+    key = amap[key]; 
 
   //Does the parameter exist at all?
-  //int isInVmap = vmap.count(key);
   int isInGmap = gmap.count(key);
 
   // Check if the parameter is boolean; if it is, we just want to see if it was
-  // passed at program initiation.
-  // TODO, reimpliment flag logic.
+  if(isInGmap && gmap[key].isFlag) 
+    return gmap[key].wasPassed;
+  
   
   // Return true if we have a defined value for identifier.
-  return isInGmap;
+  return isInGmap != 0;
 }
 
 /**
@@ -180,8 +223,14 @@ bool CLI::HasParam(const char* identifier)
  */
 std::string CLI::GetDescription(const char* identifier)
 {
-  gmap_t gmap = GetSingleton().globalValues;
+  gmap_t& gmap = GetSingleton().globalValues;
   std::string name = std::string(identifier);
+
+  //Take any possible alias into account
+  amap_t& amap = GetSingleton().aliasValues;
+  if (amap.count(name))
+    name = amap[name]; 
+
 
   if(gmap.count(name))
     return gmap[name].desc;
@@ -267,17 +316,18 @@ void CLI::UpdateGmap()
   gmap_t& gmap = GetSingleton().globalValues;
   po::variables_map& vmap = GetSingleton().vmap;
 
-  // Iterate through Gmap, and overwrite default values with anything found on
+  // Iterate through vmap, and overwrite default values with anything found on
   // command line.
-  gmap_t::iterator i;
-  for (i = gmap.begin(); i != gmap.end(); i++)
+  po::variables_map::iterator i;
+  for (i = vmap.begin(); i != vmap.end(); i++)
   {
-    po::variable_value tmp = vmap[i->first];
-    if (!tmp.empty()){ // We need to overwrite gmap.
-      ParamData param;
-      param.value = tmp.value();
-      gmap[i->first] = param;
-    }
+    ParamData param;
+    if (gmap.count(i->first)) // We need to preserve certain data
+      param = gmap[i->first];
+
+    param.value = vmap[i->first].value();
+    param.wasPassed = true;
+    gmap[i->first] = param;
   }
 }
 
@@ -319,28 +369,20 @@ void CLI::DefaultMessages()
   // Default help message
   if (GetParam<bool>("help"))
   {
-    // A little snippet about the program itself, if we have it.
-    if (GetSingleton().doc != &empty_program_doc)
-    {
-      std::cout << GetSingleton().doc->programName << std::endl << std::endl;
-    }
-    Log::Fatal << "TODO: reimpliment printing functionality" << std::endl;
+    Log::Info.ignoreInput = false;
+    PrintHelp();
     exit(0); // The user doesn't want to run the program, he wants help.
   }
 
   if (HasParam("info"))
   {
+    Log::Info.ignoreInput = false;
     std::string str = GetParam<std::string>("info");
     // The info node should always be there, but the user may not have specified
     // anything.
     if (str != "")
     {
-      Log::Fatal << "TODO: Reimpliment printing functionality" << std::endl;
-     /* //OptionsHierarchy* node = GetSingleton().hierarchy.FindNode(str);
-      if(node != NULL)
-        //node->PrintNodeHelp();
-      else
-        Log::Fatal << "Invalid parameter: " << str << std::endl;*/
+      PrintHelp(str);
       exit(0);
     }
   }
@@ -379,7 +421,148 @@ void CLI::RequiredOptions()
 /* Prints out the current hierarchy. */
 void CLI::Print()
 {
-  Log::Fatal << "TODO: Reimpliment printing functionality" << std::endl;
+  gmap_t& gmap = GetSingleton().globalValues;
+  gmap_t::iterator iter;
+
+  // Print out all the values.
+  Log::Info << std::endl << "Values: " << std::endl;
+  for(iter = gmap.begin(); iter != gmap.end(); iter++) {
+    std::string key = iter->first;
+    std::string alias = AliasReverseLookup(key);
+    alias = alias.length() ? ", " + alias : alias;
+
+    Log::Info << "\t" << key << alias << " : ";
+
+    //Now, figure out what type it is, and print it.
+    //We can handle strings, ints, bools, floats, doubles.
+    ParamData data = iter->second;
+    if (data.tname == TYPENAME(std::string)) {
+      std::string value = GetParam<std::string>(key.c_str());
+      if(value == "")
+        Log::Info << "\" \"";
+      Log::Info << value;
+    } else if (data.tname == TYPENAME(int)) {
+      int value = GetParam<int>(key.c_str());
+      Log::Info << value;
+    } else if (data.tname == TYPENAME(bool)) {
+      bool value = HasParam(key.c_str());
+      Log::Info << (value ? "True" : "False");
+    } else if (data.tname == TYPENAME(float)) {
+      float value = GetParam<float>(key.c_str());
+      Log::Info << value;
+    } else if (data.tname == TYPENAME(double)) {
+      double value = GetParam<double>(key.c_str());
+      Log::Info << value;
+    } else { 
+      //We don't know how to print this, or it's a timeval which
+      //is printed later.
+      Log::Info << "Unknown Data Type";
+    }
+
+    Log::Info << std::endl;
+  }
+  Log::Info << std::endl;
+}
+
+
+/* Prints the descriptions of the current hierarchy. */
+void CLI::PrintHelp(std::string param)
+{
+  gmap_t& gmap = GetSingleton().globalValues;
+  amap_t& amap = GetSingleton().aliasValues;
+  gmap_t::iterator iter;
+  ProgramDoc docs = *GetSingleton().doc;
+  
+  // If we pass a single param, alias it if necessary
+  if(param != "" && amap.count(param))
+    param = amap[param];
+  
+  // Do we only want to print out one value?
+  if (param != "" && gmap.count(param)) {
+    ParamData data = gmap[param];
+    std::string alias = AliasReverseLookup(param);
+    alias = alias.length() ? ", "+alias:alias; 
+     
+    Log::Info << param << alias << " info: " << std::endl;
+    Log::Info << "\t" << HyphenateString(data.desc, 8) << std::endl;
+    return;
+  } else if(param != "") {
+    //User passed a single variable, but it doesn't exist.
+    Log::Info << "Parameter does not exist." << std::endl;
+  }
+
+  // Print out the descriptions.
+  if(docs.programName != "") {
+    Log::Info << "Program: " << docs.programName << std::endl;
+    Log::Info << "\t" << HyphenateString(docs.documentation,8) << std::endl;
+  }
+  else
+    Log::Info << "Undocumented Program" << std::endl;
+
+  Log::Info << "Parameter Info: " << std::endl;
+  // Print out the descriptions of everything else.
+  for(iter = gmap.begin(); iter != gmap.end(); iter++) {
+    std::string key = iter->first;
+    ParamData data = iter->second;
+    std::string desc = data.desc;
+    std::string alias = AliasReverseLookup(key);
+    alias = alias.length() ? ", "+alias:alias;
+
+    //Now, print the descriptions.
+    Log::Info << "\t" << key << alias << std::endl;
+    Log::Info << "\t\t" << HyphenateString(desc,16) << std::endl;
+    Log::Info << std::endl;
+  }
+ 
+}
+
+/**
+ * Hyphenate a string or split it onto multiple 80-character lines, with some
+ * amount of padding on each line.  This is used for option output.
+ *
+ * @param str String to hyphenate (splits are on ' ').
+ * @param padding Amount of padding on the left for each new line.
+ */
+std::string CLI::HyphenateString(std::string str, int padding) {
+  size_t margin = 80 - padding;
+  if (str.length() < margin)
+    return str;
+  std::string out("");
+  unsigned int pos = 0;
+  // First try to look as far as possible.
+  while(pos < str.length() - 1) {
+    size_t splitpos;
+    // Check that we don't have a newline first.
+    splitpos = str.find('\n', pos);
+    if (splitpos == std::string::npos || splitpos > (pos + margin)) {
+      // We did not find a newline.
+      if (str.length() - pos < margin) {
+        splitpos = str.length(); // The rest fits on one line.
+      } else {
+      splitpos = str.rfind(' ', margin + pos); // Find nearest space.
+      if (splitpos <= pos || splitpos == std::string::npos) // Not found.
+        splitpos = pos + margin;
+      }
+    }
+    out += str.substr(pos, (splitpos - pos));
+    if (splitpos < str.length()) {
+      out += '\n';
+      out += std::string(padding, ' ');
+    }
+    pos = splitpos;
+  if (str[pos] == ' ' || str[pos] == '\n')
+  pos++;
+  }
+  return out;
+} 
+
+std::string CLI::AliasReverseLookup(std::string value) {
+  amap_t& amap = GetSingleton().aliasValues;
+  amap_t::iterator iter;
+  for(iter = amap.begin(); iter != amap.end(); iter++)
+    if(iter->second == value) //Found our match
+      return iter->first; 
+  return ""; 
 }
 
 // Add help parameter.

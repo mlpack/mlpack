@@ -11,7 +11,7 @@
 
 // Define parameters.
 PROGRAM_INFO("Neighborhood Components Analysis",
-    "documentation not done yet", "");
+    "documentation not done yet");
 
 PARAM_STRING_REQ("input_file", "Input dataset to run NCA on.", "");
 PARAM_STRING_REQ("output_file", "Output file for learned distance matrix.", "");

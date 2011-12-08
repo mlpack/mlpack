@@ -32,26 +32,33 @@ BOOST_AUTO_TEST_SUITE(CLITest);
  * Tests that CLI works as intended, namely that CLI::Add propagates
  * successfully.
  */
-/*BOOST_AUTO_TEST_CASE(TestCLIAdd)
+BOOST_AUTO_TEST_CASE(TestCLIAdd)
 {
   // Check that the CLI::HasParam returns false if no value has been specified
   // on the commandline and ignores any programmatical assignments.
-  CLI::Add<bool>("bool", "True or False", "global");
-  BOOST_REQUIRE_EQUAL(CLI::HasParam("global/bool"), false);
-  CLI::GetParam<bool>("global/bool") = true;
-  // CLI::HasParam should return true.
-  BOOST_REQUIRE_EQUAL(CLI::HasParam("global/bool"), true);
+  CLI::Add<bool>("global/bool", "True or False", "alias/bool");
+  
+  // CLI::HasParam should return true here
+  BOOST_REQUIRE(CLI::HasParam("global/bool"));
 
   // Check the description of our variable.
   BOOST_REQUIRE_EQUAL(CLI::GetDescription("global/bool").compare(
         std::string("True or False")) , 0);
-}*/
+
+  // Check that our aliasing works.
+  BOOST_REQUIRE_EQUAL(CLI::HasParam("global/bool"), 
+      CLI::HasParam("alias/bool"));
+  BOOST_REQUIRE_EQUAL(CLI::GetDescription("global/bool").compare(
+        CLI::GetDescription("alias/bool")), 0);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("global/bool"), 
+      CLI::GetParam<bool>("alias/bool"));
+}
 
 /**
  * Test the output of CLI.  We will pass bogus input to a stringstream so that
  * none of it gets to the screen.
  */
-/*BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamBasic)
+BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamBasic)
 {
   std::stringstream ss;
   PrefixedOutStream pss(ss, BASH_GREEN "[INFO ] " BASH_CLEAR);
@@ -75,32 +82,32 @@ BOOST_AUTO_TEST_SUITE(CLITest);
       BASH_GREEN "[INFO ] " BASH_CLEAR "But now I should.\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "");
-}*/
+}
 
 /**
  * Tests that the various PARAM_* macros work properly.
  */
-/*BOOST_AUTO_TEST_CASE(TestOption)
+BOOST_AUTO_TEST_CASE(TestOption)
 {
   // This test will involve creating an option, and making sure CLI reflects
   // this.
-  PARAM(int, "test", "test desc", "test_parent", DEFAULT_INT, false);
+  PARAM(int, "test_parent/test", "test desc", "", DEFAULT_INT, false);
 
   // Does CLI reflect this?
-  BOOST_REQUIRE_EQUAL(CLI::HasParam("test_parent/test"), true);
+  BOOST_REQUIRE(CLI::HasParam("test_parent/test"));
 
   std::string desc = std::string("test desc");
 
   BOOST_REQUIRE_EQUAL(CLI::GetDescription("test_parent/test"), "test desc");
   BOOST_REQUIRE_EQUAL(CLI::GetParam<int>("test_parent/test"), DEFAULT_INT);
-}*/
+}
 
 /**
  * Ensure that a Boolean option which we define is set correctly.
  */
-/*BOOST_AUTO_TEST_CASE(TestBooleanOption)
+BOOST_AUTO_TEST_CASE(TestBooleanOption)
 {
-  PARAM_FLAG("flag_test", "flag test description", "test_parent");
+  PARAM_FLAG("test_parent/flag_test", "flag test description", "");
 
   BOOST_REQUIRE_EQUAL(CLI::HasParam("test_parent/flag_test"), false);
 
@@ -109,7 +116,7 @@ BOOST_AUTO_TEST_SUITE(CLITest);
 
   // Now check that CLI reflects that it is false by default.
   BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("test_parent/flag_test"), false);
-}*/
+}
 
 /**
  * Test that we can correctly output Armadillo objects to PrefixedOutStream

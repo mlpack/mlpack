@@ -85,15 +85,12 @@ class ProgramDoc
    *     taken care of by CLI later.
    */
   ProgramDoc(const std::string programName,
-             const std::string documentation,
-             const std::string defaultModule);
+             const std::string documentation);
 
   //! The name of the program.
   std::string programName;
   //! Documentation for what the program does.
   std::string documentation;
-  //! The default module of the program.
-  std::string defaultModule;
 };
 
 }; // namespace io

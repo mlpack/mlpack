@@ -9,18 +9,15 @@
 
 using namespace mlpack;
 
-PARAM_STRING_REQ("train", "A file containing X", "linear_regression");
+PARAM_STRING_REQ("train", "A file containing X", "");
 PARAM_STRING_REQ("test", "A file containing data points to predict on",
-    "linear_regression");
+    "");
 PARAM_STRING("responses", "A file containing the y values for X; if not "
     "present, it is assumed the last column of train contains these values.",
-    "linear_regression", "");
-
-PARAM_MODULE("linear_regression",
-    "Ordinary least squares linear regression: y = BX");
+    "", "");
 
 PROGRAM_INFO("Simple Linear Regression", "An implementation of simple linear "
-    "regression using ordinary least squares.", "linear_regression");
+    "regression using ordinary least squares.");
 
 int main(int argc, char* argv[])
 {
@@ -32,11 +29,11 @@ int main(int argc, char* argv[])
   CLI::ParseCommandLine(argc, argv);
 
   const std::string train_name =
-      CLI::GetParam<std::string>("linear_regression/train");
+      CLI::GetParam<std::string>("train");
   const std::string test_name =
-      CLI::GetParam<std::string>("linear_regression/test");
+      CLI::GetParam<std::string>("test");
   const std::string response_name =
-      CLI::GetParam<std::string>("linear_regression/responses");
+      CLI::GetParam<std::string>("responses");
 
   data::Load(train_name.c_str(), file, true);
   size_t n_cols = file.n_cols,

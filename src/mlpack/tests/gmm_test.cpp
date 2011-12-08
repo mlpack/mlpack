@@ -16,7 +16,6 @@ using namespace mlpack;
 using namespace mlpack::gmm;
 
 BOOST_AUTO_TEST_SUITE(GMMTest);
-
 /**
  * Test the phi() function, in the univariate Gaussian case.
  */
@@ -459,5 +458,4 @@ BOOST_AUTO_TEST_CASE(GMMRandomTest)
   BOOST_REQUIRE_CLOSE(gmm.Covariances()[1](1, 1),
       gmm2.Covariances()[sortedIndices[1]](1, 1), 13.0);
 }
-
 BOOST_AUTO_TEST_SUITE_END();

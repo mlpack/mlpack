@@ -42,28 +42,28 @@ void Timers::PrintTimer(const char* timerName)
   if (!(days == 0 && hours == 0 && minutes == 0))
   {
     bool output = false; // Denotes if we have output anything yet.
-    Log::Info << "(";
+    Log::Info << " (";
 
     // Only output units if they have nonzero values (yes, a bit tedious).
     if (days > 0)
     {
-      Log::Info << days << "days";
+      Log::Info << days << " days";
       output = true;
     }
 
     if (hours > 0)
     {
       if (output)
-        Log::Info << ",";
-      Log::Info << hours << "hrs";
+        Log::Info << ", ";
+      Log::Info << hours << " hrs";
       output = true;
     }
 
     if (minutes > 0)
     {
       if (output)
-        Log::Info << ",";
-      Log::Info << minutes << "mins";
+        Log::Info << ", ";
+      Log::Info << minutes << " mins";
       output = true;
     }
 
