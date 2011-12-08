@@ -32,18 +32,22 @@ int main(int argc, char* argv[]) {
   //Radical rad;
   //rad.Init(0.01, 10, 200, 1, X);
 
-  Radical rad(0.01, 10, 200, 1, X);
+  Radical rad(0.01, 10, 200, 1);
 
 
   mat Y;
   mat W;
-  rad.DoRadical(Y, W);
+  rad.DoRadical(X, Y, W);
   
   W.print("W");
-
+  
+  mat matXWhitened;
+  mat matWhitening;
+  Radical::WhitenFeatureMajorMatrix(X, matXWhitened, matWhitening);
+  
   double val_init = 0;
   for(size_t i = 0; i < nDims; i++) {
-    val_init += rad.Vasicek(rad.X().col(i));
+    val_init += rad.Vasicek(matXWhitened.col(i));
   }
   printf("initial objective value: %f\n", val_init);
 
