@@ -29,11 +29,7 @@ int main(int argc, char* argv[]) {
   */
 
   
-  //Radical rad;
-  //rad.Init(0.01, 10, 200, 1, X);
-
-  Radical rad(0.01, 10, 200, 1);
-
+  mlpack::radical::Radical rad(0.01, 10, 200, 1);
 
   mat Y;
   mat W;
@@ -43,7 +39,7 @@ int main(int argc, char* argv[]) {
   
   mat matXWhitened;
   mat matWhitening;
-  Radical::WhitenFeatureMajorMatrix(X, matXWhitened, matWhitening);
+  mlpack::radical::WhitenFeatureMajorMatrix(X, matXWhitened, matWhitening);
   
   double val_init = 0;
   for(size_t i = 0; i < nDims; i++) {

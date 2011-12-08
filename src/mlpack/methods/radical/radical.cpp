@@ -7,8 +7,11 @@
 
 #include "radical.hpp"
 
-//using namespace arma;
 using namespace std;
+using namespace arma;
+
+namespace mlpack {
+namespace radical {
 
 
 Radical::Radical(double noiseStdDev, size_t nReplicates, size_t nAngles, 
@@ -17,7 +20,7 @@ Radical::Radical(double noiseStdDev, size_t nReplicates, size_t nAngles,
   nReplicates(nReplicates),
   nAngles(nAngles),
   nSweeps(nSweeps),
-  m(-1)
+  m(0)
 {
   // nothing to do here
 }
@@ -34,34 +37,34 @@ Radical::Radical(double noiseStdDev, size_t nReplicates, size_t nAngles, size_t 
 }
   
 
-void Radical::CopyAndPerturb(arma::mat& matXNew, const arma::mat& matX) {
-  matXNew = arma::repmat(matX, nReplicates, 1);
-  matXNew = matXNew + noiseStdDev * arma::randn(matXNew.n_rows, matXNew.n_cols);
+void Radical::CopyAndPerturb(mat& matXNew, const mat& matX) {
+  matXNew = repmat(matX, nReplicates, 1);
+  matXNew = matXNew + noiseStdDev * randn(matXNew.n_rows, matXNew.n_cols);
 }
 
 
-double Radical::Vasicek(const arma::vec& z) {
-  arma::vec v = sort(z);
+double Radical::Vasicek(const vec& z) {
+  vec v = sort(z);
   size_t nPoints = v.n_elem;
-  arma::vec logs = arma::log(v.subvec(m, nPoints - 1) - v.subvec(0, nPoints - 1 - m));
-  return (double) arma::sum(logs);
+  vec logs = log(v.subvec(m, nPoints - 1) - v.subvec(0, nPoints - 1 - m));
+  return (double) sum(logs);
 }
 
 
-double Radical::DoRadical2D(const arma::mat& matX) {
-  arma::mat matXMod;
+double Radical::DoRadical2D(const mat& matX) {
+  mat matXMod;
   CopyAndPerturb(matXMod, matX);
 
   double theta;
   double value;
-  arma::mat matJacobi(2,2);
-  arma::mat candidateY;
+  mat matJacobi(2,2);
+  mat candidateY;
 
   double thetaOpt = 0;
   double valueOpt = 1e99;
   
   for(size_t i = 0; i < nAngles; i++) {
-    theta = ((double) i) / ((double) nAngles) * arma::math::pi() / 2;
+    theta = ((double) i) / ((double) nAngles) * math::pi() / 2;
     matJacobi(0,0) = cos(theta);
     matJacobi(0,1) = sin(theta);
     matJacobi(1,0) = -sin(theta);
@@ -79,7 +82,7 @@ double Radical::DoRadical2D(const arma::mat& matX) {
 }
 
 
-void Radical::DoRadical(const arma::mat& matX, arma::mat& matY, arma::mat& matW) {
+void Radical::DoRadical(const mat& matX, mat& matY, mat& matW) {
   
   // matX is nPoints by nDims (although less intuitive than columns being points,
   // and although this is the transpose of the ICA literature, this choice is 
@@ -93,8 +96,8 @@ void Radical::DoRadical(const arma::mat& matX, arma::mat& matY, arma::mat& matW)
   const size_t nDims = matX.n_cols;
   const size_t nPoints = matX.n_rows;
   
-  arma::mat matXWhitened;
-  arma::mat matWhitening;
+  mat matXWhitened;
+  mat matWhitening;
   WhitenFeatureMajorMatrix(matX, matXWhitened, matWhitening);
   
   // in the RADICAL code, they do not copy and perturb initially, although the
@@ -103,18 +106,18 @@ void Radical::DoRadical(const arma::mat& matX, arma::mat& matY, arma::mat& matW)
   //GeneratePerturbedX(X, X);
   
   matY = matXWhitened;
-  matW = arma::eye(nDims, nDims);
+  matW = eye(nDims, nDims);
   
-  arma::mat matYSubspace(nPoints, 2);
+  mat matYSubspace(nPoints, 2);
   
   for(size_t sweepNum = 0; sweepNum < nSweeps; sweepNum++) {
     for(size_t i = 0; i < nDims - 1; i++) {
       for(size_t j = i + 1; j < nDims; j++) {
 	matYSubspace.col(0) = matY.col(i);
 	matYSubspace.col(1) = matY.col(j);
-	arma::mat matWSubspace;
+	mat matWSubspace;
 	double thetaOpt = DoRadical2D(matYSubspace);
-	arma::mat matJ = arma::eye(nDims, nDims);
+	mat matJ = eye(nDims, nDims);
 	matJ(i,i) = cos(thetaOpt);
 	matJ(i,j) = sin(thetaOpt);
 	matJ(j,i) = -sin(thetaOpt);
@@ -126,16 +129,20 @@ void Radical::DoRadical(const arma::mat& matX, arma::mat& matY, arma::mat& matW)
   }
   
   // the final transpose provides W in the typical form from the ICA literature
-  matW = arma::trans(matWhitening * matW);
+  matW = trans(matWhitening * matW);
 }
 
 
-void Radical::WhitenFeatureMajorMatrix(const arma::mat& matX,
-				       arma::mat& matXWhitened,
-				       arma::mat& matWhitening) {
-  arma::mat matU, matV;
-  arma::vec s;
-  arma::svd(matU, s, matV, cov(matX));
-  matWhitening = matU * arma::diagmat(1 / sqrt(s)) * arma::trans(matV);
+void WhitenFeatureMajorMatrix(const mat& matX,
+			      mat& matXWhitened,
+			      mat& matWhitening) {
+  mat matU, matV;
+  vec s;
+  svd(matU, s, matV, cov(matX));
+  matWhitening = matU * diagmat(1 / sqrt(s)) * trans(matV);
   matXWhitened = matX * matWhitening;
 }
+
+
+}; // namespace radical
+}; // namespace mlpack
