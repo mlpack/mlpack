@@ -82,12 +82,16 @@ double Radical::DoRadical2D(const mat& matX) {
 }
 
 
-void Radical::DoRadical(const mat& matX, mat& matY, mat& matW) {
+void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW) {
   
-  // matX is nPoints by nDims (although less intuitive than columns being points,
-  // and although this is the transpose of the ICA literature, this choice is 
-  // for computational efficiency)
+  // matX is nPoints by nDims (although less intuitive than columns being 
+  // points, and although this is the transpose of the ICA literature, this
+  // choice is for computational efficiency when repeatedly generating 
+  // two-dimensional coordinate projections for Radical2D
+  mat matX = trans(matXT);
   
+  // if m was not specified, initialize m as recommended in 
+  // (Learned-Miller and Fisher, 2003)
   if(m < 1) {
     m = floor(sqrt(matX.n_rows));
   }
@@ -128,8 +132,9 @@ void Radical::DoRadical(const mat& matX, mat& matY, mat& matW) {
     }
   }
   
-  // the final transpose provides W in the typical form from the ICA literature
+  // the final transposes provide W and Y in the typical form from the ICA literature
   matW = trans(matWhitening * matW);
+  matY = trans(matY);
 }
 
 
