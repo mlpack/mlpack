@@ -17,7 +17,7 @@ PROGRAM_INFO("Principal Components Analysis", "This program performs principal "
     "components analysis on the given dataset.  It will transform the data "
     "onto its principal components, optionally performing dimensionality "
     "reduction by ignoring the principal components with the smallest "
-    "eigenvalues.", "");
+    "eigenvalues.");
 
 // Parameters for program.
 PARAM_STRING_REQ("input_file", "Input dataset to perform PCA on.", "");

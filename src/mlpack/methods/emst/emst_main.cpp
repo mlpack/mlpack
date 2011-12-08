@@ -16,13 +16,13 @@
 
 #include <mlpack/core.hpp>
 
-PARAM_STRING_REQ("input_file", "Data input file.", "emst");
+PARAM_STRING_REQ("input_file", "Data input file.", "");
 PARAM_STRING("output_file", "Data output file.  Stored as an edge list.", "emst", "emst_output.csv");
-PARAM_FLAG("do_naive", "Compute the MST using .", "naive");
-PARAM_STRING("output_file", "Naive data output file.", "naive",
+PARAM_FLAG("do_naive", "Compute the MST using .", "");
+PARAM_STRING("naive_output_file", "Naive data output file.", "",
     "naive_output.csv");
-PARAM_INT("leaf_size", "Leaf size in the kd-tree.  Singleton leaves give the empirically best performance at the cost of greater memory requirements.", "emst", 1);
-PARAM_DOUBLE("total_squared_length", "Squared length of the computed tree.", "dtb", 0.0);
+PARAM_INT("leaf_size", "Leaf size in the kd-tree.  Singleton leaves give the empirically best performance at the cost of greater memory requirements.", "", 1);
+PARAM_DOUBLE("total_squared_length", "Squared length of the computed tree.", "", 0.0);
 
 using namespace mlpack;
 using namespace mlpack::emst;
@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
   data::Load(data_file_name.c_str(), data_points, true);
 
   // Do naive
-  if (CLI::GetParam<bool>("naive/do_naive"))
+  if (CLI::GetParam<bool>("do_naive"))
   {
     Log::Info << "Running naive algorithm.\n";
 
@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     naive.ComputeMST(naive_results);
 
     std::string naive_output_filename =
-    CLI::GetParam<std::string>("naive/output_file");
+    CLI::GetParam<std::string>("naive_output_file");
 
     data::Save(naive_output_filename.c_str(), naive_results, true);
   }
@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
     Log::Info << "Data read, building tree.\n";
 
     /////////////// Initialize DTB //////////////////////
-    size_t leafSize = CLI::GetParam<int>("emst/leaf_size");
+    size_t leafSize = CLI::GetParam<int>("leaf_size");
     DualTreeBoruvka dtb;
     dtb.Init(data_points, false, leafSize);
 
@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
     //////////////// Output the Results ////////////////
 
     std::string output_filename =
-        CLI::GetParam<std::string>("emst/output_file");
+        CLI::GetParam<std::string>("output_file");
 
     data::Save(output_filename.c_str(), results, true);
   }

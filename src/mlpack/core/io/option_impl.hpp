@@ -21,16 +21,22 @@ Option<N>::Option(bool ignoreTemplate,
                 N defaultValue,
                 const char* identifier,
                 const char* description,
-                const char* parent,
+                const char* alias,
                 bool required)
 {
   if (ignoreTemplate)
   {
-    CLI::Add(identifier, description, parent, required);
+    if(alias == NULL)
+      alias = "";
+
+    CLI::Add(identifier, description, alias, required);
   }
   else
   {
-    CLI::Add<N>(identifier, description, parent, required);
+    if(alias == NULL)
+      alias = "";
+
+    CLI::Add<N>(identifier, description, alias, required);
 
     CLI::GetParam<N>(identifier) = defaultValue;
   }
@@ -43,9 +49,12 @@ Option<N>::Option(bool ignoreTemplate,
 template<typename N>
 Option<N>::Option(const char* identifier,
                   const char* description,
-                  const char* parent)
+                  const char* alias)
 {
-  CLI::AddFlag(identifier, description, parent);
+  if(alias == NULL)
+    alias = "";
+
+  CLI::AddFlag(identifier, description, alias);
 }
 
 }; // namespace io

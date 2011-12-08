@@ -36,19 +36,19 @@ PROGRAM_INFO("All K-Nearest-Neighbors",
     "neighbors output file corresponds to the index of the point in the "
     "reference set which is the i'th nearest neighbor from the point in the "
     "query set with index j.  Row i and column j in the distances output file "
-    "corresponds to the distance between those two points.", "");
+    "corresponds to the distance between those two points.");
 
 // Define our input parameters that this program will take.
 PARAM_STRING_REQ("reference_file", "File containing the reference dataset.",
-    "");
-PARAM_STRING("query_file", "File containing query points (optional).", "", "");
-PARAM_STRING_REQ("distances_file", "File to output distances into.", "");
-PARAM_STRING_REQ("neighbors_file", "File to output neighbors into.", "");
+    "R");
+PARAM_STRING("query_file", "File containing query points (optional).", "Q", "");
+PARAM_STRING_REQ("distances_file", "File to output distances into.", "D");
+PARAM_STRING_REQ("neighbors_file", "File to output neighbors into.", "N");
 
-PARAM_INT("leaf_size", "Leaf size for tree building.", "", 20);
+PARAM_INT("leaf_size", "Leaf size for tree building.", "L", 20);
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
-    "dual-tree search.", "");
+    "dual-tree search.", "S");
 PARAM_INT_REQ("k", "Number of furthest neighbors to find.", "");
 
 int main(int argc, char *argv[])
@@ -110,12 +110,12 @@ int main(int argc, char *argv[])
   // Build trees by hand, so we can save memory: if we pass a tree to
   // NeighborSearch, it does not copy the matrix.
   Log::Info << "Building reference tree..." << endl;
-  Timers::StartTimer("neighbor_search/tree_building");
+  Timers::StartTimer("tree_building");
 
   BinarySpaceTree<bound::HRectBound<2>, QueryStat<NearestNeighborSort> >
       refTree(referenceData, oldFromNewRefs, leafSize);
 
-  Timers::StopTimer("neighbor_search/tree_building");
+  Timers::StopTimer("tree_building");
 
   std::vector<size_t> oldFromNewQueries;
 
@@ -133,12 +133,12 @@ int main(int argc, char *argv[])
 
     // Build trees by hand, so we can save memory: if we pass a tree to
     // NeighborSearch, it does not copy the matrix.
-    Timers::StartTimer("neighbor_search/tree_building");
+    Timers::StartTimer("tree_building");
 
     BinarySpaceTree<bound::HRectBound<2>, QueryStat<NearestNeighborSort> >
         queryTree(queryData, oldFromNewRefs, leafSize);
 
-    Timers::StopTimer("neighbor_search/tree_building");
+    Timers::StopTimer("tree_building");
 
     allknn = new AllkNN(referenceData, queryData, naive, singleMode, 20,
         &refTree, &queryTree);

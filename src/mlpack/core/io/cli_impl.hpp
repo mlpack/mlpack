@@ -31,16 +31,38 @@ namespace mlpack {
 template<typename T>
 void CLI::Add(const char* identifier,
              const char* description,
-             const char* parent,
+             const char* alias,
              bool required)
 {
 
   po::options_description& desc = CLI::GetSingleton().desc;
   std::string path = identifier;
+  std::string stringAlias = alias;
+  std::string prog_opt_id = path;
 
+  // Add the alias, if necessary
+  if (stringAlias.length()) {
+    amap_t& amap = GetSingleton().aliasValues;
+    amap[stringAlias] = path;
+    prog_opt_id = path + "," + alias;
+  }
+  
   // Add the option to boost program_options.
   desc.add_options()
-    (path.c_str(), po::value<T>(),  description);
+    (prog_opt_id.c_str(), po::value<T>(),  description);
+
+  // Make sure the appropriate metadata is inserted into gmap.
+  gmap_t& gmap = GetSingleton().globalValues;
+  
+  ParamData data;
+  T tmp = T();
+
+  data.desc = description;
+  data.name = path;
+  data.tname = TYPENAME(T);
+  data.value = boost::any(tmp);
+  gmap[path] = data;
+
   // If the option is required, add it to the required options list.
   if (required)
     GetSingleton().requiredOptions.push_front(path);
@@ -67,17 +89,25 @@ T& CLI::GetParam(const char* identifier)
   // Used to index into the globalValues map.
   std::string key = std::string(identifier);
   gmap_t& gmap = GetSingleton().globalValues;
-  //po::variables_map& vmap = GetSingleton().vmap;
 
-  // We may have whatever is on the commandline, but what if the programmer has
-  // made modifications?
+  //  Now check if we have an alias.
+  amap_t& amap = GetSingleton().aliasValues;
+  if (amap.count(key))
+    key = amap[key];
+
+  //What if we don't actually have any value?
   if (!gmap.count(key))
   {
-    // The programmer hasn't done anything; register it.
     gmap[key] = ParamData();
     gmap[key].value = boost::any(tmp);
     *boost::any_cast<T>(&gmap[key].value) = tmp;
   }
+
+  //What if we have meta-data, but no data?
+  boost::any val = gmap[key].value;
+  if(val.empty()) 
+    gmap[key].value = boost::any(tmp);
+  
 
   return *boost::any_cast<T>(&gmap[key].value);
 }

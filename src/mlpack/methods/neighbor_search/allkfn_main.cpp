@@ -36,7 +36,7 @@ PROGRAM_INFO("All K-Furthest-Neighbors",
     "neighbors output file corresponds to the index of the point in the "
     "reference set which is the i'th furthest neighbor from the point in the "
     "query set with index j.  Row i and column j in the distances output file "
-    "corresponds to the distance between those two points.", "");
+    "corresponds to the distance between those two points.");
 
 // Define our input parameters that this program will take.
 PARAM_STRING_REQ("reference_file", "File containing the reference dataset.",
@@ -108,12 +108,12 @@ int main(int argc, char *argv[])
   // Build trees by hand, so we can save memory: if we pass a tree to
   // NeighborSearch, it does not copy the matrix.
   Log::Info << "Building reference tree..." << endl;
-  Timers::StartTimer("neighbor_search/tree_building");
+  Timers::StartTimer("tree_building");
 
   BinarySpaceTree<bound::HRectBound<2>, QueryStat<FurthestNeighborSort> >
       refTree(referenceData, oldFromNewRefs);
 
-  Timers::StopTimer("neighbor_search/tree_building");
+  Timers::StopTimer("tree_building");
 
   std::vector<size_t> oldFromNewQueries;
 
@@ -131,12 +131,12 @@ int main(int argc, char *argv[])
 
     // Build trees by hand, so we can save memory: if we pass a tree to
     // NeighborSearch, it does not copy the matrix.
-    Timers::StartTimer("neighbor_search/tree_building");
+    Timers::StartTimer("tree_building");
 
     BinarySpaceTree<bound::HRectBound<2>, QueryStat<FurthestNeighborSort> >
         queryTree(queryData, oldFromNewRefs);
 
-    Timers::StopTimer("neighbor_search/tree_building");
+    Timers::StopTimer("tree_building");
 
     allkfn = new AllkFN(referenceData, queryData, naive, singleMode, 20,
         &refTree, &queryTree);

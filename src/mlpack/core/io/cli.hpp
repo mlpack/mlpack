@@ -20,17 +20,9 @@
 #include "cli_deleter.hpp" // To make sure we can delete the singleton.
 
 /**
- * Document an executable and set a default module.  Only one
- * instance of this macro should be present in your program!  Therefore, use it
- * in the main.cpp (or corresponding executable) in your program.
- *
- * The given default module will allow shorthand for options in that module.
- * For instance, if "bar" is given as DEF_MOD, then an argument "foo" with
- * parent "bar" could be specified on the command-line as "--foo=value" instead
- * of "--bar/foo=value".
- *
- * If you don't want to set a default module, pass an empty string ("") as
- * DEF_MOD.
+ * Document an executable.  Only one instance of this macro should be 
+ * present in your program!  Therefore, use it in the main.cpp 
+ * (or corresponding executable) in your program.
  *
  * @see mlpack::CLI, PARAM_FLAG(), PARAM_INT(), PARAM_DOUBLE(), PARAM_STRING(),
  * PARAM_VECTOR(), PARAM_INT_REQ(), PARAM_DOUBLE_REQ(), PARAM_STRING_REQ(),
@@ -40,22 +32,16 @@
  * @param DESC Long string describing what the program does and possibly a
  *     simple usage example.  Newlines should not be used here; this is taken
  *     care of by CLI.
- * @param DEF_MOD A default module to use for parameters, mostly just to save
- *     excess typing.
  */
-#define PROGRAM_INFO(NAME, DESC, DEF_MOD) static mlpack::io::ProgramDoc \
-    io_programdoc_dummy_object = mlpack::io::ProgramDoc(NAME, DESC, DEF_MOD);
+#define PROGRAM_INFO(NAME, DESC) static mlpack::io::ProgramDoc \
+    io_programdoc_dummy_object = mlpack::io::ProgramDoc(NAME, DESC);
 
 /**
  * Define a flag parameter.
  *
- * The parameter can then be specified on the command line with --PARENT/ID.
- * If PARENT is equal to DEF_MOD (which is set using the PROGRAM_INFO() macro),
- * the parameter can be specified with just --ID.
- *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param PARENT Parent module of the parameter.
+ * @param ALIAS An alias for the parameter 
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -67,19 +53,18 @@
  * collisions are still possible, and they produce bizarre error messages.  See
  * http://mlpack.org/ticket/74 for more information.
  */
-#define PARAM_FLAG(ID, DESC, PARENT) \
-    PARAM_FLAG_INTERNAL(ID, DESC, PARENT);
+#define PARAM_FLAG(ID, DESC, ALIAS) \
+    PARAM_FLAG_INTERNAL(ID, DESC, ALIAS);
 
 /**
  * Define an integer parameter.
  *
  * The parameter can then be specified on the command line with
- * --PARENT/ID=value. If PARENT is equal to DEF_MOD (which is set using the
- * PROGRAM_INFO() macro), the parameter can be specified with just --ID=value.
+ * --ID=value.
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param PARENT Parent module of the parameter.
+ * @param ALIAS An alias for the parameter.
  * @param DEF Default value of the parameter.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -92,19 +77,18 @@
  * collisions are still possible, and they produce bizarre error messages.  See
  * http://mlpack.org/ticket/74 for more information.
  */
-#define PARAM_INT(ID, DESC, PARENT, DEF) \
-    PARAM(int, ID, DESC, PARENT, DEF, false)
+#define PARAM_INT(ID, DESC, ALIAS, DEF) \
+    PARAM(int, ID, DESC, ALIAS, DEF, false)
 
 /**
  * Define a floating-point parameter.  You should use PARAM_DOUBLE instead.
  *
  * The parameter can then be specified on the command line with
- * --PARENT/ID=value. If PARENT is equal to DEF_MOD (which is set using the
- * PROGRAM_INFO() macro), the parameter can be specified with just --ID=value.
+ * --ID=value. 
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param PARENT Parent module of the parameter.
+ * @param ALIAS An alias for the parameter.
  * @param DEF Default value of the parameter.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -117,19 +101,18 @@
  * collisions are still possible, and they produce bizarre error messages.  See
  * http://mlpack.org/ticket/74 for more information.
  */
-#define PARAM_FLOAT(ID, DESC, PARENT, DEF) \
-    PARAM(float, ID, DESC, PARENT, DEF, false)
+#define PARAM_FLOAT(ID, DESC, ALIAS, DEF) \
+    PARAM(float, ID, DESC, ALIAS, DEF, false)
 
 /**
  * Define a double parameter.
  *
  * The parameter can then be specified on the command line with
- * --PARENT/ID=value. If PARENT is equal to DEF_MOD (which is set using the
- * PROGRAM_INFO() macro), the parameter can be specified with just --ID=value.
+ * --ID=value.
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param PARENT Parent module of the parameter.
+ * @param ALIAS An alias for the parameter.
  * @param DEF Default value of the parameter.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -142,19 +125,19 @@
  * collisions are still possible, and they produce bizarre error messages.  See
  * http://mlpack.org/ticket/74 for more information.
  */
-#define PARAM_DOUBLE(ID, DESC, PARENT, DEF) \
-    PARAM(double, ID, DESC, PARENT, DEF, false)
+#define PARAM_DOUBLE(ID, DESC, ALIAS, DEF) \
+    PARAM(double, ID, DESC, ALIAS, DEF, false)
 
 /**
  * Define a string parameter.
  *
  * The parameter can then be specified on the command line with
- * --PARENT/ID=value. If PARENT is equal to DEF_MOD (which is set using the
+ * --ID=value. If ALIAS is equal to DEF_MOD (which is set using the
  * PROGRAM_INFO() macro), the parameter can be specified with just --ID=value.
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param PARENT Parent module of the parameter.
+ * @param ALIAS An alias for the parameter.
  * @param DEF Default value of the parameter.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -167,19 +150,18 @@
  * collisions are still possible, and they produce bizarre error messages.  See
  * http://mlpack.org/ticket/74 for more information.
  */
-#define PARAM_STRING(ID, DESC, PARENT, DEF) \
-    PARAM(std::string, ID, DESC, PARENT, DEF, false)
+#define PARAM_STRING(ID, DESC, ALIAS, DEF) \
+    PARAM(std::string, ID, DESC, ALIAS, DEF, false)
 
 /**
  * Define a vector parameter.
  *
  * The parameter can then be specified on the command line with
- * --PARENT/ID=value. If PARENT is equal to DEF_MOD (which is set using the
- * PROGRAM_INFO() macro), the parameter can be specified with just --ID=value.
+ * --ID=value.  
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param PARENT Parent module of the parameter.
+ * @param ALIAS An alias for the parameter.
  * @param DEF Default value of the parameter.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -192,8 +174,8 @@
  * collisions are still possible, and they produce bizarre error messages.  See
  * http://mlpack.org/ticket/74 for more information.
  */
-#define PARAM_VECTOR(T, ID, DESC, PARENT) \
-    PARAM(std::vector<T>, ID, DESC, PARENT, std::vector<T>(), false)
+#define PARAM_VECTOR(T, ID, DESC, ALIAS) \
+    PARAM(std::vector<T>, ID, DESC, ALIAS, std::vector<T>(), false)
 
 // A required flag doesn't make sense and isn't given here.
 
@@ -201,12 +183,11 @@
  * Define a required integer parameter.
  *
  * The parameter must then be specified on the command line with
- * --PARENT/ID=value. If PARENT is equal to DEF_MOD (which is set using the
- * PROGRAM_INFO() macro), the parameter can be specified with just --ID=value.
+ * --ID=value. 
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param PARENT Parent module of the parameter.
+ * @param ALIAS An alias for the parameter. 
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -218,19 +199,19 @@
  * collisions are still possible, and they produce bizarre error messages.  See
  * http://mlpack.org/ticket/74 for more information.
  */
-#define PARAM_INT_REQ(ID, DESC, PARENT) PARAM(int, ID, DESC, PARENT, 0, true)
+#define PARAM_INT_REQ(ID, DESC, ALIAS) PARAM(int, ID, DESC, ALIAS, 0, true)
 
 /**
  * Define a required floating-point parameter.  You should probably use a double
  * instead.
  *
  * The parameter must then be specified on the command line with
- * --PARENT/ID=value. If PARENT is equal to DEF_MOD (which is set using the
+ * --ID=value. If ALIAS is equal to DEF_MOD (which is set using the
  * PROGRAM_INFO() macro), the parameter can be specified with just --ID=value.
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param PARENT Parent module of the parameter.
+ * @param ALIAS An alias for the parameter.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -242,19 +223,18 @@
  * collisions are still possible, and they produce bizarre error messages.  See
  * http://mlpack.org/ticket/74 for more information.
  */
-#define PARAM_FLOAT_REQ(ID, DESC, PARENT) PARAM(float, ID, DESC, PARENT, 0.0f, \
+#define PARAM_FLOAT_REQ(ID, DESC, ALIAS) PARAM(float, ID, DESC, ALIAS, 0.0f, \
     true)
 
 /**
  * Define a required double parameter.
  *
  * The parameter must then be specified on the command line with
- * --PARENT/ID=value. If PARENT is equal to DEF_MOD (which is set using the
- * PROGRAM_INFO() macro), the parameter can be specified with just --ID=value.
+ * --ID=value. 
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param PARENT Parent module of the parameter.
+ * @param ALIAS An alias for the parameter.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -266,19 +246,18 @@
  * collisions are still possible, and they produce bizarre error messages.  See
  * http://mlpack.org/ticket/74 for more information.
  */
-#define PARAM_DOUBLE_REQ(ID, DESC, PARENT) PARAM(double, ID, DESC, PARENT, \
+#define PARAM_DOUBLE_REQ(ID, DESC, ALIAS) PARAM(double, ID, DESC, ALIAS, \
     0.0f, true)
 
 /**
  * Define a required string parameter.
  *
  * The parameter must then be specified on the command line with
- * --PARENT/ID=value. If PARENT is equal to DEF_MOD (which is set using the
- * PROGRAM_INFO() macro), the parameter can be specified with just --ID=value.
+ * --ID=value. 
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param PARENT Parent module of the parameter.
+ * @param ALIAS An alias for the parameter.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -290,19 +269,18 @@
  * collisions are still possible, and they produce bizarre error messages.  See
  * http://mlpack.org/ticket/74 for more information.
  */
-#define PARAM_STRING_REQ(ID, DESC, PARENT) PARAM(std::string, ID, DESC, \
-    PARENT, "", true);
+#define PARAM_STRING_REQ(ID, DESC, ALIAS) PARAM(std::string, ID, DESC, \
+    ALIAS, "", true);
 
 /**
  * Define a required vector parameter.
  *
  * The parameter must then be specified on the command line with
- * --PARENT/ID=value. If PARENT is equal to DEF_MOD (which is set using the
- * PROGRAM_INFO() macro), the parameter can be specified with just --ID=value.
+ * --ID=value.  
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param PARENT Parent module of the parameter.
+ * @param ALIAS An alias for the parameter.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -314,8 +292,8 @@
  * collisions are still possible, and they produce bizarre error messages.  See
  * http://mlpack.org/ticket/74 for more information.
  */
-#define PARAM_VECTOR_REQ(T, ID, DESC, PARENT) PARAM(std::vector<T>, ID, DESC, \
-    PARENT, std::vector<T>(), true);
+#define PARAM_VECTOR_REQ(T, ID, DESC, ALIAS) PARAM(std::vector<T>, ID, DESC, \
+    ALIAS, std::vector<T>(), true);
 
 /**
  * @cond
@@ -338,18 +316,18 @@
  * @param T Type of the parameter.
  * @param ID Name of the parameter.
  * @param DESC Description of the parameter (1-2 sentences).
- * @param PARENT Name of parent module.
+ * @param ALIAS Alias for this parameter.
  * @param DEF Default value of the parameter.
  * @param REQ Whether or not parameter is required (boolean value).
  */
 #ifdef __COUNTER__
-  #define PARAM(T, ID, DESC, PARENT, DEF, REQ) static mlpack::io::Option<T> \
+  #define PARAM(T, ID, DESC, ALIAS, DEF, REQ) static mlpack::io::Option<T> \
       JOIN(io_option_dummy_object_, __COUNTER__) \
-      (false, DEF, ID, DESC, PARENT, REQ);
+      (false, DEF, ID, DESC, ALIAS, REQ);
 
   /** @cond Don't document internal macros. */
-  #define PARAM_FLAG_INTERNAL(ID, DESC, PARENT) static mlpack::io::Option<bool>\
-  JOIN(__io_option_flag_object_, __COUNTER__) (ID, DESC, PARENT);
+  #define PARAM_FLAG_INTERNAL(ID, DESC, ALIAS) static mlpack::io::Option<bool>\
+  JOIN(__io_option_flag_object_, __COUNTER__) (ID, DESC, ALIAS);
   /** @endcond */
 
   /**
@@ -366,13 +344,13 @@
   // don't think we can absolutely guarantee success, but it should be "good
   // enough".  We use the __LINE__ macro and the type of the parameter to try
   // and get a good guess at something unique.
-  #define PARAM(T, ID, DESC, PARENT, DEF, REQ) static mlpack::io::Option<T> \
+  #define PARAM(T, ID, DESC, ALIAS, DEF, REQ) static mlpack::io::Option<T> \
       JOIN(JOIN(io_option_dummy_object_, __LINE__), opt) (false, DEF, ID, \
-      DESC, PARENT, REQ);
+      DESC, ALIAS, REQ);
 
   /** @cond Don't document internal macros. */
-  #define PARAM_FLAG_INTERNAL(ID, DESC, PARENT) static mlpack::io::Option<bool>\
-      JOIN(__io_option_flag_object_, __LINE__) (ID, DESC, PARENT);
+  #define PARAM_FLAG_INTERNAL(ID, DESC, ALIAS) static mlpack::io::Option<bool>\
+      JOIN(__io_option_flag_object_, __LINE__) (ID, DESC, ALIAS);
   /** @endcond */
 
   /**
@@ -418,6 +396,10 @@ struct ParamData
   std::string tname;
   //! The actual value of this parameter.
   boost::any value;
+  //! True if this parameter was passed in via command line or file.
+  bool wasPassed;
+  //! True if the wasPassed value should not be ignored
+  bool isFlag;
 };
 
 /**
@@ -431,36 +413,23 @@ struct ParamData
  *
  * @section addparam Adding parameters to a program
  *
- * Parameters held by the CLI class are hierarchical, meaning that each
- * parameter has a "parent" module.  On the command line, then, a double
- * parameter named "bar" which has a parent module named "foo" would be
- * specified to have a value of 5 like this:
- *
  * @code
  * $ ./executable --foo/bar=5
  * @endcode
  *
  * @note The = is optional; a space can also be used.
  *
- * So, each parameter that is specified must have a parent module; this helps
- * prevent name collisions.  Each module should be declared with some
- * documentation using the PARAM_MODULE(ID, DESC) macro.  Here is an example:
- *
- * @code
- * PARAM_MODULE("mvu", "Parameters for Maximum Variance Unfolding.");
- * @endcode
- *
  * A parameter is specified by using one of the following macros (this is not a
  * complete list; see core/io/cli.hpp):
  *
- *  - PARAM_FLAG(ID, DESC, PARENT)
- *  - PARAM_DOUBLE(ID, DESC, PARENT, DEF)
- *  - PARAM_INT(ID, DESC, PARENT, DEF)
- *  - PARAM_STRING(ID, DESC, PARENT, DEF)
+ *  - PARAM_FLAG(ID, DESC, ALIAS)
+ *  - PARAM_DOUBLE(ID, DESC, ALIAS, DEF)
+ *  - PARAM_INT(ID, DESC, ALIAS, DEF)
+ *  - PARAM_STRING(ID, DESC, ALIAS, DEF)
  *
  * @param ID Name of the parameter.
  * @param DESC Short description of the parameter (one/two sentences).
- * @param PARENT Name of the parent module.
+ * @param ALIAS An alias for the parameter.
  * @param DEF Default value of the parameter.
  *
  * The flag (boolean) type automatically defaults to false; it is specified
@@ -527,7 +496,7 @@ struct ParamData
  *
  * When the parameters have been defined, the next important thing is how to
  * access and modify them.  For this, the HasParam() and GetParam() methods are
- * used.  For instance, the option "k" with parent "neighbor_search" could be
+ * used.  For instance, the option "neighbor_search/k" could be
  * modified like this (it could also be merely accessed with the same call as an
  * r-value).
  *
@@ -564,13 +533,13 @@ class CLI
    *
    * @param identifier The name of the parameter.
    * @param description Short string description of the parameter.
-   * @param parent Full pathname of a parent module, default is the root node
+   * @param alias An alias for the parameter, defaults to "" which is no alias.
    *    ("").
    * @param required Indicates if parameter must be set on command line.
    */
   static void Add(const char* identifier,
                   const char* description,
-                  const char* parent = NULL,
+                  const char* alias = "",
                   bool required = false);
 
   /**
@@ -581,13 +550,13 @@ class CLI
    *
    * @param identifier The name of the parameter.
    * @param description Short string description of the parameter.
-   * @param parent Full pathname of a parent module, default is root node.
+   * @param alias An alias for the parameter, defaults to "" which is no alias.
    * @param required Indicates if parameter must be set on command line.
    */
   template<class T>
   static void Add(const char* identifier,
                   const char* description,
-                  const char* parent,
+                  const char* alias = "",
                   bool required = false);
 
   /**
@@ -595,11 +564,11 @@ class CLI
    *
    * @param identifier The name of the paramater.
    * @param description Short string description of the parameter.
-   * @param parent Full pathname of the parent module; default is root node.
+   * @param alias An alias for the parameter, defaults to "" which is no alias.
    */
   static void AddFlag(const char* identifier,
                       const char* description,
-                      const char* parent);
+                      const char* alias = "");
 
   /**
    * See if the specified flag was found while parsing.
@@ -663,6 +632,11 @@ class CLI
   static void Print();
 
   /**
+   * Print out the help info of the hierarchy.
+   */
+  static void PrintHelp(std::string param="");
+
+  /**
    * Checks that all required parameters have been specified on the command
    * line.  If any have not been specified, an error message is printed and the
    * program is terminated.
@@ -677,6 +651,15 @@ class CLI
    * @return Sanitized string.
    */
   static std::string SanitizeString(const char* str);
+
+  /**
+   * Hyphenate a string or split it onto multiple 80-character lines, with some
+   * amount of padding on each line.  This is ued for option output.
+   *
+   * @param str String to hyphenate (splits are on ' ').
+   * @param padding Amount of padding on the left for each new line.
+   */
+  static std::string HyphenateString(std::string str, int padding);
 
   /**
    * Parses the values given on the command line, overriding any default values.
@@ -714,10 +697,13 @@ class CLI
   //! Pathnames of required options.
   std::list<std::string> requiredOptions;
 
-  //! Map of global values; stored here instead of in OptionsHierarchy for ease
-  //! of implementation.
+  //! Map of global values.
   typedef std::map<std::string, ParamData> gmap_t;
   gmap_t globalValues;
+
+  //! Map for aliases, from alias to actual name.
+  typedef std::map<std::string, std::string> amap_t;
+  amap_t aliasValues;
 
   //! The singleton itself.
   static CLI* singleton;
@@ -730,6 +716,16 @@ class CLI
   io::ProgramDoc *doc;
 
  private:
+
+  /** 
+   * Returns an alias, if given the name of the original.
+   *
+   * @param value The value in a key:value pair where the key
+   * is an alias.
+   * @return The alias associated with value.
+   */
+  static std::string AliasReverseLookup(std::string value);
+  
   /**
    * Retrieve the singleton.
    *

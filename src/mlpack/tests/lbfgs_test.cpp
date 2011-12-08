@@ -15,7 +15,7 @@ using namespace mlpack::optimization;
 using namespace mlpack::optimization::test;
 
 BOOST_AUTO_TEST_SUITE(LBFGSTest);
-
+#ifdef FOOBAR
 /**
  * Tests the L-BFGS optimizer using the Rosenbrock Function.
  */
@@ -106,5 +106,5 @@ BOOST_AUTO_TEST_CASE(rosenbrock_wood_function)
     BOOST_REQUIRE_CLOSE((coords(row, 1)), 1, 1e-5);
   }
 }
-
+#endif
 BOOST_AUTO_TEST_SUITE_END();
