@@ -16,13 +16,13 @@
 
 #include <mlpack/core.hpp>
 
-PARAM_STRING_REQ("input_file", "Data input file.", "");
-PARAM_STRING("output_file", "Data output file.  Stored as an edge list.", "emst", "emst_output.csv");
+PARAM_STRING_REQ("input_file", "Data input file.", "I");
+PARAM_STRING("output_file", "Data output file.  Stored as an edge list.", "O", "emst_output.csv");
 PARAM_FLAG("do_naive", "Compute the MST using .", "");
-PARAM_STRING("naive_output_file", "Naive data output file.", "",
+PARAM_STRING("naive_output_file", "Naive data output file.", "N",
     "naive_output.csv");
-PARAM_INT("leaf_size", "Leaf size in the kd-tree.  Singleton leaves give the empirically best performance at the cost of greater memory requirements.", "", 1);
-PARAM_DOUBLE("total_squared_length", "Squared length of the computed tree.", "", 0.0);
+PARAM_INT("leaf_size", "Leaf size in the kd-tree.  Singleton leaves give the empirically best performance at the cost of greater memory requirements.", "L", 1);
+PARAM_DOUBLE("total_squared_length", "Squared length of the computed tree.", "T", 0.0);
 
 using namespace mlpack;
 using namespace mlpack::emst;

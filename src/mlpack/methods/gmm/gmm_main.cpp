@@ -11,8 +11,8 @@ PROGRAM_INFO("GMM",
     " using the EM algorithm to find the maximum likelihood estimate.");
 
 PARAM_STRING_REQ("data", "A file containing the data on which the model has to "
-    "be fit.", "");
-PARAM_INT("gaussians", "g", "", 1);
+    "be fit.", "D");
+PARAM_INT("gaussians", "g", "G", 1);
 
 using namespace mlpack;
 using namespace mlpack::gmm;

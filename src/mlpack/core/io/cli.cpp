@@ -429,9 +429,9 @@ void CLI::Print()
   for(iter = gmap.begin(); iter != gmap.end(); iter++) {
     std::string key = iter->first;
     std::string alias = AliasReverseLookup(key);
-    alias = alias.length() ? ", " + alias : alias;
+    alias = alias.length() ? ", -" + alias : alias;
 
-    Log::Info << "\t" << key << alias << " : ";
+    Log::Info << "  --" << key << alias << " : ";
 
     //Now, figure out what type it is, and print it.
     //We can handle strings, ints, bools, floats, doubles.
@@ -481,10 +481,10 @@ void CLI::PrintHelp(std::string param)
   if (param != "" && gmap.count(param)) {
     ParamData data = gmap[param];
     std::string alias = AliasReverseLookup(param);
-    alias = alias.length() ? ", "+alias:alias; 
+    alias = alias.length() ? ", -"+alias:alias; 
      
-    Log::Info << param << alias << " info: " << std::endl;
-    Log::Info << "\t" << HyphenateString(data.desc, 8) << std::endl;
+    Log::Info << "  --" << param << alias << " info: ";
+    Log::Info << HyphenateString(data.desc, 4) << std::endl;
     return;
   } else if(param != "") {
     //User passed a single variable, but it doesn't exist.
@@ -493,8 +493,8 @@ void CLI::PrintHelp(std::string param)
 
   // Print out the descriptions.
   if(docs.programName != "") {
-    Log::Info << "Program: " << docs.programName << std::endl;
-    Log::Info << "\t" << HyphenateString(docs.documentation,8) << std::endl;
+    Log::Info << docs.programName << std::endl;
+    Log::Info << "  " << HyphenateString(docs.documentation,2) << std::endl;
   }
   else
     Log::Info << "Undocumented Program" << std::endl;
@@ -506,11 +506,11 @@ void CLI::PrintHelp(std::string param)
     ParamData data = iter->second;
     std::string desc = data.desc;
     std::string alias = AliasReverseLookup(key);
-    alias = alias.length() ? ", "+alias:alias;
+    alias = alias.length() ? ", -"+alias:alias;
 
     //Now, print the descriptions.
-    Log::Info << "\t" << key << alias << std::endl;
-    Log::Info << "\t\t" << HyphenateString(desc,16) << std::endl;
+    Log::Info << "  --" << key << alias << ": ";
+    Log::Info << HyphenateString(desc,4) << std::endl;
     Log::Info << std::endl;
   }
  

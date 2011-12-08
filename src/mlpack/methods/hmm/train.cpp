@@ -26,21 +26,19 @@ bool train_baumwelch();
 bool train_viterbi();
 void usage();
 
-PARAM_STRING_REQ("type", "HMM type : discrete | gaussian | mixture.", "");
-PARAM_STRING_REQ("profile", "A file containing HMM profile.", "");
-PARAM_STRING_REQ("seqfile", "Output file for the generated sequences.", "");
-PARAM_STRING("algorithm", "Training algorithm: baumwelch | viterbi.", "",
+PARAM_STRING_REQ("type", "HMM type : discrete | gaussian | mixture.", "T");
+PARAM_STRING_REQ("profile", "A file containing HMM profile.", "P");
+PARAM_STRING_REQ("seqfile", "Output file for the generated sequences.", "S");
+PARAM_STRING("algorithm", "Training algorithm: baumwelch | viterbi.", "A",
 	"baumwelch");
-PARAM_STRING("guess", "File containing guessing HMM model profile.", "",
+PARAM_STRING("guess", "File containing guessing HMM model profile.", "G",
 	"");
 
 
 PARAM(double, "tolerance",
-	"Error tolerance on log-likelihood as a stopping criteria.", "", 1e-3, false);
-PARAM_INT("maxiter", "Maximum number of iterations, default = 500.", "", 500);
-PARAM_INT("numstate", "If no guessing profile specified, at least provide the number of states.", "", 10);
-
-PARAM_MODULE("hmm", "This is a program generating sequences from HMM models.");
+	"Error tolerance on log-likelihood as a stopping criteria.", "R", 1e-3, false);
+PARAM_INT("maxiter", "Maximum number of iterations, default = 500.", "M", 500);
+PARAM_INT("numstate", "If no guessing profile specified, at least provide the number of states.", "N", 10);
 
 void usage() {
   Log::Warn << "Usage:" << std::endl;

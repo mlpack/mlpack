@@ -9,12 +9,12 @@
 
 using namespace mlpack;
 
-PARAM_STRING_REQ("train", "A file containing X", "");
+PARAM_STRING_REQ("train", "A file containing X", "X");
 PARAM_STRING_REQ("test", "A file containing data points to predict on",
-    "");
+    "T");
 PARAM_STRING("responses", "A file containing the y values for X; if not "
     "present, it is assumed the last column of train contains these values.",
-    "", "");
+    "", "R");
 
 PROGRAM_INFO("Simple Linear Regression", "An implementation of simple linear "
     "regression using ordinary least squares.");

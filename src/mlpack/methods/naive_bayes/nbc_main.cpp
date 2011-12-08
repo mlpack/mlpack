@@ -27,12 +27,12 @@
 
 #include "simple_nbc.hpp"
 
-PARAM_INT_REQ("classes", "The number of classes present in the data.", "")
+PARAM_INT_REQ("classes", "The number of classes present in the data.", "C")
 
-PARAM_STRING_REQ("train", "A file containing the training set", "");
-PARAM_STRING_REQ("test", "A file containing the test set", "");
+PARAM_STRING_REQ("train", "A file containing the training set", "R");
+PARAM_STRING_REQ("test", "A file containing the test set", "T");
 PARAM_STRING("output", "The file in which the output of the test would "
-    "be written, defaults to 'output.csv')", "", "output.csv");
+    "be written, defaults to 'output.csv')", "O", "output.csv");
 
 PROGRAM_INFO("Parametric Naive Bayes", "This program test drives the Parametric"
     " Naive Bayes Classifier assuming that the features are sampled from a "
