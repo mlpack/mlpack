@@ -14,12 +14,12 @@ int main(int argc, char* argv[]) {
   size_t nPoints = 1000;
   size_t nDims = 2;
 
-  mat S = randu(nPoints, nDims);
+  mat S = randu(nDims, nPoints);
   //S.print("S");
   mat Mixing = randn(nDims, nDims);
   Mixing.print("Mixing");
-  mat X = S * Mixing;
-
+  mat X = Mixing * S;
+  
   /*
   mat U, V;
   vec s;
@@ -33,21 +33,24 @@ int main(int argc, char* argv[]) {
 
   mat Y;
   mat W;
+  printf("doing radical\n");
   rad.DoRadical(X, Y, W);
+  printf("radical done\n");
   
   W.print("W");
   
-  mat matXWhitened;
-  mat matWhitening;
-  mlpack::radical::WhitenFeatureMajorMatrix(X, matXWhitened, matWhitening);
+  X = trans(X);
+  mat XWhitened;
+  mat Whitening;
+  mlpack::radical::WhitenFeatureMajorMatrix(X, XWhitened, Whitening);
   
   double val_init = 0;
   for(size_t i = 0; i < nDims; i++) {
-    val_init += rad.Vasicek(matXWhitened.col(i));
+    val_init += rad.Vasicek(XWhitened.col(i));
   }
   printf("initial objective value: %f\n", val_init);
-
   
+  Y = trans(Y);
   double val_final = 0;
   for(size_t i = 0; i < nDims; i++) {
     val_final += rad.Vasicek(Y.col(i));
