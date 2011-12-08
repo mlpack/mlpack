@@ -10,6 +10,7 @@
 //using namespace arma;
 using namespace std;
 
+/*
 Radical::Radical(double noiseStdDev, size_t nReplicates, size_t nAngles, size_t nSweeps,
 		 const arma::mat& matX) {
   this->noiseStdDev = noiseStdDev;
@@ -19,10 +20,18 @@ Radical::Radical(double noiseStdDev, size_t nReplicates, size_t nAngles, size_t 
   this->matX = arma::mat(matX); // is this the same as this.X = X ?
   m = floor(sqrt(matX.n_rows));
 }
-
-arma::mat Radical::GetX() {
-  return matX;
+*/
+Radical::Radical(double noiseStdDev, size_t nReplicates, size_t nAngles, size_t nSweeps,
+		 const arma::mat& matX) :
+  noiseStdDev(noiseStdDev),
+  nReplicates(nReplicates),
+  nAngles(nAngles),
+  nSweeps(nSweeps),
+  matX(matX) 
+{
+  m = floor(sqrt(matX.n_rows));
 }
+
 
 void Radical::WhitenX(arma::mat& matWhitening) {
   arma::mat matU, matV;

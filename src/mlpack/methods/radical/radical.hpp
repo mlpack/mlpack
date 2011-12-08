@@ -21,7 +21,10 @@ public:
   Radical(double noiseStdDev, size_t nReplicates, size_t nAngles, size_t nSweeps,
 	  const arma::mat& matX);
 
-  arma::mat GetX();
+  arma::mat X() {
+    return matX;
+  }
+  
   void WhitenX(arma::mat& matWhitening);
   void CopyAndPerturb(arma::mat& XNew, const arma::mat& matX);
   double Vasicek(const arma::vec& x);

@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
 
   double val_init = 0;
   for(size_t i = 0; i < nDims; i++) {
-    val_init += rad.Vasicek(rad.GetX().col(i));
+    val_init += rad.Vasicek(rad.X().col(i));
   }
   printf("initial objective value: %f\n", val_init);
 
