@@ -8,12 +8,11 @@
 #include "radical.hpp"
 
 using namespace std;
+using namespace arma;
 
 int main(int argc, char* argv[]) {
-  Radical rad;
-
-  u32 nPoints = 1000;
-  u32 nDims = 2;
+  size_t nPoints = 1000;
+  size_t nDims = 2;
 
   mat S = randu(nPoints, nDims);
   //S.print("S");
@@ -29,7 +28,13 @@ int main(int argc, char* argv[]) {
   X = X * Whitening;
   */
 
-  rad.Init(0.01, 10, 200, 1, X);
+  
+  //Radical rad;
+  //rad.Init(0.01, 10, 200, 1, X);
+
+  Radical rad(0.01, 10, 200, 1, X);
+
+
   mat Y;
   mat W;
   rad.DoRadical(Y, W);
@@ -37,14 +42,14 @@ int main(int argc, char* argv[]) {
   W.print("W");
 
   double val_init = 0;
-  for(u32 i = 0; i < nDims; i++) {
+  for(size_t i = 0; i < nDims; i++) {
     val_init += rad.Vasicek(rad.GetX().col(i));
   }
   printf("initial objective value: %f\n", val_init);
 
   
   double val_final = 0;
-  for(u32 i = 0; i < nDims; i++) {
+  for(size_t i = 0; i < nDims; i++) {
     val_final += rad.Vasicek(Y.col(i));
   }
   printf("final objective value: %f\n", val_final);
