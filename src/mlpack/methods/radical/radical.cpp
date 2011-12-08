@@ -11,17 +11,28 @@
 using namespace std;
 
 
-Radical::Radical(double noiseStdDev, size_t nReplicates, size_t nAngles, size_t nSweeps,
-		 const arma::mat& matX) :
+Radical::Radical(double noiseStdDev, size_t nReplicates, size_t nAngles, 
+		 size_t nSweeps) :
   noiseStdDev(noiseStdDev),
   nReplicates(nReplicates),
   nAngles(nAngles),
   nSweeps(nSweeps),
-  matX(matX) 
+  m(-1)
 {
-  m = floor(sqrt(matX.n_rows));
+  // nothing to do here
 }
 
+Radical::Radical(double noiseStdDev, size_t nReplicates, size_t nAngles, size_t nSweeps,
+		 size_t m) :
+  noiseStdDev(noiseStdDev),
+  nReplicates(nReplicates),
+  nAngles(nAngles),
+  nSweeps(nSweeps),
+  m(m)
+{
+  // nothing to do here
+}
+  
 
 void Radical::CopyAndPerturb(arma::mat& matXNew, const arma::mat& matX) {
   matXNew = arma::repmat(matX, nReplicates, 1);
@@ -68,26 +79,33 @@ double Radical::DoRadical2D(const arma::mat& matX) {
 }
 
 
-void Radical::DoRadical(arma::mat& matY, arma::mat& matW) {
-
+void Radical::DoRadical(const arma::mat& matX, arma::mat& matY, arma::mat& matW) {
+  
   // matX is nPoints by nDims (although less intuitive than columns being points,
   // and although this is the transpose of the ICA literature, this choice is 
   // for computational efficiency)
   
-  size_t nDims = matX.n_cols;
+  if(m < 1) {
+    m = floor(sqrt(matX.n_rows));
+  }
   
+  
+  const size_t nDims = matX.n_cols;
+  const size_t nPoints = matX.n_rows;
+  
+  arma::mat matXWhitened;
   arma::mat matWhitening;
-  WhitenX(matWhitening);
+  WhitenFeatureMajorMatrix(matX, matXWhitened, matWhitening);
   
   // in the RADICAL code, they do not copy and perturb initially, although the
   // paper does. we follow the code as it should match their reported results
   // and likely does a better job bouncing out of local optima
   //GeneratePerturbedX(X, X);
   
-  matY = matX;
+  matY = matXWhitened;
   matW = arma::eye(nDims, nDims);
   
-  arma::mat matYSubspace(matX.n_rows, 2);
+  arma::mat matYSubspace(nPoints, 2);
   
   for(size_t sweepNum = 0; sweepNum < nSweeps; sweepNum++) {
     for(size_t i = 0; i < nDims - 1; i++) {
@@ -102,7 +120,7 @@ void Radical::DoRadical(arma::mat& matY, arma::mat& matW) {
 	matJ(j,i) = -sin(thetaOpt);
 	matJ(j,j) = cos(thetaOpt);
 	matW = matW * matJ;
-	matY = matX * matW;
+	matY = matXWhitened * matW;
       }
     }
   }
@@ -112,10 +130,12 @@ void Radical::DoRadical(arma::mat& matY, arma::mat& matW) {
 }
 
 
-void Radical::WhitenX(arma::mat& matWhitening) {
+void Radical::WhitenFeatureMajorMatrix(const arma::mat& matX,
+				       arma::mat& matXWhitened,
+				       arma::mat& matWhitening) {
   arma::mat matU, matV;
   arma::vec s;
   arma::svd(matU, s, matV, cov(matX));
-  matWhitening = matU * arma::diagmat(pow(s, -0.5)) * arma::trans(matV);
-  matX = matX * matWhitening;
+  matWhitening = matU * arma::diagmat(1 / sqrt(s)) * arma::trans(matV);
+  matXWhitened = matX * matWhitening;
 }
