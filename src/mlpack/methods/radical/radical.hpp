@@ -14,8 +14,9 @@
 #include <stdio.h>
 #include<float.h>
 
-using namespace std;
-
+namespace mlpack {
+namespace radical {
+    
 class Radical {
 public:
   Radical(double noiseStdDev, size_t nReplicates, size_t nAngles,
@@ -29,10 +30,6 @@ public:
   double Vasicek(const arma::vec& x);
   double DoRadical2D(const arma::mat& matX);
   void DoRadical(const arma::mat& matX, arma::mat& matY, arma::mat& matW);
-
-  static void WhitenFeatureMajorMatrix(const arma::mat& matX,
-				       arma::mat& matXWhitened,
-				       arma::mat& matWhitening);
   
 private:
   /**
@@ -63,5 +60,14 @@ private:
   size_t m;
   
 };
+
+
+  void WhitenFeatureMajorMatrix(const arma::mat& matX,
+				arma::mat& matXWhitened,
+				arma::mat& matWhitening);
+  
+
+}; // namespace radical
+}; // namespace mlpack
 
 #endif
