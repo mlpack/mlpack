@@ -29,6 +29,7 @@ add_executable(mlpack_test
   nbc_test.cpp
   nca_test.cpp
   pca_test.cpp
+  radical_test.cpp
   range_search_test.cpp
   save_restore_utility_test.cpp
   sort_policy_test.cpp
