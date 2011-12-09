@@ -116,12 +116,12 @@ inline void phi(const arma::mat& x,
   // the right hand part of the equation (instead of the left side) so that
   // later we are referencing columns, not rows -- that is faster.
   arma::mat rhs = -0.5 * inv(cov) * diffs;
-  arma::vec exponents(x.n_cols); // We will now fill this.
-  for (size_t i = 0; i < x.n_cols; i++)
-    exponents(i) = accu(diffs.col(i) % rhs.col(i));
+  arma::vec exponents(diffs.n_cols); // We will now fill this.
+  for (size_t i = 0; i < diffs.n_cols; i++)
+    exponents(i) = exp(accu(diffs.unsafe_col(i) % rhs.unsafe_col(i)));
 
   probabilities = pow(2 * M_PI, (double) mean.n_elem / -2.0) *
-      pow(det(cov), -0.5) * exp(exponents);
+      pow(det(cov), -0.5) * exponents;
 }
 
 }; // namespace gmm
