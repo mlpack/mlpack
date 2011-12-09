@@ -11,21 +11,49 @@ using namespace std;
 using namespace arma;
 
 
+
 void test() {
-  mat X;
-  X.load("/net/hu15/niche/matlab/toolboxes/RADICAL/examples/data_2d_mixed");
   
-  mlpack::radical::Radical rad(0.175, 30, 150, 1);
+  mat X;
+  X.load("/net/hu15/niche/matlab/toolboxes/RADICAL/examples/data_3d_mixed");
+  
+  mlpack::radical::Radical rad(0.175, 5, 100, X.n_rows - 1);
   mat Y;
   mat W;
   
-  wall_clock timer;
-  timer.tic();
   rad.DoRadical(X, Y, W);
-  double n_secs = timer.toc();
-  cout << "took " << n_secs << " seconds" << endl;
+  
+  
+  mat YT = trans(Y);
+  double valEst = 0;
+  for(u32 i = 0; i < YT.n_cols; i++) {
+    vec Yi = vec(YT.col(i));
+    valEst += rad.Vasicek(Yi);
+  }
+  printf("objective(estimate) = %f\n", valEst);
+
+
+  
+  
+  mat S;
+  S.load("/net/hu15/niche/matlab/toolboxes/RADICAL/examples/data_3d_ind");
+  rad.DoRadical(S, Y, W);
+  YT = trans(Y);
+  double valBest = 0;
+  for(u32 i = 0; i < YT.n_cols; i++) {
+    vec Yi = vec(YT.col(i));
+    valBest += rad.Vasicek(Yi);
+  }
+  printf("objective(sources) = %f\n", valBest);
+  
+  
+  
+  
     
 }
+
+
+
 
 
 int main(int argc, char* argv[]) {
