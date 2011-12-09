@@ -131,10 +131,10 @@ private:
 };
 
 
-  void WhitenFeatureMajorMatrix(const arma::mat& matX,
-				arma::mat& matXWhitened,
-				arma::mat& matWhitening);
-  
+
+void WhitenFeatureMajorMatrix(const arma::mat& matX,
+			      arma::mat& matXWhitened,
+			      arma::mat& matWhitening);
 
 }; // namespace radical
 }; // namespace mlpack

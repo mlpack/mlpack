@@ -46,39 +46,50 @@ void Radical::CopyAndPerturb(mat& matXNew, const mat& matX) {
 double Radical::Vasicek(const vec& z) {
   vec v = sort(z);
   size_t nPoints = v.n_elem;
+
+  // Apparently slower
+  /*
   vec logs = log(v.subvec(m, nPoints - 1) - v.subvec(0, nPoints - 1 - m));
+  //vec val = sum(log(v.subvec(m, nPoints - 1) - v.subvec(0, nPoints - 1 - m)));
   return (double) sum(logs);
+  */
+
+  // Apparently faster
+  double sum = 0;
+  u32 range = nPoints - m;
+  for(u32 i = 0; i < range; i++) {
+    sum += log(v(i+m) - v(i));
+  }
+  return sum;
 }
 
 
 double Radical::DoRadical2D(const mat& matX) {
   mat matXMod;
-  CopyAndPerturb(matXMod, matX);
 
-  double theta;
-  double value;
+  CopyAndPerturb(matXMod, matX);
+  
   mat matJacobi(2,2);
   mat candidateY;
 
-  double thetaOpt = 0;
-  double valueOpt = 1e99;
+  double theta;
+  vec thetas = linspace<vec>(0, nAngles - 1, nAngles) / ((double) nAngles) * math::pi() / 2;
+  vec values(nAngles);
   
   for(size_t i = 0; i < nAngles; i++) {
-    theta = ((double) i) / ((double) nAngles) * math::pi() / 2;
+    theta = thetas(i);
     matJacobi(0,0) = cos(theta);
     matJacobi(0,1) = sin(theta);
     matJacobi(1,0) = -sin(theta);
     matJacobi(1,1) = cos(theta);
     
     candidateY = matXMod * matJacobi;
-    value = Vasicek(candidateY.col(0)) + Vasicek(candidateY.col(1));
-    if(value < valueOpt) {
-      valueOpt = value;
-      thetaOpt = theta;
-    }
+    values(i) = Vasicek(candidateY.col(0)) + Vasicek(candidateY.col(1));
   }
   
-  return thetaOpt;
+  u32 indOpt;
+  double valueOpt = values.min(indOpt);
+  return thetas(indOpt);
 }
 
 
@@ -89,6 +100,7 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW) {
   // choice is for computational efficiency when repeatedly generating 
   // two-dimensional coordinate projections for Radical2D
   mat matX = trans(matXT);
+  
   
   // if m was not specified, initialize m as recommended in 
   // (Learned-Miller and Fisher, 2003)
@@ -103,7 +115,7 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW) {
   mat matXWhitened;
   mat matWhitening;
   WhitenFeatureMajorMatrix(matX, matXWhitened, matWhitening);
-  
+    
   // in the RADICAL code, they do not copy and perturb initially, although the
   // paper does. we follow the code as it should match their reported results
   // and likely does a better job bouncing out of local optima

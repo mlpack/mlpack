@@ -10,7 +10,30 @@
 using namespace std;
 using namespace arma;
 
+/*
+void test() {
+  mat X;
+  X.load("/net/hu15/niche/matlab/toolboxes/RADICAL/examples/data_2d_mixed");
+  
+  mlpack::radical::Radical rad(0.175, 30, 150, 1);
+  mat Y;
+  mat W;
+  
+  //wall_clock timer;
+  //timer.tic();
+  rad.DoRadical(X, Y, W);
+  //double n_secs = timer.toc();
+  //cout << "took " << n_secs << " seconds" << endl;
+  
+  
+}
+*/
+
 int main(int argc, char* argv[]) {
+  //test();
+  
+  //return 1;
+  
   size_t nPoints = 1000;
   size_t nDims = 2;
 
@@ -33,9 +56,7 @@ int main(int argc, char* argv[]) {
 
   mat Y;
   mat W;
-  printf("doing radical\n");
   rad.DoRadical(X, Y, W);
-  printf("radical done\n");
   
   W.print("W");
   
