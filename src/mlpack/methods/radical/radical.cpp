@@ -47,8 +47,8 @@ double Radical::Vasicek(vec& z) {
   
   // Apparently slower
   /*
-  vec logs = log(v.subvec(m, nPoints - 1) - v.subvec(0, nPoints - 1 - m));
-  //vec val = sum(log(v.subvec(m, nPoints - 1) - v.subvec(0, nPoints - 1 - m)));
+  vec logs = log(z.subvec(m, nPoints - 1) - z.subvec(0, nPoints - 1 - m));
+  //vec val = sum(log(z.subvec(m, nPoints - 1) - z.subvec(0, nPoints - 1 - m)));
   return (double) sum(logs);
   */
 
@@ -108,7 +108,6 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW) {
   if(m < 1) {
     m = floor(sqrt(matX.n_rows));
   }
-  
   
   const size_t nDims = matX.n_cols;
   const size_t nPoints = matX.n_rows;
