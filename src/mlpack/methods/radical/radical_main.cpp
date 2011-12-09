@@ -10,7 +10,7 @@
 using namespace std;
 using namespace arma;
 
-/*
+
 void test() {
   mat X;
   X.load("/net/hu15/niche/matlab/toolboxes/RADICAL/examples/data_2d_mixed");
@@ -19,20 +19,19 @@ void test() {
   mat Y;
   mat W;
   
-  //wall_clock timer;
-  //timer.tic();
+  wall_clock timer;
+  timer.tic();
   rad.DoRadical(X, Y, W);
-  //double n_secs = timer.toc();
-  //cout << "took " << n_secs << " seconds" << endl;
-  
-  
+  double n_secs = timer.toc();
+  cout << "took " << n_secs << " seconds" << endl;
+    
 }
-*/
+
 
 int main(int argc, char* argv[]) {
-  //test();
+  test();
   
-  //return 1;
+  return 1;
   
   size_t nPoints = 1000;
   size_t nDims = 2;
@@ -67,14 +66,14 @@ int main(int argc, char* argv[]) {
   
   double val_init = 0;
   for(size_t i = 0; i < nDims; i++) {
-    val_init += rad.Vasicek(XWhitened.col(i));
+    //val_init += rad.Vasicek(XWhitened.col(i));
   }
   printf("initial objective value: %f\n", val_init);
   
   Y = trans(Y);
   double val_final = 0;
   for(size_t i = 0; i < nDims; i++) {
-    val_final += rad.Vasicek(Y.col(i));
+    //val_final += rad.Vasicek(Y.col(i));
   }
   printf("final objective value: %f\n", val_final);
   printf("improvement: %f\n", val_init - val_final);

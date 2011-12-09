@@ -38,15 +38,13 @@ Radical::Radical(double noiseStdDev, size_t nReplicates, size_t nAngles, size_t 
   
 
 void Radical::CopyAndPerturb(mat& matXNew, const mat& matX) {
-  matXNew = repmat(matX, nReplicates, 1);
-  matXNew = matXNew + noiseStdDev * randn(matXNew.n_rows, matXNew.n_cols);
+  matXNew = repmat(matX, nReplicates, 1) + noiseStdDev * randn(nReplicates * matX.n_rows, matX.n_cols);
 }
 
 
-double Radical::Vasicek(const vec& z) {
-  vec v = sort(z);
-  size_t nPoints = v.n_elem;
-
+double Radical::Vasicek(vec& z) {
+  z = sort(z);
+  
   // Apparently slower
   /*
   vec logs = log(v.subvec(m, nPoints - 1) - v.subvec(0, nPoints - 1 - m));
@@ -56,9 +54,9 @@ double Radical::Vasicek(const vec& z) {
 
   // Apparently faster
   double sum = 0;
-  u32 range = nPoints - m;
+  u32 range = z.n_elem - m;
   for(u32 i = 0; i < range; i++) {
-    sum += log(v(i+m) - v(i));
+    sum += log(z(i + m) - z(i));
   }
   return sum;
 }
@@ -72,23 +70,26 @@ double Radical::DoRadical2D(const mat& matX) {
   mat matJacobi(2,2);
   mat candidateY;
 
-  double theta;
   vec thetas = linspace<vec>(0, nAngles - 1, nAngles) / ((double) nAngles) * math::pi() / 2;
   vec values(nAngles);
   
   for(size_t i = 0; i < nAngles; i++) {
-    theta = thetas(i);
-    matJacobi(0,0) = cos(theta);
-    matJacobi(0,1) = sin(theta);
-    matJacobi(1,0) = -sin(theta);
-    matJacobi(1,1) = cos(theta);
+    double cosTheta = cos(thetas(i));
+    double sinTheta = sin(thetas(i));
+    matJacobi(0,0) = cosTheta;
+    matJacobi(1,0) = -sinTheta;
+    matJacobi(0,1) = sinTheta;
+    matJacobi(1,1) = cosTheta;
     
     candidateY = matXMod * matJacobi;
-    values(i) = Vasicek(candidateY.col(0)) + Vasicek(candidateY.col(1));
+    vec candidateY1 = candidateY.unsafe_col(0);
+    vec candidateY2 = candidateY.unsafe_col(1);
+    
+    values(i) = Vasicek(candidateY1) + Vasicek(candidateY2);
   }
   
   u32 indOpt;
-  double valueOpt = values.min(indOpt);
+  values.min(indOpt); // we ignore the return value; we don't care about it
   return thetas(indOpt);
 }
 
@@ -114,38 +115,46 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW) {
   
   mat matXWhitened;
   mat matWhitening;
-  WhitenFeatureMajorMatrix(matX, matXWhitened, matWhitening);
+  WhitenFeatureMajorMatrix(matX, matY, matWhitening);
+  // matY is now the whitened form of matX
     
   // in the RADICAL code, they do not copy and perturb initially, although the
   // paper does. we follow the code as it should match their reported results
   // and likely does a better job bouncing out of local optima
   //GeneratePerturbedX(X, X);
   
-  matY = matXWhitened;
-  matW = eye(nDims, nDims);
+  // initialize the unmixing matrix to the whitening matrix
+  matW = matWhitening;
   
   mat matYSubspace(nPoints, 2);
-  
+
+  mat matEye = eye(nDims, nDims);
+
   for(size_t sweepNum = 0; sweepNum < nSweeps; sweepNum++) {
     for(size_t i = 0; i < nDims - 1; i++) {
       for(size_t j = i + 1; j < nDims; j++) {
 	matYSubspace.col(0) = matY.col(i);
 	matYSubspace.col(1) = matY.col(j);
-	mat matWSubspace;
 	double thetaOpt = DoRadical2D(matYSubspace);
-	mat matJ = eye(nDims, nDims);
-	matJ(i,i) = cos(thetaOpt);
-	matJ(i,j) = sin(thetaOpt);
-	matJ(j,i) = -sin(thetaOpt);
-	matJ(j,j) = cos(thetaOpt);
+	mat matJ = matEye;
+	double cosThetaOpt = cos(thetaOpt);
+	double sinThetaOpt = sin(thetaOpt);
+	matJ(i,i) = cosThetaOpt;
+	matJ(j,i) = -sinThetaOpt;
+	matJ(i,j) = sinThetaOpt;
+	matJ(j,j) = cosThetaOpt;
 	matW = matW * matJ;
-	matY = matXWhitened * matW;
+	matY = matX * matW; // to avoid any issues of mismatch between matW
+	                    // and matY, do not use matY = matY * matJ,
+	                    // even though it may be much more efficient
       }
     }
   }
   
   // the final transposes provide W and Y in the typical form from the ICA literature
-  matW = trans(matWhitening * matW);
+  //matW = trans(matWhitening * matW);
+  //matY = trans(matY);
+  matW = trans(matW);
   matY = trans(matY);
 }
 

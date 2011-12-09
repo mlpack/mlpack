@@ -78,7 +78,7 @@ public:
    * @param x Empirical sample (one-dimensional) over which to estimate entropy
    *
    */
-  double Vasicek(const arma::vec& x);
+  double Vasicek(arma::vec& x);
   
   /** Make nReplicates copies of each data point and perturb data with Gaussian
    *     noise with standard deviation noiseStdDev
