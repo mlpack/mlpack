@@ -5,6 +5,7 @@
  * Executable for RADICAL
  */
 #include <armadillo>
+#include <mlpack/core.hpp>
 #include <mlpack/methods/radical/radical.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -19,31 +20,31 @@ using namespace arma;
 
 BOOST_AUTO_TEST_CASE(Radical_Test_Radical3D) {
   
-  mat X;
-  X.load("data_3d_mixed");
+  mat matX;
+  data::Load("/scratch/niche/mlpack_11_11_11/mlpack/trunk/src/mlpack/tests/data/data_3d_mixed.txt", matX);
   
-  mlpack::radical::Radical rad(0.175, 5, 100, X.n_rows - 1);
-  mat Y;
-  mat W;
+  mlpack::radical::Radical rad(0.175, 5, 100, matX.n_rows - 1);
+  mat matY;
+  mat matW;
   
-  rad.DoRadical(X, Y, W);
+  rad.DoRadical(matX, matY, matW);
   
   
-  mat YT = trans(Y);
+  mat matYT = trans(matY);
   double valEst = 0;
-  for(u32 i = 0; i < YT.n_cols; i++) {
-    vec Yi = vec(YT.col(i));
-    valEst += rad.Vasicek(Yi);
+  for(u32 i = 0; i < matYT.n_cols; i++) {
+    vec y = vec(matYT.col(i));
+    valEst += rad.Vasicek(y);
   }  
   
-  mat S;
-  S.load("data_3d_ind");
-  rad.DoRadical(S, Y, W);
-  YT = trans(Y);
+  mat matS;
+  data::Load("/scratch/niche/mlpack_11_11_11/mlpack/trunk/src/mlpack/tests/data/data_3d_ind.txt", matS);
+  rad.DoRadical(matS, matY, matW);
+  matYT = trans(matY);
   double valBest = 0;
-  for(u32 i = 0; i < YT.n_cols; i++) {
-    vec Yi = vec(YT.col(i));
-    valBest += rad.Vasicek(Yi);
+  for(u32 i = 0; i < matYT.n_cols; i++) {
+    vec y = vec(matYT.col(i));
+    valBest += rad.Vasicek(y);
   }
   
   BOOST_REQUIRE_CLOSE(valBest, valEst, 0.01);
