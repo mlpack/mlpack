@@ -1,14 +1,14 @@
 /**
- * @file lars_impl.hpp
+ * @file lars.cpp
  * @author Nishant Mehta (niche)
  *
  * Implementation of LARS and LASSO.
  */
-#ifndef __MLPACK_METHODS_LARS_LARS_IMPL_HPP
-#define __MLPACK_METHODS_LARS_LARS_IMPL_HPP
 
-// In case it hasn't been included.
 #include "lars.hpp"
+
+using namespace std;
+using namespace arma;
 
 namespace mlpack {
 namespace lars {
@@ -539,5 +539,3 @@ void LARS::CholeskyDelete(arma::u32 colToKill)
 
 }; // namespace lars
 }; // namespace mlpack
-
-#endif
