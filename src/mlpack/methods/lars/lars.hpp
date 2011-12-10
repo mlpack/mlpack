@@ -8,6 +8,7 @@
 #ifndef __MLPACK_METHODS_LARS_LARS_HPP
 #define __MLPACK_METHODS_LARS_LARS_HPP
 
+#include <armadillo>
 #include <mlpack/core.hpp>
 
 #define EPS 1e-16
@@ -113,8 +114,5 @@ class LARS {
 
 }; // namespace lars
 }; // namespace mlpack
-
-#include "lars_impl.hpp"
-#undef INSIDE_LARS_H
 
 #endif
