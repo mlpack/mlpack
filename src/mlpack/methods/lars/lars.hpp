@@ -16,15 +16,15 @@ namespace mlpack {
 namespace lars {
 
 // beta is the estimator
-// responseshat is the prediction from the current estimator
+// yHat is the prediction from the current estimator
 
 class LARS {
  private:
-  arma::mat data;
-  arma::vec responses;
+  arma::mat matX;
+  arma::vec y;
 
-  arma::vec xtResponses;
-  arma::mat gram;
+  arma::vec matXTy;
+  arma::mat matGram;
   //! Upper triangular cholesky factor; initially 0x0 arma::matrix.
   arma::mat utriCholFactor;
 
@@ -44,34 +44,34 @@ class LARS {
   std::vector<bool> isActive;
 
  public:
-  LARS(const arma::mat& data,
-       const arma::vec& responses,
+  LARS(const arma::mat& matX,
+       const arma::vec& y,
        const bool useCholesky);
 
-  LARS(const arma::mat& data,
-       const arma::vec& responses,
+  LARS(const arma::mat& matX,
+       const arma::vec& y,
        const bool useCholesky,
        const double lambda1);
 
-  LARS(const arma::mat& data,
-       const arma::vec& responses,
+  LARS(const arma::mat& matX,
+       const arma::vec& y,
        const bool useCholesky,
        const double lambda1,
        const double lambda2);
 
   ~LARS() { }
 
-  void SetGram(const arma::mat& Gram);
+  void SetGram(const arma::mat& matGram);
 
   void ComputeGram();
 
   void ComputeXty();
 
-  void UpdateX(const std::vector<int>& col_inds, const arma::mat& new_cols);
+  void UpdateX(const std::vector<int>& colInds, const arma::mat& matNewCols);
 
-  void UpdateGram(const std::vector<int>& col_inds);
+  void UpdateGram(const std::vector<int>& colInds);
 
-  void UpdateXty(const std::vector<int>& col_inds);
+  void UpdateXty(const std::vector<int>& colInds);
 
   void PrintGram();
 
@@ -79,11 +79,11 @@ class LARS {
 
   void PrintY();
 
-  const std::vector<arma::u32> active_set();
+  const std::vector<arma::u32> ActiveSet();
 
-  const std::vector<arma::vec> beta_path();
+  const std::vector<arma::vec> BetaPath();
 
-  const std::vector<double> lambda_path();
+  const std::vector<double> LambdaPath();
 
   void SetDesiredLambda(double lambda1);
 
@@ -91,24 +91,24 @@ class LARS {
 
   void Solution(arma::vec& beta);
 
-  void GetCholFactor(arma::mat& R);
+  void GetCholFactor(arma::mat& matR);
 
-  void Deactivate(arma::u32 active_var_ind);
+  void Deactivate(arma::u32 activeVarInd);
 
-  void Activate(arma::u32 var_ind);
+  void Activate(arma::u32 varInd);
 
-  void ComputeYHatDirection(const arma::vec& beta_direction,
-                            arma::vec& responseshat_direction);
+  void ComputeYHatDirection(const arma::vec& betaDirection,
+                            arma::vec& yHatDirection);
 
   void InterpolateBeta();
 
-  void CholeskyInsert(const arma::vec& new_x, const arma::mat& X);
+  void CholeskyInsert(const arma::vec& newX, const arma::mat& X);
 
-  void CholeskyInsert(const arma::vec& new_x, const arma::vec& newGramCol);
+  void CholeskyInsert(const arma::vec& newX, const arma::vec& newGramCol);
 
-  void GivensRotate(const arma::vec& x, arma::vec& rotated_x, arma::mat& G);
+  void GivensRotate(const arma::vec& x, arma::vec& rotatedX, arma::mat& G);
 
-  void CholeskyDelete(arma::u32 col_to_kill);
+  void CholeskyDelete(arma::u32 colToKill);
 };
 
 }; // namespace lars

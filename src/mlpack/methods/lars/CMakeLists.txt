@@ -26,19 +26,3 @@ add_executable(lars
 target_link_libraries(lars
   mlpack
 )
-
-add_executable(test_chol
-  one_test_chol.cpp
-)
-
-target_link_libraries(test_chol
-  mlpack
-)
-
-add_executable(test_gram
-  one_test_gram.cpp
-)
-
-target_link_libraries(test_gram
-  mlpack
-)

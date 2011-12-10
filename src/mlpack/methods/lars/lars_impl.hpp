@@ -13,22 +13,22 @@
 namespace mlpack {
 namespace lars {
 
-LARS::LARS(const arma::mat& data,
-           const arma::vec& responses,
+LARS::LARS(const arma::mat& matX,
+           const arma::vec& y,
            const bool useCholesky) :
-    data(data),
-    responses(responses),
+    matX(matX),
+    y(y),
     useCholesky(useCholesky),
     lasso(false),
     elasticNet(false)
 { /* nothing left to do */ }
 
-LARS::LARS(const arma::mat& data,
-           const arma::vec& responses,
+LARS::LARS(const arma::mat& matX,
+           const arma::vec& y,
            const bool useCholesky,
            const double lambda1) :
-    data(data),
-    responses(responses),
+    matX(matX),
+    y(y),
     useCholesky(useCholesky),
     lasso(true),
     lambda1(lambda1),
@@ -36,13 +36,13 @@ LARS::LARS(const arma::mat& data,
     lambda2(0)
 { /* nothing left to do */ }
 
-LARS::LARS(const arma::mat& data,
-           const arma::vec& responses,
+LARS::LARS(const arma::mat& matX,
+           const arma::vec& y,
            const bool useCholesky,
            const double lambda1,
            const double lambda2) :
-    data(data),
-    responses(responses),
+    matX(matX),
+    y(y),
     useCholesky(useCholesky),
     lasso(true),
     lambda1(lambda1),
@@ -50,118 +50,118 @@ LARS::LARS(const arma::mat& data,
     lambda2(lambda2)
 { /* nothing left to do */ }
 
-void LARS::SetGram(const arma::mat& Gram) {
-  gram = gram;
+void LARS::SetGram(const arma::mat& matGram) {
+  this->matGram = matGram;
 }
 
 
 void LARS::ComputeGram()
 {
   if (elasticNet)
-    gram = trans(data) * data + lambda2 * arma::eye(data.n_cols, data.n_cols);
+    matGram = trans(matX) * matX + lambda2 * arma::eye(matX.n_cols, matX.n_cols);
   else
-    gram = trans(data) * data;
+    matGram = trans(matX) * matX;
 }
 
 
 void LARS::ComputeXty()
 {
-  xtResponses = trans(data) * responses;
+  matXTy = trans(matX) * y;
 }
 
 
-void LARS::UpdateX(const std::vector<int>& col_inds, const arma::mat& new_cols)
+void LARS::UpdateX(const std::vector<int>& colInds, const arma::mat& matNewCols)
 {
-  for (arma::u32 i = 0; i < col_inds.size(); i++)
-    data.col(col_inds[i]) = new_cols.col(i);
+  for (arma::u32 i = 0; i < colInds.size(); i++)
+    matX.col(colInds[i]) = matNewCols.col(i);
 
   if (!useCholesky)
-    UpdateGram(col_inds);
+    UpdateGram(colInds);
 
-  UpdateXty(col_inds);
+  UpdateXty(colInds);
 }
 
-void LARS::UpdateGram(const std::vector<int>& col_inds)
+void LARS::UpdateGram(const std::vector<int>& colInds)
 {
-  for (std::vector<int>::const_iterator i = col_inds.begin();
-      i != col_inds.end(); ++i)
+  for (std::vector<int>::const_iterator i = colInds.begin();
+      i != colInds.end(); ++i)
   {
-    for (std::vector<int>::const_iterator j = col_inds.begin();
-        j != col_inds.end(); ++j)
+    for (std::vector<int>::const_iterator j = colInds.begin();
+        j != colInds.end(); ++j)
     {
-      gram(*i, *j) = dot(data.col(*i), data.col(*j));
+      matGram(*i, *j) = dot(matX.col(*i), matX.col(*j));
     }
   }
 
   if (elasticNet)
   {
-    for (std::vector<int>::const_iterator i = col_inds.begin();
-        i != col_inds.end(); ++i)
+    for (std::vector<int>::const_iterator i = colInds.begin();
+        i != colInds.end(); ++i)
     {
-      gram(*i, *i) += lambda2;
+      matGram(*i, *i) += lambda2;
     }
   }
 }
 
-void LARS::UpdateXty(const std::vector<int>& col_inds)
+void LARS::UpdateXty(const std::vector<int>& colInds)
 {
-  for (std::vector<int>::const_iterator i = col_inds.begin();
-      i != col_inds.end(); ++i)
-    xtResponses(*i) = dot(data.col(*i), responses);
+  for (std::vector<int>::const_iterator i = colInds.begin();
+      i != colInds.end(); ++i)
+    matXTy(*i) = dot(matX.col(*i), y);
 }
 
 void LARS::PrintGram()
 {
-  gram.print("Gram arma::matrix");
+  matGram.print("Gram arma::matrix");
 }
 
 void LARS::SetY(const arma::vec& y)
 {
-  responses = y;
+  this->y = y;
 }
 
 void LARS::PrintY()
 {
-  responses.print();
+  y.print();
 }
 
-const std::vector<arma::u32> LARS::active_set()
+const std::vector<arma::u32> LARS::ActiveSet()
 {
   return activeSet;
 }
 
-const std::vector<arma::vec> LARS::beta_path()
+const std::vector<arma::vec> LARS::BetaPath()
 {
   return betaPath;
 }
 
-const std::vector<double> LARS::lambda_path()
+const std::vector<double> LARS::LambdaPath()
 {
   return lambdaPath;
 }
 
-void LARS::SetDesiredLambda(double lambda_1)
+void LARS::SetDesiredLambda(double lambda1)
 {
-  lambda1 = lambda_1;
+  this->lambda1 = lambda1;
 }
 
 void LARS::DoLARS()
 {
   // compute Gram arma::matrix, XtY, and initialize active set varibles
   ComputeXty();
-  if (!useCholesky && gram.is_empty())
+  if (!useCholesky && matGram.is_empty())
     ComputeGram();
 
   // set up active set variables
   nActive = 0;
   activeSet = std::vector<arma::u32>(0);
-  isActive = std::vector<bool>(data.n_cols);
+  isActive = std::vector<bool>(matX.n_cols);
   fill(isActive.begin(), isActive.end(), false);
 
-  // initialize responseshat and beta
-  arma::vec beta = arma::zeros(data.n_cols);
-  arma::vec responseshat = arma::zeros(data.n_rows);
-  arma::vec responseshat_direction = arma::vec(data.n_rows);
+  // initialize yHat and beta
+  arma::vec beta = arma::zeros(matX.n_cols);
+  arma::vec yHat = arma::zeros(matX.n_rows);
+  arma::vec yHatDirection = arma::vec(matX.n_rows);
 
   bool lassocond = false;
 
@@ -171,39 +171,39 @@ void LARS::DoLARS()
     lambda2 = 0; // just in case it is accidentally used, the code still will be correct
   }
   
-  arma::vec corr = xtResponses;
-  arma::vec abs_corr = abs(corr);
-  arma::u32 change_ind;
-  double max_corr = abs_corr.max(change_ind); // change_ind gets set here
+  arma::vec corr = matXTy;
+  arma::vec absCorr = abs(corr);
+  arma::u32 changeInd;
+  double maxCorr = absCorr.max(changeInd); // change_ind gets set here
 
   betaPath.push_back(beta);
-  lambdaPath.push_back(max_corr);
+  lambdaPath.push_back(maxCorr);
   
   // don't even start!
-  if (max_corr < lambda1)
+  if (maxCorr < lambda1)
   {
     lambdaPath[0] = lambda1;
     return;
   }
 
-  //arma::u32 data.n_rowsiterations_run = 0;
+  //arma::u32 matX.n_rowsiterations_run = 0;
   // MAIN LOOP
-  while ((nActive < data.n_cols) && (max_corr > EPS))
+  while ((nActive < matX.n_cols) && (maxCorr > EPS))
   {
-    //data.n_rowsiterations_run++;
-    //printf("iteration %d\t", data.n_rowsiterations_run);
+    //matX.n_rowsiterations_run++;
+    //printf("iteration %d\t", matX.n_rowsiterations_run);
 
     // explicit computation of max correlation, among inactive indices
-    change_ind = -1;
-    max_corr = 0;
-    for (arma::u32 i = 0; i < data.n_cols; i++)
+    changeInd = -1;
+    maxCorr = 0;
+    for (arma::u32 i = 0; i < matX.n_cols; i++)
     {
       if (!isActive[i])
       {
-        if (fabs(corr(i)) > max_corr)
+        if (fabs(corr(i)) > maxCorr)
         {
-          max_corr = fabs(corr(i));
-          change_ind = i;
+          maxCorr = fabs(corr(i));
+          changeInd = i;
         }
       }
     }
@@ -211,18 +211,18 @@ void LARS::DoLARS()
     if (!lassocond)
     {
       // index is absolute index
-      //printf("activating %d\n", change_ind);
+      //printf("activating %d\n", changeInd);
       if (useCholesky)
       {
-        arma::vec new_gramcol = arma::vec(nActive);
+        arma::vec newGramCol = arma::vec(nActive);
         for (arma::u32 i = 0; i < nActive; i++)
-          new_gramcol[i] = dot(data.col(activeSet[i]), data.col(change_ind));
+          newGramCol[i] = dot(matX.col(activeSet[i]), matX.col(changeInd));
 
-        CholeskyInsert(data.col(change_ind), new_gramcol);
+        CholeskyInsert(matX.col(changeInd), newGramCol);
       }
 
       // add variable to active set
-      Activate(change_ind);
+      Activate(changeInd);
     }
 
     // compute signs of correlations
@@ -230,12 +230,12 @@ void LARS::DoLARS()
     for (arma::u32 i = 0; i < nActive; i++)
       s(i) = corr(activeSet[i]) / fabs(corr(activeSet[i]));
 
-    // compute "equiangular" direction in parameter space (beta_direction)
+    // compute "equiangular" direction in parameter space (betaDirection)
     /* We use quotes because in the case of non-unit norm variables,
        this need not be equiangular. */
-    arma::vec unnormalized_beta_direction;
+    arma::vec unnormalizedBetaDirection;
     double normalization;
-    arma::vec beta_direction;
+    arma::vec betaDirection;
     if (useCholesky)
     {
       /**
@@ -249,50 +249,50 @@ void LARS::DoLARS()
        *    = Solve(R % S, Solve(R^T, s)
        *    = s % Solve(R, Solve(R^T, s))
        */
-      unnormalized_beta_direction = solve(trimatu(utriCholFactor),
+      unnormalizedBetaDirection = solve(trimatu(utriCholFactor),
           solve(trimatl(trans(utriCholFactor)), s));
 
-      normalization = 1.0 / sqrt(dot(s, unnormalized_beta_direction));
-      beta_direction = normalization * unnormalized_beta_direction;
+      normalization = 1.0 / sqrt(dot(s, unnormalizedBetaDirection));
+      betaDirection = normalization * unnormalizedBetaDirection;
     }
     else
     {
-      arma::mat gramactive = arma::mat(nActive, nActive);
+      arma::mat matGramActive = arma::mat(nActive, nActive);
       for (arma::u32 i = 0; i < nActive; i++)
       {
         for (arma::u32 j = 0; j < nActive; j++)
         {
-          gramactive(i,j) = gram(activeSet[i], activeSet[j]);
+          matGramActive(i,j) = matGram(activeSet[i], activeSet[j]);
         }
       }
 
       arma::mat S = s * arma::ones<arma::mat>(1, nActive);
-      unnormalized_beta_direction =
-          solve(gramactive % trans(S) % S, arma::ones<arma::mat>(nActive, 1));
-      normalization = 1.0 / sqrt(sum(unnormalized_beta_direction));
-      beta_direction = normalization * unnormalized_beta_direction % s;
+      unnormalizedBetaDirection =
+          solve(matGramActive % trans(S) % S, arma::ones<arma::mat>(nActive, 1));
+      normalization = 1.0 / sqrt(sum(unnormalizedBetaDirection));
+      betaDirection = normalization * unnormalizedBetaDirection % s;
     }
 
     // compute "equiangular" direction in output space
-    ComputeYHatDirection(beta_direction, responseshat_direction);
+    ComputeYHatDirection(betaDirection, yHatDirection);
 
 
-    double gamma = max_corr / normalization;
+    double gamma = maxCorr / normalization;
 
     // if not all variables are active
-    if (nActive < data.n_cols)
+    if (nActive < matX.n_cols)
     {
       // compute correlations with direction
-      for (arma::u32 ind = 0; ind < data.n_cols; ind++)
+      for (arma::u32 ind = 0; ind < matX.n_cols; ind++)
       {
         if (isActive[ind])
         {
           continue;
         }
 
-        double dir_corr = dot(data.col(ind), responseshat_direction);
-        double val1 = (max_corr - corr(ind)) / (normalization - dir_corr);
-        double val2 = (max_corr + corr(ind)) / (normalization + dir_corr);
+        double dirCorr = dot(matX.col(ind), yHatDirection);
+        double val1 = (maxCorr - corr(ind)) / (normalization - dirCorr);
+        double val2 = (maxCorr + corr(ind)) / (normalization + dirCorr);
         if ((val1 > 0) && (val1 < gamma))
           gamma = val1;
         if((val2 > 0) && (val2 < gamma))
@@ -304,76 +304,78 @@ void LARS::DoLARS()
     if (lasso)
     {
       lassocond = false;
-      double lassobound_on_gamma = DBL_MAX;
-      arma::u32 active_ind_to_kick_out = -1;
+      double lassoboundOnGamma = DBL_MAX;
+      arma::u32 activeIndToKickOut = -1;
 
       for (arma::u32 i = 0; i < nActive; i++)
       {
-        double val = -beta(activeSet[i]) / beta_direction(i);
-        if ((val > 0) && (val < lassobound_on_gamma))
+        double val = -beta(activeSet[i]) / betaDirection(i);
+        if ((val > 0) && (val < lassoboundOnGamma))
         {
-          lassobound_on_gamma = val;
-          active_ind_to_kick_out = i;
+          lassoboundOnGamma = val;
+          activeIndToKickOut = i;
         }
       }
 
-      if (lassobound_on_gamma < gamma)
+      if (lassoboundOnGamma < gamma)
       {
         //printf("%d: gap = %e\tbeta(%d) = %e\n",
-        //    activeSet[active_ind_to_kick_out],
-        //    gamma - lassobound_odata.n_rowsgamma,
-        //    activeSet[active_ind_to_kick_out],
-        //    beta(activeSet[active_ind_to_kick_out]));
-        gamma = lassobound_on_gamma;
+        //    activeSet[activeIndToKickOut],
+        //    gamma - lassoBoundOnGamma,
+        //    activeSet[activeIndToKickOut],
+        //    beta(activeSet[activeIndToKickOut]));
+        gamma = lassoboundOnGamma;
         lassocond = true;
-        change_ind = active_ind_to_kick_out;
+        changeInd = activeIndToKickOut;
       }
     }
 
     // update prediction
-    responseshat += gamma * responseshat_direction;
+    yHat += gamma * yHatDirection;
 
     // update estimator
     for (arma::u32 i = 0; i < nActive; i++)
-      beta(activeSet[i]) += gamma * beta_direction(i);
+    {
+      beta(activeSet[i]) += gamma * betaDirection(i);
+    }
     betaPath.push_back(beta);
 
     if (lassocond)
     {
-      // index is in position change_ind in active_set
-      //printf("\t\tKICK OUT %d!\n", activeSet[change_ind]);
-      if (beta(activeSet[change_ind]) != 0)
+      // index is in position changeInd in activeSet
+      //printf("\t\tKICK OUT %d!\n", activeSet[changeInd]);
+      if (beta(activeSet[changeInd]) != 0)
       {
-        //printf("fixed from %e to 0\n", beta(activeSet[change_ind]));
-        beta(activeSet[change_ind]) = 0;
+        //printf("fixed from %e to 0\n", beta(activeSet[changeInd]));
+        beta(activeSet[changeInd]) = 0;
       }
 
       if (useCholesky)
       {
-        CholeskyDelete(change_ind);
+        CholeskyDelete(changeInd);
       }
 
-      Deactivate(change_ind);
+      Deactivate(changeInd);
     }
 
-    corr = xtResponses - trans(data) * responseshat;
+    corr = matXTy - trans(matX) * yHat;
     if (elasticNet)
     {
       corr -= lambda2 * beta;
     }
-    double cur_lambda = 0;
+    double curLambda = 0;
     for (arma::u32 i = 0; i < nActive; i++)
     {
-      cur_lambda += fabs(corr(activeSet[i]));
+      curLambda += fabs(corr(activeSet[i]));
     }
-    cur_lambda /= ((double)nActive);
+    curLambda /= ((double)nActive);
 
-    lambdaPath.push_back(cur_lambda);
+    lambdaPath.push_back(curLambda);
 
     // Time to stop for LASSO?
     if (lasso)
     {
-      if (cur_lambda <= lambda1)
+      if (curLambda <= lambda1)
       {
         InterpolateBeta();
         break;
@@ -384,147 +386,147 @@ void LARS::DoLARS()
 
 void LARS::Solution(arma::vec& beta)
 {
-  beta = beta_path().back();
+  beta = BetaPath().back();
 }
 
-void LARS::GetCholFactor(arma::mat& R)
+void LARS::GetCholFactor(arma::mat& matR)
 {
-  R = utriCholFactor;
+  matR = utriCholFactor;
 }
 
-void LARS::Deactivate(arma::u32 active_var_ind)
+void LARS::Deactivate(arma::u32 activeVarInd)
 {
   nActive--;
-  isActive[activeSet[active_var_ind]] = false;
-  activeSet.erase(activeSet.begin() + active_var_ind);
+  isActive[activeSet[activeVarInd]] = false;
+  activeSet.erase(activeSet.begin() + activeVarInd);
 }
 
-void LARS::Activate(arma::u32 var_ind)
+void LARS::Activate(arma::u32 varInd)
 {
   nActive++;
-  isActive[var_ind] = true;
-  activeSet.push_back(var_ind);
+  isActive[varInd] = true;
+  activeSet.push_back(varInd);
 }
 
-void LARS::ComputeYHatDirection(const arma::vec& beta_direction,
-                                arma::vec& responseshat_direction)
+void LARS::ComputeYHatDirection(const arma::vec& betaDirection,
+                                arma::vec& yHatDirection)
 {
-  responseshat_direction.fill(0);
+  yHatDirection.fill(0);
   for(arma::u32 i = 0; i < nActive; i++)
-    responseshat_direction += beta_direction(i) * data.col(activeSet[i]);
+    yHatDirection += betaDirection(i) * matX.col(activeSet[i]);
 }
 
 void LARS::InterpolateBeta()
 {
-  int path_length = betaPath.size();
+  int pathLength = betaPath.size();
 
   // interpolate beta and stop
-  double ultimate_lambda = lambdaPath[path_length - 1];
-  double penultimate_lambda = lambdaPath[path_length - 2];
-  double interp = (penultimate_lambda - lambda1)
-      / (penultimate_lambda - ultimate_lambda);
+  double ultimateLambda = lambdaPath[pathLength - 1];
+  double penultimateLambda = lambdaPath[pathLength - 2];
+  double interp = (penultimateLambda - lambda1)
+      / (penultimateLambda - ultimateLambda);
 
-  betaPath[path_length - 1] = (1 - interp) * (betaPath[path_length - 2])
-      + interp * betaPath[path_length - 1];
+  betaPath[pathLength - 1] = (1 - interp) * (betaPath[pathLength - 2])
+      + interp * betaPath[pathLength - 1];
 
-  lambdaPath[path_length - 1] = lambda1;
+  lambdaPath[pathLength - 1] = lambda1;
 }
 
-void LARS::CholeskyInsert(const arma::vec& new_x, const arma::mat& X)
+void LARS::CholeskyInsert(const arma::vec& newX, const arma::mat& X)
 {
   if (utriCholFactor.n_rows == 0)
   {
     utriCholFactor = arma::mat(1, 1);
     if (elasticNet)
-      utriCholFactor(0, 0) = sqrt(dot(new_x, new_x) + lambda2);
+      utriCholFactor(0, 0) = sqrt(dot(newX, newX) + lambda2);
     else
-      utriCholFactor(0, 0) = norm(new_x, 2);
+      utriCholFactor(0, 0) = norm(newX, 2);
   }
   else
   {
-    arma::vec new_gramcol = trans(X) * new_x;
-    CholeskyInsert(new_x, new_gramcol);
+    arma::vec newGramCol = trans(X) * newX;
+    CholeskyInsert(newX, newGramCol);
   }
 }
 
-void LARS::CholeskyInsert(const arma::vec& new_x, const arma::vec& new_gramcol) {
+void LARS::CholeskyInsert(const arma::vec& newX, const arma::vec& newGramCol) {
   int n = utriCholFactor.n_rows;
 
   if (n == 0)
   {
     utriCholFactor = arma::mat(1, 1);
     if (elasticNet)
-      utriCholFactor(0, 0) = sqrt(dot(new_x, new_x) + lambda2);
+      utriCholFactor(0, 0) = sqrt(dot(newX, newX) + lambda2);
     else
-      utriCholFactor(0, 0) = norm(new_x, 2);
+      utriCholFactor(0, 0) = norm(newX, 2);
   }
   else
   {
-    arma::mat new_R = arma::mat(n + 1, n + 1);
+    arma::mat matNewR = arma::mat(n + 1, n + 1);
 
-    double sq_norm_new_x;
+    double sqNormNewX;
     if (elasticNet)
-      sq_norm_new_x = dot(new_x, new_x) + lambda2;
+      sqNormNewX = dot(newX, newX) + lambda2;
     else
-      sq_norm_new_x = dot(new_x, new_x);
+      sqNormNewX = dot(newX, newX);
 
     arma::vec utriCholFactork = solve(trimatl(trans(utriCholFactor)),
-        new_gramcol);
+        newGramCol);
 
-    new_R(arma::span(0, n - 1), arma::span(0, n - 1)) = utriCholFactor;
-    new_R(arma::span(0, n - 1), n) = utriCholFactork;
-    new_R(n, arma::span(0, n - 1)).fill(0.0);
-    new_R(n, n) = sqrt(sq_norm_new_x - dot(utriCholFactork, utriCholFactork));
+    matNewR(arma::span(0, n - 1), arma::span(0, n - 1)) = utriCholFactor;
+    matNewR(arma::span(0, n - 1), n) = utriCholFactork;
+    matNewR(n, arma::span(0, n - 1)).fill(0.0);
+    matNewR(n, n) = sqrt(sqNormNewX - dot(utriCholFactork, utriCholFactork));
 
-    utriCholFactor = new_R;
+    utriCholFactor = matNewR;
   }
 }
 
-void LARS::GivensRotate(const arma::vec& x, arma::vec& rotated_x, arma::mat& G) 
+void LARS::GivensRotate(const arma::vec& x, arma::vec& rotatedX, arma::mat& G) 
 {
   if (x(1) == 0)
   {
     G = arma::eye(2, 2);
-    rotated_x = x;
+    rotatedX = x;
   }
   else
   {
     double r = norm(x, 2);
     G = arma::mat(2, 2);
 
-    double scaled_x1 = x(0) / r;
-    double scaled_x2 = x(1) / r;
+    double scaledX1 = x(0) / r;
+    double scaledX2 = x(1) / r;
 
-    G(0, 0) = scaled_x1;
-    G(1, 0) = -scaled_x2;
-    G(0, 1) = scaled_x2;
-    G(1, 1) = scaled_x1;
+    G(0, 0) = scaledX1;
+    G(1, 0) = -scaledX2;
+    G(0, 1) = scaledX2;
+    G(1, 1) = scaledX1;
 
-    rotated_x = arma::vec(2);
-    rotated_x(0) = r;
-    rotated_x(1) = 0;
+    rotatedX = arma::vec(2);
+    rotatedX(0) = r;
+    rotatedX(1) = 0;
   }
 }
 
-void LARS::CholeskyDelete(arma::u32 col_to_kill)
+void LARS::CholeskyDelete(arma::u32 colToKill)
 {
   arma::u32 n = utriCholFactor.n_rows;
 
-  if (col_to_kill == (n - 1))
+  if (colToKill == (n - 1))
   {
     utriCholFactor = utriCholFactor(arma::span(0, n - 2), arma::span(0, n - 2));
   }
   else
   {
-    utriCholFactor.shed_col(col_to_kill); // remove column col_to_kill
+    utriCholFactor.shed_col(colToKill); // remove column colToKill
     n--;
 
-    for(arma::u32 k = col_to_kill; k < n; k++)
+    for(arma::u32 k = colToKill; k < n; k++)
     {
       arma::mat G;
-      arma::vec rotated_vec;
-      GivensRotate(utriCholFactor(arma::span(k, k + 1), k), rotated_vec, G);
-      utriCholFactor(arma::span(k, k + 1), k) = rotated_vec;
+      arma::vec rotatedVec;
+      GivensRotate(utriCholFactor(arma::span(k, k + 1), k), rotatedVec, G);
+      utriCholFactor(arma::span(k, k + 1), k) = rotatedVec;
       if (k < n - 1)
       {
         utriCholFactor(arma::span(k, k + 1), arma::span(k + 1, n - 1)) = G *
