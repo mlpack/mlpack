@@ -21,7 +21,7 @@ using namespace arma;
 BOOST_AUTO_TEST_CASE(Radical_Test_Radical3D) {
   
   mat matX;
-  data::Load("/scratch/niche/mlpack_11_11_11/mlpack/trunk/src/mlpack/tests/data/data_3d_mixed.txt", matX);
+  data::Load("data_3d_mixed.txt", matX);
   
   mlpack::radical::Radical rad(0.175, 5, 100, matX.n_rows - 1);
   mat matY;
@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(Radical_Test_Radical3D) {
   }  
   
   mat matS;
-  data::Load("/scratch/niche/mlpack_11_11_11/mlpack/trunk/src/mlpack/tests/data/data_3d_ind.txt", matS);
+  data::Load("data_3d_ind.txt", matS);
   rad.DoRadical(matS, matY, matW);
   matYT = trans(matY);
   double valBest = 0;
