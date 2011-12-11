@@ -70,74 +70,10 @@ void LARS::ComputeGram()
   }
 }
 
-
 void LARS::ComputeXty()
 {
-  matXTy = trans(matX) * y;
+  vecXTy = trans(matX) * y;
 }
-
-  /*
-void LARS::UpdateX(const std::vector<int>& colInds, const mat& matNewCols)
-{
-  for (u32 i = 0; i < colInds.size(); i++)
-    matX.col(colInds[i]) = matNewCols.col(i);
-
-  if (!useCholesky)
-    UpdateGram(colInds);
-
-  UpdateXty(colInds);
-}
-
-void LARS::UpdateGram(const std::vector<int>& colInds)
-{
-  for (std::vector<int>::const_iterator i = colInds.begin();
-      i != colInds.end(); ++i)
-  {
-    for (std::vector<int>::const_iterator j = colInds.begin();
-        j != colInds.end(); ++j)
-    {
-      matGram(*i, *j) = dot(matX.col(*i), matX.col(*j));
-    }
-  }
-
-  if (elasticNet)
-  {
-    for (std::vector<int>::const_iterator i = colInds.begin();
-        i != colInds.end(); ++i)
-    {
-      matGram(*i, *i) += lambda2;
-    }
-  }
-}
-
-void LARS::UpdateXty(const std::vector<int>& colInds)
-{
-  for (std::vector<int>::const_iterator i = colInds.begin();
-      i != colInds.end(); ++i)
-    matXTy(*i) = dot(matX.col(*i), y);
-}
-  */
-
-/*
-void LARS::PrintGram()
-{
-  matGram.print("Gram matrix");
-}
-*/
-
- /*
-void LARS::SetY(const vec& y)
-{
-  this->y = y;
-}
- */
-
-  /*
-void LARS::PrintY()
-{
-  y.print();
-}
-  */
 
 const std::vector<u32> LARS::ActiveSet()
 {
@@ -154,12 +90,10 @@ const std::vector<double> LARS::LambdaPath()
   return lambdaPath;
 }
 
-  /*
-void LARS::SetDesiredLambda(double lambda1)
+const mat LARS::MatUtriCholFactor()
 {
-  this->lambda1 = lambda1;
+  return matUtriCholFactor;
 }
-  */
 
 void LARS::DoLARS()
 {
@@ -189,7 +123,7 @@ void LARS::DoLARS()
     lambda2 = 0; // just in case it is accidentally used, the code still will be correct
   }
   
-  vec corr = matXTy;
+  vec corr = vecXTy;
   vec absCorr = abs(corr);
   u32 changeInd;
   double maxCorr = absCorr.max(changeInd); // change_ind gets set here
@@ -384,7 +318,7 @@ void LARS::DoLARS()
       Deactivate(changeInd);
     }
 
-    corr = matXTy - trans(matX) * yHat;
+    corr = vecXTy - trans(matX) * yHat;
     if (elasticNet)
     {
       corr -= lambda2 * beta;
@@ -415,13 +349,9 @@ void LARS::Solution(vec& beta)
   beta = BetaPath().back();
 }
 
-void LARS::GetCholFactor(mat& matUtriCholFactor)
-{
-  matUtriCholFactor = this->matUtriCholFactor;
-}
 
 
-  // private functions
+  ////////// private functions //////////
 
 void LARS::Deactivate(u32 activeVarInd)
 {

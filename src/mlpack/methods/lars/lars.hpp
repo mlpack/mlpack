@@ -87,41 +87,27 @@ class LARS {
 
   void ComputeXty();
 
-  //void UpdateX(const std::vector<int>& colInds, const arma::mat& matNewCols);
-
-  //void UpdateGram(const std::vector<int>& colInds);
-
-  //void UpdateXty(const std::vector<int>& colInds);
-
-  //void PrintGram();
-
-  //void SetY(const arma::vec& y);
-
-  //void PrintY();
-
   const std::vector<arma::u32> ActiveSet();
 
   const std::vector<arma::vec> BetaPath();
 
   const std::vector<double> LambdaPath();
-  
-  //void SetDesiredLambda(double lambda1);
 
+  const arma::mat MatUtriCholFactor();
+  
   void DoLARS();
 
   void Solution(arma::vec& beta);
-
-  void GetCholFactor(arma::mat& matUtriCholFactor);
-
 
   
 private:
   arma::mat matX;
   arma::vec y;
 
-  arma::vec matXTy;
+  arma::vec vecXTy;
   arma::mat matGram;
-  //! Upper triangular cholesky factor; initially 0x0 arma::matrix.
+  
+  // Upper triangular cholesky factor; initially 0x0 arma::matrix.
   arma::mat matUtriCholFactor;
 
   bool useCholesky;
