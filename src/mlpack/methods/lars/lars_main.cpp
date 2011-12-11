@@ -30,7 +30,7 @@ PARAM_FLAG("use_cholesky", "Use Cholesky decomposition during computation "
 
 int main(int argc, char* argv[])
 {
-
+  
   // Handle parameters
   CLI::ParseCommandLine(argc, argv);
   
