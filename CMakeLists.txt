@@ -10,7 +10,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
 find_package(LAPACK REQUIRED)  # LAPACK finds BLAS as a dependency
 find_package(Pthreads REQUIRED)
-find_package(Armadillo 2.0.0 REQUIRED)
+find_package(Armadillo 2.4.0 REQUIRED)
 find_package(LibXml2 REQUIRED)
 
 # libxml2 requires some special handling
