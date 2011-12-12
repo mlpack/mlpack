@@ -60,8 +60,8 @@ void LassoTest(size_t nPoints, size_t nDims, bool elasticNet, bool useCholesky) 
       lambda_2 = 0;
     }
     
-    mlpack::lars::LARS lars(X, y, useCholesky, lambda_1, lambda_2);
-    lars.DoLARS();
+    mlpack::lars::LARS lars(useCholesky, lambda_1, lambda_2);
+    lars.DoLARS(X, y);
     
     arma::vec betaOpt;
     lars.Solution(betaOpt);
