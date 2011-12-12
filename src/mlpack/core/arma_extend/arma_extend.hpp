@@ -71,6 +71,11 @@ namespace arma {
 #endif
 
 namespace arma {
+  // u64
+  #include "typedef.hpp"
+  #include "traits.hpp"
+  #include "promote_type.hpp"
+
   // ccov()
   #include "op_ccov_proto.hpp"
   #include "op_ccov_meat.hpp"
