@@ -134,18 +134,18 @@ class SpMat : public Base< eT, SpMat<eT> >
   /**
    * Submatrix methods.
    */
-  arma_inline       SpSubview_row<eT> row(const uword row_num);
-  arma_inline const SpSubview_row<eT> row(const uword row_num) const;
+  arma_inline       SpSubview<eT> row(const uword row_num);
+  arma_inline const SpSubview<eT> row(const uword row_num) const;
 
-  inline            SpSubview_row<eT> operator()(const uword row_num, const span& col_span);
-  inline      const SpSubview_row<eT> operator()(const uword row_num, const span& col_span) const;
+  inline            SpSubview<eT> operator()(const uword row_num, const span& col_span);
+  inline      const SpSubview<eT> operator()(const uword row_num, const span& col_span) const;
 
 
-  arma_inline       SpSubview_col<eT> col(const uword col_num);
-  arma_inline const SpSubview_col<eT> col(const uword col_num) const;
+  arma_inline       SpSubview<eT> col(const uword col_num);
+  arma_inline const SpSubview<eT> col(const uword col_num) const;
 
-  inline            SpSubview_col<eT> operator()(const span& row_span, const uword col_num);
-  inline      const SpSubview_col<eT> operator()(const span& row_span, const uword col_num) const;
+  inline            SpSubview<eT> operator()(const span& row_span, const uword col_num);
+  inline      const SpSubview<eT> operator()(const span& row_span, const uword col_num) const;
 
   /**
    * Row- and column-related functions.
