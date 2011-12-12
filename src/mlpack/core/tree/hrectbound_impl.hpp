@@ -128,7 +128,8 @@ void HRectBound<t_pow>::Centroid(arma::vec& centroid) const
  * Calculates minimum bound-to-point squared distance.
  */
 template<int t_pow>
-double HRectBound<t_pow>::MinDistance(const arma::vec& point) const
+template<typename VecType>
+double HRectBound<t_pow>::MinDistance(const VecType& point) const
 {
   Log::Assert(point.n_elem == dim);
 
@@ -141,37 +142,6 @@ double HRectBound<t_pow>::MinDistance(const arma::vec& point) const
     higher = point[d] - bounds[d].hi;
 
     // Since only one of 'lower' or 'higher' is negative, if we add each's
-    // absolute value to itself and then sum those two, our result is the
-    // nonnegative half of the equation times two; then we raise to power t_pow.
-    sum += pow((lower + fabs(lower)) + (higher + fabs(higher)), (double) t_pow);
-  }
-
-  // Now take the t_pow'th root (but make sure our result is squared); then
-  // divide by four to cancel out the constant of 2 (which has been squared now)
-  // that was introduced earlier.
-  return pow(sum, 2.0 / (double) t_pow) / 4.0;
-}
-
-/**
- * Calculates minimum bound-to-point squared distance, filtered
- *   by indices.
- */
-template<int t_pow>
-double HRectBound<t_pow>::MinDistance(const arma::vec& point,
-                                      const std::vector<size_t>& indices) const
-{
-  Log::Assert(point.n_elem == dim);
-
-  double sum = 0.0;
-
-  double lower, higher;
-  for (size_t index = 0; index < indices.size(); index++)
-  {
-    size_t dimension = indices[index];
-    lower = bounds[dimension].lo - point[dimension];
-    higher = point[dimension] - bounds[dimension].hi;
-
-    // Since at least one of 'lower' or 'higher' is negative, if we add each's
     // absolute value to itself and then sum those two, our result is the
     // nonnegative half of the equation times two; then we raise to power t_pow.
     sum += pow((lower + fabs(lower)) + (higher + fabs(higher)), (double) t_pow);
@@ -216,39 +186,11 @@ double HRectBound<t_pow>::MinDistance(const HRectBound& other) const
 }
 
 /**
- * Calculates minimum bound-to-bound squared distance, filtered by indices.
- *
- * Example: bound1.MinDistanceSq(other, indices) for minimum squared distance.
- */
-template<int t_pow>
-double HRectBound<t_pow>::MinDistance(const HRectBound& other,
-                                      const std::vector<size_t>& indices) const
-{
-  Log::Assert(dim == other.dim);
-
-  double sum = 0.0;
-  double lower, higher;
-
-  for (size_t index = 0; index < indices.size(); index++)
-  {
-    size_t dimension = indices[index];
-    lower = bounds[dimension].lo - other.bounds[dimension].hi;
-    higher = other.bounds[dimension].lo - bounds[dimension].hi;
-
-    // Since only one of 'lower' or 'higher' is negative, if we add each's
-    // absolute value to itself and then sum those two, our result is the
-    // nonnegative half of the equation times two; then we raise to power t_pow.
-    sum += pow((lower + fabs(lower)) + (higher + fabs(higher)), (double) t_pow);
-  }
-
-  return pow(sum, 2.0 / (double) t_pow) / 4.0;
-}
-
-/**
  * Calculates maximum bound-to-point squared distance.
  */
 template<int t_pow>
-double HRectBound<t_pow>::MaxDistance(const arma::vec& point) const
+template<typename VecType>
+double HRectBound<t_pow>::MaxDistance(const VecType& point) const
 {
   double sum = 0;
 
@@ -262,30 +204,6 @@ double HRectBound<t_pow>::MaxDistance(const arma::vec& point) const
   }
 
   return pow(sum, 2.0 / (double) t_pow);
-}
-
-/**
- * Calculates maximum bound-to-point squared distance, filtered by indices.
- */
-template<int t_pow>
-double HRectBound<t_pow>::MaxDistance(const arma::vec& point,
-                                      const std::vector<size_t>& indices) const
-{
-  double sum = 0.0;
-  double lower, higher;
-
-  Log::Assert(point.n_elem == dim);
-
-  for (size_t index = 0; index < indices.size(); index++)
-  {
-    size_t dimension = indices[index];
-    lower = fabs(point[dimension] - bounds[dimension].lo);
-    higher = fabs(point[dimension] - bounds[dimension].hi);
-
-    sum += pow(fabs(higher - lower) + higher + lower, (double) t_pow);
-  }
-
-  return pow(sum, 2.0 / (double) t_pow) / 4.0;
 }
 
 /**
@@ -307,31 +225,6 @@ double HRectBound<t_pow>::MaxDistance(const HRectBound& other) const
   }
 
   return pow(sum, 2.0 / (double) t_pow);
-}
-
-/**
- * Computes the maximum distance between blocks,
- *   filtered by indices.
- */
-template<int t_pow>
-double HRectBound<t_pow>::MaxDistance(const HRectBound& other,
-                                      const std::vector<size_t>& indices) const
-{
-  double sum = 0.0;
-  double lower, higher;
-
-  Log::Assert(other.dim == dim);
-
-  for (size_t index = 0; index < indices.size(); index++)
-  {
-    size_t dimension = indices[index];
-    lower = fabs(other.bounds[dimension].hi - bounds[dimension].lo);
-    higher = fabs(other.bounds[dimension].lo - bounds[dimension].hi);
-
-    sum += pow(fabs(higher-lower) + higher + lower, (double) t_pow);
-  }
-
-  return pow(sum, 2.0 / (double) t_pow) / 4.0;
 }
 
 /**
@@ -374,7 +267,8 @@ math::Range HRectBound<t_pow>::RangeDistance(const HRectBound& other) const
  * Calculates minimum and maximum bound-to-point squared distance.
  */
 template<int t_pow>
-math::Range HRectBound<t_pow>::RangeDistance(const arma::vec& point) const
+template<typename VecType>
+math::Range HRectBound<t_pow>::RangeDistance(const VecType& point) const
 {
   double loSum = 0;
   double hiSum = 0;
@@ -418,7 +312,8 @@ math::Range HRectBound<t_pow>::RangeDistance(const arma::vec& point) const
  * Expands this region to include a new point.
  */
 template<int t_pow>
-HRectBound<t_pow>& HRectBound<t_pow>::operator|=(const arma::vec& vector)
+template<typename VecType>
+HRectBound<t_pow>& HRectBound<t_pow>::operator|=(const VecType& vector)
 {
   Log::Assert(vector.n_elem == dim);
 
@@ -446,7 +341,8 @@ HRectBound<t_pow>& HRectBound<t_pow>::operator|=(const HRectBound& other)
  * Determines if a point is within this bound.
  */
 template<int t_pow>
-bool HRectBound<t_pow>::Contains(const arma::vec& point) const
+template<typename VecType>
+bool HRectBound<t_pow>::Contains(const VecType& point) const
 {
   for (size_t i = 0; i < point.n_elem; i++)
   {

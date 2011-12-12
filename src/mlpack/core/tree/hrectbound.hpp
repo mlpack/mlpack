@@ -73,12 +73,8 @@ class HRectBound
   /**
    * Calculates minimum bound-to-point squared distance.
    */
-  double MinDistance(const arma::vec& point) const;
-  /**
-   * Calculates minimum bound-to-point squared distance.
-   */
-  double MinDistance(const arma::vec& point,
-                     const std::vector<size_t>& indices) const;
+  template<typename VecType>
+  double MinDistance(const VecType& point) const;
 
   /**
    * Calculates minimum bound-to-bound squared distance.
@@ -86,33 +82,17 @@ class HRectBound
    * Example: bound1.MinDistanceSq(other) for minimum squared distance.
    */
   double MinDistance(const HRectBound& other) const;
-  /**
-   * Calculates minimum bound-to-bound squared distance.
-   *
-   * Example: bound1.MinDistanceSq(other) for minimum squared distance.
-   */
-  double MinDistance(const HRectBound& other,
-                     const std::vector<size_t>& indices) const;
 
   /**
    * Calculates maximum bound-to-point squared distance.
    */
-  double MaxDistance(const arma::vec& point) const;
-  /**
-   * Computes maximum distance.
-   */
-  double MaxDistance(const arma::vec& point,
-                     const std::vector<size_t>& indices) const;
+  template<typename VecType>
+  double MaxDistance(const VecType& point) const;
 
   /**
    * Computes maximum distance.
    */
   double MaxDistance(const HRectBound& other) const;
-  /**
-   * Computes maximum distance.
-   */
-  double MaxDistance(const HRectBound& other,
-                     const std::vector<size_t>& indices) const;
 
   /**
    * Calculates minimum and maximum bound-to-bound squared distance.
@@ -122,12 +102,14 @@ class HRectBound
   /**
    * Calculates minimum and maximum bound-to-point squared distance.
    */
-  math::Range RangeDistance(const arma::vec& point) const;
+  template<typename VecType>
+  math::Range RangeDistance(const VecType& point) const;
 
   /**
    * Expands this region to include a new point.
    */
-  HRectBound& operator|=(const arma::vec& vector);
+  template<typename VecType>
+  HRectBound& operator|=(const VecType& vector);
 
   /**
    * Expands this region to encompass another bound.
@@ -137,7 +119,8 @@ class HRectBound
   /**
    * Determines if a point is within this bound.
    */
-  bool Contains(const arma::vec& point) const;
+  template<typename VecType>
+  bool Contains(const VecType& point) const;
 
  private:
   size_t dim;
