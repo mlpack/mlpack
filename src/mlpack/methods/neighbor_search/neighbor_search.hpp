@@ -97,8 +97,8 @@ class NeighborSearch
    * @param queryTree Optionally pass a pre-built tree for the query set.
    * @param metric An optional instance of the MetricType class.
    */
-  NeighborSearch(const arma::mat& referenceSet,
-                 const arma::mat& querySet,
+  NeighborSearch(const typename TreeType::Mat& referenceSet,
+                 const typename TreeType::Mat& querySet,
                  const bool naive = false,
                  const bool singleMode = false,
                  const size_t leafSize = 20,
@@ -131,7 +131,7 @@ class NeighborSearch
    *      set.
    * @param metric An optional instance of the MetricType class.
    */
-  NeighborSearch(const arma::mat& referenceSet,
+  NeighborSearch(const typename TreeType::Mat& referenceSet,
                  const bool naive = false,
                  const bool singleMode = false,
                  const size_t leafSize = 20,
@@ -156,9 +156,9 @@ class NeighborSearch
    * @param distances Matrix storing distances of neighbors for each query
    *     point.
    */
-  void ComputeNeighbors(const size_t k,
-                        arma::Mat<size_t>& resultingNeighbors,
-                        arma::mat& distances);
+  void Search(const size_t k,
+              arma::Mat<size_t>& resultingNeighbors,
+              arma::mat& distances);
 
  private:
   /**
@@ -174,10 +174,10 @@ class NeighborSearch
    * @param neighbors List of neighbors for each point.
    * @param distances List of distances for each point.
    */
-  void ComputeBaseCase(TreeType* queryNode,
-                       TreeType* referenceNode,
-                       arma::Mat<size_t>& neighbors,
-                       arma::mat& distances);
+  void BaseCase(TreeType* referenceNode,
+                TreeType* queryNode,
+                arma::Mat<size_t>& neighbors,
+                arma::mat& distances);
 
   /**
    * Recurse down the trees, computing base case computations when the leaves
@@ -189,11 +189,11 @@ class NeighborSearch
    * @param neighbors List of neighbors for each point.
    * @param distances List of distances for each point.
    */
-  void ComputeDualNeighborsRecursion(TreeType* queryNode,
-                                     TreeType* referenceNode,
-                                     const double lowerBound,
-                                     arma::Mat<size_t>& neighbors,
-                                     arma::mat& distances);
+  void DualTreeRecursion(TreeType* referenceNode,
+                         TreeType* queryNode,
+                         const double lowerBound,
+                         arma::Mat<size_t>& neighbors,
+                         arma::mat& distances);
 
   /**
    * Perform a recursion only on the reference tree; the query point is given.
@@ -206,12 +206,13 @@ class NeighborSearch
    * @param neighbors List of neighbors for each point.
    * @param distances List of distances for each point.
    */
-  void ComputeSingleNeighborsRecursion(const size_t pointId,
-                                       const arma::vec& point,
-                                       TreeType* referenceNode,
-                                       double& bestDistSoFar,
-                                       arma::Mat<size_t>& neighbors,
-                                       arma::mat& distances);
+  template<typename VecType>
+  void SingleTreeRecursion(TreeType* referenceNode,
+                           const VecType& queryPoint,
+                           const size_t queryIndex,
+                           double& bestDistSoFar,
+                           arma::Mat<size_t>& neighbors,
+                           arma::mat& distances);
 
   /**
    * Insert a point into the neighbors and distances matrices; this is a helper
@@ -233,14 +234,14 @@ class NeighborSearch
 
   //! Copy of reference dataset (if we need it, because tree building modifies
   //! it).
-  arma::mat referenceCopy;
+  typename TreeType::Mat referenceCopy;
   //! Copy of query dataset (if we need it, because tree building modifies it).
-  arma::mat queryCopy;
+  typename TreeType::Mat queryCopy;
 
-  //! Reference dataset.
-  const arma::mat& referenceSet;
-  //! Query dataset (may not be given).
-  const arma::mat& querySet;
+  //! Reference dataset (data should be accessed using this).
+  const typename TreeType::Mat& referenceSet;
+  //! Query dataset (data should be accessed using this).
+  const typename TreeType::Mat& querySet;
 
   //! Indicates if O(n^2) naive search is being used.
   bool naive;

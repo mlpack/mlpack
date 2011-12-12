@@ -15,8 +15,8 @@ using namespace mlpack::neighbor;
 // Construct the object.
 template<typename SortPolicy, typename MetricType, typename TreeType>
 NeighborSearch<SortPolicy, MetricType, TreeType>::
-NeighborSearch(const arma::mat& referenceSet,
-               const arma::mat& querySet,
+NeighborSearch(const typename TreeType::Mat& referenceSet,
+               const typename TreeType::Mat& querySet,
                const bool naive,
                const bool singleMode,
                const size_t leafSize,
@@ -72,7 +72,7 @@ NeighborSearch(const arma::mat& referenceSet,
 // Construct the object.
 template<typename SortPolicy, typename MetricType, typename TreeType>
 NeighborSearch<SortPolicy, MetricType, TreeType>::
-NeighborSearch(const arma::mat& referenceSet,
+NeighborSearch(const typename TreeType::Mat& referenceSet,
                const bool naive,
                const bool singleMode,
                const size_t leafSize,
@@ -126,7 +126,7 @@ NeighborSearch<SortPolicy, MetricType, TreeType>::~NeighborSearch()
  * distances.
  */
 template<typename SortPolicy, typename MetricType, typename TreeType>
-void NeighborSearch<SortPolicy, MetricType, TreeType>::ComputeNeighbors(
+void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
     const size_t k,
     arma::Mat<size_t>& resultingNeighbors,
     arma::mat& distances)
@@ -154,35 +154,20 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::ComputeNeighbors(
   {
     // Run the base case computation on all nodes
     if (queryTree)
-      ComputeBaseCase(queryTree, referenceTree, *neighborPtr, *distancePtr);
+      BaseCase(referenceTree, queryTree, *neighborPtr, *distancePtr);
     else
-      ComputeBaseCase(referenceTree, referenceTree, *neighborPtr, *distancePtr);
+      BaseCase(referenceTree, referenceTree, *neighborPtr, *distancePtr);
   }
   else
   {
     if (singleMode)
     {
-      // Do one tenth of the query set at a time.
-      size_t chunk = querySet.n_cols / 10;
-
-      for (size_t i = 0; i < 10; i++)
+      // Loop over each point in the query set.
+      for (size_t i = 0; i < querySet.n_cols; i++)
       {
-        for (size_t j = 0; j < chunk; j++)
-        {
-          double worstDistance = SortPolicy::WorstDistance();
-          ComputeSingleNeighborsRecursion(i * chunk + j,
-              querySet.unsafe_col(i * chunk + j), referenceTree, worstDistance,
-              *neighborPtr, *distancePtr);
-        }
-      }
-
-      // The last tenth is differently sized...
-      for (size_t i = 0; i < querySet.n_cols % 10; i++)
-      {
-        size_t ind = (querySet.n_cols / 10) * 10 + i;
         double worstDistance = SortPolicy::WorstDistance();
-        ComputeSingleNeighborsRecursion(ind, querySet.unsafe_col(ind),
-            referenceTree, worstDistance, *neighborPtr, *distancePtr);
+        SingleTreeRecursion(referenceTree, querySet.col(i), i, worstDistance,
+            *neighborPtr, *distancePtr);
       }
     }
     else // Dual-tree recursion.
@@ -190,13 +175,13 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::ComputeNeighbors(
       // Start on the root of each tree.
       if (queryTree)
       {
-        ComputeDualNeighborsRecursion(queryTree, referenceTree,
+        DualTreeRecursion(queryTree, referenceTree,
             SortPolicy::BestNodeToNodeDistance(queryTree, referenceTree),
             *neighborPtr, *distancePtr);
       }
       else
       {
-        ComputeDualNeighborsRecursion(referenceTree, referenceTree,
+        DualTreeRecursion(referenceTree, referenceTree,
             SortPolicy::BestNodeToNodeDistance(referenceTree, referenceTree),
             *neighborPtr, *distancePtr);
       }
@@ -297,9 +282,9 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::ComputeNeighbors(
  * Performs exhaustive computation between two leaves.
  */
 template<typename SortPolicy, typename MetricType, typename TreeType>
-void NeighborSearch<SortPolicy, MetricType, TreeType>::ComputeBaseCase(
-      TreeType* queryNode,
+void NeighborSearch<SortPolicy, MetricType, TreeType>::BaseCase(
       TreeType* referenceNode,
+      TreeType* queryNode,
       arma::Mat<size_t>& neighbors,
       arma::mat& distances)
 {
@@ -311,16 +296,14 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::ComputeBaseCase(
   for (size_t queryIndex = queryNode->Begin(); queryIndex < queryNode->End();
        queryIndex++)
   {
-    // Get the query point from the matrix.
-    arma::vec queryPoint = querySet.unsafe_col(queryIndex);
-
+    // Get the best possible distance from the query point to the node.
     double queryToNodeDistance =
-        SortPolicy::BestPointToNodeDistance(queryPoint, referenceNode);
+        SortPolicy::BestPointToNodeDistance(querySet.col(queryIndex),
+                                            referenceNode);
 
     if (SortPolicy::IsBetter(queryToNodeDistance,
         distances(distances.n_rows - 1, queryIndex)))
     {
-      // We'll do the same for the references.
       for (size_t referenceIndex = referenceNode->Begin();
           referenceIndex < referenceNode->End(); referenceIndex++)
       {
@@ -328,9 +311,8 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::ComputeBaseCase(
         // in the monochromatic case.
         if (referenceNode != queryNode || referenceIndex != queryIndex)
         {
-          arma::vec referencePoint = referenceSet.unsafe_col(referenceIndex);
-
-          double distance = metric.Evaluate(queryPoint, referencePoint);
+          double distance = metric.Evaluate(querySet.col(queryIndex),
+                                            referenceSet.col(referenceIndex));
 
           // If the reference point is closer than any of the current
           // candidates, add it to the list.
@@ -360,10 +342,9 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::ComputeBaseCase(
  * The recursive function for dual tree.
  */
 template<typename SortPolicy, typename MetricType, typename TreeType>
-void NeighborSearch<SortPolicy, MetricType, TreeType>::
-ComputeDualNeighborsRecursion(
-    TreeType* queryNode,
+void NeighborSearch<SortPolicy, MetricType, TreeType>::DualTreeRecursion(
     TreeType* referenceNode,
+    TreeType* queryNode,
     const double lowerBound,
     arma::Mat<size_t>& neighbors,
     arma::mat& distances)
@@ -377,7 +358,7 @@ ComputeDualNeighborsRecursion(
   if (queryNode->IsLeaf() && referenceNode->IsLeaf())
   {
     // Base case: both are leaves.
-    ComputeBaseCase(queryNode, referenceNode, neighbors, distances);
+    BaseCase(referenceNode, queryNode, neighbors, distances);
     return;
   }
 
@@ -394,17 +375,17 @@ ComputeDualNeighborsRecursion(
 
     if (SortPolicy::IsBetter(leftDistance, rightDistance))
     {
-      ComputeDualNeighborsRecursion(queryNode, referenceNode->Left(),
-          leftDistance, neighbors, distances);
-      ComputeDualNeighborsRecursion(queryNode, referenceNode->Right(),
-          rightDistance, neighbors, distances);
+      DualTreeRecursion(referenceNode->Left(), queryNode, leftDistance,
+          neighbors, distances);
+      DualTreeRecursion(referenceNode->Right(), queryNode, rightDistance,
+          neighbors, distances);
     }
     else
     {
-      ComputeDualNeighborsRecursion(queryNode, referenceNode->Right(),
-          rightDistance, neighbors, distances);
-      ComputeDualNeighborsRecursion(queryNode, referenceNode->Left(),
-          leftDistance, neighbors, distances);
+      DualTreeRecursion(referenceNode->Right(), queryNode, rightDistance,
+          neighbors, distances);
+      DualTreeRecursion(referenceNode->Left(), queryNode, leftDistance,
+          neighbors, distances);
     }
     return;
   }
@@ -417,10 +398,10 @@ ComputeDualNeighborsRecursion(
     double rightDistance = SortPolicy::BestNodeToNodeDistance(
         queryNode->Right(), referenceNode);
 
-    ComputeDualNeighborsRecursion(queryNode->Left(), referenceNode,
-        leftDistance, neighbors, distances);
-    ComputeDualNeighborsRecursion(queryNode->Right(), referenceNode,
-        rightDistance, neighbors, distances);
+    DualTreeRecursion(referenceNode, queryNode->Left(), leftDistance,
+        neighbors, distances);
+    DualTreeRecursion(referenceNode, queryNode->Right(), rightDistance,
+        neighbors, distances);
 
     // We need to update the upper bound based on the new upper bounds of the
     // children.
@@ -445,17 +426,17 @@ ComputeDualNeighborsRecursion(
   // Recurse on queryNode->left() first.
   if (SortPolicy::IsBetter(leftDistance, rightDistance))
   {
-    ComputeDualNeighborsRecursion(queryNode->Left(), referenceNode->Left(),
-        leftDistance, neighbors, distances);
-    ComputeDualNeighborsRecursion(queryNode->Left(), referenceNode->Right(),
-        rightDistance, neighbors, distances);
+    DualTreeRecursion(referenceNode->Left(), queryNode->Left(), leftDistance,
+        neighbors, distances);
+    DualTreeRecursion(referenceNode->Left(), queryNode->Right(), rightDistance,
+        neighbors, distances);
   }
   else
   {
-    ComputeDualNeighborsRecursion(queryNode->Left(), referenceNode->Right(),
-        rightDistance, neighbors, distances);
-    ComputeDualNeighborsRecursion(queryNode->Left(), referenceNode->Left(),
-        leftDistance, neighbors, distances);
+    DualTreeRecursion(referenceNode->Left(), queryNode->Right(), rightDistance,
+        neighbors, distances);
+    DualTreeRecursion(referenceNode->Left(), queryNode->Left(), leftDistance,
+        neighbors, distances);
   }
 
   leftDistance = SortPolicy::BestNodeToNodeDistance(queryNode->Right(),
@@ -466,17 +447,17 @@ ComputeDualNeighborsRecursion(
   // Now recurse on queryNode->right().
   if (SortPolicy::IsBetter(leftDistance, rightDistance))
   {
-    ComputeDualNeighborsRecursion(queryNode->Right(), referenceNode->Left(),
-        leftDistance, neighbors, distances);
-    ComputeDualNeighborsRecursion(queryNode->Right(), referenceNode->Right(),
-        rightDistance, neighbors, distances);
+    DualTreeRecursion(referenceNode->Right(), queryNode->Left(), leftDistance,
+        neighbors, distances);
+    DualTreeRecursion(referenceNode->Right(), queryNode->Right(), rightDistance,
+        neighbors, distances);
   }
   else
   {
-    ComputeDualNeighborsRecursion(queryNode->Right(), referenceNode->Right(),
-        rightDistance, neighbors, distances);
-    ComputeDualNeighborsRecursion(queryNode->Right(), referenceNode->Left(),
-        leftDistance, neighbors, distances);
+    DualTreeRecursion(referenceNode->Right(), queryNode->Right(), rightDistance,
+        neighbors, distances);
+    DualTreeRecursion(referenceNode->Right(), queryNode->Left(), leftDistance,
+        neighbors, distances);
   }
 
   // Update the upper bound as above
@@ -491,13 +472,14 @@ ComputeDualNeighborsRecursion(
 } // ComputeDualNeighborsRecursion()
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-void NeighborSearch<SortPolicy, MetricType, TreeType>::
-ComputeSingleNeighborsRecursion(const size_t pointId,
-                                const arma::vec& point,
-                                TreeType* referenceNode,
-                                double& bestDistSoFar,
-                                arma::Mat<size_t>& neighbors,
-                                arma::mat& distances)
+template<typename VecType>
+void NeighborSearch<SortPolicy, MetricType, TreeType>::SingleTreeRecursion(
+    TreeType* referenceNode,
+    const VecType& queryPoint,
+    const size_t queryIndex,
+    double& bestDistSoFar,
+    arma::Mat<size_t>& neighbors,
+    arma::mat& distances)
 {
   if (referenceNode->IsLeaf())
   {
@@ -506,33 +488,31 @@ ComputeSingleNeighborsRecursion(const size_t pointId,
         referenceIndex < referenceNode->End(); referenceIndex++)
     {
       // Confirm that points do not identify themselves as neighbors
-      // in the monochromatic case
-      if (!(referenceSet.memptr() == querySet.memptr() &&
-            referenceIndex == pointId))
+      // in the monochromatic case.
+      if (!queryTree && !(referenceIndex == queryIndex))
       {
-        arma::vec referencePoint = referenceSet.unsafe_col(referenceIndex);
-
-        double distance = metric.Evaluate(point, referencePoint);
+        double distance = metric.Evaluate(queryPoint,
+                                          referenceSet.col(referenceIndex));
 
         // If the reference point is better than any of the current candidates,
         // insert it into the list correctly.
-        arma::vec queryDist = distances.unsafe_col(pointId);
+        arma::vec queryDist = distances.unsafe_col(queryIndex);
         size_t insertPosition = SortPolicy::SortDistance(queryDist, distance);
 
         if (insertPosition != (size_t() - 1))
-          InsertNeighbor(pointId, insertPosition, referenceIndex, distance,
+          InsertNeighbor(queryIndex, insertPosition, referenceIndex, distance,
               neighbors, distances);
       }
     } // for referenceIndex
 
-    bestDistSoFar = distances(distances.n_rows - 1, pointId);
+    bestDistSoFar = distances(distances.n_rows - 1, queryIndex);
   }
   else
   {
     // We'll order the computation by distance.
-    double leftDistance = SortPolicy::BestPointToNodeDistance(point,
+    double leftDistance = SortPolicy::BestPointToNodeDistance(queryPoint,
         referenceNode->Left());
-    double rightDistance = SortPolicy::BestPointToNodeDistance(point,
+    double rightDistance = SortPolicy::BestPointToNodeDistance(queryPoint,
         referenceNode->Right());
 
     // Recurse in the best direction first.
@@ -541,13 +521,13 @@ ComputeSingleNeighborsRecursion(const size_t pointId,
       if (SortPolicy::IsBetter(bestDistSoFar, leftDistance))
         numberOfPrunes++; // Prune; no possibility of finding a better point.
       else
-        ComputeSingleNeighborsRecursion(pointId, point, referenceNode->Left(),
+        SingleTreeRecursion(referenceNode->Left(), queryPoint, queryIndex,
             bestDistSoFar, neighbors, distances);
 
       if (SortPolicy::IsBetter(bestDistSoFar, rightDistance))
         numberOfPrunes++; // Prune; no possibility of finding a better point.
       else
-        ComputeSingleNeighborsRecursion(pointId, point, referenceNode->Right(),
+        SingleTreeRecursion(referenceNode->Right(), queryPoint, queryIndex,
             bestDistSoFar, neighbors, distances);
 
     }
@@ -556,13 +536,13 @@ ComputeSingleNeighborsRecursion(const size_t pointId,
       if (SortPolicy::IsBetter(bestDistSoFar, rightDistance))
         numberOfPrunes++; // Prune; no possibility of finding a better point.
       else
-        ComputeSingleNeighborsRecursion(pointId, point, referenceNode->Right(),
+        SingleTreeRecursion(referenceNode->Right(), queryPoint, queryIndex,
             bestDistSoFar, neighbors, distances);
 
       if (SortPolicy::IsBetter(bestDistSoFar, leftDistance))
         numberOfPrunes++; // Prune; no possibility of finding a better point.
       else
-        ComputeSingleNeighborsRecursion(pointId, point, referenceNode->Left(),
+        SingleTreeRecursion(referenceNode->Left(), queryPoint, queryIndex,
             bestDistSoFar, neighbors, distances);
     }
   }
@@ -577,13 +557,13 @@ ComputeSingleNeighborsRecursion(const size_t pointId,
  * @param distance Distance from query point to reference point.
  */
 template<typename SortPolicy, typename MetricType, typename TreeType>
-void NeighborSearch<SortPolicy, MetricType, TreeType>::
-InsertNeighbor(const size_t queryIndex,
-               const size_t pos,
-               const size_t neighbor,
-               const double distance,
-               arma::Mat<size_t>& neighbors,
-               arma::mat& distances)
+void NeighborSearch<SortPolicy, MetricType, TreeType>::InsertNeighbor(
+    const size_t queryIndex,
+    const size_t pos,
+    const size_t neighbor,
+    const double distance,
+    arma::Mat<size_t>& neighbors,
+    arma::mat& distances)
 {
   // We only memmove() if there is actually a need to shift something.
   if (pos < (distances.n_rows - 1))
