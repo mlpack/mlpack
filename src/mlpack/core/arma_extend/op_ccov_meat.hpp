@@ -24,7 +24,7 @@
 template<typename eT>
 inline
 void
-op_ccov::direct_ccov(Mat<eT>& out, const Mat<eT>& A, const u32 norm_type)
+op_ccov::direct_ccov(Mat<eT>& out, const Mat<eT>& A, const uword norm_type)
   {
   arma_extra_debug_sigprint();
   
@@ -41,7 +41,7 @@ op_ccov::direct_ccov(Mat<eT>& out, const Mat<eT>& A, const u32 norm_type)
     }
   else
     {
-    const u32 N = A.n_cols;
+    const uword N = A.n_cols;
     const eT norm_val = (norm_type == 0) ? ( (N > 1) ? eT(N-1) : eT(1) ) : eT(N);
 
     const Col<eT> acc = sum(A, 1);
@@ -57,7 +57,7 @@ op_ccov::direct_ccov(Mat<eT>& out, const Mat<eT>& A, const u32 norm_type)
 template<typename T>
 inline
 void
-op_ccov::direct_ccov(Mat< std::complex<T> >& out, const Mat< std::complex<T> >& A, const u32 norm_type)
+op_ccov::direct_ccov(Mat< std::complex<T> >& out, const Mat< std::complex<T> >& A, const uword norm_type)
   {
   arma_extra_debug_sigprint();
   
@@ -80,7 +80,7 @@ op_ccov::direct_ccov(Mat< std::complex<T> >& out, const Mat< std::complex<T> >& 
     }
   else
     {
-    const u32 N = A.n_cols;
+    const uword N = A.n_cols;
     const eT norm_val = (norm_type == 0) ? ( (N > 1) ? eT(N-1) : eT(1) ) : eT(N);
 
     const Col<eT> acc = sum(A, 1);
@@ -105,7 +105,7 @@ op_ccov::apply(Mat<typename T1::elem_type>& out, const Op<T1,op_ccov>& in)
   const unwrap_check<T1> tmp(in.m, out);
   const Mat<eT>& A     = tmp.M;
   
-  const u32 norm_type = in.aux_u32_a;
+  const uword norm_type = in.aux_uword_a;
   
   op_ccov::direct_ccov(out, A, norm_type);
   }
