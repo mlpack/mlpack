@@ -31,11 +31,18 @@ namespace lars {
  * If lambda_1 > 0, lambda_2 > 0, the problem is the Elastic Net.
  * If lambda_1 = 0, lambda_2 > 0, the problem is Ridge Regression.
  * If lambda_1 = 0, lambda_2 = 0, the problem is unregularized linear regression.
+ *
  * Note: This algorithm is not recommended for use (in terms of efficiency) 
  * when lambda_1 = 0.
+ * 
+ * Only minor modifications are necessary to handle the constrained version of
+ * the problem: 
+ *   min_beta ||X beta - y||_2^2 + 0.5 lambda_2 ||beta||_2^2
+ *   subject to ||beta||_1 <= tau
+ * Although this option currently is not implemented, it will be implemented 
+ * very soon.
  *
  * For more details, see the following papers:
- *
  *
  * @article{efron2004least,
  *   title={Least angle regression},
@@ -47,7 +54,6 @@ namespace lars {
  *   year={2004},
  *   publisher={Institute of Mathematical Statistics}
  * }
- *
  *
  * @article{zou2005regularization,
  *   title={Regularization and variable selection via the elastic net},
@@ -64,29 +70,21 @@ class LARS {
 
  public:
   
-  LARS(const arma::mat& matX,
-       const arma::vec& y,
-       const bool useCholesky);
+  LARS(const bool useCholesky);
 
-  LARS(const arma::mat& matX,
-       const arma::vec& y,
-       const bool useCholesky,
+  LARS(const bool useCholesky,
        const double lambda1);
 
-  LARS(const arma::mat& matX,
-       const arma::vec& y,
-       const bool useCholesky,
+  LARS(const bool useCholesky,
        const double lambda1,
        const double lambda2);
 
   ~LARS() { }
 
   void SetGram(const arma::mat& matGram);
-
-  void ComputeGram();
-
-  void ComputeXty();
-
+  
+  void ComputeGram(const arma::mat& matX);
+  
   const std::vector<arma::u32> ActiveSet();
 
   const std::vector<arma::vec> BetaPath();
@@ -95,16 +93,12 @@ class LARS {
 
   const arma::mat MatUtriCholFactor();
   
-  void DoLARS();
+  void DoLARS(const arma::mat& matX, const arma::vec& y);
 
   void Solution(arma::vec& beta);
-
+  
   
 private:
-  arma::mat matX;
-  arma::vec y;
-
-  arma::vec vecXTy;
   arma::mat matGram;
   
   // Upper triangular cholesky factor; initially 0x0 arma::matrix.
@@ -130,7 +124,8 @@ private:
 
   void Activate(arma::u32 varInd);
 
-  void ComputeYHatDirection(const arma::vec& betaDirection,
+  void ComputeYHatDirection(const arma::mat& matX,
+			    const arma::vec& betaDirection,
                             arma::vec& yHatDirection);
 
   void InterpolateBeta();

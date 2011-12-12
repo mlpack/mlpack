@@ -16,22 +16,14 @@ using namespace arma;
 namespace mlpack {
 namespace lars {
 
-LARS::LARS(const mat& matX,
-           const vec& y,
-           const bool useCholesky) :
-    matX(matX),
-    y(y),
+LARS::LARS(const bool useCholesky) :
     useCholesky(useCholesky),
     lasso(false),
     elasticNet(false)
 { /* nothing left to do */ }
 
-LARS::LARS(const mat& matX,
-           const vec& y,
-           const bool useCholesky,
+LARS::LARS(const bool useCholesky,
            const double lambda1) :
-    matX(matX),
-    y(y),
     useCholesky(useCholesky),
     lasso(true),
     lambda1(lambda1),
@@ -39,13 +31,9 @@ LARS::LARS(const mat& matX,
     lambda2(0)
 { /* nothing left to do */ }
 
-LARS::LARS(const mat& matX,
-           const vec& y,
-           const bool useCholesky,
+LARS::LARS(const bool useCholesky,
            const double lambda1,
            const double lambda2) :
-    matX(matX),
-    y(y),
     useCholesky(useCholesky),
     lasso(true),
     lambda1(lambda1),
@@ -58,7 +46,7 @@ void LARS::SetGram(const mat& matGram) {
 }
 
 
-void LARS::ComputeGram()
+void LARS::ComputeGram(const mat& matX)
 {
   if (elasticNet)
   {
@@ -68,11 +56,6 @@ void LARS::ComputeGram()
   {
     matGram = trans(matX) * matX;
   }
-}
-
-void LARS::ComputeXty()
-{
-  vecXTy = trans(matX) * y;
 }
 
 const std::vector<u32> LARS::ActiveSet()
@@ -95,13 +78,15 @@ const mat LARS::MatUtriCholFactor()
   return matUtriCholFactor;
 }
 
-void LARS::DoLARS()
+void LARS::DoLARS(const mat& matX, const vec& y)
 {
-  // compute Gram matrix, XtY, and initialize active set varibles
-  ComputeXty();
+  // compute Xty
+  vec vecXTy = trans(matX) * y;
+  
+  // compute Gram matrix
   if (!useCholesky && matGram.is_empty())
   {
-    ComputeGram();
+    ComputeGram(matX);
   }
 
   // set up active set variables
@@ -230,7 +215,7 @@ void LARS::DoLARS()
     }
 
     // compute "equiangular" direction in output space
-    ComputeYHatDirection(betaDirection, yHatDirection);
+    ComputeYHatDirection(matX, betaDirection, yHatDirection);
 
 
     double gamma = maxCorr / normalization;
@@ -367,8 +352,9 @@ void LARS::Activate(u32 varInd)
   activeSet.push_back(varInd);
 }
 
-void LARS::ComputeYHatDirection(const vec& betaDirection,
-                                vec& yHatDirection)
+ void LARS::ComputeYHatDirection(const mat& matX,
+				 const vec& betaDirection,
+				 vec& yHatDirection)
 {
   yHatDirection.fill(0);
   for(u32 i = 0; i < nActive; i++)

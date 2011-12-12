@@ -49,8 +49,8 @@ int main(int argc, char* argv[])
   y.load(yFilename, raw_ascii);
   
   // do LARS
-  LARS lars(matX, y, useCholesky, lambda1, lambda2);
-  lars.DoLARS();
+  LARS lars(useCholesky, lambda1, lambda2);
+  lars.DoLARS(matX, y);
   
   // get and save solution
   vec beta;
