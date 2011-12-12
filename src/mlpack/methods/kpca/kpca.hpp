@@ -5,6 +5,8 @@
  * Defines the KPCA class to perform Kernel Principal Components Analysis on the
  * specified data set.
  */
+#ifndef __MLPACK_METHODS_KPCA_KPCA_HPP
+#define __MLPACK_METHODS_KPCA_KPCA_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
@@ -16,7 +18,7 @@ template <typename KernelType>
 class KPCA
 {
  public:
-  KPCA(/*const KernelType kernel = KernelType(),*/
+  KPCA(const KernelType kernel = KernelType(),
        const bool centerData = true,
        const bool scaleData = false);
 
@@ -100,4 +102,7 @@ class KPCA
 }; // namespace kpca
 }; // namespace mlpack
 
+// Include implementation.
+#include "kpca_impl.hpp"
 
+#endif // __MLPACK_METHODS_KPCA_HPP
