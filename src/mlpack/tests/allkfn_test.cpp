@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test)
     // Now perform the actual calculation.
     arma::Mat<size_t> neighbors;
     arma::mat distances;
-    allkfn->ComputeNeighbors(10, neighbors, distances);
+    allkfn->Search(10, neighbors, distances);
 
     // Now the exhaustive check for correctness.  This will be long.  We must
     // also remember that the distances returned are squared distances.  As a
@@ -338,11 +338,11 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_1)
 
   arma::Mat<size_t> resulting_neighbors_tree;
   arma::mat distances_tree;
-  allkfn_.ComputeNeighbors(15, resulting_neighbors_tree, distances_tree);
+  allkfn_.Search(15, resulting_neighbors_tree, distances_tree);
 
   arma::Mat<size_t> resulting_neighbors_naive;
   arma::mat distances_naive;
-  naive_.ComputeNeighbors(15, resulting_neighbors_naive, distances_naive);
+  naive_.Search(15, resulting_neighbors_naive, distances_naive);
 
   for (size_t i = 0; i < resulting_neighbors_tree.n_elem; i++)
   {
@@ -376,11 +376,11 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_2)
 
   arma::Mat<size_t> resulting_neighbors_tree;
   arma::mat distances_tree;
-  allkfn_.ComputeNeighbors(15, resulting_neighbors_tree, distances_tree);
+  allkfn_.Search(15, resulting_neighbors_tree, distances_tree);
 
   arma::Mat<size_t> resulting_neighbors_naive;
   arma::mat distances_naive;
-  naive_.ComputeNeighbors(15, resulting_neighbors_naive, distances_naive);
+  naive_.Search(15, resulting_neighbors_naive, distances_naive);
 
   for (size_t i = 0; i < resulting_neighbors_tree.n_elem; i++)
   {
@@ -413,11 +413,11 @@ BOOST_AUTO_TEST_CASE(single_tree_vs_naive)
 
   arma::Mat<size_t> resulting_neighbors_tree;
   arma::mat distances_tree;
-  allkfn_.ComputeNeighbors(15, resulting_neighbors_tree, distances_tree);
+  allkfn_.Search(15, resulting_neighbors_tree, distances_tree);
 
   arma::Mat<size_t> resulting_neighbors_naive;
   arma::mat distances_naive;
-  naive_.ComputeNeighbors(15, resulting_neighbors_naive, distances_naive);
+  naive_.Search(15, resulting_neighbors_naive, distances_naive);
 
   for (size_t i = 0; i < resulting_neighbors_tree.n_elem; i++)
   {
