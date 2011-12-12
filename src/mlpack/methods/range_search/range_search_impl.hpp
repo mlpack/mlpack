@@ -14,12 +14,13 @@ namespace mlpack {
 namespace range {
 
 template<typename MetricType, typename TreeType>
-RangeSearch<MetricType, TreeType>::RangeSearch(const arma::mat& referenceSet,
-                                               const arma::mat& querySet,
-                                               const bool naive,
-                                               const bool singleMode,
-                                               const size_t leafSize,
-                                               const MetricType metric) :
+RangeSearch<MetricType, TreeType>::RangeSearch(
+    const typename TreeType::Mat& referenceSet,
+    const typename TreeType::Mat& querySet,
+    const bool naive,
+    const bool singleMode,
+    const size_t leafSize,
+    const MetricType metric) :
     referenceCopy(referenceSet),
     queryCopy(querySet),
     referenceSet(referenceCopy),
@@ -45,11 +46,12 @@ RangeSearch<MetricType, TreeType>::RangeSearch(const arma::mat& referenceSet,
 }
 
 template<typename MetricType, typename TreeType>
-RangeSearch<MetricType, TreeType>::RangeSearch(const arma::mat& referenceSet,
-                                               const bool naive,
-                                               const bool singleMode,
-                                               const size_t leafSize,
-                                               const MetricType metric) :
+RangeSearch<MetricType, TreeType>::RangeSearch(
+    const typename TreeType::Mat& referenceSet,
+    const bool naive,
+    const bool singleMode,
+    const size_t leafSize,
+    const MetricType metric) :
     referenceCopy(referenceSet),
     referenceSet(referenceCopy),
     querySet(referenceCopy),
@@ -72,12 +74,13 @@ RangeSearch<MetricType, TreeType>::RangeSearch(const arma::mat& referenceSet,
 }
 
 template<typename MetricType, typename TreeType>
-RangeSearch<MetricType, TreeType>::RangeSearch(const TreeType* referenceTree,
-                                               const TreeType* queryTree,
-                                               const arma::mat& referenceSet,
-                                               const arma::mat& querySet,
-                                               const bool singleMode,
-                                               const MetricType metric) :
+RangeSearch<MetricType, TreeType>::RangeSearch(
+    const TreeType* referenceTree,
+    const TreeType* queryTree,
+    const typename TreeType::Mat& referenceSet,
+    const typename TreeType::Mat& querySet,
+    const bool singleMode,
+    const MetricType metric) :
     referenceSet(referenceSet),
     querySet(querySet),
     referenceTree(referenceTree),
@@ -93,10 +96,11 @@ RangeSearch<MetricType, TreeType>::RangeSearch(const TreeType* referenceTree,
 }
 
 template<typename MetricType, typename TreeType>
-RangeSearch<MetricType, TreeType>::RangeSearch(const TreeType* referenceTree,
-                                               const arma::mat& referenceSet,
-                                               const bool singleMode,
-                                               const MetricType metric) :
+RangeSearch<MetricType, TreeType>::RangeSearch(
+    const TreeType* referenceTree,
+    const typename TreeType::Mat& referenceSet,
+    const bool singleMode,
+    const MetricType metric) :
     referenceSet(referenceSet),
     querySet(referenceSet),
     referenceTree(referenceTree),
@@ -164,7 +168,7 @@ void RangeSearch<MetricType, TreeType>::Search(
     // Loop over each of the query points.
     for (size_t i = 0; i < querySet.n_cols; i++)
     {
-      SingleTreeRecursion(referenceTree, querySet.unsafe_col(i), range,
+      SingleTreeRecursion(referenceTree, querySet.col(i), i, range,
           (*neighborPtr)[i], (*distancePtr)[i]);
     }
   }
@@ -296,11 +300,10 @@ void RangeSearch<MetricType, TreeType>::ComputeBaseCase(
   for (size_t queryIndex = queryNode->Begin(); queryIndex < queryNode->End();
        queryIndex++)
   {
-    // Get the query point from the matrix.
-    arma::vec queryPoint = querySet.unsafe_col(queryIndex);
-
-    double minDistance = referenceNode->Bound().MinDistance(queryPoint);
-    double maxDistance = referenceNode->Bound().MaxDistance(queryPoint);
+    double minDistance =
+        referenceNode->Bound().MinDistance(querySet.col(queryIndex));
+    double maxDistance =
+        referenceNode->Bound().MaxDistance(querySet.col(queryIndex));
 
     // Now see if any points could fall into the range.
     if (range.Contains(math::Range(minDistance, maxDistance)))
@@ -312,9 +315,8 @@ void RangeSearch<MetricType, TreeType>::ComputeBaseCase(
         // We can't add points that are ourselves.
         if (referenceNode != queryNode || referenceIndex != queryIndex)
         {
-          arma::vec referencePoint = referenceSet.unsafe_col(referenceIndex);
-
-          double distance = metric.Evaluate(queryPoint, referencePoint);
+          double distance = metric.Evaluate(querySet.col(queryIndex),
+                                            referenceSet.col(referenceIndex));
 
           // If this lies in the range, add it.
           if (range.Contains(distance))
@@ -384,9 +386,11 @@ void RangeSearch<MetricType, TreeType>::DualTreeRecursion(
 }
 
 template<typename MetricType, typename TreeType>
+template<typename VecType>
 void RangeSearch<MetricType, TreeType>::SingleTreeRecursion(
     const TreeType* referenceNode,
-    const arma::vec& queryPoint,
+    const VecType& queryPoint,
+    const size_t queryIndex,
     const math::Range& range,
     std::vector<size_t>& neighbors,
     std::vector<double>& distances)
@@ -399,11 +403,10 @@ void RangeSearch<MetricType, TreeType>::SingleTreeRecursion(
          referenceNode->End(); referenceIndex++)
     {
       // Don't add this point if it is the same as the query point.
-      if (!(referenceSet.colptr(referenceIndex) == queryPoint.memptr()))
+      if (!queryTree && !(referenceIndex == queryIndex))
       {
-        arma::vec referencePoint = referenceSet.unsafe_col(referenceIndex);
-
-        double distance = metric.Evaluate(queryPoint, referencePoint);
+        double distance = metric.Evaluate(queryPoint,
+                                          referenceSet.col(referenceIndex));
 
         // See if the point is in the range we are looking for.
         if (range.Contains(distance))
@@ -425,8 +428,8 @@ void RangeSearch<MetricType, TreeType>::SingleTreeRecursion(
     if (range.Contains(distanceLeft))
     {
       // The left may have points we want to recurse to.
-      SingleTreeRecursion(referenceNode->Left(), queryPoint, range, neighbors,
-          distances);
+      SingleTreeRecursion(referenceNode->Left(), queryPoint, queryIndex,
+          range, neighbors, distances);
     }
     else
     {
@@ -436,8 +439,8 @@ void RangeSearch<MetricType, TreeType>::SingleTreeRecursion(
     if (range.Contains(distanceRight))
     {
       // The right may have points we want to recurse to.
-      SingleTreeRecursion(referenceNode->Right(), queryPoint, range, neighbors,
-          distances);
+      SingleTreeRecursion(referenceNode->Right(), queryPoint, queryIndex,
+          range, neighbors, distances);
     }
     else
     {

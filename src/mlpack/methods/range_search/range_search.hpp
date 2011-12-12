@@ -45,8 +45,8 @@ class RangeSearch
    * @param leafSize The leaf size to be used during tree construction.
    * @param metric Instantiated distance metric.
    */
-  RangeSearch(const arma::mat& referenceSet,
-              const arma::mat& querySet,
+  RangeSearch(const typename TreeType::Mat& referenceSet,
+              const typename TreeType::Mat& querySet,
               const bool naive = false,
               const bool singleMode = false,
               const size_t leafSize = 20,
@@ -71,7 +71,7 @@ class RangeSearch
    * @param leafSize The leaf size to be used during tree construction.
    * @param metric Instantiated distance metric.
    */
-  RangeSearch(const arma::mat& referenceSet,
+  RangeSearch(const typename TreeType::Mat& referenceSet,
               const bool naive = false,
               const bool singleMode = false,
               const size_t leafSize = 20,
@@ -108,8 +108,8 @@ class RangeSearch
    */
   RangeSearch(const TreeType* referenceTree,
               const TreeType* queryTree,
-              const arma::mat& referenceSet,
-              const arma::mat& querySet,
+              const typename TreeType::Mat& referenceSet,
+              const typename TreeType::Mat& querySet,
               const bool singleMode = false,
               const MetricType metric = MetricType());
 
@@ -141,7 +141,7 @@ class RangeSearch
    * @param metric Instantiated distance metric.
    */
   RangeSearch(const TreeType* referenceTree,
-              const arma::mat& referenceSet,
+              const typename TreeType::Mat& referenceSet,
               const bool singleMode = false,
               const MetricType metric = MetricType());
 
@@ -220,25 +220,28 @@ class RangeSearch
    *
    * @param referenceNode Reference node.
    * @param queryPoint Point to query for.
+   * @param queryIndex Index of query node.
    * @param range Range of distances to search for.
    * @param neighbors Object holding list of neighbors.
    * @param distances Object holding list of distances.
    */
+  template<typename VecType>
   void SingleTreeRecursion(const TreeType* referenceNode,
-                           const arma::vec& queryPoint,
+                           const VecType& queryPoint,
+                           const size_t queryIndex,
                            const math::Range& range,
                            std::vector<size_t>& neighbors,
                            std::vector<double>& distances);
 
   //! Copy of reference matrix; used when a tree is built internally.
-  arma::mat referenceCopy;
+  typename TreeType::Mat referenceCopy;
   //! Copy of query matrix; used when a tree is built internally.
-  arma::mat queryCopy;
+  typename TreeType::Mat queryCopy;
 
   //! Reference set (data should be accessed using this).
-  const arma::mat& referenceSet;
+  const typename TreeType::Mat& referenceSet;
   //! Query set (data should be accessed using this).
-  const arma::mat& querySet;
+  const typename TreeType::Mat& querySet;
 
   //! Reference tree.
   TreeType* referenceTree;
