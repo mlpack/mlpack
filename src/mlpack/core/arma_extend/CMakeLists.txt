@@ -9,9 +9,6 @@ set(SOURCES
   glue_ccov_proto.hpp
   op_ccov_meat.hpp
   op_ccov_proto.hpp
-  promote_type.hpp
-  traits.hpp
-  typedef.hpp
 )
 
 # add directory name to sources
