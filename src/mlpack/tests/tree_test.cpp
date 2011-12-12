@@ -150,12 +150,6 @@ BOOST_AUTO_TEST_CASE(HRectBoundMinDistancePoint)
   // This will be the Euclidean squared distance.
   BOOST_REQUIRE_CLOSE(b.MinDistance(point), 95.0, 1e-5);
 
-  // Test our filtering condition.
-  size_t ind[] = {1, 3};
-  std::vector<size_t> indices(ind, ind + sizeof (ind) / sizeof (size_t));
-
-  BOOST_REQUIRE_CLOSE(b.MinDistance(point, indices), 26.0, 1e-5);
-
   point = "2.0 5.0 2.0 -5.0 1.0";
 
   BOOST_REQUIRE_SMALL(b.MinDistance(point), 1e-5);
@@ -195,12 +189,6 @@ BOOST_AUTO_TEST_CASE(HRectBoundMinDistanceBound)
 
   BOOST_REQUIRE_CLOSE(b.MinDistance(c), 22.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c.MinDistance(b), 22.0, 1e-5);
-
-  // Test our filtering condition.
-  size_t ind[] = {1, 3};
-  std::vector<size_t> indices(ind, ind + sizeof (ind) / sizeof (size_t));
-
-  BOOST_REQUIRE_CLOSE(b.MinDistance(c, indices), 17.0, 1e-5);
 
   // The other bound is on the edge of the bound.
   c[0] = Range(-2.0, 0.0);
@@ -262,12 +250,6 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistancePoint)
 
   arma::vec point = "-2.0 0.0 10.0 3.0 3.0";
 
-  // Test our filtering condition.
-  size_t ind[] = {1,3};
-  std::vector<size_t> indices (ind, ind + sizeof (ind) / sizeof (size_t));
-
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(point, indices), 89.0, 1e-5);
-
   // This will be the Euclidean squared distance.
   BOOST_REQUIRE_CLOSE(b.MaxDistance(point), 253.0, 1e-5);
 
@@ -310,12 +292,6 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistanceBound)
 
   BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 210.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c.MaxDistance(b), 210.0, 1e-5);
-
-  // Test our filtering condition.
-  size_t ind[] = {1,3};
-  std::vector<size_t> indices (ind, ind + sizeof (ind) / sizeof (size_t));
-
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(c, indices), 136.0, 1e-5);
 
   // The other bound is on the edge of the bound.
   c[0] = Range(-2.0, 0.0);
@@ -1100,6 +1076,95 @@ void GenerateVectorOfTree(TreeType* node,
   GenerateVectorOfTree(node->Right(), depth * 2 + 1, v);
 
   return;
+}
+
+/**
+ * Exhaustive sparse kd-tree test based on #125.
+ *
+ * - Generate a random dataset of a random size.
+ * - Build a tree on that dataset.
+ * - Ensure all the permutation indices map back to the correct points.
+ * - Verify that each point is contained inside all of the bounds of its parent
+ *     nodes.
+ * - Verify that each bound at a particular level of the tree does not overlap
+ *     with any other bounds at that level.
+ *
+ * Then, we do that whole process a handful of times.
+ */
+BOOST_AUTO_TEST_CASE(ExhaustiveSparseKDTreeTest)
+{
+  typedef BinarySpaceTree<HRectBound<2>, EmptyStatistic, arma::SpMat<double> >
+      TreeType;
+
+  size_t max_runs = 2; // Two total tests.
+  size_t point_increments = 200; // Range is from 200 points to 400.
+
+  // We use the default leaf size of 20.
+  for(size_t run = 0; run < max_runs; run++)
+  {
+    size_t dimensions = run + 2;
+    size_t max_points = (run + 1) * point_increments;
+
+    size_t size = max_points;
+    arma::SpMat<double> dataset = arma::SpMat<double>(dimensions, size);
+    arma::SpMat<double> datacopy; // Used to test mappings.
+
+    // Mappings for post-sort verification of data.
+    std::vector<size_t> new_to_old;
+    std::vector<size_t> old_to_new;
+
+    // Generate data.
+    dataset.randu();
+    datacopy = dataset; // Save a copy.
+
+    // Build the tree itself.
+    TreeType root(dataset, new_to_old, old_to_new);
+
+    // Ensure the size of the tree is correct.
+    BOOST_REQUIRE_EQUAL(root.Count(), size);
+
+    // Check the forward and backward mappings for correctness.
+    for(size_t i = 0; i < size; i++)
+    {
+      for(size_t j = 0; j < dimensions; j++)
+      {
+        BOOST_REQUIRE_EQUAL(dataset(j, i), datacopy(j, new_to_old[i]));
+        BOOST_REQUIRE_EQUAL(dataset(j, old_to_new[i]), datacopy(j, i));
+      }
+    }
+
+    // Now check that each point is contained inside of all bounds above it.
+    CheckPointBounds(&root, dataset);
+
+    // Now check that no peers overlap.
+    std::vector<TreeType*> v;
+    GenerateVectorOfTree(&root, 1, v);
+
+    // Start with the first pair.
+    size_t depth = 2;
+    // Compare each peer against every other peer.
+    while (depth < v.size())
+    {
+      for (size_t i = depth; i < 2 * depth && i < v.size(); i++)
+        for (size_t j = i + 1; j < 2 * depth && j < v.size(); j++)
+          if (v[i] != NULL && v[j] != NULL)
+            BOOST_REQUIRE(!DoBoundsIntersect(v[i]->Bound(), v[j]->Bound(),
+                  i, j));
+
+      depth *= 2;
+    }
+  }
+
+  arma::SpMat<double> dataset(25, 1000);
+  for (size_t col = 0; col < dataset.n_cols; ++col)
+    for (size_t row = 0; row < dataset.n_rows; ++row)
+      dataset(row, col) = row + col;
+
+  TreeType root(dataset);
+  // Check the tree size.
+  BOOST_REQUIRE_EQUAL(root.TreeSize(), 127);
+  // Check the tree depth.
+  BOOST_REQUIRE_EQUAL(root.TreeDepth(), 7);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
