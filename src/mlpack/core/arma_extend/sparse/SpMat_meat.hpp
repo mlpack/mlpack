@@ -1697,9 +1697,6 @@ SpMat<eT>::SpMat(const Mat<eT>& x)
   {
   arma_extra_debug_sigprint_this(this);
 
-  std::cout << x.n_rows << " x " << x.n_cols << std::endl;
-  x.print();
-
   (*this).operator=(x);
   }
 
@@ -1711,8 +1708,6 @@ const SpMat<eT>&
 SpMat<eT>::operator=(const Mat<eT>& x)
   {//No easy init function, will have to generate matrix manually.
   arma_extra_debug_sigprint();
-
-  std::cout << x.n_rows << " " << x.n_cols << std::endl;
 
   init(x.n_rows, x.n_cols);
 
@@ -2586,66 +2581,82 @@ SpMat<eT>::operator/=(const subview<eT>& x)
 
 template<typename eT>
 arma_inline
-SpSubview_row<eT>
+SpSubview<eT>
 SpMat<eT>::row(const uword row_num)
   {
   arma_extra_debug_sigprint();
+
+  return SpSubview<eT>(*this, row_num, 0, 1, n_cols);
   }
 
 template<typename eT>
 arma_inline
-const SpSubview_row<eT>
+const SpSubview<eT>
 SpMat<eT>::row(const uword row_num) const
   {
   arma_extra_debug_sigprint();
+
+  return SpSubview<eT>(*this, row_num, 0, 1, n_cols);
   }
 
 template<typename eT>
 inline
-SpSubview_row<eT>
+SpSubview<eT>
 SpMat<eT>::operator()(const uword row_num, const span& col_span)
   {
   arma_extra_debug_sigprint();
+
+  return SpSubview<eT>(*this, row_num, col_span.a, col_span.b - col_span.a + 1);
   }
 
 template<typename eT>
 inline
-const SpSubview_row<eT>
+const SpSubview<eT>
 SpMat<eT>::operator()(const uword row_num, const span& col_span) const
   {
   arma_extra_debug_sigprint();
+
+  return SpSubview<eT>(*this, row_num, col_span.a, col_span.b - col_span.a + 1);
   }
 
 template<typename eT>
 arma_inline
-SpSubview_col<eT>
+SpSubview<eT>
 SpMat<eT>::col(const uword col_num)
   {
   arma_extra_debug_sigprint();
+
+  return SpSubview<eT>(*this, 0, col_num, n_rows, 1);
   }
 
 template<typename eT>
 arma_inline
-const SpSubview_col<eT>
+const SpSubview<eT>
 SpMat<eT>::col(const uword col_num) const
   {
   arma_extra_debug_sigprint();
+
+  return SpSubview<eT>(*this, 0, col_num, n_rows, 1);
   }
 
 template<typename eT>
 inline
-SpSubview_col<eT>
+SpSubview<eT>
 SpMat<eT>::operator()(const span& row_span, const uword col_num)
   {
   arma_extra_debug_sigprint();
+
+  return SpSubview<eT>(*this, row_span.a, col_num, row_span.b - row_span.a + 1, 0);
   }
 
 template<typename eT>
 inline
-const SpSubview_col<eT>
+const SpSubview<eT>
 SpMat<eT>::operator()(const span& row_span, const uword col_num) const
   {
   arma_extra_debug_sigprint();
+
+  return SpSubview<eT>(*this, row_span.a, col_num, row_span.b - row_span.a + 1, 0);
   }
 
 template<typename eT>
@@ -4813,13 +4824,19 @@ SpMat<eT>::swap_rows(const uword in_row1, const uword in_row2)
   {
   arma_extra_debug_sigprint();
 
+  arma_debug_check
+    (
+    (in_row1 >= n_rows) || (in_row2 >= n_rows),
+    "SpMat::swap_rows(): out of bounds"
+    );
+
   // Sanity check.
   if (in_row1 == in_row2)
     {
     return;
     }
 
-  // THe easier way to do this, instead of collecting all the elements in one row and then swapping with the other, will be
+  // The easier way to do this, instead of collecting all the elements in one row and then swapping with the other, will be
   // to iterate over each column of the matrix (since we store in column-major format) and then swap the two elements in the two rows at that time.
   // We will try to avoid using the at() call since it is expensive, instead preferring to use an iterator to track our position.
   uword col1 = (in_row1 < in_row2) ? in_row1 : in_row2;
@@ -4925,23 +4942,15 @@ SpMat<eT>::swap_cols(const uword in_col1, const uword in_col2)
     );
 
   // Create pointers to the beginning and end of each column for values and row_indices.
-  typename std::vector<eT>::iterator v_c1_beg = values.begin() +
-    col_ptrs[in_col1];
-  typename std::vector<eT>::iterator v_c1_end = values.begin() +
-    col_ptrs[in_col1+1];
-  typename std::vector<eT>::iterator v_c2_beg = values.begin() +
-    col_ptrs[in_col2];
-  typename std::vector<eT>::iterator v_c2_end = values.begin() +
-    col_ptrs[in_col2+1];
+  typename std::vector<eT>::iterator v_c1_beg = values.begin() + col_ptrs[in_col1];
+  typename std::vector<eT>::iterator v_c1_end = values.begin() + col_ptrs[in_col1 + 1];
+  typename std::vector<eT>::iterator v_c2_beg = values.begin() + col_ptrs[in_col2];
+  typename std::vector<eT>::iterator v_c2_end = values.begin() + col_ptrs[in_col2 + 1];
 
-  typename std::vector<uword>::iterator r_c1_beg = row_indices.begin() +
-    col_ptrs[in_col1];
-  typename std::vector<uword>::iterator r_c1_end = row_indices.begin() +
-    col_ptrs[in_col1+1];
-  typename std::vector<uword>::iterator r_c2_beg = row_indices.begin() +
-    col_ptrs[in_col2];
-  typename std::vector<uword>::iterator r_c2_end = row_indices.begin() +
-    col_ptrs[in_col2+1];
+  typename std::vector<uword>::iterator r_c1_beg = row_indices.begin() + col_ptrs[in_col1];
+  typename std::vector<uword>::iterator r_c1_end = row_indices.begin() + col_ptrs[in_col1 + 1];
+  typename std::vector<uword>::iterator r_c2_beg = row_indices.begin() + col_ptrs[in_col2];
+  typename std::vector<uword>::iterator r_c2_end = row_indices.begin() + col_ptrs[in_col2 + 1];
 
   // Calculate the difference in column sizes.
   long diff = (v_c1_end - v_c1_beg) - (v_c2_end - v_c2_beg);

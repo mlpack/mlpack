@@ -3,14 +3,7 @@
 template<typename eT>
 class SpSubview : public Base<eT, SpSubview<eT> >
   {
-  public: const SpMat<eT>& m;
-  /*
-  protected:
-
-  std::vector<eT>* values;
-  std::vector<uword>* row_indices;
-  std::vector<uword>* col_ptrs;
-  */
+  public: SpMat<eT>& m;
 
   public:
 
@@ -44,11 +37,22 @@ class SpSubview : public Base<eT, SpSubview<eT> >
   template<typename T1> inline void operator%= (const Base<eT,T1>& x);
   template<typename T1> inline void operator/= (const Base<eT,T1>& x);
   
+  /* not doing anything special
   inline void operator=  (const SpSubview& x);
   inline void operator+= (const SpSubview& x);
   inline void operator-= (const SpSubview& x);
   inline void operator%= (const SpSubview& x);
   inline void operator/= (const SpSubview& x);
+  */
+
+  /*
+  inline static void extract(SpMat<eT>& out, const SpSubview& in);
+
+  inline static void  plus_inplace(Mat<eT>& out, const subview& in);
+  inline static void minus_inplace(Mat<eT>& out, const subview& in);
+  inline static void schur_inplace(Mat<eT>& out, const subview& in);
+  inline static void   div_inplace(Mat<eT>& out, const subview& in);
+  */
 
   inline void fill(const eT val);
   inline void zeros();
@@ -71,6 +75,7 @@ class SpSubview : public Base<eT, SpSubview<eT> >
   
   inline bool is_vec() const;
   
+/* not yet
   inline       SpSubview_row<eT> row(const uword row_num);
   inline const SpSubview_row<eT> row(const uword row_num) const;
   
@@ -103,6 +108,7 @@ class SpSubview : public Base<eT, SpSubview<eT> >
   
   inline       diagview<eT> diag(const s32 in_id = 0);
   inline const diagview<eT> diag(const s32 in_id = 0) const;
+*/
   
   inline void swap_rows(const uword in_row1, const uword in_row2);
   inline void swap_cols(const uword in_col1, const uword in_col2);
@@ -113,6 +119,7 @@ class SpSubview : public Base<eT, SpSubview<eT> >
 
   };
 
+/*
 template<typename eT>
 class SpSubview_col : public SpSubview<eT>
   {
@@ -190,4 +197,4 @@ class SpSubview_row : public SpSubview<eT>
   
   SpSubview_row();
   };
-
+*/
