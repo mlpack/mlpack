@@ -40,7 +40,8 @@ namespace tree /** Trees and tree-building procedures. */ {
  *     for the necessary skeleton interface.
  */
 template<typename BoundType,
-         typename StatisticType = EmptyStatistic>
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 class BinarySpaceTree
 {
  private:
@@ -69,7 +70,7 @@ class BinarySpaceTree
    * @param data Dataset to create tree from.  This will be modified!
    * @param leafSize Size of each leaf in the tree.
    */
-  BinarySpaceTree(arma::mat& data, const size_t leafSize = 20);
+  BinarySpaceTree(MatType& data, const size_t leafSize = 20);
 
   /**
    * Construct this as the root node of a binary space tree using the given
@@ -81,7 +82,7 @@ class BinarySpaceTree
    *     each new point.
    * @param leafSize Size of each leaf in the tree.
    */
-  BinarySpaceTree(arma::mat& data,
+  BinarySpaceTree(MatType& data,
                   std::vector<size_t>& oldFromNew,
                   const size_t leafSize = 20);
 
@@ -98,7 +99,7 @@ class BinarySpaceTree
    *     each old point.
    * @param leafSize Size of each leaf in the tree.
    */
-  BinarySpaceTree(arma::mat& data,
+  BinarySpaceTree(MatType& data,
                   std::vector<size_t>& oldFromNew,
                   std::vector<size_t>& newFromOld,
                   const size_t leafSize = 20);
@@ -114,7 +115,7 @@ class BinarySpaceTree
    * @param count Number of points to use to construct tree.
    * @param leafSize Size of each leaf in the tree.
    */
-  BinarySpaceTree(arma::mat& data,
+  BinarySpaceTree(MatType& data,
                   const size_t begin,
                   const size_t count,
                   const size_t leafSize = 20);
@@ -137,7 +138,7 @@ class BinarySpaceTree
    *     each new point.
    * @param leafSize Size of each leaf in the tree.
    */
-  BinarySpaceTree(arma::mat& data,
+  BinarySpaceTree(MatType& data,
                   const size_t begin,
                   const size_t count,
                   std::vector<size_t>& oldFromNew,
@@ -164,7 +165,7 @@ class BinarySpaceTree
    *     each old point.
    * @param leafSize Size of each leaf in the tree.
    */
-  BinarySpaceTree(arma::mat& data,
+  BinarySpaceTree(MatType& data,
                   const size_t begin,
                   const size_t count,
                   std::vector<size_t>& oldFromNew,
@@ -293,7 +294,7 @@ class BinarySpaceTree
    *
    * @param data Dataset which we are using.
    */
-  void SplitNode(arma::mat& data);
+  void SplitNode(MatType& data);
 
   /**
    * Splits the current node, assigning its left and right children recursively.
@@ -302,7 +303,7 @@ class BinarySpaceTree
    * @param data Dataset which we are using.
    * @param oldFromNew Vector holding permuted indices.
    */
-  void SplitNode(arma::mat& data, std::vector<size_t>& oldFromNew);
+  void SplitNode(MatType& data, std::vector<size_t>& oldFromNew);
 
   /**
    * Find the index to split on for this node, given that we are splitting in
@@ -312,7 +313,7 @@ class BinarySpaceTree
    * @param splitDim Dimension of dataset to split on.
    * @param splitVal Value to split on, in the given split dimension.
    */
-  size_t GetSplitIndex(arma::mat& data, int splitDim, double splitVal);
+  size_t GetSplitIndex(MatType& data, int splitDim, double splitVal);
 
   /**
    * Find the index to split on for this node, given that we are splitting in
@@ -324,7 +325,7 @@ class BinarySpaceTree
    * @param splitVal Value to split on, in the given split dimension.
    * @param oldFromNew Vector holding permuted indices.
    */
-  size_t GetSplitIndex(arma::mat& data, int splitDim, double splitVal,
+  size_t GetSplitIndex(MatType& data, int splitDim, double splitVal,
       std::vector<size_t>& oldFromNew);
 };
 
