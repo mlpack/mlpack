@@ -63,6 +63,9 @@ class BinarySpaceTree
   size_t leafSize;
 
  public:
+  //! So other classes can use TreeType::Mat.
+  typedef MatType Mat;
+
   /**
    * Construct this as the root node of a binary space tree using the given
    * dataset.  This will modify the ordering of the points in the dataset!
