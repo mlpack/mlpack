@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
   }
 
   Log::Info << "Computing " << k << " nearest neighbors..." << endl;
-  allkfn->ComputeNeighbors(k, neighbors, distances);
+  allkfn->Search(k, neighbors, distances);
 
   Log::Info << "Neighbors computed." << endl;
 

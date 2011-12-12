@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
   }
 
   Log::Info << "Computing " << k << " nearest neighbors..." << endl;
-  allknn->ComputeNeighbors(k, neighbors, distances);
+  allknn->Search(k, neighbors, distances);
 
   Log::Info << "Neighbors computed." << endl;
 
