@@ -7,7 +7,7 @@ set(SOURCES
   kmeans.hpp
   kmeans_impl.hpp
   max_variance_new_cluster.hpp
-  max_variance_new_cluster.cpp
+  max_variance_new_cluster_impl.hpp
   random_partition.hpp
 )
 

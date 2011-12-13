@@ -1,18 +1,23 @@
 /**
- * @file max_variance_new_cluster.cpp
+ * @file max_variance_new_cluster_impl.hpp
  * @author Ryan Curtin
  *
  * Implementation of MaxVarianceNewCluster class.
  */
+#ifndef __MLPACK_METHODS_KMEANS_MAX_VARIANCE_NEW_CLUSTER_IMPL_HPP
+#define __MLPACK_METHODS_KMEANS_MAX_VARIANCE_NEW_CLUSTER_IMPL_HPP
+
+// Just in case it has not been included.
 #include "max_variance_new_cluster.hpp"
 
-using namespace mlpack;
-using namespace kmeans;
+namespace mlpack {
+namespace kmeans {
 
 /**
  * Take action about an empty cluster.
  */
-size_t MaxVarianceNewCluster::EmptyCluster(const arma::mat& data,
+template<typename MatType>
+size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
                                            const size_t emptyCluster,
                                            const arma::mat& centroids,
                                            arma::Col<size_t>& clusterCounts,
@@ -64,3 +69,8 @@ size_t MaxVarianceNewCluster::EmptyCluster(const arma::mat& data,
 
   return 1; // We only changed one point.
 }
+
+}; // namespace kmeans
+}; // namespace mlpack
+
+#endif

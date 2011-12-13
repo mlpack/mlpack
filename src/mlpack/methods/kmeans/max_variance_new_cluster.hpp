@@ -28,6 +28,7 @@ class MaxVarianceNewCluster
    * Take the point furthest from the centroid of the cluster with maximum
    * variance to be a new cluster.
    *
+   * @tparam MatType Type of data (arma::mat or arma::spmat).
    * @param data Dataset on which clustering is being performed.
    * @param emptyCluster Index of cluster which is empty.
    * @param centroids Centroids of each cluster (one per column).
@@ -36,7 +37,8 @@ class MaxVarianceNewCluster
    *
    * @return Number of points changed.
    */
-  static size_t EmptyCluster(const arma::mat& data,
+  template<typename MatType>
+  static size_t EmptyCluster(const MatType& data,
                              const size_t emptyCluster,
                              const arma::mat& centroids,
                              arma::Col<size_t>& clusterCounts,
@@ -45,5 +47,8 @@ class MaxVarianceNewCluster
 
 }; // namespace kmeans
 }; // namespace mlpack
+
+// Include implementation.
+#include "max_variance_new_cluster_impl.hpp"
 
 #endif

@@ -52,11 +52,12 @@ KMeans(const size_t maxIterations,
 template<typename DistanceMetric,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy>
+template<typename MatType>
 void KMeans<
     DistanceMetric,
     InitialPartitionPolicy,
     EmptyClusterPolicy>::
-Cluster(const arma::mat& data,
+Cluster(const MatType& data,
         const size_t clusters,
         arma::Col<size_t>& assignments) const
 {
@@ -118,7 +119,7 @@ Cluster(const arma::mat& data,
       for (size_t j = 0; j < actualClusters; j++)
       {
         double distance = metric::SquaredEuclideanDistance::Evaluate(
-            data.unsafe_col(i), centroids.unsafe_col(j));
+            data.col(i), centroids.col(j));
 
         if (distance < minDistance)
         {
@@ -171,7 +172,7 @@ Cluster(const arma::mat& data,
       for (size_t second = first + 1; second < actualClusters; second++)
       {
         distances(i) = metric::SquaredEuclideanDistance::Evaluate(
-            centroids.unsafe_col(first), centroids.unsafe_col(second));
+            centroids.col(first), centroids.col(second));
         firstCluster(i) = first;
         secondCluster(i) = second;
         i++;
@@ -216,7 +217,7 @@ Cluster(const arma::mat& data,
           if (distances(offset + (first - cluster)) != DBL_MAX)
             distances(offset + (first - cluster)) =
                 metric::SquaredEuclideanDistance::Evaluate(
-                centroids.unsafe_col(first), centroids.unsafe_col(cluster));
+                centroids.col(first), centroids.col(cluster));
         }
 
         distances(offset + (second - cluster)) = DBL_MAX;
@@ -232,7 +233,7 @@ Cluster(const arma::mat& data,
         {
           distances(offset + (cluster - first)) =
               metric::SquaredEuclideanDistance::Evaluate(
-              centroids.unsafe_col(first), centroids.unsafe_col(cluster));
+              centroids.col(first), centroids.col(cluster));
         }
       }
 
