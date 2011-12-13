@@ -13,18 +13,24 @@
 namespace mlpack {
 namespace nca {
 
-// Initialize with the given kernel.
-template<typename Kernel>
-SoftmaxErrorFunction<Kernel>::SoftmaxErrorFunction(const arma::mat& dataset,
-                                                   const arma::uvec& labels,
-                                                   Kernel kernel) :
-  dataset_(dataset), labels_(labels), kernel_(kernel),
-  last_coordinates_(dataset.n_rows, dataset.n_rows),
-  precalculated_(false)
-{ /* nothing to do */ }
+// Initialize with the given metric.
+template<typename MetricType, typename MatType>
+SoftmaxErrorFunction<MetricType, MatType>::SoftmaxErrorFunction(
+    const MatType& dataset,
+    const arma::uvec& labels,
+    MetricType metric) :
+    dataset_(dataset),
+    labels_(labels),
+    metric_(metric),
+    last_coordinates_(dataset.n_rows, dataset.n_rows),
+    precalculated_(false)
+{
+  /* nothing to do */
+}
 
-template<typename Kernel>
-double SoftmaxErrorFunction<Kernel>::Evaluate(const arma::mat& coordinates)
+template<typename MetricType, typename MatType>
+double SoftmaxErrorFunction<MetricType, MatType>::Evaluate(
+    const arma::mat& coordinates)
 {
   // Calculate the denominators and numerators, if necessary.
   Precalculate(coordinates);
@@ -33,9 +39,10 @@ double SoftmaxErrorFunction<Kernel>::Evaluate(const arma::mat& coordinates)
                     // minimizes, not maximizes.
 };
 
-template<typename Kernel>
-void SoftmaxErrorFunction<Kernel>::Gradient(const arma::mat& coordinates,
-                                            arma::mat& gradient)
+template<typename MetricType, typename MatType>
+void SoftmaxErrorFunction<MetricType, MatType>::Gradient(
+    const arma::mat& coordinates,
+    arma::mat& gradient)
 {
   // Calculate the denominators and numerators, if necessary.
   Precalculate(coordinates);
@@ -59,8 +66,8 @@ void SoftmaxErrorFunction<Kernel>::Gradient(const arma::mat& coordinates,
     for (size_t k = (i + 1); k < stretched_dataset_.n_cols; k++)
     {
       // Calculate p_ik and p_ki first.
-      double eval = exp(-kernel_.Evaluate(stretched_dataset_.unsafe_col(i),
-                                          stretched_dataset_.unsafe_col(k)));
+      double eval = exp(-metric_.Evaluate(stretched_dataset_.col(i),
+                                          stretched_dataset_.col(k)));
       double p_ik = 0, p_ki = 0;
       p_ik = eval / denominators_(i);
       p_ki = eval / denominators_(k);
@@ -80,14 +87,16 @@ void SoftmaxErrorFunction<Kernel>::Gradient(const arma::mat& coordinates,
   gradient = -2 * coordinates * sum;
 }
 
-template<typename Kernel>
-const arma::mat SoftmaxErrorFunction<Kernel>::GetInitialPoint() const
+template<typename MetricType, typename MatType>
+const arma::mat SoftmaxErrorFunction<MetricType, MatType>::GetInitialPoint()
+    const
 {
   return arma::eye<arma::mat>(dataset_.n_rows, dataset_.n_rows);
 }
 
-template<typename Kernel>
-void SoftmaxErrorFunction<Kernel>::Precalculate(const arma::mat& coordinates)
+template<typename MetricType, typename MatType>
+void SoftmaxErrorFunction<MetricType, MatType>::Precalculate(
+    const arma::mat& coordinates)
 {
   // Make sure the calculation is necessary.
   if ((accu(coordinates == last_coordinates_) == coordinates.n_elem) &&
@@ -111,8 +120,8 @@ void SoftmaxErrorFunction<Kernel>::Precalculate(const arma::mat& coordinates)
     for (size_t j = (i + 1); j < stretched_dataset_.n_cols; j++)
     {
       // Evaluate exp(-K(x_i, x_j)).
-      double eval = exp(-kernel_.Evaluate(stretched_dataset_.unsafe_col(i),
-                                          stretched_dataset_.unsafe_col(j)));
+      double eval = exp(-metric_.Evaluate(stretched_dataset_.col(i),
+                                          stretched_dataset_.col(j)));
 
       // Add this to the denominators of both i and j: p_ij = p_ji.
       denominators_[i] += eval;
