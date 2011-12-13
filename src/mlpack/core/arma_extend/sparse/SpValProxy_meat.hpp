@@ -26,6 +26,14 @@ SpValProxy<eT>::SpValProxy(uword in_row, uword in_col, SpMat<eT>& in_parent, eT*
 template<typename eT>
 arma_inline
 SpValProxy<eT>&
+SpValProxy<eT>::operator=(const SpValProxy<eT>& rhs)
+  {
+  return (*this).operator=(eT(rhs));
+  }
+
+template<typename eT>
+arma_inline
+SpValProxy<eT>&
 SpValProxy<eT>::operator=(const eT rhs)
   {
   if (rhs != 0) // A nonzero element is being assigned.

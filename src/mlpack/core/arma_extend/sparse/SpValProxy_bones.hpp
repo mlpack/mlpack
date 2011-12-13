@@ -29,6 +29,9 @@ class SpValProxy
    */
   SpValProxy(uword row, uword col, SpMat<eT>& in_parent, eT* in_val_ptr = NULL);
 
+  //! For swapping operations.
+  arma_inline SpValProxy& operator=(const SpValProxy& rhs);
+
   //! Overload all of the potential operators.
 
   //! First, the ones that could modify a value.
