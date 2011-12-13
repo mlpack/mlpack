@@ -405,13 +405,14 @@ void CLI::RequiredOptions()
   po::variables_map& vmap = GetSingleton().vmap;
   std::list<std::string> rOpt = GetSingleton().requiredOptions;
 
-  //Now, warn the user if they missed any required options
+  // Now, warn the user if they missed any required options.
   std::list<std::string>::iterator iter;
-  for (iter = rOpt.begin(); iter != rOpt.end(); iter++) {
+  for (iter = rOpt.begin(); iter != rOpt.end(); iter++)
+  {
     std::string str = *iter;
     if (!vmap.count(str))
     { // If a required option isn't there...
-      Timers::StopTimer("total_time"); // Execution stop here, pretty much.
+      Timers::StopTimer("total_time"); // Execution stops here, pretty much.
       Log::Fatal << "Required option --" << str.c_str() << " is undefined."
           << std::endl;
     }
@@ -426,7 +427,8 @@ void CLI::Print()
 
   // Print out all the values.
   Log::Info << std::endl << "Values: " << std::endl;
-  for(iter = gmap.begin(); iter != gmap.end(); iter++) {
+  for (iter = gmap.begin(); iter != gmap.end(); iter++)
+  {
     std::string key = iter->first;
     std::string alias = AliasReverseLookup(key);
     alias = alias.length() ? ", -" + alias : alias;
@@ -436,27 +438,38 @@ void CLI::Print()
     //Now, figure out what type it is, and print it.
     //We can handle strings, ints, bools, floats, doubles.
     ParamData data = iter->second;
-    if (data.tname == TYPENAME(std::string)) {
+    if (data.tname == TYPENAME(std::string))
+    {
       std::string value = GetParam<std::string>(key.c_str());
       if(value == "")
         Log::Info << "\" \"";
       Log::Info << value;
-    } else if (data.tname == TYPENAME(int)) {
+    }
+    else if (data.tname == TYPENAME(int))
+    {
       int value = GetParam<int>(key.c_str());
       Log::Info << value;
-    } else if (data.tname == TYPENAME(bool)) {
+    }
+    else if (data.tname == TYPENAME(bool))
+    {
       bool value = HasParam(key.c_str());
-      Log::Info << (value ? "True" : "False");
-    } else if (data.tname == TYPENAME(float)) {
+      Log::Info << (value ? "true" : "false");
+    }
+    else if (data.tname == TYPENAME(float))
+    {
       float value = GetParam<float>(key.c_str());
       Log::Info << value;
-    } else if (data.tname == TYPENAME(double)) {
+    }
+    else if (data.tname == TYPENAME(double))
+    {
       double value = GetParam<double>(key.c_str());
       Log::Info << value;
-    } else { 
-      //We don't know how to print this, or it's a timeval which
-      //is printed later.
-      Log::Info << "Unknown Data Type";
+    }
+    else
+    {
+      // We don't know how to print this, or it's a timeval which is printed
+      // later.
+      Log::Info << "(unknown data type)";
     }
 
     Log::Info << std::endl;
@@ -472,48 +485,133 @@ void CLI::PrintHelp(std::string param)
   amap_t& amap = GetSingleton().aliasValues;
   gmap_t::iterator iter;
   ProgramDoc docs = *GetSingleton().doc;
-  
-  // If we pass a single param, alias it if necessary
-  if(param != "" && amap.count(param))
+
+  // If we pass a single param, alias it if necessary.
+  if (param != "" && amap.count(param))
     param = amap[param];
-  
+
   // Do we only want to print out one value?
-  if (param != "" && gmap.count(param)) {
+  if (param != "" && gmap.count(param))
+  {
     ParamData data = gmap[param];
     std::string alias = AliasReverseLookup(param);
-    alias = alias.length() ? ", -"+alias:alias; 
-     
-    Log::Info << "  --" << param << alias << " info: ";
-    Log::Info << HyphenateString(data.desc, 4) << std::endl;
+    alias = alias.length() ? " (-" + alias + ")" : alias;
+
+    // Figure out the name of the type.
+    std::string type = "";
+    if (data.tname == TYPENAME(std::string))
+      type = " [string]";
+    else if (data.tname == TYPENAME(int))
+      type = " [int]";
+    else if (data.tname == TYPENAME(bool))
+      type = ""; // Nothing to pass for a flag.
+    else if (data.tname == TYPENAME(float))
+      type = " [float]";
+    else if (data.tname == TYPENAME(double))
+      type = " [double]";
+
+    // Now, print the descriptions.
+    std::string fullDesc = "  --" + param + alias + type + "  ";
+
+    if (fullDesc.length() <= 32) // It all fits on one line.
+      std::cout << fullDesc << std::string(32 - fullDesc.length(), ' ');
+    else // We need multiple lines.
+      std::cout << fullDesc << std::endl << std::string(32, ' ');
+
+    std::cout << HyphenateString(data.desc, 32) << std::endl;
     return;
-  } else if(param != "") {
-    //User passed a single variable, but it doesn't exist.
-    Log::Info << "Parameter does not exist." << std::endl;
+  }
+  else if (param != "")
+  {
+    // User passed a single variable, but it doesn't exist.
+    std::cerr << "Parameter --" << param << " does not exist." << std::endl;
+    exit(1); // Nothing left to do.
   }
 
   // Print out the descriptions.
-  if(docs.programName != "") {
-    Log::Info << docs.programName << std::endl;
-    Log::Info << "  " << HyphenateString(docs.documentation,2) << std::endl;
+  if(docs.programName != "")
+  {
+    std::cout << docs.programName << std::endl;
+    std::cout << "  " << HyphenateString(docs.documentation, 2) << std::endl;
   }
   else
-    Log::Info << "Undocumented Program" << std::endl;
+    std::cout << "[undocumented program]" << std::endl << std::endl;
 
-  Log::Info << "Parameter Info: " << std::endl;
-  // Print out the descriptions of everything else.
-  for(iter = gmap.begin(); iter != gmap.end(); iter++) {
-    std::string key = iter->first;
-    ParamData data = iter->second;
-    std::string desc = data.desc;
-    std::string alias = AliasReverseLookup(key);
-    alias = alias.length() ? ", -"+alias:alias;
+  for (size_t pass = 0; pass < 2; ++pass)
+  {
+    if (pass == 0)
+      std::cout << "Required options:" << std::endl << std::endl;
+    else
+      std::cout << "Options: " << std::endl << std::endl;
 
-    //Now, print the descriptions.
-    Log::Info << "  --" << key << alias << ": ";
-    Log::Info << HyphenateString(desc,4) << std::endl;
-    Log::Info << std::endl;
+    // Print out the descriptions of everything else.
+    for (iter = gmap.begin(); iter != gmap.end(); iter++)
+    {
+      std::string key = iter->first;
+      ParamData data = iter->second;
+      std::string desc = data.desc;
+      std::string alias = AliasReverseLookup(key);
+      alias = alias.length() ? " (-" + alias + ")" : alias;
+
+      // Is the option required or not?
+      bool required = false;
+      std::list<std::string>::iterator iter;
+      std::list<std::string>& rOpt = GetSingleton().requiredOptions;
+      for (iter = rOpt.begin(); iter != rOpt.end(); ++iter)
+        if ((*iter) == key)
+          required = true;
+
+      if ((pass == 0) && !required)
+        continue; // Don't print this one.
+      if ((pass == 1) && required)
+        continue; // Don't print this one.
+
+      if (pass == 1) // Append default value to description.
+      {
+        desc += "  Default value ";
+        std::stringstream tmp;
+
+        if (data.tname == TYPENAME(std::string))
+          tmp << "'" << boost::any_cast<std::string>(data.value) << "'.";
+        else if (data.tname == TYPENAME(int))
+          tmp << boost::any_cast<int>(data.value) << '.';
+        else if (data.tname == TYPENAME(bool))
+          desc = data.desc; // No extra output for that.
+        else if (data.tname == TYPENAME(float))
+          tmp << boost::any_cast<float>(data.value) << '.';
+        else if (data.tname == TYPENAME(double))
+          tmp << boost::any_cast<double>(data.value) << '.';
+
+        desc += tmp.str();
+      }
+
+      // Figure out the name of the type.
+      std::string type = "";
+      if (data.tname == TYPENAME(std::string))
+        type = " [string]";
+      else if (data.tname == TYPENAME(int))
+        type = " [int]";
+      else if (data.tname == TYPENAME(bool))
+        type = ""; // Nothing to pass for a flag.
+      else if (data.tname == TYPENAME(float))
+        type = " [float]";
+      else if (data.tname == TYPENAME(double))
+        type = " [double]";
+
+      // Now, print the descriptions.
+      std::string fullDesc = "  --" + key + alias + type + "  ";
+
+      if (fullDesc.length() <= 32) // It all fits on one line.
+        std::cout << fullDesc << std::string(32 - fullDesc.length(), ' ');
+      else // We need multiple lines.
+        std::cout << fullDesc << std::endl << std::string(32, ' ');
+
+      std::cout << HyphenateString(desc, 32) << std::endl;
+    }
+
+  std::cout << std::endl;
+
   }
- 
 }
 
 /**
@@ -530,39 +628,46 @@ std::string CLI::HyphenateString(std::string str, int padding) {
   std::string out("");
   unsigned int pos = 0;
   // First try to look as far as possible.
-  while(pos < str.length() - 1) {
+  while (pos < str.length() - 1)
+  {
     size_t splitpos;
     // Check that we don't have a newline first.
     splitpos = str.find('\n', pos);
     if (splitpos == std::string::npos || splitpos > (pos + margin)) {
       // We did not find a newline.
-      if (str.length() - pos < margin) {
+      if (str.length() - pos < margin)
+      {
         splitpos = str.length(); // The rest fits on one line.
-      } else {
-      splitpos = str.rfind(' ', margin + pos); // Find nearest space.
-      if (splitpos <= pos || splitpos == std::string::npos) // Not found.
-        splitpos = pos + margin;
+      }
+      else
+      {
+        splitpos = str.rfind(' ', margin + pos); // Find nearest space.
+        if (splitpos <= pos || splitpos == std::string::npos) // Not found.
+          splitpos = pos + margin;
       }
     }
     out += str.substr(pos, (splitpos - pos));
-    if (splitpos < str.length()) {
+    if (splitpos < str.length())
+    {
       out += '\n';
       out += std::string(padding, ' ');
     }
+
     pos = splitpos;
-  if (str[pos] == ' ' || str[pos] == '\n')
-  pos++;
+    if (str[pos] == ' ' || str[pos] == '\n')
+      pos++;
   }
   return out;
-} 
+}
 
-std::string CLI::AliasReverseLookup(std::string value) {
+std::string CLI::AliasReverseLookup(std::string value)
+{
   amap_t& amap = GetSingleton().aliasValues;
   amap_t::iterator iter;
-  for(iter = amap.begin(); iter != amap.end(); iter++)
-    if(iter->second == value) //Found our match
-      return iter->first; 
-  return ""; 
+  for (iter = amap.begin(); iter != amap.end(); iter++)
+    if (iter->second == value) // Found our match.
+      return iter->first;
+  return ""; // Nothing found.
 }
 
 // Add help parameter.
