@@ -33,8 +33,11 @@ namespace nca {
  *   title = {{Neighbourhood Components Analysis}},
  *   year = {2004}
  * }
+ *
+ * @tparam MetricType Distance metric to use.
+ * @tparam MatType Type of matrix (arma::mat or arma::spmat).
  */
-template<typename Kernel>
+template<typename MetricType, typename MatType = arma::mat>
 class NCA
 {
  public:
@@ -44,7 +47,7 @@ class NCA
    *
    * @param dataset Input dataset.
    */
-  NCA(const arma::mat& dataset, const arma::uvec& labels);
+  NCA(const MatType& dataset, const arma::uvec& labels);
 
   /**
    * Perform Neighborhood Components Analysis.  The output distance learning
@@ -52,10 +55,10 @@ class NCA
    *
    * @param output_matrix Covariance matrix of Mahalanobis distance.
    */
-  void LearnDistance(arma::mat& output_matrix);
+  void LearnDistance(MatType& output_matrix);
 
  private:
-  const arma::mat& dataset_;
+  const MatType& dataset_;
   const arma::uvec& labels_;
 };
 
