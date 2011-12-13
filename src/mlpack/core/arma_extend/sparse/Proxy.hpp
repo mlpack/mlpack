@@ -113,4 +113,38 @@ class Proxy< SpRow<eT> >
   arma_inline bool    is_alias(const Mat<eT>& X) const { return false;      }
   };
 
+
+
+template<typename eT>
+class Proxy< SpSubview<eT> >
+  {
+  public:
+
+  typedef eT                                       elem_type;
+  typedef typename get_pod_type<elem_type>::result pod_type;
+  typedef SpSubview<eT>                            stored_type;
+  typedef const SpSubview<eT>&                     ea_type;
+
+  static const bool prefer_at_accessor = true;
+  static const bool has_subview        = true;
+
+  arma_aligned const SpSubview<eT>& Q;
+
+  inline explicit Proxy(const SpSubview<eT>& A)
+    : Q(A)
+    {
+    arma_extra_debug_sigprint();
+    }
+
+  arma_inline uword get_n_rows() const { return Q.n_rows; }
+  arma_inline uword get_n_cols() const { return Q.n_cols; }
+  arma_inline uword get_n_elem() const { return Q.n_elem; }
+
+  arma_inline elem_type operator[] (const uword i)                    const { return Q[i];           }
+  arma_inline elem_type at         (const uword row, const uword col) const { return Q.at(row, col); }
+
+  arma_inline ea_type get_ea()                     const { return Q;              }
+  arma_inline bool    is_alias(const SpMat<eT>& X) const { return (&(Q.m) == &X); }
+  };
+
 //! @}
