@@ -37,11 +37,13 @@ class LinearKernel
    * Simple evaluation of the dot product.  This evaluation uses Armadillo's
    * dot() function.
    *
+   * @tparam VecType Type of vector (should be arma::vec or arma::spvec).
    * @param a First vector.
    * @param b Second vector.
    * @return K(a, b).
    */
-  static double Evaluate(const arma::vec& a, const arma::vec& b)
+  template<typename VecType>
+  static double Evaluate(const VecType& a, const VecType& b)
   {
     return arma::dot(a, b);
   }

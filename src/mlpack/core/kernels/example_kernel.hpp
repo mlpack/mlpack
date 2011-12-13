@@ -93,11 +93,13 @@ class ExampleKernel
    * function static.  For a more complex example which cannot be declared
    * static, see the GaussianKernel, which stores an internal parameter.
    *
+   * @tparam VecType Type of vector (arma::vec, arma::spvec should be expected).
    * @param a First vector.
    * @param b Second vector.
    * @return K(a, b).
    */
-  static double Evaluate(const arma::vec& a, const arma::vec& b) { return 0; }
+  template<typename VecType>
+  static double Evaluate(const VecType& a, const VecType& b) { return 0; }
 };
 
 }; // namespace kernel

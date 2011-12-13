@@ -39,10 +39,14 @@ class CosineDistance
    * @param b Second vector.
    * @return d(a, b).
    */
-  static double Evaluate(const arma::vec& a, const arma::vec& b);
+  template<typename VecType>
+  static double Evaluate(const VecType& a, const VecType& b);
 };
 
 }; // namespace kernel
 }; // namespace mlpack
+
+// Include implementation.
+#include "cosine_distance_impl.hpp"
 
 #endif

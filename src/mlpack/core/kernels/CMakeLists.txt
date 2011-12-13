@@ -6,7 +6,7 @@ set(SOURCES
   gaussian_kernel.hpp
   linear_kernel.hpp
   cosine_distance.hpp
-  cosine_distance.cpp
+  cosine_distance_impl.hpp
 )
 
 # add directory name to sources

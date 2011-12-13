@@ -48,16 +48,17 @@ class GaussianKernel
    * distance metric, not the Euclidean distance, but for now, the Euclidean
    * distance is used.
    *
+   * @tparam VecType Type of vector (likely arma::vec or arma::spvec).
    * @param a First vector.
    * @param b Second vector.
    * @return K(a, b) using the bandwidth (@f$\bandwidth@f$) specified in the
    *   constructor.
    */
-  double Evaluate(const arma::vec& a, const arma::vec& b) const
+  template<typename VecType>
+  double Evaluate(const VecType& a, const VecType& b) const
   {
-    // The precalculation of gamma saves us some little computation time.
-    arma::vec diff = b - a;
-    return exp(gamma * arma::dot(diff, diff));
+    // The precalculation of gamma saves us a little computation time.
+    return exp(gamma * metric::SquaredEuclideanDistance::Evaluate(a, b));
   }
   /**
    * Evaluation of the Gaussian kernel using a double precision argument
@@ -66,8 +67,9 @@ class GaussianKernel
    * @return K(t) using the bandwidth (@f$\bandwidth@f$) specified in the
    *   constructor.
    */
-  double Evaluate(double t) const {
-    // The precalculation of gamma saves us some little computation time.
+  double Evaluate(double t) const
+  {
+    // The precalculation of gamma saves us a little computation time.
     return exp(gamma * t * t);
   }
 
@@ -75,18 +77,14 @@ class GaussianKernel
   const double& Bandwidth() { return bandwidth; }
 
  private:
-  /**
-   * kernel bandwidth
-   * */
+  //! Kernel bandwidth.
   double bandwidth;
-  /**
-   * normalizing constant
-   */
+
+  //! Normalizing constant.
   double normalizer;
-  /**
-   * Precalculated constant depending on the bandwidth; @f$ \gamma =
-   * -\frac{1}{2 \bandwidth^2} @f$.
-   */
+
+  //! Precalculated constant depending on the bandwidth;
+  //! @f$ \gamma = -\frac{1}{2 \bandwidth^2} @f$.
   double gamma;
 };
 
