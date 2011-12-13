@@ -4463,6 +4463,8 @@ SpMat<eT>::randu()
     col_ptrs[col] += col_ptrs[col - 1];
     }
 
+  access::rw(n_nonzero) = col_ptrs[n_cols];
+
   return *this;
   }
 
@@ -4521,6 +4523,8 @@ SpMat<eT>::randn()
     {
     col_ptrs[col] += col_ptrs[col - 1];
     }
+
+  access::rw(n_nonzero) = col_ptrs[n_cols];
 
   return *this;
   }
@@ -4935,6 +4939,14 @@ SpMat<eT>::swap_cols(const uword in_col1, const uword in_col2)
   {
   arma_extra_debug_sigprint();
 
+  // slow but works
+  for(uword row = 0; row < n_rows; ++row)
+    {
+    eT tmp = at(row, in_col1);
+    at(row, in_col1) = at(row, in_col2);
+    at(row, in_col2) = tmp;
+    }
+/*
   arma_debug_check
     (
     (in_col1 > in_col2) || (in_col2 >= n_cols),
@@ -5040,7 +5052,7 @@ SpMat<eT>::swap_cols(const uword in_col1, const uword in_col2)
       }
 
     }
-
+*/
   }
 
 /**
