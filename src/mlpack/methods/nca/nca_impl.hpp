@@ -18,25 +18,19 @@ namespace mlpack {
 namespace nca {
 
 // Just set the internal matrix reference.
-template<typename MetricType, typename MatType>
-NCA<MetricType, MatType>::NCA(const MatType& dataset,
-                              const arma::uvec& labels) :
-    dataset_(dataset),
-    labels_(labels)
-{
-  /* nothing to do */
-}
+template<typename Kernel>
+NCA<Kernel>::NCA(const arma::mat& dataset, const arma::uvec& labels) :
+    dataset_(dataset), labels_(labels) { /* nothing to do */ }
 
-template<typename MetricType, typename MatType>
-void NCA<MetricType, MatType>::LearnDistance(MatType& output_matrix)
+template<typename Kernel>
+void NCA<Kernel>::LearnDistance(arma::mat& output_matrix)
 {
-  output_matrix = arma::eye<MatType>(dataset_.n_rows, dataset_.n_rows);
+  output_matrix = arma::eye<arma::mat>(dataset_.n_rows, dataset_.n_rows);
 
-  SoftmaxErrorFunction<MetricType> error_func(dataset_, labels_);
+  SoftmaxErrorFunction<Kernel> error_func(dataset_, labels_);
 
   // We will use the L-BFGS optimizer to optimize the stretching matrix.
-  optimization::L_BFGS<SoftmaxErrorFunction<MetricType, MatType> >
-      lbfgs(error_func, 10);
+  optimization::L_BFGS<SoftmaxErrorFunction<Kernel> > lbfgs(error_func, 10);
 
   lbfgs.Optimize(0, output_matrix);
 }

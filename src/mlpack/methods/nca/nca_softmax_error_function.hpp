@@ -24,30 +24,27 @@ namespace nca {
  * where x_n represents a point and A is the current scaling matrix.
  *
  * This class is more flexible than the original paper, allowing an arbitrary
- * metric function to be used, meaning that the Mahalanobis distance is not the
+ * kernel function to be used, meaning that the Mahalanobis distance is not the
  * only allowed way to run NCA.  However, the Mahalanobis distance is probably
  * the best way to use this.
- *
- * @tparam MetricType Type of metric to be used.
- * @tparam MatType Type of matrix (arma::mat or arma::spmat).
  */
-template<typename MetricType, typename MatType = arma::mat>
+template<typename Kernel>
 class SoftmaxErrorFunction
 {
  public:
   /**
-   * Initialize with the given metric; useful when the metric has some state to
-   * store, which is set elsewhere.  If no metric is given, an empty metric is
+   * Initialize with the given kernel; useful when the kernel has some state to
+   * store, which is set elsewhere.  If no kernel is given, an empty kernel is
    * used; this way, you can call the constructor with no arguments.  A
    * reference to the dataset we will be optimizing over is also required.
    *
    * @param dataset Matrix containing the dataset.
    * @param labels Vector of class labels for each point in the dataset.
-   * @param metric Instantiated metric (optional).
+   * @param kernel Instantiated kernel (optional).
    */
-  SoftmaxErrorFunction(const MatType& dataset,
+  SoftmaxErrorFunction(const arma::mat& dataset,
                        const arma::uvec& labels,
-                       MetricType metric = MetricType());
+                       Kernel kernel = Kernel());
 
   /**
    * Evaluate the softmax function for the given covariance matrix.
@@ -71,13 +68,13 @@ class SoftmaxErrorFunction
   const arma::mat GetInitialPoint() const;
 
  private:
-  const MatType& dataset_;
+  const arma::mat& dataset_;
   const arma::uvec& labels_;
 
-  MetricType metric_;
+  Kernel kernel_;
 
   arma::mat last_coordinates_;
-  MatType stretched_dataset_;
+  arma::mat stretched_dataset_;
   arma::vec p_; // Holds calculated p_i.
   arma::vec denominators_; // Holds denominators for calculation of p_ij.
 
