@@ -164,8 +164,6 @@ SpSubview<eT>::operator/= (const eT val)
   {
   arma_extra_debug_sigprint();
 
-  const uword start_row = aux_row1;
-  const uword end_row   = aux_row1 + n_rows;
   const uword start_col = aux_col1;
   const uword end_col   = aux_col1 + n_cols;
 
