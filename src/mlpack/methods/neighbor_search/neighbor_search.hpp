@@ -174,44 +174,45 @@ class NeighborSearch
    * @param neighbors List of neighbors for each point.
    * @param distances List of distances for each point.
    */
-  void BaseCase(TreeType* referenceNode,
-                TreeType* queryNode,
-                arma::Mat<size_t>& neighbors,
-                arma::mat& distances);
+  void ComputeBaseCase(TreeType* queryNode,
+                       TreeType* referenceNode,
+                       arma::Mat<size_t>& neighbors,
+                       arma::mat& distances);
 
   /**
    * Recurse down the trees, computing base case computations when the leaves
    * are reached.
    *
-   * @param referenceNode Node in reference tree.
    * @param queryNode Node in query tree.
+   * @param referenceNode Node in reference tree.
    * @param lowerBound The lower bound; if above this, we can prune.
    * @param neighbors List of neighbors for each point.
    * @param distances List of distances for each point.
    */
-  void DualTreeRecursion(TreeType* referenceNode,
-                         TreeType* queryNode,
-                         const double lowerBound,
-                         arma::Mat<size_t>& neighbors,
-                         arma::mat& distances);
+  void ComputeDualNeighborsRecursion(TreeType* queryNode,
+                                     TreeType* referenceNode,
+                                     const double lowerBound,
+                                     arma::Mat<size_t>& neighbors,
+                                     arma::mat& distances);
 
   /**
    * Perform a recursion only on the reference tree; the query point is given.
-   * This method is similar to BaseCase().
+   * This method is similar to ComputeBaseCase().
    *
+   * @param pointId Index of query point.
+   * @param point The query point.
    * @param referenceNode Reference node.
-   * @param queryPoint The query point.
-   * @param queryIndex Index of query point.
    * @param bestDistSoFar Best distance to a node so far -- used for pruning.
    * @param neighbors List of neighbors for each point.
    * @param distances List of distances for each point.
    */
-  void SingleTreeRecursion(TreeType* referenceNode,
-                           const arma::vec& queryPoint,
-                           const size_t queryIndex,
-                           double& bestDistSoFar,
-                           arma::Mat<size_t>& neighbors,
-                           arma::mat& distances);
+  template<typename VecType>
+  void ComputeSingleNeighborsRecursion(const size_t pointId,
+                                       const VecType& point,
+                                       TreeType* referenceNode,
+                                       double& bestDistSoFar,
+                                       arma::Mat<size_t>& neighbors,
+                                       arma::mat& distances);
 
   /**
    * Insert a point into the neighbors and distances matrices; this is a helper
