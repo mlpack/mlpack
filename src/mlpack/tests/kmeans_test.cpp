@@ -205,4 +205,47 @@ BOOST_AUTO_TEST_CASE(RandomPartitionTest)
     BOOST_REQUIRE_LT(assignments[i], 18);
 }
 
+/**
+ * Make sure sparse k-means works okay.
+ */
+BOOST_AUTO_TEST_CASE(SparseKMeansTest)
+{
+  // Huge dimensionality, few points.
+  arma::SpMat<double> data(5000, 12);
+  data(14, 0) = 6.4;
+  data(14, 1) = 6.3;
+  data(14, 2) = 6.5;
+  data(14, 3) = 6.2;
+  data(14, 4) = 6.1;
+  data(14, 5) = 6.6;
+  data(1402, 6) = -3.2;
+  data(1402, 7) = -3.3;
+  data(1402, 8) = -3.1;
+  data(1402, 9) = -3.4;
+  data(1402, 10) = -3.5;
+  data(1402, 11) = -3.0;
+
+  arma::Col<size_t> assignments;
+
+  KMeans<> kmeans; // Default options.
+
+  kmeans.Cluster(data, 2, assignments);
+
+  size_t clusterOne = assignments[0];
+  size_t clusterTwo = assignments[6];
+
+  BOOST_REQUIRE_EQUAL(assignments[0], clusterOne);
+  BOOST_REQUIRE_EQUAL(assignments[1], clusterOne);
+  BOOST_REQUIRE_EQUAL(assignments[2], clusterOne);
+  BOOST_REQUIRE_EQUAL(assignments[3], clusterOne);
+  BOOST_REQUIRE_EQUAL(assignments[4], clusterOne);
+  BOOST_REQUIRE_EQUAL(assignments[5], clusterOne);
+  BOOST_REQUIRE_EQUAL(assignments[6], clusterTwo);
+  BOOST_REQUIRE_EQUAL(assignments[7], clusterTwo);
+  BOOST_REQUIRE_EQUAL(assignments[8], clusterTwo);
+  BOOST_REQUIRE_EQUAL(assignments[9], clusterTwo);
+  BOOST_REQUIRE_EQUAL(assignments[10], clusterTwo);
+  BOOST_REQUIRE_EQUAL(assignments[11], clusterTwo);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
