@@ -95,7 +95,7 @@ SpSubview<eT>::operator+= (const eT val)
     {
     for(uword row = start_row; row < end_row; ++row)
       {
-      m.at(row, col) += val;
+      access::rw(m).at(row, col) += val;
       }
     }
   }
@@ -124,7 +124,7 @@ SpSubview<eT>::operator-= (const eT val)
     {
     for(uword row = start_row; row < end_row; ++row)
       {
-      m.at(row, col) -= val;
+      access::rw(m).at(row, col) -= val;
       }
     }
   }
@@ -149,7 +149,7 @@ SpSubview<eT>::operator*= (const eT val)
       {
       if(m.row_indices[r] >= start_row && m.row_indices[r] < end_row)
         {
-        m.values[r] *= val;
+        access::rw(m).values[r] *= val;
         }
       }
     }
@@ -173,7 +173,7 @@ SpSubview<eT>::operator/= (const eT val)
     {
     for(uword r = m.col_ptrs[c]; r < m.col_ptrs[++c]; ++r)
       {
-      m.values[r] /= val;
+      access::rw(m).values[r] /= val;
       }
     }
   }
@@ -190,7 +190,7 @@ SpSubview<eT>::operator=(const Base<eT, T1>& x)
 
   const Proxy<T1> P(x.get_ref());
 
-  arma_debug_assert_same_size(*this, P, "insert into sparse submatrix");
+  arma_debug_assert_same_size(n_rows, n_cols, P.get_n_rows(), P.get_n_cols(), "insert into sparse submatrix");
 
   const uword start_row = aux_row1;
   const uword end_row   = aux_row1 + n_rows;
@@ -201,7 +201,7 @@ SpSubview<eT>::operator=(const Base<eT, T1>& x)
     {
     for(uword r = start_row; r < end_row; ++r)
       {
-      m.at(r, c) = P.at(r, c);
+      access::rw(m).at(r, c) = P.at(r, c);
       }
     }
   }
@@ -218,7 +218,7 @@ SpSubview<eT>::operator+=(const Base<eT, T1>& x)
 
   const Proxy<T1> P(x.get_ref());
 
-  arma_debug_assert_same_size(*this, P, "insert into sparse submatrix");
+  arma_debug_assert_same_size(n_rows, n_cols, P.get_n_rows(), P.get_n_cols(), "addition into sparse submatrix");
 
   const uword start_row = aux_row1;
   const uword end_row   = aux_row1 + n_rows;
@@ -229,7 +229,7 @@ SpSubview<eT>::operator+=(const Base<eT, T1>& x)
     {
     for(uword r = start_row; r < end_row; ++r)
       {
-      m.at(r, c) += P.at(r, c);
+      access::rw(m).at(r, c) += P.at(r, c);
       }
     }
   }
@@ -246,7 +246,7 @@ SpSubview<eT>::operator-=(const Base<eT, T1>& x)
 
   const Proxy<T1> P(x.get_ref());
 
-  arma_debug_assert_same_size(*this, P, "insert into sparse submatrix");
+  arma_debug_assert_same_size(n_rows, n_cols, P.get_n_rows(), P.get_n_cols(), "subtraction into sparse submatrix");
 
   const uword start_row = aux_row1;
   const uword end_row   = aux_row1 + n_rows;
@@ -257,7 +257,7 @@ SpSubview<eT>::operator-=(const Base<eT, T1>& x)
     {
     for(uword r = start_row; r < end_row; ++r)
       {
-      m.at(r, c) += P.at(r, c);
+      access::rw(m).at(r, c) += P.at(r, c);
       }
     }
   }
@@ -274,7 +274,7 @@ SpSubview<eT>::operator%=(const Base<eT, T1>& x)
 
   const Proxy<T1> P(x.get_ref());
 
-  arma_debug_assert_same_size(*this, P, "insert into sparse submatrix");
+  arma_debug_assert_same_size(n_rows, n_cols, P.get_n_rows(), P.get_n_cols(), "element-wise multiplication into sparse submatrix");
 
   const uword start_row = aux_row1;
   const uword end_row   = aux_row1 + n_rows;
@@ -285,7 +285,7 @@ SpSubview<eT>::operator%=(const Base<eT, T1>& x)
     {
     for(uword r = start_row; r < end_row; ++r)
       {
-      m.at(r, c) %= P.at(r, c);
+      access::rw(m).at(r, c) %= P.at(r, c);
       }
     }
   }
@@ -302,7 +302,7 @@ SpSubview<eT>::operator/=(const Base<eT, T1>& x)
 
   const Proxy<T1> P(x.get_ref());
 
-  arma_debug_assert_same_size(*this, P, "insert into sparse submatrix");
+  arma_debug_assert_same_size(n_rows, n_cols, P.get_n_rows(), P.get_n_cols(), "element-wise division into sparse submatrix");
 
   const uword start_row = aux_row1;
   const uword end_row   = aux_row1 + n_rows;
@@ -313,7 +313,7 @@ SpSubview<eT>::operator/=(const Base<eT, T1>& x)
     {
     for(uword r = start_row; r < end_row; ++r)
       {
-      m.at(r, c) /= P.at(r, c);
+      access::rw(m).at(r, c) /= P.at(r, c);
       }
     }
   }
@@ -341,7 +341,7 @@ SpSubview<eT>::zeros()
   arma_extra_debug_sigprint();
 
   // we can be a little smarter here
-  for(typename SpMat<eT>::iterator it(m, aux_row1, aux_col1);
+  for(typename SpMat<eT>::iterator it(access::rw(m), aux_row1, aux_col1);
       (it.col < (aux_col1 + n_cols - 1)) || (it.col == (aux_col1 + n_cols - 1) && it.row < (aux_row1 + n_rows));
       ++it)
     {
@@ -473,7 +473,7 @@ inline
 eT&
 SpSubview<eT>::at(const uword in_row, const uword in_col)
   {
-  return m.at(aux_row1 + in_row, aux_col1 + in_col);
+  return access::rw(m).at(aux_row1 + in_row, aux_col1 + in_col);
   }
 
 
@@ -554,8 +554,8 @@ SpSubview<eT>::swap_rows(const uword in_row1, const uword in_row2)
   for(uword c = start_col; c < end_col; ++c)
     {
     eT val = m.at(in_row1 + aux_row1, c);
-    m.at(in_row2 + aux_row1, c) = m.at(in_row1 + aux_row1, c);
-    m.at(in_row1 + aux_row1, c) = val;
+    access::rw(m).at(in_row2 + aux_row1, c) = m.at(in_row1 + aux_row1, c);
+    access::rw(m).at(in_row1 + aux_row1, c) = val;
     }
   }
 
@@ -576,8 +576,8 @@ SpSubview<eT>::swap_cols(const uword in_col1, const uword in_col2)
   for(uword r = start_row; r < end_row; ++r)
     {
     eT val = m.at(r, in_col1 + aux_col1);
-    m.at(r, in_col1 + aux_col1) = m.at(r, in_col2 + aux_col1);
-    m.at(r, in_col2 + aux_col1) = val;
+    access::rw(m).at(r, in_col1 + aux_col1) = m.at(r, in_col2 + aux_col1);
+    access::rw(m).at(r, in_col2 + aux_col1) = val;
     }
   }
 

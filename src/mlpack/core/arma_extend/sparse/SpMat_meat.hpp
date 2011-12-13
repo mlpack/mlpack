@@ -2786,6 +2786,8 @@ SpSubview<eT>
 SpMat<eT>::operator()(const span& row_span, const span& col_span)
   {
   arma_extra_debug_sigprint();
+
+  return submat(row_span, col_span);
   }
 
 template<typename eT>
@@ -2794,6 +2796,8 @@ const SpSubview<eT>
 SpMat<eT>::operator()(const span& row_span, const span& col_span) const
   {
   arma_extra_debug_sigprint();
+
+  return submat(row_span, col_span);
   }
 
 /**
