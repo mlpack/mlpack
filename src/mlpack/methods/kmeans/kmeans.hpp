@@ -77,12 +77,14 @@ class KMeans
    * elements in the list of assignments must be equal to the number of points
    * (columns) in the dataset.
    *
+   * @tparam MatType Type of matrix (arma::mat or arma::spmat).
    * @param data Dataset to cluster.
    * @param clusters Number of clusters to compute.
    * @param assignments Vector to store cluster assignments in.  Can contain an
    *     initial guess at cluster assignments.
    */
-  void Cluster(const arma::mat& data,
+  template<typename MatType>
+  void Cluster(const MatType& data,
                const size_t clusters,
                arma::Col<size_t>& assignments) const;
 

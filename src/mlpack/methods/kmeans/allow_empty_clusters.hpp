@@ -27,6 +27,7 @@ class AllowEmptyClusters
    * This function does nothing.  It is called by K-Means when K-Means detects
    * an empty cluster.
    *
+   * @tparam MatType Type of data (arma::mat or arma::spmat).
    * @param data Dataset on which clustering is being performed.
    * @param emptyCluster Index of cluster which is empty.
    * @param centroids Centroids of each cluster (one per column).
@@ -35,7 +36,8 @@ class AllowEmptyClusters
    *
    * @return Number of points changed (0).
    */
-  static size_t EmptyCluster(const arma::mat& data,
+  template<typename MatType>
+  static size_t EmptyCluster(const MatType& data,
                              const size_t emptyCluster,
                              const arma::mat& centroids,
                              arma::Col<size_t>& clusterCounts,
