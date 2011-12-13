@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(KMeansNoOverclusteringTest)
   KMeans<> kmeans; // No overclustering.
 
   arma::Col<size_t> assignments;
-  kmeans.Cluster(trans(kMeansData), 3, assignments);
+  kmeans.Cluster((arma::mat) trans(kMeansData), 3, assignments);
 
   // Now make sure we got it all right.  There is no restriction on how the
   // clusters are ordered, so we have to be careful about that.
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(KMeansOverclusteringTest)
   KMeans<> kmeans(1000, 4.0); // Overclustering factor of 4.0.
 
   arma::Col<size_t> assignments;
-  kmeans.Cluster(trans(kMeansData), 3, assignments);
+  kmeans.Cluster((arma::mat) trans(kMeansData), 3, assignments);
 
   // Now make sure we got it all right.  There is no restriction on how the
   // clusters are ordered, so we have to be careful about that.
