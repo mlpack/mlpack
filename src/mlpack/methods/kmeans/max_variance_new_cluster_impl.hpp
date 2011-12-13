@@ -19,7 +19,7 @@ namespace kmeans {
 template<typename MatType>
 size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
                                            const size_t emptyCluster,
-                                           const arma::mat& centroids,
+                                           const MatType& centroids,
                                            arma::Col<size_t>& clusterCounts,
                                            arma::Col<size_t>& assignments)
 {
@@ -32,8 +32,8 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   // this is the sensible thing to do.
   for (size_t i = 0; i < data.n_cols; i++)
   {
-    arma::vec diff = data.col(i) - centroids.col(assignments[i]);
-    variances[assignments[i]] += var(diff);
+    variances[assignments[i]] += as_scalar(
+        var(data.col(i) - centroids.col(assignments[i])));
   }
 
   // Now find the cluster with maximum variance.
@@ -47,8 +47,8 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   {
     if (assignments[i] == maxVarCluster)
     {
-      arma::vec diff = data.col(i) - centroids.col(maxVarCluster);
-      double distance = var(diff);
+      double distance = as_scalar(
+          var(data.col(i) - centroids.col(maxVarCluster)));
 
       if (distance > maxDistance)
       {
