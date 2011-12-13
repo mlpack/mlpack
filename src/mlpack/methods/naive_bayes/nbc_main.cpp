@@ -16,7 +16,7 @@
  * This is the number of classes present in the training data.
  *
  * --test
- * This file contains the data points which the trained classifier would
+ * This file contains the data points which the trained classifier should
  * classify.
  *
  * --output
@@ -25,14 +25,14 @@
  */
 #include <mlpack/core.hpp>
 
-#include "simple_nbc.hpp"
+#include "naive_bayes_classifier.hpp"
 
-PARAM_INT_REQ("classes", "The number of classes present in the data.", "C")
+PARAM_INT_REQ("classes", "The number of classes present in the data.", "c")
 
-PARAM_STRING_REQ("train", "A file containing the training set", "R");
+PARAM_STRING_REQ("train", "A file containing the training set", "t");
 PARAM_STRING_REQ("test", "A file containing the test set", "T");
 PARAM_STRING("output", "The file in which the output of the test would "
-    "be written, defaults to 'output.csv')", "O", "output.csv");
+    "be written, defaults to 'output.csv')", "o", "output.csv");
 
 PROGRAM_INFO("Parametric Naive Bayes", "This program test drives the Parametric"
     " Naive Bayes Classifier assuming that the features are sampled from a "
@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 
   // Create and train the classifier.
   Timers::StartTimer("training");
-  SimpleNaiveBayesClassifier nbc = SimpleNaiveBayesClassifier(training_data,
+  NaiveBayesClassifier nbc = NaiveBayesClassifier(training_data,
       number_of_classes_);
   Timers::StopTimer("training");
 
