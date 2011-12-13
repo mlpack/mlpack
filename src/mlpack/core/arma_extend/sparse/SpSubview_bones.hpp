@@ -3,7 +3,7 @@
 template<typename eT>
 class SpSubview : public Base<eT, SpSubview<eT> >
   {
-  public: SpMat<eT>& m;
+  public: const SpMat<eT>& m;
 
   public:
 
