@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
   lmetric.hpp
-  lmetric.cpp
+  lmetric_impl.hpp
   mahalanobis_distance.hpp
   mahalanobis_distance_impl.hpp
 )

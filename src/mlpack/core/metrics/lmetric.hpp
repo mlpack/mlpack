@@ -63,30 +63,9 @@ class LMetric
   /**
    * Computes the distance between two points.
    */
-  static double Evaluate(const arma::vec& a, const arma::vec& b);
+  template<typename VecType>
+  static double Evaluate(const VecType& a, const VecType& b);
 };
-
-// Doxygen will not include this specialization.
-//! @cond
-
-// The implementation is not split into a _impl.h file because it is so simple;
-// the unspecialized implementation of the one function is given below.
-// Unspecialized implementation.  This should almost never be used...
-template<int t_pow, bool t_take_root>
-double LMetric<t_pow, t_take_root>::Evaluate(const arma::vec& a,
-                                             const arma::vec& b)
-{
-  double sum = 0;
-  for (size_t i = 0; i < a.n_elem; i++)
-    sum += pow(fabs(a[i] - b[i]), t_pow);
-
-  if (!t_take_root) // Suboptimal to have this here.
-    return sum;
-
-  return pow(sum, (1.0 / t_pow));
-}
-
-//! @endcond
 
 // Convenience typedefs.
 
@@ -107,5 +86,8 @@ typedef LMetric<2, true> EuclideanDistance;
 
 }; // namespace metric
 }; // namespace mlpack
+
+// Include implementation.
+#include "lmetric_impl.hpp"
 
 #endif

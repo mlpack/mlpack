@@ -16,8 +16,9 @@ namespace metric {
  * Specialization for non-rooted case.
  */
 template<>
-double MahalanobisDistance<false>::Evaluate(const arma::vec& a,
-                                            const arma::vec& b)
+template<typename VecType>
+double MahalanobisDistance<false>::Evaluate(const VecType& a,
+                                            const VecType& b)
 {
   // Check if covariance matrix has been initialized.
   if (covariance.n_rows == 0)
@@ -33,8 +34,9 @@ double MahalanobisDistance<false>::Evaluate(const arma::vec& a,
  * sqrt().
  */
 template<>
-double MahalanobisDistance<true>::Evaluate(const arma::vec& a,
-                                           const arma::vec& b)
+template<typename VecType>
+double MahalanobisDistance<true>::Evaluate(const VecType& a,
+                                           const VecType& b)
 {
   // Check if covariance matrix has been initialized.
   if (covariance.n_rows == 0)
