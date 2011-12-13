@@ -20,7 +20,6 @@ using namespace arma;
 
 BOOST_AUTO_TEST_CASE(Radical_Test_Radical3D) {
 
-  std::srand(time(0));
   mat matX;
   data::Load("data_3d_mixed.txt", matX);
   
