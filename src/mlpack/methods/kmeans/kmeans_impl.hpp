@@ -83,7 +83,7 @@ Cluster(const MatType& data,
   }
 
   // Centroids of each cluster.  Each column corresponds to a centroid.
-  arma::mat centroids(data.n_rows, actualClusters);
+  MatType centroids(data.n_rows, actualClusters);
   // Counts of points in each cluster.
   arma::Col<size_t> counts(actualClusters);
   counts.zeros();

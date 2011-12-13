@@ -39,7 +39,7 @@ class AllowEmptyClusters
   template<typename MatType>
   static size_t EmptyCluster(const MatType& data,
                              const size_t emptyCluster,
-                             const arma::mat& centroids,
+                             const MatType& centroids,
                              arma::Col<size_t>& clusterCounts,
                              arma::Col<size_t>& assignments)
   {
