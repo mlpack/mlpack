@@ -1,13 +1,13 @@
 /**
- * @file simple_nbc.hpp
+ * @file naive_bayes_classifier.hpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  *
  * A Naive Bayes Classifier which parametrically estimates the distribution of
  * the features.  It is assumed that the features have been sampled from a
  * Gaussian PDF.
  */
-#ifndef __MLPACK_METHODS_NBC_SIMPLE_NBC_HPP
-#define __MLPACK_METHODS_NBC_SIMPLE_NBC_HPP
+#ifndef __MLPACK_METHODS_NAIVE_BAYES_NAIVE_BAYES_CLASSIFIER_HPP
+#define __MLPACK_METHODS_NAIVE_BAYES_NAIVE_BAYES_CLASSIFIER_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/gmm/phi.hpp>
@@ -36,7 +36,7 @@ namespace naive_bayes {
  * Example use:
  *
  * @code
- * SimpleNaiveBayesClassifier nbc;
+ * NaiveBayesClassifier nbc;
  * arma::mat training_data, testing_data;
  * datanode *nbc_module = fx_submodule(NULL,"nbc","nbc");
  * arma::vec results;
@@ -45,21 +45,20 @@ namespace naive_bayes {
  * nbc.Classify(testing_data, &results);
  * @endcode
  */
-class SimpleNaiveBayesClassifier
+template<typename MatType = arma::mat>
+class NaiveBayesClassifier
 {
- public:
+ private:
   //! Sample mean for each class.
-  arma::mat means_;
+  MatType means;
 
   //! Sample variances for each class.
-  arma::mat variances_;
+  MatType variances;
 
   //! Class probabilities.
-  arma::vec class_probabilities_;
+  arma::vec probabilities;
 
-  //! The number of classes present.
-  size_t number_of_classes_;
-
+ public:
   /**
    * Initializes the classifier as per the input and then trains it
    * by calculating the sample mean and variances
@@ -69,17 +68,12 @@ class SimpleNaiveBayesClassifier
    * arma::mat training_data, testing_data;
    * datanode nbc_module = fx_submodule(NULL,"nbc","nbc");
    * ....
-   * SimpleNaiveBayesClassifier nbc(training_data, nbc_module);
+   * NaiveBayesClassifier nbc(training_data, nbc_module);
    * @endcode
    */
-  SimpleNaiveBayesClassifier(const arma::mat& data, size_t classes);
+  NaiveBayesClassifier(const MatType& data, const size_t classes);
 
-  /**
-   * Default constructor, you need to use the other one.
-   */
-  SimpleNaiveBayesClassifier();
-
-  ~SimpleNaiveBayesClassifier() { }
+  ~NaiveBayesClassifier() { }
 
   /**
    * Given a bunch of data points, this function evaluates the class
@@ -92,10 +86,28 @@ class SimpleNaiveBayesClassifier
    * nbc.Classify(test_data, &results);
    * @endcode
    */
-  void Classify(const arma::mat& test_data, arma::vec& results);
+  void Classify(const MatType& data, arma::Col<size_t>& results);
+
+  //! Get the sample means for each class.
+  const MatType& Means() const { return means; }
+  //! Modify the sample means for each class.
+  MatType& Means() { return means; }
+
+  //! Get the sample variances for each class.
+  const MatType& Variances() const { return variances; }
+  //! Modify the sample variances for each class.
+  MatType& Variances() { return variances; }
+
+  //! Get the prior probabilities for each class.
+  const arma::vec& Probabilities() const { return probabilities; }
+  //! Modify the prior probabilities for each class.
+  arma::vec& Probabilities() { return probabilities; }
 };
 
 }; // namespace naive_bayes
 }; // namespace mlpack
+
+// Include implementation.
+#include "naive_bayes_classifier_impl.hpp"
 
 #endif
