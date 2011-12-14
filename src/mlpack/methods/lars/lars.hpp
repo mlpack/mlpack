@@ -154,37 +154,49 @@ class LARS {
   
   
 private:
+  // Gram matrix
   arma::mat matGram;
   
   // Upper triangular cholesky factor; initially 0x0 arma::matrix.
   arma::mat matUtriCholFactor;
-
+  
   bool useCholesky;
-
+  
   bool lasso;
   double lambda1;
 
   bool elasticNet;
   double lambda2;
-
+  
+  // solution path
   std::vector<arma::vec> betaPath;
+  
+  // value of lambda1 for each solution in solution path
   std::vector<double> lambdaPath;
-
+  
+  // number of dimensions in active set
   arma::u32 nActive;
+  
+  // active set of dimensions
   std::vector<arma::u32> activeSet;
+  
+  // active set membership indicator (for each dimension)
   std::vector<bool> isActive;
   
-  
+  // remove activeVarInd'th element from active set
   void Deactivate(arma::u32 activeVarInd);
-
+  
+  // add dimension varInd to active set
   void Activate(arma::u32 varInd);
-
+  
+  // compute "equiangular" direction in output space
   void ComputeYHatDirection(const arma::mat& matX,
 			    const arma::vec& betaDirection,
                             arma::vec& yHatDirection);
 
+  // interpolate to compute last solution vector
   void InterpolateBeta();
-
+  
   void CholeskyInsert(const arma::vec& newX, const arma::mat& X);
 
   void CholeskyInsert(const arma::vec& newX, const arma::vec& newGramCol);
@@ -192,7 +204,6 @@ private:
   void GivensRotate(const arma::vec& x, arma::vec& rotatedX, arma::mat& G);
 
   void CholeskyDelete(arma::u32 colToKill);
-
   
 };
 
