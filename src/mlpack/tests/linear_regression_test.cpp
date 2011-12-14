@@ -8,6 +8,9 @@
 
 #include <boost/test/unit_test.hpp>
 
+using namespace mlpack;
+using namespace mlpack::regression;
+
 BOOST_AUTO_TEST_SUITE(LinearRegressionTest);
 
 /**
@@ -21,10 +24,10 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTest)
   arma::mat points(3, 10);
 
   // Responses is the "correct" value for each point in predictors and points.
-  arma::colvec responses(10);
+  arma::vec responses(10);
 
   // The values we get back when we predict for points.
-  arma::rowvec predictions(10);
+  arma::vec predictions(10);
 
   // We'll randomly select some coefficients for the linear response.
   arma::vec coeffs;
@@ -47,11 +50,11 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTest)
   // Generate responses.
   for (size_t elem = 0; elem < responses.n_elem; elem++)
     responses[elem] = coeffs[0] +
-      dot(coeffs.rows(1, 3), arma::ones<arma::rowvec>(3) * elem);
+        dot(coeffs.rows(1, 3), arma::ones<arma::rowvec>(3) * elem);
 
   // Initialize and predict
-  mlpack::linear_regression::LinearRegression lr(predictors, responses);
-  lr.predict(predictions, points);
+  LinearRegression lr(predictors, responses);
+  lr.Predict(points, predictions);
 
   // Output result and verify we have less than 5% error from "correct" value
   // for each point
