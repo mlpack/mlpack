@@ -6,12 +6,13 @@
 
 // Note: We don't use BOOST_REQUIRE_CLOSE in the code below because we need
 // to use FPC_WEAK, and it's not at all intuitive how to do that.
-
-
 #include <armadillo>
 #include <mlpack/methods/lars/lars.hpp>
 
 #include <boost/test/unit_test.hpp>
+
+using namespace mlpack;
+using namespace mlpack::regression;
 
 BOOST_AUTO_TEST_SUITE(LARS_Test);
 
@@ -45,10 +46,10 @@ void VerifyCorrectness(arma::vec beta, arma::vec errCorr, double lambda) {
 void LassoTest(size_t nPoints, size_t nDims, bool elasticNet, bool useCholesky) {
   arma::mat X;
   arma::vec y;
-  
+
   for(size_t i = 0; i < 100; i++) {
     GenerateProblem(X, y, nPoints, nDims);
-    
+
     // Armadillo's median is broken, so...
     arma::vec sortedAbsCorr = sort(abs(trans(X) * y));
     double lambda_1 = sortedAbsCorr(nDims/2);
@@ -59,14 +60,14 @@ void LassoTest(size_t nPoints, size_t nDims, bool elasticNet, bool useCholesky) 
     else {
       lambda_2 = 0;
     }
-    
-    mlpack::lars::LARS lars(useCholesky, lambda_1, lambda_2);
+
+    LARS lars(useCholesky, lambda_1, lambda_2);
     lars.DoLARS(X, y);
-    
+
     arma::vec betaOpt;
     lars.Solution(betaOpt);
     arma::vec errCorr = (arma::trans(X) * X + lambda_2 * arma::eye(nDims, nDims)) * betaOpt - arma::trans(X) * y;
-    
+
     VerifyCorrectness(betaOpt, errCorr, lambda_1);
   }
 }
