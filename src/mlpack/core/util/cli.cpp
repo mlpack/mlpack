@@ -680,4 +680,4 @@ std::string CLI::AliasReverseLookup(std::string value)
 PARAM_FLAG("help", "Default help info.", "h");
 PARAM_STRING("info", "Get help on a specific module or option.", "", "");
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
-    "parameters and timers at the end of execution.", "");
+    "parameters and timers at the end of execution.", "v");
