@@ -5,8 +5,8 @@
  * Implementation of timers.
  */
 #include "timers.hpp"
-#include "../io/cli.hpp"
-#include "../io/log.hpp"
+#include "cli.hpp"
+#include "log.hpp"
 
 #include <map>
 #include <string>

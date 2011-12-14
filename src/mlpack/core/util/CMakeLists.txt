@@ -3,8 +3,25 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-    save_restore_utility.cpp
-    save_restore_utility.hpp
+  cli.hpp
+  cli.cpp
+  cli_deleter.hpp
+  cli_deleter.cpp
+  cli_impl.hpp
+  log.hpp
+  log.cpp
+  nulloutstream.hpp
+  option.hpp
+  option.cpp
+  option_impl.hpp
+  prefixedoutstream.hpp
+  prefixedoutstream.cpp
+  prefixedoutstream_impl.hpp
+  save_restore_utility.hpp
+  save_restore_utility.cpp
+  save_restore_utility_impl.hpp
+  timers.hpp
+  timers.cpp
 )
 
 # add directory name to sources

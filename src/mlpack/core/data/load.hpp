@@ -9,7 +9,7 @@
 #ifndef __MLPACK_CORE_DATA_LOAD_HPP
 #define __MLPACK_CORE_DATA_LOAD_HPP
 
-#include <mlpack/core/io/log.hpp>
+#include <mlpack/core/util/log.hpp>
 #include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.
 #include <string>
 

@@ -13,6 +13,8 @@ PROGRAM_INFO("GMM",
 PARAM_STRING_REQ("data", "A file containing the data on which the model has to "
     "be fit.", "D");
 PARAM_INT("gaussians", "g", "G", 1);
+PARAM_STRING("output_file", "The file to write the trained GMM parameters into "
+    "(as XML).", "gmm.xml");
 
 using namespace mlpack;
 using namespace mlpack::gmm;
@@ -33,6 +35,8 @@ int main(int argc, char* argv[]) {
   Timer::Stop("em");
 
   ////// OUTPUT RESULTS //////
+  
+
   // We need a better solution for this.  So, currently, we do nothing.
   // XML is probably the right tool for the job.
 }
