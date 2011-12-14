@@ -14,35 +14,45 @@ namespace mlpack {
 namespace gmm {
 
 /**
- * Calculates the univariate Gaussian probability density function
+ * Calculates the univariate Gaussian probability density function.
  *
  * Example use:
  * @code
  * double x, mean, var;
  * ....
- * long double f = phi(x, mean, var);
+ * double f = phi(x, mean, var);
  * @endcode
+ *
+ * @param x Observation.
+ * @param mean Mean of univariate Gaussian.
+ * @param var Variance of univariate Gaussian.
+ * @return Probability of x being observed from the given univariate Gaussian.
  */
-inline long double phi(const double x, const double mean, const double var)
+inline double phi(const double x, const double mean, const double var)
 {
   return exp(-1.0 * ((x - mean) * (x - mean) / (2 * var)))
       / sqrt(2 * M_PI * var);
 }
 
 /**
- * Calculates the multivariate Gaussian probability density function
+ * Calculates the multivariate Gaussian probability density function.
  *
  * Example use:
  * @code
- * Vector x, mean;
- * Matrix cov;
+ * extern arma::vec x, mean;
+ * extern arma::mat cov;
  * ....
- * long double f = phi(x, mean, cov);
+ * double f = phi(x, mean, cov);
  * @endcode
+ *
+ * @param x Observation.
+ * @param mean Mean of multivariate Gaussian.
+ * @param cov Covariance of multivariate Gaussian.
+ * @return Probability of x being observed from the given multivariate Gaussian.
  */
-inline long double phi(const arma::vec& x,
-                       const arma::vec& mean,
-                       const arma::mat& cov)
+inline double phi(const arma::vec& x,
+                  const arma::vec& mean,
+                  const arma::mat& cov)
 {
   arma::vec diff = mean - x;
 
@@ -59,18 +69,18 @@ inline long double phi(const arma::vec& x,
  *
  * Example use:
  * @code
- * Vector x, mean, g_mean, g_cov;
- * ArrayList<Matrix> d_cov; // the dSigma
+ * extern arma::vec x, mean, g_mean, g_cov;
+ * std::vector<arma::mat> d_cov; // the dSigma
  * ....
- * long double f = phi(x, mean, cov, d_cov, &g_mean, &g_cov);
+ * double f = phi(x, mean, cov, d_cov, &g_mean, &g_cov);
  * @endcode
  */
-inline long double phi(const arma::vec& x,
-                       const arma::vec& mean,
-                       const arma::mat& cov,
-                       const std::vector<arma::mat>& d_cov,
-                       arma::vec& g_mean,
-                       arma::vec& g_cov)
+inline double phi(const arma::vec& x,
+                  const arma::vec& mean,
+                  const arma::mat& cov,
+                  const std::vector<arma::mat>& d_cov,
+                  arma::vec& g_mean,
+                  arma::vec& g_cov)
 {
   // We don't call out to another version of the function to avoid inverting the
   // covariance matrix more than once.
@@ -102,6 +112,11 @@ inline long double phi(const arma::vec& x,
  * Calculates the multivariate Gaussian probability density function for each
  * data point (column) in the given matrix, with respect to the given mean and
  * variance.
+ *
+ * @param x List of observations.
+ * @param mean Mean of multivariate Gaussian.
+ * @param cov Covariance of multivariate Gaussian.
+ * @param probabilities Output probabilities for each input observation.
  */
 inline void phi(const arma::mat& x,
                 const arma::vec& mean,

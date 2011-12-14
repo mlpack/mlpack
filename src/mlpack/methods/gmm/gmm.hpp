@@ -11,24 +11,29 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace gmm {
+namespace gmm /*** Gaussian Mixture Models. */ {
 
 /**
- * A Gaussian mixture model class.
+ * A Gaussian Mixture Model (GMM). This class uses maximum likelihood loss
+ * functions to estimate the parameters of the GMM on a given dataset via the EM
+ * algorithm.  The GMM can be trained either with labeled or unlabeled data.
  *
- * This class uses maximum likelihood loss functions to
- * estimate the parameters of a gaussian mixture
- * model on a given data via the EM algorithm.
- *
+ * The GMM, once trained, can be used to generate random points from the
+ * distribution and estimate the probability of points being from the
+ * distribution.  The parameters of the GMM can be obtained through the
+ * accessors and mutators.
  *
  * Example use:
  *
  * @code
- * GMM mog;
- * ArrayList<double> results;
+ * // Set up a mixture of 5 gaussians in a 4-dimensional space.
+ * GMM g(5, 4);
  *
- * mog.Init(number_of_gaussians, dimensionality);
- * mog.ExpectationMaximization(data, &results, optim_flag);
+ * // Train the GMM given the data observations.
+ * g.Estimate(data);
+ *
+ * // Get the probability of 'observation' being observed from this GMM.
+ * double probability = g.Probability(observation);
  * @endcode
  */
 class GMM {
@@ -48,9 +53,7 @@ class GMM {
   /**
    * Create an empty Gaussian Mixture Model, with zero gaussians.
    */
-  GMM() :
-    gaussians(0),
-    dimensionality(0)
+  GMM() : gaussians(0), dimensionality(0)
   {
     // Warn the user.  They probably don't want to do this.  If this constructor
     // is being used (because it is required by some template classes), the user
