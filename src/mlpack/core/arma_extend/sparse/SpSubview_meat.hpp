@@ -166,12 +166,14 @@ SpSubview<eT>::operator/= (const eT val)
 
   const uword start_col = aux_col1;
   const uword end_col   = aux_col1 + n_cols;
+  const uword start_row = aux_row1;
+  const uword end_row   = aux_row1 + n_rows;
 
   for(uword c = start_col; c < end_col; ++c)
     {
-    for(uword r = m.col_ptrs[c]; r < m.col_ptrs[++c]; ++r)
+    for(uword r = start_row; r < end_row; ++r)
       {
-      access::rw(m).values[r] /= val;
+      access::rw(m).at(r, c) /= val;
       }
     }
   }
