@@ -76,17 +76,33 @@ class DTBStat
  *
  * For more information on the algorithm, see the following citation:
  *
+ * @code
  * @inproceedings{
  *   author = {March, W.B., Ram, P., and Gray, A.G.},
  *   title = {{Fast Euclidean Minimum Spanning Tree: Algorithm, Analysis,
  *      Applications.}},
  *   booktitle = {Proceedings of the 16th ACM SIGKDD International Conference
  *      on Knowledge Discovery and Data Mining}
- *   series = {KDD '10},
+ *   series = {KDD 2010},
  *   year = {2010}
  * }
+ * @endcode
  *
- * @tparam TreeType Type of tree to use.
+ * General usage of this class might be like this:
+ *
+ * @code
+ * extern arma::mat data; // We want to find the MST of this dataset.
+ * DualTreeBoruvka<> dtb(data); // Create the tree with default options.
+ *
+ * // Find the MST.
+ * arma::mat mstResults;
+ * dtb.ComputeMST(mstResults);
+ * @endcode
+ *
+ * More advanced usage of the class can use different types of trees, pass in an
+ * already-built tree, or compute the MST using the O(n^2) naive algorithm.
+ *
+ * @tparam TreeType Type of tree to use.  Should use DTBStat as a statistic.
  */
 template<
   typename TreeType = tree::BinarySpaceTree<bound::HRectBound<2>, DTBStat>
@@ -108,7 +124,7 @@ class DualTreeBoruvka
   bool naive;
 
   //! Edges.
-  std::vector<EdgePair> edges; // must use vector with non-numerical types
+  std::vector<EdgePair> edges; // We must use vector with non-numerical types.
 
   //! Connections.
   UnionFind connections;
