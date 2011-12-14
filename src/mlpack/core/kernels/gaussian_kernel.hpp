@@ -16,10 +16,10 @@ namespace kernel {
 
 /**
  * The standard Gaussian kernel.  Given two vectors @f$ x @f$, @f$ y @f$, and a
- * bandwidth @f$ \bandwidth @f$ (set in the constructor),
+ * bandwidth @f$ \mu @f$ (set in the constructor),
  *
  * @f[
- * K(x, y) = \exp(-\frac{|| x - y ||^2}{2 \bandwidth^2}).
+ * K(x, y) = \exp(-\frac{|| x - y ||^2}{2 \mu^2}).
  * @f]
  *
  * The implementation is all in the header file because it is so simple.
@@ -35,7 +35,7 @@ class GaussianKernel
   /**
    * Construct the Gaussian kernel with a custom bandwidth.
    *
-   * @param bandwidth The bandwidth of the kernel.
+   * @param bandwidth The bandwidth of the kernel (@f$\mu@f$).
    */
   GaussianKernel(double bandwidth) :
     bandwidth(bandwidth),
@@ -51,7 +51,7 @@ class GaussianKernel
    * @tparam VecType Type of vector (likely arma::vec or arma::spvec).
    * @param a First vector.
    * @param b Second vector.
-   * @return K(a, b) using the bandwidth (@f$\bandwidth@f$) specified in the
+   * @return K(a, b) using the bandwidth (@f$\mu@f$) specified in the
    *   constructor.
    */
   template<typename VecType>
@@ -60,12 +60,13 @@ class GaussianKernel
     // The precalculation of gamma saves us a little computation time.
     return exp(gamma * metric::SquaredEuclideanDistance::Evaluate(a, b));
   }
+
   /**
-   * Evaluation of the Gaussian kernel using a double precision argument
+   * Evaluation of the Gaussian kernel using a double precision argument.
    *
    * @param t double value.
-   * @return K(t) using the bandwidth (@f$\bandwidth@f$) specified in the
-   *   constructor.
+   * @return K(t) using the bandwidth (@f$\mu@f$) specified in the
+   *     constructor.
    */
   double Evaluate(double t) const
   {
@@ -84,7 +85,7 @@ class GaussianKernel
   double normalizer;
 
   //! Precalculated constant depending on the bandwidth;
-  //! @f$ \gamma = -\frac{1}{2 \bandwidth^2} @f$.
+  //! @f$ \gamma = -\frac{1}{2 \mu^2} @f$.
   double gamma;
 };
 
