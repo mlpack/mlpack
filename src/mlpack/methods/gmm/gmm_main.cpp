@@ -28,9 +28,9 @@ int main(int argc, char* argv[]) {
   GMM gmm(CLI::GetParam<int>("gaussians"), data_points.n_rows);
 
   ////// Computing the parameters of the model using the EM algorithm //////
-  Timers::StartTimer("em");
+  Timer::Start("em");
   gmm.Estimate(data_points);
-  Timers::StopTimer("em");
+  Timer::Stop("em");
 
   ////// OUTPUT RESULTS //////
   // We need a better solution for this.  So, currently, we do nothing.

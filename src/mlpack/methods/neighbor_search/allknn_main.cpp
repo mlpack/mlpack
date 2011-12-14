@@ -110,12 +110,12 @@ int main(int argc, char *argv[])
   // Build trees by hand, so we can save memory: if we pass a tree to
   // NeighborSearch, it does not copy the matrix.
   Log::Info << "Building reference tree..." << endl;
-  Timers::StartTimer("tree_building");
+  Timer::Start("tree_building");
 
   BinarySpaceTree<bound::HRectBound<2>, QueryStat<NearestNeighborSort> >
       refTree(referenceData, oldFromNewRefs, leafSize);
 
-  Timers::StopTimer("tree_building");
+  Timer::Stop("tree_building");
 
   std::vector<size_t> oldFromNewQueries;
 
@@ -133,12 +133,12 @@ int main(int argc, char *argv[])
 
     // Build trees by hand, so we can save memory: if we pass a tree to
     // NeighborSearch, it does not copy the matrix.
-    Timers::StartTimer("tree_building");
+    Timer::Start("tree_building");
 
     BinarySpaceTree<bound::HRectBound<2>, QueryStat<NearestNeighborSort> >
         queryTree(queryData, oldFromNewRefs, leafSize);
 
-    Timers::StopTimer("tree_building");
+    Timer::Stop("tree_building");
 
     allknn = new AllkNN(referenceData, queryData, naive, singleMode, 20,
         &refTree, &queryTree);

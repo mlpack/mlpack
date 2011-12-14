@@ -58,15 +58,15 @@ int main(int argc, char* argv[])
   size_t number_of_classes_ = CLI::GetParam<size_t>("classes");
 
   // Create and train the classifier.
-  Timers::StartTimer("training");
+  Timer::Start("training");
   NaiveBayesClassifier<> nbc(training_data, number_of_classes_);
-  Timers::StopTimer("training");
+  Timer::Stop("training");
 
   // Timing the running of the Naive Bayes Classifier.
   arma::Col<size_t> results;
-  Timers::StartTimer("testing");
+  Timer::Start("testing");
   nbc.Classify(testing_data, results);
-  Timers::StopTimer("testing");
+  Timer::Stop("testing");
 
   // Output results.
   std::string output_filename = CLI::GetParam<std::string>("output");

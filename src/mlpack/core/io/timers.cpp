@@ -13,23 +13,44 @@
 
 using namespace mlpack;
 
-std::map<std::string, timeval> Timers::timers;
+/**
+ * Start the given timer.
+ */
+void Timer::Start(const std::string name)
+{
+  CLI::GetSingleton().timer.StartTimer(name);
+}
 
-std::map<std::string, timeval> Timers::GetAllTimers()
+/**
+ * Stop the given timer.
+ */
+void Timer::Stop(const std::string name)
+{
+  CLI::GetSingleton().timer.StopTimer(name);
+}
+
+/**
+ * Get the given timer.
+ */
+timeval Timer::Get(const std::string name)
+{
+  return CLI::GetSingleton().timer.GetTimer(name);
+}
+
+std::map<std::string, timeval>& Timers::GetAllTimers()
 {
   return timers;
 }
 
-timeval Timers::GetTimer(const char* timerName)
+timeval Timers::GetTimer(const std::string timerName)
 {
   std::string name(timerName);
   return timers[name];
 }
 
-void Timers::PrintTimer(const char* timerName)
+void Timers::PrintTimer(const std::string timerName)
 {
-  std::string name=timerName;
-  timeval& t = timers[name];
+  timeval& t = timers[timerName];
   Log::Info << t.tv_sec << "." << std::setw(6) << std::setfill('0')
       << t.tv_usec << "s";
 
@@ -82,10 +103,8 @@ void Timers::PrintTimer(const char* timerName)
   Log::Info << std::endl;
 }
 
-void Timers::StartTimer(const char* timerName)
+void Timers::StartTimer(const std::string timerName)
 {
-  // Convert the name to std::string.
-  std::string name(timerName);
   timeval tmp;
 
   tmp.tv_sec = 0;
@@ -96,13 +115,12 @@ void Timers::StartTimer(const char* timerName)
 #else
   FileTimeToTimeVal(&tmp);
 #endif
-  timers[name] = tmp;
+  timers[timerName] = tmp;
 }
 
-void Timers::StopTimer(const char* timerName)
+void Timers::StopTimer(const std::string timerName)
 {
-  std::string name(timerName);
-  timeval delta, b, a = timers[name];
+  timeval delta, b, a = timers[timerName];
 
 #ifndef _WIN32
   gettimeofday(&b, NULL);
@@ -111,7 +129,7 @@ void Timers::StopTimer(const char* timerName)
 #endif
   // Calculate the delta time.
   timersub(&b, &a, &delta);
-  timers[name] = delta;
+  timers[timerName] = delta;
 }
 
 #ifdef _WIN32
@@ -131,4 +149,5 @@ void Timers::FileTimeToTimeVal(timeval* tv)
   tv.tv_sec = (long) (ptime / 1000000UL);
   tv.tv_usec = (long) (ptime % 1000000UL);
 }
+
 #endif // _WIN32

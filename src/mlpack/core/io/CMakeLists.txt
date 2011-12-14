@@ -17,6 +17,8 @@ set(SOURCES
   prefixedoutstream.hpp
   prefixedoutstream.cpp
   prefixedoutstream_impl.hpp
+  timers.hpp
+  timers.cpp
 )
 
 # add directory name to sources

@@ -46,14 +46,14 @@ void CLI::Add(const char* identifier,
     amap[stringAlias] = path;
     prog_opt_id = path + "," + alias;
   }
-  
+
   // Add the option to boost program_options.
   desc.add_options()
     (prog_opt_id.c_str(), po::value<T>(),  description);
 
   // Make sure the appropriate metadata is inserted into gmap.
   gmap_t& gmap = GetSingleton().globalValues;
-  
+
   ParamData data;
   T tmp = T();
 
@@ -61,6 +61,7 @@ void CLI::Add(const char* identifier,
   data.name = path;
   data.tname = TYPENAME(T);
   data.value = boost::any(tmp);
+  data.wasPassed = false;
   gmap[path] = data;
 
   // If the option is required, add it to the required options list.
@@ -105,9 +106,9 @@ T& CLI::GetParam(const char* identifier)
 
   //What if we have meta-data, but no data?
   boost::any val = gmap[key].value;
-  if(val.empty()) 
+  if(val.empty())
     gmap[key].value = boost::any(tmp);
-  
+
 
   return *boost::any_cast<T>(&gmap[key].value);
 }
