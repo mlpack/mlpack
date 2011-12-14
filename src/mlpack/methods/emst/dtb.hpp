@@ -20,7 +20,7 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 
 namespace mlpack {
-namespace emst {
+namespace emst /*** Euclidean Minimum Spanning Trees. */ {
 
 /**
  * A statistic for use with MLPACK trees, which stores the upper bound on
