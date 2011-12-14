@@ -1,15 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-# add directory name to sources
-set(DIR_SRCS)
-foreach(file ${SOURCES})
-  set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
-endforeach()
-# Append sources (with directory name) to list of all MLPACK sources (used at
-# the parent scope).
-set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-# test executable
+# MLPACK test executable.
 add_executable(mlpack_test
   mlpack_test.cpp
   allkfn_test.cpp
@@ -36,8 +27,14 @@ add_executable(mlpack_test
   tree_test.cpp
   union_find_test.cpp
 )
-# link dependencies of test executable
+# Link dependencies of test executable.
 target_link_libraries(mlpack_test
   mlpack
   boost_unit_test_framework
+)
+
+# Copy test data into right place.
+add_custom_command(TARGET mlpack_test
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/data/ ${PROJECT_BINARY_DIR}
 )
