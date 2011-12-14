@@ -57,14 +57,16 @@ class DTBStat
   /**
    * An initializer for leaves.
    */
-  DTBStat(const arma::mat& dataset, size_t start, size_t count);
+  template<typename MatType>
+  DTBStat(const MatType& dataset, const size_t start, const size_t count);
 
   /**
    * An initializer for non-leaves.  Simply calls the leaf initializer.
    */
-  DTBStat(const arma::mat& dataset, size_t start, size_t count,
-          const DTBStat& left_stat, const DTBStat& right_stat);
-  
+  template<typename MatType>
+  DTBStat(const MatType& dataset, const size_t start, const size_t count,
+          const DTBStat& leftStat, const DTBStat& rightStat);
+
 }; // class DTBStat
 
 /**

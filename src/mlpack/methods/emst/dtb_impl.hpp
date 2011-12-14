@@ -48,7 +48,10 @@ DTBStat::DTBStat()
 /**
  * An initializer for leaves.
  */
-DTBStat::DTBStat(const arma::mat& dataset, size_t start, size_t count)
+template<typename MatType>
+DTBStat::DTBStat(const MatType& dataset,
+                 const size_t start,
+                 const size_t count)
 {
   if (count == 1)
   {
@@ -65,8 +68,12 @@ DTBStat::DTBStat(const arma::mat& dataset, size_t start, size_t count)
 /**
  * An initializer for non-leaves.  Simply calls the leaf initializer.
  */
-DTBStat::DTBStat(const arma::mat& dataset, size_t start, size_t count,
-        const DTBStat& left_stat, const DTBStat& right_stat)
+template<typename MatType>
+DTBStat::DTBStat(const MatType& dataset,
+                 const size_t start,
+                 const size_t count,
+                 const DTBStat& leftStat,
+                 const DTBStat& right_stat)
 {
   if (count == 1)
   {
@@ -80,11 +87,12 @@ DTBStat::DTBStat(const arma::mat& dataset, size_t start, size_t count,
   }
 }
 
-  DualTreeBoruvka::~DualTreeBoruvka()
-  {
-    if (tree_ != NULL)
-      delete tree_;
-  }
+
+DualTreeBoruvka::~DualTreeBoruvka()
+{
+  if (tree_ != NULL)
+    delete tree_;
+}
 
 /**
  * Adds a single edge to the edge list
