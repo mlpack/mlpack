@@ -4,8 +4,9 @@
  *
  * Tests for everything in the math:: namespace.
  */
+#include <mlpack/core/math/clamp.hpp>
+#include <mlpack/core/math/random.hpp>
 #include <mlpack/core/math/range.hpp>
-#include <mlpack/core/math/math_misc.hpp>
 #include <boost/test/unit_test.hpp>
 
 using namespace mlpack;

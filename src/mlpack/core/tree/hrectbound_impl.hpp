@@ -11,8 +11,6 @@
 
 #include <math.h>
 
-#include "../math/math_misc.hpp"
-
 // In case it has not been included yet.
 #include "hrectbound.hpp"
 

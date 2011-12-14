@@ -92,7 +92,8 @@
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/load.hpp>
 #include <mlpack/core/data/save.hpp>
-#include <mlpack/core/math/math_misc.hpp>
+#include <mlpack/core/math/clamp.hpp>
+#include <mlpack/core/math/random.hpp>
 #include <mlpack/core/math/range.hpp>
 #include <mlpack/core/util/save_restore_utility.hpp>
 

@@ -12,8 +12,6 @@
 
 #include <math.h>
 
-#include "../math/math_misc.hpp"
-
 namespace mlpack {
 namespace bound {
 
