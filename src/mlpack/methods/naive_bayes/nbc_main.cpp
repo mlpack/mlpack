@@ -59,12 +59,11 @@ int main(int argc, char* argv[])
 
   // Create and train the classifier.
   Timers::StartTimer("training");
-  NaiveBayesClassifier nbc = NaiveBayesClassifier(training_data,
-      number_of_classes_);
+  NaiveBayesClassifier<> nbc(training_data, number_of_classes_);
   Timers::StopTimer("training");
 
   // Timing the running of the Naive Bayes Classifier.
-  arma::vec results;
+  arma::Col<size_t> results;
   Timers::StartTimer("testing");
   nbc.Classify(testing_data, results);
   Timers::StopTimer("testing");
