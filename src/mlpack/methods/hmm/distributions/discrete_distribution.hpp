@@ -11,7 +11,7 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace distribution {
+namespace distribution /** Probability distributions. */ {
 
 /**
  * A discrete distribution where the only observations are discrete
