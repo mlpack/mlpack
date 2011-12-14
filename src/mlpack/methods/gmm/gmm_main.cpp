@@ -6,7 +6,7 @@
  */
 #include "gmm.hpp"
 
-PROGRAM_INFO("GMM",
+PROGRAM_INFO("Gaussian Mixture Model (GMM) Training",
     "This program takes a parametric estimate of a Gaussian mixture model (GMM)"
     " using the EM algorithm to find the maximum likelihood estimate.  The "
     "model is saved to an XML file, which contains information about each "
