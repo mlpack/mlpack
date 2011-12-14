@@ -12,7 +12,7 @@
 #include "distributions/discrete_distribution.hpp"
 
 namespace mlpack {
-namespace hmm {
+namespace hmm /** Hidden Markov Models. */ {
 
 /**
  * A class that represents a Hidden Markov Model with an arbitrary type of
@@ -47,7 +47,33 @@ namespace hmm {
  * See the mlpack::distribution::DiscreteDistribution class for an example.  One
  * would use the DiscreteDistribution class when the observations are
  * non-negative integers.  Other distributions could be Gaussians, a mixture of
- * Gaussians (GMM), or any other probability distribution.
+ * Gaussians (GMM), or any other probability distribution implementing the
+ * four Distribution functions.
+ *
+ * Usage of the HMM class generally involves either training an HMM or loading
+ * an already-known HMM and taking probability measurements of sequences.
+ * Example code for supervised training of a Gaussian HMM (that is, where the
+ * emission output distribution is a single Gaussian for each hidden state) is
+ * given below.
+ *
+ * @code
+ * extern arma::mat observations; // Each column is an observation.
+ * extern arma::Col<size_t> states; // Hidden states for each observation.
+ * // Create an untrained HMM with 5 hidden states and default (N(0, 1))
+ * // Gaussian distributions with the dimensionality of the dataset.
+ * HMM<GaussianDistribution> hmm(5, GaussianDistribution(observations.n_rows));
+ *
+ * // Train the HMM (the labels could be omitted to perform unsupervised
+ * // training).
+ * hmm.Train(observations, states);
+ * @endcode
+ *
+ * Once initialized, the HMM can evaluate the probability of a certain sequence
+ * (with LogLikelihood()), predict the most likely sequence of hidden states
+ * (with Predict()), generate a sequence (with Generate()), or estimate the
+ * probabilities of each state for a sequence of observations (with Estimate()).
+ *
+ * @tparam Distribution Type of emission distribution for this HMM.
  */
 template<typename Distribution = distribution::DiscreteDistribution>
 class HMM
@@ -71,7 +97,7 @@ class HMM
 
   /**
    * Create the Hidden Markov Model with the given transition matrix and the
-   * given emission probability matrix.
+   * given emission distributions.
    *
    * The transition matrix should be such that T(i, j) is the probability of
    * transition to state i from state j.  The columns of the matrix should sum
@@ -81,7 +107,7 @@ class HMM
    * emission i while in state j.  The columns of the matrix should sum to 1.
    *
    * @param transition Transition matrix.
-   * @param emission Emission probability matrix.
+   * @param emission Emission distributions.
    */
   HMM(const arma::mat& transition, const std::vector<Distribution>& emission);
 
@@ -90,6 +116,12 @@ class HMM
    * unlabeled observations.  Instead of giving a guess transition and emission
    * matrix here, do that in the constructor.
    *
+   * @note
+   * Train() can be called multiple times with different sequences; each time it
+   * is called, it uses the current parameters of the HMM as a starting point
+   * for training.
+   * @endnote
+   *
    * @param dataSeq Vector of observation sequences.
    */
   void Train(const std::vector<arma::mat>& dataSeq);
@@ -97,6 +129,12 @@ class HMM
   /**
    * Train the model using the given labeled observations; the transition and
    * emission matrices are directly estimated.
+   *
+   * @note
+   * Train() can be called multiple times with different sequences; each time it
+   * is called, it uses the current parameters of the HMM as a starting point
+   * for training.
+   * @endnote
    *
    * @param dataSeq Vector of observation sequences.
    * @param stateSeq Vector of state sequences, corresponding to each

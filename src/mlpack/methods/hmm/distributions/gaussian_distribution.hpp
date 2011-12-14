@@ -14,6 +14,9 @@
 namespace mlpack {
 namespace distribution {
 
+/**
+ * A single multivariate Gaussian distribution.
+ */
 class GaussianDistribution
 {
  private:
