@@ -40,8 +40,6 @@ PARAM_FLAG("naive", "Compute the MST using O(n^2) naive algorithm.", "n");
 PARAM_INT("leaf_size", "Leaf size in the kd-tree.  One-element leaves give the "
     "empirically best performance, but at the cost of greater memory "
     "requirements.", "l", 1);
-PARAM_DOUBLE("total_squared_length", "Squared length of the computed tree.",
-    "s", 0.0);
 
 using namespace mlpack;
 using namespace mlpack::emst;
