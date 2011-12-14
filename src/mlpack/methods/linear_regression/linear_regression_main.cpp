@@ -7,73 +7,94 @@
 #include <mlpack/core.hpp>
 #include "linear_regression.hpp"
 
+PROGRAM_INFO("Simple Linear Regression Prediction",
+    "An implementation of simple linear regression using ordinary least "
+    "squares. This solves the problem\n\n"
+    "  y = X * b + e\n\n"
+    "where X (--input_file) and y (the last row of --input_file, or "
+    "--input_responses) are known and b is the desired variable.  The "
+    "calculated b is saved to disk (--output_file).\n"
+    "\n"
+    "Optionally, the calculated value of b is used to predict the responses for"
+    " another matrix X' (--test_file):\n\n"
+    "   y' = X' * b\n\n"
+    "and these predicted responses, y', are saved to a file "
+    "(--output_predictions).");
+
+PARAM_STRING_REQ("input_file", "File containing X (regressors).", "i");
+PARAM_STRING("input_responses", "Optional file containing y (responses). If "
+    "not given, the responses are assumed to be the last row of the input "
+    "file.", "r", "");
+
+PARAM_STRING("output_file", "File where parameters (b) will be saved.",
+    "o", "parameters.csv");
+
+PARAM_STRING("test_file", "File containing X' (test regressors).", "t", "");
+PARAM_STRING("output_predictions", "If --test_file is specified, this file is "
+    "where the predicted responses will be saved.", "p", "predictions.csv");
+
 using namespace mlpack;
-
-PARAM_STRING_REQ("train", "A file containing X", "X");
-PARAM_STRING_REQ("test", "A file containing data points to predict on",
-    "T");
-PARAM_STRING("responses", "A file containing the y values for X; if not "
-    "present, it is assumed the last column of train contains these values.",
-    "", "R");
-
-PROGRAM_INFO("Simple Linear Regression", "An implementation of simple linear "
-    "regression using ordinary least squares.");
+using namespace mlpack::regression;
+using namespace arma;
+using namespace std;
 
 int main(int argc, char* argv[])
 {
-  arma::vec B;
-  arma::colvec responses;
-  arma::mat predictors, file, points;
-
   // Handle parameters
   CLI::ParseCommandLine(argc, argv);
 
-  const std::string train_name =
-      CLI::GetParam<std::string>("train");
-  const std::string test_name =
-      CLI::GetParam<std::string>("test");
-  const std::string response_name =
-      CLI::GetParam<std::string>("responses");
+  const string train_name = CLI::GetParam<string>("input_file");
+  const string test_name = CLI::GetParam<string>("test_file");
+  const string response_name = CLI::GetParam<string>("input_responses");
+  const string output_file = CLI::GetParam<string>("output_file");
+  const string output_predictions = CLI::GetParam<string>("output_predictions");
 
-  data::Load(train_name.c_str(), file, true);
-  size_t n_cols = file.n_cols,
-         n_rows = file.n_rows;
+  mat regressors;
+  mat responses;
+  data::Load(train_name.c_str(), regressors, true);
 
+  // Are the responses in a separate file?
   if (response_name == "")
   {
-    predictors = file.submat(0,0, n_rows-2, n_cols-1);
     // The initial predictors for y, Nx1
-    responses = arma::trans(file.row(n_rows-1));
-    --n_rows;
+    responses = trans(regressors.row(regressors.n_rows - 1));
+    regressors.shed_row(regressors.n_rows - 1);
   }
   else
   {
-    predictors = file;
     // The initial predictors for y, Nx1
     data::Load(response_name.c_str(), responses, true);
 
-    if (responses.n_rows > 1)
+    if (responses.n_rows == 1)
+      responses = trans(responses); // Probably loaded backwards, but that's ok.
+
+    if (responses.n_cols > 1)
       Log::Fatal << "The responses must have one column.\n";
 
-    if (responses.n_cols != n_cols)
+    if (responses.n_rows != regressors.n_cols)
       Log::Fatal << "The responses must have the same number of rows as the "
           "training file.\n";
   }
 
-  data::Load(test_name.c_str(), points, true);
+  LinearRegression lr(regressors, responses.unsafe_col(0));
 
-  if (points.n_rows != n_rows)
-    Log::Fatal << "The test data must have the same number of columns as the "
-        "training file.\n";
+  // Save the parameters.
+  data::Save(output_file.c_str(), lr.Parameters(), false);
 
-  arma::rowvec predictions;
+  // Did we want to predict, too?
+  if (test_name != "")
+  {
+    arma::mat points;
+    data::Load(test_name.c_str(), points, true);
 
-  linear_regression::LinearRegression lr(predictors, responses);
-  lr.predict(predictions, points);
+    if (points.n_rows != regressors.n_rows)
+      Log::Fatal << "The test data must have the same number of columns as the "
+          "training file.\n";
 
-  //data.row(n_rows) = predictions;
-  //data::Save("out.csv", data);
-  //std::cout << "predictions: " << arma::trans(predictions) << '\n';
+    arma::vec predictions;
+    lr.Predict(points, predictions);
 
-  return 0;
+    // Save predictions.
+    data::Save(output_predictions.c_str(), predictions, false);
+  }
 }

@@ -10,7 +10,7 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace linear_regression {
+namespace regression /** Regression methods. */ {
 
 /**
  * A simple linear regresion algorithm using ordinary least squares.
@@ -24,7 +24,7 @@ class LinearRegression
    * @param predictors X, matrix of data points to create B with.
    * @param responses y, the measured data for each point in X
    */
-  LinearRegression(arma::mat& predictors, const arma::colvec& responses);
+  LinearRegression(arma::mat& predictors, const arma::vec& responses);
 
   /**
    * Initialize the model from a file.
@@ -41,31 +41,15 @@ class LinearRegression
   /**
    * Calculate y_i for each data point in points.
    *
-   * @param predictions y, will contain calculated values on completion.
    * @param points the data points to calculate with.
+   * @param predictions y, will contain calculated values on completion.
    */
-  void predict(arma::rowvec& predictions, const arma::mat& points);
+  void Predict(const arma::mat& points, arma::vec& predictions);
 
-  /**
-   * Returns the model.
-   *
-   * @return the parameters which describe the least squares solution.
-   */
-  arma::vec getParameters();
-
-  /**
-   * Saves the model.
-   *
-   * @param filename the name of the file to load the model from.
-   */
-  bool save(const std::string& filename);
-
-  /**
-   * Loads the model.
-   *
-   * @param filename the name of the file to load the model from.
-   */
-  bool load(const std::string& filename);
+  //! Return the parameters (the b vector).
+  const arma::vec& Parameters() const { return parameters; }
+  //! Modify the parameters (the b vector).
+  arma::vec& Parameters() { return parameters; }
 
  private:
   /**
