@@ -32,7 +32,11 @@ void NCA<Kernel>::LearnDistance(arma::mat& output_matrix)
   // We will use the L-BFGS optimizer to optimize the stretching matrix.
   optimization::L_BFGS<SoftmaxErrorFunction<Kernel> > lbfgs(error_func, 10);
 
+  Timer::Start("nca_lbfgs_optimization");
+
   lbfgs.Optimize(0, output_matrix);
+
+  Timer::Stop("nca_lbfgs_optimization");
 }
 
 }; // namespace nca

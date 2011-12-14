@@ -11,7 +11,7 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 
 namespace mlpack {
-namespace nca {
+namespace nca /** Neighborhood Components Analysis. */ {
 
 /**
  * An implementation of Neighborhood Components Analysis, both a linear
@@ -24,6 +24,7 @@ namespace nca {
  *
  * For more details, see the following published paper:
  *
+ * @code
  * @inproceedings{Goldberger2004,
  *   author = {Goldberger, Jacob and Roweis, Sam and Hinton, Geoff and
  *       Salakhutdinov, Ruslan},
@@ -33,6 +34,7 @@ namespace nca {
  *   title = {{Neighbourhood Components Analysis}},
  *   year = {2004}
  * }
+ * @endcode
  */
 template<typename Kernel>
 class NCA
