@@ -27,7 +27,6 @@
 
 #include "cli.hpp"
 #include "log.hpp"
-#include "../utilities/timers.hpp"
 
 #include "option.hpp"
 
@@ -44,8 +43,7 @@ static ProgramDoc empty_program_doc = ProgramDoc("", "");
 
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
-CLI::CLI() : desc("Allowed Options") , did_parse(false), 
-  doc(&empty_program_doc)
+CLI::CLI() : desc("Allowed Options") , did_parse(false), doc(&empty_program_doc)
 {
   return;
 }
@@ -71,22 +69,23 @@ CLI::CLI(const CLI& other) : desc(other.desc),
 CLI::~CLI()
 {
   // Terminate the program timer.
-  Timers::StopTimer("total_time");
+  Timer::Stop("total_time");
 
   // Did the user ask for verbose output?  If so we need to print everything.
   // But only if the user did not ask for help or info.
-  if (HasParam("verbose"))
+  if (HasParam("verbose") && !HasParam("help") && !HasParam("info"))
   {
-    Log::Info << "Execution parameters:" << std::endl;
+    Log::Info << std::endl << "Execution parameters:" << std::endl;
     Print();
 
     Log::Info << "Program timers:" << std::endl;
-    std::map<std::string, timeval> times = Timers::GetAllTimers();
-    std::map<std::string, timeval>::iterator iter;
-    for (iter = times.begin(); iter != times.end(); iter++)
+    std::map<std::string, timeval>::iterator it;
+    for (it = timer.GetAllTimers().begin(); it != timer.GetAllTimers().end();
+        ++it)
     {
-      Log::Info << "\t" << iter->first << ": ";
-      Timers::PrintTimer(iter->first.c_str());
+      std::string i = (*it).first;
+      Log::Info << "  " << i << ": ";
+      timer.PrintTimer((*it).first.c_str());
     }
   }
 
@@ -120,20 +119,19 @@ void CLI::Add(const char* identifier,
   std::string tmp = TYPENAME(bool);
   std::string path = identifier;
   std::string stringAlias = alias;
-  std::string prog_opt_id = path; //Use boost's syntax for aliasing.
+  std::string prog_opt_id = path; // Use boost's syntax for aliasing.
 
-  //deal with a required alias
+  // Deal with a required alias.
   if (stringAlias.length()) {
     amap_t& amap = GetSingleton().aliasValues;
     amap[stringAlias] = path;
     prog_opt_id = path + "," + alias;
   }
 
-  //Add the option to boost::program_options.
-  desc.add_options()
-    (prog_opt_id.c_str(), description);
+  // Add the option to boost::program_options.
+  desc.add_options()(prog_opt_id.c_str(), description);
 
-  //Make sure the description etc ends up in gmap
+  // Make sure the description, etc. ends up in gmap.
   gmap_t& gmap = GetSingleton().globalValues;
   ParamData data;
   data.desc = description;
@@ -198,21 +196,21 @@ bool CLI::HasParam(const char* identifier)
   gmap_t& gmap = GetSingleton().globalValues;
   std::string key = identifier;
 
-  //Take any possible alias into account
-  amap_t& amap = GetSingleton().aliasValues;  
+  // Take any possible alias into account.
+  amap_t& amap = GetSingleton().aliasValues;
   if (amap.count(key))
-    key = amap[key]; 
+    key = amap[key];
 
-  //Does the parameter exist at all?
+  // Does the parameter exist at all?
   int isInGmap = gmap.count(key);
 
   // Check if the parameter is boolean; if it is, we just want to see if it was
-  if(isInGmap && gmap[key].isFlag) 
+  // passed.
+  if(isInGmap)
     return gmap[key].wasPassed;
-  
-  
-  // Return true if we have a defined value for identifier.
-  return isInGmap != 0;
+
+  // The parameter was not passed in; return false.
+  return false;
 }
 
 /**
@@ -229,14 +227,14 @@ std::string CLI::GetDescription(const char* identifier)
   //Take any possible alias into account
   amap_t& amap = GetSingleton().aliasValues;
   if (amap.count(name))
-    name = amap[name]; 
+    name = amap[name];
 
 
   if(gmap.count(name))
     return gmap[name].desc;
   else
     return "";
-    
+
 }
 
 // Returns the sole instance of this class.
@@ -256,6 +254,8 @@ CLI& CLI::GetSingleton()
  */
 void CLI::ParseCommandLine(int argc, char** line)
 {
+  Timer::Start("total_time");
+
   po::variables_map& vmap = GetSingleton().vmap;
   po::options_description& desc = GetSingleton().desc;
 
@@ -274,8 +274,6 @@ void CLI::ParseCommandLine(int argc, char** line)
   UpdateGmap();
   DefaultMessages();
   RequiredOptions();
-
-  Timers::StartTimer("total_time");
 }
 
 /**
@@ -305,7 +303,7 @@ void CLI::ParseStream(std::istream& stream)
   DefaultMessages();
   RequiredOptions();
 
-  Timers::StartTimer("total_time");
+  Timer::Start("total_time");
 }
 
 /**
@@ -378,6 +376,7 @@ void CLI::DefaultMessages()
   {
     Log::Info.ignoreInput = false;
     std::string str = GetParam<std::string>("info");
+
     // The info node should always be there, but the user may not have specified
     // anything.
     if (str != "")
@@ -385,10 +384,17 @@ void CLI::DefaultMessages()
       PrintHelp(str);
       exit(0);
     }
+
+    // Otherwise just print the generalized help.
+    PrintHelp();
+    exit(0);
   }
 
   if (GetParam<bool>("verbose"))
+  {
+    // Give [INFO ] output.
     Log::Info.ignoreInput = false;
+  }
 
   // Notify the user if we are debugging.  This is not done in the constructor
   // because the output streams may not be set up yet.  We also don't want this
@@ -412,7 +418,6 @@ void CLI::RequiredOptions()
     std::string str = *iter;
     if (!vmap.count(str))
     { // If a required option isn't there...
-      Timers::StopTimer("total_time"); // Execution stops here, pretty much.
       Log::Fatal << "Required option --" << str.c_str() << " is undefined."
           << std::endl;
     }
@@ -426,23 +431,20 @@ void CLI::Print()
   gmap_t::iterator iter;
 
   // Print out all the values.
-  Log::Info << std::endl << "Values: " << std::endl;
   for (iter = gmap.begin(); iter != gmap.end(); iter++)
   {
     std::string key = iter->first;
-    std::string alias = AliasReverseLookup(key);
-    alias = alias.length() ? ", -" + alias : alias;
 
-    Log::Info << "  --" << key << alias << " : ";
+    Log::Info << "  " << key << ": ";
 
-    //Now, figure out what type it is, and print it.
-    //We can handle strings, ints, bools, floats, doubles.
+    // Now, figure out what type it is, and print it.
+    // We can handle strings, ints, bools, floats, doubles.
     ParamData data = iter->second;
     if (data.tname == TYPENAME(std::string))
     {
       std::string value = GetParam<std::string>(key.c_str());
       if(value == "")
-        Log::Info << "\" \"";
+        Log::Info << "\"\"";
       Log::Info << value;
     }
     else if (data.tname == TYPENAME(int))
@@ -621,7 +623,8 @@ void CLI::PrintHelp(std::string param)
  * @param str String to hyphenate (splits are on ' ').
  * @param padding Amount of padding on the left for each new line.
  */
-std::string CLI::HyphenateString(std::string str, int padding) {
+std::string CLI::HyphenateString(std::string str, int padding)
+{
   size_t margin = 80 - padding;
   if (str.length() < margin)
     return str;
@@ -633,7 +636,8 @@ std::string CLI::HyphenateString(std::string str, int padding) {
     size_t splitpos;
     // Check that we don't have a newline first.
     splitpos = str.find('\n', pos);
-    if (splitpos == std::string::npos || splitpos > (pos + margin)) {
+    if (splitpos == std::string::npos || splitpos > (pos + margin))
+    {
       // We did not find a newline.
       if (str.length() - pos < margin)
       {
@@ -667,11 +671,12 @@ std::string CLI::AliasReverseLookup(std::string value)
   for (iter = amap.begin(); iter != amap.end(); iter++)
     if (iter->second == value) // Found our match.
       return iter->first;
+
   return ""; // Nothing found.
 }
 
 // Add help parameter.
-PARAM_FLAG("help", "Default help info.", "");
+PARAM_FLAG("help", "Default help info.", "h");
 PARAM_STRING("info", "Get help on a specific module or option.", "", "");
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "");

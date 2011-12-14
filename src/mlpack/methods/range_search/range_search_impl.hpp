@@ -33,7 +33,7 @@ RangeSearch<MetricType, TreeType>::RangeSearch(
     numberOfPrunes(0)
 {
   // Build the trees.
-  Timers::StartTimer("range_search/tree_building");
+  Timer::Start("range_search/tree_building");
 
   // Naive sets the leaf size such that the entire tree is one node.
   referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
@@ -42,7 +42,7 @@ RangeSearch<MetricType, TreeType>::RangeSearch(
   queryTree = new TreeType(queryCopy, oldFromNewQueries,
       (naive ? queryCopy.n_cols : leafSize));
 
-  Timers::StopTimer("range_search/tree_building");
+  Timer::Stop("range_search/tree_building");
 }
 
 template<typename MetricType, typename TreeType>
@@ -64,13 +64,13 @@ RangeSearch<MetricType, TreeType>::RangeSearch(
     numberOfPrunes(0)
 {
   // Build the trees.
-  Timers::StartTimer("range_search/tree_building");
+  Timer::Start("range_search/tree_building");
 
   // Naive sets the leaf size such that the entire tree is one node.
   referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
       (naive ? referenceCopy.n_cols : leafSize));
 
-  Timers::StopTimer("range_search/tree_building");
+  Timer::Stop("range_search/tree_building");
 }
 
 template<typename MetricType, typename TreeType>
@@ -130,7 +130,7 @@ void RangeSearch<MetricType, TreeType>::Search(
     std::vector<std::vector<size_t> >& neighbors,
     std::vector<std::vector<double> >& distances)
 {
-  Timers::StartTimer("range_search/computing_neighbors");
+  Timer::Start("range_search/computing_neighbors");
 
   // Set size of prunes to 0.
   numberOfPrunes = 0;
@@ -182,7 +182,7 @@ void RangeSearch<MetricType, TreeType>::Search(
           *distancePtr);
   }
 
-  Timers::StopTimer("range_search/computing_neighbors");
+  Timer::Stop("range_search/computing_neighbors");
 
   // Output number of prunes.
   Log::Info << "Number of pruned nodes during computation: " << numberOfPrunes

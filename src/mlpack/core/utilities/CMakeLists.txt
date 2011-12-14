@@ -5,8 +5,6 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
     save_restore_utility.cpp
     save_restore_utility.hpp
-    timers.hpp
-    timers.cpp
 )
 
 # add directory name to sources

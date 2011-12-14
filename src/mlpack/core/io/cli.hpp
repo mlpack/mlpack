@@ -17,11 +17,12 @@
 #include <boost/any.hpp>
 #include <boost/program_options.hpp>
 
+#include "timers.hpp"
 #include "cli_deleter.hpp" // To make sure we can delete the singleton.
 
 /**
- * Document an executable.  Only one instance of this macro should be 
- * present in your program!  Therefore, use it in the main.cpp 
+ * Document an executable.  Only one instance of this macro should be
+ * present in your program!  Therefore, use it in the main.cpp
  * (or corresponding executable) in your program.
  *
  * @see mlpack::CLI, PARAM_FLAG(), PARAM_INT(), PARAM_DOUBLE(), PARAM_STRING(),
@@ -41,7 +42,7 @@
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter 
+ * @param ALIAS An alias for the parameter
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -84,7 +85,7 @@
  * Define a floating-point parameter.  You should use PARAM_DOUBLE instead.
  *
  * The parameter can then be specified on the command line with
- * --ID=value. 
+ * --ID=value.
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
@@ -157,7 +158,7 @@
  * Define a vector parameter.
  *
  * The parameter can then be specified on the command line with
- * --ID=value.  
+ * --ID=value.
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
@@ -183,11 +184,11 @@
  * Define a required integer parameter.
  *
  * The parameter must then be specified on the command line with
- * --ID=value. 
+ * --ID=value.
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter. 
+ * @param ALIAS An alias for the parameter.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -230,7 +231,7 @@
  * Define a required double parameter.
  *
  * The parameter must then be specified on the command line with
- * --ID=value. 
+ * --ID=value.
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
@@ -253,7 +254,7 @@
  * Define a required string parameter.
  *
  * The parameter must then be specified on the command line with
- * --ID=value. 
+ * --ID=value.
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
@@ -276,7 +277,7 @@
  * Define a required vector parameter.
  *
  * The parameter must then be specified on the command line with
- * --ID=value.  
+ * --ID=value.
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
@@ -711,13 +712,19 @@ class CLI
   //! True, if CLI was used to parse command line options.
   bool did_parse;
 
+  //! Holds the timer objects.
+  Timers timer;
+
+  //! So that Timer::Start() and Timer::Stop() can access the timer variable.
+  friend class Timer;
+
  public:
   //! Pointer to the ProgramDoc object.
   io::ProgramDoc *doc;
 
  private:
 
-  /** 
+  /**
    * Returns an alias, if given the name of the original.
    *
    * @param value The value in a key:value pair where the key
@@ -725,7 +732,7 @@ class CLI
    * @return The alias associated with value.
    */
   static std::string AliasReverseLookup(std::string value);
-  
+
   /**
    * Retrieve the singleton.
    *

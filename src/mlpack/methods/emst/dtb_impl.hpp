@@ -69,7 +69,7 @@ DualTreeBoruvka<TreeType>::DualTreeBoruvka(
     connections(data.n_cols),
     totalDist(0.0)
 {
-  Timers::StartTimer("emst/treebuilding");
+  Timer::Start("emst/treebuilding");
 
   if (!naive)
   {
@@ -83,7 +83,7 @@ DualTreeBoruvka<TreeType>::DualTreeBoruvka(
     tree = new TreeType(data, oldFromNew, data.n_cols);
   }
 
-  Timers::StopTimer("emst/treebuilding");
+  Timer::Stop("emst/treebuilding");
 
   edges.reserve(data.n_cols - 1); // Set size.
 
@@ -126,7 +126,7 @@ DualTreeBoruvka<TreeType>::~DualTreeBoruvka()
 template<typename TreeType>
 void DualTreeBoruvka<TreeType>::ComputeMST(arma::mat& results)
 {
-  Timers::StartTimer("emst/mst_computation");
+  Timer::Start("emst/mst_computation");
 
   while (edges.size() < (data.n_cols - 1))
   {
@@ -147,7 +147,7 @@ void DualTreeBoruvka<TreeType>::ComputeMST(arma::mat& results)
     Log::Info << edges.size() << " edges found so far.\n";
   }
 
-  Timers::StopTimer("emst/mst_computation");
+  Timer::Stop("emst/mst_computation");
 
   EmitResults(results);
 
