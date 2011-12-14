@@ -63,8 +63,13 @@ int main(int argc, char* argv[])
   mat testingData;
   data::Load(testingDataFilename.c_str(), testingData, true);
 
+  if (testingData.n_rows != trainingData.n_rows - 1)
+    Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
+        << "must be the same as training data (" << trainingData.n_rows - 1
+        << ")!" << std::endl;
+
   // Calculate number of classes.
-  size_t classes = (size_t) max(trainingData.row(trainingData.n_rows - 1));
+  size_t classes = (size_t) max(trainingData.row(trainingData.n_rows - 1)) + 1;
 
   // Create and train the classifier.
   Timer::Start("training");
