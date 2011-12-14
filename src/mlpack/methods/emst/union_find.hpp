@@ -1,6 +1,5 @@
 /**
- * @file union_find.h
- *
+ * @file union_find.hpp
  * @author Bill March (march@gatech.edu)
  *
  * Implements a union-find data structure.  This structure tracks the components
@@ -22,82 +21,69 @@ namespace emst {
 class UnionFind
 {
  private:
-  arma::Col<size_t> parent_;
-  arma::ivec rank_;
-  size_t number_of_elements_;
+  size_t size;
+  arma::Col<size_t> parent;
+  arma::ivec rank;
 
  public:
-  UnionFind() {}
+  UnionFind(const size_t size) : size(size), parent(size), rank(size)
+  {
+    for (size_t i = 0; i < size; ++i)
+    {
+      parent[i] = i;
+      rank[i] = 0;
+    }
+  }
 
   ~UnionFind() {}
 
   /**
-   * Initializes the structure.  This implementation assumes
-   * that the size is known advance and fixed
-   *
-   * @param size The number of elements to be tracked.
-   */
-  void Init(size_t size)
-  {
-    number_of_elements_ = size;
-    parent_.set_size(number_of_elements_);
-    rank_.set_size(number_of_elements_);
-    for (size_t i = 0; i < number_of_elements_; i++)
-    {
-      parent_[i] = i;
-      rank_[i] = 0;
-    }
-  }
-
-  /**
-   * Returns the component containing an element
+   * Returns the component containing an element.
    *
    * @param x the component to be found
    * @return The index of the component containing x
    */
-  size_t Find(size_t x)
+  size_t Find(const size_t x)
   {
-    if (parent_[x] == x)
+    if (parent[x] == x)
     {
       return x;
     }
     else
     {
       // This ensures that the tree has a small depth
-      parent_[x] = Find(parent_[x]);
-      return parent_[x];
+      parent[x] = Find(parent[x]);
+      return parent[x];
     }
   }
 
   /**
-   * @function Union
-   *
-   * Union the components containing x and y
+   * Union the components containing x and y.
    *
    * @param x one component
    * @param y the other component
    */
-  void Union(size_t x, size_t y)
+  void Union(const size_t x, const size_t y)
   {
-    size_t x_root = Find(x);
-    size_t y_root = Find(y);
+    const size_t xRoot = Find(x);
+    const size_t yRoot = Find(y);
 
-    if (x_root == y_root)
+    if (xRoot == yRoot)
     {
       return;
     }
-    else if (rank_[x_root] == rank_[y_root])
+    else if (rank[xRoot] == rank[yRoot])
     {
-      parent_[y_root] = parent_[x_root];
-      rank_[x_root] = rank_[x_root] + 1;
+      parent[yRoot] = parent[xRoot];
+      rank[xRoot] = rank[xRoot] + 1;
     }
-    else if (rank_[x_root] > rank_[y_root])
+    else if (rank[xRoot] > rank[yRoot])
     {
-      parent_[y_root] = x_root;
+      parent[yRoot] = xRoot;
     }
     else
     {
-      parent_[x_root] = y_root;
+      parent[xRoot] = yRoot;
     }
   }
 }; // class UnionFind
