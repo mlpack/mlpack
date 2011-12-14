@@ -86,8 +86,8 @@ void NaiveBayesClassifier<MatType>::Classify(const MatType& data,
     }
 
     // Find the index of the maximum value in tmp_vals.
-    size_t maxIndex = 0;
-    probs.max((arma::uword&) maxIndex);
+    arma::uword maxIndex = 0;
+    probs.max(maxIndex);
 
     results[n] = maxIndex;
   }
