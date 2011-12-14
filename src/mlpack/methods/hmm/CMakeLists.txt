@@ -3,16 +3,6 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-  discreteHMM.hpp
-  discreteHMM.cpp
-  gaussianHMM.hpp
-  gaussianHMM.cpp
-  mixgaussHMM.hpp
-  mixgaussHMM.cpp
-  mixtureDST.hpp
-  mixtureDST.cpp
-  support.hpp
-  support.cpp
   hmm.hpp
   hmm_impl.hpp
   distributions/discrete_distribution.hpp
