@@ -23,8 +23,8 @@ NeighborSearch(const arma::mat& referenceSet,
                TreeType* referenceTree,
                TreeType* queryTree,
                const MetricType metric) :
-    referenceCopy(referenceTree ? 0 : referenceSet),
-    queryCopy(queryTree ? 0 : querySet),
+    referenceCopy(referenceTree ? arma::mat() : referenceSet),
+    queryCopy(queryTree ? arma::mat() : querySet),
     referenceSet(referenceTree ? referenceSet : referenceCopy),
     querySet(queryTree ? querySet : queryCopy),
     naive(naive),
@@ -78,7 +78,7 @@ NeighborSearch(const arma::mat& referenceSet,
                const size_t leafSize,
                TreeType* referenceTree,
                const MetricType metric) :
-    referenceCopy(referenceTree ? 0 : referenceSet),
+    referenceCopy(referenceTree ? arma::mat() : referenceSet),
     referenceSet(referenceTree ? referenceSet : referenceCopy),
     querySet(referenceTree ? referenceSet : referenceCopy),
     naive(naive),
@@ -578,13 +578,13 @@ ComputeSingleNeighborsRecursion(const size_t pointId,
  * @param distance Distance from query point to reference point.
  */
 template<typename SortPolicy, typename MetricType, typename TreeType>
-void NeighborSearch<SortPolicy, MetricType, TreeType>::
-InsertNeighbor(const size_t queryIndex,
-               const size_t pos,
-               const size_t neighbor,
-               const double distance,
-               arma::Mat<size_t>& neighbors,
-               arma::mat& distances)
+void NeighborSearch<SortPolicy, MetricType, TreeType>::InsertNeighbor(
+    const size_t queryIndex,
+    const size_t pos,
+    const size_t neighbor,
+    const double distance,
+    arma::Mat<size_t>& neighbors,
+    arma::mat& distances)
 {
   // We only memmove() if there is actually a need to shift something.
   if (pos < (distances.n_rows - 1))

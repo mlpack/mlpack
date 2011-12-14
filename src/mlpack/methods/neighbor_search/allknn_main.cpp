@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
   if (!data::Load(referenceFile.c_str(), referenceData))
     Log::Fatal << "Reference file " << referenceFile << "not found." << endl;
 
-  Log::Info << "Loaded reference data from " << referenceFile << endl;
+  Log::Info << "Loaded reference data from '" << referenceFile << "'." << endl;
 
   // Sanity check on k value: must be greater than 0, must be less than the
   // number of reference points.
@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
     Timer::Start("tree_building");
 
     BinarySpaceTree<bound::HRectBound<2>, QueryStat<NearestNeighborSort> >
-        queryTree(queryData, oldFromNewRefs, leafSize);
+        queryTree(queryData, oldFromNewQueries, leafSize);
 
     Timer::Stop("tree_building");
 
@@ -165,15 +165,32 @@ int main(int argc, char *argv[])
   arma::Mat<size_t> neighborsOut(neighbors.n_rows, neighbors.n_cols);
 
   // Do the actual remapping.
-  for (size_t i = 0; i < distances.n_cols; i++)
+  if (CLI::GetParam<string>("query_file") != "")
   {
-    // Map distances (copy a column).
-    distancesOut.col(oldFromNewQueries[i]) = distances.col(i);
-
-    // Map indices of neighbors.
-    for (size_t j = 0; j < distances.n_rows; j++)
+    for (size_t i = 0; i < distances.n_cols; ++i)
     {
-      neighborsOut(j, oldFromNewQueries[i]) = oldFromNewRefs[neighbors(j, i)];
+      // Map distances (copy a column).
+      distancesOut.col(oldFromNewQueries[i]) = distances.col(i);
+
+      // Map indices of neighbors.
+      for (size_t j = 0; j < distances.n_rows; ++j)
+      {
+        neighborsOut(j, oldFromNewQueries[i]) = oldFromNewRefs[neighbors(j, i)];
+      }
+    }
+  }
+  else
+  {
+    for (size_t i = 0; i < distances.n_cols; ++i)
+    {
+      // Map distances (copy a column).
+      distancesOut.col(oldFromNewRefs[i]) = distances.col(i);
+
+      // Map indices of neighbors.
+      for (size_t j = 0; j < distances.n_rows; ++j)
+      {
+        neighborsOut(j, oldFromNewRefs[i]) = oldFromNewRefs[neighbors(j, i)];
+      }
     }
   }
 
