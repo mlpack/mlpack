@@ -34,6 +34,9 @@ namespace gmm /** Gaussian Mixture Models. */ {
  *
  * // Get the probability of 'observation' being observed from this GMM.
  * double probability = g.Probability(observation);
+ *
+ * // Get a random observation from the GMM.
+ * arma::vec observation = g.Random();
  * @endcode
  */
 class GMM {
