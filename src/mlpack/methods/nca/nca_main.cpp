@@ -10,35 +10,80 @@
 #include "nca.hpp"
 
 // Define parameters.
-PROGRAM_INFO("Neighborhood Components Analysis",
-    "documentation not done yet");
+PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
+    "This program implements Neighborhood Components Analysis, both a linear "
+    "dimensionality reduction technique and a distance learning technique.  The"
+    " method seeks to improve k-nearest-neighbor classification on a dataset "
+    "by scaling the dimensions.  The method is nonparametric, and does not "
+    "require a value of k.  It works by using stochastic (\"soft\") neighbor "
+    "assignments and using optimization techniques over the gradient of the "
+    "accuracy of the neighbor assignments.\n"
+    "\n"
+    "For more details, see the following published paper:\n\n"
+    "@inproceedings{\n"
+    "  author = {Goldberge, Jacob and Roweis, Sam and Hinton, Geoff and\n"
+    "      Salakhutdinov, Ruslan},\n"
+    "  booktitle = {Advances in Neural Information Processing Systems 17},\n"
+    "  pages = {513--520},\n"
+    "  publisher = {MIT Press},\n"
+    "  title = {{Neighbourhood Components Analysis}},\n"
+    "  year = {2004}\n"
+    "}\n"
+    "\n"
+    "To work, this algorithm needs labeled data.  It can be given as the last "
+    "row of the input dataset (--input_file), or alternatively in a separate "
+    "file (--labels_file).");
 
-PARAM_STRING_REQ("input_file", "Input dataset to run NCA on.", "I");
-PARAM_STRING_REQ("output_file", "Output file for learned distance matrix.", "O");
+PARAM_STRING_REQ("input_file", "Input dataset to run NCA on.", "i");
+PARAM_STRING_REQ("output_file", "Output file for learned distance matrix.",
+    "o");
+PARAM_STRING("labels_file", "File of labels for input dataset.", "l", "");
 
 using namespace mlpack;
 using namespace mlpack::nca;
 using namespace mlpack::metric;
 using namespace std;
+using namespace arma;
 
 int main(int argc, char* argv[])
 {
+  // Parse command line.
   CLI::ParseCommandLine(argc, argv);
 
-  arma::mat data;
-  data::Load(CLI::GetParam<string>("input_file").c_str(), data, true);
+  const string inputFile = CLI::GetParam<string>("input_file");
+  const string labelsFile = CLI::GetParam<string>("labels_file");
+  const string outputFile = CLI::GetParam<string>("output_file");
 
-  arma::uvec labels(data.n_cols);
-  for (size_t i = 0; i < data.n_cols; i++)
-    labels[i] = (int) data(data.n_rows - 1, i);
+  // Load data.
+  mat data;
+  data::Load(inputFile.c_str(), data, true);
 
-  data.shed_row(data.n_rows - 1);
+  // Do we want to load labels separately?
+  umat labels(data.n_cols, 1);
+  if (labelsFile != "")
+  {
+    data::Load(labelsFile.c_str(), labels, true);
 
-  NCA<LMetric<2> > nca(data, labels);
+    if (labels.n_rows == 1)
+      labels = trans(labels);
 
-  arma::mat distance;
+    if (labels.n_cols > 1)
+      Log::Fatal << "Labels must have only one column or row!" << endl;
+  }
+  else
+  {
+    for (size_t i = 0; i < data.n_cols; i++)
+      labels[i] = (int) data(data.n_rows - 1, i);
 
+    data.shed_row(data.n_rows - 1);
+  }
+
+  // Now create the NCA object and run the optimization.
+  NCA<LMetric<2> > nca(data, labels.unsafe_col(0));
+
+  mat distance;
   nca.LearnDistance(distance);
 
+  // Save the output.
   data::Save(CLI::GetParam<string>("output_file").c_str(), distance, true);
 }
