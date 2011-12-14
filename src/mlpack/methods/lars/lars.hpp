@@ -70,31 +70,83 @@ class LARS {
 
  public:
   
+  /**
+   * Set the parameters to LARS
+   * Both lambda1 and lambda2 default to 0
+   *
+   * @param useCholesky Whether or not to use Cholesky decomposition when 
+   *    solving linear system. If no, compute full Gram matrix at beginning.
+   * @param lambda1 Regularization parameter for l_1-norm penalty
+   */
   LARS(const bool useCholesky);
 
+  /**
+   * Set the parameters to LARS
+   * lambda2 defaults to 0
+   *
+   * @param useCholesky Whether or not to use Cholesky decomposition when 
+   *    solving linear system. If no, compute full Gram matrix at beginning.
+   * @param lambda1 Regularization parameter for l_1-norm penalty
+   */
   LARS(const bool useCholesky,
        const double lambda1);
 
+  /**
+   * Set the parameters to LARS
+   *
+   * @param useCholesky Whether or not to use Cholesky decomposition when 
+   *    solving linear system. If no, compute full Gram matrix at beginning.
+   * @param lambda1 Regularization parameter for l_1-norm penalty
+   * @param lambda2 Regularization parameter for l_2-norm penalty
+   */
   LARS(const bool useCholesky,
        const double lambda1,
        const double lambda2);
 
   ~LARS() { }
 
+  /*
+   * Set the Gram matrix (done before calling DoLars)
+   *
+   * @param matGram Matrix to which to set Gram matrix
+   */
   void SetGram(const arma::mat& matGram);
   
+  /*
+   * Compute Gram matrix. If elastic net, add lambda2 * identity to diagonal.
+   *
+   * @param matX Data matrix to use for computing Gram matrix
+   */
   void ComputeGram(const arma::mat& matX);
   
+  /*
+   * Accessor for activeSet
+   */
   const std::vector<arma::u32> ActiveSet();
-
+  
+  /*
+   * Accessor for betaPath
+   */
   const std::vector<arma::vec> BetaPath();
 
+  /*
+   * Accessor for lambdaPath
+   */
   const std::vector<double> LambdaPath();
-
+  
+  /* 
+   * Accessor for matUtriCholFactor
+   */
   const arma::mat MatUtriCholFactor();
   
+  /*
+   * Do LARS
+   */
   void DoLARS(const arma::mat& matX, const arma::vec& y);
-
+  
+  /* 
+   * Load the solution vector, which is the last vector from the solution path
+   */
   void Solution(arma::vec& beta);
   
   
