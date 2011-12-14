@@ -5,6 +5,7 @@ set(DIRS
   emst
   gmm
   hmm
+  kernel_pca
   kmeans
   lars
   linear_regression
