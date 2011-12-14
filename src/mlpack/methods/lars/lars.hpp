@@ -139,8 +139,11 @@ class LARS {
    */
   const arma::mat MatUtriCholFactor();
   
-  /*
-   * Do LARS
+  /* Run LARS
+   * 
+   * @param matX Input data into the algorithm - a matrix where each row is a
+   *    point and each column is a dimension
+   * @param y A vector of targets
    */
   void DoLARS(const arma::mat& matX, const arma::vec& y);
   
