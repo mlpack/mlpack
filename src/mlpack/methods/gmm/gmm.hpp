@@ -11,7 +11,7 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace gmm /*** Gaussian Mixture Models. */ {
+namespace gmm /** Gaussian Mixture Models. */ {
 
 /**
  * A Gaussian Mixture Model (GMM). This class uses maximum likelihood loss
