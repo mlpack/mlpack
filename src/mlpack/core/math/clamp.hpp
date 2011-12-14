@@ -1,10 +1,10 @@
 /**
- * @file math_misc.hpp
+ * @file clamp.hpp
  *
- * Miscellaneous math routines.
+ * Miscellaneous math clamping routines.
  */
-#ifndef __MLPACK_CORE_MATH_MATH_MISC_HPP
-#define __MLPACK_CORE_MATH_MATH_MISC_HPP
+#ifndef __MLPACK_CORE_MATH_CLAMP_HPP
+#define __MLPACK_CORE_MATH_CLAMP_HPP
 
 #include <stdlib.h>
 #include <math.h>
@@ -54,39 +54,7 @@ inline double ClampRange(double value, double range_min, double range_max)
   return value;
 }
 
-/**
- * Generates a uniform random number between 0 and 1.
- */
-inline double Random()
-{
-  return rand() * (1.0 / RAND_MAX);
-}
-
-/**
- * Generates a uniform random number in the specified range.
- */
-inline double Random(double lo, double hi)
-{
-  return Random() * (hi - lo) + lo;
-}
-
-/**
- * Generates a uniform random integer.
- */
-inline int RandInt(int hi_exclusive)
-{
-  return rand() % hi_exclusive;
-}
-
-/**
- * Generates a uniform random integer.
- */
-inline int RandInt(int lo, int hi_exclusive)
-{
-  return (rand() % (hi_exclusive - lo)) + lo;
-}
-
 }; // namespace math
 }; // namespace mlpack
 
-#endif // __MLPACK_CORE_MATH_MATH_LIB_HPP
+#endif // __MLPACK_CORE_MATH_CLAMP_HPP

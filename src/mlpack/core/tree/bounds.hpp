@@ -1,18 +1,12 @@
 /**
- * @file tree/bounds.h
+ * @file bounds.hpp
  *
  * Bounds that are useful for binary space partitioning trees.
- *
- * TODO: Come up with a better design so you can do plug-and-play distance
- * metrics.
- *
- * @experimental
  */
 
 #ifndef __MLPACK_CORE_TREE_BOUNDS_HPP
 #define __MLPACK_CORE_TREE_BOUNDS_HPP
 
-#include <mlpack/core/math/math_misc.hpp>
 #include <mlpack/core/math/range.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 
