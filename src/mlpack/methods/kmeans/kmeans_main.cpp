@@ -21,19 +21,21 @@ PROGRAM_INFO("K-Means Clustering", "This program performs K-Means clustering "
     "becomes empty, the point furthest from the centroid of the cluster with "
     "maximum variance is taken to fill that cluster.");
 
-PARAM_STRING_REQ("input_file", "Input dataset to perform clustering on.", "I");
-PARAM_INT_REQ("clusters", "Number of clusters to find.", "C");
+PARAM_STRING_REQ("input_file", "Input dataset to perform clustering on.", "i");
+PARAM_INT_REQ("clusters", "Number of clusters to find.", "c");
+
 PARAM_FLAG("in_place", "If specified, a column of the learned cluster "
-    "assignments will be added to the input dataset file.  In this case "
-    "--output_file is not necessary.", "P");
-PARAM_STRING("output_file", "File to write output labels to.", "O", "");
-PARAM_FLAG("allow_empty_clusters", "Allow empty clusters to be created.", "E");
-PARAM_FLAG("labels_only", "Only output labels into output file.", "L");
+    "assignments will be added to the input dataset file.  In this case, "
+    "--output_file is not necessary.", "p");
+PARAM_STRING("output_file", "File to write output labels or labeled data to.",
+    "o", "output.csv");
+PARAM_FLAG("allow_empty_clusters", "Allow empty clusters to be created.", "e");
+PARAM_FLAG("labels_only", "Only output labels into output file.", "l");
 PARAM_DOUBLE("overclustering", "Finds (overclustering * clusters) clusters, "
     "then merges them together until only the desired number of clusters are "
-    "left.", "C", 1.0);
+    "left.", "O", 1.0);
 PARAM_INT("max_iterations", "Maximum number of iterations before K-Means "
-    "terminates.", "M", 1000);
+    "terminates.", "m", 1000);
 
 int main(int argc, char** argv)
 {
