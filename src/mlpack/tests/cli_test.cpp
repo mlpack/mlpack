@@ -9,8 +9,6 @@
 #include <sstream>
 #include <sys/time.h>
 
-#include <mlpack/core/io/cli.hpp>
-#include <mlpack/core/io/log.hpp>
 #include <mlpack/core.hpp>
 
 #define DEFAULT_INT 42
@@ -37,9 +35,9 @@ BOOST_AUTO_TEST_CASE(TestCLIAdd)
   // Check that the CLI::HasParam returns false if no value has been specified
   // on the commandline and ignores any programmatical assignments.
   CLI::Add<bool>("global/bool", "True or False", "alias/bool");
-  
-  // CLI::HasParam should return true here
-  BOOST_REQUIRE(CLI::HasParam("global/bool"));
+
+  // CLI::HasParam should return false here.
+  BOOST_REQUIRE(!CLI::HasParam("global/bool"));
 
   // Check the description of our variable.
   BOOST_REQUIRE_EQUAL(CLI::GetDescription("global/bool").compare(
@@ -92,9 +90,6 @@ BOOST_AUTO_TEST_CASE(TestOption)
   // This test will involve creating an option, and making sure CLI reflects
   // this.
   PARAM(int, "test_parent/test", "test desc", "", DEFAULT_INT, false);
-
-  // Does CLI reflect this?
-  BOOST_REQUIRE(CLI::HasParam("test_parent/test"));
 
   std::string desc = std::string("test desc");
 
