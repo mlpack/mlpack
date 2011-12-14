@@ -40,6 +40,24 @@ class QueryStat
    */
   QueryStat() : bound(SortPolicy::WorstDistance()) { }
 
+  /**
+   * Initialization for a leaf, required by the StatisticType policy.
+   */
+  template<typename MatType>
+  QueryStat(const MatType& dataset, const size_t begin, const size_t count)
+      : bound(SortPolicy::WorstDistance()) { }
+
+  /**
+   * Initialization for a node, required by the StatisticType policy.
+   */
+  template<typename MatType>
+  QueryStat(const MatType& dataset,
+            const size_t begin,
+            const size_t count,
+            const QueryStat& leftStat,
+            const QueryStat& rightStat)
+      : bound(SortPolicy::WorstDistance()) { }
+
   //! Get the bound.
   const double Bound() const { return bound; }
   //! Modify the bound.
