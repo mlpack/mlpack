@@ -27,7 +27,11 @@ PROGRAM_INFO("Fast Euclidean Minimum Spanning Tree", "This program can compute "
     "Conference\n        on Knowledge Discovery and Data Mining},\n"
     "    series = {KDD '10},\n"
     "    year = {2010}\n"
-    "  }\n");
+    "  }\n\n"
+    "The output is saved in a three-column matrix, where each row indicates an "
+    "edge.  The first column corresponds to the lesser index of the edge; the "
+    "second column corresponds to the greater index of the edge; and the third "
+    "column corresponds to the distance between the two points.");
 
 PARAM_STRING_REQ("input_file", "Data input file.", "i");
 PARAM_STRING("output_file", "Data output file.  Stored as an edge list.", "o",
@@ -41,6 +45,7 @@ PARAM_DOUBLE("total_squared_length", "Squared length of the computed tree.",
 
 using namespace mlpack;
 using namespace mlpack::emst;
+using namespace mlpack::tree;
 
 int main(int argc, char* argv[])
 {
@@ -54,21 +59,19 @@ int main(int argc, char* argv[])
   arma::mat dataPoints;
   data::Load(dataFilename.c_str(), dataPoints, true);
 
-  // Do naive
+  // Do naive.
   if (CLI::GetParam<bool>("naive"))
   {
     Log::Info << "Running naive algorithm.\n";
 
-    DualTreeBoruvka naive;
+    DualTreeBoruvka<> naive(dataPoints, true);
 
-    naive.Init(dataPoints, true);
-
-    arma::mat naive_results;
-    naive.ComputeMST(naive_results);
+    arma::mat naiveResults;
+    naive.ComputeMST(naiveResults);
 
     std::string outputFilename = CLI::GetParam<std::string>("output_file");
 
-    data::Save(outputFilename.c_str(), naive_results, true);
+    data::Save(outputFilename.c_str(), naiveResults, true);
   }
   else
   {
@@ -83,10 +86,9 @@ int main(int argc, char* argv[])
 
     size_t leafSize = CLI::GetParam<int>("leaf_size");
 
-    DualTreeBoruvka dtb;
-    dtb.Init(dataPoints, false, leafSize);
+    DualTreeBoruvka<> dtb(dataPoints, false, leafSize);
 
-    Log::Info << "Tree built, running algorithm.\n\n";
+    Log::Info << "Tree built, running algorithm.\n";
 
     ////////////// Run DTB /////////////////////
     arma::mat results;

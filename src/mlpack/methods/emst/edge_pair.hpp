@@ -23,9 +23,12 @@ namespace emst {
 class EdgePair
 {
  private:
-  size_t lesser_index_;
-  size_t greater_index_;
-  double distance_;
+  //! Lesser index.
+  size_t lesser;
+  //! Greater index.
+  size_t greater;
+  //! Distance between two indices.
+  double distance;
 
  public:
   /**
@@ -34,44 +37,28 @@ class EdgePair
    * Init.  However, this is not necessary for functionality; it is just a way
    * to keep the edge list organized in other code.
    */
-  void Init(size_t lesser, size_t greater, double dist)
+  EdgePair(const size_t lesser, const size_t greater, const double dist) :
+      lesser(lesser), greater(greater), distance(dist)
   {
-    mlpack::Log::Assert(lesser != greater,
-        "indices equal when creating EdgePair, lesser == greater");
-    lesser_index_ = lesser;
-    greater_index_ = greater;
-    distance_ = dist;
+    Log::Assert(lesser != greater,
+        "EdgePair::EdgePair(): indices cannot be equal.");
   }
 
-  size_t lesser_index()
-  {
-    return lesser_index_;
-  }
+  //! Get the lesser index.
+  size_t Lesser() const { return lesser; }
+  //! Modify the lesser index.
+  size_t& Lesser() { return lesser; }
 
-  void set_lesser_index(size_t index)
-  {
-    lesser_index_ = index;
-  }
+  //! Get the greater index.
+  size_t Greater() const { return greater; }
+  //! Modify the greater index.
+  size_t& Greater() { return greater; }
 
-  size_t greater_index()
-  {
-    return greater_index_;
-  }
+  //! Get the distance.
+  double Distance() const { return distance; }
+  //! Modify the distance.
+  double& Distance() { return distance; }
 
-  void set_greater_index(size_t index)
-  {
-    greater_index_ = index;
-  }
-
-  double distance() const
-  {
-    return distance_;
-  }
-
-  void set_distance(double new_dist)
-  {
-    distance_ = new_dist;
-  }
 }; // class EdgePair
 
 }; // namespace emst
