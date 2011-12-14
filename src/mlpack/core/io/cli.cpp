@@ -533,8 +533,9 @@ void CLI::PrintHelp(std::string param)
   // Print out the descriptions.
   if(docs.programName != "")
   {
-    std::cout << docs.programName << std::endl;
-    std::cout << "  " << HyphenateString(docs.documentation, 2) << std::endl;
+    std::cout << docs.programName << std::endl << std::endl;
+    std::cout << "  " << HyphenateString(docs.documentation, 2) << std::endl
+        << std::endl;
   }
   else
     std::cout << "[undocumented program]" << std::endl << std::endl;
