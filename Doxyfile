@@ -98,6 +98,9 @@ EXCLUDE_PATTERNS       = */build/* \
                          */.svn/* \
                          *_impl.cc \
                          *_impl.h \
+                         *_impl.hpp \
+                         *.cpp \
+                         *.cc \
                          *_test.cc
 EXAMPLE_PATH           =
 EXAMPLE_PATTERNS       = *
