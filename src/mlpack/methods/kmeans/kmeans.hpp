@@ -14,7 +14,7 @@
 #include "max_variance_new_cluster.hpp"
 
 namespace mlpack {
-namespace kmeans {
+namespace kmeans /** K-Means clustering. */ {
 
 /**
  * This class implements K-Means clustering.  This implementation supports
@@ -25,6 +25,21 @@ namespace kmeans {
  * Two template parameters can (optionally) be supplied: the policy for how to
  * find the initial partition of the data, and the actions to be taken when an
  * empty cluster is encountered, as well as the distance metric to be used.
+ *
+ * A simple example of how to run K-Means clustering is shown below.
+ *
+ * @code
+ * extern arma::mat data; // Dataset we want to run K-Means on.
+ * arma::Col<size_t> assignments; // Cluster assignments.
+ *
+ * KMeans<> k(); // Default options.
+ * k.Cluster(data, 3, assignments); // 3 clusters.
+ *
+ * // Cluster using the Manhattan distance, 100 iterations maximum, and an
+ * // overclustering factor of 4.0.
+ * KMeans<metric::ManhattanDistance> k(100, 4.0);
+ * k.Cluster(data, 6, assignments); // 6 clusters.
+ * @endcode
  *
  * @tparam DistanceMetric The distance metric to use for this KMeans; see
  *     metric::LMetric for an example.
