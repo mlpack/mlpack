@@ -1,15 +1,18 @@
-
+/**
+ * @file kernel_pca_main.cpp
+ * @author Ajinkya Kale <kaleajinkya@gmail.com>
+ *
+ * Executable for Kernel PCA.
+ */
 #include <mlpack/core.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
 
-#include "kpca.hpp"
+#include "kernel_pca.hpp"
 
 using namespace mlpack;
+using namespace mlpack::kpca;
 using namespace std;
 using namespace arma;
-using namespace kpca;
-
-
 
 int main(int argc, char** argv)
 {
@@ -24,7 +27,7 @@ int main(int argc, char** argv)
   data.print("DATA : ");
 
    // Now run PCA to reduce the dimensionality.
-   kpca::KPCA<kernel::LinearKernel> p;
+   kpca::KernelPCA<kernel::LinearKernel> p;
    //p.CenterData();
    p.Apply(data, 2); // Reduce to 2 dimensions.
 
