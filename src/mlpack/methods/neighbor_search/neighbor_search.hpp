@@ -91,17 +91,14 @@ class NeighborSearch
  public:
   /**
    * Initialize the NeighborSearch object, passing both a query and reference
-   * dataset.  Optionally, already-built trees can be passed, for the case where
-   * a special tree-building procedure is needed.  If referenceTree is given, it
-   * is assumed that the points in referenceTree correspond to the points in
-   * referenceSet.  The same is true for queryTree and querySet.  An initialized
+   * dataset.  Optionally, perform the computation in naive mode or single-tree
+   * mode, and set the leaf size used for tree-building.  An initialized
    * distance metric can be given, for cases where the metric has internal data
    * (i.e. the distance::MahalanobisDistance class).
    *
-   * If naive mode is being used and a pre-built tree is given, it may not work:
-   * naive mode operates by building a one-node tree (the root node holds all
-   * the points).  If that condition is not satisfied with the pre-built tree,
-   * then naive mode will not work.
+   * This method will copy the matrices to internal copies, which are rearranged
+   * during tree-building.  You can avoid this extra copy by pre-constructing
+   * the trees and passing them using a diferent constructor.
    *
    * @param referenceSet Set of reference points.
    * @param querySet Set of query points.
@@ -110,28 +107,21 @@ class NeighborSearch
    * @param singleMode If true, single-tree search will be used (as opposed to
    *      dual-tree search).
    * @param leafSize Leaf size for tree construction (ignored if tree is given).
-   * @param referenceTree Optionally pass a pre-built tree for the reference
-   *      set.
-   * @param queryTree Optionally pass a pre-built tree for the query set.
    * @param metric An optional instance of the MetricType class.
    */
-  NeighborSearch(const arma::mat& referenceSet,
-                 const arma::mat& querySet,
+  NeighborSearch(const typename TreeType::Mat& referenceSet,
+                 const typename TreeType::Mat& querySet,
                  const bool naive = false,
                  const bool singleMode = false,
                  const size_t leafSize = 20,
-                 TreeType* referenceTree = NULL,
-                 TreeType* queryTree = NULL,
                  const MetricType metric = MetricType());
 
   /**
    * Initialize the NeighborSearch object, passing only one dataset, which is
-   * used as both the query and the reference dataset.  Optionally, an
-   * already-built tree can be passed, for the case where a special
-   * tree-building procedure is needed.  If referenceTree is given, it is
-   * assumed that the points in referenceTree correspond to the points in
-   * referenceSet.  An initialized distance metric can be given, for cases where
-   * the metric has internal data (i.e. the distance::MahalanobisDistance
+   * used as both the query and the reference dataset.  Optionally, perform the
+   * computation in naive mode or single-tree mode, and set the leaf size used
+   * for tree-building.  An initialized distance metric can be given, for cases
+   * where the metric has internal data (i.e. the distance::MahalanobisDistance
    * class).
    *
    * If naive mode is being used and a pre-built tree is given, it may not work:
@@ -145,16 +135,82 @@ class NeighborSearch
    * @param singleMode If true, single-tree search will be used (as opposed to
    *      dual-tree search).
    * @param leafSize Leaf size for tree construction (ignored if tree is given).
-   * @param referenceTree Optionally pass a pre-built tree for the reference
-   *      set.
    * @param metric An optional instance of the MetricType class.
    */
-  NeighborSearch(const arma::mat& referenceSet,
+  NeighborSearch(const typename TreeType::Mat& referenceSet,
                  const bool naive = false,
                  const bool singleMode = false,
                  const size_t leafSize = 20,
-                 TreeType* referenceTree = NULL,
                  const MetricType metric = MetricType());
+
+  /**
+   * Initialize the NeighborSearch object with the given datasets and
+   * pre-constructed trees.  It is assumed that the points in referenceSet and
+   * querySet correspond to the points in referenceTree and queryTree,
+   * respectively.  Optionally, choose to use single-tree mode.  Naive mode is
+   * not available as an option for this constructor; instead, to run naive
+   * computation, construct a tree with all of the points in one leaf (i.e.
+   * leafSize = number of points).  Additionally, an instantiated distance
+   * metric can be given, for cases where the distance metric holds data.
+   *
+   * There is no copying of the data matrices in this constructor (because
+   * tree-building is not necessary), so this is the constructor to use when
+   * copies absolutely must be avoided.
+   *
+   * @note
+   * Because tree-building (at least with BinarySpaceTree) modifies the ordering
+   * of a matrix, be sure you pass the modified matrix to this object!  In
+   * addition, mapping the points of the matrix back to their original indices
+   * is not done when this constructor is used.
+   * @endnote
+   *
+   * @param referenceTree Pre-built tree for reference points.
+   * @param queryTree Pre-built tree for query points.
+   * @param referenceSet Set of reference points corresponding to referenceTree.
+   * @param querySet Set of query points corresponding to queryTree.
+   * @param singleMode Whether single-tree computation should be used (as
+   *      opposed to dual-tree computation).
+   * @param metric Instantiated distance metric.
+   */
+  NeighborSearch(TreeType* referenceTree,
+                 TreeType* queryTree,
+                 const typename TreeType::Mat& referenceSet,
+                 const typename TreeType::Mat& querySet,
+                 const bool singleMode = false,
+                 const MetricType metric = MetricType());
+
+  /**
+   * Initialize the NeighborSearch object with the given reference dataset and
+   * pre-constructed tree.  It is assumed that the points in referenceSet
+   * correspond to the points in referenceTree.  Optionally, choose to use
+   * single-tree mode.  Naive mode is not available as an option for this
+   * constructor; instead, to run naive computation, construct a tree with all
+   * the points in one leaf (i.e. leafSize = number of points).  Additionally,
+   * an instantiated distance metric can be given, for the case where the
+   * distance metric holds data.
+   *
+   * There is no copying of the data matrices in this constructor (because
+   * tree-building is not necessary), so this is the constructor to use when
+   * copies absolutely must be avoided.
+   *
+   * @note
+   * Because tree-building (at least with BinarySpaceTree) modifies the ordering
+   * of a matrix, be sure you pass the modified matrix to this object!  In
+   * addition, mapping the points of the matrix back to their original indices
+   * is not done when this constructor is used.
+   * @endnote
+   *
+   * @param referenceTree Pre-built tree for reference points.
+   * @param referenceSet Set of reference points corresponding to referenceTree.
+   * @param singleMode Whether single-tree computation should be used (as
+   *      opposed to dual-tree computation).
+   * @param metric Instantiated distance metric.
+   */
+  NeighborSearch(TreeType* referenceTree,
+                 const typename TreeType::Mat& referenceSet,
+                 const bool singleMode = false,
+                 const MetricType metric = MetricType());
+
 
   /**
    * Delete the NeighborSearch object. The tree is the only member we are
