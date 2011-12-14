@@ -40,16 +40,18 @@ PROGRAM_INFO("All K-Nearest-Neighbors",
 
 // Define our input parameters that this program will take.
 PARAM_STRING_REQ("reference_file", "File containing the reference dataset.",
-    "R");
-PARAM_STRING("query_file", "File containing query points (optional).", "Q", "");
-PARAM_STRING_REQ("distances_file", "File to output distances into.", "D");
-PARAM_STRING_REQ("neighbors_file", "File to output neighbors into.", "N");
+    "r");
+PARAM_STRING_REQ("distances_file", "File to output distances into.", "d");
+PARAM_STRING_REQ("neighbors_file", "File to output neighbors into.", "n");
 
-PARAM_INT("leaf_size", "Leaf size for tree building.", "L", 20);
-PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "");
+PARAM_INT_REQ("k", "Number of furthest neighbors to find.", "k");
+
+PARAM_STRING("query_file", "File containing query points (optional).", "q", "");
+
+PARAM_INT("leaf_size", "Leaf size for tree building.", "l", 20);
+PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
-    "dual-tree search.", "S");
-PARAM_INT_REQ("k", "Number of furthest neighbors to find.", "");
+    "dual-tree search.", "s");
 
 int main(int argc, char *argv[])
 {
@@ -98,6 +100,9 @@ int main(int argc, char *argv[])
     Log::Warn << "--single_mode ignored because --naive is present." << endl;
   }
 
+  if (naive)
+    leafSize = referenceData.n_cols;
+
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
@@ -127,6 +132,9 @@ int main(int argc, char *argv[])
     if (!data::Load(queryFile.c_str(), queryData))
       Log::Fatal << "Query file " << queryFile << " not found" << endl;
 
+    if (naive && leafSize < queryData.n_cols)
+      leafSize = queryData.n_cols;
+
     Log::Info << "Query data loaded from " << queryFile << endl;
 
     Log::Info << "Building query tree..." << endl;
@@ -140,14 +148,14 @@ int main(int argc, char *argv[])
 
     Timer::Stop("tree_building");
 
-    allknn = new AllkNN(referenceData, queryData, naive, singleMode, 20,
-        &refTree, &queryTree);
+    allknn = new AllkNN(&refTree, &queryTree, referenceData, queryData,
+        singleMode);
 
     Log::Info << "Tree built." << endl;
   }
   else
   {
-    allknn = new AllkNN(referenceData, naive, singleMode, 20, &refTree);
+    allknn = new AllkNN(&refTree, referenceData, singleMode);
 
     Log::Info << "Trees built." << endl;
   }

@@ -15,24 +15,22 @@ using namespace mlpack::neighbor;
 // Construct the object.
 template<typename SortPolicy, typename MetricType, typename TreeType>
 NeighborSearch<SortPolicy, MetricType, TreeType>::
-NeighborSearch(const arma::mat& referenceSet,
-               const arma::mat& querySet,
+NeighborSearch(const typename TreeType::Mat& referenceSet,
+               const typename TreeType::Mat& querySet,
                const bool naive,
                const bool singleMode,
                const size_t leafSize,
-               TreeType* referenceTree,
-               TreeType* queryTree,
                const MetricType metric) :
-    referenceCopy(referenceTree ? arma::mat() : referenceSet),
-    queryCopy(queryTree ? arma::mat() : querySet),
-    referenceSet(referenceTree ? referenceSet : referenceCopy),
-    querySet(queryTree ? querySet : queryCopy),
+    referenceCopy(referenceSet),
+    queryCopy(querySet),
+    referenceSet(referenceCopy),
+    querySet(queryCopy),
     naive(naive),
     singleMode(!naive && singleMode), // No single mode if naive.
-    referenceTree(referenceTree),
-    queryTree(queryTree),
-    ownReferenceTree(!referenceTree), // False if a tree was passed.
-    ownQueryTree(!queryTree), // False if a tree was passed.
+    referenceTree(NULL),
+    queryTree(NULL),
+    ownReferenceTree(true), // False if a tree was passed.
+    ownQueryTree(true), // False if a tree was passed.
     metric(metric),
     numberOfPrunes(0)
 {
@@ -43,26 +41,12 @@ NeighborSearch(const arma::mat& referenceSet,
   if (!referenceTree || !queryTree)
     Timer::Start("tree_building");
 
-  if (!referenceTree)
-  {
-    // Construct as a naive object if we need to.
-    if (naive)
-      this->referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
-          referenceSet.n_cols /* everything in one leaf */);
-    else
-      this->referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
-          leafSize);
-  }
+  // Construct as a naive object if we need to.
+  referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
+      (naive ? referenceCopy.n_cols : leafSize));
 
-  if (!queryTree)
-  {
-    // Construct as a naive object if we need to.
-    if (naive)
-      this->queryTree = new TreeType(queryCopy, oldFromNewQueries,
-          querySet.n_cols);
-    else
-      this->queryTree = new TreeType(queryCopy, oldFromNewQueries, leafSize);
-  }
+  queryTree = new TreeType(queryCopy, oldFromNewQueries,
+      (naive ? querySet.n_cols : leafSize));
 
   // Stop the timer we started above (if we need to).
   if (!referenceTree || !queryTree)
@@ -72,40 +56,76 @@ NeighborSearch(const arma::mat& referenceSet,
 // Construct the object.
 template<typename SortPolicy, typename MetricType, typename TreeType>
 NeighborSearch<SortPolicy, MetricType, TreeType>::
-NeighborSearch(const arma::mat& referenceSet,
+NeighborSearch(const typename TreeType::Mat& referenceSet,
                const bool naive,
                const bool singleMode,
                const size_t leafSize,
-               TreeType* referenceTree,
                const MetricType metric) :
-    referenceCopy(referenceTree ? arma::mat() : referenceSet),
-    referenceSet(referenceTree ? referenceSet : referenceCopy),
-    querySet(referenceTree ? referenceSet : referenceCopy),
+    referenceCopy(referenceSet),
+    referenceSet(referenceCopy),
+    querySet(referenceCopy),
     naive(naive),
     singleMode(!naive && singleMode), // No single mode if naive.
-    referenceTree(referenceTree),
+    referenceTree(NULL),
     queryTree(NULL),
-    ownReferenceTree(!referenceTree),
+    ownReferenceTree(true),
     ownQueryTree(false), // Since it will be the same as referenceTree.
     metric(metric),
     numberOfPrunes(0)
 {
   // We'll time tree building, but only if we are building trees.
-  if (!referenceTree)
-  {
-    Timer::Start("tree_building");
+  Timer::Start("tree_building");
 
-    // Construct as a naive object if we need to.
-    if (naive)
-      this->referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
-          referenceSet.n_cols /* everything in one leaf */);
-    else
-      this->referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
-          leafSize);
+  // Construct as a naive object if we need to.
+  referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
+      (naive ? referenceSet.n_cols : leafSize));
 
-    // Stop the timer we started above.
-    Timer::Stop("tree_building");
-  }
+  // Stop the timer we started above.
+  Timer::Stop("tree_building");
+}
+
+// Construct the object.
+template<typename SortPolicy, typename MetricType, typename TreeType>
+NeighborSearch<SortPolicy, MetricType, TreeType>::NeighborSearch(
+    TreeType* referenceTree,
+    TreeType* queryTree,
+    const typename TreeType::Mat& referenceSet,
+    const typename TreeType::Mat& querySet,
+    const bool singleMode,
+    const MetricType metric) :
+    referenceSet(referenceSet),
+    querySet(querySet),
+    referenceTree(referenceTree),
+    queryTree(queryTree),
+    ownReferenceTree(false),
+    ownQueryTree(false),
+    naive(false),
+    singleMode(singleMode),
+    metric(metric),
+    numberOfPrunes(0)
+{
+  // Nothing else to initialize.
+}
+
+// Construct the object.
+template<typename SortPolicy, typename MetricType, typename TreeType>
+NeighborSearch<SortPolicy, MetricType, TreeType>::NeighborSearch(
+    TreeType* referenceTree,
+    const typename TreeType::Mat& referenceSet,
+    const bool singleMode,
+    const MetricType metric) :
+    referenceSet(referenceSet),
+    querySet(referenceSet),
+    referenceTree(referenceTree),
+    queryTree(NULL),
+    ownReferenceTree(false),
+    ownQueryTree(false),
+    naive(false),
+    singleMode(singleMode),
+    metric(metric),
+    numberOfPrunes(0)
+{
+  // Nothing else to initialize.
 }
 
 /**

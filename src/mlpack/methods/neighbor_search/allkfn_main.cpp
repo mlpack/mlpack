@@ -40,16 +40,17 @@ PROGRAM_INFO("All K-Furthest-Neighbors",
 
 // Define our input parameters that this program will take.
 PARAM_STRING_REQ("reference_file", "File containing the reference dataset.",
-    "R");
-PARAM_STRING("query_file", "File containing query points (optional).", "Q", "");
-PARAM_STRING_REQ("distances_file", "File to output distances into.", "D");
-PARAM_STRING_REQ("neighbors_file", "File to output neighbors into.", "N");
+    "r");
+PARAM_INT_REQ("k", "Number of furthest neighbors to find.", "k");
+PARAM_STRING_REQ("distances_file", "File to output distances into.", "d");
+PARAM_STRING_REQ("neighbors_file", "File to output neighbors into.", "n");
 
-PARAM_INT("leaf_size", "Leaf size for tree building.", "L", 20);
+PARAM_STRING("query_file", "File containing query points (optional).", "q", "");
+
+PARAM_INT("leaf_size", "Leaf size for tree building.", "l", 20);
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
-    "dual-tree search.", "S");
-PARAM_INT_REQ("k", "Number of furthest neighbors to find.", "");
+    "dual-tree search.", "s");
 
 int main(int argc, char *argv[])
 {
@@ -98,6 +99,9 @@ int main(int argc, char *argv[])
     Log::Warn << "--single_mode ignored because --naive is present." << endl;
   }
 
+  if (naive)
+    leafSize = referenceData.n_cols;
+
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
@@ -111,7 +115,7 @@ int main(int argc, char *argv[])
   Timer::Start("reference_tree_building");
 
   BinarySpaceTree<bound::HRectBound<2>, QueryStat<FurthestNeighborSort> >
-      refTree(referenceData, oldFromNewRefs);
+      refTree(referenceData, oldFromNewRefs, leafSize);
 
   Timer::Stop("reference_tree_building");
 
@@ -129,23 +133,26 @@ int main(int argc, char *argv[])
 
     Log::Info << "Building query tree..." << endl;
 
+    if (naive && leafSize < queryData.n_cols)
+      leafSize = queryData.n_cols;
+
     // Build trees by hand, so we can save memory: if we pass a tree to
     // NeighborSearch, it does not copy the matrix.
     Timer::Start("query_tree_building");
 
     BinarySpaceTree<bound::HRectBound<2>, QueryStat<FurthestNeighborSort> >
-        queryTree(queryData, oldFromNewQueries);
+        queryTree(queryData, oldFromNewQueries, leafSize);
 
     Timer::Stop("query_tree_building");
 
-    allkfn = new AllkFN(referenceData, queryData, naive, singleMode, 20,
-        &refTree, &queryTree);
+    allkfn = new AllkFN(&refTree, &queryTree, referenceData, queryData,
+        singleMode);
 
     Log::Info << "Tree built." << endl;
   }
   else
   {
-    allkfn = new AllkFN(referenceData, naive, singleMode, 20, &refTree);
+    allkfn = new AllkFN(&refTree, referenceData, singleMode);
 
     Log::Info << "Trees built." << endl;
   }
