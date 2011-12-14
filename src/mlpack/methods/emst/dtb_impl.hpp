@@ -69,7 +69,7 @@ DualTreeBoruvka<TreeType>::DualTreeBoruvka(
     connections(data.n_cols),
     totalDist(0.0)
 {
-  Timer::Start("emst/treebuilding");
+  Timer::Start("emst/tree_building");
 
   if (!naive)
   {
@@ -83,7 +83,7 @@ DualTreeBoruvka<TreeType>::DualTreeBoruvka(
     tree = new TreeType(data, oldFromNew, data.n_cols);
   }
 
-  Timer::Stop("emst/treebuilding");
+  Timer::Stop("emst/tree_building");
 
   edges.reserve(data.n_cols - 1); // Set size.
 
@@ -120,13 +120,15 @@ DualTreeBoruvka<TreeType>::~DualTreeBoruvka()
 }
 
 /**
- * Call this function after Init.  It will iteratively find the nearest
- * neighbor of each component until the MST is complete.
+ * Iteratively find the nearest neighbor of each component until the MST is
+ * complete.
  */
 template<typename TreeType>
 void DualTreeBoruvka<TreeType>::ComputeMST(arma::mat& results)
 {
   Timer::Start("emst/mst_computation");
+
+  totalDist = 0; // Reset distance.
 
   while (edges.size() < (data.n_cols - 1))
   {
