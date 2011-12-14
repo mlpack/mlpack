@@ -4,12 +4,12 @@
  *
  * The SaveRestoreUtility provides helper functions in saving and
  *   restoring models.  The current output file type is XML.
- *
- * @experimental
  */
-#ifndef SAVE_RESTORE_MODEL_HPP
-#error "Do not include this header directly."
-#endif
+#ifndef __MLPACK_CORE_UTIL_SAVE_RESTORE_UTILITY_IMPL_HPP
+#define __MLPACK_CORE_UTIL_SAVE_RESTORE_UTILITY_IMPL_HPP
+
+// In case it hasn't been included already.
+#include "save_restore_utility.hpp"
 
 using namespace mlpack;
 using namespace mlpack::utilities;
@@ -79,3 +79,5 @@ void SaveRestoreUtility::SaveParameter(std::vector<T>& t, std::string name)
   vectorAsStr.erase(vectorAsStr.length() - 1);
   parameters[name] = vectorAsStr;
 }
+
+#endif

@@ -4,12 +4,11 @@
  *
  * Implementation of save functionality.
  */
-#ifndef __MLPACK_CORE_DATA_SAVE_HPP
-#error "Don't include this file directly; include mlpack/core/data/save.hpp."
-#endif
-
 #ifndef __MLPACK_CORE_DATA_SAVE_IMPL_HPP
 #define __MLPACK_CORE_DATA_SAVE_IMPL_HPP
+
+// In case it hasn't already been included.
+#include "save.hpp"
 
 namespace mlpack {
 namespace data {

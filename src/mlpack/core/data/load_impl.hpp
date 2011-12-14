@@ -4,12 +4,11 @@
  *
  * Implementation of templatized load() function defined in load.hpp.
  */
-#ifndef __MLPACK_CORE_DATA_LOAD_HPP
-#error "Don't include this file directly; include mlpack/core/data/load.hpp."
-#endif
-
 #ifndef __MLPACK_CORE_DATA_LOAD_IMPL_HPP
 #define __MLPACK_CORE_DATA_LOAD_IMPL_HPP
+
+// In case it hasn't already been included.
+#include "load.hpp"
 
 namespace mlpack {
 namespace data {
