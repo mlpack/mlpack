@@ -16,7 +16,11 @@ namespace mlpack {
 namespace emst {
 
 /**
- * A Union-Find data structure.  See Cormen, Rivest, & Stein for details.
+ * A Union-Find data structure.  See Cormen, Rivest, & Stein for details.  The
+ * structure tracks the components of a graph.  Each point in the graph is
+ * initially in its own component.  Calling Union(x, y) unites the components
+ * indexed by x and y.  Find(x) returns the index of the component containing
+ * point x.
  */
 class UnionFind
 {
@@ -26,6 +30,7 @@ class UnionFind
   arma::ivec rank;
 
  public:
+  //! Construct the object with the given size.
   UnionFind(const size_t size) : size(size), parent(size), rank(size)
   {
     for (size_t i = 0; i < size; ++i)
@@ -35,7 +40,8 @@ class UnionFind
     }
   }
 
-  ~UnionFind() {}
+  //! Destroy the object (nothing to do).
+  ~UnionFind() { }
 
   /**
    * Returns the component containing an element.
