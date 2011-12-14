@@ -119,20 +119,18 @@ void CLI::Add(const char* identifier,
   std::string tmp = TYPENAME(bool);
   std::string path = identifier;
   std::string stringAlias = alias;
-  std::string prog_opt_id = path; // Use boost's syntax for aliasing.
+  // Must make use of boost option name syntax.
+  std::string prog_opt_id = stringAlias.length() ? path + "," + alias : path;
 
   // Deal with a required alias.
-  if (stringAlias.length()) {
-    amap_t& amap = GetSingleton().aliasValues;
-    amap[stringAlias] = path;
-    prog_opt_id = path + "," + alias;
-  }
+  AddAlias(stringAlias, path);
 
   // Add the option to boost::program_options.
   desc.add_options()(prog_opt_id.c_str(), description);
 
   // Make sure the description, etc. ends up in gmap.
   gmap_t& gmap = GetSingleton().globalValues;
+  
   ParamData data;
   data.desc = description;
   data.tname = "";
@@ -150,39 +148,110 @@ void CLI::Add(const char* identifier,
 }
 
 /*
+ * Adds an alias mapping for a given parameter.
+ *
+ * @param alias The alias we will use for the parameter.
+ * @param original The name of the actual parameter we will be mapping to.
+ */
+void CLI::AddAlias(std::string alias, std::string original) {
+  //Conduct the mapping
+  if (alias.length()) {
+    amap_t& amap = GetSingleton().aliasValues;
+    amap[alias] = original;
+  }
+}
+
+/*
  * @brief Adds a flag parameter to CLI.
  */
 void CLI::AddFlag(const char* identifier,
                  const char* description,
                  const char* alias)
 {
-  po::options_description& desc = CLI::GetSingleton().desc;
+  // Reuse functionality from add
+  Add(identifier, description, alias, false); 
 
-  std::string path = identifier;
-  std::string stringAlias = alias;
-  std::string prog_opt_id = path;
-
-  //Deal with a required alias
-  if (stringAlias.length()) {
-    amap_t& amap = GetSingleton().aliasValues;
-    amap[stringAlias] = path;
-    prog_opt_id = path + "," + alias;
-  }
-
-  // Add the option to boost::program_options.
-  desc.add_options()
-    (prog_opt_id.c_str(), po::value<bool>()->implicit_value(true), description);
-
-  // Add the proper metadata in gmap.
+  // Insert the proper metadata in gmap.
   gmap_t& gmap = GetSingleton().globalValues;
+
   ParamData data;
   data.desc = description;
   data.tname = TYPENAME(bool);
-  data.name = path;
+  data.name = std::string(identifier);
   data.isFlag = true;
   data.wasPassed = false;
 
-  gmap[path] = data;
+  gmap[data.name] = data;
+}
+
+std::string CLI::AliasReverseLookup(std::string value)
+{
+  amap_t& amap = GetSingleton().aliasValues;
+  amap_t::iterator iter;
+  for (iter = amap.begin(); iter != amap.end(); iter++)
+    if (iter->second == value) // Found our match.
+      return iter->first;
+
+  return ""; // Nothing found.
+}
+
+/**
+ * Parses the parameters for 'help' and 'info'
+ * If found, will print out the appropriate information
+ * and kill the program.
+ */
+void CLI::DefaultMessages()
+{
+  // Default help message
+  if (HasParam("help"))
+  {
+    Log::Info.ignoreInput = false;
+    PrintHelp();
+    exit(0); // The user doesn't want to run the program, he wants help.
+  }
+
+  if (HasParam("info"))
+  {
+    Log::Info.ignoreInput = false;
+    std::string str = GetParam<std::string>("info");
+
+    // The info node should always be there, but the user may not have specified
+    // anything.
+    if (str != "")
+    {
+      PrintHelp(str);
+      exit(0);
+    }
+
+    // Otherwise just print the generalized help.
+    PrintHelp();
+    exit(0);
+  }
+
+  if (GetParam<bool>("verbose"))
+  {
+    // Give [INFO ] output.
+    Log::Info.ignoreInput = false;
+  }
+
+  // Notify the user if we are debugging.  This is not done in the constructor
+  // because the output streams may not be set up yet.  We also don't want this
+  // message twice if the user just asked for help or information.
+  Log::Debug << "Compiled with debugging symbols." << std::endl;
+}
+
+/**
+ * Destroy the CLI object.  This resets the pointer to the singleton, so in case
+ * someone tries to access it after destruction, a new one will be made (the
+ * program will not fail).
+ */
+void CLI::Destroy()
+{
+  if (singleton != NULL)
+  {
+    delete singleton;
+    singleton = NULL; // Reset pointer.
+  }
 }
 
 /**
@@ -211,6 +280,54 @@ bool CLI::HasParam(const char* identifier)
 
   // The parameter was not passed in; return false.
   return false;
+}
+
+/**
+ * Hyphenate a string or split it onto multiple 80-character lines, with some
+ * amount of padding on each line.  This is used for option output.
+ *
+ * @param str String to hyphenate (splits are on ' ').
+ * @param padding Amount of padding on the left for each new line.
+ */
+std::string CLI::HyphenateString(std::string str, int padding)
+{
+  size_t margin = 80 - padding;
+  if (str.length() < margin)
+    return str;
+  std::string out("");
+  unsigned int pos = 0;
+  // First try to look as far as possible.
+  while (pos < str.length() - 1)
+  {
+    size_t splitpos;
+    // Check that we don't have a newline first.
+    splitpos = str.find('\n', pos);
+    if (splitpos == std::string::npos || splitpos > (pos + margin))
+    {
+      // We did not find a newline.
+      if (str.length() - pos < margin)
+      {
+        splitpos = str.length(); // The rest fits on one line.
+      }
+      else
+      {
+        splitpos = str.rfind(' ', margin + pos); // Find nearest space.
+        if (splitpos <= pos || splitpos == std::string::npos) // Not found.
+          splitpos = pos + margin;
+      }
+    }
+    out += str.substr(pos, (splitpos - pos));
+    if (splitpos < str.length())
+    {
+      out += '\n';
+      out += std::string(padding, ' ');
+    }
+
+    pos = splitpos;
+    if (str[pos] == ' ' || str[pos] == '\n')
+      pos++;
+  }
+  return out;
 }
 
 /**
@@ -306,124 +423,6 @@ void CLI::ParseStream(std::istream& stream)
   Timer::Start("total_time");
 }
 
-/**
- * Parses the values given on the command line, overriding any default values.
- */
-void CLI::UpdateGmap()
-{
-  gmap_t& gmap = GetSingleton().globalValues;
-  po::variables_map& vmap = GetSingleton().vmap;
-
-  // Iterate through vmap, and overwrite default values with anything found on
-  // command line.
-  po::variables_map::iterator i;
-  for (i = vmap.begin(); i != vmap.end(); i++)
-  {
-    ParamData param;
-    if (gmap.count(i->first)) // We need to preserve certain data
-      param = gmap[i->first];
-
-    param.value = vmap[i->first].value();
-    param.wasPassed = true;
-    gmap[i->first] = param;
-  }
-}
-
-/**
- * Registers a ProgramDoc object, which contains documentation about the
- * program.
- *
- * @param doc Pointer to the ProgramDoc object.
- */
-void CLI::RegisterProgramDoc(ProgramDoc* doc)
-{
-  // Only register the doc if it is not the dummy object we created at the
-  // beginning of the file (as a default value in case this is never called).
-  if (doc != &empty_program_doc)
-    GetSingleton().doc = doc;
-}
-
-/**
- * Destroy the CLI object.  This resets the pointer to the singleton, so in case
- * someone tries to access it after destruction, a new one will be made (the
- * program will not fail).
- */
-void CLI::Destroy()
-{
-  if (singleton != NULL)
-  {
-    delete singleton;
-    singleton = NULL; // Reset pointer.
-  }
-}
-
-/**
- * Parses the parameters for 'help' and 'info'
- * If found, will print out the appropriate information
- * and kill the program.
- */
-void CLI::DefaultMessages()
-{
-  // Default help message
-  if (GetParam<bool>("help"))
-  {
-    Log::Info.ignoreInput = false;
-    PrintHelp();
-    exit(0); // The user doesn't want to run the program, he wants help.
-  }
-
-  if (HasParam("info"))
-  {
-    Log::Info.ignoreInput = false;
-    std::string str = GetParam<std::string>("info");
-
-    // The info node should always be there, but the user may not have specified
-    // anything.
-    if (str != "")
-    {
-      PrintHelp(str);
-      exit(0);
-    }
-
-    // Otherwise just print the generalized help.
-    PrintHelp();
-    exit(0);
-  }
-
-  if (GetParam<bool>("verbose"))
-  {
-    // Give [INFO ] output.
-    Log::Info.ignoreInput = false;
-  }
-
-  // Notify the user if we are debugging.  This is not done in the constructor
-  // because the output streams may not be set up yet.  We also don't want this
-  // message twice if the user just asked for help or information.
-  Log::Debug << "Compiled with debugging symbols." << std::endl;
-}
-
-/**
- * Checks that all parameters specified as required have been specified on the
- * command line.  If they havent, prints an error message and kills the program.
- */
-void CLI::RequiredOptions()
-{
-  po::variables_map& vmap = GetSingleton().vmap;
-  std::list<std::string> rOpt = GetSingleton().requiredOptions;
-
-  // Now, warn the user if they missed any required options.
-  std::list<std::string>::iterator iter;
-  for (iter = rOpt.begin(); iter != rOpt.end(); iter++)
-  {
-    std::string str = *iter;
-    if (!vmap.count(str))
-    { // If a required option isn't there...
-      Log::Fatal << "Required option --" << str.c_str() << " is undefined."
-          << std::endl;
-    }
-  }
-}
-
 /* Prints out the current hierarchy. */
 void CLI::Print()
 {
@@ -478,7 +477,6 @@ void CLI::Print()
   }
   Log::Info << std::endl;
 }
-
 
 /* Prints the descriptions of the current hierarchy. */
 void CLI::PrintHelp(std::string param)
@@ -618,62 +616,62 @@ void CLI::PrintHelp(std::string param)
 }
 
 /**
- * Hyphenate a string or split it onto multiple 80-character lines, with some
- * amount of padding on each line.  This is used for option output.
- *
- * @param str String to hyphenate (splits are on ' ').
- * @param padding Amount of padding on the left for each new line.
- */
-std::string CLI::HyphenateString(std::string str, int padding)
+ * Registers a ProgramDoc object, which contains documentation about the
+ * program.
+ *
+ * @param doc Pointer to the ProgramDoc object.
+ */
+void CLI::RegisterProgramDoc(ProgramDoc* doc)
 {
-  size_t margin = 80 - padding;
-  if (str.length() < margin)
-    return str;
-  std::string out("");
-  unsigned int pos = 0;
-  // First try to look as far as possible.
-  while (pos < str.length() - 1)
-  {
-    size_t splitpos;
-    // Check that we don't have a newline first.
-    splitpos = str.find('\n', pos);
-    if (splitpos == std::string::npos || splitpos > (pos + margin))
-    {
-      // We did not find a newline.
-      if (str.length() - pos < margin)
-      {
-        splitpos = str.length(); // The rest fits on one line.
-      }
-      else
-      {
-        splitpos = str.rfind(' ', margin + pos); // Find nearest space.
-        if (splitpos <= pos || splitpos == std::string::npos) // Not found.
-          splitpos = pos + margin;
-      }
-    }
-    out += str.substr(pos, (splitpos - pos));
-    if (splitpos < str.length())
-    {
-      out += '\n';
-      out += std::string(padding, ' ');
-    }
-
-    pos = splitpos;
-    if (str[pos] == ' ' || str[pos] == '\n')
-      pos++;
-  }
-  return out;
+  // Only register the doc if it is not the dummy object we created at the
+  // beginning of the file (as a default value in case this is never called).
+  if (doc != &empty_program_doc)
+    GetSingleton().doc = doc;
 }
 
-std::string CLI::AliasReverseLookup(std::string value)
+/**
+ * Checks that all parameters specified as required have been specified on the
+ * command line.  If they havent, prints an error message and kills the program.
+ */
+void CLI::RequiredOptions()
 {
-  amap_t& amap = GetSingleton().aliasValues;
-  amap_t::iterator iter;
-  for (iter = amap.begin(); iter != amap.end(); iter++)
-    if (iter->second == value) // Found our match.
-      return iter->first;
+  po::variables_map& vmap = GetSingleton().vmap;
+  std::list<std::string> rOpt = GetSingleton().requiredOptions;
 
-  return ""; // Nothing found.
+  // Now, warn the user if they missed any required options.
+  std::list<std::string>::iterator iter;
+  for (iter = rOpt.begin(); iter != rOpt.end(); iter++)
+  {
+    std::string str = *iter;
+    if (!vmap.count(str))
+    { // If a required option isn't there...
+      Log::Fatal << "Required option --" << str.c_str() << " is undefined."
+          << std::endl;
+    }
+  }
+}
+
+/**
+ * Parses the values given on the command line, overriding any default values.
+ */
+void CLI::UpdateGmap()
+{
+  gmap_t& gmap = GetSingleton().globalValues;
+  po::variables_map& vmap = GetSingleton().vmap;
+
+  // Iterate through vmap, and overwrite default values with anything found on
+  // command line.
+  po::variables_map::iterator i;
+  for (i = vmap.begin(); i != vmap.end(); i++)
+  {
+    ParamData param;
+    if (gmap.count(i->first)) // We need to preserve certain data
+      param = gmap[i->first];
+
+    param.value = vmap[i->first].value();
+    param.wasPassed = true;
+    gmap[i->first] = param;
+  }
 }
 
 // Add help parameter.

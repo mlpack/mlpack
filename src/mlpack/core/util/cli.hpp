@@ -331,15 +331,6 @@
   JOIN(__io_option_flag_object_, __COUNTER__) (ID, DESC, ALIAS);
   /** @endcond */
 
-  /**
-   * Define a module.
-   *
-   * @param ID Name of the module.
-   * @param DESC Description of the module (1-2 sentences).
-   */
-  #define PARAM_MODULE(ID, DESC) static mlpack::io::Option<int> \
-      JOIN(io_option_module_dummy_object_, __COUNTER__) (true, 0, ID, DESC, \
-      NULL);
 #else
   // We have to do some really bizarre stuff since __COUNTER__ isn't defined.  I
   // don't think we can absolutely guarantee success, but it should be "good
@@ -353,16 +344,6 @@
   #define PARAM_FLAG_INTERNAL(ID, DESC, ALIAS) static mlpack::io::Option<bool>\
       JOIN(__io_option_flag_object_, __LINE__) (ID, DESC, ALIAS);
   /** @endcond */
-
-  /**
-   * Define a module.
-   *
-   * @param ID Name of the module.
-   * @param DESC Description of the module (1-2 sentences).
-   */
-  #define PARAM_MODULE(ID, DESC) static mlpack::io::Option<int> \
-      JOIN(JOIN(io_option_dummy_object_, __LINE__), mod) (true, 0, ID, DESC, \
-      NULL);
 
 #endif
 
@@ -384,7 +365,7 @@ class ProgramDoc;
 }; // namespace io
 
 /**
- * Aids in the extensibility of OptionsHierarchy by focusing the potential
+ * Aids in the extensibility of CLI by focusing potential
  * changes into one structure.
  */
 struct ParamData
@@ -440,9 +421,6 @@ struct ParamData
  * optimizer (mlpack::optimizers::L_BFGS):
  *
  * @code
- * PARAM_MODULE("lbfgs", "Options for the L-BFGS optimizer, which uses a "
- *    "back-tracing line search to determine the step size to take.");
- *
  * PARAM_DOUBLE("armijo_constant", "Controls the accuracy of the line search "
  *    "routine for determining the Armijo condition.", "lbfgs", 1e-4);
  * PARAM_DOUBLE("min_step", "The minimum step of the line search.", "lbfgs",
@@ -570,20 +548,19 @@ class CLI
   static void AddFlag(const char* identifier,
                       const char* description,
                       const char* alias = "");
-
-  /**
-   * See if the specified flag was found while parsing.
-   *
-   * @param identifier The name of the parameter in question.
-   */
-  static bool HasParam(const char* identifier);
-
-
+  
   /**
    * Parses the parameters for 'help' and 'info'.
    * If found, will print out the appropriate information and kill the program.
    */
   static void DefaultMessages();
+
+  /**
+   * Destroy the CLI object.  This resets the pointer to the singleton, so in
+   * case someone tries to access it after destruction, a new one will be made
+   * (the program will not fail).
+   */
+  static void Destroy();
 
   /**
    * Grab the value of type T found while parsing.  You can set the value using
@@ -603,14 +580,34 @@ class CLI
   static std::string GetDescription(const char* identifier);
 
   /**
-   * Searches for unqualified paramters; when one is found, the default module
-   * is prepended onto it (if necessary).
+   * Retrieve the singleton.
    *
-   * @param argc The number of parameters.
-   * @param argv 2D array of the parameter strings.
-   * @return Valid modified strings.
+   * Not exposed to the outside, so as to spare users some ungainly
+   * x.GetSingleton().foo() syntax.
+   *
+   * In this case, the singleton is used to store data for the static methods,
+   * as there is no point in defining static methods only to have users call
+   * private instance methods
+   *
+   * @return The singleton instance for use in the static methods.
    */
-  static std::vector<std::string> InsertDefaultModule(int argc, char** argv);
+  static CLI& GetSingleton();
+  
+  /**
+   * See if the specified flag was found while parsing.
+   *
+   * @param identifier The name of the parameter in question.
+   */
+  static bool HasParam(const char* identifier);
+
+  /**
+   * Hyphenate a string or split it onto multiple 80-character lines, with some
+   * amount of padding on each line.  This is ued for option output.
+   *
+   * @param str String to hyphenate (splits are on ' ').
+   * @param padding Amount of padding on the left for each new line.
+   */
+  static std::string HyphenateString(std::string str, int padding);
 
   /**
    * Parses the commandline for arguments.
@@ -638,36 +635,6 @@ class CLI
   static void PrintHelp(std::string param="");
 
   /**
-   * Checks that all required parameters have been specified on the command
-   * line.  If any have not been specified, an error message is printed and the
-   * program is terminated.
-   */
-  static void RequiredOptions();
-
-  /**
-   * Cleans up input pathnames, rendering strings such as /foo/bar
-   * and foo/bar/ equivalent inputs.
-   *
-   * @param str Input string.
-   * @return Sanitized string.
-   */
-  static std::string SanitizeString(const char* str);
-
-  /**
-   * Hyphenate a string or split it onto multiple 80-character lines, with some
-   * amount of padding on each line.  This is ued for option output.
-   *
-   * @param str String to hyphenate (splits are on ' ').
-   * @param padding Amount of padding on the left for each new line.
-   */
-  static std::string HyphenateString(std::string str, int padding);
-
-  /**
-   * Parses the values given on the command line, overriding any default values.
-   */
-  static void UpdateGmap();
-
-  /**
    * Registers a ProgramDoc object, which contains documentation about the
    * program.  If this method has been called before (that is, if two
    * ProgramDocs are instantiated in the program), a fatal error will occur.
@@ -675,13 +642,6 @@ class CLI
    * @param doc Pointer to the ProgramDoc object.
    */
   static void RegisterProgramDoc(io::ProgramDoc* doc);
-
-  /**
-   * Destroy the CLI object.  This resets the pointer to the singleton, so in
-   * case someone tries to access it after destruction, a new one will be made
-   * (the program will not fail).
-   */
-  static void Destroy();
 
   /**
    * Destructor.
@@ -724,6 +684,14 @@ class CLI
 
  private:
 
+  /*
+   * Maps a given alias to a given parameter.
+   *
+   * @param alias The name of the alias to be mapped.
+   * @param original The name of the parameter to be mapped.
+   */
+  static void AddAlias(std::string alias, std::string original);
+
   /**
    * Returns an alias, if given the name of the original.
    *
@@ -732,21 +700,7 @@ class CLI
    * @return The alias associated with value.
    */
   static std::string AliasReverseLookup(std::string value);
-
-  /**
-   * Retrieve the singleton.
-   *
-   * Not exposed to the outside, so as to spare users some ungainly
-   * x.GetSingleton().foo() syntax.
-   *
-   * In this case, the singleton is used to store data for the static methods,
-   * as there is no point in defining static methods only to have users call
-   * private instance methods
-   *
-   * @return The singleton instance for use in the static methods.
-   */
-  static CLI& GetSingleton();
-
+ 
 #ifdef _WIN32
   /**
    * Converts a FILETIME structure to an equivalent timeval structure.
@@ -755,6 +709,27 @@ class CLI
    */
   void FileTimeToTimeVal(timeval* tv);
 #endif
+
+  /**
+   * Checks that all required parameters have been specified on the command
+   * line.  If any have not been specified, an error message is printed and the
+   * program is terminated.
+   */
+  static void RequiredOptions();
+
+  /**
+   * Cleans up input pathnames, rendering strings such as /foo/bar
+   * and foo/bar/ equivalent inputs.
+   *
+   * @param str Input string.
+   * @return Sanitized string.
+   */
+  static std::string SanitizeString(const char* str);
+
+  /**
+   * Parses the values given on the command line, overriding any default values.
+   */
+  static void UpdateGmap();
 
   /**
    * Make the constructor private, to preclude unauthorized instances.
