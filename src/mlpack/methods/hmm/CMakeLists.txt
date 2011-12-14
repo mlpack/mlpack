@@ -21,30 +21,30 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executables
-add_executable(generate
-  generate.cpp
-)
-target_link_libraries(generate
-  mlpack
-)
+#add_executable(generate
+#  generate.cpp
+#)
+#target_link_libraries(generate
+#  mlpack
+#)
 
-add_executable(loglik
-  loglik.cpp
-)
-target_link_libraries(loglik
-  mlpack
-)
+#add_executable(loglik
+#  loglik.cpp
+#)
+#target_link_libraries(loglik
+#  mlpack
+#)
 
-add_executable(viterbi
-  viterbi.cpp
-)
-target_link_libraries(viterbi
-  mlpack
-)
+#add_executable(viterbi
+#  viterbi.cpp
+#)
+#target_link_libraries(viterbi
+#  mlpack
+#)
 
-add_executable(train
-  train.cpp
-)
-target_link_libraries(train
-  mlpack
-)
+#add_executable(train
+#  train.cpp
+#)
+#target_link_libraries(train
+#  mlpack
+#)
