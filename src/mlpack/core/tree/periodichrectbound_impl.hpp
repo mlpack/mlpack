@@ -13,7 +13,6 @@
 #include <math.h>
 
 #include "../math/math_misc.hpp"
-#include "../io/log.hpp"
 
 namespace mlpack {
 namespace bound {

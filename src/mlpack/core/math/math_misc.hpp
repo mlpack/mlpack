@@ -3,13 +3,10 @@
  *
  * Miscellaneous math routines.
  */
+#ifndef __MLPACK_CORE_MATH_MATH_MISC_HPP
+#define __MLPACK_CORE_MATH_MATH_MISC_HPP
 
-#ifndef __MLPACK_CORE_MATH_MATH_LIB_HPP
-#define __MLPACK_CORE_MATH_MATH_LIB_HPP
-
-#include "../io/cli.hpp"
-#include "../io/log.hpp"
-
+#include <stdlib.h>
 #include <math.h>
 #include <float.h>
 

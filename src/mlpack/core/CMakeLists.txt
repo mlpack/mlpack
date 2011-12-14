@@ -2,13 +2,12 @@
 set(DIRS
   arma_extend
   data
-  io
   kernels
   math
   metrics
   optimizers
   tree
-  utilities
+  util
 )
 
 foreach(dir ${DIRS})

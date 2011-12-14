@@ -88,12 +88,12 @@
 
 // Now MLPACK-specific includes.
 #include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.
-#include <mlpack/core/io/log.hpp>
-#include <mlpack/core/io/cli.hpp>
+#include <mlpack/core/util/log.hpp>
+#include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/load.hpp>
 #include <mlpack/core/data/save.hpp>
 #include <mlpack/core/math/math_misc.hpp>
 #include <mlpack/core/math/range.hpp>
-#include <mlpack/core/utilities/save_restore_utility.hpp>
+#include <mlpack/core/util/save_restore_utility.hpp>
 
 #endif

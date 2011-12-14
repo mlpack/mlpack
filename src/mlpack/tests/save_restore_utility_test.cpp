@@ -4,7 +4,7 @@
  *
  * Here we have tests for the SaveRestoreModel class.
  */
-#include <mlpack/core/utilities/save_restore_utility.hpp>
+#include <mlpack/core/util/save_restore_utility.hpp>
 
 #include <boost/test/unit_test.hpp>
 
