@@ -122,22 +122,34 @@ class LARS {
   /*
    * Accessor for activeSet
    */
-  const std::vector<arma::u32> ActiveSet();
+  const std::vector<arma::u32> ActiveSet()
+  {
+    return activeSet;
+  }
   
   /*
    * Accessor for betaPath
    */
-  const std::vector<arma::vec> BetaPath();
-
+  const std::vector<arma::vec> BetaPath()
+  {
+    return betaPath;
+  }
+  
   /*
    * Accessor for lambdaPath
    */
-  const std::vector<double> LambdaPath();
+  const std::vector<double> LambdaPath()
+  {
+    return lambdaPath;
+  }
   
   /* 
    * Accessor for matUtriCholFactor
    */
-  const arma::mat MatUtriCholFactor();
+  const arma::mat MatUtriCholFactor()
+  {
+    return matUtriCholFactor;
+  }
   
   /* Run LARS
    * 

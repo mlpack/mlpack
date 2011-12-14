@@ -45,7 +45,6 @@ void LARS::SetGram(const mat& matGram) {
   this->matGram = matGram;
 }
 
-
 void LARS::ComputeGram(const mat& matX)
 {
   if (elasticNet)
@@ -56,26 +55,6 @@ void LARS::ComputeGram(const mat& matX)
   {
     matGram = trans(matX) * matX;
   }
-}
-
-const std::vector<u32> LARS::ActiveSet()
-{
-  return activeSet;
-}
-
-const std::vector<vec> LARS::BetaPath()
-{
-  return betaPath;
-}
-
-const std::vector<double> LARS::LambdaPath()
-{
-  return lambdaPath;
-}
-
-const mat LARS::MatUtriCholFactor()
-{
-  return matUtriCholFactor;
 }
 
 void LARS::DoLARS(const mat& matX, const vec& y)
