@@ -13,36 +13,30 @@
 #include <mlpack/methods/gmm/phi.hpp>
 
 namespace mlpack {
-namespace naive_bayes {
+namespace naive_bayes /** The Naive Bayes Classifier. */ {
 
 /**
- * A classification class. The class labels are assumed
- * to be positive integers - 0,1,2,....
+ * The simple Naive Bayes classifier.  This class trains on the data by
+ * calculating the sample mean and variance of the features with respect to each
+ * of the labels, and also the class probabilities.  The class labels are
+ * assumed to be positive integers (starting with 0), and are expected to be the
+ * last row of the data input to the constructor.
  *
- * This class trains on the data by calculating the
- * sample mean and variance of the features with
- * respect to each of the labels, and also the class
- * probabilities.
+ * Mathematically, it computes P(X_i = x_i | Y = y_j) for each feature X_i for
+ * each of the labels y_j.  Alongwith this, it also computes the classs
+ * probabilities P(Y = y_j).
  *
- * Mathematically, it computes P(X_i = x_i | Y = y_j)
- * for each feature X_i for each of the labels y_j.
- * Alongwith this, it also computes the classs probabilities
- * P( Y = y_j)
- *
- * For classifying a data point (x_1, x_2, ..., x_n),
- * it computes the following:
+ * For classifying a data point (x_1, x_2, ..., x_n), it computes the following:
  * arg max_y(P(Y = y)*P(X_1 = x_1 | Y = y) * ... * P(X_n = x_n | Y = y))
  *
  * Example use:
  *
  * @code
- * NaiveBayesClassifier nbc;
- * arma::mat training_data, testing_data;
- * datanode *nbc_module = fx_submodule(NULL,"nbc","nbc");
+ * extern arma::mat training_data, testing_data;
+ * NaiveBayesClassifier<> nbc(training_data, 5);
  * arma::vec results;
  *
- * nbc.InitTrain(training_data, nbc_module);
- * nbc.Classify(testing_data, &results);
+ * nbc.Classify(testing_data, results);
  * @endcode
  */
 template<typename MatType = arma::mat>
@@ -60,31 +54,35 @@ class NaiveBayesClassifier
 
  public:
   /**
-   * Initializes the classifier as per the input and then trains it
-   * by calculating the sample mean and variances
+   * Initializes the classifier as per the input and then trains it by
+   * calculating the sample mean and variances.  The input data is expected to
+   * have integer labels as the last row (starting with 0 and not greater than
+   * the number of classes).
    *
    * Example use:
    * @code
-   * arma::mat training_data, testing_data;
-   * datanode nbc_module = fx_submodule(NULL,"nbc","nbc");
-   * ....
-   * NaiveBayesClassifier nbc(training_data, nbc_module);
+   * extern arma::mat training_data, testing_data;
+   * NaiveBayesClassifier nbc(training_data, 5);
    * @endcode
+   *
+   * @param data Sample data points; the last row should be labels.
+   * @param classes Number of classes in this classifier.
    */
   NaiveBayesClassifier(const MatType& data, const size_t classes);
 
-  ~NaiveBayesClassifier() { }
-
   /**
-   * Given a bunch of data points, this function evaluates the class
-   * of each of those data points, and puts it in the vector 'results'
+   * Given a bunch of data points, this function evaluates the class of each of
+   * those data points, and puts it in the vector 'results'.
    *
    * @code
    * arma::mat test_data; // each column is a test point
-   * arma::vec results;
+   * arma::Col<size_t> results;
    * ...
    * nbc.Classify(test_data, &results);
    * @endcode
+   *
+   * @param data List of data points.
+   * @param results Vector that class predictions will be placed into.
    */
   void Classify(const MatType& data, arma::Col<size_t>& results);
 
