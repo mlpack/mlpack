@@ -18,38 +18,6 @@ class PCA
  public:
   PCA(const bool centerData = false, const bool scaleData = false);
 
-  /* Return whether or not this PCA object will center the data when PCA
-   *  is performed.
-   */
-  bool CenterData() const
-  {
-    return centerData_;
-  }
-
-  /* Modify whether or not this PCA object will center the data when PCA
-   * is performed.
-   */
-  bool& CenterData()
-  {
-    return centerData_;
-  }
-
-  /* Return whether or not this PCA object will scale(by standard deviation) the data when PCA
-   *  is performed.
-   */
-  bool ScaleData() const
-  {
-    return scaleData_;
-  }
-
-  /* Modify whether or not this PCA object will scale(by standard deviation) the data when PCA
-   * is performed.
-   */
-  bool& ScaleData()
-  {
-    return scaleData_;
-  }
-
   /**
    * Apply Principal Component Analysis to the provided data set.
    *
@@ -59,7 +27,7 @@ class PCA
    * @param coeff - PCA Loadings/Coeffs/EigenVectors
    */
   void Apply(const arma::mat& data, arma::mat& transformedData, arma::vec&
-             eigVal, arma::mat& coeff);
+             eigVal, arma::mat& coeff) const;
 
   /**
    * Apply Principal Component Analysis to the provided data set.
@@ -69,7 +37,7 @@ class PCA
    * @param eigVal - contains eigen values in a column vector
    */
   void Apply(const arma::mat& data, arma::mat& transformedData,
-             arma::vec& eigVal);
+             arma::vec& eigVal) const;
 
   /**
    * Apply Dimensionality Reduction using Principal Component Analysis
@@ -81,17 +49,29 @@ class PCA
    * from data matrix onto the basis vectors contained in the columns of
    * coeff/eigen vector matrix with only newDimension number of columns chosen.
    */
-  void Apply(arma::mat& data, const int newDimension);
+  void Apply(arma::mat& data, const int newDimension) const;
 
   /**
    * Delete PCA object
    */
   ~PCA();
 
- private:
-   bool centerData_;
-   bool scaleData_;
+  //! Get whether or not this PCA object will center the data.
+  bool CenterData() const { return centerData; }
+  //! Modify whether or not this PCA object will center the data when PCA is
+  //! is performed.
+  bool& CenterData() {  return centerData; }
 
+  //! Get whether or not this PCA object will scale (by standard deviation) the
+  //! data when PCA is performed.
+  bool ScaleData() const { return scaleData; }
+  //! Modify whether or not this PCA object will scale (by standard deviation)
+  //! the data when PCA is performed.
+  bool& ScaleData() { return scaleData; }
+
+ private:
+  bool centerData;
+  bool scaleData;
 }; // class PCA
 
 }; // namespace pca

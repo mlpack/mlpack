@@ -14,10 +14,9 @@ namespace mlpack {
 namespace pca {
 
 PCA::PCA(const bool centerData, const bool scaleData) :
-      centerData_(centerData),
-      scaleData_(scaleData)
-{
-}
+    centerData(centerData),
+    scaleData(scaleData)
+{ }
 
 /**
  * Apply Principal Component Analysis to the provided data set.
@@ -27,33 +26,37 @@ PCA::PCA(const bool centerData, const bool scaleData) :
  * @param eigVal - contains eigen values in a column vector
  * @param coeff - PCA Loadings/Coeffs/EigenVectors
  */
-void PCA::Apply(const arma::mat& data, arma::mat& transformedData,
-           arma::vec& eigVal, arma::mat& coeffs)
+void PCA::Apply(const arma::mat& data,
+                arma::mat& transformedData,
+                arma::vec& eigVal,
+                arma::mat& coeffs) const
 {
   arma::mat transData = trans(data);
 
-  if(centerData_)
+  if(centerData)
   {
     arma::rowvec means = arma::mean(transData, 0);
     transData = transData - arma::ones<arma::colvec>(transData.n_rows) * means;
   }
 
-  if(scaleData_)
+  if(scaleData)
   {
-    transData = transData / (arma::ones<arma::colvec>(transData.n_rows) * stddev(transData, 0, 0));
+    transData = transData / (arma::ones<arma::colvec>(transData.n_rows) *
+        stddev(transData, 0, 0));
   }
 
   arma::mat covMat = cov(transData);
   arma::eig_sym(eigVal, coeffs, covMat);
 
   int n_eigVal = eigVal.n_elem;
-  for(int i = 0; i < floor(n_eigVal / 2); i++)
+  for (int i = 0; i < floor(n_eigVal / 2); i++)
     eigVal.swap_rows(i, (n_eigVal - 1) - i);
 
   coeffs = arma::fliplr(coeffs);
   transformedData = trans(coeffs) * data;
   arma::colvec transformedDataMean = arma::mean(transformedData, 1);
-  transformedData = transformedData - (transformedDataMean * arma::ones<arma::rowvec>(transformedData.n_cols));
+  transformedData = transformedData - (transformedDataMean *
+      arma::ones<arma::rowvec>(transformedData.n_cols));
 }
 
 /**
@@ -63,12 +66,12 @@ void PCA::Apply(const arma::mat& data, arma::mat& transformedData,
  * @param transformedData - Data with PCA applied
  * @param eigVal - contains eigen values in a column vector
  */
-void PCA::Apply(const arma::mat& data, arma::mat& transformedData,
-           arma::vec& eigVal)
+void PCA::Apply(const arma::mat& data,
+                arma::mat& transformedData,
+                arma::vec& eigVal) const
 {
   arma::mat coeffs;
-  Apply(data, transformedData,
-              eigVal, coeffs);
+  Apply(data, transformedData, eigVal, coeffs);
 }
 
 /**
@@ -81,7 +84,7 @@ void PCA::Apply(const arma::mat& data, arma::mat& transformedData,
  * from data matrix onto the basis vectors contained in the columns of
  * coeff/eigen vector matrix with only newDimension number of columns chosen.
  */
-void PCA::Apply(arma::mat& data, const int newDimension)
+void PCA::Apply(arma::mat& data, const int newDimension) const
 {
   arma::mat coeffs;
   arma::vec eigVal;
