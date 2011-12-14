@@ -53,6 +53,7 @@ option(WITH_OPTIMIZERS "Include optimization code." OFF)
 # Default to debugging mode for developers.
 option(DEBUG "Compile with debugging information" ON)
 option(PROFILE "Compile with profiling information" ON)
+option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
 
 # This is as of yet unused.
 #option(PGO "Use profile-guided optimization if not a debug build" ON)
@@ -73,6 +74,10 @@ if(PROFILE)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pg")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 endif(PROFILE)
+
+if(ARMA_EXTRA_DEBUG)
+  add_definitions(-DARMA_EXTRA_DEBUG)
+endif(ARMA_EXTRA_DEBUG)
 
 # For Boost testing framework (will have no effect on non-testing executables).
 # This specifies to Boost that we are dynamically linking to the Boost test
