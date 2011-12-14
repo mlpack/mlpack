@@ -38,8 +38,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test)
   // Now perform the actual calculation.
   arma::mat results;
 
-  DualTreeBoruvka dtb;
-  dtb.Init(data);
+  DualTreeBoruvka<> dtb(data);
   dtb.ComputeMST(results);
 
   // Now the exhaustive check for correctness.
@@ -103,15 +102,13 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive)
   arma::mat naive_data = arma::trans(input_data);
 
   // Reset parameters from last test.
-  DualTreeBoruvka dtb;
-  dtb.Init(dual_data);
+  DualTreeBoruvka<> dtb(dual_data);
 
   arma::mat dual_results;
   dtb.ComputeMST(dual_results);
 
   // Set naive mode.
-  DualTreeBoruvka dtb_naive;
-  dtb_naive.Init(naive_data, true);
+  DualTreeBoruvka<> dtb_naive(naive_data, true);
 
   arma::mat naive_results;
   dtb_naive.ComputeMST(naive_results);
