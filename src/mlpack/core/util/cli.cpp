@@ -228,7 +228,7 @@ void CLI::DefaultMessages()
     exit(0);
   }
 
-  if (GetParam<bool>("verbose"))
+  if (HasParam("verbose"))
   {
     // Give [INFO ] output.
     Log::Info.ignoreInput = false;
