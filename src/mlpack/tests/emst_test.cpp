@@ -43,44 +43,44 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test)
 
   // Now the exhaustive check for correctness.
   BOOST_REQUIRE(results(0, 0) == 1);
-  BOOST_REQUIRE(results(0, 1) == 8);
-  BOOST_REQUIRE_CLOSE(results(0, 2), 0.08, 1e-5);
+  BOOST_REQUIRE(results(1, 0) == 8);
+  BOOST_REQUIRE_CLOSE(results(2, 0), 0.08, 1e-5);
 
-  BOOST_REQUIRE(results(1, 0) == 9);
+  BOOST_REQUIRE(results(0, 1) == 9);
   BOOST_REQUIRE(results(1, 1) == 10);
-  BOOST_REQUIRE_CLOSE(results(1, 2), 0.09, 1e-5);
+  BOOST_REQUIRE_CLOSE(results(2, 1), 0.09, 1e-5);
 
-  BOOST_REQUIRE(results(2, 0) == 0);
-  BOOST_REQUIRE(results(2, 1) == 2);
+  BOOST_REQUIRE(results(0, 2) == 0);
+  BOOST_REQUIRE(results(1, 2) == 2);
   BOOST_REQUIRE_CLOSE(results(2, 2), 0.1, 1e-5);
 
-  BOOST_REQUIRE(results(3, 0) == 1);
-  BOOST_REQUIRE(results(3, 1) == 2);
-  BOOST_REQUIRE_CLOSE(results(3, 2), 0.22, 1e-5);
+  BOOST_REQUIRE(results(0, 3) == 1);
+  BOOST_REQUIRE(results(1, 3) == 2);
+  BOOST_REQUIRE_CLOSE(results(2, 3), 0.22, 1e-5);
 
-  BOOST_REQUIRE(results(4, 0) == 3);
-  BOOST_REQUIRE(results(4, 1) == 10);
-  BOOST_REQUIRE_CLOSE(results(4, 2), 0.25, 1e-5);
+  BOOST_REQUIRE(results(0, 4) == 3);
+  BOOST_REQUIRE(results(1, 4) == 10);
+  BOOST_REQUIRE_CLOSE(results(2, 4), 0.25, 1e-5);
 
-  BOOST_REQUIRE(results(5, 0) == 0);
-  BOOST_REQUIRE(results(5, 1) == 5);
-  BOOST_REQUIRE_CLOSE(results(5, 2), 0.27, 1e-5);
+  BOOST_REQUIRE(results(0, 5) == 0);
+  BOOST_REQUIRE(results(1, 5) == 5);
+  BOOST_REQUIRE_CLOSE(results(2, 5), 0.27, 1e-5);
 
-  BOOST_REQUIRE(results(6, 0) == 8);
-  BOOST_REQUIRE(results(6, 1) == 9);
-  BOOST_REQUIRE_CLOSE(results(6, 2), 0.46, 1e-5);
+  BOOST_REQUIRE(results(0, 6) == 8);
+  BOOST_REQUIRE(results(1, 6) == 9);
+  BOOST_REQUIRE_CLOSE(results(2, 6), 0.46, 1e-5);
 
-  BOOST_REQUIRE(results(7, 0) == 6);
-  BOOST_REQUIRE(results(7, 1) == 7);
-  BOOST_REQUIRE_CLOSE(results(7, 2), 0.7, 1e-5);
+  BOOST_REQUIRE(results(0, 7) == 6);
+  BOOST_REQUIRE(results(1, 7) == 7);
+  BOOST_REQUIRE_CLOSE(results(2, 7), 0.7, 1e-5);
 
-  BOOST_REQUIRE(results(8, 0) == 5);
-  BOOST_REQUIRE(results(8, 1) == 7);
-  BOOST_REQUIRE_CLOSE(results(8, 2), 1.08, 1e-5);
+  BOOST_REQUIRE(results(0, 8) == 5);
+  BOOST_REQUIRE(results(1, 8) == 7);
+  BOOST_REQUIRE_CLOSE(results(2, 8), 1.08, 1e-5);
 
-  BOOST_REQUIRE(results(9, 0) == 3);
-  BOOST_REQUIRE(results(9, 1) == 4);
-  BOOST_REQUIRE_CLOSE(results(9, 2), 3.8, 1e-5);
+  BOOST_REQUIRE(results(0, 9) == 3);
+  BOOST_REQUIRE(results(1, 9) == 4);
+  BOOST_REQUIRE_CLOSE(results(2, 9), 3.8, 1e-5);
 }
 
 /**
@@ -116,11 +116,11 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive)
   BOOST_REQUIRE(dual_results.n_cols == naive_results.n_cols);
   BOOST_REQUIRE(dual_results.n_rows == naive_results.n_rows);
 
-  for (size_t i = 0; i < dual_results.n_rows; i++)
+  for (size_t i = 0; i < dual_results.n_cols; i++)
   {
-    BOOST_REQUIRE(dual_results(i, 0) == naive_results(i, 0));
-    BOOST_REQUIRE(dual_results(i, 1) == naive_results(i, 1));
-    BOOST_REQUIRE_CLOSE(dual_results(i, 2), naive_results(i, 2), 1e-5);
+    BOOST_REQUIRE(dual_results(0, i) == naive_results(0, i));
+    BOOST_REQUIRE(dual_results(1, i) == naive_results(1, i));
+    BOOST_REQUIRE_CLOSE(dual_results(2, i), naive_results(2, i), 1e-5);
   }
 }
 
