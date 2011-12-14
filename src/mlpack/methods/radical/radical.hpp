@@ -3,7 +3,7 @@
  * @author Nishant Mehta
  *
  * Declaration of Radical class (RADICAL is Robust, Accurate, Direct ICA aLgorithm)
- * Note: upper case variables correspond to matrices. do not convert them to 
+ * Note: upper case variables correspond to matrices. do not convert them to
  *   camelCase because that would make them appear to be vectors (which is bad!)
  */
 
@@ -36,15 +36,13 @@ namespace radical {
  * }
  */
 class Radical {
-
-public:
-  
+ public:
   /**
-   * Set the parameters to RADICAL
+   * Set the parameters to RADICAL.
    *
    * @param noiseStdDev Standard deviation of the Gaussian noise added to the
    *    replicates of the data points during Radical2D
-   * @param nReplicates Number of Gaussian-perturbed replicates to use 
+   * @param nReplicates Number of Gaussian-perturbed replicates to use
    *    (per point) in Radical2D
    * @param nAngles Number of angles to consider in brute-force search during
    *    Radical2D
@@ -52,14 +50,14 @@ public:
    *    Each sweep calls Radical2D once for each pair of dimensions
    */
   Radical(double noiseStdDev, size_t nReplicates, size_t nAngles,
-	  size_t nSweeps);
+      size_t nSweeps);
 
   /**
-   * Set the parameters to RADICAL
+   * Set the parameters to RADICAL.
    *
    * @param noiseStdDev Standard deviation of the Gaussian noise added to the
    *    replicates of the data points during Radical2D
-   * @param nReplicates Number of Gaussian-perturbed replicates to use 
+   * @param nReplicates Number of Gaussian-perturbed replicates to use
    *    (per point) in Radical2D
    * @param nAngles Number of angles to consider in brute-force search during
    *    Radical2D
@@ -68,27 +66,10 @@ public:
    * @param m The variable m from Vasicek's m-spacing estimator of entropy
    */
   Radical(double noiseStdDev, size_t nReplicates, size_t nAngles,
-	  size_t nSweeps, size_t m);
-  
+      size_t nSweeps, size_t m);
 
   /**
-   * Vasicek's m-spacing estimator of entropy, with overlap modification from
-   *    (Learned-Miller and Fisher, 2003)
-   * 
-   * @param x Empirical sample (one-dimensional) over which to estimate entropy
-   *
-   */
-  double Vasicek(arma::vec& x);
-  
-  /** Make nReplicates copies of each data point and perturb data with Gaussian
-   *     noise with standard deviation noiseStdDev
-   */
-  void CopyAndPerturb(arma::mat& matXNew, const arma::mat& matX);
-  
-  /** Two-dimensional version of RADICAL */
-  double DoRadical2D(const arma::mat& matX);
-  
-  /** Run RADICAL
+   * Run RADICAL.
    *
    * @param matX Input data into the algorithm - a matrix where each column is
    *    a point and each row is a dimension
@@ -97,44 +78,58 @@ public:
    * @param matW Estimated unmixing matrix, where matY = matW * matX
    */
   void DoRadical(const arma::mat& matX, arma::mat& matY, arma::mat& matW);
-  
-  
-private:
 
+  /**
+   * Vasicek's m-spacing estimator of entropy, with overlap modification from
+   *    (Learned-Miller and Fisher, 2003)
+   *
+   * @param x Empirical sample (one-dimensional) over which to estimate entropy
+   *
+   */
+  double Vasicek(arma::vec& x);
+
+  /**
+   * Make nReplicates copies of each data point and perturb data with Gaussian
+   * noise with standard deviation noiseStdDev.
+   */
+  void CopyAndPerturb(arma::mat& matXNew, const arma::mat& matX);
+
+  //! Two-dimensional version of RADICAL.
+  double DoRadical2D(const arma::mat& matX);
+
+ private:
   /**
    * standard deviation of the Gaussian noise added to the replicates of
    * the data points during Radical2D
    */
   double noiseStdDev;
-  
+
   /**
    * Number of Gaussian-perturbed replicates to use (per point) in Radical2D
    */
   size_t nReplicates;
-  
+
   /**
    * Number of angles to consider in brute-force search during Radical2D
    */
   size_t nAngles;
-  
+
   /**
    * Number of sweeps
    *  - Each sweep calls Radical2D once for each pair of dimensions
    */
   size_t nSweeps;
-  
+
   /**
    * m to use for Vasicek's m-spacing estimator of entropy
    */
   size_t m;
-  
+
 };
 
-
-
 void WhitenFeatureMajorMatrix(const arma::mat& matX,
-			      arma::mat& matXWhitened,
-			      arma::mat& matWhitening);
+                              arma::mat& matXWhitened,
+                              arma::mat& matWhitening);
 
 }; // namespace radical
 }; // namespace mlpack
