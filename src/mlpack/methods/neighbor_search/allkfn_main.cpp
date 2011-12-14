@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
   if (!data::Load(referenceFile.c_str(), referenceData))
     Log::Fatal << "Reference file " << referenceFile << "not found." << endl;
 
-  Log::Info << "Loaded reference data from " << referenceFile << endl;
+  Log::Info << "Loaded reference data from '" << referenceFile << "'." << endl;
 
   // Sanity check on k value: must be greater than 0, must be less than the
   // number of reference points.
@@ -108,12 +108,12 @@ int main(int argc, char *argv[])
   // Build trees by hand, so we can save memory: if we pass a tree to
   // NeighborSearch, it does not copy the matrix.
   Log::Info << "Building reference tree..." << endl;
-  Timer::Start("tree_building");
+  Timer::Start("reference_tree_building");
 
   BinarySpaceTree<bound::HRectBound<2>, QueryStat<FurthestNeighborSort> >
       refTree(referenceData, oldFromNewRefs);
 
-  Timer::Stop("tree_building");
+  Timer::Stop("reference_tree_building");
 
   std::vector<size_t> oldFromNewQueries;
 
@@ -123,20 +123,20 @@ int main(int argc, char *argv[])
     arma::mat queryData;
 
     if (!data::Load(queryFile.c_str(), queryData))
-      Log::Fatal << "Query file " << queryFile << " not found" << endl;
+      Log::Fatal << "Query file " << queryFile << " not found." << endl;
 
-    Log::Info << "Query data loaded from " << queryFile << endl;
+    Log::Info << "Query data loaded from '" << queryFile << "'." << endl;
 
     Log::Info << "Building query tree..." << endl;
 
     // Build trees by hand, so we can save memory: if we pass a tree to
     // NeighborSearch, it does not copy the matrix.
-    Timer::Start("tree_building");
+    Timer::Start("query_tree_building");
 
     BinarySpaceTree<bound::HRectBound<2>, QueryStat<FurthestNeighborSort> >
-        queryTree(queryData, oldFromNewRefs);
+        queryTree(queryData, oldFromNewQueries);
 
-    Timer::Stop("tree_building");
+    Timer::Stop("query_tree_building");
 
     allkfn = new AllkFN(referenceData, queryData, naive, singleMode, 20,
         &refTree, &queryTree);
@@ -163,15 +163,32 @@ int main(int argc, char *argv[])
   arma::Mat<size_t> neighborsOut(neighbors.n_rows, neighbors.n_cols);
 
   // Do the actual remapping.
-  for (size_t i = 0; i < distances.n_cols; i++)
+  if (CLI::GetParam<string>("query_file") != "")
   {
-    // Map distances (copy a column).
-    distancesOut.col(oldFromNewQueries[i]) = distances.col(i);
-
-    // Map indices of neighbors.
-    for (size_t j = 0; j < distances.n_rows; j++)
+    for (size_t i = 0; i < distances.n_cols; ++i)
     {
-      neighborsOut(j, oldFromNewQueries[i]) = oldFromNewRefs[neighbors(j, i)];
+      // Map distances (copy a column).
+      distancesOut.col(oldFromNewQueries[i]) = distances.col(i);
+
+      // Map indices of neighbors.
+      for (size_t j = 0; j < distances.n_rows; ++j)
+      {
+        neighborsOut(j, oldFromNewQueries[i]) = oldFromNewRefs[neighbors(j, i)];
+      }
+    }
+  }
+  else
+  {
+    for (size_t i = 0; i < distances.n_cols; ++i)
+    {
+      // Map distances (copy a column).
+      distancesOut.col(oldFromNewRefs[i]) = distances.col(i);
+
+      // Map indices of neighbors.
+      for (size_t j = 0; j < distances.n_rows; ++j)
+      {
+        neighborsOut(j, oldFromNewRefs[i]) = oldFromNewRefs[neighbors(j, i)];
+      }
     }
   }
 
