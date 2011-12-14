@@ -38,14 +38,11 @@ void CLI::Add(const char* identifier,
   po::options_description& desc = CLI::GetSingleton().desc;
   std::string path = identifier;
   std::string stringAlias = alias;
-  std::string prog_opt_id = path;
+  // Must make use of boost syntax here.
+  std::string prog_opt_id = stringAlias.length() ? path + "," + alias : path;
 
   // Add the alias, if necessary
-  if (stringAlias.length()) {
-    amap_t& amap = GetSingleton().aliasValues;
-    amap[stringAlias] = path;
-    prog_opt_id = path + "," + alias;
-  }
+  AddAlias(stringAlias, path);
 
   // Add the option to boost program_options.
   desc.add_options()
@@ -62,6 +59,7 @@ void CLI::Add(const char* identifier,
   data.tname = TYPENAME(T);
   data.value = boost::any(tmp);
   data.wasPassed = false;
+  
   gmap[path] = data;
 
   // If the option is required, add it to the required options list.
