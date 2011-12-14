@@ -11,10 +11,8 @@
 // we use arma namespace too often to explicitly use arma:: everywhere
 //using namespace std;
 using namespace arma;
-
-
-namespace mlpack {
-namespace lars {
+using namespace mlpack;
+using namespace mlpack::regression;
 
 LARS::LARS(const bool useCholesky) :
     useCholesky(useCholesky),
@@ -132,9 +130,9 @@ void LARS::DoLARS(const mat& matX, const vec& y)
       {
         vec newGramCol = vec(nActive);
         for (u32 i = 0; i < nActive; i++)
-	{
+  {
           newGramCol[i] = dot(matX.col(activeSet[i]), matX.col(changeInd));
-	}
+  }
 
         CholeskyInsert(matX.col(changeInd), newGramCol);
       }
@@ -214,13 +212,13 @@ void LARS::DoLARS(const mat& matX, const vec& y)
         double val1 = (maxCorr - corr(ind)) / (normalization - dirCorr);
         double val2 = (maxCorr + corr(ind)) / (normalization + dirCorr);
         if ((val1 > 0) && (val1 < gamma))
-	{
-	  gamma = val1;
-	}
+  {
+    gamma = val1;
+  }
         if((val2 > 0) && (val2 < gamma))
-	{
-	  gamma = val2;
-	}
+  {
+    gamma = val2;
+  }
       }
     }
 
@@ -332,8 +330,8 @@ void LARS::Activate(u32 varInd)
 }
 
  void LARS::ComputeYHatDirection(const mat& matX,
-				 const vec& betaDirection,
-				 vec& yHatDirection)
+         const vec& betaDirection,
+         vec& yHatDirection)
 {
   yHatDirection.fill(0);
   for(u32 i = 0; i < nActive; i++)
@@ -468,12 +466,9 @@ void LARS::CholeskyDelete(u32 colToKill)
       if (k < n - 1)
       {
         matUtriCholFactor(span(k, k + 1), span(k + 1, n - 1)) = 
-	  matG * matUtriCholFactor(span(k, k + 1), span(k + 1, n - 1));
+    matG * matUtriCholFactor(span(k, k + 1), span(k + 1, n - 1));
       }
     }
     matUtriCholFactor.shed_row(n);
   }
 }
-
-}; // namespace lars
-}; // namespace mlpack
