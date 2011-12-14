@@ -99,6 +99,12 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
 {
   // Perform the actual splitting.
   SplitNode(data);
+
+  // Create the statistic depending on if we are a leaf or not.
+  if (IsLeaf())
+    stat = StatisticType(data, begin, count);
+  else
+    stat = StatisticType(data, begin, count, left->Stat(), right->Stat());
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>
@@ -122,6 +128,12 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
 
   // Perform the actual splitting.
   SplitNode(data, oldFromNew);
+
+  // Create the statistic depending on if we are a leaf or not.
+  if (IsLeaf())
+    stat = StatisticType(data, begin, count);
+  else
+    stat = StatisticType(data, begin, count, left->Stat(), right->Stat());
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>
@@ -151,6 +163,12 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
   newFromOld.resize(data.n_cols);
   for (size_t i = 0; i < data.n_cols; i++)
     newFromOld[oldFromNew[i]] = i;
+
+  // Create the statistic depending on if we are a leaf or not.
+  if (IsLeaf())
+    stat = StatisticType(data, begin, count);
+  else
+    stat = StatisticType(data, begin, count, left->Stat(), right->Stat());
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>

@@ -15,8 +15,6 @@ namespace tree {
 /**
  * Empty statistic if you are not interested in storing statistics in your
  * tree.  Use this as a template for your own.
- *
- * @experimental
  */
 class EmptyStatistic
 {
@@ -25,17 +23,35 @@ class EmptyStatistic
     ~EmptyStatistic() {}
 
     /**
-     * Initializes by taking statistics on raw data.
+     * This constructor is called when a leaf is created.
+     *
+     * @param dataset Matrix that the tree is being built on.
+     * @param begin Starting index corresponding to this leaf.
+     * @param count Number of points held in this leaf.
      */
-    void Init(const arma::mat& dataset, size_t start, size_t count) { }
+    template<typename MatType>
+    EmptyStatistic(const MatType& dataset,
+                   const size_t begin,
+                   const size_t count)
+    { }
 
     /**
-     * Initializes by combining statistics of two partitions.
-     *
+     * This constructor is called when a non-leaf node is created.
      * This lets you build fast bottom-up statistics when building trees.
+     *
+     * @param dataset Matrix that the tree is being built on.
+     * @param begin Starting index corresponding to this leaf.
+     * @param count Number of points held in this leaf.
+     * @param leftStat EmptyStatistic object of the left child node.
+     * @param rightStat EmptyStatistic object of the right child node.
      */
-    void Init(const arma::mat& dataset, size_t start, size_t count,
-        const EmptyStatistic& left_stat, const EmptyStatistic& right_stat) { }
+    template<typename MatType>
+    EmptyStatistic(const MatType& dataset,
+                   const size_t start,
+                   const size_t count,
+                   const EmptyStatistic& leftStat,
+                   const EmptyStatistic& rightStat)
+    { }
 };
 
 }; // namespace tree
