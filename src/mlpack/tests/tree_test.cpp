@@ -582,45 +582,39 @@ BOOST_AUTO_TEST_CASE(HRectBoundContains)
 
 BOOST_AUTO_TEST_CASE(TestBallBound)
 {
-  DBallBound<> b1;
-  DBallBound<> b2;
+  BallBound<> b1;
+  BallBound<> b2;
 
   // Create two balls with a center distance of 1 from each other.
   // Give the first one a radius of 0.3 and the second a radius of 0.4.
-  b1.center().set_size(3);
-  b1.center()[0] = 1;
-  b1.center()[1] = 2;
-  b1.center()[2] = 3;
-  b1.set_radius(0.3);
+  b1.Center().set_size(3);
+  b1.Center()[0] = 1;
+  b1.Center()[1] = 2;
+  b1.Center()[2] = 3;
+  b1.Radius() = 0.3;
 
-  b2.center().set_size(3);
-  b2.center()[0] = 1;
-  b2.center()[1] = 2;
-  b2.center()[2] = 4;
-  b2.set_radius(0.4);
+  b2.Center().set_size(3);
+  b2.Center()[0] = 1;
+  b2.Center()[1] = 2;
+  b2.Center()[2] = 4;
+  b2.Radius() = 0.4;
 
-  BOOST_REQUIRE_CLOSE(sqrt(b1.MinDistanceSq(b2)), 1-0.3-0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b1.RangeDistanceSq(b2).Hi()), 1+0.3+0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b1.RangeDistanceSq(b2).Lo()), 1-0.3-0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(b1.MinDistance(b2), 1-0.3-0.4, 1e-5);
   BOOST_REQUIRE_CLOSE(b1.RangeDistance(b2).Hi(), 1+0.3+0.4, 1e-5);
   BOOST_REQUIRE_CLOSE(b1.RangeDistance(b2).Lo(), 1-0.3-0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b1.MinToMidSq(b2)), 1-0.3, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b1.MinimaxDistanceSq(b2)), 1-0.3+0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b1.MidDistanceSq(b2)), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b1.RangeDistance(b2).Hi(), 1+0.3+0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(b1.RangeDistance(b2).Lo(), 1-0.3-0.4, 1e-5);
 
-  BOOST_REQUIRE_CLOSE(sqrt(b2.MinDistanceSq(b1)), 1-0.3-0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b2.MaxDistanceSq(b1)), 1+0.3+0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b2.RangeDistanceSq(b1).Hi()), 1+0.3+0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b2.RangeDistanceSq(b1).Lo()), 1-0.3-0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b2.MinToMidSq(b1)), 1-0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b2.MinimaxDistanceSq(b1)), 1-0.4+0.3, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b2.MidDistanceSq(b1)), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b2.MinDistance(b1), 1-0.3-0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(b2.MaxDistance(b1), 1+0.3+0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(b2.RangeDistance(b1).Hi(), 1+0.3+0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(b2.RangeDistance(b1).Lo(), 1-0.3-0.4, 1e-5);
 
-  BOOST_REQUIRE(b1.Contains(b1.center()));
-  BOOST_REQUIRE(!b1.Contains(b2.center()));
+  BOOST_REQUIRE(b1.Contains(b1.Center()));
+  BOOST_REQUIRE(!b1.Contains(b2.Center()));
 
-  BOOST_REQUIRE(!b2.Contains(b1.center()));
-  BOOST_REQUIRE(b2.Contains(b2.center()));
+  BOOST_REQUIRE(!b2.Contains(b1.Center()));
+  BOOST_REQUIRE(b2.Contains(b2.Center()));
   arma::vec b2point(3); // A point that's within the radius but not the center.
   b2point[0] = 1.1;
   b2point[1] = 2.1;
@@ -628,11 +622,11 @@ BOOST_AUTO_TEST_CASE(TestBallBound)
 
   BOOST_REQUIRE(b2.Contains(b2point));
 
-  BOOST_REQUIRE_SMALL(sqrt(b1.MinDistanceSq(b1.center())), 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b1.MinDistanceSq(b2.center())), 1 - 0.3, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b2.MinDistanceSq(b1.center())), 1 - 0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b2.MaxDistanceSq(b1.center())), 1 + 0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b1.MaxDistanceSq(b2.center())), 1 + 0.3, 1e-5);
+  BOOST_REQUIRE_SMALL(b1.MinDistance(b1.Center()), 1e-5);
+  BOOST_REQUIRE_CLOSE(b1.MinDistance(b2.Center()), 1 - 0.3, 1e-5);
+  BOOST_REQUIRE_CLOSE(b2.MinDistance(b1.Center()), 1 - 0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(b2.MaxDistance(b1.Center()), 1 + 0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(b1.MaxDistance(b2.Center()), 1 + 0.3, 1e-5);
 }
 
 /**
