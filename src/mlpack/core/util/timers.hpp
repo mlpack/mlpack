@@ -25,6 +25,36 @@
 
 namespace mlpack {
 
+/**
+ * The timer class provides a way for MLPACK methods to be timed.  The three
+ * methods contained in this class allow a named timer to be started and
+ * stopped, and its value to be obtained.
+ */
+class Timer
+{
+ public:
+  /**
+   * Start the given timer.
+   *
+   * @param name Name of timer to be started.
+   */
+  static void Start(const std::string name);
+
+  /**
+   * Stop the given timer.
+   *
+   * @param name Name of timer to be stopped.
+   */
+  static void Stop(const std::string name);
+
+  /**
+   * Get the value of the given timer.
+   *
+   * @param name Name of timer to return value of.
+   */
+  static timeval Get(const std::string name);
+};
+
 class Timers
 {
  public:
@@ -71,32 +101,6 @@ class Timers
   std::map<std::string, timeval> timers;
 
   void FileTimeToTimeVal(timeval* tv);
-};
-
-// Static access methods.
-class Timer
-{
- public:
-  /**
-   * Start the given timer.
-   *
-   * @param name Name of timer to be started.
-   */
-  static void Start(const std::string name);
-
-  /**
-   * Stop the given timer.
-   *
-   * @param name Name of timer to be stopped.
-   */
-  static void Stop(const std::string name);
-
-  /**
-   * Get the value of the given timer.
-   *
-   * @param name Name of timer to return value of.
-   */
-  static timeval Get(const std::string name);
 };
 
 }; // namespace mlpack
