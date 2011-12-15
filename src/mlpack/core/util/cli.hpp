@@ -32,7 +32,8 @@
  * @param NAME Short string representing the name of the program.
  * @param DESC Long string describing what the program does and possibly a
  *     simple usage example.  Newlines should not be used here; this is taken
- *     care of by CLI.
+ *     care of by CLI (however, you can explicitly specify newlines to denote
+ *     new paragraphs).
  */
 #define PROGRAM_INFO(NAME, DESC) static mlpack::io::ProgramDoc \
     io_programdoc_dummy_object = mlpack::io::ProgramDoc(NAME, DESC);
@@ -42,7 +43,7 @@
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter
+ * @param ALIAS An alias for the parameter (one letter).
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -65,7 +66,7 @@
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter.
+ * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -89,7 +90,7 @@
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter.
+ * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -113,7 +114,7 @@
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter.
+ * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -138,7 +139,7 @@
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter.
+ * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -162,7 +163,7 @@
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter.
+ * @param ALIAS An alias for the parameter (one letter).
  * @param DEF Default value of the parameter.
  *
  * @see mlpack::CLI, PROGRAM_INFO()
@@ -188,7 +189,7 @@
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter.
+ * @param ALIAS An alias for the parameter (one letter).
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -212,7 +213,7 @@
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter.
+ * @param ALIAS An alias for the parameter (one letter).
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -235,7 +236,7 @@
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter.
+ * @param ALIAS An alias for the parameter (one letter).
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -258,7 +259,7 @@
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter.
+ * @param ALIAS An alias for the parameter (one letter).
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -281,7 +282,7 @@
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter (1-2 sentences).
- * @param ALIAS An alias for the parameter.
+ * @param ALIAS An alias for the parameter (one letter).
  *
  * @see mlpack::CLI, PROGRAM_INFO()
  *
@@ -317,7 +318,7 @@
  * @param T Type of the parameter.
  * @param ID Name of the parameter.
  * @param DESC Description of the parameter (1-2 sentences).
- * @param ALIAS Alias for this parameter.
+ * @param ALIAS Alias for this parameter (one letter).
  * @param DEF Default value of the parameter.
  * @param REQ Whether or not parameter is required (boolean value).
  */
@@ -391,12 +392,14 @@ struct ParamData
  * The CLI class is a subsystem by which parameters for machine learning methods
  * can be specified and accessed.  In conjunction with the macros PARAM_DOUBLE,
  * PARAM_INT, PARAM_STRING, PARAM_FLAG, and others, this class aims to make user
- * configurability of MLPACK methods very easy.
+ * configurability of MLPACK methods very easy.  There are only three methods in
+ * CLI that a user should need:  CLI::ParseCommandLine(), CLI::GetParam(), and
+ * CLI::HasParam() (in addition to the PARAM_*() macros).
  *
  * @section addparam Adding parameters to a program
  *
  * @code
- * $ ./executable --foo/bar=5
+ * $ ./executable --bar=5
  * @endcode
  *
  * @note The = is optional; a space can also be used.
@@ -417,22 +420,22 @@ struct ParamData
  * The flag (boolean) type automatically defaults to false; it is specified
  * merely as a flag on the command line (no '=true' is required).
  *
- * Here is an example of a few parameters being defined; this is for the L-BFGS
- * optimizer (mlpack::optimizers::L_BFGS):
+ * Here is an example of a few parameters being defined; this is for the AllkNN
+ * executable (methods/neighbor_search/allknn_main.cpp):
  *
  * @code
- * PARAM_DOUBLE("armijo_constant", "Controls the accuracy of the line search "
- *    "routine for determining the Armijo condition.", "lbfgs", 1e-4);
- * PARAM_DOUBLE("min_step", "The minimum step of the line search.", "lbfgs",
- *    1e-20);
- * PARAM_DOUBLE("max_step", "The maximum step of the line search.", "lbfgs",
- *    1e20);
- * PARAM_INT("max_line_search_trials", "The maximum number of trials for the "
- *    "line search.", "lbfgs", 50);
- * PARAM_DOUBLE("wolfe", "Parameter for detecting the Wolfe condition.",
- *    "lbfgs", 0.9);
- * PARAM_DOUBLE("min_gradient_norm", "Minimum gradient norm required to "
- *  "continue the optimization.", "lbfgs", 1e-10);
+ * PARAM_STRING_REQ("reference_file", "File containing the reference dataset.",
+ *     "r");
+ * PARAM_STRING_REQ("distances_file", "File to output distances into.", "d");
+ * PARAM_STRING_REQ("neighbors_file", "File to output neighbors into.", "n");
+ * PARAM_INT_REQ("k", "Number of furthest neighbors to find.", "k");
+ * PARAM_STRING("query_file", "File containing query points (optional).", "q",
+ *     "");
+ * PARAM_INT("leaf_size", "Leaf size for tree building.", "l", 20);
+ * PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.",
+ *     "N");
+ * PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed "
+ *     "to dual-tree search.", "s");
  * @endcode
  *
  * More documentation is available on the PARAM_*() macros in the documentation
@@ -448,11 +451,12 @@ struct ParamData
  * @code
  * PROGRAM_INFO("Maximum Variance Unfolding", "This program performs maximum "
  *    "variance unfolding on the given dataset, writing a lower-dimensional "
- *    "unfolded dataset to the given output file.", "mvu");
+ *    "unfolded dataset to the given output file.");
  * @endcode
  *
- * The last parameter, the default module (DEF_MOD), is discussed in detail in
- * the PROGRAM_INFO() documentation.
+ * This description should be verbose, and explain to a non-expert user what the
+ * program does and how to use it.  If relevant, paper citations should be
+ * included.
  *
  * @section parsecli Parsing the command line with CLI
  *
@@ -471,28 +475,31 @@ struct ParamData
  * documentation of each option; the documentation is generated from the DESC
  * arguments in the PARAM_*() macros.
  *
- * @section getparam Getting/setting parameters with CLI
+ * @section getparam Getting parameters with CLI
  *
  * When the parameters have been defined, the next important thing is how to
- * access and modify them.  For this, the HasParam() and GetParam() methods are
- * used.  For instance, the option "neighbor_search/k" could be
- * modified like this (it could also be merely accessed with the same call as an
- * r-value).
+ * access them.  For this, the HasParam() and GetParam() methods are
+ * used.  For instance, to see if the user passed the flag (boolean) "naive":
  *
  * @code
- * CLI::GetParam<index_t>("neighbor_search/k") = 50;
+ * if (CLI::HasParam("naive"))
+ * {
+ *   Log::Info << "Naive has been passed!" << std::endl;
+ * }
+ * @endcode
+ *
+ * To get the value of a parameter, such as a string, use GetParam:
+ *
+ * @code
+ * const std::string filename = CLI::GetParam<std::string>("filename");
  * @endcode
  *
  * @note
- * Care is needed when defining options.  Because the PARAM_*() macros expand to
- * a global object definition (of type mlpack::io::Option) whose constructor
- * adds the parameter to the hierarchy, the parameters defined in any included
- * file will be added to the program--and the documentation for those options
- * will appear when --help is given. For this reason, mlpack/core.h does not
- * include more than the core components necessary to write MLPACK code.  Care
- * is required so that only the files which are absolutely necessary are
- * included, so as to avoid cluttering the documentation with irrelevant
- * options.
+ * Options should only be defined in files which define `main()` (that is, main
+ * executables).  If options are defined elsewhere, they may be spuriously
+ * included into other executables and confuse users.  Similarly, if your
+ * executable has options which you did not define, it is probably because the
+ * option is defined somewhere else and included in your executable.
  *
  * @bug
  * The __COUNTER__ variable is used in most cases to guarantee a unique global
@@ -592,7 +599,7 @@ class CLI
    * @return The singleton instance for use in the static methods.
    */
   static CLI& GetSingleton();
-  
+
   /**
    * See if the specified flag was found while parsing.
    *
@@ -683,8 +690,7 @@ class CLI
   io::ProgramDoc *doc;
 
  private:
-
-  /*
+  /**
    * Maps a given alias to a given parameter.
    *
    * @param alias The name of the alias to be mapped.
