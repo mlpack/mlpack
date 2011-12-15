@@ -127,9 +127,9 @@ double PeriodicHRectBound<t_pow>::MinDistance(const arma::vec& point) const
   {
     double a = point[d];
     double v = 0, bh;
-    bh = bounds_[d].hi - bounds_[d].lo;
+    bh = bounds_[d].Hi() - bounds_[d].Lo();
     bh = bh - floor(bh / box_[d]) * box_[d];
-    a = a - bounds_[d].lo;
+    a = a - bounds_[d].Lo();
     a = a - floor(a / box_[d]) * box_[d];
 
     if (bh > a)
@@ -156,18 +156,18 @@ double PeriodicHRectBound<t_pow>::MinDistance(
 
   for (size_t d = 0; d < dim_; d++){
     double v = 0, d1, d2, d3;
-    d1 = ((bounds_[d].hi > bounds_[d].lo) |
-          (other.bounds_[d].hi > other.bounds_[d].lo)) *
-        std::min(other.bounds_[d].lo - bounds_[d].hi,
-                 bounds_[d].lo - other.bounds_[d].hi);
-    d2 = ((bounds_[d].hi > bounds_[d].lo) &
-          (other.bounds_[d].hi > other.bounds_[d].lo)) *
-        std::min(other.bounds_[d].lo - bounds_[d].hi,
-                 bounds_[d].lo - other.bounds_[d].hi + box_[d]);
-    d3 = ((bounds_[d].hi > bounds_[d].lo) &
-          (other.bounds_[d].hi > other.bounds_[d].lo)) *
-        std::min(other.bounds_[d].lo - bounds_[d].hi + box_[d],
-                 bounds_[d].lo - other.bounds_[d].hi);
+    d1 = ((bounds_[d].Hi() > bounds_[d].Lo()) |
+          (other.bounds_[d].Hi() > other.bounds_[d].Lo())) *
+        std::min(other.bounds_[d].Lo() - bounds_[d].Hi(),
+                 bounds_[d].Lo() - other.bounds_[d].Hi());
+    d2 = ((bounds_[d].Hi() > bounds_[d].Lo()) &
+          (other.bounds_[d].Hi() > other.bounds_[d].Lo())) *
+        std::min(other.bounds_[d].Lo() - bounds_[d].Hi(),
+                 bounds_[d].Lo() - other.bounds_[d].Hi() + box_[d]);
+    d3 = ((bounds_[d].Hi() > bounds_[d].Lo()) &
+          (other.bounds_[d].Hi() > other.bounds_[d].Lo())) *
+        std::min(other.bounds_[d].Lo() - bounds_[d].Hi() + box_[d],
+                 bounds_[d].Lo() - other.bounds_[d].Hi());
 
     v = (d1 + fabs(d1)) + (d2 + fabs(d2)) + (d3 + fabs(d3));
 
@@ -191,7 +191,7 @@ double PeriodicHRectBound<t_pow>::MaxDistance(const arma::vec& point) const
     double v = box_[d] / 2.0;
     double ah, al;
 
-    ah = bounds_[d].hi - b;
+    ah = bounds_[d].Hi() - b;
     ah = ah - floor(ah / box_[d]) * box_[d];
 
     if (ah < v)
@@ -200,7 +200,7 @@ double PeriodicHRectBound<t_pow>::MaxDistance(const arma::vec& point) const
     }
     else
     {
-      al = bounds_[d].lo - b;
+      al = bounds_[d].Lo() - b;
       al = al - floor(al / box_[d]) * box_[d];
 
       if (al > v)
@@ -229,9 +229,9 @@ double PeriodicHRectBound<t_pow>::MaxDistance(
     double v = box_[d] / 2.0;
     double dh, dl;
 
-    dh = bounds_[d].hi - other.bounds_[d].lo;
+    dh = bounds_[d].Hi() - other.bounds_[d].Lo();
     dh = dh - floor(dh / box_[d]) * box_[d];
-    dl = other.bounds_[d].hi - bounds_[d].lo;
+    dl = other.bounds_[d].Hi() - bounds_[d].Lo();
     dl = dl - floor(dl / box_[d]) * box_[d];
     v = fabs(std::max(std::min(dh, v), std::min(dl, v)));
 
@@ -256,8 +256,8 @@ math::Range PeriodicHRectBound<t_pow>::RangeDistance(
   double v1, v2, v_lo, v_hi;
   for (size_t d = 0; d < dim_; d++)
   {
-    v1 = bounds_[d].lo - point[d];
-    v2 = point[d] - bounds_[d].hi;
+    v1 = bounds_[d].Lo() - point[d];
+    v2 = point[d] - bounds_[d].Hi();
     // One of v1 or v2 is negative.
     if (v1 >= 0)
     {
@@ -293,8 +293,8 @@ math::Range PeriodicHRectBound<t_pow>::RangeDistance(
   double v1, v2, v_lo, v_hi;
   for (size_t d = 0; d < dim_; d++)
   {
-    v1 = other.bounds_[d].lo - bounds_[d].hi;
-    v2 = bounds_[d].lo - other.bounds_[d].hi;
+    v1 = other.bounds_[d].Lo() - bounds_[d].Hi();
+    v2 = bounds_[d].Lo() - other.bounds_[d].Hi();
     // One of v1 or v2 is negative.
     if(v1 >= v2)
     {
