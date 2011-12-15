@@ -3,11 +3,11 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
+  ballbound.hpp
+  ballbound_impl.hpp
   binary_space_tree.hpp
   binary_space_tree_impl.hpp
   bounds.hpp
-  dballbound.hpp
-  dballbound_impl.hpp
   hrectbound.hpp
   hrectbound_impl.hpp
   periodichrectbound.hpp
