@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE(RangeEmptyConstructor)
   Range x = Range();
 
   // Just verify that it is empty.
-  BOOST_REQUIRE_GT(x.lo, x.hi);
+  BOOST_REQUIRE_GT(x.Lo(), x.Hi());
 }
 
 /**
@@ -33,10 +33,10 @@ BOOST_AUTO_TEST_CASE(RangePointConstructor)
 {
   Range x(10.0);
 
-  BOOST_REQUIRE_CLOSE(x.lo, x.hi, 1e-25);
+  BOOST_REQUIRE_CLOSE(x.Lo(), x.Hi(), 1e-25);
   BOOST_REQUIRE_SMALL(x.Width(), 1e-5);
-  BOOST_REQUIRE_CLOSE(x.lo, 10.0, 1e-25);
-  BOOST_REQUIRE_CLOSE(x.hi, 10.0, 1e-25);
+  BOOST_REQUIRE_CLOSE(x.Lo(), 10.0, 1e-25);
+  BOOST_REQUIRE_CLOSE(x.Hi(), 10.0, 1e-25);
 }
 
 /**
@@ -46,8 +46,8 @@ BOOST_AUTO_TEST_CASE(RangeConstructor)
 {
   Range x(0.5, 5.5);
 
-  BOOST_REQUIRE_CLOSE(x.lo, 0.5, 1e-25);
-  BOOST_REQUIRE_CLOSE(x.hi, 5.5, 1e-25);
+  BOOST_REQUIRE_CLOSE(x.Lo(), 0.5, 1e-25);
+  BOOST_REQUIRE_CLOSE(x.Hi(), 5.5, 1e-25);
 }
 
 /**
@@ -60,18 +60,18 @@ BOOST_AUTO_TEST_CASE(RangeWidth)
   BOOST_REQUIRE_CLOSE(x.Width(), 10.0, 1e-20);
 
   // Make it empty.
-  x.hi = 0.0;
+  x.Hi() = 0.0;
 
   BOOST_REQUIRE_SMALL(x.Width(), 1e-5);
 
   // Make it negative.
-  x.hi = -2.0;
+  x.Hi() = -2.0;
 
   BOOST_REQUIRE_SMALL(x.Width(), 1e-5);
 
   // Just one more test.
-  x.lo = -5.2;
-  x.hi = 5.2;
+  x.Lo() = -5.2;
+  x.Hi() = 5.2;
 
   BOOST_REQUIRE_CLOSE(x.Width(), 10.4, 1e-5);
 }
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(RangeMidpoint)
 
   BOOST_REQUIRE_CLOSE(x.Mid(), 5.0, 1e-5);
 
-  x.lo = -5.0;
+  x.Lo() = -5.0;
 
   BOOST_REQUIRE_CLOSE(x.Mid(), 2.5, 1e-5);
 }
@@ -106,20 +106,20 @@ BOOST_AUTO_TEST_CASE(RangeIncludeOther)
   z |= y;
   w = x | y;
 
-  BOOST_REQUIRE_SMALL(z.lo, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.hi, 5.0, 1e-5);
-  BOOST_REQUIRE_SMALL(w.lo, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.hi, 5.0, 1e-5);
+  BOOST_REQUIRE_SMALL(z.Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Hi(), 5.0, 1e-5);
+  BOOST_REQUIRE_SMALL(w.Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Hi(), 5.0, 1e-5);
 
   // Switch operator precedence.
   z = y;
   z |= x;
   w = y | x;
 
-  BOOST_REQUIRE_SMALL(z.lo, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.hi, 5.0, 1e-5);
-  BOOST_REQUIRE_SMALL(w.lo, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.hi, 5.0, 1e-5);
+  BOOST_REQUIRE_SMALL(z.Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Hi(), 5.0, 1e-5);
+  BOOST_REQUIRE_SMALL(w.Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Hi(), 5.0, 1e-5);
 
   // Now make them overlapping.
   x = Range(0.0, 3.5);
@@ -129,20 +129,20 @@ BOOST_AUTO_TEST_CASE(RangeIncludeOther)
   z |= y;
   w = x | y;
 
-  BOOST_REQUIRE_SMALL(z.lo, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.hi, 4.0, 1e-5);
-  BOOST_REQUIRE_SMALL(w.lo, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.hi, 4.0, 1e-5);
+  BOOST_REQUIRE_SMALL(z.Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Hi(), 4.0, 1e-5);
+  BOOST_REQUIRE_SMALL(w.Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Hi(), 4.0, 1e-5);
 
   // Switch operator precedence.
   z = y;
   z |= x;
   w = y | x;
 
-  BOOST_REQUIRE_SMALL(z.lo, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.hi, 4.0, 1e-5);
-  BOOST_REQUIRE_SMALL(w.lo, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.hi, 4.0, 1e-5);
+  BOOST_REQUIRE_SMALL(z.Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Hi(), 4.0, 1e-5);
+  BOOST_REQUIRE_SMALL(w.Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Hi(), 4.0, 1e-5);
 
   // Now the equivalent case.
   x = Range(0.0, 2.0);
@@ -152,19 +152,19 @@ BOOST_AUTO_TEST_CASE(RangeIncludeOther)
   z |= y;
   w = x | y;
 
-  BOOST_REQUIRE_SMALL(z.lo, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.hi, 2.0, 1e-5);
-  BOOST_REQUIRE_SMALL(w.lo, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.hi, 2.0, 1e-5);
+  BOOST_REQUIRE_SMALL(z.Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Hi(), 2.0, 1e-5);
+  BOOST_REQUIRE_SMALL(w.Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Hi(), 2.0, 1e-5);
 
   z = y;
   z |= x;
   w = y | x;
 
-  BOOST_REQUIRE_SMALL(z.lo, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.hi, 2.0, 1e-5);
-  BOOST_REQUIRE_SMALL(w.lo, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.hi, 2.0, 1e-5);
+  BOOST_REQUIRE_SMALL(z.Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Hi(), 2.0, 1e-5);
+  BOOST_REQUIRE_SMALL(w.Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Hi(), 2.0, 1e-5);
 }
 
 /**
@@ -202,20 +202,20 @@ BOOST_AUTO_TEST_CASE(RangeIntersectOther)
   z &= y;
   w = x & y;
 
-  BOOST_REQUIRE_CLOSE(z.lo, 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.hi, 3.5, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.lo, 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.hi, 3.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Lo(), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Hi(), 3.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Lo(), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Hi(), 3.5, 1e-5);
 
   // Reverse operator precedence.
   z = y;
   z &= x;
   w = y & x;
 
-  BOOST_REQUIRE_CLOSE(z.lo, 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.hi, 3.5, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.lo, 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.hi, 3.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Lo(), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Hi(), 3.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Lo(), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Hi(), 3.5, 1e-5);
 
   // Now make them equivalent.
   x = Range(2.0, 4.0);
@@ -225,10 +225,10 @@ BOOST_AUTO_TEST_CASE(RangeIntersectOther)
   z &= y;
   w = x & y;
 
-  BOOST_REQUIRE_CLOSE(z.lo, 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.hi, 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.lo, 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.hi, 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Lo(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Hi(), 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Lo(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Hi(), 4.0, 1e-5);
 }
 
 /**
@@ -251,36 +251,36 @@ BOOST_AUTO_TEST_CASE(RangeMultiply)
   z = x * -1.0;
   w = -1.0 * x;
 
-  BOOST_REQUIRE_CLOSE(y.lo, 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(y.hi, 5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.lo, 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.hi, 5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.lo, 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.hi, 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(y.Lo(), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(y.Hi(), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Lo(), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Hi(), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Lo(), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Hi(), 5.0, 1e-5);
 
   y = x;
   y *= 0.0;
   z = x * 0.0;
   w = 0.0 * x;
 
-  BOOST_REQUIRE_SMALL(y.lo, 1e-5);
-  BOOST_REQUIRE_SMALL(y.hi, 1e-5);
-  BOOST_REQUIRE_SMALL(z.lo, 1e-5);
-  BOOST_REQUIRE_SMALL(z.hi, 1e-5);
-  BOOST_REQUIRE_SMALL(w.lo, 1e-5);
-  BOOST_REQUIRE_SMALL(w.hi, 1e-5);
+  BOOST_REQUIRE_SMALL(y.Lo(), 1e-5);
+  BOOST_REQUIRE_SMALL(y.Hi(), 1e-5);
+  BOOST_REQUIRE_SMALL(z.Lo(), 1e-5);
+  BOOST_REQUIRE_SMALL(z.Hi(), 1e-5);
+  BOOST_REQUIRE_SMALL(w.Lo(), 1e-5);
+  BOOST_REQUIRE_SMALL(w.Hi(), 1e-5);
 
   y = x;
   y *= 2.0;
   z = x * 2.0;
   w = 2.0 * x;
 
-  BOOST_REQUIRE_CLOSE(y.lo, -10.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(y.hi, -6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.lo, -10.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.hi, -6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.lo, -10.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.hi, -6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(y.Lo(), -10.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(y.Hi(), -6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Lo(), -10.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Hi(), -6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Lo(), -10.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Hi(), -6.0, 1e-5);
 
   x = Range(-2.0, 2.0);
   y = x;
@@ -289,36 +289,36 @@ BOOST_AUTO_TEST_CASE(RangeMultiply)
   z = x * -1.0;
   w = -1.0 * x;
 
-  BOOST_REQUIRE_CLOSE(y.lo, -2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(y.hi, 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.lo, -2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.hi, 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.lo, -2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.hi, 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(y.Lo(), -2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(y.Hi(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Lo(), -2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Hi(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Lo(), -2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Hi(), 2.0, 1e-5);
 
   y = x;
   y *= 0.0;
   z = x * 0.0;
   w = 0.0 * x;
 
-  BOOST_REQUIRE_SMALL(y.lo, 1e-5);
-  BOOST_REQUIRE_SMALL(y.hi, 1e-5);
-  BOOST_REQUIRE_SMALL(z.lo, 1e-5);
-  BOOST_REQUIRE_SMALL(z.hi, 1e-5);
-  BOOST_REQUIRE_SMALL(w.lo, 1e-5);
-  BOOST_REQUIRE_SMALL(w.hi, 1e-5);
+  BOOST_REQUIRE_SMALL(y.Lo(), 1e-5);
+  BOOST_REQUIRE_SMALL(y.Hi(), 1e-5);
+  BOOST_REQUIRE_SMALL(z.Lo(), 1e-5);
+  BOOST_REQUIRE_SMALL(z.Hi(), 1e-5);
+  BOOST_REQUIRE_SMALL(w.Lo(), 1e-5);
+  BOOST_REQUIRE_SMALL(w.Hi(), 1e-5);
 
   y = x;
   y *= 2.0;
   z = x * 2.0;
   w = 2.0 * x;
 
-  BOOST_REQUIRE_CLOSE(y.lo, -4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(y.hi, 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.lo, -4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.hi, 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.lo, -4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.hi, 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(y.Lo(), -4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(y.Hi(), 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Lo(), -4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Hi(), 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Lo(), -4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Hi(), 4.0, 1e-5);
 
   x = Range(3.0, 5.0);
 
@@ -327,36 +327,36 @@ BOOST_AUTO_TEST_CASE(RangeMultiply)
   z = x * -1.0;
   w = -1.0 * x;
 
-  BOOST_REQUIRE_CLOSE(y.lo, -5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(y.hi, -3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.lo, -5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.hi, -3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.lo, -5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.hi, -3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(y.Lo(), -5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(y.Hi(), -3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Lo(), -5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Hi(), -3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Lo(), -5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Hi(), -3.0, 1e-5);
 
   y = x;
   y *= 0.0;
   z = x * 0.0;
   w = 0.0 * x;
 
-  BOOST_REQUIRE_SMALL(y.lo, 1e-5);
-  BOOST_REQUIRE_SMALL(y.hi, 1e-5);
-  BOOST_REQUIRE_SMALL(z.lo, 1e-5);
-  BOOST_REQUIRE_SMALL(z.hi, 1e-5);
-  BOOST_REQUIRE_SMALL(w.lo, 1e-5);
-  BOOST_REQUIRE_SMALL(w.hi, 1e-5);
+  BOOST_REQUIRE_SMALL(y.Lo(), 1e-5);
+  BOOST_REQUIRE_SMALL(y.Hi(), 1e-5);
+  BOOST_REQUIRE_SMALL(z.Lo(), 1e-5);
+  BOOST_REQUIRE_SMALL(z.Hi(), 1e-5);
+  BOOST_REQUIRE_SMALL(w.Lo(), 1e-5);
+  BOOST_REQUIRE_SMALL(w.Hi(), 1e-5);
 
   y = x;
   y *= 2.0;
   z = x * 2.0;
   w = 2.0 * x;
 
-  BOOST_REQUIRE_CLOSE(y.lo, 6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(y.hi, 10.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.lo, 6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(z.hi, 10.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.lo, 6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(w.hi, 10.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(y.Lo(), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(y.Hi(), 10.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Lo(), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(z.Hi(), 10.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Lo(), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(w.Hi(), 10.0, 1e-5);
 }
 
 /**
