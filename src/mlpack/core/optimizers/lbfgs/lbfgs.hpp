@@ -61,6 +61,41 @@ class L_BFGS
    */
   bool Optimize(const size_t maxIterations, arma::mat& iterate);
 
+  //! Get the memory size.
+  size_t NumBasis() const { return numBasis; }
+  //! Modify the memory size.
+  size_t& NumBasis() { return numBasis; }
+
+  //! Get the Armijo condition constant.
+  double ArmijoConstant() const { return armijoConstant; }
+  //! Modify the Armijo condition constant.
+  double& ArmijoConstant() { return armijoConstant; }
+
+  //! Get the Wolfe parameter.
+  double Wolfe() const { return wolfe; }
+  //! Modify the Wolfe parameter.
+  double& Wolfe() { return wolfe; }
+
+  //! Get the minimum gradient norm.
+  double MinGradientNorm() const { return minGradientNorm; }
+  //! Modify the minimum gradient norm.
+  double& MinGradientNorm() { return minGradientNorm; }
+
+  //! Get the maximum number of line search trials.
+  size_t MaxLineSearchTrials() const { return maxLineSearchTrials; }
+  //! Modify the maximum number of line search trials.
+  size_t& MaxLineSearchTrials() { return maxLineSearchTrials; }
+
+  //! Return the minimum line search step size.
+  double MinStep() const { return minStep; }
+  //! Modify the minimum line search step size.
+  double& MinStep() { return minStep; }
+
+  //! Return the maximum line search step size.
+  double MaxStep() const { return maxStep; }
+  //! Modify the maximum line search step size.
+  double& MaxStep() { return maxStep; }
+
  private:
   //! Internal copy of the function we are optimizing.
   FunctionType function;

@@ -29,10 +29,10 @@ class AugLagrangianTestFunction
   double Evaluate(const arma::mat& coordinates);
   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
 
-  int NumConstraints() const { return 1; }
+  size_t NumConstraints() const { return 1; }
 
-  double EvaluateConstraint(int index, const arma::mat& coordinates);
-  void GradientConstraint(int index,
+  double EvaluateConstraint(size_t index, const arma::mat& coordinates);
+  void GradientConstraint(size_t index,
                           const arma::mat& coordinates,
                           arma::mat& gradient);
 
@@ -62,10 +62,10 @@ class GockenbachFunction
   double Evaluate(const arma::mat& coordinates);
   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
 
-  int NumConstraints() const { return 2; };
+  size_t NumConstraints() const { return 2; };
 
-  double EvaluateConstraint(int index, const arma::mat& coordinates);
-  void GradientConstraint(int index,
+  double EvaluateConstraint(size_t index, const arma::mat& coordinates);
+  void GradientConstraint(size_t index,
                           const arma::mat& coordinates,
                           arma::mat& gradient);
 
@@ -115,10 +115,10 @@ class LovaszThetaSDP
   double Evaluate(const arma::mat& coordinates);
   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
 
-  int NumConstraints();
+  size_t NumConstraints() const;
 
-  double EvaluateConstraint(int index, const arma::mat& coordinates);
-  void GradientConstraint(int index,
+  double EvaluateConstraint(size_t index, const arma::mat& coordinates);
+  void GradientConstraint(size_t index,
                           const arma::mat& coordinates,
                           arma::mat& gradient);
 
