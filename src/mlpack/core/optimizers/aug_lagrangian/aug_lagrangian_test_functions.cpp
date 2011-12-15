@@ -45,7 +45,7 @@ void AugLagrangianTestFunction::Gradient(const arma::mat& coordinates,
   gradient[1] = 4 * coordinates[0] + 6 * coordinates[1];
 }
 
-double AugLagrangianTestFunction::EvaluateConstraint(int index,
+double AugLagrangianTestFunction::EvaluateConstraint(size_t index,
     const arma::mat& coordinates)
 {
   // We return 0 if the index is wrong (not 0).
@@ -56,7 +56,7 @@ double AugLagrangianTestFunction::EvaluateConstraint(int index,
   return (coordinates[0] + coordinates[1] - 5);
 }
 
-void AugLagrangianTestFunction::GradientConstraint(int index,
+void AugLagrangianTestFunction::GradientConstraint(size_t index,
     const arma::mat& coordinates, arma::mat& gradient)
 {
   // If the user passed an invalid index (not 0), we will return a zero
@@ -107,7 +107,7 @@ void GockenbachFunction::Gradient(const arma::mat& coordinates,
   gradient[2] = 6 * (coordinates[2] + 3);
 }
 
-double GockenbachFunction::EvaluateConstraint(int index,
+double GockenbachFunction::EvaluateConstraint(size_t index,
                                               const arma::mat& coordinates)
 {
   double constraint = 0;
@@ -130,7 +130,7 @@ double GockenbachFunction::EvaluateConstraint(int index,
   return constraint;
 }
 
-void GockenbachFunction::GradientConstraint(int index,
+void GockenbachFunction::GradientConstraint(size_t index,
                                             const arma::mat& coordinates,
                                             arma::mat& gradient)
 {
@@ -203,13 +203,13 @@ void LovaszThetaSDP::Gradient(const arma::mat& coordinates,
 //  std::cout << gradient;
 }
 
-int LovaszThetaSDP::NumConstraints()
+size_t LovaszThetaSDP::NumConstraints() const
 {
   // Each edge is a constraint, and we have the constraint Tr(X) = 1.
   return edges_.n_cols + 1;
 }
 
-double LovaszThetaSDP::EvaluateConstraint(int index,
+double LovaszThetaSDP::EvaluateConstraint(size_t index,
                                           const arma::mat& coordinates)
 {
   if (index == 0) // This is the constraint Tr(X) = 1.
@@ -232,7 +232,7 @@ double LovaszThetaSDP::EvaluateConstraint(int index,
   return dot(coordinates.col(i), coordinates.col(j));
 }
 
-void LovaszThetaSDP::GradientConstraint(int index,
+void LovaszThetaSDP::GradientConstraint(size_t index,
                                         const arma::mat& coordinates,
                                         arma::mat& gradient)
 {

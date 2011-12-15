@@ -38,16 +38,26 @@ template<typename LagrangianFunction>
 class AugLagrangian
 {
  public:
-  AugLagrangian(LagrangianFunction& function_in, int num_basis);
+  AugLagrangian(LagrangianFunction& function, size_t numBasis);
       // not sure what to do here yet
 
-  bool Optimize(int num_iterations,
+  bool Optimize(size_t num_iterations,
                 arma::mat& coordinates,
                 double sigma = 0.5);
 
+  //! Get the LagrangianFunction.
+  const LagrangianFunction& Function() const { return function; }
+  //! Modify the LagrangianFunction.
+  LagrangianFunction& Function() { return function; }
+
+  //! Get the number of memory points used by L-BFGS.
+  size_t NumBasis() const { return numBasis; }
+  //! Modify the number of memory points used by L-BFGS.
+  size_t& NumBasis() { return numBasis; }
+
  private:
-  LagrangianFunction& function_;
-  int num_basis_;
+  LagrangianFunction& function;
+  size_t numBasis;
 
   /**
    * This is a utility class, which we will pass to L-BFGS during the
@@ -68,11 +78,26 @@ class AugLagrangian
 
     const arma::mat& GetInitialPoint();
 
-    arma::vec lambda_;
-    double sigma_;
+    //! Get the Lagrangian multipliers.
+    const arma::vec& Lambda() const { return lambda; }
+    //! Modify the Lagrangian multipliers.
+    arma::vec& Lambda() { return lambda; }
+
+    //! Get sigma.
+    double Sigma() const { return sigma; }
+    //! Modify sigma.
+    double& Sigma() { return sigma; }
+
+    //! Get the Lagrangian function.
+    const LagrangianFunction& Function() const { return function; }
+    //! Modify the Lagrangian function.
+    LagrangianFunction& Function() { return function; }
 
    private:
-    LagrangianFunction& function_;
+    arma::vec lambda;
+    double sigma;
+
+    LagrangianFunction& function;
   };
 };
 
