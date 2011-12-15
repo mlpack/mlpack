@@ -84,14 +84,14 @@ void PCA::Apply(const arma::mat& data,
  * from data matrix onto the basis vectors contained in the columns of
  * coeff/eigen vector matrix with only newDimension number of columns chosen.
  */
-void PCA::Apply(arma::mat& data, const int newDimension) const
+void PCA::Apply(arma::mat& data, const size_t newDimension) const
 {
   arma::mat coeffs;
   arma::vec eigVal;
 
   Apply(data, data, eigVal, coeffs);
 
-  if(newDimension < coeffs.n_rows && newDimension > 0)
+  if (newDimension < coeffs.n_rows && newDimension > 0)
     data.shed_rows(newDimension, data.n_rows - 1);
 }
 

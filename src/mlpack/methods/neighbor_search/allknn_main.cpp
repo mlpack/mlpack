@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
   string distancesFile = CLI::GetParam<string>("distances_file");
   string neighborsFile = CLI::GetParam<string>("neighbors_file");
 
-  int leafSize = CLI::GetParam<int>("leaf_size");
+  int lsInt = CLI::GetParam<int>("leaf_size");
 
   size_t k = CLI::GetParam<int>("k");
 
@@ -88,11 +88,12 @@ int main(int argc, char *argv[])
   }
 
   // Sanity check on leaf size.
-  if (leafSize < 0)
+  if (lsInt < 0)
   {
-    Log::Fatal << "Invalid leaf size: " << leafSize << ".  Must be greater "
+    Log::Fatal << "Invalid leaf size: " << lsInt << ".  Must be greater "
         "than or equal to 0." << endl;
   }
+  size_t leafSize = lsInt;
 
   // Naive mode overrides single mode.
   if (singleMode && naive)
