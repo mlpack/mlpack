@@ -23,6 +23,11 @@ target_link_libraries(mlpack
   boost_program_options
   xml2
 )
+set_target_properties(mlpack
+  PROPERTIES
+  VERSION 0.99.0
+  SOVERSION 0.99.0
+)
 
 # Collect all header files in the library.
 file(GLOB_RECURSE INCLUDE_H_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)
