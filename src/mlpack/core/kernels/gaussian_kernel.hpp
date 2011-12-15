@@ -30,7 +30,8 @@ class GaussianKernel
   /**
    * Default constructor; sets bandwidth to 1.0.
    */
-  GaussianKernel() : bandwidth(1.0), normalizer(sqrt(2.0 * M_PI)), gamma(-0.5) { }
+  GaussianKernel() : bandwidth(1.0), gamma(-0.5)
+  { }
 
   /**
    * Construct the Gaussian kernel with a custom bandwidth.
@@ -39,7 +40,6 @@ class GaussianKernel
    */
   GaussianKernel(double bandwidth) :
     bandwidth(bandwidth),
-    normalizer(bandwidth * sqrt(2.0 * M_PI)),
     gamma(-0.5 * pow(bandwidth, -2.0))
   { }
 
@@ -74,15 +74,14 @@ class GaussianKernel
     return exp(gamma * t * t);
   }
 
-  const double& Normalizer() { return normalizer; }
-  const double& Bandwidth() { return bandwidth; }
+  //! Get the bandwidth.
+  const double& Bandwidth() const { return bandwidth; }
+  //! Get the precalculated constant.
+  const double& Gamma() const { return gamma; }
 
  private:
   //! Kernel bandwidth.
   double bandwidth;
-
-  //! Normalizing constant.
-  double normalizer;
 
   //! Precalculated constant depending on the bandwidth;
   //! @f$ \gamma = -\frac{1}{2 \mu^2} @f$.
