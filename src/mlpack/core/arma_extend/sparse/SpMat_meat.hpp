@@ -1853,6 +1853,10 @@ template<typename eT>
 template<typename T1>
 inline
 SpMat<eT>::SpMat(const BaseCube<eT, T1>& X)
+  : n_rows(0)
+  , n_cols(0)
+  , n_elem(0)
+  , n_nonzero(0)
   {
   arma_extra_debug_sigprint_this(this);
 
@@ -2258,6 +2262,10 @@ SpMat<eT>::operator/=(const BaseCube<eT, T1>& X)
 template<typename eT>
 inline
 SpMat<eT>::SpMat(const SpSubview<eT>& X)
+  : n_rows(0)
+  , n_cols(0)
+  , n_elem(0)
+  , n_nonzero(0)
   {
   arma_extra_debug_sigprint_this(this);
 
@@ -2279,7 +2287,7 @@ SpMat<eT>::operator=(const SpSubview<eT>& X)
   init(in_n_rows, in_n_cols);
 
   // Iterate through the matrix using the internal matrix's iterators.
-  const_iterator it = const_iterator(X.m, X.m.aux_row1, X.m.aux_col1);
+  const_iterator it = const_iterator(X.m, X.aux_row1, X.aux_col1);
 
   while(it.col < (X.aux_col1 + in_n_cols) && it.row < (X.aux_row1 + in_n_rows))
     {
@@ -2288,7 +2296,7 @@ SpMat<eT>::operator=(const SpSubview<eT>& X)
       {
       values.push_back(*it);
       row_indices.push_back(it.row - X.aux_row1);
-      ++col_ptrs[(it.col - X.m.aux_col1) + 1]; // This is not completely correct, we'll fix it later.
+      ++col_ptrs[(it.col - X.aux_col1) + 1]; // This is not completely correct, we'll fix it later.
       }
 
     ++it;
@@ -2299,6 +2307,8 @@ SpMat<eT>::operator=(const SpSubview<eT>& X)
     {
     col_ptrs[col] += col_ptrs[col - 1];
     }
+
+  return *this;
   }
 
 
@@ -2315,7 +2325,7 @@ SpMat<eT>::operator+=(const SpSubview<eT>& X)
   const uword in_n_cols = X.n_cols;
   const uword in_n_rows = X.n_rows;
 
-  const_iterator it = const_iterator(X.m, X.m.aux_row1, X.m.aux_col1);
+  const_iterator it = const_iterator(X.m, X.aux_row1, X.aux_col1);
 
   while(it.col < (X.aux_col1 + in_n_cols) && it.row < (X.aux_row1 + in_n_rows))
     {
@@ -2325,6 +2335,8 @@ SpMat<eT>::operator+=(const SpSubview<eT>& X)
       at(it.row - X.aux_row1, it.col - X.aux_col1) += (*it);
       }
     }
+
+  return *this;
   }
 
 
@@ -2341,7 +2353,7 @@ SpMat<eT>::operator-=(const SpSubview<eT>& X)
   const uword in_n_cols = X.n_cols;
   const uword in_n_rows = X.n_rows;
 
-  const_iterator it = const_iterator(X.m, X.m.aux_row1, X.m.aux_col1);
+  const_iterator it = const_iterator(X.m, X.aux_row1, X.aux_col1);
 
   while(it.col < (X.aux_col1 + in_n_cols) && it.row < (X.aux_row1 + in_n_rows))
     {
@@ -2351,6 +2363,8 @@ SpMat<eT>::operator-=(const SpSubview<eT>& X)
       at(it.row - X.aux_row1, it.col - X.aux_col1) -= (*it);
       }
     }
+
+  return *this;
   }
 
 
@@ -2384,6 +2398,8 @@ SpMat<eT>::operator*=(const SpSubview<eT>& y)
 
   // With the calculation done, assign the temporary to ourselves.
   init(z);
+
+  return *this;
   }
 
 
@@ -2420,6 +2436,8 @@ SpMat<eT>::operator%=(const SpSubview<eT>& x)
       ++it;
       }
     }
+
+  return *this;
   }
 
 
@@ -2437,6 +2455,8 @@ SpMat<eT>::operator/=(const SpSubview<eT>& x)
     {
     at(elem) /= x(elem);
     }
+
+  return *this;
   }
 
 /**
@@ -2445,6 +2465,10 @@ SpMat<eT>::operator/=(const SpSubview<eT>& x)
 template<typename eT>
 inline
 SpMat<eT>::SpMat(const subview<eT>& x)
+  : n_rows(0)
+  , n_cols(0)
+  , n_elem(0)
+  , n_nonzero(0)
   {
   arma_extra_debug_sigprint_this(this);
 
@@ -2477,6 +2501,8 @@ SpMat<eT>::operator=(const subview<eT>& x)
 
     col_ptrs[col + 1] = values.size();
     }
+
+  return *this;
   }
 
 
@@ -2495,6 +2521,8 @@ SpMat<eT>::operator+=(const subview<eT>& x)
     {
     at(elem) += x(elem);
     }
+
+  return *this;
   }
 
 
@@ -2513,6 +2541,8 @@ SpMat<eT>::operator-=(const subview<eT>& x)
     {
     at(elem) -= x(elem);
     }
+
+  return *this;
   }
 
 
@@ -2537,6 +2567,8 @@ SpMat<eT>::operator*=(const subview<eT>& y)
       z(x_row_it.row, col) += (*x_row_it) * y(x_row_it.col, col);
       }
     }
+
+  return *this;
   }
 
 
@@ -2555,6 +2587,8 @@ SpMat<eT>::operator%=(const subview<eT>& x)
     {
     at(elem) *= x(elem);
     }
+
+  return *this;
   }
 
 
@@ -2573,6 +2607,8 @@ SpMat<eT>::operator/=(const subview<eT>& x)
     {
     at(elem) /= x(elem);
     }
+
+  return *this;
   }
 
 
@@ -2681,6 +2717,16 @@ SpSubview<eT>
 SpMat<eT>::rows(const uword in_row1, const uword in_row2)
   {
   arma_extra_debug_sigprint();
+
+  arma_debug_check
+    (
+    (in_row1 > in_row2) || (in_row2 >= n_rows),
+    "SpMat::rows(): indices out of bounds or incorrectly used"
+    );
+
+  const uword subview_n_rows = in_row2 - in_row1 + 1;
+
+  return SpSubview<eT>(*this, in_row1, 0, subview_n_rows, n_cols);
   }
 
 template<typename eT>
@@ -2689,6 +2735,16 @@ const SpSubview<eT>
 SpMat<eT>::rows(const uword in_row1, const uword in_row2) const
   {
   arma_extra_debug_sigprint();
+
+  arma_debug_check
+    (
+    (in_row1 > in_row2) || (in_row2 >= n_rows),
+    "SpMat::rows(): indices out of bounds or incorrectly used"
+    );
+
+  const uword subview_n_rows = in_row2 - in_row1 + 1;
+
+  return SpSubview<eT>(*this, in_row1, 0, subview_n_rows, n_cols);
   }
 
 template<typename eT>
@@ -2697,6 +2753,16 @@ SpSubview<eT>
 SpMat<eT>::cols(const uword in_col1, const uword in_col2)
   {
   arma_extra_debug_sigprint();
+
+  arma_debug_check
+    (
+    (in_col1 > in_col2) || (in_col2 >= n_cols),
+    "SpMat::cols(): indices out of bounds or incorrectly used"
+    );
+
+  const uword subview_n_cols = in_col2 - in_col1 + 1;
+
+  return SpSubview<eT>(*this, 0, in_col1, n_rows, subview_n_cols);
   }
 
 template<typename eT>
@@ -2705,6 +2771,16 @@ const SpSubview<eT>
 SpMat<eT>::cols(const uword in_col1, const uword in_col2) const
   {
   arma_extra_debug_sigprint();
+
+  arma_debug_check
+    (
+    (in_col1 > in_col2) || (in_col2 >= n_cols),
+    "SpMat::cols(): indices out of bounds or incorrectly used"
+    );
+
+  const uword subview_n_cols = in_col2 - in_col1 + 1;
+
+  return SpSubview<eT>(*this, 0, in_col1, n_rows, subview_n_cols);
   }
 
 template<typename eT>
