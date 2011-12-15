@@ -136,8 +136,8 @@ double HRectBound<t_pow>::MinDistance(const VecType& point) const
   double lower, higher;
   for (size_t d = 0; d < dim; d++)
   {
-    lower = bounds[d].lo - point[d];
-    higher = point[d] - bounds[d].hi;
+    lower = bounds[d].Lo() - point[d];
+    higher = point[d] - bounds[d].Hi();
 
     // Since only one of 'lower' or 'higher' is negative, if we add each's
     // absolute value to itself and then sum those two, our result is the
@@ -168,8 +168,8 @@ double HRectBound<t_pow>::MinDistance(const HRectBound& other) const
   double lower, higher;
   for (size_t d = 0; d < dim; d++)
   {
-    lower = obound->lo - mbound->hi;
-    higher = mbound->lo - obound->hi;
+    lower = obound->Lo() - mbound->Hi();
+    higher = mbound->Lo() - obound->Hi();
     // We invoke the following:
     //   x + fabs(x) = max(x * 2, 0)
     //   (x * 2)^2 / 4 = x^2
@@ -196,8 +196,8 @@ double HRectBound<t_pow>::MaxDistance(const VecType& point) const
 
   for (size_t d = 0; d < dim; d++)
   {
-    double v = fabs(std::max(point[d] - bounds[d].lo,
-                             bounds[d].hi - point[d]));
+    double v = fabs(std::max(point[d] - bounds[d].Lo(),
+                             bounds[d].Hi() - point[d]));
     sum += pow(v, (double) t_pow);
   }
 
@@ -217,8 +217,8 @@ double HRectBound<t_pow>::MaxDistance(const HRectBound& other) const
   double v;
   for (size_t d = 0; d < dim; d++)
   {
-    v = fabs(std::max(other.bounds[d].hi - bounds[d].lo,
-                      bounds[d].hi - other.bounds[d].lo));
+    v = fabs(std::max(other.bounds[d].Hi() - bounds[d].Lo(),
+                      bounds[d].Hi() - other.bounds[d].Lo()));
     sum += pow(v, (double) t_pow); // v is non-negative.
   }
 
@@ -239,8 +239,8 @@ math::Range HRectBound<t_pow>::RangeDistance(const HRectBound& other) const
   double v1, v2, vLo, vHi;
   for (size_t d = 0; d < dim; d++)
   {
-    v1 = other.bounds[d].lo - bounds[d].hi;
-    v2 = bounds[d].lo - other.bounds[d].hi;
+    v1 = other.bounds[d].Lo() - bounds[d].Hi();
+    v2 = bounds[d].Lo() - other.bounds[d].Hi();
     // One of v1 or v2 is negative.
     if (v1 >= v2)
     {
@@ -276,10 +276,10 @@ math::Range HRectBound<t_pow>::RangeDistance(const VecType& point) const
   double v1, v2, vLo, vHi;
   for (size_t d = 0; d < dim; d++)
   {
-    v1 = bounds[d].lo - point[d]; // Negative if point[d] > lo.
-    v2 = point[d] - bounds[d].hi; // Negative if point[d] < hi.
+    v1 = bounds[d].Lo() - point[d]; // Negative if point[d] > lo.
+    v2 = point[d] - bounds[d].Hi(); // Negative if point[d] < hi.
     // One of v1 or v2 (or both) is negative.
-    if (v1 >= 0) // point[d] <= bounds_[d].lo.
+    if (v1 >= 0) // point[d] <= bounds_[d].Lo().
     {
       vHi = -v2; // v2 will be larger but must be negated.
       vLo = v1;

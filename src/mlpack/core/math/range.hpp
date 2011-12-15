@@ -15,10 +15,11 @@ namespace math {
  */
 class Range
 {
- public:
+ private:
   double lo; /// The lower bound.
   double hi; /// The upper bound.
 
+ public:
   /** Initialize to an empty set (where lo > hi). */
   Range();
 
@@ -37,6 +38,16 @@ class Range
    * @param hi Upper bound of the range.
    */
   Range(const double lo, const double hi);
+
+  //! Get the lower bound.
+  const double& Lo() const { return lo; }
+  //! Modify the lower bound.
+  double& Lo() { return lo; }
+
+  //! Get the upper bound.
+  const double& Hi() const { return hi; }
+  //! Modify the upper bound.
+  double& Hi() { return hi; }
 
   /**
    * Gets the span of the range (hi - lo).
