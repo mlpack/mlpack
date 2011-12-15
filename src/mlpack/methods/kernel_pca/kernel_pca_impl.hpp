@@ -55,9 +55,9 @@ void KernelPCA<KernelType>::Apply(const arma::mat& data,
 
   arma::mat kernelMat(centeredData.n_rows, centeredData.n_rows);
 
-  for(int i = 0; i < centeredData.n_rows; i++)
+  for (size_t i = 0; i < centeredData.n_rows; i++)
   {
-    for(int j = 0; j < centeredData.n_rows; j++)
+    for (size_t j = 0; j < centeredData.n_rows; j++)
     {
       arma::vec v1 = trans(centeredData.row(i));
       arma::vec v2 = trans(centeredData.row(j));

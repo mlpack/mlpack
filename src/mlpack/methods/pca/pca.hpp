@@ -49,7 +49,7 @@ class PCA
    * from data matrix onto the basis vectors contained in the columns of
    * coeff/eigen vector matrix with only newDimension number of columns chosen.
    */
-  void Apply(arma::mat& data, const int newDimension) const;
+  void Apply(arma::mat& data, const size_t newDimension) const;
 
   /**
    * Delete PCA object

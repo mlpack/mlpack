@@ -317,11 +317,6 @@ class NeighborSearch
   //! Query dataset (may not be given).
   const arma::mat& querySet;
 
-  //! Indicates if O(n^2) naive search is being used.
-  bool naive;
-  //! Indicates if single-tree search is being used (opposed to dual-tree).
-  bool singleMode;
-
   //! Pointer to the root of the reference tree.
   TreeType* referenceTree;
   //! Pointer to the root of the query tree (might not exist).
@@ -331,6 +326,11 @@ class NeighborSearch
   bool ownReferenceTree;
   //! Indicates if we should free the query tree at deletion time.
   bool ownQueryTree;
+
+  //! Indicates if O(n^2) naive search is being used.
+  bool naive;
+  //! Indicates if single-tree search is being used (opposed to dual-tree).
+  bool singleMode;
 
   //! Instantiation of kernel.
   MetricType metric;

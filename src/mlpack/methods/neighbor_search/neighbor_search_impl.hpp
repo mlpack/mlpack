@@ -25,12 +25,12 @@ NeighborSearch(const typename TreeType::Mat& referenceSet,
     queryCopy(querySet),
     referenceSet(referenceCopy),
     querySet(queryCopy),
-    naive(naive),
-    singleMode(!naive && singleMode), // No single mode if naive.
     referenceTree(NULL),
     queryTree(NULL),
     ownReferenceTree(true), // False if a tree was passed.
     ownQueryTree(true), // False if a tree was passed.
+    naive(naive),
+    singleMode(!naive && singleMode), // No single mode if naive.
     metric(metric),
     numberOfPrunes(0)
 {
@@ -64,12 +64,12 @@ NeighborSearch(const typename TreeType::Mat& referenceSet,
     referenceCopy(referenceSet),
     referenceSet(referenceCopy),
     querySet(referenceCopy),
-    naive(naive),
-    singleMode(!naive && singleMode), // No single mode if naive.
     referenceTree(NULL),
     queryTree(NULL),
     ownReferenceTree(true),
     ownQueryTree(false), // Since it will be the same as referenceTree.
+    naive(naive),
+    singleMode(!naive && singleMode), // No single mode if naive.
     metric(metric),
     numberOfPrunes(0)
 {
