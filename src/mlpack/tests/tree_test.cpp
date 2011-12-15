@@ -62,10 +62,10 @@ BOOST_AUTO_TEST_CASE(HRectBoundCopyConstructor)
   HRectBound<2> c(b);
 
   BOOST_REQUIRE_EQUAL(c.Dim(), 2);
-  BOOST_REQUIRE_SMALL(c[0].lo, 1e-5);
-  BOOST_REQUIRE_CLOSE(c[0].hi, 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c[1].lo, 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c[1].hi, 3.0, 1e-5);
+  BOOST_REQUIRE_SMALL(c[0].Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(c[0].Hi(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[1].Lo(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[1].Hi(), 3.0, 1e-5);
 }
 
 /**
@@ -82,10 +82,10 @@ BOOST_AUTO_TEST_CASE(HRectBoundAssignmentOperator)
   c = b;
 
   BOOST_REQUIRE_EQUAL(c.Dim(), 2);
-  BOOST_REQUIRE_SMALL(c[0].lo, 1e-5);
-  BOOST_REQUIRE_CLOSE(c[0].hi, 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c[1].lo, 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c[1].hi, 3.0, 1e-5);
+  BOOST_REQUIRE_SMALL(c[0].Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(c[0].Hi(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[1].Lo(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[1].Hi(), 3.0, 1e-5);
 }
 
 /**
@@ -382,14 +382,14 @@ BOOST_AUTO_TEST_CASE(HRectBoundRangeDistanceBound)
     Range r = a.RangeDistance(b);
     Range s = b.RangeDistance(a);
 
-    BOOST_REQUIRE_CLOSE(r.lo, s.lo, 1e-5);
-    BOOST_REQUIRE_CLOSE(r.hi, s.hi, 1e-5);
+    BOOST_REQUIRE_CLOSE(r.Lo(), s.Lo(), 1e-5);
+    BOOST_REQUIRE_CLOSE(r.Hi(), s.Hi(), 1e-5);
 
-    BOOST_REQUIRE_CLOSE(r.lo, a.MinDistance(b), 1e-5);
-    BOOST_REQUIRE_CLOSE(r.hi, a.MaxDistance(b), 1e-5);
+    BOOST_REQUIRE_CLOSE(r.Lo(), a.MinDistance(b), 1e-5);
+    BOOST_REQUIRE_CLOSE(r.Hi(), a.MaxDistance(b), 1e-5);
 
-    BOOST_REQUIRE_CLOSE(s.lo, b.MinDistance(a), 1e-5);
-    BOOST_REQUIRE_CLOSE(s.hi, b.MaxDistance(a), 1e-5);
+    BOOST_REQUIRE_CLOSE(s.Lo(), b.MinDistance(a), 1e-5);
+    BOOST_REQUIRE_CLOSE(s.Hi(), b.MaxDistance(a), 1e-5);
   }
 }
 
@@ -428,8 +428,8 @@ BOOST_AUTO_TEST_CASE(HRectBoundRangeDistancePoint)
 
       Range r = a.RangeDistance(point);
 
-      BOOST_REQUIRE_CLOSE(r.lo, a.MinDistance(point), 1e-5);
-      BOOST_REQUIRE_CLOSE(r.hi, a.MaxDistance(point), 1e-5);
+      BOOST_REQUIRE_CLOSE(r.Lo(), a.MinDistance(point), 1e-5);
+      BOOST_REQUIRE_CLOSE(r.Hi(), a.MaxDistance(point), 1e-5);
     }
   }
 }
@@ -453,16 +453,16 @@ BOOST_AUTO_TEST_CASE(HRectBoundOrOperatorPoint)
 
   b |= point;
 
-  BOOST_REQUIRE_CLOSE(b[0].lo, 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(b[0].hi, 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(b[1].lo, 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(b[1].hi, 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(b[2].lo, -2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(b[2].hi, 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(b[3].lo, -1.0, 1e-5);
-  BOOST_REQUIRE_SMALL(b[3].hi, 1e-5);
-  BOOST_REQUIRE_CLOSE(b[4].lo, 6.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(b[4].hi, 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[0].Lo(), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[0].Hi(), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[1].Lo(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[1].Hi(), 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[2].Lo(), -2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[2].Hi(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[3].Lo(), -1.0, 1e-5);
+  BOOST_REQUIRE_SMALL(b[3].Hi(), 1e-5);
+  BOOST_REQUIRE_CLOSE(b[4].Lo(), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[4].Hi(), 6.0, 1e-5);
 }
 
 /**
@@ -499,45 +499,45 @@ BOOST_AUTO_TEST_CASE(HRectBoundOrOperatorBound)
   b |= c;
   d |= b;
 
-  BOOST_REQUIRE_CLOSE(b[0].lo, -3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(b[0].hi, 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(d[0].lo, -3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(d[0].hi, 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[0].Lo(), -3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[0].Hi(), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[0].Lo(), -3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[0].Hi(), 3.0, 1e-5);
 
-  BOOST_REQUIRE_CLOSE(b[1].lo, 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(b[1].hi, 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(d[1].lo, 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(d[1].hi, 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[1].Lo(), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[1].Hi(), 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[1].Lo(), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[1].Hi(), 4.0, 1e-5);
 
-  BOOST_REQUIRE_CLOSE(b[2].lo, -3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(b[2].hi, -1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(d[2].lo, -3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(d[2].hi, -1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[2].Lo(), -3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[2].Hi(), -1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[2].Lo(), -3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[2].Hi(), -1.0, 1e-5);
 
-  BOOST_REQUIRE_CLOSE(b[3].lo, 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(b[3].hi, 5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(d[3].lo, 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(d[3].hi, 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[3].Lo(), 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[3].Hi(), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[3].Lo(), 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[3].Hi(), 5.0, 1e-5);
 
-  BOOST_REQUIRE_CLOSE(b[4].lo, 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(b[4].hi, 5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(d[4].lo, 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(d[4].hi, 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[4].Lo(), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[4].Hi(), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[4].Lo(), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[4].Hi(), 5.0, 1e-5);
 
-  BOOST_REQUIRE_SMALL(b[5].lo, 1e-5);
-  BOOST_REQUIRE_CLOSE(b[5].hi, 2.0, 1e-5);
-  BOOST_REQUIRE_SMALL(d[5].lo, 1e-5);
-  BOOST_REQUIRE_CLOSE(d[5].hi, 2.0, 1e-5);
+  BOOST_REQUIRE_SMALL(b[5].Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(b[5].Hi(), 2.0, 1e-5);
+  BOOST_REQUIRE_SMALL(d[5].Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(d[5].Hi(), 2.0, 1e-5);
 
-  BOOST_REQUIRE_CLOSE(b[6].lo, 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(b[6].hi, 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(d[6].lo, 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(d[6].hi, 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[6].Lo(), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[6].Hi(), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[6].Lo(), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[6].Hi(), 3.0, 1e-5);
 
-  BOOST_REQUIRE_CLOSE(b[7].lo, 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(b[7].hi, 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(d[7].lo, 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(d[7].hi, 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[7].Lo(), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[7].Hi(), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[7].Lo(), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[7].Hi(), 3.0, 1e-5);
 }
 
 /**
@@ -600,18 +600,18 @@ BOOST_AUTO_TEST_CASE(TestBallBound)
   b2.set_radius(0.4);
 
   BOOST_REQUIRE_CLOSE(sqrt(b1.MinDistanceSq(b2)), 1-0.3-0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b1.RangeDistanceSq(b2).hi), 1+0.3+0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b1.RangeDistanceSq(b2).lo), 1-0.3-0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(b1.RangeDistance(b2).hi, 1+0.3+0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(b1.RangeDistance(b2).lo, 1-0.3-0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(sqrt(b1.RangeDistanceSq(b2).Hi()), 1+0.3+0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(sqrt(b1.RangeDistanceSq(b2).Lo()), 1-0.3-0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(b1.RangeDistance(b2).Hi(), 1+0.3+0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(b1.RangeDistance(b2).Lo(), 1-0.3-0.4, 1e-5);
   BOOST_REQUIRE_CLOSE(sqrt(b1.MinToMidSq(b2)), 1-0.3, 1e-5);
   BOOST_REQUIRE_CLOSE(sqrt(b1.MinimaxDistanceSq(b2)), 1-0.3+0.4, 1e-5);
   BOOST_REQUIRE_CLOSE(sqrt(b1.MidDistanceSq(b2)), 1.0, 1e-5);
 
   BOOST_REQUIRE_CLOSE(sqrt(b2.MinDistanceSq(b1)), 1-0.3-0.4, 1e-5);
   BOOST_REQUIRE_CLOSE(sqrt(b2.MaxDistanceSq(b1)), 1+0.3+0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b2.RangeDistanceSq(b1).hi), 1+0.3+0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b2.RangeDistanceSq(b1).lo), 1-0.3-0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(sqrt(b2.RangeDistanceSq(b1).Hi()), 1+0.3+0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(sqrt(b2.RangeDistanceSq(b1).Lo()), 1-0.3-0.4, 1e-5);
   BOOST_REQUIRE_CLOSE(sqrt(b2.MinToMidSq(b1)), 1-0.4, 1e-5);
   BOOST_REQUIRE_CLOSE(sqrt(b2.MinimaxDistanceSq(b1)), 1-0.4+0.3, 1e-5);
   BOOST_REQUIRE_CLOSE(sqrt(b2.MidDistanceSq(b1)), 1.0, 1e-5);
@@ -690,10 +690,10 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundCopyConstructor)
   PeriodicHRectBound<2> c(b);
 
   BOOST_REQUIRE_EQUAL(c.Dim(), 2);
-  BOOST_REQUIRE_SMALL(c[0].lo, 1e-5);
-  BOOST_REQUIRE_CLOSE(c[0].hi, 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c[1].lo, 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c[1].hi, 3.0, 1e-5);
+  BOOST_REQUIRE_SMALL(c[0].Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(c[0].Hi(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[1].Lo(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[1].Hi(), 3.0, 1e-5);
   BOOST_REQUIRE_EQUAL(c.box().n_elem, 2);
   BOOST_REQUIRE_CLOSE(c.box()[0], 3.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c.box()[1], 4.0, 1e-5);
@@ -713,10 +713,10 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundAssignmentOperator)
   c = b;
 
   BOOST_REQUIRE_EQUAL(c.Dim(), 2);
-  BOOST_REQUIRE_SMALL(c[0].lo, 1e-5);
-  BOOST_REQUIRE_CLOSE(c[0].hi, 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c[1].lo, 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c[1].hi, 3.0, 1e-5);
+  BOOST_REQUIRE_SMALL(c[0].Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(c[0].Hi(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[1].Lo(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[1].Hi(), 3.0, 1e-5);
   BOOST_REQUIRE_EQUAL(c.box().n_elem, 2);
   BOOST_REQUIRE_CLOSE(c.box()[0], 3.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c.box()[1], 4.0, 1e-5);
