@@ -7,7 +7,7 @@ set(SOURCES
   lin_alg.hpp
   random.hpp
   range.hpp
-  range.cpp
+  range_impl.hpp
 )
 
 # add directory name to sources
