@@ -13,22 +13,22 @@ namespace neighbor {
 
 template<typename TreeType>
 double FurthestNeighborSort::BestNodeToNodeDistance(
-    const TreeType* query_node,
-    const TreeType* reference_node)
+    const TreeType* queryNode,
+    const TreeType* referenceNode)
 {
   // This is not implemented yet for the general case because the trees do not
   // accept arbitrary distance metrics.
-  return query_node->Bound().MaxDistance(reference_node->Bound());
+  return queryNode->Bound().MaxDistance(referenceNode->Bound());
 }
 
 template<typename TreeType>
 double FurthestNeighborSort::BestPointToNodeDistance(
     const arma::vec& point,
-    const TreeType* reference_node)
+    const TreeType* referenceNode)
 {
   // This is not implemented yet for the general case because the trees do not
   // accept arbitrary distance metrics.
-  return reference_node->Bound().MaxDistance(point);
+  return referenceNode->Bound().MaxDistance(point);
 }
 
 }; // namespace neighbor

@@ -40,7 +40,7 @@ class NearestNeighborSort
    * @return size_t containing the position to insert into, or (size_t() - 1)
    *     if the new distance should not be inserted.
    */
-  static size_t SortDistance(const arma::vec& list, double new_distance);
+  static size_t SortDistance(const arma::vec& list, double newDistance);
 
   /**
    * Return whether or not value is "better" than ref.  In this case, that means
@@ -62,8 +62,8 @@ class NearestNeighborSort
    * function.
    */
   template<typename TreeType>
-  static double BestNodeToNodeDistance(const TreeType* query_node,
-                                       const TreeType* reference_node);
+  static double BestNodeToNodeDistance(const TreeType* queryNode,
+                                       const TreeType* referenceNode);
 
   /**
    * Return the best possible distance between a node and a point.  In our case,
@@ -71,8 +71,8 @@ class NearestNeighborSort
    * given distance function.
    */
   template<typename TreeType>
-  static double BestPointToNodeDistance(const arma::vec& query_point,
-                                        const TreeType* reference_node);
+  static double BestPointToNodeDistance(const arma::vec& queryPoint,
+                                        const TreeType* referenceNode);
 
   /**
    * Return what should represent the worst possible distance with this
