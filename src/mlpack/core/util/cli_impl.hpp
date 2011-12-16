@@ -38,14 +38,14 @@ void CLI::Add(const char* identifier,
   std::string path = identifier;
   std::string stringAlias = alias;
   // Must make use of boost syntax here.
-  std::string prog_opt_id = stringAlias.length() ? path + "," + alias : path;
+  std::string progOptId = stringAlias.length() ? path + "," + alias : path;
 
   // Add the alias, if necessary
   AddAlias(stringAlias, path);
 
   // Add the option to boost program_options.
   desc.add_options()
-    (prog_opt_id.c_str(), po::value<T>(),  description);
+    (progOptId.c_str(), po::value<T>(),  description);
 
   // Make sure the appropriate metadata is inserted into gmap.
   gmap_t& gmap = GetSingleton().globalValues;
@@ -58,7 +58,7 @@ void CLI::Add(const char* identifier,
   data.tname = TYPENAME(T);
   data.value = boost::any(tmp);
   data.wasPassed = false;
-  
+
   gmap[path] = data;
 
   // If the option is required, add it to the required options list.
