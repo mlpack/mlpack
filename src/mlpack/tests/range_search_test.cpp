@@ -26,9 +26,7 @@ void SortResults(const vector<vector<size_t> >& neighbors,
   {
     output[i].resize(neighbors[i].size());
     for (size_t j = 0; j < neighbors[i].size(); j++)
-    {
       output[i][j] = make_pair(distances[i][j], neighbors[i][j]);
-    }
 
     // Now that it's constructed, sort it.
     sort(output[i].begin(), output[i].end());
@@ -43,7 +41,7 @@ void SortResults(const vector<vector<size_t> >& neighbors,
  * dataset is in one dimension for simplicity -- the correct functionality of
  * distance functions is not tested here.
  */
-BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test)
+BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
 {
   // Set up our data.
   arma::mat data(1, 11);
@@ -64,17 +62,17 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test)
   for (int i = 0; i < 3; i++)
   {
     RangeSearch<>* rs;
-    arma::mat data_mutable = data;
+    arma::mat dataMutable = data;
     switch (i)
     {
       case 0: // Use the dual-tree method.
-        rs = new RangeSearch<>(data_mutable, false, false, 1);
+        rs = new RangeSearch<>(dataMutable, false, false, 1);
         break;
       case 1: // Use the single-tree method.
-        rs = new RangeSearch<>(data_mutable, false, true, 1);
+        rs = new RangeSearch<>(dataMutable, false, true, 1);
         break;
       case 2: // Use the naive method.
-        rs = new RangeSearch<>(data_mutable, true);
+        rs = new RangeSearch<>(dataMutable, true);
         break;
     }
 
@@ -447,16 +445,16 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive1)
 
   RangeSearch<> naive(naiveQuery, naiveReferences, true);
 
-  vector<vector<size_t> > neighborsTree;
-  vector<vector<double> > distancesTree;
+  vector<vector<size_t>> neighborsTree;
+  vector<vector<double>> distancesTree;
   rs.Search(Range(0.25, 1.05), neighborsTree, distancesTree);
-  vector<vector<pair<double, size_t> > > sortedTree;
+  vector<vector<pair<double, size_t>>> sortedTree;
   SortResults(neighborsTree, distancesTree, sortedTree);
 
-  vector<vector<size_t> > neighborsNaive;
-  vector<vector<double> > distancesNaive;
+  vector<vector<size_t>> neighborsNaive;
+  vector<vector<double>> distancesNaive;
   naive.Search(Range(0.25, 1.05), neighborsNaive, distancesNaive);
-  vector<vector<pair<double, size_t> > > sortedNaive;
+  vector<vector<pair<double, size_t>>> sortedNaive;
   SortResults(neighborsNaive, distancesNaive, sortedNaive);
 
   for (size_t i = 0; i < sortedTree.size(); i++)
@@ -496,16 +494,16 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive2)
   // Set naive mode.
   RangeSearch<> naive(naiveQuery, true);
 
-  vector<vector<size_t> > neighborsTree;
-  vector<vector<double> > distancesTree;
+  vector<vector<size_t>> neighborsTree;
+  vector<vector<double>> distancesTree;
   rs.Search(Range(0.25, 1.05), neighborsTree, distancesTree);
-  vector<vector<pair<double, size_t> > > sortedTree;
+  vector<vector<pair<double, size_t>>> sortedTree;
   SortResults(neighborsTree, distancesTree, sortedTree);
 
-  vector<vector<size_t> > neighborsNaive;
-  vector<vector<double> > distancesNaive;
+  vector<vector<size_t>> neighborsNaive;
+  vector<vector<double>> distancesNaive;
   naive.Search(Range(0.25, 1.05), neighborsNaive, distancesNaive);
-  vector<vector<pair<double, size_t> > > sortedNaive;
+  vector<vector<pair<double, size_t>>> sortedNaive;
   SortResults(neighborsNaive, distancesNaive, sortedNaive);
 
   for (size_t i = 0; i < sortedTree.size(); i++)
@@ -545,16 +543,16 @@ BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
   // Set up computation for naive mode.
   RangeSearch<> naive(naiveQuery, true);
 
-  vector<vector<size_t> > neighborsSingle;
-  vector<vector<double> > distancesSingle;
+  vector<vector<size_t>> neighborsSingle;
+  vector<vector<double>> distancesSingle;
   single.Search(Range(0.25, 1.05), neighborsSingle, distancesSingle);
-  vector<vector<pair<double, size_t> > > sortedTree;
+  vector<vector<pair<double, size_t>>> sortedTree;
   SortResults(neighborsSingle, distancesSingle, sortedTree);
 
-  vector<vector<size_t> > neighborsNaive;
-  vector<vector<double> > distancesNaive;
+  vector<vector<size_t>> neighborsNaive;
+  vector<vector<double>> distancesNaive;
   naive.Search(Range(0.25, 1.05), neighborsNaive, distancesNaive);
-  vector<vector<pair<double, size_t> > > sortedNaive;
+  vector<vector<pair<double, size_t>>> sortedNaive;
   SortResults(neighborsNaive, distancesNaive, sortedNaive);
 
   for (size_t i = 0; i < sortedTree.size(); i++)

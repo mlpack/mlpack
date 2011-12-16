@@ -147,17 +147,17 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMOneGaussian)
     GMM gmm(1, 2);
     gmm.Estimate(data);
 
-    arma::vec actual_mean = arma::mean(data, 1);
-    arma::mat actual_covar = ccov(data, 1 /* biased estimator */);
+    arma::vec actualMean = arma::mean(data, 1);
+    arma::mat actualCovar = ccov(data, 1 /* biased estimator */);
 
     // Check the model to see that it is correct.
-    BOOST_REQUIRE_CLOSE((gmm.Means()[0])[0], actual_mean(0), 1e-5);
-    BOOST_REQUIRE_CLOSE((gmm.Means()[0])[1], actual_mean(1), 1e-5);
+    BOOST_REQUIRE_CLOSE((gmm.Means()[0])[0], actualMean(0), 1e-5);
+    BOOST_REQUIRE_CLOSE((gmm.Means()[0])[1], actualMean(1), 1e-5);
 
-    BOOST_REQUIRE_CLOSE((gmm.Covariances()[0])(0, 0), actual_covar(0, 0), 1e-5);
-    BOOST_REQUIRE_CLOSE((gmm.Covariances()[0])(0, 1), actual_covar(0, 1), 1e-5);
-    BOOST_REQUIRE_CLOSE((gmm.Covariances()[0])(1, 0), actual_covar(1, 0), 1e-5);
-    BOOST_REQUIRE_CLOSE((gmm.Covariances()[0])(1, 1), actual_covar(1, 1), 1e-5);
+    BOOST_REQUIRE_CLOSE((gmm.Covariances()[0])(0, 0), actualCovar(0, 0), 1e-5);
+    BOOST_REQUIRE_CLOSE((gmm.Covariances()[0])(0, 1), actualCovar(0, 1), 1e-5);
+    BOOST_REQUIRE_CLOSE((gmm.Covariances()[0])(1, 0), actualCovar(1, 0), 1e-5);
+    BOOST_REQUIRE_CLOSE((gmm.Covariances()[0])(1, 1), actualCovar(1, 1), 1e-5);
 
     BOOST_REQUIRE_CLOSE(gmm.Weights()[0], 1.0, 1e-5);
   }

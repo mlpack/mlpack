@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_SUITE(AllkFNTest);
  * is in one dimension for simplicity -- the correct functionality of distance
  * functions is not tested here.
  */
-BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test)
+BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
 {
   // Set up our data.
   arma::mat data(1, 11);
@@ -41,17 +41,17 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test)
   for (int i = 0; i < 3; i++)
   {
     AllkFN* allkfn;
-    arma::mat data_mutable = data;
+    arma::mat dataMutable = data;
     switch (i)
     {
       case 0: // Use the dual-tree method.
-        allkfn = new AllkFN(data_mutable, false, false, 1);
+        allkfn = new AllkFN(dataMutable, false, false, 1);
         break;
       case 1: // Use the single-tree method.
-        allkfn = new AllkFN(data_mutable, false, true, 1);
+        allkfn = new AllkFN(dataMutable, false, true, 1);
         break;
       case 2: // Use the naive method.
-        allkfn = new AllkFN(data_mutable, true);
+        allkfn = new AllkFN(dataMutable, true);
         break;
     }
 
@@ -318,36 +318,36 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test)
  *
  * Errors are produced if the results are not identical.
  */
-BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_1)
+BOOST_AUTO_TEST_CASE(DualTreeVsNaive1)
 {
-  arma::mat data_for_tree_;
+  arma::mat dataForTree_;
 
   // Hard-coded filename: bad!
-  if (!data::Load("test_data_3_1000.csv", data_for_tree_))
+  if (!data::Load("test_data_3_1000.csv", dataForTree_))
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with.
-  arma::mat dual_query(data_for_tree_);
-  arma::mat dual_references(data_for_tree_);
-  arma::mat naive_query(data_for_tree_);
-  arma::mat naive_references(data_for_tree_);
+  arma::mat dualQuery(dataForTree_);
+  arma::mat dualReferences(dataForTree_);
+  arma::mat naiveQuery(dataForTree_);
+  arma::mat naiveReferences(dataForTree_);
 
-  AllkFN allkfn_(dual_query, dual_references);
+  AllkFN allkfn_(dualQuery, dualReferences);
 
-  AllkFN naive_(naive_query, naive_references, true);
+  AllkFN naive_(naiveQuery, naiveReferences, true);
 
-  arma::Mat<size_t> resulting_neighbors_tree;
-  arma::mat distances_tree;
-  allkfn_.Search(15, resulting_neighbors_tree, distances_tree);
+  arma::Mat<size_t> resultingNeighborsTree;
+  arma::mat distancesTree;
+  allkfn_.Search(15, resultingNeighborsTree, distancesTree);
 
-  arma::Mat<size_t> resulting_neighbors_naive;
-  arma::mat distances_naive;
-  naive_.Search(15, resulting_neighbors_naive, distances_naive);
+  arma::Mat<size_t> resultingNeighborsNaive;
+  arma::mat distancesNaive;
+  naive_.Search(15, resultingNeighborsNaive, distancesNaive);
 
-  for (size_t i = 0; i < resulting_neighbors_tree.n_elem; i++)
+  for (size_t i = 0; i < resultingNeighborsTree.n_elem; i++)
   {
-    BOOST_REQUIRE(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
-    BOOST_REQUIRE_CLOSE(distances_tree[i], distances_naive[i], 1e-5);
+    BOOST_REQUIRE(resultingNeighborsTree[i] == resultingNeighborsNaive[i]);
+    BOOST_REQUIRE_CLOSE(distancesTree[i], distancesNaive[i], 1e-5);
   }
 }
 
@@ -357,35 +357,35 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_1)
  *
  * Errors are produced if the results are not identical.
  */
-BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_2)
+BOOST_AUTO_TEST_CASE(DualTreeVsNaive2)
 {
-  arma::mat data_for_tree_;
+  arma::mat dataForTree_;
 
   // Hard-coded filename: bad!
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", data_for_tree_))
+  if (!data::Load("test_data_3_1000.csv", dataForTree_))
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with.
-  arma::mat dual_references(data_for_tree_);
-  arma::mat naive_references(data_for_tree_);
+  arma::mat dualReferences(dataForTree_);
+  arma::mat naiveReferences(dataForTree_);
 
-  AllkFN allkfn_(dual_references);
+  AllkFN allkfn_(dualReferences);
 
-  AllkFN naive_(naive_references, true);
+  AllkFN naive_(naiveReferences, true);
 
-  arma::Mat<size_t> resulting_neighbors_tree;
-  arma::mat distances_tree;
-  allkfn_.Search(15, resulting_neighbors_tree, distances_tree);
+  arma::Mat<size_t> resultingNeighborsTree;
+  arma::mat distancesTree;
+  allkfn_.Search(15, resultingNeighborsTree, distancesTree);
 
-  arma::Mat<size_t> resulting_neighbors_naive;
-  arma::mat distances_naive;
-  naive_.Search(15, resulting_neighbors_naive, distances_naive);
+  arma::Mat<size_t> resultingNeighborsNaive;
+  arma::mat distancesNaive;
+  naive_.Search(15, resultingNeighborsNaive, distancesNaive);
 
-  for (size_t i = 0; i < resulting_neighbors_tree.n_elem; i++)
+  for (size_t i = 0; i < resultingNeighborsTree.n_elem; i++)
   {
-    BOOST_REQUIRE(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
-    BOOST_REQUIRE_CLOSE(distances_tree[i], distances_naive[i], 1e-5);
+    BOOST_REQUIRE(resultingNeighborsTree[i] == resultingNeighborsNaive[i]);
+    BOOST_REQUIRE_CLOSE(distancesTree[i], distancesNaive[i], 1e-5);
   }
 }
 
@@ -395,34 +395,34 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_2)
  *
  * Errors are produced if the results are not identical.
  */
-BOOST_AUTO_TEST_CASE(single_tree_vs_naive)
+BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
 {
-  arma::mat data_for_tree_;
+  arma::mat dataForTree_;
 
   // Hard-coded filename: bad!
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", data_for_tree_))
+  if (!data::Load("test_data_3_1000.csv", dataForTree_))
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
-  arma::mat single_query(data_for_tree_);
-  arma::mat naive_query(data_for_tree_);
+  arma::mat single_query(dataForTree_);
+  arma::mat naiveQuery(dataForTree_);
 
   AllkFN allkfn_(single_query, false, true);
 
-  AllkFN naive_(naive_query, true);
+  AllkFN naive_(naiveQuery, true);
 
-  arma::Mat<size_t> resulting_neighbors_tree;
-  arma::mat distances_tree;
-  allkfn_.Search(15, resulting_neighbors_tree, distances_tree);
+  arma::Mat<size_t> resultingNeighborsTree;
+  arma::mat distancesTree;
+  allkfn_.Search(15, resultingNeighborsTree, distancesTree);
 
-  arma::Mat<size_t> resulting_neighbors_naive;
-  arma::mat distances_naive;
-  naive_.Search(15, resulting_neighbors_naive, distances_naive);
+  arma::Mat<size_t> resultingNeighborsNaive;
+  arma::mat distancesNaive;
+  naive_.Search(15, resultingNeighborsNaive, distancesNaive);
 
-  for (size_t i = 0; i < resulting_neighbors_tree.n_elem; i++)
+  for (size_t i = 0; i < resultingNeighborsTree.n_elem; i++)
   {
-    BOOST_REQUIRE(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
-    BOOST_REQUIRE_CLOSE(distances_tree[i], distances_naive[i], 1e-5);
+    BOOST_REQUIRE(resultingNeighborsTree[i] == resultingNeighborsNaive[i]);
+    BOOST_REQUIRE_CLOSE(distancesTree[i], distancesNaive[i], 1e-5);
   }
 }
 

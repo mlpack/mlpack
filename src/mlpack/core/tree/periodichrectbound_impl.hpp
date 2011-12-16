@@ -39,9 +39,14 @@ PeriodicHRectBound<t_pow>::PeriodicHRectBound(arma::vec box) :
  * Copy constructor.
  */
 template<int t_pow>
-PeriodicHRectBound<t_pow>::PeriodicHRectBound(const PeriodicHRectBound& other)
+PeriodicHRectBound<t_pow>::PeriodicHRectBound(const PeriodicHRectBound& other) :
+      dim_(other.Dim()),
+      box_(other.box())
 {
-  // not done yet
+  bounds_ = new math::Range[other.Dim()];
+  for (size_t i = 0; i < dim_; i++) {
+    bounds_[i] |= other[i];
+  }
 }
 
 /***
@@ -117,7 +122,7 @@ void PeriodicHRectBound<t_pow>::Centroid(arma::vec& centroid) const
 
 /**
  * Calculates minimum bound-to-point squared distance.
- */
+ *
 template<int t_pow>
 double PeriodicHRectBound<t_pow>::MinDistance(const arma::vec& point) const
 {
@@ -139,13 +144,65 @@ double PeriodicHRectBound<t_pow>::MinDistance(const arma::vec& point) const
   }
 
   return pow(sum, 2.0 / (double) t_pow);
+}*/
+
+template<int t_pow>
+double PeriodicHRectBound<t_pow>::MinDistance(const arma::vec& point) const
+{
+  arma::vec point2 = point;
+  double total_min = 0;
+  //Create the mirrored images. The minimum distance from the bound to a
+  //mirrored point is the minimum periodic distance.
+  arma::vec box = box_;
+  for (int i = 0; i < dim_; i++){
+    point2 = point;
+    double min = 100000000;
+    //Mod the point within the box
+
+    if (box[i] < 0){
+      box[i] = abs(box[i]);
+    }
+    if (box[i] != 0){
+      if (abs(point[i]) > box[i]) {
+        point2[i] = fmod(point2[i],box[i]);
+      }
+    }
+
+    for (int k = 0; k < 3; k++){
+      arma::vec point3 = point2;
+      if (k == 1) {
+        point3[i] += box[i];
+      }
+      else if (k == 2) {
+        point3[i] -= box[i];
+      }
+
+      double temp_min;
+      double sum = 0;
+
+      double lower, higher;
+      lower = bounds_[i].Lo() - point3[i];
+      higher = point3[i] - bounds_[i].Hi();
+
+      sum += pow((lower + fabs(lower)) + (higher + fabs(higher)), (double) t_pow);
+      temp_min = pow(sum, 2.0 / (double) t_pow) / 4.0;
+
+      if( temp_min < min)
+        min = temp_min;
+    }
+
+    total_min += min;
+  }
+  return total_min;
+
 }
 
 /**
  * Calculates minimum bound-to-bound squared distance.
  *
  * Example: bound1.MinDistance(other) for minimum squared distance.
- */
+ *
+
 template<int t_pow>
 double PeriodicHRectBound<t_pow>::MinDistance(
     const PeriodicHRectBound& other) const
@@ -175,7 +232,115 @@ double PeriodicHRectBound<t_pow>::MinDistance(
   }
 
   return pow(sum, 2.0 / (double) t_pow) / 4.0;
+}*/
+
+template<int t_pow>
+double PeriodicHRectBound<t_pow>::MinDistance(
+    const PeriodicHRectBound& other) const
+{
+  double total_min = 0;
+  //Create the mirrored images. The minimum distance from the bound to a
+  //mirrored point is the minimum periodic distance.
+  arma::vec box = box_;
+  PeriodicHRectBound<2> a(other);
+
+
+  for (int i = 0; i < dim_; i++){
+    double min = 100000000;
+    if (box[i] < 0) {
+      box[i] = abs(box[i]);
+    }
+    if (box[i] != 0) {
+      if (abs(other[i].Lo()) > box[i]) {
+        a[i].Lo() = fmod(a[i].Lo(),box[i]);
+      }
+      if (abs(other[i].Hi()) > box[i]) {
+        a[i].Hi() = fmod(a[i].Hi(),box[i]);
+      }
+    }
+
+    for (int k = 0; k < 3; k++){
+      PeriodicHRectBound<2> b = a;
+      if (k == 1) {
+        b[i].Lo() += box[i];
+        b[i].Hi() += box[i];
+      }
+      else if (k == 2) {
+        b[i].Lo() -= box[i];
+        b[i].Hi() -= box[i];
+      }
+
+      double sum = 0;
+      double temp_min;
+      double sum_lower = 0;
+      double sum_higher = 0;
+//      math::Range mbound = bounds_[i];
+//      math::Range obound = b[i];
+
+      double lower, higher, lower_lower, lower_higher, higher_lower,
+              higher_higher;
+
+      //If the bound corsses over the box, split ito two seperate bounds and
+      //find thhe minimum distance between them.
+      if( b[i].Hi() < b[i].Lo()) {
+        PeriodicHRectBound<2> a(b);
+        PeriodicHRectBound<2> c(b);
+        double upper = b[i].Hi();
+        double low = b[i].Lo();
+        a[i].Lo() = 0;
+        c[i].Hi() = box[i];
+
+        if (k == 1) {
+          a[i].Lo() += box[i];
+          c[i].Hi() += box[i];
+        }
+        else if (k == 2) {
+          a[i].Lo() -= box[i];
+          c[i].Hi() -= box[i];
+        }
+        a[i].Hi() = b[i].Hi();
+        c[i].Lo() = b[i].Lo();
+
+        lower_lower = a[i].Lo() - bounds_[i].Hi();
+        higher_lower = bounds_[i].Lo() - a[i].Hi();
+
+
+        lower_higher = c[i].Lo() - bounds_[i].Hi();
+        higher_higher = bounds_[i].Lo() - c[i].Hi();
+
+        sum_lower += pow((lower_lower + fabs(lower_lower)) +
+                         (higher_lower + fabs(higher_lower)), (double) t_pow);
+
+        sum_higher += pow((lower_higher + fabs(lower_higher)) +
+                          (higher_higher + fabs(higher_higher)), (double) t_pow);
+
+        if (sum_lower > sum_higher) {
+          temp_min = pow(sum_higher, 2.0 / (double) t_pow) / 4.0;
+        }
+        else {
+          temp_min = pow(sum_lower, 2.0 / (double) t_pow) / 4.0;
+        }
+
+      }
+      else {
+        lower = b[i].Lo() - bounds_[i].Hi();
+        higher = bounds_[i].Lo() - b[i].Hi();
+        // We invoke the following:
+        //   x + fabs(x) = max(x * 2, 0)
+        //   (x * 2)^2 / 4 = x^2
+        sum += pow((lower + fabs(lower)) + (higher + fabs(higher)), (double) t_pow);
+        temp_min = pow(sum, 2.0 / (double) t_pow) / 4.0;
+      }
+
+
+      if (temp_min < min)
+        min = temp_min;
+    }
+    total_min += min;
+  }
+  return total_min;
 }
+
 
 /**
  * Calculates maximum bound-to-point squared distance.
@@ -183,34 +348,57 @@ double PeriodicHRectBound<t_pow>::MinDistance(
 template<int t_pow>
 double PeriodicHRectBound<t_pow>::MaxDistance(const arma::vec& point) const
 {
-  double sum = 0;
+  arma::vec point2 = point;
+  double total_max = 0;
+  //Create the mirrored images. The minimum distance from the bound to a
+  //mirrored point is the minimum periodic distance.
+  arma::vec box = box_;
+  for (int i = 0; i < dim_; i++){
+    point2 = point;
+    double max = 0;
+    //Mod the point within the box
 
-  for (size_t d = 0; d < dim_; d++)
-  {
-    double b = point[d];
-    double v = box_[d] / 2.0;
-    double ah, al;
-
-    ah = bounds_[d].Hi() - b;
-    ah = ah - floor(ah / box_[d]) * box_[d];
-
-    if (ah < v)
-    {
-      v = ah;
+    if (box[i] < 0){
+      box[i] = abs(box[i]);
     }
-    else
-    {
-      al = bounds_[d].Lo() - b;
-      al = al - floor(al / box_[d]) * box_[d];
-
-      if (al > v)
-        v = (2 * v) - al;
+    if (box[i] != 0){
+      if (abs(point[i]) > box[i]) {
+        point2[i] = fmod(point2[i],box[i]);
+      }
     }
 
-    sum += pow(fabs(v), (double) t_pow);
+    for (int k = 0; k < 3; k++){
+      arma::vec point3 = point2;
+      if (k == 1) {
+        point3[i] += box[i];
+      }
+      else if (k == 2) {
+        point3[i] -= box[i];
+      }
+
+      double temp_max;
+      double sum = 0;
+
+      double lower, higher;
+      lower = bounds_[i].Lo() - point3[i];
+      higher = point3[i] - bounds_[i].Hi();
+
+      double v = fabs(std::max(point[i] - bounds_[i].Lo(),
+                             bounds_[i].Hi() - point[i]));
+      sum += pow(v, (double) t_pow);
+
+      //sum += pow((lower + fabs(lower)) + (higher + fabs(higher)),
+      //            (double) t_pow);
+      temp_max = pow(sum, 2.0 / (double) t_pow) / 4.0;
+
+      if (temp_max > max)
+        max = temp_max;
+    }
+
+    total_max += max;
   }
+  return total_max;
 
-  return pow(sum, 2.0 / (double) t_pow);
 }
 
 /**

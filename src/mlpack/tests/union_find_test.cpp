@@ -16,33 +16,33 @@ BOOST_AUTO_TEST_SUITE(UnionFindTest);
 
 BOOST_AUTO_TEST_CASE(TestFind)
 {
-  static const size_t test_size_ = 10;
-  UnionFind test_union_find_(test_size_);
+  static const size_t testSize_ = 10;
+  UnionFind testUnionFind_(testSize_);
 
-  for (size_t i = 0; i < test_size_; i++)
-    BOOST_REQUIRE(test_union_find_.Find(i) == i);
+  for (size_t i = 0; i < testSize_; i++)
+    BOOST_REQUIRE(testUnionFind_.Find(i) == i);
 
-  test_union_find_.Union(0, 1);
-  test_union_find_.Union(1, 2);
+  testUnionFind_.Union(0, 1);
+  testUnionFind_.Union(1, 2);
 
-  BOOST_REQUIRE(test_union_find_.Find(2) == test_union_find_.Find(0));
+  BOOST_REQUIRE(testUnionFind_.Find(2) == testUnionFind_.Find(0));
 }
 
 BOOST_AUTO_TEST_CASE(TestUnion)
 {
-  static const size_t test_size_ = 10;
-  UnionFind test_union_find_(test_size_);
+  static const size_t testSize_ = 10;
+  UnionFind testUnionFind_(testSize_);
 
-  test_union_find_.Union(0, 1);
-  test_union_find_.Union(2, 3);
-  test_union_find_.Union(0, 2);
-  test_union_find_.Union(5, 0);
-  test_union_find_.Union(0, 6);
+  testUnionFind_.Union(0, 1);
+  testUnionFind_.Union(2, 3);
+  testUnionFind_.Union(0, 2);
+  testUnionFind_.Union(5, 0);
+  testUnionFind_.Union(0, 6);
 
-  BOOST_REQUIRE(test_union_find_.Find(0) == test_union_find_.Find(1));
-  BOOST_REQUIRE(test_union_find_.Find(2) == test_union_find_.Find(3));
-  BOOST_REQUIRE(test_union_find_.Find(1) == test_union_find_.Find(5));
-  BOOST_REQUIRE(test_union_find_.Find(6) == test_union_find_.Find(3));
+  BOOST_REQUIRE(testUnionFind_.Find(0) == testUnionFind_.Find(1));
+  BOOST_REQUIRE(testUnionFind_.Find(2) == testUnionFind_.Find(3));
+  BOOST_REQUIRE(testUnionFind_.Find(1) == testUnionFind_.Find(5));
+  BOOST_REQUIRE(testUnionFind_.Find(6) == testUnionFind_.Find(3));
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -5,7 +5,6 @@
  * Here we have tests for the SaveRestoreModel class.
  */
 #include <mlpack/core/util/save_restore_utility.hpp>
-
 #include <boost/test/unit_test.hpp>
 
 #define ARGSTR(a) a,#a
@@ -40,9 +39,8 @@ class SaveRestoreTest
   {
     bool success = saveRestore.ReadFile(filename);
     if (success)
-    {
       anInt = saveRestore.LoadParameter(anInt, "anInt");
-    }
+
     return success;
   }
 
@@ -53,7 +51,7 @@ class SaveRestoreTest
 /**
  * Perform a save and restore on basic types.
  */
-BOOST_AUTO_TEST_CASE(save_basic_types)
+BOOST_AUTO_TEST_CASE(SaveBasicTypes)
 {
   bool b = false;
   char c = 67;
@@ -103,7 +101,7 @@ BOOST_AUTO_TEST_CASE(save_basic_types)
   delete sRM;
 }
 
-BOOST_AUTO_TEST_CASE(save_restore_std_vector)
+BOOST_AUTO_TEST_CASE(SaveRestoreStdVector)
 {
   size_t numbers[] = {0,3,6,2,6};
   std::vector<size_t> vec (numbers,
@@ -119,15 +117,13 @@ BOOST_AUTO_TEST_CASE(save_restore_std_vector)
   std::vector<size_t> loadee = sRM->LoadParameter(ARGSTR(vec));
 
   for (size_t index = 0; index < loadee.size(); ++index)
-  {
     BOOST_REQUIRE_EQUAL(numbers[index], loadee[index]);
-  }
 }
 
 /**
  * Test the arma::mat functionality.
  */
-BOOST_AUTO_TEST_CASE(save_arma_mat)
+BOOST_AUTO_TEST_CASE(SaveArmaMat)
 {
   arma::mat matrix;
   matrix <<  1.2 << 2.3 << -0.1 << arma::endr
@@ -145,12 +141,8 @@ BOOST_AUTO_TEST_CASE(save_arma_mat)
   arma::mat matrix2 = sRM->LoadParameter(ARGSTR(matrix));
 
   for (size_t row = 0; row < matrix.n_rows; ++row)
-  {
     for (size_t column = 0; column < matrix.n_cols; ++column)
-    {
       BOOST_REQUIRE_CLOSE(matrix(row,column), matrix2(row,column), 1e-5);
-    }
-  }
 
   delete sRM;
 }
@@ -159,7 +151,7 @@ BOOST_AUTO_TEST_CASE(save_arma_mat)
  * Test SaveRestoreModel proper usage in child classes and loading from
  *   separately defined objects
  */
-BOOST_AUTO_TEST_CASE(save_restore_model_child_class_usage)
+BOOST_AUTO_TEST_CASE(SaveRestoreModelChildClassUsage)
 {
   SaveRestoreTest* saver = new SaveRestoreTest();
   SaveRestoreTest* loader = new SaveRestoreTest();

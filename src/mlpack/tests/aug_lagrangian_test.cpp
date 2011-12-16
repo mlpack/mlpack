@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_SUITE(AugLagrangianTest);
  * Tests the Augmented Lagrangian optimizer using the
  * AugmentedLagrangianTestFunction class.
  */
-BOOST_AUTO_TEST_CASE(aug_lagrangian_test_function)
+BOOST_AUTO_TEST_CASE(AugLagrangianTestFunction)
 {
   // The choice of 10 memory slots is arbitrary.
   AugLagrangianTestFunction f;
@@ -31,9 +31,9 @@ BOOST_AUTO_TEST_CASE(aug_lagrangian_test_function)
   if(!aug.Optimize(0, coords))
     BOOST_FAIL("Optimization reported failure.");
 
-  double final_value = f.Evaluate(coords);
+  double finalValue = f.Evaluate(coords);
 
-  BOOST_REQUIRE_CLOSE(final_value, 70, 1e-5);
+  BOOST_REQUIRE_CLOSE(finalValue, 70, 1e-5);
   BOOST_REQUIRE_CLOSE(coords[0], 1, 1e-5);
   BOOST_REQUIRE_CLOSE(coords[1], 4, 1e-5);
 }
@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(aug_lagrangian_test_function)
 /**
  * Tests the Augmented Lagrangian optimizer using the Gockenbach function.
  */
-BOOST_AUTO_TEST_CASE(gockenbach_function)
+BOOST_AUTO_TEST_CASE(GockenbachFunction)
 {
   GockenbachFunction f;
   AugLagrangian<GockenbachFunction> aug(f, 10);
@@ -51,9 +51,9 @@ BOOST_AUTO_TEST_CASE(gockenbach_function)
   if(!aug.Optimize(0, coords))
     BOOST_FAIL("Optimization reported failure.");
 
-  double final_value = f.Evaluate(coords);
+  double finalValue = f.Evaluate(coords);
 
-  BOOST_REQUIRE_CLOSE(final_value, 29.633926, 1e-5);
+  BOOST_REQUIRE_CLOSE(finalValue, 29.633926, 1e-5);
   BOOST_REQUIRE_CLOSE(coords[0], 0.12288178, 1e-5);
   BOOST_REQUIRE_CLOSE(coords[1], -1.10778185, 1e-5);
   BOOST_REQUIRE_CLOSE(coords[2], 0.015099932, 1e-5);
@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(gockenbach_function)
 /**
  * Extremely simple test case for the Lovasz theta SDP.
  */
-BOOST_AUTO_TEST_CASE(extremely_simple_lovasz_theta_sdp)
+BOOST_AUTO_TEST_CASE(ExtremelySimpleLovaszThetaSdp)
 {
   // Manually input the single edge.
   arma::mat edges = "0; 1";
@@ -75,11 +75,11 @@ BOOST_AUTO_TEST_CASE(extremely_simple_lovasz_theta_sdp)
   if (!aug.Optimize(0, coords))
     BOOST_FAIL("Optimization reported failure.");
 
-  double final_value = ltsdp.Evaluate(coords);
+  double finalValue = ltsdp.Evaluate(coords);
 
   arma::mat X = trans(coords) * coords;
 
-  BOOST_CHECK_CLOSE(final_value, -1.0, 1e-5);
+  BOOST_CHECK_CLOSE(finalValue, -1.0, 1e-5);
 
   BOOST_CHECK_CLOSE(X(0, 0) + X(1, 1), 1.0, 1e-5);
   BOOST_CHECK_SMALL(X(0, 1), 1e-8);
@@ -104,9 +104,9 @@ BOOST_AUTO_TEST_CASE(lovasz_theta_johnson8_4_4)
   if(!aug.Optimize(0, coords))
     BOOST_FAIL("Optimization reported failure.");
 
-  double final_value = ltsdp.Evaluate(coords);
+  double finalValue = ltsdp.Evaluate(coords);
 
-  BOOST_REQUIRE_CLOSE(final_value, -14.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(finalValue, -14.0, 1e-5);
 }
  */
 

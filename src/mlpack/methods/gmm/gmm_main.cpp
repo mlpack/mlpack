@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
   Timer::Stop("em");
 
   ////// OUTPUT RESULTS //////
-  SaveRestoreUtility save;
+  mlpack::utilities::SaveRestoreUtility save;
   save.SaveParameter(gmm.Gaussians(), "gaussians");
   save.SaveParameter(gmm.Dimensionality(), "dimensionality");
   save.SaveParameter(trans(gmm.Weights()), "weights");

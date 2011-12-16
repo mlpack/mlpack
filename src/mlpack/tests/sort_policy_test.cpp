@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_SUITE(SortPolicyTest);
 /**
  * Ensure the best distance for nearest neighbors is 0.
  */
-BOOST_AUTO_TEST_CASE(nns_best_distance)
+BOOST_AUTO_TEST_CASE(NnsBestDistance)
 {
   BOOST_REQUIRE(NearestNeighborSort::BestDistance() == 0);
 }
@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(nns_best_distance)
 /**
  * Ensure the worst distance for nearest neighbors is DBL_MAX.
  */
-BOOST_AUTO_TEST_CASE(nns_worst_distance)
+BOOST_AUTO_TEST_CASE(NnsWorstDistance)
 {
   BOOST_REQUIRE(NearestNeighborSort::WorstDistance() == DBL_MAX);
 }
@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(nns_worst_distance)
 /**
  * Make sure the comparison works for values strictly less than the reference.
  */
-BOOST_AUTO_TEST_CASE(nns_is_better_strict)
+BOOST_AUTO_TEST_CASE(NnsIsBetterStrict)
 {
   BOOST_REQUIRE(NearestNeighborSort::IsBetter(5.0, 6.0) == true);
 }
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(nns_is_better_strict)
 /**
  * Warn in case the comparison is not strict.
  */
-BOOST_AUTO_TEST_CASE(nns_is_better_not_strict)
+BOOST_AUTO_TEST_CASE(NnsIsBetterNotStrict)
 {
   BOOST_WARN(NearestNeighborSort::IsBetter(6.0, 6.0) == true);
 }
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(nns_is_better_not_strict)
  * A simple test case of where to insert when all the values in the list are
  * DBL_MAX.
  */
-BOOST_AUTO_TEST_CASE(nns_sort_distance_all_dbl_max)
+BOOST_AUTO_TEST_CASE(NnsSortDistanceAllDblMax)
 {
   arma::vec list(5);
   list.fill(DBL_MAX);
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(nns_sort_distance_all_dbl_max)
  * Another test case, where we are just putting the new value in the middle of
  * the list.
  */
-BOOST_AUTO_TEST_CASE(nns_sort_distance_2)
+BOOST_AUTO_TEST_CASE(NnsSortDistance2)
 {
   arma::vec list(3);
   list[0] = 0.66;
@@ -90,58 +90,58 @@ BOOST_AUTO_TEST_CASE(nns_sort_distance_2)
  * Very simple sanity check to ensure that bounds are working alright.  We will
  * use a one-dimensional bound for simplicity.
  */
-BOOST_AUTO_TEST_CASE(nns_node_to_node_distance)
+BOOST_AUTO_TEST_CASE(NnsNodeToNodeDistance)
 {
   // Well, there's no easy way to make HRectBounds the way we want, so we have
   // to make them and then expand the region to include new points.
-  tree::BinarySpaceTree<HRectBound<2>, arma::mat> node_one;
+  tree::BinarySpaceTree<HRectBound<2>, arma::mat> nodeOne;
   arma::vec utility(1);
   utility[0] = 0;
 
-  node_one.Bound() = HRectBound<2>(1);
-  node_one.Bound() |= utility;
+  nodeOne.Bound() = HRectBound<2>(1);
+  nodeOne.Bound() |= utility;
   utility[0] = 1;
-  node_one.Bound() |= utility;
+  nodeOne.Bound() |= utility;
 
-  tree::BinarySpaceTree<HRectBound<2>, arma::mat> node_two;
-  node_two.Bound() = HRectBound<2>(1);
+  tree::BinarySpaceTree<HRectBound<2>, arma::mat> nodeTwo;
+  nodeTwo.Bound() = HRectBound<2>(1);
 
   utility[0] = 5;
-  node_two.Bound() |= utility;
+  nodeTwo.Bound() |= utility;
   utility[0] = 6;
-  node_two.Bound() |= utility;
+  nodeTwo.Bound() |= utility;
 
   // This should use the L2 squared distance.
-  BOOST_REQUIRE_CLOSE(NearestNeighborSort::BestNodeToNodeDistance(&node_one,
-      &node_two), 16.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(NearestNeighborSort::BestNodeToNodeDistance(&nodeOne,
+      &nodeTwo), 16.0, 1e-5);
 
   // And another just to be sure, from the other side.
-  node_two.Bound().Clear();
+  nodeTwo.Bound().Clear();
   utility[0] = -2;
-  node_two.Bound() |= utility;
+  nodeTwo.Bound() |= utility;
   utility[0] = -1;
-  node_two.Bound() |= utility;
+  nodeTwo.Bound() |= utility;
 
   // Again, the distance is the L2 squared distance.
-  BOOST_REQUIRE_CLOSE(NearestNeighborSort::BestNodeToNodeDistance(&node_one,
-      &node_two), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(NearestNeighborSort::BestNodeToNodeDistance(&nodeOne,
+      &nodeTwo), 1.0, 1e-5);
 
   // Now, when the bounds overlap.
-  node_two.Bound().Clear();
+  nodeTwo.Bound().Clear();
   utility[0] = -0.5;
-  node_two.Bound() |= utility;
+  nodeTwo.Bound() |= utility;
   utility[0] = 0.5;
-  node_two.Bound() |= utility;
+  nodeTwo.Bound() |= utility;
 
-  BOOST_REQUIRE_CLOSE(NearestNeighborSort::BestNodeToNodeDistance(&node_one,
-      &node_two), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(NearestNeighborSort::BestNodeToNodeDistance(&nodeOne,
+      &nodeTwo), 0.0, 1e-5);
 }
 
 /**
  * Another very simple sanity check for the point-to-node case, again in one
  * dimension.
  */
-BOOST_AUTO_TEST_CASE(nns_point_to_node_distance)
+BOOST_AUTO_TEST_CASE(NnsPointToNodeDistance)
 {
   // Well, there's no easy way to make HRectBounds the way we want, so we have
   // to make them and then expand the region to include new points.
@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(nns_point_to_node_distance)
 /**
  * Ensure the best distance for furthest neighbors is DBL_MAX.
  */
-BOOST_AUTO_TEST_CASE(fns_best_distance)
+BOOST_AUTO_TEST_CASE(FnsBestDistance)
 {
   BOOST_REQUIRE(FurthestNeighborSort::BestDistance() == DBL_MAX);
 }
@@ -187,7 +187,7 @@ BOOST_AUTO_TEST_CASE(fns_best_distance)
 /**
  * Ensure the worst distance for furthest neighbors is 0.
  */
-BOOST_AUTO_TEST_CASE(fns_worst_distance)
+BOOST_AUTO_TEST_CASE(FnsWorstDistance)
 {
   BOOST_REQUIRE(FurthestNeighborSort::WorstDistance() == 0);
 }
@@ -195,7 +195,7 @@ BOOST_AUTO_TEST_CASE(fns_worst_distance)
 /**
  * Make sure the comparison works for values strictly less than the reference.
  */
-BOOST_AUTO_TEST_CASE(fns_is_better_strict)
+BOOST_AUTO_TEST_CASE(FnsIsBetterStrict)
 {
   BOOST_REQUIRE(FurthestNeighborSort::IsBetter(5.0, 4.0) == true);
 }
@@ -203,7 +203,7 @@ BOOST_AUTO_TEST_CASE(fns_is_better_strict)
 /**
  * Warn in case the comparison is not strict.
  */
-BOOST_AUTO_TEST_CASE(fns_is_better_not_strict)
+BOOST_AUTO_TEST_CASE(FnsIsBetterNotStrict)
 {
   BOOST_WARN(FurthestNeighborSort::IsBetter(6.0, 6.0) == true);
 }
@@ -212,7 +212,7 @@ BOOST_AUTO_TEST_CASE(fns_is_better_not_strict)
  * A simple test case of where to insert when all the values in the list are
  * 0.
  */
-BOOST_AUTO_TEST_CASE(fns_sort_distance_all_zero)
+BOOST_AUTO_TEST_CASE(FnsSortDistanceAllZero)
 {
   arma::vec list(5);
   list.fill(0);
@@ -225,7 +225,7 @@ BOOST_AUTO_TEST_CASE(fns_sort_distance_all_zero)
  * Another test case, where we are just putting the new value in the middle of
  * the list.
  */
-BOOST_AUTO_TEST_CASE(fns_sort_distance_2)
+BOOST_AUTO_TEST_CASE(FnsSortDistance2)
 {
   arma::vec list(3);
   list[0] = 1.14;
@@ -244,57 +244,57 @@ BOOST_AUTO_TEST_CASE(fns_sort_distance_2)
  * Very simple sanity check to ensure that bounds are working alright.  We will
  * use a one-dimensional bound for simplicity.
  */
-BOOST_AUTO_TEST_CASE(fns_node_to_node_distance)
+BOOST_AUTO_TEST_CASE(FnsNodeToNodeDistance)
 {
   // Well, there's no easy way to make HRectBounds the way we want, so we have
   // to make them and then expand the region to include new points.
   arma::vec utility(1);
   utility[0] = 0;
 
-  tree::BinarySpaceTree<HRectBound<2>, arma::mat> node_one;
-  node_one.Bound() = HRectBound<2>(1);
-  node_one.Bound() |= utility;
+  tree::BinarySpaceTree<HRectBound<2>, arma::mat> nodeOne;
+  nodeOne.Bound() = HRectBound<2>(1);
+  nodeOne.Bound() |= utility;
   utility[0] = 1;
-  node_one.Bound() |= utility;
+  nodeOne.Bound() |= utility;
 
-  tree::BinarySpaceTree<HRectBound<2>, arma::mat> node_two;
-  node_two.Bound() = HRectBound<2>(1);
+  tree::BinarySpaceTree<HRectBound<2>, arma::mat> nodeTwo;
+  nodeTwo.Bound() = HRectBound<2>(1);
   utility[0] = 5;
-  node_two.Bound() |= utility;
+  nodeTwo.Bound() |= utility;
   utility[0] = 6;
-  node_two.Bound() |= utility;
+  nodeTwo.Bound() |= utility;
 
   // This should use the L2 squared distance.
-  BOOST_REQUIRE_CLOSE(FurthestNeighborSort::BestNodeToNodeDistance(&node_one,
-      &node_two), 36.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(FurthestNeighborSort::BestNodeToNodeDistance(&nodeOne,
+      &nodeTwo), 36.0, 1e-5);
 
   // And another just to be sure, from the other side.
-  node_two.Bound().Clear();
+  nodeTwo.Bound().Clear();
   utility[0] = -2;
-  node_two.Bound() |= utility;
+  nodeTwo.Bound() |= utility;
   utility[0] = -1;
-  node_two.Bound() |= utility;
+  nodeTwo.Bound() |= utility;
 
   // Again, the distance is the L2 squared distance.
-  BOOST_REQUIRE_CLOSE(FurthestNeighborSort::BestNodeToNodeDistance(&node_one,
-      &node_two), 9.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(FurthestNeighborSort::BestNodeToNodeDistance(&nodeOne,
+      &nodeTwo), 9.0, 1e-5);
 
   // Now, when the bounds overlap.
-  node_two.Bound().Clear();
+  nodeTwo.Bound().Clear();
   utility[0] = -0.5;
-  node_two.Bound() |= utility;
+  nodeTwo.Bound() |= utility;
   utility[0] = 0.5;
-  node_two.Bound() |= utility;
+  nodeTwo.Bound() |= utility;
 
-  BOOST_REQUIRE_CLOSE(FurthestNeighborSort::BestNodeToNodeDistance(&node_one,
-      &node_two), (1.5 * 1.5), 1e-5);
+  BOOST_REQUIRE_CLOSE(FurthestNeighborSort::BestNodeToNodeDistance(&nodeOne,
+      &nodeTwo), (1.5 * 1.5), 1e-5);
 }
 
 /**
  * Another very simple sanity check for the point-to-node case, again in one
  * dimension.
  */
-BOOST_AUTO_TEST_CASE(fns_point_to_node_distance)
+BOOST_AUTO_TEST_CASE(FnsPointToNodeDistance)
 {
   // Well, there's no easy way to make HRectBounds the way we want, so we have
   // to make them and then expand the region to include new points.

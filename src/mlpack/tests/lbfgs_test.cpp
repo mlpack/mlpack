@@ -19,18 +19,18 @@ BOOST_AUTO_TEST_SUITE(LBFGSTest);
 /**
  * Tests the L-BFGS optimizer using the Rosenbrock Function.
  */
-BOOST_AUTO_TEST_CASE(rosenbrock_function)
+BOOST_AUTO_TEST_CASE(RosenbrockFunction)
 {
   RosenbrockFunction f;
   L_BFGS<RosenbrockFunction> lbfgs(f, 10);
 
   arma::vec coords = f.GetInitialPoint();
-  if(!lbfgs.Optimize(0, coords))
+  if (!lbfgs.Optimize(0, coords))
     BOOST_FAIL("L-BFGS optimization reported failure.");
 
-  double final_value = f.Evaluate(coords);
+  double finalValue = f.Evaluate(coords);
 
-  BOOST_REQUIRE_SMALL(final_value, 1e-5);
+  BOOST_REQUIRE_SMALL(finalValue, 1e-5);
   BOOST_REQUIRE_CLOSE(coords[0], 1, 1e-5);
   BOOST_REQUIRE_CLOSE(coords[1], 1, 1e-5);
 }
@@ -38,18 +38,18 @@ BOOST_AUTO_TEST_CASE(rosenbrock_function)
 /**
  * Tests the L-BFGS optimizer using the Wood Function.
  */
-BOOST_AUTO_TEST_CASE(wood_function)
+BOOST_AUTO_TEST_CASE(WoodFunction)
 {
   WoodFunction f;
   L_BFGS<WoodFunction> lbfgs(f, 10);
 
   arma::vec coords = f.GetInitialPoint();
-  if(!lbfgs.Optimize(0, coords))
+  if (!lbfgs.Optimize(0, coords))
     BOOST_FAIL("L-BFGS optimization reported failure.");
 
-  double final_value = f.Evaluate(coords);
+  double finalValue = f.Evaluate(coords);
 
-  BOOST_REQUIRE_SMALL(final_value, 1e-5);
+  BOOST_REQUIRE_SMALL(finalValue, 1e-5);
   BOOST_REQUIRE_CLOSE(coords[0], 1, 1e-5);
   BOOST_REQUIRE_CLOSE(coords[1], 1, 1e-5);
   BOOST_REQUIRE_CLOSE(coords[2], 1, 1e-5);
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(wood_function)
  * is actually multiple tests, increasing the dimension by powers of 2, from 4
  * dimensions to 1024 dimensions.
  */
-BOOST_AUTO_TEST_CASE(generalized_rosenbrock_function)
+BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockFunction)
 {
   for (int i = 2; i < 10; i++)
   {
@@ -72,13 +72,13 @@ BOOST_AUTO_TEST_CASE(generalized_rosenbrock_function)
     L_BFGS<GeneralizedRosenbrockFunction> lbfgs(f, 20);
 
     arma::vec coords = f.GetInitialPoint();
-    if(!lbfgs.Optimize(0, coords))
+    if (!lbfgs.Optimize(0, coords))
       BOOST_FAIL("L-BFGS optimization reported failure.");
 
-    double final_value = f.Evaluate(coords);
+    double finalValue = f.Evaluate(coords);
 
     // Test the output to make sure it is correct.
-    BOOST_REQUIRE_SMALL(final_value, 1e-5);
+    BOOST_REQUIRE_SMALL(finalValue, 1e-5);
     for (int j = 0; j < dim; j++)
       BOOST_REQUIRE_CLOSE(coords[j], 1, 1e-5);
   }
@@ -88,18 +88,18 @@ BOOST_AUTO_TEST_CASE(generalized_rosenbrock_function)
  * Tests the L-BFGS optimizer using the Rosenbrock-Wood combined function.  This
  * is a test on optimizing a matrix of coordinates.
  */
-BOOST_AUTO_TEST_CASE(rosenbrock_wood_function)
+BOOST_AUTO_TEST_CASE(RosenbrockWoodFunction)
 {
   RosenbrockWoodFunction f;
   L_BFGS<RosenbrockWoodFunction> lbfgs(f, 10);
 
   arma::mat coords = f.GetInitialPoint();
-  if(!lbfgs.Optimize(0, coords))
+  if (!lbfgs.Optimize(0, coords))
     BOOST_FAIL("L-BFGS optimization reported failure.");
 
-  double final_value = f.Evaluate(coords);
+  double finalValue = f.Evaluate(coords);
 
-  BOOST_REQUIRE_SMALL(final_value, 1e-5);
+  BOOST_REQUIRE_SMALL(finalValue, 1e-5);
   for (int row = 0; row < 4; row++)
   {
     BOOST_REQUIRE_CLOSE((coords(row, 0)), 1, 1e-5);
