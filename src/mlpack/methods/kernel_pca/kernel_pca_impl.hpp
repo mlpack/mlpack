@@ -66,8 +66,8 @@ void KernelPCA<KernelType>::Apply(const arma::mat& data,
   }
 
   kernelMat.print("KERNEL MATRIX : ");
-  arma::mat mat_cov = (cov(centeredData));
-  mat_cov.print("COV MATRIX : ");
+  arma::mat matCov = (cov(centeredData));
+  matCov.print("COV MATRIX : ");
 
   transData = kernelMat; // Use the kernel matrix to do the transformations
   // after this point.
@@ -81,9 +81,9 @@ void KernelPCA<KernelType>::Apply(const arma::mat& data,
   arma::mat covMat = cov(transData);
   arma::eig_sym(eigVal, coeffs, covMat);
 
-  int n_eigVal = eigVal.n_elem;
-  for(int i = 0; i < floor(n_eigVal / 2); i++)
-    eigVal.swap_rows(i, (n_eigVal - 1) - i);
+  int nEigVal = eigVal.n_elem;
+  for(int i = 0; i < floor(nEigVal / 2); i++)
+    eigVal.swap_rows(i, (nEigVal - 1) - i);
 
   coeffs = arma::fliplr(coeffs);
   transformedData = trans(coeffs) * data;
@@ -105,8 +105,7 @@ void KernelPCA<KernelType>::Apply(const arma::mat& data,
                                   arma::vec& eigVal)
 {
   arma::mat coeffs;
-  Apply(data, transformedData,
-              eigVal, coeffs);
+  Apply(data, transformedData, eigVal, coeffs);
 }
 
 /**
