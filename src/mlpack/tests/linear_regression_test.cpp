@@ -43,8 +43,8 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTest)
   for (size_t elem = 0; elem < points.n_elem; elem++)
   {
     // Max added noise is 0.02.
-    points[elem] += ((double) rand() / (double) INT_MAX) / 50.0;
-    predictors[elem] += ((double) rand() / (double) INT_MAX) / 50.0;
+    points[elem] += math::Random() / 50.0;
+    predictors[elem] += math::Random() / 50.0;
   }
 
   // Generate responses.

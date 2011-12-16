@@ -16,7 +16,7 @@ using namespace mlpack::distribution;
 arma::vec DiscreteDistribution::Random() const
 {
   // Generate a random number.
-  double randObs = (double) rand() / (double) RAND_MAX;
+  double randObs = math::Random();
   arma::vec result(1);
 
   double sumProb = 0;

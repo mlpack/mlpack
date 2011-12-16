@@ -232,7 +232,7 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
     for (size_t obs = 0; obs < obsLen; obs++)
     {
       // See if state changed.
-      double r = (double) rand() / (double) RAND_MAX;
+      double r = math::Random();
 
       if (r <= 0.5)
         state = 0;
@@ -240,7 +240,7 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
         state = 1;
 
       // Now set the observation.
-      r = (double) rand() / (double) RAND_MAX;
+      r = math::Random();
 
       switch (state)
       {
@@ -311,7 +311,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
     states[n].set_size(obsLen);
 
     // Random starting state.
-    states[n][0] = rand() % 3;
+    states[n][0] = math::RandInt(3);
 
     // Random starting observation.
     observations[n].col(0) = emission[states[n][0]].Random();
@@ -320,7 +320,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
     for (size_t t = 1; t < obsLen; t++)
     {
       // Choose random number for state transition.
-      double state = (double) rand() / (double) RAND_MAX;
+      double state = math::Random();
 
       // Decide next state.
       double sumProb = 0;
@@ -436,7 +436,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
   for (int i = 0; i < numSeq; i++)
   {
     // Random starting state.
-    size_t startState = rand() % 4;
+    size_t startState = math::RandInt(4);
 
     hmm.Generate(numObs, sequences[i], states[i], startState);
   }
@@ -517,7 +517,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMSimpleTest)
   observations.col(0) = g1.Random();
   for (size_t i = 1; i < 1000; i++)
   {
-    double randValue = (double) rand() / (double) RAND_MAX;
+    double randValue = math::Random();
 
     if (randValue > 0.75) // Then we change state.
       classes[i] = (classes[i - 1] + 1) % 2;
@@ -586,7 +586,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMTrainTest)
     for (size_t t = 1; t < 1000; t++)
     {
       // Choose the state.
-      double randValue = (double) rand() / (double) RAND_MAX;
+      double randValue = math::Random();
       double probSum = 0;
       for (size_t state = 0; state < 3; state++)
       {
@@ -769,7 +769,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
 
   for (size_t i = 1; i < 1000; i++)
   {
-    double randValue = (double) rand() / (double) RAND_MAX;
+    double randValue = math::Random();
 
     if (randValue <= trans(0, states[i - 1]))
       states[i] = 0;

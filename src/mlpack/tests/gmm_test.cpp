@@ -323,7 +323,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
 
   for (size_t i = 0; i < 1500; i++)
   {
-    double randValue = (double) rand() / (double) RAND_MAX;
+    double randValue = math::Random();
 
     if (randValue <= 0.20) // p(d1) = 0.20
       points.col(i) = d1.Random();
@@ -339,7 +339,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
     // plus or minus a little bit of noise.  The base probability (minus the
     // noise) is parameterizable for easy modification of the test.
     double confidence = 0.995;
-    double perturbation = 0.01 * (((double) rand() / (double) RAND_MAX) - 0.5);
+    double perturbation = math::Random(-0.005, 0.005);
 
     if (randValue <= 0.90)
       probabilities(i) = confidence + perturbation;
