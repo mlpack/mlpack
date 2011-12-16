@@ -691,7 +691,7 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundCopyConstructor)
   BOOST_REQUIRE_EQUAL(c.box().n_elem, 2);
   BOOST_REQUIRE_CLOSE(c.box()[0], 3.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c.box()[1], 4.0, 1e-5);
-}*/
+}
 
 /**
  * Test the assignment operator.
@@ -890,7 +890,7 @@ BOOST_AUTO_TEST_CASE(TreeCountMismatch)
                       "3.0 4.0 6.0 7.0 1.0 2.0 ";
 
   // Leaf size of 1.
-  BinarySpaceTree<HRectBound<2>> rootNode(dataset, 1);
+  BinarySpaceTree<HRectBound<2> > rootNode(dataset, 1);
 
   BOOST_REQUIRE(rootNode.Count() == 6);
   BOOST_REQUIRE(rootNode.Left()->Count() == 3);
