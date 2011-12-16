@@ -21,13 +21,13 @@ PROGRAM_INFO("K-Means Clustering", "This program performs K-Means clustering "
     "becomes empty, the point furthest from the centroid of the cluster with "
     "maximum variance is taken to fill that cluster.");
 
-PARAM_STRING_REQ("input_file", "Input dataset to perform clustering on.", "i");
+PARAM_STRING_REQ("inputFile", "Input dataset to perform clustering on.", "i");
 PARAM_INT_REQ("clusters", "Number of clusters to find.", "c");
 
 PARAM_FLAG("in_place", "If specified, a column of the learned cluster "
     "assignments will be added to the input dataset file.  In this case, "
-    "--output_file is not necessary.", "p");
-PARAM_STRING("output_file", "File to write output labels or labeled data to.",
+    "--outputFile is not necessary.", "p");
+PARAM_STRING("outputFile", "File to write output labels or labeled data to.",
     "o", "output.csv");
 PARAM_FLAG("allow_empty_clusters", "Allow empty clusters to be created.", "e");
 PARAM_FLAG("labels_only", "Only output labels into output file.", "l");
@@ -45,7 +45,7 @@ int main(int argc, char** argv)
   srand(time(NULL));
 
   // Now do validation of options.
-  string input_file = CLI::GetParam<string>("input_file");
+  string inputFile = CLI::GetParam<string>("inputFile");
   int clusters = CLI::GetParam<int>("clusters");
   if (clusters < 1)
   {
@@ -68,15 +68,15 @@ int main(int argc, char** argv)
   }
 
   // Make sure we have an output file if we're not doing the work in-place.
-  if (!CLI::HasParam("in_place") && !CLI::HasParam("output_file"))
+  if (!CLI::HasParam("in_place") && !CLI::HasParam("outputFile"))
   {
-    Log::Fatal << "--output_file not specified (and --in_place not set)."
+    Log::Fatal << "--outputFile not specified (and --in_place not set)."
         << std::endl;
   }
 
   // Load our dataset.
   arma::mat dataset;
-  data::Load(input_file.c_str(), dataset);
+  data::Load(inputFile.c_str(), dataset);
 
   // Now create the KMeans object.  Because we could be using different types,
   // it gets a little weird...
@@ -107,16 +107,16 @@ int main(int argc, char** argv)
     dataset.insert_rows(dataset.n_rows, trans(converted));
 
     // Save the dataset.
-    data::Save(input_file.c_str(), dataset);
+    data::Save(inputFile.c_str(), dataset);
   }
   else
   {
     if (CLI::HasParam("labels_only"))
     {
       // Save only the labels.
-      string output_file = CLI::GetParam<string>("output_file");
+      string outputFile = CLI::GetParam<string>("outputFile");
       arma::Mat<size_t> output = trans(assignments);
-      data::Save(output_file.c_str(), output);
+      data::Save(outputFile.c_str(), output);
     }
     else
     {
@@ -128,8 +128,8 @@ int main(int argc, char** argv)
       dataset.insert_rows(dataset.n_rows, trans(converted));
 
       // Now save, in the different file.
-      string output_file = CLI::GetParam<string>("output_file");
-      data::Save(output_file.c_str(), dataset);
+      string outputFile = CLI::GetParam<string>("outputFile");
+      data::Save(outputFile.c_str(), dataset);
     }
   }
 }
