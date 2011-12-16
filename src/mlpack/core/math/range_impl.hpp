@@ -1,8 +1,11 @@
 /**
- * @file range.cpp
+ * @file range_impl.hpp
  *
- * Implementation of the Range class.
+ * Implementation of the (inlined) Range class.
  */
+#ifndef __MLPACK_CORE_MATH_RANGE_IMPL_HPP
+#define __MLPACK_CORE_MATH_RANGE_IMPL_HPP
+
 #include "range.hpp"
 #include <float.h>
 
@@ -12,25 +15,25 @@ namespace math {
 /**
  * Initialize the range to 0.
  */
-Range::Range() :
+inline Range::Range() :
     lo(DBL_MAX), hi(-DBL_MAX) { /* nothing else to do */ }
 
 /**
  * Initialize a range to enclose only the given point.
  */
-Range::Range(const double point) :
+inline Range::Range(const double point) :
     lo(point), hi(point) { /* nothing else to do */ }
 
 /**
  * Initializes the range to the specified values.
  */
-Range::Range(const double lo, const double hi) :
+inline Range::Range(const double lo, const double hi) :
     lo(lo), hi(hi) { /* nothing else to do */ }
 
 /**
  * Gets the span of the range, hi - lo.  Returns 0 if the range is negative.
  */
-double Range::Width() const
+inline double Range::Width() const
 {
   if (lo < hi)
     return (hi - lo);
@@ -41,7 +44,7 @@ double Range::Width() const
 /**
  * Gets the midpoint of this range.
  */
-double Range::Mid() const
+inline double Range::Mid() const
 {
   return (hi + lo) / 2;
 }
@@ -49,7 +52,7 @@ double Range::Mid() const
 /**
  * Expands range to include the other range.
  */
-Range& Range::operator|=(const Range& rhs)
+inline Range& Range::operator|=(const Range& rhs)
 {
   if (rhs.lo < lo)
     lo = rhs.lo;
@@ -59,7 +62,7 @@ Range& Range::operator|=(const Range& rhs)
   return *this;
 }
 
-Range Range::operator|(const Range& rhs) const
+inline Range Range::operator|(const Range& rhs) const
 {
   return Range((rhs.lo < lo) ? rhs.lo : lo,
                (rhs.hi > hi) ? rhs.hi : hi);
@@ -69,7 +72,7 @@ Range Range::operator|(const Range& rhs) const
  * Shrinks range to be the overlap with another range, becoming an empty
  * set if there is no overlap.
  */
-Range& Range::operator&=(const Range& rhs)
+inline Range& Range::operator&=(const Range& rhs)
 {
   if (rhs.lo > lo)
     lo = rhs.lo;
@@ -79,7 +82,7 @@ Range& Range::operator&=(const Range& rhs)
   return *this;
 }
 
-Range Range::operator&(const Range& rhs) const
+inline Range Range::operator&(const Range& rhs) const
 {
   return Range((rhs.lo > lo) ? rhs.lo : lo,
                (rhs.hi < hi) ? rhs.hi : hi);
@@ -88,7 +91,7 @@ Range Range::operator&(const Range& rhs) const
 /**
  * Scale the bounds by the given double.
  */
-Range& Range::operator*=(const double d)
+inline Range& Range::operator*=(const double d)
 {
   lo *= d;
   hi *= d;
@@ -104,7 +107,7 @@ Range& Range::operator*=(const double d)
   return *this;
 }
 
-Range Range::operator*(const double d) const
+inline Range Range::operator*(const double d) const
 {
   double nlo = lo * d;
   double nhi = hi * d;
@@ -116,7 +119,7 @@ Range Range::operator*(const double d) const
 }
 
 // Symmetric case.
-Range operator*(const double d, const Range& r)
+inline Range operator*(const double d, const Range& r)
 {
   double nlo = r.lo * d;
   double nhi = r.hi * d;
@@ -130,12 +133,12 @@ Range operator*(const double d, const Range& r)
 /**
  * Compare with another range for strict equality.
  */
-bool Range::operator==(const Range& rhs) const
+inline bool Range::operator==(const Range& rhs) const
 {
   return (lo == rhs.lo) && (hi == rhs.hi);
 }
 
-bool Range::operator!=(const Range& rhs) const
+inline bool Range::operator!=(const Range& rhs) const
 {
   return (lo != rhs.lo) || (hi != rhs.hi);
 }
@@ -144,12 +147,12 @@ bool Range::operator!=(const Range& rhs) const
  * Compare with another range.  For Range objects x and y, x < y means that x is
  * strictly less than y and does not overlap at all.
  */
-bool Range::operator<(const Range& rhs) const
+inline bool Range::operator<(const Range& rhs) const
 {
   return hi < rhs.lo;
 }
 
-bool Range::operator>(const Range& rhs) const
+inline bool Range::operator>(const Range& rhs) const
 {
   return lo > rhs.hi;
 }
@@ -157,7 +160,7 @@ bool Range::operator>(const Range& rhs) const
 /**
  * Determines if a point is contained within the range.
  */
-bool Range::Contains(const double d) const
+inline bool Range::Contains(const double d) const
 {
   return d >= lo && d <= hi;
 }
@@ -165,10 +168,12 @@ bool Range::Contains(const double d) const
 /**
  * Determines if this range overlaps with another range.
  */
-bool Range::Contains(const Range& r) const
+inline bool Range::Contains(const Range& r) const
 {
   return lo <= r.hi;
 }
 
 }; // namesapce math
 }; // namespace mlpack
+
+#endif

@@ -21,7 +21,7 @@ class Range
 
  public:
   /** Initialize to an empty set (where lo > hi). */
-  Range();
+  inline Range();
 
   /***
    * Initialize a range to enclose only the given point (lo = point, hi =
@@ -29,7 +29,7 @@ class Range
    *
    * @param point Point that this range will enclose.
    */
-  Range(const double point);
+  inline Range(const double point);
 
   /**
    * Initializes to specified range.
@@ -37,41 +37,41 @@ class Range
    * @param lo Lower bound of the range.
    * @param hi Upper bound of the range.
    */
-  Range(const double lo, const double hi);
+  inline Range(const double lo, const double hi);
 
   //! Get the lower bound.
-  const double& Lo() const { return lo; }
+  inline const double& Lo() const { return lo; }
   //! Modify the lower bound.
-  double& Lo() { return lo; }
+  inline double& Lo() { return lo; }
 
   //! Get the upper bound.
-  const double& Hi() const { return hi; }
+  inline const double& Hi() const { return hi; }
   //! Modify the upper bound.
-  double& Hi() { return hi; }
+  inline double& Hi() { return hi; }
 
   /**
    * Gets the span of the range (hi - lo).
    */
-  double Width() const;
+  inline double Width() const;
 
   /**
    * Gets the midpoint of this range.
    */
-  double Mid() const;
+  inline double Mid() const;
 
   /**
    * Expands this range to include another range.
    *
    * @param rhs Range to include.
    */
-  Range& operator|=(const Range& rhs);
+  inline Range& operator|=(const Range& rhs);
 
   /**
    * Expands this range to include another range.
    *
    * @param rhs Range to include.
    */
-  Range operator|(const Range& rhs) const;
+  inline Range operator|(const Range& rhs) const;
 
   /**
    * Shrinks this range to be the overlap with another range; this makes an
@@ -79,7 +79,7 @@ class Range
    *
    * @param rhs Other range.
    */
-  Range& operator&=(const Range& rhs);
+  inline Range& operator&=(const Range& rhs);
 
   /**
    * Shrinks this range to be the overlap with another range; this makes an
@@ -87,42 +87,42 @@ class Range
    *
    * @param rhs Other range.
    */
-  Range operator&(const Range& rhs) const;
+  inline Range operator&(const Range& rhs) const;
 
   /**
    * Scale the bounds by the given double.
    *
    * @param d Scaling factor.
    */
-  Range& operator*=(const double d);
+  inline Range& operator*=(const double d);
 
   /**
    * Scale the bounds by the given double.
    *
    * @param d Scaling factor.
    */
-  Range operator*(const double d) const;
+  inline Range operator*(const double d) const;
 
   /**
    * Scale the bounds by the given double.
    *
    * @param d Scaling factor.
    */
-  friend Range operator*(const double d, const Range& r); // Symmetric case.
+  friend inline Range operator*(const double d, const Range& r); // Symmetric.
 
   /**
    * Compare with another range for strict equality.
    *
    * @param rhs Other range.
    */
-  bool operator==(const Range& rhs) const;
+  inline bool operator==(const Range& rhs) const;
 
   /**
    * Compare with another range for strict equality.
    *
    * @param rhs Other range.
    */
-  bool operator!=(const Range& rhs) const;
+  inline bool operator!=(const Range& rhs) const;
 
   /**
    * Compare with another range.  For Range objects x and y, x < y means that x
@@ -130,7 +130,7 @@ class Range
    *
    * @param rhs Other range.
    */
-  bool operator<(const Range& rhs) const;
+  inline bool operator<(const Range& rhs) const;
 
   /**
    * Compare with another range.  For Range objects x and y, x < y means that x
@@ -138,14 +138,14 @@ class Range
    *
    * @param rhs Other range.
    */
-  bool operator>(const Range& rhs) const;
+  inline bool operator>(const Range& rhs) const;
 
   /**
    * Determines if a point is contained within the range.
    *
    * @param d Point to check.
    */
-  bool Contains(const double d) const;
+  inline bool Contains(const double d) const;
 
   /**
    * Determines if another range overlaps with this one.
@@ -154,11 +154,14 @@ class Range
    *
    * @return true if ranges overlap at all.
    */
-  bool Contains(const Range& r) const;
+  inline bool Contains(const Range& r) const;
 
 };
 
 }; // namespace math
 }; // namespace mlpack
+
+// Include inlined implementation.
+#include "range_impl.hpp"
 
 #endif // __MLPACK_CORE_MATH_RANGE_HPP
