@@ -972,6 +972,115 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMinDistanceBound)
 
 }
 
+/**
+ * Correctly calculate the maximum distance between the bound and a point in
+ * periodic coordinates.  We have to account for the shifts necessary in
+ * periodic coordinates too, so that makes testing this a little more difficult.
+ */
+BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMaxDistancePoint)
+{
+  // First, we'll start with a simple 2-dimensional case where the point is
+  // inside the bound, then on the edge of the bound, then barely outside the
+  // bound.  The box size will be large enough that this is basically the
+  // HRectBound case.
+  PeriodicHRectBound<2> b(arma::vec("100 100"));
+
+  b[0] = Range(0.0, 5.0);
+  b[1] = Range(2.0, 4.0);
+
+  // Inside the bound.
+  arma::vec point = "2.5 3.0";
+
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), 7.25, 1e-5);
+
+  // On the edge.
+  point = "5.0 4.0";
+
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), 29.0, 1e-5);
+
+  // And just a little outside the bound.
+  point = "6.0 5.0";
+
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), 45.0, 1e-5);
+
+  // Now we start to invoke the periodicity.  This point will "alias" to (-1,
+  // -1).
+  point = "99.0 99.0";
+
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), 61.0, 1e-5);
+
+  // We will perform several tests on a one-dimensional bound and smaller box size.
+  PeriodicHRectBound<2> a(arma::vec("5.0"));
+  point.set_size(1);
+
+  a[0] = Range(2.0, 4.0); // Entirely inside box.
+  point[0] = 7.5; // Inside first right image of the box.
+
+  BOOST_REQUIRE_CLOSE(a.MaxDistance(point), 2.25, 1e-5);
+
+  a[0] = Range(0.0, 5.0); // Fills box fully.
+  point[1] = 19.3; // Inside the box, which covers everything.
+
+  BOOST_REQUIRE_CLOSE(a.MaxDistance(point), 18.49, 1e-5);
+
+  a[0] = Range(-10.0, 10.0); // Larger than the box.
+  point[0] = -500.0; // Inside the box, which covers everything.
+
+  BOOST_REQUIRE_CLOSE(a.MaxDistance(point), 25.0, 1e-5);
+
+  a[0] = Range(-2.0, 1.0); // Crosses over an edge.
+  point[0] = 2.9; // The first right image of the bound starts at 3.0.
+
+  BOOST_REQUIRE_CLOSE(a.MaxDistance(point), 8.41, 1e-5);
+
+  a[0] = Range(2.0, 4.0); // Inside box.
+  point[0] = 0.0; // Farthest from the first right image of the bound.
+
+  BOOST_REQUIRE_CLOSE(a.MaxDistance(point), 25.0, 1e-5);
+
+  a[0] = Range(0.0, 2.0); // On edge of box.
+  point[0] = 7.1; // 2.1 away from the first left image of the bound.
+
+  BOOST_REQUIRE_CLOSE(a.MaxDistance(point), 4.41, 1e-5);
+
+  PeriodicHRectBound<2> d(arma::vec("0.0"));
+  d[0] = Range(-10.0, 10.0); // Box is of infinite size.
+  point[0] = 810.0; // 820 away from the only left image of the box.
+
+  BOOST_REQUIRE_CLOSE(d.MinDistance(point), 672400.0, 1e-5);
+
+  PeriodicHRectBound<2> e(arma::vec("-5.0"));
+  e[0] = Range(2.0, 4.0); // Box size of -5 should function the same as 5.
+  point[0] = -10.8; // Should alias to 4.2.
+
+  BOOST_REQUIRE_CLOSE(e.MaxDistance(point), 4.84, 1e-5);
+
+  // Switch our bound to a higher dimensionality.  This should ensure that the
+  // dimensions are independent like they should be.
+  PeriodicHRectBound<2> c(arma::vec("5.0 5.0 5.0 5.0 5.0 5.0 0.0 -5.0"));
+
+  c[0] = Range(2.0, 4.0); // Entirely inside box.
+  c[1] = Range(0.0, 5.0); // Fills box fully.
+  c[2] = Range(-10.0, 10.0); // Larger than the box.
+  c[3] = Range(-2.0, 1.0); // Crosses over an edge.
+  c[4] = Range(2.0, 4.0); // Inside box.
+  c[5] = Range(0.0, 2.0); // On edge of box.
+  c[6] = Range(-10.0, 10.0); // Box is of infinite size.
+  c[7] = Range(2.0, 4.0); // Box size of -5 should function the same as 5.
+
+  point.set_size(8);
+  point[0] = 7.5; // Inside first right image of the box.
+  point[1] = 19.3; // Inside the box, which covers everything.
+  point[2] = -500.0; // Inside the box, which covers everything.
+  point[3] = 2.9; // The first right image of the bound starts at 3.0.
+  point[4] = 0.0; // Closest to the first left image of the bound.
+  point[5] = 7.1; // 0.1 away from the first right image of the bound.
+  point[6] = 810.0; // 800 away from the only image of the box.
+  point[7] = -10.8; // Should alias to 4.2.
+
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(point), 672630.65, 1e-10);
+}
+
 
 /**
  * It seems as though Bill has stumbled across a bug where
