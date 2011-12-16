@@ -126,6 +126,8 @@ bool Load(const std::string& filename, arma::Mat<eT>& matrix, bool fatal)
   else // Unknown extension...
   {
     unknownType = true;
+    loadType = arma::raw_binary; // Won't be used; prevent a warning.
+    stringType = "";
   }
 
   // Provide error if we don't know the type.
