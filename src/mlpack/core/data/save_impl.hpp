@@ -76,6 +76,8 @@ bool Save(const std::string& filename, const arma::Mat<eT>& matrix, bool fatal)
   else
   {
     unknownType = true;
+    saveType = arma::raw_binary; // Won't be used; prevent a warning.
+    stringType = "";
   }
 
   // Provide error if we don't know the type.
