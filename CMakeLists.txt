@@ -46,6 +46,7 @@ find_package(Boost COMPONENTS
   math_c99
   program_options
   unit_test_framework
+  random
   REQUIRED) # May require math_tr1?
 
 option(WITH_OPTIMIZERS "Include optimization code." OFF)

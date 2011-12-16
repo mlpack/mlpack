@@ -21,6 +21,7 @@ target_link_libraries(mlpack
   lapack
   blas
   boost_program_options
+  boost_random
   xml2
 )
 set_target_properties(mlpack
