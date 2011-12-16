@@ -33,7 +33,7 @@ double GMM::Probability(const arma::vec& observation) const
 arma::vec GMM::Random() const
 {
   // Determine which Gaussian it will be coming from.
-  double gaussRand = (double) rand() / (double) RAND_MAX;
+  double gaussRand = math::Random();
   size_t gaussian;
 
   double sumProb = 0;

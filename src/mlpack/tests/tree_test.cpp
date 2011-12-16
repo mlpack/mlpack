@@ -353,7 +353,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundRangeDistanceBound)
 {
   for (int i = 0; i < 50; i++)
   {
-    size_t dim = rand() % 20;
+    size_t dim = math::RandInt(20);
 
     HRectBound<2> a(dim);
     HRectBound<2> b(dim);
@@ -404,7 +404,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundRangeDistancePoint)
 {
   for (int i = 0; i < 20; i++)
   {
-    size_t dim = rand() % 20;
+    size_t dim = math::RandInt(20);
 
     HRectBound<2> a(dim);
 

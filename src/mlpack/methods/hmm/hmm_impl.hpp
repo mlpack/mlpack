@@ -284,7 +284,7 @@ void HMM<Distribution>::Generate(const size_t length,
   stateSequence[0] = startState;
 
   // Choose first emission state.
-  double randValue = (double) rand() / (double) RAND_MAX;
+  double randValue = math::Random();
 
   // We just have to find where our random value sits in the probability
   // distribution of emissions for our starting state.
@@ -294,7 +294,7 @@ void HMM<Distribution>::Generate(const size_t length,
   for (size_t t = 1; t < length; t++)
   {
     // First choose the hidden state.
-    randValue = (double) rand() / (double) RAND_MAX;
+    randValue = math::Random();
 
     // Now find where our random value sits in the probability distribution of
     // state changes.
