@@ -47,18 +47,18 @@ void VectorPower(arma::vec& vec, double power)
  * Creates a centered matrix, where centering is done by subtracting
  * the sum over the columns (a column vector) from each column of the matrix.
  *
- * @param X Input matrix
- * @param X_centered Matrix to write centered output into
+ * @param x Input matrix
+ * @param xCentered Matrix to write centered output into
  */
-void Center(const arma::mat& X, arma::mat& X_centered)
+void Center(const arma::mat& x, arma::mat& xCentered)
 {
   // Sum matrix along dimension 0 (that is, sum elements in each row).
-  arma::vec row_vector_sum = arma::sum(X, 1);
-  row_vector_sum /= X.n_cols; // scale
+  arma::vec rowVectorSum = arma::sum(x, 1);
+  rowVectorSum /= x.n_cols; // scale
 
-  X_centered.set_size(X.n_rows, X.n_cols);
-  for (size_t i = 0; i < X.n_rows; i++)
-    X_centered.row(i) = X.row(i) - row_vector_sum(i);
+  xCentered.set_size(x.n_rows, x.n_cols);
+  for (size_t i = 0; i < x.n_rows; i++)
+    xCentered.row(i) = x.row(i) - rowVectorSum(i);
 }
 
 /**
@@ -66,24 +66,24 @@ void Center(const arma::mat& X, arma::mat& X_centered)
  * matrix. Whitening means the covariance matrix of the result is
  * the identity matrix
  */
-void WhitenUsingSVD(const arma::mat& X,
-                    arma::mat& X_whitened,
-                    arma::mat& whitening_matrix)
+void WhitenUsingSVD(const arma::mat& x,
+                    arma::mat& xWhitened,
+                    arma::mat& whiteningMatrix)
 {
-  arma::mat cov_X, U, V, inv_S_matrix, temp1;
-  arma::vec S_vector;
+  arma::mat covX, u, v, invSMatrix, temp1;
+  arma::vec sVector;
 
-  cov_X = ccov(X);
+  covX = ccov(x);
 
-  svd(U, S_vector, V, cov_X);
+  svd(u, sVector, v, covX);
 
-  size_t d = S_vector.n_elem;
-  inv_S_matrix.zeros(d, d);
-  inv_S_matrix.diag() = 1 / sqrt(S_vector);
+  size_t d = sVector.n_elem;
+  invSMatrix.zeros(d, d);
+  invSMatrix.diag() = 1 / sqrt(sVector);
 
-  whitening_matrix = V * inv_S_matrix * trans(U);
+  whiteningMatrix = v * invSMatrix * trans(u);
 
-  X_whitened = whitening_matrix * X;
+  xWhitened = whiteningMatrix * x;
 }
 
 /**
@@ -91,15 +91,15 @@ void WhitenUsingSVD(const arma::mat& X,
  * matrix. Whitening means the covariance matrix of the result is
  * the identity matrix
  */
-void WhitenUsingEig(const arma::mat& X,
-                    arma::mat& X_whitened,
-                    arma::mat& whitening_matrix)
+void WhitenUsingEig(const arma::mat& x,
+                    arma::mat& xWhitened,
+                    arma::mat& whiteningMatrix)
 {
   arma::mat diag, eigenvectors;
   arma::vec eigenvalues;
 
   // Get eigenvectors of covariance of input matrix.
-  eig_sym(eigenvalues, eigenvectors, ccov(X));
+  eig_sym(eigenvalues, eigenvectors, ccov(x));
 
   // Generate diagonal matrix using 1 / sqrt(eigenvalues) for each value.
   VectorPower(eigenvalues, -0.5);
@@ -107,10 +107,10 @@ void WhitenUsingEig(const arma::mat& X,
   diag.diag() = eigenvalues;
 
   // Our whitening matrix is diag(1 / sqrt(eigenvectors)) * eigenvalues.
-  whitening_matrix = diag * trans(eigenvectors);
+  whiteningMatrix = diag * trans(eigenvectors);
 
   // Now apply the whitening matrix.
-  X_whitened = whitening_matrix * X;
+  xWhitened = whiteningMatrix * x;
 }
 
 /**
@@ -139,16 +139,16 @@ void RandVector(arma::vec &v)
 }
 
 /**
- * Orthogonalize X and return the result in W, using eigendecomposition.
- * We will be using the formula \f$ W = X (X^T X)^{-0.5} \f$.
+ * Orthogonalize x and return the result in W, using eigendecomposition.
+ * We will be using the formula \f$ W = x (x^T x)^{-0.5} \f$.
  */
-void Orthogonalize(const arma::mat& X, arma::mat& W)
+void Orthogonalize(const arma::mat& x, arma::mat& W)
 {
   // For a matrix A, A^N = V * D^N * V', where VDV' is the
   // eigendecomposition of the matrix A.
   arma::mat eigenvalues, eigenvectors;
   arma::vec egval;
-  eig_sym(egval, eigenvectors, ccov(X));
+  eig_sym(egval, eigenvectors, ccov(x));
   VectorPower(egval, -0.5);
 
   eigenvalues.zeros(egval.n_elem, egval.n_elem);
@@ -156,16 +156,16 @@ void Orthogonalize(const arma::mat& X, arma::mat& W)
 
   arma::mat at = (eigenvectors * eigenvalues * trans(eigenvectors));
 
-  W = at * X;
+  W = at * x;
 }
 
 /**
- * Orthogonalize X in-place.  This could be sped up by a custom
+ * Orthogonalize x in-place.  This could be sped up by a custom
  * implementation.
  */
-void Orthogonalize(arma::mat& X)
+void Orthogonalize(arma::mat& x)
 {
-  Orthogonalize(X, X);
+  Orthogonalize(x, x);
 }
 
 }; // namespace math
