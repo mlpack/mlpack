@@ -310,13 +310,16 @@ math::Range HRectBound<t_pow>::RangeDistance(const VecType& point) const
  * Expands this region to include a new point.
  */
 template<int t_pow>
-template<typename VecType>
-HRectBound<t_pow>& HRectBound<t_pow>::operator|=(const VecType& vector)
+template<typename MatType>
+HRectBound<t_pow>& HRectBound<t_pow>::operator|=(const MatType& data)
 {
-  Log::Assert(vector.n_elem == dim);
+  Log::Assert(data.n_rows == dim);
+
+  arma::vec mins = min(data, 1);
+  arma::vec maxs = max(data, 1);
 
   for (size_t i = 0; i < dim; i++)
-    bounds[i] |= vector[i];
+    bounds[i] |= math::Range(mins[i], maxs[i]);
 
   return *this;
 }

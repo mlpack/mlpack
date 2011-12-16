@@ -389,10 +389,8 @@ inline size_t BinarySpaceTree<BoundType, StatisticType, MatType>::Count() const
 template<typename BoundType, typename StatisticType, typename MatType>
 void BinarySpaceTree<BoundType, StatisticType, MatType>::SplitNode(MatType& data)
 {
-  // This should be a single function for Bound.
   // We need to expand the bounds of this node properly.
-  for (size_t i = begin; i < (begin + count); i++)
-    bound |= data.col(i);
+  bound |= data.cols(begin, begin + count - 1);
 
   // Now, check if we need to split at all.
   if (count <= leafSize)
@@ -441,8 +439,7 @@ void BinarySpaceTree<BoundType, StatisticType, MatType>::SplitNode(
 {
   // This should be a single function for Bound.
   // We need to expand the bounds of this node properly.
-  for (size_t i = begin; i < (begin + count); i++)
-    bound |= data.col(i);
+  bound |= data.cols(begin, begin + count - 1);
 
   // First, check if we need to split at all.
   if (count <= leafSize)

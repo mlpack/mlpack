@@ -113,9 +113,15 @@ class BallBound
   const BallBound& operator|=(const BallBound& other);
 
   /**
-   * Expand the bound to include the given point.
+   * Expand the bound to include the given point.  The centroid is recalculated
+   * to be the center of all of the given points.
+   *
+   * @tparam MatType Type of matrix; could be arma::mat, arma::spmat, or a
+   *     vector.
+   * @tparam data Data points to add.
    */
-  const BallBound& operator|=(const VecType& point);
+  template<typename MatType>
+  const BallBound& operator|=(const MatType& data);
 };
 
 }; // namespace bound
