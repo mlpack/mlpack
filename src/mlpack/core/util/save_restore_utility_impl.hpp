@@ -11,11 +11,11 @@
 // In case it hasn't been included already.
 #include "save_restore_utility.hpp"
 
-using namespace mlpack;
-using namespace mlpack::utilities;
+namespace mlpack {
+namespace utilities {
 
 template<typename T>
-T& SaveRestoreUtility::LoadParameter(T& t, std::string name)
+T& SaveRestoreUtility::LoadParameter(T& t, const std::string name)
 {
   std::map<std::string, std::string>::iterator it = parameters.find(name);
   if (it != parameters.end())
@@ -31,8 +31,10 @@ T& SaveRestoreUtility::LoadParameter(T& t, std::string name)
   }
   return t;
 }
+
 template<typename T>
-std::vector<T>& SaveRestoreUtility::LoadParameter(std::vector<T>& v, std::string name)
+std::vector<T>& SaveRestoreUtility::LoadParameter(std::vector<T>& v,
+                                                  const std::string name)
 {
   std::map<std::string, std::string>::iterator it = parameters.find(name);
   if (it != parameters.end())
@@ -59,8 +61,9 @@ std::vector<T>& SaveRestoreUtility::LoadParameter(std::vector<T>& v, std::string
   }
   return v;
 }
+
 template<typename T>
-void SaveRestoreUtility::SaveParameter(T& t, std::string name)
+void SaveRestoreUtility::SaveParameter(const T& t, const std::string name)
 {
   std::ostringstream output;
   output << t;
@@ -68,7 +71,8 @@ void SaveRestoreUtility::SaveParameter(T& t, std::string name)
 }
 
 template<typename T>
-void SaveRestoreUtility::SaveParameter(std::vector<T>& t, std::string name)
+void SaveRestoreUtility::SaveParameter(const std::vector<T>& t,
+                                       const std::string name)
 {
   std::ostringstream output;
   for (size_t index = 0; index < t.size(); ++index)
@@ -79,5 +83,8 @@ void SaveRestoreUtility::SaveParameter(std::vector<T>& t, std::string name)
   vectorAsStr.erase(vectorAsStr.length() - 1);
   parameters[name] = vectorAsStr;
 }
+
+}; // namespace utilities
+}; // namespace mlpack
 
 #endif

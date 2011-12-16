@@ -7,7 +7,6 @@
  *
  * @experimental
  */
-
 #ifndef SAVE_RESTORE_MODEL_HPP
 #define SAVE_RESTORE_MODEL_HPP
 
@@ -45,66 +44,80 @@ class SaveRestoreUtility
   /**
    * ReadFile reads an XML tree from a file.
    */
-  bool ReadFile(std::string filename);
+  bool ReadFile(const std::string filename);
 
   /**
    * WriteFile writes the XML tree to a file.
    */
-  bool WriteFile(std::string filename);
+  bool WriteFile(const std::string filename);
 
   /**
    * LoadParameter loads a parameter from the parameters map.
    */
   template<typename T>
-  T& LoadParameter(T& t, std::string name);
+  T& LoadParameter(T& t, const std::string name);
 
   /**
    * LoadParameter loads a parameter from the parameters map.
    */
   template<typename T>
-  std::vector<T>& LoadParameter(std::vector<T>& v, std::string name);
+  std::vector<T>& LoadParameter(std::vector<T>& v, const std::string name);
 
   /**
    * LoadParameter loads a character from the parameters map.
    */
-  char LoadParameter(char c, std::string name);
+  char LoadParameter(char c, const std::string name);
 
   /**
    * LoadParameter loads a string from the parameters map.
    */
-  std::string LoadParameter(std::string str, std::string name);
+  std::string LoadParameter(std::string str, const std::string name);
 
   /**
    * LoadParameter loads an arma::mat from the parameters map.
    */
-  arma::mat& LoadParameter(arma::mat& matrix, std::string name);
+  arma::mat& LoadParameter(arma::mat& matrix, const std::string name);
 
   /**
    * SaveParameter saves a parameter to the parameters map.
    */
   template<typename T>
-  void SaveParameter(T& t, std::string name);
+  void SaveParameter(const T& t, const std::string name);
+
+
 
   /**
    * SaveParameter saves a parameter to the parameters map.
    */
   template<typename T>
-  void SaveParameter(std::vector<T>& v, std::string name);
+  void SaveParameter(const std::vector<T>& v, const std::string name);
 
   /**
    * SaveParameter saves a character to the parameters map.
    */
-  void SaveParameter(char c, std::string name);
+  void SaveParameter(const char c, const std::string name);
 
   /**
    * SaveParameter saves an arma::mat to the parameters map.
    */
-  void SaveParameter(arma::mat& mat, std::string name);
+  void SaveParameter(const arma::mat& mat, const std::string name);
 };
+
+//! Specialization for arma::vec.
+template<>
+arma::vec& SaveRestoreUtility::LoadParameter(arma::vec& t,
+                                             const std::string name);
+
+//! Specialization for arma::vec.
+template<>
+void SaveRestoreUtility::SaveParameter(const arma::vec& t,
+                                       const std::string name);
 
 } /* namespace utilities */
 } /* namespace mlpack */
 
 #include "save_restore_utility_impl.hpp"
+
+
 
 #endif

@@ -4,15 +4,13 @@
  *
  * The SaveRestoreUtility provides helper functions in saving and
  *   restoring models.  The current output file type is XML.
- *
- * @experimental
  */
 #include "save_restore_utility.hpp"
 
 using namespace mlpack;
 using namespace utilities;
 
-bool SaveRestoreUtility::ReadFile(std::string filename)
+bool SaveRestoreUtility::ReadFile(const std::string filename)
 {
   xmlDocPtr xmlDocTree = NULL;
   if (NULL == (xmlDocTree = xmlReadFile(filename.c_str(), NULL, 0)))
@@ -26,6 +24,7 @@ bool SaveRestoreUtility::ReadFile(std::string filename)
   xmlFreeDoc(xmlDocTree);
   return true;
 }
+
 void SaveRestoreUtility::RecurseOnNodes(xmlNode* n)
 {
   xmlNodePtr current = NULL;
@@ -40,7 +39,8 @@ void SaveRestoreUtility::RecurseOnNodes(xmlNode* n)
     RecurseOnNodes(current->children);
   }
 }
-bool SaveRestoreUtility::WriteFile(std::string filename)
+
+bool SaveRestoreUtility::WriteFile(const std::string filename)
 {
   bool success = false;
   xmlDocPtr xmlDocTree = xmlNewDoc(BAD_CAST "1.0");
@@ -64,7 +64,9 @@ bool SaveRestoreUtility::WriteFile(std::string filename)
   xmlFreeDoc(xmlDocTree);
   return success;
 }
-arma::mat& SaveRestoreUtility::LoadParameter(arma::mat& matrix, std::string name)
+
+arma::mat& SaveRestoreUtility::LoadParameter(arma::mat& matrix,
+                                             const std::string name)
 {
   std::map<std::string, std::string>::iterator it = parameters.find(name);
   if (it != parameters.end())
@@ -121,7 +123,9 @@ arma::mat& SaveRestoreUtility::LoadParameter(arma::mat& matrix, std::string name
   }
   return matrix;
 }
-std::string SaveRestoreUtility::LoadParameter(std::string str, std::string name)
+
+std::string SaveRestoreUtility::LoadParameter(std::string str,
+                                              const std::string name)
 {
   std::map<std::string, std::string>::iterator it = parameters.find(name);
   if (it != parameters.end())
@@ -134,7 +138,8 @@ std::string SaveRestoreUtility::LoadParameter(std::string str, std::string name)
   }
   return "";
 }
-char SaveRestoreUtility::LoadParameter(char c, std::string name)
+
+char SaveRestoreUtility::LoadParameter(char c, const std::string name)
 {
   int temp;
   std::map<std::string, std::string>::iterator it = parameters.find(name);
@@ -151,14 +156,17 @@ char SaveRestoreUtility::LoadParameter(char c, std::string name)
   }
   return 0;
 }
-void SaveRestoreUtility::SaveParameter(char c, std::string name)
+
+void SaveRestoreUtility::SaveParameter(const char c, const std::string name)
 {
   int temp = (int) c;
   std::ostringstream output;
   output << temp;
   parameters[name] = output.str();
 }
-void SaveRestoreUtility::SaveParameter(arma::mat& mat, std::string name)
+
+void SaveRestoreUtility::SaveParameter(const arma::mat& mat,
+                                       const std::string name)
 {
   std::ostringstream output;
   size_t columns = mat.n_cols;
@@ -173,3 +181,25 @@ void SaveRestoreUtility::SaveParameter(arma::mat& mat, std::string name)
   }
   parameters[name] = output.str();
 }
+
+// Special template specializations for vectors.
+
+namespace mlpack {
+namespace utilities {
+
+template<>
+arma::vec& SaveRestoreUtility::LoadParameter(arma::vec& t,
+                                             const std::string name)
+{
+  return (arma::vec&) LoadParameter((arma::mat&) t, name);
+}
+
+template<>
+void SaveRestoreUtility::SaveParameter(const arma::vec& t,
+                                       const std::string name)
+{
+  SaveParameter((const arma::mat&) t, name);
+}
+
+}; // namespace utilities
+}; // namespace mlpack
