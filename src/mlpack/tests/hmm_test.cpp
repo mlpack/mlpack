@@ -170,7 +170,7 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM)
 {
   HMM<DiscreteDistribution> hmm(1, 2); // 1 state, 2 emissions.
   // Randomize the emission matrix.
-  hmm.Emission()[0].Probabilities(arma::randu<arma::vec>(2));
+  hmm.Emission()[0].Probabilities() = arma::randu<arma::vec>(2);
 
   // P(each emission) = 0.5.
   // I've been careful to make P(first emission = 0) = P(first emission = 1).
@@ -205,8 +205,8 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
 
   // A little bit of obfuscation to the solution.
   hmm.Transition() = arma::mat("0.1 0.4; 0.9 0.6");
-  hmm.Emission()[0].Probabilities("0.85 0.15 0.00 0.00");
-  hmm.Emission()[1].Probabilities("0.00 0.00 0.50 0.50");
+  hmm.Emission()[0].Probabilities() = "0.85 0.15 0.00 0.00";
+  hmm.Emission()[1].Probabilities() = "0.00 0.00 0.50 0.50";
 
   // True emission matrix:
   //  [[0.4 0  ]
@@ -290,9 +290,9 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
   std::vector<DiscreteDistribution> emission(3);
 
   transition.randu(3, 3);
-  emission[0].Probabilities(arma::randu<arma::vec>(6));
-  emission[1].Probabilities(arma::randu<arma::vec>(6));
-  emission[2].Probabilities(arma::randu<arma::vec>(6));
+  emission[0].Probabilities() = arma::randu<arma::vec>(6);
+  emission[1].Probabilities() = arma::randu<arma::vec>(6);
+  emission[2].Probabilities() = arma::randu<arma::vec>(6);
 
   // Normalize so they we have a correct transition matrix.
   for (size_t col = 0; col < 3; col++)
@@ -414,10 +414,10 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
   // 6 emissions, 4 states.  Random transition and emission probability.
   arma::mat transition(4, 4);
   std::vector<DiscreteDistribution> emission(4);
-  emission[0].Probabilities(arma::randu<arma::vec>(6));
-  emission[1].Probabilities(arma::randu<arma::vec>(6));
-  emission[2].Probabilities(arma::randu<arma::vec>(6));
-  emission[3].Probabilities(arma::randu<arma::vec>(6));
+  emission[0].Probabilities() = arma::randu<arma::vec>(6);
+  emission[1].Probabilities() = arma::randu<arma::vec>(6);
+  emission[2].Probabilities() = arma::randu<arma::vec>(6);
+  emission[3].Probabilities() = arma::randu<arma::vec>(6);
 
   transition.randu();
 
@@ -470,9 +470,9 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLogLikelihoodTest)
                        "0.2 0.6 0.2;"
                        "0.3 0.4 0.7");
   std::vector<DiscreteDistribution> emission(3);
-  emission[0].Probabilities("0.75 0.25 0.00 0.00");
-  emission[1].Probabilities("0.00 0.25 0.25 0.50");
-  emission[2].Probabilities("0.10 0.40 0.40 0.10");
+  emission[0].Probabilities() = "0.75 0.25 0.00 0.00";
+  emission[1].Probabilities() = "0.00 0.25 0.25 0.50";
+  emission[2].Probabilities() = "0.10 0.40 0.40 0.10";
 
   HMM<DiscreteDistribution> hmm(transition, emission);
 
