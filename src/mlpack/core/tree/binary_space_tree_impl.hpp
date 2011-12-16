@@ -309,7 +309,8 @@ size_t BinarySpaceTree<BoundType, StatisticType, MatType>::TreeDepth() const
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>
-inline const BoundType& BinarySpaceTree<BoundType, StatisticType, MatType>::Bound() const
+inline const 
+    BoundType& BinarySpaceTree<BoundType, StatisticType, MatType>::Bound() const
 {
   return bound;
 }
@@ -321,8 +322,8 @@ inline BoundType& BinarySpaceTree<BoundType, StatisticType, MatType>::Bound()
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>
-inline const StatisticType& BinarySpaceTree<BoundType, StatisticType, MatType>::Stat()
-    const
+inline const StatisticType& 
+    BinarySpaceTree<BoundType, StatisticType, MatType>::Stat() const
 {
   return stat;
 }
@@ -344,7 +345,7 @@ inline bool BinarySpaceTree<BoundType, StatisticType, MatType>::IsLeaf() const
  */
 template<typename BoundType, typename StatisticType, typename MatType>
 inline BinarySpaceTree<BoundType, StatisticType, MatType>*
-BinarySpaceTree<BoundType, StatisticType, MatType>::Left() const
+    BinarySpaceTree<BoundType, StatisticType, MatType>::Left() const
 {
   return left;
 }
@@ -354,7 +355,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::Left() const
  */
 template<typename BoundType, typename StatisticType, typename MatType>
 inline BinarySpaceTree<BoundType, StatisticType, MatType>*
-BinarySpaceTree<BoundType, StatisticType, MatType>::Right() const
+    BinarySpaceTree<BoundType, StatisticType, MatType>::Right() const
 {
   return right;
 }
@@ -387,7 +388,8 @@ inline size_t BinarySpaceTree<BoundType, StatisticType, MatType>::Count() const
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>
-void BinarySpaceTree<BoundType, StatisticType, MatType>::SplitNode(MatType& data)
+void 
+    BinarySpaceTree<BoundType, StatisticType, MatType>::SplitNode(MatType& data)
 {
   // We need to expand the bounds of this node properly.
   bound |= data.cols(begin, begin + count - 1);
