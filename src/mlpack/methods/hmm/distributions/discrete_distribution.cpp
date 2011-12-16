@@ -79,18 +79,3 @@ void DiscreteDistribution::Estimate(const arma::mat& observations,
   else
     probabilities.fill(1 / probabilities.n_elem); // Force normalization.
 }
-
-/**
- * Set the vector of probabilities correctly.
- */
-void DiscreteDistribution::Probabilities(const arma::vec& probabilities)
-{
-  double sum = accu(probabilities);
-  if (sum > 0)
-    this->probabilities = probabilities / sum;
-  else
-  {
-    this->probabilities.set_size(probabilities.n_elem);
-    this->probabilities.fill(1 / probabilities.n_elem);
-  }
-}

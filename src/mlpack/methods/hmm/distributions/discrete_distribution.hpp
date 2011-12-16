@@ -124,15 +124,10 @@ class DiscreteDistribution
   void Estimate(const arma::mat& observations,
                 const arma::vec& probabilities);
 
-  /**
-   * Return the vector of probabilities.
-   */
+  //! Return the vector of probabilities.
   const arma::vec& Probabilities() const { return probabilities; }
-
-  /**
-   * Set the vector of probabilities correctly.  The vector will be normalized.
-   */
-  void Probabilities(const arma::vec& probabilities);
+  //! Modify the vector of probabilities.
+  arma::vec& Probabilities() { return probabilities; }
 
  private:
   arma::vec probabilities;
