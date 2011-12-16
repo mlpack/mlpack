@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionProbabilityTest)
 {
   DiscreteDistribution d(5);
 
-  d.Probabilities("0.2 0.4 0.1 0.1 0.2");
+  d.Probabilities() = "0.2 0.4 0.1 0.1 0.2";
 
   BOOST_REQUIRE_CLOSE(d.Probability("0"), 0.2, 1e-5);
   BOOST_REQUIRE_CLOSE(d.Probability("1"), 0.4, 1e-5);
@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionRandomTest)
 {
   DiscreteDistribution d(3);
 
-  d.Probabilities("0.3 0.6 0.1");
+  d.Probabilities() = "0.3 0.6 0.1";
 
   arma::vec actualProb(3);
 
