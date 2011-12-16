@@ -54,15 +54,15 @@ arma::vec GMM::Random() const
 void GMM::Estimate(const arma::mat& data)
 {
   // Create temporary models and set to the right size.
-  std::vector<arma::vec> means_trial;
-  std::vector<arma::mat> covariances_trial;
-  arma::vec weights_trial;
+  std::vector<arma::vec> meansTrial;
+  std::vector<arma::mat> covariancesTrial;
+  arma::vec weightsTrial;
 
-  arma::mat cond_prob(data.n_cols, gaussians);
+  arma::mat condProb(data.n_cols, gaussians);
 
-  double l, l_old, best_l, TINY = 1.0e-4;
+  double l, lOld, bestL, TINY = 1.0e-4;
 
-  best_l = -DBL_MAX;
+  bestL = -DBL_MAX;
 
   KMeans<> k; // Default KMeans parameters, for now.
 
@@ -70,60 +70,60 @@ void GMM::Estimate(const arma::mat& data)
   // as our trained model.
   for (size_t iter = 0; iter < 10; iter++)
   {
-    InitialClustering(k, data, means_trial, covariances_trial, weights_trial);
+    InitialClustering(k, data, meansTrial, covariancesTrial, weightsTrial);
 
-    l = Loglikelihood(data, means_trial, covariances_trial, weights_trial);
+    l = Loglikelihood(data, meansTrial, covariancesTrial, weightsTrial);
 
     Log::Info << "K-means log-likelihood: " << l << std::endl;
 
-    l_old = -DBL_MAX;
+    lOld = -DBL_MAX;
 
     // Iterate to update the model until no more improvement is found.
-    size_t max_iterations = 300;
+    size_t maxIterations = 300;
     size_t iteration = 0;
-    while (std::abs(l - l_old) > TINY && iteration < max_iterations)
+    while (std::abs(l - lOld) > TINY && iteration < maxIterations)
     {
       // Calculate the conditional probabilities of choosing a particular
       // Gaussian given the data and the present theta value.
       for (size_t i = 0; i < gaussians; i++)
       {
-        // Store conditional probabilities into cond_prob vector for each
-        // Gaussian.  First we make an alias of the cond_prob vector.
-        arma::vec cond_prob_alias = cond_prob.unsafe_col(i);
-        phi(data, means_trial[i], covariances_trial[i], cond_prob_alias);
-        cond_prob_alias *= weights_trial[i];
+        // Store conditional probabilities into condProb vector for each
+        // Gaussian.  First we make an alias of the condProb vector.
+        arma::vec condProbAlias = condProb.unsafe_col(i);
+        phi(data, meansTrial[i], covariancesTrial[i], condProbAlias);
+        condProbAlias *= weightsTrial[i];
       }
 
       // Normalize row-wise.
-      for (size_t i = 0; i < cond_prob.n_rows; i++)
-        cond_prob.row(i) /= accu(cond_prob.row(i));
+      for (size_t i = 0; i < condProb.n_rows; i++)
+        condProb.row(i) /= accu(condProb.row(i));
 
       // Store the sum of the probability of each state over all the data.
-      arma::vec prob_row_sums = trans(arma::sum(cond_prob, 0 /* columnwise */));
+      arma::vec probRowSums = trans(arma::sum(condProb, 0 /* columnwise */));
 
       // Calculate the new value of the means using the updated conditional
       // probabilities.
       for (size_t i = 0; i < gaussians; i++)
       {
-        means_trial[i] = (data * cond_prob.col(i)) / prob_row_sums[i];
+        meansTrial[i] = (data * condProb.col(i)) / probRowSums[i];
 
         // Calculate the new value of the covariances using the updated
         // conditional probabilities and the updated means.
-        arma::mat tmp = data - (means_trial[i] *
+        arma::mat tmp = data - (meansTrial[i] *
             arma::ones<arma::rowvec>(data.n_cols));
         arma::mat tmp_b = tmp % (arma::ones<arma::vec>(data.n_rows) *
-            trans(cond_prob.col(i)));
+            trans(condProb.col(i)));
 
-        covariances_trial[i] = (tmp * trans(tmp_b)) / prob_row_sums[i];
+        covariancesTrial[i] = (tmp * trans(tmp_b)) / probRowSums[i];
       }
 
       // Calculate the new values for omega using the updated conditional
       // probabilities.
-      weights_trial = prob_row_sums / data.n_cols;
+      weightsTrial = probRowSums / data.n_cols;
 
       // Update values of l; calculate new log-likelihood.
-      l_old = l;
-      l = Loglikelihood(data, means_trial, covariances_trial, weights_trial);
+      lOld = l;
+      l = Loglikelihood(data, meansTrial, covariancesTrial, weightsTrial);
 
       iteration++;
     }
@@ -132,17 +132,17 @@ void GMM::Estimate(const arma::mat& data)
         << " iterations): " << l << std::endl;
 
     // The trial model is trained.  Is it better than our existing model?
-    if (l > best_l)
+    if (l > bestL)
     {
-      best_l = l;
+      bestL = l;
 
-      means = means_trial;
-      covariances = covariances_trial;
-      weights = weights_trial;
+      means = meansTrial;
+      covariances = covariancesTrial;
+      weights = weightsTrial;
     }
   }
 
-  Log::Info << "Log likelihood value of the estimated model: " << best_l << "."
+  Log::Info << "Log likelihood value of the estimated model: " << bestL << "."
       << std::endl;
   return;
 }
@@ -157,15 +157,15 @@ void GMM::Estimate(const arma::mat& observations,
 {
   // This will be very similar to Estimate(const arma::mat&), but there will be
   // minor differences in how we calculate the means, covariances, and weights.
-  std::vector<arma::vec> means_trial;
-  std::vector<arma::mat> covariances_trial;
-  arma::vec weights_trial;
+  std::vector<arma::vec> meansTrial;
+  std::vector<arma::mat> covariancesTrial;
+  arma::vec weightsTrial;
 
-  arma::mat cond_prob(observations.n_cols, gaussians);
+  arma::mat condProb(observations.n_cols, gaussians);
 
-  double l, l_old, best_l, TINY = 1.0e-4;
+  double l, lOld, bestL, TINY = 1.0e-4;
 
-  best_l = -DBL_MAX;
+  bestL = -DBL_MAX;
 
   KMeans<> k; // Default KMeans parameters, for now.
 
@@ -173,37 +173,38 @@ void GMM::Estimate(const arma::mat& observations,
   // as our trained model.
   for (size_t iter = 0; iter < 10; iter++)
   {
-    InitialClustering(k, observations, means_trial, covariances_trial, weights_trial);
+    InitialClustering(k, observations, meansTrial, covariancesTrial, 
+        weightsTrial);
 
-    l = Loglikelihood(observations, means_trial, covariances_trial, weights_trial);
+    l = Loglikelihood(observations, meansTrial, covariancesTrial, weightsTrial);
 
     Log::Info << "K-means log-likelihood: " << l << std::endl;
 
-    l_old = -DBL_MAX;
+    lOld = -DBL_MAX;
 
     // Iterate to update the model until no more improvement is found.
-    size_t max_iterations = 300;
+    size_t maxIterations = 300;
     size_t iteration = 0;
-    while (std::abs(l - l_old) > TINY && iteration < max_iterations)
+    while (std::abs(l - lOld) > TINY && iteration < maxIterations)
     {
       // Calculate the conditional probabilities of choosing a particular
       // Gaussian given the observations and the present theta value.
       for (size_t i = 0; i < gaussians; i++)
       {
-        // Store conditional probabilities into cond_prob vector for each
-        // Gaussian.  First we make an alias of the cond_prob vector.
-        arma::vec cond_prob_alias = cond_prob.unsafe_col(i);
-        phi(observations, means_trial[i], covariances_trial[i], cond_prob_alias);
-        cond_prob_alias *= weights_trial[i];
+        // Store conditional probabilities into condProb vector for each
+        // Gaussian.  First we make an alias of the condProb vector.
+        arma::vec condProbAlias = condProb.unsafe_col(i);
+        phi(observations, meansTrial[i], covariancesTrial[i], condProbAlias);
+        condProbAlias *= weightsTrial[i];
       }
 
       // Normalize row-wise.
-      for (size_t i = 0; i < cond_prob.n_rows; i++)
-        cond_prob.row(i) /= accu(cond_prob.row(i));
+      for (size_t i = 0; i < condProb.n_rows; i++)
+        condProb.row(i) /= accu(condProb.row(i));
 
       // This will store the sum of probabilities of each state over all the
       // observations.
-      arma::vec prob_row_sums(gaussians);
+      arma::vec probRowSums(gaussians);
 
       // Calculate the new value of the means using the updated conditional
       // probabilities.
@@ -213,28 +214,29 @@ void GMM::Estimate(const arma::mat& observations,
         // conditional probability of each point being from Gaussian i
         // multiplied by the probability of the point being from this mixture
         // model.
-        prob_row_sums[i] = accu(cond_prob.col(i) % probabilities);
+        probRowSums[i] = accu(condProb.col(i) % probabilities);
 
-        means_trial[i] = (observations * (cond_prob.col(i) % probabilities)) /
-            prob_row_sums[i];
+        meansTrial[i] = (observations * (condProb.col(i) % probabilities)) /
+            probRowSums[i];
 
         // Calculate the new value of the covariances using the updated
         // conditional probabilities and the updated means.
-        arma::mat tmp = observations - (means_trial[i] *
+        arma::mat tmp = observations - (meansTrial[i] *
             arma::ones<arma::rowvec>(observations.n_cols));
         arma::mat tmp_b = tmp % (arma::ones<arma::vec>(observations.n_rows) *
-            trans(cond_prob.col(i) % probabilities));
+            trans(condProb.col(i) % probabilities));
 
-        covariances_trial[i] = (tmp * trans(tmp_b)) / prob_row_sums[i];
+        covariancesTrial[i] = (tmp * trans(tmp_b)) / probRowSums[i];
       }
 
       // Calculate the new values for omega using the updated conditional
       // probabilities.
-      weights_trial = prob_row_sums / accu(probabilities);
+      weightsTrial = probRowSums / accu(probabilities);
 
       // Update values of l; calculate new log-likelihood.
-      l_old = l;
-      l = Loglikelihood(observations, means_trial, covariances_trial, weights_trial);
+      lOld = l;
+      l = Loglikelihood(observations, meansTrial, 
+                        covariancesTrial, weightsTrial);
 
       iteration++;
     }
@@ -243,25 +245,25 @@ void GMM::Estimate(const arma::mat& observations,
         << " iterations): " << l << std::endl;
 
     // The trial model is trained.  Is it better than our existing model?
-    if (l > best_l)
+    if (l > bestL)
     {
-      best_l = l;
+      bestL = l;
 
-      means = means_trial;
-      covariances = covariances_trial;
-      weights = weights_trial;
+      means = meansTrial;
+      covariances = covariancesTrial;
+      weights = weightsTrial;
     }
   }
 
-  Log::Info << "Log likelihood value of the estimated model: " << best_l << "."
+  Log::Info << "Log likelihood value of the estimated model: " << bestL << "."
       << std::endl;
   return;
 }
 
 double GMM::Loglikelihood(const arma::mat& data,
-                          const std::vector<arma::vec>& means_l,
-                          const std::vector<arma::mat>& covariances_l,
-                          const arma::vec& weights_l) const
+                          const std::vector<arma::vec>& meansL,
+                          const std::vector<arma::mat>& covariancesL,
+                          const arma::vec& weightsL) const
 {
   double loglikelihood = 0;
 
@@ -269,8 +271,8 @@ double GMM::Loglikelihood(const arma::mat& data,
   arma::mat likelihoods(gaussians, data.n_cols);
   for (size_t i = 0; i < gaussians; i++)
   {
-    phi(data, means_l[i], covariances_l[i], phis);
-    likelihoods.row(i) = weights_l(i) * trans(phis);
+    phi(data, meansL[i], covariancesL[i], phis);
+    likelihoods.row(i) = weightsL(i) * trans(phis);
   }
 
   // Now sum over every point.
