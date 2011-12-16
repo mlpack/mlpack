@@ -43,18 +43,18 @@ int main(int argc, char* argv[])
   // Handle parameters
   CLI::ParseCommandLine(argc, argv);
 
-  const string train_name = CLI::GetParam<string>("input_file");
-  const string test_name = CLI::GetParam<string>("test_file");
-  const string response_name = CLI::GetParam<string>("input_responses");
-  const string output_file = CLI::GetParam<string>("output_file");
-  const string output_predictions = CLI::GetParam<string>("output_predictions");
+  const string trainName = CLI::GetParam<string>("input_file");
+  const string testName = CLI::GetParam<string>("test_file");
+  const string responseName = CLI::GetParam<string>("input_responses");
+  const string outputFile = CLI::GetParam<string>("outputFile");
+  const string outputPredictions = CLI::GetParam<string>("outputPredictions");
 
   mat regressors;
   mat responses;
-  data::Load(train_name.c_str(), regressors, true);
+  data::Load(trainName.c_str(), regressors, true);
 
   // Are the responses in a separate file?
-  if (response_name == "")
+  if (responseName == "")
   {
     // The initial predictors for y, Nx1
     responses = trans(regressors.row(regressors.n_rows - 1));
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
   else
   {
     // The initial predictors for y, Nx1
-    data::Load(response_name.c_str(), responses, true);
+    data::Load(responseName.c_str(), responses, true);
 
     if (responses.n_rows == 1)
       responses = trans(responses); // Probably loaded backwards, but that's ok.
@@ -79,13 +79,13 @@ int main(int argc, char* argv[])
   LinearRegression lr(regressors, responses.unsafe_col(0));
 
   // Save the parameters.
-  data::Save(output_file.c_str(), lr.Parameters(), false);
+  data::Save(outputFile.c_str(), lr.Parameters(), false);
 
   // Did we want to predict, too?
-  if (test_name != "")
+  if (testName != "")
   {
     arma::mat points;
-    data::Load(test_name.c_str(), points, true);
+    data::Load(testName.c_str(), points, true);
 
     if (points.n_rows != regressors.n_rows)
       Log::Fatal << "The test data must have the same number of columns as the "
@@ -95,6 +95,6 @@ int main(int argc, char* argv[])
     lr.Predict(points, predictions);
 
     // Save predictions.
-    data::Save(output_predictions.c_str(), predictions, false);
+    data::Save(outputPredictions.c_str(), predictions, false);
   }
 }
