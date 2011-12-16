@@ -83,7 +83,8 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ./src/mlpack
+INPUT                  = ./src/mlpack \
+                         ./doc/guide
 FILE_PATTERNS          = *.c \
                          *.cc \
                          *.h \
