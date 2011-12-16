@@ -10,6 +10,9 @@
 
 #define ARGSTR(a) a,#a
 
+using namespace mlpack;
+using namespace mlpack::utilities;
+
 BOOST_AUTO_TEST_SUITE(SaveRestoreUtilityTests);
 
 /*
