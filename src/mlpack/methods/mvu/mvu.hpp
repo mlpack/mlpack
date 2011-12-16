@@ -25,11 +25,11 @@ namespace mvu {
 class MVU
 {
  public:
-  MVU(const arma::mat& data_in);
+  MVU(const arma::mat& dataIn);
 
   void Unfold(const size_t newDim,
               const size_t numNeighbors,
-              arma::mat& output_coordinates);
+              arma::mat& outputCoordinates);
 
  private:
   const arma::mat& data;
