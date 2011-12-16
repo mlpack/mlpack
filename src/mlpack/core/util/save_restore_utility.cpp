@@ -15,8 +15,9 @@ bool SaveRestoreUtility::ReadFile(const std::string filename)
   xmlDocPtr xmlDocTree = NULL;
   if (NULL == (xmlDocTree = xmlReadFile(filename.c_str(), NULL, 0)))
   {
-    Log::Fatal << "Clearly, we couldn't load the XML file\n";
+    Log::Fatal << "Could not load XML file '" << filename << "'!" << std::endl;
   }
+
   xmlNodePtr root = xmlDocGetRootElement(xmlDocTree);
   parameters.clear();
 
@@ -119,22 +120,22 @@ arma::mat& SaveRestoreUtility::LoadParameter(arma::mat& matrix,
   }
   else
   {
-    Log::Fatal << "Missing the correct name\n";
+    Log::Fatal << "LoadParameter(): node '" << name << "' not found.\n";
   }
   return matrix;
 }
 
-std::string SaveRestoreUtility::LoadParameter(std::string str,
+std::string SaveRestoreUtility::LoadParameter(std::string& str,
                                               const std::string name)
 {
   std::map<std::string, std::string>::iterator it = parameters.find(name);
   if (it != parameters.end())
   {
-    return (*it).second;
+    return str = (*it).second;
   }
   else
   {
-    Log::Fatal << "Missing the correct name\n";
+    Log::Fatal << "LoadParameter(): node '" << name << "' not found.\n";
   }
   return "";
 }
@@ -148,11 +149,11 @@ char SaveRestoreUtility::LoadParameter(char c, const std::string name)
     std::string value = (*it).second;
     std::istringstream input (value);
     input >> temp;
-    return (char) temp;
+    return c = (char) temp;
   }
   else
   {
-    Log::Fatal << "Missing the correct name\n";
+    Log::Fatal << "LoadParameter(): node '" << name << "' not found.\n";
   }
   return 0;
 }

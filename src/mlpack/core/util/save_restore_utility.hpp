@@ -71,7 +71,7 @@ class SaveRestoreUtility
   /**
    * LoadParameter loads a string from the parameters map.
    */
-  std::string LoadParameter(std::string str, const std::string name);
+  std::string LoadParameter(std::string& str, const std::string name);
 
   /**
    * LoadParameter loads an arma::mat from the parameters map.

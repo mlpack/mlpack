@@ -27,7 +27,7 @@ T& SaveRestoreUtility::LoadParameter(T& t, const std::string name)
   }
   else
   {
-    Log::Fatal << "Missing the correct name\n";
+    Log::Fatal << "LoadParameter(): node '" << name << "' not found.\n";
   }
   return t;
 }
@@ -57,7 +57,7 @@ std::vector<T>& SaveRestoreUtility::LoadParameter(std::vector<T>& v,
   }
   else
   {
-    Log::Fatal << "Failed to load the parameter " << name << std::endl;
+    Log::Fatal << "LoadParameter(): node '" << name << "' not found.\n";
   }
   return v;
 }
