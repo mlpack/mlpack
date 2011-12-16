@@ -323,14 +323,11 @@ double PeriodicHRectBound<t_pow>::MaxDistance(const arma::vec& point) const
       double tempMax;
       double sum = 0;
 
-      std::cout << point3[i] << "\t";
       double v = fabs(std::max(point3[i] - bounds_[i].Lo(),
                              bounds_[i].Hi() - point3[i]));
-      std::cout << v << "\t";
       sum += pow(v, (double) t_pow);
 
       tempMax = pow(sum, 2.0 / (double) t_pow) / 4.0;
-      std::cout << tempMax << "\n";
 
       if (tempMax > max)
         max = tempMax;
