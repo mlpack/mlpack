@@ -20,29 +20,46 @@ namespace optimization {
  * optimization.  In this scheme, a penalty term is added to the Lagrangian.
  * This method is also called the "method of multipliers".
  *
- * The template class LagrangianFunction must implement the following three
+ * The template class LagrangianFunction must implement the following five
  * methods:
- *   double Evaluate(const arma::mat& coordinates);
- *   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
- *   int NumConstraints();
- *   double EvaluateConstraint(int index, const arma::mat& coordinates);
- *   double GradientConstraint(int index, const arma::mat& coordinates,
- *       arma::mat& gradient);
+ *
+ * - double Evaluate(const arma::mat& coordinates);
+ * - void Gradient(const arma::mat& coordinates, arma::mat& gradient);
+ * - size_t NumConstraints();
+ * - double EvaluateConstraint(size_t index, const arma::mat& coordinates);
+ * - double GradientConstraint(size_t index, const arma::mat& coordinates,
+ *        arma::mat& gradient);
  *
  * The number of constraints must be greater than or equal to 0, and
  * EvaluateConstraint() should evaluate the constraint at the given index for
  * the given coordinates.  Evaluate() should provide the objective function
  * value for the given coordinates.
+ *
+ * @tparam LagrangianFunction Function which can be optimized by this class.
  */
 template<typename LagrangianFunction>
 class AugLagrangian
 {
  public:
-  AugLagrangian(LagrangianFunction& function, size_t numBasis);
-      // not sure what to do here yet
+  /**
+   * Construct the Augmented Lagrangian optimizer with an instance of the given
+   * function.
+   *
+   * @param function Function to be optimizer.
+   * @param numBasis Number of points of memory for L-BFGS.
+   */
+  AugLagrangian(LagrangianFunction& function, size_t numBasis = 5);
 
-  bool Optimize(size_t num_iterations,
-                arma::mat& coordinates,
+  /**
+   * Optimize the function.
+   *
+   * @param coordinates Output matrix to store the optimized coordinates in.
+   * @param maxIterations Maximum number of iterations of the Augmented
+   *     Lagrangian algorithm.  0 indicates no maximum.
+   * @param sigma Initial penalty parameter.
+   */
+  bool Optimize(arma::mat& coordinates,
+                const size_t maxIterations = 1000,
                 double sigma = 0.5);
 
   //! Get the LagrangianFunction.
@@ -56,7 +73,9 @@ class AugLagrangian
   size_t& NumBasis() { return numBasis; }
 
  private:
+  //! Function to be optimized.
   LagrangianFunction& function;
+  //! Number of memory points for L-BFGS.
   size_t numBasis;
 
   /**
@@ -76,11 +95,11 @@ class AugLagrangian
     double Evaluate(const arma::mat& coordinates);
     void Gradient(const arma::mat& coordinates, arma::mat& gradient);
 
-    const arma::mat& GetInitialPoint();
+    const arma::mat& GetInitialPoint() const;
 
-    //! Get the Lagrangian multipliers.
+    //! Get the Lagrange multipliers.
     const arma::vec& Lambda() const { return lambda; }
-    //! Modify the Lagrangian multipliers.
+    //! Modify the Lagrange multipliers.
     arma::vec& Lambda() { return lambda; }
 
     //! Get sigma.
