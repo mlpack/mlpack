@@ -110,7 +110,7 @@ math::Range BallBound<VecType>::RangeDistance(
 
 /**
  * Expand the bound to include the given bound.
- */
+ *
 template<typename VecType>
 const BallBound<VecType>&
 BallBound<VecType>::operator|=(
@@ -123,14 +123,15 @@ BallBound<VecType>::operator|=(
     radius = dist;
 
   return *this;
-}
+}*/
 
 /**
  * Expand the bound to include the given point.
  */
 template<typename VecType>
+template<typename MatType>
 const BallBound<VecType>&
-BallBound<VecType>::operator|=(const VecType& point)
+BallBound<VecType>::operator|=(const MatType& point)
 {
   double dist = metric::EuclideanDistance::Evaluate(center, point);
 

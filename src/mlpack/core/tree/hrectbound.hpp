@@ -106,10 +106,14 @@ class HRectBound
   math::Range RangeDistance(const VecType& point) const;
 
   /**
-   * Expands this region to include a new point.
+   * Expands this region to include new points.
+   *
+   * @tparam MatType Type of matrix; could be Mat, SpMat, a subview, or just a
+   *   vector.
+   * @param data Data points to expand this region to include.
    */
-  template<typename VecType>
-  HRectBound& operator|=(const VecType& vector);
+  template<typename MatType>
+  HRectBound& operator|=(const MatType& data);
 
   /**
    * Expands this region to encompass another bound.
