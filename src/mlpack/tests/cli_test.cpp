@@ -41,13 +41,13 @@ BOOST_AUTO_TEST_CASE(TestCLIAdd)
 
   // Check the description of our variable.
   BOOST_REQUIRE_EQUAL(CLI::GetDescription("global/bool").compare(
-        std::string("True or False")) , 0);
+      std::string("True or False")) , 0);
 
   // Check that our aliasing works.
   BOOST_REQUIRE_EQUAL(CLI::HasParam("global/bool"), 
       CLI::HasParam("alias/bool"));
   BOOST_REQUIRE_EQUAL(CLI::GetDescription("global/bool").compare(
-        CLI::GetDescription("alias/bool")), 0);
+      CLI::GetDescription("alias/bool")), 0);
   BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("global/bool"), 
       CLI::GetParam<bool>("alias/bool"));
 }

@@ -74,9 +74,9 @@ BOOST_AUTO_TEST_CASE(LoadCSVTest)
 BOOST_AUTO_TEST_CASE(SaveCSVTest)
 {
   arma::mat test = "1 5;"
-    "2 6;"
-    "3 7;"
-    "4 8;";
+                   "2 6;"
+                   "3 7;"
+                   "4 8;";
 
   BOOST_REQUIRE(data::Save("test_file.csv", test) == true);
 
@@ -99,9 +99,9 @@ BOOST_AUTO_TEST_CASE(SaveCSVTest)
 BOOST_AUTO_TEST_CASE(LoadArmaASCIITest)
 {
   arma::mat test = "1 5;"
-    "2 6;"
-    "3 7;"
-    "4 8;";
+                   "2 6;"
+                   "3 7;"
+                   "4 8;";
 
   arma::mat testTrans = trans(test);
   BOOST_REQUIRE(testTrans.save("test_file.txt", arma::arma_ascii));
@@ -124,9 +124,9 @@ BOOST_AUTO_TEST_CASE(LoadArmaASCIITest)
 BOOST_AUTO_TEST_CASE(SaveArmaASCIITest)
 {
   arma::mat test = "1 5;"
-    "2 6;"
-    "3 7;"
-    "4 8;";
+                   "2 6;"
+                   "3 7;"
+                   "4 8;";
 
   BOOST_REQUIRE(data::Save("test_file.txt", test) == true);
 
@@ -201,9 +201,9 @@ BOOST_AUTO_TEST_CASE(LoadCSVTxtTest)
 BOOST_AUTO_TEST_CASE(LoadArmaBinaryTest)
 {
   arma::mat test = "1 5;"
-    "2 6;"
-    "3 7;"
-    "4 8;";
+                   "2 6;"
+                   "3 7;"
+                   "4 8;";
 
   arma::mat testTrans = trans(test);
   BOOST_REQUIRE(testTrans.quiet_save("test_file.bin", arma::arma_binary)
@@ -228,9 +228,9 @@ BOOST_AUTO_TEST_CASE(LoadArmaBinaryTest)
 BOOST_AUTO_TEST_CASE(SaveArmaBinaryTest)
 {
   arma::mat test = "1 5;"
-    "2 6;"
-    "3 7;"
-    "4 8;";
+                   "2 6;"
+                   "3 7;"
+                   "4 8;";
 
   BOOST_REQUIRE(data::Save("test_file.bin", test) == true);
 
@@ -252,9 +252,9 @@ BOOST_AUTO_TEST_CASE(SaveArmaBinaryTest)
 BOOST_AUTO_TEST_CASE(LoadRawBinaryTest)
 {
   arma::mat test = "1 2;"
-    "3 4;"
-    "5 6;"
-    "7 8;";
+                   "3 4;"
+                   "5 6;"
+                   "7 8;";
 
   arma::mat testTrans = trans(test);
   BOOST_REQUIRE(testTrans.quiet_save("test_file.bin", arma::raw_binary)
@@ -279,9 +279,9 @@ BOOST_AUTO_TEST_CASE(LoadRawBinaryTest)
 BOOST_AUTO_TEST_CASE(LoadPGMBinaryTest)
 {
   arma::mat test = "1 5;"
-    "2 6;"
-    "3 7;"
-    "4 8;";
+                   "2 6;"
+                   "3 7;"
+                   "4 8;";
 
   arma::mat testTrans = trans(test);
   BOOST_REQUIRE(testTrans.quiet_save("test_file.pgm", arma::pgm_binary)
@@ -306,9 +306,9 @@ BOOST_AUTO_TEST_CASE(LoadPGMBinaryTest)
 BOOST_AUTO_TEST_CASE(SavePGMBinaryTest)
 {
   arma::mat test = "1 5;"
-    "2 6;"
-    "3 7;"
-    "4 8;";
+                   "2 6;"
+                   "3 7;"
+                   "4 8;";
 
   BOOST_REQUIRE(data::Save("test_file.pgm", test) == true);
 

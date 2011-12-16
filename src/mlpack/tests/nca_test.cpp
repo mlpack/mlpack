@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_SUITE(NCATest);
  * The Softmax error function should return the identity matrix as its initial
  * point.
  */
-BOOST_AUTO_TEST_CASE(softmax_initial_point)
+BOOST_AUTO_TEST_CASE(SoftmaxInitialPoint)
 {
   // Cheap fake dataset.
   arma::mat data;
@@ -36,15 +36,15 @@ BOOST_AUTO_TEST_CASE(softmax_initial_point)
   SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
 
   // Verify the initial point is the identity matrix.
-  arma::mat initial_point = sef.GetInitialPoint();
+  arma::mat initialPoint = sef.GetInitialPoint();
   for (int row = 0; row < 5; row++)
   {
     for (int col = 0; col < 5; col++)
     {
       if (row == col)
-        BOOST_REQUIRE_CLOSE(initial_point(row, col), 1.0, 1e-5);
+        BOOST_REQUIRE_CLOSE(initialPoint(row, col), 1.0, 1e-5);
       else
-        BOOST_REQUIRE(initial_point(row, col) == 0.0);
+        BOOST_REQUIRE(initialPoint(row, col) == 0.0);
     }
   }
 }
@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(softmax_initial_point)
  * On a simple fake dataset, ensure that the initial function evaluation is
  * correct.
  */
-BOOST_AUTO_TEST_CASE(softmax_initial_evaluation)
+BOOST_AUTO_TEST_CASE(SoftmaxInitialEvaluation)
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat data    = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(softmax_initial_evaluation)
  * On a simple fake dataset, ensure that the initial gradient evaluation is
  * correct.
  */
-BOOST_AUTO_TEST_CASE(softmax_initial_gradient)
+BOOST_AUTO_TEST_CASE(SoftmaxInitialGradient)
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat data    = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(softmax_initial_gradient)
  * On optimally separated datasets, ensure that the objective function is
  * optimal (equal to the negative number of points).
  */
-BOOST_AUTO_TEST_CASE(softmax_optimal_evaluation)
+BOOST_AUTO_TEST_CASE(SoftmaxOptimalEvaluation)
 {
   // Simple optimal dataset.
   arma::mat data    = " 500  500 -500 -500;"
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(softmax_optimal_evaluation)
 /**
  * On optimally separated datasets, ensure that the gradient is zero.
  */
-BOOST_AUTO_TEST_CASE(softmax_optimal_gradient)
+BOOST_AUTO_TEST_CASE(SoftmaxOptimalGradient)
 {
   // Simple optimal dataset.
   arma::mat data    = " 500  500 -500 -500;"
@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE(softmax_optimal_gradient)
  * On our simple dataset, ensure that the NCA algorithm fully separates the
  * points.
  */
-BOOST_AUTO_TEST_CASE(nca_simple_dataset)
+BOOST_AUTO_TEST_CASE(NcaSimpleDataset)
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat data    = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -153,24 +153,24 @@ BOOST_AUTO_TEST_CASE(nca_simple_dataset)
 
   NCA<SquaredEuclideanDistance> nca(data, labels);
 
-  arma::mat output_matrix;
-  nca.LearnDistance(output_matrix);
+  arma::mat outputMatrix;
+  nca.LearnDistance(outputMatrix);
 
   // Ensure that the objective function is better now.
   SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
 
-  double init_obj = sef.Evaluate(arma::eye<arma::mat>(2, 2));
-  double final_obj = sef.Evaluate(output_matrix);
-  arma::mat final_gradient;
-  sef.Gradient(output_matrix, final_gradient);
+  double initObj = sef.Evaluate(arma::eye<arma::mat>(2, 2));
+  double finalObj = sef.Evaluate(outputMatrix);
+  arma::mat finalGradient;
+  sef.Gradient(outputMatrix, finalGradient);
 
-  // final_obj must be less than init_obj.
-  BOOST_REQUIRE_LT(final_obj, init_obj);
+  // finalObj must be less than initObj.
+  BOOST_REQUIRE_LT(finalObj, initObj);
   // Verify that final objective is optimal.
-  BOOST_REQUIRE_CLOSE(final_obj, -6.0, 1e-8);
+  BOOST_REQUIRE_CLOSE(finalObj, -6.0, 1e-8);
   // The solution is not unique, so the best we can do is ensure the gradient
   // norm is close to 0.
-  BOOST_REQUIRE_LT(arma::norm(final_gradient, 2), 1e-10);
+  BOOST_REQUIRE_LT(arma::norm(finalGradient, 2), 1e-10);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

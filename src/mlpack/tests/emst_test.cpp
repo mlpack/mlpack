@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_SUITE(EMSTTest);
  * in one dimension for simplicity -- the correct functionality of distance
  * functions is not tested here.
  */
-BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test)
+BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
 {
   // Set up our data.
   arma::mat data(1, 11);
@@ -88,39 +88,39 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test)
  *
  * Errors are produced if the results are not identical.
  */
-BOOST_AUTO_TEST_CASE(dual_tree_vs_naive)
+BOOST_AUTO_TEST_CASE(DualTreeVsNaive)
 {
-  arma::mat input_data;
+  arma::mat inputData;
 
   // Hard-coded filename: bad!
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", input_data))
+  if (!data::Load("test_data_3_1000.csv", inputData))
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with (may not be necessary with no ALIAS_MATRIX?).
-  arma::mat dual_data = arma::trans(input_data);
-  arma::mat naive_data = arma::trans(input_data);
+  arma::mat dualData = arma::trans(inputData);
+  arma::mat naiveData = arma::trans(inputData);
 
   // Reset parameters from last test.
-  DualTreeBoruvka<> dtb(dual_data);
+  DualTreeBoruvka<> dtb(dualData);
 
-  arma::mat dual_results;
-  dtb.ComputeMST(dual_results);
+  arma::mat dualResults;
+  dtb.ComputeMST(dualResults);
 
   // Set naive mode.
-  DualTreeBoruvka<> dtb_naive(naive_data, true);
+  DualTreeBoruvka<> dtbNaive(naiveData, true);
 
-  arma::mat naive_results;
-  dtb_naive.ComputeMST(naive_results);
+  arma::mat naiveResults;
+  dtbNaive.ComputeMST(naiveResults);
 
-  BOOST_REQUIRE(dual_results.n_cols == naive_results.n_cols);
-  BOOST_REQUIRE(dual_results.n_rows == naive_results.n_rows);
+  BOOST_REQUIRE(dualResults.n_cols == naiveResults.n_cols);
+  BOOST_REQUIRE(dualResults.n_rows == naiveResults.n_rows);
 
-  for (size_t i = 0; i < dual_results.n_cols; i++)
+  for (size_t i = 0; i < dualResults.n_cols; i++)
   {
-    BOOST_REQUIRE(dual_results(0, i) == naive_results(0, i));
-    BOOST_REQUIRE(dual_results(1, i) == naive_results(1, i));
-    BOOST_REQUIRE_CLOSE(dual_results(2, i), naive_results(2, i), 1e-5);
+    BOOST_REQUIRE(dualResults(0, i) == naiveResults(0, i));
+    BOOST_REQUIRE(dualResults(1, i) == naiveResults(1, i));
+    BOOST_REQUIRE_CLOSE(dualResults(2, i), naiveResults(2, i), 1e-5);
   }
 }
 

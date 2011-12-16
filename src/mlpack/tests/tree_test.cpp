@@ -360,11 +360,11 @@ BOOST_AUTO_TEST_CASE(HRectBoundRangeDistanceBound)
 
     // We will set the low randomly and the width randomly for each dimension of
     // each bound.
-    arma::vec lo_a(dim);
-    arma::vec width_a(dim);
+    arma::vec loA(dim);
+    arma::vec widthA(dim);
 
-    lo_a.randu();
-    width_a.randu();
+    loA.randu();
+    widthA.randu();
 
     arma::vec lo_b(dim);
     arma::vec width_b(dim);
@@ -374,7 +374,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundRangeDistanceBound)
 
     for (size_t j = 0; j < dim; j++)
     {
-      a[j] = Range(lo_a[j], lo_a[j] + width_a[j]);
+      a[j] = Range(loA[j], loA[j] + widthA[j]);
       b[j] = Range(lo_b[j], lo_b[j] + width_b[j]);
     }
 
@@ -410,14 +410,14 @@ BOOST_AUTO_TEST_CASE(HRectBoundRangeDistancePoint)
 
     // We will set the low randomly and the width randomly for each dimension of
     // each bound.
-    arma::vec lo_a(dim);
-    arma::vec width_a(dim);
+    arma::vec loA(dim);
+    arma::vec widthA(dim);
 
-    lo_a.randu();
-    width_a.randu();
+    loA.randu();
+    widthA.randu();
 
     for (size_t j = 0; j < dim; j++)
-      a[j] = Range(lo_a[j], lo_a[j] + width_a[j]);
+      a[j] = Range(loA[j], loA[j] + widthA[j]);
 
     // Now run the test on a few points.
     for (int j = 0; j < 10; j++)
@@ -884,25 +884,25 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMinDistancePoint)
  * BinarySpaceTree<>::count_.  So, let's build a simple tree and make sure they
  * are the same.
  */
-BOOST_AUTO_TEST_CASE(tree_count_mismatch)
+BOOST_AUTO_TEST_CASE(TreeCountMismatch)
 {
   arma::mat dataset = "2.0 5.0 9.0 4.0 8.0 7.0;"
                       "3.0 4.0 6.0 7.0 1.0 2.0 ";
 
   // Leaf size of 1.
-  BinarySpaceTree<HRectBound<2> > root_node(dataset, 1);
+  BinarySpaceTree<HRectBound<2>> rootNode(dataset, 1);
 
-  BOOST_REQUIRE(root_node.Count() == 6);
-  BOOST_REQUIRE(root_node.Left()->Count() == 3);
-  BOOST_REQUIRE(root_node.Left()->Left()->Count() == 2);
-  BOOST_REQUIRE(root_node.Left()->Left()->Left()->Count() == 1);
-  BOOST_REQUIRE(root_node.Left()->Left()->Right()->Count() == 1);
-  BOOST_REQUIRE(root_node.Left()->Right()->Count() == 1);
-  BOOST_REQUIRE(root_node.Right()->Count() == 3);
-  BOOST_REQUIRE(root_node.Right()->Left()->Count() == 2);
-  BOOST_REQUIRE(root_node.Right()->Left()->Left()->Count() == 1);
-  BOOST_REQUIRE(root_node.Right()->Left()->Right()->Count() == 1);
-  BOOST_REQUIRE(root_node.Right()->Right()->Count() == 1);
+  BOOST_REQUIRE(rootNode.Count() == 6);
+  BOOST_REQUIRE(rootNode.Left()->Count() == 3);
+  BOOST_REQUIRE(rootNode.Left()->Left()->Count() == 2);
+  BOOST_REQUIRE(rootNode.Left()->Left()->Left()->Count() == 1);
+  BOOST_REQUIRE(rootNode.Left()->Left()->Right()->Count() == 1);
+  BOOST_REQUIRE(rootNode.Left()->Right()->Count() == 1);
+  BOOST_REQUIRE(rootNode.Right()->Count() == 3);
+  BOOST_REQUIRE(rootNode.Right()->Left()->Count() == 2);
+  BOOST_REQUIRE(rootNode.Right()->Left()->Left()->Count() == 1);
+  BOOST_REQUIRE(rootNode.Right()->Left()->Right()->Count() == 1);
+  BOOST_REQUIRE(rootNode.Right()->Right()->Count() == 1);
 }
 
 // Forward declaration of methods we need for the next test.
@@ -933,33 +933,33 @@ bool DoBoundsIntersect(HRectBound<t_pow>& a,
  *
  * Then, we do that whole process a handful of times.
  */
-BOOST_AUTO_TEST_CASE(kd_tree_test)
+BOOST_AUTO_TEST_CASE(KdTreeTest)
 {
   typedef BinarySpaceTree<HRectBound<2> > TreeType;
 
-  size_t max_runs = 10; // Ten total tests.
-  size_t point_increments = 1000; // Range is from 2000 points to 11000.
+  size_t maxRuns = 10; // Ten total tests.
+  size_t pointIncrements = 1000; // Range is from 2000 points to 11000.
 
   // We use the default leaf size of 20.
-  for(size_t run = 0; run < max_runs; run++)
+  for(size_t run = 0; run < maxRuns; run++)
   {
     size_t dimensions = run + 2;
-    size_t max_points = (run + 1) * point_increments;
+    size_t maxPoints = (run + 1) * pointIncrements;
 
-    size_t size = max_points;
+    size_t size = maxPoints;
     arma::mat dataset = arma::mat(dimensions, size);
     arma::mat datacopy; // Used to test mappings.
 
     // Mappings for post-sort verification of data.
-    std::vector<size_t> new_to_old;
-    std::vector<size_t> old_to_new;
+    std::vector<size_t> newToOld;
+    std::vector<size_t> oldToNew;
 
     // Generate data.
     dataset.randu();
     datacopy = dataset; // Save a copy.
 
     // Build the tree itself.
-    TreeType root(dataset, new_to_old, old_to_new);
+    TreeType root(dataset, newToOld, oldToNew);
 
     // Ensure the size of the tree is correct.
     BOOST_REQUIRE_EQUAL(root.Count(), size);
@@ -969,8 +969,8 @@ BOOST_AUTO_TEST_CASE(kd_tree_test)
     {
       for(size_t j = 0; j < dimensions; j++)
       {
-        BOOST_REQUIRE_EQUAL(dataset(j, i), datacopy(j, new_to_old[i]));
-        BOOST_REQUIRE_EQUAL(dataset(j, old_to_new[i]), datacopy(j, i));
+        BOOST_REQUIRE_EQUAL(dataset(j, i), datacopy(j, newToOld[i]));
+        BOOST_REQUIRE_EQUAL(dataset(j, oldToNew[i]), datacopy(j, i));
       }
     }
 
@@ -1023,10 +1023,8 @@ bool CheckPointBounds(TreeType* node, const arma::mat& data)
 
   // Check that each point which this tree claims is actually inside the tree.
   for (size_t index = begin; index < begin + count; index++)
-  {
     if (!node->Bound().Contains(data.col(index)))
       return false;
-  }
 
   return CheckPointBounds(left, data) && CheckPointBounds(right, data);
 }
@@ -1090,29 +1088,29 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSparseKDTreeTest)
   typedef BinarySpaceTree<HRectBound<2>, EmptyStatistic, arma::SpMat<double> >
       TreeType;
 
-  size_t max_runs = 2; // Two total tests.
-  size_t point_increments = 200; // Range is from 200 points to 400.
+  size_t maxRuns = 2; // Two total tests.
+  size_t pointIncrements = 200; // Range is from 200 points to 400.
 
   // We use the default leaf size of 20.
-  for(size_t run = 0; run < max_runs; run++)
+  for(size_t run = 0; run < maxRuns; run++)
   {
     size_t dimensions = run + 2;
-    size_t max_points = (run + 1) * point_increments;
+    size_t maxPoints = (run + 1) * pointIncrements;
 
-    size_t size = max_points;
+    size_t size = maxPoints;
     arma::SpMat<double> dataset = arma::SpMat<double>(dimensions, size);
     arma::SpMat<double> datacopy; // Used to test mappings.
 
     // Mappings for post-sort verification of data.
-    std::vector<size_t> new_to_old;
-    std::vector<size_t> old_to_new;
+    std::vector<size_t> newToOld;
+    std::vector<size_t> oldToNew;
 
     // Generate data.
     dataset.randu();
     datacopy = dataset; // Save a copy.
 
     // Build the tree itself.
-    TreeType root(dataset, new_to_old, old_to_new);
+    TreeType root(dataset, newToOld, oldToNew);
 
     // Ensure the size of the tree is correct.
     BOOST_REQUIRE_EQUAL(root.Count(), size);
@@ -1122,8 +1120,8 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSparseKDTreeTest)
     {
       for(size_t j = 0; j < dimensions; j++)
       {
-        BOOST_REQUIRE_EQUAL(dataset(j, i), datacopy(j, new_to_old[i]));
-        BOOST_REQUIRE_EQUAL(dataset(j, old_to_new[i]), datacopy(j, i));
+        BOOST_REQUIRE_EQUAL(dataset(j, i), datacopy(j, newToOld[i]));
+        BOOST_REQUIRE_EQUAL(dataset(j, oldToNew[i]), datacopy(j, i));
       }
     }
 
