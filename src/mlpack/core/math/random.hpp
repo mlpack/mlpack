@@ -10,15 +10,32 @@
 #include <math.h>
 #include <float.h>
 
+#include <boost/random.hpp>
+
 namespace mlpack {
 namespace math /** Miscellaneous math routines. */ {
+
+// Annoying Boost versioning issues.
+#include <boost/version.hpp>
+
+#if BOOST_VERSION >= 104700
+  // Global random object.
+  extern boost::random::mt19937 randGen;
+  // Global uniform distribution.
+  extern boost::random::uniform_01 randUniformDist;
+#else
+  // Global random object.
+  extern boost::mt19937 randGen;
+  // Global uniform distribution.
+  extern boost::uniform_01<> randUniformDist;
+#endif
 
 /**
  * Generates a uniform random number between 0 and 1.
  */
 inline double Random()
 {
-  return rand() * (1.0 / RAND_MAX);
+  return randUniformDist(randGen);
 }
 
 /**
@@ -26,7 +43,13 @@ inline double Random()
  */
 inline double Random(double lo, double hi)
 {
-  return Random() * (hi - lo) + lo;
+  #if BOOST_VERSION >= 104700
+    boost::random::uniform_real_distribution dist(lo, hi);
+  #else
+    boost::uniform_real<> dist(lo, hi);
+  #endif
+
+  return dist(randGen);
 }
 
 /**
@@ -34,7 +57,13 @@ inline double Random(double lo, double hi)
  */
 inline int RandInt(int hi_exclusive)
 {
-  return rand() % hi_exclusive;
+  #if BOOST_VERSION >= 104700
+    boost::random::uniform_int_distribution dist(0, hi_exclusive - 1);
+  #else
+    boost::uniform_int<> dist(0, hi_exclusive - 1);
+  #endif
+
+  return dist(randGen);
 }
 
 /**
@@ -42,7 +71,13 @@ inline int RandInt(int hi_exclusive)
  */
 inline int RandInt(int lo, int hi_exclusive)
 {
-  return (rand() % (hi_exclusive - lo)) + lo;
+  #if BOOST_VERSION >= 104700
+    boost::random::uniform_int_distribution dist(lo, hi_exclusive - 1);
+  #else
+    boost::uniform_int<> dist(0, hi_exclusive - 1);
+  #endif
+
+  return dist(randGen);
 }
 
 }; // namespace math

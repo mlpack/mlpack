@@ -6,6 +6,7 @@ set(SOURCES
   clamp.hpp
   lin_alg.hpp
   random.hpp
+  random.cpp
   range.hpp
   range_impl.hpp
 )
