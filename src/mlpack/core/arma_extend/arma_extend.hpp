@@ -57,6 +57,8 @@ namespace arma {
   #include "sparse/fn_randn.hpp"
   #include "sparse/fn_randu.hpp"
   #include "sparse/fn_zeros.hpp"
+  #include "sparse/fn_min.hpp"
+  #include "sparse/fn_max.hpp"
 
   #include "sparse/SpValProxy_meat.hpp"
   #include "sparse/SpMat_meat.hpp"
