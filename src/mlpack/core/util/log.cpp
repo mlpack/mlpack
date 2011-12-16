@@ -49,42 +49,42 @@ void Log::Assert(bool condition, const char* message)
     // skip first stack frame (points here)
     for (size_t i = 1; i < size && messages != NULL; ++i)
     {
-      char *mangled_name = 0, *offset_begin = 0, *offset_end = 0;
+      char *mangledName = 0, *offsetBegin = 0, *offsetEnd = 0;
 
       // find parantheses and +address offset surrounding mangled name
       for (char *p = messages[i]; *p; ++p)
       {
         if (*p == '(')
         {
-          mangled_name = p;
+          mangledName = p;
         }
         else if (*p == '+')
         {
-          offset_begin = p;
+          offsetBegin = p;
         }
         else if (*p == ')')
         {
-          offset_end = p;
+          offsetEnd = p;
           break;
         }
       }
 
       // if the line could be processed, attempt to demangle the symbol
-      if (mangled_name && offset_begin && offset_end &&
-          mangled_name < offset_begin)
+      if (mangledName && offsetBegin && offsetEnd &&
+          mangledName < offsetBegin)
       {
-        *mangled_name++ = '\0';
-        *offset_begin++ = '\0';
-        *offset_end++ = '\0';
+        *mangledName++ = '\0';
+        *offsetBegin++ = '\0';
+        *offsetEnd++ = '\0';
 
         int status;
-        char* real_name = abi::__cxa_demangle(mangled_name, 0, 0, &status);
+        char* realName = abi::__cxa_demangle(mangledName, 0, 0, &status);
 
         // if demangling is successful, output the demangled function name
         if (status == 0)
         {
           Log::Debug << "[bt]: (" << i << ") " << messages[i] << " : "
-                    << real_name << "+" << offset_begin << offset_end
+                    << realName << "+" << offsetBegin << offsetEnd
                     << std::endl;
 
         }
@@ -92,10 +92,10 @@ void Log::Assert(bool condition, const char* message)
         else
         {
           Log::Debug << "[bt]: (" << i << ") " << messages[i] << " : "
-                    << mangled_name << "+" << offset_begin << offset_end
+                    << mangledName << "+" << offsetBegin << offsetEnd
                     << std::endl;
         }
-        free(real_name);
+        free(realName);
       }
       // otherwise, print the whole line
       else

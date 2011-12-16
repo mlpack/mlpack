@@ -39,11 +39,11 @@ CLI* CLI::singleton = NULL;
 namespace po = boost::program_options;
 
 // Fake ProgramDoc in case none is supplied.
-static ProgramDoc empty_program_doc = ProgramDoc("", "");
+static ProgramDoc emptyProgramDoc = ProgramDoc("", "");
 
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
-CLI::CLI() : desc("Allowed Options") , did_parse(false), doc(&empty_program_doc)
+CLI::CLI() : desc("Allowed Options") , did_parse(false), doc(&emptyProgramDoc)
 {
   return;
 }
@@ -54,14 +54,14 @@ CLI::CLI() : desc("Allowed Options") , did_parse(false), doc(&empty_program_doc)
  * @param optionsName Name of the module, as far as boost is concerned.
  */
 CLI::CLI(std::string& optionsName) :
-    desc(optionsName.c_str()), did_parse(false), doc(&empty_program_doc)
+    desc(optionsName.c_str()), did_parse(false), doc(&emptyProgramDoc)
 {
   return;
 }
 
 // Private copy constructor; don't want copies floating around.
 CLI::CLI(const CLI& other) : desc(other.desc),
-    did_parse(false), doc(&empty_program_doc)
+    did_parse(false), doc(&emptyProgramDoc)
 {
   return;
 }
@@ -120,17 +120,17 @@ void CLI::Add(const char* identifier,
   std::string path = identifier;
   std::string stringAlias = alias;
   // Must make use of boost option name syntax.
-  std::string prog_opt_id = stringAlias.length() ? path + "," + alias : path;
+  std::string progOptId = stringAlias.length() ? path + "," + alias : path;
 
   // Deal with a required alias.
   AddAlias(stringAlias, path);
 
   // Add the option to boost::program_options.
-  desc.add_options()(prog_opt_id.c_str(), description);
+  desc.add_options()(progOptId.c_str(), description);
 
   // Make sure the description, etc. ends up in gmap.
   gmap_t& gmap = GetSingleton().globalValues;
-  
+
   ParamData data;
   data.desc = description;
   data.tname = "";
@@ -155,7 +155,8 @@ void CLI::Add(const char* identifier,
  */
 void CLI::AddAlias(std::string alias, std::string original) {
   //Conduct the mapping
-  if (alias.length()) {
+  if (alias.length())
+  {
     amap_t& amap = GetSingleton().aliasValues;
     amap[alias] = original;
   }
@@ -169,7 +170,7 @@ void CLI::AddFlag(const char* identifier,
                  const char* alias)
 {
   // Reuse functionality from add
-  Add(identifier, description, alias, false); 
+  Add(identifier, description, alias, false);
 
   // Insert the proper metadata in gmap.
   gmap_t& gmap = GetSingleton().globalValues;
@@ -625,7 +626,7 @@ void CLI::RegisterProgramDoc(ProgramDoc* doc)
 {
   // Only register the doc if it is not the dummy object we created at the
   // beginning of the file (as a default value in case this is never called).
-  if (doc != &empty_program_doc)
+  if (doc != &emptyProgramDoc)
     GetSingleton().doc = doc;
 }
 
