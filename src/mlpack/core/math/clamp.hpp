@@ -41,16 +41,16 @@ inline double ClampNonPositive(double d)
  * Clamp a number between a particular range.
  *
  * @param value The number to clamp.
- * @param range_min The first of the range.
- * @param range_max The last of the range.
- * @return max(range_min, min(range_max, d)).
+ * @param rangeMin The first of the range.
+ * @param rangeMax The last of the range.
+ * @return max(rangeMin, min(rangeMax, d)).
  */
-inline double ClampRange(double value, double range_min, double range_max)
+inline double ClampRange(double value, double rangeMin, double rangeMax)
 {
-  value -= range_max;
-  value = ClampNonPositive (value) + range_max;
-  value -= range_min;
-  value = ClampNonNegative (value) + range_min;
+  value -= rangeMax;
+  value = ClampNonPositive (value) + rangeMax;
+  value -= rangeMin;
+  value = ClampNonNegative (value) + rangeMin;
   return value;
 }
 

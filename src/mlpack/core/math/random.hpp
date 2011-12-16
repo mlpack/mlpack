@@ -55,12 +55,12 @@ inline double Random(double lo, double hi)
 /**
  * Generates a uniform random integer.
  */
-inline int RandInt(int hi_exclusive)
+inline int RandInt(int hiExclusive)
 {
   #if BOOST_VERSION >= 104700
-    boost::random::uniform_int_distribution dist(0, hi_exclusive - 1);
+    boost::random::uniform_int_distribution dist(0, hiExclusive - 1);
   #else
-    boost::uniform_int<> dist(0, hi_exclusive - 1);
+    boost::uniform_int<> dist(0, hiExclusive - 1);
   #endif
 
   return dist(randGen);
@@ -69,12 +69,12 @@ inline int RandInt(int hi_exclusive)
 /**
  * Generates a uniform random integer.
  */
-inline int RandInt(int lo, int hi_exclusive)
+inline int RandInt(int lo, int hiExclusive)
 {
   #if BOOST_VERSION >= 104700
-    boost::random::uniform_int_distribution dist(lo, hi_exclusive - 1);
+    boost::random::uniform_int_distribution dist(lo, hiExclusive - 1);
   #else
-    boost::uniform_int<> dist(0, hi_exclusive - 1);
+    boost::uniform_int<> dist(0, hiExclusive - 1);
   #endif
 
   return dist(randGen);
