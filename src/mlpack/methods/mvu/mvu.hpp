@@ -22,22 +22,20 @@ namespace mvu {
  * - dataset
  * - new dimensionality
  */
-template<typename LagrangianFunction>
 class MVU
 {
  public:
-  MVU(arma::mat& data_in); // probably needs arguments
+  MVU(const arma::mat& data_in);
 
-  bool Unfold(arma::mat& output_coordinates); // probably needs arguments
+  void Unfold(const size_t newDim,
+              const size_t numNeighbors,
+              arma::mat& output_coordinates);
 
  private:
-  arma::mat& data_;
-  LagrangianFunction f_;
+  const arma::mat& data;
 };
 
 }; // namespace mvu
 }; // namespace mlpack
-
-#include "mvu_impl.h"
 
 #endif

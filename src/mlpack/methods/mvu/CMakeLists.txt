@@ -4,9 +4,9 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
   mvu.hpp
-  mvu_impl.hpp
-#  mvu_objective_function.hpp
-#  mvu_objective_function.cpp
+  mvu.cpp
+  mvu_objective_function.hpp
+  mvu_objective_function.cpp
 )
 
 # Add directory name to sources.
@@ -18,9 +18,9 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(ncmvu
+add_executable(mvu
   mvu_main.cpp
 )
-target_link_libraries(ncmvu
+target_link_libraries(mvu
   mlpack
 )
