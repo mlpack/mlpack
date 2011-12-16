@@ -284,8 +284,8 @@ L_BFGS<FunctionType>::L_BFGS(const FunctionType& function,
   // Get the dimensions of the coordinates of the function; GetInitialPoint()
   // might return an arma::vec, but that's okay because then n_cols will simply
   // be 1.
-  int rows = function.GetInitialPoint().n_rows;
-  int cols = function.GetInitialPoint().n_cols;
+  const size_t rows = function.GetInitialPoint().n_rows;
+  const size_t cols = function.GetInitialPoint().n_cols;
 
   newIterateTmp.set_size(rows, cols);
   s.set_size(rows, cols, numBasis);
@@ -352,14 +352,14 @@ bool L_BFGS<FunctionType>::Optimize(const size_t numIterations,
   for (size_t itNum = 0; optimizeUntilConvergence || (itNum != numIterations);
        itNum++)
   {
-    Log::Debug << "L-BFGS iteration " << itNum << "; objective " <<
+    Log::Info << "L-BFGS iteration " << itNum << "; objective " <<
         function.Evaluate(iterate) << "." << std::endl;
 
     // Break when the norm of the gradient becomes too small.
     if(GradientNormTooSmall(gradient))
     {
       success = true; // We have found the minimum.
-      Log::Debug << "L-BFGS gradient norm too small (terminating)."
+      Log::Info << "L-BFGS gradient norm too small (terminating)."
           << std::endl;
       break;
     }
