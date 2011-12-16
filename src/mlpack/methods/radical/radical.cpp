@@ -25,8 +25,8 @@ Radical::Radical(double noiseStdDev, size_t nReplicates, size_t nAngles,
   // nothing to do here
 }
 
-Radical::Radical(double noiseStdDev, size_t nReplicates, size_t nAngles, size_t nSweeps,
-     size_t m) :
+Radical::Radical(double noiseStdDev, size_t nReplicates, size_t nAngles,
+                  size_t nSweeps, size_t m) :
   noiseStdDev(noiseStdDev),
   nReplicates(nReplicates),
   nAngles(nAngles),
@@ -38,7 +38,8 @@ Radical::Radical(double noiseStdDev, size_t nReplicates, size_t nAngles, size_t 
 
 
 void Radical::CopyAndPerturb(mat& matXNew, const mat& matX) {
-  matXNew = repmat(matX, nReplicates, 1) + noiseStdDev * randn(nReplicates * matX.n_rows, matX.n_cols);
+  matXNew = repmat(matX, nReplicates, 1) + noiseStdDev *
+                  randn(nReplicates * matX.n_rows, matX.n_cols);
 }
 
 
@@ -70,7 +71,8 @@ double Radical::DoRadical2D(const mat& matX) {
   mat matJacobi(2,2);
   mat candidateY;
 
-  vec thetas = linspace<vec>(0, nAngles - 1, nAngles) / ((double) nAngles) * math::pi() / 2;
+  vec thetas = linspace<vec>(0, nAngles - 1, nAngles) /
+                ((double) nAngles) * math::pi() / 2;
   vec values(nAngles);
 
   for(size_t i = 0; i < nAngles; i++) {
