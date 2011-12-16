@@ -9,7 +9,7 @@ set(DIRS
   kmeans
   lars
   linear_regression
-  #mvu  # (currently known to not work)
+  mvu
   naive_bayes
   nca
   neighbor_search

@@ -18,8 +18,8 @@
  *     the Twenty-First National Conference on Artificial Intelligence
  *     (AAAI-06), 2006.
  */
-#ifndef __MLPACK_METHODS_MVU_MVU_OBJECTIVE_FUNCTION_H
-#define __MLPACK_METHODS_MVU_MVU_OBJECTIVE_FUNCTION_H
+#ifndef __MLPACK_METHODS_MVU_MVU_OBJECTIVE_FUNCTION_HPP
+#define __MLPACK_METHODS_MVU_MVU_OBJECTIVE_FUNCTION_HPP
 
 #include <mlpack/core.hpp>
 
@@ -50,28 +50,30 @@ class MVUObjectiveFunction
 {
  public:
   MVUObjectiveFunction();
-  MVUObjectiveFunction(arma::mat& initial_point);
+  MVUObjectiveFunction(const arma::mat& initial_point,
+                       const size_t newDim,
+                       const size_t numNeighbors);
 
   double Evaluate(const arma::mat& coordinates);
   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
 
-  int NumConstraints() const { return num_neighbors_ * initial_point_.n_cols; }
+  size_t NumConstraints() const { return numNeighbors * initialPoint.n_cols; }
 
-  double EvaluateConstraint(int index, const arma::mat& coordinates);
-  void GradientConstraint(int index,
+  double EvaluateConstraint(const size_t index, const arma::mat& coordinates);
+  void GradientConstraint(const size_t index,
                           const arma::mat& coordinates,
                           arma::mat& gradient);
 
-  const arma::mat& GetInitialPoint() { return initial_point_; }
+  const arma::mat& GetInitialPoint() const { return initialPoint; }
 
  private:
-  arma::mat initial_point_;
-  int num_neighbors_;
+  arma::mat initialPoint;
+  size_t numNeighbors;
 
   // These hold the output of the nearest neighbors computation (done in the
   // constructor).
-  arma::Col<index_t> neighbor_indices_;
-  arma::vec neighbor_distances_;
+  arma::Mat<size_t> neighborIndices;
+  arma::mat neighborDistances;
 };
 
 }; // namespace mvu
