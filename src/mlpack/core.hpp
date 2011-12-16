@@ -26,9 +26,8 @@
  * @section howto How To Use This Documentation
  *
  * This documentation is API documentation similar to Javadoc.  It isn't
- * necessarily a tutorial (that can be found elsewhere -- ...once we make a
- * tutorial), but it does provide detailed documentation on every namespace,
- * method, and class.
+ * necessarily a tutorial, but it does provide detailed documentation on every
+ * namespace, method, and class.
  *
  * Each MLPACK namespace generally refers to one machine learning method, so
  * browsing the list of namespaces provides some insight as to the breadth of
@@ -40,6 +39,48 @@
  * @code
  * $ doxygen
  * @endcode
+ *
+ * @section executables Executables
+ *
+ * MLPACK provides several executables so that MLPACK methods can be used
+ * without any need for knowledge of C++.  These executables are all
+ * self-documented, and that documentation can be accessed by running the
+ * executables with the '-h' or '--help' flag.
+ *
+ * A full list of executables is given below:
+ *
+ * allkfn, allknn, emst, gmm, kernel_pca, kmeans, lars, linear_regression, nbc,
+ * nca, pca, radical
+ *
+ * @section tutorial Tutorials
+ *
+ * A few short tutorials on how to use MLPACK are given below.
+ *
+ *  - @ref build
+ *  - @ref matrices
+ *  - @ref iodoc
+ *  - @ref timer
+ *  - @ref sample
+ *
+ * @section methods Methods in MLPACK
+ *
+ * The following methods are included in MLPACK:
+ *
+ *  - Euclidean Minimum Spanning Trees - mlpack::emst::DualTreeBoruvka
+ *  - Gaussian Mixture Models (GMMs) - mlpack::gmm::GMM
+ *  - Hidden Markov Models (HMMs) - mlpack::hmm::HMM
+ *  - Kernel PCA - mlpack::kpca::KernelPCA
+ *  - K-Means Clustering - mlpack::kmeans::KMeans
+ *  - Least-Angle Regression (LARS/LASSO) - mlpack::regression::LARS
+ *  - Naive Bayes Classifier - mlpack::naive_bayes::NaiveBayesClassifier
+ *  - Neighborhood Components Analysis (NCA) - mlpack::nca::NCA
+ *  - Principal Components Analysis (PCA) - mlpack::pca::PCA
+ *  - RADICAL (ICA) - mlpack::radical::Radical
+ *  - Simple Least-Squares Linear Regression -
+ *      mlpack::regression::LinearRegression
+ *  - Tree-based neighbor search (AllkNN, AllkFN) -
+ *      mlpack::neighbor::NeighborSearch
+ *  - Tree-based range search - mlpack::range::RangeSearch
  *
  * @section remarks Final Remarks
  *
