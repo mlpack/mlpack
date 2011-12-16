@@ -674,7 +674,7 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundBoxConstructor)
 
 /**
  * Test the copy constructor.
- *
+ */
 BOOST_AUTO_TEST_CASE(PeriodicHRectBoundCopyConstructor)
 {
   PeriodicHRectBound<2> b(arma::vec("3 4"));
@@ -775,7 +775,7 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundCentroid) {
  * Correctly calculate the minimum distance between the bound and a point in
  * periodic coordinates.  We have to account for the shifts necessary in
  * periodic coordinates too, so that makes testing this a little more difficult.
- *
+ */
 BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMinDistancePoint)
 {
   // First, we'll start with a simple 2-dimensional case where the point is
@@ -809,61 +809,63 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMinDistancePoint)
   BOOST_REQUIRE_CLOSE(b.MinDistance(point), 10.0, 1e-5);
 
   // We will perform several tests on a one-dimensional bound.
-  b = PeriodicHRectBound<2>(arma::vec("5.0"));
+  PeriodicHRectBound<2> a(arma::vec("5.0"));
   point.set_size(1);
 
-  b[0] = Range("2.0 4.0"); // Entirely inside box.
+  a[0] = Range(2.0, 4.0); // Entirely inside box.
   point[0] = 7.5; // Inside first right image of the box.
 
-  BOOST_REQUIRE_SMALL(b.MinDistance(point), 1e-5);
+  BOOST_REQUIRE_SMALL(a.MinDistance(point), 1e-5);
 
-  b[0] = Range("0.0 5.0"); // Fills box fully.
+  a[0] = Range(0.0, 5.0); // Fills box fully.
   point[1] = 19.3; // Inside the box, which covers everything.
 
-  BOOST_REQUIRE_SMALL(b.MinDistance(point), 1e-5);
+  BOOST_REQUIRE_SMALL(a.MinDistance(point), 1e-5);
 
-  b[0] = Range("-10.0 10.0"); // Larger than the box.
+  a[0] = Range(-10.0, 10.0); // Larger than the box.
   point[0] = -500.0; // Inside the box, which covers everything.
 
-  BOOST_REQUIRE_SMALL(b.MinDistance(point), 1e-5);
+  BOOST_REQUIRE_SMALL(a.MinDistance(point), 1e-5);
 
-  b[0] = Range("-2.0 1.0"); // Crosses over an edge.
+  a[0] = Range(-2.0, 1.0); // Crosses over an edge.
   point[0] = 2.9; // The first right image of the bound starts at 3.0.
 
-  BOOST_REQUIRE_CLOSE(b.MinDistance(point), 0.01, 1e-5);
+  BOOST_REQUIRE_CLOSE(a.MinDistance(point), 0.01, 1e-5);
 
-  b[0] = Range("2.0 4.0"); // Inside box.
+  a[0] = Range(2.0, 4.0); // Inside box.
   point[0] = 0.0; // Closest to the first left image of the bound.
 
-  BOOST_REQUIRE_CLOSE(b.MinDistance(point), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(a.MinDistance(point), 1.0, 1e-5);
 
-  b[0] = Range("0.0 2.0"); // On edge of box.
+  a[0] = Range(0.0, 2.0); // On edge of box.
   point[0] = 7.1; // 0.1 away from the first right image of the bound.
 
-  BOOST_REQUIRE_CLOSE(b.MinDistance(point), 0.01, 1e-5);
+  BOOST_REQUIRE_CLOSE(a.MinDistance(point), 0.01, 1e-5);
 
-  b[0] = Range("-10.0 10.0"); // Box is of infinite size.
+  PeriodicHRectBound<2> d(arma::vec("0.0"));
+  d[0] = Range(-10.0, 10.0); // Box is of infinite size.
   point[0] = 810.0; // 800 away from the only image of the box.
 
-  BOOST_REQUIRE_CLOSE(b.MinDistance(point), 640000, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.MinDistance(point), 640000, 1e-5);
 
-  b[0] = Range("2.0 4.0"); // Box size of -5 should function the same as 5.
+  PeriodicHRectBound<2> e(arma::vec("-5.0"));
+  e[0] = Range(2.0, 4.0); // Box size of -5 should function the same as 5.
   point[0] = -10.8; // Should alias to 4.2.
 
-  BOOST_REQUIRE_CLOSE(b.MinDistance(point), 0.04, 1e-5);
+  BOOST_REQUIRE_CLOSE(e.MinDistance(point), 0.04, 1e-5);
 
   // Switch our bound to a higher dimensionality.  This should ensure that the
   // dimensions are independent like they should be.
-  b = PeriodicHRectBound<2>(arma::vec("5.0 5.0 5.0 5.0 5.0 5.0 0.0 -5.0"));
+  PeriodicHRectBound<2> c(arma::vec("5.0 5.0 5.0 5.0 5.0 5.0 0.0 -5.0"));
 
-  b[0] = Range("2.0 4.0"); // Entirely inside box.
-  b[1] = Range("0.0 5.0"); // Fills box fully.
-  b[2] = Range("-10.0 10.0"); // Larger than the box.
-  b[3] = Range("-2.0 1.0"); // Crosses over an edge.
-  b[4] = Range("2.0 4.0"); // Inside box.
-  b[5] = Range("0.0 2.0"); // On edge of box.
-  b[6] = Range("-10.0 10.0"); // Box is of infinite size.
-  b[7] = Range("2.0 4.0"); // Box size of -5 should function the same as 5.
+  c[0] = Range(2.0, 4.0); // Entirely inside box.
+  c[1] = Range(0.0, 5.0); // Fills box fully.
+  c[2] = Range(-10.0, 10.0); // Larger than the box.
+  c[3] = Range(-2.0, 1.0); // Crosses over an edge.
+  c[4] = Range(2.0, 4.0); // Inside box.
+  c[5] = Range(0.0, 2.0); // On edge of box.
+  c[6] = Range(-10.0, 10.0); // Box is of infinite size.
+  c[7] = Range(2.0, 4.0); // Box size of -5 should function the same as 5.
 
   point.set_size(8);
   point[0] = 7.5; // Inside first right image of the box.
@@ -875,8 +877,101 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMinDistancePoint)
   point[6] = 810.0; // 800 away from the only image of the box.
   point[7] = -10.8; // Should alias to 4.2.
 
-  BOOST_REQUIRE_CLOSE(b.MinDistance(point), 640001.06, 1e-10);
-}*/
+  BOOST_REQUIRE_CLOSE(c.MinDistance(point), 640001.06, 1e-10);
+}
+
+/**
+ * Correctly calculate the minimum distance between the bound and another bound in
+ * periodic coordinates.  We have to account for the shifts necessary in
+ * periodic coordinates too, so that makes testing this a little more difficult.
+ */
+BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMinDistanceBound)
+{
+  // First, we'll start with a simple 2-dimensional case where the bounds are nonoverlapping,
+  // then one bound is on the edge of the other bound,
+  //  then overlapping, then one range entirely covering the other.  The box size will be large enough that this is basically the
+  // HRectBound case.
+  PeriodicHRectBound<2> b(arma::vec("100 100"));
+  PeriodicHRectBound<2> c(arma::vec("100 100"));
+
+  b[0] = Range(0.0, 5.0);
+  b[1] = Range(2.0, 4.0);
+
+  // Inside the bound.
+
+  c[0] = Range(7.0, 9.0);
+  c[1] = Range(10.0,12.0);
+
+
+  BOOST_REQUIRE_CLOSE(b.MinDistance(c), 40.0, 1e-5);
+
+  // On the edge.
+
+  c[0] = Range(5.0, 8.0);
+  c[1] = Range(4.0, 6.0);
+
+  BOOST_REQUIRE_SMALL(b.MinDistance(c), 1e-5);
+
+  // Overlapping the bound.
+
+  c[0] = Range(3.0, 6.0);
+  c[1] = Range(1.0, 3.0);
+
+  BOOST_REQUIRE_SMALL(b.MinDistance(c), 1e-5);
+
+  // One range entirely covering the other
+
+  c[0] = Range(0.0, 6.0);
+  c[1] = Range(1.0, 7.0);
+
+   BOOST_REQUIRE_SMALL(b.MinDistance(c), 1e-5);
+
+
+  // Now we start to invoke the periodicity.  These bounds "alias" to (-3.0,
+  // -1.0) and (5,0,6.0).
+
+  c[0] = Range(97.0, 99.0);
+  c[1] = Range(105.0, 106.0);
+
+  BOOST_REQUIRE_CLOSE(b.MinDistance(c), 2.0, 1e-5);
+
+
+
+
+  // We will perform several tests on a one-dimensional bound and smaller box size and mostly overlapping.
+  PeriodicHRectBound<2> a(arma::vec("5.0"));
+  PeriodicHRectBound<2> d(a);
+
+  a[0] = Range(2.0, 4.0); // Entirely inside box.
+  d[0] = Range(7.5, 10.0); // In the right image of the box, overlapping ranges.
+
+//  BOOST_REQUIRE_SMALL(a.MinDistance(d), 1e-5);
+
+  a[0] = Range(0.0, 5.0); // Fills box fully.
+  d[0] = Range(19.3, 21.0); // Two intervals inside the box, same as range of b[0].
+
+  BOOST_REQUIRE_SMALL(a.MinDistance(d), 1e-5);
+
+  a[0] = Range(-10.0, 10.0); // Larger than the box.
+  d[0] = Range(-500.0, -498.0); // Inside the box, which covers everything.
+
+  BOOST_REQUIRE_SMALL(a.MinDistance(d), 1e-5);
+
+  a[0] = Range(-2.0, 1.0); // Crosses over an edge.
+  d[0] = Range(2.9, 5.1); // The first right image of the bound starts at 3.0. Overlapping
+
+  BOOST_REQUIRE_SMALL(a.MinDistance(d), 1e-5);
+
+  a[0] = Range(-1.0, 1.0); // Crosses over an edge.
+  d[0] = Range(11.9, 12.5); // The first right image of the bound starts at 4.0.
+  BOOST_REQUIRE_CLOSE(a.MinDistance(d), 0.81, 1e-5);
+
+  a[0] = Range(2.0, 3.0);
+  d[0] = Range(9.5, 11);
+  BOOST_REQUIRE_CLOSE(a.MinDistance(d), 1, 1e-5);
+
+}
+
 
 /**
  * It seems as though Bill has stumbled across a bug where
