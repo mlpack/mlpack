@@ -10,7 +10,6 @@
 #include "hmm.hpp"
 #include "hmm_util.hpp"
 
-#include "distributions/gaussian_distribution.hpp"
 #include <mlpack/methods/gmm/gmm.hpp>
 
 PROGRAM_INFO("Hidden Markov Model (HMM) Sequence Generator", "This "

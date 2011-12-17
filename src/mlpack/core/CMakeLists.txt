@@ -2,6 +2,7 @@
 set(DIRS
   arma_extend
   data
+  dists
   kernels
   math
   metrics

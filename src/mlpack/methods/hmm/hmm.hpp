@@ -9,7 +9,6 @@
 #define __MLPACK_METHODS_HMM_HMM_HPP
 
 #include <mlpack/core.hpp>
-#include "distributions/discrete_distribution.hpp"
 
 namespace mlpack {
 namespace hmm /** Hidden Markov Models. */ {

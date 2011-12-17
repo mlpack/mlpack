@@ -8,7 +8,6 @@
 
 #include <mlpack/methods/gmm/gmm.hpp>
 #include <mlpack/methods/gmm/phi.hpp>
-#include <mlpack/methods/hmm/distributions/gaussian_distribution.hpp>
 
 #include <boost/test/unit_test.hpp>
 

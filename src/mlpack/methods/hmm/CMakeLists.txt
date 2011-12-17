@@ -7,10 +7,6 @@ set(SOURCES
   hmm_impl.hpp
   hmm_util.hpp
   hmm_util_impl.hpp
-  distributions/discrete_distribution.hpp
-  distributions/discrete_distribution.cpp
-  distributions/gaussian_distribution.hpp
-  distributions/gaussian_distribution.cpp
 )
 
 # Add directory name to sources.
