@@ -503,7 +503,7 @@ size_t BinarySpaceTree<BoundType, StatisticType, MatType>::GetSplitIndex(
   while ((data(splitDim, right) >= splitVal) && (left <= right))
     right--;
 
-  while(left <= right)
+  while (left <= right)
   {
     // Swap columns.
     data.swap_cols(left, right);
@@ -548,7 +548,7 @@ size_t BinarySpaceTree<BoundType, StatisticType, MatType>::GetSplitIndex(
   while ((data(splitDim, right) >= splitVal) && (left <= right))
     right--;
 
-  while(left <= right)
+  while (left <= right)
   {
     // Swap columns.
     data.swap_cols(left, right);

@@ -33,13 +33,13 @@ void PCA::Apply(const arma::mat& data,
 {
   arma::mat transData = trans(data);
 
-  if(centerData)
+  if (centerData)
   {
     arma::rowvec means = arma::mean(transData, 0);
     transData = transData - arma::ones<arma::colvec>(transData.n_rows) * means;
   }
 
-  if(scaleData)
+  if (scaleData)
   {
     transData = transData / (arma::ones<arma::colvec>(transData.n_rows) *
         stddev(transData, 0, 0));

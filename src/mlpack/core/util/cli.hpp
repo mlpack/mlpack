@@ -464,7 +464,8 @@ struct ParamData
  * call to ParseCommandLine() is necessary:
  *
  * @code
- * int main(int argc, char** argv) {
+ * int main(int argc, char** argv)
+ * {
  *   CLI::ParseCommandLine(argc, argv);
  *
  *   ...
@@ -639,7 +640,7 @@ class CLI
   /**
    * Print out the help info of the hierarchy.
    */
-  static void PrintHelp(std::string param="");
+  static void PrintHelp(std::string param = "");
 
   /**
    * Registers a ProgramDoc object, which contains documentation about the
@@ -677,7 +678,7 @@ class CLI
   static CLI* singleton;
 
   //! True, if CLI was used to parse command line options.
-  bool did_parse;
+  bool didParse;
 
   //! Holds the timer objects.
   Timers timer;

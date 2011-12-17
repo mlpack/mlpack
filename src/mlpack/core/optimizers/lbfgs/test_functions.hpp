@@ -75,7 +75,8 @@ class RosenbrockFunction
  * "A comparative study of nonlinear programming codes."
  *   A.R. Colville.  1968.  Rep. 320-2949, IBM N.Y. Scientific Center.
  */
-class WoodFunction {
+class WoodFunction
+{
  public:
   WoodFunction(); // initialize initial point
 

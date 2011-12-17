@@ -40,7 +40,7 @@ std::ostream& Log::cout = std::cout;
 #ifdef DEBUG
 void Log::Assert(bool condition, const char* message)
 {
-  if(!condition)
+  if (!condition)
   {
     void* array[25];
     size_t size = backtrace (array, sizeof(array)/sizeof(void*));

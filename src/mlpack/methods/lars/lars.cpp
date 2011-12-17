@@ -39,7 +39,8 @@ LARS::LARS(const bool useCholesky,
     lambda2(lambda2)
 { /* nothing left to do */ }
 
-void LARS::SetGram(const mat& matGram) {
+void LARS::SetGram(const mat& matGram)
+{
   this->matGram = matGram;
 }
 
@@ -80,7 +81,7 @@ void LARS::DoLARS(const mat& matX, const vec& y)
   bool lassocond = false;
 
   // used for elastic net
-  if(!elasticNet)
+  if (!elasticNet)
   {
     lambda2 = 0; // just in case it is accidentally used, the code still will be correct
   }
@@ -130,9 +131,9 @@ void LARS::DoLARS(const mat& matX, const vec& y)
       {
         vec newGramCol = vec(nActive);
         for (u32 i = 0; i < nActive; i++)
-  {
+        {
           newGramCol[i] = dot(matX.col(activeSet[i]), matX.col(changeInd));
-  }
+        }
 
         CholeskyInsert(matX.col(changeInd), newGramCol);
       }
@@ -212,13 +213,13 @@ void LARS::DoLARS(const mat& matX, const vec& y)
         double val1 = (maxCorr - corr(ind)) / (normalization - dirCorr);
         double val2 = (maxCorr + corr(ind)) / (normalization + dirCorr);
         if ((val1 > 0) && (val1 < gamma))
-  {
-    gamma = val1;
-  }
-        if((val2 > 0) && (val2 < gamma))
-  {
-    gamma = val2;
-  }
+        {
+          gamma = val1;
+        }
+        if ((val2 > 0) && (val2 < gamma))
+        {
+          gamma = val2;
+        }
       }
     }
 
@@ -377,7 +378,8 @@ void LARS::CholeskyInsert(const vec& newX, const mat& X)
   }
 }
 
-void LARS::CholeskyInsert(const vec& newX, const vec& newGramCol) {
+void LARS::CholeskyInsert(const vec& newX, const vec& newGramCol)
+{
   int n = matUtriCholFactor.n_rows;
 
   if (n == 0)
@@ -412,7 +414,8 @@ void LARS::CholeskyInsert(const vec& newX, const vec& newGramCol) {
     matNewR(span(0, n - 1), span(0, n - 1)) = matUtriCholFactor;
     matNewR(span(0, n - 1), n) = matUtriCholFactork;
     matNewR(n, span(0, n - 1)).fill(0.0);
-    matNewR(n, n) = sqrt(sqNormNewX - dot(matUtriCholFactork, matUtriCholFactork));
+    matNewR(n, n) = sqrt(sqNormNewX - dot(matUtriCholFactork,
+        matUtriCholFactork));
 
     matUtriCholFactor = matNewR;
   }
@@ -465,8 +468,8 @@ void LARS::CholeskyDelete(u32 colToKill)
       matUtriCholFactor(span(k, k + 1), k) = rotatedVec;
       if (k < n - 1)
       {
-        matUtriCholFactor(span(k, k + 1), span(k + 1, n - 1)) = 
-    matG * matUtriCholFactor(span(k, k + 1), span(k + 1, n - 1));
+        matUtriCholFactor(span(k, k + 1), span(k + 1, n - 1)) =
+            matG * matUtriCholFactor(span(k, k + 1), span(k + 1, n - 1));
       }
     }
     matUtriCholFactor.shed_row(n);

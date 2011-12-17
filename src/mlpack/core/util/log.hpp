@@ -32,7 +32,8 @@ namespace mlpack {
  * if (!someCondition())
  *   Log::Warn << "someCondition() is not satisfied!" << std::endl;
  * Log::Info << "Checking an important condition." << std::endl;
- * if (!someImportantCondition()) {
+ * if (!someImportantCondition())
+ * {
  *   Log::Fatal << "someImportantCondition() is not satisfied! Terminating.";
  *   Log::Fatal << std::endl;
  * }

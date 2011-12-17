@@ -22,7 +22,8 @@ using namespace mlpack;
 using namespace mlpack::gmm;
 using namespace mlpack::utilities;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
   CLI::ParseCommandLine(argc, argv);
 
   // Check parameters and load data.

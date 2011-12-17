@@ -88,12 +88,12 @@ T& CLI::GetParam(const char* identifier)
   std::string key = std::string(identifier);
   gmap_t& gmap = GetSingleton().globalValues;
 
-  //  Now check if we have an alias.
+  // Now check if we have an alias.
   amap_t& amap = GetSingleton().aliasValues;
   if (amap.count(key))
     key = amap[key];
 
-  //What if we don't actually have any value?
+  // What if we don't actually have any value?
   if (!gmap.count(key))
   {
     gmap[key] = ParamData();
@@ -101,11 +101,10 @@ T& CLI::GetParam(const char* identifier)
     *boost::any_cast<T>(&gmap[key].value) = tmp;
   }
 
-  //What if we have meta-data, but no data?
+  // What if we have meta-data, but no data?
   boost::any val = gmap[key].value;
-  if(val.empty())
+  if (val.empty())
     gmap[key].value = boost::any(tmp);
-
 
   return *boost::any_cast<T>(&gmap[key].value);
 }

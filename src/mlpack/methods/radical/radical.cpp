@@ -37,13 +37,15 @@ Radical::Radical(double noiseStdDev, size_t nReplicates, size_t nAngles,
 }
 
 
-void Radical::CopyAndPerturb(mat& matXNew, const mat& matX) {
+void Radical::CopyAndPerturb(mat& matXNew, const mat& matX)
+{
   matXNew = repmat(matX, nReplicates, 1) + noiseStdDev *
                   randn(nReplicates * matX.n_rows, matX.n_cols);
 }
 
 
-double Radical::Vasicek(vec& z) {
+double Radical::Vasicek(vec& z)
+{
   z = sort(z);
 
   // Apparently slower
@@ -63,7 +65,8 @@ double Radical::Vasicek(vec& z) {
 }
 
 
-double Radical::DoRadical2D(const mat& matX) {
+double Radical::DoRadical2D(const mat& matX)
+{
   mat matXMod;
 
   CopyAndPerturb(matXMod, matX);
@@ -96,7 +99,8 @@ double Radical::DoRadical2D(const mat& matX) {
 }
 
 
-void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW) {
+void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
+{
 
   // matX is nPoints by nDims (although less intuitive than columns being
   // points, and although this is the transpose of the ICA literature, this
@@ -107,7 +111,7 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW) {
 
   // if m was not specified, initialize m as recommended in
   // (Learned-Miller and Fisher, 2003)
-  if(m < 1) {
+  if (m < 1) {
     m = floor(sqrt(matX.n_rows));
   }
 
@@ -131,23 +135,26 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW) {
 
   mat matEye = eye(nDims, nDims);
 
-  for(size_t sweepNum = 0; sweepNum < nSweeps; sweepNum++) {
-    for(size_t i = 0; i < nDims - 1; i++) {
-      for(size_t j = i + 1; j < nDims; j++) {
-  matYSubspace.col(0) = matY.col(i);
-  matYSubspace.col(1) = matY.col(j);
-  double thetaOpt = DoRadical2D(matYSubspace);
-  mat matJ = matEye;
-  double cosThetaOpt = cos(thetaOpt);
-  double sinThetaOpt = sin(thetaOpt);
-  matJ(i,i) = cosThetaOpt;
-  matJ(j,i) = -sinThetaOpt;
-  matJ(i,j) = sinThetaOpt;
-  matJ(j,j) = cosThetaOpt;
-  matW = matW * matJ;
-  matY = matX * matW; // to avoid any issues of mismatch between matW
-                      // and matY, do not use matY = matY * matJ,
-                      // even though it may be much more efficient
+  for(size_t sweepNum = 0; sweepNum < nSweeps; sweepNum++)
+  {
+    for(size_t i = 0; i < nDims - 1; i++)
+    {
+      for(size_t j = i + 1; j < nDims; j++)
+      {
+        matYSubspace.col(0) = matY.col(i);
+        matYSubspace.col(1) = matY.col(j);
+        double thetaOpt = DoRadical2D(matYSubspace);
+        mat matJ = matEye;
+        double cosThetaOpt = cos(thetaOpt);
+        double sinThetaOpt = sin(thetaOpt);
+        matJ(i, i) = cosThetaOpt;
+        matJ(j, i) = -sinThetaOpt;
+        matJ(i, j) = sinThetaOpt;
+        matJ(j, j) = cosThetaOpt;
+        matW = matW * matJ;
+        matY = matX * matW; // to avoid any issues of mismatch between matW
+                            // and matY, do not use matY = matY * matJ,
+                            // even though it may be much more efficient
       }
     }
   }
@@ -162,7 +169,8 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW) {
 
 void WhitenFeatureMajorMatrix(const mat& matX,
             mat& matXWhitened,
-            mat& matWhitening) {
+            mat& matWhitening)
+{
   mat matU, matV;
   vec s;
   svd(matU, s, matV, cov(matX));

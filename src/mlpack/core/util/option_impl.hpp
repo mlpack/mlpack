@@ -26,14 +26,14 @@ Option<N>::Option(bool ignoreTemplate,
 {
   if (ignoreTemplate)
   {
-    if(alias == NULL)
+    if (alias == NULL)
       alias = "";
 
     CLI::Add(identifier, description, alias, required);
   }
   else
   {
-    if(alias == NULL)
+    if (alias == NULL)
       alias = "";
 
     CLI::Add<N>(identifier, description, alias, required);
@@ -51,7 +51,7 @@ Option<N>::Option(const char* identifier,
                   const char* description,
                   const char* alias)
 {
-  if(alias == NULL)
+  if (alias == NULL)
     alias = "";
 
   CLI::AddFlag(identifier, description, alias);
