@@ -20,6 +20,7 @@ PARAM_STRING("output_file", "The file to write the trained GMM parameters into "
 
 using namespace mlpack;
 using namespace mlpack::gmm;
+using namespace mlpack::utilities;
 
 int main(int argc, char* argv[]) {
   CLI::ParseCommandLine(argc, argv);
