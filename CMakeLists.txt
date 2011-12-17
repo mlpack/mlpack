@@ -52,8 +52,8 @@ find_package(Boost COMPONENTS
 option(WITH_OPTIMIZERS "Include optimization code." OFF)
 
 # Default to debugging mode for developers.
-option(DEBUG "Compile with debugging information" ON)
-option(PROFILE "Compile with profiling information" ON)
+option(DEBUG "Compile with debugging information" OFF)
+option(PROFILE "Compile with profiling information" OFF)
 option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
 
 # This is as of yet unused.
