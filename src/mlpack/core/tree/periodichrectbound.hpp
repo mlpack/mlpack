@@ -47,14 +47,14 @@ class PeriodicHRectBound
   ~PeriodicHRectBound();
 
   /**
-   * Modifies the boxsize_ to the desired dimenstions.
+   * Modifies the box to the desired dimenstions.
    */
   void SetBoxSize(arma::vec box);
 
   /**
-   * Returns the boxsize_ vector.
+   * Returns the box vector.
    */
-  const arma::vec& box() const { return box; }
+  const arma::vec& Box() const { return box; }
 
   /**
    * Resets all dimensions to the empty set.
