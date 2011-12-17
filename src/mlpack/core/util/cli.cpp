@@ -43,7 +43,7 @@ static ProgramDoc emptyProgramDoc = ProgramDoc("", "");
 
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
-CLI::CLI() : desc("Allowed Options") , did_parse(false), doc(&emptyProgramDoc)
+CLI::CLI() : desc("Allowed Options") , didParse(false), doc(&emptyProgramDoc)
 {
   return;
 }
@@ -54,14 +54,14 @@ CLI::CLI() : desc("Allowed Options") , did_parse(false), doc(&emptyProgramDoc)
  * @param optionsName Name of the module, as far as boost is concerned.
  */
 CLI::CLI(std::string& optionsName) :
-    desc(optionsName.c_str()), did_parse(false), doc(&emptyProgramDoc)
+    desc(optionsName.c_str()), didParse(false), doc(&emptyProgramDoc)
 {
   return;
 }
 
 // Private copy constructor; don't want copies floating around.
 CLI::CLI(const CLI& other) : desc(other.desc),
-    did_parse(false), doc(&emptyProgramDoc)
+    didParse(false), doc(&emptyProgramDoc)
 {
   return;
 }
@@ -92,7 +92,7 @@ CLI::~CLI()
   // Notify the user if we are debugging, but only if we actually parsed the
   // options.  This way this output doesn't show up inexplicably for someone who
   // may not have wanted it there (i.e. in Boost unit tests).
-  if (did_parse)
+  if (didParse)
     Log::Debug << "Compiled with debugging symbols." << std::endl;
 
   return;
@@ -153,7 +153,8 @@ void CLI::Add(const char* identifier,
  * @param alias The alias we will use for the parameter.
  * @param original The name of the actual parameter we will be mapping to.
  */
-void CLI::AddAlias(std::string alias, std::string original) {
+void CLI::AddAlias(std::string alias, std::string original)
+{
   //Conduct the mapping
   if (alias.length())
   {
@@ -276,7 +277,7 @@ bool CLI::HasParam(const char* identifier)
 
   // Check if the parameter is boolean; if it is, we just want to see if it was
   // passed.
-  if(isInGmap)
+  if (isInGmap)
     return gmap[key].wasPassed;
 
   // The parameter was not passed in; return false.
@@ -348,7 +349,7 @@ std::string CLI::GetDescription(const char* identifier)
     name = amap[name];
 
 
-  if(gmap.count(name))
+  if (gmap.count(name))
     return gmap[name].desc;
   else
     return "";
@@ -443,7 +444,7 @@ void CLI::Print()
     if (data.tname == TYPENAME(std::string))
     {
       std::string value = GetParam<std::string>(key.c_str());
-      if(value == "")
+      if (value == "")
         Log::Info << "\"\"";
       Log::Info << value;
     }
@@ -530,7 +531,7 @@ void CLI::PrintHelp(std::string param)
   }
 
   // Print out the descriptions.
-  if(docs.programName != "")
+  if (docs.programName != "")
   {
     std::cout << docs.programName << std::endl << std::endl;
     std::cout << "  " << HyphenateString(docs.documentation, 2) << std::endl

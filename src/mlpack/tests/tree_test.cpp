@@ -1309,7 +1309,8 @@ template<int t_pow>
 bool DoBoundsIntersect(HRectBound<t_pow>& a,
                        HRectBound<t_pow>& b,
                        size_t ia,
-                       size_t ib) {
+                       size_t ib)
+{
   size_t dimensionality = a.Dim();
 
   Range r_a;

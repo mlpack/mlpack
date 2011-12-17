@@ -44,7 +44,7 @@ void KernelPCA<KernelType>::Apply(const arma::mat& data,
 {
   arma::mat transData = trans(data);
 
-  if(centerData)
+  if (centerData)
   {
     arma::rowvec means = arma::mean(transData, 0);
     transData = transData - arma::ones<arma::colvec>(transData.n_rows) * means;
@@ -72,7 +72,7 @@ void KernelPCA<KernelType>::Apply(const arma::mat& data,
   transData = kernelMat; // Use the kernel matrix to do the transformations
   // after this point.
 
-  if(scaleData)
+  if (scaleData)
   {
     transData = transData / (arma::ones<arma::colvec>(transData.n_rows) *
         stddev(transData, 0, 0));
@@ -126,7 +126,7 @@ void KernelPCA<KernelType>::Apply(arma::mat& data, const size_t newDimension)
 
   Apply(data, data, eigVal, coeffs);
 
-  if(newDimension < coeffs.n_rows && newDimension > 0)
+  if (newDimension < coeffs.n_rows && newDimension > 0)
     data.shed_rows(newDimension, data.n_rows - 1);
 }
 

@@ -46,7 +46,8 @@ using namespace mlpack::radical;
 using namespace std;
 using namespace arma;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
   // Handle parameters.
   CLI::ParseCommandLine(argc, argv);
 
@@ -61,7 +62,7 @@ int main(int argc, char* argv[]) {
   size_t nAngles = CLI::GetParam<int>("angles");
   size_t nSweeps = CLI::GetParam<int>("sweeps");
 
-  if(nSweeps == 0)
+  if (nSweeps == 0)
   {
     nSweeps = matX.n_rows - 1;
   }

@@ -47,14 +47,14 @@ class PeriodicHRectBound
   ~PeriodicHRectBound();
 
   /**
-   * Modifies the box_size_ to the desired dimenstions.
+   * Modifies the boxsize_ to the desired dimenstions.
    */
   void SetBoxSize(arma::vec box);
 
   /**
-   * Returns the box_size_ vector.
+   * Returns the boxsize_ vector.
    */
-  const arma::vec& box() const { return box_; }
+  const arma::vec& box() const { return box; }
 
   /**
    * Resets all dimensions to the empty set.
@@ -62,7 +62,7 @@ class PeriodicHRectBound
   void Clear();
 
   /** Gets the dimensionality */
-  size_t Dim() const { return dim_; }
+  size_t Dim() const { return dim; }
 
   /**
    * Sets and gets the range for a particular dimension.
@@ -132,9 +132,9 @@ class PeriodicHRectBound
   bool Contains(const arma::vec& point) const;
 
  private:
-  math::Range *bounds_;
-  size_t dim_;
-  arma::vec box_;
+  math::Range *bounds;
+  size_t dim;
+  arma::vec box;
 };
 
 }; // namespace bound

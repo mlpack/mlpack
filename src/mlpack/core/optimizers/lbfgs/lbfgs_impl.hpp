@@ -137,7 +137,8 @@ bool L_BFGS<FunctionType>::LineSearch(double& functionValue,
       // Check Wolfe's condition.
       double searchDirectionDotGradient = arma::dot(gradient, searchDirection);
 
-      if(searchDirectionDotGradient < wolfe * initialSearchDirectionDotGradient)
+      if (searchDirectionDotGradient < wolfe *
+          initialSearchDirectionDotGradient)
       {
         width = inc;
       }
@@ -356,7 +357,7 @@ bool L_BFGS<FunctionType>::Optimize(const size_t numIterations,
         function.Evaluate(iterate) << "." << std::endl;
 
     // Break when the norm of the gradient becomes too small.
-    if(GradientNormTooSmall(gradient))
+    if (GradientNormTooSmall(gradient))
     {
       success = true; // We have found the minimum.
       Log::Info << "L-BFGS gradient norm too small (terminating)."

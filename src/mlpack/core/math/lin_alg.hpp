@@ -130,7 +130,7 @@ void RandVector(arma::vec &v)
     v[i + 1] = first_term * sin(second_term);
   }
 
-  if((v.n_elem % 2) == 1)
+  if ((v.n_elem % 2) == 1)
   {
     v[v.n_elem - 1] = sqrt(-2 * log(drand48())) * cos(2 * M_PI * drand48());
   }

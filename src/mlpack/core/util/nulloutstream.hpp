@@ -19,7 +19,8 @@ namespace io {
  * Used for Log::Debug when not compiled with debugging symbols.  This class
  * does nothing and should be optimized out entirely by the compiler.
  */
-class NullOutStream {
+class NullOutStream
+{
  public:
   /**
    * Does nothing.

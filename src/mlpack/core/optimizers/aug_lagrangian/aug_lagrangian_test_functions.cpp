@@ -63,7 +63,8 @@ void AugLagrangianTestFunction::GradientConstraint(size_t index,
   // gradient.
   gradient.zeros(2, 1);
 
-  if (index == 0) {
+  if (index == 0)
+  {
     // c'_x1(x) = 1
     // c'_x2(x) = 1
     gradient.ones(2, 1); // Use a shortcut instead of assigning individually.

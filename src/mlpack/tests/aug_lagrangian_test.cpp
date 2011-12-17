@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(AugLagrangianTestFunction)
 
   arma::vec coords = f.GetInitialPoint();
 
-  if(!aug.Optimize(0, coords))
+  if (!aug.Optimize(0, coords))
     BOOST_FAIL("Optimization reported failure.");
 
   double finalValue = f.Evaluate(coords);
@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(GockenbachFunction)
 
   arma::vec coords = f.GetInitialPoint();
 
-  if(!aug.Optimize(0, coords))
+  if (!aug.Optimize(0, coords))
     BOOST_FAIL("Optimization reported failure.");
 
   double finalValue = f.Evaluate(coords);
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(lovasz_theta_johnson8_4_4)
 
   arma::mat coords = ltsdp.GetInitialPoint();
 
-  if(!aug.Optimize(0, coords))
+  if (!aug.Optimize(0, coords))
     BOOST_FAIL("Optimization reported failure.");
 
   double finalValue = ltsdp.Evaluate(coords);
