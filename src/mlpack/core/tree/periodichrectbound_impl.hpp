@@ -44,8 +44,8 @@ PeriodicHRectBound<t_pow>::PeriodicHRectBound(const PeriodicHRectBound& other) :
       box_(other.box())
 {
   bounds_ = new math::Range[other.Dim()];
-  for (size_t i = 0; i < dim_; i++) 
-    bounds_[i] |= other[i];  
+  for (size_t i = 0; i < dim_; i++)
+    bounds_[i] |= other[i];
 }
 
 /***
@@ -129,29 +129,35 @@ double PeriodicHRectBound<t_pow>::MinDistance(const arma::vec& point) const
 {
   arma::vec point2 = point;
   double totalMin = 0;
-  //Create the mirrored images. The minimum distance from the bound to a
-  //mirrored point is the minimum periodic distance.
+  // Create the mirrored images. The minimum distance from the bound to a
+  // mirrored point is the minimum periodic distance.
   arma::vec box = box_;
-  for (int i = 0; i < dim_; i++){
+  for (int i = 0; i < dim_; i++)
+  {
     point2 = point;
     double min = 100000000;
-    //Mod the point within the box
+    // Mod the point within the box.
 
-    if (box[i] < 0){
+    if (box[i] < 0)
+    {
       box[i] = abs(box[i]);
     }
-    if (box[i] != 0){
-      if (abs(point[i]) > box[i]) {
+    if (box[i] != 0)
+    {
+      if (abs(point[i]) > box[i])
+      {
         point2[i] = fmod(point2[i],box[i]);
       }
     }
 
-    for (int k = 0; k < 3; k++){
+    for (int k = 0; k < 3; k++)
+    {
       arma::vec point3 = point2;
-      if (k == 1) 
-        point3[i] += box[i];      
-      else if (k == 2) 
-        point3[i] -= box[i];      
+
+      if (k == 1)
+        point3[i] += box[i];
+      else if (k == 2)
+        point3[i] -= box[i];
 
       double tempMin;
       double sum = 0;
@@ -160,7 +166,7 @@ double PeriodicHRectBound<t_pow>::MinDistance(const arma::vec& point) const
       lower = bounds_[i].Lo() - point3[i];
       higher = point3[i] - bounds_[i].Hi();
 
-      sum += pow((lower + fabs(lower)) + 
+      sum += pow((lower + fabs(lower)) +
           (higher + fabs(higher)), (double) t_pow);
       tempMin = pow(sum, 2.0 / (double) t_pow) / 4.0;
 
@@ -179,42 +185,40 @@ double PeriodicHRectBound<t_pow>::MinDistance(const arma::vec& point) const
  *
  * Example: bound1.MinDistance(other) for minimum squared distance.
  */
-
 template<int t_pow>
 double PeriodicHRectBound<t_pow>::MinDistance(
     const PeriodicHRectBound& other) const
 {
   double totalMin = 0;
-  //Create the mirrored images. The minimum distance from the bound to a
-  //mirrored point is the minimum periodic distance.
+  // Create the mirrored images. The minimum distance from the bound to a
+  // mirrored point is the minimum periodic distance.
   arma::vec box = box_;
   PeriodicHRectBound<2> a(other);
 
-
   for (int i = 0; i < dim_; i++)
   {
-    double min = 100000000;
-    if (box[i] < 0) 
+    double min = DBL_MAX;
+    if (box[i] < 0)
       box[i] = abs(box[i]);
-    
-    if (box[i] != 0) 
+
+    if (box[i] != 0)
     {
-      if (abs(other[i].Lo()) > box[i])       
+      if (abs(other[i].Lo()) > box[i])
         a[i].Lo() = fmod(a[i].Lo(),box[i]);
-      
-      if (abs(other[i].Hi()) > box[i]) 
-        a[i].Hi() = fmod(a[i].Hi(),box[i]);      
+
+      if (abs(other[i].Hi()) > box[i])
+        a[i].Hi() = fmod(a[i].Hi(),box[i]);
     }
 
     for (int k = 0; k < 3; k++)
     {
       PeriodicHRectBound<2> b = a;
-      if (k == 1) 
+      if (k == 1)
       {
         b[i].Lo() += box[i];
         b[i].Hi() += box[i];
       }
-      else if (k == 2) 
+      else if (k == 2)
       {
         b[i].Lo() -= box[i];
         b[i].Hi() -= box[i];
@@ -228,31 +232,31 @@ double PeriodicHRectBound<t_pow>::MinDistance(
       double lower, higher, lowerLower, lowerHigher, higherLower,
               higherHigher;
 
-      //If the bound corsses over the box, split ito two seperate bounds and
-      //find thhe minimum distance between them.
-      if( b[i].Hi() < b[i].Lo()) 
+      // If the bound crosses over the box, split ito two seperate bounds and
+      // find the minimum distance between them.
+      if (b[i].Hi() < b[i].Lo())
       {
         PeriodicHRectBound<2> d(b);
         PeriodicHRectBound<2> c(b);
         d[i].Lo() = 0;
         c[i].Hi() = box[i];
 
-        if (k == 1) 
+        if (k == 1)
         {
           d[i].Lo() += box[i];
           c[i].Hi() += box[i];
         }
-        else if (k == 2) 
+        else if (k == 2)
         {
           d[i].Lo() -= box[i];
           c[i].Hi() -= box[i];
         }
+
         d[i].Hi() = b[i].Hi();
         c[i].Lo() = b[i].Lo();
 
         lowerLower = d[i].Lo() - bounds_[i].Hi();
         higherLower = bounds_[i].Lo() - d[i].Hi();
-
 
         lowerHigher = c[i].Lo() - bounds_[i].Hi();
         higherHigher = bounds_[i].Lo() - c[i].Hi();
@@ -263,22 +267,22 @@ double PeriodicHRectBound<t_pow>::MinDistance(
         sumHigher += pow((lowerHigher + fabs(lowerHigher)) +
                           (higherHigher + fabs(higherHigher)), (double) t_pow);
 
-        if (sumLower > sumHigher)        
-          tempMin = pow(sumHigher, 2.0 / (double) t_pow) / 4.0;        
-        else 
-          tempMin = pow(sumLower, 2.0 / (double) t_pow) / 4.0;        
+        if (sumLower > sumHigher)
+          tempMin = pow(sumHigher, 2.0 / (double) t_pow) / 4.0;
+        else
+          tempMin = pow(sumLower, 2.0 / (double) t_pow) / 4.0;
       }
-      else {
+      else
+      {
         lower = b[i].Lo() - bounds_[i].Hi();
         higher = bounds_[i].Lo() - b[i].Hi();
         // We invoke the following:
         //   x + fabs(x) = max(x * 2, 0)
         //   (x * 2)^2 / 4 = x^2
-        sum += pow((lower + fabs(lower)) + 
+        sum += pow((lower + fabs(lower)) +
             (higher + fabs(higher)), (double) t_pow);
         tempMin = pow(sum, 2.0 / (double) t_pow) / 4.0;
       }
-
 
       if (tempMin < min)
         min = tempMin;
@@ -304,24 +308,24 @@ double PeriodicHRectBound<t_pow>::MaxDistance(const arma::vec& point) const
   {
     point2 = point;
     double max = 0;
-    //Mod the point within the box
+    // Mod the point within the box.
 
-    if (box[i] < 0)    
+    if (box[i] < 0)
       box[i] = abs(box[i]);
-    
-    if (box[i] != 0)    
-      if (abs(point[i]) > box[i])      
-        point2[i] = fmod(point2[i],box[i]);  
-    
+
+    if (box[i] != 0)
+      if (abs(point[i]) > box[i])
+        point2[i] = fmod(point2[i],box[i]);
+
     for (int k = 0; k < 3; k++)
     {
       arma::vec point3 = point2;
-      
-      if (k == 1) 
-        point3[i] += box[i];      
-      else if (k == 2) 
+
+      if (k == 1)
+        point3[i] += box[i];
+      else if (k == 2)
         point3[i] -= box[i];
-      
+
       double tempMax;
       double sum = 0;
 
@@ -358,27 +362,27 @@ double PeriodicHRectBound<t_pow>::MaxDistance(
   for (int i = 0; i < dim_; i++)
   {
     double max = 0;
-    if (box[i] < 0) 
+    if (box[i] < 0)
       box[i] = abs(box[i]);
-    
-    if (box[i] != 0) 
+
+    if (box[i] != 0)
     {
-      if (abs(other[i].Lo()) > box[i])       
+      if (abs(other[i].Lo()) > box[i])
         a[i].Lo() = fmod(a[i].Lo(),box[i]);
-      
-      if (abs(other[i].Hi()) > box[i]) 
-        a[i].Hi() = fmod(a[i].Hi(),box[i]);      
+
+      if (abs(other[i].Hi()) > box[i])
+        a[i].Hi() = fmod(a[i].Hi(),box[i]);
     }
 
     for (int k = 0; k < 3; k++)
     {
       PeriodicHRectBound<2> b = a;
-      if (k == 1) 
+      if (k == 1)
       {
         b[i].Lo() += box[i];
         b[i].Hi() += box[i];
       }
-      else if (k == 2) 
+      else if (k == 2)
       {
         b[i].Lo() -= box[i];
         b[i].Hi() -= box[i];
@@ -387,28 +391,29 @@ double PeriodicHRectBound<t_pow>::MaxDistance(
       double sum = 0;
       double tempMax;
 
-      double sumLower, sumHigher;
+      double sumLower = 0, sumHigher = 0;
 
 
-      //If the bound corsses over the box, split ito two seperate bounds and
-      //find thhe minimum distance between them.
-      if( b[i].Hi() < b[i].Lo()) 
+      // If the bound corsses over the box, split ito two seperate bounds and
+      // find thhe minimum distance between them.
+      if (b[i].Hi() < b[i].Lo())
       {
         PeriodicHRectBound<2> d(b);
         PeriodicHRectBound<2> c(b);
         a[i].Lo() = 0;
         c[i].Hi() = box[i];
 
-        if (k == 1) 
+        if (k == 1)
         {
           d[i].Lo() += box[i];
           c[i].Hi() += box[i];
         }
-        else if (k == 2) 
+        else if (k == 2)
         {
           d[i].Lo() -= box[i];
           c[i].Hi() -= box[i];
         }
+
         d[i].Hi() = b[i].Hi();
         c[i].Lo() = b[i].Lo();
 
@@ -421,12 +426,12 @@ double PeriodicHRectBound<t_pow>::MaxDistance(
         sumLower += pow(vLower, (double) t_pow);
         sumHigher += pow(vHigher, (double) t_pow);
 
-        if (sumLower > sumHigher) 
+        if (sumLower > sumHigher)
           tempMax = pow(sumHigher, 2.0 / (double) t_pow) / 4.0;
-        else 
-          tempMax = pow(sumLower, 2.0 / (double) t_pow) / 4.0; 
+        else
+          tempMax = pow(sumLower, 2.0 / (double) t_pow) / 4.0;
       }
-      else 
+      else
       {
         double v = fabs(std::max(b.bounds_[i].Hi() - bounds_[i].Lo(),
             bounds_[i].Hi() - b.bounds_[i].Lo()));
@@ -498,7 +503,7 @@ math::Range PeriodicHRectBound<t_pow>::RangeDistance(
     v1 = other.bounds_[d].Lo() - bounds_[d].Hi();
     v2 = bounds_[d].Lo() - other.bounds_[d].Hi();
     // One of v1 or v2 is negative.
-    if(v1 >= v2)
+    if (v1 >= v2)
     {
       v_hi = -v2; // Make it nonnegative.
       v_lo = (v1 > 0) ? v1 : 0; // Force to be 0 if negative.
