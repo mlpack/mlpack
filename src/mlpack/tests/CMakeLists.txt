@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 # MLPACK test executable.
 add_executable(mlpack_test
+  EXCLUDE_FROM_ALL
   mlpack_test.cpp
   allkfn_test.cpp
   allknn_test.cpp
