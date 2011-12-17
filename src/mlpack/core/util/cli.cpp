@@ -93,7 +93,11 @@ CLI::~CLI()
   // options.  This way this output doesn't show up inexplicably for someone who
   // may not have wanted it there (i.e. in Boost unit tests).
   if (didParse)
+  {
     Log::Debug << "Compiled with debugging symbols." << std::endl;
+    Log::Info << "Please cite MLPACK in your work!  See http://mlpack.org/ for "
+        "a citation.";
+  }
 
   return;
 }
