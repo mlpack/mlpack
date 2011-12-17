@@ -56,7 +56,7 @@ class RosenbrockFunction
   const arma::mat& GetInitialPoint() const;
 
  private:
-  arma::mat initial_point;
+  arma::mat initialPoint;
 };
 
 /**
@@ -85,7 +85,7 @@ class WoodFunction {
   const arma::mat& GetInitialPoint() const;
 
  private:
-  arma::mat initial_point;
+  arma::mat initialPoint;
 };
 
 /**
@@ -115,7 +115,7 @@ class GeneralizedRosenbrockFunction
   const arma::mat& GetInitialPoint() const;
 
  private:
-  arma::mat initial_point;
+  arma::mat initialPoint;
   int n; // Dimensionality
 };
 
@@ -135,7 +135,7 @@ class RosenbrockWoodFunction
   const arma::mat& GetInitialPoint() const;
 
  private:
-  arma::mat initial_point;
+  arma::mat initialPoint;
   GeneralizedRosenbrockFunction rf;
   WoodFunction wf;
 };
