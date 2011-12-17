@@ -19,7 +19,10 @@ namespace bound {
 template<typename VecType>
 math::Range BallBound<VecType>::operator[](const size_t i) const
 {
-  return math::Range(center[i] - radius, center[i] + radius);
+  if (radius < 0)
+    return math::Range();
+  else
+    return math::Range(center[i] - radius, center[i] + radius);
 }
 
 /**
@@ -28,7 +31,10 @@ math::Range BallBound<VecType>::operator[](const size_t i) const
 template<typename VecType>
 bool BallBound<VecType>::Contains(const VecType& point) const
 {
-  return metric::EuclideanDistance::Evaluate(center, point) <= radius;
+  if (radius < 0)
+    return false;
+  else
+    return metric::EuclideanDistance::Evaluate(center, point) <= radius;
 }
 
 /**
@@ -50,8 +56,11 @@ void BallBound<VecType>::CalculateMidpoint(VecType& centroid) const
 template<typename VecType>
 double BallBound<VecType>::MinDistance(const VecType& point) const
 {
-  return math::ClampNonNegative(metric::EuclideanDistance::Evaluate(point,
-      center) - radius);
+  if (radius < 0)
+    return DBL_MAX;
+  else
+    return math::ClampNonNegative(metric::EuclideanDistance::Evaluate(point,
+        center) - radius);
 }
 
 /**
@@ -60,9 +69,14 @@ double BallBound<VecType>::MinDistance(const VecType& point) const
 template<typename VecType>
 double BallBound<VecType>::MinDistance(const BallBound& other) const
 {
-  double delta = metric::EuclideanDistance::Evaluate(center, other.center)
-      - radius - other.radius;
-  return math::ClampNonNegative(delta);
+  if (radius < 0)
+    return DBL_MAX;
+  else
+  {
+    double delta = metric::EuclideanDistance::Evaluate(center, other.center)
+        - radius - other.radius;
+    return math::ClampNonNegative(delta);
+  }
 }
 
 /**
@@ -71,7 +85,10 @@ double BallBound<VecType>::MinDistance(const BallBound& other) const
 template<typename VecType>
 double BallBound<VecType>::MaxDistance(const VecType& point) const
 {
-  return metric::EuclideanDistance::Evaluate(point, center) + radius;
+  if (radius < 0)
+    return DBL_MAX;
+  else
+    return metric::EuclideanDistance::Evaluate(point, center) + radius;
 }
 
 /**
@@ -80,8 +97,11 @@ double BallBound<VecType>::MaxDistance(const VecType& point) const
 template<typename VecType>
 double BallBound<VecType>::MaxDistance(const BallBound& other) const
 {
-  return metric::EuclideanDistance::Evaluate(other.center, center) + radius
-      + other.radius;
+  if (radius < 0)
+    return DBL_MAX;
+  else
+    return metric::EuclideanDistance::Evaluate(other.center, center) + radius
+        + other.radius;
 }
 
 /**
@@ -93,19 +113,29 @@ template<typename VecType>
 math::Range BallBound<VecType>::RangeDistance(const VecType& point)
     const
 {
-  double dist = metric::EuclideanDistance::Evaluate(center, point);
-  return math::Range(math::ClampNonNegative(dist - radius),
-                                            dist + radius);
+  if (radius < 0)
+    return math::Range(DBL_MAX, DBL_MAX);
+  else
+  {
+    double dist = metric::EuclideanDistance::Evaluate(center, point);
+    return math::Range(math::ClampNonNegative(dist - radius),
+                                              dist + radius);
+  }
 }
 
 template<typename VecType>
 math::Range BallBound<VecType>::RangeDistance(
     const BallBound& other) const
 {
-  double dist = metric::EuclideanDistance::Evaluate(center, other.center);
-  double sumradius = radius + other.radius;
-  return math::Range(math::ClampNonNegative(dist - sumradius),
-                                            dist + sumradius);
+  if (radius < 0)
+    return math::Range(DBL_MAX, DBL_MAX);
+  else
+  {
+    double dist = metric::EuclideanDistance::Evaluate(center, other.center);
+    double sumradius = radius + other.radius;
+    return math::Range(math::ClampNonNegative(dist - sumradius),
+                                              dist + sumradius);
+  }
 }
 
 /**
@@ -131,12 +161,30 @@ BallBound<VecType>::operator|=(
 template<typename VecType>
 template<typename MatType>
 const BallBound<VecType>&
-BallBound<VecType>::operator|=(const MatType& point)
+BallBound<VecType>::operator|=(const MatType& data)
 {
-  double dist = metric::EuclideanDistance::Evaluate(center, point);
+  if (radius < 0)
+  {
+    center = data.col(0);
+    radius = 0;
+  }
 
-  if (dist > radius)
-    radius = dist;
+  // Now iteratively add points.  There is probably a closed-form solution to
+  // find the minimum bounding circle, and it is probably faster.
+  for (size_t i = 1; i < data.n_cols; ++i)
+  {
+    double dist = metric::EuclideanDistance::Evaluate(center, (VecType)
+        data.col(i)) - radius;
+
+    if (dist > 0)
+    {
+      // Move (dist / 2) towards the new point and increase radius by
+      // (dist / 2).
+      arma::vec diff = data.col(i) - center;
+      center += 0.5 * diff;
+      radius += 0.5 * dist;
+    }
+  }
 
   return *this;
 }
