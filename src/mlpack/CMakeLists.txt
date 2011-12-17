@@ -26,8 +26,8 @@ target_link_libraries(mlpack
 )
 set_target_properties(mlpack
   PROPERTIES
-  VERSION 0.99.0
-  SOVERSION 0.99.0
+  VERSION 1.0.0
+  SOVERSION 1.0.0
 )
 
 # Collect all header files in the library.

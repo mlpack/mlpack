@@ -11,7 +11,6 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 
 #include "hrectbound.hpp"
-#include "periodichrectbound.hpp"
 #include "ballbound.hpp"
 
 #endif // __MLPACK_CORE_TREE_BOUNDS_HPP

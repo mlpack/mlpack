@@ -46,7 +46,7 @@ bool SaveRestoreUtility::WriteFile(const std::string filename)
   bool success = false;
   xmlDocPtr xmlDocTree = xmlNewDoc(BAD_CAST "1.0");
   xmlNodePtr root = xmlNewNode(NULL, BAD_CAST "root");
-  xmlNodePtr child = NULL;
+//  xmlNodePtr child = NULL;
 
   xmlDocSetRootElement(xmlDocTree, root);
 
@@ -54,9 +54,11 @@ bool SaveRestoreUtility::WriteFile(const std::string filename)
        it != parameters.end();
        ++it)
   {
-    child = xmlNewChild(root, NULL,
-                        BAD_CAST(*it).first.c_str(),
-                        BAD_CAST(*it).second.c_str());
+//    child = xmlNewChild(root, NULL,
+//                        BAD_CAST(*it).first.c_str(),
+//                        BAD_CAST(*it).second.c_str());
+    xmlNewChild(root, NULL, BAD_CAST(*it).first.c_str(),
+        BAD_CAST(*it).second.c_str());
     /* TODO: perhaps we'll add more later?
      * xmlNewProp(child, BAD_CAST "attr", BAD_CAST "add more addibutes?"); */
   }

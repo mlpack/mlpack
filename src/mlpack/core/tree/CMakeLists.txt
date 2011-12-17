@@ -10,8 +10,6 @@ set(SOURCES
   bounds.hpp
   hrectbound.hpp
   hrectbound_impl.hpp
-  periodichrectbound.hpp
-  periodichrectbound_impl.hpp
   statistic.hpp
 )
 
