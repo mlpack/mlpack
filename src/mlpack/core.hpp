@@ -137,5 +137,7 @@
 #include <mlpack/core/math/random.hpp>
 #include <mlpack/core/math/range.hpp>
 #include <mlpack/core/util/save_restore_utility.hpp>
+#include <mlpack/core/dists/discrete_distribution.hpp>
+#include <mlpack/core/dists/gaussian_distribution.hpp>
 
 #endif

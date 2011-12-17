@@ -5,8 +5,6 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/hmm/hmm.hpp>
-#include <mlpack/methods/hmm/distributions/discrete_distribution.hpp>
-#include <mlpack/methods/hmm/distributions/gaussian_distribution.hpp>
 #include <mlpack/methods/gmm/gmm.hpp>
 
 #include <boost/test/unit_test.hpp>
