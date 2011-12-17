@@ -14,9 +14,9 @@ using namespace mlpack::optimization::test;
 
 RosenbrockFunction::RosenbrockFunction()
 {
-  initial_point.set_size(2, 1);
-  initial_point[0] = -1.2;
-  initial_point[1] = 1;
+  initialPoint.set_size(2, 1);
+  initialPoint[0] = -1.2;
+  initialPoint[1] = 1;
 }
 
 /**
@@ -52,7 +52,7 @@ void RosenbrockFunction::Gradient(const arma::mat& coordinates,
 
 const arma::mat& RosenbrockFunction::GetInitialPoint() const
 {
-  return initial_point;
+  return initialPoint;
 }
 
 //
@@ -61,11 +61,11 @@ const arma::mat& RosenbrockFunction::GetInitialPoint() const
 
 WoodFunction::WoodFunction()
 {
-  initial_point.set_size(4, 1);
-  initial_point[0] = -3;
-  initial_point[1] = -1;
-  initial_point[2] = -3;
-  initial_point[3] = -1;
+  initialPoint.set_size(4, 1);
+  initialPoint[0] = -3;
+  initialPoint[1] = -1;
+  initialPoint[2] = -3;
+  initialPoint[3] = -1;
 }
 
 /**
@@ -116,7 +116,7 @@ void WoodFunction::Gradient(const arma::mat& coordinates,
 
 const arma::mat& WoodFunction::GetInitialPoint() const
 {
-  return initial_point;
+  return initialPoint;
 }
 
 //
@@ -125,13 +125,13 @@ const arma::mat& WoodFunction::GetInitialPoint() const
 
 GeneralizedRosenbrockFunction::GeneralizedRosenbrockFunction(int n) : n(n)
 {
-  initial_point.set_size(n, 1);
+  initialPoint.set_size(n, 1);
   for (int i = 0; i < n; i++) // Set to [-1.2 1 -1.2 1 ...].
   {
     if (i % 2 == 1)
-      initial_point[i] = -1.2;
+      initialPoint[i] = -1.2;
     else
-      initial_point[i] = 1;
+      initialPoint[i] = 1;
   }
 }
 
@@ -172,7 +172,7 @@ void GeneralizedRosenbrockFunction::Gradient(const arma::mat& coordinates,
 
 const arma::mat& GeneralizedRosenbrockFunction::GetInitialPoint() const
 {
-  return initial_point;
+  return initialPoint;
 }
 
 //
@@ -181,9 +181,9 @@ const arma::mat& GeneralizedRosenbrockFunction::GetInitialPoint() const
 
 RosenbrockWoodFunction::RosenbrockWoodFunction() : rf(4), wf()
 {
-  initial_point.set_size(4, 2);
-  initial_point.col(0) = rf.GetInitialPoint();
-  initial_point.col(1) = wf.GetInitialPoint();
+  initialPoint.set_size(4, 2);
+  initialPoint.col(0) = rf.GetInitialPoint();
+  initialPoint.col(1) = wf.GetInitialPoint();
 }
 
 /**
@@ -217,5 +217,5 @@ void RosenbrockWoodFunction::Gradient(const arma::mat& coordinates,
 
 const arma::mat& RosenbrockWoodFunction::GetInitialPoint() const
 {
-  return initial_point;
+  return initialPoint;
 }
