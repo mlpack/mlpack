@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   hmm.hpp
   hmm_impl.hpp
+  hmm_util.hpp
+  hmm_util_impl.hpp
   distributions/discrete_distribution.hpp
   distributions/discrete_distribution.cpp
   distributions/gaussian_distribution.hpp
@@ -19,3 +21,31 @@ endforeach()
 # Append sources (with directory name) to list of all MLPACK sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+
+add_executable(hmm_train
+  hmm_train_main.cpp
+)
+target_link_libraries(hmm_train
+  mlpack
+)
+
+add_executable(hmm_loglik
+  hmm_loglik_main.cpp
+)
+target_link_libraries(hmm_loglik
+  mlpack
+)
+
+add_executable(hmm_viterbi
+  hmm_viterbi_main.cpp
+)
+target_link_libraries(hmm_viterbi
+  mlpack
+)
+
+add_executable(hmm_generate
+  hmm_generate_main.cpp
+)
+target_link_libraries(hmm_generate
+  mlpack
+)

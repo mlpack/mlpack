@@ -237,6 +237,11 @@ class HMM
    */
   std::vector<Distribution>& Emission() { return emission; }
 
+  //! Get the dimensionality of observations.
+  size_t Dimensionality() const { return dimensionality; }
+  //! Set the dimensionality of observations.
+  size_t& Dimensionality() { return dimensionality; }
+
  private:
   // Helper functions.
 
