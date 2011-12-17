@@ -171,6 +171,7 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM)
   HMM<DiscreteDistribution> hmm(1, 2); // 1 state, 2 emissions.
   // Randomize the emission matrix.
   hmm.Emission()[0].Probabilities() = arma::randu<arma::vec>(2);
+  hmm.Emission()[0].Probabilities() /= accu(hmm.Emission()[0].Probabilities());
 
   // P(each emission) = 0.5.
   // I've been careful to make P(first emission = 0) = P(first emission = 1).
@@ -291,8 +292,11 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
 
   transition.randu(3, 3);
   emission[0].Probabilities() = arma::randu<arma::vec>(6);
+  emission[0].Probabilities() /= accu(emission[0].Probabilities());
   emission[1].Probabilities() = arma::randu<arma::vec>(6);
+  emission[1].Probabilities() /= accu(emission[1].Probabilities());
   emission[2].Probabilities() = arma::randu<arma::vec>(6);
+  emission[2].Probabilities() /= accu(emission[2].Probabilities());
 
   // Normalize so they we have a correct transition matrix.
   for (size_t col = 0; col < 3; col++)
@@ -386,6 +390,8 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMSimpleGenerateTest)
   // Now find the empirical probabilities of each state.
   arma::vec emissionProb(4);
   arma::vec stateProb(2);
+  emissionProb.zeros();
+  stateProb.zeros();
   for (size_t i = 0; i < 100000; i++)
   {
     emissionProb[(size_t) dataSeq.col(i)[0] + 0.5]++;
@@ -415,9 +421,13 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
   arma::mat transition(4, 4);
   std::vector<DiscreteDistribution> emission(4);
   emission[0].Probabilities() = arma::randu<arma::vec>(6);
+  emission[0].Probabilities() /= accu(emission[0].Probabilities());
   emission[1].Probabilities() = arma::randu<arma::vec>(6);
+  emission[1].Probabilities() /= accu(emission[1].Probabilities());
   emission[2].Probabilities() = arma::randu<arma::vec>(6);
+  emission[2].Probabilities() /= accu(emission[2].Probabilities());
   emission[3].Probabilities() = arma::randu<arma::vec>(6);
+  emission[3].Probabilities() /= accu(emission[3].Probabilities());
 
   transition.randu();
 
