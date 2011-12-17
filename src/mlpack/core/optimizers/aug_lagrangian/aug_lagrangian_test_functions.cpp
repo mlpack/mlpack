@@ -16,12 +16,12 @@ using namespace mlpack::optimization;
 AugLagrangianTestFunction::AugLagrangianTestFunction()
 {
   // Set the initial point to be (0, 0).
-  initial_point_.zeros(2, 1);
+  initialPoint.zeros(2, 1);
 }
 
 AugLagrangianTestFunction::AugLagrangianTestFunction(
-      const arma::mat& initial_point) :
-    initial_point_(initial_point)
+      const arma::mat& initialPoint) :
+    initialPoint(initialPoint)
 {
   // Nothing to do.
 }
@@ -76,12 +76,12 @@ void AugLagrangianTestFunction::GradientConstraint(size_t index,
 GockenbachFunction::GockenbachFunction()
 {
   // Set the initial point to (0, 0, 1).
-  initial_point_.zeros(3, 1);
-  initial_point_[2] = 1;
+  initialPoint.zeros(3, 1);
+  initialPoint[2] = 1;
 }
 
-GockenbachFunction::GockenbachFunction(const arma::mat& initial_point) :
-    initial_point_(initial_point)
+GockenbachFunction::GockenbachFunction(const arma::mat& initialPoint) :
+    initialPoint(initialPoint)
 {
   // Nothing to do.
 }
@@ -160,15 +160,15 @@ void GockenbachFunction::GradientConstraint(size_t index,
 //
 // LovaszThetaSDP
 //
-LovaszThetaSDP::LovaszThetaSDP() : edges_(0), vertices_(0), initial_point_(0, 0)
+LovaszThetaSDP::LovaszThetaSDP() : edges(0), vertices(0), initialPoint(0, 0)
 { }
 
-LovaszThetaSDP::LovaszThetaSDP(const arma::mat& edges) : edges_(edges),
-    initial_point_(0, 0)
+LovaszThetaSDP::LovaszThetaSDP(const arma::mat& edges) : edges(edges),
+    initialPoint(0, 0)
 {
   // Calculate V by finding the maximum index in the edges matrix.
-  vertices_ = max(max(edges_)) + 1;
-//  Log::Debug << vertices_ << " vertices in graph." << std::endl;
+  vertices = max(max(edges)) + 1;
+//  Log::Debug << vertices << " vertices in graph." << std::endl;
 }
 
 double LovaszThetaSDP::Evaluate(const arma::mat& coordinates)
@@ -206,7 +206,7 @@ void LovaszThetaSDP::Gradient(const arma::mat& coordinates,
 size_t LovaszThetaSDP::NumConstraints() const
 {
   // Each edge is a constraint, and we have the constraint Tr(X) = 1.
-  return edges_.n_cols + 1;
+  return edges.n_cols + 1;
 }
 
 double LovaszThetaSDP::EvaluateConstraint(size_t index,
@@ -222,8 +222,8 @@ double LovaszThetaSDP::EvaluateConstraint(size_t index,
     return sum;
   }
 
-  size_t i = edges_(0, index - 1);
-  size_t j = edges_(1, index - 1);
+  size_t i = edges(0, index - 1);
+  size_t j = edges(1, index - 1);
 
 //  Log::Debug << "Constraint " << index << " evaluates to " <<
 //    dot(coordinates.col(i), coordinates.col(j)) << "." << std::endl;
@@ -245,8 +245,8 @@ void LovaszThetaSDP::GradientConstraint(size_t index,
   }
 
 //  Log::Debug << "Evaluating gradient of constraint " << index << " with ";
-  size_t i = edges_(0, index - 1);
-  size_t j = edges_(1, index - 1);
+  size_t i = edges(0, index - 1);
+  size_t j = edges(1, index - 1);
 //  Log::Debug << "i = " << i << " and j = " << j << "." << std::endl;
 
   // Since the constraint is (R^T R)_ij, the gradient for (x, y) will be (I
@@ -268,8 +268,8 @@ void LovaszThetaSDP::GradientConstraint(size_t index,
 
 const arma::mat& LovaszThetaSDP::GetInitialPoint()
 {
-  if (initial_point_.n_rows != 0 && initial_point_.n_cols != 0)
-    return initial_point_; // It has already been calculated.
+  if (initialPoint.n_rows != 0 && initialPoint.n_cols != 0)
+    return initialPoint; // It has already been calculated.
 
 //  Log::Debug << "Calculating initial point." << std::endl;
 
@@ -288,26 +288,26 @@ const arma::mat& LovaszThetaSDP::GetInitialPoint()
   //   r = 0.5 + sqrt(0.25 + 2m)
   float m = NumConstraints();
   float r = 0.5 + sqrt(0.25 + 2 * m);
-  if (ceil(r) > vertices_)
-    r = vertices_; // An upper bound on the dimension.
+  if (ceil(r) > vertices)
+    r = vertices; // An upper bound on the dimension.
 
-  Log::Debug << "Dimension will be " << ceil(r) << " x " << vertices_ << "."
+  Log::Debug << "Dimension will be " << ceil(r) << " x " << vertices << "."
       << std::endl;
 
-  initial_point_.set_size(ceil(r), vertices_);
+  initialPoint.set_size(ceil(r), vertices);
 
   // Now we set the entries of the initial matrix according to the formula given
   // in Section 4 of Monteiro and Burer.
   for (size_t i = 0; i < r; i++)
   {
-    for (size_t j = 0; j < (size_t) vertices_; j++)
+    for (size_t j = 0; j < (size_t) vertices; j++)
     {
       if (i == j)
-        initial_point_(i, j) = sqrt(1.0 / r) + sqrt(1.0 / (vertices_ * m));
+        initialPoint(i, j) = sqrt(1.0 / r) + sqrt(1.0 / (vertices * m));
       else
-        initial_point_(i, j) = sqrt(1.0 / (vertices_ * m));
+        initialPoint(i, j) = sqrt(1.0 / (vertices * m));
     }
   }
 
-  return initial_point_;
+  return initialPoint;
 }

@@ -36,10 +36,10 @@ class AugLagrangianTestFunction
                           const arma::mat& coordinates,
                           arma::mat& gradient);
 
-  const arma::mat& GetInitialPoint() { return initial_point_; }
+  const arma::mat& GetInitialPoint() { return initialPoint; }
 
  private:
-  arma::mat initial_point_;
+  arma::mat initialPoint;
 };
 
 /**
@@ -69,10 +69,10 @@ class GockenbachFunction
                           const arma::mat& coordinates,
                           arma::mat& gradient);
 
-  const arma::mat& GetInitialPoint() { return initial_point_; }
+  const arma::mat& GetInitialPoint() { return initialPoint; }
 
  private:
-  arma::mat initial_point_;
+  arma::mat initialPoint;
 };
 
 
@@ -125,10 +125,10 @@ class LovaszThetaSDP
   const arma::mat& GetInitialPoint();
 
  private:
-  arma::mat edges_;
-  int vertices_;
+  arma::mat edges;
+  int vertices;
 
-  arma::mat initial_point_;
+  arma::mat initialPoint;
 };
 
 }; // namespace optimization

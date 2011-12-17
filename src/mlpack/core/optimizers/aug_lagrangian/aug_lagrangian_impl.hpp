@@ -112,10 +112,10 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
 
 template<typename LagrangianFunction>
 AugLagrangian<LagrangianFunction>::AugLagrangianFunction::AugLagrangianFunction(
-      LagrangianFunction& functionin, arma::vec& lambdain, double sigma) :
-    lambda(lambdain),
+      LagrangianFunction& functionIn, arma::vec& lambdaIn, double sigma) :
+    lambda(lambdaIn),
     sigma(sigma),
-    function(functionin)
+    function(functionIn)
 {
   // Nothing to do.
 }

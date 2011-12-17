@@ -88,8 +88,8 @@ class AugLagrangian
   class AugLagrangianFunction
   {
    public:
-    AugLagrangianFunction(LagrangianFunction& function_in,
-                          arma::vec& lambda_in,
+    AugLagrangianFunction(LagrangianFunction& functionIn,
+                          arma::vec& lambdaIn,
                           double sigma);
 
     double Evaluate(const arma::mat& coordinates);
