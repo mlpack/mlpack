@@ -48,13 +48,13 @@ find_package(Boost COMPONENTS
   unit_test_framework
   REQUIRED) # May require math_tr1?
 
-# We need to include Boost random, but only if newer than 1.41 (as of 1.42 it
-# became a separate package).
-if(Boost_MAJOR_VERSION EQUAL 1 AND Boost_MINOR_VERSION GREATER 41)
+# We need to include Boost random, but only if newer than 1.45 (as of 1.46 it
+# became a separate package with its own linkable library object).
+if(Boost_MAJOR_VERSION EQUAL 1 AND Boost_MINOR_VERSION GREATER 45)
   find_package(Boost COMPONENTS
   random
   REQUIRED)
-endif(Boost_MAJOR_VERSION EQUAL 1 AND Boost_MINOR_VERSION GREATER 41)
+endif(Boost_MAJOR_VERSION EQUAL 1 AND Boost_MINOR_VERSION GREATER 45)
 
 
 # Default to debugging mode for developers.
