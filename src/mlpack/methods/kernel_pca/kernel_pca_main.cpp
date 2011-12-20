@@ -17,12 +17,12 @@ using namespace arma;
 int main(int argc, char** argv)
 {
 
-  /*mat data("1 0 2 3 9;"
+  mat data("1 0 2 3 9;"
             "5 2 8 4 8;"
-            "6 7 3 1 8");*/
-  mat data("1 2 3;"
+            "6 7 3 1 8");
+/*  mat data("1 2 3;"
             "4 5 6;"
-            "7 8 9");
+            "7 8 9");*/
 
   data.print("DATA : ");
 
