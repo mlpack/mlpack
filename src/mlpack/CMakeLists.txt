@@ -20,8 +20,7 @@ target_link_libraries(mlpack
   armadillo
   lapack
   blas
-  boost_program_options
-  boost_random
+  ${BOOST_LIBS}
   xml2
 )
 set_target_properties(mlpack
