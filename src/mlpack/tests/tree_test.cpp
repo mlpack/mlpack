@@ -638,7 +638,7 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundEmptyConstructor)
   PeriodicHRectBound<2> b;
 
   BOOST_REQUIRE_EQUAL(b.Dim(), 0);
-  BOOST_REQUIRE_EQUAL(b.box().n_elem, 0);
+  BOOST_REQUIRE_EQUAL(b.Box().n_elem, 0);
 }
 
 /**
@@ -652,9 +652,9 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundBoxConstructor)
   BOOST_REQUIRE_EQUAL(b.Dim(), 2);
   BOOST_REQUIRE_SMALL(b[0].Width(), 1e-5);
   BOOST_REQUIRE_SMALL(b[1].Width(), 1e-5);
-  BOOST_REQUIRE_EQUAL(b.box().n_elem, 2);
-  BOOST_REQUIRE_CLOSE(b.box()[0], 5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(b.box()[1], 6.0, 1e-5);
+  BOOST_REQUIRE_EQUAL(b.Box().n_elem, 2);
+  BOOST_REQUIRE_CLOSE(b.Box()[0], 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.Box()[1], 6.0, 1e-5);
 
   PeriodicHRectBound<2> d(arma::vec("2 3 4 5 6"));
 
@@ -664,12 +664,12 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundBoxConstructor)
   BOOST_REQUIRE_SMALL(d[2].Width(), 1e-5);
   BOOST_REQUIRE_SMALL(d[3].Width(), 1e-5);
   BOOST_REQUIRE_SMALL(d[4].Width(), 1e-5);
-  BOOST_REQUIRE_EQUAL(d.box().n_elem, 5);
-  BOOST_REQUIRE_CLOSE(d.box()[0], 2.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.box()[1], 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.box()[2], 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.box()[3], 5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.box()[4], 6.0, 1e-5);
+  BOOST_REQUIRE_EQUAL(d.Box().n_elem, 5);
+  BOOST_REQUIRE_CLOSE(d.Box()[0], 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Box()[1], 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Box()[2], 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Box()[3], 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.Box()[4], 6.0, 1e-5);
 }
 
 /**
@@ -688,9 +688,9 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundCopyConstructor)
   BOOST_REQUIRE_CLOSE(c[0].Hi(), 2.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c[1].Lo(), 2.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c[1].Hi(), 3.0, 1e-5);
-  BOOST_REQUIRE_EQUAL(c.box().n_elem, 2);
-  BOOST_REQUIRE_CLOSE(c.box()[0], 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c.box()[1], 4.0, 1e-5);
+  BOOST_REQUIRE_EQUAL(c.Box().n_elem, 2);
+  BOOST_REQUIRE_CLOSE(c.Box()[0], 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c.Box()[1], 4.0, 1e-5);
 }
 
 /**
@@ -711,9 +711,9 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundAssignmentOperator)
   BOOST_REQUIRE_CLOSE(c[0].Hi(), 2.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c[1].Lo(), 2.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c[1].Hi(), 3.0, 1e-5);
-  BOOST_REQUIRE_EQUAL(c.box().n_elem, 2);
-  BOOST_REQUIRE_CLOSE(c.box()[0], 3.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c.box()[1], 4.0, 1e-5);
+  BOOST_REQUIRE_EQUAL(c.Box().n_elem, 2);
+  BOOST_REQUIRE_CLOSE(c.Box()[0], 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c.Box()[1], 4.0, 1e-5);
 }*/
 
 /**
@@ -725,9 +725,9 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundSetBoxSize)
 
   b.SetBoxSize(arma::vec("10 12"));
 
-  BOOST_REQUIRE_EQUAL(b.box().n_elem, 2);
-  BOOST_REQUIRE_CLOSE(b.box()[0], 10.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(b.box()[1], 12.0, 1e-5);
+  BOOST_REQUIRE_EQUAL(b.Box().n_elem, 2);
+  BOOST_REQUIRE_CLOSE(b.Box()[0], 10.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.Box()[1], 12.0, 1e-5);
 }*/
 
 /**
