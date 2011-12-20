@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundEmptyConstructor)
 {
   HRectBound<2> b;
 
-  BOOST_REQUIRE_EQUAL(b.Dim(), 0);
+  BOOST_REQUIRE_EQUAL((int) b.Dim(), 0);
 }
 
 /**
@@ -846,7 +846,7 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMinDistancePoint)
   d[0] = Range(-10.0, 10.0); // Box is of infinite size.
   point[0] = 810.0; // 800 away from the only image of the box.
 
-  BOOST_REQUIRE_CLOSE(d.MinDistance(point), 640000, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.MinDistance(point), 640000.0, 1e-5);
 
   PeriodicHRectBound<2> e(arma::vec("-5.0"));
   e[0] = Range(2.0, 4.0); // Box size of -5 should function the same as 5.
@@ -961,7 +961,7 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMinDistanceBound)
 
   a[0] = Range(2.0, 3.0);
   d[0] = Range(9.5, 11);
-  BOOST_REQUIRE_CLOSE(a.MinDistance(d), 1, 1e-5);
+  BOOST_REQUIRE_CLOSE(a.MinDistance(d), 1.0, 1e-5);
 
 }
 
