@@ -41,7 +41,7 @@ PeriodicHRectBound<t_pow>::PeriodicHRectBound(arma::vec box) :
 template<int t_pow>
 PeriodicHRectBound<t_pow>::PeriodicHRectBound(const PeriodicHRectBound& other) :
       dim(other.Dim()),
-      box(other.box())
+      box(other.Box())
 {
   bounds = new math::Range[other.Dim()];
   for (size_t i = 0; i < dim; i++)
