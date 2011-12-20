@@ -1,30 +1,25 @@
 /**
- * @file kernelpca_impl.hpp
+ * @file kernel_pca_impl.hpp
  * @author Ajinkya Kale
  *
- * Implementation of KernelPCA class to perform Kernel Principal Components
- * Analysis on the specified data set.
+ * Implementation of KPCA class to perform Kernel Principal Components Analysis on the
+ * specified data set.
  */
-#ifndef __MLPACK_METHODS_KERNEL_PCA_KERNEL_PCA_IMPL_HPP
-#define __MLPACK_METHODS_KERNEL_PCA_KERNEL_PCA_IMPL_HPP
-
-// In case it hasn't already been included.
-#include "kernel_pca.hpp"
-
+#include "kpca.hpp"
 #include <iostream>
+#include <cmath>
 
-using namespace std; // This'll have to go before the release.
-
+using namespace std;
 namespace mlpack {
 namespace kpca {
 
 template <typename KernelType>
-KernelPCA<KernelType>::KernelPCA(const KernelType kernel,
+KPCA<KernelType>::KPCA(const KernelType kernel,
                        const bool centerData,
                        const bool scaleData) :
-      kernel(kernel),
-      centerData(centerData),
-      scaleData(scaleData)
+      kernel_(kernel),
+      centerData_(centerData),
+      scaleData_(scaleData)
 {
 }
 
@@ -32,80 +27,50 @@ KernelPCA<KernelType>::KernelPCA(const KernelType kernel,
  * Apply Kernel Principal Component Analysis to the provided data set.
  *
  * @param data - Data matrix
- * @param transformedData - Data with KernelPCA applied
+ * @param transformedData - Data with KPCA applied
  * @param eigVal - contains eigen values in a column vector
- * @param coeff - KernelPCA Loadings/Coeffs/EigenVectors
+ * @param coeff - KPCA Loadings/Coeffs/EigenVectors
  */
 template <typename KernelType>
-void KernelPCA<KernelType>::Apply(const arma::mat& data,
-                                  arma::mat& transformedData,
-                                  arma::vec& eigVal,
-                                  arma::mat& coeffs)
+void KPCA<KernelType>::Apply(const arma::mat& data, arma::mat& transformedData,
+           arma::vec& eigVal, arma::mat& coeffs)
 {
   arma::mat transData = trans(data);
 
-  if (centerData)
+  if(centerData_)
   {
     arma::rowvec means = arma::mean(transData, 0);
     transData = transData - arma::ones<arma::colvec>(transData.n_rows) * means;
-    cout << "centering data" << endl;
   }
-  transData.print("TRANSDATA");
   arma::mat centeredData = trans(transData);
+  arma::mat kernelMat = GetKernelMatrix(kernel_, centeredData);
+  arma::eig_sym(eigVal, coeffs, kernelMat);
 
-  arma::mat kernelMat(centeredData.n_rows, centeredData.n_rows);
-
-  for (size_t i = 0; i < centeredData.n_rows; i++)
-  {
-    for (size_t j = 0; j < centeredData.n_rows; j++)
-    {
-      arma::vec v1 = trans(centeredData.row(i));
-      arma::vec v2 = trans(centeredData.row(j));
-      kernelMat(i, j) = kernel.Evaluate(v1, v2);
-    }
-  }
-
-  kernelMat.print("KERNEL MATRIX : ");
-  arma::mat matCov = (cov(centeredData));
-  matCov.print("COV MATRIX : ");
-
-  transData = kernelMat; // Use the kernel matrix to do the transformations
-  // after this point.
-
-  if (scaleData)
-  {
-    transData = transData / (arma::ones<arma::colvec>(transData.n_rows) *
-        stddev(transData, 0, 0));
-  }
-
-  arma::mat covMat = cov(transData);
-  arma::eig_sym(eigVal, coeffs, covMat);
-
-  int nEigVal = eigVal.n_elem;
-  for(int i = 0; i < floor(nEigVal / 2); i++)
-    eigVal.swap_rows(i, (nEigVal - 1) - i);
+  int n_eigVal = eigVal.n_elem;
+  for(int i = 0; i < floor(n_eigVal / 2); i++)
+    eigVal.swap_rows(i, (n_eigVal - 1) - i);
 
   coeffs = arma::fliplr(coeffs);
+
   transformedData = trans(coeffs) * data;
   arma::colvec transformedDataMean = arma::mean(transformedData, 1);
-  transformedData = transformedData - (transformedDataMean *
-      arma::ones<arma::rowvec>(transformedData.n_cols));
+  transformedData = transformedData - (transformedDataMean * arma::ones<arma::rowvec>(transformedData.n_cols));
 }
 
 /**
  * Apply Kernel Principal Component Analysis to the provided data set.
  *
  * @param data - Data matrix
- * @param transformedData - Data with KernelPCA applied
+ * @param transformedData - Data with KPCA applied
  * @param eigVal - contains eigen values in a column vector
  */
 template <typename KernelType>
-void KernelPCA<KernelType>::Apply(const arma::mat& data,
-                                  arma::mat& transformedData,
-                                  arma::vec& eigVal)
+void KPCA<KernelType>::Apply(const arma::mat& data, arma::mat& transformedData,
+           arma::vec& eigVal)
 {
   arma::mat coeffs;
-  Apply(data, transformedData, eigVal, coeffs);
+  Apply(data, transformedData,
+              eigVal, coeffs);
 }
 
 /**
@@ -119,18 +84,38 @@ void KernelPCA<KernelType>::Apply(const arma::mat& data,
  * coeff/eigen vector matrix with only newDimension number of columns chosen.
  */
 template <typename KernelType>
-void KernelPCA<KernelType>::Apply(arma::mat& data, const size_t newDimension)
+void KPCA<KernelType>::Apply(arma::mat& data, const int newDimension)
 {
   arma::mat coeffs;
   arma::vec eigVal;
 
   Apply(data, data, eigVal, coeffs);
 
-  if (newDimension < coeffs.n_rows && newDimension > 0)
+  if(newDimension < coeffs.n_rows && newDimension > 0)
     data.shed_rows(newDimension, data.n_rows - 1);
 }
+
+/*template <typename KernelType>
+KPCA<KernelType>::~KPCA()
+{
+}*/
 
 }; // namespace mlpack
 }; // namespace kpca
 
-#endif
+template <typename KernelType>
+arma::mat GetKernelMatrix(KernelType kernel, arma::mat transData)
+{
+  arma::mat kernelMat(transData.n_rows, transData.n_rows);
+
+  for(int i = 0; i < transData.n_rows; i++)
+  {
+    for(int j = 0; j < transData.n_rows; j++)
+    {
+      arma::vec v1 = trans(transData.row(i));
+      arma::vec v2 = trans(transData.row(j));
+      kernelMat(i, j) = kernel.Evaluate(v1, v2);
+    }
+  }
+  return kernelMat;
+}
