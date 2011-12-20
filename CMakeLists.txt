@@ -46,10 +46,16 @@ find_package(Boost COMPONENTS
   math_c99
   program_options
   unit_test_framework
-  random
   REQUIRED) # May require math_tr1?
 
-option(WITH_OPTIMIZERS "Include optimization code." OFF)
+# We need to include Boost random, but only if newer than 1.41 (as of 1.42 it
+# became a separate package).
+if(Boost_MAJOR_VERSION EQUAL 1 AND Boost_MINOR_VERSION GREATER 41)
+  find_package(Boost COMPONENTS
+  random
+  REQUIRED)
+endif(Boost_MAJOR_VERSION EQUAL 1 AND Boost_MINOR_VERSION GREATER 41)
+
 
 # Default to debugging mode for developers.
 option(DEBUG "Compile with debugging information" ON)
