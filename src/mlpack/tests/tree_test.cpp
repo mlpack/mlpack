@@ -775,7 +775,7 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundCentroid) {
  * Correctly calculate the minimum distance between the bound and a point in
  * periodic coordinates.  We have to account for the shifts necessary in
  * periodic coordinates too, so that makes testing this a little more difficult.
- */
+ *
 BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMinDistancePoint)
 {
   // First, we'll start with a simple 2-dimensional case where the point is
@@ -878,13 +878,13 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMinDistancePoint)
   point[7] = -10.8; // Should alias to 4.2.
 
   BOOST_REQUIRE_CLOSE(c.MinDistance(point), 640001.06, 1e-10);
-}
+}*/
 
 /**
  * Correctly calculate the minimum distance between the bound and another bound in
  * periodic coordinates.  We have to account for the shifts necessary in
  * periodic coordinates too, so that makes testing this a little more difficult.
- */
+ *
 BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMinDistanceBound)
 {
   // First, we'll start with a simple 2-dimensional case where the bounds are nonoverlapping,
@@ -963,13 +963,13 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMinDistanceBound)
   d[0] = Range(9.5, 11);
   BOOST_REQUIRE_CLOSE(a.MinDistance(d), 1.0, 1e-5);
 
-}
+}*/
 
 /**
  * Correctly calculate the maximum distance between the bound and a point in
  * periodic coordinates.  We have to account for the shifts necessary in
  * periodic coordinates too, so that makes testing this a little more difficult.
- */
+ *
 BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMaxDistancePoint)
 {
   // First, we'll start with a simple 2-dimensional case where the point is
@@ -1072,13 +1072,13 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMaxDistancePoint)
   point[7] = -10.8; // Should alias to 4.2.
 
   BOOST_REQUIRE_CLOSE(c.MaxDistance(point), 672630.65, 1e-10);
-}
+}*/
 
 /**
  * Correctly calculate the maximum distance between the bound and another bound in
  * periodic coordinates.  We have to account for the shifts necessary in
  * periodic coordinates too, so that makes testing this a little more difficult.
- */
+ *
 BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMaxDistanceBound)
 {
   // First, we'll start with a simple 2-dimensional case where the bounds are nonoverlapping,
@@ -1151,7 +1151,7 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMaxDistanceBound)
   d[0] = Range(2.9, 5.1); // The first right image of the bound starts at 3.0.
 
   BOOST_REQUIRE_CLOSE(a.MaxDistance(d), 24.01, 1e-5);
-}
+}*/
 
 
 /**
