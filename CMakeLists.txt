@@ -42,18 +42,26 @@ mark_as_advanced(LIBXML2_INCLUDE_DIR LIBXML2_LIBRARY )
 set(Boost_ADDITIONAL_VERSIONS
   "1.41" "1.41.0" "1.42" "1.42.0" "1.43" "1.43.0"
   "1.44" "1.44.0" "1.45.0")
+set(BOOST_LIBS "boost_math_c99" "boost_program_options")
 find_package(Boost COMPONENTS
   math_c99
   program_options
   unit_test_framework
-  random
   REQUIRED) # May require math_tr1?
 
-option(WITH_OPTIMIZERS "Include optimization code." OFF)
+# We need to include Boost random, but only if newer than 1.45 (as of 1.46 it
+# became a separate package with its own linkable library object).
+if(Boost_MAJOR_VERSION EQUAL 1 AND Boost_MINOR_VERSION GREATER 45)
+  find_package(Boost COMPONENTS
+  random
+  REQUIRED)
+  set(BOOST_LIBS ${BOOST_LIBS} "boost_random")
+endif(Boost_MAJOR_VERSION EQUAL 1 AND Boost_MINOR_VERSION GREATER 45)
+
 
 # Default to debugging mode for developers.
-option(DEBUG "Compile with debugging information" OFF)
-option(PROFILE "Compile with profiling information" OFF)
+option(DEBUG "Compile with debugging information" ON)
+option(PROFILE "Compile with profiling information" ON)
 option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
 
 # This is as of yet unused.

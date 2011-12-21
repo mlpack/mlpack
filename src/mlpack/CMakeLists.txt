@@ -20,14 +20,13 @@ target_link_libraries(mlpack
   armadillo
   lapack
   blas
-  boost_program_options
-  boost_random
+  ${BOOST_LIBS}
   xml2
 )
 set_target_properties(mlpack
   PROPERTIES
-  VERSION 1.0.0
-  SOVERSION 1.0.0
+  VERSION 0.99.0
+  SOVERSION 0.99.0
 )
 
 # Collect all header files in the library.
