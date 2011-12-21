@@ -115,9 +115,9 @@ arma::mat GetKernelMatrix(KernelType kernel, arma::mat transData)
 {
   arma::mat kernelMat(transData.n_rows, transData.n_rows);
 
-  for(int i = 0; i < transData.n_rows; i++)
+  for (size_t i = 0; i < transData.n_rows; i++)
   {
-    for(int j = 0; j < transData.n_rows; j++)
+    for (size_t j = 0; j < transData.n_rows; j++)
     {
       arma::vec v1 = trans(transData.row(i));
       arma::vec v2 = trans(transData.row(j));
