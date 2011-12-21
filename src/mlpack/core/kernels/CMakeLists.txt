@@ -8,6 +8,7 @@ set(SOURCES
   cosine_distance.hpp
   cosine_distance_impl.hpp
   exponential_kernel.hpp
+  laplacian_kernel.hpp
 )
 
 # add directory name to sources
