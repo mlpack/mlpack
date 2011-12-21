@@ -22,7 +22,7 @@ namespace math /** Miscellaneous math routines. */ {
   // Global random object.
   extern boost::random::mt19937 randGen;
   // Global uniform distribution.
-  extern boost::random::uniform_01 randUniformDist;
+  extern boost::random::uniform_01<> randUniformDist;
 #else
   // Global random object.
   extern boost::mt19937 randGen;
@@ -44,7 +44,7 @@ inline double Random()
 inline double Random(double lo, double hi)
 {
   #if BOOST_VERSION >= 104700
-    boost::random::uniform_real_distribution dist(lo, hi);
+    boost::random::uniform_real_distribution<> dist(lo, hi);
   #else
     boost::uniform_real<> dist(lo, hi);
   #endif
@@ -58,7 +58,7 @@ inline double Random(double lo, double hi)
 inline int RandInt(int hiExclusive)
 {
   #if BOOST_VERSION >= 104700
-    boost::random::uniform_int_distribution dist(0, hiExclusive - 1);
+    boost::random::uniform_int_distribution<> dist(0, hiExclusive - 1);
   #else
     boost::uniform_int<> dist(0, hiExclusive - 1);
   #endif
@@ -72,7 +72,7 @@ inline int RandInt(int hiExclusive)
 inline int RandInt(int lo, int hiExclusive)
 {
   #if BOOST_VERSION >= 104700
-    boost::random::uniform_int_distribution dist(lo, hiExclusive - 1);
+    boost::random::uniform_int_distribution<> dist(lo, hiExclusive - 1);
   #else
     boost::uniform_int<> dist(0, hiExclusive - 1);
   #endif
