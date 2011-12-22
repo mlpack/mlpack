@@ -10,6 +10,7 @@ set(SOURCES
   exponential_kernel.hpp
   laplacian_kernel.hpp
   polynomial_kernel.hpp
+  hyperbolic_tangent_kernel.hpp
 )
 
 # add directory name to sources
