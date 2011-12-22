@@ -9,6 +9,7 @@ set(SOURCES
   cosine_distance_impl.hpp
   exponential_kernel.hpp
   laplacian_kernel.hpp
+  polynomial_kernel.hpp
 )
 
 # add directory name to sources
