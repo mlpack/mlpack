@@ -13,7 +13,7 @@ namespace math {
   // Global random object.
   boost::random::mt19937 randGen;
   // Global uniform distribution.
-  boost::random::uniform_01 randUniformDist;
+  boost::random::uniform_01<> randUniformDist;
 #else
   // Global random object.
   boost::mt19937 randGen;
