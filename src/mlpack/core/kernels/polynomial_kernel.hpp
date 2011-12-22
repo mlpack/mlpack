@@ -28,8 +28,8 @@ class PolynomialKernel
    * Default constructor; sets offset to 0.0 and degree to 1.0
    */
   PolynomialKernel(double offset, double degree) :
-        offset(0.0),
-        degree(1.0)
+    offset(0.0),
+    degree(1.0)
   { }
 
   /* Construct the Polynomial Kernel with custom
@@ -39,8 +39,8 @@ class PolynomialKernel
    * @param degree degree of the polynomial
    */
   PolynomialKernel(double offset, double degree) :
-      offset(offset),
-      degree(degree)
+    offset(offset),
+    degree(degree)
   { }
 
   /**
