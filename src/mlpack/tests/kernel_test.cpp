@@ -1,6 +1,7 @@
 /**
  * @file kernel_test.cpp
  * @author Ryan Curtin
+ * @author Ajinkya Kale
  *
  * Tests for the various kernel classes.
  */
@@ -9,9 +10,15 @@
 #include <mlpack/core/kernels/cosine_distance.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
+#include <mlpack/core/kernels/polynomial_kernel.hpp>
+#include <mlpack/core/kernels/exponential_kernel.hpp>
+#include <mlpack/core/kernels/laplacian_kernel.hpp>
+#include <mlpack/core/kernels/hyperbolic_tangent_kernel.hpp>
 
 #include <boost/test/unit_test.hpp>
 
+#include <iostream>
+using namespace std;
 using namespace mlpack;
 using namespace mlpack::kernel;
 using namespace mlpack::metric;
@@ -238,6 +245,37 @@ BOOST_AUTO_TEST_CASE(gaussian_kernel)
   BOOST_REQUIRE_CLOSE(gk.Evaluate(c,a), .018315638888734, 1e-5);
   BOOST_REQUIRE_CLOSE(gk.Evaluate(b,c), .018315638888734, 1e-5);
   BOOST_REQUIRE_CLOSE(gk.Evaluate(c,b), .018315638888734, 1e-5);
+}
+
+BOOST_AUTO_TEST_CASE(polynomial_kernel)
+{
+  arma::vec a = "0 0 1";
+  arma::vec b = "0 1 0";
+
+  PolynomialKernel pk(5.0, 5.0);
+  BOOST_REQUIRE_CLOSE(pk.Evaluate(a, b), 3125, 0);
+  BOOST_REQUIRE_CLOSE(pk.Evaluate(b, a), 3125, 0);
+  cout << "test" << pk.Evaluate(a, b);
+}
+
+BOOST_AUTO_TEST_CASE(hyperbolic_tangent_kernel)
+{
+  arma::vec a = "0 0 1";
+  arma::vec b = "0 1 0";
+
+  HyperbolicTangentKernel tk(5.0, 5.0);
+  BOOST_REQUIRE_CLOSE(tk.Evaluate(a, b), 0.9999092, 1e-5);
+  BOOST_REQUIRE_CLOSE(tk.Evaluate(b, a), 0.9999092, 1e-5);
+}
+
+BOOST_AUTO_TEST_CASE(laplacian_kernel)
+{
+  arma::vec a = "0 0 1";
+  arma::vec b = "0 1 0";
+
+  LaplacianKernel lk(1.0);
+  BOOST_REQUIRE_CLOSE(lk.Evaluate(a, b), 0.2431167, 1e-5);
+  BOOST_REQUIRE_CLOSE(lk.Evaluate(b, a), 0.2431167, 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
