@@ -53,7 +53,7 @@ class HyperbolicTangentKernel
    * @return K(a, b).
    */
   template<typename VecType>
-  static double Evaluate(const VecType& a, const VecType& b)
+  double Evaluate(const VecType& a, const VecType& b)
   {
     return tanh(scale * arma::dot(a, b) + offset);
   }
