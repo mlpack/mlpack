@@ -27,7 +27,7 @@ class PolynomialKernel
   /**
    * Default constructor; sets offset to 0.0 and degree to 1.0
    */
-  PolynomialKernel(double offset, double degree) :
+  PolynomialKernel() :
     offset(0.0),
     degree(1.0)
   { }
@@ -53,7 +53,7 @@ class PolynomialKernel
    * @return K(a, b).
    */
   template<typename VecType>
-  static double Evaluate(const VecType& a, const VecType& b)
+  double Evaluate(const VecType& a, const VecType& b)
   {
     return pow((arma::dot(a, b) + offset), degree);
   }
