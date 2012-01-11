@@ -17,8 +17,6 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include <iostream>
-using namespace std;
 using namespace mlpack;
 using namespace mlpack::kernel;
 using namespace mlpack::metric;
@@ -255,7 +253,6 @@ BOOST_AUTO_TEST_CASE(polynomial_kernel)
   PolynomialKernel pk(5.0, 5.0);
   BOOST_REQUIRE_CLOSE(pk.Evaluate(a, b), 3125, 0);
   BOOST_REQUIRE_CLOSE(pk.Evaluate(b, a), 3125, 0);
-  cout << "test" << pk.Evaluate(a, b);
 }
 
 BOOST_AUTO_TEST_CASE(hyperbolic_tangent_kernel)
