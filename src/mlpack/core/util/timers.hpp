@@ -38,21 +38,21 @@ class Timer
    *
    * @param name Name of timer to be started.
    */
-  static void Start(const std::string name);
+  static void Start(const std::string& name);
 
   /**
    * Stop the given timer.
    *
    * @param name Name of timer to be stopped.
    */
-  static void Stop(const std::string name);
+  static void Stop(const std::string& name);
 
   /**
    * Get the value of the given timer.
    *
    * @param name Name of timer to return value of.
    */
-  static timeval Get(const std::string name);
+  static timeval Get(const std::string& name);
 };
 
 class Timers
@@ -71,7 +71,7 @@ class Timers
    *
    * @param timerName The name of the timer in question.
    */
-  timeval GetTimer(const std::string timerName);
+  timeval GetTimer(const std::string& timerName);
 
   /**
    * Prints the specified timer.  If it took longer than a minute to complete
@@ -79,7 +79,7 @@ class Timers
    *
    * @param timerName The name of the timer in question.
    */
-  void PrintTimer(const std::string timerName);
+  void PrintTimer(const std::string& timerName);
 
   /**
    * Initializes a timer, available like a normal value specified on
@@ -87,7 +87,7 @@ class Timers
    *
    * @param timerName The name of the timer in question.
    */
-  void StartTimer(const std::string timerName);
+  void StartTimer(const std::string& timerName);
 
   /**
    * Halts the timer, and replaces it's value with
@@ -95,7 +95,7 @@ class Timers
    *
    * @param timerName The name of the timer in question.
    */
-  void StopTimer(const std::string timerName);
+  void StopTimer(const std::string& timerName);
 
  private:
   std::map<std::string, timeval> timers;

@@ -27,6 +27,7 @@ class SaveRestoreTest
   SaveRestoreTest()
   {
     saveRestore = SaveRestoreUtility();
+    anInt = 0;
   }
 
   bool SaveModel(std::string filename)

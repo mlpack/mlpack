@@ -116,7 +116,6 @@ void CLI::Add(const char* identifier,
 {
   po::options_description& desc = CLI::GetSingleton().desc;
 
-  std::string tmp = TYPENAME(bool);
   std::string path = identifier;
   std::string stringAlias = alias;
   // Must make use of boost option name syntax.
@@ -190,7 +189,7 @@ std::string CLI::AliasReverseLookup(std::string value)
 {
   amap_t& amap = GetSingleton().aliasValues;
   amap_t::iterator iter;
-  for (iter = amap.begin(); iter != amap.end(); iter++)
+  for (iter = amap.begin(); iter != amap.end(); ++iter)
     if (iter->second == value) // Found our match.
       return iter->first;
 
@@ -432,7 +431,7 @@ void CLI::Print()
   gmap_t::iterator iter;
 
   // Print out all the values.
-  for (iter = gmap.begin(); iter != gmap.end(); iter++)
+  for (iter = gmap.begin(); iter != gmap.end(); ++iter)
   {
     std::string key = iter->first;
 
@@ -548,7 +547,7 @@ void CLI::PrintHelp(std::string param)
       std::cout << "Options: " << std::endl << std::endl;
 
     // Print out the descriptions of everything else.
-    for (iter = gmap.begin(); iter != gmap.end(); iter++)
+    for (iter = gmap.begin(); iter != gmap.end(); ++iter)
     {
       std::string key = iter->first;
       ParamData data = iter->second;
@@ -642,7 +641,7 @@ void CLI::RequiredOptions()
 
   // Now, warn the user if they missed any required options.
   std::list<std::string>::iterator iter;
-  for (iter = rOpt.begin(); iter != rOpt.end(); iter++)
+  for (iter = rOpt.begin(); iter != rOpt.end(); ++iter)
   {
     std::string str = *iter;
     if (!vmap.count(str))
@@ -664,7 +663,7 @@ void CLI::UpdateGmap()
   // Iterate through vmap, and overwrite default values with anything found on
   // command line.
   po::variables_map::iterator i;
-  for (i = vmap.begin(); i != vmap.end(); i++)
+  for (i = vmap.begin(); i != vmap.end(); ++i)
   {
     ParamData param;
     if (gmap.count(i->first)) // We need to preserve certain data

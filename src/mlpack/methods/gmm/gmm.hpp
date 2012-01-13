@@ -91,7 +91,7 @@ class GMM
       const std::vector<arma::mat>& covariances,
       const arma::vec& weights) :
       gaussians(means.size()),
-      dimensionality((means.size() > 0) ? means[0].n_elem : 0),
+      dimensionality((!means.empty()) ? means[0].n_elem : 0),
       means(means),
       covariances(covariances),
       weights(weights) { /* nothing to do */ }

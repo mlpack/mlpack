@@ -24,8 +24,8 @@ using namespace std;
  *    taken care of by CLI later.
  * @param defaultModule Name of the default module.
  */
-ProgramDoc::ProgramDoc(const std::string programName,
-                       const std::string documentation) :
+ProgramDoc::ProgramDoc(const std::string& programName,
+                       const std::string& documentation) :
     programName(programName),
     documentation(documentation)
 {
