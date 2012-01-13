@@ -73,7 +73,7 @@ double MVUObjectiveFunction::EvaluateConstraint(const size_t index,
   }
 
   // Return 0 for any constraints which are out of bounds.
-  if (index >= NumConstraints() || index < 0)
+  if (index >= NumConstraints())
     return 0;
 
   // Any other constraints are the individual nearest neighbor constraints:
@@ -99,7 +99,7 @@ void MVUObjectiveFunction::GradientConstraint(const size_t index,
   gradient.zeros(coordinates.n_rows, coordinates.n_cols);
 
   // Return 0 for any constraints which are out of bounds.
-  if (index >= NumConstraints() || index < 0)
+  if (index >= NumConstraints())
     return;
 
   if (index == 0)

@@ -41,7 +41,7 @@ int main(int argc, char** argv)
   {
     // Validate the parameter.
     newDimension = (size_t) CLI::GetParam<int>("new_dimensionality");
-    if (newDimension < 1);
+    if (newDimension < 1)
     {
       Log::Fatal << "Invalid value for new dimensionality (" << newDimension
           << ")!  Must be greater than or equal to 1." << std::endl;

@@ -84,8 +84,8 @@ class ProgramDoc
    *     program and what it is.  No newline characters are necessary; this is
    *     taken care of by CLI later.
    */
-  ProgramDoc(const std::string programName,
-             const std::string documentation);
+  ProgramDoc(const std::string& programName,
+             const std::string& documentation);
 
   //! The name of the program.
   std::string programName;

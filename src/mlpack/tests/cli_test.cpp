@@ -91,8 +91,6 @@ BOOST_AUTO_TEST_CASE(TestOption)
   // this.
   PARAM(int, "test_parent/test", "test desc", "", DEFAULT_INT, false);
 
-  std::string desc = std::string("test desc");
-
   BOOST_REQUIRE_EQUAL(CLI::GetDescription("test_parent/test"), "test desc");
   BOOST_REQUIRE_EQUAL(CLI::GetParam<int>("test_parent/test"), DEFAULT_INT);
 }

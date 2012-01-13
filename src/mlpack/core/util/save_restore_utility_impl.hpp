@@ -15,7 +15,7 @@ namespace mlpack {
 namespace utilities {
 
 template<typename T>
-T& SaveRestoreUtility::LoadParameter(T& t, const std::string name)
+T& SaveRestoreUtility::LoadParameter(T& t, const std::string& name)
 {
   std::map<std::string, std::string>::iterator it = parameters.find(name);
   if (it != parameters.end())
@@ -34,7 +34,7 @@ T& SaveRestoreUtility::LoadParameter(T& t, const std::string name)
 
 template<typename T>
 std::vector<T>& SaveRestoreUtility::LoadParameter(std::vector<T>& v,
-                                                  const std::string name)
+                                                  const std::string& name)
 {
   std::map<std::string, std::string>::iterator it = parameters.find(name);
   if (it != parameters.end())
@@ -63,7 +63,7 @@ std::vector<T>& SaveRestoreUtility::LoadParameter(std::vector<T>& v,
 }
 
 template<typename T>
-void SaveRestoreUtility::SaveParameter(const T& t, const std::string name)
+void SaveRestoreUtility::SaveParameter(const T& t, const std::string& name)
 {
   std::ostringstream output;
   output << t;
@@ -72,7 +72,7 @@ void SaveRestoreUtility::SaveParameter(const T& t, const std::string name)
 
 template<typename T>
 void SaveRestoreUtility::SaveParameter(const std::vector<T>& t,
-                                       const std::string name)
+                                       const std::string& name)
 {
   std::ostringstream output;
   for (size_t index = 0; index < t.size(); ++index)

@@ -16,7 +16,7 @@ using namespace mlpack;
 /**
  * Start the given timer.
  */
-void Timer::Start(const std::string name)
+void Timer::Start(const std::string& name)
 {
   CLI::GetSingleton().timer.StartTimer(name);
 }
@@ -24,7 +24,7 @@ void Timer::Start(const std::string name)
 /**
  * Stop the given timer.
  */
-void Timer::Stop(const std::string name)
+void Timer::Stop(const std::string& name)
 {
   CLI::GetSingleton().timer.StopTimer(name);
 }
@@ -32,7 +32,7 @@ void Timer::Stop(const std::string name)
 /**
  * Get the given timer.
  */
-timeval Timer::Get(const std::string name)
+timeval Timer::Get(const std::string& name)
 {
   return CLI::GetSingleton().timer.GetTimer(name);
 }
@@ -42,13 +42,13 @@ std::map<std::string, timeval>& Timers::GetAllTimers()
   return timers;
 }
 
-timeval Timers::GetTimer(const std::string timerName)
+timeval Timers::GetTimer(const std::string& timerName)
 {
   std::string name(timerName);
   return timers[name];
 }
 
-void Timers::PrintTimer(const std::string timerName)
+void Timers::PrintTimer(const std::string& timerName)
 {
   timeval& t = timers[timerName];
   Log::Info << t.tv_sec << "." << std::setw(6) << std::setfill('0')
@@ -103,7 +103,7 @@ void Timers::PrintTimer(const std::string timerName)
   Log::Info << std::endl;
 }
 
-void Timers::StartTimer(const std::string timerName)
+void Timers::StartTimer(const std::string& timerName)
 {
   timeval tmp;
 
@@ -118,7 +118,7 @@ void Timers::StartTimer(const std::string timerName)
   timers[timerName] = tmp;
 }
 
-void Timers::StopTimer(const std::string timerName)
+void Timers::StopTimer(const std::string& timerName)
 {
   timeval delta, b, a = timers[timerName];
 
