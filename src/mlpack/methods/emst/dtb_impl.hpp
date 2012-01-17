@@ -27,7 +27,7 @@ DTBStat::DTBStat() : maxNeighborDistance(DBL_MAX), componentMembership(-1)
  * An initializer for leaves.
  */
 template<typename MatType>
-DTBStat::DTBStat(const MatType& dataset,
+DTBStat::DTBStat(const MatType& /* dataset */,
                  const size_t start,
                  const size_t count) :
     maxNeighborDistance(DBL_MAX),
@@ -40,11 +40,11 @@ DTBStat::DTBStat(const MatType& dataset,
  * An initializer for non-leaves.
  */
 template<typename MatType>
-DTBStat::DTBStat(const MatType& dataset,
+DTBStat::DTBStat(const MatType& /* dataset */,
                  const size_t start,
                  const size_t count,
-                 const DTBStat& leftStat,
-                 const DTBStat& right_stat) :
+                 const DTBStat& /* leftStat */,
+                 const DTBStat& /* rightStat */) :
     maxNeighborDistance(DBL_MAX),
     componentMembership((count == 1) ? start : -1)
 {

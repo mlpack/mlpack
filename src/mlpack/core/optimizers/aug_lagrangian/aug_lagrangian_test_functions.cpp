@@ -57,7 +57,7 @@ double AugLagrangianTestFunction::EvaluateConstraint(size_t index,
 }
 
 void AugLagrangianTestFunction::GradientConstraint(size_t index,
-    const arma::mat& coordinates, arma::mat& gradient)
+    arma::mat& gradient)
 {
   // If the user passed an invalid index (not 0), we will return a zero
   // gradient.

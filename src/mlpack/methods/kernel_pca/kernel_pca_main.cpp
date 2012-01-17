@@ -14,7 +14,7 @@ using namespace mlpack::kpca;
 using namespace std;
 using namespace arma;
 
-int main(int argc, char** argv)
+int main(int /* argc */, char** /* argv */)
 {
 
   mat data("1 0 2 3 9;"
