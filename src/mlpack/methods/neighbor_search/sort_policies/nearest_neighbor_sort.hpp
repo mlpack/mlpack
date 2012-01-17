@@ -81,7 +81,7 @@ class NearestNeighborSort
    *
    * @return DBL_MAX
    */
-  static inline const double WorstDistance() { return DBL_MAX; }
+  static inline double WorstDistance() { return DBL_MAX; }
 
   /**
    * Return what should represent the best possible distance with this
@@ -90,7 +90,7 @@ class NearestNeighborSort
    *
    * @return 0.0
    */
-  static inline const double BestDistance() { return 0.0; }
+  static inline double BestDistance() { return 0.0; }
 };
 
 }; // namespace neighbor
