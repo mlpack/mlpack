@@ -45,7 +45,7 @@ class SaveRestoreTest
     return success;
   }
 
-  const size_t AnInt() { return anInt; }
+  size_t AnInt() { return anInt; }
   void AnInt(size_t s) { this->anInt = s; }
 };
 

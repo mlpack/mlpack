@@ -59,7 +59,7 @@ class QueryStat
       : bound(SortPolicy::WorstDistance()) { }
 
   //! Get the bound.
-  const double Bound() const { return bound; }
+  double Bound() const { return bound; }
   //! Modify the bound.
   double& Bound() { return bound; }
 };
