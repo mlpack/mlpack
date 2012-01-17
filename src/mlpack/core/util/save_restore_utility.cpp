@@ -53,9 +53,8 @@ bool SaveRestoreUtility::WriteFile(const std::string& filename)
        it != parameters.end();
        ++it)
   {
-    xmlNodePtr child = xmlNewChild(root, NULL,
-                        BAD_CAST(*it).first.c_str(),
-                        BAD_CAST(*it).second.c_str());
+    xmlNewChild(root, NULL, BAD_CAST(*it).first.c_str(),
+                            BAD_CAST(*it).second.c_str());
     /* TODO: perhaps we'll add more later?
      * xmlNewProp(child, BAD_CAST "attr", BAD_CAST "add more addibutes?"); */
   }
