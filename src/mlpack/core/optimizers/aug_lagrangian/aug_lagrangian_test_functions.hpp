@@ -32,9 +32,7 @@ class AugLagrangianTestFunction
   size_t NumConstraints() const { return 1; }
 
   double EvaluateConstraint(size_t index, const arma::mat& coordinates);
-  void GradientConstraint(size_t index,
-                          const arma::mat& coordinates,
-                          arma::mat& gradient);
+  void GradientConstraint(size_t index, arma::mat& gradient);
 
   const arma::mat& GetInitialPoint() { return initialPoint; }
 

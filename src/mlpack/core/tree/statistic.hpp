@@ -30,9 +30,9 @@ class EmptyStatistic
      * @param count Number of points held in this leaf.
      */
     template<typename MatType>
-    EmptyStatistic(const MatType& dataset,
-                   const size_t begin,
-                   const size_t count)
+    EmptyStatistic(const MatType& /* dataset */,
+                   const size_t /* begin */,
+                   const size_t /* count */)
     { }
 
     /**
@@ -46,11 +46,11 @@ class EmptyStatistic
      * @param rightStat EmptyStatistic object of the right child node.
      */
     template<typename MatType>
-    EmptyStatistic(const MatType& dataset,
-                   const size_t start,
-                   const size_t count,
-                   const EmptyStatistic& leftStat,
-                   const EmptyStatistic& rightStat)
+    EmptyStatistic(const MatType& /* dataset */,
+                   const size_t /* start */,
+                   const size_t /* count */,
+                   const EmptyStatistic& /* leftStat */,
+                   const EmptyStatistic& /* rightStat */)
     { }
 };
 
