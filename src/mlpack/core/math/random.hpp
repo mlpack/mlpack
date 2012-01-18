@@ -31,6 +31,16 @@ namespace math /** Miscellaneous math routines. */ {
 #endif
 
 /**
+ * Set the random seed used by the random functions (Random() and RandInt()).
+ *
+ * @param seed Seed for the random number generator.
+ */
+inline void RandomSeed(const size_t seed)
+{
+  randGen.seed(seed);
+}
+
+/**
  * Generates a uniform random number between 0 and 1.
  */
 inline double Random()
