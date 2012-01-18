@@ -111,6 +111,6 @@ void Log::Assert(bool condition, const char* message)
   }
 }
 #else
-void Log::Assert(bool condition, const char* message)
+void Log::Assert(bool /* condition */, const char* /* message */)
 { }
 #endif
