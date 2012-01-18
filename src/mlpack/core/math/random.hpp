@@ -86,7 +86,7 @@ inline int RandInt(int lo, int hiExclusive)
   #if BOOST_VERSION >= 104700
     boost::random::uniform_int_distribution<> dist(lo, hiExclusive - 1);
   #else
-    boost::uniform_int<> dist(lo, hiExclusive - 1)
+    boost::uniform_int<> dist(lo, hiExclusive - 1);
   #endif
 
   return dist(randGen);
