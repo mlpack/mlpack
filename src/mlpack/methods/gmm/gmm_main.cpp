@@ -14,9 +14,10 @@ PROGRAM_INFO("Gaussian Mixture Model (GMM) Training",
 
 PARAM_STRING_REQ("input_file", "File containing the data on which the model "
     "will be fit.", "i");
-PARAM_INT("gaussians", "Number of Gaussians in the GMM", "g", 1);
+PARAM_INT("gaussians", "Number of Gaussians in the GMM.", "g", 1);
 PARAM_STRING("output_file", "The file to write the trained GMM parameters into "
     "(as XML).", "o", "gmm.xml");
+PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace mlpack;
 using namespace mlpack::gmm;
@@ -27,6 +28,11 @@ int main(int argc, char* argv[])
   CLI::ParseCommandLine(argc, argv);
 
   // Check parameters and load data.
+  if (CLI::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  else
+    math::RandomSeed((size_t) std::time(NULL));
+
   arma::mat dataPoints;
   data::Load(CLI::GetParam<std::string>("input_file").c_str(), dataPoints,
       true);
