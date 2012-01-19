@@ -60,7 +60,6 @@ int main(int argc, char *argv[])
 
   // Get all the parameters.
   string referenceFile = CLI::GetParam<string>("reference_file");
-  string outputFile = CLI::GetParam<string>("output_file");
 
   string distancesFile = CLI::GetParam<string>("distances_file");
   string neighborsFile = CLI::GetParam<string>("neighbors_file");
