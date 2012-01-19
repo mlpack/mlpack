@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
     if (!data::Load(queryFile.c_str(), queryData))
       Log::Fatal << "Query file " << queryFile << " not found." << endl;
 
-    Log::Info << "Query data loaded from '" << queryFile << "'." << endl;
+    Log::Info << "Loaded query data from '" << queryFile << "'." << endl;
 
     Log::Info << "Building query tree..." << endl;
 

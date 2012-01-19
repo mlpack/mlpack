@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
     if (naive && leafSize < queryData.n_cols)
       leafSize = queryData.n_cols;
 
-    Log::Info << "Query data loaded from " << queryFile << endl;
+    Log::Info << "Loaded query data from '" << queryFile << "'." << endl;
 
     Log::Info << "Building query tree..." << endl;
 
