@@ -36,13 +36,17 @@ PARAM_DOUBLE("overclustering", "Finds (overclustering * clusters) clusters, "
     "left.", "O", 1.0);
 PARAM_INT("max_iterations", "Maximum number of iterations before K-Means "
     "terminates.", "m", 1000);
+PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 int main(int argc, char** argv)
 {
   CLI::ParseCommandLine(argc, argv);
 
-  // Initialize random seed -- because that makes a difference.
-  srand(time(NULL));
+  // Initialize random seed.
+  if (CLI::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  else
+    math::RandomSeed((size_t) std::time(NULL));
 
   // Now do validation of options.
   string inputFile = CLI::GetParam<string>("inputFile");
