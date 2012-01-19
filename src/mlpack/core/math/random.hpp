@@ -40,6 +40,7 @@ namespace math /** Miscellaneous math routines. */ {
 inline void RandomSeed(const size_t seed)
 {
   randGen.seed((uint32_t) seed);
+  srand((unsigned int) seed);
 }
 
 /**
