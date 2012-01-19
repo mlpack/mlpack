@@ -1,0 +1,392 @@
+/*!
+
+@file neighbor_search.txt
+@author Ryan Curtin
+@brief Tutorial for how to use the NeighborSearch class.
+
+@page nstutorial NeighborSearch tutorial (k-nearest-neighbors)
+
+@section intro Introduction
+
+Nearest-neighbors search is a common machine learning task.  In this setting, we
+have a \b query and a \b reference dataset.  For each point in the \b query
+dataset, we wish to know the \f$k\f$ points in the \b reference dataset which
+are closest to the given query point.
+
+Alternately, if the query and reference datasets are the same, the problem can
+be stated more simply: for each point in the dataset, we wish to know the
+\f$k\f$ nearest points to that point.
+
+\b mlpack provides:
+
+ - a \ref cli "simple command-line executable" to run nearest-neighbors search
+   (and furthest-neighbors search)
+ - a \ref allknn "simple C++ interface" to perform nearest-neighbors search (and
+   furthest-neighbors search)
+ - a \ref neighborsearch "generic, extensible, and powerful C++ class
+   (NeighborSearch)" for complex usage
+
+@section toc Table of Contents
+
+A list of all the sections this tutorial contains.
+
+ - \ref intro
+ - \ref toc
+ - \ref cli
+   - \ref cli_ex1
+   - \ref cli_ex2
+   - \ref cli_ex3
+ - \ref allknn
+   - \ref allknn_ex1
+   - \ref allknn_ex2
+   - \ref allknn_ex3
+ - \ref neighborsearch
+   - \ref sort_policy_doc
+   - \ref metric_type_doc
+   - \ref tree_type_doc
+ - \ref further_doc
+
+@section cli Command-Line 'allknn'
+
+The simplest way to perform nearest-neighbors search in \b mlpack is to use the
+allknn executable.  This program will perform nearest-neighbors search and place
+the resultant neighbors into one file and the resultant distances into another.
+The output files are organized such that the first row corresponds to the
+nearest neighbors of the first query point, with the first column corresponding
+to the nearest neighbor, and so forth.
+
+Below are several examples of simple usage (and the resultant output).  The '-v'
+option is used so that output is given.  Further documentation on each
+individual option can be found by typing
+
+@code
+$ allknn --help
+@endcode
+
+@subsection cli_ex1 One dataset, 5 nearest neighbors
+
+@code
+$ allknn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
+[INFO ] Loading 'dataset.csv' as CSV data.
+[INFO ] Loaded reference data from 'dataset.csv'.
+[INFO ] Building reference tree...
+[INFO ] Trees built.
+[INFO ] Computing 5 nearest neighbors...
+[INFO ] Neighbors computed.
+[INFO ] Re-mapping indices...
+[INFO ] Saving CSV data to 'distances_out.csv'.
+[INFO ] Saving CSV data to 'neighbors_out.csv'.
+[INFO ]
+[INFO ] Execution parameters:
+[INFO ]   distances_file: distances_out.csv
+[INFO ]   help: false
+[INFO ]   info: ""
+[INFO ]   k: 5
+[INFO ]   leaf_size: 20
+[INFO ]   naive: false
+[INFO ]   neighbors_file: neighbors_out.csv
+[INFO ]   query_file: ""
+[INFO ]   reference_file: dataset.csv
+[INFO ]   single_mode: false
+[INFO ]   verbose: true
+[INFO ]
+[INFO ] Program timers:
+[INFO ]   computing_neighbors: 0.152495s
+[INFO ]   total_time: 0.201274s
+[INFO ]   tree_building: 0.005050s
+@endcode
+
+Convenient program timers are given for different parts of the calculation at
+the bottom of the output, as well as the parameters the simulation was run with.
+Now, if we look at the output files:
+
+@code
+$ head neighbors_out.csv
+14,5,13,16,27
+90,79,80,15,10
+39,84,10,123,1
+81,43,109,12,37
+15,1,79,90,10
+0,14,16,13,27
+90,79,11,1,15
+41,45,12,37,49
+11,81,13,6,15
+41,7,45,49,47
+
+$ head distances_out.csv
+7.0961442157e-04,2.0594017307e-03,4.0534606848e-03,4.6617527871e-03,1.0975766503e-02
+8.9219094854e-04,1.6944224237e-03,2.8275047594e-03,4.0659085081e-03,7.5416924388e-03
+5.9153940619e-03,6.8348261245e-03,8.0287780046e-03,9.0490742594e-03,1.6145844252e-02
+7.1565291364e-03,9.1822852410e-03,1.0054094126e-02,1.0754117196e-02,1.2889286480e-02
+5.3753598384e-03,9.0572140940e-03,9.8901718497e-03,1.0145773597e-02,1.1402159302e-02
+2.0594017307e-03,5.1443719285e-03,9.9748395427e-03,1.0246362715e-02,1.4435578329e-02
+4.2735541987e-03,6.3675054757e-03,6.7247857776e-03,8.7732353272e-03,1.0453054915e-02
+1.9993584709e-03,3.8824033162e-03,4.1911827369e-03,9.3069356843e-03,1.2123748134e-02
+2.1545427671e-03,8.1889521020e-03,1.1836045084e-02,1.2513545450e-02,1.2778332798e-02
+8.4308799684e-03,1.2294632518e-02,1.6047220935e-02,1.8866141375e-02,1.8972768693e-02
+@endcode
+
+So, the nearest neighbor to point 0 is point 14, with a distance of 7.096144e-4.
+The second nearest neighbor to point 0 is point 5, with a distance of
+2.059402e-3.  The third nearest neighbor to point 6 is point 16, with a distance
+of 9.9748395e-3.
+
+@subsection cli_ex2 Query and reference dataset, 10 nearest neighbors
+
+@code
+$ allknn -q query_dataset.csv -r reference_dataset.csv -n neighbors_out.csv \
+> -d distances_out.csv -k 10 -v
+[INFO ] Loading 'reference_dataset.csv' as CSV data.
+[INFO ] Loaded reference data from 'reference_dataset.csv'.
+[INFO ] Building reference tree...
+[INFO ] Loading 'query_dataset.csv' as CSV data.
+[INFO ] Query data loaded from 'query_dataset.csv'.
+[INFO ] Building query tree...
+[INFO ] Tree built.
+[INFO ] Computing 10 nearest neighbors...
+[INFO ] Neighbors computed.
+[INFO ] Re-mapping indices...
+[INFO ] Saving CSV data to 'distances_out.csv'.
+[INFO ] Saving CSV data to 'neighbors_out.csv'.
+[INFO ]
+[INFO ] Execution parameters:
+[INFO ]   distances_file: distances_out.csv
+[INFO ]   help: false
+[INFO ]   info: ""
+[INFO ]   k: 10
+[INFO ]   leaf_size: 20
+[INFO ]   naive: false
+[INFO ]   neighbors_file: neighbors_out.csv
+[INFO ]   query_file: query_dataset.csv
+[INFO ]   reference_file: reference_dataset.csv
+[INFO ]   single_mode: false
+[INFO ]   verbose: true
+[INFO ]
+[INFO ] Program timers:
+[INFO ]   computing_neighbors: 0.000081s
+[INFO ]   total_time: 0.062828s
+[INFO ]   tree_building: 0.004949s
+@endcode
+
+@subsection cli_ex3 One dataset, 3 nearest neighbors, leaf size of 15 points
+
+@code
+$ allknn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 3 -l 15 -v
+[INFO ] Loading 'dataset.csv' as CSV data.
+[INFO ] Loaded reference data from 'dataset.csv'.
+[INFO ] Building reference tree...
+[INFO ] Trees built.
+[INFO ] Computing 3 nearest neighbors...
+[INFO ] Neighbors computed.
+[INFO ] Re-mapping indices...
+[INFO ] Saving CSV data to 'distances_out.csv'.
+[INFO ] Saving CSV data to 'neighbors_out.csv'.
+[INFO ]
+[INFO ] Execution parameters:
+[INFO ]   distances_file: distances_out.csv
+[INFO ]   help: false
+[INFO ]   info: ""
+[INFO ]   k: 3
+[INFO ]   leaf_size: 15
+[INFO ]   naive: false
+[INFO ]   neighbors_file: neighbors_out.csv
+[INFO ]   query_file: ""
+[INFO ]   reference_file: dataset.csv
+[INFO ]   single_mode: false
+[INFO ]   verbose: true
+[INFO ]
+[INFO ] Program timers:
+[INFO ]   computing_neighbors: 0.105119s
+[INFO ]   total_time: 0.145321s
+[INFO ]   tree_building: 0.005690s
+@endcode
+
+Further documentation on options should be found by using the --help option.
+
+@section allknn The 'AllkNN' class
+
+The 'AllkNN' class is, specifically, a typedef of the more extensible
+NeighborSearch class, querying for nearest neighbors using the squared Euclidean
+distance.
+
+@code
+typedef NeighborSearch<NearestNeighborSort, metric::SquaredEuclideanDistance>
+    AllkNN;
+@endcode
+
+Using the AllkNN class is particularly simple; first, the object must be
+constructed and given a dataset.  Then, the method is run, and two matrices are
+returned: one which holds the indices of the nearest neighbors, and one which
+holds the distances of the nearest neighbors.  These are of the same structure
+as the output --neighbors_file and --reference_file for the CLI interface (see
+above).  A handful of examples of simple usage of the AllkNN class are given
+below.
+
+@subsection allknn_ex1 5 nearest neighbors on a single dataset
+
+@code
+#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+
+using namespace mlpack::neighbor;
+
+// Our dataset matrix, which is column-major.
+extern arma::mat data;
+
+AllkNN a(data);
+
+// The matrices we will store output in.
+arma::Mat<size_t> resultingNeighbors;
+arma::mat resultingDistances;
+
+a.Search(5, resultingNeighbors, resultingDistances);
+@endcode
+
+The output of the search is stored in resultingNeighbors and resultingDistances.
+
+@subsection allknn_ex2 10 nearest neighbors on a query and reference dataset
+
+@code
+#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+
+using namespace mlpack::neighbor;
+
+// Our dataset matrices, which are column-major.
+extern arma::mat queryData, referenceData;
+
+AllkNN a(referenceData, queryData);
+
+// The matrices we will store output in.
+arma::Mat<size_t> resultingNeighbors;
+arma::mat resultingDistances;
+
+a.Search(10, resultingNeighbors, resultingDistances);
+@endcode
+
+@subsection allknn_ex3 Naive (exhaustive) search for 6 nearest neighbors on one
+dataset
+
+This example uses the O(n^2) naive search (not the tree-based search).
+
+@code
+#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+
+using namespace mlpack::neighbor;
+
+// Our dataset matrix, which is column-major.
+extern arma::mat dataset;
+
+AllkNN a(dataset, true);
+
+// The matrices we will store output in.
+arma::Mat<size_t> resultingNeighbors;
+arma::mat resultingDistances;
+
+a.Search(6, resultingNeighbors, resultingDistances);
+@endcode
+
+Needless to say, naive search can be very slow...
+
+@section neighborsearch The extensible 'NeighborSearch' class
+
+The NeighborSearch class is very extensible, having the following template
+arguments:
+
+@code
+template<
+  typename SortPolicy = NearestNeighborSort,
+  typename MetricType = mlpack::metric::SquaredEuclideanDistance,
+  typename TreeType = tree::BinarySpaceTree<bound::HRectBound<2>,
+                                            QueryStat<SortPolicy> >
+>
+class NeighborSearch;
+@endcode
+
+By choosing different components for each of these template classes, a very
+arbitrary neighbor searching object can be constructed.
+
+@subsection sort_policy_doc SortPolicy policy class
+
+The SortPolicy template parameter allows specification of how the NeighborSearch
+object will decide which points are to be searched for.  The
+mlpack::neighbor::NearestNeighborSort class is a well-documented example.  A
+custom SortPolicy class must implement the same methods which
+NearestNeighborSort does:
+
+@code
+static size_t SortDistance(const arma::vec& list, double newDistance);
+
+static bool IsBetter(const double value, const double ref);
+
+template<typename TreeType>
+static double BestNodeToNodeDistance(const TreeType* queryNode,
+                                     const TreeType* referenceNode);
+
+template<typename TreeType>
+static double BestPointToNodeDistance(const arma::vec& queryPoint,
+                                      const TreeType* referenceNode);
+
+static const double WorstDistance();
+
+static const double BestDistance();
+@endcode
+
+The mlpack::neighbor::FurthestNeighborSort class is another implementation,
+which is used to create the 'AllkFN' typedef class, which finds the furthest
+neighbors, as opposed to the nearest neighbors.
+
+@subsection metric_type_doc MetricType policy class
+
+The MetricType policy class allows the neighbor search to take place in any
+arbitrary metric space.  The mlpack::metric::LMetric class is a good example
+implementation.  A MetricType class must provide the following functions:
+
+@code
+// Empty constructor is required.
+MetricType();
+
+// Compute the distance between two points.
+template<typename VecType>
+double Evaluate(const VecType& a, const VecType& b);
+@endcode
+
+Internally, the NeighborSearch class keeps an instantiated MetricType class
+(which can be given in the constructor).   This is useful for a metric like the
+Mahalanobis distance (mlpack::metric::MahalanobisDistance), which must store
+state (the covariance matrix).  Therefore, you can write a non-static MetricType
+class and use it seamlessly with NeighborSearch.
+
+@subsection tree_type_doc TreeType policy class
+
+The NeighborSearch class also allows a custom tree to be used.  The standard
+MLPACK tree, mlpack::tree::BinarySpaceTree, is also highly extensible in its own
+right, and its documentation should be consulted for more information.
+Currently, the NeighborSearch tree requires a tree which only has left and right
+children, and no points in nodes (only in leaves), but this support is planned
+to be extended.
+
+A simple usage of the TreeType policy could be to use a different type of bound
+with the tree.  For instance, you could use a ball bound instead of a
+rectangular bound:
+
+@code
+// Construct a NeighborSearch object with ball bounds.
+NeighborSearch<
+  NearestNeighborSort,
+  metric::SquaredEuclideanDistance,
+  tree::BinarySpaceTree<bound::BallBound<2>,
+                        QueryStat<SortPolicy> >
+> neighborSearch(dataset);
+@endcode
+
+It is important to note that the NeighborSearch class requires use of the
+QueryStat tree statistic to function properly.  Therefore, if you write a custom
+tree, be sure it can accept the QueryStat type.  See the
+mlpack::tree::BinarySpaceTree documentation for more information on tree
+statistics.
+
+@subsection further_doc Further documentation
+
+For further documentation on the NeighborSearch class, consult the
+\ref mlpack::neighbor::NeighborSearch "complete API documentation".
+
+*/
