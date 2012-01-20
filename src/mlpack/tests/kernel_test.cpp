@@ -251,8 +251,8 @@ BOOST_AUTO_TEST_CASE(polynomial_kernel)
   arma::vec b = "0 1 0";
 
   PolynomialKernel pk(5.0, 5.0);
-  BOOST_REQUIRE_CLOSE(pk.Evaluate(a, b), 3125, 0);
-  BOOST_REQUIRE_CLOSE(pk.Evaluate(b, a), 3125, 0);
+  BOOST_REQUIRE_CLOSE(pk.Evaluate(a, b), 3125.0, 0);
+  BOOST_REQUIRE_CLOSE(pk.Evaluate(b, a), 3125.0, 0);
 }
 
 BOOST_AUTO_TEST_CASE(hyperbolic_tangent_kernel)

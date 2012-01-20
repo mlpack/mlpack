@@ -33,6 +33,7 @@ using namespace mlpack::hmm;
 using namespace mlpack::distribution;
 using namespace mlpack::utilities;
 using namespace mlpack::gmm;
+using namespace mlpack::math;
 using namespace arma;
 using namespace std;
 
@@ -43,9 +44,9 @@ int main(int argc, char** argv)
 
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+    RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
-    math::RandomSeed((size_t) std::time(NULL));
+    RandomSeed((size_t) time(NULL));
 
   // Load observations.
   const string modelFile = CLI::GetParam<string>("model_file");
