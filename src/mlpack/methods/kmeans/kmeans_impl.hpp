@@ -206,7 +206,7 @@ Cluster(const MatType& data,
       {
         // The offset is sum^n i - sum^(n - m) i, where n is actualClusters and
         // m is the cluster we are trying to offset to.
-        size_t offset = (((actualClusters - 1) * cluster)
+        size_t offset = (size_t) (((actualClusters - 1) * cluster)
             + (cluster - pow(cluster, 2)) / 2) - 1;
 
         // See if we need to update the distance from this cluster to the first
@@ -224,7 +224,7 @@ Cluster(const MatType& data,
       }
 
       // Now the distances where the first cluster is the first cluster.
-      size_t offset = (((actualClusters - 1) * first)
+      size_t offset = (size_t) (((actualClusters - 1) * first)
           + (first - pow(first, 2)) / 2) - 1;
       for (size_t cluster = first + 1; cluster < actualClusters; cluster++)
       {
@@ -242,8 +242,8 @@ Cluster(const MatType& data,
 
       // Now max the distances for the second cluster (which no longer has
       // anything in it).
-      offset = (((actualClusters - 1) * second) + (second - pow(second, 2)) / 2)
-          - 1;
+      offset = (size_t) (((actualClusters - 1) * second) 
+			 + (second - pow(second, 2)) / 2) - 1;
       for (size_t cluster = second + 1; cluster < actualClusters; cluster++)
         distances(offset + (cluster - second)) = DBL_MAX;
 
