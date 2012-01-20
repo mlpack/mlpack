@@ -18,8 +18,6 @@ endforeach()
 add_library(mlpack SHARED ${MLPACK_SRCS})
 target_link_libraries(mlpack
   armadillo
-  lapack
-  blas
   ${BOOST_LIBS}
   xml2
 )
