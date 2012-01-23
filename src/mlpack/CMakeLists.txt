@@ -55,3 +55,14 @@ install(TARGETS mlpack
    RUNTIME DESTINATION bin
    LIBRARY DESTINATION lib
    ARCHIVE DESTINATION lib)
+
+# Set generated executables to be installed.
+# This will have some odd effects if the user has placed anything else in bin/,
+# but I think we can just hope that they haven't.  At least, an auto-builder
+# won't do that...
+install(DIRECTORY ${CMAKE_BINARY_DIR}/bin/
+  DESTINATION bin # ugly hack!
+  USE_SOURCE_PERMISSIONS
+  COMPONENT mlpack
+  FILES_MATCHING
+  PATTERN *[^_test])
