@@ -66,3 +66,10 @@ install(DIRECTORY ${CMAKE_BINARY_DIR}/bin/
   COMPONENT mlpack
   FILES_MATCHING
   PATTERN *[^_test])
+
+# For 'make test'.
+add_custom_target(test
+  ${CMAKE_BINARY_DIR}/bin/mlpack_test
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/ # This is where test files are put.
+  COMMENT "Running MLPACK test"
+  DEPENDS mlpack_test)
