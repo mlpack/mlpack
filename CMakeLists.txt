@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(MLPACK C CXX)
+project(mlpack C CXX)
 
 ## External Libraries
 #  ls /usr/share/cmake-2.6/Modules/Find* | \
@@ -126,5 +126,12 @@ if (DOXYGEN_FOUND)
     COMMAND cmake -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/doc ${CMAKE_BINARY_DIR}/doc
     COMMENT "Copying API documentation to build directory"
+  )
+
+  # Add installation hook for documentation (only HTML)
+  include(GNUInstallDirs)
+  install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}
+    COMPONENT doc
   )
 endif (DOXYGEN_FOUND)
