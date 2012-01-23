@@ -109,3 +109,22 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
 
 ## recurse
 add_subdirectory(src/mlpack) # mlpack
+
+# Make a target to generate the documentation.  If Doxygen isn't installed, then
+# I guess this option will just be unavailable.
+find_package(Doxygen)
+if (DOXYGEN_FOUND)
+  # It may be better if we built the documentation into the build directory, but
+  # I'm leaving this for a later day.
+  add_custom_target(doc
+    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT "Generating API documentation with Doxygen"
+  )
+  add_custom_command(TARGET doc
+    POST_BUILD
+    COMMAND cmake -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/doc ${CMAKE_BINARY_DIR}/doc
+    COMMENT "Copying API documentation to build directory"
+  )
+endif (DOXYGEN_FOUND)
