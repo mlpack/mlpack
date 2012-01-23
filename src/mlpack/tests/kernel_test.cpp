@@ -271,8 +271,8 @@ BOOST_AUTO_TEST_CASE(laplacian_kernel)
   arma::vec b = "0 1 0";
 
   LaplacianKernel lk(1.0);
-  BOOST_REQUIRE_CLOSE(lk.Evaluate(a, b), 0.2431167, 1e-5);
-  BOOST_REQUIRE_CLOSE(lk.Evaluate(b, a), 0.2431167, 1e-5);
+  BOOST_REQUIRE_CLOSE(lk.Evaluate(a, b), 0.243116734, 5e-5);
+  BOOST_REQUIRE_CLOSE(lk.Evaluate(b, a), 0.243116734, 5e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
