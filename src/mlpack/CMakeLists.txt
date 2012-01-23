@@ -61,7 +61,7 @@ install(TARGETS mlpack
 # but I think we can just hope that they haven't.  At least, an auto-builder
 # won't do that...
 install(DIRECTORY ${CMAKE_BINARY_DIR}/bin/
-  DESTINATION bin # ugly hack!
+  DESTINATION bin
   USE_SOURCE_PERMISSIONS
   COMPONENT mlpack
   FILES_MATCHING
