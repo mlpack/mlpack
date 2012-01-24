@@ -128,10 +128,8 @@ if (DOXYGEN_FOUND)
     COMMENT "Copying API documentation to build directory"
   )
 
-  # Add installation hook for documentation (only HTML)
-  include(GNUInstallDirs)
   install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}
+    DESTINATION share/doc/mlpack
     COMPONENT doc
   )
 endif (DOXYGEN_FOUND)
