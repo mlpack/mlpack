@@ -84,12 +84,14 @@ WARN_LOGFILE           =
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = ./src/mlpack \
-                         ./doc/guide
+                         ./doc/guide \
+                         ./doc/tutorials
 FILE_PATTERNS          = *.c \
                          *.cc \
                          *.h \
                          *.hpp \
-                         *.cpp
+                         *.cpp \
+                         *.txt
 RECURSIVE              = YES
 EXCLUDE                =
 EXCLUDE_SYMLINKS       = YES
@@ -135,7 +137,7 @@ HTML_OUTPUT            = html
 HTML_FILE_EXTENSION    = .html
 HTML_HEADER            =
 HTML_FOOTER            =
-HTML_STYLESHEET        = doc/doxygen/stylesheet.css
+HTML_STYLESHEET        =
 HTML_ALIGN_MEMBERS     = YES
 GENERATE_HTMLHELP      = NO
 CHM_FILE               =
