@@ -46,8 +46,8 @@ int main(int argc, char* argv[])
   const string trainName = CLI::GetParam<string>("input_file");
   const string testName = CLI::GetParam<string>("test_file");
   const string responseName = CLI::GetParam<string>("input_responses");
-  const string outputFile = CLI::GetParam<string>("outputFile");
-  const string outputPredictions = CLI::GetParam<string>("outputPredictions");
+  const string outputFile = CLI::GetParam<string>("output_file");
+  const string outputPredictions = CLI::GetParam<string>("output_predictions");
 
   mat regressors;
   mat responses;
