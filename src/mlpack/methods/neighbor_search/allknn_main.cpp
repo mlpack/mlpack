@@ -72,6 +72,7 @@ int main(int argc, char *argv[])
   bool singleMode = CLI::HasParam("single_mode");
 
   arma::mat referenceData;
+  arma::mat queryData; // So it doesn't go out of scope.
   if (!data::Load(referenceFile.c_str(), referenceData))
     Log::Fatal << "Reference file " << referenceFile << "not found." << endl;
 
@@ -119,6 +120,8 @@ int main(int argc, char *argv[])
 
   BinarySpaceTree<bound::HRectBound<2>, QueryStat<NearestNeighborSort> >
       refTree(referenceData, oldFromNewRefs, leafSize);
+  BinarySpaceTree<bound::HRectBound<2>, QueryStat<NearestNeighborSort> >*
+      queryTree = NULL; // Empty for now.
 
   Timer::Stop("tree_building");
 
@@ -127,7 +130,6 @@ int main(int argc, char *argv[])
   if (CLI::GetParam<string>("query_file") != "")
   {
     string queryFile = CLI::GetParam<string>("query_file");
-    arma::mat queryData;
 
     if (!data::Load(queryFile.c_str(), queryData))
       Log::Fatal << "Query file " << queryFile << " not found" << endl;
@@ -143,12 +145,13 @@ int main(int argc, char *argv[])
     // NeighborSearch, it does not copy the matrix.
     Timer::Start("tree_building");
 
-    BinarySpaceTree<bound::HRectBound<2>, QueryStat<NearestNeighborSort> >
-        queryTree(queryData, oldFromNewQueries, leafSize);
+    queryTree = new BinarySpaceTree<bound::HRectBound<2>,
+        QueryStat<NearestNeighborSort> >(queryData, oldFromNewQueries,
+        leafSize);
 
     Timer::Stop("tree_building");
 
-    allknn = new AllkNN(&refTree, &queryTree, referenceData, queryData,
+    allknn = new AllkNN(&refTree, queryTree, referenceData, queryData,
         singleMode);
 
     Log::Info << "Tree built." << endl;
@@ -201,6 +204,10 @@ int main(int argc, char *argv[])
       }
     }
   }
+
+  // Clean up.
+  if (queryTree)
+    delete queryTree;
 
   // Save output.
   data::Save(distancesFile, distances);
