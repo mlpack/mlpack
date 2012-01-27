@@ -77,47 +77,6 @@ class AugLagrangian
   LagrangianFunction& function;
   //! Number of memory points for L-BFGS.
   size_t numBasis;
-
-  /**
-   * This is a utility class, which we will pass to L-BFGS during the
-   * optimization.  We use a utility class so that we do not have to expose
-   * Evaluate() and Gradient() to the AugLagrangian public interface; instead,
-   * with a private class, these methods are correctly protected (since they
-   * should not be being used anywhere else).
-   */
-  class AugLagrangianFunction
-  {
-   public:
-    AugLagrangianFunction(LagrangianFunction& functionIn,
-                          arma::vec& lambdaIn,
-                          double sigma);
-
-    double Evaluate(const arma::mat& coordinates);
-    void Gradient(const arma::mat& coordinates, arma::mat& gradient);
-
-    const arma::mat& GetInitialPoint() const;
-
-    //! Get the Lagrange multipliers.
-    const arma::vec& Lambda() const { return lambda; }
-    //! Modify the Lagrange multipliers.
-    arma::vec& Lambda() { return lambda; }
-
-    //! Get sigma.
-    double Sigma() const { return sigma; }
-    //! Modify sigma.
-    double& Sigma() { return sigma; }
-
-    //! Get the Lagrangian function.
-    const LagrangianFunction& Function() const { return function; }
-    //! Modify the Lagrangian function.
-    LagrangianFunction& Function() { return function; }
-
-   private:
-    arma::vec lambda;
-    double sigma;
-
-    LagrangianFunction& function;
-  };
 };
 
 }; // namespace optimization

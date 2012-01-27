@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   aug_lagrangian.hpp
   aug_lagrangian_impl.hpp
+  aug_lagrangian_function.hpp
+  aug_lagrangian_function_impl.hpp
   aug_lagrangian_test_functions.hpp
   aug_lagrangian_test_functions.cpp
 )

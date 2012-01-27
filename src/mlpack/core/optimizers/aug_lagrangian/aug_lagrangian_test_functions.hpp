@@ -31,10 +31,12 @@ class AugLagrangianTestFunction
 
   size_t NumConstraints() const { return 1; }
 
-  double EvaluateConstraint(size_t index, const arma::mat& coordinates);
-  void GradientConstraint(size_t index, arma::mat& gradient);
+  double EvaluateConstraint(const size_t index, const arma::mat& coordinates);
+  void GradientConstraint(const size_t index,
+                          const arma::mat& coordinates,
+                          arma::mat& gradient);
 
-  const arma::mat& GetInitialPoint() { return initialPoint; }
+  const arma::mat& GetInitialPoint() const { return initialPoint; }
 
  private:
   arma::mat initialPoint;
@@ -62,12 +64,12 @@ class GockenbachFunction
 
   size_t NumConstraints() const { return 2; };
 
-  double EvaluateConstraint(size_t index, const arma::mat& coordinates);
-  void GradientConstraint(size_t index,
+  double EvaluateConstraint(const size_t index, const arma::mat& coordinates);
+  void GradientConstraint(const size_t index,
                           const arma::mat& coordinates,
                           arma::mat& gradient);
 
-  const arma::mat& GetInitialPoint() { return initialPoint; }
+  const arma::mat& GetInitialPoint() const { return initialPoint; }
 
  private:
   arma::mat initialPoint;
@@ -115,16 +117,19 @@ class LovaszThetaSDP
 
   size_t NumConstraints() const;
 
-  double EvaluateConstraint(size_t index, const arma::mat& coordinates);
-  void GradientConstraint(size_t index,
+  double EvaluateConstraint(const size_t index, const arma::mat& coordinates);
+  void GradientConstraint(const size_t index,
                           const arma::mat& coordinates,
                           arma::mat& gradient);
 
   const arma::mat& GetInitialPoint();
 
+  const arma::mat& Edges() const { return edges; }
+  arma::mat&       Edges()       { return edges; }
+
  private:
   arma::mat edges;
-  int vertices;
+  size_t vertices;
 
   arma::mat initialPoint;
 };

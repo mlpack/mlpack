@@ -10,6 +10,7 @@
 #define __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_IMPL_HPP
 
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include "aug_lagrangian_function.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -31,13 +32,15 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
   // Choose initial lambda parameters (vector of zeros, for simplicity).
   arma::vec lambda(function.NumConstraints());
   lambda.ones();
+  lambda *= -1;
+  lambda[0] = -double(coordinates.n_cols);
   double penalty_threshold = DBL_MAX; // Ensure we update lambda immediately.
 
   // Track the last objective to compare for convergence.
   double last_objective = function.Evaluate(coordinates);
 
   // First, we create an instance of the utility function class.
-  AugLagrangianFunction f(function, lambda, sigma);
+  AugLagrangianFunction<LagrangianFunction> f(function, lambda, sigma);
 
   // First, calculate the current penalty.
   double penalty = 0;
@@ -52,13 +55,19 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
   size_t it;
   for (it = 0; it != (maxIterations - 1); it++)
   {
-    Log::Info << "AugLagrangian on iteration " << it
+    Log::Warn << "AugLagrangian on iteration " << it
         << ", starting with objective "  << last_objective << "." << std::endl;
 
+ //   Log::Warn << coordinates << std::endl;
+
+//    Log::Warn << trans(coordinates) * coordinates << std::endl;
+
     // Use L-BFGS to optimize this function for the given lambda and sigma.
-    L_BFGS<AugLagrangianFunction> lbfgs(f, numBasis);
+    L_BFGS<AugLagrangianFunction<LagrangianFunction> >
+        lbfgs(f, numBasis, 1e-4, 0.9, 1e-10, 100, 1e-20, 1e20);
+
     if (!lbfgs.Optimize(0, coordinates))
-      Log::Info << "L-BFGS reported an error during optimization."
+      Log::Warn << "L-BFGS reported an error during optimization."
           << std::endl;
 
     // Check if we are done with the entire optimization (the threshold we are
@@ -76,10 +85,22 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
     // First, calculate the current penalty.
     double penalty = 0;
     for (size_t i = 0; i < function.NumConstraints(); i++)
+    {
       penalty += std::pow(function.EvaluateConstraint(i, coordinates), 2);
+//      Log::Debug << "Constraint " << i << " is " <<
+//          function.EvaluateConstraint(i, coordinates) << std::endl;
+    }
 
-    Log::Info << "Penalty is " << penalty << " (threshold "
+    Log::Warn << "Penalty is " << penalty << " (threshold "
         << penalty_threshold << ")." << std::endl;
+
+    for (size_t i = 0; i < function.NumConstraints(); ++i)
+    {
+      arma::mat tmpgrad;
+      function.GradientConstraint(i, coordinates, tmpgrad);
+//      Log::Debug << "Gradient of constraint " << i << " is " << std::endl;
+//      Log::Debug << tmpgrad << std::endl;
+    }
 
     if (penalty < penalty_threshold) // We update lambda.
     {
@@ -93,7 +114,7 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
       // penalty.  TODO: this factor should be a parameter (from CLI).  The
       // value of 0.25 is taken from Burer and Monteiro (2002).
       penalty_threshold = 0.25 * penalty;
-      Log::Info << "Lagrange multiplier estimates updated." << std::endl;
+      Log::Warn << "Lagrange multiplier estimates updated." << std::endl;
     }
     else
     {
@@ -102,82 +123,11 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
       // (2002).
       sigma *= 10;
       f.Sigma() = sigma;
-      Log::Info << "Updated sigma to " << sigma << "." << std::endl;
+      Log::Warn << "Updated sigma to " << sigma << "." << std::endl;
     }
   }
 
   return false;
-}
-
-
-template<typename LagrangianFunction>
-AugLagrangian<LagrangianFunction>::AugLagrangianFunction::AugLagrangianFunction(
-      LagrangianFunction& functionIn, arma::vec& lambdaIn, double sigma) :
-    lambda(lambdaIn),
-    sigma(sigma),
-    function(functionIn)
-{
-  // Nothing to do.
-}
-
-template<typename LagrangianFunction>
-double AugLagrangian<LagrangianFunction>::AugLagrangianFunction::Evaluate(
-    const arma::mat& coordinates)
-{
-  // The augmented Lagrangian is evaluated as
-  //   f(x) + {-lambdai * c_i(x) + (sigma / 2) c_i(x)^2} for all constraints
-//  Log::Debug << "Evaluating augmented Lagrangian." << std::endl;
-  double objective = function.Evaluate(coordinates);
-
-  // Now loop over constraints.
-  for (size_t i = 0; i < function.NumConstraints(); i++)
-  {
-    double constraint = function.EvaluateConstraint(i, coordinates);
-    objective += (-lambda[i] * constraint) +
-        sigma * std::pow(constraint, 2) / 2;
-  }
-
-//  Log::Warn << "Overall objective is " << objective << "." << std::endl;
-
-  return objective;
-}
-
-template<typename LagrangianFunction>
-void AugLagrangian<LagrangianFunction>::AugLagrangianFunction::Gradient(
-    const arma::mat& coordinates, arma::mat& gradient)
-{
-  // The augmented Lagrangian's gradient is evaluated as
-  // f'(x) + {(-lambdai + sigma * c_i(x)) * c'_i(x)} for all constraints
-//  gradient.zeros();
-  function.Gradient(coordinates, gradient);
-//  Log::Debug << "Objective function gradient norm is "
-//      << arma::norm(gradient, 2) << "." << std::endl;
-//  std::cout << gradient << std::endl;
-
-  arma::mat constraint_gradient; // Temporary for constraint gradients.
-  for (size_t i = 0; i < function.NumConstraints(); i++)
-  {
-    function.GradientConstraint(i, coordinates, constraint_gradient);
-
-    // Now calculate scaling factor and add to existing gradient.
-    arma::mat tmp_gradient;
-    tmp_gradient = (-lambda[i] + sigma *
-        function.EvaluateConstraint(i, coordinates)) * constraint_gradient;
-//    Log::Debug << "Gradient for constraint " << i << " (with lambda = "
-//        << lambda[i] << ") is " << std::endl;
-//    std::cout << tmp_gradient;
-    gradient += tmp_gradient;
-  }
-//  Log::Debug << "Overall gradient norm is " << arma::norm(gradient, 2) << "."
-//      << std::endl;
-//  std::cout << gradient << std::endl;
-}
-
-template<typename LagrangianFunction>
-const arma::mat& AugLagrangian<LagrangianFunction>::AugLagrangianFunction::
-    GetInitialPoint() const
-{
-  return function.GetInitialPoint();
 }
 
 }; // namespace optimization
