@@ -37,6 +37,10 @@ find_package_handle_standard_args(LibXml2  DEFAULT_MSG
 
 mark_as_advanced(LIBXML2_INCLUDE_DIR LIBXML2_LIBRARY )
 
+# Don't allow any RPATH usage
+# (http://lintian.debian.org/tags/binary-or-shlib-defines-rpath.html)
+set(CMAKE_SKIP_RPATH TRUE)
+
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
