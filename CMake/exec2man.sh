@@ -53,11 +53,11 @@ options=`./$name -h | \
 synopsis="$name [-h] [-v] $reqoptions $options";
 
 # Preview the whole thing first.
-./$name -h | \
-  awk -v syn="$synopsis" \
-      '{ if (NR == 1) print "NAME\n '$name' - "tolower($0)"\nSYNOPSIS\n "syn" \nDESCRIPTION\n" ; else print } ' | \
-  sed '/^[^ ]/ y/qwertyuiopasdfghjklzxcvbnm:/QWERTYUIOPASDFGHJKLZXCVBNM /' | \
-  txt2man -T -P mlpack -t $name -d 1
+#./$name -h | \
+#  awk -v syn="$synopsis" \
+#      '{ if (NR == 1) print "NAME\n '$name' - "tolower($0)"\nSYNOPSIS\n "syn" \nDESCRIPTION\n" ; else print } ' | \
+#  sed '/^[^ ]/ y/qwertyuiopasdfghjklzxcvbnm:/QWERTYUIOPASDFGHJKLZXCVBNM /' | \
+#  txt2man -T -P mlpack -t $name -d 1
 
 # Now do it.
 ./$name -h | \
