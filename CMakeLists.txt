@@ -132,3 +132,31 @@ if (DOXYGEN_FOUND)
     OPTIONAL
   )
 endif (DOXYGEN_FOUND)
+
+# Make a target to generate the man page documentation, but only if we are on a
+# UNIX-like system.
+if (UNIX)
+  find_program(TXT2MAN txt2man)
+
+  # It's not a requirement that we make man pages.
+  if (NOT TXT2MAN)
+    message(WARNING "txt2man not found; man pages will not be generated.")
+  else (NOT TXT2MAN)
+    # We have the tools.  We can make them.
+    add_custom_target(man ALL
+      ${CMAKE_CURRENT_SOURCE_DIR}/CMake/allexec2man.sh
+          ${CMAKE_CURRENT_SOURCE_DIR}/CMake/exec2man.sh
+          ${CMAKE_BINARY_DIR}/share/man
+      WORKING_DIRECTORY
+          ${CMAKE_BINARY_DIR}/bin
+      DEPENDS
+          allkfn allknn emst gmm hmm_generate hmm_loglik hmm_train hmm_viterbi
+          kernel_pca kmeans lars linear_regression mvu nbc nca pca radical
+      COMMENT "Generating man pages from built executables."
+    )
+
+    # Set the rules to install the documentation.
+    install(DIRECTORY ${CMAKE_BINARY_DIR}/share/man/
+        DESTINATION share/man/man1/)
+  endif (NOT TXT2MAN)
+endif (UNIX)
