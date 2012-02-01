@@ -1,6 +1,6 @@
 // Copyright (C) 2008-2011 NICTA (www.nicta.com.au)
 // Copyright (C) 2008-2011 Conrad Sanderson
-// 
+//
 // This file is part of the Armadillo C++ library.
 // It is provided without any warranty of fitness
 // for any purpose. You can redistribute this file
@@ -16,10 +16,18 @@
 
 inline                   Mat(const SpMat<eT>& m);
 inline const Mat&  operator=(const SpMat<eT>& m);
-inline const Mat& operator+=(const SpMat<eT>& m);
-inline const Mat& operator-=(const SpMat<eT>& m);
-inline const Mat& operator*=(const SpMat<eT>& m);
-inline const Mat& operator%=(const SpMat<eT>& m);
-inline const Mat& operator/=(const SpMat<eT>& m);
+//inline const Mat& operator+=(const SpMat<eT>& m);
+//inline const Mat& operator-=(const SpMat<eT>& m);
+//inline const Mat& operator*=(const SpMat<eT>& m);
+//inline const Mat& operator%=(const SpMat<eT>& m);
+//inline const Mat& operator/=(const SpMat<eT>& m);
+
+inline                   Mat(const SpSubview<eT>& m);
+inline const Mat&  operator=(const SpSubview<eT>& m);
+//inline const Mat& operator+=(const SpSubview<eT>& m);
+//inline const Mat& operator-=(const SpSubview<eT>& m);
+//inline const Mat& operator*=(const SpSubview<eT>& m);
+//inline const Mat& operator%=(const SpSubview<eT>& m);
+//inline const Mat& operator/=(const SpSubview<eT>& m);
 
 //! @}

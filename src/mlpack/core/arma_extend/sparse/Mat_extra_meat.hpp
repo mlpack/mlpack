@@ -1,6 +1,6 @@
 // Copyright (C) 2008-2011 NICTA (www.nicta.com.au)
 // Copyright (C) 2008-2011 Conrad Sanderson
-// 
+//
 // This file is part of the Armadillo C++ library.
 // It is provided without any warranty of fitness
 // for any purpose. You can redistribute this file
@@ -57,6 +57,61 @@ Mat<eT>::operator=(const SpMat<eT>& m)
     {
     at(it.row, it.col) = (*it);
     }
+
+  return *this;
   }
+
+
+
+template<typename eT>
+inline
+Mat<eT>::Mat(const SpSubview<eT>& m)
+  : n_rows(m.n_rows)
+  , n_cols(m.n_cols)
+  , n_elem(m.n_elem)
+  , vec_state(0)
+  , mem_state(0)
+  , mem()
+  {
+  arma_extra_debug_sigprint_this(this);
+
+  // Initializes memory.
+  init_cold();
+
+  // We don't have an iterator at the moment... so do it the hard way.
+  // Much slower than it could otherwise be, unfortunately.
+  for (uword row = 0; row < m.n_rows; ++row)
+    {
+    for (uword col = 0; col < m.n_cols; ++col)
+      {
+      at(row, col) = m.at(row, col);
+      }
+    }
+  }
+
+
+
+template<typename eT>
+inline
+const Mat<eT>&
+Mat<eT>::operator=(const SpSubview<eT>& m)
+  {
+  arma_extra_debug_sigprint();
+
+  init_warm(m.n_rows, m.n_cols);
+
+  // We don't have an iterator at the moment... so do it the hard way.
+  // Much slower than it could otherwise be, unfortunately.
+  for (uword row = 0; row < m.n_rows; ++row)
+    {
+    for (uword col = 0; col < m.n_cols; ++col)
+      {
+      at(row, col) = m.at(row, col);
+      }
+    }
+
+  return *this;
+  }
+
 
 //! @}
