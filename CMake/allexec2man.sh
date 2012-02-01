@@ -11,6 +11,7 @@
 exec2man=$1
 outdir=$2
 
+mkdir -p $outdir
 for program in `find . -perm /u=x,g=x,o=x | \
                 grep -v '[.]$' | \
                 grep -v '_test$' | \
