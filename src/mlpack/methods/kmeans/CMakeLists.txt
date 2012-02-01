@@ -27,3 +27,4 @@ add_executable(kmeans
 target_link_libraries(kmeans
   mlpack
 )
+install(TARGETS kmeans RUNTIME DESTINATION bin)

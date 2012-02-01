@@ -24,3 +24,4 @@ add_executable(mvu
 target_link_libraries(mvu
   mlpack
 )
+install(TARGETS mvu RUNTIME DESTINATION bin)

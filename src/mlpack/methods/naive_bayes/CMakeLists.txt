@@ -22,3 +22,4 @@ add_executable(nbc
 target_link_libraries(nbc
   mlpack
 )
+install(TARGETS nbc RUNTIME DESTINATION bin)

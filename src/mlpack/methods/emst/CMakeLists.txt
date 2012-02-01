@@ -26,3 +26,4 @@ add_executable(emst
 target_link_libraries(emst
   mlpack
 )
+install(TARGETS emst RUNTIME DESTINATION bin)

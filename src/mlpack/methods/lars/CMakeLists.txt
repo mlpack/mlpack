@@ -18,7 +18,7 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 add_executable(lars
   lars_main.cpp
 )
-
 target_link_libraries(lars
   mlpack
 )
+install(TARGETS lars RUNTIME DESTINATION bin)

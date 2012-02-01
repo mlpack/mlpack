@@ -26,3 +26,4 @@ add_executable(gmm
 target_link_libraries(gmm
   mlpack
 )
+install(TARGETS gmm RUNTIME DESTINATION bin)
