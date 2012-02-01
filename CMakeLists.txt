@@ -58,7 +58,6 @@ if(Boost_MAJOR_VERSION EQUAL 1 AND Boost_MINOR_VERSION GREATER 45)
   set(BOOST_LIBS ${BOOST_LIBS} "boost_random")
 endif(Boost_MAJOR_VERSION EQUAL 1 AND Boost_MINOR_VERSION GREATER 45)
 
-
 # Default to debugging mode for developers.
 option(DEBUG "Compile with debugging information" ON)
 option(PROFILE "Compile with profiling information" ON)
@@ -101,7 +100,6 @@ include_directories(${LIBXML2_INCLUDE_DIRS})
 include(CMake/TargetDistclean.cmake OPTIONAL)
 
 include_directories(${CMAKE_SOURCE_DIR})
-#TODO link_directories()
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)

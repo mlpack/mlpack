@@ -36,3 +36,5 @@ add_executable(allkfn
 target_link_libraries(allkfn
   mlpack
 )
+
+install(TARGETS allknn allkfn RUNTIME DESTINATION bin)

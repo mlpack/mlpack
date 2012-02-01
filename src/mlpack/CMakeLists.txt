@@ -51,21 +51,12 @@ endforeach()
 # collected to include/.
 install(DIRECTORY ${CMAKE_BINARY_DIR}/include/mlpack DESTINATION include)
 
+# Set generated executables to be installed.  Unfortunately they must manually
+# be entered...
 install(TARGETS mlpack
-   RUNTIME DESTINATION bin
-   LIBRARY DESTINATION lib
-   ARCHIVE DESTINATION lib)
-
-# Set generated executables to be installed.
-# This will have some odd effects if the user has placed anything else in bin/,
-# but I think we can just hope that they haven't.  At least, an auto-builder
-# won't do that...
-install(DIRECTORY ${CMAKE_BINARY_DIR}/bin/
-  DESTINATION bin
-  USE_SOURCE_PERMISSIONS
-  COMPONENT mlpack
-  FILES_MATCHING
-  PATTERN *[^_test])
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib)
 
 # For 'make test'.
 add_custom_target(test

@@ -19,8 +19,7 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 add_executable(kernel_pca
   kernel_pca_main.cpp
 )
-
 target_link_libraries(kernel_pca
   mlpack
 )
-
+install(TARGETS kernel_pca RUNTIME DESTINATION bin)

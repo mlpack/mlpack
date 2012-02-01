@@ -24,3 +24,4 @@ add_executable(nca
 target_link_libraries(nca
   mlpack
 )
+install(TARGETS nca RUNTIME DESTINATION bin)

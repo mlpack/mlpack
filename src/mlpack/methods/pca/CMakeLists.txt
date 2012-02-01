@@ -22,3 +22,4 @@ add_executable(pca
 target_link_libraries(pca
   mlpack
 )
+install(TARGETS pca RUNTIME DESTINATION bin)

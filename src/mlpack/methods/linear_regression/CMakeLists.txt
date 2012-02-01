@@ -23,3 +23,4 @@ add_executable(linear_regression
 target_link_libraries(linear_regression
   mlpack
 )
+install(TARGETS linear_regression RUNTIME DESTINATION bin)
