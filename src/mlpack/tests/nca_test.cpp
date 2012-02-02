@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxInitialPoint)
       if (row == col)
         BOOST_REQUIRE_CLOSE(initialPoint(row, col), 1.0, 1e-5);
       else
-        BOOST_REQUIRE(initialPoint(row, col) == 0.0);
+        BOOST_REQUIRE_SMALL(initialPoint(row, col), 1e-5);
     }
   }
 }
@@ -84,14 +84,15 @@ BOOST_AUTO_TEST_CASE(SoftmaxInitialGradient)
   SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
 
   arma::mat gradient;
-  sef.Gradient(arma::eye<arma::mat>(2, 2), gradient);
+  arma::mat coordinates = arma::eye<arma::mat>(2, 2);
+  sef.Gradient(coordinates, gradient);
 
   // Results painstakingly calculated by hand by rcurtin (recorded forever in
   // his notebook).  As a result of lack of precision of the by-hand result, the
   // tolerance is fairly high.
   BOOST_REQUIRE_CLOSE(gradient(0, 0), -0.089766, 0.05);
-  BOOST_REQUIRE(gradient(1, 0) == 0.0);
-  BOOST_REQUIRE(gradient(0, 1) == 0.0);
+  BOOST_REQUIRE_SMALL(gradient(1, 0), 1e-5);
+  BOOST_REQUIRE_SMALL(gradient(0, 1), 1e-5);
   BOOST_REQUIRE_CLOSE(gradient(1, 1), 1.63823, 0.01);
 }
 
@@ -130,10 +131,10 @@ BOOST_AUTO_TEST_CASE(SoftmaxOptimalGradient)
   arma::mat gradient;
   sef.Gradient(arma::eye<arma::mat>(2, 2), gradient);
 
-  BOOST_REQUIRE(gradient(0, 0) == 0.0);
-  BOOST_REQUIRE(gradient(0, 1) == 0.0);
-  BOOST_REQUIRE(gradient(1, 0) == 0.0);
-  BOOST_REQUIRE(gradient(1, 1) == 0.0);
+  BOOST_REQUIRE_SMALL(gradient(0, 0), 1e-5);
+  BOOST_REQUIRE_SMALL(gradient(0, 1), 1e-5);
+  BOOST_REQUIRE_SMALL(gradient(1, 0), 1e-5);
+  BOOST_REQUIRE_SMALL(gradient(1, 1), 1e-5);
 }
 
 //
