@@ -33,7 +33,7 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
   arma::vec lambda(function.NumConstraints());
   lambda.ones();
   lambda *= -1;
-  lambda[0] = -double(coordinates.n_cols);
+  lambda[0] = -0.70 * double(coordinates.n_cols);
   double penalty_threshold = DBL_MAX; // Ensure we update lambda immediately.
 
   // Track the last objective to compare for convergence.
@@ -96,8 +96,8 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
 
     for (size_t i = 0; i < function.NumConstraints(); ++i)
     {
-      arma::mat tmpgrad;
-      function.GradientConstraint(i, coordinates, tmpgrad);
+//      arma::mat tmpgrad;
+//      function.GradientConstraint(i, coordinates, tmpgrad);
 //      Log::Debug << "Gradient of constraint " << i << " is " << std::endl;
 //      Log::Debug << tmpgrad << std::endl;
     }

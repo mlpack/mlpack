@@ -17,22 +17,43 @@
 namespace mlpack {
 namespace optimization {
 
-bool LRSDP::Optimize(arma::mat& coordinates)
+double LRSDP::Optimize(arma::mat& coordinates)
 {
   // Create the Augmented Lagrangian function.
   AugLagrangian<LRSDP> auglag(*this);
 
   auglag.Optimize(coordinates);
+
+  return Evaluate(coordinates);
 }
 
 double LRSDP::Evaluate(const arma::mat& coordinates) const
 {
-  Log::Fatal << "LRSDP::Evaluate() called!  Uh-oh..." << std::endl;
+  return -accu(coordinates * trans(coordinates));
 }
 
 void LRSDP::Gradient(const arma::mat& coordinates, arma::mat& gradient) const
 {
   Log::Fatal << "LRSDP::Gradient() called!  Uh-oh..." << std::endl;
+}
+
+double LRSDP::EvaluateConstraint(const size_t index,
+                                 const arma::mat& coordinates) const
+{
+  return trace(a[index] * (coordinates * trans(coordinates))) - b[index];
+}
+
+void LRSDP::GradientConstraint(const size_t index,
+                               const arma::mat& coordinates,
+                               arma::mat& gradient) const
+{
+  Log::Fatal << "LRSDP::GradientConstraint() called!  Uh-oh..." << std::endl;
+}
+
+const arma::mat& LRSDP::GetInitialPoint()
+{
+  initialPoint.ones(2, 2);
+  return initialPoint;
 }
 
 // Custom specializations of the AugmentedLagrangianFunction for the LRSDP case.
@@ -63,8 +84,8 @@ double AugLagrangianFunction<LRSDP>::Evaluate(const arma::mat& coordinates)
 }
 
 template<>
-double AugLagrangianFunction<LRSDP>::Gradient(const arma::mat& coordinates,
-                                              arma::mat& gradient) const
+void AugLagrangianFunction<LRSDP>::Gradient(const arma::mat& coordinates,
+                                            arma::mat& gradient) const
 {
   // We can calculate the gradient in a smart way.
   // L'(R, y, s) = 2 * S' * R
