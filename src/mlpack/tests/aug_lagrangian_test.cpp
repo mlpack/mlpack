@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_SUITE(AugLagrangianTest);
  * Tests the Augmented Lagrangian optimizer using the
  * AugmentedLagrangianTestFunction class.
  */
-BOOST_AUTO_TEST_CASE(AugLagrangianTestFunction)
+BOOST_AUTO_TEST_CASE(AugLagrangianTestFunctionTest)
 {
   // The choice of 10 memory slots is arbitrary.
   AugLagrangianTestFunction f;
@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(AugLagrangianTestFunction)
 
   arma::vec coords = f.GetInitialPoint();
 
-  if (!aug.Optimize(0, coords))
+  if (!aug.Optimize(coords, 0))
     BOOST_FAIL("Optimization reported failure.");
 
   double finalValue = f.Evaluate(coords);
@@ -41,14 +41,14 @@ BOOST_AUTO_TEST_CASE(AugLagrangianTestFunction)
 /**
  * Tests the Augmented Lagrangian optimizer using the Gockenbach function.
  */
-BOOST_AUTO_TEST_CASE(GockenbachFunction)
+BOOST_AUTO_TEST_CASE(GockenbachFunctionTest)
 {
   GockenbachFunction f;
   AugLagrangian<GockenbachFunction> aug(f, 10);
 
   arma::vec coords = f.GetInitialPoint();
 
-  if (!aug.Optimize(0, coords))
+  if (!aug.Optimize(coords, 0))
     BOOST_FAIL("Optimization reported failure.");
 
   double finalValue = f.Evaluate(coords);
@@ -61,8 +61,8 @@ BOOST_AUTO_TEST_CASE(GockenbachFunction)
 
 /**
  * Extremely simple test case for the Lovasz theta SDP.
- */
-BOOST_AUTO_TEST_CASE(ExtremelySimpleLovaszThetaSdp)
+ *
+BOOST_AUTO_TEST_CASE(ExtremelySimpleLovaszThetaSDPTest)
 {
   // Manually input the single edge.
   arma::mat edges = "0; 1";
@@ -71,13 +71,16 @@ BOOST_AUTO_TEST_CASE(ExtremelySimpleLovaszThetaSdp)
   AugLagrangian<LovaszThetaSDP> aug(ltsdp, 10);
 
   arma::mat coords = ltsdp.GetInitialPoint();
+  Log::Warn << coords * trans(coords) << std::endl;
 
-  if (!aug.Optimize(0, coords))
+  if (!aug.Optimize(coords, 0))
     BOOST_FAIL("Optimization reported failure.");
 
   double finalValue = ltsdp.Evaluate(coords);
 
-  arma::mat X = trans(coords) * coords;
+  arma::mat X = coords * trans(coords);
+
+  Log::Warn << X << std::endl;
 
   BOOST_CHECK_CLOSE(finalValue, -1.0, 1e-5);
 
@@ -92,22 +95,25 @@ BOOST_AUTO_TEST_CASE(ExtremelySimpleLovaszThetaSdp)
  *
 BOOST_AUTO_TEST_CASE(lovasz_theta_johnson8_4_4)
 {
+  Log::Info.ignoreInput = true;
+
   arma::mat edges;
   // Hardcoded filename: bad!
-  data::Load("MANN-a27.csv", edges);
+  data::Load("johnson8-4-4.csv", edges);
 
   LovaszThetaSDP ltsdp(edges);
   AugLagrangian<LovaszThetaSDP> aug(ltsdp, 10);
 
   arma::mat coords = ltsdp.GetInitialPoint();
 
-  if (!aug.Optimize(0, coords))
+  if (!aug.Optimize(coords, 0))
     BOOST_FAIL("Optimization reported failure.");
 
   double finalValue = ltsdp.Evaluate(coords);
 
   BOOST_REQUIRE_CLOSE(finalValue, -14.0, 1e-5);
-}
- */
+
+//  Log::Info.ignoreInput = true;
+}*/
 
 BOOST_AUTO_TEST_SUITE_END();
