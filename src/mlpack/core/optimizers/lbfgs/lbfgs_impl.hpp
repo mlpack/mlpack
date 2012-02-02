@@ -353,8 +353,11 @@ bool L_BFGS<FunctionType>::Optimize(const size_t numIterations,
   for (size_t itNum = 0; optimizeUntilConvergence || (itNum != numIterations);
        itNum++)
   {
-    Log::Info << "L-BFGS iteration " << itNum << "; objective " <<
+    Log::Debug << "L-BFGS iteration " << itNum << "; objective " <<
         function.Evaluate(iterate) << "." << std::endl;
+//    Log::Debug << "Coordinates " << std::endl << iterate << std::endl;
+
+//    Log::Debug << "Gradient " << std::endl << gradient << std::endl;
 
     // Break when the norm of the gradient becomes too small.
     if (GradientNormTooSmall(gradient))
