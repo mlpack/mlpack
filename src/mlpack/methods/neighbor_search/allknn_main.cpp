@@ -27,7 +27,7 @@ PROGRAM_INFO("All K-Nearest-Neighbors",
     "\n\n"
     "For example, the following will calculate the 5 nearest neighbors of each"
     "point in 'input.csv' and store the distances in 'distances.csv' and the "
-    "neighbors in 'neighbors.csv':"
+    "neighbors in the file 'neighbors.csv':"
     "\n\n"
     "$ allknn --k=5 --reference_file=input.csv --distances_file=distances.csv\n"
     "  --neighbors_file=neighbors.csv"
