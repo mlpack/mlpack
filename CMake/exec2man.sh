@@ -60,9 +60,14 @@ synopsis="$name [-h] [-v] $reqoptions $options";
 #  txt2man -T -P mlpack -t $name -d 1
 
 # Now do it.
+# The awk script is a little ugly, but it is meant to format parameters
+# correctly so that the entire description of the parameter is on one line (this
+# helps avoid 'man' warnings).
 ./$name -h | \
   awk -v syn="$synopsis" \
       '{ if (NR == 1) print "NAME\n '$name' - "tolower($0)"\nSYNOPSIS\n "syn" \nDESCRIPTION\n" ; else print } ' | \
   sed '/^[^ ]/ y/qwertyuiopasdfghjklzxcvbnm:/QWERTYUIOPASDFGHJKLZXCVBNM /' | \
+  sed 's/  / /g' | \
+  awk '/NAME/,/REQUIRED OPTIONS/ { print; } /REQUIRED OPTIONS/,0 { if (!/REQUIRED_OPTIONS/ && !/OPTIONS/) { if (/ --/) { printf "\n" } sub(/^[ ]*/, ""); sub(/ [ ]*/, " "); printf "%s ", $0; } else { if (!/REQUIRED OPTIONS/) { print "\n"$0; } } }' | \
   txt2man -P mlpack -t $name -d 1 > $output
 
