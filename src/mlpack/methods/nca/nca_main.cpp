@@ -21,7 +21,7 @@ PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
     "\n"
     "For more details, see the following published paper:\n\n"
     "@inproceedings{\n"
-    "  author = {Goldberge, Jacob and Roweis, Sam and Hinton, Geoff and\n"
+    "  author = {Goldberger, Jacob and Roweis, Sam and Hinton, Geoff and\n"
     "      Salakhutdinov, Ruslan},\n"
     "  booktitle = {Advances in Neural Information Processing Systems 17},\n"
     "  pages = {513--520},\n"
