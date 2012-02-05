@@ -33,7 +33,7 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
   arma::vec lambda(function.NumConstraints());
   lambda.ones();
   lambda *= -1;
-  lambda[0] = -0.70 * double(coordinates.n_cols);
+  lambda[0] = -double(coordinates.n_cols);
   double penalty_threshold = DBL_MAX; // Ensure we update lambda immediately.
 
   // Track the last objective to compare for convergence.
@@ -66,7 +66,7 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
     L_BFGS<AugLagrangianFunction<LagrangianFunction> >
         lbfgs(f, numBasis, 1e-4, 0.9, 1e-10, 100, 1e-20, 1e20);
 
-    if (!lbfgs.Optimize(0, coordinates))
+    if (!lbfgs.Optimize(1000, coordinates))
       Log::Warn << "L-BFGS reported an error during optimization."
           << std::endl;
 
