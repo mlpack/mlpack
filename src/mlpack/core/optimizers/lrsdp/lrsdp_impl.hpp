@@ -52,7 +52,7 @@ void LRSDP::GradientConstraint(const size_t index,
 
 const arma::mat& LRSDP::GetInitialPoint()
 {
-  initialPoint.ones(2, 2);
+  initialPoint.ones(70, 34);
   return initialPoint;
 }
 
