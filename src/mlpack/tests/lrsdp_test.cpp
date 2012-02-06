@@ -16,7 +16,7 @@ BOOST_AUTO_TEST_SUITE(LRSDPTest);
 
 /**
  * Extremely simple test case for the Lovasz-Theta semidefinite program.
- */
+ *
 BOOST_AUTO_TEST_CASE(ExtremelySimpleLovaszThetaSDP)
 {
   // Manually create the LRSDP object and set its constraints.
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(ExtremelySimpleLovaszThetaSDP)
   BOOST_REQUIRE_CLOSE(x(0, 0) + x(1, 1), 1.0, 1e-5);
   BOOST_REQUIRE_SMALL(x(0, 1), 1e-8);
   BOOST_REQUIRE_SMALL(x(1, 0), 1e-8);
-}
+}*/
 
 /**
  * johnson8-4-4.co test case for Lovasz-Theta LRSDP.

@@ -5,6 +5,7 @@ add_executable(mlpack_test
   mlpack_test.cpp
   allkfn_test.cpp
   allknn_test.cpp
+  aug_lagrangian_test.cpp
   cli_test.cpp
   distribution_test.cpp
   emst_test.cpp
@@ -17,6 +18,7 @@ add_executable(mlpack_test
   lin_alg_test.cpp
   linear_regression_test.cpp
   load_save_test.cpp
+  lrsdp_test.cpp
   math_test.cpp
   nbc_test.cpp
   nca_test.cpp
