@@ -32,7 +32,8 @@ double LRSDP::Evaluate(const arma::mat& coordinates) const
   return -accu(coordinates * trans(coordinates));
 }
 
-void LRSDP::Gradient(const arma::mat& coordinates, arma::mat& gradient) const
+void LRSDP::Gradient(const arma::mat& /*coordinates*/,
+                     arma::mat& /*gradient*/) const
 {
   Log::Fatal << "LRSDP::Gradient() called!  Uh-oh..." << std::endl;
 }
@@ -43,9 +44,9 @@ double LRSDP::EvaluateConstraint(const size_t index,
   return trace(a[index] * (coordinates * trans(coordinates))) - b[index];
 }
 
-void LRSDP::GradientConstraint(const size_t index,
-                               const arma::mat& coordinates,
-                               arma::mat& gradient) const
+void LRSDP::GradientConstraint(const size_t /*index*/,
+                               const arma::mat& /*coordinates*/,
+                               arma::mat& /*gradient*/) const
 {
   Log::Fatal << "LRSDP::GradientConstraint() called!  Uh-oh..." << std::endl;
 }
