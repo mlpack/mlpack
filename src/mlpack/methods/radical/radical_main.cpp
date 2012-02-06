@@ -25,21 +25,22 @@ PROGRAM_INFO("RADICAL", "An implementation of RADICAL, a method for independent"
     "  year = {2003}\n"
     "}");
 
-PARAM_STRING_REQ("input_file", "Input dataset filename for ICA.", "");
+PARAM_STRING_REQ("input_file", "Input dataset filename for ICA.", "i");
 
 PARAM_STRING("output_ic", "File to save independent components to.", "o",
     "output_ic.csv");
 PARAM_STRING("output_unmixing", "File to save unmixing matrix to.", "u",
     "output_unmixing.csv");
 
-PARAM_DOUBLE("noise_std_dev", "Standard deviation of Gaussian noise", "",
+PARAM_DOUBLE("noise_std_dev", "Standard deviation of Gaussian noise.", "n",
     0.175);
 PARAM_INT("replicates", "Number of Gaussian-perturbed replicates to use "
-    "(per point) in Radical2D.", "", 30);
+    "(per point) in Radical2D.", "r", 30);
 PARAM_INT("angles", "Number of angles to consider in brute-force search "
-    "during Radical2D.", "", 150);
+    "during Radical2D.", "a", 150);
 PARAM_INT("sweeps", "Number of sweeps (each sweep calls Radical2D once for "
-    "each pair of dimensions", "", 0);
+    "each pair of dimensions", "S", 0);
+PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace mlpack;
 using namespace mlpack::radical;
@@ -50,6 +51,12 @@ int main(int argc, char* argv[])
 {
   // Handle parameters.
   CLI::ParseCommandLine(argc, argv);
+
+  // Set random seed.
+  if (CLI::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  else
+    math::RandomSeed((size_t) std::time(NULL));
 
   // Load the data.
   const string matXFilename = CLI::GetParam<string>("input_file");
