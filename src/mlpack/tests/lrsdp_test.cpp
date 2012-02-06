@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(Johnson844LovaszThetaSDP)
   lovasz.C() *= -1;
 
   // b_0 = 1; else = 0.
-  lovasz.B().zeros(vertices);
+  lovasz.B().zeros(edges.n_cols);
   lovasz.B()[0] = 1;
 
   // A_0 = I_n.
