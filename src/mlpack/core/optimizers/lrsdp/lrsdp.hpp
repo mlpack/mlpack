@@ -18,6 +18,8 @@ class LRSDP
  public:
   LRSDP() { }
 
+  LRSDP(const arma::mat& initialPoint);
+
   /**
    * Create an LRSDP to be optimized.  The solution will end up being a matrix
    * of size (rank) x (rows).  To construct each constraint and the objective
@@ -29,7 +31,8 @@ class LRSDP
    */
   LRSDP(const size_t numConstraints,
         const size_t rank,
-        const size_t rows);
+        const size_t rows,
+        const arma::mat& coordinates);
 
   /**
    * Optimize the LRSDP and return the final objective value.  The given
@@ -78,9 +81,14 @@ class LRSDP
   arma::mat& C() { return c; }
 
   //! Return the vector of A matrices (which correspond to the constraints).
-  const std::vector<arma::mat> A() const { return a; }
+  const std::vector<arma::mat>& A() const { return a; }
   //! Modify the veector of A matrices (which correspond to the constraints).
   std::vector<arma::mat>& A() { return a; }
+
+  //! Return the vector of modes for the A matrices.
+  const arma::uvec& AModes() const { return aModes; }
+  //! Modify the vector of modes for the A matrices.
+  arma::uvec& AModes() { return aModes; }
 
   //! Return the vector of B values.
   const arma::vec& B() const { return b; }
@@ -92,6 +100,8 @@ class LRSDP
   arma::mat c; // For objective function.
   std::vector<arma::mat> a; // A_i for each constraint.
   arma::vec b; // b_i for each constraint.
+
+  arma::uvec aModes; // 1 if entries in matrix, 0 for normal.
 
   // Initial point.
   arma::mat initialPoint;

@@ -17,6 +17,8 @@
 namespace mlpack {
 namespace optimization {
 
+LRSDP::LRSDP(const arma::mat& initialPoint) : initialPoint(initialPoint) { }
+
 double LRSDP::Optimize(arma::mat& coordinates)
 {
   // Create the Augmented Lagrangian function.
@@ -41,7 +43,17 @@ void LRSDP::Gradient(const arma::mat& /*coordinates*/,
 double LRSDP::EvaluateConstraint(const size_t index,
                                  const arma::mat& coordinates) const
 {
-  return trace(a[index] * (coordinates * trans(coordinates))) - b[index];
+  arma::mat rrt = coordinates * trans(coordinates);
+  if (aModes[index] == 0)
+    return trace(a[index] * rrt) - b[index];
+  else
+  {
+    double value = -b[index];
+    for (size_t i = 0; i < a[index].n_rows; ++i)
+      value += rrt(a[index](i, 0), a[index](i, 1));
+
+    return value;
+  }
 }
 
 void LRSDP::GradientConstraint(const size_t /*index*/,
@@ -53,7 +65,6 @@ void LRSDP::GradientConstraint(const size_t /*index*/,
 
 const arma::mat& LRSDP::GetInitialPoint()
 {
-  initialPoint.ones(70, 34);
   return initialPoint;
 }
 
@@ -76,7 +87,20 @@ double AugLagrangianFunction<LRSDP>::Evaluate(const arma::mat& coordinates)
   for (size_t i = 0; i < function.B().n_elem; ++i)
   {
     // Take the trace subtracted by the b_i.
-    double constraint = trace(function.A()[i] * rrt) - function.B()[i];
+    double constraint = -function.B()[i];
+
+    if (function.AModes()[i] == 0)
+    {
+      constraint += trace(function.A()[i] * rrt);
+    }
+    else
+    {
+      for (size_t j = 0; j < function.A()[i].n_rows; ++j)
+      {
+        constraint += rrt(function.A()[i](j, 0), function.A()[i](j, 1));
+      }
+    }
+
     objective -= (lambda[i] * constraint);
     objective += (sigma / 2) * std::pow(constraint, 2.0);
   }
@@ -93,13 +117,39 @@ void AugLagrangianFunction<LRSDP>::Gradient(const arma::mat& coordinates,
   //   with
   // S' = C - sum_{i = 1}^{m} y'_i A_i
   // y'_i = y_i - sigma * (Trace(A_i * (R R^T)) - b_i)
+  arma::mat rrt = coordinates * trans(coordinates);
   arma::mat s = function.C();
 
   for (size_t i = 0; i < function.B().n_elem; ++i)
   {
-    double y = lambda[i] - sigma * (trace(function.A()[i] *
-        (coordinates * trans(coordinates))) - function.B()[i]);
-    s -= (y * function.A()[i]);
+    double constraint = -function.B()[i];
+
+    if (function.AModes()[i] == 0)
+    {
+      constraint += trace(function.A()[i] * rrt);
+    }
+    else
+    {
+      for (size_t j = 0; j < function.A()[i].n_rows; ++j)
+      {
+        constraint += rrt(function.A()[i](j, 0), function.A()[i](j, 1));
+      }
+    }
+
+    double y = lambda[i] - sigma * constraint;
+
+    if (function.AModes()[i] == 0)
+    {
+      s -= (y * function.A()[i]);
+    }
+    else
+    {
+      // We only need to subtract the entries which could be modified.
+      for (size_t j = 0; j < function.A()[i].n_rows; ++j)
+      {
+        s(function.A()[i](j, 0), function.A()[i](j, 1)) -= y;
+      }
+    }
   }
 
   gradient = 2 * s * coordinates;
