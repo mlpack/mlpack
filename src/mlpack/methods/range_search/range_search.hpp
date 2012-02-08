@@ -106,8 +106,8 @@ class RangeSearch
    *      opposed to dual-tree computation).
    * @param metric Instantiated distance metric.
    */
-  RangeSearch(const TreeType* referenceTree,
-              const TreeType* queryTree,
+  RangeSearch(TreeType* referenceTree,
+              TreeType* queryTree,
               const typename TreeType::Mat& referenceSet,
               const typename TreeType::Mat& querySet,
               const bool singleMode = false,
@@ -140,7 +140,7 @@ class RangeSearch
    *      opposed to dual-tree computation).
    * @param metric Instantiated distance metric.
    */
-  RangeSearch(const TreeType* referenceTree,
+  RangeSearch(TreeType* referenceTree,
               const typename TreeType::Mat& referenceSet,
               const bool singleMode = false,
               const MetricType metric = MetricType());

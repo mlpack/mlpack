@@ -75,8 +75,8 @@ RangeSearch<MetricType, TreeType>::RangeSearch(
 
 template<typename MetricType, typename TreeType>
 RangeSearch<MetricType, TreeType>::RangeSearch(
-    const TreeType* referenceTree,
-    const TreeType* queryTree,
+    TreeType* referenceTree,
+    TreeType* queryTree,
     const typename TreeType::Mat& referenceSet,
     const typename TreeType::Mat& querySet,
     const bool singleMode,
@@ -97,7 +97,7 @@ RangeSearch<MetricType, TreeType>::RangeSearch(
 
 template<typename MetricType, typename TreeType>
 RangeSearch<MetricType, TreeType>::RangeSearch(
-    const TreeType* referenceTree,
+    TreeType* referenceTree,
     const typename TreeType::Mat& referenceSet,
     const bool singleMode,
     const MetricType metric) :
