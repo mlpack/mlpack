@@ -192,7 +192,7 @@ BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamModifiers)
   PrefixedOutStream pss(ss, BASH_GREEN "[INFO ] " BASH_CLEAR);
 
   pss << "I have a precise number which is ";
-  pss << std::setw(6) << std::setfill('0') << 156;
+  pss << std::setw(6) << std::setfill('0') << (int)156;
 
   BOOST_REQUIRE_EQUAL(ss.str(),
       BASH_GREEN "[INFO ] " BASH_CLEAR
