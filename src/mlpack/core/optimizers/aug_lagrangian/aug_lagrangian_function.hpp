@@ -34,6 +34,15 @@ class AugLagrangianFunction
 {
  public:
   /**
+   * Initialize the AugLagrangianFunction, but don't set the Lagrange
+   * multipliers or penalty parameters yet.  Make sure you set the Lagrange
+   * multipliers before you use this...
+   *
+   * @param function Lagrangian function.
+   */
+  AugLagrangianFunction(LagrangianFunction& function);
+
+  /**
    * Initialize the AugLagrangianFunction with the given LagrangianFunction,
    * Lagrange multipliers, and initial penalty parameter.
    *

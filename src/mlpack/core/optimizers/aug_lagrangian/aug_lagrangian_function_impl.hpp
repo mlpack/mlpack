@@ -18,6 +18,15 @@ namespace optimization {
 // Initialize the AugLagrangianFunction.
 template<typename LagrangianFunction>
 AugLagrangianFunction<LagrangianFunction>::AugLagrangianFunction(
+    LagrangianFunction& function) :
+    function(function)
+{
+  // Nothing else to do.
+}
+
+// Initialize the AugLagrangianFunction.
+template<typename LagrangianFunction>
+AugLagrangianFunction<LagrangianFunction>::AugLagrangianFunction(
     LagrangianFunction& function,
     const arma::vec& lambda,
     const double sigma) :
