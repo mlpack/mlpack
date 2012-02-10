@@ -265,8 +265,9 @@ void L_BFGS<FunctionType>::UpdateBasisSet(const size_t iterationNum,
  * @param maxStep The maximum step of the line search.
  */
 template<typename FunctionType>
-L_BFGS<FunctionType>::L_BFGS(const FunctionType& function,
+L_BFGS<FunctionType>::L_BFGS(FunctionType& function,
                              const size_t numBasis,
+                             const size_t maxIterations,
                              const double armijoConstant,
                              const double wolfe,
                              const double minGradientNorm,
@@ -275,6 +276,7 @@ L_BFGS<FunctionType>::L_BFGS(const FunctionType& function,
                              const double maxStep) :
     function(function),
     numBasis(numBasis),
+    maxIterations(maxIterations),
     armijoConstant(armijoConstant),
     wolfe(wolfe),
     minGradientNorm(minGradientNorm),
@@ -310,6 +312,12 @@ L_BFGS<FunctionType>::MinPointIterate() const
   return minPointIterate;
 }
 
+template<typename FunctionType>
+inline double L_BFGS<FunctionType>::Optimize(arma::mat& iterate)
+{
+  return Optimize(iterate, maxIterations);
+}
+
 /**
  * Use L_BFGS to optimize the given function, starting at the given iterate
  * point and performing no more than the specified number of maximum iterations.
@@ -320,15 +328,15 @@ L_BFGS<FunctionType>::MinPointIterate() const
  * @param iterate Starting point (will be modified)
  */
 template<typename FunctionType>
-bool L_BFGS<FunctionType>::Optimize(const size_t numIterations,
-                                    arma::mat& iterate)
+double L_BFGS<FunctionType>::Optimize(arma::mat& iterate,
+                                      const size_t maxIterations)
 {
   // The old iterate to be saved.
   arma::mat oldIterate;
   oldIterate.zeros(iterate.n_rows, iterate.n_cols);
 
   // Whether to optimize until convergence.
-  bool optimizeUntilConvergence = (numIterations == 0);
+  bool optimizeUntilConvergence = (maxIterations == 0);
 
   // The initial function value.
   double functionValue = Evaluate(iterate);
@@ -350,7 +358,7 @@ bool L_BFGS<FunctionType>::Optimize(const size_t numIterations,
   bool success = false;
 
   // The main optimization loop.  Start from 1 to allow running forever.
-  for (size_t itNum = 0; optimizeUntilConvergence || (itNum != numIterations);
+  for (size_t itNum = 0; optimizeUntilConvergence || (itNum != maxIterations);
        itNum++)
   {
     Log::Debug << "L-BFGS iteration " << itNum << "; objective " <<
@@ -392,7 +400,7 @@ bool L_BFGS<FunctionType>::Optimize(const size_t numIterations,
 
   } // End of the optimization loop.
 
-  return success;
+  return function.Evaluate(iterate);
 }
 
 }; // namespace optimization
