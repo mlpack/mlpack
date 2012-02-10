@@ -54,11 +54,11 @@ class NCA
    *
    * @param output_matrix Covariance matrix of Mahalanobis distance.
    */
-  void LearnDistance(arma::mat& output_matrix);
+  void LearnDistance(arma::mat& outputMatrix);
 
  private:
-  const arma::mat& dataset_;
-  const arma::uvec& labels_;
+  const arma::mat& dataset;
+  const arma::uvec& labels;
 };
 
 }; // namespace nca
