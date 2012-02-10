@@ -47,7 +47,12 @@ LinearRegression::LinearRegression(arma::mat& predictors,
 
 LinearRegression::LinearRegression(const std::string& filename)
 {
-  parameters.load(filename);
+  data::Load(filename, parameters, true);
+}
+
+LinearRegression::LinearRegression(const LinearRegression& linearRegression)
+{
+  parameters = linearRegression.parameters;
 }
 
 LinearRegression::~LinearRegression()
