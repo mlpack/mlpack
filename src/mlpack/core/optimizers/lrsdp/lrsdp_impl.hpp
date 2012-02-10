@@ -24,6 +24,9 @@ double LRSDP::Optimize(arma::mat& coordinates)
   // Create the Augmented Lagrangian function.
   AugLagrangian<LRSDP> auglag(*this);
 
+  // A kludge for now until we have a better option to implement.
+  auglag.LBFGS().MaxIterations() = 1000;
+
   auglag.Optimize(coordinates);
 
   return Evaluate(coordinates);
