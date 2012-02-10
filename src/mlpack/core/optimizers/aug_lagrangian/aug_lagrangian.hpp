@@ -11,6 +11,9 @@
 #define __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP
 
 #include <mlpack/core.hpp>
+#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+
+#include "aug_lagrangian_function.hpp"
 
 namespace mlpack {
 namespace optimization {
@@ -41,17 +44,32 @@ template<typename LagrangianFunction>
 class AugLagrangian
 {
  public:
-  /**
-   * Construct the Augmented Lagrangian optimizer with an instance of the given
-   * function.
-   *
-   * @param function Function to be optimizer.
-   * @param numBasis Number of points of memory for L-BFGS.
-   */
-  AugLagrangian(LagrangianFunction& function, size_t numBasis = 5);
+  //! Shorthand for the type of the L-BFGS optimizer we'll be using.
+  typedef L_BFGS<AugLagrangianFunction<LagrangianFunction> >
+      L_BFGSType;
 
   /**
-   * Optimize the function.
+   * Initialize the Augmented Lagrangian with the default L-BFGS optimizer.
+   *
+   * @param function The function to be optimized.
+   */
+  AugLagrangian(LagrangianFunction& function);
+
+  /**
+   * Initialize the Augmented Lagrangian with a custom L-BFGS optimizer.
+   *
+   * @param function The function to be optimized.  This must be a pre-created
+   *    utility AugLagrangianFunction.
+   * @param lbfgs The custom L-BFGS optimizer to be used.  This should have
+   *    already been initialized with the given AugLagrangianFunction.
+   */
+  AugLagrangian(AugLagrangianFunction<LagrangianFunction>& augfunc,
+                L_BFGSType& lbfgs);
+
+  /**
+   * Optimize the function.  The value '1' is used for the initial value of each
+   * Lagrange multiplier.  To set the Lagrange multipliers yourself, use the
+   * other overload of Optimize().
    *
    * @param coordinates Output matrix to store the optimized coordinates in.
    * @param maxIterations Maximum number of iterations of the Augmented
@@ -60,6 +78,23 @@ class AugLagrangian
    */
   bool Optimize(arma::mat& coordinates,
                 const size_t maxIterations = 1000,
+                const double sigma = 0.5);
+
+  /**
+   * Optimize the function, giving initial estimates for the Lagrange
+   * multipliers.  The vector of Lagrange multipliers will be modified to
+   * contain the Lagrange multipliers of the final solution (if one is found).
+   *
+   * @param coordinates Output matrix to store the optimized coordinates in.
+   * @param lambda Vector of initial Lagrange multipliers.  Should have length
+   *     equal to the number of constraints.
+   * @param maxIterations Maximum number of iterations of the Augmented
+   *     Lagrangian algorithm.  0 indicates no maximum.
+   * @param sigma Initial penalty parameter.
+   */
+  bool Optimize(arma::mat& coordinates,
+                arma::vec& lambda,
+                const size_t maxIterations = 1000,
                 double sigma = 0.5);
 
   //! Get the LagrangianFunction.
@@ -67,16 +102,25 @@ class AugLagrangian
   //! Modify the LagrangianFunction.
   LagrangianFunction& Function() { return function; }
 
-  //! Get the number of memory points used by L-BFGS.
-  size_t NumBasis() const { return numBasis; }
-  //! Modify the number of memory points used by L-BFGS.
-  size_t& NumBasis() { return numBasis; }
+  //! Get the L-BFGS object used for the actual optimization.
+  const L_BFGSType& LBFGS() const { return lbfgs; }
+  //! Modify the L-BFGS object used for the actual optimization.
+  L_BFGSType& LBFGS() { return lbfgs; }
 
  private:
   //! Function to be optimized.
   LagrangianFunction& function;
-  //! Number of memory points for L-BFGS.
-  size_t numBasis;
+
+  //! Internally used AugLagrangianFunction which holds the function we are
+  //! optimizing.  This isn't publically accessible.
+  AugLagrangianFunction<LagrangianFunction> augfunc;
+
+  //! If the user did not pass an L_BFGS object, we'll use our own internal one.
+  L_BFGSType lbfgsInternal;
+
+  //! The L-BFGS optimizer that we will use.
+  L_BFGSType& lbfgs;
+
 };
 
 }; // namespace optimization
