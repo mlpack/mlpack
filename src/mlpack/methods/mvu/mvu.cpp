@@ -7,7 +7,8 @@
 #include "mvu.hpp"
 #include "mvu_objective_function.hpp"
 
-#include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
+//#include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
+#include <mlpack/core/optimizers/lrsdp/lrsdp.hpp>
 
 using namespace mlpack;
 using namespace mlpack::mvu;
@@ -22,12 +23,16 @@ void MVU::Unfold(const size_t newDim,
                  const size_t numNeighbors,
                  arma::mat& outputData)
 {
+  // Set up LRSDP that we will solve.
+  LRSDP mvuSolver;
+
+
   MVUObjectiveFunction obj(data, newDim, numNeighbors);
 
   // Set up Augmented Lagrangian method.
   // Memory choice is arbitrary; this needs to be configurable.
-  AugLagrangian<MVUObjectiveFunction> aug(obj, 20);
+//AugLagrangian<MVUObjectiveFunction> aug(obj, 20);
 
-  outputData = obj.GetInitialPoint();
-  aug.Optimize(outputData, 0);
+//  outputData = obj.GetInitialPoint();
+//  aug.Optimize(outputData, 0);
 }
