@@ -5,7 +5,6 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   range_search.hpp
   range_search_impl.hpp
-	range_main.cpp
 )
 
 # Add directory name to sources.
@@ -17,10 +16,9 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(rangesearch
-	range_main.cpp
+add_executable(range_search
+  range_main.cpp
 )
-
-target_link_libraries(rangesearch
-	mlpack
+target_link_libraries(range_search
+  mlpack
 )
