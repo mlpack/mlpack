@@ -34,6 +34,19 @@ class LinearRegression
   LinearRegression(const std::string& filename);
 
   /**
+   * Copy constructor.
+   *
+   * @param linearRegression the other instance to copy parameters from.
+   */
+  LinearRegression(const LinearRegression& linearRegression);
+
+  /**
+   * Default constructor.
+   */
+  LinearRegression() {}
+
+
+  /**
    * Destructor - no work done.
    */
   ~LinearRegression();
