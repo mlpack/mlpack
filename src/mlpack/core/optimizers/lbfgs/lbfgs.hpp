@@ -13,16 +13,32 @@
 namespace mlpack {
 namespace optimization {
 
+/**
+ * The generic L-BFGS optimizer, which uses a back-tracking line search
+ * algorithm.  The parameters for the algorithm (number of memory points,
+ * maximum step size, and so forth) are all configurable via either the
+ * constructor or standalone modifier functions.  A function which can be
+ * optimized by this class must implement the following methods:
+ *
+ *  - a default constructor
+ *  - double Evaluate(const arma::mat& coordinates);
+ *  - void Gradient(const arma::mat& coordinates, arma::mat& gradient);
+ *  - arma::mat& GetInitialPoint();
+ */
 template<typename FunctionType>
 class L_BFGS
 {
  public:
   /**
-   * Initialize the L-BFGS object.  Copy the function we will be optimizing
-   * and set the size of the memory for the algorithm.
+   * Initialize the L-BFGS object.  Store a reference to the function we will be
+   * optimizing and set the size of the memory for the algorithm.  There are
+   * many parameters that can be set for the optimization, but default values
+   * are given for each of them.
    *
-   * @param function Instance of function to be optimized
-   * @param numBasis Number of memory points to be stored
+   * @param function Instance of function to be optimized.
+   * @param numBasis Number of memory points to be stored (default 5).
+   * @param maxIterations Maximum number of iterations for the optimization
+   *     (default 0 -- may run indefinitely).
    * @param armijoConstant Controls the accuracy of the line search routine for
    *     determining the Armijo condition.
    * @param wolfe Parameter for detecting the Wolfe condition.
@@ -33,8 +49,9 @@ class L_BFGS
    * @param minStep The minimum step of the line search.
    * @param maxStep The maximum step of the line search.
    */
-  L_BFGS(const FunctionType& function,
-         const size_t numBasis,
+  L_BFGS(FunctionType& function,
+         const size_t numBasis = 5, /* entirely arbitrary */
+         const size_t maxIterations = 0, /* run forever */
          const double armijoConstant = 1e-4,
          const double wolfe = 0.9,
          const double minGradientNorm = 1e-10,
@@ -52,19 +69,40 @@ class L_BFGS
 
   /**
    * Use L-BFGS to optimize the given function, starting at the given iterate
-   * point and performing no more than the specified number of maximum
-   * iterations.  The given starting point will be modified to store the
-   * finishing point of the algorithm.
+   * point.  The maximum number of iterations is set in the constructor (or with
+   * MaxIterations()).  Alternately, another overload is provided which takes a
+   * maximum number of iterations as a parameter.  The given starting point will
+   * be modified to store the finishing point of the algorithm, and the final
+   * objective value is returned.
    *
-   * @param maxIterations Maximum number of iterations to perform
-   * @param iterate Starting point (will be modified)
+   * @param iterate Starting point (will be modified).
+   * @return Objective value of the final point.
    */
-  bool Optimize(const size_t maxIterations, arma::mat& iterate);
+  double Optimize(arma::mat& iterate);
+
+  /**
+   * Use L-BFGS to optimize the given function, starting at the given iterate
+   * point, and performing no more than the given maximum number of iterations
+   * (the class variable maxIterations is ignored for this run, but not
+   * modified).  The given starting point will be modified to store the
+   * finishing point of the algorithm, and the final objective value is
+   * returned.
+   *
+   * @param iterate Starting point (will be modified).
+   * @param maxIterations Maximum number of iterations (0 specifies no limit).
+   * @return Objective value of the final point.
+   */
+  double Optimize(arma::mat& iterate, const size_t maxIterations);
 
   //! Get the memory size.
   size_t NumBasis() const { return numBasis; }
   //! Modify the memory size.
   size_t& NumBasis() { return numBasis; }
+
+  //! Get the maximum number of iterations.
+  size_t MaxIterations() const { return maxIterations; }
+  //! Modify the maximum number of iterations.
+  size_t& MaxIterations() { return maxIterations; }
 
   //! Get the Armijo condition constant.
   double ArmijoConstant() const { return armijoConstant; }
@@ -97,8 +135,8 @@ class L_BFGS
   double& MaxStep() { return maxStep; }
 
  private:
-  //! Internal copy of the function we are optimizing.
-  FunctionType function;
+  //! Internal reference to the function we are optimizing.
+  FunctionType& function;
 
   //! Position of the new iterate.
   arma::mat newIterateTmp;
@@ -109,6 +147,8 @@ class L_BFGS
 
   //! Size of memory for this L-BFGS optimizer.
   size_t numBasis;
+  //! Maximum number of iterations.
+  size_t maxIterations;
   //! Parameter for determining the Armijo condition.
   double armijoConstant;
   //! Parameter for detecting the Wolfe condition.
@@ -129,16 +169,16 @@ class L_BFGS
    * Evaluate the function at the given iterate point and store the result if it
    * is a new minimum.
    *
-   * @return The value of the function
+   * @return The value of the function.
    */
   double Evaluate(const arma::mat& iterate);
 
   /**
-   * Calculate the scaling factor gamma which is used to scale the Hessian
+   * Calculate the scaling factor, gamma, which is used to scale the Hessian
    * approximation matrix.  See method M3 in Section 4 of Liu and Nocedal
    * (1989).
    *
-   * @return The calculated scaling factor
+   * @return The calculated scaling factor.
    */
   double ChooseScalingFactor(const size_t iterationNum,
                              const arma::mat& gradient);
@@ -147,7 +187,7 @@ class L_BFGS
    * Check to make sure that the norm of the gradient is not smaller than 1e-5.
    * Currently that value is not configurable.
    *
-   * @return (norm < minGradientNorm)
+   * @return (norm < minGradientNorm).
    */
   bool GradientNormTooSmall(const arma::mat& gradient);
 
