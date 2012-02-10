@@ -10,6 +10,7 @@
 
 // Just in case it hasn't been included.
 #include "prefixedoutstream.hpp"
+#include <iostream>
 
 template<typename T>
 PrefixedOutStream& PrefixedOutStream::operator<<(T s)
@@ -25,14 +26,27 @@ void PrefixedOutStream::BaseLogic(T val)
   // We will use this to track whether or not we need to terminate at the end of
   // this call (only for streams which terminate after a newline).
   bool newlined = false;
+  std::string line;
 
   // If we need to, output the prefix.
   PrefixIfNeeded();
 
-  // Now we try to output the T (whatever it is).
-  try
+  std::ostringstream convert;
+  convert << val;
+
+  if(convert.fail())
   {
-    std::string line = boost::lexical_cast<std::string>(val);
+    PrefixIfNeeded();
+    if (!ignoreInput)
+    {
+      destination << "Failed lexical_cast<std::string>(T) for output; output"
+          " not shown." << std::endl;
+      newlined = true;
+    }
+  }
+  else
+  {
+    line = convert.str();
 
     // If the length of the casted thing was 0, it may have been a stream
     // manipulator, so send it directly to the stream and don't ask questions.
@@ -72,17 +86,6 @@ void PrefixedOutStream::BaseLogic(T val)
       PrefixIfNeeded();
       if (!ignoreInput)
         destination << line.substr(pos);
-    }
-  }
-  catch (boost::bad_lexical_cast &e)
-  {
-    // Warn the user that there was a failure.
-    PrefixIfNeeded();
-    if (!ignoreInput)
-    {
-      destination << "Failed lexical_cast<std::string>(T) for output; output"
-          " not shown." << std::endl;
-      newlined = true;
     }
   }
 
