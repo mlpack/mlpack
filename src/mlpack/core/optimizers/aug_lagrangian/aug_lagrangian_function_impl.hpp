@@ -19,7 +19,9 @@ namespace optimization {
 template<typename LagrangianFunction>
 AugLagrangianFunction<LagrangianFunction>::AugLagrangianFunction(
     LagrangianFunction& function) :
-    function(function)
+    function(function),
+    lambda(function.NumConstraints()),
+    sigma(0)
 {
   // Nothing else to do.
 }

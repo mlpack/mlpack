@@ -22,7 +22,7 @@ AugLagrangian<LagrangianFunction>::AugLagrangian(LagrangianFunction& function) :
     lbfgsInternal(augfunc),
     lbfgs(lbfgsInternal)
 {
-  // Not sure what to do here (if anything).
+  lbfgs.MaxIterations() = 1000;
 }
 
 template<typename LagrangianFunction>
@@ -36,39 +36,35 @@ AugLagrangian<LagrangianFunction>::AugLagrangian(
   // Nothing to do.  lbfgsInternal isn't used in this case.
 }
 
-// This overload just makes the lambda and calls the other overload.
+// This overload just sets the lambda and sigma and calls the other overload.
 template<typename LagrangianFunction>
 bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
-                                                 const size_t maxIterations,
-                                                 const double sigma)
+                                                 const arma::vec& initLambda,
+                                                 const double initSigma,
+                                                 const size_t maxIterations)
 {
-  arma::vec lambda = arma::ones<arma::vec>(function.NumConstraints());
+  augfunc.Lambda() = initLambda;
+  augfunc.Sigma() = initSigma;
 
-  return Optimize(coordinates, lambda, maxIterations, sigma);
+  return Optimize(coordinates, maxIterations);
 }
 
 template<typename LagrangianFunction>
 bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
-                                                 arma::vec& lambda,
-                                                 const size_t maxIterations,
-                                                 double sigma)
+                                                 const size_t maxIterations)
 {
   // Ensure that we update lambda immediately.
-  double penalty_threshold = DBL_MAX;
+  double penaltyThreshold = DBL_MAX;
 
   // Track the last objective to compare for convergence.
-  double last_objective = function.Evaluate(coordinates);
-
-  // First, update the utility function class.
-  augfunc.Lambda() = lambda;
-  augfunc.Sigma() = sigma;
+  double lastObjective = function.Evaluate(coordinates);
 
   // Then, calculate the current penalty.
   double penalty = 0;
   for (size_t i = 0; i < function.NumConstraints(); i++)
     penalty += std::pow(function.EvaluateConstraint(i, coordinates), 2);
 
-  Log::Info << "Penalty is " << penalty << " (threshold " << penalty_threshold
+  Log::Debug << "Penalty is " << penalty << " (threshold " << penaltyThreshold
       << ")." << std::endl;
 
   // The odd comparison allows user to pass maxIterations = 0 (i.e. no limit on
@@ -77,7 +73,7 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
   for (it = 0; it != (maxIterations - 1); it++)
   {
     Log::Warn << "AugLagrangian on iteration " << it
-        << ", starting with objective "  << last_objective << "." << std::endl;
+        << ", starting with objective "  << lastObjective << "." << std::endl;
 
  //   Log::Warn << coordinates << std::endl;
 
@@ -89,11 +85,11 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
 
     // Check if we are done with the entire optimization (the threshold we are
     // comparing with is arbitrary).
-    if (std::abs(last_objective - function.Evaluate(coordinates)) < 1e-10 &&
-        sigma > 500000)
+    if (std::abs(lastObjective - function.Evaluate(coordinates)) < 1e-10 &&
+        augfunc.Sigma() > 500000)
       return true;
 
-    last_objective = function.Evaluate(coordinates);
+    lastObjective = function.Evaluate(coordinates);
 
     // Assuming that the optimization has converged to a new set of coordinates,
     // we now update either lambda or sigma.  We update sigma if the penalty
@@ -109,7 +105,7 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
     }
 
     Log::Warn << "Penalty is " << penalty << " (threshold "
-        << penalty_threshold << ")." << std::endl;
+        << penaltyThreshold << ")." << std::endl;
 
     for (size_t i = 0; i < function.NumConstraints(); ++i)
     {
@@ -119,18 +115,18 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
 //      Log::Debug << tmpgrad << std::endl;
     }
 
-    if (penalty < penalty_threshold) // We update lambda.
+    if (penalty < penaltyThreshold) // We update lambda.
     {
-      // We use the update: lambda{k + 1} = lambdak - sigma * c(coordinates),
+      // We use the update: lambda_{k + 1} = lambda_k - sigma * c(coordinates),
       // but we have to write a loop to do this for each constraint.
       for (size_t i = 0; i < function.NumConstraints(); i++)
-        lambda[i] -= sigma * function.EvaluateConstraint(i, coordinates);
-      augfunc.Lambda() = lambda;
+        augfunc.Lambda()[i] -= augfunc.Sigma() *
+            function.EvaluateConstraint(i, coordinates);
 
       // We also update the penalty threshold to be a factor of the current
       // penalty.  TODO: this factor should be a parameter (from CLI).  The
       // value of 0.25 is taken from Burer and Monteiro (2002).
-      penalty_threshold = 0.25 * penalty;
+      penaltyThreshold = 0.25 * penalty;
       Log::Warn << "Lagrange multiplier estimates updated." << std::endl;
     }
     else
@@ -138,9 +134,8 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
       // We multiply sigma by a constant value.  TODO: this factor should be a
       // parameter (from CLI).  The value of 10 is taken from Burer and Monteiro
       // (2002).
-      sigma *= 10;
-      augfunc.Sigma() = sigma;
-      Log::Warn << "Updated sigma to " << sigma << "." << std::endl;
+      augfunc.Sigma() *= 10;
+      Log::Warn << "Updated sigma to " << augfunc.Sigma() << "." << std::endl;
     }
   }
 
