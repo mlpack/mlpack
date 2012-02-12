@@ -95,13 +95,13 @@ class AugLagrangianFunction
   LagrangianFunction& Function() { return function; }
 
  private:
+  //! Instantiation of the function to be optimized.
+  LagrangianFunction& function;
+
   //! The Lagrange multipliers.
   arma::vec lambda;
   //! The penalty parameter.
   double sigma;
-
-  //! Instantiation of the function to be optimized.
-  LagrangianFunction& function;
 };
 
 }; // namespace optimization
