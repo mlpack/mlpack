@@ -24,7 +24,7 @@ void MVU::Unfold(const size_t newDim,
                  arma::mat& outputData)
 {
   // Set up LRSDP that we will solve.
-  LRSDP mvuSolver;
+//  LRSDP mvuSolver;
 
 
   MVUObjectiveFunction obj(data, newDim, numNeighbors);
