@@ -9,6 +9,7 @@
 #define __MLPACK_CORE_OPTIMIZERS_LRSDP_LRSDP_HPP
 
 #include <mlpack/core.hpp>
+#include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
 
 namespace mlpack {
 namespace optimization {
@@ -16,10 +17,6 @@ namespace optimization {
 class LRSDP
 {
  public:
-  LRSDP() { }
-
-  LRSDP(const arma::mat& initialPoint);
-
   /**
    * Create an LRSDP to be optimized.  The solution will end up being a matrix
    * of size (rank) x (rows).  To construct each constraint and the objective
@@ -30,9 +27,20 @@ class LRSDP
    * @param rows Number of rows in the solution.
    */
   LRSDP(const size_t numConstraints,
-        const size_t rank,
-        const size_t rows,
-        const arma::mat& coordinates);
+        const arma::mat& initialPoint);
+
+  /**
+   * Create an LRSDP to be optimized, passing in an already-created
+   * AugLagrangian object.  The given initial point should be set to the size
+   * (rows) x (rank), where (rank) is the reduced rank of the problem.
+   *
+   * @param numConstraints Number of constraints in the problem.
+   * @param initialPoint Initial point of the optimization.
+   * @param auglag Pre-initialized AugLagrangian<LRSDP> object.
+   */
+  LRSDP(const size_t numConstraints,
+        const arma::mat& initialPoint,
+        AugLagrangian<LRSDP>& augLagrangian);
 
   /**
    * Optimize the LRSDP and return the final objective value.  The given
@@ -41,7 +49,6 @@ class LRSDP
    * @param coordinates Starting coordinates for the optimization.
    */
   double Optimize(arma::mat& coordinates);
-//                AugLagrangian<LRSDP> auglag);
 
   /**
    * Evaluate the objective function of the LRSDP (no constraints) at the given
@@ -95,16 +102,32 @@ class LRSDP
   //! Modify the vector of B values.
   arma::vec& B() { return b; }
 
+  //! Return the augmented Lagrangian object.
+  const AugLagrangian<LRSDP>& AugLag() const { return augLag; }
+  //! Modify the augmented Lagrangian object.
+  AugLagrangian<LRSDP>& AugLag() { return augLag; }
+
  private:
   // Should probably use sparse matrices for some of these.
-  arma::mat c; // For objective function.
-  std::vector<arma::mat> a; // A_i for each constraint.
-  arma::vec b; // b_i for each constraint.
 
-  arma::uvec aModes; // 1 if entries in matrix, 0 for normal.
+  //! For objective function.
+  arma::mat c;
+  //! A_i for each constraint.
+  std::vector<arma::mat> a;
+  //1 b_i for each constraint.
+  arma::vec b;
 
-  // Initial point.
+  //! 1 if entries in matrix, 0 for normal.
+  arma::uvec aModes;
+
+  //! Initial point.
   arma::mat initialPoint;
+
+  //! Internal AugLagrangian object, if one was not passed at construction time.
+  AugLagrangian<LRSDP> augLagInternal;
+
+  //! The AugLagrangian object which will be used for optimization.
+  AugLagrangian<LRSDP>& augLag;
 };
 
 }; // namespace optimization
