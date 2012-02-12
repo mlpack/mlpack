@@ -11,23 +11,30 @@
 // In case it hasn't already been included.
 #include "lrsdp.hpp"
 
-// Augmented Lagrangian solver.
-#include "../aug_lagrangian/aug_lagrangian.hpp"
-
 namespace mlpack {
 namespace optimization {
 
-LRSDP::LRSDP(const arma::mat& initialPoint) : initialPoint(initialPoint) { }
+LRSDP::LRSDP(const size_t numConstraints,
+             const arma::mat& initialPoint) :
+    b(numConstraints),
+    initialPoint(initialPoint),
+    augLagInternal(*this),
+    augLag(augLagInternal)
+{ }
+
+LRSDP::LRSDP(const size_t numConstraints,
+             const arma::mat& initialPoint,
+             AugLagrangian<LRSDP>& augLag) :
+    b(numConstraints),
+    initialPoint(initialPoint),
+    augLagInternal(*this),
+    augLag(augLag)
+{ }
 
 double LRSDP::Optimize(arma::mat& coordinates)
 {
-  // Create the Augmented Lagrangian function.
-  AugLagrangian<LRSDP> auglag(*this);
-
-  // A kludge for now until we have a better option to implement.
-  auglag.LBFGS().MaxIterations() = 1000;
-
-  auglag.Optimize(coordinates);
+  augLag.Sigma() = 20;
+  augLag.Optimize(coordinates, 1000);
 
   return Evaluate(coordinates);
 }
