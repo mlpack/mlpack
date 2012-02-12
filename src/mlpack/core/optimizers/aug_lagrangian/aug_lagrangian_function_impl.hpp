@@ -21,7 +21,7 @@ AugLagrangianFunction<LagrangianFunction>::AugLagrangianFunction(
     LagrangianFunction& function) :
     function(function),
     lambda(function.NumConstraints()),
-    sigma(0)
+    sigma(10)
 {
   // Nothing else to do.
 }
