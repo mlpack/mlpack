@@ -1,0 +1,219 @@
+/*!
+
+@file linear_regression.txt
+@author James Cline
+@brief Tutorial for how to use the LinearRegression class.
+
+@page lrtutorial Linear Regression tutorial (linear-regression)
+
+@section intro Introduction
+
+Linear regression is a statistical method which approximates a set of points as a
+linear function. We use a matrix representation of our dataset, called \b 
+predictors, and a vector of \b responses. The method will find the \f$dim+1\f$
+coefficients, \b parameters, for the linear function \f$y=c_0 + \sum_{i=1}^{dim}
+c_i x_i\f$.
+
+\b mlpack provides:
+
+ - a \ref cli "simple command-line executable" to run nearest-neighbors search
+   (and furthest-neighbors search)
+ - a \ref linreg "simple C++ interface" to perform linear regression
+
+@section toc Table of Contents
+
+A list of all the sections this tutorial contains.
+
+ - \ref intro
+ - \ref toc
+ - \ref cli
+   - \ref cli_ex1
+   - \ref cli_ex2
+   - \ref cli_ex3
+ - \ref linreg
+   - \ref linreg_ex1
+   - \ref linreg_ex2
+   - \ref linreg_ex3
+ - \ref further_doc
+
+@section cli Command-Line 'linear_regression'
+
+The simplest way to perform linear regression in \b mlpack is to use the
+linear_regression executable.  This program will perform linear regression and
+place the resultant coefficients into one file.
+The output file holds a vector of coefficients in increasing order, that is,
+the coefficient for \f$x_1\f$ then \f$x_2\f$ as well as the intercept.
+This executable can also predict the \f$y\f$ values of a second dataset based
+on the computed coefficients.
+
+Below are several examples of simple usage (and the resultant output).  The '-v'
+option is used so that output is given.  Further documentation on each
+individual option can be found by typing
+
+@code
+$ linear_regression --help
+@endcode
+
+@subsection cli_ex1 One file, generating the function coefficients
+
+@code
+$ linear_regression --input_file dataset.csv -v
+[INFO ] Loading 'dataset.csv' as CSV data.
+[INFO ] Saving CSV data to 'parameters.csv'.
+[INFO ] 
+[INFO ] Execution parameters:
+[INFO ]   help: false
+[INFO ]   info: ""
+[INFO ]   input_file: dataset.csv
+[INFO ]   input_responses: ""
+[INFO ]   output_file: parameters.csv
+[INFO ]   output_predictions: predictions.csv
+[INFO ]   test_file: ""
+[INFO ]   verbose: true
+[INFO ] 
+[INFO ] Program timers:
+[INFO ]   load_regressors: 0.006461s
+[INFO ]   regression: 0.000347s
+[INFO ]   total_time: 0.026589s
+@endcode
+
+Convenient program timers are given for different parts of the calculation at
+the bottom of the output, as well as the parameters the simulation was run with.
+Now, if we look at the output file, which, unless specified, is parameters.csv:
+
+@code
+$ cat dataset.csv
+0,0
+1,1
+2,2
+3,3
+4,4
+
+$ cat parameters.csv
+-0.0000000000e+00,1.0000000000e+00
+@endcode
+
+As you can see, the function for this input is \f$f(y)=0+1x_1\f$. Keep in mind
+that in this example, the regressors for the dataset are the second column.
+That is, the dataset is one dimensional, and the last column has the \f$y\f$
+values, or responses, for each row. You can specify these responses in a 
+separate file if you want, using the --input_responses, or -r, option.
+
+@subsection cli_ex2 Compute model and predict at the same time
+
+@code
+$ linear_regression --input_file dataset.csv --test_file predict.csv -v
+[INFO ] Loading 'dataset.csv' as CSV data.
+[INFO ] Saving CSV data to 'parameters.csv'.
+[INFO ] Loading 'predict.csv' as CSV data.
+[INFO ] Saving CSV data to 'predictions.csv'.
+[INFO ] 
+[INFO ] Execution parameters:
+[INFO ]   help: false
+[INFO ]   info: ""
+[INFO ]   input_file: dataset.csv
+[INFO ]   input_responses: ""
+[INFO ]   model_file: ""
+[INFO ]   output_file: parameters.csv
+[INFO ]   output_predictions: predictions.csv
+[INFO ]   test_file: predict.csv
+[INFO ]   verbose: true
+[INFO ] 
+[INFO ] Program timers:
+[INFO ]   load_regressors: 0.000360s
+[INFO ]   load_test_points: 0.000090s
+[INFO ]   prediction: 0.000006s
+[INFO ]   regression: 0.000335s
+[INFO ]   total_time: 0.001522s
+
+$ cat dataset.csv
+0,0
+1,1
+2,2
+3,3
+4,4
+
+$ cat parameters.csv
+-0.0000000000e+00,1.0000000000e+00
+
+$ cat predict.csv
+2
+3
+4
+
+$ cat predictions.csv
+2.0000000000e+00
+3.0000000000e+00
+4.0000000000e+00
+@endcode
+
+We used the same dataset, so we got the same parameters. The key thing to note
+about the predict.csv dataset is that it has the same dimensionality as the
+dataset used to create the model, one. Generally, if the model generating
+dataset has \f$n\f$ dimensions, so must the dataset we want to predict for.
+
+@subsection cli_ex3 Prediction using a precomputed model
+
+@code
+$ linear_regression --model_file parameters.csv --test_file predict.csv -v
+[INFO ] Loading 'parameters.csv' as CSV data.
+[INFO ] Loading 'predict.csv' as CSV data.
+[INFO ] Saving CSV data to 'predictions.csv'.
+[INFO ] 
+[INFO ] Execution parameters:
+[INFO ]   help: false
+[INFO ]   info: ""
+[INFO ]   input_file: ""
+[INFO ]   input_responses: ""
+[INFO ]   model_file: parameters.csv
+[INFO ]   output_file: parameters.csv
+[INFO ]   output_predictions: predictions.csv
+[INFO ]   test_file: predict.csv
+[INFO ]   verbose: true
+[INFO ] 
+[INFO ] Program timers:
+[INFO ]   load_model: 0.009519s
+[INFO ]   load_test_points: 0.000067s
+[INFO ]   prediction: 0.000007s
+[INFO ]   total_time: 0.010081s
+
+$ cat parameters.csv 
+-0.0000000000e+00,1.0000000000e+00
+
+$ cat predict.csv 
+2
+3
+4
+
+$ cat predictions.csv 
+2.0000000000e+00
+3.0000000000e+00
+4.0000000000e+00
+@endcode
+
+Further documentation on options should be found by using the --help option.
+
+@section linreg The 'LinearRegression' class
+
+The 'LinearRegression' class is a simple implementation of linear regression.
+
+Using the LinearRegression class is very simple. It has two available constructors,
+one for generating a model from a matrix of predictors and a vector of responses,
+and one for loading an already computed model from a given file.
+
+The class provides one method that does work:
+@code
+void Predict(const arma::mat& points, arma::vec& predictions);
+@endcode
+
+Once you have generated or loaded a model, you can call this method and pass it a
+matrix of data points to predict values for using the model. The second parameter,
+predictions, will be modified to contain the predicted values corresponding to
+each row of the points matrix.
+
+@subsection further_doc Further documentation
+
+For further documentation on the LinearRegression class, consult the
+\ref mlpack::regression::LinearRegression "complete API documentation".
+
+*/
