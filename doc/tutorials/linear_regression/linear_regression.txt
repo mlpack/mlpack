@@ -34,6 +34,7 @@ A list of all the sections this tutorial contains.
    - \ref linreg_ex1
    - \ref linreg_ex2
    - \ref linreg_ex3
+   - \ref linreg_ex4
  - \ref further_doc
 
 @section cli Command-Line 'linear_regression'
@@ -210,6 +211,60 @@ Once you have generated or loaded a model, you can call this method and pass it 
 matrix of data points to predict values for using the model. The second parameter,
 predictions, will be modified to contain the predicted values corresponding to
 each row of the points matrix.
+
+@subsection linreg_ex1 Generating a model
+
+@code
+#include <mlpack/methods/linear_regression/linear_regression.hpp>
+
+using namespace::regression
+
+arma::mat data; // The dataset itself
+arma::vec responses; // The responses, one row for each row in data
+
+// Regress
+LinearRegression lr(data,responses);
+
+// Get the parameters, or coefficients
+arma vec parameters = lr.Parameters();
+@endcode
+
+@subsection linreg_ex2 Setting a model
+Assuming you already have a model and do not need to create one, this is how
+you would set the parameters for a LinearRegression instance.
+
+@code
+arma::vec parameters; // Your model
+
+LinearRegression lr(); // Create a new LinearRegression instance or reuse one
+lr.Parameters() = parameters; // Set the model
+@endcode
+
+@subsection linreg_ex3 Load a model from a file
+If you have a generated model in a file somewhere you would like to load and use,
+you can simply pass it to the LinearRegression initializer like so.
+
+@code
+std::string filename; // The path and name of your file
+
+LinearRegression lr(filename); // Will load the model internally
+@endcode
+
+@subsection linreg_ex4 Prediction
+Once you have generated or loaded a model using one of the aforementioned methods,
+you can predict values for a dataset.
+
+@code
+
+LinearRegression lr();
+// Load or generate your model
+
+arma::mat points; // The dataset we want to predict on, each row is a data point
+arma::vec predictions; // This will store the predictions, one row for each point
+
+lr.Predict(points, predictions); // Predict
+// Now, predictions will contain the predicted values.
+@endcode
 
 @subsection further_doc Further documentation
 
