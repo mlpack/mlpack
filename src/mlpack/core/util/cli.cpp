@@ -298,7 +298,7 @@ std::string CLI::HyphenateString(std::string str, int padding)
   std::string out("");
   unsigned int pos = 0;
   // First try to look as far as possible.
-  while (pos < str.length() - 1)
+  while (pos < str.length())
   {
     size_t splitpos;
     // Check that we don't have a newline first.
