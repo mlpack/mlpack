@@ -60,34 +60,42 @@ int main(int argc, char* argv[])
 
   bool computeModel;
 
-  if (trainName.empty())
+  // We want to determine if an input file XOR model file were given
+  if (trainName.empty()) // The user specified no input file
   {
-    if (modelName.empty())
+    if (modelName.empty()) // The user specified no model file, error and exit
     {
       Log::Fatal << "You must specify either --input_file or --model_file." << std::endl;
       exit(1);
     }
-    else
+    else // The model file was specified, no problems
     {
       computeModel = false;
     }
   }
+  // The user specified an input file but no model file, no problems
   else if (modelName.empty())
   {
     computeModel = true;
   }
+  // The user specified both an input file and model file.
+  // This is ambiguous -- which model should we use? A generated one or given one?
+  // Report error and exit.
   else
   {
       Log::Fatal << "You must specify either --input_file or --model_file, not both." << std::endl;
       exit(1);
   }
 
+  // If they specified a model file, we also need a test file or we
+  // have nothing to do.
   if(!computeModel && testName.empty())
   {
     Log::Fatal << "When specifying --model_file, you must also specify --test_file." << std::endl;
     exit(1);
   }
 
+  // An input file was given and we need to generate the model.
   if (computeModel)
   {
     Timer::Start("load_regressors");
@@ -131,6 +139,7 @@ int main(int argc, char* argv[])
   if (!testName.empty() )
   {
 
+    // A model file was passed in, so load it
     if (!computeModel)
     {
       Timer::Start("load_model");
@@ -138,11 +147,13 @@ int main(int argc, char* argv[])
       Timer::Stop("load_model");
     }
 
+    // Load the test file data
     arma::mat points;
     Timer::Stop("load_test_points");
     data::Load(testName.c_str(), points, true);
     Timer::Stop("load_test_points");
 
+    // Perform the predictions using our model
     arma::vec predictions;
     Timer::Start("prediction");
     lr.Predict(points, predictions);
