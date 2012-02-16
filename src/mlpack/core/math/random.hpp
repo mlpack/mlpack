@@ -23,11 +23,15 @@ namespace math /** Miscellaneous math routines. */ {
   extern boost::random::mt19937 randGen;
   // Global uniform distribution.
   extern boost::random::uniform_01<> randUniformDist;
+  // Global normal distribution.
+  extern boost::random::normal_distribution<> randNormalDist;
 #else
   // Global random object.
   extern boost::mt19937 randGen;
   // Global uniform distribution.
   extern boost::uniform_01<> randUniformDist;
+  // Global normal distribution.
+  extern boost::normal_distribution<> randNormalDist;
 #endif
 
 /**
@@ -54,7 +58,7 @@ inline double Random()
 /**
  * Generates a uniform random number in the specified range.
  */
-inline double Random(double lo, double hi)
+inline double Random(const double lo, const double hi)
 {
   #if BOOST_VERSION >= 104700
     boost::random::uniform_real_distribution<> dist(lo, hi);
@@ -68,7 +72,7 @@ inline double Random(double lo, double hi)
 /**
  * Generates a uniform random integer.
  */
-inline int RandInt(int hiExclusive)
+inline int RandInt(const int hiExclusive)
 {
   #if BOOST_VERSION >= 104700
     boost::random::uniform_int_distribution<> dist(0, hiExclusive - 1);
@@ -82,7 +86,7 @@ inline int RandInt(int hiExclusive)
 /**
  * Generates a uniform random integer.
  */
-inline int RandInt(int lo, int hiExclusive)
+inline int RandInt(const int lo, const int hiExclusive)
 {
   #if BOOST_VERSION >= 104700
     boost::random::uniform_int_distribution<> dist(lo, hiExclusive - 1);
@@ -91,6 +95,26 @@ inline int RandInt(int lo, int hiExclusive)
   #endif
 
   return dist(randGen);
+}
+
+/**
+ * Generates a normally distributed random number with mean 0 and variance 1.
+ */
+inline double RandNormal()
+{
+  return randNormalDist(randGen);
+}
+
+/**
+ * Generates a normally distributed random number with specified mean and
+ * variance.
+ *
+ * @param mean Mean of distribution.
+ * @param variance Variance of distribution.
+ */
+inline double RandNormal(const double mean, const double variance)
+{
+  return variance * randNormalDist(randGen) + mean;
 }
 
 }; // namespace math
