@@ -6,7 +6,6 @@
  */
 
 #include <mlpack/core.hpp>
-#include <armadillo>
 #include "radical.hpp"
 
 PROGRAM_INFO("RADICAL", "An implementation of RADICAL, a method for independent"
@@ -44,6 +43,7 @@ PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace mlpack;
 using namespace mlpack::radical;
+using namespace mlpack::math;
 using namespace std;
 using namespace arma;
 
@@ -54,9 +54,9 @@ int main(int argc, char* argv[])
 
   // Set random seed.
   if (CLI::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+    RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
-    math::RandomSeed((size_t) std::time(NULL));
+    RandomSeed((size_t) std::time(NULL));
 
   // Load the data.
   const string matXFilename = CLI::GetParam<string>("input_file");

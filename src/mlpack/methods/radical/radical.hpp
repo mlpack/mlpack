@@ -10,9 +10,7 @@
 #ifndef __MLPACK_METHODS_RADICAL_RADICAL_HPP
 #define __MLPACK_METHODS_RADICAL_RADICAL_HPP
 
-#include<armadillo>
-#include <stdio.h>
-#include<float.h>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace radical {

@@ -75,7 +75,7 @@ double Radical::DoRadical2D(const mat& matX)
   mat candidateY;
 
   vec thetas = linspace<vec>(0, nAngles - 1, nAngles) /
-                ((double) nAngles) * math::pi() / 2;
+                ((double) nAngles) * M_PI / 2;
   vec values(nAngles);
 
   for(size_t i = 0; i < nAngles; i++) {
