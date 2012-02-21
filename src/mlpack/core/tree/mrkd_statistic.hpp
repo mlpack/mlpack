@@ -39,18 +39,18 @@ class MRKDStatistic
                    const size_t begin,
                    const size_t count)
     :
-      dataset(dataset),
+      dataset(&dataset),
       begin(begin),
       count(count)
     {
       centerOfMass = dataset[begin];
-      for(int i = begin+1; i < begin+count; ++i)
-        centerOfMass += dataset[i];
+      for(size_t i = begin+1; i < begin+count; ++i)
+        centerOfMass += dataset.row(i);
       centerOfMass /= count;
 
       sumOfSquaredNorms = 0.0;
-      for(int i = begin; i < begin+count; ++i)
-        sumOfSquaredNorms += arma::norm(dataset[i], 2);
+      for(size_t i = begin; i < begin+count; ++i)
+        sumOfSquaredNorms += arma::norm(dataset.row(i), 2);
     }
 
     /**
@@ -70,11 +70,11 @@ class MRKDStatistic
                    const MRKDStatistic& leftStat,
                    const MRKDStatistic& rightStat)
     :
-      dataset(dataset),
+      dataset(&dataset),
       begin(begin),
       count(count),
-      leftStat(leftStat),
-      rightStat(rightStat)
+      leftStat(&leftStat),
+      rightStat(&rightStat)
     {
       sumOfSquaredNorms = leftStat.sumOfSquaredNorms + rightStat.sumOfSquaredNorms;
 
@@ -85,14 +85,14 @@ class MRKDStatistic
 
     //! The data points this object contains
     const arma::mat* dataset;
+    //! The initial item in the dataset, so we don't have to make a copy
+    size_t begin;
+    //! The number of items in the dataset
+    size_t count;
     //! The left child 
     const MRKDStatistic* leftStat;
     //! The right child 
     const MRKDStatistic* rightStat;
-    //! The initial item in the dataset, so we don't have to make a copy
-    const size_t begin;
-    //! The number of items in the dataset
-    const size_t count;
 
     // Computed statistics
     //! The center of mass for this dataset
