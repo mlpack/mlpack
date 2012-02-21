@@ -33,9 +33,9 @@ BOOST_AUTO_TEST_CASE(AugLagrangianTestFunctionTest)
 
   double finalValue = f.Evaluate(coords);
 
-  BOOST_REQUIRE_CLOSE(finalValue, 70, 1e-5);
-  BOOST_REQUIRE_CLOSE(coords[0], 1, 1e-5);
-  BOOST_REQUIRE_CLOSE(coords[1], 4, 1e-5);
+  BOOST_REQUIRE_CLOSE(finalValue, 70.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(coords[0], 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(coords[1], 4.0, 1e-5);
 }
 
 /**
