@@ -46,9 +46,9 @@ class BinarySpaceTree
 {
  private:
   //! The left child node.
-  BinarySpaceTree *left;
+  BinarySpaceTree* left;
   //! The right child node.
-  BinarySpaceTree *right;
+  BinarySpaceTree* right;
   //! The index of the first point in the dataset contained in this node (and
   //! its children).
   size_t begin;
