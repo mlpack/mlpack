@@ -241,7 +241,7 @@ class BinarySpaceTree
   /**
    * Gets the right child of this node.
    */
-  BinarySpaceTree *Right() const;
+  BinarySpaceTree* Right() const;
 
   /**
    * Obtains the number of nodes in the tree, starting with this.
