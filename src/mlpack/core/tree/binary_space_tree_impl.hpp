@@ -353,6 +353,12 @@ inline StatisticType& BinarySpaceTree<BoundType, StatisticType, MatType>::Stat()
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>
+inline size_t BinarySpaceTree<BoundType, StatisticType, MatType>::GetSplitDimension() const
+{
+	return splitDimension;
+}
+
+template<typename BoundType, typename StatisticType, typename MatType>
 inline bool BinarySpaceTree<BoundType, StatisticType, MatType>::IsLeaf() const
 {
   return !left;
@@ -431,6 +437,7 @@ void
       splitDim = d;
     }
   }
+	splitDimension = splitDim;
 
   // Split in the middle of that dimension.
   double splitVal = bound[splitDim].Mid();
@@ -480,6 +487,7 @@ void BinarySpaceTree<BoundType, StatisticType, MatType>::SplitNode(
       splitDim = d;
     }
   }
+	splitDimension = splitDim;
 
   // Split in the middle of that dimension.
   double splitVal = bound[splitDim].Mid();
