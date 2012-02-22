@@ -61,8 +61,8 @@ class BinarySpaceTree
   StatisticType stat;
   //! The leaf size.
   size_t leafSize;
-	//! The dimension this node split on if it is a parent.
-	size_t splitDimension;
+  //! The dimension this node split on if it is a parent.
+  size_t splitDimension;
 
  public:
   //! So other classes can use TreeType::Mat.
@@ -245,10 +245,10 @@ class BinarySpaceTree
    */
   BinarySpaceTree* Right() const;
 
-	/**
-	 * Returns the dimension this parent's children are split on.
-	 */
-	size_t GetSplitDimension() const;
+  /**
+  * Returns the dimension this parent's children are split on.
+  */
+  size_t GetSplitDimension() const;
 
   /**
    * Obtains the number of nodes in the tree, starting with this.
