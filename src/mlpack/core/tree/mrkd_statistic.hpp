@@ -43,7 +43,7 @@ class MRKDStatistic
       begin(begin),
       count(count)
     {
-      centerOfMass = dataset[begin];
+      centerOfMass = dataset.row(begin);
       for(size_t i = begin+1; i < begin+count; ++i)
         centerOfMass += dataset.row(i);
       centerOfMass /= count;
@@ -96,7 +96,7 @@ class MRKDStatistic
 
     // Computed statistics
     //! The center of mass for this dataset
-    arma::vec centerOfMass;
+    arma::rowvec centerOfMass;
     //! The sum of the squared Euclidian norms for this dataset
     double sumOfSquaredNorms;
 };
