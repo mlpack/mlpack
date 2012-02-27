@@ -17,7 +17,7 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_executable(range_search
-  range_main.cpp
+  range_search_main.cpp
 )
 target_link_libraries(range_search
   mlpack
