@@ -196,8 +196,8 @@ double HRectBound<t_pow>::MaxDistance(const VecType& point) const
 
   for (size_t d = 0; d < dim; d++)
   {
-    double v = fabs(std::max(point[d] - bounds[d].Lo(),
-                             bounds[d].Hi() - point[d]));
+		double v = std::max(fabs(point[d] - bounds[d].Lo()),
+					       fabs(bounds[d].Hi() - point[d]));
     sum += pow(v, (double) t_pow);
   }
 
@@ -217,8 +217,8 @@ double HRectBound<t_pow>::MaxDistance(const HRectBound& other) const
   double v;
   for (size_t d = 0; d < dim; d++)
   {
-    v = fabs(std::max(other.bounds[d].Hi() - bounds[d].Lo(),
-                      bounds[d].Hi() - other.bounds[d].Lo()));
+		v = std::max(fabs(other.bounds[d].Hi() - bounds[d].Lo()),
+					       fabs(bounds[d].Hi() - other.bounds[d].Lo()));
     sum += pow(v, (double) t_pow); // v is non-negative.
   }
 

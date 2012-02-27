@@ -329,8 +329,8 @@ double PeriodicHRectBound<t_pow>::MaxDistance(const arma::vec& point) const
       double tempMax;
       double sum = 0;
 
-      double v = fabs(std::max(point3[i] - bounds[i].Lo(),
-          bounds[i].Hi() - point3[i]));
+      double v = std::max(fabs(point3[i] - bounds[i].Lo()),
+          fabs(bounds[i].Hi() - point3[i]));
       sum += pow(v, (double) t_pow);
 
       tempMax = pow(sum, 2.0 / (double) t_pow) / 4.0;
@@ -417,11 +417,11 @@ double PeriodicHRectBound<t_pow>::MaxDistance(
         d[i].Hi() = b[i].Hi();
         c[i].Lo() = b[i].Lo();
 
-        double vLower = fabs(std::max(d.bounds[i].Hi() - bounds[i].Lo(),
-            bounds[i].Hi() - d.bounds[i].Lo()));
+        double vLower = std::max(fabs(d.bounds[i].Hi() - bounds[i].Lo()),
+            fabs(bounds[i].Hi() - d.bounds[i].Lo()));
 
-        double vHigher = fabs(std::max(c.bounds[i].Hi() - bounds[i].Lo(),
-            bounds[i].Hi() - c.bounds[i].Lo()));
+        double vHigher = std::max(fabs(c.bounds[i].Hi() - bounds[i].Lo()),
+            fabs(bounds[i].Hi() - c.bounds[i].Lo()));
 
         sumLower += pow(vLower, (double) t_pow);
         sumHigher += pow(vHigher, (double) t_pow);
@@ -433,8 +433,8 @@ double PeriodicHRectBound<t_pow>::MaxDistance(
       }
       else
       {
-        double v = fabs(std::max(b.bounds[i].Hi() - bounds[i].Lo(),
-            bounds[i].Hi() - b.bounds[i].Lo()));
+        double v = std::max(fabs(b.bounds[i].Hi() - bounds[i].Lo()),
+            fabs(bounds[i].Hi() - b.bounds[i].Lo()));
         sum += pow(v, (double) t_pow); // v is non-negative.
         tempMax = pow(sum, 2.0 / (double) t_pow);
       }
