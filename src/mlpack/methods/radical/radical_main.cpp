@@ -11,18 +11,7 @@
 PROGRAM_INFO("RADICAL", "An implementation of RADICAL, a method for independent"
     "component analysis (ICA).  Assuming that we have an input matrix X, the"
     "goal is to find a square unmixing matrix W such that Y = W * X and the "
-    "dimensions of Y are independent components.\n"
-    "\n"
-    "For more details, see the following paper:\n"
-    "\n"
-    "@article{\n"
-    "  title = {ICA Using Spacings Estimates of Entropy},\n"
-    "  author = {Learned-Miller, E.G. and Fisher III, J.W.},\n"
-    "  journal = {Journal of Machine Learning Research},\n"
-    "  volume = {4},\n"
-    "  pages = {1271--1295},\n"
-    "  year = {2003}\n"
-    "}");
+    "dimensions of Y are independent components.");
 
 PARAM_STRING_REQ("input_file", "Input dataset filename for ICA.", "i");
 
