@@ -17,7 +17,7 @@ namespace kernel {
  * bandwidth @f$ \mu @f$ (set in the constructor),
  *
  * @f[
- * K(x, y) = \exp(-\frac{|| x - y ||}{ \mu}).
+ * K(x, y) = \exp(-\frac{|| x - y ||}{\mu}).
  * @f]
  *
  * The implementation is all in the header file because it is so simple.
@@ -28,7 +28,7 @@ class LaplacianKernel
   /**
    * Default constructor; sets bandwidth to 1.0.
    */
-  LaplacianKernel() : bandwidth(1.0), gamma(-1.0)
+  LaplacianKernel() : bandwidth(1.0)
   { }
 
   /**
@@ -37,8 +37,7 @@ class LaplacianKernel
    * @param bandwidth The bandwidth of the kernel (@f$\mu@f$).
    */
   LaplacianKernel(double bandwidth) :
-    bandwidth(bandwidth),
-    gamma(-pow(bandwidth, -1.0))
+      bandwidth(bandwidth)
   { }
 
   /**
@@ -56,7 +55,7 @@ class LaplacianKernel
   double Evaluate(const VecType& a, const VecType& b) const
   {
     // The precalculation of gamma saves us a little computation time.
-    return exp(gamma * sqrt(metric::SquaredEuclideanDistance::Evaluate(a, b)));
+    return exp(-metric::EuclideanDistance::Evaluate(a, b) / bandwidth);
   }
 
   /**
@@ -69,21 +68,17 @@ class LaplacianKernel
   double Evaluate(double t) const
   {
     // The precalculation of gamma saves us a little computation time.
-    return exp(gamma * t);
+    return exp(-t / bandwidth);
   }
 
   //! Get the bandwidth.
-  const double& Bandwidth() const { return bandwidth; }
-  //! Get the precalculated constant.
-  const double& Gamma() const { return gamma; }
+  double Bandwidth() const { return bandwidth; }
+  //! Modify the bandwidth.
+  double& Bandwidth() { return bandwidth; }
 
  private:
   //! Kernel bandwidth.
   double bandwidth;
-
-  //! Precalculated constant depending on the bandwidth;
-  //! @f$ \gamma = -\frac{1}{ \mu} @f$.
-  double gamma;
 };
 
 }; // namespace kernel

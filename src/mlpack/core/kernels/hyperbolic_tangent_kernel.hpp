@@ -25,26 +25,24 @@ class HyperbolicTangentKernel
 {
  public:
   /**
-   * This constructor sets default scale to 1.0 and offset to 0.0
+   * This constructor sets the default scale to 1.0 and offset to 0.0.
    */
-  HyperbolicTangentKernel() :
-    scale(1.0),
-    offset(0.0)
+  HyperbolicTangentKernel() : scale(1.0), offset(0.0)
   { }
 
   /**
-   * Construct Hyperbolic Tangent Kernel with custom scale factor and offset
+   * Construct the hyperbolic tangent kernel with custom scale factor and
+   * offset.
    *
-   * @param scale scaling factor for <x, y>
-   * @param offset kernel offset
+   * @param scale Scaling factor for <x, y>.
+   * @param offset Kernel offset.
    */
   HyperbolicTangentKernel(double scale, double offset) :
-    scale(scale),
-    offset(offset)
+      scale(scale), offset(offset)
   { }
 
   /**
-   * Evaluation of Hyperbolic Tangent Kernel.  This evaluation uses Armadillo's
+   * Evaluate the hyperbolic tangent kernel.  This evaluation uses Armadillo's
    * dot() function.
    *
    * @tparam VecType Type of vector (should be arma::vec or arma::spvec).
@@ -58,10 +56,15 @@ class HyperbolicTangentKernel
     return tanh(scale * arma::dot(a, b) + offset);
   }
 
-  //Get scale factor
-  const double& Scale() const { return scale; }
-  //Get offset for the kernel
-  const double& Offset() const { return offset; }
+  //! Get scale factor.
+  double Scale() const { return scale; }
+  //! Modify scale factor.
+  double& Scale() { return scale; }
+
+  //! Get offset for the kernel.
+  double Offset() const { return offset; }
+  //! Modify offset for the kernel.
+  double& Offset() { return offset; }
 
  private:
   double scale;
