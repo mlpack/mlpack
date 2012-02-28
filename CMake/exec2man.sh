@@ -31,7 +31,7 @@ reqoptions=`./$name -h | \
 
 # Then, regular options.
 options=`./$name -h | \
-  awk '/Options:/,0' | \
+  awk '/Options:/,/For further information,/' | \
   grep '^  --' | \
   sed 's/^  --/--/' | \
   grep -v -- '--help' | \
@@ -64,10 +64,14 @@ synopsis="$name [-h] [-v] $reqoptions $options";
 # correctly so that the entire description of the parameter is on one line (this
 # helps avoid 'man' warnings).
 ./$name -h | \
+  sed 's/^For further information/Additional Information\n\n For further information/' | \
+  sed 's/^consult the documentation/ consult the documentation/' | \
+  sed 's/^distribution of MLPACK./ distribution of MLPACK./' | \
   awk -v syn="$synopsis" \
       '{ if (NR == 1) print "NAME\n '$name' - "tolower($0)"\nSYNOPSIS\n "syn" \nDESCRIPTION\n" ; else print } ' | \
   sed '/^[^ ]/ y/qwertyuiopasdfghjklzxcvbnm:/QWERTYUIOPASDFGHJKLZXCVBNM /' | \
   sed 's/  / /g' | \
-  awk '/NAME/,/REQUIRED OPTIONS/ { print; } /REQUIRED OPTIONS/,0 { if (!/REQUIRED_OPTIONS/ && !/OPTIONS/) { if (/ --/) { printf "\n" } sub(/^[ ]*/, ""); sub(/ [ ]*/, " "); printf "%s ", $0; } else { if (!/REQUIRED OPTIONS/) { print "\n"$0; } } }' | \
+  awk '/NAME/,/REQUIRED OPTIONS/ { print; } /ADDITIONAL INFORMATION/,0 { print; } /REQUIRED OPTIONS/,/ADDITIONAL INFORMATION/ { if (!/REQUIRED_OPTIONS/ && !/OPTIONS/ && !/ADDITIONAL INFORMATION/) { if (/ --/) { printf "\n" } sub(/^[ ]*/, ""); sub(/ [ ]*/, " "); printf "%s ", $0; } else { if (!/REQUIRED OPTIONS/ && !/ADDITIONAL INFORMATION/) { print "\n"$0; } } }' | \
+  sed 's/  ADDITIONAL INFORMATION/\n\nADDITIONAL INFORMATION/' | \
   txt2man -P mlpack -t $name -d 1 > $output
 
