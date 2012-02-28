@@ -22,8 +22,8 @@ PROGRAM_INFO("Principal Components Analysis", "This program performs principal "
 // Parameters for program.
 PARAM_STRING_REQ("input_file", "Input dataset to perform PCA on.", "i");
 PARAM_STRING_REQ("output_file", "File to save modified dataset to.", "o");
-PARAM("new_dimensionality", "Desired dimensionality of output dataset.  If 0, "
-    "no dimensionality reduction is performed.", "d", 0);
+PARAM_INT("new_dimensionality", "Desired dimensionality of output dataset.  If "
+    "0, no dimensionality reduction is performed.", "d", 0);
 
 int main(int argc, char** argv)
 {
