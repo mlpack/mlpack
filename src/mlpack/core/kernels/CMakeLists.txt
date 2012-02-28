@@ -7,7 +7,6 @@ set(SOURCES
   linear_kernel.hpp
   cosine_distance.hpp
   cosine_distance_impl.hpp
-  exponential_kernel.hpp
   laplacian_kernel.hpp
   polynomial_kernel.hpp
   hyperbolic_tangent_kernel.hpp
