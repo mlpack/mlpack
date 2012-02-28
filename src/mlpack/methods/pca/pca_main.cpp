@@ -20,10 +20,10 @@ PROGRAM_INFO("Principal Components Analysis", "This program performs principal "
     "eigenvalues.");
 
 // Parameters for program.
-PARAM_STRING_REQ("input_file", "Input dataset to perform PCA on.", "");
-PARAM_STRING_REQ("output_file", "Output dataset to perform PCA on.", "");
-PARAM_INT("new_dimensionality", "Desired dimensionality of output dataset.",
-    "", 0);
+PARAM_STRING_REQ("input_file", "Input dataset to perform PCA on.", "i");
+PARAM_STRING_REQ("output_file", "File to save modified dataset to.", "o");
+PARAM("new_dimensionality", "Desired dimensionality of output dataset.  If 0, "
+    "no dimensionality reduction is performed.", "d", 0);
 
 int main(int argc, char** argv)
 {
@@ -41,19 +41,20 @@ int main(int argc, char** argv)
   {
     // Validate the parameter.
     newDimension = (size_t) CLI::GetParam<int>("new_dimensionality");
-    if (newDimension < 1)
+    if (newDimension > dataset.n_rows)
     {
-      Log::Fatal << "Invalid value for new dimensionality (" << newDimension
-          << ")!  Must be greater than or equal to 1." << std::endl;
+      Log::Fatal << "New dimensionality (" << newDimension
+          << ") cannot be greater than existing dimensionality ("
+          << dataset.n_rows << ")!" << endl;
     }
   }
 
   // Perform PCA.
   PCA p;
-  Log::Info << "Performing PCA on dataset..." << std::endl;
+  Log::Info << "Performing PCA on dataset..." << endl;
   p.Apply(dataset, newDimension);
 
   // Now save the results.
   string outputFile = CLI::GetParam<string>("output_file");
-  data::Save(outputFile.c_str(), dataset);
+  data::Save(outputFile, dataset);
 }
