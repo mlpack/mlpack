@@ -18,8 +18,8 @@ namespace kpca {
 
 template <typename KernelType>
 KernelPCA<KernelType>::KernelPCA(const KernelType kernel,
-                       const bool centerData,
-                       const bool scaleData) :
+                                 const bool centerData,
+                                 const bool scaleData) :
       kernel(kernel),
       centerData(centerData),
       scaleData(scaleData)
@@ -42,7 +42,7 @@ void KernelPCA<KernelType>::Apply(const arma::mat& data,
   arma::mat transData = trans(data);
 
   // Center the data if necessary.
-  if(centerData)
+  if (centerData)
   {
     arma::rowvec means = arma::mean(transData, 0);
     transData = transData - arma::ones<arma::colvec>(transData.n_rows) * means;
