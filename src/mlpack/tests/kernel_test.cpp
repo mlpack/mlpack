@@ -11,7 +11,6 @@
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
 #include <mlpack/core/kernels/polynomial_kernel.hpp>
-#include <mlpack/core/kernels/exponential_kernel.hpp>
 #include <mlpack/core/kernels/laplacian_kernel.hpp>
 #include <mlpack/core/kernels/hyperbolic_tangent_kernel.hpp>
 
