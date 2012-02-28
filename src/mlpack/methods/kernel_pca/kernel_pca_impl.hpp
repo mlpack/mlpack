@@ -1,5 +1,5 @@
 /**
- * @file kernelpca_impl.hpp
+ * @file kernel_pca_impl.hpp
  * @author Ajinkya Kale
  *
  * Implementation of KernelPCA class to perform Kernel Principal Components
@@ -13,8 +13,6 @@
 
 #include <iostream>
 
-using namespace std; // This'll have to go before the release.
-
 namespace mlpack {
 namespace kpca {
 
@@ -25,8 +23,7 @@ KernelPCA<KernelType>::KernelPCA(const KernelType kernel,
       kernel(kernel),
       centerData(centerData),
       scaleData(scaleData)
-{
-}
+{ }
 
 /**
  * Apply Kernel Principal Component Analysis to the provided data set.
@@ -44,16 +41,20 @@ void KernelPCA<KernelType>::Apply(const arma::mat& data,
 {
   arma::mat transData = trans(data);
 
+  // Center the data if necessary.
   if(centerData)
   {
     arma::rowvec means = arma::mean(transData, 0);
     transData = transData - arma::ones<arma::colvec>(transData.n_rows) * means;
   }
+
+  // Scale the data if necessary.
   if (scaleData)
   {
     transData = transData / (arma::ones<arma::colvec>(transData.n_rows) *
     stddev(transData, 0, 0));
   }
+
   arma::mat centeredData = trans(transData);
   arma::mat kernelMat = GetKernelMatrix(kernel, centeredData);
   arma::eig_sym(eigVal, coeffs, kernelMat);
@@ -66,7 +67,8 @@ void KernelPCA<KernelType>::Apply(const arma::mat& data,
 
   transformedData = trans(coeffs) * data;
   arma::colvec transformedDataMean = arma::mean(transformedData, 1);
-  transformedData = transformedData - (transformedDataMean * arma::ones<arma::rowvec>(transformedData.n_cols));
+  transformedData = transformedData - (transformedDataMean *
+      arma::ones<arma::rowvec>(transformedData.n_cols));
 }
 
 /**
