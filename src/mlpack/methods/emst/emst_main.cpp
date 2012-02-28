@@ -6,9 +6,18 @@
  * Can optionally call naive Boruvka's method.
  *
  * For algorithm details, see:
- * March, W.B., Ram, P., and Gray, A.G.
- * Fast Euclidean Minimum Spanning Tree: Algorithm, Analysis, Applications.
- * In KDD, 2010.
+ *
+ * @code
+ * @inproceedings{
+ *   author = {March, W.B., Ram, P., and Gray, A.G.},
+ *   title = {{Fast Euclidean Minimum Spanning Tree: Algorithm, Analysis,
+ *      Applications.}},
+ *   booktitle = {Proceedings of the 16th ACM SIGKDD International Conference
+ *      on Knowledge Discovery and Data Mining}
+ *   series = {KDD 2010},
+ *   year = {2010}
+ * }
+ * @endcode
  */
 
 #include "dtb.hpp"
@@ -17,17 +26,8 @@
 
 PROGRAM_INFO("Fast Euclidean Minimum Spanning Tree", "This program can compute "
     "the Euclidean minimum spanning tree of a set of input points using the "
-    "dual-tree Boruvka algorithm.  This method is detailed in the following "
-    "paper:\n\n"
-    "  @inproceedings{\n"
-    "    author = {March, W.B., Ram, P., and Gray, A.G.},\n"
-    "    title = {{Fast Euclidean Minimum Spanning Tree: Algorithm, Analysis,\n"
-    "        Applications.}},\n"
-    "    booktitle = {Proceedings of the 16th ACM SIGKDD International "
-    "Conference\n        on Knowledge Discovery and Data Mining},\n"
-    "    series = {KDD '10},\n"
-    "    year = {2010}\n"
-    "  }\n\n"
+    "dual-tree Boruvka algorithm."
+    "\n\n"
     "The output is saved in a three-column matrix, where each row indicates an "
     "edge.  The first column corresponds to the lesser index of the edge; the "
     "second column corresponds to the greater index of the edge; and the third "

@@ -5,9 +5,17 @@
  * Contains an implementation of the DualTreeBoruvka algorithm for finding a
  * Euclidean Minimum Spanning Tree using the kd-tree data structure.
  *
- * Citation: March, W. B.; Ram, P.; and Gray, A. G.  Fast Euclidean Minimum
- * Spanning Tree: Algorithm, Analysis, Applications.  In KDD, 2010.
- *
+ * @code
+ * @inproceedings{
+ *   author = {March, W.B., Ram, P., and Gray, A.G.},
+ *   title = {{Fast Euclidean Minimum Spanning Tree: Algorithm, Analysis,
+ *      Applications.}},
+ *   booktitle = {Proceedings of the 16th ACM SIGKDD International Conference
+ *      on Knowledge Discovery and Data Mining}
+ *   series = {KDD 2010},
+ *   year = {2010}
+ * }
+ * @endcode
  */
 #ifndef __MLPACK_METHODS_EMST_DTB_HPP
 #define __MLPACK_METHODS_EMST_DTB_HPP
