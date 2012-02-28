@@ -2,7 +2,7 @@
  * @file lars_main.cpp
  * @author Nishant Mehta
  *
- * Executable for LARS
+ * Executable for LARS.
  */
 #include <mlpack/core.hpp>
 
@@ -26,32 +26,7 @@ PROGRAM_INFO("LARS", "An implementation of LARS: Least Angle Regression "
     "regression.\n"
     "\n"
     "For efficiency reasons, it is not recommended to use this algorithm with "
-    "lambda_1 = 0.\n"
-    "\n"
-    "For more details, see the following papers:\n"
-    "\n"
-    "@article{\n"
-    "  title = {Least angle regression},\n"
-    "  author = {Efron, B. and Hastie, T. and Johnstone, I. and Tibshirani,"
-    "R.},\n"
-    "  journal = {The Annals of Statistics},\n"
-    "  volume = {32},\n"
-    "  number = {2},\n"
-    "  pages = {407--499},\n"
-    "  year = {2004},\n"
-    "  publisher = {Institute of Mathematical Statistics}\n"
-    "}\n"
-    "\n"
-    "@article{\n"
-    "  title = {Regularization and variable selection via the elastic net},\n"
-    "  author = {Zou, H. and Hastie, T.},\n"
-    "  journal = {Journal of the Royal Statistical Society Series B},\n"
-    "  volume = {67},\n"
-    "  number = {2},\n"
-    "  pages = {301--320},\n"
-    "  year = {2005},\n"
-    "  publisher = {Royal Statistical Society}\n"
-    "}");
+    "lambda_1 = 0.\n");
 
 PARAM_STRING_REQ("input_file", "File containing covariates (X)",
     "i");
