@@ -6,45 +6,151 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
+#include <mlpack/core/kernels/gaussian_kernel.hpp>
+#include <mlpack/core/kernels/hyperbolic_tangent_kernel.hpp>
+#include <mlpack/core/kernels/laplacian_kernel.hpp>
+#include <mlpack/core/kernels/polynomial_kernel.hpp>
+#include <mlpack/core/kernels/cosine_distance.hpp>
 
 #include "kernel_pca.hpp"
 
 using namespace mlpack;
 using namespace mlpack::kpca;
+using namespace mlpack::kernel;
 using namespace std;
 using namespace arma;
 
-int main(int /* argc */, char** /* argv */)
+PROGRAM_INFO("Kernel Principal Components Analysis",
+    "This program performs Kernel Principal Components Analysis (KPCA) on the "
+    "specified dataset with the specified kernel.  This will transform the "
+    "data onto the kernel principal components, and optionally reduce the "
+    "dimensionality by ignoring the kernel principal components with the "
+    "smallest eigenvalues."
+    "\n\n"
+    "For the case where a linear kernel is used, this reduces to regular "
+    "PCA."
+    "\n\n"
+    "The kernels that are supported are listed below:"
+    "\n\n"
+    " * 'linear': the standard linear dot product (same as normal PCA):\n"
+    "    K(x, y) = x^T y\n"
+    "\n"
+    " * 'gaussian': a Gaussian kernel; requires bandwidth:\n"
+    "    K(x, y) = exp(-(|| x - y || ^ 2) / (2 * (bandwidth ^ 2)))\n"
+    "\n"
+    " * 'polynomial': polynomial kernel; requires offset and degree:\n"
+    "    K(x, y) = (x^T y + offset) ^ degree\n"
+    "\n"
+    " * 'hyptan': hyperbolic tangent kernel; requires scale and offset:\n"
+    "    K(x, y) = tanh(scale * (x^T y) + offset)\n"
+    "\n"
+    " * 'laplacian': Laplacian kernel; requires bandwidth:\n"
+    "    K(x, y) = exp(-(|| x - y ||) / bandwidth)\n"
+    "\n"
+    " * 'cosine': cosine distance:\n"
+    "    K(x, y) = 1 - (x^T y) / (|| x || * || y ||)\n"
+    "\n"
+    "The parameters for each of the kernels should be specified with the "
+    "options --bandwidth, --scale, --offset, or --degree (or a combination of "
+    "those options).");
+
+PARAM_STRING_REQ("input_file", "Input dataset to perform KPCA on.", "i");
+PARAM_STRING_REQ("output_file", "File to save modified dataset to.", "o");
+PARAM_STRING_REQ("kernel", "The kernel to use; see the above documentation for "
+    "the list of usable kernels.", "k");
+
+PARAM_INT("new_dimensionality", "If not 0, reduce the dimensionality of "
+    "the output dataset by ignoring the dimensions with the smallest "
+    "eigenvalues.", "d", 0);
+
+PARAM_DOUBLE("scale", "Scale, for 'hyptan' kernel.", "s", 1.0);
+PARAM_DOUBLE("offset", "Offset, for 'hyptan' and 'polynomial' kernels.", "O",
+    0.0);
+PARAM_DOUBLE("bandwidth", "Bandwidth, for 'gaussian' and 'laplacian' kernels.",
+    "b", 1.0);
+PARAM_DOUBLE("degree", "Degree of polynomial, for 'polynomial' kernel.", "d",
+    1.0);
+
+int main(int argc, char** argv)
 {
+  // Parse command line options.
+  CLI::ParseCommandLine(argc, argv);
 
-  mat data("1 0 2 3 9;"
-            "5 2 8 4 8;"
-            "6 7 3 1 8");
-/*  mat data("1 2 3;"
-            "4 5 6;"
-            "7 8 9");*/
+  // Load input dataset.
+  mat dataset;
+  const string inputFile = CLI::GetParam<string>("input_file");
+  data::Load(inputFile, dataset, true); // Fatal on failure.
 
-  data.print("DATA : ");
+  // Get the new dimensionality, if it is necessary.
+  size_t newDim = dataset.n_rows;
+  if (CLI::GetParam<int>("new_dimensionality") != 0)
+  {
+    newDim = CLI::GetParam<int>("new_dimensionality");
 
-   // Now run PCA to reduce the dimensionality.
-   kpca::KernelPCA<kernel::LinearKernel> p;
-   //p.CenterData();
-   p.Apply(data, 2); // Reduce to 2 dimensions.
+    if (newDim > dataset.n_rows)
+    {
+      Log::Fatal << "New dimensionality (" << newDim
+          << ") cannot be greater than existing dimensionality ("
+          << dataset.n_rows << ")!" << endl;
+    }
+  }
 
-   data.print("RESULT : ");
-   // Compare with correct results.
-   mat correct("-1.53781086 -3.51358020 -0.16139887 -1.87706634  7.08985628;"
-               " 1.29937798  3.45762685 -2.69910005 -3.15620704  1.09830225");
-   correct.print("CORRECT");
+  // Get the kernel type and make sure it is valid.
+  const string kernelType = CLI::GetParam<string>("kernel");
 
-   // If the eigenvectors are pointed opposite directions, they will cancel
- // each other out in this summation.
-   for(size_t i = 0; i < data.n_rows; i++)
-   {
-     if (fabs(correct(i, 1) + data(i,1)) < 0.001 /* arbitrary */)
-     {
-          // Flip Armadillo coefficients for this column.
-          data.row(i) *= -1;
-     }
-   }
+  if (kernelType == "linear")
+  {
+    KernelPCA<LinearKernel> kpca;
+    kpca.Apply(dataset, newDim);
+  }
+  else if (kernelType == "gaussian")
+  {
+    const double bandwidth = CLI::GetParam<double>("bandwidth");
+
+    GaussianKernel kernel(bandwidth);
+    KernelPCA<GaussianKernel> kpca(kernel);
+    kpca.Apply(dataset, newDim);
+  }
+  else if (kernelType == "polynomial")
+  {
+    const double degree = CLI::GetParam<double>("degree");
+    const double offset = CLI::GetParam<double>("offset");
+
+    PolynomialKernel kernel(offset, degree);
+    KernelPCA<PolynomialKernel> kpca(kernel);
+    kpca.Apply(dataset, newDim);
+  }
+  else if (kernelType == "hyptan")
+  {
+    const double scale = CLI::GetParam<double>("scale");
+    const double offset = CLI::GetParam<double>("offset");
+
+    HyperbolicTangentKernel kernel(scale, offset);
+    KernelPCA<HyperbolicTangentKernel> kpca(kernel);
+    kpca.Apply(dataset, newDim);
+  }
+  else if (kernelType == "laplacian")
+  {
+    const double bandwidth = CLI::GetParam<double>("bandwidth");
+
+    LaplacianKernel kernel(bandwidth);
+    KernelPCA<LaplacianKernel> kpca(kernel);
+    kpca.Apply(dataset, newDim);
+  }
+  else if (kernelType == "cosine")
+  {
+    KernelPCA<CosineDistance> kpca;
+    kpca.Apply(dataset, newDim);
+  }
+  else
+  {
+    // Invalid kernel type.
+    Log::Fatal << "Invalid kernel type ('" << kernelType << "'); valid choices "
+        << "are 'linear', 'gaussian', 'polynomial', 'hyptan', 'laplacian', and "
+        << "'cosine'." << endl;
+  }
+
+  // Save the output dataset.
+  const string outputFile = CLI::GetParam<string>("output_file");
+  data::Save(outputFile, dataset, true); // Fatal on failure.
 }
