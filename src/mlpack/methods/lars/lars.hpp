@@ -26,7 +26,7 @@ namespace regression {
  * Let X be a matrix where each row is a point and each column is a dimension,
  * and let y be a vector of targets.
  * The Elastic Net problem is to solve
- * min_beta ||X beta - y||_2^2 + lambda_1 ||beta||_1 + 0.5 lambda_2 ||beta||_2^2
+ * min_beta 0.5 ||X beta - y||_2^2 + lambda_1 ||beta||_1 + 0.5 lambda_2 ||beta||_2^2
  * If lambda_1 > 0, lambda_2 = 0, the problem is the LASSO.
  * If lambda_1 > 0, lambda_2 > 0, the problem is the Elastic Net.
  * If lambda_1 = 0, lambda_2 > 0, the problem is Ridge Regression.
@@ -38,7 +38,7 @@ namespace regression {
  *
  * Only minor modifications are necessary to handle the constrained version of
  * the problem:
- *   min_beta ||X beta - y||_2^2 + 0.5 lambda_2 ||beta||_2^2
+ *   min_beta 0.5 ||X beta - y||_2^2 + 0.5 lambda_2 ||beta||_2^2
  *   subject to ||beta||_1 <= tau
  * Although this option currently is not implemented, it will be implemented
  * very soon.
