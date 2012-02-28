@@ -24,14 +24,16 @@ namespace radical {
  *
  * For more details, see the following paper:
  *
+ * @code
  * @article{learned2003ica,
- *   title={ICA Using Spacings Estimates of Entropy},
- *   author={Learned-Miller, E.G. and Fisher III, J.W.},
- *   journal={Journal of Machine Learning Research},
- *   volume={4},
- *   pages={1271--1295},
- *   year={2003}
+ *   title = {ICA Using Spacings Estimates of Entropy},
+ *   author = {Learned-Miller, E.G. and Fisher III, J.W.},
+ *   journal = {Journal of Machine Learning Research},
+ *   volume = {4},
+ *   pages = {1271--1295},
+ *   year = {2003}
  * }
+ * @endcode
  */
 class Radical {
  public:
