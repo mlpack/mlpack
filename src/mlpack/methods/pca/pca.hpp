@@ -16,7 +16,7 @@ namespace pca {
 class PCA
 {
  public:
-  PCA(const bool centerData = false, const bool scaleData = false);
+  PCA(const bool centerData = true, const bool scaleData = false);
 
   /**
    * Apply Principal Component Analysis to the provided data set.
