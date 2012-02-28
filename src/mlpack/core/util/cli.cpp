@@ -611,9 +611,16 @@ void CLI::PrintHelp(std::string param)
       std::cout << HyphenateString(desc, 32) << std::endl;
     }
 
-  std::cout << std::endl;
+    std::cout << std::endl;
 
   }
+
+  // Helpful information at the bottom of the help output, to point the user to
+  // citations and better documentation (if necessary).  See ticket #201.
+  std::cout << HyphenateString("For further information, including relevant "
+      "papers, citations, and theory, consult the documentation found at "
+      "http://www.mlpack.org or included with your distribution of MLPACK.", 0)
+      << std::endl;
 }
 
 /**
