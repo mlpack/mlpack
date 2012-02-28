@@ -10,6 +10,7 @@
 #define __MLPACK_CORE_KERNELS_GAUSSIAN_KERNEL_HPP
 
 #include <mlpack/core.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
 
 namespace mlpack {
 namespace kernel {
@@ -39,8 +40,8 @@ class GaussianKernel
    * @param bandwidth The bandwidth of the kernel (@f$\mu@f$).
    */
   GaussianKernel(double bandwidth) :
-    bandwidth(bandwidth),
-    gamma(-0.5 * pow(bandwidth, -2.0))
+      bandwidth(bandwidth),
+      gamma(-0.5 * pow(bandwidth, -2.0))
   { }
 
   /**
@@ -75,9 +76,17 @@ class GaussianKernel
   }
 
   //! Get the bandwidth.
-  const double& Bandwidth() const { return bandwidth; }
+  double Bandwidth() const { return bandwidth; }
+  //! Modify the bandwidth.  This takes an argument because we must update the
+  //! precalculated constant (gamma).
+  void Bandwidth(const double bandwidth)
+  {
+    this->bandwidth = bandwidth;
+    this->gamma = -0.5 * pow(bandwidth, -2.0);
+  }
+
   //! Get the precalculated constant.
-  const double& Gamma() const { return gamma; }
+  double Gamma() const { return gamma; }
 
  private:
   //! Kernel bandwidth.
