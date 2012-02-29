@@ -74,6 +74,30 @@ class GaussianKernel
     // The precalculation of gamma saves us a little computation time.
     return exp(gamma * t * t);
   }
+  /**
+   * Obtain the normalization constant of the Gaussian kernel.
+   *
+   * @param dimension
+   * @return the normalization constant
+   */
+  double Normalizer(size_t dimension)
+  {
+    return pow(sqrt(2.0 * M_PI) * bandwidth, dimension);
+  }
+  /**
+   * Obtain a convolution integral of the Gaussian kernel.
+   *
+   * @param a, first vector
+   * @param b, second vector
+   * @return the convolution integral
+   */
+  template<typename VecType>
+  double ConvolutionIntegral(const VecType& a, const VecType& b)
+  {
+    return Evaluate(sqrt(metric::SquaredEuclideanDistance::Evaluate(a, b) / 2.0)) /
+      (Normalizer(a.n_rows) * pow(2.0, (double) a.n_rows / 2.0));
+  }
+
 
   //! Get the bandwidth.
   double Bandwidth() const { return bandwidth; }

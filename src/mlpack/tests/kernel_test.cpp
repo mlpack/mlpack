@@ -5,14 +5,17 @@
  *
  * Tests for the various kernel classes.
  */
-#include <mlpack/core/metrics/lmetric.hpp>
-#include <mlpack/core/metrics/mahalanobis_distance.hpp>
 #include <mlpack/core/kernels/cosine_distance.hpp>
+#include <mlpack/core/kernels/epanechnikov_kernel.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
+#include <mlpack/core/kernels/hyperbolic_tangent_kernel.hpp>
+#include <mlpack/core/kernels/laplacian_kernel.hpp>
+#include <mlpack/core/kernels/linear_kernel.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
 #include <mlpack/core/kernels/polynomial_kernel.hpp>
-#include <mlpack/core/kernels/laplacian_kernel.hpp>
-#include <mlpack/core/kernels/hyperbolic_tangent_kernel.hpp>
+#include <mlpack/core/kernels/spherical_kernel.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/metrics/mahalanobis_distance.hpp>
 
 #include <boost/test/unit_test.hpp>
 
@@ -242,8 +245,73 @@ BOOST_AUTO_TEST_CASE(gaussian_kernel)
   BOOST_REQUIRE_CLOSE(gk.Evaluate(c,a), .018315638888734, 1e-5);
   BOOST_REQUIRE_CLOSE(gk.Evaluate(b,c), .018315638888734, 1e-5);
   BOOST_REQUIRE_CLOSE(gk.Evaluate(c,b), .018315638888734, 1e-5);
+  /* check the single dimension evaluate function */
+  BOOST_REQUIRE_CLOSE(gk.Evaluate(1.0), 0.1353352832366127, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.Evaluate(2.0), 0.00033546262790251185, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.Evaluate(3.0), 1.5229979744712629e-08, 1e-5);
+  /* check the normalization constant */
+  BOOST_REQUIRE_CLOSE(gk.Normalizer(1), 1.2533141373155001, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.Normalizer(2), 1.5707963267948963, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.Normalizer(3), 1.9687012432153019, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.Normalizer(4), 2.4674011002723386, 1e-5);
+  /* check the convolution integral */
+  BOOST_REQUIRE_CLOSE(gk.ConvolutionIntegral(a,b), 0.024304474038457577, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.ConvolutionIntegral(a,c), 0.024304474038457577, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.ConvolutionIntegral(b,c), 0.024304474038457577, 1e-5);
+
 }
 
+BOOST_AUTO_TEST_CASE(spherical_kernel)
+{
+  arma::vec a = "1.0 0.0";
+  arma::vec b = "0.0 1.0";
+  arma::vec c = "0.2 0.9";
+
+  SphericalKernel sk(.5);
+  BOOST_REQUIRE_CLOSE(sk.Evaluate(a,b), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(sk.Evaluate(a,c), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(sk.Evaluate(b,c), 1.0, 1e-5);
+  /* check the single dimension evaluate function */
+  BOOST_REQUIRE_CLOSE(sk.Evaluate(0.10), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(sk.Evaluate(0.25), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(sk.Evaluate(0.50), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(sk.Evaluate(1.00), 0.0, 1e-5);
+  /* check the normalization constant */
+  BOOST_REQUIRE_CLOSE(sk.Normalizer(1), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(sk.Normalizer(2), 0.78539816339744828, 1e-5);
+  BOOST_REQUIRE_CLOSE(sk.Normalizer(3), 0.52359877559829893, 1e-5);
+  BOOST_REQUIRE_CLOSE(sk.Normalizer(4), 0.30842513753404244, 1e-5);
+  /* check the convolution integral */
+  BOOST_REQUIRE_CLOSE(sk.ConvolutionIntegral(a,b), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(sk.ConvolutionIntegral(a,c), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(sk.ConvolutionIntegral(b,c), 1.0021155029652784, 1e-5);
+}
+
+BOOST_AUTO_TEST_CASE(epanechnikov_kernel)
+{
+  arma::vec a = "1.0 0.0";
+  arma::vec b = "0.0 1.0";
+  arma::vec c = "0.1 0.9";
+
+  EpanechnikovKernel ek(.5);
+  BOOST_REQUIRE_CLOSE(ek.Evaluate(a,b), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(ek.Evaluate(b,c), 0.92, 1e-5);
+  BOOST_REQUIRE_CLOSE(ek.Evaluate(a,c), 0.0, 1e-5);
+  /* check the single dimension evaluate function */
+  BOOST_REQUIRE_CLOSE(ek.Evaluate(0.10), 0.96, 1e-5);
+  BOOST_REQUIRE_CLOSE(ek.Evaluate(0.25), 0.75, 1e-5);
+  BOOST_REQUIRE_CLOSE(ek.Evaluate(0.50), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(ek.Evaluate(1.00), 0.0, 1e-5);
+  /* check the normalization constant */
+  BOOST_REQUIRE_CLOSE(ek.Normalizer(1), 0.666666666666666, 1e-5);
+  BOOST_REQUIRE_CLOSE(ek.Normalizer(2), 0.39269908169872414, 1e-5);
+  BOOST_REQUIRE_CLOSE(ek.Normalizer(3), 0.20943951023931956, 1e-5);
+  BOOST_REQUIRE_CLOSE(ek.Normalizer(4), 0.10280837917801415, 1e-5);
+  /* check the convolution integral */
+  BOOST_REQUIRE_CLOSE(ek.ConvolutionIntegral(a,b), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(ek.ConvolutionIntegral(a,c), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(ek.ConvolutionIntegral(b,c), 1.5263455690698258, 1e-5);
+}
 BOOST_AUTO_TEST_CASE(polynomial_kernel)
 {
   arma::vec a = "0 0 1";

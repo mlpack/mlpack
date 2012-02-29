@@ -100,6 +100,32 @@ class ExampleKernel
    */
   template<typename VecType>
   static double Evaluate(const VecType& a, const VecType& b) { return 0; }
+  /**
+   * Obtains the convolution integral [integral K(||x-a||)K(||b-x||)dx]
+   * for the two vectors.  In this case, because
+   * our simple example kernel has no internal parameters, we can declare the
+   * function static.  For a more complex example which cannot be declared
+   * static, see the GaussianKernel, which stores an internal parameter.
+   *
+   * @tparam VecType Type of vector (arma::vec, arma::spvec should be expected).
+   * @param a First vector.
+   * @param b Second vector.
+   * @return the convolution integral value.
+   */
+  template<typename VecType>
+  static double ConvolutionIntegral(const VecType& a, const VecType& b) { return 0; }
+
+  /**
+   * Obtains the normalizing volume for the kernel with dimension $dimension$.
+   * In this case, because our simple example kernel has no internal parameters,
+   * we can declare the function static.  For a more complex example which
+   * cannot be declared static, see the GaussianKernel, which stores an internal
+   * parameter.
+   *
+   * @param dimension the dimension of the space.
+   * @return the normalization constant.
+   */
+  static double Normalizer(size_t dimension) { return 0; }
 };
 
 }; // namespace kernel
