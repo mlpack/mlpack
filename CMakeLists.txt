@@ -13,6 +13,13 @@ find_package(Pthreads REQUIRED)
 find_package(Armadillo 2.4.0 REQUIRED)
 find_package(LibXml2 REQUIRED)
 
+# Include directories for the previous dependencies.
+include_directories(${PTHREADS_INCLUDE_DIR})
+include_directories(${ARMADILLO_INCLUDE_DIRS})
+
+# Pthreads may have a compiler definition.
+add_definitions(${PTHREADS_DEFINITIONS})
+
 # libxml2 requires some special handling
 find_package(PkgConfig)
 
@@ -26,8 +33,8 @@ find_path(LIBXML2_INCLUDE_DIR libxml/xpath.h
 find_library(LIBXML2_LIBRARY NAMES xml2 libxml2
              HINTS ${PC_LIBXML_LIBDIR} ${PC_LIBXML_LIBRARY_DIRS} )
 
-set(LIBXML2_LIBRARIES ${LIBXML2_LIBRARY} )
-set(LIBXML2_INCLUDE_DIRS ${LIBXML2_INCLUDE_DIR} )
+set(LIBXML2_LIBRARIES ${LIBXML2_LIBRARY})
+set(LIBXML2_INCLUDE_DIRS ${LIBXML2_INCLUDE_DIR})
 
 include(FindPackageHandleStandardArgs)
 # handle the QUIETLY and REQUIRED arguments and set LIBXML2_FOUND to TRUE
@@ -35,7 +42,9 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(LibXml2  DEFAULT_MSG
                                   LIBXML2_LIBRARY LIBXML2_INCLUDE_DIR)
 
-mark_as_advanced(LIBXML2_INCLUDE_DIR LIBXML2_LIBRARY )
+mark_as_advanced(LIBXML2_INCLUDE_DIR LIBXML2_LIBRARY)
+
+include_directories(${LIBXML2_INCLUDE_DIR})
 
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
@@ -48,6 +57,7 @@ find_package(Boost COMPONENTS
   program_options
   unit_test_framework
   REQUIRED) # May require math_tr1?
+include_directories(${Boost_INCLUDE_DIRS})
 
 # We need to include Boost random, but only if newer than 1.45 (as of 1.46 it
 # became a separate package with its own linkable library object).
@@ -56,6 +66,8 @@ if(Boost_MAJOR_VERSION EQUAL 1 AND Boost_MINOR_VERSION GREATER 45)
   random
   REQUIRED)
   set(BOOST_LIBS ${BOOST_LIBS} "boost_random")
+  # This may be redundant.
+  include_directories(${Boost_INCLUDE_DIRS})
 endif(Boost_MAJOR_VERSION EQUAL 1 AND Boost_MINOR_VERSION GREATER 45)
 
 # Default to debugging mode for developers.
