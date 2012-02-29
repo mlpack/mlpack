@@ -16,7 +16,9 @@ namespace optimization {
 
 LRSDP::LRSDP(const size_t numConstraints,
              const arma::mat& initialPoint) :
+    a(numConstraints),
     b(numConstraints),
+    aModes(numConstraints),
     initialPoint(initialPoint),
     augLagInternal(*this),
     augLag(augLagInternal)
@@ -25,7 +27,9 @@ LRSDP::LRSDP(const size_t numConstraints,
 LRSDP::LRSDP(const size_t numConstraints,
              const arma::mat& initialPoint,
              AugLagrangian<LRSDP>& augLag) :
+    a(numConstraints),
     b(numConstraints),
+    aModes(numConstraints),
     initialPoint(initialPoint),
     augLagInternal(*this),
     augLag(augLag)
