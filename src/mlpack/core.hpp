@@ -62,6 +62,11 @@
  *  - @ref timer
  *  - @ref sample
  *
+ * Tutorials on specific methods are also available.
+ *
+ *  - @ref nstutorial
+ *  - @ref lrtutorial
+ *
  * @section methods Methods in MLPACK
  *
  * The following methods are included in MLPACK:
@@ -106,6 +111,9 @@
  *   - Noah Kauffman <notoriousnoah@gmail.com>
  *   - Guillermo Colon <gcolon7@mail.gatech.edu>
  *   - Wei Guan <wguan@cc.gatech.edu>
+ *   - Ryan Riegel <rriegel@cc.gatech.edu>
+ *   - Nikolaos Vasiloglou <nvasil@ieee.org>
+ *   - Garry Boyer <garryb@gmail.com>
  */
 
 // First, standard includes.
