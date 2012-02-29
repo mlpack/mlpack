@@ -32,9 +32,9 @@ offset term (or intercept term) \f$\beta_0\f$.
 
 \b mlpack provides:
 
- - a \ref cli "simple command-line executable" to run nearest-neighbors search
+ - a \ref cli_lrtut "simple command-line executable" to run nearest-neighbors search
    (and furthest-neighbors search)
- - a \ref linreg "simple C++ interface" to perform linear regression
+ - a \ref linreg_lrtut "simple C++ interface" to perform linear regression
 
 @section toc_lrtut Table of Contents
 
