@@ -524,9 +524,9 @@ class CLI
    *    ("").
    * @param required Indicates if parameter must be set on command line.
    */
-  static void Add(const char* identifier,
-                  const char* description,
-                  const char* alias = "",
+  static void Add(std::string path,
+                  std::string description,
+                  std::string alias = "",
                   bool required = false);
 
   /**
@@ -541,9 +541,9 @@ class CLI
    * @param required Indicates if parameter must be set on command line.
    */
   template<class T>
-  static void Add(const char* identifier,
-                  const char* description,
-                  const char* alias = "",
+  static void Add(std::string identifier,
+                  std::string description,
+                  std::string alias = "",
                   bool required = false);
 
   /**
@@ -553,9 +553,9 @@ class CLI
    * @param description Short string description of the parameter.
    * @param alias An alias for the parameter, defaults to "" which is no alias.
    */
-  static void AddFlag(const char* identifier,
-                      const char* description,
-                      const char* alias = "");
+  static void AddFlag(std::string identifier,
+                      std::string description,
+                      std::string alias = "");
   
   /**
    * Parses the parameters for 'help' and 'info'.
@@ -577,7 +577,7 @@ class CLI
    * @param identifier The name of the parameter in question.
    */
   template<typename T>
-  static T& GetParam(const char* identifier);
+  static T& GetParam(std::string identifier);
 
   /**
    * Get the description of the specified node.
@@ -585,7 +585,7 @@ class CLI
    * @param identifier Name of the node in question.
    * @return Description of the node in question.
    */
-  static std::string GetDescription(const char* identifier);
+  static std::string GetDescription(std::string identifier);
 
   /**
    * Retrieve the singleton.
@@ -606,7 +606,7 @@ class CLI
    *
    * @param identifier The name of the parameter in question.
    */
-  static bool HasParam(const char* identifier);
+  static bool HasParam(std::string identifier);
 
   /**
    * Hyphenate a string or split it onto multiple 80-character lines, with some
@@ -731,7 +731,7 @@ class CLI
    * @param str Input string.
    * @return Sanitized string.
    */
-  static std::string SanitizeString(const char* str);
+  static std::string SanitizeString(std::string str);
 
   /**
    * Parses the values given on the command line, overriding any default values.
@@ -748,7 +748,7 @@ class CLI
    *
    * @param optionsName Name of the module, as far as boost is concerned.
    */
-  CLI(std::string& optionsName);
+  CLI(std::string optionsName);
 
   //! Private copy constructor; we don't want copies floating around.
   CLI(const CLI& other);

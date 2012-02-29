@@ -28,24 +28,22 @@ namespace mlpack {
  *   unless the parameter is specified.
  */
 template<typename T>
-void CLI::Add(const char* identifier,
-             const char* description,
-             const char* alias,
+void CLI::Add(std::string path,
+             std::string description,
+             std::string alias,
              bool required)
 {
 
   po::options_description& desc = CLI::GetSingleton().desc;
-  std::string path = identifier;
-  std::string stringAlias = alias;
   // Must make use of boost syntax here.
-  std::string progOptId = stringAlias.length() ? path + "," + alias : path;
+  std::string progOptId = alias.length() ? path + "," + alias : path;
 
   // Add the alias, if necessary
-  AddAlias(stringAlias, path);
+  AddAlias(alias, path);
 
   // Add the option to boost program_options.
   desc.add_options()
-    (progOptId.c_str(), po::value<T>(),  description);
+    (progOptId.c_str(), po::value<T>(),  description.c_str());
 
   // Make sure the appropriate metadata is inserted into gmap.
   gmap_t& gmap = GetSingleton().globalValues;
@@ -79,7 +77,7 @@ void CLI::Add(const char* identifier,
  *     valid.
  */
 template<typename T>
-T& CLI::GetParam(const char* identifier)
+T& CLI::GetParam(std::string identifier)
 {
   // Used to ensure we have a valid value.
   T tmp = T();

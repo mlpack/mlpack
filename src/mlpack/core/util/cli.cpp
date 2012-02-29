@@ -53,7 +53,7 @@ CLI::CLI() : desc("Allowed Options") , didParse(false), doc(&emptyProgramDoc)
  *
  * @param optionsName Name of the module, as far as boost is concerned.
  */
-CLI::CLI(std::string& optionsName) :
+CLI::CLI(std::string optionsName) :
     desc(optionsName.c_str()), didParse(false), doc(&emptyProgramDoc)
 {
   return;
@@ -109,23 +109,21 @@ CLI::~CLI()
  * @param alias An alias for the parameter.
  * @param required Indicates if parameter must be set on command line.
  */
-void CLI::Add(const char* identifier,
-             const char* description,
-             const char* alias,
+void CLI::Add(std::string path,
+             std::string description,
+             std::string alias,
              bool required)
 {
   po::options_description& desc = CLI::GetSingleton().desc;
 
-  std::string path = identifier;
-  std::string stringAlias = alias;
   // Must make use of boost option name syntax.
-  std::string progOptId = stringAlias.length() ? path + "," + alias : path;
+  std::string progOptId = alias.length() ? path + "," + alias : path;
 
   // Deal with a required alias.
-  AddAlias(stringAlias, path);
+  AddAlias(alias, path);
 
   // Add the option to boost::program_options.
-  desc.add_options()(progOptId.c_str(), description);
+  desc.add_options()(progOptId.c_str(), description.c_str());
 
   // Make sure the description, etc. ends up in gmap.
   gmap_t& gmap = GetSingleton().globalValues;
@@ -165,9 +163,9 @@ void CLI::AddAlias(std::string alias, std::string original)
 /*
  * @brief Adds a flag parameter to CLI.
  */
-void CLI::AddFlag(const char* identifier,
-                 const char* description,
-                 const char* alias)
+void CLI::AddFlag(std::string identifier,
+                 std::string description,
+                 std::string alias)
 {
   // Reuse functionality from add
   Add(identifier, description, alias, false);
@@ -260,11 +258,10 @@ void CLI::Destroy()
  *
  * @param identifier The name of the parameter in question.
  */
-bool CLI::HasParam(const char* identifier)
+bool CLI::HasParam(std::string key)
 {
   po::variables_map vmap = GetSingleton().vmap;
   gmap_t& gmap = GetSingleton().globalValues;
-  std::string key = identifier;
 
   // Take any possible alias into account.
   amap_t& amap = GetSingleton().aliasValues;
@@ -337,7 +334,7 @@ std::string CLI::HyphenateString(std::string str, int padding)
  * @param identifier Name of the node in question.
  * @return Description of the node in question.
  */
-std::string CLI::GetDescription(const char* identifier)
+std::string CLI::GetDescription(std::string identifier)
 {
   gmap_t& gmap = GetSingleton().globalValues;
   std::string name = std::string(identifier);
