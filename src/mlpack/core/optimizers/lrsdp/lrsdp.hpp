@@ -114,7 +114,7 @@ class LRSDP
   arma::mat c;
   //! A_i for each constraint.
   std::vector<arma::mat> a;
-  //1 b_i for each constraint.
+  //! b_i for each constraint.
   arma::vec b;
 
   //! 1 if entries in matrix, 0 for normal.
