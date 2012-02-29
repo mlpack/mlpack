@@ -66,23 +66,26 @@ void setupLovaszTheta(const arma::mat& edges,
 
   // All of the matrices will just contain coordinates because they are
   // super-sparse (two entries each).  Except for A_0, which is I_n.
-  lovasz.AModes().ones(edges.n_cols);
+  lovasz.AModes().ones();
   lovasz.AModes()[0] = 0;
 
   // A_0 = I_n.
-  lovasz.A().push_back(arma::eye<arma::mat>(vertices, vertices));
+  lovasz.A()[0].eye(vertices, vertices);
 
   // A_ij only has ones at (i, j) and (j, i) and 1 elsewhere.
   for (size_t i = 0; i < edges.n_cols; ++i)
   {
-    arma::mat a(2, 2);
+    arma::mat a(3, 2);
 
     a(0, 0) = edges(0, i);
     a(1, 0) = edges(1, i);
+    a(2, 0) = 1;
+
     a(0, 1) = edges(1, i);
     a(1, 1) = edges(0, i);
+    a(2, 1) = 1;
 
-    lovasz.A().push_back(a);
+    lovasz.A()[i + 1] = a;
   }
 
   // Set the Lagrange multipliers right.
@@ -106,7 +109,7 @@ BOOST_AUTO_TEST_CASE(Johnson844LovaszThetaSDP)
 
   createLovaszThetaInitialPoint(edges, coordinates);
 
-  LRSDP lovasz(edges.n_cols, coordinates);
+  LRSDP lovasz(edges.n_cols + 1, coordinates);
 
   setupLovaszTheta(edges, lovasz);
 
