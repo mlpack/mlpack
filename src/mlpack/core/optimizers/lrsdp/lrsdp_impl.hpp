@@ -111,7 +111,8 @@ double AugLagrangianFunction<LRSDP>::Evaluate(const arma::mat& coordinates)
     {
       for (size_t j = 0; j < function.A()[i].n_rows; ++j)
       {
-        constraint += rrt(function.A()[i](j, 0), function.A()[i](j, 1));
+        constraint += function.A()[i](j, 2) *
+            rrt(function.A()[i](j, 0), function.A()[i](j, 1));
       }
     }
 
@@ -146,7 +147,8 @@ void AugLagrangianFunction<LRSDP>::Gradient(const arma::mat& coordinates,
     {
       for (size_t j = 0; j < function.A()[i].n_rows; ++j)
       {
-        constraint += rrt(function.A()[i](j, 0), function.A()[i](j, 1));
+        constraint += function.A()[i](j, 2) *
+            rrt(function.A()[i](j, 0), function.A()[i](j, 1));
       }
     }
 
