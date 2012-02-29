@@ -5,8 +5,6 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   mvu.hpp
   mvu.cpp
-  mvu_objective_function.hpp
-  mvu_objective_function.cpp
 )
 
 # Add directory name to sources.
