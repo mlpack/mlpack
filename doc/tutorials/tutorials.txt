@@ -25,5 +25,6 @@ simply want to use the methods MLPACK offers.  These tutorials start with simple
 examples and progress to complex, extensible uses.
 
  - \ref nstutorial
+ - \ref lrtutorial
 
 */
