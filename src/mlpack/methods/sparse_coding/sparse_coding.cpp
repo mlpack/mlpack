@@ -10,7 +10,6 @@
 
 using namespace std;
 using namespace arma;
-//using namespace mlpack;
 using namespace mlpack::regression;
 
 #define OBJ_TOL 1e-2 // 1E-9
