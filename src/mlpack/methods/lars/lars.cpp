@@ -101,12 +101,12 @@ void LARS::DoLARS(const mat& matX, const vec& y)
     return;
   }
 
-  //u32 matX.n_rowsiterations_run = 0;
+  //u32 iterations_run = 0;
   // MAIN LOOP
   while ((nActive < matX.n_cols) && (maxCorr > EPS))
   {
-    //matX.n_rowsiterations_run++;
-    //printf("iteration %d\t", matX.n_rowsiterations_run);
+    //iterations_run++;
+    //printf("iteration %d\t\n", iterations_run);
 
     // explicit computation of max correlation, among inactive indices
     changeInd = -1;
@@ -242,9 +242,9 @@ void LARS::DoLARS(const mat& matX, const vec& y)
 
       if (lassoboundOnGamma < gamma)
       {
-        //printf("%d: gap = %e\tbeta(%d) = %e\n",
+        // printf("%d: gap = %e\tbeta(%d) = %e\n",
         //    activeSet[activeIndToKickOut],
-        //    gamma - lassoBoundOnGamma,
+        //    gamma - lassoboundOnGamma,
         //    activeSet[activeIndToKickOut],
         //    beta(activeSet[activeIndToKickOut]));
         gamma = lassoboundOnGamma;
@@ -261,17 +261,23 @@ void LARS::DoLARS(const mat& matX, const vec& y)
     {
       beta(activeSet[i]) += gamma * betaDirection(i);
     }
+
+    // sanity check to make sure the kicked out guy (or girl?) is actually zero
+    if (lassocond)
+    {
+      if (beta(activeSet[changeInd]) != 0)
+      {
+        //printf("fixed from %e to 0\n", beta(activeSet[changeInd]));
+        beta(activeSet[changeInd]) = 0;
+      }
+    }
+    
     betaPath.push_back(beta);
 
     if (lassocond)
     {
       // index is in position changeInd in activeSet
       //printf("\t\tKICK OUT %d!\n", activeSet[changeInd]);
-      if (beta(activeSet[changeInd]) != 0)
-      {
-        //printf("fixed from %e to 0\n", beta(activeSet[changeInd]));
-        beta(activeSet[changeInd]) = 0;
-      }
 
       if (useCholesky)
       {
