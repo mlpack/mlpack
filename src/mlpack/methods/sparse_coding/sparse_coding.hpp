@@ -170,6 +170,9 @@ class SparseCoding {
 
   // accessors, modifiers, printers
 
+  //! Modifier for matX
+  void SetData(const arma::mat& matX);
+
   //! Modifier for matD
   void SetDictionary(const arma::mat& matD);
   
