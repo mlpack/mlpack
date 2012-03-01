@@ -1,13 +1,14 @@
-/** @file mnist_sc
+/** @file sparse_coding_main.cpp
  *  @author Nishant Mehta
  *
- *  Executable for Sparse Coding on MNIST
+ *  Executable for Sparse Coding
  */
 
 #include <mlpack/core.hpp>
 #include "sparse_coding.hpp"
 
-
+PROGRAM_INFO("Sparse Coding", "An implementation of l1-norm and l1+l2-norm "
+	     "regularized Sparse Coding with Dictionary Learning");
 
 PARAM_DOUBLE_REQ("lambda1", "sparse coding l1-norm regularization parameter.", "l");
 PARAM_DOUBLE("lambda2", "sparse coding l2-norm regularization parameter.", "", 0);
@@ -70,7 +71,7 @@ int main(int argc, char* argv[]) {
     if(matInitialD.n_cols != nAtoms) {
       Log::Fatal << "The specified initial dictionary to load has " 
 		 << matInitialD.n_cols << " atoms, but the learned dictionary "
-		 << "was specified to have " << matInitialD.n_cols << " atoms!\n";
+		 << "was specified to have " << nAtoms << " atoms!\n";
       return EXIT_FAILURE;
     }
     if(matInitialD.n_rows != matX.n_rows) {
