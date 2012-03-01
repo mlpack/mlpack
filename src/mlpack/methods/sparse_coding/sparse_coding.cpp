@@ -56,8 +56,13 @@ SparseCoding::SparseCoding(const mat& matX, u32 nAtoms, double lambda1, double l
 { /* nothing left to do */ }
   
   
-void SparseCoding::SetDictionary(const mat& D) {
-  matD = D;
+void SparseCoding::SetData(const mat& matX) {
+  this -> matX = matX;
+}
+
+
+void SparseCoding::SetDictionary(const mat& matD) {
+  this -> matD = matD;
 }
 
 
@@ -151,7 +156,6 @@ void SparseCoding::OptimizeCode() {
   else {
     matGram = trans(matD) * matD;
   }
-  
   
   for(u32 i = 0; i < nPoints; i++) {
     // report progress
