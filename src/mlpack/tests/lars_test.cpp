@@ -34,8 +34,8 @@ void VerifyCorrectness(arma::vec beta, arma::vec errCorr, double lambda)
   {
     if (beta(j) == 0)
     {
-      // make sure that errCorr(j) <= lambda
-      BOOST_REQUIRE_SMALL(std::max(errCorr(j) - lambda, 0.0), tol);
+      // make sure that |errCorr(j)| <= lambda
+      BOOST_REQUIRE_SMALL(std::max(fabs(errCorr(j)) - lambda, 0.0), tol);
     }
     else if (beta(j) < 0)
     {
