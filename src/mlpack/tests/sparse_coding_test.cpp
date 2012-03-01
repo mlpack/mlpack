@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepLasso)
   u32 nAtoms = 25;
 
   mat X;
-  X.load("/home/niche/mlpack_11_11_11/mlpack/trunk/src/mlpack/tests/data/mnist_first250_training_4s_and_9s.arm");
+  X.load("mnist_first250_training_4s_and_9s.arm");
   u32 nPoints = X.n_cols;
   
   // normalize each point since these are images
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepElasticNet)
   u32 nAtoms = 25;
 
   mat X;
-  X.load("/home/niche/mlpack_11_11_11/mlpack/trunk/src/mlpack/tests/data/mnist_first250_training_4s_and_9s.arm");
+  X.load("mnist_first250_training_4s_and_9s.arm");
   u32 nPoints = X.n_cols;
   
   // normalize each point since these are images
@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
   u32 nAtoms = 25;
 
   mat X;
-  X.load("/home/niche/mlpack_11_11_11/mlpack/trunk/src/mlpack/tests/data/mnist_first250_training_4s_and_9s.arm");
+  X.load("mnist_first250_training_4s_and_9s.arm");
   u32 nPoints = X.n_cols;
   
   // normalize each point since these are images
