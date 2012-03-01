@@ -15,9 +15,6 @@ PARAM_INT_REQ("n_atoms", "number of atoms in dictionary.", "k");
 
 PARAM_INT_REQ("n_iterations", "number of iterations for sparse coding.", "");
 
-PARAM_INT_REQ("digit1", "digit for first class.", "");
-PARAM_INT_REQ("digit2", "digit for second class.", "");
-
 PARAM_STRING_REQ("data", "path to the input data.", "");
 PARAM_STRING("initial_dictionary", "Filename for initial dictionary.", "", "");
 PARAM_STRING("results_dir", "Directory for results.", "", "");
