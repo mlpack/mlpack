@@ -43,14 +43,13 @@ class MRKDStatistic
       begin(begin),
       count(count)
     {
-      centerOfMass = dataset.row(begin);
+      centerOfMass = dataset.col(begin);
       for(size_t i = begin+1; i < begin+count; ++i)
-        centerOfMass += dataset.row(i);
-      centerOfMass /= count;
+        centerOfMass += dataset.col(i);
 
       sumOfSquaredNorms = 0.0;
       for(size_t i = begin; i < begin+count; ++i)
-        sumOfSquaredNorms += arma::norm(dataset.row(i), 2);
+        sumOfSquaredNorms += arma::norm(dataset.col(i), 2);
     }
 
     /**
@@ -78,9 +77,12 @@ class MRKDStatistic
     {
       sumOfSquaredNorms = leftStat.sumOfSquaredNorms + rightStat.sumOfSquaredNorms;
 
+      /*
       centerOfMass = ((leftStat.centerOfMass * leftStat.count) +
                       (rightStat.centerOfMass * rightStat.count)) /
                       (leftStat.count + rightStat.count);
+      */
+      centerOfMass = leftStat.centerOfMass + rightStat.centerOfMass;
     }
 
     //! The data points this object contains
@@ -96,9 +98,13 @@ class MRKDStatistic
 
     // Computed statistics
     //! The center of mass for this dataset
-    arma::rowvec centerOfMass;
+    arma::colvec centerOfMass;
     //! The sum of the squared Euclidian norms for this dataset
     double sumOfSquaredNorms;
+		
+		// There may be a better place to store this -- HRectBound?
+		//! The index of the dominating centroid of the associated hyperrectangle
+		size_t dominatingCentroid;
 };
 
 }; // namespace tree
