@@ -16,10 +16,10 @@ endforeach()
 # append sources (with directory name) to list of all MLPACK sources (used at the parent scope)
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(mnist_sc
-  mnist_sc.cc
+add_executable(sparse_coding
+  sparse_coding_main.cpp
 )
-target_link_libraries(mnist_sc
+target_link_libraries(sparse_coding
   mlpack
 )
-install(TARGETS mnist_sc RUNTIME DESTINATION bin)
+install(TARGETS sparse_coding RUNTIME DESTINATION bin)
