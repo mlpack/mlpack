@@ -16,6 +16,7 @@ set(DIRS
   pca
   radical
   range_search
+  sparse_coding
 )
 
 foreach(dir ${DIRS})
