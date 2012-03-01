@@ -27,6 +27,7 @@ add_executable(mlpack_test
   range_search_test.cpp
   save_restore_utility_test.cpp
   sort_policy_test.cpp
+  sparse_coding_test.cpp
   tree_test.cpp
   union_find_test.cpp
 )
