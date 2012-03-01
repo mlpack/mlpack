@@ -9,6 +9,7 @@ set(DIRS
   kmeans
   lars
   linear_regression
+  local_coordinate_coding
   mvu
   naive_bayes
   nca
