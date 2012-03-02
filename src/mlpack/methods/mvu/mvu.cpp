@@ -26,20 +26,22 @@ void MVU::Unfold(const size_t newDim,
 {
   // First we have to choose the output point.  We'll take a linear projection
   // of the data for now (this is probably not a good final solution).
-  outputData = trans(data.rows(0, newDim));
+//  outputData = trans(data.rows(0, newDim - 1));
+  // Following Nick's idea.
+  outputData.randu(data.n_cols, newDim);
 
   // The number of constraints is the number of nearest neighbors plus one.
   LRSDP mvuSolver(numNeighbors * data.n_cols + 1, outputData);
 
   // Set up the objective.  Because we are maximizing the trace of (R R^T),
   // we'll instead state it as min(-I_n * (R R^T)), meaning C() is -I_n.
-  mvuSolver.C().eye(newDim, newDim);
+  mvuSolver.C().eye(data.n_cols, data.n_cols);
   mvuSolver.C() *= -1;
 
   // Now set up each of the constraints.
   // The first constraint is trace(ones * R * R^T) = 0.
   mvuSolver.B()[0] = 0;
-  mvuSolver.A()[0].ones(newDim, newDim);
+  mvuSolver.A()[0].ones(data.n_cols, data.n_cols);
 
   // All of our other constraints will be sparse except the first.  So set that
   // vector of modes accordingly.
@@ -66,7 +68,7 @@ void MVU::Unfold(const size_t newDim,
 
       arma::mat& aRef = mvuSolver.A()[index];
 
-      aRef.set_size(2, 4);
+      aRef.set_size(3, 4);
 
       // A_ij(i, i) = 1.
       aRef(0, 0) = i;
