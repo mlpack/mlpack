@@ -31,6 +31,8 @@ int main(int argc, char **argv)
   // Read from command line.
   CLI::ParseCommandLine(argc, argv);
 
+  math::RandomSeed(time(NULL));
+
   // Load input dataset.
   const string inputFile = CLI::GetParam<string>("input_file");
   mat data;
