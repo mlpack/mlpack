@@ -19,23 +19,17 @@ namespace io {
 template<typename N>
 Option<N>::Option(bool ignoreTemplate,
                 N defaultValue,
-                const char* identifier,
-                const char* description,
-                const char* alias,
+                const std::string& identifier,
+         	const std::string& description,
+         	const std::string& alias,
                 bool required)
 {
   if (ignoreTemplate)
   {
-    if (alias == NULL)
-      alias = "";
-
     CLI::Add(identifier, description, alias, required);
   }
   else
   {
-    if (alias == NULL)
-      alias = "";
-
     CLI::Add<N>(identifier, description, alias, required);
 
     CLI::GetParam<N>(identifier) = defaultValue;
@@ -47,13 +41,10 @@ Option<N>::Option(bool ignoreTemplate,
  * Registers a flag parameter with CLI.
  */
 template<typename N>
-Option<N>::Option(const char* identifier,
-                  const char* description,
-                  const char* alias)
+Option<N>::Option(const std::string& identifier,
+         	const std::string& description,
+         	const std::string& alias)
 {
-  if (alias == NULL)
-    alias = "";
-
   CLI::AddFlag(identifier, description, alias);
 }
 

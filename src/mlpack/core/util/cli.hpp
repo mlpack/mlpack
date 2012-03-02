@@ -524,9 +524,9 @@ class CLI
    *    ("").
    * @param required Indicates if parameter must be set on command line.
    */
-  static void Add(std::string path,
-                  std::string description,
-                  std::string alias = "",
+  static void Add(const std::string& path,
+                  const std::string& description,
+                  const std::string& alias = "",
                   bool required = false);
 
   /**
@@ -541,9 +541,9 @@ class CLI
    * @param required Indicates if parameter must be set on command line.
    */
   template<class T>
-  static void Add(std::string identifier,
-                  std::string description,
-                  std::string alias = "",
+  static void Add(const std::string& identifier,
+                  const std::string& description,
+                  const std::string& alias = "",
                   bool required = false);
 
   /**
@@ -553,9 +553,9 @@ class CLI
    * @param description Short string description of the parameter.
    * @param alias An alias for the parameter, defaults to "" which is no alias.
    */
-  static void AddFlag(std::string identifier,
-                      std::string description,
-                      std::string alias = "");
+  static void AddFlag(const std::string& identifier,
+                      const std::string& description,
+                      const std::string& alias = "");
   
   /**
    * Parses the parameters for 'help' and 'info'.
@@ -577,7 +577,7 @@ class CLI
    * @param identifier The name of the parameter in question.
    */
   template<typename T>
-  static T& GetParam(std::string identifier);
+  static T& GetParam(const std::string& identifier);
 
   /**
    * Get the description of the specified node.
@@ -585,7 +585,7 @@ class CLI
    * @param identifier Name of the node in question.
    * @return Description of the node in question.
    */
-  static std::string GetDescription(std::string identifier);
+  static std::string GetDescription(const std::string& identifier);
 
   /**
    * Retrieve the singleton.
@@ -606,7 +606,7 @@ class CLI
    *
    * @param identifier The name of the parameter in question.
    */
-  static bool HasParam(std::string identifier);
+  static bool HasParam(const std::string& identifier);
 
   /**
    * Hyphenate a string or split it onto multiple 80-character lines, with some
@@ -615,7 +615,7 @@ class CLI
    * @param str String to hyphenate (splits are on ' ').
    * @param padding Amount of padding on the left for each new line.
    */
-  static std::string HyphenateString(std::string str, int padding);
+  static std::string HyphenateString(const std::string& str, int padding);
 
   /**
    * Parses the commandline for arguments.
@@ -640,7 +640,7 @@ class CLI
   /**
    * Print out the help info of the hierarchy.
    */
-  static void PrintHelp(std::string param = "");
+  static void PrintHelp(const std::string& param = "");
 
   /**
    * Registers a ProgramDoc object, which contains documentation about the
@@ -697,7 +697,7 @@ class CLI
    * @param alias The name of the alias to be mapped.
    * @param original The name of the parameter to be mapped.
    */
-  static void AddAlias(std::string alias, std::string original);
+  static void AddAlias(const std::string& alias, const std::string& original);
 
   /**
    * Returns an alias, if given the name of the original.
@@ -706,7 +706,7 @@ class CLI
    * is an alias.
    * @return The alias associated with value.
    */
-  static std::string AliasReverseLookup(std::string value);
+  static std::string AliasReverseLookup(const std::string& value);
  
 #ifdef _WIN32
   /**
@@ -731,7 +731,7 @@ class CLI
    * @param str Input string.
    * @return Sanitized string.
    */
-  static std::string SanitizeString(std::string str);
+  static std::string SanitizeString(const std::string& str);
 
   /**
    * Parses the values given on the command line, overriding any default values.
@@ -748,7 +748,7 @@ class CLI
    *
    * @param optionsName Name of the module, as far as boost is concerned.
    */
-  CLI(std::string optionsName);
+  CLI(const std::string& optionsName);
 
   //! Private copy constructor; we don't want copies floating around.
   CLI(const CLI& other);
