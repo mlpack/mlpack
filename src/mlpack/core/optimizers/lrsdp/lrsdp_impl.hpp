@@ -63,8 +63,8 @@ double LRSDP::EvaluateConstraint(const size_t index,
   else
   {
     double value = -b[index];
-    for (size_t i = 0; i < a[index].n_rows; ++i)
-      value += rrt(a[index](i, 0), a[index](i, 1));
+    for (size_t i = 0; i < a[index].n_cols; ++i)
+      value += a[index](2, i) * rrt(a[index](0, i), a[index](1, i));
 
     return value;
   }
@@ -109,10 +109,10 @@ double AugLagrangianFunction<LRSDP>::Evaluate(const arma::mat& coordinates)
     }
     else
     {
-      for (size_t j = 0; j < function.A()[i].n_rows; ++j)
+      for (size_t j = 0; j < function.A()[i].n_cols; ++j)
       {
-        constraint += function.A()[i](j, 2) *
-            rrt(function.A()[i](j, 0), function.A()[i](j, 1));
+        constraint += function.A()[i](2, j) *
+            rrt(function.A()[i](0, j), function.A()[i](1, j));
       }
     }
 
@@ -145,10 +145,10 @@ void AugLagrangianFunction<LRSDP>::Gradient(const arma::mat& coordinates,
     }
     else
     {
-      for (size_t j = 0; j < function.A()[i].n_rows; ++j)
+      for (size_t j = 0; j < function.A()[i].n_cols; ++j)
       {
-        constraint += function.A()[i](j, 2) *
-            rrt(function.A()[i](j, 0), function.A()[i](j, 1));
+        constraint += function.A()[i](2, j) *
+            rrt(function.A()[i](0, j), function.A()[i](1, j));
       }
     }
 
@@ -161,9 +161,9 @@ void AugLagrangianFunction<LRSDP>::Gradient(const arma::mat& coordinates,
     else
     {
       // We only need to subtract the entries which could be modified.
-      for (size_t j = 0; j < function.A()[i].n_rows; ++j)
+      for (size_t j = 0; j < function.A()[i].n_cols; ++j)
       {
-        s(function.A()[i](j, 0), function.A()[i](j, 1)) -= y;
+        s(function.A()[i](0, j), function.A()[i](1, j)) -= y;
       }
     }
   }
