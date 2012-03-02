@@ -7,6 +7,8 @@
 #ifndef __MLPACK_CORE_IO_LOG_HPP
 #define __MLPACK_CORE_IO_LOG_HPP
 
+#include <string>
+
 #include "prefixedoutstream.hpp"
 #include "nulloutstream.hpp"
 
@@ -53,7 +55,7 @@ class Log
    * If not, halts program execution and prints a custom error message.
    * Does nothing in non-debug mode.
    */
-  static void Assert(bool condition, const char* message = "Assert Failed.");
+  static void Assert(bool condition, const std::string& message = std::string("Assert Failed."));
 
 
   // We only use PrefixedOutStream if the program is compiled with debug

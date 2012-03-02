@@ -44,9 +44,9 @@ class Option
    */
   Option(bool ignoreTemplate,
          N defaultValue,
-         const char* identifier,
-         const char* description,
-         const char* parent = NULL,
+         const std::string& identifier,
+         const std::string& description,
+         const std::string& parent = std::string(""),
          bool required = false);
 
   /**
@@ -59,9 +59,9 @@ class Option
    * @param parent Full pathname of the parent module that "owns" this option.
    *     The default is the root node (an empty string).
    */
-  Option(const char* identifier,
-         const char* description,
-         const char* parent = NULL);
+  Option(const std::string& identifier,
+         const std::string& description,
+         const std::string& parent = std::string(""));
 };
 
 /**

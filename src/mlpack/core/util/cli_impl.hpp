@@ -28,9 +28,9 @@ namespace mlpack {
  *   unless the parameter is specified.
  */
 template<typename T>
-void CLI::Add(std::string path,
-             std::string description,
-             std::string alias,
+void CLI::Add(const std::string& path,
+             const std::string& description,
+             const std::string& alias,
              bool required)
 {
 
@@ -77,7 +77,7 @@ void CLI::Add(std::string path,
  *     valid.
  */
 template<typename T>
-T& CLI::GetParam(std::string identifier)
+T& CLI::GetParam(const std::string& identifier)
 {
   // Used to ensure we have a valid value.
   T tmp = T();
