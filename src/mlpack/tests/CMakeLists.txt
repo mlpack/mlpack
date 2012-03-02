@@ -18,6 +18,7 @@ add_executable(mlpack_test
   lin_alg_test.cpp
   linear_regression_test.cpp
   load_save_test.cpp
+  local_coordinate_coding_test.cpp
   lrsdp_test.cpp
   math_test.cpp
   nbc_test.cpp
