@@ -23,7 +23,7 @@ target_link_libraries(mlpack
 )
 set_target_properties(mlpack
   PROPERTIES
-  VERSION 1.0.0
+  VERSION 1.0.1
   SOVERSION 1
 )
 
