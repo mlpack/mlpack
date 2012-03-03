@@ -37,7 +37,6 @@ PARAM_DOUBLE("overclustering", "Finds (overclustering * clusters) clusters, "
 PARAM_INT("max_iterations", "Maximum number of iterations before K-Means "
     "terminates.", "m", 1000);
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
-PARAM_FLAG("fast_kmeans", "Use the experimental fast k-means algorithm by Pelleg and Moore", "f")
 
 int main(int argc, char** argv)
 {
@@ -91,19 +90,13 @@ int main(int argc, char** argv)
     KMeans<metric::SquaredEuclideanDistance, RandomPartition,
         AllowEmptyClusters> k(maxIterations, overclustering);
 
-		if(CLI::HasParam("fast_kmeans"))
-			k.FastCluster(dataset, clusters, assignments);
-		else
-			k.Cluster(dataset, clusters, assignments);
+    k.Cluster(dataset, clusters, assignments);
   }
   else
   {
     KMeans<> k(maxIterations, overclustering);
 
-		if(CLI::HasParam("fast_kmeans"))
-			k.FastCluster(dataset, clusters, assignments);
-		else
-			k.Cluster(dataset, clusters, assignments);
+    k.Cluster(dataset, clusters, assignments);
   }
 
   // Now figure out what to do with our results.
