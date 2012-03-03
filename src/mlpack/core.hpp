@@ -50,7 +50,8 @@
  * A full list of executables is given below:
  *
  * allkfn, allknn, emst, gmm, hmm_train, hmm_loglik, hmm_viterbi, hmm_generate,
- * kernel_pca, kmeans, lars, linear_regression, nbc, nca, pca, radical
+ * kernel_pca, kmeans, lars, linear_regression, local_coordinate_coding, nbc,
+ * nca, pca, radical, sparse_coding
  *
  * @section tutorial Tutorials
  *
