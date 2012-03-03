@@ -163,7 +163,8 @@ if (UNIX)
           ${CMAKE_BINARY_DIR}/bin
       DEPENDS
           allkfn allknn emst gmm hmm_generate hmm_loglik hmm_train hmm_viterbi
-          kernel_pca kmeans lars linear_regression mvu nbc nca pca radical
+          kernel_pca kmeans lars linear_regression local_coordinate_coding nbc
+          nca pca radical sparse_coding
       COMMENT "Generating man pages from built executables."
     )
 
