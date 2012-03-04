@@ -68,8 +68,6 @@ namespace lcc {
 class LocalCoordinateCoding {
 
  public:
-  //void Init(const arma::mat& matX, u32 nAtoms, double lambda);
-  
   
   /**
    * Set the parameters to LocalCoordinateCoding.

@@ -27,20 +27,6 @@ LocalCoordinateCoding::LocalCoordinateCoding(const mat& matX, u32 nAtoms, double
 { /* nothing left to do */ }
 
 
-// void LocalCoordinateCoding::Init(const mat& matX, u32 nAtoms, double lambda) {
-//   this->matX = matX;
-
-//   nDims = matX.n_rows;
-//   nPoints = matX.n_cols;
-
-//   this->nAtoms = nAtoms;
-//   matD = mat(nDims, nAtoms);
-//   matZ = mat(nAtoms, nPoints);
-  
-//   this->lambda = lambda;
-// }
-
-
 void LocalCoordinateCoding::SetDictionary(const mat& matD) {
   this->matD = matD;
 }
