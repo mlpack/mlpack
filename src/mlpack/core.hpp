@@ -78,12 +78,14 @@
  *  - Kernel PCA - mlpack::kpca::KernelPCA
  *  - K-Means Clustering - mlpack::kmeans::KMeans
  *  - Least-Angle Regression (LARS/LASSO) - mlpack::regression::LARS
+ *  - Local Coordinate Coding - mlpack::lcc::LocalCoordinateCoding
  *  - Naive Bayes Classifier - mlpack::naive_bayes::NaiveBayesClassifier
  *  - Neighborhood Components Analysis (NCA) - mlpack::nca::NCA
  *  - Principal Components Analysis (PCA) - mlpack::pca::PCA
  *  - RADICAL (ICA) - mlpack::radical::Radical
  *  - Simple Least-Squares Linear Regression -
  *      mlpack::regression::LinearRegression
+ *  - Sparse Coding - mlpack::sparse_coding::SparseCoding
  *  - Tree-based neighbor search (AllkNN, AllkFN) -
  *      mlpack::neighbor::NeighborSearch
  *  - Tree-based range search - mlpack::range::RangeSearch
