@@ -144,10 +144,10 @@ void Timers::FileTimeToTimeVal(timeval* tv)
   ptime = ptime << 32;
   ptime |= ftime.dwLowDateTime;
   ptime /= 10;
-  ptime -= DELTA_EPOC_IN_MICROSECONDS;
+  ptime -= DELTA_EPOCH_IN_MICROSECONDS;
 
-  tv.tv_sec = (long) (ptime / 1000000UL);
-  tv.tv_usec = (long) (ptime % 1000000UL);
+  tv->tv_sec = (long) (ptime / 1000000UL);
+  tv->tv_usec = (long) (ptime % 1000000UL);
 }
 
 #endif // _WIN32
