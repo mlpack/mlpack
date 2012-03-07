@@ -114,6 +114,13 @@ class LARS
   void SetGram(const arma::mat& matGram);
 
   /**
+   * Set the Gram matrix (done before calling DoLars) by reusing memory.
+   *
+   * @param matGram Matrix to which to set Gram matrix
+   */
+  void SetGramMem(double* matGramMemPtr, arma::u32 nDims);
+
+  /**
    * Compute Gram matrix. If elastic net, add lambda2 * identity to diagonal.
    *
    * @param matX Data matrix to use for computing Gram matrix
@@ -192,9 +199,9 @@ private:
 
   void CholeskyInsert(const arma::vec& newX, const arma::mat& X);
 
-  void CholeskyInsert(const arma::vec& newX, const arma::vec& newGramCol);
+  void CholeskyInsert(double sqNormNewX, const arma::vec& newGramCol);
 
-  void GivensRotate(const arma::vec& x, arma::vec& rotatedX, arma::mat& G);
+  void GivensRotate(const arma::vec::fixed<2>& x, arma::vec::fixed<2>& rotatedX, arma::mat& G);
 
   void CholeskyDelete(arma::u32 colToKill);
 

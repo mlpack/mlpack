@@ -44,6 +44,11 @@ void LARS::SetGram(const mat& matGram)
   this->matGram = matGram;
 }
 
+void LARS::SetGramMem(double* matGramMemPtr, u32 nDims)
+{
+  this->matGram = mat(matGramMemPtr, nDims, nDims, false);
+}
+
 void LARS::ComputeGram(const mat& matX)
 {
   if (elasticNet)
@@ -61,12 +66,6 @@ void LARS::DoLARS(const mat& matX, const vec& y)
   // compute Xty
   vec vecXTy = trans(matX) * y;
   
-  // compute Gram matrix
-  if (!useCholesky && matGram.is_empty())
-  {
-    ComputeGram(matX);
-  }
-
   // set up active set variables
   nActive = 0;
   activeSet = std::vector<u32>(0);
@@ -101,6 +100,16 @@ void LARS::DoLARS(const mat& matX, const vec& y)
     return;
   }
 
+  // compute Gram matrix
+  if (!useCholesky && matGram.is_empty())
+  {
+    ComputeGram(matX);
+  }
+  else if(useCholesky && matGram.is_empty()) {
+    //Log::Info << "You probably should compute the Gram matrix ahead of time when in Cholesky mode!\n";
+    matGram = trans(matX) * matX;
+  }
+  
   //u32 iterations_run = 0;
   // MAIN LOOP
   while ((nActive < matX.n_cols) && (maxCorr > EPS))
@@ -129,13 +138,15 @@ void LARS::DoLARS(const mat& matX, const vec& y)
       //printf("activating %d\n", changeInd);
       if (useCholesky)
       {
-        vec newGramCol = vec(nActive);
-        for (u32 i = 0; i < nActive; i++)
-        {
-          newGramCol[i] = dot(matX.col(activeSet[i]), matX.col(changeInd));
-        }
-
-        CholeskyInsert(matX.col(changeInd), newGramCol);
+        // vec newGramCol = vec(nActive);
+        // for (u32 i = 0; i < nActive; i++)
+        // {
+        //   newGramCol[i] = dot(matX.col(activeSet[i]), matX.col(changeInd));
+        // }
+	vec newGramCol = matGram.elem(changeInd * matX.n_cols + conv_to< uvec >::from(activeSet)); // this is equivalent to the above 5 lines - check this!
+	
+        //CholeskyInsert(matX.col(changeInd), newGramCol);
+        CholeskyInsert(matGram(changeInd, changeInd), newGramCol);
       }
 
       // add variable to active set
@@ -380,11 +391,11 @@ void LARS::CholeskyInsert(const vec& newX, const mat& X)
   else
   {
     vec newGramCol = trans(X) * newX;
-    CholeskyInsert(newX, newGramCol);
+    CholeskyInsert(dot(newX, newX), newGramCol);
   }
 }
 
-void LARS::CholeskyInsert(const vec& newX, const vec& newGramCol)
+void LARS::CholeskyInsert(double sqNormNewX, const vec& newGramCol)
 {
   int n = matUtriCholFactor.n_rows;
 
@@ -393,41 +404,36 @@ void LARS::CholeskyInsert(const vec& newX, const vec& newGramCol)
     matUtriCholFactor = mat(1, 1);
     if (elasticNet)
     {
-      matUtriCholFactor(0, 0) = sqrt(dot(newX, newX) + lambda2);
+      matUtriCholFactor(0, 0) = sqrt(sqNormNewX + lambda2);
     }
     else
     {
-      matUtriCholFactor(0, 0) = norm(newX, 2);
+      matUtriCholFactor(0, 0) = sqrt(sqNormNewX);
     }
   }
   else
   {
     mat matNewR = mat(n + 1, n + 1);
 
-    double sqNormNewX;
     if (elasticNet)
     {
-      sqNormNewX = dot(newX, newX) + lambda2;
+      sqNormNewX += lambda2;
     }
-    else
-    {
-      sqNormNewX = dot(newX, newX);
-    }
-
+      
     vec matUtriCholFactork = solve(trimatl(trans(matUtriCholFactor)),
-        newGramCol);
+				   newGramCol);
 
     matNewR(span(0, n - 1), span(0, n - 1)) = matUtriCholFactor;
     matNewR(span(0, n - 1), n) = matUtriCholFactork;
     matNewR(n, span(0, n - 1)).fill(0.0);
     matNewR(n, n) = sqrt(sqNormNewX - dot(matUtriCholFactork,
-        matUtriCholFactork));
+					  matUtriCholFactork));
 
     matUtriCholFactor = matNewR;
   }
 }
 
-void LARS::GivensRotate(const vec& x, vec& rotatedX, mat& matG) 
+void LARS::GivensRotate(const vec::fixed<2>& x, vec::fixed<2>& rotatedX, mat& matG) 
 {
   if (x(1) == 0)
   {
@@ -469,7 +475,7 @@ void LARS::CholeskyDelete(u32 colToKill)
     for(u32 k = colToKill; k < n; k++)
     {
       mat matG;
-      vec rotatedVec;
+      vec::fixed<2> rotatedVec;
       GivensRotate(matUtriCholFactor(span(k, k + 1), k), rotatedVec, matG);
       matUtriCholFactor(span(k, k + 1), k) = rotatedVec;
       if (k < n - 1)
