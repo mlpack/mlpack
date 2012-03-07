@@ -18,32 +18,6 @@ using namespace mlpack::regression;
 namespace mlpack {
 namespace sparse_coding {
 
-/*
-void SparseCoding::Init(double* memX, u32 nDims, u32 nPoints,
-			u32 nAtoms, double lambda1) {
-  matX = mat(memX, nDims, nPoints, false, true);
-
-  this->nDims = nDims;
-  this->nPoints = nPoints;
-
-  this->nAtoms = nAtoms;
-  //matD = mat(nDims, nAtoms);
-  matZ = mat(nAtoms, nPoints);
-  
-  this->lambda1 = lambda1;
-  lambda2 = 0;
-}
-*/
-
-/*
-void SparseCoding::SetDictionary(double* memD) {
-  matD = mat(memD, nDims, nAtoms, false, true);
-}
-*/
-
-
-
-
 
 SparseCoding::SparseCoding(const mat& matX, u32 nAtoms, double lambda1, double lambda2) :
   nDims(matX.n_rows),  
@@ -149,13 +123,15 @@ void SparseCoding::DoSparseCoding(u32 nIterations) {
 
 
 void SparseCoding::OptimizeCode() {
-  mat matGram;
-  if(lambda2 > 0) {
-    matGram = trans(matD) * matD + lambda2 * eye(nAtoms, nAtoms);
-  }
-  else {
-    matGram = trans(matD) * matD;
-  }
+  // when using Cholesky version of LARS, this is correct even if lambda2 > 0
+  mat matGram = trans(matD) * matD;
+  // mat matGram;
+  // if(lambda2 > 0) {
+  //   matGram = trans(matD) * matD + lambda2 * eye(nAtoms, nAtoms);
+  // }
+  // else {
+  //   matGram = trans(matD) * matD;
+  // }
   
   for(u32 i = 0; i < nPoints; i++) {
     // report progress
@@ -163,18 +139,7 @@ void SparseCoding::OptimizeCode() {
       Log::Debug << "\t" << i << endl;
     }
     
-    //Lars lars;
-    // do we still need 0.5 * lambda? no, because we're using the standard objective now, which includes 0.5 scaling for quadratic terms
-    //lars.Init(D.memptr(), matX.colptr(i), nDims, nAtoms, true, lambda1); // apparently not as fast as using the below duo
-                                                                                       // this may change, depending on the dimensionality and sparsity
-
-    // the duo
-    //lars.Init(matD.memptr(), matX.colptr(i), nDims, nAtoms, false, lambda1);
-    //lars.SetGram(matGram.memptr(), nAtoms);
-    //lars.DoLARS();
- 
-
-    bool useCholesky = false;
+    bool useCholesky = true;
     LARS* lars;
     if(lambda2 > 0) {
       lars = new LARS(useCholesky, lambda1, lambda2);
@@ -182,7 +147,7 @@ void SparseCoding::OptimizeCode() {
     else {
       lars = new LARS(useCholesky, lambda1);
     }
-    lars -> SetGram(matGram);
+    lars -> SetGramMem(matGram.memptr(), matGram.n_rows);
     lars -> DoLARS(matD, matX.unsafe_col(i));
     
     vec beta;
