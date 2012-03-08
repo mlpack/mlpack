@@ -22,3 +22,4 @@ add_executable(range_search
 target_link_libraries(range_search
   mlpack
 )
+install(TARGETS range_search RUNTIME DESTINATION bin)
