@@ -72,8 +72,8 @@ class SphericalKernel
   }
   double Normalizer(size_t dimension)
   {
-    return pow(bandwidth, dimension) * pow(M_PI, dimension / 2.0) /
-             tgamma(dimension / 2.0 + 1.0);
+    return pow(bandwidth, (double) dimension) * pow(M_PI, dimension / 2.0) /
+        boost::math::tgamma(dimension / 2.0 + 1.0);
   }
   double Evaluate(double t)
   {

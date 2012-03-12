@@ -23,6 +23,7 @@ PARAM_INT("num_neighbors", "Number of nearest neighbors to consider while "
 
 using namespace mlpack;
 using namespace mlpack::mvu;
+using namespace mlpack::math;
 using namespace arma;
 using namespace std;
 
@@ -31,7 +32,7 @@ int main(int argc, char **argv)
   // Read from command line.
   CLI::ParseCommandLine(argc, argv);
 
-  math::RandomSeed(time(NULL));
+  RandomSeed(time(NULL));
 
   // Load input dataset.
   const string inputFile = CLI::GetParam<string>("input_file");

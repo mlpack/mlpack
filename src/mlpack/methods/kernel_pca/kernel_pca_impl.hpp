@@ -60,7 +60,7 @@ void KernelPCA<KernelType>::Apply(const arma::mat& data,
   arma::eig_sym(eigVal, coeffs, kernelMat);
 
   int n_eigVal = eigVal.n_elem;
-  for(int i = 0; i < floor(n_eigVal / 2); i++)
+  for(int i = 0; i < floor(n_eigVal / 2.0); i++)
     eigVal.swap_rows(i, (n_eigVal - 1) - i);
 
   coeffs = arma::fliplr(coeffs);
