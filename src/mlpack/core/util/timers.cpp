@@ -118,6 +118,36 @@ void Timers::StartTimer(const std::string& timerName)
   timers[timerName] = tmp;
 }
 
+#ifdef _WIN32
+void Timers::FileTimeToTimeVal(timeval* tv)
+{
+  FILETIME ftime;
+  uint64_t ptime = 0;
+  // Acquire the file time.
+  GetSystemTimeAsFileTime(&ftime);
+  // Now convert FILETIME to timeval.
+  ptime |= ftime.dwHighDateTime;
+  ptime = ptime << 32;
+  ptime |= ftime.dwLowDateTime;
+  ptime /= 10;
+  ptime -= DELTA_EPOCH_IN_MICROSECS;
+
+  tv->tv_sec = (long) (ptime / 1000000UL);
+  tv->tv_usec = (long) (ptime % 1000000UL);
+}
+
+inline void timersub(const timeval* tvp, const timeval* uvp, timeval * vvp) 
+{
+  vvp->tv_sec = tvp->tv_sec - uvp->tv_sec; 
+  vvp->tv_usec = tvp->tv_usec - uvp->tv_usec; 
+  if (vvp->tv_usec < 0) 
+  { 
+     --vvp->tv_sec; 
+     vvp->tv_usec += 1000000; 
+  } 
+}
+#endif // _WIN32
+
 void Timers::StopTimer(const std::string& timerName)
 {
   timeval delta, b, a = timers[timerName];
@@ -131,23 +161,3 @@ void Timers::StopTimer(const std::string& timerName)
   timersub(&b, &a, &delta);
   timers[timerName] = delta;
 }
-
-#ifdef _WIN32
-void Timers::FileTimeToTimeVal(timeval* tv)
-{
-  FILETIME ftime;
-  uint64_t ptime = 0;
-  // Acquire the file time.
-  GetSystemTimeAsFileTime(&ftime);
-  // Now convert FILETIME to timeval.
-  ptime |= ftime.dwHighDateTime;
-  ptime = ptime << 32;
-  ptime |= ftime.dwLowDateTime;
-  ptime /= 10;
-  ptime -= DELTA_EPOCH_IN_MICROSECONDS;
-
-  tv->tv_sec = (long) (ptime / 1000000UL);
-  tv->tv_usec = (long) (ptime % 1000000UL);
-}
-
-#endif // _WIN32
