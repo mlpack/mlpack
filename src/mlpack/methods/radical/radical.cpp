@@ -112,7 +112,7 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
   // if m was not specified, initialize m as recommended in
   // (Learned-Miller and Fisher, 2003)
   if (m < 1) {
-    m = floor(sqrt(matX.n_rows));
+    m = floor(sqrt((double) matX.n_rows));
   }
 
   const size_t nDims = matX.n_cols;
