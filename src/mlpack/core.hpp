@@ -133,6 +133,9 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+// For tgamma().
+#include <boost/math/special_functions/gamma.hpp>
+
 // But if it's not defined, we'll do it.
 #ifndef M_PI
   #define M_PI 3.141592653589793238462643383279
@@ -147,6 +150,7 @@
 #include <mlpack/core/math/clamp.hpp>
 #include <mlpack/core/math/random.hpp>
 #include <mlpack/core/math/range.hpp>
+#include <mlpack/core/math/round.hpp>
 #include <mlpack/core/util/save_restore_utility.hpp>
 #include <mlpack/core/dists/discrete_distribution.hpp>
 #include <mlpack/core/dists/gaussian_distribution.hpp>
