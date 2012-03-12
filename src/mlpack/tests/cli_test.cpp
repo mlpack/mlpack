@@ -7,7 +7,9 @@
 
 #include <iostream>
 #include <sstream>
-#include <sys/time.h>
+#ifndef _WIN32
+  #include <sys/time.h>
+#endif
 
 #include <mlpack/core.hpp>
 

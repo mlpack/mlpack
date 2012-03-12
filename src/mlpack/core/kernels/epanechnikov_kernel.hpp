@@ -81,8 +81,9 @@ class EpanechnikovKernel
 
   double Normalizer(size_t dimension)
   {
-    return 2.0 * pow(bandwidth, dimension) * pow(M_PI, dimension / 2.0) /
-             (tgamma(dimension / 2.0 + 1.0) * (dimension + 2.0));
+    return 2.0 * pow(bandwidth, (double) dimension) *
+        pow(M_PI, dimension / 2.0) /
+        (boost::math::tgamma(dimension / 2.0 + 1.0) * (dimension + 2.0));
   }
   double Evaluate(double t)
   {

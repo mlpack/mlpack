@@ -82,7 +82,7 @@ class GaussianKernel
    */
   double Normalizer(size_t dimension)
   {
-    return pow(sqrt(2.0 * M_PI) * bandwidth, dimension);
+    return pow(sqrt(2.0 * M_PI) * bandwidth, (double) dimension);
   }
   /**
    * Obtain a convolution integral of the Gaussian kernel.
