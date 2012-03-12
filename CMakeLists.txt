@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(mlpack C CXX FORTRAN)
+project(mlpack C CXX)
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
@@ -57,8 +57,6 @@ endif(ARMA_EXTRA_DEBUG)
 # set path right
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
-# LAPACK finds BLAS as a dependency.
-find_package(LAPACK REQUIRED)
 find_package(Armadillo 2.4.0 REQUIRED)
 find_package(LibXml2 REQUIRED)
 
