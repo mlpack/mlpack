@@ -66,7 +66,7 @@ SpMat<eT>::iterator::iterator(SpMat<eT>& in_M, uword in_row, uword in_col)
 
 template<typename eT>
 inline
-SpMat<eT>::iterator::iterator(const SpMat<eT>::iterator& other)
+SpMat<eT>::iterator::iterator(const typename SpMat<eT>::iterator& other)
   : M(other.M)
   , row(other.row)
   , col(other.col)
@@ -181,7 +181,7 @@ SpMat<eT>::iterator::operator--(int)
 template<typename eT>
 inline
 bool
-SpMat<eT>::iterator::operator!=(const SpMat<eT>::iterator& rhs) const
+SpMat<eT>::iterator::operator!=(const typename SpMat<eT>::iterator& rhs) const
   {
   return ((row != rhs.row) || (col != rhs.col));
   }
@@ -189,7 +189,7 @@ SpMat<eT>::iterator::operator!=(const SpMat<eT>::iterator& rhs) const
 template<typename eT>
 inline
 bool
-SpMat<eT>::iterator::operator!=(const SpMat<eT>::const_iterator& rhs) const
+SpMat<eT>::iterator::operator!=(const typename SpMat<eT>::const_iterator& rhs) const
   {
   return ((row != rhs.row) || (col != rhs.col));
   }
@@ -197,7 +197,7 @@ SpMat<eT>::iterator::operator!=(const SpMat<eT>::const_iterator& rhs) const
 template<typename eT>
 inline
 bool
-SpMat<eT>::iterator::operator!=(const SpMat<eT>::row_iterator& rhs) const
+SpMat<eT>::iterator::operator!=(const typename SpMat<eT>::row_iterator& rhs) const
   {
   return ((row != rhs.row) || (col != rhs.col));
   }
@@ -205,7 +205,7 @@ SpMat<eT>::iterator::operator!=(const SpMat<eT>::row_iterator& rhs) const
 template<typename eT>
 inline
 bool
-SpMat<eT>::iterator::operator!=(const SpMat<eT>::const_row_iterator& rhs) const
+SpMat<eT>::iterator::operator!=(const typename SpMat<eT>::const_row_iterator& rhs) const
   {
   return ((row != rhs.row) || (col != rhs.col));
   }
@@ -213,7 +213,7 @@ SpMat<eT>::iterator::operator!=(const SpMat<eT>::const_row_iterator& rhs) const
 template<typename eT>
 inline
 bool
-SpMat<eT>::iterator::operator==(const SpMat<eT>::iterator& rhs) const
+SpMat<eT>::iterator::operator==(const typename SpMat<eT>::iterator& rhs) const
   {
   arma_extra_debug_sigprint();
 
@@ -223,7 +223,7 @@ SpMat<eT>::iterator::operator==(const SpMat<eT>::iterator& rhs) const
 template<typename eT>
 inline
 bool
-SpMat<eT>::iterator::operator==(const SpMat<eT>::const_iterator& rhs) const
+SpMat<eT>::iterator::operator==(const typename SpMat<eT>::const_iterator& rhs) const
   {
   arma_extra_debug_sigprint();
 
@@ -233,7 +233,7 @@ SpMat<eT>::iterator::operator==(const SpMat<eT>::const_iterator& rhs) const
 template<typename eT>
 inline
 bool
-SpMat<eT>::iterator::operator==(const SpMat<eT>::row_iterator& rhs) const
+SpMat<eT>::iterator::operator==(const typename SpMat<eT>::row_iterator& rhs) const
   {
   return ((row == rhs.row) && (col == rhs.col));
   }
@@ -241,7 +241,7 @@ SpMat<eT>::iterator::operator==(const SpMat<eT>::row_iterator& rhs) const
 template<typename eT>
 inline
 bool
-SpMat<eT>::iterator::operator==(const SpMat<eT>::const_row_iterator& rhs) const
+SpMat<eT>::iterator::operator==(const typename SpMat<eT>::const_row_iterator& rhs) const
   {
   return ((row == rhs.row) && (col == rhs.col));
   }
@@ -301,7 +301,7 @@ SpMat<eT>::const_iterator::const_iterator(const SpMat<eT>& in_M, uword in_row, u
 
 template<typename eT>
 inline
-SpMat<eT>::const_iterator::const_iterator(const SpMat<eT>::const_iterator& other)
+SpMat<eT>::const_iterator::const_iterator(const typename SpMat<eT>::const_iterator& other)
   : M(other.M)
   , row(other.row)
   , col(other.col)
@@ -312,7 +312,7 @@ SpMat<eT>::const_iterator::const_iterator(const SpMat<eT>::const_iterator& other
 
 template<typename eT>
 inline
-SpMat<eT>::const_iterator::const_iterator(const SpMat<eT>::iterator& other)
+SpMat<eT>::const_iterator::const_iterator(const typename SpMat<eT>::iterator& other)
   : M(other.M)
   , row(other.row)
   , col(other.col)
@@ -427,7 +427,7 @@ SpMat<eT>::const_iterator::operator--(int)
 template<typename eT>
 inline
 bool
-SpMat<eT>::const_iterator::operator!=(const SpMat<eT>::iterator& rhs) const
+SpMat<eT>::const_iterator::operator!=(const typename SpMat<eT>::iterator& rhs) const
   {
   return ((row != rhs.row) || (col != rhs.col));
   }
@@ -435,7 +435,7 @@ SpMat<eT>::const_iterator::operator!=(const SpMat<eT>::iterator& rhs) const
 template<typename eT>
 inline
 bool
-SpMat<eT>::const_iterator::operator!=(const SpMat<eT>::const_iterator& rhs) const
+SpMat<eT>::const_iterator::operator!=(const typename SpMat<eT>::const_iterator& rhs) const
   {
   return ((row != rhs.row) || (col != rhs.col));
   }
@@ -443,7 +443,7 @@ SpMat<eT>::const_iterator::operator!=(const SpMat<eT>::const_iterator& rhs) cons
 template<typename eT>
 inline
 bool
-SpMat<eT>::const_iterator::operator!=(const SpMat<eT>::row_iterator& rhs) const
+SpMat<eT>::const_iterator::operator!=(const typename SpMat<eT>::row_iterator& rhs) const
   {
   return ((row != rhs.row) || (col != rhs.col));
   }
@@ -451,7 +451,7 @@ SpMat<eT>::const_iterator::operator!=(const SpMat<eT>::row_iterator& rhs) const
 template<typename eT>
 inline
 bool
-SpMat<eT>::const_iterator::operator!=(const SpMat<eT>::const_row_iterator& rhs) const
+SpMat<eT>::const_iterator::operator!=(const typename SpMat<eT>::const_row_iterator& rhs) const
   {
   return ((row != rhs.row) || (col != rhs.col));
   }
@@ -459,7 +459,7 @@ SpMat<eT>::const_iterator::operator!=(const SpMat<eT>::const_row_iterator& rhs) 
 template<typename eT>
 inline
 bool
-SpMat<eT>::const_iterator::operator==(const SpMat<eT>::iterator& rhs) const
+SpMat<eT>::const_iterator::operator==(const typename SpMat<eT>::iterator& rhs) const
   {
   return ((row == rhs.row) && (col == rhs.col));
   }
@@ -467,7 +467,7 @@ SpMat<eT>::const_iterator::operator==(const SpMat<eT>::iterator& rhs) const
 template<typename eT>
 inline
 bool
-SpMat<eT>::const_iterator::operator==(const SpMat<eT>::const_iterator& rhs) const
+SpMat<eT>::const_iterator::operator==(const typename SpMat<eT>::const_iterator& rhs) const
   {
   return ((row == rhs.row) && (col == rhs.col));
   }
@@ -475,7 +475,7 @@ SpMat<eT>::const_iterator::operator==(const SpMat<eT>::const_iterator& rhs) cons
 template<typename eT>
 inline
 bool
-SpMat<eT>::const_iterator::operator==(const SpMat<eT>::row_iterator& rhs) const
+SpMat<eT>::const_iterator::operator==(const typename SpMat<eT>::row_iterator& rhs) const
   {
   return ((row == rhs.row) && (col == rhs.col));
   }
@@ -483,7 +483,7 @@ SpMat<eT>::const_iterator::operator==(const SpMat<eT>::row_iterator& rhs) const
 template<typename eT>
 inline
 bool
-SpMat<eT>::const_iterator::operator==(const SpMat<eT>::const_row_iterator& rhs) const
+SpMat<eT>::const_iterator::operator==(const typename SpMat<eT>::const_row_iterator& rhs) const
   {
   return ((row == rhs.row) && (col == rhs.col));
   }
@@ -591,7 +591,7 @@ SpMat<eT>::row_iterator::row_iterator(SpMat<eT>& in_M, uword in_row, uword in_co
  */
 template<typename eT>
 inline
-SpMat<eT>::row_iterator::row_iterator(const SpMat<eT>::row_iterator& other)
+SpMat<eT>::row_iterator::row_iterator(const typename SpMat<eT>::row_iterator& other)
   : M(other.M)
   , row(other.row)
   , col(other.col)
@@ -825,7 +825,7 @@ SpMat<eT>::row_iterator::operator--(int)
 template<typename eT>
 inline
 bool
-SpMat<eT>::row_iterator::operator!=(const SpMat<eT>::iterator& rhs) const
+SpMat<eT>::row_iterator::operator!=(const typename SpMat<eT>::iterator& rhs) const
   {
   return ((row != rhs.row) || (col != rhs.col));
   }
@@ -833,7 +833,7 @@ SpMat<eT>::row_iterator::operator!=(const SpMat<eT>::iterator& rhs) const
 template<typename eT>
 inline
 bool
-SpMat<eT>::row_iterator::operator!=(const SpMat<eT>::const_iterator& rhs) const
+SpMat<eT>::row_iterator::operator!=(const typename SpMat<eT>::const_iterator& rhs) const
   {
   return ((row != rhs.row) || (col != rhs.col));
   }
@@ -841,7 +841,7 @@ SpMat<eT>::row_iterator::operator!=(const SpMat<eT>::const_iterator& rhs) const
 template<typename eT>
 inline
 bool
-SpMat<eT>::row_iterator::operator!=(const SpMat<eT>::row_iterator& rhs) const
+SpMat<eT>::row_iterator::operator!=(const typename SpMat<eT>::row_iterator& rhs) const
   {
   return ((row != rhs.row) || (col != rhs.col));
   }
@@ -849,7 +849,7 @@ SpMat<eT>::row_iterator::operator!=(const SpMat<eT>::row_iterator& rhs) const
 template<typename eT>
 inline
 bool
-SpMat<eT>::row_iterator::operator!=(const SpMat<eT>::const_row_iterator& rhs) const
+SpMat<eT>::row_iterator::operator!=(const typename SpMat<eT>::const_row_iterator& rhs) const
   {
   return ((row != rhs.row) || (col != rhs.col));
   }
@@ -860,7 +860,7 @@ SpMat<eT>::row_iterator::operator!=(const SpMat<eT>::const_row_iterator& rhs) co
 template<typename eT>
 inline
 bool
-SpMat<eT>::row_iterator::operator==(const SpMat<eT>::iterator& rhs) const
+SpMat<eT>::row_iterator::operator==(const typename SpMat<eT>::iterator& rhs) const
   {
   return ((row == rhs.row) && (col == rhs.col));
   }
@@ -868,7 +868,7 @@ SpMat<eT>::row_iterator::operator==(const SpMat<eT>::iterator& rhs) const
 template<typename eT>
 inline
 bool
-SpMat<eT>::row_iterator::operator==(const SpMat<eT>::const_iterator& rhs) const
+SpMat<eT>::row_iterator::operator==(const typename SpMat<eT>::const_iterator& rhs) const
   {
   return ((row == rhs.row) && (col == rhs.col));
   }
@@ -876,7 +876,7 @@ SpMat<eT>::row_iterator::operator==(const SpMat<eT>::const_iterator& rhs) const
 template<typename eT>
 inline
 bool
-SpMat<eT>::row_iterator::operator==(const SpMat<eT>::row_iterator& rhs) const
+SpMat<eT>::row_iterator::operator==(const typename SpMat<eT>::row_iterator& rhs) const
   {
   return ((row == rhs.row) && (col == rhs.col));
   }
@@ -884,7 +884,7 @@ SpMat<eT>::row_iterator::operator==(const SpMat<eT>::row_iterator& rhs) const
 template<typename eT>
 inline
 bool
-SpMat<eT>::row_iterator::operator==(const SpMat<eT>::const_row_iterator& rhs) const
+SpMat<eT>::row_iterator::operator==(const typename SpMat<eT>::const_row_iterator& rhs) const
   {
   return ((row == rhs.row) && (col == rhs.col));
   }
@@ -995,7 +995,7 @@ SpMat<eT>::const_row_iterator::const_row_iterator(const SpMat<eT>& in_M, uword i
  */
 template<typename eT>
 inline
-SpMat<eT>::const_row_iterator::const_row_iterator(const SpMat<eT>::const_row_iterator& other)
+SpMat<eT>::const_row_iterator::const_row_iterator(const typename SpMat<eT>::const_row_iterator& other)
   : M(other.M)
   , row(other.row)
   , col(other.col)
@@ -1009,7 +1009,7 @@ SpMat<eT>::const_row_iterator::const_row_iterator(const SpMat<eT>::const_row_ite
  */
 template<typename eT>
 inline
-SpMat<eT>::const_row_iterator::const_row_iterator(const SpMat<eT>::row_iterator& other)
+SpMat<eT>::const_row_iterator::const_row_iterator(const typename SpMat<eT>::row_iterator& other)
   : M(other.M)
   , row(other.row)
   , col(other.col)
@@ -1243,7 +1243,7 @@ SpMat<eT>::const_row_iterator::operator--(int)
 template<typename eT>
 inline
 bool
-SpMat<eT>::const_row_iterator::operator!=(const SpMat<eT>::iterator& rhs) const
+SpMat<eT>::const_row_iterator::operator!=(const typename SpMat<eT>::iterator& rhs) const
   {
   return ((row != rhs.row) || (col != rhs.col));
   }
@@ -1251,7 +1251,7 @@ SpMat<eT>::const_row_iterator::operator!=(const SpMat<eT>::iterator& rhs) const
 template<typename eT>
 inline
 bool
-SpMat<eT>::const_row_iterator::operator!=(const SpMat<eT>::const_iterator& rhs) const
+SpMat<eT>::const_row_iterator::operator!=(const typename SpMat<eT>::const_iterator& rhs) const
   {
   return ((row != rhs.row) || (col != rhs.col));
   }
@@ -1259,7 +1259,7 @@ SpMat<eT>::const_row_iterator::operator!=(const SpMat<eT>::const_iterator& rhs) 
 template<typename eT>
 inline
 bool
-SpMat<eT>::const_row_iterator::operator!=(const SpMat<eT>::row_iterator& rhs) const
+SpMat<eT>::const_row_iterator::operator!=(const typename SpMat<eT>::row_iterator& rhs) const
   {
   return ((row != rhs.row) || (col != rhs.col));
   }
@@ -1267,7 +1267,7 @@ SpMat<eT>::const_row_iterator::operator!=(const SpMat<eT>::row_iterator& rhs) co
 template<typename eT>
 inline
 bool
-SpMat<eT>::const_row_iterator::operator!=(const SpMat<eT>::const_row_iterator& rhs) const
+SpMat<eT>::const_row_iterator::operator!=(const typename SpMat<eT>::const_row_iterator& rhs) const
   {
   return ((row != rhs.row) || (col != rhs.col));
   }
@@ -1278,7 +1278,7 @@ SpMat<eT>::const_row_iterator::operator!=(const SpMat<eT>::const_row_iterator& r
 template<typename eT>
 inline
 bool
-SpMat<eT>::const_row_iterator::operator==(const SpMat<eT>::iterator& rhs) const
+SpMat<eT>::const_row_iterator::operator==(const typename SpMat<eT>::iterator& rhs) const
   {
   return ((row == rhs.row) && (col == rhs.col));
   }
@@ -1286,7 +1286,7 @@ SpMat<eT>::const_row_iterator::operator==(const SpMat<eT>::iterator& rhs) const
 template<typename eT>
 inline
 bool
-SpMat<eT>::const_row_iterator::operator==(const SpMat<eT>::const_iterator& rhs) const
+SpMat<eT>::const_row_iterator::operator==(const typename SpMat<eT>::const_iterator& rhs) const
   {
   return ((row == rhs.row) && (col == rhs.col));
   }
@@ -1294,7 +1294,7 @@ SpMat<eT>::const_row_iterator::operator==(const SpMat<eT>::const_iterator& rhs) 
 template<typename eT>
 inline
 bool
-SpMat<eT>::const_row_iterator::operator==(const SpMat<eT>::row_iterator& rhs) const
+SpMat<eT>::const_row_iterator::operator==(const typename SpMat<eT>::row_iterator& rhs) const
   {
   return ((row == rhs.row) && (col == rhs.col));
   }
@@ -1302,7 +1302,7 @@ SpMat<eT>::const_row_iterator::operator==(const SpMat<eT>::row_iterator& rhs) co
 template<typename eT>
 inline
 bool
-SpMat<eT>::const_row_iterator::operator==(const SpMat<eT>::const_row_iterator& rhs) const
+SpMat<eT>::const_row_iterator::operator==(const typename SpMat<eT>::const_row_iterator& rhs) const
   {
   return ((row == rhs.row) && (col == rhs.col));
   }
