@@ -49,7 +49,7 @@ void PCA::Apply(const arma::mat& data,
   arma::eig_sym(eigVal, coeffs, covMat);
 
   int nEigVal = eigVal.n_elem;
-  for (int i = 0; i < floor(nEigVal / 2); i++)
+  for (int i = 0; i < floor(nEigVal / 2.0); i++)
     eigVal.swap_rows(i, (nEigVal - 1) - i);
 
   coeffs = arma::fliplr(coeffs);
