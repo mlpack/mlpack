@@ -10,10 +10,10 @@
 #include <boost/scoped_ptr.hpp>
 #include <iostream>
 #include <string>
-#include <execinfo.h>
 
 #ifndef _WIN32
   #include <sys/time.h> // For Linux.
+  #include <execinfo.h>
 #else
   #include <winsock.h> // timeval on Windows.
   #include <windows.h> // GetSystemTimeAsFileTime() on Windows.
