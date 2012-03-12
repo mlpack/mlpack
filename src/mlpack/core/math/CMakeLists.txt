@@ -9,6 +9,7 @@ set(SOURCES
   random.cpp
   range.hpp
   range_impl.hpp
+  round.hpp
 )
 
 # add directory name to sources
