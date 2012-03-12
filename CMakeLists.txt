@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(mlpack C CXX)
+project(mlpack C CXX FORTRAN)
 
 # First, define all the compilation options.
 # We default to debugging mode for developers.
