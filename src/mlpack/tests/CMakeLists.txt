@@ -35,7 +35,7 @@ add_executable(mlpack_test
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test
   mlpack
-  boost_unit_test_framework
+  ${BOOST_unit_test_framework_LIBRARY}
 )
 
 # Copy test data into right place.
