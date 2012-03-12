@@ -17,9 +17,9 @@ endforeach()
 # MLPACK_SRCS is set in the subdirectories.
 add_library(mlpack SHARED ${MLPACK_SRCS})
 target_link_libraries(mlpack
-  armadillo
-  ${BOOST_LIBS}
-  xml2
+  ${ARMADILLO_LIBRARIES}
+  ${Boost_LIBRARIES}
+  ${LIBXML2_LIBRARIES}
 )
 set_target_properties(mlpack
   PROPERTIES
