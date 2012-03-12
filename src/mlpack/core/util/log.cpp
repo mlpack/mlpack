@@ -4,8 +4,10 @@
  *
  * Implementation of the Log class.
  */
-#include <cxxabi.h>
-#include <execinfo.h>
+#ifndef _WIN32
+  #include <cxxabi.h>
+  #include <execinfo.h>
+#endif
 
 #include "log.hpp"
 
@@ -42,6 +44,7 @@ void Log::Assert(bool condition, const std::string& message)
 {
   if (!condition)
   {
+#ifndef _WIN32
     void* array[25];
     size_t size = backtrace (array, sizeof(array)/sizeof(void*));
     char** messages = backtrace_symbols(array, size);
@@ -103,8 +106,12 @@ void Log::Assert(bool condition, const std::string& message)
           Log::Debug << "[bt]: (" << i << ") " << messages[i] << std::endl;
       }
     }
+#endif
     Log::Debug << message << std::endl;
+
+#ifndef _WIN32
     free(messages);
+#endif
 
     //backtrace_symbols_fd (array, size, 2);
     exit(1);
