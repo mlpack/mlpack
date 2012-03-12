@@ -9,7 +9,7 @@ project(mlpack C CXX)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
 find_package(LAPACK REQUIRED)  # LAPACK finds BLAS as a dependency
-find_package(Pthreads REQUIRED)
+#find_package(Pthreads REQUIRED)
 find_package(Armadillo 2.4.0 REQUIRED)
 find_package(LibXml2 REQUIRED)
 
@@ -59,15 +59,19 @@ find_package(Boost COMPONENTS
   REQUIRED) # May require math_tr1?
 include_directories(${Boost_INCLUDE_DIRS})
 
+# Save the actual link paths.
+set(Boost_BACKUP_LIBRARIES ${Boost_LIBRARIES})
+
 # We need to include Boost random, but only if newer than 1.45 (as of 1.46 it
 # became a separate package with its own linkable library object).
 if(Boost_MAJOR_VERSION EQUAL 1 AND Boost_MINOR_VERSION GREATER 45)
   find_package(Boost COMPONENTS
   random
   REQUIRED)
-  set(BOOST_LIBS ${BOOST_LIBS} "boost_random")
+  set(Boost_LIBRARIES ${Boost_LIBRARIES} ${Boost_BACKUP_LIBRARIES})
   # This may be redundant.
   include_directories(${Boost_INCLUDE_DIRS})
+ 
 endif(Boost_MAJOR_VERSION EQUAL 1 AND Boost_MINOR_VERSION GREATER 45)
 
 # Default to debugging mode for developers.
@@ -80,7 +84,7 @@ option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
 
 if(DEBUG)
   add_definitions(-DDEBUG)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -O0 -Wextra")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra -O0")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -Wall -Wextra -O0")
 else()
   add_definitions(-DARMA_NO_DEBUG)
