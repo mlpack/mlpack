@@ -15,7 +15,14 @@ foreach(dir ${DIRS})
 endforeach()
 
 # MLPACK_SRCS is set in the subdirectories.
-add_library(mlpack SHARED ${MLPACK_SRCS})
+# We don't use a DLL (shared) on Windows because it's a nightmare.  We can't
+# easily generate the .def file and we won't put __declspec(dllexport) next to
+# every function signature.
+if (WIN32)
+  add_library(mlpack ${MLPACK_SRCS})
+else (WIN32)
+  add_library(mlpack SHARED ${MLPACK_SRCS})
+endif (WIN32)
 target_link_libraries(mlpack
   ${ARMADILLO_LIBRARIES}
   ${Boost_LIBRARIES}
