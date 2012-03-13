@@ -121,9 +121,20 @@ include(CMake/TargetDistclean.cmake OPTIONAL)
 
 include_directories(${CMAKE_SOURCE_DIR})
 
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
+# On Windows, things end up under Debug/ or Release/.
+if (WIN32)
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+else (WIN32)
+  # If not on Windows, put them under more standard UNIX-like places.  This is
+  # necessary, otherwise they would all end up in
+  # ${CMAKE_BINARY_DIR}/src/mlpack/methods/... or somewhere else random like
+  # that.
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
+endif (WIN32)
 
 # Recurse into the rest of the project.
 add_subdirectory(src/mlpack)
