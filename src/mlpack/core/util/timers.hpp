@@ -34,7 +34,12 @@ class Timer
 {
  public:
   /**
-   * Start the given timer.
+   * Start the given timer.  If a timer is started, then stopped, then
+   * re-started, then re-stopped, the final value of the timer is the length of
+   * both runs -- that is, MLPACK timers are additive for each time they are
+   * run, and do not reset.
+   *
+   * @note Undefined behavior will occur if a timer is started twice.
    *
    * @param name Name of timer to be started.
    */
@@ -42,6 +47,8 @@ class Timer
 
   /**
    * Stop the given timer.
+   *
+   * @note Undefined behavior will occur if a timer is started twice.
    *
    * @param name Name of timer to be stopped.
    */
@@ -83,7 +90,9 @@ class Timers
 
   /**
    * Initializes a timer, available like a normal value specified on
-   * the command line.  Timers are of type timval
+   * the command line.  Timers are of type timeval.  If a timer is started, then
+   * stopped, then re-started, then stopped, the final timer value will be the
+   * length of both runs of the timer.
    *
    * @param timerName The name of the timer in question.
    */
