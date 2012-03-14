@@ -115,6 +115,18 @@ void Timers::StartTimer(const std::string& timerName)
 #else
   FileTimeToTimeVal(&tmp);
 #endif
+
+  // Check to see if the timer already exists.  If it does, we'll subtract the
+  // old value.
+  if (timers.count(timerName) == 1)
+  {
+    timeval tmpDelta;
+
+    timersub(&tmp, &timers[timerName], &tmpDelta);
+
+    tmp = tmpDelta;
+  }
+
   timers[timerName] = tmp;
 }
 
@@ -136,15 +148,15 @@ void Timers::FileTimeToTimeVal(timeval* tv)
   tv->tv_usec = (long) (ptime % 1000000UL);
 }
 
-inline void timersub(const timeval* tvp, const timeval* uvp, timeval * vvp) 
+inline void timersub(const timeval* tvp, const timeval* uvp, timeval* vvp)
 {
-  vvp->tv_sec = tvp->tv_sec - uvp->tv_sec; 
-  vvp->tv_usec = tvp->tv_usec - uvp->tv_usec; 
-  if (vvp->tv_usec < 0) 
-  { 
-     --vvp->tv_sec; 
-     vvp->tv_usec += 1000000; 
-  } 
+  vvp->tv_sec = tvp->tv_sec - uvp->tv_sec;
+  vvp->tv_usec = tvp->tv_usec - uvp->tv_usec;
+  if (vvp->tv_usec < 0)
+  {
+     --vvp->tv_sec;
+     vvp->tv_usec += 1000000;
+  }
 }
 #endif // _WIN32
 
