@@ -143,18 +143,21 @@ add_subdirectory(src/mlpack)
 # I guess this option will just be unavailable.
 find_package(Doxygen)
 if (DOXYGEN_FOUND)
-  # It may be better if we built the documentation into the build directory, but
-  # I'm leaving this for a later day.
-  add_custom_target(doc
-      ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
+  # Preprocess the Doxyfile.  This is done before 'make doc'.
+  add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Doxyfile
+      PRE_BUILD
+      COMMAND ${CMAKE_COMMAND} -D DESTDIR=${CMAKE_BINARY_DIR} -P
+          ${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-      COMMENT "Generating API documentation with Doxygen"
+      COMMENT "Creating Doxyfile to generate Doxygen documentation"
   )
-  add_custom_command(TARGET doc
-      POST_BUILD
-      COMMAND cmake -E copy_directory
-          ${CMAKE_CURRENT_SOURCE_DIR}/doc ${CMAKE_BINARY_DIR}/doc
-      COMMENT "Copying API documentation to build directory"
+
+  # Generate documentation.
+  add_custom_target(doc
+      COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile
+      DEPENDS ${CMAKE_BINARY_DIR}/Doxyfile
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      COMMENT "Generating API documentation with Doxygen"
   )
 
   install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html
