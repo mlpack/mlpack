@@ -46,11 +46,11 @@ BOOST_AUTO_TEST_CASE(TestCLIAdd)
       std::string("True or False")) , 0);
 
   // Check that our aliasing works.
-  BOOST_REQUIRE_EQUAL(CLI::HasParam("global/bool"), 
+  BOOST_REQUIRE_EQUAL(CLI::HasParam("global/bool"),
       CLI::HasParam("alias/bool"));
   BOOST_REQUIRE_EQUAL(CLI::GetDescription("global/bool").compare(
       CLI::GetDescription("alias/bool")), 0);
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("global/bool"), 
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("global/bool"),
       CLI::GetParam<bool>("alias/bool"));
 }
 
@@ -199,6 +199,39 @@ BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamModifiers)
   BOOST_REQUIRE_EQUAL(ss.str(),
       BASH_GREEN "[INFO ] " BASH_CLEAR
       "I have a precise number which is 000156");
+}
+
+/**
+ * We should be able to start and then stop a timer multiple times and it should
+ * save the value.
+ */
+BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
+{
+  Timer::Start("test_timer");
+
+  usleep(10000);
+
+  Timer::Stop("test_timer");
+
+  BOOST_REQUIRE_GT(Timer::Get("test_timer").tv_usec, 10000);
+
+  // Restart it.
+  Timer::Start("test_timer");
+
+  usleep(10000);
+
+  Timer::Stop("test_timer");
+
+  BOOST_REQUIRE_GT(Timer::Get("test_timer").tv_usec, 20000);
+
+  // Just one more time, for good measure...
+  Timer::Start("test_timer");
+
+  usleep(20000);
+
+  Timer::Stop("test_timer");
+
+  BOOST_REQUIRE_GT(Timer::Get("test_timer").tv_usec, 40000);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
