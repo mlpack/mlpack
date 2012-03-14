@@ -207,8 +207,8 @@ int main(int argc, char *argv[])
     delete queryTree;
 
   // Save output.
-  data::Save(distancesFile, distances);
-  data::Save(neighborsFile, neighbors);
+  data::Save(distancesFile, distancesOut);
+  data::Save(neighborsFile, neighborsOut);
 
   delete allkfn;
 }
