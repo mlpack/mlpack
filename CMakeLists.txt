@@ -60,6 +60,33 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 find_package(Armadillo 2.4.0 REQUIRED)
 find_package(LibXml2 REQUIRED)
 
+# On Windows, LibXml2 has a couple dependencies and we want to make sure they
+# exist.  We don't need the include directory, so we just use a find_library
+# call, looking for .dlls.
+if (WIN32)
+  # Find a .dll, not a .lib, because libxml2 is probably dynamically linked.
+  set(CMAKE_OLD_SUFFIXES "${CMAKE_FIND_LIBRARY_SUFFIXES}")
+  set(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
+
+  find_library(ZLIB_LIBRARY
+      zlib1
+      HINTS "[HKEY_LOCAL_MACHINE\\SOFTWARE\\GnuWin32\\ZLib:InstallPath]/lib"
+  )
+  if (NOT ZLIB_LIBRARY)
+    message(WARNING "zlib1.dll not found!  libxml2.dll may depend on this, and
+      if it is not present MLPACK may not work.")
+  endif (NOT ZLIB_LIBRARY)
+
+  find_library(ICONV_LIBRARY iconv)
+  if (NOT ICONV_LIBRARY)
+    message(WARNING "iconv.dll not found!  libxml2.dll may depend on this, and
+      if it is not present MLPACK may not work.")
+  endif (NOT ICONV_LIBRARY)
+
+  # Reset suffixes.
+  set(CMAKE_FIND_LIBRARY_SUFFIXES "${CMAKE_OLD_SUFFIXES}")
+endif (WIN32)
+
 # Include directories for the previous dependencies.
 include_directories(${ARMADILLO_INCLUDE_DIRS})
 include_directories(${LIBXML2_INCLUDE_DIR})
