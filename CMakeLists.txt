@@ -47,7 +47,6 @@ endif(ARMA_EXTRA_DEBUG)
 # resides.
 #   ARMADILLO_LIBRARY - location of libarmadillo.so / armadillo.lib
 #   ARMADILLO_INCLUDE_DIR - directory containing <armadillo>
-#   LAPACK_cheev_LIBRARY - location of LAPACK
 #   LIBXML2_INCLUDE_DIR - location of LibXml2 includes
 #   LIBXML2_LIBRARIES - locations of libxml2.so or libxml2.lib
 #   BOOST_ROOT - root of Boost installation
@@ -58,6 +57,36 @@ endif(ARMA_EXTRA_DEBUG)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
 find_package(Armadillo 2.4.0 REQUIRED)
+
+# On Windows, Armadillo should be using LAPACK and BLAS but we still need to
+# link against it.  We don't want to use the FindLAPACK or FindBLAS modules
+# because then we are required to have a FORTRAN compiler (argh!) so we will try
+# and find LAPACK and BLAS ourselves, using a slightly modified variant of the
+# script Armadillo uses to find these.
+if (WIN32)
+  find_library(LAPACK_LIBRARY
+      NAMES lapack liblapack lapack_win32_MT lapack_win32
+      PATHS "C:/Program Files/Armadillo"
+      PATH_SUFFIXES "examples/lib_win32/")
+
+  if (NOT LAPACK_LIBRARY)
+    message(FATAL_ERROR "Cannot find LAPACK library (.lib)!")
+  endif (NOT LAPACK_LIBRARY)
+
+  find_library(BLAS_LIBRARY
+      NAMES blas libblas blas_win32_MT blas_win32
+      PATHS "C:/Program Files/Armadillo"
+      PATH_SUFFIXES "examples/lib_win32/")
+
+  if (NOT BLAS_LIBRARY)
+    message(FATAL_ERROR "Cannot find BLAS library (.lib)!")
+  endif (NOT BLAS_LIBRARY)
+
+  # Piggyback LAPACK and BLAS linking into Armadillo link.
+  set(ARMADILLO_LIBRARIES
+      "${ARMADILLO_LIBRARIES};${BLAS_LIBRARY};${LAPACK_LIBRARY}")
+endif (WIN32)
+
 find_package(LibXml2 REQUIRED)
 
 # On Windows, LibXml2 has a couple dependencies and we want to make sure they
