@@ -13,6 +13,7 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 
 #include <stack>
+#include <limits>
 
 namespace mlpack {
 namespace kmeans {
@@ -70,97 +71,121 @@ FastCluster(MatType& data,
     actualClusters = clusters;
   }
 
-  // TODO: remove
-  // Scale the data to [0,1]
-  if(0){
-    arma::rowvec min = arma::min(data, 0);
-    data = (data - arma::ones<arma::colvec>(data.n_rows) * min) / (arma::ones<arma::colvec>(data.n_rows) * (arma::max(data,0) - min));
-    for(size_t i = 0; i < data.n_cols; ++i)
-      for(size_t j = 0; j < data.n_rows; ++j)
-        assert(data(j,i) >= 0 && data(j,i) <= 1);
-  }
-
-  if (assignments.n_rows != data.n_cols)
-    assignments.resize(data.n_cols);
+  size_t dimensionality = data.n_rows;
 
   // Centroids of each cluster.  Each column corresponds to a centroid.
-  MatType centroids(data.n_rows, actualClusters);
+  MatType centroids(dimensionality, actualClusters);
+  centroids.zeros();
 
   // Counts of points in each cluster.
   arma::Col<size_t> counts(actualClusters);
   counts.zeros();
 
   // Build the mrkd-tree on this dataset
-  tree::BinarySpaceTree<typename bound::HRectBound<2>, tree::MRKDStatistic> tree(data, 1);
+  tree::BinarySpaceTree<typename bound::HRectBound<2>, tree::MRKDStatistic> tree(data, 10);
+  std::cout << "Tree Built \n";
   // A pointer for traversing the mrkd-tree
   tree::BinarySpaceTree<typename bound::HRectBound<2>, tree::MRKDStatistic>* node;
 
-  // We use this to store the furtherst point in a hyperrectangle from a given
-  // vector.
-  arma::colvec p(data.n_rows);
-
-  // Make random centroids and fit them into the root hyperrectangle.
+  // Now, the initial assignments.  First determine if they are necessary.
+  if (assignments.n_elem != data.n_cols)
   {
-    centroids.randu();
-    bound::HRectBound<2>& bound = tree.Bound();
-    size_t dim = bound.Dim();
-    for (size_t i = 0; i < dim; ++i) {
-      double min = bound[i].Lo();
-      double max = bound[i].Hi();
-      for (size_t j = 0; j < centroids.n_cols; ++j)
-      {
-        if (centroids(i,j) < min)
-          centroids(i,j) = min;
-        else if (centroids(i,j) > max)
-          centroids(i,j) = max;
-      }
-    }
+    // Use the partitioner to come up with the partition assignments.
+    partitioner.Cluster(data, actualClusters, assignments);
   }
+
+  // Set counts correctly.
+  for (size_t i = 0; i < assignments.n_elem; i++)
+    counts[assignments[i]]++;
+
+  // Sum the points for each centroid
+  for (size_t i = 0; i < data.n_cols; i++)
+    centroids.col(assignments[i]) += data.col(i);
+
+  // Then divide the sums by the count to get the center of mass for this
+  // centroids assigned points
+  for (size_t i = 0; i < actualClusters; i++)
+    centroids.col(i) /= counts[i];
 
   // Instead of retraversing the tree after an iteration, we will update centroid
   // positions in this matrix, which also prevents clobbering our centroids from
   // the previous iteration.
-  MatType newCentroids(centroids.n_rows, centroids.n_cols);
+  MatType newCentroids(dimensionality, centroids.n_cols);
 
-  std::cout << data.n_cols << std::endl;
+  // Create a stack for traversing the mrkd-tree
+  std::stack<typename tree::BinarySpaceTree<typename bound::HRectBound<2>, 
+                                            tree::MRKDStatistic>* > stack;
+
+  // A variable to keep track of how many kmeans iterations we have made
   size_t iteration = 0;
+
+  // A variable to keep track of how many nodes assignments have changed in
+  // each kmeans iteration
   size_t changedAssignments = 0;
+
+  // A variable to keep track of the number of times something is skipped due
+  // to the blacklist
+  size_t skip = 0;
+
+  // A variable to keep track of the number of distances calculated
+  size_t comps = 0;
+
+  // A variable to keep track of how often we stop at a parent node
+  size_t dominations = 0;
   do 
   {
     // Keep track of what iteration we are on.
     ++iteration;
     changedAssignments = 0;
+
+    // Reset the newCentroids so that we can store the newly calculated ones
+    // here
     newCentroids.zeros();
+
+    // Reset the counts
     counts.zeros();
 
-    // Create a stack for traversing the mrkd-tree
-    std::stack<typename tree::BinarySpaceTree<typename bound::HRectBound<2>, 
-                                              tree::MRKDStatistic>* > stack;
     // Add the root node of the tree to the stack
     stack.push(&tree);
+    // Set the top level whitelist
+    tree.Stat().whiteList.resize(centroids.n_cols, true);
 
+    // Traverse the tree
     while (!stack.empty())
     {
+      // Get the next node in the tree
       node = stack.top();
+      // Remove the node from the stack
       stack.pop();
 
+      // Get a reference to the mrkd statistic for this hyperrectangle
       tree::MRKDStatistic& mrkd = node->Stat();
 
+      // We use this to store the index of the centroid with the minimum
+      // distance from this hyperrectangle or point
       size_t minIndex = 0;
 
       // If this node is a leaf, then we calculate the distance from
       // the centroids to every point the node contains.
       if (node->IsLeaf())
       {
-        //std::cout << "Leaf\t";
         for (size_t i = mrkd.begin; i < mrkd.count + mrkd.begin; ++i)
         {
           // Initialize minDistance to be nonzero.
           double minDistance = metric::SquaredEuclideanDistance::Evaluate(
               data.col(i), centroids.col(0));
+
           // Find the minimal distance centroid for this point.
           for (size_t j = 1; j < centroids.n_cols; ++j)
           {
+            // If this centroid is not in the whitelist, skip it
+            if (!mrkd.whiteList[j])
+            {
+              ++skip;
+              continue;
+            }
+
+            ++comps;
             double distance = metric::SquaredEuclideanDistance::Evaluate(
                 data.col(i), centroids.col(j));
             if ( minDistance > distance )
@@ -170,115 +195,298 @@ FastCluster(MatType& data,
             }
           }
 
+          // Add this point to the undivided center of mass summation for
+          // it's assigned centroid
           newCentroids.col(minIndex) += data.col(i);
+
+          // Increment the count for the minimum distance centroid
           ++counts(minIndex);
-          //std::cout << counts(minIndex) << "\t";
+
+          // If we actually changed assignments, increment changedAssignments
+          // and modify the assignment vector for this point
           if (assignments(i) != minIndex)
           {
             ++changedAssignments;
-            // TODO: this if should be removed
-            //if(counts(assignments(i)))
-              //--counts(assignments(i));
             assignments(i) = minIndex;
           }
         }
-        //std::cout << std::endl;
       }
       // If this node is not a leaf, then we continue trying to find dominant
       // centroids
       else
       {
-        //std::cout << "Parent\t";
         bound::HRectBound<2>& bound = node->Bound();
 
+        // A flag to keep track of if we find a single centroid that is closer
+        // to all points in this hyperrectangle than any other centroid.
         bool noDomination = false;
 
-        // There was no centroid inside this hyperrectangle.
-        // We must determine if an external centroid dominates it.
-        for (size_t i = 0; i < centroids.n_cols; ++i) 
-        {
-          noDomination = false;
-          for (size_t j = 0; j < centroids.n_cols; ++j)
-          {
-            if (j == i)
-              continue;
+        // Calculate the center of mass of this hyperrectangle
+        arma::vec center = mrkd.centerOfMass / mrkd.count;
 
-            for (size_t k = 0; k < p.n_rows; ++k)
+        // Set the minDistance to the maximum value of a double so any value 
+        // must be smaller than this
+        double minDistance = std::numeric_limits<double>::max();
+
+        // The candidate distance we calculate for each centroid
+        double distance = 0.0;
+
+        // How many points are inside this hyperrectangle, we stop if we
+        // see more than 1
+        size_t contains = 0;
+
+        // Find the "owner" of this hyperrectangle, if one exists
+        for (size_t i = 0; i < centroids.n_cols; ++i)
+        {
+          // If this centroid is not in the whitelist, skip it
+          if (!mrkd.whiteList[i])
+          {
+            ++skip;
+            continue;
+          }
+
+          // Incrememnt the number of distance calculations for what we are
+          // about to do
+          comps += 2;
+
+          // Reinitialize the distance so += works right
+          distance = 0.0;
+
+          // We keep track of how many dimensions have nonzero distance,
+          // if this is 0 then the distance is 0.
+          size_t nonZero = 0;
+
+          /*
+            Compute the distance to the hyperrectangle for this centroid.
+            We do this by finding the furthest point from the centroid inside
+            the hyperrectangle. This is a corner of the hyperrectangle.
+
+            In order to do this faster, we calculate both the distance and the
+            furthest point simultaneously.
+
+            This following code is equivalent to, but faster than:
+
+            arma::vec p;
+            p.zeros(dimensionality);
+
+            for (size_t j = 0; j < dimensionality; ++j)
             {
-              p(k) = (centroids(k,j) > centroids(k,i)) ?
-                bound[k].Hi() : bound[k].Lo();
+              if (centroids(j,i) < bound[j].Lo())
+                p(j) = bound[j].Lo();
+              else
+                p(j) = bound[j].Hi();
             }
 
-            double distancei = metric::SquaredEuclideanDistance::Evaluate(
+            distance = metric::SquaredEuclideanDistance::Evaluate(
                 p.col(0), centroids.col(i));
-            double distancej = metric::SquaredEuclideanDistance::Evaluate(
-                p.col(0), centroids.col(j));
+          */
+          for (size_t j = 0; j < dimensionality; ++j)
+          {
+            double ij = centroids(j,i);
+            double lo = bound[j].Lo();
 
-            if (distancei >= distancej)
+            if (ij < lo)
+            {
+              // (ij - lo)^2
+              ij -= lo;
+              ij *= ij;
+
+              distance += ij;
+              ++nonZero;
+            }
+            else
+            {
+              double hi = bound[j].Hi();
+              if (ij > hi)
+              {
+                // (ij - hi)^2
+                ij -= hi;
+                ij *= ij;
+
+                distance += ij;
+                ++nonZero;
+              }
+            }
+          }
+
+          // The centroid is inside the hyperrectangle
+          if (nonZero == 0)
+          {
+            ++contains;
+            minDistance = 0.0;
+            minIndex = i;
+
+            // If more than two points are within this hyperrectangle, then
+            // there can be no dominating centroid, so we should continue
+            // to the children nodes.
+            if (contains > 1)
             {
               noDomination = true;
               break;
             }
-
           }
 
-          // We identified a centroid that dominates this hyperrectangle.
-          if (!noDomination)
+          if (fabs(distance - minDistance) <= 1e-10)
           {
-            //std::cout << "Domination\t";
-            newCentroids.col(minIndex) += mrkd.centerOfMass;
-            counts(i) += mrkd.count;
-            //std::cout << counts(i) << std::endl;
-            // Update all assignments for this node
-            const size_t begin = node->Begin();
-            const size_t end = node->End();
-            for (size_t j = begin; j < end; ++j)
-            {
-              if (assignments(j) != i)
-              {
-                ++changedAssignments;
-                //if(counts(assignments(j)))
-                  //--counts(assignments(j));
-                //++counts(i);
-                assignments(j) = i;
-              }
-            }
-            mrkd.dominatingCentroid = i;
+            noDomination = true;
             break;
           }
+          else if (distance < minDistance)
+          {
+            minIndex = i;
+          }
+        }
+
+        distance = minDistance;
+        // Determine if the owner dominates this centroid only if there was
+        // exactly one owner
+        if (!noDomination)
+        {
+          for (size_t i = 0; i < centroids.n_cols; ++i)
+          {
+            if (i == minIndex)
+              continue;
+            // If this centroid is blacklisted for this hyperrectangle, then
+            // we skip it
+            if (!mrkd.whiteList[i])
+            {
+              ++skip;
+              continue;
+            }
+            /*
+              Compute the dominating centroid for this hyperrectangle, if one
+              exists. We do this by calculating the point which is furthest
+              from the i'th centroid in the direction of c_k - c_i. We do this
+              as outlined in the Pelleg and Moore paper.
+
+              This following code is equivalent to, but faster than:
+
+              arma::vec p;
+              p.zeros(dimensionality);
+
+              for (size_t k = 0; k < dimensionality; ++k)
+              {
+                p(k) = (centroids(k,i) > centroids(k,minIndex)) ?
+                  bound[k].Hi() : bound[k].Lo();
+              }
+
+              double distancei = metric::SquaredEuclideanDistance::Evaluate(
+                  p.col(0), centroids.col(i));
+              double distanceMin = metric::SquaredEuclideanDistance::Evaluate(
+                  p.col(0), centroids.col(minIndex));
+            */
+
+            comps += 1;
+            double distancei = 0.0;
+            double distanceMin = 0.0;
+            for (size_t k = 0; k < dimensionality; ++k)
+            {
+              double ci = centroids(k,i);
+              double cm = centroids(k,minIndex);
+              if (ci > cm)
+              {
+                double hi = bound[k].Hi();
+
+                ci -= hi;
+                cm -= hi;
+
+                ci *= ci;
+                cm *= cm;
+
+                distancei += ci;
+                distanceMin += cm;
+              }
+              else
+              {
+                double lo = bound[k].Lo();
+
+                ci -= lo;
+                cm -= lo;
+
+                ci *= ci;
+                cm *= cm;
+
+                distancei += ci;
+                distanceMin += cm;
+              }
+            }
+
+            if(distanceMin >= distancei)
+            {
+              noDomination = true;
+              break;
+            }
+            else
+            {
+              mrkd.whiteList[i] = false;
+            }
+          }
+        }
+        else
+        {
+          noDomination = true;
+        }
+
+        // If did found a centroid that was closer to every point in the
+        // hyperrectangle than every other centroid, then update that centroid
+        if (!noDomination)
+        {
+          // Adjust the new centroid sum for the min distance point to this
+          // hyperrectangle by the center of mass of this hyperrectangle
+          newCentroids.col(minIndex) += mrkd.centerOfMass;
+
+          // Increment the counts for this centroid
+          counts(minIndex) += mrkd.count;
+
+          // Update all assignments for this node
+          const size_t begin = node->Begin();
+          const size_t end = node->End();
+
+          // TODO: Do this outside of the kmeans iterations
+          for (size_t j = begin; j < end; ++j)
+          {
+            if (assignments(j) != minIndex)
+            {
+              ++changedAssignments;
+              assignments(j) = minIndex;
+            }
+          }
+          mrkd.dominatingCentroid = minIndex;
+
+          // Keep track of the number of times we found a dominating centroid
+          ++dominations;
         }
 
         // If we did not find a dominating centroid then we fall through to the
         // default case, where we add the children of this node to the stack.
-        if (noDomination)
+        else
         {
-          //std::cout << "No Domination" << std::endl;
+          // Add this hyperrectangle's children to our stack
           stack.push(node->Left());
           stack.push(node->Right());
+
+          // (Re)Initialize the whiteList for the children
+          node->Left()->Stat().whiteList = mrkd.whiteList;
+          node->Right()->Stat().whiteList = mrkd.whiteList;
         }
       }
 
     }
 
+    // Divide by the number of points assigned to the centroids so that we
+    // have the actual center of mass and update centroids' positions.
     for (size_t i = 0; i < centroids.n_cols; ++i)
     {
       if (counts(i)) {
-        // Divide by the number of points assigned to this centroid so that we
-        // have the actual center of mass and update centroids' positions.
         centroids.col(i) = newCentroids.col(i) / counts(i);
       }
     }
-    size_t count = 0;
-    for(size_t k = 0; k < counts.n_rows; ++k)
-    {
-      std::cout << counts(k) << '\t';
-      count += counts(k);
-    }
-    std::cout << '\n' << count <<'\t'<< data.n_cols<< std::endl;
-    assert(count <= data.n_cols);
-  } while(0);
-  //} while (changedAssignments > 0 && iteration != maxIterations);
 
+    // Stop when we reach max iterations or we changed no assignments
+    // assignments
+  } while (changedAssignments > 0 && iteration != maxIterations);
+
+  std::cout << "Iterations: " << iteration << '\t' << "Skips: " << skip << '\t' << "Comparisons: " << comps << '\t' << "Dominations: " << dominations << '\n';
 }
 
 /**
@@ -386,6 +594,7 @@ Cluster(const MatType& data,
     iteration++;
 
   } while (changedAssignments > 0 && iteration != maxIterations);
+  std::cout << "Iterations: " << iteration << std::endl;
 
   // If we have overclustered, we need to merge the nearest clusters.
   if (actualClusters != clusters)

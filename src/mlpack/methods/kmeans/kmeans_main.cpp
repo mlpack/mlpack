@@ -86,24 +86,29 @@ int main(int argc, char** argv)
   // Now create the KMeans object.  Because we could be using different types,
   // it gets a little weird...
   arma::Col<size_t> assignments;
+
   if (CLI::HasParam("allow_empty_clusters"))
   {
     KMeans<metric::SquaredEuclideanDistance, RandomPartition,
         AllowEmptyClusters> k(maxIterations, overclustering);
 
+    Timer::Start("clustering");
 		if(CLI::HasParam("fast_kmeans"))
 			k.FastCluster(dataset, clusters, assignments);
 		else
 			k.Cluster(dataset, clusters, assignments);
+    Timer::Stop("clustering");
   }
   else
   {
     KMeans<> k(maxIterations, overclustering);
 
+    Timer::Start("clustering");
 		if(CLI::HasParam("fast_kmeans"))
 			k.FastCluster(dataset, clusters, assignments);
 		else
 			k.Cluster(dataset, clusters, assignments);
+    Timer::Stop("clustering");
   }
 
   // Now figure out what to do with our results.
