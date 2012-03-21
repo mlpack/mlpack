@@ -49,14 +49,14 @@ void VerifyCorrectness(vec beta, vec errCorr, double lambda)
 BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepLasso)
 {
   double lambda1 = 0.1;
-  u32 nAtoms = 25;
+  uword nAtoms = 25;
 
   mat X;
   X.load("mnist_first250_training_4s_and_9s.arm");
-  u32 nPoints = X.n_cols;
+  uword nPoints = X.n_cols;
   
   // normalize each point since these are images
-  for(u32 i = 0; i < nPoints; i++) {
+  for(uword i = 0; i < nPoints; i++) {
     X.col(i) /= norm(X.col(i), 2);
   }  
 
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepLasso)
   mat D = sc.MatD();
   mat Z = sc.MatZ();
   
-  for(u32 i = 0; i < nPoints; i++) {
+  for(uword i = 0; i < nPoints; i++) {
     vec errCorr = trans(D) * (D * Z.unsafe_col(i) - X.unsafe_col(i));
     VerifyCorrectness(Z.unsafe_col(i), errCorr, lambda1);
   }
@@ -78,14 +78,14 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepElasticNet)
 {
   double lambda1 = 0.1;
   double lambda2 = 0.2;
-  u32 nAtoms = 25;
+  uword nAtoms = 25;
 
   mat X;
   X.load("mnist_first250_training_4s_and_9s.arm");
-  u32 nPoints = X.n_cols;
+  uword nPoints = X.n_cols;
   
   // normalize each point since these are images
-  for(u32 i = 0; i < nPoints; i++) {
+  for(uword i = 0; i < nPoints; i++) {
     X.col(i) /= norm(X.col(i), 2);
   }  
 
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepElasticNet)
   mat D = sc.MatD();
   mat Z = sc.MatZ();
   
-  for(u32 i = 0; i < nPoints; i++) {
+  for(uword i = 0; i < nPoints; i++) {
     vec errCorr = 
       (trans(D) * D + lambda2 *
        eye(nAtoms, nAtoms)) * Z.unsafe_col(i) - trans(D) * X.unsafe_col(i);
@@ -110,14 +110,14 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
   const double tol = 1e-12;
 
   double lambda1 = 0.1;
-  u32 nAtoms = 25;
+  uword nAtoms = 25;
 
   mat X;
   X.load("mnist_first250_training_4s_and_9s.arm");
-  u32 nPoints = X.n_cols;
+  uword nPoints = X.n_cols;
   
   // normalize each point since these are images
-  for(u32 i = 0; i < nPoints; i++) {
+  for(uword i = 0; i < nPoints; i++) {
     X.col(i) /= norm(X.col(i), 2);
   }  
 

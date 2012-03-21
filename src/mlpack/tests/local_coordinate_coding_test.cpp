@@ -49,14 +49,14 @@ void VerifyCorrectness(vec beta, vec errCorr, double lambda)
 BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestCodingStep)
 {
   double lambda1 = 0.1;
-  u32 nAtoms = 25;
+  uword nAtoms = 25;
 
   mat X;
   X.load("mnist_first250_training_4s_and_9s.arm");
-  u32 nPoints = X.n_cols;
+  uword nPoints = X.n_cols;
   
   // normalize each point since these are images
-  for(u32 i = 0; i < nPoints; i++) {
+  for(uword i = 0; i < nPoints; i++) {
     X.col(i) /= norm(X.col(i), 2);
   }  
 
@@ -67,9 +67,9 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestCodingStep)
   mat D = lcc.MatD();
   mat Z = lcc.MatZ();
   
-  for(u32 i = 0; i < nPoints; i++) {
+  for(uword i = 0; i < nPoints; i++) {
     vec sq_dists = vec(nAtoms);
-    for(u32 j = 0; j < nAtoms; j++) {
+    for(uword j = 0; j < nAtoms; j++) {
       vec diff = D.unsafe_col(j) - X.unsafe_col(i);
       sq_dists[j] = dot(diff, diff);
     }
@@ -86,14 +86,14 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestDictionaryStep)
   const double tol = 1e-12;
 
   double lambda = 0.1;
-  u32 nAtoms = 25;
+  uword nAtoms = 25;
 
   mat X;
   X.load("mnist_first250_training_4s_and_9s.arm");
-  u32 nPoints = X.n_cols;
+  uword nPoints = X.n_cols;
   
   // normalize each point since these are images
-  for(u32 i = 0; i < nPoints; i++) {
+  for(uword i = 0; i < nPoints; i++) {
     X.col(i) /= norm(X.col(i), 2);
   }  
 
@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestDictionaryStep)
   mat D = lcc.MatD();
   
   mat grad = zeros(D.n_rows, D.n_cols);
-  for(u32 i = 0; i < nPoints; i++) {
+  for(uword i = 0; i < nPoints; i++) {
     grad += (D - repmat(X.unsafe_col(i), 1, nAtoms)) * diagmat(abs(Z.unsafe_col(i)));
   }
   grad = lambda * grad + (D * Z - X) * trans(Z);

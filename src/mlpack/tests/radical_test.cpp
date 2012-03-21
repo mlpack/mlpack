@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(Radical_Test_Radical3D) {
   mat matYT = trans(matY);
   double valEst = 0;
   
-  for(u32 i = 0; i < matYT.n_cols; i++) 
+  for(uword i = 0; i < matYT.n_cols; i++) 
   {
     vec y = vec(matYT.col(i));
     valEst += rad.Vasicek(y);
@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(Radical_Test_Radical3D) {
   matYT = trans(matY);
   double valBest = 0;
   
-  for (u32 i = 0; i < matYT.n_cols; i++) 
+  for (uword i = 0; i < matYT.n_cols; i++) 
   {
     vec y = vec(matYT.col(i));
     valBest += rad.Vasicek(y);

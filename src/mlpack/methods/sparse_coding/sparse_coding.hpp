@@ -82,8 +82,8 @@ namespace sparse_coding {
 class SparseCoding {
 
  public:
-  // void Init(double* memX, u32 nDims, u32 nPoints,
-  // 	    u32 nAtoms, double lambda1);
+  // void Init(double* memX, uword nDims, uword nPoints,
+  // 	    uword nAtoms, double lambda1);
 
   //void SetDictionary(double* memD);
 
@@ -96,7 +96,7 @@ class SparseCoding {
    * @param lambda1 Regularization parameter for l1-norm penalty
    * @param lambda2 Regularization parameter for l2-norm penalty
    */
-  SparseCoding(const arma::mat& matX, arma::u32 nAtoms, double lambda1, double lambda2 = 0);
+  SparseCoding(const arma::mat& matX, arma::uword nAtoms, double lambda1, double lambda2 = 0);
   
 
   /**
@@ -139,7 +139,7 @@ class SparseCoding {
    *
    * @param nIterations Maximum number of iterations to run algorithm
    */
-  void DoSparseCoding(arma::u32 nIterations);
+  void DoSparseCoding(arma::uword nIterations);
 
   /**
    * Sparse code each point via LARS
@@ -191,9 +191,9 @@ class SparseCoding {
   void PrintCoding();
 
  private:
-  arma::u32 nDims;
-  arma::u32 nAtoms;
-  arma::u32 nPoints;
+  arma::uword nDims;
+  arma::uword nAtoms;
+  arma::uword nPoints;
 
   // data (columns are points)
   arma::mat matX;

@@ -76,7 +76,7 @@ class LocalCoordinateCoding {
    * @param nAtoms Number of atoms in dictionary
    * @param lambda Regularization parameter for weighted l1-norm penalty
    */
-  LocalCoordinateCoding(const arma::mat& matX, arma::u32 nAtoms, double lambda);
+  LocalCoordinateCoding(const arma::mat& matX, arma::uword nAtoms, double lambda);
   
   /**
    * Initialize dictionary somehow
@@ -118,7 +118,7 @@ class LocalCoordinateCoding {
    *
    * @param nIterations Maximum number of iterations to run algorithm
    */
-  void DoLCC(arma::u32 nIterations);
+  void DoLCC(arma::uword nIterations);
 
   /**
    * Sparse code each point via distance-weighted LARS
@@ -163,9 +163,9 @@ class LocalCoordinateCoding {
 
 
  private:
-  arma::u32 nDims;
-  arma::u32 nAtoms;
-  arma::u32 nPoints;
+  arma::uword nDims;
+  arma::uword nAtoms;
+  arma::uword nPoints;
 
   // data (columns are points)
   arma::mat matX;
