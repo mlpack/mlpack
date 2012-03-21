@@ -36,8 +36,6 @@ template<> struct is_promotable<u64, s8 > : public is_promotable_ok { typedef s6
 template<> struct is_promotable<u64, u32> : public is_promotable_ok { typedef u64 result; };
 template<> struct is_promotable<u64, u16> : public is_promotable_ok { typedef u64 result; };
 template<> struct is_promotable<u64, u8 > : public is_promotable_ok { typedef u64 result; };
-#endif
-
 
 template<typename T> struct is_promotable<s64, std::complex<T> > : public is_promotable_ok { typedef std::complex<T> result; };
 template<typename T> struct is_promotable<u64, std::complex<T> > : public is_promotable_ok { typedef std::complex<T> result; };
@@ -50,7 +48,9 @@ template<> struct is_promotable<u64, float> : public is_promotable_ok { typedef 
 
 template<> struct is_promotable<u64, s64> : public is_promotable_ok { typedef s64 result; };  // float ?
 #endif
+
 template<> struct is_promotable<s32, s64> : public is_promotable_ok { typedef s64 result; };
+
 #ifndef ARMA_64BIT_WORD
 template<> struct is_promotable<u32, s64> : public is_promotable_ok { typedef s64 result; };  // float ?
 template<> struct is_promotable<s16, s64> : public is_promotable_ok { typedef s64 result; };
@@ -121,6 +121,5 @@ template<> struct promote_type<s16, u64> : public promote_type_ok { typedef s64 
 template<> struct promote_type<u16, u64> : public promote_type_ok { typedef u64 result; };
 template<> struct promote_type<s8 , u64> : public promote_type_ok { typedef s64 result; };  // float ?
 template<> struct promote_type<u8 , u64> : public promote_type_ok { typedef u64 result; };
+
 #endif
-
-
