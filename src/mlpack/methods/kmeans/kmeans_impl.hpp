@@ -356,7 +356,7 @@ FastCluster(MatType& data,
             /*
               Compute the dominating centroid for this hyperrectangle, if one
               exists. We do this by calculating the point which is furthest
-              from the i'th centroid in the direction of c_k - c_i. We do this
+              from the min'th centroid in the direction of c_k - c_min. We do this
               as outlined in the Pelleg and Moore paper.
 
               This following code is equivalent to, but faster than:
