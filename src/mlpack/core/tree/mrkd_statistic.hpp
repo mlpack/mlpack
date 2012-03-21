@@ -41,7 +41,8 @@ class MRKDStatistic
     :
       dataset(&dataset),
       begin(begin),
-      count(count)
+      count(count),
+      parentStat(NULL)
     {
       centerOfMass = dataset.col(begin);
       for(size_t i = begin+1; i < begin+count; ++i)
@@ -66,14 +67,15 @@ class MRKDStatistic
     MRKDStatistic(const MatType& dataset,
                    const size_t begin,
                    const size_t count,
-                   const MRKDStatistic& leftStat,
-                   const MRKDStatistic& rightStat)
+                   MRKDStatistic& leftStat,
+                   MRKDStatistic& rightStat)
     :
       dataset(&dataset),
       begin(begin),
       count(count),
       leftStat(&leftStat),
-      rightStat(&rightStat)
+      rightStat(&rightStat),
+      parentStat(NULL)
     {
       sumOfSquaredNorms = leftStat.sumOfSquaredNorms + rightStat.sumOfSquaredNorms;
 
@@ -83,6 +85,11 @@ class MRKDStatistic
                       (leftStat.count + rightStat.count);
       */
       centerOfMass = leftStat.centerOfMass + rightStat.centerOfMass;
+
+      isWhiteListValid = false;
+
+      leftStat.parentStat = this;
+      rightStat.parentStat = this;
     }
 
     //! The data points this object contains
@@ -95,6 +102,8 @@ class MRKDStatistic
     const MRKDStatistic* leftStat;
     //! The right child 
     const MRKDStatistic* rightStat;
+    //! A link to my parent node, null if I am the root
+    const MRKDStatistic* parentStat;
 
     // Computed statistics
     //! The center of mass for this dataset
@@ -105,6 +114,11 @@ class MRKDStatistic
 		// There may be a better place to store this -- HRectBound?
 		//! The index of the dominating centroid of the associated hyperrectangle
 		size_t dominatingCentroid;
+
+    //! The list of centroids that cannot own this hyperrectangle
+    std::vector<size_t> whiteList;
+    //! Whether or not the whitelist is valid
+    bool isWhiteListValid;
 };
 
 }; // namespace tree
