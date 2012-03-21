@@ -12,6 +12,9 @@ template<> struct isnt_supported_elem_type< s64 >                  : public isnt
 // For new Armadillo versions ( > 1.2.0 ) we have to get a little bit more
 // tricky.  We will overload the values for the is_supported_elem_type
 // structure, allowing us to redefine it to report success for u64s and s64s.
+
+// This isn't necessary if Armadillo was compiled with 64-bit support.
+#ifndef ARMA_64BIT_WORD
 template<>
 struct is_supported_elem_type<u64>
   {
@@ -23,4 +26,6 @@ struct is_supported_elem_type<s64>
   {
   static const bool value = true;
   };
+#endif
+
 #endif
