@@ -45,10 +45,10 @@ int main(int argc, char* argv[]) {
   mat matX;
   matX.load(dataFullpath);
   
-  u32 nPoints = matX.n_cols;
+  uword nPoints = matX.n_cols;
 
   // normalize each point since these are images
-  for(u32 i = 0; i < nPoints; i++) {
+  for(uword i = 0; i < nPoints; i++) {
     matX.col(i) /= norm(matX.col(i), 2);
   }
   

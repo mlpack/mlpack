@@ -417,7 +417,7 @@ Cluster(const MatType& data,
 
     while (clustersLeft != clusters)
     {
-      arma::u32 minIndex;
+      arma::uword minIndex;
       distances.min(minIndex);
 
       // Now we merge the clusters which that distance belongs to.

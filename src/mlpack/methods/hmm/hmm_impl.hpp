@@ -343,7 +343,7 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
         emission[state].Probability(dataSeq.unsafe_col(0)));
 
   // Store the best first state.
-  arma::u32 index;
+  arma::uword index;
   logStateProb.unsafe_col(0).max(index);
   stateSeq[0] = index;
 

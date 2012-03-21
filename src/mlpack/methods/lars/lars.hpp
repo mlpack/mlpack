@@ -118,7 +118,7 @@ class LARS
    *
    * @param matGram Matrix to which to set Gram matrix
    */
-  void SetGramMem(double* matGramMemPtr, arma::u32 nDims);
+  void SetGramMem(double* matGramMemPtr, arma::uword nDims);
 
   /**
    * Compute Gram matrix. If elastic net, add lambda2 * identity to diagonal.
@@ -142,7 +142,7 @@ class LARS
   void Solution(arma::vec& beta);
 
   //! Accessor for activeSet.
-  const std::vector<arma::u32>& ActiveSet() const { return activeSet; }
+  const std::vector<arma::uword>& ActiveSet() const { return activeSet; }
 
   //! Accessor for betaPath.
   const std::vector<arma::vec>& BetaPath() const { return betaPath; }
@@ -175,19 +175,19 @@ private:
   std::vector<double> lambdaPath;
 
   // number of dimensions in active set
-  arma::u32 nActive;
+  arma::uword nActive;
 
   // active set of dimensions
-  std::vector<arma::u32> activeSet;
+  std::vector<arma::uword> activeSet;
 
   // active set membership indicator (for each dimension)
   std::vector<bool> isActive;
 
   // remove activeVarInd'th element from active set
-  void Deactivate(arma::u32 activeVarInd);
+  void Deactivate(arma::uword activeVarInd);
 
   // add dimension varInd to active set
-  void Activate(arma::u32 varInd);
+  void Activate(arma::uword varInd);
 
   // compute "equiangular" direction in output space
   void ComputeYHatDirection(const arma::mat& matX,
@@ -203,7 +203,7 @@ private:
 
   void GivensRotate(const arma::vec::fixed<2>& x, arma::vec::fixed<2>& rotatedX, arma::mat& G);
 
-  void CholeskyDelete(arma::u32 colToKill);
+  void CholeskyDelete(arma::uword colToKill);
 
 };
 

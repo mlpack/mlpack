@@ -44,7 +44,7 @@ void LARS::SetGram(const mat& matGram)
   this->matGram = matGram;
 }
 
-void LARS::SetGramMem(double* matGramMemPtr, u32 nDims)
+void LARS::SetGramMem(double* matGramMemPtr, uword nDims)
 {
   this->matGram = mat(matGramMemPtr, nDims, nDims, false);
 }
@@ -68,7 +68,7 @@ void LARS::DoLARS(const mat& matX, const vec& y)
   
   // set up active set variables
   nActive = 0;
-  activeSet = std::vector<u32>(0);
+  activeSet = std::vector<uword>(0);
   isActive = std::vector<bool>(matX.n_cols);
   fill(isActive.begin(), isActive.end(), false);
 
@@ -87,7 +87,7 @@ void LARS::DoLARS(const mat& matX, const vec& y)
   
   vec corr = vecXTy;
   vec absCorr = abs(corr);
-  u32 changeInd;
+  uword changeInd;
   double maxCorr = absCorr.max(changeInd); // change_ind gets set here
 
   betaPath.push_back(beta);
@@ -110,7 +110,7 @@ void LARS::DoLARS(const mat& matX, const vec& y)
     matGram = trans(matX) * matX;
   }
   
-  //u32 iterations_run = 0;
+  //uword iterations_run = 0;
   // MAIN LOOP
   while ((nActive < matX.n_cols) && (maxCorr > EPS))
   {
@@ -120,7 +120,7 @@ void LARS::DoLARS(const mat& matX, const vec& y)
     // explicit computation of max correlation, among inactive indices
     changeInd = -1;
     maxCorr = 0;
-    for (u32 i = 0; i < matX.n_cols; i++)
+    for (uword i = 0; i < matX.n_cols; i++)
     {
       if (!isActive[i])
       {
@@ -139,7 +139,7 @@ void LARS::DoLARS(const mat& matX, const vec& y)
       if (useCholesky)
       {
         // vec newGramCol = vec(nActive);
-        // for (u32 i = 0; i < nActive; i++)
+        // for (uword i = 0; i < nActive; i++)
         // {
         //   newGramCol[i] = dot(matX.col(activeSet[i]), matX.col(changeInd));
         // }
@@ -155,7 +155,7 @@ void LARS::DoLARS(const mat& matX, const vec& y)
 
     // compute signs of correlations
     vec s = vec(nActive);
-    for (u32 i = 0; i < nActive; i++)
+    for (uword i = 0; i < nActive; i++)
     {
       s(i) = corr(activeSet[i]) / fabs(corr(activeSet[i]));
     }
@@ -188,9 +188,9 @@ void LARS::DoLARS(const mat& matX, const vec& y)
     else
     {
       mat matGramActive = mat(nActive, nActive);
-      for (u32 i = 0; i < nActive; i++)
+      for (uword i = 0; i < nActive; i++)
       {
-        for (u32 j = 0; j < nActive; j++)
+        for (uword j = 0; j < nActive; j++)
         {
           matGramActive(i,j) = matGram(activeSet[i], activeSet[j]);
         }
@@ -213,7 +213,7 @@ void LARS::DoLARS(const mat& matX, const vec& y)
     if (nActive < matX.n_cols)
     {
       // compute correlations with direction
-      for (u32 ind = 0; ind < matX.n_cols; ind++)
+      for (uword ind = 0; ind < matX.n_cols; ind++)
       {
         if (isActive[ind])
         {
@@ -239,9 +239,9 @@ void LARS::DoLARS(const mat& matX, const vec& y)
     {
       lassocond = false;
       double lassoboundOnGamma = DBL_MAX;
-      u32 activeIndToKickOut = -1;
+      uword activeIndToKickOut = -1;
 
-      for (u32 i = 0; i < nActive; i++)
+      for (uword i = 0; i < nActive; i++)
       {
         double val = -beta(activeSet[i]) / betaDirection(i);
         if ((val > 0) && (val < lassoboundOnGamma))
@@ -268,7 +268,7 @@ void LARS::DoLARS(const mat& matX, const vec& y)
     yHat += gamma * yHatDirection;
 
     // update estimator
-    for (u32 i = 0; i < nActive; i++)
+    for (uword i = 0; i < nActive; i++)
     {
       beta(activeSet[i]) += gamma * betaDirection(i);
     }
@@ -304,7 +304,7 @@ void LARS::DoLARS(const mat& matX, const vec& y)
       corr -= lambda2 * beta;
     }
     double curLambda = 0;
-    for (u32 i = 0; i < nActive; i++)
+    for (uword i = 0; i < nActive; i++)
     {
       curLambda += fabs(corr(activeSet[i]));
     }
@@ -333,14 +333,14 @@ void LARS::Solution(vec& beta)
 
   ////////// private functions //////////
 
-void LARS::Deactivate(u32 activeVarInd)
+void LARS::Deactivate(uword activeVarInd)
 {
   nActive--;
   isActive[activeSet[activeVarInd]] = false;
   activeSet.erase(activeSet.begin() + activeVarInd);
 }
 
-void LARS::Activate(u32 varInd)
+void LARS::Activate(uword varInd)
 {
   nActive++;
   isActive[varInd] = true;
@@ -352,7 +352,7 @@ void LARS::Activate(u32 varInd)
          vec& yHatDirection)
 {
   yHatDirection.fill(0);
-  for(u32 i = 0; i < nActive; i++)
+  for(uword i = 0; i < nActive; i++)
   {
     yHatDirection += betaDirection(i) * matX.col(activeSet[i]);
   }
@@ -459,9 +459,9 @@ void LARS::GivensRotate(const vec::fixed<2>& x, vec::fixed<2>& rotatedX, mat& ma
   }
 }
 
-void LARS::CholeskyDelete(u32 colToKill)
+void LARS::CholeskyDelete(uword colToKill)
 {
-  u32 n = matUtriCholFactor.n_rows;
+  uword n = matUtriCholFactor.n_rows;
 
   if (colToKill == (n - 1))
   {
@@ -472,7 +472,7 @@ void LARS::CholeskyDelete(u32 colToKill)
     matUtriCholFactor.shed_col(colToKill); // remove column colToKill
     n--;
 
-    for(u32 k = colToKill; k < n; k++)
+    for(uword k = colToKill; k < n; k++)
     {
       mat matG;
       vec::fixed<2> rotatedVec;

@@ -37,7 +37,7 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   }
 
   // Now find the cluster with maximum variance.
-  arma::u32 maxVarCluster;
+  arma::uword maxVarCluster;
   variances.max(maxVarCluster);
 
   // Now, inside this cluster, find the point which is furthest away.

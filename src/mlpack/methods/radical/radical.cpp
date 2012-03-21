@@ -57,8 +57,8 @@ double Radical::Vasicek(vec& z)
 
   // Apparently faster
   double sum = 0;
-  u32 range = z.n_elem - m;
-  for(u32 i = 0; i < range; i++) {
+  uword range = z.n_elem - m;
+  for(uword i = 0; i < range; i++) {
     sum += log(z(i + m) - z(i));
   }
   return sum;
@@ -93,7 +93,7 @@ double Radical::DoRadical2D(const mat& matX)
     values(i) = Vasicek(candidateY1) + Vasicek(candidateY2);
   }
 
-  u32 indOpt;
+  uword indOpt;
   values.min(indOpt); // we ignore the return value; we don't care about it
   return thetas(indOpt);
 }
