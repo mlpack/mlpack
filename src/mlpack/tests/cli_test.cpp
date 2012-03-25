@@ -11,6 +11,11 @@
   #include <sys/time.h>
 #endif
 
+// For Sleep().
+#ifdef _WIN32
+  #include <Windows.h>
+#endif
+
 #include <mlpack/core.hpp>
 
 #define DEFAULT_INT 42
@@ -209,7 +214,14 @@ BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
 {
   Timer::Start("test_timer");
 
+  // On Windows (or, at least, in Windows not using VS2010) we cannot use
+  // usleep() because it is not provided.  Instead we will use Sleep() for a
+  // number of milliseconds.
+  #ifdef _WIN32
+  Sleep(10);
+  #else
   usleep(10000);
+  #endif
 
   Timer::Stop("test_timer");
 
@@ -218,7 +230,11 @@ BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
   // Restart it.
   Timer::Start("test_timer");
 
+  #ifdef _WIN32
+  Sleep(10);
+  #else
   usleep(10000);
+  #endif
 
   Timer::Stop("test_timer");
 
@@ -227,7 +243,11 @@ BOOST_AUTO_TEST_CASE(MultiRunTimerTest)
   // Just one more time, for good measure...
   Timer::Start("test_timer");
 
+  #ifdef _WIN32
+  Sleep(20);
+  #else
   usleep(20000);
+  #endif
 
   Timer::Stop("test_timer");
 
