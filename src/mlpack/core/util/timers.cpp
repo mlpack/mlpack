@@ -13,6 +13,20 @@
 
 using namespace mlpack;
 
+// On Windows machines, we need to define timersub.
+#ifdef _WIN32
+inline void timersub(const timeval* tvp, const timeval* uvp, timeval* vvp)
+{
+  vvp->tv_sec = tvp->tv_sec - uvp->tv_sec;
+  vvp->tv_usec = tvp->tv_usec - uvp->tv_usec;
+  if (vvp->tv_usec < 0)
+  {
+     --vvp->tv_sec;
+     vvp->tv_usec += 1000000;
+  }
+}
+#endif
+
 /**
  * Start the given timer.
  */
@@ -146,17 +160,6 @@ void Timers::FileTimeToTimeVal(timeval* tv)
 
   tv->tv_sec = (long) (ptime / 1000000UL);
   tv->tv_usec = (long) (ptime % 1000000UL);
-}
-
-inline void timersub(const timeval* tvp, const timeval* uvp, timeval* vvp)
-{
-  vvp->tv_sec = tvp->tv_sec - uvp->tv_sec;
-  vvp->tv_usec = tvp->tv_usec - uvp->tv_usec;
-  if (vvp->tv_usec < 0)
-  {
-     --vvp->tv_sec;
-     vvp->tv_usec += 1000000;
-  }
 }
 #endif // _WIN32
 
