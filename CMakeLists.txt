@@ -87,7 +87,7 @@ if (WIN32)
       "${ARMADILLO_LIBRARIES};${BLAS_LIBRARY};${LAPACK_LIBRARY}")
 endif (WIN32)
 
-find_package(LibXml2 REQUIRED)
+find_package(LibXml2 2.6.0 REQUIRED)
 
 # On Windows, LibXml2 has a couple dependencies and we want to make sure they
 # exist.  We don't need the include directory, so we just use a find_library
