@@ -112,6 +112,17 @@ if (WIN32)
       if it is not present MLPACK may not work.")
   endif (NOT ICONV_LIBRARY)
 
+  find_file(ICONV_HEADER
+      iconv.h
+      HINTS ${LIBXML2_INCLUDE_DIR})
+  if (NOT ICONV_HEADER)
+    message(FATAL_ERROR "iconv.h not found!  It can be placed in a standard
+        include directory or the LibXml2 include directory.")
+  endif (NOT ICONV_HEADER)
+  # Add the directory containing iconv.h to the include directories.
+  get_filename_component(ICONV_H_DIR ${ICONV_HEADER} ABSOLUTE)
+  include_directories(${ICONV_H_DIR})
+
   # Reset suffixes.
   set(CMAKE_FIND_LIBRARY_SUFFIXES "${CMAKE_OLD_SUFFIXES}")
 endif (WIN32)
