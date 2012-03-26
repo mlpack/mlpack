@@ -131,9 +131,6 @@ endif (WIN32)
 include_directories(${ARMADILLO_INCLUDE_DIRS})
 include_directories(${LIBXML2_INCLUDE_DIR})
 
-# Pthreads may have a compiler definition.
-add_definitions(${PTHREADS_DEFINITIONS})
-
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
