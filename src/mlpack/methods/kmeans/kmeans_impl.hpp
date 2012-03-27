@@ -82,7 +82,7 @@ FastCluster(MatType& data,
   counts.zeros();
 
   // Build the mrkd-tree on this dataset
-  tree::BinarySpaceTree<typename bound::HRectBound<2>, tree::MRKDStatistic> tree(data, 10);
+  tree::BinarySpaceTree<typename bound::HRectBound<2>, tree::MRKDStatistic> tree(data, 1);
   std::cout << "Tree Built \n";
   // A pointer for traversing the mrkd-tree
   tree::BinarySpaceTree<typename bound::HRectBound<2>, tree::MRKDStatistic>* node;
@@ -334,6 +334,7 @@ FastCluster(MatType& data,
           else if (distance < minDistance)
           {
             minIndex = i;
+            minDistance = distance;
           }
         }
 
