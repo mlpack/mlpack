@@ -118,6 +118,62 @@ BOOST_AUTO_TEST_CASE(MultipointMultivariatePhiTest)
 }
 
 /**
+ * Test GMM::Probability() for a single observation for a few cases.
+ */
+BOOST_AUTO_TEST_CASE(GMMProbabilityTest)
+{
+  // Create a GMM.
+  GMM gmm(2, 2);
+  gmm.Means()[0] = "0 0";
+  gmm.Means()[1] = "3 3";
+  gmm.Covariances()[0] = "1 0; 0 1";
+  gmm.Covariances()[1] = "2 1; 1 2";
+  gmm.Weights() = "0.3 0.7";
+
+  // Now test a couple observations.  These comparisons are calculated by hand.
+  BOOST_REQUIRE_CLOSE(gmm.Probability("0 0"), 0.05094887202, 1e-5);
+  BOOST_REQUIRE_CLOSE(gmm.Probability("1 1"), 0.03451996667, 1e-5);
+  BOOST_REQUIRE_CLOSE(gmm.Probability("2 2"), 0.04696302254, 1e-5);
+  BOOST_REQUIRE_CLOSE(gmm.Probability("3 3"), 0.06432759685, 1e-5);
+  BOOST_REQUIRE_CLOSE(gmm.Probability("-1 5.3"), 2.503171278804e-6, 1e-5);
+  BOOST_REQUIRE_CLOSE(gmm.Probability("1.4 0"), 0.024676682176, 1e-5);
+}
+
+/**
+ * Test GMM::Probability() for a single observation being from a particular
+ * component.
+ */
+BOOST_AUTO_TEST_CASE(GMMProbabilityComponentTest)
+{
+  // Create a GMM (same as the last test).
+  GMM gmm(2, 2);
+  gmm.Means()[0] = "0 0";
+  gmm.Means()[1] = "3 3";
+  gmm.Covariances()[0] = "1 0; 0 1";
+  gmm.Covariances()[1] = "2 1; 1 2";
+  gmm.Weights() = "0.3 0.7";
+
+  // Now test a couple observations.  These comparisons are calculated by hand.
+  BOOST_REQUIRE_CLOSE(gmm.Probability("0 0", 0), 0.0477464829276, 1e-5);
+  BOOST_REQUIRE_CLOSE(gmm.Probability("0 0", 1), 0.0032023890978, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(gmm.Probability("1 1", 0), 0.0175649494573, 1e-5);
+  BOOST_REQUIRE_CLOSE(gmm.Probability("1 1", 1), 0.0169550172159, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(gmm.Probability("2 2", 0), 8.7450733951e-4, 1e-5);
+  BOOST_REQUIRE_CLOSE(gmm.Probability("2 2", 1), 0.0460885151993, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(gmm.Probability("3 3", 0), 5.8923841039e-6, 1e-5);
+  BOOST_REQUIRE_CLOSE(gmm.Probability("3 3", 1), 0.0643217044658, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(gmm.Probability("-1 5.3", 0), 2.30212100302e-8, 1e-5);
+  BOOST_REQUIRE_CLOSE(gmm.Probability("-1 5.3", 1), 2.48015006877e-6, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(gmm.Probability("1.4 0", 0), 0.0179197849738, 1e-5);
+  BOOST_REQUIRE_CLOSE(gmm.Probability("1.4 0", 1), 0.0067568972024, 1e-5);
+}
+
+/**
  * Test training a model on only one Gaussian (randomly generated) in two
  * dimensions.  We will vary the dataset size from small to large.  The EM
  * algorithm is used for training the GMM.
