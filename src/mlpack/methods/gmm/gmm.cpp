@@ -15,6 +15,9 @@ using namespace mlpack;
 using namespace mlpack::gmm;
 using namespace mlpack::kmeans;
 
+/**
+ * Return the probability of the given observation being from this GMM.
+ */
 double GMM::Probability(const arma::vec& observation) const
 {
   // Sum the probability for each Gaussian in our mixture (and we have to
@@ -24,6 +27,19 @@ double GMM::Probability(const arma::vec& observation) const
     sum += weights[i] * phi(observation, means[i], covariances[i]);
 
   return sum;
+}
+
+/**
+ * Return the probability of the given observation being from the given
+ * component in the mixture.
+ */
+double GMM::Probability(const arma::vec& observation,
+                        const size_t component) const
+{
+  // We are only considering one Gaussian component -- so we only need to call
+  // phi() once.  We do consider the prior probability!
+  return weights[component] *
+      phi(observation, means[component], covariances[component]);
 }
 
 /**
@@ -173,7 +189,7 @@ void GMM::Estimate(const arma::mat& observations,
   // as our trained model.
   for (size_t iter = 0; iter < 10; iter++)
   {
-    InitialClustering(k, observations, meansTrial, covariancesTrial, 
+    InitialClustering(k, observations, meansTrial, covariancesTrial,
         weightsTrial);
 
     l = Loglikelihood(observations, meansTrial, covariancesTrial, weightsTrial);
@@ -235,7 +251,7 @@ void GMM::Estimate(const arma::mat& observations,
 
       // Update values of l; calculate new log-likelihood.
       lOld = l;
-      l = Loglikelihood(observations, meansTrial, 
+      l = Loglikelihood(observations, meansTrial,
                         covariancesTrial, weightsTrial);
 
       iteration++;
