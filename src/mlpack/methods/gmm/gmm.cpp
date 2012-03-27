@@ -276,6 +276,34 @@ void GMM::Estimate(const arma::mat& observations,
   return;
 }
 
+/**
+ * Classify the given observations as being from an individual component in this
+ * GMM.
+ */
+void GMM::Classify(const arma::mat& observations,
+                   arma::Col<size_t>& labels) const
+{
+  // This is not the best way to do this!
+
+  // We should not have to fill this with values, because each one should be
+  // overwritten.
+  labels.set_size(observations.n_cols);
+  for (size_t i = 0; i < observations.n_cols; ++i)
+  {
+    // Find maximum probability component.
+    double probability = 0;
+    for (size_t j = 0; j < gaussians; ++j)
+    {
+      double newProb = Probability(observations.unsafe_col(i), j);
+      if (newProb >= probability)
+      {
+        probability = newProb;
+        labels[i] = j;
+      }
+    }
+  }
+}
+
 double GMM::Loglikelihood(const arma::mat& data,
                           const std::vector<arma::vec>& meansL,
                           const std::vector<arma::mat>& covariancesL,

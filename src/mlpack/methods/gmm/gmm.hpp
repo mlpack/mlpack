@@ -162,6 +162,25 @@ class GMM
   void Estimate(const arma::mat& observations,
                 const arma::vec& probabilities);
 
+  /**
+   * Classify the given observations as being from an individual component in
+   * this GMM.  The resultant classifications are stored in the 'labels' object,
+   * and each label will be between 0 and (Gaussians() - 1).  Supposing that a
+   * point was classified with label 2, and that our GMM object was called
+   * 'gmm', one could access the relevant Gaussian distribution as follows:
+   *
+   * @code
+   * arma::vec mean = gmm.Means()[2];
+   * arma::mat covariance = gmm.Covariances()[2];
+   * double priorWeight = gmm.Weights()[2];
+   * @endcode
+   *
+   * @param observations List of observations to classify.
+   * @param labels Object which will be filled with labels.
+   */
+  void Classify(const arma::mat& observations,
+                arma::Col<size_t>& labels) const;
+
  private:
   /**
    * This function computes the loglikelihood of the given model.  This function
