@@ -655,26 +655,26 @@ BOOST_AUTO_TEST_CASE(GaussianHMMTrainTest)
   hmm.Train(observations);
 
   // The tolerances are increased because there is more error in unlabeled
-  // training; we use an absolute tolerance of 0.02 for the transition matrices.
+  // training; we use an absolute tolerance of 0.03 for the transition matrices.
   // Check that the transition matrix is correct.
   for (size_t row = 0; row < 3; row++)
     for (size_t col = 0; col < 3; col++)
       BOOST_REQUIRE_SMALL(transition(row, col) - hmm.Transition()(row, col),
-          0.02);
+          0.03);
 
   // Check that each distribution is correct.
   for (size_t dist = 0; dist < 3; dist++)
   {
-    // Check that the mean is correct.  Absolute tolerance of 0.06.
+    // Check that the mean is correct.  Absolute tolerance of 0.09.
     for (size_t dim = 0; dim < 3; dim++)
       BOOST_REQUIRE_SMALL(hmm.Emission()[dist].Mean()(dim) -
-          emission[dist].Mean()(dim), 0.06);
+          emission[dist].Mean()(dim), 0.09);
 
-    // Check that the covariance is correct.  Absolute tolerance of 0.09.
+    // Check that the covariance is correct.  Absolute tolerance of 0.12.
     for (size_t row = 0; row < 3; row++)
       for (size_t col = 0; col < 3; col++)
         BOOST_REQUIRE_SMALL(hmm.Emission()[dist].Covariance()(row, col) -
-            emission[dist].Covariance()(row, col), 0.09);
+            emission[dist].Covariance()(row, col), 0.12);
   }
 }
 
