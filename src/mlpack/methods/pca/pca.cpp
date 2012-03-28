@@ -31,21 +31,16 @@ void PCA::Apply(const arma::mat& data,
                 arma::vec& eigVal,
                 arma::mat& coeffs) const
 {
-  arma::mat transData = trans(data);
+	//Original transpose op goes here.
+  arma::mat covMat = ccov(data);
 
-  if (centerData)
+	//Centering is built into ccov
+	if (scaleData)
   {
-    arma::rowvec means = arma::mean(transData, 0);
-    transData = transData - arma::ones<arma::colvec>(transData.n_rows) * means;
+    covMat = covMat / (arma::ones<arma::colvec>(covMat.n_rows))
+      * stddev(covMat, 0, 0);
   }
-
-  if (scaleData)
-  {
-    transData = transData / (arma::ones<arma::colvec>(transData.n_rows) *
-        stddev(transData, 0, 0));
-  }
-
-  arma::mat covMat = cov(transData);
+ 
   arma::eig_sym(eigVal, coeffs, covMat);
 
   int nEigVal = eigVal.n_elem;

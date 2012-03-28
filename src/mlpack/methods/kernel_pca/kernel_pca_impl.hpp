@@ -39,14 +39,9 @@ void KernelPCA<KernelType>::Apply(const arma::mat& data,
                                   arma::vec& eigVal,
                                   arma::mat& coeffs)
 {
-  arma::mat transData = trans(data);
+  arma::mat transData = ccov(data);
 
   // Center the data if necessary.
-  if (centerData)
-  {
-    arma::rowvec means = arma::mean(transData, 0);
-    transData = transData - arma::ones<arma::colvec>(transData.n_rows) * means;
-  }
 
   // Scale the data if necessary.
   if (scaleData)
