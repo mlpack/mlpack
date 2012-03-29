@@ -63,8 +63,8 @@ class LMetric
   /**
    * Computes the distance between two points.
    */
-  template<typename VecType>
-  static double Evaluate(const VecType& a, const VecType& b);
+  template<typename VecType1, typename VecType2>
+  static double Evaluate(const VecType1& a, const VecType2& b);
 };
 
 // Convenience typedefs.

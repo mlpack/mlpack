@@ -68,8 +68,8 @@ class MahalanobisDistance
    * @param a First vector.
    * @param b Second vector.
    */
-  template<typename VecType>
-  double Evaluate(const VecType& a, const VecType& b);
+  template<typename VecType1, typename VecType2>
+  double Evaluate(const VecType1& a, const VecType2& b);
 
   /**
    * Access the covariance matrix.
