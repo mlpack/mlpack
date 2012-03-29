@@ -117,6 +117,7 @@
  *   - Ryan Riegel <rriegel@cc.gatech.edu>
  *   - Nikolaos Vasiloglou <nvasil@ieee.org>
  *   - Garry Boyer <garryb@gmail.com>
+ *   - Andreas Löf <andreas.lof@cs.waikato.ac.nz>
  */
 
 // First, standard includes.
