@@ -423,10 +423,6 @@ FastCluster(MatType& data,
             }
           }
         }
-        else
-        {
-          noDomination = true;
-        }
 
         // If did found a centroid that was closer to every point in the
         // hyperrectangle than every other centroid, then update that centroid
