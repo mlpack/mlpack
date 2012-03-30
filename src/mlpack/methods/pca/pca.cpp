@@ -13,8 +13,7 @@ using namespace std;
 namespace mlpack {
 namespace pca {
 
-PCA::PCA(const bool centerData, const bool scaleData) :
-    centerData(centerData),
+PCA::PCA(const bool scaleData) :
     scaleData(scaleData)
 { }
 

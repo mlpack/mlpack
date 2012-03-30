@@ -65,8 +65,6 @@ PARAM_INT("new_dimensionality", "If not 0, reduce the dimensionality of "
 
 PARAM_FLAG("scale", "If set, the data will be scaled before performing KPCA "
     "such that the variance of each feature is 1.", "s");
-PARAM_FLAG("nocenter", "If set, the data will NOT be centered before performing"
-    " KPCA.", "N");
 
 PARAM_DOUBLE("kernel_scale", "Scale, for 'hyptan' kernel.", "S", 1.0);
 PARAM_DOUBLE("offset", "Offset, for 'hyptan' and 'polynomial' kernels.", "O",
@@ -104,11 +102,10 @@ int main(int argc, char** argv)
   const string kernelType = CLI::GetParam<string>("kernel");
 
   const bool scaleData = CLI::HasParam("scale");
-  const bool centerData = !CLI::HasParam("nocenter");
 
   if (kernelType == "linear")
   {
-    KernelPCA<LinearKernel> kpca(LinearKernel(), centerData, scaleData);
+    KernelPCA<LinearKernel> kpca(LinearKernel(), scaleData);
     kpca.Apply(dataset, newDim);
   }
   else if (kernelType == "gaussian")
@@ -116,7 +113,7 @@ int main(int argc, char** argv)
     const double bandwidth = CLI::GetParam<double>("bandwidth");
 
     GaussianKernel kernel(bandwidth);
-    KernelPCA<GaussianKernel> kpca(kernel, centerData, scaleData);
+    KernelPCA<GaussianKernel> kpca(kernel, scaleData);
     kpca.Apply(dataset, newDim);
   }
   else if (kernelType == "polynomial")
@@ -125,7 +122,7 @@ int main(int argc, char** argv)
     const double offset = CLI::GetParam<double>("offset");
 
     PolynomialKernel kernel(offset, degree);
-    KernelPCA<PolynomialKernel> kpca(kernel, centerData, scaleData);
+    KernelPCA<PolynomialKernel> kpca(kernel, scaleData);
     kpca.Apply(dataset, newDim);
   }
   else if (kernelType == "hyptan")
@@ -134,7 +131,7 @@ int main(int argc, char** argv)
     const double offset = CLI::GetParam<double>("offset");
 
     HyperbolicTangentKernel kernel(scale, offset);
-    KernelPCA<HyperbolicTangentKernel> kpca(kernel, centerData, scaleData);
+    KernelPCA<HyperbolicTangentKernel> kpca(kernel, scaleData);
     kpca.Apply(dataset, newDim);
   }
   else if (kernelType == "laplacian")
@@ -142,12 +139,12 @@ int main(int argc, char** argv)
     const double bandwidth = CLI::GetParam<double>("bandwidth");
 
     LaplacianKernel kernel(bandwidth);
-    KernelPCA<LaplacianKernel> kpca(kernel, centerData, scaleData);
+    KernelPCA<LaplacianKernel> kpca(kernel, scaleData);
     kpca.Apply(dataset, newDim);
   }
   else if (kernelType == "cosine")
   {
-    KernelPCA<CosineDistance> kpca(CosineDistance(), centerData, scaleData);
+    KernelPCA<CosineDistance> kpca(CosineDistance(), scaleData);
     kpca.Apply(dataset, newDim);
   }
   else

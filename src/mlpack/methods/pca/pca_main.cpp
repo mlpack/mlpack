@@ -27,8 +27,6 @@ PARAM_INT("new_dimensionality", "Desired dimensionality of output dataset.  If "
 
 PARAM_FLAG("scale", "If set, the data will be scaled before running PCA, such "
     "that the variance of each feature is 1.", "s");
-PARAM_FLAG("nocenter", "If set, the data will NOT be centered before performing"
-    " PCA.", "N");
 
 int main(int argc, char** argv)
 {
@@ -56,10 +54,9 @@ int main(int argc, char** argv)
 
   // Get the options for running PCA.
   const size_t scale = CLI::HasParam("scale");
-  const size_t center = !CLI::HasParam("nocenter");
 
   // Perform PCA.
-  PCA p(center, scale);
+  PCA p(scale);
   Log::Info << "Performing PCA on dataset..." << endl;
   p.Apply(dataset, newDimension);
 

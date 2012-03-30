@@ -18,10 +18,8 @@ namespace kpca {
 
 template <typename KernelType>
 KernelPCA<KernelType>::KernelPCA(const KernelType kernel,
-                                 const bool centerData,
                                  const bool scaleData) :
       kernel(kernel),
-      centerData(centerData),
       scaleData(scaleData)
 { }
 

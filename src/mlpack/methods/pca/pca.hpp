@@ -16,7 +16,7 @@ namespace pca {
 class PCA
 {
  public:
-  PCA(const bool centerData = true, const bool scaleData = false);
+  PCA(const bool scaleData = false);
 
   /**
    * Apply Principal Component Analysis to the provided data set.
@@ -56,12 +56,6 @@ class PCA
    */
   ~PCA();
 
-  //! Get whether or not this PCA object will center the data.
-  bool CenterData() const { return centerData; }
-  //! Modify whether or not this PCA object will center the data when PCA is
-  //! is performed.
-  bool& CenterData() {  return centerData; }
-
   //! Get whether or not this PCA object will scale (by standard deviation) the
   //! data when PCA is performed.
   bool ScaleData() const { return scaleData; }
@@ -70,7 +64,6 @@ class PCA
   bool& ScaleData() { return scaleData; }
 
  private:
-  bool centerData;
   bool scaleData;
 }; // class PCA
 
