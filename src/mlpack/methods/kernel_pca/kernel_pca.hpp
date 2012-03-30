@@ -19,7 +19,6 @@ class KernelPCA
 {
  public:
   KernelPCA(const KernelType kernel = KernelType(),
-            const bool centerData = true,
             const bool scaleData = false);
 
   /**
@@ -63,13 +62,6 @@ class KernelPCA
   //! Modify the kernel.
   KernelType& Kernel() { return kernel; }
 
-  //! Return whether or not this KernelPCA object will center the data when
-  //! kernel PCA is performed.
-  bool CenterData() const { return centerData; }
-  //! Modify whether or not this KernelPCA object will center the data when
-  //! kernel PCA is performed.
-  bool& CenterData() { return centerData; }
-
   //! Return whether or not this KernelPCA object will scale (by standard
   //! deviation) the data when kernel PCA is performed.
   bool ScaleData() const { return scaleData; }
@@ -80,8 +72,6 @@ class KernelPCA
  private:
   //! The instantiated kernel.
   KernelType kernel;
-  //! If true, the data will be centered when Apply() is run.
-  bool centerData;
   //! If true, the data will be scaled (by standard deviation) when Apply() is
   //! run.
   bool scaleData;
