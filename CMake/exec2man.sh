@@ -63,6 +63,8 @@ synopsis="$name [-h] [-v] $reqoptions $options";
 # The awk script is a little ugly, but it is meant to format parameters
 # correctly so that the entire description of the parameter is on one line (this
 # helps avoid 'man' warnings).
+# The sed line at the end removes accidental macros from the output, replacing
+# 'word' with "word".
 ./$name -h | \
   sed 's/^For further information/Additional Information\n\n For further information/' | \
   sed 's/^consult the documentation/ consult the documentation/' | \
@@ -73,5 +75,6 @@ synopsis="$name [-h] [-v] $reqoptions $options";
   sed 's/  / /g' | \
   awk '/NAME/,/REQUIRED OPTIONS/ { print; } /ADDITIONAL INFORMATION/,0 { print; } /REQUIRED OPTIONS/,/ADDITIONAL INFORMATION/ { if (!/REQUIRED_OPTIONS/ && !/OPTIONS/ && !/ADDITIONAL INFORMATION/) { if (/ --/) { printf "\n" } sub(/^[ ]*/, ""); sub(/ [ ]*/, " "); printf "%s ", $0; } else { if (!/REQUIRED OPTIONS/ && !/ADDITIONAL INFORMATION/) { print "\n"$0; } } }' | \
   sed 's/  ADDITIONAL INFORMATION/\n\nADDITIONAL INFORMATION/' | \
-  txt2man -P mlpack -t $name -d 1 > $output
+  txt2man -P mlpack -t $name -d 1 | \
+  sed "s/^'\([A-Za-z0-9 ]*\)'/\"\1\"/" > $output
 
