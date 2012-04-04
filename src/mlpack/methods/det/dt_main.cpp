@@ -9,6 +9,7 @@
 #include "dt_utils.hpp"
 
 using namespace mlpack;
+using namespace mlpack::det;
 using namespace std;
 
 PROGRAM_INFO("Density estimation with DET", "This program "
@@ -73,21 +74,9 @@ PARAM_FLAG("flag/print_vi", "If you just wish to print the "
 	   "variable importance of each feature "
 	   "out on the command line.", "I");
 
-int main(int argc, char *argv[]) {
-
-
+int main(int argc, char *argv[]) 
+{
   CLI::ParseCommandLine(argc, argv);
-
-  DTree<>* test_pvt = new DTree<>();
-  bool test_success = test_pvt->TestPrivateFunctions();
-
-  if (test_success) {
-    Log::Warn << "Private functions tests successful." << endl;
-  } else {
-    Log::Warn << "Private functions tests failed." << endl;
-  }
-
-  exit(0);
 
   string train_set_file = CLI::GetParam<string>("S");
   arma::Mat<float> training_data;
@@ -117,7 +106,7 @@ int main(int argc, char *argv[]) {
     = CLI::GetParam<string>("u");
 
   Timer::Start("DET/Training");
-  DTree<float> *dtree_opt = dt_utils::Trainer<float>
+  DTree<float> *dtree_opt = Trainer<float>
     (&training_data, folds, CLI::HasParam("R"), CLI::GetParam<int>("M"),
      CLI::GetParam<int>("N"), unpruned_tree_estimate_file);
   Timer::Stop("DET/Training");
@@ -221,14 +210,14 @@ int main(int argc, char *argv[]) {
     assert(training_data.n_cols == labels.n_cols);
     assert(labels.n_rows == 1);
 
-    dt_utils::PrintLeafMembership<float>
+    PrintLeafMembership<float>
       (dtree_opt, training_data, labels, num_classes,
        (string) CLI::GetParam<string>("l"));
   } // leaf class membership
   
 
   if(CLI::HasParam("I")) {
-    dt_utils::PrintVariableImportance<float>
+    PrintVariableImportance<float>
       (dtree_opt, training_data.n_rows,
        (string) CLI::GetParam<string>("i"));
   } // print variable importance

@@ -2,21 +2,22 @@
  * @file dtree.hpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  *
- * Density Tree class
- *
+ * Density Estimation Tree class
  */
 
-#ifndef DTREE_HPP
-#define DTREE_HPP
+#ifndef __MLPACK_METHODS_DET_DTREE_HPP
+#define __MLPACK_METHODS_DET_DTREE_HPP
 
 #include <assert.h>
-#include <vector>
 
 #include <mlpack/core.hpp>
 
 using namespace mlpack;
 using namespace std;
 
+
+namespace mlpack {
+namespace det /** Density Estimation Trees */ {
 
 // This two types in the template are used 
 // for two purposes:
@@ -407,6 +408,9 @@ public:
   
 }; // Class DTree
 
+}; // namespace det
+}; // namespace mlpack
+
 #include "dtree_impl.hpp"
 
-#endif
+#endif // __MLPACK_METHODS_DET_DTREE_HPP

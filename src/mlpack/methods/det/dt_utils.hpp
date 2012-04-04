@@ -6,19 +6,18 @@
  * different tasks with the Density Tree class.
  */
 
-#ifndef DT_UTILS_HPP
-#define DT_UTILS_HPP
+#ifndef __MLPACK_METHODS_DET_DT_UTILS_HPP
+#define __MLPACK_METHODS_DET_DT_UTILS_HPP
 
 #include <string>
 
 #include <mlpack/core.hpp>
 #include "dtree.hpp"
 
-using namespace mlpack;
 using namespace std;
 
-
-namespace dt_utils {
+namespace mlpack {
+namespace det {
 
   template<typename eT>
   void PrintLeafMembership(DTree<eT> *dtree,
@@ -328,6 +327,7 @@ namespace dt_utils {
     return dtree_opt;
   } // Trainer
 
-}; // namespace dt_utils
+}; // namespace det
+}; // namespace mlpack
 
-#endif
+#endif // __MLPACK_METHODS_DET_DT_UTILS_HPP
