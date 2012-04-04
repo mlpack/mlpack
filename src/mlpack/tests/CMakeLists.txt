@@ -31,6 +31,7 @@ add_executable(mlpack_test
   sparse_coding_test.cpp
   tree_test.cpp
   union_find_test.cpp
+  det_test.cpp
 )
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test
