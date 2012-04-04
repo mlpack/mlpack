@@ -207,8 +207,7 @@ class L_BFGS
   bool LineSearch(double& functionValue,
                   arma::mat& iterate,
                   arma::mat& gradient,
-                  const arma::mat& searchDirection,
-                  double& stepSize);
+                  const arma::mat& searchDirection);
 
   /**
    * Find the L-BFGS search direction.

@@ -90,9 +90,11 @@ template<typename FunctionType>
 bool L_BFGS<FunctionType>::LineSearch(double& functionValue,
                                       arma::mat& iterate,
                                       arma::mat& gradient,
-                                      const arma::mat& searchDirection,
-                                      double& stepSize)
+                                      const arma::mat& searchDirection)
 {
+  // Default first step size of 1.0.
+  double stepSize = 1.0;
+
   // The initial linear term approximation in the direction of the
   // search direction.
   double initialSearchDirectionDotGradient =
@@ -100,7 +102,11 @@ bool L_BFGS<FunctionType>::LineSearch(double& functionValue,
 
   // If it is not a descent direction, just report failure.
   if (initialSearchDirectionDotGradient > 0.0)
+  {
+    Log::Warn << "L-BFGS line search direction is not a descent direction "
+        << "(terminating)!" << std::endl;
     return false;
+  }
 
   // Save the initial function value.
   double initialFunctionValue = functionValue;
@@ -354,24 +360,17 @@ double L_BFGS<FunctionType>::Optimize(arma::mat& iterate,
   // The initial gradient value.
   function.Gradient(iterate, gradient);
 
-  // The flag denoting whether or not the optimization has been successful.
-  bool success = false;
-
-  // The main optimization loop.  Start from 1 to allow running forever.
+  // The main optimization loop.
   for (size_t itNum = 0; optimizeUntilConvergence || (itNum != maxIterations);
-       itNum++)
+       ++itNum)
   {
     Log::Debug << "L-BFGS iteration " << itNum << "; objective " <<
         function.Evaluate(iterate) << "." << std::endl;
-//    Log::Debug << "Coordinates " << std::endl << iterate << std::endl;
-
-//    Log::Debug << "Gradient " << std::endl << gradient << std::endl;
 
     // Break when the norm of the gradient becomes too small.
     if (GradientNormTooSmall(gradient))
     {
-      success = true; // We have found the minimum.
-      Log::Info << "L-BFGS gradient norm too small (terminating)."
+      Log::Debug << "L-BFGS gradient norm too small (terminating successfully)."
           << std::endl;
       break;
     }
@@ -388,12 +387,20 @@ double L_BFGS<FunctionType>::Optimize(arma::mat& iterate,
     oldGradient = gradient;
 
     // Do a line search and take a step.
-    double stepSize = 1.0;
-    success = LineSearch(functionValue, iterate, gradient, searchDirection,
-        stepSize);
-
-    if (!success)
+    if (!LineSearch(functionValue, iterate, gradient, searchDirection))
+    {
+      Log::Debug << "Line search failed.  Stopping optimization." << std::endl;
       break; // The line search failed; nothing else to try.
+    }
+
+    // It is possible that the difference between the two coordinates is zero.
+    // In this case we terminate successfully.
+    if (accu(iterate != oldIterate) == 0)
+    {
+      Log::Debug << "L-BFGS step size of 0 (terminating successfully)."
+          << std::endl;
+      break;
+    }
 
     // Overwrite an old basis set.
     UpdateBasisSet(itNum, iterate, oldIterate, gradient, oldGradient);
