@@ -719,4 +719,4 @@ ComputeVariableImportance(arma::Col<double> *imps)
 }; // namespace det
 }; // namespace mlpack
 
-#endif
+#endif // __MLPACK_METHODS_DET_DTREE_IMPL_HPP
