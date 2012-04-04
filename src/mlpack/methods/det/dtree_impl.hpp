@@ -3,16 +3,17 @@
  * @author Parikshit Ram (pram@cc.gatech.edu)
  *
  * Implementations of some declared functions in 
- * the Density Tree class.
+ * the Density Estimation Tree class.
  *
  */
 
-#ifndef DTREE_IMPL_HPP
-#define DTREE_IMPL_HPP
+#ifndef __MLPACK_METHODS_DET_DTREE_IMPL_HPP
+#define __MLPACK_METHODS_DET_DTREE_IMPL_HPP
 
 #include "dtree.hpp"
 
-
+namespace mlpack{
+namespace det {
 
 // This function computes the l2-error of a given node
 // from the formula - R(t) = -|t|^2 / (N^2 V_t)
@@ -68,8 +69,6 @@ FindSplit_(MatType* data,
   bool some_split_found = false;
   size_t point_mass_in_dim = 0;
 
-  // printf("In FindSplit %Lg\n", error_);fflush(NULL);
-
   // loop through each dimension
   for (size_t dim = 0; dim < max_vals_->n_elem; dim++) {
     // have to deal with REAL, INTEGER, NOMINAL data
@@ -96,7 +95,6 @@ FindSplit_(MatType* data,
       assert(std::exp(log_range_all_not_dim) > 0);
 
       // get the values for the dimension
-      // NEED TO CHECK: if this works correctly
       RowVecType dim_val_vec = data->row(dim).subvec(start_, end_ - 1);
 
       // sort the values in ascending order
@@ -104,11 +102,10 @@ FindSplit_(MatType* data,
 
       // get ready to go through the sorted list and compute error
       assert(dim_val_vec.n_elem > maxLeafSize);
-      // enforcing the leaves to have a minimum of MIN_LEAF_SIZE 
+      // enforcing the leaves to have a minimum  
       // number of points to avoid spikes
-
       // one way of doing it is only considering splits resulting
-      // in sizes > MIN_LEAF_SIZE
+      // in sizes > some constant (minLeafSize)
       size_t left_child_size = minLeafSize - 1, right_child_size;
 
       // finding the best split for this dimension
@@ -145,11 +142,6 @@ FindSplit_(MatType* data,
 
 	    cT temp_l_error = -1.0 * std::exp(temp_log_neg_l_error);
 
-// 	      = -1.0 * ((cT)(i + 1) / (cT)total_n)
-// 	      * ((cT)(i + 1) / (cT)total_n)
-// 	      / (std::exp(log_range_all_not_dim 
-// 			  + (cT) std::log(split - min)));
-
 	    assert(std::abs(temp_l_error) 
 		   < std::numeric_limits<cT>::max());
 
@@ -163,11 +155,6 @@ FindSplit_(MatType* data,
 	    assert(right_child_size >= minLeafSize);
 	    
 	    cT temp_r_error = -1.0 * std::exp(temp_log_neg_r_error);
-
-// 	      = -1.0 * ((cT) (n_t - i - 1) / (cT)total_n)
-// 	      * ((cT) (n_t - i - 1) / (cT)total_n)
-// 	      / (std::exp(log_range_all_not_dim 
-// 			  + (cT) std::log(max - split)));
 
 	    assert(std::abs(temp_r_error) 
 		   < std::numeric_limits<cT>::max());
@@ -308,9 +295,6 @@ DTree(VecType* max_vals,
   right_(NULL)
 {
   error_ = ComputeNodeError_(total_points);
-  // if this assert fails, this implies that you need 
-  // a higher precision (or higher range) 'eT'
-  assert(std::abs(error_) < std::numeric_limits<cT>::max());
 
   bucket_tag_ = -1;
   root_ = true;
@@ -438,9 +422,9 @@ Grow(MatType* data,
 		   &left_error, &right_error,
 		   maxLeafSize, minLeafSize)) {
 
-      // printf("Split found\n");fflush(NULL);
-      // Split the data for the children
-      // MatType data_l, data_r;
+      // Move the data around for the children
+      // to have points in a node lie contiguously
+      // (to increase efficiency during the training).
       eT split_val, lsplit_val, rsplit_val;
       SplitData_(data, dim, split_ind,
 		 old_from_new, &split_val,
@@ -452,8 +436,8 @@ Grow(MatType* data,
       VecType* min_vals_l = new VecType(*min_vals_);
       VecType* min_vals_r = new VecType(*min_vals_);
 
-      (*max_vals_l)[dim] = split_val; // changed from just lsplit_val
-      (*min_vals_r)[dim] = split_val; // changed from just rsplit_val
+      (*max_vals_l)[dim] = split_val;
+      (*min_vals_r)[dim] = split_val;
 
       // store split dim and split val in the node
       split_value_ = split_val;
@@ -482,15 +466,6 @@ Grow(MatType* data,
       subtree_leaves_v_t_inv_ = left_->subtree_leaves_v_t_inv()
 	+ right_->subtree_leaves_v_t_inv();
 
-      // 	// storing the sum of the estimates (OF WHAT)
-      // 	st_estimate_ = left_->st_estimate() + right_->st_estimate();
-
-      // 	// storing del_f / del r(split_dim)
-      // 	cT del_f = (ratio_ * v_t_inv_)
-      // 	  - (left_->ratio() * left_->v_t_inv());
-      // 	cT del_r = max_vals_[split_dim_] - split_value_;
-      // 	del_f_del_r_ = fabs(del_f / del_r);
-
       // Forming T1 by removing leaves for which
       // R(t) = R(t_L) + R(t_R)
       if ((left_->subtree_leaves() == 1)
@@ -510,8 +485,6 @@ Grow(MatType* data,
       subtree_leaves_ = 1;
       subtree_leaves_error_ = error_;
       subtree_leaves_v_t_inv_ = v_t_inv_;
-//       st_estimate_ = ratio_ * ratio_ * v_t_inv_;
-//       del_f_del_r_ = 0.0;
     } // end if-else
   } else {
     // We can make this a leaf node
@@ -520,11 +493,6 @@ Grow(MatType* data,
     subtree_leaves_error_ = error_;
     subtree_leaves_v_t_inv_ = v_t_inv_;
 
-    //       // TO CHECK: 
-    //       // if these are the density estimate 
-    //       // it should be ratio_ * v_t_inv_
-    //       st_estimate_ = ratio_ * ratio_ * v_t_inv_;
-    //       del_f_del_r_ = 0.0;
   } // end if-else 
     
     // if leaf do not compute g_k(t), else compute, store,
@@ -586,10 +554,6 @@ PruneAndUpdate(cT old_alpha,
       subtree_leaves_v_t_inv_ = left_->subtree_leaves_v_t_inv()
 	+ right_->subtree_leaves_v_t_inv();
 
-      // 	// updating values for the sum of density estimates 
-      // 	st_estimate_
-      // 	  = left_->st_estimate() + right_->st_estimate();
-
       // update g_t value
       if (useVolReg) {
 	g_t = (error_ - subtree_leaves_error_) 
@@ -613,24 +577,10 @@ PruneAndUpdate(cT old_alpha,
       }
     } else { // prune this subtree
 
-      // otherwise this should be equal to the alpha
-      // for this node. So we check that:
-      // assert(g_t == old_alpha, "Alpha != g(t) but less than!!");
-
-      // 	// compute \del f_hat(x) / \del r(split_dim)
-      // 	cT st_change_in_estimate 
-      // 	  = st_estimate_ - (ratio_ * ratio_ * v_t_inv_);
-
-      // printf("%lg:%lg Pruned %lg\n",
-      //       old_alpha, del_f_del_r_, st_change_in_estimate);
-
-
       // making this node a leaf node
       subtree_leaves_ = 1;
       subtree_leaves_error_ = error_;
       subtree_leaves_v_t_inv_ = v_t_inv_;
-//       st_estimate_ = ratio_ * ratio_ * v_t_inv_;
-//       del_f_del_r_ = 0.0;
       delete left_;
       left_ = NULL;
       delete right_;
@@ -646,8 +596,8 @@ PruneAndUpdate(cT old_alpha,
 // bounding box of this node (check generally done
 // at the root, so its the bounding box of the data)
 //
-// Improvement: To open up the range with epsilons on 
-// both sides where epsilon on the density near the boundary.
+// Future improvement: To open up the range with epsilons on 
+// both sides where epsilon depends on the density near the boundary.
 template<typename eT, typename cT>
 bool DTree<eT, cT>::
 WithinRange_(VecType* query) 
@@ -679,7 +629,7 @@ ComputeValue(VecType* query)
   else
     if ((*query)[split_dim_] <= split_value_)  // if left subtree
       // go to left child
-      return left_->ComputeValue(query); //, printer);
+      return left_->ComputeValue(query);
     else  // if right subtree
       // go to right child
       return right_->ComputeValue(query);
@@ -766,5 +716,7 @@ ComputeVariableImportance(arma::Col<double> *imps)
   }
 } // ComputeVariableImportance
 
+}; // namespace det
+}; // namespace mlpack
 
 #endif
