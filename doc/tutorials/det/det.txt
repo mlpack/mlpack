@@ -1,0 +1,324 @@
+/*!
+
+@file det.txt
+@author Parikshit Ram
+@brief Tutorial for how to perform density estimation with Density Estimation Trees (DET).
+
+@page dettutorial Density Estimation Tree (DET) tutorial
+
+@section intro_det_tut Introduction
+
+DETs perform the unsupervised task of density estimation using decision trees. 
+
+The details of this work is presented in the following paper:
+@code
+@inproceedings{ram2011density,
+  title={Density estimation trees},
+  author={Ram, P. and Gray, A.G.},
+  booktitle={Proceedings of the 17th ACM SIGKDD international conference on Knowledge Discovery and Data mining},
+  pages={627--635},
+  year={2011},
+  organization={ACM}
+}
+@endcode
+
+\b mlpack provides:
+
+ - a \ref cli_det_tut "simple command-line executable" to perform density estimation and related analyses using DETs
+ - a \ref dtree_det_tut "generic C++ class (DTree)" which provide various functionality for the DETs
+ - a set of functions in the namespace \ref dtutils_det_tut "mlpack::det" to perform cross-validation for the task of density estimation with DETs
+
+@section toc_det_tut Table of Contents
+
+A list of all the sections this tutorial contains.
+
+ - \ref intro_det_tut
+ - \ref toc_det_tut
+ - \ref cli_det_tut
+   - \ref cli_ex1_de_tut
+   - \ref cli_alt_reg_tut
+   - \ref cli_ex2_de_test_tut
+   - \ref cli_ex3_de_p_tut
+   - \ref cli_ex4_de_vi_tut
+   - \ref cli_ex5_de_lm
+ - \ref dtree_det_tut
+   - \ref dtree_pub_func_det_tut
+ - \ref dtutils_det_tut
+   - \ref dtutils_util_funcs
+ - \ref further_doc_det_tut
+
+@section cli_det_tut Command-Line 'dt_main'
+The command line arguments of this binary can be viewed as following:
+
+@code
+$ ./dt_main -h
+
+Density estimation with DET
+
+  This program provides an example use of the Density Estimation Tree for
+  density estimation. For more details, please look at the paper titled 'Density
+  Estimation Trees'.
+
+Required options:
+
+  --input/training_set (-S) [string]  
+                                The data set on which to perform density
+                                estimation.
+
+Options: 
+
+  --DET/max_leaf_size (-M) [int]  
+                                The maximum size of a leaf in the unpruned fully
+                                grown DET.  Default value 10.
+  --DET/min_leaf_size (-N) [int]  
+                                The minimum size of a leaf in the unpruned fully
+                                grown DET.  Default value 5.
+  --DET/use_volume_reg (-R)     This flag gives the used the option to use a
+                                form of regularization similar to the usual
+                                alpha-pruning in decision tree. But instead of
+                                regularizing on the number of leaves, you
+                                regularize on the sum of the inverse of the
+                                volume of the leaves (meaning you penalize  low
+                                volume leaves.
+  --flag/print_tree (-P)        If you just wish to print the tree out on the
+                                command line.
+  --flag/print_vi (-I)          If you just wish to print the variable
+                                importance of each feature out on the command
+                                line.
+  --help (-h)                   Default help info.
+  --info [string]               Get help on a specific module or option. 
+                                Default value ''.
+  --input/labels (-L) [string]  The labels for the given training data to
+                                generate the class membership of each leaf (as
+                                an extra statistic)  Default value ''.
+  --input/test_set (-T) [string]  
+                                An extra set of test points on which to estimate
+                                the density given the estimator.  Default value
+                                ''.
+  --output/leaf_class_table (-l) [string]  
+                                The file in which to output the leaf class
+                                membership table.  Default value
+                                'leaf_class_membership.txt'.
+  --output/test_set_estimates (-t) [string]  
+                                The file in which to output the estimates on the
+                                test set from the final optimally pruned tree. 
+                                Default value ''.
+  --output/training_set_estimates (-s) [string]  
+                                The file in which to output the estimates on the
+                                training set from the final optimally pruned
+                                tree.  Default value ''.
+  --output/tree (-p) [string]   The file in which to print the final optimally
+                                pruned tree.  Default value ''.
+  --output/unpruned_tree_estimates (-u) [string]  
+                                The file in which to output the estimates on the
+                                training set from the large unpruned tree. 
+                                Default value ''.
+  --output/vi (-i) [string]     The file to output the variable importance
+                                values for each feature.  Default value ''.
+  --param/folds (-F) [int]      The number of folds of cross-validation to
+                                performed for the estimation (enter 0 for LOOCV)
+                                 Default value 10.
+  --param/number_of_classes (-C) [int]  
+                                The number of classes present in the 'labels'
+                                set provided  Default value 0.
+  --verbose (-v)                Display informational messages and the full list
+                                of parameters and timers at the end of
+                                execution.
+
+For further information, including relevant papers, citations, and theory,
+consult the documentation found at http://www.mlpack.org or included with your
+distribution of MLPACK.
+@endcode
+
+
+
+@subsection cli_ex1_de_tut Plain-vanilla density estimation
+
+We can just train a DET on the provided data set \e S. Please note that the data should be row major (each row corresponds to a point). This is because matrices get inverted while loading and we work with column-major date all throughout the code.
+@code
+$ ./dt_main -S dataset.csv -v 
+@endcode
+By default it performs 10-fold crossvalidation (using the \f$\alpha\f$-pruning regularization for decision trees). To perform LOOCV (leave-one-out crossvalidation), use the following command:
+@code
+$ ./dt_main -S dataset.csv -F 0 -v 
+@endcode
+To perform k-fold crossvalidation, use \e -F \e k. There are certain other options available for training. For example, for the construction of the initial tree, you can specify the maximum and minimum leaf sizes. By default, they are 10 and 5 respectively, you can set them using the \e -M (maximum_leaf_size) and the \e -N (minimum_leaf_size) options.
+@code
+$ ./dt_main -S dataset.csv -M 20 -N 10
+@endcode  
+
+In case you want to output the density estimates at the points in the training set, use the \e -s option to specify the output file.
+@code
+$ ./dt_main -S dataset.csv -s density_estimates.txt -v
+@endcode
+
+@subsection cli_alt_reg_tut Alternate DET regularization
+
+The usual regularized error \f$R_\alpha(t)\f$ of a node \f$t\f$ is given by: \f$R_\alpha(t) = R(t) + \alpha |\tilde{t}|\f$ where \f$R(t) = -\frac{|t|^2}{N^2 V(t)}\f$. \f$V(t)\f$ is the volume of the node \f$t\f$ and \f$\tilde{t}\f$ is the set of leaves in the subtree rooted at \f$t\f$.
+
+For the purposes of density estimation, I have developed a different form of regularization -- instead of penalizing the number of leaves in the subtree, we penalize the sum of the inverse of the volumes of the leaves. Here really small volume nodes are discouraged unless the data actually warrants it. Thus, \f$R_\alpha'(t) = R(t) + \alpha I_v(\tilde{t})\f$ where \f$I_v(\tilde{t}) = \sum_{l \in \tilde{t}} \frac{1}{V(l)}.\f$ To use this form of regularization, use the \e -R flag.
+@code
+$ ./dt_utils -S dataset.csv -R -v
+@endcode
+
+@subsection cli_ex2_de_test_tut Estimation on a test set
+
+There is the option of training the DET on a certain set and obtaining the density from the learned estimator at some out of sample (new) test points. The \e -T option is the set of test points and the \e -t is the file in which the estimates are to be output.
+@code
+$ ./dt_main -S dataset.csv -T test_points.csv -t test_density_estimates.txt -v
+@endcode
+
+
+@subsection cli_ex3_de_p_tut Printing a trained DET
+
+A depth-first visualization of the DET can be obtained by using the \e -P flag.
+@code
+$ ./dt_main -S dataset.csv -P -v
+@endcode
+To print this tree in a file, use the \e -p option to specify the output file along with the \e -P flag.
+@code
+$ ./dt_main -S dataset.csv -P -p tree.txt -v
+@endcode
+
+@subsection cli_ex4_de_vi_tut Computing the variable importance
+
+The variable importance (with respect to density estimation) of the different features in the data set can be obtained by using the \e -I option. This outputs the (absolute as opposed to relative) variable importance of the all the features.
+@code
+$ ./dt_main -S dataset.csv -I -v
+@endcode
+To print this in a file, use the \e -i option
+@code
+$ ./dt_main -S dataset.csv -I -i variable_importance.txt -v
+@endcode
+
+@subsection cli_ex5_de_lm Leaf Membership
+
+In case the dataset is labeled and you are curious to find the class membership of the leaves of the DET, there is an option of view the class membership. The training data has to still be input in an unlabeled format, but an additional label file containing the corresponding labels of each point has to be input using the \e -L option. You are required to specify the number of classes present in this set using the \e -C option.
+@code
+$ ./dt_main -S dataset.csv -L labels.csv -C <number-of-classes> -v
+@endcode
+The leaf membership matrix is output into a file called 'leaf_class_membership.txt' by default. An user-specified file can be used by utilizing the \e -l option.
+@code
+$ ./dt_main -S dataset.csv -L labels.csv -C <number-of-classes> -l leaf_class_membership_file.txt -v
+@endcode
+
+
+@section dtree_det_tut The 'DTree' class
+This class implements the DET. 
+
+@code
+#include <mlpack/methods/det/dtree.hpp>
+
+using namespace mlpack::det;
+
+// The dataset matrix, on which to learn the DET
+extern arma::Mat<float> data;
+
+// Initializing the class
+// This function creates and saves the bounding box of the data.
+DTree<>* det = new DTree<>(&data);
+@endcode
+
+@subsection dtree_pub_func_det_tut Public Functions
+\b Growing the tree to the full size:
+
+@code
+// This keeps track of the data during the shuffle 
+// that occurs while growing the tree.
+arma::Col<size_t>* old_from_new = new arma::Col<size_t>(data.n_cols);
+for (size_t i = 0; i < data.n_cols; i++) {
+  (*old_from_new)[i] = i;
+}
+
+// This function grows the tree down to the leaf 
+// any regularization. It returns the current minimum
+// value of the regularization parameter 'alpha'.
+bool use_volume_reg = false;
+size_t max_leaf_size = 10, min_leaf_size = 5;
+
+long double alpha 
+  = det->Grow(&data, old_from_new, use_volume_reg,
+	      max_leaf_size, min_leaf_size);
+@endcode
+
+One step of \b pruning the tree back up:
+
+@code
+// This function performs a single pruning of the 
+// decision tree for the given value of alpha
+// and returns the next minimum value of alpha 
+// that would induce a pruning
+alpha = det->PruneAndUpdate(alpha, use_volume_reg);
+@endcode
+
+\b Estimating the density at a given query point:
+
+@code
+// for a given query, you can obtain the density estimate 
+extern arma::Col<float> query;
+long double estimate = det->Compute(&query);
+@endcode
+
+Computing the \b variable \b importance of each feature for the given DET.
+
+@code
+// Initialize the importance of every dimension to zero.
+arma::Col<double> v_imps = arma::zeros<arma::Col<double> >(data.n_rows);
+
+// You can obtain the variable importance from the current tree.
+det->ComputeVariableImportance(&v_imps);
+@endcode
+
+@section dtutils_det_tut 'namespace mlpack::det'
+The functions in this namespace allows the user to perform certain tasks with the 'DTree' class. 
+@subsection dtutils_util_funcs Utility Functions
+
+\b Training a DET (with cross-validation)
+
+@code
+#include <mlpack/methods/det/dt_utils.hpp>
+
+using namespace mlpack::det;
+
+// The dataset matrix, on which to learn the DET
+extern arma::Mat<float> data;
+
+// the number of folds in the cross-validation
+size_t folds = 10; // set folds = 0 for LOOCV
+
+bool use_volume_reg = false;
+size_t max_leaf_size = 10, min_leaf_size = 5;
+
+// obtain the trained DET
+DTree<>* dtree_opt = Trainer(&data, folds, use_volume_reg,
+			     max_leaf_size, min_leaf_size);
+@endcode
+
+Generating \b leaf-class \b membership
+
+@code
+extern arma::Mat<int> labels;
+size_t number_of_classes = 3; // this is required
+
+extern string leaf_class_membership_file;
+
+PrintLeafMembership(dtree_opt, data, labels, number_of_classes,
+		    leaf_class_membership_file);
+@endcode
+
+Generating \b variable \bimportance
+
+@code
+extern string variable_importance_file;
+size_t number_of_features = data.n_rows;
+
+PrintVariableImportance(dtree_opt, nunmber_of_features,
+			variable_importance_file);
+@endcode
+
+
+@section further_doc_det_tut Further Documentation
+For further documentation on the DTree class, consult the
+\ref mlpack::det::DTree "complete API documentation".
+
+*/
