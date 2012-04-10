@@ -17,6 +17,9 @@ namespace mlpack {
 namespace kpca {
 
 template <typename KernelType>
+arma::mat GetKernelMatrix(KernelType kernel, arma::mat transData);
+
+template <typename KernelType>
 KernelPCA<KernelType>::KernelPCA(const KernelType kernel,
                                  const bool scaleData) :
       kernel(kernel),
@@ -102,9 +105,6 @@ void KernelPCA<KernelType>::Apply(arma::mat& data, const size_t newDimension)
     data.shed_rows(newDimension, data.n_rows - 1);
 }
 
-}; // namespace mlpack
-}; // namespace kpca
-
 template <typename KernelType>
 arma::mat GetKernelMatrix(KernelType kernel, arma::mat transData)
 {
@@ -122,5 +122,8 @@ arma::mat GetKernelMatrix(KernelType kernel, arma::mat transData)
 
   return kernelMat;
 }
+
+}; // namespace mlpack
+}; // namespace kpca
 
 #endif
