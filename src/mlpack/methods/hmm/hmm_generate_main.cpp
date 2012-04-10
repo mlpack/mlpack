@@ -99,7 +99,7 @@ int main(int argc, char** argv)
   }
   else if (type == "gmm")
   {
-    HMM<GMM> hmm(1, GMM(1, 1));
+    HMM<GMM<> > hmm(1, GMM<>(1, 1));
 
     LoadHMM(hmm, sr);
 

@@ -69,7 +69,7 @@ void SaveHMM(const HMM<distribution::GaussianDistribution>& hmm,
 }
 
 template<>
-void SaveHMM(const HMM<gmm::GMM>& hmm,
+void SaveHMM(const HMM<gmm::GMM<> >& hmm,
              utilities::SaveRestoreUtility& sr)
 {
   std::string type = "gmm";
@@ -178,7 +178,7 @@ void LoadHMM(HMM<distribution::GaussianDistribution>& hmm,
 }
 
 template<>
-void LoadHMM(HMM<gmm::GMM>& hmm,
+void LoadHMM(HMM<gmm::GMM<> >& hmm,
              utilities::SaveRestoreUtility& sr)
 {
   std::string type;
@@ -197,7 +197,7 @@ void LoadHMM(HMM<gmm::GMM>& hmm,
   sr.LoadParameter(hmm.Transition(), "hmm_transition");
 
   // Now each emission distribution.
-  hmm.Emission().resize(states, gmm::GMM(1, 1));
+  hmm.Emission().resize(states, gmm::GMM<>(1, 1));
   for (size_t i = 0; i < states; ++i)
   {
     std::stringstream s;
@@ -213,7 +213,8 @@ void LoadHMM(HMM<gmm::GMM>& hmm,
     size_t dimensionality = meanzero.n_elem;
 
     // Initialize GMM correctly.
-    hmm.Emission()[i] = gmm::GMM(gaussians, dimensionality);
+    hmm.Emission()[i].Gaussians() = gaussians;
+    hmm.Emission()[i].Dimensionality() = dimensionality;
 
     for (size_t g = 0; g < gaussians; ++g)
     {
