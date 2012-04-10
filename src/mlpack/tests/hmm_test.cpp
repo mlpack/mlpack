@@ -738,8 +738,8 @@ BOOST_AUTO_TEST_CASE(GaussianHMMGenerateTest)
 BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
 {
   // We will use two GMMs; one with two components and one with three.
-  std::vector<GMM> gmms(2);
-  gmms[0] = GMM(2, 2);
+  std::vector<GMM</*EMFit<>*/ > > gmms(2);
+  gmms[0] = GMM<>(2, 2);
   gmms[0].Weights() = arma::vec("0.75 0.25");
 
   // N([2.25 3.10], [1.00 0.20; 0.20 0.89])
@@ -750,7 +750,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
   gmms[0].Means()[1] = arma::vec("7.10 5.01");
   gmms[0].Covariances()[1] = arma::mat("1.00 0.00; 0.00 1.01");
 
-  gmms[1] = GMM(3, 2);
+  gmms[1] = GMM<>(3, 2);
   gmms[1].Weights() = arma::vec("0.4 0.2 0.4");
 
   gmms[1].Means()[0] = arma::vec("-3.00 -6.12");
@@ -767,7 +767,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
                   "0.70 0.50");
 
   // Now build the model.
-  HMM<GMM> hmm(trans, gmms);
+  HMM<GMM<> > hmm(trans, gmms);
 
   // Make a sequence of observations.
   arma::mat observations(2, 1000);
