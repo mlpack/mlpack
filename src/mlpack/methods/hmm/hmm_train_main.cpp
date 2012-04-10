@@ -294,7 +294,7 @@ int main(int argc, char** argv)
   else if (type == "gmm")
   {
     // Create HMM object.
-    HMM<GMM> hmm(1, GMM(1, 1));
+    HMM<GMM<> > hmm(1, GMM<>(1, 1));
 
     // Do we have a model to load?
     size_t dimensionality = 0;
@@ -321,7 +321,8 @@ int main(int argc, char** argv)
         Log::Fatal << "Invalid number of gaussians (" << gaussians << "); must "
             << "be greater than or equal to 1." << endl;
 
-      hmm = HMM<GMM>(size_t(states), GMM(size_t(gaussians), dimensionality));
+      hmm = HMM<GMM<> >(size_t(states), GMM<>(size_t(gaussians),
+          dimensionality));
     }
 
     // Verify dimensionality of data.
