@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
   }
 
   // Calculate mixture of Gaussians.
-  GMM gmm(size_t(gaussians), dataPoints.n_rows);
+  GMM<> gmm(size_t(gaussians), dataPoints.n_rows);
 
   ////// Computing the parameters of the model using the EM algorithm //////
   Timer::Start("em");
