@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
   size_t nAtoms = CLI::GetParam<int>("n_atoms");
   
   mat matX;
-	data::Load(dataFullpath, matX);
+  data::Load(dataFullpath, matX);
   
   uword nPoints = matX.n_cols;
   printf("Loaded %d points in %d dimensions\n", nPoints, matX.n_rows);
@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
   }
   else {
     mat matInitialD;
-		data::Load(initialDictionaryFullpath, matInitialD);
+    data::Load(initialDictionaryFullpath, matInitialD);
     if(matInitialD.n_cols != nAtoms) {
       Log::Fatal << "The specified initial dictionary to load has " 
 		 << matInitialD.n_cols << " atoms, but the learned dictionary "
