@@ -5,8 +5,9 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   gmm.hpp
   gmm_impl.hpp
-  gmm.cpp
   phi.hpp
+  em_fit.hpp
+  em_fit_impl.hpp
 )
 
 # Add directory name to sources.

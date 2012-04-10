@@ -10,13 +10,43 @@
 
 #include <mlpack/core.hpp>
 
+// This is the default fitting method class.
+#include "em_fit.hpp"
+
 namespace mlpack {
 namespace gmm /** Gaussian Mixture Models. */ {
 
 /**
  * A Gaussian Mixture Model (GMM). This class uses maximum likelihood loss
- * functions to estimate the parameters of the GMM on a given dataset via the EM
- * algorithm.  The GMM can be trained either with labeled or unlabeled data.
+ * functions to estimate the parameters of the GMM on a given dataset via the
+ * given fitting mechanism, defined by the FittingType template parameter.  The
+ * GMM can be trained using normal data, or data with probabilities of being
+ * from this GMM (see GMM::Estimate() for more information).
+ *
+ * The FittingType template class must provide a way for the GMM to train on
+ * data.  It must provide the following two functions:
+ *
+ * @code
+ * void Estimate(const arma::mat& observations,
+ *               std::vector<arma::vec>& means,
+ *               std::vector<arma::mat>& covariances,
+ *               arma::vec& weights);
+ *
+ * void Estimate(const arma::mat& observations,
+ *               const arma::vec& probabilities,
+ *               std::vector<arma::vec>& means,
+ *               std::vector<arma::mat>& covariances,
+ *               arma::vec& weights);
+ * @endcode
+ *
+ * These functions should produce a trained GMM from the given observations and
+ * probabilities.  These may modify the size of the model (by increasing the
+ * size of the mean and covariance vectors as well as the weight vectors), but
+ * the method should expect that these vectors are already set to the size of
+ * the GMM as specified in the constructor.
+ *
+ * For a sample implementation, see the EMFit class; this class uses the EM
+ * algorithm to train a GMM, and is the default fitting type.
  *
  * The GMM, once trained, can be used to generate random points from the
  * distribution and estimate the probability of points being from the
@@ -26,8 +56,9 @@ namespace gmm /** Gaussian Mixture Models. */ {
  * Example use:
  *
  * @code
- * // Set up a mixture of 5 gaussians in a 4-dimensional space.
- * GMM g(5, 4);
+ * // Set up a mixture of 5 gaussians in a 4-dimensional space (uses the default
+ * // EM fitting mechanism).
+ * GMM<> g(5, 4);
  *
  * // Train the GMM given the data observations.
  * g.Estimate(data);
@@ -39,6 +70,7 @@ namespace gmm /** Gaussian Mixture Models. */ {
  * arma::vec observation = g.Random();
  * @endcode
  */
+template<typename FittingType = EMFit<> >
 class GMM
 {
  private:
@@ -57,12 +89,16 @@ class GMM
   /**
    * Create an empty Gaussian Mixture Model, with zero gaussians.
    */
-  GMM() : gaussians(0), dimensionality(0)
+  GMM() :
+      gaussians(0),
+      dimensionality(0),
+      localFitter(FittingType()),
+      fitter(localFitter)
   {
     // Warn the user.  They probably don't want to do this.  If this constructor
     // is being used (because it is required by some template classes), the user
     // should know that it is potentially dangerous.
-    Log::Debug << "GMM::GMM(): no parameters given; Estimate() will fail "
+    Log::Debug << "GMM::GMM(): no parameters given; Estimate() may fail "
         << "unless parameters are set." << std::endl;
   }
 
@@ -73,12 +109,34 @@ class GMM
    * @param gaussians Number of Gaussians in this GMM.
    * @param dimensionality Dimensionality of each Gaussian.
    */
-  GMM(size_t gaussians, size_t dimensionality) :
+  GMM(const size_t gaussians, const size_t dimensionality) :
       gaussians(gaussians),
       dimensionality(dimensionality),
       means(gaussians, arma::vec(dimensionality)),
       covariances(gaussians, arma::mat(dimensionality, dimensionality)),
-      weights(gaussians) { /* nothing to do */ }
+      weights(gaussians),
+      localFitter(FittingType()),
+      fitter(localFitter) { /* Nothing to do. */ }
+
+  /**
+   * Create a GMM with the given number of Gaussians, each of which have the
+   * specified dimensionality.  Also, pass in an initialized FittingType class;
+   * this is useful in cases where the FittingType class needs to store some
+   * state.
+   *
+   * @param gaussians Number of Gaussians in this GMM.
+   * @param dimensionality Dimensionality of each Gaussian.
+   * @param fitter Initialized fitting mechanism.
+   */
+  GMM(const size_t gaussians,
+      const size_t dimensionality,
+      FittingType& fitter) :
+      gaussians(gaussians),
+      dimensionality(dimensionality),
+      means(gaussians, arma::vec(dimensionality)),
+      covariances(gaussians, arma::mat(dimensionality, dimensionality)),
+      weights(gaussians),
+      fitter(fitter) { /* Nothing to do. */ }
 
   /**
    * Create a GMM with the given means, covariances, and weights.
@@ -96,11 +154,41 @@ class GMM
       covariances(covariances),
       weights(weights) { /* nothing to do */ }
 
+  /**
+   * Copy constructor for GMMs which use different fitting types.
+   */
+  template<typename OtherFittingType>
+  GMM(const GMM<OtherFittingType>& other);
+
+  /**
+   * Copy constructor for GMMs using the same fitting type.  This also copies
+   * the fitter.
+   */
+  GMM(const GMM& other);
+
+  /**
+   * Copy operator for GMMs which use different fitting types.
+   */
+  template<typename OtherFittingType>
+  GMM& operator=(const GMM<OtherFittingType>& other);
+
+  /**
+   * Copy operator for GMMs which use the same fitting type.  This also copies
+   * the fitter.
+   */
+  GMM& operator=(const GMM& other);
+
   //! Return the number of gaussians in the model.
   size_t Gaussians() const { return gaussians; }
+  //! Modify the number of gaussians in the model.  Careful!  You will have to
+  //! resize the means, covariances, and weights yourself.
+  size_t& Gaussians() { return gaussians; }
 
   //! Return the dimensionality of the model.
   size_t Dimensionality() const { return dimensionality; }
+  //! Modify the dimensionality of the model.  Careful!  You will have to update
+  //! each mean and covariance matrix yourself.
+  size_t& Dimensionality() { return dimensionality; }
 
   //! Return a const reference to the vector of means (mu).
   const std::vector<arma::vec>& Means() const { return means; }
@@ -116,6 +204,11 @@ class GMM
   const arma::vec& Weights() const { return weights; }
   //! Return a reference to the a priori weights of each Gaussian.
   arma::vec& Weights() { return weights; }
+
+  //! Return a const reference to the fitting type.
+  const FittingType& Fitter() const { return fitter; }
+  //! Return a reference to the fitting type.
+  FittingType& Fitter() { return fitter; }
 
   /**
    * Return the probability that the given observation came from this
@@ -145,22 +238,40 @@ class GMM
 
   /**
    * Estimate the probability distribution directly from the given observations,
-   * using the EM algorithm to obtain the Maximum Likelihood parameter.
+   * using the given algorithm in the FittingType class to fit the data.
    *
+   * The fitting will be performed 'trials' times; from these trials, the model
+   * with the greatest log-likelihood will be selected.  By default, only one
+   * trial is performed.
+   *
+   * @tparam FittingType The type of fitting method which should be used
+   *     (EMFit<> is suggested).
    * @param observations Observations of the model.
+   * @param trials Number of trials to perform; the model in these trials with
+   *      the greatest log-likelihood will be selected.
    */
-  void Estimate(const arma::mat& observations);
+  void Estimate(const arma::mat& observations,
+                const size_t trials = 1);
 
   /**
    * Estimate the probability distribution directly from the given observations,
    * taking into account the probability of each observation actually being from
-   * this distribution.
+   * this distribution, and using the given algorithm in the FittingType class
+   * to fit the data.
+   *
+   * The fitting will be performed 'trials' times; from these trials, the model
+   * with the greatest log-likelihood will be selected.  By default, only one
+   * trial is performed.
    *
    * @param observations Observations of the model.
-   * @param probability Probability of each observation.
+   * @param probabilities Probability of each observation being from this
+   *     distribution.
+   * @param trials Number of trials to perform; the model in these trials with
+   *     the greatest log-likelihood will be selected.
    */
   void Estimate(const arma::mat& observations,
-                const arma::vec& probabilities);
+                const arma::vec& probabilities,
+                const size_t trials = 1);
 
   /**
    * Classify the given observations as being from an individual component in
@@ -191,29 +302,16 @@ class GMM
    * @param covars Covariances of the given mixture model.
    * @param weights Weights of the given mixture model.
    */
-  double Loglikelihood(const arma::mat& dataPoints,
+  double LogLikelihood(const arma::mat& dataPoints,
                        const std::vector<arma::vec>& means,
                        const std::vector<arma::mat>& covars,
                        const arma::vec& weights) const;
 
-  /**
-   * This function uses the given clustering class and initializes means,
-   * covariances, and weights into the passed objects based on the assignments
-   * of the clustering class.
-   *
-   * @param clusterer Initialized clustering class (must implement void
-   *      Cluster(const arma::mat&, arma::Col<size_t>&)
-   * @param data Dataset to perform clustering on.
-   * @param means Vector to store means in.
-   * @param covars Vector to store covariances in.
-   * @param weights Vector to store weights in.
-   */
-  template<typename ClusteringType>
-  void InitialClustering(const ClusteringType& clusterer,
-                         const arma::mat& data,
-                         std::vector<arma::vec>& means,
-                         std::vector<arma::mat>& covars,
-                         arma::vec& weights) const;
+  //! Locally-stored fitting object; in case the user did not pass one.
+  FittingType localFitter;
+
+  //! Reference to the fitting object we should use.
+  FittingType& fitter;
 };
 
 }; // namespace gmm
