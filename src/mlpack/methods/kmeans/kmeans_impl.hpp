@@ -83,7 +83,7 @@ FastCluster(MatType& data,
 
   // Build the mrkd-tree on this dataset
   tree::BinarySpaceTree<typename bound::HRectBound<2>, tree::MRKDStatistic> tree(data, 1);
-  std::cout << "Tree Built \n";
+  Log::Debug << "Tree Built." << std::endl;
   // A pointer for traversing the mrkd-tree
   tree::BinarySpaceTree<typename bound::HRectBound<2>, tree::MRKDStatistic>* node;
 
@@ -113,7 +113,7 @@ FastCluster(MatType& data,
   MatType newCentroids(dimensionality, centroids.n_cols);
 
   // Create a stack for traversing the mrkd-tree
-  std::stack<typename tree::BinarySpaceTree<typename bound::HRectBound<2>, 
+  std::stack<typename tree::BinarySpaceTree<typename bound::HRectBound<2>,
                                             tree::MRKDStatistic>* > stack;
 
   // A variable to keep track of how many kmeans iterations we have made
@@ -132,7 +132,7 @@ FastCluster(MatType& data,
 
   // A variable to keep track of how often we stop at a parent node
   size_t dominations = 0;
-  do 
+  do
   {
     // Keep track of what iteration we are on.
     ++iteration;
@@ -224,7 +224,7 @@ FastCluster(MatType& data,
         // Calculate the center of mass of this hyperrectangle
         arma::vec center = mrkd.centerOfMass / mrkd.count;
 
-        // Set the minDistance to the maximum value of a double so any value 
+        // Set the minDistance to the maximum value of a double so any value
         // must be smaller than this
         double minDistance = std::numeric_limits<double>::max();
 
@@ -483,7 +483,10 @@ FastCluster(MatType& data,
     // assignments
   } while (changedAssignments > 0 && iteration != maxIterations);
 
-  std::cout << "Iterations: " << iteration << '\t' << "Skips: " << skip << '\t' << "Comparisons: " << comps << '\t' << "Dominations: " << dominations << '\n';
+  Log::Debug << "Iterations: " << iteration << std::endl
+      << "Skips: " << skip << std::endl
+      << "Comparisons: " << comps << std::endl
+      << "Dominations: " << dominations << std::endl;
 }
 
 /**
@@ -591,7 +594,8 @@ Cluster(const MatType& data,
     iteration++;
 
   } while (changedAssignments > 0 && iteration != maxIterations);
-  std::cout << "Iterations: " << iteration << std::endl;
+
+  Log::Debug << "Iterations: " << iteration << std::endl;
 
   // If we have overclustered, we need to merge the nearest clusters.
   if (actualClusters != clusters)
@@ -684,7 +688,7 @@ Cluster(const MatType& data,
 
       // Now max the distances for the second cluster (which no longer has
       // anything in it).
-      offset = (size_t) (((actualClusters - 1) * second) 
+      offset = (size_t) (((actualClusters - 1) * second)
 			 + (second - pow(second, 2.0)) / 2) - 1;
       for (size_t cluster = second + 1; cluster < actualClusters; cluster++)
         distances(offset + (cluster - second)) = DBL_MAX;
