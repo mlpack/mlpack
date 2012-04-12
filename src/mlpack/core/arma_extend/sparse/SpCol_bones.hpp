@@ -20,9 +20,14 @@ template<typename eT>
 class SpCol : public SpMat<eT>
   {
   public:
-  
+
   typedef eT                                elem_type;
-  typedef typename get_pod_type<eT>::result pod_type; 
+  typedef typename get_pod_type<eT>::result pod_type;
+
+#if (ARMA_VERSION_MAJOR) >= 3
+  static const bool is_row = false;
+  static const bool is_col = true;
+#endif
 
   inline          SpCol();
   inline explicit SpCol(const uword n_elem);
@@ -33,7 +38,7 @@ class SpCol : public SpMat<eT>
 
   inline                  SpCol(const std::string& text);
   inline const SpCol& operator=(const std::string& text);
-  
+
   inline const SpCol& operator=(const eT val);
 
   template<typename T1> inline                  SpCol(const Base<eT,T1>& X);
@@ -62,11 +67,11 @@ class SpCol : public SpMat<eT>
 
   inline void shed_row (const uword row_num);
   inline void shed_rows(const uword in_row1, const uword in_row2);
-  
+
                         inline void insert_rows(const uword row_num, const uword N, const bool set_to_zero = true);
   template<typename T1> inline void insert_rows(const uword row_num, const Base<eT,T1>& X);
-  
-  
+
+
   typedef typename SpMat<eT>::iterator       row_iterator;
   typedef typename SpMat<eT>::const_iterator const_row_iterator;
 
