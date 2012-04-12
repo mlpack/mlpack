@@ -38,6 +38,8 @@
 #ifndef ARMA_HAS_SPMAT
 
 namespace arma {
+  #include "sparse/traits.hpp"
+
   #include "sparse/Proxy.hpp"
 
   #include "sparse/SpValProxy_bones.hpp"
