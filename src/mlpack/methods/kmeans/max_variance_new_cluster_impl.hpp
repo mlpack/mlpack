@@ -32,7 +32,7 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   // this is the sensible thing to do.
   for (size_t i = 0; i < data.n_cols; i++)
   {
-    variances[assignments[i]] += as_scalar(
+    variances[assignments[i]] += arma::as_scalar(
         var(data.col(i) - centroids.col(assignments[i])));
   }
 
@@ -47,7 +47,7 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   {
     if (assignments[i] == maxVarCluster)
     {
-      double distance = as_scalar(
+      double distance = arma::as_scalar(
           var(data.col(i) - centroids.col(maxVarCluster)));
 
       if (distance > maxDistance)
