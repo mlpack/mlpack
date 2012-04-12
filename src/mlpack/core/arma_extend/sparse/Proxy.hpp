@@ -26,6 +26,11 @@ class Proxy< SpMat<eT> >
   static const bool prefer_at_accessor = false;
   static const bool has_subview        = false;
 
+#if (ARMA_VERSION_MAJOR >= 3)
+  static const bool is_row = false;
+  static const bool is_col = false;
+#endif
+
   arma_aligned const SpMat<eT>& Q;
 
   inline explicit Proxy(const SpMat<eT>& A)
@@ -59,6 +64,11 @@ class Proxy< SpCol<eT> >
 
   static const bool prefer_at_accessor = false;
   static const bool has_subview        = false;
+
+#if (ARMA_VERSION_MAJOR >= 3)
+  static const bool is_row = false;
+  static const bool is_col = true;
+#endif
 
   arma_aligned const SpCol<eT>& Q;
 
@@ -94,6 +104,11 @@ class Proxy< SpRow<eT> >
   static const bool prefer_at_accessor = false;
   static const bool has_subview        = false;
 
+#if (ARMA_VERSION_MAJOR >= 3)
+  static const bool is_row = true;
+  static const bool is_col = false;
+#endif
+
   arma_aligned const SpRow<eT>& Q;
 
   inline explicit Proxy(const SpRow<eT>& A)
@@ -127,6 +142,11 @@ class Proxy< SpSubview<eT> >
 
   static const bool prefer_at_accessor = true;
   static const bool has_subview        = true;
+
+#if (ARMA_VERSION_MAJOR >= 3)
+  static const bool is_row = false;
+  static const bool is_col = false;
+#endif
 
   arma_aligned const SpSubview<eT>& Q;
 

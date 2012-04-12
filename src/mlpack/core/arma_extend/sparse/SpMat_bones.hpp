@@ -23,6 +23,11 @@ class SpMat : public Base< eT, SpMat<eT> >
   typedef eT                                elem_type;  //!< the type of elements stored in the matrix
   typedef typename get_pod_type<eT>::result pod_type;   //!< if eT is non-complex, pod_type is the same as eT; otherwise, pod_type is the underlying type used by std::complex
 
+#if (ARMA_VERSION_MAJOR) >= 3
+  static const bool is_row = false;
+  static const bool is_col = false;
+#endif
+
   const uword n_rows;
   const uword n_cols;
   const uword n_elem;
