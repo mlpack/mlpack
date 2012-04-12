@@ -56,7 +56,8 @@ inline double phi(const arma::vec& x,
 {
   arma::vec diff = mean - x;
 
-  arma::vec exponent = -0.5 * trans(diff) * inv(cov) * diff;
+  // Parentheses required for Armadillo 3.0.0 bug.
+  arma::vec exponent = -0.5 * (trans(diff) * inv(cov) * diff);
 
   // TODO: What if det(cov) < 0?
   return pow(2 * M_PI, (double) x.n_elem / -2.0) * pow(det(cov), -0.5) *
@@ -87,7 +88,8 @@ inline double phi(const arma::vec& x,
   arma::mat cinv = inv(cov);
 
   arma::vec diff = mean - x;
-  arma::vec exponent = -0.5 * trans(diff) * inv(cov) * diff;
+  // Parentheses required for Armadillo 3.0.0 bug.
+  arma::vec exponent = -0.5 * (trans(diff) * inv(cov) * diff);
 
   long double f = pow(2 * M_PI, (double) x.n_elem / 2) * pow(det(cov), -0.5)
       * exp(exponent[0]);
