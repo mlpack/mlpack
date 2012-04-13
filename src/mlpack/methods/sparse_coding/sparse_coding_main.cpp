@@ -53,12 +53,12 @@ int main(int argc, char* argv[])
   mat matX;
   data::Load(dataFullpath, matX);
 
-  uword nPoints = matX.n_cols;
+  const size_t nPoints = matX.n_cols;
   Log::Info << "Loaded " << nPoints << " points in " << matX.n_rows <<
       " dimensions." << endl;
 
   // Normalize each point since these are images.
-  for (uword i = 0; i < nPoints; ++i)
+  for (size_t i = 0; i < nPoints; ++i)
     matX.col(i) /= norm(matX.col(i), 2);
 
   // Run the sparse coding algorithm.

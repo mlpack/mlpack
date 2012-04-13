@@ -127,7 +127,7 @@ void SparseCoding::OptimizeCode()
   //   matGram = trans(matD) * matD;
   // }
 
-  for (uword i = 0; i < nPoints; ++i)
+  for (size_t i = 0; i < nPoints; ++i)
   {
     // Report progress.
     if ((i % 100) == 0)
@@ -185,7 +185,7 @@ void SparseCoding::OptimizeDictionary(const uvec& adjacencies)
   std::vector<size_t> activeAtoms;
   activeAtoms.reserve(nAtoms);
 
-  for (uword j = 0; j < nAtoms; ++j)
+  for (size_t j = 0; j < nAtoms; ++j)
   {
     if (accu(matZ.row(j) != 0) == 0)
       inactiveAtoms.push_back(j);
@@ -209,7 +209,7 @@ void SparseCoding::OptimizeDictionary(const uvec& adjacencies)
   }
 
   uvec atomReverseLookup = uvec(nAtoms);
-  for (uword i = 0; i < nActiveAtoms; ++i)
+  for (size_t i = 0; i < nActiveAtoms; ++i)
     atomReverseLookup(activeAtoms[i]) = i;
 
   if (nInactiveAtoms > 0)
@@ -235,7 +235,7 @@ void SparseCoding::OptimizeDictionary(const uvec& adjacencies)
 
   //vec dualVars = diagvec(solve(matD, matX * trans(matZ))
   //    - matZ * trans(matZ));
-  //for (uword i = 0; i < dualVars.n_elem; i++)
+  //for (size_t i = 0; i < dualVars.n_elem; i++)
   //  if (dualVars(i) < 0)
   //    dualVars(i) = 0;
 
