@@ -18,11 +18,11 @@ using namespace mlpack::sparse_coding;
 #define NEWTON_TOL 1e-6 // 1E-9
 
 SparseCoding::SparseCoding(const mat& matX,
-                           uword nAtoms,
-                           double lambda1,
-                           double lambda2) :
+                           const size_t atoms,
+                           const double lambda1,
+                           const double lambda2) :
     nDims(matX.n_rows),
-    nAtoms(nAtoms),
+    nAtoms(atoms),
     nPoints(matX.n_cols),
     matX(matX),
     matZ(mat(nAtoms, nPoints)),
@@ -40,21 +40,11 @@ void SparseCoding::SetDictionary(const mat& matD)
   this->matD = matD;
 }
 
-void SparseCoding::InitDictionary()
-{
-  DataDependentRandomInitDictionary();
-}
-
-void SparseCoding::LoadDictionary(const char* dictionaryFilename)
-{
-  matD.load(dictionaryFilename);
-}
-
 // Always a not good decision!
 void SparseCoding::RandomInitDictionary() {
   matD = randn(nDims, nAtoms);
 
-  for (uword j = 0; j < nAtoms; ++j)
+  for (size_t j = 0; j < nAtoms; ++j)
     matD.col(j) /= norm(matD.col(j), 2);
 }
 
@@ -62,7 +52,7 @@ void SparseCoding::RandomInitDictionary() {
 void SparseCoding::DataDependentRandomInitDictionary()
 {
   matD = mat(nDims, nAtoms);
-  for (uword j = 0; j < nAtoms; ++j)
+  for (size_t j = 0; j < nAtoms; ++j)
   {
     vec vecD_j = matD.unsafe_col(j);
     RandomAtom(vecD_j);
@@ -72,16 +62,15 @@ void SparseCoding::DataDependentRandomInitDictionary()
 void SparseCoding::RandomAtom(vec& atom)
 {
   atom.zeros();
-  const uword nSeedAtoms = 3;
-  for(uword i = 0; i < nSeedAtoms; i++)
+  const size_t nSeedAtoms = 3;
+  for (size_t i = 0; i < nSeedAtoms; i++)
     atom += matX.col(rand() % nPoints);
 
   atom /= norm(atom, 2);
 }
 
-void SparseCoding::DoSparseCoding(uword nIterations)
+void SparseCoding::DoSparseCoding(const size_t maxIterations)
 {
-  bool converged = false;
   double lastObjVal = DBL_MAX;
 
   Log::Info << "Initial Coding Step." << endl;
@@ -94,9 +83,9 @@ void SparseCoding::DoSparseCoding(uword nIterations)
       << "%" << endl;
   Log::Info << "  Objective value: " << Objective() << "." << endl;
 
-  for (uword t = 1; t <= nIterations && !converged; ++t)
+  for (size_t t = 1; t != maxIterations; ++t)
   {
-    Log::Info << "Iteration " << t << " of " << nIterations << "." << endl;
+    Log::Info << "Iteration " << t << " of " << maxIterations << "." << endl;
 
     Log::Info << "Performing dictionary step... ";
     OptimizeDictionary(adjacencies);
@@ -118,8 +107,8 @@ void SparseCoding::DoSparseCoding(uword nIterations)
 
     if (objValImprov < OBJ_TOL)
     {
-      converged = true;
       Log::Info << "Converged within tolerance " << OBJ_TOL << ".\n";
+      break;
     }
 
     lastObjVal = curObjVal;
@@ -138,9 +127,9 @@ void SparseCoding::OptimizeCode()
   //   matGram = trans(matD) * matD;
   // }
 
-  for (uword i = 0; i < nPoints; i++)
+  for (uword i = 0; i < nPoints; ++i)
   {
-    // report progress
+    // Report progress.
     if ((i % 100) == 0)
       Log::Debug << "Optimization at point " << i << "." << endl;
 
@@ -162,8 +151,7 @@ void SparseCoding::OptimizeCode()
   }
 }
 
-
-void SparseCoding::OptimizeDictionary(uvec adjacencies)
+void SparseCoding::OptimizeDictionary(const uvec& adjacencies)
 {
   // Count the number of atomic neighbors for each point x^i.
   uvec neighborCounts = zeros<uvec>(nPoints, 1);
@@ -171,19 +159,20 @@ void SparseCoding::OptimizeDictionary(uvec adjacencies)
   if (adjacencies.n_elem > 0)
   {
     // This gets the column index.
-    uword curPointInd = (uword)(adjacencies(0) / nAtoms);
-    uword curCount = 1;
+    // TODO: is this integer division intentional?
+    size_t curPointInd = (size_t) (adjacencies(0) / nAtoms);
+    size_t curCount = 1;
 
-    for (uword l = 1; l < adjacencies.n_elem; ++l)
+    for (size_t l = 1; l < adjacencies.n_elem; ++l)
     {
-      if ((uword)(adjacencies(l) / nAtoms) == curPointInd)
+      if ((size_t) (adjacencies(l) / nAtoms) == curPointInd)
       {
-        curCount++;
+        ++curCount;
       }
       else
       {
         neighborCounts(curPointInd) = curCount;
-        curPointInd = (uword)(adjacencies(l) / nAtoms);
+        curPointInd = (size_t) (adjacencies(l) / nAtoms);
         curCount = 1;
       }
     }
@@ -192,11 +181,11 @@ void SparseCoding::OptimizeDictionary(uvec adjacencies)
   }
 
   // Handle the case of inactive atoms (atoms not used in the given coding).
-  std::vector<uword> inactiveAtoms;
-  std::vector<uword> activeAtoms;
+  std::vector<size_t> inactiveAtoms;
+  std::vector<size_t> activeAtoms;
   activeAtoms.reserve(nAtoms);
 
-  for (uword j = 0; j < nAtoms; j++)
+  for (uword j = 0; j < nAtoms; ++j)
   {
     if (accu(matZ.row(j) != 0) == 0)
       inactiveAtoms.push_back(j);
@@ -204,8 +193,8 @@ void SparseCoding::OptimizeDictionary(uvec adjacencies)
       activeAtoms.push_back(j);
   }
 
-  uword nActiveAtoms = activeAtoms.size();
-  uword nInactiveAtoms = inactiveAtoms.size();
+  const size_t nActiveAtoms = activeAtoms.size();
+  const size_t nInactiveAtoms = inactiveAtoms.size();
 
   // Efficient construction of Z restricted to active atoms.
   mat matActiveZ;
@@ -215,15 +204,13 @@ void SparseCoding::OptimizeDictionary(uvec adjacencies)
   }
   else
   {
-    uvec inactiveAtomsVec = conv_to< uvec >::from(inactiveAtoms);
+    uvec inactiveAtomsVec = conv_to<uvec>::from(inactiveAtoms);
     RemoveRows(matZ, inactiveAtomsVec, matActiveZ);
   }
 
   uvec atomReverseLookup = uvec(nAtoms);
-  for(uword i = 0; i < nActiveAtoms; i++)
-  {
+  for (uword i = 0; i < nActiveAtoms; ++i)
     atomReverseLookup(activeAtoms[i]) = i;
-  }
 
   if (nInactiveAtoms > 0)
   {
@@ -256,7 +243,7 @@ void SparseCoding::OptimizeDictionary(uvec adjacencies)
   mat matZXT = matActiveZ * trans(matX);
   mat matZZT = matActiveZ * trans(matActiveZ);
 
-  for (uword t = 1; !converged; ++t)
+  for (size_t t = 1; !converged; ++t)
   {
     mat A = matZZT + diagmat(dualVars);
 
@@ -330,10 +317,10 @@ void SparseCoding::OptimizeDictionary(uvec adjacencies)
     mat matDActiveEstimate = trans(solve(matZZT + diagmat(dualVars), matZXT));
     matDEstimate = zeros(nDims, nAtoms);
 
-    for (uword i = 0; i < nActiveAtoms; i++)
+    for (size_t i = 0; i < nActiveAtoms; ++i)
       matDEstimate.col(activeAtoms[i]) = matDActiveEstimate.col(i);
 
-    for (uword i = 0; i < nInactiveAtoms; i++)
+    for (size_t i = 0; i < nInactiveAtoms; ++i)
     {
       vec vecmatDi = matDEstimate.unsafe_col(inactiveAtoms[i]);
       RandomAtom(vecmatDi);
@@ -345,7 +332,7 @@ void SparseCoding::OptimizeDictionary(uvec adjacencies)
 
 void SparseCoding::ProjectDictionary()
 {
-  for (uword j = 0; j < nAtoms; j++)
+  for (size_t j = 0; j < nAtoms; j++)
   {
     double normD_j = norm(matD.col(j), 2);
     if ((normD_j > 1) && (normD_j - 1.0 > 1e-9))
@@ -389,10 +376,10 @@ void mlpack::sparse_coding::RemoveRows(const mat& X,
                                        uvec rows_to_remove,
                                        mat& X_mod)
 {
-  uword n_cols = X.n_cols;
-  uword n_rows = X.n_rows;
-  uword n_to_remove = rows_to_remove.n_elem;
-  uword n_to_keep = n_rows - n_to_remove;
+  const size_t n_cols = X.n_cols;
+  const size_t n_rows = X.n_rows;
+  const size_t n_to_remove = rows_to_remove.n_elem;
+  const size_t n_to_keep = n_rows - n_to_remove;
 
   if (n_to_remove == 0)
   {
@@ -402,13 +389,13 @@ void mlpack::sparse_coding::RemoveRows(const mat& X,
   {
     X_mod.set_size(n_to_keep, n_cols);
 
-    uword cur_row = 0;
-    uword remove_ind = 0;
+    size_t cur_row = 0;
+    size_t remove_ind = 0;
     // First, check 0 to first row to remove.
     if (rows_to_remove(0) > 0)
     {
       // Note that this implies that n_rows > 1.
-      uword height = rows_to_remove(0);
+      size_t height = rows_to_remove(0);
       X_mod(span(cur_row, cur_row + height - 1), span::all) =
           X(span(0, rows_to_remove(0) - 1), span::all);
       cur_row += height;
@@ -417,8 +404,8 @@ void mlpack::sparse_coding::RemoveRows(const mat& X,
     // penultimate row.
     while (remove_ind < n_to_remove - 1)
     {
-      uword height = rows_to_remove[remove_ind + 1] - rows_to_remove[remove_ind]
-          - 1;
+      size_t height = rows_to_remove[remove_ind + 1] -
+          rows_to_remove[remove_ind] - 1;
 
       if (height > 0)
       {
