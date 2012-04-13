@@ -80,32 +80,19 @@ namespace sparse_coding {
  */
 class SparseCoding
 {
-
  public:
   /**
    * Set the parameters to SparseCoding. lambda2 defaults to 0.
    *
    * @param matX Data matrix
-   * @param nAtoms Number of atoms in dictionary
+   * @param atoms Number of atoms in dictionary
    * @param lambda1 Regularization parameter for l1-norm penalty
    * @param lambda2 Regularization parameter for l2-norm penalty
    */
   SparseCoding(const arma::mat& matX,
-               arma::uword nAtoms,
-               double lambda1,
-               double lambda2 = 0);
-
-  /**
-   * Initialize dictionary.
-   */
-  void InitDictionary();
-
-  /**
-   * Load dictionary from a file
-   *
-   * @param dictionaryFilename Filename containing dictionary
-   */
-  void LoadDictionary(const char* dictionaryFilename);
+               const size_t atoms,
+               const double lambda1,
+               const double lambda2 = 0);
 
   /**
    * Initialize dictionary by drawing k vectors uniformly at random from the
@@ -132,9 +119,10 @@ class SparseCoding
   /**
    * Run Sparse Coding with Dictionary Learning.
    *
-   * @param nIterations Maximum number of iterations to run algorithm.
+   * @param maxIterations Maximum number of iterations to run algorithm.  If 0,
+   *     the algorithm will run until convergence (or forever).
    */
-  void DoSparseCoding(arma::uword nIterations);
+  void DoSparseCoding(const size_t maxIterations = 0);
 
   /**
    * Sparse code each point via LARS.
@@ -148,7 +136,7 @@ class SparseCoding
    *    the coding matrix Z that are non-zero (the adjacency matrix for the
    *    bipartite graph of points and atoms).
    */
-  void OptimizeDictionary(arma::uvec adjacencies);
+  void OptimizeDictionary(const arma::uvec& adjacencies);
 
   /**
    * Project each atom of the dictionary onto the unit ball.
@@ -182,11 +170,11 @@ class SparseCoding
 
  private:
   //! Number of dimensions.
-  arma::uword nDims;
+  size_t nDims;
   //! Number of atoms.
-  arma::uword nAtoms;
+  size_t nAtoms;
   //! Number of points.
-  arma::uword nPoints;
+  size_t nPoints;
 
   //! data (columns are points).
   arma::mat matX;
