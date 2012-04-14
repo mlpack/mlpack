@@ -17,44 +17,32 @@ using namespace mlpack::sparse_coding;
 #define OBJ_TOL 1e-2 // 1E-9
 #define NEWTON_TOL 1e-6 // 1E-9
 
-SparseCoding::SparseCoding(const mat& matX,
+SparseCoding::SparseCoding(const mat& data,
                            const size_t atoms,
                            const double lambda1,
                            const double lambda2) :
-    nDims(matX.n_rows),
-    nAtoms(atoms),
-    nPoints(matX.n_cols),
-    matX(matX),
-    matZ(mat(nAtoms, nPoints)),
+    atoms(atoms),
+    data(data),
+    codes(mat(atoms, data.n_cols)),
     lambda1(lambda1),
     lambda2(lambda2)
 { /* Nothing left to do. */ }
 
-void SparseCoding::SetData(const mat& matX)
-{
-  this->matX = matX;
-}
-
-void SparseCoding::SetDictionary(const mat& matD)
-{
-  this->matD = matD;
-}
-
 // Always a not good decision!
 void SparseCoding::RandomInitDictionary() {
-  matD = randn(nDims, nAtoms);
+  dictionary = randn(data.n_rows, atoms);
 
-  for (size_t j = 0; j < nAtoms; ++j)
-    matD.col(j) /= norm(matD.col(j), 2);
+  for (size_t j = 0; j < atoms; ++j)
+    dictionary.col(j) /= norm(dictionary.col(j), 2);
 }
 
 // The sensible heuristic.
 void SparseCoding::DataDependentRandomInitDictionary()
 {
-  matD = mat(nDims, nAtoms);
-  for (size_t j = 0; j < nAtoms; ++j)
+  dictionary = mat(data.n_rows, atoms);
+  for (size_t j = 0; j < atoms; ++j)
   {
-    vec vecD_j = matD.unsafe_col(j);
+    vec vecD_j = dictionary.unsafe_col(j);
     RandomAtom(vecD_j);
   }
 }
@@ -64,7 +52,7 @@ void SparseCoding::RandomAtom(vec& atom)
   atom.zeros();
   const size_t nSeedAtoms = 3;
   for (size_t i = 0; i < nSeedAtoms; i++)
-    atom += matX.col(rand() % nPoints);
+    atom += data.col(rand() % data.n_cols);
 
   atom /= norm(atom, 2);
 }
@@ -76,10 +64,10 @@ void SparseCoding::DoSparseCoding(const size_t maxIterations)
   Log::Info << "Initial Coding Step." << endl;
 
   OptimizeCode();
-  uvec adjacencies = find(matZ);
+  uvec adjacencies = find(codes);
 
   Log::Info << "  Sparsity level: "
-      << 100.0 * ((double) (adjacencies.n_elem)) / ((double) (nAtoms * nPoints))
+      << 100.0 * ((double) (adjacencies.n_elem)) / ((double) (atoms * data.n_cols))
       << "%" << endl;
   Log::Info << "  Objective value: " << Objective() << "." << endl;
 
@@ -93,10 +81,10 @@ void SparseCoding::DoSparseCoding(const size_t maxIterations)
 
     Log::Info << "Performing coding step..." << endl;
     OptimizeCode();
-    adjacencies = find(matZ);
+    adjacencies = find(codes);
     Log::Info << "  Sparsity level: "
         << 100.0 *
-        ((double) (adjacencies.n_elem)) / ((double) (nAtoms * nPoints))
+        ((double) (adjacencies.n_elem)) / ((double) (atoms * data.n_cols))
         << "%" << endl;
 
     double curObjVal = Objective();
@@ -118,16 +106,16 @@ void SparseCoding::DoSparseCoding(const size_t maxIterations)
 void SparseCoding::OptimizeCode()
 {
   // When using Cholesky version of LARS, this is correct even if lambda2 > 0.
-  mat matGram = trans(matD) * matD;
+  mat matGram = trans(dictionary) * dictionary;
   // mat matGram;
   // if(lambda2 > 0) {
-  //   matGram = trans(matD) * matD + lambda2 * eye(nAtoms, nAtoms);
+  //   matGram = trans(dictionary) * dictionary + lambda2 * eye(atoms, atoms);
   // }
   // else {
-  //   matGram = trans(matD) * matD;
+  //   matGram = trans(dictionary) * dictionary;
   // }
 
-  for (size_t i = 0; i < nPoints; ++i)
+  for (size_t i = 0; i < data.n_cols; ++i)
   {
     // Report progress.
     if ((i % 100) == 0)
@@ -141,11 +129,11 @@ void SparseCoding::OptimizeCode()
       lars = new LARS(useCholesky, lambda1);
 
     lars->SetGramMem(matGram.memptr(), matGram.n_rows);
-    lars->DoLARS(matD, matX.unsafe_col(i));
+    lars->DoLARS(dictionary, data.unsafe_col(i));
 
     vec beta;
     lars->Solution(beta);
-    matZ.col(i) = beta;
+    codes.col(i) = beta;
 
     delete lars;
   }
@@ -154,25 +142,25 @@ void SparseCoding::OptimizeCode()
 void SparseCoding::OptimizeDictionary(const uvec& adjacencies)
 {
   // Count the number of atomic neighbors for each point x^i.
-  uvec neighborCounts = zeros<uvec>(nPoints, 1);
+  uvec neighborCounts = zeros<uvec>(data.n_cols, 1);
 
   if (adjacencies.n_elem > 0)
   {
     // This gets the column index.
     // TODO: is this integer division intentional?
-    size_t curPointInd = (size_t) (adjacencies(0) / nAtoms);
+    size_t curPointInd = (size_t) (adjacencies(0) / atoms);
     size_t curCount = 1;
 
     for (size_t l = 1; l < adjacencies.n_elem; ++l)
     {
-      if ((size_t) (adjacencies(l) / nAtoms) == curPointInd)
+      if ((size_t) (adjacencies(l) / atoms) == curPointInd)
       {
         ++curCount;
       }
       else
       {
         neighborCounts(curPointInd) = curCount;
-        curPointInd = (size_t) (adjacencies(l) / nAtoms);
+        curPointInd = (size_t) (adjacencies(l) / atoms);
         curCount = 1;
       }
     }
@@ -183,11 +171,11 @@ void SparseCoding::OptimizeDictionary(const uvec& adjacencies)
   // Handle the case of inactive atoms (atoms not used in the given coding).
   std::vector<size_t> inactiveAtoms;
   std::vector<size_t> activeAtoms;
-  activeAtoms.reserve(nAtoms);
+  activeAtoms.reserve(atoms);
 
-  for (size_t j = 0; j < nAtoms; ++j)
+  for (size_t j = 0; j < atoms; ++j)
   {
-    if (accu(matZ.row(j) != 0) == 0)
+    if (accu(codes.row(j) != 0) == 0)
       inactiveAtoms.push_back(j);
     else
       activeAtoms.push_back(j);
@@ -200,15 +188,15 @@ void SparseCoding::OptimizeDictionary(const uvec& adjacencies)
   mat matActiveZ;
   if (inactiveAtoms.empty())
   {
-    matActiveZ = matZ;
+    matActiveZ = codes;
   }
   else
   {
     uvec inactiveAtomsVec = conv_to<uvec>::from(inactiveAtoms);
-    RemoveRows(matZ, inactiveAtomsVec, matActiveZ);
+    RemoveRows(codes, inactiveAtomsVec, matActiveZ);
   }
 
-  uvec atomReverseLookup = uvec(nAtoms);
+  uvec atomReverseLookup = uvec(atoms);
   for (size_t i = 0; i < nActiveAtoms; ++i)
     atomReverseLookup(activeAtoms[i]) = i;
 
@@ -220,7 +208,7 @@ void SparseCoding::OptimizeDictionary(const uvec& adjacencies)
 
   Log::Debug << "Solving Dual via Newton's Method.\n";
 
-  mat matDEstimate;
+  mat dictionaryEstimate;
   // Solve using Newton's method in the dual - note that the final dot
   // multiplication with inv(A) seems to be unavoidable. Although more
   // expensive, the code written this way (we use solve()) should be more
@@ -233,21 +221,21 @@ void SparseCoding::OptimizeDictionary(const uvec& adjacencies)
   // MATLAB optimizer fmincon does something clever?
   //vec dualVars = 10.0 * randu(nActiveAtoms, 1);
 
-  //vec dualVars = diagvec(solve(matD, matX * trans(matZ))
-  //    - matZ * trans(matZ));
+  //vec dualVars = diagvec(solve(dictionary, data * trans(codes))
+  //    - codes * trans(codes));
   //for (size_t i = 0; i < dualVars.n_elem; i++)
   //  if (dualVars(i) < 0)
   //    dualVars(i) = 0;
 
   bool converged = false;
-  mat matZXT = matActiveZ * trans(matX);
-  mat matZZT = matActiveZ * trans(matActiveZ);
+  mat codesXT = matActiveZ * trans(data);
+  mat codesZT = matActiveZ * trans(matActiveZ);
 
   for (size_t t = 1; !converged; ++t)
   {
-    mat A = matZZT + diagmat(dualVars);
+    mat A = codesZT + diagmat(dualVars);
 
-    mat matAInvZXT = solve(A, matZXT);
+    mat matAInvZXT = solve(A, codesXT);
 
     vec gradient = -(sum(square(matAInvZXT), 1) - ones<vec>(nActiveAtoms));
 
@@ -265,11 +253,11 @@ void SparseCoding::OptimizeDictionary(const uvec& adjacencies)
     /*
     {
       double sumDualVars = sum(dualVars);
-      double fOld = -(-trace(trans(matZXT) * matAInvZXT) - sumDualVars);
+      double fOld = -(-trace(trans(codesXT) * matAInvZXT) - sumDualVars);
       Log::Debug << "fOld = " << fOld << "." << endl;
       double fNew =
-          -(-trace(trans(matZXT) * solve(matZZT +
-          diagmat(dualVars + alpha * searchDirection), matZXT))
+          -(-trace(trans(codesXT) * solve(codesZT +
+          diagmat(dualVars + alpha * searchDirection), codesXT))
           - (sumDualVars + alpha * sum(searchDirection)) );
       Log::Debug << "fNew = " << fNew << "." << endl;
     }
@@ -280,9 +268,9 @@ void SparseCoding::OptimizeDictionary(const uvec& adjacencies)
     {
       // Calculate objective.
       double sumDualVars = sum(dualVars);
-      double fOld = -(-trace(trans(matZXT) * matAInvZXT) - sumDualVars);
-      double fNew = -(-trace(trans(matZXT) * solve(matZZT +
-          diagmat(dualVars + alpha * searchDirection), matZXT)) -
+      double fOld = -(-trace(trans(codesXT) * matAInvZXT) - sumDualVars);
+      double fNew = -(-trace(trans(codesXT) * solve(codesZT +
+          diagmat(dualVars + alpha * searchDirection), codesXT)) -
           (sumDualVars + alpha * sum(searchDirection)));
 
       if (fNew <= fOld + alpha * sufficientDecrease)
@@ -310,48 +298,48 @@ void SparseCoding::OptimizeDictionary(const uvec& adjacencies)
 
   if (inactiveAtoms.empty())
   {
-    matDEstimate = trans(solve(matZZT + diagmat(dualVars), matZXT));
+    dictionaryEstimate = trans(solve(codesZT + diagmat(dualVars), codesXT));
   }
   else
   {
-    mat matDActiveEstimate = trans(solve(matZZT + diagmat(dualVars), matZXT));
-    matDEstimate = zeros(nDims, nAtoms);
+    mat dictionaryActiveEstimate = trans(solve(codesZT + diagmat(dualVars), codesXT));
+    dictionaryEstimate = zeros(data.n_rows, atoms);
 
     for (size_t i = 0; i < nActiveAtoms; ++i)
-      matDEstimate.col(activeAtoms[i]) = matDActiveEstimate.col(i);
+      dictionaryEstimate.col(activeAtoms[i]) = dictionaryActiveEstimate.col(i);
 
     for (size_t i = 0; i < nInactiveAtoms; ++i)
     {
-      vec vecmatDi = matDEstimate.unsafe_col(inactiveAtoms[i]);
-      RandomAtom(vecmatDi);
+      vec vecdictionaryi = dictionaryEstimate.unsafe_col(inactiveAtoms[i]);
+      RandomAtom(vecdictionaryi);
     }
   }
 
-  matD = matDEstimate;
+  dictionary = dictionaryEstimate;
 }
 
 void SparseCoding::ProjectDictionary()
 {
-  for (size_t j = 0; j < nAtoms; j++)
+  for (size_t j = 0; j < atoms; j++)
   {
-    double normD_j = norm(matD.col(j), 2);
+    double normD_j = norm(dictionary.col(j), 2);
     if ((normD_j > 1) && (normD_j - 1.0 > 1e-9))
     {
       Log::Warn << "Norm exceeded 1 by " << std::scientific << normD_j - 1.0
           << ".  Shrinking...\n";
-      matD.col(j) /= normD_j;
+      dictionary.col(j) /= normD_j;
     }
   }
 }
 
 double SparseCoding::Objective()
 {
-  double l11NormZ = sum(sum(abs(matZ)));
-  double froNormResidual = norm(matX - matD * matZ, "fro");
+  double l11NormZ = sum(sum(abs(codes)));
+  double froNormResidual = norm(data - dictionary * codes, "fro");
 
   if (lambda2 > 0)
   {
-    double froNormZ = norm(matZ, "fro");
+    double froNormZ = norm(codes, "fro");
     return 0.5 *
       (froNormResidual * froNormResidual + lambda2 * froNormZ * froNormZ) +
       lambda1 * l11NormZ;
@@ -360,16 +348,6 @@ double SparseCoding::Objective()
   {
     return 0.5 * froNormResidual * froNormResidual + lambda1 * l11NormZ;
   }
-}
-
-void SparseCoding::PrintDictionary()
-{
-  Log::Info << "Dictionary: " << endl << matD;
-}
-
-void SparseCoding::PrintCoding()
-{
-  Log::Info << "Coding matrix: " << endl << matZ;
 }
 
 void mlpack::sparse_coding::RemoveRows(const mat& X,

@@ -87,15 +87,15 @@ int main(int argc, char* argv[])
           << "has " << matX.n_rows << " dimensions!" << endl;
     }
 
-    sc.SetDictionary(matInitialD);
+    sc.Dictionary() = matInitialD;
   }
 
   Timer::Start("sparse_coding");
   sc.DoSparseCoding(nIterations);
   Timer::Stop("sparse_coding");
 
-  mat learnedD = sc.MatD();
-  mat learnedZ = sc.MatZ();
+  mat learnedD = sc.Dictionary();
+  mat learnedZ = sc.Codes();
 
   if (strlen(resultsDir) == 0)
   {
