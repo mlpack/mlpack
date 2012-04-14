@@ -84,12 +84,12 @@ class SparseCoding
   /**
    * Set the parameters to SparseCoding. lambda2 defaults to 0.
    *
-   * @param matX Data matrix
+   * @param data Data matrix
    * @param atoms Number of atoms in dictionary
    * @param lambda1 Regularization parameter for l1-norm penalty
    * @param lambda2 Regularization parameter for l2-norm penalty
    */
-  SparseCoding(const arma::mat& matX,
+  SparseCoding(const arma::mat& data,
                const size_t atoms,
                const double lambda1,
                const double lambda2 = 0);
@@ -149,41 +149,33 @@ class SparseCoding
   double Objective();
 
 
-  // accessors, modifiers, printers
+  //! Access the data.
+  const arma::mat& Data() const { return data; }
+  //! Modify the data.
+  arma::mat& Data() { return data; }
 
-  //! Modifier for matX.
-  void SetData(const arma::mat& matX);
+  //! Access the dictionary.
+  const arma::mat& Dictionary() const { return dictionary; }
+  //! Modify the dictionary.
+  arma::mat& Dictionary() { return dictionary; }
 
-  //! Modifier for matD.
-  void SetDictionary(const arma::mat& matD);
-
-  //! Accessor for matD.
-  const arma::mat& MatD() { return matD; }
-  //! Accessor for matZ
-  const arma::mat& MatZ() { return matZ; }
-
-  // Print the dictionary matD
-  void PrintDictionary();
-
-  // Print the sparse codes matZ
-  void PrintCoding();
+  //! Access the sparse codes.
+  const arma::mat& Codes() const { return codes; }
+  //! Modify the sparse codes.
+  arma::mat& Codes() { return codes; }
 
  private:
-  //! Number of dimensions.
-  size_t nDims;
   //! Number of atoms.
-  size_t nAtoms;
-  //! Number of points.
-  size_t nPoints;
+  size_t atoms;
 
   //! data (columns are points).
-  arma::mat matX;
+  arma::mat data;
 
   //! dictionary (columns are atoms).
-  arma::mat matD;
+  arma::mat dictionary;
 
   //! Sparse codes (columns are points).
-  arma::mat matZ;
+  arma::mat codes;
 
   //! l1 regularization term.
   double lambda1;
