@@ -19,37 +19,36 @@ using namespace std;
 namespace mlpack {
 namespace det /** Density Estimation Trees */ {
 
-// This two types in the template are used 
-// for two purposes:
-// eT - the type to store the data in (for most practical 
-// purposes, storing the data as a float suffices).
-// cT - the type to perform computations in (computations 
-// like computing the error, the volume of the node etc.). 
-// For high dimensional data, it might be possible that the 
-// computation might overflow, so you should use either 
-// normalize your data in the (-1, 1) hypercube or use 
-// long double or modify this code to perform computations
-// using logarithms.
+/**
+ * This two types in the template are used for two purposes:
+ *
+ *   eT - the type to store the data in (for most practical purposes, storing
+ *       the data as a float suffices).
+ *   cT - the type to perform computations in (computations like computing the
+ *       error, the volume of the node etc.).
+ *
+ * For high dimensional data, it might be possible that the computation might
+ * overflow, so you should use either normalize your data in the (-1, 1)
+ * hypercube or use long double or modify this code to perform computations
+ * using logarithms.
+ */
 template<typename eT = float,
-	 typename cT = long double>
-class DTree{
- 
-  ////////////////////// Member Variables /////////////////////////////////////
-  
+         typename cT = long double>
+class DTree
+{
  private:
 
   typedef arma::Mat<eT> MatType;
   typedef arma::Col<eT> VecType;
   typedef arma::Row<eT> RowVecType;
 
-
   // The indices in the complete set of points
   // (after all forms of swapping in the original data
-  // matrix to align all the points in a node 
-  // consecutively in the matrix. The 'old_from_new' array 
+  // matrix to align all the points in a node
+  // consecutively in the matrix. The 'old_from_new' array
   // maps the points back to their original indices.
   size_t start_, end_;
-  
+
   // The split dim for this node
   size_t split_dim_;
 
@@ -66,11 +65,11 @@ class DTree{
   size_t subtree_leaves_;
 
   // flag to indicate if this is the root node
-  // used to check whether the query point is 
+  // used to check whether the query point is
   // within the range
   bool root_;
 
-  // ratio of number of points in the node to the 
+  // ratio of number of points in the node to the
   // total number of points (|t| / N)
   cT ratio_;
 
@@ -93,9 +92,7 @@ class DTree{
   DTree<eT, cT> *left_;
   DTree<eT, cT> *right_;
 
-  ////////////////////// Constructors /////////////////////////////////////////
-
-public: 
+public:
 
   ////////////////////// Getters and Setters //////////////////////////////////
   size_t start() { return start_; }
@@ -127,70 +124,69 @@ public:
  private:
 
   cT ComputeNodeError_(size_t total_points);
-  
+
   bool FindSplit_(MatType* data,
-		  size_t* split_dim,
-		  size_t* split_ind,
-		  cT* left_error, 
-		  cT* right_error,
-		  size_t maxLeafSize = 10,
-		  size_t minLeafSize = 5);
+                  size_t* split_dim,
+                  size_t* split_ind,
+                  cT* left_error,
+                  cT* right_error,
+                  size_t maxLeafSize = 10,
+                  size_t minLeafSize = 5);
 
   void SplitData_(MatType* data,
-		  size_t split_dim,
-		  size_t split_ind,
-		  arma::Col<size_t>* old_from_new, 
-		  eT* split_val,
-		  eT* lsplit_val,
-		  eT* rsplit_val);
+                  size_t split_dim,
+                  size_t split_ind,
+                  arma::Col<size_t>* old_from_new,
+                  eT* split_val,
+                  eT* lsplit_val,
+                  eT* rsplit_val);
 
   void GetMaxMinVals_(MatType* data,
-		      VecType* max_vals,
-		      VecType* min_vals);
+                      VecType* max_vals,
+                      VecType* min_vals);
 
   bool WithinRange_(VecType* query);
 
   ///////////////////// Public Functions //////////////////////////////////////
  public:
-  
+
   DTree();
 
   // Root node initializer
   // with the bounding box of the data
   // it contains instead of just the data.
-  DTree(VecType* max_vals, 
-	VecType* min_vals,
-	size_t total_points);
+  DTree(VecType* max_vals,
+        VecType* min_vals,
+        size_t total_points);
 
   // Root node initializer
   // with the data, no bounding box.
   DTree(MatType* data);
 
   // Non-root node initializers
-  DTree(VecType* max_vals, 
-	VecType* min_vals,
-	size_t start,
-	size_t end,
-	cT error);
+  DTree(VecType* max_vals,
+        VecType* min_vals,
+        size_t start,
+        size_t end,
+        cT error);
 
-  DTree(VecType* max_vals, 
-	VecType* min_vals,
-	size_t total_points,
-	size_t start,
-	size_t end);
+  DTree(VecType* max_vals,
+        VecType* min_vals,
+        size_t total_points,
+        size_t start,
+        size_t end);
 
   ~DTree();
 
   // Greedily expand the tree
-  cT Grow(MatType* data, 
-	  arma::Col<size_t> *old_from_new,
-	  bool useVolReg = false,
-	  size_t maxLeafSize = 10,
-	  size_t minLeafSize = 5);
+  cT Grow(MatType* data,
+          arma::Col<size_t> *old_from_new,
+          bool useVolReg = false,
+          size_t maxLeafSize = 10,
+          size_t minLeafSize = 5);
 
   // perform alpha pruning on the tree
-  cT PruneAndUpdate(cT old_alpha,
-		    bool useVolReg = false);
+  cT PruneAndUpdate(cT old_alpha, bool useVolReg = false);
 
   // compute the density at a given point
   cT ComputeValue(VecType* query);
@@ -205,7 +201,7 @@ public:
   // of a learned tree.
   int FindBucket(VecType* query);
 
-  // This computes the variable importance list 
+  // This computes the variable importance list
   // for the learned tree.
   void ComputeVariableImportance(arma::Col<double> *imps);
 
