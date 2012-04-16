@@ -35,7 +35,8 @@ namespace sparse_coding {
  * the dictionary D using a Newton method based on the Lagrange dual (see the
  * paper below for details). The sparse coding step involves solving a large
  * number of sparse linear regression problems; this can be done efficiently
- * using LARS, an algorithm that can solve the LASSO or the Elastic Net (papers below).
+ * using LARS, an algorithm that can solve the LASSO or the Elastic Net (papers
+ * below).
  *
  * Here are those papers:
  *
