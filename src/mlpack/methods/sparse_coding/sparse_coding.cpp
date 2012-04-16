@@ -67,8 +67,8 @@ void SparseCoding::DoSparseCoding(const size_t maxIterations)
   uvec adjacencies = find(codes);
 
   Log::Info << "  Sparsity level: "
-      << 100.0 * ((double) (adjacencies.n_elem)) / ((double) (atoms * data.n_cols))
-      << "%" << endl;
+      << 100.0 * ((double) (adjacencies.n_elem)) / ((double)
+      (atoms * data.n_cols)) << "%" << endl;
   Log::Info << "  Objective value: " << Objective() << "." << endl;
 
   for (size_t t = 1; t != maxIterations; ++t)
@@ -302,7 +302,8 @@ void SparseCoding::OptimizeDictionary(const uvec& adjacencies)
   }
   else
   {
-    mat dictionaryActiveEstimate = trans(solve(codesZT + diagmat(dualVars), codesXT));
+    mat dictionaryActiveEstimate = trans(solve(codesZT + diagmat(dualVars),
+        codesXT));
     dictionaryEstimate = zeros(data.n_rows, atoms);
 
     for (size_t i = 0; i < nActiveAtoms; ++i)
