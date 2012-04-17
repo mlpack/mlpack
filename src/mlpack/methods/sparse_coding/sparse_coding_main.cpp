@@ -27,6 +27,7 @@ PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL) is used.", "s", 0);
 using namespace arma;
 using namespace std;
 using namespace mlpack;
+using namespace mlpack::math;
 using namespace mlpack::sparse_coding;
 
 int main(int argc, char* argv[])
@@ -34,9 +35,9 @@ int main(int argc, char* argv[])
   CLI::ParseCommandLine(argc, argv);
 
   if (CLI::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+    RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else
-    math::RandomSeed((size_t) std::time(NULL));
+    RandomSeed((size_t) std::time(NULL));
 
   double lambda1 = CLI::GetParam<double>("lambda1");
   double lambda2 = CLI::GetParam<double>("lambda2");
