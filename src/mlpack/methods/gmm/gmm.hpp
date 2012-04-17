@@ -152,7 +152,29 @@ class GMM
       dimensionality((!means.empty()) ? means[0].n_elem : 0),
       means(means),
       covariances(covariances),
-      weights(weights) { /* nothing to do */ }
+      weights(weights),
+      localFitter(FittingType()),
+      fitter(localFitter) { /* Nothing to do. */ }
+
+  /**
+   * Create a GMM with the given means, covariances, and weights, and use the
+   * given initialized FittingType class.  This is useful in cases where the
+   * FittingType class needs to store some state.
+   *
+   * @param means Means of the model.
+   * @param covariances Covariances of the model.
+   * @param weights Weights of the model.
+   */
+  GMM(const std::vector<arma::vec>& means,
+      const std::vector<arma::mat>& covariances,
+      const arma::vec& weights,
+      FittingType& fitter) :
+      gaussians(means.size()),
+      dimensionality((!means.empty()) ? means[0].n_elem : 0),
+      means(means),
+      covariances(covariances),
+      weights(weights),
+      fitter(fitter) { /* Nothing to do. */ }
 
   /**
    * Copy constructor for GMMs which use different fitting types.
