@@ -10,6 +10,7 @@
 #include <mlpack/core/optimizers/lbfgs/test_functions.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include "old_boost_test_definitions.hpp"
 
 using namespace mlpack::optimization;
 using namespace mlpack::optimization::test;

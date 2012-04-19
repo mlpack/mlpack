@@ -7,6 +7,7 @@
 #include <mlpack/methods/linear_regression/linear_regression.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include "old_boost_test_definitions.hpp"
 
 using namespace mlpack;
 using namespace mlpack::regression;
@@ -17,7 +18,7 @@ BOOST_AUTO_TEST_SUITE(LinearRegressionTest);
  * Creates two 10x3 random matrices and one 10x1 "results" matrix.
  * Finds B in y=BX with one matrix, then predicts against the other.
  */
-BOOST_AUTO_TEST_CASE(LinearRegressionTest)
+BOOST_AUTO_TEST_CASE(LinearRegressionTestCase)
 {
   // Predictors and points are 100x3 matrices.
   arma::mat predictors(3, 10);

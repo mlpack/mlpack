@@ -9,6 +9,7 @@
 #include <mlpack/methods/kernel_pca/kernel_pca.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include "old_boost_test_definitions.hpp"
 
 BOOST_AUTO_TEST_SUITE(KernelPCATest);
 

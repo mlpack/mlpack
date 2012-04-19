@@ -10,6 +10,7 @@
 #include <mlpack/methods/gmm/phi.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include "old_boost_test_definitions.hpp"
 
 using namespace mlpack;
 using namespace mlpack::gmm;

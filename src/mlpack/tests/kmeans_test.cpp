@@ -8,6 +8,7 @@
 #include <mlpack/methods/kmeans/allow_empty_clusters.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include "old_boost_test_definitions.hpp"
 
 using namespace mlpack;
 using namespace mlpack::kmeans;

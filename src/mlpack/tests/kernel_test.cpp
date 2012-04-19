@@ -18,6 +18,7 @@
 #include <mlpack/core/metrics/mahalanobis_distance.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include "old_boost_test_definitions.hpp"
 
 using namespace mlpack;
 using namespace mlpack::kernel;
@@ -312,6 +313,7 @@ BOOST_AUTO_TEST_CASE(epanechnikov_kernel)
   BOOST_REQUIRE_CLOSE(ek.ConvolutionIntegral(a,c), 0.0, 1e-5);
   BOOST_REQUIRE_CLOSE(ek.ConvolutionIntegral(b,c), 1.5263455690698258, 1e-5);
 }
+
 BOOST_AUTO_TEST_CASE(polynomial_kernel)
 {
   arma::vec a = "0 0 1";

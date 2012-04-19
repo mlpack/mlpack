@@ -6,6 +6,7 @@
  */
 #include <mlpack/core/util/save_restore_utility.hpp>
 #include <boost/test/unit_test.hpp>
+#include "old_boost_test_definitions.hpp"
 
 #define ARGSTR(a) a,#a
 
