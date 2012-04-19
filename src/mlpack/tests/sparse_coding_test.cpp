@@ -11,6 +11,7 @@
 #include <mlpack/methods/sparse_coding/sparse_coding.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include "old_boost_test_definitions.hpp"
 
 using namespace arma;
 using namespace mlpack;
@@ -19,7 +20,7 @@ using namespace mlpack::sparse_coding;
 
 BOOST_AUTO_TEST_SUITE(SparseCodingTest);
 
-void VerifyCorrectness(vec beta, vec errCorr, double lambda)
+void SCVerifyCorrectness(vec beta, vec errCorr, double lambda)
 {
   const double tol = 1e-12;
   size_t nDims = beta.n_elem;
@@ -66,7 +67,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepLasso)
   for (uword i = 0; i < nPoints; ++i)
   {
     vec errCorr = trans(D) * (D * Z.unsafe_col(i) - X.unsafe_col(i));
-    VerifyCorrectness(Z.unsafe_col(i), errCorr, lambda1);
+    SCVerifyCorrectness(Z.unsafe_col(i), errCorr, lambda1);
   }
 }
 
@@ -96,7 +97,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepElasticNet)
     vec errCorr = (trans(D) * D + lambda2 *
        eye(nAtoms, nAtoms)) * Z.unsafe_col(i) - trans(D) * X.unsafe_col(i);
 
-    VerifyCorrectness(Z.unsafe_col(i), errCorr, lambda1);
+    SCVerifyCorrectness(Z.unsafe_col(i), errCorr, lambda1);
   }
 }
 

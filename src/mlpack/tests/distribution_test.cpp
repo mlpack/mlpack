@@ -7,11 +7,12 @@
 #include <mlpack/core.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include "old_boost_test_definitions.hpp"
 
 using namespace mlpack;
 using namespace mlpack::distribution;
 
-BOOST_AUTO_TEST_SUITE(DistributionTest)
+BOOST_AUTO_TEST_SUITE(DistributionTest);
 
 /**
  * Make sure we initialize correctly.

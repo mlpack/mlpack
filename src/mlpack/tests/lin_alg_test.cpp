@@ -10,6 +10,7 @@
 #include <mlpack/core/math/lin_alg.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include "old_boost_test_definitions.hpp"
 
 using namespace arma;
 using namespace mlpack;

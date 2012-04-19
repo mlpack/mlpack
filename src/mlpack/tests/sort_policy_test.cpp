@@ -13,6 +13,7 @@
 #include <mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include "old_boost_test_definitions.hpp"
 
 using namespace mlpack;
 using namespace mlpack::neighbor;

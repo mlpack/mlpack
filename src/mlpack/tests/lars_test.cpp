@@ -12,6 +12,7 @@
 #include <mlpack/methods/lars/lars.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include "old_boost_test_definitions.hpp"
 
 using namespace mlpack;
 using namespace mlpack::regression;
@@ -26,7 +27,7 @@ void GenerateProblem(arma::mat& X, arma::vec& y, size_t nPoints, size_t nDims)
 }
 
 
-void VerifyCorrectness(arma::vec beta, arma::vec errCorr, double lambda)
+void LARSVerifyCorrectness(arma::vec beta, arma::vec errCorr, double lambda)
 {
   size_t nDims = beta.n_elem;
   const double tol = 1e-12;
@@ -78,7 +79,7 @@ void LassoTest(size_t nPoints, size_t nDims, bool elasticNet, bool useCholesky)
     arma::vec errCorr = (arma::trans(X) * X + lambda2 *
         arma::eye(nDims, nDims)) * betaOpt - arma::trans(X) * y;
 
-    VerifyCorrectness(betaOpt, errCorr, lambda1);
+    LARSVerifyCorrectness(betaOpt, errCorr, lambda1);
   }
 }
 

@@ -8,6 +8,7 @@
 #include <mlpack/core/optimizers/lrsdp/lrsdp.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include "old_boost_test_definitions.hpp"
 
 using namespace mlpack;
 using namespace mlpack::optimization;
