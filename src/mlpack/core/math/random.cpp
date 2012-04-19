@@ -25,7 +25,7 @@ namespace math {
     boost::uniform_01<> randUniformDist;
   #else
     // Pre-1.39 Boost.Random did not give default template parameter values.
-    boost::uniform_01<double, double> randUniformDist;
+    boost::uniform_01<boost::mt19937, double> randUniformDist(randGen);
   #endif
 
   // Global normal distribution.

@@ -28,8 +28,15 @@ namespace math /** Miscellaneous math routines. */ {
 #else
   // Global random object.
   extern boost::mt19937 randGen;
-  // Global uniform distribution.
-  extern boost::uniform_01<> randUniformDist;
+
+  #if BOOST_VERSION >= 103900
+    // Global uniform distribution.
+    extern boost::uniform_01<> randUniformDist;
+  #else
+    // Pre-1.39 Boost.Random did not give default template parameter values.
+    extern boost::uniform_01<boost::mt19937, double> randUniformDist;
+  #endif
+
   // Global normal distribution.
   extern boost::normal_distribution<> randNormalDist;
 #endif
@@ -52,7 +59,13 @@ inline void RandomSeed(const size_t seed)
  */
 inline double Random()
 {
+#if BOOST_VERSION >= 103900
   return randUniformDist(randGen);
+#else
+  // Before Boost 1.39, we did not give the random object when we wanted a
+  // random number; that gets given at construction time.
+  return randUniformDist();
+#endif
 }
 
 /**
