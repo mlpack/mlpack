@@ -19,8 +19,15 @@ namespace math {
 #else
   // Global random object.
   boost::mt19937 randGen;
-  // Global uniform distribution.
-  boost::uniform_01<> randUniformDist;
+
+  #if BOOST_VERSION >= 103900
+    // Global uniform distribution.
+    boost::uniform_01<> randUniformDist;
+  #else
+    // Pre-1.39 Boost.Random did not give default template parameter values.
+    boost::uniform_01<double, double> randUniformDist;
+  #endif
+
   // Global normal distribution.
   boost::normal_distribution<> randNormalDist;
 #endif
