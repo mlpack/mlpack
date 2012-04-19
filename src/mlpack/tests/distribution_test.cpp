@@ -55,6 +55,7 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionRandomTest)
   d.Probabilities() = "0.3 0.6 0.1";
 
   arma::vec actualProb(3);
+  actualProb.zeros();
 
   for (size_t i = 0; i < 10000; i++)
     actualProb((size_t) (d.Random()[0] + 0.5))++;
