@@ -8,6 +8,8 @@
 #ifndef __MLPACK_TESTS_OLD_BOOST_TEST_DEFINITIONS_HPP
 #define __MLPACK_TESTS_OLD_BOOST_TEST_DEFINITIONS_HPP
 
+#include <boost/version.hpp>
+
 // This is only necessary for pre-1.36 Boost.Test.
 #if BOOST_VERSION < 103600
 
