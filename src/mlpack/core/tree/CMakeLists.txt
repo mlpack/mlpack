@@ -8,6 +8,8 @@ set(SOURCES
   binary_space_tree.hpp
   binary_space_tree_impl.hpp
   bounds.hpp
+  cover_tree.hpp
+  cover_tree_impl.hpp
   hrectbound.hpp
   hrectbound_impl.hpp
   periodichrectbound.hpp
