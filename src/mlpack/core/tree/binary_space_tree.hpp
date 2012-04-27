@@ -235,15 +235,21 @@ class BinarySpaceTree
   //! Fills the tree to the specified level.
   size_t ExtendTree(const size_t level);
 
-  /**
-   * Gets the left child of this node.
-   */
+  //! Gets the left child of this node.
   BinarySpaceTree* Left() const;
 
-  /**
-   * Gets the right child of this node.
-   */
+  //! Gets the right child of this node.
   BinarySpaceTree* Right() const;
+
+  //! Return the number of children in this node.
+  size_t NumChildren() const;
+
+  /**
+   * Return the specified child (0 will be left, 1 will be right).
+   *
+   * @param child Index of child to return.
+   */
+  BinarySpaceTree* Child(const size_t child) const;
 
   /**
   * Returns the dimension this parent's children are split on.
