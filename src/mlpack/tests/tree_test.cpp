@@ -3,10 +3,11 @@
  *
  * Tests for tree-building methods.
  */
+#include <mlpack/core.hpp>
 #include <mlpack/core/tree/bounds.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
-#include <vector>
+#include <mlpack/core/tree/cover_tree.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -1435,6 +1436,202 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSparseKDTreeTest)
   BOOST_REQUIRE_EQUAL(root.TreeSize(), 127);
   // Check the tree depth.
   BOOST_REQUIRE_EQUAL(root.TreeDepth(), 7);
+}
+
+void RecurseTreeCountLeaves(const CoverTree<>& node, arma::vec& counts)
+{
+  for (size_t i = 0; i < node.NumChildren(); ++i)
+  {
+    if (node.Child(i).NumChildren() == 0)
+      counts[node.Child(i).Point()]++;
+    else
+      RecurseTreeCountLeaves(node.Child(i), counts);
+  }
+}
+
+void CheckSelfChild(const CoverTree<>& node)
+{
+  if (node.NumChildren() == 0)
+    return; // No self-child applicable here.
+
+  bool found = false;
+  for (size_t i = 0; i < node.NumChildren(); ++i)
+  {
+    if (node.Child(i).Point() == node.Point())
+      found = true;
+
+    // Recursively check the children.
+    CheckSelfChild(node.Child(i));
+  }
+
+  // Ensure this has its own self-child.
+  BOOST_REQUIRE_EQUAL(found, true);
+}
+
+void CheckCovering(const CoverTree<>& node)
+{
+  // Return if a leaf.  No checking necessary.
+  if (node.NumChildren() == 0)
+    return;
+
+  const arma::mat& dataset = node.Dataset();
+  const size_t nodePoint = node.Point();
+
+  // To ensure that this node satisfies the covering principle, we must ensure
+  // that the distance to each child is less than pow(expansionConstant, scale).
+  double maxDistance = pow(node.ExpansionConstant(), node.Scale());
+  for (size_t i = 0; i < node.NumChildren(); ++i)
+  {
+    const size_t childPoint = node.Child(i).Point();
+
+    double distance = metric::LMetric<2>::Evaluate(dataset.col(nodePoint),
+        dataset.col(childPoint));
+
+    BOOST_REQUIRE_LE(distance, maxDistance);
+
+    // Check the child.
+    CheckCovering(node.Child(i));
+  }
+}
+
+void CheckIndividualSeparation(const CoverTree<>& constantNode,
+                               const CoverTree<>& node)
+{
+  // Don't check points at a lower scale.
+  if (node.Scale() < constantNode.Scale())
+    return;
+
+  // If at a higher scale, recurse.
+  if (node.Scale() > constantNode.Scale())
+  {
+    for (size_t i = 0; i < node.NumChildren(); ++i)
+    {
+      // Don't recurse into leaves.
+      if (node.Child(i).NumChildren() > 0)
+        CheckIndividualSeparation(constantNode, node.Child(i));
+    }
+
+    return;
+  }
+
+  // Don't compare the same point against itself.
+  if (node.Point() == constantNode.Point())
+    return;
+
+  // Now we know we are at the same scale, so make the comparison.
+  const arma::mat& dataset = constantNode.Dataset();
+  const size_t constantPoint = constantNode.Point();
+  const size_t nodePoint = node.Point();
+
+  // Make sure the distance is at least the following value (in accordance with
+  // the separation principle of cover trees).
+  double minDistance = pow(constantNode.ExpansionConstant(),
+      constantNode.Scale());
+
+  double distance = metric::LMetric<2>::Evaluate(dataset.col(constantPoint),
+      dataset.col(nodePoint));
+
+  BOOST_REQUIRE_GT(distance, minDistance);
+}
+
+void CheckSeparation(const CoverTree<>& node, const CoverTree<>& root)
+{
+  // Check the separation between this point and all other points on this scale.
+  CheckIndividualSeparation(node, root);
+
+  // Check the children, but only if they are not leaves.  Leaves don't need to
+  // be checked.
+  for (size_t i = 0; i < node.NumChildren(); ++i)
+    if (node.Child(i).NumChildren() > 0)
+      CheckSeparation(node.Child(i), root);
+}
+
+
+/**
+ * Create a simple cover tree and then make sure it is valid.
+ */
+BOOST_AUTO_TEST_CASE(SimpleCoverTreeConstructionTest)
+{
+  // 20-point dataset.
+  arma::mat data = arma::trans(arma::mat("0.0 0.0;"
+                                         "1.0 0.0;"
+                                         "0.5 0.5;"
+                                         "2.0 2.0;"
+                                         "-1.0 2.0;"
+                                         "3.0 0.0;"
+                                         "1.5 5.5;"
+                                         "-2.0 -2.0;"
+                                         "-1.5 1.5;"
+                                         "0.0 4.0;"
+                                         "2.0 1.0;"
+                                         "2.0 1.2;"
+                                         "-3.0 -2.5;"
+                                         "-5.0 -5.0;"
+                                         "3.5 1.5;"
+                                         "2.0 2.5;"
+                                         "-1.0 -1.0;"
+                                         "-3.5 1.5;"
+                                         "3.5 -1.5;"
+                                         "2.0 1.0;"));
+
+  // The root point will be the first point, (0, 0).
+  CoverTree<> tree(data); // Expansion constant of 2.0.
+
+  // The furthest point from the root will be (-5, -5), with a squared distance
+  // of 50.  This means the scale of the root node should be 6 (because 2^6 =
+  // 64).
+  BOOST_REQUIRE_EQUAL(tree.Scale(), 6);
+
+  // Now loop through the tree and ensure that each leaf is only created once.
+  arma::vec counts;
+  counts.zeros(20);
+  RecurseTreeCountLeaves(tree, counts);
+
+  // Each point should only have one leaf node representing it.
+  for (size_t i = 0; i < 20; ++i)
+    BOOST_REQUIRE_EQUAL(counts[i], 1);
+
+  // Each non-leaf should have a self-child.
+  CheckSelfChild(tree);
+
+  // Each node must satisfy the covering principle (its children must be less
+  // than or equal to a certain distance apart).
+  CheckCovering(tree);
+
+  // Each node's children must be separated by at least a certain value.
+  CheckSeparation(tree, tree);
+}
+
+/**
+ * Create a large cover tree and make sure it's accurate.
+ */
+BOOST_AUTO_TEST_CASE(CoverTreeConstructionTest)
+{
+  arma::mat dataset;
+  // 50-dimensional, 1000 point.
+  dataset.randu(50, 1000);
+
+  CoverTree<> tree(dataset);
+
+  Log::Warn << "Tree built." << std::endl;
+
+  // Ensure each leaf is only created once.
+  arma::vec counts;
+  counts.zeros(1000);
+  RecurseTreeCountLeaves(tree, counts);
+
+  for (size_t i = 0; i < 1000; ++i)
+    BOOST_REQUIRE_EQUAL(counts[i], 1);
+
+  // Each non-leaf should have a self-child.
+  CheckSelfChild(tree);
+
+  // Each node must satisfy the covering principle (its children must be less
+  // than or equal to a certain distance apart).
+  CheckCovering(tree);
+
+  // Each node's children must be separated by at least a certain value.
+  CheckSeparation(tree, tree);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
