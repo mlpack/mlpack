@@ -18,8 +18,8 @@ template<typename StatisticType>
 CoverTree<StatisticType>::CoverTree(const arma::mat& dataset,
                                     const double expansionConstant) :
     dataset(dataset),
-    expansionConstant(expansionConstant),
-    point(0)
+    point(0),
+    expansionConstant(expansionConstant)
 {
   // Kick off the building.  Create the indices array and the distances array.
   arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
@@ -132,9 +132,9 @@ CoverTree<StatisticType>::CoverTree(const arma::mat& dataset,
                                     size_t& farSetSize,
                                     size_t& usedSetSize) :
     dataset(dataset),
-    expansionConstant(expansionConstant),
     point(pointIndex),
-    scale(scale)
+    scale(scale),
+    expansionConstant(expansionConstant)
 {
 //  Log::Debug << "Making child.  pointIndex " << pointIndex << ", scale " <<
 //      scale << ", nearSetSize " << nearSetSize << ", farSetSize " << farSetSize
