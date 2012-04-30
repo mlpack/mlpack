@@ -12,16 +12,108 @@
 namespace mlpack {
 namespace tree {
 
+/**
+ * A cover tree is a tree specifically designed to speed up nearest-neighbor
+ * computation in high-dimensional spaces.  Each non-leaf node references a
+ * point and has a nonzero number of children, including a "self-child" which
+ * references the same point.  A leaf node represents only one point.
+ *
+ * The tree can be thought of as a hierarchy with the root node at the top level
+ * and the leaf nodes at the bottom level.  Each level in the tree has an
+ * assigned 'scale' i.  The tree follows these three conditions:
+ *
+ * - nesting: the level C_i is a subset of the level C_{i - 1}.
+ * - covering: all node in level C_{i - 1} have at least one node in the
+ *     level C_i with distance less than or equal to EC^i (exactly one of these
+ *     is a parent of the point in level C_{i - 1}.
+ * - separation: all nodes in level C_i have distance greater than EC^i to all
+ *     other nodes in level C_i.
+ *
+ * The value 'EC' refers to the expansion constant, which is a parameter of the
+ * tree.  These three properties make the cover tree very good for fast,
+ * high-dimensional nearest-neighbor search.
+ *
+ * The theoretical structure of the tree contains many 'implicit' nodes which
+ * only have a "self-child" (a child referencing the same point, but at a lower
+ * scale level).  This practical implementation only constructs explicit nodes
+ * -- non-leaf nodes with more than one child.  A leaf node has no children, and
+ * its scale level is INT_MIN.
+ *
+ * For more information on cover trees, see
+ *
+ * @code
+ * @inproceedings{
+ *   author = {Beygelzimer, Alina and Kakade, Sham and Langford, John},
+ *   title = {Cover trees for nearest neighbor},
+ *   booktitle = {Proceedings of the 23rd International Conference on Machine
+ *     Learning},
+ *   series = {ICML '06},
+ *   year = {2006},
+ *   pages = {97--104]
+ * }
+ * @endcode
+ *
+ * For information on runtime bounds of the nearest-neighbor computation using
+ * cover trees, see the following paper, presented at NIPS 2009:
+ *
+ * @code
+ * @inproceedings{
+ *   author = {Ram, P., and Lee, D., and March, W.B., and Gray, A.G.},
+ *   title = {Linear-time Algorithms for Pairwise Statistical Problems},
+ *   booktitle = {Advances in Neural Information Processing Systems 22},
+ *   editor = {Y. Bengio and D. Schuurmans and J. Lafferty and C.K.I. Williams
+ *     and A. Culotta},
+ *   pages = {1527--1535},
+ *   year = {2009}
+ * }
+ * @endcode
+ */
 template<typename StatisticType = EmptyStatistic>
 class CoverTree
 {
  public:
   /**
-   * Create the cover tree.
+   * Create the cover tree with the given dataset and given expansion constant.
+   * The dataset will not be modified during the building procedure (unlike
+   * BinarySpaceTree).
+   *
+   * @param dataset Reference to the dataset to build a tree on.
+   * @param expansionConstant Expansion constant (EC) to use during tree
+   *      building (default 2.0).
    */
   CoverTree(const arma::mat& dataset,
             const double expansionConstant = 2.0);
 
+  /**
+   * Construct a child cover tree node.  This constructor is not meant to be
+   * used externally, but it could be used to insert another node into a tree.
+   * This procedure uses only one vector for the near set, the far set, and the
+   * used set (this is to prevent unnecessary memory allocation in recursive
+   * calls to this constructor).  Therefore, the size of the near set, far set,
+   * and used set must be passed in.  The near set will be entirely used up, and
+   * some of the far set may be used.  The value of usedSetSize will be set to
+   * the number of points used in the construction of this node, and the value
+   * of farSetSize will be modified to reflect the number of points in the far
+   * set _after_ the construction of this node.
+   *
+   * If you are calling this manually, be careful that the given scale is
+   * as small as possible, or you may be creating an implicit node in your tree.
+   *
+   * @param dataset Reference to the dataset to build a tree on.
+   * @param expansionConstant Expansion constant (EC) to use during tree
+   *     building.
+   * @param pointIndex Index of the point this node references.
+   * @param scale Scale of this level in the tree.
+   * @param indices Array of indices, ordered [ nearSet | farSet | usedSet ];
+   *     will be modified to [ farSet | usedSet ].
+   * @param distances Array of distances, ordered the same way as the indices.
+   *     These represent the distances between the point specified by pointIndex
+   *     and each point in the indices array.
+   * @param nearSetSize Size of the near set; if 0, this will be a leaf.
+   * @param farSetSize Size of the far set; may be modified (if this node uses
+   *     any points in the far set).
+   * @param usedSetSize The number of points used will be added to this number.
+   */
   CoverTree(const arma::mat& dataset,
             const double expansionConstant,
             const size_t pointIndex,
@@ -32,6 +124,9 @@ class CoverTree
             size_t& farSetSize,
             size_t& usedSetSize);
 
+  /**
+   * Delete this cover tree node and its children.
+   */
   ~CoverTree();
 
   //! Get a reference to the dataset.
@@ -65,17 +160,9 @@ class CoverTree
   //! Index of the point in the matrix which this node represents.
   size_t point;
 
-  //! The distance to the furthest descendant.
-  double furthestDistance; // Better name?
-
-  //! The distance to the parent.
-  double parentDistance; // Better name?
-
-  //! The list of children; the first is the "self child" (what is this?).
+  //! The list of children; the first is the self-child.
   std::vector<CoverTree*> children;
 
-  //! Depth of the node in terms of scale (in terms of what?).
-//  size_t scaleDepth;
   //! Scale level of the node.
   int scale;
 
@@ -84,30 +171,69 @@ class CoverTree
 
   //! The instantiated statistic.
   StatisticType stat;
+
+  /**
+   * Fill the vector of distances with the distances between the point specified
+   * by pointIndex and each point in the indices array.  The distances of the
+   * first pointSetSize points in indices are calculated (so, this does not
+   * necessarily need to use all of the points in the arrays).
+   *
+   * @param pointIndex Point to build the distances for.
+   * @param indices List of indices to compute distances for.
+   * @param distances Vector to store calculated distances in.
+   * @param pointSetSize Number of points in arrays to calculate distances for.
+   */
+  void ComputeDistances(const size_t pointIndex,
+                        const arma::Col<size_t>& indices,
+                        arma::vec& distances,
+                        const size_t pointSetSize);
+  /**
+   * Split the given indices and distances into a near and a far set, returning
+   * the number of points in the near set.  The distances must already be
+   * initialized.  This will order the indices and distances such that the
+   * points in the near set make up the first part of the array and the far set
+   * makes up the rest:  [ nearSet | farSet ].
+   *
+   * @param indices List of indices; will be reordered.
+   * @param distances List of distances; will be reordered.
+   * @param bound If the distance is less than or equal to this bound, the point
+   *      is placed into the near set.
+   * @param pointSetSize Size of point set (because we may be sorting a smaller
+   *      list than the indices vector will hold).
+   */
+  size_t SplitNearFar(arma::Col<size_t>& indices,
+                      arma::vec& distances,
+                      const double bound,
+                      const size_t pointSetSize);
+
+  /**
+   * Assuming that the list of indices and distances is sorted as
+   * [ childFarSet | childUsedSet | farSet | usedSet ],
+   * resort the sets so the organization is
+   * [ childFarSet | farSet | childUsedSet | usedSet ].
+   *
+   * The size_t parameters specify the sizes of each set in the array.  Only the
+   * ordering of the indices and distances arrays will be modified (not their
+   * actual contents).
+   *
+   * The size of any of the four sets can be zero and this method will handle
+   * that case accordingly.
+   *
+   * @param indices List of indices to sort.
+   * @param distances List of distances to sort.
+   * @param childFarSetSize Number of points in child far set (childFarSet).
+   * @param childUsedSetSize Number of points in child used set (childUsedSet).
+   * @param farSetSize Number of points in far set (farSet).
+   */
+  size_t SortPointSet(arma::Col<size_t>& indices,
+                      arma::vec& distances,
+                      const size_t childFarSetSize,
+                      const size_t childUsedSetSize,
+                      const size_t farSetSize);
 };
 
-// Utility functions; these should probably be incorporated into the class
-// itself sometime soon.
-
-size_t SplitNearFar(arma::Col<size_t>& indices,
-                    arma::vec& distances,
-                    const double bound,
-                    const size_t pointSetSize);
-
-void BuildDistances(const arma::mat& dataset,
-                    const size_t pointIndex,
-                    const arma::Col<size_t>& indices,
-                    arma::vec& distances,
-                    const size_t pointSetSize);
-
-size_t SortPointSet(arma::Col<size_t>& indices,
-                    arma::vec& distances,
-                    const size_t childFarSetSize,
-                    const size_t childUsedSetSize,
-                    const size_t farSetSize);
-
-};
-};
+}; // namespace tree
+}; // namespace mlpack
 
 // Include implementation.
 #include "cover_tree_impl.hpp"
