@@ -4,14 +4,23 @@
  *
  * Definition of the LARS class, which performs Least Angle Regression and the
  * LASSO.
+ *
+ * Only minor modifications of LARS are necessary to handle the constrained
+ * version of the problem:
+ *
+ * \f[
+ * \min_{\beta} 0.5 || X \beta - y ||_2^2 + 0.5 \lambda_2 || \beta ||_2^2
+ * \f]
+ * subject to \f$ ||\beta||_1 <= \tau \f$
+ *
+ * Although this option currently is not implemented, it will be implemented
+ * very soon.
  */
 #ifndef __MLPACK_METHODS_LARS_LARS_HPP
 #define __MLPACK_METHODS_LARS_LARS_HPP
 
 #include <armadillo>
 #include <mlpack/core.hpp>
-
-#define EPS 1e-16
 
 namespace mlpack {
 namespace regression {
@@ -21,27 +30,27 @@ namespace regression {
 
 /**
  * An implementation of LARS, a stage-wise homotopy-based algorithm for
- * l1 regularized linear regression (LASSO) and l1+l2 regularized linear
+ * l1-regularized linear regression (LASSO) and l1+l2 regularized linear
  * regression (Elastic Net).
- * Let X be a matrix where each row is a point and each column is a dimension,
- * and let y be a vector of targets.
+ *
+ * Let \f$ X \f$ be a matrix where each row is a point and each column is a
+ * dimension and let \f$ y \f$ be a vector of targets.
+ *
  * The Elastic Net problem is to solve
- * min_beta 0.5 ||X beta - y||_2^2 + lambda_1 ||beta||_1 + 0.5 lambda_2 ||beta||_2^2
- * If lambda_1 > 0, lambda_2 = 0, the problem is the LASSO.
- * If lambda_1 > 0, lambda_2 > 0, the problem is the Elastic Net.
- * If lambda_1 = 0, lambda_2 > 0, the problem is Ridge Regression.
- * If lambda_1 = 0, lambda_2 = 0, the problem is unregularized linear
- *     regression.
+ *
+ * \f[ \min_{\beta} 0.5 || X \beta - y ||_2^2 + \lambda_1 || \beta ||_1 +
+ *     0.5 \lambda_2 || \beta ||_2^2 \f]
+ *
+ * If \f$ \lambda_1 > 0 \f$ and \f$ \lambda_2 = 0 \f$, the problem is the LASSO.
+ * If \f$ \lambda_1 > 0 \f$ and \f$ \lambda_2 > 0 \f$, the problem is the
+ *   elastic net.
+ * If \f$ \lambda_1 = 0 \f$ and \f$ \lambda_2 > 0 \f$, the problem is ridge
+ *   regression.
+ * If \f$ \lambda_1 = 0 \f$ and \f$ \lambda_2 = 0 \f$, the problem is
+ *   unregularized linear regression.
  *
  * Note: This algorithm is not recommended for use (in terms of efficiency)
- * when lambda_1 = 0.
- *
- * Only minor modifications are necessary to handle the constrained version of
- * the problem:
- *   min_beta 0.5 ||X beta - y||_2^2 + 0.5 lambda_2 ||beta||_2^2
- *   subject to ||beta||_1 <= tau
- * Although this option currently is not implemented, it will be implemented
- * very soon.
+ * when \f$ \lambda_1 \f$ = 0.
  *
  * For more details, see the following papers:
  *
@@ -79,53 +88,33 @@ class LARS
    *
    * @param useCholesky Whether or not to use Cholesky decomposition when
    *    solving linear system. If no, compute full Gram matrix at beginning.
-   */
-  LARS(const bool useCholesky);
-
-  /**
-   * Set the parameters to LARS.  lambda2 defaults to 0.
-   *
-   * @param useCholesky Whether or not to use Cholesky decomposition when
-   *    solving linear system. If no, compute full Gram matrix at beginning.
-   * @param lambda1 Regularization parameter for l_1-norm penalty
+   * @param lambda1 Regularization parameter for l1-norm penalty.
+   * @param lambda2 Regularization parameter for l2-norm penalty.
+   * @param tolerance Run until the maximum correlation of elements in (X^T y)
+   *     is less than this.
    */
   LARS(const bool useCholesky,
-       const double lambda1);
+       const double lambda1 = 0.0,
+       const double lambda2 = 0.0,
+       const double tolerance = 1e-16);
 
   /**
-   * Set the parameters to LARS.
+   * Set the parameters to LARS, and pass in a precalculated Gram matrix.  Both
+   * lambda1 and lambda2 default to 0.
    *
    * @param useCholesky Whether or not to use Cholesky decomposition when
-   *    solving linear system. If no, compute full Gram matrix at beginning.
-   * @param lambda1 Regularization parameter for l_1-norm penalty
-   * @param lambda2 Regularization parameter for l_2-norm penalty
+   *    solving linear system.
+   * @param gramMatrix Gram matrix.
+   * @param lambda1 Regularization parameter for l1-norm penalty.
+   * @param lambda2 Regularization parameter for l2-norm penalty.
+   * @param tolerance Run until the maximum correlation of elements in (X^T y)
+   *     is less than this.
    */
   LARS(const bool useCholesky,
-       const double lambda1,
-       const double lambda2);
-
-  ~LARS() { }
-
-  /**
-   * Set the Gram matrix (done before calling DoLars).
-   *
-   * @param matGram Matrix to which to set Gram matrix
-   */
-  void SetGram(const arma::mat& matGram);
-
-  /**
-   * Set the Gram matrix (done before calling DoLars) by reusing memory.
-   *
-   * @param matGram Matrix to which to set Gram matrix
-   */
-  void SetGramMem(double* matGramMemPtr, arma::uword nDims);
-
-  /**
-   * Compute Gram matrix. If elastic net, add lambda2 * identity to diagonal.
-   *
-   * @param matX Data matrix to use for computing Gram matrix
-   */
-  void ComputeGram(const arma::mat& matX);
+       const arma::mat& gramMatrix,
+       const double lambda1 = 0.0,
+       const double lambda2 = 0.0,
+       const double tolerance = 1e-16);
 
   /**
    * Run LARS.
@@ -154,39 +143,58 @@ class LARS
   const arma::mat& MatUtriCholFactor() const { return matUtriCholFactor; }
 
 private:
-  // Gram matrix
-  arma::mat matGram;
+  //! Gram matrix.
+  arma::mat matGramInternal;
 
-  // Upper triangular cholesky factor; initially 0x0 arma::matrix.
+  //! Reference to the Gram matrix we will use.
+  const arma::mat& matGram;
+
+  //! Upper triangular cholesky factor; initially 0x0 matrix.
   arma::mat matUtriCholFactor;
 
+  //! Whether or not to use Cholesky decomposition when solving linear system.
   bool useCholesky;
 
+  //! True if this is the LASSO problem.
   bool lasso;
+  //! Regularization parameter for l1 penalty.
   double lambda1;
 
+  //! True if this is the elastic net problem.
   bool elasticNet;
+  //! Regularization parameter for l2 penalty.
   double lambda2;
 
-  // solution path
+  //! Tolerance for main loop.
+  double tolerance;
+
+  //! Solution path.
   std::vector<arma::vec> betaPath;
 
-  // value of lambda1 for each solution in solution path
+  //! Value of lambda_1 for each solution in solution path.
   std::vector<double> lambdaPath;
 
-  // number of dimensions in active set
+  //! Number of dimensions in active set.
   arma::uword nActive;
 
-  // active set of dimensions
+  //! Active set of dimensions.
   std::vector<arma::uword> activeSet;
 
-  // active set membership indicator (for each dimension)
+  //! Active set membership indicator (for each dimension).
   std::vector<bool> isActive;
 
-  // remove activeVarInd'th element from active set
+  /**
+   * Remove activeVarInd'th element from active set.
+   *
+   * @param activeVarInd Index of element to remove from active set.
+   */
   void Deactivate(arma::uword activeVarInd);
 
-  // add dimension varInd to active set
+  /**
+   * Add dimension varInd to active set.
+   *
+   * @param varInd Dimension to add to active set.
+   */
   void Activate(arma::uword varInd);
 
   // compute "equiangular" direction in output space
@@ -204,7 +212,6 @@ private:
   void GivensRotate(const arma::vec::fixed<2>& x, arma::vec::fixed<2>& rotatedX, arma::mat& G);
 
   void CholeskyDelete(arma::uword colToKill);
-
 };
 
 }; // namespace regression

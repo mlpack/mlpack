@@ -7,65 +7,42 @@
 
 #include "lars.hpp"
 
-// we are explicit with std:: to avoid confusing std::vector with arma::vec
-// we use arma namespace too often to explicitly use arma:: everywhere
-//using namespace std;
 using namespace arma;
 using namespace mlpack;
 using namespace mlpack::regression;
 
-LARS::LARS(const bool useCholesky) :
-    useCholesky(useCholesky),
-    lasso(false),
-    elasticNet(false)
-{ /* nothing left to do */ }
-
-LARS::LARS(const bool useCholesky,
-           const double lambda1) :
-    useCholesky(useCholesky),
-    lasso(true),
-    lambda1(lambda1),
-    elasticNet(false),
-    lambda2(0)
-{ /* nothing left to do */ }
-
 LARS::LARS(const bool useCholesky,
            const double lambda1,
-           const double lambda2) :
+           const double lambda2,
+           const double tolerance) :
+    matGram(matGramInternal),
     useCholesky(useCholesky),
-    lasso(true),
+    lasso((lambda1 != 0)),
     lambda1(lambda1),
-    elasticNet(true),
-    lambda2(lambda2)
-{ /* nothing left to do */ }
+    elasticNet((lambda1 != 0) && (lambda2 != 0)),
+    lambda2(lambda2),
+    tolerance(tolerance)
+{ /* Nothing left to do. */ }
 
-void LARS::SetGram(const mat& matGram)
-{
-  this->matGram = matGram;
-}
-
-void LARS::SetGramMem(double* matGramMemPtr, uword nDims)
-{
-  this->matGram = mat(matGramMemPtr, nDims, nDims, false);
-}
-
-void LARS::ComputeGram(const mat& matX)
-{
-  if (elasticNet)
-  {
-    matGram = trans(matX) * matX + lambda2 * eye(matX.n_cols, matX.n_cols);
-  }
-  else
-  {
-    matGram = trans(matX) * matX;
-  }
-}
+LARS::LARS(const bool useCholesky,
+           const arma::mat& gramMatrix,
+           const double lambda1,
+           const double lambda2,
+           const double tolerance) :
+    matGram(gramMatrix),
+    useCholesky(useCholesky),
+    lasso((lambda1 != 0)),
+    lambda1(lambda1),
+    elasticNet((lambda1 != 0) && (lambda2 != 0)),
+    lambda2(lambda2),
+    tolerance(tolerance)
+{ /* Nothing left to do */ }
 
 void LARS::DoLARS(const mat& matX, const vec& y)
 {
   // compute Xty
   vec vecXTy = trans(matX) * y;
-  
+
   // set up active set variables
   nActive = 0;
   activeSet = std::vector<uword>(0);
@@ -79,12 +56,6 @@ void LARS::DoLARS(const mat& matX, const vec& y)
 
   bool lassocond = false;
 
-  // used for elastic net
-  if (!elasticNet)
-  {
-    lambda2 = 0; // just in case it is accidentally used, the code still will be correct
-  }
-  
   vec corr = vecXTy;
   vec absCorr = abs(corr);
   uword changeInd;
@@ -92,7 +63,7 @@ void LARS::DoLARS(const mat& matX, const vec& y)
 
   betaPath.push_back(beta);
   lambdaPath.push_back(maxCorr);
-  
+
   // don't even start!
   if (maxCorr < lambda1)
   {
@@ -100,22 +71,20 @@ void LARS::DoLARS(const mat& matX, const vec& y)
     return;
   }
 
-  // compute Gram matrix
-  if (!useCholesky && matGram.is_empty())
+  // Compute the Gram matrix.  If this is the elastic net problem, we will add
+  // lambda2 * I_n to the matrix.
+  if (matGram.n_elem == 0)
   {
-    ComputeGram(matX);
+    // In this case, matGram should reference matGramInternal.
+    matGramInternal = trans(matX) * matX;
+
+    if (elasticNet && !useCholesky)
+      matGramInternal += lambda2 * eye(matX.n_cols, matX.n_cols);
   }
-  else if(useCholesky && matGram.is_empty()) {
-    //Log::Info << "You probably should compute the Gram matrix ahead of time when in Cholesky mode!\n";
-    matGram = trans(matX) * matX;
-  }
-  
-  //uword iterations_run = 0;
-  // MAIN LOOP
-  while ((nActive < matX.n_cols) && (maxCorr > EPS))
+
+  // Main loop.
+  while ((nActive < matX.n_cols) && (maxCorr > tolerance))
   {
-    //iterations_run++;
-    //printf("iteration %d\t\n", iterations_run);
 
     // explicit computation of max correlation, among inactive indices
     changeInd = -1;
@@ -143,8 +112,8 @@ void LARS::DoLARS(const mat& matX, const vec& y)
         // {
         //   newGramCol[i] = dot(matX.col(activeSet[i]), matX.col(changeInd));
         // }
-	vec newGramCol = matGram.elem(changeInd * matX.n_cols + conv_to< uvec >::from(activeSet)); // this is equivalent to the above 5 lines - check this!
-	
+        vec newGramCol = matGram.elem(changeInd * matX.n_cols + conv_to< uvec >::from(activeSet)); // this is equivalent to the above 5 lines - check this!
+
         //CholeskyInsert(matX.col(changeInd), newGramCol);
         CholeskyInsert(matGram(changeInd, changeInd), newGramCol);
       }
@@ -282,7 +251,7 @@ void LARS::DoLARS(const mat& matX, const vec& y)
         beta(activeSet[changeInd]) = 0;
       }
     }
-    
+
     betaPath.push_back(beta);
 
     if (lassocond)
@@ -330,9 +299,7 @@ void LARS::Solution(vec& beta)
 }
 
 
-
-  ////////// private functions //////////
-
+// Private functions.
 void LARS::Deactivate(uword activeVarInd)
 {
   nActive--;
@@ -419,7 +386,7 @@ void LARS::CholeskyInsert(double sqNormNewX, const vec& newGramCol)
     {
       sqNormNewX += lambda2;
     }
-      
+
     vec matUtriCholFactork = solve(trimatl(trans(matUtriCholFactor)),
 				   newGramCol);
 
@@ -433,7 +400,7 @@ void LARS::CholeskyInsert(double sqNormNewX, const vec& newGramCol)
   }
 }
 
-void LARS::GivensRotate(const vec::fixed<2>& x, vec::fixed<2>& rotatedX, mat& matG) 
+void LARS::GivensRotate(const vec::fixed<2>& x, vec::fixed<2>& rotatedX, mat& matG)
 {
   if (x(1) == 0)
   {
