@@ -6,8 +6,8 @@
  * This file describes the interface for the PeriodicHRectBound policy, which
  * implements a hyperrectangle bound in a periodic space.
  */
-#ifndef __MLPACK_CORE_TREE_PERCLIDICHRECTBOUND_HPP
-#define __MLPACK_CORE_TREE_PERCLIDICHRECTBOUND_HPP
+#ifndef __MLPACK_CORE_TREE_PERIODICHRECTBOUND_HPP
+#define __MLPACK_CORE_TREE_PERIODICHRECTBOUND_HPP
 
 #include <mlpack/core.hpp>
 
@@ -142,4 +142,4 @@ class PeriodicHRectBound
 
 #include "periodichrectbound_impl.hpp"
 
-#endif // __MLPACK_CORE_TREE_PERCLIDICHRECTBOUND_HPP
+#endif // __MLPACK_CORE_TREE_PERIODICHRECTBOUND_HPP
