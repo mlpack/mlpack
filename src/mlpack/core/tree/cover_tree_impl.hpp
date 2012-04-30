@@ -27,8 +27,7 @@ CoverTree<StatisticType>::CoverTree(const arma::mat& dataset,
   arma::vec distances(dataset.n_cols - 1);
 
   // Build the initial distances.
-  BuildDistances(dataset, 0 /* default */, indices, distances,
-      dataset.n_cols - 1);
+  ComputeDistances(0 /* default */, indices, distances, dataset.n_cols - 1);
 
   // Now determine the scale factor of the root node.
   const double maxDistance = max(distances);
@@ -46,8 +45,6 @@ CoverTree<StatisticType>::CoverTree(const arma::mat& dataset,
       indices, distances, childNearSetSize, childFarSetSize, childUsedSetSize));
 
   size_t nearSetSize = (dataset.n_cols - 1) - childUsedSetSize;
-//  Log::Warn << "before non-self children, near set " << nearSetSize << " and "
-//      << "child used set size " << childUsedSetSize << std::endl;
 
   // We have no far set, so the array is organized thusly:
   // [ near | used ].  No resorting is necessary.
@@ -66,8 +63,6 @@ CoverTree<StatisticType>::CoverTree(const arma::mat& dataset,
     // accordingly.  We don't have to worry about the fact that the point we
     // swapped is actually in the far set but grouped with the near set, because
     // we're about to rebuild that anyway.
-//    Log::Warn << "nearSetSize is AOIAJA " << nearSetSize << std::endl;
-//    Log::Warn << trans(nearSet);
     size_t setIndex;
     for (size_t k = 0; k < nearSetSize; ++k)
       if (indices[k] == newPointIndex)
@@ -92,7 +87,7 @@ CoverTree<StatisticType>::CoverTree(const arma::mat& dataset,
     nearSetSize--;
 
     // Rebuild the distances for this point.
-    BuildDistances(dataset, newPointIndex, indices, distances, nearSetSize);
+    ComputeDistances(newPointIndex, indices, distances, nearSetSize);
 
     // Split into near and far sets for this point.
     childNearSetSize = SplitNearFar(indices, distances, bound, nearSetSize);
@@ -136,20 +131,10 @@ CoverTree<StatisticType>::CoverTree(const arma::mat& dataset,
     scale(scale),
     expansionConstant(expansionConstant)
 {
-//  Log::Debug << "Making child.  pointIndex " << pointIndex << ", scale " <<
-//      scale << ", nearSetSize " << nearSetSize << ", farSetSize " << farSetSize
-//      << ", usedSetSize " << usedSetSize << std::endl;
-//  if ((nearSetSize + farSetSize) > 0)
-//    Log::Debug << trans(indices.rows(0, nearSetSize + farSetSize - 1))
-//        << trans(distances.rows(0, nearSetSize + farSetSize - 1)) << std::endl;
 
   // If the size of the near set is 0, this is a leaf.
   if (nearSetSize == 0)
-  {
-    // Make this a leaf...
-//    Log::Warn << "This one is a leaf." << std::endl;
     return;
-  }
 
   // Determine the next scale level.  This should be the first level where there
   // are any points in the far set.  So, if we know the maximum distance in the
@@ -166,9 +151,6 @@ CoverTree<StatisticType>::CoverTree(const arma::mat& dataset,
     children.push_back(new CoverTree(dataset, expansionConstant, pointIndex,
         INT_MIN, indices, distances, 0, farSetSize, usedSetSize));
 
-//    Log::Debug << "Every point in the near set will be a leaf." << std::endl;
-//    Log::Debug << trans(indices.rows(0, (nearSetSize - 1))) << std::endl;
-
     // Every point in the near set should be a leaf.
     for (size_t i = 0; i < nearSetSize; ++i)
     {
@@ -182,12 +164,7 @@ CoverTree<StatisticType>::CoverTree(const arma::mat& dataset,
     // [ used | far | other used ]
     // and we want
     // [ far | all used ].
-//    Log::Debug << "Sorting with usedSetSize " << usedSetSize
-//        << " and farSetSize " << farSetSize << std::endl;
     SortPointSet(indices, distances, 0, usedSetSize, farSetSize);
-//    Log::Debug << "After sorting: " << std::endl;
-//    Log::Debug << trans(indices.rows(0, nearSetSize + farSetSize - 1))
-//        << trans(distances.rows(0, nearSetSize + farSetSize - 1)) << std::endl;
 
     return;
   }
@@ -195,9 +172,6 @@ CoverTree<StatisticType>::CoverTree(const arma::mat& dataset,
   const int nextScale = std::min(scale - 1,
       (int) ceil(log(maxDistance) / log(expansionConstant)) - 1);
   const double bound = pow(expansionConstant, nextScale);
-
-//  Log::Debug << "maxDistance is " << maxDistance << "; nextScale is " <<
-//      nextScale << "; bound is " << bound << std::endl;
 
   // This needs to be taken out.  It's a sanity check for now.
   Log::Assert(nextScale < scale);
@@ -214,20 +188,6 @@ CoverTree<StatisticType>::CoverTree(const arma::mat& dataset,
       nextScale, indices, distances, childNearSetSize, childFarSetSize,
       childUsedSetSize));
 
-  // This will report a used set size which is one too large, because when the
-  // point itself is made into a leaf, it is counted as used (but that point is
-  // not part of the near or far set).  This only needs to be done by the parent
-  // of the self-leaf.
-//  if (children[0]->NumChildren() == 0)
-//    childUsedSetSize--;
-
-//  Log::Warn << "Back in frame pointIndex " << pointIndex << " scale " <<
-//      scale << std::endl;
-//  Log::Debug << trans(indices.rows(0, nearSetSize + farSetSize - 1))
-//      << trans(distances.rows(0, nearSetSize + farSetSize - 1)) << std::endl;
-//  Log::Debug << "That child used " << childUsedSetSize << " points." <<
-//      std::endl;
-
   // Now the arrays, in memory, look like this:
   // [ childFar | childUsed | far | used ]
   // but we need to move the used points past our far set:
@@ -235,14 +195,8 @@ CoverTree<StatisticType>::CoverTree(const arma::mat& dataset,
   // and keeping in mind that childFar = our near set,
   // [ near | far | childUsed + used ]
   // is what we are trying to make.
-//  Log::Debug << "Sorting with childFarSetSize " << childFarSetSize << " and "
-//      << "childUsedSetSize " << childUsedSetSize << " and farSetSize " <<
-//      farSetSize << std::endl;
   SortPointSet(indices, distances, childFarSetSize, childUsedSetSize,
       farSetSize);
-//  Log::Debug << "After sorting: " << std::endl;
-//  Log::Debug << trans(indices.rows(0, nearSetSize + farSetSize - 1))
-//      << trans(distances.rows(0, nearSetSize + farSetSize - 1)) << std::endl;
 
   // The self-child should not have used all the points in the near set.  If it
   // did, this is an implicit node.
@@ -251,9 +205,6 @@ CoverTree<StatisticType>::CoverTree(const arma::mat& dataset,
   // Update size of near set and used set.
   nearSetSize -= childUsedSetSize;
   usedSetSize += childUsedSetSize;
-
-//  Log::Debug << "The near set size is " << nearSetSize << "; we will need to "
-//      << "make children until those points are used." << std::endl;
 
   // Now for each point in the near set, we need to make children.  To save
   // computation later, we'll create an array holding the points in the near
@@ -293,16 +244,13 @@ CoverTree<StatisticType>::CoverTree(const arma::mat& dataset,
     }
 
     // Update the near set size.  The used set size is updated by the recursive
-    // child constructor.
+    // child constructor (but we have to add one for the point we are using,
+    // because the child constructor will not count that).
     nearSetSize--;
     usedSetSize++;
 
-//    Log::Debug << "Before rebuild we have farSetSize " << farSetSize
-//        << " nearSetSize " << nearSetSize << " usedSetSize " << usedSetSize
-//        << std::endl;
-
     // Rebuild the distances for this point.
-    BuildDistances(dataset, newPointIndex, indices, distances,
+    ComputeDistances(newPointIndex, indices, distances,
         nearSetSize + farSetSize);
 
     // Split into near and far sets for this point.
@@ -315,19 +263,6 @@ CoverTree<StatisticType>::CoverTree(const arma::mat& dataset,
     children.push_back(new CoverTree(dataset, expansionConstant, newPointIndex,
         nextScale, indices, distances, childNearSetSize, childFarSetSize,
         childUsedSetSize));
-
-//    Log::Warn << "Back in frame pointIndex " << pointIndex << " scale " <<
-//        scale << std::endl;
-//    Log::Debug << "That non-self child used " << childUsedSetSize << " points."
-//        << std::endl;
-//    Log::Debug << "Now we have farSetSize " << farSetSize << " childFarSetSize "
-//        << childFarSetSize << " childUsedSetSize " << childUsedSetSize <<
-//        " usedSetSize " << usedSetSize << std::endl;
-//    Log::Debug << trans(indices.rows(0, nearSetSize + farSetSize - 1))
-//        << trans(distances.rows(0, nearSetSize + farSetSize - 1)) << std::endl;
-
-    Log::Assert(childUsedSetSize <= (nearSetSize + farSetSize));
-    Log::Assert(childUsedSetSize >= childNearSetSize);
 
     // Now the arrays, in memory, look like this:
     // [ childFar | childUsed | used ]
@@ -362,16 +297,9 @@ CoverTree<StatisticType>::CoverTree(const arma::mat& dataset,
   // We need to rebuild the distances and the set so it looks like this:
   // [ far | used ]
   // because all the points in the near set should be used up.
-//  Log::Assert(nearSetSize == 0);
   farSetSize = childFarSetSize;
 
-  BuildDistances(dataset, pointIndex, indices, distances, farSetSize);
-
-  //farSetSize = SortPointSet(indices, distances, childFarSetSize,
-//      childUsedSetSize, farSetSize);
-
-//  Log::Warn << "Node creation complete; farSetSize " << farSetSize <<
-//      " usedSetSize " << usedSetSize << std::endl;
+  ComputeDistances(pointIndex, indices, distances, farSetSize);
 }
 
 template<typename StatisticType>
@@ -382,19 +310,16 @@ CoverTree<StatisticType>::~CoverTree()
     delete children[i];
 }
 
-// Needs a better name...
-size_t SplitNearFar(arma::Col<size_t>& indices,
-                    arma::vec& distances,
-                    const double bound,
-                    const size_t pointSetSize)
+template<typename StatisticType>
+size_t CoverTree<StatisticType>::SplitNearFar(arma::Col<size_t>& indices,
+                                              arma::vec& distances,
+                                              const double bound,
+                                              const size_t pointSetSize)
 {
   // Sanity check; there is no guarantee that this condition will not be true.
   // ...or is there?
   if (pointSetSize <= 1)
     return 0;
-
-//  Log::Debug << "Splitting dataset using bound " << bound << " and set size "
-//      << pointSetSize << std::endl;
 
   // We'll traverse from both left and right.
   size_t left = 0;
@@ -437,11 +362,12 @@ size_t SplitNearFar(arma::Col<size_t>& indices,
 }
 
 // Returns the maximum distance between points.
-void BuildDistances(const arma::mat& dataset,
-                    const size_t pointIndex,
-                    const arma::Col<size_t>& indices,
-                    arma::vec& distances,
-                    const size_t pointSetSize)
+template<typename StatisticType>
+void CoverTree<StatisticType>::ComputeDistances(
+    const size_t pointIndex,
+    const arma::Col<size_t>& indices,
+    arma::vec& distances,
+    const size_t pointSetSize)
 {
   // For each point, rebuild the distances.  The indices do not need to be
   // modified.
@@ -452,11 +378,12 @@ void BuildDistances(const arma::mat& dataset,
   }
 }
 
-size_t SortPointSet(arma::Col<size_t>& indices,
-                    arma::vec& distances,
-                    const size_t childFarSetSize,
-                    const size_t childUsedSetSize,
-                    const size_t farSetSize)
+template<typename StatisticType>
+size_t CoverTree<StatisticType>::SortPointSet(arma::Col<size_t>& indices,
+                                              arma::vec& distances,
+                                              const size_t childFarSetSize,
+                                              const size_t childUsedSetSize,
+                                              const size_t farSetSize)
 {
   // We'll use low-level memcpy calls ourselves, just to ensure it's done
   // quickly and the way we want it to be.  Unfortunately this takes up more
@@ -472,9 +399,6 @@ size_t SortPointSet(arma::Col<size_t>& indices,
   size_t* indicesBuffer = new size_t[bufferSize];
   double* distancesBuffer = new double[bufferSize];
 
-//  Log::Warn << "buffer size " << bufferSize << " and bigCopySize "
-//      << bigCopySize << std::endl;
-
   // The start of the memory region to copy to the buffer.
   const size_t bufferFromLocation = ((bufferSize == farSetSize) ?
       (childFarSetSize + childUsedSetSize) : childFarSetSize);
@@ -488,11 +412,7 @@ size_t SortPointSet(arma::Col<size_t>& indices,
   const size_t directToLocation = ((bufferSize == farSetSize) ?
       (childFarSetSize + farSetSize) : childFarSetSize);
 
-//  Log::Warn << "bufferFromLocation " << bufferFromLocation
-//      << " bufferToLocation " << bufferToLocation << " directFromLocation "
-//      << directFromLocation << " directToLocation " << directToLocation
-//      << std::endl;
-
+  // Copy the smaller piece to the buffer.
   memcpy(indicesBuffer, indices.memptr() + bufferFromLocation,
       sizeof(size_t) * bufferSize);
   memcpy(distancesBuffer, distances.memptr() + bufferFromLocation,
