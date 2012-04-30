@@ -1438,18 +1438,20 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSparseKDTreeTest)
   BOOST_REQUIRE_EQUAL(root.TreeDepth(), 7);
 }
 
-void RecurseTreeCountLeaves(const CoverTree<>& node, arma::vec& counts)
+template<typename TreeType>
+void RecurseTreeCountLeaves(const TreeType& node, arma::vec& counts)
 {
   for (size_t i = 0; i < node.NumChildren(); ++i)
   {
     if (node.Child(i).NumChildren() == 0)
       counts[node.Child(i).Point()]++;
     else
-      RecurseTreeCountLeaves(node.Child(i), counts);
+      RecurseTreeCountLeaves<TreeType>(node.Child(i), counts);
   }
 }
 
-void CheckSelfChild(const CoverTree<>& node)
+template<typename TreeType>
+void CheckSelfChild(const TreeType& node)
 {
   if (node.NumChildren() == 0)
     return; // No self-child applicable here.
@@ -1468,7 +1470,8 @@ void CheckSelfChild(const CoverTree<>& node)
   BOOST_REQUIRE_EQUAL(found, true);
 }
 
-void CheckCovering(const CoverTree<>& node)
+template<typename TreeType, typename MetricType>
+void CheckCovering(const TreeType& node)
 {
   // Return if a leaf.  No checking necessary.
   if (node.NumChildren() == 0)
@@ -1484,18 +1487,19 @@ void CheckCovering(const CoverTree<>& node)
   {
     const size_t childPoint = node.Child(i).Point();
 
-    double distance = metric::LMetric<2>::Evaluate(dataset.col(nodePoint),
+    double distance = MetricType::Evaluate(dataset.col(nodePoint),
         dataset.col(childPoint));
 
     BOOST_REQUIRE_LE(distance, maxDistance);
 
     // Check the child.
-    CheckCovering(node.Child(i));
+    CheckCovering<TreeType, MetricType>(node.Child(i));
   }
 }
 
-void CheckIndividualSeparation(const CoverTree<>& constantNode,
-                               const CoverTree<>& node)
+template<typename TreeType, typename MetricType>
+void CheckIndividualSeparation(const TreeType& constantNode,
+                               const TreeType& node)
 {
   // Don't check points at a lower scale.
   if (node.Scale() < constantNode.Scale())
@@ -1508,7 +1512,8 @@ void CheckIndividualSeparation(const CoverTree<>& constantNode,
     {
       // Don't recurse into leaves.
       if (node.Child(i).NumChildren() > 0)
-        CheckIndividualSeparation(constantNode, node.Child(i));
+        CheckIndividualSeparation<TreeType, MetricType>(constantNode,
+            node.Child(i));
     }
 
     return;
@@ -1528,22 +1533,23 @@ void CheckIndividualSeparation(const CoverTree<>& constantNode,
   double minDistance = pow(constantNode.ExpansionConstant(),
       constantNode.Scale());
 
-  double distance = metric::LMetric<2>::Evaluate(dataset.col(constantPoint),
+  double distance = MetricType::Evaluate(dataset.col(constantPoint),
       dataset.col(nodePoint));
 
   BOOST_REQUIRE_GT(distance, minDistance);
 }
 
-void CheckSeparation(const CoverTree<>& node, const CoverTree<>& root)
+template<typename TreeType, typename MetricType>
+void CheckSeparation(const TreeType& node, const TreeType& root)
 {
   // Check the separation between this point and all other points on this scale.
-  CheckIndividualSeparation(node, root);
+  CheckIndividualSeparation<TreeType, MetricType>(node, root);
 
   // Check the children, but only if they are not leaves.  Leaves don't need to
   // be checked.
   for (size_t i = 0; i < node.NumChildren(); ++i)
     if (node.Child(i).NumChildren() > 0)
-      CheckSeparation(node.Child(i), root);
+      CheckSeparation<TreeType, MetricType>(node.Child(i), root);
 }
 
 
@@ -1592,14 +1598,14 @@ BOOST_AUTO_TEST_CASE(SimpleCoverTreeConstructionTest)
     BOOST_REQUIRE_EQUAL(counts[i], 1);
 
   // Each non-leaf should have a self-child.
-  CheckSelfChild(tree);
+  CheckSelfChild<CoverTree<> >(tree);
 
   // Each node must satisfy the covering principle (its children must be less
   // than or equal to a certain distance apart).
-  CheckCovering(tree);
+  CheckCovering<CoverTree<>, LMetric<2> >(tree);
 
   // Each node's children must be separated by at least a certain value.
-  CheckSeparation(tree, tree);
+  CheckSeparation<CoverTree<>, LMetric<2> >(tree, tree);
 }
 
 /**
@@ -1622,14 +1628,44 @@ BOOST_AUTO_TEST_CASE(CoverTreeConstructionTest)
     BOOST_REQUIRE_EQUAL(counts[i], 1);
 
   // Each non-leaf should have a self-child.
-  CheckSelfChild(tree);
+  CheckSelfChild<CoverTree<> >(tree);
 
   // Each node must satisfy the covering principle (its children must be less
   // than or equal to a certain distance apart).
-  CheckCovering(tree);
+  CheckCovering<CoverTree<>, LMetric<2> >(tree);
 
   // Each node's children must be separated by at least a certain value.
-  CheckSeparation(tree, tree);
+  CheckSeparation<CoverTree<>, LMetric<2> >(tree, tree);
+}
+
+/**
+ * Make sure cover trees work in different metric spaces.
+ */
+BOOST_AUTO_TEST_CASE(CoverTreeAlternateMetricTest)
+{
+  arma::mat dataset;
+  // 5-dimensional, 300-point dataset.
+  dataset.randu(5, 300);
+
+  CoverTree<LMetric<1> > tree(dataset);
+
+  // Ensure each leaf is only created once.
+  arma::vec counts;
+  counts.zeros(300);
+  RecurseTreeCountLeaves<CoverTree<LMetric<1> > >(tree, counts);
+
+  for (size_t i = 0; i < 300; ++i)
+    BOOST_REQUIRE_EQUAL(counts[i], 1);
+
+  // Each non-leaf should have a self-child.
+  CheckSelfChild<CoverTree<LMetric<1> > >(tree);
+
+  // Each node must satisfy the covering principle (its children must be less
+  // than or equal to a certain distance apart).
+  CheckCovering<CoverTree<LMetric<1> >, LMetric<1> >(tree);
+
+  // Each node's children must be separated by at least a certain value.
+  CheckSeparation<CoverTree<LMetric<1> >, LMetric<1> >(tree, tree);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
