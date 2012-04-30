@@ -8,6 +8,7 @@
 #define __MLPACK_CORE_TREE_COVER_TREE_HPP
 
 #include <mlpack/core.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
 
 namespace mlpack {
 namespace tree {
@@ -68,7 +69,8 @@ namespace tree {
  * }
  * @endcode
  */
-template<typename StatisticType = EmptyStatistic>
+template<typename MetricType = metric::LMetric<2>,
+         typename StatisticType = EmptyStatistic>
 class CoverTree
 {
  public:

@@ -14,9 +14,10 @@ namespace mlpack {
 namespace tree {
 
 // Create the cover tree.
-template<typename StatisticType>
-CoverTree<StatisticType>::CoverTree(const arma::mat& dataset,
-                                    const double expansionConstant) :
+template<typename MetricType, typename StatisticType>
+CoverTree<MetricType, StatisticType>::CoverTree(
+    const arma::mat& dataset,
+    const double expansionConstant) :
     dataset(dataset),
     point(0),
     expansionConstant(expansionConstant)
@@ -116,16 +117,17 @@ CoverTree<StatisticType>::CoverTree(const arma::mat& dataset,
   }
 }
 
-template<typename StatisticType>
-CoverTree<StatisticType>::CoverTree(const arma::mat& dataset,
-                                    const double expansionConstant,
-                                    const size_t pointIndex,
-                                    const int scale,
-                                    arma::Col<size_t>& indices,
-                                    arma::vec& distances,
-                                    size_t nearSetSize,
-                                    size_t& farSetSize,
-                                    size_t& usedSetSize) :
+template<typename MetricType, typename StatisticType>
+CoverTree<MetricType, StatisticType>::CoverTree(
+    const arma::mat& dataset,
+    const double expansionConstant,
+    const size_t pointIndex,
+    const int scale,
+    arma::Col<size_t>& indices,
+    arma::vec& distances,
+    size_t nearSetSize,
+    size_t& farSetSize,
+    size_t& usedSetSize) :
     dataset(dataset),
     point(pointIndex),
     scale(scale),
@@ -302,19 +304,20 @@ CoverTree<StatisticType>::CoverTree(const arma::mat& dataset,
   ComputeDistances(pointIndex, indices, distances, farSetSize);
 }
 
-template<typename StatisticType>
-CoverTree<StatisticType>::~CoverTree()
+template<typename MetricType, typename StatisticType>
+CoverTree<MetricType, StatisticType>::~CoverTree()
 {
   // Delete each child.
   for (size_t i = 0; i < children.size(); ++i)
     delete children[i];
 }
 
-template<typename StatisticType>
-size_t CoverTree<StatisticType>::SplitNearFar(arma::Col<size_t>& indices,
-                                              arma::vec& distances,
-                                              const double bound,
-                                              const size_t pointSetSize)
+template<typename MetricType, typename StatisticType>
+size_t CoverTree<MetricType, StatisticType>::SplitNearFar(
+    arma::Col<size_t>& indices,
+    arma::vec& distances,
+    const double bound,
+    const size_t pointSetSize)
 {
   // Sanity check; there is no guarantee that this condition will not be true.
   // ...or is there?
@@ -362,8 +365,8 @@ size_t CoverTree<StatisticType>::SplitNearFar(arma::Col<size_t>& indices,
 }
 
 // Returns the maximum distance between points.
-template<typename StatisticType>
-void CoverTree<StatisticType>::ComputeDistances(
+template<typename MetricType, typename StatisticType>
+void CoverTree<MetricType, StatisticType>::ComputeDistances(
     const size_t pointIndex,
     const arma::Col<size_t>& indices,
     arma::vec& distances,
@@ -373,17 +376,18 @@ void CoverTree<StatisticType>::ComputeDistances(
   // modified.
   for (size_t i = 0; i < pointSetSize; ++i)
   {
-    distances[i] = metric::LMetric<2>::Evaluate(dataset.col(pointIndex),
+    distances[i] = MetricType::Evaluate(dataset.col(pointIndex),
         dataset.col(indices[i]));
   }
 }
 
-template<typename StatisticType>
-size_t CoverTree<StatisticType>::SortPointSet(arma::Col<size_t>& indices,
-                                              arma::vec& distances,
-                                              const size_t childFarSetSize,
-                                              const size_t childUsedSetSize,
-                                              const size_t farSetSize)
+template<typename MetricType, typename StatisticType>
+size_t CoverTree<MetricType, StatisticType>::SortPointSet(
+    arma::Col<size_t>& indices,
+    arma::vec& distances,
+    const size_t childFarSetSize,
+    const size_t childUsedSetSize,
+    const size_t farSetSize)
 {
   // We'll use low-level memcpy calls ourselves, just to ensure it's done
   // quickly and the way we want it to be.  Unfortunately this takes up more
