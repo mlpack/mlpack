@@ -122,20 +122,14 @@ void SparseCoding::OptimizeCode()
       Log::Debug << "Optimization at point " << i << "." << endl;
 
     bool useCholesky = true;
-    LARS* lars;
-    if(lambda2 > 0)
-      lars = new LARS(useCholesky, lambda1, lambda2);
-    else
-      lars = new LARS(useCholesky, lambda1);
+    LARS lars(useCholesky, matGram, lambda1, lambda2);
 
-    lars->SetGramMem(matGram.memptr(), matGram.n_rows);
-    lars->DoLARS(dictionary, data.unsafe_col(i));
+    //lars->SetGramMem(matGram.memptr(), matGram.n_rows);
+    lars.DoLARS(dictionary, data.unsafe_col(i));
 
     vec beta;
-    lars->Solution(beta);
+    lars.Solution(beta);
     codes.col(i) = beta;
-
-    delete lars;
   }
 }
 
