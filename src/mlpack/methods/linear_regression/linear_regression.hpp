@@ -13,7 +13,7 @@ namespace mlpack {
 namespace regression /** Regression methods. */ {
 
 /**
- * A simple linear regresion algorithm using ordinary least squares.
+ * A simple linear regression algorithm using ordinary least squares.
  */
 class LinearRegression
 {
