@@ -1613,8 +1613,6 @@ BOOST_AUTO_TEST_CASE(CoverTreeConstructionTest)
 
   CoverTree<> tree(dataset);
 
-  Log::Warn << "Tree built." << std::endl;
-
   // Ensure each leaf is only created once.
   arma::vec counts;
   counts.zeros(1000);
