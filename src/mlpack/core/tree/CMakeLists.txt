@@ -10,6 +10,7 @@ set(SOURCES
   bounds.hpp
   cover_tree.hpp
   cover_tree_impl.hpp
+  first_point_is_root.hpp
   hrectbound.hpp
   hrectbound_impl.hpp
   periodichrectbound.hpp

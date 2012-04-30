@@ -9,6 +9,7 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
+#include "first_point_is_root.hpp"
 
 namespace mlpack {
 namespace tree {
@@ -68,8 +69,20 @@ namespace tree {
  *   year = {2009}
  * }
  * @endcode
+ *
+ * The CoverTree class offers three template parameters; a custom metric type
+ * can be used with MetricType (this class defaults to the L2-squared metric).
+ * The root node's point can be chosen with the RootPointPolicy; by default, the
+ * FirstPointIsRoot policy is used, meaning the first point in the dataset is
+ * used.  The StatisticType policy allows you to define statistics which can be
+ * gathered during the creation of the tree.
+ *
+ * @tparam MetricType Metric type to use during tree construction.
+ * @tparam RootPointPolicy Determines which point to use as the root node.
+ * @tparam StatisticType Statistic to be used during tree creation.
  */
 template<typename MetricType = metric::LMetric<2>,
+         typename RootPointPolicy = FirstPointIsRoot,
          typename StatisticType = EmptyStatistic>
 class CoverTree
 {
