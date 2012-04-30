@@ -14,21 +14,26 @@ namespace mlpack {
 namespace tree {
 
 // Create the cover tree.
-template<typename MetricType, typename StatisticType>
-CoverTree<MetricType, StatisticType>::CoverTree(
+template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     const arma::mat& dataset,
     const double expansionConstant) :
     dataset(dataset),
-    point(0),
+    point(RootPointPolicy::ChooseRoot(dataset)),
     expansionConstant(expansionConstant)
 {
   // Kick off the building.  Create the indices array and the distances array.
   arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
       dataset.n_cols - 1, dataset.n_cols - 1);
+  // This is now [1 2 3 4 ... n].  We must be sure that our point does not
+  // occur.
+  if (point != 0)
+    indices[point - 1] = 0; // Put 0 back into the set; remove what was there.
+
   arma::vec distances(dataset.n_cols - 1);
 
   // Build the initial distances.
-  ComputeDistances(0 /* default */, indices, distances, dataset.n_cols - 1);
+  ComputeDistances(point, indices, distances, dataset.n_cols - 1);
 
   // Now determine the scale factor of the root node.
   const double maxDistance = max(distances);
@@ -42,7 +47,7 @@ CoverTree<MetricType, StatisticType>::CoverTree(
       dataset.n_cols - 1);
   size_t childFarSetSize = (dataset.n_cols - 1) - childNearSetSize;
   size_t childUsedSetSize = 0;
-  children.push_back(new CoverTree(dataset, expansionConstant, 0, scale - 1,
+  children.push_back(new CoverTree(dataset, expansionConstant, point, scale - 1,
       indices, distances, childNearSetSize, childFarSetSize, childUsedSetSize));
 
   size_t nearSetSize = (dataset.n_cols - 1) - childUsedSetSize;
@@ -117,8 +122,8 @@ CoverTree<MetricType, StatisticType>::CoverTree(
   }
 }
 
-template<typename MetricType, typename StatisticType>
-CoverTree<MetricType, StatisticType>::CoverTree(
+template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     const arma::mat& dataset,
     const double expansionConstant,
     const size_t pointIndex,
@@ -304,16 +309,16 @@ CoverTree<MetricType, StatisticType>::CoverTree(
   ComputeDistances(pointIndex, indices, distances, farSetSize);
 }
 
-template<typename MetricType, typename StatisticType>
-CoverTree<MetricType, StatisticType>::~CoverTree()
+template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+CoverTree<MetricType, RootPointPolicy, StatisticType>::~CoverTree()
 {
   // Delete each child.
   for (size_t i = 0; i < children.size(); ++i)
     delete children[i];
 }
 
-template<typename MetricType, typename StatisticType>
-size_t CoverTree<MetricType, StatisticType>::SplitNearFar(
+template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+size_t CoverTree<MetricType, RootPointPolicy, StatisticType>::SplitNearFar(
     arma::Col<size_t>& indices,
     arma::vec& distances,
     const double bound,
@@ -365,8 +370,8 @@ size_t CoverTree<MetricType, StatisticType>::SplitNearFar(
 }
 
 // Returns the maximum distance between points.
-template<typename MetricType, typename StatisticType>
-void CoverTree<MetricType, StatisticType>::ComputeDistances(
+template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+void CoverTree<MetricType, RootPointPolicy, StatisticType>::ComputeDistances(
     const size_t pointIndex,
     const arma::Col<size_t>& indices,
     arma::vec& distances,
@@ -381,8 +386,8 @@ void CoverTree<MetricType, StatisticType>::ComputeDistances(
   }
 }
 
-template<typename MetricType, typename StatisticType>
-size_t CoverTree<MetricType, StatisticType>::SortPointSet(
+template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+size_t CoverTree<MetricType, RootPointPolicy, StatisticType>::SortPointSet(
     arma::Col<size_t>& indices,
     arma::vec& distances,
     const size_t childFarSetSize,
