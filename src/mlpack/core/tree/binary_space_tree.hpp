@@ -23,15 +23,7 @@ namespace tree /** Trees and tree-building procedures. */ {
  * from it.  If you need to add or delete a node, the better procedure is to
  * rebuild the tree entirely.
  *
- * This tree does take one parameter, which is the leaf size to be used.  You
- * can set this at runtime with --tree/leaf_size [leaf_size].  You can also set
- * it in your program using CLI:
- *
- * @code
- * CLI::GetParam<int>("tree/leaf_size") = target_leaf_size;
- * @endcode
- *
- * @param leaf_size Maximum number of points allowed in each leaf.
+ * This tree does take one parameter, which is the leaf size to be used.
  *
  * @tparam BoundType The bound used for each node.  The valid types of bounds
  *     and the necessary skeleton interface for this class can be found in
