@@ -416,6 +416,30 @@ inline BinarySpaceTree<BoundType, StatisticType, MatType>*
 }
 
 /**
+ * Return the number of points contained in this node.
+ */
+template<typename BoundType, typename StatisticType, typename MatType>
+inline size_t
+BinarySpaceTree<BoundType, StatisticType, MatType>::NumPoints() const
+{
+  if (left)
+    return 0;
+
+  return count;
+}
+
+/**
+ * Return the index of a particular point contained in this node.
+ */
+template<typename BoundType, typename StatisticType, typename MatType>
+inline size_t
+BinarySpaceTree<BoundType, StatisticType, MatType>::Point(const size_t index)
+    const
+{
+  return (begin + index);
+}
+
+/**
  * Gets the index of the begin point of this subset.
  */
 template<typename BoundType, typename StatisticType, typename MatType>

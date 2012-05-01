@@ -243,6 +243,19 @@ class BinarySpaceTree
    */
   BinarySpaceTree* Child(const size_t child) const;
 
+  //! Return the number of points in this node (0 if not a leaf).
+  size_t NumPoints() const;
+
+  /**
+   * Return the index (with reference to the dataset) of a particular point in
+   * this node.  This will happily return invalid indices if the given index is
+   * greater than the number of points in this node (obtained with NumPoints())
+   * -- be careful.
+   *
+   * @param index Index of point for which a dataset index is wanted.
+   */
+  size_t Point(const size_t index) const;
+
   /**
   * Returns the dimension this parent's children are split on.
   */
