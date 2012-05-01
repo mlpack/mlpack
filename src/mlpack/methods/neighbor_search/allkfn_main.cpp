@@ -72,10 +72,10 @@ int main(int argc, char *argv[])
 
   arma::mat referenceData;
   arma::mat queryData; // So it doesn't go out of scope.
-  if (!data::Load(referenceFile.c_str(), referenceData))
-    Log::Fatal << "Reference file " << referenceFile << "not found." << endl;
+  data::Load(referenceFile.c_str(), referenceData, true);
 
-  Log::Info << "Loaded reference data from '" << referenceFile << "'." << endl;
+  Log::Info << "Loaded reference data from '" << referenceFile << "' ("
+      << referenceData.n_rows << " x " << referenceData.n_cols << ")." << endl;
 
   // Sanity check on k value: must be greater than 0, must be less than the
   // number of reference points.
@@ -128,10 +128,10 @@ int main(int argc, char *argv[])
   {
     string queryFile = CLI::GetParam<string>("query_file");
 
-    if (!data::Load(queryFile.c_str(), queryData))
-      Log::Fatal << "Query file " << queryFile << " not found." << endl;
+    data::Load(queryFile.c_str(), queryData, true);
 
-    Log::Info << "Loaded query data from '" << queryFile << "'." << endl;
+    Log::Info << "Loaded query data from '" << queryFile << "' ("
+        << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
 
     Log::Info << "Building query tree..." << endl;
 
