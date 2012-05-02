@@ -32,7 +32,7 @@ class SingleTreeDepthFirstTraverser
     std::stack<TreeType*> pointStack;
     pointStack.push(&referenceNode);
 
-    while(!pointStack.empty())
+    while (!pointStack.empty())
     {
       TreeType* node = pointStack.top();
       pointStack.pop();
