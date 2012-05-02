@@ -10,6 +10,9 @@
 
 #include <mlpack/core.hpp>
 
+#include <mlpack/core/tree/traversers/single_tree_depth_first_traverser.hpp>
+#include "neighbor_search_rules.hpp"
+
 using namespace mlpack::neighbor;
 
 // Construct the object.
@@ -182,28 +185,20 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
   {
     if (singleMode)
     {
-      // Do one tenth of the query set at a time.
-      size_t chunk = querySet.n_cols / 10;
+      // Create the helper object for the tree traversal.
+      NeighborSearchRules<SortPolicy, MetricType, TreeType> rules(referenceSet,
+          querySet, *neighborPtr, *distancePtr, metric);
 
-      for (size_t i = 0; i < 10; i++)
-      {
-        for (size_t j = 0; j < chunk; j++)
-        {
-          double worstDistance = SortPolicy::WorstDistance();
-          ComputeSingleNeighborsRecursion(i * chunk + j,
-              querySet.unsafe_col(i * chunk + j), referenceTree, worstDistance,
-              *neighborPtr, *distancePtr);
-        }
-      }
+      // Create the traverser.
+      tree::SingleTreeDepthFirstTraverser<TreeType,
+          NeighborSearchRules<SortPolicy, MetricType, TreeType> >
+          traverser(rules);
 
-      // The last tenth is differently sized...
-      for (size_t i = 0; i < querySet.n_cols % 10; i++)
-      {
-        size_t ind = (querySet.n_cols / 10) * 10 + i;
-        double worstDistance = SortPolicy::WorstDistance();
-        ComputeSingleNeighborsRecursion(ind, querySet.unsafe_col(ind),
-            referenceTree, worstDistance, *neighborPtr, *distancePtr);
-      }
+      // Now have it traverse for each point.
+      for (size_t i = 0; i < querySet.n_cols; ++i)
+        traverser.Traverse(i, *referenceTree);
+
+      Log::Info << "Pruned " << traverser.NumPrunes() << " nodes." << std::endl;
     }
     else // Dual-tree recursion.
     {

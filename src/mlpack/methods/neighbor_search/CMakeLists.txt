@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   neighbor_search.hpp
   neighbor_search_impl.hpp
+  neighbor_search_rules.hpp
+  neighbor_search_rules_impl.hpp
   sort_policies/nearest_neighbor_sort.hpp
   sort_policies/nearest_neighbor_sort.cpp
   sort_policies/nearest_neighbor_sort_impl.hpp
