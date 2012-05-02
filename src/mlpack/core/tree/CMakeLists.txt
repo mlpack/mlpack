@@ -17,6 +17,7 @@ set(SOURCES
   periodichrectbound_impl.hpp
   statistic.hpp
   mrkd_statistic.hpp
+  traversers/single_tree_depth_first_traverser.hpp
 )
 
 # add directory name to sources
