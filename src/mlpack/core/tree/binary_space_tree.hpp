@@ -237,11 +237,12 @@ class BinarySpaceTree
   size_t NumChildren() const;
 
   /**
-   * Return the specified child (0 will be left, 1 will be right).
+   * Return the specified child (0 will be left, 1 will be right).  If the index
+   * is greater than 1, this will return the right child.
    *
    * @param child Index of child to return.
    */
-  BinarySpaceTree* Child(const size_t child) const;
+  BinarySpaceTree& Child(const size_t child) const;
 
   //! Return the number of points in this node (0 if not a leaf).
   size_t NumPoints() const;
