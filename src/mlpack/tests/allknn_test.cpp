@@ -1,10 +1,11 @@
 /**
- * @file allknn_test.cpp
+ * @file allknntest.cpp
  *
  * Test file for AllkNN class.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+#include <mlpack/core/tree/cover_tree.hpp>
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
 
@@ -321,29 +322,29 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
  */
 BOOST_AUTO_TEST_CASE(DualTreeVsNaive1)
 {
-  arma::mat dataForTree_;
+  arma::mat dataForTree;
 
   // Hard-coded filename: bad!
-  if (!data::Load("test_data_3_1000.csv", dataForTree_))
+  if (!data::Load("test_data_3_1000.csv", dataForTree))
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with.
-  arma::mat dualQuery(dataForTree_);
-  arma::mat dual_references(dataForTree_);
-  arma::mat naiveQuery(dataForTree_);
-  arma::mat naive_references(dataForTree_);
+  arma::mat dualQuery(dataForTree);
+  arma::mat dualReferences(dataForTree);
+  arma::mat naiveQuery(dataForTree);
+  arma::mat naiveReferences(dataForTree);
 
-  AllkNN allknn_(dualQuery, dual_references);
+  AllkNN allknn(dualQuery, dualReferences);
 
-  AllkNN naive_(naiveQuery, naive_references, true);
+  AllkNN naive(naiveQuery, naiveReferences, true);
 
   arma::Mat<size_t> resultingNeighborsTree;
   arma::mat distancesTree;
-  allknn_.Search(15, resultingNeighborsTree, distancesTree);
+  allknn.Search(15, resultingNeighborsTree, distancesTree);
 
   arma::Mat<size_t> resultingNeighborsNaive;
   arma::mat distancesNaive;
-  naive_.Search(15, resultingNeighborsNaive, distancesNaive);
+  naive.Search(15, resultingNeighborsNaive, distancesNaive);
 
   for (size_t i = 0; i < resultingNeighborsTree.n_elem; i++)
   {
@@ -360,29 +361,29 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive1)
  */
 BOOST_AUTO_TEST_CASE(DualTreeVsNaive2)
 {
-  arma::mat dataForTree_;
+  arma::mat dataForTree;
 
   // Hard-coded filename: bad!
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", dataForTree_))
+  if (!data::Load("test_data_3_1000.csv", dataForTree))
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with (may not be necessary with no ALIAS_MATRIX?).
-  arma::mat dualQuery(dataForTree_);
-  arma::mat naiveQuery(dataForTree_);
+  arma::mat dualQuery(dataForTree);
+  arma::mat naiveQuery(dataForTree);
 
-  AllkNN allknn_(dualQuery);
+  AllkNN allknn(dualQuery);
 
   // Set naive mode.
-  AllkNN naive_(naiveQuery, true);
+  AllkNN naive(naiveQuery, true);
 
   arma::Mat<size_t> resultingNeighborsTree;
   arma::mat distancesTree;
-  allknn_.Search(15, resultingNeighborsTree, distancesTree);
+  allknn.Search(15, resultingNeighborsTree, distancesTree);
 
   arma::Mat<size_t> resultingNeighborsNaive;
   arma::mat distancesNaive;
-  naive_.Search(15, resultingNeighborsNaive, distancesNaive);
+  naive.Search(15, resultingNeighborsNaive, distancesNaive);
 
   for (size_t i = 0; i < resultingNeighborsTree.n_elem; i++)
   {
@@ -399,34 +400,74 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive2)
  */
 BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
 {
-  arma::mat dataForTree_;
+  arma::mat dataForTree;
 
   // Hard-coded filename: bad!
   // Code duplication: also bad!
-  if (!data::Load("test_data_3_1000.csv", dataForTree_))
+  if (!data::Load("test_data_3_1000.csv", dataForTree))
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with (may not be necessary with no ALIAS_MATRIX?).
-  arma::mat singleQuery(dataForTree_);
-  arma::mat naiveQuery(dataForTree_);
+  arma::mat singleQuery(dataForTree);
+  arma::mat naiveQuery(dataForTree);
 
-  AllkNN allknn_(singleQuery, false, true);
+  AllkNN allknn(singleQuery, false, true);
 
   // Set up computation for naive mode.
-  AllkNN naive_(naiveQuery, true);
+  AllkNN naive(naiveQuery, true);
 
   arma::Mat<size_t> resultingNeighborsTree;
   arma::mat distancesTree;
-  allknn_.Search(15, resultingNeighborsTree, distancesTree);
+  allknn.Search(15, resultingNeighborsTree, distancesTree);
 
   arma::Mat<size_t> resultingNeighborsNaive;
   arma::mat distancesNaive;
-  naive_.Search(15, resultingNeighborsNaive, distancesNaive);
+  naive.Search(15, resultingNeighborsNaive, distancesNaive);
 
   for (size_t i = 0; i < resultingNeighborsTree.n_elem; i++)
   {
     BOOST_REQUIRE(resultingNeighborsTree[i] == resultingNeighborsNaive[i]);
     BOOST_REQUIRE_CLOSE(distancesTree[i], distancesNaive[i], 1e-5);
+  }
+}
+
+/**
+ * Test the cover tree single-tree nearest-neighbors method against the naive
+ * method.  This uses only a random reference dataset.
+ *
+ * Errors are produced if the results are not identical.
+ */
+BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
+{
+  arma::mat data;
+  data.randu(75, 1000); // 75 dimensional, 1000 points.
+
+  arma::mat naiveQuery(data); // For naive AllkNN.
+
+  tree::CoverTree<metric::LMetric<2>, tree::FirstPointIsRoot,
+      QueryStat<NearestNeighborSort> > tree = tree::CoverTree<
+      metric::LMetric<2>, tree::FirstPointIsRoot,
+      QueryStat<NearestNeighborSort> >(data);
+
+  NeighborSearch<NearestNeighborSort, metric::LMetric<2>,
+      tree::CoverTree<metric::LMetric<2>, tree::FirstPointIsRoot,
+          QueryStat<NearestNeighborSort> > >
+      coverTreeSearch(&tree, data, true);
+
+  AllkNN naive(naiveQuery, true);
+
+  arma::Mat<size_t> coverTreeNeighbors;
+  arma::mat coverTreeDistances;
+  coverTreeSearch.Search(15, coverTreeNeighbors, coverTreeDistances);
+
+  arma::Mat<size_t> naiveNeighbors;
+  arma::mat naiveDistances;
+  naive.Search(15, naiveNeighbors, naiveDistances);
+
+  for (size_t i = 0; i < coverTreeNeighbors.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(coverTreeNeighbors[i], naiveNeighbors[i]);
+    BOOST_REQUIRE_CLOSE(coverTreeDistances[i], naiveDistances[i], 1e-5);
   }
 }
 
