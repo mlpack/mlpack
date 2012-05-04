@@ -10,6 +10,8 @@
 
 #include "statistic.hpp"
 
+#include "traversers/single_tree_depth_first_traverser.hpp"
+
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
@@ -59,6 +61,18 @@ class BinarySpaceTree
  public:
   //! So other classes can use TreeType::Mat.
   typedef MatType Mat;
+
+  //! Our preferred traverser.  We are using a struct here so that we don't need
+  //! to specify the template parameters.
+  template<typename RuleType>
+  struct PreferredTraverser
+  {
+    //! We use a depth-first search by default.
+    typedef SingleTreeDepthFirstTraverser<
+        BinarySpaceTree<BoundType, StatisticType, MatType>,
+        RuleType
+    > Type;
+  };
 
   /**
    * Construct this as the root node of a binary space tree using the given
@@ -257,6 +271,30 @@ class BinarySpaceTree
    */
   size_t Point(const size_t index) const;
 
+  //! Return the minimum distance to another node.
+  double MinDistance(const BinarySpaceTree* other) const
+  {
+    return bound.MinDistance(other->Bound());
+  }
+
+  //! Return the maximum distance to another node.
+  double MaxDistance(const BinarySpaceTree* other) const
+  {
+    return bound.MaxDistance(other->Bound());
+  }
+
+  //! Return the minimum distance to another point.
+  double MinDistance(const arma::vec& point) const
+  {
+    return bound.MinDistance(point);
+  }
+
+  //! Return the maximum distance to another point.
+  double MaxDistance(const arma::vec& point) const
+  {
+    return bound.MaxDistance(point);
+  }
+
   /**
   * Returns the dimension this parent's children are split on.
   */
@@ -287,6 +325,9 @@ class BinarySpaceTree
    * Gets the number of points in this subset.
    */
   size_t Count() const;
+
+  //! Returns false: this tree type does not have self children.
+  static bool HasSelfChildren() { return false; }
 
  private:
   /**
