@@ -11,6 +11,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/core/tree/traversers/single_tree_depth_first_traverser.hpp>
+#include <mlpack/core/tree/traversers/single_tree_breadth_first_traverser.hpp>
 #include "neighbor_search_rules.hpp"
 
 using namespace mlpack::neighbor;
@@ -190,8 +191,8 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
           querySet, *neighborPtr, *distancePtr, metric);
 
       // Create the traverser.
-      tree::SingleTreeDepthFirstTraverser<TreeType,
-          NeighborSearchRules<SortPolicy, MetricType, TreeType> >
+      typename TreeType::template PreferredTraverser<
+          NeighborSearchRules<SortPolicy, MetricType, TreeType> >::Type
           traverser(rules);
 
       // Now have it traverse for each point.
