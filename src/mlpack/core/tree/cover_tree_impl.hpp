@@ -318,6 +318,43 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::~CoverTree()
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+double CoverTree<MetricType, RootPointPolicy, StatisticType>::MinDistance(
+    const CoverTree<MetricType, RootPointPolicy, StatisticType>* other) const
+{
+  // Every cover tree node will contain points up to EC^(scale + 1) away.
+  return MetricType::Evaluate(dataset.col(point),
+      other->Dataset().col(other->Point())) -
+      std::pow(expansionConstant, scale + 1) -
+      std::pow(other->ExpansionConstant(), other->Scale() + 1);
+}
+
+template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+double CoverTree<MetricType, RootPointPolicy, StatisticType>::MinDistance(
+    const arma::vec& other) const
+{
+  return MetricType::Evaluate(dataset.unsafe_col(point), other) -
+      std::pow(expansionConstant, scale + 1);
+}
+
+template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+double CoverTree<MetricType, RootPointPolicy, StatisticType>::MaxDistance(
+    const CoverTree<MetricType, RootPointPolicy, StatisticType>* other) const
+{
+  return MetricType::Evaluate(dataset.col(point),
+      other->Dataset().col(other->Point())) +
+      std::pow(expansionConstant, scale + 1) +
+      std::pow(other->ExpansionConstant(), other->Scale() + 1);
+}
+
+template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+double CoverTree<MetricType, RootPointPolicy, StatisticType>::MaxDistance(
+    const arma::vec& other) const
+{
+  return MetricType::Evaluate(dataset.unsafe_col(point), other) +
+      std::pow(expansionConstant, scale + 1);
+}
+
+template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 size_t CoverTree<MetricType, RootPointPolicy, StatisticType>::SplitNearFar(
     arma::Col<size_t>& indices,
     arma::vec& distances,
