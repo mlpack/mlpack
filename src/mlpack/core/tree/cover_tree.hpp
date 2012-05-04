@@ -10,6 +10,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include "first_point_is_root.hpp"
+#include "traversers/single_tree_breadth_first_traverser.hpp"
 
 namespace mlpack {
 namespace tree {
@@ -87,6 +88,8 @@ template<typename MetricType = metric::LMetric<2>,
 class CoverTree
 {
  public:
+  typedef arma::mat Mat;
+
   /**
    * Create the cover tree with the given dataset and given expansion constant.
    * The dataset will not be modified during the building procedure (unlike
@@ -144,11 +147,32 @@ class CoverTree
    */
   ~CoverTree();
 
+  //! Define this tree's preferred traverser.
+  template<typename RuleType>
+  struct PreferredTraverser
+  {
+    typedef SingleTreeBreadthFirstTraverser<
+        CoverTree<MetricType, RootPointPolicy, StatisticType>,
+        RuleType
+    > Type;
+  };
+
   //! Get a reference to the dataset.
   const arma::mat& Dataset() const { return dataset; }
 
   //! Get the index of the point which this node represents.
   size_t Point() const { return point; }
+  //! For compatibility with other trees; the argument is ignored.
+  size_t Point(const size_t) const { return point; }
+
+  // Fake
+  CoverTree* Left() const { return NULL; }
+  CoverTree* Right() const { return NULL; }
+  size_t Begin() const { return 0; }
+  size_t Count() const { return 0; }
+  size_t End() const { return 0; }
+  bool IsLeaf() const { return (children.size() == 0); }
+  size_t NumPoints() const { return 1; }
 
   //! Get a particular child node.
   const CoverTree& Child(const size_t index) const { return *children[index]; }
@@ -167,6 +191,26 @@ class CoverTree
   double ExpansionConstant() const { return expansionConstant; }
   //! Modify the expansion constant; don't do this, you'll break everything.
   double& ExpansionConstant() { return expansionConstant; }
+
+  //! Get the statistic for this node.
+  const StatisticType& Stat() const { return stat; }
+  //! Modify the statistic for this node.
+  StatisticType& Stat() { return stat; }
+
+  //! Return the minimum distance to another node.
+  double MinDistance(const CoverTree* other) const;
+
+  //! Return the minimum distance to another point.
+  double MinDistance(const arma::vec& other) const;
+
+  //! Return the maximum distance to another node.
+  double MaxDistance(const CoverTree* other) const;
+
+  //! Return the maximum distance to another point.
+  double MaxDistance(const arma::vec& other) const;
+
+  //! Returns true: this tree does have self-children.
+  static bool HasSelfChildren() { return true; }
 
  private:
   //! Reference to the matrix which this tree is built on.
