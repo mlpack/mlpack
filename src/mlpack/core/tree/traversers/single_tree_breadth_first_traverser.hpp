@@ -29,7 +29,11 @@ class SingleTreeBreadthFirstTraverser
     // This is a non-recursive implementation (which should be faster than a
     // recursive implementation).
     std::queue<TreeType*> pointQueue;
+    std::queue<size_t> parentPoints; // For if this tree has self-children.
     pointQueue.push(&referenceNode);
+
+    if (TreeType::HasSelfChildren())
+      parentPoints.push(size_t() - 1); // Invalid value.
 
     while (!pointQueue.empty())
     {
@@ -39,17 +43,38 @@ class SingleTreeBreadthFirstTraverser
       // Check if we can prune this node.
       if (rule.CanPrune(queryIndex, *node))
       {
+        if (TreeType::HasSelfChildren())
+          parentPoints.pop(); // Pop the parent point off.
+
         ++numPrunes;
         continue;
       }
 
+      // If this tree type has self-children, we need to make sure we don't run
+      // the base case if the parent already had it run.
+      size_t baseCaseStart = 0;
+      if (TreeType::HasSelfChildren())
+      {
+        if (parentPoints.front() == node->Point(0))
+          baseCaseStart = 1; // Skip base case we've already evaluated.
+
+        parentPoints.pop();
+      }
+
       // First run the base case for any points this node might hold.
-      for (size_t i = 0; i < node->NumPoints(); ++i)
+      for (size_t i = baseCaseStart; i < node->NumPoints(); ++i)
         rule.BaseCase(queryIndex, node->Point(i));
 
       // Now push children into the FIFO.
       for (size_t i = 0; i < node->NumChildren(); ++i)
         pointQueue.push(&(node->Child(i)));
+
+      // Push parent points if we need to.
+      if (TreeType::HasSelfChildren())
+      {
+        for (size_t i = 0; i < node->NumChildren(); ++i)
+          parentPoints.push(node->Point(0));
+      }
     }
   }
 

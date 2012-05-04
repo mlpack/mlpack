@@ -30,7 +30,11 @@ class SingleTreeDepthFirstTraverser
 
     // The stack of points to look at.
     std::stack<TreeType*> pointStack;
+    std::stack<size_t> parentPoints; // For if this tree has self-children.
     pointStack.push(&referenceNode);
+
+    if (TreeType::HasSelfChildren())
+      parentPoints.push(size_t() - 1); // Invalid value.
 
     while (!pointStack.empty())
     {
@@ -40,16 +44,38 @@ class SingleTreeDepthFirstTraverser
       // Check if we can prune this node.
       if (rule.CanPrune(queryIndex, *node))
       {
+        if (TreeType::HasSelfChildren())
+          parentPoints.pop(); // Pop the parent point off.
+
         ++numPrunes;
         continue;
       }
 
+      // If this tree type has self-children, we need to make sure we don't run
+      // the base case if the parent already had it run.
+      Log::Debug << "Node is " << node->Point(0) << std::endl;
+      size_t baseCaseStart = 0;
+      if (TreeType::HasSelfChildren())
+      {
+        if (parentPoints.top() == node->Point(0))
+          baseCaseStart = 1; // Skip base case we've already evaluated.
+
+        parentPoints.pop();
+      }
+
       // First run the base case for any points this node might hold.
-      for (size_t i = 0; i < node->NumPoints(); ++i)
+      for (size_t i = baseCaseStart; i < node->NumPoints(); ++i)
         rule.BaseCase(queryIndex, node->Point(i));
 
       for (size_t i = 0; i < node->NumChildren(); ++i)
         pointStack.push(&(node->Child(i)));
+
+      // Push parent points if we need to.
+      if (TreeType::HasSelfChildren())
+      {
+        for (size_t i = 0; i < node->NumChildren(); ++i)
+          parentPoints.push(node->Point(0));
+      }
     }
   }
 
