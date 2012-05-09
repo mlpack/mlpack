@@ -306,7 +306,9 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
   // because all the points in the near set should be used up.
   farSetSize = childFarSetSize;
 
-  ComputeDistances(pointIndex, indices, distances, farSetSize);
+  // No need to rebuild the distances if we never modified them.
+  if (nearSet.n_elem != 0)
+    ComputeDistances(pointIndex, indices, distances, farSetSize);
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
