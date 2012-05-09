@@ -26,6 +26,19 @@ class NeighborSearchRules
   // For single-tree traversal.
   bool CanPrune(const size_t queryIndex, TreeType& referenceNode);
 
+  // For dual-tree traversal.
+  bool CanPrune(TreeType& queryNode, TreeType& referenceNode);
+
+  // Get the order of points to recurse to.
+  void RecursionOrder(TreeType& queryNode,
+                      TreeType& referenceNode,
+                      arma::Mat<size_t>& recursionOrder,
+                      bool& queryRecurse,
+                      bool& referenceRecurse);
+
+  // Update bounds.  Needs a better name.
+  void UpdateAfterRecursion(TreeType& queryNode, TreeType& referenceNode);
+
  private:
   //! The reference set.
   const arma::mat& referenceSet;
