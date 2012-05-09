@@ -42,7 +42,7 @@ class DualTreeDepthFirstTraverser
       if (rule.CanPrune(query, reference))
       {
         numPrunes++;
-        return;
+        continue;
       }
 
       // Run the base case for any points.  We must have points in both trees.
