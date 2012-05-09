@@ -19,6 +19,7 @@ set(SOURCES
   mrkd_statistic.hpp
   traversers/single_tree_breadth_first_traverser.hpp
   traversers/single_tree_depth_first_traverser.hpp
+  traversers/dual_tree_depth_first_traverser.hpp
 )
 
 # add directory name to sources
