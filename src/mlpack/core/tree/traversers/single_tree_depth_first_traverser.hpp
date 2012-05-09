@@ -53,7 +53,6 @@ class SingleTreeDepthFirstTraverser
 
       // If this tree type has self-children, we need to make sure we don't run
       // the base case if the parent already had it run.
-      Log::Debug << "Node is " << node->Point(0) << std::endl;
       size_t baseCaseStart = 0;
       if (TreeType::HasSelfChildren())
       {
