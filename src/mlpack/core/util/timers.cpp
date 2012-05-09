@@ -105,7 +105,7 @@ void Timers::PrintTimer(const std::string& timerName)
     if (seconds > 0)
     {
       if (output)
-        Log::Info << ",";
+        Log::Info << ", ";
       Log::Info << seconds << "." << std::setw(1) << (t.tv_usec / 100000) <<
           "secs";
       output = true;
