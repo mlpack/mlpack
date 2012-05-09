@@ -11,6 +11,7 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 #include "first_point_is_root.hpp"
 #include "traversers/single_tree_breadth_first_traverser.hpp"
+#include "statistic.hpp"
 
 namespace mlpack {
 namespace tree {
