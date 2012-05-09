@@ -10,6 +10,7 @@
 #define __MLPACK_CORE_TREE_TRAVERSERS_DUAL_TREE_DEPTH_FIRST_TRAVERSER_HPP
 
 #include <mlpack/core.hpp>
+#include <stack>
 
 namespace mlpack {
 namespace tree {
@@ -24,48 +25,70 @@ class DualTreeDepthFirstTraverser
 
   void Traverse(TreeType& queryNode, TreeType& referenceNode)
   {
-    // Check if pruning can occur.
-    if (rule.CanPrune(queryNode, referenceNode))
-    {
-      numPrunes++;
-      return;
-    }
+    // Each of these stacks should have the same number of elements in them.
+    std::stack<TreeType*> queryStack;
+    std::stack<TreeType*> referenceStack;
+    queryStack.push(&queryNode);
+    referenceStack.push(&referenceNode);
 
-    // Run the base case for any points.  We must have points in both trees.
-    if ((queryNode.NumPoints() > 0) && (referenceNode.NumPoints() > 0))
+    while (!queryStack.empty())
     {
-      for (size_t i = 0; i < queryNode.NumPoints(); ++i)
-        for (size_t j = 0; j < referenceNode.NumPoints(); ++j)
-          rule.BaseCase(queryNode.Point(i), referenceNode.Point(j));
-    }
+      TreeType& query = *queryStack.top();
+      TreeType& reference = *referenceStack.top();
+      queryStack.pop();
+      referenceStack.pop();
 
-    // Find the correct way to recurse given these two points.
-    arma::Mat<size_t> recursionOrder;
-    bool queryRecurse;
-    bool referenceRecurse;
-    rule.RecursionOrder(queryNode, referenceNode, recursionOrder, queryRecurse,
-                        referenceRecurse);
+      // Check if pruning can occur.
+      if (rule.CanPrune(query, reference))
+      {
+        numPrunes++;
+        return;
+      }
 
-    // The RuleType has told us what we need to recurse on; act accordingly.
-    if (queryRecurse && referenceRecurse) // Recurse on both trees.
-    {
-      for (size_t i = 0; i < recursionOrder.n_cols; ++i)
-        Traverse(queryNode.Child(recursionOrder(0, i)),
-                 referenceNode.Child(recursionOrder(1, i)));
-    }
-    else if (queryRecurse) // Only recurse on query tree.
-    {
-      for (size_t i = 0; i < recursionOrder.n_cols; ++i)
-        Traverse(queryNode.Child(recursionOrder(0, i)), referenceNode);
-    }
-    else if (referenceRecurse) // Only recurse on reference tree.
-    {
-      for (size_t i = 0; i < recursionOrder.n_cols; ++i)
-        Traverse(queryNode, referenceNode.Child(recursionOrder(1, i)));
-    }
+      // Run the base case for any points.  We must have points in both trees.
+      if ((query.NumPoints() > 0) && (reference.NumPoints() > 0))
+      {
+        for (size_t i = 0; i < query.NumPoints(); ++i)
+          for (size_t j = 0; j < reference.NumPoints(); ++j)
+            rule.BaseCase(query.Point(i), reference.Point(j));
+      }
 
-    // Now, after recursion, update any information.
-    rule.UpdateAfterRecursion(queryNode, referenceNode);
+      // Find the correct way to recurse given these two points.
+      arma::Mat<size_t> recursionOrder;
+      bool queryRecurse;
+      bool referenceRecurse;
+      rule.RecursionOrder(query, reference, recursionOrder, queryRecurse,
+          referenceRecurse);
+
+      // The RuleType has told us what we need to recurse on; act accordingly.
+      if (queryRecurse && referenceRecurse) // Recurse on both trees.
+      {
+        for (size_t i = 0; i < recursionOrder.n_cols; ++i)
+        {
+          queryStack.push(&(query.Child(recursionOrder(0, i))));
+          referenceStack.push(&(reference.Child(recursionOrder(1, i))));
+        }
+      }
+      else if (queryRecurse) // Only recurse on query tree.
+      {
+        for (size_t i = 0; i < recursionOrder.n_cols; ++i)
+        {
+          queryStack.push(&(query.Child(recursionOrder(0, i))));
+          referenceStack.push(&reference);
+        }
+      }
+      else if (referenceRecurse) // Only recurse on reference tree.
+      {
+        for (size_t i = 0; i < recursionOrder.n_cols; ++i)
+        {
+          queryStack.push(&query);
+          referenceStack.push(&(reference.Child(recursionOrder(1, i))));
+        }
+      }
+
+      // Now, after recursion, update any information.
+      rule.UpdateAfterRecursion(query, reference);
+    }
   }
 
   size_t NumPrunes() const { return numPrunes; }
