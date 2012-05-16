@@ -1,5 +1,5 @@
 /**
- * @file allknntest.cpp
+ * @file allknn_test.cpp
  *
  * Test file for AllkNN class.
  */
@@ -468,6 +468,52 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
   {
     BOOST_REQUIRE_EQUAL(coverTreeNeighbors[i], naiveNeighbors[i]);
     BOOST_REQUIRE_CLOSE(coverTreeDistances[i], naiveDistances[i], 1e-5);
+  }
+}
+
+/**
+ * Test the cover tree dual-tree nearest neighbors method against the naive
+ * method.
+ */
+BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
+{
+  arma::mat data;
+  srand(time(NULL));
+  data.randn(3, 1000);
+
+  arma::mat kdtreeData(data);
+
+  AllkNN tree(kdtreeData);
+
+  arma::Mat<size_t> kdNeighbors;
+  arma::mat kdDistances;
+  tree.Search(5, kdNeighbors, kdDistances);
+
+  tree::CoverTree<metric::LMetric<2>, tree::FirstPointIsRoot,
+      QueryStat<NearestNeighborSort> > referenceTree = tree::CoverTree<
+      metric::LMetric<2>, tree::FirstPointIsRoot,
+      QueryStat<NearestNeighborSort> >(data);
+
+  NeighborSearch<NearestNeighborSort, metric::LMetric<2>,
+      tree::CoverTree<metric::LMetric<2>, tree::FirstPointIsRoot,
+      QueryStat<NearestNeighborSort> > >
+      coverTreeSearch(&referenceTree, data);
+
+  arma::Mat<size_t> coverNeighbors;
+  arma::mat coverDistances;
+  coverTreeSearch.Search(5, coverNeighbors, coverDistances);
+
+  for (size_t i = 0; i < coverNeighbors.n_cols; ++i)
+  {
+    Log::Debug << trans(coverNeighbors.col(i));
+    Log::Debug << trans(coverDistances.col(i));
+    Log::Warn << trans(kdNeighbors.col(i));
+    Log::Warn << trans(kdDistances.col(i));
+    for (size_t j = 0; j < coverNeighbors.n_rows; ++j)
+    {
+      BOOST_REQUIRE_EQUAL(coverNeighbors(j, i), kdNeighbors(j, i));
+      BOOST_REQUIRE_CLOSE(coverDistances(j, i), kdDistances(j, i), 1e-5);
+    }
   }
 }
 
