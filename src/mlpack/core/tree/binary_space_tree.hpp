@@ -11,6 +11,10 @@
 #include "statistic.hpp"
 
 #include "traversers/single_tree_depth_first_traverser.hpp"
+#include "traversers/dual_tree_depth_first_traverser.hpp"
+
+// Bad!
+#include <mlpack/methods/neighbor_search/neighbor_search_rules.hpp>
 
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
@@ -72,6 +76,22 @@ class BinarySpaceTree
         BinarySpaceTree<BoundType, StatisticType, MatType>,
         RuleType
     > Type;
+  };
+
+  template<typename RuleType>
+  struct PreferredDualTraverser
+  {
+    typedef DualTreeDepthFirstTraverser<
+        BinarySpaceTree<BoundType, StatisticType, MatType>,
+        RuleType
+    > Type;
+  };
+
+  template<typename SortPolicy, typename MetricType, typename TreeType>
+  struct PreferredRules
+  {
+    typedef neighbor::NeighborSearchRules<SortPolicy, MetricType, TreeType>
+        Type;
   };
 
   /**
