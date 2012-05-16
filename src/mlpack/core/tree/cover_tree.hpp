@@ -11,7 +11,9 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 #include "first_point_is_root.hpp"
 #include "traversers/single_tree_breadth_first_traverser.hpp"
+#include "traversers/dual_cover_tree_traverser.hpp"
 #include "statistic.hpp"
+#include <mlpack/methods/neighbor_search/neighbor_search_cover_rules.hpp>
 
 namespace mlpack {
 namespace tree {
@@ -158,6 +160,25 @@ class CoverTree
     > Type;
   };
 
+  template<typename RuleType>
+  struct PreferredDualTraverser
+  {
+    typedef DualCoverTreeTraverser<
+        CoverTree<MetricType, RootPointPolicy, StatisticType>,
+        RuleType
+    > Type;
+  };
+
+  template<typename SortPolicy, typename Metric2Type, typename TreeType>
+  struct PreferredRules
+  {
+    typedef neighbor::NeighborSearchCoverRules<
+        SortPolicy,
+        Metric2Type,
+        TreeType
+    > Type;
+  };
+
   //! Get a reference to the dataset.
   const arma::mat& Dataset() const { return dataset; }
 
@@ -182,6 +203,11 @@ class CoverTree
 
   //! Get the number of children.
   size_t NumChildren() const { return children.size(); }
+
+  //! Get the children.
+  const std::vector<CoverTree*>& Children() const { return children; }
+  //! Modify the children manually (maybe not a great idea).
+  std::vector<CoverTree*>& Children() { return children; }
 
   //! Get the scale of this node.
   int Scale() const { return scale; }
