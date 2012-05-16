@@ -50,7 +50,27 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
   children.push_back(new CoverTree(dataset, expansionConstant, point, scale - 1,
       indices, distances, childNearSetSize, childFarSetSize, childUsedSetSize));
 
+  // If we created an implicit node, take its self-child instead (this could
+  // happen multiple times).
+  while (children[children.size() - 1]->NumChildren() == 1)
+  {
+    CoverTree* old = children[children.size() - 1];
+    children.erase(children.begin() + children.size() - 1);
+
+    // Now take its child.
+    children.push_back(&(old->Child(0)));
+
+    // Remove its child (so it doesn't delete it).
+    old->Children().erase(old->Children().begin() + old->Children().size() - 1);
+
+    // Now delete it.
+    delete old;
+  }
+
   size_t nearSetSize = (dataset.n_cols - 1) - childUsedSetSize;
+
+  if (nearSetSize == 0) // We are done.
+    return;
 
   // We have no far set, so the array is organized thusly:
   // [ near | used ].  No resorting is necessary.
@@ -105,6 +125,24 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
         scale - 1, indices, distances, childNearSetSize, childFarSetSize,
         childUsedSetSize));
 
+    // If we created an implicit node, take its self-child instead (this could
+    // happen multiple times).
+    while (children[children.size() - 1]->NumChildren() == 1)
+    {
+      CoverTree* old = children[children.size() - 1];
+      children.erase(children.begin() + children.size() - 1);
+
+      // Now take its child.
+      children.push_back(&(old->Child(0)));
+
+      // Remove its child (so it doesn't delete it).
+      old->Children().erase(old->Children().begin() + old->Children().size()
+          - 1);
+
+      // Now delete it.
+      delete old;
+    }
+
     // Now the arrays, in memory, look like this:
     // [ childFar | childUsed | used ]
     // So we don't really need to do anything to them to get ready for the next
@@ -138,7 +176,6 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     scale(scale),
     expansionConstant(expansionConstant)
 {
-
   // If the size of the near set is 0, this is a leaf.
   if (nearSetSize == 0)
     return;
@@ -195,6 +232,23 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
       nextScale, indices, distances, childNearSetSize, childFarSetSize,
       childUsedSetSize));
 
+  // If we created an implicit node, take its self-child instead (this could
+  // happen multiple times).
+  while (children[children.size() - 1]->NumChildren() == 1)
+  {
+    CoverTree* old = children[children.size() - 1];
+    children.erase(children.begin() + children.size() - 1);
+
+    // Now take its child.
+    children.push_back(&(old->Child(0)));
+
+    // Remove its child (so it doesn't delete it).
+    old->Children().erase(old->Children().begin() + old->Children().size() - 1);
+
+    // Now delete it.
+    delete old;
+  }
+
   // Now the arrays, in memory, look like this:
   // [ childFar | childUsed | far | used ]
   // but we need to move the used points past our far set:
@@ -205,13 +259,13 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
   SortPointSet(indices, distances, childFarSetSize, childUsedSetSize,
       farSetSize);
 
-  // The self-child should not have used all the points in the near set.  If it
-  // did, this is an implicit node.
-  Log::Assert(childUsedSetSize < nearSetSize);
-
   // Update size of near set and used set.
   nearSetSize -= childUsedSetSize;
   usedSetSize += childUsedSetSize;
+
+  // If we used all the points in the near set, we don't need to continue.
+  if (nearSetSize == 0)
+    return;
 
   // Now for each point in the near set, we need to make children.  To save
   // computation later, we'll create an array holding the points in the near
@@ -271,6 +325,24 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
         nextScale, indices, distances, childNearSetSize, childFarSetSize,
         childUsedSetSize));
 
+    // If we created an implicit node, take its self-child instead (this could
+    // happen multiple times).
+    while (children[children.size() - 1]->NumChildren() == 1)
+    {
+      CoverTree* old = children[children.size() - 1];
+      children.erase(children.begin() + children.size() - 1);
+
+      // Now take its child.
+      children.push_back(&(old->Child(0)));
+
+      // Remove its child (so it doesn't delete it).
+      old->Children().erase(old->Children().begin() + old->Children().size()
+          - 1);
+
+      // Now delete it.
+      delete old;
+    }
+
     // Now the arrays, in memory, look like this:
     // [ childFar | childUsed | used ]
     // So we don't really need to do anything to them to get ready for the next
@@ -306,9 +378,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
   // because all the points in the near set should be used up.
   farSetSize = childFarSetSize;
 
-  // No need to rebuild the distances if we never modified them.
-  if (nearSet.n_elem != 0)
-    ComputeDistances(pointIndex, indices, distances, farSetSize);
+  ComputeDistances(pointIndex, indices, distances, farSetSize);
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
