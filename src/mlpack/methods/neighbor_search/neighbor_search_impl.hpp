@@ -196,14 +196,14 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
   }
   else // Dual-tree recursion.
   {
-    // Use crazy dual-tree traverser.
-    typedef NeighborSearchRules<SortPolicy, MetricType, TreeType> RuleType;
+    // Breaking a lot of design rules here...
+    typedef typename TreeType::template PreferredRules<SortPolicy, MetricType,
+        TreeType>::Type RuleType;
 
-    RuleType rules(referenceSet, querySet, *neighborPtr, *distancePtr,
-        metric);
+    RuleType rules(referenceSet, querySet, *neighborPtr, *distancePtr, metric);
 
-    typedef tree::DualTreeDepthFirstTraverser<TreeType, RuleType>
-      TraverserType;
+    typedef typename TreeType::template PreferredDualTraverser<RuleType>::Type
+        TraverserType;
 
     TraverserType traverser(rules);
 
@@ -215,7 +215,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
     numPrunes = traverser.NumPrunes();
   }
 
-  Log::Info << "Pruned " << numPrunes << " nodes." << std::endl;
+  Log::Warn << "Pruned " << numPrunes << " nodes." << std::endl;
 
   Timer::Stop("computing_neighbors");
 
