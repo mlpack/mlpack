@@ -21,6 +21,7 @@ set(SOURCES
   traversers/single_tree_depth_first_traverser.hpp
   traversers/dual_tree_depth_first_traverser.hpp
   traversers/dual_tree_breadth_first_traverser.hpp
+  traversers/dual_cover_tree_traverser.hpp
 )
 
 # add directory name to sources
