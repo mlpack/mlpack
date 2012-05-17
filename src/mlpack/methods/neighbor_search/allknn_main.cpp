@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
   if ((k <= 0) || (k >= referenceData.n_cols))
   {
     Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less ";
-    Log::Fatal << "than the number of reference points (";
+    Log::Fatal << "than or equal to the number of reference points (";
     Log::Fatal << referenceData.n_cols << ")." << endl;
   }
 
