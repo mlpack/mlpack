@@ -112,7 +112,7 @@ void MaxIP<KernelType>::Search(const size_t k,
   // Single-tree implementation.
   if (single)
   {
-    MaxIPRules<IPMetric<KernelType> > rules(querySet, referenceSet, indices,
+    MaxIPRules<IPMetric<KernelType> > rules(referenceSet, querySet, indices,
         products);
 
     tree::SingleTreeBreadthFirstTraverser<
