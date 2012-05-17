@@ -505,10 +505,6 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
 
   for (size_t i = 0; i < coverNeighbors.n_cols; ++i)
   {
-    Log::Debug << trans(coverNeighbors.col(i));
-    Log::Debug << trans(coverDistances.col(i));
-    Log::Warn << trans(kdNeighbors.col(i));
-    Log::Warn << trans(kdDistances.col(i));
     for (size_t j = 0; j < coverNeighbors.n_rows; ++j)
     {
       BOOST_REQUIRE_EQUAL(coverNeighbors(j, i), kdNeighbors(j, i));
