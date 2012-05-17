@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 
   // Sanity check on k value: must be greater than 0, must be less than the
   // number of reference points.
-  if ((k <= 0) || (k >= referenceData.n_cols))
+  if (k > referenceData.n_cols)
   {
     Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less ";
     Log::Fatal << "than or equal to the number of reference points (";
