@@ -19,3 +19,12 @@ endforeach()
 # Append sources (with directory name) to list of all MLPACK sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+
+add_executable(maxip
+  max_ip_main.cpp
+)
+target_link_libraries(maxip
+  mlpack
+)
+
+install(TARGETS maxip RUNTIME DESTINATION bin)
