@@ -122,6 +122,8 @@ void MaxIP<KernelType>::Search(const size_t k,
     for (size_t i = 0; i < querySet.n_cols; ++i)
       traverser.Traverse(i, *referenceTree);
 
+    Log::Info << "Pruned " << traverser.NumPrunes() << " nodes." << std::endl;
+
     Timer::Stop("computing_products");
     return;
   }
