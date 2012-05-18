@@ -394,8 +394,8 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType>::MinDistance(
     const CoverTree<MetricType, RootPointPolicy, StatisticType>* other) const
 {
   // Every cover tree node will contain points up to EC^(scale + 1) away.
-  return MetricType::Evaluate(dataset.col(point),
-      other->Dataset().col(other->Point())) -
+  return MetricType::Evaluate(dataset.unsafe_col(point),
+      other->Dataset().unsafe_col(other->Point())) -
       std::pow(expansionConstant, scale + 1) -
       std::pow(other->ExpansionConstant(), other->Scale() + 1);
 }
@@ -412,8 +412,8 @@ template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 double CoverTree<MetricType, RootPointPolicy, StatisticType>::MaxDistance(
     const CoverTree<MetricType, RootPointPolicy, StatisticType>* other) const
 {
-  return MetricType::Evaluate(dataset.col(point),
-      other->Dataset().col(other->Point())) +
+  return MetricType::Evaluate(dataset.unsafe_col(point),
+      other->Dataset().unsafe_col(other->Point())) +
       std::pow(expansionConstant, scale + 1) +
       std::pow(other->ExpansionConstant(), other->Scale() + 1);
 }
@@ -490,8 +490,8 @@ void CoverTree<MetricType, RootPointPolicy, StatisticType>::ComputeDistances(
   // modified.
   for (size_t i = 0; i < pointSetSize; ++i)
   {
-    distances[i] = MetricType::Evaluate(dataset.col(pointIndex),
-        dataset.col(indices[i]));
+    distances[i] = MetricType::Evaluate(dataset.unsafe_col(pointIndex),
+        dataset.unsafe_col(indices[i]));
   }
 }
 
