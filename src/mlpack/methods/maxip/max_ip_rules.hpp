@@ -26,7 +26,8 @@ class MaxIPRules
   void BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
   bool CanPrune(const size_t queryIndex,
-                tree::CoverTree<MetricType>& referenceNode);
+                tree::CoverTree<MetricType>& referenceNode,
+                const size_t parentIndex);
 
  private:
   const arma::mat& referenceSet;
@@ -36,6 +37,8 @@ class MaxIPRules
   arma::Mat<size_t>& indices;
 
   arma::mat& products;
+
+  arma::vec queryKernels; // || q || for each q.
 
   void InsertNeighbor(const size_t queryIndex,
                       const size_t pos,
