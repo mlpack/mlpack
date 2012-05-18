@@ -10,7 +10,7 @@
 // In case it hasn't yet been included.
 #include "max_ip.hpp"
 
-#include <mlpack/core/tree/traversers/single_tree_breadth_first_traverser.hpp>
+#include <mlpack/core/tree/traversers/single_cover_tree_traverser.hpp>
 #include "max_ip_rules.hpp"
 
 namespace mlpack {
@@ -112,17 +112,90 @@ void MaxIP<KernelType>::Search(const size_t k,
   // Single-tree implementation.
   if (single)
   {
-    MaxIPRules<IPMetric<KernelType> > rules(referenceSet, querySet, indices,
-        products);
+    // Calculate number of pruned nodes.
+    size_t numPrunes = 0;
 
-    tree::SingleTreeBreadthFirstTraverser<
-        tree::CoverTree<IPMetric<KernelType> >,
-        MaxIPRules<IPMetric<KernelType> > > traverser(rules);
+    // Precalculate query products ( || q || for all q).
+    arma::vec queryProducts(querySet.n_cols);
+    for (size_t queryIndex = 0; queryIndex < querySet.n_cols; ++queryIndex)
+      queryProducts[queryIndex] = KernelType::Evaluate(
+          querySet.unsafe_col(queryIndex), querySet.unsafe_col(queryIndex));
 
-    for (size_t i = 0; i < querySet.n_cols; ++i)
-      traverser.Traverse(i, *referenceTree);
+    // Screw the CoverTreeTraverser, we'll implement it by hand.
+    for (size_t queryIndex = 0; queryIndex < querySet.n_cols; ++queryIndex)
+    {
+      std::queue<tree::CoverTree<IPMetric<KernelType> >*> pointQueue;
+      std::queue<size_t> parentQueue;
+      std::queue<double> parentEvalQueue;
+      pointQueue.push(referenceTree);
+      parentQueue.push(size_t() - 1); // Has no parent.
+      parentEvalQueue.push(0); // No possible parent evaluation.
 
-    Log::Info << "Pruned " << traverser.NumPrunes() << " nodes." << std::endl;
+      tree::CoverTree<IPMetric<KernelType> >* referenceNode;
+      size_t currentParent;
+      double currentParentEval;
+      double eval; // Kernel evaluation.
+
+      while (!pointQueue.empty())
+      {
+        // Get the information for this node.
+        referenceNode = pointQueue.front();
+        currentParent = parentQueue.front();
+        currentParentEval = parentEvalQueue.front();
+
+        pointQueue.pop();
+        parentQueue.pop();
+        parentEvalQueue.pop();
+
+        // See if this has the same parent.
+        if (referenceNode->Point() == currentParent)
+        {
+          // We don't have to evaluate the kernel again.
+          eval = currentParentEval;
+        }
+        else
+        {
+          // Evaluate the kernel.  Then see if it is a result to keep.
+          eval = KernelType::Evaluate(querySet.unsafe_col(queryIndex),
+              referenceSet.unsafe_col(referenceNode->Point()));
+
+          // Is the result good enough to be saved?
+          if (eval > products(products.n_rows - 1, queryIndex))
+          {
+            // Figure out where to insert.
+            size_t insertPosition = 0;
+            for ( ; insertPosition < products.n_rows - 1; ++insertPosition)
+              if (eval > products(insertPosition, queryIndex))
+                break;
+
+            // We are guaranteed that insertPosition is valid.
+            InsertNeighbor(indices, products, queryIndex, insertPosition,
+                referenceNode->Point(), eval);
+          }
+        }
+
+        // Now discover if we can prune this node or not.
+        double maxProduct = eval + std::pow(referenceNode->ExpansionConstant(),
+            referenceNode->Scale() + 1) * queryProducts[queryIndex];
+
+        if (maxProduct > products(products.n_rows - 1, queryIndex))
+        {
+          // We can't prune.  So add our children.
+          for (size_t i = 0; i < referenceNode->NumChildren(); ++i)
+          {
+            pointQueue.push(&(referenceNode->Child(i)));
+            parentQueue.push(referenceNode->Point());
+            parentEvalQueue.push(eval);
+          }
+        }
+        else
+        {
+          numPrunes++;
+        }
+      }
+    }
+
+    Log::Info << "Pruned " << numPrunes << " nodes." << std::endl;
 
     Timer::Stop("computing_products");
     return;
