@@ -40,8 +40,9 @@ bool MaxIPRules<MetricType>::CanPrune(const size_t queryIndex,
   // and since we are using cover trees, p_0 is the point referred to by the
   // node, and R_p will be the expansion constant to the power of the scale plus
   // one.
-  const double eval = MetricType::Kernel::Evaluate(querySet.col(queryIndex),
-      referenceSet.col(referenceNode.Point()));
+  const double eval = MetricType::Kernel::Evaluate(
+      querySet.unsafe_col(queryIndex),
+      referenceSet.unsafe_col(referenceNode.Point()));
 
   // See if base case can be added.
   if (eval > products(products.n_rows - 1, queryIndex))
@@ -57,8 +58,8 @@ bool MaxIPRules<MetricType>::CanPrune(const size_t queryIndex,
 
   double maxProduct = eval + std::pow(referenceNode.ExpansionConstant(),
       referenceNode.Scale() + 1) *
-      sqrt(MetricType::Kernel::Evaluate(querySet.col(queryIndex),
-      querySet.col(queryIndex)));
+      sqrt(MetricType::Kernel::Evaluate(querySet.unsafe_col(queryIndex),
+      querySet.unsafe_col(queryIndex)));
 
   if (maxProduct > products(products.n_rows - 1, queryIndex))
     return false;

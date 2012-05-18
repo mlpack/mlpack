@@ -91,8 +91,8 @@ void MaxIP<KernelType>::Search(const size_t k,
     {
       for (size_t r = 0; r < referenceSet.n_cols; ++r)
       {
-        const double eval = KernelType::Evaluate(querySet.col(q),
-                                                 referenceSet.col(r));
+        const double eval = KernelType::Evaluate(querySet.unsafe_col(q),
+                                                 referenceSet.unsafe_col(r));
 
         size_t insertPosition;
         for (insertPosition = 0; insertPosition < indices.n_rows;
