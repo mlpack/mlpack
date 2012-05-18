@@ -10,7 +10,6 @@
 // In case it hasn't yet been included.
 #include "max_ip.hpp"
 
-#include <mlpack/core/tree/traversers/single_cover_tree_traverser.hpp>
 #include "max_ip_rules.hpp"
 
 namespace mlpack {
