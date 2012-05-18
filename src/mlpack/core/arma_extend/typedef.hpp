@@ -17,7 +17,7 @@
     {
     typedef std::size_t u64;
 
-    static const u64  max   = (sizeof(u64) >= 8) ? 0xFFFFFFFFFFFFFFFF : 0xFFFFFFFF;  // check required for silly compilers
+    static const u64  max   = (sizeof(u64) >= 8) ? 0xFFFFFFFFFFFFFFFFULL : 0xFFFFFFFF;  // check required for silly compilers
     static const bool trunc = false;
     };
 
@@ -26,11 +26,11 @@
     {
     #if (ULONG_MAX >= 0xFFFFFFFFFFFFFFFF)
       typedef unsigned long u64;
-      static const u64  max   = 0xFFFFFFFFFFFFFFFF;
+      static const u64  max   = 0xFFFFFFFFFFFFFFFFUL;
       static const bool trunc = false;
     #elif defined(ULLONG_MAX)
       typedef unsigned long long u64;
-      static const u64  max   = 0xFFFFFFFFFFFFFFFF;
+      static const u64  max   = 0xFFFFFFFFFFFFFFFFULL;
       static const bool trunc = false;
     #elif (_MSC_VER >= 1200)
     //#elif (_MSC_VER >= 1310) && defined(_MSC_EXTENSIONS)
