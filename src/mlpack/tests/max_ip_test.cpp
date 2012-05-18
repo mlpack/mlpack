@@ -25,7 +25,8 @@ BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
 {
   // First create a random dataset.
   arma::mat data;
-  data.randn(5, 5000);
+  srand(time(NULL));
+  data.randn(5, 1000);
 
   // Now run MaxIP naively.
   MaxIP<LinearKernel> naive(data, false, true);
