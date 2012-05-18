@@ -79,6 +79,7 @@ void MaxIP<KernelType>::Search(const size_t k,
   // No remapping will be necessary.
   indices.set_size(k, querySet.n_cols);
   products.set_size(k, querySet.n_cols);
+  products.fill(DBL_MIN);
 
   Timer::Start("computing_products");
 
