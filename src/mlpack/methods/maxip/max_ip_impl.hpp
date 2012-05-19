@@ -15,6 +15,14 @@
 namespace mlpack {
 namespace maxip {
 
+template<typename TreeType>
+struct SearchFrame
+{
+  TreeType* node;
+  size_t parent;
+  double parentEval;
+};
+
 template<typename KernelType>
 MaxIP<KernelType>::MaxIP(const arma::mat& referenceSet,
                          bool single,
@@ -124,28 +132,31 @@ void MaxIP<KernelType>::Search(const size_t k,
     // Screw the CoverTreeTraverser, we'll implement it by hand.
     for (size_t queryIndex = 0; queryIndex < querySet.n_cols; ++queryIndex)
     {
-      std::queue<tree::CoverTree<IPMetric<KernelType> >*> pointQueue;
-      std::queue<size_t> parentQueue;
-      std::queue<double> parentEvalQueue;
-      pointQueue.push(referenceTree);
-      parentQueue.push(size_t() - 1); // Has no parent.
-      parentEvalQueue.push(0); // No possible parent evaluation.
+      std::queue<SearchFrame<tree::CoverTree<IPMetric<KernelType> > > >
+          frameQueue;
+
+      SearchFrame<tree::CoverTree<IPMetric<KernelType> > > nextFrame;
+      nextFrame.node = referenceTree;
+      nextFrame.parent = size_t() - 1;
+      nextFrame.parentEval = 0;
+
+      frameQueue.push(nextFrame);
 
       tree::CoverTree<IPMetric<KernelType> >* referenceNode;
       size_t currentParent;
       double currentParentEval;
       double eval; // Kernel evaluation.
 
-      while (!pointQueue.empty())
+      while (!frameQueue.empty())
       {
         // Get the information for this node.
-        referenceNode = pointQueue.front();
-        currentParent = parentQueue.front();
-        currentParentEval = parentEvalQueue.front();
+        const SearchFrame<tree::CoverTree<IPMetric<KernelType> > >& frame =
+            frameQueue.front();
+        referenceNode = frame.node;
+        currentParent = frame.parent;
+        currentParentEval = frame.parentEval;
 
-        pointQueue.pop();
-        parentQueue.pop();
-        parentEvalQueue.pop();
+        frameQueue.pop();
 
         // See if this has the same parent.
         if (referenceNode->Point() == currentParent)
@@ -183,9 +194,13 @@ void MaxIP<KernelType>::Search(const size_t k,
           // We can't prune.  So add our children.
           for (size_t i = 0; i < referenceNode->NumChildren(); ++i)
           {
-            pointQueue.push(&(referenceNode->Child(i)));
-            parentQueue.push(referenceNode->Point());
-            parentEvalQueue.push(eval);
+            SearchFrame<tree::CoverTree<IPMetric<KernelType> > > nextFrame;
+
+            nextFrame.node = &(referenceNode->Child(i));
+            nextFrame.parent = referenceNode->Point();
+            nextFrame.parentEval = eval;
+
+            frameQueue.push(nextFrame);
           }
         }
         else
