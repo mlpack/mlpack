@@ -6,6 +6,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
+#include <mlpack/core/kernels/polynomial_kernel.hpp>1
 
 #include "max_ip.hpp"
 
@@ -34,6 +35,9 @@ PARAM_STRING("products_file", "File to save inner products into.", "p", "");
 PARAM_STRING("indices_file", "File to save indices of inner products into.",
     "i", "");
 
+PARAM_STRING("kernel", "Kernel type to use: 'linear', 'polynomial'.", "K",
+    "linear");
+
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single", "If true, single-tree search is used (as opposed to "
     "dual-tree search.", "s");
@@ -50,6 +54,8 @@ int main(int argc, char** argv)
   const bool naive = CLI::HasParam("naive");
   const bool single = CLI::HasParam("single");
 
+  const string kernelType = CLI::GetParam<string>("kernel");
+
   arma::mat referenceData;
   arma::mat queryData;
 
@@ -64,6 +70,13 @@ int main(int argc, char** argv)
     Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less ";
     Log::Fatal << "than or equal to the number of reference points (";
     Log::Fatal << referenceData.n_cols << ")." << endl;
+  }
+
+  // Check on kernel type.
+  if ((kernelType != "linear") && (kernelType != "polynomial"))
+  {
+    Log::Fatal << "Invalid kernel type: '" << kernelType << "'; must be ";
+    Log::Fatal << "'linear' or 'polynomial'." << endl;
   }
 
   // Load the query matrix, if we can.
@@ -94,14 +107,32 @@ int main(int argc, char** argv)
   // Construct MaxIP object.
   if (queryData.n_elem == 0)
   {
-    MaxIP<LinearKernel> maxip(referenceData, (single && !naive), naive);
-    maxip.Search(k, indices, products);
+    if (kernelType == "linear")
+    {
+      MaxIP<LinearKernel> maxip(referenceData, (single && !naive), naive);
+      maxip.Search(k, indices, products);
+    }
+    else if (kernelType == "polynomial")
+    {
+      MaxIP<PolynomialNoOffsetKernel<2> > maxip(referenceData,
+          (single && !naive), naive);
+      maxip.Search(k, indices, products);
+    }
   }
   else
   {
-    MaxIP<LinearKernel> maxip(referenceData, queryData, (single && !naive),
-        naive);
-    maxip.Search(k, indices, products);
+    if (kernelType == "linear")
+    {
+      MaxIP<LinearKernel> maxip(referenceData, queryData, (single && !naive),
+          naive);
+      maxip.Search(k, indices, products);
+    }
+    else if (kernelType == "polynomial")
+    {
+      MaxIP<PolynomialNoOffsetKernel<2> > maxip(referenceData, queryData,
+          (single && !naive), naive);
+      maxip.Search(k, indices, products);
+    }
   }
 
   // Save output, if we were asked to.
