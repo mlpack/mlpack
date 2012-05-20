@@ -68,6 +68,20 @@ class PolynomialKernel
   double degree;
 };
 
+// For an integer degree known at compile time.  No offset.
+template<int degree>
+class PolynomialNoOffsetKernel
+{
+ public:
+  PolynomialNoOffsetKernel();
+
+  template<typename VecType>
+  static double Evaluate(const VecType& a, const VecType& b)
+  {
+    return pow((arma::dot(a, b)), degree);
+  }
+};
+
 }; // namespace kernel
 }; // namespace mlpack
 
