@@ -16,7 +16,7 @@ template<typename VecType>
 double CosineDistance::Evaluate(const VecType& a, const VecType& b)
 {
   // Since we are using the L2 inner product, this is easy.
-  return 1 - dot(a, b) / (norm(a, 2) * norm(b, 2));
+  return dot(a, b) / (norm(a, 2) * norm(b, 2));
 }
 
 }; // namespace kernel

@@ -121,6 +121,18 @@ class GaussianKernel
   double gamma;
 };
 
+class GaussianStaticKernel
+{
+ public:
+  GaussianStaticKernel() { }
+
+  template<typename VecType>
+  static double Evaluate(const VecType& a, const VecType& b)
+  {
+    return exp(-0.5 * metric::SquaredEuclideanDistance::Evaluate(a, b));
+  }
+};
+
 }; // namespace kernel
 }; // namespace mlpack
 
