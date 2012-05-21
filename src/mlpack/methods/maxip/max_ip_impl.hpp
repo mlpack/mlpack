@@ -91,6 +91,8 @@ void MaxIP<KernelType>::Search(const size_t k,
 
   Timer::Start("computing_products");
 
+  size_t kernelEvaluations = 0;
+
   // Naive implementation.
   if (naive)
   {
@@ -101,6 +103,7 @@ void MaxIP<KernelType>::Search(const size_t k,
       {
         const double eval = KernelType::Evaluate(querySet.unsafe_col(q),
                                                  referenceSet.unsafe_col(r));
+        ++kernelEvaluations;
 
         size_t insertPosition;
         for (insertPosition = 0; insertPosition < indices.n_rows;
@@ -114,6 +117,8 @@ void MaxIP<KernelType>::Search(const size_t k,
     }
 
     Timer::Stop("computing_products");
+    
+    Log::Info << "Kernel evaluations: " << kernelEvaluations << "." << std::endl;
     return;
   }
 
@@ -169,6 +174,7 @@ void MaxIP<KernelType>::Search(const size_t k,
           // Evaluate the kernel.  Then see if it is a result to keep.
           eval = KernelType::Evaluate(querySet.unsafe_col(queryIndex),
               referenceSet.unsafe_col(referenceNode->Point()));
+          ++kernelEvaluations;
 
           // Is the result good enough to be saved?
           if (eval > products(products.n_rows - 1, queryIndex))
@@ -211,6 +217,8 @@ void MaxIP<KernelType>::Search(const size_t k,
     }
 
     Log::Info << "Pruned " << numPrunes << " nodes." << std::endl;
+    Log::Info << "Kernel evaluations: " << kernelEvaluations << "." << std::endl;
+    Log::Info << "Distance evaluations: " << distanceEvaluations << "." << std::endl;
 
     Timer::Stop("computing_products");
     return;
