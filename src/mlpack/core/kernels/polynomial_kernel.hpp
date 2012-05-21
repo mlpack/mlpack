@@ -82,6 +82,19 @@ class PolynomialNoOffsetKernel
   }
 };
 
+template<int denominator>
+class PolynomialFractionKernel
+{
+ public:
+  PolynomialFractionKernel();
+
+  template<typename VecType>
+  static double Evaluate(const VecType& a, const VecType& b)
+  {
+    return pow((arma::dot(a, b)), 1.0 / (double) denominator);
+  }
+};
+
 }; // namespace kernel
 }; // namespace mlpack
 
