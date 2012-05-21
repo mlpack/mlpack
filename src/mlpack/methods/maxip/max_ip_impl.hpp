@@ -167,6 +167,7 @@ void MaxIP<KernelType>::Search(const size_t k,
       nextFrame.node = referenceTree;
       nextFrame.eval = KernelType::Evaluate(querySet.unsafe_col(queryIndex),
           referenceSet.unsafe_col(referenceTree->Point()));
+      ++kernelEvaluations;
 
       // The initial evaluation will be the best so far.
       indices(0, queryIndex) = referenceTree->Point();
@@ -219,6 +220,7 @@ void MaxIP<KernelType>::Search(const size_t k,
             childFrame.eval = KernelType::Evaluate(
                 querySet.unsafe_col(queryIndex),
                 referenceSet.unsafe_col(referenceNode->Child(i).Point()));
+            ++kernelEvaluations;
 
             // Can we prune it?  If we can, we can avoid putting it in the queue
             // (saves time).
