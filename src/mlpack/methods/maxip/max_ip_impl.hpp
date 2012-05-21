@@ -131,8 +131,8 @@ void MaxIP<KernelType>::Search(const size_t k,
     // Precalculate query products ( || q || for all q).
     arma::vec queryProducts(querySet.n_cols);
     for (size_t queryIndex = 0; queryIndex < querySet.n_cols; ++queryIndex)
-      queryProducts[queryIndex] = KernelType::Evaluate(
-          querySet.unsafe_col(queryIndex), querySet.unsafe_col(queryIndex));
+      queryProducts[queryIndex] = sqrt(KernelType::Evaluate(
+          querySet.unsafe_col(queryIndex), querySet.unsafe_col(queryIndex)));
 
     // Screw the CoverTreeTraverser, we'll implement it by hand.
     for (size_t queryIndex = 0; queryIndex < querySet.n_cols; ++queryIndex)
