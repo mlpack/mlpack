@@ -4,6 +4,9 @@
  *
  * Ensure that the maximum inner product search is successful.
  */
+#include <stddef.h>
+size_t distanceEvaluations;
+
 #include <mlpack/core.hpp>
 #include <mlpack/methods/maxip/max_ip.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
@@ -23,6 +26,8 @@ BOOST_AUTO_TEST_SUITE(MaxIPTest);
  */
 BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
 {
+  distanceEvaluations = 0;
+
   // First create a random dataset.
   arma::mat data;
   srand(time(NULL));
