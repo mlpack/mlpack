@@ -133,6 +133,7 @@ void MaxIP<KernelType>::Search(const size_t k,
     for (size_t queryIndex = 0; queryIndex < querySet.n_cols; ++queryIndex)
       queryProducts[queryIndex] = sqrt(KernelType::Evaluate(
           querySet.unsafe_col(queryIndex), querySet.unsafe_col(queryIndex)));
+    kernelEvaluations += querySet.n_cols;
 
     // Screw the CoverTreeTraverser, we'll implement it by hand.
     for (size_t queryIndex = 0; queryIndex < querySet.n_cols; ++queryIndex)
