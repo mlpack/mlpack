@@ -33,7 +33,7 @@ inline double IPMetric<kernel::LinearKernel>::Evaluate(const Vec1Type& a,
                                                        const Vec2Type& b)
 {
   ++distanceEvaluations;
-  return metric::LMetric<2>::Evaluate(a, b);
+  return metric::LMetric<2, true>::Evaluate(a, b);
 }
 
 }; // namespace maxip
