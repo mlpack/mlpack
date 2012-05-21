@@ -4,9 +4,15 @@
  *
  * Main executable for maximum inner product search.
  */
+// I can't believe I'm doing this.
+#include <stddef.h>
+size_t distanceEvaluations;
+
 #include <mlpack/core.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
-#include <mlpack/core/kernels/polynomial_kernel.hpp>1
+#include <mlpack/core/kernels/polynomial_kernel.hpp>
+#include <mlpack/core/kernels/cosine_distance.hpp>
+#include <mlpack/core/kernels/gaussian_kernel.hpp>
 
 #include "max_ip.hpp"
 
@@ -35,8 +41,8 @@ PARAM_STRING("products_file", "File to save inner products into.", "p", "");
 PARAM_STRING("indices_file", "File to save indices of inner products into.",
     "i", "");
 
-PARAM_STRING("kernel", "Kernel type to use: 'linear', 'polynomial'.", "K",
-    "linear");
+PARAM_STRING("kernel", "Kernel type to use: 'linear', 'polynomial', 'cosine'.",
+    "K", "linear");
 
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single", "If true, single-tree search is used (as opposed to "
@@ -44,6 +50,8 @@ PARAM_FLAG("single", "If true, single-tree search is used (as opposed to "
 
 int main(int argc, char** argv)
 {
+  distanceEvaluations = 0;
+
   CLI::ParseCommandLine(argc, argv);
 
   // Get reference dataset filename.
@@ -73,7 +81,10 @@ int main(int argc, char** argv)
   }
 
   // Check on kernel type.
-  if ((kernelType != "linear") && (kernelType != "polynomial"))
+  if ((kernelType != "linear") && (kernelType != "polynomial") &&
+      (kernelType != "cosine") && (kernelType != "polynomial5") &&
+      (kernelType != "polynomial10") && (kernelType != "polynomial0.5") &&
+      (kernelType != "polynomial0.1") && (kernelType != "gaussian"))
   {
     Log::Fatal << "Invalid kernel type: '" << kernelType << "'; must be ";
     Log::Fatal << "'linear' or 'polynomial'." << endl;
@@ -118,6 +129,41 @@ int main(int argc, char** argv)
           (single && !naive), naive);
       maxip.Search(k, indices, products);
     }
+    else if (kernelType == "cosine")
+    {
+      MaxIP<CosineDistance> maxip(referenceData, (single && !naive), naive);
+      maxip.Search(k, indices, products);
+    }
+    else if (kernelType == "polynomial5")
+    {
+      MaxIP<PolynomialNoOffsetKernel<5> > maxip(referenceData,
+          (single && !naive), naive);
+      maxip.Search(k, indices, products);
+    }
+    else if (kernelType == "polynomial10")
+    {
+      MaxIP<PolynomialNoOffsetKernel<10> > maxip(referenceData,
+          (single && !naive), naive);
+      maxip.Search(k, indices, products);
+    }
+    else if (kernelType == "polynomial0.5")
+    {
+      MaxIP<PolynomialFractionKernel<2> > maxip(referenceData,
+          (single && !naive), naive);
+      maxip.Search(k, indices, products);
+    }
+    else if (kernelType == "polynomial0.1")
+    {
+      MaxIP<PolynomialFractionKernel<10> > maxip(referenceData,
+          (single && !naive), naive);
+      maxip.Search(k, indices, products);
+    }
+    else if (kernelType == "gaussian")
+    {
+      MaxIP<GaussianStaticKernel> maxip(referenceData, (single && !naive),
+          naive);
+      maxip.Search(k, indices, products);
+    }
   }
   else
   {
@@ -130,6 +176,42 @@ int main(int argc, char** argv)
     else if (kernelType == "polynomial")
     {
       MaxIP<PolynomialNoOffsetKernel<2> > maxip(referenceData, queryData,
+          (single && !naive), naive);
+      maxip.Search(k, indices, products);
+    }
+    else if (kernelType == "cosine")
+    {
+      MaxIP<CosineDistance> maxip(referenceData, queryData, (single && !naive),
+        naive);
+      maxip.Search(k, indices, products);
+    }
+    else if (kernelType == "polynomial5")
+    {
+      MaxIP<PolynomialNoOffsetKernel<5> > maxip(referenceData, queryData,
+          (single && !naive), naive);
+      maxip.Search(k, indices, products);
+    }
+    else if (kernelType == "polynomial10")
+    {
+      MaxIP<PolynomialNoOffsetKernel<10> > maxip(referenceData, queryData,
+          (single && !naive), naive);
+      maxip.Search(k, indices, products);
+    }
+    else if (kernelType == "polynomial0.5")
+    {
+      MaxIP<PolynomialFractionKernel<2> > maxip(referenceData, queryData,
+          (single && !naive), naive);
+      maxip.Search(k, indices, products);
+    }
+    else if (kernelType == "polynomial0.1")
+    {
+      MaxIP<PolynomialFractionKernel<10> > maxip(referenceData, queryData,
+          (single && !naive), naive);
+      maxip.Search(k, indices, products);
+    }
+    else if (kernelType == "gaussian")
+    {
+      MaxIP<GaussianStaticKernel> maxip(referenceData, queryData,
           (single && !naive), naive);
       maxip.Search(k, indices, products);
     }
