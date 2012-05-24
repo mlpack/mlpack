@@ -66,6 +66,13 @@ if(ARMADILLO_INCLUDE_DIR)
     # WARNING: The number of spaces before the version name is not one.
     string(REGEX REPLACE ".*#define ARMA_VERSION_NAME\ +\"([0-9a-zA-Z\ _-]+)\".*" "\\1" ARMADILLO_VERSION_NAME "${_armadillo_HEADER_CONTENTS}")
 
+    string(COMPARE EQUAL "${ARMADILLO_VERSION_MAJOR}" "${_armadillo_HEADER_CONTENTS}" EQUAL_STRING)
+    if (EQUAL_STRING)
+      string(REGEX REPLACE ".*static const unsigned int major = ([0-9]+).*" "\\1" ARMADILLO_VERSION_MAJOR "${_armadillo_HEADER_CONTENTS}")
+      string(REGEX REPLACE ".*static const unsigned int minor = ([0-9]+).*" "\\1" ARMADILLO_VERSION_MINOR "${_armadillo_HEADER_CONTENTS}")
+      string(REGEX REPLACE ".*static const unsigned int patch = ([0-9]+).*" "\\1" ARMADILLO_VERSION_PATCH "${_armadillo_HEADER_CONTENTS}")
+    endif (EQUAL_STRING)
+
   endif(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/arma_version.hpp")
 
   set(ARMADILLO_VERSION_STRING "${ARMADILLO_VERSION_MAJOR}.${ARMADILLO_VERSION_MINOR}.${ARMADILLO_VERSION_PATCH}")
@@ -77,9 +84,16 @@ endif (ARMADILLO_INCLUDE_DIR)
 # Checks 'RECQUIRED', 'QUIET' and versions.
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Armadillo
-  REQUIRED_VARS ARMADILLO_LIBRARY ARMADILLO_INCLUDE_DIR
-  VERSION_VAR ARMADILLO_VERSION_STRING)
+  REQUIRED_VARS ARMADILLO_LIBRARY ARMADILLO_INCLUDE_DIR)
+#  VERSION_VAR ARMADILLO_VERSION_STRING)
 # version_var fails with cmake < 2.8.4.
+
+if ("${ARMADILLO_VERSION_STRING}" VERSION_GREATER "${Armadillo_FIND_VERSION}")
+  message(STATUS "Found Armadillo version ${ARMADILLO_VERSION_STRING} (required ${Armadillo_FIND_VERSION}).")
+else ("${ARMADILLO_VERSION_STRING}" VERSION_GREATER "${Armadillo_FIND_VERSION}")
+  message(FATAL_ERROR "Armadillo version ${Armadillo_FIND_VERSION} required (found ${ARMADILLO_VERSION_STRING}).")
+endif ("${ARMADILLO_VERSION_STRING}" VERSION_GREATER "${Armadillo_FIND_VERSION}")
+
 
 if (ARMADILLO_FOUND)
   set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR})
