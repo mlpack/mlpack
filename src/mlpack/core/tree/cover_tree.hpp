@@ -258,6 +258,9 @@ class CoverTree
   //! The instantiated statistic.
   StatisticType stat;
 
+  //! The instantiated metric.  Either the user passes it in, or we build it.
+  MetricType* metric;
+
   /**
    * Fill the vector of distances with the distances between the point specified
    * by pointIndex and each point in the indices array.  The distances of the
@@ -316,6 +319,15 @@ class CoverTree
                       const size_t childFarSetSize,
                       const size_t childUsedSetSize,
                       const size_t farSetSize);
+
+  void MoveToUsedSet(arma::Col<size_t>& indices,
+                     arma::vec& distances,
+                     size_t& nearSetSize,
+                     size_t& farSetSize,
+                     size_t& usedSetSize,
+                     arma::Col<size_t>& childIndices,
+                     const size_t childFarSetSize,
+                     const size_t childUsedSetSize);
 };
 
 }; // namespace tree
