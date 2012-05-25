@@ -535,6 +535,11 @@ void CoverTree<MetricType, RootPointPolicy, StatisticType>::MoveToUsedSet(
     const size_t childFarSetSize, // childNearSetSize is 0 in this case.
     const size_t childUsedSetSize)
 {
+  size_t originalSum = nearSetSize + farSetSize + usedSetSize;
+  size_t origNear = nearSetSize;
+  size_t origFar = farSetSize;
+  size_t origUsed = usedSetSize;
+
   // Loop across the set.  We will swap points as we need.  It should be noted
   // that farSetSize and nearSetSize may change with each iteration of this loop
   // (depending on if we make a swap or not).
@@ -548,34 +553,56 @@ void CoverTree<MetricType, RootPointPolicy, StatisticType>::MoveToUsedSet(
       {
         // We have found a point; a swap is necessary.
         // Since this point is from the near set, to preserve the near set, we
-        // must do a three-way swap.
+        // must do a swap.
 
-        // First take the target point and put the used point there.
-        size_t tempIndex = indices[nearSetSize + farSetSize - 1];
-        double tempDist = distances[nearSetSize + farSetSize - 1];
-
-        indices[nearSetSize + farSetSize - 1] = indices[i];
-        distances[nearSetSize + farSetSize - 1] = distances[i];
-
-        // Now take the last point in the near set and put the temporary point
-        // (which is from the far set) there.  Store the near set point as a
-        // temporary.  If the near set only has one point, we don't need to do
-        // the second swap.
-        if ((nearSetSize - 1) != i)
+        if (farSetSize > 0)
         {
-          size_t tempNearIndex = indices[nearSetSize - 1];
-          double tempNearDist = distances[nearSetSize - 1];
+          if ((nearSetSize - 1) != i)
+          {
+            // In this case it must be a three-way swap.
+            size_t tempIndex = indices[nearSetSize + farSetSize - 1];
+            double tempDist = distances[nearSetSize + farSetSize - 1];
 
-          indices[nearSetSize - 1] = tempIndex;
-          distances[nearSetSize - 1] = tempDist;
+            size_t tempNearIndex = indices[nearSetSize - 1];
+            double tempNearDist = distances[nearSetSize - 1];
 
-          indices[i] = tempNearIndex;
-          distances[i] = tempNearDist;
+            indices[nearSetSize + farSetSize - 1] = indices[i];
+            distances[nearSetSize + farSetSize - 1] = distances[i];
+
+            indices[nearSetSize - 1] = tempIndex;
+            distances[nearSetSize - 1] = tempDist;
+
+            indices[i] = tempNearIndex;
+            distances[i] = tempNearDist;
+          }
+          else
+          {
+            // We can do a two-way swap.
+            size_t tempIndex = indices[nearSetSize + farSetSize - 1];
+            double tempDist = distances[nearSetSize + farSetSize - 1];
+
+            indices[nearSetSize + farSetSize - 1] = indices[i];
+            distances[nearSetSize + farSetSize - 1] = distances[i];
+
+            indices[i] = tempIndex;
+            distances[i] = tempDist;
+          }
+        }
+        else if ((nearSetSize - 1) != i)
+        {
+          // A two-way swap is possible.
+          size_t tempIndex = indices[nearSetSize + farSetSize - 1];
+          double tempDist = distances[nearSetSize + farSetSize - 1];
+
+          indices[nearSetSize + farSetSize - 1] = indices[i];
+          distances[nearSetSize + farSetSize - 1] = distances[i];
+
+          indices[i] = tempIndex;
+          distances[i] = tempDist;
         }
         else
         {
-          indices[i] = tempIndex;
-          distances[i] = tempDist;
+          // No swap is necessary.
         }
 
         // We don't need to do a complete preservation of the child index set,
@@ -635,6 +662,8 @@ void CoverTree<MetricType, RootPointPolicy, StatisticType>::MoveToUsedSet(
 
   // Update used set size.
   usedSetSize += childUsedSetSize;
+
+  Log::Assert(originalSum == (nearSetSize + farSetSize + usedSetSize));
 }
 
 }; // namespace tree
