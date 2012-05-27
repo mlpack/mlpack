@@ -239,6 +239,13 @@ class CoverTree
   //! Returns true: this tree does have self-children.
   static bool HasSelfChildren() { return true; }
 
+  //! Get the distance to the furthest child.
+  double FurthestChildDistance() const { return furthestChildDistance; }
+
+  //! Get the distance to teh furthest descendant.
+  double FurthestDescendantDistance() const
+  { return furthestDescendantDistance; }
+
  private:
   //! Reference to the matrix which this tree is built on.
   const arma::mat& dataset;
@@ -260,6 +267,12 @@ class CoverTree
 
   //! The instantiated metric.  Either the user passes it in, or we build it.
   MetricType* metric;
+
+  //! Distance to the furthest child.
+  double furthestChildDistance;
+
+  //! Distance to the furthest descendant.
+  double furthestDescendantDistance;
 
   /**
    * Fill the vector of distances with the distances between the point specified
