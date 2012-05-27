@@ -170,7 +170,9 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     dataset(dataset),
     point(pointIndex),
     scale(scale),
-    expansionConstant(expansionConstant)
+    expansionConstant(expansionConstant),
+    furthestChildDistance(0), // This stays the case if this is a leaf.
+    furthestDescendantDistance(0)
 {
   // If the size of the near set is 0, this is a leaf.
   if (nearSetSize == 0)
@@ -182,7 +184,8 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
   //   maxDistance > pow(ec, i)
   // and using this for the scale factor should guarantee we are not creating an
   // implicit node.  If the maximum distance is 0, every point in the near set
-  // will be created as a leaf, and a child to this node.
+  // will be created as a leaf, and a child to this node.  We also do not need
+  // to change the furthestChildDistance or furthestDescendantDistance.
   const double maxDistance = max(distances.rows(0, nearSetSize + farSetSize - 1));
   if (maxDistance == 0)
   {
@@ -228,6 +231,10 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
   children.push_back(new CoverTree(dataset, expansionConstant, pointIndex,
       nextScale, indices, distances, childNearSetSize, childFarSetSize,
       childUsedSetSize));
+
+  // The self-child can't modify the furthestChildDistance away from 0, but it
+  // can modify the furthestDescendantDistance.
+  furthestDescendantDistance = children[0]->FurthestDescendantDistance();
 
   // If we created an implicit node, take its self-child instead (this could
   // happen multiple times).
@@ -281,25 +288,20 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
       distances[0] = tempDist;
     }
 
+    // Will this be a new furthest child?
+    if (distances[0] > furthestChildDistance)
+      furthestChildDistance = distances[0];
+
     // If there's only one point left, we don't need this crap.
-    if (nearSetSize == 1)
+    if ((nearSetSize == 1) && (farSetSize == 0))
     {
       size_t childNearSetSize = 0;
       children.push_back(new CoverTree(dataset, expansionConstant,
           indices[0], nextScale, indices, distances, childNearSetSize,
           farSetSize, usedSetSize));
 
-      // Move last point to the used set.  Because nearSetSize == 1, we can
-      // simplify a little bit...
-      size_t tempIndex = indices[farSetSize];
-      double tempDist = distances[farSetSize];
-
-      indices[farSetSize] = indices[0];
-      distances[farSetSize] = distances[0];
-
-      indices[0] = tempIndex;
-      distances[0] = tempDist;
-
+      // Because the far set size is 0, we don't have to do any swapping to
+      // move the point into the used set.
       ++usedSetSize;
       --nearSetSize;
 
@@ -363,6 +365,9 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     MoveToUsedSet(indices, distances, nearSetSize, farSetSize, usedSetSize,
         childIndices, childFarSetSize, childUsedSetSize);
   }
+
+  Log::Assert(furthestChildDistance <= pow(expansionConstant, scale));
+  Log::Assert(furthestDescendantDistance <= pow(expansionConstant, scale + 1));
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
@@ -562,9 +567,13 @@ void CoverTree<MetricType, RootPointPolicy, StatisticType>::MoveToUsedSet(
       if (childIndices[childFarSetSize + j] == indices[i])
       {
         // We have found a point; a swap is necessary.
+
+        // Check if this point is a new furthest descendant.
+        if (distances[i] > furthestDescendantDistance)
+          furthestDescendantDistance = distances[i];
+
         // Since this point is from the near set, to preserve the near set, we
         // must do a swap.
-
         if (farSetSize > 0)
         {
           if ((nearSetSize - 1) != i)
@@ -645,6 +654,12 @@ void CoverTree<MetricType, RootPointPolicy, StatisticType>::MoveToUsedSet(
       if (childIndices[childFarSetSize + j] == indices[i + nearSetSize])
       {
         // We have found a point to swap.
+        
+        // Check if this point is a new furthest descendant.
+        if (distances[i] > furthestDescendantDistance)
+          furthestDescendantDistance = distances[i];
+
+        // Perform the swap.
         size_t tempIndex = indices[nearSetSize + farSetSize - 1];
         double tempDist = distances[nearSetSize + farSetSize - 1];
 
