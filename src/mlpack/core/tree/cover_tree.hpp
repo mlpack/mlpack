@@ -328,6 +328,11 @@ class CoverTree
                      arma::Col<size_t>& childIndices,
                      const size_t childFarSetSize,
                      const size_t childUsedSetSize);
+  size_t PruneFarSet(arma::Col<size_t>& indices,
+                     arma::vec& distances,
+                     const double bound,
+                     const size_t nearSetSize,
+                     const size_t pointSetSize);
 };
 
 }; // namespace tree
