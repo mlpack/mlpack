@@ -1536,7 +1536,7 @@ void CheckIndividualSeparation(const TreeType& constantNode,
   double distance = MetricType::Evaluate(dataset.col(constantPoint),
       dataset.col(nodePoint));
 
-  BOOST_REQUIRE_GT(distance, minDistance);
+  BOOST_REQUIRE_GE(distance, minDistance);
 }
 
 template<typename TreeType, typename MetricType>
