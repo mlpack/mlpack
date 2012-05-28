@@ -103,9 +103,10 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     if (nearSetSize == 1)
     {
       size_t childNearSetSize = 0;
+      size_t childFarSetSize = 0;
       children.push_back(new CoverTree(dataset, expansionConstant,
           indices[0], scale - 1, indices, distances, childNearSetSize,
-          farSetSize, usedSetSize));
+          childFarSetSize, usedSetSize));
 
       // And we're done.
       break;
