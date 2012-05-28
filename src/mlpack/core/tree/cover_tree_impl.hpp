@@ -100,7 +100,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     size_t childUsedSetSize = 0;
 
     // If there's only one point left, we don't need this crap.
-    if ((nearSetSize == 1) && (farSetSize == 0))
+    if (nearSetSize == 1)
     {
       size_t childNearSetSize = 0;
       children.push_back(new CoverTree(dataset, expansionConstant,
