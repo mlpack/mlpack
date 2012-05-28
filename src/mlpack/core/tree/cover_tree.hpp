@@ -139,6 +139,7 @@ class CoverTree
             const double expansionConstant,
             const size_t pointIndex,
             const int scale,
+            const double parentDistance,
             arma::Col<size_t>& indices,
             arma::vec& distances,
             size_t nearSetSize,
@@ -239,8 +240,8 @@ class CoverTree
   //! Returns true: this tree does have self-children.
   static bool HasSelfChildren() { return true; }
 
-  //! Get the distance to the furthest child.
-  double FurthestChildDistance() const { return furthestChildDistance; }
+  //! Get the distance to the parent.
+  double ParentDistance() const { return parentDistance; }
 
   //! Get the distance to teh furthest descendant.
   double FurthestDescendantDistance() const
@@ -268,8 +269,8 @@ class CoverTree
   //! The instantiated metric.  Either the user passes it in, or we build it.
   MetricType* metric;
 
-  //! Distance to the furthest child.
-  double furthestChildDistance;
+  //! Distance to the parent.
+  double parentDistance;
 
   //! Distance to the furthest descendant.
   double furthestDescendantDistance;
