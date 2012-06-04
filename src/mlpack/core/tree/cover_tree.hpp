@@ -103,7 +103,8 @@ class CoverTree
    *      building (default 2.0).
    */
   CoverTree(const arma::mat& dataset,
-            const double expansionConstant = 2.0);
+            const double expansionConstant = 2.0,
+            MetricType* metric = NULL);
 
   /**
    * Construct a child cover tree node.  This constructor is not meant to be
@@ -144,7 +145,8 @@ class CoverTree
             arma::vec& distances,
             size_t nearSetSize,
             size_t& farSetSize,
-            size_t& usedSetSize);
+            size_t& usedSetSize,
+            MetricType& metric = NULL);
 
   /**
    * Delete this cover tree node and its children.
@@ -266,9 +268,6 @@ class CoverTree
   //! The instantiated statistic.
   StatisticType stat;
 
-  //! The instantiated metric.  Either the user passes it in, or we build it.
-  MetricType* metric;
-
   //! Distance to the parent.
   double parentDistance;
 
@@ -289,7 +288,8 @@ class CoverTree
   void ComputeDistances(const size_t pointIndex,
                         const arma::Col<size_t>& indices,
                         arma::vec& distances,
-                        const size_t pointSetSize);
+                        const size_t pointSetSize,
+                        MetricType& metric);
   /**
    * Split the given indices and distances into a near and a far set, returning
    * the number of points in the near set.  The distances must already be
