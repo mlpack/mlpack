@@ -20,18 +20,11 @@ namespace kernel {
  * d(a, b) = 1 - \frac{a^T b}{|| a || || b ||}
  * @f]
  *
- * and this class assumes the standard L2 inner product.  In the future it may
- * support more.
+ * and this class assumes the standard L2 inner product.
  */
 class CosineDistance
 {
  public:
-  /**
-   * Default constructor does nothing, but is required to satisfy the Kernel
-   * policy.
-   */
-  CosineDistance() { }
-
   /**
    * Computes the cosine distance between two points.
    *
