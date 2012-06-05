@@ -1,9 +1,8 @@
 /**
- * @file epanechnikov_kernel.hpp
+ * @file epanechnikov_kernel_impl.hpp
  * @author Neil Slagle
  *
- * This is an example kernel.  If you are making your own kernel, follow the
- * outline specified in this file.
+ * Implementation of template-based Epanechnikov kernel functions.
  */
 #ifndef __MLPACK_CORE_KERNELS_EPANECHNIKOV_KERNEL_IMPL_HPP
 #define __MLPACK_CORE_KERNELS_EPANECHNIKOV_KERNEL_IMPL_HPP

@@ -2,8 +2,7 @@
  * @file epanechnikov_kernel.hpp
  * @author Neil Slagle
  *
- * This is an example kernel.  If you are making your own kernel, follow the
- * outline specified in this file.
+ * Definition of the Epanechnikov kernel.
  */
 #ifndef __MLPACK_CORE_KERNELS_EPANECHNIKOV_KERNEL_HPP
 #define __MLPACK_CORE_KERNELS_EPANECHNIKOV_KERNEL_HPP
