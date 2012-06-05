@@ -1,9 +1,8 @@
 /**
- * @file epanechnikov_kernel.hpp
+ * @file epanechnikov_kernel.cpp
  * @author Neil Slagle
  *
- * This is an example kernel.  If you are making your own kernel, follow the
- * outline specified in this file.
+ * Implementation of non-template Epanechnikov kernels.
  */
 #include "epanechnikov_kernel.hpp"
 
