@@ -8,12 +8,14 @@ set(SOURCES
   epanechnikov_kernel.hpp
   epanechnikov_kernel_impl.hpp
   epanechnikov_kernel.cpp
+  example_kernel.hpp
   gaussian_kernel.hpp
   hyperbolic_tangent_kernel.hpp
   laplacian_kernel.hpp
   linear_kernel.hpp
   polynomial_kernel.hpp
   spherical_kernel.hpp
+  triangular_kernel.hpp
 )
 
 # add directory name to sources
