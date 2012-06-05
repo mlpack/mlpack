@@ -2,7 +2,7 @@
  * @file hyperbolic_tangent_kernel.hpp
  * @author Ajinkya Kale <kaleajinkya@gmail.com>
  *
- * Implementation of the hyperbolic tangent kernel
+ * Implementation of the hyperbolic tangent kernel.
  */
 #ifndef __MLPACK_CORE_KERNELS_HYPERBOLIC_TANGENT_KERNEL_HPP
 #define __MLPACK_CORE_KERNELS_HYPERBOLIC_TANGENT_KERNEL_HPP
@@ -13,13 +13,12 @@ namespace mlpack {
 namespace kernel {
 
 /**
- * Hyperbolic tangent kernel.  For any two vectors @f$ x @f$,
- * @f$ y @f$ and @f$ scale @f$ and @f$ offset @f$
+ * Hyperbolic tangent kernel.  For any two vectors @f$ x @f$, @f$ y @f$ and a
+ * given scale @f$ s @f$ and offset @f$ t @f$
  *
  * @f[
- * k(x, y) = \tanh(scale <x, y> + offset)
+ * K(x, y) = \tanh(s <x, y> + t)
  * @f]
- *
  */
 class HyperbolicTangentKernel
 {
