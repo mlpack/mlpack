@@ -101,6 +101,7 @@ class GaussianKernel
 
   //! Get the bandwidth.
   double Bandwidth() const { return bandwidth; }
+
   //! Modify the bandwidth.  This takes an argument because we must update the
   //! precalculated constant (gamma).
   void Bandwidth(const double bandwidth)
@@ -119,18 +120,6 @@ class GaussianKernel
   //! Precalculated constant depending on the bandwidth;
   //! @f$ \gamma = -\frac{1}{2 \mu^2} @f$.
   double gamma;
-};
-
-class GaussianStaticKernel
-{
- public:
-  GaussianStaticKernel() { }
-
-  template<typename VecType>
-  static double Evaluate(const VecType& a, const VecType& b)
-  {
-    return exp(-0.5 * metric::SquaredEuclideanDistance::Evaluate(a, b));
-  }
 };
 
 }; // namespace kernel
