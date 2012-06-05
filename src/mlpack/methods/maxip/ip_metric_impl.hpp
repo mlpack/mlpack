@@ -18,13 +18,14 @@ namespace maxip {
 
 template<typename KernelType>
 template<typename Vec1Type, typename Vec2Type>
-inline double IPMetric<KernelType>::Evaluate(const Vec1Type& a, const Vec2Type& b)
+inline double IPMetric<KernelType>::Evaluate(const Vec1Type& a,
+                                             const Vec2Type& b)
 {
   // This is the metric induced by the kernel function.
   // Maybe we can do better by caching some of this?
   ++distanceEvaluations;
-  return KernelType::Evaluate(a, a) + KernelType::Evaluate(b, b) -
-      2 * KernelType::Evaluate(a, b);
+  return sqrt(kernel.Evaluate(a, a) + kernel.Evaluate(b, b) -
+      2 * kernel.Evaluate(a, b));
 }
 
 template<>
