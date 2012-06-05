@@ -5,6 +5,9 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   cosine_distance.hpp
   cosine_distance_impl.hpp
+  epanechnikov_kernel.hpp
+  epanechnikov_kernel_impl.hpp
+  epanechnikov_kernel.cpp
   gaussian_kernel.hpp
   hyperbolic_tangent_kernel.hpp
   laplacian_kernel.hpp
