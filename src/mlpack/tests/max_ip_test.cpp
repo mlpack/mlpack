@@ -32,16 +32,17 @@ BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
   arma::mat data;
   srand(time(NULL));
   data.randn(5, 1000);
+  LinearKernel lk;
 
   // Now run MaxIP naively.
-  MaxIP<LinearKernel> naive(data, false, true);
+  MaxIP<LinearKernel> naive(data, lk, false, true);
 
   arma::Mat<size_t> naiveIndices;
   arma::mat naiveProducts;
   naive.Search(10, naiveIndices, naiveProducts);
 
   // Now run it in single-tree mode.
-  MaxIP<LinearKernel> single(data, true);
+  MaxIP<LinearKernel> single(data, lk, true);
 
   arma::Mat<size_t> singleIndices;
   arma::mat singleProducts;
