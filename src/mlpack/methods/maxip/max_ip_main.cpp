@@ -13,6 +13,10 @@ size_t distanceEvaluations;
 #include <mlpack/core/kernels/polynomial_kernel.hpp>
 #include <mlpack/core/kernels/cosine_distance.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
+#include <mlpack/core/kernels/hyperbolic_tangent_kernel.hpp>
+#include <mlpack/core/kernels/triangular_kernel.hpp>
+#include <mlpack/core/kernels/epanechnikov_kernel.hpp>
+#include <mlpack/core/kernels/inverse_multi_quadric_kernel.hpp>
 
 #include "max_ip.hpp"
 
@@ -48,6 +52,51 @@ PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single", "If true, single-tree search is used (as opposed to "
     "dual-tree search.", "s");
 
+PARAM_DOUBLE("base", "Base to use during cover tree construction.", "b", 2.0);
+
+PARAM_DOUBLE("degree", "Degree of polynomial kernel.", "d", 2.0);
+PARAM_DOUBLE("offset", "Offset of kernel (for polynomial and hyptan kernels).",
+    "o", 0.0);
+PARAM_DOUBLE("bandwidth", "Bandwidth (for Gaussian and Epanechnikov kernels).",
+    "w", 1.0);
+
+template<typename KernelType>
+void RunMaxIP(const arma::mat& referenceData,
+              const bool single,
+              const bool naive,
+              const double base,
+              const size_t k,
+              arma::Mat<size_t>& indices,
+              arma::mat& products,
+              KernelType& kernel)
+{
+  // Create MaxIP object.
+  MaxIP<KernelType> maxip(referenceData, kernel, (single && !naive), naive,
+      base);
+
+  // Now search with it.
+  maxip.Search(k, indices, products);
+}
+
+template<typename KernelType>
+void RunMaxIP(const arma::mat& referenceData,
+              const arma::mat& queryData,
+              const bool single,
+              const bool naive,
+              const double base,
+              const size_t k,
+              arma::Mat<size_t>& indices,
+              arma::mat& products,
+              KernelType& kernel)
+{
+  // Create MaxIP object.
+  MaxIP<KernelType> maxip(referenceData, queryData, kernel, (single && !naive),
+      naive, base);
+
+  // Now search with it.
+  maxip.Search(k, indices, products);
+}
+
 int main(int argc, char** argv)
 {
   distanceEvaluations = 0;
@@ -63,6 +112,12 @@ int main(int argc, char** argv)
   const bool single = CLI::HasParam("single");
 
   const string kernelType = CLI::GetParam<string>("kernel");
+
+  const double base = CLI::GetParam<double>("base");
+
+  const double degree = CLI::GetParam<double>("degree");
+  const double offset = CLI::GetParam<double>("offset");
+  const double bandwidth = CLI::GetParam<double>("bandwidth");
 
   arma::mat referenceData;
   arma::mat queryData;
@@ -82,9 +137,10 @@ int main(int argc, char** argv)
 
   // Check on kernel type.
   if ((kernelType != "linear") && (kernelType != "polynomial") &&
-      (kernelType != "cosine") && (kernelType != "polynomial5") &&
-      (kernelType != "polynomial10") && (kernelType != "polynomial0.5") &&
-      (kernelType != "polynomial0.1") && (kernelType != "gaussian"))
+      (kernelType != "cosine") && (kernelType != "gaussian") &&
+      (kernelType != "graph") && (kernelType != "approxGraph") &&
+      (kernelType != "triangular") && (kernelType != "hyptan") &&
+      (kernelType != "inv-mq") && (kernelType != "epanechnikov"))
   {
     Log::Fatal << "Invalid kernel type: '" << kernelType << "'; must be ";
     Log::Fatal << "'linear' or 'polynomial'." << endl;
@@ -120,101 +176,132 @@ int main(int argc, char** argv)
   {
     if (kernelType == "linear")
     {
-      MaxIP<LinearKernel> maxip(referenceData, (single && !naive), naive);
-      maxip.Search(k, indices, products);
+      LinearKernel lk;
+      RunMaxIP<LinearKernel>(referenceData, single, naive, base, k, indices,
+          products, lk);
     }
     else if (kernelType == "polynomial")
     {
-      MaxIP<PolynomialNoOffsetKernel<2> > maxip(referenceData,
-          (single && !naive), naive);
-      maxip.Search(k, indices, products);
+
+      PolynomialKernel pk(degree, offset);
+      RunMaxIP<PolynomialKernel>(referenceData, single, naive, base, k, indices,
+          products, pk);
     }
     else if (kernelType == "cosine")
     {
-      MaxIP<CosineDistance> maxip(referenceData, (single && !naive), naive);
-      maxip.Search(k, indices, products);
-    }
-    else if (kernelType == "polynomial5")
-    {
-      MaxIP<PolynomialNoOffsetKernel<5> > maxip(referenceData,
-          (single && !naive), naive);
-      maxip.Search(k, indices, products);
-    }
-    else if (kernelType == "polynomial10")
-    {
-      MaxIP<PolynomialNoOffsetKernel<10> > maxip(referenceData,
-          (single && !naive), naive);
-      maxip.Search(k, indices, products);
-    }
-    else if (kernelType == "polynomial0.5")
-    {
-      MaxIP<PolynomialFractionKernel<2> > maxip(referenceData,
-          (single && !naive), naive);
-      maxip.Search(k, indices, products);
-    }
-    else if (kernelType == "polynomial0.1")
-    {
-      MaxIP<PolynomialFractionKernel<10> > maxip(referenceData,
-          (single && !naive), naive);
-      maxip.Search(k, indices, products);
+      CosineDistance cd;
+      RunMaxIP<CosineDistance>(referenceData, single, naive, base, k, indices,
+          products, cd);
     }
     else if (kernelType == "gaussian")
     {
-      MaxIP<GaussianStaticKernel> maxip(referenceData, (single && !naive),
-          naive);
-      maxip.Search(k, indices, products);
+      GaussianKernel gk(bandwidth);
+      RunMaxIP<GaussianKernel>(referenceData, single, naive, base, k, indices,
+          products, gk);
     }
+    else if (kernelType == "epanechnikov")
+    {
+      EpanechnikovKernel ek(bandwidth);
+      RunMaxIP<EpanechnikovKernel>(referenceData, single, naive, base, k,
+          indices, products, ek);
+    }
+    else if (kernelType == "triangular")
+    {
+      TriangularKernel tk(bandwidth);
+      RunMaxIP<TriangularKernel>(referenceData, single, naive, base, k, indices,
+          products, tk);
+    }
+/*    else if (kernelType == "inv-mq")
+    {
+      MaxIP<InverseMultiQuadricKernel> maxip(referenceData, (single && !naive),
+        naive, base);
+      Log::Info << "k = 1 search." << std::endl;
+      maxip.Search(1, indices, products);
+      Log::Info << "k = 2 search." << std::endl;
+      maxip.Search(2, indices, products);
+      Log::Info << "k = 5 search." << std::endl;
+      maxip.Search(5, indices, products);
+      Log::Info << "k = 10 search." << std::endl;
+      maxip.Search(10, indices, products);
+    }
+    else if (kernelType == "hyptan")
+    {
+      MaxIP<StaticHypTanKernel> maxip(referenceData, (single && !naive), naive,
+        base);
+      Log::Info << "k = 1 search." << std::endl;
+      maxip.Search(1, indices, products);
+      Log::Info << "k = 2 search." << std::endl;
+      maxip.Search(2, indices, products);
+      Log::Info << "k = 5 search." << std::endl;
+      maxip.Search(5, indices, products);
+      Log::Info << "k = 10 search." << std::endl;
+      maxip.Search(10, indices, products);
+    }*/
   }
   else
   {
     if (kernelType == "linear")
     {
-      MaxIP<LinearKernel> maxip(referenceData, queryData, (single && !naive),
-          naive);
-      maxip.Search(k, indices, products);
+      LinearKernel lk;
+      RunMaxIP<LinearKernel>(referenceData, queryData, single, naive, base, k,
+          indices, products, lk);
     }
     else if (kernelType == "polynomial")
     {
-      MaxIP<PolynomialNoOffsetKernel<2> > maxip(referenceData, queryData,
-          (single && !naive), naive);
-      maxip.Search(k, indices, products);
+      PolynomialKernel pk(degree, offset);
+      RunMaxIP<PolynomialKernel>(referenceData, queryData, single, naive, base,
+          k, indices, products, pk);
     }
     else if (kernelType == "cosine")
     {
-      MaxIP<CosineDistance> maxip(referenceData, queryData, (single && !naive),
-        naive);
-      maxip.Search(k, indices, products);
-    }
-    else if (kernelType == "polynomial5")
-    {
-      MaxIP<PolynomialNoOffsetKernel<5> > maxip(referenceData, queryData,
-          (single && !naive), naive);
-      maxip.Search(k, indices, products);
-    }
-    else if (kernelType == "polynomial10")
-    {
-      MaxIP<PolynomialNoOffsetKernel<10> > maxip(referenceData, queryData,
-          (single && !naive), naive);
-      maxip.Search(k, indices, products);
-    }
-    else if (kernelType == "polynomial0.5")
-    {
-      MaxIP<PolynomialFractionKernel<2> > maxip(referenceData, queryData,
-          (single && !naive), naive);
-      maxip.Search(k, indices, products);
-    }
-    else if (kernelType == "polynomial0.1")
-    {
-      MaxIP<PolynomialFractionKernel<10> > maxip(referenceData, queryData,
-          (single && !naive), naive);
-      maxip.Search(k, indices, products);
+      CosineDistance cd;
+      RunMaxIP<CosineDistance>(referenceData, queryData, single, naive, base, k,
+          indices, products, cd);
     }
     else if (kernelType == "gaussian")
     {
-      MaxIP<GaussianStaticKernel> maxip(referenceData, queryData,
-          (single && !naive), naive);
-      maxip.Search(k, indices, products);
+      GaussianKernel gk(bandwidth);
+      RunMaxIP<GaussianKernel>(referenceData, queryData, single, naive, base, k,
+          indices, products, gk);
     }
+    else if (kernelType == "epanechnikov")
+    {
+      EpanechnikovKernel ek(bandwidth);
+      RunMaxIP<EpanechnikovKernel>(referenceData, queryData, single, naive,
+          base, k, indices, products, ek);
+    }
+    else if (kernelType == "triangular")
+    {
+      TriangularKernel tk(bandwidth);
+      RunMaxIP<TriangularKernel>(referenceData, queryData, single, naive, base,
+          k, indices, products, tk);
+    }
+/*    else if (kernelType == "inv-mq")
+    {
+      MaxIP<InverseMultiQuadricKernel> maxip(referenceData, queryData,
+          (single && !naive), naive, base);
+      Log::Info << "k = 1 search." << std::endl;
+      maxip.Search(1, indices, products);
+      Log::Info << "k = 2 search." << std::endl;
+      maxip.Search(2, indices, products);
+      Log::Info << "k = 5 search." << std::endl;
+      maxip.Search(5, indices, products);
+      Log::Info << "k = 10 search." << std::endl;
+      maxip.Search(10, indices, products);
+    }
+    else if (kernelType == "hyptan")
+    {
+      MaxIP<StaticHypTanKernel> maxip(referenceData, queryData,
+          (single && !naive), naive, base);
+      Log::Info << "k = 1 search." << std::endl;
+      maxip.Search(1, indices, products);
+      Log::Info << "k = 2 search." << std::endl;
+      maxip.Search(2, indices, products);
+      Log::Info << "k = 5 search." << std::endl;
+      maxip.Search(5, indices, products);
+      Log::Info << "k = 10 search." << std::endl;
+      maxip.Search(10, indices, products);
+    }*/
   }
 
   // Save output, if we were asked to.

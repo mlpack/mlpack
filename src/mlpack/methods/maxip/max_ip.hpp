@@ -19,13 +19,17 @@ class MaxIP
 {
  public:
   MaxIP(const arma::mat& referenceSet,
+        KernelType& kernel,
         bool single = false,
-        bool naive = false);
+        bool naive = false,
+        double expansionConstant = 2.0);
 
   MaxIP(const arma::mat& referenceSet,
         const arma::mat& querySet,
+        KernelType& kernel,
         bool single = false,
-        bool naive = false);
+        bool naive = false,
+        double expansionConstant = 2.0);
 
   ~MaxIP();
 
@@ -45,6 +49,8 @@ class MaxIP
   bool single;
 
   bool naive;
+
+  IPMetric<KernelType> metric;
 
   // Utility function.  Copied too many times from too many places.
   void InsertNeighbor(arma::Mat<size_t>& indices,

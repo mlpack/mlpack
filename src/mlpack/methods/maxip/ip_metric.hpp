@@ -15,18 +15,24 @@ template<typename KernelType>
 class IPMetric
 {
  public:
-  typedef KernelType Kernel;
+  IPMetric() : kernel(localKernel) { }
 
   /**
    * Create the IPMetric.
    */
-  IPMetric() { }
+  IPMetric(KernelType& kernel) : kernel(kernel) { }
 
   /**
    * Evaluate the metric.
    */
   template<typename Vec1Type, typename Vec2Type>
-  static double Evaluate(const Vec1Type& a, const Vec2Type& b);
+  double Evaluate(const Vec1Type& a, const Vec2Type& b);
+
+  const KernelType& Kernel() const { return kernel; }
+  KernelType& Kernel() { return kernel; }
+
+  KernelType localKernel;
+  KernelType& kernel;
 };
 
 }; // namespace maxip

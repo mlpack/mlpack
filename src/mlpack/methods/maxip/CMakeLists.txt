@@ -27,4 +27,11 @@ target_link_libraries(maxip
   mlpack
 )
 
+#add_executable(maxip_string
+#  max_ip_string_main.cpp
+#)
+#target_link_libraries(maxip_string
+#  mlpack
+#)
+
 install(TARGETS maxip RUNTIME DESTINATION bin)
