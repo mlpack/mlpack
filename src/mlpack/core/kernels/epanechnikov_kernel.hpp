@@ -5,40 +5,48 @@
  * This is an example kernel.  If you are making your own kernel, follow the
  * outline specified in this file.
  */
-#ifndef __MLPACK_CORE_KERNELS_EPANECHNIKOV_KERNEL_H
-#define __MLPACK_CORE_KERNELS_EPANECHNIKOV_KERNEL_H
-
-#include <boost/math/special_functions/gamma.hpp>
+#ifndef __MLPACK_CORE_KERNELS_EPANECHNIKOV_KERNEL_HPP
+#define __MLPACK_CORE_KERNELS_EPANECHNIKOV_KERNEL_HPP
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
 
 namespace mlpack {
 namespace kernel {
 
+/**
+ * The Epanechnikov kernel, defined as
+ *
+ * @f[
+ * K(x, y) = \max \{0, 1 - || x - y ||^2_2 / b^2 \}
+ * @f]
+ *
+ * where @f$ b @f$ is the bandwidth the of the kernel (defaults to 1.0).
+ */
 class EpanechnikovKernel
 {
  public:
-  EpanechnikovKernel() :
-    bandwidth(1.0),
-    inverseBandwidthSquared(1.0) {}
-  EpanechnikovKernel(double b) :
-    bandwidth(b),
-    inverseBandwidthSquared(1.0/(b*b)) {}
-
-  template<typename VecType>
-  double Evaluate(const VecType& a, const VecType& b)
-  {
-    double evaluatee =
-      1.0 - metric::SquaredEuclideanDistance::Evaluate(a, b) * inverseBandwidthSquared;
-    return (evaluatee > 0.0) ? evaluatee : 0.0;
-  }
   /**
-   * Obtains the convolution integral [integral K(||x-a||)K(||b-x||)dx]
-   * for the two vectors.  In this case, because
-   * our simple example kernel has no internal parameters, we can declare the
-   * function static.  For a more complex example which cannot be declared
-   * static, see the GaussianKernel, which stores an internal parameter.
+   * Instantiate the Epanechnikov kernel with the given bandwidth (default 1.0).
+   *
+   * @param bandwidth Bandwidth of the kernel.
+   */
+  EpanechnikovKernel(const double bandwidth = 1.0) :
+      bandwidth(bandwidth),
+      inverseBandwidthSquared(1.0 / (bandwidth * bandwidth))
+  {  }
+
+  /**
+   * Evaluate the Epanechnikov kernel on the given two inputs.
+   *
+   * @param a One input vector.
+   * @param b The other input vector.
+   */
+  template<typename Vec1Type, typename Vec2Type>
+  double Evaluate(const Vec1Type& a, const Vec2Type& b);
+
+  /**
+   * Obtains the convolution integral [integral of K(||x-a||) K(||b-x||) dx]
+   * for the two vectors.
    *
    * @tparam VecType Type of vector (arma::vec, arma::spvec should be expected).
    * @param a First vector.
@@ -46,56 +54,31 @@ class EpanechnikovKernel
    * @return the convolution integral value.
    */
   template<typename VecType>
-  double ConvolutionIntegral(const VecType& a, const VecType& b)
-  {
-    double distance = sqrt(metric::SquaredEuclideanDistance::Evaluate(a, b));
-    if (distance >= 2.0 * bandwidth)
-    {
-      return 0.0;
-    }
-    double volumeSquared = pow(Normalizer(a.n_rows), 2.0);
+  double ConvolutionIntegral(const VecType& a, const VecType& b);
 
-    switch(a.n_rows)
-    {
-      case 1:
-        return 1.0 / volumeSquared *
-          (16.0/15.0*bandwidth-4.0*distance*distance /
-          (3.0*bandwidth)+2.0*distance*distance*distance/
-          (3.0*bandwidth*bandwidth) -
-          pow(distance,5.0)/(30.0*pow(bandwidth,4.0)));
-        break;
-      case 2:
-        return 1.0 / volumeSquared *
-          ((2.0/3.0*bandwidth*bandwidth-distance*distance)*
-          asin(sqrt(1.0-pow(distance/(2.0*bandwidth),2.0))) +
-          sqrt(4.0*bandwidth*bandwidth-distance*distance)*
-          (distance/6.0+2.0/9.0*distance*pow(distance/bandwidth,2.0)-
-          distance/72.0*pow(distance/bandwidth,4.0)));
-        break;
-      default:
-        Log::Fatal << "Epanechnikov doesn't support your dimension (yet).";
-        return -1.0;
-        break;
-    }
-  }
+  /**
+   * Compute the normalizer of this Epanechnikov kernel for the given dimension.
+   *
+   * @param dimension Dimension to calculate the normalizer for.
+   */
+  double Normalizer(const size_t dimension);
 
-  double Normalizer(size_t dimension)
-  {
-    return 2.0 * pow(bandwidth, (double) dimension) *
-        pow(M_PI, dimension / 2.0) /
-        (boost::math::tgamma(dimension / 2.0 + 1.0) * (dimension + 2.0));
-  }
-  double Evaluate(double t)
-  {
-    double evaluatee = 1.0 - t * t * inverseBandwidthSquared;
-    return (evaluatee > 0.0) ? evaluatee : 0.0;
-  }
+  /**
+   * Evaluate the kernel not for two points but for a numerical value.
+   */
+  double Evaluate(const double t);
+
  private:
+  //! Bandwidth of the kernel.
   double bandwidth;
+  //! Cached value of the inverse bandwidth squared (to speed up computation).
   double inverseBandwidthSquared;
 };
 
 }; // namespace kernel
 }; // namespace mlpack
+
+// Include implementation.
+#include "epanechnikov_kernel_impl.hpp"
 
 #endif
