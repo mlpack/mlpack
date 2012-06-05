@@ -16,7 +16,6 @@ size_t distanceEvaluations;
 #include <mlpack/core/kernels/hyperbolic_tangent_kernel.hpp>
 #include <mlpack/core/kernels/triangular_kernel.hpp>
 #include <mlpack/core/kernels/epanechnikov_kernel.hpp>
-#include <mlpack/core/kernels/inverse_multi_quadric_kernel.hpp>
 
 #include "max_ip.hpp"
 
@@ -45,8 +44,8 @@ PARAM_STRING("products_file", "File to save inner products into.", "p", "");
 PARAM_STRING("indices_file", "File to save indices of inner products into.",
     "i", "");
 
-PARAM_STRING("kernel", "Kernel type to use: 'linear', 'polynomial', 'cosine'.",
-    "K", "linear");
+PARAM_STRING("kernel", "Kernel type to use: 'linear', 'polynomial', 'cosine', "
+    "'gaussian', 'epanechnikov', 'triangular', 'hyptan'.", "K", "linear");
 
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single", "If true, single-tree search is used (as opposed to "
@@ -57,8 +56,9 @@ PARAM_DOUBLE("base", "Base to use during cover tree construction.", "b", 2.0);
 PARAM_DOUBLE("degree", "Degree of polynomial kernel.", "d", 2.0);
 PARAM_DOUBLE("offset", "Offset of kernel (for polynomial and hyptan kernels).",
     "o", 0.0);
-PARAM_DOUBLE("bandwidth", "Bandwidth (for Gaussian and Epanechnikov kernels).",
-    "w", 1.0);
+PARAM_DOUBLE("bandwidth", "Bandwidth (for Gaussian, Epanechnikov, and "
+    "triangular kernels).", "w", 1.0);
+PARAM_DOUBLE("scale", "Scale of kernel (for hyptan kernel).", "s", 1.0);
 
 template<typename KernelType>
 void RunMaxIP(const arma::mat& referenceData,
@@ -106,19 +106,24 @@ int main(int argc, char** argv)
   // Get reference dataset filename.
   const string referenceFile = CLI::GetParam<string>("reference_file");
 
+  // The number of max kernel values to find.
   const size_t k = CLI::GetParam<int>("k");
 
+  // Runtime parameters.
   const bool naive = CLI::HasParam("naive");
   const bool single = CLI::HasParam("single");
 
-  const string kernelType = CLI::GetParam<string>("kernel");
-
+  // For cover tree construction.
   const double base = CLI::GetParam<double>("base");
 
+  // Kernel parameters.
+  const string kernelType = CLI::GetParam<string>("kernel");
   const double degree = CLI::GetParam<double>("degree");
   const double offset = CLI::GetParam<double>("offset");
   const double bandwidth = CLI::GetParam<double>("bandwidth");
+  const double scale = CLI::GetParam<double>("scale");
 
+  // The datasets.  The query matrix may never be used.
   arma::mat referenceData;
   arma::mat queryData;
 
@@ -211,32 +216,12 @@ int main(int argc, char** argv)
       RunMaxIP<TriangularKernel>(referenceData, single, naive, base, k, indices,
           products, tk);
     }
-/*    else if (kernelType == "inv-mq")
-    {
-      MaxIP<InverseMultiQuadricKernel> maxip(referenceData, (single && !naive),
-        naive, base);
-      Log::Info << "k = 1 search." << std::endl;
-      maxip.Search(1, indices, products);
-      Log::Info << "k = 2 search." << std::endl;
-      maxip.Search(2, indices, products);
-      Log::Info << "k = 5 search." << std::endl;
-      maxip.Search(5, indices, products);
-      Log::Info << "k = 10 search." << std::endl;
-      maxip.Search(10, indices, products);
-    }
     else if (kernelType == "hyptan")
     {
-      MaxIP<StaticHypTanKernel> maxip(referenceData, (single && !naive), naive,
-        base);
-      Log::Info << "k = 1 search." << std::endl;
-      maxip.Search(1, indices, products);
-      Log::Info << "k = 2 search." << std::endl;
-      maxip.Search(2, indices, products);
-      Log::Info << "k = 5 search." << std::endl;
-      maxip.Search(5, indices, products);
-      Log::Info << "k = 10 search." << std::endl;
-      maxip.Search(10, indices, products);
-    }*/
+      HyperbolicTangentKernel htk(scale, offset);
+      RunMaxIP<HyperbolicTangentKernel>(referenceData, single, naive, base, k,
+          indices, products, htk);
+    }
   }
   else
   {
@@ -276,32 +261,12 @@ int main(int argc, char** argv)
       RunMaxIP<TriangularKernel>(referenceData, queryData, single, naive, base,
           k, indices, products, tk);
     }
-/*    else if (kernelType == "inv-mq")
-    {
-      MaxIP<InverseMultiQuadricKernel> maxip(referenceData, queryData,
-          (single && !naive), naive, base);
-      Log::Info << "k = 1 search." << std::endl;
-      maxip.Search(1, indices, products);
-      Log::Info << "k = 2 search." << std::endl;
-      maxip.Search(2, indices, products);
-      Log::Info << "k = 5 search." << std::endl;
-      maxip.Search(5, indices, products);
-      Log::Info << "k = 10 search." << std::endl;
-      maxip.Search(10, indices, products);
-    }
     else if (kernelType == "hyptan")
     {
-      MaxIP<StaticHypTanKernel> maxip(referenceData, queryData,
-          (single && !naive), naive, base);
-      Log::Info << "k = 1 search." << std::endl;
-      maxip.Search(1, indices, products);
-      Log::Info << "k = 2 search." << std::endl;
-      maxip.Search(2, indices, products);
-      Log::Info << "k = 5 search." << std::endl;
-      maxip.Search(5, indices, products);
-      Log::Info << "k = 10 search." << std::endl;
-      maxip.Search(10, indices, products);
-    }*/
+      HyperbolicTangentKernel htk(scale, offset);
+      RunMaxIP<HyperbolicTangentKernel>(referenceData, queryData, single, naive,
+          base, k, indices, products, htk);
+    }
   }
 
   // Save output, if we were asked to.
