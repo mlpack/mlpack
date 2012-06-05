@@ -2,7 +2,7 @@
  * @file triangular_kernel.hpp
  * @author Ryan Curtin
  *
- * Triangular kernel.  Is it a Mercer kernel?  Who knows!?
+ * Definition and implementation of the trivially simple triangular kernel.
  */
 #ifndef __MLPACK_CORE_KERNELS_TRIANGULAR_KERNEL_HPP
 #define __MLPACK_CORE_KERNELS_TRIANGULAR_KERNEL_HPP
@@ -13,14 +13,46 @@
 namespace mlpack {
 namespace kernel {
 
+/**
+ * The trivially simple triangular kernel, defined by
+ *
+ * @f[
+ * K(x, y) = \max \{ 0, 1 - \frac{|| x - y ||_2}{b} \}
+ * @f]
+ *
+ * where \f$ b \f$ is the bandwidth of the kernel.
+ */
 class TriangularKernel
 {
  public:
-  template<typename VecType>
-  static double Evaluate(const VecType& a, const VecType& b)
+  /**
+   * Initialize the triangular kernel with the given bandwidth (default 1.0).
+   *
+   * @param bandwidth Bandwidth of the triangular kernel.
+   */
+  TriangularKernel(const double bandwidth = 1.0) : bandwidth(bandwidth) { }
+
+  /**
+   * Evaluate the triangular kernel for the two given vectors.
+   *
+   * @param a First vector.
+   * @param b Second vector.
+   */
+  template<typename Vec1Type, typename Vec2Type>
+  double Evaluate(const Vec1Type& a, const Vec2Type& b)
   {
-    return std::max(0.0, (1 - metric::LMetric<2>::Evaluate(a, b)));
+    return std::max(0.0, (1 - metric::EuclideanDistance::Evaluate(a, b) /
+        bandwidth));
   }
+
+  //! Get the bandwidth of the kernel.
+  double Bandwidth() const { return bandwidth; }
+  //! Modify the bandwidth of the kernel.
+  double& Bandwidth() { return bandwidth; }
+
+ private:
+  //! The bandwidth of the kernel.
+  double bandwidth;
 };
 
 }; // namespace kernel
