@@ -208,7 +208,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
     TraverserType traverser(rules);
 
     if (queryTree)
-      traverser.Traverse(*referenceTree, *queryTree);
+      traverser.Traverse(*queryTree, *referenceTree);
     else
       traverser.Traverse(*referenceTree, *referenceTree);
 
