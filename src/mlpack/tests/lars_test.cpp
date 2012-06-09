@@ -21,9 +21,9 @@ BOOST_AUTO_TEST_SUITE(LARSTest);
 
 void GenerateProblem(arma::mat& X, arma::vec& y, size_t nPoints, size_t nDims)
 {
-  X = arma::randn(nPoints, nDims);
+  X = arma::randn(nDims, nPoints);
   arma::vec beta = arma::randn(nDims, 1);
-  y = X * beta;
+  y = trans(X) * beta;
 }
 
 
@@ -62,8 +62,8 @@ void LassoTest(size_t nPoints, size_t nDims, bool elasticNet, bool useCholesky)
     GenerateProblem(X, y, nPoints, nDims);
 
     // Armadillo's median is broken, so...
-    arma::vec sortedAbsCorr = sort(abs(trans(X) * y));
-    double lambda1 = sortedAbsCorr(nDims/2);
+    arma::vec sortedAbsCorr = sort(abs(X * y));
+    double lambda1 = sortedAbsCorr(nDims / 2);
     double lambda2;
     if (elasticNet)
       lambda2 = lambda1 / 2;
@@ -72,12 +72,11 @@ void LassoTest(size_t nPoints, size_t nDims, bool elasticNet, bool useCholesky)
 
 
     LARS lars(useCholesky, lambda1, lambda2);
-    lars.DoLARS(X, y);
-
     arma::vec betaOpt;
-    lars.Solution(betaOpt);
-    arma::vec errCorr = (arma::trans(X) * X + lambda2 *
-        arma::eye(nDims, nDims)) * betaOpt - arma::trans(X) * y;
+    lars.DoLARS(X, y, betaOpt);
+
+    arma::vec errCorr = (X * trans(X) + lambda2 *
+        arma::eye(nDims, nDims)) * betaOpt - X * y;
 
     LARSVerifyCorrectness(betaOpt, errCorr, lambda1);
   }
