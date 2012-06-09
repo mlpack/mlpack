@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
 
   // Do LARS.
   LARS lars(useCholesky, lambda1, lambda2);
-  lars.DoLARS(trans(matX), matY.unsafe_col(0));
+  lars.DoLARS(matX, matY.unsafe_col(0));
 
   // Get and save solution.
   vec beta;

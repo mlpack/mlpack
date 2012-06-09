@@ -117,13 +117,21 @@ class LARS
        const double tolerance = 1e-16);
 
   /**
-   * Run LARS.
+   * Run LARS.  The input matrix (like all MLPACK matrices) should be
+   * column-major -- each column is an observation and each row is a dimension.
+   * However, because LARS is more efficient on a row-major matrix, this method
+   * will (internally) transpose the matrix.  If this transposition is not
+   * necessary (i.e., you want to pass in a row-major matrix), pass 'true' for
+   * the rowmajor parameter.
    *
-   * @param matX Input data into the algorithm - a matrix where each row is a
-   *    point and each column is a dimension
-   * @param y A vector of targets
+   * @param matX Column-major input data (or row-major input data if rowMajor =
+   *     true).
+   * @param y A vector of targets.
+   * @param rowMajor Set to true if matX is row-major.
    */
-  void DoLARS(const arma::mat& matX, const arma::vec& y);
+  void DoLARS(const arma::mat& matX,
+              const arma::vec& y,
+              const bool rowMajor = false);
 
   /*
    * Load the solution vector, which is the last vector from the solution path
