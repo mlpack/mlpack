@@ -125,10 +125,9 @@ void SparseCoding::OptimizeCode()
     bool useCholesky = true;
     LARS lars(useCholesky, matGram, lambda1, lambda2);
 
-    lars.DoLARS(dictionary, data.unsafe_col(i), true);
-
     vec beta;
-    lars.Solution(beta);
+    lars.DoLARS(dictionary, data.unsafe_col(i), beta, true);
+
     codes.col(i) = beta;
   }
 }
