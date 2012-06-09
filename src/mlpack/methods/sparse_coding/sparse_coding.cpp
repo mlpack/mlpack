@@ -29,7 +29,8 @@ SparseCoding::SparseCoding(const mat& data,
 { /* Nothing left to do. */ }
 
 // Always a not good decision!
-void SparseCoding::RandomInitDictionary() {
+void SparseCoding::RandomInitDictionary()
+{
   dictionary = randn(data.n_rows, atoms);
 
   for (size_t j = 0; j < atoms; ++j)
@@ -124,7 +125,7 @@ void SparseCoding::OptimizeCode()
     bool useCholesky = true;
     LARS lars(useCholesky, matGram, lambda1, lambda2);
 
-    lars.DoLARS(dictionary, data.unsafe_col(i));
+    lars.DoLARS(dictionary, data.unsafe_col(i), true);
 
     vec beta;
     lars.Solution(beta);
