@@ -87,7 +87,7 @@ class LARS
    * Set the parameters to LARS.  Both lambda1 and lambda2 default to 0.
    *
    * @param useCholesky Whether or not to use Cholesky decomposition when
-   *    solving linear system. If no, compute full Gram matrix at beginning.
+   *    solving linear system (as opposed to using the full Gram matrix).
    * @param lambda1 Regularization parameter for l1-norm penalty.
    * @param lambda2 Regularization parameter for l2-norm penalty.
    * @param tolerance Run until the maximum correlation of elements in (X^T y)
@@ -103,7 +103,7 @@ class LARS
    * lambda1 and lambda2 default to 0.
    *
    * @param useCholesky Whether or not to use Cholesky decomposition when
-   *    solving linear system.
+   *    solving linear system (as opposed to using the full Gram matrix).
    * @param gramMatrix Gram matrix.
    * @param lambda1 Regularization parameter for l1-norm penalty.
    * @param lambda2 Regularization parameter for l2-norm penalty.
@@ -122,24 +122,21 @@ class LARS
    * However, because LARS is more efficient on a row-major matrix, this method
    * will (internally) transpose the matrix.  If this transposition is not
    * necessary (i.e., you want to pass in a row-major matrix), pass 'true' for
-   * the rowmajor parameter.
+   * the rowMajor parameter.
    *
    * @param matX Column-major input data (or row-major input data if rowMajor =
    *     true).
    * @param y A vector of targets.
+   * @param beta Vector to store the solution in.
    * @param rowMajor Set to true if matX is row-major.
    */
   void DoLARS(const arma::mat& matX,
               const arma::vec& y,
+              arma::vec& beta,
               const bool rowMajor = false);
 
-  /*
-   * Load the solution vector, which is the last vector from the solution path
-   */
-  void Solution(arma::vec& beta);
-
   //! Accessor for activeSet.
-  const std::vector<arma::uword>& ActiveSet() const { return activeSet; }
+  const std::vector<size_t>& ActiveSet() const { return activeSet; }
 
   //! Accessor for betaPath.
   const std::vector<arma::vec>& BetaPath() const { return betaPath; }
@@ -182,11 +179,8 @@ private:
   //! Value of lambda_1 for each solution in solution path.
   std::vector<double> lambdaPath;
 
-  //! Number of dimensions in active set.
-  arma::uword nActive;
-
   //! Active set of dimensions.
-  std::vector<arma::uword> activeSet;
+  std::vector<size_t> activeSet;
 
   //! Active set membership indicator (for each dimension).
   std::vector<bool> isActive;
@@ -196,14 +190,14 @@ private:
    *
    * @param activeVarInd Index of element to remove from active set.
    */
-  void Deactivate(arma::uword activeVarInd);
+  void Deactivate(const size_t activeVarInd);
 
   /**
    * Add dimension varInd to active set.
    *
    * @param varInd Dimension to add to active set.
    */
-  void Activate(arma::uword varInd);
+  void Activate(const size_t varInd);
 
   // compute "equiangular" direction in output space
   void ComputeYHatDirection(const arma::mat& matX,
@@ -217,9 +211,11 @@ private:
 
   void CholeskyInsert(double sqNormNewX, const arma::vec& newGramCol);
 
-  void GivensRotate(const arma::vec::fixed<2>& x, arma::vec::fixed<2>& rotatedX, arma::mat& G);
+  void GivensRotate(const arma::vec::fixed<2>& x,
+                    arma::vec::fixed<2>& rotatedX,
+                    arma::mat& G);
 
-  void CholeskyDelete(arma::uword colToKill);
+  void CholeskyDelete(const size_t colToKill);
 };
 
 }; // namespace regression
