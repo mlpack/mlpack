@@ -38,6 +38,7 @@ LARS::LARS(const bool useCholesky,
 
 void LARS::DoLARS(const arma::mat& matX,
                   const arma::vec& y,
+                  arma::vec& beta,
                   const bool rowMajor)
 {
   // This matrix may end up holding the transpose -- if necessary.
@@ -52,13 +53,10 @@ void LARS::DoLARS(const arma::mat& matX,
 
   // Set up active set variables.  In the beginning, the active set has size 0
   // (all dimensions are inactive).
-  nActive = 0;
-  activeSet = std::vector<arma::uword>(0);
-  isActive = std::vector<bool>(dataRef.n_cols);
-  fill(isActive.begin(), isActive.end(), false);
+  isActive.resize(dataRef.n_cols, false);
 
   // Initialize yHat and beta.
-  arma::vec beta = arma::zeros(dataRef.n_cols);
+  beta = arma::zeros(dataRef.n_cols);
   arma::vec yHat = arma::zeros(dataRef.n_rows);
   arma::vec yHatDirection = arma::vec(dataRef.n_rows);
 
@@ -99,7 +97,7 @@ void LARS::DoLARS(const arma::mat& matX,
   }
 
   // Main loop.
-  while ((nActive < dataRef.n_cols) && (maxCorr > tolerance))
+  while ((activeSet.size() < dataRef.n_cols) && (maxCorr > tolerance))
   {
     // Compute the maximum correlation among inactive dimensions.
     maxCorr = 0;
@@ -118,8 +116,8 @@ void LARS::DoLARS(const arma::mat& matX,
       //printf("activating %d\n", changeInd);
       if (useCholesky)
       {
-        // vec newGramCol = vec(nActive);
-        // for (uword i = 0; i < nActive; i++)
+        // vec newGramCol = vec(activeSet.size());
+        // for (size_t i = 0; i < activeSet.size(); i++)
         // {
         //   newGramCol[i] = dot(matX.col(activeSet[i]), matX.col(changeInd));
         // }
@@ -136,8 +134,8 @@ void LARS::DoLARS(const arma::mat& matX,
     }
 
     // compute signs of correlations
-    arma::vec s = arma::vec(nActive);
-    for (arma::uword i = 0; i < nActive; i++)
+    arma::vec s = arma::vec(activeSet.size());
+    for (size_t i = 0; i < activeSet.size(); i++)
       s(i) = corr(activeSet[i]) / fabs(corr(activeSet[i]));
 
     // compute "equiangular" direction in parameter space (betaDirection)
@@ -167,14 +165,14 @@ void LARS::DoLARS(const arma::mat& matX,
     }
     else
     {
-      arma::mat matGramActive = arma::mat(nActive, nActive);
-      for (arma::uword i = 0; i < nActive; i++)
-        for (arma::uword j = 0; j < nActive; j++)
-          matGramActive(i,j) = matGram(activeSet[i], activeSet[j]);
+      arma::mat matGramActive = arma::mat(activeSet.size(), activeSet.size());
+      for (size_t i = 0; i < activeSet.size(); i++)
+        for (size_t j = 0; j < activeSet.size(); j++)
+          matGramActive(i, j) = matGram(activeSet[i], activeSet[j]);
 
-      arma::mat matS = s * arma::ones<arma::mat>(1, nActive);
+      arma::mat matS = s * arma::ones<arma::mat>(1, activeSet.size());
       unnormalizedBetaDirection = solve(matGramActive % trans(matS) % matS,
-          arma::ones<arma::mat>(nActive, 1));
+          arma::ones<arma::mat>(activeSet.size(), 1));
       normalization = 1.0 / sqrt(sum(unnormalizedBetaDirection));
       betaDirection = normalization * unnormalizedBetaDirection % s;
     }
@@ -185,10 +183,10 @@ void LARS::DoLARS(const arma::mat& matX,
     double gamma = maxCorr / normalization;
 
     // if not all variables are active
-    if (nActive < dataRef.n_cols)
+    if (activeSet.size() < dataRef.n_cols)
     {
       // compute correlations with direction
-      for (arma::uword ind = 0; ind < dataRef.n_cols; ind++)
+      for (size_t ind = 0; ind < dataRef.n_cols; ind++)
       {
         if (isActive[ind])
           continue;
@@ -208,9 +206,9 @@ void LARS::DoLARS(const arma::mat& matX,
     {
       lassocond = false;
       double lassoboundOnGamma = DBL_MAX;
-      arma::uword activeIndToKickOut = -1;
+      size_t activeIndToKickOut = -1;
 
-      for (arma::uword i = 0; i < nActive; i++)
+      for (size_t i = 0; i < activeSet.size(); i++)
       {
         double val = -beta(activeSet[i]) / betaDirection(i);
         if ((val > 0) && (val < lassoboundOnGamma))
@@ -237,7 +235,7 @@ void LARS::DoLARS(const arma::mat& matX,
     yHat += gamma * yHatDirection;
 
     // update estimator
-    for (arma::uword i = 0; i < nActive; i++)
+    for (size_t i = 0; i < activeSet.size(); i++)
     {
       beta(activeSet[i]) += gamma * betaDirection(i);
     }
@@ -270,10 +268,10 @@ void LARS::DoLARS(const arma::mat& matX,
       corr -= lambda2 * beta;
 
     double curLambda = 0;
-    for (arma::uword i = 0; i < nActive; i++)
+    for (size_t i = 0; i < activeSet.size(); i++)
       curLambda += fabs(corr(activeSet[i]));
 
-    curLambda /= ((double) nActive);
+    curLambda /= ((double) activeSet.size());
 
     lambdaPath.push_back(curLambda);
 
@@ -287,24 +285,20 @@ void LARS::DoLARS(const arma::mat& matX,
       }
     }
   }
-}
 
-void LARS::Solution(arma::vec& beta)
-{
-  beta = BetaPath().back();
+  // Unfortunate copy...
+  beta = betaPath.back();
 }
 
 // Private functions.
-void LARS::Deactivate(arma::uword activeVarInd)
+void LARS::Deactivate(const size_t activeVarInd)
 {
-  nActive--;
   isActive[activeSet[activeVarInd]] = false;
   activeSet.erase(activeSet.begin() + activeVarInd);
 }
 
-void LARS::Activate(arma::uword varInd)
+void LARS::Activate(const size_t varInd)
 {
-  nActive++;
   isActive[varInd] = true;
   activeSet.push_back(varInd);
 }
@@ -314,7 +308,7 @@ void LARS::ComputeYHatDirection(const arma::mat& matX,
                                 arma::vec& yHatDirection)
 {
   yHatDirection.fill(0);
-  for (arma::uword i = 0; i < nActive; i++)
+  for (size_t i = 0; i < activeSet.size(); i++)
     yHatDirection += betaDirection(i) * matX.col(activeSet[i]);
 }
 
@@ -413,9 +407,9 @@ void LARS::GivensRotate(const arma::vec::fixed<2>& x,
   }
 }
 
-void LARS::CholeskyDelete(arma::uword colToKill)
+void LARS::CholeskyDelete(const size_t colToKill)
 {
-  arma::uword n = matUtriCholFactor.n_rows;
+  size_t n = matUtriCholFactor.n_rows;
 
   if (colToKill == (n - 1))
   {
@@ -427,7 +421,7 @@ void LARS::CholeskyDelete(arma::uword colToKill)
     matUtriCholFactor.shed_col(colToKill); // remove column colToKill
     n--;
 
-    for (arma::uword k = colToKill; k < n; k++)
+    for (size_t k = colToKill; k < n; k++)
     {
       arma::mat matG;
       arma::vec::fixed<2> rotatedVec;
