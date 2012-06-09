@@ -154,9 +154,8 @@ void LocalCoordinateCoding::OptimizeCode() {
     bool useCholesky = false;
     LARS lars(useCholesky, matDPrimeTDPrime, 0.5 * lambda);
 
-    lars.DoLARS(matDPrime, matX.unsafe_col(i), true);
     vec beta;
-    lars.Solution(beta);
+    lars.DoLARS(matDPrime, matX.unsafe_col(i), beta, true);
     matZ.col(i) = beta % invW;
   }
 }
