@@ -36,33 +36,51 @@ LARS::LARS(const bool useCholesky,
     tolerance(tolerance)
 { /* Nothing left to do */ }
 
-void LARS::DoLARS(const arma::mat& matX, const arma::vec& y)
+void LARS::DoLARS(const arma::mat& matX,
+                  const arma::vec& y,
+                  const bool rowMajor)
 {
-  // Compute X' * y.
-  arma::vec vecXTy = trans(matX) * y;
+  // This matrix may end up holding the transpose -- if necessary.
+  arma::mat dataTrans;
+  // dataRef is row-major.
+  const arma::mat& dataRef = (rowMajor ? matX : dataTrans);
+  if (!rowMajor)
+    dataTrans = trans(matX);
 
-  // Set up active set variables.
+  // Compute X' * y.
+  arma::vec vecXTy = trans(dataRef) * y;
+
+  // Set up active set variables.  In the beginning, the active set has size 0
+  // (all dimensions are inactive).
   nActive = 0;
   activeSet = std::vector<arma::uword>(0);
-  isActive = std::vector<bool>(matX.n_cols);
+  isActive = std::vector<bool>(dataRef.n_cols);
   fill(isActive.begin(), isActive.end(), false);
 
   // Initialize yHat and beta.
-  arma::vec beta = arma::zeros(matX.n_cols);
-  arma::vec yHat = arma::zeros(matX.n_rows);
-  arma::vec yHatDirection = arma::vec(matX.n_rows);
+  arma::vec beta = arma::zeros(dataRef.n_cols);
+  arma::vec yHat = arma::zeros(dataRef.n_rows);
+  arma::vec yHatDirection = arma::vec(dataRef.n_rows);
 
   bool lassocond = false;
 
+  // Compute the initial maximum correlation among all dimensions.
   arma::vec corr = vecXTy;
-  arma::vec absCorr = abs(corr);
-  arma::uword changeInd;
-  double maxCorr = absCorr.max(changeInd); // change_ind gets set here
+  double maxCorr = 0;
+  size_t changeInd = 0;
+  for (size_t i = 0; i < vecXTy.n_elem; ++i)
+  {
+    if (fabs(corr(i)) > maxCorr)
+    {
+      maxCorr = fabs(corr(i));
+      changeInd = i;
+    }
+  }
 
   betaPath.push_back(beta);
   lambdaPath.push_back(maxCorr);
 
-  // don't even start!
+  // If the maximum correlation is too small, there is no reason to continue.
   if (maxCorr < lambda1)
   {
     lambdaPath[0] = lambda1;
@@ -74,27 +92,23 @@ void LARS::DoLARS(const arma::mat& matX, const arma::vec& y)
   if (matGram.n_elem == 0)
   {
     // In this case, matGram should reference matGramInternal.
-    matGramInternal = trans(matX) * matX;
+    matGramInternal = trans(dataRef) * dataRef;
 
     if (elasticNet && !useCholesky)
-      matGramInternal += lambda2 * arma::eye(matX.n_cols, matX.n_cols);
+      matGramInternal += lambda2 * arma::eye(dataRef.n_cols, dataRef.n_cols);
   }
 
   // Main loop.
-  while ((nActive < matX.n_cols) && (maxCorr > tolerance))
+  while ((nActive < dataRef.n_cols) && (maxCorr > tolerance))
   {
-    // explicit computation of max correlation, among inactive indices
-    changeInd = -1;
+    // Compute the maximum correlation among inactive dimensions.
     maxCorr = 0;
-    for (arma::uword i = 0; i < matX.n_cols; i++)
+    for (size_t i = 0; i < dataRef.n_cols; i++)
     {
-      if (!isActive[i])
+      if ((!isActive[i]) && (fabs(corr(i)) > maxCorr))
       {
-        if (fabs(corr(i)) > maxCorr)
-        {
-          maxCorr = fabs(corr(i));
-          changeInd = i;
-        }
+        maxCorr = fabs(corr(i));
+        changeInd = i;
       }
     }
 
@@ -110,7 +124,7 @@ void LARS::DoLARS(const arma::mat& matX, const arma::vec& y)
         //   newGramCol[i] = dot(matX.col(activeSet[i]), matX.col(changeInd));
         // }
         // This is equivalent to the above 5 lines.
-        arma::vec newGramCol = matGram.elem(changeInd * matX.n_cols +
+        arma::vec newGramCol = matGram.elem(changeInd * dataRef.n_cols +
             arma::conv_to<arma::uvec>::from(activeSet));
 
         //CholeskyInsert(matX.col(changeInd), newGramCol);
@@ -166,20 +180,20 @@ void LARS::DoLARS(const arma::mat& matX, const arma::vec& y)
     }
 
     // compute "equiangular" direction in output space
-    ComputeYHatDirection(matX, betaDirection, yHatDirection);
+    ComputeYHatDirection(dataRef, betaDirection, yHatDirection);
 
     double gamma = maxCorr / normalization;
 
     // if not all variables are active
-    if (nActive < matX.n_cols)
+    if (nActive < dataRef.n_cols)
     {
       // compute correlations with direction
-      for (arma::uword ind = 0; ind < matX.n_cols; ind++)
+      for (arma::uword ind = 0; ind < dataRef.n_cols; ind++)
       {
         if (isActive[ind])
           continue;
 
-        double dirCorr = dot(matX.col(ind), yHatDirection);
+        double dirCorr = dot(dataRef.col(ind), yHatDirection);
         double val1 = (maxCorr - corr(ind)) / (normalization - dirCorr);
         double val2 = (maxCorr + corr(ind)) / (normalization + dirCorr);
         if ((val1 > 0) && (val1 < gamma))
@@ -251,7 +265,7 @@ void LARS::DoLARS(const arma::mat& matX, const arma::vec& y)
       Deactivate(changeInd);
     }
 
-    corr = vecXTy - trans(matX) * yHat;
+    corr = vecXTy - trans(dataRef) * yHat;
     if (elasticNet)
       corr -= lambda2 * beta;
 
@@ -259,7 +273,7 @@ void LARS::DoLARS(const arma::mat& matX, const arma::vec& y)
     for (arma::uword i = 0; i < nActive; i++)
       curLambda += fabs(corr(activeSet[i]));
 
-    curLambda /= ((double)nActive);
+    curLambda /= ((double) nActive);
 
     lambdaPath.push_back(curLambda);
 
