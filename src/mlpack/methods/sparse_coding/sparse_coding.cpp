@@ -126,7 +126,7 @@ void SparseCoding::OptimizeCode()
     LARS lars(useCholesky, matGram, lambda1, lambda2);
 
     vec beta;
-    lars.DoLARS(dictionary, data.unsafe_col(i), beta, true);
+    lars.Regress(dictionary, data.unsafe_col(i), beta, true);
 
     codes.col(i) = beta;
   }
