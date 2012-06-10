@@ -73,7 +73,7 @@ void LassoTest(size_t nPoints, size_t nDims, bool elasticNet, bool useCholesky)
 
     LARS lars(useCholesky, lambda1, lambda2);
     arma::vec betaOpt;
-    lars.DoLARS(X, y, betaOpt);
+    lars.Regress(X, y, betaOpt);
 
     arma::vec errCorr = (X * trans(X) + lambda2 *
         arma::eye(nDims, nDims)) * betaOpt - X * y;
