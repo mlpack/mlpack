@@ -85,7 +85,7 @@ void LassoTest(size_t nPoints, size_t nDims, bool elasticNet, bool useCholesky)
 
 BOOST_AUTO_TEST_CASE(LARSTestLassoCholesky)
 {
-  LassoTest(100, 10, true, false);
+  LassoTest(100, 10, false, true);
 }
 
 
