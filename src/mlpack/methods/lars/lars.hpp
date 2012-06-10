@@ -34,12 +34,14 @@ namespace regression {
  * regression (Elastic Net).
  *
  * Let \f$ X \f$ be a matrix where each row is a point and each column is a
- * dimension and let \f$ y \f$ be a vector of targets.
+ * dimension and let \f$ y \f$ be a vector of responses.
  *
  * The Elastic Net problem is to solve
  *
  * \f[ \min_{\beta} 0.5 || X \beta - y ||_2^2 + \lambda_1 || \beta ||_1 +
  *     0.5 \lambda_2 || \beta ||_2^2 \f]
+ *
+ * where \f$ \beta \f$ is the vector of regression coefficients.
  *
  * If \f$ \lambda_1 > 0 \f$ and \f$ \lambda_2 = 0 \f$, the problem is the LASSO.
  * If \f$ \lambda_1 > 0 \f$ and \f$ \lambda_2 > 0 \f$, the problem is the
@@ -124,28 +126,27 @@ class LARS
    * necessary (i.e., you want to pass in a row-major matrix), pass 'true' for
    * the rowMajor parameter.
    *
-   * @param matX Column-major input data (or row-major input data if rowMajor =
+   * @param data Column-major input data (or row-major input data if rowMajor =
    *     true).
-   * @param y A vector of targets.
-   * @param beta Vector to store the solution in.
+   * @param responses A vector of targets.
+   * @param beta Vector to store the solution (the coefficients) in.
    * @param rowMajor Set to true if matX is row-major.
    */
-  void DoLARS(const arma::mat& matX,
-              const arma::vec& y,
-              arma::vec& beta,
-              const bool rowMajor = false);
+  void Regress(const arma::mat& data,
+               const arma::vec& responses,
+               arma::vec& beta,
+               const bool rowMajor = false);
 
-  //! Accessor for activeSet.
+  //! Access the set of active dimensions.
   const std::vector<size_t>& ActiveSet() const { return activeSet; }
 
-  //! Accessor for betaPath.
+  //! Access the set of coefficients after each iteration; the solution is the
+  //! last element.
   const std::vector<arma::vec>& BetaPath() const { return betaPath; }
 
-  //! Accessor for lambdaPath.
+  //! Access the set of values for lambda1 after each iteration; the solution is
+  //! the last element.
   const std::vector<double>& LambdaPath() const { return lambdaPath; }
-
-  //! Accessor for matUtriCholFactor.
-  const arma::mat& MatUtriCholFactor() const { return matUtriCholFactor; }
 
 private:
   //! Gram matrix.
