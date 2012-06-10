@@ -36,10 +36,10 @@ LARS::LARS(const bool useCholesky,
     tolerance(tolerance)
 { /* Nothing left to do */ }
 
-void LARS::DoLARS(const arma::mat& matX,
-                  const arma::vec& y,
-                  arma::vec& beta,
-                  const bool rowMajor)
+void LARS::Regress(const arma::mat& matX,
+                   const arma::vec& y,
+                   arma::vec& beta,
+                   const bool rowMajor)
 {
   // This matrix may end up holding the transpose -- if necessary.
   arma::mat dataTrans;
@@ -112,8 +112,6 @@ void LARS::DoLARS(const arma::mat& matX,
 
     if (!lassocond)
     {
-      // index is absolute index
-      //printf("activating %d\n", changeInd);
       if (useCholesky)
       {
         // vec newGramCol = vec(activeSet.size());
@@ -125,22 +123,21 @@ void LARS::DoLARS(const arma::mat& matX,
         arma::vec newGramCol = matGram.elem(changeInd * dataRef.n_cols +
             arma::conv_to<arma::uvec>::from(activeSet));
 
-        //CholeskyInsert(matX.col(changeInd), newGramCol);
         CholeskyInsert(matGram(changeInd, changeInd), newGramCol);
       }
 
-      // add variable to active set
+      // Add variable to active set.
       Activate(changeInd);
     }
 
-    // compute signs of correlations
+    // Compute signs of correlations.
     arma::vec s = arma::vec(activeSet.size());
     for (size_t i = 0; i < activeSet.size(); i++)
       s(i) = corr(activeSet[i]) / fabs(corr(activeSet[i]));
 
-    // compute "equiangular" direction in parameter space (betaDirection)
-    /* We use quotes because in the case of non-unit norm variables,
-       this need not be equiangular. */
+    // Compute the "equiangular" direction in parameter space (betaDirection).
+    // We use quotes because in the case of non-unit norm variables, this need
+    // not be equiangular.
     arma::vec unnormalizedBetaDirection;
     double normalization;
     arma::vec betaDirection;
@@ -182,10 +179,10 @@ void LARS::DoLARS(const arma::mat& matX,
 
     double gamma = maxCorr / normalization;
 
-    // if not all variables are active
+    // If not all variables are active.
     if (activeSet.size() < dataRef.n_cols)
     {
-      // compute correlations with direction
+      // Compute correlations with direction.
       for (size_t ind = 0; ind < dataRef.n_cols; ind++)
       {
         if (isActive[ind])
@@ -201,7 +198,7 @@ void LARS::DoLARS(const arma::mat& matX,
       }
     }
 
-    // bound gamma according to LASSO
+    // Bound gamma according to LASSO.
     if (lasso)
     {
       lassocond = false;
@@ -220,43 +217,33 @@ void LARS::DoLARS(const arma::mat& matX,
 
       if (lassoboundOnGamma < gamma)
       {
-        // printf("%d: gap = %e\tbeta(%d) = %e\n",
-        //    activeSet[activeIndToKickOut],
-        //    gamma - lassoboundOnGamma,
-        //    activeSet[activeIndToKickOut],
-        //    beta(activeSet[activeIndToKickOut]));
         gamma = lassoboundOnGamma;
         lassocond = true;
         changeInd = activeIndToKickOut;
       }
     }
 
-    // update prediction
+    // Update the prediction.
     yHat += gamma * yHatDirection;
 
-    // update estimator
+    // Update the estimator.
     for (size_t i = 0; i < activeSet.size(); i++)
     {
       beta(activeSet[i]) += gamma * betaDirection(i);
     }
 
-    // sanity check to make sure the kicked out guy (or girl?) is actually zero
+    // Sanity check to make sure the kicked out dimension is actually zero.
     if (lassocond)
     {
       if (beta(activeSet[changeInd]) != 0)
-      {
-        //printf("fixed from %e to 0\n", beta(activeSet[changeInd]));
         beta(activeSet[changeInd]) = 0;
-      }
     }
 
     betaPath.push_back(beta);
 
     if (lassocond)
     {
-      // index is in position changeInd in activeSet
-      //printf("\t\tKICK OUT %d!\n", activeSet[changeInd]);
-
+      // Index is in position changeInd in activeSet.
       if (useCholesky)
         CholeskyDelete(changeInd);
 
