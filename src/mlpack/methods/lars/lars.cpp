@@ -41,6 +41,8 @@ void LARS::Regress(const arma::mat& matX,
                    arma::vec& beta,
                    const bool rowMajor)
 {
+  Timer::Start("lars_regression");
+
   // This matrix may end up holding the transpose -- if necessary.
   arma::mat dataTrans;
   // dataRef is row-major.
@@ -275,6 +277,8 @@ void LARS::Regress(const arma::mat& matX,
 
   // Unfortunate copy...
   beta = betaPath.back();
+
+  Timer::Stop("lars_regression");
 }
 
 // Private functions.
