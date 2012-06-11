@@ -57,8 +57,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepLasso)
   for (uword i = 0; i < nPoints; ++i)
     X.col(i) /= norm(X.col(i), 2);
 
-  SparseCoding sc(X, nAtoms, lambda1);
-  sc.DataDependentRandomInitDictionary();
+  SparseCoding<> sc(X, nAtoms, lambda1);
   sc.OptimizeCode();
 
   mat D = sc.Dictionary();
@@ -85,8 +84,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepElasticNet)
   for (uword i = 0; i < nPoints; ++i)
     X.col(i) /= norm(X.col(i), 2);
 
-  SparseCoding sc(X, nAtoms, lambda1, lambda2);
-  sc.DataDependentRandomInitDictionary();
+  SparseCoding<> sc(X, nAtoms, lambda1, lambda2);
   sc.OptimizeCode();
 
   mat D = sc.Dictionary();
@@ -116,8 +114,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
   for(uword i = 0; i < nPoints; ++i)
     X.col(i) /= norm(X.col(i), 2);
 
-  SparseCoding sc(X, nAtoms, lambda1);
-  sc.DataDependentRandomInitDictionary();
+  SparseCoding<> sc(X, nAtoms, lambda1);
   sc.OptimizeCode();
 
   mat D = sc.Dictionary();
@@ -125,8 +122,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
 
   X = D * Z;
 
+  SparseCoding<> sc2(X, nAtoms, lambda1);
   sc.Data() = X;
-  sc.DataDependentRandomInitDictionary();
 
   uvec adjacencies = find(Z);
   sc.OptimizeDictionary(adjacencies);
