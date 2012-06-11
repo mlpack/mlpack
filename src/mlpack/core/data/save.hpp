@@ -31,17 +31,24 @@ namespace data /** Functions to load and save matrices. */ {
  *  - Raw binary (raw_binary), denoted by .bin
  *  - Armadillo binary (arma_binary), denoted by .bin
  *
- * If the file extension is not one of those types, an error will be given.
+ * If the file extension is not one of those types, an error will be given.  If
+ * the 'fatal' parameter is set to true, an error will cause the program to
+ * exit.  If the 'transpose' parameter is set to true, the matrix will be
+ * transposed before saving.  Generally, because MLPACK stores matrices in a
+ * column-major format and most datasets are stored on disk as row-major, this
+ * parameter should be left at its default value of 'true'.
  *
  * @param filename Name of file to save to.
  * @param matrix Matrix to save into file.
  * @param fatal If an error should be reported as fatal (default false).
+ * @param transpose If true, transpose the matrix before saving.
  * @return Boolean value indicating success or failure of save.
  */
 template<typename eT>
 bool Save(const std::string& filename,
           const arma::Mat<eT>& matrix,
-          bool fatal = false);
+          bool fatal = false,
+          bool transpose = true);
 
 }; // namespace data
 }; // namespace mlpack

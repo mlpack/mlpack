@@ -14,7 +14,10 @@ namespace mlpack {
 namespace data {
 
 template<typename eT>
-bool Load(const std::string& filename, arma::Mat<eT>& matrix, bool fatal)
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          bool fatal,
+          bool transpose)
 {
   // First we will try to discriminate by file extension.
   size_t ext = filename.rfind('.');
@@ -161,8 +164,9 @@ bool Load(const std::string& filename, arma::Mat<eT>& matrix, bool fatal)
       Log::Warn << "Loading from '" << filename << "' failed." << std::endl;
   }
 
-  // Now transpose the matrix.
-  matrix = trans(matrix);
+  // Now transpose the matrix, if necessary.
+  if (transpose)
+    matrix = trans(matrix);
 
   // Finally, return the success indicator.
   return success;
