@@ -10,6 +10,8 @@
 // In case it hasn't already been included.
 #include "load.hpp"
 
+#include <mlpack/core/util/timers.hpp>
+
 namespace mlpack {
 namespace data {
 
@@ -19,6 +21,8 @@ bool Load(const std::string& filename,
           bool fatal,
           bool transpose)
 {
+  Timer::Start("loading_data");
+
   // First we will try to discriminate by file extension.
   size_t ext = filename.rfind('.');
   if (ext == std::string::npos)
@@ -167,6 +171,8 @@ bool Load(const std::string& filename,
   // Now transpose the matrix, if necessary.
   if (transpose)
     matrix = trans(matrix);
+
+  Timer::Stop("loading_data");
 
   // Finally, return the success indicator.
   return success;
