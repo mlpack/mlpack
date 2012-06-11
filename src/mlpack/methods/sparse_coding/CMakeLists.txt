@@ -3,8 +3,11 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile
 # Anything not in this list will not be compiled into the output library
 set(SOURCES
+  data_dependent_random_initializer.hpp
+  nothing_initializer.hpp
+  random_initializer.hpp
   sparse_coding.hpp
-  sparse_coding.cpp
+  sparse_coding_impl.hpp
 )
 
 # add directory name to sources

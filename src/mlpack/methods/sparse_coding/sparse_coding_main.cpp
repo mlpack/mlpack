@@ -63,13 +63,9 @@ int main(int argc, char* argv[])
     matX.col(i) /= norm(matX.col(i), 2);
 
   // Run the sparse coding algorithm.
-  SparseCoding sc(matX, nAtoms, lambda1, lambda2);
+  SparseCoding<> sc(matX, nAtoms, lambda1, lambda2);
 
-  if (strlen(initialDictionaryFullpath) == 0)
-  {
-    sc.DataDependentRandomInitDictionary();
-  }
-  else
+  if (strlen(initialDictionaryFullpath) != 0)
   {
     mat matInitialD;
     data::Load(initialDictionaryFullpath, matInitialD);
