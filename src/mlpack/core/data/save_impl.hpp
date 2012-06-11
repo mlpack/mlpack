@@ -19,6 +19,8 @@ bool Save(const std::string& filename,
           bool fatal,
           bool transpose)
 {
+  Timer::Start("saving_data");
+
   // First we will try to discriminate by file extension.
   size_t ext = filename.rfind('.');
   if (ext == std::string::npos)
@@ -125,6 +127,8 @@ bool Save(const std::string& filename,
       return false;
     }
   }
+
+  Timer::Stop("saving_data");
 
   // Finally return success.
   return true;
