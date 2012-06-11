@@ -1,98 +1,77 @@
 /**
- * @file sparse_coding.cpp
+ * @file sparse_coding_impl.hpp
  * @author Nishant Mehta
  *
  * Implementation of Sparse Coding with Dictionary Learning using l1 (LASSO) or
  * l1+l2 (Elastic Net) regularization.
  */
+#ifndef __MLPACK_METHODS_SPARSE_CODING_SPARSE_CODING_IMPL_HPP
+#define __MLPACK_METHODS_SPARSE_CODING_SPARSE_CODING_IMPL_HPP
+
+// In case it hasn't already been included.
 #include "sparse_coding.hpp"
 
-using namespace std;
-using namespace arma;
-using namespace mlpack;
-using namespace mlpack::regression;
-using namespace mlpack::sparse_coding;
+namespace mlpack {
+namespace sparse_coding {
 
 // TODO: parameterizable; options to methods?
 #define OBJ_TOL 1e-2 // 1E-9
 #define NEWTON_TOL 1e-6 // 1E-9
 
-SparseCoding::SparseCoding(const mat& data,
-                           const size_t atoms,
-                           const double lambda1,
-                           const double lambda2) :
+template<typename DictionaryInitializer>
+SparseCoding<DictionaryInitializer>::SparseCoding(const arma::mat& data,
+                                                  const size_t atoms,
+                                                  const double lambda1,
+                                                  const double lambda2) :
     atoms(atoms),
     data(data),
-    codes(mat(atoms, data.n_cols)),
+    codes(atoms, data.n_cols),
     lambda1(lambda1),
     lambda2(lambda2)
-{ /* Nothing left to do. */ }
-
-// Always a not good decision!
-void SparseCoding::RandomInitDictionary()
 {
-  dictionary = randn(data.n_rows, atoms);
-
-  for (size_t j = 0; j < atoms; ++j)
-    dictionary.col(j) /= norm(dictionary.col(j), 2);
+  // Initialize the dictionary.
+  DictionaryInitializer::Initialize(data, atoms, dictionary);
 }
 
-// The sensible heuristic.
-void SparseCoding::DataDependentRandomInitDictionary()
-{
-  dictionary = mat(data.n_rows, atoms);
-  for (size_t j = 0; j < atoms; ++j)
-  {
-    vec vecD_j = dictionary.unsafe_col(j);
-    RandomAtom(vecD_j);
-  }
-}
-
-void SparseCoding::RandomAtom(vec& atom)
-{
-  atom.zeros();
-  const size_t nSeedAtoms = 3;
-  for (size_t i = 0; i < nSeedAtoms; i++)
-    atom += data.col(rand() % data.n_cols);
-
-  atom /= norm(atom, 2);
-}
-
-void SparseCoding::DoSparseCoding(const size_t maxIterations)
+template<typename DictionaryInitializer>
+void SparseCoding<DictionaryInitializer>::DoSparseCoding(
+    const size_t maxIterations)
 {
   double lastObjVal = DBL_MAX;
 
-  Log::Info << "Initial Coding Step." << endl;
+  Log::Info << "Initial Coding Step." << std::endl;
 
   OptimizeCode();
-  uvec adjacencies = find(codes);
+  arma::uvec adjacencies = find(codes);
 
   Log::Info << "  Sparsity level: "
       << 100.0 * ((double) (adjacencies.n_elem)) / ((double)
-      (atoms * data.n_cols)) << "%" << endl;
-  Log::Info << "  Objective value: " << Objective() << "." << endl;
+      (atoms * data.n_cols)) << "%" << std::endl;
+  Log::Info << "  Objective value: " << Objective() << "." << std::endl;
 
   for (size_t t = 1; t != maxIterations; ++t)
   {
-    Log::Info << "Iteration " << t << " of " << maxIterations << "." << endl;
+    Log::Info << "Iteration " << t << " of " << maxIterations << "."
+        << std::endl;
 
     Log::Info << "Performing dictionary step... ";
     OptimizeDictionary(adjacencies);
-    Log::Info << "objective value: " << Objective() << "." << endl;
+    Log::Info << "objective value: " << Objective() << "." << std::endl;
 
-    Log::Info << "Performing coding step..." << endl;
+    Log::Info << "Performing coding step..." << std::endl;
     OptimizeCode();
     adjacencies = find(codes);
     Log::Info << "  Sparsity level: "
         << 100.0 *
         ((double) (adjacencies.n_elem)) / ((double) (atoms * data.n_cols))
-        << "%" << endl;
+        << "%" << std::endl;
 
     double curObjVal = Objective();
-    Log::Info << "  Objective value: " << curObjVal << "." << endl;
+    Log::Info << "  Objective value: " << curObjVal << "." << std::endl;
 
     double objValImprov = lastObjVal - curObjVal;
-    Log::Info << "  Improvement: " << scientific << objValImprov << "." << endl;
+    Log::Info << "  Improvement: " << std::scientific << objValImprov << "."
+        << std::endl;
 
     if (objValImprov < OBJ_TOL)
     {
@@ -104,10 +83,11 @@ void SparseCoding::DoSparseCoding(const size_t maxIterations)
   }
 }
 
-void SparseCoding::OptimizeCode()
+template<typename DictionaryInitializer>
+void SparseCoding<DictionaryInitializer>::OptimizeCode()
 {
   // When using Cholesky version of LARS, this is correct even if lambda2 > 0.
-  mat matGram = trans(dictionary) * dictionary;
+  arma::mat matGram = trans(dictionary) * dictionary;
   // mat matGram;
   // if(lambda2 > 0) {
   //   matGram = trans(dictionary) * dictionary + lambda2 * eye(atoms, atoms);
@@ -120,22 +100,24 @@ void SparseCoding::OptimizeCode()
   {
     // Report progress.
     if ((i % 100) == 0)
-      Log::Debug << "Optimization at point " << i << "." << endl;
+      Log::Debug << "Optimization at point " << i << "." << std::endl;
 
     bool useCholesky = true;
-    LARS lars(useCholesky, matGram, lambda1, lambda2);
+    regression::LARS lars(useCholesky, matGram, lambda1, lambda2);
 
-    vec beta;
+    arma::vec beta;
     lars.Regress(dictionary, data.unsafe_col(i), beta, true);
 
     codes.col(i) = beta;
   }
 }
 
-void SparseCoding::OptimizeDictionary(const uvec& adjacencies)
+template<typename DictionaryInitializer>
+void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
+      const arma::uvec& adjacencies)
 {
   // Count the number of atomic neighbors for each point x^i.
-  uvec neighborCounts = zeros<uvec>(data.n_cols, 1);
+  arma::uvec neighborCounts = arma::zeros<arma::uvec>(data.n_cols, 1);
 
   if (adjacencies.n_elem > 0)
   {
@@ -178,18 +160,19 @@ void SparseCoding::OptimizeDictionary(const uvec& adjacencies)
   const size_t nInactiveAtoms = inactiveAtoms.size();
 
   // Efficient construction of Z restricted to active atoms.
-  mat matActiveZ;
+  arma::mat matActiveZ;
   if (inactiveAtoms.empty())
   {
     matActiveZ = codes;
   }
   else
   {
-    uvec inactiveAtomsVec = conv_to<uvec>::from(inactiveAtoms);
+    arma::uvec inactiveAtomsVec =
+        arma::conv_to<arma::uvec>::from(inactiveAtoms);
     RemoveRows(codes, inactiveAtomsVec, matActiveZ);
   }
 
-  uvec atomReverseLookup = uvec(atoms);
+  arma::uvec atomReverseLookup(atoms);
   for (size_t i = 0; i < nActiveAtoms; ++i)
     atomReverseLookup(activeAtoms[i]) = i;
 
@@ -201,12 +184,12 @@ void SparseCoding::OptimizeDictionary(const uvec& adjacencies)
 
   Log::Debug << "Solving Dual via Newton's Method.\n";
 
-  mat dictionaryEstimate;
+  arma::mat dictionaryEstimate;
   // Solve using Newton's method in the dual - note that the final dot
   // multiplication with inv(A) seems to be unavoidable. Although more
   // expensive, the code written this way (we use solve()) should be more
   // numerically stable than just using inv(A) for everything.
-  vec dualVars = zeros<vec>(nActiveAtoms);
+  arma::vec dualVars = arma::zeros<arma::vec>(nActiveAtoms);
 
   //vec dualVars = 1e-14 * ones<vec>(nActiveAtoms);
 
@@ -221,20 +204,21 @@ void SparseCoding::OptimizeDictionary(const uvec& adjacencies)
   //    dualVars(i) = 0;
 
   bool converged = false;
-  mat codesXT = matActiveZ * trans(data);
-  mat codesZT = matActiveZ * trans(matActiveZ);
+  arma::mat codesXT = matActiveZ * trans(data);
+  arma::mat codesZT = matActiveZ * trans(matActiveZ);
 
   for (size_t t = 1; !converged; ++t)
   {
-    mat A = codesZT + diagmat(dualVars);
+    arma::mat A = codesZT + diagmat(dualVars);
 
-    mat matAInvZXT = solve(A, codesXT);
+    arma::mat matAInvZXT = solve(A, codesXT);
 
-    vec gradient = -(sum(square(matAInvZXT), 1) - ones<vec>(nActiveAtoms));
+    arma::vec gradient = -(arma::sum(arma::square(matAInvZXT), 1) -
+        arma::ones<arma::vec>(nActiveAtoms));
 
-    mat hessian = -(-2 * (matAInvZXT * trans(matAInvZXT)) % inv(A));
+    arma::mat hessian = -(-2 * (matAInvZXT * trans(matAInvZXT)) % inv(A));
 
-    vec searchDirection = -solve(hessian, gradient);
+    arma::vec searchDirection = -solve(hessian, gradient);
     //vec searchDirection = -gradient;
 
     // Armijo line search.
@@ -247,12 +231,12 @@ void SparseCoding::OptimizeDictionary(const uvec& adjacencies)
     {
       double sumDualVars = sum(dualVars);
       double fOld = -(-trace(trans(codesXT) * matAInvZXT) - sumDualVars);
-      Log::Debug << "fOld = " << fOld << "." << endl;
+      Log::Debug << "fOld = " << fOld << "." << std::endl;
       double fNew =
           -(-trace(trans(codesXT) * solve(codesZT +
           diagmat(dualVars + alpha * searchDirection), codesXT))
           - (sumDualVars + alpha * sum(searchDirection)) );
-      Log::Debug << "fNew = " << fNew << "." << endl;
+      Log::Debug << "fNew = " << fNew << "." << std::endl;
     }
     */
 
@@ -280,9 +264,9 @@ void SparseCoding::OptimizeDictionary(const uvec& adjacencies)
 
     dualVars += searchDirection;
     double normGradient = norm(gradient, 2);
-    Log::Debug << "Newton Method iteration " << t << ":" << endl;
+    Log::Debug << "Newton Method iteration " << t << ":" << std::endl;
     Log::Debug << "  Gradient norm: " << std::scientific << normGradient
-        << "." << endl;
+        << "." << std::endl;
     Log::Debug << "  Improvement: " << std::scientific << improvement << ".\n";
 
     if (improvement < NEWTON_TOL)
@@ -295,24 +279,31 @@ void SparseCoding::OptimizeDictionary(const uvec& adjacencies)
   }
   else
   {
-    mat dictionaryActiveEstimate = trans(solve(codesZT + diagmat(dualVars),
-        codesXT));
-    dictionaryEstimate = zeros(data.n_rows, atoms);
+    arma::mat dictionaryActiveEstimate = trans(solve(codesZT +
+        diagmat(dualVars), codesXT));
+    dictionaryEstimate = arma::zeros(data.n_rows, atoms);
 
     for (size_t i = 0; i < nActiveAtoms; ++i)
       dictionaryEstimate.col(activeAtoms[i]) = dictionaryActiveEstimate.col(i);
 
     for (size_t i = 0; i < nInactiveAtoms; ++i)
     {
-      vec vecdictionaryi = dictionaryEstimate.unsafe_col(inactiveAtoms[i]);
-      RandomAtom(vecdictionaryi);
+      // Make a new random atom estimate.
+      dictionaryEstimate.col(inactiveAtoms[i]) =
+          (data.col(math::RandInt(data.n_cols)) +
+           data.col(math::RandInt(data.n_cols)) +
+           data.col(math::RandInt(data.n_cols)));
+
+      dictionaryEstimate.col(inactiveAtoms[i]) /=
+          norm(dictionaryEstimate.col(inactiveAtoms[i]), 2);
     }
   }
 
   dictionary = dictionaryEstimate;
 }
 
-void SparseCoding::ProjectDictionary()
+template<typename DictionaryInitializer>
+void SparseCoding<DictionaryInitializer>::ProjectDictionary()
 {
   for (size_t j = 0; j < atoms; j++)
   {
@@ -326,7 +317,8 @@ void SparseCoding::ProjectDictionary()
   }
 }
 
-double SparseCoding::Objective()
+template<typename DictionaryInitializer>
+double SparseCoding<DictionaryInitializer>::Objective()
 {
   double l11NormZ = sum(sum(abs(codes)));
   double froNormResidual = norm(data - dictionary * codes, "fro");
@@ -344,58 +336,64 @@ double SparseCoding::Objective()
   }
 }
 
-void mlpack::sparse_coding::RemoveRows(const mat& X,
-                                       uvec rows_to_remove,
-                                       mat& X_mod)
+void RemoveRows(const arma::mat& X,
+                const arma::uvec& rowsToRemove,
+                arma::mat& modX)
 {
-  const size_t n_cols = X.n_cols;
-  const size_t n_rows = X.n_rows;
-  const size_t n_to_remove = rows_to_remove.n_elem;
-  const size_t n_to_keep = n_rows - n_to_remove;
+  const size_t cols = X.n_cols;
+  const size_t rows = X.n_rows;
+  const size_t nRemove = rowsToRemove.n_elem;
+  const size_t nKeep = rows - nRemove;
 
-  if (n_to_remove == 0)
+  if (nRemove == 0)
   {
-    X_mod = X;
+    modX = X;
   }
   else
   {
-    X_mod.set_size(n_to_keep, n_cols);
+    modX.set_size(nKeep, cols);
 
-    size_t cur_row = 0;
-    size_t remove_ind = 0;
+    size_t curRow = 0;
+    size_t removeInd = 0;
     // First, check 0 to first row to remove.
-    if (rows_to_remove(0) > 0)
+    if (rowsToRemove(0) > 0)
     {
       // Note that this implies that n_rows > 1.
-      size_t height = rows_to_remove(0);
-      X_mod(span(cur_row, cur_row + height - 1), span::all) =
-          X(span(0, rows_to_remove(0) - 1), span::all);
-      cur_row += height;
+      size_t height = rowsToRemove(0);
+      modX(arma::span(curRow, curRow + height - 1), arma::span::all) =
+          X(arma::span(0, rowsToRemove(0) - 1), arma::span::all);
+      curRow += height;
     }
     // Now, check i'th row to remove to (i + 1)'th row to remove, until i is the
     // penultimate row.
-    while (remove_ind < n_to_remove - 1)
+    while (removeInd < nRemove - 1)
     {
-      size_t height = rows_to_remove[remove_ind + 1] -
-          rows_to_remove[remove_ind] - 1;
+      size_t height = rowsToRemove[removeInd + 1] -
+          rowsToRemove[removeInd] - 1;
 
       if (height > 0)
       {
-        X_mod(span(cur_row, cur_row + height - 1), span::all) =
-            X(span(rows_to_remove[remove_ind] + 1,
-            rows_to_remove[remove_ind + 1] - 1), span::all);
-        cur_row += height;
+        modX(arma::span(curRow, curRow + height - 1), arma::span::all) =
+            X(arma::span(rowsToRemove[removeInd] + 1,
+            rowsToRemove[removeInd + 1] - 1), arma::span::all);
+        curRow += height;
       }
 
-      remove_ind++;
+      removeInd++;
     }
 
     // Now that i is the last row to remove, check last row to remove to last
     // row.
-    if (rows_to_remove[remove_ind] < n_rows - 1)
+    if (rowsToRemove[removeInd] < rows - 1)
     {
-      X_mod(span(cur_row, n_to_keep - 1), span::all) =
-          X(span(rows_to_remove[remove_ind] + 1, n_rows - 1), span::all);
+      modX(arma::span(curRow, nKeep - 1), arma::span::all) =
+          X(arma::span(rowsToRemove[removeInd] + 1, rows - 1),
+          arma::span::all);
     }
   }
 }
+
+}; // namespace sparse_coding
+}; // namespace mlpack
+
+#endif

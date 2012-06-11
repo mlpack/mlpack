@@ -11,6 +11,11 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/lars/lars.hpp>
 
+// Include our three simple dictionary initializers.
+#include "nothing_initializer.hpp"
+#include "data_dependent_random_initializer.hpp"
+#include "random_initializer.hpp"
+
 namespace mlpack {
 namespace sparse_coding {
 
@@ -78,7 +83,20 @@ namespace sparse_coding {
  *   publisher={Royal Statistical Society}
  * }
  * @endcode
+ *
+ * Before the method is run, the dictionary is initialized using the
+ * DictionaryInitializationPolicy class.  Possible choices include the
+ * RandomInitializer, which provides an entirely random dictionary, the
+ * DataDependentRandomInitializer, which provides a random dictionary based
+ * loosely on characteristics of the dataset, and the NothingInitializer, which
+ * does not initialize the dictionary -- instead, the user should set the
+ * dictionary using the Dictionary() mutator method.
+ *
+ * @tparam DictionaryInitializationPolicy The class to use to initialize the
+ *     dictionary; must have 'void Initialize(const arma::mat& data, arma::mat&
+ *     dictionary)' function.
  */
+template<typename DictionaryInitializer = DataDependentRandomInitializer>
 class SparseCoding
 {
  public:
@@ -96,28 +114,6 @@ class SparseCoding
                const double lambda2 = 0);
 
   /**
-   * Initialize dictionary by drawing k vectors uniformly at random from the
-   * unit sphere.
-   */
-  void RandomInitDictionary();
-
-  /**
-   * Initialize dictionary by initializing each atom to a normalized mixture of
-   * a small number of randomly selected points in X.
-   */
-  void DataDependentRandomInitDictionary();
-
-  /**
-   * Initialize an atom to a normalized mixture of a small number of randomly
-   * selected points in X.
-   *
-   * @param atom The atom to initialize
-   */
-  void RandomAtom(arma::vec& atom);
-
-  // core algorithm functions
-
-  /**
    * Run Sparse Coding with Dictionary Learning.
    *
    * @param maxIterations Maximum number of iterations to run algorithm.  If 0,
@@ -131,7 +127,7 @@ class SparseCoding
   void OptimizeCode();
 
   /**
-   * Learn dictionary via Newton method based on Lagrange dual
+   * Learn dictionary via Newton method based on Lagrange dual.
    *
    * @param adjacencies Indices of entries (unrolled column by column) of
    *    the coding matrix Z that are non-zero (the adjacency matrix for the
@@ -186,10 +182,13 @@ class SparseCoding
 };
 
 void RemoveRows(const arma::mat& X,
-                arma::uvec rows_to_remove,
-                arma::mat& X_mod);
+                const arma::uvec& rowsToRemove,
+                arma::mat& modX);
 
 }; // namespace sparse_coding
 }; // namespace mlpack
+
+// Include implementation.
+#include "sparse_coding_impl.hpp"
 
 #endif
