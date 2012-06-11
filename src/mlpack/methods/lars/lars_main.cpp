@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
 
   double lambda1 = CLI::GetParam<double>("lambda1");
   double lambda2 = CLI::GetParam<double>("lambda2");
-  bool useCholesky = CLI::GetParam<bool>("use_cholesky");
+  bool useCholesky = CLI::HasParam("use_cholesky");
 
   // Load covariates.  We can avoid LARS transposing our data by choosing to not
   // transpose this data.
