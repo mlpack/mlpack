@@ -28,18 +28,20 @@ PROGRAM_INFO("LARS", "An implementation of LARS: Least Angle Regression "
     "For efficiency reasons, it is not recommended to use this algorithm with "
     "lambda_1 = 0.\n");
 
-PARAM_STRING_REQ("input_file", "File containing covariates (X)",
+PARAM_STRING_REQ("input_file", "File containing covariates (X).",
     "i");
 PARAM_STRING_REQ("responses_file", "File containing y "
     "(responses/observations).", "r");
 
-PARAM_STRING("output_file", "File to save beta (linear estimator) to", "o",
+PARAM_STRING("output_file", "File to save beta (linear estimator) to.", "o",
     "output.csv");
 
-PARAM_DOUBLE("lambda1", "Regularization parameter for l1-norm penalty", "l", 0);
-PARAM_DOUBLE("lambda2", "Regularization parameter for l2-norm penalty", "L", 0);
+PARAM_DOUBLE("lambda1", "Regularization parameter for l1-norm penalty.", "l",
+    0);
+PARAM_DOUBLE("lambda2", "Regularization parameter for l2-norm penalty.", "L",
+    0);
 PARAM_FLAG("use_cholesky", "Use Cholesky decomposition during computation "
-    "rather than explicitly computing the full Gram matrix", "c");
+    "rather than explicitly computing the full Gram matrix.", "c");
 
 using namespace arma;
 using namespace std;
