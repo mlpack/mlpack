@@ -36,10 +36,10 @@ PARAM_STRING_REQ("responses_file", "File containing y "
 PARAM_STRING("output_file", "File to save beta (linear estimator) to", "o",
     "output.csv");
 
-PARAM_DOUBLE("lambda1", "Regularization parameter for l1-norm penalty", "", 0);
-PARAM_DOUBLE("lambda2", "Regularization parameter for l2-norm penalty", "", 0);
+PARAM_DOUBLE("lambda1", "Regularization parameter for l1-norm penalty", "l", 0);
+PARAM_DOUBLE("lambda2", "Regularization parameter for l2-norm penalty", "L", 0);
 PARAM_FLAG("use_cholesky", "Use Cholesky decomposition during computation "
-    "rather than explicitly computing the full Gram matrix", "");
+    "rather than explicitly computing the full Gram matrix", "c");
 
 using namespace arma;
 using namespace std;
@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
   if (matY.n_cols > 1)
     Log::Fatal << "Only one column or row allowed in responses file!" << endl;
 
-  if (matY.n_elem != matX.n_cols)
+  if (matY.n_elem != matX.n_rows)
     Log::Fatal << "Number of responses must be equal to number of rows of X!"
         << endl;
 
