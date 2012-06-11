@@ -35,15 +35,23 @@ namespace data /** Functions to load and save matrices. */ {
  * This is preferable to Armadillo's default behavior of loading an unknown
  * filetype as raw_binary, which can have very confusing effects.
  *
+ * If the parameter 'fatal' is set to true, the program will exit with an error
+ * if the matrix does not load successfully.  The parameter 'transpose' controls
+ * whether or not the matrix is transposed after loading.  In most cases,
+ * because data is generally stored in a row-major format and MLPACK requires
+ * column-major matrices, this should be left at its default value of 'true'.
+ *
  * @param filename Name of file to load.
  * @param matrix Matrix to load contents of file into.
  * @param fatal If an error should be reported as fatal (default false).
+ * @param transpose If true, transpose the matrix after loading.
  * @return Boolean value indicating success or failure of load.
  */
 template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
-          bool fatal = false);
+          bool fatal = false,
+          bool transpose = true);
 
 }; // namespace data
 }; // namespace mlpack
