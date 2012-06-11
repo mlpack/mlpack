@@ -77,11 +77,8 @@ int main(int argc, char* argv[])
 
   // Do LARS.
   LARS lars(useCholesky, lambda1, lambda2);
-  lars.DoLARS(matX, matY.unsafe_col(0));
-
-  // Get and save solution.
   vec beta;
-  lars.Solution(beta);
+  lars.Regress(matX, matY.unsafe_col(0), beta);
 
   const string betaFilename = CLI::GetParam<string>("output_file");
   beta.save(betaFilename, raw_ascii);
