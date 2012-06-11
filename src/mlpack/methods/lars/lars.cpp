@@ -84,6 +84,7 @@ void LARS::Regress(const arma::mat& matX,
   if (maxCorr < lambda1)
   {
     lambdaPath[0] = lambda1;
+    Timer::Stop("lars_regression");
     return;
   }
 
