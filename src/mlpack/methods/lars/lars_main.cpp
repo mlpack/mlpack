@@ -55,15 +55,18 @@ int main(int argc, char* argv[])
   double lambda2 = CLI::GetParam<double>("lambda2");
   bool useCholesky = CLI::GetParam<bool>("use_cholesky");
 
-  // Load covariates.
+  // Load covariates.  We can avoid LARS transposing our data by choosing to not
+  // transpose this data.
   const string matXFilename = CLI::GetParam<string>("input_file");
   mat matX;
-  data::Load(matXFilename.c_str(), matX, true);
+  data::Load(matXFilename.c_str(), matX, true, false);
 
-  // Load targets.
+  // Load responses.  The responses should be a one-dimensional vector, and it
+  // seems more likely that these will be stored with one response per line (one
+  // per row).  So we should not transpose upon loading.
   const string yFilename = CLI::GetParam<string>("responses_file");
   mat matY; // Will be a vector.
-  data::Load(yFilename.c_str(), matY, true);
+  data::Load(yFilename.c_str(), matY, true, false);
 
   // Make sure y is oriented the right way.
   if (matY.n_rows == 1)
@@ -78,7 +81,7 @@ int main(int argc, char* argv[])
   // Do LARS.
   LARS lars(useCholesky, lambda1, lambda2);
   vec beta;
-  lars.Regress(matX, matY.unsafe_col(0), beta);
+  lars.Regress(matX, matY.unsafe_col(0), beta, false /* do not transpose */);
 
   const string betaFilename = CLI::GetParam<string>("output_file");
   beta.save(betaFilename, raw_ascii);
