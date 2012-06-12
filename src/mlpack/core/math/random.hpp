@@ -73,13 +73,13 @@ inline double Random()
  */
 inline double Random(const double lo, const double hi)
 {
-  #if BOOST_VERSION >= 104700
-    boost::random::uniform_real_distribution<> dist(lo, hi);
-  #else
-    boost::uniform_real<> dist(lo, hi);
-  #endif
-
-  return dist(randGen);
+#if BOOST_VERSION >= 103900
+  return lo + (hi - lo) * randUniformDist(randGen);
+#else
+  // Before Boost 1.39, we did not give the random object when we wanted a
+  // random number; that gets given at construction time.
+  return lo + (hi - lo) * randUniformDist();
+#endif
 }
 
 /**
@@ -87,13 +87,13 @@ inline double Random(const double lo, const double hi)
  */
 inline int RandInt(const int hiExclusive)
 {
-  #if BOOST_VERSION >= 104700
-    boost::random::uniform_int_distribution<> dist(0, hiExclusive - 1);
-  #else
-    boost::uniform_int<> dist(0, hiExclusive - 1);
-  #endif
-
-  return dist(randGen);
+#if BOOST_VERSION >= 103900
+  return (int) std::floor((double) hiExclusive * randUniformDist(randGen));
+#else
+  // Before Boost 1.39, we did not give the random object when we wanted a
+  // random number; that gets given at construction time.
+  return (int) std::floor((double) hiExclusive * randUniformDist());
+#endif
 }
 
 /**
@@ -101,13 +101,16 @@ inline int RandInt(const int hiExclusive)
  */
 inline int RandInt(const int lo, const int hiExclusive)
 {
-  #if BOOST_VERSION >= 104700
-    boost::random::uniform_int_distribution<> dist(lo, hiExclusive - 1);
-  #else
-    boost::uniform_int<> dist(lo, hiExclusive - 1);
-  #endif
+#if BOOST_VERSION >= 103900
+  return lo + (int) std::floor((double)(hiExclusive - lo) 
+                               * randUniformDist(randGen));
+#else
+  // Before Boost 1.39, we did not give the random object when we wanted a
+  // random number; that gets given at construction time.
+  return lo + (int) std::floor((double)(hiExclusive - lo) 
+                               * randUniformDist());
+#endif
 
-  return dist(randGen);
 }
 
 /**
