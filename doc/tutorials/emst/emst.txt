@@ -9,16 +9,16 @@
 @section intro_emsttut Introduction
 
 The Euclidean Minimum Spanning Tree problem is widely used in machine learning 
-and data mining applications.  Given a set \f$S\f$ of points in \f$\mathbb{R}^d\f$,
+and data mining applications.  Given a set \f$S\f$ of points in \f$\mathbf{R}^d\f$,
 our task is to compute lowest weight spanning tree in the complete graph on \f$S\f$
 with edge weights given by the Euclidean distance between points. 
 
 Among other applications, the EMST can be used to compute hierarchical clusterings
-of data.  A \emph{single-linkage clustering} can be obtained from the EMST by deleting
-all edges longer than a given cluster length.  This technique is also referred to as a \emph{Friends-of-Friends} clustering in the astronomy literature.
+of data.  A <em>single-linkage clustering</em> can be obtained from the EMST by deleting
+all edges longer than a given cluster length.  This technique is also referred to as a <em>Friends-of-Friends</em> clustering in the astronomy literature.
 
-MLPACK includes an implementation of \emph{Dual-Tree Boruvka} on \f$kd\f$-trees, the empirically and 
-theoretically fastest EMST algorithm.  For more details, see March, \emph{et al.}, \emph{Euclidean Minimum Spanning Tree: Algorithm, Analysis, and Applications}, in KDD, 2010.  An implementation on cover trees is forthcoming.
+MLPACK includes an implementation of <b>Dual-Tree Boruvka</b> on \f$kd\f$-trees, the empirically and 
+theoretically fastest EMST algorithm.  For more details, see March, <em>et al.</em>, <em>Euclidean Minimum Spanning Tree: Algorithm, Analysis, and Applications</em>, in KDD, 2010.  An implementation using cover trees is forthcoming.
 
 \b mlpack provides:
 
