@@ -17,6 +17,7 @@ set(DIRS
   naive_bayes
   nca
   neighbor_search
+  nmf
   pca
   radical
   range_search
