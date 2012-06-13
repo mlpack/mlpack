@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
   }
 
   Timer::Start("sparse_coding");
-  sc.DoSparseCoding(nIterations);
+  sc.Encode(nIterations);
   Timer::Stop("sparse_coding");
 
   mat learnedD = sc.Dictionary();
