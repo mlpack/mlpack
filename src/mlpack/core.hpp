@@ -67,6 +67,9 @@
  *
  *  - @ref nstutorial
  *  - @ref lrtutorial
+ *  - @ref rstutorial
+ *  - @ref dettutorial
+ *  - @ref emst_tutorial
  *
  * @section methods Methods in MLPACK
  *
