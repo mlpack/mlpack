@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
   X = D * Z;
 
   SparseCoding<> sc2(X, nAtoms, lambda1);
-  sc.Data() = X;
+//  sc.Data() = X;
 
   uvec adjacencies = find(Z);
   sc.OptimizeDictionary(adjacencies);
