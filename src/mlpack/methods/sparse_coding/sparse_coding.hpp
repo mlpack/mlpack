@@ -30,10 +30,14 @@ namespace sparse_coding {
  * each column is a point and each row is a dimension. The dictionary D is a
  * d-by-k matrix, and the sparse codes matrix Z is a k-by-m matrix.
  * This program seeks to minimize the objective:
- * min_{D,Z} 0.5 ||X - D Z||_{Fro}^2\ + lambda_1 sum_{i=1}^m ||Z_i||_1
- *                                    + 0.5 lambda_2 sum_{i=1}^m ||Z_i||_2^2
- * subject to ||D_j||_2 <= 1 for 1 <= j <= k
- * where typically lambda_1 > 0 and lambda_2 = 0.
+ *
+ * \f[
+ * \min_{D,Z} 0.5 ||X - D Z||_{F}^2\ + \lambda_1 \sum_{i=1}^m ||Z_i||_1
+ *                                    + 0.5 \lambda_2 \sum_{i=1}^m ||Z_i||_2^2
+ * \f]
+ *
+ * subject to \f$ ||D_j||_2 <= 1 \f$ for \f$ 1 <= j <= k \f$
+ * where typically \f$ lambda_1 > 0 \f$ and \f$ lambda_2 = 0 \f$.
  *
  * This problem is solved by an algorithm that alternates between a dictionary
  * learning step and a sparse coding step. The dictionary learning step updates
@@ -165,10 +169,10 @@ class SparseCoding
   //! Number of atoms.
   size_t atoms;
 
-  //! data (columns are points).
-  arma::mat data;
+  //! Data matrix (columns are points).
+  const arma::mat& data;
 
-  //! dictionary (columns are atoms).
+  //! Dictionary (columns are atoms).
   arma::mat dictionary;
 
   //! Sparse codes (columns are points).
