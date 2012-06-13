@@ -123,7 +123,7 @@ class SparseCoding
    * @param maxIterations Maximum number of iterations to run algorithm.  If 0,
    *     the algorithm will run until convergence (or forever).
    */
-  void DoSparseCoding(const size_t maxIterations = 0);
+  void Encode(const size_t maxIterations = 0);
 
   /**
    * Sparse code each point via LARS.
@@ -152,8 +152,6 @@ class SparseCoding
 
   //! Access the data.
   const arma::mat& Data() const { return data; }
-  //! Modify the data.
-  arma::mat& Data() { return data; }
 
   //! Access the dictionary.
   const arma::mat& Dictionary() const { return dictionary; }

@@ -34,8 +34,7 @@ SparseCoding<DictionaryInitializer>::SparseCoding(const arma::mat& data,
 }
 
 template<typename DictionaryInitializer>
-void SparseCoding<DictionaryInitializer>::DoSparseCoding(
-    const size_t maxIterations)
+void SparseCoding<DictionaryInitializer>::Encode(const size_t maxIterations)
 {
   double lastObjVal = DBL_MAX;
 
@@ -302,6 +301,7 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
   dictionary = dictionaryEstimate;
 }
 
+// Project each atom of the dictionary onto the unit ball.
 template<typename DictionaryInitializer>
 void SparseCoding<DictionaryInitializer>::ProjectDictionary()
 {
