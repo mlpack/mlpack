@@ -42,7 +42,7 @@ class MultiplicativeDistanceW
    * @param H Encoding matrix to output
    */
 
-  inline static void Update(const arma::mat& V,
+  inline static void Init(const arma::mat& V,
                      arma::mat& W, 
                      const arma::mat& H)
   {

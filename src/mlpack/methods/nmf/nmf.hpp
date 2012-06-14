@@ -10,6 +10,7 @@
 
 #include <mlpack/core.hpp>
 #include "mdistupdate.hpp"
+#include "randominit.hpp"
 
 namespace mlpack {
 namespace nmf {
@@ -43,7 +44,8 @@ namespace nmf {
  * @tparam HUpdateRule The update rule for calculating H matrix at each
  * iteration; @see MultiplicativeDistanceH for an example.
  */
-template<typename WUpdateRule = MultiplicativeDistanceW,
+template<typename InitializeRule = RandomInitialization,
+         typename WUpdateRule = MultiplicativeDistanceW,
          typename HUpdateRule = MultiplicativeDistanceH>
 class NMF
 {
@@ -59,13 +61,16 @@ class NMF
    *    A low residual value denotes that subsequent iterationas are not 
    *    producing much different values of W and H. Once the difference goes 
    *    below the supplied value, the iteration terminates.
+   * @param Initialize Optional Initialization object for initializing the
+   *    W and H matrices
    * @param WUpdate Optional WUpdateRule object; for when the update rule for
    *    the W vector has states that it needs to store.
    * @param HUpdate Optional HUpdateRule object; for when the update rule for
    *    the H vector has states that it needs to store.
    */
-  NMF(const size_t maxIterations = 1000,
+  NMF(const size_t maxIterations = 10000,
       const double maxResidue = 1e-10,
+      const InitializeRule Initialize = InitializeRule(),
       const WUpdateRule WUpdate = WUpdateRule(),
       const HUpdateRule HUpdate = HUpdateRule());
 
@@ -85,6 +90,8 @@ class NMF
   size_t maxIterations;
   //! The maximum residue below which iteration is considered converged
   double maxResidue;
+  //! Instantiated W&H Initialization Rule
+  InitializeRule Initialize;
   //! Instantiated W Update Rule
   WUpdateRule WUpdate;
   //! Instantiated H Update Rule

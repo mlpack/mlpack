@@ -24,6 +24,7 @@ add_executable(mlpack_test
   max_ip_test.cpp
   nbc_test.cpp
   nca_test.cpp
+  nmf_test.cpp
   pca_test.cpp
   radical_test.cpp
   range_search_test.cpp

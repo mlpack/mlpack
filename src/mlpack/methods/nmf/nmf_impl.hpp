@@ -6,6 +6,7 @@
  * on the given matrix.
  */
 #include "nmf.hpp"
+#include <iostream>
 
 namespace mlpack {
 namespace nmf {
@@ -13,16 +14,20 @@ namespace nmf {
 /**
  * Construct the NMF object.
  */
-template<typename WUpdateRule,
+template<typename InitializeRule,
+         typename WUpdateRule,
          typename HUpdateRule>
-NMF<WUpdateRule,
+NMF<InitializeRule,
+    WUpdateRule,
     HUpdateRule>::
 NMF(const size_t maxIterations,
       const double maxResidue,
+      const InitializeRule Initialize,
       const WUpdateRule WUpdate,
       const HUpdateRule HUpdate) :
     maxIterations(maxIterations),
     maxResidue(maxResidue),
+    Initialize(Initialize),
     WUpdate(WUpdate),
     HUpdate(HUpdate)
 {
@@ -43,20 +48,23 @@ NMF(const size_t maxIterations,
  * @param H Encoding matrix to output
  * @param r Rank r of the factorization
  */
-template<typename WUpdateRule,
+template<typename InitializeRule,
+         typename WUpdateRule,
          typename HUpdateRule>
-void NMF<WUpdateRule,
+void NMF<InitializeRule,
+    WUpdateRule,
     HUpdateRule>::
 Apply(const arma::mat& V, arma::mat& W, arma::mat& H, size_t& r) const
 {
   size_t n = V.n_rows;
   size_t m = V.n_cols;
+
   // old and new product WH for residue checking
   arma::mat WHold,WH,diff;
   
-  // Allocate random values to the starting iteration
-  W.randu(n,r);
-  H.randu(r,m);
+  // Intialize W and H
+  Initialize.Init(V,W,H,r);
+
   // Store the original calculated value for residue checking
   WHold = W*H;
   
@@ -77,6 +85,8 @@ Apply(const arma::mat& V, arma::mat& W, arma::mat& H, size_t& r) const
     diff = diff%diff;
     residue = accu(diff)/(double)(n*m);
     WHold = WH;
+    Log::Debug << "Iteration: " << iteration << " Residue: " 
+          << residue << std::endl;
 
     iteration++;
   
