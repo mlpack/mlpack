@@ -25,7 +25,7 @@ PARAM_STRING_REQ("H_output_file", "File to save the calculated H matrix to.",
     "h");
 PARAM_INT_REQ("rank", "Rank of the factorization.", "r");
 PARAM_INT("max_iterations", "Number of iterations before NMF terminates", 
-    "m", 1000);
+    "m", 10000);
 PARAM_DOUBLE("max_residue", "The maximum root mean square allowed below which "
     "the program termiates", "e", 1e-10);
 
