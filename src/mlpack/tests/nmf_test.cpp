@@ -27,14 +27,17 @@ BOOST_AUTO_TEST_CASE(NMFTest)
   size_t r = 4;
   mat w, h;
 
-  NMF<> nmf;
-  nmf.Apply(V, W, H, r);
+  NMF<> nmf(0);
+  nmf.Apply(v, w, h, r);
 
   mat wh = w * h;
 
+  v.print("v");
+  wh.print("wh");
+
   for (size_t row = 0; row < 5; row++)
     for (size_t col = 0; col < 5; col++)
-      BOOST_REQUIRE_CLOSE(v(row, col), wh(row, col), 5);
+      BOOST_REQUIRE_CLOSE(v(row, col), wh(row, col), 5.0);
 }
 
 
