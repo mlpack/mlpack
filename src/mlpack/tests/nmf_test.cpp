@@ -23,21 +23,18 @@ using namespace mlpack::nmf;
  */
 BOOST_AUTO_TEST_CASE(NMFTest)
 {
-  mat V = randu<mat>(5,5);
+  mat v = randu<mat>(5, 5);
   size_t r = 4;
-  mat W,H;
+  mat w, h;
 
   NMF<> nmf;
-  nmf.Apply(V,W,H,r);
+  nmf.Apply(V, W, H, r);
 
-  mat WH = W*H;
-
-  V.print("V=");
-  WH.print("WH=");
+  mat wh = w * h;
 
   for (size_t row = 0; row < 5; row++)
     for (size_t col = 0; col < 5; col++)
-      BOOST_REQUIRE_CLOSE(V(row, col), WH(row, col), 5);
+      BOOST_REQUIRE_CLOSE(v(row, col), wh(row, col), 5);
 }
 
 
