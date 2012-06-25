@@ -38,14 +38,15 @@ void SparseCoding<DictionaryInitializer>::Encode(const size_t maxIterations)
 {
   double lastObjVal = DBL_MAX;
 
+  // Take the initial coding step, which has to happen before entering the main
+  // optimization loop.
   Log::Info << "Initial Coding Step." << std::endl;
 
   OptimizeCode();
   arma::uvec adjacencies = find(codes);
 
-  Log::Info << "  Sparsity level: "
-      << 100.0 * ((double) (adjacencies.n_elem)) / ((double)
-      (atoms * data.n_cols)) << "%" << std::endl;
+  Log::Info << "  Sparsity level: " << 100.0 * ((double) (adjacencies.n_elem))
+      / ((double) (atoms * data.n_cols)) << "%." << std::endl;
   Log::Info << "  Objective value: " << Objective() << "." << std::endl;
 
   for (size_t t = 1; t != maxIterations; ++t)
@@ -53,26 +54,28 @@ void SparseCoding<DictionaryInitializer>::Encode(const size_t maxIterations)
     Log::Info << "Iteration " << t << " of " << maxIterations << "."
         << std::endl;
 
-    Log::Info << "Performing dictionary step... ";
+    // First step: optimize the dictionary.
+    Log::Info << "Performing dictionary step... " << std::endl;
     OptimizeDictionary(adjacencies);
-    Log::Info << "objective value: " << Objective() << "." << std::endl;
+    Log::Info << "  Objective value: " << Objective() << "." << std::endl;
 
+    // Second step: perform the coding.
     Log::Info << "Performing coding step..." << std::endl;
     OptimizeCode();
+    // Get the indices of all the nonzero elements in the codes.
     adjacencies = find(codes);
-    Log::Info << "  Sparsity level: "
-        << 100.0 *
-        ((double) (adjacencies.n_elem)) / ((double) (atoms * data.n_cols))
-        << "%" << std::endl;
+    Log::Info << "  Sparsity level: " << 100.0 * ((double) (adjacencies.n_elem))
+        / ((double) (atoms * data.n_cols)) << "%." << std::endl;
 
+    // Find the new objective value and improvement so we can check for
+    // convergence.
     double curObjVal = Objective();
-    Log::Info << "  Objective value: " << curObjVal << "." << std::endl;
+    double improvement = lastObjVal - curObjVal;
+    Log::Info << "  Objective value: " << curObjVal << " (improvement "
+        << std::scientific << improvement << ")." << std::endl;
 
-    double objValImprov = lastObjVal - curObjVal;
-    Log::Info << "  Improvement: " << std::scientific << objValImprov << "."
-        << std::endl;
-
-    if (objValImprov < OBJ_TOL)
+    // Have we converged?
+    if (improvement < OBJ_TOL)
     {
       Log::Info << "Converged within tolerance " << OBJ_TOL << ".\n";
       break;
@@ -85,15 +88,9 @@ void SparseCoding<DictionaryInitializer>::Encode(const size_t maxIterations)
 template<typename DictionaryInitializer>
 void SparseCoding<DictionaryInitializer>::OptimizeCode()
 {
-  // When using Cholesky version of LARS, this is correct even if lambda2 > 0.
+  // When using the Cholesky version of LARS, this is correct even if
+  // lambda2 > 0.
   arma::mat matGram = trans(dictionary) * dictionary;
-  // mat matGram;
-  // if(lambda2 > 0) {
-  //   matGram = trans(dictionary) * dictionary + lambda2 * eye(atoms, atoms);
-  // }
-  // else {
-  //   matGram = trans(dictionary) * dictionary;
-  // }
 
   for (size_t i = 0; i < data.n_cols; ++i)
   {
@@ -104,42 +101,40 @@ void SparseCoding<DictionaryInitializer>::OptimizeCode()
     bool useCholesky = true;
     regression::LARS lars(useCholesky, matGram, lambda1, lambda2);
 
-    arma::vec beta;
-    lars.Regress(dictionary, data.unsafe_col(i), beta, true);
-
-    codes.col(i) = beta;
+    // Create an alias of the code (using the same memory), and then LARS will
+    // place the result directly into that; then we will not need to have an
+    // extra copy.
+    arma::vec code = codes.unsafe_col(i);
+    lars.Regress(dictionary, data.unsafe_col(i), code, true);
   }
 }
 
+// Dictionary step for optimization.
 template<typename DictionaryInitializer>
 void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
-      const arma::uvec& adjacencies)
+    const arma::uvec& adjacencies)
 {
   // Count the number of atomic neighbors for each point x^i.
   arma::uvec neighborCounts = arma::zeros<arma::uvec>(data.n_cols, 1);
 
   if (adjacencies.n_elem > 0)
   {
-    // This gets the column index.
-    // TODO: is this integer division intentional?
+    // This gets the column index.  Intentional integer division.
     size_t curPointInd = (size_t) (adjacencies(0) / atoms);
-    size_t curCount = 1;
 
+    size_t nextColIndex = (curPointInd + 1) * atoms;
     for (size_t l = 1; l < adjacencies.n_elem; ++l)
     {
-      if ((size_t) (adjacencies(l) / atoms) == curPointInd)
+      // If l no longer refers to an element in this column, advance the column
+      // number accordingly.
+      if (adjacencies(l) >= nextColIndex)
       {
-        ++curCount;
-      }
-      else
-      {
-        neighborCounts(curPointInd) = curCount;
         curPointInd = (size_t) (adjacencies(l) / atoms);
-        curCount = 1;
+        nextColIndex = (curPointInd + 1) * atoms;
       }
-    }
 
-    neighborCounts(curPointInd) = curCount;
+      ++neighborCounts(curPointInd);
+    }
   }
 
   // Handle the case of inactive atoms (atoms not used in the given coding).
@@ -177,7 +172,7 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
 
   if (nInactiveAtoms > 0)
   {
-    Log::Info << "There are " << nInactiveAtoms
+    Log::Warn << "There are " << nInactiveAtoms
         << " inactive atoms. They will be re-initialized randomly.\n";
   }
 
@@ -301,38 +296,38 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
   dictionary = dictionaryEstimate;
 }
 
-// Project each atom of the dictionary onto the unit ball.
+// Project each atom of the dictionary back into the unit ball (if necessary).
 template<typename DictionaryInitializer>
 void SparseCoding<DictionaryInitializer>::ProjectDictionary()
 {
   for (size_t j = 0; j < atoms; j++)
   {
-    double normD_j = norm(dictionary.col(j), 2);
-    if ((normD_j > 1) && (normD_j - 1.0 > 1e-9))
+    double atomNorm = norm(dictionary.col(j), 2);
+    if (atomNorm > 1)
     {
-      Log::Warn << "Norm exceeded 1 by " << std::scientific << normD_j - 1.0
-          << ".  Shrinking...\n";
-      dictionary.col(j) /= normD_j;
+      Log::Info << "Norm of atom " << j << " exceeds 1 (" << std::scientific
+          << atomNorm << ").  Shrinking...\n";
+      dictionary.col(j) /= atomNorm;
     }
   }
 }
 
+// Compute the objective function.
 template<typename DictionaryInitializer>
 double SparseCoding<DictionaryInitializer>::Objective()
 {
   double l11NormZ = sum(sum(abs(codes)));
-  double froNormResidual = norm(data - dictionary * codes, "fro");
+  double froNormResidual = norm(data - (dictionary * codes), "fro");
 
   if (lambda2 > 0)
   {
     double froNormZ = norm(codes, "fro");
-    return 0.5 *
-      (froNormResidual * froNormResidual + lambda2 * froNormZ * froNormZ) +
-      lambda1 * l11NormZ;
+    return 0.5 * (std::pow(froNormResidual, 2.0) + (lambda2 *
+        std::pow(froNormZ, 2.0))) + (lambda1 * l11NormZ);
   }
-  else
+  else // It can be simpler.
   {
-    return 0.5 * froNormResidual * froNormResidual + lambda1 * l11NormZ;
+    return 0.5 * std::pow(froNormResidual, 2.0) + lambda1 * l11NormZ;
   }
 }
 
