@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
   uword nPoints = X.n_cols;
 
   // Normalize each point since these are images.
-  for(uword i = 0; i < nPoints; ++i)
+  for (uword i = 0; i < nPoints; ++i)
     X.col(i) /= norm(X.col(i), 2);
 
   SparseCoding<> sc(X, nAtoms, lambda1);
@@ -122,8 +122,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
 
   X = D * Z;
 
-  SparseCoding<> sc2(X, nAtoms, lambda1);
-//  sc.Data() = X;
+  // This will update sc.data (that is a reference to X).
+  DataDependentRandomInitializer::Initialize(X, nAtoms, sc.Dictionary());
 
   uvec adjacencies = find(Z);
   sc.OptimizeDictionary(adjacencies);
