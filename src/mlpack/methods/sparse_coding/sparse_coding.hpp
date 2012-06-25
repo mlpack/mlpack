@@ -140,15 +140,14 @@ class SparseCoding
   void OptimizeDictionary(const arma::uvec& adjacencies);
 
   /**
-   * Project each atom of the dictionary onto the unit ball.
+   * Project each atom of the dictionary back onto the unit ball, if necessary.
    */
   void ProjectDictionary();
 
   /**
-   * Compute objective function.
+   * Compute the objective function.
    */
   double Objective();
-
 
   //! Access the data.
   const arma::mat& Data() const { return data; }

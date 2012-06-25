@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
   double lambda2 = CLI::GetParam<double>("lambda2");
 
   const char* resultsDir = CLI::GetParam<string>("results_dir").c_str();
-  const char* dataFullpath = CLI::GetParam<string>("data").c_str();
+  const char* dataFullpath = CLI::GetParam<string>("input_file").c_str();
   const char* initialDictionaryFullpath =
       CLI::GetParam<string>("initial_dictionary").c_str();
 
@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
   // Run the sparse coding algorithm.
   SparseCoding<> sc(matX, nAtoms, lambda1, lambda2);
 
-  if (strlen(initialDictionaryFullpath) != 0)
+  if (CLI::HasParam("initial_dictionary"))
   {
     mat matInitialD;
     data::Load(initialDictionaryFullpath, matInitialD);
