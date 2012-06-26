@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
   if (initialDictionaryFile != "")
   {
     // Load initial dictionary directly into sparse coding object.
-    data::Load(initialDictionaryFile, sc.Dictionary());
+    data::Load(initialDictionaryFile, sc.Dictionary(), true);
 
     if (sc.Dictionary().n_cols != atoms)
     {
