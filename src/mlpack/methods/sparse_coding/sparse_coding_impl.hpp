@@ -153,11 +153,7 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
 
   // Efficient construction of Z restricted to active atoms.
   arma::mat matActiveZ;
-  if (inactiveAtoms.empty())
-  {
-    matActiveZ = codes;
-  }
-  else
+  if (!inactiveAtoms.empty())
   {
     arma::uvec inactiveAtomsVec =
         arma::conv_to<arma::uvec>::from(inactiveAtoms);
@@ -191,8 +187,21 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
   //    dualVars(i) = 0;
 
   bool converged = false;
-  arma::mat codesXT = matActiveZ * trans(data);
-  arma::mat codesZT = matActiveZ * trans(matActiveZ);
+
+  // If we have any inactive atoms, we must construct these differently.
+  arma::mat codesXT;
+  arma::mat codesZT;
+
+  if (inactiveAtoms.empty())
+  {
+    codesXT = codes * trans(data);
+    codesZT = codes * trans(codes);
+  }
+  else
+  {
+    codesXT = matActiveZ * trans(data);
+    codesZT = matActiveZ * trans(matActiveZ);
+  }
 
   double improvement;
   for (size_t t = 1; !converged; ++t)
@@ -201,8 +210,8 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
 
     arma::mat matAInvZXT = solve(A, codesXT);
 
-    arma::vec gradient = -(arma::sum(arma::square(matAInvZXT), 1) -
-        arma::ones<arma::vec>(nActiveAtoms));
+    arma::vec gradient = -arma::sum(arma::square(matAInvZXT), 1);
+    gradient += 1;
 
     arma::mat hessian = -(-2 * (matAInvZXT * trans(matAInvZXT)) % inv(A));
 
