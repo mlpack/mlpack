@@ -146,12 +146,10 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
   {
     if (accu(codes.row(j) != 0) == 0)
       inactiveAtoms.push_back(j);
-    else
-      activeAtoms.push_back(j);
   }
 
-  const size_t nActiveAtoms = activeAtoms.size();
   const size_t nInactiveAtoms = inactiveAtoms.size();
+  const size_t nActiveAtoms = atoms - nInactiveAtoms;
 
   // Efficient construction of Z restricted to active atoms.
   arma::mat matActiveZ;
@@ -166,10 +164,6 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
     RemoveRows(codes, inactiveAtomsVec, matActiveZ);
   }
 
-  arma::uvec atomReverseLookup(atoms);
-  for (size_t i = 0; i < nActiveAtoms; ++i)
-    atomReverseLookup(activeAtoms[i]) = i;
-
   if (nInactiveAtoms > 0)
   {
     Log::Warn << "There are " << nInactiveAtoms
@@ -178,7 +172,6 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
 
   Log::Debug << "Solving Dual via Newton's Method.\n";
 
-  arma::mat dictionaryEstimate;
   // Solve using Newton's method in the dual - note that the final dot
   // multiplication with inv(A) seems to be unavoidable. Although more
   // expensive, the code written this way (we use solve()) should be more
@@ -201,6 +194,7 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
   arma::mat codesXT = matActiveZ * trans(data);
   arma::mat codesZT = matActiveZ * trans(matActiveZ);
 
+  double improvement;
   for (size_t t = 1; !converged; ++t)
   {
     arma::mat A = codesZT + diagmat(dualVars);
@@ -213,7 +207,6 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
     arma::mat hessian = -(-2 * (matAInvZXT * trans(matAInvZXT)) % inv(A));
 
     arma::vec searchDirection = -solve(hessian, gradient);
-    //vec searchDirection = -gradient;
 
     // Armijo line search.
     const double c = 1e-4;
@@ -221,20 +214,6 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
     const double rho = 0.9;
     double sufficientDecrease = c * dot(gradient, searchDirection);
 
-    /*
-    {
-      double sumDualVars = sum(dualVars);
-      double fOld = -(-trace(trans(codesXT) * matAInvZXT) - sumDualVars);
-      Log::Debug << "fOld = " << fOld << "." << std::endl;
-      double fNew =
-          -(-trace(trans(codesXT) * solve(codesZT +
-          diagmat(dualVars + alpha * searchDirection), codesXT))
-          - (sumDualVars + alpha * sum(searchDirection)) );
-      Log::Debug << "fNew = " << fNew << "." << std::endl;
-    }
-    */
-
-    double improvement;
     while (true)
     {
       // Calculate objective.
@@ -254,8 +233,7 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
       alpha *= rho;
     }
 
-    // End of Armijo line search code.
-
+    // Take step and print useful information.
     dualVars += searchDirection;
     double normGradient = norm(gradient, 2);
     Log::Debug << "Newton Method iteration " << t << ":" << std::endl;
@@ -269,31 +247,37 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
 
   if (inactiveAtoms.empty())
   {
-    dictionaryEstimate = trans(solve(codesZT + diagmat(dualVars), codesXT));
+    // Directly update dictionary.
+    dictionary = trans(solve(codesZT + diagmat(dualVars), codesXT));
   }
   else
   {
-    arma::mat dictionaryActiveEstimate = trans(solve(codesZT +
+    arma::mat activeDictionary = trans(solve(codesZT +
         diagmat(dualVars), codesXT));
-    dictionaryEstimate = arma::zeros(data.n_rows, atoms);
 
-    for (size_t i = 0; i < nActiveAtoms; ++i)
-      dictionaryEstimate.col(activeAtoms[i]) = dictionaryActiveEstimate.col(i);
-
-    for (size_t i = 0; i < nInactiveAtoms; ++i)
+    // Update all atoms.
+    size_t currentInactiveIndex = 0;
+    for (size_t i = 0; i < atoms; ++i)
     {
-      // Make a new random atom estimate.
-      dictionaryEstimate.col(inactiveAtoms[i]) =
-          (data.col(math::RandInt(data.n_cols)) +
-           data.col(math::RandInt(data.n_cols)) +
-           data.col(math::RandInt(data.n_cols)));
+      if (inactiveAtoms[currentInactiveIndex] == i)
+      {
+        // This atom is inactive.  Reinitialize it randomly.
+        dictionary.col(i) = (data.col(math::RandInt(data.n_cols)) +
+                             data.col(math::RandInt(data.n_cols)) +
+                             data.col(math::RandInt(data.n_cols)));
 
-      dictionaryEstimate.col(inactiveAtoms[i]) /=
-          norm(dictionaryEstimate.col(inactiveAtoms[i]), 2);
+        dictionary.col(i) /= norm(dictionary.col(i), 2);
+
+        // Increment inactive index counter.
+        ++currentInactiveIndex;
+      }
+      else
+      {
+        // Update estimate.
+        dictionary.col(i) = activeDictionary.col(i - currentInactiveIndex);
+      }
     }
   }
-
-  dictionary = dictionaryEstimate;
 }
 
 // Project each atom of the dictionary back into the unit ball (if necessary).
