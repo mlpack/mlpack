@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
   Log::Info << "Loaded " << matX.n_cols << " points in " << matX.n_rows <<
       " dimensions." << endl;
 
-  // Normalize each point since these are images.
+  // Normalize each point if the user asked for it.
   if (normalize)
   {
     Log::Info << "Normalizing data before coding..." << std::endl;
@@ -103,14 +103,15 @@ int main(int argc, char* argv[])
       matX.col(i) /= norm(matX.col(i), 2);
   }
 
-  // Run the sparse coding algorithm.
-  SparseCoding<> sc(matX, atoms, lambda1, lambda2);
-
+  // If there is an initial dictionary, be sure we do not initialize one.
   if (initialDictionaryFile != "")
   {
+    SparseCoding<NothingInitializer> sc(matX, atoms, lambda1, lambda2);
+
     // Load initial dictionary directly into sparse coding object.
     data::Load(initialDictionaryFile, sc.Dictionary(), true);
 
+    // Validate size of initial dictionary.
     if (sc.Dictionary().n_cols != atoms)
     {
       Log::Fatal << "The specified initial dictionary to load has "
@@ -124,18 +125,32 @@ int main(int argc, char* argv[])
           << sc.Dictionary().n_rows << " dimensions, but the specified data "
           << "has " << matX.n_rows << " dimensions!" << endl;
     }
+
+    // Run sparse coding.
+    Timer::Start("sparse_coding");
+    sc.Encode(maxIterations);
+    Timer::Stop("sparse_coding");
+
+    // Save the results.
+    Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
+    data::Save(dictionaryFile, sc.Dictionary());
+    Log::Info << "Saving sparse codes to '" << codesFile << "'.\n";
+    data::Save(codesFile, sc.Codes());
   }
+  else
+  {
+    // No initial dictionary.
+    SparseCoding<> sc(matX, atoms, lambda1, lambda2);
 
-  Timer::Start("sparse_coding");
-  sc.Encode(maxIterations);
-  Timer::Stop("sparse_coding");
+    // Run sparse coding.
+    Timer::Start("sparse_coding");
+    sc.Encode(maxIterations);
+    Timer::Stop("sparse_coding");
 
-  // Save the results.
-  Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
-
-  data::Save(dictionaryFile, sc.Dictionary());
-
-  Log::Info << "Saving sparse codes to '" << codesFile << "'.\n";
-
-  data::Save(codesFile, sc.Codes());
+    // Save the results.
+    Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
+    data::Save(dictionaryFile, sc.Dictionary());
+    Log::Info << "Saving sparse codes to '" << codesFile << "'.\n";
+    data::Save(codesFile, sc.Codes());
+  }
 }
