@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 2.8)
 # that you have files in both sections
 set(SOURCES
    lcc.hpp
-   lcc.cpp
+   lcc_impl.hpp
 )
 
 # add directory name to sources
