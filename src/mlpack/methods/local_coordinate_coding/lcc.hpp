@@ -5,13 +5,16 @@
  * Definition of the LocalCoordinateCoding class, which performs the Local
  * Coordinate Coding algorithm.
  */
-#ifndef __MLPACK_METHODS_LCC_LCC_HPP
-#define __MLPACK_METHODS_LCC_LCC_HPP
+#ifndef __MLPACK_METHODS_LOCAL_COORDINATE_CODING_LCC_HPP
+#define __MLPACK_METHODS_LOCAL_COORDINATE_CODING_LCC_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/lars/lars.hpp>
 
-// Include three simple dictionary initializers from
+// Include three simple dictionary initializers from sparse coding.
+#include "../sparse_coding/nothing_initializer.hpp"
+#include "../sparse_coding/data_dependent_random_initializer.hpp"
+#include "../sparse_coding/random_initializer.hpp"
 
 namespace mlpack {
 namespace lcc {
@@ -67,6 +70,8 @@ namespace lcc {
  * }
  * @endcode
  */
+template<typename DictionaryInitializer =
+    sparse_coding::DataDependentRandomInitializer>
 class LocalCoordinateCoding
 {
  public:
@@ -77,43 +82,9 @@ class LocalCoordinateCoding
    * @param nAtoms Number of atoms in dictionary
    * @param lambda Regularization parameter for weighted l1-norm penalty
    */
-  LocalCoordinateCoding(const arma::mat& matX, arma::uword nAtoms,
-      double lambda);
-
-  /**
-   * Initialize dictionary somehow.
-   */
-  void InitDictionary();
-
-  /**
-   * Load dictionary from a file
-   *
-   * @param dictionaryFilename Filename containing dictionary
-   */
-  void LoadDictionary(const char* dictionaryFilename);
-
-  /**
-   * Initialize dictionary by drawing k vectors uniformly at random from the
-   * unit sphere
-   */
-  void RandomInitDictionary();
-
-  /**
-   * Initialize dictionary by initializing each atom to a normalized mixture of
-   * a small number of randomly selected points in X
-   */
-  void DataDependentRandomInitDictionary();
-
-  /**
-   * Initialize an atom to a normalized mixture of a small number of randomly
-   * selected points in X
-   *
-   * @param atom The atom to initialize
-   */
-  void RandomAtom(arma::vec& atom);
-
-
-  // core algorithm functions
+  LocalCoordinateCoding(const arma::mat& matX,
+                        arma::uword nAtoms,
+                        double lambda);
 
   /**
    * Run LCC
@@ -184,5 +155,8 @@ void RemoveRows(const arma::mat& X,
 
 }; // namespace lcc
 }; // namespace mlpack
+
+// Include implementation.
+#include "lcc_impl.hpp"
 
 #endif

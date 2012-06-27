@@ -54,11 +54,11 @@ int main(int argc, char* argv[])
   }
 
   // run Local Coordinate Coding
-  LocalCoordinateCoding lcc(matX, nAtoms, lambda);
+  LocalCoordinateCoding<> lcc(matX, nAtoms, lambda);
 
   if (strlen(initialDictionaryFullpath) == 0)
   {
-    lcc.DataDependentRandomInitDictionary();
+//    lcc.DataDependentRandomInitDictionary();
   }
   else
   {
