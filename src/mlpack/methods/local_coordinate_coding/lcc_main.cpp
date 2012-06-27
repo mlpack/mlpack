@@ -1,9 +1,9 @@
-/** @file lcc_main.cpp
- *  @author Nishant Mehta
+/**
+ * @file lcc_main.cpp
+ * @author Nishant Mehta
  *
- *  Executable for Local Coordinate Coding
+ * Executable for Local Coordinate Coding.
  */
-
 #include <mlpack/core.hpp>
 #include "lcc.hpp"
 
@@ -19,85 +19,91 @@ PARAM_STRING_REQ("data", "path to the input data.", "");
 PARAM_STRING("initial_dictionary", "Filename for initial dictionary.", "", "");
 PARAM_STRING("results_dir", "Directory for results.", "", "");
 
-
-
 using namespace arma;
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::lcc;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
   CLI::ParseCommandLine(argc, argv);
-  
+
   double lambda = CLI::GetParam<double>("lambda");
-  
+
   // if using fx-run, one could just leave resultsDir blank
   const char* resultsDir = CLI::GetParam<string>("results_dir").c_str();
-  
+
   const char* dataFullpath = CLI::GetParam<string>("data").c_str();
-  
-  const char* initialDictionaryFullpath = CLI::GetParam<string>("initial_dictionary").c_str();
-  
+
+  const char* initialDictionaryFullpath =
+      CLI::GetParam<string>("initial_dictionary").c_str();
+
   size_t nIterations = CLI::GetParam<int>("n_iterations");
 
   size_t nAtoms = CLI::GetParam<int>("n_atoms");
-  
+
   mat matX;
   matX.load(dataFullpath);
-  
+
   uword nPoints = matX.n_cols;
 
   // normalize each point since these are images
-  for(uword i = 0; i < nPoints; i++) {
+  for (uword i = 0; i < nPoints; i++)
+  {
     matX.col(i) /= norm(matX.col(i), 2);
   }
-  
+
   // run Local Coordinate Coding
   LocalCoordinateCoding lcc(matX, nAtoms, lambda);
-  
-  if(strlen(initialDictionaryFullpath) == 0) {
+
+  if (strlen(initialDictionaryFullpath) == 0)
+  {
     lcc.DataDependentRandomInitDictionary();
   }
-  else {
+  else
+  {
     mat matInitialD;
     matInitialD.load(initialDictionaryFullpath);
-    if(matInitialD.n_cols != nAtoms) {
-      Log::Fatal << "The specified initial dictionary to load has " 
-		 << matInitialD.n_cols << " atoms, but the learned dictionary "
-		 << "was specified to have " << nAtoms << " atoms!\n";
-      return EXIT_FAILURE;
-    }
-    if(matInitialD.n_rows != matX.n_rows) {
+    if (matInitialD.n_cols != nAtoms)
+    {
       Log::Fatal << "The specified initial dictionary to load has "
-		 << matInitialD.n_rows << " dimensions, but the specified data "
-		 << "has " << matX.n_rows << " dimensions!\n";
-      return EXIT_FAILURE;
+          << matInitialD.n_cols << " atoms, but the learned dictionary "
+          << "was specified to have " << nAtoms << " atoms!\n";
     }
+
+    if (matInitialD.n_rows != matX.n_rows)
+    {
+      Log::Fatal << "The specified initial dictionary to load has "
+          << matInitialD.n_rows << " dimensions, but the specified data "
+          << "has " << matX.n_rows << " dimensions!\n";
+    }
+
     lcc.SetDictionary(matInitialD);
   }
-  
-  
-  Timer::Start("lcc");
+
+  Timer::Start("local_coordinate_coding");
   lcc.DoLCC(nIterations);
-  Timer::Stop("lcc");
-  
+  Timer::Stop("local_coordinate_coding");
+
   mat learnedD = lcc.MatD();
-  
+
   mat learnedZ = lcc.MatZ();
-  
-  if(strlen(resultsDir) == 0) {
+
+  if (strlen(resultsDir) == 0)
+  {
     data::Save("D.csv", learnedD);
     data::Save("Z.csv", learnedZ);
   }
-  else {
+  else
+  {
     char* dataFullpath = (char*) malloc(320 * sizeof(char));
 
     sprintf(dataFullpath, "%s/D.csv", resultsDir);
     data::Save(dataFullpath, learnedD);
-    
+
     sprintf(dataFullpath, "%s/Z.csv", resultsDir);
     data::Save(dataFullpath, learnedZ);
-    
+
     free(dataFullpath);
   }
 }
