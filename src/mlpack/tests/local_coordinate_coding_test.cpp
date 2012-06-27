@@ -6,8 +6,6 @@
 
 // Note: We don't use BOOST_REQUIRE_CLOSE in the code below because we need
 // to use FPC_WEAK, and it's not at all intuitive how to do that.
-
-
 #include <armadillo>
 #include <mlpack/methods/local_coordinate_coding/lcc.hpp>
 
@@ -20,7 +18,6 @@ using namespace mlpack::regression;
 using namespace mlpack::lcc;
 
 BOOST_AUTO_TEST_SUITE(LocalCoordinateCodingTest);
-
 
 void VerifyCorrectness(vec beta, vec errCorr, double lambda)
 {
@@ -55,19 +52,19 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestCodingStep)
   mat X;
   X.load("mnist_first250_training_4s_and_9s.arm");
   uword nPoints = X.n_cols;
-  
-  // normalize each point since these are images
-  for(uword i = 0; i < nPoints; i++) {
-    X.col(i) /= norm(X.col(i), 2);
-  }  
 
-  LocalCoordinateCoding lcc(X, nAtoms, lambda1);
-  lcc.DataDependentRandomInitDictionary();
-  lcc.OptimizeCode();  
-  
+  // normalize each point since these are images
+  for (uword i = 0; i < nPoints; i++)
+  {
+    X.col(i) /= norm(X.col(i), 2);
+  }
+
+  LocalCoordinateCoding<> lcc(X, nAtoms, lambda1);
+  lcc.OptimizeCode();
+
   mat D = lcc.MatD();
   mat Z = lcc.MatZ();
-  
+
   for(uword i = 0; i < nPoints; i++) {
     vec sq_dists = vec(nAtoms);
     for(uword j = 0; j < nAtoms; j++) {
@@ -76,7 +73,7 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestCodingStep)
     }
     mat Dprime = D * diagmat(1.0 / sq_dists);
     mat zPrime = Z.unsafe_col(i) % sq_dists;
-    
+
     vec errCorr = trans(Dprime) * (Dprime * zPrime - X.unsafe_col(i));
     VerifyCorrectness(zPrime, errCorr, 0.5 * lambda1);
   }
@@ -92,32 +89,32 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestDictionaryStep)
   mat X;
   X.load("mnist_first250_training_4s_and_9s.arm");
   uword nPoints = X.n_cols;
-  
-  // normalize each point since these are images
-  for(uword i = 0; i < nPoints; i++) {
-    X.col(i) /= norm(X.col(i), 2);
-  }  
 
-  LocalCoordinateCoding lcc(X, nAtoms, lambda);
-  lcc.DataDependentRandomInitDictionary();
-  lcc.OptimizeCode();  
+  // normalize each point since these are images
+  for (uword i = 0; i < nPoints; i++)
+  {
+    X.col(i) /= norm(X.col(i), 2);
+  }
+
+  LocalCoordinateCoding<> lcc(X, nAtoms, lambda);
+  lcc.OptimizeCode();
   mat Z = lcc.MatZ();
   uvec adjacencies = find(Z);
   lcc.OptimizeDictionary(adjacencies);
-  
-  
+
   mat D = lcc.MatD();
-  
+
   mat grad = zeros(D.n_rows, D.n_cols);
-  for(uword i = 0; i < nPoints; i++) {
-    grad += (D - repmat(X.unsafe_col(i), 1, nAtoms)) * diagmat(abs(Z.unsafe_col(i)));
+  for (uword i = 0; i < nPoints; i++)
+  {
+    grad += (D - repmat(X.unsafe_col(i), 1, nAtoms)) *
+        diagmat(abs(Z.unsafe_col(i)));
   }
   grad = lambda * grad + (D * Z - X) * trans(Z);
 
   BOOST_REQUIRE_SMALL(norm(grad, "fro"), tol);
-  
-}
 
+}
 
 /*
 BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestWhole)
