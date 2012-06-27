@@ -122,8 +122,15 @@ class SparseCoding
    *
    * @param maxIterations Maximum number of iterations to run algorithm.  If 0,
    *     the algorithm will run until convergence (or forever).
+   * @param objTolerance Tolerance for objective function.  When an iteration of
+   *     the algorithm produces an improvement smaller than this, the algorithm
+   *     will terminate.
+   * @param newtonTolerance Tolerance for the Newton's method dictionary
+   *     optimization step.
    */
-  void Encode(const size_t maxIterations = 0);
+  void Encode(const size_t maxIterations = 0,
+              const double objTolerance = 0.01,
+              const double newtonTolerance = 1e-6);
 
   /**
    * Sparse code each point via LARS.
@@ -136,8 +143,10 @@ class SparseCoding
    * @param adjacencies Indices of entries (unrolled column by column) of
    *    the coding matrix Z that are non-zero (the adjacency matrix for the
    *    bipartite graph of points and atoms).
+   * @param newtonTolerance Tolerance of the Newton's method optimizer.
    */
-  void OptimizeDictionary(const arma::uvec& adjacencies);
+  void OptimizeDictionary(const arma::uvec& adjacencies,
+                          const double newtonTolerance = 1e-6);
 
   /**
    * Project each atom of the dictionary back onto the unit ball, if necessary.

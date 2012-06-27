@@ -14,10 +14,6 @@
 namespace mlpack {
 namespace sparse_coding {
 
-// TODO: parameterizable; options to methods?
-#define OBJ_TOL 1e-2 // 1E-9
-#define NEWTON_TOL 1e-6 // 1E-9
-
 template<typename DictionaryInitializer>
 SparseCoding<DictionaryInitializer>::SparseCoding(const arma::mat& data,
                                                   const size_t atoms,
@@ -34,7 +30,9 @@ SparseCoding<DictionaryInitializer>::SparseCoding(const arma::mat& data,
 }
 
 template<typename DictionaryInitializer>
-void SparseCoding<DictionaryInitializer>::Encode(const size_t maxIterations)
+void SparseCoding<DictionaryInitializer>::Encode(const size_t maxIterations,
+                                                 const double objTolerance,
+                                                 const double newtonTolerance)
 {
   double lastObjVal = DBL_MAX;
 
@@ -56,7 +54,7 @@ void SparseCoding<DictionaryInitializer>::Encode(const size_t maxIterations)
 
     // First step: optimize the dictionary.
     Log::Info << "Performing dictionary step... " << std::endl;
-    OptimizeDictionary(adjacencies);
+    OptimizeDictionary(adjacencies, newtonTolerance);
     Log::Info << "  Objective value: " << Objective() << "." << std::endl;
 
     // Second step: perform the coding.
@@ -75,9 +73,9 @@ void SparseCoding<DictionaryInitializer>::Encode(const size_t maxIterations)
         << std::scientific << improvement << ")." << std::endl;
 
     // Have we converged?
-    if (improvement < OBJ_TOL)
+    if (improvement < objTolerance)
     {
-      Log::Info << "Converged within tolerance " << OBJ_TOL << ".\n";
+      Log::Info << "Converged within tolerance " << objTolerance << ".\n";
       break;
     }
 
@@ -112,7 +110,8 @@ void SparseCoding<DictionaryInitializer>::OptimizeCode()
 // Dictionary step for optimization.
 template<typename DictionaryInitializer>
 void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
-    const arma::uvec& adjacencies)
+    const arma::uvec& adjacencies,
+    const double newtonTolerance)
 {
   // Count the number of atomic neighbors for each point x^i.
   arma::uvec neighborCounts = arma::zeros<arma::uvec>(data.n_cols, 1);
@@ -250,7 +249,7 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
         << "." << std::endl;
     Log::Debug << "  Improvement: " << std::scientific << improvement << ".\n";
 
-    if (improvement < NEWTON_TOL)
+    if (improvement < newtonTolerance)
       converged = true;
   }
 
