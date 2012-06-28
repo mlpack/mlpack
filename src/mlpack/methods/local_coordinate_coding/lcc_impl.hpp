@@ -18,8 +18,8 @@ namespace lcc {
 template<typename DictionaryInitializer>
 LocalCoordinateCoding<DictionaryInitializer>::LocalCoordinateCoding(
     const arma::mat& data,
-    arma::uword nAtoms,
-    double lambda) :
+    const size_t nAtoms,
+    const double lambda) :
     nDims(data.n_rows),
     nAtoms(nAtoms),
     nPoints(data.n_cols),
@@ -33,48 +33,59 @@ LocalCoordinateCoding<DictionaryInitializer>::LocalCoordinateCoding(
 
 template<typename DictionaryInitializer>
 void LocalCoordinateCoding<DictionaryInitializer>::DoLCC(
-    arma::uword nIterations)
+    const size_t nIterations)
 {
-  bool converged = false;
-  double lastObjVal = 1e99;
+  double lastObjVal = DBL_MAX;
 
-  Log::Info << "Initial Coding Step" << std::endl;
+  // Take the initial coding step, which has to happen before entering the main
+  // loop.
+  Log::Info << "Initial Coding Step." << std::endl;
+
   OptimizeCode();
   arma::uvec adjacencies = find(codes);
-  Log::Info << "\tSparsity level: " << 100.0 * ((double)(adjacencies.n_elem)) /
-      ((double)(nAtoms * nPoints)) << "%\n";
-  Log::Info << "\tObjective value: " << Objective(adjacencies) << std::endl;
 
-  for (arma::uword t = 1; t <= nIterations && !converged; t++)
+  Log::Info << "  Sparsity level: " << 100.0 * ((double)(adjacencies.n_elem)) /
+      ((double)(nAtoms * nPoints)) << "%.\n";
+  Log::Info << "  Objective value: " << Objective(adjacencies) << "."
+      << std::endl;
+
+  for (size_t t = 1; t <= nIterations; t++)
   {
-    Log::Info << "Iteration " << t << " of " << nIterations << std::endl;
+    Log::Info << "Iteration " << t << " of " << nIterations << "." << std::endl;
 
-    Log::Info << "Dictionary Step\n";
+    // First step: optimize the dictionary.
+    Log::Info << "Performing dictionary step..." << std::endl;
     OptimizeDictionary(adjacencies);
     double dsObjVal = Objective(adjacencies);
-    Log::Info << "\tObjective value: " << Objective(adjacencies) << std::endl;
-
-    Log::Info << "Coding Step" << std::endl;
-    OptimizeCode();
-    adjacencies = find(codes);
-    Log::Info << "\tSparsity level: " << 100.0 * ((double)(adjacencies.n_elem))
-        / ((double)(nAtoms * nPoints)) << "%\n";
-    double curObjVal = Objective(adjacencies);
-    Log::Info << "\tObjective value: " << curObjVal << std::endl;
-
-    if (curObjVal > dsObjVal)
-    {
-      Log::Fatal << "Objective increased in sparse coding step!" << std::endl;
-    }
-
-    double objValImprov = lastObjVal - curObjVal;
-    Log::Info << "\t\t\t\t\tImprovement: " << std::scientific << objValImprov
+    Log::Info << "  Objective value: " << Objective(adjacencies) << "."
         << std::endl;
 
-    if (objValImprov < OBJ_TOL)
+    // Second step: perform the coding.
+    Log::Info << "Performing coding step..." << std::endl;
+    OptimizeCode();
+    adjacencies = find(codes);
+    Log::Info << "  Sparsity level: " << 100.0 * ((double)(adjacencies.n_elem))
+        / ((double)(nAtoms * nPoints)) << "%.\n";
+
+    // Terminate if the objective increased in the coding step.
+    double curObjVal = Objective(adjacencies);
+    if (curObjVal > dsObjVal)
     {
-      converged = true;
-      Log::Info << "Converged within tolerance\n";
+      Log::Warn << "Objective increased in coding step!  Terminating."
+          << std::endl;
+      break;
+    }
+
+    // Find the new objective value and improvement so we can check for
+    // convergence.
+    double improvement = lastObjVal - curObjVal;
+    Log::Info << "Objective value: " << curObjVal << " (improvement "
+        << std::scientific << improvement << ")." << std::endl;
+
+    if (improvement < OBJ_TOL)
+    {
+      Log::Info << "Converged within tolerance " << OBJ_TOL << ".\n";
+      break;
     }
 
     lastObjVal = curObjVal;
@@ -92,12 +103,12 @@ void LocalCoordinateCoding<DictionaryInitializer>::OptimizeCode()
   arma::mat dictionaryTD = trans(dictionary) * dictionary;
   arma::mat dictionaryPrimeTDPrime(dictionaryTD.n_rows, dictionaryTD.n_cols);
 
-  for (arma::uword i = 0; i < nPoints; i++)
+  for (size_t i = 0; i < nPoints; i++)
   {
     // report progress
     if ((i % 100) == 0)
     {
-      Log::Debug << "\t" << i << std::endl;
+      Log::Debug << "Optimization at point " << i << "." << std::endl;
     }
 
     arma::vec w = matSqDists.unsafe_col(i);
@@ -135,30 +146,30 @@ void LocalCoordinateCoding<DictionaryInitializer>::OptimizeDictionary(
   if (adjacencies.n_elem > 0)
   {
     // this gets the column index
-    arma::uword curPointInd = (arma::uword) (adjacencies(0) / nAtoms);
-    arma::uword curCount = 1;
-    for (arma::uword l = 1; l < adjacencies.n_elem; l++)
+    size_t curPointInd = (size_t) (adjacencies(0) / nAtoms);
+    size_t curCount = 1;
+    for (size_t l = 1; l < adjacencies.n_elem; l++)
     {
-      if ((arma::uword) (adjacencies(l) / nAtoms) == curPointInd)
+      if ((size_t) (adjacencies(l) / nAtoms) == curPointInd)
       {
         curCount++;
       }
       else
       {
         neighborCounts(curPointInd) = curCount;
-        curPointInd = (arma::uword)(adjacencies(l) / nAtoms);
+        curPointInd = (size_t) (adjacencies(l) / nAtoms);
         curCount = 1;
       }
     }
     neighborCounts(curPointInd) = curCount;
   }
 
-  // build dataPrime := [X x^1 ... x^1 ... x^n ... x^n]
-  // where each x^i is repeated for the number of neighbors x^i has
+  // Build dataPrime := [X x^1 ... x^1 ... x^n ... x^n]
+  // where each x^i is repeated for the number of neighbors x^i has.
   arma::mat dataPrime = arma::zeros(nDims, nPoints + adjacencies.n_elem);
   dataPrime(arma::span::all, arma::span(0, nPoints - 1)) = data;
-  arma::uword curCol = nPoints;
-  for (arma::uword i = 0; i < nPoints; i++)
+  size_t curCol = nPoints;
+  for (size_t i = 0; i < nPoints; i++)
   {
     if (neighborCounts(i) > 0)
     {
@@ -168,23 +179,19 @@ void LocalCoordinateCoding<DictionaryInitializer>::OptimizeDictionary(
     curCol += neighborCounts(i);
   }
 
-  // handle the case of inactive atoms (atoms not used in the given coding)
-  std::vector<arma::uword> inactiveAtoms;
-  std::vector<arma::uword> activeAtoms;
+  // Handle the case of inactive atoms (atoms not used in the given coding).
+  std::vector<size_t> inactiveAtoms;
+  std::vector<size_t> activeAtoms;
   activeAtoms.reserve(nAtoms);
-  for (arma::uword j = 0; j < nAtoms; j++)
+  for (size_t j = 0; j < nAtoms; j++)
   {
     if (accu(codes.row(j) != 0) == 0)
-    {
       inactiveAtoms.push_back(j);
-    }
     else
-    {
       activeAtoms.push_back(j);
-    }
   }
-  arma::uword nActiveAtoms = activeAtoms.size();
-  arma::uword nInactiveAtoms = inactiveAtoms.size();
+  size_t nActiveAtoms = activeAtoms.size();
+  size_t nInactiveAtoms = inactiveAtoms.size();
 
   // efficient construction of Z restricted to active atoms
   arma::mat matActiveZ;
@@ -200,7 +207,7 @@ void LocalCoordinateCoding<DictionaryInitializer>::OptimizeDictionary(
   }
 
   arma::uvec atomReverseLookup = arma::uvec(nAtoms);
-  for (arma::uword i = 0; i < nActiveAtoms; i++)
+  for (size_t i = 0; i < nActiveAtoms; i++)
   {
     atomReverseLookup(activeAtoms[i]) = i;
   }
@@ -211,16 +218,15 @@ void LocalCoordinateCoding<DictionaryInitializer>::OptimizeDictionary(
         << " be re-initialized randomly.\n";
   }
 
-  arma::mat codesPrime = arma::zeros(nActiveAtoms, nPoints + adjacencies.n_elem);
-  //Log::Debug << "adjacencies.n_elem = " << adjacencies.n_elem << std::endl;
+  arma::mat codesPrime = arma::zeros(nActiveAtoms,
+      nPoints + adjacencies.n_elem);
   codesPrime(arma::span::all, arma::span(0, nPoints - 1)) = matActiveZ;
 
   arma::vec wSquared = arma::ones(nPoints + adjacencies.n_elem, 1);
-  //Log::Debug << "building up codesPrime\n";
-  for (arma::uword l = 0; l < adjacencies.n_elem; l++)
+  for (size_t l = 0; l < adjacencies.n_elem; l++)
   {
-    arma::uword atomInd = adjacencies(l) % nAtoms;
-    arma::uword pointInd = (arma::uword) (adjacencies(l) / nAtoms);
+    size_t atomInd = adjacencies(l) % nAtoms;
+    size_t pointInd = (size_t) (adjacencies(l) / nAtoms);
     codesPrime(atomReverseLookup(atomInd), nPoints + l) = 1.0;
     wSquared(nPoints + l) = codes(atomInd, pointInd);
   }
@@ -235,9 +241,7 @@ void LocalCoordinateCoding<DictionaryInitializer>::OptimizeDictionary(
     arma::mat A = codesPrime * diagmat(wSquared) * trans(codesPrime);
     arma::mat B = codesPrime * diagmat(wSquared) * trans(dataPrime);
 
-    //Log::Debug << "solving...\n";
-    dictionaryEstimate =
-      trans(solve(A, B));
+    dictionaryEstimate = trans(solve(A, B));
     /*
     dictionaryEstimate =
       trans(solve(codesPrime * diagmat(wSquared) * trans(codesPrime),
@@ -247,16 +251,15 @@ void LocalCoordinateCoding<DictionaryInitializer>::OptimizeDictionary(
   else
   {
     dictionaryEstimate = arma::zeros(nDims, nAtoms);
-    //Log::Debug << "solving...\n";
     arma::mat dictionaryActiveEstimate =
       trans(solve(codesPrime * diagmat(wSquared) * trans(codesPrime),
                   codesPrime * diagmat(wSquared) * trans(dataPrime)));
-    for (arma::uword j = 0; j < nActiveAtoms; j++)
+    for (size_t j = 0; j < nActiveAtoms; j++)
     {
       dictionaryEstimate.col(activeAtoms[j]) = dictionaryActiveEstimate.col(j);
     }
 
-    for (arma::uword j = 0; j < nInactiveAtoms; j++)
+    for (size_t j = 0; j < nInactiveAtoms; j++)
     {
       // Reinitialize randomly.
       // Add three atoms together.
@@ -279,11 +282,11 @@ double LocalCoordinateCoding<DictionaryInitializer>::Objective(
     arma::uvec adjacencies)
 {
   double weightedL1NormZ = 0;
-  arma::uword nAdjacencies = adjacencies.n_elem;
-  for (arma::uword l = 0; l < nAdjacencies; l++)
+  size_t nAdjacencies = adjacencies.n_elem;
+  for (size_t l = 0; l < nAdjacencies; l++)
   {
-    arma::uword atomInd = adjacencies(l) % nAtoms;
-    arma::uword pointInd = (arma::uword) (adjacencies(l) / nAtoms);
+    size_t atomInd = adjacencies(l) % nAtoms;
+    size_t pointInd = (size_t) (adjacencies(l) / nAtoms);
     weightedL1NormZ += fabs(codes(atomInd, pointInd)) *
         as_scalar(sum(square(dictionary.col(atomInd) - data.col(pointInd))));
   }
