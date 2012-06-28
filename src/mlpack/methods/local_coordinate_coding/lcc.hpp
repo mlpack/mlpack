@@ -83,15 +83,15 @@ class LocalCoordinateCoding
    * @param lambda Regularization parameter for weighted l1-norm penalty
    */
   LocalCoordinateCoding(const arma::mat& data,
-                        arma::uword nAtoms,
-                        double lambda);
+                        const size_t nAtoms,
+                        const double lambda);
 
   /**
    * Run LCC
    *
    * @param nIterations Maximum number of iterations to run algorithm
    */
-  void DoLCC(arma::uword nIterations);
+  void DoLCC(const size_t nIterations);
 
   /**
    * Sparse code each point via distance-weighted LARS
@@ -126,9 +126,9 @@ class LocalCoordinateCoding
   arma::mat& Codes() { return codes; }
 
  private:
-  arma::uword nDims;
-  arma::uword nAtoms;
-  arma::uword nPoints;
+  size_t nDims;
+  size_t nAtoms;
+  size_t nPoints;
 
   // Data matrix (columns are points).
   const arma::mat& data;
