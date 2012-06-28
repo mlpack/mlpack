@@ -62,8 +62,8 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestCodingStep)
   LocalCoordinateCoding<> lcc(X, nAtoms, lambda1);
   lcc.OptimizeCode();
 
-  mat D = lcc.MatD();
-  mat Z = lcc.MatZ();
+  mat D = lcc.Dictionary();
+  mat Z = lcc.Codes();
 
   for(uword i = 0; i < nPoints; i++) {
     vec sq_dists = vec(nAtoms);
@@ -98,11 +98,11 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestDictionaryStep)
 
   LocalCoordinateCoding<> lcc(X, nAtoms, lambda);
   lcc.OptimizeCode();
-  mat Z = lcc.MatZ();
+  mat Z = lcc.Codes();
   uvec adjacencies = find(Z);
   lcc.OptimizeDictionary(adjacencies);
 
-  mat D = lcc.MatD();
+  mat D = lcc.Dictionary();
 
   mat grad = zeros(D.n_rows, D.n_cols);
   for (uword i = 0; i < nPoints; i++)
