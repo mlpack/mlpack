@@ -17,25 +17,18 @@ namespace lcc {
 
 template<typename DictionaryInitializer>
 LocalCoordinateCoding<DictionaryInitializer>::LocalCoordinateCoding(
-    const arma::mat& matX,
+    const arma::mat& data,
     arma::uword nAtoms,
     double lambda) :
-    nDims(matX.n_rows),
+    nDims(data.n_rows),
     nAtoms(nAtoms),
-    nPoints(matX.n_cols),
-    matX(matX),
-    matZ(nAtoms, nPoints),
+    nPoints(data.n_cols),
+    data(data),
+    codes(nAtoms, nPoints),
     lambda(lambda)
 {
   // Initialize the dictionary.
-  DictionaryInitializer::Initialize(matX, nAtoms, matD);
-}
-
-template<typename DictionaryInitializer>
-void LocalCoordinateCoding<DictionaryInitializer>::SetDictionary(
-    const arma::mat& matD)
-{
-  this->matD = matD;
+  DictionaryInitializer::Initialize(data, nAtoms, dictionary);
 }
 
 template<typename DictionaryInitializer>
@@ -47,7 +40,7 @@ void LocalCoordinateCoding<DictionaryInitializer>::DoLCC(
 
   Log::Info << "Initial Coding Step" << std::endl;
   OptimizeCode();
-  arma::uvec adjacencies = find(matZ);
+  arma::uvec adjacencies = find(codes);
   Log::Info << "\tSparsity level: " << 100.0 * ((double)(adjacencies.n_elem)) /
       ((double)(nAtoms * nPoints)) << "%\n";
   Log::Info << "\tObjective value: " << Objective(adjacencies) << std::endl;
@@ -63,7 +56,7 @@ void LocalCoordinateCoding<DictionaryInitializer>::DoLCC(
 
     Log::Info << "Coding Step" << std::endl;
     OptimizeCode();
-    adjacencies = find(matZ);
+    adjacencies = find(codes);
     Log::Info << "\tSparsity level: " << 100.0 * ((double)(adjacencies.n_elem))
         / ((double)(nAtoms * nPoints)) << "%\n";
     double curObjVal = Objective(adjacencies);
@@ -91,13 +84,13 @@ void LocalCoordinateCoding<DictionaryInitializer>::DoLCC(
 template<typename DictionaryInitializer>
 void LocalCoordinateCoding<DictionaryInitializer>::OptimizeCode()
 {
-  arma::mat matSqDists = repmat(trans(sum(square(matD))), 1, nPoints) +
-      repmat(sum(square(matX)), nAtoms, 1) - 2 * trans(matD) * matX;
+  arma::mat matSqDists = repmat(trans(sum(square(dictionary))), 1, nPoints) +
+      repmat(sum(square(data)), nAtoms, 1) - 2 * trans(dictionary) * data;
 
   arma::mat matInvSqDists = 1.0 / matSqDists;
 
-  arma::mat matDTD = trans(matD) * matD;
-  arma::mat matDPrimeTDPrime(matDTD.n_rows, matDTD.n_cols);
+  arma::mat dictionaryTD = trans(dictionary) * dictionary;
+  arma::mat dictionaryPrimeTDPrime(dictionaryTD.n_rows, dictionaryTD.n_cols);
 
   for (arma::uword i = 0; i < nPoints; i++)
   {
@@ -109,27 +102,27 @@ void LocalCoordinateCoding<DictionaryInitializer>::OptimizeCode()
 
     arma::vec w = matSqDists.unsafe_col(i);
     arma::vec invW = matInvSqDists.unsafe_col(i);
-    arma::mat matDPrime = matD * diagmat(invW);
+    arma::mat dictionaryPrime = dictionary * diagmat(invW);
 
-    arma::mat matDPrimeTDPrime = diagmat(invW) * matDTD * diagmat(invW);
+    arma::mat dictionaryPrimeTDPrime = diagmat(invW) * dictionaryTD * diagmat(invW);
 
     //LARS lars;
     // do we still need 0.5 * lambda? yes, yes we do
-    //lars.Init(matDPrime.memptr(), matX.colptr(i), nDims, nAtoms, true, 0.5 *
+    //lars.Init(dictionaryPrime.memptr(), data.colptr(i), nDims, nAtoms, true, 0.5 *
     //lambda); // apparently not as fast as using the below duo
     // this may change, depending on the dimensionality and sparsity
 
     // the duo
-    /* lars.Init(matDPrime.memptr(), matX.colptr(i), nDims, nAtoms, false, 0.5 *
+    /* lars.Init(dictionaryPrime.memptr(), data.colptr(i), nDims, nAtoms, false, 0.5 *
      * lambda); */
-    /* lars.SetGram(matDPrimeTDPrime.memptr(), nAtoms); */
+    /* lars.SetGram(dictionaryPrimeTDPrime.memptr(), nAtoms); */
 
     bool useCholesky = false;
-    regression::LARS lars(useCholesky, matDPrimeTDPrime, 0.5 * lambda);
+    regression::LARS lars(useCholesky, dictionaryPrimeTDPrime, 0.5 * lambda);
 
     arma::vec beta;
-    lars.Regress(matDPrime, matX.unsafe_col(i), beta, true);
-    matZ.col(i) = beta % invW;
+    lars.Regress(dictionaryPrime, data.unsafe_col(i), beta, true);
+    codes.col(i) = beta % invW;
   }
 }
 
@@ -160,17 +153,17 @@ void LocalCoordinateCoding<DictionaryInitializer>::OptimizeDictionary(
     neighborCounts(curPointInd) = curCount;
   }
 
-  // build matXPrime := [X x^1 ... x^1 ... x^n ... x^n]
+  // build dataPrime := [X x^1 ... x^1 ... x^n ... x^n]
   // where each x^i is repeated for the number of neighbors x^i has
-  arma::mat matXPrime = arma::zeros(nDims, nPoints + adjacencies.n_elem);
-  matXPrime(arma::span::all, arma::span(0, nPoints - 1)) = matX;
+  arma::mat dataPrime = arma::zeros(nDims, nPoints + adjacencies.n_elem);
+  dataPrime(arma::span::all, arma::span(0, nPoints - 1)) = data;
   arma::uword curCol = nPoints;
   for (arma::uword i = 0; i < nPoints; i++)
   {
     if (neighborCounts(i) > 0)
     {
-      matXPrime(arma::span::all, arma::span(curCol, curCol + neighborCounts(i)
-          - 1)) = repmat(matX.col(i), 1, neighborCounts(i));
+      dataPrime(arma::span::all, arma::span(curCol, curCol + neighborCounts(i)
+          - 1)) = repmat(data.col(i), 1, neighborCounts(i));
     }
     curCol += neighborCounts(i);
   }
@@ -181,7 +174,7 @@ void LocalCoordinateCoding<DictionaryInitializer>::OptimizeDictionary(
   activeAtoms.reserve(nAtoms);
   for (arma::uword j = 0; j < nAtoms; j++)
   {
-    if (accu(matZ.row(j) != 0) == 0)
+    if (accu(codes.row(j) != 0) == 0)
     {
       inactiveAtoms.push_back(j);
     }
@@ -197,13 +190,13 @@ void LocalCoordinateCoding<DictionaryInitializer>::OptimizeDictionary(
   arma::mat matActiveZ;
   if (inactiveAtoms.empty())
   {
-    matActiveZ = matZ;
+    matActiveZ = codes;
   }
   else
   {
     arma::uvec inactiveAtomsVec = arma::conv_to<arma::uvec>::from(
         inactiveAtoms);
-    RemoveRows(matZ, inactiveAtomsVec, matActiveZ);
+    RemoveRows(codes, inactiveAtomsVec, matActiveZ);
   }
 
   arma::uvec atomReverseLookup = arma::uvec(nAtoms);
@@ -218,67 +211,67 @@ void LocalCoordinateCoding<DictionaryInitializer>::OptimizeDictionary(
         << " be re-initialized randomly.\n";
   }
 
-  arma::mat matZPrime = arma::zeros(nActiveAtoms, nPoints + adjacencies.n_elem);
+  arma::mat codesPrime = arma::zeros(nActiveAtoms, nPoints + adjacencies.n_elem);
   //Log::Debug << "adjacencies.n_elem = " << adjacencies.n_elem << std::endl;
-  matZPrime(arma::span::all, arma::span(0, nPoints - 1)) = matActiveZ;
+  codesPrime(arma::span::all, arma::span(0, nPoints - 1)) = matActiveZ;
 
   arma::vec wSquared = arma::ones(nPoints + adjacencies.n_elem, 1);
-  //Log::Debug << "building up matZPrime\n";
+  //Log::Debug << "building up codesPrime\n";
   for (arma::uword l = 0; l < adjacencies.n_elem; l++)
   {
     arma::uword atomInd = adjacencies(l) % nAtoms;
     arma::uword pointInd = (arma::uword) (adjacencies(l) / nAtoms);
-    matZPrime(atomReverseLookup(atomInd), nPoints + l) = 1.0;
-    wSquared(nPoints + l) = matZ(atomInd, pointInd);
+    codesPrime(atomReverseLookup(atomInd), nPoints + l) = 1.0;
+    wSquared(nPoints + l) = codes(atomInd, pointInd);
   }
 
   wSquared.subvec(nPoints, wSquared.n_elem - 1) = lambda *
       abs(wSquared.subvec(nPoints, wSquared.n_elem - 1));
 
   //Log::Debug << "about to solve\n";
-  arma::mat matDEstimate;
+  arma::mat dictionaryEstimate;
   if (inactiveAtoms.empty())
   {
-    arma::mat A = matZPrime * diagmat(wSquared) * trans(matZPrime);
-    arma::mat B = matZPrime * diagmat(wSquared) * trans(matXPrime);
+    arma::mat A = codesPrime * diagmat(wSquared) * trans(codesPrime);
+    arma::mat B = codesPrime * diagmat(wSquared) * trans(dataPrime);
 
     //Log::Debug << "solving...\n";
-    matDEstimate =
+    dictionaryEstimate =
       trans(solve(A, B));
     /*
-    matDEstimate =
-      trans(solve(matZPrime * diagmat(wSquared) * trans(matZPrime),
-                  matZPrime * diagmat(wSquared) * trans(matXPrime)));
+    dictionaryEstimate =
+      trans(solve(codesPrime * diagmat(wSquared) * trans(codesPrime),
+                  codesPrime * diagmat(wSquared) * trans(dataPrime)));
     */
   }
   else
   {
-    matDEstimate = arma::zeros(nDims, nAtoms);
+    dictionaryEstimate = arma::zeros(nDims, nAtoms);
     //Log::Debug << "solving...\n";
-    arma::mat matDActiveEstimate =
-      trans(solve(matZPrime * diagmat(wSquared) * trans(matZPrime),
-                  matZPrime * diagmat(wSquared) * trans(matXPrime)));
+    arma::mat dictionaryActiveEstimate =
+      trans(solve(codesPrime * diagmat(wSquared) * trans(codesPrime),
+                  codesPrime * diagmat(wSquared) * trans(dataPrime)));
     for (arma::uword j = 0; j < nActiveAtoms; j++)
     {
-      matDEstimate.col(activeAtoms[j]) = matDActiveEstimate.col(j);
+      dictionaryEstimate.col(activeAtoms[j]) = dictionaryActiveEstimate.col(j);
     }
 
     for (arma::uword j = 0; j < nInactiveAtoms; j++)
     {
       // Reinitialize randomly.
       // Add three atoms together.
-      matDEstimate.col(inactiveAtoms[j]) =
-          (matX.col(math::RandInt(matX.n_cols)) +
-           matX.col(math::RandInt(matX.n_cols)) +
-           matX.col(math::RandInt(matX.n_cols)));
+      dictionaryEstimate.col(inactiveAtoms[j]) =
+          (data.col(math::RandInt(data.n_cols)) +
+           data.col(math::RandInt(data.n_cols)) +
+           data.col(math::RandInt(data.n_cols)));
 
       // Now normalize the atom.
-      matDEstimate.col(inactiveAtoms[j]) /=
-          norm(matDEstimate.col(inactiveAtoms[j]), 2);
+      dictionaryEstimate.col(inactiveAtoms[j]) /=
+          norm(dictionaryEstimate.col(inactiveAtoms[j]), 2);
     }
   }
 
-  matD = matDEstimate;
+  dictionary = dictionaryEstimate;
 }
 
 template<typename DictionaryInitializer>
@@ -291,11 +284,11 @@ double LocalCoordinateCoding<DictionaryInitializer>::Objective(
   {
     arma::uword atomInd = adjacencies(l) % nAtoms;
     arma::uword pointInd = (arma::uword) (adjacencies(l) / nAtoms);
-    weightedL1NormZ += fabs(matZ(atomInd, pointInd)) *
-        as_scalar(sum(square(matD.col(atomInd) - matX.col(pointInd))));
+    weightedL1NormZ += fabs(codes(atomInd, pointInd)) *
+        as_scalar(sum(square(dictionary.col(atomInd) - data.col(pointInd))));
   }
 
-  double froNormResidual = norm(matX - matD * matZ, "fro");
+  double froNormResidual = norm(data - dictionary * codes, "fro");
   return froNormResidual * froNormResidual + lambda * weightedL1NormZ;
 }
 

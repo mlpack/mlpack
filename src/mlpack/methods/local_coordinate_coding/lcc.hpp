@@ -78,11 +78,11 @@ class LocalCoordinateCoding
   /**
    * Set the parameters to LocalCoordinateCoding.
    *
-   * @param matX Data matrix
+   * @param data Data matrix
    * @param nAtoms Number of atoms in dictionary
    * @param lambda Regularization parameter for weighted l1-norm penalty
    */
-  LocalCoordinateCoding(const arma::mat& matX,
+  LocalCoordinateCoding(const arma::mat& data,
                         arma::uword nAtoms,
                         double lambda);
 
@@ -112,37 +112,32 @@ class LocalCoordinateCoding
    */
   double Objective(arma::uvec adjacencies);
 
-  // accessors, modifiers, printers
+  //! Access the data.
+  const arma::mat& Data() const { return data; }
 
-  //! Modifier for matD
-  void SetDictionary(const arma::mat& matD);
+  //! Accessor for dictionary.
+  const arma::mat& Dictionary() const { return dictionary; }
+  //! Mutator for dictionary.
+  arma::mat& Dictionary() { return dictionary; }
 
-  //! Accessor for matD
-  const arma::mat& MatD() { return matD; }
-
-  //! Accessor for matZ
-  const arma::mat& MatZ() { return matZ; }
-
-  // Print the dictionary matD
-  void PrintDictionary();
-
-  // Print the sparse codes matZ
-  void PrintCoding();
-
+  //! Accessor the codes.
+  const arma::mat& Codes() const { return codes; }
+  //! Modify the codes.
+  arma::mat& Codes() { return codes; }
 
  private:
   arma::uword nDims;
   arma::uword nAtoms;
   arma::uword nPoints;
 
-  // data (columns are points)
-  arma::mat matX;
+  // Data matrix (columns are points).
+  const arma::mat& data;
 
   // dictionary (columns are atoms)
-  arma::mat matD;
+  arma::mat dictionary;
 
   // sparse codes (columns are points)
-  arma::mat matZ;
+  arma::mat codes;
 
   // l1 regularization term
   double lambda;
