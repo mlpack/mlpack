@@ -78,16 +78,15 @@ int main(int argc, char* argv[])
           << "has " << matX.n_rows << " dimensions!\n";
     }
 
-    lcc.SetDictionary(matInitialD);
+    lcc.Dictionary() = matInitialD;
   }
 
   Timer::Start("local_coordinate_coding");
   lcc.DoLCC(nIterations);
   Timer::Stop("local_coordinate_coding");
 
-  mat learnedD = lcc.MatD();
-
-  mat learnedZ = lcc.MatZ();
+  mat learnedD = lcc.Dictionary();
+  mat learnedZ = lcc.Codes();
 
   if (strlen(resultsDir) == 0)
   {
