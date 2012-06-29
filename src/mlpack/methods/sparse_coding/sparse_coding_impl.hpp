@@ -150,7 +150,7 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
 
   // Efficient construction of Z restricted to active atoms.
   arma::mat matActiveZ;
-  if (!inactiveAtoms.empty())
+  if (nInactiveAtoms > 0)
   {
     arma::uvec inactiveAtomsVec =
         arma::conv_to<arma::uvec>::from(inactiveAtoms);
