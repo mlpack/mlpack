@@ -138,8 +138,6 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
 
   // Handle the case of inactive atoms (atoms not used in the given coding).
   std::vector<size_t> inactiveAtoms;
-  std::vector<size_t> activeAtoms;
-  activeAtoms.reserve(atoms);
 
   for (size_t j = 0; j < atoms; ++j)
   {
