@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
   }
 
   Timer::Start("local_coordinate_coding");
-  lcc.DoLCC(nIterations);
+  lcc.Encode(nIterations);
   Timer::Stop("local_coordinate_coding");
 
   mat learnedD = lcc.Dictionary();
