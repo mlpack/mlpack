@@ -17,7 +17,7 @@ namespace kernel {
  * The cosine distance (or cosine similarity).  It is defined by
  *
  * @f[
- * d(a, b) = 1 - \frac{a^T b}{|| a || || b ||}
+ * d(a, b) = \frac{a^T b}{|| a || || b ||}
  * @f]
  *
  * and this class assumes the standard L2 inner product.
