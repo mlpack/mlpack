@@ -78,28 +78,28 @@ class LocalCoordinateCoding
   /**
    * Set the parameters to LocalCoordinateCoding.
    *
-   * @param data Data matrix
-   * @param nAtoms Number of atoms in dictionary
-   * @param lambda Regularization parameter for weighted l1-norm penalty
+   * @param data Data matrix.
+   * @param atoms Number of atoms in dictionary.
+   * @param lambda Regularization parameter for weighted l1-norm penalty.
    */
   LocalCoordinateCoding(const arma::mat& data,
-                        const size_t nAtoms,
+                        const size_t atoms,
                         const double lambda);
 
   /**
-   * Run LCC
+   * Run local coordinate coding.
    *
    * @param nIterations Maximum number of iterations to run algorithm
    */
-  void DoLCC(const size_t nIterations);
+  void Encode(const size_t maxIterations = 0);
 
   /**
-   * Sparse code each point via distance-weighted LARS
+   * Code each point via distance-weighted LARS.
    */
   void OptimizeCode();
 
   /**
-   * Learn dictionary by solving linear systemx
+   * Learn dictionary by solving linear system.
    *
    * @param adjacencies Indices of entries (unrolled column by column) of
    *    the coding matrix Z that are non-zero (the adjacency matrix for the
@@ -126,20 +126,19 @@ class LocalCoordinateCoding
   arma::mat& Codes() { return codes; }
 
  private:
-  size_t nDims;
-  size_t nAtoms;
-  size_t nPoints;
+  //! Number of atoms in dictionary.
+  size_t atoms;
 
-  // Data matrix (columns are points).
+  //! Data matrix (columns are points).
   const arma::mat& data;
 
-  // dictionary (columns are atoms)
+  //! Dictionary (columns are atoms).
   arma::mat dictionary;
 
-  // sparse codes (columns are points)
+  //! Codes (columns are points).
   arma::mat codes;
 
-  // l1 regularization term
+  //! l1 regularization term.
   double lambda;
 };
 
