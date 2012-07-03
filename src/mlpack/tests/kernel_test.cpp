@@ -179,8 +179,8 @@ BOOST_AUTO_TEST_CASE(cosine_distance_same_angle)
   arma::vec a = "1.0 2.0 3.0";
   arma::vec b = "2.0 4.0 6.0";
 
-  BOOST_REQUIRE_SMALL(CosineDistance::Evaluate(a, b), 1e-5);
-  BOOST_REQUIRE_SMALL(CosineDistance::Evaluate(b, a), 1e-5);
+  BOOST_REQUIRE_CLOSE(CosineDistance::Evaluate(a, b), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(CosineDistance::Evaluate(b, a), 1.0, 1e-5);
 }
 
 /**
@@ -191,8 +191,8 @@ BOOST_AUTO_TEST_CASE(cosine_distance_orthogonal)
   arma::vec a = "0.0 1.0";
   arma::vec b = "1.0 0.0";
 
-  BOOST_REQUIRE_CLOSE(CosineDistance::Evaluate(a, b), 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(CosineDistance::Evaluate(b, a), 1.0, 1e-5);
+  BOOST_REQUIRE_SMALL(CosineDistance::Evaluate(a, b), 1e-5);
+  BOOST_REQUIRE_SMALL(CosineDistance::Evaluate(b, a), 1e-5);
 }
 
 /**
@@ -203,8 +203,8 @@ BOOST_AUTO_TEST_CASE(cosine_distance_random_test)
   arma::vec a = "0.1 0.2 0.3 0.4 0.5";
   arma::vec b = "1.2 1.0 0.8 -0.3 -0.5";
 
-  BOOST_REQUIRE_CLOSE(CosineDistance::Evaluate(a, b), 1 - 0.1385349024, 1e-5);
-  BOOST_REQUIRE_CLOSE(CosineDistance::Evaluate(b, a), 1 - 0.1385349024, 1e-5);
+  BOOST_REQUIRE_CLOSE(CosineDistance::Evaluate(a, b), 0.1385349024, 1e-5);
+  BOOST_REQUIRE_CLOSE(CosineDistance::Evaluate(b, a), 0.1385349024, 1e-5);
 }
 
 /**
