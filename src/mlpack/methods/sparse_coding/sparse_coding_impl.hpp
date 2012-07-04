@@ -152,9 +152,7 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
   arma::mat matActiveZ;
   if (nInactiveAtoms > 0)
   {
-    arma::uvec inactiveAtomsVec =
-        arma::conv_to<arma::uvec>::from(inactiveAtoms);
-    RemoveRows(codes, inactiveAtomsVec, matActiveZ);
+    math::RemoveRows(codes, inactiveAtoms, matActiveZ);
   }
 
   if (nInactiveAtoms > 0)
@@ -318,63 +316,6 @@ double SparseCoding<DictionaryInitializer>::Objective()
   else // It can be simpler.
   {
     return 0.5 * std::pow(froNormResidual, 2.0) + lambda1 * l11NormZ;
-  }
-}
-
-void RemoveRows(const arma::mat& X,
-                const arma::uvec& rowsToRemove,
-                arma::mat& modX)
-{
-  const size_t cols = X.n_cols;
-  const size_t rows = X.n_rows;
-  const size_t nRemove = rowsToRemove.n_elem;
-  const size_t nKeep = rows - nRemove;
-
-  if (nRemove == 0)
-  {
-    modX = X;
-  }
-  else
-  {
-    modX.set_size(nKeep, cols);
-
-    size_t curRow = 0;
-    size_t removeInd = 0;
-    // First, check 0 to first row to remove.
-    if (rowsToRemove(0) > 0)
-    {
-      // Note that this implies that n_rows > 1.
-      size_t height = rowsToRemove(0);
-      modX(arma::span(curRow, curRow + height - 1), arma::span::all) =
-          X(arma::span(0, rowsToRemove(0) - 1), arma::span::all);
-      curRow += height;
-    }
-    // Now, check i'th row to remove to (i + 1)'th row to remove, until i is the
-    // penultimate row.
-    while (removeInd < nRemove - 1)
-    {
-      size_t height = rowsToRemove[removeInd + 1] -
-          rowsToRemove[removeInd] - 1;
-
-      if (height > 0)
-      {
-        modX(arma::span(curRow, curRow + height - 1), arma::span::all) =
-            X(arma::span(rowsToRemove[removeInd] + 1,
-            rowsToRemove[removeInd + 1] - 1), arma::span::all);
-        curRow += height;
-      }
-
-      removeInd++;
-    }
-
-    // Now that i is the last row to remove, check last row to remove to last
-    // row.
-    if (rowsToRemove[removeInd] < rows - 1)
-    {
-      modX(arma::span(curRow, nKeep - 1), arma::span::all) =
-          X(arma::span(rowsToRemove[removeInd] + 1, rows - 1),
-          arma::span::all);
-    }
   }
 }
 

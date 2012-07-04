@@ -191,9 +191,7 @@ void LocalCoordinateCoding<DictionaryInitializer>::OptimizeDictionary(
 
     // Create matrix holding only active codes.
     arma::mat activeCodes;
-    arma::uvec inactiveAtomsVec =
-        arma::conv_to<arma::uvec>::from(inactiveAtoms);
-    RemoveRows(codes, inactiveAtomsVec, activeCodes);
+    math::RemoveRows(codes, inactiveAtoms, activeCodes);
 
     // Create reverse atom lookup for active atoms.
     arma::uvec atomReverseLookup(atoms);
@@ -305,57 +303,6 @@ double LocalCoordinateCoding<DictionaryInitializer>::Objective(
 
   double froNormResidual = norm(data - dictionary * codes, "fro");
   return std::pow(froNormResidual, 2.0) + lambda * weightedL1NormZ;
-}
-
-void RemoveRows(const arma::mat& X, arma::uvec rows_to_remove, arma::mat& X_mod)
-{
-  arma::uword n_cols = X.n_cols;
-  arma::uword n_rows = X.n_rows;
-  arma::uword n_to_remove = rows_to_remove.n_elem;
-  arma::uword n_to_keep = n_rows - n_to_remove;
-
-  if (n_to_remove == 0)
-  {
-    X_mod = X;
-  }
-  else
-  {
-    X_mod.set_size(n_to_keep, n_cols);
-
-    arma::uword cur_row = 0;
-    arma::uword remove_ind = 0;
-    // first, check 0 to first row to remove
-    if (rows_to_remove(0) > 0)
-    {
-      // note that this implies that n_rows > 1
-      arma::uword height = rows_to_remove(0);
-      X_mod(arma::span(cur_row, cur_row + height - 1), arma::span::all) =
-          X(arma::span(0, rows_to_remove(0) - 1), arma::span::all);
-      cur_row += height;
-    }
-    // now, check i'th row to remove to (i + 1)'th row to remove, until i =
-    // penultimate row
-    while (remove_ind < n_to_remove - 1)
-    {
-      arma::uword height = rows_to_remove[remove_ind + 1] -
-          rows_to_remove[remove_ind] - 1;
-      if (height > 0)
-      {
-        X_mod(arma::span(cur_row, cur_row + height - 1), arma::span::all) =
-            X(arma::span(rows_to_remove[remove_ind] + 1,
-            rows_to_remove[remove_ind + 1] - 1), arma::span::all);
-        cur_row += height;
-      }
-      remove_ind++;
-    }
-    // now that i is last row to remove, check last row to remove to last row
-    if (rows_to_remove[remove_ind] < n_rows - 1)
-    {
-      X_mod(arma::span(cur_row, n_to_keep - 1), arma::span::all) =
-          X(arma::span(rows_to_remove[remove_ind] + 1, n_rows - 1),
-          arma::span::all);
-    }
-  }
 }
 
 }; // namespace lcc

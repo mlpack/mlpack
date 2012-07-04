@@ -142,11 +142,6 @@ class LocalCoordinateCoding
   double lambda;
 };
 
-void RemoveRows(const arma::mat& X,
-                arma::uvec rows_to_remove,
-                arma::mat& X_mod);
-
-
 }; // namespace lcc
 }; // namespace mlpack
 
