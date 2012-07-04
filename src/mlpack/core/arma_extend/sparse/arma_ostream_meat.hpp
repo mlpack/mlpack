@@ -1,6 +1,6 @@
 // Copyright (C) 2008-2011 NICTA (www.nicta.com.au)
 // Copyright (C) 2008-2011 Conrad Sanderson
-// 
+//
 // This file is part of the Armadillo C++ library.
 // It is provided without any warranty of fitness
 // for any purpose. You can redistribute this file
@@ -81,9 +81,9 @@ arma_ostream_new::modify_stream(std::ostream& o, typename SpMat<eT>::const_itera
   return cell_width;
 }
 
-template<typename eT> 
-inline 
-void 
+template<typename eT>
+inline
+void
 arma_ostream_new::print(std::ostream& o, const SpMat<eT>& m, const bool modify)
   {
   arma_extra_debug_sigprint();
@@ -101,16 +101,16 @@ arma_ostream_new::print(std::ostream& o, const SpMat<eT>& m, const bool modify)
   typename SpMat<eT>::const_iterator end = m.end();
 
   if(m.is_empty() == false)
-    {   
+    {
     if(m_n_cols > 0)
-      {   
+      {
       if(cell_width > 0)
         {
 	// An efficient row_iterator would make this simpler and faster
         for(uword row=0; row < m_n_rows; ++row)
-          {   
+          {
           for(uword col=0; col < m_n_cols; ++col)
-            {   
+            {
             // the cell width appears to be reset after each element is printed,
             // hence we need to restore it
             o.width(cell_width);
@@ -124,18 +124,18 @@ arma_ostream_new::print(std::ostream& o, const SpMat<eT>& m, const bool modify)
 		}
 	      }
 	    arma_ostream::print_elem(o,eT(val));
-            }   
-    
+            }
+
           o << '\n';
-          }   
-        }   
+          }
+        }
       else
-        {   
+        {
 	// An efficient row_iterator would make this simpler and faster
         for(uword row=0; row < m_n_rows; ++row)
-          {   
+          {
           for(uword col=0; col < m_n_cols; ++col)
-            {   
+            {
 	    eT val = 0;
 	    for(typename SpMat<eT>::const_iterator it = begin; it != end; ++it)
 	      {
@@ -147,26 +147,26 @@ arma_ostream_new::print(std::ostream& o, const SpMat<eT>& m, const bool modify)
 	      }
 	    arma_ostream::print_elem(o,eT(val));
             o << ' ';
-            }   
-    
+            }
+
           o << '\n';
-          }   
-        }   
-      }   
-    }   
+          }
+        }
+      }
+    }
   else
-    {   
+    {
     o << "[matrix size: " << m_n_rows << 'x' << m_n_cols << "]\n";
-    }   
-  
+    }
+
   o.flush();
   stream_state.restore(o);
 
   }
 
-template<typename eT> 
-inline 
-void 
+template<typename eT>
+inline
+void
 arma_ostream_new::print_trans(std::ostream& o, const SpMat<eT>& m, const bool modify)
   {
   arma_extra_debug_sigprint();
@@ -185,15 +185,15 @@ arma_ostream_new::print_trans(std::ostream& o, const SpMat<eT>& m, const bool mo
   typename SpMat<eT>::const_iterator end = m.end();
 
   if(m.is_empty() == false)
-    {   
+    {
     if(m_n_cols > 0)
-      {   
+      {
       if(cell_width > 0)
         {
 	for(uword row=0; row < m_n_rows; ++row)
-          {   
+          {
 	  for(uword col=0; col < m_n_cols; ++col)
-            {   
+            {
             o.width(cell_width);
 	    if(it != end && it.row == col && it.col == row )
 	      {
@@ -204,17 +204,17 @@ arma_ostream_new::print_trans(std::ostream& o, const SpMat<eT>& m, const bool mo
 	      {
 	      arma_ostream::print_elem(o,eT(0));
 	      }
-            }   
-    
+            }
+
           o << '\n';
-          }   
-        }   
+          }
+        }
       else
-        {   
+        {
 	for(uword row=0; row < m_n_rows; ++row)
-          {   
+          {
 	  for(uword col=0; col < m_n_cols; ++col)
-            {   
+            {
 	    eT val = 0;
 	    if(it != end && it.row == col && it.col == row )
 	      {
@@ -226,18 +226,18 @@ arma_ostream_new::print_trans(std::ostream& o, const SpMat<eT>& m, const bool mo
 	      arma_ostream::print_elem(o,eT(0));
 	      }
             o << ' ';
-            }   
-    
+            }
+
           o << '\n';
-          }   
-        }   
-      }   
-    }   
+          }
+        }
+      }
+    }
   else
-    {   
+    {
     o << "[matrix size: " << m_n_rows << 'x' << m_n_cols << "]\n";
-    }   
-  
+    }
+
   o.flush();
   stream_state.restore(o);
 
