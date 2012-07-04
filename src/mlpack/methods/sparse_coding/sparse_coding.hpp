@@ -191,10 +191,6 @@ class SparseCoding
   double lambda2;
 };
 
-void RemoveRows(const arma::mat& X,
-                const arma::uvec& rowsToRemove,
-                arma::mat& modX);
-
 }; // namespace sparse_coding
 }; // namespace mlpack
 
