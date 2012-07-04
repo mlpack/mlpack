@@ -129,33 +129,36 @@ template<typename DictionaryInitializer>
 void LocalCoordinateCoding<DictionaryInitializer>::OptimizeDictionary(
     arma::uvec adjacencies)
 {
-  // count number of atomic neighbors for each point x^i
+  // Count number of atomic neighbors for each point x^i.
   arma::uvec neighborCounts = arma::zeros<arma::uvec>(data.n_cols, 1);
   if (adjacencies.n_elem > 0)
   {
-    // this gets the column index
+    // This gets the column index.  Intentional integer division.
     size_t curPointInd = (size_t) (adjacencies(0) / atoms);
-    size_t curCount = 1;
+    ++neighborCounts(curPointInd);
+
+    size_t nextColIndex = (curPointInd + 1) * atoms;
     for (size_t l = 1; l < adjacencies.n_elem; l++)
     {
-      if ((size_t) (adjacencies(l) / atoms) == curPointInd)
+      // If l no longer refers to an element in this column, advance the column
+      // number accordingly.
+      if (adjacencies(l) >= nextColIndex)
       {
-        curCount++;
-      }
-      else
-      {
-        neighborCounts(curPointInd) = curCount;
         curPointInd = (size_t) (adjacencies(l) / atoms);
-        curCount = 1;
+        nextColIndex = (curPointInd + 1) * atoms;
       }
+
+      ++neighborCounts(curPointInd);
     }
-    neighborCounts(curPointInd) = curCount;
   }
 
   // Build dataPrime := [X x^1 ... x^1 ... x^n ... x^n]
   // where each x^i is repeated for the number of neighbors x^i has.
-  arma::mat dataPrime = arma::zeros(data.n_rows, data.n_cols + adjacencies.n_elem);
+  arma::mat dataPrime = arma::zeros(data.n_rows,
+      data.n_cols + adjacencies.n_elem);
+
   dataPrime(arma::span::all, arma::span(0, data.n_cols - 1)) = data;
+
   size_t curCol = data.n_cols;
   for (size_t i = 0; i < data.n_cols; i++)
   {
@@ -169,100 +172,119 @@ void LocalCoordinateCoding<DictionaryInitializer>::OptimizeDictionary(
 
   // Handle the case of inactive atoms (atoms not used in the given coding).
   std::vector<size_t> inactiveAtoms;
-  std::vector<size_t> activeAtoms;
-  activeAtoms.reserve(atoms);
-  for (size_t j = 0; j < atoms; j++)
-  {
+  for (size_t j = 0; j < atoms; ++j)
     if (accu(codes.row(j) != 0) == 0)
       inactiveAtoms.push_back(j);
-    else
-      activeAtoms.push_back(j);
-  }
-  size_t nActiveAtoms = activeAtoms.size();
-  size_t nInactiveAtoms = inactiveAtoms.size();
 
-  // efficient construction of Z restricted to active atoms
-  arma::mat matActiveZ;
-  if (inactiveAtoms.empty())
-  {
-    matActiveZ = codes;
-  }
-  else
-  {
-    arma::uvec inactiveAtomsVec = arma::conv_to<arma::uvec>::from(
-        inactiveAtoms);
-    RemoveRows(codes, inactiveAtomsVec, matActiveZ);
-  }
+  const size_t nInactiveAtoms = inactiveAtoms.size();
+  const size_t nActiveAtoms = atoms - nInactiveAtoms;
 
-  arma::uvec atomReverseLookup = arma::uvec(atoms);
-  for (size_t i = 0; i < nActiveAtoms; i++)
-  {
-    atomReverseLookup(activeAtoms[i]) = i;
-  }
+  // Efficient construction of codes restricted to active atoms.
+  arma::mat codesPrime = arma::zeros(nActiveAtoms, data.n_cols +
+      adjacencies.n_elem);
+  arma::vec wSquared = arma::ones(data.n_cols + adjacencies.n_elem, 1);
 
   if (nInactiveAtoms > 0)
   {
-    Log::Info << "There are " << nInactiveAtoms << " inactive atoms. They will"
-        << " be re-initialized randomly.\n";
+    Log::Warn << "There are " << nInactiveAtoms
+        << " inactive atoms.  They will be re-initialized randomly.\n";
+
+    // Create matrix holding only active codes.
+    arma::mat activeCodes;
+    arma::uvec inactiveAtomsVec =
+        arma::conv_to<arma::uvec>::from(inactiveAtoms);
+    RemoveRows(codes, inactiveAtomsVec, activeCodes);
+
+    // Create reverse atom lookup for active atoms.
+    arma::uvec atomReverseLookup(atoms);
+    size_t inactiveOffset = 0;
+    for (size_t i = 0; i < atoms; ++i)
+    {
+      if (inactiveAtoms[inactiveOffset] == i)
+        ++inactiveOffset;
+      else
+        atomReverseLookup(i - inactiveOffset) = i;
+    }
+
+    codesPrime(arma::span::all, arma::span(0, data.n_cols - 1)) = activeCodes;
+
+    // Fill the rest of codesPrime.
+    for (size_t l = 0; l < adjacencies.n_elem; ++l)
+    {
+      // Recover the location in the codes matrix that this adjacency refers to.
+      size_t atomInd = adjacencies(l) % atoms;
+      size_t pointInd = (size_t) (adjacencies(l) / atoms);
+
+      // Fill matrix.
+      codesPrime(atomReverseLookup(atomInd), data.n_cols + l) = 1.0;
+      wSquared(data.n_cols + l) = codes(atomInd, pointInd);
+    }
   }
-
-  arma::mat codesPrime = arma::zeros(nActiveAtoms,
-      data.n_cols + adjacencies.n_elem);
-  codesPrime(arma::span::all, arma::span(0, data.n_cols - 1)) = matActiveZ;
-
-  arma::vec wSquared = arma::ones(data.n_cols + adjacencies.n_elem, 1);
-  for (size_t l = 0; l < adjacencies.n_elem; l++)
+  else
   {
-    size_t atomInd = adjacencies(l) % atoms;
-    size_t pointInd = (size_t) (adjacencies(l) / atoms);
-    codesPrime(atomReverseLookup(atomInd), data.n_cols + l) = 1.0;
-    wSquared(data.n_cols + l) = codes(atomInd, pointInd);
+    // All atoms are active.
+    codesPrime(arma::span::all, arma::span(0, data.n_cols - 1)) = codes;
+
+    for (size_t l = 0; l < adjacencies.n_elem; ++l)
+    {
+      // Recover the location in the codes matrix that this adjacency refers to.
+      size_t atomInd = adjacencies(l) % atoms;
+      size_t pointInd = (size_t) (adjacencies(l) / atoms);
+
+      // Fill matrix.
+      codesPrime(atomInd, data.n_cols + l) = 1.0;
+      wSquared(data.n_cols + l) = codes(atomInd, pointInd);
+    }
   }
 
   wSquared.subvec(data.n_cols, wSquared.n_elem - 1) = lambda *
       abs(wSquared.subvec(data.n_cols, wSquared.n_elem - 1));
 
-  //Log::Debug << "about to solve\n";
-  arma::mat dictionaryEstimate;
-  if (inactiveAtoms.empty())
+  // Solve system.
+  if (nInactiveAtoms == 0)
   {
+    // No inactive atoms.  We can solve directly.
     arma::mat A = codesPrime * diagmat(wSquared) * trans(codesPrime);
     arma::mat B = codesPrime * diagmat(wSquared) * trans(dataPrime);
 
-    dictionaryEstimate = trans(solve(A, B));
+    dictionary = trans(solve(A, B));
     /*
-    dictionaryEstimate =
-      trans(solve(codesPrime * diagmat(wSquared) * trans(codesPrime),
-                  codesPrime * diagmat(wSquared) * trans(dataPrime)));
+    dictionary = trans(solve(codesPrime * diagmat(wSquared) * trans(codesPrime),
+        codesPrime * diagmat(wSquared) * trans(dataPrime)));
     */
   }
   else
   {
-    dictionaryEstimate = arma::zeros(data.n_rows, atoms);
-    arma::mat dictionaryActiveEstimate =
+    // Inactive atoms must be reinitialized randomly, so we cannot solve
+    // directly for the entire dictionary estimate.
+    arma::mat dictionaryActive =
       trans(solve(codesPrime * diagmat(wSquared) * trans(codesPrime),
                   codesPrime * diagmat(wSquared) * trans(dataPrime)));
-    for (size_t j = 0; j < nActiveAtoms; j++)
-    {
-      dictionaryEstimate.col(activeAtoms[j]) = dictionaryActiveEstimate.col(j);
-    }
 
-    for (size_t j = 0; j < nInactiveAtoms; j++)
+    // Update all atoms.
+    size_t currentInactiveIndex = 0;
+    for (size_t i = 0; i < atoms; ++i)
     {
-      // Reinitialize randomly.
-      // Add three atoms together.
-      dictionaryEstimate.col(inactiveAtoms[j]) =
-          (data.col(math::RandInt(data.n_cols)) +
-           data.col(math::RandInt(data.n_cols)) +
-           data.col(math::RandInt(data.n_cols)));
+      if (inactiveAtoms[currentInactiveIndex] == i)
+      {
+        // This atom is inactive.  Reinitialize it randomly.
+        dictionary.col(i) = (data.col(math::RandInt(data.n_cols)) +
+                             data.col(math::RandInt(data.n_cols)) +
+                             data.col(math::RandInt(data.n_cols)));
 
-      // Now normalize the atom.
-      dictionaryEstimate.col(inactiveAtoms[j]) /=
-          norm(dictionaryEstimate.col(inactiveAtoms[j]), 2);
+        // Now normalize the atom.
+        dictionary.col(i) /= norm(dictionary.col(i), 2);
+
+        // Increment inactive atom counter.
+        ++currentInactiveIndex;
+      }
+      else
+      {
+        // Update estimate.
+        dictionary.col(i) = dictionaryActive.col(i - currentInactiveIndex);
+      }
     }
   }
-
-  dictionary = dictionaryEstimate;
 }
 
 template<typename DictionaryInitializer>
@@ -270,17 +292,19 @@ double LocalCoordinateCoding<DictionaryInitializer>::Objective(
     arma::uvec adjacencies)
 {
   double weightedL1NormZ = 0;
-  size_t nAdjacencies = adjacencies.n_elem;
-  for (size_t l = 0; l < nAdjacencies; l++)
+
+  for (size_t l = 0; l < adjacencies.n_elem; l++)
   {
-    size_t atomInd = adjacencies(l) % atoms;
-    size_t pointInd = (size_t) (adjacencies(l) / atoms);
+    // Map adjacency back to its location in the codes matrix.
+    const size_t atomInd = adjacencies(l) % atoms;
+    const size_t pointInd = (size_t) (adjacencies(l) / atoms);
+
     weightedL1NormZ += fabs(codes(atomInd, pointInd)) *
         as_scalar(sum(square(dictionary.col(atomInd) - data.col(pointInd))));
   }
 
   double froNormResidual = norm(data - dictionary * codes, "fro");
-  return froNormResidual * froNormResidual + lambda * weightedL1NormZ;
+  return std::pow(froNormResidual, 2.0) + lambda * weightedL1NormZ;
 }
 
 void RemoveRows(const arma::mat& X, arma::uvec rows_to_remove, arma::mat& X_mod)
