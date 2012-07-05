@@ -181,23 +181,22 @@ void mlpack::math::RemoveRows(const arma::mat& input,
     if (rowsToRemove[0] > 0)
     {
       // Note that this implies that n_rows > 1.
-      size_t height = rowsToRemove[0];
-      output(arma::span(curRow, curRow + height - 1), arma::span::all) =
-          input(arma::span(0, rowsToRemove[0] - 1), arma::span::all);
-      curRow += height;
+      output.rows(0, rowsToRemove[0] - 1) = input.rows(0, rowsToRemove[0] - 1);
+      curRow += rowsToRemove[0];
     }
 
     // Now, check i'th row to remove to (i + 1)'th row to remove, until i is the
     // penultimate row.
     while (removeInd < nRemove - 1)
     {
-      size_t height = rowsToRemove[removeInd + 1] - rowsToRemove[removeInd] - 1;
+      const size_t height = rowsToRemove[removeInd + 1] -
+          rowsToRemove[removeInd] - 1;
 
       if (height > 0)
       {
-        output(arma::span(curRow, curRow + height - 1), arma::span::all) =
-            input(arma::span(rowsToRemove[removeInd] + 1,
-            rowsToRemove[removeInd + 1] - 1), arma::span::all);
+        output.rows(curRow, curRow + height - 1) =
+            input.rows(rowsToRemove[removeInd] + 1,
+                       rowsToRemove[removeInd + 1] - 1);
         curRow += height;
       }
 
@@ -208,9 +207,8 @@ void mlpack::math::RemoveRows(const arma::mat& input,
     // row.
     if (rowsToRemove[removeInd] < input.n_rows - 1)
     {
-      output(arma::span(curRow, nKeep - 1), arma::span::all) =
-          input(arma::span(rowsToRemove[removeInd] + 1, input.n_rows - 1),
-          arma::span::all);
+      output.rows(curRow, nKeep - 1) = input.rows(rowsToRemove[removeInd] + 1,
+          input.n_rows - 1);
     }
   }
 }
