@@ -132,4 +132,58 @@ BOOST_AUTO_TEST_CASE(TestOrthogonalize)
   }
 }
 
+// Test RemoveRows().
+BOOST_AUTO_TEST_CASE(TestRemoveRows)
+{
+  // Run this test several times.
+  for (size_t run = 0; run < 10; ++run)
+  {
+    arma::mat input;
+    input.randu(200, 200);
+
+    // Now pick some random numbers.
+    std::vector<size_t> rowsToRemove;
+    size_t row = 0;
+    while (row < 200)
+    {
+      row += (math::RandInt(1, (2 * (run + 1) + 1)));
+      if (row < 200)
+      {
+        Log::Warn << "drop row " << row << "\n";
+        rowsToRemove.push_back(row);
+      }
+    }
+
+    // Ensure we're not about to remove every single row.
+    if (rowsToRemove.size() == 10)
+    {
+      rowsToRemove.erase(rowsToRemove.begin() + 4); // Random choice to remove.
+    }
+
+    arma::mat output;
+    RemoveRows(input, rowsToRemove, output);
+
+    // Now check that the output is right.
+    size_t outputRow = 0;
+    size_t skipIndex = 0;
+
+    for (row = 0; row < 200; ++row)
+    {
+      // Was this row supposed to be removed?  If so skip it.
+      if ((skipIndex < rowsToRemove.size()) && (rowsToRemove[skipIndex] == row))
+      {
+        ++skipIndex;
+      }
+      else
+      {
+        // Compare.
+        BOOST_REQUIRE_EQUAL(accu(input.row(row) == output.row(outputRow)), 200);
+
+        // Increment output row counter.
+        ++outputRow;
+      }
+    }
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END();
