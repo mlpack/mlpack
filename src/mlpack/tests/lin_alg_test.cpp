@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE(TestRemoveRows)
     size_t row = 0;
     while (row < 200)
     {
-      row += (math::RandInt(1, (2 * (run + 1) + 1)));
+      row += RandInt(1, (2 * (run + 1) + 1));
       if (row < 200)
       {
         Log::Warn << "drop row " << row << "\n";
