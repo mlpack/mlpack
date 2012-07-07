@@ -24,6 +24,7 @@ BOOST_AUTO_TEST_CASE(RosenbrockFunction)
 {
   RosenbrockFunction f;
   L_BFGS<RosenbrockFunction> lbfgs(f);
+  lbfgs.MaxIterations() = 10000;
 
   arma::vec coords = f.GetInitialPoint();
   if (!lbfgs.Optimize(coords))
@@ -43,6 +44,7 @@ BOOST_AUTO_TEST_CASE(WoodFunction)
 {
   WoodFunction f;
   L_BFGS<WoodFunction> lbfgs(f);
+  lbfgs.MaxIterations() = 10000;
 
   arma::vec coords = f.GetInitialPoint();
   if (!lbfgs.Optimize(coords))
@@ -71,6 +73,7 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockFunction)
 
     GeneralizedRosenbrockFunction f(dim);
     L_BFGS<GeneralizedRosenbrockFunction> lbfgs(f, 20);
+    lbfgs.MaxIterations() = 10000;
 
     arma::vec coords = f.GetInitialPoint();
     if (!lbfgs.Optimize(coords))
@@ -93,6 +96,7 @@ BOOST_AUTO_TEST_CASE(RosenbrockWoodFunction)
 {
   RosenbrockWoodFunction f;
   L_BFGS<RosenbrockWoodFunction> lbfgs(f);
+  lbfgs.MaxIterations() = 10000;
 
   arma::mat coords = f.GetInitialPoint();
   if (!lbfgs.Optimize(coords))
