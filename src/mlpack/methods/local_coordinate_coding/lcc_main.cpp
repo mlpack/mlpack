@@ -7,102 +7,150 @@
 #include <mlpack/core.hpp>
 #include "lcc.hpp"
 
-PROGRAM_INFO("LCC", "An implementation of Local Coordinate Coding");
+PROGRAM_INFO("Local Coordinate Coding",
+    "An implementation of Local Coordinate Coding (LCC), which "
+    "codes data that approximately lives on a manifold using a variation of l1-"
+    "norm regularized sparse coding.  Given a dense data matrix X with n points"
+    " and d dimensions, LCC seeks to find a dense dictionary matrix D with k "
+    "atoms in d dimensions, and a coding matrix Z with n points in k "
+    "dimensions.  Because of the regularization method used, the atoms in D "
+    "should lie close to the manifold on which the data points lie."
+    "\n\n"
+    "The original data matrix X can then be reconstructed as D * Z.  Therefore,"
+    " this program finds a representation of each point in X as a sparse linear"
+    " combination of atoms in the dictionary D."
+    "\n\n"
+    "The coding is found with an algorithm which alternates between a "
+    "dictionary step, which updates the dictionary D, and a coding step, which "
+    "updates the coding matrix Z."
+    "\n\n"
+    "To run this program, the input matrix X must be specified (with -i), along"
+    " with the number of atoms in the dictionary (-k).  An initial dictionary "
+    "may also be specified with the --initial_dictionary option.  The l1-norm "
+    "regularization parameter is specified with -l.  For example, to run LCC on"
+    " the dataset in data.csv using 200 atoms and an l1-regularization "
+    "parameter of 0.1, saving the dictionary into dict.csv and the codes into "
+    "codes.csv, use "
+    "\n\n"
+    "$ local_coordinate_coding -i data.csv -k 200 -l 0.1 -d dict.csv -c "
+    "codes.csv"
+    "\n\n"
+    "The maximum number of iterations may be specified with the -n option. "
+    "Optionally, the input data matrix X can be normalized before coding with "
+    "the -N option.");
 
-PARAM_DOUBLE_REQ("lambda", "weighted l1-norm regularization parameter.", "l");
+PARAM_STRING_REQ("input_file", "Filename of the input data.", "i");
+PARAM_INT_REQ("atoms", "Number of atoms in the dictionary.", "k");
 
-PARAM_INT_REQ("n_atoms", "number of atoms in dictionary.", "k");
+PARAM_DOUBLE("lambda", "Weighted l1-norm regularization parameter.", "l", 0.0);
 
-PARAM_INT_REQ("n_iterations", "number of iterations for sparse coding.", "");
+PARAM_INT("max_iterations", "Maximum number of iterations for LCC (0 indicates "
+    "no limit).", "n", 0);
 
-PARAM_STRING_REQ("data", "path to the input data.", "");
-PARAM_STRING("initial_dictionary", "Filename for initial dictionary.", "", "");
-PARAM_STRING("results_dir", "Directory for results.", "", "");
+PARAM_STRING("initial_dictionary", "Filename for optional initial dictionary.",
+    "D", "");
+
+PARAM_STRING("dictionary_file", "Filename to save the output dictionary to.",
+    "d", "dictionary.csv");
+PARAM_STRING("codes_file", "Filename to save the output codes to.", "c",
+    "codes.csv");
+
+PARAM_FLAG("normalize", "If set, the input data matrix will be normalized "
+    "before coding.", "N");
+
+PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace arma;
 using namespace std;
 using namespace mlpack;
+using namespace mlpack::math;
 using namespace mlpack::lcc;
+using namespace mlpack::sparse_coding; // For NothingInitializer.
 
 int main(int argc, char* argv[])
 {
   CLI::ParseCommandLine(argc, argv);
 
-  double lambda = CLI::GetParam<double>("lambda");
+  if (CLI::GetParam<int>("seed") != 0)
+    RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  else
+    RandomSeed((size_t) std::time(NULL));
 
-  // if using fx-run, one could just leave resultsDir blank
-  const char* resultsDir = CLI::GetParam<string>("results_dir").c_str();
+  const double lambda = CLI::GetParam<double>("lambda");
 
-  const char* dataFullpath = CLI::GetParam<string>("data").c_str();
+  const string inputFile = CLI::GetParam<string>("input_file");
+  const string dictionaryFile = CLI::GetParam<string>("dictionary_file");
+  const string codesFile = CLI::GetParam<string>("codes_file");
+  const string initialDictionaryFile =
+      CLI::GetParam<string>("initial_dictionary");
 
-  const char* initialDictionaryFullpath =
-      CLI::GetParam<string>("initial_dictionary").c_str();
+  const size_t maxIterations = CLI::GetParam<int>("max_iteartions");
+  const size_t atoms = CLI::GetParam<int>("atoms");
 
-  size_t nIterations = CLI::GetParam<int>("n_iterations");
+  const bool normalize = CLI::HasParam("normalize");
 
-  size_t nAtoms = CLI::GetParam<int>("n_atoms");
+  mat input;
+  data::Load(inputFile, input, true);
 
-  mat matX;
-  matX.load(dataFullpath);
+  Log::Info << "Loaded " << input.n_cols << " point in " << input.n_rows
+      << " dimensions." << endl;
 
-  uword nPoints = matX.n_cols;
-
-  // normalize each point since these are images
-  for (uword i = 0; i < nPoints; i++)
+  // Normalize each point if the user asked for it.
+  if (normalize)
   {
-    matX.col(i) /= norm(matX.col(i), 2);
+    Log::Info << "Normalizing data before coding..." << endl;
+    for (size_t i = 0; i < input.n_cols; ++i)
+      input.col(i) /= norm(input.col(i), 2);
   }
 
-  // run Local Coordinate Coding
-  LocalCoordinateCoding<> lcc(matX, nAtoms, lambda);
-
-  if (strlen(initialDictionaryFullpath) == 0)
+  // If there is an initial dictionary, be sure we do not initialize one.
+  if (initialDictionaryFile != "")
   {
-//    lcc.DataDependentRandomInitDictionary();
+    LocalCoordinateCoding<NothingInitializer> lcc(input, atoms, lambda);
+
+    // Load initial dictionary directly into LCC object.
+    data::Load(initialDictionaryFile, lcc.Dictionary(), true);
+
+    // Validate size of initial dictionary.
+    if (lcc.Dictionary().n_cols != atoms)
+    {
+      Log::Fatal << "The initial dictionary has " << lcc.Dictionary().n_cols
+          << " atoms, but the number of atoms was specified to be " << atoms
+          << "!" << endl;
+    }
+
+    if (lcc.Dictionary().n_rows != input.n_rows)
+    {
+      Log::Fatal << "The initial dictionary has " << lcc.Dictionary().n_rows
+          << " dimensions, but the data has " << input.n_rows << " dimensions!"
+          << endl;
+    }
+
+    // Run LCC.
+    Timer::Start("local_coordinate_coding");
+    lcc.Encode(maxIterations);
+    Timer::Stop("local_coordinate_coding");
+
+    // Save the results.
+    Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
+    data::Save(dictionaryFile, lcc.Dictionary());
+    Log::Info << "Saving sparse codes to '" << codesFile << "'.\n";
+    data::Save(codesFile, lcc.Codes());
   }
   else
   {
-    mat matInitialD;
-    matInitialD.load(initialDictionaryFullpath);
-    if (matInitialD.n_cols != nAtoms)
-    {
-      Log::Fatal << "The specified initial dictionary to load has "
-          << matInitialD.n_cols << " atoms, but the learned dictionary "
-          << "was specified to have " << nAtoms << " atoms!\n";
-    }
+    // No initial dictionary.
+    LocalCoordinateCoding<> lcc(input, atoms, lambda);
 
-    if (matInitialD.n_rows != matX.n_rows)
-    {
-      Log::Fatal << "The specified initial dictionary to load has "
-          << matInitialD.n_rows << " dimensions, but the specified data "
-          << "has " << matX.n_rows << " dimensions!\n";
-    }
+    // Run LCC.
+    Timer::Start("local_coordinate_coding");
+    lcc.Encode(maxIterations);
+    Timer::Stop("local_coordinate_coding");
 
-    lcc.Dictionary() = matInitialD;
-  }
-
-  Timer::Start("local_coordinate_coding");
-  lcc.Encode(nIterations);
-  Timer::Stop("local_coordinate_coding");
-
-  mat learnedD = lcc.Dictionary();
-  mat learnedZ = lcc.Codes();
-
-  if (strlen(resultsDir) == 0)
-  {
-    data::Save("D.csv", learnedD);
-    data::Save("Z.csv", learnedZ);
-  }
-  else
-  {
-    char* dataFullpath = (char*) malloc(320 * sizeof(char));
-
-    sprintf(dataFullpath, "%s/D.csv", resultsDir);
-    data::Save(dataFullpath, learnedD);
-
-    sprintf(dataFullpath, "%s/Z.csv", resultsDir);
-    data::Save(dataFullpath, learnedZ);
-
-    free(dataFullpath);
+    // Save the results.
+    Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
+    data::Save(dictionaryFile, lcc.Dictionary());
+    Log::Info << "Saving sparse codes to '" << codesFile << "'.\n";
+    data::Save(codesFile, lcc.Codes());
   }
 }
