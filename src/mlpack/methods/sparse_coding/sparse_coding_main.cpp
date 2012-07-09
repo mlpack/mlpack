@@ -114,16 +114,16 @@ int main(int argc, char* argv[])
     // Validate size of initial dictionary.
     if (sc.Dictionary().n_cols != atoms)
     {
-      Log::Fatal << "The specified initial dictionary to load has "
-          << sc.Dictionary().n_cols << " atoms, but the learned dictionary "
-          << "was specified to have " << atoms << " atoms!" << endl;
+      Log::Fatal << "The initial dictionary has " << sc.Dictionary().n_cols
+          << " atoms, but the number of atoms was specified to be " << atoms
+          << "!" << endl;
     }
 
     if (sc.Dictionary().n_rows != matX.n_rows)
     {
-      Log::Fatal << "The specified initial dictionary to load has "
-          << sc.Dictionary().n_rows << " dimensions, but the specified data "
-          << "has " << matX.n_rows << " dimensions!" << endl;
+      Log::Fatal << "The initial dictionary has " << sc.Dictionary().n_rows
+          << " dimensions, but the data has " << matX.n_rows << " dimensions!"
+          << endl;
     }
 
     // Run sparse coding.
