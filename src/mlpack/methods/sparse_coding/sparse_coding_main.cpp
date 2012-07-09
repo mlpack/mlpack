@@ -127,9 +127,7 @@ int main(int argc, char* argv[])
     }
 
     // Run sparse coding.
-    Timer::Start("sparse_coding");
     sc.Encode(maxIterations);
-    Timer::Stop("sparse_coding");
 
     // Save the results.
     Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
@@ -143,9 +141,7 @@ int main(int argc, char* argv[])
     SparseCoding<> sc(matX, atoms, lambda1, lambda2);
 
     // Run sparse coding.
-    Timer::Start("sparse_coding");
     sc.Encode(maxIterations);
-    Timer::Stop("sparse_coding");
 
     // Save the results.
     Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
