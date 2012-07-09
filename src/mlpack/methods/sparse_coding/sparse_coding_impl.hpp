@@ -34,6 +34,8 @@ void SparseCoding<DictionaryInitializer>::Encode(const size_t maxIterations,
                                                  const double objTolerance,
                                                  const double newtonTolerance)
 {
+  Timer::Start("sparse_coding");
+
   double lastObjVal = DBL_MAX;
 
   // Take the initial coding step, which has to happen before entering the main
@@ -81,6 +83,8 @@ void SparseCoding<DictionaryInitializer>::Encode(const size_t maxIterations,
 
     lastObjVal = curObjVal;
   }
+
+  Timer::Stop("sparse_coding");
 }
 
 template<typename DictionaryInitializer>
