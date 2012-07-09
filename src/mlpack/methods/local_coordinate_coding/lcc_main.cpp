@@ -127,9 +127,7 @@ int main(int argc, char* argv[])
     }
 
     // Run LCC.
-    Timer::Start("local_coordinate_coding");
     lcc.Encode(maxIterations);
-    Timer::Stop("local_coordinate_coding");
 
     // Save the results.
     Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
@@ -143,9 +141,7 @@ int main(int argc, char* argv[])
     LocalCoordinateCoding<> lcc(input, atoms, lambda);
 
     // Run LCC.
-    Timer::Start("local_coordinate_coding");
     lcc.Encode(maxIterations);
-    Timer::Stop("local_coordinate_coding");
 
     // Save the results.
     Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
