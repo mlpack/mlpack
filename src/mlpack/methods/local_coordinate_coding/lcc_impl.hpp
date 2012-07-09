@@ -33,6 +33,8 @@ template<typename DictionaryInitializer>
 void LocalCoordinateCoding<DictionaryInitializer>::Encode(
     const size_t maxIterations)
 {
+  Timer::Start("local_coordinate_coding");
+
   double lastObjVal = DBL_MAX;
 
   // Take the initial coding step, which has to happen before entering the main
@@ -89,6 +91,8 @@ void LocalCoordinateCoding<DictionaryInitializer>::Encode(
 
     lastObjVal = curObjVal;
   }
+
+  Timer::Stop("local_coordinate_coding");
 }
 
 template<typename DictionaryInitializer>
