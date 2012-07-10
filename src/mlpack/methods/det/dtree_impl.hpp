@@ -15,34 +15,19 @@
 namespace mlpack{
 namespace det {
 
-// This function computes the l2-error of a given node from the formula
-//   R(t) = -|t|^2 / (N^2 V_t).
+// This function computes the log-l2-negative-error of a given node from the
+// formula R(t) = log(|t|^2 / (N^2 V_t)).
 template<typename eT, typename cT>
-cT DTree<eT, cT>::ComputeNodeError_(size_t total_points)
+double DTree<eT, cT>::LogNegativeError(size_t total_points)
 {
-  size_t node_size = end_ - start_;
-
-  cT log_vol_t = 0;
-  for (size_t i = 0; i < max_vals_->n_elem; i++)
-    if ((*max_vals_)[i] - (*min_vals_)[i] > 0.0)
-      // Use log to prevent overflow.
-      log_vol_t += (cT) std::log((*max_vals_)[i] - (*min_vals_)[i]);
-
-  // Check for overflow -- if it doesn't work, try higher precision by default
-  // cT = long double, so if you can't work with that there is nothing else you
-  // can do - except computing error using log and dealing with everything in
-  // log form.
-  assert(std::exp(log_vol_t) > 0.0);
-
-  cT log_neg_error = 2 * std::log((cT) node_size / (cT) total_points)
-    - log_vol_t;
-
-  assert(std::exp(log_neg_error) > 0.0);
-
-  cT error = -1.0 * std::exp(log_neg_error);
+  // log(-|t|^2 / (N^2 V_t)) = log(-1) + 2 log(|t|) - 2 log(N) - log(V_t).
+  double error = 2 * std::log((double) (end_ - start_)) -
+                 2 * std::log((double) total_points);
+  for (size_t i = 0; i < max_vals_->n_elem; ++i)
+    error -= std::log((*max_vals_)[i] - (*min_vals_)[i]);
 
   return error;
-} // ComputeNodeError
+}
 
 // This function finds the best split with respect to the L2-error,
 // but trying all possible splits.  The dataset is the full data set but the
@@ -285,7 +270,7 @@ DTree<eT, cT>::DTree(VecType* max_vals,
     left_(NULL),
     right_(NULL)
 {
-  error_ = ComputeNodeError_(total_points);
+  error_ = -std::exp(LogNegativeError(total_points));
 
   bucket_tag_ = -1;
   root_ = true;
@@ -304,7 +289,7 @@ DTree<eT, cT>::DTree(MatType* data) :
 
   GetMaxMinVals_(data, max_vals_, min_vals_);
 
-  error_ = ComputeNodeError_(data->n_cols);
+  error_ = -std::exp(LogNegativeError(data->n_cols));
 
   bucket_tag_ = -1;
   root_ = true;
@@ -344,7 +329,7 @@ DTree<eT, cT>::DTree(VecType* max_vals,
     left_(NULL),
     right_(NULL)
 {
-  error_ = ComputeNodeError_(total_points);
+  error_ = -std::exp(LogNegativeError(total_points));
 
   bucket_tag_ = -1;
   root_ = false;

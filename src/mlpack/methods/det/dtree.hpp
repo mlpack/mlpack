@@ -31,6 +31,28 @@ namespace det /** Density Estimation Trees */ {
  * overflow, so you should use either normalize your data in the (-1, 1)
  * hypercube or use long double or modify this code to perform computations
  * using logarithms.
+ *
+ * A density estimation tree is similar to both a decision tree and a space
+ * partitioning tree (like a kd-tree).  Each leaf represents a constant-density
+ * hyper-rectangle.  The tree is constructed in such a way as to minimize the
+ * integrated square error between the probability distribution of the tree and
+ * the observed probability distribution of the data.  Because the tree is
+ * similar to a decision tree, the density estimation tree can provide very fast
+ * density estimates for a given point.
+ *
+ * For more information, see the following paper:
+ *
+ * @code
+ * @incollection{ram2011,
+ *   author = {Ram, Parikshit and Gray, Alexander G.},
+ *   title = {Density estimation trees},
+ *   booktitle = {{Proceedings of the 17th ACM SIGKDD International Conference
+ *       on Knowledge Discovery and Data Mining}},
+ *   series = {KDD '11},
+ *   year = {2011},
+ *   pages = {627--635}
+ * }
+ * @endcode
  */
 template<typename eT = float,
          typename cT = long double>
@@ -123,7 +145,7 @@ public:
   ////////////////////// Private Functions ////////////////////////////////////
  private:
 
-  cT ComputeNodeError_(size_t total_points);
+  double LogNegativeError(size_t total_points);
 
   bool FindSplit_(MatType* data,
                   size_t* split_dim,
