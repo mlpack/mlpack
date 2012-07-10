@@ -18,7 +18,7 @@ namespace det {
 // This function computes the log-l2-negative-error of a given node from the
 // formula R(t) = log(|t|^2 / (N^2 V_t)).
 template<typename eT, typename cT>
-double DTree<eT, cT>::LogNegativeError(size_t total_points)
+inline double DTree<eT, cT>::LogNegativeError(size_t total_points)
 {
   // log(-|t|^2 / (N^2 V_t)) = log(-1) + 2 log(|t|) - 2 log(N) - log(V_t).
   return 2 * std::log((double) (end_ - start_)) -

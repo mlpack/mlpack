@@ -145,7 +145,7 @@ public:
   ////////////////////// Private Functions ////////////////////////////////////
  private:
 
-  double LogNegativeError(size_t total_points);
+  inline double LogNegativeError(size_t total_points);
 
   bool FindSplit_(MatType* data,
                   size_t* split_dim,
