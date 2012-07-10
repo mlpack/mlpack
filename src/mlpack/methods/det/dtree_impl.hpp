@@ -21,12 +21,9 @@ template<typename eT, typename cT>
 double DTree<eT, cT>::LogNegativeError(size_t total_points)
 {
   // log(-|t|^2 / (N^2 V_t)) = log(-1) + 2 log(|t|) - 2 log(N) - log(V_t).
-  double error = 2 * std::log((double) (end_ - start_)) -
-                 2 * std::log((double) total_points);
-  for (size_t i = 0; i < max_vals_->n_elem; ++i)
-    error -= std::log((*max_vals_)[i] - (*min_vals_)[i]);
-
-  return error;
+  return 2 * std::log((double) (end_ - start_)) -
+         2 * std::log((double) total_points) -
+         arma::accu(arma::log((*max_vals_) - (*min_vals_)));
 }
 
 // This function finds the best split with respect to the L2-error,
