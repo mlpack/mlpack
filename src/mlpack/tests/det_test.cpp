@@ -65,8 +65,8 @@ BOOST_AUTO_TEST_CASE(TestComputeNodeError)
   *min_vals << 3 << 0 << 1;
 
   DTree<>* testDTree = new DTree<>(max_vals, min_vals, 5);
-  long double true_node_error = -1.0 * exp(-(long double) log((float) 4.0) 
-					   - (long double) log((float) 7.0) 
+  long double true_node_error = -1.0 * exp(-(long double) log((float) 4.0)
+					   - (long double) log((float) 7.0)
 					   - (long double) log((float) 7.0));
 
   BOOST_REQUIRE_CLOSE(testDTree->error_, true_node_error, 1e-10);
@@ -74,10 +74,10 @@ BOOST_AUTO_TEST_CASE(TestComputeNodeError)
   testDTree->start_ = 3;
   testDTree->end_ = 5;
 
-  long double node_error = testDTree->ComputeNodeError_(5);
-  true_node_error = -1.0 * exp(2 * log((long double) 2 / (long double) 5) 
-			       -(long double) log((float) 4.0) 
-			       - (long double) log((float) 7.0) 
+  long double node_error = -std::exp(testDTree->LogNegativeError(5));
+  true_node_error = -1.0 * exp(2 * log((long double) 2 / (long double) 5)
+			       -(long double) log((float) 4.0)
+			       - (long double) log((float) 7.0)
 			       - (long double) log((float) 7.0));
   BOOST_REQUIRE_CLOSE(node_error, true_node_error, 1e-10);
 
@@ -122,17 +122,17 @@ BOOST_AUTO_TEST_CASE(TestFindSplit)
 
   true_dim = 2;
   true_ind = 1;
-  true_left_error = -1.0 * exp(2 * log((long double) 2 
-				       / (long double) 5) 
-			       - ((long double) log((float) 7) 
+  true_left_error = -1.0 * exp(2 * log((long double) 2
+				       / (long double) 5)
+			       - ((long double) log((float) 7)
 				  + (long double) log((float) 4)
 				  + (long double) log((float) 4.5)));
-  true_right_error =  -1.0 * exp(2 * log((long double) 3 
-					 / (long double) 5) 
-				 - ((long double) log((float) 7) 
+  true_right_error =  -1.0 * exp(2 * log((long double) 3
+					 / (long double) 5)
+				 - ((long double) log((float) 7)
 				    + (long double) log((float) 4)
 				    + (long double) log((float) 2.5)));
-  
+
   BOOST_REQUIRE(testDTree->FindSplit_
 		(&test_data, &ob_dim, &ob_ind, &ob_left_error,
 		 &ob_right_error, 2, 1));
@@ -167,12 +167,12 @@ BOOST_AUTO_TEST_CASE(TestSplitData)
   true_rsplit_val = 6;
   true_split_val = (true_lsplit_val + true_rsplit_val) / 2;
 
-  testDTree->SplitData_(&test_data, split_dim, split_ind, 
-			&o_test, &ob_split_val, 
+  testDTree->SplitData_(&test_data, split_dim, split_ind,
+			&o_test, &ob_split_val,
 			&ob_lsplit_val, &ob_rsplit_val);
 
-  BOOST_REQUIRE(o_test[0] == 1 && o_test[1] == 4 
-		&& o_test[2] == 3 && o_test[3] == 2 
+  BOOST_REQUIRE(o_test[0] == 1 && o_test[1] == 4
+		&& o_test[2] == 3 && o_test[3] == 2
 		&& o_test[4] == 5);
 
   BOOST_REQUIRE(true_split_val == ob_split_val);
@@ -197,30 +197,30 @@ BOOST_AUTO_TEST_CASE(TestGrow)
 
   long double root_error, l_error, r_error, rl_error, rr_error;
 
-  root_error = -1.0 * exp(-(long double) log((float) 4.0) 
-			  - (long double) log((float) 7.0) 
+  root_error = -1.0 * exp(-(long double) log((float) 4.0)
+			  - (long double) log((float) 7.0)
 			  - (long double) log((float) 7.0));
 
-  l_error = -1.0 * exp(2 * log((long double) 2 
-			       / (long double) 5) 
-		       - ((long double) log((float) 7) 
+  l_error = -1.0 * exp(2 * log((long double) 2
+			       / (long double) 5)
+		       - ((long double) log((float) 7)
 			  + (long double) log((float) 4)
 			  + (long double) log((float) 4.5)));
-  r_error =  -1.0 * exp(2 * log((long double) 3 
-				/ (long double) 5) 
-			- ((long double) log((float) 7) 
+  r_error =  -1.0 * exp(2 * log((long double) 3
+				/ (long double) 5)
+			- ((long double) log((float) 7)
 			   + (long double) log((float) 4)
 			   + (long double) log((float) 2.5)));
 
-  rl_error = -1.0 * exp(2 * log((long double) 1 
-				/ (long double) 5) 
-			- ((long double) log((float) 0.5) 
+  rl_error = -1.0 * exp(2 * log((long double) 1
+				/ (long double) 5)
+			- ((long double) log((float) 0.5)
 			   + (long double) log((float) 4)
 			   + (long double) log((float) 2.5)));
 
-  rr_error = -1.0 * exp(2 * log((long double) 2 
-				/ (long double) 5) 
-			- ((long double) log((float) 6.5) 
+  rr_error = -1.0 * exp(2 * log((long double) 2
+				/ (long double) 5)
+			- ((long double) log((float) 6.5)
 			   + (long double) log((float) 4)
 			   + (long double) log((float) 2.5)));
 
@@ -284,8 +284,8 @@ BOOST_AUTO_TEST_CASE(TestPruneAndUpdate)
   BOOST_REQUIRE_CLOSE(alpha, numeric_limits<long double>::max(), 1e-10);
   BOOST_REQUIRE(testDTree->subtree_leaves() == 1);
 
-  long double root_error = -1.0 * exp(-(long double) log((float) 4.0) 
-				      - (long double) log((float) 7.0) 
+  long double root_error = -1.0 * exp(-(long double) log((float) 4.0)
+				      - (long double) log((float) 7.0)
 				      - (long double) log((float) 7.0));
 
   BOOST_REQUIRE_CLOSE(testDTree->error(), root_error, 1e-10);
@@ -319,15 +319,15 @@ BOOST_AUTO_TEST_CASE(TestComputeValue)
 				      false, 2, 1);
 
   long double d1, d2, d3;
-  d1 = ((long double) 2 / (long double) 5) 
+  d1 = ((long double) 2 / (long double) 5)
     / exp((long double) log((float) 4) + (long double) log((float) 7)
 	  + (long double) log((float) 4.5));
 
-  d2 = ((long double) 1 / (long double) 5) 
+  d2 = ((long double) 1 / (long double) 5)
     / exp((long double) log((float) 4) + (long double) log((float) 0.5)
 	  + (long double) log((float) 2.5));
 
-  d3 = ((long double) 2 / (long double) 5) 
+  d3 = ((long double) 2 / (long double) 5)
     / exp((long double) log((float) 4) + (long double) log((float) 6.5)
 	  + (long double) log((float) 2.5));
 
@@ -338,7 +338,7 @@ BOOST_AUTO_TEST_CASE(TestComputeValue)
 
   alpha = testDTree->PruneAndUpdate(alpha, false);
 
-  long double d = 1.0 
+  long double d = 1.0
     / exp((long double) log((float) 4) + (long double) log((float) 7)
 	  + (long double) log((float) 7));
 
@@ -360,30 +360,30 @@ BOOST_AUTO_TEST_CASE(TestVariableImportance)
 
   long double root_error, l_error, r_error, rl_error, rr_error;
 
-  root_error = -1.0 * exp(-(long double) log((float) 4.0) 
-			  - (long double) log((float) 7.0) 
+  root_error = -1.0 * exp(-(long double) log((float) 4.0)
+			  - (long double) log((float) 7.0)
 			  - (long double) log((float) 7.0));
 
-  l_error = -1.0 * exp(2 * log((long double) 2 
-			       / (long double) 5) 
-		       - ((long double) log((float) 7) 
+  l_error = -1.0 * exp(2 * log((long double) 2
+			       / (long double) 5)
+		       - ((long double) log((float) 7)
 			  + (long double) log((float) 4)
 			  + (long double) log((float) 4.5)));
-  r_error =  -1.0 * exp(2 * log((long double) 3 
-				/ (long double) 5) 
-			- ((long double) log((float) 7) 
+  r_error =  -1.0 * exp(2 * log((long double) 3
+				/ (long double) 5)
+			- ((long double) log((float) 7)
 			   + (long double) log((float) 4)
 			   + (long double) log((float) 2.5)));
 
-  rl_error = -1.0 * exp(2 * log((long double) 1 
-				/ (long double) 5) 
-			- ((long double) log((float) 0.5) 
+  rl_error = -1.0 * exp(2 * log((long double) 1
+				/ (long double) 5)
+			- ((long double) log((float) 0.5)
 			   + (long double) log((float) 4)
 			   + (long double) log((float) 2.5)));
 
-  rr_error = -1.0 * exp(2 * log((long double) 2 
-				/ (long double) 5) 
-			- ((long double) log((float) 6.5) 
+  rr_error = -1.0 * exp(2 * log((long double) 2
+				/ (long double) 5)
+			- ((long double) log((float) 6.5)
 			   + (long double) log((float) 4)
 			   + (long double) log((float) 2.5)));
 
