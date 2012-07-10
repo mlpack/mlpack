@@ -58,7 +58,7 @@ PARAM_STRING("codes_file", "Filename to save the output sparse codes to.", "c",
 PARAM_FLAG("normalize", "If set, the input data matrix will be normalized "
     "before coding.", "N");
 
-PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL) is used.", "s", 0);
+PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace arma;
 using namespace std;
