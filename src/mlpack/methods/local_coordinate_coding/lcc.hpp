@@ -46,6 +46,7 @@ namespace lcc {
  *
  * The papers are listed below.
  *
+ * @code
  * @incollection{NIPS2009_0719,
  *   title = {Nonlinear Learning using Local Coordinate Coding},
  *   author = {Kai Yu and Tong Zhang and Yihong Gong},
