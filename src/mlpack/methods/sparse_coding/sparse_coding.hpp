@@ -156,7 +156,7 @@ class SparseCoding
   /**
    * Compute the objective function.
    */
-  double Objective();
+  double Objective() const;
 
   //! Access the data.
   const arma::mat& Data() const { return data; }
