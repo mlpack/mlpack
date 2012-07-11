@@ -109,9 +109,9 @@ class LocalCoordinateCoding
   void OptimizeDictionary(arma::uvec adjacencies);
 
   /**
-   * Compute objective function
+   * Compute objective function given the list of adjacencies.
    */
-  double Objective(arma::uvec adjacencies);
+  double Objective(arma::uvec adjacencies) const;
 
   //! Access the data.
   const arma::mat& Data() const { return data; }

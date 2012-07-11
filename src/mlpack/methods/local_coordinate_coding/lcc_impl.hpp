@@ -291,7 +291,7 @@ void LocalCoordinateCoding<DictionaryInitializer>::OptimizeDictionary(
 
 template<typename DictionaryInitializer>
 double LocalCoordinateCoding<DictionaryInitializer>::Objective(
-    arma::uvec adjacencies)
+    arma::uvec adjacencies) const
 {
   double weightedL1NormZ = 0;
 
