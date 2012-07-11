@@ -69,7 +69,7 @@ class NMF
    *    the H vector has states that it needs to store.
    */
   NMF(const size_t maxIterations = 10000,
-      const double maxResidue = 1e-10,
+      const double maxResidue = 1e-5,
       const InitializeRule Initialize = InitializeRule(),
       const WUpdateRule WUpdate = WUpdateRule(),
       const HUpdateRule HUpdate = HUpdateRule());

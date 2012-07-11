@@ -26,13 +26,20 @@ PARAM_STRING_REQ("H_output_file", "File to save the calculated H matrix to.",
 PARAM_INT_REQ("rank", "Rank of the factorization.", "r");
 PARAM_INT("max_iterations", "Number of iterations before NMF terminates", 
     "m", 10000);
+PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 PARAM_DOUBLE("max_residue", "The maximum root mean square allowed below which "
-    "the program termiates", "e", 1e-10);
+    "the program termiates", "e", 1e-5);
 
 int main(int argc, char** argv)
 {
   // Parse commandline.
   CLI::ParseCommandLine(argc, argv);
+
+  // Initialize random seed.
+  if (CLI::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  else
+    math::RandomSeed((size_t) std::time(NULL));
 
   // Load input dataset.
   string inputFile = CLI::GetParam<string>("input_file");

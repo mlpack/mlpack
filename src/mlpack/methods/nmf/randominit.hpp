@@ -27,6 +27,7 @@ class RandomInitialization
                      const size_t& r)
   {
     // Simple inplementation. This can be left here.
+
     size_t n = V.n_rows;
     size_t m = V.n_cols;
   
