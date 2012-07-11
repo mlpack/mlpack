@@ -306,7 +306,7 @@ void SparseCoding<DictionaryInitializer>::ProjectDictionary()
 
 // Compute the objective function.
 template<typename DictionaryInitializer>
-double SparseCoding<DictionaryInitializer>::Objective()
+double SparseCoding<DictionaryInitializer>::Objective() const
 {
   double l11NormZ = sum(sum(abs(codes)));
   double froNormResidual = norm(data - (dictionary * codes), "fro");
