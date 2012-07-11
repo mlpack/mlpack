@@ -54,7 +54,7 @@ namespace det /** Density Estimation Trees */ {
  * }
  * @endcode
  */
-template<typename eT = float,
+template<typename eT = double,
          typename cT = long double>
 class DTree
 {
@@ -147,7 +147,7 @@ public:
 
   inline double LogNegativeError(size_t total_points);
 
-  bool FindSplit_(MatType* data,
+  bool FindSplit_(const arma::mat& data,
                   size_t* split_dim,
                   size_t* split_ind,
                   cT* left_error,
