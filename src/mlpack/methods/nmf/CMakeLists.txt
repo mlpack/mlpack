@@ -5,7 +5,9 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   mdistupdate.hpp
   mdivupdate.hpp
+  alsupdate.hpp
   randominit.hpp
+  randomacolinit.hpp
   nmf.hpp
   nmf_impl.hpp
 )
