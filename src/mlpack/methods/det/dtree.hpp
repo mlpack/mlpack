@@ -145,7 +145,7 @@ public:
   ////////////////////// Private Functions ////////////////////////////////////
  private:
 
-  inline double LogNegativeError(size_t total_points);
+  inline double LogNegativeError(const size_t total_points);
 
   bool FindSplit_(const arma::mat& data,
                   size_t* split_dim,
