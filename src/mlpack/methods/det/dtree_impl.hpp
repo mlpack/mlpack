@@ -11,7 +11,7 @@
 
 #include "dtree.hpp"
 
-namespace mlpack
+namespace mlpack {
 namespace det {
 
 // This function computes the log-l2-negative-error of a given node from the
@@ -164,8 +164,7 @@ bool DTree<eT, cT>::FindSplit_(const arma::mat& data,
   *right_error = -std::exp(*right_error);
 
   return some_split_found;
-} // end FindSplit_
-
+}
 
 template<typename eT, typename cT>
 void DTree<eT, cT>::SplitData_(MatType* data,
