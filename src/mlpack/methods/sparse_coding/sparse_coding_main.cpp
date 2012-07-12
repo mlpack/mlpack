@@ -60,6 +60,11 @@ PARAM_FLAG("normalize", "If set, the input data matrix will be normalized "
 
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
+PARAM_DOUBLE("objective_tolerance", "Tolerance for convergence of the objective"
+    " function.", "o", 0.01);
+PARAM_DOUBLE("newton_tolerance", "Tolerance for convergence of Newton method.",
+    "w", 1e-6);
+
 using namespace arma;
 using namespace std;
 using namespace mlpack;
@@ -88,6 +93,9 @@ int main(int argc, char* argv[])
   const size_t atoms = CLI::GetParam<int>("atoms");
 
   const bool normalize = CLI::HasParam("normalize");
+
+  const double objTolerance = CLI::GetParam<double>("objective_tolerance");
+  const double newtonTolerance = CLI::GetParam<double>("newton_tolerance");
 
   mat matX;
   data::Load(inputFile, matX, true);
@@ -127,7 +135,7 @@ int main(int argc, char* argv[])
     }
 
     // Run sparse coding.
-    sc.Encode(maxIterations);
+    sc.Encode(maxIterations, objTolerance, newtonTolerance);
 
     // Save the results.
     Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
@@ -141,7 +149,7 @@ int main(int argc, char* argv[])
     SparseCoding<> sc(matX, atoms, lambda1, lambda2);
 
     // Run sparse coding.
-    sc.Encode(maxIterations);
+    sc.Encode(maxIterations, objTolerance, newtonTolerance);
 
     // Save the results.
     Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
