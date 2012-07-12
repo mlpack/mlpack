@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(TestComputeNodeError)
   DTree<>* testDTree = new DTree<>(max_vals, min_vals, 5);
   double true_node_error = -1.0 * exp(-log(4.0) - log(7.0) - log(7.0));
 
-  BOOST_REQUIRE_CLOSE(testDTree->error_, true_node_error, 1e-10);
+  BOOST_REQUIRE_CLOSE((double) testDTree->error_, true_node_error, 1e-10);
 
   testDTree->start_ = 3;
   testDTree->end_ = 5;
@@ -184,7 +184,7 @@ BOOST_AUTO_TEST_CASE(TestGrow)
   arma::Col<size_t> o_test(5);
   o_test << 0 << 1 << 2 << 3 << 4;
 
-  double root_error, l_error, r_error, rl_error, rr_error;
+  long double root_error, l_error, r_error, rl_error, rr_error;
 
   root_error = -1.0 * exp(-log(4.0) - log(7.0) - log(7.0));
 
@@ -212,10 +212,9 @@ BOOST_AUTO_TEST_CASE(TestGrow)
   BOOST_REQUIRE(testDTree->subtree_leaves() == 3);
 
   BOOST_REQUIRE(testDTree->split_dim() == 2);
-  BOOST_REQUIRE_CLOSE(testDTree->split_value(), (float) 5.5, (float) 1e-5);
+  BOOST_REQUIRE_CLOSE(testDTree->split_value(), 5.5, 1e-5);
   BOOST_REQUIRE(testDTree->right()->split_dim() == 1);
-  BOOST_REQUIRE_CLOSE(testDTree->right()->split_value(),
-		      (float) 0.5, (float) 1e-5);
+  BOOST_REQUIRE_CLOSE(testDTree->right()->split_value(), 0.5, 1e-5);
 
   // test node errors for every node
   BOOST_REQUIRE_CLOSE(testDTree->error_, root_error, 1e-10);
@@ -285,7 +284,7 @@ BOOST_AUTO_TEST_CASE(TestComputeValue)
   long double alpha = testDTree->Grow(&test_data, &o_test,
 				      false, 2, 1);
 
-  double d1, d2, d3;
+  long double d1, d2, d3;
   d1 = (2.0 / 5.0) / exp(log(4.0) + log(7.0) + log(4.5));
   d2 = (1.0 / 5.0) / exp(log(4.0) + log(0.5) + log(2.5));
   d3 = (2.0 / 5.0) / exp(log(4.0) + log(6.5) + log(2.5));
