@@ -10,8 +10,6 @@
 // In case it hasn't been included yet.
 #include "lcc.hpp"
 
-#define OBJ_TOL 1e-2 // 1E-9
-
 namespace mlpack {
 namespace lcc {
 
@@ -31,7 +29,8 @@ LocalCoordinateCoding<DictionaryInitializer>::LocalCoordinateCoding(
 
 template<typename DictionaryInitializer>
 void LocalCoordinateCoding<DictionaryInitializer>::Encode(
-    const size_t maxIterations)
+    const size_t maxIterations,
+    const double objTolerance)
 {
   Timer::Start("local_coordinate_coding");
 
@@ -83,9 +82,9 @@ void LocalCoordinateCoding<DictionaryInitializer>::Encode(
     Log::Info << "Objective value: " << curObjVal << " (improvement "
         << std::scientific << improvement << ")." << std::endl;
 
-    if (improvement < OBJ_TOL)
+    if (improvement < objTolerance)
     {
-      Log::Info << "Converged within tolerance " << OBJ_TOL << ".\n";
+      Log::Info << "Converged within tolerance " << objTolerance << ".\n";
       break;
     }
 

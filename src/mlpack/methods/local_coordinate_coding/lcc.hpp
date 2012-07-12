@@ -90,9 +90,13 @@ class LocalCoordinateCoding
   /**
    * Run local coordinate coding.
    *
-   * @param nIterations Maximum number of iterations to run algorithm
+   * @param nIterations Maximum number of iterations to run algorithm.
+   * @param objTolerance Tolerance of objective function.  When the objective
+   *     function changes by a value lower than this tolerance, the optimization
+   *     terminates.
    */
-  void Encode(const size_t maxIterations = 0);
+  void Encode(const size_t maxIterations = 0,
+              const double objTolerance = 0.01);
 
   /**
    * Code each point via distance-weighted LARS.
