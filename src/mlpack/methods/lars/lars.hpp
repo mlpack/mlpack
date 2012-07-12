@@ -148,6 +148,9 @@ class LARS
   //! the last element.
   const std::vector<double>& LambdaPath() const { return lambdaPath; }
 
+  //! Access the upper triangular cholesky factor
+  const arma::mat& MatUtriCholFactor() const { return matUtriCholFactor; }
+  
 private:
   //! Gram matrix.
   arma::mat matGramInternal;
