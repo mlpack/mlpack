@@ -7,7 +7,7 @@ set(SOURCES
   mdivupdate.hpp
   alsupdate.hpp
   randominit.hpp
-  randomacolinit.hpp
+#  randomacolinit.hpp
   nmf.hpp
   nmf_impl.hpp
 )
