@@ -215,6 +215,7 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
     arma::mat hessian = -(-2 * (matAInvZXT * trans(matAInvZXT)) % inv(A));
 
     arma::vec searchDirection = -solve(hessian, gradient);
+    //printf("%e\n", norm(searchDirection, 2));
 
     // Armijo line search.
     const double c = 1e-4;
@@ -286,6 +287,7 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
       }
     }
   }
+  //printf("final reconstruction error: %e\n", norm(data - dictionary * codes, "fro"));
 }
 
 // Project each atom of the dictionary back into the unit ball (if necessary).
