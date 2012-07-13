@@ -17,11 +17,11 @@ namespace det {
 // This function computes the log-l2-negative-error of a given node from the
 // formula R(t) = log(|t|^2 / (N^2 V_t)).
 template<typename eT, typename cT>
-inline double DTree<eT, cT>::LogNegativeError(const size_t total_points)
+inline double DTree<eT, cT>::LogNegativeError(const size_t totalPoints) const
 {
   // log(-|t|^2 / (N^2 V_t)) = log(-1) + 2 log(|t|) - 2 log(N) - log(V_t).
   return 2 * std::log((double) (end_ - start_)) -
-         2 * std::log((double) total_points) -
+         2 * std::log((double) totalPoints) -
          arma::accu(arma::log((*max_vals_) - (*min_vals_)));
 }
 
@@ -29,24 +29,23 @@ inline double DTree<eT, cT>::LogNegativeError(const size_t total_points)
 // all possible splits.  The dataset is the full data set but the start_ and
 // end_ are used to obtain the point in this node.
 template<typename eT, typename cT>
-bool DTree<eT, cT>::FindSplit_(const arma::mat& data,
-                               size_t *split_dim,
-                               size_t *split_ind,
-                               cT *left_error,
-                               cT *right_error,
-                               size_t maxLeafSize,
-                               size_t minLeafSize)
+bool DTree<eT, cT>::FindSplit(const arma::mat& data,
+                              size_t& splitDim,
+                              size_t& splitIndex,
+                              double& leftError,
+                              double& rightError,
+                              const size_t maxLeafSize,
+                              const size_t minLeafSize) const
 {
   // Ensure the dimensionality of the data is the same as the dimensionality of
   // the bounding rectangle.
   assert(data.n_rows == max_vals_->n_elem);
   assert(data.n_rows == min_vals_->n_elem);
 
-  const size_t n_t = end_ - start_;
+  const size_t points = end_ - start_;
 
-  double min_error = std::log(-error_);
-  bool some_split_found = false;
-  size_t point_mass_in_dim = 0;
+  double minError = std::log(-error_);
+  bool splitFound = false;
 
   // Loop through each dimension.
   for (size_t dim = 0; dim < max_vals_->n_elem; dim++)
@@ -58,50 +57,42 @@ bool DTree<eT, cT>::FindSplit_(const arma::mat& data,
 
     // If there is nothing to split in this dimension, move on.
     if (max - min == 0.0)
-    {
-      ++point_mass_in_dim;
       continue; // Skip to next dimension.
-    }
 
     // Initializing all the stuff for this dimension.
-    bool dim_split_found = false;
+    bool dimSplitFound = false;
     // Take an error estimate for this dimension.
-    double min_dim_error = n_t / (max - min);
-    double temp_lval = 0.0;
-    double temp_rval = 0.0;
-    size_t dim_split_ind = -1;
+    double minDimError = points / (max - min);
+    double dimLeftError = 0.0;
+    double dimRightError = 0.0;
+    size_t dimSplitIndex = -1;
 
     // Find the log volume of all the other dimensions.
-    double log_range_all_not_dim = 0;
+    double volumeWithoutDim = 0;
     for (size_t i = 0; i < max_vals_->n_elem; ++i)
     {
       if (((*max_vals_)[i] - (*min_vals_)[i] > 0.0) && (i != dim))
       {
-        log_range_all_not_dim += std::log((*max_vals_)[i] - (*min_vals_)[i]);
+        volumeWithoutDim += std::log((*max_vals_)[i] - (*min_vals_)[i]);
       }
     }
 
     // Get the values for the dimension.
-    arma::rowvec dim_val_vec = data.row(dim).subvec(start_, end_ - 1);
+    arma::rowvec dimVec = data.row(dim).subvec(start_, end_ - 1);
 
     // Sort the values in ascending order.
-    dim_val_vec = arma::sort(dim_val_vec);
+    dimVec = arma::sort(dimVec);
 
     // Get ready to go through the sorted list and compute error.
-    assert(dim_val_vec.n_elem > maxLeafSize);
-
-    // Enforce that the leaves have a minimum number of points to avoid
-    // spikes.  One way of doing this is to only consider splits resulting in
-    // sizes > some constant (minLeafSize).
-    size_t right_child_size;
+    assert(dimVec.n_elem > maxLeafSize);
 
     // Find the best split for this dimension.  We need to figure out why
     // there are spikes if this min_leaf_size is enforced here...
-    for (size_t i = minLeafSize - 1; i < dim_val_vec.n_elem - minLeafSize; ++i)
+    for (size_t i = minLeafSize - 1; i < dimVec.n_elem - minLeafSize; ++i)
     {
       double split;
-      double lsplit = dim_val_vec[i];
-      double rsplit = dim_val_vec[i + 1];
+      double lsplit = dimVec[i];
+      double rsplit = dimVec[i + 1];
 
       if (lsplit == rsplit)
         continue; // We can't split here.
@@ -114,56 +105,57 @@ bool DTree<eT, cT>::FindSplit_(const arma::mat& data,
       //   split = left_split;
       if ((split - min > 0.0) && (max - split > 0.0))
       {
+        // Ensure that the right node will have at least the minimum number of
+        // points.
+        Log::Assert((points - i - 1) >= minLeafSize);
+
         // Now we have to see if the error will be reduced.  Simple manipulation
         // of the error function gives us the condition we must satisfy:
         //   |t_l|^2 / V_l + |t_r|^2 / V_r  >= |t|^2 / (V_l + V_r)
         // and because the volume is only dependent on the dimension we are
         // splitting, we can assume V_l is just the range of the left and V_r is
         // just the range of the right.
-        right_child_size = n_t - i - 1;
-        Log::Assert(right_child_size >= minLeafSize);
-
         double negLeftError = std::pow(i + 1, 2.0) / (split - min);
-        double negRightError = std::pow(n_t - i - 1, 2.0) / (max - split);
+        double negRightError = std::pow(points - i - 1, 2.0) / (max - split);
 
         // If this is better, take it.
-        if ((negLeftError + negRightError) >= min_dim_error)
+        if ((negLeftError + negRightError) >= minDimError)
         {
-          min_dim_error = negLeftError + negRightError;
-          temp_lval = negLeftError;
-          temp_rval = negRightError;
-          dim_split_ind = i;
-          dim_split_found = true;
+          minDimError = negLeftError + negRightError;
+          dimLeftError = negLeftError;
+          dimRightError = negRightError;
+          dimSplitIndex = i;
+          dimSplitFound = true;
         }
       }
     }
 
-    dim_val_vec.clear();
+    dimVec.clear();
 
-    double actualMinDimError = std::log(min_dim_error) -
-        2 * std::log(data.n_cols) - log_range_all_not_dim;
+    double actualMinDimError = std::log(minDimError) - 2 * std::log(data.n_cols)
+        - volumeWithoutDim;
 
-    if ((actualMinDimError > min_error) && dim_split_found)
+    if ((actualMinDimError > minError) && dimSplitFound)
     {
       // Calculate actual error (in logspace) by adding terms back to our
       // estimate.
-      min_error = actualMinDimError;
-      *split_dim = dim;
-      *split_ind = dim_split_ind;
-      *left_error = std::log(temp_lval) - 2 * std::log(data.n_cols) -
-          log_range_all_not_dim;
-      *right_error = std::log(temp_rval) - 2 * std::log(data.n_cols) -
-          log_range_all_not_dim;
-      some_split_found = true;
+      minError = actualMinDimError;
+      splitDim = dim;
+      splitIndex = dimSplitIndex;
+      leftError = std::log(dimLeftError) - 2 * std::log(data.n_cols) -
+          volumeWithoutDim;
+      rightError = std::log(dimRightError) - 2 * std::log(data.n_cols) -
+          volumeWithoutDim;
+      splitFound = true;
     } // end if better split found in this dimension.
   }
 
   // Map out of logspace.
-  min_error = -std::exp(min_error);
-  *left_error = -std::exp(*left_error);
-  *right_error = -std::exp(*right_error);
+  minError = -std::exp(minError);
+  leftError = -std::exp(leftError);
+  rightError = -std::exp(rightError);
 
-  return some_split_found;
+  return splitFound;
 }
 
 template<typename eT, typename cT>
@@ -176,13 +168,13 @@ void DTree<eT, cT>::SplitData_(MatType* data,
                                eT *rsplit_val)
 {
   // Get the values for the split dimension.
-  RowVecType dim_val_vec = data->row(split_dim).subvec(start_, end_ - 1);
+  RowVecType dimVec = data->row(split_dim).subvec(start_, end_ - 1);
 
   // Sort the values.
-  dim_val_vec = arma::sort(dim_val_vec);
+  dimVec = arma::sort(dimVec);
 
-  *lsplit_val = dim_val_vec[split_ind];
-  *rsplit_val = dim_val_vec[split_ind + 1];
+  *lsplit_val = dimVec[split_ind];
+  *rsplit_val = dimVec[split_ind + 1];
   *split_val = (*lsplit_val + *rsplit_val) / 2 ;
 
   std::vector<bool> left_membership;
@@ -380,9 +372,9 @@ cT DTree<eT, cT>::Grow(MatType* data,
 
     // Find the split.
     size_t dim, split_ind;
-    cT left_error, right_error;
-    if (FindSplit_(*data, &dim, &split_ind, &left_error, &right_error,
-        maxLeafSize, minLeafSize))
+    double left_error, right_error;
+    if (FindSplit(*data, dim, split_ind, left_error, right_error, maxLeafSize,
+        minLeafSize))
     {
       // Move the data around for the children to have points in a node lie
       // contiguously (to increase efficiency during the training).
@@ -405,9 +397,9 @@ cT DTree<eT, cT>::Grow(MatType* data,
 
       // Recursively grow the children.
       left_ = new DTree(max_vals_l, min_vals_l, start_, start_ + split_ind + 1,
-          left_error);
+          (cT) left_error);
       right_ = new DTree(max_vals_r, min_vals_r, start_ + split_ind + 1, end_,
-          right_error);
+          (cT) right_error);
 
       left_g = left_->Grow(data, old_from_new, useVolReg, maxLeafSize,
           minLeafSize);
