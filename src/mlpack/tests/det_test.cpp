@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(TestFindSplit)
   DTree<>* testDTree = new DTree<>(&test_data);
 
   size_t ob_dim, true_dim, ob_ind, true_ind;
-  long double true_left_error, ob_left_error, true_right_error, ob_right_error;
+  double true_left_error, ob_left_error, true_right_error, ob_right_error;
 
   true_dim = 2;
   true_ind = 1;
@@ -122,9 +122,8 @@ BOOST_AUTO_TEST_CASE(TestFindSplit)
   true_right_error = -1.0 * exp(2 * log(3.0 / 5.0) - (log(7.0) + log(4.0) +
       log(2.5)));
 
-  BOOST_REQUIRE(testDTree->FindSplit_
-		(test_data, &ob_dim, &ob_ind, &ob_left_error,
-		 &ob_right_error, 2, 1));
+  BOOST_REQUIRE(testDTree->FindSplit(test_data, ob_dim, ob_ind, ob_left_error,
+      ob_right_error, 2, 1));
 
   BOOST_REQUIRE(true_dim == ob_dim);
   BOOST_REQUIRE(true_ind == ob_ind);
