@@ -145,15 +145,15 @@ public:
   ////////////////////// Private Functions ////////////////////////////////////
  private:
 
-  inline double LogNegativeError(const size_t total_points);
+  inline double LogNegativeError(const size_t total_points) const;
 
-  bool FindSplit_(const arma::mat& data,
-                  size_t* split_dim,
-                  size_t* split_ind,
-                  cT* left_error,
-                  cT* right_error,
-                  size_t maxLeafSize = 10,
-                  size_t minLeafSize = 5);
+  bool FindSplit(const arma::mat& data,
+                 size_t& split_dim,
+                 size_t& split_ind,
+                 double& left_error,
+                 double& right_error,
+                 const size_t maxLeafSize = 10,
+                 const size_t minLeafSize = 5) const;
 
   void SplitData_(MatType* data,
                   size_t split_dim,
