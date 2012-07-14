@@ -88,11 +88,11 @@ find_package_handle_standard_args(Armadillo
 #  VERSION_VAR ARMADILLO_VERSION_STRING)
 # version_var fails with cmake < 2.8.4.
 
-if ("${ARMADILLO_VERSION_STRING}" VERSION_GREATER "${Armadillo_FIND_VERSION}")
-  message(STATUS "Found Armadillo version ${ARMADILLO_VERSION_STRING} (required ${Armadillo_FIND_VERSION}).")
-else ("${ARMADILLO_VERSION_STRING}" VERSION_GREATER "${Armadillo_FIND_VERSION}")
+if ("${ARMADILLO_VERSION_STRING}" VERSION_LESS "${Armadillo_FIND_VERSION}")
   message(FATAL_ERROR "Armadillo version ${Armadillo_FIND_VERSION} required (found ${ARMADILLO_VERSION_STRING}).")
-endif ("${ARMADILLO_VERSION_STRING}" VERSION_GREATER "${Armadillo_FIND_VERSION}")
+else ("${ARMADILLO_VERSION_STRING}" VERSION_LESS "${Armadillo_FIND_VERSION}")
+  message(STATUS "Found Armadillo version ${ARMADILLO_VERSION_STRING} (required ${Armadillo_FIND_VERSION}).")
+endif ("${ARMADILLO_VERSION_STRING}" VERSION_LESS "${Armadillo_FIND_VERSION}")
 
 
 if (ARMADILLO_FOUND)
