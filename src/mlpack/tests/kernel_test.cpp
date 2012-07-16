@@ -14,6 +14,7 @@
 #include <mlpack/core/kernels/linear_kernel.hpp>
 #include <mlpack/core/kernels/polynomial_kernel.hpp>
 #include <mlpack/core/kernels/spherical_kernel.hpp>
+#include <mlpack/core/kernels/pspectrum_string_kernel.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/metrics/mahalanobis_distance.hpp>
 
@@ -342,6 +343,220 @@ BOOST_AUTO_TEST_CASE(laplacian_kernel)
   LaplacianKernel lk(1.0);
   BOOST_REQUIRE_CLOSE(lk.Evaluate(a, b), 0.243116734, 5e-5);
   BOOST_REQUIRE_CLOSE(lk.Evaluate(b, a), 0.243116734, 5e-5);
+}
+
+// Ensure that the p-spectrum kernel successfully extracts all length-p
+// substrings from the data.
+BOOST_AUTO_TEST_CASE(PSpectrumSubstringExtractionTest)
+{
+  std::vector<std::vector<std::string> > datasets;
+
+  datasets.push_back(std::vector<std::string>());
+
+  datasets[0].push_back("herpgle");
+  datasets[0].push_back("herpagkle");
+  datasets[0].push_back("klunktor");
+  datasets[0].push_back("flibbynopple");
+
+  datasets.push_back(std::vector<std::string>());
+
+  datasets[1].push_back("floggy3245");
+  datasets[1].push_back("flippydopflip");
+  datasets[1].push_back("stupid fricking cat");
+  datasets[1].push_back("food time isn't until later");
+  datasets[1].push_back("leave me alone until 6:00");
+  datasets[1].push_back("only after that do you get any food.");
+  datasets[1].push_back("obloblobloblobloblobloblob");
+
+  PSpectrumStringKernel p(datasets, 3);
+
+  // Ensure the sizes are correct.
+  BOOST_REQUIRE_EQUAL(p.Counts().size(), 2);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0].size(), 4);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1].size(), 7);
+
+  // herpgle: her, erp, rpg, pgl, gle
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][0].size(), 5);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][0]["her"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][0]["erp"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][0]["rpg"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][0]["pgl"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][0]["gle"], 1);
+
+  // herpagkle: her, erp, rpa, pag, agk, gkl, kle
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][1].size(), 7);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][1]["her"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][1]["erp"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][1]["rpa"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][1]["pag"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][1]["agk"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][1]["gkl"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][1]["kle"], 1);
+
+  // klunktor: klu, lun, unk, nkt, kto, tor
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][2].size(), 6);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][2]["klu"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][2]["lun"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][2]["unk"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][2]["nkt"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][2]["kto"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][2]["tor"], 1);
+
+  // flibbynopple: fli lib ibb bby byn yno nop opp ppl ple
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][3].size(), 10);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][3]["fli"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][3]["lib"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][3]["ibb"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][3]["bby"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][3]["byn"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][3]["yno"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][3]["nop"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][3]["opp"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][3]["ppl"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[0][3]["ple"], 1);
+
+  // floggy3245: flo log ogg ggy gy3 y32 324 245
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][0].size(), 8);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][0]["flo"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][0]["log"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][0]["ogg"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][0]["ggy"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][0]["gy3"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][0]["y32"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][0]["324"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][0]["245"], 1);
+
+  // flippydopflip: fli lip ipp ppy pyd ydo dop opf pfl fli lip
+  // fli(2) lip(2) ipp ppy pyd ydo dop opf pfl
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][1].size(), 9);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][1]["fli"], 2);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][1]["lip"], 2);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][1]["ipp"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][1]["ppy"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][1]["pyd"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][1]["ydo"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][1]["dop"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][1]["opf"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][1]["pfl"], 1);
+
+  // stupid fricking cat: stu tup upi pid fri ric ick cki kin ing cat
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][2].size(), 11);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][2]["stu"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][2]["tup"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][2]["upi"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][2]["pid"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][2]["fri"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][2]["ric"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][2]["ick"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][2]["cki"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][2]["kin"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][2]["ing"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][2]["cat"], 1);
+
+  // food time isn't until later: foo ood tim ime isn unt nti til lat ate ter
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][3].size(), 11);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][3]["foo"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][3]["ood"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][3]["tim"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][3]["ime"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][3]["isn"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][3]["unt"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][3]["nti"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][3]["til"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][3]["lat"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][3]["ate"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][3]["ter"], 1);
+
+  // leave me alone until 6:00: lea eav ave alo lon one unt nti til
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][4].size(), 9);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][4]["lea"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][4]["eav"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][4]["ave"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][4]["alo"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][4]["lon"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][4]["one"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][4]["unt"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][4]["nti"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][4]["til"], 1);
+
+  // only after that do you get any food.:
+  // onl nly aft fte ter tha hat you get any foo ood
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][5].size(), 12);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][5]["onl"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][5]["nly"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][5]["aft"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][5]["fte"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][5]["ter"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][5]["tha"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][5]["hat"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][5]["you"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][5]["get"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][5]["any"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][5]["foo"], 1);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][5]["ood"], 1);
+
+  // obloblobloblobloblobloblob: obl(8) blo(8) lob(8)
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][6].size(), 3);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][6]["obl"], 8);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][6]["blo"], 8);
+  BOOST_REQUIRE_EQUAL(p.Counts()[1][6]["lob"], 8);
+}
+
+BOOST_AUTO_TEST_CASE(PSpectrumStringEvaluateTest)
+{
+  // Construct simple dataset.
+  std::vector<std::vector<std::string> > dataset;
+  dataset.push_back(std::vector<std::string>());
+  dataset[0].push_back("hello");
+  dataset[0].push_back("jello");
+  dataset[0].push_back("mellow");
+  dataset[0].push_back("mellow jello");
+
+  PSpectrumStringKernel p(dataset, 3);
+
+  arma::vec a("0 0");
+  arma::vec b("0 0");
+
+  BOOST_REQUIRE_CLOSE(p.Evaluate(a, b), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(p.Evaluate(b, a), 3.0, 1e-5);
+
+  b = "0 1";
+  BOOST_REQUIRE_CLOSE(p.Evaluate(a, b), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(p.Evaluate(b, a), 2.0, 1e-5);
+
+  b = "0 2";
+  BOOST_REQUIRE_CLOSE(p.Evaluate(a, b), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(p.Evaluate(b, a), 2.0, 1e-5);
+
+  b = "0 3";
+  BOOST_REQUIRE_CLOSE(p.Evaluate(a, b), 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(p.Evaluate(b, a), 4.0, 1e-5);
+
+  a = "0 1";
+  b = "0 1";
+  BOOST_REQUIRE_CLOSE(p.Evaluate(a, b), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(p.Evaluate(b, a), 3.0, 1e-5);
+
+  b = "0 2";
+  BOOST_REQUIRE_CLOSE(p.Evaluate(a, b), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(p.Evaluate(b, a), 2.0, 1e-5);
+
+  b = "0 3";
+  BOOST_REQUIRE_CLOSE(p.Evaluate(a, b), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(p.Evaluate(b, a), 5.0, 1e-5);
+
+  a = "0 2";
+  b = "0 2";
+  BOOST_REQUIRE_CLOSE(p.Evaluate(a, b), 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(p.Evaluate(b, a), 4.0, 1e-5);
+
+  b = "0 3";
+  BOOST_REQUIRE_CLOSE(p.Evaluate(a, b), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(p.Evaluate(b, a), 6.0, 1e-5);
+
+  a = "0 3";
+  BOOST_REQUIRE_CLOSE(p.Evaluate(a, b), 11.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(p.Evaluate(b, a), 11.0, 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
