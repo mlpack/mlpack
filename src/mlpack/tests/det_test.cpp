@@ -54,20 +54,18 @@ BOOST_AUTO_TEST_CASE(TestComputeNodeError)
   arma::vec maxVals("7 7 8");
   arma::vec minVals("3 0 1");
 
-  DTree<>* testDTree = new DTree<>(maxVals, minVals, 5);
+  DTree<> testDTree(maxVals, minVals, 5);
   double true_node_error = -1.0 * exp(-log(4.0) - log(7.0) - log(7.0));
 
-  BOOST_REQUIRE_CLOSE((double) testDTree->error_, true_node_error, 1e-10);
+  BOOST_REQUIRE_CLOSE((double) testDTree.error_, true_node_error, 1e-10);
 
-  testDTree->start_ = 3;
-  testDTree->end_ = 5;
+  testDTree.start_ = 3;
+  testDTree.end_ = 5;
 
-  double node_error = -std::exp(testDTree->LogNegativeError(5));
+  double node_error = -std::exp(testDTree.LogNegativeError(5));
   true_node_error = -1.0 * exp(2 * log(2.0 / 5.0) - log(4.0) - log(7.0) -
       log(7.0));
   BOOST_REQUIRE_CLOSE(node_error, true_node_error, 1e-10);
-
-  delete testDTree;
 }
 
 BOOST_AUTO_TEST_CASE(TestWithinRange)
