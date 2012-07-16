@@ -200,20 +200,17 @@ DTree<eT, cT>::DTree() :
 template<typename eT, typename cT>
 DTree<eT, cT>::DTree(const arma::vec& maxVals,
                      const arma::vec& minVals,
-                     size_t total_points) :
+                     const size_t totalPoints) :
     start_(0),
-    end_(total_points),
+    end_(totalPoints),
+    root_(true),
     maxVals(maxVals),
     minVals(minVals),
+    error_(-std::exp(LogNegativeError(totalPoints))),
+    bucket_tag_(-1),
     left_(NULL),
     right_(NULL)
-{
-  error_ = -std::exp(LogNegativeError(total_points));
-
-  bucket_tag_ = -1;
-  root_ = true;
-}
-
+{ /* Nothing to do. */ }
 
 template<typename eT, typename cT>
 DTree<eT, cT>::DTree(arma::mat& data) :
@@ -223,7 +220,7 @@ DTree<eT, cT>::DTree(arma::mat& data) :
     right_(NULL)
 {
   maxVals.set_size(data.n_rows);
-  minVals.set_size(data.n_cols);
+  minVals.set_size(data.n_rows);
 
   // Initialize to first column; values will be overwritten if necessary.
   maxVals = data.col(0);
@@ -252,41 +249,36 @@ DTree<eT, cT>::DTree(arma::mat& data) :
 template<typename eT, typename cT>
 DTree<eT, cT>::DTree(const arma::vec& maxVals,
                      const arma::vec& minVals,
-                     size_t start,
-                     size_t end,
-                     cT error) :
+                     const size_t start,
+                     const size_t end,
+                     const double error) :
     start_(start),
     end_(end),
-    error_(error),
     maxVals(maxVals),
     minVals(minVals),
+    error_(error),
+    root_(false),
+    bucket_tag_(-1),
     left_(NULL),
     right_(NULL)
-{
-  bucket_tag_ = -1;
-  root_ = false;
-}
-
+{ /* Nothing to do. */ }
 
 template<typename eT, typename cT>
 DTree<eT, cT>::DTree(const arma::vec& maxVals,
                      const arma::vec& minVals,
-                     size_t total_points,
-                     size_t start,
-                     size_t end) :
+                     const size_t totalPoints,
+                     const size_t start,
+                     const size_t end) :
     start_(start),
     end_(end),
     maxVals(maxVals),
     minVals(minVals),
+    error_(-std::exp(LogNegativeError(totalPoints))),
+    root_(false),
+    bucket_tag_(-1),
     left_(NULL),
     right_(NULL)
-{
-  error_ = -std::exp(LogNegativeError(total_points));
-
-  bucket_tag_ = -1;
-  root_ = false;
-}
-
+{ /* Nothing to do. */ }
 
 template<typename eT, typename cT>
 DTree<eT, cT>::~DTree()
@@ -355,10 +347,8 @@ cT DTree<eT, cT>::Grow(MatType* data,
       split_dim_ = dim;
 
       // Recursively grow the children.
-      left_ = new DTree(max_vals_l, min_vals_l, start_, splitIndex,
-          (cT) left_error);
-      right_ = new DTree(max_vals_r, min_vals_r, splitIndex, end_,
-          (cT) right_error);
+      left_ = new DTree(max_vals_l, min_vals_l, start_, splitIndex, left_error);
+      right_ = new DTree(max_vals_r, min_vals_r, splitIndex, end_, right_error);
 
       left_g = left_->Grow(data, old_from_new, useVolReg, maxLeafSize,
           minLeafSize);
@@ -508,10 +498,10 @@ cT DTree<eT, cT>::PruneAndUpdate(cT old_alpha, bool useVolReg)
 // Future improvement: Open up the range with epsilons on both sides where
 // epsilon depends on the density near the boundary.
 template<typename eT, typename cT>
-bool DTree<eT, cT>::WithinRange_(VecType* query)
+inline bool DTree<eT, cT>::WithinRange(const arma::vec& query) const
 {
-  for (size_t i = 0; i < query->n_elem; ++i)
-    if (((*query)[i] < minVals[i]) || ((*query)[i] > maxVals[i]))
+  for (size_t i = 0; i < query.n_elem; ++i)
+    if ((query[i] < minVals[i]) || (query[i] > maxVals[i]))
       return false;
 
   return true;
@@ -525,7 +515,7 @@ cT DTree<eT, cT>::ComputeValue(VecType* query)
 
   if (root_ == 1) // If we are the root...
     // Check if the query is within range.
-    if (!WithinRange_(query))
+    if (!WithinRange(*query))
       return 0.0;
 
   if (subtree_leaves_ == 1)  // If we are a leaf...

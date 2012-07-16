@@ -71,6 +71,11 @@ class DTree
   // maps the points back to their original indices.
   size_t start_, end_;
 
+  // since we are using uniform density, we need
+  // the max and min of every dimension for every node
+  arma::vec maxVals;
+  arma::vec minVals;
+
   // The split dim for this node
   size_t split_dim_;
 
@@ -101,11 +106,6 @@ class DTree
   // sum of the reciprocal of the inverse v_ts
   // the leaves of this subtree
   cT subtree_leaves_v_t_inv_;
-
-  // since we are using uniform density, we need
-  // the max and min of every dimension for every node
-  arma::vec maxVals;
-  arma::vec minVals;
 
   // the tag for the leaf used for hashing points
   int bucket_tag_;
@@ -160,7 +160,7 @@ public:
                    const double splitValue,
                    arma::Col<size_t>& oldFromNew) const;
 
-  bool WithinRange_(VecType* query);
+  inline bool WithinRange(const arma::vec& query) const;
 
   ///////////////////// Public Functions //////////////////////////////////////
  public:
@@ -172,7 +172,7 @@ public:
   // it contains instead of just the data.
   DTree(const arma::vec& maxVals,
         const arma::vec& minVals,
-        size_t total_points);
+        const size_t totalPoints);
 
   // Root node initializer
   // with the data, no bounding box.
@@ -181,9 +181,9 @@ public:
   // Non-root node initializers
   DTree(const arma::vec& max_vals,
         const arma::vec& min_vals,
-        size_t start,
-        size_t end,
-        cT error);
+        const size_t start,
+        const size_t end,
+        const double error);
 
   DTree(const arma::vec& max_vals,
         const arma::vec& min_vals,
