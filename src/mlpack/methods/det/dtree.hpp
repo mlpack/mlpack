@@ -179,29 +179,29 @@ public:
   DTree(arma::mat& data);
 
   // Non-root node initializers
-  DTree(const arma::vec& max_vals,
-        const arma::vec& min_vals,
+  DTree(const arma::vec& maxVals,
+        const arma::vec& minVals,
         const size_t start,
         const size_t end,
         const double error);
 
-  DTree(const arma::vec& max_vals,
-        const arma::vec& min_vals,
-        size_t total_points,
-        size_t start,
-        size_t end);
+  DTree(const arma::vec& maxVals,
+        const arma::vec& minVals,
+        const size_t totalPoints,
+        const size_t start,
+        const size_t end);
 
   ~DTree();
 
   // Greedily expand the tree
-  cT Grow(MatType* data,
-          arma::Col<size_t> *old_from_new,
-          bool useVolReg = false,
-          size_t maxLeafSize = 10,
-          size_t minLeafSize = 5);
+  double Grow(arma::mat& data,
+              arma::Col<size_t>& oldFromNew,
+              const bool useVolReg = false,
+              const size_t maxLeafSize = 10,
+              const size_t minLeafSize = 5);
 
   // perform alpha pruning on the tree
-  cT PruneAndUpdate(cT old_alpha, bool useVolReg = false);
+  double PruneAndUpdate(const double old_alpha, const bool useVolReg = false);
 
   // compute the density at a given point
   cT ComputeValue(VecType* query);

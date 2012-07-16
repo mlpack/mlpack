@@ -203,10 +203,10 @@ DTree<eT, cT>::DTree(const arma::vec& maxVals,
                      const size_t totalPoints) :
     start_(0),
     end_(totalPoints),
-    root_(true),
     maxVals(maxVals),
     minVals(minVals),
     error_(-std::exp(LogNegativeError(totalPoints))),
+    root_(true),
     bucket_tag_(-1),
     left_(NULL),
     right_(NULL)
@@ -293,45 +293,44 @@ DTree<eT, cT>::~DTree()
 
 // Greedily expand the tree
 template<typename eT, typename cT>
-cT DTree<eT, cT>::Grow(MatType* data,
-                       arma::Col<size_t> *old_from_new,
-                       bool useVolReg,
-                       size_t maxLeafSize,
-                       size_t minLeafSize)
+double DTree<eT, cT>::Grow(arma::mat& data,
+                           arma::Col<size_t>& oldFromNew,
+                           const bool useVolReg,
+                           const size_t maxLeafSize,
+                           const size_t minLeafSize)
 {
-  assert(data->n_rows == maxVals.n_elem);
-  assert(data->n_rows == minVals.n_elem);
+  assert(data.n_rows == maxVals.n_elem);
+  assert(data.n_rows == minVals.n_elem);
 
-  cT left_g, right_g;
+  double leftG, rightG;
 
   // Compute points ratio.
-  ratio_ = (cT) (end_ - start_) / (cT) old_from_new->n_elem;
+  ratio_ = (double) (end_ - start_) / (double) oldFromNew.n_elem;
 
-  // Compute the v_t_inv: the inverse of the volume of the node.
-  cT log_vol_t = 0;
+  // Compute the v_t_inv: the inverse of the volume of the node.  We use log to
+  // prevent overflow.
+  double logVol = 0;
   for (size_t i = 0; i < maxVals.n_elem; ++i)
     if (maxVals[i] - minVals[i] > 0.0)
-      // Use log to prevent overflow.
-      log_vol_t += (cT) std::log(maxVals[i] - minVals[i]);
+      logVol += std::log(maxVals[i] - minVals[i]);
 
   // Check for overflow.
-  assert(std::exp(log_vol_t) > 0.0);
-  v_t_inv_ = 1.0 / std::exp(log_vol_t);
+  assert(std::exp(logVol) > 0.0);
+  v_t_inv_ = 1.0 / std::exp(logVol);
 
-  // Check if node is large enough.
+  // Check if node is large enough to split.
   if ((size_t) (end_ - start_) > maxLeafSize) {
 
     // Find the split.
     size_t dim;
     double splitValue;
-    double left_error, right_error;
-    if (FindSplit(*data, dim, splitValue, left_error, right_error, maxLeafSize,
+    double leftError, rightError;
+    if (FindSplit(data, dim, splitValue, leftError, rightError, maxLeafSize,
         minLeafSize))
     {
       // Move the data around for the children to have points in a node lie
       // contiguously (to increase efficiency during the training).
-      const size_t splitIndex = SplitData(*data, dim, splitValue,
-          *old_from_new);
+      const size_t splitIndex = SplitData(data, dim, splitValue, oldFromNew);
 
       // Make max and min vals for the children.
       arma::vec max_vals_l(maxVals);
@@ -347,12 +346,12 @@ cT DTree<eT, cT>::Grow(MatType* data,
       split_dim_ = dim;
 
       // Recursively grow the children.
-      left_ = new DTree(max_vals_l, min_vals_l, start_, splitIndex, left_error);
-      right_ = new DTree(max_vals_r, min_vals_r, splitIndex, end_, right_error);
+      left_ = new DTree(max_vals_l, min_vals_l, start_, splitIndex, leftError);
+      right_ = new DTree(max_vals_r, min_vals_r, splitIndex, end_, rightError);
 
-      left_g = left_->Grow(data, old_from_new, useVolReg, maxLeafSize,
+      leftG = left_->Grow(data, oldFromNew, useVolReg, maxLeafSize,
           minLeafSize);
-      right_g = right_->Grow(data, old_from_new, useVolReg, maxLeafSize,
+      rightG = right_->Grow(data, oldFromNew, useVolReg, maxLeafSize,
           minLeafSize);
 
       // Store values of R(T~) and |T~|.
@@ -363,23 +362,6 @@ cT DTree<eT, cT>::Grow(MatType* data,
       // Store the subtree_leaves_v_t_inv.
       subtree_leaves_v_t_inv_ = left_->subtree_leaves_v_t_inv() +
           right_->subtree_leaves_v_t_inv();
-
-      // Form T1 by removing leaves for which R(t) = R(t_L) + R(t_R).
-      if ((left_->subtree_leaves() == 1) && (right_->subtree_leaves() == 1))
-      {
-        if (left_->error() + right_->error() == error_)
-        {
-          delete left_;
-          left_ = NULL;
-
-          delete right_;
-          right_ = NULL;
-
-          subtree_leaves_ = 1;
-          subtree_leaves_error_ = error_;
-          subtree_leaves_v_t_inv_ = v_t_inv_;
-        }
-      }
     }
     else
     {
@@ -399,14 +381,15 @@ cT DTree<eT, cT>::Grow(MatType* data,
   }
 
   // If this is a leaf, do not compute g_k(t); otherwise compute, store, and
-  // propagate min(g_k(t_L),g_k(t_R),g_k(t)), unless t_L and/or t_R are leaves.
+  // propagate min(g_k(t_L), g_k(t_R), g_k(t)), unless t_L and/or t_R are
+  // leaves.
   if (subtree_leaves_ == 1)
   {
-    return std::numeric_limits<cT>::max();
+    return std::numeric_limits<double>::max();
   }
   else
   {
-    cT g_t;
+    double g_t;
     if (useVolReg)
       g_t = (error_ - subtree_leaves_error_) /
           (subtree_leaves_v_t_inv_ - v_t_inv_);
@@ -414,44 +397,46 @@ cT DTree<eT, cT>::Grow(MatType* data,
       g_t = (error_ - subtree_leaves_error_) / (subtree_leaves_ - 1);
 
     assert(g_t > 0.0);
-    return min(g_t, min(left_g, right_g));
+    return min(g_t, min(leftG, rightG));
   }
 
-  // We need to compute (c_t^2)*r_t for all subtree leaves; this is equal to
+  // We need to compute (c_t^2) * r_t for all subtree leaves; this is equal to
   // n_t ^ 2 / r_t * n ^ 2 = -error_.  Therefore the value we need is actually
   // -1.0 * subtree_leaves_error_.
 }
 
 
 template<typename eT, typename cT>
-cT DTree<eT, cT>::PruneAndUpdate(cT old_alpha, bool useVolReg)
+double DTree<eT, cT>::PruneAndUpdate(const double oldAlpha,
+                                     const bool useVolReg)
 {
   // Compute g_t.
   if (subtree_leaves_ == 1) // If we are a leaf...
   {
-    return std::numeric_limits<cT>::max();
+    return std::numeric_limits<double>::max();
   }
   else
   {
     // Compute g_t value for node t.
-    cT g_t;
+    double g_t;
     if (useVolReg)
       g_t = (error_ - subtree_leaves_error_) /
           (subtree_leaves_v_t_inv_ - v_t_inv_);
     else
       g_t = (error_ - subtree_leaves_error_) / (subtree_leaves_ - 1);
 
-    if (g_t > old_alpha)
+    if (g_t > oldAlpha)
     {
       // Go down the tree and update accordingly.  Traverse the children.
-      cT left_g = left_->PruneAndUpdate(old_alpha, useVolReg);
-      cT right_g = right_->PruneAndUpdate(old_alpha, useVolReg);
+      double left_g = left_->PruneAndUpdate(oldAlpha, useVolReg);
+      double right_g = right_->PruneAndUpdate(oldAlpha, useVolReg);
 
       // Update values.
       subtree_leaves_ = left_->subtree_leaves() + right_->subtree_leaves();
       subtree_leaves_error_ = left_->subtree_leaves_error() +
           right_->subtree_leaves_error();
-      subtree_leaves_v_t_inv_ = left_->subtree_leaves_v_t_inv() + right_->subtree_leaves_v_t_inv();
+      subtree_leaves_v_t_inv_ = left_->subtree_leaves_v_t_inv() +
+          right_->subtree_leaves_v_t_inv();
 
       // Update g_t value.
       if (useVolReg)
@@ -460,7 +445,7 @@ cT DTree<eT, cT>::PruneAndUpdate(cT old_alpha, bool useVolReg)
       else
         g_t = (error_ - subtree_leaves_error_) / (subtree_leaves_ - 1);
 
-      assert(g_t < std::numeric_limits<cT>::max());
+      assert(g_t < std::numeric_limits<double>::max());
 
       if (left_->subtree_leaves() == 1 && right_->subtree_leaves() == 1)
         return g_t;
@@ -470,7 +455,6 @@ cT DTree<eT, cT>::PruneAndUpdate(cT old_alpha, bool useVolReg)
         return min(g_t, left_g);
       else
         return min(g_t, min(left_g, right_g));
-
     }
     else
     {
@@ -486,8 +470,7 @@ cT DTree<eT, cT>::PruneAndUpdate(cT old_alpha, bool useVolReg)
       right_ = NULL;
 
       // Pass information upward.
-      return std::numeric_limits<cT>::max();
-
+      return std::numeric_limits<double>::max();
     }
   }
 }

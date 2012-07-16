@@ -128,8 +128,8 @@ DTree<eT> *Trainer(arma::Mat<eT>* dataset,
   arma::Mat<eT>* new_dataset = new arma::Mat<eT>(*dataset);
 
   // Growing the tree
-  long double old_alpha = 0.0;
-  long double alpha = dtree->Grow(new_dataset, &old_from_new, useVolumeReg,
+  double old_alpha = 0.0;
+  double alpha = dtree->Grow(*new_dataset, old_from_new, useVolumeReg,
       maxLeafSize, minLeafSize);
 
   delete new_dataset;
@@ -160,10 +160,10 @@ DTree<eT> *Trainer(arma::Mat<eT>* dataset,
   }
 
   // Sequentially prune and save the alpha values and the values of c_t^2 * r_t.
-  std::vector<std::pair<long double, long double> > pruned_sequence;
+  std::vector<std::pair<double, long double> > pruned_sequence;
   while (dtree->subtree_leaves() > 1)
   {
-    std::pair<long double, long double> tree_seq(old_alpha,
+    std::pair<double, long double> tree_seq(old_alpha,
         -1.0 * dtree->subtree_leaves_error());
     pruned_sequence.push_back(tree_seq);
     old_alpha = alpha;
@@ -230,12 +230,12 @@ DTree<eT> *Trainer(arma::Mat<eT>* dataset,
 
     // Grow the tree.
     old_alpha = 0.0;
-    alpha = dtree_cv->Grow(train, &old_from_new_cv, useVolumeReg, maxLeafSize,
+    alpha = dtree_cv->Grow(*train, old_from_new_cv, useVolumeReg, maxLeafSize,
         minLeafSize);
 
     // Sequentially prune with all the values of available alphas and adding
     // values for test values.
-    std::vector<std::pair<long double, long double> >::iterator it;
+    std::vector<std::pair<double, long double> >::iterator it;
     for (it = pruned_sequence.begin(); it < pruned_sequence.end() -2; ++it)
     {
       // Compute test values for this state of the tree.
@@ -275,7 +275,7 @@ DTree<eT> *Trainer(arma::Mat<eT>* dataset,
 
   long double optimal_alpha = -1.0;
   long double best_cv_error = numeric_limits<long double>::max();
-  std::vector<std::pair<long double, long double> >::iterator it;
+  std::vector<std::pair<double, long double> >::iterator it;
 
   for (it = pruned_sequence.begin(); it < pruned_sequence.end() -1; ++it)
   {
@@ -300,7 +300,7 @@ DTree<eT> *Trainer(arma::Mat<eT>* dataset,
 
   // Grow the tree.
   old_alpha = 0.0;
-  alpha = dtree_opt->Grow(new_dataset, &old_from_new, useVolumeReg, maxLeafSize,
+  alpha = dtree_opt->Grow(*new_dataset, old_from_new, useVolumeReg, maxLeafSize,
       minLeafSize);
 
   // Prune with optimal alpha.
