@@ -78,11 +78,11 @@ BOOST_AUTO_TEST_CASE(TestWithinRange)
   VecType test_query(3);
   test_query << 4.5 << 2.5 << 2;
 
-  BOOST_REQUIRE(testDTree.WithinRange_(&test_query));
+  BOOST_REQUIRE_EQUAL(testDTree.WithinRange(test_query), true);
 
   test_query << 8.5 << 2.5 << 2;
 
-  BOOST_REQUIRE(!testDTree.WithinRange_(&test_query));
+  BOOST_REQUIRE_EQUAL(testDTree.WithinRange(test_query), false);
 }
 
 BOOST_AUTO_TEST_CASE(TestFindSplit)
