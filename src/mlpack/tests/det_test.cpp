@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE(TestGrow)
   rr_error = -1.0 * exp(2 * log(2.0 / 5.0) - (log(6.5) + log(4.0) + log(2.5)));
 
   DTree<> testDTree(test_data);
-  long double alpha = testDTree.Grow(&test_data, &o_test, false, 2, 1);
+  double alpha = testDTree.Grow(test_data, o_test, false, 2, 1);
 
   BOOST_REQUIRE_EQUAL(o_test[0], 0);
   BOOST_REQUIRE_EQUAL(o_test[1], 3);
@@ -200,7 +200,7 @@ BOOST_AUTO_TEST_CASE(TestGrow)
 
 
   // test alpha
-  long double root_alpha, r_alpha;
+  double root_alpha, r_alpha;
   root_alpha = (root_error - (l_error + rl_error + rr_error)) / 2;
   r_alpha = r_error - (rl_error + rr_error);
 
@@ -218,10 +218,10 @@ BOOST_AUTO_TEST_CASE(TestPruneAndUpdate)
   arma::Col<size_t> o_test(5);
   o_test << 0 << 1 << 2 << 3 << 4;
   DTree<> testDTree(test_data);
-  long double alpha = testDTree.Grow(&test_data, &o_test, false, 2, 1);
+  double alpha = testDTree.Grow(test_data, o_test, false, 2, 1);
   alpha = testDTree.PruneAndUpdate(alpha, false);
 
-  BOOST_REQUIRE_CLOSE(alpha, numeric_limits<long double>::max(), 1e-10);
+  BOOST_REQUIRE_CLOSE(alpha, numeric_limits<double>::max(), 1e-10);
   BOOST_REQUIRE(testDTree.subtree_leaves() == 1);
 
   long double root_error = -1.0 * exp(-log(4.0) - log(7.0) - log(7.0));
@@ -251,7 +251,7 @@ BOOST_AUTO_TEST_CASE(TestComputeValue)
   o_test << 0 << 1 << 2 << 3 << 4;
 
   DTree<> testDTree(test_data);
-  long double alpha = testDTree.Grow(&test_data, &o_test, false, 2, 1);
+  double alpha = testDTree.Grow(test_data, o_test, false, 2, 1);
 
   long double d1, d2, d3;
   d1 = (2.0 / 5.0) / exp(log(4.0) + log(7.0) + log(4.5));
@@ -295,7 +295,7 @@ BOOST_AUTO_TEST_CASE(TestVariableImportance)
   o_test << 0 << 1 << 2 << 3 << 4;
 
   DTree<> testDTree(test_data);
-  testDTree.Grow(&test_data, &o_test, false, 2, 1);
+  testDTree.Grow(test_data, o_test, false, 2, 1);
 
   arma::vec imps(3);
   imps.zeros();
