@@ -117,7 +117,7 @@ DTree<eT> *Trainer(arma::Mat<eT>* dataset,
                    string unprunedTreeOutput = "")
 {
   // Initialize the tree.
-  DTree<eT>* dtree = new DTree<eT>(dataset);
+  DTree<eT>* dtree = new DTree<eT>(*dataset);
 
   // Getting ready to grow the tree...
   arma::Col<size_t> old_from_new(dataset->n_cols);
@@ -221,7 +221,7 @@ DTree<eT> *Trainer(arma::Mat<eT>* dataset,
     assert(train->n_cols + test.n_cols == cvdata->n_cols);
 
     // Initialize the tree.
-    DTree<eT>* dtree_cv = new DTree<eT>(train);
+    DTree<eT>* dtree_cv = new DTree<eT>(*train);
 
     // Getting ready to grow the tree...
     arma::Col<size_t> old_from_new_cv(train->n_cols);
@@ -289,7 +289,7 @@ DTree<eT> *Trainer(arma::Mat<eT>* dataset,
   Log::Info << "Optimal alpha: " << optimal_alpha << "." << std::endl;
 
   // Initialize the tree.
-  DTree<eT>* dtree_opt = new DTree<eT>(dataset);
+  DTree<eT>* dtree_opt = new DTree<eT>(*dataset);
 
   // Getting ready to grow the tree...
   for (size_t i = 0; i < old_from_new.n_elem; i++)

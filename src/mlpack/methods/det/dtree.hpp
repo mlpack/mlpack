@@ -104,8 +104,8 @@ class DTree
 
   // since we are using uniform density, we need
   // the max and min of every dimension for every node
-  VecType* max_vals_;
-  VecType* min_vals_;
+  arma::vec maxVals;
+  arma::vec minVals;
 
   // the tag for the leaf used for hashing points
   int bucket_tag_;
@@ -160,10 +160,6 @@ public:
                    const double splitValue,
                    arma::Col<size_t>& oldFromNew) const;
 
-  void GetMaxMinVals_(MatType* data,
-                      VecType* max_vals,
-                      VecType* min_vals);
-
   bool WithinRange_(VecType* query);
 
   ///////////////////// Public Functions //////////////////////////////////////
@@ -174,23 +170,23 @@ public:
   // Root node initializer
   // with the bounding box of the data
   // it contains instead of just the data.
-  DTree(VecType* max_vals,
-        VecType* min_vals,
+  DTree(const arma::vec& maxVals,
+        const arma::vec& minVals,
         size_t total_points);
 
   // Root node initializer
   // with the data, no bounding box.
-  DTree(MatType* data);
+  DTree(arma::mat& data);
 
   // Non-root node initializers
-  DTree(VecType* max_vals,
-        VecType* min_vals,
+  DTree(const arma::vec& max_vals,
+        const arma::vec& min_vals,
         size_t start,
         size_t end,
         cT error);
 
-  DTree(VecType* max_vals,
-        VecType* min_vals,
+  DTree(const arma::vec& max_vals,
+        const arma::vec& min_vals,
         size_t total_points,
         size_t start,
         size_t end);
