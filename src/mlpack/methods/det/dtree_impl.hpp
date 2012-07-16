@@ -22,7 +22,7 @@ inline double DTree<eT, cT>::LogNegativeError(const size_t totalPoints) const
   // log(-|t|^2 / (N^2 V_t)) = log(-1) + 2 log(|t|) - 2 log(N) - log(V_t).
   return 2 * std::log((double) (end_ - start_)) -
          2 * std::log((double) totalPoints) -
-         arma::accu(arma::log((*max_vals_) - (*min_vals_)));
+         arma::accu(arma::log(maxVals - minVals));
 }
 
 // This function finds the best split with respect to the L2-error, by trying
@@ -39,8 +39,8 @@ bool DTree<eT, cT>::FindSplit(const arma::mat& data,
 {
   // Ensure the dimensionality of the data is the same as the dimensionality of
   // the bounding rectangle.
-  assert(data.n_rows == max_vals_->n_elem);
-  assert(data.n_rows == min_vals_->n_elem);
+  assert(data.n_rows == maxVals.n_elem);
+  assert(data.n_rows == minVals.n_elem);
 
   const size_t points = end_ - start_;
 
@@ -48,12 +48,12 @@ bool DTree<eT, cT>::FindSplit(const arma::mat& data,
   bool splitFound = false;
 
   // Loop through each dimension.
-  for (size_t dim = 0; dim < max_vals_->n_elem; dim++)
+  for (size_t dim = 0; dim < maxVals.n_elem; dim++)
   {
     // Have to deal with REAL, INTEGER, NOMINAL data differently, so we have to
     // think of how to do that...
-    const double min = (*min_vals_)[dim];
-    const double max = (*max_vals_)[dim];
+    const double min = minVals[dim];
+    const double max = maxVals[dim];
 
     // If there is nothing to split in this dimension, move on.
     if (max - min == 0.0)
@@ -69,11 +69,11 @@ bool DTree<eT, cT>::FindSplit(const arma::mat& data,
 
     // Find the log volume of all the other dimensions.
     double volumeWithoutDim = 0;
-    for (size_t i = 0; i < max_vals_->n_elem; ++i)
+    for (size_t i = 0; i < maxVals.n_elem; ++i)
     {
-      if (((*max_vals_)[i] - (*min_vals_)[i] > 0.0) && (i != dim))
+      if ((maxVals[i] - minVals[i] > 0.0) && (i != dim))
       {
-        volumeWithoutDim += std::log((*max_vals_)[i] - (*min_vals_)[i]);
+        volumeWithoutDim += std::log(maxVals[i] - minVals[i]);
       }
     }
 
@@ -188,30 +188,9 @@ size_t DTree<eT, cT>::SplitData(arma::mat& data,
 
 
 template<typename eT, typename cT>
-void DTree<eT, cT>::GetMaxMinVals_(MatType* data,
-                                   VecType *max_vals,
-                                   VecType *min_vals)
-{
-  max_vals->set_size(data->n_rows);
-  min_vals->set_size(data->n_rows);
-
-  MatType temp_d = arma::trans(*data);
-
-  for (size_t i = 0; i < temp_d.n_cols; ++i)
-  {
-    VecType dim_vals = arma::sort(temp_d.col(i));
-    (*min_vals)[i] = dim_vals[0];
-    (*max_vals)[i] = dim_vals[dim_vals.n_elem - 1];
-  }
-}
-
-
-template<typename eT, typename cT>
 DTree<eT, cT>::DTree() :
     start_(0),
     end_(0),
-    max_vals_(NULL),
-    min_vals_(NULL),
     left_(NULL),
     right_(NULL)
 { /* Nothing to do. */ }
@@ -219,13 +198,13 @@ DTree<eT, cT>::DTree() :
 
 // Root node initializers
 template<typename eT, typename cT>
-DTree<eT, cT>::DTree(VecType* max_vals,
-                     VecType* min_vals,
+DTree<eT, cT>::DTree(const arma::vec& maxVals,
+                     const arma::vec& minVals,
                      size_t total_points) :
     start_(0),
     end_(total_points),
-    max_vals_(max_vals),
-    min_vals_(min_vals),
+    maxVals(maxVals),
+    minVals(minVals),
     left_(NULL),
     right_(NULL)
 {
@@ -237,18 +216,32 @@ DTree<eT, cT>::DTree(VecType* max_vals,
 
 
 template<typename eT, typename cT>
-DTree<eT, cT>::DTree(MatType* data) :
+DTree<eT, cT>::DTree(arma::mat& data) :
     start_(0),
-    end_(data->n_cols),
+    end_(data.n_cols),
     left_(NULL),
     right_(NULL)
 {
-  max_vals_ = new VecType();
-  min_vals_ = new VecType();
+  maxVals.set_size(data.n_rows);
+  minVals.set_size(data.n_cols);
 
-  GetMaxMinVals_(data, max_vals_, min_vals_);
+  // Initialize to first column; values will be overwritten if necessary.
+  maxVals = data.col(0);
+  minVals = data.col(0);
 
-  error_ = -std::exp(LogNegativeError(data->n_cols));
+  // Loop over data to extract maximum and minimum values in each dimension.
+  for (size_t i = 1; i < data.n_cols; ++i)
+  {
+    for (size_t j = 0; j < data.n_rows; ++j)
+    {
+      if (data(j, i) > maxVals[j])
+        maxVals[j] = data(j, i);
+      if (data(j, i) < minVals[j])
+        minVals[j] = data(j, i);
+    }
+  }
+
+  error_ = -std::exp(LogNegativeError(data.n_cols));
 
   bucket_tag_ = -1;
   root_ = true;
@@ -257,16 +250,16 @@ DTree<eT, cT>::DTree(MatType* data) :
 
 // Non-root node initializers
 template<typename eT, typename cT>
-DTree<eT, cT>::DTree(VecType* max_vals,
-                     VecType* min_vals,
+DTree<eT, cT>::DTree(const arma::vec& maxVals,
+                     const arma::vec& minVals,
                      size_t start,
                      size_t end,
                      cT error) :
     start_(start),
     end_(end),
     error_(error),
-    max_vals_(max_vals),
-    min_vals_(min_vals),
+    maxVals(maxVals),
+    minVals(minVals),
     left_(NULL),
     right_(NULL)
 {
@@ -276,15 +269,15 @@ DTree<eT, cT>::DTree(VecType* max_vals,
 
 
 template<typename eT, typename cT>
-DTree<eT, cT>::DTree(VecType* max_vals,
-                     VecType* min_vals,
+DTree<eT, cT>::DTree(const arma::vec& maxVals,
+                     const arma::vec& minVals,
                      size_t total_points,
                      size_t start,
                      size_t end) :
     start_(start),
     end_(end),
-    max_vals_(max_vals),
-    min_vals_(min_vals),
+    maxVals(maxVals),
+    minVals(minVals),
     left_(NULL),
     right_(NULL)
 {
@@ -303,12 +296,6 @@ DTree<eT, cT>::~DTree()
 
   if (right_ != NULL)
     delete right_;
-
-  if (min_vals_ != NULL)
-    delete min_vals_;
-
-  if (max_vals_ != NULL)
-    delete max_vals_;
 }
 
 
@@ -320,8 +307,8 @@ cT DTree<eT, cT>::Grow(MatType* data,
                        size_t maxLeafSize,
                        size_t minLeafSize)
 {
-  assert(data->n_rows == max_vals_->n_elem);
-  assert(data->n_rows == min_vals_->n_elem);
+  assert(data->n_rows == maxVals.n_elem);
+  assert(data->n_rows == minVals.n_elem);
 
   cT left_g, right_g;
 
@@ -330,10 +317,10 @@ cT DTree<eT, cT>::Grow(MatType* data,
 
   // Compute the v_t_inv: the inverse of the volume of the node.
   cT log_vol_t = 0;
-  for (size_t i = 0; i < max_vals_->n_elem; ++i)
-    if ((*max_vals_)[i] - (*min_vals_)[i] > 0.0)
+  for (size_t i = 0; i < maxVals.n_elem; ++i)
+    if (maxVals[i] - minVals[i] > 0.0)
       // Use log to prevent overflow.
-      log_vol_t += (cT) std::log((*max_vals_)[i] - (*min_vals_)[i]);
+      log_vol_t += (cT) std::log(maxVals[i] - minVals[i]);
 
   // Check for overflow.
   assert(std::exp(log_vol_t) > 0.0);
@@ -355,13 +342,13 @@ cT DTree<eT, cT>::Grow(MatType* data,
           *old_from_new);
 
       // Make max and min vals for the children.
-      VecType* max_vals_l = new VecType(*max_vals_);
-      VecType* max_vals_r = new VecType(*max_vals_);
-      VecType* min_vals_l = new VecType(*min_vals_);
-      VecType* min_vals_r = new VecType(*min_vals_);
+      arma::vec max_vals_l(maxVals);
+      arma::vec max_vals_r(maxVals);
+      arma::vec min_vals_l(minVals);
+      arma::vec min_vals_r(minVals);
 
-      (*max_vals_l)[dim] = splitValue;
-      (*min_vals_r)[dim] = splitValue;
+      max_vals_l[dim] = splitValue;
+      min_vals_r[dim] = splitValue;
 
       // Store split dim and split val in the node.
       split_value_ = splitValue;
@@ -524,7 +511,7 @@ template<typename eT, typename cT>
 bool DTree<eT, cT>::WithinRange_(VecType* query)
 {
   for (size_t i = 0; i < query->n_elem; ++i)
-    if (((*query)[i] < (*min_vals_)[i]) || ((*query)[i] > (*max_vals_)[i]))
+    if (((*query)[i] < minVals[i]) || ((*query)[i] > maxVals[i]))
       return false;
 
   return true;
@@ -534,7 +521,7 @@ bool DTree<eT, cT>::WithinRange_(VecType* query)
 template<typename eT, typename cT>
 cT DTree<eT, cT>::ComputeValue(VecType* query)
 {
-  assert(query->n_elem == max_vals_->n_elem);
+  assert(query->n_elem == maxVals.n_elem);
 
   if (root_ == 1) // If we are the root...
     // Check if the query is within range.
@@ -601,7 +588,7 @@ int DTree<eT, cT>::TagTree(int tag)
 template<typename eT, typename cT>
 int DTree<eT, cT>::FindBucket(VecType* query)
 {
-  assert(query->n_elem == max_vals_->n_elem);
+  assert(query->n_elem == maxVals.n_elem);
 
   if (subtree_leaves_ == 1) // If we are a leaf...
   {
