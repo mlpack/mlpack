@@ -148,20 +148,17 @@ public:
   inline double LogNegativeError(const size_t total_points) const;
 
   bool FindSplit(const arma::mat& data,
-                 size_t& split_dim,
-                 size_t& split_ind,
-                 double& left_error,
-                 double& right_error,
+                 size_t& splitDim,
+                 double& splitValue,
+                 double& leftError,
+                 double& rightError,
                  const size_t maxLeafSize = 10,
                  const size_t minLeafSize = 5) const;
 
-  void SplitData_(MatType* data,
-                  size_t split_dim,
-                  size_t split_ind,
-                  arma::Col<size_t>* old_from_new,
-                  eT* split_val,
-                  eT* lsplit_val,
-                  eT* rsplit_val);
+  size_t SplitData(arma::mat& data,
+                   const size_t splitDim,
+                   const double splitValue,
+                   arma::Col<size_t>& oldFromNew) const;
 
   void GetMaxMinVals_(MatType* data,
                       VecType* max_vals,
