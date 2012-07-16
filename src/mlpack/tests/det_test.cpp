@@ -113,20 +113,22 @@ BOOST_AUTO_TEST_CASE(TestFindSplit)
   DTree<>* testDTree = new DTree<>(&test_data);
 
   size_t ob_dim, true_dim, ob_ind, true_ind;
-  double true_left_error, ob_left_error, true_right_error, ob_right_error;
+  double true_left_error, ob_left_error, true_right_error, ob_right_error,
+      ob_split, true_split;
 
   true_dim = 2;
   true_ind = 1;
+  true_split = 5.5;
   true_left_error = -1.0 * exp(2 * log(2.0 / 5.0) - (log(7.0) + log(4.0) +
       log(4.5)));
   true_right_error = -1.0 * exp(2 * log(3.0 / 5.0) - (log(7.0) + log(4.0) +
       log(2.5)));
 
-  BOOST_REQUIRE(testDTree->FindSplit(test_data, ob_dim, ob_ind, ob_left_error,
+  BOOST_REQUIRE(testDTree->FindSplit(test_data, ob_dim, ob_split, ob_left_error,
       ob_right_error, 2, 1));
 
   BOOST_REQUIRE(true_dim == ob_dim);
-  BOOST_REQUIRE(true_ind == ob_ind);
+  BOOST_REQUIRE_CLOSE(true_split, ob_split, 1e-10);
 
   BOOST_REQUIRE_CLOSE(true_left_error, ob_left_error, 1e-10);
   BOOST_REQUIRE_CLOSE(true_right_error, ob_right_error, 1e-10);
@@ -153,19 +155,13 @@ BOOST_AUTO_TEST_CASE(TestSplitData)
 
   true_lsplit_val = 5;
   true_rsplit_val = 6;
-  true_split_val = (true_lsplit_val + true_rsplit_val) / 2;
+  true_split_val = (true_lsplit_val + true_rsplit_val) / 2.0;
 
-  testDTree->SplitData_(&test_data, split_dim, split_ind,
-			&o_test, &ob_split_val,
-			&ob_lsplit_val, &ob_rsplit_val);
+  testDTree->SplitData(test_data, split_dim, true_split_val, o_test);
 
   BOOST_REQUIRE(o_test[0] == 1 && o_test[1] == 4
 		&& o_test[2] == 3 && o_test[3] == 2
 		&& o_test[4] == 5);
-
-  BOOST_REQUIRE(true_split_val == ob_split_val);
-  BOOST_REQUIRE(true_lsplit_val == ob_lsplit_val);
-  BOOST_REQUIRE(true_rsplit_val == ob_rsplit_val);
 
   delete testDTree;
 }
