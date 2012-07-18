@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
   Timer::Start("DET/EstimationTime");
   for (size_t i = 0; i < training_data.n_cols; i++) {
     arma::Col<double> test_p = training_data.unsafe_col(i);
-    long double f = dtree_opt->ComputeValue(&test_p);
+    long double f = dtree_opt->ComputeValue(test_p);
     if (fp != NULL)
       fprintf(fp, "%Lg\n", f);
   } // end for
@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
     Timer::Start("DET/TestSetEstimation");
     for (size_t i = 0; i < test_data.n_cols; i++) {
       arma::Col<double> test_p = test_data.unsafe_col(i);
-      long double f = dtree_opt->ComputeValue(&test_p);
+      long double f = dtree_opt->ComputeValue(test_p);
       if (fp != NULL)
 	fprintf(fp, "%Lg\n", f);
     } // end for

@@ -148,7 +148,7 @@ DTree<eT> *Trainer(arma::Mat<eT>* dataset,
       for (size_t i = 0; i < dataset->n_cols; ++i)
       {
         arma::Col<eT> test_p = dataset->unsafe_col(i);
-        outfile << dtree->ComputeValue(&test_p) << endl;
+        outfile << dtree->ComputeValue(test_p) << endl;
       }
     }
     else
@@ -243,7 +243,7 @@ DTree<eT> *Trainer(arma::Mat<eT>* dataset,
       for (size_t i = 0; i < test.n_cols; i++)
       {
         arma::Col<eT> test_point = test.unsafe_col(i);
-        val_cv += dtree_cv->ComputeValue(&test_point);
+        val_cv += dtree_cv->ComputeValue(test_point);
       }
 
       // Update the cv error value.
@@ -259,7 +259,7 @@ DTree<eT> *Trainer(arma::Mat<eT>* dataset,
     for (size_t i = 0; i < test.n_cols; ++i)
     {
       arma::Col<eT> test_point = test.unsafe_col(i);
-      val_cv += dtree_cv->ComputeValue(&test_point);
+      val_cv += dtree_cv->ComputeValue(test_point);
     }
 
     // Update the cv error value.

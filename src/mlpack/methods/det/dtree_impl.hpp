@@ -492,24 +492,32 @@ inline bool DTree<eT, cT>::WithinRange(const arma::vec& query) const
 
 
 template<typename eT, typename cT>
-cT DTree<eT, cT>::ComputeValue(VecType* query)
+double DTree<eT, cT>::ComputeValue(const arma::vec& query) const
 {
-  assert(query->n_elem == maxVals.n_elem);
+  Log::Assert(query.n_elem == maxVals.n_elem);
 
   if (root_ == 1) // If we are the root...
+  {
     // Check if the query is within range.
-    if (!WithinRange(*query))
+    if (!WithinRange(query))
       return 0.0;
+  }
 
   if (subtree_leaves_ == 1)  // If we are a leaf...
+  {
     return ratio_ * v_t_inv_;
+  }
   else
   {
-    if ((*query)[split_dim_] <= split_value_)
+    if (query[split_dim_] <= split_value_)
+    {
       // If left subtree, go to left child.
       return left_->ComputeValue(query);
+    }
     else  // If right subtree, go to right child
+    {
       return right_->ComputeValue(query);
+    }
   }
 }
 
