@@ -204,7 +204,7 @@ public:
   double PruneAndUpdate(const double old_alpha, const bool useVolReg = false);
 
   // compute the density at a given point
-  cT ComputeValue(VecType* query);
+  double ComputeValue(const arma::vec& query) const;
 
   // print the tree (in a DFS manner)
   void WriteTree(size_t level, FILE *fp);
