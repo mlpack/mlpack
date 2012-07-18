@@ -253,24 +253,23 @@ BOOST_AUTO_TEST_CASE(TestComputeValue)
   DTree<> testDTree(test_data);
   double alpha = testDTree.Grow(test_data, o_test, false, 2, 1);
 
-  long double d1, d2, d3;
-  d1 = (2.0 / 5.0) / exp(log(4.0) + log(7.0) + log(4.5));
-  d2 = (1.0 / 5.0) / exp(log(4.0) + log(0.5) + log(2.5));
-  d3 = (2.0 / 5.0) / exp(log(4.0) + log(6.5) + log(2.5));
+  double d1 = (2.0 / 5.0) / exp(log(4.0) + log(7.0) + log(4.5));
+  double d2 = (1.0 / 5.0) / exp(log(4.0) + log(0.5) + log(2.5));
+  double d3 = (2.0 / 5.0) / exp(log(4.0) + log(6.5) + log(2.5));
 
-  BOOST_REQUIRE_CLOSE(d1, testDTree.ComputeValue(&q1), 1e-10);
-  BOOST_REQUIRE_CLOSE(d2, testDTree.ComputeValue(&q2), 1e-10);
-  BOOST_REQUIRE_CLOSE(d3, testDTree.ComputeValue(&q3), 1e-10);
-  BOOST_REQUIRE_CLOSE((long double) 0.0, testDTree.ComputeValue(&q4), 1e-10);
+  BOOST_REQUIRE_CLOSE(d1, testDTree.ComputeValue(q1), 1e-10);
+  BOOST_REQUIRE_CLOSE(d2, testDTree.ComputeValue(q2), 1e-10);
+  BOOST_REQUIRE_CLOSE(d3, testDTree.ComputeValue(q3), 1e-10);
+  BOOST_REQUIRE_CLOSE(0.0, testDTree.ComputeValue(q4), 1e-10);
 
   alpha = testDTree.PruneAndUpdate(alpha, false);
 
-  long double d = 1.0 / exp(log(4.0) + log(7.0) + log(7.0));
+  double d = 1.0 / exp(log(4.0) + log(7.0) + log(7.0));
 
-  BOOST_REQUIRE_CLOSE(d, testDTree.ComputeValue(&q1), 1e-10);
-  BOOST_REQUIRE_CLOSE(d, testDTree.ComputeValue(&q2), 1e-10);
-  BOOST_REQUIRE_CLOSE(d, testDTree.ComputeValue(&q3), 1e-10);
-  BOOST_REQUIRE_CLOSE((long double) 0.0, testDTree.ComputeValue(&q4), 1e-10);
+  BOOST_REQUIRE_CLOSE(d, testDTree.ComputeValue(q1), 1e-10);
+  BOOST_REQUIRE_CLOSE(d, testDTree.ComputeValue(q2), 1e-10);
+  BOOST_REQUIRE_CLOSE(d, testDTree.ComputeValue(q3), 1e-10);
+  BOOST_REQUIRE_CLOSE(0.0, testDTree.ComputeValue(q4), 1e-10);
 }
 
 BOOST_AUTO_TEST_CASE(TestVariableImportance)
