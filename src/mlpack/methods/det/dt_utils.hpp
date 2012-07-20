@@ -19,7 +19,7 @@ namespace det {
 template<typename eT>
 void PrintLeafMembership(DTree<eT> *dtree,
                          const arma::Mat<eT>& data,
-                         const arma::Mat<int>& labels,
+                         const arma::Mat<size_t>& labels,
                          size_t num_classes,
                          string leaf_class_membership_file = "")
 {
@@ -33,7 +33,7 @@ void PrintLeafMembership(DTree<eT> *dtree,
   {
     arma::Col<eT> test_p = data.unsafe_col(i);
     int leaf_tag = dtree->FindBucket(test_p);
-    int label = labels[i];
+    size_t label = labels[i];
     table(leaf_tag, label) += 1;
   }
 
