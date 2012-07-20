@@ -64,16 +64,16 @@ int main(int argc, char *argv[])
 {
   CLI::ParseCommandLine(argc, argv);
 
-  string train_set_file = CLI::GetParam<string>("S");
-  arma::Mat<double> training_data;
+  string trainSetFile = CLI::GetParam<string>("input/training_set");
+  arma::Mat<double> trainingData;
 
-  data::Load(train_set_file, training_data, true);
+  data::Load(trainSetFile, trainingData, true);
 
   // Cross-validation here.
-  size_t folds = CLI::GetParam<int>("F");
+  size_t folds = CLI::GetParam<int>("param/folds");
   if (folds == 0)
   {
-    folds = training_data.n_cols;
+    folds = trainingData.n_cols;
     Log::Info << "Performing leave-one-out cross validation." << endl;
   }
   else
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
     Log::Info << "Performing " << folds << "-fold cross validation." << endl;
   }
 
-  const string unpruned_tree_estimate_file =
+  const string unprunedTreeEstimateFile =
       CLI::GetParam<string>("output/unpruned_tree_estimates");
   const bool regularization = CLI::HasParam("DET/use_volume_reg");
   const int maxLeafSize = CLI::GetParam<int>("DET/max_leaf_size");
@@ -89,8 +89,8 @@ int main(int argc, char *argv[])
 
   // Obtain the optimal tree.
   Timer::Start("det_training");
-  DTree<double> *dtree_opt = Trainer<double>(&training_data, folds,
-      regularization, maxLeafSize, minLeafSize, unpruned_tree_estimate_file);
+  DTree<double> *dtreeOpt = Trainer<double>(&trainingData, folds,
+      regularization, maxLeafSize, minLeafSize, unprunedTreeEstimateFile);
   Timer::Stop("det_training");
 
   // Compute densities for the training points in the optimal tree.
@@ -104,10 +104,10 @@ int main(int argc, char *argv[])
 
   // Computation timing is more accurate when printing is not performed.
   Timer::Start("det_estimation_time");
-  for (size_t i = 0; i < training_data.n_cols; i++)
+  for (size_t i = 0; i < trainingData.n_cols; i++)
   {
-    arma::vec test_p = training_data.unsafe_col(i);
-    double f = dtree_opt->ComputeValue(test_p);
+    arma::vec testPoint = trainingData.unsafe_col(i);
+    double f = dtreeOpt->ComputeValue(testPoint);
 
     if (fp != NULL)
       fprintf(fp, "%lg\n", f);
@@ -121,9 +121,9 @@ int main(int argc, char *argv[])
   // the given file.
   if (CLI::GetParam<string>("input/test_set") != "")
   {
-    const string test_file = CLI::GetParam<string>("input/test_set");
-    arma::mat test_data;
-    data::Load(test_file, test_data, true);
+    const string testFile = CLI::GetParam<string>("input/test_set");
+    arma::mat testData;
+    data::Load(testFile, testData, true);
 
     fp = NULL;
 
@@ -134,10 +134,10 @@ int main(int argc, char *argv[])
     }
 
     Timer::Start("det_test_set_estimation");
-    for (size_t i = 0; i < test_data.n_cols; i++)
+    for (size_t i = 0; i < testData.n_cols; i++)
     {
-      arma::vec test_p = test_data.unsafe_col(i);
-      double f = dtree_opt->ComputeValue(test_p);
+      arma::vec testPoint = testData.unsafe_col(i);
+      double f = dtreeOpt->ComputeValue(testPoint);
 
       if (fp != NULL)
         fprintf(fp, "%lg\n", f);
@@ -158,13 +158,13 @@ int main(int argc, char *argv[])
 
       if (fp != NULL)
       {
-        dtree_opt->WriteTree(0, fp);
+        dtreeOpt->WriteTree(0, fp);
         fclose(fp);
       }
     }
     else
     {
-      dtree_opt->WriteTree(0, stdout);
+      dtreeOpt->WriteTree(0, stdout);
       printf("\n");
     }
   }
@@ -172,10 +172,10 @@ int main(int argc, char *argv[])
   // Print the leaf memberships for the optimal tree.
   if (CLI::GetParam<string>("input/labels") != "")
   {
-    std::string labels_file = CLI::GetParam<string>("input/labels");
+    std::string labelsFile = CLI::GetParam<string>("input/labels");
     arma::Mat<size_t> labels;
 
-    data::Load(labels_file, labels, true);
+    data::Load(labelsFile, labels, true);
 
     size_t num_classes = CLI::GetParam<int>("param/number_of_classes");
     if (num_classes == 0)
@@ -184,19 +184,19 @@ int main(int argc, char *argv[])
           << endl;
     }
 
-    Log::Assert(training_data.n_cols == labels.n_cols);
+    Log::Assert(trainingData.n_cols == labels.n_cols);
     Log::Assert(labels.n_rows == 1);
 
-    PrintLeafMembership<double>(dtree_opt, training_data, labels, num_classes,
+    PrintLeafMembership<double>(dtreeOpt, trainingData, labels, num_classes,
        CLI::GetParam<string>("output/leaf_class_table"));
   }
 
   // Print variable importance.
   if (CLI::HasParam("flag/print_vi"))
   {
-    PrintVariableImportance<double>(dtree_opt,
+    PrintVariableImportance<double>(dtreeOpt,
         CLI::GetParam<string>("output/vi"));
   }
 
-  delete dtree_opt;
+  delete dtreeOpt;
 }
