@@ -54,9 +54,10 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepLasso)
   uword nPoints = X.n_cols;
 
   // Normalize each point since these are images.
-  for (uword i = 0; i < nPoints; ++i)
+  for (uword i = 0; i < nPoints; ++i) {
     X.col(i) /= norm(X.col(i), 2);
-
+  }
+  
   SparseCoding<> sc(X, nAtoms, lambda1);
   sc.OptimizeCode();
 
@@ -92,8 +93,9 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepElasticNet)
 
   for(uword i = 0; i < nPoints; ++i)
   {
-    vec errCorr = (trans(D) * D + lambda2 *
-       eye(nAtoms, nAtoms)) * Z.unsafe_col(i) - trans(D) * X.unsafe_col(i);
+    vec errCorr = 
+      (trans(D) * D + lambda2 * eye(nAtoms, nAtoms)) * Z.unsafe_col(i)
+      - trans(D) * X.unsafe_col(i);
 
     SCVerifyCorrectness(Z.unsafe_col(i), errCorr, lambda1);
   }
@@ -101,7 +103,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepElasticNet)
 
 BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
 {
-  const double tol = 1e-12;
+  const double tol = 1e-7;
 
   double lambda1 = 0.1;
   uword nAtoms = 25;
@@ -120,17 +122,10 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
   mat D = sc.Dictionary();
   mat Z = sc.Codes();
 
-  X = D * Z;
-
-  // This will update sc.data (that is a reference to X).
-  DataDependentRandomInitializer::Initialize(X, nAtoms, sc.Dictionary());
-
   uvec adjacencies = find(Z);
-  sc.OptimizeDictionary(adjacencies);
-
-  mat D_hat = sc.Dictionary();
-
-  BOOST_REQUIRE_SMALL(norm(D - D_hat, "fro"), tol);
+  double normGradient = sc.OptimizeDictionary(adjacencies, 1e-12);
+  
+  BOOST_REQUIRE_SMALL(normGradient, tol);
 }
 
 /*
