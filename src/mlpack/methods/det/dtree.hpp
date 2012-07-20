@@ -117,30 +117,30 @@ class DTree
 public:
 
   ////////////////////// Getters and Setters //////////////////////////////////
-  size_t start() { return start_; }
+  size_t start() const { return start_; }
 
-  size_t end() { return end_; }
+  size_t end() const { return end_; }
 
-  size_t split_dim() { return split_dim_; }
+  size_t split_dim() const { return split_dim_; }
 
-  eT split_value() { return split_value_; }
+  eT split_value() const { return split_value_; }
 
-  cT error() { return error_; }
+  cT error() const { return error_; }
 
-  cT subtree_leaves_error() { return subtree_leaves_error_; }
+  cT subtree_leaves_error() const { return subtree_leaves_error_; }
 
-  size_t subtree_leaves() { return subtree_leaves_; }
+  size_t subtree_leaves() const { return subtree_leaves_; }
 
-  cT ratio() { return ratio_; }
+  cT ratio() const { return ratio_; }
 
-  cT v_t_inv() { return v_t_inv_; }
+  cT v_t_inv() const { return v_t_inv_; }
 
-  cT subtree_leaves_v_t_inv() { return subtree_leaves_v_t_inv_; }
+  cT subtree_leaves_v_t_inv() const { return subtree_leaves_v_t_inv_; }
 
-  DTree<eT, cT>* left() { return left_; }
-  DTree<eT, cT>* right() { return right_; }
+  DTree<eT, cT>* left() const { return left_; }
+  DTree<eT, cT>* right() const { return right_; }
 
-  bool root() { return root_; }
+  bool root() const { return root_; }
 
   ////////////////////// Private Functions ////////////////////////////////////
  private:
@@ -214,11 +214,11 @@ public:
 
   // This is used to generate the class membership
   // of a learned tree.
-  int FindBucket(VecType* query);
+  int FindBucket(const arma::vec& query) const;
 
   // This computes the variable importance list
   // for the learned tree.
-  void ComputeVariableImportance(arma::Col<double> *imps);
+  void ComputeVariableImportance(arma::vec& importances) const;
 
 }; // Class DTree
 
