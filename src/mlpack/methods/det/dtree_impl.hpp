@@ -21,14 +21,14 @@ template<typename eT, typename cT>
 inline double DTree<eT, cT>::LogNegativeError(const size_t totalPoints) const
 {
   // log(-|t|^2 / (N^2 V_t)) = log(-1) + 2 log(|t|) - 2 log(N) - log(V_t).
-  return 2 * std::log((double) (end_ - start_)) -
+  return 2 * std::log((double) (end - start)) -
          2 * std::log((double) totalPoints) -
          arma::accu(arma::log(maxVals - minVals));
 }
 
 // This function finds the best split with respect to the L2-error, by trying
-// all possible splits.  The dataset is the full data set but the start_ and
-// end_ are used to obtain the point in this node.
+// all possible splits.  The dataset is the full data set but the start and
+// end are used to obtain the point in this node.
 template<typename eT, typename cT>
 bool DTree<eT, cT>::FindSplit(const arma::mat& data,
                               size_t& splitDim,
@@ -43,9 +43,9 @@ bool DTree<eT, cT>::FindSplit(const arma::mat& data,
   assert(data.n_rows == maxVals.n_elem);
   assert(data.n_rows == minVals.n_elem);
 
-  const size_t points = end_ - start_;
+  const size_t points = end - start;
 
-  double minError = std::log(-error_);
+  double minError = std::log(-error);
   bool splitFound = false;
 
   // Loop through each dimension.
@@ -79,7 +79,7 @@ bool DTree<eT, cT>::FindSplit(const arma::mat& data,
     }
 
     // Get the values for the dimension.
-    arma::rowvec dimVec = data.row(dim).subvec(start_, end_ - 1);
+    arma::rowvec dimVec = data.row(dim).subvec(start, end - 1);
 
     // Sort the values in ascending order.
     dimVec = arma::sort(dimVec);
@@ -88,7 +88,7 @@ bool DTree<eT, cT>::FindSplit(const arma::mat& data,
     assert(dimVec.n_elem > maxLeafSize);
 
     // Find the best split for this dimension.  We need to figure out why
-    // there are spikes if this min_leaf_size is enforced here...
+    // there are spikes if this minLeafSize is enforced here...
     for (size_t i = minLeafSize - 1; i < dimVec.n_elem - minLeafSize; ++i)
     {
       // This makes sense for real continuous data.  This kinda corrupts the
@@ -99,7 +99,7 @@ bool DTree<eT, cT>::FindSplit(const arma::mat& data,
         continue; // We can't split here (two points are the same).
 
       // Another way of picking split is using this:
-      //   split = left_split;
+      //   split = leftsplit;
       if ((split - min > 0.0) && (max - split > 0.0))
       {
         // Ensure that the right node will have at least the minimum number of
@@ -163,8 +163,8 @@ size_t DTree<eT, cT>::SplitData(arma::mat& data,
   // less than or equal to splitValue are on the left side, and all others are
   // on the right side.  A similar sort to this is also performed in
   // BinarySpaceTree construction (its comments are more detailed).
-  size_t left = start_;
-  size_t right = end_ - 1;
+  size_t left = start;
+  size_t right = end - 1;
   for (;;)
   {
     while (data(splitDim, left) <= splitValue)
@@ -190,10 +190,10 @@ size_t DTree<eT, cT>::SplitData(arma::mat& data,
 
 template<typename eT, typename cT>
 DTree<eT, cT>::DTree() :
-    start_(0),
-    end_(0),
-    left_(NULL),
-    right_(NULL)
+    start(0),
+    end(0),
+    left(NULL),
+    right(NULL)
 { /* Nothing to do. */ }
 
 
@@ -202,23 +202,23 @@ template<typename eT, typename cT>
 DTree<eT, cT>::DTree(const arma::vec& maxVals,
                      const arma::vec& minVals,
                      const size_t totalPoints) :
-    start_(0),
-    end_(totalPoints),
+    start(0),
+    end(totalPoints),
     maxVals(maxVals),
     minVals(minVals),
-    error_(-std::exp(LogNegativeError(totalPoints))),
-    root_(true),
-    bucket_tag_(-1),
-    left_(NULL),
-    right_(NULL)
+    error(-std::exp(LogNegativeError(totalPoints))),
+    root(true),
+    bucketTag(-1),
+    left(NULL),
+    right(NULL)
 { /* Nothing to do. */ }
 
 template<typename eT, typename cT>
 DTree<eT, cT>::DTree(arma::mat& data) :
-    start_(0),
-    end_(data.n_cols),
-    left_(NULL),
-    right_(NULL)
+    start(0),
+    end(data.n_cols),
+    left(NULL),
+    right(NULL)
 {
   maxVals.set_size(data.n_rows);
   minVals.set_size(data.n_rows);
@@ -239,10 +239,10 @@ DTree<eT, cT>::DTree(arma::mat& data) :
     }
   }
 
-  error_ = -std::exp(LogNegativeError(data.n_cols));
+  error = -std::exp(LogNegativeError(data.n_cols));
 
-  bucket_tag_ = -1;
-  root_ = true;
+  bucketTag = -1;
+  root = true;
 }
 
 
@@ -253,15 +253,15 @@ DTree<eT, cT>::DTree(const arma::vec& maxVals,
                      const size_t start,
                      const size_t end,
                      const double error) :
-    start_(start),
-    end_(end),
+    start(start),
+    end(end),
     maxVals(maxVals),
     minVals(minVals),
-    error_(error),
-    root_(false),
-    bucket_tag_(-1),
-    left_(NULL),
-    right_(NULL)
+    error(error),
+    root(false),
+    bucketTag(-1),
+    left(NULL),
+    right(NULL)
 { /* Nothing to do. */ }
 
 template<typename eT, typename cT>
@@ -270,25 +270,25 @@ DTree<eT, cT>::DTree(const arma::vec& maxVals,
                      const size_t totalPoints,
                      const size_t start,
                      const size_t end) :
-    start_(start),
-    end_(end),
+    start(start),
+    end(end),
     maxVals(maxVals),
     minVals(minVals),
-    error_(-std::exp(LogNegativeError(totalPoints))),
-    root_(false),
-    bucket_tag_(-1),
-    left_(NULL),
-    right_(NULL)
+    error(-std::exp(LogNegativeError(totalPoints))),
+    root(false),
+    bucketTag(-1),
+    left(NULL),
+    right(NULL)
 { /* Nothing to do. */ }
 
 template<typename eT, typename cT>
 DTree<eT, cT>::~DTree()
 {
-  if (left_ != NULL)
-    delete left_;
+  if (left != NULL)
+    delete left;
 
-  if (right_ != NULL)
-    delete right_;
+  if (right != NULL)
+    delete right;
 }
 
 
@@ -306,7 +306,7 @@ double DTree<eT, cT>::Grow(arma::mat& data,
   double leftG, rightG;
 
   // Compute points ratio.
-  ratio_ = (double) (end_ - start_) / (double) oldFromNew.n_elem;
+  ratio = (double) (end - start) / (double) oldFromNew.n_elem;
 
   // Compute the v_t_inv: the inverse of the volume of the node.  We use log to
   // prevent overflow.
@@ -317,93 +317,92 @@ double DTree<eT, cT>::Grow(arma::mat& data,
 
   // Check for overflow.
   assert(std::exp(logVol) > 0.0);
-  v_t_inv_ = 1.0 / std::exp(logVol);
+  vTInv = 1.0 / std::exp(logVol);
 
   // Check if node is large enough to split.
-  if ((size_t) (end_ - start_) > maxLeafSize) {
+  if ((size_t) (end - start) > maxLeafSize) {
 
     // Find the split.
     size_t dim;
-    double splitValue;
+    double splitValueTmp;
     double leftError, rightError;
-    if (FindSplit(data, dim, splitValue, leftError, rightError, maxLeafSize,
+    if (FindSplit(data, dim, splitValueTmp, leftError, rightError, maxLeafSize,
         minLeafSize))
     {
       // Move the data around for the children to have points in a node lie
       // contiguously (to increase efficiency during the training).
-      const size_t splitIndex = SplitData(data, dim, splitValue, oldFromNew);
+      const size_t splitIndex = SplitData(data, dim, splitValueTmp, oldFromNew);
 
       // Make max and min vals for the children.
-      arma::vec max_vals_l(maxVals);
-      arma::vec max_vals_r(maxVals);
-      arma::vec min_vals_l(minVals);
-      arma::vec min_vals_r(minVals);
+      arma::vec maxValsL(maxVals);
+      arma::vec maxValsR(maxVals);
+      arma::vec minValsL(minVals);
+      arma::vec minValsR(minVals);
 
-      max_vals_l[dim] = splitValue;
-      min_vals_r[dim] = splitValue;
+      maxValsL[dim] = splitValueTmp;
+      minValsR[dim] = splitValueTmp;
 
       // Store split dim and split val in the node.
-      split_value_ = splitValue;
-      split_dim_ = dim;
+      splitValue = splitValueTmp;
+      splitDim = dim;
 
       // Recursively grow the children.
-      left_ = new DTree(max_vals_l, min_vals_l, start_, splitIndex, leftError);
-      right_ = new DTree(max_vals_r, min_vals_r, splitIndex, end_, rightError);
+      left = new DTree(maxValsL, minValsL, start, splitIndex, leftError);
+      right = new DTree(maxValsR, minValsR, splitIndex, end, rightError);
 
-      leftG = left_->Grow(data, oldFromNew, useVolReg, maxLeafSize,
+      leftG = left->Grow(data, oldFromNew, useVolReg, maxLeafSize,
           minLeafSize);
-      rightG = right_->Grow(data, oldFromNew, useVolReg, maxLeafSize,
+      rightG = right->Grow(data, oldFromNew, useVolReg, maxLeafSize,
           minLeafSize);
 
       // Store values of R(T~) and |T~|.
-      subtree_leaves_ = left_->subtree_leaves() + right_->subtree_leaves();
-      subtree_leaves_error_ = left_->subtree_leaves_error() +
-          right_->subtree_leaves_error();
+      subtreeLeaves = left->SubtreeLeaves() + right->SubtreeLeaves();
+      subtreeLeavesError = left->SubtreeLeavesError() +
+          right->SubtreeLeavesError();
 
-      // Store the subtree_leaves_v_t_inv.
-      subtree_leaves_v_t_inv_ = left_->subtree_leaves_v_t_inv() +
-          right_->subtree_leaves_v_t_inv();
+      // Store subtreeLeavesVTInv.
+      subtreeLeavesVTInv = left->SubtreeLeavesVTInv() +
+          right->SubtreeLeavesVTInv();
     }
     else
     {
       // No split found so make a leaf out of it.
-      subtree_leaves_ = 1;
-      subtree_leaves_error_ = error_;
-      subtree_leaves_v_t_inv_ = v_t_inv_;
+      subtreeLeaves = 1;
+      subtreeLeavesError = error;
+      subtreeLeavesVTInv = vTInv;
     }
   }
   else
   {
     // We can make this a leaf node.
-    assert((size_t) (end_ - start_) >= minLeafSize);
-    subtree_leaves_ = 1;
-    subtree_leaves_error_ = error_;
-    subtree_leaves_v_t_inv_ = v_t_inv_;
+    assert((size_t) (end - start) >= minLeafSize);
+    subtreeLeaves = 1;
+    subtreeLeavesError = error;
+    subtreeLeavesVTInv = vTInv;
   }
 
   // If this is a leaf, do not compute g_k(t); otherwise compute, store, and
   // propagate min(g_k(t_L), g_k(t_R), g_k(t)), unless t_L and/or t_R are
   // leaves.
-  if (subtree_leaves_ == 1)
+  if (subtreeLeaves == 1)
   {
     return std::numeric_limits<double>::max();
   }
   else
   {
-    double g_t;
+    double gT;
     if (useVolReg)
-      g_t = (error_ - subtree_leaves_error_) /
-          (subtree_leaves_v_t_inv_ - v_t_inv_);
+      gT = (error - subtreeLeavesError) / (subtreeLeavesVTInv - vTInv);
     else
-      g_t = (error_ - subtree_leaves_error_) / (subtree_leaves_ - 1);
+      gT = (error - subtreeLeavesError) / (subtreeLeaves - 1);
 
-    assert(g_t > 0.0);
-    return min(g_t, min(leftG, rightG));
+    assert(gT > 0.0);
+    return min(gT, min(leftG, rightG));
   }
 
   // We need to compute (c_t^2) * r_t for all subtree leaves; this is equal to
-  // n_t ^ 2 / r_t * n ^ 2 = -error_.  Therefore the value we need is actually
-  // -1.0 * subtree_leaves_error_.
+  // n_t ^ 2 / r_t * n ^ 2 = -error.  Therefore the value we need is actually
+  // -1.0 * subtreeLeavesError.
 }
 
 
@@ -411,64 +410,62 @@ template<typename eT, typename cT>
 double DTree<eT, cT>::PruneAndUpdate(const double oldAlpha,
                                      const bool useVolReg)
 {
-  // Compute g_t.
-  if (subtree_leaves_ == 1) // If we are a leaf...
+  // Compute gT.
+  if (subtreeLeaves == 1) // If we are a leaf...
   {
     return std::numeric_limits<double>::max();
   }
   else
   {
-    // Compute g_t value for node t.
-    double g_t;
+    // Compute gT value for node t.
+    double gT;
     if (useVolReg)
-      g_t = (error_ - subtree_leaves_error_) /
-          (subtree_leaves_v_t_inv_ - v_t_inv_);
+      gT = (error - subtreeLeavesError) / (subtreeLeavesVTInv - vTInv);
     else
-      g_t = (error_ - subtree_leaves_error_) / (subtree_leaves_ - 1);
+      gT = (error - subtreeLeavesError) / (subtreeLeaves - 1);
 
-    if (g_t > oldAlpha)
+    if (gT > oldAlpha)
     {
       // Go down the tree and update accordingly.  Traverse the children.
-      double left_g = left_->PruneAndUpdate(oldAlpha, useVolReg);
-      double right_g = right_->PruneAndUpdate(oldAlpha, useVolReg);
+      double leftG = left->PruneAndUpdate(oldAlpha, useVolReg);
+      double rightG = right->PruneAndUpdate(oldAlpha, useVolReg);
 
       // Update values.
-      subtree_leaves_ = left_->subtree_leaves() + right_->subtree_leaves();
-      subtree_leaves_error_ = left_->subtree_leaves_error() +
-          right_->subtree_leaves_error();
-      subtree_leaves_v_t_inv_ = left_->subtree_leaves_v_t_inv() +
-          right_->subtree_leaves_v_t_inv();
+      subtreeLeaves = left->SubtreeLeaves() + right->SubtreeLeaves();
+      subtreeLeavesError = left->SubtreeLeavesError() +
+          right->SubtreeLeavesError();
+      subtreeLeavesVTInv = left->SubtreeLeavesVTInv() +
+          right->SubtreeLeavesVTInv();
 
-      // Update g_t value.
+      // Update gT value.
       if (useVolReg)
-        g_t = (error_ - subtree_leaves_error_)
-            / (subtree_leaves_v_t_inv_ - v_t_inv_);
+        gT = (error - subtreeLeavesError) / (subtreeLeavesVTInv - vTInv);
       else
-        g_t = (error_ - subtree_leaves_error_) / (subtree_leaves_ - 1);
+        gT = (error - subtreeLeavesError) / (subtreeLeaves - 1);
 
-      assert(g_t < std::numeric_limits<double>::max());
+      assert(gT < std::numeric_limits<double>::max());
 
-      if (left_->subtree_leaves() == 1 && right_->subtree_leaves() == 1)
-        return g_t;
-      else if (left_->subtree_leaves() == 1)
-        return min(g_t, right_g);
-      else if (right_->subtree_leaves() == 1)
-        return min(g_t, left_g);
+      if (left->SubtreeLeaves() == 1 && right->SubtreeLeaves() == 1)
+        return gT;
+      else if (left->SubtreeLeaves() == 1)
+        return min(gT, rightG);
+      else if (right->SubtreeLeaves() == 1)
+        return min(gT, leftG);
       else
-        return min(g_t, min(left_g, right_g));
+        return min(gT, min(leftG, rightG));
     }
     else
     {
       // Prune this subtree.
       // First, make this node a leaf node.
-      subtree_leaves_ = 1;
-      subtree_leaves_error_ = error_;
-      subtree_leaves_v_t_inv_ = v_t_inv_;
+      subtreeLeaves = 1;
+      subtreeLeavesError = error;
+      subtreeLeavesVTInv = vTInv;
 
-      delete left_;
-      left_ = NULL;
-      delete right_;
-      right_ = NULL;
+      delete left;
+      left = NULL;
+      delete right;
+      right = NULL;
 
       // Pass information upward.
       return std::numeric_limits<double>::max();
@@ -497,27 +494,27 @@ double DTree<eT, cT>::ComputeValue(const arma::vec& query) const
 {
   Log::Assert(query.n_elem == maxVals.n_elem);
 
-  if (root_ == 1) // If we are the root...
+  if (root == 1) // If we are the root...
   {
     // Check if the query is within range.
     if (!WithinRange(query))
       return 0.0;
   }
 
-  if (subtree_leaves_ == 1)  // If we are a leaf...
+  if (subtreeLeaves == 1)  // If we are a leaf...
   {
-    return ratio_ * v_t_inv_;
+    return ratio * vTInv;
   }
   else
   {
-    if (query[split_dim_] <= split_value_)
+    if (query[splitDim] <= splitValue)
     {
       // If left subtree, go to left child.
-      return left_->ComputeValue(query);
+      return left->ComputeValue(query);
     }
     else  // If right subtree, go to right child
     {
-      return right_->ComputeValue(query);
+      return right->ComputeValue(query);
     }
   }
 }
@@ -526,27 +523,27 @@ double DTree<eT, cT>::ComputeValue(const arma::vec& query) const
 template<typename eT, typename cT>
 void DTree<eT, cT>::WriteTree(size_t level, FILE *fp)
 {
-  if (subtree_leaves_ > 1)
+  if (subtreeLeaves > 1)
   {
     fprintf(fp, "\n");
     for (size_t i = 0; i < level; ++i)
       fprintf(fp, "|\t");
-    fprintf(fp, "Var. %zu > %lg", split_dim_, split_value_);
+    fprintf(fp, "Var. %zu > %lg", splitDim, splitValue);
 
-    right_->WriteTree(level + 1, fp);
+    right->WriteTree(level + 1, fp);
 
     fprintf(fp, "\n");
     for (size_t i = 0; i < level; ++i)
       fprintf(fp, "|\t");
-    fprintf(fp, "Var. %zu <= %lg ", split_dim_, split_value_);
+    fprintf(fp, "Var. %zu <= %lg ", splitDim, splitValue);
 
-    left_->WriteTree(level + 1, fp);
+    left->WriteTree(level + 1, fp);
   }
   else // If we are a leaf...
   {
-    fprintf(fp, ": f(x)=%Lg", (cT) ratio_ * v_t_inv_);
-    if (bucket_tag_ != -1)
-      fprintf(fp, " BT:%d", bucket_tag_);
+    fprintf(fp, ": f(x)=%lg", ratio * vTInv);
+    if (bucketTag != -1)
+      fprintf(fp, " BT:%d", bucketTag);
   }
 }
 
@@ -555,14 +552,14 @@ void DTree<eT, cT>::WriteTree(size_t level, FILE *fp)
 template<typename eT, typename cT>
 int DTree<eT, cT>::TagTree(int tag)
 {
-  if (subtree_leaves_ == 1)
+  if (subtreeLeaves == 1)
   {
-    bucket_tag_ = tag;
+    bucketTag = tag;
     return (tag + 1);
   }
   else
   {
-    return right_->TagTree(left_->TagTree(tag));
+    return right->TagTree(left->TagTree(tag));
   }
 } // TagTree
 
@@ -572,18 +569,18 @@ int DTree<eT, cT>::FindBucket(const arma::vec& query) const
 {
   Log::Assert(query.n_elem == maxVals.n_elem);
 
-  if (subtree_leaves_ == 1) // If we are a leaf...
+  if (subtreeLeaves == 1) // If we are a leaf...
   {
-    return bucket_tag_;
+    return bucketTag;
   }
-  else if (query[split_dim_] <= split_value_)
+  else if (query[splitDim] <= splitValue)
   {
     // If left subtree, go to left child.
-    return left_->FindBucket(query);
+    return left->FindBucket(query);
   }
   else // If right subtree, go to right child.
   {
-    return right_->FindBucket(query);
+    return right->FindBucket(query);
   }
 }
 
@@ -603,14 +600,14 @@ void DTree<eT, cT>::ComputeVariableImportance(arma::vec& importances)
     const DTree& curNode = *nodes.top();
     nodes.pop();
 
-    if (curNode.subtree_leaves_ == 1)
+    if (curNode.subtreeLeaves == 1)
       continue; // Do nothing for leaves.
 
-    importances[curNode.split_dim()] += (double) (curNode.error() -
-        (curNode.left()->error() + curNode.right()->error()));
+    importances[curNode.SplitDim()] += (double) (curNode.Error() -
+        (curNode.Left()->Error() + curNode.Right()->Error()));
 
-    nodes.push(curNode.left());
-    nodes.push(curNode.right());
+    nodes.push(curNode.Left());
+    nodes.push(curNode.Right());
   }
 }
 

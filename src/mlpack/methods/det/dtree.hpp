@@ -59,17 +59,13 @@ template<typename eT = double,
 class DTree
 {
  private:
-
-  typedef arma::Mat<eT> MatType;
-  typedef arma::Col<eT> VecType;
-  typedef arma::Row<eT> RowVecType;
-
   // The indices in the complete set of points
   // (after all forms of swapping in the original data
   // matrix to align all the points in a node
   // consecutively in the matrix. The 'old_from_new' array
   // maps the points back to their original indices.
-  size_t start_, end_;
+  size_t start;
+  size_t end;
 
   // since we are using uniform density, we need
   // the max and min of every dimension for every node
@@ -77,70 +73,70 @@ class DTree
   arma::vec minVals;
 
   // The split dim for this node
-  size_t split_dim_;
+  size_t splitDim;
 
   // The split val on that dim
-  eT split_value_;
+  double splitValue;
 
   // L2-error of the node
-  cT error_;
+  double error;
 
   // sum of the error of the leaves of the subtree
-  cT subtree_leaves_error_;
+  double subtreeLeavesError;
 
   // number of leaves of the subtree
-  size_t subtree_leaves_;
+  size_t subtreeLeaves;
 
   // flag to indicate if this is the root node
   // used to check whether the query point is
   // within the range
-  bool root_;
+  bool root;
 
   // ratio of number of points in the node to the
   // total number of points (|t| / N)
-  cT ratio_;
+  double ratio;
 
   // the inverse of  volume of the node
-  cT v_t_inv_;
+  double vTInv;
 
   // sum of the reciprocal of the inverse v_ts
   // the leaves of this subtree
-  cT subtree_leaves_v_t_inv_;
+  double subtreeLeavesVTInv;
 
   // the tag for the leaf used for hashing points
-  int bucket_tag_;
+  int bucketTag;
 
   // The children
-  DTree<eT, cT> *left_;
-  DTree<eT, cT> *right_;
+  DTree<eT, cT> *left;
+  DTree<eT, cT> *right;
 
 public:
 
   ////////////////////// Getters and Setters //////////////////////////////////
-  size_t start() const { return start_; }
+  size_t Start() const { return start; }
 
-  size_t end() const { return end_; }
+  size_t End() const { return end; }
 
-  size_t split_dim() const { return split_dim_; }
+  size_t SplitDim() const { return splitDim; }
 
-  eT split_value() const { return split_value_; }
+  double SplitValue() const { return splitValue; }
 
-  cT error() const { return error_; }
+  double Error() const { return error; }
 
-  cT subtree_leaves_error() const { return subtree_leaves_error_; }
+  double SubtreeLeavesError() const { return subtreeLeavesError; }
 
-  size_t subtree_leaves() const { return subtree_leaves_; }
+  size_t SubtreeLeaves() const { return subtreeLeaves; }
 
-  cT ratio() const { return ratio_; }
+  double Ratio() const { return ratio; }
 
-  cT v_t_inv() const { return v_t_inv_; }
+  double VTInv() const { return vTInv; }
 
-  cT subtree_leaves_v_t_inv() const { return subtree_leaves_v_t_inv_; }
+  double SubtreeLeavesVTInv() const { return subtreeLeavesVTInv; }
 
-  DTree<eT, cT>* left() const { return left_; }
-  DTree<eT, cT>* right() const { return right_; }
+  DTree<eT, cT>* Left() const { return left; }
+  DTree<eT, cT>* Right() const { return right; }
 
-  bool root() const { return root_; }
+  bool Root() const { return root; }
 
   ////////////////////// Private Functions ////////////////////////////////////
  private:

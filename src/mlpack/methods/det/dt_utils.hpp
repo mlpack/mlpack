@@ -67,8 +67,7 @@ void PrintLeafMembership(DTree<eT> *dtree,
 
 template<typename eT>
 void PrintVariableImportance(DTree<eT> *dtree,
-                             size_t num_dims,
-                             string vi_file = "")
+                             const string vi_file = "")
 {
   arma::vec imps;
   dtree->ComputeVariableImportance(imps);
@@ -131,7 +130,7 @@ DTree<eT> *Trainer(arma::Mat<eT>* dataset,
 
   delete new_dataset;
 
-  Log::Info << dtree->subtree_leaves()
+  Log::Info << dtree->SubtreeLeaves()
       << " leaf nodes in the tree with full data; min_alpha: " << alpha << "."
       << std::endl;
 
@@ -157,24 +156,24 @@ DTree<eT> *Trainer(arma::Mat<eT>* dataset,
   }
 
   // Sequentially prune and save the alpha values and the values of c_t^2 * r_t.
-  std::vector<std::pair<double, long double> > pruned_sequence;
-  while (dtree->subtree_leaves() > 1)
+  std::vector<std::pair<double, double> > pruned_sequence;
+  while (dtree->SubtreeLeaves() > 1)
   {
-    std::pair<double, long double> tree_seq(old_alpha,
-        -1.0 * dtree->subtree_leaves_error());
+    std::pair<double, double> tree_seq(old_alpha,
+        -1.0 * dtree->SubtreeLeavesError());
     pruned_sequence.push_back(tree_seq);
     old_alpha = alpha;
     alpha = dtree->PruneAndUpdate(old_alpha, useVolumeReg);
 
     // Some sanity checks.
-    assert((alpha < std::numeric_limits<long double>::max()) ||
-        (dtree->subtree_leaves() == 1));
+    assert((alpha < std::numeric_limits<double>::max()) ||
+        (dtree->SubtreeLeaves() == 1));
     assert(alpha > old_alpha);
-    assert(dtree->subtree_leaves_error() >= -1.0 * tree_seq.second);
+    assert(dtree->SubtreeLeavesError() >= -1.0 * tree_seq.second);
   }
 
-  std::pair<long double, long double> tree_seq(old_alpha,
-      -1.0 * dtree->subtree_leaves_error());
+  std::pair<double, double> tree_seq(old_alpha,
+      -1.0 * dtree->SubtreeLeavesError());
   pruned_sequence.push_back(tree_seq);
 
   Log::Info << pruned_sequence.size() << " trees in the sequence; max_alpha: "
@@ -232,11 +231,11 @@ DTree<eT> *Trainer(arma::Mat<eT>* dataset,
 
     // Sequentially prune with all the values of available alphas and adding
     // values for test values.
-    std::vector<std::pair<double, long double> >::iterator it;
+    std::vector<std::pair<double, double> >::iterator it;
     for (it = pruned_sequence.begin(); it < pruned_sequence.end() -2; ++it)
     {
       // Compute test values for this state of the tree.
-      long double val_cv = 0.0;
+      double val_cv = 0.0;
       for (size_t i = 0; i < test.n_cols; i++)
       {
         arma::Col<eT> test_point = test.unsafe_col(i);
@@ -244,7 +243,7 @@ DTree<eT> *Trainer(arma::Mat<eT>* dataset,
       }
 
       // Update the cv error value.
-      it->second -= 2.0 * val_cv / (long double) dataset->n_cols;
+      it->second -= 2.0 * val_cv / (double) dataset->n_cols;
 
       // Determine the new alpha value and prune accordingly.
       old_alpha = sqrt(((it + 1)->first) * ((it + 2)->first));
@@ -252,7 +251,7 @@ DTree<eT> *Trainer(arma::Mat<eT>* dataset,
     }
 
     // Compute test values for this state of the tree.
-    long double val_cv = 0.0;
+    double val_cv = 0.0;
     for (size_t i = 0; i < test.n_cols; ++i)
     {
       arma::Col<eT> test_point = test.unsafe_col(i);
@@ -260,7 +259,7 @@ DTree<eT> *Trainer(arma::Mat<eT>* dataset,
     }
 
     // Update the cv error value.
-    it->second -= 2.0 * val_cv / (long double) dataset->n_cols;
+    it->second -= 2.0 * val_cv / (double) dataset->n_cols;
 
     test.reset();
     delete train;
@@ -270,9 +269,9 @@ DTree<eT> *Trainer(arma::Mat<eT>* dataset,
 
   delete cvdata;
 
-  long double optimal_alpha = -1.0;
-  long double best_cv_error = numeric_limits<long double>::max();
-  std::vector<std::pair<double, long double> >::iterator it;
+  double optimal_alpha = -1.0;
+  double best_cv_error = numeric_limits<double>::max();
+  std::vector<std::pair<double, double> >::iterator it;
 
   for (it = pruned_sequence.begin(); it < pruned_sequence.end() -1; ++it)
   {
@@ -301,18 +300,18 @@ DTree<eT> *Trainer(arma::Mat<eT>* dataset,
       minLeafSize);
 
   // Prune with optimal alpha.
-  while ((old_alpha < optimal_alpha) && (dtree_opt->subtree_leaves() > 1))
+  while ((old_alpha < optimal_alpha) && (dtree_opt->SubtreeLeaves() > 1))
   {
     old_alpha = alpha;
     alpha = dtree_opt->PruneAndUpdate(old_alpha, useVolumeReg);
 
     // Some sanity checks.
-    assert((alpha < numeric_limits<long double>::max()) ||
-        (dtree_opt->subtree_leaves() == 1));
+    assert((alpha < numeric_limits<double>::max()) ||
+        (dtree_opt->SubtreeLeaves() == 1));
     assert(alpha > old_alpha);
   }
 
-  Log::Info << dtree_opt->subtree_leaves()
+  Log::Info << dtree_opt->SubtreeLeaves()
     << " leaf nodes in the optimally pruned tree; optimal alpha: "
     << old_alpha << "." << std::endl;
 
