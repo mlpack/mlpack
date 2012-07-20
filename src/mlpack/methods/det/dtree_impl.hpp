@@ -10,6 +10,7 @@
 #define __MLPACK_METHODS_DET_DTREE_IMPL_HPP
 
 #include "dtree.hpp"
+#include <stack>
 
 namespace mlpack {
 namespace det {
@@ -567,15 +568,15 @@ int DTree<eT, cT>::TagTree(int tag)
 
 
 template<typename eT, typename cT>
-int DTree<eT, cT>::FindBucket(VecType* query)
+int DTree<eT, cT>::FindBucket(const arma::vec& query) const
 {
-  assert(query->n_elem == maxVals.n_elem);
+  Log::Assert(query.n_elem == maxVals.n_elem);
 
   if (subtree_leaves_ == 1) // If we are a leaf...
   {
     return bucket_tag_;
   }
-  else if ((*query)[split_dim_] <= split_value_)
+  else if (query[split_dim_] <= split_value_)
   {
     // If left subtree, go to left child.
     return left_->FindBucket(query);
@@ -588,22 +589,28 @@ int DTree<eT, cT>::FindBucket(VecType* query)
 
 
 template<typename eT, typename cT>
-void DTree<eT, cT>::ComputeVariableImportance(arma::Col<double> *imps)
+void DTree<eT, cT>::ComputeVariableImportance(arma::vec& importances)
+    const
 {
-  if (subtree_leaves_ == 1)
+  // Clear and set to right size.
+  importances.zeros(maxVals.n_elem);
+
+  std::stack<const DTree*> nodes;
+  nodes.push(this);
+
+  while(!nodes.empty())
   {
-    // If we are a leaf, do nothing.
-    return;
-  }
-  else
-  {
-    // Compute the improvement in error because of the split.
-    double error_improv = (double)
-        (error_ - (left_->error() + right_->error()));
-    (*imps)[split_dim_] += error_improv;
-    left_->ComputeVariableImportance(imps);
-    right_->ComputeVariableImportance(imps);
-    return;
+    const DTree& curNode = *nodes.top();
+    nodes.pop();
+
+    if (curNode.subtree_leaves_ == 1)
+      continue; // Do nothing for leaves.
+
+    importances[curNode.split_dim()] += (double) (curNode.error() -
+        (curNode.left()->error() + curNode.right()->error()));
+
+    nodes.push(curNode.left());
+    nodes.push(curNode.right());
   }
 }
 

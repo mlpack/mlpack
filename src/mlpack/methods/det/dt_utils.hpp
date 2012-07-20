@@ -32,7 +32,7 @@ void PrintLeafMembership(DTree<eT> *dtree,
   for (size_t i = 0; i < data.n_cols; i++)
   {
     arma::Col<eT> test_p = data.unsafe_col(i);
-    int leaf_tag = dtree->FindBucket(&test_p);
+    int leaf_tag = dtree->FindBucket(test_p);
     int label = labels[i];
     table(leaf_tag, label) += 1;
   }
@@ -70,20 +70,19 @@ void PrintVariableImportance(DTree<eT> *dtree,
                              size_t num_dims,
                              string vi_file = "")
 {
-  arma::Col<double> *imps = new arma::Col<double>(num_dims);
-  imps->zeros();
-
+  arma::vec imps;
   dtree->ComputeVariableImportance(imps);
+
   double max = 0.0;
-  for (size_t i = 0; i < imps->n_elem; ++i)
-    if ((*imps)[i] > max)
-      max = (*imps)[i];
+  for (size_t i = 0; i < imps.n_elem; ++i)
+    if (imps[i] > max)
+      max = imps[i];
 
   Log::Warn << "Max. variable importance: " << max << "." << std::endl;
 
   if (vi_file == "")
   {
-    Log::Warn << "Variable importance: " << std::endl << imps->t() << std::endl;
+    Log::Warn << "Variable importance: " << std::endl << imps.t() << std::endl;
   }
   else
   {
@@ -92,15 +91,13 @@ void PrintVariableImportance(DTree<eT> *dtree,
     {
       Log::Warn << "Variable importance printed in '" << vi_file << "'."
           << endl;
-      outfile << *imps;
+      outfile << imps;
     } else {
       Log::Warn << "Can't open '" << vi_file
         << "'" << endl;
     }
     outfile.close();
   }
-
-  delete[] imps;
 
   return;
 } // PrintVariableImportance
