@@ -216,10 +216,9 @@ int main(int argc, char *argv[])
   } // leaf class membership
 
 
-  if(CLI::HasParam("I")) {
-    PrintVariableImportance<double>
-      (dtree_opt, training_data.n_rows,
-       (string) CLI::GetParam<string>("i"));
+  if (CLI::HasParam("I"))
+  {
+    PrintVariableImportance<double>(dtree_opt, CLI::GetParam<string>("i"));
   } // print variable importance
 
 
