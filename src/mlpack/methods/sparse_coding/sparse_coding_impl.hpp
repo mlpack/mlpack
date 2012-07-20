@@ -113,7 +113,7 @@ void SparseCoding<DictionaryInitializer>::OptimizeCode()
 
 // Dictionary step for optimization.
 template<typename DictionaryInitializer>
-void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
+double SparseCoding<DictionaryInitializer>::OptimizeDictionary(
     const arma::uvec& adjacencies,
     const double newtonTolerance)
 {
@@ -202,6 +202,7 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
     codesZT = matActiveZ * trans(matActiveZ);
   }
 
+  double normGradient;
   double improvement;
   for (size_t t = 1; !converged; ++t)
   {
@@ -244,7 +245,7 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
 
     // Take step and print useful information.
     dualVars += searchDirection;
-    double normGradient = norm(gradient, 2);
+    normGradient = norm(gradient, 2);
     Log::Debug << "Newton Method iteration " << t << ":" << std::endl;
     Log::Debug << "  Gradient norm: " << std::scientific << normGradient
         << "." << std::endl;
@@ -288,6 +289,7 @@ void SparseCoding<DictionaryInitializer>::OptimizeDictionary(
     }
   }
   //printf("final reconstruction error: %e\n", norm(data - dictionary * codes, "fro"));
+  return normGradient;
 }
 
 // Project each atom of the dictionary back into the unit ball (if necessary).
