@@ -296,10 +296,9 @@ BOOST_AUTO_TEST_CASE(TestVariableImportance)
   DTree<> testDTree(test_data);
   testDTree.Grow(test_data, o_test, false, 2, 1);
 
-  arma::vec imps(3);
-  imps.zeros();
+  arma::vec imps;
 
-  testDTree.ComputeVariableImportance(&imps);
+  testDTree.ComputeVariableImportance(imps);
 
   BOOST_REQUIRE_CLOSE((double) 0.0, imps[0], 1e-10);
   BOOST_REQUIRE_CLOSE((double) (r_error - (rl_error + rr_error)), imps[1],
