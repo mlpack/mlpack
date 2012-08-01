@@ -158,13 +158,13 @@ int main(int argc, char *argv[])
 
       if (fp != NULL)
       {
-        dtreeOpt->WriteTree(0, fp);
+        dtreeOpt->WriteTree(fp);
         fclose(fp);
       }
     }
     else
     {
-      dtreeOpt->WriteTree(0, stdout);
+      dtreeOpt->WriteTree(stdout);
       printf("\n");
     }
   }

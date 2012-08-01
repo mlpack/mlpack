@@ -58,91 +58,248 @@ template<typename eT = double,
          typename cT = long double>
 class DTree
 {
+ public:
+  /**
+   * Create an empty density estimation tree.
+   */
+  DTree();
+
+  /**
+   * Create a density estimation tree with the given bounds and the given number
+   * of total points.  Children will not be created.
+   *
+   * @param maxVals Maximum values of the bounding box.
+   * @param minVals Minimum values of the bounding box.
+   * @param totalPoints Total number of points in the dataset.
+   */
+  DTree(const arma::vec& maxVals,
+        const arma::vec& minVals,
+        const size_t totalPoints);
+
+  /**
+   * Create a density estimation tree on the given data.  Children will be
+   * created following the procedure outlined in the paper.  The data will be
+   * modified; it will be reordered similar to the way BinarySpaceTree modifies
+   * datasets.
+   *
+   * @param data Dataset to build tree on.
+   */
+  DTree(arma::mat& data);
+
+  /**
+   * Create a child node of a density estimation tree given the bounding box
+   * specified by maxVals and minVals, using the size given in start and end and
+   * the specified error.  Children of this node will not be created
+   * recursively.
+   *
+   * @param maxVals Upper bound of bounding box.
+   * @param minVals Lower bound of bounding box.
+   * @param start Start of points represented by this node in the data matrix.
+   * @param end End of points represented by this node in the data matrix.
+   * @param error log-negative error of this node.
+   */
+  DTree(const arma::vec& maxVals,
+        const arma::vec& minVals,
+        const size_t start,
+        const size_t end,
+        const double logNegError);
+
+  /**
+   * Create a child node of a density estimation tree given the bounding box
+   * specified by maxVals and minVals, using the size given in start and end,
+   * and calculating the error with the total number of points given.  Children
+   * of this node will not be created recursively.
+   *
+   * @param maxVals Upper bound of bounding box.
+   * @param minVals Lower bound of bounding box.
+   * @param start Start of points represented by this node in the data matrix.
+   * @param end End of points represented by this node in the data matrix.
+   */
+  DTree(const arma::vec& maxVals,
+        const arma::vec& minVals,
+        const size_t totalPoints,
+        const size_t start,
+        const size_t end);
+
+  //! Clean up memory allocated by the tree.
+  ~DTree();
+
+  /**
+   * Greedily expand the tree.  The points in the dataset will be reordered
+   * during tree growth.
+   *
+   * @param data Dataset to build tree on.
+   * @param oldFromNew Mappings from old points to new points.
+   * @param useVolReg If true, volume regularization is used.
+   * @param maxLeafSize Maximum size of a leaf.
+   * @param minLeafSize Minimum size of a leaf.
+   */
+  double Grow(arma::mat& data,
+              arma::Col<size_t>& oldFromNew,
+              const bool useVolReg = false,
+              const size_t maxLeafSize = 10,
+              const size_t minLeafSize = 5);
+
+  /**
+   * Perform alpha pruning on a tree.  Returns the new value of alpha.
+   *
+   * @param oldAlpha Old value of alpha.
+   * @param points Total number of points in dataset.
+   * @param useVolReg If true, volume regularization is used.
+   * @return New value of alpha.
+   */
+  double PruneAndUpdate(const double oldAlpha,
+                        const size_t points,
+                        const bool useVolReg = false);
+
+  /**
+   * Compute the logarithm of the density estimate of a given query point.
+   *
+   * @param query Point to estimate density of.
+   */
+  double ComputeValue(const arma::vec& query) const;
+
+  /**
+   * Print the tree in a depth-first manner (this function is called
+   * recursively).
+   *
+   * @param fp File to write the tree to.
+   * @param level Level of the tree (should start at 0).
+   */
+  void WriteTree(FILE *fp, const size_t level = 0) const;
+
+  /**
+   * Index the buckets for possible usage later; this results in every leaf in
+   * the tree having a specific tag (accessible with BucketTag()).  This
+   * function calls itself recursively.
+   *
+   * @param tag Tag for the next leaf; leave at 0 for the initial call.
+   */
+  int TagTree(const int tag = 0);
+
+  /**
+   * Return the tag of the leaf containing the query.  This is useful for
+   * generating class memberships.
+   *
+   * @param query Query to search for.
+   */
+  int FindBucket(const arma::vec& query) const;
+
+  /**
+   * Compute the variable importance of each dimension in the learned tree.
+   *
+   * @param importances Vector to store the calculated importances in.
+   */
+  void ComputeVariableImportance(arma::vec& importances) const;
+
+  /**
+   * Compute the log-negative-error for this point, given the total number of
+   * points in the dataset.
+   *
+   * @param totalPoints Total number of points in the dataset.
+   */
+  inline double LogNegativeError(const size_t totalPoints) const;
+
  private:
   // The indices in the complete set of points
   // (after all forms of swapping in the original data
   // matrix to align all the points in a node
   // consecutively in the matrix. The 'old_from_new' array
   // maps the points back to their original indices.
+
+  //! The index of the first point in the dataset contained in this node (and
+  //! its children).
   size_t start;
+  //! The index of the last point in the dataset contained in this node (and its
+  //! children).
   size_t end;
 
-  // since we are using uniform density, we need
-  // the max and min of every dimension for every node
+  //! Upper half of bounding box for this node.
   arma::vec maxVals;
+  //! Lower half of bounding box for this node.
   arma::vec minVals;
 
-  // The split dim for this node
+  //! The splitting dimension for this node.
   size_t splitDim;
 
-  // The split val on that dim
+  //! The split value on the splitting dimension for this node.
   double splitValue;
 
-  // L2-error of the node
-  double error;
+  //! log-negative-L2-error of the node.
+  double logNegError;
 
-  // sum of the error of the leaves of the subtree
-  double subtreeLeavesError;
+  //! Sum of the error of the leaves of the subtree.
+  double subtreeLeavesLogNegError;
 
-  // number of leaves of the subtree
+  //! Number of leaves of the subtree.
   size_t subtreeLeaves;
 
-  // flag to indicate if this is the root node
-  // used to check whether the query point is
-  // within the range
+  //! If true, this node is the root of the tree.
   bool root;
 
-  // ratio of number of points in the node to the
-  // total number of points (|t| / N)
+  //! Ratio of the number of points in the node to the total number of points.
   double ratio;
 
-  // the inverse of  volume of the node
-  double vTInv;
+  //! The logarithm of the volume of the node.
+  double logVolume;
 
-  // sum of the reciprocal of the inverse v_ts
-  // the leaves of this subtree
-  double subtreeLeavesVTInv;
-
-  // the tag for the leaf used for hashing points
+  //! The tag for the leaf, used for hashing points.
   int bucketTag;
 
-  // The children
+  //! Upper part of alpha sum; used for pruning.
+  double alphaUpper;
+
+  //! The left child.
   DTree<eT, cT> *left;
+  //! The right child.
   DTree<eT, cT> *right;
 
-public:
-
-  ////////////////////// Getters and Setters //////////////////////////////////
+ public:
+  //! Return the starting index of points contained in this node.
   size_t Start() const { return start; }
-
+  //! Return the first index of a point not contained in this node.
   size_t End() const { return end; }
-
+  //! Return the split dimension of this node.
   size_t SplitDim() const { return splitDim; }
-
+  //! Return the split value of this node.
   double SplitValue() const { return splitValue; }
-
-  double Error() const { return error; }
-
-  double SubtreeLeavesError() const { return subtreeLeavesError; }
-
+  //! Return the log negative error of this node.
+  double LogNegError() const { return logNegError; }
+  //! Return the log negative error of all descendants of this node.
+  double SubtreeLeavesLogNegError() const { return subtreeLeavesLogNegError; }
+  //! Return the number of leaves which are descendants of this node.
   size_t SubtreeLeaves() const { return subtreeLeaves; }
-
+  //! Return the ratio of points in this node to the points in the whole
+  //! dataset.
   double Ratio() const { return ratio; }
-
-  double VTInv() const { return vTInv; }
-
-  double SubtreeLeavesVTInv() const { return subtreeLeavesVTInv; }
-
+  //! Return the inverse of the volume of this node.
+  double LogVolume() const { return logVolume; }
+  //! Return the left child.
   DTree<eT, cT>* Left() const { return left; }
+  //! Return the right child.
   DTree<eT, cT>* Right() const { return right; }
-
+  //! Return whether or not this is the root of the tree.
   bool Root() const { return root; }
+  //! Return the upper part of the alpha sum.
+  double AlphaUpper() const { return alphaUpper; }
 
-  ////////////////////// Private Functions ////////////////////////////////////
+  //! Return the maximum values.
+  const arma::vec& MaxVals() const { return maxVals; }
+  //! Modify the maximum values.
+  arma::vec& MaxVals() { return maxVals; }
+
+  //! Return the minimum values.
+  const arma::vec& MinVals() const { return minVals; }
+  //! Modify the minimum values.
+  arma::vec& MinVals() { return minVals; }
+
  private:
 
-  inline double LogNegativeError(const size_t total_points) const;
+  // Utility methods.
 
+  /**
+   * Find the dimension to split on.
+   */
   bool FindSplit(const arma::mat& data,
                  size_t& splitDim,
                  double& splitValue,
@@ -151,71 +308,18 @@ public:
                  const size_t maxLeafSize = 10,
                  const size_t minLeafSize = 5) const;
 
+  /**
+   * Split the data, returning the number of points left of the split.
+   */
   size_t SplitData(arma::mat& data,
                    const size_t splitDim,
                    const double splitValue,
                    arma::Col<size_t>& oldFromNew) const;
 
+  /**
+   * Return whether a query point is within the range of this node.
+   */
   inline bool WithinRange(const arma::vec& query) const;
-
-  ///////////////////// Public Functions //////////////////////////////////////
- public:
-
-  DTree();
-
-  // Root node initializer
-  // with the bounding box of the data
-  // it contains instead of just the data.
-  DTree(const arma::vec& maxVals,
-        const arma::vec& minVals,
-        const size_t totalPoints);
-
-  // Root node initializer
-  // with the data, no bounding box.
-  DTree(arma::mat& data);
-
-  // Non-root node initializers
-  DTree(const arma::vec& maxVals,
-        const arma::vec& minVals,
-        const size_t start,
-        const size_t end,
-        const double error);
-
-  DTree(const arma::vec& maxVals,
-        const arma::vec& minVals,
-        const size_t totalPoints,
-        const size_t start,
-        const size_t end);
-
-  ~DTree();
-
-  // Greedily expand the tree
-  double Grow(arma::mat& data,
-              arma::Col<size_t>& oldFromNew,
-              const bool useVolReg = false,
-              const size_t maxLeafSize = 10,
-              const size_t minLeafSize = 5);
-
-  // perform alpha pruning on the tree
-  double PruneAndUpdate(const double old_alpha, const bool useVolReg = false);
-
-  // compute the density at a given point
-  double ComputeValue(const arma::vec& query) const;
-
-  // print the tree (in a DFS manner)
-  void WriteTree(size_t level, FILE *fp);
-
-  // indexing the buckets for possible usage later
-  int TagTree(int tag);
-
-  // This is used to generate the class membership
-  // of a learned tree.
-  int FindBucket(const arma::vec& query) const;
-
-  // This computes the variable importance list
-  // for the learned tree.
-  void ComputeVariableImportance(arma::vec& importances) const;
-
 }; // Class DTree
 
 }; // namespace det
