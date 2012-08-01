@@ -17,46 +17,46 @@ namespace mlpack {
 namespace det {
 
 template<typename eT>
-void PrintLeafMembership(DTree<eT> *dtree,
+void PrintLeafMembership(DTree<eT>* dtree,
                          const arma::Mat<eT>& data,
                          const arma::Mat<size_t>& labels,
-                         size_t num_classes,
-                         string leaf_class_membership_file = "")
+                         const size_t numClasses,
+                         const std::string leafClassMembershipFile = "")
 {
   // Tag the leaves with numbers.
-  int num_leaves = dtree->TagTree();
+  int numLeaves = dtree->TagTree();
 
-  arma::Mat<size_t> table(num_leaves, num_classes);
+  arma::Mat<size_t> table(numLeaves, numClasses);
   table.zeros();
 
   for (size_t i = 0; i < data.n_cols; i++)
   {
-    arma::Col<eT> test_p = data.unsafe_col(i);
-    int leaf_tag = dtree->FindBucket(test_p);
-    size_t label = labels[i];
-    table(leaf_tag, label) += 1;
+    const arma::Col<eT> test_p = data.unsafe_col(i);
+    const int leafTag = dtree->FindBucket(test_p);
+    const size_t label = labels[i];
+    table(leafTag, label) += 1;
   }
 
-  if (leaf_class_membership_file == "")
+  if (leafClassMembershipFile == "")
   {
-    Log::Warn << "Leaf Membership: Classes in each leaf" << std::endl
-      << table << std::endl;
+    Log::Info << "Leaf membership; row represents leaf id, column represents "
+        << "class id; value represents number of points in leaf in class."
+        << std::endl << table;
   }
   else
   {
     // Create a stream for the file.
-    ofstream outfile(leaf_class_membership_file.c_str());
+    std::ofstream outfile(leafClassMembershipFile.c_str());
     if (outfile.good())
     {
       outfile << table;
-      Log::Warn << "Leaf Membership: Classes in each leaf"
-        << " printed in '" << leaf_class_membership_file << "'."
-        << std::endl;
+      Log::Info << "Leaf membership printed to '" << leafClassMembershipFile
+          << "'." << std::endl;
     }
     else
     {
-      Log::Warn << "Can't open '" << leaf_class_membership_file << "'."
-        << std::endl;
+      Log::Warn << "Can't open '" << leafClassMembershipFile << "' to write "
+          << "leaf membership to." << std::endl;
     }
     outfile.close();
   }
@@ -66,8 +66,8 @@ void PrintLeafMembership(DTree<eT> *dtree,
 
 
 template<typename eT>
-void PrintVariableImportance(DTree<eT> *dtree,
-                             const string vi_file = "")
+void PrintVariableImportance(const DTree<eT>* dtree,
+                             const std::string viFile = "")
 {
   arma::vec imps;
   dtree->ComputeVariableImportance(imps);
@@ -77,253 +77,235 @@ void PrintVariableImportance(DTree<eT> *dtree,
     if (imps[i] > max)
       max = imps[i];
 
-  Log::Warn << "Max. variable importance: " << max << "." << std::endl;
+  Log::Info << "Maximum variable importance: " << max << "." << std::endl;
 
-  if (vi_file == "")
+  if (viFile == "")
   {
-    Log::Warn << "Variable importance: " << std::endl << imps.t() << std::endl;
+    Log::Info << "Variable importance: " << std::endl << imps.t() << std::endl;
   }
   else
   {
-    ofstream outfile(vi_file.c_str());
+    std::ofstream outfile(viFile.c_str());
     if (outfile.good())
     {
-      Log::Warn << "Variable importance printed in '" << vi_file << "'."
-          << endl;
       outfile << imps;
-    } else {
-      Log::Warn << "Can't open '" << vi_file
-        << "'" << endl;
+      Log::Info << "Variable importance printed to '" << viFile << "'."
+          << std::endl;
+    }
+    else
+    {
+      Log::Warn << "Can't open '" << viFile << "' to write variable importance "
+          << "to." << std::endl;
     }
     outfile.close();
   }
-
-  return;
-} // PrintVariableImportance
+}
 
 
 // This function trains the optimal decision tree using the given number of
 // folds.
 template<typename eT>
-DTree<eT> *Trainer(arma::Mat<eT>* dataset,
-                   size_t folds,
-                   bool useVolumeReg = false,
-                   size_t maxLeafSize = 10,
-                   size_t minLeafSize = 5,
-                   string unprunedTreeOutput = "")
+DTree<eT>* Trainer(arma::Mat<eT>& dataset,
+                   const size_t folds,
+                   const bool useVolumeReg = false,
+                   const size_t maxLeafSize = 10,
+                   const size_t minLeafSize = 5,
+                   const std::string unprunedTreeOutput = "")
 {
   // Initialize the tree.
-  DTree<eT>* dtree = new DTree<eT>(*dataset);
+  DTree<eT>* dtree = new DTree<eT>(dataset);
 
-  // Getting ready to grow the tree...
-  arma::Col<size_t> old_from_new(dataset->n_cols);
-  for (size_t i = 0; i < old_from_new.n_elem; i++)
-    old_from_new[i] = i;
+  // Prepare to grow the tree...
+  arma::Col<size_t> oldFromNew(dataset.n_cols);
+  for (size_t i = 0; i < oldFromNew.n_elem; i++)
+    oldFromNew[i] = i;
 
-  // Saving the dataset since it would be modified while growing the tree
-  arma::Mat<eT>* new_dataset = new arma::Mat<eT>(*dataset);
+  // Save the dataset since it would be modified while growing the tree.
+  arma::Mat<eT> newDataset(dataset);
 
   // Growing the tree
-  double old_alpha = 0.0;
-  double alpha = dtree->Grow(*new_dataset, old_from_new, useVolumeReg,
-      maxLeafSize, minLeafSize);
+  double oldAlpha = 0.0;
+  double alpha = dtree->Grow(newDataset, oldFromNew, useVolumeReg, maxLeafSize,
+      minLeafSize);
 
-  delete new_dataset;
-
-  Log::Info << dtree->SubtreeLeaves()
-      << " leaf nodes in the tree with full data; min_alpha: " << alpha << "."
-      << std::endl;
+  Log::Info << dtree->SubtreeLeaves() << " leaf nodes in the tree using full "
+      << "dataset; minimum alpha: " << alpha << "." << std::endl;
 
   // Compute densities for the training points in the full tree, if we were
   // asked for this.
   if (unprunedTreeOutput != "")
   {
-    ofstream outfile(unprunedTreeOutput.c_str());
+    std::ofstream outfile(unprunedTreeOutput.c_str());
     if (outfile.good())
     {
-      for (size_t i = 0; i < dataset->n_cols; ++i)
+      for (size_t i = 0; i < dataset.n_cols; ++i)
       {
-        arma::Col<eT> test_p = dataset->unsafe_col(i);
-        outfile << dtree->ComputeValue(test_p) << endl;
+        arma::Col<eT> test_p = dataset.unsafe_col(i);
+        outfile << dtree->ComputeValue(test_p) << std::endl;
       }
     }
     else
     {
-      Log::Warn << "Can't open '" << unprunedTreeOutput << "'." << std::endl;
+      Log::Warn << "Can't open '" << unprunedTreeOutput << "' to write computed"
+          << " densities to." << std::endl;
     }
 
     outfile.close();
   }
 
   // Sequentially prune and save the alpha values and the values of c_t^2 * r_t.
-  std::vector<std::pair<double, double> > pruned_sequence;
+  std::vector<std::pair<double, double> > prunedSequence;
   while (dtree->SubtreeLeaves() > 1)
   {
-    std::pair<double, double> tree_seq(old_alpha,
+    std::pair<double, double> treeSeq(oldAlpha,
         dtree->SubtreeLeavesLogNegError());
-    pruned_sequence.push_back(tree_seq);
-    old_alpha = alpha;
-    alpha = dtree->PruneAndUpdate(old_alpha, dataset->n_cols, useVolumeReg);
+    prunedSequence.push_back(treeSeq);
+    oldAlpha = alpha;
+    alpha = dtree->PruneAndUpdate(oldAlpha, dataset.n_cols, useVolumeReg);
 
     // Some sanity checks.
-    assert((alpha < std::numeric_limits<double>::max()) ||
+    Log::Assert((alpha < std::numeric_limits<double>::max()) ||
         (dtree->SubtreeLeaves() == 1));
-    assert(alpha > old_alpha);
-    assert(dtree->SubtreeLeavesLogNegError() < tree_seq.second);
+    Log::Assert(alpha > oldAlpha);
+    Log::Assert(dtree->SubtreeLeavesLogNegError() < treeSeq.second);
   }
 
-  std::pair<double, double> tree_seq(old_alpha,
+  std::pair<double, double> treeSeq(oldAlpha,
       dtree->SubtreeLeavesLogNegError());
-  pruned_sequence.push_back(tree_seq);
+  prunedSequence.push_back(treeSeq);
 
-  Log::Info << pruned_sequence.size() << " trees in the sequence; max_alpha: "
-      << old_alpha << "." << std::endl;
+  Log::Info << prunedSequence.size() << " trees in the sequence; maximum alpha:"
+      << " " << oldAlpha << "." << std::endl;
 
   delete dtree;
 
-  arma::Mat<eT>* cvdata = new arma::Mat<eT>(*dataset);
-  size_t test_size = dataset->n_cols / folds;
+  arma::Mat<eT> cvdata(dataset);
+  size_t testSize = dataset.n_cols / folds;
 
   // Go through each fold.
   for (size_t fold = 0; fold < folds; fold++)
   {
     // Break up data into train and test sets.
-    size_t start = fold * test_size;
-    size_t end = std::min((fold + 1) * test_size, (size_t) cvdata->n_cols);
+    size_t start = fold * testSize;
+    size_t end = std::min((fold + 1) * testSize, (size_t) cvdata.n_cols);
 
-    arma::Mat<eT> test = cvdata->cols(start, end - 1);
-    arma::Mat<eT>* train = new arma::Mat<eT>(cvdata->n_rows,
-        cvdata->n_cols - test.n_cols);
+    arma::Mat<eT> test = cvdata.cols(start, end - 1);
+    arma::Mat<eT> train(cvdata.n_rows, cvdata.n_cols - test.n_cols);
 
-    if (start == 0 && end < cvdata->n_cols)
+    if (start == 0 && end < cvdata.n_cols)
     {
-      assert(train->n_cols == cvdata->n_cols - end);
-      train->cols(0, train->n_cols - 1) = cvdata->cols(end, cvdata->n_cols - 1);
+      train.cols(0, train.n_cols - 1) = cvdata.cols(end, cvdata.n_cols - 1);
     }
-    else if (start > 0 && end == cvdata->n_cols)
+    else if (start > 0 && end == cvdata.n_cols)
     {
-      assert(train->n_cols == start);
-      train->cols(0, train->n_cols - 1) = cvdata->cols(0, start - 1);
+      train.cols(0, train.n_cols - 1) = cvdata.cols(0, start - 1);
     }
     else
     {
-      assert(train->n_cols == start + cvdata->n_cols - end);
-
-      train->cols(0, start - 1) = cvdata->cols(0, start - 1);
-      train->cols(start, train->n_cols - 1) =
-          cvdata->cols(end, cvdata->n_cols - 1);
+      train.cols(0, start - 1) = cvdata.cols(0, start - 1);
+      train.cols(start, train.n_cols - 1) = cvdata.cols(end, cvdata.n_cols - 1);
     }
 
-    assert(train->n_cols + test.n_cols == cvdata->n_cols);
-
     // Initialize the tree.
-    DTree<eT>* dtree_cv = new DTree<eT>(*train);
+    DTree<eT>* cvDTree = new DTree<eT>(train);
 
     // Getting ready to grow the tree...
-    arma::Col<size_t> old_from_new_cv(train->n_cols);
-    for (size_t i = 0; i < old_from_new_cv.n_elem; i++)
-      old_from_new_cv[i] = i;
+    arma::Col<size_t> cvOldFromNew(train.n_cols);
+    for (size_t i = 0; i < cvOldFromNew.n_elem; i++)
+      cvOldFromNew[i] = i;
 
     // Grow the tree.
-    old_alpha = 0.0;
-    alpha = dtree_cv->Grow(*train, old_from_new_cv, useVolumeReg, maxLeafSize,
+    oldAlpha = 0.0;
+    alpha = cvDTree->Grow(train, cvOldFromNew, useVolumeReg, maxLeafSize,
         minLeafSize);
 
     // Sequentially prune with all the values of available alphas and adding
     // values for test values.
     std::vector<std::pair<double, double> >::iterator it;
-    for (it = pruned_sequence.begin(); it < pruned_sequence.end() -2; ++it)
+    for (it = prunedSequence.begin(); it < prunedSequence.end() - 2; ++it)
     {
       // Compute test values for this state of the tree.
-      double val_cv = 0.0;
+      double cvVal = 0.0;
       for (size_t i = 0; i < test.n_cols; i++)
       {
-        arma::Col<eT> test_point = test.unsafe_col(i);
-        val_cv += dtree_cv->ComputeValue(test_point);
+        arma::Col<eT> testPoint = test.unsafe_col(i);
+        cvVal += cvDTree->ComputeValue(testPoint);
       }
 
       // Update the cv error value by mapping out of log-space then back into
       // it, using long doubles.
       long double notLogVal = -std::exp((long double) it->second) -
-          2.0 * val_cv / (double) dataset->n_cols;
+          2.0 * cvVal / (double) dataset.n_cols;
       it->second = (double) std::log(-notLogVal);
 
       // Determine the new alpha value and prune accordingly.
-      old_alpha = sqrt(((it + 1)->first) * ((it + 2)->first));
-      alpha = dtree_cv->PruneAndUpdate(old_alpha, train->n_cols, useVolumeReg);
+      oldAlpha = sqrt(((it + 1)->first) * ((it + 2)->first));
+      alpha = cvDTree->PruneAndUpdate(oldAlpha, train.n_cols, useVolumeReg);
     }
 
     // Compute test values for this state of the tree.
-    double val_cv = 0.0;
+    double cvVal = 0.0;
     for (size_t i = 0; i < test.n_cols; ++i)
     {
-      arma::Col<eT> test_point = test.unsafe_col(i);
-      val_cv += dtree_cv->ComputeValue(test_point);
+      arma::Col<eT> testPoint = test.unsafe_col(i);
+      cvVal += cvDTree->ComputeValue(testPoint);
     }
 
     // Update the cv error value.
     long double notLogVal = -std::exp((long double) it->second) -
-        2.0 * val_cv / (double) dataset->n_cols;
+        2.0 * cvVal / (double) dataset.n_cols;
     it->second -= (double) std::log(-notLogVal);
 
     test.reset();
-    delete train;
-
-    delete dtree_cv;
+    delete cvDTree;
   }
 
-  delete cvdata;
-
-  double optimal_alpha = -1.0;
-  double best_cv_error = numeric_limits<double>::max();
+  double optimalAlpha = -1.0;
+  double cvBestError = std::numeric_limits<double>::max();
   std::vector<std::pair<double, double> >::iterator it;
 
-  for (it = pruned_sequence.begin(); it < pruned_sequence.end() -1; ++it)
+  for (it = prunedSequence.begin(); it < prunedSequence.end() -1; ++it)
   {
-    if (it->second < best_cv_error)
+    if (it->second < cvBestError)
     {
-      best_cv_error = it->second;
-      optimal_alpha = it->first;
+      cvBestError = it->second;
+      optimalAlpha = it->first;
     }
   }
 
-  Log::Info << "Optimal alpha: " << optimal_alpha << "." << std::endl;
+  Log::Info << "Optimal alpha: " << optimalAlpha << "." << std::endl;
 
   // Initialize the tree.
-  DTree<eT>* dtree_opt = new DTree<eT>(*dataset);
+  DTree<eT>* dtreeOpt = new DTree<eT>(dataset);
 
   // Getting ready to grow the tree...
-  for (size_t i = 0; i < old_from_new.n_elem; i++)
-    old_from_new[i] = i;
+  for (size_t i = 0; i < oldFromNew.n_elem; i++)
+    oldFromNew[i] = i;
 
   // Save the dataset since it would be modified while growing the tree.
-  new_dataset = new arma::Mat<eT>(*dataset);
+  newDataset = dataset;
 
   // Grow the tree.
-  old_alpha = 0.0;
-  alpha = dtree_opt->Grow(*new_dataset, old_from_new, useVolumeReg, maxLeafSize,
+  oldAlpha = 0.0;
+  alpha = dtreeOpt->Grow(newDataset, oldFromNew, useVolumeReg, maxLeafSize,
       minLeafSize);
 
   // Prune with optimal alpha.
-  while ((old_alpha > optimal_alpha) && (dtree_opt->SubtreeLeaves() > 1))
+  while ((oldAlpha > optimalAlpha) && (dtreeOpt->SubtreeLeaves() > 1))
   {
-    old_alpha = alpha;
-    alpha = dtree_opt->PruneAndUpdate(old_alpha, new_dataset->n_cols,
-        useVolumeReg);
+    oldAlpha = alpha;
+    alpha = dtreeOpt->PruneAndUpdate(oldAlpha, newDataset.n_cols, useVolumeReg);
 
     // Some sanity checks.
-    assert((alpha < numeric_limits<double>::max()) ||
-        (dtree_opt->SubtreeLeaves() == 1));
-    assert(alpha < old_alpha);
+    Log::Assert((alpha < std::numeric_limits<double>::max()) ||
+        (dtreeOpt->SubtreeLeaves() == 1));
+    Log::Assert(alpha < oldAlpha);
   }
 
-  Log::Info << dtree_opt->SubtreeLeaves()
-    << " leaf nodes in the optimally pruned tree; optimal alpha: "
-    << old_alpha << "." << std::endl;
+  Log::Info << dtreeOpt->SubtreeLeaves() << " leaf nodes in the optimally "
+      << "pruned tree; optimal alpha: " << oldAlpha << "." << std::endl;
 
-  delete new_dataset;
-
-  return dtree_opt;
+  return dtreeOpt;
 }
 
 }; // namespace det

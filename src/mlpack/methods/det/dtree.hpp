@@ -12,10 +12,6 @@
 
 #include <mlpack/core.hpp>
 
-using namespace mlpack;
-using namespace std;
-
-
 namespace mlpack {
 namespace det /** Density Estimation Trees */ {
 
