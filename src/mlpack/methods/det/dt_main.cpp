@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 
   // Obtain the optimal tree.
   Timer::Start("det_training");
-  DTree<double> *dtreeOpt = Trainer<double>(&trainingData, folds,
+  DTree<double> *dtreeOpt = Trainer<double>(trainingData, folds,
       regularization, maxLeafSize, minLeafSize, unprunedTreeEstimateFile);
   Timer::Stop("det_training");
 

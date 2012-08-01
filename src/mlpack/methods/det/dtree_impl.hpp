@@ -419,7 +419,7 @@ double DTree<eT, cT>::Grow(arma::mat& data,
       gT = alphaUpper - std::log(subtreeLeaves - 1);
     }
 
-    return min(gT, min(leftG, rightG));
+    return std::min(gT, std::min(leftG, rightG));
   }
 
   // We need to compute (c_t^2) * r_t for all subtree leaves; this is equal to
@@ -514,7 +514,7 @@ double DTree<eT, cT>::PruneAndUpdate(const double oldAlpha,
 
       assert(gT < std::numeric_limits<double>::max());
 
-      return min(gT, min(leftG, rightG));
+      return std::min(gT, std::min(leftG, rightG));
     }
     else
     {
@@ -524,8 +524,9 @@ double DTree<eT, cT>::PruneAndUpdate(const double oldAlpha,
       subtreeLeavesLogNegError = logNegError;
 
       delete left;
-      left = NULL;
       delete right;
+
+      left = NULL;
       right = NULL;
 
       // Pass information upward.
