@@ -463,7 +463,7 @@ double DTree::PruneAndUpdate(const double oldAlpha,
       const double leftRatio = (splitValue - minVals[splitDim]) / range;
       const double rightRatio = (maxVals[splitDim] - splitValue) / range;
 
-      const size_t leftPow = std::pow(((double) (left->End() - left->Start()),
+      const size_t leftPow = std::pow((double) (left->End() - left->Start()),
           2);
       const size_t rightPow = std::pow((double) (right->End() - right->Start()),
           2);
