@@ -462,9 +462,10 @@ double DTree::PruneAndUpdate(const double oldAlpha,
       const double leftRatio = (splitValue - minVals[splitDim]) / range;
       const double rightRatio = (maxVals[splitDim] - splitValue) / range;
 
-      const size_t leftPow = std::pow(left->End() - left->Start(), 2);
-      const size_t rightPow = std::pow(right->End() - right->Start(), 2);
-      const size_t thisPow = std::pow(end - start, 2);
+      const size_t leftPow = std::pow(left->End() - left->Start(), (size_t) 2);
+      const size_t rightPow = std::pow(right->End() - right->Start(),
+          (size_t) 2);
+      const size_t thisPow = std::pow(end - start, (size_t) 2);
 
       double tmpAlphaSum = leftPow / leftRatio + rightPow / rightRatio -
           thisPow;
