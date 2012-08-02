@@ -436,8 +436,6 @@ double DTree::PruneAndUpdate(const double oldAlpha,
     else
       gT = alphaUpper - std::log(subtreeLeaves - 1);
 
-//    Log::Debug << "gT is " << gT << " oldAlpha is " << oldAlpha << std::endl;
-
     if (gT > oldAlpha)
     {
       // Go down the tree and update accordingly.  Traverse the children.
@@ -474,8 +472,6 @@ double DTree::PruneAndUpdate(const double oldAlpha,
       double tmpAlphaSum = leftPow / leftRatio + rightPow / rightRatio -
           thisPow;
 
-//      Log::Debug << "tmpAlphaSum is " << tmpAlphaSum;
-
       if (left->SubtreeLeaves() > 1)
       {
         const double exponent = 2 * std::log(points) + logVolume +
@@ -486,8 +482,6 @@ double DTree::PruneAndUpdate(const double oldAlpha,
         tmpAlphaSum += std::exp(exponent);
       }
 
-//      Log::Debug << " then " << tmpAlphaSum;
-
       if (right->SubtreeLeaves() > 1)
       {
         const double exponent = 2 * std::log(points) + logVolume +
@@ -496,11 +490,7 @@ double DTree::PruneAndUpdate(const double oldAlpha,
         tmpAlphaSum += std::exp(exponent);
       }
 
-//      Log::Debug << " then " << tmpAlphaSum << std::endl;
-
       alphaUpper = std::log(tmpAlphaSum) - 2 * std::log(points) - logVolume;
-
-//      Log::Debug << "alphaUpper is " << alphaUpper << std::endl;
 
       // Update gT value.
       if (useVolReg)
@@ -513,12 +503,8 @@ double DTree::PruneAndUpdate(const double oldAlpha,
         gT = alphaUpper - std::log(subtreeLeaves - 1);
       }
 
-//      Log::Debug << "and gT is " << gT << std::endl;
-
       Log::Assert(gT < std::numeric_limits<double>::max());
 
-//      Log::Debug << "gT " << gT << " leftG " << leftG << " rightG " << rightG
-//          << std::endl;
       return std::min(gT, std::min(leftG, rightG));
     }
     else
