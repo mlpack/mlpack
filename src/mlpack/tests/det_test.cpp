@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(TestGetMaxMinVals)
            << 5 << 0 << 1 << 7 << 1 << arma::endr
            << 5 << 6 << 7 << 1 << 8 << arma::endr;
 
-  DTree<> tree(testData);
+  DTree tree(testData);
 
   BOOST_REQUIRE_EQUAL(tree.maxVals[0], 7);
   BOOST_REQUIRE_EQUAL(tree.minVals[0], 3);
@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(TestComputeNodeError)
   arma::vec maxVals("7 7 8");
   arma::vec minVals("3 0 1");
 
-  DTree<> testDTree(maxVals, minVals, 5);
+  DTree testDTree(maxVals, minVals, 5);
   double trueNodeError = -log(4.0) - log(7.0) - log(7.0);
 
   BOOST_REQUIRE_CLOSE((double) testDTree.logNegError, trueNodeError, 1e-10);
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(TestWithinRange)
   arma::vec maxVals("7 7 8");
   arma::vec minVals("3 0 1");
 
-  DTree<> testDTree(maxVals, minVals, 5);
+  DTree testDTree(maxVals, minVals, 5);
 
   arma::vec testQuery(3);
   testQuery << 4.5 << 2.5 << 2;
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE(TestFindSplit)
            << 5 << 0 << 1 << 7 << 1 << arma::endr
            << 5 << 6 << 7 << 1 << 8 << arma::endr;
 
-  DTree<> testDTree(testData);
+  DTree testDTree(testData);
 
   size_t obDim, trueDim;
   double trueLeftError, obLeftError, trueRightError, obRightError,
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(TestSplitData)
            << 5 << 0 << 1 << 7 << 1 << arma::endr
            << 5 << 6 << 7 << 1 << 8 << arma::endr;
 
-  DTree<> testDTree(testData);
+  DTree testDTree(testData);
 
   arma::Col<size_t> oTest(5);
   oTest << 1 << 2 << 3 << 4 << 5;
@@ -159,7 +159,7 @@ BOOST_AUTO_TEST_CASE(TestGrow)
   rlError = 2 * log(1.0 / 5.0) - (log(0.5) + log(4.0) + log(2.5));
   rrError = 2 * log(2.0 / 5.0) - (log(6.5) + log(4.0) + log(2.5));
 
-  DTree<> testDTree(testData);
+  DTree testDTree(testData);
   double alpha = testDTree.Grow(testData, oTest, false, 2, 1);
 
   BOOST_REQUIRE_EQUAL(oTest[0], 0);
@@ -210,7 +210,7 @@ BOOST_AUTO_TEST_CASE(TestPruneAndUpdate)
 
   arma::Col<size_t> oTest(5);
   oTest << 0 << 1 << 2 << 3 << 4;
-  DTree<> testDTree(testData);
+  DTree testDTree(testData);
   double alpha = testDTree.Grow(testData, oTest, false, 2, 1);
   alpha = testDTree.PruneAndUpdate(alpha, testData.n_cols, false);
 
@@ -243,7 +243,7 @@ BOOST_AUTO_TEST_CASE(TestComputeValue)
   arma::Col<size_t> oTest(5);
   oTest << 0 << 1 << 2 << 3 << 4;
 
-  DTree<> testDTree(testData);
+  DTree testDTree(testData);
   double alpha = testDTree.Grow(testData, oTest, false, 2, 1);
 
   double d1 = (2.0 / 5.0) / exp(log(4.0) + log(7.0) + log(4.5));
@@ -286,7 +286,7 @@ BOOST_AUTO_TEST_CASE(TestVariableImportance)
   arma::Col<size_t> oTest(5);
   oTest << 0 << 1 << 2 << 3 << 4;
 
-  DTree<> testDTree(testData);
+  DTree testDTree(testData);
   testDTree.Grow(testData, oTest, false, 2, 1);
 
   arma::vec imps;
