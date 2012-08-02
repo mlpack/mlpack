@@ -57,11 +57,13 @@ PARAM_INT("min_leaf_size", "The minimum size of a leaf in the unpruned, fully "
     "grown DET.", "N", 5);
 PARAM_INT("max_leaf_size", "The maximum size of a leaf in the unpruned, fully "
     "grown DET.", "M", 10);
+/*
 PARAM_FLAG("volume_regularization", "This flag gives the used the option to use"
     "a form of regularization similar to the usual alpha-pruning in decision "
     "tree. But instead of regularizing on the number of leaves, you regularize "
     "on the sum of the inverse of the volume of the leaves (meaning you "
     "penalize low volume leaves.", "R");
+*/
 
 // Some flags for output of some information about the tree.
 PARAM_FLAG("print_tree", "Print the tree out on the command line (or in the "
@@ -92,7 +94,8 @@ int main(int argc, char *argv[])
 
   const string unprunedTreeEstimateFile =
       CLI::GetParam<string>("unpruned_tree_estimates_file");
-  const bool regularization = CLI::HasParam("volume_regularization");
+  const bool regularization = false;
+//  const bool regularization = CLI::HasParam("volume_regularization");
   const int maxLeafSize = CLI::GetParam<int>("max_leaf_size");
   const int minLeafSize = CLI::GetParam<int>("min_leaf_size");
 
