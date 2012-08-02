@@ -171,7 +171,13 @@ int main(int argc, char *argv[])
 
     data::Load(labelsFile, labels, true);
 
-    size_t numClasses = max(max(labels));
+    size_t numClasses = 0;
+    for (size_t i = 0; i < labels.n_elem; ++i)
+    {
+      if (labels[i] > numClasses)
+        numClasses = labels[i];
+    }
+
     Log::Info << numClasses << " found in labels file '" << labelsFile << "'."
         << std::endl;
 
