@@ -89,8 +89,8 @@ int main(int argc, char *argv[])
 
   // Obtain the optimal tree.
   Timer::Start("det_training");
-  DTree<double> *dtreeOpt = Trainer<double>(trainingData, folds,
-      regularization, maxLeafSize, minLeafSize, unprunedTreeEstimateFile);
+  DTree *dtreeOpt = Trainer(trainingData, folds, regularization, maxLeafSize,
+      minLeafSize, unprunedTreeEstimateFile);
   Timer::Stop("det_training");
 
   // Compute densities for the training points in the optimal tree.
@@ -187,15 +187,14 @@ int main(int argc, char *argv[])
     Log::Assert(trainingData.n_cols == labels.n_cols);
     Log::Assert(labels.n_rows == 1);
 
-    PrintLeafMembership<double>(dtreeOpt, trainingData, labels, num_classes,
+    PrintLeafMembership(dtreeOpt, trainingData, labels, num_classes,
        CLI::GetParam<string>("output/leaf_class_table"));
   }
 
   // Print variable importance.
   if (CLI::HasParam("flag/print_vi"))
   {
-    PrintVariableImportance<double>(dtreeOpt,
-        CLI::GetParam<string>("output/vi"));
+    PrintVariableImportance(dtreeOpt, CLI::GetParam<string>("output/vi"));
   }
 
   delete dtreeOpt;
