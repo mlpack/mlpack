@@ -378,10 +378,19 @@ void CLI::ParseCommandLine(int argc, char** line)
   // Parse the command line, place the options & values into vmap
   try
   {
-    po::store(po::parse_command_line(argc, line, desc), vmap);
+    // Get the basic_parsed_options
+    po::basic_parsed_options<char> bpo(
+      po::parse_command_line(argc, line, desc));
+
+    // Look for any duplicate parameters, removing duplicate flags
+    RemoveDuplicateFlags(bpo);
+
+    // Record the basic_parsed_options
+    po::store(bpo, vmap);
   }
   catch (std::exception& ex)
   {
+    Log::Fatal << "Caught exception from parsing command line:\t";
     Log::Fatal << ex.what() << std::endl;
   }
 
@@ -390,6 +399,43 @@ void CLI::ParseCommandLine(int argc, char** line)
   UpdateGmap();
   DefaultMessages();
   RequiredOptions();
+}
+
+/*
+ * Removes duplicate flags.
+ *
+ * @param bpo The basic_program_options to remove duplicate flags from. 
+ */
+void CLI::RemoveDuplicateFlags(po::basic_parsed_options<char>& bpo)
+{
+  // Iterate over all the program_options, looking for duplicate parameters
+  for (unsigned int i = 0; i < bpo.options.size(); i++)
+  {
+    for (unsigned int j = i + 1; j < bpo.options.size(); j++)
+    {
+      if (bpo.options[i].string_key == bpo.options[j].string_key)
+      {
+        // If a duplicate is found, check to see if either one has a value
+        if (bpo.options[i].value.size() == 0 &&
+            bpo.options[j].value.size() == 0)
+        {
+          // If neither has a value, consider it a duplicate flag and remove the
+          // duplicate. It's important to not break out of this loop because
+          // there might be another duplicate later on in the vector.
+          bpo.options.erase(bpo.options.begin()+j);
+        }
+        else
+        {
+          // If one or both has a value, produce an error and politely
+          // terminate. We pull the name from the original_tokens, rather than
+          // from the string_key, because the string_key is the parameter after
+          // aliases have been expanded.
+          Log::Fatal << "\"" << bpo.options[j].original_tokens[0] << "\""
+              << " is defined multiple times." << std::endl;
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -469,7 +515,7 @@ void CLI::Print()
     {
       // We don't know how to print this, or it's a timeval which is printed
       // later.
-      Log::Info << "(unknown data type)";
+      Log::Info << "(Unknown data type - " << data.tname << ")";
     }
 
     Log::Info << std::endl;

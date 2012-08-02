@@ -626,6 +626,13 @@ class CLI
   static void ParseCommandLine(int argc, char** argv);
 
   /**
+   * Removes duplicate flags.
+   *
+   * @param bpo The basic_program_options to remove duplicate flags from. 
+   */
+  static void RemoveDuplicateFlags(po::basic_parsed_options<char>& bpo);
+
+ /**
    * Parses a stream for arguments.
    *
    * @param stream The stream to be parsed.
