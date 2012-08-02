@@ -150,7 +150,6 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
   {
     std::pair<double, double> treeSeq(oldAlpha,
         dtree->SubtreeLeavesLogNegError());
-    Log::Debug << "sllne " << dtree->SubtreeLeavesLogNegError() << std::endl;
     prunedSequence.push_back(treeSeq);
     oldAlpha = alpha;
     alpha = dtree->PruneAndUpdate(oldAlpha, dataset.n_cols, useVolumeReg);
@@ -173,6 +172,9 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
 
   arma::mat cvData(dataset);
   size_t testSize = dataset.n_cols / folds;
+
+  std::vector<double> regularizationConstants;
+  regularizationConstants.resize(prunedSequence.size(), 0);
 
   // Go through each fold.
   for (size_t fold = 0; fold < folds; fold++)
@@ -213,25 +215,22 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
 
     // Sequentially prune with all the values of available alphas and adding
     // values for test values.
-    std::vector<std::pair<double, double> >::iterator it;
-    for (it = prunedSequence.begin(); it < prunedSequence.end() - 2; ++it)
+    for (size_t i = 0; i < prunedSequence.size() - 2; ++i)
     {
       // Compute test values for this state of the tree.
       double cvVal = 0.0;
-      for (size_t i = 0; i < test.n_cols; i++)
+      for (size_t j = 0; j < test.n_cols; j++)
       {
-        arma::vec testPoint = test.unsafe_col(i);
+        arma::vec testPoint = test.unsafe_col(j);
         cvVal += cvDTree->ComputeValue(testPoint);
       }
 
-      // Update the cv error value by mapping out of log-space then back into
-      // it, using long doubles.
-      long double notLogVal = -std::exp((long double) it->second) -
-          2.0 * cvVal / (double) dataset.n_cols;
-      it->second = (double) std::log(-notLogVal);
+      // Update the cv regularization constant.
+      regularizationConstants[i] += 2.0 * cvVal / (double) dataset.n_cols;
 
       // Determine the new alpha value and prune accordingly.
-      oldAlpha = sqrt(((it + 1)->first) * ((it + 2)->first));
+      oldAlpha = 0.5 * (prunedSequence[i + 1].first +
+          prunedSequence[i + 2].first);
       alpha = cvDTree->PruneAndUpdate(oldAlpha, train.n_cols, useVolumeReg);
     }
 
@@ -243,25 +242,27 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
       cvVal += cvDTree->ComputeValue(testPoint);
     }
 
-    // Update the cv error value.
-    long double notLogVal = -std::exp((long double) it->second) -
-        2.0 * cvVal / (double) dataset.n_cols;
-    it->second -= (double) std::log(-notLogVal);
+    regularizationConstants[prunedSequence.size() - 2] += 2.0 * cvVal /
+        (double) dataset.n_cols;
 
     test.reset();
     delete cvDTree;
   }
 
   double optimalAlpha = -1.0;
-  double cvBestError = std::numeric_limits<double>::max();
-  std::vector<std::pair<double, double> >::iterator it;
+  long double cvBestError = -std::numeric_limits<long double>::max();
 
-  for (it = prunedSequence.begin(); it < prunedSequence.end() -1; ++it)
+  for (size_t i = 0; i < prunedSequence.size() - 1; ++i)
   {
-    if (it->second < cvBestError)
+    // We can no longer work in the log-space for this because we have no
+    // guarantee the quantity will be positive.
+    long double thisError = -std::exp((long double) prunedSequence[i].second) +
+        (long double) regularizationConstants[i];
+
+    if (thisError > cvBestError)
     {
-      cvBestError = it->second;
-      optimalAlpha = it->first;
+      cvBestError = thisError;
+      optimalAlpha = prunedSequence[i].first;
     }
   }
 
@@ -278,12 +279,12 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
   newDataset = dataset;
 
   // Grow the tree.
-  oldAlpha = 0.0;
+  oldAlpha = -DBL_MAX;
   alpha = dtreeOpt->Grow(newDataset, oldFromNew, useVolumeReg, maxLeafSize,
       minLeafSize);
 
   // Prune with optimal alpha.
-  while ((oldAlpha > optimalAlpha) && (dtreeOpt->SubtreeLeaves() > 1))
+  while ((oldAlpha < optimalAlpha) && (dtreeOpt->SubtreeLeaves() > 1))
   {
     oldAlpha = alpha;
     alpha = dtreeOpt->PruneAndUpdate(oldAlpha, newDataset.n_cols, useVolumeReg);
@@ -291,7 +292,7 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
     // Some sanity checks.
     Log::Assert((alpha < std::numeric_limits<double>::max()) ||
         (dtreeOpt->SubtreeLeaves() == 1));
-    Log::Assert(alpha < oldAlpha);
+    Log::Assert(alpha > oldAlpha);
   }
 
   Log::Info << dtreeOpt->SubtreeLeaves() << " leaf nodes in the optimally "
