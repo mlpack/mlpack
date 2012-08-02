@@ -370,9 +370,10 @@ double DTree::Grow(arma::mat& data,
     const double leftRatio = (splitValue - minVals[splitDim]) / range;
     const double rightRatio = (maxVals[splitDim] - splitValue) / range;
 
-    const size_t leftPow = std::pow(left->End() - left->Start(), (size_t) 2);
-    const size_t rightPow = std::pow(right->End() - right->Start(), (size_t) 2);
-    const size_t thisPow = std::pow(end - start, (size_t) 2);
+    const size_t leftPow = std::pow((double) (left->End() - left->Start()), 2);
+    const size_t rightPow = std::pow((double) (right->End() - right->Start()),
+        2);
+    const size_t thisPow = std::pow((double) (end - start), 2);
 
     double tmpAlphaSum = leftPow / leftRatio + rightPow / rightRatio - thisPow;
 
@@ -462,10 +463,11 @@ double DTree::PruneAndUpdate(const double oldAlpha,
       const double leftRatio = (splitValue - minVals[splitDim]) / range;
       const double rightRatio = (maxVals[splitDim] - splitValue) / range;
 
-      const size_t leftPow = std::pow(left->End() - left->Start(), (size_t) 2);
-      const size_t rightPow = std::pow(right->End() - right->Start(),
-          (size_t) 2);
-      const size_t thisPow = std::pow(end - start, (size_t) 2);
+      const size_t leftPow = std::pow(((double) (left->End() - left->Start()),
+          2);
+      const size_t rightPow = std::pow((double) (right->End() - right->Start()),
+          2);
+      const size_t thisPow = std::pow((double) (end - start), 2);
 
       double tmpAlphaSum = leftPow / leftRatio + rightPow / rightRatio -
           thisPow;
