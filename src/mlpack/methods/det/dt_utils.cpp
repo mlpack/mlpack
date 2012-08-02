@@ -150,6 +150,7 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
   {
     std::pair<double, double> treeSeq(oldAlpha,
         dtree->SubtreeLeavesLogNegError());
+    Log::Debug << "sllne " << dtree->SubtreeLeavesLogNegError() << std::endl;
     prunedSequence.push_back(treeSeq);
     oldAlpha = alpha;
     alpha = dtree->PruneAndUpdate(oldAlpha, dataset.n_cols, useVolumeReg);
