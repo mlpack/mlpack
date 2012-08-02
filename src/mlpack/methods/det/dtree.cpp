@@ -337,8 +337,9 @@ double DTree::Grow(arma::mat& data,
       // As a result we do leave log-space, but the largest quantity we
       // represent is on the order of (V_t / V_i) where V_i is the smallest leaf
       // node below this node, which depends heavily on the depth of the tree.
-      subtreeLeavesLogNegError = std::log(std::exp(logVolume +
-          left->SubtreeLeavesLogNegError() + right->SubtreeLeavesLogNegError()))
+      subtreeLeavesLogNegError = std::log(
+          std::exp(logVolume + left->SubtreeLeavesLogNegError()) +
+          std::exp(logVolume + right->SubtreeLeavesLogNegError()))
           - logVolume;
     }
     else
@@ -369,9 +370,9 @@ double DTree::Grow(arma::mat& data,
     const double leftRatio = (splitValue - minVals[splitDim]) / range;
     const double rightRatio = (maxVals[splitDim] - splitValue) / range;
 
-    const size_t leftPow = std::pow(left->End() - left->Start(), 2);
-    const size_t rightPow = std::pow(right->End() - right->Start(), 2);
-    const size_t thisPow = std::pow(end - start, 2);
+    const size_t leftPow = std::pow(left->End() - left->Start(), (size_t) 2);
+    const size_t rightPow = std::pow(right->End() - right->Start(), (size_t) 2);
+    const size_t thisPow = std::pow(end - start, (size_t) 2);
 
     double tmpAlphaSum = leftPow / leftRatio + rightPow / rightRatio - thisPow;
 
@@ -423,7 +424,7 @@ double DTree::PruneAndUpdate(const double oldAlpha,
   // Compute gT.
   if (subtreeLeaves == 1) // If we are a leaf...
   {
-    return 0;
+    return std::numeric_limits<double>::max();
   }
   else
   {
@@ -451,8 +452,9 @@ double DTree::PruneAndUpdate(const double oldAlpha,
       // As a result we do leave log-space, but the largest quantity we
       // represent is on the order of (V_t / V_i) where V_i is the smallest leaf
       // node below this node, which depends heavily on the depth of the tree.
-      subtreeLeavesLogNegError = std::log(std::exp(logVolume +
-          left->SubtreeLeavesLogNegError() + right->SubtreeLeavesLogNegError()))
+      subtreeLeavesLogNegError = std::log(
+          std::exp(logVolume + left->SubtreeLeavesLogNegError()) +
+          std::exp(logVolume + right->SubtreeLeavesLogNegError()))
           - logVolume;
 
       // Recalculate upper alpha.
