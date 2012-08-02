@@ -16,18 +16,6 @@ namespace mlpack {
 namespace det /** Density Estimation Trees */ {
 
 /**
- * This two types in the template are used for two purposes:
- *
- *   eT - the type to store the data in (for most practical purposes, storing
- *       the data as a float suffices).
- *   cT - the type to perform computations in (computations like computing the
- *       error, the volume of the node etc.).
- *
- * For high dimensional data, it might be possible that the computation might
- * overflow, so you should use either normalize your data in the (-1, 1)
- * hypercube or use long double or modify this code to perform computations
- * using logarithms.
- *
  * A density estimation tree is similar to both a decision tree and a space
  * partitioning tree (like a kd-tree).  Each leaf represents a constant-density
  * hyper-rectangle.  The tree is constructed in such a way as to minimize the
@@ -50,8 +38,6 @@ namespace det /** Density Estimation Trees */ {
  * }
  * @endcode
  */
-template<typename eT = double,
-         typename cT = long double>
 class DTree
 {
  public:
@@ -194,7 +180,12 @@ class DTree
    *
    * @param totalPoints Total number of points in the dataset.
    */
-  inline double LogNegativeError(const size_t totalPoints) const;
+  double LogNegativeError(const size_t totalPoints) const;
+
+  /**
+   * Return whether a query point is within the range of this node.
+   */
+  bool WithinRange(const arma::vec& query) const;
 
  private:
   // The indices in the complete set of points
@@ -246,9 +237,9 @@ class DTree
   double alphaUpper;
 
   //! The left child.
-  DTree<eT, cT> *left;
+  DTree* left;
   //! The right child.
-  DTree<eT, cT> *right;
+  DTree* right;
 
  public:
   //! Return the starting index of points contained in this node.
@@ -271,9 +262,9 @@ class DTree
   //! Return the inverse of the volume of this node.
   double LogVolume() const { return logVolume; }
   //! Return the left child.
-  DTree<eT, cT>* Left() const { return left; }
+  DTree* Left() const { return left; }
   //! Return the right child.
-  DTree<eT, cT>* Right() const { return right; }
+  DTree* Right() const { return right; }
   //! Return whether or not this is the root of the tree.
   bool Root() const { return root; }
   //! Return the upper part of the alpha sum.
@@ -312,15 +303,9 @@ class DTree
                    const double splitValue,
                    arma::Col<size_t>& oldFromNew) const;
 
-  /**
-   * Return whether a query point is within the range of this node.
-   */
-  inline bool WithinRange(const arma::vec& query) const;
-}; // Class DTree
+};
 
 }; // namespace det
 }; // namespace mlpack
-
-#include "dtree_impl.hpp"
 
 #endif // __MLPACK_METHODS_DET_DTREE_HPP

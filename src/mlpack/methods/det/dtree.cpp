@@ -1,22 +1,18 @@
  /**
- * @file dtree_impl.hpp
+ * @file dtree.cpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  *
  * Implementations of some declared functions in
  * the Density Estimation Tree class.
  *
  */
-#ifndef __MLPACK_METHODS_DET_DTREE_IMPL_HPP
-#define __MLPACK_METHODS_DET_DTREE_IMPL_HPP
-
 #include "dtree.hpp"
 #include <stack>
 
-namespace mlpack {
-namespace det {
+using namespace mlpack;
+using namespace det;
 
-template<typename eT, typename cT>
-DTree<eT, cT>::DTree() :
+DTree::DTree() :
     start(0),
     end(0),
     logNegError(-DBL_MAX),
@@ -28,10 +24,9 @@ DTree<eT, cT>::DTree() :
 
 
 // Root node initializers
-template<typename eT, typename cT>
-DTree<eT, cT>::DTree(const arma::vec& maxVals,
-                     const arma::vec& minVals,
-                     const size_t totalPoints) :
+DTree::DTree(const arma::vec& maxVals,
+             const arma::vec& minVals,
+             const size_t totalPoints) :
     start(0),
     end(totalPoints),
     maxVals(maxVals),
@@ -43,8 +38,7 @@ DTree<eT, cT>::DTree(const arma::vec& maxVals,
     right(NULL)
 { /* Nothing to do. */ }
 
-template<typename eT, typename cT>
-DTree<eT, cT>::DTree(arma::mat& data) :
+DTree::DTree(arma::mat& data) :
     start(0),
     end(data.n_cols),
     left(NULL),
@@ -77,12 +71,11 @@ DTree<eT, cT>::DTree(arma::mat& data) :
 
 
 // Non-root node initializers
-template<typename eT, typename cT>
-DTree<eT, cT>::DTree(const arma::vec& maxVals,
-                     const arma::vec& minVals,
-                     const size_t start,
-                     const size_t end,
-                     const double logNegError) :
+DTree::DTree(const arma::vec& maxVals,
+             const arma::vec& minVals,
+             const size_t start,
+             const size_t end,
+             const double logNegError) :
     start(start),
     end(end),
     maxVals(maxVals),
@@ -94,12 +87,11 @@ DTree<eT, cT>::DTree(const arma::vec& maxVals,
     right(NULL)
 { /* Nothing to do. */ }
 
-template<typename eT, typename cT>
-DTree<eT, cT>::DTree(const arma::vec& maxVals,
-                     const arma::vec& minVals,
-                     const size_t totalPoints,
-                     const size_t start,
-                     const size_t end) :
+DTree::DTree(const arma::vec& maxVals,
+             const arma::vec& minVals,
+             const size_t totalPoints,
+             const size_t start,
+             const size_t end) :
     start(start),
     end(end),
     maxVals(maxVals),
@@ -111,8 +103,7 @@ DTree<eT, cT>::DTree(const arma::vec& maxVals,
     right(NULL)
 { /* Nothing to do. */ }
 
-template<typename eT, typename cT>
-DTree<eT, cT>::~DTree()
+DTree::~DTree()
 {
   if (left != NULL)
     delete left;
@@ -123,8 +114,7 @@ DTree<eT, cT>::~DTree()
 
 // This function computes the log-l2-negative-error of a given node from the
 // formula R(t) = log(|t|^2 / (N^2 V_t)).
-template<typename eT, typename cT>
-inline double DTree<eT, cT>::LogNegativeError(const size_t totalPoints) const
+double DTree::LogNegativeError(const size_t totalPoints) const
 {
   // log(-|t|^2 / (N^2 V_t)) = log(-1) + 2 log(|t|) - 2 log(N) - log(V_t).
   return 2 * std::log((double) (end - start)) -
@@ -135,14 +125,13 @@ inline double DTree<eT, cT>::LogNegativeError(const size_t totalPoints) const
 // This function finds the best split with respect to the L2-error, by trying
 // all possible splits.  The dataset is the full data set but the start and
 // end are used to obtain the point in this node.
-template<typename eT, typename cT>
-bool DTree<eT, cT>::FindSplit(const arma::mat& data,
-                              size_t& splitDim,
-                              double& splitValue,
-                              double& leftError,
-                              double& rightError,
-                              const size_t maxLeafSize,
-                              const size_t minLeafSize) const
+bool DTree::FindSplit(const arma::mat& data,
+                      size_t& splitDim,
+                      double& splitValue,
+                      double& leftError,
+                      double& rightError,
+                      const size_t maxLeafSize,
+                      const size_t minLeafSize) const
 {
   // Ensure the dimensionality of the data is the same as the dimensionality of
   // the bounding rectangle.
@@ -247,11 +236,10 @@ bool DTree<eT, cT>::FindSplit(const arma::mat& data,
   return splitFound;
 }
 
-template<typename eT, typename cT>
-size_t DTree<eT, cT>::SplitData(arma::mat& data,
-                                const size_t splitDim,
-                                const double splitValue,
-                                arma::Col<size_t>& oldFromNew) const
+size_t DTree::SplitData(arma::mat& data,
+                        const size_t splitDim,
+                        const double splitValue,
+                        arma::Col<size_t>& oldFromNew) const
 {
   // Swap all columns such that any columns with value in dimension splitDim
   // less than or equal to splitValue are on the left side, and all others are
@@ -282,12 +270,11 @@ size_t DTree<eT, cT>::SplitData(arma::mat& data,
 }
 
 // Greedily expand the tree
-template<typename eT, typename cT>
-double DTree<eT, cT>::Grow(arma::mat& data,
-                           arma::Col<size_t>& oldFromNew,
-                           const bool useVolReg,
-                           const size_t maxLeafSize,
-                           const size_t minLeafSize)
+double DTree::Grow(arma::mat& data,
+                   arma::Col<size_t>& oldFromNew,
+                   const bool useVolReg,
+                   const size_t maxLeafSize,
+                   const size_t minLeafSize)
 {
   assert(data.n_rows == maxVals.n_elem);
   assert(data.n_rows == minVals.n_elem);
@@ -428,10 +415,9 @@ double DTree<eT, cT>::Grow(arma::mat& data,
 }
 
 
-template<typename eT, typename cT>
-double DTree<eT, cT>::PruneAndUpdate(const double oldAlpha,
-                                     const size_t points,
-                                     const bool useVolReg)
+double DTree::PruneAndUpdate(const double oldAlpha,
+                             const size_t points,
+                             const bool useVolReg)
 
 {
   // Compute gT.
@@ -540,8 +526,7 @@ double DTree<eT, cT>::PruneAndUpdate(const double oldAlpha,
 //
 // Future improvement: Open up the range with epsilons on both sides where
 // epsilon depends on the density near the boundary.
-template<typename eT, typename cT>
-inline bool DTree<eT, cT>::WithinRange(const arma::vec& query) const
+bool DTree::WithinRange(const arma::vec& query) const
 {
   for (size_t i = 0; i < query.n_elem; ++i)
     if ((query[i] < minVals[i]) || (query[i] > maxVals[i]))
@@ -551,8 +536,7 @@ inline bool DTree<eT, cT>::WithinRange(const arma::vec& query) const
 }
 
 
-template<typename eT, typename cT>
-double DTree<eT, cT>::ComputeValue(const arma::vec& query) const
+double DTree::ComputeValue(const arma::vec& query) const
 {
   Log::Assert(query.n_elem == maxVals.n_elem);
 
@@ -584,8 +568,7 @@ double DTree<eT, cT>::ComputeValue(const arma::vec& query) const
 }
 
 
-template<typename eT, typename cT>
-void DTree<eT, cT>::WriteTree(FILE *fp, const size_t level) const
+void DTree::WriteTree(FILE *fp, const size_t level) const
 {
   if (subtreeLeaves > 1)
   {
@@ -613,8 +596,7 @@ void DTree<eT, cT>::WriteTree(FILE *fp, const size_t level) const
 
 
 // Index the buckets for possible usage later.
-template<typename eT, typename cT>
-int DTree<eT, cT>::TagTree(const int tag)
+int DTree::TagTree(const int tag)
 {
   if (subtreeLeaves == 1)
   {
@@ -629,8 +611,7 @@ int DTree<eT, cT>::TagTree(const int tag)
 }
 
 
-template<typename eT, typename cT>
-int DTree<eT, cT>::FindBucket(const arma::vec& query) const
+int DTree::FindBucket(const arma::vec& query) const
 {
   Log::Assert(query.n_elem == maxVals.n_elem);
 
@@ -651,9 +632,7 @@ int DTree<eT, cT>::FindBucket(const arma::vec& query) const
 }
 
 
-template<typename eT, typename cT>
-void DTree<eT, cT>::ComputeVariableImportance(arma::vec& importances)
-    const
+void DTree::ComputeVariableImportance(arma::vec& importances) const
 {
   // Clear and set to right size.
   importances.zeros(maxVals.n_elem);
@@ -679,8 +658,3 @@ void DTree<eT, cT>::ComputeVariableImportance(arma::vec& importances)
     nodes.push(curNode.Right());
   }
 }
-
-}; // namespace det
-}; // namespace mlpack
-
-#endif // __MLPACK_METHODS_DET_DTREE_IMPL_HPP

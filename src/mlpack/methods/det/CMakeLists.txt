@@ -4,13 +4,13 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
 set(SOURCES
-
   # the DET class
   dtree.hpp
-  dtree_impl.hpp
+  dtree.cpp
 
   # the util file
   dt_utils.hpp
+  dt_utils.cpp
 )
 
 # add directory name to sources
