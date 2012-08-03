@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-  mdistupdate.hpp
-  mdivupdate.hpp
-  alsupdate.hpp
-  randominit.hpp
+  mult_dist_update_rules.hpp
+  mult_div_update_rules.hpp
+  als_update_rules.hpp
+  random_init.hpp
 #  randomacolinit.hpp
   nmf.hpp
   nmf_impl.hpp

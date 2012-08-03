@@ -12,79 +12,76 @@ namespace nmf {
 /**
  * Construct the NMF object.
  */
-template<typename InitializeRule,
+template<typename InitializationRule,
          typename WUpdateRule,
          typename HUpdateRule>
-NMF<InitializeRule,
-    WUpdateRule,
-    HUpdateRule>::
-NMF(const size_t maxIterations,
-      const double maxResidue,
-      const InitializeRule Initialize,
-      const WUpdateRule WUpdate,
-      const HUpdateRule HUpdate) :
+NMF<InitializationRule, WUpdateRule, HUpdateRule>::NMF(
+    const size_t maxIterations,
+    const double minResidue,
+    const InitializationRule initializeRule,
+    const WUpdateRule wUpdate,
+    const HUpdateRule hUpdate) :
     maxIterations(maxIterations),
-    maxResidue(maxResidue),
-    Initialize(Initialize),
-    WUpdate(WUpdate),
-    HUpdate(HUpdate)
+    minResidue(minResidue),
+    initializeRule(initializeRule),
+    wUpdate(wUpdate),
+    hUpdate(hUpdate)
 {
-  if (maxResidue < 0.0)
+  if (minResidue < 0.0)
   {
-    Log::Warn << "NMF::NMF(): maxResidue must be a positive value ("
-        << maxResidue << " given). Setting to the default value of "
-        << "1e-10.\n";
-    this->maxResidue = 1e-10;
-  } 
-
-  math::RandomSeed((size_t) std::time(NULL));    
+    Log::Warn << "NMF::NMF(): minResidue must be a positive value ("
+        << minResidue << " given). Setting to the default value of 1e-10.\n";
+    this->minResidue = 1e-10;
+  }
 }
 
 /**
- * Apply the Non-Negative Matrix Factorization on the provided matrix.
+ * Apply Non-Negative Matrix Factorization to the provided matrix.
  *
  * @param V Input matrix to be factorized
  * @param W Basis matrix to be output
  * @param H Encoding matrix to output
  * @param r Rank r of the factorization
  */
-template<typename InitializeRule,
+template<typename InitializationRule,
          typename WUpdateRule,
          typename HUpdateRule>
-void NMF<InitializeRule,
-    WUpdateRule,
-    HUpdateRule>::
-Apply(const arma::mat& V, arma::mat& W, arma::mat& H, size_t& r) const
+void NMF<InitializationRule, WUpdateRule, HUpdateRule>::Apply(
+    const arma::mat& V,
+    const size_t r,
+    arma::mat& W,
+    arma::mat& H) const
 {
-  size_t n = V.n_rows;
-  size_t m = V.n_cols;
+  const size_t n = V.n_rows;
+  const size_t m = V.n_cols;
 
-  // Intialize W and H
-  Initialize.Init(V,W,H,r);
+  // Initialize W and H.
+  initializeRule.Initialize(V, r, W, H);
 
-  //Log::Debug << "Initialized W and H." << std::endl;
+  Log::Info << "Initialized W and H." << std::endl;
 
-  size_t iteration = 0;
-  size_t nm = n*m;
-  double residue = maxResidue;
-  double normOld,norm;
-  arma::mat WH;    
-  
-  while (residue >= maxResidue  && iteration != maxIterations)
+  size_t iteration = 1;
+  const size_t nm = n * m;
+  double residue = minResidue;
+  double normOld;
+  double norm;
+  arma::mat WH;
+
+  while (residue >= minResidue && iteration != maxIterations)
   {
     // Update step.
     // Update the value of W and H based on the Update Rules provided
-    WUpdate.Update(V,W,H);
-    HUpdate.Update(V,W,H);
+    wUpdate.Update(V, W, H);
+    hUpdate.Update(V, W, H);
 
-    // Calculate norm of WH after each iteration
-    WH = W*H;
-    norm = sqrt(accu(WH%WH)/nm);
-    
-    if(iteration!=0)
+    // Calculate norm of WH after each iteration.
+    WH = W * H;
+    norm = sqrt(accu(WH % WH) / nm);
+
+    if (iteration != 0)
     {
-      residue = fabs(normOld-norm);
-      if(normOld > 1.0)
+      residue = fabs(normOld - norm);
+      if (normOld > 1.0)
       {
         residue /= normOld;
       }
@@ -92,21 +89,14 @@ Apply(const arma::mat& V, arma::mat& W, arma::mat& H, size_t& r) const
 
     normOld = norm;
 
-    /*
-      WH = W*H;
-      diff = WHold-WH;
-    diff = diff%diff;
-    residue = accu(diff)/(double)(n*m);
-    WHold = WH;*/
-
-    //Log::Debug << "Iteration: " << iteration << " Residue: " 
-    //      << sqrt(residue) << std::endl;
+    Log::Debug << "NMF iteration " << iteration << ": residue "
+        << sqrt(residue) << std::endl;
 
     iteration++;
-      
   }
 
-  //Log::Debug << "Iterations: " << iteration << std::endl;
+  Log::Info << "NMF converged to residue of " << sqrt(residue) << " in "
+      << iteration << " iterations." << std::endl;
 }
 
 }; // namespace nmf
