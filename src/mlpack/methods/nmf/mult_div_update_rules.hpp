@@ -5,7 +5,7 @@
  * Update rules for the Non-negative Matrix Factorization. This follows a method
  * described in the paper 'Algorithms for Non-negative Matrix Factorization'
  * by D. D. Lee and H. S. Seung. This is a multiplicative rule that ensures
- * that the the 'divergence'
+ * that the Kullback–Leibler divergence
  * \f$ \sum_i \sum_j (V_{ij} log\frac{V_{ij}}{(WH)_{ij}}-V_{ij}+(WH)_{ij}) \f$is
  * non-increasing between subsequent iterations. Both of the update rules
  * for W and H are defined in this file.

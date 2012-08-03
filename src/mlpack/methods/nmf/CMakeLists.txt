@@ -7,7 +7,7 @@ set(SOURCES
   mult_div_update_rules.hpp
   als_update_rules.hpp
   random_init.hpp
-#  randomacolinit.hpp
+  random_acol_init.hpp
   nmf.hpp
   nmf_impl.hpp
 )

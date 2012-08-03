@@ -38,13 +38,14 @@ class WAlternatingLeastSquaresRule
    * @param W Basis matrix to be updated.
    * @param H Encoding matrix.
    */
-  inline static void Update(const arma::mat& /* V */,
+  inline static void Update(const arma::mat& V,
                             arma::mat& W,
                             const arma::mat& H)
   {
-    W = (inv(H * H.t()) * H * H.t()).t();
-
-    // Set all negative numbers to 0.
+    //W = (inv(H * H.t()) * H * V.t()).t();
+    W = V * H.t() * pinv(H * H.t());
+    
+    // Set all negative numbers to machine epsilon
     for (size_t i = 0; i < W.n_elem; i++)
     {
       if (W(i) < 0.0)
@@ -79,7 +80,7 @@ class HAlternatingLeastSquaresRule
                             const arma::mat& W,
                             arma::mat& H)
   {
-    H = inv(W.t() * W) * W.t() * V;
+    H = pinv(W.t() * W) * W.t() * V;
 
     // Set all negative numbers to 0.
     for (size_t i = 0; i < H.n_elem; i++)
