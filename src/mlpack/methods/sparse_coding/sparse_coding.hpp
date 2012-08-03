@@ -148,7 +148,7 @@ class SparseCoding
    *    the dual variables
    */
   double OptimizeDictionary(const arma::uvec& adjacencies,
-			    const double newtonTolerance = 1e-6);
+                            const double newtonTolerance = 1e-6);
 
   /**
    * Project each atom of the dictionary back onto the unit ball, if necessary.
