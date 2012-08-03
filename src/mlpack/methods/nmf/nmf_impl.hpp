@@ -81,21 +81,15 @@ void NMF<InitializationRule, WUpdateRule, HUpdateRule>::Apply(
     if (iteration != 0)
     {
       residue = fabs(normOld - norm);
-      if (normOld > 1.0)
-      {
-        residue /= normOld;
-      }
+      residue /= normOld;
     }
 
     normOld = norm;
 
-    Log::Debug << "NMF iteration " << iteration << ": residue "
-        << sqrt(residue) << std::endl;
-
     iteration++;
   }
 
-  Log::Info << "NMF converged to residue of " << sqrt(residue) << " in "
+  Log::Debug << "NMF converged to residue of " << sqrt(residue) << " in "
       << iteration << " iterations." << std::endl;
 }
 
