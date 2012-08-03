@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(NMFTest)
   mat w, h;
 
   NMF<> nmf(0);
-  nmf.Apply(v, w, h, r);
+  nmf.Apply(v, r, w, h);
 
   mat wh = w * h;
 
