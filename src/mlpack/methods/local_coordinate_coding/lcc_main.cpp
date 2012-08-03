@@ -60,6 +60,9 @@ PARAM_FLAG("normalize", "If set, the input data matrix will be normalized "
 
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
+PARAM_DOUBLE("objective_tolerance", "Tolerance for objective function.", "o",
+    0.01);
+
 using namespace arma;
 using namespace std;
 using namespace mlpack;
@@ -88,6 +91,8 @@ int main(int argc, char* argv[])
   const size_t atoms = CLI::GetParam<int>("atoms");
 
   const bool normalize = CLI::HasParam("normalize");
+
+  const double objTolerance = CLI::GetParam<double>("objective_tolerance");
 
   mat input;
   data::Load(inputFile, input, true);
@@ -127,7 +132,7 @@ int main(int argc, char* argv[])
     }
 
     // Run LCC.
-    lcc.Encode(maxIterations);
+    lcc.Encode(maxIterations, objTolerance);
 
     // Save the results.
     Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
@@ -141,7 +146,7 @@ int main(int argc, char* argv[])
     LocalCoordinateCoding<> lcc(input, atoms, lambda);
 
     // Run LCC.
-    lcc.Encode(maxIterations);
+    lcc.Encode(maxIterations, objTolerance);
 
     // Save the results.
     Log::Info << "Saving dictionary matrix to '" << dictionaryFile << "'.\n";
