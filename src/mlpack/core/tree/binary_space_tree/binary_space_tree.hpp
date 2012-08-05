@@ -3,15 +3,12 @@
  *
  * Definition of generalized binary space partitioning tree (BinarySpaceTree).
  */
-#ifndef __MLPACK_CORE_TREE_BINARY_SPACE_TREE_HPP
-#define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_HPP
+#ifndef __MLPACK_CORE_TREE_BINARY_SPACE_TREE_BINARY_SPACE_TREE_HPP
+#define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_BINARY_SPACE_TREE_HPP
 
 #include <mlpack/core.hpp>
 
-#include "statistic.hpp"
-
-#include "traversers/single_tree_depth_first_traverser.hpp"
-#include "traversers/dual_tree_depth_first_traverser.hpp"
+#include "../statistic.hpp"
 
 // Bad!
 #include <mlpack/methods/neighbor_search/neighbor_search_rules.hpp>
@@ -66,33 +63,14 @@ class BinarySpaceTree
   //! So other classes can use TreeType::Mat.
   typedef MatType Mat;
 
-  //! Our preferred traverser.  We are using a struct here so that we don't need
-  //! to specify the template parameters.
+  //! A single-tree traverser for binary space trees; see
+  //! single_tree_traverser.hpp for implementation.
   template<typename RuleType>
-  struct PreferredTraverser
-  {
-    //! We use a depth-first search by default.
-    typedef SingleTreeDepthFirstTraverser<
-        BinarySpaceTree<BoundType, StatisticType, MatType>,
-        RuleType
-    > Type;
-  };
+  class SingleTreeTraverser;
 
+  //! A dual-tree traverser for binary space trees; see dual_tree_traverser.hpp.
   template<typename RuleType>
-  struct PreferredDualTraverser
-  {
-    typedef DualTreeDepthFirstTraverser<
-        BinarySpaceTree<BoundType, StatisticType, MatType>,
-        RuleType
-    > Type;
-  };
-
-  template<typename SortPolicy, typename MetricType, typename TreeType>
-  struct PreferredRules
-  {
-    typedef neighbor::NeighborSearchRules<SortPolicy, MetricType, TreeType>
-        Type;
-  };
+  class DualTreeTraverser;
 
   /**
    * Construct this as the root node of a binary space tree using the given
