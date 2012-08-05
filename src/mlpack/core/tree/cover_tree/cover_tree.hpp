@@ -4,16 +4,13 @@
  *
  * Definition of CoverTree, which can be used in place of the BinarySpaceTree.
  */
-#ifndef __MLPACK_CORE_TREE_COVER_TREE_HPP
-#define __MLPACK_CORE_TREE_COVER_TREE_HPP
+#ifndef __MLPACK_CORE_TREE_COVER_TREE_COVER_TREE_HPP
+#define __MLPACK_CORE_TREE_COVER_TREE_COVER_TREE_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include "first_point_is_root.hpp"
-#include "traversers/single_tree_breadth_first_traverser.hpp"
-#include "traversers/dual_cover_tree_traverser.hpp"
-#include "statistic.hpp"
-#include <mlpack/methods/neighbor_search/neighbor_search_cover_rules.hpp>
+#include "../statistic.hpp"
 
 namespace mlpack {
 namespace tree {
@@ -153,34 +150,14 @@ class CoverTree
    */
   ~CoverTree();
 
-  //! Define this tree's preferred traverser.
+  //! A single-tree cover tree traverser; see single_tree_traverser.hpp for
+  //! implementation.
   template<typename RuleType>
-  struct PreferredTraverser
-  {
-    typedef SingleTreeBreadthFirstTraverser<
-        CoverTree<MetricType, RootPointPolicy, StatisticType>,
-        RuleType
-    > Type;
-  };
+  class SingleTreeTraverser;
 
+  //! A dual-tree cover tree traverser; see dual_tree_traverser.hpp.
   template<typename RuleType>
-  struct PreferredDualTraverser
-  {
-    typedef DualCoverTreeTraverser<
-        CoverTree<MetricType, RootPointPolicy, StatisticType>,
-        RuleType
-    > Type;
-  };
-
-  template<typename SortPolicy, typename Metric2Type, typename TreeType>
-  struct PreferredRules
-  {
-    typedef neighbor::NeighborSearchCoverRules<
-        SortPolicy,
-        Metric2Type,
-        TreeType
-    > Type;
-  };
+  class DualTreeTraverser;
 
   //! Get a reference to the dataset.
   const arma::mat& Dataset() const { return dataset; }

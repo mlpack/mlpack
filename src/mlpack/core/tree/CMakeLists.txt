@@ -5,23 +5,26 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   ballbound.hpp
   ballbound_impl.hpp
-  binary_space_tree.hpp
-  binary_space_tree_impl.hpp
+  binary_space_tree/binary_space_tree.hpp
+  binary_space_tree/binary_space_tree_impl.hpp
+  binary_space_tree/dual_tree_traverser.hpp
+  binary_space_tree/dual_tree_traverser_impl.hpp
+  binary_space_tree/single_tree_traverser.hpp
+  binary_space_tree/single_tree_traverser_impl.hpp
   bounds.hpp
-  cover_tree.hpp
-  cover_tree_impl.hpp
-  first_point_is_root.hpp
+  cover_tree/cover_tree.hpp
+  cover_tree/cover_tree_impl.hpp
+  cover_tree/first_point_is_root.hpp
+  cover_tree/single_tree_traverser.hpp
+  cover_tree/single_tree_traverser_impl.hpp
+  cover_tree/dual_tree_traverser.hpp
+  cover_tree/dual_tree_traverser_impl.hpp
   hrectbound.hpp
   hrectbound_impl.hpp
   periodichrectbound.hpp
   periodichrectbound_impl.hpp
   statistic.hpp
   mrkd_statistic.hpp
-  traversers/single_tree_breadth_first_traverser.hpp
-  traversers/single_tree_depth_first_traverser.hpp
-  traversers/dual_tree_depth_first_traverser.hpp
-  traversers/dual_tree_breadth_first_traverser.hpp
-  traversers/dual_cover_tree_traverser.hpp
 )
 
 # add directory name to sources
