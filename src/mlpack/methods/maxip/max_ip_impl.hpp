@@ -13,6 +13,7 @@
 #include "max_ip_rules.hpp"
 
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
+#include <queue>
 
 namespace mlpack {
 namespace maxip {

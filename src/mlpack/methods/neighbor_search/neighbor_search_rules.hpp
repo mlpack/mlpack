@@ -30,11 +30,8 @@ class NeighborSearchRules
   bool CanPrune(TreeType& queryNode, TreeType& referenceNode);
 
   // Get the order of points to recurse to.
-  void RecursionOrder(TreeType& queryNode,
-                      TreeType& referenceNode,
-                      arma::Mat<size_t>& recursionOrder,
-                      bool& queryRecurse,
-                      bool& referenceRecurse);
+  bool LeftFirst(const size_t queryIndex, TreeType& referenceNode);
+  bool LeftFirst(TreeType& staticNode, TreeType& recurseNode);
 
   // Update bounds.  Needs a better name.
   void UpdateAfterRecursion(TreeType& queryNode, TreeType& referenceNode);
