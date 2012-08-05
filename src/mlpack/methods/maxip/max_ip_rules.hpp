@@ -9,7 +9,7 @@
 #define __MLPACK_METHODS_MAXIP_MAX_IP_RULES_HPP
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/tree/cover_tree.hpp>
+#include <mlpack/core/tree/cover_tree/cover_tree.hpp>
 
 namespace mlpack {
 namespace maxip {

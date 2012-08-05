@@ -23,9 +23,9 @@
 #include "edge_pair.hpp"
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/tree/bounds.hpp>
-#include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
+
+#include <mlpack/core/tree/binary_space_tree.hpp>
 
 namespace mlpack {
 namespace emst /** Euclidean Minimum Spanning Trees. */ {

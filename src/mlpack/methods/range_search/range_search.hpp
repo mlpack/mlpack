@@ -9,10 +9,10 @@
 #define __MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_HPP
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/tree/bounds.hpp>
-#include <mlpack/core/tree/binary_space_tree.hpp>
 
 #include <mlpack/core/metrics/lmetric.hpp>
+
+#include <mlpack/core/tree/binary_space_tree.hpp>
 
 namespace mlpack {
 namespace range /** Range-search routines. */ {

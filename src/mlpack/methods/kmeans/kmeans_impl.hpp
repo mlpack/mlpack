@@ -7,8 +7,6 @@
  */
 #include "kmeans.hpp"
 
-#include <mlpack/core/tree/binary_space_tree.hpp>
-#include <mlpack/core/tree/hrectbound.hpp>
 #include <mlpack/core/tree/mrkd_statistic.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 

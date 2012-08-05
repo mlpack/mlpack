@@ -10,9 +10,6 @@
 
 #include <mlpack/core.hpp>
 
-#include <mlpack/core/tree/traversers/single_tree_depth_first_traverser.hpp>
-#include <mlpack/core/tree/traversers/single_tree_breadth_first_traverser.hpp>
-#include <mlpack/core/tree/traversers/dual_tree_depth_first_traverser.hpp>
 #include "neighbor_search_rules.hpp"
 
 using namespace mlpack::neighbor;
@@ -180,13 +177,11 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
   if (singleMode)
   {
     // Create the helper object for the tree traversal.
-    NeighborSearchRules<SortPolicy, MetricType, TreeType> rules(referenceSet,
-        querySet, *neighborPtr, *distancePtr, metric);
+    typedef NeighborSearchRules<SortPolicy, MetricType, TreeType> RuleType;
+    RuleType rules(referenceSet, querySet, *neighborPtr, *distancePtr, metric);
 
     // Create the traverser.
-    typename TreeType::template PreferredTraverser<
-      NeighborSearchRules<SortPolicy, MetricType, TreeType> >::Type
-      traverser(rules);
+    typename TreeType::template SingleTreeTraverser<RuleType> traverser(rules);
 
     // Now have it traverse for each point.
     for (size_t i = 0; i < querySet.n_cols; ++i)
@@ -196,16 +191,11 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
   }
   else // Dual-tree recursion.
   {
-    // Breaking a lot of design rules here...
-    typedef typename TreeType::template PreferredRules<SortPolicy, MetricType,
-        TreeType>::Type RuleType;
-
+    // Create the helper object for the tree traversal.
+    typedef NeighborSearchRules<SortPolicy, MetricType, TreeType> RuleType;
     RuleType rules(referenceSet, querySet, *neighborPtr, *distancePtr, metric);
 
-    typedef typename TreeType::template PreferredDualTraverser<RuleType>::Type
-        TraverserType;
-
-    TraverserType traverser(rules);
+    typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
 
     if (queryTree)
       traverser.Traverse(*queryTree, *referenceTree);

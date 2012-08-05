@@ -84,154 +84,34 @@ inline bool NeighborSearchRules<SortPolicy, MetricType, TreeType>::CanPrune(
     return true;
 }
 
-// Return the order in which we should recurse.
 template<typename SortPolicy, typename MetricType, typename TreeType>
-inline void NeighborSearchRules<
-    SortPolicy,
-    MetricType,
-    TreeType>::
-RecursionOrder(TreeType& queryNode,
-               TreeType& referenceNode,
-               arma::Mat<size_t>& recursionOrder,
-               bool& queryRecurse,
-               bool& referenceRecurse)
+inline bool NeighborSearchRules<SortPolicy, MetricType, TreeType>::LeftFirst(
+    const size_t queryIndex,
+    TreeType& referenceNode)
 {
-  queryRecurse = !(queryNode.IsLeaf());
-  referenceRecurse = !(referenceNode.IsLeaf());
+  // This ends up with us calculating this distance twice (it will be done again
+  // in CanPrune()), but because single-neighbors recursion is not the most
+  // important in this method, we can let it slide.
+  const arma::vec queryPoint = querySet.unsafe_col(queryIndex);
+  const double leftDistance = SortPolicy::BestPointToNodeDistance(queryPoint,
+      referenceNode.Left());
+  const double rightDistance = SortPolicy::BestPointToNodeDistance(queryPoint,
+      referenceNode.Right());
 
-  if (queryRecurse && !referenceRecurse)
-  {
-    // We only need to recurse into the query children.  Therefore, the elements
-    // in row 1 can be ignored.
-    recursionOrder.set_size(2, queryNode.NumChildren());
-    arma::vec recursionDistances(queryNode.NumChildren());
-    recursionDistances.fill(SortPolicy::WorstDistance());
-    size_t children = 0; // Number of children to recurse to.
+  return SortPolicy::IsBetter(leftDistance, rightDistance);
+}
 
-    for (size_t i = 0; i < queryNode.NumChildren(); ++i)
-    {
-      double distance = SortPolicy::BestNodeToNodeDistance(&queryNode.Child(i),
-          &referenceNode);
+template<typename SortPolicy, typename MetricType, typename TreeType>
+inline bool NeighborSearchRules<SortPolicy, MetricType, TreeType>::LeftFirst(
+    TreeType& staticNode,
+    TreeType& recurseNode)
+{
+  const double leftDistance = SortPolicy::BestNodeToNodeDistance(&staticNode,
+      recurseNode.Left());
+  const double rightDistance = SortPolicy::BestNodeToNodeDistance(&staticNode,
+      recurseNode.Right());
 
-      // Find where to insert.
-      size_t insertPosition;
-      for (insertPosition = 0; insertPosition < children; ++insertPosition)
-        if (SortPolicy::IsBetter(distance, recursionDistances[insertPosition]))
-          break;
-
-      // Now perform the actual insertion.
-      if ((children - insertPosition) > 0)
-      {
-        memmove(recursionDistances.memptr() + insertPosition + 1,
-                recursionDistances.memptr() + insertPosition,
-                sizeof(double) * (children - insertPosition));
-        memmove(recursionOrder.memptr() + (insertPosition + 1) * 2,
-                recursionOrder.memptr() + (insertPosition * 2),
-                sizeof(size_t) * (children - insertPosition) * 2);
-      }
-
-      // Insert.
-      recursionDistances[insertPosition] = distance;
-      recursionOrder(0, insertPosition) = i;
-      ++children;
-    }
-
-    // Strip extra columns.
-    if (children < queryNode.NumChildren())
-      recursionOrder.shed_cols(children, queryNode.NumChildren() - 1);
-  }
-  else if (!queryRecurse && referenceRecurse)
-  {
-    // We only need to recurse into the reference children.  Therefore, the
-    // elements in row 0 can be ignored.
-    recursionOrder.set_size(2, referenceNode.NumChildren());
-    arma::vec recursionDistances(referenceNode.NumChildren());
-    recursionDistances.fill(SortPolicy::WorstDistance());
-    size_t children = 0; // Number of children to recurse into.
-
-    for (size_t i = 0; i < referenceNode.NumChildren(); ++i)
-    {
-      double distance = SortPolicy::BestNodeToNodeDistance(&queryNode,
-          &referenceNode.Child(i));
-
-      // Find where to insert.
-      size_t insertPosition;
-      for (insertPosition = 0; insertPosition < children; ++insertPosition)
-        if (SortPolicy::IsBetter(distance, recursionDistances[insertPosition]))
-          break;
-
-      // Now perform the actual insertion.
-      if ((children - insertPosition) > 0)
-      {
-        memmove(recursionDistances.memptr() + insertPosition + 1,
-                recursionDistances.memptr() + insertPosition,
-                sizeof(double) * (children - insertPosition));
-        memmove(recursionOrder.memptr() + (insertPosition + 1) * 2,
-                recursionOrder.memptr() + (insertPosition * 2),
-                sizeof(size_t) * (children - insertPosition) * 2);
-      }
-
-      // Insert.
-      recursionDistances[insertPosition] = distance;
-      recursionOrder(1, insertPosition) = i;
-      ++children;
-    }
-
-    // Strip extra columns.
-    if (children < referenceNode.NumChildren())
-      recursionOrder.shed_cols(children, referenceNode.NumChildren() - 1);
-  }
-  else if (queryRecurse && referenceRecurse)
-  {
-    // We need to recurse into both children.
-    const size_t maxChildren = referenceNode.NumChildren() *
-        queryNode.NumChildren();
-    recursionOrder.set_size(2, maxChildren);
-    arma::vec recursionDistances(maxChildren);
-    recursionDistances.fill(SortPolicy::WorstDistance());
-    size_t children = 0; // Number of children to recurse into.
-
-    for (size_t i = 0; i < queryNode.NumChildren(); ++i)
-    {
-      // Check if we should even continue this direction.
-      if (CanPrune(queryNode.Child(i), referenceNode))
-        continue; // Don't go this way.
-
-      for (size_t j = 0; j < referenceNode.NumChildren(); ++j)
-      {
-        double distance = SortPolicy::BestNodeToNodeDistance(
-            &queryNode.Child(i), &referenceNode.Child(j));
-
-        // Find where to insert.
-        size_t insertPosition;
-        for (insertPosition = 0; insertPosition < children; ++insertPosition)
-          if (SortPolicy::IsBetter(distance,
-              recursionDistances[insertPosition]))
-            break;
-
-        // Move things to prepare for insertion.
-        if ((children - insertPosition) > 0)
-        {
-          memmove(recursionDistances.memptr() + insertPosition + 1,
-                  recursionDistances.memptr() + insertPosition,
-                  sizeof(double) * (children - insertPosition));
-          memmove(recursionOrder.memptr() + (insertPosition + 1) * 2,
-                  recursionOrder.memptr() + (insertPosition * 2),
-                  sizeof(size_t) * (children - insertPosition) * 2);
-        }
-
-        // Insert.
-        recursionDistances[insertPosition] = distance;
-        recursionOrder(0, insertPosition) = i;
-        recursionOrder(1, insertPosition) = j;
-        ++children;
-      }
-    }
-
-    // Strip extra columns.
-    if (children < maxChildren)
-      recursionOrder.shed_cols(children, maxChildren - 1);
-  }
+  return SortPolicy::IsBetter(leftDistance, rightDistance);
 }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>

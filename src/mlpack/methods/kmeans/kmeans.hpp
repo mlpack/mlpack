@@ -13,6 +13,8 @@
 #include "random_partition.hpp"
 #include "max_variance_new_cluster.hpp"
 
+#include <mlpack/core/tree/binary_space_tree.hpp>
+
 namespace mlpack {
 namespace kmeans /** K-Means clustering. */ {
 
