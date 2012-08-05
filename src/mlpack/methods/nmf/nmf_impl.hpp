@@ -89,7 +89,7 @@ void NMF<InitializationRule, WUpdateRule, HUpdateRule>::Apply(
     iteration++;
   }
 
-  Log::Debug << "NMF converged to residue of " << sqrt(residue) << " in "
+  Log::Info << "NMF converged to residue of " << sqrt(residue) << " in "
       << iteration << " iterations." << std::endl;
 }
 

@@ -42,9 +42,10 @@ class WAlternatingLeastSquaresRule
                             arma::mat& W,
                             const arma::mat& H)
   {
-    //W = (inv(H * H.t()) * H * V.t()).t();
+    // The call to inv() sometimes fails; so we are using the psuedoinverse.
+    // W = (inv(H * H.t()) * H * V.t()).t();
     W = V * H.t() * pinv(H * H.t());
-    
+
     // Set all negative numbers to machine epsilon
     for (size_t i = 0; i < W.n_elem; i++)
     {
