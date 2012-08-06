@@ -42,8 +42,19 @@ DualTreeTraverser<RuleType>::Traverse(
   {
     // We have to recurse down the query node.  In this case the recursion order
     // does not matter.
-    Traverse(*queryNode.Left(), referenceNode);
-    Traverse(*queryNode.Right(), referenceNode);
+    double leftScore = rule.Score(*queryNode.Left(), referenceNode);
+
+    if (leftScore != DBL_MAX)
+      Traverse(*queryNode.Left(), referenceNode);
+    else
+      ++numPrunes;
+
+    double rightScore = rule.Score(*queryNode.Right(), referenceNode);
+
+    if (rightScore != DBL_MAX)
+      Traverse(*queryNode.Right(), referenceNode);
+    else
+      ++numPrunes;
   }
   else if (queryNode.IsLeaf() && (!referenceNode.IsLeaf()))
   {
