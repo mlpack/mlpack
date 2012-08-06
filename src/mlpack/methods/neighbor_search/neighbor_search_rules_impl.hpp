@@ -145,6 +145,58 @@ UpdateAfterRecursion(TreeType& queryNode, TreeType& /* referenceNode */)
   queryNode.Stat().Bound() = worstDistance;
 }
 
+template<typename SortPolicy, typename MetricType, typename TreeType>
+inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
+    const size_t queryIndex,
+    TreeType& referenceNode) const
+{
+  const arma::vec queryPoint = querySet.unsafe_col(queryIndex);
+  const double distance = SortPolicy::BestPointToNodeDistance(queryPoint,
+      &referenceNode);
+  const double bestDistance = distances(distances.n_rows - 1, queryIndex);
+
+  return (SortPolicy::IsBetter(distance, bestDistance)) ? distance : DBL_MAX;
+}
+
+template<typename SortPolicy, typename MetricType, typename TreeType>
+inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Rescore(
+    const size_t queryIndex,
+    TreeType& /* referenceNode */,
+    const double oldScore) const
+{
+  // If we are already pruning, still prune.
+  if (oldScore == DBL_MAX)
+    return oldScore;
+
+  // Just check the score again against the distances.
+  const double bestDistance = distances(distances.n_rows - 1, queryIndex);
+
+  return (SortPolicy::IsBetter(oldScore, bestDistance)) ? oldScore : DBL_MAX;
+}
+
+template<typename SortPolicy, typename MetricType, typename TreeType>
+inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
+    TreeType& queryNode,
+    TreeType& referenceNode) const
+{
+  const double distance = SortPolicy::BestNodeToNodeDistance(&queryNode,
+      &referenceNode);
+  const double bestDistance = queryNode.Stat().Bound();
+
+  return (SortPolicy::IsBetter(distance, bestDistance)) ? distance : DBL_MAX;
+}
+
+template<typename SortPolicy, typename MetricType, typename TreeType>
+inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Rescore(
+    TreeType& queryNode,
+    TreeType& /* referenceNode */,
+    const double oldScore) const
+{
+  const double bestDistance = queryNode.Stat().Bound();
+
+  return (SortPolicy::IsBetter(oldScore, bestDistance)) ? oldScore : DBL_MAX;
+}
+
 /**
  * Helper function to insert a point into the neighbors and distances matrices.
  *
