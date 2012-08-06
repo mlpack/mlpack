@@ -192,6 +192,9 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Rescore(
     TreeType& /* referenceNode */,
     const double oldScore) const
 {
+  if (oldScore == DBL_MAX)
+    return oldScore;
+
   const double bestDistance = queryNode.Stat().Bound();
 
   return (SortPolicy::IsBetter(oldScore, bestDistance)) ? oldScore : DBL_MAX;
