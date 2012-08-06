@@ -40,12 +40,12 @@ class Range
   inline Range(const double lo, const double hi);
 
   //! Get the lower bound.
-  inline const double& Lo() const { return lo; }
+  inline double Lo() const { return lo; }
   //! Modify the lower bound.
   inline double& Lo() { return lo; }
 
   //! Get the upper bound.
-  inline const double& Hi() const { return hi; }
+  inline double Hi() const { return hi; }
   //! Modify the upper bound.
   inline double& Hi() { return hi; }
 
