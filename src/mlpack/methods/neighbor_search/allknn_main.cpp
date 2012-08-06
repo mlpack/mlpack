@@ -148,13 +148,16 @@ int main(int argc, char *argv[])
 
       // Build trees by hand, so we can save memory: if we pass a tree to
       // NeighborSearch, it does not copy the matrix.
-      Timer::Start("tree_building");
+      if (!singleMode)
+      {
+        Timer::Start("tree_building");
 
-      queryTree = new BinarySpaceTree<bound::HRectBound<2>,
-                QueryStat<NearestNeighborSort> >(queryData, oldFromNewQueries,
-                    leafSize);
+        queryTree = new BinarySpaceTree<bound::HRectBound<2>,
+            QueryStat<NearestNeighborSort> >(queryData, oldFromNewQueries,
+            leafSize);
 
-      Timer::Stop("tree_building");
+        Timer::Stop("tree_building");
+      }
 
       allknn = new AllkNN(&refTree, queryTree, referenceData, queryData,
           singleMode);
@@ -243,23 +246,26 @@ int main(int argc, char *argv[])
       data::Load(queryFile, queryData, true);
 
       // Build query tree.
-      Log::Info << "Building query tree..." << endl;
-      Timer::Start("tree_building");
-      queryTree = new CoverTree<metric::LMetric<2>, tree::FirstPointIsRoot,
-          QueryStat<NearestNeighborSort> >(queryData);
-      Timer::Stop("tree_building");
+      if (!singleMode)
+      {
+        Log::Info << "Building query tree..." << endl;
+        Timer::Start("tree_building");
+        queryTree = new CoverTree<metric::LMetric<2>, tree::FirstPointIsRoot,
+            QueryStat<NearestNeighborSort> >(queryData);
+        Timer::Stop("tree_building");
+      }
 
       allknn = new NeighborSearch<NearestNeighborSort, metric::LMetric<2>,
           CoverTree<metric::LMetric<2>, tree::FirstPointIsRoot,
           QueryStat<NearestNeighborSort> > >(&referenceTree, queryTree,
-          referenceData, queryData, true);
+          referenceData, queryData, singleMode);
     }
     else
     {
       allknn = new NeighborSearch<NearestNeighborSort, metric::LMetric<2>,
           CoverTree<metric::LMetric<2>, tree::FirstPointIsRoot,
           QueryStat<NearestNeighborSort> > >(&referenceTree, referenceData,
-          true);
+          singleMode);
     }
 
     Log::Info << "Computing " << k << " nearest neighbors..." << endl;
