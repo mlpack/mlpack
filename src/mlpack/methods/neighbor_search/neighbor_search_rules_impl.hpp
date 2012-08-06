@@ -28,9 +28,8 @@ NeighborSearchRules<SortPolicy, MetricType, TreeType>::NeighborSearchRules(
 { /* Nothing left to do. */ }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-inline void NeighborSearchRules<SortPolicy, MetricType, TreeType>::BaseCase(
-    const size_t queryIndex,
-    const size_t referenceIndex)
+inline force_inline void NeighborSearchRules<SortPolicy, MetricType, TreeType>::
+BaseCase(const size_t queryIndex, const size_t referenceIndex)
 {
   // If the datasets are the same, then this search is only using one dataset
   // and we should not return identical points.
