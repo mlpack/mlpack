@@ -7,8 +7,6 @@ set(SOURCES
   neighbor_search_impl.hpp
   neighbor_search_rules.hpp
   neighbor_search_rules_impl.hpp
-  neighbor_search_cover_rules.hpp
-  neighbor_search_cover_rules_impl.hpp
   sort_policies/nearest_neighbor_sort.hpp
   sort_policies/nearest_neighbor_sort.cpp
   sort_policies/nearest_neighbor_sort_impl.hpp
