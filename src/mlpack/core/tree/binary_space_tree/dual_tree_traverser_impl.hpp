@@ -2,9 +2,9 @@
  * @file dual_tree_traverser_impl.hpp
  * @author Ryan Curtin
  *
- * Implementation of the DualTreeTraverser
- * way to perform a dual-tree traversal of two trees.  The trees must be the
- * same type.
+ * Implementation of the DualTreeTraverser for BinarySpaceTree.  This is a way
+ * to perform a dual-tree traversal of two trees.  The trees must be the same
+ * type.
  */
 #ifndef __MLPACK_CORE_TREE_BINARY_SPACE_TREE_DUAL_TREE_TRAVERSER_IMPL_HPP
 #define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_DUAL_TREE_TRAVERSER_IMPL_HPP
