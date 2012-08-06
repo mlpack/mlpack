@@ -32,42 +32,63 @@ SingleTreeTraverser<RuleType>::Traverse(
     const size_t queryIndex,
     BinarySpaceTree<BoundType, StatisticType, MatType>& referenceNode)
 {
-  // This is a non-recursive implementation (which should be faster).
-
-  // The stack of points to look at.
-  std::stack<BinarySpaceTree<BoundType, StatisticType, MatType>*> pointStack;
-  pointStack.push(&referenceNode);
-
-  while (!pointStack.empty())
+  // If we are a leaf, run the base case as necessary.
+  if (referenceNode.IsLeaf())
   {
-    BinarySpaceTree<BoundType, StatisticType, MatType>* node = pointStack.top();
-    pointStack.pop();
+    for (size_t i = referenceNode.Begin(); i < referenceNode.End(); ++i)
+      rule.BaseCase(queryIndex, i);
+  }
+  else
+  {
+    // If either score is DBL_MAX, we do not recurse into that node.
+    double leftScore = rule.Score(queryIndex, *referenceNode.Left());
+    double rightScore = rule.Score(queryIndex, *referenceNode.Right());
 
-    // Check if we can prune this node.
-    if (rule.CanPrune(queryIndex, *node))
+    if (leftScore < rightScore)
     {
-      ++numPrunes;
-      continue;
-    }
+      // Recurse to the left.
+      Traverse(queryIndex, *referenceNode.Left());
 
-    // If we are a leaf, run the base case as necessary.
-    if (node->IsLeaf())
-    {
-      for (size_t i = node->Begin(); i < node->End(); ++i)
-        rule.BaseCase(queryIndex, i);
+      // Is it still valid to recurse to the right?
+      rightScore = rule.Rescore(queryIndex, *referenceNode.Right(), rightScore);
+
+      if (rightScore != DBL_MAX)
+        Traverse(queryIndex, *referenceNode.Right()); // Recurse to the right.
+      else
+        ++numPrunes;
     }
-    else
+    else if (rightScore < leftScore)
     {
-      // Otherwise recurse by distance.
-      if (rule.LeftFirst(queryIndex, *node))
+      // Recurse to the right.
+      Traverse(queryIndex, *referenceNode.Right());
+
+      // Is it still valid to recurse to the left?
+      leftScore = rule.Rescore(queryIndex, *referenceNode.Left(), leftScore);
+
+      if (leftScore != DBL_MAX)
+        Traverse(queryIndex, *referenceNode.Left()); // Recurse to the left.
+      else
+        ++numPrunes;
+    }
+    else // leftScore is equal to rightScore.
+    {
+      if (leftScore == DBL_MAX)
       {
-        pointStack.push(node->Right());
-        pointStack.push(node->Left());
+        numPrunes += 2; // Pruned both left and right.
       }
       else
       {
-        pointStack.push(node->Left());
-        pointStack.push(node->Right());
+        // Choose the left first.
+        Traverse(queryIndex, *referenceNode.Left());
+
+        // Is it still valid to recurse to the right?
+        rightScore = rule.Rescore(queryIndex, *referenceNode.Right(),
+            rightScore);
+
+        if (rightScore != DBL_MAX)
+          Traverse(queryIndex, *referenceNode.Right());
+        else
+          ++numPrunes;
       }
     }
   }
