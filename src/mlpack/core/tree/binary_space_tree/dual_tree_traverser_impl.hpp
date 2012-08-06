@@ -35,8 +35,17 @@ DualTreeTraverser<RuleType>::Traverse(
   {
     // Loop through each of the points in each node.
     for (size_t query = queryNode.Begin(); query < queryNode.End(); ++query)
-      for (size_t ref = referenceNode.Begin(); ref < referenceNode.End(); ++ref)
+    {
+      // See if we need to investigate this point (this function should be
+      // implemented for the single-tree recursion too).
+      const double score = rule.Score(query, referenceNode);
+
+      if (score == DBL_MAX)
+        continue; // We can't improve this particular point. 
+
+      for (size_t ref = referenceNode.Begin(); ref < referenceNode.End(); ++ref)  
         rule.BaseCase(query, ref);
+    }
   }
   else if ((!queryNode.IsLeaf()) && referenceNode.IsLeaf())
   {
