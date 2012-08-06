@@ -37,8 +37,8 @@ inline void NeighborSearchRules<SortPolicy, MetricType, TreeType>::BaseCase(
   if ((&querySet == &referenceSet) && (queryIndex == referenceIndex))
     return;
 
-  double distance = metric.Evaluate(querySet.col(queryIndex),
-                                    referenceSet.col(referenceIndex));
+  double distance = metric.Evaluate(querySet.unsafe_col(queryIndex),
+                                    referenceSet.unsafe_col(referenceIndex));
 
   // If this distance is better than any of the current candidates, the
   // SortDistance() function will give us the position to insert it into.
