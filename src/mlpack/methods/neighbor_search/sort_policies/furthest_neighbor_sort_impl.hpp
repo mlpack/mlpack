@@ -12,7 +12,7 @@ namespace mlpack {
 namespace neighbor {
 
 template<typename TreeType>
-double FurthestNeighborSort::BestNodeToNodeDistance(
+inline double FurthestNeighborSort::BestNodeToNodeDistance(
     const TreeType* queryNode,
     const TreeType* referenceNode)
 {
@@ -22,7 +22,7 @@ double FurthestNeighborSort::BestNodeToNodeDistance(
 }
 
 template<typename TreeType>
-double FurthestNeighborSort::BestPointToNodeDistance(
+inline double FurthestNeighborSort::BestPointToNodeDistance(
     const arma::vec& point,
     const TreeType* referenceNode)
 {
