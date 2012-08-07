@@ -426,8 +426,7 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType>::MinDistance(
   // Every cover tree node will contain points up to EC^(scale + 1) away.
   return std::max(MetricType::Evaluate(dataset.unsafe_col(point),
       other->Dataset().unsafe_col(other->Point())) -
-      std::pow(expansionConstant, scale + 1) -
-      std::pow(other->ExpansionConstant(), other->Scale() + 1), 0.0);
+      furthestDescendantDistance - other->FurthestDescendantDistance(), 0.0);
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
@@ -436,8 +435,8 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType>::MinDistance(
     const double distance) const
 {
   // We already have the distance as evaluated by the metric.
-  return std::max(distance - (std::pow(expansionConstant, scale + 1) -
-      std::pow(other->ExpansionConstant(), other->Scale() + 1)), 0.0);
+  return std::max(distance - furthestDescendantDistance -
+      other->FurthestDescendantDistance(), 0.0);
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
@@ -445,7 +444,7 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType>::MinDistance(
     const arma::vec& other) const
 {
   return std::max(MetricType::Evaluate(dataset.unsafe_col(point), other) -
-      std::pow(expansionConstant, scale + 1), 0.0);
+      furthestDescendantDistance, 0.0);
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
@@ -453,7 +452,7 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType>::MinDistance(
     const arma::vec& other,
     const double distance) const
 {
-  return std::max(distance - std::pow(expansionConstant, scale + 1), 0.0);
+  return std::max(distance - furthestDescendantDistance, 0.0);
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
@@ -462,8 +461,7 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType>::MaxDistance(
 {
   return MetricType::Evaluate(dataset.unsafe_col(point),
       other->Dataset().unsafe_col(other->Point())) +
-      std::pow(expansionConstant, scale + 1) +
-      std::pow(other->ExpansionConstant(), other->Scale() + 1);
+      furthestDescendantDistance + other->FurthestDescendantDistance();
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
@@ -472,8 +470,8 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType>::MaxDistance(
     const double distance) const
 {
   // We already have the distance as evaluated by the metric.
-  return distance + (std::pow(expansionConstant, scale + 1) +
-      std::pow(other->ExpansionConstant(), other->Scale() + 1));
+  return distance + furthestDescendantDistance +
+      other->FurthestDescendantDistance();
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
@@ -481,7 +479,7 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType>::MaxDistance(
     const arma::vec& other) const
 {
   return MetricType::Evaluate(dataset.unsafe_col(point), other) +
-      std::pow(expansionConstant, scale + 1);
+      furthestDescendantDistance;
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
@@ -489,7 +487,7 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType>::MaxDistance(
     const arma::vec& other,
     const double distance) const
 {
-  return distance + std::pow(expansionConstant, scale + 1);
+  return distance + furthestDescendantDistance;
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
