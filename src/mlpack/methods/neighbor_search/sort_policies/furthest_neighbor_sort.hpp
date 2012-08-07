@@ -62,6 +62,17 @@ class FurthestNeighborSort
                                        const TreeType* referenceNode);
 
   /**
+   * Return the best possible distance between two nodes, given that the
+   * distance between the centers of the two nodes has already been calculated.
+   * This is used in conjunction with trees that have self-children (like cover
+   * trees).
+   */
+  template<typename TreeType>
+  static double BestNodeToNodeDistance(const TreeType* queryNode,
+                                       const TreeType* referenceNode,
+                                       const double centerToCenterDistance);
+
+  /**
    * Return the best possible distance between a node and a point.  In our case,
    * this is the maximum distance between the tree node and the point using the
    * given distance function.
@@ -69,6 +80,17 @@ class FurthestNeighborSort
   template<typename TreeType>
   static double BestPointToNodeDistance(const arma::vec& queryPoint,
                                         const TreeType* referenceNode);
+
+  /**
+   * Return the best possible distance between a point and a node, given that
+   * the distance between the point and the center of the node has already been
+   * calculated.  This is used in conjunction with trees that have
+   * self-children (like cover trees).
+   */
+  template<typename TreeType>
+  static double BestPointToNodeDistance(const arma::vec& queryPoint,
+                                        const TreeType* referenceNode,
+                                        const double pointToCenterDistance);
 
   /**
    * Return what should represent the worst possible distance with this

@@ -22,6 +22,15 @@ inline double NearestNeighborSort::BestNodeToNodeDistance(
 }
 
 template<typename TreeType>
+inline double NearestNeighborSort::BestNodeToNodeDistance(
+    const TreeType* queryNode,
+    const TreeType* referenceNode,
+    const double centerToCenterDistance)
+{
+  return queryNode->MinDistance(referenceNode, centerToCenterDistance);
+}
+
+template<typename TreeType>
 inline double NearestNeighborSort::BestPointToNodeDistance(
     const arma::vec& point,
     const TreeType* referenceNode)
@@ -29,6 +38,15 @@ inline double NearestNeighborSort::BestPointToNodeDistance(
   // This is not implemented yet for the general case because the trees do not
   // accept arbitrary distance metrics.
   return referenceNode->MinDistance(point);
+}
+
+template<typename TreeType>
+inline double NearestNeighborSort::BestPointToNodeDistance(
+    const arma::vec& point,
+    const TreeType* referenceNode,
+    const double pointToCenterDistance)
+{
+  return referenceNode->MinDistance(point, pointToCenterDistance);
 }
 
 }; // namespace neighbor
