@@ -45,7 +45,7 @@ class RandomAcolInitialization
           << "available in the V matrix; weird results may ensue!" << std::endl;
     }
 
-    W.zeros(n, m);
+    W.zeros(n, r);
 
     // Initialize W matrix with random columns.
     for (size_t col = 0; col < r; col++)
