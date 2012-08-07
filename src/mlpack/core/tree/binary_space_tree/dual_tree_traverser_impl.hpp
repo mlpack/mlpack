@@ -41,9 +41,9 @@ DualTreeTraverser<RuleType>::Traverse(
       const double score = rule.Score(query, referenceNode);
 
       if (score == DBL_MAX)
-        continue; // We can't improve this particular point. 
+        continue; // We can't improve this particular point.
 
-      for (size_t ref = referenceNode.Begin(); ref < referenceNode.End(); ++ref)  
+      for (size_t ref = referenceNode.Begin(); ref < referenceNode.End(); ++ref)
         rule.BaseCase(query, ref);
     }
   }
@@ -218,7 +218,7 @@ DualTreeTraverser<RuleType>::Traverse(
       else
       {
         // Choose the left first.
-        Traverse(*queryNode.Right(), *referenceNode.Right());
+        Traverse(*queryNode.Right(), *referenceNode.Left());
 
         // Is it still valid to recurse to the right?
         rightScore = rule.Rescore(*queryNode.Right(), *referenceNode.Right(),
