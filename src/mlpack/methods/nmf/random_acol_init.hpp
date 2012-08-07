@@ -42,9 +42,7 @@ class RandomAcolInitialization
     if (p > m)
     {
       Log::Warn << "Number of random columns is more than the number of columns"
-          << "available in the V matrix; setting to the number of random "
-          << "columns to " << m << "." << std::endl;
-      p = m;
+          << "available in the V matrix; weird results may ensue!" << std::endl;
     }
 
     W.zeros(n, m);
