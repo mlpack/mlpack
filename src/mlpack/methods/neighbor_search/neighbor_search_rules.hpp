@@ -21,17 +21,13 @@ class NeighborSearchRules
                       arma::mat& distances,
                       MetricType& metric);
 
-  void BaseCase(const size_t queryIndex, const size_t referenceIndex);
+  double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
   // For single-tree traversal.
   bool CanPrune(const size_t queryIndex, TreeType& referenceNode);
 
   // For dual-tree traversal.
   bool CanPrune(TreeType& queryNode, TreeType& referenceNode);
-
-  // Get the order of points to recurse to.
-  bool LeftFirst(const size_t queryIndex, TreeType& referenceNode);
-  bool LeftFirst(TreeType& staticNode, TreeType& recurseNode);
 
   // Update bounds.  Needs a better name.
   void UpdateAfterRecursion(TreeType& queryNode, TreeType& referenceNode);
@@ -45,6 +41,20 @@ class NeighborSearchRules
    * @param referenceNode Candidate node to be recursed into.
    */
   double Score(const size_t queryIndex, TreeType& referenceNode) const;
+
+  /**
+   * Get the score for recursion order, passing the base case result (in the
+   * situation where it may be needed to calculate the recursion order).  A low
+   * score indicates priority for recursion, while DBL_MAX indicates that the
+   * node should not be recursed into at all (it should be pruned).
+   *
+   * @param queryIndex Index of query point.
+   * @param referenceNode Candidate node to be recursed into.
+   * @param baseCaseResult Result of BaseCase(queryIndex, referenceNode).
+   */
+  double Score(const size_t queryIndex,
+               TreeType& referenceNode,
+               const double baseCaseResult) const;
 
   /**
    * Re-evaluate the score for recursion order.  A low score indicates priority

@@ -28,13 +28,14 @@ NeighborSearchRules<SortPolicy, MetricType, TreeType>::NeighborSearchRules(
 { /* Nothing left to do. */ }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-inline force_inline void NeighborSearchRules<SortPolicy, MetricType, TreeType>::
+inline force_inline // Absolutely MUST be inline so optimizations can happen.
+double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
 BaseCase(const size_t queryIndex, const size_t referenceIndex)
 {
   // If the datasets are the same, then this search is only using one dataset
   // and we should not return identical points.
   if ((&querySet == &referenceSet) && (queryIndex == referenceIndex))
-    return;
+    return 0.0;
 
   double distance = metric.Evaluate(querySet.unsafe_col(queryIndex),
                                     referenceSet.unsafe_col(referenceIndex));
@@ -47,6 +48,8 @@ BaseCase(const size_t queryIndex, const size_t referenceIndex)
   // SortDistance() returns (size_t() - 1) if we shouldn't add it.
   if (insertPosition != (size_t() - 1))
     InsertNeighbor(queryIndex, insertPosition, referenceIndex, distance);
+
+  return distance;
 }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
@@ -62,10 +65,7 @@ inline bool NeighborSearchRules<SortPolicy, MetricType, TreeType>::CanPrune(
 
   // If this is better than the best distance we've seen so far, maybe there
   // will be something down this node.
-  if (SortPolicy::IsBetter(distance, bestDistance))
-    return false; // We cannot prune.
-  else
-    return true; // There cannot be anything better in this node.  So prune it.
+  return !(SortPolicy::IsBetter(distance, bestDistance));
 }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
@@ -77,40 +77,7 @@ inline bool NeighborSearchRules<SortPolicy, MetricType, TreeType>::CanPrune(
       &queryNode, &referenceNode);
   const double bestDistance = queryNode.Stat().Bound();
 
-  if (SortPolicy::IsBetter(distance, bestDistance))
-    return false; // Can't prune.
-  else
-    return true;
-}
-
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline bool NeighborSearchRules<SortPolicy, MetricType, TreeType>::LeftFirst(
-    const size_t queryIndex,
-    TreeType& referenceNode)
-{
-  // This ends up with us calculating this distance twice (it will be done again
-  // in CanPrune()), but because single-neighbors recursion is not the most
-  // important in this method, we can let it slide.
-  const arma::vec queryPoint = querySet.unsafe_col(queryIndex);
-  const double leftDistance = SortPolicy::BestPointToNodeDistance(queryPoint,
-      referenceNode.Left());
-  const double rightDistance = SortPolicy::BestPointToNodeDistance(queryPoint,
-      referenceNode.Right());
-
-  return SortPolicy::IsBetter(leftDistance, rightDistance);
-}
-
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline bool NeighborSearchRules<SortPolicy, MetricType, TreeType>::LeftFirst(
-    TreeType& staticNode,
-    TreeType& recurseNode)
-{
-  const double leftDistance = SortPolicy::BestNodeToNodeDistance(&staticNode,
-      recurseNode.Left());
-  const double rightDistance = SortPolicy::BestNodeToNodeDistance(&staticNode,
-      recurseNode.Right());
-
-  return SortPolicy::IsBetter(leftDistance, rightDistance);
+  return !(SortPolicy::IsBetter(distance, bestDistance));
 }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
@@ -152,6 +119,20 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
   const arma::vec queryPoint = querySet.unsafe_col(queryIndex);
   const double distance = SortPolicy::BestPointToNodeDistance(queryPoint,
       &referenceNode);
+  const double bestDistance = distances(distances.n_rows - 1, queryIndex);
+
+  return (SortPolicy::IsBetter(distance, bestDistance)) ? distance : DBL_MAX;
+}
+
+template<typename SortPolicy, typename MetricType, typename TreeType>
+inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
+    const size_t queryIndex,
+    TreeType& referenceNode,
+    const double baseCaseResult) const
+{
+  const arma::vec queryPoint = querySet.unsafe_col(queryIndex);
+  const double distance = SortPolicy::BestPointToNodeDistance(queryPoint,
+      &referenceNode, baseCaseResult);
   const double bestDistance = distances(distances.n_rows - 1, queryIndex);
 
   return (SortPolicy::IsBetter(distance, bestDistance)) ? distance : DBL_MAX;
