@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(NMFAcolDistTest)
   mat v = w * h;
   size_t r = 16;
 
-  NMF<RandomAcolInitialization> nmf;
+  NMF<RandomAcolInitialization<> > nmf;
   nmf.Apply(v, r, w, h);
 
   mat wh = w * h;
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(NMFRandomDivTest)
   mat v = w * h;
   size_t r = 16;
 
-  NMF<RandomInitialization, 
+  NMF<RandomInitialization,
       WMultiplicativeDivergenceRule,
       HMultiplicativeDivergenceRule> nmf;
   nmf.Apply(v, r, w, h);
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(NMFALSTest)
   mat v = w * h;
   size_t r = 16;
 
-  NMF<RandomInitialization, 
+  NMF<RandomInitialization,
       WAlternatingLeastSquaresRule,
       HAlternatingLeastSquaresRule> nmf;
   nmf.Apply(v, r, w, h);
