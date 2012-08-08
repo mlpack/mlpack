@@ -26,8 +26,8 @@ if(DEBUG)
 else()
   add_definitions(-DARMA_NO_DEBUG)
   add_definitions(-DNDEBUG)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -O2")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -O3")
 endif(DEBUG)
 
 # Profiling CFLAGS.  Turn profiling information on.
@@ -138,7 +138,6 @@ set(Boost_ADDITIONAL_VERSIONS
   "1.46.0" "1.46.1" "1.47.0" "1.48.0" "1.49.0")
 find_package(Boost
     COMPONENTS
-      math_c99
       program_options
       unit_test_framework
     REQUIRED
