@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
         }
       }
     }
-    else if (singleMode)
+    else if ((CLI::GetParam<string>("query_file") != "") && singleMode)
     {
       // No remapping of queries is necessary.  So distances are the same.
       distances = sqrt(distancesOut);
