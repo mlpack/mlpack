@@ -14,6 +14,7 @@ set(SOURCES
   bounds.hpp
   cover_tree/cover_tree.hpp
   cover_tree/cover_tree_impl.hpp
+  cover_tree/cover_tree_map_entry.hpp
   cover_tree/first_point_is_root.hpp
   cover_tree/single_tree_traverser.hpp
   cover_tree/single_tree_traverser_impl.hpp
