@@ -176,7 +176,7 @@
 #define force_inline
 #if defined(__GNUG__)
   #undef force_inline
-  #define force_inline __attribute__((force_inline))
+  #define force_inline __attribute__((always_inline))
 #elif defined(_MSC_VER)
   #undef force_inline
   #define force_inline __forceinline
