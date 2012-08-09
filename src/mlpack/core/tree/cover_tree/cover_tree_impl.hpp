@@ -449,7 +449,7 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType>::MinDistance(
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 double CoverTree<MetricType, RootPointPolicy, StatisticType>::MinDistance(
-    const arma::vec& other,
+    const arma::vec& /* other */,
     const double distance) const
 {
   return std::max(distance - furthestDescendantDistance, 0.0);
@@ -484,7 +484,7 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType>::MaxDistance(
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 double CoverTree<MetricType, RootPointPolicy, StatisticType>::MaxDistance(
-    const arma::vec& other,
+    const arma::vec& /* other */,
     const double distance) const
 {
   return distance + furthestDescendantDistance;

@@ -169,7 +169,7 @@ SingleTreeTraverser<RuleType>::Traverse(
     }
 
     // There are no self-leaves; evaluate the base case.
-    const double baseCase = rule.BaseCase(queryIndex, point);
+    rule.BaseCase(queryIndex, point);
   }
 }
 
