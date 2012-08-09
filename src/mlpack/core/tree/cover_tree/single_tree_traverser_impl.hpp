@@ -11,32 +11,11 @@
 // In case it hasn't been included yet.
 #include "single_tree_traverser.hpp"
 
+#include "cover_tree_map_entry.hpp"
 #include <queue>
 
 namespace mlpack {
 namespace tree {
-
-//! This is the structure the priority queue will use for traversal.
-template<typename MetricType, typename RootPointPolicy, typename StatisticType>
-struct CoverTreeQueueEntry
-{
-  //! The node this entry refers to.
-  CoverTree<MetricType, RootPointPolicy, StatisticType>* node;
-  //! The score of the node.
-  double score;
-  //! The index of the parent node.
-  size_t parent;
-  //! The base case evaluation (-1.0 if it has not been performed).
-  double baseCase;
-
-  //! Comparison operator.
-  bool operator<(const CoverTreeQueueEntry& other) const
-  {
-    return (score < other.score);
-  }
-};
-
-
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 template<typename RuleType>
@@ -55,7 +34,7 @@ SingleTreeTraverser<RuleType>::Traverse(
 {
   // This is a non-recursive implementation (which should be faster than a
   // recursive implementation).
-  typedef CoverTreeQueueEntry<MetricType, RootPointPolicy, StatisticType>
+  typedef CoverTreeMapEntry<MetricType, RootPointPolicy, StatisticType>
       QueueType;
 
   // We will use this map as a priority queue.  Each key represents the scale,
@@ -69,7 +48,7 @@ SingleTreeTraverser<RuleType>::Traverse(
   // Manually add the children of the first node.  These cannot be pruned
   // anyway.
   double rootBaseCase = rule.BaseCase(queryIndex, referenceNode.Point());
-    
+
   // Create the score for the children.
   double rootChildScore = rule.Score(queryIndex, referenceNode, rootBaseCase);
 
