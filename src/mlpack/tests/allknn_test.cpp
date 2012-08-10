@@ -477,11 +477,11 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
  */
 BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
 {
-  arma::mat data;
+  arma::mat dataset;
   srand(time(NULL));
-  data.randn(3, 1000);
+  dataset.randn(5, 5000);
 
-  arma::mat kdtreeData(data);
+  arma::mat kdtreeData(dataset);
 
   AllkNN tree(kdtreeData);
 
@@ -489,15 +489,15 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
   arma::mat kdDistances;
   tree.Search(5, kdNeighbors, kdDistances);
 
-  tree::CoverTree<metric::LMetric<2>, tree::FirstPointIsRoot,
+  tree::CoverTree<metric::LMetric<2, true>, tree::FirstPointIsRoot,
       QueryStat<NearestNeighborSort> > referenceTree = tree::CoverTree<
-      metric::LMetric<2>, tree::FirstPointIsRoot,
-      QueryStat<NearestNeighborSort> >(data);
+      metric::LMetric<2, true>, tree::FirstPointIsRoot,
+      QueryStat<NearestNeighborSort> >(dataset);
 
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2>,
-      tree::CoverTree<metric::LMetric<2>, tree::FirstPointIsRoot,
+  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
+      tree::CoverTree<metric::LMetric<2, true>, tree::FirstPointIsRoot,
       QueryStat<NearestNeighborSort> > >
-      coverTreeSearch(&referenceTree, data);
+      coverTreeSearch(&referenceTree, dataset);
 
   arma::Mat<size_t> coverNeighbors;
   arma::mat coverDistances;
@@ -508,7 +508,7 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
     for (size_t j = 0; j < coverNeighbors.n_rows; ++j)
     {
       BOOST_REQUIRE_EQUAL(coverNeighbors(j, i), kdNeighbors(j, i));
-      BOOST_REQUIRE_CLOSE(coverDistances(j, i), kdDistances(j, i), 1e-5);
+      BOOST_REQUIRE_CLOSE(coverDistances(j, i), sqrt(kdDistances(j, i)), 1e-5);
     }
   }
 }
