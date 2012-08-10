@@ -13,6 +13,10 @@
 namespace mlpack {
 namespace tree {
 
+//! Forward declaration of struct to be used for traversal.
+template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+struct DualCoverTreeMapEntry;
+
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 template<typename RuleType>
 class CoverTree<MetricType, RootPointPolicy, StatisticType>::DualTreeTraverser
@@ -35,8 +39,9 @@ class CoverTree<MetricType, RootPointPolicy, StatisticType>::DualTreeTraverser
    * Helper function for traversal of the two trees.
    */
   void Traverse(CoverTree& queryNode,
-                CoverTree& referenceNode,
-                const size_t parent);
+                std::map<int, std::vector<DualCoverTreeMapEntry<
+                    MetricType, RootPointPolicy, StatisticType> > >&
+                    referenceNode);
 
   //! Get the number of pruned nodes.
   size_t NumPrunes() const { return numPrunes; }

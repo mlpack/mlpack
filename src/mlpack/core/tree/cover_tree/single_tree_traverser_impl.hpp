@@ -11,11 +11,30 @@
 // In case it hasn't been included yet.
 #include "single_tree_traverser.hpp"
 
-#include "cover_tree_map_entry.hpp"
 #include <queue>
 
 namespace mlpack {
 namespace tree {
+
+//! This is the structure the cover tree map will use for traversal.
+template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+struct CoverTreeMapEntry
+{
+  //! The node this entry refers to.
+  CoverTree<MetricType, RootPointPolicy, StatisticType>* node;
+  //! The score of the node.
+  double score;
+  //! The index of the parent node.
+  size_t parent;
+  //! The base case evaluation.
+  double baseCase;
+
+  //! Comparison operator.
+  bool operator<(const CoverTreeMapEntry& other) const
+  {
+    return (score < other.score);
+  }
+};
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 template<typename RuleType>
@@ -35,7 +54,7 @@ SingleTreeTraverser<RuleType>::Traverse(
   // This is a non-recursive implementation (which should be faster than a
   // recursive implementation).
   typedef CoverTreeMapEntry<MetricType, RootPointPolicy, StatisticType>
-      QueueType;
+      MapEntryType;
 
   // We will use this map as a priority queue.  Each key represents the scale,
   // and then the vector is all the nodes in that scale which need to be
@@ -43,7 +62,7 @@ SingleTreeTraverser<RuleType>::Traverse(
   // scale, we know that the vector for each scale is final when we get to it.
   // In addition, map is organized in such a way that rbegin() will return the
   // largest scale.
-  std::map<int, std::vector<QueueType> > mapQueue;
+  std::map<int, std::vector<MapEntryType> > mapQueue;
 
   // Manually add the children of the first node.  These cannot be pruned
   // anyway.
@@ -68,7 +87,7 @@ SingleTreeTraverser<RuleType>::Traverse(
 
     for (/* i was set above. */; i < referenceNode.NumChildren(); ++i)
     {
-      QueueType newFrame;
+      MapEntryType newFrame;
       newFrame.node = &referenceNode.Child(i);
       newFrame.score = rootChildScore;
       newFrame.baseCase = rootBaseCase;
@@ -80,23 +99,23 @@ SingleTreeTraverser<RuleType>::Traverse(
   }
 
   // Now begin the iteration through the map.
-  typename std::map<int, std::vector<QueueType> >::reverse_iterator rit =
+  typename std::map<int, std::vector<MapEntryType> >::reverse_iterator rit =
       mapQueue.rbegin();
 
   // We will treat the leaves differently (below).
   while ((*rit).first != INT_MIN)
   {
     // Get a reference to the current scale.
-    std::vector<QueueType>& scaleVector = (*rit).second;
+    std::vector<MapEntryType>& scaleVector = (*rit).second;
 
-    // Before beginning all the points in this scale, sort by score.
+    // Before traversing all the points in this scale, sort by score.
     std::sort(scaleVector.begin(), scaleVector.end());
 
     // Now loop over each element.
     for (size_t i = 0; i < scaleVector.size(); ++i)
     {
       // Get a reference to the current element.
-      const QueueType& frame = scaleVector.at(i);
+      const MapEntryType& frame = scaleVector.at(i);
 
       CoverTree<MetricType, RootPointPolicy, StatisticType>* node = frame.node;
       const double score = frame.score;
@@ -136,7 +155,7 @@ SingleTreeTraverser<RuleType>::Traverse(
 
       for (/* j is already set. */; j < node->NumChildren(); ++j)
       {
-        QueueType newFrame;
+        MapEntryType newFrame;
         newFrame.node = &node->Child(j);
         newFrame.score = childScore;
         newFrame.baseCase = baseCase;
@@ -153,7 +172,7 @@ SingleTreeTraverser<RuleType>::Traverse(
   // Now deal with the leaves.
   for (size_t i = 0; i < mapQueue[INT_MIN].size(); ++i)
   {
-    const QueueType& frame = mapQueue[INT_MIN].at(i);
+    const MapEntryType& frame = mapQueue[INT_MIN].at(i);
 
     CoverTree<MetricType, RootPointPolicy, StatisticType>* node = frame.node;
     const double score = frame.score;
