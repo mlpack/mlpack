@@ -120,7 +120,7 @@ if (WIN32)
         include directory or the LibXml2 include directory.")
   endif (NOT ICONV_HEADER)
   # Add the directory containing iconv.h to the include directories.
-  get_filename_component(ICONV_H_DIR ${ICONV_HEADER} ABSOLUTE)
+  get_filename_component(ICONV_H_DIR ${ICONV_HEADER} PATH)
   include_directories(${ICONV_H_DIR})
 
   # Reset suffixes.
