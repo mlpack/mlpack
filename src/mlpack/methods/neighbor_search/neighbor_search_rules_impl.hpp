@@ -53,34 +53,6 @@ BaseCase(const size_t queryIndex, const size_t referenceIndex)
 }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-inline bool NeighborSearchRules<SortPolicy, MetricType, TreeType>::CanPrune(
-    const size_t queryIndex,
-    TreeType& referenceNode)
-{
-  // Find the best distance between the query point and the node.
-  const arma::vec queryPoint = querySet.unsafe_col(queryIndex);
-  const double distance =
-      SortPolicy::BestPointToNodeDistance(queryPoint, &referenceNode);
-  const double bestDistance = distances(distances.n_rows - 1, queryIndex);
-
-  // If this is better than the best distance we've seen so far, maybe there
-  // will be something down this node.
-  return !(SortPolicy::IsBetter(distance, bestDistance));
-}
-
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline bool NeighborSearchRules<SortPolicy, MetricType, TreeType>::CanPrune(
-    TreeType& queryNode,
-    TreeType& referenceNode)
-{
-  const double distance = SortPolicy::BestNodeToNodeDistance(
-      &queryNode, &referenceNode);
-  const double bestDistance = queryNode.Stat().Bound();
-
-  return !(SortPolicy::IsBetter(distance, bestDistance));
-}
-
-template<typename SortPolicy, typename MetricType, typename TreeType>
 void NeighborSearchRules<
     SortPolicy,
     MetricType,
@@ -161,6 +133,19 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
 {
   const double distance = SortPolicy::BestNodeToNodeDistance(&queryNode,
       &referenceNode);
+  const double bestDistance = queryNode.Stat().Bound();
+
+  return (SortPolicy::IsBetter(distance, bestDistance)) ? distance : DBL_MAX;
+}
+
+template<typename SortPolicy, typename MetricType, typename TreeType>
+inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
+    TreeType& queryNode,
+    TreeType& referenceNode,
+    const double baseCaseResult) const
+{
+  const double distance = SortPolicy::BestNodeToNodeDistance(&queryNode,
+      &referenceNode, baseCaseResult);
   const double bestDistance = queryNode.Stat().Bound();
 
   return (SortPolicy::IsBetter(distance, bestDistance)) ? distance : DBL_MAX;
