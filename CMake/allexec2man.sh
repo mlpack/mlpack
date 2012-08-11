@@ -17,6 +17,6 @@ for program in `find . -perm /u=x,g=x,o=x | \
                 grep -v '_test$' | \
                 sed 's|^./||'`; do
   echo "Generating man page for $program...";
-  $1 "$program" "$outdir/$program.1"
+  "$1" "$program" "$outdir/$program.1"
   gzip -f "$outdir/$program.1"
 done
