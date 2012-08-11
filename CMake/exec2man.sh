@@ -11,12 +11,12 @@
 # No warranties...
 #
 # @author Ryan Curtin
-name=$1
-output=$2
+name="$1"
+output="$2"
 
 # Generate the synopsis.
 # First, required options.
-reqoptions=`./$name -h | \
+reqoptions=`./"$name" -h | \
   awk '/Required options:/,/Options:/' | \
   grep '^  --' | \
   sed 's/^  --/--/' | \
@@ -30,7 +30,7 @@ reqoptions=`./$name -h | \
   sed 's/\]//g'`
 
 # Then, regular options.
-options=`./$name -h | \
+options=`./"$name" -h | \
   awk '/Options:/,/For further information,/' | \
   grep '^  --' | \
   sed 's/^  --/--/' | \
@@ -65,16 +65,16 @@ synopsis="$name [-h] [-v] $reqoptions $options";
 # helps avoid 'man' warnings).
 # The sed line at the end removes accidental macros from the output, replacing
 # 'word' with "word".
-./$name -h | \
+./"$name" -h | \
   sed 's/^For further information/Additional Information\n\n For further information/' | \
   sed 's/^consult the documentation/ consult the documentation/' | \
   sed 's/^distribution of MLPACK./ distribution of MLPACK./' | \
   awk -v syn="$synopsis" \
-      '{ if (NR == 1) print "NAME\n '$name' - "tolower($0)"\nSYNOPSIS\n "syn" \nDESCRIPTION\n" ; else print } ' | \
+      '{ if (NR == 1) print "NAME\n '"$name"' - "tolower($0)"\nSYNOPSIS\n "syn" \nDESCRIPTION\n" ; else print } ' | \
   sed '/^[^ ]/ y/qwertyuiopasdfghjklzxcvbnm:/QWERTYUIOPASDFGHJKLZXCVBNM /' | \
   sed 's/  / /g' | \
   awk '/NAME/,/REQUIRED OPTIONS/ { print; } /ADDITIONAL INFORMATION/,0 { print; } /REQUIRED OPTIONS/,/ADDITIONAL INFORMATION/ { if (!/REQUIRED_OPTIONS/ && !/OPTIONS/ && !/ADDITIONAL INFORMATION/) { if (/ --/) { printf "\n" } sub(/^[ ]*/, ""); sub(/ [ ]*/, " "); printf "%s ", $0; } else { if (!/REQUIRED OPTIONS/ && !/ADDITIONAL INFORMATION/) { print "\n"$0; } } }' | \
   sed 's/  ADDITIONAL INFORMATION/\n\nADDITIONAL INFORMATION/' | \
-  txt2man -P mlpack -t $name -d 1 | \
-  sed "s/^'\([A-Za-z0-9 ]*\)'/\"\1\"/" > $output
+  txt2man -P mlpack -t "$name" -d 1 | \
+  sed "s/^'\([A-Za-z0-9 ]*\)'/\"\1\"/" > "$output"
 
