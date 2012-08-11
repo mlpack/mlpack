@@ -44,8 +44,8 @@ PROGRAM_INFO("Non-negative Matrix Factorization", "This program performs "
 
 // Parameters for program.
 PARAM_STRING_REQ("input_file", "Input dataset to perform NMF on.", "i");
-PARAM_STRING_REQ("w_file", "File to save the calculated W matrix to.", "w");
-PARAM_STRING_REQ("h_file", "File to save the calculated H matrix to.", "h");
+PARAM_STRING_REQ("w_file", "File to save the calculated W matrix to.", "W");
+PARAM_STRING_REQ("h_file", "File to save the calculated H matrix to.", "H");
 PARAM_INT_REQ("rank", "Rank of the factorization.", "r");
 
 PARAM_INT("max_iterations", "Number of iterations before NMF terminates (0 runs"
