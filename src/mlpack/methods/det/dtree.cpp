@@ -431,7 +431,7 @@ double DTree::PruneAndUpdate(const double oldAlpha,
   else
   {
     // Compute gT value for node t.
-    double gT;
+    volatile double gT;
     if (useVolReg)
       gT = alphaUpper;// - std::log(subtreeLeavesVTInv - vTInv);
     else
@@ -507,7 +507,7 @@ double DTree::PruneAndUpdate(const double oldAlpha,
 
       Log::Assert(gT < std::numeric_limits<double>::max());
 
-      return std::min(gT, std::min(leftG, rightG));
+      return std::min((double) gT, std::min(leftG, rightG));
     }
     else
     {
