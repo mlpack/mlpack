@@ -103,19 +103,19 @@ DualTreeTraverser<RuleType>::Traverse(
       std::map<int, std::vector<MapEntryType> > childMap;
       PruneMap(queryNode.Child(i), referenceMap, childMap);
 
-      Log::Debug << "Recurse into query child " << i << ": " <<
-          queryNode.Child(i).Point() << " scale " << queryNode.Child(i).Scale()
-          << "; this parent is " << queryNode.Point() << " scale " <<
-          queryNode.Scale() << std::endl;
+//      Log::Debug << "Recurse into query child " << i << ": " <<
+//          queryNode.Child(i).Point() << " scale " << queryNode.Child(i).Scale()
+//          << "; this parent is " << queryNode.Point() << " scale " <<
+//          queryNode.Scale() << std::endl;
       Traverse(queryNode.Child(i), childMap);
     }
 
     PruneMapForSelfChild(queryNode.Child(0), referenceMap);
 
     // Now we can use the existing map (without a copy) for the self-child.
-    Log::Warn << "Recurse into query self-child " << queryNode.Child(0).Point()
-        << " scale " << queryNode.Child(0).Scale() << "; this parent is "
-        << queryNode.Point() << " scale " << queryNode.Scale() << std::endl;
+//    Log::Warn << "Recurse into query self-child " << queryNode.Child(0).Point()
+//        << " scale " << queryNode.Child(0).Scale() << "; this parent is "
+//        << queryNode.Point() << " scale " << queryNode.Scale() << std::endl;
     Traverse(queryNode.Child(0), referenceMap);
   }
 
