@@ -5,6 +5,7 @@
  * Definition of AugLagrangian class, which implements the Augmented Lagrangian
  * optimization method (also called the 'method of multipliers'.  This class
  * uses the L-BFGS optimizer.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

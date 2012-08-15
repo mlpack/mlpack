@@ -2,6 +2,7 @@
  * @file binary_space_tree.hpp
  *
  * Definition of generalized binary space partitioning tree (BinarySpaceTree).
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

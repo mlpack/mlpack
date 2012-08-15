@@ -5,6 +5,7 @@
  * Declaration of Radical class (RADICAL is Robust, Accurate, Direct ICA aLgorithm)
  * Note: upper case variables correspond to matrices. do not convert them to
  *   camelCase because that would make them appear to be vectors (which is bad!)
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

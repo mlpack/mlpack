@@ -3,6 +3,7 @@
  * @author Ryan Curtin
  *
  * Implementation of the MVU class and its auxiliary objective function class.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

@@ -5,6 +5,7 @@
  * Simple tests for things in the linalg__private namespace.
  * Partly so I can be sure that my changes are working.
  * Move to boost unit testing framework at some point.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

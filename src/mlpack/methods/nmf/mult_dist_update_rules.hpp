@@ -8,6 +8,7 @@
  * that the Frobenius norm \f$ \sqrt{\sum_i \sum_j(V-WH)^2} \f$ is
  * non-increasing between subsequent iterations. Both of the update rules
  * for W and H are defined in this file.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

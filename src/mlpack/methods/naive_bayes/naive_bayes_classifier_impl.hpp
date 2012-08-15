@@ -5,6 +5,7 @@
  * A Naive Bayes Classifier which parametrically estimates the distribution of
  * the features.  It is assumed that the features have been sampled from a
  * Gaussian PDF.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

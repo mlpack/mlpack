@@ -4,6 +4,7 @@
  *
  * Implementation of round() for use on Visual Studio, where C99 isn't
  * implemented.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

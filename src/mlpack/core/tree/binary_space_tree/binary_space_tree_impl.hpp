@@ -2,6 +2,7 @@
  * @file binary_space_tree_impl.hpp
  *
  * Implementation of generalized space partitioning tree.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

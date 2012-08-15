@@ -5,6 +5,7 @@
  * An initializer for SparseCoding which does precisely nothing.  It is useful
  * for when you have an already defined dictionary and you plan on setting it
  * with SparseCoding::Dictionary().
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

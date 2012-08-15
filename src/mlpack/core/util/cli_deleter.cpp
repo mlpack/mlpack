@@ -7,6 +7,7 @@
  * 'CLI::Destroy()' at the end of their program.  The file also defines a static
  * CLIDeleter class, which will be initialized at the beginning of the program
  * and deleted at the end.  The destructor destroys the CLI singleton.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

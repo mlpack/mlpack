@@ -4,6 +4,7 @@
  *
  * Unit tests for the functions of the class DTree
  * and the utility functions using this class.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

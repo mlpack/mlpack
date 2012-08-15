@@ -4,6 +4,7 @@
  * Definition of the policy type for the statistic class.
  *
  * You should define your own statistic that looks like EmptyStatistic.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

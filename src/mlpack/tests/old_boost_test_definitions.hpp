@@ -4,6 +4,7 @@
  *
  * Ancient Boost.Test versions don't act how we expect.  This file includes the
  * things we need to fix that.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

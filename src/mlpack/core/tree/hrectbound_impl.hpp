@@ -5,6 +5,7 @@
  * Template parameter t_pow is the metric to use; use 2 for Euclidean (L2).
  *
  * @experimental
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

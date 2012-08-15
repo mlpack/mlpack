@@ -6,6 +6,7 @@
  *
  * This classifier does parametric naive bayes classification assuming that the
  * features are sampled from a Gaussian distribution.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

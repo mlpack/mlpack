@@ -6,6 +6,7 @@
  * nested class of BinarySpaceTree which traverses two trees in a depth-first
  * manner with a given set of rules which indicate the branches which can be
  * pruned and the order in which to recurse.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

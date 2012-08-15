@@ -4,6 +4,7 @@
  *
  * A very simple policy for the cover tree; the first point in the dataset is
  * chosen as the root of the cover tree.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

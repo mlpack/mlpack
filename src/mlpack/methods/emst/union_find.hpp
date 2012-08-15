@@ -6,6 +6,7 @@
  * of a graph.  Each point in the graph is initially in its own component.
  * Calling unionfind.Union(x, y) unites the components indexed by x and y.
  * unionfind.Find(x) returns the index of the component containing point x.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

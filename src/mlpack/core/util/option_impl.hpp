@@ -3,6 +3,7 @@
  * @author Matthew Amidon
  *
  * Implementation of template functions for the Option class.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

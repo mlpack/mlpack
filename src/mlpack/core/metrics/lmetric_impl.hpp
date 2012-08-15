@@ -3,6 +3,7 @@
  * @author Ryan Curtin
  *
  * Implementation of template specializations of LMetric class.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

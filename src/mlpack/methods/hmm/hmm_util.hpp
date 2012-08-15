@@ -4,6 +4,7 @@
  *
  * Save/load utilities for HMMs.  This should be eventually merged into the HMM
  * class itself.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

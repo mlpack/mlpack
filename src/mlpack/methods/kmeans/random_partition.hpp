@@ -4,6 +4,7 @@
  *
  * Very simple partitioner which partitions the data randomly into the number of
  * desired clusters.  Used as the default InitialPartitionPolicy for KMeans.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

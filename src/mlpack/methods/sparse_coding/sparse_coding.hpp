@@ -4,6 +4,7 @@
  *
  * Definition of the SparseCoding class, which performs L1 (LASSO) or
  * L1+L2 (Elastic Net)-regularized sparse coding with dictionary learning
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

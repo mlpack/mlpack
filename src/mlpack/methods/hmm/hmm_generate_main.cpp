@@ -4,6 +4,7 @@
  *
  * Compute the most probably hidden state sequence of a given observation
  * sequence for a given HMM.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

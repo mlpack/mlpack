@@ -2,6 +2,7 @@
  * @file sparse_coding_test.cpp
  *
  * Test for Sparse Coding
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

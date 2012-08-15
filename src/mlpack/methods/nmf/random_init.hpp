@@ -4,6 +4,7 @@
  *
  * Intialization rule for Non-Negative Matrix Factorization (NMF). This simple
  * initialization is performed by assigning a random matrix to W and H.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

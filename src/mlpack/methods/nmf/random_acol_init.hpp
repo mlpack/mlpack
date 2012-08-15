@@ -7,6 +7,7 @@
  * the paper 'Algorithms, Initializations and Convergence' by Langville et al.
  * This method sets each of the columns of W by averaging p randomly chosen
  * columns of V.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

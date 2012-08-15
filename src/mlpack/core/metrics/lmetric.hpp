@@ -6,6 +6,7 @@
  * as non-squared distances.  The squared distances are faster to compute.
  *
  * This also gives several convenience typedefs for commonly used L-metrics.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

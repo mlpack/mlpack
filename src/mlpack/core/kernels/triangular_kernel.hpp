@@ -3,6 +3,7 @@
  * @author Ryan Curtin
  *
  * Definition and implementation of the trivially simple triangular kernel.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

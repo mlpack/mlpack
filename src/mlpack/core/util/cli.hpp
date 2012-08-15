@@ -5,6 +5,7 @@
  * This file implements the CLI subsystem which is intended to replace FX.
  * This can be used more or less regardless of context.  In the future,
  * it might be expanded to include file I/O.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

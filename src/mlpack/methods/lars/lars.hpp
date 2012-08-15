@@ -15,6 +15,7 @@
  *
  * Although this option currently is not implemented, it will be implemented
  * very soon.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

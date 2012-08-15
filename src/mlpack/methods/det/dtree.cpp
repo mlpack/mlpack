@@ -5,6 +5,7 @@
  * Implementations of some declared functions in
  * the Density Estimation Tree class.
  *
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

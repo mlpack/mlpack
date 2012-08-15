@@ -5,6 +5,7 @@
  * An implementation of the EmptyClusterPolicy policy class for K-Means.  When
  * an empty cluster is detected, the point furthest from the centroid of the
  * cluster with maximum variance is taken to be a new cluster.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

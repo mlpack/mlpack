@@ -9,6 +9,7 @@
  *  Jorge J. Moré, Burton S. Garbow, and Kenneth E. Hillstrom. 1981.
  *  ACM Trans. Math. Softw. 7, 1 (March 1981), 17-41.
  *  http://portal.acm.org/citation.cfm?id=355934.355936
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

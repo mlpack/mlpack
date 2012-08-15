@@ -4,6 +4,7 @@
  *
  * Defines the RangeSearch class, which performs a generalized range search on
  * points.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

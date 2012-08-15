@@ -3,6 +3,7 @@
  * @author Bill March (march@gatech.edu)
  *
  * Unit tests for the Union-Find data structure.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

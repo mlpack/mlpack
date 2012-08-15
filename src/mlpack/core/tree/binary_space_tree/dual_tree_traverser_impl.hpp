@@ -5,6 +5,7 @@
  * Implementation of the DualTreeTraverser for BinarySpaceTree.  This is a way
  * to perform a dual-tree traversal of two trees.  The trees must be the same
  * type.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

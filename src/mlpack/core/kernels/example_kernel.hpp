@@ -4,6 +4,7 @@
  *
  * This is an example kernel.  If you are making your own kernel, follow the
  * outline specified in this file.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

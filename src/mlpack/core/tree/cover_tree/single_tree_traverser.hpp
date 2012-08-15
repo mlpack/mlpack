@@ -5,6 +5,7 @@
  * Defines the SingleTreeTraverser for the cover tree.  This implements a
  * single-tree breadth-first recursion with a pruning rule and a base case (two
  * point) rule.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

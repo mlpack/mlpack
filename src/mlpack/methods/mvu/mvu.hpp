@@ -6,6 +6,7 @@
  * class as well as a class representing the objective function (a semidefinite
  * program) which MVU seeks to minimize.  Minimization is performed by the
  * Augmented Lagrangian optimizer (which in turn uses the L-BFGS optimizer).
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

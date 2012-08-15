@@ -5,6 +5,7 @@
  * Simple typedefs describing template instantiations of the NeighborSearch
  * class which are commonly used.  This is meant to be included by
  * neighbor_search.h but is a separate file for simplicity.
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the

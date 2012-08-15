@@ -4,6 +4,7 @@
  *
  * An implementation of Monteiro and Burer's formulation of low-rank
  * semidefinite programs (LR-SDP).
+ *
  * This file is part of MLPACK 1.0.2.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the
