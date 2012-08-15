@@ -4,18 +4,19 @@ Upstream-Contact: Ryan Curtin <gth671b@mail.gatech.edu>
 Source: http://www.mlpack.org/
 
 Files: *
-Copyright: Copyright 2008-2011, Ryan Curtin <gth671b@mail.gatech.edu>
-Copyright: Copyright 2008-2011, Bill March <march@gatech.edu>
-Copyright: Copyright 2008-2011, Dongryeol Lee <dongryel@cc.gatech.edu>
-Copyright: Copyright 2008-2011, Nishant Mehta <niche@cc.gatech.edu>
-Copyright: Copyright 2008-2011, Parikshit Ram <p.ram@gatech.edu>
-Copyright: Copyright 2010-2011, James Cline <james.cline@gatech.edu>
-Copyright: Copyright 2010-2011, Sterling Peet <sterling.peet@gatech.edu>
-Copyright: Copyright 2011, Matthew Amidon <mamidon@gatech.edu>
-Copyright: Copyright 2011, Neil Slagle <npslagle@gmail.com>
+Copyright: Copyright 2008-2012, Ryan Curtin <gth671b@mail.gatech.edu>
+Copyright: Copyright 2008-2012, Bill March <march@gatech.edu>
+Copyright: Copyright 2008-2012, Dongryeol Lee <dongryel@cc.gatech.edu>
+Copyright: Copyright 2008-2012, Nishant Mehta <niche@cc.gatech.edu>
+Copyright: Copyright 2008-2012, Parikshit Ram <p.ram@gatech.edu>
+Copyright: Copyright 2010-2012, James Cline <james.cline@gatech.edu>
+Copyright: Copyright 2010-2012, Sterling Peet <sterling.peet@gatech.edu>
+Copyright: Copyright 2011-2012, Matthew Amidon <mamidon@gatech.edu>
+Copyright: Copyright 2011-2012, Neil Slagle <npslagle@gmail.com>
 Copyright: Copyright 2011, Ajinkya Kale <kaleajinkya@gmail.com>
 Copyright: Copyright 2011, Vlad Grantcharov <vlad321@gatech.edu>
 Copyright: Copyright 2011, Noah Kauffman <notoriousnoah@gmail.com>
+Copyright: Copyright 2012, Trironk Kiatkungwanglai <trironk@gmail.com>
 License: LGPL-3+
   The text of the license is available on Debian systems in the
   /usr/share/common-licenses/LGPL-3 file.

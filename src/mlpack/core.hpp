@@ -111,6 +111,7 @@
  *   - Dongryeol Lee <dongryel@cc.gatech.edu>
  *   - Nishant Mehta <niche@cc.gatech.edu>
  *   - Parikshit Ram <p.ram@gatech.edu>
+ *   - Trironk Kiatkungwanglai <trironk@gmail.com>
  *   - Chip Mappus <cmappus@gatech.edu>
  *   - Hua Ouyang <houyang@gatech.edu>
  *   - Long Quoc Tran <tqlong@gmail.com>
@@ -176,7 +177,7 @@
 #define force_inline
 #if defined(__GNUG__) && !defined(DEBUG)
   #undef force_inline
-  #define force_inline __attribute__((noinline))
+  #define force_inline __attribute__((always_inline))
 #elif defined(_MSC_VER)
   #undef force_inline && !defined(DEBUG)
   #define force_inline __forceinline
