@@ -1481,8 +1481,8 @@ void CheckCovering(const TreeType& node)
   const size_t nodePoint = node.Point();
 
   // To ensure that this node satisfies the covering principle, we must ensure
-  // that the distance to each child is less than pow(expansionConstant, scale).
-  double maxDistance = pow(node.ExpansionConstant(), node.Scale());
+  // that the distance to each child is less than pow(base, scale).
+  double maxDistance = pow(node.Base(), node.Scale());
   for (size_t i = 0; i < node.NumChildren(); ++i)
   {
     const size_t childPoint = node.Child(i).Point();
@@ -1530,7 +1530,7 @@ void CheckIndividualSeparation(const TreeType& constantNode,
 
   // Make sure the distance is at least the following value (in accordance with
   // the separation principle of cover trees).
-  double minDistance = pow(constantNode.ExpansionConstant(),
+  double minDistance = pow(constantNode.Base(),
       constantNode.Scale());
 
   double distance = MetricType::Evaluate(dataset.col(constantPoint),
