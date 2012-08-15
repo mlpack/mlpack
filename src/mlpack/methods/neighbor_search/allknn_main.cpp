@@ -240,7 +240,7 @@ int main(int argc, char *argv[])
     Log::Info << "Building reference tree..." << endl;
     Timer::Start("tree_building");
     CoverTree<metric::LMetric<2, true>, tree::FirstPointIsRoot,
-        QueryStat<NearestNeighborSort> > referenceTree(referenceData);
+        QueryStat<NearestNeighborSort> > referenceTree(referenceData, 1.3);
     CoverTree<metric::LMetric<2, true>, tree::FirstPointIsRoot,
         QueryStat<NearestNeighborSort> >* queryTree = NULL;
     Timer::Stop("tree_building");
@@ -262,7 +262,8 @@ int main(int argc, char *argv[])
         Log::Info << "Building query tree..." << endl;
         Timer::Start("tree_building");
         queryTree = new CoverTree<metric::LMetric<2, true>,
-            tree::FirstPointIsRoot, QueryStat<NearestNeighborSort> >(queryData);
+            tree::FirstPointIsRoot, QueryStat<NearestNeighborSort> >(queryData,
+            1.3);
         Timer::Stop("tree_building");
       }
 
