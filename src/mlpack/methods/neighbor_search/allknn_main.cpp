@@ -22,9 +22,10 @@ using namespace mlpack::tree;
 // Information about the program itself.
 PROGRAM_INFO("All K-Nearest-Neighbors",
     "This program will calculate the all k-nearest-neighbors of a set of "
-    "points. You may specify a separate set of reference points and query "
-    "points, or just a reference set which will be used as both the reference "
-    "and query set."
+    "points using kd-trees or cover trees (cover tree support is experimental "
+    "and may not be optimally fast). You may specify a separate set of "
+    "reference points and query points, or just a reference set which will be "
+    "used as both the reference and query set."
     "\n\n"
     "For example, the following will calculate the 5 nearest neighbors of each"
     "point in 'input.csv' and store the distances in 'distances.csv' and the "
@@ -53,8 +54,8 @@ PARAM_INT("leaf_size", "Leaf size for tree building.", "l", 20);
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
     "dual-tree search.", "s");
-PARAM_FLAG("cover_tree", "If true, use cover trees to perform the search.",
-    "c");
+PARAM_FLAG("cover_tree", "If true, use cover trees to perform the search "
+    "(experimental, may be slow).", "c");
 
 int main(int argc, char *argv[])
 {
@@ -236,11 +237,14 @@ int main(int argc, char *argv[])
   }
   else // Cover trees.
   {
+    // Make sure to notify the user that they are using cover trees.
+    Log::Info << "Using cover trees for nearest-neighbor calculation." << endl;
+
     // Build our reference tree.
     Log::Info << "Building reference tree..." << endl;
     Timer::Start("tree_building");
     CoverTree<metric::LMetric<2, true>, tree::FirstPointIsRoot,
-        QueryStat<NearestNeighborSort> > referenceTree(referenceData);
+        QueryStat<NearestNeighborSort> > referenceTree(referenceData, 1.3);
     CoverTree<metric::LMetric<2, true>, tree::FirstPointIsRoot,
         QueryStat<NearestNeighborSort> >* queryTree = NULL;
     Timer::Stop("tree_building");
@@ -262,7 +266,8 @@ int main(int argc, char *argv[])
         Log::Info << "Building query tree..." << endl;
         Timer::Start("tree_building");
         queryTree = new CoverTree<metric::LMetric<2, true>,
-            tree::FirstPointIsRoot, QueryStat<NearestNeighborSort> >(queryData);
+            tree::FirstPointIsRoot, QueryStat<NearestNeighborSort> >(queryData,
+            1.3);
         Timer::Stop("tree_building");
       }
 

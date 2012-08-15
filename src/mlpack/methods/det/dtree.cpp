@@ -215,8 +215,8 @@ bool DTree::FindSplit(const arma::mat& data,
       }
     }
 
-    double actualMinDimError = std::log(minDimError) - 2 * std::log(data.n_cols)
-        - volumeWithoutDim;
+    double actualMinDimError = std::log(minDimError)
+        - 2 * std::log((double) data.n_cols) - volumeWithoutDim;
 
     if ((actualMinDimError > minError) && dimSplitFound)
     {
@@ -225,10 +225,10 @@ bool DTree::FindSplit(const arma::mat& data,
       minError = actualMinDimError;
       splitDim = dim;
       splitValue = dimSplitValue;
-      leftError = std::log(dimLeftError) - 2 * std::log(data.n_cols) -
-          volumeWithoutDim;
-      rightError = std::log(dimRightError) - 2 * std::log(data.n_cols) -
-          volumeWithoutDim;
+      leftError = std::log(dimLeftError) - 2 * std::log((double) data.n_cols)
+          - volumeWithoutDim;
+      rightError = std::log(dimRightError) - 2 * std::log((double) data.n_cols)
+          - volumeWithoutDim;
       splitFound = true;
     } // end if better split found in this dimension.
   }
@@ -379,7 +379,7 @@ double DTree::Grow(arma::mat& data,
 
     if (left->SubtreeLeaves() > 1)
     {
-      const double exponent = 2 * std::log(data.n_cols) + logVolume +
+      const double exponent = 2 * std::log((double) data.n_cols) + logVolume +
           left->AlphaUpper();
 
       // Whether or not this will overflow is highly dependent on the depth of
@@ -389,13 +389,14 @@ double DTree::Grow(arma::mat& data,
 
     if (right->SubtreeLeaves() > 1)
     {
-      const double exponent = 2 * std::log(data.n_cols) + logVolume +
+      const double exponent = 2 * std::log((double) data.n_cols) + logVolume +
           right->AlphaUpper();
 
       tmpAlphaSum += std::exp(exponent);
     }
 
-    alphaUpper = std::log(tmpAlphaSum) - 2 * std::log(data.n_cols) - logVolume;
+    alphaUpper = std::log(tmpAlphaSum) - 2 * std::log((double) data.n_cols)
+        - logVolume;
 
     double gT;
     if (useVolReg)
@@ -405,7 +406,7 @@ double DTree::Grow(arma::mat& data,
     }
     else
     {
-      gT = alphaUpper - std::log(subtreeLeaves - 1);
+      gT = alphaUpper - std::log((double) (subtreeLeaves - 1));
     }
 
     return std::min(gT, std::min(leftG, rightG));
@@ -430,11 +431,11 @@ double DTree::PruneAndUpdate(const double oldAlpha,
   else
   {
     // Compute gT value for node t.
-    double gT;
+    volatile double gT;
     if (useVolReg)
       gT = alphaUpper;// - std::log(subtreeLeavesVTInv - vTInv);
     else
-      gT = alphaUpper - std::log(subtreeLeaves - 1);
+      gT = alphaUpper - std::log((double) (subtreeLeaves - 1));
 
     if (gT > oldAlpha)
     {
@@ -474,7 +475,7 @@ double DTree::PruneAndUpdate(const double oldAlpha,
 
       if (left->SubtreeLeaves() > 1)
       {
-        const double exponent = 2 * std::log(points) + logVolume +
+        const double exponent = 2 * std::log((double) points) + logVolume +
             left->AlphaUpper();
 
         // Whether or not this will overflow is highly dependent on the depth of
@@ -484,13 +485,14 @@ double DTree::PruneAndUpdate(const double oldAlpha,
 
       if (right->SubtreeLeaves() > 1)
       {
-        const double exponent = 2 * std::log(points) + logVolume +
+        const double exponent = 2 * std::log((double) points) + logVolume +
             right->AlphaUpper();
 
         tmpAlphaSum += std::exp(exponent);
       }
 
-      alphaUpper = std::log(tmpAlphaSum) - 2 * std::log(points) - logVolume;
+      alphaUpper = std::log(tmpAlphaSum) - 2 * std::log((double) points) -
+          logVolume;
 
       // Update gT value.
       if (useVolReg)
@@ -500,12 +502,12 @@ double DTree::PruneAndUpdate(const double oldAlpha,
       }
       else
       {
-        gT = alphaUpper - std::log(subtreeLeaves - 1);
+        gT = alphaUpper - std::log((double) (subtreeLeaves - 1));
       }
 
       Log::Assert(gT < std::numeric_limits<double>::max());
 
-      return std::min(gT, std::min(leftG, rightG));
+      return std::min((double) gT, std::min(leftG, rightG));
     }
     else
     {

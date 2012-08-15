@@ -23,12 +23,6 @@ class NeighborSearchRules
 
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
-  // For single-tree traversal.
-  bool CanPrune(const size_t queryIndex, TreeType& referenceNode);
-
-  // For dual-tree traversal.
-  bool CanPrune(TreeType& queryNode, TreeType& referenceNode);
-
   // Update bounds.  Needs a better name.
   void UpdateAfterRecursion(TreeType& queryNode, TreeType& referenceNode);
 
@@ -80,6 +74,20 @@ class NeighborSearchRules
    * @param referenceNode Candidate reference node to recurse into.
    */
   double Score(TreeType& queryNode, TreeType& referenceNode) const;
+
+  /**
+   * Get the score for recursion order, passing the base case result (in the
+   * situation where it may be needed to calculate the recursion order).  A low
+   * score indicates priority for recursion, while DBL_MAX indicates that the
+   * node should not be recursed into at all (it should be pruned).
+   *
+   * @param queryNode Candidate query node to recurse into.
+   * @param referenceNode Candidate reference node to recurse into.
+   * @param baseCaseResult Result of BaseCase(queryIndex, referenceNode).
+   */
+  double Score(TreeType& queryNode,
+               TreeType& referenceNode,
+               const double baseCaseResult) const;
 
   /**
    * Re-evaluate the score for recursion order.  A low score indicates priority

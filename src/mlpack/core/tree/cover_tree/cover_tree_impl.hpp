@@ -17,11 +17,11 @@ namespace tree {
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     const arma::mat& dataset,
-    const double expansionConstant,
+    const double base,
     MetricType* metric) :
     dataset(dataset),
     point(RootPointPolicy::ChooseRoot(dataset)),
-    expansionConstant(expansionConstant),
+    base(base),
     parentDistance(0),
     furthestDescendantDistance(0)
 {
@@ -48,8 +48,8 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
 
   // Now determine the scale factor of the root node.
   const double maxDistance = max(distances);
-  scale = (int) ceil(log(maxDistance) / log(expansionConstant));
-  const double bound = pow(expansionConstant, scale - 1);
+  scale = (int) ceil(log(maxDistance) / log(base));
+  const double bound = pow(base, scale - 1);
 
   // Unfortunately, we can't call out to other constructors, so we have to copy
   // a little bit of code from the other constructor.  First we build the self
@@ -58,7 +58,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
       dataset.n_cols - 1);
   size_t childFarSetSize = (dataset.n_cols - 1) - childNearSetSize;
   size_t usedSetSize = 0;
-  children.push_back(new CoverTree(dataset, expansionConstant, point, scale - 1,
+  children.push_back(new CoverTree(dataset, base, point, scale - 1,
       0, indices, distances, childNearSetSize, childFarSetSize, usedSetSize,
       *metric));
 
@@ -114,7 +114,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     {
       size_t childNearSetSize = 0;
       size_t childFarSetSize = 0;
-      children.push_back(new CoverTree(dataset, expansionConstant,
+      children.push_back(new CoverTree(dataset, base,
           indices[0], scale - 1, distances[0], indices, distances,
           childNearSetSize, childFarSetSize, usedSetSize, *metric));
 
@@ -142,7 +142,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     // Build this child (recursively).
     childUsedSetSize = 1; // Mark self point as used.
     childFarSetSize = ((nearSetSize - 1) - childNearSetSize);
-    children.push_back(new CoverTree(dataset, expansionConstant, indices[0],
+    children.push_back(new CoverTree(dataset, base, indices[0],
         scale - 1, distances[0], childIndices, childDistances, childNearSetSize,
         childFarSetSize, childUsedSetSize, *metric));
 
@@ -179,7 +179,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     if (distances[i] > furthestDescendantDistance)
       furthestDescendantDistance = distances[i];
 
-  Log::Assert(furthestDescendantDistance <= pow(expansionConstant, scale + 1));
+  Log::Assert(furthestDescendantDistance <= pow(base, scale + 1));
 
   if (localMetric)
     delete metric;
@@ -188,7 +188,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     const arma::mat& dataset,
-    const double expansionConstant,
+    const double base,
     const size_t pointIndex,
     const int scale,
     const double parentDistance,
@@ -201,7 +201,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     dataset(dataset),
     point(pointIndex),
     scale(scale),
-    expansionConstant(expansionConstant),
+    base(base),
     parentDistance(parentDistance),
     furthestDescendantDistance(0)
 {
@@ -227,14 +227,14 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     // Make the self child at the lowest possible level.
     // This should not modify farSetSize or usedSetSize.
     size_t tempSize = 0;
-    children.push_back(new CoverTree(dataset, expansionConstant, pointIndex,
+    children.push_back(new CoverTree(dataset, base, pointIndex,
         INT_MIN, 0, indices, distances, 0, tempSize, usedSetSize, metric));
 
     // Every point in the near set should be a leaf.
     for (size_t i = 0; i < nearSetSize; ++i)
     {
       // farSetSize and usedSetSize will not be modified.
-      children.push_back(new CoverTree(dataset, expansionConstant, indices[i],
+      children.push_back(new CoverTree(dataset, base, indices[i],
           INT_MIN, 0, indices, distances, 0, tempSize, usedSetSize, metric));
       usedSetSize++;
     }
@@ -249,8 +249,8 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
   }
 
   const int nextScale = std::min(scale,
-      (int) ceil(log(maxDistance) / log(expansionConstant))) - 1;
-  const double bound = pow(expansionConstant, nextScale);
+      (int) ceil(log(maxDistance) / log(base))) - 1;
+  const double bound = pow(base, nextScale);
 
   // This needs to be taken out.  It's a sanity check for now.
   Log::Assert(nextScale < scale);
@@ -263,7 +263,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
   // Build the self child (recursively).
   size_t childFarSetSize = nearSetSize - childNearSetSize;
   size_t childUsedSetSize = 0;
-  children.push_back(new CoverTree(dataset, expansionConstant, pointIndex,
+  children.push_back(new CoverTree(dataset, base, pointIndex,
       nextScale, 0, indices, distances, childNearSetSize, childFarSetSize,
       childUsedSetSize, metric));
 
@@ -331,7 +331,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     if ((nearSetSize == 1) && (farSetSize == 0))
     {
       size_t childNearSetSize = 0;
-      children.push_back(new CoverTree(dataset, expansionConstant,
+      children.push_back(new CoverTree(dataset, base,
           indices[0], nextScale, distances[0], indices, distances,
           childNearSetSize, farSetSize, usedSetSize, metric));
 
@@ -359,7 +359,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     childNearSetSize = SplitNearFar(childIndices, childDistances, bound,
         nearSetSize + farSetSize - 1);
     childFarSetSize = PruneFarSet(childIndices, childDistances,
-        expansionConstant * bound, childNearSetSize,
+        base * bound, childNearSetSize,
         (nearSetSize + farSetSize - 1));
 
     // Now that we know the near and far set sizes, we can put the used point
@@ -371,7 +371,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
 
     // Build this child (recursively).
     childUsedSetSize = 1; // Mark self point as used.
-    children.push_back(new CoverTree(dataset, expansionConstant, indices[0],
+    children.push_back(new CoverTree(dataset, base, indices[0],
         nextScale, distances[0], childIndices, childDistances, childNearSetSize,
         childFarSetSize, childUsedSetSize, metric));
 
@@ -408,7 +408,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     if (distances[i] > furthestDescendantDistance)
       furthestDescendantDistance = distances[i];
 
-  Log::Assert(furthestDescendantDistance <= pow(expansionConstant, scale + 1));
+  Log::Assert(furthestDescendantDistance <= pow(base, scale + 1));
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
@@ -449,7 +449,7 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType>::MinDistance(
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 double CoverTree<MetricType, RootPointPolicy, StatisticType>::MinDistance(
-    const arma::vec& other,
+    const arma::vec& /* other */,
     const double distance) const
 {
   return std::max(distance - furthestDescendantDistance, 0.0);
@@ -484,7 +484,7 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType>::MaxDistance(
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 double CoverTree<MetricType, RootPointPolicy, StatisticType>::MaxDistance(
-    const arma::vec& other,
+    const arma::vec& /* other */,
     const double distance) const
 {
   return distance + furthestDescendantDistance;

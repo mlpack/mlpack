@@ -174,11 +174,11 @@
 
 // Give ourselves a nice way to force functions to be inline if we need.
 #define force_inline
-#if defined(__GNUG__)
+#if defined(__GNUG__) && !defined(DEBUG)
   #undef force_inline
-  #define force_inline __attribute__((always_inline))
+  #define force_inline __attribute__((noinline))
 #elif defined(_MSC_VER)
-  #undef force_inline
+  #undef force_inline && !defined(DEBUG)
   #define force_inline __forceinline
 #endif
 

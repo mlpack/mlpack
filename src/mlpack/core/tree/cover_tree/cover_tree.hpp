@@ -32,7 +32,7 @@ namespace tree {
  * - separation: all nodes in level C_i have distance greater than EC^i to all
  *     other nodes in level C_i.
  *
- * The value 'EC' refers to the expansion constant, which is a parameter of the
+ * The value 'EC' refers to the base, which is a parameter of the
  * tree.  These three properties make the cover tree very good for fast,
  * high-dimensional nearest-neighbor search.
  *
@@ -82,7 +82,7 @@ namespace tree {
  * @tparam RootPointPolicy Determines which point to use as the root node.
  * @tparam StatisticType Statistic to be used during tree creation.
  */
-template<typename MetricType = metric::LMetric<2>,
+template<typename MetricType = metric::LMetric<2, true>,
          typename RootPointPolicy = FirstPointIsRoot,
          typename StatisticType = EmptyStatistic>
 class CoverTree
@@ -91,16 +91,15 @@ class CoverTree
   typedef arma::mat Mat;
 
   /**
-   * Create the cover tree with the given dataset and given expansion constant.
+   * Create the cover tree with the given dataset and given base.
    * The dataset will not be modified during the building procedure (unlike
    * BinarySpaceTree).
    *
    * @param dataset Reference to the dataset to build a tree on.
-   * @param expansionConstant Expansion constant (EC) to use during tree
-   *      building (default 2.0).
+   * @param base Base to use during tree building (default 2.0).
    */
   CoverTree(const arma::mat& dataset,
-            const double expansionConstant = 2.0,
+            const double base = 2.0,
             MetricType* metric = NULL);
 
   /**
@@ -119,8 +118,7 @@ class CoverTree
    * as small as possible, or you may be creating an implicit node in your tree.
    *
    * @param dataset Reference to the dataset to build a tree on.
-   * @param expansionConstant Expansion constant (EC) to use during tree
-   *     building.
+   * @param base Base to use during tree building.
    * @param pointIndex Index of the point this node references.
    * @param scale Scale of this level in the tree.
    * @param indices Array of indices, ordered [ nearSet | farSet | usedSet ];
@@ -134,7 +132,7 @@ class CoverTree
    * @param usedSetSize The number of points used will be added to this number.
    */
   CoverTree(const arma::mat& dataset,
-            const double expansionConstant,
+            const double base,
             const size_t pointIndex,
             const int scale,
             const double parentDistance,
@@ -194,10 +192,10 @@ class CoverTree
   //! Modify the scale of this node.  Be careful...
   int& Scale() { return scale; }
 
-  //! Get the expansion constant.
-  double ExpansionConstant() const { return expansionConstant; }
-  //! Modify the expansion constant; don't do this, you'll break everything.
-  double& ExpansionConstant() { return expansionConstant; }
+  //! Get the base.
+  double Base() const { return base; }
+  //! Modify the base; don't do this, you'll break everything.
+  double& Base() { return base; }
 
   //! Get the statistic for this node.
   const StatisticType& Stat() const { return stat; }
@@ -255,8 +253,8 @@ class CoverTree
   //! Scale level of the node.
   int scale;
 
-  //! The expansion constant used to construct the tree.
-  double expansionConstant;
+  //! The base used to construct the tree.
+  double base;
 
   //! The instantiated statistic.
   StatisticType stat;
