@@ -328,7 +328,7 @@ DualTreeTraverser<RuleType>::PruneMapForSelfChild(
         rule.UpdateAfterRecursion(candidateQueryNode, *refNode);
       }
 
-      score = rule.Score(candidateQueryNode, *refNode, score);
+      score = rule.Score(candidateQueryNode, *refNode, baseCase);
 
       //        Log::Debug << "Rescored as " << score << std::endl;
 
