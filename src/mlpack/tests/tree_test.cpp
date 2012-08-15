@@ -2,6 +2,20 @@
  * @file tree_test.cpp
  *
  * Tests for tree-building methods.
+ * This file is part of MLPACK 1.0.2.
+ *
+ * MLPACK is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * MLPACK is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+ * details (LICENSE.txt).
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * MLPACK.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/bounds.hpp>
@@ -1583,10 +1597,10 @@ BOOST_AUTO_TEST_CASE(SimpleCoverTreeConstructionTest)
   // The root point will be the first point, (0, 0).
   CoverTree<> tree(data); // Expansion constant of 2.0.
 
-  // The furthest point from the root will be (-5, -5), with a squared distance
-  // of 50.  This means the scale of the root node should be 6 (because 2^6 =
-  // 64).
-  BOOST_REQUIRE_EQUAL(tree.Scale(), 6);
+  // The furthest point from the root will be (-5, -5), with a distance of
+  // of sqrt(50).  This means the scale of the root node should be 3 (because
+  // 2^3 = 8).
+  BOOST_REQUIRE_EQUAL(tree.Scale(), 3);
 
   // Now loop through the tree and ensure that each leaf is only created once.
   arma::vec counts;
@@ -1602,10 +1616,10 @@ BOOST_AUTO_TEST_CASE(SimpleCoverTreeConstructionTest)
 
   // Each node must satisfy the covering principle (its children must be less
   // than or equal to a certain distance apart).
-  CheckCovering<CoverTree<>, LMetric<2> >(tree);
+  CheckCovering<CoverTree<>, LMetric<2, true> >(tree);
 
   // Each node's children must be separated by at least a certain value.
-  CheckSeparation<CoverTree<>, LMetric<2> >(tree, tree);
+  CheckSeparation<CoverTree<>, LMetric<2, true> >(tree, tree);
 }
 
 /**
@@ -1632,10 +1646,10 @@ BOOST_AUTO_TEST_CASE(CoverTreeConstructionTest)
 
   // Each node must satisfy the covering principle (its children must be less
   // than or equal to a certain distance apart).
-  CheckCovering<CoverTree<>, LMetric<2> >(tree);
+  CheckCovering<CoverTree<>, LMetric<2, true> >(tree);
 
   // Each node's children must be separated by at least a certain value.
-  CheckSeparation<CoverTree<>, LMetric<2> >(tree, tree);
+  CheckSeparation<CoverTree<>, LMetric<2, true> >(tree, tree);
 }
 
 /**
