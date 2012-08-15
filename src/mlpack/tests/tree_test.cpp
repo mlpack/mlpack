@@ -1647,25 +1647,25 @@ BOOST_AUTO_TEST_CASE(CoverTreeAlternateMetricTest)
   // 5-dimensional, 300-point dataset.
   dataset.randu(5, 300);
 
-  CoverTree<LMetric<1> > tree(dataset);
+  CoverTree<LMetric<1, true> > tree(dataset);
 
   // Ensure each leaf is only created once.
   arma::vec counts;
   counts.zeros(300);
-  RecurseTreeCountLeaves<CoverTree<LMetric<1> > >(tree, counts);
+  RecurseTreeCountLeaves<CoverTree<LMetric<1, true> > >(tree, counts);
 
   for (size_t i = 0; i < 300; ++i)
     BOOST_REQUIRE_EQUAL(counts[i], 1);
 
   // Each non-leaf should have a self-child.
-  CheckSelfChild<CoverTree<LMetric<1> > >(tree);
+  CheckSelfChild<CoverTree<LMetric<1, true> > >(tree);
 
   // Each node must satisfy the covering principle (its children must be less
   // than or equal to a certain distance apart).
-  CheckCovering<CoverTree<LMetric<1> >, LMetric<1> >(tree);
+  CheckCovering<CoverTree<LMetric<1, true> >, LMetric<1, true> >(tree);
 
   // Each node's children must be separated by at least a certain value.
-  CheckSeparation<CoverTree<LMetric<1> >, LMetric<1> >(tree, tree);
+  CheckSeparation<CoverTree<LMetric<1, true> >, LMetric<1, true> >(tree, tree);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
