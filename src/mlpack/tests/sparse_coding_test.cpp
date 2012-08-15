@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepLasso)
   for (uword i = 0; i < nPoints; ++i) {
     X.col(i) /= norm(X.col(i), 2);
   }
-  
+
   SparseCoding<> sc(X, nAtoms, lambda1);
   sc.OptimizeCode();
 
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepElasticNet)
 
   for(uword i = 0; i < nPoints; ++i)
   {
-    vec errCorr = 
+    vec errCorr =
       (trans(D) * D + lambda2 * eye(nAtoms, nAtoms)) * Z.unsafe_col(i)
       - trans(D) * X.unsafe_col(i);
 
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepElasticNet)
 
 BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
 {
-  const double tol = 1e-7;
+  const double tol = 2e-7;
 
   double lambda1 = 0.1;
   uword nAtoms = 25;
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
 
   uvec adjacencies = find(Z);
   double normGradient = sc.OptimizeDictionary(adjacencies, 1e-12);
-  
+
   BOOST_REQUIRE_SMALL(normGradient, tol);
 }
 
