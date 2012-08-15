@@ -5,10 +5,10 @@
  * This is an example kernel.  If you are making your own kernel, follow the
  * outline specified in this file.
  */
-#ifndef __MLPACK_CORE_KERNELS_EXAMPLE_KERNEL_H
-#define __MLPACK_CORE_KERNELS_EXAMPLE_KERNEL_H
+#ifndef __MLPACK_CORE_KERNELS_EXAMPLE_KERNEL_HPP
+#define __MLPACK_CORE_KERNELS_EXAMPLE_KERNEL_HPP
 
-core.h>/core.h>
+#include <mlpack/core.hpp>
 
 namespace mlpack {
 
@@ -100,6 +100,7 @@ class ExampleKernel
    */
   template<typename VecType>
   static double Evaluate(const VecType& a, const VecType& b) { return 0; }
+
   /**
    * Obtains the convolution integral [integral K(||x-a||)K(||b-x||)dx]
    * for the two vectors.  In this case, because
@@ -113,7 +114,8 @@ class ExampleKernel
    * @return the convolution integral value.
    */
   template<typename VecType>
-  static double ConvolutionIntegral(const VecType& a, const VecType& b) { return 0; }
+  static double ConvolutionIntegral(const VecType& a, const VecType& b)
+  { return 0; }
 
   /**
    * Obtains the normalizing volume for the kernel with dimension $dimension$.
