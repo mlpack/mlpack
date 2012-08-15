@@ -111,6 +111,7 @@
  *   - Dongryeol Lee <dongryel@cc.gatech.edu>
  *   - Nishant Mehta <niche@cc.gatech.edu>
  *   - Parikshit Ram <p.ram@gatech.edu>
+ *   - Rajendran Mohan <rmohan88@gatech.edu>
  *   - Trironk Kiatkungwanglai <trironk@gmail.com>
  *   - Chip Mappus <cmappus@gatech.edu>
  *   - Hua Ouyang <houyang@gatech.edu>
