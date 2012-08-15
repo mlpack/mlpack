@@ -1601,7 +1601,7 @@ BOOST_AUTO_TEST_CASE(SimpleCoverTreeConstructionTest)
   // The furthest point from the root will be (-5, -5), with a squared distance
   // of 50.  This means the scale of the root node should be 6 (because 2^6 =
   // 64).
-  BOOST_REQUIRE_EQUAL(tree.Scale(), 6);
+  BOOST_REQUIRE_EQUAL(tree.Scale(), 3);
 
   // Now loop through the tree and ensure that each leaf is only created once.
   arma::vec counts;
@@ -1617,10 +1617,10 @@ BOOST_AUTO_TEST_CASE(SimpleCoverTreeConstructionTest)
 
   // Each node must satisfy the covering principle (its children must be less
   // than or equal to a certain distance apart).
-  CheckCovering<CoverTree<>, LMetric<2> >(tree);
+  CheckCovering<CoverTree<>, LMetric<2, true> >(tree);
 
   // Each node's children must be separated by at least a certain value.
-  CheckSeparation<CoverTree<>, LMetric<2> >(tree, tree);
+  CheckSeparation<CoverTree<>, LMetric<2, true> >(tree, tree);
 }
 
 /**
@@ -1647,10 +1647,10 @@ BOOST_AUTO_TEST_CASE(CoverTreeConstructionTest)
 
   // Each node must satisfy the covering principle (its children must be less
   // than or equal to a certain distance apart).
-  CheckCovering<CoverTree<>, LMetric<2> >(tree);
+  CheckCovering<CoverTree<>, LMetric<2, true> >(tree);
 
   // Each node's children must be separated by at least a certain value.
-  CheckSeparation<CoverTree<>, LMetric<2> >(tree, tree);
+  CheckSeparation<CoverTree<>, LMetric<2, true> >(tree, tree);
 }
 
 /**
