@@ -82,7 +82,7 @@ namespace tree {
  * @tparam RootPointPolicy Determines which point to use as the root node.
  * @tparam StatisticType Statistic to be used during tree creation.
  */
-template<typename MetricType = metric::LMetric<2>,
+template<typename MetricType = metric::LMetric<2, true>,
          typename RootPointPolicy = FirstPointIsRoot,
          typename StatisticType = EmptyStatistic>
 class CoverTree
