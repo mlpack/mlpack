@@ -135,7 +135,7 @@
 #include <stdint.h>
 #include <iostream>
 
-// Defining __USE_MATH_DEFINES should set M_PI.
+// Defining _USE_MATH_DEFINES should set M_PI.
 #define _USE_MATH_DEFINES
 #include <math.h>
 
