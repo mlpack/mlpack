@@ -15,8 +15,7 @@
 template<typename T>
 PrefixedOutStream& PrefixedOutStream::operator<<(T s)
 {
-  BaseLogic<T>(s);
-
+  CallBaseLogic<T>(s);
   return *this;
 }
 
@@ -32,7 +31,7 @@ void PrefixedOutStream::BaseLogic(T val)
   PrefixIfNeeded();
 
   std::ostringstream convert;
-  convert << val;
+  convert << val;  
 
   if(convert.fail())
   {
