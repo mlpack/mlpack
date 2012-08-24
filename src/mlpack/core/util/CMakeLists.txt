@@ -20,6 +20,7 @@ set(SOURCES
   save_restore_utility.hpp
   save_restore_utility.cpp
   save_restore_utility_impl.hpp
+  sfinae_utility.hpp
   timers.hpp
   timers.cpp
 )

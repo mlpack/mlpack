@@ -79,3 +79,12 @@ void DiscreteDistribution::Estimate(const arma::mat& observations,
   else
     probabilities.fill(1 / probabilities.n_elem); // Force normalization.
 }
+
+std::string DiscreteDistribution::ToString() const
+{
+  std::ostringstream convert;
+  convert << "Distribution" << this << std::endl;
+  convert << probabilities;
+  return convert.str();
+}
+

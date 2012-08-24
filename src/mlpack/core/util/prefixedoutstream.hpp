@@ -14,6 +14,10 @@
 #include <streambuf>
 
 #include <boost/lexical_cast.hpp>
+#include <boost/utility/enable_if.hpp>
+#include <boost/type_traits.hpp>
+
+#include <mlpack/core/util/sfinae_utility.hpp>
 
 namespace mlpack {
 namespace io {
@@ -111,6 +115,47 @@ class PrefixedOutStream
   bool ignoreInput;
 
  private:
+  HAS_MEM_FUNC(ToString, HasToString)
+
+  //! This handles forwarding all primitive types transparently
+  template<typename T>
+  void CallBaseLogic(T s,
+      typename boost::disable_if<
+          boost::is_class<T>
+      >::type* = 0)
+  {
+    BaseLogic<T>(s);
+  }
+
+  // Forward all objects that do not implement a ToString() method transparently
+  template<typename T>
+  void CallBaseLogic(T s,
+      typename boost::enable_if<
+          boost::is_class<T>
+      >::type* = 0,
+      typename boost::disable_if<
+          HasToString<T, std::string(T::*)() const>
+      >::type* = 0)
+  {
+    BaseLogic<T>(s);
+  }
+  
+  // Call ToString() on all objects that implement ToString() before forwarding
+  template<typename T>
+  void CallBaseLogic(T s,
+      typename boost::enable_if<
+          boost::is_class<T>
+      >::type* = 0,
+      typename boost::enable_if<
+          HasToString<T, std::string(T::*)() const>
+      >::type* = 0)
+  {
+    std::string result = s.ToString();
+    BaseLogic<std::string&>(result);
+  }
+
+
+
   /**
    * @brief Conducts the base logic required in all the operator << overloads.
    *   Mostly just a good idea to reduce copy-pasta.
