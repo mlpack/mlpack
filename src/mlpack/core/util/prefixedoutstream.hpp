@@ -122,39 +122,27 @@ class PrefixedOutStream
   void CallBaseLogic(T s,
       typename boost::disable_if<
           boost::is_class<T>
-      >::type* = 0)
-  {
-    BaseLogic<T>(s);
-  }
+      >::type*);
 
-  // Forward all objects that do not implement a ToString() method transparently
+  //! Forward all objects that do not implement a ToString() method 
   template<typename T>
   void CallBaseLogic(T s,
       typename boost::enable_if<
           boost::is_class<T>
-      >::type* = 0,
+      >::type*,
       typename boost::disable_if<
           HasToString<T, std::string(T::*)() const>
-      >::type* = 0)
-  {
-    BaseLogic<T>(s);
-  }
+      >::type*);
   
-  // Call ToString() on all objects that implement ToString() before forwarding
+  //! Call ToString() on all objects that implement ToString() before forwarding
   template<typename T>
   void CallBaseLogic(T s,
       typename boost::enable_if<
           boost::is_class<T>
-      >::type* = 0,
+      >::type*,
       typename boost::enable_if<
           HasToString<T, std::string(T::*)() const>
-      >::type* = 0)
-  {
-    std::string result = s.ToString();
-    BaseLogic<std::string&>(result);
-  }
-
-
+      >::type*);
 
   /**
    * @brief Conducts the base logic required in all the operator << overloads.

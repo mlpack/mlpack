@@ -19,6 +19,43 @@ PrefixedOutStream& PrefixedOutStream::operator<<(T s)
   return *this;
 }
 
+//! This handles forwarding all primitive types transparently
+template<typename T> 
+void PrefixedOutStream::CallBaseLogic(T s,
+    typename boost::disable_if<
+        boost::is_class<T>
+    >::type* = 0)
+{ 
+  BaseLogic<T>(s);
+}
+
+// Forward all objects that do not implement a ToString() method transparently
+template<typename T> 
+void PrefixedOutStream::CallBaseLogic(T s,
+    typename boost::enable_if<
+        boost::is_class<T>
+    >::type* = 0,
+    typename boost::disable_if<
+        HasToString<T, std::string(T::*)() const>
+    >::type* = 0)
+{ 
+  BaseLogic<T>(s);
+}
+
+// Call ToString() on all objects that implement ToString() before forwarding
+template<typename T> 
+void PrefixedOutStream::CallBaseLogic(T s,
+    typename boost::enable_if<
+        boost::is_class<T>
+    >::type* = 0,
+    typename boost::enable_if<
+        HasToString<T, std::string(T::*)() const>
+    >::type* = 0)
+{ 
+  std::string result = s.ToString();
+  BaseLogic<std::string&>(result);
+}
+
 template<typename T>
 void PrefixedOutStream::BaseLogic(T val)
 {
