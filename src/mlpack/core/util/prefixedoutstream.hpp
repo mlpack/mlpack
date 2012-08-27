@@ -116,7 +116,7 @@ class PrefixedOutStream
 
  private:
   HAS_MEM_FUNC(ToString, HasToString)
-
+  
   //! This handles forwarding all primitive types transparently
   template<typename T>
   void CallBaseLogic(T s,
