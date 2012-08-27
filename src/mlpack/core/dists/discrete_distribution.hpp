@@ -129,6 +129,9 @@ class DiscreteDistribution
   //! Modify the vector of probabilities.
   arma::vec& Probabilities() { return probabilities; }
   
+  /*
+   * Returns a string representation of this object.
+   */
   std::string ToString() const;
 
  private:

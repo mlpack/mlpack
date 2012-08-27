@@ -80,6 +80,9 @@ void DiscreteDistribution::Estimate(const arma::mat& observations,
     probabilities.fill(1 / probabilities.n_elem); // Force normalization.
 }
 
+/*
+ * Returns a string representation of this object.
+ */
 std::string DiscreteDistribution::ToString() const
 {
   std::ostringstream convert;
