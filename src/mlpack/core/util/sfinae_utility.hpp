@@ -32,15 +32,15 @@
  * @param NAME the name of the struct to construct. For example: HasToString
  * @param FUNC the name of the function to check for. For example: ToString
  */
-#define HAS_MEM_FUNC(FUNC, NAME)                                               \
-template<typename T, typename sig>                                             \
-struct NAME {                                                                  \
-    typedef char yes;                                                          \
-    typedef long no;                                                           \
-    template <typename U, U> struct type_check;                                \
-    template <typename _1> static yes &chk(type_check<sig, &_1::FUNC> *);      \
-    template <typename   > static no  &chk(...);                               \
-    static bool const value = sizeof(chk<T>(0)) == sizeof(yes);                \
+#define HAS_MEM_FUNC(FUNC, NAME)                                                   \
+template<typename T, typename sig>                                                 \
+struct NAME {                                                                      \
+  typedef char yes[1];                                                             \
+  typedef char no [2];                                                             \
+  template<typename U, U> struct type_check;                                       \
+  template<typename _1> static yes &chk(type_check<sig, &_1::FUNC> *);             \
+  template<typename   > static no  &chk(...);                                      \
+  static bool const value = sizeof(chk<T>(0)) == sizeof(yes);                      \
 };
 
 #endif

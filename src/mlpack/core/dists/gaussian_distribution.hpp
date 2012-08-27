@@ -99,6 +99,10 @@ class GaussianDistribution
    */
   arma::mat& Covariance() { return covariance; }
 
+  /**
+   * Returns a string representation of this object.
+   */
+  std::string ToString() const;
 };
 
 }; // namespace distribution

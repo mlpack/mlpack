@@ -95,4 +95,17 @@ void GaussianDistribution::Estimate(const arma::mat& observations,
 
   // This is probably biased, but I don't know how to unbias it.
   covariance /= sumProb;
+
+}
+
+/**
+ * Returns a string representation of this object.
+ */
+std::string GaussianDistribution::ToString() const
+{
+  std::ostringstream convert;
+  convert << "GaussianDistribution: " << this << std::endl;
+  convert << "mean: " << std::endl << mean << std::endl;
+  convert << "covariance: " << std::endl << covariance << std::endl;
+  return convert.str();
 }
