@@ -19,6 +19,13 @@
 
 
 
+/**
+ * This does not handle column vectors or row vectors entirely correctly.  You
+ * should be able to do multiplication or other basic operations with the
+ * resulting matrix, but it may have other problems.  So if you are using this
+ * on vectors (arma::Col<> or arma::Row<>), be careful, and be warned that
+ * bizarre behavior may occur.
+ */
 template<typename eT>
 inline
 Mat<eT>&
