@@ -37,13 +37,13 @@ class GaussianDistribution
    */
   GaussianDistribution(const size_t dimension) :
       mean(dimension), covariance(arma::eye<arma::mat>(dimension, dimension))
-  { /* nothing to do */ }
+  { /* Nothing to do. */ }
 
   /**
    * Create a Gaussian distribution with the given mean and covariance.
    */
   GaussianDistribution(const arma::vec& mean, const arma::mat& covariance) :
-      mean(mean), covariance(covariance) { /* nothing to do */ }
+      mean(mean), covariance(covariance) { /* Nothing to do. */ }
 
   //! Return the dimensionality of this distribution.
   size_t Dimensionality() const { return mean.n_elem; }
