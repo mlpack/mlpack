@@ -20,7 +20,7 @@ namespace math /** Miscellaneous math routines. */ {
  * @param d Double to clamp.
  * @return 0 if d < 0, d otherwise.
  */
-inline double ClampNonNegative(double d)
+inline double ClampNonNegative(const double d)
 {
   return (d + fabs(d)) / 2;
 }
@@ -32,7 +32,7 @@ inline double ClampNonNegative(double d)
  * @param d Double to clamp.
  * @param 0 if d > 0, d otherwise.
  */
-inline double ClampNonPositive(double d)
+inline double ClampNonPositive(const double d)
 {
   return (d - fabs(d)) / 2;
 }
@@ -45,12 +45,14 @@ inline double ClampNonPositive(double d)
  * @param rangeMax The last of the range.
  * @return max(rangeMin, min(rangeMax, d)).
  */
-inline double ClampRange(double value, double rangeMin, double rangeMax)
+inline double ClampRange(double value,
+                         const double rangeMin,
+                         const double rangeMax)
 {
   value -= rangeMax;
-  value = ClampNonPositive (value) + rangeMax;
+  value = ClampNonPositive(value) + rangeMax;
   value -= rangeMin;
-  value = ClampNonNegative (value) + rangeMin;
+  value = ClampNonNegative(value) + rangeMin;
   return value;
 }
 
