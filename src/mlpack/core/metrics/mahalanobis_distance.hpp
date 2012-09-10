@@ -51,7 +51,7 @@ class MahalanobisDistance
    * Because we don't actually know the size of the vectors we will be using, we
    * delay creation of the covariance matrix until evaluation.
    */
-  MahalanobisDistance() : covariance(0, 0) { }
+  MahalanobisDistance() { }
 
   /**
    * Initialize the Mahalanobis distance with the given covariance matrix.  The
