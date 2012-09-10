@@ -20,10 +20,6 @@ template<typename VecType1, typename VecType2>
 double MahalanobisDistance<false>::Evaluate(const VecType1& a,
                                             const VecType2& b)
 {
-  // Check if covariance matrix has been initialized.
-  if (covariance.n_rows == 0)
-    covariance = arma::eye<arma::mat>(a.n_elem, a.n_elem);
-
   arma::vec m = (a - b);
   arma::mat out = trans(m) * covariance * m; // 1x1
   return out[0];

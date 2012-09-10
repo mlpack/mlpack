@@ -48,10 +48,18 @@ class MahalanobisDistance
  public:
   /**
    * Initialize the Mahalanobis distance with the empty matrix as covariance.
-   * Because we don't actually know the size of the vectors we will be using, we
-   * delay creation of the covariance matrix until evaluation.
+   * Don't call Evaluate() until you set the covariance with Covariance()!
    */
   MahalanobisDistance() { }
+
+  /**
+   * Initialize the Mahalanobis distance with the identity matrix of the given
+   * dimensionality.
+   *
+   * @param dimensionality Dimesnsionality of the covariance matrix.
+   */
+  MahalanobisDistance(const size_t dimensionality) :
+      covariance(arma::eye<arma::mat>(dimensionality, dimensionality)) { }
 
   /**
    * Initialize the Mahalanobis distance with the given covariance matrix.  The
@@ -63,7 +71,9 @@ class MahalanobisDistance
 
   /**
    * Evaluate the distance between the two given points using this Mahalanobis
-   * distance.
+   * distance.  If the covariance matrix has not been set (i.e. if you used the
+   * empty constructor and did not later modify the covariance matrix), calling
+   * this method will probably result in a crash.
    *
    * @param a First vector.
    * @param b Second vector.
