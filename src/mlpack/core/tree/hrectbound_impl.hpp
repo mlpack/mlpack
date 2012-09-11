@@ -153,8 +153,6 @@ double HRectBound<t_pow>::MinDistance(const VecType& point) const
 
 /**
  * Calculates minimum bound-to-bound squared distance.
- *
- * Example: bound1.MinDistanceSq(other) for minimum squared distance.
  */
 template<int t_pow>
 double HRectBound<t_pow>::MinDistance(const HRectBound& other) const
@@ -196,8 +194,8 @@ double HRectBound<t_pow>::MaxDistance(const VecType& point) const
 
   for (size_t d = 0; d < dim; d++)
   {
-		double v = std::max(fabs(point[d] - bounds[d].Lo()),
-					       fabs(bounds[d].Hi() - point[d]));
+    double v = std::max(fabs(point[d] - bounds[d].Lo()),
+        fabs(bounds[d].Hi() - point[d]));
     sum += pow(v, (double) t_pow);
   }
 
@@ -217,8 +215,8 @@ double HRectBound<t_pow>::MaxDistance(const HRectBound& other) const
   double v;
   for (size_t d = 0; d < dim; d++)
   {
-		v = std::max(fabs(other.bounds[d].Hi() - bounds[d].Lo()),
-					       fabs(bounds[d].Hi() - other.bounds[d].Lo()));
+    v = std::max(fabs(other.bounds[d].Hi() - bounds[d].Lo()),
+        fabs(bounds[d].Hi() - other.bounds[d].Lo()));
     sum += pow(v, (double) t_pow); // v is non-negative.
   }
 
