@@ -28,14 +28,14 @@ namespace metric {
  * The value of p is given as a template parameter.
  *
  * In addition, the function @f$ d(x, y) @f$ can be simplified, neglecting the
- * p-root calculation.  This is done by specifying the t_take_root template
+ * p-root calculation.  This is done by specifying the TakeRoot template
  * parameter to be false.  Then,
  *
  * @f[
  * d(x, y) = \sum_{i = 1}^{n} | x_i - y_i |^p
  * @f]
  *
- * It is faster to compute that distance, so t_take_root is by default off.
+ * It is faster to compute that distance, so TakeRoot is by default off.
  *
  * A few convenience typedefs are given:
  *
@@ -43,14 +43,14 @@ namespace metric {
  *  - EuclideanDistance
  *  - SquaredEuclideanDistance
  *
- * @tparam t_pow Power of metric; i.e. t_pow = 1 gives the L1-norm (Manhattan
- *   distance).
- * @tparam t_take_root If true, the t_pow'th root of the result is taken before
- *   it is returned.  In the case of the L2-norm (t_pow = 2), when t_take_root
- *   is true, the squared L2 distance is returned.  It is slightly faster to set
- *   t_take_root = false, because one fewer call to pow() is required.
+ * @tparam Power Power of metric; i.e. Power = 1 gives the L1-norm (Manhattan
+ *    distance).
+ * @tparam TakeRoot If true, the Power'th root of the result is taken before it
+ *    is returned.  In the case of the L2-norm (Power = 2), when TakeRoot is
+ *    true, the squared L2 distance is returned.  It is slightly faster to set
+ *    TakeRoot = false, because one fewer call to pow() is required.
  */
-template<int t_pow, bool t_take_root = false>
+template<int Power, bool TakeRoot = false>
 class LMetric
 {
  public:

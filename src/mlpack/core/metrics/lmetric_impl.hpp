@@ -14,19 +14,19 @@ namespace mlpack {
 namespace metric {
 
 // Unspecialized implementation.  This should almost never be used...
-template<int t_pow, bool t_take_root>
+template<int Power, bool TakeRoot>
 template<typename VecType1, typename VecType2>
-double LMetric<t_pow, t_take_root>::Evaluate(const VecType1& a,
+double LMetric<Power, TakeRoot>::Evaluate(const VecType1& a,
                                              const VecType2& b)
 {
   double sum = 0;
   for (size_t i = 0; i < a.n_elem; i++)
-    sum += pow(fabs(a[i] - b[i]), t_pow);
+    sum += pow(fabs(a[i] - b[i]), Power);
 
-  if (!t_take_root) // Suboptimal to have this here.
+  if (!TakeRoot) // The compiler should optimize this correctly at compile-time.
     return sum;
 
-  return pow(sum, (1.0 / t_pow));
+  return pow(sum, (1.0 / Power));
 }
 
 // L1-metric specializations; the root doesn't matter.
