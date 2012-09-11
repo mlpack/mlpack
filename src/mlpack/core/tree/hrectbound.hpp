@@ -20,7 +20,7 @@ namespace bound {
  *
  * Template parameter Power is the metric to use; use 2 for Euclidean (L2).
  */
-template<int Power = 2>
+template<int Power = 2, bool TakeRoot = false>
 class HRectBound
 {
  public:
