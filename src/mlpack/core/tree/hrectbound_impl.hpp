@@ -2,7 +2,7 @@
  * @file hrectbound_impl.hpp
  *
  * Implementation of hyper-rectangle bound policy class.
- * Template parameter t_pow is the metric to use; use 2 for Euclidean (L2).
+ * Template parameter Power is the metric to use; use 2 for Euclidean (L2).
  *
  * @experimental
  */
@@ -20,8 +20,8 @@ namespace bound {
 /**
  * Empty constructor
  */
-template<int t_pow>
-HRectBound<t_pow>::HRectBound() :
+template<int Power>
+HRectBound<Power>::HRectBound() :
     dim(0),
     bounds(NULL)
 { /* nothing to do */ }
@@ -30,8 +30,8 @@ HRectBound<t_pow>::HRectBound() :
  * Initializes to specified dimensionality with each dimension the empty
  * set.
  */
-template<int t_pow>
-HRectBound<t_pow>::HRectBound(const size_t dimension) :
+template<int Power>
+HRectBound<Power>::HRectBound(const size_t dimension) :
     dim(dimension),
     bounds(new math::Range[dim])
 { /* nothing to do */ }
@@ -39,8 +39,8 @@ HRectBound<t_pow>::HRectBound(const size_t dimension) :
 /***
  * Copy constructor necessary to prevent memory leaks.
  */
-template<int t_pow>
-HRectBound<t_pow>::HRectBound(const HRectBound& other) :
+template<int Power>
+HRectBound<Power>::HRectBound(const HRectBound& other) :
     dim(other.Dim()),
     bounds(new math::Range[dim])
 {
@@ -52,8 +52,8 @@ HRectBound<t_pow>::HRectBound(const HRectBound& other) :
 /***
  * Same as the copy constructor.
  */
-template<int t_pow>
-HRectBound<t_pow>& HRectBound<t_pow>::operator=(const HRectBound& other)
+template<int Power>
+HRectBound<Power>& HRectBound<Power>::operator=(const HRectBound& other)
 {
   if (bounds)
     delete[] bounds;
@@ -71,8 +71,8 @@ HRectBound<t_pow>& HRectBound<t_pow>::operator=(const HRectBound& other)
 /**
  * Destructor: clean up memory
  */
-template<int t_pow>
-HRectBound<t_pow>::~HRectBound()
+template<int Power>
+HRectBound<Power>::~HRectBound()
 {
   if (bounds)
     delete[] bounds;
@@ -81,8 +81,8 @@ HRectBound<t_pow>::~HRectBound()
 /**
  * Resets all dimensions to the empty set.
  */
-template<int t_pow>
-void HRectBound<t_pow>::Clear()
+template<int Power>
+void HRectBound<Power>::Clear()
 {
   for (size_t i = 0; i < dim; i++)
     bounds[i] = math::Range();
@@ -91,8 +91,8 @@ void HRectBound<t_pow>::Clear()
 /**
  * Gets the range for a particular dimension.
  */
-template<int t_pow>
-inline const math::Range& HRectBound<t_pow>::operator[](const size_t i) const
+template<int Power>
+inline const math::Range& HRectBound<Power>::operator[](const size_t i) const
 {
   return bounds[i];
 }
@@ -100,8 +100,8 @@ inline const math::Range& HRectBound<t_pow>::operator[](const size_t i) const
 /**
  * Sets the range for the given dimension.
  */
-template<int t_pow>
-inline math::Range& HRectBound<t_pow>::operator[](const size_t i)
+template<int Power>
+inline math::Range& HRectBound<Power>::operator[](const size_t i)
 {
   return bounds[i];
 }
@@ -111,8 +111,8 @@ inline math::Range& HRectBound<t_pow>::operator[](const size_t i)
  *
  * @param centroid Vector which the centroid will be written to.
  */
-template<int t_pow>
-void HRectBound<t_pow>::Centroid(arma::vec& centroid) const
+template<int Power>
+void HRectBound<Power>::Centroid(arma::vec& centroid) const
 {
   // set size correctly if necessary
   if (!(centroid.n_elem == dim))
@@ -125,9 +125,9 @@ void HRectBound<t_pow>::Centroid(arma::vec& centroid) const
 /**
  * Calculates minimum bound-to-point squared distance.
  */
-template<int t_pow>
+template<int Power>
 template<typename VecType>
-double HRectBound<t_pow>::MinDistance(const VecType& point) const
+double HRectBound<Power>::MinDistance(const VecType& point) const
 {
   Log::Assert(point.n_elem == dim);
 
@@ -141,21 +141,21 @@ double HRectBound<t_pow>::MinDistance(const VecType& point) const
 
     // Since only one of 'lower' or 'higher' is negative, if we add each's
     // absolute value to itself and then sum those two, our result is the
-    // nonnegative half of the equation times two; then we raise to power t_pow.
-    sum += pow((lower + fabs(lower)) + (higher + fabs(higher)), (double) t_pow);
+    // nonnegative half of the equation times two; then we raise to power Power.
+    sum += pow((lower + fabs(lower)) + (higher + fabs(higher)), (double) Power);
   }
 
-  // Now take the t_pow'th root (but make sure our result is squared); then
+  // Now take the Power'th root (but make sure our result is squared); then
   // divide by four to cancel out the constant of 2 (which has been squared now)
   // that was introduced earlier.
-  return pow(sum, 2.0 / (double) t_pow) / 4.0;
+  return pow(sum, 2.0 / (double) Power) / 4.0;
 }
 
 /**
  * Calculates minimum bound-to-bound squared distance.
  */
-template<int t_pow>
-double HRectBound<t_pow>::MinDistance(const HRectBound& other) const
+template<int Power>
+double HRectBound<Power>::MinDistance(const HRectBound& other) const
 {
   Log::Assert(dim == other.dim);
 
@@ -171,22 +171,22 @@ double HRectBound<t_pow>::MinDistance(const HRectBound& other) const
     // We invoke the following:
     //   x + fabs(x) = max(x * 2, 0)
     //   (x * 2)^2 / 4 = x^2
-    sum += pow((lower + fabs(lower)) + (higher + fabs(higher)), (double) t_pow);
+    sum += pow((lower + fabs(lower)) + (higher + fabs(higher)), (double) Power);
 
     // Move bound pointers.
     mbound++;
     obound++;
   }
 
-  return pow(sum, 2.0 / (double) t_pow) / 4.0;
+  return pow(sum, 2.0 / (double) Power) / 4.0;
 }
 
 /**
  * Calculates maximum bound-to-point squared distance.
  */
-template<int t_pow>
+template<int Power>
 template<typename VecType>
-double HRectBound<t_pow>::MaxDistance(const VecType& point) const
+double HRectBound<Power>::MaxDistance(const VecType& point) const
 {
   double sum = 0;
 
@@ -196,17 +196,17 @@ double HRectBound<t_pow>::MaxDistance(const VecType& point) const
   {
     double v = std::max(fabs(point[d] - bounds[d].Lo()),
         fabs(bounds[d].Hi() - point[d]));
-    sum += pow(v, (double) t_pow);
+    sum += pow(v, (double) Power);
   }
 
-  return pow(sum, 2.0 / (double) t_pow);
+  return pow(sum, 2.0 / (double) Power);
 }
 
 /**
  * Computes maximum distance.
  */
-template<int t_pow>
-double HRectBound<t_pow>::MaxDistance(const HRectBound& other) const
+template<int Power>
+double HRectBound<Power>::MaxDistance(const HRectBound& other) const
 {
   double sum = 0;
 
@@ -217,17 +217,17 @@ double HRectBound<t_pow>::MaxDistance(const HRectBound& other) const
   {
     v = std::max(fabs(other.bounds[d].Hi() - bounds[d].Lo()),
         fabs(bounds[d].Hi() - other.bounds[d].Lo()));
-    sum += pow(v, (double) t_pow); // v is non-negative.
+    sum += pow(v, (double) Power); // v is non-negative.
   }
 
-  return pow(sum, 2.0 / (double) t_pow);
+  return pow(sum, 2.0 / (double) Power);
 }
 
 /**
  * Calculates minimum and maximum bound-to-bound squared distance.
  */
-template<int t_pow>
-math::Range HRectBound<t_pow>::RangeDistance(const HRectBound& other) const
+template<int Power>
+math::Range HRectBound<Power>::RangeDistance(const HRectBound& other) const
 {
   double loSum = 0;
   double hiSum = 0;
@@ -251,20 +251,20 @@ math::Range HRectBound<t_pow>::RangeDistance(const HRectBound& other) const
       vLo = (v2 > 0) ? v2 : 0; // Force to be 0 if negative.
     }
 
-    loSum += pow(vLo, (double) t_pow);
-    hiSum += pow(vHi, (double) t_pow);
+    loSum += pow(vLo, (double) Power);
+    hiSum += pow(vHi, (double) Power);
   }
 
-  return math::Range(pow(loSum, 2.0 / (double) t_pow),
-                     pow(hiSum, 2.0 / (double) t_pow));
+  return math::Range(pow(loSum, 2.0 / (double) Power),
+                     pow(hiSum, 2.0 / (double) Power));
 }
 
 /**
  * Calculates minimum and maximum bound-to-point squared distance.
  */
-template<int t_pow>
+template<int Power>
 template<typename VecType>
-math::Range HRectBound<t_pow>::RangeDistance(const VecType& point) const
+math::Range HRectBound<Power>::RangeDistance(const VecType& point) const
 {
   double loSum = 0;
   double hiSum = 0;
@@ -296,20 +296,20 @@ math::Range HRectBound<t_pow>::RangeDistance(const VecType& point) const
       }
     }
 
-    loSum += pow(vLo, (double) t_pow);
-    hiSum += pow(vHi, (double) t_pow);
+    loSum += pow(vLo, (double) Power);
+    hiSum += pow(vHi, (double) Power);
   }
 
-  return math::Range(pow(loSum, 2.0 / (double) t_pow),
-                     pow(hiSum, 2.0 / (double) t_pow));
+  return math::Range(pow(loSum, 2.0 / (double) Power),
+                     pow(hiSum, 2.0 / (double) Power));
 }
 
 /**
  * Expands this region to include a new point.
  */
-template<int t_pow>
+template<int Power>
 template<typename MatType>
-HRectBound<t_pow>& HRectBound<t_pow>::operator|=(const MatType& data)
+HRectBound<Power>& HRectBound<Power>::operator|=(const MatType& data)
 {
   Log::Assert(data.n_rows == dim);
 
@@ -325,8 +325,8 @@ HRectBound<t_pow>& HRectBound<t_pow>::operator|=(const MatType& data)
 /**
  * Expands this region to encompass another bound.
  */
-template<int t_pow>
-HRectBound<t_pow>& HRectBound<t_pow>::operator|=(const HRectBound& other)
+template<int Power>
+HRectBound<Power>& HRectBound<Power>::operator|=(const HRectBound& other)
 {
   assert(other.dim == dim);
 
@@ -339,9 +339,9 @@ HRectBound<t_pow>& HRectBound<t_pow>::operator|=(const HRectBound& other)
 /**
  * Determines if a point is within this bound.
  */
-template<int t_pow>
+template<int Power>
 template<typename VecType>
-bool HRectBound<t_pow>::Contains(const VecType& point) const
+bool HRectBound<Power>::Contains(const VecType& point) const
 {
   for (size_t i = 0; i < point.n_elem; i++)
   {

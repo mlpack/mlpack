@@ -18,9 +18,9 @@ namespace bound {
 /**
  * Hyper-rectangle bound for an L-metric.
  *
- * Template parameter t_pow is the metric to use; use 2 for Euclidean (L2).
+ * Template parameter Power is the metric to use; use 2 for Euclidean (L2).
  */
-template<int t_pow = 2>
+template<int Power = 2>
 class HRectBound
 {
  public:
