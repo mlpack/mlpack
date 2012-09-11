@@ -16,9 +16,13 @@ namespace mlpack {
 namespace bound {
 
 /**
- * Hyper-rectangle bound for an L-metric.
+ * Hyper-rectangle bound for an L-metric.  This should be used in conjunction
+ * with the LMetric class.  Be sure to use the same template parameters for
+ * LMetric as you do for HRectBound -- otherwise odd results may occur.
  *
- * Template parameter Power is the metric to use; use 2 for Euclidean (L2).
+ * @tparam Power The metric to use; use 2 for Euclidean (L2).
+ * @tparam TakeRoot Whether or not the root should be taken (see LMetric
+ *     documentation).
  */
 template<int Power = 2, bool TakeRoot = false>
 class HRectBound
