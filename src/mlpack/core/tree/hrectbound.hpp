@@ -3,10 +3,8 @@
  *
  * Bounds that are useful for binary space partitioning trees.
  *
- * This file describes the interface for the DHrectBound policy, which
- * implements a hyperrectangle bound.
- *
- * @experimental
+ * This file describes the interface for the HRectBound class, which implements
+ * a hyperrectangle bound.
  */
 #ifndef __MLPACK_CORE_TREE_HRECTBOUND_HPP
 #define __MLPACK_CORE_TREE_HRECTBOUND_HPP
