@@ -36,6 +36,11 @@ namespace metric {
  * @f]
  *
  * It is faster to compute that distance, so TakeRoot is by default off.
+ * However, when TakeRoot is false, the distance given is not actually a true
+ * metric -- it does not satisfy the triangle inequality.  Some MLPACK methods
+ * do not require the triangle inequality to operate correctly (such as the
+ * BinarySpaceTree), but setting TakeRoot = false in some cases will cause
+ * incorrect results.
  *
  * A few convenience typedefs are given:
  *
@@ -46,9 +51,8 @@ namespace metric {
  * @tparam Power Power of metric; i.e. Power = 1 gives the L1-norm (Manhattan
  *    distance).
  * @tparam TakeRoot If true, the Power'th root of the result is taken before it
- *    is returned.  In the case of the L2-norm (Power = 2), when TakeRoot is
- *    true, the squared L2 distance is returned.  It is slightly faster to set
- *    TakeRoot = false, because one fewer call to pow() is required.
+ *    is returned.  Setting this to false causes the metric to not satisfy the
+ *    Triangle Inequality (be careful!).
  */
 template<int Power, bool TakeRoot = false>
 class LMetric
