@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
   const string initialDictionaryFile =
       CLI::GetParam<string>("initial_dictionary");
 
-  const size_t maxIterations = CLI::GetParam<int>("max_iteartions");
+  const size_t maxIterations = CLI::GetParam<int>("max_iterations");
   const size_t atoms = CLI::GetParam<int>("atoms");
 
   const bool normalize = CLI::HasParam("normalize");
