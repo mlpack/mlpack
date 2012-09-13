@@ -73,36 +73,48 @@ class HRectBound
   void Centroid(arma::vec& centroid) const;
 
   /**
-   * Calculates minimum bound-to-point squared distance.
+   * Calculates minimum bound-to-point distance.
+   *
+   * @param point Point to which the minimum distance is requested.
    */
   template<typename VecType>
   double MinDistance(const VecType& point) const;
 
   /**
-   * Calculates minimum bound-to-bound squared distance.
+   * Calculates minimum bound-to-bound distance.
    *
-   * Example: bound1.MinDistanceSq(other) for minimum squared distance.
+   * @param other Bound to which the minimum distance is requested.
    */
   double MinDistance(const HRectBound& other) const;
 
   /**
    * Calculates maximum bound-to-point squared distance.
+   *
+   * @param point Point to which the maximum distance is requested.
    */
   template<typename VecType>
   double MaxDistance(const VecType& point) const;
 
   /**
    * Computes maximum distance.
+   *
+   * @param other Bound to which the maximum distance is requested.
    */
   double MaxDistance(const HRectBound& other) const;
 
   /**
-   * Calculates minimum and maximum bound-to-bound squared distance.
+   * Calculates minimum and maximum bound-to-bound distance.
+   *
+   * @param other Bound to which the minimum and maximum distances are
+   *     requested.
    */
   math::Range RangeDistance(const HRectBound& other) const;
 
   /**
-   * Calculates minimum and maximum bound-to-point squared distance.
+   * Calculates minimum and maximum bound-to-point distance.
+   *
+   * @param point Point to which the minimum and maximum distances are
+   *     requested.
    */
   template<typename VecType>
   math::Range RangeDistance(const VecType& point) const;
@@ -129,7 +141,9 @@ class HRectBound
   bool Contains(const VecType& point) const;
 
  private:
+  //! The dimensionality of the bound.
   size_t dim;
+  //! The bounds for each dimension.
   math::Range* bounds;
 };
 

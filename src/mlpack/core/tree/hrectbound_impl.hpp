@@ -18,13 +18,13 @@ namespace mlpack {
 namespace bound {
 
 /**
- * Empty constructor
+ * Empty constructor.
  */
 template<int Power, bool TakeRoot>
 HRectBound<Power, TakeRoot>::HRectBound() :
     dim(0),
     bounds(NULL)
-{ /* nothing to do */ }
+{ /* Nothing to do. */ }
 
 /**
  * Initializes to specified dimensionality with each dimension the empty
@@ -34,7 +34,7 @@ template<int Power, bool TakeRoot>
 HRectBound<Power, TakeRoot>::HRectBound(const size_t dimension) :
     dim(dimension),
     bounds(new math::Range[dim])
-{ /* nothing to do */ }
+{ /* Nothing to do. */ }
 
 /***
  * Copy constructor necessary to prevent memory leaks.
@@ -56,13 +56,17 @@ template<int Power, bool TakeRoot>
 HRectBound<Power, TakeRoot>& HRectBound<Power, TakeRoot>::operator=(
     const HRectBound& other)
 {
-  if (bounds)
-    delete[] bounds;
+  if (dim != other.Dim())
+  {
+    // Reallocation is necessary.
+    if (bounds)
+      delete[] bounds;
 
-  // We can't just copy the bounds_ pointer like the default copy constructor
-  // will!
-  dim = other.Dim();
-  bounds = new math::Range[dim];
+    dim = other.Dim();
+    bounds = new math::Range[dim];
+  }
+
+  // Now copy each of the bound values.
   for (size_t i = 0; i < dim; i++)
     bounds[i] = other[i];
 
