@@ -48,7 +48,7 @@ void LocalCoordinateCoding<DictionaryInitializer>::Encode(
   Log::Info << "  Objective value: " << Objective(adjacencies) << "."
       << std::endl;
 
-  for (size_t t = 1; t <= maxIterations; t++)
+  for (size_t t = 1; t != maxIterations; t++)
   {
     Log::Info << "Iteration " << t << " of " << maxIterations << "."
         << std::endl;
