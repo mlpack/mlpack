@@ -6,7 +6,7 @@
  * This can be used more or less regardless of context.  In the future,
  * it might be expanded to include file I/O.
  *
- * This file is part of MLPACK 1.0.2.
+ * This file is part of MLPACK 1.0.3.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free

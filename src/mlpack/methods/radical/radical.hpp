@@ -6,7 +6,7 @@
  * Note: upper case variables correspond to matrices. do not convert them to
  *   camelCase because that would make them appear to be vectors (which is bad!)
  *
- * This file is part of MLPACK 1.0.2.
+ * This file is part of MLPACK 1.0.3.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free

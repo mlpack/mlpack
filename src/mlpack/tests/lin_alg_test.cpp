@@ -6,7 +6,7 @@
  * Partly so I can be sure that my changes are working.
  * Move to boost unit testing framework at some point.
  *
- * This file is part of MLPACK 1.0.2.
+ * This file is part of MLPACK 1.0.3.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free

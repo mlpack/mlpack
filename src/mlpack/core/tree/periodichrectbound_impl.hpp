@@ -4,7 +4,7 @@
  * Implementation of periodic hyper-rectangle bound policy class.
  * Template parameter t_pow is the metric to use; use 2 for Euclidian (L2).
  *
- * This file is part of MLPACK 1.0.2.
+ * This file is part of MLPACK 1.0.3.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free
