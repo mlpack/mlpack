@@ -93,10 +93,10 @@ int main(int argc, char** argv)
         AllowEmptyClusters> k(maxIterations, overclustering);
 
     Timer::Start("clustering");
-		if(CLI::HasParam("fast_kmeans"))
-			k.FastCluster(dataset, clusters, assignments);
-		else
-			k.Cluster(dataset, clusters, assignments);
+    if (CLI::HasParam("fast_kmeans"))
+      k.FastCluster(dataset, clusters, assignments);
+    else
+      k.Cluster(dataset, clusters, assignments);
     Timer::Stop("clustering");
   }
   else
@@ -104,10 +104,10 @@ int main(int argc, char** argv)
     KMeans<> k(maxIterations, overclustering);
 
     Timer::Start("clustering");
-		if(CLI::HasParam("fast_kmeans"))
-			k.FastCluster(dataset, clusters, assignments);
-		else
-			k.Cluster(dataset, clusters, assignments);
+    if (CLI::HasParam("fast_kmeans"))
+      k.FastCluster(dataset, clusters, assignments);
+    else
+      k.Cluster(dataset, clusters, assignments);
     Timer::Stop("clustering");
   }
 
