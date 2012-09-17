@@ -404,7 +404,7 @@ void CLI::ParseCommandLine(int argc, char** line)
 /*
  * Removes duplicate flags.
  *
- * @param bpo The basic_program_options to remove duplicate flags from. 
+ * @param bpo The basic_program_options to remove duplicate flags from.
  */
 void CLI::RemoveDuplicateFlags(po::basic_parsed_options<char>& bpo)
 {
@@ -570,7 +570,8 @@ void CLI::PrintHelp(const std::string& param)
   else if (used_param != "")
   {
     // User passed a single variable, but it doesn't exist.
-    std::cerr << "Parameter --" << used_param << " does not exist." << std::endl;
+    std::cerr << "Parameter --" << used_param << " does not exist."
+        << std::endl;
     exit(1); // Nothing left to do.
   }
 
