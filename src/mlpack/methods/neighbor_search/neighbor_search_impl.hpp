@@ -205,7 +205,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
     numPrunes = traverser.NumPrunes();
   }
 
-  Log::Warn << "Pruned " << numPrunes << " nodes." << std::endl;
+  Log::Debug << "Pruned " << numPrunes << " nodes." << std::endl;
 
   Timer::Stop("computing_neighbors");
 
