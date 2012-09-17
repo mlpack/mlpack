@@ -79,11 +79,13 @@ FastCluster(MatType& data,
   arma::Col<size_t> counts(actualClusters);
   counts.zeros();
 
-  // Build the mrkd-tree on this dataset
-  tree::BinarySpaceTree<typename bound::HRectBound<2>, tree::MRKDStatistic> tree(data, 1);
+  // Build the mrkd-tree on this dataset.
+  tree::BinarySpaceTree<typename bound::HRectBound<2>, tree::MRKDStatistic>
+      tree(data, 1);
   Log::Debug << "Tree Built." << std::endl;
-  // A pointer for traversing the mrkd-tree
-  tree::BinarySpaceTree<typename bound::HRectBound<2>, tree::MRKDStatistic>* node;
+  // A pointer for traversing the mrkd-tree.
+  tree::BinarySpaceTree<typename bound::HRectBound<2>, tree::MRKDStatistic>*
+      node;
 
   // Now, the initial assignments.  First determine if they are necessary.
   if (assignments.n_elem != data.n_cols)
@@ -105,30 +107,30 @@ FastCluster(MatType& data,
   for (size_t i = 0; i < actualClusters; i++)
     centroids.col(i) /= counts[i];
 
-  // Instead of retraversing the tree after an iteration, we will update centroid
-  // positions in this matrix, which also prevents clobbering our centroids from
-  // the previous iteration.
+  // Instead of retraversing the tree after an iteration, we will update
+  // centroid positions in this matrix, which also prevents clobbering our
+  // centroids from the previous iteration.
   MatType newCentroids(dimensionality, centroids.n_cols);
 
-  // Create a stack for traversing the mrkd-tree
+  // Create a stack for traversing the mrkd-tree.
   std::stack<typename tree::BinarySpaceTree<typename bound::HRectBound<2>,
                                             tree::MRKDStatistic>* > stack;
 
-  // A variable to keep track of how many kmeans iterations we have made
+  // A variable to keep track of how many kmeans iterations we have made.
   size_t iteration = 0;
 
   // A variable to keep track of how many nodes assignments have changed in
-  // each kmeans iteration
+  // each kmeans iteration.
   size_t changedAssignments = 0;
 
   // A variable to keep track of the number of times something is skipped due
-  // to the blacklist
+  // to the blacklist.
   size_t skip = 0;
 
-  // A variable to keep track of the number of distances calculated
+  // A variable to keep track of the number of distances calculated.
   size_t comps = 0;
 
-  // A variable to keep track of how often we stop at a parent node
+  // A variable to keep track of how often we stop at a parent node.
   size_t dominations = 0;
   do
   {
@@ -137,30 +139,30 @@ FastCluster(MatType& data,
     changedAssignments = 0;
 
     // Reset the newCentroids so that we can store the newly calculated ones
-    // here
+    // here.
     newCentroids.zeros();
 
-    // Reset the counts
+    // Reset the counts.
     counts.zeros();
 
-    // Add the root node of the tree to the stack
+    // Add the root node of the tree to the stack.
     stack.push(&tree);
-    // Set the top level whitelist
+    // Set the top level whitelist.
     tree.Stat().whiteList.resize(centroids.n_cols, true);
 
-    // Traverse the tree
+    // Traverse the tree.
     while (!stack.empty())
     {
-      // Get the next node in the tree
+      // Get the next node in the tree.
       node = stack.top();
-      // Remove the node from the stack
+      // Remove the node from the stack.
       stack.pop();
 
-      // Get a reference to the mrkd statistic for this hyperrectangle
+      // Get a reference to the mrkd statistic for this hyperrectangle.
       tree::MRKDStatistic& mrkd = node->Stat();
 
       // We use this to store the index of the centroid with the minimum
-      // distance from this hyperrectangle or point
+      // distance from this hyperrectangle or point.
       size_t minIndex = 0;
 
       // If this node is a leaf, then we calculate the distance from
@@ -176,7 +178,7 @@ FastCluster(MatType& data,
           // Find the minimal distance centroid for this point.
           for (size_t j = 1; j < centroids.n_cols; ++j)
           {
-            // If this centroid is not in the whitelist, skip it
+            // If this centroid is not in the whitelist, skip it.
             if (!mrkd.whiteList[j])
             {
               ++skip;
@@ -186,22 +188,22 @@ FastCluster(MatType& data,
             ++comps;
             double distance = metric::SquaredEuclideanDistance::Evaluate(
                 data.col(i), centroids.col(j));
-            if ( minDistance > distance )
+            if (minDistance > distance)
             {
               minIndex = j;
               minDistance = distance;
             }
           }
 
-          // Add this point to the undivided center of mass summation for
-          // it's assigned centroid
+          // Add this point to the undivided center of mass summation for its
+          // assigned centroid.
           newCentroids.col(minIndex) += data.col(i);
 
-          // Increment the count for the minimum distance centroid
+          // Increment the count for the minimum distance centroid.
           ++counts(minIndex);
 
           // If we actually changed assignments, increment changedAssignments
-          // and modify the assignment vector for this point
+          // and modify the assignment vector for this point.
           if (assignments(i) != minIndex)
           {
             ++changedAssignments;
@@ -210,7 +212,7 @@ FastCluster(MatType& data,
         }
       }
       // If this node is not a leaf, then we continue trying to find dominant
-      // centroids
+      // centroids.
       else
       {
         bound::HRectBound<2>& bound = node->Bound();
@@ -219,24 +221,24 @@ FastCluster(MatType& data,
         // to all points in this hyperrectangle than any other centroid.
         bool noDomination = false;
 
-        // Calculate the center of mass of this hyperrectangle
+        // Calculate the center of mass of this hyperrectangle.
         arma::vec center = mrkd.centerOfMass / mrkd.count;
 
         // Set the minDistance to the maximum value of a double so any value
-        // must be smaller than this
+        // must be smaller than this.
         double minDistance = std::numeric_limits<double>::max();
 
-        // The candidate distance we calculate for each centroid
+        // The candidate distance we calculate for each centroid.
         double distance = 0.0;
 
         // How many points are inside this hyperrectangle, we stop if we
-        // see more than 1
+        // see more than 1.
         size_t contains = 0;
 
-        // Find the "owner" of this hyperrectangle, if one exists
+        // Find the "owner" of this hyperrectangle, if one exists.
         for (size_t i = 0; i < centroids.n_cols; ++i)
         {
-          // If this centroid is not in the whitelist, skip it
+          // If this centroid is not in the whitelist, skip it.
           if (!mrkd.whiteList[i])
           {
             ++skip;
@@ -244,10 +246,10 @@ FastCluster(MatType& data,
           }
 
           // Incrememnt the number of distance calculations for what we are
-          // about to do
+          // about to do.
           comps += 2;
 
-          // Reinitialize the distance so += works right
+          // Reinitialize the distance so += works right.
           distance = 0.0;
 
           // We keep track of how many dimensions have nonzero distance,
@@ -307,7 +309,7 @@ FastCluster(MatType& data,
             }
           }
 
-          // The centroid is inside the hyperrectangle
+          // The centroid is inside the hyperrectangle.
           if (nonZero == 0)
           {
             ++contains;
@@ -338,7 +340,7 @@ FastCluster(MatType& data,
 
         distance = minDistance;
         // Determine if the owner dominates this centroid only if there was
-        // exactly one owner
+        // exactly one owner.
         if (!noDomination)
         {
           for (size_t i = 0; i < centroids.n_cols; ++i)
@@ -346,7 +348,7 @@ FastCluster(MatType& data,
             if (i == minIndex)
               continue;
             // If this centroid is blacklisted for this hyperrectangle, then
-            // we skip it
+            // we skip it.
             if (!mrkd.whiteList[i])
             {
               ++skip;
@@ -355,8 +357,8 @@ FastCluster(MatType& data,
             /*
               Compute the dominating centroid for this hyperrectangle, if one
               exists. We do this by calculating the point which is furthest
-              from the min'th centroid in the direction of c_k - c_min. We do this
-              as outlined in the Pelleg and Moore paper.
+              from the min'th centroid in the direction of c_k - c_min. We do
+              this as outlined in the Pelleg and Moore paper.
 
               This following code is equivalent to, but faster than:
 
@@ -423,21 +425,21 @@ FastCluster(MatType& data,
         }
 
         // If did found a centroid that was closer to every point in the
-        // hyperrectangle than every other centroid, then update that centroid
+        // hyperrectangle than every other centroid, then update that centroid.
         if (!noDomination)
         {
           // Adjust the new centroid sum for the min distance point to this
-          // hyperrectangle by the center of mass of this hyperrectangle
+          // hyperrectangle by the center of mass of this hyperrectangle.
           newCentroids.col(minIndex) += mrkd.centerOfMass;
 
-          // Increment the counts for this centroid
+          // Increment the counts for this centroid.
           counts(minIndex) += mrkd.count;
 
-          // Update all assignments for this node
+          // Update all assignments for this node.
           const size_t begin = node->Begin();
           const size_t end = node->End();
 
-          // TODO: Do this outside of the kmeans iterations
+          // TODO: Do this outside of the kmeans iterations.
           for (size_t j = begin; j < end; ++j)
           {
             if (assignments(j) != minIndex)
@@ -448,7 +450,7 @@ FastCluster(MatType& data,
           }
           mrkd.dominatingCentroid = minIndex;
 
-          // Keep track of the number of times we found a dominating centroid
+          // Keep track of the number of times we found a dominating centroid.
           ++dominations;
         }
 
@@ -456,11 +458,11 @@ FastCluster(MatType& data,
         // default case, where we add the children of this node to the stack.
         else
         {
-          // Add this hyperrectangle's children to our stack
+          // Add this hyperrectangle's children to our stack.
           stack.push(node->Left());
           stack.push(node->Right());
 
-          // (Re)Initialize the whiteList for the children
+          // (Re)Initialize the whiteList for the children.
           node->Left()->Stat().whiteList = mrkd.whiteList;
           node->Right()->Stat().whiteList = mrkd.whiteList;
         }
@@ -471,17 +473,14 @@ FastCluster(MatType& data,
     // Divide by the number of points assigned to the centroids so that we
     // have the actual center of mass and update centroids' positions.
     for (size_t i = 0; i < centroids.n_cols; ++i)
-    {
-      if (counts(i)) {
+      if (counts(i))
         centroids.col(i) = newCentroids.col(i) / counts(i);
-      }
-    }
 
     // Stop when we reach max iterations or we changed no assignments
-    // assignments
+    // assignments.
   } while (changedAssignments > 0 && iteration != maxIterations);
 
-  Log::Debug << "Iterations: " << iteration << std::endl
+  Log::Info << "Iterations: " << iteration << std::endl
       << "Skips: " << skip << std::endl
       << "Comparisons: " << comps << std::endl
       << "Dominations: " << dominations << std::endl;
