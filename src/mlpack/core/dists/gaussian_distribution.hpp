@@ -36,7 +36,8 @@ class GaussianDistribution
    * the given dimensionality.
    */
   GaussianDistribution(const size_t dimension) :
-      mean(dimension), covariance(arma::eye<arma::mat>(dimension, dimension))
+      mean(arma::zeros<arma::vec>(dimension)),
+      covariance(arma::eye<arma::mat>(dimension, dimension))
   { /* Nothing to do. */ }
 
   /**
