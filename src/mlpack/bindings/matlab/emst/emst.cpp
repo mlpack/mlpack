@@ -1,7 +1,7 @@
 #include "mex.h"
 
-#include "dtb.hpp"
 #include <mlpack/core.hpp>
+#include <mlpack/methods/emst/dtb.hpp>
 
 #include <iostream>
 
@@ -14,12 +14,12 @@ void mexFunction(int nlhs, mxArray *plhs[],
                  int nrhs, const mxArray *prhs[])
 {
   // argument checks
-  if (nrhs != 3) 
+  if (nrhs != 3)
   {
     mexErrMsgTxt("Expecting an datapoints matrix, isBoruvka, and leafSize.");
   }
 
-  if (nlhs != 1) 
+  if (nlhs != 1)
   {
     mexErrMsgTxt("Output required.");
   }
@@ -31,9 +31,9 @@ void mexFunction(int nlhs, mxArray *plhs[],
   // converting from mxArray to armadillo matrix
   arma::mat dataPoints(numDimensions, numPoints);
 
-  // setting the values. 
+  // setting the values.
   double * mexDataPoints = mxGetPr(prhs[0]);
-  for (int i = 0, n = numPoints * numDimensions; i < n; ++i) 
+  for (int i = 0, n = numPoints * numDimensions; i < n; ++i)
   {
     dataPoints(i) = mexDataPoints[i];
   }
@@ -43,7 +43,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
   // running the computation
   arma::mat result;
-  if (isBoruvka) 
+  if (isBoruvka)
   {
     // getting the number of leaves
     const size_t leafSize = (size_t) mxGetScalar(prhs[2]);
@@ -51,7 +51,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
     DualTreeBoruvka<> dtb(dataPoints, false, leafSize);
     dtb.ComputeMST(result);
   }
-  else 
+  else
   {
     DualTreeBoruvka<> naive(dataPoints, true);
     naive.ComputeMST(result);
@@ -62,7 +62,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
   // setting the values
   double * out = mxGetPr(plhs[0]);
-  for (int i = 0, n = (numPoints - 1) * 3; i < n; ++i) 
+  for (int i = 0, n = (numPoints - 1) * 3; i < n; ++i)
   {
     out[i] = result(i);
   }
