@@ -8,6 +8,8 @@ set(SOURCES
    # dtb
    dtb.hpp
    dtb_impl.hpp
+   dtb_rules.hpp
+   dtb_rules_impl.hpp
    edge_pair.hpp
 )
 
