@@ -79,8 +79,7 @@ class DTBStat
 
 /**
  * Performs the MST calculation using the Dual-Tree Boruvka algorithm, using any
- * type of tree.  At the moment this class does not support arbitrary distance
- * metrics, and uses the squared Euclidean distance.
+ * type of tree.  
  *
  * For more information on the algorithm, see the following citation:
  *
@@ -110,9 +109,14 @@ class DTBStat
  * More advanced usage of the class can use different types of trees, pass in an
  * already-built tree, or compute the MST using the O(n^2) naive algorithm.
  *
+ * @tparam MetricType The metric to use.  IMPORTANT: this hasn't really been 
+ * tested with anything other than the L2 metric, so user beware. Note that the 
+ * tree type needs to compute bounds using the same metric as the type 
+ * specified here.
  * @tparam TreeType Type of tree to use.  Should use DTBStat as a statistic.
  */
 template<
+  typename MetricType = metric::SquaredEuclideanDistance,
   typename TreeType = tree::BinarySpaceTree<bound::HRectBound<2>, DTBStat>
 >
 class DualTreeBoruvka
@@ -148,6 +152,9 @@ class DualTreeBoruvka
 
   //! Total distance of the tree.
   double totalDist;
+  
+  //! The metric
+  MetricType metric;
 
   // For sorting the edge list after the computation.
   struct SortEdgesHelper
@@ -169,7 +176,8 @@ class DualTreeBoruvka
    */
   DualTreeBoruvka(const typename TreeType::Mat& dataset,
                   const bool naive = false,
-                  const size_t leafSize = 1);
+                  const size_t leafSize = 1,
+                  const MetricType metric = MetricType());
 
   /**
    * Create the DualTreeBoruvka object with an already initialized tree.  This
@@ -188,7 +196,8 @@ class DualTreeBoruvka
    * @param tree Pre-built tree.
    * @param dataset Dataset corresponding to the pre-built tree.
    */
-  DualTreeBoruvka(TreeType* tree, const typename TreeType::Mat& dataset);
+  DualTreeBoruvka(TreeType* tree, const typename TreeType::Mat& dataset,
+                  const MetricType metric = MetricType());
 
   /**
    * Delete the tree, if it was created inside the object.
@@ -216,18 +225,6 @@ class DualTreeBoruvka
    * Adds all the edges found in one iteration to the list of neighbors.
    */
   void AddAllEdges();
-
-  /**
-   * Handles the base case computation.  Also called by naive.
-   */
-  double BaseCase(const TreeType* queryNode, const TreeType* referenceNode);
-
-  /**
-   * Handles the recursive calls to find the nearest neighbors in an iteration
-   */
-  void DualTreeRecursion(TreeType *queryNode,
-                         TreeType *referenceNode,
-                         double incomingDistance);
 
   /**
    * Unpermute the edge list and output it to results.

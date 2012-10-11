@@ -8,7 +8,7 @@
 #ifndef __MLPACK_METHODS_EMST_DTB_IMPL_HPP
 #define __MLPACK_METHODS_EMST_DTB_IMPL_HPP
 
-#include <mlpack/core.hpp>
+#include "dtb_rules.hpp"
 
 namespace mlpack {
 namespace emst {
@@ -57,17 +57,19 @@ DTBStat::DTBStat(const MatType& /* dataset */,
  * Takes in a reference to the data set.  Copies the data, builds the tree,
  * and initializes all of the member variables.
  */
-template<typename TreeType>
-DualTreeBoruvka<TreeType>::DualTreeBoruvka(
+template<typename MetricType, typename TreeType>
+DualTreeBoruvka<MetricType, TreeType>::DualTreeBoruvka(
     const typename TreeType::Mat& dataset,
     const bool naive,
-    const size_t leafSize) :
+    const size_t leafSize,
+    const MetricType metric) :
     dataCopy(dataset),
     data(dataCopy), // The reference points to our copy of the data.
     ownTree(true),
     naive(naive),
     connections(data.n_cols),
-    totalDist(0.0)
+    totalDist(0.0),
+    metric(metric)
 {
   Timer::Start("emst/tree_building");
 
@@ -93,16 +95,18 @@ DualTreeBoruvka<TreeType>::DualTreeBoruvka(
   neighborsDistances.fill(DBL_MAX);
 } // Constructor
 
-template<typename TreeType>
-DualTreeBoruvka<TreeType>::DualTreeBoruvka(
+template<typename MetricType, typename TreeType>
+DualTreeBoruvka<MetricType, TreeType>::DualTreeBoruvka(
     TreeType* tree,
-    const typename TreeType::Mat& dataset) :
+    const typename TreeType::Mat& dataset,
+    const MetricType metric) :
     data(dataset),
     tree(tree),
     ownTree(true),
     naive(false),
     connections(data.n_cols),
-    totalDist(0.0)
+    totalDist(0.0),
+    metric(metric)
 {
   edges.reserve(data.n_cols - 1); // fill with EdgePairs
 
@@ -112,8 +116,8 @@ DualTreeBoruvka<TreeType>::DualTreeBoruvka(
   neighborsDistances.fill(DBL_MAX);
 }
 
-template<typename TreeType>
-DualTreeBoruvka<TreeType>::~DualTreeBoruvka()
+template<typename MetricType, typename TreeType>
+DualTreeBoruvka<MetricType, TreeType>::~DualTreeBoruvka()
 {
   if (ownTree)
     delete tree;
@@ -123,25 +127,24 @@ DualTreeBoruvka<TreeType>::~DualTreeBoruvka()
  * Iteratively find the nearest neighbor of each component until the MST is
  * complete.
  */
-template<typename TreeType>
-void DualTreeBoruvka<TreeType>::ComputeMST(arma::mat& results)
+template<typename MetricType, typename TreeType>
+void DualTreeBoruvka<MetricType, TreeType>::ComputeMST(arma::mat& results)
 {
   Timer::Start("emst/mst_computation");
 
   totalDist = 0; // Reset distance.
 
+  typedef DTBRules<MetricType, TreeType> RuleType;
+  RuleType rules(data, connections, neighborsDistances, neighborsInComponent,
+                 neighborsOutComponent, metric);
+
   while (edges.size() < (data.n_cols - 1))
   {
-    // Compute neighbors.
-    if (naive)
-    {
-      BaseCase(tree, tree);
-    }
-    else
-    {
-      DualTreeRecursion(tree, tree, DBL_MAX);
-    }
-
+    
+    typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
+    
+    traverser.Traverse(*tree, *tree);
+    
     AddAllEdges();
 
     Cleanup();
@@ -159,8 +162,8 @@ void DualTreeBoruvka<TreeType>::ComputeMST(arma::mat& results)
 /**
  * Adds a single edge to the edge list
  */
-template<typename TreeType>
-void DualTreeBoruvka<TreeType>::AddEdge(const size_t e1,
+template<typename MetricType, typename TreeType>
+void DualTreeBoruvka<MetricType, TreeType>::AddEdge(const size_t e1,
                                         const size_t e2,
                                         const double distance)
 {
@@ -176,8 +179,8 @@ void DualTreeBoruvka<TreeType>::AddEdge(const size_t e1,
 /**
  * Adds all the edges found in one iteration to the list of neighbors.
  */
-template<typename TreeType>
-void DualTreeBoruvka<TreeType>::AddAllEdges()
+template<typename MetricType, typename TreeType>
+void DualTreeBoruvka<MetricType, TreeType>::AddAllEdges()
 {
   for (size_t i = 0; i < data.n_cols; i++)
   {
@@ -195,165 +198,11 @@ void DualTreeBoruvka<TreeType>::AddAllEdges()
   }
 } // AddAllEdges
 
-
-/**
- * Handles the base case computation.  Also called by naive.
- */
-template<typename TreeType>
-double DualTreeBoruvka<TreeType>::BaseCase(const TreeType* queryNode,
-                                           const TreeType* referenceNode)
-{
-  double newUpperBound = -1.0;
-
-  for (size_t queryIndex = queryNode->Begin(); queryIndex < queryNode->End();
-       ++queryIndex)
-  {
-    // Find the index of the component the query is in.
-    size_t queryComponentIndex = connections.Find(queryIndex);
-
-    for (size_t referenceIndex = referenceNode->Begin();
-         referenceIndex < referenceNode->End(); ++referenceIndex)
-    {
-      size_t referenceComponentIndex = connections.Find(referenceIndex);
-
-      if (queryComponentIndex != referenceComponentIndex)
-      {
-        double distance = metric::LMetric<2>::Evaluate(data.col(queryIndex),
-            data.col(referenceIndex));
-
-        if (distance < neighborsDistances[queryComponentIndex])
-        {
-          Log::Assert(queryIndex != referenceIndex);
-
-          neighborsDistances[queryComponentIndex] = distance;
-          neighborsInComponent[queryComponentIndex] = queryIndex;
-          neighborsOutComponent[queryComponentIndex] = referenceIndex;
-        } // if distance
-      } // if indices not equal
-    } // for referenceIndex
-
-    if (newUpperBound < neighborsDistances[queryComponentIndex])
-      newUpperBound = neighborsDistances[queryComponentIndex];
-
-  } // for queryIndex
-
-  Log::Assert(newUpperBound >= 0.0);
-
-  return newUpperBound;
-
-} // BaseCase
-
-
-/**
- * Handles the recursive calls to find the nearest neighbors in an iteration
- */
-template<typename TreeType>
-void DualTreeBoruvka<TreeType>::DualTreeRecursion(TreeType *queryNode,
-                                                  TreeType *referenceNode,
-                                                  double incomingDistance)
-{
-  // Check for a distance prune.
-  if (queryNode->Stat().MaxNeighborDistance() < incomingDistance)
-  {
-    // Pruned by distance.
-    return;
-  }
-  // Check for a component prune.
-  else if ((queryNode->Stat().ComponentMembership() >= 0)
-        && (queryNode->Stat().ComponentMembership() ==
-               referenceNode->Stat().ComponentMembership()))
-  {
-    // Pruned by component membership.
-    Log::Assert(referenceNode->Stat().ComponentMembership() >= 0);
-    return;
-  }
-  else if (queryNode->IsLeaf() && referenceNode->IsLeaf()) // Base case.
-  {
-    double new_bound = BaseCase(queryNode, referenceNode);
-    queryNode->Stat().MaxNeighborDistance() = new_bound;
-  }
-  else if (queryNode->IsLeaf()) // Other recursive calls.
-  {
-    // Recurse on referenceNode only.
-    double leftDist =
-        queryNode->Bound().MinDistance(referenceNode->Left()->Bound());
-    double rightDist =
-        queryNode->Bound().MinDistance(referenceNode->Right()->Bound());
-
-    if (leftDist < rightDist)
-    {
-      DualTreeRecursion(queryNode, referenceNode->Left(), leftDist);
-      DualTreeRecursion(queryNode, referenceNode->Right(), rightDist);
-    }
-    else
-    {
-      DualTreeRecursion(queryNode, referenceNode->Right(), rightDist);
-      DualTreeRecursion(queryNode, referenceNode->Left(), leftDist);
-    }
-  }
-  else if (referenceNode->IsLeaf())
-  {
-    // Recurse on queryNode only.
-    double leftDist =
-        queryNode->Left()->Bound().MinDistance(referenceNode->Bound());
-    double rightDist =
-        queryNode->Right()->Bound().MinDistance(referenceNode->Bound());
-
-    DualTreeRecursion(queryNode->Left(), referenceNode, leftDist);
-    DualTreeRecursion(queryNode->Right(), referenceNode, rightDist);
-
-    // Update queryNode's stat.
-    queryNode->Stat().MaxNeighborDistance() =
-        std::max(queryNode->Left()->Stat().MaxNeighborDistance(),
-                 queryNode->Right()->Stat().MaxNeighborDistance());
-  }
-  else
-  {
-    // Recurse on both.
-    double leftDist = queryNode->Left()->Bound().MinDistance(
-        referenceNode->Left()->Bound());
-    double rightDist = queryNode->Left()->Bound().MinDistance(
-        referenceNode->Right()->Bound());
-
-    if (leftDist < rightDist)
-    {
-      DualTreeRecursion(queryNode->Left(), referenceNode->Left(), leftDist);
-      DualTreeRecursion(queryNode->Left(), referenceNode->Right(),
-          rightDist);
-    }
-    else
-    {
-      DualTreeRecursion(queryNode->Left(), referenceNode->Right(), rightDist);
-      DualTreeRecursion(queryNode->Left(), referenceNode->Left(), leftDist);
-    }
-
-    leftDist = queryNode->Right()->Bound().MinDistance(
-        referenceNode->Left()->Bound());
-    rightDist = queryNode->Right()->Bound().MinDistance(
-        referenceNode->Right()->Bound());
-
-    if (leftDist < rightDist)
-    {
-      DualTreeRecursion(queryNode->Right(), referenceNode->Left(), leftDist);
-      DualTreeRecursion(queryNode->Right(), referenceNode->Right(), rightDist);
-    }
-    else
-    {
-      DualTreeRecursion(queryNode->Right(), referenceNode->Right(), rightDist);
-      DualTreeRecursion(queryNode->Right(), referenceNode->Left(), leftDist);
-    }
-
-    queryNode->Stat().MaxNeighborDistance() =
-        std::max(queryNode->Left()->Stat().MaxNeighborDistance(),
-                 queryNode->Right()->Stat().MaxNeighborDistance());
-  }
-} // DualTreeRecursion
-
 /**
  * Unpermute the edge list (if necessary) and output it to results.
  */
-template<typename TreeType>
-void DualTreeBoruvka<TreeType>::EmitResults(arma::mat& results)
+template<typename MetricType, typename TreeType>
+void DualTreeBoruvka<MetricType, TreeType>::EmitResults(arma::mat& results)
 {
   // Sort the edges.
   std::sort(edges.begin(), edges.end(), SortFun);
@@ -400,10 +249,10 @@ void DualTreeBoruvka<TreeType>::EmitResults(arma::mat& results)
 
 /**
  * This function resets the values in the nodes of the tree nearest neighbor
- * distance, check for fully connected nodes
+ * distance and checks for fully connected nodes.
  */
-template<typename TreeType>
-void DualTreeBoruvka<TreeType>::CleanupHelper(TreeType* tree)
+template<typename MetricType, typename TreeType>
+void DualTreeBoruvka<MetricType, TreeType>::CleanupHelper(TreeType* tree)
 {
   tree->Stat().MaxNeighborDistance() = DBL_MAX;
 
@@ -440,8 +289,8 @@ void DualTreeBoruvka<TreeType>::CleanupHelper(TreeType* tree)
 /**
  * The values stored in the tree must be reset on each iteration.
  */
-template<typename TreeType>
-void DualTreeBoruvka<TreeType>::Cleanup()
+template<typename MetricType, typename TreeType>
+void DualTreeBoruvka<MetricType, TreeType>::Cleanup()
 {
   for (size_t i = 0; i < data.n_cols; i++)
   {
