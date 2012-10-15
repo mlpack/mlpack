@@ -164,6 +164,8 @@ if(Boost_MAJOR_VERSION EQUAL 1 AND Boost_MINOR_VERSION GREATER 45)
   include_directories(${Boost_INCLUDE_DIRS})
 
 endif(Boost_MAJOR_VERSION EQUAL 1 AND Boost_MINOR_VERSION GREATER 45)
+link_directories(${Boost_LIBRARY_DIRS})
+message(STATUS "libdir ${Boost_LIBRARY_DIRS} libs ${Boost_LIBRARIES} incldir ${Boost_INCLUDE_DIRS}")
 
 # On Windows, automatic linking is performed, so we don't need to worry about
 # it.  Clear the list of libraries to link against and let Visual Studio handle
