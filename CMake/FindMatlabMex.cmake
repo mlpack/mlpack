@@ -2,9 +2,9 @@
 # The following variables are defined when the script completes:
 #   MATLAB_MEX: location of mex compiler
 #   MATLAB_ROOT: root of MATLAB installation
-#   MATLAB_MEX_FOUND: 0 if not found, 1 if found
+#   MATLABMEX_FOUND: 0 if not found, 1 if found
 
-SET(MATLAB_MEX_FOUND 0)
+SET(MATLABMEX_FOUND 0)
 
 IF(WIN32)
   # This is untested but taken from the older FindMatlab.cmake script as well as
@@ -92,16 +92,17 @@ ELSE(WIN32)
   ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 ENDIF(WIN32)
 
-IF(MATLAB_MEX)
-  SET(MATLAB_MEX_FOUND 1)
-ENDIF(MATLAB_MEX)
+IF(NOT "${MATLAB_MEX}" AND "${MatlabMex_FIND_REQUIRED}")
+  MESSAGE(FATAL_ERROR "Could not find MATLAB mex compiler; try specifying MATLAB_ROOT.")
+ELSE(NOT "${MATLAB_MEX}" AND "${MatlabMex_FIND_REQUIRED}")
+  MESSAGE(STATUS "Found MATLAB mex compiler: ${MATLAB_MEX}")
+  MESSAGE(STATUS "MATLAB root: ${MATLAB_ROOT}")
+ENDIF(NOT "${MATLAB_MEX}" AND "${MatlabMex_FIND_REQUIRED}")
 
-MESSAGE(STATUS "Found MATLAB mex compiler: ${MATLAB_MEX}")
-MESSAGE(STATUS "MATLAB root: ${MATLAB_ROOT}")
 
 MARK_AS_ADVANCED(
   MATLAB_MEX
-  MATLAB_MEX_FOUND
+  MATLABMEX_FOUND
   MATLAB_ROOT
 )
 
