@@ -5,6 +5,7 @@ set(${MLPACK_SRCS} ${MLPACK_SRCS} "core.hpp")
 
 ## Recurse into both core/ and methods/.
 set(DIRS
+  bindings
   core
   methods
   tests
