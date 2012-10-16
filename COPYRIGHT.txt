@@ -18,6 +18,7 @@ Copyright: Copyright 2011, Vlad Grantcharov <vlad321@gatech.edu>
 Copyright: Copyright 2011, Noah Kauffman <notoriousnoah@gmail.com>
 Copyright: Copyright 2012, Rajendran Mohan <rmohan88@gatech.edu>
 Copyright: Copyright 2012, Trironk Kiatkungwanglai <trironk@gmail.com>
+Copyright: Copyright 2012, Patrick Mason <patrick.s.mason@gmail.com>
 License: LGPL-3+
   The text of the license is available on Debian systems in the
   /usr/share/common-licenses/LGPL-3 file.
