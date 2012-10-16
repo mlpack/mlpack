@@ -1,10 +1,6 @@
-cmake_minimum_required(VERSION 2.8)
-
 # We need to modify the Doxyfile slightly.  We'll copy the Doxyfile into the
 # build directory, update the location of the source, and then run Doxygen and
 # it will generate the documentation into the build directory.
-
-message(STATUS "Hurble ${CMAKE_CURRENT_SOURCE_DIR}")
 
 # First, read the Doxyfile in as a variable.
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile" DOXYFILE_CONTENTS)
@@ -28,8 +24,6 @@ string(REPLACE
     "${CMAKE_CURRENT_SOURCE_DIR}/doc/tutorials"
     DOXYFILE_AUXVAR "${DOXYFILE_CONTENTS}"
 )
-
-message(STATUS "Ready to go ${DESTDIR}")
 
 # Save the Doxyfile to its new location.
 file(WRITE "${DESTDIR}/Doxyfile" "${DOXYFILE_AUXVAR}")
