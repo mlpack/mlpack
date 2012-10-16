@@ -4,12 +4,12 @@
 # We need the mex compiler for this to work.
 find_package(MatlabMex)
 
-if(NOT "${MATLAB_MEX}")
+if(NOT ${MATLABMEX_FOUND})
   message(STATUS
       "MATLAB mex compiler not found; MATLAB bindings will not be built.")
   message(STATUS "If MATLAB is installed, try specifying MATLAB_ROOT.")
   return()
-endif(NOT "${MATLAB_MEX}")
+endif(NOT ${MATLABMEX_FOUND})
 
 # Ignore the fact that we are setting CMAKE_SHARED_LIBRARY_CXX_FLAGS on CMake
 # 2.8.9 and newer.  Because we are requiring at least CMake 2.8.5, we only have
