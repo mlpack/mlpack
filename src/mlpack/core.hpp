@@ -75,6 +75,7 @@
  *
  * The following methods are included in MLPACK:
  *
+ *  - Density Estimation Trees - mlpack::det::DTree
  *  - Euclidean Minimum Spanning Trees - mlpack::emst::DualTreeBoruvka
  *  - Gaussian Mixture Models (GMMs) - mlpack::gmm::GMM
  *  - Hidden Markov Models (HMMs) - mlpack::hmm::HMM
