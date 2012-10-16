@@ -113,6 +113,7 @@
  *   - Parikshit Ram <p.ram@gatech.edu>
  *   - Rajendran Mohan <rmohan88@gatech.edu>
  *   - Trironk Kiatkungwanglai <trironk@gmail.com>
+ *   - Patrick Mason <patrick.s.mason@gmail.com>
  *   - Chip Mappus <cmappus@gatech.edu>
  *   - Hua Ouyang <houyang@gatech.edu>
  *   - Long Quoc Tran <tqlong@gmail.com>
