@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 2.8)
-
 set(DIRS
   aug_lagrangian
   lbfgs

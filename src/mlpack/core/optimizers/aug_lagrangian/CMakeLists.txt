@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 2.8)
-
 set(SOURCES
   aug_lagrangian.hpp
   aug_lagrangian_impl.hpp

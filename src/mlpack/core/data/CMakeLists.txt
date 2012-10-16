@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 2.8)
-
 # Define the files that we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
