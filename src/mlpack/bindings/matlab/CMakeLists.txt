@@ -71,3 +71,20 @@ include_directories(${CMAKE_SOURCE_DIR}/src/) # So we can include <mlpack/...>.
 set(MATLAB_TOOLBOX_DIR "${MATLAB_ROOT}/toolbox")
 
 add_subdirectory(emst)
+
+# Create a target whose sole purpose is to modify the pathdef.m MATLAB file so
+# that the MLPACK toolbox is added to the MATLAB default path.
+add_custom_target(matlab ALL
+    # Modify pathdef.m.
+    COMMAND ${CMAKE_COMMAND} -D MATLAB_ROOT="${MATLAB_ROOT}" -D
+        PATHDEF_OUTPUT_FILE="${CMAKE_BINARY_DIR}/matlab/pathdef.m" -P
+        ${CMAKE_SOURCE_DIR}/CMake/ModifyMatlabPathdef.cmake
+    # Due to the dependencies, 'make matlab' makes all the bindings.
+    DEPENDS
+    emst_mex
+)
+
+install(FILES "${CMAKE_BINARY_DIR}/matlab/pathdef.m"
+    DESTINATION "${MATLAB_ROOT}/toolbox/local/"
+)
+
