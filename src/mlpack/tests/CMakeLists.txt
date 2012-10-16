@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 2.8)
-
 # MLPACK test executable.
 add_executable(mlpack_test
   mlpack_test.cpp
