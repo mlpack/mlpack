@@ -686,7 +686,7 @@ Cluster(const MatType& data,
       // Now max the distances for the second cluster (which no longer has
       // anything in it).
       offset = (size_t) (((actualClusters - 1) * second)
-			 + (second - pow(second, 2.0)) / 2) - 1;
+          + (second - pow(second, 2.0)) / 2) - 1;
       for (size_t cluster = second + 1; cluster < actualClusters; cluster++)
         distances(offset + (cluster - second)) = DBL_MAX;
 
