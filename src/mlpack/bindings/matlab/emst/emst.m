@@ -24,8 +24,8 @@ function result = emst(dataPoints, varargin)
 
 % a parser for the inputs
 p = inputParser;
-p.addOptional('method', 'boruvka', @(x) strcmpi(x, 'naive') || strcmpi(x, 'boruvka'));
-p.addOptional('leafSize', 1, @isscalar);
+p.addParamValue('method', 'boruvka', @(x) strcmpi(x, 'naive') || strcmpi(x, 'boruvka'));
+p.addParamValue('leafSize', 1, @isscalar);
 
 % parsing the varargin options
 p.parse(varargin{:});
