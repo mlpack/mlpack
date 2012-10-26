@@ -90,7 +90,7 @@ class NMF
    */
   NMF(const size_t maxIterations = 10000,
       const double minResidue = 1e-10,
-      const InitializationRule initializateRule = InitializationRule(),
+      const InitializationRule initializeRule = InitializationRule(),
       const WUpdateRule wUpdate = WUpdateRule(),
       const HUpdateRule hUpdate = HUpdateRule());
 
