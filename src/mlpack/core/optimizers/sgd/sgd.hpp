@@ -8,7 +8,7 @@
 #define __MLPACK_CORE_OPTIMIZERS_SGD_SGD_HPP
 
 namespace mlpack {
-namespace optimizers {
+namespace optimization {
 
 /**
  * Stochastic Gradient Descent is a technique for minimizing a function which
@@ -139,7 +139,7 @@ class SGD
   bool shuffle;
 }
 
-}; // namespace optimizers
+}; // namespace optimization
 }; // namespace mlpack
 
 // Include implementation.
