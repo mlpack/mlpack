@@ -36,7 +36,8 @@ double SGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   // This is used only if shuffle is true.
   arma::vec visitationOrder;
   if (shuffle)
-    visitationOrder = shuffle(linspace(0, (numFunctions - 1), numFunctions));
+    visitationOrder = arma::shuffle(arma::linspace(0, (numFunctions - 1),
+        numFunctions));
 
   // To keep track of where we are and how things are going.
   size_t currentFunction = 0;
@@ -58,6 +59,13 @@ double SGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
       Log::Info << "SGD: iteration " << i << ", objective " << overallObjective
           << "." << std::endl;
 
+      if (overallObjective != overallObjective)
+      {
+        Log::Warn << "SGD: converged to " << overallObjective << "; terminating"
+            << " with failure.  Try a smaller step size?" << std::endl;
+        return overallObjective;
+      }
+
       if (std::abs(lastObjective - overallObjective) < tolerance)
       {
         Log::Info << "SGD: minimized within tolerance " << tolerance << "; "
@@ -71,7 +79,7 @@ double SGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
       currentFunction = 0;
 
       if (shuffle) // Determine order of visitation.
-        visitationOrder = shuffle(visitationOrder);
+        visitationOrder = arma::shuffle(visitationOrder);
     }
 
     // Evaluate the gradient for this iteration.

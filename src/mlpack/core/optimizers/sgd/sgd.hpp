@@ -137,7 +137,7 @@ class SGD
   //! Controls whether or not the individual functions are shuffled when
   //! iterating.
   bool shuffle;
-}
+};
 
 }; // namespace optimization
 }; // namespace mlpack
