@@ -15,10 +15,10 @@ namespace optimization {
 
 /**
  * The generic L-BFGS optimizer, which uses a back-tracking line search
- * algorithm.  The parameters for the algorithm (number of memory points,
- * maximum step size, and so forth) are all configurable via either the
- * constructor or standalone modifier functions.  A function which can be
- * optimized by this class must implement the following methods:
+ * algorithm to minimize a function.  The parameters for the algorithm (number
+ * of memory points, maximum step size, and so forth) are all configurable via
+ * either the constructor or standalone modifier functions.  A function which
+ * can be optimized by this class must implement the following methods:
  *
  *  - a default constructor
  *  - double Evaluate(const arma::mat& coordinates);
@@ -69,11 +69,11 @@ class L_BFGS
 
   /**
    * Use L-BFGS to optimize the given function, starting at the given iterate
-   * point.  The maximum number of iterations is set in the constructor (or with
-   * MaxIterations()).  Alternately, another overload is provided which takes a
-   * maximum number of iterations as a parameter.  The given starting point will
-   * be modified to store the finishing point of the algorithm, and the final
-   * objective value is returned.
+   * point and finding the minimum.  The maximum number of iterations is set in
+   * the constructor (or with MaxIterations()).  Alternately, another overload
+   * is provided which takes a maximum number of iterations as a parameter.  The
+   * given starting point will be modified to store the finishing point of the
+   * algorithm, and the final objective value is returned.
    *
    * @param iterate Starting point (will be modified).
    * @return Objective value of the final point.
@@ -81,10 +81,10 @@ class L_BFGS
   double Optimize(arma::mat& iterate);
 
   /**
-   * Use L-BFGS to optimize the given function, starting at the given iterate
-   * point, and performing no more than the given maximum number of iterations
-   * (the class variable maxIterations is ignored for this run, but not
-   * modified).  The given starting point will be modified to store the
+   * Use L-BFGS to optimize (minimize) the given function, starting at the given
+   * iterate point, and performing no more than the given maximum number of
+   * iterations (the class variable maxIterations is ignored for this run, but
+   * not modified).  The given starting point will be modified to store the
    * finishing point of the algorithm, and the final objective value is
    * returned.
    *
