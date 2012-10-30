@@ -97,6 +97,11 @@ class WoodFunction
  *
  * This should optimize to f(x) = 0, at x = [1, 1, 1, 1, ...].
  *
+ * This function can also be used for stochastic gradient descent (SGD) as a
+ * decomposable function (DecomposableFunctionType), so there are other
+ * overloads of Evaluate() and Gradient() implemented, as well as
+ * NumFunctions().
+ *
  * "An analysis of the behavior of a glass of genetic adaptive systems."
  *   K.A. De Jong.  Ph.D. thesis, University of Michigan, 1975.
  */
@@ -110,8 +115,14 @@ class GeneralizedRosenbrockFunction
    */
   GeneralizedRosenbrockFunction(int n);
 
-  double Evaluate(const arma::mat& coordinates);
-  void Gradient(const arma::mat& coordinates, arma::mat& gradient);
+  double Evaluate(const arma::mat& coordinates) const;
+  void Gradient(const arma::mat& coordinates, arma::mat& gradient) const;
+
+  size_t NumFunctions() const { return n - 1; }
+  double Evaluate(const arma::mat& coordinates, const size_t i) const;
+  void Gradient(const arma::mat& coordinates,
+                const size_t i,
+                arma::mat& gradient) const;
 
   const arma::mat& GetInitialPoint() const;
 
