@@ -11,7 +11,7 @@
 #include "sgd.hpp"
 
 namespace mlpack {
-namespace optimizers {
+namespace optimization {
 
 template<typename DecomposableFunctionType>
 SGD<DecomposableFunctionType>::SGD(DecomposableFunctionType& function,
@@ -89,7 +89,7 @@ double SGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   return overallObjective;
 }
 
-}; // namespace optimizers
+}; // namespace optimization
 }; // namespace mlpack
 
 #endif
