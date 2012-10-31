@@ -43,26 +43,19 @@ class NCA
   /**
    * Construct the Neighborhood Components Analysis object.  This simply stores
    * the reference to the dataset and labels as well as the parameters for
-   * optimization before the actual optimization is performed.  In cases where
-   * points in the dataset are far apart (>700), some calculations will
-   * underflow; in this case, normalizeDistances should be set to true (it is by
-   * default).  It can be set to false for very minor speed gains.
+   * optimization before the actual optimization is performed.
    *
    * @param dataset Input dataset.
    * @param labels Input dataset labels.
    * @param stepSize Step size for stochastic gradient descent.
    * @param maxIterations Maximum iterations for stochastic gradient descent.
    * @param tolerance Tolerance for termination of stochastic gradient descent.
-   * @param normalizeDistances Whether or not distances should be normalized;
-   *     this is useful when the points in the dataset are far apart.
-   * @param metric Instantiated metric type.
    */
   NCA(const arma::mat& dataset,
       const arma::uvec& labels,
       const double stepSize = 0.01,
       const size_t maxIterations = 500000,
       const double tolerance = 1e-5,
-      const bool normalizeDistances = true,
       MetricType metric = MetricType());
 
   /**
@@ -108,8 +101,6 @@ class NCA
   size_t maxIterations;
   //! Tolerance for termination of stochastic gradient descent.
   double tolerance;
-  //! Whether or not distances should be normalized in the error function.
-  bool normalizeDistances;
 };
 
 }; // namespace nca
