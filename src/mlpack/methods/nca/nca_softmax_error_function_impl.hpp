@@ -15,14 +15,19 @@ namespace nca {
 
 // Initialize with the given kernel.
 template<typename MetricType>
-SoftmaxErrorFunction<MetricType>::SoftmaxErrorFunction(const arma::mat& dataset,
-                                                       const arma::uvec& labels,
-                                                       MetricType metric) :
-  dataset(dataset),
-  labels(labels),
-  metric(metric),
-  precalculated(false)
-{ /* nothing to do */ }
+SoftmaxErrorFunction<MetricType>::SoftmaxErrorFunction(
+    const arma::mat& dataset,
+    const arma::uvec& labels,
+    const bool normalizeDistances,
+    MetricType metric) :
+    dataset(dataset),
+    labels(labels),
+    metric(metric),
+    normalizeDistances(normalizeDistances),
+    normalizationConstant(100.0), // Just start at some number.
+    precalculated(false)
+{
+}
 
 //! The non-separable implementation, which uses Precalculate() to save time.
 template<typename MetricType>
@@ -55,8 +60,25 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
       continue;
 
     // We want to evaluate exp(-D(A x_i, A x_k)).
-    double eval = std::exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
-                                            stretchedDataset.unsafe_col(k)));
+    double dist = metric.Evaluate(stretchedDataset.unsafe_col(i),
+                                  stretchedDataset.unsafe_col(k));
+
+    // exp(-750) underflows.  So let's take action if the distance goes over
+    // 700.
+    if (normalizeDistances && ((dist / normalizationConstant) > 700))
+    {
+      Log::Warn << "Normalized distance between points " << i << " and " << k
+          << " is greater than limit of 700 (" << (dist / normalizationConstant)
+          << ").  Renormalizing..." << std::endl;
+      normalizationConstant = (1.5 * dist);
+
+      // We must re-call Evaluate() recursively since the normalization has
+      // changed.  This may do weird things to the objective function, but it
+      // should still optimize okay.
+      return Evaluate(coordinates, i);
+    }
+
+    double eval = std::exp(-dist);
 
     // If they are in the same
     if (labels[i] == labels[k])
@@ -104,8 +126,27 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
     for (size_t k = (i + 1); k < stretchedDataset.n_cols; k++)
     {
       // Calculate p_ik and p_ki first.
-      double eval = exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
-                                         stretchedDataset.unsafe_col(k)));
+      double dist = metric.Evaluate(stretchedDataset.unsafe_col(i),
+                                    stretchedDataset.unsafe_col(k));
+
+      // exp(-750) underflows.  So let's take action if the distance goes over
+      // 700.
+      if (normalizeDistances && ((dist / normalizationConstant) > 700))
+      {
+        Log::Warn << "Normalized distance between points " << i << " and " << k
+            << " is greater than limit of 700 ("
+            << (dist / normalizationConstant) << ").  Renormalizing...\n";
+        normalizationConstant = (1.5 * dist);
+
+        // We must re-call Gradient() recursively since the normalization has
+        // changed.  This may do weird things to the objective function, but it
+        // should still optimize okay.
+        Gradient(coordinates, gradient);
+        return;
+      }
+
+      double eval = exp(-dist);
+
       double p_ik = 0, p_ki = 0;
       p_ik = eval / denominators(i);
       p_ki = eval / denominators(k);
@@ -151,8 +192,26 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
       continue;
 
     // Calculate p_ik.
-    double eval = exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
-                                       stretchedDataset.unsafe_col(k)));
+    double dist = metric.Evaluate(stretchedDataset.unsafe_col(i),
+                                  stretchedDataset.unsafe_col(k));
+
+    // exp(-750) underflows.  So let's take action if the distance goes over
+    // 700.
+    if (normalizeDistances && ((dist / normalizationConstant) > 700))
+    {
+      Log::Warn << "Normalized distance between points " << i << " and " << k
+          << " is greater than limit of 700 (" << (dist / normalizationConstant)
+          << ").  Renormalizing..." << std::endl;
+      normalizationConstant = (1.5 * dist);
+
+      // We must re-call Gradient() recursively since the normalization has
+      // changed.  This may do weird things to the objective function, but it
+      // should still optimize okay.
+      Gradient(coordinates, i, gradient);
+      return;
+    }
+
+    double eval = exp(-dist);
 
     // If the points are in the same class, we must add to the second term of
     // the gradient as well as the numerator of p_i.
@@ -198,8 +257,8 @@ void SoftmaxErrorFunction<MetricType>::Precalculate(
   lastCoordinates.set_size(coordinates.n_rows, coordinates.n_cols);
 
   // Make sure the calculation is necessary.
-  if ((accu(coordinates == lastCoordinates) == coordinates.n_elem) &&
-      precalculated)
+  if (precalculated &&
+      (accu(coordinates == lastCoordinates) == coordinates.n_elem))
     return; // No need to calculate; we already have this stuff saved.
 
   // Coordinates are different; save the new ones, and stretch the dataset.
@@ -219,8 +278,27 @@ void SoftmaxErrorFunction<MetricType>::Precalculate(
     for (size_t j = (i + 1); j < stretchedDataset.n_cols; j++)
     {
       // Evaluate exp(-d(x_i, x_j)).
-      double eval = exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
-                                         stretchedDataset.unsafe_col(j)));
+      double dist = metric.Evaluate(stretchedDataset.unsafe_col(i),
+                                    stretchedDataset.unsafe_col(j));
+
+      // exp(-750) underflows.  So let's take action if the distance goes over
+      // 700.
+      if (normalizeDistances && ((dist / normalizationConstant) > 700))
+      {
+        Log::Warn << "Normalized distance between points " << i << " and " << j
+            << " is greater than limit of 700 ("
+            << (dist / normalizationConstant) << ").  Renormalizing...\n";
+        normalizationConstant = (1.5 * dist);
+
+        // We must re-call Gradient() recursively since the normalization has
+        // changed.  This may do weird things to the objective function, but it
+        // should still optimize okay.
+        precalculated = false;
+        Precalculate(coordinates);
+        return;
+      }
+
+      double eval = std::exp(-dist);
 
       // Add this to the denominators of both i and j: p_ij = p_ji.
       denominators[i] += eval;
