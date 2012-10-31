@@ -10,7 +10,7 @@
 // In case it was not already included.
 #include "nca.hpp"
 
-#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
 
 #include "nca_softmax_error_function.hpp"
 
@@ -18,25 +18,37 @@ namespace mlpack {
 namespace nca {
 
 // Just set the internal matrix reference.
-template<typename Kernel>
-NCA<Kernel>::NCA(const arma::mat& dataset, const arma::uvec& labels) :
-    dataset(dataset), labels(labels) { /* nothing to do */ }
+template<typename MetricType>
+NCA<MetricType>::NCA(const arma::mat& dataset,
+                     const arma::uvec& labels,
+                     const double stepSize,
+                     const size_t maxIterations,
+                     const double tolerance,
+                     MetricType metric) :
+    dataset(dataset),
+    labels(labels),
+    metric(metric),
+    stepSize(stepSize),
+    maxIterations(maxIterations),
+    tolerance(tolerance)
+{ /* Nothing to do. */ }
 
-template<typename Kernel>
-void NCA<Kernel>::LearnDistance(arma::mat& outputMatrix)
+template<typename MetricType>
+void NCA<MetricType>::LearnDistance(arma::mat& outputMatrix)
 {
   outputMatrix = arma::eye<arma::mat>(dataset.n_rows, dataset.n_rows);
 
-  SoftmaxErrorFunction<Kernel> errorFunc(dataset, labels);
+  SoftmaxErrorFunction<MetricType> errorFunc(dataset, labels, metric);
 
-  // We will use the L-BFGS optimizer to optimize the stretching matrix.
-  optimization::L_BFGS<SoftmaxErrorFunction<Kernel> > lbfgs(errorFunc, 10);
+  // We will use stochastic gradient descent to optimize the NCA error function.
+  optimization::SGD<SoftmaxErrorFunction<MetricType> > sgd(errorFunc, stepSize,
+      maxIterations, tolerance);
 
-  Timer::Start("nca_lbfgs_optimization");
+  Timer::Start("nca_sgd_optimization");
 
-  lbfgs.Optimize(outputMatrix);
+  sgd.Optimize(outputMatrix);
 
-  Timer::Stop("nca_lbfgs_optimization");
+  Timer::Stop("nca_sgd_optimization");
 }
 
 }; // namespace nca
