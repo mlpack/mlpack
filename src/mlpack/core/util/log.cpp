@@ -27,7 +27,7 @@
 #endif
 
 using namespace mlpack;
-using namespace mlpack::io;
+using namespace mlpack::util;
 
 // Only output debugging output if in debug mode.
 #ifdef DEBUG

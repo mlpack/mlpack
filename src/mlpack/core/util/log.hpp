@@ -55,28 +55,29 @@ class Log
    * If not, halts program execution and prints a custom error message.
    * Does nothing in non-debug mode.
    */
-  static void Assert(bool condition, const std::string& message = std::string("Assert Failed."));
+  static void Assert(bool condition,
+                     const std::string& message = "Assert Failed.");
 
 
   // We only use PrefixedOutStream if the program is compiled with debug
   // symbols.
 #ifdef DEBUG
   //! Prints debug output with the appropriate tag: [DEBUG].
-  static io::PrefixedOutStream Debug;
+  static util::PrefixedOutStream Debug;
 #else
   //! Dumps debug output into the bit nether regions.
-  static io::NullOutStream Debug;
+  static util::NullOutStream Debug;
 #endif
 
   //! Prints informational messages if --verbose is specified, prefixed with
   //! [INFO ].
-  static io::PrefixedOutStream Info;
+  static util::PrefixedOutStream Info;
 
   //! Prints warning messages prefixed with [WARN ].
-  static io::PrefixedOutStream Warn;
+  static util::PrefixedOutStream Warn;
 
   //! Prints fatal messages prefixed with [FATAL], then terminates the program.
-  static io::PrefixedOutStream Fatal;
+  static util::PrefixedOutStream Fatal;
 
   //! Reference to cout, if necessary.
   static std::ostream& cout;

@@ -31,7 +31,7 @@
 #include "option.hpp"
 
 using namespace mlpack;
-using namespace mlpack::io;
+using namespace mlpack::util;
 
 CLI* CLI::singleton = NULL;
 

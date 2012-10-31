@@ -1,5 +1,5 @@
 /**
- * @file io_deleter.cc
+ * @file cli_deleter.cpp
  * @author Ryan Curtin
  *
  * Extremely simple class whose only job is to delete the existing CLI object at
@@ -12,14 +12,14 @@
 #include "cli.hpp"
 
 using namespace mlpack;
-using namespace mlpack::io;
+using namespace mlpack::util;
 
 /***
  * Empty constructor that does nothing.
  */
 CLIDeleter::CLIDeleter()
 {
-  /* nothing to do */
+  /* Nothing to do. */
 }
 
 /***

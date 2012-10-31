@@ -4,11 +4,11 @@
  *
  * Definition of the CLIDeleter() class.
  */
-#ifndef __MLPACK_CORE_IO_CLI_DELETER_HPP
-#define __MLPACK_CORE_IO_CLI_DELETER_HPP
+#ifndef __MLPACK_CORE_UTIL_CLI_DELETER_HPP
+#define __MLPACK_CORE_UTIL_CLI_DELETER_HPP
 
 namespace mlpack {
-namespace io {
+namespace util {
 
 /**
  * Extremely simple class whose only job is to delete the existing CLI object at

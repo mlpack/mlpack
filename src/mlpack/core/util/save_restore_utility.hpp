@@ -22,7 +22,7 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace utilities {
+namespace util {
 
 class SaveRestoreUtility
 {
@@ -113,11 +113,10 @@ template<>
 void SaveRestoreUtility::SaveParameter(const arma::vec& t,
                                        const std::string& name);
 
-} /* namespace utilities */
-} /* namespace mlpack */
+}; /* namespace util */
+}; /* namespace mlpack */
 
+// Include implementation.
 #include "save_restore_utility_impl.hpp"
-
-
 
 #endif

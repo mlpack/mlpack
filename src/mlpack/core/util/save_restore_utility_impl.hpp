@@ -12,7 +12,7 @@
 #include "save_restore_utility.hpp"
 
 namespace mlpack {
-namespace utilities {
+namespace util {
 
 template<typename T>
 T& SaveRestoreUtility::LoadParameter(T& t, const std::string& name)
@@ -84,7 +84,7 @@ void SaveRestoreUtility::SaveParameter(const std::vector<T>& t,
   parameters[name] = vectorAsStr;
 }
 
-}; // namespace utilities
+}; // namespace util
 }; // namespace mlpack
 
 #endif
