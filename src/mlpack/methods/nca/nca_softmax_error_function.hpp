@@ -61,6 +61,18 @@ class SoftmaxErrorFunction
   double Evaluate(const arma::mat& covariance);
 
   /**
+   * Evaluate the softmax objective function for the given covariance matrix on
+   * only one point of the dataset.  This is the separable implementation, where
+   * the objective function is decomposed into the sum of many objective
+   * functions, and here, only one of those constituent objective functions is
+   * returned.
+   *
+   * @param covariance Covariance matrix of Mahalanobis distance.
+   * @param i Index of point to use for objective function.
+   */
+  double Evaluate(const arma::mat& covariance, const size_t i);
+
+  /**
    * Evaluate the gradient of the softmax function for the given covariance
    * matrix.  This is the non-separable implementation, where the objective
    * function is not decomposed into the sum of several objective functions.
@@ -71,9 +83,30 @@ class SoftmaxErrorFunction
   void Gradient(const arma::mat& covariance, arma::mat& gradient);
 
   /**
+   * Evaluate the gradient of the softmax function for the given covariance
+   * matrix on only one point of the dataset.  This is the separable
+   * implementation, where the objective function is decomposed into the sum of
+   * many objective functions, and here, only one of those constituent objective
+   * functions is returned.
+   *
+   * @param covariance Covariance matrix of Mahalanobis distance.
+   * @param i Index of point to use for objective function.
+   * @param gradient Matrix to store the calculated gradient in.
+   */
+  void Gradient(const arma::mat& covariance,
+                const size_t i,
+                arma::mat& gradient);
+
+  /**
    * Get the initial point.
    */
   const arma::mat GetInitialPoint() const;
+
+  /**
+   * Get the number of functions the objective function can be decomposed into.
+   * This is just the number of points in the dataset.
+   */
+  size_t NumFunctions() const { return dataset.n_cols; }
 
  private:
   const arma::mat& dataset;
@@ -83,7 +116,7 @@ class SoftmaxErrorFunction
 
   //! Last coordinates.  Used for the non-separable Evaluate() and Gradient().
   arma::mat lastCoordinates;
-  //! Stretched dataset.  Used for the non-separable Evaluate() and Gradient().
+  //! Stretched dataset.  Kept internal to avoid memory reallocations.
   arma::mat stretchedDataset;
   //! Holds calculated p_i, for the non-separable Evaluate() and Gradient().
   arma::vec p;

@@ -36,17 +36,27 @@ namespace nca /** Neighborhood Components Analysis. */ {
  * }
  * @endcode
  */
-template<typename Kernel>
+template<typename MetricType>
 class NCA
 {
  public:
   /**
    * Construct the Neighborhood Components Analysis object.  This simply stores
-   * the reference to the dataset, before the actual optimization is performed.
+   * the reference to the dataset and labels as well as the parameters for
+   * optimization before the actual optimization is performed.
    *
    * @param dataset Input dataset.
+   * @param labels Input dataset labels.
+   * @param stepSize Step size for stochastic gradient descent.
+   * @param maxIterations Maximum iterations for stochastic gradient descent.
+   * @param tolerance Tolerance for termination of stochastic gradient descent.
    */
-  NCA(const arma::mat& dataset, const arma::uvec& labels);
+  NCA(const arma::mat& dataset,
+      const arma::uvec& labels,
+      const double stepSize = 0.01,
+      const size_t maxIterations = 500000,
+      const double tolerance = 1e-5,
+      MetricType metric = MetricType());
 
   /**
    * Perform Neighborhood Components Analysis.  The output distance learning
@@ -56,9 +66,41 @@ class NCA
    */
   void LearnDistance(arma::mat& outputMatrix);
 
+  //! Get the dataset reference.
+  const arma::mat& Dataset() const { return dataset; }
+  //! Get the labels reference.
+  const arma::uvec& Labels() const { return labels; }
+
+  //! Get the step size for stochastic gradient descent.
+  double StepSize() const { return stepSize; }
+  //! Modify the step size for stochastic gradient descent.
+  double& StepSize() { return stepSize; }
+
+  //! Get the maximum number of iterations for stochastic gradient descent.
+  size_t MaxIterations() const { return maxIterations; }
+  //! Modify the maximum number of iterations for stochastic gradient descent.
+  size_t& MaxIterations() { return maxIterations; }
+
+  //! Get the tolerance for the termination of stochastic gradient descent.
+  double Tolerance() const { return tolerance; }
+  //! Modify the tolerance for the termination of stochastic gradient descent.
+  double& Tolerance() { return tolerance; }
+
  private:
+  //! Dataset reference.
   const arma::mat& dataset;
+  //! Labels reference.
   const arma::uvec& labels;
+
+  //! Metric to be used.
+  MetricType metric;
+
+  //! Step size for stochastic gradient descent.
+  double stepSize;
+  //! Maximum iterations for stochastic gradient descent.
+  size_t maxIterations;
+  //! Tolerance for termination of stochastic gradient descent.
+  double tolerance;
 };
 
 }; // namespace nca
