@@ -70,7 +70,11 @@ include_directories(${CMAKE_SOURCE_DIR}/src/) # So we can include <mlpack/...>.
 # Set MATLAB toolbox install directory.
 set(MATLAB_TOOLBOX_DIR "${MATLAB_ROOT}/toolbox")
 
+# CHANGE HERE FOR NEW BINDINGS!!!!
 add_subdirectory(emst)
+add_subdirectory(kmeans)
+add_subdirectory(range_search)
+add_subdirectory(gmm)
 
 # Create a target whose sole purpose is to modify the pathdef.m MATLAB file so
 # that the MLPACK toolbox is added to the MATLAB default path.
