@@ -30,7 +30,7 @@
 #define BASH_CLEAR "\033[0m"
 
 using namespace mlpack;
-using namespace mlpack::io;
+using namespace mlpack::util;
 
 BOOST_AUTO_TEST_SUITE(CLITest);
 
