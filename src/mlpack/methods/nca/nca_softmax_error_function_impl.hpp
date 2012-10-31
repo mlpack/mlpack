@@ -138,8 +138,11 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
 
   // The gradient involves two matrix terms which are eventually combined into
   // one.
-  arma::mat firstTerm(coordinates.n_rows, coordinates.n_cols);
-  arma::mat secondTerm(coordinates.n_rows, coordinates.n_cols);
+  arma::mat firstTerm;
+  arma::mat secondTerm;
+
+  firstTerm.zeros(coordinates.n_rows, coordinates.n_cols);
+  secondTerm.zeros(coordinates.n_rows, coordinates.n_cols);
 
   // Compute the stretched dataset.
   stretchedDataset = coordinates * dataset;
