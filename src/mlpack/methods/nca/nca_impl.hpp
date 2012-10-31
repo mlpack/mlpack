@@ -24,13 +24,15 @@ NCA<MetricType>::NCA(const arma::mat& dataset,
                      const double stepSize,
                      const size_t maxIterations,
                      const double tolerance,
+                     const bool normalizeDistances,
                      MetricType metric) :
     dataset(dataset),
     labels(labels),
     metric(metric),
     stepSize(stepSize),
     maxIterations(maxIterations),
-    tolerance(tolerance)
+    tolerance(tolerance),
+    normalizeDistances(normalizeDistances)
 { /* Nothing to do. */ }
 
 template<typename MetricType>
@@ -38,11 +40,12 @@ void NCA<MetricType>::LearnDistance(arma::mat& outputMatrix)
 {
   outputMatrix = arma::eye<arma::mat>(dataset.n_rows, dataset.n_rows);
 
-  SoftmaxErrorFunction<MetricType> errorFunc(dataset, labels, metric);
+  SoftmaxErrorFunction<MetricType> errorFunc(dataset, labels,
+      normalizeDistances, metric);
 
   // We will use stochastic gradient descent to optimize the NCA error function.
   optimization::SGD<SoftmaxErrorFunction<MetricType> > sgd(errorFunc, stepSize,
-      maxIterations, tolerance);
+      maxIterations, tolerance, normalizeDistances);
 
   Timer::Start("nca_sgd_optimization");
 

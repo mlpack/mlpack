@@ -33,6 +33,8 @@ PARAM_INT("max_iterations", "Maximum number of iterations for stochastic "
     "gradient descent (0 indicates no limit).", "n", 500000);
 PARAM_DOUBLE("tolerance", "Maximum tolerance for termination of stochastic "
     "gradient descent.", "t", 1e-7);
+PARAM_FLAG("no_normalization", "Do not normalize distances (this should not be"
+    "set if squared distances between points are greater than 700).", "N");
 
 using namespace mlpack;
 using namespace mlpack::nca;
@@ -52,6 +54,7 @@ int main(int argc, char* argv[])
   const double stepSize = CLI::GetParam<double>("step_size");
   const size_t maxIterations = CLI::GetParam<int>("max_iterations");
   const double tolerance = CLI::GetParam<double>("tolerance");
+  const bool normalize = !CLI::HasParam("no_normalization");
 
   // Load data.
   mat data;
@@ -79,7 +82,7 @@ int main(int argc, char* argv[])
 
   // Now create the NCA object and run the optimization.
   NCA<LMetric<2> > nca(data, labels.unsafe_col(0), stepSize, maxIterations,
-      tolerance);
+      tolerance, normalize);
 
   mat distance;
   nca.LearnDistance(distance);
