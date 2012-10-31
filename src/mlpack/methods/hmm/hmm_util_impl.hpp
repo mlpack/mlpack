@@ -16,7 +16,7 @@ namespace mlpack {
 namespace hmm {
 
 template<typename Distribution>
-void SaveHMM(const HMM<Distribution>& hmm, utilities::SaveRestoreUtility& sr)
+void SaveHMM(const HMM<Distribution>& hmm, util::SaveRestoreUtility& sr)
 {
   Log::Fatal << "HMM save not implemented for arbitrary distributions."
       << std::endl;
@@ -24,7 +24,7 @@ void SaveHMM(const HMM<Distribution>& hmm, utilities::SaveRestoreUtility& sr)
 
 template<>
 void SaveHMM(const HMM<distribution::DiscreteDistribution>& hmm,
-             utilities::SaveRestoreUtility& sr)
+             util::SaveRestoreUtility& sr)
 {
   std::string type = "discrete";
   size_t states = hmm.Transition().n_rows;
@@ -45,7 +45,7 @@ void SaveHMM(const HMM<distribution::DiscreteDistribution>& hmm,
 
 template<>
 void SaveHMM(const HMM<distribution::GaussianDistribution>& hmm,
-             utilities::SaveRestoreUtility& sr)
+             util::SaveRestoreUtility& sr)
 {
   std::string type = "gaussian";
   size_t states = hmm.Transition().n_rows;
@@ -70,7 +70,7 @@ void SaveHMM(const HMM<distribution::GaussianDistribution>& hmm,
 
 template<>
 void SaveHMM(const HMM<gmm::GMM<> >& hmm,
-             utilities::SaveRestoreUtility& sr)
+             util::SaveRestoreUtility& sr)
 {
   std::string type = "gmm";
   size_t states = hmm.Transition().n_rows;
@@ -105,7 +105,7 @@ void SaveHMM(const HMM<gmm::GMM<> >& hmm,
 }
 
 template<typename Distribution>
-void LoadHMM(HMM<Distribution>& hmm, utilities::SaveRestoreUtility& sr)
+void LoadHMM(HMM<Distribution>& hmm, util::SaveRestoreUtility& sr)
 {
   Log::Fatal << "HMM load not implemented for arbitrary distributions."
       << std::endl;
@@ -113,7 +113,7 @@ void LoadHMM(HMM<Distribution>& hmm, utilities::SaveRestoreUtility& sr)
 
 template<>
 void LoadHMM(HMM<distribution::DiscreteDistribution>& hmm,
-             utilities::SaveRestoreUtility& sr)
+             util::SaveRestoreUtility& sr)
 {
   std::string type;
   size_t states;
@@ -144,7 +144,7 @@ void LoadHMM(HMM<distribution::DiscreteDistribution>& hmm,
 
 template<>
 void LoadHMM(HMM<distribution::GaussianDistribution>& hmm,
-             utilities::SaveRestoreUtility& sr)
+             util::SaveRestoreUtility& sr)
 {
   std::string type;
   size_t states;
@@ -179,7 +179,7 @@ void LoadHMM(HMM<distribution::GaussianDistribution>& hmm,
 
 template<>
 void LoadHMM(HMM<gmm::GMM<> >& hmm,
-             utilities::SaveRestoreUtility& sr)
+             util::SaveRestoreUtility& sr)
 {
   std::string type;
   size_t states;
