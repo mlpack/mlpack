@@ -21,7 +21,7 @@ namespace hmm {
  * @param sr SaveRestoreUtility to use.
  */
 template<typename Distribution>
-void SaveHMM(const HMM<Distribution>& hmm, utilities::SaveRestoreUtility& sr);
+void SaveHMM(const HMM<Distribution>& hmm, util::SaveRestoreUtility& sr);
 
 /**
  * Load an HMM from file.  This only works for GMMs, DiscreteDistributions, and
@@ -31,7 +31,7 @@ void SaveHMM(const HMM<Distribution>& hmm, utilities::SaveRestoreUtility& sr);
  * @param sr SaveRestoreUtility to use.
  */
 template<typename Distribution>
-void LoadHMM(HMM<Distribution>& hmm, utilities::SaveRestoreUtility& sr);
+void LoadHMM(HMM<Distribution>& hmm, util::SaveRestoreUtility& sr);
 
 }; // namespace hmm
 }; // namespace mlpack

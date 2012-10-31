@@ -22,7 +22,7 @@ PARAM_STRING_REQ("model_file", "File containing HMM (XML).", "m");
 using namespace mlpack;
 using namespace mlpack::hmm;
 using namespace mlpack::distribution;
-using namespace mlpack::utilities;
+using namespace mlpack::util;
 using namespace mlpack::gmm;
 using namespace arma;
 using namespace std;
