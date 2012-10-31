@@ -27,14 +27,15 @@ PARAM_STRING_REQ("input_file", "Input dataset to run NCA on.", "i");
 PARAM_STRING_REQ("output_file", "Output file for learned distance matrix.",
     "o");
 PARAM_STRING("labels_file", "File of labels for input dataset.", "l", "");
-PARAM_DOUBLE("step_size", "Step size for stochastic gradient descent.", "s",
-    0.01);
+PARAM_DOUBLE("step_size", "Step size for stochastic gradient descent (alpha).",
+    "a", 0.01);
 PARAM_INT("max_iterations", "Maximum number of iterations for stochastic "
     "gradient descent (0 indicates no limit).", "n", 500000);
 PARAM_DOUBLE("tolerance", "Maximum tolerance for termination of stochastic "
     "gradient descent.", "t", 1e-7);
 PARAM_FLAG("normalize", "Normalize data; useful for datasets where points are "
     "far apart, or when SGD is converging to an objective of NaN.", "N");
+PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
 using namespace mlpack;
 using namespace mlpack::nca;
@@ -46,6 +47,11 @@ int main(int argc, char* argv[])
 {
   // Parse command line.
   CLI::ParseCommandLine(argc, argv);
+
+  if (CLI::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  else
+    math::RandomSeed((size_t) std::time(NULL));
 
   const string inputFile = CLI::GetParam<string>("input_file");
   const string labelsFile = CLI::GetParam<string>("labels_file");
