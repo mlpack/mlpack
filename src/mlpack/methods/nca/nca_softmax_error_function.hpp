@@ -42,9 +42,6 @@ class SoftmaxErrorFunction
    * store, which is set elsewhere.  If no kernel is given, an empty kernel is
    * used; this way, you can call the constructor with no arguments.  A
    * reference to the dataset we will be optimizing over is also required.
-   * Optionally, the distances between points can be normalized, to prevent
-   * underflows.  If all of the points in your dataset are relatively close
-   * (distances less than 700 or so), underflow will not occur.
    *
    * @param dataset Matrix containing the dataset.
    * @param labels Vector of class labels for each point in the dataset.
@@ -52,7 +49,6 @@ class SoftmaxErrorFunction
    */
   SoftmaxErrorFunction(const arma::mat& dataset,
                        const arma::uvec& labels,
-                       const bool normalizeDistances = true,
                        MetricType metric = MetricType());
 
   /**
@@ -113,18 +109,10 @@ class SoftmaxErrorFunction
   size_t NumFunctions() const { return dataset.n_cols; }
 
  private:
-  //! Reference to the dataset.
   const arma::mat& dataset;
-  //! Reference to the labels for the dataset.
   const arma::uvec& labels;
 
-  //! The instantiated metric to use.
   MetricType metric;
-
-  //! Whether or not to normalize the distances to 1.
-  bool normalizeDistances;
-  //! The normalization constant, used if normalizeDistances == true.
-  double normalizationConstant;
 
   //! Last coordinates.  Used for the non-separable Evaluate() and Gradient().
   arma::mat lastCoordinates;
