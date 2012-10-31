@@ -13,7 +13,7 @@
 
 #include "prefixedoutstream.hpp"
 
-using namespace mlpack::io;
+using namespace mlpack::util;
 
 /**
  * These are all necessary because gcc's template mechanism does not seem smart

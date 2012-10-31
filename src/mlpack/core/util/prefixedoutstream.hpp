@@ -20,7 +20,7 @@
 #include <mlpack/core/util/sfinae_utility.hpp>
 
 namespace mlpack {
-namespace io {
+namespace util {
 
 /**
  * Allows us to output to an ostream with a prefix at the beginning of each
@@ -116,7 +116,7 @@ class PrefixedOutStream
 
  private:
   HAS_MEM_FUNC(ToString, HasToString)
-  
+
   //! This handles forwarding all primitive types transparently
   template<typename T>
   void CallBaseLogic(T s,
@@ -124,7 +124,7 @@ class PrefixedOutStream
           boost::is_class<T>
       >::type*);
 
-  //! Forward all objects that do not implement a ToString() method 
+  //! Forward all objects that do not implement a ToString() method
   template<typename T>
   void CallBaseLogic(T s,
       typename boost::enable_if<
@@ -133,7 +133,7 @@ class PrefixedOutStream
       typename boost::disable_if<
           HasToString<T, std::string(T::*)() const>
       >::type*);
-  
+
   //! Call ToString() on all objects that implement ToString() before forwarding
   template<typename T>
   void CallBaseLogic(T s,
@@ -171,10 +171,10 @@ class PrefixedOutStream
   bool fatal;
 };
 
-// Template definitions
-#include "prefixedoutstream_impl.hpp"
+}; // namespace util
+}; // namespace mlpack
 
-} // namespace io
-} // namespace mlpack
+// Template definitions.
+#include "prefixedoutstream_impl.hpp"
 
 #endif

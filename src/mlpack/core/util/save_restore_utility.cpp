@@ -8,7 +8,7 @@
 #include "save_restore_utility.hpp"
 
 using namespace mlpack;
-using namespace utilities;
+using namespace mlpack::util;
 
 bool SaveRestoreUtility::ReadFile(const std::string& filename)
 {

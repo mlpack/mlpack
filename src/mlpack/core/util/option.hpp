@@ -13,7 +13,7 @@
 #include "cli.hpp"
 
 namespace mlpack {
-namespace io {
+namespace util {
 
 /**
  * A static object whose constructor registers a parameter with the CLI class.
@@ -93,7 +93,7 @@ class ProgramDoc
   std::string documentation;
 };
 
-}; // namespace io
+}; // namespace util
 }; // namespace mlpack
 
 // For implementations of templated functions

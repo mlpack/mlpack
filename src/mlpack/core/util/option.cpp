@@ -11,7 +11,7 @@
 #include <string>
 
 using namespace mlpack;
-using namespace mlpack::io;
+using namespace mlpack::util;
 using namespace std;
 
 /**
