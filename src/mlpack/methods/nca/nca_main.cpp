@@ -27,6 +27,12 @@ PARAM_STRING_REQ("input_file", "Input dataset to run NCA on.", "i");
 PARAM_STRING_REQ("output_file", "Output file for learned distance matrix.",
     "o");
 PARAM_STRING("labels_file", "File of labels for input dataset.", "l", "");
+PARAM_DOUBLE("step_size", "Step size for stochastic gradient descent.", "s",
+    0.01);
+PARAM_INT("max_iterations", "Maximum number of iterations for stochastic "
+    "gradient descent (0 indicates no limit).", "n", 500000);
+PARAM_DOUBLE("tolerance", "Maximum tolerance for termination of stochastic "
+    "gradient descent.", "t", 1e-7);
 
 using namespace mlpack;
 using namespace mlpack::nca;
@@ -42,6 +48,10 @@ int main(int argc, char* argv[])
   const string inputFile = CLI::GetParam<string>("input_file");
   const string labelsFile = CLI::GetParam<string>("labels_file");
   const string outputFile = CLI::GetParam<string>("output_file");
+
+  const double stepSize = CLI::GetParam<double>("step_size");
+  const size_t maxIterations = CLI::GetParam<int>("max_iterations");
+  const double tolerance = CLI::GetParam<double>("tolerance");
 
   // Load data.
   mat data;
@@ -68,7 +78,8 @@ int main(int argc, char* argv[])
   }
 
   // Now create the NCA object and run the optimization.
-  NCA<LMetric<2> > nca(data, labels.unsafe_col(0));
+  NCA<LMetric<2> > nca(data, labels.unsafe_col(0), stepSize, maxIterations,
+      tolerance);
 
   mat distance;
   nca.LearnDistance(distance);
