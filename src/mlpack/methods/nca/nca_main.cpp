@@ -33,6 +33,8 @@ PARAM_INT("max_iterations", "Maximum number of iterations for stochastic "
     "gradient descent (0 indicates no limit).", "n", 500000);
 PARAM_DOUBLE("tolerance", "Maximum tolerance for termination of stochastic "
     "gradient descent.", "t", 1e-7);
+PARAM_FLAG("normalize", "Normalize data; useful for datasets where points are "
+    "far apart, or when SGD is converging to an objective of NaN.", "N");
 
 using namespace mlpack;
 using namespace mlpack::nca;
@@ -52,6 +54,7 @@ int main(int argc, char* argv[])
   const double stepSize = CLI::GetParam<double>("step_size");
   const size_t maxIterations = CLI::GetParam<int>("max_iterations");
   const double tolerance = CLI::GetParam<double>("tolerance");
+  const bool normalize = CLI::HasParam("normalize");
 
   // Load data.
   mat data;
@@ -75,6 +78,25 @@ int main(int argc, char* argv[])
       labels[i] = (int) data(data.n_rows - 1, i);
 
     data.shed_row(data.n_rows - 1);
+  }
+
+  // Normalize the data, if necessary.
+  if (normalize)
+  {
+    // Find the minimum and maximum values for each dimension.
+    arma::vec range = arma::max(data, 1) - arma::min(data, 1);
+
+    // Now find the maximum range.
+    double maxRange = arma::max(range);
+
+    // We can place a (lazy) upper bound on the distance with range^2 * d.
+    // Since we want no distance greater than 700 (because std::exp(-750)
+    // underflows), we can normalize with (range^2 * d) / 700).
+    double normalization = (std::pow(maxRange, 2.0) * data.n_rows) / 700.0;
+    data /= normalization; // Element-wise division.
+
+    Log::Info << "Data normalized (normalization constant " << normalization
+        << ")." << std::endl;
   }
 
   // Now create the NCA object and run the optimization.
