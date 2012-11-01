@@ -33,8 +33,9 @@ PARAM_INT("max_iterations", "Maximum number of iterations for stochastic "
     "gradient descent (0 indicates no limit).", "n", 500000);
 PARAM_DOUBLE("tolerance", "Maximum tolerance for termination of stochastic "
     "gradient descent.", "t", 1e-7);
-PARAM_FLAG("normalize", "Normalize data; useful for datasets where points are "
-    "far apart, or when SGD is converging to an objective of NaN.", "N");
+PARAM_FLAG("normalize", "Use a normalized starting point for optimization. This"
+    " is useful for when points are far apart, or when SGD is returning NaN.",
+    "N");
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 PARAM_FLAG("linear_scan", "Don't shuffle the order in which data points are "
     "visited for SGD.", "L");
@@ -89,30 +90,24 @@ int main(int argc, char* argv[])
     data.shed_row(data.n_rows - 1);
   }
 
+  mat distance;
+
   // Normalize the data, if necessary.
   if (normalize)
   {
     // Find the minimum and maximum values for each dimension.
-    arma::vec range = arma::max(data, 1) - arma::min(data, 1);
-
-    // Now find the maximum range.
-    double maxRange = arma::max(range);
-
-    // We can place a (lazy) upper bound on the distance with range^2 * d.
-    // Since we want no distance greater than 700 (because std::exp(-750)
-    // underflows), we can normalize with (range^2 * d) / 700).
-    double normalization = (std::pow(maxRange, 2.0) * data.n_rows) / 700.0;
-    data /= normalization; // Element-wise division.
-
-    Log::Info << "Data normalized (normalization constant " << normalization
-        << ")." << std::endl;
+    distance = diagmat(1.0 / (arma::max(data, 1) - arma::min(data, 1)));
+    Log::Info << "Using normalized starting point for SGD." << std::endl;
+  }
+  else
+  {
+    distance.eye();
   }
 
   // Now create the NCA object and run the optimization.
   NCA<LMetric<2> > nca(data, labels.unsafe_col(0), stepSize, maxIterations,
       tolerance, shuffle);
 
-  mat distance;
   nca.LearnDistance(distance);
 
   Log::Warn << trans(distance);
