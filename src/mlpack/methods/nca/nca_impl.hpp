@@ -38,7 +38,10 @@ NCA<MetricType>::NCA(const arma::mat& dataset,
 template<typename MetricType>
 void NCA<MetricType>::LearnDistance(arma::mat& outputMatrix)
 {
-  outputMatrix = arma::eye<arma::mat>(dataset.n_rows, dataset.n_rows);
+  // See if we were passed an initialized matrix.
+  if ((outputMatrix.n_rows != dataset.n_rows) ||
+      (outputMatrix.n_cols != dataset.n_rows))
+    outputMatrix.eye(dataset.n_rows, dataset.n_rows);
 
   SoftmaxErrorFunction<MetricType> errorFunc(dataset, labels, metric);
 
