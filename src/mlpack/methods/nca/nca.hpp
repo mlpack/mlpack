@@ -55,7 +55,7 @@ class NCA
       const arma::uvec& labels,
       const double stepSize = 0.01,
       const size_t maxIterations = 500000,
-      const double tolerance = 1e-5,
+      const double tolerance = 1e-10,
       MetricType metric = MetricType());
 
   /**
