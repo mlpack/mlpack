@@ -63,7 +63,10 @@ class NCA
 
   /**
    * Perform Neighborhood Components Analysis.  The output distance learning
-   * matrix is written into the passed reference.
+   * matrix is written into the passed reference.  If LearnDistance() is called
+   * with an outputMatrix which has the correct size (dataset.n_rows x
+   * dataset.n_rows), that matrix will be used as the starting point for
+   * optimization.
    *
    * @param output_matrix Covariance matrix of Mahalanobis distance.
    */
