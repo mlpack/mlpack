@@ -153,12 +153,13 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
     if (i == k)
       continue;
 
-    // Calculate p_ik.
+    // Calculate the numerator of p_ik.
     double eval = exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
                                        stretchedDataset.unsafe_col(k)));
 
     // If the points are in the same class, we must add to the second term of
-    // the gradient as well as the numerator of p_i.
+    // the gradient as well as the numerator of p_i.  We will divide by the
+    // denominator of p_ik later.
     if (labels[i] == labels[k])
     {
       numerator += eval;
@@ -168,7 +169,7 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
     }
 
     // We always have to add to the denominator of p_i and the first term of the
-    // gradient computation.
+    // gradient computation.  We will divide by the denominator of p_ik later.
     denominator += eval;
     firstTerm += eval *
         (stretchedDataset.col(i) - stretchedDataset.col(k)) *
@@ -180,7 +181,11 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
   if (denominator == 0)
     Log::Warn << "Denominator of p_" << i << " is 0!" << std::endl;
   else
+  {
     p = numerator / denominator;
+    firstTerm /= denominator;
+    secondTerm /= denominator;
+  }
 
   // Now multiply the first term by p_i, and add the two together and multiply
   // all by 2 * A.  We negate it though, because our optimizer is a minimizer.
