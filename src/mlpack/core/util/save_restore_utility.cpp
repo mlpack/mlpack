@@ -1,5 +1,5 @@
 /**
- * @file utilities/save_restore_utility.cpp
+ * @file save_restore_utility.cpp
  * @author Neil Slagle
  *
  * The SaveRestoreUtility provides helper functions in saving and
@@ -184,7 +184,7 @@ void SaveRestoreUtility::SaveParameter(const arma::mat& mat,
 // Special template specializations for vectors.
 
 namespace mlpack {
-namespace utilities {
+namespace util {
 
 template<>
 arma::vec& SaveRestoreUtility::LoadParameter(arma::vec& t,
@@ -200,5 +200,5 @@ void SaveRestoreUtility::SaveParameter(const arma::vec& t,
   SaveParameter((const arma::mat&) t, name);
 }
 
-}; // namespace utilities
+}; // namespace util
 }; // namespace mlpack
