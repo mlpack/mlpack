@@ -138,6 +138,110 @@ BOOST_AUTO_TEST_CASE(SoftmaxOptimalGradient)
   BOOST_REQUIRE_SMALL(gradient(1, 1), 1e-5);
 }
 
+/**
+ * Ensure the separable objective function is right.
+ */
+BOOST_AUTO_TEST_CASE(SoftmaxSeparableObjective)
+{
+  // Useful but simple dataset with six points and two classes.
+  arma::mat data    = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                      " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::uvec labels = " 0    0    0    1    1    1   ";
+
+  SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
+
+  // Results painstakingly calculated by hand by rcurtin (recorded forever in
+  // his notebook).  As a result of lack of precision of the by-hand result, the
+  // tolerance is fairly high.
+  arma::mat coordinates = arma::eye<arma::mat>(2, 2);
+  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 0), -0.22480, 0.01);
+  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 1), -0.30613, 0.01);
+  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 2), -0.22480, 0.01);
+  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 3), -0.22480, 0.01);
+  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 4), -0.30613, 0.01);
+  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 5), -0.22480, 0.01);
+}
+
+/**
+ * Ensure the optimal separable objective function is right.
+ */
+BOOST_AUTO_TEST_CASE(OptimalSoftmaxSeparableObjective)
+{
+  // Simple optimal dataset.
+  arma::mat data    = " 500  500 -500 -500;"
+                      "   1    0    1    0 ";
+  arma::uvec labels = "   0    0    1    1 ";
+
+  SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
+
+  arma::mat coordinates = arma::eye<arma::mat>(2, 2);
+
+  // Use a very close tolerance for optimality; we need to be sure this function
+  // gives optimal results correctly.
+  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 0), -1.0, 1e-10);
+  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 1), -1.0, 1e-10);
+  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 2), -1.0, 1e-10);
+  BOOST_REQUIRE_CLOSE(sef.Evaluate(coordinates, 3), -1.0, 1e-10);
+}
+
+/**
+ * Ensure the separable gradient is right.
+ */
+BOOST_AUTO_TEST_CASE(SoftmaxSeparableGradient)
+{
+  // Useful but simple dataset with six points and two classes.
+  arma::mat data    = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                      " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::uvec labels = " 0    0    0    1    1    1   ";
+
+  SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
+
+  arma::mat coordinates = arma::eye<arma::mat>(2, 2);
+  arma::mat gradient(2, 2);
+
+  sef.Gradient(coordinates, 0, gradient);
+
+  BOOST_REQUIRE_CLOSE(gradient(0, 0), -2.0 * 0.0069708, 0.01);
+  BOOST_REQUIRE_CLOSE(gradient(0, 1), -2.0 * -0.0101707, 0.01);
+  BOOST_REQUIRE_CLOSE(gradient(1, 0), -2.0 * -0.0101707, 0.01);
+  BOOST_REQUIRE_CLOSE(gradient(1, 1), -2.0 * -0.14359, 0.01);
+
+  sef.Gradient(coordinates, 1, gradient);
+
+  BOOST_REQUIRE_CLOSE(gradient(0, 0), -2.0 * 0.008496, 0.01);
+  BOOST_REQUIRE_SMALL(gradient(0, 1), 1e-5);
+  BOOST_REQUIRE_SMALL(gradient(1, 0), 1e-5);
+  BOOST_REQUIRE_CLOSE(gradient(1, 1), -2.0 * -0.12238, 0.01);
+
+  sef.Gradient(coordinates, 2, gradient);
+
+  BOOST_REQUIRE_CLOSE(gradient(0, 0), -2.0 * 0.0069708, 0.01);
+  BOOST_REQUIRE_CLOSE(gradient(0, 1), -2.0 * 0.0101707, 0.01);
+  BOOST_REQUIRE_CLOSE(gradient(1, 0), -2.0 * 0.0101707, 0.01);
+  BOOST_REQUIRE_CLOSE(gradient(1, 1), -2.0 * -0.1435886, 0.01);
+
+  sef.Gradient(coordinates, 3, gradient);
+
+  BOOST_REQUIRE_CLOSE(gradient(0, 0), -2.0 * 0.0069708, 0.01);
+  BOOST_REQUIRE_CLOSE(gradient(0, 1), -2.0 * 0.0101707, 0.01);
+  BOOST_REQUIRE_CLOSE(gradient(1, 0), -2.0 * 0.0101707, 0.01);
+  BOOST_REQUIRE_CLOSE(gradient(1, 1), -2.0 * -0.1435886, 0.01);
+
+  sef.Gradient(coordinates, 4, gradient);
+
+  BOOST_REQUIRE_CLOSE(gradient(0, 0), -2.0 * 0.008496, 0.01);
+  BOOST_REQUIRE_SMALL(gradient(0, 1), 1e-5);
+  BOOST_REQUIRE_SMALL(gradient(1, 0), 1e-5);
+  BOOST_REQUIRE_CLOSE(gradient(1, 1), -2.0 * -0.12238, 0.01);
+
+  sef.Gradient(coordinates, 5, gradient);
+
+  BOOST_REQUIRE_CLOSE(gradient(0, 0), -2.0 * 0.0069708, 0.01);
+  BOOST_REQUIRE_CLOSE(gradient(0, 1), -2.0 * -0.0101707, 0.01);
+  BOOST_REQUIRE_CLOSE(gradient(1, 0), -2.0 * -0.0101707, 0.01);
+  BOOST_REQUIRE_CLOSE(gradient(1, 1), -2.0 * -0.1435886, 0.01);
+}
+
 //
 // Tests for the NCA algorithm.
 //
@@ -153,7 +257,8 @@ BOOST_AUTO_TEST_CASE(NcaSimpleDataset)
                       " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::uvec labels = " 0    0    0    1    1    1   ";
 
-  NCA<SquaredEuclideanDistance> nca(data, labels);
+  // Huge learning rate because this is so simple.
+  NCA<SquaredEuclideanDistance> nca(data, labels, 1.2, 300000, 0);
 
   arma::mat outputMatrix;
   nca.LearnDistance(outputMatrix);
@@ -169,10 +274,10 @@ BOOST_AUTO_TEST_CASE(NcaSimpleDataset)
   // finalObj must be less than initObj.
   BOOST_REQUIRE_LT(finalObj, initObj);
   // Verify that final objective is optimal.
-  BOOST_REQUIRE_CLOSE(finalObj, -6.0, 1e-8);
+  BOOST_REQUIRE_CLOSE(finalObj, -6.0, 1e-5);
   // The solution is not unique, so the best we can do is ensure the gradient
   // norm is close to 0.
-  BOOST_REQUIRE_LT(arma::norm(finalGradient, 2), 1e-10);
+  BOOST_REQUIRE_LT(arma::norm(finalGradient, 2), 1e-6);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
