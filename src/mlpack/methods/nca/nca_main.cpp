@@ -110,8 +110,6 @@ int main(int argc, char* argv[])
 
   nca.LearnDistance(distance);
 
-  Log::Warn << trans(distance);
-
   // Save the output.
   data::Save(CLI::GetParam<string>("output_file").c_str(), distance, true);
 }
