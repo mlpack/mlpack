@@ -159,27 +159,30 @@ void SoftmaxErrorFunction<MetricType>::Gradient(const arma::mat& coordinates,
 
     // If the points are in the same class, we must add to the second term of
     // the gradient as well as the numerator of p_i.  We will divide by the
-    // denominator of p_ik later.
+    // denominator of p_ik later.  For x_ik we are not using stretched points.
+    arma::vec x_ik = dataset.col(i) - dataset.col(k);
     if (labels[i] == labels[k])
     {
       numerator += eval;
-      secondTerm += eval *
-          (stretchedDataset.col(i) - stretchedDataset.col(k)) *
-          arma::trans(stretchedDataset.col(i) - stretchedDataset.col(k));
+      secondTerm += eval * x_ik * trans(x_ik);
     }
 
     // We always have to add to the denominator of p_i and the first term of the
     // gradient computation.  We will divide by the denominator of p_ik later.
     denominator += eval;
-    firstTerm += eval *
-        (stretchedDataset.col(i) - stretchedDataset.col(k)) *
-        arma::trans(stretchedDataset.col(i) - stretchedDataset.col(k));
+    firstTerm += eval * x_ik * trans(x_ik);
   }
 
   // Calculate p_i.
   double p = 0;
   if (denominator == 0)
+  {
     Log::Warn << "Denominator of p_" << i << " is 0!" << std::endl;
+    // If the denominator is zero, then all p_ik should be zero and there is
+    // no gradient contribution from this point.
+    gradient.zeros(coordinates.n_rows, coordinates.n_rows);
+    return;
+  }
   else
   {
     p = numerator / denominator;
