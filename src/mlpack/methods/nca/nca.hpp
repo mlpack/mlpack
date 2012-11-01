@@ -50,12 +50,15 @@ class NCA
    * @param stepSize Step size for stochastic gradient descent.
    * @param maxIterations Maximum iterations for stochastic gradient descent.
    * @param tolerance Tolerance for termination of stochastic gradient descent.
+   * @param shuffle Whether or not to shuffle the dataset during SGD.
+   * @param metric Instantiated metric to use.
    */
   NCA(const arma::mat& dataset,
       const arma::uvec& labels,
       const double stepSize = 0.01,
       const size_t maxIterations = 500000,
       const double tolerance = 1e-10,
+      const bool shuffle = true,
       MetricType metric = MetricType());
 
   /**
@@ -101,6 +104,8 @@ class NCA
   size_t maxIterations;
   //! Tolerance for termination of stochastic gradient descent.
   double tolerance;
+  //! Whether or not to shuffle the dataset for SGD.
+  bool shuffle;
 };
 
 }; // namespace nca

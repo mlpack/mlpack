@@ -1,4 +1,4 @@
-/***
+/**
  * @file nca_impl.hpp
  * @author Ryan Curtin
  *
@@ -24,13 +24,15 @@ NCA<MetricType>::NCA(const arma::mat& dataset,
                      const double stepSize,
                      const size_t maxIterations,
                      const double tolerance,
+                     const bool shuffle,
                      MetricType metric) :
     dataset(dataset),
     labels(labels),
     metric(metric),
     stepSize(stepSize),
     maxIterations(maxIterations),
-    tolerance(tolerance)
+    tolerance(tolerance),
+    shuffle(shuffle)
 { /* Nothing to do. */ }
 
 template<typename MetricType>
@@ -42,7 +44,7 @@ void NCA<MetricType>::LearnDistance(arma::mat& outputMatrix)
 
   // We will use stochastic gradient descent to optimize the NCA error function.
   optimization::SGD<SoftmaxErrorFunction<MetricType> > sgd(errorFunc, stepSize,
-      maxIterations, tolerance);
+      maxIterations, tolerance, shuffle);
 
   Timer::Start("nca_sgd_optimization");
 

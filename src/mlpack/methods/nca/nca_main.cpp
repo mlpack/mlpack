@@ -36,6 +36,8 @@ PARAM_DOUBLE("tolerance", "Maximum tolerance for termination of stochastic "
 PARAM_FLAG("normalize", "Normalize data; useful for datasets where points are "
     "far apart, or when SGD is converging to an objective of NaN.", "N");
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+PARAM_FLAG("linear_scan", "Don't shuffle the order in which data points are "
+    "visited for SGD.", "L");
 
 using namespace mlpack;
 using namespace mlpack::nca;
@@ -61,6 +63,7 @@ int main(int argc, char* argv[])
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
   const double tolerance = CLI::GetParam<double>("tolerance");
   const bool normalize = CLI::HasParam("normalize");
+  const bool shuffle = !CLI::HasParam("linear_scan");
 
   // Load data.
   mat data;
@@ -107,10 +110,12 @@ int main(int argc, char* argv[])
 
   // Now create the NCA object and run the optimization.
   NCA<LMetric<2> > nca(data, labels.unsafe_col(0), stepSize, maxIterations,
-      tolerance);
+      tolerance, shuffle);
 
   mat distance;
   nca.LearnDistance(distance);
+
+  Log::Warn << trans(distance);
 
   // Save the output.
   data::Save(CLI::GetParam<string>("output_file").c_str(), distance, true);
