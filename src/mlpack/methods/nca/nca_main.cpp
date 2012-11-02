@@ -21,7 +21,24 @@ PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
     "\n"
     "To work, this algorithm needs labeled data.  It can be given as the last "
     "row of the input dataset (--input_file), or alternatively in a separate "
-    "file (--labels_file).");
+    "file (--labels_file).\n"
+    "\n"
+    "This implementation of NCA uses stochastic gradient descent, which depends"
+    " primarily on two parameters: the step size (--step_size) and the maximum "
+    "number of iterations (--max_iterations).  In addition, a normalized "
+    "starting point can be used (--normalize), which is necessary if many "
+    "warnings of the form 'Denominator of p_i is 0!' are given.  Tuning the "
+    "step size can be a tedious affair.  In general, the step size is too large"
+    " if the objective is not mostly uniformly decreasing, or if zero-valued "
+    "denominator warnings are being issued.  The step size is too small if the "
+    "objective is changing very slowly.  Setting the termination condition can "
+    "be done easily once a good step size parameter is found; either increase "
+    "the maximum iterations to a large number and allow SGD to find a minimum, "
+    "or set the maximum iterations to 0 (allowing infinite iterations) and set "
+    "the tolerance (--tolerance) to define the maximum allowed difference "
+    "between objectives for SGD to terminate.  Be careful -- setting the "
+    "tolerance instead of the maximum iterations can take a very long time and "
+    "may actually never converge due to the properties of the SGD optimizer.");
 
 PARAM_STRING_REQ("input_file", "Input dataset to run NCA on.", "i");
 PARAM_STRING_REQ("output_file", "Output file for learned distance matrix.",
@@ -96,7 +113,12 @@ int main(int argc, char* argv[])
   if (normalize)
   {
     // Find the minimum and maximum values for each dimension.
-    distance = diagmat(1.0 / (arma::max(data, 1) - arma::min(data, 1)));
+    arma::vec ranges = arma::max(data, 1) - arma::min(data, 1);
+    for (size_t d = 0; d < ranges.n_elem; ++d)
+      if (ranges[d] == 0.0)
+        ranges[d] = 1; // A range of 0 produces NaN later on.
+
+    distance = diagmat(1.0 / ranges);
     Log::Info << "Using normalized starting point for SGD." << std::endl;
   }
   else

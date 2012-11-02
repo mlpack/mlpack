@@ -72,9 +72,9 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
     Log::Warn << "Denominator of p_" << i << " is 0!" << std::endl;
     return 0;
   }
-  else
-    return -(numerator / denominator); // Negate because the optimizer is a
-                                       // minimizer.
+
+  return -(numerator / denominator); // Negate because the optimizer is a
+                                     // minimizer.
 }
 
 //! The non-separable implementation, where Precalculate() is used.
