@@ -155,18 +155,21 @@ bool Load(const std::string& filename,
     Log::Warn << "Loading '" << filename << "' as " << stringType << "; "
         << "but this may not be the actual filetype!" << std::endl;
   else
-    Log::Info << "Loading '" << filename << "' as " << stringType << "."
-        << std::endl;
+    Log::Info << "Loading '" << filename << "' as " << stringType << ".  ";
 
   bool success = matrix.load(stream, loadType);
 
   if (!success)
   {
+    Log::Info << std::endl;
     if (fatal)
       Log::Fatal << "Loading from '" << filename << "' failed." << std::endl;
     else
       Log::Warn << "Loading from '" << filename << "' failed." << std::endl;
   }
+  else
+    Log::Info << "Size is " << (transpose ? matrix.n_cols : matrix.n_rows)
+        << " x " << (transpose ? matrix.n_rows : matrix.n_cols) << ".\n";
 
   // Now transpose the matrix, if necessary.
   if (transpose)
