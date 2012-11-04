@@ -2,6 +2,7 @@
 set(DIRS
   det
   emst
+  fastmks
   gmm
   hmm
   kernel_pca
@@ -10,7 +11,6 @@ set(DIRS
   linear_regression
 #  lmnn
   local_coordinate_coding
-  maxip
   mvu
   naive_bayes
   nca
