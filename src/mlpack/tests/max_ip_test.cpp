@@ -8,7 +8,7 @@
 size_t distanceEvaluations;
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/maxip/max_ip.hpp>
+#include <mlpack/methods/fastmks/max_ip.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
 
 #include <boost/test/unit_test.hpp>
