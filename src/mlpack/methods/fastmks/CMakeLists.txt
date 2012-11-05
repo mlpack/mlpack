@@ -3,10 +3,10 @@
 set(SOURCES
   ip_metric.hpp
   ip_metric_impl.hpp
-  max_ip.hpp
-  max_ip_impl.hpp
-  max_ip_rules.hpp
-  max_ip_rules_impl.hpp
+  fastmks.hpp
+  fastmks_impl.hpp
+  fastmks_rules.hpp
+  fastmks_rules_impl.hpp
 )
 
 # Add directory name to sources.
@@ -18,18 +18,11 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(maxip
-  max_ip_main.cpp
+add_executable(fastmks
+  fastmks_main.cpp
 )
-target_link_libraries(maxip
+target_link_libraries(fastmks
   mlpack
 )
 
-#add_executable(maxip_string
-#  max_ip_string_main.cpp
-#)
-#target_link_libraries(maxip_string
-#  mlpack
-#)
-
-install(TARGETS maxip RUNTIME DESTINATION bin)
+install(TARGETS fastmks RUNTIME DESTINATION bin)

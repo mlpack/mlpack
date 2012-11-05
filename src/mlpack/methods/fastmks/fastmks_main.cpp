@@ -1,5 +1,5 @@
 /**
- * @file max_ip_main.cpp
+ * @file fastmks_main.cpp
  * @author Ryan Curtin
  *
  * Main executable for maximum inner product search.
@@ -17,21 +17,20 @@ size_t distanceEvaluations;
 #include <mlpack/core/kernels/triangular_kernel.hpp>
 #include <mlpack/core/kernels/epanechnikov_kernel.hpp>
 
-#include "max_ip.hpp"
+#include "fastmks.hpp"
 
 using namespace std;
 using namespace mlpack;
-using namespace mlpack::maxip;
+using namespace mlpack::fastmks;
 using namespace mlpack::kernel;
 
 // Needs to be fleshed out a little bit.
-PROGRAM_INFO("Maximum Inner Product Search",
-    "This program will find the k maximum inner products of a set of points, "
+PROGRAM_INFO("FastMKS (Fast Max-Kernel Search)",
+    "This program will find the k maximum kernels of a set of points, "
     "using a query set and a reference set (which can optionally be the same "
     "set). More specifically, for each point in the query set, the k points in"
     " the reference set with maximum inner products are found.  The inner "
-    "product used is the kernel function specified by --kernel.  Currently the"
-    " linear kernel is all that is used.");
+    "product used is the kernel function specified by --kernel.");
 
 // Define our input parameters.
 PARAM_STRING_REQ("reference_file", "File containing the reference dataset.",
@@ -61,7 +60,7 @@ PARAM_DOUBLE("bandwidth", "Bandwidth (for Gaussian, Epanechnikov, and "
 PARAM_DOUBLE("scale", "Scale of kernel (for hyptan kernel).", "s", 1.0);
 
 template<typename KernelType>
-void RunMaxIP(const arma::mat& referenceData,
+void RunFastMKS(const arma::mat& referenceData,
               const bool single,
               const bool naive,
               const double base,
@@ -70,28 +69,28 @@ void RunMaxIP(const arma::mat& referenceData,
               arma::mat& products,
               KernelType& kernel)
 {
-  // Create MaxIP object.
-  MaxIP<KernelType> maxip(referenceData, kernel, (single && !naive), naive,
+  // Create FastMKS object.
+  FastMKS<KernelType> fastmks(referenceData, kernel, (single && !naive), naive,
       base);
 
   // Now search with it.
-  maxip.Search(k, indices, products);
+  fastmks.Search(k, indices, products);
 }
 
 template<typename KernelType>
-void RunMaxIP(const arma::mat& referenceData,
-              const arma::mat& queryData,
-              const bool single,
-              const bool naive,
-              const double base,
-              const size_t k,
-              arma::Mat<size_t>& indices,
-              arma::mat& products,
-              KernelType& kernel)
+void RunFastMKS(const arma::mat& referenceData,
+                const arma::mat& queryData,
+                const bool single,
+                const bool naive,
+                const double base,
+                const size_t k,
+                arma::Mat<size_t>& indices,
+                arma::mat& products,
+                KernelType& kernel)
 {
-  // Create MaxIP object.
-  MaxIP<KernelType> maxip(referenceData, queryData, kernel, (single && !naive),
-      naive, base);
+  // Create FastMKS object.
+  FastMKS<KernelType> maxip(referenceData, queryData, kernel,
+      (single && !naive), naive, base);
 
   // Now search with it.
   maxip.Search(k, indices, products);
@@ -176,50 +175,50 @@ int main(int argc, char** argv)
   arma::Mat<size_t> indices;
   arma::mat products;
 
-  // Construct MaxIP object.
+  // Construct FastMKS object.
   if (queryData.n_elem == 0)
   {
     if (kernelType == "linear")
     {
       LinearKernel lk;
-      RunMaxIP<LinearKernel>(referenceData, single, naive, base, k, indices,
+      RunFastMKS<LinearKernel>(referenceData, single, naive, base, k, indices,
           products, lk);
     }
     else if (kernelType == "polynomial")
     {
 
       PolynomialKernel pk(degree, offset);
-      RunMaxIP<PolynomialKernel>(referenceData, single, naive, base, k, indices,
-          products, pk);
+      RunFastMKS<PolynomialKernel>(referenceData, single, naive, base, k,
+          indices, products, pk);
     }
     else if (kernelType == "cosine")
     {
       CosineDistance cd;
-      RunMaxIP<CosineDistance>(referenceData, single, naive, base, k, indices,
+      RunFastMKS<CosineDistance>(referenceData, single, naive, base, k, indices,
           products, cd);
     }
     else if (kernelType == "gaussian")
     {
       GaussianKernel gk(bandwidth);
-      RunMaxIP<GaussianKernel>(referenceData, single, naive, base, k, indices,
+      RunFastMKS<GaussianKernel>(referenceData, single, naive, base, k, indices,
           products, gk);
     }
     else if (kernelType == "epanechnikov")
     {
       EpanechnikovKernel ek(bandwidth);
-      RunMaxIP<EpanechnikovKernel>(referenceData, single, naive, base, k,
+      RunFastMKS<EpanechnikovKernel>(referenceData, single, naive, base, k,
           indices, products, ek);
     }
     else if (kernelType == "triangular")
     {
       TriangularKernel tk(bandwidth);
-      RunMaxIP<TriangularKernel>(referenceData, single, naive, base, k, indices,
-          products, tk);
+      RunFastMKS<TriangularKernel>(referenceData, single, naive, base, k,
+          indices, products, tk);
     }
     else if (kernelType == "hyptan")
     {
       HyperbolicTangentKernel htk(scale, offset);
-      RunMaxIP<HyperbolicTangentKernel>(referenceData, single, naive, base, k,
+      RunFastMKS<HyperbolicTangentKernel>(referenceData, single, naive, base, k,
           indices, products, htk);
     }
   }
@@ -228,44 +227,44 @@ int main(int argc, char** argv)
     if (kernelType == "linear")
     {
       LinearKernel lk;
-      RunMaxIP<LinearKernel>(referenceData, queryData, single, naive, base, k,
+      RunFastMKS<LinearKernel>(referenceData, queryData, single, naive, base, k,
           indices, products, lk);
     }
     else if (kernelType == "polynomial")
     {
       PolynomialKernel pk(degree, offset);
-      RunMaxIP<PolynomialKernel>(referenceData, queryData, single, naive, base,
-          k, indices, products, pk);
+      RunFastMKS<PolynomialKernel>(referenceData, queryData, single, naive,
+          base, k, indices, products, pk);
     }
     else if (kernelType == "cosine")
     {
       CosineDistance cd;
-      RunMaxIP<CosineDistance>(referenceData, queryData, single, naive, base, k,
-          indices, products, cd);
+      RunFastMKS<CosineDistance>(referenceData, queryData, single, naive, base,
+          k, indices, products, cd);
     }
     else if (kernelType == "gaussian")
     {
       GaussianKernel gk(bandwidth);
-      RunMaxIP<GaussianKernel>(referenceData, queryData, single, naive, base, k,
-          indices, products, gk);
+      RunFastMKS<GaussianKernel>(referenceData, queryData, single, naive, base,
+          k, indices, products, gk);
     }
     else if (kernelType == "epanechnikov")
     {
       EpanechnikovKernel ek(bandwidth);
-      RunMaxIP<EpanechnikovKernel>(referenceData, queryData, single, naive,
+      RunFastMKS<EpanechnikovKernel>(referenceData, queryData, single, naive,
           base, k, indices, products, ek);
     }
     else if (kernelType == "triangular")
     {
       TriangularKernel tk(bandwidth);
-      RunMaxIP<TriangularKernel>(referenceData, queryData, single, naive, base,
-          k, indices, products, tk);
+      RunFastMKS<TriangularKernel>(referenceData, queryData, single, naive,
+          base, k, indices, products, tk);
     }
     else if (kernelType == "hyptan")
     {
       HyperbolicTangentKernel htk(scale, offset);
-      RunMaxIP<HyperbolicTangentKernel>(referenceData, queryData, single, naive,
-          base, k, indices, products, htk);
+      RunFastMKS<HyperbolicTangentKernel>(referenceData, queryData, single,
+          naive, base, k, indices, products, htk);
     }
   }
 

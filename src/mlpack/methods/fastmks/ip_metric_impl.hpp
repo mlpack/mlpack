@@ -4,8 +4,8 @@
  *
  * Implementation of the IPMetric.
  */
-#ifndef __MLPACK_METHODS_MAXIP_IP_METRIC_IMPL_HPP
-#define __MLPACK_METHODS_MAXIP_IP_METRIC_IMPL_HPP
+#ifndef __MLPACK_METHODS_FASTMKS_IP_METRIC_IMPL_HPP
+#define __MLPACK_METHODS_FASTMKS_IP_METRIC_IMPL_HPP
 
 // In case it hasn't been included yet.
 #include "ip_metric_impl.hpp"
@@ -14,7 +14,7 @@
 #include <mlpack/core/kernels/linear_kernel.hpp>
 
 namespace mlpack {
-namespace maxip {
+namespace fastmks {
 
 template<typename KernelType>
 template<typename Vec1Type, typename Vec2Type>
@@ -37,7 +37,7 @@ inline double IPMetric<kernel::LinearKernel>::Evaluate(const Vec1Type& a,
   return metric::LMetric<2, true>::Evaluate(a, b);
 }
 
-}; // namespace maxip
+}; // namespace fastmks
 }; // namespace mlpack
 
 #endif

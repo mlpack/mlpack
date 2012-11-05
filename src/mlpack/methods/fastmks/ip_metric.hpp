@@ -5,11 +5,11 @@
  * Inner product induced metric.  If given a kernel function, this gives the
  * complementary metric.
  */
-#ifndef __MLPACK_METHODS_MAXIP_IP_METRIC_HPP
-#define __MLPACK_METHODS_MAXIP_IP_METRIC_HPP
+#ifndef __MLPACK_METHODS_FASTMKS_IP_METRIC_HPP
+#define __MLPACK_METHODS_FASTMKS_IP_METRIC_HPP
 
 namespace mlpack {
-namespace maxip /** The maximum inner product problem. */ {
+namespace fastmks /** The fast maximum kernel search problem. */ {
 
 template<typename KernelType>
 class IPMetric
@@ -35,7 +35,7 @@ class IPMetric
   KernelType& kernel;
 };
 
-}; // namespace maxip
+}; // namespace fastmks
 }; // namespace mlpack
 
 // Include implementation.
