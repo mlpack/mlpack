@@ -1,22 +1,22 @@
 /**
- * @file max_ip_impl.hpp
+ * @file fastmks_impl.hpp
  * @author Ryan Curtin
  *
- * Implementation of the MaxIP class (maximum inner product search).
+ * Implementation of the FastMKS class (fast max-kernel search).
  */
-#ifndef __MLPACK_METHODS_MAXIP_MAX_IP_IMPL_HPP
-#define __MLPACK_METHODS_MAXIP_MAX_IP_IMPL_HPP
+#ifndef __MLPACK_METHODS_FASTMKS_FASTMKS_IMPL_HPP
+#define __MLPACK_METHODS_FASTMKS_FASTMKS_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "max_ip.hpp"
+#include "fastmks.hpp"
 
-#include "max_ip_rules.hpp"
+#include "fastmks_rules.hpp"
 
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 #include <queue>
 
 namespace mlpack {
-namespace maxip {
+namespace fastmks {
 
 template<typename TreeType>
 void RecurseTreeCountLeaves(const TreeType& node, arma::vec& counts)
@@ -132,7 +132,10 @@ void CheckSeparation(const TreeType& node, const TreeType& root)
 }
 
 template<typename TreeType, typename MetricType>
-void GetMaxDistance(TreeType& node, TreeType& constantNode, double& best, size_t& index)
+void GetMaxDistance(TreeType& node,
+                    TreeType& constantNode,
+                    double& best,
+                    size_t& index)
 {
   const arma::mat& dataset = node.Dataset();
   const double eval = MetricType::Evaluate(dataset.unsafe_col(node.Point()),
@@ -145,7 +148,8 @@ void GetMaxDistance(TreeType& node, TreeType& constantNode, double& best, size_t
 
   // Recurse into children.
   for (size_t i = 0; i < node.NumChildren(); ++i)
-    GetMaxDistance<TreeType, MetricType>(node.Child(i), constantNode, best, index);
+    GetMaxDistance<TreeType, MetricType>(node.Child(i), constantNode, best,
+        index);
 }
 
 template<typename TreeType, typename MetricType>
@@ -158,20 +162,17 @@ void CheckMaxDistances(TreeType& node)
     double eval = MetricType::Evaluate(dataset.unsafe_col(node.Point()),
         dataset.unsafe_col(node.Child(i).Point()));
 
-//    Log::Debug << "Point " << node.Point() << ", child point " << node.Child(i).Point() << "\n";
-//    Log::Debug << "Actual eval " << eval << ", supposed parent distance " << node.Child(i).ParentDistance() << "\n";
-//    Log::Debug << "Diff " << eval - node.Child(i).ParentDistance() << "\n";
     Log::Assert(std::abs(eval - node.Child(i).ParentDistance()) < 1e-10);
   }
 
   // Check all descendants.
   double maxDescendantDistance = 0;
   size_t maxIndex = 0;
-  GetMaxDistance<TreeType, MetricType>(node, node, maxDescendantDistance, maxIndex);
+  GetMaxDistance<TreeType, MetricType>(node, node, maxDescendantDistance,
+      maxIndex);
 
-//  Log::Debug << "Point " << node.Point() << ", max desc. index " << maxIndex << "\n";
-//  Log::Debug << "Calculated maxDescendantDistance " << maxDescendantDistance << " given " << node.FurthestDescendantDistance() << std::endl;
-  Log::Assert(std::abs(maxDescendantDistance - node.FurthestDescendantDistance()) < 1e-10);
+  Log::Assert(std::abs(maxDescendantDistance -
+      node.FurthestDescendantDistance()) < 1e-10);
 
   for (size_t i = 0; i < node.NumChildren(); ++i)
     CheckMaxDistances<TreeType, MetricType>(node.Child(i));
@@ -203,11 +204,11 @@ class SearchFrameCompare
 };
 
 template<typename KernelType>
-MaxIP<KernelType>::MaxIP(const arma::mat& referenceSet,
-                         KernelType& kernel,
-                         bool single,
-                         bool naive,
-                         double expansionConstant) :
+FastMKS<KernelType>::FastMKS(const arma::mat& referenceSet,
+                             KernelType& kernel,
+                             bool single,
+                             bool naive,
+                             double expansionConstant) :
     referenceSet(referenceSet),
     querySet(referenceSet), // Gotta point it somewhere...
     queryTree(NULL),
@@ -229,12 +230,12 @@ MaxIP<KernelType>::MaxIP(const arma::mat& referenceSet,
 }
 
 template<typename KernelType>
-MaxIP<KernelType>::MaxIP(const arma::mat& referenceSet,
-                         const arma::mat& querySet,
-                         KernelType& kernel,
-                         bool single,
-                         bool naive,
-                         double expansionConstant) :
+FastMKS<KernelType>::FastMKS(const arma::mat& referenceSet,
+                             const arma::mat& querySet,
+                             KernelType& kernel,
+                             bool single,
+                             bool naive,
+                             double expansionConstant) :
     referenceSet(referenceSet),
     querySet(querySet),
     single(single),
@@ -287,7 +288,7 @@ MaxIP<KernelType>::MaxIP(const arma::mat& referenceSet,
 }
 
 template<typename KernelType>
-MaxIP<KernelType>::~MaxIP()
+FastMKS<KernelType>::~FastMKS()
 {
   if (queryTree)
     delete queryTree;
@@ -296,7 +297,7 @@ MaxIP<KernelType>::~MaxIP()
 }
 
 template<typename KernelType>
-void MaxIP<KernelType>::Search(const size_t k,
+void FastMKS<KernelType>::Search(const size_t k,
                                arma::Mat<size_t>& indices,
                                arma::mat& products)
 {
@@ -334,7 +335,8 @@ void MaxIP<KernelType>::Search(const size_t k,
 
     Timer::Stop("computing_products");
 
-    Log::Info << "Kernel evaluations: " << kernelEvaluations << "." << std::endl;
+    Log::Info << "Kernel evaluations: " << kernelEvaluations << "."
+        << std::endl;
     return;
   }
 
@@ -502,12 +504,12 @@ void MaxIP<KernelType>::Search(const size_t k,
  * @param distance Distance from query point to reference point.
  */
 template<typename KernelType>
-void MaxIP<KernelType>::InsertNeighbor(arma::Mat<size_t>& indices,
-                                       arma::mat& products,
-                                       const size_t queryIndex,
-                                       const size_t pos,
-                                       const size_t neighbor,
-                                       const double distance)
+void FastMKS<KernelType>::InsertNeighbor(arma::Mat<size_t>& indices,
+                                         arma::mat& products,
+                                         const size_t queryIndex,
+                                         const size_t pos,
+                                         const size_t neighbor,
+                                         const double distance)
 {
   // We only memmove() if there is actually a need to shift something.
   if (pos < (products.n_rows - 1))
@@ -528,9 +530,9 @@ void MaxIP<KernelType>::InsertNeighbor(arma::Mat<size_t>& indices,
 
 // Specialized implementation for tighter bounds for Gaussian.
 template<>
-void MaxIP<kernel::GaussianKernel>::Search(const size_t k,
-                                           arma::Mat<size_t>& indices,
-                                           arma::mat& products)
+void FastMKS<kernel::GaussianKernel>::Search(const size_t k,
+                                             arma::Mat<size_t>& indices,
+                                             arma::mat& products)
 {
   Log::Warn << "Alternate implementation!" << std::endl;
 
@@ -592,12 +594,15 @@ void MaxIP<kernel::GaussianKernel>::Search(const size_t k,
       // Use an array of priority queues?
       std::priority_queue<
           SearchFrame<tree::CoverTree<IPMetric<kernel::GaussianKernel> > >,
-          std::vector<SearchFrame<tree::CoverTree<IPMetric<kernel::GaussianKernel> > > >,
-          SearchFrameCompare<tree::CoverTree<IPMetric<kernel::GaussianKernel> > > >
+          std::vector<SearchFrame<tree::CoverTree<IPMetric<
+              kernel::GaussianKernel> > > >,
+          SearchFrameCompare<tree::CoverTree<IPMetric<
+              kernel::GaussianKernel> > > >
           frameQueue;
 
       // Add initial frame.
-      SearchFrame<tree::CoverTree<IPMetric<kernel::GaussianKernel> > > nextFrame;
+      SearchFrame<tree::CoverTree<IPMetric<kernel::GaussianKernel> > >
+          nextFrame;
       nextFrame.node = referenceTree;
       nextFrame.eval = metric.Kernel().Evaluate(querySet.unsafe_col(queryIndex),
           referenceSet.unsafe_col(referenceTree->Point()));
@@ -737,7 +742,7 @@ void MaxIP<kernel::GaussianKernel>::Search(const size_t k,
 
 }
 
-}; // namespace maxip
+}; // namespace fastmks
 }; // namespace mlpack
 
 #endif

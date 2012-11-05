@@ -1,27 +1,26 @@
 /**
- * @file max_ip_rules.hpp
+ * @file fastmks_rules.hpp
  * @author Ryan Curtin
  *
- * Rules for the single or dual tree traversal for the maximum inner product
- * search.
+ * Rules for the single or dual tree traversal for fast max-kernel search.
  */
-#ifndef __MLPACK_METHODS_MAXIP_MAX_IP_RULES_HPP
-#define __MLPACK_METHODS_MAXIP_MAX_IP_RULES_HPP
+#ifndef __MLPACK_METHODS_FASTMKS_FASTMKS_RULES_HPP
+#define __MLPACK_METHODS_FASTMKS_FASTMKS_RULES_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>
 
 namespace mlpack {
-namespace maxip {
+namespace fastmks {
 
 template<typename MetricType>
-class MaxIPRules
+class FastMKSRules
 {
  public:
-  MaxIPRules(const arma::mat& referenceSet,
-             const arma::mat& querySet,
-             arma::Mat<size_t>& indices,
-             arma::mat& products);
+  FastMKSRules(const arma::mat& referenceSet,
+               const arma::mat& querySet,
+               arma::Mat<size_t>& indices,
+               arma::mat& products);
 
   void BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
@@ -46,10 +45,10 @@ class MaxIPRules
                       const double distance);
 };
 
-}; // namespace maxip
+}; // namespace fastmks
 }; // namespace mlpack
 
 // Include implementation.
-#include "max_ip_rules_impl.hpp"
+#include "fastmks_rules_impl.hpp"
 
 #endif

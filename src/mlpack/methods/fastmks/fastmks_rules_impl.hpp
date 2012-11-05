@@ -1,23 +1,23 @@
 /**
- * @file max_ip_rules_impl.hpp
+ * @file fastmks_rules_impl.hpp
  * @author Ryan Curtin
  *
- * Implementation of MaxIPRules for cover tree search.
+ * Implementation of FastMKSRules for cover tree search.
  */
-#ifndef __MLPACK_METHODS_MAXIP_MAX_IP_RULES_IMPL_HPP
-#define __MLPACK_METHODS_MAXIP_MAX_IP_RULES_IMPL_HPP
+#ifndef __MLPACK_METHODS_FASTMKS_FASTMKS_RULES_IMPL_HPP
+#define __MLPACK_METHODS_FASTMKS_FASTMKS_RULES_IMPL_HPP
 
 // In case it hasn't already been included.
-#include "max_ip_rules.hpp"
+#include "fastmks_rules.hpp"
 
 namespace mlpack {
-namespace maxip {
+namespace fastmks {
 
 template<typename MetricType>
-MaxIPRules<MetricType>::MaxIPRules(const arma::mat& referenceSet,
-                                   const arma::mat& querySet,
-                                   arma::Mat<size_t>& indices,
-                                   arma::mat& products) :
+FastMKSRules<MetricType>::FastMKSRules(const arma::mat& referenceSet,
+                                       const arma::mat& querySet,
+                                       arma::Mat<size_t>& indices,
+                                       arma::mat& products) :
     referenceSet(referenceSet),
     querySet(querySet),
     indices(indices),
@@ -26,12 +26,12 @@ MaxIPRules<MetricType>::MaxIPRules(const arma::mat& referenceSet,
   // Precompute each self-kernel.
 //  queryKernels.set_size(querySet.n_cols);
 //  for (size_t i = 0; i < querySet.n_cols; ++i)
-//    queryKernels[i] = sqrt(MetricType::Kernel::Evaluate(querySet.unsafe_col(i),
+//   queryKernels[i] = sqrt(MetricType::Kernel::Evaluate(querySet.unsafe_col(i),
 //        querySet.unsafe_col(i)));
 }
 
 template<typename MetricType>
-bool MaxIPRules<MetricType>::CanPrune(const size_t queryIndex,
+bool FastMKSRules<MetricType>::CanPrune(const size_t queryIndex,
     tree::CoverTree<MetricType>& referenceNode,
     const size_t parentIndex)
 {
@@ -57,8 +57,8 @@ bool MaxIPRules<MetricType>::CanPrune(const size_t queryIndex,
 
   double maxProduct = eval + std::pow(referenceNode.ExpansionConstant(),
       referenceNode.Scale() + 1) *
-sqrt(MetricType::Kernel::Evaluate(querySet.col(queryIndex),
-querySet.col(queryIndex)));
+      sqrt(MetricType::Kernel::Evaluate(querySet.col(queryIndex),
+      querySet.col(queryIndex)));
 
   if (maxProduct > products(products.n_rows - 1, queryIndex))
     return false;
@@ -75,10 +75,10 @@ querySet.col(queryIndex)));
  * @param distance Distance from query point to reference point.
  */
 template<typename MetricType>
-void MaxIPRules<MetricType>::InsertNeighbor(const size_t queryIndex,
-                                            const size_t pos,
-                                            const size_t neighbor,
-                                            const double distance)
+void FastMKSRules<MetricType>::InsertNeighbor(const size_t queryIndex,
+                                              const size_t pos,
+                                              const size_t neighbor,
+                                              const double distance)
 {
   // We only memmove() if there is actually a need to shift something.
   if (pos < (products.n_rows - 1))
@@ -97,7 +97,7 @@ void MaxIPRules<MetricType>::InsertNeighbor(const size_t queryIndex,
   indices(pos, queryIndex) = neighbor;
 }
 
-}; // namespace maxip
+}; // namespace fastmks
 }; // namespace mlpack
 
 #endif

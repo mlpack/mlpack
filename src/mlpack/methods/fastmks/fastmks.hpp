@@ -1,37 +1,37 @@
 /**
- * @file max_ip.hpp
+ * @file fastmks.hpp
  * @author Ryan Curtin
  *
- * Definition of the MaxIP class, which is the maximum inner product search.
+ * Definition of the FastMKS class, which is the fast max-kernel search.
  */
-#ifndef __MLPACK_METHODS_MAXIP_MAX_IP_HPP
-#define __MLPACK_METHODS_MAXIP_MAX_IP_HPP
+#ifndef __MLPACK_METHODS_FASTMKS_FASTMKS_HPP
+#define __MLPACK_METHODS_FASTMKS_FASTMKS_HPP
 
 #include <mlpack/core.hpp>
 #include "ip_metric.hpp"
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>
 
 namespace mlpack {
-namespace maxip {
+namespace fastmks {
 
 template<typename KernelType>
-class MaxIP
+class FastMKS
 {
  public:
-  MaxIP(const arma::mat& referenceSet,
-        KernelType& kernel,
-        bool single = false,
-        bool naive = false,
-        double expansionConstant = 2.0);
+  FastMKS(const arma::mat& referenceSet,
+          KernelType& kernel,
+          bool single = false,
+          bool naive = false,
+          double expansionConstant = 2.0);
 
-  MaxIP(const arma::mat& referenceSet,
-        const arma::mat& querySet,
-        KernelType& kernel,
-        bool single = false,
-        bool naive = false,
-        double expansionConstant = 2.0);
+  FastMKS(const arma::mat& referenceSet,
+          const arma::mat& querySet,
+          KernelType& kernel,
+          bool single = false,
+          bool naive = false,
+          double expansionConstant = 2.0);
 
-  ~MaxIP();
+  ~FastMKS();
 
   void Search(const size_t k,
               arma::Mat<size_t>& indices,
@@ -61,10 +61,10 @@ class MaxIP
                       const double distance);
 };
 
-}; // namespace maxip
+}; // namespace fastmks
 }; // namespace mlpack
 
 // Include implementation.
-#include "max_ip_impl.hpp"
+#include "fastmks_impl.hpp"
 
 #endif
