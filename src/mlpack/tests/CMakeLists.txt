@@ -8,6 +8,7 @@ add_executable(mlpack_test
   cli_test.cpp
   distribution_test.cpp
   emst_test.cpp
+  fastmks_test.cpp
   gmm_test.cpp
   hmm_test.cpp
   kernel_test.cpp
@@ -20,7 +21,6 @@ add_executable(mlpack_test
   local_coordinate_coding_test.cpp
   lrsdp_test.cpp
   math_test.cpp
-  max_ip_test.cpp
   nbc_test.cpp
   nca_test.cpp
   nmf_test.cpp

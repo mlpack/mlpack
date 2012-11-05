@@ -1,14 +1,14 @@
 /**
- * @file max_ip_test.cpp
+ * @file fastmks_test.cpp
  * @author Ryan Curtin
  *
- * Ensure that the maximum inner product search is successful.
+ * Ensure that fast max-kernel search is correct.
  */
 #include <stddef.h>
 size_t distanceEvaluations;
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/fastmks/max_ip.hpp>
+#include <mlpack/methods/fastmks/fastmks.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -16,10 +16,10 @@ size_t distanceEvaluations;
 
 using namespace mlpack;
 using namespace mlpack::tree;
-using namespace mlpack::maxip;
+using namespace mlpack::fastmks;
 using namespace mlpack::kernel;
 
-BOOST_AUTO_TEST_SUITE(MaxIPTest);
+BOOST_AUTO_TEST_SUITE(FastMKSTest);
 
 /**
  * Compare single-tree and naive.
@@ -34,15 +34,15 @@ BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
   data.randn(5, 1000);
   LinearKernel lk;
 
-  // Now run MaxIP naively.
-  MaxIP<LinearKernel> naive(data, lk, false, true);
+  // Now run FastMKS naively.
+  FastMKS<LinearKernel> naive(data, lk, false, true);
 
   arma::Mat<size_t> naiveIndices;
   arma::mat naiveProducts;
   naive.Search(10, naiveIndices, naiveProducts);
 
   // Now run it in single-tree mode.
-  MaxIP<LinearKernel> single(data, lk, true);
+  FastMKS<LinearKernel> single(data, lk, true);
 
   arma::Mat<size_t> singleIndices;
   arma::mat singleProducts;
