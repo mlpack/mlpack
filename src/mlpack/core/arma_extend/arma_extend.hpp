@@ -32,6 +32,9 @@ namespace arma {
   #include "glue_ccov_proto.hpp"
   #include "glue_ccov_meat.hpp"
   #include "fn_ccov.hpp"
+
+  // inplace_reshape()
+  #include "fn_inplace_reshape.hpp"
 };
 
 #endif
