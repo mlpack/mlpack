@@ -30,6 +30,7 @@ namespace data /** Functions to load and save matrices. */ {
  *  - PPM (ppm_binary), denoted by .ppm
  *  - Raw binary (raw_binary), denoted by .bin
  *  - Armadillo binary (arma_binary), denoted by .bin
+ *  - HDF5, denoted by .hdf, .hdf5, .h5, or .he5
  *
  * If the file extension is not one of those types, an error will be given.
  * This is preferable to Armadillo's default behavior of loading an unknown

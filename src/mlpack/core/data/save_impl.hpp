@@ -78,6 +78,25 @@ bool Save(const std::string& filename,
     saveType = arma::pgm_binary;
     stringType = "PGM data";
   }
+  else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
+           extension == "he5")
+  {
+#ifdef ARMA_USE_HDF5
+    saveType = arma::hdf5_binary;
+    stringType = "HDF5 data";
+#else
+    if (fatal)
+      Log::Fatal << "Attempted to save HDF5 data to '" << filename << "', but "
+          << "Armadillo was compiled without HDF5 support.  Save failed."
+          << std::endl;
+    else
+      Log::Warn << "Attempted to save HDF5 data to '" << filename << "', but "
+          << "Armadillo was compiled without HDF5 support.  Save failed."
+          << std::endl;
+
+    return false;
+#endif
+  }
   else
   {
     unknownType = true;
