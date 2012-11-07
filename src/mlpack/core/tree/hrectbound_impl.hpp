@@ -344,8 +344,8 @@ HRectBound<Power, TakeRoot>& HRectBound<Power, TakeRoot>::operator|=(
 {
   Log::Assert(data.n_rows == dim);
 
-  arma::vec mins = min(data, 1);
-  arma::vec maxs = max(data, 1);
+  arma::vec mins(min(data, 1));
+  arma::vec maxs(max(data, 1));
 
   for (size_t i = 0; i < dim; i++)
     bounds[i] |= math::Range(mins[i], maxs[i]);
