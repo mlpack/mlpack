@@ -379,4 +379,133 @@ BOOST_AUTO_TEST_CASE(SavePGMBinaryTest)
   remove("test_file.pgm");
 }
 
+#ifdef ARMA_USE_HDF5
+/**
+ * Make sure load as HDF5 is successful.
+ */
+BOOST_AUTO_TEST_CASE(LoadHDF5Test)
+{
+  arma::mat test = "1 5;"
+                   "2 6;"
+                   "3 7;"
+                   "4 8;";
+  arma::mat testTrans = trans(test);
+  BOOST_REQUIRE(testTrans.quiet_save("test_file.h5", arma::hdf5_binary)
+      == true);
+  BOOST_REQUIRE(testTrans.quiet_save("test_file.hdf5", arma::hdf5_binary)
+      == true);
+  BOOST_REQUIRE(testTrans.quiet_save("test_file.hdf", arma::hdf5_binary)
+      == true);
+  BOOST_REQUIRE(testTrans.quiet_save("test_file.he5", arma::hdf5_binary)
+      == true);
+
+  // Now reload through our interface.
+  BOOST_REQUIRE(data::Load("test_file.h5", test) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
+  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+
+  for (int i = 0; i < 8; ++i)
+    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+
+  // Make sure the other extensions work too.
+  BOOST_REQUIRE(data::Load("test_file.hdf5", test) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
+  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+
+  for (int i = 0; i < 8; ++i)
+    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+
+  BOOST_REQUIRE(data::Load("test_file.hdf", test) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
+  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+
+  for (int i = 0; i < 8; ++i)
+    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+
+  BOOST_REQUIRE(data::Load("test_file.he5", test) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
+  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+
+  for (int i = 0; i < 8; ++i)
+    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+
+  remove("test_file.h5");
+  remove("test_file.hdf");
+  remove("test_file.hdf5");
+  remove("test_file.he5");
+}
+
+/**
+ * Make sure save as HDF5 is successful.
+ */
+BOOST_AUTO_TEST_CASE(SaveHDF5Test)
+{
+  arma::mat test = "1 5;"
+                   "2 6;"
+                   "3 7;"
+                   "4 8;";
+  BOOST_REQUIRE(data::Save("test_file.h5", test) == true);
+  BOOST_REQUIRE(data::Save("test_file.hdf5", test) == true);
+  BOOST_REQUIRE(data::Save("test_file.hdf", test) == true);
+  BOOST_REQUIRE(data::Save("test_file.he5", test) == true);
+
+  // Now load them all and verify they were saved okay.
+  BOOST_REQUIRE(data::Load("test_file.h5", test) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
+  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+
+  for (int i = 0; i < 8; ++i)
+    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+
+  // Make sure the other extensions work too.
+  BOOST_REQUIRE(data::Load("test_file.hdf5", test) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
+  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+
+  for (int i = 0; i < 8; ++i)
+    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+
+  BOOST_REQUIRE(data::Load("test_file.hdf", test) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
+  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+
+  for (int i = 0; i < 8; ++i)
+    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+
+  BOOST_REQUIRE(data::Load("test_file.he5", test) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
+  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+
+  for (int i = 0; i < 8; ++i)
+    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+
+  remove("test_file.h5");
+  remove("test_file.hdf");
+  remove("test_file.hdf5");
+  remove("test_file.he5");
+}
+#else
+/**
+ * Ensure saving as HDF5 fails.
+ */
+BOOST_AUTO_TEST_CASE(NoHDF5Test)
+{
+  arma::mat test;
+  test.randu(5, 5);
+
+  BOOST_REQUIRE(data::Save("test_file.h5", test) == false);
+  BOOST_REQUIRE(data::Save("test_file.hdf5", test) == false);
+  BOOST_REQUIRE(data::Save("test_file.hdf", test) == false);
+  BOOST_REQUIRE(data::Save("test_file.he5", test) == false);
+}
+#endif
+
 BOOST_AUTO_TEST_SUITE_END();
