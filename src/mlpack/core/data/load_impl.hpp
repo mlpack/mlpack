@@ -10,6 +10,7 @@
 // In case it hasn't already been included.
 #include "load.hpp"
 
+#include <algorithm>
 #include <mlpack/core/util/timers.hpp>
 
 namespace mlpack {
@@ -37,7 +38,10 @@ bool Load(const std::string& filename,
     return false;
   }
 
+  // Get the extension and force it to lowercase.
   std::string extension = filename.substr(ext + 1);
+  std::transform(extension.begin(), extension.end(), extension.begin(),
+      ::tolower);
 
   // Catch nonexistent files by opening the stream ourselves.
   std::fstream stream;
@@ -129,6 +133,25 @@ bool Load(const std::string& filename,
   {
     loadType = arma::pgm_binary;
     stringType = "PGM data";
+  }
+  else if (extension == "h5" || extension == "hdf5" || extension == "hdf" ||
+           extension == "he5")
+  {
+#ifdef ARMA_USE_HDF5
+    loadType = arma::hdf5_binary;
+    stringType = "HDF5 data";
+#else
+    if (fatal)
+      Log::Fatal << "Attempted to load '" << filename << "' as HDF5 data, but "
+          << "Armadillo was compiled without HDF5 support.  Load failed."
+          << std::endl;
+    else
+      Log::Warn << "Attempted to load '" << filename << "' as HDF5 data, but "
+          << "Armadillo was compiled without HDF5 support.  Load failed."
+          << std::endl;
+
+    return false;
+#endif
   }
   else // Unknown extension...
   {
