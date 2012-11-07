@@ -206,9 +206,10 @@ BOOST_AUTO_TEST_CASE(RandomPartitionTest)
     BOOST_REQUIRE_LT(assignments[i], 18);
 }
 
+#ifdef ARMA_HAS_SPMAT
 /**
  * Make sure sparse k-means works okay.
- *
+ */
 BOOST_AUTO_TEST_CASE(SparseKMeansTest)
 {
   // Huge dimensionality, few points.
@@ -248,6 +249,6 @@ BOOST_AUTO_TEST_CASE(SparseKMeansTest)
   BOOST_REQUIRE_EQUAL(assignments[10], clusterTwo);
   BOOST_REQUIRE_EQUAL(assignments[11], clusterTwo);
 }
-*/
+#endif // ARMA_HAS_SPMAT
 
 BOOST_AUTO_TEST_SUITE_END();

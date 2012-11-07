@@ -1491,8 +1491,8 @@ BOOST_AUTO_TEST_CASE(TreeCountMismatch)
 }
 
 // Forward declaration of methods we need for the next test.
-template<typename TreeType>
-bool CheckPointBounds(TreeType* node, const arma::mat& data);
+template<typename TreeType, typename MatType>
+bool CheckPointBounds(TreeType* node, const MatType& data);
 
 template<typename TreeType>
 void GenerateVectorOfTree(TreeType* node,
@@ -1594,8 +1594,8 @@ BOOST_AUTO_TEST_CASE(KdTreeTest)
 }
 
 // Recursively checks that each node contains all points that it claims to have.
-template<typename TreeType>
-bool CheckPointBounds(TreeType* node, const arma::mat& data)
+template<typename TreeType, typename MatType>
+bool CheckPointBounds(TreeType* node, const MatType& data)
 {
   if (node == NULL) // We have passed a leaf node.
     return true;
@@ -1656,6 +1656,7 @@ void GenerateVectorOfTree(TreeType* node,
   return;
 }
 
+#ifdef ARMA_HAS_SPMAT
 /**
  * Exhaustive sparse kd-tree test based on #125.
  *
@@ -1692,7 +1693,7 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSparseKDTreeTest)
     std::vector<size_t> oldToNew;
 
     // Generate data.
-    dataset.randu();
+    dataset.sprandu(dimensions, size, 0.1);
     datacopy = dataset; // Save a copy.
 
     // Build the tree itself.
@@ -1744,6 +1745,7 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSparseKDTreeTest)
   // Check the tree depth.
   BOOST_REQUIRE_EQUAL(root.TreeDepth(), 7);
 }
+#endif // ARMA_HAS_SPMAT
 
 template<typename TreeType>
 void RecurseTreeCountLeaves(const TreeType& node, arma::vec& counts)
