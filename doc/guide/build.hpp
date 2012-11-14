@@ -12,7 +12,7 @@ and installed.
 Once the MLPACK source is unpacked, you should create a build directory.
 
 @code
-$ cd mlpack-1.0.0
+$ cd mlpack-1.0.3
 $ mkdir build
 @endcode
 
@@ -28,7 +28,29 @@ system and have headers present:
  - pthreads
  - Armadillo >= 2.4.0
  - LibXML2
- - Boost (math_c99, program_options, unit_test_framework)
+ - Boost (math_c99, program_options, unit_test_framework, random)
+
+In Ubuntu and Debian, you can get all of these dependencies through apt:
+
+@code
+# apt-get install libboost-math-dev libboost-program-options-dev
+  libboost-random-dev libboost-test-dev libxml2-dev libarmadillo-dev
+@endcode
+
+If you are using an Ubuntu version older than 12.04 ("Precise Pangolin") or
+Debian older than Wheezy, you will have to compile Armadillo from source.  See
+the README.txt distributed with Armadillo for more information.
+
+On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via yum:
+
+@code
+# yum install boost-devel boost-random boost-test boost-program-options
+  boost-math libxml2-devel armadillo-devel
+@endcode
+
+On Red Hat Enterprise Linux 6 and older (as well as CentOS 6), the Armadillo
+version available is too old and must be compiled by hand.  The same applies for
+Fedora 16 and older.
 
 @section config Configuring CMake
 
