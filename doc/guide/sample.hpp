@@ -41,7 +41,8 @@ nearest neighbor of each point in a dataset using the L1 metric, and then print
 the index of the neighbor and the distance of it to stdout.
 
 @code
-@include <mlpack/core.hpp>
+#include <mlpack/core.hpp>
+#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 using namespace mlpack;
 using namespace mlpack::neighbor; // NeighborSearch and NearestNeighborSort
