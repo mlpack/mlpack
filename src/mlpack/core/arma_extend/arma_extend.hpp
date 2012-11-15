@@ -12,13 +12,6 @@
 #ifndef __MLPACK_CORE_ARMA_EXTEND_ARMA_EXTEND_HPP
 #define __MLPACK_CORE_ARMA_EXTEND_ARMA_EXTEND_HPP
 
-// Use 64-bit indices (define uword as u64), but only if size_t is that size.
-// Basically, this will use 64-bit indices on 64-bit systems and 32-bit indices
-// on 32-bit systems (yes, there are exceptions).
-#if (ULONG_MAX > 0xffffffff)
-  #define ARMA_64BIT_WORD
-#endif
-
 // Add constructors for sparse vectors (these are only added if sparse support
 // is enabled).
 #define ARMA_EXTRA_COL_PROTO mlpack/core/arma_extend/Col_extra_bones.hpp
@@ -34,8 +27,12 @@
   #define csv_ascii (ppm_binary + 1) // ppm_binary is the last in the old enums.
 #endif
 
-
 namespace arma {
+  // u64
+  #include "typedef.hpp"
+  #include "traits.hpp"
+  #include "promote_type.hpp"
+
   // ccov()
   #include "op_ccov_proto.hpp"
   #include "op_ccov_meat.hpp"
