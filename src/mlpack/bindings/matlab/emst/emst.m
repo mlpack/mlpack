@@ -1,6 +1,7 @@
 function result = emst(dataPoints, varargin)
-% Fast Euclidean Minimum Spanning Tree. This script can compute
-% the Euclidean minimum spanning tree of a set of input points using the
+% result = emst(dataPoints, varargin)
+%
+% Compute the Euclidean minimum spanning tree of a set of input points using the
 % dual-tree Boruvka algorithm.
 %
 % The output is saved in a three-column matrix, where each row indicates an
@@ -9,36 +10,40 @@ function result = emst(dataPoints, varargin)
 % column corresponds to the distance between the two points.
 %
 % Parameters:
-% dataPoints - the matrix of data points. Columns are assumed to represent dimensions,
-%              with rows representing seperate points.
-% method     - the algorithm for computing the tree. 'naive' or 'boruvka', with
-%              'boruvka' being the default algorithm.
+%
+% dataPoints - The matrix of data points. Columns are assumed to represent
+%              dimensions, with rows representing separate points.
+% method     - The algorithm for computing the tree. 'naive' or 'boruvka', with
+%              'boruvka' being the default dual-tree Boruvka algorithm.
 % leafSize   - Leaf size in the kd-tree.  One-element leaves give the
 %              empirically best performance, but at the cost of greater memory
-%              requirements. One is default.
+%              requirements.  Defaults to 1.
 %
 % Examples:
+%
 % result = emst(dataPoints);
-% or
-% esult = emst(dataPoints,'method','naive');
+% result = emst(dataPoints, 'method', 'naive');
+% result = emst(dataPoints, 'method', 'naive', 'leafSize', 5);
 
-% a parser for the inputs
+% A parser for the inputs.
 p = inputParser;
-p.addParamValue('method', 'boruvka', @(x) strcmpi(x, 'naive') || strcmpi(x, 'boruvka'));
+p.addParamValue('method', 'boruvka', ...
+    @(x) strcmpi(x, 'naive') || strcmpi(x, 'boruvka'));
 p.addParamValue('leafSize', 1, @isscalar);
 
-% parsing the varargin options
+% Parse the varargin options.
 p.parse(varargin{:});
 parsed = p.Results;
 
-% interfacing with mlpack. transposing to machine learning standards.
+% Interface with mlpack. Transpose to machine learning standards.  MLPACK
+% expects column-major matrices; the user has passed in a row-major matrix.
 if strcmpi(parsed.method, 'boruvka')
   result = emst_mex(dataPoints', 1, parsed.leafSize);
-	result = result';
+    result = result';
   return;
 else
   result = emst_mex(dataPoints', 0, 1);
-	result = result';
+    result = result';
   return;
 end
 
