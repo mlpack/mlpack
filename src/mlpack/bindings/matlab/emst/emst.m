@@ -9,13 +9,16 @@ function result = emst(dataPoints, varargin)
 % second column corresponds to the greater index of the edge; and the third
 % column corresponds to the distance between the two points.
 %
-% Parameters:
+% Required parameters:
 %
 % dataPoints - The matrix of data points. Columns are assumed to represent
 %              dimensions, with rows representing separate points.
-% method     - The algorithm for computing the tree. 'naive' or 'boruvka', with
+%
+% Optional parameters (i.e. emst(..., 'parameter', value, ...)):
+%
+% 'method'   - The algorithm for computing the tree. 'naive' or 'boruvka', with
 %              'boruvka' being the default dual-tree Boruvka algorithm.
-% leafSize   - Leaf size in the kd-tree.  One-element leaves give the
+% 'leafSize' - Leaf size in the kd-tree.  One-element leaves give the
 %              empirically best performance, but at the cost of greater memory
 %              requirements.  Defaults to 1.
 %
