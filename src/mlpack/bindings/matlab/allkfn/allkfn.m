@@ -48,7 +48,7 @@ parsed
 
 % interfacing with mlpack
 [distances neighbors] = mex_allkfn(dataPoints', k, parsed.queryPoints', ...
-	parsed.leafSize, parsed.naive, parsed.singleMode);
+    parsed.leafSize, parsed.naive, parsed.singleMode);
 
 % transposing results
 distances = distances';
