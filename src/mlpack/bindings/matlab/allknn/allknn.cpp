@@ -1,69 +1,31 @@
+/**
+ * @file allknn.cpp
+ * @author Patrick Mason
+ *
+ * MEX function for MATLAB All-kNN binding.
+ */
 #include "mex.h"
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
-
-#include <string>
-#include <iostream>
-
-#include "neighbor_search.hpp"
+#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::neighbor;
 using namespace mlpack::tree;
 
-/*
-// Information about the program itself.
-PROGRAM_INFO("All K-Nearest-Neighbors",
-    "This program will calculate the all k-nearest-neighbors of a set of "
-    "points using kd-trees or cover trees (cover tree support is experimental "
-    "and may not be optimally fast). You may specify a separate set of "
-    "reference points and query points, or just a reference set which will be "
-    "used as both the reference and query set."
-    "\n\n"
-    "For example, the following will calculate the 5 nearest neighbors of each"
-    "point in 'input.csv' and store the distances in 'distances.csv' and the "
-    "neighbors in the file 'neighbors.csv':"
-    "\n\n"
-    "$ allknn --k=5 --reference_file=input.csv --distances_file=distances.csv\n"
-    "  --neighbors_file=neighbors.csv"
-    "\n\n"
-    "The output files are organized such that row i and column j in the "
-    "neighbors output file corresponds to the index of the point in the "
-    "reference set which is the i'th nearest neighbor from the point in the "
-    "query set with index j.  Row i and column j in the distances output file "
-    "corresponds to the distance between those two points.");
-
-// Define our input parameters that this program will take.
-PARAM_STRING_REQ("reference_file", "File containing the reference dataset.",
-    "r");
-PARAM_STRING_REQ("distances_file", "File to output distances into.", "d");
-PARAM_STRING_REQ("neighbors_file", "File to output neighbors into.", "n");
-
-PARAM_INT_REQ("k", "Number of furthest neighbors to find.", "k");
-
-PARAM_STRING("query_file", "File containing query points (optional).", "q", "");
-
-PARAM_INT("leaf_size", "Leaf size for tree building.", "l", 20);
-PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
-PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
-    "dual-tree search.", "s");
-PARAM_FLAG("cover_tree", "If true, use cover trees to perform the search "
-    "(experimental, may be slow).", "c");
-*/
-
 // the gateway, required by all mex functions
 void mexFunction(int nlhs, mxArray *plhs[],
                  int nrhs, const mxArray *prhs[])
 {
   // checking inputs
-	if (nrhs != 7) 
+  if (nrhs != 7)
   {
     mexErrMsgTxt("Expecting seven arguments.");
   }
 
-  if (nlhs != 2) 
+  if (nlhs != 2)
   {
     mexErrMsgTxt("Two outputs required.");
   }
@@ -72,36 +34,36 @@ void mexFunction(int nlhs, mxArray *plhs[],
   size_t numPoints = mxGetN(prhs[0]);
   size_t numDimensions = mxGetM(prhs[0]);
 
-	// feeding the referenceData matrix
-	arma::mat referenceData(numDimensions, numPoints);
-	// setting the values. 
+  // feeding the referenceData matrix
+  arma::mat referenceData(numDimensions, numPoints);
+  // setting the values.
   double * mexDataPoints = mxGetPr(prhs[0]);
-  for (int i = 0, n = numPoints * numDimensions; i < n; ++i) 
+  for (int i = 0, n = numPoints * numDimensions; i < n; ++i)
   {
     referenceData(i) = mexDataPoints[i];
   }
 
-	// getting the leafsize
-	int lsInt = (int) mxGetScalar(prhs[3]);
+  // getting the leafsize
+  int lsInt = (int) mxGetScalar(prhs[3]);
 
-	// getting k
-	size_t k = (int) mxGetScalar(prhs[1]);
+  // getting k
+  size_t k = (int) mxGetScalar(prhs[1]);
 
-	// naive algorithm?
-	bool naive = (mxGetScalar(prhs[4]) == 1.0);
+  // naive algorithm?
+  bool naive = (mxGetScalar(prhs[4]) == 1.0);
 
-	// single mode?
-	bool singleMode = (mxGetScalar(prhs[5]) == 1.0);
-	
-	// the query matrix
-	double * mexQueryPoints = mxGetPr(prhs[2]);
-	arma::mat queryData; 
-	bool hasQueryData = ((mxGetM(prhs[2]) != 0) && (mxGetN(prhs[2]) != 0)); 
-	
-	// cover-tree?
-	bool usesCoverTree = (mxGetScalar(prhs[6]) == 1.0);
+  // single mode?
+  bool singleMode = (mxGetScalar(prhs[5]) == 1.0);
 
-	/*
+  // the query matrix
+  double * mexQueryPoints = mxGetPr(prhs[2]);
+  arma::mat queryData;
+  bool hasQueryData = ((mxGetM(prhs[2]) != 0) && (mxGetN(prhs[2]) != 0));
+
+  // cover-tree?
+  bool usesCoverTree = (mxGetScalar(prhs[6]) == 1.0);
+
+  /*
   // Give CLI the command line parameters the user passed in.
   // CLI::ParseCommandLine(argc, argv);
 
@@ -122,33 +84,33 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
   Log::Info << "Loaded reference data from '" << referenceFile << "' ("
      << referenceData.n_rows << " x " << referenceData.n_cols << ")." << endl;
-	*/
+  */
 
   // Sanity check on k value: must be greater than 0, must be less than the
   // number of reference points.
   if (k > referenceData.n_cols)
   {
-		stringstream os;
-		os << "Invalid k: " << k << "; must be greater than 0 and less ";
-		os << "than or equal to the number of reference points (";
-		os << referenceData.n_cols << ")." << endl;
-		mexErrMsgTxt(os.str().c_str());
+    stringstream os;
+    os << "Invalid k: " << k << "; must be greater than 0 and less ";
+    os << "than or equal to the number of reference points (";
+    os << referenceData.n_cols << ")." << endl;
+    mexErrMsgTxt(os.str().c_str());
   }
 
   // Sanity check on leaf size.
   if (lsInt < 0)
   {
-		stringstream os;
-		os << "Invalid leaf size: " << lsInt << ".  Must be greater "
+    stringstream os;
+    os << "Invalid leaf size: " << lsInt << ".  Must be greater "
         "than or equal to 0." << endl;
-		mexErrMsgTxt(os.str().c_str());
+    mexErrMsgTxt(os.str().c_str());
   }
   size_t leafSize = lsInt;
 
   // Naive mode overrides single mode.
   if (singleMode && naive)
   {
-   	mexWarnMsgTxt("single_mode ignored because naive is present.");
+     mexWarnMsgTxt("single_mode ignored because naive is present.");
   }
 
   if (naive)
@@ -158,7 +120,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
   arma::mat distances;
 
   //if (!CLI::HasParam("cover_tree"))
-	if (usesCoverTree)
+  if (usesCoverTree)
   {
     // Because we may construct it differently, we need a pointer.
     AllkNN* allknn = NULL;
@@ -177,20 +139,20 @@ void mexFunction(int nlhs, mxArray *plhs[],
     std::vector<size_t> oldFromNewQueries;
 
     //if (CLI::GetParam<string>("query_file") != "")
-		if (hasQueryData)
+    if (hasQueryData)
     {
       //string queryFile = CLI::GetParam<string>("query_file");
       //data::Load(queryFile.c_str(), queryData, true);
 
-			// setting the values. 
-  		mexDataPoints = mxGetPr(prhs[2]);
-  		numPoints = mxGetN(prhs[2]);
-  		numDimensions = mxGetM(prhs[2]);
-			queryData = arma::mat(numDimensions, numPoints);
-  		for (int i = 0, n = numPoints * numDimensions; i < n; ++i) 
-  		{
-    		queryData(i) = mexDataPoints[i];
-  		}
+      // setting the values.
+      mexDataPoints = mxGetPr(prhs[2]);
+      numPoints = mxGetN(prhs[2]);
+      numDimensions = mxGetM(prhs[2]);
+      queryData = arma::mat(numDimensions, numPoints);
+      for (int i = 0, n = numPoints * numDimensions; i < n; ++i)
+      {
+        queryData(i) = mexDataPoints[i];
+      }
 
       if (naive && leafSize < queryData.n_cols)
         leafSize = queryData.n_cols;
@@ -224,7 +186,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
     // Do the actual remapping.
     //if ((CLI::GetParam<string>("query_file") != "") && !singleMode)
-		if ((hasQueryData) && !singleMode)
+    if ((hasQueryData) && !singleMode)
     {
       for (size_t i = 0; i < distancesOut.n_cols; ++i)
       {
@@ -240,7 +202,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
       }
     }
     //else if ((CLI::GetParam<string>("query_file") != "") && singleMode)
-		else if ((hasQueryData) && singleMode)
+    else if ((hasQueryData) && singleMode)
     {
       // No remapping of queries is necessary.  So distances are the same.
       distances = sqrt(distancesOut);
@@ -286,20 +248,20 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
     // See if we have query data.
     //if (CLI::HasParam("query_file"))
-		if (hasQueryData)
+    if (hasQueryData)
     {
       //string queryFile = CLI::GetParam<string>("query_file");
       //data::Load(queryFile, queryData, true);
 
-			// setting the values. 
-  		mexDataPoints = mxGetPr(prhs[2]);
-  		numPoints = mxGetN(prhs[2]);
-  		numDimensions = mxGetM(prhs[2]);
-			queryData = arma::mat(numDimensions, numPoints);
-  		for (int i = 0, n = numPoints * numDimensions; i < n; ++i) 
-  		{
-    		queryData(i) = mexDataPoints[i];
-  		}
+      // setting the values.
+      mexDataPoints = mxGetPr(prhs[2]);
+      numPoints = mxGetN(prhs[2]);
+      numDimensions = mxGetM(prhs[2]);
+      queryData = arma::mat(numDimensions, numPoints);
+      for (int i = 0, n = numPoints * numDimensions; i < n; ++i)
+      {
+        queryData(i) = mexDataPoints[i];
+      }
 
       // Build query tree.
       if (!singleMode)
@@ -335,16 +297,16 @@ void mexFunction(int nlhs, mxArray *plhs[],
   //data::Save(neighborsFile, neighbors);
   // constructing matrix to return to matlab
   plhs[0] = mxCreateDoubleMatrix(distances.n_rows, distances.n_cols, mxREAL);
-	plhs[1] = mxCreateDoubleMatrix(neighbors.n_rows, neighbors.n_cols, mxREAL);
+  plhs[1] = mxCreateDoubleMatrix(neighbors.n_rows, neighbors.n_cols, mxREAL);
 
   // setting the values
   double * out = mxGetPr(plhs[0]);
-  for (int i = 0, n = distances.n_rows * distances.n_cols; i < n; ++i) 
+  for (int i = 0, n = distances.n_rows * distances.n_cols; i < n; ++i)
   {
     out[i] = distances(i);
   }
   out = mxGetPr(plhs[1]);
-  for (int i = 0, n = neighbors.n_rows * neighbors.n_cols; i < n; ++i) 
+  for (int i = 0, n = neighbors.n_rows * neighbors.n_cols; i < n; ++i)
   {
     out[i] = neighbors(i);
   }
