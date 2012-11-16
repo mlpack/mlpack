@@ -1,27 +1,33 @@
+/**
+ * @file gmm.cpp
+ * @author Patrick Mason
+ *
+ * MEX function for MATLAB GMM binding.
+ */
 #include "mex.h"
 
-#include "gmm.hpp"
-#include <iostream>
+#include <mlpack/core.hpp>
+#include <mlpack/methods/gmm/gmm.hpp>
 
 using namespace mlpack;
 using namespace mlpack::gmm;
-using namespace mlpack::utilities;
+using namespace mlpack::util;
 
 void mexFunction(int nlhs, mxArray *plhs[],
                  int nrhs, const mxArray *prhs[])
 {
   // argument checks
-  if (nrhs != 3) 
+  if (nrhs != 3)
   {
     mexErrMsgTxt("Expecting three inputs.");
   }
 
-  if (nlhs != 1) 
+  if (nlhs != 1)
   {
     mexErrMsgTxt("Output required.");
   }
 
-	size_t seed = (size_t) mxGetScalar(prhs[2]);
+  size_t seed = (size_t) mxGetScalar(prhs[2]);
   // Check parameters and load data.
   if (seed != 0)
     math::RandomSeed(seed);
@@ -33,15 +39,15 @@ void mexFunction(int nlhs, mxArray *plhs[],
   size_t numPoints = mxGetN(prhs[0]);
   size_t numDimensions = mxGetM(prhs[0]);
   arma::mat dataPoints(numDimensions, numPoints);
-  for (int i = 0, n = numPoints * numDimensions; i < n; ++i) 
+  for (int i = 0, n = numPoints * numDimensions; i < n; ++i)
   {
     dataPoints(i) = mexDataPoints[i];
   }
 
-	int gaussians = (int) mxGetScalar(prhs[1]);
+  int gaussians = (int) mxGetScalar(prhs[1]);
   if (gaussians <= 0)
   {
-		std::stringstream ss;
+    std::stringstream ss;
     ss << "Invalid number of Gaussians (" << gaussians << "); must "
         "be greater than or equal to 1." << std::endl;
     mexErrMsgTxt(ss.str().c_str());
@@ -66,58 +72,58 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
   plhs[0] =  mxCreateStructArray(ndim, dims, 3, fieldNames);
 
-	// dimensionality
+  // dimensionality
   mxArray * field_value;
-	field_value = mxCreateDoubleMatrix(1, 1, mxREAL);
-	*mxGetPr(field_value) = numDimensions;
+  field_value = mxCreateDoubleMatrix(1, 1, mxREAL);
+  *mxGetPr(field_value) = numDimensions;
   mxSetFieldByNumber(plhs[0], 0, 0, field_value);
 
-	// mixture weights
-	field_value = mxCreateDoubleMatrix(gmm.Weights().size(), 1, mxREAL);
-	double * values = mxGetPr(field_value);
-	for (int i=0; i<gmm.Weights().size(); ++i)
-	{
-		values[i] = gmm.Weights()[i];
-	}
+  // mixture weights
+  field_value = mxCreateDoubleMatrix(gmm.Weights().size(), 1, mxREAL);
+  double * values = mxGetPr(field_value);
+  for (int i=0; i<gmm.Weights().size(); ++i)
+  {
+    values[i] = gmm.Weights()[i];
+  }
   mxSetFieldByNumber(plhs[0], 0, 1, field_value);
-  
-	// gaussian mean/variances
-	const char * gaussianNames[2] = {
+
+  // gaussian mean/variances
+  const char * gaussianNames[2] = {
     "mean"
     , "covariance"
   };
-	ndim = 1;
+  ndim = 1;
   dims[0] = gmm.Gaussians();
 
-	field_value = mxCreateStructArray(ndim, dims, 2, gaussianNames);
-	for (int i=0; i<gmm.Gaussians(); ++i)
-	{
-		mxArray * tmp;
-		double * values;
-	
-		// setting the mean
-		arma::mat mean = gmm.Means()[i];
-		tmp = mxCreateDoubleMatrix(numDimensions, 1, mxREAL);
-		values = mxGetPr(tmp);
-		for (int j = 0; j < numDimensions; ++j)
-		{
-			values[j] = mean(j);
-		}
-		// note: SetField does not copy the data structure.
-		// mxDuplicateArray does the necessary copying.
-		mxSetFieldByNumber(field_value, i, 0, mxDuplicateArray(tmp));
-		mxDestroyArray(tmp);
+  field_value = mxCreateStructArray(ndim, dims, 2, gaussianNames);
+  for (int i=0; i<gmm.Gaussians(); ++i)
+  {
+    mxArray * tmp;
+    double * values;
 
-		// setting the covariance matrix
-		arma::mat covariance = gmm.Covariances()[i];
-		tmp = mxCreateDoubleMatrix(numDimensions, numDimensions, mxREAL);
-		values = mxGetPr(tmp);
-		for (int j = 0; j < numDimensions * numDimensions; ++j)
-		{
-			values[j] = covariance(j);
-		}
-		mxSetFieldByNumber(field_value, i, 1, mxDuplicateArray(tmp));
-		mxDestroyArray(tmp);
-	}
-	mxSetFieldByNumber(plhs[0], 0, 2, field_value);
+    // setting the mean
+    arma::mat mean = gmm.Means()[i];
+    tmp = mxCreateDoubleMatrix(numDimensions, 1, mxREAL);
+    values = mxGetPr(tmp);
+    for (int j = 0; j < numDimensions; ++j)
+    {
+      values[j] = mean(j);
+    }
+    // note: SetField does not copy the data structure.
+    // mxDuplicateArray does the necessary copying.
+    mxSetFieldByNumber(field_value, i, 0, mxDuplicateArray(tmp));
+    mxDestroyArray(tmp);
+
+    // setting the covariance matrix
+    arma::mat covariance = gmm.Covariances()[i];
+    tmp = mxCreateDoubleMatrix(numDimensions, numDimensions, mxREAL);
+    values = mxGetPr(tmp);
+    for (int j = 0; j < numDimensions * numDimensions; ++j)
+    {
+      values[j] = covariance(j);
+    }
+    mxSetFieldByNumber(field_value, i, 1, mxDuplicateArray(tmp));
+    mxDestroyArray(tmp);
+  }
+  mxSetFieldByNumber(plhs[0], 0, 2, field_value);
 }
