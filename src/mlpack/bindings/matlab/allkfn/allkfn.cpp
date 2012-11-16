@@ -7,12 +7,7 @@
 #include "mex.h"
 
 #include <mlpack/core.hpp>
-
-#include <string>
-#include <fstream>
-#include <iostream>
-
-#include "neighbor_search.hpp"
+#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 using namespace std;
 using namespace mlpack;
@@ -37,30 +32,30 @@ void mexFunction(int nlhs, mxArray *plhs[],
   size_t numDimensions = mxGetM(prhs[0]);
 
   // Create the reference matrix.
-	arma::mat referenceData(numDimensions, numPoints);
-	// setting the values.
+  arma::mat referenceData(numDimensions, numPoints);
+  // setting the values.
   double * mexDataPoints = mxGetPr(prhs[0]);
   for (int i = 0, n = numPoints * numDimensions; i < n; ++i)
   {
     referenceData(i) = mexDataPoints[i];
   }
 
-	// getting the leafsize
-	int lsInt = (int) mxGetScalar(prhs[3]);
+  // getting the leafsize
+  int lsInt = (int) mxGetScalar(prhs[3]);
 
-	// getting k
-	size_t k = (int) mxGetScalar(prhs[1]);
+  // getting k
+  size_t k = (int) mxGetScalar(prhs[1]);
 
-	// naive algorithm?
-	bool naive = (mxGetScalar(prhs[4]) == 1.0);
+  // naive algorithm?
+  bool naive = (mxGetScalar(prhs[4]) == 1.0);
 
-	// single mode?
-	bool singleMode = (mxGetScalar(prhs[5]) == 1.0);
+  // single mode?
+  bool singleMode = (mxGetScalar(prhs[5]) == 1.0);
 
-	// the query matrix
-	double * mexQueryPoints = mxGetPr(prhs[2]);
-	arma::mat queryData;
-	bool hasQueryData = ((mxGetM(prhs[2]) != 0) && (mxGetN(prhs[2]) != 0));
+  // the query matrix
+  double * mexQueryPoints = mxGetPr(prhs[2]);
+  arma::mat queryData;
+  bool hasQueryData = ((mxGetM(prhs[2]) != 0) && (mxGetN(prhs[2]) != 0));
 
   //arma::mat referenceData;
   //arma::mat queryData; // So it doesn't go out of scope.
@@ -70,27 +65,27 @@ void mexFunction(int nlhs, mxArray *plhs[],
   // number of reference points.
   if (k > referenceData.n_cols)
   {
-		stringstream os;
-		os << "Invalid k: " << k << "; must be greater than 0 and less ";
-		os << "than or equal to the number of reference points (";
-		os << referenceData.n_cols << ")." << endl;
-		mexErrMsgTxt(os.str().c_str());
+    stringstream os;
+    os << "Invalid k: " << k << "; must be greater than 0 and less ";
+    os << "than or equal to the number of reference points (";
+    os << referenceData.n_cols << ")." << endl;
+    mexErrMsgTxt(os.str().c_str());
   }
 
   // Sanity check on leaf size.
   if (lsInt < 0)
   {
-		stringstream os;
-		os << "Invalid leaf size: " << lsInt << ".  Must be greater "
-        "than or equal to 0." << endl;
-		mexErrMsgTxt(os.str().c_str());
+    stringstream os;
+    os << "Invalid leaf size: " << lsInt << ".  Must be greater ";
+    os << "than or equal to 0." << endl;
+    mexErrMsgTxt(os.str().c_str());
   }
   size_t leafSize = lsInt;
 
   // Naive mode overrides single mode.
   if (singleMode && naive)
   {
-		mexWarnMsgTxt("single_mode ignored because naive is present.");
+    mexWarnMsgTxt("single_mode ignored because naive is present.");
   }
 
   if (naive)
@@ -113,17 +108,17 @@ void mexFunction(int nlhs, mxArray *plhs[],
   std::vector<size_t> oldFromNewQueries;
 
   //f (CLI::GetParam<string>("query_file") != "")
-	if (hasQueryData)
+  if (hasQueryData)
   {
-		// setting the values.
-  	mexDataPoints = mxGetPr(prhs[2]);
-  	numPoints = mxGetN(prhs[2]);
-  	numDimensions = mxGetM(prhs[2]);
-		queryData = arma::mat(numDimensions, numPoints);
-  	for (int i = 0, n = numPoints * numDimensions; i < n; ++i)
-  	{
-   		queryData(i) = mexDataPoints[i];
-  	}
+    // setting the values.
+    mexDataPoints = mxGetPr(prhs[2]);
+    numPoints = mxGetN(prhs[2]);
+    numDimensions = mxGetM(prhs[2]);
+    queryData = arma::mat(numDimensions, numPoints);
+    for (int i = 0, n = numPoints * numDimensions; i < n; ++i)
+    {
+      queryData(i) = mexDataPoints[i];
+    }
 
     if (naive && leafSize < queryData.n_cols)
       leafSize = queryData.n_cols;
@@ -151,7 +146,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
   // Do the actual remapping.
   //if (CLI::GetParam<string>("query_file") != "")
-	if (hasQueryData)
+  if (hasQueryData)
   {
     for (size_t i = 0; i < distances.n_cols; ++i)
     {
@@ -184,9 +179,9 @@ void mexFunction(int nlhs, mxArray *plhs[],
   if (queryTree)
     delete queryTree;
 
-	// constructing matrix to return to matlab
+  // constructing matrix to return to matlab
   plhs[0] = mxCreateDoubleMatrix(distances.n_rows, distances.n_cols, mxREAL);
-	plhs[1] = mxCreateDoubleMatrix(neighbors.n_rows, neighbors.n_cols, mxREAL);
+  plhs[1] = mxCreateDoubleMatrix(neighbors.n_rows, neighbors.n_cols, mxREAL);
 
   // setting the values
   double * out = mxGetPr(plhs[0]);
@@ -200,6 +195,6 @@ void mexFunction(int nlhs, mxArray *plhs[],
     out[i] = neighbors(i);
   }
 
-	// More clean up.
+  // More clean up.
   delete allkfn;
 }
