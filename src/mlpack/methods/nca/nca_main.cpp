@@ -61,7 +61,6 @@ using namespace mlpack;
 using namespace mlpack::nca;
 using namespace mlpack::metric;
 using namespace std;
-using namespace arma;
 
 int main(int argc, char* argv[])
 {
@@ -84,11 +83,11 @@ int main(int argc, char* argv[])
   const bool shuffle = !CLI::HasParam("linear_scan");
 
   // Load data.
-  mat data;
+  arma::mat data;
   data::Load(inputFile.c_str(), data, true);
 
   // Do we want to load labels separately?
-  umat labels(data.n_cols, 1);
+  arma::umat labels(data.n_cols, 1);
   if (labelsFile != "")
   {
     data::Load(labelsFile.c_str(), labels, true);
@@ -107,7 +106,7 @@ int main(int argc, char* argv[])
     data.shed_row(data.n_rows - 1);
   }
 
-  mat distance;
+  arma::mat distance;
 
   // Normalize the data, if necessary.
   if (normalize)
