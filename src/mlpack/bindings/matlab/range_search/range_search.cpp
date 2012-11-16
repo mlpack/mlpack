@@ -1,62 +1,19 @@
+/**
+ * @file range_search.cpp
+ * @author Patrick Mason
+ *
+ * MEX function for MATLAB range search binding.
+ */
 #include "mex.h"
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
-
-#include "range_search.hpp"
+#include <mlpack/methods/range_search/range_search.hpp>
 
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::range;
 using namespace mlpack::tree;
-
-/*
-// Information about the program itself.
-PROGRAM_INFO("Range Search",
-    "This program implements range search with a Euclidean distance metric. "
-    "For a given query point, a given range, and a given set of reference "
-    "points, the program will return all of the reference points with distance "
-    "to the query point in the given range.  This is performed for an entire "
-    "set of query points. You may specify a separate set of reference and query"
-    " points, or only a reference set -- which is then used as both the "
-    "reference and query set.  The given range is taken to be inclusive (that "
-    "is, points with a distance exactly equal to the minimum and maximum of the"
-    " range are included in the results)."
-    "\n\n"
-    "For example, the following will calculate the points within the range [2, "
-    "5] of each point in 'input.csv' and store the distances in 'distances.csv'"
-    " and the neighbors in 'neighbors.csv':"
-    "\n\n"
-    "$ range_search --min=2 --max=5 --reference_file=input.csv\n"
-    "  --distances_file=distances.csv --neighbors_file=neighbors.csv"
-    "\n\n"
-    "The output files are organized such that line i corresponds to the points "
-    "found for query point i.  Because sometimes 0 points may be found in the "
-    "given range, lines of the output files may be empty.  The points are not "
-    "ordered in any specific manner."
-    "\n\n"
-    "Because the number of points returned for each query point may differ, the"
-    " resultant CSV-like files may not be loadable by many programs.  However, "
-    "at this time a better way to store this non-square result is not known.  "
-    "As a result, any output files will be written as CSVs in this manner, "
-    "regardless of the given extension.");
-
-// Define our input parameters that this program will take.
-PARAM_STRING_REQ("reference_file", "File containing the reference dataset.",
-    "r");
-PARAM_STRING_REQ("distances_file", "File to output distances into.", "d");
-PARAM_STRING_REQ("neighbors_file", "File to output neighbors into.", "n");
-
-PARAM_DOUBLE_REQ("max", "Upper bound in range.", "M");
-PARAM_DOUBLE("min", "Lower bound in range.", "m", 0.0);
-
-PARAM_STRING("query_file", "File containing query points (optional).", "q", "");
-
-PARAM_INT("leaf_size", "Leaf size for tree building.", "l", 20);
-PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
-PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
-    "dual-tree search.", "s");
-*/
 
 typedef RangeSearch<metric::SquaredEuclideanDistance,
     BinarySpaceTree<bound::HRectBound<2>, EmptyStatistic> > RSType;
@@ -80,37 +37,37 @@ void mexFunction(int nlhs, mxArray *plhs[],
   //bool singleMode = CLI::HasParam("single_mode");
 
   // argument checks
-  if (nrhs != 7) 
+  if (nrhs != 7)
   {
     mexErrMsgTxt("Expecting an datapoints matrix, isBoruvka, and leafSize.");
   }
 
-  if (nlhs != 1) 
+  if (nlhs != 1)
   {
     mexErrMsgTxt("Output required.");
   }
 
-	double max = mxGetScalar(prhs[1]);
-	double min = mxGetScalar(prhs[2]);
+  double max = mxGetScalar(prhs[1]);
+  double min = mxGetScalar(prhs[2]);
   int lsInt = (int) mxGetScalar(prhs[4]);
   bool naive = (mxGetScalar(prhs[5]) == 1.0);
   bool singleMode = (mxGetScalar(prhs[6]) == 1.0);
 
   // checking for query data
-	bool hasQueryData = ((mxGetM(prhs[3]) != 0) && (mxGetN(prhs[3]) != 0)); 
-  arma::mat queryData; 
+  bool hasQueryData = ((mxGetM(prhs[3]) != 0) && (mxGetN(prhs[3]) != 0));
+  arma::mat queryData;
 
-	// setting the dataset values. 
+  // setting the dataset values.
   double * mexDataPoints = mxGetPr(prhs[0]);
   size_t numPoints = mxGetN(prhs[0]);
   size_t numDimensions = mxGetM(prhs[0]);
   arma::mat referenceData(numDimensions, numPoints);
-  for (int i = 0, n = numPoints * numDimensions; i < n; ++i) 
+  for (int i = 0, n = numPoints * numDimensions; i < n; ++i)
   {
     referenceData(i) = mexDataPoints[i];
   }
-  
-	//if (!data::Load(referenceFile.c_str(), referenceData))
+
+  //if (!data::Load(referenceFile.c_str(), referenceData))
   //  Log::Fatal << "Reference file " << referenceFile << "not found." << endl;
 
   //Log::Info << "Loaded reference data from '" << referenceFile << "'." << endl;
@@ -138,7 +95,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
   // Naive mode overrides single mode.
   if (singleMode && naive)
   {
-    mexWarnMsgTxt("single_mode ignored because naive is present."); 
+    mexWarnMsgTxt("single_mode ignored because naive is present.");
   }
 
   if (naive)
@@ -174,15 +131,15 @@ void mexFunction(int nlhs, mxArray *plhs[],
     //if (!data::Load(queryFile.c_str(), queryData))
     //  Log::Fatal << "Query file " << queryFile << " not found" << endl;
 
-		// setting the values. 
-  	mexDataPoints = mxGetPr(prhs[3]);
-  	numPoints = mxGetN(prhs[3]);
-  	numDimensions = mxGetM(prhs[3]);
-		queryData = arma::mat(numDimensions, numPoints);
-  	for (int i = 0, n = numPoints * numDimensions; i < n; ++i) 
-  	{
-    	queryData(i) = mexDataPoints[i];
-  	}
+    // setting the values.
+    mexDataPoints = mxGetPr(prhs[3]);
+    numPoints = mxGetN(prhs[3]);
+    numDimensions = mxGetM(prhs[3]);
+    queryData = arma::mat(numDimensions, numPoints);
+    for (int i = 0, n = numPoints * numDimensions; i < n; ++i)
+    {
+      queryData(i) = mexDataPoints[i];
+    }
 
     if (naive && leafSize < queryData.n_cols)
       leafSize = queryData.n_cols;
@@ -263,46 +220,46 @@ void mexFunction(int nlhs, mxArray *plhs[],
     }
   }
 
-	// Setting values to be returned to matlab
-	mwSize ndim = 1;
+  // Setting values to be returned to matlab
+  mwSize ndim = 1;
   mwSize dims[1] = {distancesOut.size()};
   const char * fieldNames[2] = {
     "neighbors"
     , "distances"
   };
 
-	plhs[0] = mxCreateStructArray(ndim, dims, 2, fieldNames);
+  plhs[0] = mxCreateStructArray(ndim, dims, 2, fieldNames);
 
-	// setting the structure elements
-	for (int i=0; i<distancesOut.size(); ++i)
-	{
-		mxArray * tmp;
-		double * values;
+  // setting the structure elements
+  for (int i=0; i<distancesOut.size(); ++i)
+  {
+    mxArray * tmp;
+    double * values;
 
-		// settings the neighbors
-		const size_t numElements = distancesOut[i].size();
-		tmp = mxCreateDoubleMatrix(1, numElements, mxREAL);
-		values = mxGetPr(tmp);
-		for (int j=0; j<numElements; ++j)
-		{
-			// converting to matlab's index offset
-			values[j] = neighborsOut[i][j] + 1;
-		}
-		// note: SetField does not copy the data structure.
-		// mxDuplicateArray does the necessary copying.
-		mxSetFieldByNumber(plhs[0], i, 0, mxDuplicateArray(tmp));
-		mxDestroyArray(tmp);
+    // settings the neighbors
+    const size_t numElements = distancesOut[i].size();
+    tmp = mxCreateDoubleMatrix(1, numElements, mxREAL);
+    values = mxGetPr(tmp);
+    for (int j=0; j<numElements; ++j)
+    {
+      // converting to matlab's index offset
+      values[j] = neighborsOut[i][j] + 1;
+    }
+    // note: SetField does not copy the data structure.
+    // mxDuplicateArray does the necessary copying.
+    mxSetFieldByNumber(plhs[0], i, 0, mxDuplicateArray(tmp));
+    mxDestroyArray(tmp);
 
-		// setting the distances
-		tmp = mxCreateDoubleMatrix(1, numElements, mxREAL);
-		values = mxGetPr(tmp);
-		for (int j=0; j<numElements; ++j)
-		{
-			values[j] = distancesOut[i][j];
-		}
-		mxSetFieldByNumber(plhs[0], i, 1, mxDuplicateArray(tmp));
-		mxDestroyArray(tmp);
-	}
+    // setting the distances
+    tmp = mxCreateDoubleMatrix(1, numElements, mxREAL);
+    values = mxGetPr(tmp);
+    for (int j=0; j<numElements; ++j)
+    {
+      values[j] = distancesOut[i][j];
+    }
+    mxSetFieldByNumber(plhs[0], i, 1, mxDuplicateArray(tmp));
+    mxDestroyArray(tmp);
+  }
 
   // Clean up.
   if (queryTree)
