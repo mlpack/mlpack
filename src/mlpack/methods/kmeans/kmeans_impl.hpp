@@ -722,5 +722,5 @@ Cluster(const MatType& data,
   }
 }
 
-}; // namespace gmm
+}; // namespace kmeans
 }; // namespace mlpack
