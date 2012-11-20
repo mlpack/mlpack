@@ -130,6 +130,11 @@ add_subdirectory(emst)
 add_subdirectory(kmeans)
 add_subdirectory(range_search)
 add_subdirectory(gmm)
+add_subdirectory(pca)
+add_subdirectory(kernel_pca)
+add_subdirectory(lars)
+add_subdirectory(nca)
+add_subdirectory(nmf)
 
 # Create a target whose sole purpose is to modify the pathdef.m MATLAB file so
 # that the MLPACK toolbox is added to the MATLAB default path.
