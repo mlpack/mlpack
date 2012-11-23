@@ -1948,6 +1948,24 @@ BOOST_AUTO_TEST_CASE(CoverTreeConstructionTest)
 }
 
 /**
+ * Test the manual constructor.
+ */
+BOOST_AUTO_TEST_CASE(CoverTreeManualConstructorTest)
+{
+  arma::mat dataset;
+  dataset.zeros(10, 10);
+
+  CoverTree<> node(dataset, 1.3, 3, 2, 1.5, 2.75);
+
+  BOOST_REQUIRE_EQUAL(&node.Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(node.Base(), 1.3);
+  BOOST_REQUIRE_EQUAL(node.Point(), 3);
+  BOOST_REQUIRE_EQUAL(node.Scale(), 2);
+  BOOST_REQUIRE_EQUAL(node.ParentDistance(), 1.5);
+  BOOST_REQUIRE_EQUAL(node.FurthestDescendantDistance(), 2.75);
+}
+
+/**
  * Make sure cover trees work in different metric spaces.
  */
 BOOST_AUTO_TEST_CASE(CoverTreeAlternateMetricTest)
