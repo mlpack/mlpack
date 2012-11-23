@@ -63,8 +63,8 @@ void NMF<InitializationRule, WUpdateRule, HUpdateRule>::Apply(
   size_t iteration = 1;
   const size_t nm = n * m;
   double residue = minResidue;
-  double normOld;
-  double norm;
+  double normOld = 0;
+  double norm = 0;
   arma::mat WH;
 
   while (residue >= minResidue && iteration != maxIterations)
