@@ -411,6 +411,25 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
   Log::Assert(furthestDescendantDistance <= pow(base, scale + 1));
 }
 
+// Manually create a cover tree node.
+template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
+    const arma::mat& dataset,
+    const double base,
+    const size_t pointIndex,
+    const int scale,
+    const double parentDistance,
+    const double furthestDescendantDistance) :
+    dataset(dataset),
+    point(pointIndex),
+    scale(scale),
+    base(base),
+    parentDistance(parentDistance),
+    furthestDescendantDistance(furthestDescendantDistance)
+{
+  // Nothing to do.
+}
+
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 CoverTree<MetricType, RootPointPolicy, StatisticType>::~CoverTree()
 {

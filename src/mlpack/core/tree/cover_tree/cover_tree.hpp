@@ -144,6 +144,27 @@ class CoverTree
             MetricType& metric = NULL);
 
   /**
+   * Manually construct a cover tree node; no tree assembly is done in this
+   * constructor, and children must be added manually (use Children()).  This
+   * constructor is useful when the tree is being "imported" into the CoverTree
+   * class after being created in some other manner.
+   *
+   * @param dataset Reference to the dataset this node is a part of.
+   * @param base Base that was used for tree building.
+   * @param pointIndex Index of the point in the dataset which this node refers
+   *      to.
+   * @param scale Scale of this node's level in the tree.
+   * @param parentDistance Distance to parent node point.
+   * @param furthestDescendantDistance Distance to furthest descendant point.
+   */
+  CoverTree(const arma::mat& dataset,
+            const double base,
+            const size_t pointIndex,
+            const int scale,
+            const double parentDistance,
+            const double furthestDescendantDistance);
+
+  /**
    * Delete this cover tree node and its children.
    */
   ~CoverTree();
