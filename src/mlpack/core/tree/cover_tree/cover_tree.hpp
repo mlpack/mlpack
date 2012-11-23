@@ -27,14 +27,14 @@ namespace tree {
  *
  * - nesting: the level C_i is a subset of the level C_{i - 1}.
  * - covering: all node in level C_{i - 1} have at least one node in the
- *     level C_i with distance less than or equal to EC^i (exactly one of these
+ *     level C_i with distance less than or equal to b^i (exactly one of these
  *     is a parent of the point in level C_{i - 1}.
- * - separation: all nodes in level C_i have distance greater than EC^i to all
+ * - separation: all nodes in level C_i have distance greater than b^i to all
  *     other nodes in level C_i.
  *
- * The value 'EC' refers to the base, which is a parameter of the
- * tree.  These three properties make the cover tree very good for fast,
- * high-dimensional nearest-neighbor search.
+ * The value 'b' refers to the base, which is a parameter of the tree.  These
+ * three properties make the cover tree very good for fast, high-dimensional
+ * nearest-neighbor search.
  *
  * The theoretical structure of the tree contains many 'implicit' nodes which
  * only have a "self-child" (a child referencing the same point, but at a lower
