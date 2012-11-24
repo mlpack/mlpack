@@ -62,7 +62,7 @@ void CheckCovering(const TreeType& node)
 
   // To ensure that this node satisfies the covering principle, we must ensure
   // that the distance to each child is less than pow(expansionConstant, scale).
-  double maxDistance = pow(node.ExpansionConstant(), node.Scale());
+  double maxDistance = pow(node.Base(), node.Scale());
   for (size_t i = 0; i < node.NumChildren(); ++i)
   {
     const size_t childPoint = node.Child(i).Point();
