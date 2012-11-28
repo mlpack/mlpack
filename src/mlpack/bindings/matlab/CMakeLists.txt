@@ -2,14 +2,7 @@
 # non-Linux systems.
 
 # We need the mex compiler for this to work.
-find_package(MatlabMex)
-
-if(NOT ${MATLABMEX_FOUND})
-  message(STATUS
-      "MATLAB mex compiler not found; MATLAB bindings will not be built.")
-  message(STATUS "If MATLAB is installed, try specifying MATLAB_ROOT.")
-  return()
-endif(NOT ${MATLABMEX_FOUND})
+find_package(MatlabMex REQUIRED)
 
 # If the mex compiler is wrapping an "unsupported" version, warn the user that
 # they may have issues with the produced bindings for a multitude of reasons.
@@ -49,7 +42,7 @@ if(UNIX)
       endif(NOT ("${MEX_COMPILER_VERSION}" VERSION_LESS
           "${OTHER_COMPILER_VERSION}"))
     endif(MEX_COMPILER_VERSION AND OTHER_COMPILER_VERSION)
-      
+
     if(NEED_TO_WARN EQUAL 1)
       message(WARNING "The MATLAB runtime glibc is different than the system "
           " glibc.  This can (and probably will) cause the MLPACK bindings "
@@ -126,6 +119,8 @@ include_directories(${CMAKE_SOURCE_DIR}/src/) # So we can include <mlpack/...>.
 set(MATLAB_TOOLBOX_DIR "${MATLAB_ROOT}/toolbox")
 
 # CHANGE HERE FOR NEW BINDINGS!!!!
+add_subdirectory(allkfn)
+add_subdirectory(allknn)
 add_subdirectory(emst)
 add_subdirectory(kmeans)
 add_subdirectory(range_search)
@@ -145,7 +140,12 @@ add_custom_target(matlab ALL
         ${CMAKE_SOURCE_DIR}/CMake/ModifyMatlabPathdef.cmake
     # Due to the dependencies, 'make matlab' makes all the bindings.
     DEPENDS
+    allknn_mex
+    allkfn_mex
     emst_mex
+    gmm_mex
+    kmeans_mex
+    range_search_mex
 )
 
 install(FILES "${CMAKE_BINARY_DIR}/matlab/pathdef.m"
