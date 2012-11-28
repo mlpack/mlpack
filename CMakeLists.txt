@@ -6,6 +6,7 @@ project(mlpack C CXX)
 option(DEBUG "Compile with debugging information" ON)
 option(PROFILE "Compile with profiling information" ON)
 option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
+option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 
 # This is as of yet unused.
 #option(PGO "Use profile-guided optimization if not a debug build" ON)
