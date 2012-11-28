@@ -5,15 +5,11 @@ set(${MLPACK_SRCS} ${MLPACK_SRCS} "core.hpp")
 
 ## Recurse into both core/ and methods/.
 set(DIRS
+  bindings
   core
   methods
   tests
 )
-
-# If we are making MATLAB bindings, recurse into that subdirectory.
-if(MATLAB_BINDINGS)
-  set(DIRS ${DIRS} bindings)
-endif(MATLAB_BINDINGS)
 
 foreach(dir ${DIRS})
     add_subdirectory(${dir})
