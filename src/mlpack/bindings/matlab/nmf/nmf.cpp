@@ -2,12 +2,12 @@
 
 #include <mlpack/core.hpp>
 
-#include "nmf.hpp"
+#include <mlpack/methods/nmf/nmf.hpp>
 
-#include "random_init.hpp"
-#include "mult_dist_update_rules.hpp"
-#include "mult_div_update_rules.hpp"
-#include "als_update_rules.hpp"
+#include <mlpack/methods/nmf/random_init.hpp>
+#include <mlpack/methods/nmf/mult_dist_update_rules.hpp>
+#include <mlpack/methods/nmf/mult_div_update_rules.hpp>
+#include <mlpack/methods/nmf/als_update_rules.hpp>
 
 using namespace mlpack;
 using namespace mlpack::nmf;
@@ -17,17 +17,17 @@ void mexFunction(int nlhs, mxArray *plhs[],
                  int nrhs, const mxArray *prhs[])
 {
   // argument checks
-  if (nrhs != 6) 
+  if (nrhs != 6)
   {
     mexErrMsgTxt("Expecting six inputs.");
   }
 
-  if (nlhs != 2) 
+  if (nlhs != 2)
   {
     mexErrMsgTxt("Two outputs required.");
   }
 
-	const size_t seed = (size_t) mxGetScalar(prhs[5]);
+  const size_t seed = (size_t) mxGetScalar(prhs[5]);
 
   // Initialize random seed.
   if (seed != 0)
@@ -36,16 +36,16 @@ void mexFunction(int nlhs, mxArray *plhs[],
     math::RandomSeed((size_t) std::time(NULL));
 
   // Gather parameters.
-	const size_t r = (size_t) mxGetScalar(prhs[1]);
-	const size_t maxIterations = (size_t) mxGetScalar(prhs[2]);
-	const double minResidue = mxGetScalar(prhs[3]);
+  const size_t r = (size_t) mxGetScalar(prhs[1]);
+  const size_t maxIterations = (size_t) mxGetScalar(prhs[2]);
+  const double minResidue = mxGetScalar(prhs[3]);
 
-	// update rule
-	int bufLength = mxGetNumberOfElements(prhs[4]) + 1;
-	char * buf = (char *) mxCalloc(bufLength, sizeof(char));
+  // update rule
+  int bufLength = mxGetNumberOfElements(prhs[4]) + 1;
+  char * buf = (char *) mxCalloc(bufLength, sizeof(char));
   mxGetString(prhs[4], buf, bufLength);
-	string updateRules(buf);
-	mxFree(buf);
+  string updateRules(buf);
+  mxFree(buf);
 
   // Validate rank.
   if (r < 1)
@@ -57,17 +57,17 @@ void mexFunction(int nlhs, mxArray *plhs[],
       (updateRules != "multdiv") &&
       (updateRules != "als"))
   {
-		stringstream ss;
-  	ss << "Invalid update rules ('" << updateRules << "'); must be '"
+    stringstream ss;
+    ss << "Invalid update rules ('" << updateRules << "'); must be '"
         << "multdist', 'multdiv', or 'als'.";
-		mexErrMsgTxt(ss.str().c_str());
+    mexErrMsgTxt(ss.str().c_str());
   }
 
   // Load input dataset.
   arma::mat V(mxGetM(prhs[0]), mxGetN(prhs[0]));
-	double * values = mxGetPr(prhs[0]);
-	for (int i=0, num=mxGetNumberOfElements(prhs[0]); i<num; ++i)
-		V(i) = values[i];
+  double * values = mxGetPr(prhs[0]);
+  for (int i=0, num=mxGetNumberOfElements(prhs[0]); i<num; ++i)
+    V(i) = values[i];
 
   arma::mat W;
   arma::mat H;
@@ -93,14 +93,14 @@ void mexFunction(int nlhs, mxArray *plhs[],
     nmf.Apply(V, r, W, H);
   }
 
-	// return to matlab
-	plhs[0] = mxCreateDoubleMatrix(W.n_rows, W.n_cols, mxREAL);
-	values = mxGetPr(plhs[0]);
-	for (int i = 0; i < W.n_elem; ++i)
-		values[i] = W(i);
+  // return to matlab
+  plhs[0] = mxCreateDoubleMatrix(W.n_rows, W.n_cols, mxREAL);
+  values = mxGetPr(plhs[0]);
+  for (int i = 0; i < W.n_elem; ++i)
+    values[i] = W(i);
 
-	plhs[1] = mxCreateDoubleMatrix(H.n_rows, H.n_cols, mxREAL);
-	values = mxGetPr(plhs[0]);
-	for (int i = 0; i < H.n_elem; ++i)
-		values[i] = H(i);
+  plhs[1] = mxCreateDoubleMatrix(H.n_rows, H.n_cols, mxREAL);
+  values = mxGetPr(plhs[0]);
+  for (int i = 0; i < H.n_elem; ++i)
+    values[i] = H(i);
 }
