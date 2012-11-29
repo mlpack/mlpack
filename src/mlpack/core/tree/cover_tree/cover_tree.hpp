@@ -256,10 +256,14 @@ class CoverTree
 
   //! Get the distance to the parent.
   double ParentDistance() const { return parentDistance; }
+  //! Modify the distance to the parent.
+  double& ParentDistance() { return parentDistance; }
 
-  //! Get the distance to teh furthest descendant.
+  //! Get the distance to the furthest descendant.
   double FurthestDescendantDistance() const
   { return furthestDescendantDistance; }
+  //! Modify the distance to the furthest descendant.
+  double& FurthestDescendantDistance() { return furthestDescendantDistance; }
 
  private:
   //! Reference to the matrix which this tree is built on.
