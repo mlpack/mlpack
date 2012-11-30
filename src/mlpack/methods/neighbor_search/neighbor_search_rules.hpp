@@ -23,9 +23,6 @@ class NeighborSearchRules
 
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
-  // Update bounds.  Needs a better name.
-  void UpdateAfterRecursion(TreeType& queryNode, TreeType& referenceNode);
-
   /**
    * Get the score for recursion order.  A low score indicates priority for
    * recursion, while DBL_MAX indicates that the node should not be recursed
