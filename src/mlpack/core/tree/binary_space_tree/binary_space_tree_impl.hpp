@@ -400,6 +400,22 @@ inline size_t
 }
 
 /**
+ * Return the furthest possible descendant distance.  This returns the maximum
+ * distance from the centroid to the edge of the bound and not the empirical
+ * quantity which is the actual furthest descendant distance.  So the actual
+ * furthest descendant distance may be less than what this method returns (but
+ * it will never be greater than this).
+ */
+template<typename BoundType, typename StatisticType, typename MatType>
+inline double BinarySpaceTree<BoundType, StatisticType, MatType>::
+    FurthestDescendantDistance() const
+{
+  arma::vec centroid;
+  bound.Centroid(centroid);
+  return bound.MaxDistance(centroid);
+}
+
+/**
  * Return the specified child.
  */
 template<typename BoundType, typename StatisticType, typename MatType>
