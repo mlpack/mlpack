@@ -64,7 +64,7 @@ DualTreeTraverser<RuleType>::Traverse(
   rootRefEntry.queryIndex = queryNode.Point();
   rootRefEntry.baseCase = rule.BaseCase(queryNode.Point(),
       referenceNode.Point());
-  rule.UpdateAfterRecursion(queryNode, referenceNode);
+//  rule.UpdateAfterRecursion(queryNode, referenceNode);
 
   refMap[referenceNode.Scale()].push_back(rootRefEntry);
 
@@ -97,7 +97,9 @@ DualTreeTraverser<RuleType>::Traverse(
   if ((queryNode.Scale() != INT_MIN) &&
       (queryNode.Scale() >= (*referenceMap.rbegin()).first))
   {
-    // Recurse into the non-self-children first.
+    // Recurse into the non-self-children first.  The recursion order cannot
+    // affect the runtime of the algorithm, because each query child recursion's
+    // results are separate and independent.
     for (size_t i = 1; i < queryNode.NumChildren(); ++i)
     {
       std::map<int, std::vector<MapEntryType> > childMap;
@@ -167,10 +169,6 @@ DualTreeTraverser<RuleType>::Traverse(
 //    Log::Debug << "Not pruned, performing base case " << queryNode.Point() <<
 //        " " << pointVector[i].referenceNode->Point() << "\n";
     rule.BaseCase(queryNode.Point(), pointVector[i].referenceNode->Point());
-    rule.UpdateAfterRecursion(queryNode, *pointVector[i].referenceNode);
-//    Log::Debug << "Bound for point " << queryNode.Point() << " scale " <<
-//        queryNode.Scale() << " is now " << queryNode.Stat().Bound() <<
-//        std::endl;
   }
 }
 
@@ -185,8 +183,8 @@ DualTreeTraverser<RuleType>::PruneMap(
         RootPointPolicy, StatisticType> > >& childMap)
 {
 //  Log::Debug << "Prep for recurse into query child point " <<
-//      queryNode.Child(i).Point() << " scale " << queryNode.Child(i).Scale()
-//      << std::endl;
+//      candidateQueryNode.Point() << " scale " <<
+//      candidateQueryNode.Scale() << std::endl;
   typedef DualCoverTreeMapEntry<MetricType, RootPointPolicy, StatisticType>
       MapEntryType;
 
@@ -228,11 +226,11 @@ DualTreeTraverser<RuleType>::PruneMap(
       }
 
       // Evaluate base case.
-//      Log::Debug << "Must evaluate base case " << queryNode.Child(i).Point()
-//         << " " << refNode->Point() << "\n";
+//      Log::Debug << "Must evaluate base case "
+//          << candidateQueryNode.Point() << " " << refNode->Point()
+//          << "\n";
       double baseCase = rule.BaseCase(candidateQueryNode.Point(),
           refNode->Point());
-      rule.UpdateAfterRecursion(candidateQueryNode, *refNode);
 //      Log::Debug << "Base case was " << baseCase << std::endl;
 
       score = rule.Score(candidateQueryNode, *refNode, baseCase);
@@ -271,8 +269,8 @@ DualTreeTraverser<RuleType>::PruneMapForSelfChild(
         StatisticType> > >& referenceMap)
 {
 //  Log::Debug << "Prep for recurse into query self-child point " <<
-//      queryNode.Child(0).Point() << " scale " << queryNode.Child(0).Scale()
-//      << std::endl;
+//      candidateQueryNode.Point() << " scale " <<
+//      candidateQueryNode.Scale() << std::endl;
   typedef DualCoverTreeMapEntry<MetricType, RootPointPolicy, StatisticType>
       MapEntryType;
 
@@ -281,7 +279,7 @@ DualTreeTraverser<RuleType>::PruneMapForSelfChild(
   // in this setting we do not recurse into any children of the reference
   // entries.
   typename std::map<int, std::vector<MapEntryType> >::reverse_iterator it =
-    referenceMap.rbegin();
+      referenceMap.rbegin();
 
   while (it != referenceMap.rend() && (*it).first != INT_MIN)
   {
@@ -305,9 +303,9 @@ DualTreeTraverser<RuleType>::PruneMapForSelfChild(
       const size_t queryIndex = frame.queryIndex;
       const size_t refIndex = frame.referenceIndex;
 
-      //        Log::Debug << "Recheck reference node " << refNode->Point() <<
-      //            " scale " << refNode->Scale() << " which has old score " <<
-      //            oldScore << std::endl;
+//      Log::Debug << "Recheck reference node " << refNode->Point() << " scale "
+//          << refNode->Scale() << " which has old score " << oldScore
+//          << std::endl;
 
       // Have we performed the base case yet?
       double score;
@@ -325,12 +323,11 @@ DualTreeTraverser<RuleType>::PruneMapForSelfChild(
 
         // If not pruned, we have to perform the base case.
         baseCase = rule.BaseCase(candidateQueryNode.Point(), refNode->Point());
-        rule.UpdateAfterRecursion(candidateQueryNode, *refNode);
       }
 
       score = rule.Score(candidateQueryNode, *refNode, baseCase);
 
-      //        Log::Debug << "Rescored as " << score << std::endl;
+//      Log::Debug << "Rescored as " << score << std::endl;
 
       if (score == DBL_MAX)
       {
@@ -339,7 +336,7 @@ DualTreeTraverser<RuleType>::PruneMapForSelfChild(
         continue;
       }
 
-      //        Log::Debug << "Kept in map\n";
+//      Log::Debug << "Kept in map\n";
 
       // Add to child map.
       newScaleVector.push_back(frame);
@@ -372,6 +369,12 @@ DualTreeTraverser<RuleType>::ReferenceRecursion(
   // the query node.
   while ((*referenceMap.rbegin()).first > queryNode.Scale())
   {
+    // If the query node's scale is INT_MIN and the reference map's maximum
+    // scale is INT_MIN, don't try to recurse...
+    if ((queryNode.Scale() == INT_MIN) &&
+       ((*referenceMap.rbegin()).first == INT_MIN))
+      break;
+
     // Get a reference to the current largest scale.
     std::vector<MapEntryType>& scaleVector = (*referenceMap.rbegin()).second;
 
@@ -402,7 +405,7 @@ DualTreeTraverser<RuleType>::ReferenceRecursion(
       // First we recalculate the score of this node to find if we can prune it.
       if (rule.Rescore(queryNode, *refNode, score) == DBL_MAX)
       {
- //       Log::Warn << "Pruned after rescore\n";
+//        Log::Warn << "Pruned after rescore\n";
         ++numPrunes;
         continue;
       }
@@ -416,10 +419,6 @@ DualTreeTraverser<RuleType>::ReferenceRecursion(
 //            << refPoint << "\n";
         baseCase = rule.BaseCase(queryNode.Point(), refPoint);
 //        Log::Debug << "Base case " << baseCase << std::endl;
-        rule.UpdateAfterRecursion(queryNode, *refNode); // Kludgey.
-//        Log::Debug << "Bound for point " << queryNode.Point() << " scale " <<
-//            queryNode.Scale() << " is now " << queryNode.Stat().Bound() <<
-//            std::endl;
       }
 
       // Create the score for the children.
@@ -462,7 +461,6 @@ DualTreeTraverser<RuleType>::ReferenceRecursion(
 
         // Calculate the base case of each child.
         baseCase = rule.BaseCase(queryIndex, refIndex);
-        rule.UpdateAfterRecursion(queryNode, refNode->Child(j));
 
         // See if we can prune it.
         childScore = rule.Score(queryNode, refNode->Child(j), baseCase);
