@@ -231,9 +231,6 @@ DualTreeTraverser<RuleType>::Traverse(
       }
     }
   }
-
-  // Now update any necessary information after recursion.
-  rule.UpdateAfterRecursion(queryNode, referenceNode);
 }
 
 }; // namespace tree
