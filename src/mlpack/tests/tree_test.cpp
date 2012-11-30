@@ -1490,6 +1490,21 @@ BOOST_AUTO_TEST_CASE(TreeCountMismatch)
   BOOST_REQUIRE(rootNode.Right()->Right()->Count() == 1);
 }
 
+// Ensure FurthestDescendantDistance() works.
+BOOST_AUTO_TEST_CASE(FurthestDescendantDistanceTest)
+{
+  arma::mat dataset = "1; 3"; // One point.
+  BinarySpaceTree<HRectBound<2> > rootNode(dataset, 1);
+
+  BOOST_REQUIRE_SMALL(rootNode.FurthestDescendantDistance(), 1e-5);
+
+  dataset = "1 -1; 1 -1"; // Square of size [2, 2].
+
+  // Both points are contained in the one node.
+  BinarySpaceTree<HRectBound<2> > twoPoint(dataset);
+  BOOST_REQUIRE_CLOSE(twoPoint.FurthestDescendantDistance(), 2, 1e-5);
+}
+
 // Forward declaration of methods we need for the next test.
 template<typename TreeType, typename MatType>
 bool CheckPointBounds(TreeType* node, const MatType& data);
