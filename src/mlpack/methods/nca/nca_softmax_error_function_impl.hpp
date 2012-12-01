@@ -233,7 +233,7 @@ void SoftmaxErrorFunction<MetricType>::Precalculate(
       double eval = exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
                                          stretchedDataset.unsafe_col(j)));
 
-      // Add this to the denominators of both i and j: p_ij = p_ji.
+      // Add this to the denominators of both p_i and p_j: K(i, j) = K(j, i).
       denominators[i] += eval;
       denominators[j] += eval;
 
