@@ -41,7 +41,7 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
                                                   const size_t i)
 {
   // Unfortunately each evaluation will take O(N) time because it requires a
-  // scan over all points in the dataset.  Our objective is to compute p_ij.
+  // scan over all points in the dataset.  Our objective is to compute p_i.
   double denominator = 0;
   double numerator = 0;
 
