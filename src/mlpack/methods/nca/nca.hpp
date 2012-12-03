@@ -9,6 +9,9 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
+
+#include "nca_softmax_error_function.hpp"
 
 namespace mlpack {
 namespace nca /** Neighborhood Components Analysis. */ {
@@ -36,7 +39,8 @@ namespace nca /** Neighborhood Components Analysis. */ {
  * }
  * @endcode
  */
-template<typename MetricType>
+template<typename MetricType = metric::SquaredEuclideanDistance,
+         template<typename> class OptimizerType = optimization::SGD>
 class NCA
 {
  public:
@@ -55,10 +59,6 @@ class NCA
    */
   NCA(const arma::mat& dataset,
       const arma::uvec& labels,
-      const double stepSize = 0.01,
-      const size_t maxIterations = 500000,
-      const double tolerance = 1e-10,
-      const bool shuffle = true,
       MetricType metric = MetricType());
 
   /**
@@ -77,20 +77,11 @@ class NCA
   //! Get the labels reference.
   const arma::uvec& Labels() const { return labels; }
 
-  //! Get the step size for stochastic gradient descent.
-  double StepSize() const { return stepSize; }
-  //! Modify the step size for stochastic gradient descent.
-  double& StepSize() { return stepSize; }
-
-  //! Get the maximum number of iterations for stochastic gradient descent.
-  size_t MaxIterations() const { return maxIterations; }
-  //! Modify the maximum number of iterations for stochastic gradient descent.
-  size_t& MaxIterations() { return maxIterations; }
-
-  //! Get the tolerance for the termination of stochastic gradient descent.
-  double Tolerance() const { return tolerance; }
-  //! Modify the tolerance for the termination of stochastic gradient descent.
-  double& Tolerance() { return tolerance; }
+  //! Get the optimizer.
+  const OptimizerType<SoftmaxErrorFunction<MetricType> >& Optimizer() const
+  { return optimizer; }
+  OptimizerType<SoftmaxErrorFunction<MetricType> >& Optimizer()
+  { return optimizer; }
 
  private:
   //! Dataset reference.
@@ -101,14 +92,11 @@ class NCA
   //! Metric to be used.
   MetricType metric;
 
-  //! Step size for stochastic gradient descent.
-  double stepSize;
-  //! Maximum iterations for stochastic gradient descent.
-  size_t maxIterations;
-  //! Tolerance for termination of stochastic gradient descent.
-  double tolerance;
-  //! Whether or not to shuffle the dataset for SGD.
-  bool shuffle;
+  //! The function to optimize.
+  SoftmaxErrorFunction<MetricType> errorFunction;
+
+  //! The optimizer to use.
+  OptimizerType<SoftmaxErrorFunction<MetricType> > optimizer;
 };
 
 }; // namespace nca

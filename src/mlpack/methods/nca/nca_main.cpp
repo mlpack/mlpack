@@ -126,8 +126,11 @@ int main(int argc, char* argv[])
   }
 
   // Now create the NCA object and run the optimization.
-  NCA<LMetric<2> > nca(data, labels.unsafe_col(0), stepSize, maxIterations,
-      tolerance, shuffle);
+  NCA<LMetric<2> > nca(data, labels.unsafe_col(0));
+  nca.Optimizer().StepSize() = stepSize;
+  nca.Optimizer().MaxIterations() = maxIterations;
+  nca.Optimizer().Tolerance() = tolerance;
+  nca.Optimizer().Shuffle() = shuffle;
 
   nca.LearnDistance(distance);
 
