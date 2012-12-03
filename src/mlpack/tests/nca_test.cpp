@@ -258,7 +258,11 @@ BOOST_AUTO_TEST_CASE(NcaSimpleDataset)
   arma::uvec labels = " 0    0    0    1    1    1   ";
 
   // Huge learning rate because this is so simple.
-  NCA<SquaredEuclideanDistance> nca(data, labels, 1.2, 300000, 0);
+  NCA<SquaredEuclideanDistance> nca(data, labels);
+  nca.Optimizer().StepSize() = 1.2;
+  nca.Optimizer().MaxIterations() = 300000;
+  nca.Optimizer().Tolerance() = 0;
+  nca.Optimizer().Shuffle() = true;
 
   arma::mat outputMatrix;
   nca.LearnDistance(outputMatrix);
