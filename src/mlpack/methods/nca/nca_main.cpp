@@ -9,6 +9,8 @@
 
 #include "nca.hpp"
 
+#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+
 // Define parameters.
 PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
     "This program implements Neighborhood Components Analysis, both a linear "
@@ -23,8 +25,14 @@ PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
     "row of the input dataset (--input_file), or alternatively in a separate "
     "file (--labels_file).\n"
     "\n"
-    "This implementation of NCA uses stochastic gradient descent, which depends"
-    " primarily on two parameters: the step size (--step_size) and the maximum "
+    "This implementation of NCA uses either stochastic gradient descent or the "
+    "L_BFGS optimizer.  Both of these optimizers do not guarantee global "
+    "convergence for a nonconvex objective function (NCA's objective function "
+    "is nonconvex), so the final results could depend on the random seed or "
+    "other optimizer parameters.\n"
+    "\n"
+    "Stochastic gradient descent, specified by --optimizer \"sgd\", depends "
+    "primarily on two parameters: the step size (--step_size) and the maximum "
     "number of iterations (--max_iterations).  In addition, a normalized "
     "starting point can be used (--normalize), which is necessary if many "
     "warnings of the form 'Denominator of p_i is 0!' are given.  Tuning the "
@@ -38,28 +46,57 @@ PROGRAM_INFO("Neighborhood Components Analysis (NCA)",
     "the tolerance (--tolerance) to define the maximum allowed difference "
     "between objectives for SGD to terminate.  Be careful -- setting the "
     "tolerance instead of the maximum iterations can take a very long time and "
-    "may actually never converge due to the properties of the SGD optimizer.");
+    "may actually never converge due to the properties of the SGD optimizer.\n"
+    "\n"
+    "The L-BFGS optimizer, specified by --optimizer \"lbfgs\", uses a "
+    "back-tracking line search algorithm to minimize a function.  The "
+    "following parameters are used by L-BFGS: --num_basis (specifies the number"
+    " of memory points used by L-BFGS), --max_iterations, --armijo_constant, "
+    "--wolfe, --tolerance (the optimization is terminated when the gradient "
+    "norm is below this value), --max_line_search_trials, --min_step and "
+    "--max_step (which both refer to the line search routine).  For more "
+    "details on the L-BFGS optimizer, consult either the MLPACK L-BFGS "
+    "documentation (in lbfgs.hpp) or the vast set of published literature on "
+    "L-BFGS.\n"
+    "\n"
+    "By default, the SGD optimizer is used.");
 
 PARAM_STRING_REQ("input_file", "Input dataset to run NCA on.", "i");
 PARAM_STRING_REQ("output_file", "Output file for learned distance matrix.",
     "o");
 PARAM_STRING("labels_file", "File of labels for input dataset.", "l", "");
-PARAM_DOUBLE("step_size", "Step size for stochastic gradient descent (alpha).",
-    "a", 0.01);
-PARAM_INT("max_iterations", "Maximum number of iterations for stochastic "
-    "gradient descent (0 indicates no limit).", "n", 500000);
-PARAM_DOUBLE("tolerance", "Maximum tolerance for termination of stochastic "
-    "gradient descent.", "t", 1e-7);
+PARAM_STRING("optimizer", "Optimizer to use; \"sgd\" or \"lbfgs\".", "O", "");
+
 PARAM_FLAG("normalize", "Use a normalized starting point for optimization. This"
     " is useful for when points are far apart, or when SGD is returning NaN.",
     "N");
-PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+
+PARAM_INT("max_iterations", "Maximum number of iterations for SGD or L-BFGS (0 "
+    "indicates no limit).", "n", 500000);
+PARAM_DOUBLE("tolerance", "Maximum tolerance for termination of SGD or L-BFGS.",
+    "t", 1e-7);
+
+PARAM_DOUBLE("step_size", "Step size for stochastic gradient descent (alpha).",
+    "a", 0.01);
 PARAM_FLAG("linear_scan", "Don't shuffle the order in which data points are "
     "visited for SGD.", "L");
+
+PARAM_INT("num_basis", "Number of memory points to be stored for L-BFGS.", "N",
+    5);
+PARAM_DOUBLE("armijo_constant", "Armijo constant for L-BFGS.", "A", 1e-4);
+PARAM_DOUBLE("wolfe", "Wolfe condition parameter for L-BFGS.", "w", 0.9);
+PARAM_INT("max_line_search_trials", "Maximum number of line search trials for "
+    "L-BFGS.", "L", 50);
+PARAM_DOUBLE("min_step", "Minimum step of line search for L-BFGS.", "m", 1e-20);
+PARAM_DOUBLE("max_step", "Maximum step of line search for L-BFGS.", "M", 1e20);
+
+PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+
 
 using namespace mlpack;
 using namespace mlpack::nca;
 using namespace mlpack::metric;
+using namespace mlpack::optimization;
 using namespace std;
 
 int main(int argc, char* argv[])
@@ -76,11 +113,62 @@ int main(int argc, char* argv[])
   const string labelsFile = CLI::GetParam<string>("labels_file");
   const string outputFile = CLI::GetParam<string>("output_file");
 
+  const string optimizerType = CLI::GetParam<string>("optimizer");
+
+  if ((optimizerType != "sgd") && (optimizerType != "lbfgs"))
+  {
+    Log::Fatal << "Optimizer type '" << optimizerType << "' unknown; must be "
+        << "'sgd' or 'lbfgs'!" << std::endl;
+  }
+
+  // Warn on unused parameters.
+  if (optimizerType == "sgd")
+  {
+    if (CLI::HasParam("num_basis"))
+      Log::Warn << "Parameter --num_basis ignored (not using 'lbfgs' "
+          << "optimizer)." << std::endl;
+
+    if (CLI::HasParam("armijo_constant"))
+      Log::Warn << "Parameter --armijo_constant ignored (not using 'lbfgs' "
+          << "optimizer)." << std::endl;
+
+    if (CLI::HasParam("wolfe"))
+      Log::Warn << "Parameter --wolfe ignored (not using 'lbfgs' optimizer).\n";
+
+    if (CLI::HasParam("max_line_search_trials"))
+      Log::Warn << "Parameter --max_line_search_trials ignored (not using "
+          << "'lbfgs' optimizer." << std::endl;
+
+    if (CLI::HasParam("min_step"))
+      Log::Warn << "Parameter --min_step ignored (not using 'lbfgs' optimizer)."
+          << std::endl;
+
+    if (CLI::HasParam("max_step"))
+      Log::Warn << "Parameter --max_step ignored (not using 'lbfgs' optimizer)."
+          << std::endl;
+  }
+  else if (optimizerType == "lbfgs")
+  {
+    if (CLI::HasParam("step_size"))
+      Log::Warn << "Parameter --step_size ignored (not using 'sgd' optimizer)."
+          << std::endl;
+
+    if (CLI::HasParam("linear_scan"))
+      Log::Warn << "Parameter --linear_scan ignored (not using 'sgd' "
+          << "optimizer)." << std::endl;
+  }
+
   const double stepSize = CLI::GetParam<double>("step_size");
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
   const double tolerance = CLI::GetParam<double>("tolerance");
   const bool normalize = CLI::HasParam("normalize");
   const bool shuffle = !CLI::HasParam("linear_scan");
+  const int numBasis = CLI::GetParam<int>("num_basis");
+  const double armijoConstant = CLI::GetParam<double>("armijo_constant");
+  const double wolfe = CLI::GetParam<double>("wolfe");
+  const int maxLineSearchTrials = CLI::GetParam<int>("max_line_search_trials");
+  const double minStep = CLI::GetParam<double>("min_step");
+  const double maxStep = CLI::GetParam<double>("max_step");
 
   // Load data.
   arma::mat data;
@@ -118,7 +206,8 @@ int main(int argc, char* argv[])
         ranges[d] = 1; // A range of 0 produces NaN later on.
 
     distance = diagmat(1.0 / ranges);
-    Log::Info << "Using normalized starting point for SGD." << std::endl;
+    Log::Info << "Using normalized starting point for optimization."
+        << std::endl;
   }
   else
   {
@@ -126,13 +215,30 @@ int main(int argc, char* argv[])
   }
 
   // Now create the NCA object and run the optimization.
-  NCA<LMetric<2> > nca(data, labels.unsafe_col(0));
-  nca.Optimizer().StepSize() = stepSize;
-  nca.Optimizer().MaxIterations() = maxIterations;
-  nca.Optimizer().Tolerance() = tolerance;
-  nca.Optimizer().Shuffle() = shuffle;
+  if (optimizerType == "sgd")
+  {
+    NCA<LMetric<2> > nca(data, labels.unsafe_col(0));
+    nca.Optimizer().StepSize() = stepSize;
+    nca.Optimizer().MaxIterations() = maxIterations;
+    nca.Optimizer().Tolerance() = tolerance;
+    nca.Optimizer().Shuffle() = shuffle;
 
-  nca.LearnDistance(distance);
+    nca.LearnDistance(distance);
+  }
+  else if (optimizerType == "lbfgs")
+  {
+    NCA<LMetric<2>, L_BFGS> nca(data, labels.unsafe_col(0));
+    nca.Optimizer().NumBasis() = numBasis;
+    nca.Optimizer().MaxIterations() = maxIterations;
+    nca.Optimizer().ArmijoConstant() = armijoConstant;
+    nca.Optimizer().Wolfe() = wolfe;
+    nca.Optimizer().MinGradientNorm() = tolerance;
+    nca.Optimizer().MaxLineSearchTrials() = maxLineSearchTrials;
+    nca.Optimizer().MinStep() = minStep;
+    nca.Optimizer().MaxStep() = maxStep;
+
+    nca.LearnDistance(distance);
+  }
 
   // Save the output.
   data::Save(CLI::GetParam<string>("output_file").c_str(), distance, true);
