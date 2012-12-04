@@ -75,6 +75,24 @@ class NearestNeighborSort
   static double BestNodeToNodeDistance(const TreeType* queryNode,
                                        const TreeType* referenceNode,
                                        const double centerToCenterDistance);
+
+  /**
+   * Return the best possible distance between the query node and the reference
+   * child node given the base case distance between the query node and the
+   * reference node.  TreeType::ParentDistance() must be implemented to use
+   * this.
+   *
+   * @param queryNode Query node.
+   * @param referenceNode Reference node.
+   * @param referenceChildNode Child of reference node which is being inspected.
+   * @param centerToCenterDistance Distance between centers of query node and
+   *     reference node.
+   */
+  template<typename TreeType>
+  static double BestNodeToNodeDistance(const TreeType* queryNode,
+                                       const TreeType* referenceNode,
+                                       const TreeType* referenceChildNode,
+                                       const double centerToCenterDistance);
   /**
    * Return the best possible distance between a node and a point.  In our case,
    * this is the minimum distance between the tree node and the point using the
