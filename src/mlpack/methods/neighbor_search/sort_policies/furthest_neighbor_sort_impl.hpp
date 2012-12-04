@@ -31,6 +31,17 @@ inline double FurthestNeighborSort::BestNodeToNodeDistance(
 }
 
 template<typename TreeType>
+inline double FurthestNeighborSort::BestNodeToNodeDistance(
+    const TreeType* queryNode,
+    const TreeType* referenceNode,
+    const TreeType* referenceChildNode,
+    const double centerToCenterDistance)
+{
+  return queryNode->MaxDistance(referenceNode, centerToCenterDistance) +
+      referenceChildNode->ParentDistance();
+}
+
+template<typename TreeType>
 inline double FurthestNeighborSort::BestPointToNodeDistance(
     const arma::vec& point,
     const TreeType* referenceNode)
