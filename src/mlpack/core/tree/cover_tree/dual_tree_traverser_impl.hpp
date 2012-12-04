@@ -393,6 +393,7 @@ DualTreeTraverser<RuleType>::ReferenceRecursion(
       const size_t refIndex = frame.referenceIndex;
       const size_t refPoint = refNode->Point();
       const size_t queryIndex = frame.queryIndex;
+      const size_t queryPoint = queryNode.Point();
       double baseCase = frame.baseCase;
 
 //      Log::Debug << "Currently inspecting reference node " << refNode->Point()
@@ -413,11 +414,11 @@ DualTreeTraverser<RuleType>::ReferenceRecursion(
       // If this is a self-child, the base case has already been evaluated.
       // We also must ensure that the base case was evaluated with this query
       // point.
-      if ((refPoint != refIndex) || (queryNode.Point() != queryIndex))
+      if ((refPoint != refIndex) || (queryPoint != queryIndex))
       {
 //        Log::Warn << "Must evaluate base case " << queryNode.Point() << " "
 //            << refPoint << "\n";
-        baseCase = rule.BaseCase(queryNode.Point(), refPoint);
+        baseCase = rule.BaseCase(queryPoint, refPoint);
 //        Log::Debug << "Base case " << baseCase << std::endl;
       }
 
@@ -458,6 +459,23 @@ DualTreeTraverser<RuleType>::ReferenceRecursion(
       {
         const size_t queryIndex = queryNode.Point();
         const size_t refIndex = refNode->Child(j).Point();
+
+        // We need to incorporate shell() here to try and avoid base case
+        // computations.  TODO
+//        Log::Debug << "Prescore query " << queryNode.Point() << " scale "
+//            << queryNode.Scale() << ", reference " << refNode->Point() <<
+//            " scale " << refNode->Scale() << ", reference child " <<
+//            refNode->Child(j).Point() << " scale " << refNode->Child(j).Scale()
+//            << " with base case " << baseCase;
+        childScore = rule.Prescore(queryNode, *refNode, refNode->Child(j),
+            frame.baseCase);
+//        Log::Debug << " and result " << childScore << ".\n";
+
+        if (childScore == DBL_MAX)
+        {
+          ++numPrunes;
+          continue;
+        }
 
         // Calculate the base case of each child.
         baseCase = rule.BaseCase(queryIndex, refIndex);
