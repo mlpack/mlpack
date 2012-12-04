@@ -24,6 +24,20 @@ class NeighborSearchRules
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
   /**
+   * Get the score for the recursion order, in general before the base case is
+   * computed.  This is useful for cover trees or other trees that can cache
+   * some statistic that could be used to make a prune of a child before its
+   * base case is computed.
+   *
+   * @param queryNode Query node.
+   * @param referenceNode Reference node.
+   */
+  double Prescore(TreeType& queryNode,
+                  TreeType& referenceNode,
+                  TreeType& referenceChildNode,
+                  const double baseCaseResult) const;
+
+  /**
    * Get the score for recursion order.  A low score indicates priority for
    * recursion, while DBL_MAX indicates that the node should not be recursed
    * into at all (it should be pruned).
