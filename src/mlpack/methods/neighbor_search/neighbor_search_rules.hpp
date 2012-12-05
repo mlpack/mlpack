@@ -36,6 +36,10 @@ class NeighborSearchRules
                   TreeType& referenceNode,
                   TreeType& referenceChildNode,
                   const double baseCaseResult) const;
+  double PrescoreQ(TreeType& queryNode,
+                   TreeType& queryChildNode,
+                   TreeType& referenceNode,
+                   const double baseCaseResult) const;
 
   /**
    * Get the score for recursion order.  A low score indicates priority for

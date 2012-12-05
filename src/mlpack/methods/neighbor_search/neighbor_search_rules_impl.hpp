@@ -96,6 +96,49 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Prescore(
 }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
+inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::PrescoreQ(
+    TreeType& queryNode,
+    TreeType& queryChildNode,
+    TreeType& referenceNode,
+    const double baseCaseResult) const
+{
+  const double distance = SortPolicy::BestNodeToNodeDistance(&referenceNode,
+      &queryNode, &queryChildNode, baseCaseResult);
+
+  // Calculate the bound on the fly.  This bound will be the minimum of
+  // pointBound (the bounds given by the points in this node) and childBound
+  // (the bounds given by the children of this node).
+  double pointBound = DBL_MAX;
+  double childBound = DBL_MAX;
+  const double maxDescendantDistance = queryNode.FurthestDescendantDistance();
+
+  // Find the bound of the points contained in this node.
+  for (size_t i = 0; i < queryNode.NumPoints(); ++i)
+  {
+    // The bound for this point is the k-th best distance plus the maximum
+    // distance to a child of this node.
+    const double bound = distances(distances.n_rows - 1, queryNode.Point(i)) +
+        maxDescendantDistance;
+    if (bound < pointBound)
+      pointBound = bound;
+  }
+
+  // Find the bound of the children.
+  for (size_t i = 0; i < queryNode.NumChildren(); ++i)
+  {
+    const double bound = queryNode.Child(i).Stat().Bound();
+    if (bound < childBound)
+      childBound = bound;
+  }
+
+  // Update our bound.
+  queryNode.Stat().Bound() = std::min(pointBound, childBound);
+  const double bestDistance = queryNode.Stat().Bound();
+
+  return (SortPolicy::IsBetter(distance, bestDistance)) ? distance : DBL_MAX;
+}
+
+template<typename SortPolicy, typename MetricType, typename TreeType>
 inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
     const size_t queryIndex,
     TreeType& referenceNode) const
