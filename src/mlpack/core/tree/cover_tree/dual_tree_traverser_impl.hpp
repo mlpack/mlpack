@@ -103,7 +103,7 @@ DualTreeTraverser<RuleType>::Traverse(
     for (size_t i = 1; i < queryNode.NumChildren(); ++i)
     {
       std::map<int, std::vector<MapEntryType> > childMap;
-      PruneMap(queryNode.Child(i), referenceMap, childMap);
+      PruneMap(queryNode, queryNode.Child(i), referenceMap, childMap);
 
 //      Log::Debug << "Recurse into query child " << i << ": " <<
 //          queryNode.Child(i).Point() << " scale " << queryNode.Child(i).Scale()
@@ -176,6 +176,7 @@ template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 template<typename RuleType>
 void CoverTree<MetricType, RootPointPolicy, StatisticType>::
 DualTreeTraverser<RuleType>::PruneMap(
+    CoverTree& queryNode,
     CoverTree& candidateQueryNode,
     std::map<int, std::vector<DualCoverTreeMapEntry<MetricType,
         RootPointPolicy, StatisticType> > >& referenceMap,
@@ -209,12 +210,23 @@ DualTreeTraverser<RuleType>::PruneMap(
           frame.referenceNode;
       const double oldScore = frame.score;
 
+      // Try to prune based on shell().  This is hackish and will need to be
+      // refined or cleaned at some point.
+      double score = rule.PrescoreQ(queryNode, candidateQueryNode, *refNode,
+          frame.baseCase);
+
+      if (score == DBL_MAX)
+      {
+        ++numPrunes;
+        continue;
+      }
+
 //      Log::Debug << "Recheck reference node " << refNode->Point() <<
 //          " scale " << refNode->Scale() << " which has old score " <<
 //          oldScore << " with old reference index " << frame.referenceIndex
 //          << " and old query index " << frame.queryIndex << std::endl;
 
-      double score = rule.Rescore(candidateQueryNode, *refNode, oldScore);
+      score = rule.Rescore(candidateQueryNode, *refNode, oldScore);
 
 //      Log::Debug << "Rescored as " << score << std::endl;
 
