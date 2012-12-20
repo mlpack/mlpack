@@ -19,12 +19,34 @@ endforeach()
 set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 
-# The code to compute the rank-approximate neighbor
+# The code to compute the approximate neighbor
 # for the given query and reference sets
-add_executable(allkdann
+# with p-stable LSH
+add_executable(lsh
   lsh_main.cpp
 )
-target_link_libraries(allkdann
+target_link_libraries(lsh
+  ${MLPACK_LIBRARY}
+)
+
+# The code to compute the approximate neighbor
+# for the given query and reference sets 
+# with p-stable LSH and analyze the time-accuracy
+# tradeoff
+add_executable(lsh_analysis
+  lsh_analysis_main.cpp
+)
+target_link_libraries(lsh_analysis
   ${MLPACK_LIBRARY}
   contrib_pram
 )
+
+
+# Testing the LSHSearch class 
+add_executable(lsh_test
+  lsh_test.cpp
+)
+target_link_libraries(lsh_test
+  ${MLPACK_LIBRARY}
+)
+
