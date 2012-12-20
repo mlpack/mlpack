@@ -10,6 +10,9 @@
 // In case it hasn't already been included.
 #include "cover_tree.hpp"
 
+#include <mlpack/core/util/string_util.hpp>
+#include <string>
+
 namespace mlpack {
 namespace tree {
 
@@ -817,6 +820,32 @@ size_t CoverTree<MetricType, RootPointPolicy, StatisticType>::PruneFarSet(
   return (left - nearSetSize);
 }
 
+
+template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+std::string CoverTree<MetricType, RootPointPolicy, StatisticType>::ToString() const
+{
+  std::ostringstream convert;
+  convert << "CoverTree [" << this << "]" << std::endl;
+  convert << "dataset: " << &dataset << std::endl;
+  convert << "point: " << point << std::endl;
+  convert << "scale: " << scale << std::endl;
+  convert << "base: " << base << std::endl;
+//  convert << "StatisticType: " << stat << std::endl;
+  convert << "parent distance : " << parentDistance << std::endl;
+  convert << "furthest child distance: " << furthestDescendantDistance;
+  convert << std::endl;
+  convert << "children:";
+
+  if (IsLeaf() == false)
+  {
+    for (int i = 0; i < children.size(); i++)
+    {
+      convert << std::endl << mlpack::util::Indent(children.at(i)->ToString());
+    }
+  }
+  std::cout << "returning " << this << std::endl;
+  return convert.str();
+}
 }; // namespace tree
 }; // namespace mlpack
 

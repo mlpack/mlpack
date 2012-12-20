@@ -363,6 +363,8 @@ class CoverTree
                      const double bound,
                      const size_t nearSetSize,
                      const size_t pointSetSize);
+ public:
+  std::string ToString() const;
 };
 
 }; // namespace tree

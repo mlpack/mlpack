@@ -52,6 +52,13 @@ class EmptyStatistic
                    const EmptyStatistic& /* leftStat */,
                    const EmptyStatistic& /* rightStat */)
     { }
+  public:
+    std::string ToString() const
+    {
+      std::stringstream convert;
+      convert << "EmptyStatistic [" << this << "]" << std::endl;
+      return convert.str();
+    }
 };
 
 }; // namespace tree

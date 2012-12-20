@@ -92,6 +92,12 @@ class MRKDStatistic
       rightStat.parentStat = this;
     }
 
+  /**
+   * Returns a string representation of an object.
+   */
+  std::string ToString() const;
+
+
     //! The data points this object contains
     const arma::mat* dataset;
     //! The initial item in the dataset, so we don't have to make a copy
