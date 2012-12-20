@@ -2,10 +2,24 @@
  * @file lsh_search.hpp
  * @author Parikshit Ram
  *
- * Defines the LSHSearch class, which performs an abstract
- * distance-approximate nearest neighbor query on two datasets
- * using Locality-sensitive hashing with 2-stable distributions
+ * Defines the LSHSearch class, which performs an approximate
+ * nearest neighbor search for a queries in a query set 
+ * over a given dataset using Locality-sensitive hashing 
+ * with 2-stable distributions.
+ *
+ * The details of this method can be found in the following paper:
+ *
+ * @inproceedings{datar2004locality,
+ *  title={Locality-sensitive hashing scheme based on p-stable distributions},
+ *  author={Datar, M. and Immorlica, N. and Indyk, P. and Mirrokni, V.S.},
+ *  booktitle={Proceedings of the 12th Annual Symposium on Computational Geometry},
+ *  pages={253--262},A
+ *  year={2004},
+ *  organization={ACM}
+ * }
+ *
  */
+
 #ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_LSH_SEARCH_HPP
 #define __MLPACK_METHODS_NEIGHBOR_SEARCH_LSH_SEARCH_HPP
 
@@ -22,57 +36,39 @@ namespace neighbor /** Neighbor-search routines.  These include
                     * searches. */ {
 
 /**
- * The RASearch class is a template class for performing distance-based
- * neighbor searches.  It takes a query dataset and a reference dataset (or just
- * a reference dataset) and, for each point in the query dataset, finds the k
- * neighbors in the reference dataset which have the 'best' distance according
- * to a given sorting policy.  A constructor is given which takes only a
- * reference dataset, and if that constructor is used, the given reference
- * dataset is also used as the query dataset.
- *
- * The template parameters SortPolicy and Metric define the sort function used
- * and the metric (distance function) used.  More information on those classes
- * can be found in the NearestNeighborSort class and the kernel::ExampleKernel
- * class.
- *
+ * The LSHSearch class -- TBD
+ * 
  * @tparam SortPolicy The sort policy for distances; see NearestNeighborSort.
  * @tparam MetricType The metric to use for computation.
- * @tparam TreeType The tree type to use.
  */
 template<typename SortPolicy = NearestNeighborSort,
-         typename MetricType = mlpack::metric::SquaredEuclideanDistance,
-         typename eT = double>
+         typename MetricType = mlpack::metric::SquaredEuclideanDistance>
 
 class LSHSearch
 {
  public:
 
-  typedef arma::Mat<eT> MatType;
-  typedef arma::Col<eT> ColType;
-  typedef arma::Row<eT> RowType;
-
   /**
-   * Initialize the RASearch object, passing both a query and reference
-   * dataset.  Optionally, perform the computation in naive mode or single-tree
-   * mode, and set the leaf size used for tree-building.  An initialized
-   * distance metric can be given, for cases where the metric has internal data
-   * (i.e. the distance::MahalanobisDistance class).
-   *
-   * This method will copy the matrices to internal copies, which are rearranged
-   * during tree-building.  You can avoid this extra copy by pre-constructing
-   * the trees and passing them using a diferent constructor.
+   * Intialize -- TBD
    *
    * @param referenceSet Set of reference points.
    * @param querySet Set of query points.
-   * @param naive If true, O(n^2) naive search will be used (as opposed to
-   *      dual-tree search).  This overrides singleMode (if it is set to true).
-   * @param singleMode If true, single-tree search will be used (as opposed to
-   *      dual-tree search).
-   * @param leafSize Leaf size for tree construction (ignored if tree is given).
+   * @param numProj Number of projections in each hash table (anything between 
+   *     10-50 might be a decent choice).
+   * @param numTables Total number of hash tables (anything between 10-20 should 
+   *     should suffice).
+   * @param hashWidth The width of hash for every table (currently automatically 
+   *     chosen from the main function). This should be a reasonable upper bound 
+   *     on the nearest-neighbor distance in general.
+   * @param secondHashSize The size of the second hash table. This should be a 
+   *     large prime number.
+   * @param bucketSize The size of the bucket in the second hash table. This is 
+   *     the maximum number of points that can be hashed into single bucket. 
+   *     Default values are already provided here.
    * @param metric An optional instance of the MetricType class.
    */
-  LSHSearch(const MatType& referenceSet,
-            const MatType& querySet,
+  LSHSearch(const arma::mat& referenceSet,
+            const arma::mat& querySet,
             const size_t numProj,
             const size_t numTables,
             const double hashWidth,
@@ -81,27 +77,24 @@ class LSHSearch
             const MetricType metric = MetricType());
 
   /**
-   * Initialize the RASearch object, passing only one dataset, which is
-   * used as both the query and the reference dataset.  Optionally, perform the
-   * computation in naive mode or single-tree mode, and set the leaf size used
-   * for tree-building.  An initialized distance metric can be given, for cases
-   * where the metric has internal data (i.e. the distance::MahalanobisDistance
-   * class).
+   * Intialize -- TBD
    *
-   * If naive mode is being used and a pre-built tree is given, it may not work:
-   * naive mode operates by building a one-node tree (the root node holds all
-   * the points).  If that condition is not satisfied with the pre-built tree,
-   * then naive mode will not work.
-   *
-   * @param referenceSet Set of reference points.
-   * @param naive If true, O(n^2) naive search will be used (as opposed to
-   *      dual-tree search).  This overrides singleMode (if it is set to true).
-   * @param singleMode If true, single-tree search will be used (as opposed to
-   *      dual-tree search).
-   * @param leafSize Leaf size for tree construction (ignored if tree is given).
+   * @param referenceSet Set of reference points and the set of queries.
+   * @param numProj Number of projections in each hash table (anything between 
+   *     10-50 might be a decent choice).
+   * @param numTables Total number of hash tables (anything between 10-20 should 
+   *     should suffice).
+   * @param hashWidth The width of hash for every table (currently automatically 
+   *     chosen from the main function). This should be a reasonable upper bound 
+   *     on the nearest-neighbor distance in general.
+   * @param secondHashSize The size of the second hash table. This should be a 
+   *     large prime number.
+   * @param bucketSize The size of the bucket in the second hash table. This is 
+   *     the maximum number of points that can be hashed into single bucket. 
+   *     Default values are already provided here.
    * @param metric An optional instance of the MetricType class.
    */
-  LSHSearch(const MatType& referenceSet,
+  LSHSearch(const arma::mat& referenceSet,
             const size_t numProj,
             const size_t numTables,
             const double hashWidth,
@@ -109,7 +102,7 @@ class LSHSearch
             const size_t bucketSize = 500,
             const MetricType metric = MetricType());
   /**
-   * Delete the RASearch object. The tree is the only member we are
+   * Delete the LSHSearch object. The tree is the only member we are
    * responsible for deleting.  The others will take care of themselves.
    */
   ~LSHSearch();
@@ -127,47 +120,86 @@ class LSHSearch
    *     point.
    */
   void Search(const size_t k,
-              arma::Mat<size_t>& resultingNeighbors,
+              arma::Mat<size_t>& resultingNeighbors, 
               arma::mat& distances);
 
  private:
 
-  void BuildFirstLevelHash(MatType* allKeyPointMat);
+  /**
+   * This function builds a hash table with two levels of hashing 
+   * as presented in the paper. This function first hashes the points
+   * with 'numProj' random projections to a single hash table creating
+   * (key, point ID) pairs where the key is a 'numProj'-dimensional 
+   * integer vector.
+   * 
+   * Then each key in this hash table is hashed into a second hash table
+   * using a standard hash. 
+   *
+   * This function does not have any parameters and relies on parameters 
+   * which are private members of this class, intialized during the 
+   * class intialization.
+   */
+  void BuildHash();
 
-  void BuildSecondLevelHash(MatType& allKeyPointMat);
 
-  inline void BaseCase(const size_t queryIndex, 
-                       const size_t referenceIndex);
-
-  void InsertNeighbor(const size_t queryIndex,
-                      const size_t pos,
-                      const size_t neighbor,
-                      const double distance);
-
+  /**
+   * This function takes a query and hashes it into each of the hash tables 
+   * to get keys for the query and then the key is hashed to a bucket of the 
+   * second hash table and all the points (if any) in those buckets 
+   * are collected as the potential neighbor candidates.
+   *
+   * @param queryIndex The index of the query currently being processed.
+   * @param referenceIndices The list of neighbor candidates obtained from 
+   *    hashing the query into all the hash tables and eventually into 
+   *    multiple buckets of the second hash table.
+   */
   void ReturnIndicesFromTable(const size_t queryIndex,
                               arma::uvec& referenceIndices);
+  /**
+   * This is a helper function that computes the distance of the query to the 
+   * neighbor candidates and appropriately stores the best 'k' candidates
+   *
+   * @param queryIndex The index of the query in question
+   * @param referenceIndex The index of the neighbor candidate in question
+   */
+  double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
+  /**
+   * This is a helper function that efficiently inserts better neighbor 
+   * candidates into an existing set of neighbor candidates. This function 
+   * is only called by the 'BaseCase' function. 
+   *
+   * @param queryIndex This is the index of the query being processed currently
+   * @param pos The position of the neighbor candidate in the current list of 
+   *    neighbor candidates.
+   * @param neighbor The neighbor candidate that is being inserted into the list 
+   *    of the best 'k' candidates for the query in question.
+   * @param distance The distance of the query to the neighbor candidate. 
+   */
+  void InsertNeighbor(const size_t queryIndex, const size_t pos,
+                      const size_t neighbor, const double distance);
 
  private:
   //! Reference dataset.
   const arma::mat& referenceSet;
+
   //! Query dataset (may not be given).
   const arma::mat& querySet;
 
-  //! Instantiation of kernel.
+  //! Instantiation of the metric.
   MetricType metric;
 
   //! The number of projections
   const size_t numProj;
 
-  //! The number of tables
+  //! The number of hash tables
   const size_t numTables;
 
   //! The std::vector containing the projection matrix of each table
-  std::vector<MatType> projections; // should be [numProj x dims] x numTables
+  std::vector<arma::mat> projections; // should be [numProj x dims] x numTables
 
   //! The list of the offset 'b' for each of the projection for each table
-  MatType offsets; // should be numProj x numTables
+  arma::mat offsets; // should be numProj x numTables
 
   //! The hash width
   const double hashWidth;
@@ -176,7 +208,7 @@ class LSHSearch
   const size_t secondHashSize;
 
   //! The weights of the second hash
-  ColType secondHashWeights;
+  arma::vec secondHashWeights;
 
   //! The bucket size of the second hash
   const size_t bucketSize;
@@ -205,8 +237,5 @@ class LSHSearch
 
 // Include implementation.
 #include "lsh_search_impl.hpp"
-
-// Include convenience typedefs.
-//#include "lsh_typedef.hpp"
 
 #endif
