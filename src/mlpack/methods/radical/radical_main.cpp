@@ -11,7 +11,8 @@
 PROGRAM_INFO("RADICAL", "An implementation of RADICAL, a method for independent"
     "component analysis (ICA).  Assuming that we have an input matrix X, the"
     "goal is to find a square unmixing matrix W such that Y = W * X and the "
-    "dimensions of Y are independent components.");
+    "dimensions of Y are independent components.  If the algorithm is running"
+    "particularly slowly, try reducing the number of replicates.");
 
 PARAM_STRING_REQ("input_file", "Input dataset filename for ICA.", "i");
 
