@@ -8,6 +8,7 @@
 
 #include "range.hpp"
 #include <float.h>
+#include <sstream>
 
 namespace mlpack {
 namespace math {
@@ -171,6 +172,19 @@ inline bool Range::Contains(const double d) const
 inline bool Range::Contains(const Range& r) const
 {
   return lo <= r.hi;
+}
+/**
+ * Returns a string representation of an object.
+ */
+std::string Range::ToString() const
+{
+  std::ostringstream convert;
+  convert << "Range [" << this << "]" << std::endl;
+  convert << "Low:  " << lo << std::endl;
+  convert << "High: " << hi;
+  
+  std::string result = convert.str();
+  return result;   
 }
 
 }; // namesapce math
