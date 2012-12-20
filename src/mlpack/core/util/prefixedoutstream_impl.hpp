@@ -56,7 +56,7 @@ void PrefixedOutStream::CallBaseLogic(T s,
     >::type* = 0)
 {
   std::string result = s.ToString();
-  BaseLogic<std::string&>(result);
+  BaseLogic<std::string>(result);
 }
 
 template<typename T>
