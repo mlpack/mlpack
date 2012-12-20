@@ -397,6 +397,10 @@ class BinarySpaceTree
    */
   size_t GetSplitIndex(MatType& data, int splitDim, double splitVal,
       std::vector<size_t>& oldFromNew);
+
+/*
+  std::string ToString() const;
+*/
 };
 
 }; // namespace tree

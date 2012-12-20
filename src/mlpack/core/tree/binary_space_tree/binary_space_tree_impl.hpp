@@ -672,6 +672,14 @@ size_t BinarySpaceTree<BoundType, StatisticType, MatType>::GetSplitIndex(
   return left;
 }
 
+/*
+std::string BinarySpaceTree::ToString() const
+{
+  std::ostringstream convert;
+  convert << "BinarySpaceTree [" << this << "]" << std::endl;
+  return convert.str();
+}
+*/
 }; // namespace tree
 }; // namespace mlpack
 
