@@ -44,7 +44,7 @@ LSHSearch(const arma::mat& referenceSet,
           const double hashWidth,
           const size_t secondHashSize,
           const size_t bucketSize,
-          const MetricType metric) : 
+          const MetricType metric) :
   referenceSet(referenceSet),
   querySet(referenceSet),
   numProj(numProj),
@@ -91,7 +91,7 @@ InsertNeighbor(const size_t queryIndex,
 
 
 template<typename SortPolicy, typename MetricType>
-inline //force_inline 
+inline //force_inline
 double LSHSearch<SortPolicy, MetricType>::
 BaseCase(const size_t queryIndex, const size_t referenceIndex)
 {
@@ -121,7 +121,7 @@ void LSHSearch<SortPolicy, MetricType>::
 ReturnIndicesFromTable(const size_t queryIndex,
                        arma::uvec& referenceIndices)
 {
-  // Hash the query in each of the 'numTables' hash tables using the 
+  // Hash the query in each of the 'numTables' hash tables using the
   // 'numProj' projections for each table.
   // This gives us 'numTables' keys for the query where each key
   // is a 'numProj' dimensional integer vector
@@ -129,13 +129,13 @@ ReturnIndicesFromTable(const size_t queryIndex,
   // compute the projection of the query in each table
   arma::mat allProjInTables(numProj, numTables);
   for (size_t i = 0; i < numTables; i++)
-    allProjInTables.unsafe_col(i) 
+    allProjInTables.unsafe_col(i)
       = projections[i].t() * querySet.unsafe_col(queryIndex);
   allProjInTables += offsets;
   allProjInTables /= hashWidth;
 
-  // compute the hash value of each key of the query into a bucket of the 
-  // 'secondHashTable' using the 'secondHashWeights'. 
+  // compute the hash value of each key of the query into a bucket of the
+  // 'secondHashTable' using the 'secondHashWeights'.
   arma::rowvec hashVec = secondHashWeights.t() * arma::floor(allProjInTables);
 
   for (size_t i = 0; i < hashVec.n_elem; i++)
@@ -143,8 +143,8 @@ ReturnIndicesFromTable(const size_t queryIndex,
 
   assert(hashVec.n_elem == numTables);
 
-  // For all the buckets that the query is hashed into, sequentially 
-  // collect the indices in those buckets. 
+  // For all the buckets that the query is hashed into, sequentially
+  // collect the indices in those buckets.
   arma::Col<size_t> refPointsConsidered;
   refPointsConsidered.zeros(referenceSet.n_cols);
 
@@ -191,7 +191,7 @@ Search(const size_t k,
   // go through every query point sequentially
   for (size_t i = 0; i < querySet.n_cols; i++)
   {
-    // For hash every query into every hash tables and eventually 
+    // For hash every query into every hash tables and eventually
     // into the 'secondHashTable' to obtain the neighbor candidates
     arma::uvec refIndices;
     ReturnIndicesFromTable(i, refIndices);
@@ -222,48 +222,48 @@ BuildHash()
   // The first level hash for a single table outputs a 'numProj'-dimensional
   // integer key for each point in the set -- (key, pointID)
   // The key creation details are presented below
-  // 
-  // The second level hash is performed by hashing the key to 
+  //
+  // The second level hash is performed by hashing the key to
   // an integer in the range [0, 'secondHashSize').
   //
-  // This is done by creating a weight vector 'secondHashWeights' of 
+  // This is done by creating a weight vector 'secondHashWeights' of
   // length 'numProj' with each entry an integer randomly chosen
-  // between [0, 'secondHashSize'). 
+  // between [0, 'secondHashSize').
   //
-  // Then the bucket for any key and its corresponding point is 
+  // Then the bucket for any key and its corresponding point is
   // given by <key, 'secondHashWeights'> % 'secondHashSize'
-  // and the corresponding point ID is put into that bucket.  
+  // and the corresponding point ID is put into that bucket.
 
   //////////////////////////////////////////
   // Step I: Preparing the second level hash
   ///////////////////////////////////////////
 
   // obtain the weights for the second hash
-  secondHashWeights = arma::floor(arma::randu(numProj) 
+  secondHashWeights = arma::floor(arma::randu(numProj)
                                   * (double) secondHashSize);
 
-  // The 'secondHashTable' is initially an empty matrix of size 
-  // ('secondHashSize' x 'bucketSize'). But by only filling the buckets 
-  // as points land in them allows us to shrink the size of the 
+  // The 'secondHashTable' is initially an empty matrix of size
+  // ('secondHashSize' x 'bucketSize'). But by only filling the buckets
+  // as points land in them allows us to shrink the size of the
   // 'secondHashTable' at the end of the hashing.
 
   // Start filling up the second hash table
   secondHashTable.set_size(secondHashSize, bucketSize);
 
   // Fill the second hash table n = referenceSet.n_cols
-  // This is because no point has index 'n' so the presence of 
-  // this in the bucket denotes that there are no more points 
-  // in this bucket. 
+  // This is because no point has index 'n' so the presence of
+  // this in the bucket denotes that there are no more points
+  // in this bucket.
   secondHashTable.fill(referenceSet.n_cols);
 
   // Keeping track of the size of each bucket in the hash.
   // At the end of hashing most buckets will be empty.
   bucketContentSize.zeros(secondHashSize);
 
-  // Instead of putting the points in the row corresponding to 
-  // the bucket, we chose the next empty row and keep track of 
-  // the row in which the bucket lies. This allows us to 
-  // stack together and slice out the empty buckets at the 
+  // Instead of putting the points in the row corresponding to
+  // the bucket, we chose the next empty row and keep track of
+  // the row in which the bucket lies. This allows us to
+  // stack together and slice out the empty buckets at the
   // end of the hashing.
   bucketRowInHashTable.set_size(secondHashSize);
   bucketRowInHashTable.fill(secondHashSize);
@@ -293,7 +293,7 @@ BuildHash()
     // Step IV: Obtaining the 'numProj' projections for each table
     //////////////////////////////////////////////////////////////
     //
-    // For L2 metric, 2-stable distributions are used, and 
+    // For L2 metric, 2-stable distributions are used, and
     // the normal Z ~ N(0, 1) is a 2-stable distribution.
     arma::mat projMat;
     projMat.randn(referenceSet.n_rows, numProj);
@@ -302,16 +302,16 @@ BuildHash()
     projections.push_back(projMat);
 
     ///////////////////////////////////////////////////////////////
-    // Step V: create the 'numProj'-dimensional key for each point 
+    // Step V: create the 'numProj'-dimensional key for each point
     // in each table.
     //////////////////////////////////////////////////////////////
 
-    // The following set of lines performs the task of 
-    // hashing each point to a 'numProj'-dimensional integer key. 
+    // The following set of lines performs the task of
+    // hashing each point to a 'numProj'-dimensional integer key.
     // Hence you get a ('numProj' x 'referenceSet.n_cols') key matrix
     //
-    // For a single table, let the 'numProj' projections be denoted 
-    // by 'proj_i' and the corresponding offset be 'offset_i'. 
+    // For a single table, let the 'numProj' projections be denoted
+    // by 'proj_i' and the corresponding offset be 'offset_i'.
     // Then the key of a single point is obtained as:
     // key = { floor( (<proj_i, point> + offset_i) / 'hashWidth' ) forall i }
     arma::mat offsetMat = arma::repmat(offsets.unsafe_col(i),
@@ -321,7 +321,7 @@ BuildHash()
     hashMat /= hashWidth;
 
     ////////////////////////////////////////////////////////////
-    // Step VI: Putting the points in the 'secondHashTable' by 
+    // Step VI: Putting the points in the 'secondHashTable' by
     // hashing the key.
     ///////////////////////////////////////////////////////////
 
@@ -335,7 +335,7 @@ BuildHash()
 
     assert(secondHashVec.n_elem == referenceSet.n_cols);
 
-    // Inserting the point in the corresponding row to its bucket 
+    // Inserting the point in the corresponding row to its bucket
     // in the 'secondHashTable'.
     for (size_t j = 0; j < secondHashVec.n_elem; j++)
     {
@@ -343,7 +343,7 @@ BuildHash()
       size_t hashInd = (size_t) secondHashVec[j];
       // The point ID is 'j'
 
-      // If this is currently an empty bucket, start a new row 
+      // If this is currently an empty bucket, start a new row
       // keep track of which row corresponds to the bucket.
       if (bucketContentSize[hashInd] == 0)
       {
@@ -353,14 +353,14 @@ BuildHash()
 
         numRowsInTable++;
       }
-      // If bucket already present in the 'secondHashTable', find 
-      // the corresponding row and insert the point ID in this row 
+      // If bucket already present in the 'secondHashTable', find
+      // the corresponding row and insert the point ID in this row
       // unless the bucket is full, in which case, do nothing.
-      else 
+      else
       {
-        // if bucket not full, insert point here        
+        // if bucket not full, insert point here
         if (bucketContentSize[hashInd] < bucketSize)
-          secondHashTable(bucketRowInHashTable[hashInd], 
+          secondHashTable(bucketRowInHashTable[hashInd],
                           bucketContentSize[hashInd]) = j;
         // else just ignore as suggested
       }
@@ -376,12 +376,12 @@ BuildHash()
   // Step VII: Condensing the 'secondHashTable'
   /////////////////////////////////////////////////
 
-  size_t maxBucketSize = 0; 
+  size_t maxBucketSize = 0;
   for (size_t i = 0; i < bucketContentSize.n_elem; i++)
     if (bucketContentSize[i] > maxBucketSize)
       maxBucketSize = bucketContentSize[i];
 
-  Log::Info << "Final hash table size: (" << numRowsInTable << " x " 
+  Log::Info << "Final hash table size: (" << numRowsInTable << " x "
             << maxBucketSize << ")" << std::endl;
   secondHashTable.resize(numRowsInTable, maxBucketSize);
 
