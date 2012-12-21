@@ -434,6 +434,22 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
+    const CoverTree& other) :
+    dataset(other.dataset),
+    point(other.point),
+    scale(other.scale),
+    base(other.base),
+    stat(other.stat),
+    parentDistance(other.parentDistance),
+    furthestDescendantDistance(other.furthestDescendantDistance)
+{
+  // Copy each child by hand.
+  for (size_t i = 0; i < other.NumChildren(); ++i)
+    children.push_back(new CoverTree(other.Child(i)));
+}
+
+template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 CoverTree<MetricType, RootPointPolicy, StatisticType>::~CoverTree()
 {
   // Delete each child.
