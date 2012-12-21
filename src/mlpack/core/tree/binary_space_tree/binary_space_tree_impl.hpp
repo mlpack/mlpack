@@ -11,6 +11,7 @@
 
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/log.hpp>
+#include <mlpack/core/util/string_util.hpp>
 
 namespace mlpack {
 namespace tree {
@@ -672,14 +673,33 @@ size_t BinarySpaceTree<BoundType, StatisticType, MatType>::GetSplitIndex(
   return left;
 }
 
-/*
-std::string BinarySpaceTree::ToString() const
+/**
+ * Returns a string representation of this object.
+ */
+template<typename BoundType, typename StatisticType, typename MatType>
+std::string BinarySpaceTree<BoundType, StatisticType, MatType>::ToString() const
 {
   std::ostringstream convert;
   convert << "BinarySpaceTree [" << this << "]" << std::endl;
+  convert << "begin: " << begin << std::endl;
+  convert << "count: " << count << std::endl;
+  convert << "bound: " << mlpack::util::Indent(bound.ToString());
+  convert << "statistic: " << stat.ToString();
+  convert << "leaf size: " << leafSize << std::endl;
+  convert << "splitDimension: " << splitDimension << std::endl;
+  if (left != NULL)
+  {
+    convert << "left:" << std::endl;
+    convert << mlpack::util::Indent(left->ToString());
+  }
+  if (right != NULL)
+  {
+    convert << "right:" << std::endl;
+    convert << mlpack::util::Indent(right->ToString());
+  }
   return convert.str();
 }
-*/
+
 }; // namespace tree
 }; // namespace mlpack
 

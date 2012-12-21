@@ -364,6 +364,9 @@ class CoverTree
                      const size_t nearSetSize,
                      const size_t pointSetSize);
  public:
+  /**
+   * Returns a string representation of this object.
+   */
   std::string ToString() const;
 };
 

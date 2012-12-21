@@ -92,11 +92,33 @@ class MRKDStatistic
       rightStat.parentStat = this;
     }
 
-  /**
-   * Returns a string representation of an object.
-   */
-  std::string ToString() const;
-
+    /**
+     * Returns a string representation of this object.
+     */
+    std::string ToString() const
+    {
+      std::cout << "Started " << this << std::endl;
+      std::ostringstream convert;
+      convert << "MRKDStatistic [" << this << std::endl;
+      convert << "begin: " << begin << std::endl;
+      std::cout << "  after begin " << this << std::endl;
+      convert << "count: " << count << std::endl;
+      std::cout << "  after count " << this << std::endl;
+      convert << "sumOfSquaredNorms" << sumOfSquaredNorms << std::endl;
+      std::cout << "  after sum of squared norms" << this << std::endl;
+      std::cout << "Children " << this << std::endl;
+/*
+      if (leftStat != NULL)
+      {
+        convert << "leftStat:" << std::endl << mlpack::util::Indent(leftStat->ToString());
+      }
+      if (rightStat != NULL)
+      {
+        convert << "rightStat:" << std::endl << mlpack::util::Indent(rightStat->ToString());
+      }
+*/
+      std::cout << "Done " << this << std::endl;
+    }
 
     //! The data points this object contains
     const arma::mat* dataset;

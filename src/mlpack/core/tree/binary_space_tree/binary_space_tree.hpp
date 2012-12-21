@@ -397,10 +397,12 @@ class BinarySpaceTree
    */
   size_t GetSplitIndex(MatType& data, int splitDim, double splitVal,
       std::vector<size_t>& oldFromNew);
-
-/*
+ public:
+  /**
+   * Returns a string representation of this object.
+   */
   std::string ToString() const;
-*/
+
 };
 
 }; // namespace tree
