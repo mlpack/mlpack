@@ -2010,4 +2010,51 @@ BOOST_AUTO_TEST_CASE(CoverTreeAlternateMetricTest)
   CheckSeparation<CoverTree<LMetric<1, true> >, LMetric<1, true> >(tree, tree);
 }
 
+/**
+ * Make sure copy constructor works for the cover tree.
+ */
+BOOST_AUTO_TEST_CASE(CoverTreeCopyConstructor)
+{
+  arma::mat dataset;
+  dataset.randu(10, 10); // dataset is irrelevant.
+  CoverTree<> c(dataset, 1.3, 0, 5, 1.45, 5.2); // Random parameters.
+  c.Children().push_back(new CoverTree<>(dataset, 1.3, 1, 4, 1.3, 2.45));
+  c.Children().push_back(new CoverTree<>(dataset, 1.5, 2, 3, 1.2, 5.67));
+
+  CoverTree<> d = c;
+
+  // Check that everything is the same.
+  BOOST_REQUIRE_EQUAL(c.Dataset().memptr(), d.Dataset().memptr());
+  BOOST_REQUIRE_CLOSE(c.Base(), d.Base(), 1e-50);
+  BOOST_REQUIRE_EQUAL(c.Point(), d.Point());
+  BOOST_REQUIRE_EQUAL(c.Scale(), d.Scale());
+  BOOST_REQUIRE_EQUAL(c.ParentDistance(), d.ParentDistance());
+  BOOST_REQUIRE_EQUAL(c.FurthestDescendantDistance(),
+                      d.FurthestDescendantDistance());
+  BOOST_REQUIRE_EQUAL(c.NumChildren(), d.NumChildren());
+  BOOST_REQUIRE_NE(&c.Child(0), &d.Child(0));
+  BOOST_REQUIRE_NE(&c.Child(1), &d.Child(1));
+
+  // Check that the children are okay.
+  BOOST_REQUIRE_EQUAL(c.Child(0).Dataset().memptr(),
+                      d.Child(0).Dataset().memptr());
+  BOOST_REQUIRE_CLOSE(c.Child(0).Base(), d.Child(0).Base(), 1e-50);
+  BOOST_REQUIRE_EQUAL(c.Child(0).Point(), d.Child(0).Point());
+  BOOST_REQUIRE_EQUAL(c.Child(0).Scale(), d.Child(0).Scale());
+  BOOST_REQUIRE_EQUAL(c.Child(0).ParentDistance(), d.Child(0).ParentDistance());
+  BOOST_REQUIRE_EQUAL(c.Child(0).FurthestDescendantDistance(),
+                      d.Child(0).FurthestDescendantDistance());
+  BOOST_REQUIRE_EQUAL(c.Child(0).NumChildren(), d.Child(0).NumChildren());
+
+  BOOST_REQUIRE_EQUAL(c.Child(1).Dataset().memptr(),
+                      d.Child(1).Dataset().memptr());
+  BOOST_REQUIRE_CLOSE(c.Child(1).Base(), d.Child(1).Base(), 1e-50);
+  BOOST_REQUIRE_EQUAL(c.Child(1).Point(), d.Child(1).Point());
+  BOOST_REQUIRE_EQUAL(c.Child(1).Scale(), d.Child(1).Scale());
+  BOOST_REQUIRE_EQUAL(c.Child(1).ParentDistance(), d.Child(1).ParentDistance());
+  BOOST_REQUIRE_EQUAL(c.Child(1).FurthestDescendantDistance(),
+                      d.Child(1).FurthestDescendantDistance());
+  BOOST_REQUIRE_EQUAL(c.Child(1).NumChildren(), d.Child(1).NumChildren());
+}
+
 BOOST_AUTO_TEST_SUITE_END();
