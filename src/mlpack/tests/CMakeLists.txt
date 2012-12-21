@@ -20,6 +20,7 @@ add_executable(mlpack_test
   load_save_test.cpp
   local_coordinate_coding_test.cpp
   lrsdp_test.cpp
+  lsh_test.cpp
   math_test.cpp
   nbc_test.cpp
   nca_test.cpp
