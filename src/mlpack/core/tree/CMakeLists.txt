@@ -19,10 +19,12 @@ set(SOURCES
   cover_tree/dual_tree_traverser_impl.hpp
   hrectbound.hpp
   hrectbound_impl.hpp
+  mrkd_statistic.hpp
+  mrkd_statistic_impl.hpp
+  mrkd_statistic.cpp
   periodichrectbound.hpp
   periodichrectbound_impl.hpp
   statistic.hpp
-  mrkd_statistic.hpp
 )
 
 # add directory name to sources
