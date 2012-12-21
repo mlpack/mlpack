@@ -204,6 +204,30 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree() :
 }
 
 /**
+ * Create a binary space tree by copying the other tree.  Be careful!  This can
+ * take a long time and use a lot of memory.
+ */
+template<typename BoundType, typename StatisticType, typename MatType>
+BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
+    const BinarySpaceTree& other) :
+    left(NULL),
+    right(NULL),
+    begin(other.Begin()),
+    count(other.Count()),
+    bound(other.Bound()),
+    stat(other.Stat()),
+    leafSize(other.LeafSize()),
+    splitDimension(other.SplitDimension())
+{
+  // Create left and right children (if any).
+  if (other.Left())
+    left = new BinarySpaceTree(*other.Left());
+
+  if (other.Right())
+    right = new BinarySpaceTree(*other.Right());
+}
+
+/**
  * Deletes this node, deallocating the memory for the children and calling their
  * destructors in turn.  This will invalidate any pointers or references to any
  * nodes which are children of this one.
@@ -328,61 +352,9 @@ size_t BinarySpaceTree<BoundType, StatisticType, MatType>::TreeDepth() const
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>
-inline const
-    BoundType& BinarySpaceTree<BoundType, StatisticType, MatType>::Bound() const
-{
-  return bound;
-}
-
-template<typename BoundType, typename StatisticType, typename MatType>
-inline BoundType& BinarySpaceTree<BoundType, StatisticType, MatType>::Bound()
-{
-  return bound;
-}
-
-template<typename BoundType, typename StatisticType, typename MatType>
-inline const StatisticType&
-    BinarySpaceTree<BoundType, StatisticType, MatType>::Stat() const
-{
-  return stat;
-}
-
-template<typename BoundType, typename StatisticType, typename MatType>
-inline StatisticType& BinarySpaceTree<BoundType, StatisticType, MatType>::Stat()
-{
-  return stat;
-}
-
-template<typename BoundType, typename StatisticType, typename MatType>
-inline size_t BinarySpaceTree<BoundType, StatisticType, MatType>::GetSplitDimension() const
-{
-  return splitDimension;
-}
-
-template<typename BoundType, typename StatisticType, typename MatType>
 inline bool BinarySpaceTree<BoundType, StatisticType, MatType>::IsLeaf() const
 {
   return !left;
-}
-
-/**
- * Gets the left branch of the tree.
- */
-template<typename BoundType, typename StatisticType, typename MatType>
-inline BinarySpaceTree<BoundType, StatisticType, MatType>*
-    BinarySpaceTree<BoundType, StatisticType, MatType>::Left() const
-{
-  return left;
-}
-
-/**
- * Gets the right branch.
- */
-template<typename BoundType, typename StatisticType, typename MatType>
-inline BinarySpaceTree<BoundType, StatisticType, MatType>*
-    BinarySpaceTree<BoundType, StatisticType, MatType>::Right() const
-{
-  return right;
 }
 
 /**
@@ -455,30 +427,12 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::Point(const size_t index)
 }
 
 /**
- * Gets the index of the begin point of this subset.
- */
-template<typename BoundType, typename StatisticType, typename MatType>
-inline size_t BinarySpaceTree<BoundType, StatisticType, MatType>::Begin() const
-{
-  return begin;
-}
-
-/**
  * Gets the index one beyond the last index in the series.
  */
 template<typename BoundType, typename StatisticType, typename MatType>
 inline size_t BinarySpaceTree<BoundType, StatisticType, MatType>::End() const
 {
   return begin + count;
-}
-
-/**
- * Gets the number of points in this subset.
- */
-template<typename BoundType, typename StatisticType, typename MatType>
-inline size_t BinarySpaceTree<BoundType, StatisticType, MatType>::Count() const
-{
-  return count;
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>
