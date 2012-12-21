@@ -22,7 +22,10 @@ class MRKDStatistic
     :
       dataset(NULL),
       begin(0),
-      count(0)
+      count(0),
+      leftStat(NULL),
+      rightStat(NULL),
+      parentStat(NULL)
     { }
 
     ~MRKDStatistic() {}
@@ -42,6 +45,8 @@ class MRKDStatistic
       dataset(&dataset),
       begin(begin),
       count(count),
+      leftStat(NULL),
+      rightStat(NULL),
       parentStat(NULL)
     {
       centerOfMass = dataset.col(begin);
@@ -97,27 +102,22 @@ class MRKDStatistic
      */
     std::string ToString() const
     {
-      std::cout << "Started " << this << std::endl;
       std::ostringstream convert;
       convert << "MRKDStatistic [" << this << std::endl;
       convert << "begin: " << begin << std::endl;
-      std::cout << "  after begin " << this << std::endl;
       convert << "count: " << count << std::endl;
-      std::cout << "  after count " << this << std::endl;
-      convert << "sumOfSquaredNorms" << sumOfSquaredNorms << std::endl;
-      std::cout << "  after sum of squared norms" << this << std::endl;
-      std::cout << "Children " << this << std::endl;
-/*
+      convert << "sumOfSquaredNorms: " << sumOfSquaredNorms << std::endl;
       if (leftStat != NULL)
       {
-        convert << "leftStat:" << std::endl << mlpack::util::Indent(leftStat->ToString());
+        convert << "leftStat:" << std::endl;
+        convert << mlpack::util::Indent(leftStat->ToString());
       }
       if (rightStat != NULL)
       {
-        convert << "rightStat:" << std::endl << mlpack::util::Indent(rightStat->ToString());
+        convert << "rightStat:" << std::endl;
+        convert << mlpack::util::Indent(rightStat->ToString());
       }
-*/
-      std::cout << "Done " << this << std::endl;
+      return convert.str();
     }
 
     //! The data points this object contains
