@@ -2057,4 +2057,48 @@ BOOST_AUTO_TEST_CASE(CoverTreeCopyConstructor)
   BOOST_REQUIRE_EQUAL(c.Child(1).NumChildren(), d.Child(1).NumChildren());
 }
 
+/**
+ * Make sure copy constructor works right for the binary space tree.
+ */
+BOOST_AUTO_TEST_CASE(BinarySpaceTreeCopyConstructor)
+{
+  BinarySpaceTree<HRectBound<2> > b;
+  b.Begin() = 10;
+  b.Count() = 50;
+  b.Left() = new BinarySpaceTree<HRectBound<2> >();
+  b.Left()->Begin() = 10;
+  b.Left()->Count() = 30;
+  b.Right() = new BinarySpaceTree<HRectBound<2> >();
+  b.Right()->Begin() = 40;
+  b.Right()->Count() = 20;
+
+  // Copy the tree.
+  BinarySpaceTree<HRectBound<2> > c(b);
+
+  // Ensure everything copied correctly.
+  BOOST_REQUIRE_EQUAL(b.Begin(), c.Begin());
+  BOOST_REQUIRE_EQUAL(b.Count(), c.Count());
+  BOOST_REQUIRE_NE(b.Left(), c.Left());
+  BOOST_REQUIRE_NE(b.Right(), c.Right());
+
+  // Check the children.
+  BOOST_REQUIRE_EQUAL(b.Left()->Begin(), c.Left()->Begin());
+  BOOST_REQUIRE_EQUAL(b.Left()->Count(), c.Left()->Count());
+  BOOST_REQUIRE_EQUAL(b.Left()->Left(),
+      (BinarySpaceTree<HRectBound<2> >*) NULL);
+  BOOST_REQUIRE_EQUAL(b.Left()->Left(), c.Left()->Left());
+  BOOST_REQUIRE_EQUAL(b.Left()->Right(),
+      (BinarySpaceTree<HRectBound<2> >*) NULL);
+  BOOST_REQUIRE_EQUAL(b.Left()->Right(), c.Left()->Right());
+
+  BOOST_REQUIRE_EQUAL(b.Right()->Begin(), c.Right()->Begin());
+  BOOST_REQUIRE_EQUAL(b.Right()->Count(), c.Right()->Count());
+  BOOST_REQUIRE_EQUAL(b.Right()->Left(),
+      (BinarySpaceTree<HRectBound<2> >*) NULL);
+  BOOST_REQUIRE_EQUAL(b.Right()->Left(), c.Right()->Left());
+  BOOST_REQUIRE_EQUAL(b.Right()->Right(),
+      (BinarySpaceTree<HRectBound<2> >*) NULL);
+  BOOST_REQUIRE_EQUAL(b.Right()->Right(), c.Right()->Right());
+}
+
 BOOST_AUTO_TEST_SUITE_END();
