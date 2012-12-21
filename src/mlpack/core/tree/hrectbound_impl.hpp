@@ -384,6 +384,19 @@ bool HRectBound<Power, TakeRoot>::Contains(const VecType& point) const
   return true;
 }
 
+/**
+ * Returns a string representation of this object.
+ */
+template<int Power, bool TakeRoot>
+std::string HRectBound<Power, TakeRoot>::ToString() const
+{
+  std::ostringstream convert;
+  convert << "HRectBound [" << this << "]" << std::endl;
+  convert << "dim: " << dim << std::endl;
+  convert << "bounds: " << bounds->ToString() << std::endl;
+  return convert.str();
+}
+
 }; // namespace bound
 }; // namespace mlpack
 

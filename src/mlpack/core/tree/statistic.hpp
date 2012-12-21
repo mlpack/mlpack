@@ -53,6 +53,9 @@ class EmptyStatistic
                    const EmptyStatistic& /* rightStat */)
     { }
   public:
+    /**
+     * Returns a string representation of this object.
+     */
     std::string ToString() const
     {
       std::stringstream convert;

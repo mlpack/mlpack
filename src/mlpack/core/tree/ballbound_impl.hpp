@@ -190,7 +190,9 @@ BallBound<VecType>::operator|=(const MatType& data)
 
   return *this;
 }
-
+/**
+ * Returns a string representation of this object.
+ */
 template<typename VecType>
 std::string BallBound<VecType>::ToString() const
 {

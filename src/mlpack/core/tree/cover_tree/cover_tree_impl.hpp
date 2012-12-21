@@ -820,7 +820,9 @@ size_t CoverTree<MetricType, RootPointPolicy, StatisticType>::PruneFarSet(
   return (left - nearSetSize);
 }
 
-
+/**
+ * Returns a string representation of this object.
+ */
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 std::string CoverTree<MetricType, RootPointPolicy, StatisticType>::ToString() const
 {
