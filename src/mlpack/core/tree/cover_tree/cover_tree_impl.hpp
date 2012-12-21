@@ -845,7 +845,6 @@ std::string CoverTree<MetricType, RootPointPolicy, StatisticType>::ToString() co
       convert << std::endl << mlpack::util::Indent(children.at(i)->ToString());
     }
   }
-  std::cout << "returning " << this << std::endl;
   return convert.str();
 }
 }; // namespace tree
