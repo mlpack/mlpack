@@ -91,7 +91,7 @@ InsertNeighbor(const size_t queryIndex,
 
 
 template<typename SortPolicy, typename MetricType>
-inline //force_inline
+inline force_inline
 double LSHSearch<SortPolicy, MetricType>::
 BaseCase(const size_t queryIndex, const size_t referenceIndex)
 {
