@@ -1490,6 +1490,32 @@ BOOST_AUTO_TEST_CASE(TreeCountMismatch)
   BOOST_REQUIRE(rootNode.Right()->Right()->Count() == 1);
 }
 
+BOOST_AUTO_TEST_CASE(CheckParents)
+{
+  arma::mat dataset = "2.0 5.0 9.0 4.0 8.0 7.0;"
+                      "3.0 4.0 6.0 7.0 1.0 2.0 ";
+
+  // Leaf size of 1.
+  BinarySpaceTree<HRectBound<2> > rootNode(dataset, 1);
+
+  BOOST_REQUIRE_EQUAL(rootNode.Parent(),
+      (BinarySpaceTree<HRectBound<2> >*) NULL);
+  BOOST_REQUIRE_EQUAL(&rootNode, rootNode.Left()->Parent());
+  BOOST_REQUIRE_EQUAL(&rootNode, rootNode.Right()->Parent());
+  BOOST_REQUIRE_EQUAL(rootNode.Left(), rootNode.Left()->Left()->Parent());
+  BOOST_REQUIRE_EQUAL(rootNode.Left(), rootNode.Left()->Right()->Parent());
+  BOOST_REQUIRE_EQUAL(rootNode.Left()->Left(),
+      rootNode.Left()->Left()->Left()->Parent());
+  BOOST_REQUIRE_EQUAL(rootNode.Left()->Left(),
+      rootNode.Left()->Left()->Right()->Parent());
+  BOOST_REQUIRE_EQUAL(rootNode.Right(), rootNode.Right()->Left()->Parent());
+  BOOST_REQUIRE_EQUAL(rootNode.Right(), rootNode.Right()->Right()->Parent());
+  BOOST_REQUIRE_EQUAL(rootNode.Right()->Left(),
+      rootNode.Right()->Left()->Left()->Parent());
+  BOOST_REQUIRE_EQUAL(rootNode.Right()->Left(),
+      rootNode.Right()->Left()->Right()->Parent());
+}
+
 // Ensure FurthestDescendantDistance() works.
 BOOST_AUTO_TEST_CASE(FurthestDescendantDistanceTest)
 {
