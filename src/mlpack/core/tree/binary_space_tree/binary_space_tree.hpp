@@ -44,6 +44,8 @@ class BinarySpaceTree
   BinarySpaceTree* left;
   //! The right child node.
   BinarySpaceTree* right;
+  //! The parent node (NULL if this is the root of the tree).
+  BinarySpaceTree* parent;
   //! The index of the first point in the dataset contained in this node (and
   //! its children).
   size_t begin;
@@ -127,6 +129,7 @@ class BinarySpaceTree
   BinarySpaceTree(MatType& data,
                   const size_t begin,
                   const size_t count,
+                  BinarySpaceTree* parent = NULL,
                   const size_t leafSize = 20);
 
   /**
@@ -151,6 +154,7 @@ class BinarySpaceTree
                   const size_t begin,
                   const size_t count,
                   std::vector<size_t>& oldFromNew,
+                  BinarySpaceTree* parent = NULL,
                   const size_t leafSize = 20);
 
   /**
@@ -179,6 +183,7 @@ class BinarySpaceTree
                   const size_t count,
                   std::vector<size_t>& oldFromNew,
                   std::vector<size_t>& newFromOld,
+                  BinarySpaceTree* parent = NULL,
                   const size_t leafSize = 20);
 
   /**
@@ -258,6 +263,11 @@ class BinarySpaceTree
   BinarySpaceTree* Right() const { return right; }
   //! Modify the right child of this node.
   BinarySpaceTree*& Right() { return right; }
+
+  //! Gets the parent of this node.
+  BinarySpaceTree* Parent() const { return parent; }
+  //! Modify the parent of this node.
+  BinarySpaceTree*& Parent() { return parent; }
 
   //! Get the split dimension for this node.
   size_t SplitDimension() const { return splitDimension; }

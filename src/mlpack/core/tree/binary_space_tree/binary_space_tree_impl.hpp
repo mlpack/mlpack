@@ -24,6 +24,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     const size_t leafSize) :
     left(NULL),
     right(NULL),
+    parent(NULL),
     begin(0), /* This root node starts at index 0, */
     count(data.n_cols), /* and spans all of the dataset. */
     bound(data.n_rows),
@@ -47,6 +48,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     const size_t leafSize) :
     left(NULL),
     right(NULL),
+    parent(NULL),
     begin(0),
     count(data.n_cols),
     bound(data.n_rows),
@@ -76,6 +78,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     const size_t leafSize) :
     left(NULL),
     right(NULL),
+    parent(NULL),
     begin(0),
     count(data.n_cols),
     bound(data.n_rows),
@@ -107,9 +110,11 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     MatType& data,
     const size_t begin,
     const size_t count,
+    BinarySpaceTree* parent,
     const size_t leafSize) :
     left(NULL),
     right(NULL),
+    parent(parent),
     begin(begin),
     count(count),
     bound(data.n_rows),
@@ -132,9 +137,11 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     const size_t begin,
     const size_t count,
     std::vector<size_t>& oldFromNew,
+    BinarySpaceTree* parent,
     const size_t leafSize) :
     left(NULL),
     right(NULL),
+    parent(parent),
     begin(begin),
     count(count),
     bound(data.n_rows),
@@ -162,9 +169,11 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     const size_t count,
     std::vector<size_t>& oldFromNew,
     std::vector<size_t>& newFromOld,
+    BinarySpaceTree* parent,
     const size_t leafSize) :
     left(NULL),
     right(NULL),
+    parent(parent),
     begin(begin),
     count(count),
     bound(data.n_rows),
@@ -194,6 +203,7 @@ template<typename BoundType, typename StatisticType, typename MatType>
 BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree() :
     left(NULL),
     right(NULL),
+    parent(NULL),
     begin(0),
     count(0),
     bound(),
@@ -212,6 +222,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     const BinarySpaceTree& other) :
     left(NULL),
     right(NULL),
+    parent(other.Parent()),
     begin(other.Begin()),
     count(other.Count()),
     bound(other.Bound()),
@@ -221,10 +232,16 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
 {
   // Create left and right children (if any).
   if (other.Left())
+  {
     left = new BinarySpaceTree(*other.Left());
+    left->Parent() = this; // Set parent to this, not other tree.
+  }
 
   if (other.Right())
+  {
     right = new BinarySpaceTree(*other.Right());
+    right->Parent() = this; // Set parent to this, not other tree.
+  }
 }
 
 /**
@@ -478,9 +495,9 @@ void
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
   left = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, begin,
-      splitCol - begin, leafSize);
+      splitCol - begin, this, leafSize);
   right = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, splitCol,
-      begin + count - splitCol, leafSize);
+      begin + count - splitCol, this, leafSize);
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>
@@ -528,9 +545,9 @@ void BinarySpaceTree<BoundType, StatisticType, MatType>::SplitNode(
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
   left = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, begin,
-      splitCol - begin, oldFromNew, leafSize);
+      splitCol - begin, oldFromNew, this, leafSize);
   right = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, splitCol,
-      begin + count - splitCol, oldFromNew, leafSize);
+      begin + count - splitCol, oldFromNew, this, leafSize);
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>
