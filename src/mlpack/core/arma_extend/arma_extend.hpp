@@ -28,10 +28,12 @@
 #endif
 
 namespace arma {
-  // u64
+  // u64/s64
   #include "typedef.hpp"
   #include "traits.hpp"
   #include "promote_type.hpp"
+  #include "restrictors.hpp"
+  #include "hdf5_misc.hpp"
 
   // ccov()
   #include "op_ccov_proto.hpp"
