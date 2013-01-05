@@ -5,9 +5,11 @@ set(SOURCES
   fn_ccov.hpp
   glue_ccov_meat.hpp
   glue_ccov_proto.hpp
+  hdf5_misc.hpp
   op_ccov_meat.hpp
   op_ccov_proto.hpp
   promote_type.hpp
+  restrictors.hpp
   traits.hpp
   typedef.hpp
 )
