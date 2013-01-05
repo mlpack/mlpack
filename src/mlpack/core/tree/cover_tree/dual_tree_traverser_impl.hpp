@@ -212,21 +212,21 @@ DualTreeTraverser<RuleType>::PruneMap(
 
       // Try to prune based on shell().  This is hackish and will need to be
       // refined or cleaned at some point.
-      double score = rule.PrescoreQ(queryNode, candidateQueryNode, *refNode,
-          frame.baseCase);
+//      double score = rule.PrescoreQ(queryNode, candidateQueryNode, *refNode,
+//          frame.baseCase);
 
-      if (score == DBL_MAX)
-      {
-        ++numPrunes;
-        continue;
-      }
+//      if (score == DBL_MAX)
+//      {
+//        ++numPrunes;
+//        continue;
+//      }
 
 //      Log::Debug << "Recheck reference node " << refNode->Point() <<
 //          " scale " << refNode->Scale() << " which has old score " <<
 //          oldScore << " with old reference index " << frame.referenceIndex
 //          << " and old query index " << frame.queryIndex << std::endl;
 
-      score = rule.Rescore(candidateQueryNode, *refNode, oldScore);
+      double score = rule.Rescore(candidateQueryNode, *refNode, oldScore);
 
 //      Log::Debug << "Rescored as " << score << std::endl;
 
@@ -479,21 +479,21 @@ DualTreeTraverser<RuleType>::ReferenceRecursion(
 //            " scale " << refNode->Scale() << ", reference child " <<
 //            refNode->Child(j).Point() << " scale " << refNode->Child(j).Scale()
 //            << " with base case " << baseCase;
-        childScore = rule.Prescore(queryNode, *refNode, refNode->Child(j),
-            frame.baseCase);
+//        childScore = rule.Prescore(queryNode, *refNode, refNode->Child(j),
+//            frame.baseCase);
 //        Log::Debug << " and result " << childScore << ".\n";
 
-        if (childScore == DBL_MAX)
-        {
-          ++numPrunes;
-          continue;
-        }
+//        if (childScore == DBL_MAX)
+//        {
+//          ++numPrunes;
+//          continue;
+//        }
 
         // Calculate the base case of each child.
         baseCase = rule.BaseCase(queryIndex, refIndex);
 
         // See if we can prune it.
-        childScore = rule.Score(queryNode, refNode->Child(j), baseCase);
+        double childScore = rule.Score(queryNode, refNode->Child(j), baseCase);
 
         if (childScore == DBL_MAX)
         {
