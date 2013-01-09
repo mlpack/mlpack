@@ -113,13 +113,13 @@ BOOST_AUTO_TEST_CASE(AllkRANNNaiveSearch)
   arma::mat refData;
   arma::mat queryData;
 
-  data::Load("./data/rann_test_r_3_900.csv", refData, true);
-  data::Load("./data/rann_test_q_3_100.csv", queryData, true);
+  data::Load("rann_test_r_3_900.csv", refData, true);
+  data::Load("rann_test_q_3_100.csv", queryData, true);
 
   RASearch<> *rann_rs = new RASearch<>(refData, queryData, true);
 
   arma::mat qrRanks;
-  data::Load("./data/rann_test_qr_ranks.csv", qrRanks, true);
+  data::Load("rann_test_qr_ranks.csv", qrRanks, true);
   qrRanks = qrRanks.t();
 
   size_t numRounds = 1000;
@@ -176,8 +176,8 @@ BOOST_AUTO_TEST_CASE(AllkRANNSingleTreeSearch)
   arma::mat refData;
   arma::mat queryData;
 
-  data::Load("./data/rann_test_r_3_900.csv", refData, true);
-  data::Load("./data/rann_test_q_3_100.csv", queryData, true);
+  data::Load("rann_test_r_3_900.csv", refData, true);
+  data::Load("rann_test_q_3_100.csv", queryData, true);
 
   // Search for 1 rank-approximate nearest-neighbors in the top 30% 
   // of the point (rank error of 3)
@@ -189,7 +189,7 @@ BOOST_AUTO_TEST_CASE(AllkRANNSingleTreeSearch)
 
   // The relative ranks for the given query reference pair
   arma::Mat<size_t> qrRanks;
-  data::Load("./data/rann_test_qr_ranks.csv", qrRanks, true);
+  data::Load("rann_test_qr_ranks.csv", qrRanks, true);
   qrRanks = qrRanks.t();
 
   size_t numRounds = 1000;
@@ -246,8 +246,8 @@ BOOST_AUTO_TEST_CASE(AllkRANNDualTreeSearch)
   arma::mat refData;
   arma::mat queryData;
 
-  data::Load("./data/rann_test_r_3_900.csv", refData, true);
-  data::Load("./data/rann_test_q_3_100.csv", queryData, true);
+  data::Load("rann_test_r_3_900.csv", refData, true);
+  data::Load("rann_test_q_3_100.csv", queryData, true);
 
   // Search for 1 rank-approximate nearest-neighbors in the top 30% 
   // of the point (rank error of 3)
@@ -257,7 +257,7 @@ BOOST_AUTO_TEST_CASE(AllkRANNDualTreeSearch)
   RASearch<> *rann_tsd = new RASearch<>(refData, queryData, false, false, 5);
 
   arma::Mat<size_t> qrRanks;
-  data::Load("./data/rann_test_qr_ranks.csv", qrRanks, true);
+  data::Load("rann_test_qr_ranks.csv", qrRanks, true);
   qrRanks = qrRanks.t();
 
   size_t numRounds = 1000;
