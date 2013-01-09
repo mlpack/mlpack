@@ -3,6 +3,7 @@ add_executable(mlpack_test
   mlpack_test.cpp
   allkfn_test.cpp
   allknn_test.cpp
+  allkrann_search_test.cpp
   arma_extend_test.cpp
   aug_lagrangian_test.cpp
   cli_test.cpp
