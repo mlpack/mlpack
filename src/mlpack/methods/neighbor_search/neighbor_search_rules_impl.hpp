@@ -226,16 +226,47 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
       childBound = bound;
   }
 
+  // If there are no points, then break; the bound must be the child bound.
+  if (queryNode.NumPoints() == 0)
+    return childBound;
+
+  // If there are no children, then break; the bound must be the point bound.
+  if (queryNode.NumChildren() == 0)
+    return pointBound;
+
+//  Log::Debug << "Point bound " << pointBound << std::endl;
+//  Log::Debug << "Child bound " << childBound << std::endl;
+//  Log::Debug << "Furthest descendant distance " << maxDescendantDistance <<
+//      std::endl;
+
   // If the bound of the children is uninitialized
   // (SortPolicy::WorstDistance()), then maybe we can create a bound for the
   // children.  But this requires a point bound to exist.
-  if (childBound == SortPolicy::WorstDistance() &&
-      pointBound != SortPolicy::BestDistance()) // This could fail!
-      // SortPolicy::BestDistance() could be a valid bound!
+
+  // It is possible that we could calculate a better bound for the children.
+  if (pointBound != SortPolicy::WorstDistance())
   {
-    // Should we be considering queryNode.Stat().Bound() too?
-    childBound = pointBound + maxDescendantDistance;
-    Log::Debug << "Child bound is " << childBound << std::endl;
+    const double pointChildBound = pointBound + maxDescendantDistance;
+//    Log::Debug << "Point-child bound is " << pointChildBound << std::endl;
+
+    if (SortPolicy::IsBetter(pointChildBound, childBound))
+    {
+      // The calculated bound is a tighter bound than the existing child bounds.
+      // Update all of the child bounds to this new, tighter bound.
+      for (size_t i = 0; i < queryNode.NumChildren(); ++i)
+      {
+//        Log::Debug << "Update child " << i << " bound from " <<
+//            queryNode.Child(i).Stat().Bound() << " to " << pointChildBound <<
+//            std::endl;
+        if (SortPolicy::IsBetter(pointChildBound,
+            queryNode.Child(i).Stat().Bound()))
+          queryNode.Child(i).Stat().Bound() = pointChildBound;
+//        else
+//          Log::Debug << "Did not update child!\n";
+      }
+
+      childBound = pointChildBound;
+    }
   }
 
   // Return the worse of the two bounds.
