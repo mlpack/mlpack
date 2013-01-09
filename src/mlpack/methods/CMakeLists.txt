@@ -19,6 +19,7 @@ set(DIRS
   pca
   radical
   range_search
+  rann
   sparse_coding
 )
 
