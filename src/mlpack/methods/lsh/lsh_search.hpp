@@ -34,7 +34,9 @@ namespace mlpack {
 namespace neighbor {
 
 /**
- * The LSHSearch class -- TBD
+ * The LSHSearch class -- This class builds a hash on the reference set 
+ * and uses this hash to compute the distance-approximate nearest-neighbors 
+ * of the given queries.
  *
  * @tparam SortPolicy The sort policy for distances; see NearestNeighborSort.
  * @tparam MetricType The metric to use for computation.
@@ -45,17 +47,21 @@ class LSHSearch
 {
  public:
   /**
-   * Intialize -- TBD
+   * This function initializes the LSH class. It builds the hash on the 
+   * reference set with 2-stable distributions. See the individual functions 
+   * performing the hashing for details on how the hashing is done.
    *
    * @param referenceSet Set of reference points.
    * @param querySet Set of query points.
    * @param numProj Number of projections in each hash table (anything between
    *     10-50 might be a decent choice).
-   * @param numTables Total number of hash tables (anything between 10-20 should
+   * @param numTables Total number of hash tables (anything between 10-20 
    *     should suffice).
-   * @param hashWidth The width of hash for every table (currently automatically
-   *     chosen from the main function). This should be a reasonable upper bound
-   *     on the nearest-neighbor distance in general.
+   * @param hashWidth The width of hash for every table. If the user does not 
+   *     provide a value then the class automatically obtains a hash width
+   *     by computing the average pairwise distance of 25 pairs. This should 
+   *     be a reasonable upper bound on the nearest-neighbor distance 
+   *     in general.
    * @param secondHashSize The size of the second hash table. This should be a
    *     large prime number.
    * @param bucketSize The size of the bucket in the second hash table. This is
@@ -67,22 +73,26 @@ class LSHSearch
             const arma::mat& querySet,
             const size_t numProj,
             const size_t numTables,
-            const double hashWidth,
+            const double hashWidth = 0.0,
             const size_t secondHashSize = 99901,
             const size_t bucketSize = 500,
             const MetricType metric = MetricType());
 
   /**
-   * Intialize -- TBD
+   * This function initializes the LSH class. It builds the hash on the 
+   * reference set with 2-stable distributions. See the individual functions 
+   * performing the hashing for details on how the hashing is done.
    *
    * @param referenceSet Set of reference points and the set of queries.
    * @param numProj Number of projections in each hash table (anything between
    *     10-50 might be a decent choice).
-   * @param numTables Total number of hash tables (anything between 10-20 should
+   * @param numTables Total number of hash tables (anything between 10-20 
    *     should suffice).
-   * @param hashWidth The width of hash for every table (currently automatically
-   *     chosen from the main function). This should be a reasonable upper bound
-   *     on the nearest-neighbor distance in general.
+   * @param hashWidth The width of hash for every table. If the user does not 
+   *     provide a value then the class automatically obtains a hash width
+   *     by computing the average pairwise distance of 25 pairs. This should 
+   *     be a reasonable upper bound on the nearest-neighbor distance 
+   *     in general.
    * @param secondHashSize The size of the second hash table. This should be a
    *     large prime number.
    * @param bucketSize The size of the bucket in the second hash table. This is
@@ -93,7 +103,7 @@ class LSHSearch
   LSHSearch(const arma::mat& referenceSet,
             const size_t numProj,
             const size_t numTables,
-            const double hashWidth,
+            const double hashWidth = 0.0,
             const size_t secondHashSize = 99901,
             const size_t bucketSize = 500,
             const MetricType metric = MetricType());
@@ -105,8 +115,8 @@ class LSHSearch
 
   /**
    * Compute the nearest neighbors and store the output in the given matrices.
-   * The matrices will be set to the size of n columns by k rows, where n is the
-   * number of points in the query dataset and k is the number of neighbors
+   * The matrices will be set to the size of n columns by k rows, where n is 
+   * the number of points in the query dataset and k is the number of neighbors
    * being searched for.
    *
    * @param k Number of neighbors to search for.
@@ -114,10 +124,17 @@ class LSHSearch
    *     point.
    * @param distances Matrix storing distances of neighbors for each query
    *     point.
+   * @param numTablesToSearch This parameter allows the user to have control
+   *     over the number of hash tables to be searched. This allows 
+   *     the user to pick the number of tables it can afford for the time 
+   *     available without having to build hashing for every table size.
+   *     By default, this is set to zero in which case all tables are 
+   *     considered.
    */
   void Search(const size_t k,
               arma::Mat<size_t>& resultingNeighbors,
-              arma::mat& distances);
+              arma::mat& distances,
+              size_t numTablesToSearch = 0);
 
  private:
   /**
@@ -147,7 +164,8 @@ class LSHSearch
    *    multiple buckets of the second hash table.
    */
   void ReturnIndicesFromTable(const size_t queryIndex,
-                              arma::uvec& referenceIndices);
+                              arma::uvec& referenceIndices,
+                              size_t numTablesToSearch);
   /**
    * This is a helper function that computes the distance of the query to the
    * neighbor candidates and appropriately stores the best 'k' candidates
@@ -192,7 +210,7 @@ class LSHSearch
   arma::mat offsets; // should be numProj x numTables
 
   //! The hash width
-  const double hashWidth;
+  double hashWidth;
 
   //! The big prime representing the size of the second hash
   const size_t secondHashSize;

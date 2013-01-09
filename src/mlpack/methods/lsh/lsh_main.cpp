@@ -50,6 +50,9 @@ PARAM_STRING("query_file", "File containing query points (optional).", "q", "");
 PARAM_INT("num_projections", "The number of hash functions for each table", 
           "K", 10);
 PARAM_INT("num_tables", "The number of hash tables to be used.", "L", 30);
+PARAM_DOUBLE("hash_width", "The hash width for the first-level hashing "
+             "in the LSH preprocessing. By default, the LSH class "
+             "automatically estimates a hash width for its use.", "H", 0.0);
 PARAM_INT("second_hash_size", "The size of the second level hash table.", 
           "M", 99901);
 PARAM_INT("bucket_size", "The size of a bucket in the second level hash.", 
@@ -91,23 +94,9 @@ int main(int argc, char *argv[])
   size_t numProj = CLI::GetParam<int>("num_projections");
   size_t numTables = CLI::GetParam<int>("num_tables");
   
-  // Compute the 'width' parameter from LSH
+  // Compute the 'hash_width' parameter from LSH
+  double hashWidth = CLI::GetParam<double>("hash_width");
 
-  // Find the average pairwise distance of 25 random pairs and use that 
-  // as the hash-width
-  double hashWidth = 0;
-  for (size_t i = 0; i < 25; i++)
-  {
-    size_t p1 = (size_t) math::RandInt(referenceData.n_cols);
-    size_t p2 = (size_t) math::RandInt(referenceData.n_cols);
-
-    hashWidth += metric::EuclideanDistance::Evaluate(referenceData.unsafe_col(p1),
-                                                     referenceData.unsafe_col(p2));
-  }
-
-  hashWidth /= 25;
-
-  Log::Info << "Hash width chosen as: " << hashWidth << endl;
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
@@ -121,8 +110,12 @@ int main(int argc, char *argv[])
               << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
   }
 
-  Log::Info << "LSH with " << numProj << " projections(K) and " << numTables << 
-    " tables(L) with hash width(r): " << hashWidth << endl;
+  if (hashWidth == 0.0)
+    Log::Info << "LSH with " << numProj << " projections(K) and " << 
+      numTables << " tables(L) with default hash width." << endl;
+  else
+    Log::Info << "LSH with " << numProj << " projections(K) and " << 
+      numTables << " tables(L) with hash width(r): " << hashWidth << endl;
 
   Timer::Start("hash_building");
 
@@ -136,8 +129,9 @@ int main(int argc, char *argv[])
                               secondHashSize, bucketSize);
 
   Timer::Stop("hash_building");
-
-  Log::Info << "Computing " << k << " distance approx. nearest neighbors " << endl;
+  
+  Log::Info << "Computing " << k << " distance approx. nearest neighbors " << 
+    endl;
   allkann->Search(k, neighbors, distances);
 
   Log::Info << "Neighbors computed." << endl;

@@ -20,7 +20,7 @@ LSHSearch(const arma::mat& referenceSet,
           const arma::mat& querySet,
           const size_t numProj,
           const size_t numTables,
-          const double hashWidth,
+          const double hashWidthIn,
           const size_t secondHashSize,
           const size_t bucketSize,
           const MetricType metric) :
@@ -28,11 +28,26 @@ LSHSearch(const arma::mat& referenceSet,
   querySet(querySet),
   numProj(numProj),
   numTables(numTables),
-  hashWidth(hashWidth),
+  hashWidth(hashWidthIn),
   secondHashSize(secondHashSize),
   bucketSize(bucketSize),
   metric(metric)
 {
+  if (hashWidth == 0.0) // the user has not provided any value
+  {
+    for (size_t i = 0; i < 25; i++)
+    {
+      size_t p1 = (size_t) math::RandInt(referenceSet.n_cols);
+      size_t p2 = (size_t) math::RandInt(referenceSet.n_cols);
+
+      hashWidth 
+        += metric::EuclideanDistance::Evaluate(referenceSet.unsafe_col(p1),
+                                               referenceSet.unsafe_col(p2));
+    }
+
+    hashWidth /= 25;
+  } // computing a heuristic hashWidth from the data
+
   BuildHash();
 }
 
@@ -41,7 +56,7 @@ LSHSearch<SortPolicy, MetricType>::
 LSHSearch(const arma::mat& referenceSet,
           const size_t numProj,
           const size_t numTables,
-          const double hashWidth,
+          const double hashWidthIn,
           const size_t secondHashSize,
           const size_t bucketSize,
           const MetricType metric) :
@@ -49,11 +64,26 @@ LSHSearch(const arma::mat& referenceSet,
   querySet(referenceSet),
   numProj(numProj),
   numTables(numTables),
-  hashWidth(hashWidth),
+  hashWidth(hashWidthIn),
   secondHashSize(secondHashSize),
   bucketSize(bucketSize),
   metric(metric)
 {
+  if (hashWidth == 0.0) // the user has not provided any value
+  {
+    for (size_t i = 0; i < 25; i++)
+    {
+      size_t p1 = (size_t) math::RandInt(referenceSet.n_cols);
+      size_t p2 = (size_t) math::RandInt(referenceSet.n_cols);
+
+      hashWidth 
+        += metric::EuclideanDistance::Evaluate(referenceSet.unsafe_col(p1),
+                                               referenceSet.unsafe_col(p2));
+    }
+
+    hashWidth /= 25;
+  } // computing a heuristic hashWidth from the data
+
   BuildHash();
 }
 
@@ -119,19 +149,30 @@ BaseCase(const size_t queryIndex, const size_t referenceIndex)
 template<typename SortPolicy, typename MetricType>
 void LSHSearch<SortPolicy, MetricType>::
 ReturnIndicesFromTable(const size_t queryIndex,
-                       arma::uvec& referenceIndices)
+                       arma::uvec& referenceIndices,
+                       size_t numTablesToSearch)
 {
-  // Hash the query in each of the 'numTables' hash tables using the
+  // deciding on the number of tables to look into.
+  if (numTablesToSearch == 0) // if no user input, search all
+    numTablesToSearch = numTables;
+
+
+  // sanity check to make sure that the existing number of tables is not 
+  // exceeded.
+  if (numTablesToSearch > numTables)
+    numTablesToSearch = numTables;
+
+  // Hash the query in each of the 'numTablesToSearch' hash tables using the
   // 'numProj' projections for each table.
-  // This gives us 'numTables' keys for the query where each key
+  // This gives us 'numTablesToSearch' keys for the query where each key
   // is a 'numProj' dimensional integer vector
   //
   // compute the projection of the query in each table
-  arma::mat allProjInTables(numProj, numTables);
-  for (size_t i = 0; i < numTables; i++)
+  arma::mat allProjInTables(numProj, numTablesToSearch);
+  for (size_t i = 0; i < numTablesToSearch; i++)
     allProjInTables.unsafe_col(i)
       = projections[i].t() * querySet.unsafe_col(queryIndex);
-  allProjInTables += offsets;
+  allProjInTables += offsets.cols(0, numTablesToSearch - 1);
   allProjInTables /= hashWidth;
 
   // compute the hash value of each key of the query into a bucket of the
@@ -141,7 +182,7 @@ ReturnIndicesFromTable(const size_t queryIndex,
   for (size_t i = 0; i < hashVec.n_elem; i++)
     hashVec[i] = (double)((size_t) hashVec[i] % secondHashSize);
 
-  assert(hashVec.n_elem == numTables);
+  assert(hashVec.n_elem == numTablesToSearch);
 
   // For all the buckets that the query is hashed into, sequentially
   // collect the indices in those buckets.
@@ -173,7 +214,8 @@ template<typename SortPolicy, typename MetricType>
 void LSHSearch<SortPolicy, MetricType>::
 Search(const size_t k,
        arma::Mat<size_t>& resultingNeighbors,
-       arma::mat& distances)
+       arma::mat& distances,
+       size_t numTablesToSearch)
 {
   neighborPtr = &resultingNeighbors;
   distancePtr = &distances;
@@ -194,7 +236,7 @@ Search(const size_t k,
     // For hash every query into every hash tables and eventually
     // into the 'secondHashTable' to obtain the neighbor candidates
     arma::uvec refIndices;
-    ReturnIndicesFromTable(i, refIndices);
+    ReturnIndicesFromTable(i, refIndices, numTablesToSearch);
 
     // Just an informative book-keeping for the number of neighbor candidates
     // returned on average
