@@ -18,32 +18,7 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::neighbor;
 
-BOOST_AUTO_TEST_SUITE(LSHSearchTest);
-
-BOOST_AUTO_TEST_CASE(HashWidthTest)
-{
-  // Force to specific random seed for these results.
-  math::RandomSeed(0);
-
-  arma::mat rdata(2, 10);
-  rdata << 3 << 2 << 4 << 3 << 5 << 6 << 0 << 8 << 3 << 1 << arma::endr <<
-           0 << 3 << 4 << 7 << 8 << 4 << 1 << 0 << 4 << 3 << arma::endr;
-
-  // Computing the hash width here.
-  // CORRECT ANSWER: 'hashWidth' = 4.24777.
-  double hashWidth = 0;
-  for (size_t i = 0; i < 10; i++)
-  {
-    size_t p1 = (size_t) math::RandInt(rdata.n_cols);
-    size_t p2 = (size_t) math::RandInt(rdata.n_cols);
-
-    hashWidth += metric::EuclideanDistance::Evaluate(rdata.unsafe_col(p1),
-                                                     rdata.unsafe_col(p2));
-  }
-  hashWidth /= 10.0;
-
-  BOOST_REQUIRE_CLOSE(hashWidth, 4.24777, 0.05);
-}
+BOOST_AUTO_TEST_SUITE(LSHTest);
 
 BOOST_AUTO_TEST_CASE(LSHSearchTest)
 {
@@ -88,6 +63,7 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
   //    COR.SOL.: Proj. Mat 1: [2.7020 0.0187 0.4355; 1.3692 0.6933 0.0416]
   //    COR.SOL.: Proj. Mat 2: [-0.3961 -0.2666 1.1001; 0.3895 -1.5118 -1.3964]
   LSHSearch<> lsh_test(rdata, qdata, 3, 2, hashWidth, 11, 3);
+//   LSHSearch<> lsh_test(rdata, qdata, 3, 2, 0.0, 11, 3);
 
   // Given this, the 'LSHSearch::bucketRowInHashTable' should be:
   // COR.SOL.: [2 11 4 7 6 3 11 0 5 1 8]
@@ -120,9 +96,6 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
   // After search
   // COR.SOL.: 'neighbors' = [2 1 9; 3 8 2]
   // COR.SOL.: 'distances' = [2 0 2; 4 2 16]
-
-//   Log::Info << "Neighbors: " << std::endl << neighbors << std::endl <<
-//     "Distances: " << std::endl << distances << std::endl;
 
   arma::Mat<size_t> true_neighbors(2, 3);
   true_neighbors << 2 << 1 << 9 << arma::endr << 3 << 8 << 2 << arma::endr;
