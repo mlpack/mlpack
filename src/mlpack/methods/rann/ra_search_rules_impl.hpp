@@ -161,7 +161,7 @@ SuccessProbability(const size_t n,
 
     double eps = (double) t / (double) n;
 
-    return 1.0 - std::pow(1.0 - eps, m);
+    return 1.0 - std::pow(1.0 - eps, (int) m);
 
   } // faster implementation for topK = 1
   else
@@ -198,7 +198,7 @@ SuccessProbability(const size_t n,
       lb = 1;
       ub = k;
       topHalf = true;
-      sum = std::pow(1 - eps, m);
+      sum = std::pow(1 - eps, (int) m);
     }
     else
     {
@@ -210,7 +210,7 @@ SuccessProbability(const size_t n,
       lb = k;
       ub = m;
       topHalf = false;
-      sum = std::pow(eps, m);
+      sum = std::pow(eps, (int) m);
     }
 
     for (size_t j = lb; j < ub; j++)
@@ -232,7 +232,8 @@ SuccessProbability(const size_t n,
         mCj /= (double) i;
       }
 
-      sum += (mCj * std::pow(eps, j) * std::pow(1.0 - eps, m - j));
+      sum += (mCj * std::pow(eps, (int) j) 
+              * std::pow(1.0 - eps, (int) (m - j)));
     }
 
     if (topHalf)
