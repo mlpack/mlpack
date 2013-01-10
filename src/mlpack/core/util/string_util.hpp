@@ -11,10 +11,11 @@
 namespace mlpack {
 namespace util {
 
-// A utility function that replaces all all newlines with a number of spaces
-// depending on the indentation level.
+//! A utility function that replaces all all newlines with a number of spaces
+//! depending on the indentation level.
 std::string Indent(std::string input);
 
-}
-}
+}; // namespace util
+}; // namespace mlpack
+
 #endif
