@@ -9,6 +9,7 @@ set(SOURCES
   binary_space_tree/dual_tree_traverser_impl.hpp
   binary_space_tree/single_tree_traverser.hpp
   binary_space_tree/single_tree_traverser_impl.hpp
+  binary_space_tree/traits.hpp
   bounds.hpp
   cover_tree/cover_tree.hpp
   cover_tree/cover_tree_impl.hpp
@@ -17,6 +18,7 @@ set(SOURCES
   cover_tree/single_tree_traverser_impl.hpp
   cover_tree/dual_tree_traverser.hpp
   cover_tree/dual_tree_traverser_impl.hpp
+  cover_tree/traits.hpp
   hrectbound.hpp
   hrectbound_impl.hpp
   mrkd_statistic.hpp
@@ -25,6 +27,7 @@ set(SOURCES
   periodichrectbound.hpp
   periodichrectbound_impl.hpp
   statistic.hpp
+  tree_traits.hpp
 )
 
 # add directory name to sources
