@@ -212,8 +212,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
   {
     // The bound for this point is the k-th best distance plus the maximum
     // distance to a child of this node.
-    const double bound = distances(distances.n_rows - 1, queryNode.Point(i)) +
-        maxDescendantDistance;
+    const double bound = distances(distances.n_rows - 1, queryNode.Point(i));
     if (SortPolicy::IsBetter(pointBound, bound))
       pointBound = bound;
   }
