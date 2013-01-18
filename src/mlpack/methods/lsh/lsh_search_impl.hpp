@@ -7,11 +7,10 @@
 #ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_LSH_SEARCH_IMPL_HPP
 #define __MLPACK_METHODS_NEIGHBOR_SEARCH_LSH_SEARCH_IMPL_HPP
 
-#include <map>
-
 #include <mlpack/core.hpp>
 
-using namespace mlpack::neighbor;
+namespace mlpack {
+namespace neighbor {
 
 // Construct the object.
 template<typename SortPolicy, typename MetricType>
@@ -87,7 +86,6 @@ LSHSearch(const arma::mat& referenceSet,
   BuildHash();
 }
 
-
 template<typename SortPolicy, typename MetricType>
 void LSHSearch<SortPolicy, MetricType>::
 InsertNeighbor(const size_t queryIndex,
@@ -111,8 +109,6 @@ InsertNeighbor(const size_t queryIndex,
   (*distancePtr)(pos, queryIndex) = distance;
   (*neighborPtr)(pos, queryIndex) = neighbor;
 }
-
-
 
 template<typename SortPolicy, typename MetricType>
 inline force_inline
@@ -138,7 +134,6 @@ BaseCase(const size_t queryIndex, const size_t referenceIndex)
 
   return distance;
 }
-
 
 template<typename SortPolicy, typename MetricType>
 void LSHSearch<SortPolicy, MetricType>::
@@ -392,5 +387,8 @@ BuildHash()
             << maxBucketSize << ")" << std::endl;
   secondHashTable.resize(numRowsInTable, maxBucketSize);
 }
+
+}; // namespace neighbor
+}; // namespace mlpack
 
 #endif
