@@ -34,8 +34,8 @@ namespace mlpack {
 namespace neighbor {
 
 /**
- * The LSHSearch class -- This class builds a hash on the reference set 
- * and uses this hash to compute the distance-approximate nearest-neighbors 
+ * The LSHSearch class -- This class builds a hash on the reference set
+ * and uses this hash to compute the distance-approximate nearest-neighbors
  * of the given queries.
  *
  * @tparam SortPolicy The sort policy for distances; see NearestNeighborSort.
@@ -47,21 +47,20 @@ class LSHSearch
 {
  public:
   /**
-   * This function initializes the LSH class. It builds the hash on the 
-   * reference set with 2-stable distributions. See the individual functions 
+   * This function initializes the LSH class. It builds the hash on the
+   * reference set with 2-stable distributions. See the individual functions
    * performing the hashing for details on how the hashing is done.
    *
    * @param referenceSet Set of reference points.
    * @param querySet Set of query points.
    * @param numProj Number of projections in each hash table (anything between
    *     10-50 might be a decent choice).
-   * @param numTables Total number of hash tables (anything between 10-20 
+   * @param numTables Total number of hash tables (anything between 10-20
    *     should suffice).
-   * @param hashWidth The width of hash for every table. If the user does not 
-   *     provide a value then the class automatically obtains a hash width
-   *     by computing the average pairwise distance of 25 pairs. This should 
-   *     be a reasonable upper bound on the nearest-neighbor distance 
-   *     in general.
+   * @param hashWidth The width of hash for every table. If 0 (the default) is
+   *     provided, then the hash width is automatically obtained by computing
+   *     the average pairwise distance of 25 pairs.  This should be a reasonable
+   *     upper bound on the nearest-neighbor distance in general.
    * @param secondHashSize The size of the second hash table. This should be a
    *     large prime number.
    * @param bucketSize The size of the bucket in the second hash table. This is
@@ -79,20 +78,19 @@ class LSHSearch
             const MetricType metric = MetricType());
 
   /**
-   * This function initializes the LSH class. It builds the hash on the 
-   * reference set with 2-stable distributions. See the individual functions 
+   * This function initializes the LSH class. It builds the hash on the
+   * reference set with 2-stable distributions. See the individual functions
    * performing the hashing for details on how the hashing is done.
    *
    * @param referenceSet Set of reference points and the set of queries.
    * @param numProj Number of projections in each hash table (anything between
    *     10-50 might be a decent choice).
-   * @param numTables Total number of hash tables (anything between 10-20 
+   * @param numTables Total number of hash tables (anything between 10-20
    *     should suffice).
-   * @param hashWidth The width of hash for every table. If the user does not 
-   *     provide a value then the class automatically obtains a hash width
-   *     by computing the average pairwise distance of 25 pairs. This should 
-   *     be a reasonable upper bound on the nearest-neighbor distance 
-   *     in general.
+   * @param hashWidth The width of hash for every table. If 0 (the default) is
+   *     provided, then the hash width is automatically obtained by computing
+   *     the average pairwise distance of 25 pairs.  This should be a reasonable
+   *     upper bound on the nearest-neighbor distance in general.
    * @param secondHashSize The size of the second hash table. This should be a
    *     large prime number.
    * @param bucketSize The size of the bucket in the second hash table. This is
@@ -107,15 +105,10 @@ class LSHSearch
             const size_t secondHashSize = 99901,
             const size_t bucketSize = 500,
             const MetricType metric = MetricType());
-  /**
-   * Delete the LSHSearch object. The tree is the only member we are
-   * responsible for deleting.  The others will take care of themselves.
-   */
-  ~LSHSearch();
 
   /**
    * Compute the nearest neighbors and store the output in the given matrices.
-   * The matrices will be set to the size of n columns by k rows, where n is 
+   * The matrices will be set to the size of n columns by k rows, where n is
    * the number of points in the query dataset and k is the number of neighbors
    * being searched for.
    *
@@ -125,16 +118,16 @@ class LSHSearch
    * @param distances Matrix storing distances of neighbors for each query
    *     point.
    * @param numTablesToSearch This parameter allows the user to have control
-   *     over the number of hash tables to be searched. This allows 
-   *     the user to pick the number of tables it can afford for the time 
+   *     over the number of hash tables to be searched. This allows
+   *     the user to pick the number of tables it can afford for the time
    *     available without having to build hashing for every table size.
-   *     By default, this is set to zero in which case all tables are 
+   *     By default, this is set to zero in which case all tables are
    *     considered.
    */
   void Search(const size_t k,
               arma::Mat<size_t>& resultingNeighbors,
               arma::mat& distances,
-              size_t numTablesToSearch = 0);
+              const size_t numTablesToSearch = 0);
 
  private:
   /**
@@ -166,6 +159,7 @@ class LSHSearch
   void ReturnIndicesFromTable(const size_t queryIndex,
                               arma::uvec& referenceIndices,
                               size_t numTablesToSearch);
+
   /**
    * This is a helper function that computes the distance of the query to the
    * neighbor candidates and appropriately stores the best 'k' candidates
@@ -224,23 +218,22 @@ class LSHSearch
   //! Instantiation of the metric.
   MetricType metric;
 
-  //! The final hash table
-  arma::Mat<size_t> secondHashTable; // should be (< secondHashSize) x bucketSize
+  //! The final hash table; should be (< secondHashSize) x bucketSize.
+  arma::Mat<size_t> secondHashTable;
 
-  //! The number of elements present in each hash bucket
-  arma::Col<size_t> bucketContentSize; // should be secondHashSize
+  //! The number of elements present in each hash bucket; should be
+  //! secondHashSize.
+  arma::Col<size_t> bucketContentSize;
 
   //! For a particular hash value, points to the row in secondHashTable
-  //! corresponding to this value
-  arma::Col<size_t> bucketRowInHashTable; // should be secondHashSize
+  //! corresponding to this value.  Should be secondHashSize.
+  arma::Col<size_t> bucketRowInHashTable;
 
-  //! The pointer to the nearest neighbor distance
+  //! The pointer to the nearest neighbor distances.
   arma::mat* distancePtr;
 
-  //! The pointer to the nearest neighbor indices
+  //! The pointer to the nearest neighbor indices.
   arma::Mat<size_t>* neighborPtr;
-
-
 }; // class LSHSearch
 
 }; // namespace neighbor
