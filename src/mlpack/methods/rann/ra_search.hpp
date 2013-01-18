@@ -4,23 +4,21 @@
  *
  * Defines the RASearch class, which performs an abstract
  * rank-approximate nearest/farthest neighbor query on two datasets.
- * 
+ *
  * The details of this method can be found in the following paper:
  *
  * @inproceedings{ram2009rank,
- *    title={{Rank-Approximate Nearest Neighbor Search: Retaining Meaning and Speed in High Dimensions}},
- *    author={{Ram, P. and Lee, D. and Ouyang, H. and Gray, A. G.}},
- *    booktitle={{Advances of Neural Information Processing Systems}},
- *    year={2009}
+ *   title={{Rank-Approximate Nearest Neighbor Search: Retaining Meaning and
+ *       Speed in High Dimensions}},
+ *   author={{Ram, P. and Lee, D. and Ouyang, H. and Gray, A. G.}},
+ *   booktitle={{Advances of Neural Information Processing Systems}},
+ *   year={2009}
  * }
- * 
  */
 #ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_RA_SEARCH_HPP
 #define __MLPACK_METHODS_NEIGHBOR_SEARCH_RA_SEARCH_HPP
 
 #include <mlpack/core.hpp>
-#include <vector>
-#include <string>
 
 #include <mlpack/core/tree/binary_space_tree.hpp>
 
@@ -35,10 +33,10 @@ namespace neighbor /** Neighbor-search routines.  These include
 /**
  * Extra data for each node in the tree.  For neighbor searches, each node only
  * needs to store a bound on neighbor distances.
- * 
- * Every query is required to make a minimum number of samples to guarantee
- * the desired approximation error. The 'numSamplesMade' keeps track of 
- * the minimum number of samples made by all queries in the node in question. 
+ *
+ * Every query is required to make a minimum number of samples to guarantee the
+ * desired approximation error. The 'numSamplesMade' keeps track of the minimum
+ * number of samples made by all queries in the node in question.
  */
 template<typename SortPolicy>
 class RAQueryStat
@@ -47,13 +45,13 @@ class RAQueryStat
   //! The bound on the node's neighbor distances.
   double bound;
 
-  //! The minimum number of samples made by any query in this node
+  //! The minimum number of samples made by any query in this node.
   size_t numSamplesMade;
 
  public:
   /**
-   * Initialize the statistic with the worst possible distance according to
-   * our sorting policy.
+   * Initialize the statistic with the worst possible distance according to our
+   * sorting policy.
    */
   RAQueryStat() : bound(SortPolicy::WorstDistance()), numSamplesMade(0) { }
 
@@ -61,11 +59,11 @@ class RAQueryStat
    * Initialization for a leaf, required by the StatisticType policy.
    */
   template<typename MatType>
-  RAQueryStat(const MatType& /* dataset */, 
-              const size_t /* begin */, 
-              const size_t /* count */) : 
-    bound(SortPolicy::WorstDistance()), 
-    numSamplesMade(0) 
+  RAQueryStat(const MatType& /* dataset */,
+              const size_t /* begin */,
+              const size_t /* count */) :
+    bound(SortPolicy::WorstDistance()),
+    numSamplesMade(0)
   { }
 
   /**
@@ -77,28 +75,36 @@ class RAQueryStat
               const size_t /* count */,
               const RAQueryStat& /* leftStat */,
               const RAQueryStat& /* rightStat */) :
-    bound(SortPolicy::WorstDistance()), 
-    numSamplesMade(0) 
+    bound(SortPolicy::WorstDistance()),
+    numSamplesMade(0)
   { }
-  
+
   //! Get the bound.
   double Bound() const { return bound; }
   //! Modify the bound.
   double& Bound() { return bound; }
 
-  //! Get the number of samples made
+  //! Get the number of samples made.
   size_t NumSamplesMade() const { return numSamplesMade; }
-  //! Modify the number of samples made
+  //! Modify the number of samples made.
   size_t& NumSamplesMade() { return numSamplesMade; }
 };
 
 /**
- * The RASearch class: This class provides a generic manner to perform 
- *   rank-approximate search via random-sampling. If the 'naive' option 
- *   is chosen, this rank-approximate search will be done by randomly 
- *   sampled from the whole set. If the 'naive' option is not chosen, 
- *   the sampling is done in a stratified manner in the tree as 
- *   mentioned in the algorithms in Figure 2 of the aforementioned paper. 
+ * The RASearch class: This class provides a generic manner to perform
+ * rank-approximate search via random-sampling. If the 'naive' option is chosen,
+ * this rank-approximate search will be done by randomly sampled from the whole
+ * set. If the 'naive' option is not chosen, the sampling is done in a
+ * stratified manner in the tree as mentioned in the algorithms in Figure 2 of
+ * the following paper:
+ *
+ * @inproceedings{ram2009rank,
+ *   title={{Rank-Approximate Nearest Neighbor Search: Retaining Meaning and
+ *       Speed in High Dimensions}},
+ *   author={{Ram, P. and Lee, D. and Ouyang, H. and Gray, A. G.}},
+ *   booktitle={{Advances of Neural Information Processing Systems}},
+ *   year={2009}
+ * }
  *
  * @tparam SortPolicy The sort policy for distances; see NearestNeighborSort.
  * @tparam MetricType The metric to use for computation.
@@ -112,22 +118,21 @@ class RASearch
 {
  public:
   /**
-   * Initialize the RASearch object, passing both a query and reference
-   * dataset.  Optionally, perform the computation in naive mode or single-tree
-   * mode, and set the leaf size used for tree-building.  An initialized
-   * distance metric can be given, for cases where the metric has internal data
-   * (i.e. the distance::MahalanobisDistance class).
+   * Initialize the RASearch object, passing both a query and reference dataset.
+   * Optionally, perform the computation in naive mode or single-tree mode, and
+   * set the leaf size used for tree-building.  An initialized distance metric
+   * can be given, for cases where the metric has internal data (i.e. the
+   * distance::MahalanobisDistance class).
    *
-   * This method will copy the matrices to internal copies, 
-   * which are rearranged during tree-building.  You can avoid this 
-   * extra copy by pre-constructing the trees and passing them 
-   * using a diferent constructor.
+   * This method will copy the matrices to internal copies, which are rearranged
+   * during tree-building.  You can avoid this extra copy by pre-constructing
+   * the trees and passing them using a diferent constructor.
    *
    * @param referenceSet Set of reference points.
    * @param querySet Set of query points.
-   * @param naive If true, the rank-approximate search will be performed 
-   *      by directly sampling the whole set instead of using the stratified 
-   *      sampling on the tree. 
+   * @param naive If true, the rank-approximate search will be performed by
+   *      directly sampling the whole set instead of using the stratified
+   *      sampling on the tree.
    * @param singleMode If true, single-tree search will be used (as opposed to
    *      dual-tree search).
    * @param leafSize Leaf size for tree construction (ignored if tree is given).
@@ -154,9 +159,9 @@ class RASearch
    * then naive mode will not work.
    *
    * @param referenceSet Set of reference points.
-   * @param naive If true, the rank-approximate search will be performed 
-   *      by directly sampling the whole set instead of using the stratified 
-   *      sampling on the tree. 
+   * @param naive If true, the rank-approximate search will be performed
+   *      by directly sampling the whole set instead of using the stratified
+   *      sampling on the tree.
    * @param singleMode If true, single-tree search will be used (as opposed to
    *      dual-tree search).
    * @param leafSize Leaf size for tree construction (ignored if tree is given).
@@ -236,7 +241,6 @@ class RASearch
            const bool singleMode = false,
            const MetricType metric = MetricType());
 
-
   /**
    * Delete the RASearch object. The tree is the only member we are
    * responsible for deleting.  The others will take care of themselves.
@@ -244,26 +248,25 @@ class RASearch
   ~RASearch();
 
   /**
-   * Compute the rank approximate nearest neighbors and store the 
-   * output in the given matrices. The matrices will be set to the size 
-   * of n columns by k rows, where n is the number of points in the 
-   * query dataset and k is the number of neighbors being searched for.
+   * Compute the rank approximate nearest neighbors and store the output in the
+   * given matrices. The matrices will be set to the size of n columns by k
+   * rows, where n is the number of points in the query dataset and k is the
+   * number of neighbors being searched for.
    *
    * @param k Number of neighbors to search for.
    * @param resultingNeighbors Matrix storing lists of neighbors for each query
    *     point.
    * @param distances Matrix storing distances of neighbors for each query
    *     point.
-   * @param tau The rank-approximation in percentile of the data. The 
-   *     default value is 0.1%. 
+   * @param tau The rank-approximation in percentile of the data. The default
+   *     value is 0.1%.
    * @param alpha The desired success probability. The default value is 0.95.
-   * @param sampleAtLeaves The flag to trigger sampling at leaves for 
-   *     faster yet less accurate computation. This defaults to 'false'.
-   * @param firstLeafExact The flag to trigger the traversal of the algorithm 
-   *     to the first leaf without approximation. This can ensure that the 
-   *     query definitely finds its (near) duplicate if there exists one.
-   *     This defaults to 'false' for now.
-   * @param singleSampleLimit The limit on the largest node that can be 
+   * @param sampleAtLeaves Sample at leaves for faster but less accurate
+   *      computation. This defaults to 'false'.
+   * @param firstLeafExact Traverse to the first leaf without approximation.
+   *     This can ensure that the query definitely finds its (near) duplicate
+   *     if there exists one.  This defaults to 'false' for now.
+   * @param singleSampleLimit The limit on the largest node that can be
    *     approximated by sampling. This defaults to 20.
    */
   void Search(const size_t k,
@@ -277,14 +280,12 @@ class RASearch
 
   /**
    * This function recursively resets the RAQueryStat of the queryTree to set
-   * 'bound' to WorstDistance and the 'numSamplesMade' to 0. This allows 
-   * a user to perform multiple searches on the same pair of trees, 
-   * possibly with different levels of approximation without requiring 
-   * to build a new pair of trees for every new (approximate) search.
+   * 'bound' to WorstDistance and the 'numSamplesMade' to 0. This allows a user
+   * to perform multiple searches on the same pair of trees, possibly with
+   * different levels of approximation without requiring to build a new pair of
+   * trees for every new (approximate) search.
    */
   void ResetQueryTree();
-
-
 
  private:
   //! Copy of reference dataset (if we need it, because tree building modifies
@@ -325,12 +326,10 @@ class RASearch
   size_t numberOfPrunes;
 
   /**
-   *
-   * @param treeNode The node of the tree whose RAQueryStat is reset 
+   * @param treeNode The node of the tree whose RAQueryStat is reset
    *     and whose children are to be explored recursively.
    */
   void ResetRAQueryStat(TreeType* treeNode);
-
 }; // class RASearch
 
 }; // namespace neighbor
