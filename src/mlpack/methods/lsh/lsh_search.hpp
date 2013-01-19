@@ -39,10 +39,8 @@ namespace neighbor {
  * of the given queries.
  *
  * @tparam SortPolicy The sort policy for distances; see NearestNeighborSort.
- * @tparam MetricType The metric to use for computation.
  */
-template<typename SortPolicy = NearestNeighborSort,
-         typename MetricType = mlpack::metric::SquaredEuclideanDistance>
+template<typename SortPolicy = NearestNeighborSort>
 class LSHSearch
 {
  public:
@@ -66,7 +64,6 @@ class LSHSearch
    * @param bucketSize The size of the bucket in the second hash table. This is
    *     the maximum number of points that can be hashed into single bucket.
    *     Default values are already provided here.
-   * @param metric An optional instance of the MetricType class.
    */
   LSHSearch(const arma::mat& referenceSet,
             const arma::mat& querySet,
@@ -74,8 +71,7 @@ class LSHSearch
             const size_t numTables,
             const double hashWidth = 0.0,
             const size_t secondHashSize = 99901,
-            const size_t bucketSize = 500,
-            const MetricType metric = MetricType());
+            const size_t bucketSize = 500);
 
   /**
    * This function initializes the LSH class. It builds the hash on the
@@ -96,15 +92,13 @@ class LSHSearch
    * @param bucketSize The size of the bucket in the second hash table. This is
    *     the maximum number of points that can be hashed into single bucket.
    *     Default values are already provided here.
-   * @param metric An optional instance of the MetricType class.
    */
   LSHSearch(const arma::mat& referenceSet,
             const size_t numProj,
             const size_t numTables,
             const double hashWidth = 0.0,
             const size_t secondHashSize = 99901,
-            const size_t bucketSize = 500,
-            const MetricType metric = MetricType());
+            const size_t bucketSize = 500);
 
   /**
    * Compute the nearest neighbors and store the output in the given matrices.
@@ -216,7 +210,7 @@ class LSHSearch
   const size_t bucketSize;
 
   //! Instantiation of the metric.
-  MetricType metric;
+  metric::SquaredEuclideanDistance metric;
 
   //! The final hash table; should be (< secondHashSize) x bucketSize.
   arma::Mat<size_t> secondHashTable;
