@@ -101,8 +101,8 @@ int main(int argc, char *argv[])
   }
 
   // Pick up the LSH-specific parameters.
-  const size_t numProj = CLI::GetParam<int>("num_projections");
-  const size_t numTables = CLI::GetParam<int>("num_tables");
+  const size_t numProj = CLI::GetParam<int>("projections");
+  const size_t numTables = CLI::GetParam<int>("tables");
   const double hashWidth = CLI::GetParam<double>("hash_width");
 
   arma::Mat<size_t> neighbors;

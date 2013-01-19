@@ -13,24 +13,22 @@ namespace mlpack {
 namespace neighbor {
 
 // Construct the object.
-template<typename SortPolicy, typename MetricType>
-LSHSearch<SortPolicy, MetricType>::
+template<typename SortPolicy>
+LSHSearch<SortPolicy>::
 LSHSearch(const arma::mat& referenceSet,
           const arma::mat& querySet,
           const size_t numProj,
           const size_t numTables,
           const double hashWidthIn,
           const size_t secondHashSize,
-          const size_t bucketSize,
-          const MetricType metric) :
+          const size_t bucketSize) :
   referenceSet(referenceSet),
   querySet(querySet),
   numProj(numProj),
   numTables(numTables),
   hashWidth(hashWidthIn),
   secondHashSize(secondHashSize),
-  bucketSize(bucketSize),
-  metric(metric)
+  bucketSize(bucketSize)
 {
   if (hashWidth == 0.0) // The user has not provided any value.
   {
@@ -40,33 +38,33 @@ LSHSearch(const arma::mat& referenceSet,
       size_t p1 = (size_t) math::RandInt(referenceSet.n_cols);
       size_t p2 = (size_t) math::RandInt(referenceSet.n_cols);
 
-      hashWidth += MetricType::Evaluate(referenceSet.unsafe_col(p1),
-                                        referenceSet.unsafe_col(p2));
+      hashWidth += std::sqrt(metric.Evaluate(referenceSet.unsafe_col(p1),
+                                             referenceSet.unsafe_col(p2)));
     }
 
     hashWidth /= 25;
   }
 
+  Log::Info << "Hash width chosen as: " << hashWidth << std::endl;
+
   BuildHash();
 }
 
-template<typename SortPolicy, typename MetricType>
-LSHSearch<SortPolicy, MetricType>::
+template<typename SortPolicy>
+LSHSearch<SortPolicy>::
 LSHSearch(const arma::mat& referenceSet,
           const size_t numProj,
           const size_t numTables,
           const double hashWidthIn,
           const size_t secondHashSize,
-          const size_t bucketSize,
-          const MetricType metric) :
+          const size_t bucketSize) :
   referenceSet(referenceSet),
   querySet(referenceSet),
   numProj(numProj),
   numTables(numTables),
   hashWidth(hashWidthIn),
   secondHashSize(secondHashSize),
-  bucketSize(bucketSize),
-  metric(metric)
+  bucketSize(bucketSize)
 {
   if (hashWidth == 0.0) // The user has not provided any value.
   {
@@ -76,18 +74,20 @@ LSHSearch(const arma::mat& referenceSet,
       size_t p1 = (size_t) math::RandInt(referenceSet.n_cols);
       size_t p2 = (size_t) math::RandInt(referenceSet.n_cols);
 
-      hashWidth += MetricType::Evaluate(referenceSet.unsafe_col(p1),
-                                        referenceSet.unsafe_col(p2));
+      hashWidth += std::sqrt(metric.Evaluate(referenceSet.unsafe_col(p1),
+                                             referenceSet.unsafe_col(p2)));
     }
 
     hashWidth /= 25;
   }
 
+  Log::Info << "Hash width chosen as: " << hashWidth << std::endl;
+
   BuildHash();
 }
 
-template<typename SortPolicy, typename MetricType>
-void LSHSearch<SortPolicy, MetricType>::
+template<typename SortPolicy>
+void LSHSearch<SortPolicy>::
 InsertNeighbor(const size_t queryIndex,
                const size_t pos,
                const size_t neighbor,
@@ -110,9 +110,9 @@ InsertNeighbor(const size_t queryIndex,
   (*neighborPtr)(pos, queryIndex) = neighbor;
 }
 
-template<typename SortPolicy, typename MetricType>
+template<typename SortPolicy>
 inline force_inline
-double LSHSearch<SortPolicy, MetricType>::
+double LSHSearch<SortPolicy>::
 BaseCase(const size_t queryIndex, const size_t referenceIndex)
 {
   // If the datasets are the same, then this search is only using one dataset
@@ -135,8 +135,8 @@ BaseCase(const size_t queryIndex, const size_t referenceIndex)
   return distance;
 }
 
-template<typename SortPolicy, typename MetricType>
-void LSHSearch<SortPolicy, MetricType>::
+template<typename SortPolicy>
+void LSHSearch<SortPolicy>::
 ReturnIndicesFromTable(const size_t queryIndex,
                        arma::uvec& referenceIndices,
                        size_t numTablesToSearch)
@@ -199,8 +199,8 @@ ReturnIndicesFromTable(const size_t queryIndex,
 }
 
 
-template<typename SortPolicy, typename MetricType>
-void LSHSearch<SortPolicy, MetricType>::
+template<typename SortPolicy>
+void LSHSearch<SortPolicy>::
 Search(const size_t k,
        arma::Mat<size_t>& resultingNeighbors,
        arma::mat& distances,
@@ -244,8 +244,8 @@ Search(const size_t k,
       std::endl;
 }
 
-template<typename SortPolicy, typename MetricType>
-void LSHSearch<SortPolicy, MetricType>::
+template<typename SortPolicy>
+void LSHSearch<SortPolicy>::
 BuildHash()
 {
   // The first level hash for a single table outputs a 'numProj'-dimensional
