@@ -57,10 +57,6 @@ void mexFunction(int nlhs, mxArray *plhs[],
   arma::mat queryData;
   bool hasQueryData = ((mxGetM(prhs[2]) != 0) && (mxGetN(prhs[2]) != 0));
 
-  //arma::mat referenceData;
-  //arma::mat queryData; // So it doesn't go out of scope.
-  //data::Load(referenceFile.c_str(), referenceData, true);
-
   // Sanity check on k value: must be greater than 0, must be less than the
   // number of reference points.
   if (k > referenceData.n_cols)
@@ -107,7 +103,6 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
   std::vector<size_t> oldFromNewQueries;
 
-  //f (CLI::GetParam<string>("query_file") != "")
   if (hasQueryData)
   {
     // setting the values.
@@ -145,7 +140,6 @@ void mexFunction(int nlhs, mxArray *plhs[],
   arma::Mat<size_t> neighborsOut(neighbors.n_rows, neighbors.n_cols);
 
   // Do the actual remapping.
-  //if (CLI::GetParam<string>("query_file") != "")
   if (hasQueryData)
   {
     for (size_t i = 0; i < distances.n_cols; ++i)
