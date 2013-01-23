@@ -63,29 +63,6 @@ void mexFunction(int nlhs, mxArray *plhs[],
   // cover-tree?
   bool usesCoverTree = (mxGetScalar(prhs[6]) == 1.0);
 
-  /*
-  // Give CLI the command line parameters the user passed in.
-  // CLI::ParseCommandLine(argc, argv);
-
-  // Get all the parameters.
-  string referenceFile = CLI::GetParam<string>("reference_file");
-  string distancesFile = CLI::GetParam<string>("distances_file");
-  string neighborsFile = CLI::GetParam<string>("neighbors_file");
-
-  int lsInt = CLI::GetParam<int>("leaf_size");
-  size_t k = CLI::GetParam<int>("k");
-
-  bool naive = CLI::HasParam("naive");
-  bool singleMode = CLI::HasParam("single_mode");
-
-  arma::mat referenceData;
-  arma::mat queryData; // So it doesn't go out of scope.
-  data::Load(referenceFile.c_str(), referenceData, true);
-
-  Log::Info << "Loaded reference data from '" << referenceFile << "' ("
-     << referenceData.n_rows << " x " << referenceData.n_cols << ")." << endl;
-  */
-
   // Sanity check on k value: must be greater than 0, must be less than the
   // number of reference points.
   if (k > referenceData.n_cols)
@@ -138,12 +115,8 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
     std::vector<size_t> oldFromNewQueries;
 
-    //if (CLI::GetParam<string>("query_file") != "")
     if (hasQueryData)
     {
-      //string queryFile = CLI::GetParam<string>("query_file");
-      //data::Load(queryFile.c_str(), queryData, true);
-
       // setting the values.
       mexDataPoints = mxGetPr(prhs[2]);
       numPoints = mxGetN(prhs[2]);
@@ -185,7 +158,6 @@ void mexFunction(int nlhs, mxArray *plhs[],
     distances.set_size(distancesOut.n_rows, distancesOut.n_cols);
 
     // Do the actual remapping.
-    //if ((CLI::GetParam<string>("query_file") != "") && !singleMode)
     if ((hasQueryData) && !singleMode)
     {
       for (size_t i = 0; i < distancesOut.n_cols; ++i)
@@ -201,7 +173,6 @@ void mexFunction(int nlhs, mxArray *plhs[],
         }
       }
     }
-    //else if ((CLI::GetParam<string>("query_file") != "") && singleMode)
     else if ((hasQueryData) && singleMode)
     {
       // No remapping of queries is necessary.  So distances are the same.
@@ -247,12 +218,8 @@ void mexFunction(int nlhs, mxArray *plhs[],
         QueryStat<NearestNeighborSort> > >* allknn = NULL;
 
     // See if we have query data.
-    //if (CLI::HasParam("query_file"))
     if (hasQueryData)
     {
-      //string queryFile = CLI::GetParam<string>("query_file");
-      //data::Load(queryFile, queryData, true);
-
       // setting the values.
       mexDataPoints = mxGetPr(prhs[2]);
       numPoints = mxGetN(prhs[2]);
@@ -293,8 +260,6 @@ void mexFunction(int nlhs, mxArray *plhs[],
   }
 
   // writing back to matlab
-  //data::Save(distancesFile, distances);
-  //data::Save(neighborsFile, neighbors);
   // constructing matrix to return to matlab
   plhs[0] = mxCreateDoubleMatrix(distances.n_rows, distances.n_cols, mxREAL);
   plhs[1] = mxCreateDoubleMatrix(neighbors.n_rows, neighbors.n_cols, mxREAL);
