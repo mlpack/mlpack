@@ -176,7 +176,7 @@ template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 template<typename RuleType>
 void CoverTree<MetricType, RootPointPolicy, StatisticType>::
 DualTreeTraverser<RuleType>::PruneMap(
-    CoverTree& queryNode,
+    CoverTree& /* queryNode */,
     CoverTree& candidateQueryNode,
     std::map<int, std::vector<DualCoverTreeMapEntry<MetricType,
         RootPointPolicy, StatisticType> > >& referenceMap,
