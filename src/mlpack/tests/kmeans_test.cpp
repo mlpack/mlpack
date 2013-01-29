@@ -207,6 +207,9 @@ BOOST_AUTO_TEST_CASE(RandomPartitionTest)
 }
 
 #ifdef ARMA_HAS_SPMAT
+// Can't do this test on Armadillo 3.4; var(SpBase) is not implemented.
+#if !((ARMA_MAJOR_VERSION == 3) && (ARMA_MINOR_VERSION == 4))
+
 /**
  * Make sure sparse k-means works okay.
  */
@@ -249,6 +252,7 @@ BOOST_AUTO_TEST_CASE(SparseKMeansTest)
   BOOST_REQUIRE_EQUAL(assignments[10], clusterTwo);
   BOOST_REQUIRE_EQUAL(assignments[11], clusterTwo);
 }
+#endif // Exclude Armadillo 3.4.
 #endif // ARMA_HAS_SPMAT
 
 BOOST_AUTO_TEST_SUITE_END();
