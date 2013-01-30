@@ -64,7 +64,7 @@ RASearchRules(const arma::mat& referenceSet,
 
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-inline // force_inline
+inline force_inline
 void RASearchRules<SortPolicy, MetricType, TreeType>::
 ObtainDistinctSamples(const size_t numSamples,
                       const size_t rangeUpperBound,
@@ -245,7 +245,7 @@ SuccessProbability(const size_t n,
 
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-inline // force_inline 
+inline force_inline 
 double RASearchRules<SortPolicy, MetricType, TreeType>::
 BaseCase(const size_t queryIndex, const size_t referenceIndex)
 {
