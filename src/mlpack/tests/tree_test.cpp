@@ -1698,6 +1698,11 @@ void GenerateVectorOfTree(TreeType* node,
 }
 
 #ifdef ARMA_HAS_SPMAT
+// Only run sparse tree tests if we are using Armadillo 3.6.  Armadillo 3.4 has
+// some bugs that cause the kd-tree splitting procedure to fail terribly.  Soon,
+// that version will be obsolete, though.
+#if !((ARMA_VERSION_MAJOR == 3) && (ARMA_VERSION_MINOR == 4))
+
 /**
  * Exhaustive sparse kd-tree test based on #125.
  *
@@ -1786,6 +1791,8 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSparseKDTreeTest)
   // Check the tree depth.
   BOOST_REQUIRE_EQUAL(root.TreeDepth(), 7);
 }
+
+#endif // Using Armadillo 3.4.
 #endif // ARMA_HAS_SPMAT
 
 template<typename TreeType>
