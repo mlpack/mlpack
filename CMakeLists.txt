@@ -57,7 +57,7 @@ endif(ARMA_EXTRA_DEBUG)
 # set path right
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
-find_package(Armadillo 2.4.0 REQUIRED)
+find_package(Armadillo 2.4.2 REQUIRED)
 
 # If Armadillo was compiled without ARMA_64BIT_WORD and we are on a 64-bit
 # system (where size_t will be 64 bits), suggest to the user that they should
