@@ -2,7 +2,7 @@
 set(DIRS
   det
   emst
-  fastmks
+#  fastmks
   gmm
   hmm
   kernel_pca
