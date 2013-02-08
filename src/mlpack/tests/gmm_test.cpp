@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMOneGaussian)
 
     // Now, train the model.
     GMM<> gmm(1, 2);
-    gmm.Estimate(data, 10);
+    double likelihood = gmm.Estimate(data, 10);
 
     arma::vec actualMean = arma::mean(data, 1);
     arma::mat actualCovar = ccov(data, 1 /* biased estimator */);
@@ -291,7 +291,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
 
   // Now train the model.
   GMM<> gmm(gaussians, dims);
-  gmm.Estimate(data, 10);
+  double likelihood = gmm.Estimate(data, 10);
 
   arma::uvec sortRef = sort_index(weights);
   arma::uvec sortTry = sort_index(gmm.Weights());
@@ -334,7 +334,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMSingleGaussianWithProbability)
 
   // Now train the model.
   GMM<> g(1, 2);
-  g.Estimate(observations, probabilities, 10);
+  double likelihood = g.Estimate(observations, probabilities, 10);
 
   // Check that it is trained correctly.  7% tolerance because of random error
   // present in observations.
@@ -407,7 +407,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
   // Now train the model.
   GMM<> g(4, 3); // 3 dimensions, 4 components.
 
-  g.Estimate(points, probabilities, 8);
+  double likelihood = g.Estimate(points, probabilities, 8);
 
   // Now check the results.  We need to order by weights so that when we do the
   // checking, things will be correct.
@@ -487,7 +487,7 @@ BOOST_AUTO_TEST_CASE(GMMRandomTest)
 
   // A new one which we'll train.
   GMM<> gmm2(2, 2);
-  gmm2.Estimate(observations, 10);
+  double likelihood = gmm2.Estimate(observations, 10);
 
   // Now check the results.  We need to order by weights so that when we do the
   // checking, things will be correct.
