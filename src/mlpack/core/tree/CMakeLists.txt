@@ -23,6 +23,7 @@ set(SOURCES
   periodichrectbound_impl.hpp
   statistic.hpp
   mrkd_statistic.hpp
+  mrkd_statistic_impl.hpp
 )
 
 # add directory name to sources
