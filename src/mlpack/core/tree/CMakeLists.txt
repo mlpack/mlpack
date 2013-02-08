@@ -24,6 +24,7 @@ set(SOURCES
   statistic.hpp
   mrkd_statistic.hpp
   mrkd_statistic_impl.hpp
+  mrkd_statistic.cpp
 )
 
 # add directory name to sources
