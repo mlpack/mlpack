@@ -165,6 +165,14 @@ class CoverTree
             const double furthestDescendantDistance);
 
   /**
+   * Create a cover tree from another tree.  Be careful!  This may use a lot of
+   * memory and take a lot of time.
+   *
+   * @param other Cover tree to copy from.
+   */
+  CoverTree(const CoverTree& other);
+
+  /**
    * Delete this cover tree node and its children.
    */
   ~CoverTree();
@@ -363,6 +371,11 @@ class CoverTree
                      const double bound,
                      const size_t nearSetSize,
                      const size_t pointSetSize);
+ public:
+  /**
+   * Returns a string representation of this object.
+   */
+  std::string ToString() const;
 };
 
 }; // namespace tree

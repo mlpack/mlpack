@@ -122,6 +122,12 @@ class BallBound
    */
   template<typename MatType>
   const BallBound& operator|=(const MatType& data);
+
+  /**
+   * Returns a string representation of this object.
+   */
+  std::string ToString() const;
+
 };
 
 }; // namespace bound

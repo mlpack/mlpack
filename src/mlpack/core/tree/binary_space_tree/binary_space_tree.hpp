@@ -44,6 +44,8 @@ class BinarySpaceTree
   BinarySpaceTree* left;
   //! The right child node.
   BinarySpaceTree* right;
+  //! The parent node (NULL if this is the root of the tree).
+  BinarySpaceTree* parent;
   //! The index of the first point in the dataset contained in this node (and
   //! its children).
   size_t begin;
@@ -127,6 +129,7 @@ class BinarySpaceTree
   BinarySpaceTree(MatType& data,
                   const size_t begin,
                   const size_t count,
+                  BinarySpaceTree* parent = NULL,
                   const size_t leafSize = 20);
 
   /**
@@ -151,6 +154,7 @@ class BinarySpaceTree
                   const size_t begin,
                   const size_t count,
                   std::vector<size_t>& oldFromNew,
+                  BinarySpaceTree* parent = NULL,
                   const size_t leafSize = 20);
 
   /**
@@ -179,7 +183,16 @@ class BinarySpaceTree
                   const size_t count,
                   std::vector<size_t>& oldFromNew,
                   std::vector<size_t>& newFromOld,
+                  BinarySpaceTree* parent = NULL,
                   const size_t leafSize = 20);
+
+  /**
+   * Create a binary space tree by copying the other tree.  Be careful!  This
+   * can take a long time and use a lot of memory.
+   *
+   * @param other Tree to be replicated.
+   */
+  BinarySpaceTree(const BinarySpaceTree& other);
 
   /**
    * Create an empty tree node.
@@ -221,29 +234,45 @@ class BinarySpaceTree
   BinarySpaceTree* FindByBeginCount(size_t begin, size_t count);
 
   //! Return the bound object for this node.
-  const BoundType& Bound() const;
+  const BoundType& Bound() const { return bound; }
   //! Return the bound object for this node.
-  BoundType& Bound();
+  BoundType& Bound() { return bound; }
 
   //! Return the statistic object for this node.
-  const StatisticType& Stat() const;
+  const StatisticType& Stat() const { return stat; }
   //! Return the statistic object for this node.
-  StatisticType& Stat();
+  StatisticType& Stat() { return stat; }
 
   //! Return whether or not this node is a leaf (true if it has no children).
   bool IsLeaf() const;
 
   //! Return the leaf size.
-  size_t LeafSize() const;
+  size_t LeafSize() const { return leafSize; }
+  //! Modify the leaf size.
+  size_t& LeafSize() { return leafSize; }
 
   //! Fills the tree to the specified level.
   size_t ExtendTree(const size_t level);
 
   //! Gets the left child of this node.
-  BinarySpaceTree* Left() const;
+  BinarySpaceTree* Left() const { return left; }
+  //! Modify the left child of this node.
+  BinarySpaceTree*& Left() { return left; }
 
   //! Gets the right child of this node.
-  BinarySpaceTree* Right() const;
+  BinarySpaceTree* Right() const { return right; }
+  //! Modify the right child of this node.
+  BinarySpaceTree*& Right() { return right; }
+
+  //! Gets the parent of this node.
+  BinarySpaceTree* Parent() const { return parent; }
+  //! Modify the parent of this node.
+  BinarySpaceTree*& Parent() { return parent; }
+
+  //! Get the split dimension for this node.
+  size_t SplitDimension() const { return splitDimension; }
+  //! Modify the split dimension for this node.
+  size_t& SplitDimension() { return splitDimension; }
 
   //! Return the number of children in this node.
   size_t NumChildren() const;
@@ -318,20 +347,20 @@ class BinarySpaceTree
    */
   size_t TreeDepth() const;
 
-  /**
-   * Gets the index of the beginning point of this subset.
-   */
-  size_t Begin() const;
+  //! Return the index of the beginning point of this subset.
+  size_t Begin() const { return begin; }
+  //! Modify the index of the beginning point of this subset.
+  size_t& Begin() { return begin; }
 
   /**
    * Gets the index one beyond the last index in the subset.
    */
   size_t End() const;
 
-  /**
-   * Gets the number of points in this subset.
-   */
-  size_t Count() const;
+  //! Return the number of points in this subset.
+  size_t Count() const { return count; }
+  //! Modify the number of points in this subset.
+  size_t& Count() { return count; }
 
   //! Returns false: this tree type does not have self children.
   static bool HasSelfChildren() { return false; }
@@ -397,6 +426,12 @@ class BinarySpaceTree
    */
   size_t GetSplitIndex(MatType& data, int splitDim, double splitVal,
       std::vector<size_t>& oldFromNew);
+ public:
+  /**
+   * Returns a string representation of this object.
+   */
+  std::string ToString() const;
+
 };
 
 }; // namespace tree

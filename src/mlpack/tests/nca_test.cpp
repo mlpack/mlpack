@@ -8,6 +8,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/nca/nca.hpp>
+#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -15,6 +16,7 @@
 using namespace mlpack;
 using namespace mlpack::metric;
 using namespace mlpack::nca;
+using namespace mlpack::optimization;
 
 //
 // Tests for the SoftmaxErrorFunction
@@ -250,7 +252,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxSeparableGradient)
  * On our simple dataset, ensure that the NCA algorithm fully separates the
  * points.
  */
-BOOST_AUTO_TEST_CASE(NcaSimpleDataset)
+BOOST_AUTO_TEST_CASE(NCASGDSimpleDataset)
 {
   // Useful but simple dataset with six points and two classes.
   arma::mat data    = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
@@ -278,10 +280,42 @@ BOOST_AUTO_TEST_CASE(NcaSimpleDataset)
   // finalObj must be less than initObj.
   BOOST_REQUIRE_LT(finalObj, initObj);
   // Verify that final objective is optimal.
+  BOOST_REQUIRE_CLOSE(finalObj, -6.0, 0.005);
+  // The solution is not unique, so the best we can do is ensure the gradient
+  // norm is close to 0.
+  BOOST_REQUIRE_LT(arma::norm(finalGradient, 2), 1e-4);
+}
+
+BOOST_AUTO_TEST_CASE(NCALBFGSSimpleDataset)
+{
+  // Useful but simple dataset with six points and two classes.
+  arma::mat data    = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                      " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::uvec labels = " 0    0    0    1    1    1   ";
+
+  // Huge learning rate because this is so simple.
+  NCA<SquaredEuclideanDistance, L_BFGS> nca(data, labels);
+  nca.Optimizer().NumBasis() = 5;
+
+  arma::mat outputMatrix;
+  nca.LearnDistance(outputMatrix);
+
+  // Ensure that the objective function is better now.
+  SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
+
+  double initObj = sef.Evaluate(arma::eye<arma::mat>(2, 2));
+  double finalObj = sef.Evaluate(outputMatrix);
+  arma::mat finalGradient;
+  sef.Gradient(outputMatrix, finalGradient);
+
+  // finalObj must be less than initObj.
+  BOOST_REQUIRE_LT(finalObj, initObj);
+  // Verify that final objective is optimal.
   BOOST_REQUIRE_CLOSE(finalObj, -6.0, 1e-5);
   // The solution is not unique, so the best we can do is ensure the gradient
   // norm is close to 0.
   BOOST_REQUIRE_LT(arma::norm(finalGradient, 2), 1e-6);
+
 }
 
 BOOST_AUTO_TEST_SUITE_END();

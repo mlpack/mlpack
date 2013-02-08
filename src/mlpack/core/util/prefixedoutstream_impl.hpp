@@ -16,7 +16,7 @@ namespace mlpack {
 namespace util {
 
 template<typename T>
-PrefixedOutStream& PrefixedOutStream::operator<<(T s)
+PrefixedOutStream& PrefixedOutStream::operator<<(const T& s)
 {
   CallBaseLogic<T>(s);
   return *this;
@@ -24,7 +24,7 @@ PrefixedOutStream& PrefixedOutStream::operator<<(T s)
 
 //! This handles forwarding all primitive types transparently
 template<typename T>
-void PrefixedOutStream::CallBaseLogic(T s,
+void PrefixedOutStream::CallBaseLogic(const T& s,
     typename boost::disable_if<
         boost::is_class<T>
     >::type* = 0)
@@ -34,7 +34,7 @@ void PrefixedOutStream::CallBaseLogic(T s,
 
 // Forward all objects that do not implement a ToString() method transparently
 template<typename T>
-void PrefixedOutStream::CallBaseLogic(T s,
+void PrefixedOutStream::CallBaseLogic(const T& s,
     typename boost::enable_if<
         boost::is_class<T>
     >::type* = 0,
@@ -47,7 +47,7 @@ void PrefixedOutStream::CallBaseLogic(T s,
 
 // Call ToString() on all objects that implement ToString() before forwarding
 template<typename T>
-void PrefixedOutStream::CallBaseLogic(T s,
+void PrefixedOutStream::CallBaseLogic(const T& s,
     typename boost::enable_if<
         boost::is_class<T>
     >::type* = 0,
@@ -56,11 +56,11 @@ void PrefixedOutStream::CallBaseLogic(T s,
     >::type* = 0)
 {
   std::string result = s.ToString();
-  BaseLogic<std::string&>(result);
+  BaseLogic<std::string>(result);
 }
 
 template<typename T>
-void PrefixedOutStream::BaseLogic(T val)
+void PrefixedOutStream::BaseLogic(const T& val)
 {
   // We will use this to track whether or not we need to terminate at the end of
   // this call (only for streams which terminate after a newline).
