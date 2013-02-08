@@ -131,11 +131,6 @@ class PeriodicHRectBound
    */
   bool Contains(const arma::vec& point) const;
 
-  /**
-   * Returns a string representation of an object.
-   */
-  std::string ToString() const;
-
  private:
   math::Range *bounds;
   size_t dim;

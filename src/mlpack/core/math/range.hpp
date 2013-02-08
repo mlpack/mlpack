@@ -156,11 +156,6 @@ class Range
    */
   inline bool Contains(const Range& r) const;
 
-  /**
-   * Returns a string representation of an object.
-   */
-  inline std::string ToString() const;
-
 };
 
 }; // namespace math

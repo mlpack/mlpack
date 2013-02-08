@@ -11,8 +11,7 @@
 PROGRAM_INFO("RADICAL", "An implementation of RADICAL, a method for independent"
     "component analysis (ICA).  Assuming that we have an input matrix X, the"
     "goal is to find a square unmixing matrix W such that Y = W * X and the "
-    "dimensions of Y are independent components.  If the algorithm is running"
-    "particularly slowly, try reducing the number of replicates.");
+    "dimensions of Y are independent components.");
 
 PARAM_STRING_REQ("input_file", "Input dataset filename for ICA.", "i");
 
@@ -27,11 +26,9 @@ PARAM_INT("replicates", "Number of Gaussian-perturbed replicates to use "
     "(per point) in Radical2D.", "r", 30);
 PARAM_INT("angles", "Number of angles to consider in brute-force search "
     "during Radical2D.", "a", 150);
-PARAM_INT("sweeps", "Number of sweeps; each sweep calls Radical2D once for "
-    "each pair of dimensions.", "S", 0);
+PARAM_INT("sweeps", "Number of sweeps (each sweep calls Radical2D once for "
+    "each pair of dimensions", "S", 0);
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
-PARAM_FLAG("objective", "If set, an estimate of the final objective function "
-    "is printed.", "O");
 
 using namespace mlpack;
 using namespace mlpack::radical;
@@ -72,28 +69,22 @@ int main(int argc, char* argv[])
   mat matW;
   rad.DoRadical(matX, matY, matW);
 
-  // Save results.
+  // save results
   const string matYFilename = CLI::GetParam<string>("output_ic");
   data::Save(matYFilename, matY);
 
   const string matWFilename = CLI::GetParam<string>("output_unmixing");
   data::Save(matWFilename, matW);
 
-  if (CLI::HasParam("objective"))
+  /*
+  // compute and print objective
+  mat matYT = trans(matY);
+  double valEst = 0;
+  for(size_t i = 0; i < matYT.n_cols; i++)
   {
-    // Compute and print objective.
-    mat matYT = trans(matY);
-    double valEst = 0;
-    for (size_t i = 0; i < matYT.n_cols; i++)
-    {
-      vec y = vec(matYT.col(i));
-      valEst += rad.Vasicek(y);
-    }
-
-    // Force output even if --verbose is not given.
-    const bool ignoring = Log::Info.ignoreInput;
-    Log::Info.ignoreInput = false;
-    Log::Info << "Objective (estimate): " << valEst << "." << endl;
-    Log::Info.ignoreInput = ignoring;
+    vec Yi = vec(matYT.col(i));
+    valEst += rad.Vasicek(Yi);
   }
+  Log::Info << "Objective (estimate): " << valEst << "." << endl;
+  */
 }

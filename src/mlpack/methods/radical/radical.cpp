@@ -14,80 +14,80 @@ using namespace mlpack::radical;
 
 // Set the parameters to RADICAL.
 Radical::Radical(const double noiseStdDev,
-                 const size_t replicates,
-                 const size_t angles,
-                 const size_t sweeps,
+                 const size_t nReplicates,
+                 const size_t nAngles,
+                 const size_t nSweeps,
                  const size_t m) :
     noiseStdDev(noiseStdDev),
-    replicates(replicates),
-    angles(angles),
-    sweeps(sweeps),
+    nReplicates(nReplicates),
+    nAngles(nAngles),
+    nSweeps(nSweeps),
     m(m)
 {
   // Nothing to do here.
 }
 
-void Radical::CopyAndPerturb(mat& xNew, const mat& x) const
+void Radical::CopyAndPerturb(mat& matXNew, const mat& matX)
 {
-  Timer::Start("radical_copy_and_perturb");
-  xNew = repmat(x, replicates, 1) + noiseStdDev * randn(replicates * x.n_rows,
-      x.n_cols);
-  Timer::Stop("radical_copy_and_perturb");
+  matXNew = repmat(matX, nReplicates, 1) + noiseStdDev *
+                  randn(nReplicates * matX.n_rows, matX.n_cols);
 }
 
 
-double Radical::Vasicek(vec& z) const
+double Radical::Vasicek(vec& z)
 {
   z = sort(z);
 
-  // Apparently slower.
+  // Apparently slower
   /*
-  vec logs = log(z.subvec(m, z.n_elem - 1) - z.subvec(0, z.n_elem - 1 - m));
+  vec logs = log(z.subvec(m, nPoints - 1) - z.subvec(0, nPoints - 1 - m));
   //vec val = sum(log(z.subvec(m, nPoints - 1) - z.subvec(0, nPoints - 1 - m)));
   return (double) sum(logs);
   */
 
-  // Apparently faster.
+  // Apparently faster
   double sum = 0;
   uword range = z.n_elem - m;
   for (uword i = 0; i < range; i++)
   {
     sum += log(z(i + m) - z(i));
   }
-
   return sum;
 }
 
 
 double Radical::DoRadical2D(const mat& matX)
 {
-  CopyAndPerturb(perturbed, matX);
+  mat matXMod;
 
-  mat::fixed<2, 2> matJacobi;
+  CopyAndPerturb(matXMod, matX);
 
-  vec values(angles);
+  mat matJacobi(2,2);
+  mat candidateY;
 
-  for (size_t i = 0; i < angles; i++)
+  vec thetas = linspace<vec>(0, nAngles - 1, nAngles) /
+                ((double) nAngles) * M_PI / 2;
+  vec values(nAngles);
+
+  for (size_t i = 0; i < nAngles; i++)
   {
-    const double theta = (i / (double) angles) * M_PI / 2.0;
-    const double cosTheta = cos(theta);
-    const double sinTheta = sin(theta);
-
+    double cosTheta = cos(thetas(i));
+    double sinTheta = sin(thetas(i));
     matJacobi(0, 0) = cosTheta;
     matJacobi(1, 0) = -sinTheta;
     matJacobi(0, 1) = sinTheta;
     matJacobi(1, 1) = cosTheta;
 
-    candidate = perturbed * matJacobi;
-    vec candidateY1 = candidate.unsafe_col(0);
-    vec candidateY2 = candidate.unsafe_col(1);
+    candidateY = matXMod * matJacobi;
+    vec candidateY1 = candidateY.unsafe_col(0);
+    vec candidateY2 = candidateY.unsafe_col(1);
 
     values(i) = Vasicek(candidateY1) + Vasicek(candidateY2);
   }
 
   uword indOpt;
   values.min(indOpt); // we ignore the return value; we don't care about it
-  return (indOpt / (double) angles) * M_PI / 2.0;
+  return thetas(indOpt);
 }
 
 
@@ -96,10 +96,8 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
   // matX is nPoints by nDims (although less intuitive than columns being
   // points, and although this is the transpose of the ICA literature, this
   // choice is for computational efficiency when repeatedly generating
-  // two-dimensional coordinate projections for Radical2D).
-  Timer::Start("radical_transpose_data");
+  // two-dimensional coordinate projections for Radical2D.
   mat matX = trans(matXT);
-  Timer::Stop("radical_transpose_data");
 
   // If m was not specified, initialize m as recommended in
   // (Learned-Miller and Fisher, 2003).
@@ -109,70 +107,55 @@ void Radical::DoRadical(const mat& matXT, mat& matY, mat& matW)
   const size_t nDims = matX.n_cols;
   const size_t nPoints = matX.n_rows;
 
-  Timer::Start("radical_whiten_data");
   mat matXWhitened;
   mat matWhitening;
   WhitenFeatureMajorMatrix(matX, matY, matWhitening);
-  Timer::Stop("radical_whiten_data");
-  // matY is now the whitened form of matX.
+  // matY is now the whitened form of matX
 
   // In the RADICAL code, they do not copy and perturb initially, although the
-  // paper does.  We follow the code as it should match their reported results
+  // paper does. we follow the code as it should match their reported results
   // and likely does a better job bouncing out of local optima.
   //GeneratePerturbedX(X, X);
 
   // Initialize the unmixing matrix to the whitening matrix.
-  Timer::Start("radical_do_radical");
   matW = matWhitening;
 
   mat matYSubspace(nPoints, 2);
 
-  mat matJ = eye(nDims, nDims);
+  mat matEye = eye(nDims, nDims);
 
-  for (size_t sweepNum = 0; sweepNum < sweeps; sweepNum++)
+  for (size_t sweepNum = 0; sweepNum < nSweeps; sweepNum++)
   {
-    Log::Info << "RADICAL: sweep " << sweepNum << "." << std::endl;
-
     for (size_t i = 0; i < nDims - 1; i++)
     {
       for (size_t j = i + 1; j < nDims; j++)
       {
-        Log::Debug << "RADICAL 2D on dimensions " << i << " and " << j << "."
-            << std::endl;
-
         matYSubspace.col(0) = matY.col(i);
         matYSubspace.col(1) = matY.col(j);
-
-        const double thetaOpt = DoRadical2D(matYSubspace);
-
-        const double cosThetaOpt = cos(thetaOpt);
-        const double sinThetaOpt = sin(thetaOpt);
-
-        // Set elements of transformation matrix.
+        double thetaOpt = DoRadical2D(matYSubspace);
+        mat matJ = matEye;
+        double cosThetaOpt = cos(thetaOpt);
+        double sinThetaOpt = sin(thetaOpt);
         matJ(i, i) = cosThetaOpt;
         matJ(j, i) = -sinThetaOpt;
         matJ(i, j) = sinThetaOpt;
         matJ(j, j) = cosThetaOpt;
-
-        matY *= matJ;
-
-        // Unset elements of transformation matrix, so matJ = eye() again.
-        matJ(i, i) = 1;
-        matJ(j, i) = 0;
-        matJ(i, j) = 0;
-        matJ(j, j) = 1;
+        matW = matW * matJ;
+        matY = matX * matW; // to avoid any issues of mismatch between matW
+                            // and matY, do not use matY = matY * matJ,
+                            // even though it may be much more efficient
       }
     }
   }
-  Timer::Stop("radical_do_radical");
 
-  // The final transposes provide W and Y in the typical form from the ICA
-  // literature.
-  Timer::Start("radical_transpose_data");
+  // the final transposes provide W and Y in the typical form from the ICA
+  // literature
+  //matW = trans(matWhitening * matW);
+  //matY = trans(matY);
   matW = trans(matW);
   matY = trans(matY);
-  Timer::Stop("radical_transpose_data");
 }
+
 
 void mlpack::radical::WhitenFeatureMajorMatrix(const mat& matX,
                                                mat& matXWhitened,

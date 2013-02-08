@@ -12,8 +12,6 @@
 // In case it hasn't been included already.
 #include "ballbound.hpp"
 
-#include <string>
-
 namespace mlpack {
 namespace bound {
 
@@ -189,18 +187,6 @@ BallBound<VecType>::operator|=(const MatType& data)
   }
 
   return *this;
-}
-/**
- * Returns a string representation of this object.
- */
-template<typename VecType>
-std::string BallBound<VecType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "BallBound [" << this << "]" << std::endl;
-  convert << "Radius:  " << radius << std::endl;
-  convert << "Center:  " << std::endl << center;
-  return convert.str();
 }
 
 }; // namespace bound

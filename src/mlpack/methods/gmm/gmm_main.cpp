@@ -49,10 +49,8 @@ int main(int argc, char* argv[])
 
   ////// Computing the parameters of the model using the EM algorithm //////
   Timer::Start("em");
-  double likelihood = gmm.Estimate(dataPoints);
+  gmm.Estimate(dataPoints);
   Timer::Stop("em");
-
-  Log::Info << "Log-likelihood of estimate: " << likelihood << ".\n";
 
   ////// OUTPUT RESULTS //////
   SaveRestoreUtility save;

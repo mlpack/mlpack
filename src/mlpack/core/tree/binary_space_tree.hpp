@@ -11,6 +11,5 @@
 #include "binary_space_tree/binary_space_tree.hpp"
 #include "binary_space_tree/single_tree_traverser.hpp"
 #include "binary_space_tree/dual_tree_traverser.hpp"
-#include "binary_space_tree/traits.hpp"
 
 #endif

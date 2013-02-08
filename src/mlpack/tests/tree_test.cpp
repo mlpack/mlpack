@@ -1490,32 +1490,6 @@ BOOST_AUTO_TEST_CASE(TreeCountMismatch)
   BOOST_REQUIRE(rootNode.Right()->Right()->Count() == 1);
 }
 
-BOOST_AUTO_TEST_CASE(CheckParents)
-{
-  arma::mat dataset = "2.0 5.0 9.0 4.0 8.0 7.0;"
-                      "3.0 4.0 6.0 7.0 1.0 2.0 ";
-
-  // Leaf size of 1.
-  BinarySpaceTree<HRectBound<2> > rootNode(dataset, 1);
-
-  BOOST_REQUIRE_EQUAL(rootNode.Parent(),
-      (BinarySpaceTree<HRectBound<2> >*) NULL);
-  BOOST_REQUIRE_EQUAL(&rootNode, rootNode.Left()->Parent());
-  BOOST_REQUIRE_EQUAL(&rootNode, rootNode.Right()->Parent());
-  BOOST_REQUIRE_EQUAL(rootNode.Left(), rootNode.Left()->Left()->Parent());
-  BOOST_REQUIRE_EQUAL(rootNode.Left(), rootNode.Left()->Right()->Parent());
-  BOOST_REQUIRE_EQUAL(rootNode.Left()->Left(),
-      rootNode.Left()->Left()->Left()->Parent());
-  BOOST_REQUIRE_EQUAL(rootNode.Left()->Left(),
-      rootNode.Left()->Left()->Right()->Parent());
-  BOOST_REQUIRE_EQUAL(rootNode.Right(), rootNode.Right()->Left()->Parent());
-  BOOST_REQUIRE_EQUAL(rootNode.Right(), rootNode.Right()->Right()->Parent());
-  BOOST_REQUIRE_EQUAL(rootNode.Right()->Left(),
-      rootNode.Right()->Left()->Left()->Parent());
-  BOOST_REQUIRE_EQUAL(rootNode.Right()->Left(),
-      rootNode.Right()->Left()->Right()->Parent());
-}
-
 // Ensure FurthestDescendantDistance() works.
 BOOST_AUTO_TEST_CASE(FurthestDescendantDistanceTest)
 {
@@ -1528,7 +1502,7 @@ BOOST_AUTO_TEST_CASE(FurthestDescendantDistanceTest)
 
   // Both points are contained in the one node.
   BinarySpaceTree<HRectBound<2> > twoPoint(dataset);
-  BOOST_REQUIRE_CLOSE(twoPoint.FurthestDescendantDistance(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(twoPoint.FurthestDescendantDistance(), 2, 1e-5);
 }
 
 // Forward declaration of methods we need for the next test.
@@ -1698,11 +1672,6 @@ void GenerateVectorOfTree(TreeType* node,
 }
 
 #ifdef ARMA_HAS_SPMAT
-// Only run sparse tree tests if we are using Armadillo 3.6.  Armadillo 3.4 has
-// some bugs that cause the kd-tree splitting procedure to fail terribly.  Soon,
-// that version will be obsolete, though.
-#if !((ARMA_VERSION_MAJOR == 3) && (ARMA_VERSION_MINOR == 4))
-
 /**
  * Exhaustive sparse kd-tree test based on #125.
  *
@@ -1791,8 +1760,6 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSparseKDTreeTest)
   // Check the tree depth.
   BOOST_REQUIRE_EQUAL(root.TreeDepth(), 7);
 }
-
-#endif // Using Armadillo 3.4.
 #endif // ARMA_HAS_SPMAT
 
 template<typename TreeType>
@@ -2041,97 +2008,6 @@ BOOST_AUTO_TEST_CASE(CoverTreeAlternateMetricTest)
 
   // Each node's children must be separated by at least a certain value.
   CheckSeparation<CoverTree<LMetric<1, true> >, LMetric<1, true> >(tree, tree);
-}
-
-/**
- * Make sure copy constructor works for the cover tree.
- */
-BOOST_AUTO_TEST_CASE(CoverTreeCopyConstructor)
-{
-  arma::mat dataset;
-  dataset.randu(10, 10); // dataset is irrelevant.
-  CoverTree<> c(dataset, 1.3, 0, 5, 1.45, 5.2); // Random parameters.
-  c.Children().push_back(new CoverTree<>(dataset, 1.3, 1, 4, 1.3, 2.45));
-  c.Children().push_back(new CoverTree<>(dataset, 1.5, 2, 3, 1.2, 5.67));
-
-  CoverTree<> d = c;
-
-  // Check that everything is the same.
-  BOOST_REQUIRE_EQUAL(c.Dataset().memptr(), d.Dataset().memptr());
-  BOOST_REQUIRE_CLOSE(c.Base(), d.Base(), 1e-50);
-  BOOST_REQUIRE_EQUAL(c.Point(), d.Point());
-  BOOST_REQUIRE_EQUAL(c.Scale(), d.Scale());
-  BOOST_REQUIRE_EQUAL(c.ParentDistance(), d.ParentDistance());
-  BOOST_REQUIRE_EQUAL(c.FurthestDescendantDistance(),
-                      d.FurthestDescendantDistance());
-  BOOST_REQUIRE_EQUAL(c.NumChildren(), d.NumChildren());
-  BOOST_REQUIRE_NE(&c.Child(0), &d.Child(0));
-  BOOST_REQUIRE_NE(&c.Child(1), &d.Child(1));
-
-  // Check that the children are okay.
-  BOOST_REQUIRE_EQUAL(c.Child(0).Dataset().memptr(),
-                      d.Child(0).Dataset().memptr());
-  BOOST_REQUIRE_CLOSE(c.Child(0).Base(), d.Child(0).Base(), 1e-50);
-  BOOST_REQUIRE_EQUAL(c.Child(0).Point(), d.Child(0).Point());
-  BOOST_REQUIRE_EQUAL(c.Child(0).Scale(), d.Child(0).Scale());
-  BOOST_REQUIRE_EQUAL(c.Child(0).ParentDistance(), d.Child(0).ParentDistance());
-  BOOST_REQUIRE_EQUAL(c.Child(0).FurthestDescendantDistance(),
-                      d.Child(0).FurthestDescendantDistance());
-  BOOST_REQUIRE_EQUAL(c.Child(0).NumChildren(), d.Child(0).NumChildren());
-
-  BOOST_REQUIRE_EQUAL(c.Child(1).Dataset().memptr(),
-                      d.Child(1).Dataset().memptr());
-  BOOST_REQUIRE_CLOSE(c.Child(1).Base(), d.Child(1).Base(), 1e-50);
-  BOOST_REQUIRE_EQUAL(c.Child(1).Point(), d.Child(1).Point());
-  BOOST_REQUIRE_EQUAL(c.Child(1).Scale(), d.Child(1).Scale());
-  BOOST_REQUIRE_EQUAL(c.Child(1).ParentDistance(), d.Child(1).ParentDistance());
-  BOOST_REQUIRE_EQUAL(c.Child(1).FurthestDescendantDistance(),
-                      d.Child(1).FurthestDescendantDistance());
-  BOOST_REQUIRE_EQUAL(c.Child(1).NumChildren(), d.Child(1).NumChildren());
-}
-
-/**
- * Make sure copy constructor works right for the binary space tree.
- */
-BOOST_AUTO_TEST_CASE(BinarySpaceTreeCopyConstructor)
-{
-  BinarySpaceTree<HRectBound<2> > b;
-  b.Begin() = 10;
-  b.Count() = 50;
-  b.Left() = new BinarySpaceTree<HRectBound<2> >();
-  b.Left()->Begin() = 10;
-  b.Left()->Count() = 30;
-  b.Right() = new BinarySpaceTree<HRectBound<2> >();
-  b.Right()->Begin() = 40;
-  b.Right()->Count() = 20;
-
-  // Copy the tree.
-  BinarySpaceTree<HRectBound<2> > c(b);
-
-  // Ensure everything copied correctly.
-  BOOST_REQUIRE_EQUAL(b.Begin(), c.Begin());
-  BOOST_REQUIRE_EQUAL(b.Count(), c.Count());
-  BOOST_REQUIRE_NE(b.Left(), c.Left());
-  BOOST_REQUIRE_NE(b.Right(), c.Right());
-
-  // Check the children.
-  BOOST_REQUIRE_EQUAL(b.Left()->Begin(), c.Left()->Begin());
-  BOOST_REQUIRE_EQUAL(b.Left()->Count(), c.Left()->Count());
-  BOOST_REQUIRE_EQUAL(b.Left()->Left(),
-      (BinarySpaceTree<HRectBound<2> >*) NULL);
-  BOOST_REQUIRE_EQUAL(b.Left()->Left(), c.Left()->Left());
-  BOOST_REQUIRE_EQUAL(b.Left()->Right(),
-      (BinarySpaceTree<HRectBound<2> >*) NULL);
-  BOOST_REQUIRE_EQUAL(b.Left()->Right(), c.Left()->Right());
-
-  BOOST_REQUIRE_EQUAL(b.Right()->Begin(), c.Right()->Begin());
-  BOOST_REQUIRE_EQUAL(b.Right()->Count(), c.Right()->Count());
-  BOOST_REQUIRE_EQUAL(b.Right()->Left(),
-      (BinarySpaceTree<HRectBound<2> >*) NULL);
-  BOOST_REQUIRE_EQUAL(b.Right()->Left(), c.Right()->Left());
-  BOOST_REQUIRE_EQUAL(b.Right()->Right(),
-      (BinarySpaceTree<HRectBound<2> >*) NULL);
-  BOOST_REQUIRE_EQUAL(b.Right()->Right(), c.Right()->Right());
 }
 
 BOOST_AUTO_TEST_SUITE_END();

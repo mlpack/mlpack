@@ -565,20 +565,6 @@ bool PeriodicHRectBound<t_pow>::Contains(const arma::vec& point) const
   return true;
 }
 
-/**
- * Returns a string representation of this object.
- */
-template<int t_pow>
-std::string PeriodicHRectBound<t_pow>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "PeriodicHRectBound [" << this << "]" << std::endl;
-  convert << "bounds: " << bounds->ToString() << std::endl;
-  convert << "dim: " << dim << std::endl;
-  convert << "box: " << box;
-  return convert.str();
-}
-
 }; // namespace bound
 }; // namespace mlpack
 

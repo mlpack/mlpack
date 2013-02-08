@@ -9,8 +9,8 @@ set(DIRS
   kmeans
   lars
   linear_regression
+#  lmnn
   local_coordinate_coding
-  lsh
   mvu
   naive_bayes
   nca
@@ -19,7 +19,6 @@ set(DIRS
   pca
   radical
   range_search
-  rann
   sparse_coding
 )
 

@@ -86,8 +86,8 @@ void DiscreteDistribution::Estimate(const arma::mat& observations,
 std::string DiscreteDistribution::ToString() const
 {
   std::ostringstream convert;
-  convert << "DiscreteDistribution [" << this << "]" << std::endl;
-  convert << "Probabilities" << std::endl << probabilities;
+  convert << "DiscreteDistribution " << this << std::endl;
+  convert << probabilities;
   return convert.str();
 }
 

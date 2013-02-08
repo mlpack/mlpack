@@ -140,11 +140,6 @@ class HRectBound
   template<typename VecType>
   bool Contains(const VecType& point) const;
 
-  /**
-   * Returns a string representation of this object.
-   */
-  std::string ToString() const;
-
  private:
   //! The dimensionality of the bound.
   size_t dim;

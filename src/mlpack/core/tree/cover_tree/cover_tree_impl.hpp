@@ -10,9 +10,6 @@
 // In case it hasn't already been included.
 #include "cover_tree.hpp"
 
-#include <mlpack/core/util/string_util.hpp>
-#include <string>
-
 namespace mlpack {
 namespace tree {
 
@@ -434,22 +431,6 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
-CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
-    const CoverTree& other) :
-    dataset(other.dataset),
-    point(other.point),
-    scale(other.scale),
-    base(other.base),
-    stat(other.stat),
-    parentDistance(other.parentDistance),
-    furthestDescendantDistance(other.furthestDescendantDistance)
-{
-  // Copy each child by hand.
-  for (size_t i = 0; i < other.NumChildren(); ++i)
-    children.push_back(new CoverTree(other.Child(i)));
-}
-
-template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 CoverTree<MetricType, RootPointPolicy, StatisticType>::~CoverTree()
 {
   // Delete each child.
@@ -836,33 +817,6 @@ size_t CoverTree<MetricType, RootPointPolicy, StatisticType>::PruneFarSet(
   return (left - nearSetSize);
 }
 
-/**
- * Returns a string representation of this object.
- */
-template<typename MetricType, typename RootPointPolicy, typename StatisticType>
-std::string CoverTree<MetricType, RootPointPolicy, StatisticType>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "CoverTree [" << this << "]" << std::endl;
-  convert << "dataset: " << &dataset << std::endl;
-  convert << "point: " << point << std::endl;
-  convert << "scale: " << scale << std::endl;
-  convert << "base: " << base << std::endl;
-//  convert << "StatisticType: " << stat << std::endl;
-  convert << "parent distance : " << parentDistance << std::endl;
-  convert << "furthest child distance: " << furthestDescendantDistance;
-  convert << std::endl;
-  convert << "children:";
-
-  if (IsLeaf() == false)
-  {
-    for (int i = 0; i < children.size(); i++)
-    {
-      convert << std::endl << mlpack::util::Indent(children.at(i)->ToString());
-    }
-  }
-  return convert.str();
-}
 }; // namespace tree
 }; // namespace mlpack
 

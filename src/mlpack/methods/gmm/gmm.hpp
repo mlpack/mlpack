@@ -264,17 +264,16 @@ class GMM
    *
    * The fitting will be performed 'trials' times; from these trials, the model
    * with the greatest log-likelihood will be selected.  By default, only one
-   * trial is performed.  The log-likelihood of the best fitting is returned.
+   * trial is performed.
    *
    * @tparam FittingType The type of fitting method which should be used
    *     (EMFit<> is suggested).
    * @param observations Observations of the model.
    * @param trials Number of trials to perform; the model in these trials with
    *      the greatest log-likelihood will be selected.
-   * @return The log-likelihood of the best fit.
    */
-  double Estimate(const arma::mat& observations,
-                  const size_t trials = 1);
+  void Estimate(const arma::mat& observations,
+                const size_t trials = 1);
 
   /**
    * Estimate the probability distribution directly from the given observations,
@@ -284,18 +283,17 @@ class GMM
    *
    * The fitting will be performed 'trials' times; from these trials, the model
    * with the greatest log-likelihood will be selected.  By default, only one
-   * trial is performed.  The log-likelihood of the best fitting is returned.
+   * trial is performed.
    *
    * @param observations Observations of the model.
    * @param probabilities Probability of each observation being from this
    *     distribution.
    * @param trials Number of trials to perform; the model in these trials with
    *     the greatest log-likelihood will be selected.
-   * @return The log-likelihood of the best fit.
    */
-  double Estimate(const arma::mat& observations,
-                  const arma::vec& probabilities,
-                  const size_t trials = 1);
+  void Estimate(const arma::mat& observations,
+                const arma::vec& probabilities,
+                const size_t trials = 1);
 
   /**
    * Classify the given observations as being from an individual component in

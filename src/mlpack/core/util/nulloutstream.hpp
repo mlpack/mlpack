@@ -78,7 +78,7 @@ class NullOutStream
 
   //! Does nothing.
   template<typename T>
-  NullOutStream& operator<<(T& s)
+  NullOutStream& operator<<(T s)
   { (void) s; return *this; }
 };
 

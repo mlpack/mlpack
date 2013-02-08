@@ -3,11 +3,9 @@ add_executable(mlpack_test
   mlpack_test.cpp
   allkfn_test.cpp
   allknn_test.cpp
-  allkrann_search_test.cpp
   arma_extend_test.cpp
   aug_lagrangian_test.cpp
   cli_test.cpp
-  det_test.cpp
   distribution_test.cpp
   emst_test.cpp
   fastmks_test.cpp
@@ -22,7 +20,6 @@ add_executable(mlpack_test
   load_save_test.cpp
   local_coordinate_coding_test.cpp
   lrsdp_test.cpp
-  lsh_test.cpp
   math_test.cpp
   nbc_test.cpp
   nca_test.cpp
@@ -35,8 +32,8 @@ add_executable(mlpack_test
   sort_policy_test.cpp
   sparse_coding_test.cpp
   tree_test.cpp
-  tree_traits_test.cpp
   union_find_test.cpp
+  det_test.cpp
 )
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test

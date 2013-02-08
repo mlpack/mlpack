@@ -18,7 +18,6 @@
 #include <boost/type_traits.hpp>
 
 #include <mlpack/core/util/sfinae_utility.hpp>
-#include <mlpack/core/util/string_util.hpp>
 
 namespace mlpack {
 namespace util {
@@ -107,7 +106,7 @@ class PrefixedOutStream
 
   //! Write anything else to the stream.
   template<typename T>
-  PrefixedOutStream& operator<<(const T& s);
+  PrefixedOutStream& operator<<(T s);
 
   //! The output stream that all data is to be sent too; example: std::cout.
   std::ostream& destination;
@@ -120,14 +119,14 @@ class PrefixedOutStream
 
   //! This handles forwarding all primitive types transparently
   template<typename T>
-  void CallBaseLogic(const T& s,
+  void CallBaseLogic(T s,
       typename boost::disable_if<
           boost::is_class<T>
       >::type*);
 
   //! Forward all objects that do not implement a ToString() method
   template<typename T>
-  void CallBaseLogic(const T& s,
+  void CallBaseLogic(T s,
       typename boost::enable_if<
           boost::is_class<T>
       >::type*,
@@ -137,7 +136,7 @@ class PrefixedOutStream
 
   //! Call ToString() on all objects that implement ToString() before forwarding
   template<typename T>
-  void CallBaseLogic(const T& s,
+  void CallBaseLogic(T s,
       typename boost::enable_if<
           boost::is_class<T>
       >::type*,
@@ -153,7 +152,7 @@ class PrefixedOutStream
    * @param val The The data to be output.
    */
   template<typename T>
-  void BaseLogic(const T& val);
+  void BaseLogic(T val);
 
   /**
    * Output the prefix, but only if we need to and if we are allowed to.

@@ -43,28 +43,28 @@ class Radical
    *
    * @param noiseStdDev Standard deviation of the Gaussian noise added to the
    *    replicates of the data points during Radical2D
-   * @param replicates Number of Gaussian-perturbed replicates to use (per
-   *    point) in Radical2D
-   * @param angles Number of angles to consider in brute-force search during
+   * @param nReplicates Number of Gaussian-perturbed replicates to use
+   *    (per point) in Radical2D
+   * @param nAngles Number of angles to consider in brute-force search during
    *    Radical2D
-   * @param sweeps Number of sweeps.  Each sweep calls Radical2D once for each
-   *    pair of dimensions
+   * @param nSweeps Number of sweeps
+   *    Each sweep calls Radical2D once for each pair of dimensions
    * @param m The variable m from Vasicek's m-spacing estimator of entropy.
    */
   Radical(const double noiseStdDev = 0.175,
-          const size_t replicates = 30,
-          const size_t angles = 150,
-          const size_t sweeps = 0,
+          const size_t nReplicates = 30,
+          const size_t nAngles = 150,
+          const size_t nSweeps = 0,
           const size_t m = 0);
 
   /**
    * Run RADICAL.
    *
    * @param matX Input data into the algorithm - a matrix where each column is
-   *    a point and each row is a dimension.
+   *    a point and each row is a dimension
    * @param matY Estimated independent components - a matrix where each column
-   *    is a point and each row is an estimated independent component.
-   * @param matW Estimated unmixing matrix, where matY = matW * matX.
+   *    is a point and each row is an estimated independent component
+   * @param matW Estimated unmixing matrix, where matY = matW * matX
    */
   void DoRadical(const arma::mat& matX, arma::mat& matY, arma::mat& matW);
 
@@ -74,60 +74,44 @@ class Radical
    *
    * @param x Empirical sample (one-dimensional) over which to estimate entropy.
    */
-  double Vasicek(arma::vec& x) const;
+  double Vasicek(arma::vec& x);
 
   /**
-   * Make replicates of each data point (the number of replicates is set in
-   * either the constructor or with Replicates()) and perturb data with Gaussian
+   * Make nReplicates copies of each data point and perturb data with Gaussian
    * noise with standard deviation noiseStdDev.
    */
-  void CopyAndPerturb(arma::mat& xNew, const arma::mat& x) const;
+  void CopyAndPerturb(arma::mat& matXNew, const arma::mat& matX);
 
   //! Two-dimensional version of RADICAL.
   double DoRadical2D(const arma::mat& matX);
 
-  //! Get the standard deviation of the additive Gaussian noise.
-  double NoiseStdDev() const { return noiseStdDev; }
-  //! Modify the standard deviation of the additive Gaussian noise.
-  double& NoiseStdDev() { return noiseStdDev; }
-
-  //! Get the number of Gaussian-perturbed replicates used per point.
-  size_t Replicates() const { return replicates; }
-  //! Modify the number of Gaussian-perturbed replicates used per point.
-  size_t& Replicates() { return replicates; }
-
-  //! Get the number of angles considered during brute-force search.
-  size_t Angles() const { return angles; }
-  //! Modify the number of angles considered during brute-force search.
-  size_t& Angles() { return angles; }
-
-  //! Get the number of sweeps.
-  size_t Sweeps() const { return sweeps; }
-  //! Modify the number of sweeps.
-  size_t& Sweeps() { return sweeps; }
-
  private:
-  //! Standard deviation of the Gaussian noise added to the replicates of
-  //! the data points during Radical2D.
+  /**
+   * standard deviation of the Gaussian noise added to the replicates of
+   * the data points during Radical2D
+   */
   double noiseStdDev;
 
-  //! Number of Gaussian-perturbed replicates to use (per point) in Radical2D.
-  size_t replicates;
+  /**
+   * Number of Gaussian-perturbed replicates to use (per point) in Radical2D
+   */
+  size_t nReplicates;
 
-  //! Number of angles to consider in brute-force search during Radical2D.
-  size_t angles;
+  /**
+   * Number of angles to consider in brute-force search during Radical2D
+   */
+  size_t nAngles;
 
-  //! Number of sweeps; each sweep calls Radical2D once for each pair of
-  //! dimensions.
-  size_t sweeps;
+  /**
+   * Number of sweeps
+   *  - Each sweep calls Radical2D once for each pair of dimensions
+   */
+  size_t nSweeps;
 
-  //! Value of m to use for Vasicek's m-spacing estimator of entropy.
+  /**
+   * m to use for Vasicek's m-spacing estimator of entropy
+   */
   size_t m;
-
-  //! Internal matrix, held as member variable to prevent memory reallocations.
-  arma::mat perturbed;
-  //! Internal matrix, held as member variable to prevent memory reallocations.
-  arma::mat candidate;
 };
 
 void WhitenFeatureMajorMatrix(const arma::mat& matX,

@@ -148,7 +148,7 @@ FastCluster(MatType& data,
     // Add the root node of the tree to the stack.
     stack.push(&tree);
     // Set the top level whitelist.
-    tree.Stat().Whitelist().resize(centroids.n_cols, true);
+    tree.Stat().whiteList.resize(centroids.n_cols, true);
 
     // Traverse the tree.
     while (!stack.empty())
@@ -169,7 +169,7 @@ FastCluster(MatType& data,
       // the centroids to every point the node contains.
       if (node->IsLeaf())
       {
-        for (size_t i = mrkd.Begin(); i < mrkd.Count() + mrkd.Begin(); ++i)
+        for (size_t i = mrkd.begin; i < mrkd.count + mrkd.begin; ++i)
         {
           // Initialize minDistance to be nonzero.
           double minDistance = metric::SquaredEuclideanDistance::Evaluate(
@@ -179,7 +179,7 @@ FastCluster(MatType& data,
           for (size_t j = 1; j < centroids.n_cols; ++j)
           {
             // If this centroid is not in the whitelist, skip it.
-            if (!mrkd.Whitelist()[j])
+            if (!mrkd.whiteList[j])
             {
               ++skip;
               continue;
@@ -222,7 +222,7 @@ FastCluster(MatType& data,
         bool noDomination = false;
 
         // Calculate the center of mass of this hyperrectangle.
-        arma::vec center = mrkd.CenterOfMass() / mrkd.Count();
+        arma::vec center = mrkd.centerOfMass / mrkd.count;
 
         // Set the minDistance to the maximum value of a double so any value
         // must be smaller than this.
@@ -239,7 +239,7 @@ FastCluster(MatType& data,
         for (size_t i = 0; i < centroids.n_cols; ++i)
         {
           // If this centroid is not in the whitelist, skip it.
-          if (!mrkd.Whitelist()[i])
+          if (!mrkd.whiteList[i])
           {
             ++skip;
             continue;
@@ -349,7 +349,7 @@ FastCluster(MatType& data,
               continue;
             // If this centroid is blacklisted for this hyperrectangle, then
             // we skip it.
-            if (!mrkd.Whitelist()[i])
+            if (!mrkd.whiteList[i])
             {
               ++skip;
               continue;
@@ -382,8 +382,8 @@ FastCluster(MatType& data,
             double distanceMin = 0.0;
             for (size_t k = 0; k < dimensionality; ++k)
             {
-              double ci = centroids(k, i);
-              double cm = centroids(k, minIndex);
+              double ci = centroids(k,i);
+              double cm = centroids(k,minIndex);
               if (ci > cm)
               {
                 double hi = bound[k].Hi();
@@ -412,14 +412,14 @@ FastCluster(MatType& data,
               }
             }
 
-            if (distanceMin >= distancei)
+            if(distanceMin >= distancei)
             {
               noDomination = true;
               break;
             }
             else
             {
-              mrkd.Whitelist()[i] = false;
+              mrkd.whiteList[i] = false;
             }
           }
         }
@@ -430,10 +430,10 @@ FastCluster(MatType& data,
         {
           // Adjust the new centroid sum for the min distance point to this
           // hyperrectangle by the center of mass of this hyperrectangle.
-          newCentroids.col(minIndex) += mrkd.CenterOfMass();
+          newCentroids.col(minIndex) += mrkd.centerOfMass;
 
           // Increment the counts for this centroid.
-          counts(minIndex) += mrkd.Count();
+          counts(minIndex) += mrkd.count;
 
           // Update all assignments for this node.
           const size_t begin = node->Begin();
@@ -448,7 +448,7 @@ FastCluster(MatType& data,
               assignments(j) = minIndex;
             }
           }
-          mrkd.DominatingCentroid() = minIndex;
+          mrkd.dominatingCentroid = minIndex;
 
           // Keep track of the number of times we found a dominating centroid.
           ++dominations;
@@ -463,8 +463,8 @@ FastCluster(MatType& data,
           stack.push(node->Right());
 
           // (Re)Initialize the whiteList for the children.
-          node->Left()->Stat().Whitelist() = mrkd.Whitelist();
-          node->Right()->Stat().Whitelist() = mrkd.Whitelist();
+          node->Left()->Stat().whiteList = mrkd.whiteList;
+          node->Right()->Stat().whiteList = mrkd.whiteList;
         }
       }
 
