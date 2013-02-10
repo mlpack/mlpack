@@ -5,6 +5,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+#include <mlpack/methods/neighbor_search/unmap.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -13,6 +14,147 @@ using namespace mlpack;
 using namespace mlpack::neighbor;
 
 BOOST_AUTO_TEST_SUITE(AllkNNTest);
+
+/**
+ * Test that Unmap() works in the dual-tree case (see unmap.hpp).
+ */
+BOOST_AUTO_TEST_CASE(DualTreeUnmapTest)
+{
+  std::vector<size_t> refMap;
+  refMap.push_back(3);
+  refMap.push_back(4);
+  refMap.push_back(1);
+  refMap.push_back(2);
+  refMap.push_back(0);
+
+  std::vector<size_t> queryMap;
+  queryMap.push_back(2);
+  queryMap.push_back(0);
+  queryMap.push_back(4);
+  queryMap.push_back(3);
+  queryMap.push_back(1);
+  queryMap.push_back(5);
+
+  // Now generate some results.  6 queries, 5 references.
+  arma::Mat<size_t> neighbors("3 1 2 0 4;"
+                              "1 0 2 3 4;"
+                              "0 1 2 3 4;"
+                              "4 1 0 3 2;"
+                              "3 0 4 1 2;"
+                              "3 0 4 1 2;");
+  neighbors = neighbors.t();
+
+  // Integer distances will work fine here.
+  arma::mat distances("3 1 2 0 4;"
+                      "1 0 2 3 4;"
+                      "0 1 2 3 4;"
+                      "4 1 0 3 2;"
+                      "3 0 4 1 2;"
+                      "3 0 4 1 2;");
+  distances = distances.t();
+
+  // This is what the results should be when they are unmapped.
+  arma::Mat<size_t> correctNeighbors("4 3 1 2 0;"
+                                     "2 3 0 4 1;"
+                                     "2 4 1 3 0;"
+                                     "0 4 3 2 1;"
+                                     "3 4 1 2 0;"
+                                     "2 3 0 4 1;");
+  correctNeighbors = correctNeighbors.t();
+
+  arma::mat correctDistances("1 0 2 3 4;"
+                             "3 0 4 1 2;"
+                             "3 1 2 0 4;"
+                             "4 1 0 3 2;"
+                             "0 1 2 3 4;"
+                             "3 0 4 1 2;");
+  correctDistances = correctDistances.t();
+
+  // Perform the unmapping.
+  arma::Mat<size_t> neighborsOut;
+  arma::mat distancesOut;
+
+  Unmap(neighbors, distances, refMap, queryMap, neighborsOut, distancesOut);
+
+  for (size_t i = 0; i < correctNeighbors.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(neighborsOut[i], correctNeighbors[i]);
+    BOOST_REQUIRE_CLOSE(distancesOut[i], correctDistances[i], 1e-5);
+  }
+
+  // Now try taking the square root.
+  Unmap(neighbors, distances, refMap, queryMap, neighborsOut, distancesOut,
+      true);
+
+  for (size_t i = 0; i < correctNeighbors.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(neighborsOut[i], correctNeighbors[i]);
+    BOOST_REQUIRE_CLOSE(distancesOut[i], sqrt(correctDistances[i]), 1e-5);
+  }
+}
+
+/**
+ * Check that Unmap() works in the single-tree case.
+ */
+BOOST_AUTO_TEST_CASE(SingleTreeUnmapTest)
+{
+  std::vector<size_t> refMap;
+  refMap.push_back(3);
+  refMap.push_back(4);
+  refMap.push_back(1);
+  refMap.push_back(2);
+  refMap.push_back(0);
+
+  // Now generate some results.  6 queries, 5 references.
+  arma::Mat<size_t> neighbors("3 1 2 0 4;"
+                              "1 0 2 3 4;"
+                              "0 1 2 3 4;"
+                              "4 1 0 3 2;"
+                              "3 0 4 1 2;"
+                              "3 0 4 1 2;");
+  neighbors = neighbors.t();
+
+  // Integer distances will work fine here.
+  arma::mat distances("3 1 2 0 4;"
+                      "1 0 2 3 4;"
+                      "0 1 2 3 4;"
+                      "4 1 0 3 2;"
+                      "3 0 4 1 2;"
+                      "3 0 4 1 2;");
+  distances = distances.t();
+
+  // This is what the results should be when they are unmapped.
+  arma::Mat<size_t> correctNeighbors("2 4 1 3 0;"
+                                     "4 3 1 2 0;"
+                                     "3 4 1 2 0;"
+                                     "0 4 3 2 1;"
+                                     "2 3 0 4 1;"
+                                     "2 3 0 4 1;");
+  correctNeighbors = correctNeighbors.t();
+
+  arma::mat correctDistances = distances;
+
+  // Perform the unmapping.
+  arma::Mat<size_t> neighborsOut;
+  arma::mat distancesOut;
+
+  Unmap(neighbors, distances, refMap, neighborsOut, distancesOut);
+
+  for (size_t i = 0; i < correctNeighbors.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(neighborsOut[i], correctNeighbors[i]);
+    BOOST_REQUIRE_CLOSE(distancesOut[i], correctDistances[i], 1e-5);
+  }
+
+  // Now try taking the square root.
+  Unmap(neighbors, distances, refMap, neighborsOut, distancesOut, true);
+
+  for (size_t i = 0; i < correctNeighbors.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(neighborsOut[i], correctNeighbors[i]);
+    BOOST_REQUIRE_CLOSE(distancesOut[i], sqrt(correctDistances[i]), 1e-5);
+  }
+}
 
 /**
  * Simple nearest-neighbors test with small, synthetic dataset.  This is an
@@ -506,14 +648,14 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
 
   for (size_t i = 0; i < coverNeighbors.n_cols; ++i)
   {
-//    Log::Debug << "cover neighbors col " << i << "\n" <<
-//        trans(coverNeighbors.col(i));
-//    Log::Debug << "cover distances col " << i << "\n" <<
-//        trans(coverDistances.col(i));
-//    Log::Debug << "kd neighbors col " << i << "\n" <<
-//        trans(kdNeighbors.col(i));
-//    Log::Debug << "kd distances col " << i << "\n" <<
-//        trans(kdDistances.col(i));
+    Log::Debug << "cover neighbors col " << i << "\n" <<
+        trans(coverNeighbors.col(i));
+    Log::Debug << "cover distances col " << i << "\n" <<
+        trans(coverDistances.col(i));
+    Log::Debug << "kd neighbors col " << i << "\n" <<
+        trans(kdNeighbors.col(i));
+    Log::Debug << "kd distances col " << i << "\n" <<
+        trans(kdDistances.col(i));
     for (size_t j = 0; j < coverNeighbors.n_rows; ++j)
     {
       BOOST_REQUIRE_EQUAL(coverNeighbors(j, i), kdNeighbors(j, i));
