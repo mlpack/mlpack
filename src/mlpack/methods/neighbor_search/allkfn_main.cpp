@@ -12,6 +12,7 @@
 #include <iostream>
 
 #include "neighbor_search.hpp"
+#include "unmap.hpp"
 
 using namespace std;
 using namespace mlpack;
@@ -174,14 +175,14 @@ int main(int argc, char *argv[])
 
   // Map the points back to their original locations.
   if ((CLI::GetParam<string>("query_file") != "") && !singleMode)
-    Unmap(neighbors, distances, oldFromNewReferences, oldFromNewQueries,
-        neighborsOut, distancesOut, true);
-  else if ((CLI::GetParam<string>("query_file") != "") && singleMode)
-    Unmap(neighbors, distances, oldFromNewReferences, neighborsOut,
+    Unmap(neighbors, distances, oldFromNewRefs, oldFromNewQueries, neighborsOut,
         distancesOut, true);
+  else if ((CLI::GetParam<string>("query_file") != "") && singleMode)
+    Unmap(neighbors, distances, oldFromNewRefs, neighborsOut, distancesOut,
+        true);
   else
-    Unmap(neighbors, distances, oldFromNewReferences, oldFromNewReferences,
-        neighborsOut, distancesOut, true);
+    Unmap(neighbors, distances, oldFromNewRefs, oldFromNewRefs, neighborsOut,
+        distancesOut, true);
 
   // Clean up.
   if (queryTree)
