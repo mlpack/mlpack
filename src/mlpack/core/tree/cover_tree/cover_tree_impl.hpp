@@ -25,6 +25,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     dataset(dataset),
     point(RootPointPolicy::ChooseRoot(dataset)),
     base(base),
+    parent(NULL),
     parentDistance(0),
     furthestDescendantDistance(0)
 {
@@ -62,8 +63,8 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
   size_t childFarSetSize = (dataset.n_cols - 1) - childNearSetSize;
   size_t usedSetSize = 0;
   children.push_back(new CoverTree(dataset, base, point, scale - 1,
-      0, indices, distances, childNearSetSize, childFarSetSize, usedSetSize,
-      *metric));
+      this, 0, indices, distances, childNearSetSize, childFarSetSize,
+      usedSetSize, *metric));
 
   furthestDescendantDistance = children[0]->FurthestDescendantDistance();
 
@@ -118,7 +119,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
       size_t childNearSetSize = 0;
       size_t childFarSetSize = 0;
       children.push_back(new CoverTree(dataset, base,
-          indices[0], scale - 1, distances[0], indices, distances,
+          indices[0], scale - 1, this, distances[0], indices, distances,
           childNearSetSize, childFarSetSize, usedSetSize, *metric));
 
       // And we're done.
@@ -146,8 +147,8 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     childUsedSetSize = 1; // Mark self point as used.
     childFarSetSize = ((nearSetSize - 1) - childNearSetSize);
     children.push_back(new CoverTree(dataset, base, indices[0],
-        scale - 1, distances[0], childIndices, childDistances, childNearSetSize,
-        childFarSetSize, childUsedSetSize, *metric));
+        scale - 1, this, distances[0], childIndices, childDistances,
+        childNearSetSize, childFarSetSize, childUsedSetSize, *metric));
 
     // If we created an implicit node, take its self-child instead (this could
     // happen multiple times).
@@ -194,6 +195,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     const double base,
     const size_t pointIndex,
     const int scale,
+    CoverTree* parent,
     const double parentDistance,
     arma::Col<size_t>& indices,
     arma::vec& distances,
@@ -205,6 +207,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     point(pointIndex),
     scale(scale),
     base(base),
+    parent(parent),
     parentDistance(parentDistance),
     furthestDescendantDistance(0)
 {
@@ -231,14 +234,16 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     // This should not modify farSetSize or usedSetSize.
     size_t tempSize = 0;
     children.push_back(new CoverTree(dataset, base, pointIndex,
-        INT_MIN, 0, indices, distances, 0, tempSize, usedSetSize, metric));
+        INT_MIN, this, 0, indices, distances, 0, tempSize, usedSetSize,
+        metric));
 
     // Every point in the near set should be a leaf.
     for (size_t i = 0; i < nearSetSize; ++i)
     {
       // farSetSize and usedSetSize will not be modified.
       children.push_back(new CoverTree(dataset, base, indices[i],
-          INT_MIN, 0, indices, distances, 0, tempSize, usedSetSize, metric));
+          INT_MIN, this, distances[i], indices, distances, 0, tempSize,
+          usedSetSize, metric));
       usedSetSize++;
     }
 
@@ -267,7 +272,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
   size_t childFarSetSize = nearSetSize - childNearSetSize;
   size_t childUsedSetSize = 0;
   children.push_back(new CoverTree(dataset, base, pointIndex,
-      nextScale, 0, indices, distances, childNearSetSize, childFarSetSize,
+      nextScale, this, 0, indices, distances, childNearSetSize, childFarSetSize,
       childUsedSetSize, metric));
 
   // The self-child can't modify the furthestChildDistance away from 0, but it
@@ -335,7 +340,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     {
       size_t childNearSetSize = 0;
       children.push_back(new CoverTree(dataset, base,
-          indices[0], nextScale, distances[0], indices, distances,
+          indices[0], nextScale, this, distances[0], indices, distances,
           childNearSetSize, farSetSize, usedSetSize, metric));
 
       // Because the far set size is 0, we don't have to do any swapping to
@@ -375,8 +380,8 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     // Build this child (recursively).
     childUsedSetSize = 1; // Mark self point as used.
     children.push_back(new CoverTree(dataset, base, indices[0],
-        nextScale, distances[0], childIndices, childDistances, childNearSetSize,
-        childFarSetSize, childUsedSetSize, metric));
+        nextScale, this, distances[0], childIndices, childDistances,
+        childNearSetSize, childFarSetSize, childUsedSetSize, metric));
 
     // If we created an implicit node, take its self-child instead (this could
     // happen multiple times).
@@ -421,12 +426,14 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     const double base,
     const size_t pointIndex,
     const int scale,
+    CoverTree* parent,
     const double parentDistance,
     const double furthestDescendantDistance) :
     dataset(dataset),
     point(pointIndex),
     scale(scale),
     base(base),
+    parent(parent),
     parentDistance(parentDistance),
     furthestDescendantDistance(furthestDescendantDistance)
 {
@@ -441,12 +448,16 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     scale(other.scale),
     base(other.base),
     stat(other.stat),
+    parent(other.parent),
     parentDistance(other.parentDistance),
     furthestDescendantDistance(other.furthestDescendantDistance)
 {
   // Copy each child by hand.
   for (size_t i = 0; i < other.NumChildren(); ++i)
+  {
     children.push_back(new CoverTree(other.Child(i)));
+    children[i]->Parent() = this;
+  }
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>

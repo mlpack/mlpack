@@ -121,6 +121,8 @@ class CoverTree
    * @param base Base to use during tree building.
    * @param pointIndex Index of the point this node references.
    * @param scale Scale of this level in the tree.
+   * @param parent Parent of this node (NULL indicates no parent).
+   * @param parentDistance Distance to the parent node.
    * @param indices Array of indices, ordered [ nearSet | farSet | usedSet ];
    *     will be modified to [ farSet | usedSet ].
    * @param distances Array of distances, ordered the same way as the indices.
@@ -135,6 +137,7 @@ class CoverTree
             const double base,
             const size_t pointIndex,
             const int scale,
+            CoverTree* parent,
             const double parentDistance,
             arma::Col<size_t>& indices,
             arma::vec& distances,
@@ -154,6 +157,7 @@ class CoverTree
    * @param pointIndex Index of the point in the dataset which this node refers
    *      to.
    * @param scale Scale of this node's level in the tree.
+   * @param parent Parent node (NULL indicates no parent).
    * @param parentDistance Distance to parent node point.
    * @param furthestDescendantDistance Distance to furthest descendant point.
    */
@@ -161,6 +165,7 @@ class CoverTree
             const double base,
             const size_t pointIndex,
             const int scale,
+            CoverTree* parent,
             const double parentDistance,
             const double furthestDescendantDistance);
 
@@ -262,6 +267,11 @@ class CoverTree
   //! Returns true: this tree does have self-children.
   static bool HasSelfChildren() { return true; }
 
+  //! Get the parent node.
+  CoverTree* Parent() const { return parent; }
+  //! Modify the parent node.
+  CoverTree*& Parent() { return parent; }
+
   //! Get the distance to the parent.
   double ParentDistance() const { return parentDistance; }
   //! Modify the distance to the parent.
@@ -291,6 +301,9 @@ class CoverTree
 
   //! The instantiated statistic.
   StatisticType stat;
+
+  //! The parent node (NULL if this is the root of the tree).
+  CoverTree* parent;
 
   //! Distance to the parent.
   double parentDistance;
