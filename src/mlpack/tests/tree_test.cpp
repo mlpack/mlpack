@@ -2003,12 +2003,13 @@ BOOST_AUTO_TEST_CASE(CoverTreeManualConstructorTest)
   arma::mat dataset;
   dataset.zeros(10, 10);
 
-  CoverTree<> node(dataset, 1.3, 3, 2, 1.5, 2.75);
+  CoverTree<> node(dataset, 1.3, 3, 2, NULL, 1.5, 2.75);
 
   BOOST_REQUIRE_EQUAL(&node.Dataset(), &dataset);
   BOOST_REQUIRE_EQUAL(node.Base(), 1.3);
   BOOST_REQUIRE_EQUAL(node.Point(), 3);
   BOOST_REQUIRE_EQUAL(node.Scale(), 2);
+  BOOST_REQUIRE_EQUAL(node.Parent(), (CoverTree<>*) NULL);
   BOOST_REQUIRE_EQUAL(node.ParentDistance(), 1.5);
   BOOST_REQUIRE_EQUAL(node.FurthestDescendantDistance(), 2.75);
 }
@@ -2050,9 +2051,9 @@ BOOST_AUTO_TEST_CASE(CoverTreeCopyConstructor)
 {
   arma::mat dataset;
   dataset.randu(10, 10); // dataset is irrelevant.
-  CoverTree<> c(dataset, 1.3, 0, 5, 1.45, 5.2); // Random parameters.
-  c.Children().push_back(new CoverTree<>(dataset, 1.3, 1, 4, 1.3, 2.45));
-  c.Children().push_back(new CoverTree<>(dataset, 1.5, 2, 3, 1.2, 5.67));
+  CoverTree<> c(dataset, 1.3, 0, 5, NULL, 1.45, 5.2); // Random parameters.
+  c.Children().push_back(new CoverTree<>(dataset, 1.3, 1, 4, &c, 1.3, 2.45));
+  c.Children().push_back(new CoverTree<>(dataset, 1.5, 2, 3, &c, 1.2, 5.67));
 
   CoverTree<> d = c;
 
@@ -2061,12 +2062,18 @@ BOOST_AUTO_TEST_CASE(CoverTreeCopyConstructor)
   BOOST_REQUIRE_CLOSE(c.Base(), d.Base(), 1e-50);
   BOOST_REQUIRE_EQUAL(c.Point(), d.Point());
   BOOST_REQUIRE_EQUAL(c.Scale(), d.Scale());
+  BOOST_REQUIRE_EQUAL(c.Parent(), d.Parent());
   BOOST_REQUIRE_EQUAL(c.ParentDistance(), d.ParentDistance());
   BOOST_REQUIRE_EQUAL(c.FurthestDescendantDistance(),
                       d.FurthestDescendantDistance());
   BOOST_REQUIRE_EQUAL(c.NumChildren(), d.NumChildren());
   BOOST_REQUIRE_NE(&c.Child(0), &d.Child(0));
   BOOST_REQUIRE_NE(&c.Child(1), &d.Child(1));
+
+  BOOST_REQUIRE_EQUAL(c.Child(0).Parent(), &c);
+  BOOST_REQUIRE_EQUAL(c.Child(1).Parent(), &c);
+  BOOST_REQUIRE_EQUAL(d.Child(0).Parent(), &d);
+  BOOST_REQUIRE_EQUAL(d.Child(1).Parent(), &d);
 
   // Check that the children are okay.
   BOOST_REQUIRE_EQUAL(c.Child(0).Dataset().memptr(),
