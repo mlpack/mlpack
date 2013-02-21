@@ -18,7 +18,6 @@ namespace tree {
  * help write tree-independent (but still optimized) tree-based algorithms.  See
  * mlpack/core/tree/tree_traits.hpp for more information.
  */
-template<>
 template<typename BoundType,
          typename StatisticType,
          typename MatType>
