@@ -19,7 +19,6 @@ namespace tree {
  * tree-independent (but still optimized) tree-based algorithms.  See
  * mlpack/core/tree/tree_traits.hpp for more information.
  */
-template<>
 template<typename MetricType,
          typename RootPointPolicy,
          typename StatisticType>
