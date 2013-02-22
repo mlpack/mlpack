@@ -190,7 +190,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMOneGaussian)
     covar.randu(2);
 
     arma::mat data;
-    data.randn(2 /* dimension */, 100 * pow(10, (iterations / 3.0)));
+    data.randn(2 /* dimension */, 150 * pow(10, (iterations / 3.0)));
 
     // Now apply mean and covariance.
     data.row(0) *= covar(0);
