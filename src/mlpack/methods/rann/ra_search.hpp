@@ -112,7 +112,7 @@ class RAQueryStat
  */
 template<typename SortPolicy = NearestNeighborSort,
          typename MetricType = mlpack::metric::SquaredEuclideanDistance,
-         typename TreeType = tree::BinarySpaceTree<bound::HRectBound<2>,
+         typename TreeType = tree::BinarySpaceTree<bound::HRectBound<2, false>,
                                                    RAQueryStat<SortPolicy> > >
 class RASearch
 {
