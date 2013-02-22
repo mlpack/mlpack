@@ -24,7 +24,7 @@ namespace bound {
  * @tparam TakeRoot Whether or not the root should be taken (see LMetric
  *     documentation).
  */
-template<int Power = 2, bool TakeRoot = false>
+template<int Power = 2, bool TakeRoot = true>
 class HRectBound
 {
  public:
