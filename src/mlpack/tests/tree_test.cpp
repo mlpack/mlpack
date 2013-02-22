@@ -149,8 +149,8 @@ BOOST_AUTO_TEST_CASE(HRectBoundMinDistancePoint)
 
   arma::vec point = "-2.0 0.0 10.0 3.0 3.0";
 
-  // This will be the Euclidean squared distance.
-  BOOST_REQUIRE_CLOSE(b.MinDistance(point), 95.0, 1e-5);
+  // This will be the Euclidean distance.
+  BOOST_REQUIRE_CLOSE(b.MinDistance(point), sqrt(95.0), 1e-5);
 
   point = "2.0 5.0 2.0 -5.0 1.0";
 
@@ -189,8 +189,8 @@ BOOST_AUTO_TEST_CASE(HRectBoundMinDistanceBound)
   c[3] = Range(2.0, 5.0);
   c[4] = Range(3.0, 4.0);
 
-  BOOST_REQUIRE_CLOSE(b.MinDistance(c), 22.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MinDistance(b), 22.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MinDistance(c), sqrt(22.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MinDistance(b), sqrt(22.0), 1e-5);
 
   // The other bound is on the edge of the bound.
   c[0] = Range(-2.0, 0.0);
@@ -252,16 +252,16 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistancePoint)
 
   arma::vec point = "-2.0 0.0 10.0 3.0 3.0";
 
-  // This will be the Euclidean squared distance.
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), 253.0, 1e-5);
+  // This will be the Euclidean distance.
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), sqrt(253.0), 1e-5);
 
   point = "2.0 5.0 2.0 -5.0 1.0";
 
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), 46.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), sqrt(46.0), 1e-5);
 
   point = "1.0 2.0 0.0 -2.0 1.5";
 
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), 23.25, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), sqrt(23.25), 1e-5);
 }
 
 /**
@@ -292,8 +292,8 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistanceBound)
   c[3] = Range(2.0, 5.0);
   c[4] = Range(3.0, 4.0);
 
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 210.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), 210.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), sqrt(210.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), sqrt(210.0), 1e-5);
 
   // The other bound is on the edge of the bound.
   c[0] = Range(-2.0, 0.0);
@@ -302,8 +302,8 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistanceBound)
   c[3] = Range(-10.0, -5.0);
   c[4] = Range(2.0, 3.0);
 
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 134.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), 134.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), sqrt(134.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), sqrt(134.0), 1e-5);
 
   // The other bound partially overlaps the bound.
   c[0] = Range(-2.0, 1.0);
@@ -312,12 +312,12 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistanceBound)
   c[3] = Range(-8.0, -4.0);
   c[4] = Range(0.0, 4.0);
 
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 102.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), 102.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), sqrt(102.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), sqrt(102.0), 1e-5);
 
   // The other bound fully overlaps the bound.
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(b), 46.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MaxDistance(c), 61.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(b), sqrt(46.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(c), sqrt(61.0), 1e-5);
 
   // The other bound is entirely inside the bound / the other bound entirely
   // envelops the bound.
@@ -327,13 +327,13 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistanceBound)
   c[3] = Range(-7.0, 0.0);
   c[4] = Range(0.0, 5.0);
 
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 100.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), 100.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), sqrt(100.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), sqrt(100.0), 1e-5);
 
   // Identical bounds.  This will be the sum of the squared widths in each
   // dimension.
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(b), 46.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MaxDistance(c), 162.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(b), sqrt(46.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(c), sqrt(162.0), 1e-5);
 
   // One last additional case.  If the bound encloses only one point, the
   // maximum distance between it and itself is 0.
@@ -1528,7 +1528,7 @@ BOOST_AUTO_TEST_CASE(FurthestDescendantDistanceTest)
 
   // Both points are contained in the one node.
   BinarySpaceTree<HRectBound<2> > twoPoint(dataset);
-  BOOST_REQUIRE_CLOSE(twoPoint.FurthestDescendantDistance(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(twoPoint.FurthestDescendantDistance(), sqrt(2.0), 1e-5);
 }
 
 // Forward declaration of methods we need for the next test.
