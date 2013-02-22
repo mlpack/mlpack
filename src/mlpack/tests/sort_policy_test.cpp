@@ -111,9 +111,9 @@ BOOST_AUTO_TEST_CASE(NnsNodeToNodeDistance)
   utility[0] = 6;
   nodeTwo.Bound() |= utility;
 
-  // This should use the L2 squared distance.
+  // This should use the L2 distance.
   BOOST_REQUIRE_CLOSE(NearestNeighborSort::BestNodeToNodeDistance(&nodeOne,
-      &nodeTwo), 16.0, 1e-5);
+      &nodeTwo), 4.0, 1e-5);
 
   // And another just to be sure, from the other side.
   nodeTwo.Bound().Clear();
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(NnsNodeToNodeDistance)
   utility[0] = -1;
   nodeTwo.Bound() |= utility;
 
-  // Again, the distance is the L2 squared distance.
+  // Again, the distance is the L2 distance.
   BOOST_REQUIRE_CLOSE(NearestNeighborSort::BestNodeToNodeDistance(&nodeOne,
       &nodeTwo), 1.0, 1e-5);
 
@@ -133,8 +133,8 @@ BOOST_AUTO_TEST_CASE(NnsNodeToNodeDistance)
   utility[0] = 0.5;
   nodeTwo.Bound() |= utility;
 
-  BOOST_REQUIRE_CLOSE(NearestNeighborSort::BestNodeToNodeDistance(&nodeOne,
-      &nodeTwo), 0.0, 1e-5);
+  BOOST_REQUIRE_SMALL(NearestNeighborSort::BestNodeToNodeDistance(&nodeOne,
+      &nodeTwo), 1e-5);
 }
 
 /**
@@ -157,21 +157,21 @@ BOOST_AUTO_TEST_CASE(NnsPointToNodeDistance)
   arma::vec point(1);
   point[0] = -0.5;
 
-  // The distance is the L2 squared distance.
+  // The distance is the L2 distance.
   BOOST_REQUIRE_CLOSE(NearestNeighborSort::BestPointToNodeDistance(point,
-      &node), 0.25, 1e-5);
+      &node), 0.5, 1e-5);
 
   // Now from the other side of the bound.
   point[0] = 1.5;
 
   BOOST_REQUIRE_CLOSE(NearestNeighborSort::BestPointToNodeDistance(point,
-      &node), 0.25, 1e-5);
+      &node), 0.5, 1e-5);
 
   // And now when the point is inside the bound.
   point[0] = 0.5;
 
-  BOOST_REQUIRE_CLOSE(NearestNeighborSort::BestPointToNodeDistance(point,
-      &node), 0.0, 1e-5);
+  BOOST_REQUIRE_SMALL(NearestNeighborSort::BestPointToNodeDistance(point,
+      &node), 1e-5);
 }
 
 // Tests for FurthestNeighborSort
@@ -264,9 +264,9 @@ BOOST_AUTO_TEST_CASE(FnsNodeToNodeDistance)
   utility[0] = 6;
   nodeTwo.Bound() |= utility;
 
-  // This should use the L2 squared distance.
+  // This should use the L2 distance.
   BOOST_REQUIRE_CLOSE(FurthestNeighborSort::BestNodeToNodeDistance(&nodeOne,
-      &nodeTwo), 36.0, 1e-5);
+      &nodeTwo), 6.0, 1e-5);
 
   // And another just to be sure, from the other side.
   nodeTwo.Bound().Clear();
@@ -275,9 +275,9 @@ BOOST_AUTO_TEST_CASE(FnsNodeToNodeDistance)
   utility[0] = -1;
   nodeTwo.Bound() |= utility;
 
-  // Again, the distance is the L2 squared distance.
+  // Again, the distance is the L2 distance.
   BOOST_REQUIRE_CLOSE(FurthestNeighborSort::BestNodeToNodeDistance(&nodeOne,
-      &nodeTwo), 9.0, 1e-5);
+      &nodeTwo), 3.0, 1e-5);
 
   // Now, when the bounds overlap.
   nodeTwo.Bound().Clear();
@@ -287,7 +287,7 @@ BOOST_AUTO_TEST_CASE(FnsNodeToNodeDistance)
   nodeTwo.Bound() |= utility;
 
   BOOST_REQUIRE_CLOSE(FurthestNeighborSort::BestNodeToNodeDistance(&nodeOne,
-      &nodeTwo), (1.5 * 1.5), 1e-5);
+      &nodeTwo), 1.5, 1e-5);
 }
 
 /**
@@ -310,21 +310,21 @@ BOOST_AUTO_TEST_CASE(FnsPointToNodeDistance)
   arma::vec point(1);
   point[0] = -0.5;
 
-  // The distance is the L2 squared distance.
+  // The distance is the L2 distance.
   BOOST_REQUIRE_CLOSE(FurthestNeighborSort::BestPointToNodeDistance(point,
-      &node), (1.5 * 1.5), 1e-5);
+      &node), 1.5, 1e-5);
 
   // Now from the other side of the bound.
   point[0] = 1.5;
 
   BOOST_REQUIRE_CLOSE(FurthestNeighborSort::BestPointToNodeDistance(point,
-      &node), (1.5 * 1.5), 1e-5);
+      &node), 1.5, 1e-5);
 
   // And now when the point is inside the bound.
   point[0] = 0.5;
 
   BOOST_REQUIRE_CLOSE(FurthestNeighborSort::BestPointToNodeDistance(point,
-      &node), 0.25, 1e-5);
+      &node), 0.5, 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
