@@ -78,6 +78,9 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     // Now take its child.
     children.push_back(&(old->Child(0)));
 
+    // Set its parent correctly.
+    old->Child(0).Parent() = this;
+
     // Remove its child (so it doesn't delete it).
     old->Children().erase(old->Children().begin() + old->Children().size() - 1);
 
@@ -159,6 +162,9 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
 
       // Now take its child.
       children.push_back(&(old->Child(0)));
+
+      // Set its parent correctly.
+      old->Child(0).Parent() = this;
 
       // Remove its child (so it doesn't delete it).
       old->Children().erase(old->Children().begin() + old->Children().size()
@@ -289,6 +295,9 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     // Now take its child.
     children.push_back(&(old->Child(0)));
 
+    // Set its parent correctly.
+    old->Child(0).Parent() = this;
+
     // Remove its child (so it doesn't delete it).
     old->Children().erase(old->Children().begin() + old->Children().size() - 1);
 
@@ -392,6 +401,9 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
 
       // Now take its child.
       children.push_back(&(old->Child(0)));
+
+      // Set its parent correctly.
+      old->Child(0).Parent() = this;
 
       // Remove its child (so it doesn't delete it).
       old->Children().erase(old->Children().begin() + old->Children().size()
