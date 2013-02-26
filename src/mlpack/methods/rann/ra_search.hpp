@@ -56,25 +56,10 @@ class RAQueryStat
   RAQueryStat() : bound(SortPolicy::WorstDistance()), numSamplesMade(0) { }
 
   /**
-   * Initialization for a leaf, required by the StatisticType policy.
+   * Initialization for a node.
    */
-  template<typename MatType>
-  RAQueryStat(const MatType& /* dataset */,
-              const size_t /* begin */,
-              const size_t /* count */) :
-    bound(SortPolicy::WorstDistance()),
-    numSamplesMade(0)
-  { }
-
-  /**
-   * Initialization for a node, required by the StatisticType policy.
-   */
-  template<typename MatType>
-  RAQueryStat(const MatType& /* dataset */,
-              const size_t /* begin */,
-              const size_t /* count */,
-              const RAQueryStat& /* leftStat */,
-              const RAQueryStat& /* rightStat */) :
+  template<typename TreeType>
+  RAQueryStat(const TreeType& /* node */) :
     bound(SortPolicy::WorstDistance()),
     numSamplesMade(0)
   { }
