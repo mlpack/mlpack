@@ -18,16 +18,6 @@ MRKDStatistic::MRKDStatistic() :
     parentStat(NULL)
 { }
 
-template<typename TreeType>
-MRKDStatistic::MRKDStatistic(const TreeType& /* node */) :
-    dataset(NULL),
-    begin(0),
-    count(0),
-    leftStat(NULL),
-    rightStat(NULL),
-    parentStat(NULL)
-{ }
-
 /**
  * Returns a string representation of this object.
  */

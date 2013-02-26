@@ -13,13 +13,23 @@
 namespace mlpack {
 namespace tree {
 
+template<typename TreeType>
+MRKDStatistic::MRKDStatistic(const TreeType& /* node */) :
+    dataset(NULL),
+    begin(0),
+    count(0),
+    leftStat(NULL),
+    rightStat(NULL),
+    parentStat(NULL)
+{ }
+
 /**
  * This constructor is called when a leaf is created.
  *
  * @param dataset Matrix that the tree is being built on.
  * @param begin Starting index corresponding to this leaf.
  * @param count Number of points held in this leaf.
- */
+ *
 template<typename MatType>
 MRKDStatistic::MRKDStatistic(const TreeType& node) :
     dataset(&dataset),
@@ -47,7 +57,7 @@ MRKDStatistic::MRKDStatistic(const TreeType& node) :
  * @param count Number of points held in this leaf.
  * @param leftStat MRKDStatistic object of the left child node.
  * @param rightStat MRKDStatistic object of the right child node.
- */
+ *
 template<typename MatType>
 MRKDStatistic::MRKDStatistic(const MatType& dataset,
                              const size_t begin,
@@ -67,7 +77,7 @@ MRKDStatistic::MRKDStatistic(const MatType& dataset,
   centerOfMass = ((leftStat.centerOfMass * leftStat.count) +
                   (rightStat.centerOfMass * rightStat.count)) /
                   (leftStat.count + rightStat.count);
-  */
+  *
   centerOfMass = leftStat.centerOfMass + rightStat.centerOfMass;
 
   isWhitelistValid = false;
@@ -75,6 +85,7 @@ MRKDStatistic::MRKDStatistic(const MatType& dataset,
   leftStat.parentStat = this;
   rightStat.parentStat = this;
 }
+*/
 
 }; // namespace tree
 }; // namespace mlpack
