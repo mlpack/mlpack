@@ -41,21 +41,11 @@ class QueryStat
   QueryStat() : bound(SortPolicy::WorstDistance()) { }
 
   /**
-   * Initialization for a leaf, required by the StatisticType policy.
+   * Initialization for a fully initialized node.  In this case, we don't need
+   * to worry about the node.
    */
-  template<typename MatType>
-  QueryStat(const MatType& /* dataset */, const size_t /* begin */, const size_t /* count */)
-      : bound(SortPolicy::WorstDistance()) { }
-
-  /**
-   * Initialization for a node, required by the StatisticType policy.
-   */
-  template<typename MatType>
-  QueryStat(const MatType& /* dataset */,
-            const size_t /* begin */,
-            const size_t /* count */,
-            const QueryStat& /* leftStat */,
-            const QueryStat& /* rightStat */)
+  template<typename TreeType>
+  QueryStat(TreeType& /* node */)
       : bound(SortPolicy::WorstDistance()) { }
 
   //! Get the bound.
