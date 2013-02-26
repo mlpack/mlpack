@@ -21,9 +21,7 @@ namespace tree {
  * @param count Number of points held in this leaf.
  */
 template<typename MatType>
-MRKDStatistic::MRKDStatistic(const MatType& dataset,
-                             const size_t begin,
-                             const size_t count) :
+MRKDStatistic::MRKDStatistic(const TreeType& node) :
     dataset(&dataset),
     begin(begin),
     count(count),
@@ -32,11 +30,11 @@ MRKDStatistic::MRKDStatistic(const MatType& dataset,
     parentStat(NULL)
 {
   centerOfMass = dataset.col(begin);
-  for (size_t i = begin+1; i < begin+count; ++i)
+  for (size_t i = begin + 1; i < begin + count; ++i)
     centerOfMass += dataset.col(i);
 
   sumOfSquaredNorms = 0.0;
-  for (size_t i = begin; i < begin+count; ++i)
+  for (size_t i = begin; i < begin + count; ++i)
     sumOfSquaredNorms += arma::norm(dataset.col(i), 2);
 }
 
