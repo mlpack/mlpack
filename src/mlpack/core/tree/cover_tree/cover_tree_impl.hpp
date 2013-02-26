@@ -193,6 +193,9 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
 
   if (localMetric)
     delete metric;
+
+  // Initialize statistic.
+  stat = StatisticType(*this);
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
@@ -258,6 +261,9 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     // and we want
     // [ far | all used ].
     SortPointSet(indices, distances, 0, usedSetSize, farSetSize);
+
+    // Initialize the statistic.
+    stat = StatisticType(*this);
 
     return;
   }
@@ -429,6 +435,9 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
       furthestDescendantDistance = distances[i];
 
   Log::Assert(furthestDescendantDistance <= pow(base, scale + 1));
+
+  // Lastly, initialize the statistic.
+  stat = StatisticType(*this);
 }
 
 // Manually create a cover tree node.
@@ -449,7 +458,8 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     parentDistance(parentDistance),
     furthestDescendantDistance(furthestDescendantDistance)
 {
-  // Nothing to do.
+  // Initialize the statistic.
+  stat = StatisticType(*this);
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
