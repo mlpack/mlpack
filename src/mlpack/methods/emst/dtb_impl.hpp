@@ -29,8 +29,8 @@ DTBStat::DTBStat() : maxNeighborDistance(DBL_MAX), componentMembership(-1)
 template<typename TreeType>
 DTBStat::DTBStat(const TreeType& node) :
     maxNeighborDistance(DBL_MAX),
-    componentMembership(
-        ((node.NumPoints() == 1) && (node.NumChildren() == 0)) ? start : -1)
+    componentMembership(((node.NumPoints() == 1) && (node.NumChildren() == 0)) ?
+        node.Point(0) : -1)
 {
   // Nothing to do.
 }
