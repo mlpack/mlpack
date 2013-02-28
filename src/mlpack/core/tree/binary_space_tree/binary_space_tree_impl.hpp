@@ -27,9 +27,9 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     parent(NULL),
     begin(0), /* This root node starts at index 0, */
     count(data.n_cols), /* and spans all of the dataset. */
+    leafSize(leafSize),
     bound(data.n_rows),
-    stat(),
-    leafSize(leafSize)
+    dataset(data)
 {
   // Do the actual splitting of this node.
   SplitNode(data);
@@ -48,9 +48,9 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     parent(NULL),
     begin(0),
     count(data.n_cols),
+    leafSize(leafSize),
     bound(data.n_rows),
-    stat(),
-    leafSize(leafSize)
+    dataset(data)
 {
   // Initialize oldFromNew correctly.
   oldFromNew.resize(data.n_cols);
@@ -75,9 +75,9 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     parent(NULL),
     begin(0),
     count(data.n_cols),
+    leafSize(leafSize),
     bound(data.n_rows),
-    stat(),
-    leafSize(leafSize)
+    dataset(data)
 {
   // Initialize the oldFromNew vector correctly.
   oldFromNew.resize(data.n_cols);
@@ -108,9 +108,9 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     parent(parent),
     begin(begin),
     count(count),
+    leafSize(leafSize),
     bound(data.n_rows),
-    stat(),
-    leafSize(leafSize)
+    dataset(data)
 {
   // Perform the actual splitting.
   SplitNode(data);
@@ -132,9 +132,9 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     parent(parent),
     begin(begin),
     count(count),
+    leafSize(leafSize),
     bound(data.n_rows),
-    stat(),
-    leafSize(leafSize)
+    dataset(data)
 {
   // Hopefully the vector is initialized correctly!  We can't check that
   // entirely but we can do a minor sanity check.
@@ -161,9 +161,9 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     parent(parent),
     begin(begin),
     count(count),
+    leafSize(leafSize),
     bound(data.n_rows),
-    stat(),
-    leafSize(leafSize)
+    dataset(data)
 {
   // Hopefully the vector is initialized correctly!  We can't check that
   // entirely but we can do a minor sanity check.
@@ -181,6 +181,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     newFromOld[oldFromNew[i]] = i;
 }
 
+/*
 template<typename BoundType, typename StatisticType, typename MatType>
 BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree() :
     left(NULL),
@@ -193,7 +194,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree() :
     leafSize(20) // Default leaf size is 20.
 {
   // Nothing to do.
-}
+}*/
 
 /**
  * Create a binary space tree by copying the other tree.  Be careful!  This can
@@ -204,13 +205,14 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     const BinarySpaceTree& other) :
     left(NULL),
     right(NULL),
-    parent(other.Parent()),
-    begin(other.Begin()),
-    count(other.Count()),
-    bound(other.Bound()),
-    stat(other.Stat()),
-    leafSize(other.LeafSize()),
-    splitDimension(other.SplitDimension())
+    parent(other.parent),
+    begin(other.begin),
+    count(other.count),
+    leafSize(other.leafSize),
+    bound(other.bound),
+    stat(other.stat),
+    splitDimension(other.splitDimension),
+    dataset(other.dataset)
 {
   // Create left and right children (if any).
   if (other.Left())
