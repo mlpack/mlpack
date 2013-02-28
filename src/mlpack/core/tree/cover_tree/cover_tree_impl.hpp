@@ -27,15 +27,13 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     base(base),
     parent(NULL),
     parentDistance(0),
-    furthestDescendantDistance(0)
+    furthestDescendantDistance(0),
+    localMetric(metric == NULL),
+    metric(metric)
 {
   // If we need to create a metric, do that.  We'll just do it on the heap.
-  bool localMetric = false;
-  if (metric == NULL)
-  {
-    localMetric = true; // So we know we need to free it.
-    metric = new MetricType();
-  }
+  if (localMetric)
+    this->metric = new MetricType();
 
   // Kick off the building.  Create the indices array and the distances array.
   arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
@@ -48,7 +46,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
   arma::vec distances(dataset.n_cols - 1);
 
   // Build the initial distances.
-  ComputeDistances(point, indices, distances, dataset.n_cols - 1, *metric);
+  ComputeDistances(point, indices, distances, dataset.n_cols - 1);
 
   // Now determine the scale factor of the root node.
   const double maxDistance = max(distances);
@@ -139,7 +137,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
 
     // Build distances for the child.
     ComputeDistances(indices[0], childIndices, childDistances,
-        nearSetSize - 1, *metric);
+        nearSetSize - 1);
     childDistances(nearSetSize - 1) = 0;
 
     // Split into near and far sets for this point.
@@ -191,9 +189,6 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
 
   Log::Assert(furthestDescendantDistance <= pow(base, scale + 1));
 
-  if (localMetric)
-    delete metric;
-
   // Initialize statistic.
   stat = StatisticType(*this);
 }
@@ -218,7 +213,9 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     base(base),
     parent(parent),
     parentDistance(parentDistance),
-    furthestDescendantDistance(0)
+    furthestDescendantDistance(0),
+    localMetric(false),
+    metric(&metric)
 {
   // If the size of the near set is 0, this is a leaf.
   if (nearSetSize == 0)
@@ -376,7 +373,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
 
     // Build distances for the child.
     ComputeDistances(indices[0], childIndices, childDistances, nearSetSize
-        + farSetSize - 1, metric);
+        + farSetSize - 1);
 
     // Split into near and far sets for this point.
     childNearSetSize = SplitNearFar(childIndices, childDistances, bound,
@@ -449,15 +446,22 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     const int scale,
     CoverTree* parent,
     const double parentDistance,
-    const double furthestDescendantDistance) :
+    const double furthestDescendantDistance,
+    MetricType* metric) :
     dataset(dataset),
     point(pointIndex),
     scale(scale),
     base(base),
     parent(parent),
     parentDistance(parentDistance),
-    furthestDescendantDistance(furthestDescendantDistance)
+    furthestDescendantDistance(furthestDescendantDistance),
+    localMetric(metric == NULL),
+    metric(metric)
 {
+  // If necessary, create a local metric.
+  if (localMetric)
+    this->metric = new MetricType();
+
   // Initialize the statistic.
   stat = StatisticType(*this);
 }
@@ -472,7 +476,9 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     stat(other.stat),
     parent(other.parent),
     parentDistance(other.parentDistance),
-    furthestDescendantDistance(other.furthestDescendantDistance)
+    furthestDescendantDistance(other.furthestDescendantDistance),
+    localMetric(false),
+    metric(other.metric)
 {
   // Copy each child by hand.
   for (size_t i = 0; i < other.NumChildren(); ++i)
@@ -488,6 +494,10 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::~CoverTree()
   // Delete each child.
   for (size_t i = 0; i < children.size(); ++i)
     delete children[i];
+
+  // Delete the local metric, if necessary.
+  if (localMetric)
+    delete metric;
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
@@ -495,7 +505,7 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType>::MinDistance(
     const CoverTree<MetricType, RootPointPolicy, StatisticType>* other) const
 {
   // Every cover tree node will contain points up to EC^(scale + 1) away.
-  return std::max(MetricType::Evaluate(dataset.unsafe_col(point),
+  return std::max(metric->Evaluate(dataset.unsafe_col(point),
       other->Dataset().unsafe_col(other->Point())) -
       furthestDescendantDistance - other->FurthestDescendantDistance(), 0.0);
 }
@@ -514,7 +524,7 @@ template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 double CoverTree<MetricType, RootPointPolicy, StatisticType>::MinDistance(
     const arma::vec& other) const
 {
-  return std::max(MetricType::Evaluate(dataset.unsafe_col(point), other) -
+  return std::max(metric->Evaluate(dataset.unsafe_col(point), other) -
       furthestDescendantDistance, 0.0);
 }
 
@@ -530,7 +540,7 @@ template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 double CoverTree<MetricType, RootPointPolicy, StatisticType>::MaxDistance(
     const CoverTree<MetricType, RootPointPolicy, StatisticType>* other) const
 {
-  return MetricType::Evaluate(dataset.unsafe_col(point),
+  return metric->Evaluate(dataset.unsafe_col(point),
       other->Dataset().unsafe_col(other->Point())) +
       furthestDescendantDistance + other->FurthestDescendantDistance();
 }
@@ -549,7 +559,7 @@ template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 double CoverTree<MetricType, RootPointPolicy, StatisticType>::MaxDistance(
     const arma::vec& other) const
 {
-  return MetricType::Evaluate(dataset.unsafe_col(point), other) +
+  return metric->Evaluate(dataset.unsafe_col(point), other) +
       furthestDescendantDistance;
 }
 
@@ -619,14 +629,13 @@ void CoverTree<MetricType, RootPointPolicy, StatisticType>::ComputeDistances(
     const size_t pointIndex,
     const arma::Col<size_t>& indices,
     arma::vec& distances,
-    const size_t pointSetSize,
-    MetricType& metric)
+    const size_t pointSetSize)
 {
   // For each point, rebuild the distances.  The indices do not need to be
   // modified.
   for (size_t i = 0; i < pointSetSize; ++i)
   {
-    distances[i] = metric.Evaluate(dataset.unsafe_col(pointIndex),
+    distances[i] = metric->Evaluate(dataset.unsafe_col(pointIndex),
         dataset.unsafe_col(indices[i]));
   }
 }

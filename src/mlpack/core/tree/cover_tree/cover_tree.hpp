@@ -160,6 +160,7 @@ class CoverTree
    * @param parent Parent node (NULL indicates no parent).
    * @param parentDistance Distance to parent node point.
    * @param furthestDescendantDistance Distance to furthest descendant point.
+   * @param metric Instantiated metric (optional).
    */
   CoverTree(const arma::mat& dataset,
             const double base,
@@ -167,7 +168,8 @@ class CoverTree
             const int scale,
             CoverTree* parent,
             const double parentDistance,
-            const double furthestDescendantDistance);
+            const double furthestDescendantDistance,
+            MetricType* metric = NULL);
 
   /**
    * Create a cover tree from another tree.  Be careful!  This may use a lot of
@@ -311,6 +313,12 @@ class CoverTree
   //! Distance to the furthest descendant.
   double furthestDescendantDistance;
 
+  //! Whether or not we need to destroy the metric in the destructor.
+  bool localMetric;
+
+  //! The metric used for this tree.
+  MetricType* metric;
+
   /**
    * Fill the vector of distances with the distances between the point specified
    * by pointIndex and each point in the indices array.  The distances of the
@@ -325,8 +333,7 @@ class CoverTree
   void ComputeDistances(const size_t pointIndex,
                         const arma::Col<size_t>& indices,
                         arma::vec& distances,
-                        const size_t pointSetSize,
-                        MetricType& metric);
+                        const size_t pointSetSize);
   /**
    * Split the given indices and distances into a near and a far set, returning
    * the number of points in the near set.  The distances must already be
