@@ -11,6 +11,7 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/math/range.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
 
 namespace mlpack {
 namespace bound {
@@ -28,6 +29,9 @@ template<int Power = 2, bool TakeRoot = true>
 class HRectBound
 {
  public:
+  //! This is the metric type that this bound is using.
+  typedef metric::LMetric<Power, TakeRoot> MetricType;
+
   /**
    * Empty constructor; creates a bound of dimensionality 0.
    */
@@ -39,15 +43,12 @@ class HRectBound
    */
   HRectBound(const size_t dimension);
 
-  /***
-   * Copy constructor; necessary to prevent memory leaks.
-   */
+  //! Copy constructor; necessary to prevent memory leaks.
   HRectBound(const HRectBound& other);
-  HRectBound& operator=(const HRectBound& other); // Same as copy constructor.
+  //! Same as copy constructor; necessary to prevent memory leaks.
+  HRectBound& operator=(const HRectBound& other);
 
-  /**
-   * Destructor: clean up memory.
-   */
+  //! Destructor: clean up memory.
   ~HRectBound();
 
   /**
@@ -56,14 +57,13 @@ class HRectBound
    */
   void Clear();
 
-  /** Gets the dimensionality */
+  //! Gets the dimensionality.
   size_t Dim() const { return dim; }
 
-  /**
-   * Sets and gets the range for a particular dimension.
-   */
-  math::Range& operator[](const size_t i);
-  const math::Range& operator[](const size_t i) const;
+  //! Get the range for a particular dimension.  No bounds checking.
+  math::Range& operator[](const size_t i) { return bounds[i]; }
+  //! Modify the range for a particular dimension.  No bounds checking.
+  const math::Range& operator[](const size_t i) const { return bounds[i]; }
 
   /**
    * Calculates the centroid of the range, placing it into the given vector.
@@ -144,6 +144,13 @@ class HRectBound
    * Returns a string representation of this object.
    */
   std::string ToString() const;
+
+  /**
+   * Return the metric associated with this bound.  Because it is an LMetric, it
+   * cannot store state, so we can make it on the fly.  It is also static
+   * because the metric is only dependent on the template arguments.
+   */
+  static MetricType Metric() { return metric::LMetric<Power, TakeRoot>(); }
 
  private:
   //! The dimensionality of the bound.
