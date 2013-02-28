@@ -94,7 +94,9 @@ BOOST_AUTO_TEST_CASE(NnsNodeToNodeDistance)
 {
   // Well, there's no easy way to make HRectBounds the way we want, so we have
   // to make them and then expand the region to include new points.
-  tree::BinarySpaceTree<HRectBound<2>, arma::mat> nodeOne;
+  arma::mat dataset("1");
+  tree::BinarySpaceTree<HRectBound<2>, tree::EmptyStatistic, arma::mat>
+      nodeOne(dataset);
   arma::vec utility(1);
   utility[0] = 0;
 
@@ -103,7 +105,8 @@ BOOST_AUTO_TEST_CASE(NnsNodeToNodeDistance)
   utility[0] = 1;
   nodeOne.Bound() |= utility;
 
-  tree::BinarySpaceTree<HRectBound<2>, arma::mat> nodeTwo;
+  tree::BinarySpaceTree<HRectBound<2>, tree::EmptyStatistic, arma::mat>
+      nodeTwo(dataset);
   nodeTwo.Bound() = HRectBound<2>(1);
 
   utility[0] = 5;
@@ -148,7 +151,8 @@ BOOST_AUTO_TEST_CASE(NnsPointToNodeDistance)
   arma::vec utility(1);
   utility[0] = 0;
 
-  tree::BinarySpaceTree<HRectBound<2>, arma::mat> node;
+  arma::mat dataset("1");
+  tree::BinarySpaceTree<HRectBound<2> > node(dataset);
   node.Bound() = HRectBound<2>(1);
   node.Bound() |= utility;
   utility[0] = 1;
@@ -251,13 +255,14 @@ BOOST_AUTO_TEST_CASE(FnsNodeToNodeDistance)
   arma::vec utility(1);
   utility[0] = 0;
 
-  tree::BinarySpaceTree<HRectBound<2>, arma::mat> nodeOne;
+  arma::mat dataset("1");
+  tree::BinarySpaceTree<HRectBound<2> > nodeOne(dataset);
   nodeOne.Bound() = HRectBound<2>(1);
   nodeOne.Bound() |= utility;
   utility[0] = 1;
   nodeOne.Bound() |= utility;
 
-  tree::BinarySpaceTree<HRectBound<2>, arma::mat> nodeTwo;
+  tree::BinarySpaceTree<HRectBound<2> > nodeTwo(dataset);
   nodeTwo.Bound() = HRectBound<2>(1);
   utility[0] = 5;
   nodeTwo.Bound() |= utility;
@@ -301,7 +306,8 @@ BOOST_AUTO_TEST_CASE(FnsPointToNodeDistance)
   arma::vec utility(1);
   utility[0] = 0;
 
-  tree::BinarySpaceTree<HRectBound<2>, arma::mat> node;
+  arma::mat dataset("1");
+  tree::BinarySpaceTree<HRectBound<2> > node(dataset);
   node.Bound() = HRectBound<2>(1);
   node.Bound() |= utility;
   utility[0] = 1;
