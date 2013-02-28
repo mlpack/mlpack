@@ -52,14 +52,16 @@ class BinarySpaceTree
   //! The number of points of the dataset contained in this node (and its
   //! children).
   size_t count;
+  //! The leaf size.
+  size_t leafSize;
   //! The bound object for this node.
   BoundType bound;
   //! Any extra data contained in the node.
   StatisticType stat;
-  //! The leaf size.
-  size_t leafSize;
   //! The dimension this node split on if it is a parent.
   size_t splitDimension;
+  //! The dataset.
+  MatType& dataset;
 
  public:
   //! So other classes can use TreeType::Mat.
@@ -195,11 +197,6 @@ class BinarySpaceTree
   BinarySpaceTree(const BinarySpaceTree& other);
 
   /**
-   * Create an empty tree node.
-   */
-  BinarySpaceTree();
-
-  /**
    * Deletes this node, deallocating the memory for the children and calling
    * their destructors in turn.  This will invalidate any pointers or references
    * to any nodes which are children of this one.
@@ -273,6 +270,14 @@ class BinarySpaceTree
   size_t SplitDimension() const { return splitDimension; }
   //! Modify the split dimension for this node.
   size_t& SplitDimension() { return splitDimension; }
+
+  //! Get the dataset which the tree is built on.
+  const arma::mat& Dataset() const { return dataset; }
+  //! Modify the dataset which the tree is built on.  Be careful!
+  arma::mat& Dataset() { return dataset; }
+
+  //! Get the metric which the tree uses.
+  typename BoundType::MetricType Metric() const { return bound.Metric(); }
 
   //! Return the number of children in this node.
   size_t NumChildren() const;
