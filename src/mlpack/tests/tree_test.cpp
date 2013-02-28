@@ -1516,6 +1516,27 @@ BOOST_AUTO_TEST_CASE(CheckParents)
       rootNode.Right()->Left()->Right()->Parent());
 }
 
+BOOST_AUTO_TEST_CASE(CheckDataset)
+{
+  arma::mat dataset = "2.0 5.0 9.0 4.0 8.0 7.0;"
+                      "3.0 4.0 6.0 7.0 1.0 2.0 ";
+
+  // Leaf size of 1.
+  BinarySpaceTree<HRectBound<2> > rootNode(dataset, 1);
+
+  BOOST_REQUIRE_EQUAL(&rootNode.Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Left()->Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Right()->Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Left()->Left()->Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Left()->Right()->Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Right()->Left()->Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Right()->Right()->Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Left()->Left()->Left()->Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Left()->Left()->Right()->Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Right()->Left()->Left()->Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Right()->Left()->Right()->Dataset(), &dataset);
+}
+
 // Ensure FurthestDescendantDistance() works.
 BOOST_AUTO_TEST_CASE(FurthestDescendantDistanceTest)
 {
@@ -2102,13 +2123,14 @@ BOOST_AUTO_TEST_CASE(CoverTreeCopyConstructor)
  */
 BOOST_AUTO_TEST_CASE(BinarySpaceTreeCopyConstructor)
 {
-  BinarySpaceTree<HRectBound<2> > b;
+  arma::mat data("1");
+  BinarySpaceTree<HRectBound<2> > b(data);
   b.Begin() = 10;
   b.Count() = 50;
-  b.Left() = new BinarySpaceTree<HRectBound<2> >();
+  b.Left() = new BinarySpaceTree<HRectBound<2> >(data);
   b.Left()->Begin() = 10;
   b.Left()->Count() = 30;
-  b.Right() = new BinarySpaceTree<HRectBound<2> >();
+  b.Right() = new BinarySpaceTree<HRectBound<2> >(data);
   b.Right()->Begin() = 40;
   b.Right()->Count() = 20;
 
