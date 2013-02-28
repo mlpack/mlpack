@@ -93,25 +93,6 @@ void HRectBound<Power, TakeRoot>::Clear()
     bounds[i] = math::Range();
 }
 
-/**
- * Gets the range for a particular dimension.
- */
-template<int Power, bool TakeRoot>
-inline const math::Range& HRectBound<Power, TakeRoot>::operator[](
-    const size_t i) const
-{
-  return bounds[i];
-}
-
-/**
- * Sets the range for the given dimension.
- */
-template<int Power, bool TakeRoot>
-inline math::Range& HRectBound<Power, TakeRoot>::operator[](const size_t i)
-{
-  return bounds[i];
-}
-
 /***
  * Calculates the centroid of the range, placing it into the given vector.
  *
