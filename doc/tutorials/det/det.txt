@@ -47,11 +47,11 @@ A list of all the sections this tutorial contains.
    - \ref dtutils_util_funcs
  - \ref further_doc_det_tut
 
-@section cli_det_tut Command-Line 'dt_main'
+@section cli_det_tut Command-Line 'det'
 The command line arguments of this program can be viewed using the '-h' option:
 
 @code
-$ ./dt_main -h
+$ ./det -h
 
 Density estimation with DET
 
@@ -139,15 +139,15 @@ is loaded; internally, the data is column-major -- see \ref matrices "this page"
 for more information).
 
 @code
-$ ./dt_main -S dataset.csv -v
+$ ./det -S dataset.csv -v
 @endcode
 
-By default, dt_main performs 10-fold cross-validation (using the
+By default, det performs 10-fold cross-validation (using the
 \f$\alpha\f$-pruning regularization for decision trees). To perform LOOCV
 (leave-one-out cross-validation), use the following command:
 
 @code
-$ ./dt_main -S dataset.csv -F 0 -v
+$ ./det -S dataset.csv -F 0 -v
 @endcode
 
 To perform k-fold crossvalidation, use \c -F \c k. There are certain other
@@ -157,14 +157,14 @@ tree, you can specify the maximum and minimum leaf sizes. By default, they are
 and the \c -N (\c --minimum_leaf_size) options.
 
 @code
-$ ./dt_main -S dataset.csv -M 20 -N 10
+$ ./det -S dataset.csv -M 20 -N 10
 @endcode
 
 In case you want to output the density estimates at the points in the training
 set, use the \c -s option to specify the output file.
 
 @code
-$ ./dt_main -S dataset.csv -s density_estimates.txt -v
+$ ./det -S dataset.csv -s density_estimates.txt -v
 @endcode
 
 @subsection cli_alt_reg_tut Alternate DET regularization
@@ -194,7 +194,7 @@ density from the learned estimator at some out of sample (new) test points. The
 estimates are to be output.
 
 @code
-$ ./dt_main -S dataset.csv -T test_points.csv -t test_density_estimates.txt -v
+$ ./det -S dataset.csv -T test_points.csv -t test_density_estimates.txt -v
 @endcode
 
 @subsection cli_ex3_de_p_tut Printing a trained DET
@@ -202,14 +202,14 @@ $ ./dt_main -S dataset.csv -T test_points.csv -t test_density_estimates.txt -v
 A depth-first visualization of the DET can be obtained by using the \e -P flag.
 
 @code
-$ ./dt_main -S dataset.csv -P -v
+$ ./det -S dataset.csv -P -v
 @endcode
 
 To print this tree in a file, use the \e -p option to specify the output file
 along with the \e -P flag.
 
 @code
-$ ./dt_main -S dataset.csv -P -p tree.txt -v
+$ ./det -S dataset.csv -P -p tree.txt -v
 @endcode
 
 @subsection cli_ex4_de_vi_tut Computing the variable importance
@@ -220,13 +220,13 @@ the (absolute as opposed to relative) variable importance of the all the
 features.
 
 @code
-$ ./dt_main -S dataset.csv -I -v
+$ ./det -S dataset.csv -I -v
 @endcode
 
 To print this in a file, use the \e -i option
 
 @code
-$ ./dt_main -S dataset.csv -I -i variable_importance.txt -v
+$ ./det -S dataset.csv -I -i variable_importance.txt -v
 @endcode
 
 @subsection cli_ex5_de_lm Leaf Membership
@@ -239,11 +239,11 @@ using the \e -L option. You are required to specify the number of classes
 present in this set using the \e -C option.
 
 @code
-$ ./dt_main -S dataset.csv -L labels.csv -C <number-of-classes> -v
+$ ./det -S dataset.csv -L labels.csv -C <number-of-classes> -v
 @endcode
 The leaf membership matrix is output into a file called 'leaf_class_membership.txt' by default. An user-specified file can be used by utilizing the \e -l option.
 @code
-$ ./dt_main -S dataset.csv -L labels.csv -C <number-of-classes> -l leaf_class_membership_file.txt -v
+$ ./det -S dataset.csv -L labels.csv -C <number-of-classes> -l leaf_class_membership_file.txt -v
 @endcode
 
 
