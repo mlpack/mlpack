@@ -212,6 +212,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     bound(other.bound),
     stat(other.stat),
     splitDimension(other.splitDimension),
+    furthestDescendantDistance(other.furthestDescendantDistance),
     dataset(other.dataset)
 {
   // Create left and right children (if any).
@@ -384,9 +385,7 @@ template<typename BoundType, typename StatisticType, typename MatType>
 inline double BinarySpaceTree<BoundType, StatisticType, MatType>::
     FurthestDescendantDistance() const
 {
-  arma::vec centroid;
-  bound.Centroid(centroid);
-  return bound.MaxDistance(centroid);
+  return furthestDescendantDistance;
 }
 
 /**
@@ -443,6 +442,9 @@ void
   // We need to expand the bounds of this node properly.
   bound |= data.cols(begin, begin + count - 1);
 
+  // Calculate the furthest descendant distance.
+  furthestDescendantDistance = 0.5 * bound.Diameter();
+
   // Now, check if we need to split at all.
   if (count <= leafSize)
     return; // We can't split this.
@@ -492,6 +494,9 @@ void BinarySpaceTree<BoundType, StatisticType, MatType>::SplitNode(
   // This should be a single function for Bound.
   // We need to expand the bounds of this node properly.
   bound |= data.cols(begin, begin + count - 1);
+
+  // Calculate the furthest descendant distance.
+  furthestDescendantDistance = 0.5 * bound.Diameter();
 
   // First, check if we need to split at all.
   if (count <= leafSize)
