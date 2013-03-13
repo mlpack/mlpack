@@ -84,6 +84,11 @@ class TreeTraits
    * overlap.
    */
   static const bool HasOverlappingChildren = true;
+
+  /**
+   * This is true if Point(0) is the centroid of the node.
+   */
+  static const bool FirstPointIsCentroid = false;
 };
 
 }; // namespace tree

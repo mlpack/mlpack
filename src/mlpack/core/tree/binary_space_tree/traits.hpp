@@ -36,6 +36,11 @@ class TreeTraits<BinarySpaceTree<BoundType, StatisticType, MatType> >
    * children are not overlapping.
    */
   static const bool HasOverlappingChildren = false;
+
+  /**
+   * There is no guarantee that the first point in a node is its centroid.
+   */
+  static const bool FirstPointIsCentroid = false;
 };
 
 }; // namespace tree
