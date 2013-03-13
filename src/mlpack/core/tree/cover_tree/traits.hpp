@@ -37,6 +37,17 @@ class TreeTraits<CoverTree<MetricType, RootPointPolicy, StatisticType> >
    * children represent non-overlapping subsets of the parent node.
    */
   static const bool HasOverlappingChildren = true;
+
+  /**
+   * Each cover tree node contains only one point, and that point is its
+   * centroid.
+   */
+  static const bool FirstPointIsCentroid = true;
+
+  /**
+   * Cover trees do have self-children.
+   */
+  static const bool HasSelfChildren = true;
 };
 
 }; // namespace tree
