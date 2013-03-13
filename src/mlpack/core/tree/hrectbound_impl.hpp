@@ -366,6 +366,22 @@ bool HRectBound<Power, TakeRoot>::Contains(const VecType& point) const
 }
 
 /**
+ * Returns the diameter of the hyperrectangle (that is, the longest diagonal).
+ */
+template<int Power, bool TakeRoot>
+double HRectBound<Power, TakeRoot>::Diameter() const
+{
+  double d = 0;
+  for (size_t i = 0; i < dim; ++i)
+    d += std::pow(bounds[i].Hi() - bounds[i].Lo(), (double) Power);
+
+  if (TakeRoot)
+    return std::pow(d, 1.0 / (double) Power);
+  else
+    return d;
+}
+
+/**
  * Returns a string representation of this object.
  */
 template<int Power, bool TakeRoot>

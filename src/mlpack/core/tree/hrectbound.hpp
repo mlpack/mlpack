@@ -141,6 +141,11 @@ class HRectBound
   bool Contains(const VecType& point) const;
 
   /**
+   * Returns the diameter of the hyperrectangle (that is, the longest diagonal).
+   */
+  double Diameter() const;
+
+  /**
    * Returns a string representation of this object.
    */
   std::string ToString() const;
