@@ -238,13 +238,12 @@ int main(int argc, char *argv[])
     // Map the results back to the correct places.
     if ((CLI::GetParam<string>("query_file") != "") && !singleMode)
       Unmap(neighborsOut, distancesOut, oldFromNewRefs, oldFromNewQueries,
-          neighbors, distances, true);
+          neighbors, distances);
     else if ((CLI::GetParam<string>("query_file") != "") && singleMode)
-      Unmap(neighborsOut, distancesOut, oldFromNewRefs, neighbors, distances,
-          true);
+      Unmap(neighborsOut, distancesOut, oldFromNewRefs, neighbors, distances);
     else
       Unmap(neighborsOut, distancesOut, oldFromNewRefs, oldFromNewRefs,
-          neighbors, distances, true);
+          neighbors, distances);
 
     // Clean up.
     if (queryTree)

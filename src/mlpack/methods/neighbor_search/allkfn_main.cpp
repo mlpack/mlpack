@@ -176,13 +176,12 @@ int main(int argc, char *argv[])
   // Map the points back to their original locations.
   if ((CLI::GetParam<string>("query_file") != "") && !singleMode)
     Unmap(neighbors, distances, oldFromNewRefs, oldFromNewQueries, neighborsOut,
-        distancesOut, true);
+        distancesOut);
   else if ((CLI::GetParam<string>("query_file") != "") && singleMode)
-    Unmap(neighbors, distances, oldFromNewRefs, neighborsOut, distancesOut,
-        true);
+    Unmap(neighbors, distances, oldFromNewRefs, neighborsOut, distancesOut);
   else
     Unmap(neighbors, distances, oldFromNewRefs, oldFromNewRefs, neighborsOut,
-        distancesOut, true);
+        distancesOut);
 
   // Clean up.
   if (queryTree)
