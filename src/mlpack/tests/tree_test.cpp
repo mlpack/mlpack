@@ -939,6 +939,34 @@ BOOST_AUTO_TEST_CASE(HRectBoundRootRangeDistancePoint)
 }
 
 /**
+ * Ensure that HRectBound::Diameter() works properly.
+ */
+BOOST_AUTO_TEST_CASE(HRectBoundDiameter)
+{
+  HRectBound<3> b(4);
+  b[0] = math::Range(0.0, 1.0);
+  b[1] = math::Range(-1.0, 0.0);
+  b[2] = math::Range(2.0, 3.0);
+  b[3] = math::Range(7.0, 7.0);
+
+  BOOST_REQUIRE_CLOSE(b.Diameter(), std::pow(3.0, 1.0 / 3.0), 1e-5);
+
+  HRectBound<2, false> c(4);
+  c[0] = math::Range(0.0, 1.0);
+  c[1] = math::Range(-1.0, 0.0);
+  c[2] = math::Range(2.0, 3.0);
+  c[3] = math::Range(0.0, 0.0);
+
+  BOOST_REQUIRE_CLOSE(c.Diameter(), 3.0, 1e-5);
+
+  HRectBound<5> d(2);
+  d[0] = math::Range(2.2, 2.2);
+  d[1] = math::Range(1.0, 1.0);
+
+  BOOST_REQUIRE_SMALL(d.Diameter(), 1e-5);
+}
+
+/**
  * Ensure that a bound, by default, is empty and has no dimensionality, and the
  * box size vector is empty.
  */
