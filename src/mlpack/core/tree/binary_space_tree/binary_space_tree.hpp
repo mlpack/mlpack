@@ -60,6 +60,8 @@ class BinarySpaceTree
   StatisticType stat;
   //! The dimension this node split on if it is a parent.
   size_t splitDimension;
+  //! The distance to the furthest descendant, cached to speed things up.
+  double furthestDescendantDistance;
   //! The dataset.
   MatType& dataset;
 
