@@ -221,6 +221,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
   if (nearSetSize == 0)
   {
     this->scale = INT_MIN;
+    stat = StatisticType(*this);
     return;
   }
 
