@@ -285,6 +285,12 @@ class CoverTree
   //! Modify the distance to the furthest descendant.
   double& FurthestDescendantDistance() { return furthestDescendantDistance; }
 
+  //! Get the centroid of the node and store it in the given vector.
+  void Centroid(arma::vec& centroid) const { centroid = dataset.col(point); }
+
+  //! Get the instantiated metric.
+  MetricType& Metric() const { return *metric; }
+
  private:
   //! Reference to the matrix which this tree is built on.
   const arma::mat& dataset;

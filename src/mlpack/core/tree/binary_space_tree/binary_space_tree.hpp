@@ -279,6 +279,9 @@ class BinarySpaceTree
   //! Get the metric which the tree uses.
   typename BoundType::MetricType Metric() const { return bound.Metric(); }
 
+  //! Get the centroid of the node and store it in the given vector.
+  void Centroid(arma::vec& centroid) { bound.Centroid(centroid); }
+
   //! Return the number of children in this node.
   size_t NumChildren() const;
 
