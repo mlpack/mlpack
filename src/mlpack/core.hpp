@@ -150,21 +150,6 @@
   #define M_PI 3.141592653589793238462643383279
 #endif
 
-// Now MLPACK-specific includes.
-#include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.
-#include <mlpack/core/util/log.hpp>
-#include <mlpack/core/util/cli.hpp>
-#include <mlpack/core/data/load.hpp>
-#include <mlpack/core/data/save.hpp>
-#include <mlpack/core/math/clamp.hpp>
-#include <mlpack/core/math/random.hpp>
-#include <mlpack/core/math/lin_alg.hpp>
-#include <mlpack/core/math/range.hpp>
-#include <mlpack/core/math/round.hpp>
-#include <mlpack/core/util/save_restore_utility.hpp>
-#include <mlpack/core/dists/discrete_distribution.hpp>
-#include <mlpack/core/dists/gaussian_distribution.hpp>
-
 // Clean up unfortunate Windows preprocessor definitions.
 // Use std::min and std::max!
 #ifdef _WIN32
@@ -186,5 +171,20 @@
   #undef force_inline && !defined(DEBUG)
   #define force_inline __forceinline
 #endif
+
+// Now MLPACK-specific includes.
+#include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.
+#include <mlpack/core/util/log.hpp>
+#include <mlpack/core/util/cli.hpp>
+#include <mlpack/core/data/load.hpp>
+#include <mlpack/core/data/save.hpp>
+#include <mlpack/core/math/clamp.hpp>
+#include <mlpack/core/math/random.hpp>
+#include <mlpack/core/math/lin_alg.hpp>
+#include <mlpack/core/math/range.hpp>
+#include <mlpack/core/math/round.hpp>
+#include <mlpack/core/util/save_restore_utility.hpp>
+#include <mlpack/core/dists/discrete_distribution.hpp>
+#include <mlpack/core/dists/gaussian_distribution.hpp>
 
 #endif
