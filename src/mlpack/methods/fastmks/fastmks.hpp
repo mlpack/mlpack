@@ -9,7 +9,8 @@
 
 #include <mlpack/core.hpp>
 #include "ip_metric.hpp"
-#include <mlpack/core/tree/cover_tree/cover_tree.hpp>
+#include "fastmks_stat.hpp"
+#include <mlpack/core/tree/cover_tree.hpp>
 
 namespace mlpack {
 namespace fastmks {
@@ -42,9 +43,11 @@ class FastMKS
 
   const arma::mat& querySet;
 
-  tree::CoverTree<IPMetric<KernelType> >* referenceTree;
+  tree::CoverTree<IPMetric<KernelType>, tree::FirstPointIsRoot, FastMKSStat>*
+      referenceTree;
 
-  tree::CoverTree<IPMetric<KernelType> >* queryTree;
+  tree::CoverTree<IPMetric<KernelType>, tree::FirstPointIsRoot, FastMKSStat>*
+      queryTree;
 
   bool single;
 
