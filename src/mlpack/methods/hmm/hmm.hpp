@@ -77,17 +77,13 @@ namespace hmm /** Hidden Markov Models. */ {
 template<typename Distribution = distribution::DiscreteDistribution>
 class HMM
 {
- private:
-  //! Transition probability matrix.
-  arma::mat transition;
-
-  //! Set of emission probability distributions; one for each state.
-  std::vector<Distribution> emission;
-
  public:
   /**
    * Create the Hidden Markov Model with the given number of hidden states and
-   * the given default distribution for emissions.
+   * the given default distribution for emissions.  The dimensionality of the
+   * observations is taken from the emissions variable, so it is important that
+   * the given default emission distribution is set with the correct
+   * dimensionality.  Alternately, set the dimensionality with Dimensionality().
    *
    * @param states Number of states.
    * @param emissions Default distribution for emissions.
@@ -96,7 +92,9 @@ class HMM
 
   /**
    * Create the Hidden Markov Model with the given transition matrix and the
-   * given emission distributions.
+   * given emission distributions.  The dimensionality of the observations of
+   * the HMM are taken from the given emission distributions.  Alternately, the
+   * dimensionality can be set with Dimensionality().
    *
    * The transition matrix should be such that T(i, j) is the probability of
    * transition to state i from state j.  The columns of the matrix should sum
@@ -113,7 +111,17 @@ class HMM
   /**
    * Train the model using the Baum-Welch algorithm, with only the given
    * unlabeled observations.  Instead of giving a guess transition and emission
-   * matrix here, do that in the constructor.
+   * matrix here, do that in the constructor.  Each matrix in the vector of data
+   * sequences holds an individual data sequence; each point in each individual
+   * data sequence should be a column in the matrix.  The number of rows in each
+   * matrix should be equal to the dimensionality of the HMM (which is set in
+   * the constructor).
+   *
+   * It is preferable to use the other overload of Train(), with labeled data.
+   * That will produce much better results.  However, if labeled data is
+   * unavailable, this will work.  In addition, it is possible to use Train()
+   * with labeled data first, and then continue to train the model using this
+   * overload of Train() with unlabeled data.
    *
    * @note
    * Train() can be called multiple times with different sequences; each time it
@@ -127,7 +135,14 @@ class HMM
 
   /**
    * Train the model using the given labeled observations; the transition and
-   * emission matrices are directly estimated.
+   * emission matrices are directly estimated.  Each matrix in the vector of
+   * data sequences corresponds to a vector in the vector of state sequences.
+   * Each point in each individual data sequence should be a column in the
+   * matrix, and its state should be the corresponding element in the state
+   * sequence vector.  For instance, dataSeq[0].col(3) corresponds to the fourth
+   * observation in the first data sequence, and its state is stateSeq[0][3].
+   * The number of rows in each matrix should be equal to the dimensionality of
+   * the HMM (which is set in the constructor).
    *
    * @note
    * Train() can be called multiple times with different sequences; each time it
@@ -137,7 +152,7 @@ class HMM
    *
    * @param dataSeq Vector of observation sequences.
    * @param stateSeq Vector of state sequences, corresponding to each
-   *    observation.
+   *     observation.
    */
   void Train(const std::vector<arma::mat>& dataSeq,
              const std::vector<arma::Col<size_t> >& stateSeq);
@@ -182,8 +197,9 @@ class HMM
 
   /**
    * Generate a random data sequence of the given length.  The data sequence is
-   * stored in the data_sequence parameter, and the state sequence is stored in
-   * the state_sequence parameter.
+   * stored in the dataSequence parameter, and the state sequence is stored in
+   * the stateSequence parameter.  Each column of dataSequence represents a
+   * random observation.
    *
    * @param length Length of random sequence to generate.
    * @param dataSequence Vector to store data in.
@@ -216,24 +232,14 @@ class HMM
    */
   double LogLikelihood(const arma::mat& dataSeq) const;
 
-  /**
-   * Return the transition matrix.
-   */
+  //! Return the transition matrix.
   const arma::mat& Transition() const { return transition; }
-
-  /**
-   * Return a modifiable transition matrix reference.
-   */
+  //! Return a modifiable transition matrix reference.
   arma::mat& Transition() { return transition; }
 
-  /**
-   * Return the emission distributions.
-   */
+  //! Return the emission distributions.
   const std::vector<Distribution>& Emission() const { return emission; }
-
-  /**
-   * Return a modifiable emission probability matrix reference.
-   */
+  //! Return a modifiable emission probability matrix reference.
   std::vector<Distribution>& Emission() { return emission; }
 
   //! Get the dimensionality of observations.
@@ -272,6 +278,12 @@ class HMM
   void Backward(const arma::mat& dataSeq,
                 const arma::vec& scales,
                 arma::mat& backwardProb) const;
+
+  //! Transition probability matrix.
+  arma::mat transition;
+
+  //! Set of emission probability distributions; one for each state.
+  std::vector<Distribution> emission;
 
   //! Dimensionality of observations.
   size_t dimensionality;
