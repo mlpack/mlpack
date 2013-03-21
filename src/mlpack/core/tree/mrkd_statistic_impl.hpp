@@ -48,7 +48,7 @@ MRKDStatistic::MRKDStatistic(const TreeType& node) :
     sumOfSquaredNorms += arma::norm(dataset.col(i), 2);
 }
 
-/**
+ **
  * This constructor is called when a non-leaf node is created.
  * This lets you build fast bottom-up statistics when building trees.
  *
@@ -73,7 +73,7 @@ MRKDStatistic::MRKDStatistic(const MatType& dataset,
 {
   sumOfSquaredNorms = leftStat.sumOfSquaredNorms + rightStat.sumOfSquaredNorms;
 
-  /*
+  *
   centerOfMass = ((leftStat.centerOfMass * leftStat.count) +
                   (rightStat.centerOfMass * rightStat.count)) /
                   (leftStat.count + rightStat.count);
