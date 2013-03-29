@@ -81,10 +81,10 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
   file(READ "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp" _armadillo_CONFIG_CONTENTS)
   string(REGEX MATCH "[\r\n][\t ]*#define[ \t]+ARMA_USE_HDF5[ \t\r\n]" ARMA_USE_HDF5 "${_armadillo_CONFIG_CONTENTS}")
 
-  message("arma_use_hdf5: ${ARMA_USE_HDF5}")
   if(NOT "${ARMA_USE_HDF5}" STREQUAL "")
+    message(STATUS "Armadillo HDF5 support is enabled.")
     # We have HDF5 support and need to link against HDF5.
-    find_package(HDF5)
+    find_package(HDF5 REQUIRED)
   endif(NOT "${ARMA_USE_HDF5}" STREQUAL "")
 endif(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
 
@@ -103,8 +103,6 @@ if (ARMADILLO_FOUND)
   # HDF5 libraries are stored in HDF5_LIBRARIES, if they were necessary.
   set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARY} ${HDF5_LIBRARIES})
 endif (ARMADILLO_FOUND)
-
-message("Armadillo libraries: ${ARMADILLO_LIBRARIES}")
 
 
 # Hide internal variables
