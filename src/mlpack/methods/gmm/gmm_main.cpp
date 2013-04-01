@@ -68,8 +68,8 @@ int main(int argc, char* argv[])
     std::string covName = "covariance" + o.str();
 
     // Now save them.
-    save.SaveParameter(trans(gmm.Means()[0]), meanName);
-    save.SaveParameter(gmm.Covariances()[0], covName);
+    save.SaveParameter(trans(gmm.Means()[i]), meanName);
+    save.SaveParameter(gmm.Covariances()[i], covName);
   }
 
   save.WriteFile(CLI::GetParam<std::string>("output_file").c_str());
