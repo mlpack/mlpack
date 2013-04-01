@@ -7,8 +7,8 @@
  *
  * @experimental
  */
-#ifndef SAVE_RESTORE_MODEL_HPP
-#define SAVE_RESTORE_MODEL_HPP
+#ifndef __MLPACK_CORE_UTIL_SAVE_RESTORE_MODEL_HPP
+#define __MLPACK_CORE_UTIL_SAVE_RESTORE_MODEL_HPP
 
 #include <list>
 #include <map>
