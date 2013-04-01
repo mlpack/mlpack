@@ -72,5 +72,5 @@ int main(int argc, char* argv[])
     save.SaveParameter(gmm.Covariances()[i], covName);
   }
 
-  save.WriteFile(CLI::GetParam<std::string>("output_file").c_str());
+  save.WriteFile(CLI::GetParam<std::string>("output_file"));
 }
