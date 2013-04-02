@@ -47,30 +47,13 @@ int main(int argc, char* argv[])
   // Calculate mixture of Gaussians.
   GMM<> gmm(size_t(gaussians), dataPoints.n_rows);
 
-  ////// Computing the parameters of the model using the EM algorithm //////
+  // Compute the parameters of the model using the EM algorithm.
   Timer::Start("em");
   double likelihood = gmm.Estimate(dataPoints);
   Timer::Stop("em");
 
   Log::Info << "Log-likelihood of estimate: " << likelihood << ".\n";
 
-  ////// OUTPUT RESULTS //////
-  SaveRestoreUtility save;
-  save.SaveParameter(gmm.Gaussians(), "gaussians");
-  save.SaveParameter(gmm.Dimensionality(), "dimensionality");
-  save.SaveParameter(trans(gmm.Weights()), "weights");
-  for (size_t i = 0; i < gmm.Gaussians(); ++i)
-  {
-    // Generate names for the XML nodes.
-    std::stringstream o;
-    o << i;
-    std::string meanName = "mean" + o.str();
-    std::string covName = "covariance" + o.str();
-
-    // Now save them.
-    save.SaveParameter(trans(gmm.Means()[i]), meanName);
-    save.SaveParameter(gmm.Covariances()[i], covName);
-  }
-
-  save.WriteFile(CLI::GetParam<std::string>("output_file"));
+  // Save results.
+  gmm.Save(CLI::GetParam<std::string>("output_file"));
 }
