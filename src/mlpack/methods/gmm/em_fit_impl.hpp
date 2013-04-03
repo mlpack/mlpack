@@ -65,10 +65,10 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
       // conditional probabilities and the updated means.
       arma::mat tmp = observations - (means[i] *
           arma::ones<arma::rowvec>(observations.n_cols));
-      arma::mat tmp_b = tmp % (arma::ones<arma::vec>(observations.n_rows) *
+      arma::mat tmpB = tmp % (arma::ones<arma::vec>(observations.n_rows) *
           trans(condProb.col(i)));
 
-      covariances[i] = (tmp * trans(tmp_b)) / probRowSums[i];
+      covariances[i] = (tmp * trans(tmpB)) / probRowSums[i];
     }
 
     // Calculate the new values for omega using the updated conditional
@@ -141,10 +141,10 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
       // conditional probabilities and the updated means.
       arma::mat tmp = observations - (means[i] *
           arma::ones<arma::rowvec>(observations.n_cols));
-      arma::mat tmp_b = tmp % (arma::ones<arma::vec>(observations.n_rows) *
+      arma::mat tmpB = tmp % (arma::ones<arma::vec>(observations.n_rows) *
           trans(condProb.col(i) % probabilities));
 
-      covariances[i] = (tmp * trans(tmp_b)) / probRowSums[i];
+      covariances[i] = (tmp * trans(tmpB)) / probRowSums[i];
     }
 
     // Calculate the new values for omega using the updated conditional
