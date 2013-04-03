@@ -178,6 +178,7 @@ void EMFit<InitialClusteringType>::InitialClustering(
   {
     means[i].zeros();
     covariances[i].zeros();
+    covariances[i].diag().fill(1e-200);
   }
 
   // From the assignments, generate our means, covariances, and weights.
