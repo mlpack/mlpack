@@ -70,11 +70,14 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
 
       covariances[i] = (tmp * trans(tmpB)) / probRowSums[i];
 
-      if (accu(covariances[i]) == 0)
+      for (size_t d = 0; d < covariances[i].n_rows; ++d)
       {
-        Log::Debug << "Covariance " << i << " sums to zero!  Adding "
-            << " perturbation." << std::endl;
-        covariances[i].diag() += 1e-50;
+        if (covariances[i](d, d) == 0.0)
+        {
+          Log::Debug << "Covariance " << i << " has zero in diagonal element "
+              << d << "!  Adding perturbation." << std::endl;
+          covariances[i](d, d) += 1e-50;
+        }
       }
     }
 
@@ -153,11 +156,14 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
 
       covariances[i] = (tmp * trans(tmpB)) / probRowSums[i];
 
-      if (accu(covariances[i]) == 0)
+      for (size_t d = 0; d < covariances[i].n_rows; ++d)
       {
-        Log::Debug << "Covariance " << i << " sums to zero!  Adding "
-            << " perturbation." << std::endl;
-        covariances[i].diag() += 1e-50;
+        if (covariances[i](d, d) == 0.0)
+        {
+          Log::Debug << "Covariance " << i << " has zero in diagonal element "
+            << d << "!  Adding perturbation." << std::endl;
+          covariances[i](d, d) += 1e-50;
+        }
       }
     }
 
@@ -218,12 +224,14 @@ void EMFit<InitialClusteringType>::InitialClustering(
     means[i] /= weights[i];
     covariances[i] /= (weights[i] > 1) ? weights[i] : 1;
 
-    if (accu(covariances[i]) == 0)
+    for (size_t d = 0; d < covariances[i].n_rows; ++d)
     {
-      Log::Debug << "Covariance " << i << " sums to zero!  Adding perturbation."
-          << std::endl;
-      covariances[i].diag() += 1e-50;
-      Log::Debug << covariances[i];
+      if (covariances[i](d, d) == 0.0)
+      {
+        Log::Debug << "Covariance " << i << " has zero in diagonal element "
+          << d << "!  Adding perturbation." << std::endl;
+        covariances[i](d, d) += 1e-50;
+      }
     }
   }
 
