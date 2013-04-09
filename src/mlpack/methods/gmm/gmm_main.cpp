@@ -18,6 +18,7 @@ PARAM_INT("gaussians", "Number of Gaussians in the GMM.", "g", 1);
 PARAM_STRING("output_file", "The file to write the trained GMM parameters into "
     "(as XML).", "o", "gmm.xml");
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+PARAM_INT("trials", "Number of trials to perform in training GMM.", "t", 10);
 
 using namespace mlpack;
 using namespace mlpack::gmm;
@@ -49,7 +50,7 @@ int main(int argc, char* argv[])
 
   // Compute the parameters of the model using the EM algorithm.
   Timer::Start("em");
-  double likelihood = gmm.Estimate(dataPoints);
+  double likelihood = gmm.Estimate(dataPoints, CLI::GetParam<int>("trials"));
   Timer::Stop("em");
 
   Log::Info << "Log-likelihood of estimate: " << likelihood << ".\n";
