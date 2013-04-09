@@ -69,6 +69,13 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
           trans(condProb.col(i)));
 
       covariances[i] = (tmp * trans(tmpB)) / probRowSums[i];
+
+      if (accu(covariances[i]) == 0)
+      {
+        Log::Debug << "Covariance " << i << " sums to zero!  Adding "
+            << " perturbation." << std::endl;
+        covariances[i].diag() += 1e-50;
+      }
     }
 
     // Calculate the new values for omega using the updated conditional
@@ -145,6 +152,13 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
           trans(condProb.col(i) % probabilities));
 
       covariances[i] = (tmp * trans(tmpB)) / probRowSums[i];
+
+      if (accu(covariances[i]) == 0)
+      {
+        Log::Debug << "Covariance " << i << " sums to zero!  Adding "
+            << " perturbation." << std::endl;
+        covariances[i].diag() += 1e-50;
+      }
     }
 
     // Calculate the new values for omega using the updated conditional
@@ -178,7 +192,7 @@ void EMFit<InitialClusteringType>::InitialClustering(
   {
     means[i].zeros();
     covariances[i].zeros();
-    covariances[i].diag().fill(1e-200);
+    covariances[i].diag().fill(1e-50);
   }
 
   // From the assignments, generate our means, covariances, and weights.
@@ -203,6 +217,14 @@ void EMFit<InitialClusteringType>::InitialClustering(
 
     means[i] /= weights[i];
     covariances[i] /= (weights[i] > 1) ? weights[i] : 1;
+
+    if (accu(covariances[i]) == 0)
+    {
+      Log::Debug << "Covariance " << i << " sums to zero!  Adding perturbation."
+          << std::endl;
+      covariances[i].diag() += 1e-50;
+      Log::Debug << covariances[i];
+    }
   }
 
   // Finally, normalize weights.
