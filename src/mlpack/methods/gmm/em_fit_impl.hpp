@@ -284,7 +284,7 @@ double EMFit<InitialClusteringType>::LogLikelihood(
   {
     if (accu(likelihoods.col(j)) == 0)
       Log::Info << "Likelihood of point " << j << " is 0!  It is probably an "
-          << " outlier." << std::endl;
+          << "outlier." << std::endl;
     logLikelihood += log(accu(likelihoods.col(j)));
   }
 
