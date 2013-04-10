@@ -22,8 +22,6 @@ arma::vec GaussianDistribution::Random() const
  */
 void GaussianDistribution::Estimate(const arma::mat& observations)
 {
-  // Calculate the mean and covariance with each point.  Because this is a
-  // std::vector and not a matrix, this is a little more difficult.
   if (observations.n_cols > 0)
   {
     mean.zeros(observations.n_rows);
@@ -33,6 +31,7 @@ void GaussianDistribution::Estimate(const arma::mat& observations)
   {
     mean.zeros(0);
     covariance.zeros(0);
+    return;
   }
 
   // Calculate the mean.
@@ -52,6 +51,17 @@ void GaussianDistribution::Estimate(const arma::mat& observations)
   // Finish estimating the covariance by normalizing, with the (1 / (n - 1)) so
   // that it is the unbiased estimator.
   covariance /= (observations.n_cols - 1);
+
+  // Ensure that there are no zeros on the diagonal.
+  for (size_t d = 0; d < covariance.n_rows; ++d)
+  {
+    if (covariance(d, d) == 0.0)
+    {
+      Log::Debug << "GaussianDistribution::Estimate(): covariance diagonal "
+          << "element " << d << " is 0; adding perturbation." << std::endl;
+      covariance(d, d) = 1e-50;
+    }
+  }
 }
 
 /**
@@ -71,6 +81,7 @@ void GaussianDistribution::Estimate(const arma::mat& observations,
   {
     mean.zeros(0);
     covariance.zeros(0);
+    return;
   }
 
   double sumProb = 0;
@@ -81,6 +92,14 @@ void GaussianDistribution::Estimate(const arma::mat& observations,
   {
     mean += probabilities[i] * observations.col(i);
     sumProb += probabilities[i];
+  }
+
+  if (sumProb == 0)
+  {
+    // Nothing in this Gaussian!  At least set the covariance so that it's
+    // invertible.
+    covariance.diag() += 1e-50;
+    return;
   }
 
   // Normalize.
@@ -96,6 +115,16 @@ void GaussianDistribution::Estimate(const arma::mat& observations,
   // This is probably biased, but I don't know how to unbias it.
   covariance /= sumProb;
 
+  // Ensure that there are no zeros on the diagonal.
+  for (size_t d = 0; d < covariance.n_rows; ++d)
+  {
+    if (covariance(d, d) == 0.0)
+    {
+      Log::Debug << "GaussianDistribution::Estimate(): covariance diagonal "
+          << "element " << d << " is 0; adding perturbation." << std::endl;
+      covariance(d, d) = 1e-50;
+    }
+  }
 }
 
 /**
