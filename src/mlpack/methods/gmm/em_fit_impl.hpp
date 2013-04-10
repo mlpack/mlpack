@@ -50,7 +50,13 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
 
     // Normalize row-wise.
     for (size_t i = 0; i < condProb.n_rows; i++)
-      condProb.row(i) /= accu(condProb.row(i));
+    {
+      // Avoid dividing by zero; if the probability for everything is 0, we
+      // don't want to make it NaN.
+      const double probSum = accu(condProb.row(i));
+      if (probSum != 0.0)
+        condProb.row(i) /= probSum;
+    }
 
     // Store the sum of the probability of each state over all the observations.
     arma::vec probRowSums = trans(arma::sum(condProb, 0 /* columnwise */));
@@ -128,7 +134,13 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
 
     // Normalize row-wise.
     for (size_t i = 0; i < condProb.n_rows; i++)
-      condProb.row(i) /= accu(condProb.row(i));
+    {
+      // Avoid dividing by zero; if the probability for everything is 0, we
+      // don't want to make it NaN.
+      const double probSum = accu(condProb.row(i));
+      if (probSum != 0.0)
+        condProb.row(i) /= probSum;
+    }
 
     // This will store the sum of probabilities of each state over all the
     // observations.
@@ -198,19 +210,18 @@ void EMFit<InitialClusteringType>::InitialClustering(
   {
     means[i].zeros();
     covariances[i].zeros();
-    covariances[i].diag().fill(1e-50);
   }
 
   // From the assignments, generate our means, covariances, and weights.
   for (size_t i = 0; i < observations.n_cols; ++i)
   {
-    size_t cluster = assignments[i];
+    const size_t cluster = assignments[i];
 
     // Add this to the relevant mean.
     means[cluster] += observations.col(i);
 
     // Add this to the relevant covariance.
-    covariances[cluster] += observations.col(i) * trans(observations.col(i));
+//    covariances[cluster] += observations.col(i) * trans(observations.col(i));
 
     // Now add one to the weights (we will normalize).
     weights[cluster]++;
@@ -219,9 +230,21 @@ void EMFit<InitialClusteringType>::InitialClustering(
   // Now normalize the mean and covariance.
   for (size_t i = 0; i < means.size(); ++i)
   {
-    covariances[i] -= means[i] * trans(means[i]) / weights[i];
+//    covariances[i] -= means[i] * trans(means[i]);
 
-    means[i] /= weights[i];
+    means[i] /= (weights[i] > 1) ? weights[i] : 1;
+//    covariances[i] /= (weights[i] > 1) ? weights[i] : 1;
+  }
+
+  for (size_t i = 0; i < observations.n_cols; ++i)
+  {
+    const size_t cluster = assignments[i];
+    const arma::vec normObs = observations.col(i) - means[cluster];
+    covariances[cluster] += normObs * normObs.t();
+  }
+
+  for (size_t i = 0; i < means.size(); ++i)
+  {
     covariances[i] /= (weights[i] > 1) ? weights[i] : 1;
 
     for (size_t d = 0; d < covariances[i].n_rows; ++d)
@@ -258,7 +281,12 @@ double EMFit<InitialClusteringType>::LogLikelihood(
 
   // Now sum over every point.
   for (size_t j = 0; j < observations.n_cols; ++j)
+  {
+    if (accu(likelihoods.col(j)) == 0)
+      Log::Info << "Likelihood of point " << j << " is 0!  It is probably an "
+          << " outlier." << std::endl;
     logLikelihood += log(accu(likelihoods.col(j)));
+  }
 
   return logLikelihood;
 }
