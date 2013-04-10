@@ -211,7 +211,7 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
 
     bestLikelihood = LogLikelihood(observations, means, covariances, weights);
 
-    Log::Debug << "GMM::Estimate(): Log-likelihood of trial 0 is "
+    Log::Info << "GMM::Estimate(): Log-likelihood of trial 0 is "
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
@@ -228,7 +228,7 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
       double newLikelihood = LogLikelihood(observations, meansTrial,
           covariancesTrial, weightsTrial);
 
-      Log::Debug << "GMM::Estimate(): Log-likelihood of trial " << trial
+      Log::Info << "GMM::Estimate(): Log-likelihood of trial " << trial
           << " is " << newLikelihood << "." << std::endl;
 
       if (newLikelihood > bestLikelihood)
