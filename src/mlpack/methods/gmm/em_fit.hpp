@@ -35,10 +35,20 @@ class EMFit
  public:
   /**
    * Construct the EMFit object, optionally passing an InitialClusteringType
-   * object (just in case it needs to store state).
+   * object (just in case it needs to store state).  Setting the maximum number
+   * of iterations to 0 means that the EM algorithm will iterate until
+   * convergence (with the given tolerance).
+   *
+   * @param clusterer Object which will perform the initial clustering.
+   * @param maxIterations Maximum number of iterations for EM.
+   * @param tolerance Log-likelihood tolerance required for convergence.
+   * @param perturbation Value to add to zero-valued diagonal covariance entries
+   *     to ensure positive-definiteness.
    */
-  EMFit(InitialClusteringType clusterer = InitialClusteringType()) :
-      clusterer(clusterer) { /* Nothing to do. */ }
+  EMFit(const size_t maxIterations = 300,
+        const double tolerance = 1e-10,
+        const double perturbation = 1e-30,
+        InitialClusteringType clusterer = InitialClusteringType());
 
   /**
    * Fit the observations to a Gaussian mixture model (GMM) using the EM
@@ -73,6 +83,26 @@ class EMFit
                 std::vector<arma::mat>& covariances,
                 arma::vec& weights);
 
+  //! Get the clusterer.
+  const InitialClusteringType& Clusterer() const { return clusterer; }
+  //! Modify the clusterer.
+  InitialClusteringType& Clusterer() { return clusterer; }
+
+  //! Get the maximum number of iterations of the EM algorithm.
+  size_t MaxIterations() const { return maxIterations; }
+  //! Modify the maximum number of iterations of the EM algorithm.
+  size_t& MaxIterations() { return maxIterations; }
+
+  //! Get the tolerance for the convergence of the EM algorithm.
+  double Tolerance() const { return tolerance; }
+  //! Modify the tolerance for the convergence of the EM algorithm.
+  double& Tolerance() { return tolerance; }
+
+  //! Get the perturbation added to zero diagonal covariance elements.
+  double Perturbation() const { return perturbation; }
+  //! Modify the perturbation added to zero diagonal covariance elements.
+  double& Perturbation() { return perturbation; }
+
  private:
   /**
    * Run the clusterer, and then turn the cluster assignments into Gaussians.
@@ -104,6 +134,13 @@ class EMFit
                        const std::vector<arma::mat>& covariances,
                        const arma::vec& weights) const;
 
+  //! Maximum iterations of EM algorithm.
+  size_t maxIterations;
+  //! Tolerance for convergence of EM.
+  double tolerance;
+  //! Perturbation to add to zero-valued diagonal covariance values.
+  double perturbation;
+  //! Object which will perform the clustering.
   InitialClusteringType clusterer;
 };
 

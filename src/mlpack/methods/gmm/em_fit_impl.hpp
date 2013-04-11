@@ -16,6 +16,18 @@
 namespace mlpack {
 namespace gmm {
 
+//! Constructor.
+template<typename InitialClusteringType>
+EMFit<InitialClusteringType>::EMFit(const size_t maxIterations,
+                                    const double tolerance,
+                                    const double perturbation,
+                                    InitialClusteringType clusterer) :
+    maxIterations(maxIterations),
+    tolerance(tolerance),
+    perturbation(perturbation),
+    clusterer(clusterer)
+{ /* Nothing to do. */ }
+
 template<typename InitialClusteringType>
 void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
                                             std::vector<arma::vec>& means,
@@ -33,9 +45,8 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
   arma::mat condProb(observations.n_cols, means.size());
 
   // Iterate to update the model until no more improvement is found.
-  size_t maxIterations = 300;
-  size_t iteration = 0;
-  while (std::abs(l - lOld) > 1e-10 && iteration < maxIterations)
+  size_t iteration = 1;
+  while (std::abs(l - lOld) > tolerance && iteration != maxIterations)
   {
     // Calculate the conditional probabilities of choosing a particular
     // Gaussian given the observations and the present theta value.
@@ -82,7 +93,7 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
         {
           Log::Debug << "Covariance " << i << " has zero in diagonal element "
               << d << "!  Adding perturbation." << std::endl;
-          covariances[i](d, d) += 1e-50;
+          covariances[i](d, d) += perturbation;
         }
       }
     }
@@ -117,9 +128,8 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
   arma::mat condProb(observations.n_cols, means.size());
 
   // Iterate to update the model until no more improvement is found.
-  size_t maxIterations = 300;
-  size_t iteration = 0;
-  while (std::abs(l - lOld) > 1e-10 && iteration < maxIterations)
+  size_t iteration = 1;
+  while (std::abs(l - lOld) > tolerance && iteration != maxIterations)
   {
     // Calculate the conditional probabilities of choosing a particular
     // Gaussian given the observations and the present theta value.
@@ -174,7 +184,7 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
         {
           Log::Debug << "Covariance " << i << " has zero in diagonal element "
             << d << "!  Adding perturbation." << std::endl;
-          covariances[i](d, d) += 1e-50;
+          covariances[i](d, d) += perturbation;
         }
       }
     }
@@ -253,7 +263,7 @@ void EMFit<InitialClusteringType>::InitialClustering(
       {
         Log::Debug << "Covariance " << i << " has zero in diagonal element "
           << d << "!  Adding perturbation." << std::endl;
-        covariances[i](d, d) += 1e-50;
+        covariances[i](d, d) += perturbation;
       }
     }
   }
