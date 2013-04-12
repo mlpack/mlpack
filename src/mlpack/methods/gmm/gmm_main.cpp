@@ -13,11 +13,17 @@ PROGRAM_INFO("Gaussian Mixture Model (GMM) Training",
     "Gaussian."
     "\n\n"
     "If GMM training fails with an error indicating that a covariance matrix "
-    "could not be inverted, this is probably remedied either via a larger "
-    "option to the perturbation parameter, or alternately, adding a small "
-    "amount of Gaussian noise to the entire dataset.  This helps prevent "
-    "Gaussians with zero variance in a particular dimension, which is usually "
-    "the cause of non-invertible covariance matrices.");
+    "could not be inverted, be sure that the 'no_force_positive' flag was not "
+    "specified.  Alternately, adding a small amount of Gaussian noise to the "
+    "entire dataset may help prevent Gaussians with zero variance in a "
+    "particular dimension, which is usually the cause of non-invertible "
+    "covariance matrices."
+    "\n\n"
+    "The 'no_force_positive' flag, if set, will avoid the checks after each "
+    "iteration of the EM algorithm which ensure that the covariance matrices "
+    "are positive definite.  Specifying the flag can cause faster runtime, "
+    "but may also cause non-positive definite covariance matrices, which will "
+    "cause the program to crash.");
 
 PARAM_STRING_REQ("input_file", "File containing the data on which the model "
     "will be fit.", "i");
@@ -29,8 +35,8 @@ PARAM_INT("trials", "Number of trials to perform in training GMM.", "t", 10);
 
 // Parameters for EM algorithm.
 PARAM_DOUBLE("tolerance", "Tolerance for convergence of EM.", "T", 1e-10);
-PARAM_DOUBLE("perturbation", "Perturbation to add to zero-valued diagonal "
-    "covariance entries.", "p", 1e-30);
+PARAM_FLAG("no_force_positive", "Do not force the covariance matrices to be "
+    "positive definite.", "P");
 PARAM_INT("max_iterations", "Maximum number of iterations of EM algorithm "
     "(passing 0 will run until convergence).", "n", 250);
 
@@ -77,8 +83,8 @@ int main(int argc, char* argv[])
   // Gather parameters for EMFit object.
   const size_t maxIterations = (size_t) CLI::GetParam<int>("max_iterations");
   const double tolerance = CLI::GetParam<double>("tolerance");
-  const double perturbation = CLI::GetParam<double>("perturbation");
-  EMFit<> em(maxIterations, tolerance, perturbation);
+  const bool forcePositive = !CLI::HasParam("no_force_positive");
+  EMFit<> em(maxIterations, tolerance, forcePositive);
 
   // Calculate mixture of Gaussians.
   GMM<> gmm(size_t(gaussians), dataPoints.n_rows, em);
