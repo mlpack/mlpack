@@ -20,11 +20,11 @@ namespace gmm {
 template<typename InitialClusteringType>
 EMFit<InitialClusteringType>::EMFit(const size_t maxIterations,
                                     const double tolerance,
-                                    const double perturbation,
+                                    const bool forcePositive,
                                     InitialClusteringType clusterer) :
     maxIterations(maxIterations),
     tolerance(tolerance),
-    perturbation(perturbation),
+    forcePositive(forcePositive),
     clusterer(clusterer)
 { /* Nothing to do. */ }
 
@@ -48,6 +48,9 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
   size_t iteration = 1;
   while (std::abs(l - lOld) > tolerance && iteration != maxIterations)
   {
+    Log::Info << "EMFit::Estimate(): iteration " << iteration << ", "
+        << "log-likelihood " << l << "." << std::endl;
+
     // Calculate the conditional probabilities of choosing a particular
     // Gaussian given the observations and the present theta value.
     for (size_t i = 0; i < means.size(); i++)
@@ -74,9 +77,12 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
 
     // Calculate the new value of the means using the updated conditional
     // probabilities.
+    size_t nonPositive = 0; // Count the number of non-positive covariances.
     for (size_t i = 0; i < means.size(); i++)
     {
-      means[i] = (observations * condProb.col(i)) / probRowSums[i];
+      // Don't update if there's no probability of the Gaussian having points.
+      if (probRowSums[i] != 0)
+        means[i] = (observations * condProb.col(i)) / probRowSums[i];
 
       // Calculate the new value of the covariances using the updated
       // conditional probabilities and the updated means.
@@ -85,18 +91,29 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
       arma::mat tmpB = tmp % (arma::ones<arma::vec>(observations.n_rows) *
           trans(condProb.col(i)));
 
-      covariances[i] = (tmp * trans(tmpB)) / probRowSums[i];
+      // Don't update if there's no probability of the Gaussian having points.
+      if (probRowSums[i] != 0.0)
+        covariances[i] = (tmp * trans(tmpB)) / probRowSums[i];
 
-      for (size_t d = 0; d < covariances[i].n_rows; ++d)
+      // Ensure positive-definiteness.  TODO: make this more efficient.
+      if (forcePositive && det(covariances[i]) <= 1e-50)
       {
-        if (covariances[i](d, d) == 0.0)
+        ++nonPositive;
+        Log::Debug << "Covariance matrix " << i << " is not positive definite. "
+            << "Adding perturbation." << std::endl;
+
+        double perturbation = 1e-30;
+        while (det(covariances[i]) <= 1e-50)
         {
-          Log::Debug << "Covariance " << i << " has zero in diagonal element "
-              << d << "!  Adding perturbation." << std::endl;
-          covariances[i](d, d) += perturbation;
+          covariances[i].diag() += perturbation;
+          perturbation *= 10; // Slow, but we don't want to add too much.
         }
       }
     }
+
+    if (nonPositive > 0)
+      Log::Warn << nonPositive << " covariance matrices are very small. "
+          << "Consider reducing the number of Gaussians." << std::endl;
 
     // Calculate the new values for omega using the updated conditional
     // probabilities.
@@ -178,13 +195,17 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
 
       covariances[i] = (tmp * trans(tmpB)) / probRowSums[i];
 
-      for (size_t d = 0; d < covariances[i].n_rows; ++d)
+      // Ensure positive-definiteness.  TODO: make this more efficient.
+      if (forcePositive && det(covariances[i]) <= 1e-50)
       {
-        if (covariances[i](d, d) == 0.0)
+        Log::Debug << "Covariance matrix " << i << " is not positive definite. "
+            << "Adding perturbation." << std::endl;
+
+        double perturbation = 1e-30;
+        while (det(covariances[i]) <= 1e-50)
         {
-          Log::Debug << "Covariance " << i << " has zero in diagonal element "
-            << d << "!  Adding perturbation." << std::endl;
-          covariances[i](d, d) += perturbation;
+          covariances[i].diag() += perturbation;
+          perturbation *= 10; // Slow, but we don't want to add too much.
         }
       }
     }
@@ -257,13 +278,17 @@ void EMFit<InitialClusteringType>::InitialClustering(
   {
     covariances[i] /= (weights[i] > 1) ? weights[i] : 1;
 
-    for (size_t d = 0; d < covariances[i].n_rows; ++d)
+    // Ensure positive-definiteness.  TODO: make this more efficient.
+    if (forcePositive && det(covariances[i]) <= 1e-50)
     {
-      if (covariances[i](d, d) == 0.0)
+      Log::Debug << "Covariance matrix " << i << " is not positive definite. "
+          << "Adding perturbation." << std::endl;
+
+      double perturbation = 1e-50;
+      while (det(covariances[i]) <= 1e-50)
       {
-        Log::Debug << "Covariance " << i << " has zero in diagonal element "
-          << d << "!  Adding perturbation." << std::endl;
-        covariances[i](d, d) += perturbation;
+        covariances[i].diag() += perturbation;
+        perturbation *= 10; // Slow, but we don't want to add too much.
       }
     }
   }
