@@ -97,7 +97,6 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
       // Ensure positive-definiteness.  TODO: make this more efficient.
       if (forcePositive && det(covariances[i]) <= 1e-50)
       {
-        ++nonPositive;
         Log::Debug << "Covariance matrix " << i << " is not positive definite. "
             << "Adding perturbation." << std::endl;
 
