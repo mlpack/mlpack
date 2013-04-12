@@ -77,7 +77,6 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
 
     // Calculate the new value of the means using the updated conditional
     // probabilities.
-    size_t nonPositive = 0; // Count the number of non-positive covariances.
     for (size_t i = 0; i < means.size(); i++)
     {
       // Don't update if there's no probability of the Gaussian having points.
@@ -110,10 +109,6 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
         }
       }
     }
-
-    if (nonPositive > 0)
-      Log::Warn << nonPositive << " covariance matrices are very small. "
-          << "Consider reducing the number of Gaussians." << std::endl;
 
     // Calculate the new values for omega using the updated conditional
     // probabilities.
