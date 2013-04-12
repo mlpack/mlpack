@@ -39,15 +39,20 @@ class EMFit
    * of iterations to 0 means that the EM algorithm will iterate until
    * convergence (with the given tolerance).
    *
-   * @param clusterer Object which will perform the initial clustering.
+   * The parameter forcePositive controls whether or not the covariance matrices
+   * are checked for positive definiteness at each iteration.  This could be a
+   * time-consuming task, so, if you know your data is well-behaved, you can set
+   * it to false and save some runtime.
+   *
    * @param maxIterations Maximum number of iterations for EM.
    * @param tolerance Log-likelihood tolerance required for convergence.
-   * @param perturbation Value to add to zero-valued diagonal covariance entries
-   *     to ensure positive-definiteness.
+   * @param forcePositive Check for positive-definiteness of each covariance
+   *     matrix at each iteration.
+   * @param clusterer Object which will perform the initial clustering.
    */
   EMFit(const size_t maxIterations = 300,
         const double tolerance = 1e-10,
-        const double perturbation = 1e-30,
+        const bool forcePositive = true,
         InitialClusteringType clusterer = InitialClusteringType());
 
   /**
@@ -98,10 +103,12 @@ class EMFit
   //! Modify the tolerance for the convergence of the EM algorithm.
   double& Tolerance() { return tolerance; }
 
-  //! Get the perturbation added to zero diagonal covariance elements.
-  double Perturbation() const { return perturbation; }
-  //! Modify the perturbation added to zero diagonal covariance elements.
-  double& Perturbation() { return perturbation; }
+  //! Get whether or not the covariance matrices are forced to be positive
+  //! definite.
+  bool ForcePositive() const { return forcePositive; }
+  //! Modify whether or not the covariance matrices are forced to be positive
+  //! definite.
+  bool& ForcePositive() { return forcePositive; }
 
  private:
   /**
@@ -138,8 +145,8 @@ class EMFit
   size_t maxIterations;
   //! Tolerance for convergence of EM.
   double tolerance;
-  //! Perturbation to add to zero-valued diagonal covariance values.
-  double perturbation;
+  //! Whether or not to force positive definiteness of covariance matrices.
+  bool forcePositive;
   //! Object which will perform the clustering.
   InitialClusteringType clusterer;
 };
