@@ -52,14 +52,17 @@ void GaussianDistribution::Estimate(const arma::mat& observations)
   // that it is the unbiased estimator.
   covariance /= (observations.n_cols - 1);
 
-  // Ensure that there are no zeros on the diagonal.
-  for (size_t d = 0; d < covariance.n_rows; ++d)
+  // Ensure that the covariance is positive definite.
+  if (det(covariance) <= 1e-50)
   {
-    if (covariance(d, d) == 0.0)
+    Log::Debug << "GaussianDistribution::Estimate(): Covariance matrix is not "
+        << "positive definite. Adding perturbation." << std::endl;
+
+    double perturbation = 1e-30;
+    while (det(covariance) <= 1e-50)
     {
-      Log::Debug << "GaussianDistribution::Estimate(): covariance diagonal "
-          << "element " << d << " is 0; adding perturbation." << std::endl;
-      covariance(d, d) = 1e-50;
+      covariance.diag() += perturbation;
+      perturbation *= 10; // Slow, but we don't want to add too much.
     }
   }
 }
@@ -115,14 +118,17 @@ void GaussianDistribution::Estimate(const arma::mat& observations,
   // This is probably biased, but I don't know how to unbias it.
   covariance /= sumProb;
 
-  // Ensure that there are no zeros on the diagonal.
-  for (size_t d = 0; d < covariance.n_rows; ++d)
+  // Ensure that the covariance is positive definite.
+  if (det(covariance) <= 1e-50)
   {
-    if (covariance(d, d) == 0.0)
+    Log::Debug << "GaussianDistribution::Estimate(): Covariance matrix is not "
+        << "positive definite. Adding perturbation." << std::endl;
+
+    double perturbation = 1e-30;
+    while (det(covariance) <= 1e-50)
     {
-      Log::Debug << "GaussianDistribution::Estimate(): covariance diagonal "
-          << "element " << d << " is 0; adding perturbation." << std::endl;
-      covariance(d, d) = 1e-50;
+      covariance.diag() += perturbation;
+      perturbation *= 10; // Slow, but we don't want to add too much.
     }
   }
 }
