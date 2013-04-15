@@ -84,11 +84,17 @@ class HMM
    * observations is taken from the emissions variable, so it is important that
    * the given default emission distribution is set with the correct
    * dimensionality.  Alternately, set the dimensionality with Dimensionality().
+   * Optionally, the tolerance for convergence of the Baum-Welch algorithm can
+   * be set.
    *
    * @param states Number of states.
    * @param emissions Default distribution for emissions.
+   * @param tolerance Tolerance for convergence of training algorithm
+   *      (Baum-Welch).
    */
-  HMM(const size_t states, const Distribution emissions);
+  HMM(const size_t states,
+      const Distribution emissions,
+      const double tolerance = 1e-5);
 
   /**
    * Create the Hidden Markov Model with the given transition matrix and the
@@ -103,10 +109,17 @@ class HMM
    * The emission matrix should be such that E(i, j) is the probability of
    * emission i while in state j.  The columns of the matrix should sum to 1.
    *
+   * Optionally, the tolerance for convergence of the Baum-Welch algorithm can
+   * be set.
+   *
    * @param transition Transition matrix.
    * @param emission Emission distributions.
+   * @param tolerance Tolerance for convergence of training algorithm
+   *      (Baum-Welch).
    */
-  HMM(const arma::mat& transition, const std::vector<Distribution>& emission);
+  HMM(const arma::mat& transition,
+      const std::vector<Distribution>& emission,
+      const double tolerance = 1e-5);
 
   /**
    * Train the model using the Baum-Welch algorithm, with only the given
@@ -122,6 +135,11 @@ class HMM
    * unavailable, this will work.  In addition, it is possible to use Train()
    * with labeled data first, and then continue to train the model using this
    * overload of Train() with unlabeled data.
+   *
+   * The tolerance of the Baum-Welch algorithm can be set either in the
+   * constructor or with the Tolerance() method.  When the change in
+   * log-likelihood of the model between iterations is less than the tolerance,
+   * the Baum-Welch algorithm terminates.
    *
    * @note
    * Train() can be called multiple times with different sequences; each time it
@@ -247,6 +265,11 @@ class HMM
   //! Set the dimensionality of observations.
   size_t& Dimensionality() { return dimensionality; }
 
+  //! Get the tolerance of the Baum-Welch algorithm.
+  double Tolerance() const { return tolerance; }
+  //! Modify the tolerance of the Baum-Welch algorithm.
+  double& Tolerance() { return tolerance; }
+
  private:
   // Helper functions.
 
@@ -287,6 +310,9 @@ class HMM
 
   //! Dimensionality of observations.
   size_t dimensionality;
+
+  //! Tolerance of Baum-Welch algorithm.
+  double tolerance;
 };
 
 }; // namespace hmm

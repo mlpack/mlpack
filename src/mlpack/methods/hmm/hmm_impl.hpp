@@ -19,10 +19,13 @@ namespace hmm {
  * given number of emission states.
  */
 template<typename Distribution>
-HMM<Distribution>::HMM(const size_t states, const Distribution emissions) :
+HMM<Distribution>::HMM(const size_t states,
+                       const Distribution emissions,
+                       const double tolerance) :
     transition(arma::ones<arma::mat>(states, states) / (double) states),
     emission(states, /* default distribution */ emissions),
-    dimensionality(emissions.Dimensionality())
+    dimensionality(emissions.Dimensionality()),
+    tolerance(tolerance)
 { /* nothing to do */ }
 
 /**
@@ -31,9 +34,11 @@ HMM<Distribution>::HMM(const size_t states, const Distribution emissions) :
  */
 template<typename Distribution>
 HMM<Distribution>::HMM(const arma::mat& transition,
-                       const std::vector<Distribution>& emission) :
+                       const std::vector<Distribution>& emission,
+                       const double tolerance) :
     transition(transition),
-    emission(emission)
+    emission(emission),
+    tolerance(tolerance)
 {
   // Set the dimensionality, if we can.
   if (emission.size() > 0)
@@ -160,7 +165,7 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
     Log::Debug << "Iteration " << iter << ": log-likelihood " << loglik
         << std::endl;
 
-    if (fabs(oldLoglik - loglik) < 1e-5)
+    if (std::abs(oldLoglik - loglik) < tolerance)
     {
       Log::Debug << "Converged after " << iter << " iterations." << std::endl;
       break;
