@@ -109,38 +109,15 @@ class KMeans
                const size_t clusters,
                arma::Col<size_t>& assignments) const;
 
-  /**
-   * Return the overclustering factor.
-   */
+  //! Return the overclustering factor.
   double OverclusteringFactor() const { return overclusteringFactor; }
+  //! Set the overclustering factor.  Must be greater than 1.
+  double& OverclusteringFactor() { return overclusteringFactor; }
 
-  /**
-   * Set the overclustering factor.
-   */
-  void OverclusteringFactor(const double overclusteringFactor)
-  {
-    if (overclusteringFactor < 1.0)
-    {
-      Log::Warn << "KMeans::OverclusteringFactor(): invalid value (<= 1.0) "
-          "ignored." << std::endl;
-      return;
-    }
-
-    this->overclusteringFactor = overclusteringFactor;
-  }
-
-  /**
-   * Get the maximum number of iterations.
-   */
+  //! Get the maximum number of iterations.
   size_t MaxIterations() const { return maxIterations; }
-
-  /**
-   * Set the maximum number of iterations.
-   */
-  void MaxIterations(const size_t maxIterations)
-  {
-    this->maxIterations = maxIterations;
-  }
+  //! Set the maximum number of iterations.
+  size_t& MaxIterations() { return maxIterations; }
 
   //! Get the distance metric.
   const DistanceMetric& Metric() const { return metric; }
@@ -154,9 +131,7 @@ class KMeans
 
   //! Get the empty cluster policy.
   const EmptyClusterPolicy& EmptyClusterAction() const
-  {
-    return emptyClusterAction;
-  }
+  { return emptyClusterAction; }
   //! Modify the empty cluster policy.
   EmptyClusterPolicy& EmptyClusterAction() { return emptyClusterAction; }
 
