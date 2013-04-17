@@ -88,22 +88,58 @@ class KMeans
 
 
   /**
-   * Perform K-Means clustering on the data, returning a list of cluster
+   * Perform k-means clustering on the data, returning a list of cluster
    * assignments.  Optionally, the vector of assignments can be set to an
-   * initial guess of the cluster assignments; to do this, the number of
-   * elements in the list of assignments must be equal to the number of points
-   * (columns) in the dataset.
+   * initial guess of the cluster assignments; to do this, set initialGuess to
+   * true.
    *
-   * @tparam MatType Type of matrix (arma::mat or arma::spmat).
+   * @tparam MatType Type of matrix (arma::mat or arma::sp_mat).
    * @param data Dataset to cluster.
    * @param clusters Number of clusters to compute.
-   * @param assignments Vector to store cluster assignments in.  Can contain an
-   *     initial guess at cluster assignments.
+   * @param assignments Vector to store cluster assignments in.
+   * @param initialGuess If true, then it is assumed that assignments has a list
+   *      of initial cluster assignments.
    */
   template<typename MatType>
   void Cluster(const MatType& data,
                const size_t clusters,
-               arma::Col<size_t>& assignments) const;
+               arma::Col<size_t>& assignments,
+               const bool initialGuess = false) const;
+
+  /**
+   * Perform k-means clustering on the data, returning a list of cluster
+   * assignments and also the centroids of each cluster.  Optionally, the vector
+   * of assignments can be set to an initial guess of the cluster assignments;
+   * to do this, set initialAssignmentGuess to true.  Another way to set initial
+   * cluster guesses is to fill the centroids matrix with the centroid guesses,
+   * and then set initialCentroidGuess to true.  initialAssignmentGuess
+   * supersedes initialCentroidGuess, so if both are set to true, the
+   * assignments vector is used.
+   *
+   * Note that if the overclustering factor is greater than 1, the centroids
+   * matrix will be resized in the method.  Regardless of the overclustering
+   * factor, the centroid guess matrix (if initialCentroidGuess is set to true)
+   * should have the same number of rows as the data matrix, and number of
+   * columns equal to 'clusters'.
+   *
+   * @tparam MatType Type of matrix (arma::mat or arma::sp_mat).
+   * @param data Dataset to cluster.
+   * @param clusters Number of clusters to compute.
+   * @param assignments Vector to store cluster assignments in.
+   * @param centroids Matrix in which centroids are stored.
+   * @param initialAssignmentGuess If true, then it is assumed that assignments
+   *      has a list of initial cluster assignments.
+   * @param initialCentroidGuess If true, then it is assumed that centroids
+   *      contains the initial centroids of each cluster.
+   */
+  template<typename MatType>
+  void Cluster(const MatType& data,
+               const size_t clusters,
+               arma::Col<size_t>& assignments,
+               MatType& centroids,
+               const bool initialAssignmentGuess = false,
+               const bool initialCentroidGuess = false) const;
+
   template<typename MatType>
   void FastCluster(MatType& data,
                const size_t clusters,
