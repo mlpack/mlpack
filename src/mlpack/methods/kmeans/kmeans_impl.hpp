@@ -509,7 +509,7 @@ Cluster(const MatType& data,
 
   // Make sure our overclustering factor is valid.
   size_t actualClusters = size_t(overclusteringFactor * clusters);
-  if (actualClusters > data.n_cols)
+  if (actualClusters > data.n_cols && overclusteringFactor != 1.0)
   {
     Log::Warn << "KMeans::Cluster(): overclustering factor is too large.  No "
         << "overclustering will be done." << std::endl;
