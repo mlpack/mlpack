@@ -539,16 +539,19 @@ Cluster(const MatType& data,
   }
 
   // Now, the initial assignments.  First determine if they are necessary.
-  if (initialAssignmentGuess && assignments.n_cols != data.n_cols)
+  if (initialAssignmentGuess && assignments.n_elem != data.n_cols)
   {
-    Log::Fatal << "KMeans::Cluster(): initial cluster assignments not the same "
-        << "size as the dataset!" << std::endl;
+    Log::Fatal << "KMeans::Cluster(): initial cluster assignments (length "
+        << assignments.n_elem << ") not the same size as the dataset (size "
+        << data.n_cols << ")!" << std::endl;
   }
   else if (initialCentroidGuess && (centroids.n_rows != data.n_rows ||
                                     centroids.n_cols != clusters))
   {
     Log::Fatal << "KMeans::Cluster(): wrong number of initial cluster centroids"
-        << " or wrong dimensionality!" << std::endl;
+        << " (" << centroids.n_cols << ", should be " << clusters << ") or "
+        << "wrong dimensionality (" << centroids.n_rows << ", should be "
+        << data.n_rows << ")!" << std::endl;
   }
   else
   {
