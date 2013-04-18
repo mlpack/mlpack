@@ -7,6 +7,8 @@ set(SOURCES
   max_variance_new_cluster.hpp
   max_variance_new_cluster_impl.hpp
   random_partition.hpp
+  refined_start.hpp
+  refined_start_impl.hpp
 )
 
 # Add directory name to sources.
