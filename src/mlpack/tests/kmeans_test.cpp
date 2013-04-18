@@ -206,6 +206,176 @@ BOOST_AUTO_TEST_CASE(RandomPartitionTest)
     BOOST_REQUIRE_LT(assignments[i], 18);
 }
 
+/**
+ * Make sure that random initialization fails for a corner case dataset.
+ */
+BOOST_AUTO_TEST_CASE(RandomInitialAssignmentFailureTest)
+{
+  // This is a very synthetic dataset.  It is one Gaussian with a huge number of
+  // points combined with one faraway Gaussian with very few points.  Normally,
+  // k-means should not get the correct result -- which is one cluster at each
+  // Gaussian.  This is because the random partitioning scheme has very low
+  // (virtually zero) likelihood of separating the two Gaussians properly, and
+  // then the algorithm will never converge to that result.
+  //
+  // So we will set the initial assignments appropriately.  Remember, once the
+  // initial assignments are done, k-means is deterministic.
+  arma::mat dataset(2, 10002);
+  dataset.randn();
+  // Now move the second Gaussian far away.
+  for (size_t i = 0; i < 2; ++i)
+    dataset.col(10000 + i) += arma::vec("50 50");
+
+  // Ensure that k-means fails when run with random initialization.  This isn't
+  // strictly a necessary test, but it does help let us know that this is a good
+  // test.
+  size_t successes = 0;
+  for (size_t run = 0; run < 15; ++run)
+  {
+    arma::mat centroids;
+    arma::Col<size_t> assignments;
+    KMeans<> kmeans;
+    kmeans.Cluster(dataset, 2, assignments, centroids);
+
+    // Inspect centroids.  See if one is close to the second Gaussian.
+    if ((centroids(0, 0) >= 30.0 && centroids(1, 0) >= 30.0) ||
+        (centroids(0, 1) >= 30.0 && centroids(1, 1) >= 30.0))
+      ++successes;
+  }
+
+  // Only one success allowed.  The probability of two successes should be
+  // infinitesimal.
+  BOOST_REQUIRE_LT(successes, 2);
+}
+
+/**
+ * Make sure that specifying initial assignments is successful for a corner case
+ * dataset which doesn't usually converge otherwise.
+ */
+BOOST_AUTO_TEST_CASE(InitialAssignmentTest)
+{
+  // For a better description of this dataset, see
+  // RandomInitialAssignmentFailureTest.
+  arma::mat dataset(2, 10002);
+  dataset.randn();
+  // Now move the second Gaussian far away.
+  for (size_t i = 0; i < 2; ++i)
+    dataset.col(10000 + i) += arma::vec("50 50");
+
+  // Now, if we specify initial assignments, the algorithm should converge (with
+  // zero iterations, actually, because this is the solution).
+  arma::Col<size_t> assignments(10002);
+  assignments.fill(0);
+  assignments[10000] = 1;
+  assignments[10001] = 1;
+
+  KMeans<> kmeans;
+  kmeans.Cluster(dataset, 2, assignments, true);
+
+  // Check results.
+  for (size_t i = 0; i < 10000; ++i)
+    BOOST_REQUIRE_EQUAL(assignments[i], 0);
+  for (size_t i = 10000; i < 10002; ++i)
+    BOOST_REQUIRE_EQUAL(assignments[i], 1);
+
+  // Now, slightly harder.  Give it one incorrect assignment in each cluster.
+  // The wrong assignment should be quickly fixed.
+  assignments[9999] = 1;
+  assignments[10000] = 0;
+
+  kmeans.Cluster(dataset, 2, assignments, true);
+
+  // Check results.
+  for (size_t i = 0; i < 10000; ++i)
+    BOOST_REQUIRE_EQUAL(assignments[i], 0);
+  for (size_t i = 10000; i < 10002; ++i)
+    BOOST_REQUIRE_EQUAL(assignments[i], 1);
+}
+
+/**
+ * Make sure specifying initial centroids is successful for a corner case which
+ * doesn't usually converge otherwise.
+ */
+BOOST_AUTO_TEST_CASE(InitialCentroidTest)
+{
+  // For a better description of this dataset, see
+  // RandomInitialAssignmentFailureTest.
+  arma::mat dataset(2, 10002);
+  dataset.randn();
+  // Now move the second Gaussian far away.
+  for (size_t i = 0; i < 2; ++i)
+    dataset.col(10000 + i) += arma::vec("50 50");
+
+  arma::Col<size_t> assignments;
+  arma::mat centroids(2, 2);
+
+  centroids.col(0) = arma::vec("0 0");
+  centroids.col(1) = arma::vec("50 50");
+
+  // This should converge correctly.
+  KMeans<> k;
+  k.Cluster(dataset, 2, assignments, centroids, false, true);
+
+  // Check results.
+  for (size_t i = 0; i < 10000; ++i)
+    BOOST_REQUIRE_EQUAL(assignments[i], 0);
+  for (size_t i = 10000; i < 10002; ++i)
+    BOOST_REQUIRE_EQUAL(assignments[i], 1);
+
+  // Now add a little noise to the initial centroids.
+  centroids.col(0) = arma::vec("3 4");
+  centroids.col(1) = arma::vec("25 10");
+
+  k.Cluster(dataset, 2, assignments, centroids, false, true);
+
+  // Check results.
+  for (size_t i = 0; i < 10000; ++i)
+    BOOST_REQUIRE_EQUAL(assignments[i], 0);
+  for (size_t i = 10000; i < 10002; ++i)
+    BOOST_REQUIRE_EQUAL(assignments[i], 1);
+}
+
+/**
+ * Ensure that initial assignments override initial centroids.
+ */
+BOOST_AUTO_TEST_CASE(InitialAssignmentOverrideTest)
+{
+  // For a better description of this dataset, see
+  // RandomInitialAssignmentFailureTest.
+  arma::mat dataset(2, 10002);
+  dataset.randn();
+  // Now move the second Gaussian far away.
+  for (size_t i = 0; i < 2; ++i)
+    dataset.col(10000 + i) += arma::vec("50 50");
+
+  arma::Col<size_t> assignments(10002);
+  assignments.fill(0);
+  assignments[10000] = 1;
+  assignments[10001] = 1;
+
+  // Note that this initial centroid guess is the opposite of the assignments
+  // guess!
+  arma::mat centroids(2, 2);
+  centroids.col(0) = arma::vec("50 50");
+  centroids.col(1) = arma::vec("0 0");
+
+  KMeans<> k;
+  k.Cluster(dataset, 2, assignments, centroids, true, true);
+
+  // Because the initial assignments guess should take priority, we should get
+  // those same results back.
+  for (size_t i = 0; i < 10000; ++i)
+    BOOST_REQUIRE_EQUAL(assignments[i], 0);
+  for (size_t i = 10000; i < 10002; ++i)
+    BOOST_REQUIRE_EQUAL(assignments[i], 1);
+
+  // Make sure the centroids are about right too.
+  BOOST_REQUIRE_LT(centroids(0, 0), 10.0);
+  BOOST_REQUIRE_LT(centroids(1, 0), 10.0);
+  BOOST_REQUIRE_GT(centroids(0, 1), 40.0);
+  BOOST_REQUIRE_GT(centroids(1, 1), 40.0);
+}
+
 #ifdef ARMA_HAS_SPMAT
 // Can't do this test on Armadillo 3.4; var(SpBase) is not implemented.
 #if !((ARMA_VERSION_MAJOR == 3) && (ARMA_VERSION_MINOR == 4))
@@ -252,6 +422,7 @@ BOOST_AUTO_TEST_CASE(SparseKMeansTest)
   BOOST_REQUIRE_EQUAL(assignments[10], clusterTwo);
   BOOST_REQUIRE_EQUAL(assignments[11], clusterTwo);
 }
+
 #endif // Exclude Armadillo 3.4.
 #endif // ARMA_HAS_SPMAT
 
