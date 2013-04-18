@@ -539,34 +539,28 @@ Cluster(const MatType& data,
   }
 
   // Now, the initial assignments.  First determine if they are necessary.
-  if (initialAssignmentGuess && assignments.n_elem != data.n_cols)
+  if (initialAssignmentGuess)
   {
-    Log::Fatal << "KMeans::Cluster(): initial cluster assignments (length "
-        << assignments.n_elem << ") not the same size as the dataset (size "
-        << data.n_cols << ")!" << std::endl;
+    if (assignments.n_elem != data.n_cols)
+      Log::Fatal << "KMeans::Cluster(): initial cluster assignments (length "
+          << assignments.n_elem << ") not the same size as the dataset (size "
+          << data.n_cols << ")!" << std::endl;
   }
-  else if (initialCentroidGuess && (centroids.n_rows != data.n_rows ||
-                                    centroids.n_cols != clusters))
+  else if (initialCentroidGuess)
   {
-    Log::Fatal << "KMeans::Cluster(): wrong number of initial cluster centroids"
-        << " (" << centroids.n_cols << ", should be " << clusters << ") or "
-        << "wrong dimensionality (" << centroids.n_rows << ", should be "
+    if (centroids.n_cols != clusters)
+      Log::Fatal << "KMeans::Cluster(): wrong number of initial cluster "
+        << "centroids (" << centroids.n_cols << ", should be " << clusters
+        << ")!" << std::endl;
+
+    if (centroids.n_rows != data.n_rows)
+      Log::Fatal << "KMeans::Cluster(): initial cluster centroids have wrong "
+        << " dimensionality (" << centroids.n_rows << ", should be "
         << data.n_rows << ")!" << std::endl;
-  }
-  else
-  {
-    // Use the partitioner to come up with the partition assignments.
-    partitioner.Cluster(data, actualClusters, assignments);
-  }
 
-  // Counts of points in each cluster.
-  arma::Col<size_t> counts(actualClusters);
-  counts.zeros();
-
-  // If we received an initial cluster guess, assign the points for the first
-  // time.  Note that initialAssignmentGuess supersedes initialCentroidGuess.
-  if (initialCentroidGuess && !initialAssignmentGuess)
-  {
+    // If there were no problems, construct the initial assignments from the
+    // given centroids.
+    assignments.set_size(data.n_cols);
     for (size_t i = 0; i < data.n_cols; ++i)
     {
       // Find the closest centroid to this point.
@@ -588,6 +582,15 @@ Cluster(const MatType& data,
       assignments[i] = closestCluster;
     }
   }
+  else
+  {
+    // Use the partitioner to come up with the partition assignments.
+    partitioner.Cluster(data, actualClusters, assignments);
+  }
+
+  // Counts of points in each cluster.
+  arma::Col<size_t> counts(actualClusters);
+  counts.zeros();
 
   // Resize to correct size.
   centroids.set_size(data.n_rows, actualClusters);
