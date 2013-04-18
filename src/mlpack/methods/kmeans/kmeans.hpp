@@ -142,8 +142,8 @@ class KMeans
 
   template<typename MatType>
   void FastCluster(MatType& data,
-               const size_t clusters,
-               arma::Col<size_t>& assignments) const;
+                   const size_t clusters,
+                   arma::Col<size_t>& assignments) const;
 
   //! Return the overclustering factor.
   double OverclusteringFactor() const { return overclusteringFactor; }
