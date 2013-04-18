@@ -19,7 +19,7 @@ namespace kmeans {
 template<typename MatType>
 void RefinedStart::Cluster(const MatType& data,
                            const size_t clusters,
-                           arma::Col<size_t>& assignments)
+                           arma::Col<size_t>& assignments) const
 {
   math::RandomSeed(std::time(NULL));
 
