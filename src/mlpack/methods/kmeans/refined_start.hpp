@@ -54,7 +54,17 @@ class RefinedStart
   template<typename MatType>
   void Cluster(const MatType& data,
                const size_t clusters,
-               arma::Col<size_t>& assignments);
+               arma::Col<size_t>& assignments) const;
+
+  //! Get the number of samplings that will be performed.
+  size_t Samplings() const { return samplings; }
+  //! Modify the number of samplings that will be performed.
+  size_t& Samplings() { return samplings; }
+
+  //! Get the percentage of the data used by each subsampling.
+  double Percentage() const { return percentage; }
+  //! Modify the percentage of the data used by each subsampling.
+  double& Percentage() { return percentage; }
 
  private:
   //! The number of samplings to perform.
