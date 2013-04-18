@@ -127,7 +127,7 @@ $ head distances_out.csv
 
 So, the nearest neighbor to point 0 is point 14, with a distance of 7.096144e-4.
 The second nearest neighbor to point 0 is point 5, with a distance of
-2.059402e-3.  The third nearest neighbor to point 6 is point 16, with a distance
+2.059402e-3.  The third nearest neighbor to point 5 is point 16, with a distance
 of 9.9748395e-3.
 
 @subsection cli_ex2_nstut Query and reference dataset, 10 nearest neighbors
