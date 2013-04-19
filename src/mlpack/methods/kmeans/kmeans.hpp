@@ -47,10 +47,12 @@ namespace kmeans /** K-Means clustering. */ {
  *     metric::LMetric for an example.
  * @tparam InitialPartitionPolicy Initial partitioning policy; must implement a
  *     default constructor and 'void Cluster(const arma::mat&, const size_t,
- *     arma::Col<size_t>&)'.  @see RandomPartition for an example.
+ *     arma::Col<size_t>&)'.
  * @tparam EmptyClusterPolicy Policy for what to do on an empty cluster; must
  *     implement a default constructor and 'void EmptyCluster(const arma::mat&,
- *     arma::Col<size_t&)'.  @see AllowEmptyClusters and MaxVarianceNewCluster.
+ *     arma::Col<size_t&)'.
+ *
+ * @see RandomPartition, RefinedStart, AllowEmptyClusters, MaxVarianceNewCluster
  */
 template<typename DistanceMetric = metric::SquaredEuclideanDistance,
          typename InitialPartitionPolicy = RandomPartition,
