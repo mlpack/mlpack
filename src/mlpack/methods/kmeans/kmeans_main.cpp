@@ -46,7 +46,7 @@ PARAM_FLAG("in_place", "If specified, a column of the learned cluster "
 PARAM_STRING("output_file", "File to write output labels or labeled data to.",
     "o", "output.csv");
 PARAM_STRING("centroid_file", "If specified, the centroids of each cluster will"
-    " be written to the given file.", "c", "");
+    " be written to the given file.", "C", "");
 
 // k-means configuration options.
 PARAM_FLAG("allow_empty_clusters", "Allow empty clusters to be created.", "e");
