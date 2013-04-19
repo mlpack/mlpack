@@ -113,7 +113,7 @@ int main(int argc, char** argv)
 
   // Load our dataset.
   arma::mat dataset;
-  data::Load(inputFile.c_str(), dataset);
+  data::Load(inputFile.c_str(), dataset, true); // Fatal upon failure.
 
   // Now create the KMeans object.  Because we could be using different types,
   // it gets a little weird...
