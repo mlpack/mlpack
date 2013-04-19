@@ -124,8 +124,19 @@ int main(int argc, char** argv)
   {
     if (CLI::HasParam("refined_start"))
     {
+      const int samplings = CLI::GetParam<int>("samplings");
+      const double percentage = CLI::GetParam<int>("percentage");
+
+      if (samplings < 0)
+        Log::Fatal << "Number of samplings (" << samplings << ") must be "
+            << "greater than 0!" << std::endl;
+      if (percentage <= 0.0 || percentage > 1.0)
+        Log::Fatal << "Percentage for sampling (" << percentage << ") must be "
+            << "greater than 0.0 and less than or equal to 1.0!" << std::endl;
+
       KMeans<metric::SquaredEuclideanDistance, RefinedStart, AllowEmptyClusters>
-          k(maxIterations, overclustering);
+          k(maxIterations, overclustering, metric::SquaredEuclideanDistance(),
+          RefinedStart(samplings, percentage));
 
       Timer::Start("clustering");
       if (CLI::HasParam("fast_kmeans"))
@@ -151,8 +162,19 @@ int main(int argc, char** argv)
   {
     if (CLI::HasParam("refined_start"))
     {
-      KMeans<metric::SquaredEuclideanDistance, RefinedStart> k(maxIterations,
-          overclustering);
+      const int samplings = CLI::GetParam<int>("samplings");
+      const double percentage = CLI::GetParam<int>("percentage");
+
+      if (samplings < 0)
+        Log::Fatal << "Number of samplings (" << samplings << ") must be "
+            << "greater than 0!" << std::endl;
+      if (percentage <= 0.0 || percentage > 1.0)
+        Log::Fatal << "Percentage for sampling (" << percentage << ") must be "
+            << "greater than 0.0 and less than or equal to 1.0!" << std::endl;
+
+      KMeans<metric::SquaredEuclideanDistance, RefinedStart, AllowEmptyClusters>
+          k(maxIterations, overclustering, metric::SquaredEuclideanDistance(),
+          RefinedStart(samplings, percentage));
 
       Timer::Start("clustering");
       if (CLI::HasParam("fast_kmeans"))
