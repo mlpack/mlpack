@@ -105,7 +105,7 @@ int main(int argc, char** argv)
   }
 
   // Make sure we have an output file if we're not doing the work in-place.
-  if (!CLI::HasParam("in_place") && !CLI::HasParam("outputFile"))
+  if (!CLI::HasParam("in_place") && !CLI::HasParam("output_file"))
   {
     Log::Fatal << "--outputFile not specified (and --in_place not set)."
         << std::endl;
