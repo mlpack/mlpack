@@ -34,7 +34,7 @@ namespace kmeans /** K-Means clustering. */ {
  * extern arma::mat data; // Dataset we want to run K-Means on.
  * arma::Col<size_t> assignments; // Cluster assignments.
  *
- * KMeans<> k(); // Default options.
+ * KMeans<> k; // Default options.
  * k.Cluster(data, 3, assignments); // 3 clusters.
  *
  * // Cluster using the Manhattan distance, 100 iterations maximum, and an
