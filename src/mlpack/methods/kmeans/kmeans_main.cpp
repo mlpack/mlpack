@@ -235,7 +235,7 @@ int main(int argc, char** argv)
   }
 
   // Should we write the centroids to a file?
-  if (CLI::HasParam("centroids_file"))
-    data::Save(CLI::GetParam<std::string>("centroids_file"), centroids);
+  if (CLI::HasParam("centroid_file"))
+    data::Save(CLI::GetParam<std::string>("centroid_file"), centroids);
 }
 
