@@ -290,7 +290,7 @@ lr.Predict(points, predictions); // Predict.
 // Now, the vector 'predictions' will contain the predicted values.
 @endcode
 
-@subsection further_doc_lrtut Further documentation
+@section further_doc_lrtut Further documentation
 
 For further documentation on the LinearRegression class, consult the
 \ref mlpack::regression::LinearRegression "complete API documentation".
