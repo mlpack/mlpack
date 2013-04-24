@@ -40,7 +40,6 @@ A list of all the sections this tutorial contains.
  - \ref toc_det_tut
  - \ref cli_det_tut
    - \ref cli_ex1_de_tut
-   - \ref cli_alt_reg_tut
    - \ref cli_ex2_de_test_tut
    - \ref cli_ex3_de_p_tut
    - \ref cli_ex4_de_vi_tut
