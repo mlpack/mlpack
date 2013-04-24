@@ -215,9 +215,9 @@ int main(int argc, char** argv)
     if (CLI::HasParam("labels_only"))
     {
       // Save only the labels.
-      string outputFile = CLI::GetParam<string>("outputFile");
+      string outputFile = CLI::GetParam<string>("output_file");
       arma::Mat<size_t> output = trans(assignments);
-      data::Save(outputFile.c_str(), output);
+      data::Save(outputFile, output);
     }
     else
     {
@@ -229,7 +229,7 @@ int main(int argc, char** argv)
       dataset.insert_rows(dataset.n_rows, trans(converted));
 
       // Now save, in the different file.
-      string outputFile = CLI::GetParam<string>("outputFile");
+      string outputFile = CLI::GetParam<string>("output_file");
       data::Save(outputFile, dataset);
     }
   }
