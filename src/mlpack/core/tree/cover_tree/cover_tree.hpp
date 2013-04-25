@@ -95,12 +95,27 @@ class CoverTree
    * The dataset will not be modified during the building procedure (unlike
    * BinarySpaceTree).
    *
+   * The last argument will be removed in mlpack 1.1.0 (see #274 and #273).
+   *
    * @param dataset Reference to the dataset to build a tree on.
    * @param base Base to use during tree building (default 2.0).
    */
   CoverTree(const arma::mat& dataset,
             const double base = 2.0,
             MetricType* metric = NULL);
+
+  /**
+   * Create the cover tree with the given dataset and the given instantiated
+   * metric.  Optionally, set the base.  The dataset will not be modified during
+   * the building procedure (unlike BinarySpaceTree).
+   *
+   * @param dataset Reference to the dataset to build a tree on.
+   * @param metric Instantiated metric to use during tree building.
+   * @param base Base to use during tree building (default 2.0).
+   */
+  CoverTree(const arma::mat& dataset,
+            MetricType& metric,
+            const double base = 2.0);
 
   /**
    * Construct a child cover tree node.  This constructor is not meant to be
@@ -324,6 +339,15 @@ class CoverTree
 
   //! The metric used for this tree.
   MetricType* metric;
+
+  /**
+   * Create the children for this node.
+   */
+  void CreateChildren(arma::Col<size_t>& indices,
+                      arma::vec& distances,
+                      size_t nearSetSize,
+                      size_t& farSetSize,
+                      size_t& usedSetSize);
 
   /**
    * Fill the vector of distances with the distances between the point specified
