@@ -19,16 +19,16 @@ namespace kmeans {
 /**
  * Construct the K-Means object.
  */
-template<typename DistanceMetric,
+template<typename MetricType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy>
 KMeans<
-    DistanceMetric,
+    MetricType,
     InitialPartitionPolicy,
     EmptyClusterPolicy>::
 KMeans(const size_t maxIterations,
        const double overclusteringFactor,
-       const DistanceMetric metric,
+       const MetricType metric,
        const InitialPartitionPolicy partitioner,
        const EmptyClusterPolicy emptyClusterAction) :
     maxIterations(maxIterations),
@@ -49,12 +49,12 @@ KMeans(const size_t maxIterations,
   }
 }
 
-template<typename DistanceMetric,
+template<typename MetricType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy>
 template<typename MatType>
 void KMeans<
-    DistanceMetric,
+    MetricType,
     InitialPartitionPolicy,
     EmptyClusterPolicy>::
 FastCluster(MatType& data,
@@ -488,12 +488,12 @@ FastCluster(MatType& data,
  * centroids too.  If this is properly inlined, there shouldn't be any
  * performance penalty whatsoever.
  */
-template<typename DistanceMetric,
+template<typename MetricType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy>
 template<typename MatType>
 inline void KMeans<
-    DistanceMetric,
+    MetricType,
     InitialPartitionPolicy,
     EmptyClusterPolicy>::
 Cluster(const MatType& data,
@@ -509,12 +509,12 @@ Cluster(const MatType& data,
  * Perform k-means clustering on the data, returning a list of cluster
  * assignments and the centroids of each cluster.
  */
-template<typename DistanceMetric,
+template<typename MetricType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy>
 template<typename MatType>
 void KMeans<
-    DistanceMetric,
+    MetricType,
     InitialPartitionPolicy,
     EmptyClusterPolicy>::
 Cluster(const MatType& data,

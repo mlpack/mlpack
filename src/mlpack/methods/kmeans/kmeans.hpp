@@ -43,7 +43,7 @@ namespace kmeans /** K-Means clustering. */ {
  * k.Cluster(data, 6, assignments); // 6 clusters.
  * @endcode
  *
- * @tparam DistanceMetric The distance metric to use for this KMeans; see
+ * @tparam MetricType The distance metric to use for this KMeans; see
  *     metric::LMetric for an example.
  * @tparam InitialPartitionPolicy Initial partitioning policy; must implement a
  *     default constructor and 'void Cluster(const arma::mat&, const size_t,
@@ -54,7 +54,7 @@ namespace kmeans /** K-Means clustering. */ {
  *
  * @see RandomPartition, RefinedStart, AllowEmptyClusters, MaxVarianceNewCluster
  */
-template<typename DistanceMetric = metric::SquaredEuclideanDistance,
+template<typename MetricType = metric::SquaredEuclideanDistance,
          typename InitialPartitionPolicy = RandomPartition,
          typename EmptyClusterPolicy = MaxVarianceNewCluster>
 class KMeans
@@ -75,7 +75,7 @@ class KMeans
    *     (0 is valid, but the algorithm may never terminate).
    * @param overclusteringFactor Factor controlling how many extra clusters are
    *     found and then merged to get the desired number of clusters.
-   * @param metric Optional DistanceMetric object; for when the metric has state
+   * @param metric Optional MetricType object; for when the metric has state
    *     it needs to store.
    * @param partitioner Optional InitialPartitionPolicy object; for when a
    *     specially initialized partitioning policy is required.
@@ -84,7 +84,7 @@ class KMeans
    */
   KMeans(const size_t maxIterations = 1000,
          const double overclusteringFactor = 1.0,
-         const DistanceMetric metric = DistanceMetric(),
+         const MetricType metric = MetricType(),
          const InitialPartitionPolicy partitioner = InitialPartitionPolicy(),
          const EmptyClusterPolicy emptyClusterAction = EmptyClusterPolicy());
 
@@ -158,9 +158,9 @@ class KMeans
   size_t& MaxIterations() { return maxIterations; }
 
   //! Get the distance metric.
-  const DistanceMetric& Metric() const { return metric; }
+  const MetricType& Metric() const { return metric; }
   //! Modify the distance metric.
-  DistanceMetric& Metric() { return metric; }
+  MetricType& Metric() { return metric; }
 
   //! Get the initial partitioning policy.
   const InitialPartitionPolicy& Partitioner() const { return partitioner; }
@@ -179,7 +179,7 @@ class KMeans
   //! Maximum number of iterations before giving up.
   size_t maxIterations;
   //! Instantiated distance metric.
-  DistanceMetric metric;
+  MetricType metric;
   //! Instantiated initial partitioning policy.
   InitialPartitionPolicy partitioner;
   //! Instantiated empty cluster policy.
