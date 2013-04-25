@@ -28,5 +28,6 @@ examples and progress to complex, extensible uses.
  - \ref lrtutorial
  - \ref rstutorial
  - \ref dettutorial
+ - \ref kmtutorial
 
 */
