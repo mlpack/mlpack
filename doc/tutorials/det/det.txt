@@ -166,44 +166,6 @@ allows smaller estimates to be saved.
 $ ./det -t dataset.csv -s density_estimates.txt -v
 @endcode
 
-*/
-
------ this option is not available in DET right now; see #238! -----
-@subsection cli_alt_reg_tut Alternate DET regularization
-
-The usual regularized error \f$R_\alpha(t)\f$ of a node \f$t\f$ is given by:
-\f$R_\alpha(t) = R(t) + \alpha |\tilde{t}|\f$ where
-
-\f[
-R(t) = -\frac{|t|^2}{N^2 V(t)}.
-\f]
-
-\f$V(t)\f$ is the volume of the node \f$t\f$ and \f$\tilde{t}\f$ is
-the set of leaves in the subtree rooted at \f$t\f$.
-
-For the purposes of density estimation, there is a different form of
-regularization: instead of penalizing the number of leaves in the subtree, we
-penalize the sum of the inverse of the volumes of the leaves.  With this
-regularization, very small volume nodes are discouraged unless the data actually
-warrants it. Thus,
-
-\f[
-R_\alpha'(t) = R(t) + \alpha I_v(\tilde{t})
-\f]
-
-where
-
-\f[
-I_v(\tilde{t}) = \sum_{l \in \tilde{t}} \frac{1}{V(l)}.
-\f]
-
-To use this form of regularization, use the \c -R flag.
-
-@code
-$ det -t dataset.csv -R -v
-@endcode
-
-/*!
 @subsection cli_ex2_de_test_tut Estimation on a test set
 
 Often, it is useful to train a density estimation tree on a training set and
@@ -398,3 +360,38 @@ For further documentation on the DTree class, consult the
 \ref mlpack::det::DTree "complete API documentation".
 
 */
+
+----- this option is not available in DET right now; see #238! -----
+@subsection cli_alt_reg_tut Alternate DET regularization
+
+The usual regularized error \f$R_\alpha(t)\f$ of a node \f$t\f$ is given by:
+\f$R_\alpha(t) = R(t) + \alpha |\tilde{t}|\f$ where
+
+\f[
+R(t) = -\frac{|t|^2}{N^2 V(t)}.
+\f]
+
+\f$V(t)\f$ is the volume of the node \f$t\f$ and \f$\tilde{t}\f$ is
+the set of leaves in the subtree rooted at \f$t\f$.
+
+For the purposes of density estimation, there is a different form of
+regularization: instead of penalizing the number of leaves in the subtree, we
+penalize the sum of the inverse of the volumes of the leaves.  With this
+regularization, very small volume nodes are discouraged unless the data actually
+warrants it. Thus,
+
+\f[
+R_\alpha'(t) = R(t) + \alpha I_v(\tilde{t})
+\f]
+
+where
+
+\f[
+I_v(\tilde{t}) = \sum_{l \in \tilde{t}} \frac{1}{V(l)}.
+\f]
+
+To use this form of regularization, use the \c -R flag.
+
+@code
+$ det -t dataset.csv -R -v
+@endcode
