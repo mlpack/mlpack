@@ -9,18 +9,20 @@
 #define __MLPACK_METHODS_FASTMKS_IP_METRIC_HPP
 
 namespace mlpack {
-namespace fastmks /** The fast maximum kernel search problem. */ {
+namespace fastmks /** Fast maximum kernel search. */ {
 
 template<typename KernelType>
 class IPMetric
 {
  public:
-  IPMetric() : kernel(localKernel) { }
+  //! Create the IPMetric without an instantiated kernel.
+  IPMetric();
 
-  /**
-   * Create the IPMetric.
-   */
-  IPMetric(KernelType& kernel) : kernel(kernel) { }
+  //! Create the IPMetric with an instantiated kernel.
+  IPMetric(KernelType& kernel);
+
+  //! Destroy the IPMetric object.
+  ~IPMetric();
 
   /**
    * Evaluate the metric.
@@ -28,10 +30,15 @@ class IPMetric
   template<typename Vec1Type, typename Vec2Type>
   double Evaluate(const Vec1Type& a, const Vec2Type& b);
 
+  //! Get the kernel.
   const KernelType& Kernel() const { return kernel; }
+  //! Modify the kernel.
   KernelType& Kernel() { return kernel; }
 
-  KernelType localKernel;
+ private:
+  //! The locally stored kernel, if it is necessary.
+  KernelType* localKernel;
+  //! The reference to the kernel that is being used.
   KernelType& kernel;
 };
 
