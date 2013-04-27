@@ -50,7 +50,7 @@ PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single", "If true, single-tree search is used (as opposed to "
     "dual-tree search.", "s");
 
-PARAM_DOUBLE("base", "Base to use during cover tree construction.", "b", 2.0);
+//PARAM_DOUBLE("base", "Base to use during cover tree construction.", "b", 2.0);
 
 PARAM_DOUBLE("degree", "Degree of polynomial kernel.", "d", 2.0);
 PARAM_DOUBLE("offset", "Offset of kernel (for polynomial and hyptan kernels).",
@@ -61,17 +61,16 @@ PARAM_DOUBLE("scale", "Scale of kernel (for hyptan kernel).", "s", 1.0);
 
 template<typename KernelType>
 void RunFastMKS(const arma::mat& referenceData,
-              const bool single,
-              const bool naive,
-              const double base,
-              const size_t k,
-              arma::Mat<size_t>& indices,
-              arma::mat& products,
-              KernelType& kernel)
+                const bool single,
+                const bool naive,
+                const double base,
+                const size_t k,
+                arma::Mat<size_t>& indices,
+                arma::mat& products,
+                KernelType& kernel)
 {
   // Create FastMKS object.
-  FastMKS<KernelType> fastmks(referenceData, kernel, (single && !naive), naive,
-      base);
+  FastMKS<KernelType> fastmks(referenceData, kernel, (single && !naive), naive);
 
   // Now search with it.
   fastmks.Search(k, indices, products);
@@ -90,7 +89,7 @@ void RunFastMKS(const arma::mat& referenceData,
 {
   // Create FastMKS object.
   FastMKS<KernelType> maxip(referenceData, queryData, kernel,
-      (single && !naive), naive, base);
+      (single && !naive), naive);
 
   // Now search with it.
   maxip.Search(k, indices, products);
