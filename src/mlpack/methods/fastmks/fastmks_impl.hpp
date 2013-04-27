@@ -18,79 +18,160 @@
 namespace mlpack {
 namespace fastmks {
 
-template<typename KernelType>
-FastMKS<KernelType>::FastMKS(const arma::mat& referenceSet,
-                             KernelType& kernel,
-                             bool single,
-                             bool naive,
-                             double expansionConstant) :
+// Single dataset, no instantiated kernel.
+template<typename KernelType, typename TreeType>
+FastMKS<KernelType, TreeType>::FastMKS(const arma::mat& referenceSet,
+                                       const bool single,
+                                       const bool naive) :
     referenceSet(referenceSet),
-    querySet(referenceSet), // Gotta point it somewhere...
+    querySet(referenceSet),
+    referenceTree(NULL),
     queryTree(NULL),
+    treeOwner(true),
     single(single),
-    naive(naive),
-    metric(kernel)
+    naive(naive)
 {
-
   Timer::Start("tree_building");
 
-  // Build the tree.  Could we do this in the initialization list?
-  if (naive)
-    referenceTree = NULL;
-  else
-    referenceTree = new tree::CoverTree<IPMetric<KernelType>,
-        tree::FirstPointIsRoot, FastMKSStat>(referenceSet, expansionConstant,
-        &metric);
+  if (!naive)
+    referenceTree = new TreeType(referenceSet);
 
   Timer::Stop("tree_building");
 }
 
-template<typename KernelType>
-FastMKS<KernelType>::FastMKS(const arma::mat& referenceSet,
-                             const arma::mat& querySet,
-                             KernelType& kernel,
-                             bool single,
-                             bool naive,
-                             double expansionConstant) :
+// Two datasets, no instantiated kernel.
+template<typename KernelType, typename TreeType>
+FastMKS<KernelType, TreeType>::FastMKS(const arma::mat& referenceSet,
+                                       const arma::mat& querySet,
+                                       const bool single,
+                                       const bool naive) :
     referenceSet(referenceSet),
     querySet(querySet),
+    referenceTree(NULL),
+    queryTree(NULL),
+    treeOwner(true),
+    single(single),
+    naive(naive)
+{
+  Timer::Start("tree_building");
+
+  // If necessary, the trees should be built.
+  if (!naive)
+    referenceTree = new TreeType(referenceSet);
+
+  if (!naive && !single)
+    queryTree = new TreeType(querySet);
+
+  Timer::Stop("tree_building");
+}
+
+// One dataset, instantiated kernel.
+template<typename KernelType, typename TreeType>
+FastMKS<KernelType, TreeType>::FastMKS(const arma::mat& referenceSet,
+                                       KernelType& kernel,
+                                       const bool single,
+                                       const bool naive) :
+    referenceSet(referenceSet),
+    querySet(referenceSet),
+    referenceTree(NULL),
+    queryTree(NULL),
+    treeOwner(true),
     single(single),
     naive(naive),
     metric(kernel)
 {
   Timer::Start("tree_building");
 
-  // Build the trees.  Could we do this in the initialization lists?
-  if (naive)
-    referenceTree = NULL;
-  else
-    referenceTree = new tree::CoverTree<IPMetric<KernelType>,
-        tree::FirstPointIsRoot, FastMKSStat>(referenceSet, expansionConstant,
-        &metric);
-
-  if (single || naive)
-    queryTree = NULL;
-  else
-    queryTree = new tree::CoverTree<IPMetric<KernelType>,
-        tree::FirstPointIsRoot, FastMKSStat>(querySet, expansionConstant,
-        &metric);
+  // If necessary, the reference tree should be built.  There is no query tree.
+  if (!naive)
+    referenceTree = new TreeType(referenceSet, metric);
 
   Timer::Stop("tree_building");
 }
 
-template<typename KernelType>
-FastMKS<KernelType>::~FastMKS()
+// Two datasets, instantiated kernel.
+template<typename KernelType, typename TreeType>
+FastMKS<KernelType, TreeType>::FastMKS(const arma::mat& referenceSet,
+                                       const arma::mat& querySet,
+                                       KernelType& kernel,
+                                       const bool single,
+                                       const bool naive) :
+    referenceSet(referenceSet),
+    querySet(querySet),
+    referenceTree(NULL),
+    queryTree(NULL),
+    treeOwner(true),
+    single(single),
+    naive(naive),
+    metric(kernel)
 {
-  if (queryTree)
-    delete queryTree;
-  if (referenceTree)
-    delete referenceTree;
+  Timer::Start("tree_building");
+
+  // If necessary, the trees should be built.
+  if (!naive)
+    referenceTree = new TreeType(referenceSet, metric);
+
+  if (!naive && !single)
+    queryTree = new TreeType(querySet, metric);
+
+  Timer::Stop("tree_building");
 }
 
-template<typename KernelType>
-void FastMKS<KernelType>::Search(const size_t k,
-                               arma::Mat<size_t>& indices,
-                               arma::mat& products)
+// One dataset, pre-built tree.
+template<typename KernelType, typename TreeType>
+FastMKS<KernelType, TreeType>::FastMKS(const arma::mat& referenceSet,
+                                       TreeType* referenceTree,
+                                       const bool single,
+                                       const bool naive) :
+    referenceSet(referenceSet),
+    querySet(referenceSet),
+    referenceTree(referenceTree),
+    queryTree(NULL),
+    treeOwner(false),
+    single(single),
+    naive(naive),
+    metric(referenceTree->Metric())
+{
+  // Nothing to do.
+}
+
+// Two datasets, pre-built trees.
+template<typename KernelType, typename TreeType>
+FastMKS<KernelType, TreeType>::FastMKS(const arma::mat& referenceSet,
+                                       TreeType* referenceTree,
+                                       const arma::mat& querySet,
+                                       TreeType* queryTree,
+                                       const bool single,
+                                       const bool naive) :
+    referenceSet(referenceSet),
+    querySet(querySet),
+    referenceTree(referenceTree),
+    queryTree(queryTree),
+    treeOwner(false),
+    single(single),
+    naive(naive),
+    metric(referenceTree->Metric())
+{
+  // Nothing to do.
+}
+
+template<typename KernelType, typename TreeType>
+FastMKS<KernelType, TreeType>::~FastMKS()
+{
+  // If we created the trees, we must delete them.
+  if (treeOwner)
+  {
+    if (queryTree)
+      delete queryTree;
+    if (referenceTree)
+      delete referenceTree;
+  }
+}
+
+template<typename KernelType, typename TreeType>
+void FastMKS<KernelType, TreeType>::Search(const size_t k,
+                                           arma::Mat<size_t>& indices,
+                                           arma::mat& products)
 {
   // No remapping will be necessary because we are using the cover tree.
   indices.set_size(k, querySet.n_cols);
@@ -139,8 +220,6 @@ void FastMKS<KernelType>::Search(const size_t k,
   {
     // Create rules object (this will store the results).  This constructor
     // precalculates each self-kernel value.
-    typedef tree::CoverTree<IPMetric<KernelType>, tree::FirstPointIsRoot,
-        FastMKSStat> TreeType;
     typedef FastMKSRules<KernelType, TreeType> RuleType;
     RuleType rules(referenceSet, querySet, indices, products, metric.Kernel());
 
@@ -163,8 +242,6 @@ void FastMKS<KernelType>::Search(const size_t k,
   }
 
   // Dual-tree implementation.
-  typedef tree::CoverTree<IPMetric<KernelType>, tree::FirstPointIsRoot,
-      FastMKSStat> TreeType;
   typedef FastMKSRules<KernelType, TreeType> RuleType;
   RuleType rules(referenceSet, querySet, indices, products, metric.Kernel());
 
@@ -194,13 +271,13 @@ void FastMKS<KernelType>::Search(const size_t k,
  * @param neighbor Index of reference point which is being inserted.
  * @param distance Distance from query point to reference point.
  */
-template<typename KernelType>
-void FastMKS<KernelType>::InsertNeighbor(arma::Mat<size_t>& indices,
-                                         arma::mat& products,
-                                         const size_t queryIndex,
-                                         const size_t pos,
-                                         const size_t neighbor,
-                                         const double distance)
+template<typename KernelType, typename TreeType>
+void FastMKS<KernelType, TreeType>::InsertNeighbor(arma::Mat<size_t>& indices,
+                                                   arma::mat& products,
+                                                   const size_t queryIndex,
+                                                   const size_t pos,
+                                                   const size_t neighbor,
+                                                   const double distance)
 {
   // We only memmove() if there is actually a need to shift something.
   if (pos < (products.n_rows - 1))
