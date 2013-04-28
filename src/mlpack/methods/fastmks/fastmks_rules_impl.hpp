@@ -38,6 +38,7 @@ FastMKSRules<KernelType, TreeType>::FastMKSRules(const arma::mat& referenceSet,
 }
 
 template<typename KernelType, typename TreeType>
+inline force_inline
 double FastMKSRules<KernelType, TreeType>::BaseCase(
     const size_t queryIndex,
     const size_t referenceIndex)
@@ -199,7 +200,7 @@ double FastMKSRules<MetricType, TreeType>::CalculateBound(TreeType& queryNode)
   // (4) B(parent of queryNode);
   double worstPointKernel = DBL_MAX;
   double bestAdjustedPointKernel = -DBL_MAX;
-  double bestPointSelfKernel = -DBL_MAX;
+//  double bestPointSelfKernel = -DBL_MAX;
   const double queryDescendantDistance = queryNode.FurthestDescendantDistance();
 
   // Loop over all points in this node to find the best and worst.
