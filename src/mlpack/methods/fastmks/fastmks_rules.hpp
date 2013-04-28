@@ -13,6 +13,9 @@
 namespace mlpack {
 namespace fastmks {
 
+/**
+ * The base case and pruning rules for FastMKS (fast max-kernel search).
+ */
 template<typename KernelType, typename TreeType>
 class FastMKSRules
 {
@@ -105,15 +108,19 @@ class FastMKSRules
                  const double oldScore) const;
 
  private:
+  //! The reference dataset.
   const arma::mat& referenceSet;
-
+  //! The query dataset.
   const arma::mat& querySet;
 
+  //! The indices of the maximum kernel results.
   arma::Mat<size_t>& indices;
-
+  //! The maximum kernels.
   arma::mat& products;
 
-  arma::vec queryKernels; // || q || for each q.
+  //! Cached query set self-kernels (|| q || for each q).
+  arma::vec queryKernels;
+  //! Cached reference set self-kernels (|| r || for each r).
   arma::vec referenceKernels;
 
   //! The instantiated kernel.
@@ -122,6 +129,7 @@ class FastMKSRules
   //! Calculate the bound for a given query node.
   double CalculateBound(TreeType& queryNode) const;
 
+  //! Utility function to insert neighbor into list of results.
   void InsertNeighbor(const size_t queryIndex,
                       const size_t pos,
                       const size_t neighbor,
