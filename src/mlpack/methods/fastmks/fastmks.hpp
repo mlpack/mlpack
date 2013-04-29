@@ -125,7 +125,6 @@ class FastMKS
    *
    * @param referenceSet Reference set of data for FastMKS.
    * @param referenceTree Tree built on reference data.
-   * @param kernel Initialized kernel.
    * @param single Whether or not to run single-tree search.
    * @param naive Whether or not to run brute-force (naive) search.
    */
@@ -144,7 +143,6 @@ class FastMKS
    * @param referenceTree Tree built on reference data.
    * @param querySet Set of query points for FastMKS.
    * @param queryTree Tree built on query data.
-   * @param kernel Initialized kernel.
    * @param single Whether or not to use single-tree search.
    * @param naive Whether or not to use naive (brute-force) search.
    */
