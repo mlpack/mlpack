@@ -180,8 +180,6 @@ void FastMKS<KernelType, TreeType>::Search(const size_t k,
 
   Timer::Start("computing_products");
 
-  size_t kernelEvaluations = 0;
-
   // Naive implementation.
   if (naive)
   {
@@ -195,7 +193,6 @@ void FastMKS<KernelType, TreeType>::Search(const size_t k,
 
         const double eval = metric.Kernel().Evaluate(querySet.unsafe_col(q),
             referenceSet.unsafe_col(r));
-        ++kernelEvaluations;
 
         size_t insertPosition;
         for (insertPosition = 0; insertPosition < indices.n_rows;
@@ -210,8 +207,6 @@ void FastMKS<KernelType, TreeType>::Search(const size_t k,
 
     Timer::Stop("computing_products");
 
-    Log::Info << "Kernel evaluations: " << kernelEvaluations << "."
-        << std::endl;
     return;
   }
 
@@ -232,10 +227,6 @@ void FastMKS<KernelType, TreeType>::Search(const size_t k,
     const size_t numPrunes = traverser.NumPrunes();
 
     Log::Info << "Pruned " << numPrunes << " nodes." << std::endl;
-    Log::Info << "Kernel evaluations: " << kernelEvaluations << "."
-        << std::endl;
-    Log::Info << "Distance evaluations: " << distanceEvaluations << "."
-        << std::endl;
 
     Timer::Stop("computing_products");
     return;
@@ -255,9 +246,6 @@ void FastMKS<KernelType, TreeType>::Search(const size_t k,
   const size_t numPrunes = traverser.NumPrunes();
 
   Log::Info << "Pruned " << numPrunes << " nodes." << std::endl;
-  Log::Info << "Kernel evaluations: " << kernelEvaluations << "." << std::endl;
-  Log::Info << "Distance evaluations: " << distanceEvaluations << "."
-      << std::endl;
 
   Timer::Stop("computing_products");
   return;
