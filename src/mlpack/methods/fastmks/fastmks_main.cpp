@@ -4,10 +4,6 @@
  *
  * Main executable for maximum inner product search.
  */
-// I can't believe I'm doing this.
-#include <stddef.h>
-size_t distanceEvaluations;
-
 #include <mlpack/core.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
 #include <mlpack/core/kernels/polynomial_kernel.hpp>
@@ -23,14 +19,31 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::fastmks;
 using namespace mlpack::kernel;
+using namespace mlpack::tree;
 
-// Needs to be fleshed out a little bit.
 PROGRAM_INFO("FastMKS (Fast Max-Kernel Search)",
-    "This program will find the k maximum kernels of a set of points, "
+    "This program will find the k maximum kernel of a set of points, "
     "using a query set and a reference set (which can optionally be the same "
     "set). More specifically, for each point in the query set, the k points in"
-    " the reference set with maximum inner products are found.  The inner "
-    "product used is the kernel function specified by --kernel.");
+    " the reference set with maximum kernel evaluations are found.  The kernel "
+    "function used is specified by --kernel."
+    "\n\n"
+    "For example, the following command will calculate, for each point in "
+    "'query.csv', the five points in 'reference.csv' with maximum kernel "
+    "evaluation using the linear kernel.  The kernel evaluations are stored in "
+    "'kernels.csv' and the indices are stored in 'indices.csv'."
+    "\n\n"
+    "$ fastmks --k 5 --reference_file reference.csv --query_file query.csv\n"
+    "  --indices_file indices.csv --products_file kernels.csv --kernel linear"
+    "\n\n"
+    "The output files are organized such that row i and column j in the indices"
+    " output file corresponds to the index of the point in the reference set "
+    "that has i'th largest kernel evaluation with the point in the query set "
+    "with index j.  Row i and column j in the products output file corresponds "
+    "to the kernel evaluation between those two points."
+    "\n\n"
+    "This executable performs FastMKS using a cover tree.  The base used to "
+    "build the cover tree can be specified with the --base option.");
 
 // Define our input parameters.
 PARAM_STRING_REQ("reference_file", "File containing the reference dataset.",
@@ -50,8 +63,10 @@ PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single", "If true, single-tree search is used (as opposed to "
     "dual-tree search.", "s");
 
-//PARAM_DOUBLE("base", "Base to use during cover tree construction.", "b", 2.0);
+// Cover tree parameter.
+PARAM_DOUBLE("base", "Base to use during cover tree construction.", "b", 2.0);
 
+// Kernel parameters.
 PARAM_DOUBLE("degree", "Degree of polynomial kernel.", "d", 2.0);
 PARAM_DOUBLE("offset", "Offset of kernel (for polynomial and hyptan kernels).",
     "o", 0.0);
@@ -59,6 +74,7 @@ PARAM_DOUBLE("bandwidth", "Bandwidth (for Gaussian, Epanechnikov, and "
     "triangular kernels).", "w", 1.0);
 PARAM_DOUBLE("scale", "Scale of kernel (for hyptan kernel).", "s", 1.0);
 
+//! Run FastMKS on a single dataset for the given kernel type.
 template<typename KernelType>
 void RunFastMKS(const arma::mat& referenceData,
                 const bool single,
@@ -69,13 +85,20 @@ void RunFastMKS(const arma::mat& referenceData,
                 arma::mat& products,
                 KernelType& kernel)
 {
+  // Create the tree with the specified base.
+  typedef CoverTree<IPMetric<KernelType>, FirstPointIsRoot, FastMKSStat>
+      TreeType;
+  IPMetric<KernelType> metric(kernel);
+  TreeType tree(referenceData, metric, base);
+
   // Create FastMKS object.
-  FastMKS<KernelType> fastmks(referenceData, kernel, (single && !naive), naive);
+  FastMKS<KernelType> fastmks(referenceData, &tree, (single && !naive), naive);
 
   // Now search with it.
   fastmks.Search(k, indices, products);
 }
 
+//! Run FastMKS for a given query and reference set using the given kernel type.
 template<typename KernelType>
 void RunFastMKS(const arma::mat& referenceData,
                 const arma::mat& queryData,
@@ -87,18 +110,23 @@ void RunFastMKS(const arma::mat& referenceData,
                 arma::mat& products,
                 KernelType& kernel)
 {
+  // Create the tree with the specified base.
+  typedef CoverTree<IPMetric<KernelType>, FirstPointIsRoot, FastMKSStat>
+      TreeType;
+  IPMetric<KernelType> metric(kernel);
+  TreeType referenceTree(referenceData, metric, base);
+  TreeType queryTree(queryData, metric, base);
+
   // Create FastMKS object.
-  FastMKS<KernelType> maxip(referenceData, queryData, kernel,
-      (single && !naive), naive);
+  FastMKS<KernelType> fastmks(referenceData, &referenceTree, queryData,
+      &queryTree, (single && !naive), naive);
 
   // Now search with it.
-  maxip.Search(k, indices, products);
+  fastmks.Search(k, indices, products);
 }
 
 int main(int argc, char** argv)
 {
-  distanceEvaluations = 0;
-
   CLI::ParseCommandLine(argc, argv);
 
   // Get reference dataset filename.
