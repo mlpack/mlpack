@@ -202,7 +202,7 @@ class FastMKS
   //! The instantiated inner-product metric induced by the given kernel.
   IPMetric<KernelType> metric;
 
-  // Utility function.  Copied too many times from too many places.
+  //! Utility function.  Copied too many times from too many places.
   void InsertNeighbor(arma::Mat<size_t>& indices,
                       arma::mat& products,
                       const size_t queryIndex,
