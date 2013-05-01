@@ -1,5 +1,5 @@
 /**
- * @file randominit.hpp
+ * @file random_init.hpp
  * @author Mohan Rajendran
  *
  * Intialization rule for Non-Negative Matrix Factorization (NMF). This simple
