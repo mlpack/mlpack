@@ -25,7 +25,7 @@ Given a set of query points \f$Q\f$ and a set of reference points \f$R\f$, the
 FastMKS algorithm is a fast algorithm which finds
 
 \f[
-\argmax_{p_r \in R} K(p_q, p_r)
+\arg\max_{p_r \in R} K(p_q, p_r)
 \f]
 
 for all points \f$p_q \in Q\f$ and for some Mercer kernel \f$K(\cdot, \cdot)\f$.
@@ -67,7 +67,7 @@ A list of all the sections this tutorial contains.
    - \ref fastmks_ex3_fmkstut
    - \ref fastmks_ex4_fmkstut
  - \ref writing_kernel_fmkstut
- - \ref custom_trees_fmkstut
+ - \ref custom_tree_fmkstut
  - \ref objects_fmkstut
  - \ref further_doc_fmkstut
 
@@ -219,13 +219,14 @@ allows further flexibility in kernel choice and tree type choice.  However,
 \c FastMKS<> has no default template parameter for the kernel type -- that must
 be manually specified.  Choices that \b mlpack provides include:
 
- - \ref mlpack::metric::LinearKernel
- - \ref mlpack::metric::PolynomialKernel
+ - \ref mlpack::kernel::LinearKernel
+ - \ref mlpack::kernel::PolynomialKernel
  - \ref mlpack::kernel::CosineDistance
  - \ref mlpack::kernel::GaussianKernel
  - \ref mlpack::kernel::EpanechnikovKernel
  - \ref mlpack::kernel::TriangularKernel
  - \ref mlpack::kernel::HyperbolicTangentKernel
+ - \ref mlpack::kernel::PSpectrumStringKernel
 
 The following examples use kernels from that list.  Writing your own kernel is
 detailed in \ref writing_kernel_fmkstut "the next section".  Remember that when
@@ -403,12 +404,13 @@ arma::mat).
 
 @section custom_tree_fmkstut Using other tree types for FastMKS
 
-The use of the cover tree (\see tree::CoverTree) is not necessary for FastMKS,
-although it is the default tree type.  A different type of tree can be specified
-with the TreeType template parameter.  However, the tree type is required to
-have \ref fastmks::FastMKSStat FastMKSStat as the StatisticType.
+The use of the cover tree (see \ref mlpack::tree::CoverTree "CoverTree") is not
+necessary for FastMKS, although it is the default tree type.  A different type
+of tree can be specified with the TreeType template parameter.  However, the
+tree type is required to have \ref mlpack::fastmks::FastMKSStat "FastMKSStat" as
+the StatisticType.
 
-Below is an example of the \ref mlpack::tree::BinarySpaceTree BinarySpaceTree
+Below is an example of the \ref mlpack::tree::BinarySpaceTree "BinarySpaceTree"
 being used as the tree type for FastMKS.  In this example FastMKS is only run on
 one dataset.
 
@@ -466,7 +468,7 @@ Gray).
 Remember that FastMKS is a tree-based method.  But trees like the binary space
 tree require centroids -- and as we said earlier, centroids often don't make
 sense with these types of objects.  Therefore, we need a type of tree which is
-built \i exclusively on points in the dataset -- those are points which we can
+built \b exclusively on points in the dataset -- those are points which we can
 evaluate our kernel function on.  The cover tree is one example of a type of
 tree satisfying this condition; its construction will only call the kernel
 function on two points that are in the dataset.
@@ -482,7 +484,48 @@ simply holds indices to objects.  A good example of how to do this is detailed
 in the documentation for the \ref mlpack::kernel::PSpectrumStringKernel
 "PSpectrumStringKernel".
 
-In short, the trick
+In short, the trick is to make each data matrix one-dimensional and containing
+linear indices:
+
+@code
+arma::mat data = "0 1 2 3 4 5 6 7 8";
+@endcode
+
+Then, when \c Evaluate() is called on the kernel function, the parameters will
+be two one-dimensional vectors that simply contain indices to objects.  The
+example below details the process a little better:
+
+@code
+// This function evaluates the kernel on two Objects (in this example, its
+// implementation is not important; the only important thing is that the
+// function exists).
+double ObjectKernel::Evaluate(const Object& a, const Object& b) const;
+
+template<typename VecType>
+double ObjectKernel::Evaluate(const VecType& a, const VecType& b) const
+{
+  // Extract the indices from the vectors.
+  const size_t indexA = size_t(a[0]);
+  const size_t indexB = size_t(b[0]);
+
+  // Assume that 'objects' is an array (or std::vector or other container)
+  // holding Objects.
+  const Object& objectA = objects[indexA];
+  const Object& objectB = objects[indexB];
+
+  // Now call the function that does the actual evaluation on the objects and
+  // return its result.
+  return Evaluate(objectA, objectB);
+}
+@endcode
+
+As written earlier, the documentation for \ref
+mlpack::kernel::PSpectrumStringKernel "PSpectrumStringKernel" is a good place to
+consult for further reference on this.  That kernel uses two dimensional
+indices; one dimension represents the index of the string, and the other
+represents whether it is referring to the query set or the reference set.  If
+your kernel is meant to work on separate query and reference sets, that strategy
+should be considered.
 
 @section further_doc_fmkstut Further documentation
 
