@@ -465,10 +465,10 @@ how to modify them.
 
 Most machine learning algorithms in \b mlpack support modifying the distance
 metric, and \c KMeans<> is no exception.  Similar to \ref
-neighbor::NeighborSearch NeighborSearch (see \ref metric_type_doc_nstut
-"the section in the NeighborSearch tutorial"), any class in mlpack::metric can
-be given as an argument.  The mlpack::metric::LMetric class is a good example
-implementation.
+mlpack::neighbor::NeighborSearch "NeighborSearch" (see \ref
+metric_type_doc_nstut "the section in the NeighborSearch tutorial"), any class
+in mlpack::metric can be given as an argument.  The mlpack::metric::LMetric
+class is a good example implementation.
 
 A class fulfilling the MetricType policy must provide the following two
 functions:
