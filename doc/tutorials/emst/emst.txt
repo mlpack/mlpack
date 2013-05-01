@@ -23,7 +23,7 @@ theoretically fastest EMST algorithm.  For more details, see March, <em>et al.</
 \b mlpack provides:
 
  - a \ref cli_emsttut "simple command-line executable" to compute the EMST of a given data set
- - a \ref class_emsttut "simple C++ interface" to compute the EMST
+ - a \ref dtb_emsttut "simple C++ interface" to compute the EMST
 
 @section toc_emsttut Table of Contents
 
