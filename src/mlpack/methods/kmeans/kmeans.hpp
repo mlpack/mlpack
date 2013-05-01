@@ -142,6 +142,11 @@ class KMeans
                const bool initialAssignmentGuess = false,
                const bool initialCentroidGuess = false) const;
 
+  /**
+   * An implementation of k-means using the Pelleg-Moore algorithm; this is
+   * known to not work -- do not use it!  (Fixing it is TODO, of course; see
+   * #251.)
+   */
   template<typename MatType>
   void FastCluster(MatType& data,
                    const size_t clusters,
