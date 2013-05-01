@@ -1,5 +1,5 @@
 /**
- * @file tree/periodichrectbound.h
+ * @file periodichrectbound.hpp
  *
  * Bounds that are useful for binary space partitioning trees.
  *

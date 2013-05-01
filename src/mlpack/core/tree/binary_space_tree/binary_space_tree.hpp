@@ -10,9 +10,6 @@
 
 #include "../statistic.hpp"
 
-// Bad!
-#include <mlpack/methods/neighbor_search/neighbor_search_rules.hpp>
-
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 

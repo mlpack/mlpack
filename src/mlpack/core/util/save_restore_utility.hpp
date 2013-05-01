@@ -1,5 +1,5 @@
 /**
- * @file utilities/save_restore_utility.hpp
+ * @file save_restore_utility.hpp
  * @author Neil Slagle
  *
  * The SaveRestoreUtility provides helper functions in saving and
