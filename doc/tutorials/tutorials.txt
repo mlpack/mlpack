@@ -29,5 +29,7 @@ examples and progress to complex, extensible uses.
  - \ref rstutorial
  - \ref dettutorial
  - \ref kmtutorial
+ - \ref fmkstutorial
+ - \ref emst_tutorial
 
 */
