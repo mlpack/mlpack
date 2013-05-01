@@ -1,5 +1,5 @@
 /**
- * @file tree/periodichrectbound_impl.h
+ * @file periodichrectbound_impl.hpp
  *
  * Implementation of periodic hyper-rectangle bound policy class.
  * Template parameter t_pow is the metric to use; use 2 for Euclidian (L2).
