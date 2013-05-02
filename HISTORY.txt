@@ -1,3 +1,25 @@
+2013-05-01    mlpack 1.0.5
+
+  * Speedups of cover tree traversers (#243).
+
+  * Addition of rank-approximate nearest neighbors (RANN), found in
+    src/mlpack/methods/rann/.
+
+  * Addition of fast exact max-kernel search (FastMKS), found in
+    src/mlpack/methods/fastmks/.
+
+  * Fix for EM covariance estimation; this should improve GMM training time.
+
+  * More parameters for GMM estimation.
+
+  * Force GMM and GaussianDistribution covariance matrices to be positive
+    definite, so that training converges much more often.
+
+  * Add parameter for the tolerance of the Baum-Welch algorithm for HMM
+    training.
+
+  * Fix for compilation with clang compiler.
+
 2013-02-08    mlpack 1.0.4
 
   * Force minimum Armadillo version to 2.4.2.
