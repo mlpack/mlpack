@@ -51,10 +51,6 @@ class NeighborSearchRules
                   TreeType& referenceNode,
                   TreeType& referenceChildNode,
                   const double baseCaseResult) const;
-  double PrescoreQ(TreeType& queryNode,
-                   TreeType& queryChildNode,
-                   TreeType& referenceNode,
-                   const double baseCaseResult) const;
 
   /**
    * Get the score for recursion order.  A low score indicates priority for
@@ -149,11 +145,6 @@ class NeighborSearchRules
 
   //! The instantiated metric.
   MetricType& metric;
-
-  /**
-   * Recalculate the bound for a given query node.
-   */
-  double CalculateBound(TreeType& queryNode) const;
 
   /**
    * Insert a point into the neighbors and distances matrices; this is a helper
