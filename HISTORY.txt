@@ -20,6 +20,8 @@
 
   * Fix for compilation with clang compiler.
 
+  * Fix for k-furthest-neighbor-search.
+
 2013-02-08    mlpack 1.0.4
 
   * Force minimum Armadillo version to 2.4.2.
