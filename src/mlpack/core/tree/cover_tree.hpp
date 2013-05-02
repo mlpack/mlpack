@@ -26,5 +26,6 @@
 #include "cover_tree/cover_tree.hpp"
 #include "cover_tree/single_tree_traverser.hpp"
 #include "cover_tree/dual_tree_traverser.hpp"
+#include "cover_tree/traits.hpp"
 
 #endif

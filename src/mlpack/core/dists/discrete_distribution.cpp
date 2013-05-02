@@ -61,7 +61,19 @@ void DiscreteDistribution::Estimate(const arma::mat& observations)
   // observation is to turn the default flooring operation of the size_t cast
   // into a rounding operation.
   for (size_t i = 0; i < observations.n_cols; i++)
-    probabilities((size_t) (observations(0, i) + 0.5))++;
+  {
+    const size_t obs = size_t(observations(0, i) + 0.5);
+
+    // Ensure that the observation is within the bounds.
+    if (obs >= probabilities.n_elem)
+    {
+      Log::Debug << "DiscreteDistribution::Estimate(): observation " << i
+          << " (" << obs << ") is invalid; observation must be in [0, "
+          << probabilities.n_elem << "] for this distribution." << std::endl;
+    }
+
+    probabilities(obs)++;
+  }
 
   // Now normalize the distribution.
   double sum = accu(probabilities);
@@ -85,7 +97,19 @@ void DiscreteDistribution::Estimate(const arma::mat& observations,
   // observation is to turn the default flooring operation of the size_t cast
   // into a rounding observation.
   for (size_t i = 0; i < observations.n_cols; i++)
-    probabilities((size_t) (observations(0, i) + 0.5)) += probObs[i];
+  {
+    const size_t obs = size_t(observations(0, i) + 0.5);
+
+    // Ensure that the observation is within the bounds.
+    if (obs >= probabilities.n_elem)
+    {
+      Log::Debug << "DiscreteDistribution::Estimate(): observation " << i
+          << " (" << obs << ") is invalid; observation must be in [0, "
+          << probabilities.n_elem << "] for this distribution." << std::endl;
+    }
+
+    probabilities(obs) += probObs[i];
+  }
 
   // Now normalize the distribution.
   double sum = accu(probabilities);

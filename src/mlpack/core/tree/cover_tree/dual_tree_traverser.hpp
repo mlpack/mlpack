@@ -71,7 +71,8 @@ class CoverTree<MetricType, RootPointPolicy, StatisticType>::DualTreeTraverser
   size_t numPrunes;
 
   //! Prepare map for recursion.
-  void PruneMap(CoverTree& candidateQueryNode,
+  void PruneMap(CoverTree& queryNode,
+                CoverTree& candidateQueryNode,
                 std::map<int, std::vector<DualCoverTreeMapEntry<
                     MetricType, RootPointPolicy, StatisticType> > >&
                     referenceMap,

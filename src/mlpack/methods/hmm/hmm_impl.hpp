@@ -34,10 +34,13 @@ namespace hmm {
  * given number of emission states.
  */
 template<typename Distribution>
-HMM<Distribution>::HMM(const size_t states, const Distribution emissions) :
+HMM<Distribution>::HMM(const size_t states,
+                       const Distribution emissions,
+                       const double tolerance) :
     transition(arma::ones<arma::mat>(states, states) / (double) states),
     emission(states, /* default distribution */ emissions),
-    dimensionality(emissions.Dimensionality())
+    dimensionality(emissions.Dimensionality()),
+    tolerance(tolerance)
 { /* nothing to do */ }
 
 /**
@@ -46,18 +49,38 @@ HMM<Distribution>::HMM(const size_t states, const Distribution emissions) :
  */
 template<typename Distribution>
 HMM<Distribution>::HMM(const arma::mat& transition,
-                       const std::vector<Distribution>& emission) :
+                       const std::vector<Distribution>& emission,
+                       const double tolerance) :
     transition(transition),
-    emission(emission)
+    emission(emission),
+    tolerance(tolerance)
 {
   // Set the dimensionality, if we can.
   if (emission.size() > 0)
     dimensionality = emission[0].Dimensionality();
+  else
+  {
+    Log::Warn << "HMM::HMM(): no emission distributions given; assuming a "
+        << "dimensionality of 0 and hoping it gets set right later."
+        << std::endl;
+    dimensionality = 0;
+  }
 }
 
 /**
  * Train the model using the Baum-Welch algorithm, with only the given unlabeled
- * observations.
+ * observations.  Each matrix in the vector of data sequences holds an
+ * individual data sequence; each point in each individual data sequence should
+ * be a column in the matrix.  The number of rows in each matrix should be equal
+ * to the dimensionality of the HMM.
+ *
+ * It is preferable to use the other overload of Train(), with labeled data.
+ * That will produce much better results.  However, if labeled data is
+ * unavailable, this will work.  In addition, it is possible to use Train() with
+ * labeled data first, and then continue to train the model using this overload
+ * of Train() with unlabeled data.
+ *
+ * @param dataSeq Set of data sequences to train on.
  */
 template<typename Distribution>
 void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
@@ -69,14 +92,17 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
   // Maximum iterations?
   size_t iterations = 1000;
 
-  // Find length of all sequences.
+  // Find length of all sequences and ensure they are the correct size.
   size_t totalLength = 0;
   for (size_t seq = 0; seq < dataSeq.size(); seq++)
+  {
     totalLength += dataSeq[seq].n_cols;
 
-  // Re-set the dimensionality, if we need to.
-  if (dataSeq.size() > 0) // Just in case a user passed an empty sequence...
-    dimensionality = dataSeq[0].n_rows;
+    if (dataSeq[seq].n_rows != dimensionality)
+      Log::Fatal << "HMM::Train(): data sequence " << seq << " has "
+          << "dimensionality " << dataSeq[seq].n_rows << " (expected "
+          << dimensionality << " dimensions)." << std::endl;
+  }
 
   // These are used later for training of each distribution.  We initialize it
   // all now so we don't have to do any allocation later on.
@@ -154,7 +180,7 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
     Log::Debug << "Iteration " << iter << ": log-likelihood " << loglik
         << std::endl;
 
-    if (fabs(oldLoglik - loglik) < 1e-5)
+    if (std::abs(oldLoglik - loglik) < tolerance)
     {
       Log::Debug << "Converged after " << iter << " iterations." << std::endl;
       break;
@@ -182,10 +208,6 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
 
   transition.zeros();
 
-  // Re-set the dimensionality, if we need to.
-  if (dataSeq.size() > 0)
-    dimensionality = dataSeq[0].n_rows;
-
   // Estimate the transition and emission matrices directly from the
   // observations.  The emission list holds the time indices for observations
   // from each state.
@@ -200,6 +222,13 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
           << dataSeq[seq].n_cols << ") in sequence " << seq
           << " not equal to number of states (" << stateSeq[seq].n_cols
           << ") in sequence " << seq << "." << std::endl;
+    }
+
+    if (dataSeq[seq].n_rows != dimensionality)
+    {
+      Log::Fatal << "HMM::Train(): data sequence " << seq << " has "
+          << "dimensionality " << dataSeq[seq].n_rows << " (expected "
+          << dimensionality << " dimensions)." << std::endl;
     }
 
     // Loop over each observation in the sequence.  For estimation of the

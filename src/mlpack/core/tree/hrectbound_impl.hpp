@@ -108,25 +108,6 @@ void HRectBound<Power, TakeRoot>::Clear()
     bounds[i] = math::Range();
 }
 
-/**
- * Gets the range for a particular dimension.
- */
-template<int Power, bool TakeRoot>
-inline const math::Range& HRectBound<Power, TakeRoot>::operator[](
-    const size_t i) const
-{
-  return bounds[i];
-}
-
-/**
- * Sets the range for the given dimension.
- */
-template<int Power, bool TakeRoot>
-inline math::Range& HRectBound<Power, TakeRoot>::operator[](const size_t i)
-{
-  return bounds[i];
-}
-
 /***
  * Calculates the centroid of the range, placing it into the given vector.
  *
@@ -397,6 +378,38 @@ bool HRectBound<Power, TakeRoot>::Contains(const VecType& point) const
   }
 
   return true;
+}
+
+/**
+ * Returns the diameter of the hyperrectangle (that is, the longest diagonal).
+ */
+template<int Power, bool TakeRoot>
+double HRectBound<Power, TakeRoot>::Diameter() const
+{
+  double d = 0;
+  for (size_t i = 0; i < dim; ++i)
+    d += std::pow(bounds[i].Hi() - bounds[i].Lo(), (double) Power);
+
+  if (TakeRoot)
+    return std::pow(d, 1.0 / (double) Power);
+  else
+    return d;
+}
+
+/**
+ * Returns a string representation of this object.
+ */
+template<int Power, bool TakeRoot>
+std::string HRectBound<Power, TakeRoot>::ToString() const
+{
+  std::ostringstream convert;
+  convert << "HRectBound [" << this << "]" << std::endl;
+  convert << "dim: " << dim << std::endl;
+  convert << "bounds: " << std::endl;
+  for (size_t i = 0; i < dim; ++i)
+    convert << util::Indent(bounds[i].ToString()) << std::endl;
+
+  return convert.str();
 }
 
 }; // namespace bound

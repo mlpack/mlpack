@@ -136,7 +136,7 @@ int main(int argc, char** argv)
     const double degree = CLI::GetParam<double>("degree");
     const double offset = CLI::GetParam<double>("offset");
 
-    PolynomialKernel kernel(offset, degree);
+    PolynomialKernel kernel(degree, offset);
     KernelPCA<PolynomialKernel> kpca(kernel, scaleData);
     kpca.Apply(dataset, newDim);
   }

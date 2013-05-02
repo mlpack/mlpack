@@ -74,9 +74,11 @@ namespace nmf {
  * @endcode
  *
  * @tparam WUpdateRule The update rule for calculating W matrix at each
- *     iteration; @see MultiplicativeDistanceW for an example.
+ *     iteration.
  * @tparam HUpdateRule The update rule for calculating H matrix at each
- *     iteration; @see MultiplicativeDistanceH for an example.
+ *     iteration.
+ *
+ * @see WMultiplicativeDistanceRule, HMultiplicativeDistanceRule
  */
 template<typename InitializationRule = RandomInitialization,
          typename WUpdateRule = WMultiplicativeDistanceRule,

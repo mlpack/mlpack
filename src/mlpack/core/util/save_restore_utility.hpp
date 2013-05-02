@@ -1,5 +1,5 @@
 /**
- * @file utilities/save_restore_utility.hpp
+ * @file save_restore_utility.hpp
  * @author Neil Slagle
  *
  * The SaveRestoreUtility provides helper functions in saving and
@@ -22,8 +22,8 @@
  * You should have received a copy of the GNU General Public License along with
  * MLPACK.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SAVE_RESTORE_MODEL_HPP
-#define SAVE_RESTORE_MODEL_HPP
+#ifndef __MLPACK_CORE_UTIL_SAVE_RESTORE_MODEL_HPP
+#define __MLPACK_CORE_UTIL_SAVE_RESTORE_MODEL_HPP
 
 #include <list>
 #include <map>

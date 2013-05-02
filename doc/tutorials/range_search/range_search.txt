@@ -379,7 +379,7 @@ not make use of tree statistics; therefore, the EmptyStatistic class should be
 used for the StatisticType parameter of the BinarySpaceTree (but this is not
 technically necessary -- RangeSearch simply makes no use of the tree statistic).
 
-@subsection further_doc_rstut Further documentation
+@section further_doc_rstut Further documentation
 
 For further documentation on the RangeSearch class, consult the
 \ref mlpack::range::RangeSearch "complete API documentation".

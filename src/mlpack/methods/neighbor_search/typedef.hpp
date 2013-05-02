@@ -36,22 +36,16 @@ namespace mlpack {
 namespace neighbor {
 
 /**
- * The AllkNN class is the all-k-nearest-neighbors method.  It returns squared
- * L2 distances (squared Euclidean distances) for each of the k nearest
- * neighbors.  Squared distances are used because they are slightly faster than
- * non-squared distances (they have one fewer call to sqrt()).
+ * The AllkNN class is the all-k-nearest-neighbors method.  It returns L2
+ * distances (Euclidean distances) for each of the k nearest neighbors.
  */
-typedef NeighborSearch<NearestNeighborSort, metric::SquaredEuclideanDistance>
-    AllkNN;
+typedef NeighborSearch<NearestNeighborSort, metric::EuclideanDistance> AllkNN;
 
 /**
- * The AllkFN class is the all-k-furthest-neighbors method.  It returns squared
- * L2 distances (squared Euclidean distances) for each of the k furthest
- * neighbors.  Squared distances are used because they are slightly faster than
- * non-squared distances (they have one fewer call to sqrt()).
+ * The AllkFN class is the all-k-furthest-neighbors method.  It returns L2
+ * distances (Euclidean distances) for each of the k furthest neighbors.
  */
-typedef NeighborSearch<FurthestNeighborSort, metric::SquaredEuclideanDistance>
-    AllkFN;
+typedef NeighborSearch<FurthestNeighborSort, metric::EuclideanDistance> AllkFN;
 
 }; // namespace neighbor
 }; // namespace mlpack

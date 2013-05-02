@@ -34,16 +34,16 @@ namespace kmeans {
 /**
  * Construct the K-Means object.
  */
-template<typename DistanceMetric,
+template<typename MetricType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy>
 KMeans<
-    DistanceMetric,
+    MetricType,
     InitialPartitionPolicy,
     EmptyClusterPolicy>::
 KMeans(const size_t maxIterations,
        const double overclusteringFactor,
-       const DistanceMetric metric,
+       const MetricType metric,
        const InitialPartitionPolicy partitioner,
        const EmptyClusterPolicy emptyClusterAction) :
     maxIterations(maxIterations),
@@ -64,12 +64,12 @@ KMeans(const size_t maxIterations,
   }
 }
 
-template<typename DistanceMetric,
+template<typename MetricType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy>
 template<typename MatType>
 void KMeans<
-    DistanceMetric,
+    MetricType,
     InitialPartitionPolicy,
     EmptyClusterPolicy>::
 FastCluster(MatType& data,
@@ -187,8 +187,7 @@ FastCluster(MatType& data,
         for (size_t i = mrkd.Begin(); i < mrkd.Count() + mrkd.Begin(); ++i)
         {
           // Initialize minDistance to be nonzero.
-          double minDistance = metric::SquaredEuclideanDistance::Evaluate(
-              data.col(i), centroids.col(0));
+          double minDistance = metric.Evaluate(data.col(i), centroids.col(0));
 
           // Find the minimal distance centroid for this point.
           for (size_t j = 1; j < centroids.n_cols; ++j)
@@ -201,8 +200,7 @@ FastCluster(MatType& data,
             }
 
             ++comps;
-            double distance = metric::SquaredEuclideanDistance::Evaluate(
-                data.col(i), centroids.col(j));
+            double distance = metric.Evaluate(data.col(i), centroids.col(j));
             if (minDistance > distance)
             {
               minIndex = j;
@@ -292,8 +290,7 @@ FastCluster(MatType& data,
                 p(j) = bound[j].Hi();
             }
 
-            distance = metric::SquaredEuclideanDistance::Evaluate(
-                p.col(0), centroids.col(i));
+            distance = metric.Evaluate(p.col(0), centroids.col(i));
           */
           for (size_t j = 0; j < dimensionality; ++j)
           {
@@ -386,10 +383,9 @@ FastCluster(MatType& data,
                   bound[k].Hi() : bound[k].Lo();
               }
 
-              double distancei = metric::SquaredEuclideanDistance::Evaluate(
-                  p.col(0), centroids.col(i));
-              double distanceMin = metric::SquaredEuclideanDistance::Evaluate(
-                  p.col(0), centroids.col(minIndex));
+              double distancei = metric.Evaluate(p.col(0), centroids.col(i));
+              double distanceMin = metric.Evaluate(p.col(0),
+                  centroids.col(minIndex));
             */
 
             comps += 1;
@@ -502,20 +498,46 @@ FastCluster(MatType& data,
 }
 
 /**
- * Perform K-Means clustering on the data, returning a list of cluster
- * assignments.
+ * Perform k-means clustering on the data, returning a list of cluster
+ * assignments.  This just forward to the other function, which returns the
+ * centroids too.  If this is properly inlined, there shouldn't be any
+ * performance penalty whatsoever.
  */
-template<typename DistanceMetric,
+template<typename MetricType,
          typename InitialPartitionPolicy,
          typename EmptyClusterPolicy>
 template<typename MatType>
-void KMeans<
-    DistanceMetric,
+inline void KMeans<
+    MetricType,
     InitialPartitionPolicy,
     EmptyClusterPolicy>::
 Cluster(const MatType& data,
         const size_t clusters,
-        arma::Col<size_t>& assignments) const
+        arma::Col<size_t>& assignments,
+        const bool initialGuess) const
+{
+  MatType centroids(data.n_rows, clusters);
+  Cluster(data, clusters, assignments, centroids, initialGuess);
+}
+
+/**
+ * Perform k-means clustering on the data, returning a list of cluster
+ * assignments and the centroids of each cluster.
+ */
+template<typename MetricType,
+         typename InitialPartitionPolicy,
+         typename EmptyClusterPolicy>
+template<typename MatType>
+void KMeans<
+    MetricType,
+    InitialPartitionPolicy,
+    EmptyClusterPolicy>::
+Cluster(const MatType& data,
+        const size_t clusters,
+        arma::Col<size_t>& assignments,
+        MatType& centroids,
+        const bool initialAssignmentGuess,
+        const bool initialCentroidGuess) const
 {
   // Make sure we have more points than clusters.
   if (clusters > data.n_cols)
@@ -524,7 +546,7 @@ Cluster(const MatType& data,
 
   // Make sure our overclustering factor is valid.
   size_t actualClusters = size_t(overclusteringFactor * clusters);
-  if (actualClusters > data.n_cols)
+  if (actualClusters > data.n_cols && overclusteringFactor != 1.0)
   {
     Log::Warn << "KMeans::Cluster(): overclustering factor is too large.  No "
         << "overclustering will be done." << std::endl;
@@ -532,17 +554,61 @@ Cluster(const MatType& data,
   }
 
   // Now, the initial assignments.  First determine if they are necessary.
-  if (assignments.n_elem != data.n_cols)
+  if (initialAssignmentGuess)
+  {
+    if (assignments.n_elem != data.n_cols)
+      Log::Fatal << "KMeans::Cluster(): initial cluster assignments (length "
+          << assignments.n_elem << ") not the same size as the dataset (size "
+          << data.n_cols << ")!" << std::endl;
+  }
+  else if (initialCentroidGuess)
+  {
+    if (centroids.n_cols != clusters)
+      Log::Fatal << "KMeans::Cluster(): wrong number of initial cluster "
+        << "centroids (" << centroids.n_cols << ", should be " << clusters
+        << ")!" << std::endl;
+
+    if (centroids.n_rows != data.n_rows)
+      Log::Fatal << "KMeans::Cluster(): initial cluster centroids have wrong "
+        << " dimensionality (" << centroids.n_rows << ", should be "
+        << data.n_rows << ")!" << std::endl;
+
+    // If there were no problems, construct the initial assignments from the
+    // given centroids.
+    assignments.set_size(data.n_cols);
+    for (size_t i = 0; i < data.n_cols; ++i)
+    {
+      // Find the closest centroid to this point.
+      double minDistance = std::numeric_limits<double>::infinity();
+      size_t closestCluster = clusters; // Invalid value.
+
+      for (size_t j = 0; j < clusters; j++)
+      {
+        double distance = metric.Evaluate(data.col(i), centroids.col(j));
+
+        if (distance < minDistance)
+        {
+          minDistance = distance;
+          closestCluster = j;
+        }
+      }
+
+      // Assign the point to the closest cluster that we found.
+      assignments[i] = closestCluster;
+    }
+  }
+  else
   {
     // Use the partitioner to come up with the partition assignments.
     partitioner.Cluster(data, actualClusters, assignments);
   }
 
-  // Centroids of each cluster.  Each column corresponds to a centroid.
-  MatType centroids(data.n_rows, actualClusters);
   // Counts of points in each cluster.
   arma::Col<size_t> counts(actualClusters);
   counts.zeros();
+
+  // Resize to correct size.
+  centroids.set_size(data.n_rows, actualClusters);
 
   // Set counts correctly.
   for (size_t i = 0; i < assignments.n_elem; i++)
@@ -574,8 +640,7 @@ Cluster(const MatType& data,
 
       for (size_t j = 0; j < actualClusters; j++)
       {
-        double distance = metric::SquaredEuclideanDistance::Evaluate(
-            data.col(i), centroids.col(j));
+        double distance = metric.Evaluate(data.col(i), centroids.col(j));
 
         if (distance < minDistance)
         {
@@ -607,7 +672,25 @@ Cluster(const MatType& data,
 
   } while (changedAssignments > 0 && iteration != maxIterations);
 
-  Log::Debug << "Iterations: " << iteration << std::endl;
+  if (iteration != maxIterations)
+  {
+    Log::Debug << "KMeans::Cluster(): converged after " << iteration
+        << " iterations." << std::endl;
+  }
+  else
+  {
+    Log::Debug << "KMeans::Cluster(): terminated after limit of " << iteration
+        << " iterations." << std::endl;
+
+    // Recalculate final clusters.
+    centroids.zeros();
+
+    for (size_t i = 0; i < data.n_cols; i++)
+      centroids.col(assignments[i]) += data.col(i);
+
+    for (size_t i = 0; i < actualClusters; i++)
+      centroids.col(i) /= counts[i];
+  }
 
   // If we have overclustered, we need to merge the nearest clusters.
   if (actualClusters != clusters)
@@ -629,8 +712,8 @@ Cluster(const MatType& data,
     {
       for (size_t second = first + 1; second < actualClusters; second++)
       {
-        distances(i) = metric::SquaredEuclideanDistance::Evaluate(
-            centroids.col(first), centroids.col(second));
+        distances(i) = metric.Evaluate(centroids.col(first),
+                                       centroids.col(second));
         firstCluster(i) = first;
         secondCluster(i) = second;
         i++;
@@ -673,8 +756,7 @@ Cluster(const MatType& data,
         {
           // Make sure it isn't already DBL_MAX.
           if (distances(offset + (first - cluster)) != DBL_MAX)
-            distances(offset + (first - cluster)) =
-                metric::SquaredEuclideanDistance::Evaluate(
+            distances(offset + (first - cluster)) = metric.Evaluate(
                 centroids.col(first), centroids.col(cluster));
         }
 
@@ -689,8 +771,7 @@ Cluster(const MatType& data,
         // Make sure it isn't already DBL_MAX.
         if (distances(offset + (cluster - first)) != DBL_MAX)
         {
-          distances(offset + (cluster - first)) =
-              metric::SquaredEuclideanDistance::Evaluate(
+          distances(offset + (cluster - first)) = metric.Evaluate(
               centroids.col(first), centroids.col(cluster));
         }
       }

@@ -73,8 +73,10 @@ bool SaveRestoreUtility::WriteFile(const std::string& filename)
     /* TODO: perhaps we'll add more later?
      * xmlNewProp(child, BAD_CAST "attr", BAD_CAST "add more addibutes?"); */
   }
-  /* save the file */
-  xmlSaveFormatFileEnc(filename.c_str(), xmlDocTree, "UTF-8", 1);
+
+  // Actually save the file.
+  success =
+      (xmlSaveFormatFileEnc(filename.c_str(), xmlDocTree, "UTF-8", 1) != -1);
   xmlFreeDoc(xmlDocTree);
   return success;
 }

@@ -50,10 +50,25 @@ class EMFit
  public:
   /**
    * Construct the EMFit object, optionally passing an InitialClusteringType
-   * object (just in case it needs to store state).
+   * object (just in case it needs to store state).  Setting the maximum number
+   * of iterations to 0 means that the EM algorithm will iterate until
+   * convergence (with the given tolerance).
+   *
+   * The parameter forcePositive controls whether or not the covariance matrices
+   * are checked for positive definiteness at each iteration.  This could be a
+   * time-consuming task, so, if you know your data is well-behaved, you can set
+   * it to false and save some runtime.
+   *
+   * @param maxIterations Maximum number of iterations for EM.
+   * @param tolerance Log-likelihood tolerance required for convergence.
+   * @param forcePositive Check for positive-definiteness of each covariance
+   *     matrix at each iteration.
+   * @param clusterer Object which will perform the initial clustering.
    */
-  EMFit(InitialClusteringType clusterer = InitialClusteringType()) :
-      clusterer(clusterer) { /* Nothing to do. */ }
+  EMFit(const size_t maxIterations = 300,
+        const double tolerance = 1e-10,
+        const bool forcePositive = true,
+        InitialClusteringType clusterer = InitialClusteringType());
 
   /**
    * Fit the observations to a Gaussian mixture model (GMM) using the EM
@@ -88,6 +103,28 @@ class EMFit
                 std::vector<arma::mat>& covariances,
                 arma::vec& weights);
 
+  //! Get the clusterer.
+  const InitialClusteringType& Clusterer() const { return clusterer; }
+  //! Modify the clusterer.
+  InitialClusteringType& Clusterer() { return clusterer; }
+
+  //! Get the maximum number of iterations of the EM algorithm.
+  size_t MaxIterations() const { return maxIterations; }
+  //! Modify the maximum number of iterations of the EM algorithm.
+  size_t& MaxIterations() { return maxIterations; }
+
+  //! Get the tolerance for the convergence of the EM algorithm.
+  double Tolerance() const { return tolerance; }
+  //! Modify the tolerance for the convergence of the EM algorithm.
+  double& Tolerance() { return tolerance; }
+
+  //! Get whether or not the covariance matrices are forced to be positive
+  //! definite.
+  bool ForcePositive() const { return forcePositive; }
+  //! Modify whether or not the covariance matrices are forced to be positive
+  //! definite.
+  bool& ForcePositive() { return forcePositive; }
+
  private:
   /**
    * Run the clusterer, and then turn the cluster assignments into Gaussians.
@@ -119,6 +156,13 @@ class EMFit
                        const std::vector<arma::mat>& covariances,
                        const arma::vec& weights) const;
 
+  //! Maximum iterations of EM algorithm.
+  size_t maxIterations;
+  //! Tolerance for convergence of EM.
+  double tolerance;
+  //! Whether or not to force positive definiteness of covariance matrices.
+  bool forcePositive;
+  //! Object which will perform the clustering.
   InitialClusteringType clusterer;
 };
 

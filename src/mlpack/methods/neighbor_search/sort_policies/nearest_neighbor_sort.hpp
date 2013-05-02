@@ -145,6 +145,15 @@ class NearestNeighborSort
    * @return 0.0
    */
   static inline double BestDistance() { return 0.0; }
+
+  /**
+   * Return the worst combination of the two distances.
+   */
+  static inline double CombineWorst(const double a, const double b)
+  {
+    if (a == DBL_MAX || b == DBL_MAX)
+      return DBL_MAX;
+    return a + b; }
 };
 
 }; // namespace neighbor

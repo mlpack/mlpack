@@ -28,6 +28,7 @@
 #include <iostream>
 
 #include "neighbor_search.hpp"
+#include "unmap.hpp"
 
 using namespace std;
 using namespace mlpack;
@@ -68,20 +69,29 @@ PARAM_STRING("query_file", "File containing query points (optional).", "q", "");
 PARAM_INT("leaf_size", "Leaf size for tree building.", "l", 20);
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
-    "dual-tree search.", "s");
+    "dual-tree search).", "s");
 PARAM_FLAG("cover_tree", "If true, use cover trees to perform the search "
     "(experimental, may be slow).", "c");
+PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
+    "random orthogonal basis.", "R");
+PARAM_INT("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
 
 int main(int argc, char *argv[])
 {
   // Give CLI the command line parameters the user passed in.
   CLI::ParseCommandLine(argc, argv);
 
-  // Get all the parameters.
-  string referenceFile = CLI::GetParam<string>("reference_file");
+  if (CLI::GetParam<int>("seed") != 0)
+    math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
+  else
+    math::RandomSeed((size_t) std::time(NULL));
 
-  string distancesFile = CLI::GetParam<string>("distances_file");
-  string neighborsFile = CLI::GetParam<string>("neighbors_file");
+  // Get all the parameters.
+  const string referenceFile = CLI::GetParam<string>("reference_file");
+  const string queryFile = CLI::GetParam<string>("query_file");
+
+  const string distancesFile = CLI::GetParam<string>("distances_file");
+  const string neighborsFile = CLI::GetParam<string>("neighbors_file");
 
   int lsInt = CLI::GetParam<int>("leaf_size");
 
@@ -89,13 +99,21 @@ int main(int argc, char *argv[])
 
   bool naive = CLI::HasParam("naive");
   bool singleMode = CLI::HasParam("single_mode");
+  const bool randomBasis = CLI::HasParam("random_basis");
 
   arma::mat referenceData;
   arma::mat queryData; // So it doesn't go out of scope.
-  data::Load(referenceFile.c_str(), referenceData, true);
+  data::Load(referenceFile, referenceData, true);
 
   Log::Info << "Loaded reference data from '" << referenceFile << "' ("
       << referenceData.n_rows << " x " << referenceData.n_cols << ")." << endl;
+
+  if (queryFile != "")
+  {
+    data::Load(queryFile, queryData, true);
+    Log::Info << "Loaded query data from '" << queryFile << "' ("
+      << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
+  }
 
   // Sanity check on k value: must be greater than 0, must be less than the
   // number of reference points.
@@ -123,6 +141,43 @@ int main(int argc, char *argv[])
   if (naive)
     leafSize = referenceData.n_cols;
 
+  // See if we want to project onto a random basis.
+  if (randomBasis)
+  {
+    // Generate the random basis.
+    while (true)
+    {
+      // [Q, R] = qr(randn(d, d));
+      // Q = Q * diag(sign(diag(R)));
+      arma::mat q, r;
+      if (arma::qr(q, r, arma::randn<arma::mat>(referenceData.n_rows,
+          referenceData.n_rows)))
+      {
+        arma::vec rDiag(r.n_rows);
+        for (size_t i = 0; i < rDiag.n_elem; ++i)
+        {
+          if (r(i, i) < 0)
+            rDiag(i) = -1;
+          else if (r(i, i) > 0)
+            rDiag(i) = 1;
+          else
+            rDiag(i) = 0;
+        }
+
+        q *= arma::diagmat(rDiag);
+
+        // Check if the determinant is positive.
+        if (arma::det(q) >= 0)
+        {
+          referenceData = q * referenceData;
+          if (queryFile != "")
+            queryData = q * queryData;
+          break;
+        }
+      }
+    }
+  }
+
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
@@ -140,9 +195,9 @@ int main(int argc, char *argv[])
     Timer::Start("tree_building");
 
     BinarySpaceTree<bound::HRectBound<2>, QueryStat<NearestNeighborSort> >
-      refTree(referenceData, oldFromNewRefs, leafSize);
+        refTree(referenceData, oldFromNewRefs, leafSize);
     BinarySpaceTree<bound::HRectBound<2>, QueryStat<NearestNeighborSort> >*
-      queryTree = NULL; // Empty for now.
+        queryTree = NULL; // Empty for now.
 
     Timer::Stop("tree_building");
 
@@ -150,15 +205,11 @@ int main(int argc, char *argv[])
 
     if (CLI::GetParam<string>("query_file") != "")
     {
-      string queryFile = CLI::GetParam<string>("query_file");
-
-      data::Load(queryFile.c_str(), queryData, true);
-
       if (naive && leafSize < queryData.n_cols)
         leafSize = queryData.n_cols;
 
       Log::Info << "Loaded query data from '" << queryFile << "' ("
-        << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
+          << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
 
       Log::Info << "Building query tree..." << endl;
 
@@ -199,50 +250,15 @@ int main(int argc, char *argv[])
     // construction.
     Log::Info << "Re-mapping indices..." << endl;
 
-    neighbors.set_size(neighborsOut.n_rows, neighborsOut.n_cols);
-    distances.set_size(distancesOut.n_rows, distancesOut.n_cols);
-
-    // Do the actual remapping.
+    // Map the results back to the correct places.
     if ((CLI::GetParam<string>("query_file") != "") && !singleMode)
-    {
-      for (size_t i = 0; i < distancesOut.n_cols; ++i)
-      {
-        // Map distances (copy a column) and square root.
-        distances.col(oldFromNewQueries[i]) = sqrt(distancesOut.col(i));
-
-        // Map indices of neighbors.
-        for (size_t j = 0; j < distancesOut.n_rows; ++j)
-        {
-          neighbors(j, oldFromNewQueries[i]) =
-              oldFromNewRefs[neighborsOut(j, i)];
-        }
-      }
-    }
+      Unmap(neighborsOut, distancesOut, oldFromNewRefs, oldFromNewQueries,
+          neighbors, distances);
     else if ((CLI::GetParam<string>("query_file") != "") && singleMode)
-    {
-      // No remapping of queries is necessary.  So distances are the same.
-      distances = sqrt(distancesOut);
-
-      // The neighbor indices must be mapped.
-      for (size_t j = 0; j < neighborsOut.n_elem; ++j)
-      {
-        neighbors[j] = oldFromNewRefs[neighborsOut[j]];
-      }
-    }
+      Unmap(neighborsOut, distancesOut, oldFromNewRefs, neighbors, distances);
     else
-    {
-      for (size_t i = 0; i < distancesOut.n_cols; ++i)
-      {
-        // Map distances (copy a column).
-        distances.col(oldFromNewRefs[i]) = sqrt(distancesOut.col(i));
-
-        // Map indices of neighbors.
-        for (size_t j = 0; j < distancesOut.n_rows; ++j)
-        {
-          neighbors(j, oldFromNewRefs[i]) = oldFromNewRefs[neighborsOut(j, i)];
-        }
-      }
-    }
+      Unmap(neighborsOut, distancesOut, oldFromNewRefs, oldFromNewRefs,
+          neighbors, distances);
 
     // Clean up.
     if (queryTree)
@@ -271,10 +287,6 @@ int main(int argc, char *argv[])
     // See if we have query data.
     if (CLI::HasParam("query_file"))
     {
-      string queryFile = CLI::GetParam<string>("query_file");
-
-      data::Load(queryFile, queryData, true);
-
       // Build query tree.
       if (!singleMode)
       {

@@ -26,6 +26,7 @@
 
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/log.hpp>
+#include <mlpack/core/util/string_util.hpp>
 
 namespace mlpack {
 namespace tree {
@@ -38,20 +39,18 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     const size_t leafSize) :
     left(NULL),
     right(NULL),
+    parent(NULL),
     begin(0), /* This root node starts at index 0, */
     count(data.n_cols), /* and spans all of the dataset. */
+    leafSize(leafSize),
     bound(data.n_rows),
-    stat(),
-    leafSize(leafSize)
+    dataset(data)
 {
   // Do the actual splitting of this node.
   SplitNode(data);
 
   // Create the statistic depending on if we are a leaf or not.
-  if (IsLeaf())
-    stat = StatisticType(data, begin, count);
-  else
-    stat = StatisticType(data, begin, count, left->Stat(), right->Stat());
+  stat = StatisticType(*this);
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>
@@ -61,11 +60,12 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     const size_t leafSize) :
     left(NULL),
     right(NULL),
+    parent(NULL),
     begin(0),
     count(data.n_cols),
+    leafSize(leafSize),
     bound(data.n_rows),
-    stat(),
-    leafSize(leafSize)
+    dataset(data)
 {
   // Initialize oldFromNew correctly.
   oldFromNew.resize(data.n_cols);
@@ -76,10 +76,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
   SplitNode(data, oldFromNew);
 
   // Create the statistic depending on if we are a leaf or not.
-  if (IsLeaf())
-    stat = StatisticType(data, begin, count);
-  else
-    stat = StatisticType(data, begin, count, left->Stat(), right->Stat());
+  stat = StatisticType(*this);
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>
@@ -90,11 +87,12 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     const size_t leafSize) :
     left(NULL),
     right(NULL),
+    parent(NULL),
     begin(0),
     count(data.n_cols),
+    leafSize(leafSize),
     bound(data.n_rows),
-    stat(),
-    leafSize(leafSize)
+    dataset(data)
 {
   // Initialize the oldFromNew vector correctly.
   oldFromNew.resize(data.n_cols);
@@ -105,10 +103,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
   SplitNode(data, oldFromNew);
 
   // Create the statistic depending on if we are a leaf or not.
-  if (IsLeaf())
-    stat = StatisticType(data, begin, count);
-  else
-    stat = StatisticType(data, begin, count, left->Stat(), right->Stat());
+  stat = StatisticType(*this);
 
   // Map the newFromOld indices correctly.
   newFromOld.resize(data.n_cols);
@@ -121,23 +116,22 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     MatType& data,
     const size_t begin,
     const size_t count,
+    BinarySpaceTree* parent,
     const size_t leafSize) :
     left(NULL),
     right(NULL),
+    parent(parent),
     begin(begin),
     count(count),
+    leafSize(leafSize),
     bound(data.n_rows),
-    stat(),
-    leafSize(leafSize)
+    dataset(data)
 {
   // Perform the actual splitting.
   SplitNode(data);
 
   // Create the statistic depending on if we are a leaf or not.
-  if (IsLeaf())
-    stat = StatisticType(data, begin, count);
-  else
-    stat = StatisticType(data, begin, count, left->Stat(), right->Stat());
+  stat = StatisticType(*this);
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>
@@ -146,14 +140,16 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     const size_t begin,
     const size_t count,
     std::vector<size_t>& oldFromNew,
+    BinarySpaceTree* parent,
     const size_t leafSize) :
     left(NULL),
     right(NULL),
+    parent(parent),
     begin(begin),
     count(count),
+    leafSize(leafSize),
     bound(data.n_rows),
-    stat(),
-    leafSize(leafSize)
+    dataset(data)
 {
   // Hopefully the vector is initialized correctly!  We can't check that
   // entirely but we can do a minor sanity check.
@@ -163,10 +159,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
   SplitNode(data, oldFromNew);
 
   // Create the statistic depending on if we are a leaf or not.
-  if (IsLeaf())
-    stat = StatisticType(data, begin, count);
-  else
-    stat = StatisticType(data, begin, count, left->Stat(), right->Stat());
+  stat = StatisticType(*this);
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>
@@ -176,14 +169,16 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     const size_t count,
     std::vector<size_t>& oldFromNew,
     std::vector<size_t>& newFromOld,
+    BinarySpaceTree* parent,
     const size_t leafSize) :
     left(NULL),
     right(NULL),
+    parent(parent),
     begin(begin),
     count(count),
+    leafSize(leafSize),
     bound(data.n_rows),
-    stat(),
-    leafSize(leafSize)
+    dataset(data)
 {
   // Hopefully the vector is initialized correctly!  We can't check that
   // entirely but we can do a minor sanity check.
@@ -193,10 +188,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
   SplitNode(data, oldFromNew);
 
   // Create the statistic depending on if we are a leaf or not.
-  if (IsLeaf())
-    stat = StatisticType(data, begin, count);
-  else
-    stat = StatisticType(data, begin, count, left->Stat(), right->Stat());
+  stat = StatisticType(*this);
 
   // Map the newFromOld indices correctly.
   newFromOld.resize(data.n_cols);
@@ -204,10 +196,12 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     newFromOld[oldFromNew[i]] = i;
 }
 
+/*
 template<typename BoundType, typename StatisticType, typename MatType>
 BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree() :
     left(NULL),
     right(NULL),
+    parent(NULL),
     begin(0),
     count(0),
     bound(),
@@ -215,6 +209,39 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree() :
     leafSize(20) // Default leaf size is 20.
 {
   // Nothing to do.
+}*/
+
+/**
+ * Create a binary space tree by copying the other tree.  Be careful!  This can
+ * take a long time and use a lot of memory.
+ */
+template<typename BoundType, typename StatisticType, typename MatType>
+BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
+    const BinarySpaceTree& other) :
+    left(NULL),
+    right(NULL),
+    parent(other.parent),
+    begin(other.begin),
+    count(other.count),
+    leafSize(other.leafSize),
+    bound(other.bound),
+    stat(other.stat),
+    splitDimension(other.splitDimension),
+    furthestDescendantDistance(other.furthestDescendantDistance),
+    dataset(other.dataset)
+{
+  // Create left and right children (if any).
+  if (other.Left())
+  {
+    left = new BinarySpaceTree(*other.Left());
+    left->Parent() = this; // Set parent to this, not other tree.
+  }
+
+  if (other.Right())
+  {
+    right = new BinarySpaceTree(*other.Right());
+    right->Parent() = this; // Set parent to this, not other tree.
+  }
 }
 
 /**
@@ -342,61 +369,9 @@ size_t BinarySpaceTree<BoundType, StatisticType, MatType>::TreeDepth() const
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>
-inline const
-    BoundType& BinarySpaceTree<BoundType, StatisticType, MatType>::Bound() const
-{
-  return bound;
-}
-
-template<typename BoundType, typename StatisticType, typename MatType>
-inline BoundType& BinarySpaceTree<BoundType, StatisticType, MatType>::Bound()
-{
-  return bound;
-}
-
-template<typename BoundType, typename StatisticType, typename MatType>
-inline const StatisticType&
-    BinarySpaceTree<BoundType, StatisticType, MatType>::Stat() const
-{
-  return stat;
-}
-
-template<typename BoundType, typename StatisticType, typename MatType>
-inline StatisticType& BinarySpaceTree<BoundType, StatisticType, MatType>::Stat()
-{
-  return stat;
-}
-
-template<typename BoundType, typename StatisticType, typename MatType>
-inline size_t BinarySpaceTree<BoundType, StatisticType, MatType>::GetSplitDimension() const
-{
-  return splitDimension;
-}
-
-template<typename BoundType, typename StatisticType, typename MatType>
 inline bool BinarySpaceTree<BoundType, StatisticType, MatType>::IsLeaf() const
 {
   return !left;
-}
-
-/**
- * Gets the left branch of the tree.
- */
-template<typename BoundType, typename StatisticType, typename MatType>
-inline BinarySpaceTree<BoundType, StatisticType, MatType>*
-    BinarySpaceTree<BoundType, StatisticType, MatType>::Left() const
-{
-  return left;
-}
-
-/**
- * Gets the right branch.
- */
-template<typename BoundType, typename StatisticType, typename MatType>
-inline BinarySpaceTree<BoundType, StatisticType, MatType>*
-    BinarySpaceTree<BoundType, StatisticType, MatType>::Right() const
-{
-  return right;
 }
 
 /**
@@ -425,9 +400,7 @@ template<typename BoundType, typename StatisticType, typename MatType>
 inline double BinarySpaceTree<BoundType, StatisticType, MatType>::
     FurthestDescendantDistance() const
 {
-  arma::vec centroid;
-  bound.Centroid(centroid);
-  return bound.MaxDistance(centroid);
+  return furthestDescendantDistance;
 }
 
 /**
@@ -469,15 +442,6 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::Point(const size_t index)
 }
 
 /**
- * Gets the index of the begin point of this subset.
- */
-template<typename BoundType, typename StatisticType, typename MatType>
-inline size_t BinarySpaceTree<BoundType, StatisticType, MatType>::Begin() const
-{
-  return begin;
-}
-
-/**
  * Gets the index one beyond the last index in the series.
  */
 template<typename BoundType, typename StatisticType, typename MatType>
@@ -486,21 +450,15 @@ inline size_t BinarySpaceTree<BoundType, StatisticType, MatType>::End() const
   return begin + count;
 }
 
-/**
- * Gets the number of points in this subset.
- */
-template<typename BoundType, typename StatisticType, typename MatType>
-inline size_t BinarySpaceTree<BoundType, StatisticType, MatType>::Count() const
-{
-  return count;
-}
-
 template<typename BoundType, typename StatisticType, typename MatType>
 void
     BinarySpaceTree<BoundType, StatisticType, MatType>::SplitNode(MatType& data)
 {
   // We need to expand the bounds of this node properly.
   bound |= data.cols(begin, begin + count - 1);
+
+  // Calculate the furthest descendant distance.
+  furthestDescendantDistance = 0.5 * bound.Diameter();
 
   // Now, check if we need to split at all.
   if (count <= leafSize)
@@ -538,9 +496,9 @@ void
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
   left = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, begin,
-      splitCol - begin, leafSize);
+      splitCol - begin, this, leafSize);
   right = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, splitCol,
-      begin + count - splitCol, leafSize);
+      begin + count - splitCol, this, leafSize);
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>
@@ -551,6 +509,9 @@ void BinarySpaceTree<BoundType, StatisticType, MatType>::SplitNode(
   // This should be a single function for Bound.
   // We need to expand the bounds of this node properly.
   bound |= data.cols(begin, begin + count - 1);
+
+  // Calculate the furthest descendant distance.
+  furthestDescendantDistance = 0.5 * bound.Diameter();
 
   // First, check if we need to split at all.
   if (count <= leafSize)
@@ -588,9 +549,9 @@ void BinarySpaceTree<BoundType, StatisticType, MatType>::SplitNode(
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
   left = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, begin,
-      splitCol - begin, oldFromNew, leafSize);
+      splitCol - begin, oldFromNew, this, leafSize);
   right = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, splitCol,
-      begin + count - splitCol, oldFromNew, leafSize);
+      begin + count - splitCol, oldFromNew, this, leafSize);
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>
@@ -685,6 +646,33 @@ size_t BinarySpaceTree<BoundType, StatisticType, MatType>::GetSplitIndex(
   Log::Assert(left == right + 1);
 
   return left;
+}
+
+/**
+ * Returns a string representation of this object.
+ */
+template<typename BoundType, typename StatisticType, typename MatType>
+std::string BinarySpaceTree<BoundType, StatisticType, MatType>::ToString() const
+{
+  std::ostringstream convert;
+  convert << "BinarySpaceTree [" << this << "]" << std::endl;
+  convert << "begin: " << begin << std::endl;
+  convert << "count: " << count << std::endl;
+  convert << "bound: " << mlpack::util::Indent(bound.ToString());
+  convert << "statistic: " << stat.ToString();
+  convert << "leaf size: " << leafSize << std::endl;
+  convert << "splitDimension: " << splitDimension << std::endl;
+  if (left != NULL)
+  {
+    convert << "left:" << std::endl;
+    convert << mlpack::util::Indent(left->ToString());
+  }
+  if (right != NULL)
+  {
+    convert << "right:" << std::endl;
+    convert << mlpack::util::Indent(right->ToString());
+  }
+  return convert.str();
 }
 
 }; // namespace tree

@@ -54,15 +54,15 @@ LARS::LARS(const bool useCholesky,
 void LARS::Regress(const arma::mat& matX,
                    const arma::vec& y,
                    arma::vec& beta,
-                   const bool rowMajor)
+                   const bool transposeData)
 {
   Timer::Start("lars_regression");
 
   // This matrix may end up holding the transpose -- if necessary.
   arma::mat dataTrans;
   // dataRef is row-major.
-  const arma::mat& dataRef = (rowMajor ? matX : dataTrans);
-  if (!rowMajor)
+  const arma::mat& dataRef = (transposeData ? dataTrans : matX);
+  if (transposeData)
     dataTrans = trans(matX);
 
   // Compute X' * y.

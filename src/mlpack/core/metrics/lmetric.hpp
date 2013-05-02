@@ -69,7 +69,7 @@ namespace metric {
  *    is returned.  Setting this to false causes the metric to not satisfy the
  *    Triangle Inequality (be careful!).
  */
-template<int Power, bool TakeRoot = false>
+template<int Power, bool TakeRoot = true>
 class LMetric
 {
  public:

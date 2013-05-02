@@ -37,33 +37,12 @@ class MRKDStatistic
   MRKDStatistic();
 
   /**
-   * This constructor is called when a leaf is created.
+   * This constructor is called when a node is finished initializing.
    *
-   * @param dataset Matrix that the tree is being built on.
-   * @param begin Starting index corresponding to this leaf.
-   * @param count Number of points held in this leaf.
+   * @param node The node that has been finished.
    */
-  template<typename MatType>
-  MRKDStatistic(const MatType& dataset,
-                const size_t begin,
-                const size_t count);
-
-  /**
-   * This constructor is called when a non-leaf node is created.
-   * This lets you build fast bottom-up statistics when building trees.
-   *
-   * @param dataset Matrix that the tree is being built on.
-   * @param begin Starting index corresponding to this leaf.
-   * @param count Number of points held in this leaf.
-   * @param leftStat MRKDStatistic object of the left child node.
-   * @param rightStat MRKDStatistic object of the right child node.
-   */
-  template<typename MatType>
-  MRKDStatistic(const MatType& dataset,
-                const size_t begin,
-                const size_t count,
-                MRKDStatistic& leftStat,
-                MRKDStatistic& rightStat);
+  template<typename TreeType>
+  MRKDStatistic(const TreeType& /* node */);
 
   /**
    * Returns a string representation of this object.
@@ -112,7 +91,7 @@ class MRKDStatistic
   // Computed statistics.
   //! The center of mass for this dataset.
   arma::colvec centerOfMass;
-  //! The sum of the squared Euclidian norms for this dataset.
+  //! The sum of the squared Euclidean norms for this dataset.
   double sumOfSquaredNorms;
 
   // There may be a better place to store this -- HRectBound?

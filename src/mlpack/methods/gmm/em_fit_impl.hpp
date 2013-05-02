@@ -31,6 +31,18 @@
 namespace mlpack {
 namespace gmm {
 
+//! Constructor.
+template<typename InitialClusteringType>
+EMFit<InitialClusteringType>::EMFit(const size_t maxIterations,
+                                    const double tolerance,
+                                    const bool forcePositive,
+                                    InitialClusteringType clusterer) :
+    maxIterations(maxIterations),
+    tolerance(tolerance),
+    forcePositive(forcePositive),
+    clusterer(clusterer)
+{ /* Nothing to do. */ }
+
 template<typename InitialClusteringType>
 void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
                                             std::vector<arma::vec>& means,
@@ -48,10 +60,12 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
   arma::mat condProb(observations.n_cols, means.size());
 
   // Iterate to update the model until no more improvement is found.
-  size_t maxIterations = 300;
-  size_t iteration = 0;
-  while (std::abs(l - lOld) > 1e-10 && iteration < maxIterations)
+  size_t iteration = 1;
+  while (std::abs(l - lOld) > tolerance && iteration != maxIterations)
   {
+    Log::Info << "EMFit::Estimate(): iteration " << iteration << ", "
+        << "log-likelihood " << l << "." << std::endl;
+
     // Calculate the conditional probabilities of choosing a particular
     // Gaussian given the observations and the present theta value.
     for (size_t i = 0; i < means.size(); i++)
@@ -65,7 +79,13 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
 
     // Normalize row-wise.
     for (size_t i = 0; i < condProb.n_rows; i++)
-      condProb.row(i) /= accu(condProb.row(i));
+    {
+      // Avoid dividing by zero; if the probability for everything is 0, we
+      // don't want to make it NaN.
+      const double probSum = accu(condProb.row(i));
+      if (probSum != 0.0)
+        condProb.row(i) /= probSum;
+    }
 
     // Store the sum of the probability of each state over all the observations.
     arma::vec probRowSums = trans(arma::sum(condProb, 0 /* columnwise */));
@@ -74,16 +94,34 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
     // probabilities.
     for (size_t i = 0; i < means.size(); i++)
     {
-      means[i] = (observations * condProb.col(i)) / probRowSums[i];
+      // Don't update if there's no probability of the Gaussian having points.
+      if (probRowSums[i] != 0)
+        means[i] = (observations * condProb.col(i)) / probRowSums[i];
 
       // Calculate the new value of the covariances using the updated
       // conditional probabilities and the updated means.
       arma::mat tmp = observations - (means[i] *
           arma::ones<arma::rowvec>(observations.n_cols));
-      arma::mat tmp_b = tmp % (arma::ones<arma::vec>(observations.n_rows) *
+      arma::mat tmpB = tmp % (arma::ones<arma::vec>(observations.n_rows) *
           trans(condProb.col(i)));
 
-      covariances[i] = (tmp * trans(tmp_b)) / probRowSums[i];
+      // Don't update if there's no probability of the Gaussian having points.
+      if (probRowSums[i] != 0.0)
+        covariances[i] = (tmp * trans(tmpB)) / probRowSums[i];
+
+      // Ensure positive-definiteness.  TODO: make this more efficient.
+      if (forcePositive && det(covariances[i]) <= 1e-50)
+      {
+        Log::Debug << "Covariance matrix " << i << " is not positive definite. "
+            << "Adding perturbation." << std::endl;
+
+        double perturbation = 1e-30;
+        while (det(covariances[i]) <= 1e-50)
+        {
+          covariances[i].diag() += perturbation;
+          perturbation *= 10; // Slow, but we don't want to add too much.
+        }
+      }
     }
 
     // Calculate the new values for omega using the updated conditional
@@ -116,9 +154,8 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
   arma::mat condProb(observations.n_cols, means.size());
 
   // Iterate to update the model until no more improvement is found.
-  size_t maxIterations = 300;
-  size_t iteration = 0;
-  while (std::abs(l - lOld) > 1e-10 && iteration < maxIterations)
+  size_t iteration = 1;
+  while (std::abs(l - lOld) > tolerance && iteration != maxIterations)
   {
     // Calculate the conditional probabilities of choosing a particular
     // Gaussian given the observations and the present theta value.
@@ -133,7 +170,13 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
 
     // Normalize row-wise.
     for (size_t i = 0; i < condProb.n_rows; i++)
-      condProb.row(i) /= accu(condProb.row(i));
+    {
+      // Avoid dividing by zero; if the probability for everything is 0, we
+      // don't want to make it NaN.
+      const double probSum = accu(condProb.row(i));
+      if (probSum != 0.0)
+        condProb.row(i) /= probSum;
+    }
 
     // This will store the sum of probabilities of each state over all the
     // observations.
@@ -156,10 +199,24 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
       // conditional probabilities and the updated means.
       arma::mat tmp = observations - (means[i] *
           arma::ones<arma::rowvec>(observations.n_cols));
-      arma::mat tmp_b = tmp % (arma::ones<arma::vec>(observations.n_rows) *
+      arma::mat tmpB = tmp % (arma::ones<arma::vec>(observations.n_rows) *
           trans(condProb.col(i) % probabilities));
 
-      covariances[i] = (tmp * trans(tmp_b)) / probRowSums[i];
+      covariances[i] = (tmp * trans(tmpB)) / probRowSums[i];
+
+      // Ensure positive-definiteness.  TODO: make this more efficient.
+      if (forcePositive && det(covariances[i]) <= 1e-50)
+      {
+        Log::Debug << "Covariance matrix " << i << " is not positive definite. "
+            << "Adding perturbation." << std::endl;
+
+        double perturbation = 1e-30;
+        while (det(covariances[i]) <= 1e-50)
+        {
+          covariances[i].diag() += perturbation;
+          perturbation *= 10; // Slow, but we don't want to add too much.
+        }
+      }
     }
 
     // Calculate the new values for omega using the updated conditional
@@ -198,13 +255,13 @@ void EMFit<InitialClusteringType>::InitialClustering(
   // From the assignments, generate our means, covariances, and weights.
   for (size_t i = 0; i < observations.n_cols; ++i)
   {
-    size_t cluster = assignments[i];
+    const size_t cluster = assignments[i];
 
     // Add this to the relevant mean.
     means[cluster] += observations.col(i);
 
     // Add this to the relevant covariance.
-    covariances[cluster] += observations.col(i) * trans(observations.col(i));
+//    covariances[cluster] += observations.col(i) * trans(observations.col(i));
 
     // Now add one to the weights (we will normalize).
     weights[cluster]++;
@@ -213,10 +270,36 @@ void EMFit<InitialClusteringType>::InitialClustering(
   // Now normalize the mean and covariance.
   for (size_t i = 0; i < means.size(); ++i)
   {
-    covariances[i] -= means[i] * trans(means[i]) / weights[i];
+//    covariances[i] -= means[i] * trans(means[i]);
 
-    means[i] /= weights[i];
+    means[i] /= (weights[i] > 1) ? weights[i] : 1;
+//    covariances[i] /= (weights[i] > 1) ? weights[i] : 1;
+  }
+
+  for (size_t i = 0; i < observations.n_cols; ++i)
+  {
+    const size_t cluster = assignments[i];
+    const arma::vec normObs = observations.col(i) - means[cluster];
+    covariances[cluster] += normObs * normObs.t();
+  }
+
+  for (size_t i = 0; i < means.size(); ++i)
+  {
     covariances[i] /= (weights[i] > 1) ? weights[i] : 1;
+
+    // Ensure positive-definiteness.  TODO: make this more efficient.
+    if (forcePositive && det(covariances[i]) <= 1e-50)
+    {
+      Log::Debug << "Covariance matrix " << i << " is not positive definite. "
+          << "Adding perturbation." << std::endl;
+
+      double perturbation = 1e-50;
+      while (det(covariances[i]) <= 1e-50)
+      {
+        covariances[i].diag() += perturbation;
+        perturbation *= 10; // Slow, but we don't want to add too much.
+      }
+    }
   }
 
   // Finally, normalize weights.
@@ -242,7 +325,12 @@ double EMFit<InitialClusteringType>::LogLikelihood(
 
   // Now sum over every point.
   for (size_t j = 0; j < observations.n_cols; ++j)
+  {
+    if (accu(likelihoods.col(j)) == 0)
+      Log::Info << "Likelihood of point " << j << " is 0!  It is probably an "
+          << "outlier." << std::endl;
     logLikelihood += log(accu(likelihoods.col(j)));
+  }
 
   return logLikelihood;
 }

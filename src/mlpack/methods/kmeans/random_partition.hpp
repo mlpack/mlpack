@@ -44,7 +44,7 @@ class RandomPartition
    * are random, and the number of points in each cluster should be equal (or
    * approximately equal).
    *
-   * @tparam MatType Type of data (arma::mat or arma::spmat).
+   * @tparam MatType Type of data (arma::mat or arma::sp_mat).
    * @param data Dataset to partition.
    * @param clusters Number of clusters to split dataset into.
    * @param assignments Vector to store cluster assignments into.  Values will

@@ -164,8 +164,8 @@ BOOST_AUTO_TEST_CASE(HRectBoundMinDistancePoint)
 
   arma::vec point = "-2.0 0.0 10.0 3.0 3.0";
 
-  // This will be the Euclidean squared distance.
-  BOOST_REQUIRE_CLOSE(b.MinDistance(point), 95.0, 1e-5);
+  // This will be the Euclidean distance.
+  BOOST_REQUIRE_CLOSE(b.MinDistance(point), sqrt(95.0), 1e-5);
 
   point = "2.0 5.0 2.0 -5.0 1.0";
 
@@ -204,8 +204,8 @@ BOOST_AUTO_TEST_CASE(HRectBoundMinDistanceBound)
   c[3] = Range(2.0, 5.0);
   c[4] = Range(3.0, 4.0);
 
-  BOOST_REQUIRE_CLOSE(b.MinDistance(c), 22.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MinDistance(b), 22.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MinDistance(c), sqrt(22.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MinDistance(b), sqrt(22.0), 1e-5);
 
   // The other bound is on the edge of the bound.
   c[0] = Range(-2.0, 0.0);
@@ -267,16 +267,16 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistancePoint)
 
   arma::vec point = "-2.0 0.0 10.0 3.0 3.0";
 
-  // This will be the Euclidean squared distance.
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), 253.0, 1e-5);
+  // This will be the Euclidean distance.
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), sqrt(253.0), 1e-5);
 
   point = "2.0 5.0 2.0 -5.0 1.0";
 
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), 46.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), sqrt(46.0), 1e-5);
 
   point = "1.0 2.0 0.0 -2.0 1.5";
 
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), 23.25, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), sqrt(23.25), 1e-5);
 }
 
 /**
@@ -307,8 +307,8 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistanceBound)
   c[3] = Range(2.0, 5.0);
   c[4] = Range(3.0, 4.0);
 
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 210.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), 210.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), sqrt(210.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), sqrt(210.0), 1e-5);
 
   // The other bound is on the edge of the bound.
   c[0] = Range(-2.0, 0.0);
@@ -317,8 +317,8 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistanceBound)
   c[3] = Range(-10.0, -5.0);
   c[4] = Range(2.0, 3.0);
 
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 134.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), 134.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), sqrt(134.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), sqrt(134.0), 1e-5);
 
   // The other bound partially overlaps the bound.
   c[0] = Range(-2.0, 1.0);
@@ -327,12 +327,12 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistanceBound)
   c[3] = Range(-8.0, -4.0);
   c[4] = Range(0.0, 4.0);
 
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 102.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), 102.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), sqrt(102.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), sqrt(102.0), 1e-5);
 
   // The other bound fully overlaps the bound.
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(b), 46.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MaxDistance(c), 61.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(b), sqrt(46.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(c), sqrt(61.0), 1e-5);
 
   // The other bound is entirely inside the bound / the other bound entirely
   // envelops the bound.
@@ -342,13 +342,13 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistanceBound)
   c[3] = Range(-7.0, 0.0);
   c[4] = Range(0.0, 5.0);
 
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 100.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), 100.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), sqrt(100.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), sqrt(100.0), 1e-5);
 
   // Identical bounds.  This will be the sum of the squared widths in each
   // dimension.
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(b), 46.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MaxDistance(c), 162.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(b), sqrt(46.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(c), sqrt(162.0), 1e-5);
 
   // One last additional case.  If the bound encloses only one point, the
   // maximum distance between it and itself is 0.
@@ -954,6 +954,34 @@ BOOST_AUTO_TEST_CASE(HRectBoundRootRangeDistancePoint)
 }
 
 /**
+ * Ensure that HRectBound::Diameter() works properly.
+ */
+BOOST_AUTO_TEST_CASE(HRectBoundDiameter)
+{
+  HRectBound<3> b(4);
+  b[0] = math::Range(0.0, 1.0);
+  b[1] = math::Range(-1.0, 0.0);
+  b[2] = math::Range(2.0, 3.0);
+  b[3] = math::Range(7.0, 7.0);
+
+  BOOST_REQUIRE_CLOSE(b.Diameter(), std::pow(3.0, 1.0 / 3.0), 1e-5);
+
+  HRectBound<2, false> c(4);
+  c[0] = math::Range(0.0, 1.0);
+  c[1] = math::Range(-1.0, 0.0);
+  c[2] = math::Range(2.0, 3.0);
+  c[3] = math::Range(0.0, 0.0);
+
+  BOOST_REQUIRE_CLOSE(c.Diameter(), 3.0, 1e-5);
+
+  HRectBound<5> d(2);
+  d[0] = math::Range(2.2, 2.2);
+  d[1] = math::Range(1.0, 1.0);
+
+  BOOST_REQUIRE_SMALL(d.Diameter(), 1e-5);
+}
+
+/**
  * Ensure that a bound, by default, is empty and has no dimensionality, and the
  * box size vector is empty.
  */
@@ -1505,6 +1533,53 @@ BOOST_AUTO_TEST_CASE(TreeCountMismatch)
   BOOST_REQUIRE(rootNode.Right()->Right()->Count() == 1);
 }
 
+BOOST_AUTO_TEST_CASE(CheckParents)
+{
+  arma::mat dataset = "2.0 5.0 9.0 4.0 8.0 7.0;"
+                      "3.0 4.0 6.0 7.0 1.0 2.0 ";
+
+  // Leaf size of 1.
+  BinarySpaceTree<HRectBound<2> > rootNode(dataset, 1);
+
+  BOOST_REQUIRE_EQUAL(rootNode.Parent(),
+      (BinarySpaceTree<HRectBound<2> >*) NULL);
+  BOOST_REQUIRE_EQUAL(&rootNode, rootNode.Left()->Parent());
+  BOOST_REQUIRE_EQUAL(&rootNode, rootNode.Right()->Parent());
+  BOOST_REQUIRE_EQUAL(rootNode.Left(), rootNode.Left()->Left()->Parent());
+  BOOST_REQUIRE_EQUAL(rootNode.Left(), rootNode.Left()->Right()->Parent());
+  BOOST_REQUIRE_EQUAL(rootNode.Left()->Left(),
+      rootNode.Left()->Left()->Left()->Parent());
+  BOOST_REQUIRE_EQUAL(rootNode.Left()->Left(),
+      rootNode.Left()->Left()->Right()->Parent());
+  BOOST_REQUIRE_EQUAL(rootNode.Right(), rootNode.Right()->Left()->Parent());
+  BOOST_REQUIRE_EQUAL(rootNode.Right(), rootNode.Right()->Right()->Parent());
+  BOOST_REQUIRE_EQUAL(rootNode.Right()->Left(),
+      rootNode.Right()->Left()->Left()->Parent());
+  BOOST_REQUIRE_EQUAL(rootNode.Right()->Left(),
+      rootNode.Right()->Left()->Right()->Parent());
+}
+
+BOOST_AUTO_TEST_CASE(CheckDataset)
+{
+  arma::mat dataset = "2.0 5.0 9.0 4.0 8.0 7.0;"
+                      "3.0 4.0 6.0 7.0 1.0 2.0 ";
+
+  // Leaf size of 1.
+  BinarySpaceTree<HRectBound<2> > rootNode(dataset, 1);
+
+  BOOST_REQUIRE_EQUAL(&rootNode.Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Left()->Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Right()->Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Left()->Left()->Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Left()->Right()->Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Right()->Left()->Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Right()->Right()->Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Left()->Left()->Left()->Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Left()->Left()->Right()->Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Right()->Left()->Left()->Dataset(), &dataset);
+  BOOST_REQUIRE_EQUAL(&rootNode.Right()->Left()->Right()->Dataset(), &dataset);
+}
+
 // Ensure FurthestDescendantDistance() works.
 BOOST_AUTO_TEST_CASE(FurthestDescendantDistanceTest)
 {
@@ -1517,7 +1592,7 @@ BOOST_AUTO_TEST_CASE(FurthestDescendantDistanceTest)
 
   // Both points are contained in the one node.
   BinarySpaceTree<HRectBound<2> > twoPoint(dataset);
-  BOOST_REQUIRE_CLOSE(twoPoint.FurthestDescendantDistance(), 2, 1e-5);
+  BOOST_REQUIRE_CLOSE(twoPoint.FurthestDescendantDistance(), sqrt(2.0), 1e-5);
 }
 
 // Forward declaration of methods we need for the next test.
@@ -1687,6 +1762,11 @@ void GenerateVectorOfTree(TreeType* node,
 }
 
 #ifdef ARMA_HAS_SPMAT
+// Only run sparse tree tests if we are using Armadillo 3.6.  Armadillo 3.4 has
+// some bugs that cause the kd-tree splitting procedure to fail terribly.  Soon,
+// that version will be obsolete, though.
+#if !((ARMA_VERSION_MAJOR == 3) && (ARMA_VERSION_MINOR == 4))
+
 /**
  * Exhaustive sparse kd-tree test based on #125.
  *
@@ -1775,6 +1855,8 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSparseKDTreeTest)
   // Check the tree depth.
   BOOST_REQUIRE_EQUAL(root.TreeDepth(), 7);
 }
+
+#endif // Using Armadillo 3.4.
 #endif // ARMA_HAS_SPMAT
 
 template<typename TreeType>
@@ -1985,12 +2067,13 @@ BOOST_AUTO_TEST_CASE(CoverTreeManualConstructorTest)
   arma::mat dataset;
   dataset.zeros(10, 10);
 
-  CoverTree<> node(dataset, 1.3, 3, 2, 1.5, 2.75);
+  CoverTree<> node(dataset, 1.3, 3, 2, NULL, 1.5, 2.75);
 
   BOOST_REQUIRE_EQUAL(&node.Dataset(), &dataset);
   BOOST_REQUIRE_EQUAL(node.Base(), 1.3);
   BOOST_REQUIRE_EQUAL(node.Point(), 3);
   BOOST_REQUIRE_EQUAL(node.Scale(), 2);
+  BOOST_REQUIRE_EQUAL(node.Parent(), (CoverTree<>*) NULL);
   BOOST_REQUIRE_EQUAL(node.ParentDistance(), 1.5);
   BOOST_REQUIRE_EQUAL(node.FurthestDescendantDistance(), 2.75);
 }
@@ -2023,6 +2106,104 @@ BOOST_AUTO_TEST_CASE(CoverTreeAlternateMetricTest)
 
   // Each node's children must be separated by at least a certain value.
   CheckSeparation<CoverTree<LMetric<1, true> >, LMetric<1, true> >(tree, tree);
+}
+
+/**
+ * Make sure copy constructor works for the cover tree.
+ */
+BOOST_AUTO_TEST_CASE(CoverTreeCopyConstructor)
+{
+  arma::mat dataset;
+  dataset.randu(10, 10); // dataset is irrelevant.
+  CoverTree<> c(dataset, 1.3, 0, 5, NULL, 1.45, 5.2); // Random parameters.
+  c.Children().push_back(new CoverTree<>(dataset, 1.3, 1, 4, &c, 1.3, 2.45));
+  c.Children().push_back(new CoverTree<>(dataset, 1.5, 2, 3, &c, 1.2, 5.67));
+
+  CoverTree<> d = c;
+
+  // Check that everything is the same.
+  BOOST_REQUIRE_EQUAL(c.Dataset().memptr(), d.Dataset().memptr());
+  BOOST_REQUIRE_CLOSE(c.Base(), d.Base(), 1e-50);
+  BOOST_REQUIRE_EQUAL(c.Point(), d.Point());
+  BOOST_REQUIRE_EQUAL(c.Scale(), d.Scale());
+  BOOST_REQUIRE_EQUAL(c.Parent(), d.Parent());
+  BOOST_REQUIRE_EQUAL(c.ParentDistance(), d.ParentDistance());
+  BOOST_REQUIRE_EQUAL(c.FurthestDescendantDistance(),
+                      d.FurthestDescendantDistance());
+  BOOST_REQUIRE_EQUAL(c.NumChildren(), d.NumChildren());
+  BOOST_REQUIRE_NE(&c.Child(0), &d.Child(0));
+  BOOST_REQUIRE_NE(&c.Child(1), &d.Child(1));
+
+  BOOST_REQUIRE_EQUAL(c.Child(0).Parent(), &c);
+  BOOST_REQUIRE_EQUAL(c.Child(1).Parent(), &c);
+  BOOST_REQUIRE_EQUAL(d.Child(0).Parent(), &d);
+  BOOST_REQUIRE_EQUAL(d.Child(1).Parent(), &d);
+
+  // Check that the children are okay.
+  BOOST_REQUIRE_EQUAL(c.Child(0).Dataset().memptr(),
+                      d.Child(0).Dataset().memptr());
+  BOOST_REQUIRE_CLOSE(c.Child(0).Base(), d.Child(0).Base(), 1e-50);
+  BOOST_REQUIRE_EQUAL(c.Child(0).Point(), d.Child(0).Point());
+  BOOST_REQUIRE_EQUAL(c.Child(0).Scale(), d.Child(0).Scale());
+  BOOST_REQUIRE_EQUAL(c.Child(0).ParentDistance(), d.Child(0).ParentDistance());
+  BOOST_REQUIRE_EQUAL(c.Child(0).FurthestDescendantDistance(),
+                      d.Child(0).FurthestDescendantDistance());
+  BOOST_REQUIRE_EQUAL(c.Child(0).NumChildren(), d.Child(0).NumChildren());
+
+  BOOST_REQUIRE_EQUAL(c.Child(1).Dataset().memptr(),
+                      d.Child(1).Dataset().memptr());
+  BOOST_REQUIRE_CLOSE(c.Child(1).Base(), d.Child(1).Base(), 1e-50);
+  BOOST_REQUIRE_EQUAL(c.Child(1).Point(), d.Child(1).Point());
+  BOOST_REQUIRE_EQUAL(c.Child(1).Scale(), d.Child(1).Scale());
+  BOOST_REQUIRE_EQUAL(c.Child(1).ParentDistance(), d.Child(1).ParentDistance());
+  BOOST_REQUIRE_EQUAL(c.Child(1).FurthestDescendantDistance(),
+                      d.Child(1).FurthestDescendantDistance());
+  BOOST_REQUIRE_EQUAL(c.Child(1).NumChildren(), d.Child(1).NumChildren());
+}
+
+/**
+ * Make sure copy constructor works right for the binary space tree.
+ */
+BOOST_AUTO_TEST_CASE(BinarySpaceTreeCopyConstructor)
+{
+  arma::mat data("1");
+  BinarySpaceTree<HRectBound<2> > b(data);
+  b.Begin() = 10;
+  b.Count() = 50;
+  b.Left() = new BinarySpaceTree<HRectBound<2> >(data);
+  b.Left()->Begin() = 10;
+  b.Left()->Count() = 30;
+  b.Right() = new BinarySpaceTree<HRectBound<2> >(data);
+  b.Right()->Begin() = 40;
+  b.Right()->Count() = 20;
+
+  // Copy the tree.
+  BinarySpaceTree<HRectBound<2> > c(b);
+
+  // Ensure everything copied correctly.
+  BOOST_REQUIRE_EQUAL(b.Begin(), c.Begin());
+  BOOST_REQUIRE_EQUAL(b.Count(), c.Count());
+  BOOST_REQUIRE_NE(b.Left(), c.Left());
+  BOOST_REQUIRE_NE(b.Right(), c.Right());
+
+  // Check the children.
+  BOOST_REQUIRE_EQUAL(b.Left()->Begin(), c.Left()->Begin());
+  BOOST_REQUIRE_EQUAL(b.Left()->Count(), c.Left()->Count());
+  BOOST_REQUIRE_EQUAL(b.Left()->Left(),
+      (BinarySpaceTree<HRectBound<2> >*) NULL);
+  BOOST_REQUIRE_EQUAL(b.Left()->Left(), c.Left()->Left());
+  BOOST_REQUIRE_EQUAL(b.Left()->Right(),
+      (BinarySpaceTree<HRectBound<2> >*) NULL);
+  BOOST_REQUIRE_EQUAL(b.Left()->Right(), c.Left()->Right());
+
+  BOOST_REQUIRE_EQUAL(b.Right()->Begin(), c.Right()->Begin());
+  BOOST_REQUIRE_EQUAL(b.Right()->Count(), c.Right()->Count());
+  BOOST_REQUIRE_EQUAL(b.Right()->Left(),
+      (BinarySpaceTree<HRectBound<2> >*) NULL);
+  BOOST_REQUIRE_EQUAL(b.Right()->Left(), c.Right()->Left());
+  BOOST_REQUIRE_EQUAL(b.Right()->Right(),
+      (BinarySpaceTree<HRectBound<2> >*) NULL);
+  BOOST_REQUIRE_EQUAL(b.Right()->Right(), c.Right()->Right());
 }
 
 BOOST_AUTO_TEST_SUITE_END();

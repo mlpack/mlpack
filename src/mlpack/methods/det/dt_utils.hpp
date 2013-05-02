@@ -61,7 +61,8 @@ void PrintVariableImportance(const DTree* dtree,
 
 /**
  * Train the optimal decision tree using cross-validation with the given number
- * of folds.  Optionally, give a filename to print the unpruned tree to.
+ * of folds.  Optionally, give a filename to print the unpruned tree to.  This
+ * initializes a tree on the heap, so you are responsible for deleting it.
  *
  * @param dataset Dataset for the tree to use.
  * @param folds Number of folds to use for cross-validation.

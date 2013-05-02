@@ -1,5 +1,5 @@
 /**
- * @file tree/periodichrectbound.h
+ * @file periodichrectbound.hpp
  *
  * Bounds that are useful for binary space partitioning trees.
  *
@@ -145,6 +145,11 @@ class PeriodicHRectBound
    * Determines if a point is within this bound.
    */
   bool Contains(const arma::vec& point) const;
+
+  /**
+   * Returns a string representation of an object.
+   */
+  std::string ToString() const;
 
  private:
   math::Range *bounds;

@@ -41,27 +41,11 @@ DTBStat::DTBStat() : maxNeighborDistance(DBL_MAX), componentMembership(-1)
 /**
  * An initializer for leaves.
  */
-template<typename MatType>
-DTBStat::DTBStat(const MatType& /* dataset */,
-                 const size_t start,
-                 const size_t count) :
+template<typename TreeType>
+DTBStat::DTBStat(const TreeType& node) :
     maxNeighborDistance(DBL_MAX),
-    componentMembership((count == 1) ? start : -1)
-{
-  // Nothing to do.
-}
-
-/**
- * An initializer for non-leaves.
- */
-template<typename MatType>
-DTBStat::DTBStat(const MatType& /* dataset */,
-                 const size_t start,
-                 const size_t count,
-                 const DTBStat& /* leftStat */,
-                 const DTBStat& /* rightStat */) :
-    maxNeighborDistance(DBL_MAX),
-    componentMembership((count == 1) ? start : -1)
+    componentMembership(((node.NumPoints() == 1) && (node.NumChildren() == 0)) ?
+        node.Point(0) : -1)
 {
   // Nothing to do.
 }
@@ -155,11 +139,11 @@ void DualTreeBoruvka<MetricType, TreeType>::ComputeMST(arma::mat& results)
 
   while (edges.size() < (data.n_cols - 1))
   {
-    
+
     typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
-    
+
     traverser.Traverse(*tree, *tree);
-    
+
     AddAllEdges();
 
     Cleanup();

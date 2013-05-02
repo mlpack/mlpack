@@ -12,6 +12,8 @@ set(SOURCES
   sort_policies/furthest_neighbor_sort.cpp
   sort_policies/furthest_neighbor_sort_impl.hpp
   typedef.hpp
+  unmap.hpp
+  unmap.cpp
 )
 
 # Add directory name to sources.

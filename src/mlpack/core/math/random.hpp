@@ -117,12 +117,12 @@ inline int RandInt(const int hiExclusive)
 inline int RandInt(const int lo, const int hiExclusive)
 {
 #if BOOST_VERSION >= 103900
-  return lo + (int) std::floor((double)(hiExclusive - lo) 
+  return lo + (int) std::floor((double) (hiExclusive - lo)
                                * randUniformDist(randGen));
 #else
   // Before Boost 1.39, we did not give the random object when we wanted a
   // random number; that gets given at construction time.
-  return lo + (int) std::floor((double)(hiExclusive - lo) 
+  return lo + (int) std::floor((double) (hiExclusive - lo)
                                * randUniformDist());
 #endif
 

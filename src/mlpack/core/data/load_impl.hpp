@@ -50,6 +50,7 @@ bool Load(const std::string& filename,
       Log::Warn << "Cannot determine type of file '" << filename << "'; "
           << "no extension is present.  Load failed." << std::endl;
 
+    Timer::Stop("loading_data");
     return false;
   }
 
@@ -70,6 +71,7 @@ bool Load(const std::string& filename,
       Log::Warn << "Cannot open file '" << filename << "'; load failed."
           << std::endl;
 
+    Timer::Stop("loading_data");
     return false;
   }
 
@@ -165,6 +167,7 @@ bool Load(const std::string& filename,
           << "Armadillo was compiled without HDF5 support.  Load failed."
           << std::endl;
 
+    Timer::Stop("loading_data");
     return false;
 #endif
   }
@@ -185,6 +188,7 @@ bool Load(const std::string& filename,
       Log::Warn << "Unable to detect type of '" << filename << "'; load failed."
           << " Incorrect extension?" << std::endl;
 
+    Timer::Stop("loading_data");
     return false;
   }
 
@@ -196,7 +200,7 @@ bool Load(const std::string& filename,
     Log::Info << "Loading '" << filename << "' as " << stringType << ".  "
         << std::flush;
 
-  bool success = matrix.load(stream, loadType);
+  const bool success = matrix.load(stream, loadType);
 
   if (!success)
   {

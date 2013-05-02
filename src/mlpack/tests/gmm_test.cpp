@@ -205,7 +205,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMOneGaussian)
     covar.randu(2);
 
     arma::mat data;
-    data.randn(2 /* dimension */, 100 * pow(10, (iterations / 3.0)));
+    data.randn(2 /* dimension */, 150 * pow(10, (iterations / 3.0)));
 
     // Now apply mean and covariance.
     data.row(0) *= covar(0);
@@ -590,6 +590,48 @@ BOOST_AUTO_TEST_CASE(GMMClassifyTest)
   BOOST_REQUIRE_EQUAL(classes[10], 0);
   BOOST_REQUIRE_EQUAL(classes[11], 2);
   BOOST_REQUIRE_EQUAL(classes[12], 2);
+}
+
+BOOST_AUTO_TEST_CASE(GMMLoadSaveTest)
+{
+  // Create a GMM, save it, and load it.
+  GMM<> gmm(10, 4);
+  gmm.Weights().randu();
+
+  for (size_t i = 0; i < gmm.Gaussians(); ++i)
+  {
+    gmm.Means()[i].randu();
+    gmm.Covariances()[i].randu();
+  }
+
+  gmm.Save("test-gmm-save.xml");
+
+  GMM<> gmm2;
+  gmm2.Load("test-gmm-save.xml");
+
+  // Remove clutter.
+  remove("test-gmm-save.xml");
+
+  BOOST_REQUIRE_EQUAL(gmm.Gaussians(), gmm2.Gaussians());
+  BOOST_REQUIRE_EQUAL(gmm.Dimensionality(), gmm2.Dimensionality());
+
+  for (size_t i = 0; i < gmm.Dimensionality(); ++i)
+    BOOST_REQUIRE_CLOSE(gmm.Weights()[i], gmm2.Weights()[i], 1e-3);
+
+  for (size_t i = 0; i < gmm.Gaussians(); ++i)
+  {
+    for (size_t j = 0; j < gmm.Dimensionality(); ++j)
+      BOOST_REQUIRE_CLOSE(gmm.Means()[i][j], gmm2.Means()[i][j], 1e-3);
+
+    for (size_t j = 0; j < gmm.Dimensionality(); ++j)
+    {
+      for (size_t k = 0; k < gmm.Dimensionality(); ++k)
+      {
+        BOOST_REQUIRE_CLOSE(gmm.Covariances()[i](j, k),
+            gmm2.Covariances()[i](j, k), 1e-3);
+      }
+    }
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

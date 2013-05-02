@@ -92,8 +92,8 @@ BOOST_AUTO_TEST_CASE(arbitrary_case)
   arma::vec a = "3.0 5.0 6.0 7.0";
   arma::vec b = "1.0 2.0 1.0 0.0";
 
-  BOOST_REQUIRE_CLOSE(LMetric<3>::Evaluate(a, b), 503.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(LMetric<3>::Evaluate(b, a), 503.0, 1e-5);
+  BOOST_REQUIRE_CLOSE((LMetric<3, false>::Evaluate(a, b)), 503.0, 1e-5);
+  BOOST_REQUIRE_CLOSE((LMetric<3, false>::Evaluate(b, a)), 503.0, 1e-5);
 
   BOOST_REQUIRE_CLOSE((LMetric<3, true>::Evaluate(a, b)), 7.95284762, 1e-5);
   BOOST_REQUIRE_CLOSE((LMetric<3, true>::Evaluate(b, a)), 7.95284762, 1e-5);

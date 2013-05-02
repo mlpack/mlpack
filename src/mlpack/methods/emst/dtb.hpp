@@ -63,22 +63,20 @@ class DTBStat
 
  public:
   /**
-   * A generic initializer.
+   * A generic initializer.  Sets the maximum neighbor distance to its default,
+   * and the component membership to -1 (no component).
    */
   DTBStat();
 
   /**
-   * An initializer for leaves.
+   * This is called when a node is finished initializing.  We set the maximum
+   * neighbor distance to its default, and if possible, we set the component
+   * membership of the node (if it has only one point and no children).
+   *
+   * @param node Node that has been finished.
    */
-  template<typename MatType>
-  DTBStat(const MatType& dataset, const size_t start, const size_t count);
-
-  /**
-   * An initializer for non-leaves.
-   */
-  template<typename MatType>
-  DTBStat(const MatType& dataset, const size_t start, const size_t count,
-          const DTBStat& leftStat, const DTBStat& rightStat);
+  template<typename TreeType>
+  DTBStat(const TreeType& node);
 
   //! Get the maximum neighbor distance.
   double MaxNeighborDistance() const { return maxNeighborDistance; }
@@ -94,7 +92,7 @@ class DTBStat
 
 /**
  * Performs the MST calculation using the Dual-Tree Boruvka algorithm, using any
- * type of tree.  
+ * type of tree.
  *
  * For more information on the algorithm, see the following citation:
  *
@@ -124,9 +122,9 @@ class DTBStat
  * More advanced usage of the class can use different types of trees, pass in an
  * already-built tree, or compute the MST using the O(n^2) naive algorithm.
  *
- * @tparam MetricType The metric to use.  IMPORTANT: this hasn't really been 
- * tested with anything other than the L2 metric, so user beware. Note that the 
- * tree type needs to compute bounds using the same metric as the type 
+ * @tparam MetricType The metric to use.  IMPORTANT: this hasn't really been
+ * tested with anything other than the L2 metric, so user beware. Note that the
+ * tree type needs to compute bounds using the same metric as the type
  * specified here.
  * @tparam TreeType Type of tree to use.  Should use DTBStat as a statistic.
  */
@@ -167,7 +165,7 @@ class DualTreeBoruvka
 
   //! Total distance of the tree.
   double totalDist;
-  
+
   //! The metric
   MetricType metric;
 

@@ -730,19 +730,19 @@ BOOST_AUTO_TEST_CASE(GaussianHMMGenerateTest)
   {
     // Check that the mean is the same.
     BOOST_REQUIRE_SMALL(hmm.Emission()[em].Mean()(0) -
-        hmm2.Emission()[em].Mean()(0), 0.07);
+        hmm2.Emission()[em].Mean()(0), 0.09);
     BOOST_REQUIRE_SMALL(hmm.Emission()[em].Mean()(1) -
-        hmm2.Emission()[em].Mean()(1), 0.07);
+        hmm2.Emission()[em].Mean()(1), 0.09);
 
     // Check that the covariances are the same.
     BOOST_REQUIRE_SMALL(hmm.Emission()[em].Covariance()(0, 0) -
-        hmm2.Emission()[em].Covariance()(0, 0), 0.1);
+        hmm2.Emission()[em].Covariance()(0, 0), 0.2);
     BOOST_REQUIRE_SMALL(hmm.Emission()[em].Covariance()(0, 1) -
-        hmm2.Emission()[em].Covariance()(0, 1), 0.1);
+        hmm2.Emission()[em].Covariance()(0, 1), 0.2);
     BOOST_REQUIRE_SMALL(hmm.Emission()[em].Covariance()(1, 0) -
-        hmm2.Emission()[em].Covariance()(1, 0), 0.1);
+        hmm2.Emission()[em].Covariance()(1, 0), 0.2);
     BOOST_REQUIRE_SMALL(hmm.Emission()[em].Covariance()(1, 1) -
-        hmm2.Emission()[em].Covariance()(1, 1), 0.1);
+        hmm2.Emission()[em].Covariance()(1, 1), 0.2);
   }
 }
 

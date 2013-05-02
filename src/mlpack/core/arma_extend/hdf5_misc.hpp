@@ -1,5 +1,7 @@
 // To hack in u64/s64 support to Armadillo when it is not compiled with
 // ARMA_64BIT_WORD.
+namespace hdf5_misc {
+
 #if defined(ARMA_USE_HDF5)
   #if !(defined(ARMA_64BIT_WORD) || defined(ARMA_USE_U64S64))
     #if defined(ULLONG_MAX)
@@ -21,3 +23,5 @@
     #endif
   #endif
 #endif
+
+} // namespace hdf5_misc

@@ -4,26 +4,26 @@
 @author Bill March
 @brief Tutorial for the Euclidean Minimum Spanning Tree algorithm.
 
-@page emst_tutorial EMST Tutorial 
+@page emst_tutorial EMST Tutorial
 
 @section intro_emsttut Introduction
 
-The Euclidean Minimum Spanning Tree problem is widely used in machine learning 
+The Euclidean Minimum Spanning Tree problem is widely used in machine learning
 and data mining applications.  Given a set \f$S\f$ of points in \f$\mathbf{R}^d\f$,
 our task is to compute lowest weight spanning tree in the complete graph on \f$S\f$
-with edge weights given by the Euclidean distance between points. 
+with edge weights given by the Euclidean distance between points.
 
 Among other applications, the EMST can be used to compute hierarchical clusterings
 of data.  A <em>single-linkage clustering</em> can be obtained from the EMST by deleting
 all edges longer than a given cluster length.  This technique is also referred to as a <em>Friends-of-Friends</em> clustering in the astronomy literature.
 
-MLPACK includes an implementation of <b>Dual-Tree Boruvka</b> on \f$kd\f$-trees, the empirically and 
+MLPACK includes an implementation of <b>Dual-Tree Boruvka</b> on \f$kd\f$-trees, the empirically and
 theoretically fastest EMST algorithm.  For more details, see March, <em>et al.</em>, <em>Euclidean Minimum Spanning Tree: Algorithm, Analysis, and Applications</em>, in KDD, 2010.  An implementation using cover trees is forthcoming.
 
 \b mlpack provides:
 
  - a \ref cli_emsttut "simple command-line executable" to compute the EMST of a given data set
- - a \ref class_emsttut "simple C++ interface" to compute the EMST
+ - a \ref dtb_emsttut "simple C++ interface" to compute the EMST
 
 @section toc_emsttut Table of Contents
 
@@ -37,9 +37,9 @@ A list of all the sections this tutorial contains.
 
 @section cli_emsttut Command-Line 'EMST'
 
-The emst executable in \b mlpack will compute the EMST of a given set of points and store the resulting edge list to a file.  
+The emst executable in \b mlpack will compute the EMST of a given set of points and store the resulting edge list to a file.
 
-The output file contains an edge list representation of the MST in an \f$n-1 \times 3 \f$ matrix, where the first and second columns are labels of points and the third column is the edge weight.  The edges are sorted in order of increasing weight.  
+The output file contains an edge list representation of the MST in an \f$n-1 \times 3 \f$ matrix, where the first and second columns are labels of points and the third column is the edge weight.  The edges are sorted in order of increasing weight.
 
 Below are several examples of simple usage (and the resultant output).  The '-v'
 option is used so that verbose output is given.  Further documentation on each
@@ -59,7 +59,7 @@ $ emst --input_file=dataset.csv --output_file=edge_list.csv -v
 [INFO ] 5 edges found so far.
 [INFO ] Total squared length: 1002.45
 [INFO ] Saving CSV data to 'edge_list.csv'.
-[INFO ] 
+[INFO ]
 [INFO ] Execution parameters:
 [INFO ]   help: false
 [INFO ]   info: ""
@@ -68,14 +68,14 @@ $ emst --input_file=dataset.csv --output_file=edge_list.csv -v
 [INFO ]   naive: false
 [INFO ]   output_file: edge_list.csv
 [INFO ]   verbose: true
-[INFO ] 
+[INFO ]
 [INFO ] Program timers:
 [INFO ]   emst/mst_computation: 0.000179s
 [INFO ]   emst/tree_building: 0.000061s
 [INFO ]   total_time: 0.052641s
 @endcode
 
-The code performs at most \f$\log N\f$ iterations for \f$N\f$ data points.  It will print an update on the number of MST edges found after each iteration.  
+The code performs at most \f$\log N\f$ iterations for \f$N\f$ data points.  It will print an update on the number of MST edges found after each iteration.
 Convenient program timers are given for different parts of the calculation at
 the bottom of the output, as well as the parameters the simulation was run with.
 
@@ -98,22 +98,22 @@ $ cat edge_list.csv
 
 The input points are labeled 0-5.  The output tells us that the MST connects point 0 to point 3, point 4 to point 5, point 1 to point 3, point 1 to point 2, and point 2 to point 4, with the corresponding edge weights given in the third column.  The total squared length of the MST is also given in the verbose output.
 
-Note that it is also possible to compute the EMST using a naive (\f$O(N^2)\f$) algorithm for timing and comparison purposes.  
+Note that it is also possible to compute the EMST using a naive (\f$O(N^2)\f$) algorithm for timing and comparison purposes.
 
 @section dtb_emsttut The 'DualTreeBoruvka' class
 
-The 'DualTreeBoruvka' class contains our implementation of the Dual-Tree Boruvka algorithm. 
+The 'DualTreeBoruvka' class contains our implementation of the Dual-Tree Boruvka algorithm.
 
-The class has two constructors: the first takes the data set, constructs the \f$kd\f$-tree, and computes the MST.  The second takes data set and an already constructed tree.  
+The class has two constructors: the first takes the data set, constructs the \f$kd\f$-tree, and computes the MST.  The second takes data set and an already constructed tree.
 
 The class provides one method that performs the MST computation:
 @code
 void ComputeMST(const arma::mat& results);
 @endcode
 
-This method stores the computed MST in the matrix results in the format given above. 
+This method stores the computed MST in the matrix results in the format given above.
 
-@subsection further_doc_emsttut Further documentation
+@section further_doc_emsttut Further documentation
 
 For further documentation on the DualTreeBoruvka class, consult the
 \ref mlpack::emst::DualTreeBoruvka "complete API documentation".

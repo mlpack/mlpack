@@ -37,8 +37,6 @@ arma::vec GaussianDistribution::Random() const
  */
 void GaussianDistribution::Estimate(const arma::mat& observations)
 {
-  // Calculate the mean and covariance with each point.  Because this is a
-  // std::vector and not a matrix, this is a little more difficult.
   if (observations.n_cols > 0)
   {
     mean.zeros(observations.n_rows);
@@ -48,6 +46,7 @@ void GaussianDistribution::Estimate(const arma::mat& observations)
   {
     mean.zeros(0);
     covariance.zeros(0);
+    return;
   }
 
   // Calculate the mean.
@@ -67,6 +66,20 @@ void GaussianDistribution::Estimate(const arma::mat& observations)
   // Finish estimating the covariance by normalizing, with the (1 / (n - 1)) so
   // that it is the unbiased estimator.
   covariance /= (observations.n_cols - 1);
+
+  // Ensure that the covariance is positive definite.
+  if (det(covariance) <= 1e-50)
+  {
+    Log::Debug << "GaussianDistribution::Estimate(): Covariance matrix is not "
+        << "positive definite. Adding perturbation." << std::endl;
+
+    double perturbation = 1e-30;
+    while (det(covariance) <= 1e-50)
+    {
+      covariance.diag() += perturbation;
+      perturbation *= 10; // Slow, but we don't want to add too much.
+    }
+  }
 }
 
 /**
@@ -86,6 +99,7 @@ void GaussianDistribution::Estimate(const arma::mat& observations,
   {
     mean.zeros(0);
     covariance.zeros(0);
+    return;
   }
 
   double sumProb = 0;
@@ -96,6 +110,14 @@ void GaussianDistribution::Estimate(const arma::mat& observations,
   {
     mean += probabilities[i] * observations.col(i);
     sumProb += probabilities[i];
+  }
+
+  if (sumProb == 0)
+  {
+    // Nothing in this Gaussian!  At least set the covariance so that it's
+    // invertible.
+    covariance.diag() += 1e-50;
+    return;
   }
 
   // Normalize.
@@ -111,6 +133,19 @@ void GaussianDistribution::Estimate(const arma::mat& observations,
   // This is probably biased, but I don't know how to unbias it.
   covariance /= sumProb;
 
+  // Ensure that the covariance is positive definite.
+  if (det(covariance) <= 1e-50)
+  {
+    Log::Debug << "GaussianDistribution::Estimate(): Covariance matrix is not "
+        << "positive definite. Adding perturbation." << std::endl;
+
+    double perturbation = 1e-30;
+    while (det(covariance) <= 1e-50)
+    {
+      covariance.diag() += perturbation;
+      perturbation *= 10; // Slow, but we don't want to add too much.
+    }
+  }
 }
 
 /**

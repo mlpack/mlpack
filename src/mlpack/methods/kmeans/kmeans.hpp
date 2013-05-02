@@ -49,7 +49,7 @@ namespace kmeans /** K-Means clustering. */ {
  * extern arma::mat data; // Dataset we want to run K-Means on.
  * arma::Col<size_t> assignments; // Cluster assignments.
  *
- * KMeans<> k(); // Default options.
+ * KMeans<> k; // Default options.
  * k.Cluster(data, 3, assignments); // 3 clusters.
  *
  * // Cluster using the Manhattan distance, 100 iterations maximum, and an
@@ -58,16 +58,18 @@ namespace kmeans /** K-Means clustering. */ {
  * k.Cluster(data, 6, assignments); // 6 clusters.
  * @endcode
  *
- * @tparam DistanceMetric The distance metric to use for this KMeans; see
+ * @tparam MetricType The distance metric to use for this KMeans; see
  *     metric::LMetric for an example.
  * @tparam InitialPartitionPolicy Initial partitioning policy; must implement a
  *     default constructor and 'void Cluster(const arma::mat&, const size_t,
- *     arma::Col<size_t>&)'.  @see RandomPartition for an example.
+ *     arma::Col<size_t>&)'.
  * @tparam EmptyClusterPolicy Policy for what to do on an empty cluster; must
  *     implement a default constructor and 'void EmptyCluster(const arma::mat&,
- *     arma::Col<size_t&)'.  @see AllowEmptyClusters and MaxVarianceNewCluster.
+ *     arma::Col<size_t&)'.
+ *
+ * @see RandomPartition, RefinedStart, AllowEmptyClusters, MaxVarianceNewCluster
  */
-template<typename DistanceMetric = metric::SquaredEuclideanDistance,
+template<typename MetricType = metric::SquaredEuclideanDistance,
          typename InitialPartitionPolicy = RandomPartition,
          typename EmptyClusterPolicy = MaxVarianceNewCluster>
 class KMeans
@@ -88,7 +90,7 @@ class KMeans
    *     (0 is valid, but the algorithm may never terminate).
    * @param overclusteringFactor Factor controlling how many extra clusters are
    *     found and then merged to get the desired number of clusters.
-   * @param metric Optional DistanceMetric object; for when the metric has state
+   * @param metric Optional MetricType object; for when the metric has state
    *     it needs to store.
    * @param partitioner Optional InitialPartitionPolicy object; for when a
    *     specially initialized partitioning policy is required.
@@ -97,70 +99,88 @@ class KMeans
    */
   KMeans(const size_t maxIterations = 1000,
          const double overclusteringFactor = 1.0,
-         const DistanceMetric metric = DistanceMetric(),
+         const MetricType metric = MetricType(),
          const InitialPartitionPolicy partitioner = InitialPartitionPolicy(),
          const EmptyClusterPolicy emptyClusterAction = EmptyClusterPolicy());
 
 
   /**
-   * Perform K-Means clustering on the data, returning a list of cluster
+   * Perform k-means clustering on the data, returning a list of cluster
    * assignments.  Optionally, the vector of assignments can be set to an
-   * initial guess of the cluster assignments; to do this, the number of
-   * elements in the list of assignments must be equal to the number of points
-   * (columns) in the dataset.
+   * initial guess of the cluster assignments; to do this, set initialGuess to
+   * true.
    *
-   * @tparam MatType Type of matrix (arma::mat or arma::spmat).
+   * @tparam MatType Type of matrix (arma::mat or arma::sp_mat).
    * @param data Dataset to cluster.
    * @param clusters Number of clusters to compute.
-   * @param assignments Vector to store cluster assignments in.  Can contain an
-   *     initial guess at cluster assignments.
+   * @param assignments Vector to store cluster assignments in.
+   * @param initialGuess If true, then it is assumed that assignments has a list
+   *      of initial cluster assignments.
    */
   template<typename MatType>
   void Cluster(const MatType& data,
                const size_t clusters,
-               arma::Col<size_t>& assignments) const;
+               arma::Col<size_t>& assignments,
+               const bool initialGuess = false) const;
+
+  /**
+   * Perform k-means clustering on the data, returning a list of cluster
+   * assignments and also the centroids of each cluster.  Optionally, the vector
+   * of assignments can be set to an initial guess of the cluster assignments;
+   * to do this, set initialAssignmentGuess to true.  Another way to set initial
+   * cluster guesses is to fill the centroids matrix with the centroid guesses,
+   * and then set initialCentroidGuess to true.  initialAssignmentGuess
+   * supersedes initialCentroidGuess, so if both are set to true, the
+   * assignments vector is used.
+   *
+   * Note that if the overclustering factor is greater than 1, the centroids
+   * matrix will be resized in the method.  Regardless of the overclustering
+   * factor, the centroid guess matrix (if initialCentroidGuess is set to true)
+   * should have the same number of rows as the data matrix, and number of
+   * columns equal to 'clusters'.
+   *
+   * @tparam MatType Type of matrix (arma::mat or arma::sp_mat).
+   * @param data Dataset to cluster.
+   * @param clusters Number of clusters to compute.
+   * @param assignments Vector to store cluster assignments in.
+   * @param centroids Matrix in which centroids are stored.
+   * @param initialAssignmentGuess If true, then it is assumed that assignments
+   *      has a list of initial cluster assignments.
+   * @param initialCentroidGuess If true, then it is assumed that centroids
+   *      contains the initial centroids of each cluster.
+   */
+  template<typename MatType>
+  void Cluster(const MatType& data,
+               const size_t clusters,
+               arma::Col<size_t>& assignments,
+               MatType& centroids,
+               const bool initialAssignmentGuess = false,
+               const bool initialCentroidGuess = false) const;
+
+  /**
+   * An implementation of k-means using the Pelleg-Moore algorithm; this is
+   * known to not work -- do not use it!  (Fixing it is TODO, of course; see
+   * #251.)
+   */
   template<typename MatType>
   void FastCluster(MatType& data,
-               const size_t clusters,
-               arma::Col<size_t>& assignments) const;
+                   const size_t clusters,
+                   arma::Col<size_t>& assignments) const;
 
-  /**
-   * Return the overclustering factor.
-   */
+  //! Return the overclustering factor.
   double OverclusteringFactor() const { return overclusteringFactor; }
+  //! Set the overclustering factor.  Must be greater than 1.
+  double& OverclusteringFactor() { return overclusteringFactor; }
 
-  /**
-   * Set the overclustering factor.
-   */
-  void OverclusteringFactor(const double overclusteringFactor)
-  {
-    if (overclusteringFactor < 1.0)
-    {
-      Log::Warn << "KMeans::OverclusteringFactor(): invalid value (<= 1.0) "
-          "ignored." << std::endl;
-      return;
-    }
-
-    this->overclusteringFactor = overclusteringFactor;
-  }
-
-  /**
-   * Get the maximum number of iterations.
-   */
+  //! Get the maximum number of iterations.
   size_t MaxIterations() const { return maxIterations; }
-
-  /**
-   * Set the maximum number of iterations.
-   */
-  void MaxIterations(const size_t maxIterations)
-  {
-    this->maxIterations = maxIterations;
-  }
+  //! Set the maximum number of iterations.
+  size_t& MaxIterations() { return maxIterations; }
 
   //! Get the distance metric.
-  const DistanceMetric& Metric() const { return metric; }
+  const MetricType& Metric() const { return metric; }
   //! Modify the distance metric.
-  DistanceMetric& Metric() { return metric; }
+  MetricType& Metric() { return metric; }
 
   //! Get the initial partitioning policy.
   const InitialPartitionPolicy& Partitioner() const { return partitioner; }
@@ -169,9 +189,7 @@ class KMeans
 
   //! Get the empty cluster policy.
   const EmptyClusterPolicy& EmptyClusterAction() const
-  {
-    return emptyClusterAction;
-  }
+  { return emptyClusterAction; }
   //! Modify the empty cluster policy.
   EmptyClusterPolicy& EmptyClusterAction() { return emptyClusterAction; }
 
@@ -181,7 +199,7 @@ class KMeans
   //! Maximum number of iterations before giving up.
   size_t maxIterations;
   //! Instantiated distance metric.
-  DistanceMetric metric;
+  MetricType metric;
   //! Instantiated initial partitioning policy.
   InitialPartitionPolicy partitioner;
   //! Instantiated empty cluster policy.

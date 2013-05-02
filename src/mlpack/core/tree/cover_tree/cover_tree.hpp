@@ -110,12 +110,27 @@ class CoverTree
    * The dataset will not be modified during the building procedure (unlike
    * BinarySpaceTree).
    *
+   * The last argument will be removed in mlpack 1.1.0 (see #274 and #273).
+   *
    * @param dataset Reference to the dataset to build a tree on.
    * @param base Base to use during tree building (default 2.0).
    */
   CoverTree(const arma::mat& dataset,
             const double base = 2.0,
             MetricType* metric = NULL);
+
+  /**
+   * Create the cover tree with the given dataset and the given instantiated
+   * metric.  Optionally, set the base.  The dataset will not be modified during
+   * the building procedure (unlike BinarySpaceTree).
+   *
+   * @param dataset Reference to the dataset to build a tree on.
+   * @param metric Instantiated metric to use during tree building.
+   * @param base Base to use during tree building (default 2.0).
+   */
+  CoverTree(const arma::mat& dataset,
+            MetricType& metric,
+            const double base = 2.0);
 
   /**
    * Construct a child cover tree node.  This constructor is not meant to be
@@ -136,6 +151,8 @@ class CoverTree
    * @param base Base to use during tree building.
    * @param pointIndex Index of the point this node references.
    * @param scale Scale of this level in the tree.
+   * @param parent Parent of this node (NULL indicates no parent).
+   * @param parentDistance Distance to the parent node.
    * @param indices Array of indices, ordered [ nearSet | farSet | usedSet ];
    *     will be modified to [ farSet | usedSet ].
    * @param distances Array of distances, ordered the same way as the indices.
@@ -150,6 +167,7 @@ class CoverTree
             const double base,
             const size_t pointIndex,
             const int scale,
+            CoverTree* parent,
             const double parentDistance,
             arma::Col<size_t>& indices,
             arma::vec& distances,
@@ -169,15 +187,27 @@ class CoverTree
    * @param pointIndex Index of the point in the dataset which this node refers
    *      to.
    * @param scale Scale of this node's level in the tree.
+   * @param parent Parent node (NULL indicates no parent).
    * @param parentDistance Distance to parent node point.
    * @param furthestDescendantDistance Distance to furthest descendant point.
+   * @param metric Instantiated metric (optional).
    */
   CoverTree(const arma::mat& dataset,
             const double base,
             const size_t pointIndex,
             const int scale,
+            CoverTree* parent,
             const double parentDistance,
-            const double furthestDescendantDistance);
+            const double furthestDescendantDistance,
+            MetricType* metric = NULL);
+
+  /**
+   * Create a cover tree from another tree.  Be careful!  This may use a lot of
+   * memory and take a lot of time.
+   *
+   * @param other Cover tree to copy from.
+   */
+  CoverTree(const CoverTree& other);
 
   /**
    * Delete this cover tree node and its children.
@@ -269,6 +299,11 @@ class CoverTree
   //! Returns true: this tree does have self-children.
   static bool HasSelfChildren() { return true; }
 
+  //! Get the parent node.
+  CoverTree* Parent() const { return parent; }
+  //! Modify the parent node.
+  CoverTree*& Parent() { return parent; }
+
   //! Get the distance to the parent.
   double ParentDistance() const { return parentDistance; }
   //! Modify the distance to the parent.
@@ -279,6 +314,12 @@ class CoverTree
   { return furthestDescendantDistance; }
   //! Modify the distance to the furthest descendant.
   double& FurthestDescendantDistance() { return furthestDescendantDistance; }
+
+  //! Get the centroid of the node and store it in the given vector.
+  void Centroid(arma::vec& centroid) const { centroid = dataset.col(point); }
+
+  //! Get the instantiated metric.
+  MetricType& Metric() const { return *metric; }
 
  private:
   //! Reference to the matrix which this tree is built on.
@@ -299,11 +340,29 @@ class CoverTree
   //! The instantiated statistic.
   StatisticType stat;
 
+  //! The parent node (NULL if this is the root of the tree).
+  CoverTree* parent;
+
   //! Distance to the parent.
   double parentDistance;
 
   //! Distance to the furthest descendant.
   double furthestDescendantDistance;
+
+  //! Whether or not we need to destroy the metric in the destructor.
+  bool localMetric;
+
+  //! The metric used for this tree.
+  MetricType* metric;
+
+  /**
+   * Create the children for this node.
+   */
+  void CreateChildren(arma::Col<size_t>& indices,
+                      arma::vec& distances,
+                      size_t nearSetSize,
+                      size_t& farSetSize,
+                      size_t& usedSetSize);
 
   /**
    * Fill the vector of distances with the distances between the point specified
@@ -319,8 +378,7 @@ class CoverTree
   void ComputeDistances(const size_t pointIndex,
                         const arma::Col<size_t>& indices,
                         arma::vec& distances,
-                        const size_t pointSetSize,
-                        MetricType& metric);
+                        const size_t pointSetSize);
   /**
    * Split the given indices and distances into a near and a far set, returning
    * the number of points in the near set.  The distances must already be
@@ -378,6 +436,11 @@ class CoverTree
                      const double bound,
                      const size_t nearSetSize,
                      const size_t pointSetSize);
+ public:
+  /**
+   * Returns a string representation of this object.
+   */
+  std::string ToString() const;
 };
 
 }; // namespace tree

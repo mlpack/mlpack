@@ -42,7 +42,7 @@ template<typename T>
 void PrefixedOutStream::CallBaseLogic(const T& s,
     typename boost::disable_if<
         boost::is_class<T>
-    >::type* = 0)
+    >::type*)
 {
   BaseLogic<T>(s);
 }
@@ -52,10 +52,10 @@ template<typename T>
 void PrefixedOutStream::CallBaseLogic(const T& s,
     typename boost::enable_if<
         boost::is_class<T>
-    >::type* = 0,
+    >::type*,
     typename boost::disable_if<
         HasToString<T, std::string(T::*)() const>
-    >::type* = 0)
+    >::type*)
 {
   BaseLogic<T>(s);
 }
@@ -65,10 +65,10 @@ template<typename T>
 void PrefixedOutStream::CallBaseLogic(const T& s,
     typename boost::enable_if<
         boost::is_class<T>
-    >::type* = 0,
+    >::type*,
     typename boost::enable_if<
         HasToString<T, std::string(T::*)() const>
-    >::type* = 0)
+    >::type*)
 {
   std::string result = s.ToString();
   BaseLogic<std::string>(result);

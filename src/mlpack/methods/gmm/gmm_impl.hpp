@@ -26,6 +26,8 @@
 // In case it hasn't already been included.
 #include "gmm.hpp"
 
+#include <mlpack/core/util/save_restore_utility.hpp>
+
 namespace mlpack {
 namespace gmm {
 
@@ -77,6 +79,67 @@ GMM<FittingType>& GMM<FittingType>::operator=(const GMM<FittingType>& other)
   localFitter = other.Fitter();
 
   return *this;
+}
+
+// Load a GMM from file.
+template<typename FittingType>
+void GMM<FittingType>::Load(const std::string& filename)
+{
+  util::SaveRestoreUtility load;
+
+  if (!load.ReadFile(filename))
+    Log::Fatal << "GMM::Load(): could not read file '" << filename << "'!\n";
+
+  load.LoadParameter(gaussians, "gaussians");
+  load.LoadParameter(dimensionality, "dimensionality");
+  load.LoadParameter(weights, "weights");
+
+  // We need to do a little error checking here.
+  if (weights.n_elem != gaussians)
+  {
+    Log::Fatal << "GMM::Load('" << filename << "'): file reports " << gaussians
+        << " gaussians but weights vector only contains " << weights.n_elem
+        << " elements!" << std::endl;
+  }
+
+  means.resize(gaussians);
+  covariances.resize(gaussians);
+
+  for (size_t i = 0; i < gaussians; ++i)
+  {
+    std::stringstream o;
+    o << i;
+    std::string meanName = "mean" + o.str();
+    std::string covName = "covariance" + o.str();
+
+    load.LoadParameter(means[i], meanName);
+    load.LoadParameter(covariances[i], covName);
+  }
+}
+
+// Save a GMM to a file.
+template<typename FittingType>
+void GMM<FittingType>::Save(const std::string& filename) const
+{
+  util::SaveRestoreUtility save;
+  save.SaveParameter(gaussians, "gaussians");
+  save.SaveParameter(dimensionality, "dimensionality");
+  save.SaveParameter(weights, "weights");
+  for (size_t i = 0; i < gaussians; ++i)
+  {
+    // Generate names for the XML nodes.
+    std::stringstream o;
+    o << i;
+    std::string meanName = "mean" + o.str();
+    std::string covName = "covariance" + o.str();
+
+    // Now save them.
+    save.SaveParameter(means[i], meanName);
+    save.SaveParameter(covariances[i], covName);
+  }
+
+  if (!save.WriteFile(filename))
+    Log::Warn << "GMM::Save(): error saving to '" << filename << "'.\n";
 }
 
 /**
@@ -163,7 +226,7 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
 
     bestLikelihood = LogLikelihood(observations, means, covariances, weights);
 
-    Log::Debug << "GMM::Estimate(): Log-likelihood of trial 0 is "
+    Log::Info << "GMM::Estimate(): Log-likelihood of trial 0 is "
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
@@ -180,7 +243,7 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
       double newLikelihood = LogLikelihood(observations, meansTrial,
           covariancesTrial, weightsTrial);
 
-      Log::Debug << "GMM::Estimate(): Log-likelihood of trial " << trial
+      Log::Info << "GMM::Estimate(): Log-likelihood of trial " << trial
           << " is " << newLikelihood << "." << std::endl;
 
       if (newLikelihood > bestLikelihood)

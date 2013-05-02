@@ -45,7 +45,15 @@ template<typename SortPolicy>
 class QueryStat
 {
  private:
-  //! The bound on the node's neighbor distances.
+  //! The first bound on the node's neighbor distances (B_1).  This represents
+  //! the worst candidate distance of any descendants of this node.
+  double firstBound;
+  //! The second bound on the node's neighbor distances (B_2).  This represents
+  //! a bound on the worst distance of any descendants of this node assembled
+  //! using the best descendant candidate distance modified by the furthest
+  //! descendant distance.
+  double secondBound;
+  //! The better of the two bounds.
   double bound;
 
  public:
@@ -53,29 +61,32 @@ class QueryStat
    * Initialize the statistic with the worst possible distance according to
    * our sorting policy.
    */
-  QueryStat() : bound(SortPolicy::WorstDistance()) { }
+  QueryStat() :
+      firstBound(SortPolicy::WorstDistance()),
+      secondBound(SortPolicy::WorstDistance()),
+      bound(SortPolicy::WorstDistance()) { }
 
   /**
-   * Initialization for a leaf, required by the StatisticType policy.
+   * Initialization for a fully initialized node.  In this case, we don't need
+   * to worry about the node.
    */
-  template<typename MatType>
-  QueryStat(const MatType& /* dataset */, const size_t /* begin */, const size_t /* count */)
-      : bound(SortPolicy::WorstDistance()) { }
+  template<typename TreeType>
+  QueryStat(TreeType& /* node */) :
+      firstBound(SortPolicy::WorstDistance()),
+      secondBound(SortPolicy::WorstDistance()),
+      bound(SortPolicy::WorstDistance()) { }
 
-  /**
-   * Initialization for a node, required by the StatisticType policy.
-   */
-  template<typename MatType>
-  QueryStat(const MatType& /* dataset */,
-            const size_t /* begin */,
-            const size_t /* count */,
-            const QueryStat& /* leftStat */,
-            const QueryStat& /* rightStat */)
-      : bound(SortPolicy::WorstDistance()) { }
-
-  //! Get the bound.
+  //! Get the first bound.
+  double FirstBound() const { return firstBound; }
+  //! Modify the first bound.
+  double& FirstBound() { return firstBound; }
+  //! Get the second bound.
+  double SecondBound() const { return secondBound; }
+  //! Modify the second bound.
+  double& SecondBound() { return secondBound; }
+  //! Get the overall bound (the better of the two bounds).
   double Bound() const { return bound; }
-  //! Modify the bound.
+  //! Modify the overall bound (it should be the better of the two bounds).
   double& Bound() { return bound; }
 };
 

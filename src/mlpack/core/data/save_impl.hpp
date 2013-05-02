@@ -66,6 +66,7 @@ bool Save(const std::string& filename,
       Log::Warn << "Cannot open file '" << filename << "' for writing; save "
           << "failed." << std::endl;
 
+    Timer::Stop("saving_data");
     return false;
   }
 
@@ -109,6 +110,7 @@ bool Save(const std::string& filename,
           << "Armadillo was compiled without HDF5 support.  Save failed."
           << std::endl;
 
+    Timer::Stop("saving_data");
     return false;
 #endif
   }
@@ -146,6 +148,7 @@ bool Save(const std::string& filename,
       else
         Log::Warn << "Save to '" << filename << "' failed." << std::endl;
 
+      Timer::Stop("saving_data");
       return false;
     }
   }
@@ -158,6 +161,7 @@ bool Save(const std::string& filename,
       else
         Log::Warn << "Save to '" << filename << "' failed." << std::endl;
 
+      Timer::Stop("saving_data");
       return false;
     }
   }

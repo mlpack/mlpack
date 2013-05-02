@@ -127,7 +127,7 @@ $ head distances_out.csv
 
 So, the nearest neighbor to point 0 is point 14, with a distance of 7.096144e-4.
 The second nearest neighbor to point 0 is point 5, with a distance of
-2.059402e-3.  The third nearest neighbor to point 6 is point 16, with a distance
+2.059402e-3.  The third nearest neighbor to point 5 is point 16, with a distance
 of 9.9748395e-3.
 
 @subsection cli_ex2_nstut Query and reference dataset, 10 nearest neighbors
@@ -382,7 +382,7 @@ tree, be sure it can accept the QueryStat type.  See the
 mlpack::tree::BinarySpaceTree documentation for more information on tree
 statistics.
 
-@subsection further_doc_nstut Further documentation
+@section further_doc_nstut Further documentation
 
 For further documentation on the NeighborSearch class, consult the
 \ref mlpack::neighbor::NeighborSearch "complete API documentation".
