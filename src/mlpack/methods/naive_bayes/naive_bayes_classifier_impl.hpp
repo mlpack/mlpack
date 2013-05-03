@@ -25,7 +25,7 @@ NaiveBayesClassifier<MatType>::NaiveBayesClassifier(const MatType& data,
 
   // Update the variables according to the number of features and classes
   // present in the data.
-  probabilities.set_size(classes);
+  probabilities.zeros(classes);
   means.zeros(dimensionality, classes);
   variances.zeros(dimensionality, classes);
 
@@ -45,9 +45,12 @@ NaiveBayesClassifier<MatType>::NaiveBayesClassifier(const MatType& data,
 
   for (size_t i = 0; i < classes; ++i)
   {
-    variances.col(i) -= (square(means.col(i)) / probabilities[i]);
-    means.col(i) /= probabilities[i];
-    variances.col(i) /= (probabilities[i] - 1);
+    if (probabilities[i] != 0)
+    {
+      variances.col(i) -= (square(means.col(i)) / probabilities[i]);
+      means.col(i) /= probabilities[i];
+      variances.col(i) /= (probabilities[i] - 1);
+    }
   }
 
   probabilities /= data.n_cols;
@@ -80,9 +83,12 @@ void NaiveBayesClassifier<MatType>::Classify(const MatType& data,
       // Use the log values to prevent floating point underflow.
       probs(i) = log(probabilities(i));
 
-      // Loop over every feature.
-      probs(i) += log(gmm::phi(data.unsafe_col(n), means.unsafe_col(i),
-          diagmat(variances.unsafe_col(i))));
+      // Loop over every feature, but avoid inverting empty matrices.
+      if (probabilities[i] != 0)
+      {
+        probs(i) += log(gmm::phi(data.unsafe_col(n), means.unsafe_col(i),
+            diagmat(variances.unsafe_col(i))));
+      }
     }
 
     // Find the index of the maximum value in tmp_vals.
