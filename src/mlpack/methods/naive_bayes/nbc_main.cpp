@@ -52,9 +52,9 @@ int main(int argc, char* argv[])
 
     // Not incredibly efficient...
     if (labels.n_rows == 1)
-      trainingData.insert_rows(trainingData.n_rows, trans(labels));
-    else if (labels.n_cols == 1)
       trainingData.insert_rows(trainingData.n_rows, labels);
+    else if (labels.n_cols == 1)
+      trainingData.insert_rows(trainingData.n_rows, trans(labels));
     else
       Log::Fatal << "Labels must have only one column or row!" << endl;
   }
