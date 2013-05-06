@@ -281,6 +281,22 @@ class CoverTree
   //! the center to the point has already been calculated.
   double MaxDistance(const arma::vec& other, const double distance) const;
 
+  //! Return the minimum and maximum distance to another node.
+  math::Range RangeDistance(const CoverTree* other) const;
+
+  //! Return the minimum and maximum distance to another node given that the
+  //! point-to-point distance has already been calculated.
+  math::Range RangeDistance(const CoverTree* other, const double distance)
+      const;
+
+  //! Return the minimum and maximum distance to another point.
+  math::Range RangeDistance(const arma::vec& other) const;
+
+  //! Return the minimum and maximum distance to another point given that the
+  //! point-to-point distance has already been calculated.
+  math::Range RangeDistance(const arma::vec& other, const double distance)
+      const;
+
   //! Returns true: this tree does have self-children.
   static bool HasSelfChildren() { return true; }
 

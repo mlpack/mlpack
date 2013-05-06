@@ -499,6 +499,61 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType>::MaxDistance(
   return distance + furthestDescendantDistance;
 }
 
+//! Return the minimum and maximum distance to another node.
+template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+double CoverTree<MetricType, RootPointPolicy, StatisticType>::RangeDistance(
+    const CoverTree* other) const
+{
+  const double distance = metric->Evaluate(dataset.unsafe_col(point),
+      other->Dataset().unsafe_col(other->Point()));
+
+  math::Range result;
+  result.Lo() = distance - furthestDescendantDistance -
+      other->FurthestDescendantDistance();
+  result.Hi() = distance + furthestDescendantDistance +
+      other->FurthestDescendantDistance();
+
+  return result;
+}
+
+//! Return the minimum and maximum distance to another node given that the
+//! point-to-point distance has already been calculated.
+template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+double CoverTree<MetricType, RootPointPolicy, StatisticType>::RangeDistance(
+    const CoverTree* other,
+    const double distance) const
+{
+  math::Range result;
+  result.Lo() = distance - furthestDescendantDistance -
+      other->FurthestDescendantDistance();
+  result.Hi() = distance + furthestDescendantDistance +
+      other->FurthestDescendantDistance();
+
+  return result;
+}
+
+//! Return the minimum and maximum distance to another point.
+template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+double CoverTree<MetricType, RootPointPolicy, StatisticType>::RangeDistance(
+    const arma::vec& other) const
+{
+  const double distance = metric->Evaluate(dataset.unsafe_col(point), other);
+
+  return math::Range(distance - furthestDescendantDistance,
+                     distance + furthestDescendantDistance);
+}
+
+//! Return the minimum and maximum distance to another point given that the
+//! point-to-point distance has already been calculated.
+template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+double CoverTree<MetricType, RootPointPolicy, StatisticType>::RangeDistance(
+    const arma::vec& other,
+    const double distance) const
+{
+  return math::Range(distance - furthestDescendantDistance,
+                     distance + furthestDescendantDistance);
+}
+
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 size_t CoverTree<MetricType, RootPointPolicy, StatisticType>::SplitNearFar(
     arma::Col<size_t>& indices,
