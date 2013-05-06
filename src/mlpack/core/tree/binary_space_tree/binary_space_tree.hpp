@@ -326,6 +326,12 @@ class BinarySpaceTree
     return bound.MaxDistance(other->Bound());
   }
 
+  //! Return the minimum and maximum distance to another node.
+  math::Range RangeDistance(const BinarySpaceTree* other) const
+  {
+    return bound.RangeDistance(other);
+  }
+
   //! Return the minimum distance to another point.
   double MinDistance(const arma::vec& point) const
   {
@@ -336,6 +342,12 @@ class BinarySpaceTree
   double MaxDistance(const arma::vec& point) const
   {
     return bound.MaxDistance(point);
+  }
+
+  //! Return the minimum and maximum distance to another point.
+  math::Range RangeDistance(const arma::vec& point) const
+  {
+    return bound.RangeDistance(point);
   }
 
   /**
