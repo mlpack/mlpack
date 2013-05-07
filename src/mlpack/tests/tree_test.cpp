@@ -1693,12 +1693,9 @@ bool CheckPointBounds(TreeType* node, const MatType& data)
   TreeType* left = node->Left();
   TreeType* right = node->Right();
 
-  size_t begin = node->Begin();
-  size_t count = node->Count();
-
   // Check that each point which this tree claims is actually inside the tree.
-  for (size_t index = begin; index < begin + count; index++)
-    if (!node->Bound().Contains(data.col(index)))
+  for (size_t index = 0; index < node->NumDescendants(); index++)
+    if (!node->Bound().Contains(data.col(node->Descendant(index))))
       return false;
 
   return CheckPointBounds(left, data) && CheckPointBounds(right, data);
