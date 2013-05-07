@@ -416,6 +416,27 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::NumPoints() const
 }
 
 /**
+ * Return the number of descendants contained in the node.
+ */
+template<typename BoundType, typename StatisticType, typename MatType>
+inline size_t
+BinarySpaceTree<BoundType, StatisticType, MatType>::NumDescendants() const
+{
+  return count;
+}
+
+/**
+ * Return the index of a particular descendant contained in this node.
+ */
+template<typename BoundType, typename StatisticType, typename MatType>
+inline size_t
+BinarySpaceTree<BoundType, StatisticType, MatType>::Descendant(
+    const size_t index) const
+{
+  return (begin + index);
+}
+
+/**
  * Return the index of a particular point contained in this node.
  */
 template<typename BoundType, typename StatisticType, typename MatType>
