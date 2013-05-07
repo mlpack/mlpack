@@ -305,6 +305,22 @@ class BinarySpaceTree
   size_t NumPoints() const;
 
   /**
+   * Return the number of descendants of this node.  For a non-leaf in a binary
+   * space tree, this is the number of points at the descendant leaves.  For a
+   * leaf, this is the number of points in the leaf.
+   */
+  size_t NumDescendants() const;
+
+  /**
+   * Return the index (with reference to the dataset) of a particular descendant
+   * of this node.  The index should be greater than zero but less than the
+   * number of descendants.
+   *
+   * @param index Index of the descendant.
+   */
+  size_t Descendant(const size_t index) const;
+
+  /**
    * Return the index (with reference to the dataset) of a particular point in
    * this node.  This will happily return invalid indices if the given index is
    * greater than the number of points in this node (obtained with NumPoints())
@@ -329,7 +345,7 @@ class BinarySpaceTree
   //! Return the minimum and maximum distance to another node.
   math::Range RangeDistance(const BinarySpaceTree* other) const
   {
-    return bound.RangeDistance(other);
+    return bound.RangeDistance(other->Bound());
   }
 
   //! Return the minimum distance to another point.
