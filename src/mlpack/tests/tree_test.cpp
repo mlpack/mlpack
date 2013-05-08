@@ -2188,4 +2188,120 @@ BOOST_AUTO_TEST_CASE(BinarySpaceTreeCopyConstructor)
   BOOST_REQUIRE_EQUAL(b.Right()->Right(), c.Right()->Right());
 }
 
+//! Count the number of leaves under this node.
+template<typename TreeType>
+size_t NumLeaves(TreeType* node)
+{
+  if (node->NumChildren() == 0)
+    return 1;
+
+  size_t count = 0;
+  for (size_t i = 0; i < node->NumChildren(); ++i)
+    count += NumLeaves(&node->Child(i));
+
+  return count;
+}
+
+//! Returns true if the index is contained somewhere under this node.
+template<typename TreeType>
+bool FindIndex(TreeType* node, const size_t index)
+{
+  for (size_t i = 0; i < node->NumPoints(); ++i)
+    if (node->Point(i) == index)
+      return true;
+
+  for (size_t i = 0; i < node->NumChildren(); ++i)
+    if (FindIndex(&node->Child(i), index))
+      return true;
+
+  return false;
+}
+
+//! Check that the points in the given node are accessible through the
+//! Descendant() function of the root node.
+template<typename TreeType>
+bool CheckAccessibility(TreeType* childNode, TreeType* rootNode)
+{
+  for (size_t i = 0; i < childNode->NumPoints(); ++i)
+  {
+    bool found = false;
+    for (size_t j = 0; j < rootNode->NumDescendants(); ++j)
+    {
+      if (childNode->Point(i) == rootNode->Descendant(j))
+      {
+        found = true;
+        break;
+      }
+    }
+
+    if (!found)
+    {
+      Log::Debug << "Did not find descendant " << childNode->Point(i) << ".\n";
+      return false;
+    }
+  }
+
+  // Now check the children.
+  for (size_t i = 0; i < childNode->NumChildren(); ++i)
+    if (!CheckAccessibility(&childNode->Child(i), rootNode))
+      return false;
+
+  return true;
+}
+
+//! Check that Descendant() and NumDescendants() is right for this node.
+template<typename TreeType>
+void CheckDescendants(TreeType* node)
+{
+  // In a cover tree, the number of leaves should be the number of descendant
+  // points.
+  const size_t numLeaves = NumLeaves(node);
+  BOOST_REQUIRE_EQUAL(numLeaves, node->NumDescendants());
+
+  // Now check that each descendant is somewhere in the tree.
+  for (size_t i = 0; i < node->NumDescendants(); ++i)
+  {
+    Log::Debug << "Check for descendant " << node->Descendant(i) << " (i " <<
+        i << ").\n";
+    BOOST_REQUIRE_EQUAL(FindIndex(node, node->Descendant(i)), true);
+  }
+
+  // Now check that every actual descendant is accessible through the
+  // Descendant() function.
+  BOOST_REQUIRE_EQUAL(CheckAccessibility(node, node), true);
+
+  // Now check that there are no duplicates in the list of descendants.
+  std::vector<size_t> descendants;
+  descendants.resize(node->NumDescendants());
+  for (size_t i = 0; i < node->NumDescendants(); ++i)
+    descendants[i] = node->Descendant(i);
+
+  // Sort the list.
+  std::sort(descendants.begin(), descendants.end());
+
+  // Check that there are no duplicates (this is easy because it's sorted).
+  for (size_t i = 1; i < descendants.size(); ++i)
+    BOOST_REQUIRE_NE(descendants[i], descendants[i - 1]);
+
+  // Now perform these same checks for the children.
+  for (size_t i = 0; i < node->NumChildren(); ++i)
+    CheckDescendants(&node->Child(i));
+}
+
+/**
+ * Make sure Descendant() and NumDescendants() works properly for the cover
+ * tree.
+ */
+BOOST_AUTO_TEST_CASE(CoverTreeDescendantTest)
+{
+  arma::mat dataset;
+  dataset.randu(3, 100);
+
+  CoverTree<> tree(dataset);
+
+  // Now check that the NumDescendants() count and each Descendant() is right
+  // using the recursive function above.
+  CheckDescendants(&tree);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
