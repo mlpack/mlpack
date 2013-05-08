@@ -238,6 +238,12 @@ class CoverTree
   //! Modify the children manually (maybe not a great idea).
   std::vector<CoverTree*>& Children() { return children; }
 
+  //! Get the number of descendant points.
+  size_t NumDescendants() const;
+
+  //! Get the index of a particular descendant point.
+  size_t Descendant(const size_t index) const;
+
   //! Get the scale of this node.
   int Scale() const { return scale; }
   //! Modify the scale of this node.  Be careful...
@@ -340,6 +346,9 @@ class CoverTree
 
   //! The instantiated statistic.
   StatisticType stat;
+
+  //! The number of descendant points.
+  size_t numDescendants;
 
   //! The parent node (NULL if this is the root of the tree).
   CoverTree* parent;
