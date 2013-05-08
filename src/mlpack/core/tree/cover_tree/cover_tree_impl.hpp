@@ -375,7 +375,7 @@ math::Range CoverTree<MetricType, RootPointPolicy, StatisticType>::
 //! point-to-point distance has already been calculated.
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 math::Range CoverTree<MetricType, RootPointPolicy, StatisticType>::
-    RangeDistance(const arma::vec& other,
+    RangeDistance(const arma::vec& /* other */,
                   const double distance) const
 {
   return math::Range(distance - furthestDescendantDistance,
