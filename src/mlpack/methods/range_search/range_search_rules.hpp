@@ -8,17 +8,29 @@
 #define __MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_RULES_HPP
 
 namespace mlpack {
-namespace neighbor {
+namespace range {
+
 
 template<typename MetricType, typename TreeType>
 class RangeSearchRules
 {
  public:
+  /**
+   * Construct the RangeSearchRules object.  This is usually done from within
+   * the RangeSearch class at search time.
+   *
+   * @param referenceSet Set of reference data.
+   * @param querySet Set of query data.
+   * @param range Range to search for.
+   * @param neighbors Vector to store resulting neighbors in.
+   * @param distances Vector to store resulting distances in.
+   * @param metric Instantiated metric.
+   */
   RangeSearchRules(const arma::mat& referenceSet,
                    const arma::mat& querySet,
+                   const math::Range& range,
                    std::vector<std::vector<size_t> >& neighbors,
                    std::vector<std::vector<double> >& distances,
-                   math::Range& range,
                    MetricType& metric);
 
   /**
@@ -66,7 +78,7 @@ class RangeSearchRules
    */
   double Rescore(const size_t queryIndex,
                  TreeType& referenceNode,
-                 const double oldScore);
+                 const double oldScore) const;
 
   /**
    * Get the score for recursion order.  A low score indicates priority for
@@ -105,7 +117,7 @@ class RangeSearchRules
    */
   double Rescore(TreeType& queryNode,
                  TreeType& referenceNode,
-                 const double oldScore);
+                 const double oldScore) const;
 
  private:
   //! The reference set.
@@ -114,24 +126,27 @@ class RangeSearchRules
   //! The query set.
   const arma::mat& querySet;
 
+  //! The range of distances for which we are searching.
+  const math::Range& range;
+
   //! The vector the resultant neighbor indices should be stored in.
   std::vector<std::vector<size_t> >& neighbors;
 
   //! The vector the resultant neighbor distances should be stored in.
   std::vector<std::vector<double> >& distances;
 
-  //! The range of distances for which we are searching.
-  math::Range& range;
-
   //! The instantiated metric.
   MetricType& metric;
 
   //! Add all the points in the given node to the results for the given query
-  //! point.
-  void AddResult(const size_t queryIndex, TreeType& referenceNode);
+  //! point.  If the base case has already been calculated, we make sure to not
+  //! add that to the results twice.
+  void AddResult(const size_t queryIndex,
+                 TreeType& referenceNode,
+                 const bool hasBaseCase);
 };
 
-}; // namespace neighbor
+}; // namespace range
 }; // namespace mlpack
 
 // Include implementation.
