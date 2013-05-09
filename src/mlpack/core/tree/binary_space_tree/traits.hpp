@@ -41,6 +41,11 @@ class TreeTraits<BinarySpaceTree<BoundType, StatisticType, MatType> >
    * There is no guarantee that the first point in a node is its centroid.
    */
   static const bool FirstPointIsCentroid = false;
+
+  /**
+   * Points are not contained at multiple levels of the binary space tree.
+   */
+  static const bool HasSelfChildren = false;
 };
 
 }; // namespace tree

@@ -89,6 +89,12 @@ class TreeTraits
    * This is true if Point(0) is the centroid of the node.
    */
   static const bool FirstPointIsCentroid = false;
+
+  /**
+   * This is true if the points contained in the first child of a node
+   * (Child(0)) are also contained in that node.
+   */
+  static const bool HasSelfChildren = false;
 };
 
 }; // namespace tree
