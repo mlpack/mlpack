@@ -18,9 +18,12 @@ namespace mlpack {
 namespace range /** Range-search routines. */ {
 
 /**
- * The RangeSearch class is a template class for performing range searches.
+ * The RangeSearch class is a template class for performing range searches.  It
+ * is implemented in the style of a generalized tree-independent dual-tree
+ * algorithm; for more details on the actual algorithm, see the RangeSearchRules
+ * class.
  */
-template<typename MetricType = mlpack::metric::SquaredEuclideanDistance,
+template<typename MetricType = mlpack::metric::EuclideanDistance,
          typename TreeType = tree::BinarySpaceTree<bound::HRectBound<2>,
                                                    tree::EmptyStatistic> >
 class RangeSearch
@@ -182,57 +185,6 @@ class RangeSearch
               std::vector<std::vector<double> >& distances);
 
  private:
-  /**
-   * Compute the base case, when both referenceNode and queryNode are leaves
-   * containing points.
-   *
-   * @param referenceNode Reference node (must be a leaf).
-   * @param queryNode Query node (must be a leaf).
-   * @param range Range of distances to search for.
-   * @param neighbors Object holding list of neighbors.
-   * @param distances Object holding list of distances.
-   */
-  void ComputeBaseCase(const TreeType* referenceNode,
-                       const TreeType* queryNode,
-                       const math::Range& range,
-                       std::vector<std::vector<size_t> >& neighbors,
-                       std::vector<std::vector<double> >& distances) const;
-
-  /**
-   * Perform the dual-tree recursion, which will recurse until the base case is
-   * necessary.
-   *
-   * @param referenceNode Reference node.
-   * @param queryNode Query node.
-   * @param range Range of distances to search for.
-   * @param neighbors Object holding list of neighbors.
-   * @param distances Object holding list of distances.
-   */
-  void DualTreeRecursion(const TreeType* referenceNode,
-                         const TreeType* queryNode,
-                         const math::Range& range,
-                         std::vector<std::vector<size_t> >& neighbors,
-                         std::vector<std::vector<double> >& distances);
-
-  /**
-   * Perform the single-tree recursion, which will recurse down the reference
-   * tree to get the results for a single point.
-   *
-   * @param referenceNode Reference node.
-   * @param queryPoint Point to query for.
-   * @param queryIndex Index of query node.
-   * @param range Range of distances to search for.
-   * @param neighbors Object holding list of neighbors.
-   * @param distances Object holding list of distances.
-   */
-  template<typename VecType>
-  void SingleTreeRecursion(const TreeType* referenceNode,
-                           const VecType& queryPoint,
-                           const size_t queryIndex,
-                           const math::Range& range,
-                           std::vector<size_t>& neighbors,
-                           std::vector<double>& distances);
-
   //! Copy of reference matrix; used when a tree is built internally.
   typename TreeType::Mat referenceCopy;
   //! Copy of query matrix; used when a tree is built internally.
@@ -267,7 +219,7 @@ class RangeSearch
   MetricType metric;
 
   //! The number of pruned nodes during computation.
-  size_t numberOfPrunes;
+  size_t numPrunes;
 };
 
 }; // namespace range
