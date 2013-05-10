@@ -128,6 +128,7 @@
  *   - Nikolaos Vasiloglou <nvasil@ieee.org>
  *   - Garry Boyer <garryb@gmail.com>
  *   - Andreas Löf <andreas.lof@cs.waikato.ac.nz>
+ *   - Marcus Edel <marcus.edel@fu-berlin.de>
  */
 
 // First, standard includes.
