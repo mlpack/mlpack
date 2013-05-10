@@ -183,7 +183,7 @@ std::string Range::ToString() const
   return convert.str();
 }
 
-}; // namesapce math
+}; // namespace math
 }; // namespace mlpack
 
 #endif
