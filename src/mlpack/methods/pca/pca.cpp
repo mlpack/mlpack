@@ -30,16 +30,16 @@ void PCA::Apply(const arma::mat& data,
                 arma::vec& eigVal,
                 arma::mat& coeffs) const
 {
-	//Original transpose op goes here.
+  // Original transpose op goes here.
   arma::mat covMat = ccov(data);
 
-	//Centering is built into ccov
-	if (scaleData)
+  // Centering is built into ccov().
+  if (scaleData)
   {
     covMat = covMat / (arma::ones<arma::colvec>(covMat.n_rows))
       * stddev(covMat, 0, 0);
   }
- 
+
   arma::eig_sym(eigVal, coeffs, covMat);
 
   int nEigVal = eigVal.n_elem;
@@ -87,10 +87,6 @@ void PCA::Apply(arma::mat& data, const size_t newDimension) const
 
   if (newDimension < coeffs.n_rows && newDimension > 0)
     data.shed_rows(newDimension, data.n_rows - 1);
-}
-
-PCA::~PCA()
-{
 }
 
 }; // namespace mlpack
