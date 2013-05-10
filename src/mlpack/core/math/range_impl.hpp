@@ -171,8 +171,9 @@ inline bool Range::Contains(const double d) const
  */
 inline bool Range::Contains(const Range& r) const
 {
-  return lo <= r.hi;
+  return lo <= r.hi && hi >= r.lo;
 }
+
 /**
  * Returns a string representation of an object.
  */
