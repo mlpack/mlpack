@@ -4,13 +4,13 @@ Upstream-Contact: Ryan Curtin <gth671b@mail.gatech.edu>
 Source: http://www.mlpack.org/
 
 Files: *
-Copyright: Copyright 2008-2012, Ryan Curtin <gth671b@mail.gatech.edu>
-Copyright: Copyright 2008-2012, Bill March <march@gatech.edu>
+Copyright: Copyright 2008-2013, Ryan Curtin <gth671b@mail.gatech.edu>
+Copyright: Copyright 2008-2013, Bill March <march@gatech.edu>
 Copyright: Copyright 2008-2012, Dongryeol Lee <dongryel@cc.gatech.edu>
-Copyright: Copyright 2008-2012, Nishant Mehta <niche@cc.gatech.edu>
-Copyright: Copyright 2008-2012, Parikshit Ram <p.ram@gatech.edu>
+Copyright: Copyright 2008-2013, Nishant Mehta <niche@cc.gatech.edu>
+Copyright: Copyright 2008-2013, Parikshit Ram <p.ram@gatech.edu>
 Copyright: Copyright 2010-2012, James Cline <james.cline@gatech.edu>
-Copyright: Copyright 2010-2012, Sterling Peet <sterling.peet@gatech.edu>
+Copyright: Copyright 2010-2013, Sterling Peet <sterling.peet@gatech.edu>
 Copyright: Copyright 2011-2012, Matthew Amidon <mamidon@gatech.edu>
 Copyright: Copyright 2011-2012, Neil Slagle <npslagle@gmail.com>
 Copyright: Copyright 2011, Ajinkya Kale <kaleajinkya@gmail.com>
