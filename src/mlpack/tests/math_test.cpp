@@ -522,4 +522,60 @@ BOOST_AUTO_TEST_CASE(RangeContains)
   BOOST_REQUIRE(x.Contains(10.0));
 }
 
+/**
+ * Test that Range::Contains() works on other Ranges.  It should return false
+ * unless the ranges overlap at all.
+ */
+BOOST_AUTO_TEST_CASE(RangeContainsRange)
+{
+  // Empty ranges should not contain each other.
+  Range a;
+  Range b;
+
+  BOOST_REQUIRE_EQUAL(a.Contains(b), false);
+  BOOST_REQUIRE_EQUAL(b.Contains(a), false);
+
+  // Completely disparate ranges.
+  a = Range(-5.0, -3.0);
+  b = Range(3.0, 5.0);
+
+  BOOST_REQUIRE_EQUAL(a.Contains(b), false);
+  BOOST_REQUIRE_EQUAL(b.Contains(a), false);
+
+  // Overlapping at the end-point; this is containment of the end point.
+  a = Range(-5.0, 0.0);
+  b = Range(0.0, 5.0);
+
+  BOOST_REQUIRE_EQUAL(a.Contains(b), true);
+  BOOST_REQUIRE_EQUAL(b.Contains(a), true);
+
+  // Partially overlapping.
+  a = Range(-5.0, 2.0);
+  b = Range(-2.0, 5.0);
+
+  BOOST_REQUIRE_EQUAL(a.Contains(b), true);
+  BOOST_REQUIRE_EQUAL(b.Contains(a), true);
+
+  // One range encloses the other.
+  a = Range(-5.0, 5.0);
+  b = Range(-3.0, 3.0);
+
+  BOOST_REQUIRE_EQUAL(a.Contains(b), true);
+  BOOST_REQUIRE_EQUAL(b.Contains(a), true);
+
+  // Identical ranges.
+  a = Range(-3.0, 3.0);
+  b = Range(-3.0, 3.0);
+
+  BOOST_REQUIRE_EQUAL(a.Contains(b), true);
+  BOOST_REQUIRE_EQUAL(b.Contains(a), true);
+
+  // Single-point ranges.
+  a = Range(0.0, 0.0);
+  b = Range(0.0, 0.0);
+
+  BOOST_REQUIRE_EQUAL(a.Contains(b), true);
+  BOOST_REQUIRE_EQUAL(b.Contains(a), true);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
