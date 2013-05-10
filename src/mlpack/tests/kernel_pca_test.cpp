@@ -1,11 +1,12 @@
 /**
  * @file kernel_pca_test.cpp
- * @author Ajinkya Kale <kaleajinkya@gmail.com>
+ * @author Ryan Curtin
  *
  * Test file for Kernel PCA.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/kernels/linear_kernel.hpp>
+#include <mlpack/core/kernels/gaussian_kernel.hpp>
 #include <mlpack/methods/kernel_pca/kernel_pca.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -19,34 +20,68 @@ using namespace mlpack::kernel;
 using namespace std;
 using namespace arma;
 
-BOOST_AUTO_TEST_CASE(linear_kernel)
+/**
+ * If KernelPCA is working right, then it should turn a circle dataset into a
+ * linearly separable dataset in one dimension (which is easy to check).
+ */
+BOOST_AUTO_TEST_CASE(CircleTransformationTest)
 {
+  // The dataset, which will have three concentric rings in three dimensions.
+  arma::mat dataset;
 
-  mat data("1 0 2 3 9;"
-            "5 2 8 4 8;"
-            "6 7 3 1 8");
+  // Now, there are 750 points centered at the origin with unit variance.
+  dataset.randn(3, 750);
+  dataset *= 0.05;
 
-  KernelPCA<LinearKernel> p;
-  p.Apply(data, 2); // Reduce to 2 dimensions.
-
-  // Compare with correct results.
-  mat correct("-1.53781086 -3.51358020 -0.16139887 -1.87706634  7.08985628;"
-              " 1.29937798  3.45762685 -2.69910005 -3.15620704  1.09830225");
-
-  // If the eigenvectors are pointed opposite directions, they will cancel
-  // each other out in this summation.
-  for(size_t i = 0; i < data.n_rows; i++)
+  // Take the second 250 points and spread them away from the origin.
+  for (size_t i = 250; i < 500; ++i)
   {
-    if (fabs(correct(i, 1) + data(i, 1)) < 0.001 /* arbitrary */)
-    {
-         // Flip eigenvector for this column (negate output).
-         data.row(i) *= -1;
-    }
+    // Push the point away from the origin by 2.
+    const double pointNorm = norm(dataset.col(i), 2);
+
+    dataset(0, i) += 2.0 * (dataset(0, i) / pointNorm);
+    dataset(1, i) += 2.0 * (dataset(1, i) / pointNorm);
+    dataset(2, i) += 2.0 * (dataset(2, i) / pointNorm);
   }
 
-  for (size_t row = 0; row < 2; ++row)
-    for (size_t col = 0; col < 5; ++col)
-      BOOST_REQUIRE_CLOSE(data(row, col), correct(row, col), 1e-3);
+  // Take the third 500 points and spread them away from the origin.
+  for (size_t i = 500; i < 750; ++i)
+  {
+    // Push the point away from the origin by 5.
+    const double pointNorm = norm(dataset.col(i), 2);
+
+    dataset(0, i) += 5.0 * (dataset(0, i) / pointNorm);
+    dataset(1, i) += 5.0 * (dataset(1, i) / pointNorm);
+    dataset(2, i) += 5.0 * (dataset(2, i) / pointNorm);
+  }
+
+  data::Save("circle.csv", dataset);
+
+  // Now we have a dataset; we will use the GaussianKernel to perform KernelPCA
+  // to take it down to one dimension.
+  KernelPCA<GaussianKernel> p;
+  p.Apply(dataset, 1);
+
+  // Get the ranges of each "class".  These are all initialized as empty ranges
+  // containing no points.
+  math::Range ranges[3];
+  ranges[0] = math::Range();
+  ranges[1] = math::Range();
+  ranges[2] = math::Range();
+
+  // Expand the ranges to hold all of the points in the class.
+  for (size_t i = 0; i < 250; ++i)
+    ranges[0] |= dataset(0, i);
+  for (size_t i = 250; i < 500; ++i)
+    ranges[1] |= dataset(0, i);
+  for (size_t i = 500; i < 750; ++i)
+    ranges[2] |= dataset(0, i);
+
+  // None of these ranges should overlap -- the classes should be linearly
+  // separable.
+  BOOST_REQUIRE_EQUAL(ranges[0].Contains(ranges[1]), false);
+  BOOST_REQUIRE_EQUAL(ranges[0].Contains(ranges[2]), false);
+  BOOST_REQUIRE_EQUAL(ranges[1].Contains(ranges[2]), false);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
