@@ -13,48 +13,57 @@
 namespace mlpack {
 namespace pca {
 
+/**
+ * This class implements principal components analysis (PCA).  This is a common,
+ * widely-used technique that is often used for either dimensionality reduction
+ * or transforming data into a better basis.  Further information on PCA can be
+ * found in almost any statistics or machine learning textbook, and all over the
+ * internet.
+ */
 class PCA
 {
  public:
+  /**
+   * Create the PCA object, specifying if the data should be scaled in each
+   * dimension by standard deviation when PCA is performed.
+   *
+   * @param scaleData Whether or not to scale the data.
+   */
   PCA(const bool scaleData = false);
 
   /**
    * Apply Principal Component Analysis to the provided data set.
    *
-   * @param data - Data matrix
-   * @param transformedData - Data with PCA applied
-   * @param eigVal - contains eigen values in a column vector
-   * @param coeff - PCA Loadings/Coeffs/EigenVectors
+   * @param data Data matrix.
+   * @param transformedData Matrix to put results of PCA into.
+   * @param eigval Vector to put eigenvalues into.
+   * @param eigvec Matrix to put eigenvectors (loadings) into.
    */
-  void Apply(const arma::mat& data, arma::mat& transformedData, arma::vec&
-             eigVal, arma::mat& coeff) const;
+  void Apply(const arma::mat& data,
+             arma::mat& transformedData,
+             arma::vec& eigval,
+             arma::mat& eigvec) const;
 
   /**
    * Apply Principal Component Analysis to the provided data set.
    *
-   * @param data - Data matrix
-   * @param transformedData - Data with PCA applied
-   * @param eigVal - contains eigen values in a column vector
+   * @param data Data matrix.
+   * @param transformedData Matrix to store results of PCA in.
+   * @param eigval Vector to put eigenvalues into.
    */
-  void Apply(const arma::mat& data, arma::mat& transformedData,
+  void Apply(const arma::mat& data,
+             arma::mat& transformedData,
              arma::vec& eigVal) const;
 
   /**
-   * Apply Dimensionality Reduction using Principal Component Analysis
-   * to the provided data set.
+   * Use PCA for dimensionality reduction on the given dataset.  This will save
+   * the newDimension largest principal components of the data and remove the
+   * rest.
    *
-   * @param data - M x N Data matrix
-   * @param newDimension - matrix consisting of N column vectors,
-   * where each vector is the projection of the corresponding data vector
-   * from data matrix onto the basis vectors contained in the columns of
-   * coeff/eigen vector matrix with only newDimension number of columns chosen.
+   * @param data Data matrix.
+   * @param newDimension New dimension of the data.
    */
   void Apply(arma::mat& data, const size_t newDimension) const;
-
-  /**
-   * Delete PCA object
-   */
-  ~PCA();
 
   //! Get whether or not this PCA object will scale (by standard deviation) the
   //! data when PCA is performed.
@@ -64,7 +73,10 @@ class PCA
   bool& ScaleData() { return scaleData; }
 
  private:
+  //! Whether or not the data will be scaled by standard deviation when PCA is
+  //! performed.
   bool scaleData;
+
 }; // class PCA
 
 }; // namespace pca
