@@ -39,7 +39,7 @@ int main(int argc, char** argv)
   data::Load(inputFile.c_str(), dataset);
 
   // Find out what dimension we want.
-  const size_t newDimension = dataset.n_rows; // No reduction, by default.
+  size_t newDimension = dataset.n_rows; // No reduction, by default.
   if (CLI::GetParam<int>("new_dimensionality") != 0)
   {
     // Validate the parameter.
