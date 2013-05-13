@@ -14,7 +14,7 @@
 #include <mlpack/core/tree/cover_tree.hpp>
 
 namespace mlpack {
-namespace fastmks {
+namespace fastmks /** Fast max-kernel search. */ {
 
 /**
  * An implementation of fast exact max-kernel search.  Given a query dataset and
