@@ -9,7 +9,7 @@
 #define __MLPACK_METHODS_FASTMKS_IP_METRIC_HPP
 
 namespace mlpack {
-namespace fastmks /** Fast maximum kernel search. */ {
+namespace metric {
 
 template<typename KernelType>
 class IPMetric
@@ -42,7 +42,7 @@ class IPMetric
   KernelType& kernel;
 };
 
-}; // namespace fastmks
+}; // namespace metric
 }; // namespace mlpack
 
 // Include implementation.

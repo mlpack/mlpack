@@ -20,6 +20,7 @@ using namespace mlpack;
 using namespace mlpack::fastmks;
 using namespace mlpack::kernel;
 using namespace mlpack::tree;
+using namespace mlpack::metric;
 
 PROGRAM_INFO("FastMKS (Fast Max-Kernel Search)",
     "This program will find the k maximum kernel of a set of points, "

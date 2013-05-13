@@ -14,7 +14,7 @@
 #include <mlpack/core/kernels/linear_kernel.hpp>
 
 namespace mlpack {
-namespace fastmks {
+namespace metric {
 
 // Constructor with no instantiated kernel.
 template<typename KernelType>
@@ -63,7 +63,7 @@ inline double IPMetric<kernel::LinearKernel>::Evaluate(const Vec1Type& a,
   return metric::LMetric<2, true>::Evaluate(a, b);
 }
 
-}; // namespace fastmks
+}; // namespace metric
 }; // namespace mlpack
 
 #endif
