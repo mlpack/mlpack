@@ -48,7 +48,7 @@ namespace fastmks {
  */
 template<
     typename KernelType,
-    typename TreeType = tree::CoverTree<IPMetric<KernelType>,
+    typename TreeType = tree::CoverTree<metric::IPMetric<KernelType>,
         tree::FirstPointIsRoot, FastMKSStat>
 >
 class FastMKS
@@ -175,9 +175,9 @@ class FastMKS
               arma::mat& products);
 
   //! Get the inner-product metric induced by the given kernel.
-  const IPMetric<KernelType>& Metric() const { return metric; }
+  const metric::IPMetric<KernelType>& Metric() const { return metric; }
   //! Modify the inner-product metric induced by the given kernel.
-  IPMetric<KernelType>& Metric() { return metric; }
+  metric::IPMetric<KernelType>& Metric() { return metric; }
 
  private:
   //! The reference dataset.
@@ -200,7 +200,7 @@ class FastMKS
   bool naive;
 
   //! The instantiated inner-product metric induced by the given kernel.
-  IPMetric<KernelType> metric;
+  metric::IPMetric<KernelType> metric;
 
   //! Utility function.  Copied too many times from too many places.
   void InsertNeighbor(arma::Mat<size_t>& indices,
