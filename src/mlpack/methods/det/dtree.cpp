@@ -276,8 +276,8 @@ double DTree::Grow(arma::mat& data,
                    const size_t maxLeafSize,
                    const size_t minLeafSize)
 {
-  assert(data.n_rows == maxVals.n_elem);
-  assert(data.n_rows == minVals.n_elem);
+  Log::Assert(data.n_rows == maxVals.n_elem);
+  Log::Assert(data.n_rows == minVals.n_elem);
 
   double leftG, rightG;
 
