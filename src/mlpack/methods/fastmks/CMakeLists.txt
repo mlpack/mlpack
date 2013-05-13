@@ -1,8 +1,6 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-  ip_metric.hpp
-  ip_metric_impl.hpp
   fastmks.hpp
   fastmks_impl.hpp
   fastmks_rules.hpp
