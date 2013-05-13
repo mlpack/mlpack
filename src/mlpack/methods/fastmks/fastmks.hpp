@@ -9,7 +9,7 @@
 #define __MLPACK_METHODS_FASTMKS_FASTMKS_HPP
 
 #include <mlpack/core.hpp>
-#include "ip_metric.hpp"
+#include <mlpack/core/metrics/ip_metric.hpp>
 #include "fastmks_stat.hpp"
 #include <mlpack/core/tree/cover_tree.hpp>
 

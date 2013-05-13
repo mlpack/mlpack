@@ -1,6 +1,8 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
+  ip_metric.hpp
+  ip_metric_impl.hpp
   lmetric.hpp
   lmetric_impl.hpp
   mahalanobis_distance.hpp
