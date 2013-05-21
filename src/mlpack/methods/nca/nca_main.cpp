@@ -215,9 +215,10 @@ int main(int argc, char* argv[])
   }
 
   // Now create the NCA object and run the optimization.
+  arma::uvec labelsCol = labels.unsafe_col(0);
   if (optimizerType == "sgd")
   {
-    NCA<LMetric<2> > nca(data, labels.unsafe_col(0));
+    NCA<LMetric<2> > nca(data, labelsCol);
     nca.Optimizer().StepSize() = stepSize;
     nca.Optimizer().MaxIterations() = maxIterations;
     nca.Optimizer().Tolerance() = tolerance;
@@ -227,7 +228,7 @@ int main(int argc, char* argv[])
   }
   else if (optimizerType == "lbfgs")
   {
-    NCA<LMetric<2>, L_BFGS> nca(data, labels.unsafe_col(0));
+    NCA<LMetric<2>, L_BFGS> nca(data, labelsCol);
     nca.Optimizer().NumBasis() = numBasis;
     nca.Optimizer().MaxIterations() = maxIterations;
     nca.Optimizer().ArmijoConstant() = armijoConstant;
