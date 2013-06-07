@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(NMFALSTest)
 
   NMF<RandomInitialization,
       WAlternatingLeastSquaresRule,
-      HAlternatingLeastSquaresRule> nmf;
+      HAlternatingLeastSquaresRule> nmf(50000, 1e-15);
   nmf.Apply(v, r, w, h);
 
   mat wh = w * h;
