@@ -1,5 +1,6 @@
-## Recurse into different methods.
+# Recurse into each method mlpack provides.
 set(DIRS
+  det
   emst
   fastmks
   gmm
@@ -21,10 +22,6 @@ set(DIRS
   rann
   sparse_coding
 )
-# Density estimation trees fail on Windows.
-if (NOT WIN32)
-  set(DIRS ${DIRS} det)
-endif (NOT WIN32)
 
 foreach(dir ${DIRS})
     add_subdirectory(${dir})
