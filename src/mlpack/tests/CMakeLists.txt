@@ -1,5 +1,5 @@
 # MLPACK test executable.
-add_executable(mlpack_test
+set(TEST_SOURCES
   mlpack_test.cpp
   allkfn_test.cpp
   allknn_test.cpp
@@ -7,7 +7,6 @@ add_executable(mlpack_test
   arma_extend_test.cpp
   aug_lagrangian_test.cpp
   cli_test.cpp
-  det_test.cpp
   distribution_test.cpp
   emst_test.cpp
   fastmks_test.cpp
@@ -38,6 +37,13 @@ add_executable(mlpack_test
   tree_traits_test.cpp
   union_find_test.cpp
 )
+# On Windows, we don't include the test for density estimation trees.
+set(TEST_SOURCES ${TEST_SOURCES} det_test.cpp)
+
+add_executable(mlpack_test
+  ${TEST_SOURCES}
+)
+
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test
   mlpack
