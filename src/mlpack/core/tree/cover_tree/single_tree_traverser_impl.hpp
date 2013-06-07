@@ -98,7 +98,9 @@ SingleTreeTraverser<RuleType>::Traverse(
     }
   }
 
-  // Now begin the iteration through the map.
+  // Now begin the iteration through the map, but only if it has anything in it.
+  if (mapQueue.empty())
+    return;
   typename std::map<int, std::vector<MapEntryType> >::reverse_iterator rit =
       mapQueue.rbegin();
 
