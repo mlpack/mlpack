@@ -86,10 +86,7 @@ WARN_LOGFILE           =
 INPUT                  = ./src/mlpack \
                          ./doc/guide \
                          ./doc/tutorials
-FILE_PATTERNS          = *.c \
-                         *.cc \
-                         *.h \
-                         *.hpp \
+FILE_PATTERNS          = *.hpp \
                          *.cpp \
                          *.txt
 RECURSIVE              = YES
