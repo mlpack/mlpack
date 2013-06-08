@@ -15,6 +15,7 @@
 BOOST_AUTO_TEST_SUITE(KernelPCATest);
 
 using namespace mlpack;
+using namespace mlpack::math;
 using namespace mlpack::kpca;
 using namespace mlpack::kernel;
 using namespace std;
@@ -64,10 +65,10 @@ BOOST_AUTO_TEST_CASE(CircleTransformationTest)
 
   // Get the ranges of each "class".  These are all initialized as empty ranges
   // containing no points.
-  math::Range ranges[3];
-  ranges[0] = math::Range();
-  ranges[1] = math::Range();
-  ranges[2] = math::Range();
+  Range ranges[3];
+  ranges[0] = Range();
+  ranges[1] = Range();
+  ranges[2] = Range();
 
   // Expand the ranges to hold all of the points in the class.
   for (size_t i = 0; i < 250; ++i)
