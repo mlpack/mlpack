@@ -35,6 +35,12 @@ set_target_properties(mlpack
   SOVERSION 1
 )
 
+# Make sure the linker can find the needed library.
+# rt: clock_gettime()
+if(UNIX AND NOT APPLE)
+    target_link_libraries(mlpack rt)
+endif(UNIX AND NOT APPLE)
+
 # Collect all header files in the library.
 file(GLOB_RECURSE INCLUDE_H_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)
 file(GLOB_RECURSE INCLUDE_HPP_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp)
