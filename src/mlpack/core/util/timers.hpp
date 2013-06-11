@@ -1,6 +1,7 @@
 /**
  * @file timers.hpp
  * @author Matthew Amidon
+ * @author Marcus Edel
  *
  * Timers for MLPACK.
  */
@@ -10,18 +11,42 @@
 #include <map>
 #include <string>
 
-#ifndef _WIN32
-  #include <sys/time.h> //linux
-#else
-  #include <winsock.h> //timeval on windows
-  #include <windows.h> //GetSystemTimeAsFileTime on windows
-//gettimeofday has no equivalent will need to write extra code for that.
+#if defined(__unix__) || defined(__unix)
+  #include <time.h>       // clock_gettime()
+  #include <sys/time.h>   // timeval, gettimeofday()
+  #include <unistd.h>     // flags like  _POSIX_VERSION
+#elif defined(__MACH__) && defined(__APPLE__)
+  #include <mach/mach_time.h>   // mach_timebase_info,
+                                // mach_absolute_time()
+
+  // TEMPORARY
+  #include <time.h>       // clock_gettime()
+  #include <sys/time.h>   // timeval, gettimeofday()
+  #include <unistd.h>     // flags like  _POSIX_VERSION
+#elif defined(_WIN32)
+  #include <windows.h>  //GetSystemTimeAsFileTime(),
+                        // QueryPerformanceFrequency(),
+                        // QueryPerformanceCounter()
+  #include <winsock.h>  //timeval on windows
+
+  // uint64_t isn't defined on every windows.
+  #if !defined(HAVE_UINT64_T)
+    #if SIZEOF_UNSIGNED_LONG == 8
+      typedef unsigned long uint64_t;
+    #else
+      typedef unsigned long long  uint64_t;
+    #endif  // SIZEOF_UNSIGNED_LONG
+  #endif  // HAVE_UINT64_T
+
+  //gettimeofday has no equivalent will need to write extra code for that.
   #if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
     #define DELTA_EPOCH_IN_MICROSECS 11644473600000000Ui64
   #else
     #define DELTA_EPOCH_IN_MICROSECS 11644473600000000ULL
-  #endif
-#endif //_WIN32
+  #endif // _MSC_VER, _MSC_EXTENSIONS
+#else
+  #error "unknown OS"
+#endif
 
 namespace mlpack {
 
@@ -110,6 +135,7 @@ class Timers
   std::map<std::string, timeval> timers;
 
   void FileTimeToTimeVal(timeval* tv);
+  void GetTime(timeval* tv);
 };
 
 }; // namespace mlpack
