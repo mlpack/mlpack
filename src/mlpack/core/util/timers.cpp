@@ -1,6 +1,7 @@
 /**
  * @file timers.cpp
  * @author Matthew Amidon
+ * @author Marcus Edel
  *
  * Implementation of timers.
  */
@@ -117,30 +118,111 @@ void Timers::PrintTimer(const std::string& timerName)
   Log::Info << std::endl;
 }
 
+void Timers::GetTime(timeval* tv)
+{
+#if defined(__MACH__) && defined(__APPLE__)
+  
+  static mach_timebase_info_data_t info;
+  
+  // If this is the first time we've run, get the timebase.
+  // We can use denom == 0 to indicate that sTimebaseInfo is
+  // uninitialised.
+  if (info.denom == 0) {
+    (void) mach_timebase_info(&info);
+  }
+  
+  // Hope that the multiplication doesn't overflow.
+  uint64_t nsecs = mach_absolute_time() * info.numer / info.denom;  
+  tv->tv_sec = nsecs / 1e9;
+  tv->tv_usec = (nsecs / 1e3) - (tv->tv_sec * 1e6);
+  
+#elif defined(_POSIX_VERSION)
+#if defined(_POSIX_TIMERS) && (_POSIX_TIMERS > 0)
+
+  // Get the right clock_id.
+#if defined(CLOCK_MONOTONIC_PRECISE)
+  static const clockid_t id = CLOCK_MONOTONIC_PRECISE;
+#elif defined(CLOCK_MONOTONIC_RAW)
+  static const clockid_t id = CLOCK_MONOTONIC_RAW;
+#elif defined(CLOCK_MONOTONIC)
+  static const clockid_t id = CLOCK_MONOTONIC;
+#elif defined(CLOCK_REALTIME)
+  static const clockid_t id = CLOCK_REALTIME;
+#else
+  static const clockid_t id = ((clockid_t) - 1);
+#endif // CLOCK
+  
+  struct timespec ts;
+  
+  // Returns the current value tp for the specified clock_id.
+  if (clock_gettime(id, &ts) != -1 && id != ((clockid_t) - 1))
+  {
+    tv->tv_sec = ts.tv_sec;
+    tv->tv_usec = ts.tv_nsec / 1e3;
+  }
+  
+  // Fallback for the clock_gettime function.
+  gettimeofday(tv, NULL);
+  
+#endif  // _POSIX_TIMERS
+#elif defined(_WIN32)
+   
+  static double frequency = 0.0;
+  static LARGE_INTEGER offset;
+  
+  // If this is the first time we've run, get the frequency.
+  // We use frequency == 0.0 to indicate that
+  // QueryPerformanceFrequency is uninitialised.
+  if (frequency == 0.0)
+  {
+    LARGE_INTEGER pF;
+    if (!QueryPerformanceFrequency(&pF))
+    {
+      // Fallback for the QueryPerformanceCounter function.
+      FileTimeToTimeVal(tv);
+    }
+    else
+    {
+      QueryPerformanceCounter(&offset);
+      frequency = (double)pF.QuadPart / 1000000.0;
+    }
+  }
+  
+  if (frequency != 0.0)
+  {
+    LARGE_INTEGER pC;
+    // Get the current performance-counter value.
+    QueryPerformanceCounter(&pC);
+    
+    pC.QuadPart -= offset.QuadPart;
+    double microseconds = (double)pC.QuadPart / frequency;
+    pC.QuadPart = microseconds;
+    tv->tv_sec = (long)pC.QuadPart / 1000000;
+    tv->tv_usec = (long)(pC.QuadPart % 1000000);
+  }
+  
+#endif
+}
+
 void Timers::StartTimer(const std::string& timerName)
 {
   timeval tmp;
-
   tmp.tv_sec = 0;
   tmp.tv_usec = 0;
 
-#ifndef _WIN32
-  gettimeofday(&tmp, NULL);
-#else
-  FileTimeToTimeVal(&tmp);
-#endif
-
+  GetTime(&tmp);
+  
   // Check to see if the timer already exists.  If it does, we'll subtract the
-  // old value.
+  // old value.  
   if (timers.count(timerName) == 1)
   {
     timeval tmpDelta;
-
+    
     timersub(&tmp, &timers[timerName], &tmpDelta);
-
+    
     tmp = tmpDelta;
   }
-
+  
   timers[timerName] = tmp;
 }
 
@@ -166,12 +248,9 @@ void Timers::FileTimeToTimeVal(timeval* tv)
 void Timers::StopTimer(const std::string& timerName)
 {
   timeval delta, b, a = timers[timerName];
+  
+  GetTime(&b);
 
-#ifndef _WIN32
-  gettimeofday(&b, NULL);
-#else
-  FileTimeToTimeVal(&b);
-#endif
   // Calculate the delta time.
   timersub(&b, &a, &delta);
   timers[timerName] = delta;
