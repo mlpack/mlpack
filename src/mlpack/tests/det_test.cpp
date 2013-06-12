@@ -2,9 +2,12 @@
  * @file det_test.cpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  *
- * Unit tests for the functions of the class DTree
- * and the utility functions using this class.
+ * Unit tests for the functions of the class DTree and the utility functions
+ * using this class.
  */
+#include <mlpack/core.hpp>
+#include <boost/test/unit_test.hpp>
+#include "old_boost_test_definitions.hpp"
 
 #define protected public
 #define private public
@@ -12,10 +15,6 @@
 #include <mlpack/methods/det/dt_utils.hpp>
 #undef protected
 #undef private
-
-#include <mlpack/core.hpp>
-#include <boost/test/unit_test.hpp>
-#include "old_boost_test_definitions.hpp"
 
 using namespace mlpack;
 using namespace mlpack::det;
