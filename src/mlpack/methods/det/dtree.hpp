@@ -8,8 +8,6 @@
 #ifndef __MLPACK_METHODS_DET_DTREE_HPP
 #define __MLPACK_METHODS_DET_DTREE_HPP
 
-#include <assert.h>
-
 #include <mlpack/core.hpp>
 
 namespace mlpack {
