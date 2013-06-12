@@ -8,8 +8,6 @@
 #ifndef __MLPACK_METHODS_DET_DT_UTILS_HPP
 #define __MLPACK_METHODS_DET_DT_UTILS_HPP
 
-#include <string>
-
 #include <mlpack/core.hpp>
 #include "dtree.hpp"
 
