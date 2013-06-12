@@ -153,18 +153,6 @@
   #define M_PI 3.141592653589793238462643383279
 #endif
 
-// Clean up unfortunate Windows preprocessor definitions.
-// Use std::min and std::max!
-#ifdef _WIN32
-  #ifdef min
-    #undef min
-  #endif
-
-  #ifdef max
-    #undef max
-  #endif
-#endif
-
 // Give ourselves a nice way to force functions to be inline if we need.
 #define force_inline
 #if defined(__GNUG__) && !defined(DEBUG)
@@ -190,4 +178,16 @@
 #include <mlpack/core/dists/discrete_distribution.hpp>
 #include <mlpack/core/dists/gaussian_distribution.hpp>
 
+#endif
+
+// Clean up unfortunate Windows preprocessor definitions, even if this file was
+// already included.  Use std::min and std::max!
+#ifdef _WIN32
+  #ifdef min
+    #undef min
+  #endif
+
+  #ifdef max
+    #undef max
+  #endif
 #endif
