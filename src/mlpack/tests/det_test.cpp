@@ -193,12 +193,14 @@ BOOST_AUTO_TEST_CASE(TestGrow)
   BOOST_REQUIRE(testDTree.Right()->SplitDim() == 1);
   BOOST_REQUIRE_CLOSE(testDTree.Right()->SplitValue(), 0.5, 1e-5);
 
-  // Test node errors for every node.
+  // Test node errors for every node (these are private functions).
+#ifndef _WIN32
   BOOST_REQUIRE_CLOSE(testDTree.logNegError, rootError, 1e-10);
   BOOST_REQUIRE_CLOSE(testDTree.Left()->logNegError, lError, 1e-10);
   BOOST_REQUIRE_CLOSE(testDTree.Right()->logNegError, rError, 1e-10);
   BOOST_REQUIRE_CLOSE(testDTree.Right()->Left()->logNegError, rlError, 1e-10);
   BOOST_REQUIRE_CLOSE(testDTree.Right()->Right()->logNegError, rrError, 1e-10);
+#endif
 
   // Test alpha.
   double rootAlpha, rAlpha;
