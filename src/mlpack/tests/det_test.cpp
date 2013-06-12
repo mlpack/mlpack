@@ -9,12 +9,20 @@
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
 
-#define protected public
-#define private public
+// This trick does not work on Windows.  We will have to comment out the tests
+// that depend on it.
+#ifndef _WIN32
+  #define protected public
+  #define private public
+#endif
+
 #include <mlpack/methods/det/dtree.hpp>
 #include <mlpack/methods/det/dt_utils.hpp>
-#undef protected
-#undef private
+
+#ifndef _WIN32
+  #undef protected
+  #undef private
+#endif
 
 using namespace mlpack;
 using namespace mlpack::det;
@@ -22,8 +30,10 @@ using namespace std;
 
 BOOST_AUTO_TEST_SUITE(DETTest);
 
-// Tests for the private functions.
-
+// Tests for the private functions.  We cannot perform these if we are on
+// Windows because we cannot make private functions accessible using the macro
+// trick above.
+#ifndef _WIN32
 BOOST_AUTO_TEST_CASE(TestGetMaxMinVals)
 {
   arma::mat testData(3, 5);
@@ -134,6 +144,7 @@ BOOST_AUTO_TEST_CASE(TestSplitData)
   BOOST_REQUIRE_EQUAL(oTest[3], 2);
   BOOST_REQUIRE_EQUAL(oTest[4], 5);
 }
+#endif
 
 // Tests for the public functions.
 
