@@ -8,7 +8,7 @@
  * CLIDeleter class, which will be initialized at the beginning of the program
  * and deleted at the end.  The destructor destroys the CLI singleton.
  *
- * This file is part of MLPACK 1.0.5.
+ * This file is part of MLPACK 1.0.6.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free

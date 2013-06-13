@@ -1,3 +1,7 @@
+2013-06-13    mlpack 1.0.6
+
+  * Minor bugfix so that FastMKS gets built.
+
 2013-05-01    mlpack 1.0.5
 
   * Speedups of cover tree traversers (#243).
