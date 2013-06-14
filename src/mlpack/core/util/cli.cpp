@@ -11,20 +11,6 @@
 #include <iostream>
 #include <string>
 
-#ifndef _WIN32
-  #include <sys/time.h> // For Linux.
-  #include <execinfo.h>
-#else
-  #include <winsock.h> // timeval on Windows.
-  #include <windows.h> // GetSystemTimeAsFileTime() on Windows.
-// gettimeofday() has no equivalent; we will need to write extra code for that.
-  #if defined(_MSC_VER) || defined(_MSC_EXTENSCLINS)
-    #define DELTA_EPOCH_IN_MICROSECS 11644473600000000Ui64
-  #else
-    #define DELTA_EPOCH_IN_MICROSECS 11644473600000000ULL
-  #endif
-#endif // _WIN32
-
 #include "cli.hpp"
 #include "log.hpp"
 
