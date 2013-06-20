@@ -15,7 +15,6 @@ BOOST_AUTO_TEST_SUITE(PCATest);
 using namespace std;
 using namespace arma;
 using namespace mlpack;
-using namespace mlpack::math;
 using namespace mlpack::pca;
 using namespace mlpack::distribution;
 
@@ -81,8 +80,6 @@ BOOST_AUTO_TEST_CASE(PCADimensionalityReductionTest)
  */
 BOOST_AUTO_TEST_CASE(PCAScalingTest)
 {
-  RandomSeed(std::time(NULL));
-
   // Generate an artificial dataset in 3 dimensions.
   arma::mat data(3, 5000);
 
