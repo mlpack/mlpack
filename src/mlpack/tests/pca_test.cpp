@@ -16,6 +16,7 @@ using namespace std;
 using namespace arma;
 using namespace mlpack;
 using namespace mlpack::pca;
+using namespace mlpack::distribution;
 
 /**
  * Compare the output of our PCA implementation with Armadillo's.
@@ -59,19 +60,69 @@ BOOST_AUTO_TEST_CASE(PCADimensionalityReductionTest)
               " 1.29937798  3.45762685 -2.69910005 -3.15620704  1.09830225");
 
   // If the eigenvectors are pointed opposite directions, they will cancel
-// each other out in this summation.
-  for(size_t i = 0; i < data.n_rows; i++)
+  // each other out in this summation.
+  for (size_t i = 0; i < data.n_rows; i++)
   {
-    if (fabs(correct(i, 1) + data(i,1)) < 0.001 /* arbitrary */)
+    if (fabs(correct(i, 1) + data(i, 1)) < 0.001 /* arbitrary */)
     {
-         // Flip Armadillo coefficients for this column.
-         data.row(i) *= -1;
+      // Flip Armadillo coefficients for this column.
+      data.row(i) *= -1;
     }
   }
 
   for (size_t row = 0; row < 2; row++)
     for (size_t col = 0; col < 5; col++)
       BOOST_REQUIRE_CLOSE(data(row, col), correct(row, col), 1e-3);
+}
+
+/**
+ * Test that scaling PCA works.
+ */
+BOOST_AUTO_TEST_CASE(PCAScalingTest)
+{
+  math::RandomSeed(std::time(NULL));
+
+  // Generate an artificial dataset in 3 dimensions.
+  arma::mat data(3, 5000);
+
+  arma::vec mean("1.0 3.0 -12.0");
+  arma::mat cov("1.0 0.9 0.0;"
+                "0.9 1.0 0.0;"
+                "0.0 0.0 12.0");
+  GaussianDistribution g(mean, cov);
+
+  for (size_t i = 0; i < 5000; ++i)
+    data.col(i) = g.Random();
+
+  // Now get the principal components when we are scaling.
+  PCA p(true);
+  arma::mat transData;
+  arma::vec eigval;
+  arma::mat eigvec;
+
+  p.Apply(data, transData, eigval, eigvec);
+
+  // The first two components of the eigenvector with largest eigenvalue should
+  // be somewhere near sqrt(2) / 2.  The third component should be close to
+  // zero.  There is noise, of course...
+  BOOST_REQUIRE_CLOSE(std::abs(eigvec(0, 0)), sqrt(2) / 2, 0.2); // 20% tolerance.
+  BOOST_REQUIRE_CLOSE(std::abs(eigvec(1, 0)), sqrt(2) / 2, 0.2);
+  BOOST_REQUIRE_SMALL(eigvec(2, 0), 0.08); // Large tolerance for noise.
+
+  // The second component should be focused almost entirely in the third
+  // dimension.
+  BOOST_REQUIRE_SMALL(eigvec(0, 1), 0.08);
+  BOOST_REQUIRE_SMALL(eigvec(1, 1), 0.08);
+  BOOST_REQUIRE_CLOSE(std::abs(eigvec(2, 1)), 1.0, 0.2);
+
+  // The third component should have the same absolute value characteristics as
+  // the first.
+  BOOST_REQUIRE_CLOSE(std::abs(eigvec(0, 0)), sqrt(2) / 2, 0.2); // 20% tolerance.
+  BOOST_REQUIRE_CLOSE(std::abs(eigvec(1, 0)), sqrt(2) / 2, 0.2);
+  BOOST_REQUIRE_SMALL(eigvec(2, 0), 0.08); // Large tolerance for noise.
+
+  // The eigenvalues should sum to three.
+  BOOST_REQUIRE_CLOSE(accu(eigval), 3.0, 0.1); // 10% tolerance.
 }
 
 
