@@ -10,8 +10,8 @@
 #include <iostream>
 
 using namespace std;
-namespace mlpack {
-namespace pca {
+using namespace mlpack;
+using namespace mlpack::pca;
 
 PCA::PCA(const bool scaleData) :
     scaleData(scaleData)
@@ -30,14 +30,28 @@ void PCA::Apply(const arma::mat& data,
                 arma::vec& eigVal,
                 arma::mat& coeffs) const
 {
-  // Original transpose op goes here.
+  // Calculate the covariance matrix, given that the data is column-major (this
+  // is why we use ccov() and not cov()).
   arma::mat covMat = ccov(data);
 
-  // Centering is built into ccov().
+  // Centering is built into ccov(), so we don't need to worry about it.  We
+  // only need to scale the data if the user asked for it.
   if (scaleData)
   {
-    covMat = covMat / (arma::ones<arma::colvec>(covMat.n_rows))
-      * stddev(covMat, 0, 0);
+    // Scaling the data is when we reduce the variance of each dimension to 1.
+    // Normally you might do this by dividing each dimension by its standard
+    // deviation, but since we already have the covariance matrix we can
+    // simplify the operation into dividing each element C_ij in the covariance
+    // matrix by the standard deviation of dimension i multiplied by the
+    // standard deviation of dimension j.
+    arma::vec stdDev = sqrt(covMat.diag());
+
+    // If there are any zeroes, make them very small.
+    for (size_t i = 0; i < stdDev.n_elem; ++i)
+      if (stdDev[i] == 0)
+        stdDev[i] = 1e-50;
+
+    covMat /= stdDev * trans(stdDev);
   }
 
   arma::eig_sym(eigVal, coeffs, covMat);
@@ -88,6 +102,3 @@ void PCA::Apply(arma::mat& data, const size_t newDimension) const
   if (newDimension < coeffs.n_rows && newDimension > 0)
     data.shed_rows(newDimension, data.n_rows - 1);
 }
-
-}; // namespace mlpack
-}; // namespace pca
