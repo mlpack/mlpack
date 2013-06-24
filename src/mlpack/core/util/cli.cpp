@@ -84,8 +84,6 @@ CLI::~CLI()
   return;
 }
 
-/* Methods */
-
 /**
  * Adds a parameter to the hierarchy. Use char* and not std::string since the
  * vast majority of use cases will be literal strings.
@@ -138,7 +136,7 @@ void CLI::Add(const std::string& path,
  */
 void CLI::AddAlias(const std::string& alias, const std::string& original)
 {
-  //Conduct the mapping
+  // Conduct the mapping.
   if (alias.length())
   {
     amap_t& amap = GetSingleton().aliasValues;
@@ -153,10 +151,10 @@ void CLI::AddFlag(const std::string& identifier,
                  const std::string& description,
                  const std::string& alias)
 {
-  // Reuse functionality from add
+  // Reuse functionality from Add().
   Add(identifier, description, alias, false);
 
-  // Insert the proper metadata in gmap.
+  // Insert the proper metadata into gmap.
   gmap_t& gmap = GetSingleton().globalValues;
 
   ParamData data;
@@ -181,9 +179,8 @@ std::string CLI::AliasReverseLookup(const std::string& value)
 }
 
 /**
- * Parses the parameters for 'help' and 'info'
- * If found, will print out the appropriate information
- * and kill the program.
+ * Parses the parameters for 'help' and 'info' If found, will print out the
+ * appropriate information and kill the program.
  */
 void CLI::DefaultMessages()
 {
@@ -246,6 +243,15 @@ void CLI::Destroy()
  */
 bool CLI::HasParam(const std::string& key)
 {
+  return GetParam<bool>(key);
+}
+
+/**
+ * GetParam<bool>() is equivalent to HasParam().
+ */
+template<>
+bool& CLI::GetParam<bool>(const std::string& key)
+{
   std::string used_key = key;
   po::variables_map vmap = GetSingleton().vmap;
   gmap_t& gmap = GetSingleton().globalValues;
@@ -263,8 +269,15 @@ bool CLI::HasParam(const std::string& key)
   if (isInGmap)
     return gmap[used_key].wasPassed;
 
-  // The parameter was not passed in; return false.
-  return false;
+  // The parameter was not passed in; terminate the program.
+  Log::Fatal << "Parameter '--" << key << "' does not exist in this program."
+      << std::endl;
+
+  // These lines will never be reached, but must be here to make the compiler
+  // happy.
+  bool* trash = new bool;
+  *trash = false;
+  return *trash;
 }
 
 /**
