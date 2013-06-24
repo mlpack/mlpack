@@ -64,6 +64,9 @@ void CLI::Add(const std::string& path,
     GetSingleton().requiredOptions.push_front(path);
 }
 
+// We specialize this in cli.cpp.
+template<>
+bool& CLI::GetParam<bool>(const std::string& identifier);
 
 /**
  * @brief Returns the value of the specified parameter.
