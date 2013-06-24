@@ -54,7 +54,7 @@ PARAM_STRING("query_file", "File containing query points (optional).", "q", "");
 PARAM_INT("leaf_size", "Leaf size for tree building.", "l", 20);
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
-    "dual-tree search).", "s");
+    "dual-tree search).", "S");
 PARAM_FLAG("cover_tree", "If true, use cover trees to perform the search "
     "(experimental, may be slow).", "c");
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
