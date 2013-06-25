@@ -179,7 +179,8 @@ Search(const size_t k,
 
   if (singleMode || naive)
   {
-    // Create the helper object for the tree traversal.
+    // Create the helper object for the tree traversal.  Initialization of
+    // RASearchRules already implicitly performs the naive tree traversal.
     typedef RASearchRules<SortPolicy, MetricType, TreeType> RuleType;
     RuleType rules(referenceSet, querySet, *neighborPtr, *distancePtr,
                    metric, tau, alpha, naive, sampleAtLeaves, firstLeafExact,
@@ -219,13 +220,20 @@ Search(const size_t k,
 
     typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
 
-    Log::Info << "Dual-tree traversal; query statistic pre-search: "
-        << queryTree->Stat().NumSamplesMade() << std::endl;
+
 
     if (queryTree)
+    {
+      Log::Info << "Query statistic pre-search: "
+          << queryTree->Stat().NumSamplesMade() << std::endl;
       traverser.Traverse(*queryTree, *referenceTree);
+    }
     else
+    {
+      Log::Info << "Query statistic pre-search: " <<
+          referenceTree->Stat().NumSamplesMade() << std::endl;
       traverser.Traverse(*referenceTree, *referenceTree);
+    }
 
     numPrunes = traverser.NumPrunes();
 
