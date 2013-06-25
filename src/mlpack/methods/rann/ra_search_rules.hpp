@@ -3,8 +3,8 @@
  * @author Parikshit Ram
  *
  * Defines the pruning rules and base case rules necessary to perform a
- * tree-based rank-approximate search (with an arbitrary tree) 
- * for the RASearch class. 
+ * tree-based rank-approximate search (with an arbitrary tree) for the RASearch
+ * class.
  */
 #ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_RA_SEARCH_RULES_HPP
 #define __MLPACK_METHODS_NEIGHBOR_SEARCH_RA_SEARCH_RULES_HPP
@@ -33,17 +33,17 @@ class RASearchRules
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
   /**
-   * TOFIX: This function is specified for the cover tree (usually) so 
-   *   I need to think about it more algorithmically and keep its 
+   * TOFIX: This function is specified for the cover tree (usually) so
+   *   I need to think about it more algorithmically and keep its
    *   implementation mostly empty.
    *   Also, since the access to the points in the subtree of a cover tree
    *   is non-trivial, we might have to re-work this.
-   *   FOR NOW: I am just using as for a BSP-tree, I will fix it when 
+   *   FOR NOW: I am just using as for a BSP-tree, I will fix it when
    *   we figure out cover trees.
    *
    */
 
-  double Prescore(TreeType& queryNode, 
+  double Prescore(TreeType& queryNode,
                   TreeType& referenceNode,
                   TreeType& referenceChildNode,
                   const double baseCaseResult) const;
@@ -58,17 +58,17 @@ class RASearchRules
    * Get the score for recursion order.  A low score indicates priority for
    * recursion, while DBL_MAX indicates that the node should not be recursed
    * into at all (it should be pruned).
-   * 
-   * For rank-approximation, the scoring function first checks if pruning 
-   * by distance is possible. 
-   *   If yes, then the node is given the score of 
-   *   'DBL_MAX' and the expected number of samples from that node are 
-   *   added to the number of samples made for the query. 
    *
-   *   If no, then the function tries to see if the node can be pruned by 
+   * For rank-approximation, the scoring function first checks if pruning
+   * by distance is possible.
+   *   If yes, then the node is given the score of
+   *   'DBL_MAX' and the expected number of samples from that node are
+   *   added to the number of samples made for the query.
+   *
+   *   If no, then the function tries to see if the node can be pruned by
    *   approximation. If number of samples required from this node is small
    *   enough, then that number of samples are acquired from this node
-   *   and the score is set to be 'DBL_MAX'. 
+   *   and the score is set to be 'DBL_MAX'.
    *
    *   If the pruning by approximation is not possible either, the algorithm
    *   continues with the usual tree-traversal.
@@ -82,17 +82,17 @@ class RASearchRules
    * Get the score for recursion order.  A low score indicates priority for
    * recursion, while DBL_MAX indicates that the node should not be recursed
    * into at all (it should be pruned).
-   * 
-   * For rank-approximation, the scoring function first checks if pruning 
-   * by distance is possible. 
-   *   If yes, then the node is given the score of 
-   *   'DBL_MAX' and the expected number of samples from that node are 
-   *   added to the number of samples made for the query. 
    *
-   *   If no, then the function tries to see if the node can be pruned by 
+   * For rank-approximation, the scoring function first checks if pruning
+   * by distance is possible.
+   *   If yes, then the node is given the score of
+   *   'DBL_MAX' and the expected number of samples from that node are
+   *   added to the number of samples made for the query.
+   *
+   *   If no, then the function tries to see if the node can be pruned by
    *   approximation. If number of samples required from this node is small
    *   enough, then that number of samples are acquired from this node
-   *   and the score is set to be 'DBL_MAX'. 
+   *   and the score is set to be 'DBL_MAX'.
    *
    *   If the pruning by approximation is not possible either, the algorithm
    *   continues with the usual tree-traversal.
@@ -114,10 +114,10 @@ class RASearchRules
    * bound.
    *
    * For rank-approximation, it also checks if the number of samples left
-   * for a query to satisfy the rank constraint is small enough at this 
-   * point of the algorithm, then this node is approximated by sampling 
+   * for a query to satisfy the rank constraint is small enough at this
+   * point of the algorithm, then this node is approximated by sampling
    * and given a new score of 'DBL_MAX'.
-   * 
+   *
    * @param queryIndex Index of query point.
    * @param referenceNode Candidate node to be recursed into.
    * @param oldScore Old score produced by Score() (or Rescore()).
@@ -130,16 +130,16 @@ class RASearchRules
    * Get the score for recursion order.  A low score indicates priority for
    * recursionm while DBL_MAX indicates that the node should not be recursed
    * into at all (it should be pruned).
-   * 
-   * For the rank-approximation, we check if the referenceNode can be 
-   * approximated by sampling. If it can be, enough samples are made for 
+   *
+   * For the rank-approximation, we check if the referenceNode can be
+   * approximated by sampling. If it can be, enough samples are made for
    * every query in the queryNode. No further query-tree traversal is
-   * performed. 
-   * 
-   * The 'NumSamplesMade' query stat is propagated up the tree. And then 
+   * performed.
+   *
+   * The 'NumSamplesMade' query stat is propagated up the tree. And then
    * if pruning occurs (by distance or by sampling), the 'NumSamplesMade'
    * stat is not propagated down the tree. If no pruning occurs, the
-   * stat is propagated down the tree. 
+   * stat is propagated down the tree.
    *
    * @param queryNode Candidate query node to recurse into.
    * @param referenceNode Candidate reference node to recurse into.
@@ -151,16 +151,16 @@ class RASearchRules
    * situation where it may be needed to calculate the recursion order).  A low
    * score indicates priority for recursion, while DBL_MAX indicates that the
    * node should not be recursed into at all (it should be pruned).
-   * 
-   * For the rank-approximation, we check if the referenceNode can be 
-   * approximated by sampling. If it can be, enough samples are made for 
+   *
+   * For the rank-approximation, we check if the referenceNode can be
+   * approximated by sampling. If it can be, enough samples are made for
    * every query in the queryNode. No further query-tree traversal is
-   * performed. 
-   * 
-   * The 'NumSamplesMade' query stat is propagated up the tree. And then 
+   * performed.
+   *
+   * The 'NumSamplesMade' query stat is propagated up the tree. And then
    * if pruning occurs (by distance or by sampling), the 'NumSamplesMade'
    * stat is not propagated down the tree. If no pruning occurs, the
-   * stat is propagated down the tree. 
+   * stat is propagated down the tree.
    *
    * @param queryNode Candidate query node to recurse into.
    * @param referenceNode Candidate reference node to recurse into.
@@ -172,21 +172,21 @@ class RASearchRules
 
   /**
    * Re-evaluate the score for recursion order.  A low score indicates priority
-   * for recursion, while DBL_MAX indicates that the node should not be 
+   * for recursion, while DBL_MAX indicates that the node should not be
    * recursed into at all (it should be pruned).  This is used when the score
-   * has already been calculated, but another recursion may have modified the 
+   * has already been calculated, but another recursion may have modified the
    * bounds for pruning.  So the old score is checked against the new pruning
    * bound.
-   * 
-   * For the rank-approximation, we check if the referenceNode can be 
-   * approximated by sampling. If it can be, enough samples are made for 
+   *
+   * For the rank-approximation, we check if the referenceNode can be
+   * approximated by sampling. If it can be, enough samples are made for
    * every query in the queryNode. No further query-tree traversal is
-   * performed. 
-   * 
-   * The 'NumSamplesMade' query stat is propagated up the tree. And then 
+   * performed.
+   *
+   * The 'NumSamplesMade' query stat is propagated up the tree. And then
    * if pruning occurs (by distance or by sampling), the 'NumSamplesMade'
    * stat is not propagated down the tree. If no pruning occurs, the
-   * stat is propagated down the tree. 
+   * stat is propagated down the tree.
    *
    * @param queryNode Candidate query node to recurse into.
    * @param referenceNode Candidate reference node to recurse into.
@@ -198,12 +198,12 @@ class RASearchRules
 
 
   size_t NumDistComputations() { return numDistComputations; }
-  size_t NumEffectiveSamples() 
-  { 
+  size_t NumEffectiveSamples()
+  {
     if (numSamplesMade.n_elem == 0)
       return 0;
-    else 
-      return arma::sum(numSamplesMade); 
+    else
+      return arma::sum(numSamplesMade);
   }
 
  private:
@@ -258,10 +258,10 @@ class RASearchRules
                       const size_t neighbor,
                       const double distance);
 
-  /** 
+  /**
    * Compute the minimum number of samples required to guarantee
    * the given rank-approximation and success probability.
-   * 
+   *
    * @param n Size of the set to be sampled from.
    * @param k The number of neighbors required within the rank-approximation.
    * @param tau The rank-approximation in percentile of the data.
@@ -273,7 +273,7 @@ class RASearchRules
                             const double alpha) const;
 
   /**
-   * Compute the success probability of obtaining 'k'-neighbors from a 
+   * Compute the success probability of obtaining 'k'-neighbors from a
    * set of size 'n' within the top 't' neighbors if 'm' samples are made.
    *
    * @param n Size of the set being sampled from.
@@ -287,8 +287,8 @@ class RASearchRules
                             const size_t t) const;
 
   /**
-   * Pick up desired number of samples (with replacement) from a given range 
-   * of integers so that only the distinct samples are returned from 
+   * Pick up desired number of samples (with replacement) from a given range
+   * of integers so that only the distinct samples are returned from
    * the range [0 - specified upper bound)
    *
    * @param numSamples Number of random samples.
