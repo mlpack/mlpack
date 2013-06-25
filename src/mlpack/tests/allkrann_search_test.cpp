@@ -265,4 +265,63 @@ BOOST_AUTO_TEST_CASE(AllkRANNDualTreeSearch)
   BOOST_REQUIRE(numQueriesFail < maxNumQueriesFail);
 }
 
+// Test rank-approximate search with just a single dataset.  These tests just
+// ensure that the method runs okay.
+BOOST_AUTO_TEST_CASE(AllkRANNSingleDatasetNaiveSearch)
+{
+  arma::mat dataset(5, 2500);
+  dataset.randn();
+
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+
+  RASearch<> naive(dataset, true);
+
+  naive.Search(1, neighbors, distances);
+
+  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 1);
+  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 2500);
+  BOOST_REQUIRE_EQUAL(distances.n_rows, 1);
+  BOOST_REQUIRE_EQUAL(distances.n_cols, 2500);
+}
+
+// Test rank-approximate search with just a single dataset in single-tree mode.
+// These tests just ensure that the method runs okay.
+BOOST_AUTO_TEST_CASE(AllkRANNSingleDatasetSingleSearch)
+{
+  arma::mat dataset(5, 2500);
+  dataset.randn();
+
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+
+  RASearch<> single(dataset, false, true);
+
+  single.Search(1, neighbors, distances);
+
+  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 1);
+  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 2500);
+  BOOST_REQUIRE_EQUAL(distances.n_rows, 1);
+  BOOST_REQUIRE_EQUAL(distances.n_cols, 2500);
+}
+
+// Test rank-approximate search with just a single dataset in dual-tree mode.
+// These tests just ensure that the method runs okay.
+BOOST_AUTO_TEST_CASE(AllkRANNSingleDatasetSearch)
+{
+  arma::mat dataset(5, 2500);
+  dataset.randn();
+
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+
+  RASearch<> allkrann(dataset);
+  allkrann.Search(1, neighbors, distances);
+
+  BOOST_REQUIRE_EQUAL(neighbors.n_rows, 1);
+  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 2500);
+  BOOST_REQUIRE_EQUAL(distances.n_rows, 1);
+  BOOST_REQUIRE_EQUAL(distances.n_cols, 2500);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
