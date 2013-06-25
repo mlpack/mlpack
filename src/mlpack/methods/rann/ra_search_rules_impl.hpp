@@ -34,7 +34,7 @@ RASearchRules(const arma::mat& referenceSet,
   sampleAtLeaves(sampleAtLeaves),
   firstLeafExact(firstLeafExact),
   singleSampleLimit(singleSampleLimit)
-{ 
+{
   Timer::Start("computing_number_of_samples_reqd");
   numSamplesReqd = MinimumSamplesReqd(referenceSet.n_cols, neighbors.n_rows,
                                       tau, alpha);
@@ -45,7 +45,7 @@ RASearchRules(const arma::mat& referenceSet,
   numDistComputations = 0;
   samplingRatio = (double) numSamplesReqd / (double) referenceSet.n_cols;
 
-  Log::Info << "Minimum Samples Required per-query: " << numSamplesReqd << 
+  Log::Info << "Minimum Samples Required per-query: " << numSamplesReqd <<
     ", Sampling Ratio: " << samplingRatio << std::endl;
 
   if (naive) // no tree traversal going to happen, just do naive sampling here.
@@ -54,7 +54,7 @@ RASearchRules(const arma::mat& referenceSet,
     for (size_t i = 0; i < querySet.n_cols; ++i)
     {
       arma::uvec distinctSamples;
-      ObtainDistinctSamples(numSamplesReqd, referenceSet.n_cols, 
+      ObtainDistinctSamples(numSamplesReqd, referenceSet.n_cols,
                             distinctSamples);
       for (size_t j = 0; j < distinctSamples.n_elem; j++)
         BaseCase(i, (size_t) distinctSamples[j]);
@@ -98,21 +98,21 @@ MinimumSamplesReqd(const size_t n,
   size_t t = (size_t) std::ceil(tau * (double) n / 100.0);
 
   double prob;
-  assert(alpha <= 1.0);
+  Log::Assert(alpha <= 1.0);
 
   // going through all values of sample sizes
   // to find the minimum samples required to satisfy the
   // desired bound
   bool done = false;
 
-  // This performs a binary search on the integer values between 'lb = k' 
+  // This performs a binary search on the integer values between 'lb = k'
   // and 'ub = n' to find the minimum number of samples 'm' required to obtain
   // the desired success probability 'alpha'.
-  do 
+  do
   {
     prob = SuccessProbability(n, k, m, t);
 
-    if (prob > alpha) 
+    if (prob > alpha)
     {
       if (prob - alpha < 0.001 || ub < lb + 2) {
         done = true;
@@ -120,20 +120,20 @@ MinimumSamplesReqd(const size_t n,
       }
       else
         ub = m;
-    } 
-    else 
+    }
+    else
     {
-      if (prob < alpha) 
+      if (prob < alpha)
       {
-        if (m == lb) 
+        if (m == lb)
         {
           m++;
           continue;
         }
-        else 
+        else
           lb = m;
-      } 
-      else 
+      }
+      else
       {
         done = true;
         break;
@@ -154,7 +154,7 @@ SuccessProbability(const size_t n,
                    const size_t m,
                    const size_t t) const
 {
-  if (k == 1) 
+  if (k == 1)
   {
     if (m > n - t)
       return 1.0;
@@ -175,13 +175,13 @@ SuccessProbability(const size_t n,
     double eps = (double) t / (double) n;
     double sum = 0.0;
 
-    // The probability that 'k' of the 'm' samples lie within the top 't' 
+    // The probability that 'k' of the 'm' samples lie within the top 't'
     // of the neighbors is given by:
     // sum_{j = k}^m Choose(m, j) (t/n)^j (1 - t/n)^{m - j}
-    // which is also equal to 
+    // which is also equal to
     // 1 - sum_{j = 0}^{k - 1} Choose(m, j) (t/n)^j (1 - t/n)^{m - j}
     //
-    // So this is a m - k term summation or a k term summation. So if 
+    // So this is a m - k term summation or a k term summation. So if
     // m > 2k, do the k term summation, otherwise do the m term summation.
 
     size_t lb;
@@ -215,7 +215,7 @@ SuccessProbability(const size_t n,
 
     for (size_t j = lb; j < ub; j++)
     {
-      // compute Choose(m, j) 
+      // compute Choose(m, j)
       double mCj = (double) m;
       size_t jTrans;
 
@@ -226,13 +226,13 @@ SuccessProbability(const size_t n,
       else
         jTrans = m - j;
 
-      for(size_t i = 2; i <= jTrans; i++) 
+      for(size_t i = 2; i <= jTrans; i++)
       {
         mCj *= (double) (m - (i - 1));
         mCj /= (double) i;
       }
 
-      sum += (mCj * std::pow(eps, (double) j) 
+      sum += (mCj * std::pow(eps, (double) j)
               * std::pow(1.0 - eps, (double) (m - j)));
     }
 
@@ -245,7 +245,7 @@ SuccessProbability(const size_t n,
 
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-inline force_inline 
+inline force_inline
 double RASearchRules<SortPolicy, MetricType, TreeType>::
 BaseCase(const size_t queryIndex, const size_t referenceIndex)
 {
@@ -281,7 +281,7 @@ Prescore(TreeType& queryNode,
          TreeType& referenceNode,
          TreeType& referenceChildNode,
          const double baseCaseResult) const
-{ 
+{
   return 0.0;
 }
 
@@ -292,7 +292,7 @@ PrescoreQ(TreeType& queryNode,
           TreeType& queryChildNode,
           TreeType& referenceNode,
           const double baseCaseResult) const
-{ 
+{
   return 0.0;
 }
 
@@ -307,8 +307,8 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   const double bestDistance = distances(distances.n_rows - 1, queryIndex);
 
 
-  // If this is better than the best distance we've seen so far, 
-  // maybe there will be something down this node. 
+  // If this is better than the best distance we've seen so far,
+  // maybe there will be something down this node.
   // Also check if enough samples are already made for this query.
   if (SortPolicy::IsBetter(distance, bestDistance)
       && numSamplesMade[queryIndex] < numSamplesReqd)
@@ -316,14 +316,14 @@ Score(const size_t queryIndex, TreeType& referenceNode)
     // We cannot prune this node
     // Try approximating this node by sampling
 
-    // If you are required to visit the first leaf (to find possible 
+    // If you are required to visit the first leaf (to find possible
     // duplicates), make sure you do not approximate.
     if (numSamplesMade[queryIndex] > 0 || !firstLeafExact)
     {
       // check if this node can be approximated by sampling
-      size_t samplesReqd = 
+      size_t samplesReqd =
         (size_t) std::ceil(samplingRatio * (double) referenceNode.Count());
-      samplesReqd = std::min(samplesReqd, 
+      samplesReqd = std::min(samplesReqd,
                              numSamplesReqd - numSamplesMade[queryIndex]);
 
       if (samplesReqd > singleSampleLimit && !referenceNode.IsLeaf())
@@ -345,7 +345,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
             // so no book-keeping is required here.
             BaseCase(queryIndex,
                      referenceNode.Begin() + (size_t) distinctSamples[i]);
-          
+
           // Node approximated so we can prune it
           return DBL_MAX;
         }
@@ -362,11 +362,11 @@ Score(const size_t queryIndex, TreeType& referenceNode)
               // function so no book-keeping is required here.
               BaseCase(queryIndex,
                        referenceNode.Begin() + (size_t) distinctSamples[i]);
-          
+
             // (Leaf) Node approximated so can prune it
             return DBL_MAX;
           }
-          else 
+          else
           {
             // not allowed to sample from leaves, so cannot prune.
             return distance;
@@ -383,19 +383,19 @@ Score(const size_t queryIndex, TreeType& referenceNode)
   }
   else
   {
-    // Either there cannot be anything better in this node. 
-    // Or enough number of samples are already made. 
+    // Either there cannot be anything better in this node.
+    // Or enough number of samples are already made.
     // So prune it.
 
-    // add 'fake' samples from this node; fake because the distances to 
+    // add 'fake' samples from this node; fake because the distances to
     // these samples need not be computed.
 
-    // If enough samples already made, this step does not change the 
+    // If enough samples already made, this step does not change the
     // result of the search.
-    numSamplesMade[queryIndex] += 
+    numSamplesMade[queryIndex] +=
       (size_t) std::floor(samplingRatio * (double) referenceNode.Count());
 
-    return DBL_MAX; 
+    return DBL_MAX;
   } // if can-prune
 } // Score(point, node)
 
@@ -403,7 +403,7 @@ Score(const size_t queryIndex, TreeType& referenceNode)
 template<typename SortPolicy, typename MetricType, typename TreeType>
 inline double RASearchRules<SortPolicy, MetricType, TreeType>::
 Score(const size_t queryIndex,
-      TreeType& referenceNode, 
+      TreeType& referenceNode,
       const double baseCaseResult)
 {
 
@@ -412,11 +412,11 @@ Score(const size_t queryIndex,
       &referenceNode, baseCaseResult);
   const double bestDistance = distances(distances.n_rows - 1, queryIndex);
 
-  // Hereon, this 'Score' function is exactly same as the previous 
+  // Hereon, this 'Score' function is exactly same as the previous
   // 'Score' function.
 
-  // If this is better than the best distance we've seen so far, 
-  // maybe there will be something down this node. 
+  // If this is better than the best distance we've seen so far,
+  // maybe there will be something down this node.
   // Also check if enough samples are already made for this query.
   if (SortPolicy::IsBetter(distance, bestDistance)
       && numSamplesMade[queryIndex] < numSamplesReqd)
@@ -424,16 +424,16 @@ Score(const size_t queryIndex,
     // We cannot prune this node
     // Try approximating this node by sampling
 
-    // If you are required to visit the first leaf (to find possible 
+    // If you are required to visit the first leaf (to find possible
     // duplicates), make sure you do not approximate.
     if (numSamplesMade[queryIndex] > 0 || !firstLeafExact)
     {
       // Check if this node can be approximated by sampling:
       // 'referenceNode.Count() should correspond to the number of points
       // present in this subtree.
-      size_t samplesReqd = 
+      size_t samplesReqd =
         (size_t) std::ceil(samplingRatio * (double) referenceNode.Count());
-      samplesReqd = std::min(samplesReqd, 
+      samplesReqd = std::min(samplesReqd,
                              numSamplesReqd - numSamplesMade[queryIndex]);
 
       if (samplesReqd > singleSampleLimit && !referenceNode.IsLeaf())
@@ -447,7 +447,7 @@ Score(const size_t queryIndex,
         {
           // Then samplesReqd <= singleSampleLimit.
           // Hence approximate node by sampling enough number of points
-          // from this subtree. 
+          // from this subtree.
           arma::uvec distinctSamples;
           ObtainDistinctSamples(samplesReqd, referenceNode.Count(),
                                 distinctSamples);
@@ -456,7 +456,7 @@ Score(const size_t queryIndex,
             // function so no book-keeping is required here.
             BaseCase(queryIndex,
                      referenceNode.Begin() + (size_t) distinctSamples[i]);
-          
+
           // Node approximated so we can prune it
           return DBL_MAX;
         }
@@ -473,11 +473,11 @@ Score(const size_t queryIndex,
               // function so no book-keeping is required here.
               BaseCase(queryIndex,
                        referenceNode.Begin() + (size_t) distinctSamples[i]);
-          
+
             // (Leaf) Node approximated so can prune it
             return DBL_MAX;
           }
-          else 
+          else
           {
             // not allowed to sample from leaves, so cannot prune.
             return distance;
@@ -493,22 +493,22 @@ Score(const size_t queryIndex,
   }
   else
   {
-    // Either there cannot be anything better in this node. 
-    // Or enough number of samples are already made. 
+    // Either there cannot be anything better in this node.
+    // Or enough number of samples are already made.
     // So prune it.
 
-    // add 'fake' samples from this node; fake because the distances to 
+    // add 'fake' samples from this node; fake because the distances to
     // these samples need not be computed.
 
-    // If enough samples already made, this step does not change the 
+    // If enough samples already made, this step does not change the
     // result of the search.
     if (numSamplesMade[queryIndex] < numSamplesReqd)
-      // add 'fake' samples from this node; fake because the distances to 
+      // add 'fake' samples from this node; fake because the distances to
       // these samples need not be computed.
-      numSamplesMade[queryIndex] += 
+      numSamplesMade[queryIndex] +=
         (size_t) std::floor(samplingRatio * (double) referenceNode.Count());
 
-    return DBL_MAX; 
+    return DBL_MAX;
   } // if can-prune
 
   return (SortPolicy::IsBetter(distance, bestDistance)) ? distance : DBL_MAX;
@@ -519,7 +519,7 @@ Score(const size_t queryIndex,
 template<typename SortPolicy, typename MetricType, typename TreeType>
 inline double RASearchRules<SortPolicy, MetricType, TreeType>::
 Rescore(const size_t queryIndex,
-        TreeType& referenceNode, 
+        TreeType& referenceNode,
         const double oldScore)
 {
   // If we are already pruning, still prune.
@@ -529,8 +529,8 @@ Rescore(const size_t queryIndex,
   // Just check the score again against the distances.
   const double bestDistance = distances(distances.n_rows - 1, queryIndex);
 
-  // If this is better than the best distance we've seen so far, 
-  // maybe there will be something down this node. 
+  // If this is better than the best distance we've seen so far,
+  // maybe there will be something down this node.
   // Also check if enough samples are already made for this query.
   if (SortPolicy::IsBetter(oldScore, bestDistance)
       && numSamplesMade[queryIndex] < numSamplesReqd)
@@ -538,15 +538,15 @@ Rescore(const size_t queryIndex,
     // We cannot prune this node
     // Try approximating this node by sampling
 
-    // Here we assume that since we are re-scoring, the algorithm 
-    // has already sampled some candidates, and if specified, also 
-    // traversed to the first leaf. 
-    // So no checks regarding that is made any more. 
+    // Here we assume that since we are re-scoring, the algorithm
+    // has already sampled some candidates, and if specified, also
+    // traversed to the first leaf.
+    // So no checks regarding that is made any more.
     //
     // check if this node can be approximated by sampling
-    size_t samplesReqd = 
+    size_t samplesReqd =
       (size_t) std::ceil(samplingRatio * (double) referenceNode.Count());
-    samplesReqd = std::min(samplesReqd, 
+    samplesReqd = std::min(samplesReqd,
                            numSamplesReqd - numSamplesMade[queryIndex]);
 
     if (samplesReqd > singleSampleLimit && !referenceNode.IsLeaf())
@@ -568,7 +568,7 @@ Rescore(const size_t queryIndex,
           // function so no book-keeping is required here.
           BaseCase(queryIndex,
                    referenceNode.Begin() + (size_t) distinctSamples[i]);
-          
+
         // Node approximated so we can prune it
         return DBL_MAX;
       }
@@ -585,11 +585,11 @@ Rescore(const size_t queryIndex,
             // function so no book-keeping is required here.
             BaseCase(queryIndex,
                      referenceNode.Begin() + (size_t) distinctSamples[i]);
-          
+
           // (Leaf) Node approximated so can prune it
           return DBL_MAX;
         }
-        else 
+        else
         {
           // not allowed to sample from leaves, so cannot prune.
           return oldScore;
@@ -599,19 +599,19 @@ Rescore(const size_t queryIndex,
   }
   else
   {
-    // Either there cannot be anything better in this node. 
-    // Or enough number of samples are already made. 
+    // Either there cannot be anything better in this node.
+    // Or enough number of samples are already made.
     // So prune it.
 
-    // add 'fake' samples from this node; fake because the distances to 
+    // add 'fake' samples from this node; fake because the distances to
     // these samples need not be computed.
 
-    // If enough samples already made, this step does not change the 
+    // If enough samples already made, this step does not change the
     // result of the search.
-    numSamplesMade[queryIndex] += 
+    numSamplesMade[queryIndex] +=
       (size_t) std::floor(samplingRatio * (double) referenceNode.Count());
 
-    return DBL_MAX; 
+    return DBL_MAX;
   } // if can-prune
 } // Rescore(point, node, oldScore)
 
@@ -620,7 +620,7 @@ template<typename SortPolicy, typename MetricType, typename TreeType>
 inline double RASearchRules<SortPolicy, MetricType, TreeType>::
 Score(TreeType& queryNode, TreeType& referenceNode)
 {
-  // First try to find the distance bound to check if we can prune 
+  // First try to find the distance bound to check if we can prune
   // by distance.
 
   // finding the best node-to-node distance
@@ -653,7 +653,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
   // update the number of samples made for that node
   //  -- propagate up from child nodes if child nodes have made samples
   //     that the parent node is not aware of.
-  //     REMEMBER to propagate down samples made to the child nodes 
+  //     REMEMBER to propagate down samples made to the child nodes
   //     if 'queryNode' descend is deemed necessary.
 
   // only update from children if a non-leaf node obviously
@@ -669,18 +669,18 @@ Score(TreeType& queryNode, TreeType& referenceNode)
         numSamplesMadeInChildNodes = numSamples;
     }
 
-    // The number of samples made for a node is propagated up from the 
+    // The number of samples made for a node is propagated up from the
     // child nodes if the child nodes have made samples that the parent
     // (which is the current 'queryNode') is not aware of.
-    queryNode.Stat().NumSamplesMade() 
-      = std::max(queryNode.Stat().NumSamplesMade(), 
+    queryNode.Stat().NumSamplesMade()
+      = std::max(queryNode.Stat().NumSamplesMade(),
                  numSamplesMadeInChildNodes);
   }
 
   // Now check if the node-pair interaction can be pruned
 
-  // If this is better than the best distance we've seen so far, 
-  // maybe there will be something down this node. 
+  // If this is better than the best distance we've seen so far,
+  // maybe there will be something down this node.
   // Also check if enough samples are already made for this 'queryNode'.
   if (SortPolicy::IsBetter(distance, bestDistance)
       && queryNode.Stat().NumSamplesMade() < numSamplesReqd)
@@ -688,14 +688,14 @@ Score(TreeType& queryNode, TreeType& referenceNode)
     // We cannot prune this node
     // Try approximating this node by sampling
 
-    // If you are required to visit the first leaf (to find possible 
+    // If you are required to visit the first leaf (to find possible
     // duplicates), make sure you do not approximate.
     if (queryNode.Stat().NumSamplesMade() > 0 || !firstLeafExact)
     {
       // check if this node can be approximated by sampling
-      size_t samplesReqd = 
+      size_t samplesReqd =
         (size_t) std::ceil(samplingRatio * (double) referenceNode.Count());
-      samplesReqd 
+      samplesReqd
         = std::min(samplesReqd,
                    numSamplesReqd - queryNode.Stat().NumSamplesMade());
 
@@ -703,15 +703,15 @@ Score(TreeType& queryNode, TreeType& referenceNode)
       {
         // if too many samples required and not at a leaf, then can't prune
 
-        // Since query tree descend is necessary now, 
+        // Since query tree descend is necessary now,
         // propagate the number of samples made down to the children
 
-        // Iterate through all children and propagate the number of 
+        // Iterate through all children and propagate the number of
         // samples made to the children.
         // Only update if the parent node has made samples the children
         // have not seen
-        for (size_t i = 0; i < queryNode.NumChildren(); i++) 
-          queryNode.Child(i).Stat().NumSamplesMade() 
+        for (size_t i = 0; i < queryNode.NumChildren(); i++)
+          queryNode.Child(i).Stat().NumSamplesMade()
             = std::max(queryNode.Stat().NumSamplesMade(),
                        queryNode.Child(i).Stat().NumSamplesMade());
 
@@ -724,7 +724,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
           // Then samplesReqd <= singleSampleLimit.
           // Hence approximate node by sampling enough number of points
           // for every query in the 'queryNode'
-          for (size_t queryIndex = queryNode.Begin(); 
+          for (size_t queryIndex = queryNode.Begin();
                queryIndex < queryNode.End(); queryIndex++)
           {
             arma::uvec distinctSamples;
@@ -741,8 +741,8 @@ Score(TreeType& queryNode, TreeType& referenceNode)
           // also update the number of sample made for the child nodes.
           queryNode.Stat().NumSamplesMade() += samplesReqd;
 
-          // since you are not going to descend down the query tree for this 
-          // referenceNode, there is no point updating the number of 
+          // since you are not going to descend down the query tree for this
+          // referenceNode, there is no point updating the number of
           // samples made for the child nodes of this queryNode.
 
           // Node approximated so we can prune it
@@ -754,7 +754,7 @@ Score(TreeType& queryNode, TreeType& referenceNode)
           {
             // Approximate node by sampling enough number of points
             // for every query in the 'queryNode'.
-            for (size_t queryIndex = queryNode.Begin(); 
+            for (size_t queryIndex = queryNode.Begin();
                  queryIndex < queryNode.End(); queryIndex++)
             {
               arma::uvec distinctSamples;
@@ -771,22 +771,22 @@ Score(TreeType& queryNode, TreeType& referenceNode)
             // also update the number of sample made for the child nodes.
             queryNode.Stat().NumSamplesMade() += samplesReqd;
 
-            // since you are not going to descend down the query tree for this 
-            // referenceNode, there is no point updating the number of 
+            // since you are not going to descend down the query tree for this
+            // referenceNode, there is no point updating the number of
             // samples made for the child nodes of this queryNode.
 
             // (Leaf) Node approximated so can prune it
             return DBL_MAX;
           }
-          else 
+          else
           {
             // Not allowed to sample from leaves, so cannot prune.
             // Propagate the number of samples made down to the children
-            
-            // Go through all children and propagate the number of 
+
+            // Go through all children and propagate the number of
             // samples made to the children.
-            for (size_t i = 0; i < queryNode.NumChildren(); i++) 
-              queryNode.Child(i).Stat().NumSamplesMade() 
+            for (size_t i = 0; i < queryNode.NumChildren(); i++)
+              queryNode.Child(i).Stat().NumSamplesMade()
                 = std::max(queryNode.Stat().NumSamplesMade(),
                            queryNode.Child(i).Stat().NumSamplesMade());
 
@@ -801,36 +801,36 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 
       // Propagate the number of samples made down to the children
 
-      // Go through all children and propagate the number of 
+      // Go through all children and propagate the number of
       // samples made to the children.
-      for (size_t i = 0; i < queryNode.NumChildren(); i++) 
-        queryNode.Child(i).Stat().NumSamplesMade() 
+      for (size_t i = 0; i < queryNode.NumChildren(); i++)
+        queryNode.Child(i).Stat().NumSamplesMade()
           = std::max(queryNode.Stat().NumSamplesMade(),
                      queryNode.Child(i).Stat().NumSamplesMade());
-      
+
       return distance;
     } // if first-leaf exact visit required
   }
   else
   {
-    // Either there cannot be anything better in this node. 
-    // Or enough number of samples are already made. 
+    // Either there cannot be anything better in this node.
+    // Or enough number of samples are already made.
     // So prune it.
 
-    // add 'fake' samples from this node; fake because the distances to 
+    // add 'fake' samples from this node; fake because the distances to
     // these samples need not be computed.
 
-    // If enough samples already made, this step does not change the 
-    // result of the search since this queryNode will never be 
+    // If enough samples already made, this step does not change the
+    // result of the search since this queryNode will never be
     // descended anymore.
-    queryNode.Stat().NumSamplesMade() += 
+    queryNode.Stat().NumSamplesMade() +=
       (size_t) std::floor(samplingRatio * (double) referenceNode.Count());
 
-    // since you are not going to descend down the query tree for this 
-    // reference node, there is no point updating the number of samples 
+    // since you are not going to descend down the query tree for this
+    // reference node, there is no point updating the number of samples
     // made for the child nodes of this queryNode.
 
-    return DBL_MAX; 
+    return DBL_MAX;
   } // if can-prune
 } // Score(node, node)
 
@@ -838,10 +838,10 @@ Score(TreeType& queryNode, TreeType& referenceNode)
 template<typename SortPolicy, typename MetricType, typename TreeType>
 inline double RASearchRules<SortPolicy, MetricType, TreeType>::
 Score(TreeType& queryNode,
-      TreeType& referenceNode, 
+      TreeType& referenceNode,
       const double baseCaseResult)
 {
-  // First try to find the distance bound to check if we can prune 
+  // First try to find the distance bound to check if we can prune
   // by distance.
 
   // find the best node-to-node distance
@@ -874,7 +874,7 @@ Score(TreeType& queryNode,
   // update the number of samples made for that node
   //  -- propagate up from child nodes if child nodes have made samples
   //     that the parent node is not aware of.
-  //     REMEMBER to propagate down samples made to the child nodes 
+  //     REMEMBER to propagate down samples made to the child nodes
   //     if 'queryNode' descend is deemed necessary.
 
   // only update from children if a non-leaf node obviously
@@ -890,18 +890,18 @@ Score(TreeType& queryNode,
         numSamplesMadeInChildNodes = numSamples;
     }
 
-    // The number of samples made for a node is propagated up from the 
+    // The number of samples made for a node is propagated up from the
     // child nodes if the child nodes have made samples that the parent
     // (which is the current 'queryNode') is not aware of.
-    queryNode.Stat().NumSamplesMade() 
-      = std::max(queryNode.Stat().NumSamplesMade(), 
+    queryNode.Stat().NumSamplesMade()
+      = std::max(queryNode.Stat().NumSamplesMade(),
                  numSamplesMadeInChildNodes);
   }
 
   // Now check if the node-pair interaction can be pruned
 
-  // If this is better than the best distance we've seen so far, 
-  // maybe there will be something down this node. 
+  // If this is better than the best distance we've seen so far,
+  // maybe there will be something down this node.
   // Also check if enough samples are already made for this 'queryNode'.
   if (SortPolicy::IsBetter(distance, bestDistance)
       && queryNode.Stat().NumSamplesMade() < numSamplesReqd)
@@ -909,14 +909,14 @@ Score(TreeType& queryNode,
     // We cannot prune this node
     // Try approximating this node by sampling
 
-    // If you are required to visit the first leaf (to find possible 
+    // If you are required to visit the first leaf (to find possible
     // duplicates), make sure you do not approximate.
     if (queryNode.Stat().NumSamplesMade() > 0 || !firstLeafExact)
     {
       // check if this node can be approximated by sampling
-      size_t samplesReqd = 
+      size_t samplesReqd =
         (size_t) std::ceil(samplingRatio * (double) referenceNode.Count());
-      samplesReqd 
+      samplesReqd
         = std::min(samplesReqd,
                    numSamplesReqd - queryNode.Stat().NumSamplesMade());
 
@@ -924,15 +924,15 @@ Score(TreeType& queryNode,
       {
         // if too many samples required and not at a leaf, then can't prune
 
-        // Since query tree descend is necessary now, 
+        // Since query tree descend is necessary now,
         // propagate the number of samples made down to the children
 
-        // Iterate through all children and propagate the number of 
+        // Iterate through all children and propagate the number of
         // samples made to the children.
         // Only update if the parent node has made samples the children
         // have not seen
-        for (size_t i = 0; i < queryNode.NumChildren(); i++) 
-          queryNode.Child(i).Stat().NumSamplesMade() 
+        for (size_t i = 0; i < queryNode.NumChildren(); i++)
+          queryNode.Child(i).Stat().NumSamplesMade()
             = std::max(queryNode.Stat().NumSamplesMade(),
                        queryNode.Child(i).Stat().NumSamplesMade());
 
@@ -945,7 +945,7 @@ Score(TreeType& queryNode,
           // Then samplesReqd <= singleSampleLimit.
           // Hence approximate node by sampling enough number of points
           // for every query in the 'queryNode'
-          for (size_t queryIndex = queryNode.Begin(); 
+          for (size_t queryIndex = queryNode.Begin();
                queryIndex < queryNode.End(); queryIndex++)
           {
             arma::uvec distinctSamples;
@@ -962,8 +962,8 @@ Score(TreeType& queryNode,
           // also update the number of sample made for the child nodes.
           queryNode.Stat().NumSamplesMade() += samplesReqd;
 
-          // since you are not going to descend down the query tree for this 
-          // referenceNode, there is no point updating the number of 
+          // since you are not going to descend down the query tree for this
+          // referenceNode, there is no point updating the number of
           // samples made for the child nodes of this queryNode.
 
           // Node approximated so we can prune it
@@ -975,7 +975,7 @@ Score(TreeType& queryNode,
           {
             // Approximate node by sampling enough number of points
             // for every query in the 'queryNode'.
-            for (size_t queryIndex = queryNode.Begin(); 
+            for (size_t queryIndex = queryNode.Begin();
                  queryIndex < queryNode.End(); queryIndex++)
             {
               arma::uvec distinctSamples;
@@ -992,22 +992,22 @@ Score(TreeType& queryNode,
             // also update the number of sample made for the child nodes.
             queryNode.Stat().NumSamplesMade() += samplesReqd;
 
-            // since you are not going to descend down the query tree for this 
-            // referenceNode, there is no point updating the number of 
+            // since you are not going to descend down the query tree for this
+            // referenceNode, there is no point updating the number of
             // samples made for the child nodes of this queryNode.
 
             // (Leaf) Node approximated so can prune it
             return DBL_MAX;
           }
-          else 
+          else
           {
             // Not allowed to sample from leaves, so cannot prune.
             // Propagate the number of samples made down to the children
-            
-            // Go through all children and propagate the number of 
+
+            // Go through all children and propagate the number of
             // samples made to the children.
-            for (size_t i = 0; i < queryNode.NumChildren(); i++) 
-              queryNode.Child(i).Stat().NumSamplesMade() 
+            for (size_t i = 0; i < queryNode.NumChildren(); i++)
+              queryNode.Child(i).Stat().NumSamplesMade()
                 = std::max(queryNode.Stat().NumSamplesMade(),
                            queryNode.Child(i).Stat().NumSamplesMade());
 
@@ -1022,36 +1022,36 @@ Score(TreeType& queryNode,
 
       // Propagate the number of samples made down to the children
 
-      // Go through all children and propagate the number of 
+      // Go through all children and propagate the number of
       // samples made to the children.
-      for (size_t i = 0; i < queryNode.NumChildren(); i++) 
-        queryNode.Child(i).Stat().NumSamplesMade() 
+      for (size_t i = 0; i < queryNode.NumChildren(); i++)
+        queryNode.Child(i).Stat().NumSamplesMade()
           = std::max(queryNode.Stat().NumSamplesMade(),
                      queryNode.Child(i).Stat().NumSamplesMade());
-      
+
       return distance;
     } // if first-leaf exact visit required
   }
   else
   {
-    // Either there cannot be anything better in this node. 
-    // Or enough number of samples are already made. 
+    // Either there cannot be anything better in this node.
+    // Or enough number of samples are already made.
     // So prune it.
 
-    // add 'fake' samples from this node; fake because the distances to 
+    // add 'fake' samples from this node; fake because the distances to
     // these samples need not be computed.
 
-    // If enough samples already made, this step does not change the 
-    // result of the search since this queryNode will never be 
+    // If enough samples already made, this step does not change the
+    // result of the search since this queryNode will never be
     // descended anymore.
-    queryNode.Stat().NumSamplesMade() += 
+    queryNode.Stat().NumSamplesMade() +=
       (size_t) std::floor(samplingRatio * (double) referenceNode.Count());
 
-    // since you are not going to descend down the query tree for this 
-    // reference node, there is no point updating the number of samples 
+    // since you are not going to descend down the query tree for this
+    // reference node, there is no point updating the number of samples
     // made for the child nodes of this queryNode.
 
-    return DBL_MAX; 
+    return DBL_MAX;
   } // if can-prune
 } // Score(node, node, baseCaseResult)
 
@@ -1059,13 +1059,13 @@ Score(TreeType& queryNode,
 template<typename SortPolicy, typename MetricType, typename TreeType>
 inline double RASearchRules<SortPolicy, MetricType, TreeType>::
 Rescore(TreeType& queryNode,
-        TreeType& referenceNode, 
-        const double oldScore) 
+        TreeType& referenceNode,
+        const double oldScore)
 {
   if (oldScore == DBL_MAX)
     return oldScore;
 
-  // First try to find the distance bound to check if we can prune 
+  // First try to find the distance bound to check if we can prune
   // by distance.
   double pointBound = DBL_MAX;
   double childBound = DBL_MAX;
@@ -1094,8 +1094,8 @@ Rescore(TreeType& queryNode,
   // update the number of samples made for that node
   //  -- propagate up from child nodes if child nodes have made samples
   //     that the parent node is not aware of.
-  //     REMEMBER to propagate down samples made to the child nodes 
-  //     if the parent samples. 
+  //     REMEMBER to propagate down samples made to the child nodes
+  //     if the parent samples.
 
   // only update from children if a non-leaf node obviously
   if (!queryNode.IsLeaf())
@@ -1110,18 +1110,18 @@ Rescore(TreeType& queryNode,
         numSamplesMadeInChildNodes = numSamples;
     }
 
-    // The number of samples made for a node is propagated up from the 
+    // The number of samples made for a node is propagated up from the
     // child nodes if the child nodes have made samples that the parent
     // (which is the current 'queryNode') is not aware of.
-    queryNode.Stat().NumSamplesMade() 
-      = std::max(queryNode.Stat().NumSamplesMade(), 
+    queryNode.Stat().NumSamplesMade()
+      = std::max(queryNode.Stat().NumSamplesMade(),
                  numSamplesMadeInChildNodes);
   }
 
   // Now check if the node-pair interaction can be pruned by sampling
 
-  // If this is better than the best distance we've seen so far, 
-  // maybe there will be something down this node. 
+  // If this is better than the best distance we've seen so far,
+  // maybe there will be something down this node.
   // Also check if enough samples are already made for this query.
   if (SortPolicy::IsBetter(oldScore, bestDistance)
       && queryNode.Stat().NumSamplesMade() < numSamplesReqd)
@@ -1129,15 +1129,15 @@ Rescore(TreeType& queryNode,
     // We cannot prune this node
     // Try approximating this node by sampling
 
-    // Here we assume that since we are re-scoring, the algorithm 
-    // has already sampled some candidates, and if specified, also 
-    // traversed to the first leaf. 
-    // So no checks regarding that is made any more. 
+    // Here we assume that since we are re-scoring, the algorithm
+    // has already sampled some candidates, and if specified, also
+    // traversed to the first leaf.
+    // So no checks regarding that is made any more.
     //
     // check if this node can be approximated by sampling
-    size_t samplesReqd = 
+    size_t samplesReqd =
       (size_t) std::ceil(samplingRatio * (double) referenceNode.Count());
-    samplesReqd 
+    samplesReqd
       = std::min(samplesReqd,
                  numSamplesReqd - queryNode.Stat().NumSamplesMade());
 
@@ -1145,15 +1145,15 @@ Rescore(TreeType& queryNode,
     {
       // if too many samples required and not at a leaf, then can't prune
 
-      // Since query tree descend is necessary now, 
+      // Since query tree descend is necessary now,
       // propagate the number of samples made down to the children
 
-      // Go through all children and propagate the number of 
+      // Go through all children and propagate the number of
       // samples made to the children.
       // Only update if the parent node has made samples the children
       // have not seen
-      for (size_t i = 0; i < queryNode.NumChildren(); i++) 
-        queryNode.Child(i).Stat().NumSamplesMade() 
+      for (size_t i = 0; i < queryNode.NumChildren(); i++)
+        queryNode.Child(i).Stat().NumSamplesMade()
           = std::max(queryNode.Stat().NumSamplesMade(),
                      queryNode.Child(i).Stat().NumSamplesMade());
 
@@ -1166,7 +1166,7 @@ Rescore(TreeType& queryNode,
         // Then samplesReqd <= singleSampleLimit.
         // Hence approximate node by sampling enough number of points
         // for every query in the 'queryNode'
-        for (size_t queryIndex = queryNode.Begin(); 
+        for (size_t queryIndex = queryNode.Begin();
              queryIndex < queryNode.End(); queryIndex++)
         {
           arma::uvec distinctSamples;
@@ -1178,13 +1178,13 @@ Rescore(TreeType& queryNode,
             BaseCase(queryIndex,
                      referenceNode.Begin() + (size_t) distinctSamples[i]);
         }
-        
+
         // update the number of samples made for the queryNode and
         // also update the number of sample made for the child nodes.
         queryNode.Stat().NumSamplesMade() += samplesReqd;
 
-        // since you are not going to descend down the query tree for this 
-        // referenceNode, there is no point updating the number of 
+        // since you are not going to descend down the query tree for this
+        // referenceNode, there is no point updating the number of
         // samples made for the child nodes of this queryNode.
 
         // Node approximated so we can prune it
@@ -1196,7 +1196,7 @@ Rescore(TreeType& queryNode,
         {
           // Approximate node by sampling enough number of points
           // for every query in the 'queryNode'.
-          for (size_t queryIndex = queryNode.Begin(); 
+          for (size_t queryIndex = queryNode.Begin();
                queryIndex < queryNode.End(); queryIndex++)
           {
             arma::uvec distinctSamples;
@@ -1213,22 +1213,22 @@ Rescore(TreeType& queryNode,
           // also update the number of sample made for the child nodes.
           queryNode.Stat().NumSamplesMade() += samplesReqd;
 
-          // since you are not going to descend down the query tree for this 
-          // referenceNode, there is no point updating the number of 
+          // since you are not going to descend down the query tree for this
+          // referenceNode, there is no point updating the number of
           // samples made for the child nodes of this queryNode.
-          
+
           // (Leaf) Node approximated so can prune it
           return DBL_MAX;
         }
-        else 
+        else
         {
           // not allowed to sample from leaves, so cannot prune.
           // propagate the number of samples made down to the children
-            
-          // going through all children and propagate the number of 
+
+          // going through all children and propagate the number of
           // samples made to the children.
-          for (size_t i = 0; i < queryNode.NumChildren(); i++) 
-            queryNode.Child(i).Stat().NumSamplesMade() 
+          for (size_t i = 0; i < queryNode.NumChildren(); i++)
+            queryNode.Child(i).Stat().NumSamplesMade()
               = std::max(queryNode.Stat().NumSamplesMade(),
                          queryNode.Child(i).Stat().NumSamplesMade());
 
@@ -1239,24 +1239,24 @@ Rescore(TreeType& queryNode,
   }
   else
   {
-    // Either there cannot be anything better in this node. 
-    // Or enough number of samples are already made. 
+    // Either there cannot be anything better in this node.
+    // Or enough number of samples are already made.
     // So prune it.
 
-    // add 'fake' samples from this node; fake because the distances to 
+    // add 'fake' samples from this node; fake because the distances to
     // these samples need not be computed.
 
-    // If enough samples already made, this step does not change the 
-    // result of the search since this queryNode will never be 
+    // If enough samples already made, this step does not change the
+    // result of the search since this queryNode will never be
     // descended anymore.
-    queryNode.Stat().NumSamplesMade() += 
+    queryNode.Stat().NumSamplesMade() +=
       (size_t) std::floor(samplingRatio * (double) referenceNode.Count());
 
-    // since you are not going to descend down the query tree for this 
-    // reference node, there is no point updating the number of samples 
+    // since you are not going to descend down the query tree for this
+    // reference node, there is no point updating the number of samples
     // made for the child nodes of this queryNode.
 
-    return DBL_MAX; 
+    return DBL_MAX;
   } // if can-prune
 } // Rescore(node, node, oldScore)
 
