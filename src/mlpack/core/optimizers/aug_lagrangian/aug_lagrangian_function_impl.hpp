@@ -23,7 +23,8 @@ AugLagrangianFunction<LagrangianFunction>::AugLagrangianFunction(
     lambda(function.NumConstraints()),
     sigma(10)
 {
-  // Nothing else to do.
+  // Initialize lambda vector to all zeroes.
+  lambda.zeros();
 }
 
 // Initialize the AugLagrangianFunction.
