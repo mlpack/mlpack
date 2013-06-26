@@ -197,8 +197,10 @@ DualTreeTraverser<RuleType>::PruneMap(
     // Get a reference to the vector representing the entries at this scale.
     const std::vector<MapEntryType>& scaleVector = (*it).second;
 
-    std::vector<MapEntryType>& newScaleVector = childMap[(*it).first];
-    newScaleVector.reserve(scaleVector.size()); // Maximum possible size.
+    const int thisScale = (*it).first;
+    childMap[thisScale].reserve(scaleVector.size());
+    std::vector<MapEntryType>& newScaleVector = childMap[thisScale];
+//    newScaleVector.reserve(scaleVector.size()); // Maximum possible size.
 
     // Loop over each entry in the vector.
     for (size_t j = 0; j < scaleVector.size(); ++j)
