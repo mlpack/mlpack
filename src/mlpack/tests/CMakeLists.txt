@@ -17,6 +17,7 @@ add_executable(mlpack_test
   kernel_pca_test.cpp
   kmeans_test.cpp
   lars_test.cpp
+  lbfgs_test.cpp
   lin_alg_test.cpp
   linear_regression_test.cpp
   load_save_test.cpp
