@@ -139,9 +139,9 @@ int main(int argc, char** argv)
           RefinedStart(samplings, percentage));
 
       Timer::Start("clustering");
-      if (CLI::HasParam("fast_kmeans"))
-        k.FastCluster(dataset, clusters, assignments);
-      else
+//      if (CLI::HasParam("fast_kmeans"))
+//        k.FastCluster(dataset, clusters, assignments);
+//      else
         k.Cluster(dataset, clusters, assignments, centroids);
       Timer::Stop("clustering");
     }
@@ -151,9 +151,9 @@ int main(int argc, char** argv)
           AllowEmptyClusters> k(maxIterations, overclustering);
 
       Timer::Start("clustering");
-      if (CLI::HasParam("fast_kmeans"))
-        k.FastCluster(dataset, clusters, assignments);
-      else
+//      if (CLI::HasParam("fast_kmeans"))
+//        k.FastCluster(dataset, clusters, assignments);
+//      else
         k.Cluster(dataset, clusters, assignments, centroids);
       Timer::Stop("clustering");
     }
@@ -177,9 +177,9 @@ int main(int argc, char** argv)
           RefinedStart(samplings, percentage));
 
       Timer::Start("clustering");
-      if (CLI::HasParam("fast_kmeans"))
-        k.FastCluster(dataset, clusters, assignments);
-      else
+//      if (CLI::HasParam("fast_kmeans"))
+//        k.FastCluster(dataset, clusters, assignments);
+//      else
         k.Cluster(dataset, clusters, assignments, centroids);
       Timer::Stop("clustering");
     }
@@ -188,9 +188,9 @@ int main(int argc, char** argv)
       KMeans<> k(maxIterations, overclustering);
 
       Timer::Start("clustering");
-      if (CLI::HasParam("fast_kmeans"))
-        k.FastCluster(dataset, clusters, assignments);
-      else
+//      if (CLI::HasParam("fast_kmeans"))
+//        k.FastCluster(dataset, clusters, assignments);
+//      else
         k.Cluster(dataset, clusters, assignments, centroids);
       Timer::Stop("clustering");
     }
