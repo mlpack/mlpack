@@ -65,7 +65,7 @@ PARAM_STRING_REQ("input_file", "Input dataset to run NCA on.", "i");
 PARAM_STRING_REQ("output_file", "Output file for learned distance matrix.",
     "o");
 PARAM_STRING("labels_file", "File of labels for input dataset.", "l", "");
-PARAM_STRING("optimizer", "Optimizer to use; \"sgd\" or \"lbfgs\".", "O", "");
+PARAM_STRING("optimizer", "Optimizer to use; \"sgd\" or \"lbfgs\".", "O", "sgd");
 
 PARAM_FLAG("normalize", "Use a normalized starting point for optimization. This"
     " is useful for when points are far apart, or when SGD is returning NaN.",
@@ -81,12 +81,12 @@ PARAM_DOUBLE("step_size", "Step size for stochastic gradient descent (alpha).",
 PARAM_FLAG("linear_scan", "Don't shuffle the order in which data points are "
     "visited for SGD.", "L");
 
-PARAM_INT("num_basis", "Number of memory points to be stored for L-BFGS.", "N",
+PARAM_INT("num_basis", "Number of memory points to be stored for L-BFGS.", "B",
     5);
 PARAM_DOUBLE("armijo_constant", "Armijo constant for L-BFGS.", "A", 1e-4);
 PARAM_DOUBLE("wolfe", "Wolfe condition parameter for L-BFGS.", "w", 0.9);
 PARAM_INT("max_line_search_trials", "Maximum number of line search trials for "
-    "L-BFGS.", "L", 50);
+    "L-BFGS.", "T", 50);
 PARAM_DOUBLE("min_step", "Minimum step of line search for L-BFGS.", "m", 1e-20);
 PARAM_DOUBLE("max_step", "Maximum step of line search for L-BFGS.", "M", 1e20);
 
