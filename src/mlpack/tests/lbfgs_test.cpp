@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_SUITE(LBFGSTest);
 /**
  * Tests the L-BFGS optimizer using the Rosenbrock Function.
  */
-BOOST_AUTO_TEST_CASE(RosenbrockFunction)
+BOOST_AUTO_TEST_CASE(RosenbrockFunctionTest)
 {
   RosenbrockFunction f;
   L_BFGS<RosenbrockFunction> lbfgs(f);
@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(RosenbrockFunction)
 /**
  * Tests the L-BFGS optimizer using the Wood Function.
  */
-BOOST_AUTO_TEST_CASE(WoodFunction)
+BOOST_AUTO_TEST_CASE(WoodFunctionTest)
 {
   WoodFunction f;
   L_BFGS<WoodFunction> lbfgs(f);
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(WoodFunction)
  * is actually multiple tests, increasing the dimension by powers of 2, from 4
  * dimensions to 1024 dimensions.
  */
-BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockFunction)
+BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockFunctionTest)
 {
   for (int i = 2; i < 10; i++)
   {
@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockFunction)
  * Tests the L-BFGS optimizer using the Rosenbrock-Wood combined function.  This
  * is a test on optimizing a matrix of coordinates.
  */
-BOOST_AUTO_TEST_CASE(RosenbrockWoodFunction)
+BOOST_AUTO_TEST_CASE(RosenbrockWoodFunctionTest)
 {
   RosenbrockWoodFunction f;
   L_BFGS<RosenbrockWoodFunction> lbfgs(f);
