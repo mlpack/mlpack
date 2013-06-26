@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockFunctionTest)
   for (int i = 2; i < 10; i++)
   {
     // Dimension: powers of 2
-    int dim = std::pow(2, i);
+    int dim = std::pow(2.0, i);
 
     GeneralizedRosenbrockFunction f(dim);
     L_BFGS<GeneralizedRosenbrockFunction> lbfgs(f, 20);
