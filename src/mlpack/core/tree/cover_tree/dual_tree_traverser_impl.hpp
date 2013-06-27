@@ -189,6 +189,8 @@ DualTreeTraverser<RuleType>::PruneMap(
   typedef DualCoverTreeMapEntry<MetricType, RootPointPolicy, StatisticType>
       MapEntryType;
 
+  if (referenceMap.empty())
+    return; // Nothing to do.
   typename std::map<int, std::vector<MapEntryType> >::reverse_iterator it =
       referenceMap.rbegin();
 
@@ -292,6 +294,8 @@ DualTreeTraverser<RuleType>::PruneMapForSelfChild(
   // every entry in the reference map and evaluating (or pruning) it.  But
   // in this setting we do not recurse into any children of the reference
   // entries.
+  if (referenceMap.empty())
+    return; // Nothing to do.
   typename std::map<int, std::vector<MapEntryType> >::reverse_iterator it =
       referenceMap.rbegin();
 
