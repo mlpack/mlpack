@@ -3,6 +3,8 @@
 set(SOURCES
   load.hpp
   load_impl.hpp
+  normalize_labels.hpp
+  normalize_labels_impl.hpp
   save.hpp
   save_impl.hpp
 )
