@@ -553,8 +553,6 @@ BOOST_AUTO_TEST_CASE(NormalizeLabelTest)
 
   data::NormalizeLabels(randLabels, newLabels, mappings);
 
-  Log::Warn << mappings.t();
-
   // Now map them back and ensure they are right.
   arma::vec revertedLabels(5000);
   data::RevertLabels(newLabels, mappings, revertedLabels);
