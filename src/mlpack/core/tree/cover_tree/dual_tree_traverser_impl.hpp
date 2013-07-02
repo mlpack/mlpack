@@ -366,7 +366,11 @@ DualTreeTraverser<RuleType>::PruneMapForSelfChild(
 
     // If we didn't add anything, then strike this vector from the map.
     if (newScaleVector.size() == 0)
+    {
       referenceMap.erase((*it).first);
+      if (referenceMap.empty())
+        break;
+    }
 
     ++it; // Advance to next scale.
   }
