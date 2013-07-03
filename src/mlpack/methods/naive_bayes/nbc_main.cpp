@@ -42,28 +42,36 @@ int main(int argc, char* argv[])
   mat trainingData;
   data::Load(trainingDataFilename.c_str(), trainingData, true);
 
+  // Normalize labels.
+  Col<size_t> labels;
+  vec mappings;
+
   // Did the user pass in labels?
   const string labelsFilename = CLI::GetParam<string>("labels_file");
   if (labelsFilename != "")
   {
     // Load labels.
-    arma::mat labels;
-    data::Load(labelsFilename.c_str(), labels, true);
+    mat rawLabels;
+    data::Load(labelsFilename, rawLabels, true);
 
-    // Not incredibly efficient...
-    if (labels.n_rows == 1)
-      trainingData.insert_rows(trainingData.n_rows, labels);
-    else if (labels.n_cols == 1)
-      trainingData.insert_rows(trainingData.n_rows, trans(labels));
-    else
-      Log::Fatal << "Labels must have only one column or row!" << endl;
+    data::NormalizeLabels(rawLabels.unsafe_col(0), labels, mappings);
+  }
+  else
+  {
+    // Use the last row of the training data as the labels.
+    Log::Info << "Using last dimension of training data as training labels."
+        << std::endl;
+    vec rawLabels = trans(trainingData.row(trainingData.n_rows - 1));
+    data::NormalizeLabels(rawLabels, labels, mappings);
+    // Remove the label row.
+    trainingData.shed_row(trainingData.n_rows - 1);
   }
 
   const string testingDataFilename = CLI::GetParam<std::string>("test_file");
   mat testingData;
   data::Load(testingDataFilename.c_str(), testingData, true);
 
-  if (testingData.n_rows != trainingData.n_rows - 1)
+  if (testingData.n_rows != trainingData.n_rows)
     Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
         << "must be the same as training data (" << trainingData.n_rows - 1
         << ")!" << std::endl;
@@ -73,18 +81,20 @@ int main(int argc, char* argv[])
 
   // Create and train the classifier.
   Timer::Start("training");
-  NaiveBayesClassifier<> nbc(trainingData, classes);
+  NaiveBayesClassifier<> nbc(trainingData, labels, classes);
   Timer::Stop("training");
 
-  // Timing the running of the Naive Bayes Classifier.
-  arma::Col<size_t> results;
+  // Time the running of the Naive Bayes Classifier.
+  Col<size_t> results;
   Timer::Start("testing");
   nbc.Classify(testingData, results);
   Timer::Stop("testing");
 
+  // Un-normalize labels to prepare output.
+  vec rawResults;
+  data::RevertLabels(results, mappings, rawResults);
+
   // Output results.
   const string outputFilename = CLI::GetParam<string>("output");
-  data::Save(outputFilename.c_str(), results, true);
-
-  return 0;
+  data::Save(outputFilename, results, true);
 }
