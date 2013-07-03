@@ -48,7 +48,7 @@ class SoftmaxErrorFunction
    * @param kernel Instantiated kernel (optional).
    */
   SoftmaxErrorFunction(const arma::mat& dataset,
-                       const arma::uvec& labels,
+                       const arma::Col<size_t>& labels,
                        MetricType metric = MetricType());
 
   /**
@@ -109,9 +109,12 @@ class SoftmaxErrorFunction
   size_t NumFunctions() const { return dataset.n_cols; }
 
  private:
+  //! The dataset.
   const arma::mat& dataset;
-  const arma::uvec& labels;
+  //! Labels for each point in the dataset.
+  const arma::Col<size_t>& labels;
 
+  //! The instantiated metric.
   MetricType metric;
 
   //! Last coordinates.  Used for the non-separable Evaluate() and Gradient().
