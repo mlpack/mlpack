@@ -172,27 +172,32 @@ int main(int argc, char* argv[])
 
   // Load data.
   arma::mat data;
-  data::Load(inputFile.c_str(), data, true);
+  data::Load(inputFile, data, true);
 
   // Do we want to load labels separately?
-  arma::umat labels(data.n_cols, 1);
+  arma::umat rawLabels(data.n_cols, 1);
   if (labelsFile != "")
   {
-    data::Load(labelsFile.c_str(), labels, true);
+    data::Load(labelsFile, rawLabels, true);
 
-    if (labels.n_rows == 1)
-      labels = trans(labels);
+    if (rawLabels.n_rows == 1)
+      rawLabels = trans(rawLabels);
 
-    if (labels.n_cols > 1)
+    if (rawLabels.n_cols > 1)
       Log::Fatal << "Labels must have only one column or row!" << endl;
   }
   else
   {
     for (size_t i = 0; i < data.n_cols; i++)
-      labels[i] = (int) data(data.n_rows - 1, i);
+      rawLabels[i] = (int) data(data.n_rows - 1, i);
 
     data.shed_row(data.n_rows - 1);
   }
+
+  // Now, normalize the labels.
+  arma::uvec mappings;
+  arma::Col<size_t> labels;
+  data::NormalizeLabels(rawLabels.unsafe_col(0), labels, mappings);
 
   arma::mat distance;
 
@@ -215,10 +220,9 @@ int main(int argc, char* argv[])
   }
 
   // Now create the NCA object and run the optimization.
-  arma::uvec labelsCol = labels.unsafe_col(0);
   if (optimizerType == "sgd")
   {
-    NCA<LMetric<2> > nca(data, labelsCol);
+    NCA<LMetric<2> > nca(data, labels);
     nca.Optimizer().StepSize() = stepSize;
     nca.Optimizer().MaxIterations() = maxIterations;
     nca.Optimizer().Tolerance() = tolerance;
@@ -228,7 +232,7 @@ int main(int argc, char* argv[])
   }
   else if (optimizerType == "lbfgs")
   {
-    NCA<LMetric<2>, L_BFGS> nca(data, labelsCol);
+    NCA<LMetric<2>, L_BFGS> nca(data, labels);
     nca.Optimizer().NumBasis() = numBasis;
     nca.Optimizer().MaxIterations() = maxIterations;
     nca.Optimizer().ArmijoConstant() = armijoConstant;
@@ -242,5 +246,5 @@ int main(int argc, char* argv[])
   }
 
   // Save the output.
-  data::Save(CLI::GetParam<string>("output_file").c_str(), distance, true);
+  data::Save(CLI::GetParam<string>("output_file"), distance, true);
 }
