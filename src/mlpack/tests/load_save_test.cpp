@@ -513,7 +513,7 @@ BOOST_AUTO_TEST_CASE(NoHDF5Test)
 BOOST_AUTO_TEST_CASE(NormalizeLabelSmallDatasetTest)
 {
   arma::ivec labels("-1 1 1 -1 -1 -1 1 1");
-  arma::uvec newLabels;
+  arma::Col<size_t> newLabels;
   arma::ivec mappings;
 
   data::NormalizeLabels(labels, newLabels, mappings);
@@ -548,7 +548,7 @@ BOOST_AUTO_TEST_CASE(NormalizeLabelTest)
     randLabels[i] = math::RandInt(-50, 50);
   randLabels[0] = 0.65; // Hey, doubles work too!
 
-  arma::uvec newLabels;
+  arma::Col<size_t> newLabels;
   arma::vec mappings;
 
   data::NormalizeLabels(randLabels, newLabels, mappings);
