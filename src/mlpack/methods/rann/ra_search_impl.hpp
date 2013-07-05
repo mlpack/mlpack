@@ -153,6 +153,21 @@ Search(const size_t k,
        const bool firstLeafExact,
        const size_t singleSampleLimit)
 {
+  // Sanity check to make sure that the rank-approximation is 
+  // greater than the number of neighbors requested.
+
+  // The rank approximation
+  size_t t = (size_t) std::ceil(tau * (double) referenceSet.n_cols  
+                                / 100.0);
+  if (t <= k)
+  {
+    Log::Warn << tau << "-rank-approximation => " << k << 
+      " neighbors requested from the top " << t <<
+      "." << std::endl;
+    Log::Fatal << "No approximation here, " <<
+      "hence quitting...please increase 'tau' and try again." << std::endl;
+  }
+
   Timer::Start("computing_neighbors");
 
   // If we have built the trees ourselves, then we will have to map all the

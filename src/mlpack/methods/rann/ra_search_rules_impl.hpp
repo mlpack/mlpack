@@ -97,6 +97,18 @@ MinimumSamplesReqd(const size_t n,
   // The rank approximation
   size_t t = (size_t) std::ceil(tau * (double) n / 100.0);
 
+  // Sanity check here (if the previous one is somehow missed)
+  // to make sure that the rank-approximation is actually
+  // giving some approximation.
+  if (t <= k)
+  {
+    Log::Warn << tau << "-rank-approximation => " << k << 
+      " neighbors requested from the top " << t <<
+      "." << std::endl;
+    Log::Fatal << "No approximation here, " <<
+      "hence quitting...please increase 'tau' and try again." << std::endl;
+  }
+
   double prob;
   Log::Assert(alpha <= 1.0);
 
@@ -143,7 +155,7 @@ MinimumSamplesReqd(const size_t n,
 
   } while (!done);
 
-  return (m + 1);
+  return (std::min(m + 1, n));
 }
 
 
@@ -169,7 +181,7 @@ SuccessProbability(const size_t n,
     if (m < k)
       return 0.0;
 
-    if (m > n - t + k)
+    if (m > n - t + k - 1)
       return 1.0;
 
     double eps = (double) t / (double) n;
