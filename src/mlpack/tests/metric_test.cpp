@@ -29,10 +29,10 @@ BOOST_AUTO_TEST_CASE(L1MetricTest)
 
   ManhattanDistance lMetric;
 
-  BOOST_REQUIRE_CLOSE(arma::sum(arma::abs(a1 - b1)),
+  BOOST_REQUIRE_CLOSE((double) arma::sum(arma::abs(a1 - b1)),
                       lMetric.Evaluate(a1, b1), 1e-5);
 
-  BOOST_REQUIRE_CLOSE(arma::sum(arma::abs(a2 - b2)),
+  BOOST_REQUIRE_CLOSE((double) arma::sum(arma::abs(a2 - b2)),
                       lMetric.Evaluate(a2, b2), 1e-5);
 }
 
@@ -52,10 +52,10 @@ BOOST_AUTO_TEST_CASE(L2MetricTest)
 
   EuclideanDistance lMetric;
 
-  BOOST_REQUIRE_CLOSE(sqrt(arma::sum(arma::square(a1 - b1))),
+  BOOST_REQUIRE_CLOSE((double) sqrt(arma::sum(arma::square(a1 - b1))),
                       lMetric.Evaluate(a1, b1), 1e-5);
 
-  BOOST_REQUIRE_CLOSE(sqrt(arma::sum(arma::square(a2 - b2))),
+  BOOST_REQUIRE_CLOSE((double) sqrt(arma::sum(arma::square(a2 - b2))),
                       lMetric.Evaluate(a2, b2), 1e-5);
 }
 
@@ -75,10 +75,10 @@ BOOST_AUTO_TEST_CASE(LINFMetricTest)
 
   EuclideanDistance lMetric;
 
-  BOOST_REQUIRE_CLOSE(arma::max(arma::abs(a1 - b1)),
+  BOOST_REQUIRE_CLOSE((double) arma::max(arma::abs(a1 - b1)),
                       lMetric.Evaluate(a1, b1), 1e-5);
 
-  BOOST_REQUIRE_CLOSE(arma::max(arma::abs(a2 - b2)),
+  BOOST_REQUIRE_CLOSE((double) arma::max(arma::abs(a2 - b2)),
                       lMetric.Evaluate(a2, b2), 1e-5);
 }
 

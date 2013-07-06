@@ -33,8 +33,8 @@ BOOST_AUTO_TEST_CASE(RosenbrockFunctionTest)
   double finalValue = f.Evaluate(coords);
 
   BOOST_REQUIRE_SMALL(finalValue, 1e-5);
-  BOOST_REQUIRE_CLOSE(coords[0], 1, 1e-5);
-  BOOST_REQUIRE_CLOSE(coords[1], 1, 1e-5);
+  BOOST_REQUIRE_CLOSE(coords[0], 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(coords[1], 1.0, 1e-5);
 }
 
 /**
@@ -53,10 +53,10 @@ BOOST_AUTO_TEST_CASE(WoodFunctionTest)
   double finalValue = f.Evaluate(coords);
 
   BOOST_REQUIRE_SMALL(finalValue, 1e-5);
-  BOOST_REQUIRE_CLOSE(coords[0], 1, 1e-5);
-  BOOST_REQUIRE_CLOSE(coords[1], 1, 1e-5);
-  BOOST_REQUIRE_CLOSE(coords[2], 1, 1e-5);
-  BOOST_REQUIRE_CLOSE(coords[3], 1, 1e-5);
+  BOOST_REQUIRE_CLOSE(coords[0], 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(coords[1], 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(coords[2], 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(coords[3], 1.0, 1e-5);
 }
 
 /**
@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockFunctionTest)
     // Test the output to make sure it is correct.
     BOOST_REQUIRE_SMALL(finalValue, 1e-5);
     for (int j = 0; j < dim; j++)
-      BOOST_REQUIRE_CLOSE(coords[j], 1, 1e-5);
+      BOOST_REQUIRE_CLOSE(coords[j], 1.0, 1e-5);
   }
 }
 
@@ -107,8 +107,8 @@ BOOST_AUTO_TEST_CASE(RosenbrockWoodFunctionTest)
   BOOST_REQUIRE_SMALL(finalValue, 1e-5);
   for (int row = 0; row < 4; row++)
   {
-    BOOST_REQUIRE_CLOSE((coords(row, 0)), 1, 1e-5);
-    BOOST_REQUIRE_CLOSE((coords(row, 1)), 1, 1e-5);
+    BOOST_REQUIRE_CLOSE((coords(row, 0)), 1.0, 1e-5);
+    BOOST_REQUIRE_CLOSE((coords(row, 1)), 1.0, 1e-5);
   }
 }
 
