@@ -78,6 +78,14 @@ double LMetric<3, false>::Evaluate(const VecType1& a, const VecType2& b)
   return accu(pow(abs(a - b), 3.0));
 }
 
+// L-infinity (Chebyshev distance) specialization
+template<>
+template<typename VecType1, typename VecType2>
+double LMetric<INT_MAX, false>::Evaluate(const VecType1& a, const VecType2& b)
+{
+  return max(abs(a - b));
+}
+
 }; // namespace metric
 }; // namespace mlpack
 
