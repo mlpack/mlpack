@@ -25,6 +25,7 @@ add_executable(mlpack_test
   lrsdp_test.cpp
   lsh_test.cpp
   math_test.cpp
+  metric_test.cpp
   nbc_test.cpp
   nca_test.cpp
   nmf_test.cpp

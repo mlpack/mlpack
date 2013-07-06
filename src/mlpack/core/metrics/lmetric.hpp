@@ -88,6 +88,11 @@ typedef LMetric<2, false> SquaredEuclideanDistance;
  */
 typedef LMetric<2, true> EuclideanDistance;
 
+/***
+ * The L-infinity distance
+ */
+typedef LMetric<INT_MAX, false> ChebyshevDistance;
+
 }; // namespace metric
 }; // namespace mlpack
 
