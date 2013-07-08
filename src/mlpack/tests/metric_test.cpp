@@ -75,11 +75,11 @@ BOOST_AUTO_TEST_CASE(LINFMetricTest)
 
   ChebyshevDistance lMetric;
 
-  BOOST_REQUIRE_CLOSE((double) arma::as_scalar(arma::max(arma::abs(a1 - b1)),
-                      lMetric.Evaluate(a1, b1)), 1e-5);
+  BOOST_REQUIRE_CLOSE((double) arma::as_scalar(arma::max(arma::abs(a1 - b1))),
+                      lMetric.Evaluate(a1, b1), 1e-5);
 
-  BOOST_REQUIRE_CLOSE((double) arma::as_scalar(arma::max(arma::abs(a2 - b2)),
-                      lMetric.Evaluate(a2, b2)), 1e-5);
+  BOOST_REQUIRE_CLOSE((double) arma::as_scalar(arma::max(arma::abs(a2 - b2))),
+                      lMetric.Evaluate(a2, b2), 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
