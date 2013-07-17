@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE(ArmaComparisonPCATest)
   vec eigVal, eigVal1;
   mat score, score1;
 
-  mat data = randu<mat>(100,100);
+  mat data = randu<mat>(100, 100);
 
   PCA p;
 
@@ -35,9 +35,13 @@ BOOST_AUTO_TEST_CASE(ArmaComparisonPCATest)
   princomp(coeff, score, eigVal, trans(data));
 
   // Verify the PCA results based on the eigenvalues.
-  for(size_t i = 0; i < eigVal.n_rows; i++)
-    for(size_t j = 0; j < eigVal.n_cols; j++)
-      BOOST_REQUIRE_SMALL(eigVal(i, j) - eigVal1(i, j), 0.0001);
+  for (size_t i = 0; i < eigVal.n_elem; i++)
+  {
+    if (eigVal[i] == 0.0)
+      BOOST_REQUIRE_SMALL(eigVal1[i], 1e-15);
+    else
+      BOOST_REQUIRE_CLOSE(eigVal[i], eigVal1[i], 0.0001);
+  }
 }
 
 /**
@@ -63,7 +67,7 @@ BOOST_AUTO_TEST_CASE(PCADimensionalityReductionTest)
   // each other out in this summation.
   for (size_t i = 0; i < data.n_rows; i++)
   {
-    if (fabs(correct(i, 1) + data(i, 1)) < 0.001 /* arbitrary */)
+    if (accu(abs(correct.row(i) + data.row(i))) < 0.001 /* arbitrary */)
     {
       // Flip Armadillo coefficients for this column.
       data.row(i) *= -1;
