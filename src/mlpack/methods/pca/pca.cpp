@@ -8,6 +8,7 @@
 #include "pca.hpp"
 #include <mlpack/core.hpp>
 #include <iostream>
+#include <complex>
 
 using namespace std;
 using namespace mlpack;
@@ -28,43 +29,49 @@ PCA::PCA(const bool scaleData) :
 void PCA::Apply(const arma::mat& data,
                 arma::mat& transformedData,
                 arma::vec& eigVal,
-                arma::mat& coeffs) const
+                arma::mat& coeff) const
 {
-  // Calculate the covariance matrix, given that the data is column-major (this
-  // is why we use ccov() and not cov()).
-  arma::mat covMat = ccov(data);
+  // This matrix will store the right singular values; we do not need them.
+  arma::mat v;
 
-  // Centering is built into ccov(), so we don't need to worry about it.  We
-  // only need to scale the data if the user asked for it.
+  // Center the data into a temporary matrix.
+  arma::mat centeredData;
+  math::Center(data, centeredData);
+
   if (scaleData)
   {
     // Scaling the data is when we reduce the variance of each dimension to 1.
-    // Normally you might do this by dividing each dimension by its standard
-    // deviation, but since we already have the covariance matrix we can
-    // simplify the operation into dividing each element C_ij in the covariance
-    // matrix by the standard deviation of dimension i multiplied by the
-    // standard deviation of dimension j.
-    arma::vec stdDev = sqrt(covMat.diag());
+    // We do this by dividing each dimension by its standard deviation.
+    arma::vec stdDev = arma::stddev(centeredData, 0, 1 /* for each dimension */);
 
     // If there are any zeroes, make them very small.
     for (size_t i = 0; i < stdDev.n_elem; ++i)
       if (stdDev[i] == 0)
         stdDev[i] = 1e-50;
 
-    covMat /= stdDev * trans(stdDev);
+    centeredData /= arma::repmat(stdDev, 1, centeredData.n_cols);
   }
 
-  arma::eig_sym(eigVal, coeffs, covMat);
+  // Do singular value decomposition.  Use the economical singular value
+  // decomposition if the columns are much larger than the rows.
+  if (data.n_rows < data.n_cols)
+  {
+    // Do economical singular value decomposition and compute only the left
+    // singular vectors.
+    arma::svd_econ(coeff, eigVal, v, centeredData, 'l');
+  }
+  else
+  {
+    arma::svd(coeff, eigVal, v, centeredData);
+  }
 
-  int nEigVal = eigVal.n_elem;
-  for (int i = 0; i < floor(nEigVal / 2.0); i++)
-    eigVal.swap_rows(i, (nEigVal - 1) - i);
+  // Now we must square the singular values to get the eigenvalues.
+  // In addition we must divide by the number of points, because the covariance
+  // matrix is X * X' / (N - 1).
+  eigVal %= eigVal / (data.n_cols - 1);
 
-  coeffs = arma::fliplr(coeffs);
-  transformedData = trans(coeffs) * data;
-  arma::colvec transformedDataMean = arma::mean(transformedData, 1);
-  transformedData = transformedData - (transformedDataMean *
-      arma::ones<arma::rowvec>(transformedData.n_cols));
+  // Project the samples to the principals.
+  transformedData = arma::trans(coeff) * centeredData;
 }
 
 /**
