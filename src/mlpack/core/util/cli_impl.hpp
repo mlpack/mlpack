@@ -42,8 +42,7 @@ void CLI::Add(const std::string& path,
   AddAlias(alias, path);
 
   // Add the option to boost program_options.
-  desc.add_options()
-    (progOptId.c_str(), po::value<T>(),  description.c_str());
+  desc.add_options()(progOptId.c_str(), po::value<T>(), description.c_str());
 
   // Make sure the appropriate metadata is inserted into gmap.
   gmap_t& gmap = GetSingleton().globalValues;
