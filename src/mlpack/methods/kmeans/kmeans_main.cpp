@@ -28,12 +28,7 @@ PROGRAM_INFO("K-Means Clustering", "This program performs K-Means clustering "
     " random samples of the dataset; to specify the number of samples, the "
     "--samples parameter is used, and to specify the percentage of the dataset "
     "to be used in each sample, the --percentage parameter is used (it should "
-    "be a value between 0.0 and 1.0)."
-    "\n\n"
-    "If you want to specify your own initial cluster assignments or initial "
-    "cluster centroids, this functionality is available in the C++ interface. "
-    "Alternately, file a bug (well, a feature request) on the mlpack bug "
-    "tracker.");
+    "be a value between 0.0 and 1.0).\n");
 
 // Required options.
 PARAM_STRING_REQ("inputFile", "Input dataset to perform clustering on.", "i");
@@ -119,6 +114,14 @@ int main(int argc, char** argv)
   // it gets a little weird...
   arma::Col<size_t> assignments;
   arma::mat centroids;
+  
+  bool initialCentroidGuess = CLI::HasParam("initial_centroid");
+  // Load initial centroids if the user asked for it.
+  if (initialCentroidGuess)
+  {
+    string initialCentroidsFile = CLI::GetParam<string>("initial_centroid");
+    data::Load(initialCentroidsFile.c_str(), centroids, true);
+  }
 
   if (CLI::HasParam("allow_empty_clusters"))
   {
@@ -154,7 +157,8 @@ int main(int argc, char** argv)
 //      if (CLI::HasParam("fast_kmeans"))
 //        k.FastCluster(dataset, clusters, assignments);
 //      else
-        k.Cluster(dataset, clusters, assignments, centroids);
+        k.Cluster(dataset, clusters, assignments, centroids, false,
+            initialCentroidGuess);
       Timer::Stop("clustering");
     }
   }
@@ -191,7 +195,8 @@ int main(int argc, char** argv)
 //      if (CLI::HasParam("fast_kmeans"))
 //        k.FastCluster(dataset, clusters, assignments);
 //      else
-        k.Cluster(dataset, clusters, assignments, centroids);
+        k.Cluster(dataset, clusters, assignments, centroids, false,
+            initialCentroidGuess);
       Timer::Stop("clustering");
     }
   }
