@@ -177,7 +177,7 @@ int main(int argc, char** argv)
   {
     // Only one input file.
     trainSeq.resize(1);
-    data::Load(inputFile.c_str(), trainSeq[0], true);
+    data::Load(inputFile, trainSeq[0], true);
 
     // Do we need to load labels?
     if (labelsFile != "")

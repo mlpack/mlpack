@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
   Log::Info << "Reading in data.\n";
 
   arma::mat dataPoints;
-  data::Load(dataFilename.c_str(), dataPoints, true);
+  data::Load(dataFilename, dataPoints, true);
 
   // Do naive.
   if (CLI::GetParam<bool>("naive"))
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 
     std::string outputFilename = CLI::GetParam<std::string>("output_file");
 
-    data::Save(outputFilename.c_str(), naiveResults, true);
+    data::Save(outputFilename, naiveResults, true);
   }
   else
   {
@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
     //////////////// Output the Results ////////////////
     std::string outputFilename = CLI::GetParam<std::string>("output_file");
 
-    data::Save(outputFilename.c_str(), results, true);
+    data::Save(outputFilename, results, true);
   }
 
   return 0;

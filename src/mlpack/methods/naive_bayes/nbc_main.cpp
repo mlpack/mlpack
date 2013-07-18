@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
   // Check input parameters.
   const string trainingDataFilename = CLI::GetParam<string>("train_file");
   mat trainingData;
-  data::Load(trainingDataFilename.c_str(), trainingData, true);
+  data::Load(trainingDataFilename, trainingData, true);
 
   // Normalize labels.
   Col<size_t> labels;
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 
   const string testingDataFilename = CLI::GetParam<std::string>("test_file");
   mat testingData;
-  data::Load(testingDataFilename.c_str(), testingData, true);
+  data::Load(testingDataFilename, testingData, true);
 
   if (testingData.n_rows != trainingData.n_rows)
     Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "

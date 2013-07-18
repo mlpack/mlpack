@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
     math::RandomSeed((size_t) std::time(NULL));
 
   arma::mat dataPoints;
-  data::Load(CLI::GetParam<std::string>("input_file").c_str(), dataPoints,
+  data::Load(CLI::GetParam<std::string>("input_file"), dataPoints,
       true);
 
   const int gaussians = CLI::GetParam<int>("gaussians");
