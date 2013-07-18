@@ -52,6 +52,8 @@ PARAM_DOUBLE("overclustering", "Finds (overclustering * clusters) clusters, "
 PARAM_INT("max_iterations", "Maximum number of iterations before K-Means "
     "terminates.", "m", 1000);
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+PARAM_STRING("initial_centroid", "Start with the specified initial centroids.",
+             "I", "");
 
 // This is known to not work (#251).
 //PARAM_FLAG("fast_kmeans", "Use the experimental fast k-means algorithm by "
