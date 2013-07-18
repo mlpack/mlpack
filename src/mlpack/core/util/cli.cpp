@@ -40,7 +40,7 @@ CLI::CLI() : desc("Allowed Options") , didParse(false), doc(&emptyProgramDoc)
  * @param optionsName Name of the module, as far as boost is concerned.
  */
 CLI::CLI(const std::string& optionsName) :
-    desc(optionsName.c_str()), didParse(false), doc(&emptyProgramDoc)
+    desc(optionsName), didParse(false), doc(&emptyProgramDoc)
 {
   return;
 }
@@ -71,7 +71,7 @@ CLI::~CLI()
     {
       std::string i = (*it).first;
       Log::Info << "  " << i << ": ";
-      timer.PrintTimer((*it).first.c_str());
+      timer.PrintTimer((*it).first);
     }
   }
 
@@ -485,29 +485,29 @@ void CLI::Print()
     ParamData data = iter->second;
     if (data.tname == TYPENAME(std::string))
     {
-      std::string value = GetParam<std::string>(key.c_str());
+      std::string value = GetParam<std::string>(key);
       if (value == "")
         Log::Info << "\"\"";
       Log::Info << value;
     }
     else if (data.tname == TYPENAME(int))
     {
-      int value = GetParam<int>(key.c_str());
+      int value = GetParam<int>(key);
       Log::Info << value;
     }
     else if (data.tname == TYPENAME(bool))
     {
-      bool value = HasParam(key.c_str());
+      bool value = HasParam(key);
       Log::Info << (value ? "true" : "false");
     }
     else if (data.tname == TYPENAME(float))
     {
-      float value = GetParam<float>(key.c_str());
+      float value = GetParam<float>(key);
       Log::Info << value;
     }
     else if (data.tname == TYPENAME(double))
     {
-      double value = GetParam<double>(key.c_str());
+      double value = GetParam<double>(key);
       Log::Info << value;
     }
     else
@@ -698,7 +698,7 @@ void CLI::RequiredOptions()
     std::string str = *iter;
     if (!vmap.count(str))
     { // If a required option isn't there...
-      Log::Fatal << "Required option --" << str.c_str() << " is undefined."
+      Log::Fatal << "Required option --" << str << " is undefined."
           << std::endl;
     }
   }
