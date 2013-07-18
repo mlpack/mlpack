@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
 
   arma::mat referenceData;
   arma::mat queryData; // So it doesn't go out of scope.
-  if (!data::Load(referenceFile.c_str(), referenceData))
+  if (!data::Load(referenceFile, referenceData))
     Log::Fatal << "Reference file " << referenceFile << "not found." << endl;
 
   Log::Info << "Loaded reference data from '" << referenceFile << "'." << endl;
@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
   {
     string queryFile = CLI::GetParam<string>("query_file");
 
-    if (!data::Load(queryFile.c_str(), queryData))
+    if (!data::Load(queryFile, queryData))
       Log::Fatal << "Query file " << queryFile << " not found" << endl;
 
     if (naive && leafSize < queryData.n_cols)

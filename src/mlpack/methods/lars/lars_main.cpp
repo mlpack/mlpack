@@ -61,14 +61,14 @@ int main(int argc, char* argv[])
   // transpose this data.
   const string matXFilename = CLI::GetParam<string>("input_file");
   mat matX;
-  data::Load(matXFilename.c_str(), matX, true, false);
+  data::Load(matXFilename, matX, true, false);
 
   // Load responses.  The responses should be a one-dimensional vector, and it
   // seems more likely that these will be stored with one response per line (one
   // per row).  So we should not transpose upon loading.
   const string yFilename = CLI::GetParam<string>("responses_file");
   mat matY; // Will be a vector.
-  data::Load(yFilename.c_str(), matY, true, false);
+  data::Load(yFilename, matY, true, false);
 
   // Make sure y is oriented the right way.
   if (matY.n_rows == 1)

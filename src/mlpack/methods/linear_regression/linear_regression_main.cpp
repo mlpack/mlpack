@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
   if (computeModel)
   {
     Timer::Start("load_regressors");
-    data::Load(trainName.c_str(), regressors, true);
+    data::Load(trainName, regressors, true);
     Timer::Stop("load_regressors");
 
     // Are the responses in a separate file?
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
     {
       // The initial predictors for y, Nx1
       Timer::Start("load_responses");
-      data::Load(responseName.c_str(), responses, true);
+      data::Load(responseName, responses, true);
       Timer::Stop("load_responses");
 
       if (responses.n_rows == 1)
@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
     Timer::Stop("regression");
 
     // Save the parameters.
-    data::Save(outputFile.c_str(), lr.Parameters(), true);
+    data::Save(outputFile, lr.Parameters(), true);
   }
 
   // Did we want to predict, too?
@@ -150,7 +150,7 @@ int main(int argc, char* argv[])
     // Load the test file data
     arma::mat points;
     Timer::Stop("load_test_points");
-    data::Load(testName.c_str(), points, true);
+    data::Load(testName, points, true);
     Timer::Stop("load_test_points");
 
     // Perform the predictions using our model
@@ -161,6 +161,6 @@ int main(int argc, char* argv[])
 
     // Save predictions.
     predictions = arma::trans(predictions);
-    data::Save(outputPredictions.c_str(), predictions, true);
+    data::Save(outputPredictions, predictions, true);
   }
 }
