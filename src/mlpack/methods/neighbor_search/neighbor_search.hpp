@@ -272,7 +272,7 @@ class NeighborSearch
   //! Indicates if single-tree search is being used (opposed to dual-tree).
   bool singleMode;
 
-  //! Instantiation of kernel.
+  //! Instantiation of metric.
   MetricType metric;
 
   //! Permutations of reference points during tree building.
