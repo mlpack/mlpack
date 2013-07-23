@@ -422,7 +422,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
   BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[0]] - 0.1, 0.075);
 
   for (size_t i = 0; i < 3; i++)
-    BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[0]][i] - d4.Mean()[i]), 0.35);
+    BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[0]][i] - d4.Mean()[i]), 0.4);
 
   for (size_t row = 0; row < 3; row++)
     for (size_t col = 0; col < 3; col++)
@@ -433,7 +433,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
   BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[1]] - 0.2, 0.075);
 
   for (size_t i = 0; i < 3; i++)
-    BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[1]][i] - d1.Mean()[i]), 0.35);
+    BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[1]][i] - d1.Mean()[i]), 0.4);
 
   for (size_t row = 0; row < 3; row++)
     for (size_t col = 0; col < 3; col++)
@@ -444,7 +444,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
   BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[2]] - 0.3, 0.1);
 
   for (size_t i = 0; i < 3; i++)
-    BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[2]][i] - d2.Mean()[i]), 0.35);
+    BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[2]][i] - d2.Mean()[i]), 0.4);
 
   for (size_t row = 0; row < 3; row++)
     for (size_t col = 0; col < 3; col++)
@@ -455,7 +455,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
   BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[3]] - 0.4, 0.1);
 
   for (size_t i = 0; i < 3; ++i)
-    BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[3]][i] - d3.Mean()[i]), 0.35);
+    BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[3]][i] - d3.Mean()[i]), 0.4);
 
   for (size_t row = 0; row < 3; ++row)
     for (size_t col = 0; col < 3; ++col)
