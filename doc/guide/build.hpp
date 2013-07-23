@@ -12,7 +12,7 @@ and installed.
 Once the MLPACK source is unpacked, you should create a build directory.
 
 @code
-$ cd mlpack-1.0.5
+$ cd mlpack-1.0.6
 $ mkdir build
 @endcode
 
