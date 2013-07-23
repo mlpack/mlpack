@@ -338,16 +338,16 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMSingleGaussianWithProbability)
   GMM<> g(1, 2);
   g.Estimate(observations, probabilities, 10);
 
-  // Check that it is trained correctly.  7% tolerance because of random error
+  // Check that it is trained correctly.  5% tolerance because of random error
   // present in observations.
-  BOOST_REQUIRE_CLOSE(g.Means()[0][0], 0.5, 4.0);
-  BOOST_REQUIRE_CLOSE(g.Means()[0][1], 1.0, 4.0);
+  BOOST_REQUIRE_CLOSE(g.Means()[0][0], 0.5, 5.0);
+  BOOST_REQUIRE_CLOSE(g.Means()[0][1], 1.0, 5.0);
 
-  // 9% tolerance on the large numbers, 12% on the smaller numbers.
-  BOOST_REQUIRE_CLOSE(g.Covariances()[0](0, 0), 1.0, 4.0);
-  BOOST_REQUIRE_CLOSE(g.Covariances()[0](0, 1), 0.3, 6.0);
-  BOOST_REQUIRE_CLOSE(g.Covariances()[0](1, 0), 0.3, 6.0);
-  BOOST_REQUIRE_CLOSE(g.Covariances()[0](1, 1), 1.0, 4.0);
+  // 6% tolerance on the large numbers, 10% on the smaller numbers.
+  BOOST_REQUIRE_CLOSE(g.Covariances()[0](0, 0), 1.0, 6.0);
+  BOOST_REQUIRE_CLOSE(g.Covariances()[0](0, 1), 0.3, 10.0);
+  BOOST_REQUIRE_CLOSE(g.Covariances()[0](1, 0), 0.3, 10.0);
+  BOOST_REQUIRE_CLOSE(g.Covariances()[0](1, 1), 1.0, 6.0);
 
   BOOST_REQUIRE_CLOSE(g.Weights()[0], 1.0, 1e-5);
 }
