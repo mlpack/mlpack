@@ -7,6 +7,9 @@ configuration options.  One can consult any of numerous CMake tutorials for
 further documentation, but this tutorial should be enough to get MLPACK built
 and installed.
 
+@section Download latest mlpack build
+Download latest mlpack build from here : <a href="http://www.mlpack.org/files/mlpack-1.0.6.tar.gz">mlpack-1.0.6</a>
+
 @section builddir Creating Build Directory
 
 Once the MLPACK source is unpacked, you should create a build directory.
