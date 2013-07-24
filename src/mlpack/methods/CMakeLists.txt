@@ -21,6 +21,7 @@ set(DIRS
   range_search
   rann
   sparse_coding
+  cf
 )
 
 foreach(dir ${DIRS})

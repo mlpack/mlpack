@@ -1,0 +1,101 @@
+/**
+ * @file als_update_rules.hpp
+ * @author Mohan Rajendran
+ * @author Mudit Raj Gupta
+ *
+ * Update rules for the Non-negative Matrix Factorization. This follows a method
+ * titled 'Alternating Least Squares' described in the paper 'Positive Matrix
+ * Factorization: A Non-negative Factor Model with Optimal Utilization of
+ * Error Estimates of Data Values' by P. Paatero and U. Tapper. It uses least
+ * squares projection formula to reduce the error value of
+ * \f$ \sqrt{\sum_i \sum_j(V-WH)^2} \f$ by alternately calculating W and H
+ * respectively while holding the other matrix constant.
+ */
+#ifndef __MLPACK_CORE_OPTIMIZERS_ALS_ALS_UPDATE_RULES_HPP
+#define __MLPACK_CORE_OPTIMIZERS_ALS_ALS_UPDATE_RULES_HPP
+
+#include <mlpack/core.hpp>
+
+namespace mlpack {
+namespace als {
+
+/**
+ * The update rule for the basis matrix W. The formula used is
+ * \f[
+ * W^T = \frac{HV^T}{HH^T}
+ * \f]
+ */
+class WAlternatingLeastSquaresRule
+{
+ public:
+  // Empty constructor required for the WUpdateRule template.
+  WAlternatingLeastSquaresRule() { }
+
+  /**
+   * The update function that actually updates the W matrix. The function takes
+   * in all the matrices and only changes the value of the W matrix.
+   *
+   * @param V Input matrix to be factorized.
+   * @param W Basis matrix to be updated.
+   * @param H Encoding matrix.
+   */
+  inline static void Update(const arma::sp_mat& V,
+                            arma::mat& W,
+                            const arma::mat& H)
+  {
+    // The call to inv() sometimes fails; so we are using the psuedoinverse.
+    // W = (inv(H * H.t()) * H * V.t()).t();
+    W = V * H.t() * pinv(H * H.t());
+
+    // Set all negative numbers to machine epsilon
+    for (size_t i = 0; i < W.n_elem; i++)
+    {
+      if (W(i) < 0.0)
+      {
+        W(i) = 0.0;
+      }
+    }
+  }
+};
+
+/**
+ * The update rule for the encoding matrix H. The formula used is
+ * \f[
+ * H = \frac{W^TV}{W^TW}
+ * \f]
+ */
+class HAlternatingLeastSquaresRule
+{
+ public:
+  // Empty constructor required for the HUpdateRule template.
+  HAlternatingLeastSquaresRule() { }
+
+  /**
+   * The update function that actually updates the H matrix. The function takes
+   * in all the matrices and only changes the value of the H matrix.
+   *
+   * @param V Input matrix to be factorized.
+   * @param W Basis matrix.
+   * @param H Encoding matrix to be updated.
+   */
+  inline static void Update(const arma::sp_mat& V,
+                            const arma::mat& W,
+                            arma::mat& H)
+  {
+    H = pinv(W.t() * W) * W.t() * V;
+
+    // Set all negative numbers to 0.
+    for (size_t i = 0; i < H.n_elem; i++)
+    {
+      if (H(i) < 0.0)
+      {
+        H(i) = 0.0;
+      }
+    }
+  }
+};
+
+}; // namespace nmf
+}; // namespace mlpack
+
+#endif
