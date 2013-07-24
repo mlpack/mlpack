@@ -2,6 +2,7 @@ set(DIRS
   aug_lagrangian
   lbfgs
   sgd
+  als
 )
 
 foreach(dir ${DIRS})
