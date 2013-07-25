@@ -1,5 +1,6 @@
 # Recurse into each method mlpack provides.
 set(DIRS
+#  cf
   det
   emst
   fastmks
@@ -21,7 +22,6 @@ set(DIRS
   range_search
   rann
   sparse_coding
-  cf
 )
 
 foreach(dir ${DIRS})
