@@ -4,8 +4,6 @@
  *
  * Tree traverser rules for the DualTreeBoruvka algorithm.
  */
-
-
 #ifndef __MLPACK_METHODS_EMST_DTB_RULES_HPP
 #define __MLPACK_METHODS_EMST_DTB_RULES_HPP
 
@@ -18,19 +16,18 @@ template<typename MetricType, typename TreeType>
 class DTBRules
 {
  public:
-  
   DTBRules(const arma::mat& dataSet,
            UnionFind& connections,
            arma::vec& neighborsDistances,
            arma::Col<size_t>& neighborsInComponent,
            arma::Col<size_t>& neighborsOutComponent,
            MetricType& metric);
-  
+
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
-  
+
   // Update bounds.  Needs a better name.
   void UpdateAfterRecursion(TreeType& queryNode, TreeType& referenceNode);
-  
+
   /**
    * Get the score for recursion order.  A low score indicates priority for
    * recursion, while DBL_MAX indicates that the node should not be recursed
@@ -40,7 +37,7 @@ class DTBRules
    * @param referenceNode Candidate node to be recursed into.
    */
   double Score(const size_t queryIndex, TreeType& referenceNode);
-  
+
   /**
    * Get the score for recursion order, passing the base case result (in the
    * situation where it may be needed to calculate the recursion order).  A low
@@ -54,7 +51,7 @@ class DTBRules
   double Score(const size_t queryIndex,
                TreeType& referenceNode,
                const double baseCaseResult);
-  
+
   /**
    * Re-evaluate the score for recursion order.  A low score indicates priority
    * for recursion, while DBL_MAX indicates that the node should not be recursed
@@ -69,7 +66,7 @@ class DTBRules
   double Rescore(const size_t queryIndex,
                  TreeType& referenceNode,
                  const double oldScore);
-  
+
   /**
    * Get the score for recursion order.  A low score indicates priority for
    * recursionm while DBL_MAX indicates that the node should not be recursed
@@ -79,7 +76,7 @@ class DTBRules
    * @param referenceNode Candidate reference node to recurse into.
    */
   double Score(TreeType& queryNode, TreeType& referenceNode) const;
-  
+
   /**
    * Get the score for recursion order, passing the base case result (in the
    * situation where it may be needed to calculate the recursion order).  A low
@@ -93,7 +90,7 @@ class DTBRules
   double Score(TreeType& queryNode,
                TreeType& referenceNode,
                const double baseCaseResult) const;
-  
+
   /**
    * Re-evaluate the score for recursion order.  A low score indicates priority
    * for recursion, while DBL_MAX indicates that the node should not be recursed
@@ -110,36 +107,25 @@ class DTBRules
                  const double oldScore) const;
 
  private:
-  
-  // This class needs to know what points are connected to one another
-  
-  
-  // Things I need
-  // UnionFind storing the tree structure at this iteration
-  // neighborDistances
-  // neighborInComponent
-  // neighborOutComponent
-  
   //! The data points.
   const arma::mat& dataSet;
-  
+
   //! Stores the tree structure so far
   UnionFind& connections;
-  
+
   //! The distance to the candidate nearest neighbor for each component.
   arma::vec& neighborsDistances;
-  
+
   //! The index of the point in the component that is an endpoint of the
   //! candidate edge.
   arma::Col<size_t>& neighborsInComponent;
-  
+
   //! The index of the point outside of the component that is an endpoint
   //! of the candidate edge.
   arma::Col<size_t>& neighborsOutComponent;
-  
+
   //! The metric
   MetricType& metric;
-  
 }; // class DTBRules
 
 } // emst namespace
