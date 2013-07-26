@@ -55,7 +55,6 @@ double DTBRules<MetricType, TreeType>::BaseCase(const size_t queryIndex,
       neighborsDistances[queryComponentIndex] = distance;
       neighborsInComponent[queryComponentIndex] = queryIndex;
       neighborsOutComponent[queryComponentIndex] = referenceIndex;
-
     }
   }
 
@@ -65,34 +64,6 @@ double DTBRules<MetricType, TreeType>::BaseCase(const size_t queryIndex,
   Log::Assert(newUpperBound >= 0.0);
 
   return newUpperBound;
-}
-
-template<typename MetricType, typename TreeType>
-void DTBRules<MetricType, TreeType>::UpdateAfterRecursion(
-    TreeType& queryNode,
-    TreeType& /* referenceNode */)
-{
-  // Find the worst distance that the children found (including any points), and
-  // update the bound accordingly.
-  double newUpperBound = 0.0;
-
-  // First look through children nodes.
-  for (size_t i = 0; i < queryNode.NumChildren(); ++i)
-  {
-    if (newUpperBound < queryNode.Child(i).Stat().MaxNeighborDistance())
-      newUpperBound = queryNode.Child(i).Stat().MaxNeighborDistance();
-  }
-
-  // Now look through children points.
-  for (size_t i = 0; i < queryNode.NumPoints(); ++i)
-  {
-    size_t pointComponent = connections.Find(queryNode.Point(i));
-    if (newUpperBound < neighborsDistances[pointComponent])
-      newUpperBound = neighborsDistances[pointComponent];
-  }
-
-  // Update the bound in the query's statistic.
-  queryNode.Stat().MaxNeighborDistance() = newUpperBound;
 }
 
 template<typename MetricType, typename TreeType>
@@ -109,7 +80,6 @@ double DTBRules<MetricType, TreeType>::Score(const size_t queryIndex,
     return DBL_MAX;
 
   const arma::vec queryPoint = dataSet.unsafe_col(queryIndex);
-
   const double distance = referenceNode.MinDistance(queryPoint);
 
   // If all the points in the reference node are farther than the candidate
@@ -166,11 +136,11 @@ double DTBRules<MetricType, TreeType>::Score(TreeType& queryNode,
     return DBL_MAX;
 
   const double distance = queryNode.MinDistance(&referenceNode);
+  const double bound = CalculateBound(queryNode);
 
   // If all the points in the reference node are farther than the candidate
   // nearest neighbor for all queries in the node, we prune.
-  return (queryNode.Stat().MaxNeighborDistance() < distance) ? DBL_MAX :
-      distance;
+  return (bound < distance) ? DBL_MAX : distance;
 }
 
 template<typename MetricType, typename TreeType>
@@ -185,13 +155,12 @@ double DTBRules<MetricType, TreeType>::Score(TreeType& queryNode,
            referenceNode.Stat().ComponentMembership()))
     return DBL_MAX;
 
-  const double distance = queryNode.MinDistance(referenceNode,
-                                                baseCaseResult);
+  const double distance = queryNode.MinDistance(referenceNode, baseCaseResult);
+  const double bound = CalculateBound(queryNode);
 
   // If all the points in the reference node are farther than the candidate
   // nearest neighbor for all queries in the node, we prune.
-  return (queryNode.Stat().MaxNeighborDistance() < distance) ? DBL_MAX :
-      distance;
+  return (bound < distance) ? DBL_MAX : distance;
 }
 
 template<typename MetricType, typename TreeType>
@@ -199,12 +168,63 @@ double DTBRules<MetricType, TreeType>::Rescore(TreeType& queryNode,
                                                TreeType& /* referenceNode */,
                                                const double oldScore) const
 {
-  return (oldScore > queryNode.Stat().MaxNeighborDistance()) ? DBL_MAX :
-      oldScore;
+  const double bound = CalculateBound(queryNode);
+  return (oldScore > bound) ? DBL_MAX : oldScore;
 }
 
-} // namespace emst
-} // namespace mlpack
+// Calculate the bound for a given query node in its current state and update
+// it.
+template<typename MetricType, typename TreeType>
+inline double DTBRules<MetricType, TreeType>::CalculateBound(
+    TreeType& queryNode) const
+{
+  double worstPointBound = -DBL_MAX;
+  double bestPointBound = DBL_MAX;
+
+  double worstChildBound = -DBL_MAX;
+  double bestChildBound = DBL_MAX;
+
+  // Now, find the best and worst point bounds.
+  for (size_t i = 0; i < queryNode.NumPoints(); ++i)
+  {
+    const size_t pointComponent = connections.Find(queryNode.Point(i));
+    const double bound = neighborsDistances[pointComponent];
+
+    if (bound > worstPointBound)
+      worstPointBound = bound;
+    if (bound < bestPointBound)
+      bestPointBound = bound;
+  }
+
+  // Find the best and worst child bounds.
+  for (size_t i = 0; i < queryNode.NumChildren(); ++i)
+  {
+    const double maxBound = queryNode.Child(i).Stat().MaxNeighborDistance();
+    if (maxBound > worstChildBound)
+      worstChildBound = maxBound;
+
+    const double minBound = queryNode.Child(i).Stat().MinNeighborDistance();
+    if (minBound < bestChildBound)
+      bestChildBound = minBound;
+  }
+
+  // Now calculate the actual bounds.
+  const double worstBound = std::max(worstPointBound, worstChildBound);
+  const double bestBound = std::min(bestPointBound, bestChildBound);
+  // We must check that bestBound != DBL_MAX; otherwise, we risk overflow.
+  const double bestAdjustedBound = (bestBound == DBL_MAX) ? DBL_MAX :
+      bestBound + 2 * queryNode.FurthestDescendantDistance();
+
+  // Update the relevant quantities in the node.
+  queryNode.Stat().MaxNeighborDistance() = worstBound;
+  queryNode.Stat().MinNeighborDistance() = bestBound;
+  queryNode.Stat().Bound() = std::min(worstBound, bestAdjustedBound);
+
+  return queryNode.Stat().Bound();
+}
+
+}; // namespace emst
+}; // namespace mlpack
 
 
 

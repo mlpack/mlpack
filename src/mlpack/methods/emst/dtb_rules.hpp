@@ -25,9 +25,6 @@ class DTBRules
 
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
-  // Update bounds.  Needs a better name.
-  void UpdateAfterRecursion(TreeType& queryNode, TreeType& referenceNode);
-
   /**
    * Get the score for recursion order.  A low score indicates priority for
    * recursion, while DBL_MAX indicates that the node should not be recursed
@@ -124,8 +121,14 @@ class DTBRules
   //! of the candidate edge.
   arma::Col<size_t>& neighborsOutComponent;
 
-  //! The metric
+  //! The instantiated metric.
   MetricType& metric;
+
+  /**
+   * Update the bound for the given query node.
+   */
+  inline double CalculateBound(TreeType& queryNode) const;
+
 }; // class DTBRules
 
 } // emst namespace
