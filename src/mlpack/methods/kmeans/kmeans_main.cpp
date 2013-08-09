@@ -117,7 +117,7 @@ int main(int argc, char** argv)
   arma::Col<size_t> assignments;
   arma::mat centroids;
 
-  const bool initialCentroidGuess = CLI::HasParam("initial_centroid");
+  const bool initialCentroidGuess = CLI::HasParam("initial_centroids");
   // Load initial centroids if the user asked for it.
   if (initialCentroidGuess)
   {
