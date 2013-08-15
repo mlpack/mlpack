@@ -5,8 +5,8 @@
  * Implementation of RASearch class to perform rank-approximate
  * all-nearest-neighbors on two specified data sets.
  */
-#ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_RA_SEARCH_IMPL_HPP
-#define __MLPACK_METHODS_NEIGHBOR_SEARCH_RA_SEARCH_IMPL_HPP
+#ifndef __MLPACK_METHODS_RANN_RA_SEARCH_IMPL_HPP
+#define __MLPACK_METHODS_RANN_RA_SEARCH_IMPL_HPP
 
 #include <mlpack/core.hpp>
 
@@ -153,21 +153,6 @@ Search(const size_t k,
        const bool firstLeafExact,
        const size_t singleSampleLimit)
 {
-  // Sanity check to make sure that the rank-approximation is 
-  // greater than the number of neighbors requested.
-
-  // The rank approximation
-  size_t t = (size_t) std::ceil(tau * (double) referenceSet.n_cols  
-                                / 100.0);
-  if (t <= k)
-  {
-    Log::Warn << tau << "-rank-approximation => " << k << 
-      " neighbors requested from the top " << t <<
-      "." << std::endl;
-    Log::Fatal << "No approximation here, " <<
-      "hence quitting...please increase 'tau' and try again." << std::endl;
-  }
-
   Timer::Start("computing_neighbors");
 
   // If we have built the trees ourselves, then we will have to map all the
@@ -201,6 +186,8 @@ Search(const size_t k,
                    metric, tau, alpha, naive, sampleAtLeaves, firstLeafExact,
                    singleSampleLimit);
 
+    // If the reference root node is a leaf, then the sampling has already been
+    // done in the RASearchRules constructor.  This happens when naive = true.
     if (!referenceTree->IsLeaf())
     {
       Log::Info << "Performing single-tree traversal..." << std::endl;
@@ -214,15 +201,12 @@ Search(const size_t k,
         traverser.Traverse(i, *referenceTree);
 
       numPrunes = traverser.NumPrunes();
-    }
-    else
-    {
-      assert(naive);
-      Log::Info << "Naive sampling already done!" << std::endl;
-    }
 
-    Log::Info << "Single-tree traversal done; number of distance calculations: "
-        << (rules.NumDistComputations() / querySet.n_cols) << std::endl;
+      Log::Info << "Single-tree traversal complete." << std::endl;
+      Log::Info << "Average number of distance calculations per query point: "
+          << (rules.NumDistComputations() / querySet.n_cols) << "."
+          << std::endl;
+    }
   }
   else // Dual-tree recursion.
   {
@@ -235,8 +219,6 @@ Search(const size_t k,
 
     typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
 
-
-
     if (queryTree)
     {
       Log::Info << "Query statistic pre-search: "
@@ -245,15 +227,16 @@ Search(const size_t k,
     }
     else
     {
-      Log::Info << "Query statistic pre-search: " <<
-          referenceTree->Stat().NumSamplesMade() << std::endl;
+      Log::Info << "Query statistic pre-search: "
+          << referenceTree->Stat().NumSamplesMade() << std::endl;
       traverser.Traverse(*referenceTree, *referenceTree);
     }
 
     numPrunes = traverser.NumPrunes();
 
-    Log::Info << "Dual-tree traversal done; number of distance calculations: "
-        << (rules.NumDistComputations() / querySet.n_cols) << std::endl;
+    Log::Info << "Dual-tree traversal complete." << std::endl;
+    Log::Info << "Average number of distance calculations per query point: "
+        << (rules.NumDistComputations() / querySet.n_cols) << "." << std::endl;
   }
 
   Timer::Stop("computing_neighbors");
@@ -349,8 +332,7 @@ Search(const size_t k,
 } // Search
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-void RASearch<SortPolicy, MetricType, TreeType>::
-ResetQueryTree()
+void RASearch<SortPolicy, MetricType, TreeType>::ResetQueryTree()
 {
   if (!singleMode)
   {
@@ -362,15 +344,15 @@ ResetQueryTree()
 }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-void RASearch<SortPolicy, MetricType, TreeType>::
-ResetRAQueryStat(TreeType* treeNode)
+void RASearch<SortPolicy, MetricType, TreeType>::ResetRAQueryStat(
+    TreeType* treeNode)
 {
   treeNode->Stat().Bound() = SortPolicy::WorstDistance();
   treeNode->Stat().NumSamplesMade() = 0;
 
   for (size_t i = 0; i < treeNode->NumChildren(); i++)
     ResetRAQueryStat(&treeNode->Child(i));
-} // ResetRAQueryStat
+}
 
 }; // namespace neighbor
 }; // namespace mlpack
