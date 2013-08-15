@@ -51,7 +51,7 @@ PARAM_STRING("query_file", "File containing query points (optional).", "q", "");
 PARAM_INT("leaf_size", "Leaf size for tree building.", "l", 20);
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
-    "dual-tree search.", "s");
+    "dual-tree search).", "s");
 
 int main(int argc, char *argv[])
 {
