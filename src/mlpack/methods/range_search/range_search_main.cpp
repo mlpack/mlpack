@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
   vector<vector<double> > distances;
 
   // The cover tree implies different types, so we must split this section.
-  if (CLI::HasParam("cover_tree"))
+  if (coverTree)
   {
     Log::Info << "Using cover trees." << endl;
 
