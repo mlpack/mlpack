@@ -6,8 +6,8 @@
  * tree-based rank-approximate search (with an arbitrary tree) for the RASearch
  * class.
  */
-#ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_RA_SEARCH_RULES_HPP
-#define __MLPACK_METHODS_NEIGHBOR_SEARCH_RA_SEARCH_RULES_HPP
+#ifndef __MLPACK_METHODS_RANN_RA_SEARCH_RULES_HPP
+#define __MLPACK_METHODS_RANN_RA_SEARCH_RULES_HPP
 
 namespace mlpack {
 namespace neighbor {
@@ -21,7 +21,7 @@ class RASearchRules
                 arma::Mat<size_t>& neighbors,
                 arma::mat& distances,
                 MetricType& metric,
-                const double tau = 0.1,
+                const double tau = 5,
                 const double alpha = 0.95,
                 const bool naive = false,
                 const bool sampleAtLeaves = false,
@@ -243,7 +243,6 @@ class RASearchRules
   // TO REMOVE: just for testing
   size_t numDistComputations;
 
-
   /**
    * Insert a point into the neighbors and distances matrices; this is a helper
    * function.
@@ -299,6 +298,22 @@ class RASearchRules
                              const size_t rangeUpperBound,
                              arma::uvec& distinctSamples) const;
 
+  /**
+   * Perform actual scoring for single-tree case.
+   */
+  double Score(const size_t queryIndex,
+               TreeType& referenceNode,
+               const double distance,
+               const double bestDistance);
+
+  /**
+   * Perform actual scoring for dual-tree case.
+   */
+  double Score(TreeType& queryNode,
+               TreeType& referenceNode,
+               const double distance,
+               const double bestDistance);
+
 }; // class RASearchRules
 
 }; // namespace neighbor
@@ -307,4 +322,4 @@ class RASearchRules
 // Include implementation.
 #include "ra_search_rules_impl.hpp"
 
-#endif // __MLPACK_METHODS_NEIGHBOR_SEARCH_RA_SEARCH_RULES_HPP
+#endif // __MLPACK_METHODS_RANN_RA_SEARCH_RULES_HPP
