@@ -55,9 +55,6 @@ LinearRegression::LinearRegression(const LinearRegression& linearRegression)
   parameters = linearRegression.parameters;
 }
 
-LinearRegression::~LinearRegression()
-{ }
-
 void LinearRegression::Predict(const arma::mat& points, arma::vec& predictions)
 {
   // We get the number of columns and rows of the dataset.
@@ -65,26 +62,12 @@ void LinearRegression::Predict(const arma::mat& points, arma::vec& predictions)
   const size_t nRows = points.n_rows;
 
   // We want to be sure we have the correct number of dimensions in the dataset.
-  Log::Assert(nRows == parameters.n_rows - 1);
-  if (nRows != parameters.n_rows -1)
-  {
-    Log::Fatal << "The test data must have the same number of columns as the "
-        "training file.\n";
-  }
+  Log::Assert(points.n_rows == parameters.n_rows - 1);
 
-  predictions.zeros(nCols);
-  // We set all the predictions to the intercept value initially.
+  // Get the predictions, but this ignores the intercept value (parameters[0]).
+  predictions = arma::trans(arma::trans(
+      parameters(arma::span(1, parameters.n_elem - 1))) * points);
+
+  // Now add the intercept.
   predictions += parameters(0);
-
-  // Now we iterate through the dimensions of the data and parameters.
-  for (size_t i = 1; i < nRows + 1; ++i)
-  {
-    // Now we iterate through each row, or point, of the data.
-    for (size_t j = 0; j < nCols; ++j)
-    {
-      // Increment each prediction value by x_i * a_i, or the next dimensional
-      // coefficient and x value.
-      predictions(j) += parameters(i) * points(i - 1, j);
-    }
-  }
 }
