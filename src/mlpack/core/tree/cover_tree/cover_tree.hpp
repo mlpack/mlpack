@@ -446,6 +446,13 @@ class CoverTree
                      const double bound,
                      const size_t nearSetSize,
                      const size_t pointSetSize);
+
+  /**
+   * Take a look at the last child (the most recently created one) and remove
+   * any implicit nodes that have been created.
+   */
+  void RemoveNewImplicitNodes();
+
  public:
   /**
    * Returns a string representation of this object.
