@@ -41,15 +41,9 @@ class LinearRegression
   LinearRegression(const LinearRegression& linearRegression);
 
   /**
-   * Default constructor.
+   * Empty constructor.
    */
-  LinearRegression() {}
-
-
-  /**
-   * Destructor - no work done.
-   */
-  ~LinearRegression();
+  LinearRegression() { }
 
   /**
    * Calculate y_i for each data point in points.
