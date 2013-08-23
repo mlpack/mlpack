@@ -455,25 +455,8 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CreateChildren(
   // can modify the furthestDescendantDistance.
   furthestDescendantDistance = children[0]->FurthestDescendantDistance();
 
-  // If we created an implicit node, take its self-child instead (this could
-  // happen multiple times).
-  while (children[children.size() - 1]->NumChildren() == 1)
-  {
-    CoverTree* old = children[children.size() - 1];
-    children.erase(children.begin() + children.size() - 1);
-
-    // Now take its child.
-    children.push_back(&(old->Child(0)));
-
-    // Set its parent correctly.
-    old->Child(0).Parent() = this;
-
-    // Remove its child (so it doesn't delete it).
-    old->Children().erase(old->Children().begin() + old->Children().size() - 1);
-
-    // Now delete it.
-    delete old;
-  }
+  // Remove any implicit nodes we may have created.
+  RemoveNewImplicitNodes();
 
   // Now the arrays, in memory, look like this:
   // [ childFar | childUsed | far | used ]
@@ -564,26 +547,8 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CreateChildren(
         childFarSetSize, childUsedSetSize, *metric));
     numDescendants += children[children.size() - 1]->NumDescendants();
 
-    // If we created an implicit node, take its self-child instead (this could
-    // happen multiple times).
-    while (children[children.size() - 1]->NumChildren() == 1)
-    {
-      CoverTree* old = children[children.size() - 1];
-      children.erase(children.begin() + children.size() - 1);
-
-      // Now take its child.
-      children.push_back(&(old->Child(0)));
-
-      // Set its parent correctly.
-      old->Child(0).Parent() = this;
-
-      // Remove its child (so it doesn't delete it).
-      old->Children().erase(old->Children().begin() + old->Children().size()
-          - 1);
-
-      // Now delete it.
-      delete old;
-    }
+    // Remove any implicit nodes.
+    RemoveNewImplicitNodes();
 
     // Now with the child created, it returns the childIndices and
     // childDistances vectors in this form:
@@ -909,6 +874,36 @@ size_t CoverTree<MetricType, RootPointPolicy, StatisticType>::PruneFarSet(
 }
 
 /**
+ * Take a look at the last child (the most recently created one) and remove any
+ * implicit nodes that have been created.
+ */
+template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+inline void CoverTree<MetricType, RootPointPolicy, StatisticType>::
+    RemoveNewImplicitNodes()
+{
+  // If we created an implicit node, take its self-child instead (this could
+  // happen multiple times).
+  while (children[children.size() - 1]->NumChildren() == 1)
+  {
+    CoverTree* old = children[children.size() - 1];
+    children.erase(children.begin() + children.size() - 1);
+
+    // Now take its child.
+    children.push_back(&(old->Child(0)));
+
+    // Set its parent correctly.
+    old->Child(0).Parent() = this;
+    old->Child(0).ParentDistance() = old->ParentDistance();
+
+    // Remove its child (so it doesn't delete it).
+    old->Children().erase(old->Children().begin() + old->Children().size() - 1);
+
+    // Now delete it.
+    delete old;
+  }
+}
+
+/**
  * Returns a string representation of this object.
  */
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
@@ -936,6 +931,7 @@ std::string CoverTree<MetricType, RootPointPolicy, StatisticType>::ToString()
   }
   return convert.str();
 }
+
 }; // namespace tree
 }; // namespace mlpack
 
