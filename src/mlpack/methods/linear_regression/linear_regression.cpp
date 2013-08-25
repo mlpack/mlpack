@@ -66,7 +66,7 @@ void LinearRegression::Predict(const arma::mat& points, arma::vec& predictions)
 
   // Get the predictions, but this ignores the intercept value (parameters[0]).
   predictions = arma::trans(arma::trans(
-      parameters(arma::span(1, parameters.n_elem - 1))) * points);
+      parameters.subvec(1, parameters.n_elem - 1)) * points);
 
   // Now add the intercept.
   predictions += parameters(0);
