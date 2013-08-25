@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 
   LinearRegression lr;
 
-  bool computeModel;
+  bool computeModel = false;
 
   // We want to determine if an input file XOR model file were given.
   if (trainName.empty()) // The user specified no input file.
@@ -72,7 +72,6 @@ int main(int argc, char* argv[])
   // The user specified an input file but no model file, no problems.
   else if (modelName.empty())
     computeModel = true;
-
   // The user specified both an input file and model file.
   // This is ambiguous -- which model should we use? A generated one or given
   // one?  Report error and exit.
