@@ -37,22 +37,37 @@ void KernelPCA<KernelType>::Apply(const arma::mat& data,
   // Construct the kernel matrix.
   arma::mat kernelMatrix;
   GetKernelMatrix(data, kernelMatrix);
-
+  
+  // Reminder: Use the each_row() and the each_row functions to center the
+  // kernel matrix. This is faster as the current version but requires
+  // Armadillo version 3.4.
+//  arma::rowvec rowMean = arma::sum(kernelMatrix, 0) / kernelMatrix.n_cols;
+//  kernelMatrix.each_row() -= rowMean;
+//  kernelMatrix.each_col() -= arma::sum(kernelMatrix, 1) / kernelMatrix.n_cols;
+//  kernelMatrix += arma::sum(rowMean) / kernelMatrix.n_cols;
+  
   // For PCA the data has to be centered, even if the data is centered.  But it
   // is not guaranteed that the data, when mapped to the kernel space, is also
   // centered. Since we actually never work in the feature space we cannot
-  // center the data.  So, we perform a "psuedo-centering" using the kernel
+  // center the data. So, we perform a "psuedo-centering" using the kernel
   // matrix.
-
-  // The matrix of ones, made below, may be somewhat large in memory.  The
-  // centering expression might be optimizable to avoid creation of ones.
-  arma::mat ones = arma::ones<arma::mat>(kernelMatrix.n_rows,
-      kernelMatrix.n_cols);
-  arma::mat centeredKernelMatrix = kernelMatrix - (ones * kernelMatrix) -
-      (kernelMatrix * ones) + (ones * kernelMatrix * ones);
-
+  // Get the mean of the elements in each row.
+  arma::rowvec rowMean = arma::sum(kernelMatrix, 0) / kernelMatrix.n_cols;
+  
+  // Get the mean of the elements in each col.
+  arma::colvec colMean = arma::sum(kernelMatrix, 1) / kernelMatrix.n_cols;
+  
+  // Center the kernel matrix.
+  for (size_t i = 0; i < kernelMatrix.n_rows; ++i)
+    kernelMatrix.row(i) -= rowMean;
+  
+  for (size_t i = 0; i < kernelMatrix.n_cols; ++i)
+    kernelMatrix.col(i) -= colMean;
+  
+  kernelMatrix += arma::sum(rowMean) / kernelMatrix.n_cols;
+  
   // Eigendecompose the centered kernel matrix.
-  arma::eig_sym(eigval, eigvec, centeredKernelMatrix);
+  arma::eig_sym(eigval, eigvec, kernelMatrix);
 
   // Swap the eigenvalues since they are ordered backwards (we need largest to
   // smallest).
@@ -62,7 +77,7 @@ void KernelPCA<KernelType>::Apply(const arma::mat& data,
   // Flip the coefficients to produce the same effect.
   eigvec = arma::fliplr(eigvec);
 
-  transformedData = eigvec.t() * centeredKernelMatrix;
+  transformedData = eigvec.t() * kernelMatrix;
 
   // Center the transformed data, if the user asked for it.
   if (centerTransformedData)
