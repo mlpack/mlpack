@@ -144,7 +144,7 @@ void DualTreeBoruvka<MetricType, TreeType>::ComputeMST(arma::mat& results)
 
   EmitResults(results);
 
-  Log::Info << "Total squared length: " << totalDist << std::endl;
+  Log::Info << "Total spanning tree length: " << totalDist << std::endl;
 } // ComputeMST
 
 /**
