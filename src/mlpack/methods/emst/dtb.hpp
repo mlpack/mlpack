@@ -172,7 +172,7 @@ class DualTreeBoruvka
   //! The instantiated metric.
   MetricType metric;
 
-  // For sorting the edge list after the computation.
+  //! For sorting the edge list after the computation.
   struct SortEdgesHelper
   {
     bool operator()(const EdgePair& pairA, const EdgePair& pairB)
