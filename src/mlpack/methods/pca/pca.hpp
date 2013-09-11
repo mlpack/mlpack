@@ -32,7 +32,8 @@ class PCA
   PCA(const bool scaleData = false);
 
   /**
-   * Apply Principal Component Analysis to the provided data set.
+   * Apply Principal Component Analysis to the provided data set.  It is safe to
+   * pass the same matrix reference for both data and transformedData.
    *
    * @param data Data matrix.
    * @param transformedData Matrix to put results of PCA into.
@@ -45,7 +46,8 @@ class PCA
              arma::mat& eigvec) const;
 
   /**
-   * Apply Principal Component Analysis to the provided data set.
+   * Apply Principal Component Analysis to the provided data set.  It is safe to
+   * pass the same matrix reference for both data and transformedData.
    *
    * @param data Data matrix.
    * @param transformedData Matrix to store results of PCA in.
@@ -58,12 +60,38 @@ class PCA
   /**
    * Use PCA for dimensionality reduction on the given dataset.  This will save
    * the newDimension largest principal components of the data and remove the
-   * rest.
+   * rest.  The parameter returned is the amount of variance of the data that is
+   * retained; this is a value between 0 and 1.  For instance, a value of 0.9
+   * indicates that 90% of the variance present in the data was retained.
    *
    * @param data Data matrix.
    * @param newDimension New dimension of the data.
+   * @return Amount of the variance of the data retained (between 0 and 1).
    */
-  void Apply(arma::mat& data, const size_t newDimension) const;
+  double Apply(arma::mat& data, const size_t newDimension) const;
+
+  //! This overload is here to make sure int gets casted right to size_t.
+  inline double Apply(arma::mat& data, const int newDimension) const
+  {
+    return Apply(data, size_t(newDimension));
+  }
+
+  /**
+   * Use PCA for dimensionality reduction on the given dataset.  This will save
+   * as many dimensions as necessary to retain at least the given amount of
+   * variance (specified by parameter varRetained).  The amount should be
+   * between 0 and 1; if the amount is 0, then only 1 dimension will be
+   * retained.  If the amount is 1, then all dimensions will be retained.
+   *
+   * The method returns the actual amount of variance retained, which will
+   * always be greater than or equal to the varRetained parameter.
+   *
+   * @param data Data matrix.
+   * @param varRetained Lower bound on amount of variance to retain; should be
+   *     between 0 and 1.
+   * @return Actual amount of variance retained (between 0 and 1).
+   */
+  double Apply(arma::mat& data, const double varRetained) const;
 
   //! Get whether or not this PCA object will scale (by standard deviation) the
   //! data when PCA is performed.
