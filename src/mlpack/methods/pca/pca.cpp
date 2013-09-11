@@ -31,6 +31,8 @@ void PCA::Apply(const arma::mat& data,
                 arma::vec& eigVal,
                 arma::mat& coeff) const
 {
+  Timer::Start("pca");
+
   // This matrix will store the right singular values; we do not need them.
   arma::mat v;
 
@@ -72,6 +74,8 @@ void PCA::Apply(const arma::mat& data,
 
   // Project the samples to the principals.
   transformedData = arma::trans(coeff) * centeredData;
+
+  Timer::Stop("pca");
 }
 
 /**
@@ -90,22 +94,77 @@ void PCA::Apply(const arma::mat& data,
 }
 
 /**
- * Apply Dimensionality Reduction using Principal Component Analysis
- * to the provided data set.
+ * Use PCA for dimensionality reduction on the given dataset.  This will save
+ * the newDimension largest principal components of the data and remove the
+ * rest.  The parameter returned is the amount of variance of the data that is
+ * retained; this is a value between 0 and 1.  For instance, a value of 0.9
+ * indicates that 90% of the variance present in the data was retained.
  *
- * @param data - M x N Data matrix
- * @param newDimension - matrix consisting of N column vectors,
- * where each vector is the projection of the corresponding data vector
- * from data matrix onto the basis vectors contained in the columns of
- * coeff/eigen vector matrix with only newDimension number of columns chosen.
+ * @param data Data matrix.
+ * @param newDimension New dimension of the data.
+ * @return Amount of the variance of the data retained (between 0 and 1).
  */
-void PCA::Apply(arma::mat& data, const size_t newDimension) const
+double PCA::Apply(arma::mat& data, const size_t newDimension) const
 {
+  // Parameter validation.
+  if (newDimension == 0)
+    Log::Fatal << "PCA::Apply(): newDimension (" << newDimension << ") cannot "
+        << "be zero!" << endl;
+  if (newDimension > data.n_rows)
+    Log::Fatal << "PCA::Apply(): newDimension (" << newDimension << ") cannot "
+        << "be greater than the existing dimensionality of the data ("
+        << data.n_rows << ")!" << endl;
+
   arma::mat coeffs;
   arma::vec eigVal;
 
   Apply(data, data, eigVal, coeffs);
 
-  if (newDimension < coeffs.n_rows && newDimension > 0)
+  // Drop unnecessary rows.
+  data.shed_rows(newDimension, data.n_rows - 1);
+
+  // Calculate the total amount of variance retained.
+  return (sum(eigVal.subvec(0, newDimension - 1)) / sum(eigVal));
+}
+
+/**
+ * Use PCA for dimensionality reduction on the given dataset.  This will save
+ * as many dimensions as necessary to retain at least the given amount of
+ * variance (specified by parameter varRetained).  The amount should be
+ * between 0 and 1; if the amount is 0, then only 1 dimension will be
+ * retained.  If the amount is 1, then all dimensions will be retained.
+ *
+ * The method returns the actual amount of variance retained, which will
+ * always be greater than or equal to the varRetained parameter.
+ */
+double PCA::Apply(arma::mat& data, const double varRetained) const
+{
+  // Parameter validation.
+  if (varRetained < 0)
+    Log::Fatal << "PCA::Apply(): varRetained (" << varRetained << ") must be "
+        << "greater than or equal to 0." << endl;
+  if (varRetained > 1)
+    Log::Fatal << "PCA::Apply(): varRetained (" << varRetained << ") should be "
+        << "less than or equal to 1." << endl;
+
+  arma::mat coeffs;
+  arma::vec eigVal;
+
+  Apply(data, data, eigVal, coeffs);
+
+  // Calculate the dimension we should keep.
+  size_t newDimension = 0;
+  double varSum = 0.0;
+  eigVal /= arma::sum(eigVal); // Normalize eigenvalues.
+  while ((varSum < varRetained) && (newDimension < eigVal.n_elem))
+  {
+    varSum += eigVal[newDimension];
+    ++newDimension;
+  }
+
+  // varSum is the actual variance we will retain.
+  if (newDimension < eigVal.n_elem)
     data.shed_rows(newDimension, data.n_rows - 1);
+
+  return varSum;
 }
