@@ -37,7 +37,7 @@ PARAM_INT_REQ("clusters", "Number of clusters to find.", "c");
 // Output options.
 PARAM_FLAG("in_place", "If specified, a column of the learned cluster "
     "assignments will be added to the input dataset file.  In this case, "
-    "--outputFile is not necessary.", "p");
+    "--outputFile is not necessary.", "P");
 PARAM_STRING("output_file", "File to write output labels or labeled data to.",
     "o", "output.csv");
 PARAM_STRING("centroid_file", "If specified, the centroids of each cluster will"
