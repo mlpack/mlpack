@@ -9,6 +9,7 @@ set(SOURCES
   example_kernel.hpp
   gaussian_kernel.hpp
   hyperbolic_tangent_kernel.hpp
+  kernel_traits.hpp
   laplacian_kernel.hpp
   linear_kernel.hpp
   polynomial_kernel.hpp

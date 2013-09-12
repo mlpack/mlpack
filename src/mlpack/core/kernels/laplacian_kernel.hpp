@@ -81,6 +81,15 @@ class LaplacianKernel
   double bandwidth;
 };
 
+//! Kernel traits of the Laplacian kernel.
+template<>
+class KernelTraits<LaplacianKernel>
+{
+ public:
+  //! The Laplacian kernel is normalized: K(x, x) = 1 for all x.
+  static const bool IsNormalized = true;
+};
+
 }; // namespace kernel
 }; // namespace mlpack
 
