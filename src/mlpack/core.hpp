@@ -180,6 +180,19 @@
 #include <mlpack/core/dists/discrete_distribution.hpp>
 #include <mlpack/core/dists/gaussian_distribution.hpp>
 
+// Include kernel traits.
+#include <mlpack/core/kernels/kernel_traits.hpp>
+#include <mlpack/core/kernels/linear_kernel.hpp>
+#include <mlpack/core/kernels/polynomial_kernel.hpp>
+#include <mlpack/core/kernels/cosine_distance.hpp>
+#include <mlpack/core/kernels/gaussian_kernel.hpp>
+#include <mlpack/core/kernels/epanechnikov_kernel.hpp>
+#include <mlpack/core/kernels/hyperbolic_tangent_kernel.hpp>
+#include <mlpack/core/kernels/laplacian_kernel.hpp>
+#include <mlpack/core/kernels/pspectrum_string_kernel.hpp>
+#include <mlpack/core/kernels/spherical_kernel.hpp>
+#include <mlpack/core/kernels/triangular_kernel.hpp>
+
 #endif
 
 // Clean up unfortunate Windows preprocessor definitions, even if this file was
