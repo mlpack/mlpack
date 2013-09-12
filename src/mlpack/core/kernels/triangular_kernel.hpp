@@ -55,6 +55,15 @@ class TriangularKernel
   double bandwidth;
 };
 
+//! Kernel traits for the triangular kernel.
+template<>
+class KernelTraits<TriangularKernel>
+{
+ public:
+  //! The triangular kernel is normalized: K(x, x) = 1 for all x.
+  static const bool IsNormalized = true;
+};
+
 }; // namespace kernel
 }; // namespace mlpack
 

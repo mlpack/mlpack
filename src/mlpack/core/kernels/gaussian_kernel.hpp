@@ -122,6 +122,15 @@ class GaussianKernel
   double gamma;
 };
 
+//! Kernel traits for the Gaussian kernel.
+template<>
+class KernelTraits<GaussianKernel>
+{
+ public:
+  //! The Gaussian kernel is normalized: K(x, x) = 1 for all x.
+  static const bool IsNormalized = true;
+};
+
 }; // namespace kernel
 }; // namespace mlpack
 

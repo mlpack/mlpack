@@ -74,6 +74,15 @@ class EpanechnikovKernel
   double inverseBandwidthSquared;
 };
 
+//! Kernel traits for the Epanechnikov kernel.
+template<>
+class KernelTraits<EpanechnikovKernel>
+{
+ public:
+  //! The Epanechnikov kernel is normalized: K(x, x) = 1 for all x.
+  static const bool IsNormalized = true;
+};
+
 }; // namespace kernel
 }; // namespace mlpack
 
