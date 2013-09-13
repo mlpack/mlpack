@@ -31,7 +31,8 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     parentDistance(0),
     furthestDescendantDistance(0),
     localMetric(metric == NULL),
-    metric(metric)
+    metric(metric),
+    distanceComps(0)
 {
   // If we need to create a metric, do that.  We'll just do it on the heap.
   if (localMetric)
@@ -66,6 +67,9 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
 
   // Initialize statistic.
   stat = StatisticType(*this);
+
+  Log::Info << distanceComps << " distance computations during tree "
+      << "construction." << std::endl;
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
@@ -82,7 +86,8 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     parentDistance(0),
     furthestDescendantDistance(0),
     localMetric(false),
-    metric(&metric)
+    metric(&metric),
+    distanceComps(0)
 {
   // If there is only one point in the dataset, uh, we're done.
   if (dataset.n_cols == 1)
@@ -113,6 +118,9 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
 
   // Initialize statistic.
   stat = StatisticType(*this);
+
+  Log::Info << distanceComps << " distance computations during tree "
+      << "construction." << std::endl;
 }
 
 template<typename MetricType, typename RootPointPolicy, typename StatisticType>
@@ -138,7 +146,8 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     parentDistance(parentDistance),
     furthestDescendantDistance(0),
     localMetric(false),
-    metric(&metric)
+    metric(&metric),
+    distanceComps(0)
 {
   // If the size of the near set is 0, this is a leaf.
   if (nearSetSize == 0)
@@ -176,7 +185,8 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     parentDistance(parentDistance),
     furthestDescendantDistance(furthestDescendantDistance),
     localMetric(metric == NULL),
-    metric(metric)
+    metric(metric),
+    distanceComps(0)
 {
   // If necessary, create a local metric.
   if (localMetric)
@@ -199,7 +209,8 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
     parentDistance(other.parentDistance),
     furthestDescendantDistance(other.furthestDescendantDistance),
     localMetric(false),
-    metric(other.metric)
+    metric(other.metric),
+    distanceComps(0)
 {
   // Copy each child by hand.
   for (size_t i = 0; i < other.NumChildren(); ++i)
@@ -409,6 +420,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CreateChildren(
     size_t tempSize = 0;
     children.push_back(new CoverTree(dataset, base, point, INT_MIN, this, 0,
         indices, distances, 0, tempSize, usedSetSize, *metric));
+    distanceComps += children.back()->DistanceComps();
 
     // Every point in the near set should be a leaf.
     for (size_t i = 0; i < nearSetSize; ++i)
@@ -417,6 +429,7 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CreateChildren(
       children.push_back(new CoverTree(dataset, base, indices[i],
           INT_MIN, this, distances[i], indices, distances, 0, tempSize,
           usedSetSize, *metric));
+      distanceComps += children.back()->DistanceComps();
       usedSetSize++;
     }
 
@@ -457,6 +470,8 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CreateChildren(
 
   // Remove any implicit nodes we may have created.
   RemoveNewImplicitNodes();
+
+  distanceComps += children[0]->DistanceComps();
 
   // Now the arrays, in memory, look like this:
   // [ childFar | childUsed | far | used ]
@@ -504,7 +519,8 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CreateChildren(
       children.push_back(new CoverTree(dataset, base, indices[0], nextScale,
           this, distances[0], indices, distances, childNearSetSize, farSetSize,
           usedSetSize, *metric));
-      numDescendants += children[children.size() - 1]->NumDescendants();
+      distanceComps += children.back()->DistanceComps();
+      numDescendants += children.back()->NumDescendants();
 
       // Because the far set size is 0, we don't have to do any swapping to
       // move the point into the used set.
@@ -545,10 +561,12 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CreateChildren(
     children.push_back(new CoverTree(dataset, base, indices[0], nextScale,
         this, distances[0], childIndices, childDistances, childNearSetSize,
         childFarSetSize, childUsedSetSize, *metric));
-    numDescendants += children[children.size() - 1]->NumDescendants();
+    numDescendants += children.back()->NumDescendants();
 
     // Remove any implicit nodes.
     RemoveNewImplicitNodes();
+
+    distanceComps += children.back()->DistanceComps();
 
     // Now with the child created, it returns the childIndices and
     // childDistances vectors in this form:
@@ -628,6 +646,7 @@ void CoverTree<MetricType, RootPointPolicy, StatisticType>::ComputeDistances(
 {
   // For each point, rebuild the distances.  The indices do not need to be
   // modified.
+  distanceComps += pointSetSize;
   for (size_t i = 0; i < pointSetSize; ++i)
   {
     distances[i] = metric->Evaluate(dataset.unsafe_col(pointIndex),
@@ -894,6 +913,7 @@ inline void CoverTree<MetricType, RootPointPolicy, StatisticType>::
     // Set its parent correctly.
     old->Child(0).Parent() = this;
     old->Child(0).ParentDistance() = old->ParentDistance();
+    old->Child(0).DistanceComps() = old->DistanceComps();
 
     // Remove its child (so it doesn't delete it).
     old->Children().erase(old->Children().begin() + old->Children().size() - 1);
