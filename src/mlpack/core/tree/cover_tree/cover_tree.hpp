@@ -458,6 +458,12 @@ class CoverTree
    * Returns a string representation of this object.
    */
   std::string ToString() const;
+
+  size_t DistanceComps() const { return distanceComps; }
+  size_t& DistanceComps() { return distanceComps; }
+
+ private:
+  size_t distanceComps;
 };
 
 }; // namespace tree
