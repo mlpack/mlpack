@@ -36,6 +36,9 @@ FastMKS<KernelType, TreeType>::FastMKS(const arma::mat& referenceSet,
   if (!naive)
     referenceTree = new TreeType(referenceSet);
 
+  if (!naive && !single)
+    queryTree = new TreeType(referenceSet);
+
   Timer::Stop("tree_building");
 }
 
@@ -86,6 +89,9 @@ FastMKS<KernelType, TreeType>::FastMKS(const arma::mat& referenceSet,
   if (!naive)
     referenceTree = new TreeType(referenceSet, metric);
 
+  if (!naive && !single)
+    queryTree = new TreeType(referenceSet, metric);
+
   Timer::Stop("tree_building");
 }
 
@@ -132,7 +138,9 @@ FastMKS<KernelType, TreeType>::FastMKS(const arma::mat& referenceSet,
     naive(naive),
     metric(referenceTree->Metric())
 {
-  // Nothing to do.
+  // The query tree cannot be the same as the reference tree.
+  if (referenceTree)
+    queryTree = new TreeType(*referenceTree);
 }
 
 // Two datasets, pre-built trees.
@@ -165,6 +173,12 @@ FastMKS<KernelType, TreeType>::~FastMKS()
       delete queryTree;
     if (referenceTree)
       delete referenceTree;
+  }
+  else if (&querySet == &referenceSet)
+  {
+    // The user passed in a reference tree which we needed to copy.
+    if (queryTree)
+      delete queryTree;
   }
 }
 
@@ -228,6 +242,9 @@ void FastMKS<KernelType, TreeType>::Search(const size_t k,
 
     Log::Info << "Pruned " << numPrunes << " nodes." << std::endl;
 
+    Log::Info << rules.BaseCases() << " base cases." << std::endl;
+    Log::Info << rules.Scores() << " scores." << std::endl;
+
     Timer::Stop("computing_products");
     return;
   }
@@ -238,14 +255,13 @@ void FastMKS<KernelType, TreeType>::Search(const size_t k,
 
   typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
 
-  if (queryTree)
-    traverser.Traverse(*queryTree, *referenceTree);
-  else
-    traverser.Traverse(*referenceTree, *referenceTree);
+  traverser.Traverse(*queryTree, *referenceTree);
 
   const size_t numPrunes = traverser.NumPrunes();
 
   Log::Info << "Pruned " << numPrunes << " nodes." << std::endl;
+  Log::Info << rules.BaseCases() << " base cases." << std::endl;
+  Log::Info << rules.Scores() << " scores." << std::endl;
 
   Timer::Stop("computing_products");
   return;
