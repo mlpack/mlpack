@@ -138,6 +138,7 @@ void DualTreeBoruvka<MetricType, TreeType>::ComputeMST(arma::mat& results)
     Cleanup();
 
     Log::Info << edges.size() << " edges found so far." << std::endl;
+    Log::Info << traverser.NumPrunes() << " nodes pruned." << std::endl;
   }
 
   Timer::Stop("emst/mst_computation");
