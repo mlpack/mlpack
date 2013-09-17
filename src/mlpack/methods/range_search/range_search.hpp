@@ -14,6 +14,8 @@
 
 #include <mlpack/core/tree/binary_space_tree.hpp>
 
+#include "range_search_stat.hpp"
+
 namespace mlpack {
 namespace range /** Range-search routines. */ {
 
@@ -25,7 +27,7 @@ namespace range /** Range-search routines. */ {
  */
 template<typename MetricType = mlpack::metric::EuclideanDistance,
          typename TreeType = tree::BinarySpaceTree<bound::HRectBound<2>,
-                                                   tree::EmptyStatistic> >
+                                                   RangeSearchStat> >
 class RangeSearch
 {
  public:
