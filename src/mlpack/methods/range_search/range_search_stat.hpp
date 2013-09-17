@@ -11,7 +11,7 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace neighbor {
+namespace range {
 
 /**
  * Statistic class for RangeSearch, to be set to the StatisticType of the tree
