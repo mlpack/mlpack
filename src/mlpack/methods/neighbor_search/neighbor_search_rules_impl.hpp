@@ -149,7 +149,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
       if ((lastQuery != NULL) &&
           (queryNode.Point(0) == lastQuery->Point(0)))
       {
-        baseCase = queryNode.Stat().LastDistance();
+        baseCase = referenceNode.Stat().LastDistance();
         alreadyDone = true;
       }
 
@@ -196,10 +196,9 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
       lastBaseCase = baseCase;
     }
 
-//    distance = SortPolicy::CombineBest(baseCase,
-//        queryNode.FurthestDescendantDistance() +
-//        referenceNode.FurthestDescendantDistance());
-    distance = 0;
+    distance = SortPolicy::CombineBest(baseCase,
+        queryNode.FurthestDescendantDistance() +
+        referenceNode.FurthestDescendantDistance());
 
     // Update the last distance calculation for the query and reference nodes.
     queryNode.Stat().LastDistanceNode() = (void*) &referenceNode;
