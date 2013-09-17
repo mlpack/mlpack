@@ -579,9 +579,11 @@ BOOST_AUTO_TEST_CASE(RangeSearchCoverTreeTest)
   // Set up kd-tree range search.
   RangeSearch<> kdsearch(data);
   // Set up cover tree range search.
-  tree::CoverTree<> tree(data);
-  RangeSearch<metric::EuclideanDistance, tree::CoverTree<> >
-      coversearch(&tree, data);
+  typedef tree::CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
+      RangeSearchStat> CoverTreeType;
+  CoverTreeType tree(data);
+  RangeSearch<metric::EuclideanDistance, CoverTreeType> coversearch(&tree,
+      data);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
@@ -652,9 +654,11 @@ BOOST_AUTO_TEST_CASE(RangeSearchCoverTreeTwoDatasetsTest)
   // Set up kd-tree range search.
   RangeSearch<> kdsearch(data, queries);
   // Set up cover tree range search.
-  tree::CoverTree<> tree(data);
-  tree::CoverTree<> queryTree(queries);
-  RangeSearch<metric::EuclideanDistance, tree::CoverTree<> >
+  typedef tree::CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
+      RangeSearchStat> CoverTreeType;
+  CoverTreeType tree(data);
+  CoverTreeType queryTree(queries);
+  RangeSearch<metric::EuclideanDistance, CoverTreeType>
       coversearch(&tree, &queryTree, data, queries);
 
   // Four trials with different ranges.
@@ -725,8 +729,10 @@ BOOST_AUTO_TEST_CASE(RangeSearchCoverTreeSingleTreeTest)
   // Set up kd-tree range search.
   RangeSearch<> kdsearch(data, true);
   // Set up cover tree range search.
-  tree::CoverTree<> tree(data);
-  RangeSearch<metric::EuclideanDistance, tree::CoverTree<> >
+  typedef tree::CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
+      RangeSearchStat> CoverTreeType;
+  CoverTreeType tree(data);
+  RangeSearch<metric::EuclideanDistance, CoverTreeType>
       coversearch(&tree, data, true);
 
   // Four trials with different ranges.
