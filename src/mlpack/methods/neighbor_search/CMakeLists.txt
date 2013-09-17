@@ -5,6 +5,7 @@ set(SOURCES
   neighbor_search_impl.hpp
   neighbor_search_rules.hpp
   neighbor_search_rules_impl.hpp
+  neighbor_search_stat.hpp
   sort_policies/nearest_neighbor_sort.hpp
   sort_policies/nearest_neighbor_sort.cpp
   sort_policies/nearest_neighbor_sort_impl.hpp

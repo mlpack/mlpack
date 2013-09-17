@@ -24,24 +24,6 @@ class NeighborSearchRules
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
   /**
-   * Get the score for the recursion order, in general before the base case is
-   * computed.  This is useful for cover trees or other trees that can cache
-   * some statistic that could be used to make a prune of a child before its
-   * base case is computed.
-   *
-   * @param queryNode Query node.
-   * @param referenceNode Reference node.
-   */
-  double Prescore(TreeType& queryNode,
-                  TreeType& referenceNode,
-                  TreeType& referenceChildNode,
-                  const double baseCaseResult) const;
-  double PrescoreQ(TreeType& queryNode,
-                   TreeType& queryChildNode,
-                   TreeType& referenceNode,
-                   const double baseCaseResult) const;
-
-  /**
    * Get the score for recursion order.  A low score indicates priority for
    * recursion, while DBL_MAX indicates that the node should not be recursed
    * into at all (it should be pruned).
@@ -49,21 +31,7 @@ class NeighborSearchRules
    * @param queryIndex Index of query point.
    * @param referenceNode Candidate node to be recursed into.
    */
-  double Score(const size_t queryIndex, TreeType& referenceNode) const;
-
-  /**
-   * Get the score for recursion order, passing the base case result (in the
-   * situation where it may be needed to calculate the recursion order).  A low
-   * score indicates priority for recursion, while DBL_MAX indicates that the
-   * node should not be recursed into at all (it should be pruned).
-   *
-   * @param queryIndex Index of query point.
-   * @param referenceNode Candidate node to be recursed into.
-   * @param baseCaseResult Result of BaseCase(queryIndex, referenceNode).
-   */
-  double Score(const size_t queryIndex,
-               TreeType& referenceNode,
-               const double baseCaseResult) const;
+  double Score(const size_t queryIndex, TreeType& referenceNode);
 
   /**
    * Re-evaluate the score for recursion order.  A low score indicates priority
@@ -88,21 +56,7 @@ class NeighborSearchRules
    * @param queryNode Candidate query node to recurse into.
    * @param referenceNode Candidate reference node to recurse into.
    */
-  double Score(TreeType& queryNode, TreeType& referenceNode) const;
-
-  /**
-   * Get the score for recursion order, passing the base case result (in the
-   * situation where it may be needed to calculate the recursion order).  A low
-   * score indicates priority for recursion, while DBL_MAX indicates that the
-   * node should not be recursed into at all (it should be pruned).
-   *
-   * @param queryNode Candidate query node to recurse into.
-   * @param referenceNode Candidate reference node to recurse into.
-   * @param baseCaseResult Result of BaseCase(queryIndex, referenceNode).
-   */
-  double Score(TreeType& queryNode,
-               TreeType& referenceNode,
-               const double baseCaseResult) const;
+  double Score(TreeType& queryNode, TreeType& referenceNode);
 
   /**
    * Re-evaluate the score for recursion order.  A low score indicates priority
@@ -134,6 +88,13 @@ class NeighborSearchRules
 
   //! The instantiated metric.
   MetricType& metric;
+
+  //! The last query point BaseCase() was called with.
+  size_t lastQueryIndex;
+  //! The last reference point BaseCase() was called with.
+  size_t lastReferenceIndex;
+  //! The last base case result.
+  double lastBaseCase;
 
   /**
    * Recalculate the bound for a given query node.
