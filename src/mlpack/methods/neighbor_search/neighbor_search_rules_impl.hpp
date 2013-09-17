@@ -24,7 +24,9 @@ NeighborSearchRules<SortPolicy, MetricType, TreeType>::NeighborSearchRules(
     querySet(querySet),
     neighbors(neighbors),
     distances(distances),
-    metric(metric)
+    metric(metric),
+    lastQueryIndex(querySet.n_cols),
+    lastReferenceIndex(referenceSet.n_cols)
 { /* Nothing left to do. */ }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
@@ -36,6 +38,10 @@ BaseCase(const size_t queryIndex, const size_t referenceIndex)
   // and we should not return identical points.
   if ((&querySet == &referenceSet) && (queryIndex == referenceIndex))
     return 0.0;
+
+  // If we have already performed this base case, then do not perform it again.
+  if ((lastQueryIndex == queryIndex) && (lastReferenceIndex == referenceIndex))
+    return lastBaseCase;
 
   double distance = metric.Evaluate(querySet.unsafe_col(queryIndex),
                                     referenceSet.unsafe_col(referenceIndex));
@@ -49,63 +55,49 @@ BaseCase(const size_t queryIndex, const size_t referenceIndex)
   if (insertPosition != (size_t() - 1))
     InsertNeighbor(queryIndex, insertPosition, referenceIndex, distance);
 
+  // Cache this information for the next time BaseCase() is called.
+  lastQueryIndex = queryIndex;
+  lastReferenceIndex = referenceIndex;
+  lastBaseCase = distance;
+
   return distance;
 }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Prescore(
-    TreeType& queryNode,
-    TreeType& referenceNode,
-    TreeType& referenceChildNode,
-    const double baseCaseResult) const
-{
-  const double distance = SortPolicy::BestNodeToNodeDistance(&queryNode,
-      &referenceNode, &referenceChildNode, baseCaseResult);
-
-  // Update our bound.
-  const double bestDistance = CalculateBound(queryNode);
-
-  return (SortPolicy::IsBetter(distance, bestDistance)) ? distance : DBL_MAX;
-}
-
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::PrescoreQ(
-    TreeType& queryNode,
-    TreeType& queryChildNode,
-    TreeType& referenceNode,
-    const double baseCaseResult) const
-{
-  const double distance = SortPolicy::BestNodeToNodeDistance(&referenceNode,
-      &queryNode, &queryChildNode, baseCaseResult);
-
-  // Update our bound.
-  const double bestDistance = CalculateBound(queryNode);
-
-  return (SortPolicy::IsBetter(distance, bestDistance)) ? distance : DBL_MAX;
-}
-
-template<typename SortPolicy, typename MetricType, typename TreeType>
 inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
     const size_t queryIndex,
-    TreeType& referenceNode) const
+    TreeType& referenceNode)
 {
-  const arma::vec queryPoint = querySet.unsafe_col(queryIndex);
-  const double distance = SortPolicy::BestPointToNodeDistance(queryPoint,
-      &referenceNode);
-  const double bestDistance = distances(distances.n_rows - 1, queryIndex);
+  double distance;
+  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+  {
+    // The first point in the tree is the centroid.  So we can then calculate
+    // the base case between that and the query point.
+    double baseCase;
+    if (tree::TreeTraits<TreeType>::HasSelfChildren)
+    {
+      // If the parent node is the same, then we have already calculated the
+      // base case.
+      if ((referenceNode.Parent() != NULL) &&
+          (referenceNode.Point(0) == referenceNode.Parent()->Point(0)))
+        baseCase = referenceNode.Parent()->Stat().LastDistance();
+      else
+        baseCase = BaseCase(queryIndex, referenceNode.Point(0));
 
-  return (SortPolicy::IsBetter(distance, bestDistance)) ? distance : DBL_MAX;
-}
+      // Save this evaluation.
+      referenceNode.Stat().LastDistance() = baseCase;
+    }
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
-    const size_t queryIndex,
-    TreeType& referenceNode,
-    const double baseCaseResult) const
-{
-  const arma::vec queryPoint = querySet.unsafe_col(queryIndex);
-  const double distance = SortPolicy::BestPointToNodeDistance(queryPoint,
-      &referenceNode, baseCaseResult);
+    distance = SortPolicy::CombineBest(baseCase,
+        referenceNode.FurthestDescendantDistance());
+  }
+  else
+  {
+    const arma::vec queryPoint = querySet.unsafe_col(queryIndex);
+    distance = SortPolicy::BestPointToNodeDistance(queryPoint, &referenceNode);
+  }
+
+  // Compare against the best k'th distance for this query point so far.
   const double bestDistance = distances(distances.n_rows - 1, queryIndex);
 
   return (SortPolicy::IsBetter(distance, bestDistance)) ? distance : DBL_MAX;
@@ -130,25 +122,95 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Rescore(
 template<typename SortPolicy, typename MetricType, typename TreeType>
 inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
     TreeType& queryNode,
-    TreeType& referenceNode) const
+    TreeType& referenceNode)
 {
-  const double distance = SortPolicy::BestNodeToNodeDistance(&queryNode,
-      &referenceNode);
+  double distance;
+  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+  {
+    // The first point in the node is the centroid, so we can calculate the
+    // distance between the two points using BaseCase() and then find the
+    // bounds.  This is potentially loose for non-ball bounds.
+    bool alreadyDone = false;
+    double baseCase;
+    if (tree::TreeTraits<TreeType>::HasSelfChildren)
+    {
+      // In this case, we may have already calculated the base case.
+      TreeType* lastRef = (TreeType*) queryNode.Stat().LastDistanceNode();
+      TreeType* lastQuery = (TreeType*) referenceNode.Stat().LastDistanceNode();
 
-  // Update our bound.
-  const double bestDistance = CalculateBound(queryNode);
+      // Does the query node have the base case cached?
+      if ((lastRef != NULL) && (referenceNode.Point(0) == lastRef->Point(0)))
+      {
+        baseCase = queryNode.Stat().LastDistance();
+        alreadyDone = true;
+      }
 
-  return (SortPolicy::IsBetter(distance, bestDistance)) ? distance : DBL_MAX;
-}
+      // Does the reference node have the base case cached?
+      if ((lastQuery != NULL) &&
+          (queryNode.Point(0) == lastQuery->Point(0)))
+      {
+        baseCase = queryNode.Stat().LastDistance();
+        alreadyDone = true;
+      }
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
-inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
-    TreeType& queryNode,
-    TreeType& referenceNode,
-    const double baseCaseResult) const
-{
-  const double distance = SortPolicy::BestNodeToNodeDistance(&queryNode,
-      &referenceNode, baseCaseResult);
+      // Is the query node a self-child, and if so, does the query node's parent
+      // have the base case cached?
+      if ((queryNode.Parent() != NULL) &&
+          (queryNode.Parent()->Point(0) == queryNode.Point(0)))
+      {
+        TreeType* lastParentRef = (TreeType*)
+            queryNode.Parent()->Stat().LastDistanceNode();
+        if (lastParentRef->Point(0) == referenceNode.Point(0))
+        {
+          baseCase = queryNode.Parent()->Stat().LastDistance();
+          alreadyDone = true;
+        }
+      }
+
+      // Is the reference node a self-child, and if so, does the reference
+      // node's parent have the base case cached?
+      if ((referenceNode.Parent() != NULL) &&
+          (referenceNode.Parent()->Point(0) == referenceNode.Point(0)))
+      {
+        TreeType* lastParentRef = (TreeType*)
+            referenceNode.Parent()->Stat().LastDistanceNode();
+        if (lastParentRef->Point(0) == queryNode.Point(0))
+        {
+          baseCase = referenceNode.Parent()->Stat().LastDistance();
+          alreadyDone = true;
+        }
+      }
+    }
+
+    // If we did not find a cached base case, then recalculate it.
+    if (!alreadyDone)
+    {
+      baseCase = BaseCase(queryNode.Point(0), referenceNode.Point(0));
+    }
+    else
+    {
+      // Set lastQueryIndex and lastReferenceIndex, so that BaseCase() does not
+      // duplicate work.
+      lastQueryIndex = queryNode.Point(0);
+      lastReferenceIndex = referenceNode.Point(0);
+      lastBaseCase = baseCase;
+    }
+
+//    distance = SortPolicy::CombineBest(baseCase,
+//        queryNode.FurthestDescendantDistance() +
+//        referenceNode.FurthestDescendantDistance());
+    distance = 0;
+
+    // Update the last distance calculation for the query and reference nodes.
+    queryNode.Stat().LastDistanceNode() = (void*) &referenceNode;
+    queryNode.Stat().LastDistance() = baseCase;
+    referenceNode.Stat().LastDistanceNode() = (void*) &queryNode;
+    referenceNode.Stat().LastDistance() = baseCase;
+  }
+  else
+  {
+    distance = SortPolicy::BestNodeToNodeDistance(&queryNode, &referenceNode);
+  }
 
   // Update our bound.
   const double bestDistance = CalculateBound(queryNode);

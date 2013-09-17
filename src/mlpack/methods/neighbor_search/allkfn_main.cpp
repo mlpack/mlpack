@@ -116,9 +116,11 @@ int main(int argc, char *argv[])
   Log::Info << "Building reference tree..." << endl;
   Timer::Start("reference_tree_building");
 
-  BinarySpaceTree<bound::HRectBound<2>, QueryStat<FurthestNeighborSort> >
+  BinarySpaceTree<bound::HRectBound<2>,
+      NeighborSearchStat<FurthestNeighborSort> >
       refTree(referenceData, oldFromNewRefs, leafSize);
-  BinarySpaceTree<bound::HRectBound<2>, QueryStat<FurthestNeighborSort> >*
+  BinarySpaceTree<bound::HRectBound<2>,
+      NeighborSearchStat<FurthestNeighborSort> >*
       queryTree = NULL; // Empty for now.
 
   Timer::Stop("reference_tree_building");
@@ -144,7 +146,7 @@ int main(int argc, char *argv[])
     Timer::Start("query_tree_building");
 
     queryTree = new BinarySpaceTree<bound::HRectBound<2>,
-        QueryStat<FurthestNeighborSort> >(queryData, oldFromNewQueries,
+        NeighborSearchStat<FurthestNeighborSort> >(queryData, oldFromNewQueries,
         leafSize);
 
     Timer::Stop("query_tree_building");

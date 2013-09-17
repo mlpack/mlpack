@@ -179,9 +179,11 @@ int main(int argc, char *argv[])
     Log::Info << "Building reference tree..." << endl;
     Timer::Start("tree_building");
 
-    BinarySpaceTree<bound::HRectBound<2>, QueryStat<NearestNeighborSort> >
+    BinarySpaceTree<bound::HRectBound<2>,
+        NeighborSearchStat<NearestNeighborSort> >
         refTree(referenceData, oldFromNewRefs, leafSize);
-    BinarySpaceTree<bound::HRectBound<2>, QueryStat<NearestNeighborSort> >*
+    BinarySpaceTree<bound::HRectBound<2>,
+        NeighborSearchStat<NearestNeighborSort> >*
         queryTree = NULL; // Empty for now.
 
     Timer::Stop("tree_building");
@@ -205,8 +207,8 @@ int main(int argc, char *argv[])
         Timer::Start("tree_building");
 
         queryTree = new BinarySpaceTree<bound::HRectBound<2>,
-            QueryStat<NearestNeighborSort> >(queryData, oldFromNewQueries,
-            leafSize);
+            NeighborSearchStat<NearestNeighborSort> >(queryData,
+            oldFromNewQueries, leafSize);
 
         Timer::Stop("tree_building");
       }
@@ -260,14 +262,15 @@ int main(int argc, char *argv[])
     Log::Info << "Building reference tree..." << endl;
     Timer::Start("tree_building");
     CoverTree<metric::LMetric<2, true>, tree::FirstPointIsRoot,
-        QueryStat<NearestNeighborSort> > referenceTree(referenceData, 1.3);
+        NeighborSearchStat<NearestNeighborSort> > referenceTree(referenceData,
+        1.3);
     CoverTree<metric::LMetric<2, true>, tree::FirstPointIsRoot,
-        QueryStat<NearestNeighborSort> >* queryTree = NULL;
+        NeighborSearchStat<NearestNeighborSort> >* queryTree = NULL;
     Timer::Stop("tree_building");
 
     NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
         CoverTree<metric::LMetric<2, true>, tree::FirstPointIsRoot,
-        QueryStat<NearestNeighborSort> > >* allknn = NULL;
+        NeighborSearchStat<NearestNeighborSort> > >* allknn = NULL;
 
     // See if we have query data.
     if (CLI::HasParam("query_file"))
@@ -278,22 +281,22 @@ int main(int argc, char *argv[])
         Log::Info << "Building query tree..." << endl;
         Timer::Start("tree_building");
         queryTree = new CoverTree<metric::LMetric<2, true>,
-            tree::FirstPointIsRoot, QueryStat<NearestNeighborSort> >(queryData,
-            1.3);
+            tree::FirstPointIsRoot, NeighborSearchStat<NearestNeighborSort> >(
+            queryData, 1.3);
         Timer::Stop("tree_building");
       }
 
       allknn = new NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
           CoverTree<metric::LMetric<2, true>, tree::FirstPointIsRoot,
-          QueryStat<NearestNeighborSort> > >(&referenceTree, queryTree,
+          NeighborSearchStat<NearestNeighborSort> > >(&referenceTree, queryTree,
           referenceData, queryData, singleMode);
     }
     else
     {
       allknn = new NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
           CoverTree<metric::LMetric<2, true>, tree::FirstPointIsRoot,
-          QueryStat<NearestNeighborSort> > >(&referenceTree, referenceData,
-          singleMode);
+          NeighborSearchStat<NearestNeighborSort> > >(&referenceTree,
+          referenceData, singleMode);
     }
 
     Log::Info << "Computing " << k << " nearest neighbors..." << endl;
