@@ -207,10 +207,11 @@ class RangeSearch
   //! Mappings to old query indices (used when this object builds trees).
   std::vector<size_t> oldFromNewQueries;
 
-  //! Indicates ownership of the reference tree (meaning we need to delete it).
-  bool ownReferenceTree;
-  //! Indicates ownership of the query tree (meaning we need to delete it).
-  bool ownQueryTree;
+  //! If true, this object is responsible for deleting the trees.
+  bool treeOwner;
+  //! If true, a query set was passed; if false, the query set is the reference
+  //! set.
+  bool hasQuerySet;
 
   //! If true, O(n^2) naive computation is used.
   bool naive;

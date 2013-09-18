@@ -52,20 +52,6 @@ class RangeSearchRules
   double Score(const size_t queryIndex, TreeType& referenceNode);
 
   /**
-   * Get the score for recursion order, passing the base case result (in the
-   * situation where it may be needed to calculate the recursion order).  A low
-   * score indicates priority for recursion, while DBL_MAX indicates that the
-   * node should not be recursed into at all (it should be pruned).
-   *
-   * @param queryIndex Index of query point.
-   * @param referenceNode Candidate node to be recursed into.
-   * @param baseCaseResult Result of BaseCase(queryIndex, referenceNode).
-   */
-  double Score(const size_t queryIndex,
-               TreeType& referenceNode,
-               const double baseCaseResult);
-
-  /**
    * Re-evaluate the score for recursion order.  A low score indicates priority
    * for recursion, while DBL_MAX indicates that the node should not be recursed
    * into at all (it should be pruned).  This is used when the score has already
@@ -89,20 +75,6 @@ class RangeSearchRules
    * @param referenceNode Candidate reference node to recurse into.
    */
   double Score(TreeType& queryNode, TreeType& referenceNode);
-
-  /**
-   * Get the score for recursion order, passing the base case result (in the
-   * situation where it may be needed to calculate the recursion order).  A low
-   * score indicates priority for recursion, while DBL_MAX indicates that the
-   * node should not be recursed into at all (it should be pruned).
-   *
-   * @param queryNode Candidate query node to recurse into.
-   * @param referenceNode Candidate reference node to recurse into.
-   * @param baseCaseResult Result of BaseCase(queryNode, referenceNode).
-   */
-  double Score(TreeType& queryNode,
-               TreeType& referenceNode,
-               const double baseCaseResult);
 
   /**
    * Re-evaluate the score for recursion order.  A low score indicates priority
@@ -138,12 +110,16 @@ class RangeSearchRules
   //! The instantiated metric.
   MetricType& metric;
 
+  //! The last query index.
+  size_t lastQueryIndex;
+  //! The last reference index.
+  size_t lastReferenceIndex;
+
   //! Add all the points in the given node to the results for the given query
   //! point.  If the base case has already been calculated, we make sure to not
   //! add that to the results twice.
   void AddResult(const size_t queryIndex,
-                 TreeType& referenceNode,
-                 const bool hasBaseCase);
+                 TreeType& referenceNode);
 };
 
 }; // namespace range
