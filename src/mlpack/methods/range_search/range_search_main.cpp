@@ -66,7 +66,9 @@ PARAM_FLAG("cover_tree", "If true, use a cover tree for range searching "
     "(instead of a kd-tree).", "c");
 
 typedef RangeSearch<> RSType;
-typedef RangeSearch<metric::EuclideanDistance, CoverTree<> > RSCoverType;
+typedef CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
+    RangeSearchStat> CoverTreeType;
+typedef RangeSearch<metric::EuclideanDistance, CoverTreeType> RSCoverType;
 
 int main(int argc, char *argv[])
 {
@@ -136,8 +138,8 @@ int main(int argc, char *argv[])
     // This is significantly simpler than kd-tree construction because the data
     // matrix is not modified.
     RSCoverType* rangeSearch = NULL;
-    CoverTree<> referenceTree(referenceData);
-    CoverTree<>* queryTree = NULL;
+    CoverTreeType referenceTree(referenceData);
+    CoverTreeType* queryTree = NULL;
 
     if (CLI::GetParam<string>("query_file") == "")
     {
@@ -149,7 +151,7 @@ int main(int argc, char *argv[])
       // Two datasets.
       const string queryFile = CLI::GetParam<string>("query_file");
       data::Load(queryFile, queryData, true);
-      queryTree = new CoverTree<>(queryData);
+      queryTree = new CoverTreeType(queryData);
 
       rangeSearch = new RSCoverType(&referenceTree, queryTree, referenceData,
           queryData, singleMode);
