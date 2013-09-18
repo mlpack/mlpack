@@ -35,6 +35,17 @@ void SortResults(const vector<vector<size_t> >& neighbors,
   }
 }
 
+// Clean a tree's statistics.
+template<typename TreeType>
+void CleanTree(TreeType& node)
+{
+  node.Stat().LastDistanceNode() = NULL;
+  node.Stat().LastDistance() = 0.0;
+
+  for (size_t i = 0; i < node.NumChildren(); ++i)
+    CleanTree(node.Child(i));
+}
+
 /**
  * Simple range-search test with small, synthetic dataset.  This is an
  * exhaustive test, which checks that each method for performing the calculation
@@ -571,13 +582,11 @@ BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
  * Ensure that range search with cover trees works by comparing with the kd-tree
  * implementation.
  */
-BOOST_AUTO_TEST_CASE(RangeSearchCoverTreeTest)
+BOOST_AUTO_TEST_CASE(CoverTreeTest)
 {
   arma::mat data;
   data.randu(8, 1000); // 1000 points in 8 dimensions.
 
-  // Set up kd-tree range search.
-  RangeSearch<> kdsearch(data);
   // Set up cover tree range search.
   typedef tree::CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
       RangeSearchStat> CoverTreeType;
@@ -588,6 +597,9 @@ BOOST_AUTO_TEST_CASE(RangeSearchCoverTreeTest)
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
   {
+    // Set up kd-tree range search.
+    RangeSearch<> kdsearch(data);
+
     Range range;
     switch (r)
     {
@@ -616,6 +628,9 @@ BOOST_AUTO_TEST_CASE(RangeSearchCoverTreeTest)
     // Results for cover tree search.
     vector<vector<size_t> > coverNeighbors;
     vector<vector<double> > coverDistances;
+
+    // Clean the tree statistics.
+    CleanTree(tree);
 
     // Run the searches.
     kdsearch.Search(range, kdNeighbors, kdDistances);
@@ -644,15 +659,13 @@ BOOST_AUTO_TEST_CASE(RangeSearchCoverTreeTest)
 /**
  * Ensure that range search with cover trees works when using two datasets.
  */
-BOOST_AUTO_TEST_CASE(RangeSearchCoverTreeTwoDatasetsTest)
+BOOST_AUTO_TEST_CASE(CoverTreeTwoDatasetsTest)
 {
   arma::mat data;
   data.randu(8, 1000); // 1000 points in 8 dimensions.
   arma::mat queries;
   queries.randu(8, 350); // 350 points in 8 dimensions.
 
-  // Set up kd-tree range search.
-  RangeSearch<> kdsearch(data, queries);
   // Set up cover tree range search.
   typedef tree::CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
       RangeSearchStat> CoverTreeType;
@@ -664,6 +677,10 @@ BOOST_AUTO_TEST_CASE(RangeSearchCoverTreeTwoDatasetsTest)
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
   {
+    // Set up kd-tree range search.  We don't have an easy way to rebuild the
+    // tree, so we'll just reinstantiate it here each loop time.
+    RangeSearch<> kdsearch(data, queries);
+
     Range range;
     switch (r)
     {
@@ -673,11 +690,11 @@ BOOST_AUTO_TEST_CASE(RangeSearchCoverTreeTwoDatasetsTest)
         break;
       case 1:
         // A bounded range on both sides.
-        range = Range(0.5, 1.5);
+        range = Range(0.85, 1.05);
         break;
       case 2:
         // A range with no upper bound.
-        range = Range(0.8, DBL_MAX);
+        range = Range(1.35, DBL_MAX);
         break;
       case 3:
         // A range which should have no results.
@@ -693,9 +710,13 @@ BOOST_AUTO_TEST_CASE(RangeSearchCoverTreeTwoDatasetsTest)
     vector<vector<size_t> > coverNeighbors;
     vector<vector<double> > coverDistances;
 
+    // Clean the trees.
+    CleanTree(tree);
+    CleanTree(queryTree);
+
     // Run the searches.
-    kdsearch.Search(range, kdNeighbors, kdDistances);
     coversearch.Search(range, coverNeighbors, coverDistances);
+    kdsearch.Search(range, kdNeighbors, kdDistances);
 
     // Sort before comparison.
     vector<vector<pair<double, size_t> > > kdSorted;
@@ -706,14 +727,13 @@ BOOST_AUTO_TEST_CASE(RangeSearchCoverTreeTwoDatasetsTest)
     // Now compare the results.
     for (size_t i = 0; i < kdSorted.size(); ++i)
     {
-      BOOST_REQUIRE_EQUAL(kdSorted[i].size(), coverSorted[i].size());
-
       for (size_t j = 0; j < kdSorted[i].size(); ++j)
       {
         BOOST_REQUIRE_EQUAL(kdSorted[i][j].second, coverSorted[i][j].second);
         BOOST_REQUIRE_CLOSE(kdSorted[i][j].first, coverSorted[i][j].first,
             1e-5);
       }
+      BOOST_REQUIRE_EQUAL(kdSorted[i].size(), coverSorted[i].size());
     }
   }
 }
@@ -721,13 +741,11 @@ BOOST_AUTO_TEST_CASE(RangeSearchCoverTreeTwoDatasetsTest)
 /**
  * Ensure that single-tree cover tree range search works.
  */
-BOOST_AUTO_TEST_CASE(RangeSearchCoverTreeSingleTreeTest)
+BOOST_AUTO_TEST_CASE(CoverTreeSingleTreeTest)
 {
   arma::mat data;
   data.randu(8, 1000); // 1000 points in 8 dimensions.
 
-  // Set up kd-tree range search.
-  RangeSearch<> kdsearch(data, true);
   // Set up cover tree range search.
   typedef tree::CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
       RangeSearchStat> CoverTreeType;
@@ -738,6 +756,9 @@ BOOST_AUTO_TEST_CASE(RangeSearchCoverTreeSingleTreeTest)
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
   {
+    // Set up kd-tree range search.
+    RangeSearch<> kdsearch(data, true);
+
     Range range;
     switch (r)
     {
@@ -766,6 +787,9 @@ BOOST_AUTO_TEST_CASE(RangeSearchCoverTreeSingleTreeTest)
     // Results for cover tree search.
     vector<vector<size_t> > coverNeighbors;
     vector<vector<double> > coverDistances;
+
+    // Clean the tree statistics.
+    CleanTree(tree);
 
     // Run the searches.
     kdsearch.Search(range, kdNeighbors, kdDistances);
