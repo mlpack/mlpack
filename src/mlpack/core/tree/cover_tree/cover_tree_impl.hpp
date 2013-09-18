@@ -271,7 +271,7 @@ template<typename MetricType, typename RootPointPolicy, typename StatisticType>
 double CoverTree<MetricType, RootPointPolicy, StatisticType>::MinDistance(
     const CoverTree<MetricType, RootPointPolicy, StatisticType>* other) const
 {
-  // Every cover tree node will contain points up to EC^(scale + 1) away.
+  // Every cover tree node will contain points up to base^(scale + 1) away.
   return std::max(metric->Evaluate(dataset.unsafe_col(point),
       other->Dataset().unsafe_col(other->Point())) -
       furthestDescendantDistance - other->FurthestDescendantDistance(), 0.0);
