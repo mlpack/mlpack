@@ -92,6 +92,25 @@ class CF
     }
     this->numRecs = recs; 
   }
+
+  //! Sets data
+  void Data(arma::mat& d)
+  {
+    data = d;
+  }
+  
+  //! Gets data
+  arma::mat Data() 
+  {
+    return data;
+  }
+
+  //! Gets numRecs
+  size_t NumRecs()
+  { 
+    return numRecs;
+  }
+
   //! Sets number of user for calculating similarity.
   void NumUsersForSimilarity(size_t num) 
   { 
@@ -103,6 +122,12 @@ class CF
     }
     this->numUsersForSimilarity = num; 
   }
+  //! Gets number of users for calculating similarity/
+  size_t NumUsersForSimilarity()
+  {
+    return numUsersForSimilarity;
+  }
+  
   //! Get the User Matrix.
   const arma::mat& W() const { return w; }
   //! Get the Item Matrix.
@@ -167,7 +192,7 @@ class CF
   //! Cleaned Data Matrix.
   arma::sp_mat cleanedData;
   //!Calculates a rating matrix with available data and approximations
-  void CalculateAprroximateRatings();
+  void CalculateApproximateRatings();
   //!Converts the User, Item, Value Matrix to User-Item Table
   void CleanData();
   //!Decomposes the cleanedData size_to user and item matrices

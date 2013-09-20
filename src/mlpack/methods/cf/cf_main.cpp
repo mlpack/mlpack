@@ -65,7 +65,7 @@ int main(int argc, char** argv)
   CF c(dataset);
 
   Log::Info << "Performing CF on dataset..." << endl;
-  c.GetRecommendations(recommendations,users);
+  c.GetRecommendations(recommendations);
   string outputFile = CLI::GetParam<string>("output_file");
   data::Save(outputFile, recommendations);
 }
