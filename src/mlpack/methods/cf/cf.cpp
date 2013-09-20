@@ -76,12 +76,12 @@ void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
   Log::Info<<"GetRecommendations (param: recommendations,users)"<<endl;
   //Base function for calculating Recommendations
   //Operations Independent of the query
-  CalculateAprroximateRatings();
+  CalculateApproximateRatings();
   //Query Dependent Operations
   Query(recommendations,users);  
 }
 
-void CF::CalculateAprroximateRatings() 
+void CF::CalculateApproximateRatings() 
 {
   Log::Info<<"CalculatineApproximateRating"<<endl;
   //Build the initial rating tables with missing values
@@ -161,8 +161,8 @@ void CF::CleanData()
   cleanedData = tmp;
   //Storing the mask
   mask=lMask;
- // data::Save("cleanedData.csv",cleanedData);
-  data::Save("mask.csv",mask);
+ //data::Save("cleanedData.csv",cleanedData);
+ //data::Save("mask.csv",mask);
 }
 
 void CF::Decompose() 
@@ -174,8 +174,8 @@ void CF::Decompose()
   ALS<RandomInitialization, WAlternatingLeastSquaresRule,
       HAlternatingLeastSquaresRule> als(10000, 1e-5);
   als.Apply(cleanedData,rank,w,h);
-  data::Save("w.csv",w);
-  data::Save("h.csv",h);
+  //data::Save("w.csv",w);
+  //data::Save("h.csv",h);
 }
 
 void CF::GenerateRating() 
@@ -183,7 +183,7 @@ void CF::GenerateRating()
   Log::Info<<"GenerateRatings"<<endl;
   //Calculating approximate rating 
   rating = w*h;
-  data::Save("rating.csv",rating);
+  //data::Save("rating.csv",rating);
 }
 
 void CF::Query(arma::Mat<size_t>& recommendations,
@@ -214,7 +214,7 @@ void CF::CreateQuery(arma::mat& query,arma::Col<size_t>& users) const
   for(size_t i=0;i<users.n_rows;i++)
     for(size_t j=0;j<rating.col(i).n_rows;j++)
       query(j,i) = rating(j,users(i)-1);
-  data::Save("query.csv",query);
+  //data::Save("query.csv",query);
 }
 
 void CF::GetNeighbourhood(arma::mat& query, 
@@ -236,7 +236,7 @@ void CF::GetNeighbourhood(arma::mat& query,
   //Building neighbourhood
   a.Search(numUsersForSimilarity, neighbourhood, 
            resultingDistances); 
-  data::Save("neighbourhood.csv",neighbourhood);
+  //data::Save("neighbourhood.csv",neighbourhood);
 }
 
 void CF::CalculateAverage(arma::Mat<size_t>& neighbourhood, 
@@ -256,7 +256,7 @@ void CF::CalculateAverage(arma::Mat<size_t>& neighbourhood,
     //Calculating averages
     averages.col(i) = tmp/j;  
   }
-  data::Save("averages.csv",averages);
+  //data::Save("averages.csv",averages);
 }
 
 void CF::CalculateTopRecommendations(arma::Mat<size_t>& recommendations, 
