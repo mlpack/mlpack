@@ -173,12 +173,14 @@ void CosineTreeBuilder::CTNodeSplit(CosineTree& root, CosineTree& left,
   if(ALeft.n_rows > 0)
   {
     CTNode(ALeft,left);
-    root.Left(left);
+    //TODO: Traversal is not required, still fix this
+    //root.Left(left);
   }
   if(ARight.n_rows > 0)
   {
     CTNode(ARight,right);
-    root.Right(right);
+    //TODO: Traversal is not required, still fix this
+    //root.Right(right);
   }
 }
 

@@ -43,7 +43,7 @@ class CosineTree
    * @param centroid Centroid of the matrix.
    * @param probabilities Sampling probabilities
    */
-  CosineTree(arma::mat& data, arma::vec centroid, arma::vec probabilities);
+  CosineTree(arma::mat data, arma::rowvec centroid, arma::vec probabilities);
 
   /**
    * Create an empty tree node.

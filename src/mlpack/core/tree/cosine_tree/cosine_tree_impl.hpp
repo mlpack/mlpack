@@ -12,13 +12,13 @@
 namespace mlpack {
 namespace tree {
 
-CosineTree::CosineTree(arma::mat& data, arma::vec centroid, arma::vec probabilities) : 
-    left(NULL),
-    right(NULL),
+CosineTree::CosineTree(arma::mat data, arma::rowvec centroid, arma::vec probabilities) : 
     data(data),
     centroid(centroid),
-    numPoints(data.n_cols),
-    probabilities(probabilities)
+    probabilities(probabilities),
+    left(NULL),
+    right(NULL),
+    numPoints(data.n_cols)
 { 
   // Nothing to do
 }
