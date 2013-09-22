@@ -13,10 +13,6 @@
 namespace mlpack {
 namespace tree /** Cosine Trees and building procedures. */ {
 
-/**
- */
-//template<typename MatType = arma::mat>
-
 class CosineTree
 {
  private:
@@ -79,9 +75,6 @@ class CosineTree
 
   //! Return the number of points in this node (0 if not a leaf).
   size_t NumPoints() const;
-
-  //! Sets the number of points in this node (0 if not a leaf).
-  void NumPoints(size_t n);
 
   //! Returns a reference to the data
   arma::mat Data();
