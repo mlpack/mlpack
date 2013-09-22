@@ -6,7 +6,7 @@ add_executable(mlpack_test
   allkrann_search_test.cpp
   arma_extend_test.cpp
   aug_lagrangian_test.cpp
-  cf_test.cpp
+#  cf_test.cpp
   cli_test.cpp
   det_test.cpp
   distribution_test.cpp
