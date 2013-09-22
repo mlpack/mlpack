@@ -2,6 +2,21 @@
  * @file tree_test.cpp
  *
  * Tests for tree-building methods.
+ *
+ * This file is part of MLPACK 1.0.4.
+ *
+ * MLPACK is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * MLPACK is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+ * details (LICENSE.txt).
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * MLPACK.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/bounds.hpp>
@@ -123,6 +138,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundCentroid)
 
   arma::vec centroid;
 
+
   b.Centroid(centroid);
 
   BOOST_REQUIRE_EQUAL(centroid.n_elem, 3);
@@ -151,8 +167,8 @@ BOOST_AUTO_TEST_CASE(HRectBoundMinDistancePoint)
 
   arma::vec point = "-2.0 0.0 10.0 3.0 3.0";
 
-  // This will be the Euclidean distance.
-  BOOST_REQUIRE_CLOSE(b.MinDistance(point), sqrt(95.0), 1e-5);
+  // This will be the Euclidean squared distance.
+  BOOST_REQUIRE_CLOSE(b.MinDistance(point), 95.0, 1e-5);
 
   point = "2.0 5.0 2.0 -5.0 1.0";
 
@@ -191,8 +207,8 @@ BOOST_AUTO_TEST_CASE(HRectBoundMinDistanceBound)
   c[3] = Range(2.0, 5.0);
   c[4] = Range(3.0, 4.0);
 
-  BOOST_REQUIRE_CLOSE(b.MinDistance(c), sqrt(22.0), 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MinDistance(b), sqrt(22.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MinDistance(c), 22.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MinDistance(b), 22.0, 1e-5);
 
   // The other bound is on the edge of the bound.
   c[0] = Range(-2.0, 0.0);
@@ -254,16 +270,16 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistancePoint)
 
   arma::vec point = "-2.0 0.0 10.0 3.0 3.0";
 
-  // This will be the Euclidean distance.
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), sqrt(253.0), 1e-5);
+  // This will be the Euclidean squared distance.
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), 253.0, 1e-5);
 
   point = "2.0 5.0 2.0 -5.0 1.0";
 
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), sqrt(46.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), 46.0, 1e-5);
 
   point = "1.0 2.0 0.0 -2.0 1.5";
 
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), sqrt(23.25), 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), 23.25, 1e-5);
 }
 
 /**
@@ -294,8 +310,8 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistanceBound)
   c[3] = Range(2.0, 5.0);
   c[4] = Range(3.0, 4.0);
 
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), sqrt(210.0), 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), sqrt(210.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 210.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), 210.0, 1e-5);
 
   // The other bound is on the edge of the bound.
   c[0] = Range(-2.0, 0.0);
@@ -304,8 +320,8 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistanceBound)
   c[3] = Range(-10.0, -5.0);
   c[4] = Range(2.0, 3.0);
 
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), sqrt(134.0), 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), sqrt(134.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 134.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), 134.0, 1e-5);
 
   // The other bound partially overlaps the bound.
   c[0] = Range(-2.0, 1.0);
@@ -314,12 +330,12 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistanceBound)
   c[3] = Range(-8.0, -4.0);
   c[4] = Range(0.0, 4.0);
 
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), sqrt(102.0), 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), sqrt(102.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 102.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), 102.0, 1e-5);
 
   // The other bound fully overlaps the bound.
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(b), sqrt(46.0), 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MaxDistance(c), sqrt(61.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(b), 46.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(c), 61.0, 1e-5);
 
   // The other bound is entirely inside the bound / the other bound entirely
   // envelops the bound.
@@ -329,13 +345,13 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistanceBound)
   c[3] = Range(-7.0, 0.0);
   c[4] = Range(0.0, 5.0);
 
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), sqrt(100.0), 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), sqrt(100.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 100.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), 100.0, 1e-5);
 
   // Identical bounds.  This will be the sum of the squared widths in each
   // dimension.
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(b), sqrt(46.0), 1e-5);
-  BOOST_REQUIRE_CLOSE(c.MaxDistance(c), sqrt(162.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(b), 46.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(c), 162.0, 1e-5);
 
   // One last additional case.  If the bound encloses only one point, the
   // maximum distance between it and itself is 0.
@@ -349,7 +365,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundMaxDistanceBound)
 
 /**
  * Ensure that the ranges returned by RangeDistance() are equal to the minimum
- * and maximum distance.  We will perform this test by creating random bounds
+ * and maximum distance.  We will perform this test by creating  bounds
  * and comparing the behavior to MinDistance() and MaxDistance() -- so this test
  * is assuming that those passed and operate correctly.
  */
@@ -941,34 +957,6 @@ BOOST_AUTO_TEST_CASE(HRectBoundRootRangeDistancePoint)
 }
 
 /**
- * Ensure that HRectBound::Diameter() works properly.
- */
-BOOST_AUTO_TEST_CASE(HRectBoundDiameter)
-{
-  HRectBound<3> b(4);
-  b[0] = math::Range(0.0, 1.0);
-  b[1] = math::Range(-1.0, 0.0);
-  b[2] = math::Range(2.0, 3.0);
-  b[3] = math::Range(7.0, 7.0);
-
-  BOOST_REQUIRE_CLOSE(b.Diameter(), std::pow(3.0, 1.0 / 3.0), 1e-5);
-
-  HRectBound<2, false> c(4);
-  c[0] = math::Range(0.0, 1.0);
-  c[1] = math::Range(-1.0, 0.0);
-  c[2] = math::Range(2.0, 3.0);
-  c[3] = math::Range(0.0, 0.0);
-
-  BOOST_REQUIRE_CLOSE(c.Diameter(), 3.0, 1e-5);
-
-  HRectBound<5> d(2);
-  d[0] = math::Range(2.2, 2.2);
-  d[1] = math::Range(1.0, 1.0);
-
-  BOOST_REQUIRE_SMALL(d.Diameter(), 1e-5);
-}
-
-/**
  * Ensure that a bound, by default, is empty and has no dimensionality, and the
  * box size vector is empty.
  */
@@ -1520,53 +1508,6 @@ BOOST_AUTO_TEST_CASE(TreeCountMismatch)
   BOOST_REQUIRE(rootNode.Right()->Right()->Count() == 1);
 }
 
-BOOST_AUTO_TEST_CASE(CheckParents)
-{
-  arma::mat dataset = "2.0 5.0 9.0 4.0 8.0 7.0;"
-                      "3.0 4.0 6.0 7.0 1.0 2.0 ";
-
-  // Leaf size of 1.
-  BinarySpaceTree<HRectBound<2> > rootNode(dataset, 1);
-
-  BOOST_REQUIRE_EQUAL(rootNode.Parent(),
-      (BinarySpaceTree<HRectBound<2> >*) NULL);
-  BOOST_REQUIRE_EQUAL(&rootNode, rootNode.Left()->Parent());
-  BOOST_REQUIRE_EQUAL(&rootNode, rootNode.Right()->Parent());
-  BOOST_REQUIRE_EQUAL(rootNode.Left(), rootNode.Left()->Left()->Parent());
-  BOOST_REQUIRE_EQUAL(rootNode.Left(), rootNode.Left()->Right()->Parent());
-  BOOST_REQUIRE_EQUAL(rootNode.Left()->Left(),
-      rootNode.Left()->Left()->Left()->Parent());
-  BOOST_REQUIRE_EQUAL(rootNode.Left()->Left(),
-      rootNode.Left()->Left()->Right()->Parent());
-  BOOST_REQUIRE_EQUAL(rootNode.Right(), rootNode.Right()->Left()->Parent());
-  BOOST_REQUIRE_EQUAL(rootNode.Right(), rootNode.Right()->Right()->Parent());
-  BOOST_REQUIRE_EQUAL(rootNode.Right()->Left(),
-      rootNode.Right()->Left()->Left()->Parent());
-  BOOST_REQUIRE_EQUAL(rootNode.Right()->Left(),
-      rootNode.Right()->Left()->Right()->Parent());
-}
-
-BOOST_AUTO_TEST_CASE(CheckDataset)
-{
-  arma::mat dataset = "2.0 5.0 9.0 4.0 8.0 7.0;"
-                      "3.0 4.0 6.0 7.0 1.0 2.0 ";
-
-  // Leaf size of 1.
-  BinarySpaceTree<HRectBound<2> > rootNode(dataset, 1);
-
-  BOOST_REQUIRE_EQUAL(&rootNode.Dataset(), &dataset);
-  BOOST_REQUIRE_EQUAL(&rootNode.Left()->Dataset(), &dataset);
-  BOOST_REQUIRE_EQUAL(&rootNode.Right()->Dataset(), &dataset);
-  BOOST_REQUIRE_EQUAL(&rootNode.Left()->Left()->Dataset(), &dataset);
-  BOOST_REQUIRE_EQUAL(&rootNode.Left()->Right()->Dataset(), &dataset);
-  BOOST_REQUIRE_EQUAL(&rootNode.Right()->Left()->Dataset(), &dataset);
-  BOOST_REQUIRE_EQUAL(&rootNode.Right()->Right()->Dataset(), &dataset);
-  BOOST_REQUIRE_EQUAL(&rootNode.Left()->Left()->Left()->Dataset(), &dataset);
-  BOOST_REQUIRE_EQUAL(&rootNode.Left()->Left()->Right()->Dataset(), &dataset);
-  BOOST_REQUIRE_EQUAL(&rootNode.Right()->Left()->Left()->Dataset(), &dataset);
-  BOOST_REQUIRE_EQUAL(&rootNode.Right()->Left()->Right()->Dataset(), &dataset);
-}
-
 // Ensure FurthestDescendantDistance() works.
 BOOST_AUTO_TEST_CASE(FurthestDescendantDistanceTest)
 {
@@ -1579,7 +1520,7 @@ BOOST_AUTO_TEST_CASE(FurthestDescendantDistanceTest)
 
   // Both points are contained in the one node.
   BinarySpaceTree<HRectBound<2> > twoPoint(dataset);
-  BOOST_REQUIRE_CLOSE(twoPoint.FurthestDescendantDistance(), sqrt(2.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(twoPoint.FurthestDescendantDistance(), 2, 1e-5);
 }
 
 // Forward declaration of methods we need for the next test.
@@ -1695,9 +1636,12 @@ bool CheckPointBounds(TreeType* node, const MatType& data)
   TreeType* left = node->Left();
   TreeType* right = node->Right();
 
+  size_t begin = node->Begin();
+  size_t count = node->Count();
+
   // Check that each point which this tree claims is actually inside the tree.
-  for (size_t index = 0; index < node->NumDescendants(); index++)
-    if (!node->Bound().Contains(data.col(node->Descendant(index))))
+  for (size_t index = begin; index < begin + count; index++)
+    if (!node->Bound().Contains(data.col(index)))
       return false;
 
   return CheckPointBounds(left, data) && CheckPointBounds(right, data);
@@ -1746,11 +1690,6 @@ void GenerateVectorOfTree(TreeType* node,
 }
 
 #ifdef ARMA_HAS_SPMAT
-// Only run sparse tree tests if we are using Armadillo 3.6.  Armadillo 3.4 has
-// some bugs that cause the kd-tree splitting procedure to fail terribly.  Soon,
-// that version will be obsolete, though.
-#if !((ARMA_VERSION_MAJOR == 3) && (ARMA_VERSION_MINOR == 4))
-
 /**
  * Exhaustive sparse kd-tree test based on #125.
  *
@@ -1839,8 +1778,6 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSparseKDTreeTest)
   // Check the tree depth.
   BOOST_REQUIRE_EQUAL(root.TreeDepth(), 7);
 }
-
-#endif // Using Armadillo 3.4.
 #endif // ARMA_HAS_SPMAT
 
 template<typename TreeType>
@@ -2051,13 +1988,12 @@ BOOST_AUTO_TEST_CASE(CoverTreeManualConstructorTest)
   arma::mat dataset;
   dataset.zeros(10, 10);
 
-  CoverTree<> node(dataset, 1.3, 3, 2, NULL, 1.5, 2.75);
+  CoverTree<> node(dataset, 1.3, 3, 2, 1.5, 2.75);
 
   BOOST_REQUIRE_EQUAL(&node.Dataset(), &dataset);
   BOOST_REQUIRE_EQUAL(node.Base(), 1.3);
   BOOST_REQUIRE_EQUAL(node.Point(), 3);
   BOOST_REQUIRE_EQUAL(node.Scale(), 2);
-  BOOST_REQUIRE_EQUAL(node.Parent(), (CoverTree<>*) NULL);
   BOOST_REQUIRE_EQUAL(node.ParentDistance(), 1.5);
   BOOST_REQUIRE_EQUAL(node.FurthestDescendantDistance(), 2.75);
 }
@@ -2093,409 +2029,209 @@ BOOST_AUTO_TEST_CASE(CoverTreeAlternateMetricTest)
 }
 
 /**
- * Make sure copy constructor works for the cover tree.
- */
-BOOST_AUTO_TEST_CASE(CoverTreeCopyConstructor)
-{
-  arma::mat dataset;
-  dataset.randu(10, 10); // dataset is irrelevant.
-  CoverTree<> c(dataset, 1.3, 0, 5, NULL, 1.45, 5.2); // Random parameters.
-  c.Children().push_back(new CoverTree<>(dataset, 1.3, 1, 4, &c, 1.3, 2.45));
-  c.Children().push_back(new CoverTree<>(dataset, 1.5, 2, 3, &c, 1.2, 5.67));
-
-  CoverTree<> d = c;
-
-  // Check that everything is the same.
-  BOOST_REQUIRE_EQUAL(c.Dataset().memptr(), d.Dataset().memptr());
-  BOOST_REQUIRE_CLOSE(c.Base(), d.Base(), 1e-50);
-  BOOST_REQUIRE_EQUAL(c.Point(), d.Point());
-  BOOST_REQUIRE_EQUAL(c.Scale(), d.Scale());
-  BOOST_REQUIRE_EQUAL(c.Parent(), d.Parent());
-  BOOST_REQUIRE_EQUAL(c.ParentDistance(), d.ParentDistance());
-  BOOST_REQUIRE_EQUAL(c.FurthestDescendantDistance(),
-                      d.FurthestDescendantDistance());
-  BOOST_REQUIRE_EQUAL(c.NumChildren(), d.NumChildren());
-  BOOST_REQUIRE_NE(&c.Child(0), &d.Child(0));
-  BOOST_REQUIRE_NE(&c.Child(1), &d.Child(1));
-
-  BOOST_REQUIRE_EQUAL(c.Child(0).Parent(), &c);
-  BOOST_REQUIRE_EQUAL(c.Child(1).Parent(), &c);
-  BOOST_REQUIRE_EQUAL(d.Child(0).Parent(), &d);
-  BOOST_REQUIRE_EQUAL(d.Child(1).Parent(), &d);
-
-  // Check that the children are okay.
-  BOOST_REQUIRE_EQUAL(c.Child(0).Dataset().memptr(),
-                      d.Child(0).Dataset().memptr());
-  BOOST_REQUIRE_CLOSE(c.Child(0).Base(), d.Child(0).Base(), 1e-50);
-  BOOST_REQUIRE_EQUAL(c.Child(0).Point(), d.Child(0).Point());
-  BOOST_REQUIRE_EQUAL(c.Child(0).Scale(), d.Child(0).Scale());
-  BOOST_REQUIRE_EQUAL(c.Child(0).ParentDistance(), d.Child(0).ParentDistance());
-  BOOST_REQUIRE_EQUAL(c.Child(0).FurthestDescendantDistance(),
-                      d.Child(0).FurthestDescendantDistance());
-  BOOST_REQUIRE_EQUAL(c.Child(0).NumChildren(), d.Child(0).NumChildren());
-
-  BOOST_REQUIRE_EQUAL(c.Child(1).Dataset().memptr(),
-                      d.Child(1).Dataset().memptr());
-  BOOST_REQUIRE_CLOSE(c.Child(1).Base(), d.Child(1).Base(), 1e-50);
-  BOOST_REQUIRE_EQUAL(c.Child(1).Point(), d.Child(1).Point());
-  BOOST_REQUIRE_EQUAL(c.Child(1).Scale(), d.Child(1).Scale());
-  BOOST_REQUIRE_EQUAL(c.Child(1).ParentDistance(), d.Child(1).ParentDistance());
-  BOOST_REQUIRE_EQUAL(c.Child(1).FurthestDescendantDistance(),
-                      d.Child(1).FurthestDescendantDistance());
-  BOOST_REQUIRE_EQUAL(c.Child(1).NumChildren(), d.Child(1).NumChildren());
-}
-
-/**
- * Make sure copy constructor works right for the binary space tree.
- */
-BOOST_AUTO_TEST_CASE(BinarySpaceTreeCopyConstructor)
-{
-  arma::mat data("1");
-  BinarySpaceTree<HRectBound<2> > b(data);
-  b.Begin() = 10;
-  b.Count() = 50;
-  b.Left() = new BinarySpaceTree<HRectBound<2> >(data);
-  b.Left()->Begin() = 10;
-  b.Left()->Count() = 30;
-  b.Right() = new BinarySpaceTree<HRectBound<2> >(data);
-  b.Right()->Begin() = 40;
-  b.Right()->Count() = 20;
-
-  // Copy the tree.
-  BinarySpaceTree<HRectBound<2> > c(b);
-
-  // Ensure everything copied correctly.
-  BOOST_REQUIRE_EQUAL(b.Begin(), c.Begin());
-  BOOST_REQUIRE_EQUAL(b.Count(), c.Count());
-  BOOST_REQUIRE_NE(b.Left(), c.Left());
-  BOOST_REQUIRE_NE(b.Right(), c.Right());
-
-  // Check the children.
-  BOOST_REQUIRE_EQUAL(b.Left()->Begin(), c.Left()->Begin());
-  BOOST_REQUIRE_EQUAL(b.Left()->Count(), c.Left()->Count());
-  BOOST_REQUIRE_EQUAL(b.Left()->Left(),
-      (BinarySpaceTree<HRectBound<2> >*) NULL);
-  BOOST_REQUIRE_EQUAL(b.Left()->Left(), c.Left()->Left());
-  BOOST_REQUIRE_EQUAL(b.Left()->Right(),
-      (BinarySpaceTree<HRectBound<2> >*) NULL);
-  BOOST_REQUIRE_EQUAL(b.Left()->Right(), c.Left()->Right());
-
-  BOOST_REQUIRE_EQUAL(b.Right()->Begin(), c.Right()->Begin());
-  BOOST_REQUIRE_EQUAL(b.Right()->Count(), c.Right()->Count());
-  BOOST_REQUIRE_EQUAL(b.Right()->Left(),
-      (BinarySpaceTree<HRectBound<2> >*) NULL);
-  BOOST_REQUIRE_EQUAL(b.Right()->Left(), c.Right()->Left());
-  BOOST_REQUIRE_EQUAL(b.Right()->Right(),
-      (BinarySpaceTree<HRectBound<2> >*) NULL);
-  BOOST_REQUIRE_EQUAL(b.Right()->Right(), c.Right()->Right());
-}
-
-//! Count the number of leaves under this node.
-template<typename TreeType>
-size_t NumLeaves(TreeType* node)
-{
-  if (node->NumChildren() == 0)
-    return 1;
-
-  size_t count = 0;
-  for (size_t i = 0; i < node->NumChildren(); ++i)
-    count += NumLeaves(&node->Child(i));
-
-  return count;
-}
-
-//! Returns true if the index is contained somewhere under this node.
-template<typename TreeType>
-bool FindIndex(TreeType* node, const size_t index)
-{
-  for (size_t i = 0; i < node->NumPoints(); ++i)
-    if (node->Point(i) == index)
-      return true;
-
-  for (size_t i = 0; i < node->NumChildren(); ++i)
-    if (FindIndex(&node->Child(i), index))
-      return true;
-
-  return false;
-}
-
-//! Check that the points in the given node are accessible through the
-//! Descendant() function of the root node.
-template<typename TreeType>
-bool CheckAccessibility(TreeType* childNode, TreeType* rootNode)
-{
-  for (size_t i = 0; i < childNode->NumPoints(); ++i)
-  {
-    bool found = false;
-    for (size_t j = 0; j < rootNode->NumDescendants(); ++j)
-    {
-      if (childNode->Point(i) == rootNode->Descendant(j))
-      {
-        found = true;
-        break;
-      }
-    }
-
-    if (!found)
-    {
-      Log::Debug << "Did not find descendant " << childNode->Point(i) << ".\n";
-      return false;
-    }
-  }
-
-  // Now check the children.
-  for (size_t i = 0; i < childNode->NumChildren(); ++i)
-    if (!CheckAccessibility(&childNode->Child(i), rootNode))
-      return false;
-
-  return true;
-}
-
-//! Check that Descendant() and NumDescendants() is right for this node.
-template<typename TreeType>
-void CheckDescendants(TreeType* node)
-{
-  // In a cover tree, the number of leaves should be the number of descendant
-  // points.
-  const size_t numLeaves = NumLeaves(node);
-  BOOST_REQUIRE_EQUAL(numLeaves, node->NumDescendants());
-
-  // Now check that each descendant is somewhere in the tree.
-  for (size_t i = 0; i < node->NumDescendants(); ++i)
-  {
-    Log::Debug << "Check for descendant " << node->Descendant(i) << " (i " <<
-        i << ").\n";
-    BOOST_REQUIRE_EQUAL(FindIndex(node, node->Descendant(i)), true);
-  }
-
-  // Now check that every actual descendant is accessible through the
-  // Descendant() function.
-  BOOST_REQUIRE_EQUAL(CheckAccessibility(node, node), true);
-
-  // Now check that there are no duplicates in the list of descendants.
-  std::vector<size_t> descendants;
-  descendants.resize(node->NumDescendants());
-  for (size_t i = 0; i < node->NumDescendants(); ++i)
-    descendants[i] = node->Descendant(i);
-
-  // Sort the list.
-  std::sort(descendants.begin(), descendants.end());
-
-  // Check that there are no duplicates (this is easy because it's sorted).
-  for (size_t i = 1; i < descendants.size(); ++i)
-    BOOST_REQUIRE_NE(descendants[i], descendants[i - 1]);
-
-  // Now perform these same checks for the children.
-  for (size_t i = 0; i < node->NumChildren(); ++i)
-    CheckDescendants(&node->Child(i));
-}
-
-/**
- * Make sure Descendant() and NumDescendants() works properly for the cover
- * tree.
- */
-BOOST_AUTO_TEST_CASE(CoverTreeDescendantTest)
-{
-  arma::mat dataset;
-  dataset.randu(3, 100);
-
-  CoverTree<> tree(dataset);
-
-  // Now check that the NumDescendants() count and each Descendant() is right
-  // using the recursive function above.
-  CheckDescendants(&tree);
-}
-
-/*
- * Make sure that constructor for cosine tree is working.
- */
+ * Make sure that constructor for cosine tree is working
+ */ 
 BOOST_AUTO_TEST_CASE(CosineTreeConstructorTest)
 {
-  // Create test data.
-  arma::mat data = arma::randu<arma::mat>(5, 5);
-  arma::rowvec centroid = arma::randu<arma::rowvec>(1, 5);
-  arma::vec probabilities = arma::randu<arma::vec>(5, 1);
+  //Creating Dummy Test Data
+  arma::mat A = arma::randu<arma::mat>(5,5); 
+  arma::rowvec centroid = arma::randu<arma::rowvec>(1,5);
+  arma::vec probabilities = arma::randu<arma::vec>(5,1);
 
-  // Creating a cosine tree.
-  CosineTree ct(data, centroid, probabilities);
+  //Creating a Cosine Tree object
+  CosineTree ct(A,centroid,probabilities);
+  
+  //Getters  
+  arma::mat Aret = ct.Data();
+  arma::rowvec centroidRet = ct.Centroid();
+  arma::vec probabilitiesRet = ct.Probabilities();
+  
+  //Checking correctness of dimentionality of A 
+  BOOST_REQUIRE_EQUAL(A.n_cols, Aret.n_rows);
+  BOOST_REQUIRE_EQUAL(A.n_rows, Aret.n_cols);  
 
-  const arma::mat& dataRet = ct.Data();
-  const arma::rowvec& centroidRet = ct.Centroid();
-  const arma::vec& probabilitiesRet = ct.Probabilities();
-
-  // Check correctness of dimensionality of data matrix.
-  BOOST_REQUIRE_EQUAL(data.n_cols, dataRet.n_cols);
-  BOOST_REQUIRE_EQUAL(data.n_rows, dataRet.n_rows);
-
-  // Check the data matrix.
-  for (size_t i = 0; i < data.n_cols; i++)
-    for (size_t j = 0; j < data.n_rows; j++)
-      BOOST_REQUIRE_CLOSE((double) dataRet(j, i), (double) data(j, i), 1e-5);
-
-  // Check correctness of dimensionality of centroid.
+  //Checking A
+  for (size_t i=0;i<A.n_cols;i++)
+    for (size_t j=0;j<A.n_rows;j++)
+      BOOST_REQUIRE_CLOSE(Aret(j,i), A(i,j), 1e-5);
+ 
+  //Checking correctness of dimentionality of centroid 
   BOOST_REQUIRE_EQUAL(centroid.n_cols, centroidRet.n_cols);
   BOOST_REQUIRE_EQUAL(centroid.n_rows, centroidRet.n_rows);
 
-  // Check centroid.
-  for (size_t i = 0; i < centroid.n_cols; i++)
-    BOOST_REQUIRE_CLOSE((double) centroidRet(0, i), (double) centroid(0,i),
-        1e-5);
-
-  // Check correctness of dimentionality of sampling probabilities.
+  //Checking centroid
+  for (size_t i=0;i<centroid.n_cols;i++)
+    BOOST_REQUIRE_CLOSE(centroidRet(0,i), centroid(0,i), 1e-5);
+  
+  //Checking correctness of dimentionality of sampling probabilities
   BOOST_REQUIRE_EQUAL(probabilities.n_cols, probabilitiesRet.n_cols);
   BOOST_REQUIRE_EQUAL(probabilities.n_rows, probabilitiesRet.n_rows);
 
-  // Check sampling probabilities.
-  for (size_t i = 0; i < probabilities.n_rows; i++)
-    BOOST_REQUIRE_CLOSE((double) probabilitiesRet(i, 0), (double)
-        probabilities(i, 0), 1e-5);
-
-  // Check pointers of children nodes.
-  BOOST_REQUIRE(ct.Right() == NULL);
-  BOOST_REQUIRE(ct.Left() == NULL);
+  //Checking Sampling Probabilities 
+  for (size_t i=0;i<probabilities.n_rows;i++)
+    BOOST_REQUIRE_CLOSE(probabilitiesRet(i,0), probabilities(i,0), 1e-5);
+  
+  //Checking pointers of children nodes
+  BOOST_REQUIRE_EQUAL((ct.Right()==NULL),1);
+  BOOST_REQUIRE_EQUAL((ct.Left()==NULL),1);
 }
 
 /**
- * Make sure that CTNode function in Cosine tree builder is working.
- */
+ * Make sure that CTNode function in Cosine tree builder is working
+ */ 
 BOOST_AUTO_TEST_CASE(CosineTreeEmptyConstructorTest)
 {
-  // Create a tree through the empty constructor.
+  //Creating an object through the empty constructor
   CosineTree ct;
-
-  // Check to make sure it has no children.
-  BOOST_REQUIRE(ct.Right() == NULL);
-  BOOST_REQUIRE(ct.Left() == NULL);
+  
+  //Checking pointers of children nodes
+  BOOST_REQUIRE_EQUAL((ct.Right()==NULL),1);
+  BOOST_REQUIRE_EQUAL((ct.Left()==NULL),1);
 }
 
 /**
- * Make sure that CTNode function in CosineTreeBuilder is working.
- * This test just validates the dimentionality and data.
- */
+ * Make sure that CTNode function in Cosine tree builder is working
+ * This test just validates the dimentionality and data
+ */ 
 BOOST_AUTO_TEST_CASE(CosineTreeBuilderCTNodeTest)
 {
-  // Create dummy test data.
-  arma::mat data = arma::randu<arma::mat>(5, 5);
-
-  // Create a cosine tree builder object.
+  //Creating Dummy Teat Data
+  arma::mat A = arma::randu<arma::mat>(5,5);
+  
+  //Creating a Cosine Tree Builder Object
   CosineTreeBuilder builder;
-
-  // Create a cosine tree object.
+  
+  //Creating a Cosine Tree Object
   CosineTree ct;
+  
+  //Creating a Cosine Tree Node through Cosine Tree Builder
+  builder.CTNode(A,ct);
 
-  // Use the builder to create the tree.
-  builder.CTNode(data, ct);
+  //Getters  
+  arma::mat Aret = ct.Data();
+  arma::rowvec centroidRet = ct.Centroid();
+  arma::vec probabilitiesRet = ct.Probabilities();
 
-  const arma::mat& dataRet = ct.Data();
-  const arma::rowvec& centroidRet = ct.Centroid();
-  const arma::vec& probabilitiesRet = ct.Probabilities();
+  //Checking correctness of dimentionality of A 
+  BOOST_REQUIRE_EQUAL(A.n_cols, Aret.n_rows);
+  BOOST_REQUIRE_EQUAL(A.n_rows, Aret.n_cols);  
 
-  // Check correctness of dimentionality of data.
-  BOOST_REQUIRE_EQUAL(data.n_cols, dataRet.n_cols);
-  BOOST_REQUIRE_EQUAL(data.n_rows, dataRet.n_rows);
-
-  // Check data.
-  for (size_t i = 0; i < data.n_cols; i++)
-    for (size_t j = 0; j < data.n_rows; j++)
-      BOOST_REQUIRE_CLOSE((double) dataRet(j, i), (double) data(j, i), 1e-5);
-
-  // Check correctness of dimensionality of centroid.
-  BOOST_REQUIRE_EQUAL(data.n_cols, centroidRet.n_cols);
+  //Checking A
+  for (size_t i=0;i<A.n_cols;i++)
+    for (size_t j=0;j<A.n_rows;j++)
+      BOOST_REQUIRE_CLOSE(Aret(j,i), A(i,j), 1e-5);
+ 
+  //Checking correctness of dimentionality of centroid 
+  BOOST_REQUIRE_EQUAL(A.n_cols, centroidRet.n_cols);
   BOOST_REQUIRE_EQUAL(1, centroidRet.n_rows);
 
-  // Check correctness of dimensionality of sampling probabilities.
+  //Checking correctness of dimentionality of sampling probabilities
   BOOST_REQUIRE_EQUAL(1, probabilitiesRet.n_cols);
-  BOOST_REQUIRE_EQUAL(data.n_rows, probabilitiesRet.n_rows);
-
-  // Check pointers of children nodes.
-  BOOST_REQUIRE(ct.Right() == NULL);
-  BOOST_REQUIRE(ct.Left() == NULL);
+  BOOST_REQUIRE_EQUAL(A.n_rows, probabilitiesRet.n_rows);
+  
+  //Checking pointers of children nodes
+  BOOST_REQUIRE_EQUAL((ct.Right()==NULL),1);
+  BOOST_REQUIRE_EQUAL((ct.Left()==NULL),1);
 
 }
 
 /**
- * Make sure that the centroid is calculated correctly when the cosine tree is
- * built.
- */
+ * Make sure that Centroid is calculated correctly
+ */ 
 BOOST_AUTO_TEST_CASE(CosineTreeBuilderCentroidTest)
 {
-  // Create dummy test data.
-  arma::mat data;
-  data << 1.0 << 4.0 << 2.5 << arma::endr
-       << 2.0 << 2.0 << 3.0 << arma::endr
-       << 3.0 << 3.0 << 2.0 << arma::endr;
+  //Creating Dummy Test Data
+  arma::mat A;
+  A << 1.0 << 2.0 << 3.0 << arma::endr
+    << 4.0 << 2.0 << 3.0 << arma::endr
+    << 2.5 << 3.0 << 2.0 << arma::endr;  
 
-  // Expected centroid.
+  //Expected Centroid
   arma::vec c;
   c << 2.0 << 3.0 << 2.5 << arma::endr;
-
-  // Build the cosine tree.
+ 
+  //Creating a Cosine Tree Builder Object
   CosineTreeBuilder builder;
-  CosineTree ct;
-  builder.CTNode(data, ct);
 
-  // Get the centroid.
+  //Creating a Cosine Tree Object
+  CosineTree ct;
+  
+  //Crating a Node
+  builder.CTNode(A,ct);
+
+  //Getting centroid
   arma::rowvec centroid = ct.Centroid();
 
-  // Check correctness of the centroid.
-  BOOST_REQUIRE_CLOSE((double) c(0, 0), (double) centroid(0, 0), 1e-5);
-  BOOST_REQUIRE_CLOSE((double) c(1, 0), (double) centroid(0, 1), 1e-5);
-  BOOST_REQUIRE_CLOSE((double) c(2, 0), (double) centroid(0, 2), 1e-5);
+  //Checkin correctness of the centroid
+  BOOST_REQUIRE_CLOSE(c(0,0), centroid(0,0), 1e-5);
+  BOOST_REQUIRE_CLOSE(c(1,0), centroid(0,1), 1e-5);
+  BOOST_REQUIRE_CLOSE(c(2,0), centroid(0,2), 1e-5);
 }
-
 /**
- * Make sure that the sampling probabilities are calculated correctly when the
- * cosine tree is built.
- */
+ * Make sure that the sampling probabilities is calculated correctly
+}
+ */ 
 BOOST_AUTO_TEST_CASE(CosineTreeBuilderProbabilitiesTest)
 {
-  // Create dummy test data.
-  arma::mat data;
-  data << 100.0 << 400.0 << 200.5 << arma::endr
-       <<   2.0 <<   2.0 <<   3.0 << arma::endr
-       <<   3.0 <<   3.0 <<   2.0 << arma::endr;
-
-  // Expected sample probability.
+  //Creating Dummy Test Data
+  arma::mat A;
+  A << 100.0 << 2.0 << 3.0 << arma::endr
+    << 400.0 << 2.0 << 3.0 << arma::endr
+    << 200.5 << 3.0 << 2.0 << arma::endr;
+  
+  //Expected Sample Probability    
   arma::vec p;
   p << 0.999907 << 0.00899223 << 0.0102295 << arma::endr;
-
-  // Create the cosine tree.
+  
+  //Expectec sampling values
+ 
+  //Creating a Cosine Tree Builder Object
   CosineTreeBuilder builder;
+
+  //Creating a Cosine Tree Object
   CosineTree ct;
-  builder.CTNode(data, ct);
+  
+  //Crating a Node
+  builder.CTNode(A,ct);
 
-  // Get the probabilities.
-  const arma::vec& probabilities = ct.Probabilities();
+  //Getting probabilities
+  arma::vec probabilities = ct.Probabilities();
 
-  // Check correctness of sampling probabilities.
-  BOOST_REQUIRE_CLOSE((double) p(0, 0), (double) probabilities(0, 0), 1e-4);
-  BOOST_REQUIRE_CLOSE((double) p(1, 0), (double) probabilities(1, 0), 1e-4);
-  BOOST_REQUIRE_CLOSE((double) p(2, 0), (double) probabilities(2, 0), 1e-4);
+  //Checkin correctness of sampling probabilities
+  BOOST_REQUIRE_CLOSE(p(0,0), probabilities(0,0), 1e-4);
+  BOOST_REQUIRE_CLOSE(p(1,0), probabilities(1,0), 1e-4);
+  BOOST_REQUIRE_CLOSE(p(2,0), probabilities(2,0), 1e-4);
 }
-
 /**
- * Make sure that the cosine tree builder is splitting nodes.
- */
+ * Make sure that Cosine Tree builder is splitting nodes
+ */ 
 BOOST_AUTO_TEST_CASE(CosineTreeBuilderCTNodeSplitTest)
 {
-  // Create dummy test data.
-  arma::mat data;
-  data << 100.0 << 400.0 << 200.5 << arma::endr
-       <<   2.0 <<   2.0 <<   3.0 << arma::endr
-       <<   3.0 <<   3.0 <<   2.0 << arma::endr;
-
-  // Build a cosine tree root node, and then split it.
+  //Creating Dummy Test Data
+  arma::mat A;
+  
+  A << 100.0 << 2.0 << 3.0 << arma::endr
+    << 400.0 << 2.0 << 3.0 << arma::endr 
+    << 200.5 << 3.0 << 2.0 << arma::endr;
+  
+  //Creating a Cosine Tree Builder Object
   CosineTreeBuilder builder;
+
+  //Creating Cosine Tree Objects
   CosineTree root, left, right;
-  builder.CTNode(data, root);
+    
+  //Crating a Root Node
+  builder.CTNode(A,root);
+
+  //Splitting the root node into child nodes
   builder.CTNodeSplit(root, left, right);
+  
+  //Ensuring no data loss
+  BOOST_REQUIRE_EQUAL((left.NumPoints() + right.NumPoints()), root.NumPoints());  
 
-  // Ensure that there is no data loss.
-  BOOST_REQUIRE_EQUAL((left.NumPoints() + right.NumPoints()), root.NumPoints());
-
-  // Ensure that the dimensionality is correct.
-  BOOST_REQUIRE_EQUAL(left.Data().n_cols, data.n_cols);
-  BOOST_REQUIRE_EQUAL(right.Data().n_cols, data.n_cols);
+  //Ensuring dimensionality is correct
+  BOOST_REQUIRE_EQUAL(left.Data().n_cols, A.n_cols);
+  BOOST_REQUIRE_EQUAL(right.Data().n_cols, A.n_cols);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

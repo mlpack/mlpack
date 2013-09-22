@@ -13,7 +13,7 @@ namespace mlpack {
 namespace tree {
 
 CosineTree::CosineTree(arma::mat data, arma::rowvec centroid, arma::vec probabilities) : 
-    data(data),
+    data(data.t()),
     centroid(centroid),
     probabilities(probabilities),
     left(NULL),
@@ -71,11 +71,6 @@ size_t CosineTree::NumPoints() const
   return numPoints;
 }
 
-void CosineTree::NumPoints(size_t n)
-{
-  numPoints = n;
-}
-
 arma::mat CosineTree::Data()
 {
   return data;
@@ -84,6 +79,7 @@ arma::mat CosineTree::Data()
 void CosineTree::Data(arma::mat& d)
 {
     data = d;
+    numPoints = d.n_rows;
 }
 
 arma::vec CosineTree::Probabilities() 

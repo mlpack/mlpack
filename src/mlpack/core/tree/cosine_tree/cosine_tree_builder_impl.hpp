@@ -45,6 +45,7 @@ arma::rowvec CosineTreeBuilder::CalculateCentroid(arma::mat A) const
 
 void CosineTreeBuilder::CTNode(arma::mat A, CosineTree& root)
 {
+  A = A.t();
   Log::Info<<"CTNode"<<std::endl;
   //Calculating Centroid
   arma::rowvec centroid = CalculateCentroid(A);
@@ -55,9 +56,6 @@ void CosineTreeBuilder::CTNode(arma::mat A, CosineTree& root)
   root.Probabilities(probabilities);
   root.Data(A);
   root.Centroid(centroid);
-  root.Left(NULL);
-  root.Right(NULL);
-  root.NumPoints(A.n_rows);
 }
 
 size_t CosineTreeBuilder::GetPivot(arma::vec prob)
@@ -156,13 +154,13 @@ void CosineTreeBuilder::CTNodeSplit(CosineTree& root, CosineTree& left,
   //Creating Nodes
   if(ALeft.n_rows > 0)
   {
-    CTNode(ALeft,left);
+    CTNode(ALeft.t(),left);
     //TODO: Traversal is not required, still fix this
     //root.Left(left);
   }
   if(ARight.n_rows > 0)
   {
-    CTNode(ARight,right);
+    CTNode(ARight.t(),right);
     //TODO: Traversal is not required, still fix this
     //root.Right(right);
   }
