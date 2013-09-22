@@ -4,17 +4,18 @@
  *
  * Implementation of cosine tree builder.
  */
-
 #ifndef __MLPACK_CORE_TREE_COSINE_TREE_COSINE_TREE_BUILDER_IMPL_HPP
 #define __MLPACK_CORE_TREE_COSINE_TREE_COSINE_TREE_BUILDER_IMPL_HPP
 
 #include "cosine_tree_builder.hpp"
 
+#include <mlpack/core/kernels/cosine_distance.hpp>
+
 namespace mlpack {
 namespace tree {
 
 // Empty Constructor
-CosineTreeBuilder::CosineTreeBuilder() 
+CosineTreeBuilder::CosineTreeBuilder()
 {
   Log::Info<<"Constructor"<<std::endl;
 }
@@ -30,27 +31,6 @@ void CosineTreeBuilder::LSSampling(arma::mat A, arma::vec& probability)
   //Calculating probability of each point to be sampled
   for (size_t i=0;i<A.n_rows;i++)
     probability(i) = arma::norm(A.row(i),"fro")/normA;
-}
-
-double CosineTreeBuilder::EuclideanNorm(arma::vec A)
-{
-   Log::Info<<"EuclideanNorm"<<std::endl;
-   //Calculating the Euclidean Norm
-   return sqrt(arma::sum(arma::square(A)));
-}
-
-double CosineTreeBuilder::CosineSimilarity(arma::vec A, arma::vec B)
-{
-  Log::Info<<"CosineSimilarity"<<std::endl;
-  //Value of the cosine
-  double value = arma::dot(A,B)/(EuclideanNorm(A)*EuclideanNorm(B));
-  //Stripping to account for floating point error
-  if (value > 1.0)
-    value = 1.0;
-  if (value < -1.0)
-    value = -1.0;
-  //Calculating angle
-  return acos(value);
 }
 
 arma::rowvec CosineTreeBuilder::CalculateCentroid(arma::mat A) const
@@ -84,9 +64,9 @@ size_t CosineTreeBuilder::GetPivot(arma::vec prob)
 {
   Log::Info<<"GetPivot"<<std::endl;
   //Setting firtst value as the pivot
-  double maxPivot=prob(0,0); 
+  double maxPivot=prob(0,0);
   size_t pivot=0;
- 
+
   //Searching for the pivot poitn
   for (size_t i=0;i<prob.n_rows;i++)
   {
@@ -99,7 +79,7 @@ size_t CosineTreeBuilder::GetPivot(arma::vec prob)
   return pivot;
 }
 
-void CosineTreeBuilder::SplitData(std::vector<double> c, arma::mat& ALeft, 
+void CosineTreeBuilder::SplitData(std::vector<double> c, arma::mat& ALeft,
                                   arma::mat& ARight,arma::mat A)
 {
   Log::Info<<"SplitData"<<std::endl;
@@ -109,7 +89,7 @@ void CosineTreeBuilder::SplitData(std::vector<double> c, arma::mat& ALeft,
   cMax = GetMinSimilarity(c);
   //Couter for left and right
   size_t lft, rgt;
-  lft = 0; 
+  lft = 0;
   rgt = 0;
   //Splitting on the basis of nearness to the the high or low value
   for(size_t i=0;i<A.n_rows;i++)
@@ -127,19 +107,23 @@ void CosineTreeBuilder::SplitData(std::vector<double> c, arma::mat& ALeft,
   }
 }
 
-void CosineTreeBuilder::CreateCosineSimilarityArray(std::vector<double>& c, 
+void CosineTreeBuilder::CreateCosineSimilarityArray(std::vector<double>& c,
                                                     arma::mat A, size_t pivot)
 {
   Log::Info<<"CreateCosineSimilarityArray"<<std::endl;
-  for(size_t i=0;i<A.n_rows;i++)
-    c.push_back(CosineSimilarity(A.row(pivot).t(),A.row(i).t()));
+  for (size_t i = 0; i < A.n_rows; i++)
+  {
+    const double similarity =
+        kernel::CosineDistance::Evaluate(A.row(pivot), A.row(i));
+    c.push_back(similarity);
+  }
 }
 double CosineTreeBuilder::GetMinSimilarity(std::vector<double> c)
 {
   Log::Info<<"GetMinSimilarity"<<std::endl;
   double cMin = c[0];
   for(size_t i=1;i<c.size();i++)
-    if(cMin<c[i])  
+    if(cMin<c[i])
       cMin = c[i];
   return cMin;
 }
@@ -148,11 +132,11 @@ double CosineTreeBuilder::GetMaxSimilarity(std::vector<double> c)
   Log::Info<<"GetMaxSimilarity"<<std::endl;
   double cMax = c[0];
   for(size_t i=1;i<c.size();i++)
-    if(cMax<c[i])  
+    if(cMax<c[i])
       cMax = c[i];
   return cMax;
 }
-void CosineTreeBuilder::CTNodeSplit(CosineTree& root, CosineTree& left, 
+void CosineTreeBuilder::CTNodeSplit(CosineTree& root, CosineTree& left,
                                     CosineTree& right)
 {
   //Extracting points from the root

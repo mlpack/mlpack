@@ -25,7 +25,7 @@ class CosineTreeBuilder
    * @param A Matrix for which probabilities are calculated
    * @param prob Reference to the probability vector
    */
-  void LSSampling(arma::mat A, arma::vec& prob); 
+  void LSSampling(arma::mat A, arma::vec& prob);
 
   /**
    * Calculates the centroid of the matrix
@@ -35,27 +35,12 @@ class CosineTreeBuilder
   arma::rowvec CalculateCentroid(arma::mat A) const;
 
   /**
-   * Calculates the Cosine Similarity between two vector
-   * 
-   * @param A Vector 1
-   * @param B Vector 2
-   */  
-  double CosineSimilarity(arma::vec A, arma::vec B);
-
-  /**
-   * Return the Euclidean Norm of the vectoe
-   * 
-   * @param A Vector for which Euclidean Norm has to be calculated
-   */
-  double EuclideanNorm(arma::vec A);
-  
-  /**
    * Calculates the Pivot for splitting
-   * 
+   *
    * @param prob Probability for a point to act as the pivot
    */
   size_t GetPivot(arma::vec prob);
-  
+
   /**
    * Splits the points into the root node into children nodes
    *
@@ -64,7 +49,7 @@ class CosineTreeBuilder
    * @param ARight Matrix for storing the points in Right Node
    * @param A All points
    */
-  void SplitData(std::vector<double> c, arma::mat& ALeft, 
+  void SplitData(std::vector<double> c, arma::mat& ALeft,
                  arma::mat& Aright, arma::mat A);
 
   /**
@@ -74,31 +59,31 @@ class CosineTreeBuilder
    * @param A All points
    * @param pivot pivot point
    */
-  void CreateCosineSimilarityArray(std::vector<double>& c, 
+  void CreateCosineSimilarityArray(std::vector<double>& c,
                                    arma::mat A, size_t pivot);
-  
+
   /**
    * Calculates Maximum Cosine Similarity
    *
    * @param c Array of Cosine Similarities
    */
   double GetMaxSimilarity(std::vector<double> c);
-   
+
   /**
    * Calculates Maximum Cosine Similarity
    *
    * @param c Array of Cosine Similarities
    */
   double GetMinSimilarity(std::vector<double> c);
- 
+
  public:
   //! Empty Constructor
   CosineTreeBuilder();
   //! Destructor
   ~CosineTreeBuilder();
- 
-  /** 
-   * Creates a new cosine tree node 
+
+  /**
+   * Creates a new cosine tree node
    *
    * @param A Data for constructing the node
    * @param root Reference to the constructed node
@@ -107,7 +92,7 @@ class CosineTreeBuilder
 
   /**
    * Splits a cosine tree node
-   * 
+   *
    * @param root Node to be split
    * @param right reference to the right child
    * @param left reference to the left child
