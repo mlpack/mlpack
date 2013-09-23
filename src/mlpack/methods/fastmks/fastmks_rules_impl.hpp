@@ -208,13 +208,26 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
 
   const double queryDistBound = (queryParentDist + queryDescDist);
   const double refDistBound = (refParentDist + refDescDist);
+  const double dualTerm = queryDistBound * refDistBound;
 
+  // The parent-child and parent-parent prunes work by applying the same pruning
+  // condition, except they are tighter because
+  //    queryDistBound < queryNode.Parent()->FurthestDescendantDistance()
+  // and
+  //    refDistBound < referenceNode.Parent()->FurthestDescendantDistance()
+  // so we construct the same bounds that were used when Score() was called with
+  // the parents, except with the tighter distance bounds.  Sometimes this
+  // allows us to prune nodes without evaluating the base cases between them.
   if ((queryParent != NULL) &&
       (queryParent->Stat().LastKernelNode() == (void*) &referenceNode))
   {
     // Query parent was last evaluated with reference node.
-    const double maxKernelBound = queryParent->Stat().LastKernel() +
+    const double queryKernelTerm =
+        refDistBound * queryParent->Stat().SelfKernel();
+    const double refKernelTerm =
         queryDistBound * referenceNode.Stat().SelfKernel();
+    const double maxKernelBound = queryParent->Stat().LastKernel() +
+        queryKernelTerm + refKernelTerm + dualTerm;
 
     if (maxKernelBound < bestKernel)
       return DBL_MAX;
@@ -223,8 +236,11 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
       (refParent->Stat().LastKernelNode() == (void*) &queryNode))
   {
     // Reference parent was last evaluated with query node.
+    const double queryKernelTerm = refDistBound * queryNode.Stat().SelfKernel();
+    const double refKernelTerm =
+        queryDistBound * refParent->Stat().SelfKernel();
     const double maxKernelBound = refParent->Stat().LastKernel() +
-        (refParentDist + refDescDist) * queryNode.Stat().SelfKernel();
+        queryKernelTerm + refKernelTerm + dualTerm;
 
     if (maxKernelBound < bestKernel)
       return DBL_MAX;
@@ -250,12 +266,10 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
       (refParent->Stat().LastKernelNode() == (void*) queryParent))
   {
     // Reference parent was last calculated with query parent.
-    const double queryKernelTerm = (refParentDist + refDescDist) *
+    const double queryKernelTerm = refDistBound *
         queryParent->Stat().SelfKernel();
-    const double refKernelTerm = (queryParentDist + queryDescDist) *
+    const double refKernelTerm = queryDistBound *
         refParent->Stat().SelfKernel();
-    const double dualTerm = (queryParentDist + queryDescDist) *
-        (refParentDist + refDescDist);
 
     const double maxKernelBound = refParent->Stat().LastKernel() +
         queryKernelTerm + refKernelTerm + dualTerm;
@@ -264,10 +278,13 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
       return DBL_MAX;
   }
 
-  // Calculate kernel evaluation, if necessary.
+  // We were unable to perform a parent-child or parent-parent prune, so now we
+  // must calculate kernel evaluation, if necessary.
   double kernelEval = 0.0;
   if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
   {
+    // For this type of tree, we may have already calculated the base case in
+    // the parents.  So see if it is already cached there.
     bool alreadyDone = false;
     if ((queryNode.Parent() != NULL) &&
         (queryNode.Parent()->Point(0) == queryNode.Point(0)))
