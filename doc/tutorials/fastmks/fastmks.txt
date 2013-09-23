@@ -16,13 +16,14 @@ proposed in the following paper:
   title={Fast Exact Max-Kernel Search},
   author={Curtin, Ryan R. and Ram, Parikshit and Gray, Alexander G.},
   booktitle={Proceedings of the 2013 SIAM International Conference on Data
-      Mining (SDM 13)},
-  year={2013}
+      Mining (SDM '13)},
+  year={2013},
+  pages={1--9}
 }
 @endcode
 
 Given a set of query points \f$Q\f$ and a set of reference points \f$R\f$, the
-FastMKS algorithm is a fast algorithm which finds
+FastMKS algorithm is a fast dual-tree (or single-tree) algorithm which finds
 
 \f[
 \arg\max_{p_r \in R} K(p_q, p_r)
@@ -84,6 +85,17 @@ types of kernels:
  - \ref mlpack::kernel::EpanechnikovKernel "Epanechnikov kernel"
  - \ref mlpack::kernel::TriangularKernel "triangular kernel"
  - \ref mlpack::kernel::HyperbolicTangentKernel "hyperbolic tangent kernel"
+ - \ref mlpack::kernel::LaplacianKernel "Laplacian kernel"
+
+Note that when a shift-invariant kernel is used, the results will be the same as
+nearest neighbor search, so @ref nstutorial "allknn" may be a better option.  A
+shift-invariant kernel is a kernel that depends only on the distance between the
+two input points.  The \ref mlpack::kernel::GaussianKernel "Gaussian kernel",
+\ref mlpack::kernel::EpanechnikovKernel "Epanechnikov kernel", \ref
+mlpack::kernel::TriangularKernel "triangular kernel", and \ref
+mlpack::kernel::LaplacianKernel "Laplacian kernel" are instances of
+shift-invariant kernels.  The paper contains more details on this situation.
+The \c fastmks executable still provides these kernels as options, though.
 
 The following examples detail usage of the \c fastmks program.  Note that you
 can get documentation on all the possible parameters by typing:
@@ -96,11 +108,11 @@ $ fastmks --help
 
 If only one dataset is specified (with \c -r or \c --reference_file), the
 reference dataset is taken to be both the query and reference datasets.  The
-example below finds the 5 maximum kernels of each point in dataset.csv, using
+example below finds the 4 maximum kernels of each point in dataset.csv, using
 the default linear kernel.
 
 @code
-$ fastmks -r dataset.csv -k 5 -v -p products.csv -i indices.csv
+$ fastmks -r dataset.csv -k 4 -v -p products.csv -i indices.csv
 @endcode
 
 When the operation completes, the values of the kernels are saved in
@@ -109,30 +121,30 @@ saved in indices.csv.
 
 @code
 $ head indices.csv
-762,910,863,890,614
-762,910,426,568,863
-910,762,863,426,249
-762,910,863,426,890
-863,910,614,762,159
-762,863,910,614,890
-762,910,488,568,426
-762,910,863,426,614
-910,762,863,426,249
-863,762,910,614,890
+762,910,863,890
+762,910,426,568
+910,762,863,426
+762,910,863,426
+863,910,614,762
+762,863,910,614
+762,910,488,568
+762,910,863,426
+910,762,863,426
+863,762,910,614
 @endcode
 
 @code
 $ head products.csv
-1.6221652894e+00,1.5998743443e+00,1.5898890769e+00,1.5406789753e+00,1.5399969285e+00
-1.3387953449e+00,1.3317349486e+00,1.2966613184e+00,1.2774493620e+00,1.2702400994e+00
-1.6386110476e+00,1.6332029753e+00,1.5952629124e+00,1.5887195330e+00,1.5564789777e+00
-1.0917545803e+00,1.0820878726e+00,1.0668992636e+00,1.0419838050e+00,1.0339546654e+00
-1.2272441028e+00,1.2169643942e+00,1.2104597963e+00,1.2067780154e+00,1.1966583848e+00
-1.5720962456e+00,1.5618504956e+00,1.5609069923e+00,1.5235605095e+00,1.5106847348e+00
-1.3655478674e+00,1.3548593212e+00,1.3311547298e+00,1.3250728881e+00,1.3230827266e+00
-2.0119149744e+00,2.0043668067e+00,1.9847289214e+00,1.9298280046e+00,1.9262610223e+00
-1.1586923205e+00,1.1494586097e+00,1.1274872962e+00,1.1248172766e+00,1.1025268196e+00
-4.4789820372e-01,4.4618539778e-01,4.4200024852e-01,4.3989721792e-01,4.3277728840e-01
+1.6221652894e+00,1.5998743443e+00,1.5898890769e+00,1.5406789753e+00
+1.3387953449e+00,1.3317349486e+00,1.2966613184e+00,1.2774493620e+00
+1.6386110476e+00,1.6332029753e+00,1.5952629124e+00,1.5887195330e+00
+1.0917545803e+00,1.0820878726e+00,1.0668992636e+00,1.0419838050e+00
+1.2272441028e+00,1.2169643942e+00,1.2104597963e+00,1.2067780154e+00
+1.5720962456e+00,1.5618504956e+00,1.5609069923e+00,1.5235605095e+00
+1.3655478674e+00,1.3548593212e+00,1.3311547298e+00,1.3250728881e+00
+2.0119149744e+00,2.0043668067e+00,1.9847289214e+00,1.9298280046e+00
+1.1586923205e+00,1.1494586097e+00,1.1274872962e+00,1.1248172766e+00
+4.4789820372e-01,4.4618539778e-01,4.4200024852e-01,4.3989721792e-01
 @endcode
 
 We can see in this example that for point 0, the point with maximum kernel value
@@ -226,6 +238,7 @@ be manually specified.  Choices that \b mlpack provides include:
  - \ref mlpack::kernel::EpanechnikovKernel
  - \ref mlpack::kernel::TriangularKernel
  - \ref mlpack::kernel::HyperbolicTangentKernel
+ - \ref mlpack::kernel::LaplacianKernel
  - \ref mlpack::kernel::PSpectrumStringKernel
 
 The following examples use kernels from that list.  Writing your own kernel is
@@ -378,6 +391,12 @@ The syntax is similar for the case where different query and reference datasets
 are given; but trees for both need to be built in the manner specified above.
 Be sure to build both trees using the same metric (or at least a metric with the
 exact same parameters).
+
+Note that the cover tree is not the only type of tree that can be used with
+FastMKS.  For a tree to work with FastMKS, it must be able to be built only on
+kernel evaluations (or induced metric evaluations in the kernel space via
+IPMetric::Evaluate()).  Then, specify a custom TreeType as the second template
+parameter of the FastMKS object.
 
 @code
 FastMKS<PolynomialKernel> f(referenceData, referenceTree, queryData, queryTree);
