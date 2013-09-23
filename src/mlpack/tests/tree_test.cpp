@@ -3,16 +3,16 @@
  *
  * Tests for tree-building methods.
  */
-include <mlpack/core.hpp>
-include <mlpack/core/tree/bounds.hpp>
-include <mlpack/core/tree/binary_space_tree/binary_space_tree.hpp>
-include <mlpack/core/metrics/lmetric.hpp>
-include <mlpack/core/tree/cover_tree/cover_tree.hpp>
-include <mlpack/core/tree/cosine_tree/cosine_tree.hpp>
-include <mlpack/core/tree/cosine_tree/cosine_tree_builder.hpp>
+#include <mlpack/core.hpp>
+#include <mlpack/core/tree/bounds.hpp>
+#include <mlpack/core/tree/binary_space_tree/binary_space_tree.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/tree/cover_tree/cover_tree.hpp>
+#include <mlpack/core/tree/cosine_tree/cosine_tree.hpp>
+#include <mlpack/core/tree/cosine_tree/cosine_tree_builder.hpp>
 
-include <boost/test/unit_test.hpp>
-include "old_boost_test_definitions.hpp"
+#include <boost/test/unit_test.hpp>
+#include "old_boost_test_definitions.hpp"
 
 using namespace mlpack;
 using namespace mlpack::math;
@@ -27,9 +27,9 @@ BOOST_AUTO_TEST_SUITE(TreeTest);
  */
 BOOST_AUTO_TEST_CASE(HRectBoundEmptyConstructor)
 {
- HRectBound<2> b;
+  HRectBound<2> b;
 
- BOOST_REQUIRE_EQUAL((int) b.Dim(), 0);
+  BOOST_REQUIRE_EQUAL((int) b.Dim(), 0);
 }
 
 /**
@@ -38,20 +38,20 @@ BOOST_AUTO_TEST_CASE(HRectBoundEmptyConstructor)
  */
 BOOST_AUTO_TEST_CASE(HRectBoundDimConstructor)
 {
- HRectBound<2> b(2); // We'll do this with 2 and 5 dimensions.
+  HRectBound<2> b(2); // We'll do this with 2 and 5 dimensions.
 
- BOOST_REQUIRE_EQUAL(b.Dim(), 2);
- BOOST_REQUIRE_SMALL(b[0].Width(), 1e-5);
- BOOST_REQUIRE_SMALL(b[1].Width(), 1e-5);
+  BOOST_REQUIRE_EQUAL(b.Dim(), 2);
+  BOOST_REQUIRE_SMALL(b[0].Width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[1].Width(), 1e-5);
 
- b = HRectBound<2>(5);
+  b = HRectBound<2>(5);
 
- BOOST_REQUIRE_EQUAL(b.Dim(), 5);
- BOOST_REQUIRE_SMALL(b[0].Width(), 1e-5);
- BOOST_REQUIRE_SMALL(b[1].Width(), 1e-5);
- BOOST_REQUIRE_SMALL(b[2].Width(), 1e-5);
- BOOST_REQUIRE_SMALL(b[3].Width(), 1e-5);
- BOOST_REQUIRE_SMALL(b[4].Width(), 1e-5);
+  BOOST_REQUIRE_EQUAL(b.Dim(), 5);
+  BOOST_REQUIRE_SMALL(b[0].Width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[1].Width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[2].Width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[3].Width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[4].Width(), 1e-5);
 }
 
 /**
@@ -59,17 +59,17 @@ BOOST_AUTO_TEST_CASE(HRectBoundDimConstructor)
  */
 BOOST_AUTO_TEST_CASE(HRectBoundCopyConstructor)
 {
- HRectBound<2> b(2);
- b[0] = Range(0.0, 2.0);
- b[1] = Range(2.0, 3.0);
+  HRectBound<2> b(2);
+  b[0] = Range(0.0, 2.0);
+  b[1] = Range(2.0, 3.0);
 
- HRectBound<2> c(b);
+  HRectBound<2> c(b);
 
- BOOST_REQUIRE_EQUAL(c.Dim(), 2);
- BOOST_REQUIRE_SMALL(c[0].Lo(), 1e-5);
- BOOST_REQUIRE_CLOSE(c[0].Hi(), 2.0, 1e-5);
- BOOST_REQUIRE_CLOSE(c[1].Lo(), 2.0, 1e-5);
- BOOST_REQUIRE_CLOSE(c[1].Hi(), 3.0, 1e-5);
+  BOOST_REQUIRE_EQUAL(c.Dim(), 2);
+  BOOST_REQUIRE_SMALL(c[0].Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(c[0].Hi(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[1].Lo(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[1].Hi(), 3.0, 1e-5);
 }
 
 /**
@@ -77,19 +77,19 @@ BOOST_AUTO_TEST_CASE(HRectBoundCopyConstructor)
  */
 BOOST_AUTO_TEST_CASE(HRectBoundAssignmentOperator)
 {
- HRectBound<2> b(2);
- b[0] = Range(0.0, 2.0);
- b[1] = Range(2.0, 3.0);
+  HRectBound<2> b(2);
+  b[0] = Range(0.0, 2.0);
+  b[1] = Range(2.0, 3.0);
 
- HRectBound<2> c(4);
+  HRectBound<2> c(4);
 
- c = b;
+  c = b;
 
- BOOST_REQUIRE_EQUAL(c.Dim(), 2);
- BOOST_REQUIRE_SMALL(c[0].Lo(), 1e-5);
- BOOST_REQUIRE_CLOSE(c[0].Hi(), 2.0, 1e-5);
- BOOST_REQUIRE_CLOSE(c[1].Lo(), 2.0, 1e-5);
- BOOST_REQUIRE_CLOSE(c[1].Hi(), 3.0, 1e-5);
+  BOOST_REQUIRE_EQUAL(c.Dim(), 2);
+  BOOST_REQUIRE_SMALL(c[0].Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(c[0].Hi(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[1].Lo(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[1].Hi(), 3.0, 1e-5);
 }
 
 /**
@@ -1091,11 +1091,11 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundClear)
 /**
  * Ensure that we get the correct centroid for our bound.
  *
-  BOOST_AUTO_TEST_CASE(PeriodicHRectBoundCentroid) {
+BOOST_AUTO_TEST_CASE(PeriodicHRectBoundCentroid) {
   // Create a simple 3-dimensional bound.  The centroid is not affected by the
   // periodic coordinates.
   PeriodicHRectBound<2> b(arma::vec("100 100 100"));
-	
+
   b[0] = Range(0.0, 5.0);
   b[1] = Range(-2.0, -1.0);
   b[2] = Range(-10.0, 50.0);
@@ -1252,7 +1252,7 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMinDistanceBound)
   // Overlapping the bound.
   c[0] = Range(3.0, 6.0);
   c[1] = Range(1.0, 3.0);
-	
+
   BOOST_REQUIRE_SMALL(b.MinDistance(c), 1e-5);
 
   // One range entirely covering the other
@@ -1297,7 +1297,7 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMinDistanceBound)
   a[0] = Range(-1.0, 1.0); // Crosses over an edge.
   d[0] = Range(11.9, 12.5); // The first right image of the bound starts at 4.0.
   BOOST_REQUIRE_CLOSE(a.MinDistance(d), 0.81, 1e-5);
-	
+
   a[0] = Range(2.0, 3.0);
   d[0] = Range(9.5, 11);
   BOOST_REQUIRE_CLOSE(a.MinDistance(d), 1.0, 1e-5);
@@ -1319,7 +1319,7 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMaxDistancePoint)
 
   b[0] = Range(0.0, 5.0);
   b[1] = Range(2.0, 4.0);
-	
+
   // Inside the bound.
   arma::vec point = "2.5 3.0";
 
@@ -1349,7 +1349,7 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMaxDistancePoint)
   point[0] = 7.5; // Inside first right image of the box.
 
   BOOST_REQUIRE_CLOSE(a.MaxDistance(point), 2.25, 1e-5);
-	
+
   a[0] = Range(0.0, 5.0); // Fills box fully.
   point[1] = 19.3; // Inside the box, which covers everything.
 
@@ -1372,7 +1372,7 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMaxDistancePoint)
 
   a[0] = Range(0.0, 2.0); // On edge of box.
   point[0] = 7.1; // 2.1 away from the first left image of the bound.
-	
+
   BOOST_REQUIRE_CLOSE(a.MaxDistance(point), 4.41, 1e-5);
 
   PeriodicHRectBound<2> d(arma::vec("0.0"));
@@ -1384,13 +1384,13 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMaxDistancePoint)
   PeriodicHRectBound<2> e(arma::vec("-5.0"));
   e[0] = Range(2.0, 4.0); // Box size of -5 should function the same as 5.
   point[0] = -10.8; // Should alias to 4.2.
-	
+
   BOOST_REQUIRE_CLOSE(e.MaxDistance(point), 4.84, 1e-5);
 
   // Switch our bound to a higher dimensionality.  This should ensure that the
   // dimensions are independent like they should be.
   PeriodicHRectBound<2> c(arma::vec("5.0 5.0 5.0 5.0 5.0 5.0 0.0 -5.0"));
-	
+
   c[0] = Range(2.0, 4.0); // Entirely inside box.
   c[1] = Range(0.0, 5.0); // Fills box fully.
   c[2] = Range(-10.0, 10.0); // Larger than the box.
@@ -1409,9 +1409,10 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMaxDistancePoint)
   point[5] = 7.1; // 0.1 away from the first right image of the bound.
   point[6] = 810.0; // 800 away from the only image of the box.
   point[7] = -10.8; // Should alias to 4.2.
-	
+
   BOOST_REQUIRE_CLOSE(c.MaxDistance(point), 672630.65, 1e-10);
 }*/
+
 /**
  * Correctly calculate the maximum distance between the bound and another bound in
  * periodic coordinates.  We have to account for the shifts necessary in
@@ -1443,7 +1444,7 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMaxDistanceBound)
   c[1] = Range(4.0, 6.0);
 
   BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 80.0, 1e-5);
-	
+
   // Overlapping the bound.
 
   c[0] = Range(3.0, 6.0);
@@ -1456,11 +1457,11 @@ BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMaxDistanceBound)
   c[0] = Range(0.0, 6.0);
   c[1] = Range(1.0, 7.0);
 
-  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 61.0, 1e-5);
+   BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 61.0, 1e-5);
 
   // Now we start to invoke the periodicity.  Thess bounds "alias" to (-3.0,
   // -1.0) and (5,0,6.0).
-	
+
   c[0] = Range(97.0, 99.0);
   c[1] = Range(105.0, 106.0);
 
@@ -1615,6 +1616,7 @@ BOOST_AUTO_TEST_CASE(KdTreeTest)
 
   size_t maxRuns = 10; // Ten total tests.
   size_t pointIncrements = 1000; // Range is from 2000 points to 11000.
+
   // We use the default leaf size of 20.
   for(size_t run = 0; run < maxRuns; run++)
   {
@@ -1648,7 +1650,8 @@ BOOST_AUTO_TEST_CASE(KdTreeTest)
         BOOST_REQUIRE_EQUAL(dataset(j, oldToNew[i]), datacopy(j, i));
       }
     }
-   // Now check that each point is contained inside of all bounds above it.
+
+    // Now check that each point is contained inside of all bounds above it.
     CheckPointBounds(&root, dataset);
 
     // Now check that no peers overlap.
@@ -1989,6 +1992,7 @@ BOOST_AUTO_TEST_CASE(SimpleCoverTreeConstructionTest)
   // of sqrt(50).  This means the scale of the root node should be 3 (because
   // 2^3 = 8).
   BOOST_REQUIRE_EQUAL(tree.Scale(), 3);
+
   // Now loop through the tree and ensure that each leaf is only created once.
   arma::vec counts;
   counts.zeros(20);
@@ -2302,211 +2306,196 @@ BOOST_AUTO_TEST_CASE(CoverTreeDescendantTest)
   CheckDescendants(&tree);
 }
 
-
-/**
- * Make sure that constructor for cosine tree is working
- */ 
+/*
+ * Make sure that constructor for cosine tree is working.
+ */
 BOOST_AUTO_TEST_CASE(CosineTreeConstructorTest)
 {
-  //Creating Dummy Test Data
-  arma::mat A = arma::randu<arma::mat>(5,5); 
-  arma::rowvec centroid = arma::randu<arma::rowvec>(1,5);
-  arma::vec probabilities = arma::randu<arma::vec>(5,1);
+  // Create test data.
+  arma::mat data = arma::randu<arma::mat>(5, 5);
+  arma::rowvec centroid = arma::randu<arma::rowvec>(1, 5);
+  arma::vec probabilities = arma::randu<arma::vec>(5, 1);
 
-  //Creating a Cosine Tree object
-  CosineTree ct(A,centroid,probabilities);
-  
-  //Getters  
-  arma::mat Aret = ct.Data();
-  arma::rowvec centroidRet = ct.Centroid();
-  arma::vec probabilitiesRet = ct.Probabilities();
-  
-  //Checking correctness of dimentionality of A 
-  BOOST_REQUIRE_EQUAL(A.n_cols, Aret.n_rows);
-  BOOST_REQUIRE_EQUAL(A.n_rows, Aret.n_cols);  
+  // Creating a cosine tree.
+  CosineTree ct(data, centroid, probabilities);
 
-  //Checking A
-  for (size_t i=0;i<A.n_cols;i++)
-    for (size_t j=0;j<A.n_rows;j++)
-      BOOST_REQUIRE_CLOSE(Aret(j,i), A(i,j), 1e-5);
- 
-  //Checking correctness of dimentionality of centroid 
+  const arma::mat& dataRet = ct.Data();
+  const arma::rowvec& centroidRet = ct.Centroid();
+  const arma::vec& probabilitiesRet = ct.Probabilities();
+
+  // Check correctness of dimensionality of data matrix.
+  BOOST_REQUIRE_EQUAL(data.n_cols, dataRet.n_rows);
+  BOOST_REQUIRE_EQUAL(data.n_rows, dataRet.n_cols);
+
+  // Check the data matrix.
+  for (size_t i = 0; i < data.n_cols; i++)
+    for (size_t j = 0; j < data.n_rows; j++)
+      BOOST_REQUIRE_CLOSE((double) dataRet(j, i), (double) data(i, j), 1e-5);
+
+  // Check correctness of dimensionality of centroid.
   BOOST_REQUIRE_EQUAL(centroid.n_cols, centroidRet.n_cols);
   BOOST_REQUIRE_EQUAL(centroid.n_rows, centroidRet.n_rows);
 
-  //Checking centroid
-  for (size_t i=0;i<centroid.n_cols;i++)
-    BOOST_REQUIRE_CLOSE(centroidRet(0,i), centroid(0,i), 1e-5);
-  
-  //Checking correctness of dimentionality of sampling probabilities
+  // Check centroid.
+  for (size_t i = 0; i < centroid.n_cols; i++)
+    BOOST_REQUIRE_CLOSE((double) centroidRet(0, i), (double) centroid(0,i),
+        1e-5);
+
+  // Check correctness of dimentionality of sampling probabilities.
   BOOST_REQUIRE_EQUAL(probabilities.n_cols, probabilitiesRet.n_cols);
   BOOST_REQUIRE_EQUAL(probabilities.n_rows, probabilitiesRet.n_rows);
 
-  //Checking Sampling Probabilities 
-  for (size_t i=0;i<probabilities.n_rows;i++)
-    BOOST_REQUIRE_CLOSE(probabilitiesRet(i,0), probabilities(i,0), 1e-5);
-  
-  //Checking pointers of children nodes
-  BOOST_REQUIRE_EQUAL((ct.Right()==NULL),1);
-  BOOST_REQUIRE_EQUAL((ct.Left()==NULL),1);
+  // Check sampling probabilities.
+  for (size_t i = 0; i < probabilities.n_rows; i++)
+    BOOST_REQUIRE_CLOSE((double) probabilitiesRet(i, 0), (double)
+        probabilities(i, 0), 1e-5);
+
+  // Check pointers of children nodes.
+  BOOST_REQUIRE(ct.Right() == NULL);
+  BOOST_REQUIRE(ct.Left() == NULL);
 }
 
 /**
- * Make sure that CTNode function in Cosine tree builder is working
- */ 
+ * Make sure that CTNode function in Cosine tree builder is working.
+ */
 BOOST_AUTO_TEST_CASE(CosineTreeEmptyConstructorTest)
 {
-  //Creating an object through the empty constructor
+  // Create a tree through the empty constructor.
   CosineTree ct;
-  
-  //Checking pointers of children nodes
-  BOOST_REQUIRE_EQUAL((ct.Right()==NULL),1);
-  BOOST_REQUIRE_EQUAL((ct.Left()==NULL),1);
+
+  // Check to make sure it has no children.
+  BOOST_REQUIRE(ct.Right() == NULL);
+  BOOST_REQUIRE(ct.Left() == NULL);
 }
 
 /**
- * Make sure that CTNode function in Cosine tree builder is working
- * This test just validates the dimentionality and data
- */ 
+ * Make sure that CTNode function in CosineTreeBuilder is working.
+ * This test just validates the dimentionality and data.
+ */
 BOOST_AUTO_TEST_CASE(CosineTreeBuilderCTNodeTest)
 {
-  //Creating Dummy Teat Data
-  arma::mat A = arma::randu<arma::mat>(5,5);
-  
-  //Creating a Cosine Tree Builder Object
+  // Create dummy test data.
+  arma::mat data = arma::randu<arma::mat>(5, 5);
+
+  // Create a cosine tree builder object.
   CosineTreeBuilder builder;
-  
-  //Creating a Cosine Tree Object
+
+  // Create a cosine tree object.
   CosineTree ct;
-  
-  //Creating a Cosine Tree Node through Cosine Tree Builder
-  builder.CTNode(A,ct);
 
-  //Getters  
-  arma::mat Aret = ct.Data();
-  arma::rowvec centroidRet = ct.Centroid();
-  arma::vec probabilitiesRet = ct.Probabilities();
+  // Use the builder to create the tree.
+  builder.CTNode(data, ct);
 
-  //Checking correctness of dimentionality of A 
-  BOOST_REQUIRE_EQUAL(A.n_cols, Aret.n_rows);
-  BOOST_REQUIRE_EQUAL(A.n_rows, Aret.n_cols);  
+  const arma::mat& dataRet = ct.Data();
+  const arma::rowvec& centroidRet = ct.Centroid();
+  const arma::vec& probabilitiesRet = ct.Probabilities();
 
-  //Checking A
-  for (size_t i=0;i<A.n_cols;i++)
-    for (size_t j=0;j<A.n_rows;j++)
-      BOOST_REQUIRE_CLOSE(Aret(j,i), A(i,j), 1e-5);
- 
-  //Checking correctness of dimentionality of centroid 
-  BOOST_REQUIRE_EQUAL(A.n_cols, centroidRet.n_cols);
+  // Check correctness of dimentionality of data.
+  BOOST_REQUIRE_EQUAL(data.n_cols, dataRet.n_cols);
+  BOOST_REQUIRE_EQUAL(data.n_rows, dataRet.n_rows);
+
+  // Check data.
+  for (size_t i = 0; i < data.n_cols; i++)
+    for (size_t j = 0; j < data.n_rows; j++)
+      BOOST_REQUIRE_CLOSE((double) dataRet(j, i), (double) data(i, j), 1e-5);
+
+  // Check correctness of dimensionality of centroid.
+  BOOST_REQUIRE_EQUAL(data.n_rows, centroidRet.n_cols);
   BOOST_REQUIRE_EQUAL(1, centroidRet.n_rows);
 
-  //Checking correctness of dimentionality of sampling probabilities
+  // Check correctness of dimensionality of sampling probabilities.
   BOOST_REQUIRE_EQUAL(1, probabilitiesRet.n_cols);
-  BOOST_REQUIRE_EQUAL(A.n_rows, probabilitiesRet.n_rows);
-  
-  //Checking pointers of children nodes
-  BOOST_REQUIRE_EQUAL((ct.Right()==NULL),1);
-  BOOST_REQUIRE_EQUAL((ct.Left()==NULL),1);
+  BOOST_REQUIRE_EQUAL(data.n_rows, probabilitiesRet.n_rows);
+
+  // Check pointers of children nodes.
+  BOOST_REQUIRE(ct.Right() == NULL);
+  BOOST_REQUIRE(ct.Left() == NULL);
 
 }
 
 /**
- * Make sure that Centroid is calculated correctly
- */ 
+ * Make sure that the centroid is calculated correctly when the cosine tree is
+ * built.
+ */
 BOOST_AUTO_TEST_CASE(CosineTreeBuilderCentroidTest)
 {
-  //Creating Dummy Test Data
-  arma::mat A;
-  A << 1.0 << 2.0 << 3.0 << arma::endr
-    << 4.0 << 2.0 << 3.0 << arma::endr
-    << 2.5 << 3.0 << 2.0 << arma::endr;  
+  // Create dummy test data.
+  arma::mat data;
+  data << 1.0 << 2.0 << 3.0 << arma::endr
+       << 4.0 << 2.0 << 3.0 << arma::endr
+       << 2.5 << 3.0 << 2.0 << arma::endr;
 
-  //Expected Centroid
+  // Expected centroid.
   arma::vec c;
   c << 2.0 << 3.0 << 2.5 << arma::endr;
- 
-  //Creating a Cosine Tree Builder Object
+
+  // Build the cosine tree.
   CosineTreeBuilder builder;
-
-  //Creating a Cosine Tree Object
   CosineTree ct;
-  
-  //Crating a Node
-  builder.CTNode(A,ct);
+  builder.CTNode(data, ct);
 
-  //Getting centroid
+  // Get the centroid.
   arma::rowvec centroid = ct.Centroid();
 
-  //Checkin correctness of the centroid
-  BOOST_REQUIRE_CLOSE(c(0,0), centroid(0,0), 1e-5);
-  BOOST_REQUIRE_CLOSE(c(1,0), centroid(0,1), 1e-5);
-  BOOST_REQUIRE_CLOSE(c(2,0), centroid(0,2), 1e-5);
+  // Check correctness of the centroid.
+  BOOST_REQUIRE_CLOSE((double) c(0, 0), (double) centroid(0, 0), 1e-5);
+  BOOST_REQUIRE_CLOSE((double) c(1, 0), (double) centroid(0, 1), 1e-5);
+  BOOST_REQUIRE_CLOSE((double) c(2, 0), (double) centroid(0, 2), 1e-5);
 }
+
 /**
- * Make sure that the sampling probabilities is calculated correctly
-}
- */ 
+ * Make sure that the sampling probabilities are calculated correctly when the
+ * cosine tree is built.
+ */
 BOOST_AUTO_TEST_CASE(CosineTreeBuilderProbabilitiesTest)
 {
-  //Creating Dummy Test Data
-  arma::mat A;
-  A << 100.0 << 2.0 << 3.0 << arma::endr
-    << 400.0 << 2.0 << 3.0 << arma::endr
-    << 200.5 << 3.0 << 2.0 << arma::endr;
-  
-  //Expected Sample Probability    
+  // Create dummy test data.
+  arma::mat data;
+  data << 100.0 <<   2.0 <<   3.0 << arma::endr
+       << 400.0 <<   2.0 <<   3.0 << arma::endr
+       << 200.5 <<   3.0 <<   2.0 << arma::endr;
+
+  // Expected sample probability.
   arma::vec p;
   p << 0.999907 << 0.00899223 << 0.0102295 << arma::endr;
-  
-  //Expectec sampling values
- 
-  //Creating a Cosine Tree Builder Object
+
+  // Create the cosine tree.
   CosineTreeBuilder builder;
-
-  //Creating a Cosine Tree Object
   CosineTree ct;
-  
-  //Crating a Node
-  builder.CTNode(A,ct);
+  builder.CTNode(data, ct);
 
-  //Getting probabilities
-  arma::vec probabilities = ct.Probabilities();
+  // Get the probabilities.
+  const arma::vec& probabilities = ct.Probabilities();
 
-  //Checkin correctness of sampling probabilities
-  BOOST_REQUIRE_CLOSE(p(0,0), probabilities(0,0), 1e-4);
-  BOOST_REQUIRE_CLOSE(p(1,0), probabilities(1,0), 1e-4);
-  BOOST_REQUIRE_CLOSE(p(2,0), probabilities(2,0), 1e-4);
+  // Check correctness of sampling probabilities.
+  BOOST_REQUIRE_CLOSE((double) p(0, 0), (double) probabilities(0, 0), 1e-4);
+  BOOST_REQUIRE_CLOSE((double) p(1, 0), (double) probabilities(1, 0), 1e-4);
+  BOOST_REQUIRE_CLOSE((double) p(2, 0), (double) probabilities(2, 0), 1e-4);
 }
+
 /**
- * Make sure that Cosine Tree builder is splitting nodes
- */ 
+ * Make sure that the cosine tree builder is splitting nodes.
+ */
 BOOST_AUTO_TEST_CASE(CosineTreeBuilderCTNodeSplitTest)
 {
-  //Creating Dummy Test Data
-  arma::mat A;
-  
-  A << 100.0 << 2.0 << 3.0 << arma::endr
-    << 400.0 << 2.0 << 3.0 << arma::endr 
-    << 200.5 << 3.0 << 2.0 << arma::endr;
-  
-  //Creating a Cosine Tree Builder Object
+  // Create dummy test data.
+  arma::mat data;
+  data << 100.0 <<   2.0 <<   3.0 << arma::endr
+       << 400.0 <<   2.0 <<   3.0 << arma::endr
+       << 200.5 <<   3.0 <<   2.0 << arma::endr;
+
+  // Build a cosine tree root node, and then split it.
   CosineTreeBuilder builder;
-
-  //Creating Cosine Tree Objects
   CosineTree root, left, right;
-    
-  //Crating a Root Node
-  builder.CTNode(A,root);
-
-  //Splitting the root node into child nodes
+  builder.CTNode(data, root);
   builder.CTNodeSplit(root, left, right);
-  
-  //Ensuring no data loss
-  BOOST_REQUIRE_EQUAL((left.NumPoints() + right.NumPoints()), root.NumPoints());  
 
-  //Ensuring dimensionality is correct
-  BOOST_REQUIRE_EQUAL(left.Data().n_cols, A.n_cols);
-  BOOST_REQUIRE_EQUAL(right.Data().n_cols, A.n_cols);
+  // Ensure that there is no data loss.
+  BOOST_REQUIRE_EQUAL((left.NumPoints() + right.NumPoints()), root.NumPoints());
+
+  // Ensure that the dimensionality is correct.
+  BOOST_REQUIRE_EQUAL(left.Data().n_cols, data.n_cols);
+  BOOST_REQUIRE_EQUAL(right.Data().n_cols, data.n_cols);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
