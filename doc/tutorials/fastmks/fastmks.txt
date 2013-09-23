@@ -39,7 +39,9 @@ The FastMKS algorithm builds trees on the datasets \f$Q\f$ and \f$R\f$ in such a
 way that explicit representation of the points in the kernel space is
 unnecessary, by using cover trees (\ref mlpack::tree::CoverTree).  This allows
 the algorithm to be run, for instance, on string kernels, where there is no
-sensible explicit representation.  For more details, see the paper.
+sensible explicit representation.  The \b mlpack implementation allows any type
+of tree that does not require an explicit representation to be used.  For more
+details, see the paper.
 
 At the time of this writing there is no other fast algorithm for exact
 max-kernel search.  Also, \b mlpack implements dual-tree FastMKS, while the
@@ -149,7 +151,7 @@ $ head products.csv
 
 We can see in this example that for point 0, the point with maximum kernel value
 is point 762, with a kernel value of 1.622165.  For point 3, the point with
-fifth largest kernel value is point 890, with a kernel value of 1.033954.
+third largest kernel value is point 863, with a kernel value of 1.0669.
 
 @subsection cli_ex2_fmkstut FastMKS on a reference and query dataset
 
@@ -165,11 +167,11 @@ $ fastmks -q query_set.csv -r reference_set.csv -k 5 -i indices.csv -p products.
 
 The \c fastmks program offers more than just the linear kernel.  Valid options
 are \c 'linear', \c 'polynomial', \c 'cosine', \c 'gaussian', \c 'epanechnikov',
-\c 'triangular', and \c 'hyptan' (the hyperbolic tangent kernel).  Note that the
-hyperbolic tangent kernel is provably not a Mercer kernel but is positive
-semidefinite on most datasets and is commonly used as a kernel.  Note also that
-the Gaussian kernel gives the same results as nearest neighbor search (\see
-nstutorial).
+\c 'triangular', \c 'laplacian', and \c 'hyptan' (the hyperbolic tangent
+kernel).  Note that the hyperbolic tangent kernel is provably not a Mercer
+kernel but is positive semidefinite on most datasets and is commonly used as a
+kernel.  Note also that the Gaussian kernel and other shift-invariant kernels
+give the same results as nearest neighbor search (see \ref nstutorial).
 
 The kernel to use is specified with the \c -K (or \c --kernel) option.  The
 example below uses the cosine similarity as a kernel.
@@ -392,12 +394,6 @@ are given; but trees for both need to be built in the manner specified above.
 Be sure to build both trees using the same metric (or at least a metric with the
 exact same parameters).
 
-Note that the cover tree is not the only type of tree that can be used with
-FastMKS.  For a tree to work with FastMKS, it must be able to be built only on
-kernel evaluations (or induced metric evaluations in the kernel space via
-IPMetric::Evaluate()).  Then, specify a custom TreeType as the second template
-parameter of the FastMKS object.
-
 @code
 FastMKS<PolynomialKernel> f(referenceData, referenceTree, queryData, queryTree);
 @endcode
@@ -427,15 +423,16 @@ The use of the cover tree (see \ref mlpack::tree::CoverTree "CoverTree") is not
 necessary for FastMKS, although it is the default tree type.  A different type
 of tree can be specified with the TreeType template parameter.  However, the
 tree type is required to have \ref mlpack::fastmks::FastMKSStat "FastMKSStat" as
-the StatisticType.
+the StatisticType, and for FastMKS to work, the tree must be built only on
+kernel evaluations (or distance evaluations in the kernel space via
+IPMetric::Evaluate()).
 
-Below is an example of the \ref mlpack::tree::BinarySpaceTree "BinarySpaceTree"
-being used as the tree type for FastMKS.  In this example FastMKS is only run on
-one dataset.
+Below is an example where a custom tree class, \c CustomTree, is used as the
+tree type for FastMKS.  In this example FastMKS is only run on one dataset.
 
 @code
 #include <mlpack/methods/fastmks/fastmks.hpp>
-#include <mlpack/core/tree/binary_space_tree/binary_space_tree.hpp>
+#include "custom_tree.hpp"
 
 using namespace mlpack::fastmks;
 using namespace mlpack::tree;
@@ -443,9 +440,9 @@ using namespace mlpack::tree;
 // The dataset that FastMKS will be run on.
 extern arma::mat data;
 
-// The tree used for FastMKS.  We use a convenience typedef to make things a
-// little prettier.
-typedef BinarySpaceTree<bound::HRectBound<2, true>, FastMKSStat> TreeType;
+// The custom tree type.  We'll assume that the first template parameter is the
+// statistic type.
+typedef CustomTree<FastMKSStat> TreeType;
 
 // The FastMKS constructor will create the tree.
 FastMKS<LinearKernel, TreeType> f(data);
@@ -457,11 +454,6 @@ arma::mat products;
 // Run FastMKS.
 f.Search(5, indices, products);
 @endcode
-
-Note that the \c BinarySpaceTree class used here is not the only possible option
-for the \c TreeType parameter; custom trees can be written, or, alternately,
-different template parameters can be used to configure either the \c
-BinarySpaceTree or the \c CoverTree.
 
 @section objects_fmkstut Running FastMKS on objects
 
@@ -481,8 +473,7 @@ string kernel).
 
 The only requirement on these kernels is that they are positive definite kernels
 (or Mercer kernels).  For more information on those details, refer to the
-FastMKS paper ("Fast exact max-kernel search" by R.R. Curtin, P. Ram, and A.G.
-Gray).
+FastMKS paper.
 
 Remember that FastMKS is a tree-based method.  But trees like the binary space
 tree require centroids -- and as we said earlier, centroids often don't make
