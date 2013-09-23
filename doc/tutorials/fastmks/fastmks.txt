@@ -351,8 +351,8 @@ example on just a reference dataset is shown below, where the base of the cover
 tree is modified.
 
 We also use an instantiated kernel, but because we are building our own tree, we
-must use \c IPMetric<> so that our tree is built on the metric induced by our
-kernel function.
+must use \ref mlpack::metric::IPMetric "IPMetric" so that our tree is built on
+the metric induced by our kernel function.
 
 @code
 #include <mlpack/methods/fastmks/fastmks.hpp>
@@ -425,7 +425,7 @@ of tree can be specified with the TreeType template parameter.  However, the
 tree type is required to have \ref mlpack::fastmks::FastMKSStat "FastMKSStat" as
 the StatisticType, and for FastMKS to work, the tree must be built only on
 kernel evaluations (or distance evaluations in the kernel space via
-IPMetric::Evaluate()).
+\ref mlpack::metric::IPMetric "IPMetric::Evaluate()").
 
 Below is an example where a custom tree class, \c CustomTree, is used as the
 tree type for FastMKS.  In this example FastMKS is only run on one dataset.
