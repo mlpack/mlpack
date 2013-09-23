@@ -189,12 +189,12 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
 
   size_t numPrunes = 0;
 
+  // Create the helper object for the tree traversal.
+  typedef NeighborSearchRules<SortPolicy, MetricType, TreeType> RuleType;
+  RuleType rules(referenceSet, querySet, *neighborPtr, *distancePtr, metric);
+
   if (singleMode)
   {
-    // Create the helper object for the tree traversal.
-    typedef NeighborSearchRules<SortPolicy, MetricType, TreeType> RuleType;
-    RuleType rules(referenceSet, querySet, *neighborPtr, *distancePtr, metric);
-
     // Create the traverser.
     typename TreeType::template SingleTreeTraverser<RuleType> traverser(rules);
 
@@ -204,10 +204,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
   }
   else // Dual-tree recursion.
   {
-    // Create the helper object for the tree traversal.
-    typedef NeighborSearchRules<SortPolicy, MetricType, TreeType> RuleType;
-    RuleType rules(referenceSet, querySet, *neighborPtr, *distancePtr, metric);
-
+    // Create the traverser.
     typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
 
     traverser.Traverse(*queryTree, *referenceTree);
