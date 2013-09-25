@@ -71,3 +71,29 @@ void LinearRegression::Predict(const arma::mat& points, arma::vec& predictions)
   // Now add the intercept.
   predictions += parameters(0);
 }
+
+//! Compute the L2 squared error on the given predictors and responses.
+double LinearRegression::ComputeError(const arma::mat& predictors,
+                                      const arma::vec& responses) const
+{
+  // Get the number of columns and rows of the dataset.
+  const size_t nCols = predictors.n_cols;
+  const size_t nRows = predictors.n_rows;
+
+  // Ensure that we have the correct number of dimensions in the dataset.
+  if (nRows != parameters.n_rows - 1)
+  {
+    Log::Fatal << "The test data must have the same number of columns as the "
+        "training file." << std::endl;
+  }
+
+  // Calculate the differences between actual responses and predicted responses.
+  // We must also add the intercept (parameters(0)) to the predictions.
+  arma::vec temp = responses - arma::trans(
+      (arma::trans(parameters.subvec(1, parameters.n_elem - 1)) * predictors) +
+      parameters(0));
+
+  const double cost = arma::sum(arma::dot(temp, temp)) / nCols;
+
+  return cost;
+}
