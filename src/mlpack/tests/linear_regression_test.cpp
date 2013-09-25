@@ -63,4 +63,37 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTestCase)
     BOOST_REQUIRE_SMALL(predictions(i) - responses(i), .05);
 }
 
+/**
+ * Check the functionality of ComputeError().
+ */
+BOOST_AUTO_TEST_CASE(ComputeErrorTest)
+{
+  arma::mat predictors;
+  predictors << 0 << 1 << 2 << 4 << 8 << 16 << arma::endr
+             << 16 << 8 << 4 << 2 << 1 << 0 << arma::endr;
+  arma::vec responses = "0 2 4 3 8 8";
+
+  // http://www.mlpack.org/trac/ticket/298
+  // This dataset gives a cost of 1.189500337 (as calculated in Octave).
+  LinearRegression lr(predictors, responses);
+
+  BOOST_REQUIRE_CLOSE(lr.ComputeError(predictors, responses), 1.189500337,
+      1e-3);
+}
+
+/**
+ * Ensure that the cost is 0 when a perfectly-fitting dataset is given.
+ */
+BOOST_AUTO_TEST_CASE(ComputeErrorPerfectFitTest)
+{
+  // Linear regression should perfectly model this dataset.
+  arma::mat predictors;
+  predictors << 0 << 1 << 2 << 3 << 4 << 5 << 6 << arma::endr;
+  arma::vec responses = "1 2 3 4 5 6 7";
+
+  LinearRegression lr(predictors, responses);
+
+  BOOST_REQUIRE_SMALL(lr.ComputeError(predictors, responses), 1e-30);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
