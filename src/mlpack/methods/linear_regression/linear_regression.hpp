@@ -53,6 +53,26 @@ class LinearRegression
    */
   void Predict(const arma::mat& points, arma::vec& predictions);
 
+  /**
+   * Calculate the L2 squared error on the given predictors and responses using
+   * this linear regression model.  This calculation returns
+   *
+   * \f[
+   * (1 / n) * \| y - X \theta \|^2_2
+   * \f]
+   *
+   * where \f$ y \f$ is the responses vector, \f$ X \f$ is the matrix of
+   * predictors, and \f$ \theta \f$ is the parameters of the trained linear
+   * regression model.
+   *
+   * As this number decreases to 0, the linear regression fit is better.
+   *
+   * @param predictors Matrix of predictors (X).
+   * @param responses Vector of responses (y).
+   */
+  double ComputeError(const arma::mat& points,
+                      const arma::vec& responses) const;
+
   //! Return the parameters (the b vector).
   const arma::vec& Parameters() const { return parameters; }
   //! Modify the parameters (the b vector).
