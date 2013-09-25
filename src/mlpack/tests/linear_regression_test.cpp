@@ -88,12 +88,13 @@ BOOST_AUTO_TEST_CASE(ComputeErrorPerfectFitTest)
 {
   // Linear regression should perfectly model this dataset.
   arma::mat predictors;
-  predictors << 0 << 1 << 2 << 3 << 4 << 5 << 6 << arma::endr;
-  arma::vec responses = "1 2 3 4 5 6 7";
+  predictors << 0 << 1 << 2 << 1 << 6 << 2 << arma::endr
+             << 0 << 1 << 2 << 2 << 2 << 6 << arma::endr;
+  arma::vec responses = "0 2 4 3 8 8";
 
   LinearRegression lr(predictors, responses);
 
-  BOOST_REQUIRE_SMALL(lr.ComputeError(predictors, responses), 1e-30);
+  BOOST_REQUIRE_SMALL(lr.ComputeError(predictors, responses), 1e-25);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
