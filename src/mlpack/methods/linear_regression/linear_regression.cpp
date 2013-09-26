@@ -10,7 +10,9 @@ using namespace mlpack;
 using namespace mlpack::regression;
 
 LinearRegression::LinearRegression(arma::mat& predictors,
-                                   const arma::colvec& responses)
+                                   const arma::colvec& responses,
+                                   const double lambda) :
+    lambda(lambda)
 {
   /*
    * We want to calculate the a_i coefficients of:
@@ -18,7 +20,7 @@ LinearRegression::LinearRegression(arma::mat& predictors,
    * In order to get the intercept value, we will add a row of ones.
    */
 
-  // We store the number of rows of the predictors.
+  // We store the number of rows and columns of the predictors.
   // Reminder: Armadillo stores the data transposed from how we think of it,
   //           that is, columns are actually rows (see: column major order).
   const size_t nCols = predictors.n_cols;
@@ -30,6 +32,16 @@ LinearRegression::LinearRegression(arma::mat& predictors,
 
   // We set the parameters to the correct size and initialize them to zero.
   parameters.zeros(nCols);
+
+  // Now, add the identity matrix to the predictors (this is equivalent to ridge
+  // regression).  See http://math.stackexchange.com/questions/299481/ for more
+  // information.
+  if (lambda > 0)
+  {
+    predictors.insert_cols(nCols, predictors.n_rows);
+    predictors.cols(nCols, predictors.n_cols - 1) =
+        lambda * arma::eye<arma::mat>(predictors.n_rows, predictors.n_rows);
+  }
 
   // We compute the QR decomposition of the predictors.
   // We transpose the predictors because they are in column major order.
@@ -43,6 +55,10 @@ LinearRegression::LinearRegression(arma::mat& predictors,
 
   // We now remove the row of ones we added so the user's data is unmodified.
   predictors.shed_row(0);
+  if (lambda > 0)
+  {
+    predictors.shed_cols(nCols, predictors.n_cols - 1);
+  }
 }
 
 LinearRegression::LinearRegression(const std::string& filename)
