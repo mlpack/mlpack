@@ -9,7 +9,7 @@
 using namespace mlpack;
 using namespace mlpack::regression;
 
-LinearRegression::LinearRegression(arma::mat& predictors,
+LinearRegression::LinearRegression(const arma::mat& predictors,
                                    const arma::colvec& responses,
                                    const double lambda) :
     lambda(lambda)
@@ -26,38 +26,46 @@ LinearRegression::LinearRegression(arma::mat& predictors,
   const size_t nCols = predictors.n_cols;
 
   // Here we add the row of ones to the predictors.
-  arma::rowvec ones;
-  ones.ones(nCols);
-  predictors.insert_rows(0, ones);
-
-  // We set the parameters to the correct size and initialize them to zero.
-  parameters.zeros(nCols);
-
-  // Now, add the identity matrix to the predictors (this is equivalent to ridge
-  // regression).  See http://math.stackexchange.com/questions/299481/ for more
-  // information.
-  if (lambda > 0)
+  arma::mat p;
+  if (lambda == 0.0)
   {
-    predictors.insert_cols(nCols, predictors.n_rows);
-    predictors.cols(nCols, predictors.n_cols - 1) =
+    p.set_size(predictors.n_rows + 1, nCols);
+    p.submat(1, 0, p.n_rows - 1, nCols - 1) = predictors;
+    p.row(0).fill(1);
+  }
+  else
+  {
+    // Add the identity matrix to the predictors (this is equivalent to ridge
+    // regression).  See http://math.stackexchange.com/questions/299481/ for
+    // more information.
+    p.set_size(predictors.n_rows + 1, nCols + predictors.n_rows);
+    p.submat(1, 0, p.n_rows - 1, nCols - 1) = predictors;
+    p.row(0).fill(1);
+    p.submat(1, nCols, p.n_rows - 1, nCols + predictors.n_rows - 1) =
         lambda * arma::eye<arma::mat>(predictors.n_rows, predictors.n_rows);
   }
 
   // We compute the QR decomposition of the predictors.
   // We transpose the predictors because they are in column major order.
   arma::mat Q, R;
-  arma::qr(Q, R, arma::trans(predictors));
+  arma::qr(Q, R, arma::trans(p));
 
   // We compute the parameters, B, like so:
   // R * B = Q^T * responses
   // B = Q^T * responses * R^-1
-  arma::solve(parameters, R, arma::trans(Q) * responses);
-
-  // We now remove the row of ones we added so the user's data is unmodified.
-  predictors.shed_row(0);
-  if (lambda > 0)
+  // If lambda > 0, then we must add a bunch of empty responses.
+  if (lambda == 0.0)
   {
-    predictors.shed_cols(nCols, predictors.n_cols - 1);
+    arma::solve(parameters, R, arma::trans(Q) * responses);
+  }
+  else
+  {
+    // Copy responses into larger vector.
+    arma::vec r(nCols + predictors.n_rows);
+    r.subvec(0, nCols - 1) = responses;
+    r.subvec(nCols, nCols + predictors.n_rows - 1).fill(0);
+
+    arma::solve(parameters, R, arma::trans(Q) * r);
   }
 }
 
