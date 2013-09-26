@@ -56,6 +56,7 @@ LinearRegression::LinearRegression(const LinearRegression& linearRegression)
 }
 
 void LinearRegression::Predict(const arma::mat& points, arma::vec& predictions)
+    const
 {
   // We want to be sure we have the correct number of dimensions in the dataset.
   Log::Assert(points.n_rows == parameters.n_rows - 1);
