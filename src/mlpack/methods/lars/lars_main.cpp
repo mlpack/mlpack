@@ -21,12 +21,13 @@ PROGRAM_INFO("LARS", "An implementation of LARS: Least Angle Regression "
     "      0.5 lambda_2 ||beta||_2^2\n\n"
     "If lambda_1 > 0 and lambda_2 = 0, the problem is the LASSO.\n"
     "If lambda_1 > 0 and lambda_2 > 0, the problem is the Elastic Net.\n"
-    "If lambda_1 = 0 and lambda_2 > 0, the problem is Ridge Regression.\n"
+    "If lambda_1 = 0 and lambda_2 > 0, the problem is ridge regression.\n"
     "If lambda_1 = 0 and lambda_2 = 0, the problem is unregularized linear "
     "regression.\n"
     "\n"
     "For efficiency reasons, it is not recommended to use this algorithm with "
-    "lambda_1 = 0.\n");
+    "lambda_1 = 0.  In that case, use the 'linear_regression' program, which "
+    "implements both unregularized linear regression and ridge regression.\n");
 
 PARAM_STRING_REQ("input_file", "File containing covariates (X).",
     "i");
