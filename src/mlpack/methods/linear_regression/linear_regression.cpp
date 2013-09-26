@@ -77,7 +77,7 @@ LinearRegression::LinearRegression(const std::string& filename) :
 
 LinearRegression::LinearRegression(const LinearRegression& linearRegression) :
     parameters(linearRegression.parameters),
-    lambda(linearRegression lambda)
+    lambda(linearRegression.lambda)
 { /* Nothing to do. */ }
 
 void LinearRegression::Predict(const arma::mat& points, arma::vec& predictions)
