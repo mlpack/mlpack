@@ -7,19 +7,23 @@
 #include <mlpack/core.hpp>
 #include "linear_regression.hpp"
 
-PROGRAM_INFO("Simple Linear Regression Prediction",
-    "An implementation of simple linear regression using ordinary least "
-    "squares. This solves the problem\n\n"
+PROGRAM_INFO("Simple Linear Regression and Prediction",
+    "An implementation of simple linear regression and simple ridge regression "
+    "using ordinary least squares. This solves the problem\n\n"
     "  y = X * b + e\n\n"
     "where X (--input_file) and y (the last row of --input_file, or "
-    "--input_responses) are known and b is the desired variable.  The "
-    "calculated b is saved to disk (--output_file).\n"
+    "--input_responses) are known and b is the desired variable.  If the "
+    "covariance matrix (X'X) is not invertible, or if the solution is "
+    "overdetermined, then specify a Tikhonov regularization constant (--lambda)"
+    " greater than 0, which will regularize the covariance matrix to make it "
+    "invertible.  The calculated b is saved to disk (--output_file).\n"
     "\n"
     "Optionally, the calculated value of b is used to predict the responses for"
     " another matrix X' (--test_file):\n\n"
     "   y' = X' * b\n\n"
     "and these predicted responses, y', are saved to a file "
-    "(--output_predictions).");
+    "(--output_predictions).  This type of regression is related to least-angle"
+    " regression, which mlpack implements with the 'lars' executable.");
 
 PARAM_STRING("input_file", "File containing X (regressors).", "i", "");
 PARAM_STRING("input_responses", "Optional file containing y (responses). If "
@@ -35,6 +39,9 @@ PARAM_STRING("output_file", "File where parameters (b) will be saved.",
 PARAM_STRING("test_file", "File containing X' (test regressors).", "t", "");
 PARAM_STRING("output_predictions", "If --test_file is specified, this file is "
     "where the predicted responses will be saved.", "p", "predictions.csv");
+
+PARAM_DOUBLE("lambda", "Tikhonov regularization for ridge regression.  If 0, "
+    "the method reduces to linear regression.", "l", 0.0);
 
 using namespace mlpack;
 using namespace mlpack::regression;
@@ -52,11 +59,13 @@ int main(int argc, char* argv[])
   const string responseName = CLI::GetParam<string>("input_responses");
   const string testName = CLI::GetParam<string>("test_file");
   const string trainName = CLI::GetParam<string>("input_file");
+  const double lambda = CLI::GetParam<double>("lambda");
 
   mat regressors;
   mat responses;
 
   LinearRegression lr;
+  lr.Lambda() = lambda;
 
   bool computeModel = false;
 
