@@ -38,11 +38,12 @@ LinearRegression::LinearRegression(const arma::mat& predictors,
     // Add the identity matrix to the predictors (this is equivalent to ridge
     // regression).  See http://math.stackexchange.com/questions/299481/ for
     // more information.
-    p.set_size(predictors.n_rows + 1, nCols + predictors.n_rows);
+    p.set_size(predictors.n_rows + 1, nCols + predictors.n_rows + 1);
     p.submat(1, 0, p.n_rows - 1, nCols - 1) = predictors;
-    p.row(0).fill(1);
-    p.submat(1, nCols, p.n_rows - 1, nCols + predictors.n_rows - 1) =
-        lambda * arma::eye<arma::mat>(predictors.n_rows, predictors.n_rows);
+    p.row(0).subvec(0, nCols - 1).fill(1);
+    p.submat(0, nCols, p.n_rows - 1, nCols + predictors.n_rows) =
+        lambda * arma::eye<arma::mat>(predictors.n_rows + 1,
+                                      predictors.n_rows + 1);
   }
 
   // We compute the QR decomposition of the predictors.
@@ -61,9 +62,9 @@ LinearRegression::LinearRegression(const arma::mat& predictors,
   else
   {
     // Copy responses into larger vector.
-    arma::vec r(nCols + predictors.n_rows);
+    arma::vec r(nCols + predictors.n_rows + 1);
     r.subvec(0, nCols - 1) = responses;
-    r.subvec(nCols, nCols + predictors.n_rows - 1).fill(0);
+    r.subvec(nCols, nCols + predictors.n_rows).fill(0);
 
     arma::solve(parameters, R, arma::trans(Q) * r);
   }
