@@ -97,4 +97,30 @@ BOOST_AUTO_TEST_CASE(ComputeErrorPerfectFitTest)
   BOOST_REQUIRE_SMALL(lr.ComputeError(predictors, responses), 1e-25);
 }
 
+/**
+ * Test ridge regression using an empty dataset, which is not invertible.  But
+ * the ridge regression part should make it invertible.
+ */
+BOOST_AUTO_TEST_CASE(RidgeRegressionTest)
+{
+  // Create empty dataset.
+  arma::mat data;
+  data.zeros(10, 5000); // 10-dimensional, 5000 points.
+  arma::vec responses;
+  responses.zeros(5000); // 5000 points.
+
+  // Any lambda greater than 0 works to make the predictors covariance matrix
+  // invertible.  If ridge regression is not working correctly, then the matrix
+  // will not be invertible and the test should segfault (or something else
+  // ugly).
+  LinearRegression lr(data, responses, 0.00001);
+
+  // Now just make sure that it predicts some more zeros.
+  arma::vec predictedResponses;
+  lr.Predict(data, predictedResponses);
+
+  for (size_t i = 0; i < 5000; ++i)
+    BOOST_REQUIRE_SMALL((double) predictedResponses[i], 1e-20);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
