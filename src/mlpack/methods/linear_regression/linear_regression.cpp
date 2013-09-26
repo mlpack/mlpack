@@ -69,15 +69,16 @@ LinearRegression::LinearRegression(const arma::mat& predictors,
   }
 }
 
-LinearRegression::LinearRegression(const std::string& filename)
+LinearRegression::LinearRegression(const std::string& filename) :
+    lambda(0.0)
 {
   data::Load(filename, parameters, true);
 }
 
-LinearRegression::LinearRegression(const LinearRegression& linearRegression)
-{
-  parameters = linearRegression.parameters;
-}
+LinearRegression::LinearRegression(const LinearRegression& linearRegression) :
+    parameters(linearRegression.parameters),
+    lambda(linearRegression lambda)
+{ /* Nothing to do. */ }
 
 void LinearRegression::Predict(const arma::mat& points, arma::vec& predictions)
     const
