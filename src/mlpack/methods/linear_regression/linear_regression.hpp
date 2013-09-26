@@ -26,7 +26,7 @@ class LinearRegression
    * @param predictors X, matrix of data points to create B with.
    * @param responses y, the measured data for each point in X
    */
-  LinearRegression(arma::mat& predictors,
+  LinearRegression(const arma::mat& predictors,
                    const arma::vec& responses,
                    const double lambda = 0);
 
@@ -82,6 +82,11 @@ class LinearRegression
   //! Modify the parameters (the b vector).
   arma::vec& Parameters() { return parameters; }
 
+  //! Return the Tikhonov regularization parameter for ridge regression.
+  double Lambda() const { return lambda; }
+  //! Modify the Tikhonov regularization parameter for ridge regression.
+  double& Lambda() { return lambda; }
+
  private:
   /**
    * The calculated B.
@@ -89,7 +94,10 @@ class LinearRegression
    */
   arma::vec parameters;
 
-  //! The lambda parameter for ridge regression (0 for linear regression).
+  /**
+   * The Tikhonov regularization parameter for ridge regression (0 for linear
+   * regression).
+   */
   double lambda;
 };
 
