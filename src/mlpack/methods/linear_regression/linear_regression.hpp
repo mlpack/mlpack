@@ -14,6 +14,8 @@ namespace regression /** Regression methods. */ {
 
 /**
  * A simple linear regression algorithm using ordinary least squares.
+ * Optionally, this class can perform ridge regression, if the lambda parameter
+ * is set to a number greater than zero.
  */
 class LinearRegression
 {
@@ -24,7 +26,9 @@ class LinearRegression
    * @param predictors X, matrix of data points to create B with.
    * @param responses y, the measured data for each point in X
    */
-  LinearRegression(arma::mat& predictors, const arma::vec& responses);
+  LinearRegression(arma::mat& predictors,
+                   const arma::vec& responses,
+                   const double lambda = 0);
 
   /**
    * Initialize the model from a file.
@@ -58,11 +62,11 @@ class LinearRegression
    * this linear regression model.  This calculation returns
    *
    * \f[
-   * (1 / n) * \| y - X \theta \|^2_2
+   * (1 / n) * \| y - X B \|^2_2
    * \f]
    *
    * where \f$ y \f$ is the responses vector, \f$ X \f$ is the matrix of
-   * predictors, and \f$ \theta \f$ is the parameters of the trained linear
+   * predictors, and \f$ B \f$ is the parameters of the trained linear
    * regression model.
    *
    * As this number decreases to 0, the linear regression fit is better.
@@ -84,6 +88,9 @@ class LinearRegression
    * Initialized and filled by constructor to hold the least squares solution.
    */
   arma::vec parameters;
+
+  //! The lambda parameter for ridge regression (0 for linear regression).
+  double lambda;
 };
 
 }; // namespace linear_regression
