@@ -7,12 +7,14 @@ methods.  The results of any timers used during the program are displayed at
 output by the mlpack::CLI object, when --verbose is given:
 
 @code
-$ allknn -i=data.csv -k 5
+$ allknn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
 <...>
 [INFO ] Program timers:
-[INFO ]   computing_neighbors: 0.044764s
-[INFO ]   total_time: 0.061249s
-[INFO ]   tree_building: 0.003075s
+[INFO ]   computing_neighbors: 0.010650s
+[INFO ]   loading_data: 0.002567s
+[INFO ]   saving_data: 0.001115s
+[INFO ]   total_time: 0.149816s
+[INFO ]   tree_building: 0.000534s
 @endcode
 
 @section usingtimer Timer API
