@@ -93,7 +93,7 @@ double LinearRegression::ComputeError(const arma::mat& predictors,
       (arma::trans(parameters.subvec(1, parameters.n_elem - 1)) * predictors) +
       parameters(0));
 
-  const double cost = arma::sum(arma::dot(temp, temp)) / nCols;
+  const double cost = arma::dot(temp, temp) / nCols;
 
   return cost;
 }
