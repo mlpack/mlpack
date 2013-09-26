@@ -419,7 +419,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
   // that we introduced a fair amount of random noise into this whole process.
 
   // First Gaussian (d4).
-  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[0]] - 0.1, 0.075);
+  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[0]] - 0.1, 0.1);
 
   for (size_t i = 0; i < 3; i++)
     BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[0]][i] - d4.Mean()[i]), 0.4);
@@ -430,7 +430,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
           d4.Covariance()(row, col)), 0.60); // Big tolerance!  Lots of noise.
 
   // Second Gaussian (d1).
-  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[1]] - 0.2, 0.075);
+  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[1]] - 0.2, 0.1);
 
   for (size_t i = 0; i < 3; i++)
     BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[1]][i] - d1.Mean()[i]), 0.4);
