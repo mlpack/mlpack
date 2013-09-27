@@ -39,7 +39,8 @@ class WMultiplicativeDivergenceRule
    * @param W Basis matrix to be updated.
    * @param H Encoding matrix.
    */
-  inline static void Update(const arma::mat& V,
+  template<typename MatType>
+  inline static void Update(const MatType& V,
                             arma::mat& W,
                             const arma::mat& H)
   {
@@ -80,7 +81,8 @@ class HMultiplicativeDivergenceRule
    * @param W Basis matrix.
    * @param H Encoding matrix to updated.
    */
-  inline static void Update(const arma::mat& V,
+  template<typename MatType>
+  inline static void Update(const MatType& V,
                             const arma::mat& W,
                             arma::mat& H)
   {
