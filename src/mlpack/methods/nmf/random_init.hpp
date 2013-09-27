@@ -19,7 +19,8 @@ class RandomInitialization
   // Empty constructor required for the InitializeRule template
   RandomInitialization() { }
 
-  inline static void Initialize(const arma::mat& V,
+  template<typename MatType>
+  inline static void Initialize(const MatType& V,
                                 const size_t r,
                                 arma::mat& W,
                                 arma::mat& H)
