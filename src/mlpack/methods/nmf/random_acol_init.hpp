@@ -53,7 +53,8 @@ class RandomAcolInitialization
     {
       for (size_t randCol = 0; randCol < p; randCol++)
       {
-        W.col(col) += V.col(math::RandInt(0, m));
+        // .col() does not work in this case, as of Armadillo 3.920.
+        W.unsafe_col(col) += V.col(math::RandInt(0, m));
       }
     }
 
