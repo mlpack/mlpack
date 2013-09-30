@@ -124,9 +124,9 @@ BOOST_AUTO_TEST_CASE(SparseNMFDefaultTest)
 
   // It seems to hit the iteration limit first.
   NMF<> nmf(10000, 1e-20);
-  math::RandomSeed(1000); // Set random seed so results are the same.
+  mlpack::math::RandomSeed(1000); // Set random seed so results are the same.
   nmf.Apply(v, r, w, h);
-  math::RandomSeed(1000);
+  mlpack::math::RandomSeed(1000);
   nmf.Apply(dv, r, dw, dh);
 
   // Make sure the results are about equal for the W and H matrices.
@@ -162,9 +162,9 @@ BOOST_AUTO_TEST_CASE(SparseNMFAcolDistTest)
   size_t r = 16;
 
   NMF<RandomAcolInitialization<> > nmf;
-  math::RandomSeed(1000); // Set random seed so results are the same.
+  mlpack::math::RandomSeed(1000); // Set random seed so results are the same.
   nmf.Apply(v, r, w, h);
-  math::RandomSeed(1000);
+  mlpack::math::RandomSeed(1000);
   nmf.Apply(dv, r, dw, dh);
 
   // Make sure the results are about equal for the W and H matrices.
@@ -202,9 +202,9 @@ BOOST_AUTO_TEST_CASE(SparseNMFRandomDivTest)
   NMF<RandomInitialization,
       WMultiplicativeDivergenceRule,
       HMultiplicativeDivergenceRule> nmf;
-  math::RandomSeed(10); // Set random seed so the results are the same.
+  mlpack::math::RandomSeed(10); // Set random seed so the results are the same.
   nmf.Apply(v, r, w, h);
-  math::RandomSeed(10);
+  mlpack::math::RandomSeed(10);
   nmf.Apply(dv, r, dw, dh);
 
   // Make sure the results are about equal for the W and H matrices.
@@ -242,9 +242,9 @@ BOOST_AUTO_TEST_CASE(SparseNMFALSTest)
   NMF<RandomInitialization,
       WAlternatingLeastSquaresRule,
       HAlternatingLeastSquaresRule> nmf;
-  math::RandomSeed(40);
+  mlpack::math::RandomSeed(40);
   nmf.Apply(v, r, w, h);
-  math::RandomSeed(40);
+  mlpack::math::RandomSeed(40);
   nmf.Apply(dv, r, dw, dh);
 
   // Make sure the results are about equal for the W and H matrices.
