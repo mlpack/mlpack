@@ -139,7 +139,7 @@ class CF
   /**
    * Generates default number of recommendations for all users.
    *
-   * @param recommendations Matrix to save recommendations
+   * @param recommendations Matrix to save recommendations into.
    */
   void GetRecommendations(arma::Mat<size_t>& recommendations);
 
