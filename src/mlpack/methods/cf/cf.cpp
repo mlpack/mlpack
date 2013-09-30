@@ -164,22 +164,27 @@ void CF::CleanData()
 void CF::Query(arma::Mat<size_t>& recommendations,
                arma::Col<size_t>& users)
 {
-  Log::Info<<"Query"<<endl;
-  //Temproraily stores feature vector of queried users
-  arma::mat query(rating.n_rows, users.n_rows);// = arma::zeros<arma::mat>(rating.n_rows, users.n_rows);
-  //Calculates the feature vector of queried users
-  CreateQuery(query,users);
-  //Temporary storage for neighbourhood of the queried users
-  arma::Mat<size_t> neighbourhood;
-  //Calculates the neighbourhood of the queried users
-  GetNeighbourhood(query,neighbourhood);
-  //Temporary storage for storing the average rating for each
-  //user in their neighbourhood
-  arma::mat averages = arma::zeros<arma::mat>(rating.n_rows,query.n_cols);
-  //Calculates the average values
-  CalculateAverage(neighbourhood,averages);
-  //Calculates the top recommendations
-  CalculateTopRecommendations(recommendations,averages,users);
+  // Temporarily store feature vector of queried users.
+  arma::mat query(rating.n_rows, users.n_rows);
+
+  // Calculate the feature vector of queried users.
+  CreateQuery(query, users);
+
+  // Temporary storage for neighborhood of the queried users.
+  arma::Mat<size_t> neighborhood;
+
+  // Calculates the neighborhood of the queried users.
+  GetNeighbourhood(query, neighborhood);
+
+  // Temporary storage for storing the average rating for each user in their
+  // neighborhood.
+  arma::mat averages = arma::zeros<arma::mat>(rating.n_rows, query.n_cols);
+
+  // Calculate the average values.
+  CalculateAverage(neighborhood, averages);
+
+  // Calculate the top recommendations.
+  CalculateTopRecommendations(recommendations, averages, users);
 }
 
 void CF::CreateQuery(arma::mat& query,arma::Col<size_t>& users) const
