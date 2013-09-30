@@ -27,6 +27,8 @@ CF::CF(arma::mat& data) :
   Log::Info<<"Constructor (param: input data, default: numRecs;neighbourhood)"<<endl;
   this->numRecs = 5;
   this->numUsersForSimilarity = 5;
+
+  CleanData();
 }
 
 CF::CF(const size_t numRecs,arma::mat& data) :
@@ -43,6 +45,8 @@ CF::CF(const size_t numRecs,arma::mat& data) :
   else
     this->numRecs = numRecs;
   this->numUsersForSimilarity = 5;
+
+  CleanData();
 }
 
 CF::CF(const size_t numRecs, const size_t numUsersForSimilarity,
@@ -69,14 +73,13 @@ CF::CF(const size_t numRecs, const size_t numUsersForSimilarity,
   }
   else
     this->numUsersForSimilarity = numUsersForSimilarity;
+
+  CleanData();
 }
 
 void CF::CalculateApproximateRatings()
 {
   Log::Info<<"CalculatineApproximateRating"<<endl;
-  //Build the initial rating tables with missing values
-  //if(cleanedData.n_rows==0)
-  CleanData();
   //Decompose the size_tiial table size_to user and item
   Decompose();
   //Generate new table by multiplying approximate values
@@ -85,8 +88,6 @@ void CF::CalculateApproximateRatings()
 
 void CF::GetRecommendations(arma::Mat<size_t>& recommendations)
 {
-  // Build the initial rating tables with missing values.
-  CleanData();
   // Used to save user IDs.
   arma::Col<size_t> users =
     arma::zeros<arma::Col<size_t> >(cleanedData.n_cols, 1);
