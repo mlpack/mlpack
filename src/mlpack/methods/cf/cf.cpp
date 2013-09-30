@@ -159,15 +159,14 @@ void CF::CleanData()
 
 void CF::Decompose()
 {
-   Log::Info<<"Decompose"<<endl;
-   size_t rank = 2;
-  //Presenltly only ALS is supported as an Optimizer
-  //Should be converted to a template
+  // Should this rank be parameterizable?
+  size_t rank = 2;
+
+  // Presently only ALS (via NMF) is supported as an optimizer.  This should be
+  // converted to a template when more optimizers are available.
   NMF<RandomInitialization, WAlternatingLeastSquaresRule,
       HAlternatingLeastSquaresRule> als(10000, 1e-5);
-  als.Apply(cleanedData,rank,w,h);
-  //data::Save("w.csv",w);
-  //data::Save("h.csv",h);
+  als.Apply(cleanedData, rank, w, h);
 }
 
 void CF::GenerateRating()
