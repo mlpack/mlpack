@@ -196,8 +196,6 @@ class CF
   void CalculateApproximateRatings();
   //!Converts the User, Item, Value Matrix to User-Item Table
   void CleanData();
-  //!Decomposes the cleanedData size_to user and item matrices
-  void Decompose();
   //!Create ratings from user and item matrices
   void GenerateRating();
 
