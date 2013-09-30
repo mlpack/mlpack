@@ -71,17 +71,6 @@ CF::CF(const size_t numRecs, const size_t numUsersForSimilarity,
     this->numUsersForSimilarity = numUsersForSimilarity;
 }
 
-void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
-                            arma::Col<size_t>& users)
-{
-  Log::Info<<"GetRecommendations (param: recommendations,users)"<<endl;
-  //Base function for calculating Recommendations
-  //Operations Independent of the query
-  CalculateApproximateRatings();
-  //Query Dependent Operations
-  Query(recommendations,users);
-}
-
 void CF::CalculateApproximateRatings()
 {
   Log::Info<<"CalculatineApproximateRating"<<endl;
@@ -96,17 +85,27 @@ void CF::CalculateApproximateRatings()
 
 void CF::GetRecommendations(arma::Mat<size_t>& recommendations)
 {
-  Log::Info<<"GetRecommendations (param: recommendations)"<<endl;
-  //Build the initial rating tables with missing values
+  // Build the initial rating tables with missing values.
   CleanData();
-  //Used to save user IDs
+  // Used to save user IDs.
   arma::Col<size_t> users =
-    arma::zeros<arma::Col<size_t> >(cleanedData.n_cols,1);
-  //Getting all user IDs
-  for (size_t i=0;i<cleanedData.n_cols;i++)
-    users(i) = i+1;
-  //Calling Base Function for Recommendations
-  GetRecommendations(recommendations,users);
+    arma::zeros<arma::Col<size_t> >(cleanedData.n_cols, 1);
+  // Getting all user IDs.
+  for (size_t i = 0; i < cleanedData.n_cols; i++)
+    users(i) = i + 1;
+
+  // Calling base function for recommendations.
+  GetRecommendations(recommendations, users);
+}
+
+void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
+                            arma::Col<size_t>& users)
+{
+  // Base function for calculating recommendations.
+  // Operations independent of the query.
+  CalculateApproximateRatings();
+  // Query-dependent operations.
+  Query(recommendations,users);
 }
 
 void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
