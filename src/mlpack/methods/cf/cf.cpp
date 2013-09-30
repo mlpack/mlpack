@@ -89,8 +89,8 @@ void CF::CalculateApproximateRatings()
       HAlternatingLeastSquaresRule> als(10000, 1e-5);
   als.Apply(cleanedData, rank, w, h);
 
-  //Generate new table by multiplying approximate values
-  GenerateRating();
+  // Generate new table by multiplying approximate values.
+  rating = w * h;
 }
 
 void CF::GetRecommendations(arma::Mat<size_t>& recommendations)
@@ -162,14 +162,6 @@ void CF::CleanData()
   // Populate mask.
   for (size_t i = 0; i < data.n_cols; i++)
     mask(data(1, i) - 1, data(0, i) - 1) = -1.0;
-}
-
-void CF::GenerateRating()
-{
-  Log::Info<<"GenerateRatings"<<endl;
-  //Calculating approximate rating
-  rating = w*h;
-  //data::Save("rating.csv",rating);
 }
 
 void CF::Query(arma::Mat<size_t>& recommendations,
