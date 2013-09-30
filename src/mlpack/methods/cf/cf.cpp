@@ -165,10 +165,11 @@ void CF::Query(arma::Mat<size_t>& recommendations,
                arma::Col<size_t>& users)
 {
   // Temporarily store feature vector of queried users.
-  arma::mat query(rating.n_rows, users.n_rows);
+  arma::mat query(rating.n_rows, users.n_elem);
 
-  // Calculate the feature vector of queried users.
-  CreateQuery(query, users);
+  // Select feature vectors of queried users.
+  for (size_t i = 0; i < users.n_elem; i++)
+    query.col(i) = rating.col(users(i) - 1);
 
   // Temporary storage for neighborhood of the queried users.
   arma::Mat<size_t> neighborhood;
@@ -185,16 +186,6 @@ void CF::Query(arma::Mat<size_t>& recommendations,
 
   // Calculate the top recommendations.
   CalculateTopRecommendations(recommendations, averages, users);
-}
-
-void CF::CreateQuery(arma::mat& query,arma::Col<size_t>& users) const
-{
-  Log::Info<<"CreateQuery"<<endl;
-  //Selecting feature vectors of queried users
-  for(size_t i=0;i<users.n_rows;i++)
-    for(size_t j=0;j<rating.col(i).n_rows;j++)
-      query(j,i) = rating(j,users(i)-1);
-  //data::Save("query.csv",query);
 }
 
 void CF::GetNeighbourhood(arma::mat& query,

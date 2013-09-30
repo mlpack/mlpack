@@ -204,14 +204,6 @@ class CF
   void Query(arma::Mat<size_t>& recommendations,arma::Col<size_t>& users);
 
   /**
-   * Selects item preferences of the users
-   *
-   * @param query Matrix to store the item preference of the user.
-   * @param users Users for which recommendations are to be generated
-   */
-  void CreateQuery(arma::mat& query,arma::Col<size_t>& users) const;
-
-  /**
    * Generates the neighbourhood of users.
    *
    * @param query Matrix to store the item preference of the user.
