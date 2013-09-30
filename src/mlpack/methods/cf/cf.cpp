@@ -77,22 +77,6 @@ CF::CF(const size_t numRecs, const size_t numUsersForSimilarity,
   CleanData();
 }
 
-void CF::CalculateApproximateRatings()
-{
-  // Decompose the sparse data matrix to user and data matrices.
-  // Should this rank be parameterizable?
-  size_t rank = 2;
-
-  // Presently only ALS (via NMF) is supported as an optimizer.  This should be
-  // converted to a template when more optimizers are available.
-  NMF<RandomInitialization, WAlternatingLeastSquaresRule,
-      HAlternatingLeastSquaresRule> als(10000, 1e-5);
-  als.Apply(cleanedData, rank, w, h);
-
-  // Generate new table by multiplying approximate values.
-  rating = w * h;
-}
-
 void CF::GetRecommendations(arma::Mat<size_t>& recommendations)
 {
   // Used to save user IDs.
@@ -110,8 +94,21 @@ void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
                             arma::Col<size_t>& users)
 {
   // Base function for calculating recommendations.
-  // Operations independent of the query.
-  CalculateApproximateRatings();
+
+  // Operations independent of the query:
+  // Decompose the sparse data matrix to user and data matrices.
+  // Should this rank be parameterizable?
+  size_t rank = 2;
+
+  // Presently only ALS (via NMF) is supported as an optimizer.  This should be
+  // converted to a template when more optimizers are available.
+  NMF<RandomInitialization, WAlternatingLeastSquaresRule,
+      HAlternatingLeastSquaresRule> als(10000, 1e-5);
+  als.Apply(cleanedData, rank, w, h);
+
+  // Generate new table by multiplying approximate values.
+  rating = w * h;
+
   // Query-dependent operations.
   Query(recommendations,users);
 }

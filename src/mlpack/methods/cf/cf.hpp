@@ -192,8 +192,6 @@ class CF
   arma::mat data;
   //! Cleaned Data Matrix.
   arma::sp_mat cleanedData;
-  //!Calculates a rating matrix with available data and approximations
-  void CalculateApproximateRatings();
   //!Converts the User, Item, Value Matrix to User-Item Table
   void CleanData();
 
