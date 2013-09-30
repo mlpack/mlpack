@@ -204,16 +204,6 @@ class CF
   void Query(arma::Mat<size_t>& recommendations,arma::Col<size_t>& users);
 
   /**
-   * Calculates the Average rating users would have given to unrated items based
-   * on their similarity with other users.
-   *
-   * @param neighbourhood Matrix to store user neighbourhood.
-   * @param averages stores the average rating for each item.
-   */
-  void CalculateAverage(arma::Mat<size_t>& neighbourhood,
-                        arma::mat& averages) const;
-
-  /**
    * Calculates the top recommendations given average rating
    * for each user.
    *
