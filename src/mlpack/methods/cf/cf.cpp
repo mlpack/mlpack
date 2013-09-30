@@ -132,27 +132,26 @@ void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
 
 void CF::CleanData()
 {
-  // Temporarily stores max user id.
-  double maxUserID = data(0, 0);
-  // Temporarily stores max item id.
-  double maxItemID = data(1, 0);
-
-  // Calculate max users and items.
-  for (size_t i = 1; i < data.n_cols; i++)
+  // Generate list of locations for batch insert constructor for sparse
+  // matrices.
+  arma::umat locations(2, data.n_cols);
+  arma::vec values(data.n_cols);
+  for (size_t i = 0; i < data.n_cols; ++i)
   {
-    if (data(0, i) > maxUserID)
-      maxUserID = data(0, i);
-    if (data(1, i) > maxItemID)
-      maxItemID = data(1, i);
+    // We have to transpose it because items are rows, and users are columns.
+    locations(1, i) = ((arma::uword) data(0, i)) - 1;
+    locations(0, i) = ((arma::uword) data(1, i)) - 1;
+    values(i) = data(2, i);
   }
 
+  // Find maximum user and item IDs.
+  const size_t maxItemID = (size_t) max(locations.row(0)) + 1;
+  const size_t maxUserID = (size_t) max(locations.row(1)) + 1;
+
   // Fill sparse matrix and mask matrix.
-  cleanedData.set_size((size_t) maxItemID, (size_t) maxUserID);
+  cleanedData = arma::sp_mat(locations, values, maxItemID, maxUserID);
   mask = arma::ones<arma::mat>((size_t) maxItemID,
                                (size_t) maxUserID);
-  // Calculates the initial User-Item table
-  for (size_t i = 0; i < data.n_cols; i++)
-    cleanedData(data(1, i) - 1, data(0, i) - 1) = data(2, i);
   // Populate mask.
   for (size_t i = 0; i < data.n_cols; i++)
     mask(data(1, i) - 1, data(0, i) - 1) = -1.0;
