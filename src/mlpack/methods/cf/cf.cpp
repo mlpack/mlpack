@@ -174,8 +174,11 @@ void CF::Query(arma::Mat<size_t>& recommendations,
   // Temporary storage for neighborhood of the queried users.
   arma::Mat<size_t> neighborhood;
 
-  // Calculates the neighborhood of the queried users.
-  GetNeighbourhood(query, neighborhood);
+  // Calculate the neighborhood of the queried users.
+  // This should be a templatized option.
+  AllkNN a(rating, query);
+  arma::mat resultingDistances; // Temporary storage.
+  a.Search(numUsersForSimilarity, neighborhood, resultingDistances);
 
   // Temporary storage for storing the average rating for each user in their
   // neighborhood.
@@ -186,28 +189,6 @@ void CF::Query(arma::Mat<size_t>& recommendations,
 
   // Calculate the top recommendations.
   CalculateTopRecommendations(recommendations, averages, users);
-}
-
-void CF::GetNeighbourhood(arma::mat& query,
-                         arma::Mat<size_t>& neighbourhood)
-{
-  Log::Info<<"GetNeighbourhood"<<endl;
-  if(numUsersForSimilarity>rating.n_cols)
-  {
-    Log::Warn << "CF::GetNeighbourhood(arma::mat,armaMat<size_t>):"
-        <<"neighbourhood size should be > total number of users("
-        << rating.n_cols << " given). Setting value to number of users.\n";
-    NumUsersForSimilarity(rating.n_cols);
-  }
-  //Creating an Alknn object
-  //Should be moved to templates
-  AllkNN a(rating, query);
-  //Temproraily storing distance between neighbours
-  arma::mat resultingDistances;
-  //Building neighbourhood
-  a.Search(numUsersForSimilarity, neighbourhood,
-           resultingDistances);
-  //data::Save("neighbourhood.csv",neighbourhood);
 }
 
 void CF::CalculateAverage(arma::Mat<size_t>& neighbourhood,

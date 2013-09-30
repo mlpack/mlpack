@@ -204,16 +204,6 @@ class CF
   void Query(arma::Mat<size_t>& recommendations,arma::Col<size_t>& users);
 
   /**
-   * Generates the neighbourhood of users.
-   *
-   * @param query Matrix to store the item preference of the user.
-   * @param modifiedRating Matrix to store the Modified Matix.
-   * @param neighbourhood Matrix to store user neighbourhood.
-   */
-  void GetNeighbourhood(arma::mat& query,
-                        arma::Mat<size_t>& neighbourhood);
-
-  /**
    * Calculates the Average rating users would have given to unrated items based
    * on their similarity with other users.
    *
