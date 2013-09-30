@@ -184,31 +184,18 @@ void CF::Query(arma::Mat<size_t>& recommendations,
   // neighborhood.
   arma::mat averages = arma::zeros<arma::mat>(rating.n_rows, query.n_cols);
 
-  // Calculate the average values.
-  CalculateAverage(neighborhood, averages);
+  // Iterate over each query user.
+  for (size_t i = 0; i < neighborhood.n_cols; ++i)
+  {
+    // Iterate over each neighbor of the query user.
+    for (size_t j = 0; j < neighborhood.n_rows; ++j)
+      averages.col(i) += rating.col(neighborhood(j, i));
+    // Normalize average.
+    averages.col(i) /= neighborhood.n_rows;
+  }
 
   // Calculate the top recommendations.
   CalculateTopRecommendations(recommendations, averages, users);
-}
-
-void CF::CalculateAverage(arma::Mat<size_t>& neighbourhood,
-                      arma::mat& averages) const
-{
-  Log::Info<<"CalculateAverage"<<endl;
-  //Temprorary Storage for calculating sum
-  arma::Col<double> tmp = arma::zeros<arma::Col<double> >(rating.n_rows,1);
-  size_t j;
-  //Iterating over all users
-  for(size_t i=0;i<neighbourhood.n_cols;i++)
-  {
-    tmp = arma::zeros<arma::Col<double> >(rating.n_rows,1);
-    //Iterating over all neighbours
-    for(j=0;j<neighbourhood.n_rows;j++)
-      tmp += rating.col(neighbourhood(j,i));
-    //Calculating averages
-    averages.col(i) = tmp/j;
-  }
-  //data::Save("averages.csv",averages);
 }
 
 void CF::CalculateTopRecommendations(arma::Mat<size_t>& recommendations,
