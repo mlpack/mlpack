@@ -1,17 +1,18 @@
 /**
- * @file cf.hpp
+ * @file cf.cpp
  * @author Mudit Raj Gupta
  *
  * Collaborative Filtering.
- * 
- * Implementation of CF class to perform Collaborative Filtering on the 
+ *
+ * Implementation of CF class to perform Collaborative Filtering on the
  * specified data set.
  *
- */ 
-
+ */
 #include "cf.hpp"
+#include <mlpack/methods/nmf/nmf.hpp>
+#include <mlpack/methods/nmf/als_update_rules.hpp>
 
-using namespace mlpack::als;
+using namespace mlpack::nmf;
 using namespace std;
 
 namespace mlpack {
@@ -24,7 +25,7 @@ CF::CF(arma::mat& data) :
      data(data)
 {
   Log::Info<<"Constructor (param: input data, default: numRecs;neighbourhood)"<<endl;
-  this->numRecs = 5;  
+  this->numRecs = 5;
   this->numUsersForSimilarity = 5;
 }
 
@@ -40,7 +41,7 @@ CF::CF(const size_t numRecs,arma::mat& data) :
     this->numRecs = 5;
   }
   else
-    this->numRecs = numRecs;   
+    this->numRecs = numRecs;
   this->numUsersForSimilarity = 5;
 }
 
@@ -57,7 +58,7 @@ CF::CF(const size_t numRecs, const size_t numUsersForSimilarity,
     this->numRecs = 5;
   }
   else
-    this->numRecs = numRecs;  
+    this->numRecs = numRecs;
   // Validate neighbourhood size.
   if (numUsersForSimilarity < 1)
   {
@@ -70,7 +71,7 @@ CF::CF(const size_t numRecs, const size_t numUsersForSimilarity,
     this->numUsersForSimilarity = numUsersForSimilarity;
 }
 
-void CF::GetRecommendations(arma::Mat<size_t>& recommendations, 
+void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
                             arma::Col<size_t>& users)
 {
   Log::Info<<"GetRecommendations (param: recommendations,users)"<<endl;
@@ -78,28 +79,28 @@ void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
   //Operations Independent of the query
   CalculateApproximateRatings();
   //Query Dependent Operations
-  Query(recommendations,users);  
+  Query(recommendations,users);
 }
 
-void CF::CalculateApproximateRatings() 
+void CF::CalculateApproximateRatings()
 {
   Log::Info<<"CalculatineApproximateRating"<<endl;
   //Build the initial rating tables with missing values
   //if(cleanedData.n_rows==0)
   CleanData();
-  //Decompose the size_tiial table size_to user and item 
+  //Decompose the size_tiial table size_to user and item
   Decompose();
   //Generate new table by multiplying approximate values
   GenerateRating();
 }
 
-void CF::GetRecommendations(arma::Mat<size_t>& recommendations) 
+void CF::GetRecommendations(arma::Mat<size_t>& recommendations)
 {
   Log::Info<<"GetRecommendations (param: recommendations)"<<endl;
   //Build the initial rating tables with missing values
   CleanData();
   //Used to save user IDs
-  arma::Col<size_t> users = 
+  arma::Col<size_t> users =
     arma::zeros<arma::Col<size_t> >(cleanedData.n_cols,1);
   //Getting all user IDs
   for (size_t i=0;i<cleanedData.n_cols;i++)
@@ -109,21 +110,21 @@ void CF::GetRecommendations(arma::Mat<size_t>& recommendations)
 }
 
 void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
-                            arma::Col<size_t>& users,size_t num) 
+                            arma::Col<size_t>& users,size_t num)
 {
-  //Setting Number of Recommendations  
-  NumRecs(num); 
+  //Setting Number of Recommendations
+  NumRecs(num);
   //Calling Base Function for Recommendations
   GetRecommendations(recommendations,users);
 }
 
 void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
-                            arma::Col<size_t>& users,size_t num,size_t s) 
+                            arma::Col<size_t>& users,size_t num,size_t s)
 {
-  //Setting number of users that should be used for calculating 
+  //Setting number of users that should be used for calculating
   //neighbours
   NumUsersForSimilarity(s);
-  //Setting Number of Recommendations  
+  //Setting Number of Recommendations
   NumRecs(num);
   //Calling Base Function for Recommendations
   GetRecommendations(recommendations,users,num);
@@ -132,7 +133,7 @@ void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
 void CF::CleanData()
 {
   Log::Info<<"CleanData";
-  //Temporarily stores max user id 
+  //Temporarily stores max user id
   double maxUserID;
   //Temporarily stores max item id
   double maxItemID;
@@ -148,7 +149,7 @@ void CF::CleanData()
   }
   //Temporarily stores sparcely populated rating matrix
   arma::sp_mat tmp((size_t)maxItemID,(size_t)maxUserID);
-  //Temporarily stores mask matrix 
+  //Temporarily stores mask matrix
   arma::mat lMask = arma::ones<arma::mat>((size_t)maxItemID,
                                           (size_t)maxUserID);
   //Calculates the initial User-Item table
@@ -165,29 +166,29 @@ void CF::CleanData()
  //data::Save("mask.csv",mask);
 }
 
-void CF::Decompose() 
-{ 
+void CF::Decompose()
+{
    Log::Info<<"Decompose"<<endl;
    size_t rank = 2;
   //Presenltly only ALS is supported as an Optimizer
   //Should be converted to a template
-  ALS<RandomInitialization, WAlternatingLeastSquaresRule,
+  NMF<RandomInitialization, WAlternatingLeastSquaresRule,
       HAlternatingLeastSquaresRule> als(10000, 1e-5);
   als.Apply(cleanedData,rank,w,h);
   //data::Save("w.csv",w);
   //data::Save("h.csv",h);
 }
 
-void CF::GenerateRating() 
+void CF::GenerateRating()
 {
   Log::Info<<"GenerateRatings"<<endl;
-  //Calculating approximate rating 
+  //Calculating approximate rating
   rating = w*h;
   //data::Save("rating.csv",rating);
 }
 
 void CF::Query(arma::Mat<size_t>& recommendations,
-               arma::Col<size_t>& users) 
+               arma::Col<size_t>& users)
 {
   Log::Info<<"Query"<<endl;
   //Temproraily stores feature vector of queried users
@@ -197,8 +198,8 @@ void CF::Query(arma::Mat<size_t>& recommendations,
   //Temporary storage for neighbourhood of the queried users
   arma::Mat<size_t> neighbourhood;
   //Calculates the neighbourhood of the queried users
-  GetNeighbourhood(query,neighbourhood); 
-  //Temporary storage for storing the average rating for each 
+  GetNeighbourhood(query,neighbourhood);
+  //Temporary storage for storing the average rating for each
   //user in their neighbourhood
   arma::mat averages = arma::zeros<arma::mat>(rating.n_rows,query.n_cols);
   //Calculates the average values
@@ -210,15 +211,15 @@ void CF::Query(arma::Mat<size_t>& recommendations,
 void CF::CreateQuery(arma::mat& query,arma::Col<size_t>& users) const
 {
   Log::Info<<"CreateQuery"<<endl;
-  //Selecting feature vectors of queried users 
+  //Selecting feature vectors of queried users
   for(size_t i=0;i<users.n_rows;i++)
     for(size_t j=0;j<rating.col(i).n_rows;j++)
       query(j,i) = rating(j,users(i)-1);
   //data::Save("query.csv",query);
 }
 
-void CF::GetNeighbourhood(arma::mat& query, 
-                         arma::Mat<size_t>& neighbourhood) 
+void CF::GetNeighbourhood(arma::mat& query,
+                         arma::Mat<size_t>& neighbourhood)
 {
   Log::Info<<"GetNeighbourhood"<<endl;
   if(numUsersForSimilarity>rating.n_cols)
@@ -234,12 +235,12 @@ void CF::GetNeighbourhood(arma::mat& query,
   //Temproraily storing distance between neighbours
   arma::mat resultingDistances;
   //Building neighbourhood
-  a.Search(numUsersForSimilarity, neighbourhood, 
-           resultingDistances); 
+  a.Search(numUsersForSimilarity, neighbourhood,
+           resultingDistances);
   //data::Save("neighbourhood.csv",neighbourhood);
 }
 
-void CF::CalculateAverage(arma::Mat<size_t>& neighbourhood, 
+void CF::CalculateAverage(arma::Mat<size_t>& neighbourhood,
                       arma::mat& averages) const
 {
   Log::Info<<"CalculateAverage"<<endl;
@@ -252,14 +253,14 @@ void CF::CalculateAverage(arma::Mat<size_t>& neighbourhood,
     tmp = arma::zeros<arma::Col<double> >(rating.n_rows,1);
     //Iterating over all neighbours
     for(j=0;j<neighbourhood.n_rows;j++)
-      tmp += rating.col(neighbourhood(j,i));  
+      tmp += rating.col(neighbourhood(j,i));
     //Calculating averages
-    averages.col(i) = tmp/j;  
+    averages.col(i) = tmp/j;
   }
   //data::Save("averages.csv",averages);
 }
 
-void CF::CalculateTopRecommendations(arma::Mat<size_t>& recommendations, 
+void CF::CalculateTopRecommendations(arma::Mat<size_t>& recommendations,
                                  arma::mat& averages,
                                  arma::Col<size_t>& users) const
 {
@@ -280,10 +281,10 @@ void CF::CalculateTopRecommendations(arma::Mat<size_t>& recommendations,
   size_t count;
   //Iterate for all users
   for(size_t i=0;i<users.n_rows;i++)
-  { 
+  {
     count=0;
     //Dot product between average rating and mask to dilute the ratings
-    // of the items that user i has already rated 
+    // of the items that user i has already rated
     tmp = averages.col(users(i)-1) % mask.col(users(i)-1);
     //Mapping Rating to Items
     for(size_t j=0;j<tmp.n_rows;j++)
@@ -291,7 +292,7 @@ void CF::CalculateTopRecommendations(arma::Mat<size_t>& recommendations,
         tmpMap.insert(std::pair<double,size_t>(tmp(j),j+1));
     //Iterating over Item-Rating Map
     for(iter=tmpMap.rbegin();iter!=tmpMap.rend();++iter)
-    { 
+    {
        //Saving recommendations to the recommendations table
       rec(count,i) = (size_t)iter->second;
       count++;
@@ -300,12 +301,12 @@ void CF::CalculateTopRecommendations(arma::Mat<size_t>& recommendations,
         break;
     }
     //Removing the items from the map
-    //note: Item 0 is just to maintain the consistency and it 
+    //note: Item 0 is just to maintain the consistency and it
     //represents not recommendations were available
     for(it=tmpMap.begin();it!=tmpMap.end();++it)
       tmpMap.erase(it);
   }
-  //Saving to recommendations 
+  //Saving to recommendations
   recommendations = rec;
 }
 
