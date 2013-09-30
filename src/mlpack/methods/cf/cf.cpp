@@ -132,38 +132,30 @@ void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
 
 void CF::CleanData()
 {
-  Log::Info<<"CleanData";
-  //Temporarily stores max user id
-  double maxUserID;
-  //Temporarily stores max item id
-  double maxItemID;
-  //Calculating max users and items
-  maxUserID = data(0,0);
-  maxItemID = data(1,0);
-  for (size_t i=1;i<data.n_cols;i++)
+  // Temporarily stores max user id.
+  double maxUserID = data(0, 0);
+  // Temporarily stores max item id.
+  double maxItemID = data(1, 0);
+
+  // Calculate max users and items.
+  for (size_t i = 1; i < data.n_cols; i++)
   {
-      if(data(0,i)>maxUserID)
-        maxUserID = data(0,i);
-      if(data(1,i)>maxItemID)
-        maxItemID = data(1,i);
+    if (data(0, i) > maxUserID)
+      maxUserID = data(0, i);
+    if (data(1, i) > maxItemID)
+      maxItemID = data(1, i);
   }
-  //Temporarily stores sparcely populated rating matrix
-  arma::sp_mat tmp((size_t)maxItemID,(size_t)maxUserID);
-  //Temporarily stores mask matrix
-  arma::mat lMask = arma::ones<arma::mat>((size_t)maxItemID,
-                                          (size_t)maxUserID);
-  //Calculates the initial User-Item table
-  for (size_t i=0;i<data.n_cols;i++)
-    tmp(data(1,i)-1,data(0,i)-1) = data(2,i);
-  //Mask
-  for (size_t i=0;i<data.n_cols;i++)
-    lMask(data(1,i)-1,data(0,i)-1) = -1.0;
-  //Storing in a global variable
-  cleanedData = tmp;
-  //Storing the mask
-  mask=lMask;
- //data::Save("cleanedData.csv",cleanedData);
- //data::Save("mask.csv",mask);
+
+  // Fill sparse matrix and mask matrix.
+  cleanedData.set_size((size_t) maxItemID, (size_t) maxUserID);
+  mask = arma::ones<arma::mat>((size_t) maxItemID,
+                               (size_t) maxUserID);
+  // Calculates the initial User-Item table
+  for (size_t i = 0; i < data.n_cols; i++)
+    cleanedData(data(1, i) - 1, data(0, i) - 1) = data(2, i);
+  // Populate mask.
+  for (size_t i = 0; i < data.n_cols; i++)
+    mask(data(1, i) - 1, data(0, i) - 1) = -1.0;
 }
 
 void CF::Decompose()
