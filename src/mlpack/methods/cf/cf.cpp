@@ -79,9 +79,16 @@ CF::CF(const size_t numRecs, const size_t numUsersForSimilarity,
 
 void CF::CalculateApproximateRatings()
 {
-  Log::Info<<"CalculatineApproximateRating"<<endl;
-  //Decompose the size_tiial table size_to user and item
-  Decompose();
+  // Decompose the sparse data matrix to user and data matrices.
+  // Should this rank be parameterizable?
+  size_t rank = 2;
+
+  // Presently only ALS (via NMF) is supported as an optimizer.  This should be
+  // converted to a template when more optimizers are available.
+  NMF<RandomInitialization, WAlternatingLeastSquaresRule,
+      HAlternatingLeastSquaresRule> als(10000, 1e-5);
+  als.Apply(cleanedData, rank, w, h);
+
   //Generate new table by multiplying approximate values
   GenerateRating();
 }
@@ -155,18 +162,6 @@ void CF::CleanData()
   // Populate mask.
   for (size_t i = 0; i < data.n_cols; i++)
     mask(data(1, i) - 1, data(0, i) - 1) = -1.0;
-}
-
-void CF::Decompose()
-{
-  // Should this rank be parameterizable?
-  size_t rank = 2;
-
-  // Presently only ALS (via NMF) is supported as an optimizer.  This should be
-  // converted to a template when more optimizers are available.
-  NMF<RandomInitialization, WAlternatingLeastSquaresRule,
-      HAlternatingLeastSquaresRule> als(10000, 1e-5);
-  als.Apply(cleanedData, rank, w, h);
 }
 
 void CF::GenerateRating()
