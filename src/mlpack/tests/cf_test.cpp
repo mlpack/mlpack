@@ -118,4 +118,96 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserTest)
   BOOST_REQUIRE_EQUAL(recommendations.n_cols, numUsers);
 }
 
+/**
+ * Make sure recommendations that are generated are reasonably accurate.
+ */
+BOOST_AUTO_TEST_CASE(RecommendationAccuracyTest)
+{
+  // Load the GroupLens dataset; then, we will remove some values from it.
+  arma::mat dataset;
+  data::Load("GroupLens100k.csv", dataset);
+
+  // Save the columns we've removed.
+  arma::mat savedCols(3, 300); // Remove 300 5-star ratings.
+  size_t currentCol = 0;
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+  {
+    if (currentCol == 300)
+      break;
+
+    if (dataset(2, i) > 4.5) // 5-star rating.
+    {
+      // Make sure we don't have this user yet.  This is a slow way to do this
+      // but I don't particularly care here because it's in the tests.
+      bool found = false;
+      for (size_t j = 0; j < currentCol; ++j)
+      {
+        if (savedCols(0, j) == dataset(0, i))
+        {
+          found = true;
+          break;
+        }
+      }
+
+      // If this user doesn't already exist in savedCols, add them.  Otherwise
+      // ignore this point.
+      if (!found)
+      {
+        savedCols.col(currentCol) = dataset.col(i);
+        dataset.shed_col(i);
+        ++currentCol;
+      }
+    }
+  }
+
+  // Now create the CF object.
+  CF c(dataset);
+
+  // Obtain 150 recommendations for the users in savedCols, and make sure the
+  // missing item shows up in most of them.  First, create the list of users,
+  // which requires casting from doubles...
+  arma::Col<size_t> users(300);
+  for (size_t i = 0; i < 300; ++i)
+    users(i) = (size_t) savedCols(0, i);
+  arma::Mat<size_t> recommendations;
+  size_t numRecs = 150;
+  c.NumRecs(numRecs);
+  c.GetRecommendations(recommendations, users);
+
+  BOOST_REQUIRE_EQUAL(recommendations.n_rows, numRecs);
+  BOOST_REQUIRE_EQUAL(recommendations.n_cols, 300);
+
+  size_t failures = 0;
+  for (size_t i = 0; i < 300; ++i)
+  {
+    size_t targetItem = (size_t) savedCols(1, i) - 1;
+    bool found = false;
+    // Make sure the target item shows up in the recommendations.
+    for (size_t j = 0; j < numRecs; ++j)
+    {
+      const size_t user = users(i) - 1;
+      const size_t item = recommendations(j, i) - 1;
+      if (item == targetItem)
+      {
+        found = true;
+      }
+      else
+      {
+        // Make sure we aren't being recommended an item that the user already
+        // rated.
+        BOOST_REQUIRE_EQUAL((double) c.CleanedData()(item, user), 0.0);
+      }
+    }
+
+    if (!found)
+      ++failures;
+  }
+
+  // Make sure the right item showed up in at least 2/3 of the recommendations.
+  // Random chance (that is, if we selected recommendations randomly) for this
+  // GroupLens dataset would give somewhere around a 10% success rate (failures
+  // would be closer to 270).
+  BOOST_REQUIRE_LT(failures, 100);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
