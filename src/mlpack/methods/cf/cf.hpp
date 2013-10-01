@@ -125,6 +125,8 @@ class CF
   const arma::mat& Rating() const { return rating; }
   //! Get the data matrix.
   const arma::mat& Data() const { return data; }
+  //! Get the cleaned data matrix.
+  const arma::sp_mat& CleanedData() const { return cleanedData; }
 
   /**
    * Generates default number of recommendations for all users.
