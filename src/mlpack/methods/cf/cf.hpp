@@ -93,18 +93,6 @@ class CF
     this->numRecs = recs;
   }
 
-  //! Sets data
-  void Data(arma::mat& d)
-  {
-    data = d;
-  }
-
-  //! Gets data
-  arma::mat Data()
-  {
-    return data;
-  }
-
   //! Gets numRecs
   size_t NumRecs()
   {
@@ -135,6 +123,8 @@ class CF
   const arma::mat& H() const { return h; }
   //! Get the Rating Matrix.
   const arma::mat& Rating() const { return rating; }
+  //! Get the data matrix.
+  const arma::mat& Data() const { return data; }
 
   /**
    * Generates default number of recommendations for all users.
@@ -176,21 +166,21 @@ class CF
                           size_t neighbours);
 
  private:
-  //! Number of Recommendations.
+  //! Number of recommendations.
   size_t numRecs;
-  //! Number of User for Similariy.
+  //! Number of users for similarity.
   size_t numUsersForSimilarity;
-  //! User Matrix.
+  //! User matrix.
   arma::mat w;
-  //! Item Matrix.
+  //! Item matrix.
   arma::mat h;
-  //! Rating Martix.
+  //! Rating matrix.
   arma::mat rating;
-  //! Initial Data Matrix.
+  //! Initial data matrix.
   arma::mat data;
-  //! Cleaned Data Matrix.
+  //! Cleaned data matrix.
   arma::sp_mat cleanedData;
-  //!Converts the User, Item, Value Matrix to User-Item Table
+  //! Converts the User, Item, Value Matrix to User-Item Table
   void CleanData();
 
   /**
