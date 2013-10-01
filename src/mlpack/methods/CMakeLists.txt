@@ -1,6 +1,6 @@
 # Recurse into each method mlpack provides.
 set(DIRS
-#  cf
+  cf
   det
   emst
   fastmks
