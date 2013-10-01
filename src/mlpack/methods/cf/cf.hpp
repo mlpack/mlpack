@@ -186,8 +186,6 @@ class CF
   arma::mat h;
   //! Rating Martix.
   arma::mat rating;
-  //! Masking Matrix
-  arma::mat mask;
   //! Initial Data Matrix.
   arma::mat data;
   //! Cleaned Data Matrix.
