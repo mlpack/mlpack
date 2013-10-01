@@ -109,56 +109,9 @@ void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
   // Generate new table by multiplying approximate values.
   rating = w * h;
 
-  // Query-dependent operations.
-  Query(recommendations,users);
-}
+  // Now, we will use the decomposed w and h matrices to estimate what the user
+  // would have rated items as, and then pick the best items.
 
-void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
-                            arma::Col<size_t>& users,size_t num)
-{
-  //Setting Number of Recommendations
-  NumRecs(num);
-  //Calling Base Function for Recommendations
-  GetRecommendations(recommendations,users);
-}
-
-void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
-                            arma::Col<size_t>& users,size_t num,size_t s)
-{
-  //Setting number of users that should be used for calculating
-  //neighbours
-  NumUsersForSimilarity(s);
-  //Setting Number of Recommendations
-  NumRecs(num);
-  //Calling Base Function for Recommendations
-  GetRecommendations(recommendations,users,num);
-}
-
-void CF::CleanData()
-{
-  // Generate list of locations for batch insert constructor for sparse
-  // matrices.
-  arma::umat locations(2, data.n_cols);
-  arma::vec values(data.n_cols);
-  for (size_t i = 0; i < data.n_cols; ++i)
-  {
-    // We have to transpose it because items are rows, and users are columns.
-    locations(1, i) = ((arma::uword) data(0, i)) - 1;
-    locations(0, i) = ((arma::uword) data(1, i)) - 1;
-    values(i) = data(2, i);
-  }
-
-  // Find maximum user and item IDs.
-  const size_t maxItemID = (size_t) max(locations.row(0)) + 1;
-  const size_t maxUserID = (size_t) max(locations.row(1)) + 1;
-
-  // Fill sparse matrix.
-  cleanedData = arma::sp_mat(locations, values, maxItemID, maxUserID);
-}
-
-void CF::Query(arma::Mat<size_t>& recommendations,
-               arma::Col<size_t>& users)
-{
   // Temporarily store feature vector of queried users.
   arma::mat query(rating.n_rows, users.n_elem);
 
@@ -230,6 +183,49 @@ void CF::Query(arma::Mat<size_t>& recommendations,
       Log::Warn << "Could not provide " << values.n_rows << " recommendations "
           << "for user " << users(i) << " (not enough un-rated items)!" << endl;
   }
+}
+
+void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
+                            arma::Col<size_t>& users,size_t num)
+{
+  //Setting Number of Recommendations
+  NumRecs(num);
+  //Calling Base Function for Recommendations
+  GetRecommendations(recommendations,users);
+}
+
+void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
+                            arma::Col<size_t>& users,size_t num,size_t s)
+{
+  //Setting number of users that should be used for calculating
+  //neighbours
+  NumUsersForSimilarity(s);
+  //Setting Number of Recommendations
+  NumRecs(num);
+  //Calling Base Function for Recommendations
+  GetRecommendations(recommendations,users,num);
+}
+
+void CF::CleanData()
+{
+  // Generate list of locations for batch insert constructor for sparse
+  // matrices.
+  arma::umat locations(2, data.n_cols);
+  arma::vec values(data.n_cols);
+  for (size_t i = 0; i < data.n_cols; ++i)
+  {
+    // We have to transpose it because items are rows, and users are columns.
+    locations(1, i) = ((arma::uword) data(0, i)) - 1;
+    locations(0, i) = ((arma::uword) data(1, i)) - 1;
+    values(i) = data(2, i);
+  }
+
+  // Find maximum user and item IDs.
+  const size_t maxItemID = (size_t) max(locations.row(0)) + 1;
+  const size_t maxUserID = (size_t) max(locations.row(1)) + 1;
+
+  // Fill sparse matrix.
+  cleanedData = arma::sp_mat(locations, values, maxItemID, maxUserID);
 }
 
 /**

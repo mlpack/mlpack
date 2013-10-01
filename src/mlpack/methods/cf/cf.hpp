@@ -194,14 +194,6 @@ class CF
   void CleanData();
 
   /**
-   * Queries the obtained rating matrix.
-   *
-   * @param recommendations Matrix to save recommendations
-   * @param users Users for which recommendations are to be generated
-   */
-  void Query(arma::Mat<size_t>& recommendations,arma::Col<size_t>& users);
-
-  /**
    * Helper function to insert a point into the recommendation matrices.
    *
    * @param queryIndex Index of point whose recommendations we are inserting
