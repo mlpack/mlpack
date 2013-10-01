@@ -3,8 +3,7 @@
  * @author Mudit Raj Gupta
  *
  * Main executable to run CF.
- *
- */ 
+ */
 
 #include <mlpack/core.hpp>
 #include "cf.hpp"
@@ -20,7 +19,7 @@ PROGRAM_INFO("Collaborating Filtering", "This program performs Collaborative "
     " Optionally, the users to be queried can be specified. The program also"
     " provides the flexibility to select number of recommendations for each"
     " user and also the neighbourhood. User, Item and Rating matrices can also"
-    " be extracted. Variable parameters include algorithm for performing " 
+    " be extracted. Variable parameters include algorithm for performing "
     "cf, algorithm parameters and similarity measures to give recommendations");
 
 // Parameters for program.
@@ -28,9 +27,9 @@ PARAM_STRING_REQ("input_file", "Input dataset to perform CF on.", "i");
 PARAM_STRING("output_file","Recommendations.", "o", "recommendations.csv");
 PARAM_STRING("algorithm", "Algorithm used for cf (als/svd).", "a","als");
 PARAM_STRING("ratings_file", "File to save ratings.", "R","ratings.csv");
-PARAM_STRING("user_file", "File to save the calculated User matrix to.", 
+PARAM_STRING("user_file", "File to save the calculated User matrix to.",
              "U","user.csv");
-PARAM_STRING("item_file", "File to save the calculated Item matrix to.", 
+PARAM_STRING("item_file", "File to save the calculated Item matrix to.",
              "I","item.csv");
 PARAM_STRING("nearest_neighbour_algorithm", "Similarity Measure to be used "
              "for generating recommendations", "s","knn");
@@ -43,29 +42,29 @@ PARAM_INT("neighbourhood", "Size of the neighbourhood for all "
 
 int main(int argc, char** argv)
 {
-  //Parse Command Line
+  // Parse command line options.
   CLI::ParseCommandLine(argc, argv);
- 
-  //Read from the input file
-  string inputFile = CLI::GetParam<string>("input_file");
+
+  // Read from the input file.
+  const string inputFile = CLI::GetParam<string>("input_file");
   arma::mat dataset;
-  data::Load(inputFile.c_str(), dataset);
-    
-  //Recommendation matrix.
-  arma::Mat<size_t> recommendations; 
-   
-  //User Matrix
-  arma::Col<size_t> users;  
+  data::Load(inputFile, dataset);
 
-  //Reading Users
-  string userf = CLI::GetParam<string>("query_file");
-  data::Load(userf.c_str(),users);
+  // Recommendation matrix.
+  arma::Mat<size_t> recommendations;
 
-  //Calculating Recommendations
+  // User matrix.
+  arma::Col<size_t> users;
+
+  // Reading users.
+  const string userf = CLI::GetParam<string>("query_file");
+  data::Load(userf, users);
+
+  // Calculating Recommendations
   CF c(dataset);
 
   Log::Info << "Performing CF on dataset..." << endl;
   c.GetRecommendations(recommendations);
-  string outputFile = CLI::GetParam<string>("output_file");
+  const string outputFile = CLI::GetParam<string>("output_file");
   data::Save(outputFile, recommendations);
 }
