@@ -152,13 +152,8 @@ void CF::CleanData()
   const size_t maxItemID = (size_t) max(locations.row(0)) + 1;
   const size_t maxUserID = (size_t) max(locations.row(1)) + 1;
 
-  // Fill sparse matrix and mask matrix.
+  // Fill sparse matrix.
   cleanedData = arma::sp_mat(locations, values, maxItemID, maxUserID);
-  mask = arma::ones<arma::mat>((size_t) maxItemID,
-                               (size_t) maxUserID);
-  // Populate mask.
-  for (size_t i = 0; i < data.n_cols; i++)
-    mask(data(1, i) - 1, data(0, i) - 1) = -1.0;
 }
 
 void CF::Query(arma::Mat<size_t>& recommendations,
