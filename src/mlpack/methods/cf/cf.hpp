@@ -204,17 +204,6 @@ class CF
   void Query(arma::Mat<size_t>& recommendations,arma::Col<size_t>& users);
 
   /**
-   * Calculates the top recommendations given average rating
-   * for each user.
-   *
-   * @param neighbourhood Matrix to store user neighbourhood.
-   * @param averages stores the average rating for each item.
-   */
-  void CalculateTopRecommendations(arma::Mat<size_t>& recommendations,
-                                   arma::mat& averages,
-                                   arma::Col<size_t>& users) const;
-
-  /**
    * Helper function to insert a point into the recommendation matrices.
    *
    * @param queryIndex Index of point whose recommendations we are inserting
