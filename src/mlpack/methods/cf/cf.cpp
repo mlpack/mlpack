@@ -206,47 +206,73 @@ void CF::CalculateTopRecommendations(arma::Mat<size_t>& recommendations,
   int recos = numRecs;
   if(averages.n_cols<numRecs)
     recos = averages.n_rows;
-  //Stores recommendations
-  arma::Mat<size_t> rec = arma::zeros<arma::Mat<size_t> >(recos,users.n_rows);
-  //Stores valid ratings for items by a user
-  arma::Col<double> tmp = arma::zeros<arma::Col<double> >(rating.n_cols,1);
-  //Maps the items to their ratings
-  std::map<double,size_t> tmpMap;
-  //Iterator for the Item-Rating Map
-  std::map<double,size_t>::reverse_iterator iter;
-  std::map<double,size_t>::iterator it;
-  //Keeps count of number of recommendations provided for a user
-  size_t count;
-  //Iterate for all users
-  for(size_t i=0;i<users.n_rows;i++)
+
+  // Generate recommendations for each query user by finding the maximum numRecs
+  // elements in the averages matrix.
+  recommendations.set_size(numRecs, users.n_elem);
+  arma::mat values(numRecs, users.n_elem);
+  values.fill(-DBL_MAX); // The smallest possible value.
+  for (size_t i = 0; i < users.n_elem; i++)
   {
-    count=0;
-    //Dot product between average rating and mask to dilute the ratings
-    // of the items that user i has already rated
-    tmp = averages.col(users(i)-1) % mask.col(users(i)-1);
-    //Mapping Rating to Items
-    for(size_t j=0;j<tmp.n_rows;j++)
-      if(tmp(j)>=0)
-        tmpMap.insert(std::pair<double,size_t>(tmp(j),j+1));
-    //Iterating over Item-Rating Map
-    for(iter=tmpMap.rbegin();iter!=tmpMap.rend();++iter)
+    // Look through the averages column corresponding to the current user.
+    for (size_t j = 0; j < averages.n_rows; ++j)
     {
-       //Saving recommendations to the recommendations table
-      rec(count,i) = (size_t)iter->second;
-      count++;
-      //break is desired number of recommendations are saved
-      if(count==numRecs)
-        break;
+      // Ensure that the user hasn't already rated the item.
+      if (cleanedData(j, users(i) - 1) != 0.0)
+        continue; // The user already rated the item.
+
+      // Is the estimated value better than the worst candidate?
+      const double value = averages(j, i);
+      if (value > values(values.n_rows - 1, i))
+      {
+        // It should be inserted.  Which position?
+        size_t insertPosition = values.n_rows - 1;
+        while (insertPosition > 0)
+        {
+          if (value <= values(insertPosition - 1, i))
+            break; // The current value is the right one.
+          insertPosition--;
+        }
+
+        // Now insert it into the list.
+        InsertNeighbor(i, insertPosition, j, value, recommendations, values);
+      }
     }
-    //Removing the items from the map
-    //note: Item 0 is just to maintain the consistency and it
-    //represents not recommendations were available
-    for(it=tmpMap.begin();it!=tmpMap.end();++it)
-      tmpMap.erase(it);
   }
-  //Saving to recommendations
-  recommendations = rec;
 }
+
+/**
+ * Helper function to insert a point into the recommendation matrices.
+ *
+ * @param queryIndex Index of point whose recommendations we are inserting into.
+ * @param pos Position in list to insert into.
+ * @param neighbor Index of item being inserted as a recommendation.
+ * @param value Value of recommendation.
+ */
+void CF::InsertNeighbor(const size_t queryIndex,
+                        const size_t pos,
+                        const size_t neighbor,
+                        const double value,
+                        arma::Mat<size_t>& recommendations,
+                        arma::mat& values) const
+{
+  // We only memmove() if there is actually a need to shift something.
+  if (pos < (recommendations.n_rows - 1))
+  {
+    const int len = (values.n_rows - 1) - pos;
+    memmove(values.colptr(queryIndex) + (pos + 1),
+        values.colptr(queryIndex) + pos,
+        sizeof(double) * len);
+    memmove(recommendations.colptr(queryIndex) + (pos + 1),
+        recommendations.colptr(queryIndex) + pos,
+        sizeof(size_t) * len);
+  }
+
+  // Now put the new information in the right index.
+  values(pos, queryIndex) = value;
+  recommendations(pos, queryIndex) = neighbor;
+}
+
 
 }; // namespace mlpack
 }; // namespace cf

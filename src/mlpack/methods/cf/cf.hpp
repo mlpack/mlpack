@@ -214,6 +214,22 @@ class CF
                                    arma::mat& averages,
                                    arma::Col<size_t>& users) const;
 
+  /**
+   * Helper function to insert a point into the recommendation matrices.
+   *
+   * @param queryIndex Index of point whose recommendations we are inserting
+   *     into.
+   * @param pos Position in list to insert into.
+   * @param neighbor Index of item being inserted as a recommendation.
+   * @param value Value of recommendation.
+   */
+   void InsertNeighbor(const size_t queryIndex,
+                       const size_t pos,
+                       const size_t neighbor,
+                       const double value,
+                       arma::Mat<size_t>& recommendations,
+                       arma::mat& values) const;
+
 }; // class CF
 
 }; // namespace cf
