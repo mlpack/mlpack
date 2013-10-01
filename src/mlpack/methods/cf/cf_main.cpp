@@ -37,10 +37,10 @@ PARAM_STRING("output_file","File to save output recommendations to.", "o",
 //PARAM_STRING("nearest_neighbor_algorithm", "Similarity search procedure to "
 //    "be used for generating recommendations.", "s", "knn");
 
-PARAM_INT("number_of_Recommendations", "Number of Recommendations for each "
-          "user in query", "r",5);
-PARAM_INT("neighbourhood", "Size of the neighbourhood for all "
-          "user in query", "n",5);
+PARAM_INT("recommendations", "Number of recommendations to generate for each "
+    "query user.", "r", 5);
+PARAM_INT("neighborhood", "Size of the neighborhood of similar users to "
+    "consider for each query user.", "n", 5);
 
 int main(int argc, char** argv)
 {
@@ -55,9 +55,15 @@ int main(int argc, char** argv)
   // Recommendation matrix.
   arma::Mat<size_t> recommendations;
 
+  // Get parameters.
+  const size_t numRecs = (size_t) CLI::GetParam<int>("recommendations");
+  const size_t neighborhood = (size_t) CLI::GetParam<int>("neighborhood");
+
   // Perform decomposition to prepare for recommendations.
   Log::Info << "Performing CF matrix decomposition on dataset..." << endl;
   CF c(dataset);
+  c.NumRecs(numRecs);
+  c.NumUsersForSimilarity(neighborhood);
 
   // Reading users.
   const string queryFile = CLI::GetParam<string>("query_file");
