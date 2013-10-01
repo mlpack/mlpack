@@ -24,6 +24,10 @@ PROGRAM_INFO("Collaborating Filtering", "This program performs Collaborative "
 
 // Parameters for program.
 PARAM_STRING_REQ("input_file", "Input dataset to perform CF on.", "i");
+PARAM_STRING("query_file", "List of users for which recommendations are to "
+    "be generated (if unspecified, then recommendations are generated for all "
+    "users).", "q", "");
+
 PARAM_STRING("output_file","Recommendations.", "o", "recommendations.csv");
 PARAM_STRING("algorithm", "Algorithm used for cf (als/svd).", "a","als");
 PARAM_STRING("ratings_file", "File to save ratings.", "R","ratings.csv");
@@ -33,8 +37,7 @@ PARAM_STRING("item_file", "File to save the calculated Item matrix to.",
              "I","item.csv");
 PARAM_STRING("nearest_neighbour_algorithm", "Similarity Measure to be used "
              "for generating recommendations", "s","knn");
-PARAM_STRING("query_file", "List of user for which recommendations are to "
-             "be generated (If unspecified then all)", "q","query.csv");
+
 PARAM_INT("number_of_Recommendations", "Number of Recommendations for each "
           "user in query", "r",5);
 PARAM_INT("neighbourhood", "Size of the neighbourhood for all "
@@ -48,23 +51,35 @@ int main(int argc, char** argv)
   // Read from the input file.
   const string inputFile = CLI::GetParam<string>("input_file");
   arma::mat dataset;
-  data::Load(inputFile, dataset);
+  data::Load(inputFile, dataset, true);
 
   // Recommendation matrix.
   arma::Mat<size_t> recommendations;
 
-  // User matrix.
-  arma::Col<size_t> users;
-
-  // Reading users.
-  const string userf = CLI::GetParam<string>("query_file");
-  data::Load(userf, users);
-
-  // Calculating Recommendations
+  // Perform decomposition to prepare for recommendations.
+  Log::Info << "Performing CF matrix decomposition on dataset..." << endl;
   CF c(dataset);
 
-  Log::Info << "Performing CF on dataset..." << endl;
-  c.GetRecommendations(recommendations);
+  // Reading users.
+  const string queryFile = CLI::GetParam<string>("query_file");
+  if (queryFile != "")
+  {
+    // User matrix.
+    arma::Mat<size_t> userTmp;
+    arma::Col<size_t> users;
+    data::Load(queryFile, userTmp, true, false /* Don't transpose. */);
+    users = userTmp.col(0);
+
+    Log::Info << "Generating recommendations for " << users.n_elem << " users "
+        << "in '" << queryFile << "'." << endl;
+    c.GetRecommendations(recommendations, users);
+  }
+  else
+  {
+    Log::Info << "Generating recommendations for all users." << endl;
+    c.GetRecommendations(recommendations);
+  }
+
   const string outputFile = CLI::GetParam<string>("output_file");
   data::Save(outputFile, recommendations);
 }
