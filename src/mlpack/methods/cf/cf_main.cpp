@@ -13,14 +13,22 @@ using namespace mlpack::cf;
 using namespace std;
 
 // Document program.
-PROGRAM_INFO("Collaborating Filtering", "This program performs Collaborative "
-    "filtering(cf) on the given dataset. Given a list of user, item and "
-    "preferences the program output is a set of recommendations for users."
-    " Optionally, the users to be queried can be specified. The program also"
-    " provides the flexibility to select number of recommendations for each"
-    " user and also the neighbourhood. User, Item and Rating matrices can also"
-    " be extracted. Variable parameters include algorithm for performing "
-    "cf, algorithm parameters and similarity measures to give recommendations");
+PROGRAM_INFO("Collaborating Filtering", "This program performs collaborative "
+    "filtering (CF) on the given dataset. Given a list of user, item and "
+    "preferences (--input_file) the program will output a set of "
+    "recommendations for each user."
+    "\n\n"
+    "Optionally, the set of query users can be specified with the --query_file "
+    "option.  In addition, the number of recommendations to generate can be "
+    "specified with the --recommendations (-r) parameter, and the number of "
+    "similar users (the size of the neighborhood) to be considered when "
+    "generating recommendations can be specified with the --neighborhood (-n) "
+    "option."
+    "\n\n"
+    "The input file should contain a 3-column matrix of ratings, where the "
+    "first column is the user, the second column is the item, and the third "
+    "column is that user's rating of that item.  Both the users and items "
+    "should be numeric indices, not names.");
 
 // Parameters for program.
 PARAM_STRING_REQ("input_file", "Input dataset to perform CF on.", "i");
