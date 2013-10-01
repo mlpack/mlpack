@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_SUITE(LinearRegressionTest);
  */
 BOOST_AUTO_TEST_CASE(LinearRegressionTestCase)
 {
-  // Predictors and points are 100x3 matrices.
+  // Predictors and points are 10x3 matrices.
   arma::mat predictors(3, 10);
   arma::mat points(3, 10);
 
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(RidgeRegressionTest)
  */
 BOOST_AUTO_TEST_CASE(RidgeRegressionTestCase)
 {
-  // Predictors and points are 100x3 matrices.
+  // Predictors and points are 10x3 matrices.
   arma::mat predictors(3, 10);
   arma::mat points(3, 10);
 
