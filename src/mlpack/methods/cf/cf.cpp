@@ -210,6 +210,7 @@ void CF::CalculateTopRecommendations(arma::Mat<size_t>& recommendations,
   // Generate recommendations for each query user by finding the maximum numRecs
   // elements in the averages matrix.
   recommendations.set_size(numRecs, users.n_elem);
+  recommendations.fill(cleanedData.n_rows + 1); // Invalid item number.
   arma::mat values(numRecs, users.n_elem);
   values.fill(-DBL_MAX); // The smallest possible value.
   for (size_t i = 0; i < users.n_elem; i++)
@@ -234,10 +235,18 @@ void CF::CalculateTopRecommendations(arma::Mat<size_t>& recommendations,
           insertPosition--;
         }
 
-        // Now insert it into the list.
-        InsertNeighbor(i, insertPosition, j, value, recommendations, values);
+        // Now insert it into the list, but insert item (j + 1), not item j,
+        // because everything is offset.
+        InsertNeighbor(i, insertPosition, j + 1, value, recommendations,
+            values);
       }
     }
+
+    // If we were not able to come up with enough recommendations, issue a
+    // warning.
+    if (recommendations(values.n_rows - 1, i) == cleanedData.n_rows + 1)
+      Log::Warn << "Could not provide " << values.n_rows << " recommendations "
+          << "for user " << users(i) << " (not enough un-rated items)!" << endl;
   }
 }
 
