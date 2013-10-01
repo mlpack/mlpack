@@ -28,15 +28,12 @@ PARAM_STRING("query_file", "List of users for which recommendations are to "
     "be generated (if unspecified, then recommendations are generated for all "
     "users).", "q", "");
 
-PARAM_STRING("output_file","Recommendations.", "o", "recommendations.csv");
-PARAM_STRING("algorithm", "Algorithm used for cf (als/svd).", "a","als");
-PARAM_STRING("ratings_file", "File to save ratings.", "R","ratings.csv");
-PARAM_STRING("user_file", "File to save the calculated User matrix to.",
-             "U","user.csv");
-PARAM_STRING("item_file", "File to save the calculated Item matrix to.",
-             "I","item.csv");
-PARAM_STRING("nearest_neighbour_algorithm", "Similarity Measure to be used "
-             "for generating recommendations", "s","knn");
+PARAM_STRING("output_file","File to save output recommendations to.", "o",
+    "recommendations.csv");
+
+//PARAM_STRING("algorithm", "Algorithm used for cf (als/svd).", "a","als");
+//PARAM_STRING("nearest_neighbour_algorithm", "Similarity Measure to be used "
+//             "for generating recommendations", "s","knn");
 
 PARAM_INT("number_of_Recommendations", "Number of Recommendations for each "
           "user in query", "r",5);
