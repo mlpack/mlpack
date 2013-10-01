@@ -31,9 +31,11 @@ PARAM_STRING("query_file", "List of users for which recommendations are to "
 PARAM_STRING("output_file","File to save output recommendations to.", "o",
     "recommendations.csv");
 
-//PARAM_STRING("algorithm", "Algorithm used for cf (als/svd).", "a","als");
-//PARAM_STRING("nearest_neighbour_algorithm", "Similarity Measure to be used "
-//             "for generating recommendations", "s","knn");
+// These features are not yet available in the CF code.
+//PARAM_STRING("algorithm", "Algorithm used for CF ('als' or 'svd').", "a",
+//    "als");
+//PARAM_STRING("nearest_neighbor_algorithm", "Similarity search procedure to "
+//    "be used for generating recommendations.", "s", "knn");
 
 PARAM_INT("number_of_Recommendations", "Number of Recommendations for each "
           "user in query", "r",5);
