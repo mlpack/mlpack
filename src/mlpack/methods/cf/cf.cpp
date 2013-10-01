@@ -194,19 +194,6 @@ void CF::Query(arma::Mat<size_t>& recommendations,
     averages.col(i) /= neighborhood.n_rows;
   }
 
-  // Calculate the top recommendations.
-  CalculateTopRecommendations(recommendations, averages, users);
-}
-
-void CF::CalculateTopRecommendations(arma::Mat<size_t>& recommendations,
-                                 arma::mat& averages,
-                                 arma::Col<size_t>& users) const
-{
-  Log::Info<<"CalculateTopRecommendations"<<endl;
-  int recos = numRecs;
-  if(averages.n_cols<numRecs)
-    recos = averages.n_rows;
-
   // Generate recommendations for each query user by finding the maximum numRecs
   // elements in the averages matrix.
   recommendations.set_size(numRecs, users.n_elem);
