@@ -210,12 +210,12 @@ class CF
    * @param neighbor Index of item being inserted as a recommendation.
    * @param value Value of recommendation.
    */
-   void InsertNeighbor(const size_t queryIndex,
-                       const size_t pos,
-                       const size_t neighbor,
-                       const double value,
-                       arma::Mat<size_t>& recommendations,
-                       arma::mat& values) const;
+  void InsertNeighbor(const size_t queryIndex,
+                      const size_t pos,
+                      const size_t neighbor,
+                      const double value,
+                      arma::Mat<size_t>& recommendations,
+                      arma::mat& values) const;
 
 }; // class CF
 
