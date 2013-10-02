@@ -9,6 +9,9 @@
 #include <mlpack/methods/gmm/gmm.hpp>
 #include <mlpack/methods/gmm/phi.hpp>
 
+#include <mlpack/methods/gmm/no_constraint.hpp>
+#include <mlpack/methods/gmm/positive_definite_covariance.hpp>
+
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
 
@@ -618,6 +621,39 @@ BOOST_AUTO_TEST_CASE(GMMLoadSaveTest)
             gmm2.Covariances()[i](j, k), 1e-3);
       }
     }
+  }
+}
+
+BOOST_AUTO_TEST_CASE(NoConstraintTest)
+{
+  // Generate random matrices and make sure they end up the same.
+  for (size_t i = 0; i < 30; ++i)
+  {
+    const size_t rows = 5 + math::RandInt(100);
+    const size_t cols = 5 + math::RandInt(100);
+    arma::mat cov(rows, cols);
+    cov.randu();
+    arma::mat newcov(cov);
+
+    NoConstraint::ApplyConstraint(newcov);
+
+    for (size_t j = 0; j < cov.n_elem; ++j)
+      BOOST_REQUIRE_CLOSE(newcov(j), cov(j), 1e-20);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(PositiveDefiniteConstraintTest)
+{
+  // Make sure matrices are made to be positive definite.
+  for (size_t i = 0; i < 30; ++i)
+  {
+    const size_t elem = 5 + math::RandInt(50);
+    arma::mat cov(elem, elem);
+    cov.randu();
+
+    PositiveDefiniteCovariance::ApplyConstraint(cov);
+
+    BOOST_REQUIRE_GE((double) det(cov), 1e-50);
   }
 }
 
