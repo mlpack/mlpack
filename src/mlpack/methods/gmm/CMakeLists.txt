@@ -3,7 +3,9 @@
 set(SOURCES
   gmm.hpp
   gmm_impl.hpp
+  no_constraint.hpp
   phi.hpp
+  positive_definite_covariance.hpp
   em_fit.hpp
   em_fit_impl.hpp
 )
