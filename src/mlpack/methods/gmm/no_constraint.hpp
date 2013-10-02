@@ -21,7 +21,7 @@ class NoConstraint
 {
  public:
   //! Do nothing, and do not modify the covariance matrix.
-  void ApplyConstraint(const arma::mat& /* covariance */) { }
+  static void ApplyConstraint(const arma::mat& /* covariance */) { }
 };
 
 }; // namespace gmm
