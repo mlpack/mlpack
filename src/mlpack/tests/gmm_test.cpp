@@ -11,6 +11,7 @@
 
 #include <mlpack/methods/gmm/no_constraint.hpp>
 #include <mlpack/methods/gmm/positive_definite_constraint.hpp>
+#include <mlpack/methods/gmm/diagonal_constraint.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -654,6 +655,24 @@ BOOST_AUTO_TEST_CASE(PositiveDefiniteConstraintTest)
     PositiveDefiniteConstraint::ApplyConstraint(cov);
 
     BOOST_REQUIRE_GE((double) det(cov), 1e-50);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(DiagonalConstraintTest)
+{
+  // Make sure matrices are made to be positive definite.
+  for (size_t i = 0; i < 30; ++i)
+  {
+    const size_t elem = 5 + math::RandInt(50);
+    arma::mat cov(elem, elem);
+    cov.randu();
+
+    DiagonalConstraint::ApplyConstraint(cov);
+
+    for (size_t j = 0; j < elem; ++j)
+      for (size_t k = 0; k < elem; ++k)
+        if (j != k)
+          BOOST_REQUIRE_SMALL(cov(j, k), 1e-50);
   }
 }
 
