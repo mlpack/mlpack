@@ -1,11 +1,11 @@
 /**
- * @file positive_definite_covariance.hpp
+ * @file positive_definite_constraint.hpp
  * @author Ryan Curtin
  *
  * Restricts a covariance matrix to being positive definite.
  */
-#ifndef __MLPACK_METHODS_GMM_POSITIVE_DEFINITE_COVARIANCE_HPP
-#define __MLPACK_METHODS_GMM_POSITIVE_DEFINITE_COVARIANCE_HPP
+#ifndef __MLPACK_METHODS_GMM_POSITIVE_DEFINITE_CONSTRAINT_HPP
+#define __MLPACK_METHODS_GMM_POSITIVE_DEFINITE_CONSTRAINT_HPP
 
 namespace mlpack {
 namespace gmm {
@@ -13,7 +13,7 @@ namespace gmm {
 /**
  * Given a covariance matrix, force the matrix to be positive definite.
  */
-class PositiveDefiniteCovariance
+class PositiveDefiniteConstraint
 {
  public:
   /**
