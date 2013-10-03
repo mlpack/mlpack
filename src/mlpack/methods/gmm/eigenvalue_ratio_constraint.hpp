@@ -28,7 +28,7 @@ class EigenvalueRatioConstraint
    * be 1.  In addition, all other elements should be less than or equal to 1.
    */
   EigenvalueRatioConstraint(const arma::vec& ratios) :
-    ratios(ratios)
+      ratios(ratios)
   {
     // Check validity of ratios.
     if (std::abs(ratios[0] - 1.0) > 1e-20)
@@ -46,6 +46,7 @@ class EigenvalueRatioConstraint
             << "element " << i << " of ratio vectors is negative and will "
             << "probably cause the covariance to be non-invertible..."
             << std::endl;
+    }
   }
 
   /**
