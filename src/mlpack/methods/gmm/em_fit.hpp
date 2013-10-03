@@ -13,7 +13,7 @@
 // Default clustering mechanism.
 #include <mlpack/methods/kmeans/kmeans.hpp>
 // Default covariance matrix constraint.
-#include "positive_definite_covariance.hpp"
+#include "positive_definite_constraint.hpp"
 
 namespace mlpack {
 namespace gmm {
@@ -32,7 +32,7 @@ namespace gmm {
  * each point to a cluster.
  */
 template<typename InitialClusteringType = kmeans::KMeans<>,
-         typename CovarianceConstraintPolicy = PositiveDefiniteCovariance>
+         typename CovarianceConstraintPolicy = PositiveDefiniteConstraint>
 class EMFit
 {
  public:
