@@ -9,6 +9,7 @@ set(SOURCES
   no_constraint.hpp
   positive_definite_constraint.hpp
   diagonal_constraint.hpp
+  eigenvalue_ratio_constraint.hpp
 )
 
 # Add directory name to sources.
