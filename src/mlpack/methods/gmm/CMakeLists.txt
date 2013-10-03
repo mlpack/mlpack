@@ -3,11 +3,12 @@
 set(SOURCES
   gmm.hpp
   gmm_impl.hpp
-  no_constraint.hpp
   phi.hpp
-  positive_definite_constraint.hpp
   em_fit.hpp
   em_fit_impl.hpp
+  no_constraint.hpp
+  positive_definite_constraint.hpp
+  diagonal_constraint.hpp
 )
 
 # Add directory name to sources.
