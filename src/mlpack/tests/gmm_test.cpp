@@ -12,6 +12,7 @@
 #include <mlpack/methods/gmm/no_constraint.hpp>
 #include <mlpack/methods/gmm/positive_definite_constraint.hpp>
 #include <mlpack/methods/gmm/diagonal_constraint.hpp>
+#include <mlpack/methods/gmm/eigenvalue_ratio_constraint.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -673,6 +674,28 @@ BOOST_AUTO_TEST_CASE(DiagonalConstraintTest)
       for (size_t k = 0; k < elem; ++k)
         if (j != k)
           BOOST_REQUIRE_SMALL(cov(j, k), 1e-50);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(EigenvalueRatioConstraintTest)
+{
+  // Generate a list of eigenvalue ratios.
+  arma::vec ratios("1.0 0.7 0.4 0.2 0.1 0.1 0.05 0.01");
+  EigenvalueRatioConstraint erc(ratios);
+
+  // Now make some random matrices and see if the constraint works.
+  for (size_t i = 0; i < 30; ++i)
+  {
+    arma::mat cov(8, 8);
+    cov.randu();
+
+    erc.ApplyConstraint(cov);
+
+    // Decompose the matrix and make sure things are right.
+    arma::vec eigenvalues = arma::eig_sym(cov);
+
+    for (size_t i = 0; i < eigenvalues.n_elem; ++i)
+      BOOST_REQUIRE_CLOSE(eigenvalues[i] / eigenvalues[0], ratios[i], 1e-5);
   }
 }
 
