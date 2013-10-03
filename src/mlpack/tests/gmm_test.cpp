@@ -10,7 +10,7 @@
 #include <mlpack/methods/gmm/phi.hpp>
 
 #include <mlpack/methods/gmm/no_constraint.hpp>
-#include <mlpack/methods/gmm/positive_definite_covariance.hpp>
+#include <mlpack/methods/gmm/positive_definite_constraint.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -651,7 +651,7 @@ BOOST_AUTO_TEST_CASE(PositiveDefiniteConstraintTest)
     arma::mat cov(elem, elem);
     cov.randu();
 
-    PositiveDefiniteCovariance::ApplyConstraint(cov);
+    PositiveDefiniteConstraint::ApplyConstraint(cov);
 
     BOOST_REQUIRE_GE((double) det(cov), 1e-50);
   }
