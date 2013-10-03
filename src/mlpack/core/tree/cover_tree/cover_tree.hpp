@@ -217,6 +217,11 @@ class CoverTree
   size_t Point(const size_t) const { return point; }
 
   // Fake
+  CoverTree* Left() const { return NULL; }
+  CoverTree* Right() const { return NULL; }
+  size_t Begin() const { return 0; }
+  size_t Count() const { return 0; }
+  size_t End() const { return 0; }
   bool IsLeaf() const { return (children.size() == 0); }
   size_t NumPoints() const { return 1; }
 
