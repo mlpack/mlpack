@@ -3,6 +3,8 @@
  * @author Ryan Curtin
  *
  * Implementation of the MVU class and its auxiliary objective function class.
+ *
+ * Note: this implementation of MVU does not work.  See #189.
  */
 #include "mvu.hpp"
 

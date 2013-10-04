@@ -3,6 +3,8 @@
  * @author Ryan Curtin
  *
  * Executable for MVU.
+ *
+ * Note: this implementation of MVU does not work.  See #189.
  */
 #include <mlpack/core.hpp>
 #include "mvu.hpp"
