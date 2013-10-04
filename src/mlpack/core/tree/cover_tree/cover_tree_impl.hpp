@@ -61,6 +61,32 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
   CreateChildren(indices, distances, dataset.n_cols - 1, farSetSize,
       usedSetSize);
 
+  // If we ended up creating only one child, remove the implicit node.
+  while (children.size() == 1)
+  {
+    // Prepare to delete the implicit child node.
+    CoverTree* old = children[0];
+
+    // Now take its children and set their parent correctly.
+    children.erase(children.begin());
+    for (size_t i = 0; i < old->NumChildren(); ++i)
+    {
+      children.push_back(&(old->Child(i)));
+
+      // Set its parent correctly.
+      old->Child(i).Parent() = this;
+    }
+
+    // Remove all the children so they don't get erased.
+    old->Children().clear();
+
+    // Reduce our own scale.
+    scale = old->Scale();
+
+    // Now delete it.
+    delete old;
+  }
+
   // Use the furthest descendant distance to determine the scale of the root
   // node.
   scale = (int) ceil(log(furthestDescendantDistance) / log(base));
@@ -111,6 +137,32 @@ CoverTree<MetricType, RootPointPolicy, StatisticType>::CoverTree(
   size_t usedSetSize = 0;
   CreateChildren(indices, distances, dataset.n_cols - 1, farSetSize,
       usedSetSize);
+
+  // If we ended up creating only one child, remove the implicit node.
+  while (children.size() == 1)
+  {
+    // Prepare to delete the implicit child node.
+    CoverTree* old = children[0];
+
+    // Now take its children and set their parent correctly.
+    children.erase(children.begin());
+    for (size_t i = 0; i < old->NumChildren(); ++i)
+    {
+      children.push_back(&(old->Child(i)));
+
+      // Set its parent correctly.
+      old->Child(i).Parent() = this;
+    }
+
+    // Remove all the children so they don't get erased.
+    old->Children().clear();
+
+    // Reduce our own scale.
+    scale = old->Scale();
+
+    // Now delete it.
+    delete old;
+  }
 
   // Use the furthest descendant distance to determine the scale of the root
   // node.
