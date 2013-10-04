@@ -19,6 +19,10 @@
 #define ARMA_EXTRA_ROW_PROTO mlpack/core/arma_extend/Row_extra_bones.hpp
 #define ARMA_EXTRA_ROW_MEAT  mlpack/core/arma_extend/Row_extra_meat.hpp
 
+// Add batch constructor for sparse matrix (if version <= 3.810.0).
+#define ARMA_EXTRA_SPMAT_PROTO mlpack/core/arma_extend/SpMat_extra_bones.hpp
+#define ARMA_EXTRA_SPMAT_MEAT  mlpack/core/arma_extend/SpMat_extra_meat.hpp
+
 #include <armadillo>
 
 // To get CSV support on versions of Armadillo prior to 2.0.0, we'll do this.  I
