@@ -27,6 +27,8 @@
 
   * MVU (mvu) removed because it is known to not work (#189).
 
+  * Minor updates and fixes for kernels (in mlpack::kernel).
+
 2013-06-13    mlpack 1.0.6
 
   * Minor bugfix so that FastMKS gets built.
