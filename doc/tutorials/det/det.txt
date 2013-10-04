@@ -163,7 +163,7 @@ training set.  Note that the logarithm of the density estimates are given, which
 allows smaller estimates to be saved.
 
 @code
-$ ./det -t dataset.csv -s density_estimates.txt -v
+$ det -t dataset.csv -e density_estimates.txt -v
 @endcode
 
 @subsection cli_ex2_de_test_tut Estimation on a test set
@@ -225,7 +225,7 @@ memberships into can be specified with \c -L (\c --leaf_class_table_file).  If
 
 @code
 $ det -t dataset.csv -l labels.csv -v
-$ det -t dataset.csv -l labels.csv -l leaf_class_membership_file.txt -v
+$ det -t dataset.csv -l labels.csv -L leaf_class_membership_file.txt -v
 @endcode
 
 

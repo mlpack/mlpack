@@ -63,6 +63,12 @@ class CoverTree<MetricType, RootPointPolicy, StatisticType>::DualTreeTraverser
   //! Modify the number of pruned nodes.
   size_t& NumPrunes() { return numPrunes; }
 
+  ///// These are all fake because this is a patch for kd-trees only and I still
+  ///// want it to compile!
+  size_t NumVisited() const { return 0; }
+  size_t NumScores() const { return 0; }
+  size_t NumBaseCases() const { return 0; }
+
  private:
   //! The instantiated rule set for pruning branches.
   RuleType& rule;
@@ -72,17 +78,11 @@ class CoverTree<MetricType, RootPointPolicy, StatisticType>::DualTreeTraverser
 
   //! Prepare map for recursion.
   void PruneMap(CoverTree& queryNode,
-                CoverTree& candidateQueryNode,
                 std::map<int, std::vector<DualCoverTreeMapEntry<
                     MetricType, RootPointPolicy, StatisticType> > >&
                     referenceMap,
                 std::map<int, std::vector<DualCoverTreeMapEntry<
                     MetricType, RootPointPolicy, StatisticType> > >& childMap);
-
-  void PruneMapForSelfChild(CoverTree& candidateQueryNode,
-                            std::map<int, std::vector<DualCoverTreeMapEntry<
-                                MetricType, RootPointPolicy, StatisticType> > >&
-                                referenceMap);
 
   void ReferenceRecursion(CoverTree& queryNode,
                           std::map<int, std::vector<DualCoverTreeMapEntry<

@@ -231,12 +231,6 @@ class CoverTree
   //! For compatibility with other trees; the argument is ignored.
   size_t Point(const size_t) const { return point; }
 
-  // Fake
-  CoverTree* Left() const { return NULL; }
-  CoverTree* Right() const { return NULL; }
-  size_t Begin() const { return 0; }
-  size_t Count() const { return 0; }
-  size_t End() const { return 0; }
   bool IsLeaf() const { return (children.size() == 0); }
   size_t NumPoints() const { return 1; }
 
@@ -436,11 +430,24 @@ class CoverTree
                      const double bound,
                      const size_t nearSetSize,
                      const size_t pointSetSize);
+
+  /**
+   * Take a look at the last child (the most recently created one) and remove
+   * any implicit nodes that have been created.
+   */
+  void RemoveNewImplicitNodes();
+
  public:
   /**
    * Returns a string representation of this object.
    */
   std::string ToString() const;
+
+  size_t DistanceComps() const { return distanceComps; }
+  size_t& DistanceComps() { return distanceComps; }
+
+ private:
+  size_t distanceComps;
 };
 
 }; // namespace tree

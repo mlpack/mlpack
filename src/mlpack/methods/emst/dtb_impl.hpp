@@ -19,7 +19,6 @@
  * You should have received a copy of the GNU General Public License along with
  * MLPACK.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #ifndef __MLPACK_METHODS_EMST_DTB_IMPL_HPP
 #define __MLPACK_METHODS_EMST_DTB_IMPL_HPP
 
@@ -33,7 +32,11 @@ namespace emst {
 /**
  * A generic initializer.
  */
-DTBStat::DTBStat() : maxNeighborDistance(DBL_MAX), componentMembership(-1)
+DTBStat::DTBStat() :
+    maxNeighborDistance(DBL_MAX),
+    minNeighborDistance(DBL_MAX),
+    bound(DBL_MAX),
+    componentMembership(-1)
 {
   // Nothing to do.
 }
@@ -44,6 +47,8 @@ DTBStat::DTBStat() : maxNeighborDistance(DBL_MAX), componentMembership(-1)
 template<typename TreeType>
 DTBStat::DTBStat(const TreeType& node) :
     maxNeighborDistance(DBL_MAX),
+    minNeighborDistance(DBL_MAX),
+    bound(DBL_MAX),
     componentMembership(((node.NumPoints() == 1) && (node.NumChildren() == 0)) ?
         node.Point(0) : -1)
 {
@@ -139,7 +144,6 @@ void DualTreeBoruvka<MetricType, TreeType>::ComputeMST(arma::mat& results)
 
   while (edges.size() < (data.n_cols - 1))
   {
-
     typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
 
     traverser.Traverse(*tree, *tree);
@@ -148,14 +152,15 @@ void DualTreeBoruvka<MetricType, TreeType>::ComputeMST(arma::mat& results)
 
     Cleanup();
 
-    Log::Info << edges.size() << " edges found so far.\n";
+    Log::Info << edges.size() << " edges found so far." << std::endl;
+    Log::Info << traverser.NumPrunes() << " nodes pruned." << std::endl;
   }
 
   Timer::Stop("emst/mst_computation");
 
   EmitResults(results);
 
-  Log::Info << "Total squared length: " << totalDist << std::endl;
+  Log::Info << "Total spanning tree length: " << totalDist << std::endl;
 } // ComputeMST
 
 /**
@@ -190,7 +195,7 @@ void DualTreeBoruvka<MetricType, TreeType>::AddAllEdges()
     {
       //totalDist = totalDist + dist;
       // changed to make this agree with the cover tree code
-      totalDist += sqrt(neighborsDistances[component]);
+      totalDist += neighborsDistances[component];
       AddEdge(inEdge, outEdge, neighborsDistances[component]);
       connections.Union(inEdge, outEdge);
     }
@@ -232,7 +237,7 @@ void DualTreeBoruvka<MetricType, TreeType>::EmitResults(arma::mat& results)
 
       results(0, i) = edges[i].Lesser();
       results(1, i) = edges[i].Greater();
-      results(2, i) = sqrt(edges[i].Distance());
+      results(2, i) = edges[i].Distance();
     }
   }
   else
@@ -241,7 +246,7 @@ void DualTreeBoruvka<MetricType, TreeType>::EmitResults(arma::mat& results)
     {
       results(0, i) = edges[i].Lesser();
       results(1, i) = edges[i].Greater();
-      results(2, i) = sqrt(edges[i].Distance());
+      results(2, i) = edges[i].Distance();
     }
   }
 } // EmitResults
@@ -254,6 +259,8 @@ template<typename MetricType, typename TreeType>
 void DualTreeBoruvka<MetricType, TreeType>::CleanupHelper(TreeType* tree)
 {
   tree->Stat().MaxNeighborDistance() = DBL_MAX;
+  tree->Stat().MinNeighborDistance() = DBL_MAX;
+  tree->Stat().Bound() = DBL_MAX;
 
   if (!tree->IsLeaf())
   {

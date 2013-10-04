@@ -6,6 +6,10 @@ set(SOURCES
   phi.hpp
   em_fit.hpp
   em_fit_impl.hpp
+  no_constraint.hpp
+  positive_definite_constraint.hpp
+  diagonal_constraint.hpp
+  eigenvalue_ratio_constraint.hpp
 )
 
 # Add directory name to sources.

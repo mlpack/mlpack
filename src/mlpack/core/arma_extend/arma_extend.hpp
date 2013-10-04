@@ -12,20 +12,11 @@
 #ifndef __MLPACK_CORE_ARMA_EXTEND_ARMA_EXTEND_HPP
 #define __MLPACK_CORE_ARMA_EXTEND_ARMA_EXTEND_HPP
 
-// Add constructors for sparse vectors (these are only added if sparse support
-// is enabled).
-#define ARMA_EXTRA_COL_PROTO mlpack/core/arma_extend/Col_extra_bones.hpp
-#define ARMA_EXTRA_COL_MEAT  mlpack/core/arma_extend/Col_extra_meat.hpp
-#define ARMA_EXTRA_ROW_PROTO mlpack/core/arma_extend/Row_extra_bones.hpp
-#define ARMA_EXTRA_ROW_MEAT  mlpack/core/arma_extend/Row_extra_meat.hpp
+// Add batch constructor for sparse matrix (if version <= 3.810.0).
+#define ARMA_EXTRA_SPMAT_PROTO mlpack/core/arma_extend/SpMat_extra_bones.hpp
+#define ARMA_EXTRA_SPMAT_MEAT  mlpack/core/arma_extend/SpMat_extra_meat.hpp
 
 #include <armadillo>
-
-// To get CSV support on versions of Armadillo prior to 2.0.0, we'll do this.  I
-// feel dirty, but I think it's the best we can do.
-#if (ARMA_VERSION_MAJOR < 2)
-  #define csv_ascii (ppm_binary + 1) // ppm_binary is the last in the old enums.
-#endif
 
 namespace arma {
   // u64/s64

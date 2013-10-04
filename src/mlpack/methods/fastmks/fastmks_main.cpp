@@ -76,7 +76,7 @@ PARAM_STRING("kernel", "Kernel type to use: 'linear', 'polynomial', 'cosine', "
 
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single", "If true, single-tree search is used (as opposed to "
-    "dual-tree search.", "s");
+    "dual-tree search.", "S");
 
 // Cover tree parameter.
 PARAM_DOUBLE("base", "Base to use during cover tree construction.", "b", 2.0);

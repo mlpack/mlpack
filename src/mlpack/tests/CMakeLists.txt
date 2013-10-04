@@ -6,6 +6,7 @@ add_executable(mlpack_test
   allkrann_search_test.cpp
   arma_extend_test.cpp
   aug_lagrangian_test.cpp
+  cf_test.cpp
   cli_test.cpp
   det_test.cpp
   distribution_test.cpp
@@ -15,8 +16,10 @@ add_executable(mlpack_test
   hmm_test.cpp
   kernel_test.cpp
   kernel_pca_test.cpp
+  kernel_traits_test.cpp
   kmeans_test.cpp
   lars_test.cpp
+  lbfgs_test.cpp
   lin_alg_test.cpp
   linear_regression_test.cpp
   load_save_test.cpp
@@ -24,6 +27,7 @@ add_executable(mlpack_test
   lrsdp_test.cpp
   lsh_test.cpp
   math_test.cpp
+  metric_test.cpp
   nbc_test.cpp
   nca_test.cpp
   nmf_test.cpp

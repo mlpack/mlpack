@@ -54,7 +54,8 @@ class WMultiplicativeDivergenceRule
    * @param W Basis matrix to be updated.
    * @param H Encoding matrix.
    */
-  inline static void Update(const arma::mat& V,
+  template<typename MatType>
+  inline static void Update(const MatType& V,
                             arma::mat& W,
                             const arma::mat& H)
   {
@@ -67,7 +68,16 @@ class WMultiplicativeDivergenceRule
     {
       for (size_t j = 0; j < W.n_cols; ++j)
       {
-        t2 = H.row(j) % V.row(i) / t1.row(i);
+        // Writing this as a single expression does not work as of Armadillo
+        // 3.920.  This should be fixed in a future release, and then the code
+        // below can be fixed.
+        //t2 = H.row(j) % V.row(i) / t1.row(i);
+        t2.set_size(H.n_cols);
+        for (size_t k = 0; k < t2.n_elem; ++k)
+        {
+          t2(k) = H(j, k) * V(i, k) / t1(i, k);
+        }
+
         W(i, j) = W(i, j) * sum(t2) / sum(H.row(j));
       }
     }
@@ -95,7 +105,8 @@ class HMultiplicativeDivergenceRule
    * @param W Basis matrix.
    * @param H Encoding matrix to updated.
    */
-  inline static void Update(const arma::mat& V,
+  template<typename MatType>
+  inline static void Update(const MatType& V,
                             const arma::mat& W,
                             arma::mat& H)
   {
@@ -108,7 +119,16 @@ class HMultiplicativeDivergenceRule
     {
       for (size_t j = 0; j < H.n_cols; j++)
       {
-        t2 = W.col(i) % V.col(j) / t1.col(j);
+        // Writing this as a single expression does not work as of Armadillo
+        // 3.920.  This should be fixed in a future release, and then the code
+        // below can be fixed.
+        //t2 = W.col(i) % V.col(j) / t1.col(j);
+        t2.set_size(W.n_rows);
+        for (size_t k = 0; k < t2.n_elem; ++k)
+        {
+          t2(k) = W(k, i) * V(k, j) / t1(k, j);
+        }
+
         H(i,j) = H(i,j) * sum(t2) / sum(W.col(i));
       }
     }

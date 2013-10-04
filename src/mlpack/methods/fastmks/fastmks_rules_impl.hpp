@@ -38,7 +38,12 @@ FastMKSRules<KernelType, TreeType>::FastMKSRules(const arma::mat& referenceSet,
     querySet(querySet),
     indices(indices),
     products(products),
-    kernel(kernel)
+    kernel(kernel),
+    lastQueryIndex(-1),
+    lastReferenceIndex(-1),
+    lastKernel(0.0),
+    baseCases(0),
+    scores(0)
 {
   // Precompute each self-kernel.
   queryKernels.set_size(querySet.n_cols);
@@ -58,9 +63,28 @@ double FastMKSRules<KernelType, TreeType>::BaseCase(
     const size_t queryIndex,
     const size_t referenceIndex)
 {
+  // Score() always happens before BaseCase() for a given node combination.  For
+  // cover trees, the kernel evaluation between the two centroid points already
+  // happened.  So we don't need to do it.  Note that this optimizes out if the
+  // first conditional is false (its result is known at compile time).
+  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+  {
+    if ((queryIndex == lastQueryIndex) &&
+        (referenceIndex == lastReferenceIndex))
+      return lastKernel;
 
+    // Store new values.
+    lastQueryIndex = queryIndex;
+    lastReferenceIndex = referenceIndex;
+  }
+
+  ++baseCases;
   double kernelEval = kernel.Evaluate(querySet.unsafe_col(queryIndex),
                                       referenceSet.unsafe_col(referenceIndex));
+
+  // Update the last kernel value, if we need to.
+  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+    lastKernel = kernelEval;
 
   // If the reference and query sets are identical, we still need to compute the
   // base case (so that things can be bounded properly), but we won't add it to
@@ -82,98 +106,321 @@ double FastMKSRules<KernelType, TreeType>::BaseCase(
   return kernelEval;
 }
 
-template<typename MetricType, typename TreeType>
-double FastMKSRules<MetricType, TreeType>::Score(const size_t queryIndex,
-                                                 TreeType& referenceNode) const
+template<typename KernelType, typename TreeType>
+double FastMKSRules<KernelType, TreeType>::Score(const size_t queryIndex,
+                                                 TreeType& referenceNode)
 {
-  // Calculate the maximum possible kernel value.
-  const arma::vec queryPoint = querySet.unsafe_col(queryIndex);
-  const arma::vec refCentroid;
-  referenceNode.Bound().Centroid(refCentroid);
-
-  const double maxKernel = kernel.Evaluate(queryPoint, refCentroid) +
-      referenceNode.FurthestDescendantDistance() * queryKernels[queryIndex];
-
   // Compare with the current best.
   const double bestKernel = products(products.n_rows - 1, queryIndex);
 
+  // See if we can perform a parent-child prune.
+  const double furthestDist = referenceNode.FurthestDescendantDistance();
+  if (referenceNode.Parent() != NULL)
+  {
+    double maxKernelBound;
+    const double parentDist = referenceNode.ParentDistance();
+    const double combinedDistBound = parentDist + furthestDist;
+    const double lastKernel = referenceNode.Parent()->Stat().LastKernel();
+    if (kernel::KernelTraits<KernelType>::IsNormalized)
+    {
+      const double squaredDist = std::pow(combinedDistBound, 2.0);
+      const double delta = (1 - 0.5 * squaredDist);
+      if (lastKernel <= delta)
+      {
+        const double gamma = combinedDistBound * sqrt(1 - 0.25 * squaredDist);
+        maxKernelBound = lastKernel * delta +
+             gamma * sqrt(1 - std::pow(lastKernel, 2.0));
+      }
+      else
+      {
+        maxKernelBound = 1.0;
+      }
+    }
+    else
+    {
+      maxKernelBound = lastKernel +
+          combinedDistBound * queryKernels[queryIndex];
+    }
+
+    if (maxKernelBound < bestKernel)
+      return DBL_MAX;
+  }
+
+  // Calculate the maximum possible kernel value, either by calculating the
+  // centroid or, if the centroid is a point, use that.
+  ++scores;
+  double kernelEval;
+  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+  {
+    // Could it be that this kernel evaluation has already been calculated?
+    if (tree::TreeTraits<TreeType>::HasSelfChildren &&
+        referenceNode.Parent() != NULL &&
+        referenceNode.Point(0) == referenceNode.Parent()->Point(0))
+    {
+      kernelEval = referenceNode.Parent()->Stat().LastKernel();
+    }
+    else
+    {
+      kernelEval = BaseCase(queryIndex, referenceNode.Point(0));
+    }
+  }
+  else
+  {
+    const arma::vec queryPoint = querySet.unsafe_col(queryIndex);
+    arma::vec refCentroid;
+    referenceNode.Centroid(refCentroid);
+
+    kernelEval = kernel.Evaluate(queryPoint, refCentroid);
+  }
+
+  referenceNode.Stat().LastKernel() = kernelEval;
+
+  double maxKernel;
+  if (kernel::KernelTraits<KernelType>::IsNormalized)
+  {
+    const double squaredDist = std::pow(furthestDist, 2.0);
+    const double delta = (1 - 0.5 * squaredDist);
+    if (kernelEval <= delta)
+    {
+      const double gamma = furthestDist * sqrt(1 - 0.25 * squaredDist);
+      maxKernel = kernelEval * delta +
+          gamma * sqrt(1 - std::pow(kernelEval, 2.0));
+    }
+    else
+    {
+      maxKernel = 1.0;
+    }
+  }
+  else
+  {
+    maxKernel = kernelEval + furthestDist * queryKernels[queryIndex];
+  }
+
   // We return the inverse of the maximum kernel so that larger kernels are
   // recursed into first.
   return (maxKernel > bestKernel) ? (1.0 / maxKernel) : DBL_MAX;
 }
 
-template<typename MetricType, typename TreeType>
-double FastMKSRules<MetricType, TreeType>::Score(
-    const size_t queryIndex,
-    TreeType& referenceNode,
-    const double baseCaseResult) const
+template<typename KernelType, typename TreeType>
+double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
+                                                 TreeType& referenceNode)
 {
-  // We already have the base case result.  Add the bound.
-  const double maxKernel = baseCaseResult +
-      referenceNode.FurthestDescendantDistance() * queryKernels[queryIndex];
-  const double bestKernel = products(products.n_rows - 1, queryIndex);
-
-  // We return the inverse of the maximum kernel so that larger kernels are
-  // recursed into first.
-  return (maxKernel > bestKernel) ? (1.0 / maxKernel) : DBL_MAX;
-}
-
-template<typename MetricType, typename TreeType>
-double FastMKSRules<MetricType, TreeType>::Score(TreeType& queryNode,
-                                                 TreeType& referenceNode) const
-{
-  // Calculate the maximum possible kernel value.
-  const arma::vec queryCentroid;
-  const arma::vec refCentroid;
-  queryNode.Bound().Centroid(queryCentroid);
-  referenceNode.Bound().Centroid(refCentroid);
-
-  const double refKernelTerm = queryNode.FurthestDescendantDistance() *
-      referenceNode.Stat().SelfKernel();
-  const double queryKernelTerm = referenceNode.FurthestDescendantDistance() *
-      queryNode.Stat().SelfKernel();
-
-  const double maxKernel = kernel.Evaluate(queryCentroid, refCentroid) +
-      refKernelTerm + queryKernelTerm +
-      (queryNode.FurthestDescendantDistance() *
-       referenceNode.FurthestDescendantDistance());
-
-  // The existing bound.
+  // Update and get the query node's bound.
   queryNode.Stat().Bound() = CalculateBound(queryNode);
   const double bestKernel = queryNode.Stat().Bound();
 
+  // First, see if we can make a parent-child or parent-parent prune.  These
+  // four bounds on the maximum kernel value are looser than the bound normally
+  // used, but they can prevent a base case from needing to be calculated.
+  const TreeType* queryParent = queryNode.Parent();
+  const TreeType* refParent = referenceNode.Parent();
+
+  // Convenience caching so lines are shorter.
+  const double queryParentDist = queryNode.ParentDistance();
+  const double queryDescDist = queryNode.FurthestDescendantDistance();
+  const double refParentDist = referenceNode.ParentDistance();
+  const double refDescDist = referenceNode.FurthestDescendantDistance();
+
+  const double queryDistBound = (queryParentDist + queryDescDist);
+  const double refDistBound = (refParentDist + refDescDist);
+  const double dualTerm = queryDistBound * refDistBound;
+
+  // The parent-child and parent-parent prunes work by applying the same pruning
+  // condition, except they are tighter because
+  //    queryDistBound < queryNode.Parent()->FurthestDescendantDistance()
+  // and
+  //    refDistBound < referenceNode.Parent()->FurthestDescendantDistance()
+  // so we construct the same bounds that were used when Score() was called with
+  // the parents, except with the tighter distance bounds.  Sometimes this
+  // allows us to prune nodes without evaluating the base cases between them.
+  if ((queryParent != NULL) &&
+      (queryParent->Stat().LastKernelNode() == (void*) &referenceNode))
+  {
+    // Query parent was last evaluated with reference node.
+    const double queryKernelTerm =
+        refDistBound * queryParent->Stat().SelfKernel();
+    const double refKernelTerm =
+        queryDistBound * referenceNode.Stat().SelfKernel();
+    const double maxKernelBound = queryParent->Stat().LastKernel() +
+        queryKernelTerm + refKernelTerm + dualTerm;
+
+    if (maxKernelBound < bestKernel)
+      return DBL_MAX;
+  }
+  else if ((refParent != NULL) &&
+      (refParent->Stat().LastKernelNode() == (void*) &queryNode))
+  {
+    // Reference parent was last evaluated with query node.
+    const double queryKernelTerm = refDistBound * queryNode.Stat().SelfKernel();
+    const double refKernelTerm =
+        queryDistBound * refParent->Stat().SelfKernel();
+    const double maxKernelBound = refParent->Stat().LastKernel() +
+        queryKernelTerm + refKernelTerm + dualTerm;
+
+    if (maxKernelBound < bestKernel)
+      return DBL_MAX;
+  }
+  else if ((refParent != NULL) && (queryParent != NULL) &&
+      (queryParent->Stat().LastKernelNode() == (void*) refParent))
+  {
+    // Query parent was last calculated with reference parent.
+    const double queryKernelTerm = (refParentDist + refDescDist) *
+        queryParent->Stat().SelfKernel();
+    const double refKernelTerm = (queryParentDist + queryDescDist) *
+        refParent->Stat().SelfKernel();
+    const double dualTerm = (queryParentDist + queryDescDist) * (refParentDist +
+        refDescDist);
+
+    const double maxKernelBound = queryParent->Stat().LastKernel() +
+        queryKernelTerm + refKernelTerm + dualTerm;
+
+    if (maxKernelBound < bestKernel)
+      return DBL_MAX;
+  }
+  else if ((refParent != NULL) && (queryParent != NULL) &&
+      (refParent->Stat().LastKernelNode() == (void*) queryParent))
+  {
+    // Reference parent was last calculated with query parent.
+    const double queryKernelTerm = refDistBound *
+        queryParent->Stat().SelfKernel();
+    const double refKernelTerm = queryDistBound *
+        refParent->Stat().SelfKernel();
+
+    const double maxKernelBound = refParent->Stat().LastKernel() +
+        queryKernelTerm + refKernelTerm + dualTerm;
+
+    if (maxKernelBound < bestKernel)
+      return DBL_MAX;
+  }
+
+  // We were unable to perform a parent-child or parent-parent prune, so now we
+  // must calculate kernel evaluation, if necessary.
+  double kernelEval = 0.0;
+  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
+  {
+    // For this type of tree, we may have already calculated the base case in
+    // the parents.  So see if it is already cached there.
+    bool alreadyDone = false;
+    if ((queryNode.Parent() != NULL) &&
+        (queryNode.Parent()->Point(0) == queryNode.Point(0)))
+    {
+      TreeType* lastRef = (TreeType*)
+          queryNode.Parent()->Stat().LastKernelNode();
+      if (lastRef->Point(0) == referenceNode.Point(0))
+      {
+        // The query node parent was evaluated with the reference node.
+        kernelEval = queryNode.Parent()->Stat().LastKernel();
+        alreadyDone = true;
+      }
+    }
+
+    if ((referenceNode.Parent() != NULL) &&
+        (referenceNode.Parent()->Point(0) == referenceNode.Point(0)))
+    {
+      TreeType* lastQuery = (TreeType*)
+          referenceNode.Parent()->Stat().LastKernelNode();
+      if (lastQuery->Point(0) == queryNode.Point(0))
+      {
+        // The reference node parent was evaluated with the query node.
+        kernelEval = referenceNode.Parent()->Stat().LastKernel();
+        alreadyDone = true;
+      }
+    }
+
+    TreeType* lastRefNode = (TreeType*) referenceNode.Stat().LastKernelNode();
+    if ((lastRefNode != NULL) && (queryNode.Point(0) == lastRefNode->Point(0)))
+    {
+      // The kernel evaluation was already performed and is saved by the
+      // reference node.
+      kernelEval = referenceNode.Stat().LastKernel();
+      alreadyDone = true;
+    }
+
+    TreeType* lastQueryNode = (TreeType*) queryNode.Stat().LastKernelNode();
+    if ((lastQueryNode != NULL) &&
+        (referenceNode.Point(0) == lastQueryNode->Point(0)))
+    {
+      // The kernel evaluation was already performed and is saved by the query
+      // node.
+      kernelEval = queryNode.Stat().LastKernel();
+      alreadyDone = true;
+    }
+
+    if (!alreadyDone)
+    {
+      // The kernel must be evaluated, but it is between points in the dataset,
+      // so we can call BaseCase().  BaseCase() will set lastQueryIndex and
+      // lastReferenceIndex correctly.
+      kernelEval = BaseCase(queryNode.Point(0), referenceNode.Point(0));
+    }
+    else
+    {
+      // When BaseCase() is called after Score(), these must be correct so that
+      // another kernel evaluation is not performed.
+      lastQueryIndex = queryNode.Point(0);
+      lastReferenceIndex = referenceNode.Point(0);
+    }
+  }
+  else
+  {
+    // Calculate the maximum possible kernel value.
+    arma::vec queryCentroid;
+    arma::vec refCentroid;
+    queryNode.Centroid(queryCentroid);
+    referenceNode.Centroid(refCentroid);
+
+    kernelEval = kernel.Evaluate(queryCentroid, refCentroid);
+  }
+  ++scores;
+
+  double maxKernel;
+  if (kernel::KernelTraits<KernelType>::IsNormalized)
+  {
+    // We have a tighter bound for normalized kernels.
+    const double querySqDist = std::pow(queryDescDist, 2.0);
+    const double refSqDist = std::pow(refDescDist, 2.0);
+    const double bothSqDist = std::pow((queryDescDist + refDescDist), 2.0);
+
+    if (kernelEval <= (1 - 0.5 * bothSqDist))
+    {
+      const double queryDelta = (1 - 0.5 * querySqDist);
+      const double queryGamma = queryDescDist * sqrt(1 - 0.25 * querySqDist);
+      const double refDelta = (1 - 0.5 * refSqDist);
+      const double refGamma = refDescDist * sqrt(1 - 0.25 * refSqDist);
+
+      maxKernel = kernelEval * (queryDelta * refDelta - queryGamma * refGamma) +
+          sqrt(1 - std::pow(kernelEval, 2.0)) *
+          (queryGamma * refDelta + queryDelta * refGamma);
+    }
+    else
+    {
+      maxKernel = 1.0;
+    }
+  }
+  else
+  {
+    // Use standard bound; kernel is not normalized.
+    const double refKernelTerm = queryDescDist *
+        referenceNode.Stat().SelfKernel();
+    const double queryKernelTerm = refDescDist * queryNode.Stat().SelfKernel();
+
+    maxKernel = kernelEval + refKernelTerm + queryKernelTerm +
+        (queryDescDist * refDescDist);
+  }
+
+  // Store relevant information for parent-child pruning.
+  queryNode.Stat().LastKernel() = kernelEval;
+  queryNode.Stat().LastKernelNode() = (void*) &referenceNode;
+  referenceNode.Stat().LastKernel() = kernelEval;
+  referenceNode.Stat().LastKernelNode() = (void*) &queryNode;
+
   // We return the inverse of the maximum kernel so that larger kernels are
   // recursed into first.
   return (maxKernel > bestKernel) ? (1.0 / maxKernel) : DBL_MAX;
 }
 
-template<typename MetricType, typename TreeType>
-double FastMKSRules<MetricType, TreeType>::Score(
-    TreeType& queryNode,
-    TreeType& referenceNode,
-    const double baseCaseResult) const
-{
-  // We already have the base case, so we need to add the bounds.
-  const double refKernelTerm = queryNode.FurthestDescendantDistance() *
-      referenceNode.Stat().SelfKernel();
-  const double queryKernelTerm = referenceNode.FurthestDescendantDistance() *
-      queryNode.Stat().SelfKernel();
-
-  const double maxKernel = baseCaseResult + refKernelTerm + queryKernelTerm +
-      (queryNode.FurthestDescendantDistance() *
-       referenceNode.FurthestDescendantDistance());
-
-  // The existing bound.
-  queryNode.Stat().Bound() = CalculateBound(queryNode);
-  const double bestKernel = queryNode.Stat().Bound();
-
-  // We return the inverse of the maximum kernel so that larger kernels are
-  // recursed into first.
-  return (maxKernel > bestKernel) ? (1.0 / maxKernel) : DBL_MAX;
-}
-
-template<typename MetricType, typename TreeType>
-double FastMKSRules<MetricType, TreeType>::Rescore(const size_t queryIndex,
+template<typename KernelType, typename TreeType>
+double FastMKSRules<KernelType, TreeType>::Rescore(const size_t queryIndex,
                                                    TreeType& /*referenceNode*/,
                                                    const double oldScore) const
 {
@@ -182,8 +429,8 @@ double FastMKSRules<MetricType, TreeType>::Rescore(const size_t queryIndex,
   return ((1.0 / oldScore) > bestKernel) ? oldScore : DBL_MAX;
 }
 
-template<typename MetricType, typename TreeType>
-double FastMKSRules<MetricType, TreeType>::Rescore(TreeType& queryNode,
+template<typename KernelType, typename TreeType>
+double FastMKSRules<KernelType, TreeType>::Rescore(TreeType& queryNode,
                                                    TreeType& /*referenceNode*/,
                                                    const double oldScore) const
 {
@@ -200,8 +447,8 @@ double FastMKSRules<MetricType, TreeType>::Rescore(TreeType& queryNode,
  *
  * @param queryNode Query node to calculate bound for.
  */
-template<typename MetricType, typename TreeType>
-double FastMKSRules<MetricType, TreeType>::CalculateBound(TreeType& queryNode)
+template<typename KernelType, typename TreeType>
+double FastMKSRules<KernelType, TreeType>::CalculateBound(TreeType& queryNode)
     const
 {
   // We have four possible bounds -- just like NeighborSearchRules, but they are
@@ -215,7 +462,7 @@ double FastMKSRules<MetricType, TreeType>::CalculateBound(TreeType& queryNode)
   // (4) B(parent of queryNode);
   double worstPointKernel = DBL_MAX;
   double bestAdjustedPointKernel = -DBL_MAX;
-//  double bestPointSelfKernel = -DBL_MAX;
+
   const double queryDescendantDistance = queryNode.FurthestDescendantDistance();
 
   // Loop over all points in this node to find the best and worst.
@@ -228,8 +475,10 @@ double FastMKSRules<MetricType, TreeType>::CalculateBound(TreeType& queryNode)
     if (products(products.n_rows - 1, point) == -DBL_MAX)
       continue; // Avoid underflow.
 
+    // This should be (queryDescendantDistance + centroidDistance) for any tree
+    // but it works for cover trees since centroidDistance = 0 for cover trees.
     const double candidateKernel = products(products.n_rows - 1, point) -
-        (2 * queryDescendantDistance) *
+        queryDescendantDistance *
         referenceKernels[indices(indices.n_rows - 1, point)];
 
     if (candidateKernel > bestAdjustedPointKernel)
@@ -270,8 +519,8 @@ double FastMKSRules<MetricType, TreeType>::CalculateBound(TreeType& queryNode)
  * @param neighbor Index of reference point which is being inserted.
  * @param distance Distance from query point to reference point.
  */
-template<typename MetricType, typename TreeType>
-void FastMKSRules<MetricType, TreeType>::InsertNeighbor(const size_t queryIndex,
+template<typename KernelType, typename TreeType>
+void FastMKSRules<KernelType, TreeType>::InsertNeighbor(const size_t queryIndex,
                                                         const size_t pos,
                                                         const size_t neighbor,
                                                         const double distance)

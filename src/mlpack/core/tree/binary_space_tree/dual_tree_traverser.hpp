@@ -55,12 +55,36 @@ class BinarySpaceTree<BoundType, StatisticType, MatType>::DualTreeTraverser
   //! Modify the number of prunes.
   size_t& NumPrunes() { return numPrunes; }
 
+  //! Get the number of visited combinations.
+  size_t NumVisited() const { return numVisited; }
+  //! Modify the number of visited combinations.
+  size_t& NumVisited() { return numVisited; }
+
+  //! Get the number of times a node combination was scored.
+  size_t NumScores() const { return numScores; }
+  //! Modify the number of times a node combination was scored.
+  size_t& NumScores() { return numScores; }
+
+  //! Get the number of times a base case was calculated.
+  size_t NumBaseCases() const { return numBaseCases; }
+  //! Modify the number of times a base case was calculated.
+  size_t& NumBaseCases() { return numBaseCases; }
+
  private:
   //! Reference to the rules with which the trees will be traversed.
   RuleType& rule;
 
-  //! The number of nodes which have been pruned during traversal.
+  //! The number of prunes.
   size_t numPrunes;
+
+  //! The number of node combinations that have been visited during traversal.
+  size_t numVisited;
+
+  //! The number of times a node combination was scored.
+  size_t numScores;
+
+  //! The number of times a base case was calculated.
+  size_t numBaseCases;
 };
 
 }; // namespace tree

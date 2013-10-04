@@ -26,20 +26,6 @@
 #include <iostream>
 #include <string>
 
-#ifndef _WIN32
-  #include <sys/time.h> // For Linux.
-  #include <execinfo.h>
-#else
-  #include <winsock.h> // timeval on Windows.
-  #include <windows.h> // GetSystemTimeAsFileTime() on Windows.
-// gettimeofday() has no equivalent; we will need to write extra code for that.
-  #if defined(_MSC_VER) || defined(_MSC_EXTENSCLINS)
-    #define DELTA_EPOCH_IN_MICROSECS 11644473600000000Ui64
-  #else
-    #define DELTA_EPOCH_IN_MICROSECS 11644473600000000ULL
-  #endif
-#endif // _WIN32
-
 #include "cli.hpp"
 #include "log.hpp"
 
@@ -69,7 +55,7 @@ CLI::CLI() : desc("Allowed Options") , didParse(false), doc(&emptyProgramDoc)
  * @param optionsName Name of the module, as far as boost is concerned.
  */
 CLI::CLI(const std::string& optionsName) :
-    desc(optionsName.c_str()), didParse(false), doc(&emptyProgramDoc)
+    desc(optionsName), didParse(false), doc(&emptyProgramDoc)
 {
   return;
 }
@@ -100,7 +86,7 @@ CLI::~CLI()
     {
       std::string i = (*it).first;
       Log::Info << "  " << i << ": ";
-      timer.PrintTimer((*it).first.c_str());
+      timer.PrintTimer((*it).first);
     }
   }
 
@@ -112,8 +98,6 @@ CLI::~CLI()
 
   return;
 }
-
-/* Methods */
 
 /**
  * Adds a parameter to the hierarchy. Use char* and not std::string since the
@@ -167,7 +151,7 @@ void CLI::Add(const std::string& path,
  */
 void CLI::AddAlias(const std::string& alias, const std::string& original)
 {
-  //Conduct the mapping
+  // Conduct the mapping.
   if (alias.length())
   {
     amap_t& amap = GetSingleton().aliasValues;
@@ -182,10 +166,10 @@ void CLI::AddFlag(const std::string& identifier,
                  const std::string& description,
                  const std::string& alias)
 {
-  // Reuse functionality from add
+  // Reuse functionality from Add().
   Add(identifier, description, alias, false);
 
-  // Insert the proper metadata in gmap.
+  // Insert the proper metadata into gmap.
   gmap_t& gmap = GetSingleton().globalValues;
 
   ParamData data;
@@ -210,9 +194,8 @@ std::string CLI::AliasReverseLookup(const std::string& value)
 }
 
 /**
- * Parses the parameters for 'help' and 'info'
- * If found, will print out the appropriate information
- * and kill the program.
+ * Parses the parameters for 'help' and 'info' If found, will print out the
+ * appropriate information and kill the program.
  */
 void CLI::DefaultMessages()
 {
@@ -275,6 +258,15 @@ void CLI::Destroy()
  */
 bool CLI::HasParam(const std::string& key)
 {
+  return GetParam<bool>(key);
+}
+
+/**
+ * GetParam<bool>() is equivalent to HasParam().
+ */
+template<>
+bool& CLI::GetParam<bool>(const std::string& key)
+{
   std::string used_key = key;
   po::variables_map vmap = GetSingleton().vmap;
   gmap_t& gmap = GetSingleton().globalValues;
@@ -292,8 +284,15 @@ bool CLI::HasParam(const std::string& key)
   if (isInGmap)
     return gmap[used_key].wasPassed;
 
-  // The parameter was not passed in; return false.
-  return false;
+  // The parameter was not passed in; terminate the program.
+  Log::Fatal << "Parameter '--" << key << "' does not exist in this program."
+      << std::endl;
+
+  // These lines will never be reached, but must be here to make the compiler
+  // happy.
+  bool* trash = new bool;
+  *trash = false;
+  return *trash;
 }
 
 /**
@@ -501,29 +500,29 @@ void CLI::Print()
     ParamData data = iter->second;
     if (data.tname == TYPENAME(std::string))
     {
-      std::string value = GetParam<std::string>(key.c_str());
+      std::string value = GetParam<std::string>(key);
       if (value == "")
         Log::Info << "\"\"";
       Log::Info << value;
     }
     else if (data.tname == TYPENAME(int))
     {
-      int value = GetParam<int>(key.c_str());
+      int value = GetParam<int>(key);
       Log::Info << value;
     }
     else if (data.tname == TYPENAME(bool))
     {
-      bool value = HasParam(key.c_str());
+      bool value = HasParam(key);
       Log::Info << (value ? "true" : "false");
     }
     else if (data.tname == TYPENAME(float))
     {
-      float value = GetParam<float>(key.c_str());
+      float value = GetParam<float>(key);
       Log::Info << value;
     }
     else if (data.tname == TYPENAME(double))
     {
-      double value = GetParam<double>(key.c_str());
+      double value = GetParam<double>(key);
       Log::Info << value;
     }
     else
@@ -714,7 +713,7 @@ void CLI::RequiredOptions()
     std::string str = *iter;
     if (!vmap.count(str))
     { // If a required option isn't there...
-      Log::Fatal << "Required option --" << str.c_str() << " is undefined."
+      Log::Fatal << "Required option --" << str << " is undefined."
           << std::endl;
     }
   }

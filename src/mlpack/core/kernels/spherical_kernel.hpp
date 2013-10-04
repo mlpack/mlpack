@@ -94,9 +94,19 @@ class SphericalKernel
   {
     return (t <= bandwidth) ? 1.0 : 0.0;
   }
+
  private:
   double bandwidth;
   double bandwidthSquared;
+};
+
+//! Kernel traits for the spherical kernel.
+template<>
+class KernelTraits<SphericalKernel>
+{
+ public:
+  //! The spherical kernel is normalized: K(x, x) = 1 for all x.
+  static const bool IsNormalized = true;
 };
 
 }; // namespace kernel

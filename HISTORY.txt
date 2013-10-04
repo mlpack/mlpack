@@ -1,3 +1,34 @@
+2013-10-04    mlpack 1.0.7
+
+  * Cover tree support for range search (range_search), rank-approximate nearest
+    neighbors (allkrann), minimum spanning tree calculation (emst), and FastMKS
+    (fastmks).
+
+  * Dual-tree FastMKS implementation added and tested.
+
+  * Added collaborative filtering package (cf) that can provide recommendations
+    when given users and items.
+
+  * Fix for correctness of Kernel PCA (kernel_pca) (#280).
+
+  * Speedups for PCA and Kernel PCA (#204).
+
+  * Fix for correctness of Neighborhood Components Analysis (NCA) (#289).
+
+  * Minor speedups for dual-tree algorithms.
+
+  * Fix for Naive Bayes Classifier (nbc) (#279).
+
+  * Added a ridge regression option to LinearRegression (linear_regression)
+    (#298).
+
+  * Gaussian Mixture Models (gmm::GMM<>) now support arbitrary covariance matrix
+    constraints (#294).
+
+  * MVU (mvu) removed because it is known to not work (#189).
+
+  * Minor updates and fixes for kernels (in mlpack::kernel).
+
 2013-06-13    mlpack 1.0.6
 
   * Minor bugfix so that FastMKS gets built.

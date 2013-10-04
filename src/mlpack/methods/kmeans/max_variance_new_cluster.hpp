@@ -43,7 +43,7 @@ class MaxVarianceNewCluster
    * Take the point furthest from the centroid of the cluster with maximum
    * variance to be a new cluster.
    *
-   * @tparam MatType Type of data (arma::mat or arma::spmat).
+   * @tparam MatType Type of data (arma::mat or arma::sp_mat).
    * @param data Dataset on which clustering is being performed.
    * @param emptyCluster Index of cluster which is empty.
    * @param centroids Centroids of each cluster (one per column).

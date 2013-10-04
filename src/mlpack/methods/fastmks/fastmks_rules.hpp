@@ -52,21 +52,7 @@ class FastMKSRules
    * @param queryIndex Index of query point.
    * @param referenceNode Candidate to be recursed into.
    */
-  double Score(const size_t queryIndex, TreeType& referenceNode) const;
-
-  /**
-   * Get the score for recursion order, passing the base case result (in the
-   * situation where it may be needed to calculate the recursion order).  A low
-   * score indicates priority for recursion, while DBL_MAX indicates that the
-   * node should not be recursed into at all (it should be pruned).
-   *
-   * @param queryIndex Index of query point.
-   * @param referenceNode Candidate node to be recursed into.
-   * @param baseCaseResult Result of BaseCase(queryIndex, referenceNode).
-   */
-  double Score(const size_t queryIndex,
-               TreeType& referenceNode,
-               const double baseCaseResult) const;
+  double Score(const size_t queryIndex, TreeType& referenceNode);
 
   /**
    * Get the score for recursion order.  A low score indicates priority for
@@ -76,21 +62,7 @@ class FastMKSRules
    * @param queryNode Candidate query node to be recursed into.
    * @param referenceNode Candidate reference node to be recursed into.
    */
-  double Score(TreeType& queryNode, TreeType& referenceNode) const;
-
-  /**
-   * Get the score for recursion order, passing the base case result (in the
-   * situation where it may be needed to calculate the recursion order).  A low
-   * score indicates priority for recursion, while DBL_MAX indicates that the
-   * node should not be recursed into at all (it should be pruned).
-   *
-   * @param queryNode Candidate query node to be recursed into.
-   * @param referenceNode Candidate reference node to be recursed into.
-   * @param baseCaseResult Result of BaseCase(queryNode, referenceNode).
-   */
-  double Score(TreeType& queryNode,
-               TreeType& referenceNode,
-               const double baseCaseResult) const;
+  double Score(TreeType& queryNode, TreeType& referenceNode);
 
   /**
    * Re-evaluate the score for recursion order.  A low score indicates priority
@@ -122,6 +94,16 @@ class FastMKSRules
                  TreeType& referenceNode,
                  const double oldScore) const;
 
+  //! Get the number of times BaseCase() was called.
+  size_t BaseCases() const { return baseCases; }
+  //! Modify the number of times BaseCase() was called.
+  size_t& BaseCases() { return baseCases; }
+
+  //! Get the number of times Score() was called.
+  size_t Scores() const { return scores; }
+  //! Modify the number of times Score() was called.
+  size_t& Scores() { return scores; }
+
  private:
   //! The reference dataset.
   const arma::mat& referenceSet;
@@ -141,6 +123,13 @@ class FastMKSRules
   //! The instantiated kernel.
   KernelType& kernel;
 
+  //! The last query index BaseCase() was called with.
+  size_t lastQueryIndex;
+  //! The last reference index BaseCase() was called with.
+  size_t lastReferenceIndex;
+  //! The last kernel evaluation resulting from BaseCase().
+  double lastKernel;
+
   //! Calculate the bound for a given query node.
   double CalculateBound(TreeType& queryNode) const;
 
@@ -149,6 +138,11 @@ class FastMKSRules
                       const size_t pos,
                       const size_t neighbor,
                       const double distance);
+
+  //! For benchmarking.
+  size_t baseCases;
+  //! For benchmarking.
+  size_t scores;
 };
 
 }; // namespace fastmks

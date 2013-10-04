@@ -59,60 +59,54 @@ PARAM_INT("leaf_size", "Leaf size in the kd-tree.  One-element leaves give the "
 using namespace mlpack;
 using namespace mlpack::emst;
 using namespace mlpack::tree;
+using namespace std;
 
 int main(int argc, char* argv[])
 {
   CLI::ParseCommandLine(argc, argv);
 
-  ///////////////// READ IN DATA //////////////////////////////////
-  std::string dataFilename = CLI::GetParam<std::string>("input_file");
-
-  Log::Info << "Reading in data.\n";
+  const string dataFilename = CLI::GetParam<string>("input_file");
 
   arma::mat dataPoints;
-  data::Load(dataFilename.c_str(), dataPoints, true);
+  data::Load(dataFilename, dataPoints, true);
 
-  // Do naive.
+  // Do naive computation if necessary.
   if (CLI::GetParam<bool>("naive"))
   {
-    Log::Info << "Running naive algorithm.\n";
+    Log::Info << "Running naive algorithm." << endl;
 
     DualTreeBoruvka<> naive(dataPoints, true);
 
     arma::mat naiveResults;
     naive.ComputeMST(naiveResults);
 
-    std::string outputFilename = CLI::GetParam<std::string>("output_file");
+    const string outputFilename = CLI::GetParam<string>("output_file");
 
-    data::Save(outputFilename.c_str(), naiveResults, true);
+    data::Save(outputFilename, naiveResults, true);
   }
   else
   {
-    Log::Info << "Data read, building tree.\n";
+    Log::Info << "Building tree.\n";
 
-    /////////////// Initialize DTB //////////////////////
+    // Check that the leaf size is reasonable.
     if (CLI::GetParam<int>("leaf_size") <= 0)
     {
       Log::Fatal << "Invalid leaf size (" << CLI::GetParam<int>("leaf_size")
           << ")!  Must be greater than or equal to 1." << std::endl;
     }
 
-    size_t leafSize = CLI::GetParam<int>("leaf_size");
-
+    // Initialize the tree and get ready to compute the MST.
+    const size_t leafSize = (size_t) CLI::GetParam<int>("leaf_size");
     DualTreeBoruvka<> dtb(dataPoints, false, leafSize);
 
-    Log::Info << "Tree built, running algorithm.\n";
-
-    ////////////// Run DTB /////////////////////
+    // Run the DTB algorithm.
+    Log::Info << "Calculating minimum spanning tree." << endl;
     arma::mat results;
-
     dtb.ComputeMST(results);
 
-    //////////////// Output the Results ////////////////
-    std::string outputFilename = CLI::GetParam<std::string>("output_file");
+    // Output the results.
+    const string outputFilename = CLI::GetParam<string>("output_file");
 
-    data::Save(outputFilename.c_str(), results, true);
+    data::Save(outputFilename, results, true);
   }
-
-  return 0;
 }

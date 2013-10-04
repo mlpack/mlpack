@@ -30,13 +30,14 @@ namespace nca {
 
 // Initialize with the given kernel.
 template<typename MetricType>
-SoftmaxErrorFunction<MetricType>::SoftmaxErrorFunction(const arma::mat& dataset,
-                                                       const arma::uvec& labels,
-                                                       MetricType metric) :
-  dataset(dataset),
-  labels(labels),
-  metric(metric),
-  precalculated(false)
+SoftmaxErrorFunction<MetricType>::SoftmaxErrorFunction(
+    const arma::mat& dataset,
+    const arma::Col<size_t>& labels,
+    MetricType metric) :
+    dataset(dataset),
+    labels(labels),
+    metric(metric),
+    precalculated(false)
 { /* nothing to do */ }
 
 //! The non-separable implementation, which uses Precalculate() to save time.

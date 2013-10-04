@@ -38,7 +38,12 @@ class FastMKSStat
   /**
    * Default initialization.
    */
-  FastMKSStat() : bound(-DBL_MAX), selfKernel(0.0) { }
+  FastMKSStat() :
+      bound(-DBL_MAX),
+      selfKernel(0.0),
+      lastKernel(0.0),
+      lastKernelNode(NULL)
+  { }
 
   /**
    * Initialize this statistic for the given tree node.  The TreeType's metric
@@ -49,7 +54,9 @@ class FastMKSStat
    */
   template<typename TreeType>
   FastMKSStat(const TreeType& node) :
-      bound(-DBL_MAX)
+      bound(-DBL_MAX),
+      lastKernel(0.0),
+      lastKernelNode(NULL)
   {
     // Do we have to calculate the centroid?
     if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
@@ -90,12 +97,30 @@ class FastMKSStat
   //! Modify the bound.
   double& Bound() { return bound; }
 
+  //! Get the last kernel evaluation.
+  double LastKernel() const { return lastKernel; }
+  //! Modify the last kernel evaluation.
+  double& LastKernel() { return lastKernel; }
+
+  //! Get the address of the node corresponding to the last distance evaluation.
+  void* LastKernelNode() const { return lastKernelNode; }
+  //! Modify the address of the node corresponding to the last distance
+  //! evaluation.
+  void*& LastKernelNode() { return lastKernelNode; }
+
  private:
   //! The bound for pruning.
   double bound;
 
   //! The self-kernel evaluation: sqrt(K(centroid, centroid)).
   double selfKernel;
+
+  //! The last kernel evaluation.
+  double lastKernel;
+
+  //! The node corresponding to the last kernel evaluation.  This has to be void
+  //! otherwise we get recursive template arguments.
+  void* lastKernelNode;
 };
 
 }; // namespace fastmks

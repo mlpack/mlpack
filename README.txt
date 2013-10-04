@@ -41,13 +41,15 @@ documentation.  The website should be consulted for further information:
 If you use mlpack in your research or software, please cite mlpack using the
 citation below (given in BiBTeX format):
 
-@INPROCEEDINGS{mlpack2011,
-  author    = {Ryan R. Curtin and James R. Cline and Neil P. Slagle and Matthew
-      L. Amidon and Alexander G. Gray},
-  title     = {{MLPACK: A Scalable C++ Machine Learning Library}},
-  booktitle = {{BigLearning: Algorithms, Systems, and Tools for Learning at
-      Scale}},
-  year      = 2011
+@article{mlpack2013,
+  title     = {{MLPACK}: A Scalable {C++} Machine Learning Library},
+  author    = {Curtin, Ryan R. and Cline, James R. and Slagle, Neil P. and
+               March, William B. and Ram, P. and Mehta, Nishant A. and Gray,
+               Alexander G.},
+  journal   = {Journal of Machine Learning Research},
+  volume    = {14},
+  pages     = {801--805},
+  year      = {2013}
 }
 
 Citations are beneficial for the growth and improvement of mlpack.
@@ -58,7 +60,7 @@ Citations are beneficial for the growth and improvement of mlpack.
 
 mlpack has the following dependencies:
 
-  Armadillo     >= 2.4.2
+  Armadillo     >= 3.6.0
   LibXml2       >= 2.6.0
   Boost (program_options, math_c99, unit_test_framework, random)
   CMake         >= 2.8.5

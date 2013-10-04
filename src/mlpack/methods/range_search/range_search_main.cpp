@@ -23,6 +23,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/tree/cover_tree.hpp>
 
 #include "range_search.hpp"
 
@@ -75,10 +76,14 @@ PARAM_STRING("query_file", "File containing query points (optional).", "q", "");
 PARAM_INT("leaf_size", "Leaf size for tree building.", "l", 20);
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
-    "dual-tree search.", "s");
+    "dual-tree search).", "s");
+PARAM_FLAG("cover_tree", "If true, use a cover tree for range searching "
+    "(instead of a kd-tree).", "c");
 
-typedef RangeSearch<metric::SquaredEuclideanDistance,
-    BinarySpaceTree<bound::HRectBound<2>, EmptyStatistic> > RSType;
+typedef RangeSearch<> RSType;
+typedef CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
+    RangeSearchStat> CoverTreeType;
+typedef RangeSearch<metric::EuclideanDistance, CoverTreeType> RSCoverType;
 
 int main(int argc, char *argv[])
 {
@@ -96,12 +101,13 @@ int main(int argc, char *argv[])
   double max = CLI::GetParam<double>("max");
   double min = CLI::GetParam<double>("min");
 
-  bool naive = CLI::HasParam("naive");
-  bool singleMode = CLI::HasParam("single_mode");
+  const bool naive = CLI::HasParam("naive");
+  const bool singleMode = CLI::HasParam("single_mode");
+  bool coverTree = CLI::HasParam("cover_tree");
 
   arma::mat referenceData;
   arma::mat queryData; // So it doesn't go out of scope.
-  if (!data::Load(referenceFile.c_str(), referenceData))
+  if (!data::Load(referenceFile, referenceData))
     Log::Fatal << "Reference file " << referenceFile << "not found." << endl;
 
   Log::Info << "Loaded reference data from '" << referenceFile << "'." << endl;
@@ -130,117 +136,163 @@ int main(int argc, char *argv[])
   if (naive)
     leafSize = referenceData.n_cols;
 
+  if (coverTree && naive)
+  {
+    Log::Warn << "--cover_tree ignored because --naive is present." << endl;
+    coverTree = false;
+  }
+
   vector<vector<size_t> > neighbors;
   vector<vector<double> > distances;
 
-  // Because we may construct it differently, we need a pointer.
-  RSType* rangeSearch = NULL;
-
-  // Mappings for when we build the tree.
-  vector<size_t> oldFromNewRefs;
-
-  // Build trees by hand, so we can save memory: if we pass a tree to
-  // NeighborSearch, it does not copy the matrix.
-  Log::Info << "Building reference tree..." << endl;
-  Timer::Start("tree_building");
-
-  BinarySpaceTree<bound::HRectBound<2>, tree::EmptyStatistic>
-      refTree(referenceData, oldFromNewRefs, leafSize);
-  BinarySpaceTree<bound::HRectBound<2>, tree::EmptyStatistic>*
-      queryTree = NULL; // Empty for now.
-
-  Timer::Stop("tree_building");
-
-  std::vector<size_t> oldFromNewQueries;
-
-  if (CLI::GetParam<string>("query_file") != "")
+  // The cover tree implies different types, so we must split this section.
+  if (coverTree)
   {
-    string queryFile = CLI::GetParam<string>("query_file");
+    Log::Info << "Using cover trees." << endl;
 
-    if (!data::Load(queryFile.c_str(), queryData))
-      Log::Fatal << "Query file " << queryFile << " not found" << endl;
+    // This is significantly simpler than kd-tree construction because the data
+    // matrix is not modified.
+    RSCoverType* rangeSearch = NULL;
+    CoverTreeType referenceTree(referenceData);
+    CoverTreeType* queryTree = NULL;
 
-    if (naive && leafSize < queryData.n_cols)
-      leafSize = queryData.n_cols;
+    if (CLI::GetParam<string>("query_file") == "")
+    {
+      // Single dataset.
+      rangeSearch = new RSCoverType(&referenceTree, referenceData, singleMode);
+    }
+    else
+    {
+      // Two datasets.
+      const string queryFile = CLI::GetParam<string>("query_file");
+      data::Load(queryFile, queryData, true);
+      queryTree = new CoverTreeType(queryData);
 
-    Log::Info << "Loaded query data from '" << queryFile << "'." << endl;
+      rangeSearch = new RSCoverType(&referenceTree, queryTree, referenceData,
+          queryData, singleMode);
+    }
 
-    Log::Info << "Building query tree..." << endl;
+    Log::Info << "Trees built." << endl;
+
+    const math::Range r(min, max);
+    rangeSearch->Search(r, neighbors, distances);
+
+    if (queryTree)
+      delete queryTree;
+    delete rangeSearch;
+  }
+  else
+  {
+    // Because we may construct it differently, we need a pointer.
+    RSType* rangeSearch = NULL;
+
+    // Mappings for when we build the tree.
+    vector<size_t> oldFromNewRefs;
 
     // Build trees by hand, so we can save memory: if we pass a tree to
     // NeighborSearch, it does not copy the matrix.
+    Log::Info << "Building reference tree..." << endl;
     Timer::Start("tree_building");
 
-    queryTree = new BinarySpaceTree<bound::HRectBound<2>,
-        tree::EmptyStatistic >(queryData, oldFromNewQueries,
-        leafSize);
+    BinarySpaceTree<bound::HRectBound<2>, RangeSearchStat>
+        refTree(referenceData, oldFromNewRefs, leafSize);
+    BinarySpaceTree<bound::HRectBound<2>, RangeSearchStat>*
+        queryTree = NULL; // Empty for now.
 
     Timer::Stop("tree_building");
 
-    rangeSearch = new RSType(&refTree, queryTree, referenceData, queryData,
-        singleMode);
+    vector<size_t> oldFromNewQueries;
 
-    Log::Info << "Tree built." << endl;
-  }
-  else
-  {
-    rangeSearch = new RSType(&refTree, referenceData, singleMode);
-
-    Log::Info << "Trees built." << endl;
-  }
-
-  Log::Info << "Computing neighbors within range [" << min << ", " << max
-      << "]." << endl;
-
-  math::Range r = math::Range(min, max);
-  rangeSearch->Search(r, neighbors, distances);
-
-  Log::Info << "Neighbors computed." << endl;
-
-  // We have to map back to the original indices from before the tree
-  // construction.
-  Log::Info << "Re-mapping indices..." << endl;
-
-  vector<vector<double> > distancesOut;
-  distancesOut.resize(distances.size());
-  vector<vector<size_t> > neighborsOut;
-  neighborsOut.resize(neighbors.size());
-
-  // Do the actual remapping.
-  if (CLI::GetParam<string>("query_file") != "")
-  {
-    for (size_t i = 0; i < distances.size(); ++i)
+    if (CLI::GetParam<string>("query_file") != "")
     {
-      // Map distances (copy a column).
-      distancesOut[oldFromNewQueries[i]] = distances[i];
+      const string queryFile = CLI::GetParam<string>("query_file");
+      data::Load(queryFile, queryData, true);
 
-      // Map indices of neighbors.
-      neighborsOut[oldFromNewQueries[i]].resize(neighbors[i].size());
-      for (size_t j = 0; j < distances[i].size(); ++j)
+      if (naive && leafSize < queryData.n_cols)
+        leafSize = queryData.n_cols;
+
+      Log::Info << "Loaded query data from '" << queryFile << "'." << endl;
+
+      Log::Info << "Building query tree..." << endl;
+
+      // Build trees by hand, so we can save memory: if we pass a tree to
+      // NeighborSearch, it does not copy the matrix.
+      Timer::Start("tree_building");
+
+      queryTree = new BinarySpaceTree<bound::HRectBound<2>,
+          RangeSearchStat>(queryData, oldFromNewQueries, leafSize);
+
+      Timer::Stop("tree_building");
+
+      rangeSearch = new RSType(&refTree, queryTree, referenceData, queryData,
+          singleMode);
+
+      Log::Info << "Tree built." << endl;
+    }
+    else
+    {
+      rangeSearch = new RSType(&refTree, referenceData, singleMode);
+
+      Log::Info << "Trees built." << endl;
+    }
+
+    Log::Info << "Computing neighbors within range [" << min << ", " << max
+        << "]." << endl;
+
+    // Collect the results in these vectors before remapping.
+    vector<vector<double> > distancesOut;
+    vector<vector<size_t> > neighborsOut;
+
+    const math::Range r(min, max);
+    rangeSearch->Search(r, neighborsOut, distancesOut);
+
+    Log::Info << "Neighbors computed." << endl;
+
+    // We have to map back to the original indices from before the tree
+    // construction.
+    Log::Info << "Re-mapping indices..." << endl;
+
+    distances.resize(distancesOut.size());
+    neighbors.resize(neighborsOut.size());
+
+    // Do the actual remapping.
+    if (CLI::GetParam<string>("query_file") != "")
+    {
+      for (size_t i = 0; i < distances.size(); ++i)
       {
-        neighborsOut[oldFromNewQueries[i]][j] = oldFromNewRefs[neighbors[i][j]];
+        // Map distances (copy a column).
+        distances[oldFromNewQueries[i]] = distancesOut[i];
+
+        // Map indices of neighbors.
+        neighbors[oldFromNewQueries[i]].resize(neighborsOut[i].size());
+        for (size_t j = 0; j < distancesOut[i].size(); ++j)
+        {
+          neighbors[oldFromNewQueries[i]][j] =
+              oldFromNewRefs[neighborsOut[i][j]];
+        }
       }
     }
-  }
-  else
-  {
-    for (size_t i = 0; i < distances.size(); ++i)
+    else
     {
-      // Map distances (copy a column).
-      distancesOut[oldFromNewRefs[i]] = distances[i];
-
-      // Map indices of neighbors.
-      neighborsOut[oldFromNewRefs[i]].resize(neighbors[i].size());
-      for (size_t j = 0; j < distances[i].size(); ++j)
+      for (size_t i = 0; i < distances.size(); ++i)
       {
-        neighborsOut[oldFromNewRefs[i]][j] = oldFromNewRefs[neighbors[i][j]];
+        // Map distances (copy a column).
+        distances[oldFromNewRefs[i]] = distancesOut[i];
+
+        // Map indices of neighbors.
+        neighbors[oldFromNewRefs[i]].resize(neighborsOut[i].size());
+        for (size_t j = 0; j < distancesOut[i].size(); ++j)
+        {
+          neighbors[oldFromNewRefs[i]][j] = oldFromNewRefs[neighborsOut[i][j]];
+        }
       }
     }
-  }
 
-  // Clean up.
-  if (queryTree)
-    delete queryTree;
+    // Clean up.
+    if (queryTree)
+      delete queryTree;
+    delete rangeSearch;
+  }
 
   // Save output.  We have to do this by hand.
   fstream distancesStr(distancesFile.c_str(), fstream::out);
@@ -252,17 +304,17 @@ int main(int argc, char *argv[])
   else
   {
     // Loop over each point.
-    for (size_t i = 0; i < distancesOut.size(); ++i)
+    for (size_t i = 0; i < distances.size(); ++i)
     {
       // Store the distances of each point.  We may have 0 points to store, so
       // we must account for that possibility.
-      for (size_t j = 0; j + 1 < distancesOut[i].size(); ++j)
+      for (size_t j = 0; j + 1 < distances[i].size(); ++j)
       {
-        distancesStr << distancesOut[i][j] << ", ";
+        distancesStr << distances[i][j] << ", ";
       }
 
-      if (distancesOut[i].size() > 0)
-        distancesStr << distancesOut[i][distancesOut[i].size() - 1];
+      if (distances[i].size() > 0)
+        distancesStr << distances[i][distances[i].size() - 1];
 
       distancesStr << endl;
     }
@@ -279,23 +331,21 @@ int main(int argc, char *argv[])
   else
   {
     // Loop over each point.
-    for (size_t i = 0; i < neighborsOut.size(); ++i)
+    for (size_t i = 0; i < neighbors.size(); ++i)
     {
       // Store the neighbors of each point.  We may have 0 points to store, so
       // we must account for that possibility.
-      for (size_t j = 0; j + 1 < neighborsOut[i].size(); ++j)
+      for (size_t j = 0; j + 1 < neighbors[i].size(); ++j)
       {
-        neighborsStr << neighborsOut[i][j] << ", ";
+        neighborsStr << neighbors[i][j] << ", ";
       }
 
-      if (neighborsOut[i].size() > 0)
-        neighborsStr << neighborsOut[i][neighborsOut[i].size() - 1];
+      if (neighbors[i].size() > 0)
+        neighborsStr << neighbors[i][neighbors[i].size() - 1];
 
       neighborsStr << endl;
     }
 
     neighborsStr.close();
   }
-
-  delete rangeSearch;
 }

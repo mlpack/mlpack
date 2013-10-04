@@ -52,13 +52,10 @@ void mlpack::math::VectorPower(arma::vec& vec, double power)
  */
 void mlpack::math::Center(const arma::mat& x, arma::mat& xCentered)
 {
-  // Sum matrix along dimension 0 (that is, sum elements in each row).
-  arma::vec rowVectorSum = arma::sum(x, 1);
-  rowVectorSum /= x.n_cols; // scale
+  // Get the mean of the elements in each row.
+  arma::vec rowMean = arma::sum(x, 1) / x.n_cols;
 
-  xCentered.set_size(x.n_rows, x.n_cols);
-  for (size_t i = 0; i < x.n_rows; i++)
-    xCentered.row(i) = x.row(i) - rowVectorSum(i);
+  xCentered = x - arma::repmat(rowMean, 1, x.n_cols);
 }
 
 /**

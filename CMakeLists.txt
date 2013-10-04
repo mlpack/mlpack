@@ -57,7 +57,7 @@ endif(ARMA_EXTRA_DEBUG)
 # set path right
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
-find_package(Armadillo 2.4.2 REQUIRED)
+find_package(Armadillo 3.6.0 REQUIRED)
 
 # If Armadillo was compiled without ARMA_64BIT_WORD and we are on a 64-bit
 # system (where size_t will be 64 bits), suggest to the user that they should
@@ -277,9 +277,10 @@ if (UNIX)
         WORKING_DIRECTORY
           ${CMAKE_BINARY_DIR}/bin
         DEPENDS
-          allkfn allknn emst gmm hmm_generate hmm_loglik hmm_train hmm_viterbi
-          kernel_pca kmeans lars linear_regression local_coordinate_coding mvu
-          nbc nca pca radical sparse_coding
+          allkfn allknn allkrann cf det emst fastmks gmm hmm_generate hmm_loglik
+          hmm_train hmm_viterbi kernel_pca kmeans lars linear_regression
+          local_coordinate_coding nbc nca nmf pca radical range_search
+          sparse_coding
         COMMENT "Generating man pages from built executables."
     )
 

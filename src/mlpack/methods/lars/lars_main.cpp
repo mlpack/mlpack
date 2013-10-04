@@ -36,12 +36,13 @@ PROGRAM_INFO("LARS", "An implementation of LARS: Least Angle Regression "
     "      0.5 lambda_2 ||beta||_2^2\n\n"
     "If lambda_1 > 0 and lambda_2 = 0, the problem is the LASSO.\n"
     "If lambda_1 > 0 and lambda_2 > 0, the problem is the Elastic Net.\n"
-    "If lambda_1 = 0 and lambda_2 > 0, the problem is Ridge Regression.\n"
+    "If lambda_1 = 0 and lambda_2 > 0, the problem is ridge regression.\n"
     "If lambda_1 = 0 and lambda_2 = 0, the problem is unregularized linear "
     "regression.\n"
     "\n"
     "For efficiency reasons, it is not recommended to use this algorithm with "
-    "lambda_1 = 0.\n");
+    "lambda_1 = 0.  In that case, use the 'linear_regression' program, which "
+    "implements both unregularized linear regression and ridge regression.\n");
 
 PARAM_STRING_REQ("input_file", "File containing covariates (X).",
     "i");
@@ -76,14 +77,14 @@ int main(int argc, char* argv[])
   // transpose this data.
   const string matXFilename = CLI::GetParam<string>("input_file");
   mat matX;
-  data::Load(matXFilename.c_str(), matX, true, false);
+  data::Load(matXFilename, matX, true, false);
 
   // Load responses.  The responses should be a one-dimensional vector, and it
   // seems more likely that these will be stored with one response per line (one
   // per row).  So we should not transpose upon loading.
   const string yFilename = CLI::GetParam<string>("responses_file");
   mat matY; // Will be a vector.
-  data::Load(yFilename.c_str(), matY, true, false);
+  data::Load(yFilename, matY, true, false);
 
   // Make sure y is oriented the right way.
   if (matY.n_rows == 1)

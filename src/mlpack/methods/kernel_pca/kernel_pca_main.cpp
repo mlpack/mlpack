@@ -86,7 +86,7 @@ PARAM_DOUBLE("offset", "Offset, for 'hyptan' and 'polynomial' kernels.", "O",
     0.0);
 PARAM_DOUBLE("bandwidth", "Bandwidth, for 'gaussian' and 'laplacian' kernels.",
     "b", 1.0);
-PARAM_DOUBLE("degree", "Degree of polynomial, for 'polynomial' kernel.", "d",
+PARAM_DOUBLE("degree", "Degree of polynomial, for 'polynomial' kernel.", "D",
     1.0);
 
 int main(int argc, char** argv)

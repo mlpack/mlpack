@@ -51,6 +51,15 @@ class CosineDistance
   static double Evaluate(const VecType& a, const VecType& b);
 };
 
+//! Kernel traits for the cosine distance.
+template<>
+class KernelTraits<CosineDistance>
+{
+ public:
+  //! The cosine kernel is normalized: K(x, x) = 1 for all x.
+  static const bool IsNormalized = true;
+};
+
 }; // namespace kernel
 }; // namespace mlpack
 

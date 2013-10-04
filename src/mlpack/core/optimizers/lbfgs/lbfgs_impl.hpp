@@ -27,6 +27,57 @@ namespace mlpack {
 namespace optimization {
 
 /**
+ * Initialize the L_BFGS object.  Copy the function we will be optimizing and
+ * set the size of the memory for the algorithm.
+ *
+ * @param function Instance of function to be optimized
+ * @param numBasis Number of memory points to be stored
+ * @param armijoConstant Controls the accuracy of the line search routine for
+ *     determining the Armijo condition.
+ * @param wolfe Parameter for detecting the Wolfe condition.
+ * @param minGradientNorm Minimum gradient norm required to continue the
+ *     optimization.
+ * @param maxLineSearchTrials The maximum number of trials for the line search
+ *     (before giving up).
+ * @param minStep The minimum step of the line search.
+ * @param maxStep The maximum step of the line search.
+ */
+template<typename FunctionType>
+L_BFGS<FunctionType>::L_BFGS(FunctionType& function,
+                             const size_t numBasis,
+                             const size_t maxIterations,
+                             const double armijoConstant,
+                             const double wolfe,
+                             const double minGradientNorm,
+                             const size_t maxLineSearchTrials,
+                             const double minStep,
+                             const double maxStep) :
+    function(function),
+    numBasis(numBasis),
+    maxIterations(maxIterations),
+    armijoConstant(armijoConstant),
+    wolfe(wolfe),
+    minGradientNorm(minGradientNorm),
+    maxLineSearchTrials(maxLineSearchTrials),
+    minStep(minStep),
+    maxStep(maxStep)
+{
+  // Get the dimensions of the coordinates of the function; GetInitialPoint()
+  // might return an arma::vec, but that's okay because then n_cols will simply
+  // be 1.
+  const size_t rows = function.GetInitialPoint().n_rows;
+  const size_t cols = function.GetInitialPoint().n_cols;
+
+  newIterateTmp.set_size(rows, cols);
+  s.set_size(rows, cols, numBasis);
+  y.set_size(rows, cols, numBasis);
+
+  // Allocate the pair holding the min iterate information.
+  minPointIterate.first.zeros(rows, cols);
+  minPointIterate.second = std::numeric_limits<double>::max();
+}
+
+/**
  * Evaluate the function at the given iterate point and store the result if
  * it is a new minimum.
  *
@@ -270,57 +321,6 @@ void L_BFGS<FunctionType>::UpdateBasisSet(const size_t iterationNum,
 }
 
 /**
- * Initialize the L_BFGS object.  Copy the function we will be optimizing and
- * set the size of the memory for the algorithm.
- *
- * @param function Instance of function to be optimized
- * @param numBasis Number of memory points to be stored
- * @param armijoConstant Controls the accuracy of the line search routine for
- *     determining the Armijo condition.
- * @param wolfe Parameter for detecting the Wolfe condition.
- * @param minGradientNorm Minimum gradient norm required to continue the
- *     optimization.
- * @param maxLineSearchTrials The maximum number of trials for the line search
- *     (before giving up).
- * @param minStep The minimum step of the line search.
- * @param maxStep The maximum step of the line search.
- */
-template<typename FunctionType>
-L_BFGS<FunctionType>::L_BFGS(FunctionType& function,
-                             const size_t numBasis,
-                             const size_t maxIterations,
-                             const double armijoConstant,
-                             const double wolfe,
-                             const double minGradientNorm,
-                             const size_t maxLineSearchTrials,
-                             const double minStep,
-                             const double maxStep) :
-    function(function),
-    numBasis(numBasis),
-    maxIterations(maxIterations),
-    armijoConstant(armijoConstant),
-    wolfe(wolfe),
-    minGradientNorm(minGradientNorm),
-    maxLineSearchTrials(maxLineSearchTrials),
-    minStep(minStep),
-    maxStep(maxStep)
-{
-  // Get the dimensions of the coordinates of the function; GetInitialPoint()
-  // might return an arma::vec, but that's okay because then n_cols will simply
-  // be 1.
-  const size_t rows = function.GetInitialPoint().n_rows;
-  const size_t cols = function.GetInitialPoint().n_cols;
-
-  newIterateTmp.set_size(rows, cols);
-  s.set_size(rows, cols, numBasis);
-  y.set_size(rows, cols, numBasis);
-
-  // Allocate the pair holding the min iterate information.
-  minPointIterate.first.zeros(rows, cols);
-  minPointIterate.second = std::numeric_limits<double>::max();
-}
-
-/**
  * Return the point where the lowest function value has been found.
  *
  * @return arma::vec representing the point and a double with the function
@@ -352,6 +352,15 @@ template<typename FunctionType>
 double L_BFGS<FunctionType>::Optimize(arma::mat& iterate,
                                       const size_t maxIterations)
 {
+  // Ensure that the cubes holding past iterations' information are the right
+  // size.  Also set the current best point value to the maximum.
+  const size_t rows = function.GetInitialPoint().n_rows;
+  const size_t cols = function.GetInitialPoint().n_cols;
+
+  s.set_size(rows, cols, numBasis);
+  y.set_size(rows, cols, numBasis);
+  minPointIterate.second = std::numeric_limits<double>::max();
+
   // The old iterate to be saved.
   arma::mat oldIterate;
   oldIterate.zeros(iterate.n_rows, iterate.n_cols);

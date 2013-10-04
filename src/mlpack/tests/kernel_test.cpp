@@ -287,12 +287,12 @@ BOOST_AUTO_TEST_CASE(gaussian_kernel)
   arma::vec c = "0 0 1";
 
   GaussianKernel gk(.5);
-  BOOST_REQUIRE_CLOSE(gk.Evaluate(a,b), .018315638888734, 1e-5);
-  BOOST_REQUIRE_CLOSE(gk.Evaluate(b,a), .018315638888734, 1e-5);
-  BOOST_REQUIRE_CLOSE(gk.Evaluate(a,c), .018315638888734, 1e-5);
-  BOOST_REQUIRE_CLOSE(gk.Evaluate(c,a), .018315638888734, 1e-5);
-  BOOST_REQUIRE_CLOSE(gk.Evaluate(b,c), .018315638888734, 1e-5);
-  BOOST_REQUIRE_CLOSE(gk.Evaluate(c,b), .018315638888734, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.Evaluate(a, b), .018315638888734, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.Evaluate(b, a), .018315638888734, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.Evaluate(a, c), .018315638888734, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.Evaluate(c, a), .018315638888734, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.Evaluate(b, c), .018315638888734, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.Evaluate(c, b), .018315638888734, 1e-5);
   /* check the single dimension evaluate function */
   BOOST_REQUIRE_CLOSE(gk.Evaluate(1.0), 0.1353352832366127, 1e-5);
   BOOST_REQUIRE_CLOSE(gk.Evaluate(2.0), 0.00033546262790251185, 1e-5);
@@ -316,9 +316,9 @@ BOOST_AUTO_TEST_CASE(spherical_kernel)
   arma::vec c = "0.2 0.9";
 
   SphericalKernel sk(.5);
-  BOOST_REQUIRE_CLOSE(sk.Evaluate(a,b), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(sk.Evaluate(a,c), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(sk.Evaluate(b,c), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(sk.Evaluate(a, b), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(sk.Evaluate(a, c), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(sk.Evaluate(b, c), 1.0, 1e-5);
   /* check the single dimension evaluate function */
   BOOST_REQUIRE_CLOSE(sk.Evaluate(0.10), 1.0, 1e-5);
   BOOST_REQUIRE_CLOSE(sk.Evaluate(0.25), 1.0, 1e-5);
@@ -342,9 +342,9 @@ BOOST_AUTO_TEST_CASE(epanechnikov_kernel)
   arma::vec c = "0.1 0.9";
 
   EpanechnikovKernel ek(.5);
-  BOOST_REQUIRE_CLOSE(ek.Evaluate(a,b), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(ek.Evaluate(b,c), 0.92, 1e-5);
-  BOOST_REQUIRE_CLOSE(ek.Evaluate(a,c), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(ek.Evaluate(a, b), 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(ek.Evaluate(b, c), 0.92, 1e-5);
+  BOOST_REQUIRE_CLOSE(ek.Evaluate(a, c), 0.0, 1e-5);
   /* check the single dimension evaluate function */
   BOOST_REQUIRE_CLOSE(ek.Evaluate(0.10), 0.96, 1e-5);
   BOOST_REQUIRE_CLOSE(ek.Evaluate(0.25), 0.75, 1e-5);

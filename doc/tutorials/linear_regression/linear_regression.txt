@@ -4,15 +4,15 @@
 @author James Cline
 @brief Tutorial for how to use the LinearRegression class.
 
-@page lrtutorial Linear Regression tutorial (linear_regression)
+@page lrtutorial Linear/ridge regression tutorial (linear_regression)
 
 @section intro_lrtut Introduction
 
-Linear regression is a simple machine learning technique which aims to estimate
-the parameters of a linear model.  Assuming we have \f$n\f$ \b predictor points
-\f$\mathbf{x_i}, 0 \le i < n\f$ of dimensionality \f$d\f$ and \f$n\f$
-responses \f$y_i, 0 \le i < n\f$, we are trying to estimate the best fit for
-\f$\beta_i, 0 \le i \le d\f$ in the linear model
+Linear regression and ridge regression are simple machine learning techniques
+that aim to estimate the parameters of a linear model.  Assuming we have \f$n\f$
+\b predictor points \f$\mathbf{x_i}, 0 \le i < n\f$ of dimensionality \f$d\f$
+and \f$n\f$ responses \f$y_i, 0 \le i < n\f$, we are trying to estimate the best
+fit for \f$\beta_i, 0 \le i \le d\f$ in the linear model
 
 \f[
 y_i = \beta_0 + \displaystyle\sum_{j = 1}^{d} \beta_j x_{ij}
@@ -32,8 +32,8 @@ offset term (or intercept term) \f$\beta_0\f$.
 
 \b mlpack provides:
 
- - a \ref cli_lrtut "simple command-line executable" to perform linear regression
- - a \ref linreg_lrtut "simple C++ interface" to perform linear regression
+ - a \ref cli_lrtut "simple command-line executable" to perform linear regression or ridge regression
+ - a \ref linreg_lrtut "simple C++ interface" to perform linear regression or    ridge regression
 
 @section toc_lrtut Table of Contents
 
@@ -45,18 +45,20 @@ A list of all the sections this tutorial contains.
    - \ref cli_ex1_lrtut
    - \ref cli_ex2_lrtut
    - \ref cli_ex3_lrtut
+   - \ref cli_ex4_lrtut
  - \ref linreg_lrtut
    - \ref linreg_ex1_lrtut
    - \ref linreg_ex2_lrtut
    - \ref linreg_ex3_lrtut
    - \ref linreg_ex4_lrtut
+   - \ref linreg_ex5_lrtut
  - \ref further_doc_lrtut
 
 @section cli_lrtut Command-Line 'linear_regression'
 
-The simplest way to perform linear regression in \b mlpack is to use the
-linear_regression executable.  This program will perform linear regression and
-place the resultant coefficients into one file.
+The simplest way to perform linear regression or ridge regression in \b mlpack
+is to use the linear_regression executable.  This program will perform linear
+regression and place the resultant coefficients into one file.
 
 The output file holds a vector of coefficients in increasing order of dimension;
 that is, the offset term (\f$\beta_0\f$), the coefficient for dimension 1
@@ -84,6 +86,7 @@ $ linear_regression --input_file dataset.csv -v
 [INFO ]   info: ""
 [INFO ]   input_file: dataset.csv
 [INFO ]   input_responses: ""
+[INFO ]   lambda: 0
 [INFO ]   output_file: parameters.csv
 [INFO ]   output_predictions: predictions.csv
 [INFO ]   test_file: ""
@@ -115,7 +118,7 @@ As you can see, the function for this input is \f$f(y)=0+1x_1\f$. Keep in mind
 that in this example, the regressors for the dataset are the second column.
 That is, the dataset is one dimensional, and the last column has the \f$y\f$
 values, or responses, for each row. You can specify these responses in a
-separate file if you want, using the --input_responses, or -r, option.
+separate file if you want, using the \c --input_responses, or \c -r, option.
 
 @subsection cli_ex2_lrtut Compute model and predict at the same time
 
@@ -131,6 +134,7 @@ $ linear_regression --input_file dataset.csv --test_file predict.csv -v
 [INFO ]   info: ""
 [INFO ]   input_file: dataset.csv
 [INFO ]   input_responses: ""
+[INFO ]   lambda: 0
 [INFO ]   model_file: ""
 [INFO ]   output_file: parameters.csv
 [INFO ]   output_predictions: predictions.csv
@@ -183,6 +187,7 @@ $ linear_regression --model_file parameters.csv --test_file predict.csv -v
 [INFO ]   info: ""
 [INFO ]   input_file: ""
 [INFO ]   input_responses: ""
+[INFO ]   lambda: 0
 [INFO ]   model_file: parameters.csv
 [INFO ]   output_file: parameters.csv
 [INFO ]   output_predictions: predictions.csv
@@ -209,7 +214,55 @@ $ cat predictions.csv
 4.0000000000e+00
 @endcode
 
-Further documentation on options should be found by using the --help option.
+@subsection cli_ex4_lrtut Using ridge regression
+
+Sometimes, the input matrix of predictors has a covariance matrix that is not
+invertible, or the system is overdetermined.  In this case, ridge regression is
+useful: it adds a normalization term to the covariance matrix to make it
+invertible.  Ridge regression is a standard technique and documentation for the
+mathematics behind it can be found anywhere on the Internet.  In short, the
+covariance matrix
+
+\f[
+\mathbf{X}' \mathbf{X}
+\f]
+
+is replaced with
+
+\f[
+\mathbf{X}' \mathbf{X} + \lambda \mathbf{I}
+\f]
+
+where \f$\mathbf{I}\f$ is the identity matrix.  So, a \f$\lambda\f$ parameter
+greater than zero should be specified to perform ridge regression, using the
+\c --lambda (or \c -l) option.  An example is given below.
+
+@code
+$ linear_regression --input_file dataset.csv -v --lambda 0.5
+[INFO ] Loading 'dataset.csv' as CSV data.  Size is 3 x 1000.
+[INFO ] Saving CSV data to 'parameters.csv'.
+[INFO ]
+[INFO ] Execution parameters:
+[INFO ]   help: false
+[INFO ]   info: ""
+[INFO ]   input_file: test_data_3_1000.csv
+[INFO ]   input_responses: ""
+[INFO ]   lambda: 0.5
+[INFO ]   model_file: ""
+[INFO ]   output_file: parameters.csv
+[INFO ]   output_predictions: predictions.csv
+[INFO ]   test_file: ""
+[INFO ]   verbose: true
+[INFO ]
+[INFO ] Program timers:
+[INFO ]   load_regressors: 0.005236s
+[INFO ]   loading_data: 0.005208s
+[INFO ]   regression: 0.013206s
+[INFO ]   saving_data: 0.000276s
+[INFO ]   total_time: 0.020019s
+@endcode
+
+Further documentation on options should be found by using the \c --help option.
 
 @section linreg_lrtut The 'LinearRegression' class
 
@@ -225,10 +278,10 @@ The class provides one method that performs computation:
 void Predict(const arma::mat& points, arma::vec& predictions);
 @endcode
 
-Once you have generated or loaded a model, you can call this method and pass it a
-matrix of data points to predict values for using the model. The second parameter,
-predictions, will be modified to contain the predicted values corresponding to
-each row of the points matrix.
+Once you have generated or loaded a model, you can call this method and pass it
+a matrix of data points to predict values for using the model. The second
+parameter, predictions, will be modified to contain the predicted values
+corresponding to each row of the points matrix.
 
 @subsection linreg_ex1_lrtut Generating a model
 
@@ -272,11 +325,10 @@ LinearRegression lr(filename); // Will load the model internally.
 
 @subsection linreg_ex4_lrtut Prediction
 
-Once you have generated or loaded a model using one of the aforementioned methods,
-you can predict values for a dataset.
+Once you have generated or loaded a model using one of the aforementioned
+methods, you can predict values for a dataset.
 
 @code
-
 LinearRegression lr();
 // Load or generate your model.
 
@@ -288,6 +340,36 @@ arma::vec predictions;
 lr.Predict(points, predictions); // Predict.
 
 // Now, the vector 'predictions' will contain the predicted values.
+@endcode
+
+@subsection linreg_ex5_lrtut Setting lambda for ridge regression
+
+As discussed in \ref cli_ex4_lrtut, ridge regression is useful when the
+covariance of the predictors is not invertible.  The standard constructor can be
+used to set a value of lambda:
+
+@code
+#include <mlpack/methods/linear_regression/linear_regression.hpp>
+
+using namespace mlpack::regression;
+
+arma::mat data; // The dataset itself.
+arma::vec responses; // The responses, one row for each row in data.
+
+// Regress, with a lambda of 0.5.
+LinearRegression lr(data, responses, 0.5);
+
+// Get the parameters, or coefficients.
+arma::vec parameters = lr.Parameters();
+@endcode
+
+In addition, the \c Lambda() function can be used to get or modify the lambda
+value:
+
+@code
+LinearRegression lr;
+lr.Lambda() = 0.5;
+Log::Info << "Lambda is " << lr.Lambda() << "." << std::endl;
 @endcode
 
 @section further_doc_lrtut Further documentation

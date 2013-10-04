@@ -3,26 +3,16 @@
  * @author Ryan Curtin
  *
  * Test for the Gaussian Mixture Model class.
- *
- * This file is part of MLPACK 1.0.6.
- *
- * MLPACK is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * MLPACK is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * MLPACK.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/gmm/gmm.hpp>
 #include <mlpack/methods/gmm/phi.hpp>
+
+#include <mlpack/methods/gmm/no_constraint.hpp>
+#include <mlpack/methods/gmm/positive_definite_constraint.hpp>
+#include <mlpack/methods/gmm/diagonal_constraint.hpp>
+#include <mlpack/methods/gmm/eigenvalue_ratio_constraint.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -216,7 +206,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMOneGaussian)
 
     // Now, train the model.
     GMM<> gmm(1, 2);
-    double likelihood = gmm.Estimate(data, 10);
+    gmm.Estimate(data, 10);
 
     arma::vec actualMean = arma::mean(data, 1);
     arma::mat actualCovar = ccov(data, 1 /* biased estimator */);
@@ -306,7 +296,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
 
   // Now train the model.
   GMM<> gmm(gaussians, dims);
-  double likelihood = gmm.Estimate(data, 10);
+  gmm.Estimate(data, 10);
 
   arma::uvec sortRef = sort_index(weights);
   arma::uvec sortTry = sort_index(gmm.Weights());
@@ -337,6 +327,8 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
  */
 BOOST_AUTO_TEST_CASE(GMMTrainEMSingleGaussianWithProbability)
 {
+  math::RandomSeed(std::time(NULL));
+
   // Generate observations from a Gaussian distribution.
   distribution::GaussianDistribution d("0.5 1.0", "1.0 0.3; 0.3 1.0");
 
@@ -349,18 +341,18 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMSingleGaussianWithProbability)
 
   // Now train the model.
   GMM<> g(1, 2);
-  double likelihood = g.Estimate(observations, probabilities, 10);
+  g.Estimate(observations, probabilities, 10);
 
-  // Check that it is trained correctly.  7% tolerance because of random error
+  // Check that it is trained correctly.  5% tolerance because of random error
   // present in observations.
-  BOOST_REQUIRE_CLOSE(g.Means()[0][0], 0.5, 7.0);
-  BOOST_REQUIRE_CLOSE(g.Means()[0][1], 1.0, 7.0);
+  BOOST_REQUIRE_CLOSE(g.Means()[0][0], 0.5, 5.0);
+  BOOST_REQUIRE_CLOSE(g.Means()[0][1], 1.0, 5.0);
 
-  // 9% tolerance on the large numbers, 12% on the smaller numbers.
-  BOOST_REQUIRE_CLOSE(g.Covariances()[0](0, 0), 1.0, 9.0);
-  BOOST_REQUIRE_CLOSE(g.Covariances()[0](0, 1), 0.3, 12.0);
-  BOOST_REQUIRE_CLOSE(g.Covariances()[0](1, 0), 0.3, 12.0);
-  BOOST_REQUIRE_CLOSE(g.Covariances()[0](1, 1), 1.0, 9.0);
+  // 6% tolerance on the large numbers, 10% on the smaller numbers.
+  BOOST_REQUIRE_CLOSE(g.Covariances()[0](0, 0), 1.0, 6.0);
+  BOOST_REQUIRE_CLOSE(g.Covariances()[0](0, 1), 0.3, 10.0);
+  BOOST_REQUIRE_CLOSE(g.Covariances()[0](1, 0), 0.3, 10.0);
+  BOOST_REQUIRE_CLOSE(g.Covariances()[0](1, 1), 1.0, 6.0);
 
   BOOST_REQUIRE_CLOSE(g.Weights()[0], 1.0, 1e-5);
 }
@@ -422,7 +414,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
   // Now train the model.
   GMM<> g(4, 3); // 3 dimensions, 4 components.
 
-  double likelihood = g.Estimate(points, probabilities, 8);
+  g.Estimate(points, probabilities, 8);
 
   // Now check the results.  We need to order by weights so that when we do the
   // checking, things will be correct.
@@ -432,10 +424,10 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
   // that we introduced a fair amount of random noise into this whole process.
 
   // First Gaussian (d4).
-  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[0]] - 0.1, 0.075);
+  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[0]] - 0.1, 0.1);
 
   for (size_t i = 0; i < 3; i++)
-    BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[0]][i] - d4.Mean()[i]), 0.30);
+    BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[0]][i] - d4.Mean()[i]), 0.4);
 
   for (size_t row = 0; row < 3; row++)
     for (size_t col = 0; col < 3; col++)
@@ -443,10 +435,10 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
           d4.Covariance()(row, col)), 0.60); // Big tolerance!  Lots of noise.
 
   // Second Gaussian (d1).
-  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[1]] - 0.2, 0.075);
+  BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[1]] - 0.2, 0.1);
 
   for (size_t i = 0; i < 3; i++)
-    BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[1]][i] - d1.Mean()[i]), 0.25);
+    BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[1]][i] - d1.Mean()[i]), 0.4);
 
   for (size_t row = 0; row < 3; row++)
     for (size_t col = 0; col < 3; col++)
@@ -457,7 +449,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
   BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[2]] - 0.3, 0.1);
 
   for (size_t i = 0; i < 3; i++)
-    BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[2]][i] - d2.Mean()[i]), 0.25);
+    BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[2]][i] - d2.Mean()[i]), 0.4);
 
   for (size_t row = 0; row < 3; row++)
     for (size_t col = 0; col < 3; col++)
@@ -468,7 +460,7 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
   BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[3]] - 0.4, 0.1);
 
   for (size_t i = 0; i < 3; ++i)
-    BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[3]][i] - d3.Mean()[i]), 0.25);
+    BOOST_REQUIRE_SMALL((g.Means()[sortedIndices[3]][i] - d3.Mean()[i]), 0.4);
 
   for (size_t row = 0; row < 3; ++row)
     for (size_t col = 0; col < 3; ++col)
@@ -502,7 +494,7 @@ BOOST_AUTO_TEST_CASE(GMMRandomTest)
 
   // A new one which we'll train.
   GMM<> gmm2(2, 2);
-  double likelihood = gmm2.Estimate(observations, 10);
+  gmm2.Estimate(observations, 10);
 
   // Now check the results.  We need to order by weights so that when we do the
   // checking, things will be correct.
@@ -631,6 +623,79 @@ BOOST_AUTO_TEST_CASE(GMMLoadSaveTest)
             gmm2.Covariances()[i](j, k), 1e-3);
       }
     }
+  }
+}
+
+BOOST_AUTO_TEST_CASE(NoConstraintTest)
+{
+  // Generate random matrices and make sure they end up the same.
+  for (size_t i = 0; i < 30; ++i)
+  {
+    const size_t rows = 5 + math::RandInt(100);
+    const size_t cols = 5 + math::RandInt(100);
+    arma::mat cov(rows, cols);
+    cov.randu();
+    arma::mat newcov(cov);
+
+    NoConstraint::ApplyConstraint(newcov);
+
+    for (size_t j = 0; j < cov.n_elem; ++j)
+      BOOST_REQUIRE_CLOSE(newcov(j), cov(j), 1e-20);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(PositiveDefiniteConstraintTest)
+{
+  // Make sure matrices are made to be positive definite.
+  for (size_t i = 0; i < 30; ++i)
+  {
+    const size_t elem = 5 + math::RandInt(50);
+    arma::mat cov(elem, elem);
+    cov.randu();
+
+    PositiveDefiniteConstraint::ApplyConstraint(cov);
+
+    BOOST_REQUIRE_GE((double) det(cov), 1e-50);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(DiagonalConstraintTest)
+{
+  // Make sure matrices are made to be positive definite.
+  for (size_t i = 0; i < 30; ++i)
+  {
+    const size_t elem = 5 + math::RandInt(50);
+    arma::mat cov(elem, elem);
+    cov.randu();
+
+    DiagonalConstraint::ApplyConstraint(cov);
+
+    for (size_t j = 0; j < elem; ++j)
+      for (size_t k = 0; k < elem; ++k)
+        if (j != k)
+          BOOST_REQUIRE_SMALL(cov(j, k), 1e-50);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(EigenvalueRatioConstraintTest)
+{
+  // Generate a list of eigenvalue ratios.
+  arma::vec ratios("1.0 0.7 0.4 0.2 0.1 0.1 0.05 0.01");
+  EigenvalueRatioConstraint erc(ratios);
+
+  // Now make some random matrices and see if the constraint works.
+  for (size_t i = 0; i < 30; ++i)
+  {
+    arma::mat cov(8, 8);
+    cov.randu();
+
+    erc.ApplyConstraint(cov);
+
+    // Decompose the matrix and make sure things are right.
+    arma::vec eigenvalues = arma::eig_sym(cov);
+
+    for (size_t i = 0; i < eigenvalues.n_elem; ++i)
+      BOOST_REQUIRE_CLOSE(eigenvalues[i] / eigenvalues[0], ratios[i], 1e-5);
   }
 }
 

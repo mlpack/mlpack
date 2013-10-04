@@ -34,7 +34,7 @@ void mlpack::det::PrintLeafMembership(DTree* dtree,
   // Tag the leaves with numbers.
   int numLeaves = dtree->TagTree();
 
-  arma::Mat<size_t> table(numLeaves, numClasses);
+  arma::Mat<size_t> table(numLeaves, (numClasses + 1));
   table.zeros();
 
   for (size_t i = 0; i < data.n_cols; i++)

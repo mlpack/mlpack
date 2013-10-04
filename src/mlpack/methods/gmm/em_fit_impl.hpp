@@ -32,22 +32,24 @@ namespace mlpack {
 namespace gmm {
 
 //! Constructor.
-template<typename InitialClusteringType>
-EMFit<InitialClusteringType>::EMFit(const size_t maxIterations,
-                                    const double tolerance,
-                                    const bool forcePositive,
-                                    InitialClusteringType clusterer) :
+template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
+EMFit<InitialClusteringType, CovarianceConstraintPolicy>::EMFit(
+    const size_t maxIterations,
+    const double tolerance,
+    InitialClusteringType clusterer,
+    CovarianceConstraintPolicy constraint) :
     maxIterations(maxIterations),
     tolerance(tolerance),
-    forcePositive(forcePositive),
-    clusterer(clusterer)
+    clusterer(clusterer),
+    constraint(constraint)
 { /* Nothing to do. */ }
 
-template<typename InitialClusteringType>
-void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
-                                            std::vector<arma::vec>& means,
-                                            std::vector<arma::mat>& covariances,
-                                            arma::vec& weights)
+template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
+void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
+    const arma::mat& observations,
+    std::vector<arma::vec>& means,
+    std::vector<arma::mat>& covariances,
+    arma::vec& weights)
 {
   InitialClustering(observations, means, covariances, weights);
 
@@ -109,19 +111,8 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
       if (probRowSums[i] != 0.0)
         covariances[i] = (tmp * trans(tmpB)) / probRowSums[i];
 
-      // Ensure positive-definiteness.  TODO: make this more efficient.
-      if (forcePositive && det(covariances[i]) <= 1e-50)
-      {
-        Log::Debug << "Covariance matrix " << i << " is not positive definite. "
-            << "Adding perturbation." << std::endl;
-
-        double perturbation = 1e-30;
-        while (det(covariances[i]) <= 1e-50)
-        {
-          covariances[i].diag() += perturbation;
-          perturbation *= 10; // Slow, but we don't want to add too much.
-        }
-      }
+      // Apply covariance constraint.
+      constraint.ApplyConstraint(covariances[i]);
     }
 
     // Calculate the new values for omega using the updated conditional
@@ -136,12 +127,13 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
   }
 }
 
-template<typename InitialClusteringType>
-void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
-                                            const arma::vec& probabilities,
-                                            std::vector<arma::vec>& means,
-                                            std::vector<arma::mat>& covariances,
-                                            arma::vec& weights)
+template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
+void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
+    const arma::mat& observations,
+    const arma::vec& probabilities,
+    std::vector<arma::vec>& means,
+    std::vector<arma::mat>& covariances,
+    arma::vec& weights)
 {
   InitialClustering(observations, means, covariances, weights);
 
@@ -204,19 +196,8 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
 
       covariances[i] = (tmp * trans(tmpB)) / probRowSums[i];
 
-      // Ensure positive-definiteness.  TODO: make this more efficient.
-      if (forcePositive && det(covariances[i]) <= 1e-50)
-      {
-        Log::Debug << "Covariance matrix " << i << " is not positive definite. "
-            << "Adding perturbation." << std::endl;
-
-        double perturbation = 1e-30;
-        while (det(covariances[i]) <= 1e-50)
-        {
-          covariances[i].diag() += perturbation;
-          perturbation *= 10; // Slow, but we don't want to add too much.
-        }
-      }
+      // Apply covariance constraint.
+      constraint.ApplyConstraint(covariances[i]);
     }
 
     // Calculate the new values for omega using the updated conditional
@@ -231,12 +212,12 @@ void EMFit<InitialClusteringType>::Estimate(const arma::mat& observations,
   }
 }
 
-template<typename InitialClusteringType>
-void EMFit<InitialClusteringType>::InitialClustering(
-    const arma::mat& observations,
-    std::vector<arma::vec>& means,
-    std::vector<arma::mat>& covariances,
-    arma::vec& weights)
+template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
+void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::
+InitialClustering(const arma::mat& observations,
+                  std::vector<arma::vec>& means,
+                  std::vector<arma::mat>& covariances,
+                  arma::vec& weights)
 {
   // Assignments from clustering.
   arma::Col<size_t> assignments;
@@ -287,27 +268,16 @@ void EMFit<InitialClusteringType>::InitialClustering(
   {
     covariances[i] /= (weights[i] > 1) ? weights[i] : 1;
 
-    // Ensure positive-definiteness.  TODO: make this more efficient.
-    if (forcePositive && det(covariances[i]) <= 1e-50)
-    {
-      Log::Debug << "Covariance matrix " << i << " is not positive definite. "
-          << "Adding perturbation." << std::endl;
-
-      double perturbation = 1e-50;
-      while (det(covariances[i]) <= 1e-50)
-      {
-        covariances[i].diag() += perturbation;
-        perturbation *= 10; // Slow, but we don't want to add too much.
-      }
-    }
+    // Apply constraints to covariance matrix.
+    constraint.ApplyConstraint(covariances[i]);
   }
 
   // Finally, normalize weights.
   weights /= accu(weights);
 }
 
-template<typename InitialClusteringType>
-double EMFit<InitialClusteringType>::LogLikelihood(
+template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
+double EMFit<InitialClusteringType, CovarianceConstraintPolicy>::LogLikelihood(
     const arma::mat& observations,
     const std::vector<arma::vec>& means,
     const std::vector<arma::mat>& covariances,

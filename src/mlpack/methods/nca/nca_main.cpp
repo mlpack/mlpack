@@ -3,21 +3,6 @@
  * @author Ryan Curtin
  *
  * Executable for Neighborhood Components Analysis.
- *
- * This file is part of MLPACK 1.0.6.
- *
- * MLPACK is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * MLPACK is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * MLPACK.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
@@ -80,7 +65,7 @@ PARAM_STRING_REQ("input_file", "Input dataset to run NCA on.", "i");
 PARAM_STRING_REQ("output_file", "Output file for learned distance matrix.",
     "o");
 PARAM_STRING("labels_file", "File of labels for input dataset.", "l", "");
-PARAM_STRING("optimizer", "Optimizer to use; \"sgd\" or \"lbfgs\".", "O", "");
+PARAM_STRING("optimizer", "Optimizer to use; \"sgd\" or \"lbfgs\".", "O", "sgd");
 
 PARAM_FLAG("normalize", "Use a normalized starting point for optimization. This"
     " is useful for when points are far apart, or when SGD is returning NaN.",
@@ -96,12 +81,12 @@ PARAM_DOUBLE("step_size", "Step size for stochastic gradient descent (alpha).",
 PARAM_FLAG("linear_scan", "Don't shuffle the order in which data points are "
     "visited for SGD.", "L");
 
-PARAM_INT("num_basis", "Number of memory points to be stored for L-BFGS.", "N",
+PARAM_INT("num_basis", "Number of memory points to be stored for L-BFGS.", "B",
     5);
 PARAM_DOUBLE("armijo_constant", "Armijo constant for L-BFGS.", "A", 1e-4);
 PARAM_DOUBLE("wolfe", "Wolfe condition parameter for L-BFGS.", "w", 0.9);
 PARAM_INT("max_line_search_trials", "Maximum number of line search trials for "
-    "L-BFGS.", "L", 50);
+    "L-BFGS.", "T", 50);
 PARAM_DOUBLE("min_step", "Minimum step of line search for L-BFGS.", "m", 1e-20);
 PARAM_DOUBLE("max_step", "Maximum step of line search for L-BFGS.", "M", 1e20);
 
@@ -187,27 +172,32 @@ int main(int argc, char* argv[])
 
   // Load data.
   arma::mat data;
-  data::Load(inputFile.c_str(), data, true);
+  data::Load(inputFile, data, true);
 
   // Do we want to load labels separately?
-  arma::umat labels(data.n_cols, 1);
+  arma::umat rawLabels(data.n_cols, 1);
   if (labelsFile != "")
   {
-    data::Load(labelsFile.c_str(), labels, true);
+    data::Load(labelsFile, rawLabels, true);
 
-    if (labels.n_rows == 1)
-      labels = trans(labels);
+    if (rawLabels.n_rows == 1)
+      rawLabels = trans(rawLabels);
 
-    if (labels.n_cols > 1)
+    if (rawLabels.n_cols > 1)
       Log::Fatal << "Labels must have only one column or row!" << endl;
   }
   else
   {
     for (size_t i = 0; i < data.n_cols; i++)
-      labels[i] = (int) data(data.n_rows - 1, i);
+      rawLabels[i] = (int) data(data.n_rows - 1, i);
 
     data.shed_row(data.n_rows - 1);
   }
+
+  // Now, normalize the labels.
+  arma::uvec mappings;
+  arma::Col<size_t> labels;
+  data::NormalizeLabels(rawLabels.unsafe_col(0), labels, mappings);
 
   arma::mat distance;
 
@@ -232,7 +222,7 @@ int main(int argc, char* argv[])
   // Now create the NCA object and run the optimization.
   if (optimizerType == "sgd")
   {
-    NCA<LMetric<2> > nca(data, labels.unsafe_col(0));
+    NCA<LMetric<2> > nca(data, labels);
     nca.Optimizer().StepSize() = stepSize;
     nca.Optimizer().MaxIterations() = maxIterations;
     nca.Optimizer().Tolerance() = tolerance;
@@ -242,7 +232,7 @@ int main(int argc, char* argv[])
   }
   else if (optimizerType == "lbfgs")
   {
-    NCA<LMetric<2>, L_BFGS> nca(data, labels.unsafe_col(0));
+    NCA<LMetric<2>, L_BFGS> nca(data, labels);
     nca.Optimizer().NumBasis() = numBasis;
     nca.Optimizer().MaxIterations() = maxIterations;
     nca.Optimizer().ArmijoConstant() = armijoConstant;
@@ -256,5 +246,5 @@ int main(int argc, char* argv[])
   }
 
   // Save the output.
-  data::Save(CLI::GetParam<string>("output_file").c_str(), distance, true);
+  data::Save(CLI::GetParam<string>("output_file"), distance, true);
 }

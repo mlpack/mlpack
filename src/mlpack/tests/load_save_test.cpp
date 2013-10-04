@@ -21,8 +21,7 @@
  */
 #include <sstream>
 
-#include <mlpack/core/data/load.hpp>
-#include <mlpack/core/data/save.hpp>
+#include <mlpack/core.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -522,5 +521,59 @@ BOOST_AUTO_TEST_CASE(NoHDF5Test)
   BOOST_REQUIRE(data::Save("test_file.he5", test) == false);
 }
 #endif
+
+/**
+ * Test normalization of labels.
+ */
+BOOST_AUTO_TEST_CASE(NormalizeLabelSmallDatasetTest)
+{
+  arma::ivec labels("-1 1 1 -1 -1 -1 1 1");
+  arma::Col<size_t> newLabels;
+  arma::ivec mappings;
+
+  data::NormalizeLabels(labels, newLabels, mappings);
+
+  BOOST_REQUIRE_EQUAL(mappings[0], -1);
+  BOOST_REQUIRE_EQUAL(mappings[1], 1);
+
+  BOOST_REQUIRE_EQUAL(newLabels[0], 0);
+  BOOST_REQUIRE_EQUAL(newLabels[1], 1);
+  BOOST_REQUIRE_EQUAL(newLabels[2], 1);
+  BOOST_REQUIRE_EQUAL(newLabels[3], 0);
+  BOOST_REQUIRE_EQUAL(newLabels[4], 0);
+  BOOST_REQUIRE_EQUAL(newLabels[5], 0);
+  BOOST_REQUIRE_EQUAL(newLabels[6], 1);
+  BOOST_REQUIRE_EQUAL(newLabels[7], 1);
+
+  arma::ivec revertedLabels;
+
+  data::RevertLabels(newLabels, mappings, revertedLabels);
+
+  for (size_t i = 0; i < labels.n_elem; ++i)
+    BOOST_REQUIRE_EQUAL(labels[i], revertedLabels[i]);
+}
+
+/**
+ * Harder label normalization test.
+ */
+BOOST_AUTO_TEST_CASE(NormalizeLabelTest)
+{
+  arma::vec randLabels(5000);
+  for (size_t i = 0; i < 5000; ++i)
+    randLabels[i] = math::RandInt(-50, 50);
+  randLabels[0] = 0.65; // Hey, doubles work too!
+
+  arma::Col<size_t> newLabels;
+  arma::vec mappings;
+
+  data::NormalizeLabels(randLabels, newLabels, mappings);
+
+  // Now map them back and ensure they are right.
+  arma::vec revertedLabels(5000);
+  data::RevertLabels(newLabels, mappings, revertedLabels);
+
+  for (size_t i = 0; i < 5000; ++i)
+    BOOST_REQUIRE_EQUAL(randLabels[i], revertedLabels[i]);
+}
 
 BOOST_AUTO_TEST_SUITE_END();

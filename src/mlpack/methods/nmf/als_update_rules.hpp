@@ -53,7 +53,8 @@ class WAlternatingLeastSquaresRule
    * @param W Basis matrix to be updated.
    * @param H Encoding matrix.
    */
-  inline static void Update(const arma::mat& V,
+  template<typename MatType>
+  inline static void Update(const MatType& V,
                             arma::mat& W,
                             const arma::mat& H)
   {
@@ -92,7 +93,8 @@ class HAlternatingLeastSquaresRule
    * @param W Basis matrix.
    * @param H Encoding matrix to be updated.
    */
-  inline static void Update(const arma::mat& V,
+  template<typename MatType>
+  inline static void Update(const MatType& V,
                             const arma::mat& W,
                             arma::mat& H)
   {

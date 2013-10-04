@@ -32,6 +32,7 @@ namespace kernel {
 
 template<typename Vec1Type, typename Vec2Type>
 inline double EpanechnikovKernel::Evaluate(const Vec1Type& a, const Vec2Type& b)
+    const
 {
   return std::max(0.0, 1.0 - metric::SquaredEuclideanDistance::Evaluate(a, b)
       * inverseBandwidthSquared);

@@ -7,12 +7,15 @@ configuration options.  One can consult any of numerous CMake tutorials for
 further documentation, but this tutorial should be enough to get MLPACK built
 and installed.
 
+@section Download latest mlpack build
+Download latest mlpack build from here : <a href="http://www.mlpack.org/files/mlpack-1.0.6.tar.gz">mlpack-1.0.6</a>
+
 @section builddir Creating Build Directory
 
 Once the MLPACK source is unpacked, you should create a build directory.
 
 @code
-$ cd mlpack-1.0.3
+$ cd mlpack-1.0.6
 $ mkdir build
 @endcode
 
@@ -24,10 +27,8 @@ enough.
 MLPACK depends on the following libraries, which need to be installed on the
 system and have headers present:
 
- - LAPACK
- - pthreads
- - Armadillo >= 2.4.0
- - LibXML2
+ - Armadillo >= 3.6.0 (with LAPACK support)
+ - LibXML2 >= 2.6.0
  - Boost (math_c99, program_options, unit_test_framework, random)
 
 In Ubuntu and Debian, you can get all of these dependencies through apt:
@@ -48,7 +49,7 @@ On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via yum:
   boost-math libxml2-devel armadillo-devel
 @endcode
 
-On Red Hat Enterprise Linux 6 and older (as well as CentOS 6), the Armadillo
+On Red Hat Enterprise Linux 5 and older (as well as CentOS 5), the Armadillo
 version available is too old and must be compiled by hand.  The same applies for
 Fedora 16 and older.
 

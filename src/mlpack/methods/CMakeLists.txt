@@ -1,5 +1,6 @@
 ## recurse
 set(DIRS
+  cf
   det
   emst
   fastmks
@@ -11,7 +12,7 @@ set(DIRS
   linear_regression
   local_coordinate_coding
   lsh
-  mvu
+#  mvu
   naive_bayes
   nca
   neighbor_search

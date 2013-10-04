@@ -113,9 +113,9 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive)
   if (!data::Load("test_data_3_1000.csv", inputData))
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
-  // Set up matrices to work with (may not be necessary with no ALIAS_MATRIX?).
-  arma::mat dualData = arma::trans(inputData);
-  arma::mat naiveData = arma::trans(inputData);
+  // Set up matrices to work with.
+  arma::mat dualData = inputData;
+  arma::mat naiveData = inputData;
 
   // Reset parameters from last test.
   DualTreeBoruvka<> dtb(dualData);

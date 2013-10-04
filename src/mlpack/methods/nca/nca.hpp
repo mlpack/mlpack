@@ -73,7 +73,7 @@ class NCA
    * @param metric Instantiated metric to use.
    */
   NCA(const arma::mat& dataset,
-      const arma::uvec& labels,
+      const arma::Col<size_t>& labels,
       MetricType metric = MetricType());
 
   /**
@@ -90,7 +90,7 @@ class NCA
   //! Get the dataset reference.
   const arma::mat& Dataset() const { return dataset; }
   //! Get the labels reference.
-  const arma::uvec& Labels() const { return labels; }
+  const arma::Col<size_t>& Labels() const { return labels; }
 
   //! Get the optimizer.
   const OptimizerType<SoftmaxErrorFunction<MetricType> >& Optimizer() const
@@ -102,7 +102,7 @@ class NCA
   //! Dataset reference.
   const arma::mat& dataset;
   //! Labels reference.
-  const arma::uvec& labels;
+  const arma::Col<size_t>& labels;
 
   //! Metric to be used.
   MetricType metric;

@@ -12,6 +12,8 @@ set(SOURCES
   restrictors.hpp
   traits.hpp
   typedef.hpp
+  SpMat_extra_bones.hpp
+  SpMat_extra_meat.hpp
 )
 
 # add directory name to sources

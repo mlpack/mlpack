@@ -33,10 +33,12 @@ namespace mlpack {
 namespace naive_bayes {
 
 template<typename MatType>
-NaiveBayesClassifier<MatType>::NaiveBayesClassifier(const MatType& data,
-                                                    const size_t classes)
+NaiveBayesClassifier<MatType>::NaiveBayesClassifier(
+    const MatType& data,
+    const arma::Col<size_t>& labels,
+    const size_t classes)
 {
-  size_t dimensionality = data.n_rows - 1;
+  size_t dimensionality = data.n_rows;
 
   // Update the variables according to the number of features and classes
   // present in the data.
@@ -51,11 +53,11 @@ NaiveBayesClassifier<MatType>::NaiveBayesClassifier(const MatType& data,
   // for each of the features with respect to each of the labels.
   for (size_t j = 0; j < data.n_cols; ++j)
   {
-    size_t label = (size_t) data(dimensionality, j);
+    const size_t label = labels[j];
     ++probabilities[label];
 
-    means.col(label) += data(arma::span(0, dimensionality - 1), j);
-    variances.col(label) += square(data(arma::span(0, dimensionality - 1), j));
+    means.col(label) += data.col(j);
+    variances.col(label) += square(data.col(j));
   }
 
   for (size_t i = 0; i < classes; ++i)

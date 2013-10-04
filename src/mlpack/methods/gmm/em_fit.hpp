@@ -27,6 +27,8 @@
 
 // Default clustering mechanism.
 #include <mlpack/methods/kmeans/kmeans.hpp>
+// Default covariance matrix constraint.
+#include "positive_definite_constraint.hpp"
 
 namespace mlpack {
 namespace gmm {
@@ -44,7 +46,8 @@ namespace gmm {
  * This method should create 'clusters' clusters, and return the assignment of
  * each point to a cluster.
  */
-template<typename InitialClusteringType = kmeans::KMeans<> >
+template<typename InitialClusteringType = kmeans::KMeans<>,
+         typename CovarianceConstraintPolicy = PositiveDefiniteConstraint>
 class EMFit
 {
  public:
@@ -67,8 +70,8 @@ class EMFit
    */
   EMFit(const size_t maxIterations = 300,
         const double tolerance = 1e-10,
-        const bool forcePositive = true,
-        InitialClusteringType clusterer = InitialClusteringType());
+        InitialClusteringType clusterer = InitialClusteringType(),
+        CovarianceConstraintPolicy constraint = CovarianceConstraintPolicy());
 
   /**
    * Fit the observations to a Gaussian mixture model (GMM) using the EM
@@ -108,6 +111,11 @@ class EMFit
   //! Modify the clusterer.
   InitialClusteringType& Clusterer() { return clusterer; }
 
+  //! Get the covariance constraint policy class.
+  const CovarianceConstraintPolicy& Constraint() const { return constraint; }
+  //! Modify the covariance constraint policy class.
+  CovarianceConstraintPolicy& Constraint() { return constraint; }
+
   //! Get the maximum number of iterations of the EM algorithm.
   size_t MaxIterations() const { return maxIterations; }
   //! Modify the maximum number of iterations of the EM algorithm.
@@ -117,13 +125,6 @@ class EMFit
   double Tolerance() const { return tolerance; }
   //! Modify the tolerance for the convergence of the EM algorithm.
   double& Tolerance() { return tolerance; }
-
-  //! Get whether or not the covariance matrices are forced to be positive
-  //! definite.
-  bool ForcePositive() const { return forcePositive; }
-  //! Modify whether or not the covariance matrices are forced to be positive
-  //! definite.
-  bool& ForcePositive() { return forcePositive; }
 
  private:
   /**
@@ -160,10 +161,10 @@ class EMFit
   size_t maxIterations;
   //! Tolerance for convergence of EM.
   double tolerance;
-  //! Whether or not to force positive definiteness of covariance matrices.
-  bool forcePositive;
   //! Object which will perform the clustering.
   InitialClusteringType clusterer;
+  //! Object which applies constraints to the covariance matrix.
+  CovarianceConstraintPolicy constraint;
 };
 
 }; // namespace gmm

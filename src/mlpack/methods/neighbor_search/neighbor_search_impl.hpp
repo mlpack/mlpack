@@ -44,8 +44,8 @@ NeighborSearch(const typename TreeType::Mat& referenceSet,
     querySet(queryCopy),
     referenceTree(NULL),
     queryTree(NULL),
-    ownReferenceTree(true), // False if a tree was passed.
-    ownQueryTree(true), // False if a tree was passed.
+    treeOwner(true), // False if a tree was passed.
+    hasQuerySet(true),
     naive(naive),
     singleMode(!naive && singleMode), // No single mode if naive.
     metric(metric),
@@ -55,19 +55,18 @@ NeighborSearch(const typename TreeType::Mat& referenceSet,
   // copypasta problem.
 
   // We'll time tree building, but only if we are building trees.
-  if (!referenceTree || !queryTree)
-    Timer::Start("tree_building");
+  Timer::Start("tree_building");
 
   // Construct as a naive object if we need to.
   referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
       (naive ? referenceCopy.n_cols : leafSize));
 
-  queryTree = new TreeType(queryCopy, oldFromNewQueries,
-      (naive ? querySet.n_cols : leafSize));
+  if (!singleMode)
+    queryTree = new TreeType(queryCopy, oldFromNewQueries,
+        (naive ? querySet.n_cols : leafSize));
 
   // Stop the timer we started above (if we need to).
-  if (!referenceTree || !queryTree)
-    Timer::Stop("tree_building");
+  Timer::Stop("tree_building");
 }
 
 // Construct the object.
@@ -83,8 +82,8 @@ NeighborSearch(const typename TreeType::Mat& referenceSet,
     querySet(referenceCopy),
     referenceTree(NULL),
     queryTree(NULL),
-    ownReferenceTree(true),
-    ownQueryTree(false), // Since it will be the same as referenceTree.
+    treeOwner(true),
+    hasQuerySet(false),
     naive(naive),
     singleMode(!naive && singleMode), // No single mode if naive.
     metric(metric),
@@ -96,6 +95,8 @@ NeighborSearch(const typename TreeType::Mat& referenceSet,
   // Construct as a naive object if we need to.
   referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
       (naive ? referenceSet.n_cols : leafSize));
+  if (!singleMode)
+    queryTree = new TreeType(*referenceTree);
 
   // Stop the timer we started above.
   Timer::Stop("tree_building");
@@ -114,8 +115,8 @@ NeighborSearch<SortPolicy, MetricType, TreeType>::NeighborSearch(
     querySet(querySet),
     referenceTree(referenceTree),
     queryTree(queryTree),
-    ownReferenceTree(false),
-    ownQueryTree(false),
+    treeOwner(false),
+    hasQuerySet(true),
     naive(false),
     singleMode(singleMode),
     metric(metric),
@@ -135,14 +136,20 @@ NeighborSearch<SortPolicy, MetricType, TreeType>::NeighborSearch(
     querySet(referenceSet),
     referenceTree(referenceTree),
     queryTree(NULL),
-    ownReferenceTree(false),
-    ownQueryTree(false),
+    treeOwner(false),
+    hasQuerySet(false), // In this case we will own a tree, if singleMode.
     naive(false),
     singleMode(singleMode),
     metric(metric),
     numberOfPrunes(0)
 {
-  // Nothing else to initialize.
+  Timer::Start("tree_building");
+
+  // The query tree cannot be the same as the reference tree.
+  if (referenceTree && !singleMode)
+    queryTree = new TreeType(*referenceTree);
+
+  Timer::Stop("tree_building");
 }
 
 /**
@@ -152,10 +159,18 @@ NeighborSearch<SortPolicy, MetricType, TreeType>::NeighborSearch(
 template<typename SortPolicy, typename MetricType, typename TreeType>
 NeighborSearch<SortPolicy, MetricType, TreeType>::~NeighborSearch()
 {
-  if (ownReferenceTree)
-    delete referenceTree;
-  if (ownQueryTree)
+  if (treeOwner)
+  {
+    if (referenceTree)
+      delete referenceTree;
+    if (queryTree)
+      delete queryTree;
+  }
+  else if (!treeOwner && !hasQuerySet && !singleMode)
+  {
+    // We replicated the reference tree to create a query tree.
     delete queryTree;
+  }
 }
 
 /**
@@ -177,9 +192,9 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
   arma::Mat<size_t>* neighborPtr = &resultingNeighbors;
   arma::mat* distancePtr = &distances;
 
-  if (ownQueryTree || (ownReferenceTree && !queryTree))
+  if (treeOwner && !(singleMode && hasQuerySet))
     distancePtr = new arma::mat; // Query indices need to be mapped.
-  if (ownReferenceTree || ownQueryTree)
+  if (treeOwner)
     neighborPtr = new arma::Mat<size_t>; // All indices need mapping.
 
   // Set the size of the neighbor and distance matrices.
@@ -189,48 +204,40 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
 
   size_t numPrunes = 0;
 
+  // Create the helper object for the tree traversal.
+  typedef NeighborSearchRules<SortPolicy, MetricType, TreeType> RuleType;
+  RuleType rules(referenceSet, querySet, *neighborPtr, *distancePtr, metric);
+
   if (singleMode)
   {
-    // Create the helper object for the tree traversal.
-    typedef NeighborSearchRules<SortPolicy, MetricType, TreeType> RuleType;
-    RuleType rules(referenceSet, querySet, *neighborPtr, *distancePtr, metric);
-
     // Create the traverser.
     typename TreeType::template SingleTreeTraverser<RuleType> traverser(rules);
 
     // Now have it traverse for each point.
     for (size_t i = 0; i < querySet.n_cols; ++i)
       traverser.Traverse(i, *referenceTree);
-
-    numPrunes = traverser.NumPrunes();
   }
   else // Dual-tree recursion.
   {
-    // Create the helper object for the tree traversal.
-    typedef NeighborSearchRules<SortPolicy, MetricType, TreeType> RuleType;
-    RuleType rules(referenceSet, querySet, *neighborPtr, *distancePtr, metric);
-
+    // Create the traverser.
     typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
 
-    if (queryTree)
-      traverser.Traverse(*queryTree, *referenceTree);
-    else
-      traverser.Traverse(*referenceTree, *referenceTree);
+    traverser.Traverse(*queryTree, *referenceTree);
 
-    numPrunes = traverser.NumPrunes();
+    Log::Info << traverser.NumVisited() << " node combinations were visited.\n";
+    Log::Info << traverser.NumScores() << " node combinations were scored.\n";
+    Log::Info << traverser.NumBaseCases() << " base cases were calculated.\n";
   }
-
-  Log::Debug << "Pruned " << numPrunes << " nodes." << std::endl;
 
   Timer::Stop("computing_neighbors");
 
   // Now, do we need to do mapping of indices?
-  if (!ownReferenceTree && !ownQueryTree)
+  if (!treeOwner)
   {
     // No mapping needed.  We are done.
     return;
   }
-  else if (ownReferenceTree && ownQueryTree) // Map references and queries.
+  else if (treeOwner && hasQuerySet && !singleMode) // Map both sets.
   {
     // Set size of output matrices correctly.
     resultingNeighbors.set_size(k, querySet.n_cols);
@@ -253,62 +260,40 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
     delete neighborPtr;
     delete distancePtr;
   }
-  else if (ownReferenceTree)
+  else if (treeOwner && !hasQuerySet)
   {
-    if (!queryTree) // No query tree -- map both references and queries.
-    {
-      resultingNeighbors.set_size(k, querySet.n_cols);
-      distances.set_size(k, querySet.n_cols);
-
-      for (size_t i = 0; i < distances.n_cols; i++)
-      {
-        // Map distances (copy a column).
-        distances.col(oldFromNewReferences[i]) = distancePtr->col(i);
-
-        // Map indices of neighbors.
-        for (size_t j = 0; j < distances.n_rows; j++)
-        {
-          resultingNeighbors(j, oldFromNewReferences[i]) =
-              oldFromNewReferences[(*neighborPtr)(j, i)];
-        }
-      }
-    }
-    else // Map only references.
-    {
-      // Set size of neighbor indices matrix correctly.
-      resultingNeighbors.set_size(k, querySet.n_cols);
-
-      // Map indices of neighbors.
-      for (size_t i = 0; i < resultingNeighbors.n_cols; i++)
-      {
-        for (size_t j = 0; j < resultingNeighbors.n_rows; j++)
-        {
-          resultingNeighbors(j, i) = oldFromNewReferences[(*neighborPtr)(j, i)];
-        }
-      }
-    }
-
-    // Finished with temporary matrix.
-    delete neighborPtr;
-  }
-  else if (ownQueryTree)
-  {
-    // Set size of matrices correctly.
     resultingNeighbors.set_size(k, querySet.n_cols);
     distances.set_size(k, querySet.n_cols);
 
     for (size_t i = 0; i < distances.n_cols; i++)
     {
       // Map distances (copy a column).
-      distances.col(oldFromNewQueries[i]) = distancePtr->col(i);
+      distances.col(oldFromNewReferences[i]) = distancePtr->col(i);
 
       // Map indices of neighbors.
-      resultingNeighbors.col(oldFromNewQueries[i]) = neighborPtr->col(i);
+      for (size_t j = 0; j < distances.n_rows; j++)
+      {
+        resultingNeighbors(j, oldFromNewReferences[i]) =
+            oldFromNewReferences[(*neighborPtr)(j, i)];
+      }
+    }
+  }
+  else if (treeOwner && hasQuerySet && singleMode) // Map only references.
+  {
+    // Set size of neighbor indices matrix correctly.
+    resultingNeighbors.set_size(k, querySet.n_cols);
+
+    // Map indices of neighbors.
+    for (size_t i = 0; i < resultingNeighbors.n_cols; i++)
+    {
+      for (size_t j = 0; j < resultingNeighbors.n_rows; j++)
+      {
+        resultingNeighbors(j, i) = oldFromNewReferences[(*neighborPtr)(j, i)];
+      }
     }
 
-    // Finished with temporary matrices.
+    // Finished with temporary matrix.
     delete neighborPtr;
-    delete distancePtr;
   }
 } // Search
 

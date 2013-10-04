@@ -35,7 +35,10 @@ template<typename RuleType>
 BinarySpaceTree<BoundType, StatisticType, MatType>::
 DualTreeTraverser<RuleType>::DualTreeTraverser(RuleType& rule) :
     rule(rule),
-    numPrunes(0)
+    numPrunes(0),
+    numVisited(0),
+    numScores(0),
+    numBaseCases(0)
 { /* Nothing to do. */ }
 
 template<typename BoundType, typename StatisticType, typename MatType>
@@ -45,6 +48,9 @@ DualTreeTraverser<RuleType>::Traverse(
     BinarySpaceTree<BoundType, StatisticType, MatType>& queryNode,
     BinarySpaceTree<BoundType, StatisticType, MatType>& referenceNode)
 {
+  // Increment the visit counter.
+  ++numVisited;
+
   // If both are leaves, we must evaluate the base case.
   if (queryNode.IsLeaf() && referenceNode.IsLeaf())
   {
@@ -60,6 +66,8 @@ DualTreeTraverser<RuleType>::Traverse(
 
       for (size_t ref = referenceNode.Begin(); ref < referenceNode.End(); ++ref)
         rule.BaseCase(query, ref);
+
+      numBaseCases += referenceNode.Count();
     }
   }
   else if ((!queryNode.IsLeaf()) && referenceNode.IsLeaf())
@@ -67,6 +75,7 @@ DualTreeTraverser<RuleType>::Traverse(
     // We have to recurse down the query node.  In this case the recursion order
     // does not matter.
     double leftScore = rule.Score(*queryNode.Left(), referenceNode);
+    ++numScores;
 
     if (leftScore != DBL_MAX)
       Traverse(*queryNode.Left(), referenceNode);
@@ -74,6 +83,7 @@ DualTreeTraverser<RuleType>::Traverse(
       ++numPrunes;
 
     double rightScore = rule.Score(*queryNode.Right(), referenceNode);
+    ++numScores;
 
     if (rightScore != DBL_MAX)
       Traverse(*queryNode.Right(), referenceNode);
@@ -86,6 +96,7 @@ DualTreeTraverser<RuleType>::Traverse(
     // order does matter.
     double leftScore = rule.Score(queryNode, *referenceNode.Left());
     double rightScore = rule.Score(queryNode, *referenceNode.Right());
+    numScores += 2;
 
     if (leftScore < rightScore)
     {
@@ -141,6 +152,7 @@ DualTreeTraverser<RuleType>::Traverse(
     // first.
     double leftScore = rule.Score(*queryNode.Left(), *referenceNode.Left());
     double rightScore = rule.Score(*queryNode.Left(), *referenceNode.Right());
+    numScores += 2;
 
     if (leftScore < rightScore)
     {
@@ -195,6 +207,7 @@ DualTreeTraverser<RuleType>::Traverse(
     // Now recurse down the right query node.
     leftScore = rule.Score(*queryNode.Right(), *referenceNode.Left());
     rightScore = rule.Score(*queryNode.Right(), *referenceNode.Right());
+    numScores += 2;
 
     if (leftScore < rightScore)
     {

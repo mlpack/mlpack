@@ -3,27 +3,15 @@
  * @author Ryan Curtin
  *
  * Implementation of the RangeSearch class.
- *
- * This file is part of MLPACK 1.0.6.
- *
- * MLPACK is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * MLPACK is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * MLPACK.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef __MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_IMPL_HPP
 #define __MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_IMPL_HPP
 
 // Just in case it hasn't been included.
 #include "range_search.hpp"
+
+// The rules for traversal.
+#include "range_search_rules.hpp"
 
 namespace mlpack {
 namespace range {
@@ -40,12 +28,12 @@ RangeSearch<MetricType, TreeType>::RangeSearch(
     queryCopy(querySet),
     referenceSet(referenceCopy),
     querySet(queryCopy),
-    ownReferenceTree(true),
-    ownQueryTree(true),
+    treeOwner(true),
+    hasQuerySet(true),
     naive(naive),
     singleMode(!naive && singleMode), // Naive overrides single mode.
     metric(metric),
-    numberOfPrunes(0)
+    numPrunes(0)
 {
   // Build the trees.
   Timer::Start("range_search/tree_building");
@@ -71,12 +59,12 @@ RangeSearch<MetricType, TreeType>::RangeSearch(
     referenceSet(referenceCopy),
     querySet(referenceCopy),
     queryTree(NULL),
-    ownReferenceTree(true),
-    ownQueryTree(false),
+    treeOwner(true),
+    hasQuerySet(false),
     naive(naive),
     singleMode(!naive && singleMode), // Naive overrides single mode.
     metric(metric),
-    numberOfPrunes(0)
+    numPrunes(0)
 {
   // Build the trees.
   Timer::Start("range_search/tree_building");
@@ -84,6 +72,10 @@ RangeSearch<MetricType, TreeType>::RangeSearch(
   // Naive sets the leaf size such that the entire tree is one node.
   referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
       (naive ? referenceCopy.n_cols : leafSize));
+
+  // If using dual-tree mode, then we need a second tree.
+  if (!singleMode)
+    queryTree = new TreeType(*referenceTree);
 
   Timer::Stop("range_search/tree_building");
 }
@@ -100,12 +92,12 @@ RangeSearch<MetricType, TreeType>::RangeSearch(
     querySet(querySet),
     referenceTree(referenceTree),
     queryTree(queryTree),
-    ownReferenceTree(false),
-    ownQueryTree(false),
+    treeOwner(false),
+    hasQuerySet(true),
     naive(false),
     singleMode(singleMode),
     metric(metric),
-    numberOfPrunes(0)
+    numPrunes(0)
 {
   // Nothing else to initialize.
 }
@@ -120,22 +112,31 @@ RangeSearch<MetricType, TreeType>::RangeSearch(
     querySet(referenceSet),
     referenceTree(referenceTree),
     queryTree(NULL),
-    ownReferenceTree(false),
-    ownQueryTree(false),
+    treeOwner(false),
+    hasQuerySet(false),
     naive(false),
     singleMode(singleMode),
     metric(metric),
-    numberOfPrunes(0)
+    numPrunes(0)
 {
-  // Nothing else to initialize.
+  // If doing dual-tree range search, we must clone the reference tree.
+  if (!singleMode)
+    queryTree = new TreeType(*referenceTree);
 }
 
 template<typename MetricType, typename TreeType>
 RangeSearch<MetricType, TreeType>::~RangeSearch()
 {
-  if (ownReferenceTree)
-    delete referenceTree;
-  if (ownQueryTree)
+  if (treeOwner)
+  {
+    if (referenceTree)
+      delete referenceTree;
+    if (queryTree)
+      delete queryTree;
+  }
+
+  // If doing dual-tree search with one dataset, we cloned the reference tree.
+  if (!treeOwner && !hasQuerySet && !singleMode)
     delete queryTree;
 }
 
@@ -148,7 +149,7 @@ void RangeSearch<MetricType, TreeType>::Search(
   Timer::Start("range_search/computing_neighbors");
 
   // Set size of prunes to 0.
-  numberOfPrunes = 0;
+  numPrunes = 0;
 
   // If we have built the trees ourselves, then we will have to map all the
   // indices back to their original indices when this computation is finished.
@@ -157,9 +158,9 @@ void RangeSearch<MetricType, TreeType>::Search(
   std::vector<std::vector<size_t> >* neighborPtr = &neighbors;
   std::vector<std::vector<double> >* distancePtr = &distances;
 
-  if (ownQueryTree || (ownReferenceTree && !queryTree))
+  if (treeOwner && !(singleMode && hasQuerySet))
     distancePtr = new std::vector<std::vector<double> >;
-  if (ownReferenceTree || ownQueryTree)
+  if (treeOwner)
     neighborPtr = new std::vector<std::vector<size_t> >;
 
   // Resize each vector.
@@ -168,48 +169,45 @@ void RangeSearch<MetricType, TreeType>::Search(
   distancePtr->clear();
   distancePtr->resize(querySet.n_cols);
 
-  if (naive)
+  // Create the helper object for the traversal.
+  typedef RangeSearchRules<MetricType, TreeType> RuleType;
+  RuleType rules(referenceSet, querySet, range, *neighborPtr, *distancePtr,
+      metric);
+
+  if (singleMode)
   {
-    // Run the base case.
-    if (!queryTree)
-      ComputeBaseCase(referenceTree, referenceTree, range, *neighborPtr,
-          *distancePtr);
-    else
-      ComputeBaseCase(referenceTree, queryTree, range, *neighborPtr,
-          *distancePtr);
+    // Create the traverser.
+    typename TreeType::template SingleTreeTraverser<RuleType> traverser(rules);
+
+    // Now have it traverse for each point.
+    for (size_t i = 0; i < querySet.n_cols; ++i)
+      traverser.Traverse(i, *referenceTree);
+
+    numPrunes = traverser.NumPrunes();
   }
-  else if (singleMode)
+  else // Dual-tree recursion.
   {
-    // Loop over each of the query points.
-    for (size_t i = 0; i < querySet.n_cols; i++)
-    {
-      SingleTreeRecursion(referenceTree, querySet.col(i), i, range,
-          (*neighborPtr)[i], (*distancePtr)[i]);
-    }
-  }
-  else
-  {
-    if (!queryTree) // References are the same as queries.
-      DualTreeRecursion(referenceTree, referenceTree, range, *neighborPtr,
-          *distancePtr);
-    else
-      DualTreeRecursion(referenceTree, queryTree, range, *neighborPtr,
-          *distancePtr);
+    // Create the traverser.
+    typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
+
+    traverser.Traverse(*queryTree, *referenceTree);
+
+    numPrunes = traverser.NumPrunes();
   }
 
   Timer::Stop("range_search/computing_neighbors");
 
   // Output number of prunes.
-  Log::Info << "Number of pruned nodes during computation: " << numberOfPrunes
+  Log::Info << "Number of pruned nodes during computation: " << numPrunes
       << "." << std::endl;
 
   // Map points back to original indices, if necessary.
-  if (!ownReferenceTree && !ownQueryTree)
+  if (!treeOwner)
   {
     // No mapping needed.  We are done.
     return;
   }
-  else if (ownReferenceTree && ownQueryTree) // Map references and queries.
+  else if (treeOwner && hasQuerySet && !singleMode) // Map both sets.
   {
     neighbors.clear();
     neighbors.resize(querySet.n_cols);
@@ -234,53 +232,7 @@ void RangeSearch<MetricType, TreeType>::Search(
     delete neighborPtr;
     delete distancePtr;
   }
-  else if (ownReferenceTree)
-  {
-    if (!queryTree) // No query tree -- map both references and queries.
-    {
-      neighbors.clear();
-      neighbors.resize(querySet.n_cols);
-      distances.clear();
-      distances.resize(querySet.n_cols);
-
-      for (size_t i = 0; i < distances.size(); i++)
-      {
-        // Map distances (copy a column).
-        size_t refMapping = oldFromNewReferences[i];
-        distances[refMapping] = (*distancePtr)[i];
-
-        // Copy each neighbor individually, because we need to map it.
-        neighbors[refMapping].resize(distances[refMapping].size());
-        for (size_t j = 0; j < distances[refMapping].size(); j++)
-        {
-          neighbors[refMapping][j] = oldFromNewReferences[(*neighborPtr)[i][j]];
-        }
-      }
-
-      // Finished with temporary objects.
-      delete neighborPtr;
-      delete distancePtr;
-    }
-    else // Map only references.
-    {
-      neighbors.clear();
-      neighbors.resize(querySet.n_cols);
-
-      // Map indices of neighbors.
-      for (size_t i = 0; i < neighbors.size(); i++)
-      {
-        neighbors[i].resize((*neighborPtr)[i].size());
-        for (size_t j = 0; j < neighbors[i].size(); j++)
-        {
-          neighbors[i][j] = oldFromNewReferences[(*neighborPtr)[i][j]];
-        }
-      }
-
-      // Finished with temporary object.
-      delete neighborPtr;
-    }
-  }
-  else if (ownQueryTree)
+  else if (treeOwner && !hasQuerySet)
   {
     neighbors.clear();
     neighbors.resize(querySet.n_cols);
@@ -290,177 +242,38 @@ void RangeSearch<MetricType, TreeType>::Search(
     for (size_t i = 0; i < distances.size(); i++)
     {
       // Map distances (copy a column).
-      distances[oldFromNewQueries[i]] = (*distancePtr)[i];
+      size_t refMapping = oldFromNewReferences[i];
+      distances[refMapping] = (*distancePtr)[i];
 
-      // Map neighbors.
-      neighbors[oldFromNewQueries[i]] = (*neighborPtr)[i];
+      // Copy each neighbor individually, because we need to map it.
+      neighbors[refMapping].resize(distances[refMapping].size());
+      for (size_t j = 0; j < distances[refMapping].size(); j++)
+      {
+        neighbors[refMapping][j] = oldFromNewReferences[(*neighborPtr)[i][j]];
+      }
     }
 
     // Finished with temporary objects.
     delete neighborPtr;
     delete distancePtr;
   }
-}
-
-template<typename MetricType, typename TreeType>
-void RangeSearch<MetricType, TreeType>::ComputeBaseCase(
-    const TreeType* referenceNode,
-    const TreeType* queryNode,
-    const math::Range& range,
-    std::vector<std::vector<size_t> >& neighbors,
-    std::vector<std::vector<double> >& distances) const
-{
-  // node->Begin() is the index of the first point in the node,
-  // node->End() is one past the last index.
-  for (size_t queryIndex = queryNode->Begin(); queryIndex < queryNode->End();
-       queryIndex++)
+  else if (treeOwner && hasQuerySet && singleMode) // Map only references.
   {
-    double minDistance =
-        referenceNode->Bound().MinDistance(querySet.col(queryIndex));
-    double maxDistance =
-        referenceNode->Bound().MaxDistance(querySet.col(queryIndex));
+    neighbors.clear();
+    neighbors.resize(querySet.n_cols);
 
-    // Now see if any points could fall into the range.
-    if (range.Contains(math::Range(minDistance, maxDistance)))
+    // Map indices of neighbors.
+    for (size_t i = 0; i < neighbors.size(); i++)
     {
-      // Loop through the reference points and see which fall into the range.
-      for (size_t referenceIndex = referenceNode->Begin();
-          referenceIndex < referenceNode->End(); referenceIndex++)
+      neighbors[i].resize((*neighborPtr)[i].size());
+      for (size_t j = 0; j < neighbors[i].size(); j++)
       {
-        // We can't add points that are ourselves.
-        if (referenceNode != queryNode || referenceIndex != queryIndex)
-        {
-          double distance = metric.Evaluate(querySet.col(queryIndex),
-                                            referenceSet.col(referenceIndex));
-
-          // If this lies in the range, add it.
-          if (range.Contains(distance))
-          {
-            neighbors[queryIndex].push_back(referenceIndex);
-            distances[queryIndex].push_back(distance);
-          }
-        }
+        neighbors[i][j] = oldFromNewReferences[(*neighborPtr)[i][j]];
       }
     }
-  }
-}
 
-template<typename MetricType, typename TreeType>
-void RangeSearch<MetricType, TreeType>::DualTreeRecursion(
-    const TreeType* referenceNode,
-    const TreeType* queryNode,
-    const math::Range& range,
-    std::vector<std::vector<size_t> >& neighbors,
-    std::vector<std::vector<double> >& distances)
-{
-  // See if we can prune this node.
-  math::Range distance =
-      referenceNode->Bound().RangeDistance(queryNode->Bound());
-
-  if (!range.Contains(distance))
-  {
-    numberOfPrunes++; // Don't recurse.  These nodes can't contain anything.
-    return;
-  }
-
-  // If both nodes are leaves, then we compute the base case.
-  if (referenceNode->IsLeaf() && queryNode->IsLeaf())
-  {
-    ComputeBaseCase(referenceNode, queryNode, range, neighbors, distances);
-  }
-  else if (referenceNode->IsLeaf())
-  {
-    // We must descend down the query node to get a leaf.
-    DualTreeRecursion(referenceNode, queryNode->Left(), range, neighbors,
-        distances);
-    DualTreeRecursion(referenceNode, queryNode->Right(), range, neighbors,
-        distances);
-  }
-  else if (queryNode->IsLeaf())
-  {
-    // We must descend down the reference node to get a leaf.
-    DualTreeRecursion(referenceNode->Left(), queryNode, range, neighbors,
-        distances);
-    DualTreeRecursion(referenceNode->Right(), queryNode, range, neighbors,
-        distances);
-  }
-  else
-  {
-    // First descend the left reference node.
-    DualTreeRecursion(referenceNode->Left(), queryNode->Left(), range,
-        neighbors, distances);
-    DualTreeRecursion(referenceNode->Left(), queryNode->Right(), range,
-        neighbors, distances);
-
-    // Now descend the right reference node.
-    DualTreeRecursion(referenceNode->Right(), queryNode->Left(), range,
-        neighbors, distances);
-    DualTreeRecursion(referenceNode->Right(), queryNode->Right(), range,
-        neighbors, distances);
-  }
-}
-
-template<typename MetricType, typename TreeType>
-template<typename VecType>
-void RangeSearch<MetricType, TreeType>::SingleTreeRecursion(
-    const TreeType* referenceNode,
-    const VecType& queryPoint,
-    const size_t queryIndex,
-    const math::Range& range,
-    std::vector<size_t>& neighbors,
-    std::vector<double>& distances)
-{
-  // See if we need to recurse or if we can perform base-case computations.
-  if (referenceNode->IsLeaf())
-  {
-    // Base case: reference node is a leaf.
-    for (size_t referenceIndex = referenceNode->Begin(); referenceIndex !=
-         referenceNode->End(); referenceIndex++)
-    {
-      // Don't add this point if it is the same as the query point.
-      if (!queryTree && !(referenceIndex == queryIndex))
-      {
-        double distance = metric.Evaluate(queryPoint,
-                                          referenceSet.col(referenceIndex));
-
-        // See if the point is in the range we are looking for.
-        if (range.Contains(distance))
-        {
-          neighbors.push_back(referenceIndex);
-          distances.push_back(distance);
-        }
-      }
-    }
-  }
-  else
-  {
-    // Recurse down the tree.
-    math::Range distanceLeft =
-        referenceNode->Left()->Bound().RangeDistance(queryPoint);
-    math::Range distanceRight =
-        referenceNode->Right()->Bound().RangeDistance(queryPoint);
-
-    if (range.Contains(distanceLeft))
-    {
-      // The left may have points we want to recurse to.
-      SingleTreeRecursion(referenceNode->Left(), queryPoint, queryIndex,
-          range, neighbors, distances);
-    }
-    else
-    {
-      numberOfPrunes++;
-    }
-
-    if (range.Contains(distanceRight))
-    {
-      // The right may have points we want to recurse to.
-      SingleTreeRecursion(referenceNode->Right(), queryPoint, queryIndex,
-          range, neighbors, distances);
-    }
-    else
-    {
-      numberOfPrunes++;
-    }
+    // Finished with temporary object.
+    delete neighborPtr;
   }
 }
 

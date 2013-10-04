@@ -66,7 +66,7 @@ PARAM_STRING("query_file", "File containing query points (optional).", "q", "");
 PARAM_INT("leaf_size", "Leaf size for tree building.", "l", 20);
 PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
-    "dual-tree search.", "s");
+    "dual-tree search).", "s");
 
 int main(int argc, char *argv[])
 {
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
 
   arma::mat referenceData;
   arma::mat queryData; // So it doesn't go out of scope.
-  data::Load(referenceFile.c_str(), referenceData, true);
+  data::Load(referenceFile, referenceData, true);
 
   Log::Info << "Loaded reference data from '" << referenceFile << "' ("
       << referenceData.n_rows << " x " << referenceData.n_cols << ")." << endl;
@@ -131,9 +131,11 @@ int main(int argc, char *argv[])
   Log::Info << "Building reference tree..." << endl;
   Timer::Start("reference_tree_building");
 
-  BinarySpaceTree<bound::HRectBound<2>, QueryStat<FurthestNeighborSort> >
+  BinarySpaceTree<bound::HRectBound<2>,
+      NeighborSearchStat<FurthestNeighborSort> >
       refTree(referenceData, oldFromNewRefs, leafSize);
-  BinarySpaceTree<bound::HRectBound<2>, QueryStat<FurthestNeighborSort> >*
+  BinarySpaceTree<bound::HRectBound<2>,
+      NeighborSearchStat<FurthestNeighborSort> >*
       queryTree = NULL; // Empty for now.
 
   Timer::Stop("reference_tree_building");
@@ -144,7 +146,7 @@ int main(int argc, char *argv[])
   {
     string queryFile = CLI::GetParam<string>("query_file");
 
-    data::Load(queryFile.c_str(), queryData, true);
+    data::Load(queryFile, queryData, true);
 
     Log::Info << "Loaded query data from '" << queryFile << "' ("
         << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
@@ -159,7 +161,7 @@ int main(int argc, char *argv[])
     Timer::Start("query_tree_building");
 
     queryTree = new BinarySpaceTree<bound::HRectBound<2>,
-        QueryStat<FurthestNeighborSort> >(queryData, oldFromNewQueries,
+        NeighborSearchStat<FurthestNeighborSort> >(queryData, oldFromNewQueries,
         leafSize);
 
     Timer::Stop("query_tree_building");

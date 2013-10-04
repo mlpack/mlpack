@@ -23,6 +23,8 @@
 #include <mlpack/core/tree/binary_space_tree/binary_space_tree.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>
+#include <mlpack/core/tree/cosine_tree/cosine_tree.hpp>
+#include <mlpack/core/tree/cosine_tree/cosine_tree_builder.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -2204,6 +2206,198 @@ BOOST_AUTO_TEST_CASE(BinarySpaceTreeCopyConstructor)
   BOOST_REQUIRE_EQUAL(b.Right()->Right(),
       (BinarySpaceTree<HRectBound<2> >*) NULL);
   BOOST_REQUIRE_EQUAL(b.Right()->Right(), c.Right()->Right());
+}
+
+/*
+ * Make sure that constructor for cosine tree is working.
+ */
+BOOST_AUTO_TEST_CASE(CosineTreeConstructorTest)
+{
+  // Create test data.
+  arma::mat data = arma::randu<arma::mat>(5, 5);
+  arma::rowvec centroid = arma::randu<arma::rowvec>(1, 5);
+  arma::vec probabilities = arma::randu<arma::vec>(5, 1);
+
+  // Creating a cosine tree.
+  CosineTree ct(data, centroid, probabilities);
+
+  const arma::mat& dataRet = ct.Data();
+  const arma::rowvec& centroidRet = ct.Centroid();
+  const arma::vec& probabilitiesRet = ct.Probabilities();
+
+  // Check correctness of dimensionality of data matrix.
+  BOOST_REQUIRE_EQUAL(data.n_cols, dataRet.n_rows);
+  BOOST_REQUIRE_EQUAL(data.n_rows, dataRet.n_cols);
+
+  // Check the data matrix.
+  for (size_t i = 0; i < data.n_cols; i++)
+    for (size_t j = 0; j < data.n_rows; j++)
+      BOOST_REQUIRE_CLOSE((double) dataRet(j, i), (double) data(i, j), 1e-5);
+
+  // Check correctness of dimensionality of centroid.
+  BOOST_REQUIRE_EQUAL(centroid.n_cols, centroidRet.n_cols);
+  BOOST_REQUIRE_EQUAL(centroid.n_rows, centroidRet.n_rows);
+
+  // Check centroid.
+  for (size_t i = 0; i < centroid.n_cols; i++)
+    BOOST_REQUIRE_CLOSE((double) centroidRet(0, i), (double) centroid(0,i),
+        1e-5);
+
+  // Check correctness of dimentionality of sampling probabilities.
+  BOOST_REQUIRE_EQUAL(probabilities.n_cols, probabilitiesRet.n_cols);
+  BOOST_REQUIRE_EQUAL(probabilities.n_rows, probabilitiesRet.n_rows);
+
+  // Check sampling probabilities.
+  for (size_t i = 0; i < probabilities.n_rows; i++)
+    BOOST_REQUIRE_CLOSE((double) probabilitiesRet(i, 0), (double)
+        probabilities(i, 0), 1e-5);
+
+  // Check pointers of children nodes.
+  BOOST_REQUIRE(ct.Right() == NULL);
+  BOOST_REQUIRE(ct.Left() == NULL);
+}
+
+/**
+ * Make sure that CTNode function in Cosine tree builder is working.
+ */
+BOOST_AUTO_TEST_CASE(CosineTreeEmptyConstructorTest)
+{
+  // Create a tree through the empty constructor.
+  CosineTree ct;
+
+  // Check to make sure it has no children.
+  BOOST_REQUIRE(ct.Right() == NULL);
+  BOOST_REQUIRE(ct.Left() == NULL);
+}
+
+/**
+ * Make sure that CTNode function in CosineTreeBuilder is working.
+ * This test just validates the dimentionality and data.
+ */
+BOOST_AUTO_TEST_CASE(CosineTreeBuilderCTNodeTest)
+{
+  // Create dummy test data.
+  arma::mat data = arma::randu<arma::mat>(5, 5);
+
+  // Create a cosine tree builder object.
+  CosineTreeBuilder builder;
+
+  // Create a cosine tree object.
+  CosineTree ct;
+
+  // Use the builder to create the tree.
+  builder.CTNode(data, ct);
+
+  const arma::mat& dataRet = ct.Data();
+  const arma::rowvec& centroidRet = ct.Centroid();
+  const arma::vec& probabilitiesRet = ct.Probabilities();
+
+  // Check correctness of dimentionality of data.
+  BOOST_REQUIRE_EQUAL(data.n_cols, dataRet.n_cols);
+  BOOST_REQUIRE_EQUAL(data.n_rows, dataRet.n_rows);
+
+  // Check data.
+  for (size_t i = 0; i < data.n_cols; i++)
+    for (size_t j = 0; j < data.n_rows; j++)
+      BOOST_REQUIRE_CLOSE((double) dataRet(j, i), (double) data(i, j), 1e-5);
+
+  // Check correctness of dimensionality of centroid.
+  BOOST_REQUIRE_EQUAL(data.n_rows, centroidRet.n_cols);
+  BOOST_REQUIRE_EQUAL(1, centroidRet.n_rows);
+
+  // Check correctness of dimensionality of sampling probabilities.
+  BOOST_REQUIRE_EQUAL(1, probabilitiesRet.n_cols);
+  BOOST_REQUIRE_EQUAL(data.n_rows, probabilitiesRet.n_rows);
+
+  // Check pointers of children nodes.
+  BOOST_REQUIRE(ct.Right() == NULL);
+  BOOST_REQUIRE(ct.Left() == NULL);
+
+}
+
+/**
+ * Make sure that the centroid is calculated correctly when the cosine tree is
+ * built.
+ */
+BOOST_AUTO_TEST_CASE(CosineTreeBuilderCentroidTest)
+{
+  // Create dummy test data.
+  arma::mat data;
+  data << 1.0 << 2.0 << 3.0 << arma::endr
+       << 4.0 << 2.0 << 3.0 << arma::endr
+       << 2.5 << 3.0 << 2.0 << arma::endr;
+
+  // Expected centroid.
+  arma::vec c;
+  c << 2.0 << 3.0 << 2.5 << arma::endr;
+
+  // Build the cosine tree.
+  CosineTreeBuilder builder;
+  CosineTree ct;
+  builder.CTNode(data, ct);
+
+  // Get the centroid.
+  arma::rowvec centroid = ct.Centroid();
+
+  // Check correctness of the centroid.
+  BOOST_REQUIRE_CLOSE((double) c(0, 0), (double) centroid(0, 0), 1e-5);
+  BOOST_REQUIRE_CLOSE((double) c(1, 0), (double) centroid(0, 1), 1e-5);
+  BOOST_REQUIRE_CLOSE((double) c(2, 0), (double) centroid(0, 2), 1e-5);
+}
+
+/**
+ * Make sure that the sampling probabilities are calculated correctly when the
+ * cosine tree is built.
+ */
+BOOST_AUTO_TEST_CASE(CosineTreeBuilderProbabilitiesTest)
+{
+  // Create dummy test data.
+  arma::mat data;
+  data << 100.0 <<   2.0 <<   3.0 << arma::endr
+       << 400.0 <<   2.0 <<   3.0 << arma::endr
+       << 200.5 <<   3.0 <<   2.0 << arma::endr;
+
+  // Expected sample probability.
+  arma::vec p;
+  p << 0.999907 << 0.00899223 << 0.0102295 << arma::endr;
+
+  // Create the cosine tree.
+  CosineTreeBuilder builder;
+  CosineTree ct;
+  builder.CTNode(data, ct);
+
+  // Get the probabilities.
+  const arma::vec& probabilities = ct.Probabilities();
+
+  // Check correctness of sampling probabilities.
+  BOOST_REQUIRE_CLOSE((double) p(0, 0), (double) probabilities(0, 0), 1e-4);
+  BOOST_REQUIRE_CLOSE((double) p(1, 0), (double) probabilities(1, 0), 1e-4);
+  BOOST_REQUIRE_CLOSE((double) p(2, 0), (double) probabilities(2, 0), 1e-4);
+}
+
+/**
+ * Make sure that the cosine tree builder is splitting nodes.
+ */
+BOOST_AUTO_TEST_CASE(CosineTreeBuilderCTNodeSplitTest)
+{
+  // Create dummy test data.
+  arma::mat data;
+  data << 100.0 <<   2.0 <<   3.0 << arma::endr
+       << 400.0 <<   2.0 <<   3.0 << arma::endr
+       << 200.5 <<   3.0 <<   2.0 << arma::endr;
+
+  // Build a cosine tree root node, and then split it.
+  CosineTreeBuilder builder;
+  CosineTree root, left, right;
+  builder.CTNode(data, root);
+  builder.CTNodeSplit(root, left, right);
+
+  // Ensure that there is no data loss.
+  BOOST_REQUIRE_EQUAL((left.NumPoints() + right.NumPoints()), root.NumPoints());
+
+  // Ensure that the dimensionality is correct.
+  BOOST_REQUIRE_EQUAL(left.Data().n_cols, data.n_cols);
+  BOOST_REQUIRE_EQUAL(right.Data().n_cols, data.n_cols);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

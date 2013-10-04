@@ -41,8 +41,7 @@ double EpanechnikovKernel::Normalizer(const size_t dimension)
 /**
  * Evaluate the kernel not for two points but for a numerical value.
  */
-double EpanechnikovKernel::Evaluate(const double t)
+double EpanechnikovKernel::Evaluate(const double distance) const
 {
-  double evaluatee = 1.0 - t * t * inverseBandwidthSquared;
-  return (evaluatee > 0.0) ? evaluatee : 0.0;
+  return std::max(0.0, 1 - std::pow(distance, 2.0) * inverseBandwidthSquared);
 }

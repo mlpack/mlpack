@@ -61,8 +61,9 @@ NMF<InitializationRule, WUpdateRule, HUpdateRule>::NMF(
 template<typename InitializationRule,
          typename WUpdateRule,
          typename HUpdateRule>
+template<typename MatType>
 void NMF<InitializationRule, WUpdateRule, HUpdateRule>::Apply(
-    const arma::mat& V,
+    const MatType& V,
     const size_t r,
     arma::mat& W,
     arma::mat& H) const

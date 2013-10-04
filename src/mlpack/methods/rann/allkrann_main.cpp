@@ -38,18 +38,24 @@ using namespace mlpack::tree;
 
 // Information about the program itself.
 PROGRAM_INFO("All K-Rank-Approximate-Nearest-Neighbors",
-    "This program will calculate the k rank-approximate-nearest-neighbors "
-    "of a set of points. You may specify a separate set of reference "
-    "points and query points, or just a reference set which will be "
-    "used as both the reference and query set. You must specify the "
-    "rank approximation (in \%)  (and maybe the success probability)."
+    "This program will calculate the k rank-approximate-nearest-neighbors of a "
+    "set of points. You may specify a separate set of reference points and "
+    "query points, or just a reference set which will be used as both the "
+    "reference and query set. You must specify the rank approximation (in \%) "
+    "(and optionally the success probability)."
     "\n\n"
-    "For example, the following will return 5 neighbors from the top 0.1\% "
-    "of the data (with probability 0.95) for each point in 'input.csv' "
-    "and store the distances in 'distances.csv' and the neighbors in the "
-    "file 'neighbors.csv':"
+    "For example, the following will return 5 neighbors from the top 0.1\% of "
+    "the data (with probability 0.95) for each point in 'input.csv' and store "
+    "the distances in 'distances.csv' and the neighbors in the file "
+    "'neighbors.csv':"
     "\n\n"
-    "$ allkrann -k 5 -r input.csv -d distances.csv -n neighbors.csv --tau=0.1"
+    "$ allkrann -k 5 -r input.csv -d distances.csv -n neighbors.csv --tau 0.1"
+    "\n\n"
+    "Note that tau must be set such that the number of points in the "
+    "corresponding percentile of the data is greater than k.  Thus, if we "
+    "choose tau = 0.1 with a dataset of 1000 points and k = 5, then we are "
+    "attempting to choose 5 nearest neighbors out of the closest 1 point -- "
+    "this is invalid and the program will terminate with an error message."
     "\n\n"
     "The output files are organized such that row i and column j in the "
     "neighbors output file corresponds to the index of the point in the "
@@ -69,7 +75,7 @@ PARAM_STRING("query_file", "File containing query points (optional).",
              "q", "");
 
 PARAM_DOUBLE("tau", "The allowed rank-error in terms of the percentile of "
-             "the data.", "t", 0.1);
+             "the data.", "t", 5);
 PARAM_DOUBLE("alpha", "The desired success probability.", "a", 0.95);
 
 PARAM_INT("leaf_size", "Leaf size for tree building.", "l", 20);
@@ -112,7 +118,7 @@ int main(int argc, char *argv[])
 
   arma::mat referenceData;
   arma::mat queryData; // So it doesn't go out of scope.
-  data::Load(referenceFile.c_str(), referenceData, true);
+  data::Load(referenceFile, referenceData, true);
 
   Log::Info << "Loaded reference data from '" << referenceFile << "' ("
       << referenceData.n_rows << " x " << referenceData.n_cols << ")." << endl;
@@ -129,8 +135,8 @@ int main(int argc, char *argv[])
   // Sanity check on the value of 'tau' with respect to 'k' so that
   // 'k' neighbors are not requested from the top-'rank_error' neighbors
   // where 'rank_error' <= 'k'.
-  size_t rank_error
-    = (size_t) ceil(tau * (double) referenceData.n_cols / 100.0);
+  size_t rank_error = (size_t) ceil(tau *
+      (double) referenceData.n_cols / 100.0);
   if (rank_error <= k)
     Log::Fatal << "Invalid 'tau' (" << tau << ") - k (" << k << ") " <<
       "combination. Increase 'tau' or decrease 'k'." << endl;
@@ -145,7 +151,7 @@ int main(int argc, char *argv[])
   if (singleMode && naive)
     Log::Warn << "--single_mode ignored because --naive is present." << endl;
 
-  // The actual output after the remapping
+  // The actual output after the remapping.
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
@@ -156,7 +162,7 @@ int main(int argc, char *argv[])
     {
       string queryFile = CLI::GetParam<string>("query_file");
 
-      data::Load(queryFile.c_str(), queryData, true);
+      data::Load(queryFile, queryData, true);
 
       Log::Info << "Loaded query data from '" << queryFile << "' (" <<
         queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
@@ -210,7 +216,7 @@ int main(int argc, char *argv[])
       {
         string queryFile = CLI::GetParam<string>("query_file");
 
-        data::Load(queryFile.c_str(), queryData, true);
+        data::Load(queryFile, queryData, true);
 
         if (naive && leafSize < queryData.n_cols)
           leafSize = queryData.n_cols;
@@ -302,9 +308,6 @@ int main(int argc, char *argv[])
   // Save output.
   if (distancesFile != "")
     data::Save(distancesFile, distances);
-
   if (neighborsFile != "")
     data::Save(neighborsFile, neighbors);
-
-  return 0;
 }

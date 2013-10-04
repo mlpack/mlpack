@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License along with
  * MLPACK.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_RA_SEARCH_IMPL_HPP
-#define __MLPACK_METHODS_NEIGHBOR_SEARCH_RA_SEARCH_IMPL_HPP
+#ifndef __MLPACK_METHODS_RANN_RA_SEARCH_IMPL_HPP
+#define __MLPACK_METHODS_RANN_RA_SEARCH_IMPL_HPP
 
 #include <mlpack/core.hpp>
 
@@ -194,12 +194,15 @@ Search(const size_t k,
 
   if (singleMode || naive)
   {
-    // Create the helper object for the tree traversal.
+    // Create the helper object for the tree traversal.  Initialization of
+    // RASearchRules already implicitly performs the naive tree traversal.
     typedef RASearchRules<SortPolicy, MetricType, TreeType> RuleType;
     RuleType rules(referenceSet, querySet, *neighborPtr, *distancePtr,
                    metric, tau, alpha, naive, sampleAtLeaves, firstLeafExact,
                    singleSampleLimit);
 
+    // If the reference root node is a leaf, then the sampling has already been
+    // done in the RASearchRules constructor.  This happens when naive = true.
     if (!referenceTree->IsLeaf())
     {
       Log::Info << "Performing single-tree traversal..." << std::endl;
@@ -213,15 +216,12 @@ Search(const size_t k,
         traverser.Traverse(i, *referenceTree);
 
       numPrunes = traverser.NumPrunes();
-    }
-    else
-    {
-      assert(naive);
-      Log::Info << "Naive sampling already done!" << std::endl;
-    }
 
-    Log::Info << "Single-tree traversal done; number of distance calculations: "
-        << (rules.NumDistComputations() / querySet.n_cols) << std::endl;
+      Log::Info << "Single-tree traversal complete." << std::endl;
+      Log::Info << "Average number of distance calculations per query point: "
+          << (rules.NumDistComputations() / querySet.n_cols) << "."
+          << std::endl;
+    }
   }
   else // Dual-tree recursion.
   {
@@ -234,18 +234,24 @@ Search(const size_t k,
 
     typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
 
-    Log::Info << "Dual-tree traversal; query statistic pre-search: "
-        << queryTree->Stat().NumSamplesMade() << std::endl;
-
     if (queryTree)
+    {
+      Log::Info << "Query statistic pre-search: "
+          << queryTree->Stat().NumSamplesMade() << std::endl;
       traverser.Traverse(*queryTree, *referenceTree);
+    }
     else
+    {
+      Log::Info << "Query statistic pre-search: "
+          << referenceTree->Stat().NumSamplesMade() << std::endl;
       traverser.Traverse(*referenceTree, *referenceTree);
+    }
 
     numPrunes = traverser.NumPrunes();
 
-    Log::Info << "Dual-tree traversal done; number of distance calculations: "
-        << (rules.NumDistComputations() / querySet.n_cols) << std::endl;
+    Log::Info << "Dual-tree traversal complete." << std::endl;
+    Log::Info << "Average number of distance calculations per query point: "
+        << (rules.NumDistComputations() / querySet.n_cols) << "." << std::endl;
   }
 
   Timer::Stop("computing_neighbors");
@@ -341,8 +347,7 @@ Search(const size_t k,
 } // Search
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-void RASearch<SortPolicy, MetricType, TreeType>::
-ResetQueryTree()
+void RASearch<SortPolicy, MetricType, TreeType>::ResetQueryTree()
 {
   if (!singleMode)
   {
@@ -354,15 +359,15 @@ ResetQueryTree()
 }
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
-void RASearch<SortPolicy, MetricType, TreeType>::
-ResetRAQueryStat(TreeType* treeNode)
+void RASearch<SortPolicy, MetricType, TreeType>::ResetRAQueryStat(
+    TreeType* treeNode)
 {
   treeNode->Stat().Bound() = SortPolicy::WorstDistance();
   treeNode->Stat().NumSamplesMade() = 0;
 
   for (size_t i = 0; i < treeNode->NumChildren(); i++)
     ResetRAQueryStat(&treeNode->Child(i));
-} // ResetRAQueryStat
+}
 
 }; // namespace neighbor
 }; // namespace mlpack

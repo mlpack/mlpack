@@ -43,12 +43,7 @@ PROGRAM_INFO("K-Means Clustering", "This program performs K-Means clustering "
     " random samples of the dataset; to specify the number of samples, the "
     "--samples parameter is used, and to specify the percentage of the dataset "
     "to be used in each sample, the --percentage parameter is used (it should "
-    "be a value between 0.0 and 1.0)."
-    "\n\n"
-    "If you want to specify your own initial cluster assignments or initial "
-    "cluster centroids, this functionality is available in the C++ interface. "
-    "Alternately, file a bug (well, a feature request) on the mlpack bug "
-    "tracker.");
+    "be a value between 0.0 and 1.0).\n");
 
 // Required options.
 PARAM_STRING_REQ("inputFile", "Input dataset to perform clustering on.", "i");
@@ -57,7 +52,7 @@ PARAM_INT_REQ("clusters", "Number of clusters to find.", "c");
 // Output options.
 PARAM_FLAG("in_place", "If specified, a column of the learned cluster "
     "assignments will be added to the input dataset file.  In this case, "
-    "--outputFile is not necessary.", "p");
+    "--outputFile is not necessary.", "P");
 PARAM_STRING("output_file", "File to write output labels or labeled data to.",
     "o", "output.csv");
 PARAM_STRING("centroid_file", "If specified, the centroids of each cluster will"
@@ -72,6 +67,8 @@ PARAM_DOUBLE("overclustering", "Finds (overclustering * clusters) clusters, "
 PARAM_INT("max_iterations", "Maximum number of iterations before K-Means "
     "terminates.", "m", 1000);
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
+PARAM_STRING("initial_centroids", "Start with the specified initial centroids.",
+             "I", "");
 
 // This is known to not work (#251).
 //PARAM_FLAG("fast_kmeans", "Use the experimental fast k-means algorithm by "
@@ -97,43 +94,58 @@ int main(int argc, char** argv)
     math::RandomSeed((size_t) std::time(NULL));
 
   // Now do validation of options.
-  string inputFile = CLI::GetParam<string>("inputFile");
-  int clusters = CLI::GetParam<int>("clusters");
+  const string inputFile = CLI::GetParam<string>("inputFile");
+  const int clusters = CLI::GetParam<int>("clusters");
   if (clusters < 1)
   {
     Log::Fatal << "Invalid number of clusters requested (" << clusters << ")! "
-        << "Must be greater than or equal to 1." << std::endl;
+        << "Must be greater than or equal to 1." << endl;
   }
 
-  int maxIterations = CLI::GetParam<int>("max_iterations");
+  const int maxIterations = CLI::GetParam<int>("max_iterations");
   if (maxIterations < 0)
   {
     Log::Fatal << "Invalid value for maximum iterations (" << maxIterations <<
-        ")! Must be greater than or equal to 0." << std::endl;
+        ")! Must be greater than or equal to 0." << endl;
   }
 
-  double overclustering = CLI::GetParam<double>("overclustering");
+  const double overclustering = CLI::GetParam<double>("overclustering");
   if (overclustering < 1)
   {
     Log::Fatal << "Invalid value for overclustering (" << overclustering <<
-        ")! Must be greater than or equal to 1." << std::endl;
+        ")! Must be greater than or equal to 1." << endl;
   }
 
   // Make sure we have an output file if we're not doing the work in-place.
   if (!CLI::HasParam("in_place") && !CLI::HasParam("output_file"))
   {
     Log::Fatal << "--outputFile not specified (and --in_place not set)."
-        << std::endl;
+        << endl;
   }
 
   // Load our dataset.
   arma::mat dataset;
-  data::Load(inputFile.c_str(), dataset, true); // Fatal upon failure.
+  data::Load(inputFile, dataset, true); // Fatal upon failure.
 
   // Now create the KMeans object.  Because we could be using different types,
   // it gets a little weird...
   arma::Col<size_t> assignments;
   arma::mat centroids;
+
+  const bool initialCentroidGuess = CLI::HasParam("initial_centroids");
+  // Load initial centroids if the user asked for it.
+  if (initialCentroidGuess)
+  {
+    string initialCentroidsFile = CLI::GetParam<string>("initial_centroids");
+    data::Load(initialCentroidsFile, centroids, true);
+
+    if (CLI::HasParam("refined_start"))
+      Log::Warn << "Initial centroids are specified, but will be ignored "
+          << "because --refined_start is also specified!" << endl;
+    else
+      Log::Info << "Using initial centroid guesses from '" <<
+          initialCentroidsFile << "'." << endl;
+  }
 
   if (CLI::HasParam("allow_empty_clusters"))
   {
@@ -144,20 +156,20 @@ int main(int argc, char** argv)
 
       if (samplings < 0)
         Log::Fatal << "Number of samplings (" << samplings << ") must be "
-            << "greater than 0!" << std::endl;
+            << "greater than 0!" << endl;
       if (percentage <= 0.0 || percentage > 1.0)
         Log::Fatal << "Percentage for sampling (" << percentage << ") must be "
-            << "greater than 0.0 and less than or equal to 1.0!" << std::endl;
+            << "greater than 0.0 and less than or equal to 1.0!" << endl;
 
       KMeans<metric::SquaredEuclideanDistance, RefinedStart, AllowEmptyClusters>
           k(maxIterations, overclustering, metric::SquaredEuclideanDistance(),
           RefinedStart(samplings, percentage));
 
       Timer::Start("clustering");
-      if (CLI::HasParam("fast_kmeans"))
-        k.FastCluster(dataset, clusters, assignments);
-      else
-        k.Cluster(dataset, clusters, assignments, centroids);
+//      if (CLI::HasParam("fast_kmeans"))
+//        k.FastCluster(dataset, clusters, assignments);
+//      else
+      k.Cluster(dataset, clusters, assignments, centroids);
       Timer::Stop("clustering");
     }
     else
@@ -166,10 +178,11 @@ int main(int argc, char** argv)
           AllowEmptyClusters> k(maxIterations, overclustering);
 
       Timer::Start("clustering");
-      if (CLI::HasParam("fast_kmeans"))
-        k.FastCluster(dataset, clusters, assignments);
-      else
-        k.Cluster(dataset, clusters, assignments, centroids);
+//      if (CLI::HasParam("fast_kmeans"))
+//        k.FastCluster(dataset, clusters, assignments);
+//      else
+      k.Cluster(dataset, clusters, assignments, centroids, false,
+          initialCentroidGuess);
       Timer::Stop("clustering");
     }
   }
@@ -182,19 +195,19 @@ int main(int argc, char** argv)
 
       if (samplings < 0)
         Log::Fatal << "Number of samplings (" << samplings << ") must be "
-            << "greater than 0!" << std::endl;
+            << "greater than 0!" << endl;
       if (percentage <= 0.0 || percentage > 1.0)
         Log::Fatal << "Percentage for sampling (" << percentage << ") must be "
-            << "greater than 0.0 and less than or equal to 1.0!" << std::endl;
+            << "greater than 0.0 and less than or equal to 1.0!" << endl;
 
       KMeans<metric::SquaredEuclideanDistance, RefinedStart, AllowEmptyClusters>
           k(maxIterations, overclustering, metric::SquaredEuclideanDistance(),
           RefinedStart(samplings, percentage));
 
       Timer::Start("clustering");
-      if (CLI::HasParam("fast_kmeans"))
-        k.FastCluster(dataset, clusters, assignments);
-      else
+//      if (CLI::HasParam("fast_kmeans"))
+//        k.FastCluster(dataset, clusters, assignments);
+//      else
         k.Cluster(dataset, clusters, assignments, centroids);
       Timer::Stop("clustering");
     }
@@ -203,10 +216,11 @@ int main(int argc, char** argv)
       KMeans<> k(maxIterations, overclustering);
 
       Timer::Start("clustering");
-      if (CLI::HasParam("fast_kmeans"))
-        k.FastCluster(dataset, clusters, assignments);
-      else
-        k.Cluster(dataset, clusters, assignments, centroids);
+//      if (CLI::HasParam("fast_kmeans"))
+//        k.FastCluster(dataset, clusters, assignments);
+//      else
+        k.Cluster(dataset, clusters, assignments, centroids, false,
+            initialCentroidGuess);
       Timer::Stop("clustering");
     }
   }

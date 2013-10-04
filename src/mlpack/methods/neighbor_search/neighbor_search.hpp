@@ -30,65 +30,13 @@
 #include <mlpack/core/tree/binary_space_tree.hpp>
 
 #include <mlpack/core/metrics/lmetric.hpp>
+#include "neighbor_search_stat.hpp"
 #include "sort_policies/nearest_neighbor_sort.hpp"
 
 namespace mlpack {
 namespace neighbor /** Neighbor-search routines.  These include
                     * all-nearest-neighbors and all-furthest-neighbors
                     * searches. */ {
-
-/**
- * Extra data for each node in the tree.  For neighbor searches, each node only
- * needs to store a bound on neighbor distances.
- */
-template<typename SortPolicy>
-class QueryStat
-{
- private:
-  //! The first bound on the node's neighbor distances (B_1).  This represents
-  //! the worst candidate distance of any descendants of this node.
-  double firstBound;
-  //! The second bound on the node's neighbor distances (B_2).  This represents
-  //! a bound on the worst distance of any descendants of this node assembled
-  //! using the best descendant candidate distance modified by the furthest
-  //! descendant distance.
-  double secondBound;
-  //! The better of the two bounds.
-  double bound;
-
- public:
-  /**
-   * Initialize the statistic with the worst possible distance according to
-   * our sorting policy.
-   */
-  QueryStat() :
-      firstBound(SortPolicy::WorstDistance()),
-      secondBound(SortPolicy::WorstDistance()),
-      bound(SortPolicy::WorstDistance()) { }
-
-  /**
-   * Initialization for a fully initialized node.  In this case, we don't need
-   * to worry about the node.
-   */
-  template<typename TreeType>
-  QueryStat(TreeType& /* node */) :
-      firstBound(SortPolicy::WorstDistance()),
-      secondBound(SortPolicy::WorstDistance()),
-      bound(SortPolicy::WorstDistance()) { }
-
-  //! Get the first bound.
-  double FirstBound() const { return firstBound; }
-  //! Modify the first bound.
-  double& FirstBound() { return firstBound; }
-  //! Get the second bound.
-  double SecondBound() const { return secondBound; }
-  //! Modify the second bound.
-  double& SecondBound() { return secondBound; }
-  //! Get the overall bound (the better of the two bounds).
-  double Bound() const { return bound; }
-  //! Modify the overall bound (it should be the better of the two bounds).
-  double& Bound() { return bound; }
-};
 
 /**
  * The NeighborSearch class is a template class for performing distance-based
@@ -111,7 +59,7 @@ class QueryStat
 template<typename SortPolicy = NearestNeighborSort,
          typename MetricType = mlpack::metric::SquaredEuclideanDistance,
          typename TreeType = tree::BinarySpaceTree<bound::HRectBound<2>,
-                                                   QueryStat<SortPolicy> > >
+             NeighborSearchStat<SortPolicy> > >
 class NeighborSearch
 {
  public:
@@ -277,17 +225,17 @@ class NeighborSearch
   //! Pointer to the root of the query tree (might not exist).
   TreeType* queryTree;
 
-  //! Indicates if we should free the reference tree at deletion time.
-  bool ownReferenceTree;
-  //! Indicates if we should free the query tree at deletion time.
-  bool ownQueryTree;
+  //! If true, this object created the trees and is responsible for them.
+  bool treeOwner;
+  //! Indicates if a separate query set was passed.
+  bool hasQuerySet;
 
   //! Indicates if O(n^2) naive search is being used.
   bool naive;
   //! Indicates if single-tree search is being used (opposed to dual-tree).
   bool singleMode;
 
-  //! Instantiation of kernel.
+  //! Instantiation of metric.
   MetricType metric;
 
   //! Permutations of reference points during tree building.

@@ -123,15 +123,29 @@ BOOST_AUTO_TEST_CASE(TestOption)
  */
 BOOST_AUTO_TEST_CASE(TestBooleanOption)
 {
-  PARAM_FLAG("test_parent/flag_test", "flag test description", "");
+  PARAM_FLAG("flag_test", "flag test description", "");
 
-  BOOST_REQUIRE_EQUAL(CLI::HasParam("test_parent/flag_test"), false);
+  BOOST_REQUIRE_EQUAL(CLI::HasParam("flag_test"), false);
 
-  BOOST_REQUIRE_EQUAL(CLI::GetDescription("test_parent/flag_test"),
+  BOOST_REQUIRE_EQUAL(CLI::GetDescription("flag_test"),
       "flag test description");
 
   // Now check that CLI reflects that it is false by default.
-  BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("test_parent/flag_test"), false);
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("flag_test"), false);
+
+  // Now, if we specify this flag, it should be true.
+  int argc = 2;
+  char* argv[2];
+  argv[0] = strcpy(new char[strlen("programname")], "programname");
+  argv[1] = strcpy(new char[strlen("--flag_test")], "--flag_test");
+
+  CLI::ParseCommandLine(argc, argv);
+
+  BOOST_REQUIRE_EQUAL(CLI::GetParam<bool>("flag_test"), true);
+  BOOST_REQUIRE_EQUAL(CLI::HasParam("flag_test"), true);
+
+  delete[] argv[0];
+  delete[] argv[1];
 }
 
 /**

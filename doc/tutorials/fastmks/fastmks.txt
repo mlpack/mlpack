@@ -16,13 +16,14 @@ proposed in the following paper:
   title={Fast Exact Max-Kernel Search},
   author={Curtin, Ryan R. and Ram, Parikshit and Gray, Alexander G.},
   booktitle={Proceedings of the 2013 SIAM International Conference on Data
-      Mining (SDM 13)},
-  year={2013}
+      Mining (SDM '13)},
+  year={2013},
+  pages={1--9}
 }
 @endcode
 
 Given a set of query points \f$Q\f$ and a set of reference points \f$R\f$, the
-FastMKS algorithm is a fast algorithm which finds
+FastMKS algorithm is a fast dual-tree (or single-tree) algorithm which finds
 
 \f[
 \arg\max_{p_r \in R} K(p_q, p_r)
@@ -38,7 +39,9 @@ The FastMKS algorithm builds trees on the datasets \f$Q\f$ and \f$R\f$ in such a
 way that explicit representation of the points in the kernel space is
 unnecessary, by using cover trees (\ref mlpack::tree::CoverTree).  This allows
 the algorithm to be run, for instance, on string kernels, where there is no
-sensible explicit representation.  For more details, see the paper.
+sensible explicit representation.  The \b mlpack implementation allows any type
+of tree that does not require an explicit representation to be used.  For more
+details, see the paper.
 
 At the time of this writing there is no other fast algorithm for exact
 max-kernel search.  Also, \b mlpack implements dual-tree FastMKS, while the
@@ -84,6 +87,17 @@ types of kernels:
  - \ref mlpack::kernel::EpanechnikovKernel "Epanechnikov kernel"
  - \ref mlpack::kernel::TriangularKernel "triangular kernel"
  - \ref mlpack::kernel::HyperbolicTangentKernel "hyperbolic tangent kernel"
+ - \ref mlpack::kernel::LaplacianKernel "Laplacian kernel"
+
+Note that when a shift-invariant kernel is used, the results will be the same as
+nearest neighbor search, so @ref nstutorial "allknn" may be a better option.  A
+shift-invariant kernel is a kernel that depends only on the distance between the
+two input points.  The \ref mlpack::kernel::GaussianKernel "Gaussian kernel",
+\ref mlpack::kernel::EpanechnikovKernel "Epanechnikov kernel", \ref
+mlpack::kernel::TriangularKernel "triangular kernel", and \ref
+mlpack::kernel::LaplacianKernel "Laplacian kernel" are instances of
+shift-invariant kernels.  The paper contains more details on this situation.
+The \c fastmks executable still provides these kernels as options, though.
 
 The following examples detail usage of the \c fastmks program.  Note that you
 can get documentation on all the possible parameters by typing:
@@ -96,11 +110,11 @@ $ fastmks --help
 
 If only one dataset is specified (with \c -r or \c --reference_file), the
 reference dataset is taken to be both the query and reference datasets.  The
-example below finds the 5 maximum kernels of each point in dataset.csv, using
+example below finds the 4 maximum kernels of each point in dataset.csv, using
 the default linear kernel.
 
 @code
-$ fastmks -r dataset.csv -k 5 -v -p products.csv -i indices.csv
+$ fastmks -r dataset.csv -k 4 -v -p products.csv -i indices.csv
 @endcode
 
 When the operation completes, the values of the kernels are saved in
@@ -109,35 +123,35 @@ saved in indices.csv.
 
 @code
 $ head indices.csv
-762,910,863,890,614
-762,910,426,568,863
-910,762,863,426,249
-762,910,863,426,890
-863,910,614,762,159
-762,863,910,614,890
-762,910,488,568,426
-762,910,863,426,614
-910,762,863,426,249
-863,762,910,614,890
+762,910,863,890
+762,910,426,568
+910,762,863,426
+762,910,863,426
+863,910,614,762
+762,863,910,614
+762,910,488,568
+762,910,863,426
+910,762,863,426
+863,762,910,614
 @endcode
 
 @code
 $ head products.csv
-1.6221652894e+00,1.5998743443e+00,1.5898890769e+00,1.5406789753e+00,1.5399969285e+00
-1.3387953449e+00,1.3317349486e+00,1.2966613184e+00,1.2774493620e+00,1.2702400994e+00
-1.6386110476e+00,1.6332029753e+00,1.5952629124e+00,1.5887195330e+00,1.5564789777e+00
-1.0917545803e+00,1.0820878726e+00,1.0668992636e+00,1.0419838050e+00,1.0339546654e+00
-1.2272441028e+00,1.2169643942e+00,1.2104597963e+00,1.2067780154e+00,1.1966583848e+00
-1.5720962456e+00,1.5618504956e+00,1.5609069923e+00,1.5235605095e+00,1.5106847348e+00
-1.3655478674e+00,1.3548593212e+00,1.3311547298e+00,1.3250728881e+00,1.3230827266e+00
-2.0119149744e+00,2.0043668067e+00,1.9847289214e+00,1.9298280046e+00,1.9262610223e+00
-1.1586923205e+00,1.1494586097e+00,1.1274872962e+00,1.1248172766e+00,1.1025268196e+00
-4.4789820372e-01,4.4618539778e-01,4.4200024852e-01,4.3989721792e-01,4.3277728840e-01
+1.6221652894e+00,1.5998743443e+00,1.5898890769e+00,1.5406789753e+00
+1.3387953449e+00,1.3317349486e+00,1.2966613184e+00,1.2774493620e+00
+1.6386110476e+00,1.6332029753e+00,1.5952629124e+00,1.5887195330e+00
+1.0917545803e+00,1.0820878726e+00,1.0668992636e+00,1.0419838050e+00
+1.2272441028e+00,1.2169643942e+00,1.2104597963e+00,1.2067780154e+00
+1.5720962456e+00,1.5618504956e+00,1.5609069923e+00,1.5235605095e+00
+1.3655478674e+00,1.3548593212e+00,1.3311547298e+00,1.3250728881e+00
+2.0119149744e+00,2.0043668067e+00,1.9847289214e+00,1.9298280046e+00
+1.1586923205e+00,1.1494586097e+00,1.1274872962e+00,1.1248172766e+00
+4.4789820372e-01,4.4618539778e-01,4.4200024852e-01,4.3989721792e-01
 @endcode
 
 We can see in this example that for point 0, the point with maximum kernel value
 is point 762, with a kernel value of 1.622165.  For point 3, the point with
-fifth largest kernel value is point 890, with a kernel value of 1.033954.
+third largest kernel value is point 863, with a kernel value of 1.0669.
 
 @subsection cli_ex2_fmkstut FastMKS on a reference and query dataset
 
@@ -153,11 +167,11 @@ $ fastmks -q query_set.csv -r reference_set.csv -k 5 -i indices.csv -p products.
 
 The \c fastmks program offers more than just the linear kernel.  Valid options
 are \c 'linear', \c 'polynomial', \c 'cosine', \c 'gaussian', \c 'epanechnikov',
-\c 'triangular', and \c 'hyptan' (the hyperbolic tangent kernel).  Note that the
-hyperbolic tangent kernel is provably not a Mercer kernel but is positive
-semidefinite on most datasets and is commonly used as a kernel.  Note also that
-the Gaussian kernel gives the same results as nearest neighbor search (\see
-nstutorial).
+\c 'triangular', \c 'laplacian', and \c 'hyptan' (the hyperbolic tangent
+kernel).  Note that the hyperbolic tangent kernel is provably not a Mercer
+kernel but is positive semidefinite on most datasets and is commonly used as a
+kernel.  Note also that the Gaussian kernel and other shift-invariant kernels
+give the same results as nearest neighbor search (see \ref nstutorial).
 
 The kernel to use is specified with the \c -K (or \c --kernel) option.  The
 example below uses the cosine similarity as a kernel.
@@ -226,6 +240,7 @@ be manually specified.  Choices that \b mlpack provides include:
  - \ref mlpack::kernel::EpanechnikovKernel
  - \ref mlpack::kernel::TriangularKernel
  - \ref mlpack::kernel::HyperbolicTangentKernel
+ - \ref mlpack::kernel::LaplacianKernel
  - \ref mlpack::kernel::PSpectrumStringKernel
 
 The following examples use kernels from that list.  Writing your own kernel is
@@ -336,8 +351,8 @@ example on just a reference dataset is shown below, where the base of the cover
 tree is modified.
 
 We also use an instantiated kernel, but because we are building our own tree, we
-must use \c IPMetric<> so that our tree is built on the metric induced by our
-kernel function.
+must use \ref mlpack::metric::IPMetric "IPMetric" so that our tree is built on
+the metric induced by our kernel function.
 
 @code
 #include <mlpack/methods/fastmks/fastmks.hpp>
@@ -408,15 +423,16 @@ The use of the cover tree (see \ref mlpack::tree::CoverTree "CoverTree") is not
 necessary for FastMKS, although it is the default tree type.  A different type
 of tree can be specified with the TreeType template parameter.  However, the
 tree type is required to have \ref mlpack::fastmks::FastMKSStat "FastMKSStat" as
-the StatisticType.
+the StatisticType, and for FastMKS to work, the tree must be built only on
+kernel evaluations (or distance evaluations in the kernel space via
+\ref mlpack::metric::IPMetric "IPMetric::Evaluate()").
 
-Below is an example of the \ref mlpack::tree::BinarySpaceTree "BinarySpaceTree"
-being used as the tree type for FastMKS.  In this example FastMKS is only run on
-one dataset.
+Below is an example where a custom tree class, \c CustomTree, is used as the
+tree type for FastMKS.  In this example FastMKS is only run on one dataset.
 
 @code
 #include <mlpack/methods/fastmks/fastmks.hpp>
-#include <mlpack/core/tree/binary_space_tree/binary_space_tree.hpp>
+#include "custom_tree.hpp"
 
 using namespace mlpack::fastmks;
 using namespace mlpack::tree;
@@ -424,9 +440,9 @@ using namespace mlpack::tree;
 // The dataset that FastMKS will be run on.
 extern arma::mat data;
 
-// The tree used for FastMKS.  We use a convenience typedef to make things a
-// little prettier.
-typedef BinarySpaceTree<bound::HRectBound<2, true>, FastMKSStat> TreeType;
+// The custom tree type.  We'll assume that the first template parameter is the
+// statistic type.
+typedef CustomTree<FastMKSStat> TreeType;
 
 // The FastMKS constructor will create the tree.
 FastMKS<LinearKernel, TreeType> f(data);
@@ -438,11 +454,6 @@ arma::mat products;
 // Run FastMKS.
 f.Search(5, indices, products);
 @endcode
-
-Note that the \c BinarySpaceTree class used here is not the only possible option
-for the \c TreeType parameter; custom trees can be written, or, alternately,
-different template parameters can be used to configure either the \c
-BinarySpaceTree or the \c CoverTree.
 
 @section objects_fmkstut Running FastMKS on objects
 
@@ -462,8 +473,7 @@ string kernel).
 
 The only requirement on these kernels is that they are positive definite kernels
 (or Mercer kernels).  For more information on those details, refer to the
-FastMKS paper ("Fast exact max-kernel search" by R.R. Curtin, P. Ram, and A.G.
-Gray).
+FastMKS paper.
 
 Remember that FastMKS is a tree-based method.  But trees like the binary space
 tree require centroids -- and as we said earlier, centroids often don't make

@@ -119,8 +119,11 @@ class NMF
    * @param H Encoding matrix to output.
    * @param r Rank r of the factorization.
    */
-  void Apply(const arma::mat& V, const size_t r, arma::mat& W, arma::mat& H)
-      const;
+  template<typename MatType>
+  void Apply(const MatType& V,
+             const size_t r,
+             arma::mat& W,
+             arma::mat& H) const;
 
  private:
   //! The maximum number of iterations allowed before giving up.

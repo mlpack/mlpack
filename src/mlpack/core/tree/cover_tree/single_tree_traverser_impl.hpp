@@ -79,12 +79,8 @@ SingleTreeTraverser<RuleType>::Traverse(
   // largest scale.
   std::map<int, std::vector<MapEntryType> > mapQueue;
 
-  // Manually add the children of the first node.  These cannot be pruned
-  // anyway.
-  double rootBaseCase = rule.BaseCase(queryIndex, referenceNode.Point());
-
   // Create the score for the children.
-  double rootChildScore = rule.Score(queryIndex, referenceNode, rootBaseCase);
+  double rootChildScore = rule.Score(queryIndex, referenceNode);
 
   if (rootChildScore == DBL_MAX)
   {
@@ -92,6 +88,12 @@ SingleTreeTraverser<RuleType>::Traverse(
   }
   else
   {
+    // Manually add the children of the first node.
+    // Often, a ruleset will return without doing any computation on cover trees
+    // using TreeTraits::FirstPointIsCentroid; this is an optimization that
+    // (theoretically) the compiler should get right.
+    double rootBaseCase = rule.BaseCase(queryIndex, referenceNode.Point());
+
     // Don't add the self-leaf.
     size_t i = 0;
     if (referenceNode.Child(0).NumChildren() == 0)
@@ -145,12 +147,8 @@ SingleTreeTraverser<RuleType>::Traverse(
         continue;
       }
 
-      // If we are a self-child, the base case has already been evaluated.
-      if (point != parent)
-        baseCase = rule.BaseCase(queryIndex, point);
-
       // Create the score for the children.
-      const double childScore = rule.Score(queryIndex, *node, baseCase);
+      const double childScore = rule.Score(queryIndex, *node);
 
       // Now if this childScore is DBL_MAX we can prune all children.  In this
       // recursion setup pruning is all or nothing for children.
@@ -159,6 +157,13 @@ SingleTreeTraverser<RuleType>::Traverse(
         numPrunes += node->NumChildren();
         continue;
       }
+
+      // If we are a self-child, the base case has already been evaluated.
+      // Often, a ruleset will return without doing any computation on cover
+      // trees using TreeTraits::FirstPointIsCentroid; this is an optimization
+      // that (theoretically) the compiler should get right.
+      if (point != parent)
+        baseCase = rule.BaseCase(queryIndex, point);
 
       // Don't add the self-leaf.
       size_t j = 0;
@@ -194,16 +199,32 @@ SingleTreeTraverser<RuleType>::Traverse(
     const size_t point = node->Point();
 
     // First, recalculate the score of this node to find if we can prune it.
-    double actualScore = rule.Rescore(queryIndex, *node, score);
+    double rescore = rule.Rescore(queryIndex, *node, score);
+
+    if (rescore == DBL_MAX)
+    {
+      ++numPrunes;
+      continue;
+    }
+
+    // For this to be a valid dual-tree algorithm, we *must* evaluate the
+    // combination, even if pruning it will make no difference.  It's the
+    // definition.
+    const double actualScore = rule.Score(queryIndex, *node);
 
     if (actualScore == DBL_MAX)
     {
       ++numPrunes;
       continue;
     }
-
-    // There are no self-leaves; evaluate the base case.
-    rule.BaseCase(queryIndex, point);
+    else
+    {
+      // Evaluate the base case, since the combination was not pruned.
+      // Often, a ruleset will return without doing any computation on cover
+      // trees using TreeTraits::FirstPointIsCentroid; this is an optimization
+      // that (theoretically) the compiler should get right.
+      rule.BaseCase(queryIndex, point);
+    }
   }
 }
 

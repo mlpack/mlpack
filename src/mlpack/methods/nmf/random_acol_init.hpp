@@ -46,7 +46,8 @@ class RandomAcolInitialization
   RandomAcolInitialization()
   { }
 
-  inline static void Initialize(const arma::mat& V,
+  template<typename MatType>
+  inline static void Initialize(const MatType& V,
                                 const size_t r,
                                 arma::mat& W,
                                 arma::mat& H)
@@ -67,7 +68,8 @@ class RandomAcolInitialization
     {
       for (size_t randCol = 0; randCol < p; randCol++)
       {
-        W.col(col) += V.col(math::RandInt(0, m));
+        // .col() does not work in this case, as of Armadillo 3.920.
+        W.unsafe_col(col) += V.col(math::RandInt(0, m));
       }
     }
 

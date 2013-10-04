@@ -57,7 +57,7 @@ $ emst --input_file=dataset.csv --output_file=edge_list.csv -v
 [INFO ] Tree built, running algorithm.
 [INFO ] 4 edges found so far.
 [INFO ] 5 edges found so far.
-[INFO ] Total squared length: 1002.45
+[INFO ] Total spanning tree length: 1002.45
 [INFO ] Saving CSV data to 'edge_list.csv'.
 [INFO ]
 [INFO ] Execution parameters:
@@ -96,7 +96,7 @@ $ cat edge_list.csv
 2.0000000000e+00,4.0000000000e+00,9.9700451353e+02
 @endcode
 
-The input points are labeled 0-5.  The output tells us that the MST connects point 0 to point 3, point 4 to point 5, point 1 to point 3, point 1 to point 2, and point 2 to point 4, with the corresponding edge weights given in the third column.  The total squared length of the MST is also given in the verbose output.
+The input points are labeled 0-5.  The output tells us that the MST connects point 0 to point 3, point 4 to point 5, point 1 to point 3, point 1 to point 2, and point 2 to point 4, with the corresponding edge weights given in the third column.  The total length of the MST is also given in the verbose output.
 
 Note that it is also possible to compute the EMST using a naive (\f$O(N^2)\f$) algorithm for timing and comparison purposes.
 

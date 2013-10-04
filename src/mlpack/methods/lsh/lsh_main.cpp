@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 
   arma::mat referenceData;
   arma::mat queryData; // So it doesn't go out of scope.
-  data::Load(referenceFile.c_str(), referenceData, true);
+  data::Load(referenceFile, referenceData, true);
 
   Log::Info << "Loaded reference data from '" << referenceFile << "' ("
       << referenceData.n_rows << " x " << referenceData.n_cols << ")." << endl;
@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
   {
     string queryFile = CLI::GetParam<string>("query_file");
 
-    data::Load(queryFile.c_str(), queryData, true);
+    data::Load(queryFile, queryData, true);
     Log::Info << "Loaded query data from '" << queryFile << "' ("
               << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
   }

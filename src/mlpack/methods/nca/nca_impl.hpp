@@ -31,7 +31,7 @@ namespace nca {
 // Just set the internal matrix reference.
 template<typename MetricType, template<typename> class OptimizerType>
 NCA<MetricType, OptimizerType>::NCA(const arma::mat& dataset,
-                                    const arma::uvec& labels,
+                                    const arma::Col<size_t>& labels,
                                     MetricType metric) :
     dataset(dataset),
     labels(labels),

@@ -1,9 +1,9 @@
 /**
  * @file ra_search.hpp
- * @author  Parikshit Ram
+ * @author Parikshit Ram
  *
- * Defines the RASearch class, which performs an abstract
- * rank-approximate nearest/farthest neighbor query on two datasets.
+ * Defines the RASearch class, which performs an abstract rank-approximate
+ * nearest/farthest neighbor query on two datasets.
  *
  * The details of this method can be found in the following paper:
  *
@@ -30,8 +30,8 @@
  * You should have received a copy of the GNU General Public License along with
  * MLPACK.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_RA_SEARCH_HPP
-#define __MLPACK_METHODS_NEIGHBOR_SEARCH_RA_SEARCH_HPP
+#ifndef __MLPACK_METHODS_RANN_RA_SEARCH_HPP
+#define __MLPACK_METHODS_RANN_RA_SEARCH_HPP
 
 #include <mlpack/core.hpp>
 
@@ -253,13 +253,27 @@ class RASearch
    * rows, where n is the number of points in the query dataset and k is the
    * number of neighbors being searched for.
    *
+   * Note that tau, the rank-approximation parameter, specifies that we are
+   * looking for k neighbors with probability alpha of being in the top tau
+   * percent of nearest neighbors.  So, as an example, if our dataset has 1000
+   * points, and we want 5 nearest neighbors with 95% probability of being in
+   * the top 5% of nearest neighbors (or, the top 50 nearest neighbors), we set
+   * k = 5, tau = 5, and alpha = 0.95.
+   *
+   * The method will fail (and issue a failure message) if the value of tau is
+   * too low: tau must be set such that the number of points in the
+   * corresponding percentile of the data is greater than k.  Thus, if we choose
+   * tau = 0.1 with a dataset of 1000 points and k = 5, then we are attempting
+   * to choose 5 nearest neighbors out of the closest 1 point -- this is
+   * invalid.
+   *
    * @param k Number of neighbors to search for.
    * @param resultingNeighbors Matrix storing lists of neighbors for each query
    *     point.
    * @param distances Matrix storing distances of neighbors for each query
    *     point.
    * @param tau The rank-approximation in percentile of the data. The default
-   *     value is 0.1%.
+   *     value is 5%.
    * @param alpha The desired success probability. The default value is 0.95.
    * @param sampleAtLeaves Sample at leaves for faster but less accurate
    *      computation. This defaults to 'false'.
@@ -272,7 +286,7 @@ class RASearch
   void Search(const size_t k,
               arma::Mat<size_t>& resultingNeighbors,
               arma::mat& distances,
-              const double tau = 0.1,
+              const double tau = 5,
               const double alpha = 0.95,
               const bool sampleAtLeaves = false,
               const bool firstLeafExact = false,

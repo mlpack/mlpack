@@ -78,17 +78,18 @@ class GaussianKernel
   }
 
   /**
-   * Evaluation of the Gaussian kernel using a double precision argument.
+   * Evaluation of the Gaussian kernel given the distance between two points.
    *
-   * @param t double value.
+   * @param t The distance between the two points the kernel is evaluated on.
    * @return K(t) using the bandwidth (@f$\mu@f$) specified in the
    *     constructor.
    */
   double Evaluate(double t) const
   {
     // The precalculation of gamma saves us a little computation time.
-    return exp(gamma * t * t);
+    return exp(gamma * std::pow(t, 2.0));
   }
+
   /**
    * Obtain the normalization constant of the Gaussian kernel.
    *
@@ -99,6 +100,7 @@ class GaussianKernel
   {
     return pow(sqrt(2.0 * M_PI) * bandwidth, (double) dimension);
   }
+
   /**
    * Obtain a convolution integral of the Gaussian kernel.
    *
@@ -135,6 +137,15 @@ class GaussianKernel
   //! Precalculated constant depending on the bandwidth;
   //! @f$ \gamma = -\frac{1}{2 \mu^2} @f$.
   double gamma;
+};
+
+//! Kernel traits for the Gaussian kernel.
+template<>
+class KernelTraits<GaussianKernel>
+{
+ public:
+  //! The Gaussian kernel is normalized: K(x, x) = 1 for all x.
+  static const bool IsNormalized = true;
 };
 
 }; // namespace kernel

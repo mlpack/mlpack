@@ -22,6 +22,7 @@
 #include <mlpack/core.hpp>
 
 #include "gmm.hpp"
+#include "no_constraint.hpp"
 
 #include <mlpack/methods/kmeans/refined_start.hpp>
 
@@ -29,6 +30,7 @@ using namespace mlpack;
 using namespace mlpack::gmm;
 using namespace mlpack::util;
 using namespace mlpack::kmeans;
+using namespace std;
 
 PROGRAM_INFO("Gaussian Mixture Model (GMM) Training",
     "This program takes a parametric estimate of a Gaussian mixture model (GMM)"
@@ -88,7 +90,7 @@ int main(int argc, char* argv[])
     math::RandomSeed((size_t) std::time(NULL));
 
   arma::mat dataPoints;
-  data::Load(CLI::GetParam<std::string>("input_file").c_str(), dataPoints,
+  data::Load(CLI::GetParam<string>("input_file"), dataPoints,
       true);
 
   const int gaussians = CLI::GetParam<int>("gaussians");
@@ -136,35 +138,74 @@ int main(int argc, char* argv[])
     KMeansType k(1000, 1.0, metric::SquaredEuclideanDistance(),
         RefinedStart(samplings, percentage));
 
-    EMFit<KMeansType> em(maxIterations, tolerance, forcePositive, k);
+    // Depending on the value of 'forcePositive', we have to use different
+    // types.
+    if (forcePositive)
+    {
+      EMFit<KMeansType> em(maxIterations, tolerance, k);
 
-    GMM<EMFit<KMeansType> > gmm(size_t(gaussians), dataPoints.n_rows, em);
+      GMM<EMFit<KMeansType> > gmm(size_t(gaussians), dataPoints.n_rows, em);
 
-    // Compute the parameters of the model using the EM algorithm.
-    Timer::Start("em");
-    likelihood = gmm.Estimate(dataPoints, CLI::GetParam<int>("trials"));
-    Timer::Stop("em");
+      // Compute the parameters of the model using the EM algorithm.
+      Timer::Start("em");
+      likelihood = gmm.Estimate(dataPoints, CLI::GetParam<int>("trials"));
+      Timer::Stop("em");
 
-    // Save results.
-    gmm.Save(CLI::GetParam<std::string>("output_file"));
+      // Save results.
+      gmm.Save(CLI::GetParam<string>("output_file"));
+    }
+    else
+    {
+      EMFit<KMeansType, NoConstraint> em(maxIterations, tolerance, k);
+
+      GMM<EMFit<KMeansType, NoConstraint> > gmm(size_t(gaussians),
+          dataPoints.n_rows, em);
+
+      // Compute the parameters of the model using the EM algorithm.
+      Timer::Start("em");
+      likelihood = gmm.Estimate(dataPoints, CLI::GetParam<int>("trials"));
+      Timer::Stop("em");
+
+      // Save results.
+      gmm.Save(CLI::GetParam<string>("output_file"));
+    }
   }
   else
   {
-    EMFit<> em(maxIterations, tolerance, forcePositive);
+    // Depending on the value of forcePositive, we have to use different types.
+    if (forcePositive)
+    {
+      EMFit<> em(maxIterations, tolerance);
 
-    // Calculate mixture of Gaussians.
-    GMM<> gmm(size_t(gaussians), dataPoints.n_rows, em);
+      // Calculate mixture of Gaussians.
+      GMM<> gmm(size_t(gaussians), dataPoints.n_rows, em);
 
-    // Compute the parameters of the model using the EM algorithm.
-    Timer::Start("em");
-    likelihood = gmm.Estimate(dataPoints, CLI::GetParam<int>("trials"));
-    Timer::Stop("em");
+      // Compute the parameters of the model using the EM algorithm.
+      Timer::Start("em");
+      likelihood = gmm.Estimate(dataPoints, CLI::GetParam<int>("trials"));
+      Timer::Stop("em");
 
-    // Save results.
-    gmm.Save(CLI::GetParam<std::string>("output_file"));
+      // Save results.
+      gmm.Save(CLI::GetParam<string>("output_file"));
+    }
+    else
+    {
+      // Use no constraints on the covariance matrix.
+      EMFit<KMeans<>, NoConstraint> em(maxIterations, tolerance);
+
+      // Calculate mixture of Gaussians.
+      GMM<EMFit<KMeans<>, NoConstraint> > gmm(size_t(gaussians),
+          dataPoints.n_rows, em);
+
+      // Compute the parameters of the model using the EM algorithm.
+      Timer::Start("em");
+      likelihood = gmm.Estimate(dataPoints, CLI::GetParam<int>("trials"));
+      Timer::Stop("em");
+
+      // Save results.
+      gmm.Save(CLI::GetParam<string>("output_file"));
+    }
   }
 
   Log::Info << "Log-likelihood of estimate: " << likelihood << ".\n";
-
-
 }

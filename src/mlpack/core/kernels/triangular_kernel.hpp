@@ -54,10 +54,21 @@ class TriangularKernel
    * @param b Second vector.
    */
   template<typename Vec1Type, typename Vec2Type>
-  double Evaluate(const Vec1Type& a, const Vec2Type& b)
+  double Evaluate(const Vec1Type& a, const Vec2Type& b) const
   {
     return std::max(0.0, (1 - metric::EuclideanDistance::Evaluate(a, b) /
         bandwidth));
+  }
+
+  /**
+   * Evaluate the triangular kernel given that the distance between the two
+   * points is known.
+   *
+   * @param distance The distance between the two points.
+   */
+  double Evaluate(const double distance) const
+  {
+    return std::max(0.0, (1 - distance) / bandwidth);
   }
 
   //! Get the bandwidth of the kernel.
@@ -68,6 +79,15 @@ class TriangularKernel
  private:
   //! The bandwidth of the kernel.
   double bandwidth;
+};
+
+//! Kernel traits for the triangular kernel.
+template<>
+class KernelTraits<TriangularKernel>
+{
+ public:
+  //! The triangular kernel is normalized: K(x, x) = 1 for all x.
+  static const bool IsNormalized = true;
 };
 
 }; // namespace kernel
