@@ -30,6 +30,7 @@ DTBRules(const arma::mat& dataSet,
 }
 
 template<typename MetricType, typename TreeType>
+inline force_inline
 double DTBRules<MetricType, TreeType>::BaseCase(const size_t queryIndex,
                                                 const size_t referenceIndex)
 {
