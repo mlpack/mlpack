@@ -11,10 +11,6 @@ set(SOURCES
   binary_space_tree/single_tree_traverser_impl.hpp
   binary_space_tree/traits.hpp
   bounds.hpp
-  cosine_tree/cosine_tree_impl.hpp
-  cosine_tree/cosine_tree.hpp
-  cosine_tree/cosine_tree_builder.hpp
-  cosine_tree/cosine_tree_builder_impl.hpp
   cover_tree/cover_tree.hpp
   cover_tree/cover_tree_impl.hpp
   cover_tree/first_point_is_root.hpp
