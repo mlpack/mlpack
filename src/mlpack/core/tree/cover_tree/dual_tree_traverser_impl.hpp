@@ -78,6 +78,10 @@ DualTreeTraverser<RuleType>::Traverse(
   // First recurse down the reference nodes as necessary.
   ReferenceRecursion(queryNode, referenceMap);
 
+  // Did the map get emptied?
+  if (referenceMap.size() == 0)
+    return; // Nothing to do!
+
   // Now, reduce the scale of the query node by recursing.  But we can't recurse
   // if the query node is a leaf node.
   if ((queryNode.Scale() != INT_MIN) &&
@@ -216,7 +220,8 @@ DualTreeTraverser<RuleType>::ReferenceRecursion(
 
   // First, reduce the maximum scale in the reference map down to the scale of
   // the query node.
-  while ((*referenceMap.rbegin()).first > queryNode.Scale())
+  while (!referenceMap.empty() &&
+      ((*referenceMap.rbegin()).first > queryNode.Scale()))
   {
     // If the query node's scale is INT_MIN and the reference map's maximum
     // scale is INT_MIN, don't try to recurse...
