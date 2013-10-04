@@ -36,6 +36,7 @@ RangeSearchRules<MetricType, TreeType>::RangeSearchRules(
 //! The base case.  Evaluate the distance between the two points and add to the
 //! results if necessary.
 template<typename MetricType, typename TreeType>
+inline force_inline
 double RangeSearchRules<MetricType, TreeType>::BaseCase(
     const size_t queryIndex,
     const size_t referenceIndex)
