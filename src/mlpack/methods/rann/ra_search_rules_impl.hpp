@@ -814,30 +814,26 @@ Rescore(TreeType& queryNode,
         numSamplesMadeInChildNodes = numSamples;
     }
 
-    // The number of samples made for a node is propagated up from the
-    // child nodes if the child nodes have made samples that the parent
-    // (which is the current 'queryNode') is not aware of.
+    // The number of samples made for a node is propagated up from the child
+    // nodes if the child nodes have made samples that the parent (which is the
+    // current 'queryNode') is not aware of.
     queryNode.Stat().NumSamplesMade() = std::max(
         queryNode.Stat().NumSamplesMade(), numSamplesMadeInChildNodes);
   }
 
-  // Now check if the node-pair interaction can be pruned by sampling
+  // Now check if the node-pair interaction can be pruned by sampling.
 
-  // If this is better than the best distance we've seen so far,
-  // maybe there will be something down this node.
-  // Also check if enough samples are already made for this query.
+  // If this is better than the best distance we've seen so far, maybe there
+  // will be something down this node.  Also check if enough samples are already
+  // made for this query.
   if (SortPolicy::IsBetter(oldScore, bestDistance) &&
       queryNode.Stat().NumSamplesMade() < numSamplesReqd)
   {
-    // We cannot prune this node
-    // Try approximating this node by sampling
+    // We cannot prune this node, so approximate by sampling.
 
-    // Here we assume that since we are re-scoring, the algorithm
-    // has already sampled some candidates, and if specified, also
-    // traversed to the first leaf.
-    // So no checks regarding that is made any more.
-    //
-    // check if this node can be approximated by sampling
+    // Here we assume that since we are re-scoring, the algorithm has already
+    // sampled some candidates, and if specified, also traversed to the first
+    // leaf.  So no checks regarding that are made any more.
     size_t samplesReqd = (size_t) std::ceil(
         samplingRatio * (double) referenceNode.NumDescendants());
     samplesReqd  = std::min(samplesReqd,
@@ -851,10 +847,9 @@ Rescore(TreeType& queryNode,
       // Since query tree descent is necessary now, propagate the number of
       // samples made down to the children.
 
-      // Go through all children and propagate the number of
-      // samples made to the children.
-      // Only update if the parent node has made samples the children
-      // have not seen
+      // Go through all children and propagate the number of samples made to the
+      // children.  Only update if the parent node has made samples the children
+      // have not seen.
       for (size_t i = 0; i < queryNode.NumChildren(); i++)
         queryNode.Child(i).Stat().NumSamplesMade() = std::max(
             queryNode.Stat().NumSamplesMade(),
@@ -864,11 +859,10 @@ Rescore(TreeType& queryNode,
     }
     else
     {
-      if (!referenceNode.IsLeaf()) // if not a leaf
+      if (!referenceNode.IsLeaf()) // If not a leaf,
       {
-        // Then samplesReqd <= singleSampleLimit.
-        // Hence approximate node by sampling enough number of points
-        // for every query in the 'queryNode'
+        // then samplesReqd <= singleSampleLimit.  Hence, approximate the node
+        // by sampling enough points for every query in the query node.
         for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
         {
           const size_t queryIndex = queryNode.Descendant(i);
@@ -881,23 +875,23 @@ Rescore(TreeType& queryNode,
             BaseCase(queryIndex, referenceNode.Descendant(distinctSamples[j]));
         }
 
-        // update the number of samples made for the queryNode and
-        // also update the number of sample made for the child nodes.
+        // Update the number of samples made for the query node and also update
+        // the number of samples made for the child nodes.
         queryNode.Stat().NumSamplesMade() += samplesReqd;
 
-        // since you are not going to descend down the query tree for this
-        // referenceNode, there is no point updating the number of
-        // samples made for the child nodes of this queryNode.
+        // Since we are not going to descend down the query tree for this
+        // reference node, there is no point updating the number of samples made
+        // for the child nodes of this query node.
 
-        // Node approximated so we can prune it
+        // Node approximated, so we can prune it.
         return DBL_MAX;
       }
-      else // we are at a leaf.
+      else // We are at a leaf.
       {
-        if (sampleAtLeaves) // if allowed to sample at leaves.
+        if (sampleAtLeaves)
         {
-          // Approximate node by sampling enough number of points
-          // for every query in the 'queryNode'.
+          // Approximate node by sampling enough points for every query in the
+          // query node.
           for (size_t i = 0; i < queryNode.NumDescendants(); ++i)
           {
             const size_t queryIndex = queryNode.Descendant(i);
@@ -905,14 +899,14 @@ Rescore(TreeType& queryNode,
             ObtainDistinctSamples(samplesReqd, referenceNode.NumDescendants(),
                                   distinctSamples);
             for (size_t j = 0; j < distinctSamples.n_elem; j++)
-              // The counting of the samples are done in the 'BaseCase'
-              // function so no book-keeping is required here.
+              // The counting of the samples are done in BaseCase() so no
+              // book-keeping is required here.
               BaseCase(queryIndex,
                   referenceNode.Descendant(distinctSamples[j]));
           }
 
           // Update the number of samples made for the query node and also
-          // update the number of sample made for the child nodes.
+          // update the number of samples made for the child nodes.
           queryNode.Stat().NumSamplesMade() += samplesReqd;
 
           // Since we are not going to descend down the query tree for this
