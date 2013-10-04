@@ -277,9 +277,10 @@ if (UNIX)
         WORKING_DIRECTORY
           ${CMAKE_BINARY_DIR}/bin
         DEPENDS
-          allkfn allknn emst gmm hmm_generate hmm_loglik hmm_train hmm_viterbi
-          kernel_pca kmeans lars linear_regression local_coordinate_coding mvu
-          nbc nca pca radical sparse_coding
+          allkfn allknn allkrann cf det emst fastmks gmm hmm_generate hmm_loglik
+          hmm_train hmm_viterbi kernel_pca kmeans lars linear_regression
+          local_coordinate_coding nbc nca nmf pca radical range_search
+          sparse_coding
         COMMENT "Generating man pages from built executables."
     )
 
