@@ -12,7 +12,6 @@ set(DIRS
   linear_regression
   local_coordinate_coding
   lsh
-#  mvu
   naive_bayes
   nca
   neighbor_search
