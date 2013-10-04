@@ -59,13 +59,14 @@ class LaplacianKernel
   }
 
   /**
-   * Evaluation of the Laplacian kernel using a double precision argument.
+   * Evaluation of the Laplacian kernel given the distance between two points.
    *
-   * @param t double value.
+   * @param t The distance between the two points the kernel should be evaluated
+   *     on.
    * @return K(t) using the bandwidth (@f$\mu@f$) specified in the
    *     constructor.
    */
-  double Evaluate(double t) const
+  double Evaluate(const double t) const
   {
     // The precalculation of gamma saves us a little computation time.
     return exp(-t / bandwidth);

@@ -41,7 +41,13 @@ class EpanechnikovKernel
    * @param b The other input vector.
    */
   template<typename Vec1Type, typename Vec2Type>
-  double Evaluate(const Vec1Type& a, const Vec2Type& b);
+  double Evaluate(const Vec1Type& a, const Vec2Type& b) const;
+
+  /**
+   * Evaluate the Epanechnikov kernel given that the distance between the two
+   * input points is known.
+   */
+  double Evaluate(const double distance) const;
 
   /**
    * Obtains the convolution integral [integral of K(||x-a||) K(||b-x||) dx]
@@ -61,11 +67,6 @@ class EpanechnikovKernel
    * @param dimension Dimension to calculate the normalizer for.
    */
   double Normalizer(const size_t dimension);
-
-  /**
-   * Evaluate the kernel not for two points but for a numerical value.
-   */
-  double Evaluate(const double t);
 
  private:
   //! Bandwidth of the kernel.
