@@ -273,14 +273,15 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
   BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 1), 0.5, 2.5);
   BOOST_REQUIRE_CLOSE(hmm.Transition()(1, 1), 0.5, 2.5);
 
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("0"), 0.4, 2.5);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("1"), 0.6, 2.5);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[0].Probability("2"), 2.5);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[0].Probability("3"), 2.5);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[1].Probability("0"), 2.5);
-  BOOST_REQUIRE_SMALL(hmm.Emission()[1].Probability("1"), 2.5);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[1].Probability("2"), 0.2, 2.5);
-  BOOST_REQUIRE_CLOSE(hmm.Emission()[1].Probability("3"), 0.8, 2.5);
+  // Widened to 3% tolerance.
+  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("0"), 0.4, 3.0);
+  BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("1"), 0.6, 3.0);
+  BOOST_REQUIRE_SMALL(hmm.Emission()[0].Probability("2"), 3.0);
+  BOOST_REQUIRE_SMALL(hmm.Emission()[0].Probability("3"), 3.0);
+  BOOST_REQUIRE_SMALL(hmm.Emission()[1].Probability("0"), 3.0);
+  BOOST_REQUIRE_SMALL(hmm.Emission()[1].Probability("1"), 3.0);
+  BOOST_REQUIRE_CLOSE(hmm.Emission()[1].Probability("2"), 0.2, 3.0);
+  BOOST_REQUIRE_CLOSE(hmm.Emission()[1].Probability("3"), 0.8, 3.0);
 }
 
 BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
@@ -350,11 +351,11 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
 
   // We can't use % tolerance here because percent error increases as the actual
   // value gets very small.  So, instead, we just ensure that every value is no
-  // more than 0.009 away from the actual value.
+  // more than 0.015 away from the actual value.
   for (size_t row = 0; row < hmm.Transition().n_rows; row++)
     for (size_t col = 0; col < hmm.Transition().n_cols; col++)
       BOOST_REQUIRE_SMALL(hmm.Transition()(row, col) - transition(row, col),
-          0.009);
+          0.015);
 
   for (size_t col = 0; col < hmm.Emission().size(); col++)
   {
@@ -364,7 +365,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
       arma::vec obs(1);
       obs[0] = row;
       BOOST_REQUIRE_SMALL(hmm.Emission()[col].Probability(obs) -
-          emission[col].Probability(obs), 0.009);
+          emission[col].Probability(obs), 0.015);
     }
   }
 }
@@ -708,7 +709,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMGenerateTest)
   for (size_t row = 0; row < 3; row++)
     for (size_t col = 0; col < 3; col++)
       BOOST_REQUIRE_SMALL(hmm.Transition()(row, col) - hmm2.Transition()(row,
-          col), 0.03);
+          col), 0.032);
 
   // Check that each Gaussian is the same.
   for (size_t em = 0; em < 3; em++)
