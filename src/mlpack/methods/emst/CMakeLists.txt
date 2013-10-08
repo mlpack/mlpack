@@ -1,14 +1,15 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-   # union_find
-   union_find.hpp
-   # dtb
-   dtb.hpp
-   dtb_impl.hpp
-   dtb_rules.hpp
-   dtb_rules_impl.hpp
-   edge_pair.hpp
+  # union_find
+  union_find.hpp
+  # dtb
+  dtb.hpp
+  dtb_impl.hpp
+  dtb_rules.hpp
+  dtb_rules_impl.hpp
+  dtb_stat.hpp
+  edge_pair.hpp
 )
 
 # Add directory name to sources.

@@ -20,6 +20,7 @@
 #ifndef __MLPACK_METHODS_EMST_DTB_HPP
 #define __MLPACK_METHODS_EMST_DTB_HPP
 
+#include "dtb_stat.hpp"
 #include "edge_pair.hpp"
 
 #include <mlpack/core.hpp>
@@ -29,69 +30,6 @@
 
 namespace mlpack {
 namespace emst /** Euclidean Minimum Spanning Trees. */ {
-
-/**
- * A statistic for use with MLPACK trees, which stores the upper bound on
- * distance to nearest neighbors and the component which this node belongs to.
- */
-class DTBStat
-{
- private:
-  //! Upper bound on the distance to the nearest neighbor of any point in this
-  //! node.
-  double maxNeighborDistance;
-
-  //! Lower bound on the distance to the nearest neighbor of any point in this
-  //! node.
-  double minNeighborDistance;
-
-  //! Total bound for pruning.
-  double bound;
-
-  //! The index of the component that all points in this node belong to.  This
-  //! is the same index returned by UnionFind for all points in this node.  If
-  //! points in this node are in different components, this value will be
-  //! negative.
-  int componentMembership;
-
- public:
-  /**
-   * A generic initializer.  Sets the maximum neighbor distance to its default,
-   * and the component membership to -1 (no component).
-   */
-  DTBStat();
-
-  /**
-   * This is called when a node is finished initializing.  We set the maximum
-   * neighbor distance to its default, and if possible, we set the component
-   * membership of the node (if it has only one point and no children).
-   *
-   * @param node Node that has been finished.
-   */
-  template<typename TreeType>
-  DTBStat(const TreeType& node);
-
-  //! Get the maximum neighbor distance.
-  double MaxNeighborDistance() const { return maxNeighborDistance; }
-  //! Modify the maximum neighbor distance.
-  double& MaxNeighborDistance() { return maxNeighborDistance; }
-
-  //! Get the minimum neighbor distance.
-  double MinNeighborDistance() const { return minNeighborDistance; }
-  //! Modify the minimum neighbor distance.
-  double& MinNeighborDistance() { return minNeighborDistance; }
-
-  //! Get the total bound for pruning.
-  double Bound() const { return bound; }
-  //! Modify the total bound for pruning.
-  double& Bound() { return bound; }
-
-  //! Get the component membership of this node.
-  int ComponentMembership() const { return componentMembership; }
-  //! Modify the component membership of this node.
-  int& ComponentMembership() { return componentMembership; }
-
-}; // class DTBStat
 
 /**
  * Performs the MST calculation using the Dual-Tree Boruvka algorithm, using any
