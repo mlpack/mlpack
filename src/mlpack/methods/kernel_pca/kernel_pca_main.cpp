@@ -5,12 +5,6 @@
  * Executable for Kernel PCA.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/kernels/linear_kernel.hpp>
-#include <mlpack/core/kernels/gaussian_kernel.hpp>
-#include <mlpack/core/kernels/hyperbolic_tangent_kernel.hpp>
-#include <mlpack/core/kernels/laplacian_kernel.hpp>
-#include <mlpack/core/kernels/polynomial_kernel.hpp>
-#include <mlpack/core/kernels/cosine_distance.hpp>
 
 #include "kernel_pca.hpp"
 
@@ -46,6 +40,9 @@ PROGRAM_INFO("Kernel Principal Components Analysis",
     "\n"
     " * 'laplacian': Laplacian kernel; requires bandwidth:\n"
     "    K(x, y) = exp(-(|| x - y ||) / bandwidth)\n"
+    "\n"
+    " * 'epanechnikov': Epanechnikov kernel; requires bandwidth:\n"
+    "    K(x, y) = max(0, 1 - || x - y ||^2 / bandwidth^2)\n"
     "\n"
     " * 'cosine': cosine distance:\n"
     "    K(x, y) = 1 - (x^T y) / (|| x || * || y ||)\n"
@@ -140,6 +137,14 @@ int main(int argc, char** argv)
 
     LaplacianKernel kernel(bandwidth);
     KernelPCA<LaplacianKernel> kpca(kernel, centerTransformedData);
+    kpca.Apply(dataset, newDim);
+  }
+  else if (kernelType == "epanechnikov")
+  {
+    const double bandwidth = CLI::GetParam<double>("bandwidth");
+
+    EpanechnikovKernel kernel(bandwidth);
+    KernelPCA<EpanechnikovKernel> kpca(kernel, centerTransformedData);
     kpca.Apply(dataset, newDim);
   }
   else if (kernelType == "cosine")
