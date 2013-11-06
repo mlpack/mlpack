@@ -187,7 +187,8 @@ arma::vec GMM<FittingType>::Random() const
  */
 template<typename FittingType>
 double GMM<FittingType>::Estimate(const arma::mat& observations,
-                                  const size_t trials)
+                                  const size_t trials,
+                                  const bool useExistingModel)
 {
   double bestLikelihood; // This will be reported later.
 
@@ -196,7 +197,8 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
   {
     // Train the model.  The user will have been warned earlier if the GMM was
     // initialized with no parameters (0 gaussians, dimensionality of 0).
-    fitter.Estimate(observations, means, covariances, weights);
+    fitter.Estimate(observations, means, covariances, weights,
+        useExistingModel);
 
     bestLikelihood = LogLikelihood(observations, means, covariances, weights);
   }
@@ -205,9 +207,21 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
     if (trials == 0)
       return -DBL_MAX; // It's what they asked for...
 
+    // If each trial must start from the same initial location, we must save it.
+    std::vector<arma::vec> meansOrig;
+    std::vector<arma::mat> covariancesOrig;
+    arma::vec weightsOrig;
+    if (useExistingModel)
+    {
+      meansOrig = means;
+      covariancesOrig = covariances;
+      weightsOrig = weights;
+    }
+
     // We need to keep temporary copies.  We'll do the first training into the
     // actual model position, so that if it's the best we don't need to copy it.
-    fitter.Estimate(observations, means, covariances, weights);
+    fitter.Estimate(observations, means, covariances, weights,
+        useExistingModel);
 
     bestLikelihood = LogLikelihood(observations, means, covariances, weights);
 
@@ -222,7 +236,15 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
 
     for (size_t trial = 1; trial < trials; ++trial)
     {
-      fitter.Estimate(observations, meansTrial, covariancesTrial, weightsTrial);
+      if (useExistingModel)
+      {
+        meansTrial = meansOrig;
+        covariancesTrial = covariancesOrig;
+        weightsTrial = weightsOrig;
+      }
+
+      fitter.Estimate(observations, meansTrial, covariancesTrial, weightsTrial,
+          useExistingModel);
 
       // Check to see if the log-likelihood of this one is better.
       double newLikelihood = LogLikelihood(observations, meansTrial,
@@ -256,7 +278,8 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
 template<typename FittingType>
 double GMM<FittingType>::Estimate(const arma::mat& observations,
                                   const arma::vec& probabilities,
-                                  const size_t trials)
+                                  const size_t trials,
+                                  const bool useExistingModel)
 {
   double bestLikelihood; // This will be reported later.
 
@@ -265,7 +288,8 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
   {
     // Train the model.  The user will have been warned earlier if the GMM was
     // initialized with no parameters (0 gaussians, dimensionality of 0).
-    fitter.Estimate(observations, probabilities, means, covariances, weights);
+    fitter.Estimate(observations, probabilities, means, covariances, weights,
+        useExistingModel);
 
     bestLikelihood = LogLikelihood(observations, means, covariances, weights);
   }
@@ -274,9 +298,21 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
     if (trials == 0)
       return -DBL_MAX; // It's what they asked for...
 
+    // If each trial must start from the same initial location, we must save it.
+    std::vector<arma::vec> meansOrig;
+    std::vector<arma::mat> covariancesOrig;
+    arma::vec weightsOrig;
+    if (useExistingModel)
+    {
+      meansOrig = means;
+      covariancesOrig = covariances;
+      weightsOrig = weights;
+    }
+
     // We need to keep temporary copies.  We'll do the first training into the
     // actual model position, so that if it's the best we don't need to copy it.
-    fitter.Estimate(observations, probabilities, means, covariances, weights);
+    fitter.Estimate(observations, probabilities, means, covariances, weights,
+        useExistingModel);
 
     bestLikelihood = LogLikelihood(observations, means, covariances, weights);
 
@@ -291,7 +327,15 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
 
     for (size_t trial = 1; trial < trials; ++trial)
     {
-      fitter.Estimate(observations, meansTrial, covariancesTrial, weightsTrial);
+      if (useExistingModel)
+      {
+        meansTrial = meansOrig;
+        covariancesTrial = covariancesOrig;
+        weightsTrial = weightsOrig;
+      }
+
+      fitter.Estimate(observations, meansTrial, covariancesTrial, weightsTrial,
+          useExistingModel);
 
       // Check to see if the log-likelihood of this one is better.
       double newLikelihood = LogLikelihood(observations, meansTrial,
