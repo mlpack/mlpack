@@ -61,35 +61,47 @@ class EMFit
   /**
    * Fit the observations to a Gaussian mixture model (GMM) using the EM
    * algorithm.  The size of the vectors (indicating the number of components)
-   * must already be set.
+   * must already be set.  Optionally, if useInitialModel is set to true, then
+   * the model given in the means, covariances, and weights parameters is used
+   * as the initial model, instead of using the InitialClusteringType::Cluster()
+   * option.
    *
    * @param observations List of observations to train on.
    * @param means Vector to store trained means in.
    * @param covariances Vector to store trained covariances in.
    * @param weights Vector to store a priori weights in.
+   * @param useInitialModel If true, the given model is used for the initial
+   *      clustering.
    */
   void Estimate(const arma::mat& observations,
                 std::vector<arma::vec>& means,
                 std::vector<arma::mat>& covariances,
-                arma::vec& weights);
+                arma::vec& weights,
+                const bool useInitialModel = false);
 
   /**
    * Fit the observations to a Gaussian mixture model (GMM) using the EM
    * algorithm, taking into account the probabilities of each point being from
    * this mixture.  The size of the vectors (indicating the number of
-   * components) must already be set.
+   * components) must already be set.  Optionally, if useInitialModel is set to
+   * true, then the model given in the means, covariances, and weights
+   * parameters is used as the initial model, instead of using the
+   * InitialClusteringType::Cluster() option.
    *
    * @param observations List of observations to train on.
    * @param probabilities Probability of each point being from this model.
    * @param means Vector to store trained means in.
    * @param covariances Vector to store trained covariances in.
    * @param weights Vector to store a priori weights in.
+   * @param useInitialModel If true, the given model is used for the initial
+   *      clustering.
    */
   void Estimate(const arma::mat& observations,
                 const arma::vec& probabilities,
                 std::vector<arma::vec>& means,
                 std::vector<arma::mat>& covariances,
-                arma::vec& weights);
+                arma::vec& weights,
+                const bool useInitialModel = false);
 
   //! Get the clusterer.
   const InitialClusteringType& Clusterer() const { return clusterer; }
