@@ -699,4 +699,161 @@ BOOST_AUTO_TEST_CASE(EigenvalueRatioConstraintTest)
   }
 }
 
+BOOST_AUTO_TEST_CASE(UseExistingModelTest)
+{
+  // If we run a GMM and it converges, then if we run it again using the
+  // converged results as the starting point, then it should terminate after one
+  // iteration and give basically the same results.
+
+  // Higher dimensionality gives us a greater chance of having separated
+  // Gaussians.
+  size_t dims = 8;
+  size_t gaussians = 3;
+
+  // Generate dataset.
+  arma::mat data;
+  data.zeros(dims, 500);
+
+  std::vector<arma::vec> means(gaussians);
+  std::vector<arma::mat> covars(gaussians);
+  arma::vec weights(gaussians);
+  arma::Col<size_t> counts(gaussians);
+
+  // Choose weights randomly.
+  weights.zeros();
+  while (weights.min() < 0.02)
+  {
+    weights.randu(gaussians);
+    weights /= accu(weights);
+  }
+
+  for (size_t i = 0; i < gaussians; i++)
+    counts[i] = round(weights[i] * (data.n_cols - gaussians));
+  // Ensure one point minimum in each.
+  counts += 1;
+
+  // Account for rounding errors (possibly necessary).
+  counts[gaussians - 1] += (data.n_cols - arma::accu(counts));
+
+  // Build each Gaussian individually.
+  size_t point = 0;
+  for (size_t i = 0; i < gaussians; i++)
+  {
+    arma::mat gaussian;
+    gaussian.randn(dims, counts[i]);
+
+    // Randomly generate mean and covariance.
+    means[i].randu(dims);
+    means[i] -= 0.5;
+    means[i] *= 50;
+
+    // We need to make sure the covariance is positive definite.  We will take a
+    // random matrix C and then set our covariance to 4 * C * C', which will be
+    // positive semidefinite.
+    covars[i].randu(dims, dims);
+    covars[i] *= 4 * trans(covars[i]);
+
+    data.cols(point, point + counts[i] - 1) = (covars[i] * gaussian + means[i]
+        * arma::ones<arma::rowvec>(counts[i]));
+
+    // Calculate the actual means and covariances because they will probably
+    // be different (this is easier to do before we shuffle the points).
+    means[i] = arma::mean(data.cols(point, point + counts[i] - 1), 1);
+    covars[i] = ccov(data.cols(point, point + counts[i] - 1), 1 /* biased */);
+
+    point += counts[i];
+  }
+
+  // Calculate actual weights.
+  for (size_t i = 0; i < gaussians; i++)
+    weights[i] = (double) counts[i] / data.n_cols;
+
+  // Now train the model.
+  GMM<> gmm(gaussians, dims);
+  gmm.Estimate(data, 10);
+
+  GMM<> oldgmm(gmm);
+
+  // Retrain the model with the existing model as the starting point.
+  gmm.Estimate(data, 1, true);
+
+  // Check for similarity.
+  for (size_t i = 0; i < gmm.Gaussians(); ++i)
+  {
+    BOOST_REQUIRE_CLOSE(gmm.Weights()[i], oldgmm.Weights()[i], 1e-4);
+
+    for (size_t j = 0; j < gmm.Dimensionality(); ++j)
+    {
+      BOOST_REQUIRE_CLOSE(gmm.Means()[i][j], oldgmm.Means()[i][j], 1e-3);
+
+      for (size_t k = 0; k < gmm.Dimensionality(); ++k)
+        BOOST_REQUIRE_CLOSE(gmm.Covariances()[i](j, k),
+                            oldgmm.Covariances()[i](j, k), 1e-3);
+    }
+  }
+
+  // Do it again, with a larger number of trials.
+  gmm = oldgmm;
+
+  // Retrain the model with the existing model as the starting point.
+  gmm.Estimate(data, 10, true);
+
+  // Check for similarity.
+  for (size_t i = 0; i < gmm.Gaussians(); ++i)
+  {
+    BOOST_REQUIRE_CLOSE(gmm.Weights()[i], oldgmm.Weights()[i], 1e-4);
+
+    for (size_t j = 0; j < gmm.Dimensionality(); ++j)
+    {
+      BOOST_REQUIRE_CLOSE(gmm.Means()[i][j], oldgmm.Means()[i][j], 1e-3);
+
+      for (size_t k = 0; k < gmm.Dimensionality(); ++k)
+        BOOST_REQUIRE_CLOSE(gmm.Covariances()[i](j, k),
+                            oldgmm.Covariances()[i](j, k), 1e-3);
+    }
+  }
+
+  // Do it again, but using the overload of Estimate() that takes probabilities
+  // into account.
+  arma::vec probabilities(data.n_cols);
+  probabilities.ones(); // Fill with ones.
+
+  gmm = oldgmm;
+  gmm.Estimate(data, probabilities, 1, true);
+
+  // Check for similarity.
+  for (size_t i = 0; i < gmm.Gaussians(); ++i)
+  {
+    BOOST_REQUIRE_CLOSE(gmm.Weights()[i], oldgmm.Weights()[i], 1e-4);
+
+    for (size_t j = 0; j < gmm.Dimensionality(); ++j)
+    {
+      BOOST_REQUIRE_CLOSE(gmm.Means()[i][j], oldgmm.Means()[i][j], 1e-3);
+
+      for (size_t k = 0; k < gmm.Dimensionality(); ++k)
+        BOOST_REQUIRE_CLOSE(gmm.Covariances()[i](j, k),
+                            oldgmm.Covariances()[i](j, k), 1e-3);
+    }
+  }
+
+  // One more time, with multiple trials.
+  gmm = oldgmm;
+  gmm.Estimate(data, probabilities, 10, true);
+
+  // Check for similarity.
+  for (size_t i = 0; i < gmm.Gaussians(); ++i)
+  {
+    BOOST_REQUIRE_CLOSE(gmm.Weights()[i], oldgmm.Weights()[i], 1e-4);
+
+    for (size_t j = 0; j < gmm.Dimensionality(); ++j)
+    {
+      BOOST_REQUIRE_CLOSE(gmm.Means()[i][j], oldgmm.Means()[i][j], 1e-3);
+
+      for (size_t k = 0; k < gmm.Dimensionality(); ++k)
+        BOOST_REQUIRE_CLOSE(gmm.Covariances()[i](j, k),
+                            oldgmm.Covariances()[i](j, k), 1e-3);
+    }
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END();
