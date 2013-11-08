@@ -2,7 +2,8 @@
  * @file logistic_regression_impl.hpp
  * @author Sumedh Ghaisas
  *
- * Implementation of the LogisticRegression class.
+ * Implementation of the LogisticRegression class.  This implementation supports
+ * L2-regularization.
  */
 #ifndef __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_IMPL_HPP
 #define __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_IMPL_HPP
@@ -20,7 +21,7 @@ LogisticRegression<OptimizerType>::LogisticRegression(
     const double lambda) :
     predictors(predictors),
     responses(responses),
-    errorFunction(LogisticRegressionFunction(predictors,responses,lambda)),
+    errorFunction(LogisticRegressionFunction(predictors, responses, lambda)),
     optimizer(OptimizerType<LogisticRegressionFunction>(errorFunction)),
     lambda(lambda)
 {
@@ -35,7 +36,7 @@ LogisticRegression<OptimizerType>::LogisticRegression(
     const double lambda) :
     predictors(predictors),
     responses(responses),
-    errorFunction(LogisticRegressionFunction(predictors,responses)),
+    errorFunction(LogisticRegressionFunction(predictors, responses)),
     optimizer(OptimizerType<LogisticRegressionFunction>(errorFunction)),
     lambda(lambda)
 {
@@ -71,7 +72,7 @@ double LogisticRegression<OptimizerType>::ComputeError(
   ones.ones(predictors.n_cols);
   predictors.insert_rows(0, ones);
 
-  double out = errorFunction.Evaluate(predictors,responses,parameters);
+  double out = errorFunction.Evaluate(predictors, responses, parameters);
 
   predictors.shed_row(0);
 
@@ -84,11 +85,11 @@ double LogisticRegression<OptimizerType>::ComputeAccuracy(
     const arma::vec& responses,
     const double decisionBoundary)
 {
-  arma::vec temp_responses;
-  Predict(predictors,temp_responses,decisionBoundary);
+  arma::vec tempResponses;
+  Predict(predictors, tempResponses, decisionBoundary);
   int count = 0;
   for (size_t i = 0; i < responses.n_rows; i++)
-    if (responses(i, 0) == temp_responses(i, 0))
+    if (responses(i, 0) == tempResponses(i, 0))
       count++;
 
   return (double) (count * 100) / responses.n_rows;
