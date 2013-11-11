@@ -2,10 +2,10 @@
  * @file logistic_regression_function_impl.hpp
  * @author Sumedh Ghaisas
  *
- * Implementation of hte LogisticRegressionFunction class.
+ * Implementation of hte LogisticFunction class.
  */
-#ifndef __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_FUNCTION_IMPL_HPP
-#define __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_FUNCTION_IMPL_HPP
+#ifndef __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_FUNCTION_IMPL_HPP
+#define __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_FUNCTION_IMPL_HPP
 
 // In case it hasn't been done yet.
 #include "logistic_regression_function.hpp"
@@ -13,7 +13,7 @@
 namespace mlpack {
 namespace regression {
 
-LogisticRegressionFunction::LogisticRegressionFunction(
+LogisticFunction::LogisticFunction(
     arma::mat& predictors,
     arma::vec& responses,
     const double lambda) :
@@ -24,7 +24,7 @@ LogisticRegressionFunction::LogisticRegressionFunction(
   initialPoint = arma::zeros<arma::mat>(predictors.n_rows + 1, 1);
 }
 
-LogisticRegressionFunction::LogisticRegressionFunction(
+LogisticFunction::LogisticFunction(
     arma::mat& predictors,
     arma::vec& responses,
     const arma::mat& initialPoint,
@@ -39,14 +39,14 @@ LogisticRegressionFunction::LogisticRegressionFunction(
     this->initialPoint = arma::zeros<arma::mat>(predictors.n_rows + 1,1);
 }
 
-arma::vec LogisticRegressionFunction::getSigmoid(const arma::vec& values) const
+arma::vec LogisticFunction::getSigmoid(const arma::vec& values) const
 {
   arma::vec out = arma::ones<arma::vec>(values.n_rows,1) /
       (arma::ones<arma::vec>(values.n_rows,1) + arma::exp(-values));
   return out;
 }
 
-double LogisticRegressionFunction::Evaluate(
+double LogisticFunction::Evaluate(
     const arma::mat& predictors,
     const arma::vec& responses,
     const arma::mat& values) const
@@ -69,7 +69,7 @@ double LogisticRegressionFunction::Evaluate(
       predictors.n_cols + regularization;
 }
 
-void LogisticRegressionFunction::Gradient(
+void LogisticFunction::Gradient(
     const arma::mat& values,
     arma::mat& gradient)
 {
