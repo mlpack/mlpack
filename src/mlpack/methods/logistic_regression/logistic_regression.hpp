@@ -11,7 +11,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
 
-#include "logistic_regression_function.hpp"
+#include "logistic_function.hpp"
 
 namespace mlpack {
 namespace regression {

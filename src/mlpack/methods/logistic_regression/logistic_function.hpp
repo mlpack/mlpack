@@ -3,25 +3,25 @@
  * @author Sumedh Ghaisas
  *
  * Implementation of the logistic regression function, which is meant to be
- * optimized by a separate optimizer class that takes LogisticRegressionFunction
+ * optimized by a separate optimizer class that takes LogisticFunction
  * as its FunctionType class.
  */
-#ifndef __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_FUNCTION_HPP
-#define __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_FUNCTION_HPP
+#ifndef __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_FUNCTION_HPP
+#define __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_FUNCTION_HPP
 
 #include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace regression {
 
-class LogisticRegressionFunction
+class LogisticFunction
 {
  public:
-  LogisticRegressionFunction(arma::mat& predictors,
+  LogisticFunction(arma::mat& predictors,
                              arma::vec& responses,
                              const double lambda = 0);
 
-  LogisticRegressionFunction(arma::mat& predictors,
+  LogisticFunction(arma::mat& predictors,
                              arma::vec& responses,
                              const arma::mat& initialPoint,
                              const double lambda = 0);
@@ -77,4 +77,4 @@ class LogisticRegressionFunction
 }; // namespace regression
 }; // namespace mlpack
 
-#endif // __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_FUNCTION_HPP
+#endif // __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_FUNCTION_HPP
