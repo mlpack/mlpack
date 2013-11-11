@@ -2,10 +2,10 @@
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
 set(SOURCES
-  logistic_function.hpp
-  logistic_function_impl.hpp
   logistic_regression.hpp
   logistic_regression_impl.hpp
+  logistic_regression_function.hpp
+  logistic_regression_function_impl.hpp
 )
 
 # add directory name to sources

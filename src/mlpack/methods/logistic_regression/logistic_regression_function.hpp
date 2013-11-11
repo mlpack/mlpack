@@ -3,35 +3,30 @@
  * @author Sumedh Ghaisas
  *
  * Implementation of the logistic regression function, which is meant to be
- * optimized by a separate optimizer class that takes LogisticFunction
+ * optimized by a separate optimizer class that takes LogisticRegressionFunction
  * as its FunctionType class.
  */
-#ifndef __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_FUNCTION_HPP
-#define __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_FUNCTION_HPP
+#ifndef __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_FUNCTION_HPP
+#define __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_FUNCTION_HPP
 
 #include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace regression {
 
-class LogisticFunction
+class LogisticRegressionFunction
 {
  public:
-  LogisticFunction(arma::mat& predictors,
+  LogisticRegressionFunction(arma::mat& predictors,
                              arma::vec& responses,
                              const double lambda = 0);
 
-  LogisticFunction(arma::mat& predictors,
+  LogisticRegressionFunction(arma::mat& predictors,
                              arma::vec& responses,
                              const arma::mat& initialPoint,
                              const double lambda = 0);
 
   arma::vec getSigmoid(const arma::vec& values) const;
-
-  //evaluates the logistic function with given parameters
-  double Evaluate(const arma::mat& predictors,
-                  const arma::vec& responses,
-                  const arma::mat& values) const;
 
   //!Return the initial point
   const arma::mat& InitialPoint() const { return initialPoint; }
@@ -44,10 +39,7 @@ class LogisticFunction
   double& Lambda() { return lambda; }
 
   //functions to optimize by l-bfgs
-  double Evaluate(const arma::mat& values) const
-  {
-      return Evaluate(predictors, responses, values);
-  }
+  double Evaluate(const arma::mat& values) const;
 
   void Gradient(const arma::mat& values, arma::mat& gradient);
 
@@ -77,4 +69,4 @@ class LogisticFunction
 }; // namespace regression
 }; // namespace mlpack
 
-#endif // __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_FUNCTION_HPP
+#endif // __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_FUNCTION_HPP
