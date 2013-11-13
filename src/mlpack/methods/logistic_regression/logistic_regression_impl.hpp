@@ -107,10 +107,10 @@ void LogisticRegression<OptimizerType>::Predict(
   ones.ones(predictors.n_cols);
   predictors.insert_rows(0, ones);
 
-  responses = arma::floor(
-      errorFunction.getSigmoid(arma::trans(predictors) * parameters) -
-      decisionBoundary * arma::ones<arma::vec>(predictors.n_cols, 1)) +
-      arma::ones<arma::vec>(predictors.n_cols);
+//  responses = arma::floor(
+//      errorFunction.getSigmoid(arma::trans(predictors) * parameters) -
+//      decisionBoundary * arma::ones<arma::vec>(predictors.n_cols, 1)) +
+//      arma::ones<arma::vec>(predictors.n_cols);
 
   //shed the added rows
   predictors.shed_row(0);
