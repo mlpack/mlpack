@@ -88,7 +88,7 @@ double LogisticRegressionFunction::Evaluate(const arma::mat& parameters)
 }
 
 void LogisticRegressionFunction::Gradient(const arma::mat& parameters,
-                                          arma::mat& gradient)
+                                          arma::mat& gradient) const
 {
   // Regularization term.
   arma::mat regularization = arma::zeros<arma::mat>(predictors.n_rows, 1);

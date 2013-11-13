@@ -51,7 +51,14 @@ class LogisticRegressionFunction
    */
   double Evaluate(const arma::mat& parameters) const;
 
-  void Gradient(const arma::mat& values, arma::mat& gradient);
+  /**
+   * Evaluate the gradient of the logistic regression log-likelihood function
+   * with the given parameters.
+   *
+   * @param parameters Vector of logistic regression parameters.
+   * @param gradient Vector to output gradient into.
+   */
+  void Gradient(const arma::mat& parameters, arma::mat& gradient) const;
 
   const arma::mat& GetInitialPoint() const { return initialPoint; }
 
