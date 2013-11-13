@@ -36,16 +36,6 @@ LogisticRegressionFunction::LogisticRegressionFunction(
     this->initialPoint = arma::zeros<arma::mat>(predictors.n_rows + 1, 1);
 }
 
-/*
-arma::vec LogisticRegressionFunction::getSigmoid(const arma::vec& values,
-                                       arma::vec& output) const
-{
-  arma::vec out = arma::ones<arma::vec>(values.n_rows,1) /
-      (arma::ones<arma::vec>(values.n_rows,1) + arma::exp(-values));
-  return out;
-}
-*/
-
 /**
  * Evaluate the logistic regression objective function given the estimated
  * parameters.

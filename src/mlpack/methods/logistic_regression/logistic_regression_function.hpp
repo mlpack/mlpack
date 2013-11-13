@@ -14,6 +14,11 @@
 namespace mlpack {
 namespace regression {
 
+/**
+ * The log-likelihood function for the logistic regression objective function.
+ * This is used by various mlpack optimizers to train a logistic regression
+ * model.
+ */
 class LogisticRegressionFunction
 {
  public:
@@ -25,8 +30,6 @@ class LogisticRegressionFunction
                              arma::vec& responses,
                              const arma::mat& initialPoint,
                              const double lambda = 0);
-
-  arma::vec getSigmoid(const arma::vec& values) const;
 
   //! Return the initial point for the optimization.
   const arma::mat& InitialPoint() const { return initialPoint; }
