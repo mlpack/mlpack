@@ -87,16 +87,15 @@ double LogisticRegressionFunction::Evaluate(const arma::mat& parameters)
   return -(result + regularization);
 }
 
-void LogisticRegressionFunction::Gradient(const arma::mat& values,
-                                arma::mat& gradient)
+void LogisticRegressionFunction::Gradient(const arma::mat& parameters,
+                                          arma::mat& gradient)
 {
-  //regularization
-//  arma::mat regularization = arma::zeros<arma::mat>(predictors.n_rows, 1);
-//  regularization.rows(1, predictors.n_rows - 1) = lambda *
-//      values.rows(1, predictors.n_rows - 1) / responses.n_rows;
+  // Regularization term.
+  arma::mat regularization = arma::zeros<arma::mat>(predictors.n_rows, 1);
+  regularization.rows(1, predictors.n_rows - 1) = lambda *
+      parameters.col(0).subvec(1, predictors.n_rows - 1);
 
-  //gradient =
-//  gradient = -(predictors * (responses
-//      - (1 / (1 + arma::exp(-(arma::trans(predictors) * values))))
-//      / responses.n_rows + regularization;
+  gradient = -predictors * (responses
+      - (1 / (1 + arma::exp(-predictors.t() * parameters))))
+      - regularization;
 }
