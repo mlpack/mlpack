@@ -11,7 +11,7 @@ set(DIRS
   lars
   linear_regression
   local_coordinate_coding
-#  logistic_regression
+  logistic_regression
   lsh
 #  mvu
   naive_bayes
