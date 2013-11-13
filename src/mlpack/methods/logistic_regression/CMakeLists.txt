@@ -5,7 +5,7 @@ set(SOURCES
   logistic_regression.hpp
   logistic_regression_impl.hpp
   logistic_regression_function.hpp
-  logistic_regression_function_impl.hpp
+  logistic_regression_function.cpp
 )
 
 # add directory name to sources
@@ -17,10 +17,10 @@ endforeach()
 # the parent scope)
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(logistic_regression
-  logistic_regression_main.cpp
-)
-target_link_libraries(logistic_regression
-  mlpack
-)
-install(TARGETS logistic_regression RUNTIME DESTINATION bin)
+#add_executable(logistic_regression
+#  logistic_regression_main.cpp
+#)
+#target_link_libraries(logistic_regression
+#  mlpack
+#)
+#install(TARGETS logistic_regression RUNTIME DESTINATION bin)

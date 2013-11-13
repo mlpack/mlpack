@@ -72,11 +72,12 @@ double LogisticRegression<OptimizerType>::ComputeError(
   ones.ones(predictors.n_cols);
   predictors.insert_rows(0, ones);
 
-  double out = errorFunction.Evaluate(predictors, responses, parameters);
+//  double out = errorFunction.Evaluate(predictors, responses, parameters);
 
   predictors.shed_row(0);
 
-  return out;
+//  return out;
+  return 0.0;
 }
 
 template <template<typename> class OptimizerType>

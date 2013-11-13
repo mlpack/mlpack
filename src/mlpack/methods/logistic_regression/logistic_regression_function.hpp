@@ -38,8 +38,18 @@ class LogisticRegressionFunction
   //! Modify the lambda
   double& Lambda() { return lambda; }
 
-  //functions to optimize by l-bfgs
-  double Evaluate(const arma::mat& values) const;
+  /**
+   * Evaluate the logistic regression log-likelihood function with the given
+   * parameters.  Note that if a point has 0 probability of being classified
+   * directly with the given parameters, then Evaluate() will return nan (this
+   * is kind of a corner case and should not happen for reasonable models).
+   *
+   * The optimum (minimum) of this function is 0.0, and occurs when each point
+   * is classified correctly with very high probability.
+   *
+   * @param parameters Vector of logistic regression parameters.
+   */
+  double Evaluate(const arma::mat& parameters) const;
 
   void Gradient(const arma::mat& values, arma::mat& gradient);
 
