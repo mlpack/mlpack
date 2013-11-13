@@ -16,7 +16,7 @@ using namespace mlpack::regression;
 BOOST_AUTO_TEST_SUITE(LogisticRegressionTest);
 
 /**
- * Test the LogisticFunction on a simple set of points.
+ * Test the LogisticRegressionFunction on a simple set of points.
  */
 BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionEvaluate)
 {
@@ -36,6 +36,48 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionEvaluate)
   BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::vec("200 -40 -40")), 0.0, 1e-5);
   BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::vec("200 -80 0")), 0.0, 1e-5);
   BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::vec("200 -100 20")), 0.0, 1e-5);
+}
+
+/**
+ * A more complicated test for the LogisticRegressionFunction.
+ */
+BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRandomEvaluate)
+{
+  const size_t points = 1000;
+  const size_t dimension = 10;
+  const size_t trials = 50;
+
+  // Create a random dataset.
+  arma::mat data;
+  data.randu(dimension, points);
+  // Create random responses.
+  arma::vec responses(points);
+  for (size_t i = 0; i < points; ++i)
+    responses[i] = math::RandInt(0, 2);
+
+  LogisticRegressionFunction lrf(data, responses, 0.0 /* no regularization */);
+
+  // Run a bunch of trials.
+  for (size_t i = 0; i < trials; ++i)
+  {
+    // Generate a random set of parameters.
+    arma::vec parameters;
+    parameters.randu(dimension);
+
+    // Hand-calculate the loss function.
+    double loglikelihood = 0.0;
+    for (size_t j = 0; j < points; ++j)
+    {
+      const double sigmoid = (1.0 / (1.0 +
+          exp(-arma::dot(data.col(j), parameters))));
+      if (responses[j] == 1.0)
+        loglikelihood += log(std::pow(sigmoid, responses[j]));
+      else
+        loglikelihood += log(std::pow(1.0 - sigmoid, 1.0 - responses[j]));
+    }
+
+    BOOST_REQUIRE_CLOSE(lrf.Evaluate(parameters), -loglikelihood, 1e-5);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();
