@@ -28,14 +28,14 @@ class LogisticRegressionFunction
 
   arma::vec getSigmoid(const arma::vec& values) const;
 
-  //!Return the initial point
+  //! Return the initial point for the optimization.
   const arma::mat& InitialPoint() const { return initialPoint; }
-  //! Modify the initial point
+  //! Modify the initial point for the optimization.
   arma::mat& InitialPoint() { return initialPoint; }
 
-  //!Return the lambda
+  //! Return the regularization parameter (lambda).
   const double& Lambda() const { return lambda; }
-  //! Modify the lambda
+  //! Modify the regularization parameter (lambda).
   double& Lambda() { return lambda; }
 
   /**
@@ -60,6 +60,7 @@ class LogisticRegressionFunction
    */
   void Gradient(const arma::mat& parameters, arma::mat& gradient) const;
 
+  //! Return the initial point for the optimization.
   const arma::mat& GetInitialPoint() const { return initialPoint; }
 
   //functions to optimize by sgd
@@ -77,9 +78,13 @@ class LogisticRegressionFunction
   size_t NumFunctions() { return 1; }
 
  private:
+  //! The initial point, from which to start the optimization.
   arma::mat initialPoint;
+  //! The matrix of data points (predictors).
   arma::mat& predictors;
+  //! The vector of responses to the input data points.
   arma::vec& responses;
+  //! The regularization parameter for L2-regularization.
   double lambda;
 };
 
