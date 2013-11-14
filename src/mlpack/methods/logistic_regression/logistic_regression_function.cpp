@@ -101,6 +101,7 @@ double LogisticRegressionFunction::Evaluate(const arma::mat& parameters,
     return -(log(1.0 - sigmoid) + regularization);
 }
 
+//! Evaluate the gradient of the logistic regression objective function.
 void LogisticRegressionFunction::Gradient(const arma::mat& parameters,
                                           arma::mat& gradient) const
 {
@@ -112,4 +113,24 @@ void LogisticRegressionFunction::Gradient(const arma::mat& parameters,
   gradient = -predictors * (responses
       - (1 / (1 + arma::exp(-predictors.t() * parameters))))
       - regularization;
+}
+
+/**
+ * Evaluate the individual gradients of the logistic regression objective
+ * function with respect to individual points.  This is useful for optimizers
+ * that use a separable objective function, such as SGD.
+ */
+void LogisticRegressionFunction::Gradient(const arma::mat& parameters,
+                                          const size_t i,
+                                          arma::mat& gradient) const
+{
+  // Calculate the regularization term.
+  arma::mat regularization = arma::zeros<arma::mat>(predictors.n_rows, 1);
+  regularization.rows(1, predictors.n_rows - 1) = lambda *
+      parameters.col(0).subvec(1, predictors.n_rows - 1) / predictors.n_cols;
+
+  const double sigmoid = 1.0 /
+      (1.0 + std::exp(-arma::dot(predictors.col(i), parameters)));
+
+  gradient = -predictors.col(i) * (responses[i] - sigmoid) - regularization;
 }
