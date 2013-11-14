@@ -170,4 +170,47 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionGradient)
   BOOST_REQUIRE_GE(gradient[0], 0.0);
 }
 
+/**
+ * Test individual Evaluate() functions for SGD.
+ */
+BOOST_AUTO_TEST_CASE(LogisticRegressionSeparableEvaluate)
+{
+  // Very simple fake dataset.
+  arma::mat data("1 1 1;" // Fake row for intercept.
+                 "1 2 3;"
+                 "1 2 3");
+  arma::vec responses("1 1 0");
+
+  // Create a LogisticRegressionFunction.
+  LogisticRegressionFunction lrf(data, responses, 0.0 /* no regularization */);
+
+  // These were hand-calculated using Octave.
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::vec("1 1 1"), 0), 4.85873516e-2, 1e-5);
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::vec("1 1 1"), 1), 6.71534849e-3, 1e-5);
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::vec("1 1 1"), 2), 7.00091146645, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::vec("0 0 0"), 0), 0.6931471805, 1e-5);
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::vec("0 0 0"), 1), 0.6931471805, 1e-5);
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::vec("0 0 0"), 2), 0.6931471805, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::vec("-1 -1 -1"), 0), 3.0485873516,
+      1e-5);
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::vec("-1 -1 -1"), 1), 5.0067153485,
+      1e-5);
+  BOOST_REQUIRE_CLOSE(lrf.Evaluate(arma::vec("-1 -1 -1"), 2), 9.1146645377e-4,
+      1e-5);
+
+  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::vec("200 -40 -40"), 0), 1e-5);
+  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::vec("200 -40 -40"), 1), 1e-5);
+  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::vec("200 -40 -40"), 2), 1e-5);
+
+  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::vec("200 -80 0"), 0), 1e-5);
+  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::vec("200 -80 0"), 1), 1e-5);
+  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::vec("200 -80 0"), 2), 1e-5);
+
+  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::vec("200 -100 20"), 0), 1e-5);
+  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::vec("200 -100 20"), 1), 1e-5);
+  BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::vec("200 -100 20"), 2), 1e-5);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
