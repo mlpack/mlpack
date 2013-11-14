@@ -68,9 +68,9 @@ double LogisticRegressionFunction::Evaluate(const arma::mat& parameters)
   for (size_t i = 0; i < responses.n_elem; ++i)
   {
     if (responses[i] == 1)
-      result += responses[i] * log(sigmoid[i]);
+      result += log(sigmoid[i]);
     else
-      result += (1 - responses[i]) * log(1.0 - sigmoid[i]);
+      result += log(1.0 - sigmoid[i]);
   }
 
   // Invert the result, because it's a minimization.
