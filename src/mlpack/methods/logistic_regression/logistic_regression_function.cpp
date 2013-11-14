@@ -77,6 +77,30 @@ double LogisticRegressionFunction::Evaluate(const arma::mat& parameters)
   return -(result + regularization);
 }
 
+/**
+ * Evaluate the logistic regression objective function, but with only one point.
+ * This is useful for optimizers that use a separable objective function, such
+ * as SGD.
+ */
+double LogisticRegressionFunction::Evaluate(const arma::mat& parameters,
+                                            const size_t i) const
+{
+  // Calculate the regularization term.  We must divide by the number of points,
+  // so that sum(Evaluate(parameters, [1:points])) == Evaluate(parameters).
+  const double regularization = lambda * (1.0 / (2.0 * predictors.n_cols)) *
+      arma::dot(parameters.col(0).subvec(1, parameters.n_elem - 1),
+                parameters.col(0).subvec(1, parameters.n_elem - 1));
+
+  // Calculate sigmoid.
+  const double sigmoid = 1.0 /
+      (1.0 + std::exp(-arma::dot(predictors.col(i), parameters)));
+
+  if (responses[i] == 1)
+    return -(log(sigmoid) + regularization);
+  else
+    return -(log(1.0 - sigmoid) + regularization);
+}
+
 void LogisticRegressionFunction::Gradient(const arma::mat& parameters,
                                           arma::mat& gradient) const
 {
