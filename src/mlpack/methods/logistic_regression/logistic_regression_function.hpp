@@ -57,8 +57,8 @@ class LogisticRegressionFunction
   /**
    * Evaluate the logistic regression log-likelihood function with the given
    * parameters, but using only one data point.  This is useful for optimizers
-   * such as SGD, that require a separable objective function.  Note that if the
-   * point has 0 probability of being classified correctly with the given
+   * such as SGD, which require a separable objective function.  Note that if
+   * the point has 0 probability of being classified correctly with the given
    * parameters, then Evaluate() will return nan (this is kind of a corner case
    * and should not happen for reasonable models).
    *
@@ -68,7 +68,7 @@ class LogisticRegressionFunction
    * @param parameters Vector of logistic regression parameters.
    * @param i Index of point to use for objective function evaluation.
    */
-  double Evaluate(const arma::mat& values, const size_t i) const;
+  double Evaluate(const arma::mat& parameters, const size_t i) const;
 
   /**
    * Evaluate the gradient of the logistic regression log-likelihood function
@@ -79,16 +79,24 @@ class LogisticRegressionFunction
    */
   void Gradient(const arma::mat& parameters, arma::mat& gradient) const;
 
+  /**
+   * Evaluate the gradient of the logistic regression log-likelihood function
+   * with the given parameters, and with respect to only one point in the
+   * dataset.  This is useful for optimizers such as SGD, which require a
+   * separable objective function.
+   *
+   * @param parameters Vector of logistic regression parameters.
+   * @param i Index of points to use for objective function gradient evaluation.
+   * @param gradient Vector to output gradient into.
+   */
+  void Gradient(const arma::mat& parameters,
+                const size_t i,
+                arma::mat& gradient) const;
+
   //! Return the initial point for the optimization.
   const arma::mat& GetInitialPoint() const { return initialPoint; }
 
-  void Gradient(const arma::mat& values,
-                const size_t i,
-                arma::mat& gradient)
-  {
-    Gradient(values,gradient);
-  }
-
+  //! Return the number of separable functions (the number of predictor points).
   size_t NumFunctions() const { return predictors.n_cols; }
 
  private:
