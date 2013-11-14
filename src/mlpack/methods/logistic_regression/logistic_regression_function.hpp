@@ -55,6 +55,22 @@ class LogisticRegressionFunction
   double Evaluate(const arma::mat& parameters) const;
 
   /**
+   * Evaluate the logistic regression log-likelihood function with the given
+   * parameters, but using only one data point.  This is useful for optimizers
+   * such as SGD, that require a separable objective function.  Note that if the
+   * point has 0 probability of being classified correctly with the given
+   * parameters, then Evaluate() will return nan (this is kind of a corner case
+   * and should not happen for reasonable models).
+   *
+   * The optimum (minimum) of this function is 0.0, and occurs when the point is
+   * classified correctly with very high probability.
+   *
+   * @param parameters Vector of logistic regression parameters.
+   * @param i Index of point to use for objective function evaluation.
+   */
+  double Evaluate(const arma::mat& values, const size_t i) const;
+
+  /**
    * Evaluate the gradient of the logistic regression log-likelihood function
    * with the given parameters.
    *
@@ -66,11 +82,6 @@ class LogisticRegressionFunction
   //! Return the initial point for the optimization.
   const arma::mat& GetInitialPoint() const { return initialPoint; }
 
-  //functions to optimize by sgd
-  double Evaluate(const arma::mat& values, const size_t i) const
-  {
-    return Evaluate(values);
-  }
   void Gradient(const arma::mat& values,
                 const size_t i,
                 arma::mat& gradient)
@@ -78,7 +89,7 @@ class LogisticRegressionFunction
     Gradient(values,gradient);
   }
 
-  size_t NumFunctions() { return 1; }
+  size_t NumFunctions() const { return predictors.n_cols; }
 
  private:
   //! The initial point, from which to start the optimization.
