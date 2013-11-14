@@ -213,4 +213,53 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSeparableEvaluate)
   BOOST_REQUIRE_SMALL(lrf.Evaluate(arma::vec("200 -100 20"), 2), 1e-5);
 }
 
+/**
+ * Test regularization for the separable LogisticRegressionFunction Evaluate()
+ * function.
+ */
+BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRegularizationSeparableEvaluate)
+{
+  const size_t points = 5000;
+  const size_t dimension = 25;
+  const size_t trials = 10;
+
+  // Create a random dataset.
+  arma::mat data;
+  data.randu(dimension, points);
+  // Create random responses.
+  arma::vec responses(points);
+  for (size_t i = 0; i < points; ++i)
+    responses[i] = math::RandInt(0, 2);
+
+  LogisticRegressionFunction lrfNoReg(data, responses, 0.0);
+  LogisticRegressionFunction lrfSmallReg(data, responses, 0.5);
+  LogisticRegressionFunction lrfBigReg(data, responses, 20.0);
+
+  // Check that the number of functions is correct.
+  BOOST_REQUIRE_EQUAL(lrfNoReg.NumFunctions(), points);
+  BOOST_REQUIRE_EQUAL(lrfSmallReg.NumFunctions(), points);
+  BOOST_REQUIRE_EQUAL(lrfBigReg.NumFunctions(), points);
+
+  for (size_t i = 0; i < trials; ++i)
+  {
+    arma::vec parameters(dimension);
+    parameters.randu();
+
+    // Regularization term: 0.5 * lambda * || parameters ||_2^2 (but note that
+    // the first parameters term is ignored).
+    const double smallRegTerm = (0.25 * std::pow(arma::norm(parameters, 2), 2.0)
+        - 0.25 * std::pow(parameters[0], 2.0)) / points;
+    const double bigRegTerm = (10.0 * std::pow(arma::norm(parameters, 2), 2.0)
+        - 10.0 * std::pow(parameters[0], 2.0)) / points;
+
+    for (size_t j = 0; j < points; ++j)
+    {
+      BOOST_REQUIRE_CLOSE(lrfNoReg.Evaluate(parameters, j) - smallRegTerm,
+          lrfSmallReg.Evaluate(parameters, j), 1e-5);
+      BOOST_REQUIRE_CLOSE(lrfNoReg.Evaluate(parameters, j) - bigRegTerm,
+          lrfBigReg.Evaluate(parameters, j), 1e-5);
+    }
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END();
