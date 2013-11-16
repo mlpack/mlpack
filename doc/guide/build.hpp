@@ -38,8 +38,8 @@ In Ubuntu and Debian, you can get all of these dependencies through apt:
   libboost-random-dev libboost-test-dev libxml2-dev libarmadillo-dev
 @endcode
 
-If you are using an Ubuntu version older than 12.04 ("Precise Pangolin") or
-Debian older than Wheezy, you will have to compile Armadillo from source.  See
+If you are using an Ubuntu version older than 13.10 ("Saucy Salamander") or
+Debian older than Jessie, you will have to compile Armadillo from source.  See
 the README.txt distributed with Armadillo for more information.
 
 On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via yum:
