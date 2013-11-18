@@ -51,8 +51,12 @@ void SparseCoding<DictionaryInitializer>::Encode(const size_t maxIterations,
 
   for (size_t t = 1; t != maxIterations; ++t)
   {
-    Log::Info << "Iteration " << t << " of " << maxIterations << "."
-        << std::endl;
+    // Print current iteration, and maximum number of iterations (if it isn't
+    // 0).
+    Log::Info << "Iteration " << t;
+    if (maxIterations != 0)
+      Log::Info << " of " << maxIterations;
+    Log::Info << "." << std::endl;
 
     // First step: optimize the dictionary.
     Log::Info << "Performing dictionary step... " << std::endl;
