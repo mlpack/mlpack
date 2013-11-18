@@ -262,6 +262,10 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
             oldFromNewReferences[(*neighborPtr)(j, i)];
       }
     }
+
+    // Finished with temporary matrices.
+    delete neighborPtr;
+    delete distancePtr;
   }
   else if (treeOwner && hasQuerySet && singleMode) // Map only references.
   {
