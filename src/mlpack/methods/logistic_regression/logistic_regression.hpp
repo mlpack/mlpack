@@ -32,8 +32,8 @@ class LogisticRegression
    * @param responses Outputs resulting from input training variables.
    * @param lambda L2-regularization parameter.
    */
-  LogisticRegression(arma::mat& predictors,
-                     arma::vec& responses,
+  LogisticRegression(const arma::mat& predictors,
+                     const arma::vec& responses,
                      const double lambda = 0);
 
   /**
@@ -47,8 +47,8 @@ class LogisticRegression
    * @param initialPoint Initial model to train with.
    * @param lambda L2-regularization parameter.
    */
-  LogisticRegression(arma::mat& predictors,
-                     arma::vec& responses,
+  LogisticRegression(const arma::mat& predictors,
+                     const arma::vec& responses,
                      const arma::mat& initialPoint,
                      const double lambda = 0);
 
@@ -77,8 +77,8 @@ class LogisticRegression
 
  private:
   arma::vec parameters;
-  arma::mat& predictors;
-  arma::vec& responses;
+  const arma::mat& predictors;
+  const arma::vec& responses;
   LogisticRegressionFunction errorFunction;
   OptimizerType<LogisticRegressionFunction> optimizer;
   double lambda;
