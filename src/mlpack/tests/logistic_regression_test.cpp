@@ -21,8 +21,7 @@ BOOST_AUTO_TEST_SUITE(LogisticRegressionTest);
 BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionEvaluate)
 {
   // Very simple fake dataset.
-  arma::mat data("1 1 1;" // Fake row for intercept.
-                 "1 2 3;"
+  arma::mat data("1 2 3;"
                  "1 2 3");
   arma::vec responses("1 1 0");
 
@@ -62,14 +61,14 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRandomEvaluate)
   {
     // Generate a random set of parameters.
     arma::vec parameters;
-    parameters.randu(dimension);
+    parameters.randu(dimension + 1);
 
     // Hand-calculate the loss function.
     double loglikelihood = 0.0;
     for (size_t j = 0; j < points; ++j)
     {
-      const double sigmoid = (1.0 / (1.0 +
-          exp(-arma::dot(data.col(j), parameters))));
+      const double sigmoid = (1.0 / (1.0 + exp(-parameters[0] -
+          arma::dot(data.col(j), parameters.subvec(1, dimension)))));
       if (responses[j] == 1.0)
         loglikelihood += log(std::pow(sigmoid, responses[j]));
       else
@@ -103,7 +102,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRegularizationEvaluate)
 
   for (size_t i = 0; i < trials; ++i)
   {
-    arma::vec parameters(dimension);
+    arma::vec parameters(dimension + 1);
     parameters.randu();
 
     // Regularization term: 0.5 * lambda * || parameters ||_2^2 (but note that
@@ -126,8 +125,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRegularizationEvaluate)
 BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionGradient)
 {
   // Very simple fake dataset.
-  arma::mat data("1 1 1;" // Fake row for intercept.
-                 "1 2 3;"
+  arma::mat data("1 2 3;"
                  "1 2 3");
   arma::vec responses("1 1 0");
 
@@ -176,9 +174,8 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionGradient)
 BOOST_AUTO_TEST_CASE(LogisticRegressionSeparableEvaluate)
 {
   // Very simple fake dataset.
-  arma::mat data("1 1 1;" // Fake row for intercept.
-                 "1 2 3;"
-                 "1 2 3");
+  arma::mat data("1 2 3;"
+                 "1 2 3;");
   arma::vec responses("1 1 0");
 
   // Create a LogisticRegressionFunction.
@@ -242,7 +239,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRegularizationSeparableEvaluate)
 
   for (size_t i = 0; i < trials; ++i)
   {
-    arma::vec parameters(dimension);
+    arma::vec parameters(dimension + 1);
     parameters.randu();
 
     // Regularization term: 0.5 * lambda * || parameters ||_2^2 (but note that
@@ -268,8 +265,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRegularizationSeparableEvaluate)
 BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionSeparableGradient)
 {
   // Very simple fake dataset.
-  arma::mat data("1 1 1;" // Fake row for intercept.
-                 "1 2 3;"
+  arma::mat data("1 2 3;"
                  "1 2 3");
   arma::vec responses("1 1 0");
 
@@ -361,7 +357,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRegularizationGradient)
 
   for (size_t i = 0; i < trials; ++i)
   {
-    arma::vec parameters(dimension);
+    arma::vec parameters(dimension + 1);
     parameters.randu();
 
     // Regularization term: 0.5 * lambda * || parameters ||_2^2 (but note that
@@ -423,7 +419,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRegularizationSeparableGradient)
 
   for (size_t i = 0; i < trials; ++i)
   {
-    arma::vec parameters(dimension);
+    arma::vec parameters(dimension + 1);
     parameters.randu();
 
     // Regularization term: 0.5 * lambda * || parameters ||_2^2 (but note that
