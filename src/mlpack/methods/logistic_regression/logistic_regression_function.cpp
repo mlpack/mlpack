@@ -10,8 +10,8 @@ using namespace mlpack;
 using namespace mlpack::regression;
 
 LogisticRegressionFunction::LogisticRegressionFunction(
-    arma::mat& predictors,
-    arma::vec& responses,
+    const arma::mat& predictors,
+    const arma::vec& responses,
     const double lambda) :
     predictors(predictors),
     responses(responses),
@@ -21,8 +21,8 @@ LogisticRegressionFunction::LogisticRegressionFunction(
 }
 
 LogisticRegressionFunction::LogisticRegressionFunction(
-    arma::mat& predictors,
-    arma::vec& responses,
+    const arma::mat& predictors,
+    const arma::vec& responses,
     const arma::mat& initialPoint,
     const double lambda) :
     initialPoint(initialPoint),
