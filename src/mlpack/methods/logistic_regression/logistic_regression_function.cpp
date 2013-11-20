@@ -56,8 +56,10 @@ double LogisticRegressionFunction::Evaluate(const arma::mat& parameters)
       arma::dot(parameters.col(0).subvec(1, parameters.n_elem - 1),
                 parameters.col(0).subvec(1, parameters.n_elem - 1));
 
-  // Calculate vectors of sigmoids.
-  const arma::vec exponents = predictors.t() * parameters;
+  // Calculate vectors of sigmoids.  The intercept term is parameters(0, 0) and
+  // does not need to be multiplied by any of the predictors.
+  const arma::vec exponents = parameters(0, 0) + predictors.t() *
+      parameters.col(0).subvec(1, parameters.n_elem - 1);
   const arma::vec sigmoid = 1.0 / (1.0 + arma::exp(-exponents));
 
   // Assemble full objective function.  Often the objective function and the
@@ -92,8 +94,9 @@ double LogisticRegressionFunction::Evaluate(const arma::mat& parameters,
                 parameters.col(0).subvec(1, parameters.n_elem - 1));
 
   // Calculate sigmoid.
-  const double sigmoid = 1.0 /
-      (1.0 + std::exp(-arma::dot(predictors.col(i), parameters)));
+  const double exponent = parameters(0, 0) + arma::dot(predictors.col(i),
+      parameters.col(0).subvec(1, parameters.n_elem - 1));
+  const double sigmoid = 1.0 / (1.0 + std::exp(-exponent));
 
   if (responses[i] == 1)
     return -(log(sigmoid) + regularization);
@@ -106,13 +109,16 @@ void LogisticRegressionFunction::Gradient(const arma::mat& parameters,
                                           arma::mat& gradient) const
 {
   // Regularization term.
-  arma::mat regularization = arma::zeros<arma::mat>(predictors.n_rows, 1);
-  regularization.rows(1, predictors.n_rows - 1) = lambda *
-      parameters.col(0).subvec(1, predictors.n_rows - 1);
+  arma::mat regularization;
+  regularization = lambda * parameters.col(0).subvec(1, parameters.n_elem - 1);
 
-  gradient = -predictors * (responses
-      - (1 / (1 + arma::exp(-predictors.t() * parameters))))
-      - regularization;
+  const arma::vec sigmoids = 1 / (1 + arma::exp(-parameters(0, 0)
+      - predictors.t() * parameters.col(0).subvec(1, parameters.n_elem - 1)));
+
+  gradient.set_size(parameters.n_elem);
+  gradient[0] = -arma::accu(responses - sigmoids);
+  gradient.col(0).subvec(1, parameters.n_elem - 1) = -predictors * (responses -
+      sigmoids) - regularization;
 }
 
 /**
@@ -125,12 +131,16 @@ void LogisticRegressionFunction::Gradient(const arma::mat& parameters,
                                           arma::mat& gradient) const
 {
   // Calculate the regularization term.
-  arma::mat regularization = arma::zeros<arma::mat>(predictors.n_rows, 1);
-  regularization.rows(1, predictors.n_rows - 1) = lambda *
-      parameters.col(0).subvec(1, predictors.n_rows - 1) / predictors.n_cols;
+  arma::mat regularization;
+  regularization = lambda * parameters.col(0).subvec(1, parameters.n_elem - 1)
+      / predictors.n_cols;
 
-  const double sigmoid = 1.0 /
-      (1.0 + std::exp(-arma::dot(predictors.col(i), parameters)));
+  const double sigmoid = 1.0 / (1.0 + std::exp(-parameters(0, 0)
+      - arma::dot(predictors.col(i), parameters.col(0).subvec(1,
+      parameters.n_elem - 1))));
 
-  gradient = -predictors.col(i) * (responses[i] - sigmoid) - regularization;
+  gradient.set_size(parameters.n_elem);
+  gradient[0] = -(responses[i] - sigmoid);
+  gradient.col(0).subvec(1, parameters.n_elem - 1) = -predictors.col(i)
+      * (responses[i] - sigmoid) - regularization;
 }
