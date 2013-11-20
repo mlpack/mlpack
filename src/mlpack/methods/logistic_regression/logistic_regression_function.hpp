@@ -22,12 +22,12 @@ namespace regression {
 class LogisticRegressionFunction
 {
  public:
-  LogisticRegressionFunction(arma::mat& predictors,
-                             arma::vec& responses,
+  LogisticRegressionFunction(const arma::mat& predictors,
+                             const arma::vec& responses,
                              const double lambda = 0);
 
-  LogisticRegressionFunction(arma::mat& predictors,
-                             arma::vec& responses,
+  LogisticRegressionFunction(const arma::mat& predictors,
+                             const arma::vec& responses,
                              const arma::mat& initialPoint,
                              const double lambda = 0);
 
@@ -103,9 +103,9 @@ class LogisticRegressionFunction
   //! The initial point, from which to start the optimization.
   arma::mat initialPoint;
   //! The matrix of data points (predictors).
-  arma::mat& predictors;
+  const arma::mat& predictors;
   //! The vector of responses to the input data points.
-  arma::vec& responses;
+  const arma::vec& responses;
   //! The regularization parameter for L2-regularization.
   double lambda;
 };
