@@ -16,8 +16,8 @@ namespace regression {
 
 template<template<typename> class OptimizerType>
 LogisticRegression<OptimizerType>::LogisticRegression(
-    arma::mat& predictors,
-    arma::vec& responses,
+    const arma::mat& predictors,
+    const arma::vec& responses,
     const double lambda) :
     predictors(predictors),
     responses(responses),
@@ -30,8 +30,8 @@ LogisticRegression<OptimizerType>::LogisticRegression(
 
 template<template<typename> class OptimizerType>
 LogisticRegression<OptimizerType>::LogisticRegression(
-    arma::mat& predictors,
-    arma::vec& responses,
+    const arma::mat& predictors,
+    const arma::vec& responses,
     const arma::mat& initialPoint,
     const double lambda) :
     predictors(predictors),
@@ -46,18 +46,9 @@ LogisticRegression<OptimizerType>::LogisticRegression(
 template <template<typename> class OptimizerType>
 double LogisticRegression<OptimizerType>::LearnModel()
 {
-  //add rows of ones to predictors
-  arma::rowvec ones;
-  ones.ones(predictors.n_cols);
-  predictors.insert_rows(0, ones);
-
-  double out;
   Timer::Start("logistic_regression_optimization");
-  out = optimizer.Optimize(parameters);
+  const double out = optimizer.Optimize(parameters);
   Timer::Stop("logistic_regression_optimization");
-
-  //shed the added rows
-  predictors.shed_row(0);
 
   return out;
 }
