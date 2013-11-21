@@ -45,7 +45,21 @@ LogisticRegression<OptimizerType>::LogisticRegression(
   LearnModel();
 }
 
-template <template<typename> class OptimizerType>
+template<template<typename> class OptimizerType>
+LogisticRegression<OptimizerType>::LogisticRegression(
+    OptimizerType<LogisticRegressionFunction>& optimizer) :
+    predictors(optimizer.Function().Predictors()),
+    responses(optimizer.Function().Responses()),
+    parameters(optimizer.Function().GetInitialPoint()),
+    errorFunction(optimizer.Function()),
+    optimizer(optimizer)
+{
+  Timer::Start("logistic_regression_optimization");
+  const double out = optimizer.Optimize(parameters);
+  Timer::Stop("logistic_regression_optimization");
+}
+
+template<template<typename> class OptimizerType>
 void LogisticRegression<OptimizerType>::Predict(const arma::mat& predictors,
                                                 arma::vec& responses,
                                                 const double decisionBoundary)
