@@ -52,6 +52,19 @@ class LogisticRegression
                      const arma::mat& initialPoint,
                      const double lambda = 0);
 
+  /**
+   * Construct the LogisticRegression class with the given labeled training
+   * data.  This will train the model.  This overload takes an already
+   * instantiated optimizer (which holds the LogisticRegressionFunction error
+   * function, which must also be instantiated), so that the optimizer can be
+   * configured before the training is run by this constructor.  The predictors
+   * and responses and initial point are all taken from the error function
+   * contained in the optimizer.
+   *
+   * @param optimizer Instantiated optimizer with instantiated error function.
+   */
+  LogisticRegression(OptimizerType<LogisticRegressionFunction>& optimizer);
+
   //! Return the parameters (the b vector).
   const arma::vec& Parameters() const { return parameters; }
   //! Modify the parameters (the b vector).
