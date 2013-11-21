@@ -94,6 +94,11 @@ class L_BFGS
    */
   double Optimize(arma::mat& iterate, const size_t maxIterations);
 
+  //! Return the function that is being optimized.
+  const FunctionType& Function() const { return function; }
+  //! Modify the function that is being optimized.
+  FunctionType& Function() { return function; }
+
   //! Get the memory size.
   size_t NumBasis() const { return numBasis; }
   //! Modify the memory size.
