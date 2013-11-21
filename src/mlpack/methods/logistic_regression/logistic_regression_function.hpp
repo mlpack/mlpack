@@ -41,6 +41,11 @@ class LogisticRegressionFunction
   //! Modify the regularization parameter (lambda).
   double& Lambda() { return lambda; }
 
+  //! Return the matrix of predictors.
+  const arma::mat& Predictors() const { return predictors; }
+  //! Return the vector of responses.
+  const arma::vec& Responses() const { return responses; }
+
   /**
    * Evaluate the logistic regression log-likelihood function with the given
    * parameters.  Note that if a point has 0 probability of being classified
