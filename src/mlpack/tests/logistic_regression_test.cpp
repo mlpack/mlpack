@@ -6,12 +6,15 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
 
 using namespace mlpack;
 using namespace mlpack::regression;
+using namespace mlpack::optimization;
+using namespace mlpack::distribution;
 
 BOOST_AUTO_TEST_SUITE(LogisticRegressionTest);
 
@@ -460,6 +463,192 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRegularizationSeparableGradient)
       }
     }
   }
+}
+
+// Test training of logistic regression on a simple dataset.
+BOOST_AUTO_TEST_CASE(LogisticRegressionLBFGSSimpleTest)
+{
+  // Very simple fake dataset.
+  arma::mat data("1 2 3;"
+                 "1 2 3");
+  arma::vec responses("1 1 0");
+
+  // Create a logistic regression object using L-BFGS (that is the default).
+  LogisticRegression<> lr(data, responses);
+  Log::Warn << "Parameters: " << lr.Parameters() << "\n";
+
+  // Test sigmoid function.
+  arma::vec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
+      - data.t() * lr.Parameters().subvec(1, lr.Parameters().n_elem - 1)));
+
+  // Large 0.1% error tolerance is because the optimizer may terminate before
+  // the predictions converge to 1.
+  BOOST_REQUIRE_CLOSE(sigmoids[0], 1.0, 0.1);
+  BOOST_REQUIRE_CLOSE(sigmoids[1], 1.0, 5.0);
+  BOOST_REQUIRE_SMALL(sigmoids[2], 0.1);
+}
+
+// Test training of logistic regression on a simple dataset using SGD.
+BOOST_AUTO_TEST_CASE(LogisticRegressionSGDSimpleTest)
+{
+  // Very simple fake dataset.
+  arma::mat data("1 2 3;"
+                 "1 2 3");
+  arma::vec responses("1 1 0");
+
+  // Create a logistic regression object using SGD.
+  LogisticRegression<SGD> lr(data, responses);
+
+  // Test sigmoid function.
+  arma::vec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
+      - data.t() * lr.Parameters().subvec(1, lr.Parameters().n_elem - 1)));
+
+  // Large 0.1% error tolerance is because the optimizer may terminate before
+  // the predictions converge to 1.  SGD tolerance is larger because its default
+  // convergence tolerance is larger.
+  BOOST_REQUIRE_CLOSE(sigmoids[0], 1.0, 3.0);
+  BOOST_REQUIRE_CLOSE(sigmoids[1], 1.0, 12.0);
+  BOOST_REQUIRE_SMALL(sigmoids[2], 0.1);
+}
+
+// Test training of logistic regression on a simple dataset with regularization.
+BOOST_AUTO_TEST_CASE(LogisticRegressionLBFGSRegularizationSimpleTest)
+{
+  // Very simple fake dataset.
+  arma::mat data("1 2 3;"
+                 "1 2 3");
+  arma::vec responses("1 1 0");
+
+  // Create a logistic regression object using L-BFGS (that is the default).
+  LogisticRegression<> lr(data, responses, 0.001);
+
+  // Test sigmoid function.
+  arma::vec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
+      - data.t() * lr.Parameters().subvec(1, lr.Parameters().n_elem - 1)));
+
+  // Large error tolerance is because the optimizer may terminate before
+  // the predictions converge to 1.
+  BOOST_REQUIRE_CLOSE(sigmoids[0], 1.0, 5.0);
+  BOOST_REQUIRE_CLOSE(sigmoids[1], 1.0, 10.0);
+  BOOST_REQUIRE_SMALL(sigmoids[2], 0.1);
+}
+
+// Test training of logistic regression on a simple dataset using SGD with
+// regularization.
+BOOST_AUTO_TEST_CASE(LogisticRegressionSGDRegularizationSimpleTest)
+{
+  // Very simple fake dataset.
+  arma::mat data("1 2 3;"
+                 "1 2 3");
+  arma::vec responses("1 1 0");
+
+  // Create a logistic regression object using SGD.
+  LogisticRegression<SGD> lr(data, responses, 0.001);
+
+  // Test sigmoid function.
+  arma::vec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
+      - data.t() * lr.Parameters().subvec(1, lr.Parameters().n_elem - 1)));
+
+  // Large error tolerance is because the optimizer may terminate before
+  // the predictions converge to 1.  SGD tolerance is wider because its default
+  // convergence tolerance is larger.
+  BOOST_REQUIRE_CLOSE(sigmoids[0], 1.0, 7.0);
+  BOOST_REQUIRE_CLOSE(sigmoids[1], 1.0, 14.0);
+  BOOST_REQUIRE_SMALL(sigmoids[2], 0.1);
+}
+
+// Test training of logistic regression on two Gaussians and ensure it's
+// properly separable.
+BOOST_AUTO_TEST_CASE(LogisticRegressionLBFGSGaussianTest)
+{
+  // Generate a two-Gaussian dataset.
+  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+
+  arma::mat data(3, 1000);
+  arma::vec responses(1000);
+  for (size_t i = 0; i < 500; ++i)
+  {
+    data.col(i) = g1.Random();
+    responses[i] = 0;
+  }
+  for (size_t i = 501; i < 1000; ++i)
+  {
+    data.col(i) = g2.Random();
+    responses[i] = 1;
+  }
+
+  // Now train a logistic regression object on it.
+  LogisticRegression<> lr(data, responses, 0.5);
+
+  // Ensure that the error is close to zero.
+  const double acc = lr.ComputeAccuracy(data, responses);
+
+  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
+
+  // Create a test set.
+  for (size_t i = 0; i < 500; ++i)
+  {
+    data.col(i) = g1.Random();
+    responses[i] = 0;
+  }
+  for (size_t i = 501; i < 1000; ++i)
+  {
+    data.col(i) = g2.Random();
+    responses[i] = 1;
+  }
+
+  // Ensure that the error is close to zero.
+  const double testAcc = lr.ComputeAccuracy(data, responses);
+
+  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
+}
+
+// Test training of logistic regression on two Gaussians and ensure it's
+// properly separable using SGD.
+BOOST_AUTO_TEST_CASE(LogisticRegressionSGDGaussianTest)
+{
+  // Generate a two-Gaussian dataset.
+  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+
+  arma::mat data(3, 1000);
+  arma::vec responses(1000);
+  for (size_t i = 0; i < 500; ++i)
+  {
+    data.col(i) = g1.Random();
+    responses[i] = 0;
+  }
+  for (size_t i = 501; i < 1000; ++i)
+  {
+    data.col(i) = g2.Random();
+    responses[i] = 1;
+  }
+
+  // Now train a logistic regression object on it.
+  LogisticRegression<SGD> lr(data, responses, 0.5);
+
+  // Ensure that the error is close to zero.
+  const double acc = lr.ComputeAccuracy(data, responses);
+
+  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
+
+  // Create a test set.
+  for (size_t i = 0; i < 500; ++i)
+  {
+    data.col(i) = g1.Random();
+    responses[i] = 0;
+  }
+  for (size_t i = 501; i < 1000; ++i)
+  {
+    data.col(i) = g2.Random();
+    responses[i] = 1;
+  }
+
+  // Ensure that the error is close to zero.
+  const double testAcc = lr.ComputeAccuracy(data, responses);
+
+  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.5); // 0.5% error tolerance.
 }
 
 BOOST_AUTO_TEST_SUITE_END();
