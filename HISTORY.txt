@@ -1,3 +1,15 @@
+????-??-??    mlpack 1.0.8
+
+  * Memory leak in NeighborSearch index-mapping code fixed (#310).
+
+  * GMMs can be trained using the existing model as a starting point by
+    specifying an additional boolean parameter to GMM::Estimate() (#308).
+
+  * Logistic regression implementation added in methods/logistic_regression (see
+    also #305).
+
+  * L-BFGS optimizer now returns its function via Function().
+
 2013-10-04    mlpack 1.0.7
 
   * Cover tree support for range search (range_search), rank-approximate nearest
