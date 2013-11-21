@@ -21,10 +21,12 @@ LogisticRegression<OptimizerType>::LogisticRegression(
     const double lambda) :
     predictors(predictors),
     responses(responses),
+    parameters(arma::zeros<arma::vec>(predictors.n_rows + 1)),
     errorFunction(LogisticRegressionFunction(predictors, responses, lambda)),
     optimizer(OptimizerType<LogisticRegressionFunction>(errorFunction))
 {
-  parameters.zeros(predictors.n_rows + 1);
+  // Train the model.
+  LearnModel();
 }
 
 template<template<typename> class OptimizerType>
@@ -35,10 +37,56 @@ LogisticRegression<OptimizerType>::LogisticRegression(
     const double lambda) :
     predictors(predictors),
     responses(responses),
+    parameters(arma::zeros<arma::vec>(predictors.n_rows + 1)),
     errorFunction(LogisticRegressionFunction(predictors, responses)),
     optimizer(OptimizerType<LogisticRegressionFunction>(errorFunction))
 {
-  parameters.zeros(predictors.n_rows + 1);
+  // Train the model.
+  LearnModel();
+}
+
+template <template<typename> class OptimizerType>
+void LogisticRegression<OptimizerType>::Predict(const arma::mat& predictors,
+                                                arma::vec& responses,
+                                                const double decisionBoundary)
+    const
+{
+  // Calculate sigmoid function for each point.  The (1.0 - decisionBoundary)
+  // term correctly sets an offset so that floor() returns 0 or 1 correctly.
+  responses = arma::floor((1.0 / (1.0 + arma::exp(-parameters(0)
+      - predictors.t() * parameters.subvec(1, parameters.n_elem - 1))))
+      + (1.0 - decisionBoundary));
+}
+
+template <template<typename> class OptimizerType>
+double LogisticRegression<OptimizerType>::ComputeError(
+    const arma::mat& predictors,
+    const arma::vec& responses) const
+{
+  // Construct a new error function.
+  LogisticRegressionFunction newErrorFunction(predictors, responses,
+      errorFunction.Lambda());
+
+  return newErrorFunction.Evaluate(parameters);
+}
+
+template <template<typename> class OptimizerType>
+double LogisticRegression<OptimizerType>::ComputeAccuracy(
+    const arma::mat& predictors,
+    const arma::vec& responses,
+    const double decisionBoundary) const
+{
+  // Predict responses using the current model.
+  arma::vec tempResponses;
+  Predict(predictors, tempResponses, decisionBoundary);
+
+  // Count the number of responses that were correct.
+  size_t count = 0;
+  for (size_t i = 0; i < responses.n_elem; i++)
+    if (responses(i) == tempResponses(i))
+      count++;
+
+  return (double) (count * 100) / responses.n_rows;
 }
 
 template <template<typename> class OptimizerType>
@@ -49,60 +97,6 @@ double LogisticRegression<OptimizerType>::LearnModel()
   Timer::Stop("logistic_regression_optimization");
 
   return out;
-}
-
-template <template<typename> class OptimizerType>
-double LogisticRegression<OptimizerType>::ComputeError(
-    arma::mat& predictors,
-    const arma::vec& responses)
-{
-  // Here we add the row of ones to the predictors.
-  arma::rowvec ones;
-  ones.ones(predictors.n_cols);
-  predictors.insert_rows(0, ones);
-
-//  double out = errorFunction.Evaluate(predictors, responses, parameters);
-
-  predictors.shed_row(0);
-
-//  return out;
-  return 0.0;
-}
-
-template <template<typename> class OptimizerType>
-double LogisticRegression<OptimizerType>::ComputeAccuracy(
-    arma::mat& predictors,
-    const arma::vec& responses,
-    const double decisionBoundary)
-{
-  arma::vec tempResponses;
-  Predict(predictors, tempResponses, decisionBoundary);
-  int count = 0;
-  for (size_t i = 0; i < responses.n_rows; i++)
-    if (responses(i, 0) == tempResponses(i, 0))
-      count++;
-
-  return (double) (count * 100) / responses.n_rows;
-}
-
-template <template<typename> class OptimizerType>
-void LogisticRegression<OptimizerType>::Predict(
-    arma::mat& predictors,
-    arma::vec& responses,
-    const double decisionBoundary)
-{
-  //add rows of ones to predictors
-  arma::rowvec ones;
-  ones.ones(predictors.n_cols);
-  predictors.insert_rows(0, ones);
-
-//  responses = arma::floor(
-//      errorFunction.getSigmoid(arma::trans(predictors) * parameters) -
-//      decisionBoundary * arma::ones<arma::vec>(predictors.n_cols, 1)) +
-//      arma::ones<arma::vec>(predictors.n_cols);
-
-  //shed the added rows
-  predictors.shed_row(0);
 }
 
 }; // namespace regression
