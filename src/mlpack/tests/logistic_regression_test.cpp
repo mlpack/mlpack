@@ -475,7 +475,6 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionLBFGSSimpleTest)
 
   // Create a logistic regression object using L-BFGS (that is the default).
   LogisticRegression<> lr(data, responses);
-  Log::Warn << "Parameters: " << lr.Parameters() << "\n";
 
   // Test sigmoid function.
   arma::vec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
@@ -649,6 +648,47 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDGaussianTest)
   const double testAcc = lr.ComputeAccuracy(data, responses);
 
   BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.5); // 0.5% error tolerance.
+}
+
+/**
+ * Test constructor that takes an already-instantiated optimizer.
+ */
+BOOST_AUTO_TEST_CASE(LogisticRegressionInstantiatedOptimizer)
+{
+  // Very simple fake dataset.
+  arma::mat data("1 2 3;"
+                 "1 2 3");
+  arma::vec responses("1 1 0");
+
+  // Create an optimizer and function.
+  LogisticRegressionFunction lrf(data, responses, 0.001);
+  L_BFGS<LogisticRegressionFunction> lbfgsOpt(lrf);
+  lbfgsOpt.MinGradientNorm() = 1e-50;
+  LogisticRegression<L_BFGS> lr(lbfgsOpt);
+
+  // Test sigmoid function.
+  arma::vec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
+      - data.t() * lr.Parameters().subvec(1, lr.Parameters().n_elem - 1)));
+
+  // Error tolerance is small because we tightened the optimizer tolerance.
+  BOOST_REQUIRE_CLOSE(sigmoids[0], 1.0, 0.1);
+  BOOST_REQUIRE_CLOSE(sigmoids[1], 1.0, 0.5);
+  BOOST_REQUIRE_SMALL(sigmoids[2], 0.1);
+
+  // Now do the same with SGD.
+  SGD<LogisticRegressionFunction> sgdOpt(lrf);
+  sgdOpt.StepSize() = 0.15;
+  sgdOpt.Tolerance() = 1e-75;
+  LogisticRegression<SGD> lr2(sgdOpt);
+
+  // Test sigmoid function.
+  sigmoids = 1 / (1 + arma::exp(-lr2.Parameters()[0]
+      - data.t() * lr2.Parameters().subvec(1, lr2.Parameters().n_elem - 1)));
+
+  // Error tolerance is small because we tightened the optimizer tolerance.
+  BOOST_REQUIRE_CLOSE(sigmoids[0], 1.0, 0.1);
+  BOOST_REQUIRE_CLOSE(sigmoids[1], 1.0, 0.5);
+  BOOST_REQUIRE_SMALL(sigmoids[2], 0.1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
