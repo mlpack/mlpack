@@ -22,8 +22,7 @@ LogisticRegression<OptimizerType>::LogisticRegression(
     predictors(predictors),
     responses(responses),
     errorFunction(LogisticRegressionFunction(predictors, responses, lambda)),
-    optimizer(OptimizerType<LogisticRegressionFunction>(errorFunction)),
-    lambda(lambda)
+    optimizer(OptimizerType<LogisticRegressionFunction>(errorFunction))
 {
   parameters.zeros(predictors.n_rows + 1);
 }
@@ -37,8 +36,7 @@ LogisticRegression<OptimizerType>::LogisticRegression(
     predictors(predictors),
     responses(responses),
     errorFunction(LogisticRegressionFunction(predictors, responses)),
-    optimizer(OptimizerType<LogisticRegressionFunction>(errorFunction)),
-    lambda(lambda)
+    optimizer(OptimizerType<LogisticRegressionFunction>(errorFunction))
 {
   parameters.zeros(predictors.n_rows + 1);
 }

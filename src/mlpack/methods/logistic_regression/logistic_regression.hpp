@@ -58,9 +58,9 @@ class LogisticRegression
   arma::vec& Parameters() { return parameters; }
 
   //! Return the lambda value for L2-regularization.
-  const double& Lambda() const { return lambda; }
+  const double& Lambda() const { return errorFunction.Lambda(); }
   //! Modify the lambda value for L2-regularization.
-  double& Lambda() { return lambda; }
+  double& Lambda() { return errorFunction().Lambda(); }
 
   double LearnModel();
 
@@ -76,12 +76,17 @@ class LogisticRegression
   double ComputeError(arma::mat& predictors, const arma::vec& responses);
 
  private:
-  arma::vec parameters;
+  //! Matrix of predictor points (X).
   const arma::mat& predictors;
+  //! Vector of responses (y).
   const arma::vec& responses;
+  //! Vector of trained parameters.
+  arma::vec parameters;
+
+  //! Instantiated error function that will be optimized.
   LogisticRegressionFunction errorFunction;
+  //! Instantiated optimizer.
   OptimizerType<LogisticRegressionFunction> optimizer;
-  double lambda;
 };
 
 }; // namespace regression
