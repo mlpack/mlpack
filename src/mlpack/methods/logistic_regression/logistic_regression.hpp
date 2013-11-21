@@ -62,18 +62,49 @@ class LogisticRegression
   //! Modify the lambda value for L2-regularization.
   double& Lambda() { return errorFunction().Lambda(); }
 
-  double LearnModel();
-
-  //predict functions
-  void Predict(arma::mat& predictors,
+  /**
+   * Predict the responses to a given set of predictors.  The responses will be
+   * either 0 or 1.  Optionally, specify the decision boundary; logistic
+   * regression returns a value between 0 and 1.  If the value is greater than
+   * the decision boundary, the response is taken to be 1; otherwise, it is 0.
+   * By default the decision boundary is 0.5.
+   *
+   * @param predictors Input predictors.
+   * @param responses Vector to put output predictions of responses into.
+   * @param decisionBoundary Decision boundary (default 0.5).
+   */
+  void Predict(const arma::mat& predictors,
                arma::vec& responses,
-               const double decisionBoundary = 0.5);
+               const double decisionBoundary = 0.5) const;
 
-  double ComputeAccuracy(arma::mat& predictors,
+  /**
+   * Compute the accuracy of the model on the given predictors and responses,
+   * optionally using the given decision boundary.  The responses should be
+   * either 0 or 1.  Logistic regression returns a value between 0 and 1.  If
+   * the value is greater than the decision boundary, the response is taken to
+   * be 1; otherwise, it is 0.  By default, the decision boundary is 0.5.
+   *
+   * The accuracy is returned as a percentage, between 0 and 100.
+   *
+   * @param predictors Input predictors.
+   * @param responses Vector of responses.
+   * @param decisionBoundary Decision boundary (default 0.5).
+   * @return Percentage of responses that are predicted correctly.
+   */
+  double ComputeAccuracy(const arma::mat& predictors,
                          const arma::vec& responses,
-                         const double decisionBoundary = 0.5);
+                         const double decisionBoundary = 0.5) const;
 
-  double ComputeError(arma::mat& predictors, const arma::vec& responses);
+  /**
+   * Compute the error of the model.  This returns the negative objective
+   * function of the logistic regression log-likelihood function.  For the model
+   * to be optimal, the negative log-likelihood function should be minimized.
+   *
+   * @param predictors Input predictors.
+   * @param responses Vector of responses.
+   */
+  double ComputeError(const arma::mat& predictors,
+                      const arma::vec& responses) const;
 
  private:
   //! Matrix of predictor points (X).
@@ -87,6 +118,12 @@ class LogisticRegression
   LogisticRegressionFunction errorFunction;
   //! Instantiated optimizer.
   OptimizerType<LogisticRegressionFunction> optimizer;
+
+  /**
+   * Learn the model by optimizing the logistic regression objective function.
+   * Returns the objective function evaluated when the parameters are optimized.
+   */
+  double LearnModel();
 };
 
 }; // namespace regression
