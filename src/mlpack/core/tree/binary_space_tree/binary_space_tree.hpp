@@ -285,6 +285,12 @@ class BinarySpaceTree
   size_t NumChildren() const;
 
   /**
+   * Return the furthest distance to a point held in this node.  If this is not
+   * a leaf node, then the distance is 0 because the node holds no points.
+   */
+  double FurthestPointDistance() const;
+
+  /**
    * Return the furthest possible descendant distance.  This returns the maximum
    * distance from the centroid to the edge of the bound and not the empirical
    * quantity which is the actual furthest descendant distance.  So the actual
