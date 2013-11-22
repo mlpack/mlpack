@@ -11,6 +11,8 @@
 #include <mlpack/core/tree/cosine_tree/cosine_tree.hpp>
 #include <mlpack/core/tree/cosine_tree/cosine_tree_builder.hpp>
 
+#include <queue>
+
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
 
@@ -1580,6 +1582,52 @@ BOOST_AUTO_TEST_CASE(FurthestDescendantDistanceTest)
   // Both points are contained in the one node.
   BinarySpaceTree<HRectBound<2> > twoPoint(dataset);
   BOOST_REQUIRE_CLOSE(twoPoint.FurthestDescendantDistance(), sqrt(2.0), 1e-5);
+}
+
+// Ensure that FurthestPointDistance() works.
+BOOST_AUTO_TEST_CASE(FurthestPointDistanceTest)
+{
+  arma::mat dataset;
+  dataset.randu(5, 100);
+
+  BinarySpaceTree<HRectBound<2> > tree(dataset);
+
+  // Now, check each node.
+  std::queue<BinarySpaceTree<HRectBound<2> >*> nodeQueue;
+  nodeQueue.push(&tree);
+
+  while (!nodeQueue.empty())
+  {
+    BinarySpaceTree<HRectBound<2> >* node = nodeQueue.front();
+    nodeQueue.pop();
+
+    if (node->NumChildren() == 0)
+      BOOST_REQUIRE_EQUAL(node->FurthestPointDistance(), 0.0);
+    else
+    {
+      // Get centroid.
+      arma::vec centroid;
+      node->Centroid(centroid);
+
+      double maxDist = 0.0;
+      for (size_t i = 0; i < node->NumPoints(); ++i)
+      {
+        const double dist = metric::EuclideanDistance::Evaluate(centroid,
+            dataset.col(node->Point(i)));
+        if (dist > maxDist)
+          maxDist = dist;
+      }
+
+      // We don't require an exact value because FurthestPointDistance() can
+      // just bound the value instead of returning the exact value.
+      BOOST_REQUIRE_LE(maxDist, node->FurthestPointDistance());
+
+      if (node->Left())
+        nodeQueue.push(node->Left());
+      if (node->Right())
+        nodeQueue.push(node->Right());
+    }
+  }
 }
 
 // Forward declaration of methods we need for the next test.
