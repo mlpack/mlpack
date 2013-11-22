@@ -375,6 +375,22 @@ inline size_t
 }
 
 /**
+ * Return a bound on the furthest point in the node from the centroid.  This
+ * returns 0 unless the node is a leaf.
+ */
+template<typename BoundType, typename StatisticType, typename MatType>
+inline double BinarySpaceTree<BoundType, StatisticType, MatType>::
+    FurthestPointDistance() const
+{
+  if (IsLeaf())
+    return 0.0;
+
+  // Otherwise half of the maximum bound distance is sufficient (this is the
+  // distance from a corner of the bound to the centroid).
+  return bound.MaxDistance(bound);
+}
+
+/**
  * Return the furthest possible descendant distance.  This returns the maximum
  * distance from the centroid to the edge of the bound and not the empirical
  * quantity which is the actual furthest descendant distance.  So the actual
