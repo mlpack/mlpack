@@ -76,7 +76,7 @@ double LogisticRegressionFunction::Evaluate(const arma::mat& parameters)
   }
 
   // Invert the result, because it's a minimization.
-  return -(result + regularization);
+  return -result + regularization;
 }
 
 /**
@@ -99,9 +99,9 @@ double LogisticRegressionFunction::Evaluate(const arma::mat& parameters,
   const double sigmoid = 1.0 / (1.0 + std::exp(-exponent));
 
   if (responses[i] == 1)
-    return -(log(sigmoid) + regularization);
+    return -log(sigmoid) + regularization;
   else
-    return -(log(1.0 - sigmoid) + regularization);
+    return -log(1.0 - sigmoid) + regularization;
 }
 
 //! Evaluate the gradient of the logistic regression objective function.
@@ -118,7 +118,7 @@ void LogisticRegressionFunction::Gradient(const arma::mat& parameters,
   gradient.set_size(parameters.n_elem);
   gradient[0] = -arma::accu(responses - sigmoids);
   gradient.col(0).subvec(1, parameters.n_elem - 1) = -predictors * (responses -
-      sigmoids) - regularization;
+      sigmoids) + regularization;
 }
 
 /**
@@ -142,5 +142,5 @@ void LogisticRegressionFunction::Gradient(const arma::mat& parameters,
   gradient.set_size(parameters.n_elem);
   gradient[0] = -(responses[i] - sigmoid);
   gradient.col(0).subvec(1, parameters.n_elem - 1) = -predictors.col(i)
-      * (responses[i] - sigmoid) - regularization;
+      * (responses[i] - sigmoid) + regularization;
 }
