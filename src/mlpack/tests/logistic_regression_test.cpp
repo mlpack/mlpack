@@ -115,9 +115,9 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRegularizationEvaluate)
     const double bigRegTerm = 10.0 * std::pow(arma::norm(parameters, 2), 2.0)
         - 10.0 * std::pow(parameters[0], 2.0);
 
-    BOOST_REQUIRE_CLOSE(lrfNoReg.Evaluate(parameters) - smallRegTerm,
+    BOOST_REQUIRE_CLOSE(lrfNoReg.Evaluate(parameters) + smallRegTerm,
         lrfSmallReg.Evaluate(parameters), 1e-5);
-    BOOST_REQUIRE_CLOSE(lrfNoReg.Evaluate(parameters) - bigRegTerm,
+    BOOST_REQUIRE_CLOSE(lrfNoReg.Evaluate(parameters) + bigRegTerm,
         lrfBigReg.Evaluate(parameters), 1e-5);
   }
 }
@@ -254,9 +254,9 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRegularizationSeparableEvaluate)
 
     for (size_t j = 0; j < points; ++j)
     {
-      BOOST_REQUIRE_CLOSE(lrfNoReg.Evaluate(parameters, j) - smallRegTerm,
+      BOOST_REQUIRE_CLOSE(lrfNoReg.Evaluate(parameters, j) + smallRegTerm,
           lrfSmallReg.Evaluate(parameters, j), 1e-5);
-      BOOST_REQUIRE_CLOSE(lrfNoReg.Evaluate(parameters, j) - bigRegTerm,
+      BOOST_REQUIRE_CLOSE(lrfNoReg.Evaluate(parameters, j) + bigRegTerm,
           lrfBigReg.Evaluate(parameters, j), 1e-5);
     }
   }
@@ -392,9 +392,9 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRegularizationGradient)
       const double smallRegTerm = 0.5 * parameters[j];
       const double bigRegTerm = 20.0 * parameters[j];
 
-      BOOST_REQUIRE_CLOSE(gradient[j] - smallRegTerm, smallRegGradient[j],
+      BOOST_REQUIRE_CLOSE(gradient[j] + smallRegTerm, smallRegGradient[j],
           1e-5);
-      BOOST_REQUIRE_CLOSE(gradient[j] - bigRegTerm, bigRegGradient[j], 1e-5);
+      BOOST_REQUIRE_CLOSE(gradient[j] + bigRegTerm, bigRegGradient[j], 1e-5);
     }
   }
 }
@@ -457,9 +457,9 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionFunctionRegularizationSeparableGradient)
         const double smallRegTerm = 0.5 * parameters[j] / points;
         const double bigRegTerm = 20.0 * parameters[j] / points;
 
-        BOOST_REQUIRE_CLOSE(gradient[j] - smallRegTerm, smallRegGradient[j],
+        BOOST_REQUIRE_CLOSE(gradient[j] + smallRegTerm, smallRegGradient[j],
             1e-5);
-        BOOST_REQUIRE_CLOSE(gradient[j] - bigRegTerm, bigRegGradient[j], 1e-5);
+        BOOST_REQUIRE_CLOSE(gradient[j] + bigRegTerm, bigRegGradient[j], 1e-5);
       }
     }
   }
@@ -647,7 +647,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDGaussianTest)
   // Ensure that the error is close to zero.
   const double testAcc = lr.ComputeAccuracy(data, responses);
 
-  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.5); // 0.5% error tolerance.
+  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6); // 0.6% error tolerance.
 }
 
 /**
@@ -661,7 +661,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionInstantiatedOptimizer)
   arma::vec responses("1 1 0");
 
   // Create an optimizer and function.
-  LogisticRegressionFunction lrf(data, responses, 0.001);
+  LogisticRegressionFunction lrf(data, responses, 0.0005);
   L_BFGS<LogisticRegressionFunction> lbfgsOpt(lrf);
   lbfgsOpt.MinGradientNorm() = 1e-50;
   LogisticRegression<L_BFGS> lr(lbfgsOpt);
@@ -672,7 +672,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionInstantiatedOptimizer)
 
   // Error tolerance is small because we tightened the optimizer tolerance.
   BOOST_REQUIRE_CLOSE(sigmoids[0], 1.0, 0.1);
-  BOOST_REQUIRE_CLOSE(sigmoids[1], 1.0, 0.5);
+  BOOST_REQUIRE_CLOSE(sigmoids[1], 1.0, 0.6);
   BOOST_REQUIRE_SMALL(sigmoids[2], 0.1);
 
   // Now do the same with SGD.
@@ -687,7 +687,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionInstantiatedOptimizer)
 
   // Error tolerance is small because we tightened the optimizer tolerance.
   BOOST_REQUIRE_CLOSE(sigmoids[0], 1.0, 0.1);
-  BOOST_REQUIRE_CLOSE(sigmoids[1], 1.0, 0.5);
+  BOOST_REQUIRE_CLOSE(sigmoids[1], 1.0, 0.6);
   BOOST_REQUIRE_SMALL(sigmoids[2], 0.1);
 }
 
