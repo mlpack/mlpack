@@ -19,14 +19,12 @@ LogisticRegression<OptimizerType>::LogisticRegression(
     const arma::mat& predictors,
     const arma::vec& responses,
     const double lambda) :
-    predictors(predictors),
-    responses(responses),
     parameters(arma::zeros<arma::vec>(predictors.n_rows + 1)),
     errorFunction(LogisticRegressionFunction(predictors, responses, lambda)),
     optimizer(OptimizerType<LogisticRegressionFunction>(errorFunction))
 {
   // Train the model.
-  LearnModel();
+  LearnModel(predictors, responses);
 }
 
 template<template<typename> class OptimizerType>
@@ -35,21 +33,17 @@ LogisticRegression<OptimizerType>::LogisticRegression(
     const arma::vec& responses,
     const arma::mat& initialPoint,
     const double lambda) :
-    predictors(predictors),
-    responses(responses),
     parameters(arma::zeros<arma::vec>(predictors.n_rows + 1)),
     errorFunction(LogisticRegressionFunction(predictors, responses)),
     optimizer(OptimizerType<LogisticRegressionFunction>(errorFunction))
 {
   // Train the model.
-  LearnModel();
+  LearnModel(predictors, responses);
 }
 
 template<template<typename> class OptimizerType>
 LogisticRegression<OptimizerType>::LogisticRegression(
     OptimizerType<LogisticRegressionFunction>& optimizer) :
-    predictors(optimizer.Function().Predictors()),
-    responses(optimizer.Function().Responses()),
     parameters(optimizer.Function().GetInitialPoint()),
     errorFunction(optimizer.Function()),
     optimizer(optimizer)
@@ -57,6 +51,14 @@ LogisticRegression<OptimizerType>::LogisticRegression(
   Timer::Start("logistic_regression_optimization");
   const double out = optimizer.Optimize(parameters);
   Timer::Stop("logistic_regression_optimization");
+}
+
+template<template<typename> class OptimizerType>
+LogisticRegression<OptimizerType>::LogisticRegression(
+    const arma::vec& parameters) :
+    parameters(parameters)
+{
+  // Nothing to do.
 }
 
 template<template<typename> class OptimizerType>
@@ -104,7 +106,9 @@ double LogisticRegression<OptimizerType>::ComputeAccuracy(
 }
 
 template <template<typename> class OptimizerType>
-double LogisticRegression<OptimizerType>::LearnModel()
+double LogisticRegression<OptimizerType>::LearnModel(
+    const arma::mat& predictors,
+    const arma::vec& responses)
 {
   Timer::Start("logistic_regression_optimization");
   const double out = optimizer.Optimize(parameters);
