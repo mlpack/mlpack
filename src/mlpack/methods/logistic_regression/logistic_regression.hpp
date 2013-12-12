@@ -65,6 +65,12 @@ class LogisticRegression
    */
   LogisticRegression(OptimizerType<LogisticRegressionFunction>& optimizer);
 
+  /**
+   * Construct a logistic regression model from the given parameters, without
+   * performing any training.
+   */
+  LogisticRegression(const arma::vec& parameters);
+
   //! Return the parameters (the b vector).
   const arma::vec& Parameters() const { return parameters; }
   //! Modify the parameters (the b vector).
@@ -120,10 +126,6 @@ class LogisticRegression
                       const arma::vec& responses) const;
 
  private:
-  //! Matrix of predictor points (X).
-  const arma::mat& predictors;
-  //! Vector of responses (y).
-  const arma::vec& responses;
   //! Vector of trained parameters.
   arma::vec parameters;
 
@@ -136,7 +138,7 @@ class LogisticRegression
    * Learn the model by optimizing the logistic regression objective function.
    * Returns the objective function evaluated when the parameters are optimized.
    */
-  double LearnModel();
+  double LearnModel(const arma::mat& predictors, const arma::vec& responses);
 };
 
 }; // namespace regression
