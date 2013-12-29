@@ -54,7 +54,7 @@ PARAM_STRING_REQ("reference_file", "File containing the reference dataset.",
 PARAM_STRING("distances_file", "File to output distances into.", "d", "");
 PARAM_STRING("neighbors_file", "File to output neighbors into.", "n", "");
 
-PARAM_INT_REQ("k", "Number of furthest neighbors to find.", "k");
+PARAM_INT_REQ("k", "Number of nearest neighbors to find.", "k");
 
 PARAM_STRING("query_file", "File containing query points (optional).",
              "q", "");

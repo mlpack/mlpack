@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
     Log::Info << "Trees built." << endl;
   }
 
-  Log::Info << "Computing " << k << " nearest neighbors..." << endl;
+  Log::Info << "Computing " << k << " furthest neighbors..." << endl;
   allkfn->Search(k, neighbors, distances);
 
   Log::Info << "Neighbors computed." << endl;
