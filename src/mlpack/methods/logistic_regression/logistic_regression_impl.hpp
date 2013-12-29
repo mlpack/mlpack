@@ -20,11 +20,18 @@ LogisticRegression<OptimizerType>::LogisticRegression(
     const arma::vec& responses,
     const double lambda) :
     parameters(arma::zeros<arma::vec>(predictors.n_rows + 1)),
-    errorFunction(LogisticRegressionFunction(predictors, responses, lambda)),
-    optimizer(OptimizerType<LogisticRegressionFunction>(errorFunction))
+    lambda(lambda)
 {
+  LogisticRegressionFunction errorFunction(predictors, responses, lambda);
+  OptimizerType<LogisticRegressionFunction> optimizer(errorFunction);
+
   // Train the model.
-  LearnModel(predictors, responses);
+  Timer::Start("logistic_regression_optimization");
+  const double out = optimizer.Optimize(parameters);
+  Timer::Stop("logistic_regression_optimization");
+
+  Log::Info << "LogisticRegression::LogisticRegression(): final objective of "
+      << "trained model is " << out << "." << std::endl;
 }
 
 template<template<typename> class OptimizerType>
@@ -34,29 +41,41 @@ LogisticRegression<OptimizerType>::LogisticRegression(
     const arma::mat& initialPoint,
     const double lambda) :
     parameters(arma::zeros<arma::vec>(predictors.n_rows + 1)),
-    errorFunction(LogisticRegressionFunction(predictors, responses)),
-    optimizer(OptimizerType<LogisticRegressionFunction>(errorFunction))
+    lambda(lambda)
 {
+  LogisticRegressionFunction errorFunction(predictors, responses, lambda);
+  errorFunction.InitialPoint() = initialPoint;
+  OptimizerType<LogisticRegressionFunction> optimizer(errorFunction);
+
   // Train the model.
-  LearnModel(predictors, responses);
+  Timer::Start("logistic_regression_optimization");
+  const double out = optimizer.Optimize(parameters);
+  Timer::Stop("logistic_regression_optimization");
+
+  Log::Info << "LogisticRegression::LogisticRegression(): final objective of "
+      << "trained model is " << out << "." << std::endl;
 }
 
 template<template<typename> class OptimizerType>
 LogisticRegression<OptimizerType>::LogisticRegression(
     OptimizerType<LogisticRegressionFunction>& optimizer) :
     parameters(optimizer.Function().GetInitialPoint()),
-    errorFunction(optimizer.Function()),
-    optimizer(optimizer)
+    lambda(optimizer.Function().Lambda())
 {
   Timer::Start("logistic_regression_optimization");
   const double out = optimizer.Optimize(parameters);
   Timer::Stop("logistic_regression_optimization");
+
+  Log::Info << "LogisticRegression::LogisticRegression(): final objective of "
+      << "trained model is " << out << "." << std::endl;
 }
 
 template<template<typename> class OptimizerType>
 LogisticRegression<OptimizerType>::LogisticRegression(
-    const arma::vec& parameters) :
-    parameters(parameters)
+    const arma::vec& parameters,
+    const double lambda) :
+    parameters(parameters),
+    lambda(lambda)
 {
   // Nothing to do.
 }
@@ -81,7 +100,7 @@ double LogisticRegression<OptimizerType>::ComputeError(
 {
   // Construct a new error function.
   LogisticRegressionFunction newErrorFunction(predictors, responses,
-      errorFunction.Lambda());
+      lambda);
 
   return newErrorFunction.Evaluate(parameters);
 }
@@ -103,18 +122,6 @@ double LogisticRegression<OptimizerType>::ComputeAccuracy(
       count++;
 
   return (double) (count * 100) / responses.n_rows;
-}
-
-template <template<typename> class OptimizerType>
-double LogisticRegression<OptimizerType>::LearnModel(
-    const arma::mat& predictors,
-    const arma::vec& responses)
-{
-  Timer::Start("logistic_regression_optimization");
-  const double out = optimizer.Optimize(parameters);
-  Timer::Stop("logistic_regression_optimization");
-
-  return out;
 }
 
 }; // namespace regression
