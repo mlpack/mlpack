@@ -67,9 +67,14 @@ class LogisticRegression
 
   /**
    * Construct a logistic regression model from the given parameters, without
-   * performing any training.
+   * performing any training.  The lambda parameter is used for the
+   * ComputeAccuracy() and ComputeError() functions; this constructor does not
+   * train the model itself.
+   *
+   * @param parameters Parameters making up the model.
+   * @param lambda L2-regularization penalty parameter.
    */
-  LogisticRegression(const arma::vec& parameters);
+  LogisticRegression(const arma::vec& parameters, const double lambda = 0);
 
   //! Return the parameters (the b vector).
   const arma::vec& Parameters() const { return parameters; }
@@ -77,9 +82,9 @@ class LogisticRegression
   arma::vec& Parameters() { return parameters; }
 
   //! Return the lambda value for L2-regularization.
-  const double& Lambda() const { return errorFunction.Lambda(); }
+  const double& Lambda() const { return lambda; }
   //! Modify the lambda value for L2-regularization.
-  double& Lambda() { return errorFunction().Lambda(); }
+  double& Lambda() { return lambda; }
 
   /**
    * Predict the responses to a given set of predictors.  The responses will be
@@ -128,17 +133,8 @@ class LogisticRegression
  private:
   //! Vector of trained parameters.
   arma::vec parameters;
-
-  //! Instantiated error function that will be optimized.
-  LogisticRegressionFunction errorFunction;
-  //! Instantiated optimizer.
-  OptimizerType<LogisticRegressionFunction> optimizer;
-
-  /**
-   * Learn the model by optimizing the logistic regression objective function.
-   * Returns the objective function evaluated when the parameters are optimized.
-   */
-  double LearnModel(const arma::mat& predictors, const arma::vec& responses);
+  //! L2-regularization penalty parameter.
+  double lambda;
 };
 
 }; // namespace regression
