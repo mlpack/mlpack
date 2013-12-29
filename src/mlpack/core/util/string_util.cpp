@@ -7,10 +7,11 @@
 
 using namespace mlpack;
 using namespace mlpack::util;
+using namespace std;
 
 //! A utility function that replaces all all newlines with a number of spaces
 //! depending on the indentation level.
-std::string mlpack::util::Indent(std::string input)
+string mlpack::util::Indent(string input)
 {
   // Tab the first line.
   input.insert(0, 1, ' ');
@@ -20,10 +21,11 @@ std::string mlpack::util::Indent(std::string input)
   std::string tabbedNewline("\n  ");
 
   // Replace all newline characters with the precomputed character sequence.
-  size_t start_pos = 0;
-  while((start_pos = input.find("\n", start_pos)) != std::string::npos) {
-      input.replace(start_pos, 1, tabbedNewline);
-      start_pos += tabbedNewline.length();
+  size_t startPos = 0;
+  while ((startPos = input.find("\n", startPos)) != string::npos)
+  {
+    input.replace(startPos, 1, tabbedNewline);
+    startPos += tabbedNewline.length();
   }
 
   return input;
