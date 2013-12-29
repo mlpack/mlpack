@@ -1,4 +1,4 @@
-/*! @page timer mlpack version information
+/*! @page verinfo mlpack version information
 
 @section vercode mlpack versions in code
 
