@@ -19,6 +19,7 @@
 
 #include "timers.hpp"
 #include "cli_deleter.hpp" // To make sure we can delete the singleton.
+#include "version.hpp"
 
 /**
  * Document an executable.  Only one instance of this macro should be
@@ -597,7 +598,7 @@ class CLI
    *
    * In this case, the singleton is used to store data for the static methods,
    * as there is no point in defining static methods only to have users call
-   * private instance methods
+   * private instance methods.
    *
    * @return The singleton instance for use in the static methods.
    */
@@ -688,6 +689,9 @@ class CLI
 
   //! True, if CLI was used to parse command line options.
   bool didParse;
+
+  //! Hold the name of the program for --version.
+  std::string programName;
 
   //! Holds the timer objects.
   Timers timer;

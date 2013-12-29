@@ -1,0 +1,25 @@
+/**
+ * @file version.hpp
+ * @author Ryan Curtin
+ *
+ * The current version of mlpack, available as macros and as a string.
+ */
+#ifndef __MLPACK_CORE_UTIL_VERSION_HPP
+#define __MLPACK_CORE_UTIL_VERSION_HPP
+
+// The version of mlpack.  If this is svn trunk, this will be a version with
+// higher number than the most recent release.
+#define __MLPACK_VERSION_MAJOR 1
+#define __MLPACK_VERSION_MINOR 0
+#define __MLPACK_VERSION_PATCH 8
+
+// The name of the version (for use by --version).
+namespace mlpack {
+namespace util {
+
+inline std::string GetVersion() { return "mlpack trunk"; }
+
+}; // namespace util
+}; // namespace mlpack
+
+#endif
