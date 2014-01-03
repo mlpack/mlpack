@@ -251,6 +251,9 @@ if (Subversion_FOUND)
         COMMAND ${CMAKE_COMMAND} -P CMake/CreateSVNVersionHeader.cmake
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMENT "Updating svnversion.hpp (if necessary)")
+  # Add svnversion.hpp to the list of sources.
+  set(MLPACK_SRCS ${MLPACK_SRCS}
+      "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/svnversion.hpp")
   endif (${MLPACK_TMP_WC_INFO_RESULT} EQUAL 0)
 endif (Subversion_FOUND)
 
