@@ -7,6 +7,8 @@
 #ifndef __MLPACK_CORE_UTIL_VERSION_HPP
 #define __MLPACK_CORE_UTIL_VERSION_HPP
 
+#include <string>
+
 // The version of mlpack.  If this is svn trunk, this will be a version with
 // higher number than the most recent release.
 #define __MLPACK_VERSION_MAJOR 1
@@ -17,7 +19,11 @@
 namespace mlpack {
 namespace util {
 
-inline std::string GetVersion() { return "mlpack trunk"; }
+/**
+ * This will return either "mlpack x.y.z" or "mlpack trunk-rXXXXX" depending on
+ * whether or not this is a stable version of mlpack or an svn revision.
+ */
+std::string GetVersion();
 
 }; // namespace util
 }; // namespace mlpack
