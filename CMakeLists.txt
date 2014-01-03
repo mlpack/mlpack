@@ -229,8 +229,36 @@ else (WIN32)
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
 endif (WIN32)
 
+# Determine whether or not this is a subversion repository, so that we can set
+# the trunk revision if necessary for --version (#309).
+find_package(Subversion)
+set (USING_SVNVERSION "NO")
+if (Subversion_FOUND)
+  Subversion_WC_INFO(${CMAKE_SOURCE_DIR} MLPACK_TEST)
+  if(MLPACK_TEST_WC_REVISION) # If this is not empty we are inside a repo.
+    # This is a subversion repository.  Now we have to create
+    # src/mlpack/core/util/svnversion.hpp and then update it when things are
+    # built.  During build-time, we must set __MLPACK_SUBVERSION.
+    set (USING_SVNVERSION "YES")
+    add_definitions(-D__MLPACK_SUBVERSION)
+    include(CMake/CreateSVNVersionHeader.cmake)
+
+    add_custom_target(mlpack_svnversion ALL
+        COMMAND ${CMAKE_COMMAND} -P CMake/CreateSVNVersionHeader.cmake
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Updating svnversion.hpp (if necessary)")
+  endif(MLPACK_TEST_WC_REVISION)
+endif (Subversion_FOUND)
+
 # Recurse into the rest of the project.
 add_subdirectory(src/mlpack)
+
+if (USING_SVNVERSION STREQUAL "YES")
+  add_dependencies(mlpack mlpack_svnversion)
+endif (USING_SVNVERSION STREQUAL "YES")
+
+# If we need to keep svnversion.hpp up to date, then make sure the mlpack target
+# depends on it.
 
 # Make a target to generate the documentation.  If Doxygen isn't installed, then
 # I guess this option will just be unavailable.
@@ -239,17 +267,17 @@ if (DOXYGEN_FOUND)
   # Preprocess the Doxyfile.  This is done before 'make doc'.
   add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Doxyfile
       PRE_BUILD
-      COMMAND ${CMAKE_COMMAND} -D DESTDIR=${CMAKE_BINARY_DIR} -P
-          ${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      COMMAND ${CMAKE_COMMAND} -D DESTDIR="${CMAKE_BINARY_DIR}" -P
+          "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake"
+      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
       COMMENT "Creating Doxyfile to generate Doxygen documentation"
   )
 
   # Generate documentation.
   add_custom_target(doc
-      COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile
-      DEPENDS ${CMAKE_BINARY_DIR}/Doxyfile
-      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      COMMAND "${DOXYGEN_EXECUTABLE}" "${CMAKE_BINARY_DIR}/Doxyfile"
+      DEPENDS "${CMAKE_BINARY_DIR}/Doxyfile"
+      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
       COMMENT "Generating API documentation with Doxygen"
   )
 
