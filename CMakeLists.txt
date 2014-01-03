@@ -234,20 +234,30 @@ endif (WIN32)
 find_package(Subversion)
 set (USING_SVNVERSION "NO")
 if (Subversion_FOUND)
-  Subversion_WC_INFO(${CMAKE_SOURCE_DIR} MLPACK_TEST)
-  if(MLPACK_TEST_WC_REVISION) # If this is not empty we are inside a repo.
-    # This is a subversion repository.  Now we have to create
-    # src/mlpack/core/util/svnversion.hpp and then update it when things are
-    # built.  During build-time, we must set __MLPACK_SUBVERSION.
-    set (USING_SVNVERSION "YES")
-    add_definitions(-D__MLPACK_SUBVERSION)
-    include(CMake/CreateSVNVersionHeader.cmake)
+  # Run svn info to find out if this is a working copy.  If the return code is
+  # not 0, then it isn't.  The following line is taken from
+  # FindSubversion.cmake...
+  execute_process(COMMAND ${Subversion_SVN_EXECUTABLE} info ${CMAKE_SOURCE_DIR}
+      OUTPUT_VARIABLE MLPACK_TMP_WC_INFO
+      ERROR_VARIABLE MLPACK_TMP_WC_INFO_ERROR
+      RESULT_VARIABLE MLPACK_TMP_WC_INFO_RESULT
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
+  if (${MLPACK_TMP_WC_INFO_RESULT} EQUAL 0)
+    Subversion_WC_INFO(${CMAKE_SOURCE_DIR} MLPACK_TEST)
+    if(MLPACK_TEST_WC_REVISION) # If this is not empty we are inside a repo.
+      # This is a subversion repository.  Now we have to create
+      # src/mlpack/core/util/svnversion.hpp and then update it when things are
+      # built.  During build-time, we must set __MLPACK_SUBVERSION.
+      set (USING_SVNVERSION "YES")
+      add_definitions(-D__MLPACK_SUBVERSION)
+      include(CMake/CreateSVNVersionHeader.cmake)
 
-    add_custom_target(mlpack_svnversion ALL
-        COMMAND ${CMAKE_COMMAND} -P CMake/CreateSVNVersionHeader.cmake
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Updating svnversion.hpp (if necessary)")
-  endif(MLPACK_TEST_WC_REVISION)
+      add_custom_target(mlpack_svnversion ALL
+          COMMAND ${CMAKE_COMMAND} -P CMake/CreateSVNVersionHeader.cmake
+          WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+          COMMENT "Updating svnversion.hpp (if necessary)")
+    endif(MLPACK_TEST_WC_REVISION)
+  endif (${MLPACK_TMP_WC_INFO_RESULT} EQUAL 0)
 endif (Subversion_FOUND)
 
 # Recurse into the rest of the project.
