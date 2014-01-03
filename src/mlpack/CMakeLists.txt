@@ -1,7 +1,7 @@
 include_directories(..) # <mlpack/[whatever]>
 
 # Add core.hpp to list of sources.
-set(${MLPACK_SRCS} ${MLPACK_SRCS} "core.hpp")
+set(MLPACK_SRCS ${MLPACK_SRCS} "${CMAKE_CURRENT_SOURCE_DIR}/core.hpp")
 
 ## Recurse into both core/ and methods/.
 set(DIRS
