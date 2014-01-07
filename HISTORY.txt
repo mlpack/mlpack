@@ -11,8 +11,8 @@
   * L-BFGS optimizer now returns its function via Function().
 
   * Version information is now obtainable via mlpack::util::GetVersion() or the
-    __MLPACK_VERSION_MAJOR, __MLPACK_VERSION_MINOR, and  __MLPACK_VERSION_PATCH.
-    (#309)
+    __MLPACK_VERSION_MAJOR, __MLPACK_VERSION_MINOR, and  __MLPACK_VERSION_PATCH
+    macros (#309).
 
   * Fix typos in allkfn and allkrann output.
 
