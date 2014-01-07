@@ -1,4 +1,4 @@
-????-??-??    mlpack 1.0.8
+2014-01-06    mlpack 1.0.8
 
   * Memory leak in NeighborSearch index-mapping code fixed (#310).
 
@@ -9,6 +9,12 @@
     also #305).
 
   * L-BFGS optimizer now returns its function via Function().
+
+  * Version information is now obtainable via mlpack::util::GetVersion() or the
+    __MLPACK_VERSION_MAJOR, __MLPACK_VERSION_MINOR, and  __MLPACK_VERSION_PATCH.
+    (#309)
+
+  * Fix typos in allkfn and allkrann output.
 
 2013-10-04    mlpack 1.0.7
 
