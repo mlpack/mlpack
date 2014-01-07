@@ -130,6 +130,7 @@
  *   - Garry Boyer <garryb@gmail.com>
  *   - Andreas Löf <andreas.lof@cs.waikato.ac.nz>
  *   - Marcus Edel <marcus.edel@fu-berlin.de>
+ *   - Mudit Raj Gupta <mudit.raaj.gupta@gmail.com>
  *   - Sumedh Ghaisas <sumedhghaisas@gmail.com>
  */
 
