@@ -66,7 +66,9 @@ template<typename T>
 void SaveRestoreUtility::SaveParameter(const T& t, const std::string& name)
 {
   std::ostringstream output;
-  output << t;
+  // Manually increase precision to solve #313 for now, until we have a way to
+  // store this as an actual binary number.
+  output << std::setprecision(15) << t;
   parameters[name] = output.str();
 }
 

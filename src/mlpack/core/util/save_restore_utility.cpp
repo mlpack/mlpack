@@ -176,9 +176,9 @@ void SaveRestoreUtility::SaveParameter(const arma::mat& mat,
   {
     for (size_t c = 0; c < columns - 1; ++c)
     {
-      output << mat(r,c) << ",";
+      output << std::setprecision(15) << mat(r, c) << ",";
     }
-    output << mat(r,columns - 1) << std::endl;
+    output << std::setprecision(15) << mat(r, columns - 1) << std::endl;
   }
   parameters[name] = output.str();
 }
