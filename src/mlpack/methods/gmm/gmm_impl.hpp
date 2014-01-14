@@ -16,6 +16,64 @@
 namespace mlpack {
 namespace gmm {
 
+/**
+ * Create a GMM with the given number of Gaussians, each of which have the
+ * specified dimensionality.  The means and covariances will be set to 0.
+ *
+ * @param gaussians Number of Gaussians in this GMM.
+ * @param dimensionality Dimensionality of each Gaussian.
+ */
+template<typename FittingType>
+GMM<FittingType>::GMM(const size_t gaussians, const size_t dimensionality) :
+    gaussians(gaussians),
+    dimensionality(dimensionality),
+    means(gaussians, arma::vec(dimensionality)),
+    covariances(gaussians, arma::mat(dimensionality, dimensionality)),
+    weights(gaussians),
+    localFitter(FittingType()),
+    fitter(localFitter)
+{
+  // Clear the memory; set it to 0.  Technically this model is still valid, but
+  // only barely.
+  weights.fill(1.0 / gaussians);
+  for (size_t i = 0; i < gaussians; ++i)
+  {
+    means[i].zeros();
+    covariances[i].eye();
+  }
+}
+
+/**
+ * Create a GMM with the given number of Gaussians, each of which have the
+ * specified dimensionality.  Also, pass in an initialized FittingType class;
+ * this is useful in cases where the FittingType class needs to store some
+ * state.
+ *
+ * @param gaussians Number of Gaussians in this GMM.
+ * @param dimensionality Dimensionality of each Gaussian.
+ * @param fitter Initialized fitting mechanism.
+ */
+template<typename FittingType>
+GMM<FittingType>::GMM(const size_t gaussians,
+                      const size_t dimensionality,
+                      FittingType& fitter) :
+    gaussians(gaussians),
+    dimensionality(dimensionality),
+    means(gaussians, arma::vec(dimensionality)),
+    covariances(gaussians, arma::mat(dimensionality, dimensionality)),
+    weights(gaussians),
+    fitter(fitter)
+{
+  // Clear the memory; set it to 0.  Technically this model is still valid, but
+  // only barely.
+  weights.fill(1.0 / gaussians);
+  for (size_t i = 0; i < gaussians; ++i)
+  {
+    means[i].zeros();
+    covariances[i].eye();
+  }
+}
+
 // Copy constructor.
 template<typename FittingType>
 template<typename OtherFittingType>
