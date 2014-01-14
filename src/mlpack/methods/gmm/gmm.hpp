@@ -104,19 +104,12 @@ class GMM
 
   /**
    * Create a GMM with the given number of Gaussians, each of which have the
-   * specified dimensionality.
+   * specified dimensionality.  The means and covariances will be set to 0.
    *
    * @param gaussians Number of Gaussians in this GMM.
    * @param dimensionality Dimensionality of each Gaussian.
    */
-  GMM(const size_t gaussians, const size_t dimensionality) :
-      gaussians(gaussians),
-      dimensionality(dimensionality),
-      means(gaussians, arma::vec(dimensionality)),
-      covariances(gaussians, arma::mat(dimensionality, dimensionality)),
-      weights(gaussians),
-      localFitter(FittingType()),
-      fitter(localFitter) { /* Nothing to do. */ }
+  GMM(const size_t gaussians, const size_t dimensionality);
 
   /**
    * Create a GMM with the given number of Gaussians, each of which have the
@@ -130,13 +123,7 @@ class GMM
    */
   GMM(const size_t gaussians,
       const size_t dimensionality,
-      FittingType& fitter) :
-      gaussians(gaussians),
-      dimensionality(dimensionality),
-      means(gaussians, arma::vec(dimensionality)),
-      covariances(gaussians, arma::mat(dimensionality, dimensionality)),
-      weights(gaussians),
-      fitter(fitter) { /* Nothing to do. */ }
+      FittingType& fitter);
 
   /**
    * Create a GMM with the given means, covariances, and weights.
