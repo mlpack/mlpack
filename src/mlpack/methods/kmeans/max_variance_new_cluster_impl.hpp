@@ -30,11 +30,15 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
 
   // Add the variance of each point's distance away from the cluster.  I think
   // this is the sensible thing to do.
-  for (size_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; ++i)
   {
-    variances[assignments[i]] += arma::as_scalar(
-        arma::var(data.col(i) - centroids.col(assignments[i])));
+    variances[assignments[i]] += metric::SquaredEuclideanDistance::Evaluate(
+        data.col(i), centroids.col(assignments[i]));
   }
+
+  // Divide by the number of points in the cluster to produce the variance.
+  for (size_t i = 0; i < clusterCounts.n_elem; ++i)
+    variances[i] /= clusterCounts[i];
 
   // Now find the cluster with maximum variance.
   arma::uword maxVarCluster;
@@ -43,7 +47,7 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   // Now, inside this cluster, find the point which is furthest away.
   size_t furthestPoint = data.n_cols;
   double maxDistance = -DBL_MAX;
-  for (size_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; ++i)
   {
     if (assignments[i] == maxVarCluster)
     {
