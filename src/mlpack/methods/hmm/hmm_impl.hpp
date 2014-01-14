@@ -430,9 +430,10 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
     forwardProb(state, 0) = transition(state, 0) *
         emission[state].Probability(dataSeq.unsafe_col(0));
 
-  // Then normalize the column.
+  // Then normalize the column, but only if the scale is not 0.
   scales[0] = accu(forwardProb.col(0));
-  forwardProb.col(0) /= scales[0];
+  if (scales[0] != 0.0)
+    forwardProb.col(0) /= scales[0];
 
   // Now compute the probabilities for each successive observation.
   for (size_t t = 1; t < dataSeq.n_cols; t++)
@@ -447,9 +448,10 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
           emission[j].Probability(dataSeq.unsafe_col(t));
     }
 
-    // Normalize probability.
+    // Normalize probability, but only if the scale is not 0.
     scales[t] = accu(forwardProb.col(t));
-    forwardProb.col(t) /= scales[t];
+    if (scales[t] != 0.0)
+      forwardProb.col(t) /= scales[t];
   }
 }
 
@@ -478,8 +480,10 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
         backwardProb(j, t) += transition(state, j) * backwardProb(state, t + 1)
             * emission[state].Probability(dataSeq.unsafe_col(t + 1));
 
-      // Normalize by the weights from the forward algorithm.
-      backwardProb(j, t) /= scales[t + 1];
+      // Normalize by the weights from the forward algorithm, if the scale is
+      // not 0.
+      if (scales[t + 1] != 0.0)
+        backwardProb(j, t) /= scales[t + 1];
     }
   }
 }
