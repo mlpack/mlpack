@@ -57,6 +57,9 @@ void LARS::Regress(const arma::mat& matX,
   // (all dimensions are inactive).
   isActive.resize(dataRef.n_cols, false);
 
+  // Set up ignores set variables. Initialized empty.
+  isIgnored.resize(dataRef.n_cols, false);
+
   // Initialize yHat and beta.
   beta = arma::zeros(dataRef.n_cols);
   arma::vec yHat = arma::zeros(dataRef.n_rows);
@@ -100,13 +103,14 @@ void LARS::Regress(const arma::mat& matX,
   }
 
   // Main loop.
-  while ((activeSet.size() < dataRef.n_cols) && (maxCorr > tolerance))
+  while (((activeSet.size() + ignoreSet.size()) < dataRef.n_cols) &&
+         (maxCorr > tolerance))
   {
     // Compute the maximum correlation among inactive dimensions.
     maxCorr = 0;
     for (size_t i = 0; i < dataRef.n_cols; i++)
     {
-      if ((!isActive[i]) && (fabs(corr(i)) > maxCorr))
+      if ((!isActive[i]) && (!isIgnored[i]) && (fabs(corr(i)) > maxCorr))
       {
         maxCorr = fabs(corr(i));
         changeInd = i;
@@ -146,22 +150,41 @@ void LARS::Regress(const arma::mat& matX,
     arma::vec betaDirection;
     if (useCholesky)
     {
-      /**
-       * Note that:
-       * R^T R % S^T % S = (R % S)^T (R % S)
-       * Now, for 1 the ones vector:
-       * inv( (R % S)^T (R % S) ) 1
-       *    = inv(R % S) inv((R % S)^T) 1
-       *    = inv(R % S) Solve((R % S)^T, 1)
-       *    = inv(R % S) Solve(R^T, s)
-       *    = Solve(R % S, Solve(R^T, s)
-       *    = s % Solve(R, Solve(R^T, s))
-       */
-      unnormalizedBetaDirection = solve(trimatu(matUtriCholFactor),
-          solve(trimatl(trans(matUtriCholFactor)), s));
+      // Check for singularity.
+      const double lastUtriElement = matUtriCholFactor(
+          matUtriCholFactor.n_cols - 1, matUtriCholFactor.n_rows - 1);
+      if (std::abs(lastUtriElement) > tolerance)
+      {
+        // Ok, no singularity.
+        /**
+         * Note that:
+         * R^T R % S^T % S = (R % S)^T (R % S)
+         * Now, for 1 the ones vector:
+         * inv( (R % S)^T (R % S) ) 1
+         *    = inv(R % S) inv((R % S)^T) 1
+         *    = inv(R % S) Solve((R % S)^T, 1)
+         *    = inv(R % S) Solve(R^T, s)
+         *    = Solve(R % S, Solve(R^T, s)
+         *    = s % Solve(R, Solve(R^T, s))
+         */
+        unnormalizedBetaDirection = solve(trimatu(matUtriCholFactor),
+            solve(trimatl(trans(matUtriCholFactor)), s));
 
-      normalization = 1.0 / sqrt(dot(s, unnormalizedBetaDirection));
-      betaDirection = normalization * unnormalizedBetaDirection;
+        normalization = 1.0 / sqrt(dot(s, unnormalizedBetaDirection));
+        betaDirection = normalization * unnormalizedBetaDirection;
+      }
+      else
+      {
+        // Singularity, so remove variable from active set, add to ignores set,
+        // and look for new variable to add.
+        Log::Warn << "Encountered singularity when adding variable "
+            << changeInd << " to active set; permanently removing."
+            << std::endl;
+        Deactivate(activeSet.size() - 1);
+        Ignore(changeInd);
+        CholeskyDelete(matUtriCholFactor.n_rows - 1);
+        continue;
+      }
     }
     else
     {
@@ -170,11 +193,28 @@ void LARS::Regress(const arma::mat& matX,
         for (size_t j = 0; j < activeSet.size(); j++)
           matGramActive(i, j) = matGram(activeSet[i], activeSet[j]);
 
+      // Check for singularity.
       arma::mat matS = s * arma::ones<arma::mat>(1, activeSet.size());
-      unnormalizedBetaDirection = solve(matGramActive % trans(matS) % matS,
+      const bool solvedOk = solve(unnormalizedBetaDirection,
+          matGramActive % trans(matS) % matS,
           arma::ones<arma::mat>(activeSet.size(), 1));
-      normalization = 1.0 / sqrt(sum(unnormalizedBetaDirection));
-      betaDirection = normalization * unnormalizedBetaDirection % s;
+      if (solvedOk)
+      {
+        // Ok, no singularity.
+        normalization = 1.0 / sqrt(sum(unnormalizedBetaDirection));
+        betaDirection = normalization * unnormalizedBetaDirection % s;
+      }
+      else
+      {
+        // Singularity, so remove variable from active set, add to ignores set,
+        // and look for new variable to add.
+        Deactivate(activeSet.size() - 1);
+        Ignore(changeInd);
+        Log::Warn << "Encountered singularity when adding variable "
+            << changeInd << " to active set; permanently removing."
+            << std::endl;
+        continue;
+      }
     }
 
     // compute "equiangular" direction in output space
@@ -183,12 +223,12 @@ void LARS::Regress(const arma::mat& matX,
     double gamma = maxCorr / normalization;
 
     // If not all variables are active.
-    if (activeSet.size() < dataRef.n_cols)
+    if ((activeSet.size() + ignoreSet.size()) < dataRef.n_cols)
     {
       // Compute correlations with direction.
       for (size_t ind = 0; ind < dataRef.n_cols; ind++)
       {
-        if (isActive[ind])
+        if (isActive[ind] || isIgnored[ind])
           continue;
 
         double dirCorr = dot(dataRef.col(ind), yHatDirection);
@@ -293,6 +333,12 @@ void LARS::Activate(const size_t varInd)
 {
   isActive[varInd] = true;
   activeSet.push_back(varInd);
+}
+
+void LARS::Ignore(const size_t varInd)
+{
+  isIgnored[varInd] = true;
+  ignoreSet.push_back(varInd);
 }
 
 void LARS::ComputeYHatDirection(const arma::mat& matX,

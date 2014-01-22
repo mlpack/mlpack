@@ -189,6 +189,14 @@ private:
   //! Active set membership indicator (for each dimension).
   std::vector<bool> isActive;
 
+  // Set of variables that are ignored (if any).
+
+  //! Set of ignored variables (for dimensions in span{active set dimensions}).
+  std::vector<size_t> ignoreSet;
+
+  //! Membership indicator for set of ignored variables.
+  std::vector<bool> isIgnored;
+
   /**
    * Remove activeVarInd'th element from active set.
    *
@@ -202,6 +210,13 @@ private:
    * @param varInd Dimension to add to active set.
    */
   void Activate(const size_t varInd);
+
+  /**
+   * Add dimension varInd to ignores set (never removed).
+   *
+   * @param varInd Dimension to add to ignores set.
+   */
+  void Ignore(const size_t varInd);
 
   // compute "equiangular" direction in output space
   void ComputeYHatDirection(const arma::mat& matX,
