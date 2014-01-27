@@ -23,6 +23,8 @@ inline double EpanechnikovKernel::Evaluate(const Vec1Type& a, const Vec2Type& b)
       * inverseBandwidthSquared);
 }
 
+
+
 /**
  * Obtains the convolution integral [integral of K(||x-a||) K(||b-x||) dx]
  * for the two vectors.

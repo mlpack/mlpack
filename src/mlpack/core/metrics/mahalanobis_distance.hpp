@@ -30,7 +30,7 @@ namespace metric {
  * itself before performing any evaluations.  However, this class is provided
  * for convenience.
  *
- * Similar to the LMetric class, this offers a template parameter t_take_root
+ * Similar to the LMetric class, this offers a template parameter TakeRoot
  * which, when set to false, will instead evaluate the distance
  *
  * @f[
@@ -39,10 +39,10 @@ namespace metric {
  *
  * which is faster to evaluate.
  *
- * @tparam t_take_root If true, takes the root of the output.  It is slightly
+ * @tparam TakeRoot If true, takes the root of the output.  It is slightly
  *   faster to leave this at the default of false.
  */
-template<bool t_take_root = false>
+template<bool TakeRoot = false>
 class MahalanobisDistance
 {
  public:
@@ -78,6 +78,9 @@ class MahalanobisDistance
    * @param a First vector.
    * @param b Second vector.
    */
+
+  // Return String of Object
+  std::string ToString() const;
   template<typename VecType1, typename VecType2>
   double Evaluate(const VecType1& a, const VecType2& b);
 
@@ -94,7 +97,6 @@ class MahalanobisDistance
    * @return Reference to the covariance matrix.
    */
   arma::mat& Covariance() { return covariance; }
-
  private:
   //! The covariance matrix associated with this distance.
   arma::mat covariance;

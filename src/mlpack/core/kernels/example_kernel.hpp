@@ -98,6 +98,16 @@ class ExampleKernel
    * @param b Second vector.
    * @return K(a, b).
    */
+  std::string ToString() const{
+    std::ostringstream convert;
+    convert << "ExampleKernel [" << this << "]" << std::endl;
+    return convert.str();
+  }
+  /**
+   * Returns a String for the Kernel Object; in this case, with only the memory
+   * address for the Kernel. If your kernel has any members, your ToString
+   * method should include those as neccessary as well.
+   **/
   template<typename VecType>
   static double Evaluate(const VecType& a, const VecType& b) { return 0; }
 
@@ -127,7 +137,8 @@ class ExampleKernel
    * @param dimension the dimension of the space.
    * @return the normalization constant.
    */
-  static double Normalizer(size_t dimension) { return 0; }
+  static double Normalizer(size_t dimension=1) { return 0; }
+  
 };
 
 }; // namespace kernel

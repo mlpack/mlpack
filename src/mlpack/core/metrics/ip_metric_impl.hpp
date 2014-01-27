@@ -53,6 +53,15 @@ inline double IPMetric<KernelType>::Evaluate(const Vec1Type& a,
       2 * kernel.Evaluate(a, b));
 }
 
+// Convert Object To String
+template<typename KernelType>
+std::string IPMetric<KernelType>::ToString() const{
+  std::ostringstream convert;
+  convert << "IPMetric [" << this << "]" << std::endl;
+  convert << "Kernel: " << localKernel << std::endl;
+  return convert.str();
+}
+
 // A specialization for the linear kernel, which actually just turns out to be
 // the Euclidean distance.
 template<>

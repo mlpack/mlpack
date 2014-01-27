@@ -59,7 +59,14 @@ class PolynomialKernel
   const double& Offset() const { return offset; }
   //! Modify the offset of the dot product of the arguments.
   double& Offset() { return offset; }
-
+  
+  // Return String of Object  
+  std::string ToString() const{
+    std::ostringstream convert;
+    convert << "PolynomialKernel [" << this << "]" << std::endl;
+    return convert.str();
+  }
+  
  private:
   //! The degree of the polynomial.
   double degree;

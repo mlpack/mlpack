@@ -12,6 +12,15 @@
 namespace mlpack {
 namespace metric {
 
+
+// Convert Object into String
+template<bool TakeRoot>
+std::string MahalanobisDistance<TakeRoot>::ToString() const{
+  std::ostringstream convert;
+  convert << "MahalanobisDistance [" << this << "]" << std::endl;
+  return convert.str();
+}
+
 /**
  * Specialization for non-rooted case.
  */
@@ -24,7 +33,6 @@ double MahalanobisDistance<false>::Evaluate(const VecType1& a,
   arma::mat out = trans(m) * covariance * m; // 1x1
   return out[0];
 }
-
 /**
  * Specialization for rooted case.  This requires one extra evaluation of
  * sqrt().

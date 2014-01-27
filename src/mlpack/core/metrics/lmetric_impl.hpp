@@ -29,6 +29,15 @@ double LMetric<Power, TakeRoot>::Evaluate(const VecType1& a,
   return pow(sum, (1.0 / Power));
 }
 
+// String Conversion
+template<int Power, bool TakeRoot> 
+std::string LMetric<Power,TakeRoot>::ToString() const
+{
+  std::ostringstream convert;
+  convert << "LMetric [" << this << "]" << std::endl;;
+  return convert.str();
+}
+
 // L1-metric specializations; the root doesn't matter.
 template<>
 template<typename VecType1, typename VecType2>

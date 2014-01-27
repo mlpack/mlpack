@@ -58,6 +58,7 @@ class EpanechnikovKernel
    * @param b Second vector.
    * @return the convolution integral value.
    */
+  
   template<typename VecType>
   double ConvolutionIntegral(const VecType& a, const VecType& b);
 
@@ -67,12 +68,16 @@ class EpanechnikovKernel
    * @param dimension Dimension to calculate the normalizer for.
    */
   double Normalizer(const size_t dimension);
+  
+  // Returns String of O bject
+  std::string ToString() const;
 
  private:
   //! Bandwidth of the kernel.
   double bandwidth;
   //! Cached value of the inverse bandwidth squared (to speed up computation).
   double inverseBandwidthSquared;
+
 };
 
 //! Kernel traits for the Epanechnikov kernel.
