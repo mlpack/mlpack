@@ -151,7 +151,7 @@ class LARS
   //! Access the upper triangular cholesky factor
   const arma::mat& MatUtriCholFactor() const { return matUtriCholFactor; }
   
-private:
+ private:
   //! Gram matrix.
   arma::mat matGramInternal;
 
