@@ -95,6 +95,14 @@ class PSpectrumStringKernel
   //! Modify the value of p.
   size_t& P() { return p; }
 
+   /*
+   * Returns a string representation of this object.
+   */
+  std::string ToString() const{
+    std::ostringstream convert;
+    convert << "PSpectrumStringKernel [" << this << "]" << std::endl;
+    return convert.str();
+  }
  private:
   //! The datasets.
   const std::vector<std::vector<std::string> >& datasets;

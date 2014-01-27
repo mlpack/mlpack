@@ -47,6 +47,12 @@ class LinearKernel
   {
     return arma::dot(a, b);
   }
+
+  std::string ToString() const{
+    std::ostringstream convert;
+    convert << "Linear Kernel [" << this << "]" << std::endl;
+    return convert.str();
+  }
 };
 
 }; // namespace kernel

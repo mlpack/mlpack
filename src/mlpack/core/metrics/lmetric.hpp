@@ -69,6 +69,7 @@ class LMetric
    */
   template<typename VecType1, typename VecType2>
   static double Evaluate(const VecType1& a, const VecType2& b);
+  std::string ToString() const;
 };
 
 // Convenience typedefs.
@@ -92,6 +93,7 @@ typedef LMetric<2, true> EuclideanDistance;
  * The L-infinity distance
  */
 typedef LMetric<INT_MAX, false> ChebyshevDistance;
+
 
 }; // namespace metric
 }; // namespace mlpack

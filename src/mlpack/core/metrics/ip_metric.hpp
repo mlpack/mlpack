@@ -34,7 +34,10 @@ class IPMetric
   const KernelType& Kernel() const { return kernel; }
   //! Modify the kernel.
   KernelType& Kernel() { return kernel; }
-
+  /**
+   * Returns a string representation of this object.
+   */
+  std::string ToString() const;
  private:
   //! The locally stored kernel, if it is necessary.
   KernelType* localKernel;

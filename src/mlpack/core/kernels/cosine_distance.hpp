@@ -34,6 +34,14 @@ class CosineDistance
    */
   template<typename VecType>
   static double Evaluate(const VecType& a, const VecType& b);
+  /**
+   * Returns a string representation of this object.
+   */
+  std::string ToString() const{
+    std::ostringstream convert;
+    convert << "CosineDistance [" << this << "]" << std::endl;
+    return convert.str();
+}
 };
 
 //! Kernel traits for the cosine distance.

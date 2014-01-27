@@ -115,6 +115,13 @@ class GaussianKernel
   //! Get the precalculated constant.
   double Gamma() const { return gamma; }
 
+  // convert object to string
+  std::string ToString() const{
+    std::ostringstream convert;
+    convert << "GaussianKernel [" << this << "]" << std::endl;
+    return convert.str();
+  }
+
  private:
   //! Kernel bandwidth.
   double bandwidth;
