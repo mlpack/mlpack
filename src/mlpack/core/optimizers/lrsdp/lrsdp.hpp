@@ -14,6 +14,15 @@
 namespace mlpack {
 namespace optimization {
 
+/**
+ * An implementation of a low-rank semidefinite program solver, based on
+ * Monteiro and Burer's formulation.  The optimizer is the augmented Lagrangian
+ * algorithm, and thus this class has Evaluate(), Gradient(),
+ * EvaluateConstraint(), and GradientConstraint() functions for that purpose.
+ * However, you should not call the Gradient() or GradientConstraint() functions
+ * by hand, because they are only implemented as part of the augmented
+ * Lagrangian optimizer.
+ */
 class LRSDP
 {
  public:
@@ -133,7 +142,8 @@ class LRSDP
 }; // namespace optimization
 }; // namespace mlpack
 
-// Include implementation.
+// Include implementation (template specializations for the augmented Lagrangian
+// function).
 #include "lrsdp_impl.hpp"
 
 #endif
