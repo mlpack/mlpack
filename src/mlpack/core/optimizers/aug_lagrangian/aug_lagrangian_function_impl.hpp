@@ -95,7 +95,18 @@ const arma::mat& AugLagrangianFunction<LagrangianFunction>::GetInitialPoint()
   return function.GetInitialPoint();
 }
 
+//Convert the Object to a String
+template<typename LagrangianFunction>
+std::string AugLagrangianFunction<LagrangianFunction>::ToString() const{
+  std::ostringstream convert;
+  convert << "AugLagrangianFunction [" << this << "]" << std::endl;
+  convert << "Lagrange multipliers: " << lambda << std::endl;
+  convert << "Penalty parameter: " << sigma << std::endl;
+  return convert.str();
+}
+
 }; // namespace optimization
 }; // namespace mlpack
 
 #endif
+
