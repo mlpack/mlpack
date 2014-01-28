@@ -76,11 +76,16 @@ class LaplacianKernel
   double Bandwidth() const { return bandwidth; }
   //! Modify the bandwidth.
   double& Bandwidth() { return bandwidth; }
-  std::string ToString() const{
+
+  //! Return a string representation of the kernel.
+  std::string ToString() const
+  {
     std::ostringstream convert;
     convert << "LaplacianKernel [" << this << "]" << std::endl;
+    convert << "  Bandwidth: " << bandwidth << std::endl;
     return convert.str();
   }
+
  private:
   //! Kernel bandwidth.
   double bandwidth;
