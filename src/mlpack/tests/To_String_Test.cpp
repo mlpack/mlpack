@@ -26,11 +26,21 @@
 #include <mlpack/methods/nca/nca_softmax_error_function.hpp>
 #include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian_test_functions.hpp>
 
+#include <mlpack/core/tree/ballbound.hpp>
+#include <mlpack/core/tree/binary_space_tree.hpp>
+#include <mlpack/core/tree/bounds.hpp>
+#include <mlpack/core/tree/mrkd_statistic.hpp>
+#include <mlpack/core/tree/hrectbound.hpp>
+#include <mlpack/core/tree/periodichrectbound.hpp>
+#include <mlpack/core/tree/statistic.hpp>
+
 using namespace mlpack;
 using namespace mlpack::kernel;
 using namespace mlpack::distribution;
 using namespace mlpack::metric;
 using namespace mlpack::nca;
+using namespace mlpack::bound;
+using namespace mlpack::tree;
 
 //using namespace mlpack::optimization;
 
@@ -159,6 +169,12 @@ BOOST_AUTO_TEST_CASE(AugLagString)
       <mlpack::optimization::AugLagrangianTestFunction> q(a);
 	mlpack::optimization::AugLagrangian 
       <mlpack::optimization::AugLagrangianTestFunction> d(a);
+  Log::Info << d;
+}
+
+BOOST_AUTO_TEST_CASE(BallBoundString)
+{
+  BallBound<> d;
   Log::Info << d;
 }
 
