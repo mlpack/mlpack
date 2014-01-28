@@ -62,3 +62,4 @@ BOOST_AUTO_TEST_CASE(GockenbachFunctionTest)
 }
 
 BOOST_AUTO_TEST_SUITE_END();
+
