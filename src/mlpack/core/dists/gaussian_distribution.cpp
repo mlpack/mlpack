@@ -139,8 +139,13 @@ void GaussianDistribution::Estimate(const arma::mat& observations,
 std::string GaussianDistribution::ToString() const
 {
   std::ostringstream convert;
-  convert << "GaussianDistribution: " << this << std::endl;
-  convert << "mean: " << std::endl << mean << std::endl;
-  convert << "covariance: " << std::endl << covariance << std::endl;
+  convert << "GaussianDistribution [" << this << "]" << std::endl;
+
+  // Secondary ostringstream so things can be indented right.
+  std::ostringstream data;
+  data << "Mean: " << std::endl << mean << std::endl;
+  data << "Covariance: " << std::endl << covariance << std::endl;
+
+  convert << util::Indent(data.str());
   return convert.str();
 }

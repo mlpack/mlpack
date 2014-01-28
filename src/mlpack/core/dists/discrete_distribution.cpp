@@ -111,7 +111,13 @@ std::string DiscreteDistribution::ToString() const
 {
   std::ostringstream convert;
   convert << "DiscreteDistribution [" << this << "]" << std::endl;
-  convert << "Probabilities" << std::endl << probabilities;
+
+  // Secondary object so we can indent the probabilities.
+  std::ostringstream prob;
+  prob << "Probabilities:" << std::endl;
+  prob << probabilities;
+
+  convert << util::Indent(prob.str());
   return convert.str();
 }
 
