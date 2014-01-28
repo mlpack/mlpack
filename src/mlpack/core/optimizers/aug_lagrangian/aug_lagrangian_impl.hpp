@@ -55,7 +55,7 @@ std::string AugLagrangian<LagrangianFunction>::ToString() const{
   std::ostringstream convert;
   convert << "AugLagrangian [" << this << "]" << std::endl;
   // Fix this! Why Only log? Ostream is lonely.
-  //Log::Debug  << "Function to be Oprimized: " << function << std::endl;
+  Log::Debug  << "Function to be Oprimized: " << function << std::endl;
   //Log::Debug << "L-BFGS Selected: " << lbfgs << std::endl;
   return convert.str();
 }
