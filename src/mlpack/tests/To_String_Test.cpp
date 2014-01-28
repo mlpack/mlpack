@@ -14,16 +14,24 @@
 #include <mlpack/core/metrics/ip_metric.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/metrics/mahalanobis_distance.hpp>
-#include <mlpack/core/kernels/pspectrum_string_kernel.hpp>
 
 #include <mlpack/core/kernels/pspectrum_string_kernel.hpp>
-
+#include <mlpack/core/kernels/pspectrum_string_kernel.hpp>
 #include <mlpack/core/kernels/example_kernel.hpp>
+
+//#include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
+//#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+//#include <mlpack/core/optimizers/lrsdp/lrsdp.hpp>
+#include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/methods/nca/nca_softmax_error_function.hpp>
 
 using namespace mlpack;
 using namespace mlpack::kernel;
 using namespace mlpack::distribution;
 using namespace mlpack::metric;
+using namespace mlpack::nca;
+
+//using namespace mlpack::optimization;
 
 BOOST_AUTO_TEST_SUITE(ToStringTest);
 
@@ -125,4 +133,14 @@ BOOST_AUTO_TEST_CASE(MahalanobisDistanceString)
   Log::Info << d;
 }
 
+BOOST_AUTO_TEST_CASE(SGDString)
+{
+  const arma::mat g(2,2);
+  const arma::Col<size_t> v(2);
+  //g.randu();
+  //v.randu();
+  SoftmaxErrorFunction<> a(g,v);
+	mlpack::optimization::SGD<SoftmaxErrorFunction<> > d(a);
+  Log::Info << d;
+}
 BOOST_AUTO_TEST_SUITE_END();
