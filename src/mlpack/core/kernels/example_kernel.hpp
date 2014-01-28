@@ -137,7 +137,10 @@ class ExampleKernel
    * @param dimension the dimension of the space.
    * @return the normalization constant.
    */
-  static double Normalizer(size_t dimension=1) { return 0; }
+  static double Normalizer() { return 0; }
+  
+  // Modified to remove unused variable "dimension"  
+  //static double Normalizer(size_t dimension=1) { return 0; }
   
 };
 
