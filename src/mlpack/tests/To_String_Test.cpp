@@ -157,9 +157,8 @@ BOOST_AUTO_TEST_CASE(AugLagString)
 	mlpack::optimization::AugLagrangianTestFunction a;
   mlpack::optimization::AugLagrangianFunction 
       <mlpack::optimization::AugLagrangianTestFunction> q(a);
-	//mlpack::optimization::AugLagrangian 
-  //    <mlpack::optimization::AugLagrangianFunction 
-  //    <mlpack::optimization::AugLagrangianTestFunction> > d(q);
+	mlpack::optimization::AugLagrangian 
+      <mlpack::optimization::AugLagrangianTestFunction> d(a);
   Log::Info << q;
 }
 BOOST_AUTO_TEST_SUITE_END();
