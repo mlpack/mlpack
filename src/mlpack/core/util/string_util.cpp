@@ -24,6 +24,10 @@ string mlpack::util::Indent(string input)
   size_t startPos = 0;
   while ((startPos = input.find("\n", startPos)) != string::npos)
   {
+    // Don't replace the last newline.
+    if (startPos == input.length() - 1)
+      break;
+
     input.replace(startPos, 1, tabbedNewline);
     startPos += tabbedNewline.length();
   }
