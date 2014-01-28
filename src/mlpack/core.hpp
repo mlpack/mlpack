@@ -133,6 +133,7 @@
  *   - Mudit Raj Gupta <mudit.raaj.gupta@gmail.com>
  *   - Sumedh Ghaisas <sumedhghaisas@gmail.com>
  *   - Michael Fox <michaelfox99@gmail.com>
+ *   - Ryan Birmingham <birm@gatech.edu>
  */
 
 // First, standard includes.
