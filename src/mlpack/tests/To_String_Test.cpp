@@ -19,11 +19,12 @@
 #include <mlpack/core/kernels/pspectrum_string_kernel.hpp>
 #include <mlpack/core/kernels/example_kernel.hpp>
 
-//#include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
+#include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
 //#include <mlpack/core/optimizers/lrsdp/lrsdp.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include <mlpack/methods/nca/nca_softmax_error_function.hpp>
+#include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian_test_functions.hpp>
 
 using namespace mlpack;
 using namespace mlpack::kernel;
@@ -149,5 +150,16 @@ BOOST_AUTO_TEST_CASE(L_BFGSString)
   SoftmaxErrorFunction<> a(g,v);
 	mlpack::optimization::L_BFGS<SoftmaxErrorFunction<> > d(a);
   Log::Info << d;
+}
+
+BOOST_AUTO_TEST_CASE(AugLagString)
+{
+	mlpack::optimization::AugLagrangianTestFunction a;
+  mlpack::optimization::AugLagrangianFunction 
+      <mlpack::optimization::AugLagrangianTestFunction> q(a);
+	//mlpack::optimization::AugLagrangian 
+  //    <mlpack::optimization::AugLagrangianFunction 
+  //    <mlpack::optimization::AugLagrangianTestFunction> > d(q);
+  Log::Info << q;
 }
 BOOST_AUTO_TEST_SUITE_END();
