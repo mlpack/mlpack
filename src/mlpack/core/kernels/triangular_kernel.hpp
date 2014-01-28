@@ -61,10 +61,12 @@ class TriangularKernel
   //! Modify the bandwidth of the kernel.
   double& Bandwidth() { return bandwidth; }
 
-  // convert object to string
-  std::string ToString() const{
+  //! Return a string representation of the kernel.
+  std::string ToString() const
+  {
     std::ostringstream convert;
     convert << "TriangularKernel [" << this << "]" << std::endl;
+    convert << "  Bandwidth: " << bandwidth << std::endl;
     return convert.str();
   }
 

@@ -98,18 +98,20 @@ class ExampleKernel
    * @param b Second vector.
    * @return K(a, b).
    */
-  std::string ToString() const{
+  template<typename VecType>
+  static double Evaluate(const VecType& a, const VecType& b) { return 0; }
+
+  /**
+   * Returns a string for the kernel object; in this case, with only the memory
+   * address for the kernel. If your kernel has any members, your ToString()
+   * method should include those as neccessary as well.
+   **/
+  std::string ToString() const
+  {
     std::ostringstream convert;
     convert << "ExampleKernel [" << this << "]" << std::endl;
     return convert.str();
   }
-  /**
-   * Returns a String for the Kernel Object; in this case, with only the memory
-   * address for the Kernel. If your kernel has any members, your ToString
-   * method should include those as neccessary as well.
-   **/
-  template<typename VecType>
-  static double Evaluate(const VecType& a, const VecType& b) { return 0; }
 
   /**
    * Obtains the convolution integral [integral K(||x-a||)K(||b-x||)dx]
@@ -138,10 +140,10 @@ class ExampleKernel
    * @return the normalization constant.
    */
   static double Normalizer() { return 0; }
-  
-  // Modified to remove unused variable "dimension"  
+
+  // Modified to remove unused variable "dimension"
   //static double Normalizer(size_t dimension=1) { return 0; }
-  
+
 };
 
 }; // namespace kernel

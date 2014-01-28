@@ -65,10 +65,13 @@ class HyperbolicTangentKernel
   //! Modify offset for the kernel.
   double& Offset() { return offset; }
 
-  // Convert Object to String
-  std::string ToString() const{
+  //! Convert object to string.
+  std::string ToString() const
+  {
     std::ostringstream convert;
     convert << "HyperbolicTangentKernel [" << this << "]" << std::endl;
+    convert << "  Scale: " << scale << std::endl;
+    convert << "  Offset: " << offset << std::endl;
     return convert.str();
   }
 

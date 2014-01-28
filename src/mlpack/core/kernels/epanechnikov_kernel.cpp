@@ -31,12 +31,13 @@ double EpanechnikovKernel::Evaluate(const double distance) const
   return std::max(0.0, 1 - std::pow(distance, 2.0) * inverseBandwidthSquared);
 }
 
-// Return String of Object
-std::string EpanechnikovKernel::ToString() const{
+// Return string of object.
+std::string EpanechnikovKernel::ToString() const
+{
   std::ostringstream convert;
   convert << "EpanechnikovKernel [" << this << "]" << std::endl;
-  convert << "Bandwidth: " << bandwidth << std::endl;
-  convert << "Inverse Bandwidth Squared: ";
+  convert << "  Bandwidth: " << bandwidth << std::endl;
+  convert << "  Inverse squared bandwidth: ";
   convert << inverseBandwidthSquared << std::endl;
   return convert.str();
 }

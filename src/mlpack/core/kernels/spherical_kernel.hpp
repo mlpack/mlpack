@@ -80,10 +80,12 @@ class SphericalKernel
     return (t <= bandwidth) ? 1.0 : 0.0;
   }
 
-  // convert object to string
-  std::string ToString() const{
+  //! Return a string representation of the kernel.
+  std::string ToString() const
+  {
     std::ostringstream convert;
     convert << "SphericalKernel [" << this << "]" << std::endl;
+    convert << "  Bandwidth: " << bandwidth << std::endl;
     return convert.str();
   }
 
