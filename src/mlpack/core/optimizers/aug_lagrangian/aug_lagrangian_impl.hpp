@@ -49,6 +49,17 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
   return Optimize(coordinates, maxIterations);
 }
 
+//Convert the Object to a String
+template<typename LagrangianFunction>
+std::string AugLagrangian<LagrangianFunction>::ToString() const{
+  std::ostringstream convert;
+  convert << "AugLagrangian [" << this << "]" << std::endl;
+  // Fix this! Why Only log? Ostream is lonely.
+  Log::Debug  << "Function to be Oprimized: " << function << std::endl;
+  convert << "L-BFGS Selected: " << lbfgs << std::endl;
+  return convert.str();
+}
+
 template<typename LagrangianFunction>
 bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
                                                  const size_t maxIterations)
@@ -146,3 +157,4 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
 }; // namespace mlpack
 
 #endif // __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_IMPL_HPP
+

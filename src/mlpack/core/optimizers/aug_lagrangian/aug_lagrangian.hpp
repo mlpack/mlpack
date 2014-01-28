@@ -118,6 +118,9 @@ class AugLagrangian
   //! Modify the penalty parameter.
   double& Sigma() { return augfunc.Sigma(); }
 
+  // convert the obkect into a string
+  std::string ToString() const;
+
  private:
   //! Function to be optimized.
   LagrangianFunction& function;
@@ -140,3 +143,4 @@ class AugLagrangian
 #include "aug_lagrangian_impl.hpp"
 
 #endif // __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_HPP
+
