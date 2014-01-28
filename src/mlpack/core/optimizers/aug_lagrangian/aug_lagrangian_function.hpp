@@ -93,6 +93,9 @@ class AugLagrangianFunction
   const LagrangianFunction& Function() const { return function; }
   //! Modify the Lagrangian function.
   LagrangianFunction& Function() { return function; }
+  
+  // convert the obkect into a string
+  std::string ToString() const;
 
  private:
   //! Instantiation of the function to be optimized.
@@ -111,3 +114,4 @@ class AugLagrangianFunction
 #include "aug_lagrangian_function_impl.hpp"
 
 #endif // __MLPACK_CORE_OPTIMIZERS_AUG_LAGRANGIAN_AUG_LAGRANGIAN_FUNCTION_HPP
+
