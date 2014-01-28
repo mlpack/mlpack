@@ -121,6 +121,9 @@ class SGD
   //! Modify whether or not the individual functions are shuffled.
   bool& Shuffle() { return shuffle; }
 
+  // convert the obkect into a string
+  std::string ToString() const;
+
  private:
   //! The instantiated function.
   DecomposableFunctionType& function;
