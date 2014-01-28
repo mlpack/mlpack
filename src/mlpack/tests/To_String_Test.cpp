@@ -20,7 +20,7 @@
 #include <mlpack/core/kernels/example_kernel.hpp>
 
 //#include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
-//#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
+#include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
 //#include <mlpack/core/optimizers/lrsdp/lrsdp.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include <mlpack/methods/nca/nca_softmax_error_function.hpp>
@@ -137,10 +137,17 @@ BOOST_AUTO_TEST_CASE(SGDString)
 {
   const arma::mat g(2,2);
   const arma::Col<size_t> v(2);
-  //g.randu();
-  //v.randu();
   SoftmaxErrorFunction<> a(g,v);
 	mlpack::optimization::SGD<SoftmaxErrorFunction<> > d(a);
+  Log::Info << d;
+}
+
+BOOST_AUTO_TEST_CASE(L_BFGSString)
+{
+  const arma::mat g(2,2);
+  const arma::Col<size_t> v(2);
+  SoftmaxErrorFunction<> a(g,v);
+	mlpack::optimization::L_BFGS<SoftmaxErrorFunction<> > d(a);
   Log::Info << d;
 }
 BOOST_AUTO_TEST_SUITE_END();
