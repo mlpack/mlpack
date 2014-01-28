@@ -39,7 +39,7 @@ add_executable(mlpack_test
   sgd_test.cpp
   sort_policy_test.cpp
   sparse_coding_test.cpp
-  To_String_Test.cpp
+  to_string_test.cpp
   tree_test.cpp
   tree_traits_test.cpp
   union_find_test.cpp
