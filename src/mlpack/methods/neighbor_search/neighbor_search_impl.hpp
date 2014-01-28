@@ -186,8 +186,9 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
   neighborPtr->set_size(k, querySet.n_cols);
   distancePtr->set_size(k, querySet.n_cols);
   distancePtr->fill(SortPolicy::WorstDistance());
-
-  size_t numPrunes = 0;
+  
+  // compiler flags this as unused.
+  //size_t numPrunes = 0;
 
   // Create the helper object for the tree traversal.
   typedef NeighborSearchRules<SortPolicy, MetricType, TreeType> RuleType;
