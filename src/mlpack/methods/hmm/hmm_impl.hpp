@@ -4,21 +4,6 @@
  * @author Tran Quoc Long
  *
  * Implementation of HMM class.
- *
- * This file is part of MLPACK 1.0.7.
- *
- * MLPACK is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * MLPACK is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * MLPACK.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef __MLPACK_METHODS_HMM_HMM_IMPL_HPP
 #define __MLPACK_METHODS_HMM_HMM_IMPL_HPP
@@ -323,7 +308,7 @@ void HMM<Distribution>::Generate(const size_t length,
   // Set vectors to the right size.
   stateSequence.set_size(length);
   dataSequence.set_size(dimensionality, length);
-    
+
   // Set start state (default is 0).
   stateSequence[0] = startState;
 
@@ -412,7 +397,7 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
   stateSeq[dataSeq.n_cols-1] = index;
   for (size_t t = 2; t <= dataSeq.n_cols; t++)
     stateSeq[dataSeq.n_cols-t] = stateSeqBack(stateSeq[dataSeq.n_cols-t+1], dataSeq.n_cols-t+1);
-    
+
   return logStateProb(stateSeq(dataSeq.n_cols - 1), dataSeq.n_cols - 1);
 }
 
