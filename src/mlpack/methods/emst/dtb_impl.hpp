@@ -17,7 +17,7 @@ namespace emst {
 /**
  * A generic initializer.
  */
-DTBStat::DTBStat() :
+inline DTBStat::DTBStat() :
     maxNeighborDistance(DBL_MAX),
     minNeighborDistance(DBL_MAX),
     bound(DBL_MAX),
