@@ -116,6 +116,9 @@ class LRSDP
   //! Modify the augmented Lagrangian object.
   AugLagrangian<LRSDP>& AugLag() { return augLag; }
 
+  // convert the obkect into a string
+  std::string ToString() const;
+
  private:
   // Should probably use sparse matrices for some of these.
 
@@ -147,3 +150,4 @@ class LRSDP
 #include "lrsdp_impl.hpp"
 
 #endif
+

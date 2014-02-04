@@ -489,6 +489,18 @@ void HMM<Distribution>::Backward(const arma::mat& dataSeq,
   }
 }
 
+template<typename Distribution>
+std::string HMM<Distribution>::ToString() const
+{
+  std::ostringstream convert;
+  convert << "HMM [" << this << "]" << std::endl;
+  convert << "  Dimensionality: " << Dimensionality <<std::endl;
+  convert << "  Tolerance: " << Tolerance <<std::endl;
+  convert << "  Transition matrix: " << transition.n_rows << "x" ;
+  convert << transition.n_cols << std::endl;
+  return convert.str();
+}
+
 }; // namespace hmm
 }; // namespace mlpack
 

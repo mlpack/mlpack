@@ -678,12 +678,12 @@ std::string BinarySpaceTree<BoundType, StatisticType, MatType>::ToString() const
 {
   std::ostringstream convert;
   convert << "BinarySpaceTree [" << this << "]" << std::endl;
-  convert << "begin: " << begin << std::endl;
-  convert << "count: " << count << std::endl;
-  convert << "bound: " << mlpack::util::Indent(bound.ToString());
-  convert << "statistic: " << stat.ToString();
-  convert << "leaf size: " << leafSize << std::endl;
-  convert << "splitDimension: " << splitDimension << std::endl;
+  convert << "  begin: " << begin << std::endl;
+  convert << "  count: " << count << std::endl;
+  convert << "  bound: " << mlpack::util::Indent(bound.ToString());
+  convert << "  statistic: " << stat.ToString();
+  convert << "  leaf size: " << leafSize << std::endl;
+  convert << "  splitDimension: " << splitDimension << std::endl;
   if (left != NULL)
   {
     convert << "left:" << std::endl;

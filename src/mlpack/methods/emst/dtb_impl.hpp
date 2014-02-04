@@ -294,6 +294,19 @@ void DualTreeBoruvka<MetricType, TreeType>::Cleanup()
   }
 }
 
+// convert the object to a string
+template<typename MetricType, typename TreeType>
+std::string DualTreeBoruvka<MetricType, TreeType>::ToString() const
+{
+  std::ostringstream convert;
+  convert << "Dual Tree Boruvka [" << this << "]" << std::endl;
+  //convert << "  Data: " << data.n_rows << "x" << data.n_cols <<std::endl;
+  //convert << "  Total Distance: " << totalDist <<std::endl;
+  //convert << "  Naive: " << naive << std::endl;
+  //convert << "  Metric" << metric << std::endl;
+  return convert.str();
+}
+
 }; // namespace emst
 }; // namespace mlpack
 
