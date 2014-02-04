@@ -7,6 +7,8 @@
 #ifndef __MLPACK_METHODS_GMM_POSITIVE_DEFINITE_CONSTRAINT_HPP
 #define __MLPACK_METHODS_GMM_POSITIVE_DEFINITE_CONSTRAINT_HPP
 
+#include <mlpack/core.hpp>
+
 namespace mlpack {
 namespace gmm {
 
@@ -24,13 +26,13 @@ class PositiveDefiniteConstraint
   static void ApplyConstraint(arma::mat& covariance)
   {
     // TODO: make this more efficient.
-    if (det(covariance) <= 1e-50)
+    if (arma::det(covariance) <= 1e-50)
     {
       Log::Debug << "Covariance matrix is not positive definite.  Adding "
           << "perturbation." << std::endl;
 
       double perturbation = 1e-30;
-      while (det(covariance) <= 1e-50)
+      while (arma::det(covariance) <= 1e-50)
       {
         covariance.diag() += perturbation;
         perturbation *= 10;
@@ -43,3 +45,4 @@ class PositiveDefiniteConstraint
 }; // namespace mlpack
 
 #endif
+
