@@ -31,8 +31,10 @@ Here is a simple example, and its output:
 
 using namespace mlpack;
 
-int main()
+int main(int argc, char** argv)
 {
+  CLI::ParseCommandLine(argc, argv);
+
   Log::Debug << "Compiled with debugging symbols." << std::endl;
 
   Log::Info << "Some test informational output." << std::endl;
