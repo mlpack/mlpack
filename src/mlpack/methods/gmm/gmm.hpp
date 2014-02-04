@@ -334,6 +334,11 @@ class GMM
   void Classify(const arma::mat& observations,
                 arma::Col<size_t>& labels) const;
 
+  /**
+   * Returns a string representation of this object.
+   */
+  std::string ToString() const;
+
  private:
   /**
    * This function computes the loglikelihood of the given model.  This function
@@ -363,3 +368,4 @@ class GMM
 #include "gmm_impl.hpp"
 
 #endif
+
