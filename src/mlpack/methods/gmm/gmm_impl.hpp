@@ -476,7 +476,16 @@ double GMM<FittingType>::LogLikelihood(
   return loglikelihood;
 }
 
+template<typename FittingType>
+std::string GMM<FittingType>::ToString() const
+{
+  std::ostringstream convert;
+  convert << "GMM [" << this << "]" << std::endl;
+  return convert.str();
+}
+
 }; // namespace gmm
 }; // namespace mlpack
 
 #endif
+
