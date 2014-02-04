@@ -278,6 +278,11 @@ class DTree
   //! Modify the minimum values.
   arma::vec& MinVals() { return minVals; }
 
+  /**
+   * Returns a string representation of this object.
+   */
+  std::string ToString() const;
+
  private:
 
   // Utility methods.

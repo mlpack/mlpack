@@ -270,6 +270,11 @@ class HMM
   //! Modify the tolerance of the Baum-Welch algorithm.
   double& Tolerance() { return tolerance; }
 
+  /**
+   * Returns a string representation of this object.
+   */
+  std::string ToString() const;
+
  private:
   // Helper functions.
 

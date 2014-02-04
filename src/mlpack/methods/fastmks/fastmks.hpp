@@ -179,6 +179,11 @@ class FastMKS
   //! Modify the inner-product metric induced by the given kernel.
   metric::IPMetric<KernelType>& Metric() { return metric; }
 
+  /**
+   * Returns a string representation of this object.
+   */
+  std::string ToString() const;
+
  private:
   //! The reference dataset.
   const arma::mat& referenceSet;

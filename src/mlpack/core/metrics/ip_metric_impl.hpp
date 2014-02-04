@@ -58,7 +58,7 @@ template<typename KernelType>
 std::string IPMetric<KernelType>::ToString() const{
   std::ostringstream convert;
   convert << "IPMetric [" << this << "]" << std::endl;
-  convert << "Kernel: " << localKernel << std::endl;
+  convert << "  Kernel address: " << localKernel << std::endl;
   return convert.str();
 }
 
