@@ -29,19 +29,19 @@ namespace cf /** Collaborative filtering. */{
  * @code
  * extern arma::mat data; // (user, item, rating) table
  * extern arma::Col<size_t> users; // users seeking recommendations
- * arma::mat recommendations; // Recommendations
+ * arma::Mat<size_t> recommendations; // Recommendations
  * size_t numRecommendations = 10;
  *
- * CF<> cf(data); // Default options.
+ * CF cf(data); // Default options.
  *
  * // Generate the default number of recommendations for all users.
- * cf.GenerateRecommendations(recommendations);
+ * cf.GetRecommendations(recommendations);
  *
  * // Generate the default number of recommendations for specified users.
- * cf.GenerateRecommendations(recommendations, users);
+ * cf.GetRecommendations(recommendations, users);
  *
  * // Generate 10 recommendations for specified users.
- * cf.GenerateRecommendations(recommendations, users, numRecommendations);
+ * cf.GetRecommendations(recommendations, users, numRecommendations);
  *
  * @endcode
  *
