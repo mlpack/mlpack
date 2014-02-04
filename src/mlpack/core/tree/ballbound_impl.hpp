@@ -198,8 +198,8 @@ std::string BallBound<VecType>::ToString() const
 {
   std::ostringstream convert;
   convert << "BallBound [" << this << "]" << std::endl;
-  convert << "Radius:  " << radius << std::endl;
-  convert << "Center:  " << std::endl << center;
+  convert << "  Radius:  " << radius << std::endl;
+  convert << "  Center:  " << center << std::endl;
   return convert.str();
 }
 

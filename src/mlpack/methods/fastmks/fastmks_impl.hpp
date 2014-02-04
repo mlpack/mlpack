@@ -300,6 +300,18 @@ void FastMKS<KernelType, TreeType>::InsertNeighbor(arma::Mat<size_t>& indices,
   indices(pos, queryIndex) = neighbor;
 }
 
+// Return string of object.
+template<typename KernelType, typename TreeType>
+std::string FastMKS<KernelType, TreeType>::ToString() const
+{
+  std::ostringstream convert;
+  convert << "FastMKS [" << this << "]" << std::endl;
+  convert << "  Naive: " << naive << std::endl;
+  convert << "  Single: " << single << std::endl;
+  Log::Debug << "  Metric: " << metric << std::endl;
+  return convert.str();
+}
+
 // Specialized implementation for tighter bounds for Gaussian.
 /*
 template<>
