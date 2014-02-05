@@ -480,7 +480,24 @@ template<typename FittingType>
 std::string GMM<FittingType>::ToString() const
 {
   std::ostringstream convert;
+  std::ostringstream data;
   convert << "GMM [" << this << "]" << std::endl;
+  convert << "  Gaussians: " << gaussians << std::endl;
+  convert << "  Dimensionality: "<<dimensionality;
+  convert << std::endl;
+  // Secondary ostringstream so things can be indented properly.
+  for (size_t ind=0; ind < gaussians; ind++)
+  {
+    data << "Means of Gaussian " << ind << ": " << std::endl << means[ind]; 
+    data << std::endl;
+    data << "Covariances of Gaussian " << ind << ": " << std::endl ;
+    data << covariances[ind] << std::endl;
+    data << "Weight of Gaussian " << ind << ": " << std::endl ;
+    data << weights[ind] << std::endl;
+  }
+
+  convert << util::Indent(data.str());
+
   return convert.str();
 }
 

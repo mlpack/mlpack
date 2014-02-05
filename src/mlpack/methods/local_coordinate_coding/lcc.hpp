@@ -130,6 +130,9 @@ class LocalCoordinateCoding
   //! Modify the codes.
   arma::mat& Codes() { return codes; }
 
+  // Returns a string representation of this object. 
+  std::string ToString() const;
+
  private:
   //! Number of atoms in dictionary.
   size_t atoms;

@@ -124,6 +124,16 @@ double LogisticRegression<OptimizerType>::ComputeAccuracy(
   return (double) (count * 100) / responses.n_rows;
 }
 
+template <template<typename> class OptimizerType>
+std::string LogisticRegression<OptimizerType>::ToString() const
+{
+  std::ostringstream convert;
+  convert << "Logistic Regression [" << this << "]" << std::endl;
+  convert << "  Parameters: " << parameters.n_rows << std::endl;
+  convert << "  Lambda: " << lambda << std::endl;
+  return convert.str();
+}
+
 }; // namespace regression
 }; // namespace mlpack
 

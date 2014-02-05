@@ -803,5 +803,22 @@ Cluster(const MatType& data,
   }
 }
 
+template<typename MetricType,
+         typename InitialPartitionPolicy,
+         typename EmptyClusterPolicy>
+std::string KMeans<MetricType,
+    InitialPartitionPolicy,
+    EmptyClusterPolicy>::ToString() const
+{
+  std::ostringstream convert;
+  convert << "KMeans [" << this << "]" << std::endl;
+  convert << "  Overclustering Factor: " << overclusteringFactor <<std::endl;
+  convert << "  Max Iterations: " << maxIterations <<std::endl;
+  convert << "  Metric: " << std::endl;
+  convert << mlpack::util::Indent(mlpack::util::Indent(metric.ToString()));
+  convert << std::endl;
+  return convert.str();
+}
+
 }; // namespace kmeans
 }; // namespace mlpack

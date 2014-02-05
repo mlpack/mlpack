@@ -120,6 +120,19 @@ void KernelPCA<KernelType>::GetKernelMatrix(const arma::mat& data,
       kernelMatrix(i, j) = kernelMatrix(j, i);
 }
 
+// Returns a String of the Object
+template <typename KernelType>
+std::string KernelPCA<KernelType>::ToString() const
+{
+  std::ostringstream convert;
+  convert << "KernelPCA [" << this << "]" << std::endl;
+  convert << "  Center Transformed: " << centerTransformedData <<std::endl;
+  convert << "  Kernel Type: " << std::endl;
+  convert <<  mlpack::util::Indent(mlpack::util::Indent(kernel.ToString()));
+  convert << std::endl;
+  return convert.str();
+}
+
 }; // namespace mlpack
 }; // namespace kpca
 
