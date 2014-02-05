@@ -308,7 +308,9 @@ std::string FastMKS<KernelType, TreeType>::ToString() const
   convert << "FastMKS [" << this << "]" << std::endl;
   convert << "  Naive: " << naive << std::endl;
   convert << "  Single: " << single << std::endl;
-  Log::Debug << "  Metric: " << metric << std::endl;
+  convert << "  Metric: " << std::endl;
+  convert << mlpack::util::Indent(mlpack::util::Indent(metric.ToString()));
+  convert << std::endl;
   return convert.str();
 }
 

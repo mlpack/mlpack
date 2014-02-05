@@ -150,6 +150,9 @@ class LARS
 
   //! Access the upper triangular cholesky factor
   const arma::mat& MatUtriCholFactor() const { return matUtriCholFactor; }
+
+  // Returns a string representation of this object. 
+  std::string ToString() const;
   
  private:
   //! Gram matrix.

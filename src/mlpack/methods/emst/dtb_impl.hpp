@@ -300,10 +300,12 @@ std::string DualTreeBoruvka<MetricType, TreeType>::ToString() const
 {
   std::ostringstream convert;
   convert << "Dual Tree Boruvka [" << this << "]" << std::endl;
-  //convert << "  Data: " << data.n_rows << "x" << data.n_cols <<std::endl;
-  //convert << "  Total Distance: " << totalDist <<std::endl;
-  //convert << "  Naive: " << naive << std::endl;
-  //convert << "  Metric" << metric << std::endl;
+  convert << "  Data: " << data.n_rows << "x" << data.n_cols <<std::endl;
+  convert << "  Total Distance: " << totalDist <<std::endl;
+  convert << "  Naive: " << naive << std::endl;
+  convert << "  Metric: " << std::endl;
+  convert << mlpack::util::Indent(mlpack::util::Indent(metric.ToString()));
+  convert << std::endl;
   return convert.str();
 }
 

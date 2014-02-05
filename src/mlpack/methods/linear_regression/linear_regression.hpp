@@ -87,6 +87,9 @@ class LinearRegression
   //! Modify the Tikhonov regularization parameter for ridge regression.
   double& Lambda() { return lambda; }
 
+  // Returns a string representation of this object. 
+  std::string ToString() const;
+
  private:
   /**
    * The calculated B.

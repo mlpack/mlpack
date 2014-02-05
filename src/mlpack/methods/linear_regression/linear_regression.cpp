@@ -120,3 +120,11 @@ double LinearRegression::ComputeError(const arma::mat& predictors,
 
   return cost;
 }
+
+std::string LinearRegression::ToString() const
+{
+  std::ostringstream convert;
+  convert << "Linear Regression [" << this << "]" << std::endl;
+  convert << "  Lambda: " << lambda << std::endl;
+  return convert.str();
+}
