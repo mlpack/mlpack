@@ -167,6 +167,11 @@ class CF
                           arma::Col<size_t>& users, size_t num,
                           size_t neighbours);
 
+  /**
+   * Returns a string representation of this object.
+   */
+  std::string ToString() const;
+
  private:
   //! Number of recommendations.
   size_t numRecs;

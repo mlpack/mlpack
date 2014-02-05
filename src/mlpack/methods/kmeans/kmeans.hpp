@@ -178,6 +178,9 @@ class KMeans
   //! Modify the empty cluster policy.
   EmptyClusterPolicy& EmptyClusterAction() { return emptyClusterAction; }
 
+  // Returns a string representation of this object. 
+  std::string ToString() const;
+
  private:
   //! Factor controlling how many clusters are actually found.
   double overclusteringFactor;
