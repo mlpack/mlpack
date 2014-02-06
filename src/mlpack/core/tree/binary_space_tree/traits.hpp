@@ -46,6 +46,11 @@ class TreeTraits<BinarySpaceTree<BoundType, StatisticType, MatType> >
    * Points are not contained at multiple levels of the binary space tree.
    */
   static const bool HasSelfChildren = false;
+
+  /**
+   * Points are rearranged during building of the tree.
+   */
+  static const bool RearrangesDataset = true;
 };
 
 }; // namespace tree

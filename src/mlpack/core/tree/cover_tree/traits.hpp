@@ -48,6 +48,11 @@ class TreeTraits<CoverTree<MetricType, RootPointPolicy, StatisticType> >
    * Cover trees do have self-children.
    */
   static const bool HasSelfChildren = true;
+
+  /**
+   * Points are not rearranged when the tree is built.
+   */
+  static const bool RearrangesDataset = false;
 };
 
 }; // namespace tree

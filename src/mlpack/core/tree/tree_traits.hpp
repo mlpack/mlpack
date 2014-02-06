@@ -95,6 +95,11 @@ class TreeTraits
    * (Child(0)) are also contained in that node.
    */
   static const bool HasSelfChildren = false;
+
+  /**
+   * This is true if the tree rearranges points in the dataset when it is built.
+   */
+  static const bool RearrangesDataset = false;
 };
 
 }; // namespace tree
