@@ -9,6 +9,7 @@
 using namespace mlpack::neighbor;
 
 size_t NearestNeighborSort::SortDistance(const arma::vec& list,
+                                         const arma::Col<size_t>& indices,
                                          double newDistance)
 {
   // The first element in the list is the nearest neighbor.  We only want to
@@ -18,8 +19,8 @@ size_t NearestNeighborSort::SortDistance(const arma::vec& list,
 
   // Search from the beginning.  This may not be the best way.
   for (size_t i = 0; i < list.n_elem; i++)
-    if (newDistance <= list[i])
-      return i;  
+    if (newDistance <= list[i] || indices[i] == (size_t() - 1))
+      return i;
 
   // Control should never reach here.
   return (size_t() - 1);
