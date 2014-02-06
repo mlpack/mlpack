@@ -12,6 +12,7 @@
 #include <mlpack/core/tree/cosine_tree/cosine_tree_builder.hpp>
 
 #include <queue>
+#include <stack>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -1627,6 +1628,48 @@ BOOST_AUTO_TEST_CASE(FurthestPointDistanceTest)
       if (node->Right())
         nodeQueue.push(node->Right());
     }
+  }
+}
+
+BOOST_AUTO_TEST_CASE(ParentDistanceTest)
+{
+  arma::mat dataset;
+  dataset.randu(5, 500);
+
+  BinarySpaceTree<HRectBound<2> > tree(dataset);
+
+  // The root's parent distance should be 0 (although maybe it doesn't actually
+  // matter; I just want to be sure it's not an uninitialized value, which this
+  // test *sort* of checks).
+  BOOST_REQUIRE_EQUAL(tree.ParentDistance(), 0.0);
+
+  // Do a depth-first traversal and make sure the parent distance is the same as
+  // we calculate.
+  std::stack<BinarySpaceTree<HRectBound<2> >*> nodeStack;
+  nodeStack.push(&tree);
+
+  while (!nodeStack.empty())
+  {
+    BinarySpaceTree<HRectBound<2> >* node = nodeStack.top();
+    nodeStack.pop();
+
+    // If it's a leaf, nothing to check.
+    if (node->NumChildren() == 0)
+      continue;
+
+    arma::vec centroid, leftCentroid, rightCentroid;
+    node->Centroid(centroid);
+    node->Left()->Centroid(leftCentroid);
+    node->Right()->Centroid(rightCentroid);
+
+    const double leftDistance = LMetric<2>::Evaluate(centroid, leftCentroid);
+    const double rightDistance = LMetric<2>::Evaluate(centroid, rightCentroid);
+
+    BOOST_REQUIRE_CLOSE(leftDistance, node->Left()->ParentDistance(), 1e-5);
+    BOOST_REQUIRE_CLOSE(rightDistance, node->Right()->ParentDistance(), 1e-5);
+
+    nodeStack.push(node->Left());
+    nodeStack.push(node->Right());
   }
 }
 
