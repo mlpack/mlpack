@@ -62,9 +62,11 @@ BOOST_AUTO_TEST_CASE(NnsSortDistanceAllDblMax)
 {
   arma::vec list(5);
   list.fill(DBL_MAX);
+  arma::Col<size_t> indices(5);
+  indices.fill(0);
 
   // Should be inserted at the head of the list.
-  BOOST_REQUIRE(NearestNeighborSort::SortDistance(list, 5.0) == 0);
+  BOOST_REQUIRE(NearestNeighborSort::SortDistance(list, indices, 5.0) == 0);
 }
 
 /**
@@ -77,12 +79,14 @@ BOOST_AUTO_TEST_CASE(NnsSortDistance2)
   list[0] = 0.66;
   list[1] = 0.89;
   list[2] = 1.14;
+  arma::Col<size_t> indices(3);
+  indices.fill(0);
 
   // Run a couple possibilities through.
-  BOOST_REQUIRE(NearestNeighborSort::SortDistance(list, 0.61) == 0);
-  BOOST_REQUIRE(NearestNeighborSort::SortDistance(list, 0.76) == 1);
-  BOOST_REQUIRE(NearestNeighborSort::SortDistance(list, 0.99) == 2);
-  BOOST_REQUIRE(NearestNeighborSort::SortDistance(list, 1.22) ==
+  BOOST_REQUIRE(NearestNeighborSort::SortDistance(list, indices, 0.61) == 0);
+  BOOST_REQUIRE(NearestNeighborSort::SortDistance(list, indices, 0.76) == 1);
+  BOOST_REQUIRE(NearestNeighborSort::SortDistance(list, indices, 0.99) == 2);
+  BOOST_REQUIRE(NearestNeighborSort::SortDistance(list, indices, 1.22) ==
       (size_t() - 1));
 }
 
@@ -220,9 +224,11 @@ BOOST_AUTO_TEST_CASE(FnsSortDistanceAllZero)
 {
   arma::vec list(5);
   list.fill(0);
+  arma::Col<size_t> indices(5);
+  indices.fill(0);
 
   // Should be inserted at the head of the list.
-  BOOST_REQUIRE(FurthestNeighborSort::SortDistance(list, 5.0) == 0);
+  BOOST_REQUIRE(FurthestNeighborSort::SortDistance(list, indices, 5.0) == 0);
 }
 
 /**
@@ -235,12 +241,14 @@ BOOST_AUTO_TEST_CASE(FnsSortDistance2)
   list[0] = 1.14;
   list[1] = 0.89;
   list[2] = 0.66;
+  arma::Col<size_t> indices(3);
+  indices.fill(0);
 
   // Run a couple possibilities through.
-  BOOST_REQUIRE(FurthestNeighborSort::SortDistance(list, 1.22) == 0);
-  BOOST_REQUIRE(FurthestNeighborSort::SortDistance(list, 0.93) == 1);
-  BOOST_REQUIRE(FurthestNeighborSort::SortDistance(list, 0.68) == 2);
-  BOOST_REQUIRE(FurthestNeighborSort::SortDistance(list, 0.62) ==
+  BOOST_REQUIRE(FurthestNeighborSort::SortDistance(list, indices, 1.22) == 0);
+  BOOST_REQUIRE(FurthestNeighborSort::SortDistance(list, indices, 0.93) == 1);
+  BOOST_REQUIRE(FurthestNeighborSort::SortDistance(list, indices, 0.68) == 2);
+  BOOST_REQUIRE(FurthestNeighborSort::SortDistance(list, indices, 0.62) ==
       (size_t() - 1));
 }
 
