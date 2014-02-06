@@ -9,6 +9,8 @@
 #ifndef __MLPACK_METHODS_RANN_RA_SEARCH_RULES_HPP
 #define __MLPACK_METHODS_RANN_RA_SEARCH_RULES_HPP
 
+#include "../neighbor_search/ns_traversal_info.hpp"
+
 namespace mlpack {
 namespace neighbor {
 
@@ -206,6 +208,11 @@ class RASearchRules
       return arma::sum(numSamplesMade);
   }
 
+  typedef neighbor::NeighborSearchTraversalInfo<TreeType> TraversalInfoType;
+
+  const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
+  TraversalInfoType& TraversalInfo() { return traversalInfo; }
+
  private:
   //! The reference set.
   const arma::mat& referenceSet;
@@ -242,6 +249,8 @@ class RASearchRules
 
   // TO REMOVE: just for testing
   size_t numDistComputations;
+
+  TraversalInfoType traversalInfo;
 
   /**
    * Insert a point into the neighbors and distances matrices; this is a helper
