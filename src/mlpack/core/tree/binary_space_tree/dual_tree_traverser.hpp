@@ -28,12 +28,17 @@ class BinarySpaceTree<BoundType, StatisticType, MatType>::DualTreeTraverser
   DualTreeTraverser(RuleType& rule);
 
   /**
-   * Traverse the two trees.  This does not reset the number of prunes.
+   * Traverse the two trees.  This does not reset the number of prunes.  If you
+   * are starting a traversal, the score for the parent node combination is
+   * irrelevant and can be left as 0 and thus does not need to be specified.
    *
    * @param queryNode The query node to be traversed.
    * @param referenceNode The reference node to be traversed.
+   * @param score The score of the current node combination.
    */
-  void Traverse(BinarySpaceTree& queryNode, BinarySpaceTree& referenceNode);
+  void Traverse(BinarySpaceTree& queryNode,
+                BinarySpaceTree& referenceNode,
+                const double score = 0.0);
 
   //! Get the number of prunes.
   size_t NumPrunes() const { return numPrunes; }
@@ -70,6 +75,10 @@ class BinarySpaceTree<BoundType, StatisticType, MatType>::DualTreeTraverser
 
   //! The number of times a base case was calculated.
   size_t numBaseCases;
+
+  //! Traversal information, held in the class so that it isn't continually
+  //! being reallocated.
+  typename RuleType::TraversalInfoType traversalInfo;
 };
 
 }; // namespace tree
