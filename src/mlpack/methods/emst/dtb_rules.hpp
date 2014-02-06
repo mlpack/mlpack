@@ -9,6 +9,8 @@
 
 #include <mlpack/core.hpp>
 
+#include "../neighbor_search/ns_traversal_info.hpp"
+
 namespace mlpack {
 namespace emst {
 
@@ -103,6 +105,11 @@ class DTBRules
                  TreeType& referenceNode,
                  const double oldScore) const;
 
+  typedef neighbor::NeighborSearchTraversalInfo<TreeType> TraversalInfoType;
+
+  const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
+  TraversalInfoType& TraversalInfo() { return traversalInfo; }
+
  private:
   //! The data points.
   const arma::mat& dataSet;
@@ -128,6 +135,8 @@ class DTBRules
    * Update the bound for the given query node.
    */
   inline double CalculateBound(TreeType& queryNode) const;
+
+  TraversalInfoType traversalInfo;
 
 }; // class DTBRules
 

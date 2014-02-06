@@ -10,6 +10,8 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>
 
+#include "../neighbor_search/ns_traversal_info.hpp"
+
 namespace mlpack {
 namespace fastmks {
 
@@ -89,6 +91,11 @@ class FastMKSRules
   //! Modify the number of times Score() was called.
   size_t& Scores() { return scores; }
 
+  typedef neighbor::NeighborSearchTraversalInfo<TreeType> TraversalInfoType;
+
+  const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
+  TraversalInfoType& TraversalInfo() { return traversalInfo; }
+
  private:
   //! The reference dataset.
   const arma::mat& referenceSet;
@@ -128,6 +135,8 @@ class FastMKSRules
   size_t baseCases;
   //! For benchmarking.
   size_t scores;
+
+  TraversalInfoType traversalInfo;
 };
 
 }; // namespace fastmks
