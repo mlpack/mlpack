@@ -45,6 +45,7 @@
 #include <mlpack/methods/linear_regression/linear_regression.hpp>
 #include <mlpack/methods/local_coordinate_coding/lcc.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+#include <mlpack/methods/lsh/lsh_search.hpp>
 
 using namespace mlpack;
 using namespace mlpack::kernel;
@@ -363,6 +364,16 @@ BOOST_AUTO_TEST_CASE(LogRegString)
   c.randn();
   b.randn();
   mlpack::regression::LogisticRegression<> d(c,b);
+  Log::Debug << d;
+  std::string s = d.ToString();
+  BOOST_REQUIRE_NE(s, "");
+}
+BOOST_AUTO_TEST_CASE(LSHString)
+{
+  arma::mat c(40,40);
+  const size_t b=3;
+  c.randn();
+  mlpack::neighbor::LSHSearch<NearestNeighborSort> d(c, b, b);
   Log::Debug << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
