@@ -57,6 +57,8 @@ class BinarySpaceTree
   StatisticType stat;
   //! The dimension this node split on if it is a parent.
   size_t splitDimension;
+  //! The distance from the centroid of this node to the centroid of the parent.
+  double parentDistance;
   //! The distance to the furthest descendant, cached to speed things up.
   double furthestDescendantDistance;
   //! The dataset.
@@ -298,6 +300,13 @@ class BinarySpaceTree
    * it will never be greater than this).
    */
   double FurthestDescendantDistance() const;
+
+  //! Modify the distance from the center of this node to the center of the
+  //! parent node.
+  double& ParentDistance() { return parentDistance; }
+  //! Return the distance from the center of this node to the center of the
+  //! parent node.
+  double ParentDistance() const { return parentDistance; }
 
   /**
    * Return the specified child (0 will be left, 1 will be right).  If the index

@@ -29,6 +29,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     count(data.n_cols), /* and spans all of the dataset. */
     leafSize(leafSize),
     bound(data.n_rows),
+    parentDistance(0), // Parent distance for the root is 0: it has no parent.
     dataset(data)
 {
   // Do the actual splitting of this node.
@@ -50,6 +51,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     count(data.n_cols),
     leafSize(leafSize),
     bound(data.n_rows),
+    parentDistance(0), // Parent distance for the root is 0: it has no parent.
     dataset(data)
 {
   // Initialize oldFromNew correctly.
@@ -77,6 +79,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     count(data.n_cols),
     leafSize(leafSize),
     bound(data.n_rows),
+    parentDistance(0), // Parent distance for the root is 0: it has no parent.
     dataset(data)
 {
   // Initialize the oldFromNew vector correctly.
@@ -212,6 +215,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree(
     bound(other.bound),
     stat(other.stat),
     splitDimension(other.splitDimension),
+    parentDistance(other.parentDistance),
     furthestDescendantDistance(other.furthestDescendantDistance),
     dataset(other.dataset)
 {
@@ -473,8 +477,8 @@ inline size_t BinarySpaceTree<BoundType, StatisticType, MatType>::End() const
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>
-void
-    BinarySpaceTree<BoundType, StatisticType, MatType>::SplitNode(MatType& data)
+void BinarySpaceTree<BoundType, StatisticType, MatType>::SplitNode(
+    MatType& data)
 {
   // We need to expand the bounds of this node properly.
   bound |= data.cols(begin, begin + count - 1);
@@ -521,6 +525,20 @@ void
       splitCol - begin, this, leafSize);
   right = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, splitCol,
       begin + count - splitCol, this, leafSize);
+
+  // Calculate parent distances for those two nodes.
+  arma::vec centroid, leftCentroid, rightCentroid;
+  Centroid(centroid);
+  left->Centroid(leftCentroid);
+  right->Centroid(rightCentroid);
+
+  const double leftParentDistance = bound.Metric().Evaluate(centroid,
+      leftCentroid);
+  const double rightParentDistance = bound.Metric().Evaluate(centroid,
+      rightCentroid);
+
+  left->ParentDistance() = leftParentDistance;
+  right->ParentDistance() = rightParentDistance;
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>
@@ -574,6 +592,20 @@ void BinarySpaceTree<BoundType, StatisticType, MatType>::SplitNode(
       splitCol - begin, oldFromNew, this, leafSize);
   right = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, splitCol,
       begin + count - splitCol, oldFromNew, this, leafSize);
+
+  // Calculate parent distances for those two nodes.
+  arma::vec centroid, leftCentroid, rightCentroid;
+  Centroid(centroid);
+  left->Centroid(leftCentroid);
+  right->Centroid(rightCentroid);
+
+  const double leftParentDistance = bound.Metric().Evaluate(centroid,
+      leftCentroid);
+  const double rightParentDistance = bound.Metric().Evaluate(centroid,
+      rightCentroid);
+
+  left->ParentDistance() = leftParentDistance;
+  right->ParentDistance() = rightParentDistance;
 }
 
 template<typename BoundType, typename StatisticType, typename MatType>
