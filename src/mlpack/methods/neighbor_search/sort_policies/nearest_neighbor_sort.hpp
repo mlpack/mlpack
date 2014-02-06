@@ -40,7 +40,9 @@ class NearestNeighborSort
    * @return size_t containing the position to insert into, or (size_t() - 1)
    *     if the new distance should not be inserted.
    */
-  static size_t SortDistance(const arma::vec& list, double newDistance);
+  static size_t SortDistance(const arma::vec& list,
+                             const arma::Col<size_t>& indices,
+                             double newDistance);
 
   /**
    * Return whether or not value is "better" than ref.  In this case, that means
