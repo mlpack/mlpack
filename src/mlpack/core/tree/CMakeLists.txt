@@ -31,6 +31,7 @@ set(SOURCES
   periodichrectbound.hpp
   periodichrectbound_impl.hpp
   statistic.hpp
+  traversal_info.hpp
   tree_traits.hpp
 )
 
