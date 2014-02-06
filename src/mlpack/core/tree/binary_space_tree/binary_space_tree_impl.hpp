@@ -712,8 +712,10 @@ std::string BinarySpaceTree<BoundType, StatisticType, MatType>::ToString() const
   convert << "BinarySpaceTree [" << this << "]" << std::endl;
   convert << "  begin: " << begin << std::endl;
   convert << "  count: " << count << std::endl;
-  convert << "  bound: " << mlpack::util::Indent(bound.ToString());
-  convert << "  statistic: " << stat.ToString();
+  convert << "  bound: " << std::endl;
+  convert << mlpack::util::Indent(bound.ToString(),2);
+  convert << "  statistic: " << std::endl;
+  convert << mlpack::util::Indent(stat.ToString(),2);
   convert << "  leaf size: " << leafSize << std::endl;
   convert << "  splitDimension: " << splitDimension << std::endl;
   if (left != NULL)

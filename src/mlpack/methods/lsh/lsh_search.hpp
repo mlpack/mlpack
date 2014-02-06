@@ -123,6 +123,9 @@ class LSHSearch
               arma::mat& distances,
               const size_t numTablesToSearch = 0);
 
+  // Returns a string representation of this object. 
+  std::string ToString() const;
+
  private:
   /**
    * This function builds a hash table with two levels of hashing as presented
@@ -178,7 +181,6 @@ class LSHSearch
   void InsertNeighbor(const size_t queryIndex, const size_t pos,
                       const size_t neighbor, const double distance);
 
- private:
   //! Reference dataset.
   const arma::mat& referenceSet;
 

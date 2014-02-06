@@ -1,6 +1,6 @@
 /**
  * @file string_util.cpp
- *
+ * @author ??? and Ryan Birmingham
  * Defines methods useful for formatting output.
  */
 #include "string_util.hpp"
@@ -11,14 +11,21 @@ using namespace std;
 
 //! A utility function that replaces all all newlines with a number of spaces
 //! depending on the indentation level.
-string mlpack::util::Indent(string input)
+string mlpack::util::Indent(string input, size_t howManyTabs)
 {
-  // Tab the first line.
-  input.insert(0, 1, ' ');
-  input.insert(0, 1, ' ');
-
-  // Get the character sequence to replace all newline characters.
-  std::string tabbedNewline("\n  ");
+  // For each declared...
+  string standardTab = "  ";
+  string bigTab = "";
+  for (size_t ind=0; ind<howManyTabs; ind++)
+  {
+    // increase amount tabbed on later lines
+    bigTab+=standardTab;
+    //add to first line
+    input.insert(0, 1, ' ');
+    input.insert(0, 1, ' ');
+  }  
+// Get the character sequence to replace all newline characters.
+  std::string tabbedNewline("\n"+ bigTab);
 
   // Replace all newline characters with the precomputed character sequence.
   size_t startPos = 0;

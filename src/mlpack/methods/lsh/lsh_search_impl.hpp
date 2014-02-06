@@ -390,6 +390,24 @@ BuildHash()
   secondHashTable.resize(numRowsInTable, maxBucketSize);
 }
 
+template<typename SortPolicy>
+std::string LSHSearch<SortPolicy>::ToString() const
+{
+  std::ostringstream convert;
+  convert << "LSHSearch [" << this << "]" << std::endl;
+  convert << "  Reference Set: " << referenceSet.n_rows << "x" ;
+  convert <<  referenceSet.n_cols << std::endl;
+  if (&referenceSet != & querySet)
+    convert << "  QueryeSet: " << querySet.n_rows << "x" << querySet.n_cols 
+        << std::endl;
+  convert << "  Number of Projections: " << numProj << std::endl;
+  convert << "  Number of Tables: " << numTables << std::endl;
+  convert << "  Hash Width: " << hashWidth << std::endl;
+  convert << "  Metric: " << std::endl;
+  convert << mlpack::util::Indent(metric.ToString(),2);
+  return convert.str();
+}
+
 }; // namespace neighbor
 }; // namespace mlpack
 
