@@ -31,8 +31,7 @@ template<typename RuleType>
 void BinarySpaceTree<BoundType, StatisticType, MatType>::
 DualTreeTraverser<RuleType>::Traverse(
     BinarySpaceTree<BoundType, StatisticType, MatType>& queryNode,
-    BinarySpaceTree<BoundType, StatisticType, MatType>& referenceNode,
-    const double score /* = 0.0 */)
+    BinarySpaceTree<BoundType, StatisticType, MatType>& referenceNode)
 {
   // Increment the visit counter.
   ++numVisited;
@@ -69,7 +68,7 @@ DualTreeTraverser<RuleType>::Traverse(
     ++numScores;
 
     if (leftScore != DBL_MAX)
-      Traverse(*queryNode.Left(), referenceNode, leftScore);
+      Traverse(*queryNode.Left(), referenceNode);
     else
       ++numPrunes;
 
@@ -79,7 +78,7 @@ DualTreeTraverser<RuleType>::Traverse(
     ++numScores;
 
     if (rightScore != DBL_MAX)
-      Traverse(*queryNode.Right(), referenceNode, rightScore);
+      Traverse(*queryNode.Right(), referenceNode);
     else
       ++numPrunes;
   }
@@ -100,7 +99,7 @@ DualTreeTraverser<RuleType>::Traverse(
       // traversal info.
       traversalInfo = rule.TraversalInfo();
       rule.TraversalInfo() = leftInfo;
-      Traverse(queryNode, *referenceNode.Left(), leftScore);
+      Traverse(queryNode, *referenceNode.Left());
 
       // Is it still valid to recurse to the right?
       rightScore = rule.Rescore(queryNode, *referenceNode.Right(), rightScore);
@@ -109,7 +108,7 @@ DualTreeTraverser<RuleType>::Traverse(
       {
         // Restore the right traversal info.
         rule.TraversalInfo() = traversalInfo;
-        Traverse(queryNode, *referenceNode.Right(), rightScore);
+        Traverse(queryNode, *referenceNode.Right());
       }
       else
         ++numPrunes;
@@ -117,7 +116,7 @@ DualTreeTraverser<RuleType>::Traverse(
     else if (rightScore < leftScore)
     {
       // Recurse to the right.
-      Traverse(queryNode, *referenceNode.Right(), rightScore);
+      Traverse(queryNode, *referenceNode.Right());
 
       // Is it still valid to recurse to the left?
       leftScore = rule.Rescore(queryNode, *referenceNode.Left(), leftScore);
@@ -126,7 +125,7 @@ DualTreeTraverser<RuleType>::Traverse(
       {
         // Restore the left traversal info.
         rule.TraversalInfo() = leftInfo;
-        Traverse(queryNode, *referenceNode.Left(), leftScore);
+        Traverse(queryNode, *referenceNode.Left());
       }
       else
         ++numPrunes;
@@ -143,7 +142,7 @@ DualTreeTraverser<RuleType>::Traverse(
         // right traversal info.
         traversalInfo = rule.TraversalInfo();
         rule.TraversalInfo() = leftInfo;
-        Traverse(queryNode, *referenceNode.Left(), leftScore);
+        Traverse(queryNode, *referenceNode.Left());
 
         rightScore = rule.Rescore(queryNode, *referenceNode.Right(),
             rightScore);
@@ -152,7 +151,7 @@ DualTreeTraverser<RuleType>::Traverse(
         {
           // Restore the right traversal info.
           rule.TraversalInfo() = traversalInfo;
-          Traverse(queryNode, *referenceNode.Right(), rightScore);
+          Traverse(queryNode, *referenceNode.Right());
         }
         else
           ++numPrunes;
@@ -178,7 +177,7 @@ DualTreeTraverser<RuleType>::Traverse(
       // traversal info.
       rightInfo = rule.TraversalInfo();
       rule.TraversalInfo() = leftInfo;
-      Traverse(*queryNode.Left(), *referenceNode.Left(), leftScore);
+      Traverse(*queryNode.Left(), *referenceNode.Left());
 
       // Is it still valid to recurse to the right?
       rightScore = rule.Rescore(*queryNode.Left(), *referenceNode.Right(),
@@ -188,7 +187,7 @@ DualTreeTraverser<RuleType>::Traverse(
       {
         // Restore the right traversal info.
         rule.TraversalInfo() = rightInfo;
-        Traverse(*queryNode.Left(), *referenceNode.Right(), rightScore);
+        Traverse(*queryNode.Left(), *referenceNode.Right());
       }
       else
         ++numPrunes;
@@ -196,7 +195,7 @@ DualTreeTraverser<RuleType>::Traverse(
     else if (rightScore < leftScore)
     {
       // Recurse to the right.
-      Traverse(*queryNode.Left(), *referenceNode.Right(), rightScore);
+      Traverse(*queryNode.Left(), *referenceNode.Right());
 
       // Is it still valid to recurse to the left?
       leftScore = rule.Rescore(*queryNode.Left(), *referenceNode.Left(),
@@ -206,7 +205,7 @@ DualTreeTraverser<RuleType>::Traverse(
       {
         // Restore the left traversal info.
         rule.TraversalInfo() = leftInfo;
-        Traverse(*queryNode.Left(), *referenceNode.Left(), leftScore);
+        Traverse(*queryNode.Left(), *referenceNode.Left());
       }
       else
         ++numPrunes;
@@ -256,7 +255,7 @@ DualTreeTraverser<RuleType>::Traverse(
       // traversal info.
       rightInfo = rule.TraversalInfo();
       rule.TraversalInfo() = leftInfo;
-      Traverse(*queryNode.Right(), *referenceNode.Left(), leftScore);
+      Traverse(*queryNode.Right(), *referenceNode.Left());
 
       // Is it still valid to recurse to the right?
       rightScore = rule.Rescore(*queryNode.Right(), *referenceNode.Right(),
@@ -266,7 +265,7 @@ DualTreeTraverser<RuleType>::Traverse(
       {
         // Restore the right traversal info.
         rule.TraversalInfo() = rightInfo;
-        Traverse(*queryNode.Right(), *referenceNode.Right(), rightScore);
+        Traverse(*queryNode.Right(), *referenceNode.Right());
       }
       else
         ++numPrunes;
@@ -274,7 +273,7 @@ DualTreeTraverser<RuleType>::Traverse(
     else if (rightScore < leftScore)
     {
       // Recurse to the right.
-      Traverse(*queryNode.Right(), *referenceNode.Right(), rightScore);
+      Traverse(*queryNode.Right(), *referenceNode.Right());
 
       // Is it still valid to recurse to the left?
       leftScore = rule.Rescore(*queryNode.Right(), *referenceNode.Left(),
@@ -284,7 +283,7 @@ DualTreeTraverser<RuleType>::Traverse(
       {
         // Restore the left traversal info.
         rule.TraversalInfo() = leftInfo;
-        Traverse(*queryNode.Right(), *referenceNode.Left(), leftScore);
+        Traverse(*queryNode.Right(), *referenceNode.Left());
       }
       else
         ++numPrunes;
@@ -301,7 +300,7 @@ DualTreeTraverser<RuleType>::Traverse(
         // right traversal info.
         rightInfo = rule.TraversalInfo();
         rule.TraversalInfo() = leftInfo;
-        Traverse(*queryNode.Right(), *referenceNode.Left(), leftScore);
+        Traverse(*queryNode.Right(), *referenceNode.Left());
 
         // Is it still valid to recurse to the right?
         rightScore = rule.Rescore(*queryNode.Right(), *referenceNode.Right(),
@@ -311,7 +310,7 @@ DualTreeTraverser<RuleType>::Traverse(
         {
           // Restore the right traversal info.
           rule.TraversalInfo() = rightInfo;
-          Traverse(*queryNode.Right(), *referenceNode.Right(), rightScore);
+          Traverse(*queryNode.Right(), *referenceNode.Right());
         }
         else
           ++numPrunes;
