@@ -8,6 +8,8 @@
 #ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
 #define __MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP
 
+#include "ns_traversal_info.hpp"
+
 namespace mlpack {
 namespace neighbor {
 
@@ -73,6 +75,24 @@ class NeighborSearchRules
                  TreeType& referenceNode,
                  const double oldScore) const;
 
+  //! Get the number of base cases that have been performed.
+  size_t BaseCases() const { return baseCases; }
+  //! Modify the number of base cases that have been performed.
+  size_t& BaseCases() { return baseCases; }
+
+  //! Get the number of scores that have been performed.
+  size_t Scores() const { return scores; }
+  //! Modify the number of scores that have been performed.
+  size_t& Scores() { return scores; }
+
+  //! Convenience typedef.
+  typedef NeighborSearchTraversalInfo<TreeType> TraversalInfoType;
+
+  //! Get the traversal info.
+  const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
+  //! Modify the traversal info.
+  TraversalInfoType& TraversalInfo() { return traversalInfo; }
+
  private:
   //! The reference set.
   const arma::mat& referenceSet;
@@ -95,6 +115,15 @@ class NeighborSearchRules
   size_t lastReferenceIndex;
   //! The last base case result.
   double lastBaseCase;
+
+  //! The number of base cases that have been performed.
+  size_t baseCases;
+  //! The number of scores that have been performed.
+  size_t scores;
+
+  //! Traversal info for the parent combination; this is updated by the
+  //! traversal before each call to Score().
+  TraversalInfoType traversalInfo;
 
   /**
    * Recalculate the bound for a given query node.

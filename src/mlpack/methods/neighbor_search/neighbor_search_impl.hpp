@@ -184,6 +184,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
 
   // Set the size of the neighbor and distance matrices.
   neighborPtr->set_size(k, querySet.n_cols);
+  neighborPtr->fill(size_t() - 1);
   distancePtr->set_size(k, querySet.n_cols);
   distancePtr->fill(SortPolicy::WorstDistance());
   
@@ -210,9 +211,8 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
 
     traverser.Traverse(*queryTree, *referenceTree);
 
-    Log::Info << traverser.NumVisited() << " node combinations were visited.\n";
-    Log::Info << traverser.NumScores() << " node combinations were scored.\n";
-    Log::Info << traverser.NumBaseCases() << " base cases were calculated.\n";
+    Log::Info << rules.Scores() << " node combinations were scored.\n";
+    Log::Info << rules.BaseCases() << " base cases were calculated.\n";
   }
 
   Timer::Stop("computing_neighbors");
