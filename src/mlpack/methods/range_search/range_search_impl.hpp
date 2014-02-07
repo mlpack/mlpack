@@ -277,6 +277,20 @@ void RangeSearch<MetricType, TreeType>::Search(
   }
 }
 
+template<typename MetricType, typename TreeType>
+std::string RangeSearch<MetricType, TreeType>::ToString() const
+{
+  std::ostringstream convert;
+  convert << "Range Search  [" << this << "]" << std::endl;
+  if (treeOwner)  
+    convert << "  Tree Owner: TRUE" << std::endl;
+  if (naive)  
+    convert << "  Naive: TRUE" << std::endl;
+  convert << "  Metric: " << std::endl << 
+      mlpack::util::Indent(metric.ToString(),2);
+  return convert.str();
+}
+
 }; // namespace range
 }; // namespace mlpack
 

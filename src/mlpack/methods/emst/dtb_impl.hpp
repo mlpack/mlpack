@@ -304,7 +304,7 @@ std::string DualTreeBoruvka<MetricType, TreeType>::ToString() const
   convert << "  Total Distance: " << totalDist <<std::endl;
   convert << "  Naive: " << naive << std::endl;
   convert << "  Metric: " << std::endl;
-  convert << mlpack::util::Indent(mlpack::util::Indent(metric.ToString()));
+  convert << mlpack::util::Indent(metric.ToString(),2);
   convert << std::endl;
   return convert.str();
 }

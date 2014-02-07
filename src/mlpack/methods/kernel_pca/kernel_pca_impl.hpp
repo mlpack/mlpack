@@ -128,7 +128,7 @@ std::string KernelPCA<KernelType>::ToString() const
   convert << "KernelPCA [" << this << "]" << std::endl;
   convert << "  Center Transformed: " << centerTransformedData <<std::endl;
   convert << "  Kernel Type: " << std::endl;
-  convert <<  mlpack::util::Indent(mlpack::util::Indent(kernel.ToString()));
+  convert <<  mlpack::util::Indent(kernel.ToString(),2);
   convert << std::endl;
   return convert.str();
 }

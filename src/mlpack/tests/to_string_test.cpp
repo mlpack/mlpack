@@ -33,6 +33,7 @@
 #include <mlpack/core/tree/hrectbound.hpp>
 #include <mlpack/core/tree/periodichrectbound.hpp>
 #include <mlpack/core/tree/statistic.hpp>
+
 #include <mlpack/methods/cf/cf.hpp>
 #include <mlpack/methods/det/dtree.hpp>
 #include <mlpack/methods/emst/dtb.hpp>
@@ -46,6 +47,12 @@
 #include <mlpack/methods/local_coordinate_coding/lcc.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 #include <mlpack/methods/lsh/lsh_search.hpp>
+#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+#include <mlpack/methods/nmf/nmf.hpp>
+#include <mlpack/methods/nca/nca.hpp>
+#include <mlpack/methods/pca/pca.hpp>
+#include <mlpack/methods/radical/radical.hpp>
+#include <mlpack/methods/range_search/range_search.hpp>
 
 using namespace mlpack;
 using namespace mlpack::kernel;
@@ -191,9 +198,9 @@ BOOST_AUTO_TEST_CASE(MahalanobisDistanceString)
 
 BOOST_AUTO_TEST_CASE(SGDString)
 {
-  const arma::mat g(2,2);
+  const arma::mat g(2, 2);
   const arma::Col<size_t> v(2);
-  SoftmaxErrorFunction<> a(g,v);
+  SoftmaxErrorFunction<> a(g, v);
 	mlpack::optimization::SGD<SoftmaxErrorFunction<> > d(a);
   Log::Debug << d;
   std::string s = d.ToString();
@@ -202,9 +209,9 @@ BOOST_AUTO_TEST_CASE(SGDString)
 
 BOOST_AUTO_TEST_CASE(L_BFGSString)
 {
-  const arma::mat g(2,2);
+  const arma::mat g(2, 2);
   const arma::Col<size_t> v(2);
-  SoftmaxErrorFunction<> a(g,v);
+  SoftmaxErrorFunction<> a(g, v);
 	mlpack::optimization::L_BFGS<SoftmaxErrorFunction<> > d(a);
   Log::Debug << d;
   std::string s = d.ToString();
@@ -233,7 +240,7 @@ BOOST_AUTO_TEST_CASE(BallBoundString)
 
 BOOST_AUTO_TEST_CASE(BinSpaceString)
 {
-  arma::mat q(2,2);
+  arma::mat q(2, 2);
   q.randu();
   BinarySpaceTree<HRectBound<1> > d(q);
   Log::Debug << d;
@@ -244,7 +251,7 @@ BOOST_AUTO_TEST_CASE(BinSpaceString)
 BOOST_AUTO_TEST_CASE(CFString)
 {
   size_t a = 1 ;
-  arma::mat c(3,3);
+  arma::mat c(3, 3);
   c(0, 0) = 1;
   c(0, 1) = 2;
   c(0, 2) = 1.5;
@@ -254,7 +261,7 @@ BOOST_AUTO_TEST_CASE(CFString)
   c(2, 0) = 1;
   c(2, 1) = 3;
   c(2, 2) = 0.7;
-  mlpack::cf::CF d(a,a,c);
+  mlpack::cf::CF d(a, a, c);
   Log::Debug << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
@@ -262,7 +269,7 @@ BOOST_AUTO_TEST_CASE(CFString)
 
 BOOST_AUTO_TEST_CASE(DetString)
 {
-  arma::mat c(4,4);
+  arma::mat c(4, 4);
   c.randn();
   mlpack::det::DTree d(c);
   Log::Debug << d;
@@ -272,7 +279,7 @@ BOOST_AUTO_TEST_CASE(DetString)
 
 BOOST_AUTO_TEST_CASE(EmstString)
 {
-  arma::mat c(4,4);
+  arma::mat c(4, 4);
   c.randu();
   mlpack::emst::DualTreeBoruvka<> d(c);
   Log::Debug << d;
@@ -282,7 +289,7 @@ BOOST_AUTO_TEST_CASE(EmstString)
 
 BOOST_AUTO_TEST_CASE(FastMKSString)
 {
-  arma::mat c(4,4);
+  arma::mat c(4, 4);
   c.randn();
   mlpack::fastmks::FastMKS<LinearKernel> d(c);
   Log::Debug << d;
@@ -292,7 +299,7 @@ BOOST_AUTO_TEST_CASE(FastMKSString)
 
 BOOST_AUTO_TEST_CASE(GMMString)
 {
-  arma::mat c(400,40);
+  arma::mat c(400, 40);
   c.randn();
   mlpack::gmm::GMM<> d(5, 4);
   Log::Debug << d;
@@ -302,7 +309,7 @@ BOOST_AUTO_TEST_CASE(GMMString)
 
 BOOST_AUTO_TEST_CASE(HMMString)
 {
-  mlpack::hmm::HMM<> d(5,4);
+  mlpack::hmm::HMM<> d(5, 4);
   Log::Debug << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
@@ -311,7 +318,7 @@ BOOST_AUTO_TEST_CASE(HMMString)
 BOOST_AUTO_TEST_CASE(KPCAString)
 {
   LinearKernel k;
-  mlpack::kpca::KernelPCA<LinearKernel> d(k,false);
+  mlpack::kpca::KernelPCA<LinearKernel> d(k, false);
   Log::Debug << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
@@ -335,11 +342,11 @@ BOOST_AUTO_TEST_CASE(LarsString)
 
 BOOST_AUTO_TEST_CASE(LinRegString)
 {
-  arma::mat c(40,40);
-  arma::mat b(40,1);
+  arma::mat c(40, 40);
+  arma::mat b(40, 1);
   c.randn();
   b.randn();
-  mlpack::regression::LinearRegression d(c,b);
+  mlpack::regression::LinearRegression d(c, b);
   Log::Debug << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
@@ -351,7 +358,7 @@ BOOST_AUTO_TEST_CASE(LCCString)
   const size_t b=3;
   const double a=1;
   c.randn();
-  mlpack::lcc::LocalCoordinateCoding<> d(c,b,a);
+  mlpack::lcc::LocalCoordinateCoding<> d(c, b, a);
   Log::Debug << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
@@ -359,21 +366,79 @@ BOOST_AUTO_TEST_CASE(LCCString)
 
 BOOST_AUTO_TEST_CASE(LogRegString)
 {
-  arma::mat c(40,40);
-  arma::mat b(40,1);
+  arma::mat c(40, 40);
+  arma::mat b(40, 1);
   c.randn();
   b.randn();
-  mlpack::regression::LogisticRegression<> d(c,b);
+  mlpack::regression::LogisticRegression<> d(c, b);
   Log::Debug << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
+
 BOOST_AUTO_TEST_CASE(LSHString)
 {
-  arma::mat c(40,40);
+  arma::mat c(40, 40);
   const size_t b=3;
   c.randn();
   mlpack::neighbor::LSHSearch<NearestNeighborSort> d(c, b, b);
+  Log::Debug << d;
+  std::string s = d.ToString();
+  BOOST_REQUIRE_NE(s, "");
+}
+
+BOOST_AUTO_TEST_CASE(NeighborString)
+{
+  arma::mat c(40, 40);
+  c.randn();
+  mlpack::neighbor::NeighborSearch<> d(c, c);
+  Log::Debug << d;
+  std::string s = d.ToString();
+  BOOST_REQUIRE_NE(s, "");
+}
+
+BOOST_AUTO_TEST_CASE(NMFString)
+{
+  arma::mat c(40, 40);
+  c.randn();
+  mlpack::nmf::NMF<> d;
+  Log::Debug << d;
+  std::string s = d.ToString();
+  BOOST_REQUIRE_NE(s, "");
+}
+
+BOOST_AUTO_TEST_CASE(NCAString)
+{
+  arma::mat c(40, 40);
+  arma::Col<size_t> b(3);
+  c.randn();
+  mlpack::nca::NCA<> d(c, b);
+  Log::Debug << d;
+  std::string s = d.ToString();
+  BOOST_REQUIRE_NE(s, "");
+}
+
+BOOST_AUTO_TEST_CASE(PCAString)
+{
+  mlpack::pca::PCA d(true);
+  Log::Debug << d;
+  std::string s = d.ToString();
+  BOOST_REQUIRE_NE(s, "");
+}
+
+BOOST_AUTO_TEST_CASE(RadicalString)
+{
+  mlpack::radical::Radical d;
+  Log::Debug << d;
+  std::string s = d.ToString();
+  BOOST_REQUIRE_NE(s, "");
+}
+
+BOOST_AUTO_TEST_CASE(RangeSearchString)
+{
+  arma::mat c(40, 40);
+  c.randn();
+  mlpack::range::RangeSearch<> d(c);
   Log::Debug << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");

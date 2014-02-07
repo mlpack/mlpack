@@ -193,6 +193,9 @@ class NeighborSearch
               arma::Mat<size_t>& resultingNeighbors,
               arma::mat& distances);
 
+  // Returns a string representation of this object. 
+  std::string ToString() const;
+
  private:
   //! Copy of reference dataset (if we need it, because tree building modifies
   //! it).
