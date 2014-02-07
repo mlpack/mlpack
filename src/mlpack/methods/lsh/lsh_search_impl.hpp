@@ -397,8 +397,8 @@ std::string LSHSearch<SortPolicy>::ToString() const
   convert << "LSHSearch [" << this << "]" << std::endl;
   convert << "  Reference Set: " << referenceSet.n_rows << "x" ;
   convert <<  referenceSet.n_cols << std::endl;
-  if (&referenceSet != & querySet)
-    convert << "  QueryeSet: " << querySet.n_rows << "x" << querySet.n_cols 
+  if (&referenceSet != &querySet)
+    convert << "  QuerySet: " << querySet.n_rows << "x" << querySet.n_cols 
         << std::endl;
   convert << "  Number of Projections: " << numProj << std::endl;
   convert << "  Number of Tables: " << numTables << std::endl;

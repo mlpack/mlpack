@@ -815,7 +815,7 @@ std::string KMeans<MetricType,
   convert << "  Overclustering Factor: " << overclusteringFactor <<std::endl;
   convert << "  Max Iterations: " << maxIterations <<std::endl;
   convert << "  Metric: " << std::endl;
-  convert << mlpack::util::Indent(mlpack::util::Indent(metric.ToString()));
+  convert << mlpack::util::Indent(metric.ToString(),2);
   convert << std::endl;
   return convert.str();
 }

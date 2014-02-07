@@ -54,9 +54,10 @@ template<typename LagrangianFunction>
 std::string AugLagrangian<LagrangianFunction>::ToString() const{
   std::ostringstream convert;
   convert << "AugLagrangian [" << this << "]" << std::endl;
-  // Fix this! Why Only log? Ostream is lonely.
-  Log::Debug  << "  Function to be Optimized: " << function << std::endl;
-  Log::Debug << "L-BFGS Selected: " << lbfgs << std::endl;
+  convert << "  Function to be Optimized: " <<std::endl;
+  convert << mlpack::util::Indent(function.ToString(),2);
+  convert << "    L-BFGS Selected: " <<std::endl; 
+  convert << mlpack::util::Indent(lbfgs.ToString(),2);
   return convert.str();
 }
 
