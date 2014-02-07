@@ -84,7 +84,7 @@ void CF::GetRecommendations(arma::Mat<size_t>& recommendations)
     arma::zeros<arma::Col<size_t> >(cleanedData.n_cols, 1);
   // Getting all user IDs.
   for (size_t i = 0; i < cleanedData.n_cols; i++)
-    users(i) = i + 1;
+    users(i) = i;
 
   // Calling base function for recommendations.
   GetRecommendations(recommendations, users);
@@ -117,7 +117,7 @@ void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
 
   // Select feature vectors of queried users.
   for (size_t i = 0; i < users.n_elem; i++)
-    query.col(i) = rating.col(users(i) - 1);
+    query.col(i) = rating.col(users(i));
 
   // Temporary storage for neighborhood of the queried users.
   arma::Mat<size_t> neighborhood;
@@ -145,7 +145,7 @@ void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
   // Generate recommendations for each query user by finding the maximum numRecs
   // elements in the averages matrix.
   recommendations.set_size(numRecs, users.n_elem);
-  recommendations.fill(cleanedData.n_rows + 1); // Invalid item number.
+  recommendations.fill(cleanedData.n_rows); // Invalid item number.
   arma::mat values(numRecs, users.n_elem);
   values.fill(-DBL_MAX); // The smallest possible value.
   for (size_t i = 0; i < users.n_elem; i++)
@@ -154,7 +154,7 @@ void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
     for (size_t j = 0; j < averages.n_rows; ++j)
     {
       // Ensure that the user hasn't already rated the item.
-      if (cleanedData(j, users(i) - 1) != 0.0)
+      if (cleanedData(j, users(i)) != 0.0)
         continue; // The user already rated the item.
 
       // Is the estimated value better than the worst candidate?
@@ -172,7 +172,7 @@ void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
 
         // Now insert it into the list, but insert item (j + 1), not item j,
         // because everything is offset.
-        InsertNeighbor(i, insertPosition, j + 1, value, recommendations,
+        InsertNeighbor(i, insertPosition, j, value, recommendations,
             values);
       }
     }
@@ -215,8 +215,8 @@ void CF::CleanData()
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     // We have to transpose it because items are rows, and users are columns.
-    locations(1, i) = ((arma::uword) data(0, i)) - 1;
-    locations(0, i) = ((arma::uword) data(1, i)) - 1;
+    locations(1, i) = ((arma::uword) data(0, i));
+    locations(0, i) = ((arma::uword) data(1, i));
     values(i) = data(2, i);
   }
 

@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserTest)
   // Creaate dummy query set.
   arma::Col<size_t> users = arma::zeros<arma::Col<size_t> >(numUsers, 1);
   for (size_t i = 0; i < numUsers; i++)
-    users(i) = i + 1;
+    users(i) = i;
 
   // Matrix to save recommendations into.
   arma::Mat<size_t> recommendations;
@@ -180,13 +180,13 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyTest)
   size_t failures = 0;
   for (size_t i = 0; i < 300; ++i)
   {
-    size_t targetItem = (size_t) savedCols(1, i) - 1;
+    size_t targetItem = (size_t) savedCols(1, i);
     bool found = false;
     // Make sure the target item shows up in the recommendations.
     for (size_t j = 0; j < numRecs; ++j)
     {
-      const size_t user = users(i) - 1;
-      const size_t item = recommendations(j, i) - 1;
+      const size_t user = users(i);
+      const size_t item = recommendations(j, i);
       if (item == targetItem)
       {
         found = true;
