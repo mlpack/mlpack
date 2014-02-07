@@ -173,6 +173,9 @@ class SparseCoding
   //! Modify the sparse codes.
   arma::mat& Codes() { return codes; }
 
+  // Returns a string representation of this object. 
+  std::string ToString() const;
+
  private:
   //! Number of atoms.
   size_t atoms;

@@ -73,6 +73,7 @@ class RAQueryStat
   size_t NumSamplesMade() const { return numSamplesMade; }
   //! Modify the number of samples made.
   size_t& NumSamplesMade() { return numSamplesMade; }
+
 };
 
 /**
@@ -285,6 +286,9 @@ class RASearch
    * trees for every new (approximate) search.
    */
   void ResetQueryTree();
+
+  // Returns a string representation of this object. 
+  std::string ToString() const;
 
  private:
   //! Copy of reference dataset (if we need it, because tree building modifies

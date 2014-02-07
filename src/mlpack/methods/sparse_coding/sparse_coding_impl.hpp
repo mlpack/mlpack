@@ -331,6 +331,19 @@ double SparseCoding<DictionaryInitializer>::Objective() const
   }
 }
 
+template<typename DictionaryInitializer>
+std::string SparseCoding<DictionaryInitializer>::ToString() const
+{
+  std::ostringstream convert;
+  convert << "Sparse Coding  [" << this << "]" << std::endl;
+  convert << "  Data: " << data.n_rows << "x" ;
+  convert <<  data.n_cols << std::endl;
+  convert << "  Atoms: " << atoms << std::endl; 
+  convert << "  Lambda 1: " << lambda1 << std::endl; 
+  convert << "  Lambda 2: " << lambda2 << std::endl; 
+  return convert.str();
+}
+
 }; // namespace sparse_coding
 }; // namespace mlpack
 
