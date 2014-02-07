@@ -354,6 +354,26 @@ void RASearch<SortPolicy, MetricType, TreeType>::ResetRAQueryStat(
     ResetRAQueryStat(&treeNode->Child(i));
 }
 
+// Returns a String of the Object.
+template<typename SortPolicy, typename MetricType, typename TreeType>
+std::string RASearch<SortPolicy, MetricType, TreeType>::ToString() const
+{
+  std::ostringstream convert;
+  convert << "RA Search  [" << this << "]" << std::endl;
+  convert << "  Reference Set: " << referenceSet.n_rows << "x" ;
+  convert <<  referenceSet.n_cols << std::endl;
+  if (&referenceSet != &querySet)
+    convert << "  QuerySet: " << querySet.n_rows << "x" << querySet.n_cols 
+        << std::endl;
+  if (naive)  
+    convert << "  Naive: TRUE" << std::endl;
+  if (singleMode)
+    convert << "  Single Node: TRUE" << std::endl;
+  convert << "  Metric: " << std::endl << 
+      mlpack::util::Indent(metric.ToString(),2);
+  return convert.str();
+}
+
 }; // namespace neighbor
 }; // namespace mlpack
 

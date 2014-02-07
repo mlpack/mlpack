@@ -53,6 +53,8 @@
 #include <mlpack/methods/pca/pca.hpp>
 #include <mlpack/methods/radical/radical.hpp>
 #include <mlpack/methods/range_search/range_search.hpp>
+#include <mlpack/methods/rann/ra_search.hpp>
+#include <mlpack/methods/sparse_coding/sparse_coding.hpp>
 
 using namespace mlpack;
 using namespace mlpack::kernel;
@@ -439,6 +441,28 @@ BOOST_AUTO_TEST_CASE(RangeSearchString)
   arma::mat c(40, 40);
   c.randn();
   mlpack::range::RangeSearch<> d(c);
+  Log::Debug << d;
+  std::string s = d.ToString();
+  BOOST_REQUIRE_NE(s, "");
+}
+
+BOOST_AUTO_TEST_CASE(RannString)
+{
+  arma::mat c(40, 40);
+  c.randn();
+  mlpack::neighbor::RASearch<> d(c);
+  Log::Debug << d;
+  std::string s = d.ToString();
+  BOOST_REQUIRE_NE(s, "");
+}
+
+BOOST_AUTO_TEST_CASE(SparseCodingString)
+{
+  arma::mat c(40, 40);
+  c.randn();
+  const size_t b=3;
+  double a=0.1;
+  mlpack::sparse_coding::SparseCoding<> d(c,b,a);
   Log::Debug << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
