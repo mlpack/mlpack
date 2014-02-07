@@ -287,4 +287,26 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
   }
 } // Search
 
+
+//Return a String of the Object.
+template<typename SortPolicy, typename MetricType, typename TreeType>
+std::string NeighborSearch<SortPolicy, MetricType, TreeType>::ToString() const
+{
+  std::ostringstream convert;
+  convert << "NearestNeighborSearch [" << this << "]" << std::endl;
+  convert << "  Reference Set: " << referenceSet.n_rows << "x" ;
+  convert <<  referenceSet.n_cols << std::endl;
+  if (&referenceSet != &querySet)
+    convert << "  QuerySet: " << querySet.n_rows << "x" << querySet.n_cols 
+        << std::endl;
+  convert << "  Reference Tree: " << referenceTree << std::endl;
+  if (&referenceTree != &queryTree)
+    convert << "  QueryTree: " << queryTree << std::endl;
+  convert << "  Tree Owner: " << treeOwner << std::endl;
+  convert << "  Naive: " << naive << std::endl;
+  convert << "  Metric: " << std::endl;
+  convert << mlpack::util::Indent(metric.ToString(),2);
+  return convert.str();
+}
+
 #endif

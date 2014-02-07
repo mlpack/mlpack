@@ -94,5 +94,18 @@ void NMF<InitializationRule, WUpdateRule, HUpdateRule>::Apply(
       << iteration << " iterations." << std::endl;
 }
 
+//Return a String of the object
+template<typename InitializationRule,
+         typename WUpdateRule,
+         typename HUpdateRule>
+std::string NMF<InitializationRule, WUpdateRule, HUpdateRule>::ToString() const
+{
+  std::ostringstream convert;
+  convert << "Non negative matrix factorization [" << this << "]" << std::endl;
+  convert << "  Max Iterations: " << maxIterations << std::endl;
+  convert << "  Minimum Residue: " << minResidue<< std::endl;
+  return convert.str();
+}
+
 }; // namespace nmf
 }; // namespace mlpack

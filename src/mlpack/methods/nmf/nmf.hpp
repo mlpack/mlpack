@@ -144,6 +144,9 @@ class NMF
   //! Modify the H update rule.
   HUpdateRule& HUpdate() { return hUpdate; }
 
+  // Returns a string representation of this object. 
+  std::string ToString() const;
+
 }; // class NMF
 
 }; // namespace nmf
