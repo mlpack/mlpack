@@ -49,15 +49,16 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
   return Optimize(coordinates, maxIterations);
 }
 
-//Convert the Object to a String
+// Convert the object to a string.
 template<typename LagrangianFunction>
-std::string AugLagrangian<LagrangianFunction>::ToString() const{
+std::string AugLagrangian<LagrangianFunction>::ToString() const
+{
   std::ostringstream convert;
   convert << "AugLagrangian [" << this << "]" << std::endl;
-  convert << "  Function to be Optimized: " <<std::endl;
-  convert << mlpack::util::Indent(function.ToString(),2);
-  convert << "    L-BFGS Selected: " <<std::endl; 
-  convert << mlpack::util::Indent(lbfgs.ToString(),2);
+  convert << "  Function:" << std::endl;
+  convert << mlpack::util::Indent(function.ToString(), 2);
+  convert << "  L-BFGS optimizer:" << std::endl;
+  convert << mlpack::util::Indent(lbfgs.ToString(), 2);
   return convert.str();
 }
 
