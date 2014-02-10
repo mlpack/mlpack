@@ -386,8 +386,10 @@ const arma::mat& LovaszThetaSDP::GetInitialPoint()
   return initialPoint;
 }
 
-std::string AugLagrangianTestFunction::ToString() const{
+std::string AugLagrangianTestFunction::ToString() const
+{
+  // The actual output is unimportant -- this object is only for testing anyway.
   std::ostringstream convert;
-  convert << "AugLagrangian Test [" << this << "]" << std::endl;
+  convert << "AugLagrangianTestFunction [" << this << "]" << std::endl;
   return convert.str();
 }
