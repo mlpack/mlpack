@@ -370,14 +370,13 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
   logStateProb.col(0).zeros();
   for (size_t state = 0; state < transition.n_rows; state++)
   {
-    logStateProb[state] = log(transition(state, 0) *
+    logStateProb[state] = log(transition.unsafe_col(state).max() *
         emission[state].Probability(dataSeq.unsafe_col(0)));
     stateSeqBack[state] = state;
   }
 
   // Store the best first state.
   arma::uword index;
-  logStateProb.unsafe_col(0).max(index);
   for (size_t t = 1; t < dataSeq.n_cols; t++)
   {
     // Assemble the state probability for this element.
@@ -386,10 +385,9 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
     for (size_t j = 0; j < transition.n_rows; j++)
     {
       arma::vec prob = logStateProb.col(t - 1) + logTrans.col(j);
-      logStateProb(j, t) = prob.max() +
+      logStateProb(j, t) = prob.max(index) +
           log(emission[j].Probability(dataSeq.unsafe_col(t)));
-      prob.max(index);
-      stateSeqBack(j, t) = index;
+        stateSeqBack(j, t) = index;
     }
   }
   // Backtrack to find most probable state sequence
