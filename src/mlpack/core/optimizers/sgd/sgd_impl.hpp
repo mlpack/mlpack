@@ -97,18 +97,18 @@ double SGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
   return overallObjective;
 }
 
-//Convert the Object to a String
+// Convert the object to a string.
 template<typename DecomposableFunctionType>
-std::string SGD<DecomposableFunctionType>::ToString() const{
+std::string SGD<DecomposableFunctionType>::ToString() const
+{
   std::ostringstream convert;
   convert << "SGD [" << this << "]" << std::endl;
-  // Fix this! Why Only log? Ostream is lonely.
-  Log::Debug << "  Function: " << function << std::endl;
+  convert << "  Function:" << std::endl;
+  convert << util::Indent(function.ToString(), 2);
   convert << "  StepSize: " << stepSize << std::endl;
   convert << "  Maximum Iterations: " << maxIterations << std::endl;
   convert << "  Tolerance: " << tolerance << std::endl;
-  convert << "  Shuffle: " << shuffle << std::endl;
-  convert << std::endl;
+  convert << "  Shuffle: " << (shuffle ? "true" : "false") << std::endl;
   return convert.str();
 }
 
