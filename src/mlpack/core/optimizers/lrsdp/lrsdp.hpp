@@ -145,9 +145,4 @@ class LRSDP
 }; // namespace optimization
 }; // namespace mlpack
 
-// Include implementation (template specializations for the augmented Lagrangian
-// function).
-#include "lrsdp_impl.hpp"
-
 #endif
-
