@@ -31,7 +31,6 @@
 #include <mlpack/core/tree/bounds.hpp>
 #include <mlpack/core/tree/mrkd_statistic.hpp>
 #include <mlpack/core/tree/hrectbound.hpp>
-#include <mlpack/core/tree/periodichrectbound.hpp>
 #include <mlpack/core/tree/statistic.hpp>
 
 #include <mlpack/methods/cf/cf.hpp>
