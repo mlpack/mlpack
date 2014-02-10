@@ -994,9 +994,10 @@ std::string CoverTree<MetricType, RootPointPolicy, StatisticType>::ToString()
   convert << std::endl;
   convert << "children:";
 
-  if (IsLeaf() == false)
+  // How many levels should we print?  This will print the top two tree levels.
+  if (IsLeaf() == false && parent == NULL)
   {
-    for (int i = 0; i < children.size(); i++)
+    for (size_t i = 0; i < children.size(); i++)
     {
       convert << std::endl << mlpack::util::Indent(children.at(i)->ToString());
     }
