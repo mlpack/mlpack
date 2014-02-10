@@ -12,15 +12,6 @@
 namespace mlpack {
 namespace metric {
 
-
-// Convert Object into String
-template<bool TakeRoot>
-std::string MahalanobisDistance<TakeRoot>::ToString() const{
-  std::ostringstream convert;
-  convert << "MahalanobisDistance [" << this << "]" << std::endl;
-  return convert.str();
-}
-
 /**
  * Specialization for non-rooted case.
  */
@@ -49,6 +40,15 @@ double MahalanobisDistance<true>::Evaluate(const VecType1& a,
   arma::vec m = (a - b);
   arma::mat out = trans(m) * covariance * m; // 1x1;
   return sqrt(out[0]);
+}
+
+// Convert object into string.
+template<bool TakeRoot>
+std::string MahalanobisDistance<TakeRoot>::ToString() const
+{
+  std::ostringstream convert;
+  convert << "MahalanobisDistance [" << this << "]" << std::endl;
+  return convert.str();
 }
 
 }; // namespace metric
