@@ -19,10 +19,13 @@ namespace bound {
  *
  * @tparam VecType Type of vector (arma::vec or arma::spvec).
  */
-template<typename VecType = arma::vec>
+template<typename VecType = arma::vec , int Power = 2, bool TakeRoot = true>
 class BallBound
 {
  public:
+  //! This is the metric type that this bound is using.
+  typedef metric::LMetric<Power, TakeRoot> MetricType;
+  
   typedef VecType Vec;
 
  private:
@@ -38,7 +41,15 @@ class BallBound
    * @param dimension Dimensionality of ball bound.
    */
   BallBound(const size_t dimension) : radius(0), center(dimension) { }
-
+  
+  
+  /**
+   * Return the metric associated with this bound.  Because it is an LMetric, it
+   * cannot store state, so we can make it on the fly.  It is also static
+   * because the metric is only dependent on the template arguments.
+   */
+  static MetricType Metric() { return metric::LMetric<Power, TakeRoot>(); }
+  
   /**
    * Create the ball bound with the specified radius and center.
    *
