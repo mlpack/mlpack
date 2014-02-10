@@ -105,10 +105,10 @@ std::string SGD<DecomposableFunctionType>::ToString() const
   convert << "SGD [" << this << "]" << std::endl;
   convert << "  Function:" << std::endl;
   convert << util::Indent(function.ToString(), 2);
-  convert << "  StepSize: " << stepSize << std::endl;
-  convert << "  Maximum Iterations: " << maxIterations << std::endl;
+  convert << "  Step size: " << stepSize << std::endl;
+  convert << "  Maximum iterations: " << maxIterations << std::endl;
   convert << "  Tolerance: " << tolerance << std::endl;
-  convert << "  Shuffle: " << (shuffle ? "true" : "false") << std::endl;
+  convert << "  Shuffle points: " << (shuffle ? "true" : "false") << std::endl;
   return convert.str();
 }
 
