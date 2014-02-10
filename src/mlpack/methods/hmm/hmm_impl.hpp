@@ -390,11 +390,13 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
         stateSeqBack(j, t) = index;
     }
   }
-  // Backtrack to find most probable state sequence
-  logStateProb.unsafe_col(dataSeq.n_cols-1).max(index);
-  stateSeq[dataSeq.n_cols-1] = index;
+
+  // Backtrack to find the most probable state sequence.
+  logStateProb.unsafe_col(dataSeq.n_cols - 1).max(index);
+  stateSeq[dataSeq.n_cols - 1] = index;
   for (size_t t = 2; t <= dataSeq.n_cols; t++)
-    stateSeq[dataSeq.n_cols-t] = stateSeqBack(stateSeq[dataSeq.n_cols-t+1], dataSeq.n_cols-t+1);
+    stateSeq[dataSeq.n_cols - t] =
+        stateSeqBack(stateSeq[dataSeq.n_cols - t + 1], dataSeq.n_cols - t + 1);
 
   return logStateProb(stateSeq(dataSeq.n_cols - 1), dataSeq.n_cols - 1);
 }
