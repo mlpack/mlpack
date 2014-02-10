@@ -21,7 +21,7 @@
 
 #include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
-//#include <mlpack/core/optimizers/lrsdp/lrsdp.hpp>
+#include <mlpack/core/optimizers/lrsdp/lrsdp.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include <mlpack/methods/nca/nca_softmax_error_function.hpp>
 #include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian_test_functions.hpp>
@@ -224,6 +224,17 @@ BOOST_AUTO_TEST_CASE(AugLagString)
   mlpack::optimization::AugLagrangianTestFunction a;
   mlpack::optimization::AugLagrangian<
       mlpack::optimization::AugLagrangianTestFunction> d(a);
+  Log::Debug << d;
+  std::string s = d.ToString();
+  BOOST_REQUIRE_NE(s, "");
+}
+
+BOOST_AUTO_TEST_CASE(LRSDPString)
+{
+  arma::mat c(40, 40);
+  c.randn();
+  const size_t b=3;
+  mlpack::optimization::LRSDP d(b,c);
   Log::Debug << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");

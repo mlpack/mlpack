@@ -84,10 +84,9 @@ std::string LRSDP::ToString() const
 {
   std::ostringstream convert;
   convert << "LRSDP [" << this << "]" << std::endl;
-  convert << "Matrix Size: " << c.n_rows << "x" << c.n_cols << std::endl;
-  convert << "Initial point Size : " << initialPoint.n_rows << "x"
+  convert << "  Matrix Size: " << c.n_rows << "x" << c.n_cols << std::endl;
+  convert << "  Initial point Size : " << initialPoint.n_rows << "x"
       << initialPoint.n_cols << std::endl;
-  //convert << "AugLagrangian Info: " << std::endl << augLag;
   return convert.str();
 }
 
