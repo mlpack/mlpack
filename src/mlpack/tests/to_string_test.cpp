@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_SUITE(ToStringTest);
 
 BOOST_AUTO_TEST_CASE(DiscreteDistributionString)
 {
-  DiscreteDistribution d;
+  DiscreteDistribution d("0.4 0.5 0.1");
   Log::Debug << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionString)
 
 BOOST_AUTO_TEST_CASE(GaussianDistributionString)
 {
-  GaussianDistribution d;
+  GaussianDistribution d("0.1 0.3", "1.0 0.1; 0.1 1.0");
   Log::Debug << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
