@@ -101,6 +101,12 @@ class PSpectrumStringKernel
   std::string ToString() const{
     std::ostringstream convert;
     convert << "PSpectrumStringKernel [" << this << "]" << std::endl;
+    convert << "  p used: " << p << std::endl;
+    convert << "  Dataset:" << datasets.size() << std::endl;
+    std::ostringstream convertb;
+    for (size_t ind=0; ind < datasets.size(); ind++)
+      convertb << datasets[ind].size();
+    convert << mlpack::util::Indent(convertb.str(),2);
     return convert.str();
   }
  private:
