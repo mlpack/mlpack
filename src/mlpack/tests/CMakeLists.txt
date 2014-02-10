@@ -1,4 +1,9 @@
 # MLPACK test executable.
+INCLUDE_DIRECTORIES(
+    $/usr/include/libxml2/libxml
+)
+
+
 add_executable(mlpack_test
   mlpack_test.cpp
   allkfn_test.cpp
