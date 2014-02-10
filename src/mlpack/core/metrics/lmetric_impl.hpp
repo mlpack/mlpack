@@ -29,12 +29,14 @@ double LMetric<Power, TakeRoot>::Evaluate(const VecType1& a,
   return pow(sum, (1.0 / Power));
 }
 
-// String Conversion
-template<int Power, bool TakeRoot> 
-std::string LMetric<Power,TakeRoot>::ToString() const
+// String conversion.
+template<int Power, bool TakeRoot>
+std::string LMetric<Power, TakeRoot>::ToString() const
 {
   std::ostringstream convert;
-  convert << "LMetric [" << this << "]" << std::endl;;
+  convert << "LMetric [" << this << "]" << std::endl;
+  convert << "  Power: " << Power << std::endl;
+  convert << "  TakeRoot: " << (TakeRoot ? "true" : "false") << std::endl;
   return convert.str();
 }
 
