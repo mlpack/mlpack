@@ -151,8 +151,8 @@ BOOST_AUTO_TEST_CASE(PolynomialKernelString)
 BOOST_AUTO_TEST_CASE(PSpectrumStringKernelString)
 {
   const std::vector<std::vector<std::string> > s;
-  const size_t t=1;
-  PSpectrumStringKernel d(s,t);
+  const size_t t = 1;
+  PSpectrumStringKernel d(s, t);
   Log::Debug << d;
   std::string sttm = d.ToString();
   BOOST_REQUIRE_NE(sttm, "");
@@ -203,7 +203,7 @@ BOOST_AUTO_TEST_CASE(SGDString)
   const arma::mat g(2, 2);
   const arma::Col<size_t> v(2);
   SoftmaxErrorFunction<> a(g, v);
-	mlpack::optimization::SGD<SoftmaxErrorFunction<> > d(a);
+  mlpack::optimization::SGD<SoftmaxErrorFunction<> > d(a);
   Log::Debug << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
@@ -214,7 +214,7 @@ BOOST_AUTO_TEST_CASE(L_BFGSString)
   const arma::mat g(2, 2);
   const arma::Col<size_t> v(2);
   SoftmaxErrorFunction<> a(g, v);
-	mlpack::optimization::L_BFGS<SoftmaxErrorFunction<> > d(a);
+  mlpack::optimization::L_BFGS<SoftmaxErrorFunction<> > d(a);
   Log::Debug << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
@@ -222,11 +222,9 @@ BOOST_AUTO_TEST_CASE(L_BFGSString)
 
 BOOST_AUTO_TEST_CASE(AugLagString)
 {
-	mlpack::optimization::AugLagrangianTestFunction a;
-  mlpack::optimization::AugLagrangianFunction
-      <mlpack::optimization::AugLagrangianTestFunction> q(a);
-	mlpack::optimization::AugLagrangian
-      <mlpack::optimization::AugLagrangianTestFunction> d(a);
+  mlpack::optimization::AugLagrangianTestFunction a;
+  mlpack::optimization::AugLagrangian<
+      mlpack::optimization::AugLagrangianTestFunction> d(a);
   Log::Debug << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
@@ -234,7 +232,7 @@ BOOST_AUTO_TEST_CASE(AugLagString)
 
 BOOST_AUTO_TEST_CASE(BallBoundString)
 {
-  BallBound<> d;
+  BallBound<> d(3.5, "1.0 2.0");
   Log::Debug << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
@@ -242,7 +240,7 @@ BOOST_AUTO_TEST_CASE(BallBoundString)
 
 BOOST_AUTO_TEST_CASE(BinSpaceString)
 {
-  arma::mat q(2, 2);
+  arma::mat q(2, 50);
   q.randu();
   BinarySpaceTree<HRectBound<1> > d(q);
   Log::Debug << d;
