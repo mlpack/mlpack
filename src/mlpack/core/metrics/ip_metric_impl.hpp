@@ -53,12 +53,14 @@ inline double IPMetric<KernelType>::Evaluate(const Vec1Type& a,
       2 * kernel.Evaluate(a, b));
 }
 
-// Convert Object To String
+// Convert object to string.
 template<typename KernelType>
-std::string IPMetric<KernelType>::ToString() const{
+std::string IPMetric<KernelType>::ToString() const
+{
   std::ostringstream convert;
   convert << "IPMetric [" << this << "]" << std::endl;
-  convert << "  Kernel address: " << localKernel << std::endl;
+  convert << "  Kernel: " << std::endl;
+  convert << util::Indent(kernel.ToString(), 2);
   return convert.str();
 }
 
