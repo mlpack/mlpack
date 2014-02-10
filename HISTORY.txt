@@ -17,6 +17,8 @@
   * CF (collaborative filtering) now expects users and items to be zero-indexed,
     not one-indexed (#324).
 
+  * Removed incorrect PeriodicHRectBound (#30).
+
 2014-01-06    mlpack 1.0.8
 
   * Memory leak in NeighborSearch index-mapping code fixed (#310).
