@@ -28,8 +28,6 @@ set(SOURCES
   mrkd_statistic.hpp
   mrkd_statistic_impl.hpp
   mrkd_statistic.cpp
-  periodichrectbound.hpp
-  periodichrectbound_impl.hpp
   statistic.hpp
   traversal_info.hpp
   tree_traits.hpp
