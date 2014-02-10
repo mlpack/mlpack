@@ -710,23 +710,25 @@ std::string BinarySpaceTree<BoundType, StatisticType, MatType>::ToString() const
 {
   std::ostringstream convert;
   convert << "BinarySpaceTree [" << this << "]" << std::endl;
-  convert << "  begin: " << begin << std::endl;
-  convert << "  count: " << count << std::endl;
-  convert << "  bound: " << std::endl;
-  convert << mlpack::util::Indent(bound.ToString(),2);
-  convert << "  statistic: " << std::endl;
-  convert << mlpack::util::Indent(stat.ToString(),2);
-  convert << "  leaf size: " << leafSize << std::endl;
-  convert << "  splitDimension: " << splitDimension << std::endl;
+  convert << "  First point: " << begin << std::endl;
+  convert << "  Number of descendants: " << count << std::endl;
+  convert << "  Bound: " << std::endl;
+  convert << mlpack::util::Indent(bound.ToString(), 2);
+  convert << "  Statistic: " << std::endl;
+  convert << mlpack::util::Indent(stat.ToString(), 2);
+  convert << "  Leaf size: " << leafSize << std::endl;
+  convert << "  Split dimension: " << splitDimension << std::endl;
+
+  // How many levels should we print?  This will print every level of the tree.
   if (left != NULL)
   {
-    convert << "left:" << std::endl;
-    convert << mlpack::util::Indent(left->ToString());
+    convert << " Left child:" << std::endl;
+    convert << mlpack::util::Indent(left->ToString(), 2);
   }
   if (right != NULL)
   {
-    convert << "right:" << std::endl;
-    convert << mlpack::util::Indent(right->ToString());
+    convert << " Right child:" << std::endl;
+    convert << mlpack::util::Indent(right->ToString(), 2);
   }
   return convert.str();
 }

@@ -389,8 +389,10 @@ std::string HRectBound<Power, TakeRoot>::ToString() const
 {
   std::ostringstream convert;
   convert << "HRectBound [" << this << "]" << std::endl;
-  convert << "dim: " << dim << std::endl;
-  convert << "bounds: " << std::endl;
+  convert << "  Power: " << Power << std::endl;
+  convert << "  TakeRoot: " << (TakeRoot ? "true" : "false") << std::endl;
+  convert << "  Dimensionality: " << dim << std::endl;
+  convert << "  Bounds: " << std::endl;
   for (size_t i = 0; i < dim; ++i)
     convert << util::Indent(bounds[i].ToString()) << std::endl;
 
