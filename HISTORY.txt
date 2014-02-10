@@ -8,6 +8,12 @@
   * Fix MaxVarianceNewCluster (used when re-initializing clusters for k-means)
     (#314).
 
+  * Fixed implementation of Viterbi algorithm in HMM::Predict() (#316).
+
+  * Significant speedups for dual-tree algorithms using the cover tree (#243).
+
+  * Fix for LRSDP optimizer so that it compiles and can be used (#325).
+
 2014-01-06    mlpack 1.0.8
 
   * Memory leak in NeighborSearch index-mapping code fixed (#310).
