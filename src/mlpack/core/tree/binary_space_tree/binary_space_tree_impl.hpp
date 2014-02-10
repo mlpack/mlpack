@@ -719,13 +719,13 @@ std::string BinarySpaceTree<BoundType, StatisticType, MatType>::ToString() const
   convert << "  Leaf size: " << leafSize << std::endl;
   convert << "  Split dimension: " << splitDimension << std::endl;
 
-  // How many levels should we print?  This will print every level of the tree.
-  if (left != NULL)
+  // How many levels should we print?  This will print the top two tree levels.
+  if (left != NULL && parent == NULL) 
   {
     convert << " Left child:" << std::endl;
     convert << mlpack::util::Indent(left->ToString(), 2);
   }
-  if (right != NULL)
+  if (right != NULL && parent == NULL)
   {
     convert << " Right child:" << std::endl;
     convert << mlpack::util::Indent(right->ToString(), 2);

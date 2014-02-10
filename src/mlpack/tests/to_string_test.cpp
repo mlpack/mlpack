@@ -258,6 +258,26 @@ BOOST_AUTO_TEST_CASE(BinSpaceString)
   BOOST_REQUIRE_NE(s, "");
 }
 
+BOOST_AUTO_TEST_CASE(CoverTreeString)
+{
+  arma::mat q(2, 50);
+  q.randu();
+  mlpack::tree::CoverTree<> d(q);
+  Log::Debug << d;
+  std::string s = d.ToString();
+  BOOST_REQUIRE_NE(s, "");
+}
+
+BOOST_AUTO_TEST_CASE(MRKDString)
+{
+  arma::mat q(2, 50);
+  q.randu();
+  mlpack::tree::MRKDStatistic d(q);
+  Log::Debug << d;
+  std::string s = d.ToString();
+  BOOST_REQUIRE_NE(s, "");
+}
+
 BOOST_AUTO_TEST_CASE(CFString)
 {
   size_t a = 1 ;
