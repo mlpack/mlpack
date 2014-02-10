@@ -143,8 +143,8 @@ std::string GaussianDistribution::ToString() const
 
   // Secondary ostringstream so things can be indented right.
   std::ostringstream data;
-  data << "Mean: " << std::endl << mean << std::endl;
-  data << "Covariance: " << std::endl << covariance << std::endl;
+  data << "Mean: " << std::endl << mean;
+  data << "Covariance: " << std::endl << covariance;
 
   convert << util::Indent(data.str());
   return convert.str();
