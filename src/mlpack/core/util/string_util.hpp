@@ -1,6 +1,8 @@
 /**
  * @file string_util.hpp
- * @author ??? and Ryan Birmingham
+ * @author Trironk Kiatkungwanglai
+ * @author Ryan Birmingham
+ *
  * Declares methods that are useful for writing formatting output.
  */
 #ifndef __MLPACK_CORE_STRING_UTIL_HPP
@@ -13,7 +15,7 @@ namespace util {
 
 //! A utility function that replaces all all newlines with a number of spaces
 //! depending on the indentation level.
-std::string Indent(std::string input, size_t howManyTabs=1);
+std::string Indent(std::string input, const size_t howManyTabs = 1);
 
 }; // namespace util
 }; // namespace mlpack
