@@ -28,7 +28,8 @@ PROGRAM_INFO("Collaborating Filtering", "This program performs collaborative "
     "The input file should contain a 3-column matrix of ratings, where the "
     "first column is the user, the second column is the item, and the third "
     "column is that user's rating of that item.  Both the users and items "
-    "should be numeric indices, not names.");
+    "should be numeric indices, not names. The indices are assumed to start "
+    "from 0.");
 
 // Parameters for program.
 PARAM_STRING_REQ("input_file", "Input dataset to perform CF on.", "i");
