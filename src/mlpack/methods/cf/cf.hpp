@@ -49,6 +49,7 @@ namespace cf /** Collaborative filtering. */{
  * should have three rows.  The first represents the user; the second represents
  * the item; and the third represents the rating.  The user and item, while they
  * are in a matrix that holds doubles, should hold integer (or size_t) values.
+ * The user and item indices are assumed to be starting from 0.
  */
 class CF
 {
