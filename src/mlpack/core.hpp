@@ -134,6 +134,7 @@
  *   - Sumedh Ghaisas <sumedhghaisas@gmail.com>
  *   - Michael Fox <michaelfox99@gmail.com>
  *   - Ryan Birmingham <birm@gatech.edu>
+ *   - Siddharth Agrawal <siddharth.950@gmail.com>
  */
 
 // First, standard includes.
@@ -170,6 +171,7 @@
 
 // Now MLPACK-specific includes.
 #include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.
+#include <mlpack/core/util/arma_traits.hpp>
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/data/load.hpp>
