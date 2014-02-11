@@ -18,8 +18,8 @@ namespace mlpack {
 namespace bound {
 
 //! Get the range in a certain dimension.
-template<typename VecType , int Power, bool TakeRoot>
-math::Range BallBound<VecType, Power , TakeRoot>::operator[](const size_t i) const
+template<typename VecType>
+math::Range BallBound<VecType>::operator[](const size_t i) const
 {
   if (radius < 0)
     return math::Range();
@@ -30,8 +30,8 @@ math::Range BallBound<VecType, Power , TakeRoot>::operator[](const size_t i) con
 /**
  * Determines if a point is within the bound.
  */
-template<typename VecType, int Power, bool TakeRoot>
-bool BallBound<VecType,Power,TakeRoot>::Contains(const VecType& point) const
+template<typename VecType>
+bool BallBound<VecType>::Contains(const VecType& point) const
 {
   if (radius < 0)
     return false;
@@ -46,8 +46,8 @@ bool BallBound<VecType,Power,TakeRoot>::Contains(const VecType& point) const
  * with DHrectBound, so it can plug in more directly if a "centroid"
  * is needed.
  */
-template<typename VecType,int Power, bool TakeRoot>
-void BallBound<VecType, Power, TakeRoot>::CalculateMidpoint(VecType& centroid) const
+template<typename VecType>
+void BallBound<VecType>::CalculateMidpoint(VecType& centroid) const
 {
   centroid = center;
 }
@@ -55,8 +55,8 @@ void BallBound<VecType, Power, TakeRoot>::CalculateMidpoint(VecType& centroid) c
 /**
  * Calculates minimum bound-to-point squared distance.
  */
-template<typename VecType, int Power, bool TakeRoot>
-double BallBound<VecType, Power , TakeRoot>::MinDistance(const VecType& point) const
+template<typename VecType>
+double BallBound<VecType>::MinDistance(const VecType& point) const
 {
   if (radius < 0)
     return DBL_MAX;
@@ -68,8 +68,8 @@ double BallBound<VecType, Power , TakeRoot>::MinDistance(const VecType& point) c
 /**
  * Calculates minimum bound-to-bound squared distance.
  */
-template<typename VecType, int Power, bool TakeRoot>
-double BallBound<VecType, Power , TakeRoot>::MinDistance(const BallBound& other) const
+template<typename VecType>
+double BallBound<VecType>::MinDistance(const BallBound& other) const
 {
   if (radius < 0)
     return DBL_MAX;
@@ -84,8 +84,8 @@ double BallBound<VecType, Power , TakeRoot>::MinDistance(const BallBound& other)
 /**
  * Computes maximum distance.
  */
-template<typename VecType, int Power, bool TakeRoot>
-double BallBound<VecType, Power , TakeRoot>::MaxDistance(const VecType& point) const
+template<typename VecType>
+double BallBound<VecType>::MaxDistance(const VecType& point) const
 {
   if (radius < 0)
     return DBL_MAX;
@@ -96,8 +96,8 @@ double BallBound<VecType, Power , TakeRoot>::MaxDistance(const VecType& point) c
 /**
  * Computes maximum distance.
  */
-template<typename VecType, int Power, bool TakeRoot>
-double BallBound<VecType, Power , TakeRoot>::MaxDistance(const BallBound& other) const
+template<typename VecType>
+double BallBound<VecType>::MaxDistance(const BallBound& other) const
 {
   if (radius < 0)
     return DBL_MAX;
@@ -111,8 +111,8 @@ double BallBound<VecType, Power , TakeRoot>::MaxDistance(const BallBound& other)
  *
  * Example: bound1.MinDistanceSq(other) for minimum squared distance.
  */
-template<typename VecType, int Power, bool TakeRoot>
-math::Range BallBound<VecType, Power, TakeRoot>::RangeDistance(const VecType& point)
+template<typename VecType>
+math::Range BallBound<VecType>::RangeDistance(const VecType& point)
     const
 {
   if (radius < 0)
@@ -124,8 +124,9 @@ math::Range BallBound<VecType, Power, TakeRoot>::RangeDistance(const VecType& po
                                               dist + radius);
   }
 }
-template<typename VecType, int Power, bool TakeRoot>
-math::Range BallBound<VecType, Power, TakeRoot>::RangeDistance(
+
+template<typename VecType>
+math::Range BallBound<VecType>::RangeDistance(
     const BallBound& other) const
 {
   if (radius < 0)
@@ -159,10 +160,10 @@ BallBound<VecType>::operator|=(
 /**
  * Expand the bound to include the given point.
  */
-template<typename VecType , int Power, bool TakeRoot>
+template<typename VecType>
 template<typename MatType>
-const BallBound<VecType,Power,TakeRoot>&
-BallBound<VecType,Power, TakeRoot>::operator|=(const MatType& data)
+const BallBound<VecType>&
+BallBound<VecType>::operator|=(const MatType& data)
 {
   if (radius < 0)
   {
@@ -192,8 +193,8 @@ BallBound<VecType,Power, TakeRoot>::operator|=(const MatType& data)
 /**
  * Returns a string representation of this object.
  */
-template<typename VecType, int Power, bool TakeRoot>
-std::string BallBound<VecType,Power, TakeRoot>::ToString() const
+template<typename VecType>
+std::string BallBound<VecType>::ToString() const
 {
   std::ostringstream convert;
   convert << "BallBound [" << this << "]" << std::endl;
