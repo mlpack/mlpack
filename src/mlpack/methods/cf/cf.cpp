@@ -170,8 +170,7 @@ void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
           insertPosition--;
         }
 
-        // Now insert it into the list, but insert item (j + 1), not item j,
-        // because everything is offset.
+        // Now insert it into the list.
         InsertNeighbor(i, insertPosition, j, value, recommendations,
             values);
       }
