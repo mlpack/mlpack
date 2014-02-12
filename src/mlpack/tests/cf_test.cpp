@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserTest)
   // Default number of recommendations.
   size_t numRecsDefault = 5;
 
-  // Creaate dummy query set.
+  // Create dummy query set.
   arma::Col<size_t> users = arma::zeros<arma::Col<size_t> >(numUsers, 1);
   for (size_t i = 0; i < numUsers; i++)
     users(i) = i;
