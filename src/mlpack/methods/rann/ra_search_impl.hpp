@@ -41,11 +41,12 @@ RASearch(const typename TreeType::Mat& referenceSet,
   Timer::Start("tree_building");
 
   // Construct as a naive object if we need to.
-  referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
-      (naive ? referenceCopy.n_cols : leafSize));
+  if (!naive)
+  {
+    referenceTree = new TreeType(referenceCopy, oldFromNewReferences, leafSize);
 
-  queryTree = new TreeType(queryCopy, oldFromNewQueries,
-      (naive ? querySet.n_cols : leafSize));
+    queryTree = new TreeType(queryCopy, oldFromNewQueries, leafSize);
+  }
 
   // Stop the timer we started above.
   Timer::Stop("tree_building");
@@ -75,8 +76,10 @@ RASearch(const typename TreeType::Mat& referenceSet,
   Timer::Start("tree_building");
 
   // Construct as a naive object if we need to.
-  referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
-      (naive ? referenceSet.n_cols : leafSize));
+  if (!naive)
+  {
+    referenceTree = new TreeType(referenceCopy, oldFromNewReferences, leafSize);
+  }
 
   // Stop the timer we started above.
   Timer::Stop("tree_building");
@@ -177,7 +180,35 @@ Search(const size_t k,
 
   size_t numPrunes = 0;
 
-  if (singleMode || naive)
+  if (naive)
+  {
+    // We don't need to run the base case on every possible combination of
+    // points; we can achieve the rank approximation guarantee with probability
+    // alpha by sampling the reference set.
+    typedef RASearchRules<SortPolicy, MetricType, TreeType> RuleType;
+    RuleType rules(referenceSet, querySet, *neighborPtr, *distancePtr,
+                   metric, tau, alpha, naive, sampleAtLeaves, firstLeafExact,
+                   singleSampleLimit);
+
+    // Find how many samples from the reference set we need and sample uniformly
+    // from the reference set without replacement.
+    const size_t numSamples = rules.MinimumSamplesReqd(referenceSet.n_cols, k,
+        tau, alpha);
+    arma::uvec distinctSamples;
+    rules.ObtainDistinctSamples(numSamples, referenceSet.n_cols,
+        distinctSamples);
+
+    // Run the base case on each combination of query point and sampled
+    // reference point.
+    for (size_t i = 0; i < querySet.n_cols; ++i)
+    {
+      for (size_t j = 0; j < distinctSamples.n_elem; ++j)
+      {
+        rules.BaseCase(i, (size_t) distinctSamples[j]);
+      }
+    }
+  }
+  else if (singleMode)
   {
     // Create the helper object for the tree traversal.  Initialization of
     // RASearchRules already implicitly performs the naive tree traversal.
@@ -363,13 +394,13 @@ std::string RASearch<SortPolicy, MetricType, TreeType>::ToString() const
   convert << "  Reference Set: " << referenceSet.n_rows << "x" ;
   convert <<  referenceSet.n_cols << std::endl;
   if (&referenceSet != &querySet)
-    convert << "  QuerySet: " << querySet.n_rows << "x" << querySet.n_cols 
+    convert << "  QuerySet: " << querySet.n_rows << "x" << querySet.n_cols
         << std::endl;
-  if (naive)  
+  if (naive)
     convert << "  Naive: TRUE" << std::endl;
   if (singleMode)
     convert << "  Single Node: TRUE" << std::endl;
-  convert << "  Metric: " << std::endl << 
+  convert << "  Metric: " << std::endl <<
       mlpack::util::Indent(metric.ToString(),2);
   return convert.str();
 }
