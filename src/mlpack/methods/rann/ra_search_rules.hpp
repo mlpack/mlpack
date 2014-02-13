@@ -10,6 +10,7 @@
 #define __MLPACK_METHODS_RANN_RA_SEARCH_RULES_HPP
 
 #include "../neighbor_search/ns_traversal_info.hpp"
+#include "ra_search.hpp" // For friend declaration.
 
 namespace mlpack {
 namespace neighbor {
@@ -323,6 +324,10 @@ class RASearchRules
                const double distance,
                const double bestDistance);
 
+  // So that RASearch can access ObtainDistinctSamples() and
+  // MinimumSamplesReqd().  Maybe refactoring is a better solution but this is
+  // okay for now.
+  friend class RASearch<SortPolicy, MetricType, TreeType>;
 }; // class RASearchRules
 
 }; // namespace neighbor
