@@ -218,6 +218,7 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
   // so we construct the same bounds that were used when Score() was called with
   // the parents, except with the tighter distance bounds.  Sometimes this
   // allows us to prune nodes without evaluating the base cases between them.
+/*
   if ((queryParent != NULL) &&
       (queryParent->Stat().LastKernelNode() == (void*) &referenceNode))
   {
@@ -276,7 +277,7 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
 
     if (maxKernelBound < bestKernel)
       return DBL_MAX;
-  }
+  }*/
 
   // We were unable to perform a parent-child or parent-parent prune, so now we
   // must calculate kernel evaluation, if necessary.
@@ -284,67 +285,29 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
   if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
   {
     // For this type of tree, we may have already calculated the base case in
-    // the parents.  So see if it is already cached there.
-    bool alreadyDone = false;
-    if ((queryNode.Parent() != NULL) &&
-        (queryNode.Parent()->Point(0) == queryNode.Point(0)))
+    // the parents.
+    if ((traversalInfo.LastQueryNode() != NULL) &&
+        (traversalInfo.LastReferenceNode() != NULL) &&
+        (traversalInfo.LastQueryNode()->Point(0) == queryNode.Point(0)) &&
+        (traversalInfo.LastReferenceNode()->Point(0) == referenceNode.Point(0)))
     {
-      TreeType* lastRef = (TreeType*)
-          queryNode.Parent()->Stat().LastKernelNode();
-      if (lastRef->Point(0) == referenceNode.Point(0))
-      {
-        // The query node parent was evaluated with the reference node.
-        kernelEval = queryNode.Parent()->Stat().LastKernel();
-        alreadyDone = true;
-      }
-    }
+      // Base case already done.
+      kernelEval = traversalInfo.LastBaseCase();
 
-    if ((referenceNode.Parent() != NULL) &&
-        (referenceNode.Parent()->Point(0) == referenceNode.Point(0)))
-    {
-      TreeType* lastQuery = (TreeType*)
-          referenceNode.Parent()->Stat().LastKernelNode();
-      if (lastQuery->Point(0) == queryNode.Point(0))
-      {
-        // The reference node parent was evaluated with the query node.
-        kernelEval = referenceNode.Parent()->Stat().LastKernel();
-        alreadyDone = true;
-      }
+      // When BaseCase() is called after Score(), these must be correct so that
+      // another kernel evaluation is not performed.
+      lastQueryIndex = queryNode.Point(0);
+      lastReferenceIndex = referenceNode.Point(0);
     }
-
-    TreeType* lastRefNode = (TreeType*) referenceNode.Stat().LastKernelNode();
-    if ((lastRefNode != NULL) && (queryNode.Point(0) == lastRefNode->Point(0)))
-    {
-      // The kernel evaluation was already performed and is saved by the
-      // reference node.
-      kernelEval = referenceNode.Stat().LastKernel();
-      alreadyDone = true;
-    }
-
-    TreeType* lastQueryNode = (TreeType*) queryNode.Stat().LastKernelNode();
-    if ((lastQueryNode != NULL) &&
-        (referenceNode.Point(0) == lastQueryNode->Point(0)))
-    {
-      // The kernel evaluation was already performed and is saved by the query
-      // node.
-      kernelEval = queryNode.Stat().LastKernel();
-      alreadyDone = true;
-    }
-
-    if (!alreadyDone)
+    else
     {
       // The kernel must be evaluated, but it is between points in the dataset,
       // so we can call BaseCase().  BaseCase() will set lastQueryIndex and
       // lastReferenceIndex correctly.
       kernelEval = BaseCase(queryNode.Point(0), referenceNode.Point(0));
     }
-    else
-    {
-      // When BaseCase() is called after Score(), these must be correct so that
-      // another kernel evaluation is not performed.
-      lastQueryIndex = queryNode.Point(0);
-      lastReferenceIndex = referenceNode.Point(0);
-    }
+
+    traversalInfo.LastBaseCase() = kernelEval;
   }
   else
   {
@@ -394,10 +357,8 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
   }
 
   // Store relevant information for parent-child pruning.
-  queryNode.Stat().LastKernel() = kernelEval;
-  queryNode.Stat().LastKernelNode() = (void*) &referenceNode;
-  referenceNode.Stat().LastKernel() = kernelEval;
-  referenceNode.Stat().LastKernelNode() = (void*) &queryNode;
+  traversalInfo.LastQueryNode() = &queryNode;
+  traversalInfo.LastReferenceNode() = &referenceNode;
 
   // We return the inverse of the maximum kernel so that larger kernels are
   // recursed into first.
