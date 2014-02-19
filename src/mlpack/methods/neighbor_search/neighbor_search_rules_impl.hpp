@@ -183,7 +183,11 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
   }
   else
   {
-    adjustedScore = SortPolicy::CombineBest(adjustedScore, queryDescDist);
+    // If the parent node is NULL, force adjustedScore to be such that it can't
+    // be pruned.  Otherwise use the parent descendant distance.
+    const double queryParentDescDist = (queryNode.Parent() == NULL) ?
+        bestDistance : queryNode.Parent()->FurthestDescendantDistance();
+    adjustedScore = SortPolicy::CombineBest(adjustedScore, queryParentDescDist);
   }
 
   if (traversalInfo.LastReferenceNode() == referenceNode.Parent())
@@ -193,7 +197,11 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
   }
   else
   {
-    adjustedScore = SortPolicy::CombineBest(adjustedScore, refDescDist);
+    // If the parent node is NULL, force adjustedScore to be such that it can't
+    // be pruned.  Otherwise use the parent descendant distance.
+    const double refParentDescDist = (referenceNode.Parent() == NULL) ?
+        bestDistance : referenceNode.Parent()->FurthestDescendantDistance();
+    adjustedScore = SortPolicy::CombineBest(adjustedScore, refParentDescDist);
   }
 
   // Can we prune?
