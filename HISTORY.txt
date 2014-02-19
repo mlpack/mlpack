@@ -10,7 +10,8 @@
 
   * Fixed implementation of Viterbi algorithm in HMM::Predict() (#316).
 
-  * Significant speedups for dual-tree algorithms using the cover tree (#243).
+  * Significant speedups for dual-tree algorithms using the cover tree (#243,
+    #329) including a faster implementation of FastMKS.
 
   * Fix for LRSDP optimizer so that it compiles and can be used (#325).
 
