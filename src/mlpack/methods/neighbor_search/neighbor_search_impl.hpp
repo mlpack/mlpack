@@ -29,7 +29,7 @@ NeighborSearch(const typename TreeType::Mat& referenceSet,
     querySet(queryCopy),
     referenceTree(NULL),
     queryTree(NULL),
-    treeOwner(true), // False if a tree was passed.
+    treeOwner(!naive), // False if a tree was passed.  If naive, then no trees.
     hasQuerySet(true),
     naive(naive),
     singleMode(!naive && singleMode), // No single mode if naive.
@@ -42,13 +42,16 @@ NeighborSearch(const typename TreeType::Mat& referenceSet,
   // We'll time tree building, but only if we are building trees.
   Timer::Start("tree_building");
 
-  // Construct as a naive object if we need to.
-  referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
-      (naive ? referenceCopy.n_cols : leafSize));
+  // If not in naive mode, then we need to build trees.
+  if (!naive)
+  {
+    referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
+        (naive ? referenceCopy.n_cols : leafSize));
 
-  if (!singleMode)
-    queryTree = new TreeType(queryCopy, oldFromNewQueries,
-        (naive ? querySet.n_cols : leafSize));
+    if (!singleMode)
+      queryTree = new TreeType(queryCopy, oldFromNewQueries,
+          (naive ? querySet.n_cols : leafSize));
+  }
 
   // Stop the timer we started above (if we need to).
   Timer::Stop("tree_building");
@@ -67,7 +70,7 @@ NeighborSearch(const typename TreeType::Mat& referenceSet,
     querySet(referenceCopy),
     referenceTree(NULL),
     queryTree(NULL),
-    treeOwner(true),
+    treeOwner(!naive), // If naive, then we are not building any trees.
     hasQuerySet(false),
     naive(naive),
     singleMode(!naive && singleMode), // No single mode if naive.
@@ -77,11 +80,14 @@ NeighborSearch(const typename TreeType::Mat& referenceSet,
   // We'll time tree building, but only if we are building trees.
   Timer::Start("tree_building");
 
-  // Construct as a naive object if we need to.
-  referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
-      (naive ? referenceSet.n_cols : leafSize));
-  if (!singleMode)
-    queryTree = new TreeType(*referenceTree);
+  // If not in naive mode, then we may need to construct trees.
+  if (!naive)
+  {
+    referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
+        (naive ? referenceSet.n_cols : leafSize));
+    if (!singleMode)
+      queryTree = new TreeType(*referenceTree);
+  }
 
   // Stop the timer we started above.
   Timer::Stop("tree_building");
@@ -151,7 +157,7 @@ NeighborSearch<SortPolicy, MetricType, TreeType>::~NeighborSearch()
     if (queryTree)
       delete queryTree;
   }
-  else if (!treeOwner && !hasQuerySet && !singleMode)
+  else if (!treeOwner && !hasQuerySet && !(singleMode || naive))
   {
     // We replicated the reference tree to create a query tree.
     delete queryTree;
@@ -187,7 +193,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
   neighborPtr->fill(size_t() - 1);
   distancePtr->set_size(k, querySet.n_cols);
   distancePtr->fill(SortPolicy::WorstDistance());
-  
+
   // compiler flags this as unused.
   //size_t numPrunes = 0;
 
@@ -195,7 +201,14 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
   typedef NeighborSearchRules<SortPolicy, MetricType, TreeType> RuleType;
   RuleType rules(referenceSet, querySet, *neighborPtr, *distancePtr, metric);
 
-  if (singleMode)
+  if (naive)
+  {
+    // The naive brute-force traversal.
+    for (size_t i = 0; i < querySet.n_cols; ++i)
+      for (size_t j = 0; j < referenceSet.n_cols; ++j)
+        rules.BaseCase(i, j);
+  }
+  else if (singleMode)
   {
     // Create the traverser.
     typename TreeType::template SingleTreeTraverser<RuleType> traverser(rules);
@@ -297,7 +310,7 @@ std::string NeighborSearch<SortPolicy, MetricType, TreeType>::ToString() const
   convert << "  Reference Set: " << referenceSet.n_rows << "x" ;
   convert <<  referenceSet.n_cols << std::endl;
   if (&referenceSet != &querySet)
-    convert << "  QuerySet: " << querySet.n_rows << "x" << querySet.n_cols 
+    convert << "  QuerySet: " << querySet.n_rows << "x" << querySet.n_cols
         << std::endl;
   convert << "  Reference Tree: " << referenceTree << std::endl;
   if (&referenceTree != &queryTree)
