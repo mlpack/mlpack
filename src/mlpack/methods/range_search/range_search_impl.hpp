@@ -28,7 +28,7 @@ RangeSearch<MetricType, TreeType>::RangeSearch(
     queryCopy(querySet),
     referenceSet(referenceCopy),
     querySet(queryCopy),
-    treeOwner(true),
+    treeOwner(!naive), // If in naive mode, we are not building any trees.
     hasQuerySet(true),
     naive(naive),
     singleMode(!naive && singleMode), // Naive overrides single mode.
@@ -38,12 +38,17 @@ RangeSearch<MetricType, TreeType>::RangeSearch(
   // Build the trees.
   Timer::Start("range_search/tree_building");
 
-  // Naive sets the leaf size such that the entire tree is one node.
-  referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
-      (naive ? referenceCopy.n_cols : leafSize));
+  // If in naive mode, then we do not need to build trees.
+  if (!naive)
+  {
+    referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
+        (naive ? referenceCopy.n_cols : leafSize));
 
-  queryTree = new TreeType(queryCopy, oldFromNewQueries,
-      (naive ? queryCopy.n_cols : leafSize));
+    // If we are in dual-tree mode, we need to build a query tree too.
+    if (!singleMode)
+      queryTree = new TreeType(queryCopy, oldFromNewQueries,
+          (naive ? queryCopy.n_cols : leafSize));
+  }
 
   Timer::Stop("range_search/tree_building");
 }
@@ -59,7 +64,7 @@ RangeSearch<MetricType, TreeType>::RangeSearch(
     referenceSet(referenceCopy),
     querySet(referenceCopy),
     queryTree(NULL),
-    treeOwner(true),
+    treeOwner(!naive), // If in naive mode, we are not building any trees.
     hasQuerySet(false),
     naive(naive),
     singleMode(!naive && singleMode), // Naive overrides single mode.
@@ -69,14 +74,16 @@ RangeSearch<MetricType, TreeType>::RangeSearch(
   // Build the trees.
   Timer::Start("range_search/tree_building");
 
-  // Naive sets the leaf size such that the entire tree is one node.
-  referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
-      (naive ? referenceCopy.n_cols : leafSize));
+  // If in naive mode, then we do not need to build trees.
+  if (!naive)
+  {
+    referenceTree = new TreeType(referenceCopy, oldFromNewReferences,
+        (naive ? referenceCopy.n_cols : leafSize));
 
-  // If using dual-tree mode, then we need a second tree.
-  if (!singleMode)
-    queryTree = new TreeType(*referenceTree);
-
+    // If using dual-tree mode, then we need a second tree.
+    if (!singleMode)
+      queryTree = new TreeType(*referenceTree);
+  }
   Timer::Stop("range_search/tree_building");
 }
 
@@ -136,7 +143,7 @@ RangeSearch<MetricType, TreeType>::~RangeSearch()
   }
 
   // If doing dual-tree search with one dataset, we cloned the reference tree.
-  if (!treeOwner && !hasQuerySet && !singleMode)
+  if (!treeOwner && !hasQuerySet && !(singleMode || naive))
     delete queryTree;
 }
 
@@ -174,7 +181,14 @@ void RangeSearch<MetricType, TreeType>::Search(
   RuleType rules(referenceSet, querySet, range, *neighborPtr, *distancePtr,
       metric);
 
-  if (singleMode)
+  if (naive)
+  {
+    // The naive brute-force solution.
+    for (size_t i = 0; i < querySet.n_cols; ++i)
+      for (size_t j = 0; j < referenceSet.n_cols; ++j)
+        rules.BaseCase(i, j);
+  }
+  else if (singleMode)
   {
     // Create the traverser.
     typename TreeType::template SingleTreeTraverser<RuleType> traverser(rules);
@@ -282,11 +296,11 @@ std::string RangeSearch<MetricType, TreeType>::ToString() const
 {
   std::ostringstream convert;
   convert << "Range Search  [" << this << "]" << std::endl;
-  if (treeOwner)  
+  if (treeOwner)
     convert << "  Tree Owner: TRUE" << std::endl;
-  if (naive)  
+  if (naive)
     convert << "  Naive: TRUE" << std::endl;
-  convert << "  Metric: " << std::endl << 
+  convert << "  Metric: " << std::endl <<
       mlpack::util::Indent(metric.ToString(),2);
   return convert.str();
 }
