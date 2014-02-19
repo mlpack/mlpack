@@ -40,6 +40,11 @@ FastMKSRules<KernelType, TreeType>::FastMKSRules(const arma::mat& referenceSet,
   for (size_t i = 0; i < referenceSet.n_cols; ++i)
     referenceKernels[i] = sqrt(kernel.Evaluate(referenceSet.unsafe_col(i),
                                                referenceSet.unsafe_col(i)));
+
+  // Set to invalid memory, so that the first node combination does not try to
+  // dereference null pointers.
+  traversalInfo.LastQueryNode() = (TreeType*) this;
+  traversalInfo.LastReferenceNode() = (TreeType*) this;
 }
 
 template<typename KernelType, typename TreeType>
@@ -197,18 +202,18 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
   // First, see if we can make a parent-child or parent-parent prune.  These
   // four bounds on the maximum kernel value are looser than the bound normally
   // used, but they can prevent a base case from needing to be calculated.
-  const TreeType* queryParent = queryNode.Parent();
-  const TreeType* refParent = referenceNode.Parent();
 
   // Convenience caching so lines are shorter.
   const double queryParentDist = queryNode.ParentDistance();
   const double queryDescDist = queryNode.FurthestDescendantDistance();
   const double refParentDist = referenceNode.ParentDistance();
   const double refDescDist = referenceNode.FurthestDescendantDistance();
+  double adjustedScore = traversalInfo.LastBaseCase();
 
   const double queryDistBound = (queryParentDist + queryDescDist);
   const double refDistBound = (refParentDist + refDescDist);
-  const double dualTerm = queryDistBound * refDistBound;
+  double dualQueryTerm;
+  double dualRefTerm;
 
   // The parent-child and parent-parent prunes work by applying the same pruning
   // condition as when the parent node was used, except they are tighter because
@@ -218,66 +223,74 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
   // so we construct the same bounds that were used when Score() was called with
   // the parents, except with the tighter distance bounds.  Sometimes this
   // allows us to prune nodes without evaluating the base cases between them.
-/*
-  if ((queryParent != NULL) &&
-      (queryParent->Stat().LastKernelNode() == (void*) &referenceNode))
+  if (traversalInfo.LastQueryNode() == queryNode.Parent())
   {
-    // Query parent was last evaluated with reference node.
-    const double queryKernelTerm =
-        refDistBound * queryParent->Stat().SelfKernel();
-    const double refKernelTerm =
-        queryDistBound * referenceNode.Stat().SelfKernel();
-    const double maxKernelBound = queryParent->Stat().LastKernel() +
-        queryKernelTerm + refKernelTerm + dualTerm;
-
-    if (maxKernelBound < bestKernel)
-      return DBL_MAX;
+    // We can assume that queryNode.Parent() != NULL, because at the root node
+    // combination, the traversalInfo.LastQueryNode() pointer will _not_ be
+    // NULL.  We also should be guaranteed that
+    // traversalInfo.LastReferenceNode() is either the reference node or the
+    // parent of the reference node.
+    adjustedScore += queryDistBound *
+        traversalInfo.LastReferenceNode()->Stat().SelfKernel();
+    dualQueryTerm = queryDistBound;
   }
-  else if ((refParent != NULL) &&
-      (refParent->Stat().LastKernelNode() == (void*) &queryNode))
+  else
   {
-    // Reference parent was last evaluated with query node.
-    const double queryKernelTerm = refDistBound * queryNode.Stat().SelfKernel();
-    const double refKernelTerm =
-        queryDistBound * refParent->Stat().SelfKernel();
-    const double maxKernelBound = refParent->Stat().LastKernel() +
-        queryKernelTerm + refKernelTerm + dualTerm;
-
-    if (maxKernelBound < bestKernel)
-      return DBL_MAX;
+    // The query parent could be NULL, which does weird things and we have to
+    // consider.
+    if (traversalInfo.LastReferenceNode() != NULL)
+    {
+      adjustedScore += queryDescDist *
+          traversalInfo.LastReferenceNode()->Stat().SelfKernel();
+      dualQueryTerm = queryDescDist;
+    }
+    else
+    {
+      // This makes it so a child-parent (or parent-parent) prune is not
+      // possible.
+      dualQueryTerm = 0.0;
+      adjustedScore = bestKernel;
+    }
   }
-  else if ((refParent != NULL) && (queryParent != NULL) &&
-      (queryParent->Stat().LastKernelNode() == (void*) refParent))
+
+  if (traversalInfo.LastReferenceNode() == referenceNode.Parent())
   {
-    // Query parent was last calculated with reference parent.
-    const double queryKernelTerm = (refParentDist + refDescDist) *
-        queryParent->Stat().SelfKernel();
-    const double refKernelTerm = (queryParentDist + queryDescDist) *
-        refParent->Stat().SelfKernel();
-    const double dualTerm = (queryParentDist + queryDescDist) * (refParentDist +
-        refDescDist);
-
-    const double maxKernelBound = queryParent->Stat().LastKernel() +
-        queryKernelTerm + refKernelTerm + dualTerm;
-
-    if (maxKernelBound < bestKernel)
-      return DBL_MAX;
+    // We can assume that referenceNode.Parent() != NULL, because at the root
+    // node combination, the traversalInfo.LastReferenceNode() pointer will
+    // _not_ be NULL.
+    adjustedScore += refDistBound *
+        traversalInfo.LastQueryNode()->Stat().SelfKernel();
+    dualRefTerm = refDistBound;
   }
-  else if ((refParent != NULL) && (queryParent != NULL) &&
-      (refParent->Stat().LastKernelNode() == (void*) queryParent))
+  else
   {
-    // Reference parent was last calculated with query parent.
-    const double queryKernelTerm = refDistBound *
-        queryParent->Stat().SelfKernel();
-    const double refKernelTerm = queryDistBound *
-        refParent->Stat().SelfKernel();
+    // The reference parent could be NULL, which does weird things and we have
+    // to consider.
+    if (traversalInfo.LastQueryNode() != NULL)
+    {
+      adjustedScore += refDescDist *
+          traversalInfo.LastQueryNode()->Stat().SelfKernel();
+      dualRefTerm = refDescDist;
+    }
+    else
+    {
+      // This makes it so a child-parent (or parent-parent) prune is not
+      // possible.
+      dualRefTerm = 0.0;
+      adjustedScore = bestKernel;
+    }
+  }
 
-    const double maxKernelBound = refParent->Stat().LastKernel() +
-        queryKernelTerm + refKernelTerm + dualTerm;
+  // Now add the dual term.
+  adjustedScore += (dualQueryTerm * dualRefTerm);
 
-    if (maxKernelBound < bestKernel)
-      return DBL_MAX;
-  }*/
+  if (adjustedScore < bestKernel)
+  {
+    // It is not possible that this node combination can contain a point
+    // combination with kernel value better than the minimum kernel value to
+    // improve any of the results, so we can prune it.
+    return DBL_MAX;
+  }
 
   // We were unable to perform a parent-child or parent-parent prune, so now we
   // must calculate kernel evaluation, if necessary.
@@ -318,6 +331,8 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
     referenceNode.Centroid(refCentroid);
 
     kernelEval = kernel.Evaluate(queryCentroid, refCentroid);
+
+    traversalInfo.LastBaseCase() = kernelEval;
   }
   ++scores;
 
