@@ -36,28 +36,6 @@ class RASearchRules
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
   /**
-   * TOFIX: This function is specified for the cover tree (usually) so
-   *   I need to think about it more algorithmically and keep its
-   *   implementation mostly empty.
-   *   Also, since the access to the points in the subtree of a cover tree
-   *   is non-trivial, we might have to re-work this.
-   *   FOR NOW: I am just using as for a BSP-tree, I will fix it when
-   *   we figure out cover trees.
-   *
-   */
-
-  double Prescore(TreeType& queryNode,
-                  TreeType& referenceNode,
-                  TreeType& referenceChildNode,
-                  const double baseCaseResult) const;
-  double PrescoreQ(TreeType& queryNode,
-                   TreeType& queryChildNode,
-                   TreeType& referenceNode,
-                   const double baseCaseResult) const;
-
-
-
-  /**
    * Get the score for recursion order.  A low score indicates priority for
    * recursion, while DBL_MAX indicates that the node should not be recursed
    * into at all (it should be pruned).
