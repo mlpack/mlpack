@@ -25,6 +25,7 @@ bool Save(const std::string& filename,
   size_t ext = filename.rfind('.');
   if (ext == std::string::npos)
   {
+    Timer::Stop("saving_data");
     if (fatal)
       Log::Fatal << "No extension given with filename '" << filename << "'; "
           << "type unknown.  Save failed." << std::endl;
@@ -44,6 +45,7 @@ bool Save(const std::string& filename,
 
   if (!stream.is_open())
   {
+    Timer::Stop("saving_data");
     if (fatal)
       Log::Fatal << "Cannot open file '" << filename << "' for writing. "
           << "Save failed." << std::endl;
@@ -51,7 +53,6 @@ bool Save(const std::string& filename,
       Log::Warn << "Cannot open file '" << filename << "' for writing; save "
           << "failed." << std::endl;
 
-    Timer::Stop("saving_data");
     return false;
   }
 
@@ -86,6 +87,7 @@ bool Save(const std::string& filename,
     saveType = arma::hdf5_binary;
     stringType = "HDF5 data";
 #else
+    Timer::Stop("saving_data");
     if (fatal)
       Log::Fatal << "Attempted to save HDF5 data to '" << filename << "', but "
           << "Armadillo was compiled without HDF5 support.  Save failed."
@@ -95,7 +97,6 @@ bool Save(const std::string& filename,
           << "Armadillo was compiled without HDF5 support.  Save failed."
           << std::endl;
 
-    Timer::Stop("saving_data");
     return false;
 #endif
   }
@@ -109,12 +110,15 @@ bool Save(const std::string& filename,
   // Provide error if we don't know the type.
   if (unknownType)
   {
+    Timer::Stop("saving_data");
     if (fatal)
       Log::Fatal << "Unable to determine format to save to from filename '"
           << filename << "'.  Save failed." << std::endl;
     else
       Log::Warn << "Unable to determine format to save to from filename '"
           << filename << "'.  Save failed." << std::endl;
+
+    return false;
   }
 
   // Try to save the file.
@@ -128,12 +132,12 @@ bool Save(const std::string& filename,
 
     if (!tmp.quiet_save(stream, saveType))
     {
+      Timer::Stop("saving_data");
       if (fatal)
         Log::Fatal << "Save to '" << filename << "' failed." << std::endl;
       else
         Log::Warn << "Save to '" << filename << "' failed." << std::endl;
 
-      Timer::Stop("saving_data");
       return false;
     }
   }
@@ -141,12 +145,12 @@ bool Save(const std::string& filename,
   {
     if (!matrix.quiet_save(stream, saveType))
     {
+      Timer::Stop("saving_data");
       if (fatal)
         Log::Fatal << "Save to '" << filename << "' failed." << std::endl;
       else
         Log::Warn << "Save to '" << filename << "' failed." << std::endl;
 
-      Timer::Stop("saving_data");
       return false;
     }
   }
