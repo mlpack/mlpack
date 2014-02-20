@@ -364,19 +364,28 @@ class BinarySpaceTree
   }
 
   //! Return the minimum distance to another point.
-  double MinDistance(const arma::vec& point) const
+  template<typename VecType>
+  double MinDistance(const VecType& point,
+                     typename boost::enable_if<IsVector<VecType> >::type* = 0)
+      const
   {
     return bound.MinDistance(point);
   }
 
   //! Return the maximum distance to another point.
-  double MaxDistance(const arma::vec& point) const
+  template<typename VecType>
+  double MaxDistance(const VecType& point,
+                     typename boost::enable_if<IsVector<VecType> >::type* = 0)
+      const
   {
     return bound.MaxDistance(point);
   }
 
   //! Return the minimum and maximum distance to another point.
-  math::Range RangeDistance(const arma::vec& point) const
+  template<typename VecType>
+  math::Range
+  RangeDistance(const VecType& point,
+                typename boost::enable_if<IsVector<VecType> >::type* = 0) const
   {
     return bound.RangeDistance(point);
   }
