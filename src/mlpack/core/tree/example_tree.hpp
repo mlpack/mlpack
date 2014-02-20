@@ -232,7 +232,4 @@ class ExampleTree
 }; // namespace tree
 }; // namespace mlpack
 
-//! Include implementation (which does not make any sense!).
-#include "example_tree_impl.hpp"
-
 #endif
