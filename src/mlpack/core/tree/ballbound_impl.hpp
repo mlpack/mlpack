@@ -56,7 +56,10 @@ void BallBound<VecType>::CalculateMidpoint(VecType& centroid) const
  * Calculates minimum bound-to-point squared distance.
  */
 template<typename VecType>
-double BallBound<VecType>::MinDistance(const VecType& point) const
+template<typename OtherVecType>
+double BallBound<VecType>::MinDistance(
+    const OtherVecType& point,
+    typename boost::enable_if<IsVector<OtherVecType> >* /* junk */) const
 {
   if (radius < 0)
     return DBL_MAX;
@@ -85,7 +88,10 @@ double BallBound<VecType>::MinDistance(const BallBound& other) const
  * Computes maximum distance.
  */
 template<typename VecType>
-double BallBound<VecType>::MaxDistance(const VecType& point) const
+template<typename OtherVecType>
+double BallBound<VecType>::MaxDistance(
+    const OtherVecType& point,
+    typename boost::enable_if<IsVector<OtherVecType> >* /* junk */) const
 {
   if (radius < 0)
     return DBL_MAX;
@@ -112,8 +118,10 @@ double BallBound<VecType>::MaxDistance(const BallBound& other) const
  * Example: bound1.MinDistanceSq(other) for minimum squared distance.
  */
 template<typename VecType>
-math::Range BallBound<VecType>::RangeDistance(const VecType& point)
-    const
+template<typename OtherVecType>
+math::Range BallBound<VecType>::RangeDistance(
+    const OtherVecType& point,
+    typename boost::enable_if<IsVector<OtherVecType> >* /* junk */) const
 {
   if (radius < 0)
     return math::Range(DBL_MAX, DBL_MAX);
