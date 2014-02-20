@@ -199,14 +199,14 @@ class NeighborSearch
  private:
   //! Copy of reference dataset (if we need it, because tree building modifies
   //! it).
-  arma::mat referenceCopy;
+  typename TreeType::Mat referenceCopy;
   //! Copy of query dataset (if we need it, because tree building modifies it).
-  arma::mat queryCopy;
+  typename TreeType::Mat queryCopy;
 
   //! Reference dataset.
-  const arma::mat& referenceSet;
+  const typename TreeType::Mat& referenceSet;
   //! Query dataset (may not be given).
-  const arma::mat& querySet;
+  const typename TreeType::Mat& querySet;
 
   //! Pointer to the root of the reference tree.
   TreeType* referenceTree;
