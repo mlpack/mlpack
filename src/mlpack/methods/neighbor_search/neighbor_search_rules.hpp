@@ -17,8 +17,8 @@ template<typename SortPolicy, typename MetricType, typename TreeType>
 class NeighborSearchRules
 {
  public:
-  NeighborSearchRules(const arma::mat& referenceSet,
-                      const arma::mat& querySet,
+  NeighborSearchRules(const typename TreeType::Mat& referenceSet,
+                      const typename TreeType::Mat& querySet,
                       arma::Mat<size_t>& neighbors,
                       arma::mat& distances,
                       MetricType& metric);
@@ -95,10 +95,10 @@ class NeighborSearchRules
 
  private:
   //! The reference set.
-  const arma::mat& referenceSet;
+  const typename TreeType::Mat& referenceSet;
 
   //! The query set.
-  const arma::mat& querySet;
+  const typename TreeType::Mat& querySet;
 
   //! The matrix the resultant neighbor indices should be stored in.
   arma::Mat<size_t>& neighbors;

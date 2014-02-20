@@ -15,8 +15,8 @@ namespace neighbor {
 
 template<typename SortPolicy, typename MetricType, typename TreeType>
 NeighborSearchRules<SortPolicy, MetricType, TreeType>::NeighborSearchRules(
-    const arma::mat& referenceSet,
-    const arma::mat& querySet,
+    const typename TreeType::Mat& referenceSet,
+    const typename TreeType::Mat& querySet,
     arma::Mat<size_t>& neighbors,
     arma::mat& distances,
     MetricType& metric) :
@@ -51,12 +51,12 @@ BaseCase(const size_t queryIndex, const size_t referenceIndex)
   if ((lastQueryIndex == queryIndex) && (lastReferenceIndex == referenceIndex))
     return lastBaseCase;
 
-  double distance = metric.Evaluate(querySet.unsafe_col(queryIndex),
-                                    referenceSet.unsafe_col(referenceIndex));
+  double distance = metric.Evaluate(querySet.col(queryIndex),
+                                    referenceSet.col(referenceIndex));
   ++baseCases;
 
   // If this distance is better than any of the current candidates, the
-  // SortDistance() function will give us the position to insert it into.
+  // SortDistance() function will give us the poto insert it into.
   arma::vec queryDist = distances.unsafe_col(queryIndex);
   arma::Col<size_t> queryIndices = neighbors.unsafe_col(queryIndex);
   const size_t insertPosition = SortPolicy::SortDistance(queryDist,
@@ -105,8 +105,8 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
   }
   else
   {
-    const arma::vec queryPoint = querySet.unsafe_col(queryIndex);
-    distance = SortPolicy::BestPointToNodeDistance(queryPoint, &referenceNode);
+    distance = SortPolicy::BestPointToNodeDistance(querySet.col(queryIndex),
+        &referenceNode);
   }
 
   // Compare against the best k'th distance for this query point so far.
