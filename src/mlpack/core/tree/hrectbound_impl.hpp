@@ -114,7 +114,9 @@ void HRectBound<Power, TakeRoot>::Centroid(arma::vec& centroid) const
  */
 template<int Power, bool TakeRoot>
 template<typename VecType>
-double HRectBound<Power, TakeRoot>::MinDistance(const VecType& point) const
+double HRectBound<Power, TakeRoot>::MinDistance(
+    const VecType& point,
+    typename boost::enable_if<IsVector<VecType> >* /* junk */) const
 {
   Log::Assert(point.n_elem == dim);
 
@@ -181,7 +183,9 @@ double HRectBound<Power, TakeRoot>::MinDistance(const HRectBound& other) const
  */
 template<int Power, bool TakeRoot>
 template<typename VecType>
-double HRectBound<Power, TakeRoot>::MaxDistance(const VecType& point) const
+double HRectBound<Power, TakeRoot>::MaxDistance(
+    const VecType& point,
+    typename boost::enable_if<IsVector<VecType> >* /* junk */) const
 {
   double sum = 0;
 
@@ -271,8 +275,9 @@ math::Range HRectBound<Power, TakeRoot>::RangeDistance(const HRectBound& other)
  */
 template<int Power, bool TakeRoot>
 template<typename VecType>
-math::Range HRectBound<Power, TakeRoot>::RangeDistance(const VecType& point)
-    const
+math::Range HRectBound<Power, TakeRoot>::RangeDistance(
+    const VecType& point,
+    typename boost::enable_if<IsVector<VecType> >* /* junk */) const
 {
   double loSum = 0;
   double hiSum = 0;

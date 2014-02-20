@@ -78,7 +78,8 @@ class HRectBound
    * @param point Point to which the minimum distance is requested.
    */
   template<typename VecType>
-  double MinDistance(const VecType& point) const;
+  double MinDistance(const VecType& point,
+                     typename boost::enable_if<IsVector<VecType> >* = 0) const;
 
   /**
    * Calculates minimum bound-to-bound distance.
@@ -93,7 +94,8 @@ class HRectBound
    * @param point Point to which the maximum distance is requested.
    */
   template<typename VecType>
-  double MaxDistance(const VecType& point) const;
+  double MaxDistance(const VecType& point,
+                     typename boost::enable_if<IsVector<VecType> >* = 0) const;
 
   /**
    * Computes maximum distance.
@@ -117,7 +119,9 @@ class HRectBound
    *     requested.
    */
   template<typename VecType>
-  math::Range RangeDistance(const VecType& point) const;
+  math::Range RangeDistance(const VecType& point,
+                            typename boost::enable_if<IsVector<VecType> >* = 0)
+      const;
 
   /**
    * Expands this region to include new points.

@@ -17,7 +17,7 @@ namespace bound {
 /**
  * Ball bound that works in the regular Euclidean metric space.
  *
- * @tparam VecType Type of vector (arma::vec or arma::spvec).
+ * @tparam VecType Type of vector (arma::vec or arma::sp_vec).
  */
 template<typename VecType = arma::vec>
 class BallBound
@@ -78,7 +78,10 @@ class BallBound
   /**
    * Calculates minimum bound-to-point squared distance.
    */
-  double MinDistance(const VecType& point) const;
+  template<typename OtherVecType>
+  double MinDistance(const OtherVecType& point,
+                     typename boost::enable_if<IsVector<OtherVecType> >* = 0)
+      const;
 
   /**
    * Calculates minimum bound-to-bound squared distance.
@@ -88,7 +91,10 @@ class BallBound
   /**
    * Computes maximum distance.
    */
-  double MaxDistance(const VecType& point) const;
+  template<typename OtherVecType>
+  double MaxDistance(const OtherVecType& point,
+                     typename boost::enable_if<IsVector<OtherVecType> >* = 0)
+      const;
 
   /**
    * Computes maximum distance.
@@ -98,7 +104,10 @@ class BallBound
   /**
    * Calculates minimum and maximum bound-to-point distance.
    */
-  math::Range RangeDistance(const VecType& other) const;
+  template<typename OtherVecType>
+  math::Range RangeDistance(
+      const OtherVecType& other,
+      typename boost::enable_if<IsVector<OtherVecType> >* = 0) const;
 
   /**
    * Calculates minimum and maximum bound-to-bound distance.
