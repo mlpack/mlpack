@@ -7,11 +7,15 @@
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <mlpack/methods/neighbor_search/unmap.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
+#include <mlpack/core/tree/example_tree.hpp>
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
 
 using namespace mlpack;
 using namespace mlpack::neighbor;
+using namespace mlpack::tree;
+using namespace mlpack::metric;
+using namespace mlpack::bound;
 
 BOOST_AUTO_TEST_SUITE(AllkNNTest);
 
@@ -586,14 +590,12 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
 
   arma::mat naiveQuery(data); // For naive AllkNN.
 
-  tree::CoverTree<metric::LMetric<2>, tree::FirstPointIsRoot,
-      NeighborSearchStat<NearestNeighborSort> > tree = tree::CoverTree<
-      metric::LMetric<2>, tree::FirstPointIsRoot,
-      NeighborSearchStat<NearestNeighborSort> >(data);
+  CoverTree<LMetric<2>, FirstPointIsRoot,
+      NeighborSearchStat<NearestNeighborSort> > tree = CoverTree<LMetric<2>,
+      FirstPointIsRoot, NeighborSearchStat<NearestNeighborSort> >(data);
 
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2>,
-      tree::CoverTree<metric::LMetric<2>, tree::FirstPointIsRoot,
-          NeighborSearchStat<NearestNeighborSort> > >
+  NeighborSearch<NearestNeighborSort, LMetric<2>, CoverTree<LMetric<2>,
+      FirstPointIsRoot, NeighborSearchStat<NearestNeighborSort> > >
       coverTreeSearch(&tree, data, true);
 
   AllkNN naive(naiveQuery, true);
@@ -630,13 +632,13 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
   arma::mat kdDistances;
   tree.Search(5, kdNeighbors, kdDistances);
 
-  tree::CoverTree<metric::LMetric<2, true>, tree::FirstPointIsRoot,
-      NeighborSearchStat<NearestNeighborSort> > referenceTree = tree::CoverTree<
-      metric::LMetric<2, true>, tree::FirstPointIsRoot,
+  CoverTree<LMetric<2, true>, FirstPointIsRoot,
+      NeighborSearchStat<NearestNeighborSort> > referenceTree = CoverTree<
+      LMetric<2, true>, FirstPointIsRoot,
       NeighborSearchStat<NearestNeighborSort> >(dataset);
 
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
-      tree::CoverTree<metric::LMetric<2, true>, tree::FirstPointIsRoot,
+  NeighborSearch<NearestNeighborSort, LMetric<2, true>,
+      CoverTree<LMetric<2, true>, FirstPointIsRoot,
       NeighborSearchStat<NearestNeighborSort> > >
       coverTreeSearch(&referenceTree, dataset);
 
@@ -650,5 +652,85 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
     BOOST_REQUIRE_CLOSE(coverDistances(i), kdDistances(i), 1e-5);
   }
 }
+
+// Make sure sparse nearest neighbors works with kd trees.
+BOOST_AUTO_TEST_CASE(SparseAllkNNKDTreeTest)
+{
+  typedef BinarySpaceTree<HRectBound<2>,
+      NeighborSearchStat<NearestNeighborSort>, arma::sp_mat> SparseKDTree;
+
+  // The dimensionality of these datasets must be high so that the probability
+  // of a completely empty point is very low.  In this case, with dimensionality
+  // 70, the probability of all 70 dimensions being zero is 0.8^70 = 1.65e-7 in
+  // the reference set and 0.9^70 = 6.27e-4 in the query set.
+  arma::sp_mat queryDataset;
+  queryDataset.sprandu(50, 5000, 0.2);
+  arma::sp_mat referenceDataset;
+  referenceDataset.sprandu(50, 8000, 0.1);
+  arma::mat denseQuery(queryDataset);
+  arma::mat denseReference(referenceDataset);
+
+  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, SparseKDTree>
+      SparseAllkNN;
+
+  SparseAllkNN a(queryDataset, referenceDataset);
+  AllkNN naive(denseQuery, denseReference, true);
+
+  arma::mat sparseDistances;
+  arma::Mat<size_t> sparseNeighbors;
+  a.Search(10, sparseNeighbors, sparseDistances);
+
+  arma::mat naiveDistances;
+  arma::Mat<size_t> naiveNeighbors;
+  naive.Search(10, naiveNeighbors, naiveDistances);
+
+  for (size_t i = 0; i < naiveNeighbors.n_cols; ++i)
+  {
+    for (size_t j = 0; j < naiveNeighbors.n_rows; ++j)
+    {
+      BOOST_REQUIRE_EQUAL(naiveNeighbors(j, i), sparseNeighbors(j, i));
+      BOOST_REQUIRE_CLOSE(naiveDistances(j, i), sparseDistances(j, i), 1e-5);
+    }
+  }
+}
+
+/*
+BOOST_AUTO_TEST_CASE(SparseAllkNNCoverTreeTest)
+{
+  typedef CoverTree<LMetric<2, true>, FirstPointIsRoot,
+      NeighborSearchStat<NearestNeighborSort>, arma::sp_mat> SparseCoverTree;
+
+  // The dimensionality of these datasets must be high so that the probability
+  // of a completely empty point is very low.  In this case, with dimensionality
+  // 70, the probability of all 70 dimensions being zero is 0.8^70 = 1.65e-7 in
+  // the reference set and 0.9^70 = 6.27e-4 in the query set.
+  arma::sp_mat queryDataset;
+  queryDataset.sprandu(50, 5000, 0.2);
+  arma::sp_mat referenceDataset;
+  referenceDataset.sprandu(50, 8000, 0.1);
+  arma::mat denseQuery(queryDataset);
+  arma::mat denseReference(referenceDataset);
+
+  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance,
+      SparseCoverTree> SparseAllkNN;
+
+  arma::mat sparseDistances;
+  arma::Mat<size_t> sparseNeighbors;
+  a.Search(10, sparseNeighbors, sparseDistances);
+
+  arma::mat naiveDistances;
+  arma::Mat<size_t> naiveNeighbors;
+  naive.Search(10, naiveNeighbors, naiveDistances);
+
+  for (size_t i = 0; i < naiveNeighbors.n_cols; ++i)
+  {
+    for (size_t j = 0; j < naiveNeighbors.n_rows; ++j)
+    {
+      BOOST_REQUIRE_EQUAL(naiveNeighbors(j, i), sparseNeighbors(j, i));
+      BOOST_REQUIRE_CLOSE(naiveDistances(j, i), sparseDistances(j, i), 1e-5);
+    }
+  }
+}
+*/
 
 BOOST_AUTO_TEST_SUITE_END();
