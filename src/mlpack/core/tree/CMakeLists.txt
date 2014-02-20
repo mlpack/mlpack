@@ -23,6 +23,7 @@ set(SOURCES
   cover_tree/dual_tree_traverser.hpp
   cover_tree/dual_tree_traverser_impl.hpp
   cover_tree/traits.hpp
+  example_tree.hpp
   hrectbound.hpp
   hrectbound_impl.hpp
   mrkd_statistic.hpp
