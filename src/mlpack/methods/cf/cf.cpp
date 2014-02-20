@@ -97,8 +97,10 @@ void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
 
   // Operations independent of the query:
   // Decompose the sparse data matrix to user and data matrices.
-  // Should this rank be parameterizable?
-  size_t rank = 2;
+  // This is a simple heuristic that picks a rank based on the density of the
+  // dataset between 5 and 105.
+  const double density = (cleanedData.n_nonzero * 100.0) / cleanedData.n_elem;
+  size_t rank = size_t(density) + 5;
 
   // Presently only ALS (via NMF) is supported as an optimizer.  This should be
   // converted to a template when more optimizers are available.
