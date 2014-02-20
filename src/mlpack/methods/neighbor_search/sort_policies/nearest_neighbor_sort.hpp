@@ -100,8 +100,8 @@ class NearestNeighborSort
    * this is the minimum distance between the tree node and the point using the
    * given distance function.
    */
-  template<typename TreeType>
-  static double BestPointToNodeDistance(const arma::vec& queryPoint,
+  template<typename VecType, typename TreeType>
+  static double BestPointToNodeDistance(const VecType& queryPoint,
                                         const TreeType* referenceNode);
 
   /**
@@ -110,8 +110,8 @@ class NearestNeighborSort
    * calculated.  This is used in conjunction with trees that have
    * self-children (like cover trees).
    */
-  template<typename TreeType>
-  static double BestPointToNodeDistance(const arma::vec& queryPoint,
+  template<typename VecType, typename TreeType>
+  static double BestPointToNodeDistance(const VecType& queryPoint,
                                         const TreeType* referenceNode,
                                         const double pointToCenterDistance);
 
