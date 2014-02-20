@@ -41,9 +41,9 @@ inline double FurthestNeighborSort::BestNodeToNodeDistance(
       referenceChildNode->ParentDistance();
 }
 
-template<typename TreeType>
+template<typename VecType, typename TreeType>
 inline double FurthestNeighborSort::BestPointToNodeDistance(
-    const arma::vec& point,
+    const VecType& point,
     const TreeType* referenceNode)
 {
   // This is not implemented yet for the general case because the trees do not
@@ -51,9 +51,9 @@ inline double FurthestNeighborSort::BestPointToNodeDistance(
   return referenceNode->MaxDistance(point);
 }
 
-template<typename TreeType>
+template<typename VecType, typename TreeType>
 inline double FurthestNeighborSort::BestPointToNodeDistance(
-    const arma::vec& point,
+    const VecType& point,
     const TreeType* referenceNode,
     const double pointToCenterDistance)
 {
