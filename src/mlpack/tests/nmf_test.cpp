@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(NMFALSTest)
 
   for (size_t row = 0; row < 20; row++)
     for (size_t col = 0; col < 20; col++)
-      BOOST_REQUIRE_CLOSE(v(row, col), wh(row, col), 15.0);
+      BOOST_REQUIRE_CLOSE(v(row, col), wh(row, col), 18.0);
 }
 
 /**
