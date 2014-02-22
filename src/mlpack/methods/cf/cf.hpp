@@ -55,35 +55,23 @@ class CF
 {
  public:
   /**
-   * Create a CF object and (optionally) set the parameters with which
-   * collaborative filtering will be run.
+   * Initialize the CF object. Store a reference to the data that we
+   * will be using. There are parameters that can be set; default values
+   * are provided for each of them.  If the rank is left unset (or is set to 0),
+   * a simple density-based heuristic will be used to choose a rank.
    *
-   * @param data Initial (user,item,rating) matrix.
+   * @param data Initial (user, item, rating) matrix.
    * @param numRecs Desired number of recommendations for each user.
    * @param numUsersForSimilarity Size of the neighborhood.
+   * @param rank Rank parameter for matrix factorization.
    */
-  CF(const size_t numRecs,const size_t numUsersForSimilarity,
-     arma::mat& data);
-
-  /**
-   * Create a CF object and (optionally) set the parameters which CF
-   * will be run with.
-   *
-   * @param data Initial User,Item,Rating Matrix
-   * @param numRecs Number of Recommendations for each user.
-   */
-  CF(const size_t numRecs, arma::mat& data);
-
-  /**
-   * Create a CF object and (optionally) set the parameters which CF
-   * will be run with.
-   *
-   * @param data Initial User,Item,Rating Matrix
-   */
-  CF(arma::mat& data);
+  CF(arma::mat& data,
+     const size_t numRecs = 5,
+     const size_t numUsersForSimilarity = 5,
+     const size_t rank = 0);
 
   //! Sets number of Recommendations.
-  void NumRecs(size_t recs)
+  void NumRecs(const size_t recs)
   {
     if (recs < 1)
     {
@@ -101,7 +89,7 @@ class CF
   }
 
   //! Sets number of user for calculating similarity.
-  void NumUsersForSimilarity(size_t num)
+  void NumUsersForSimilarity(const size_t num)
   {
     if (num < 1)
     {
@@ -112,10 +100,22 @@ class CF
     this->numUsersForSimilarity = num;
   }
 
-  //! Gets number of users for calculating similarity/
+  //! Gets number of users for calculating similarity.
   size_t NumUsersForSimilarity()
   {
     return numUsersForSimilarity;
+  }
+
+  //! Sets rank parameter for matrix factorization.
+  void Rank(const size_t rankValue)
+  {
+    this->rank = rankValue;
+  }
+
+  //! Gets rank parameter for matrix factorization.
+  size_t Rank()
+  {
+    return rank;
   }
 
   //! Get the User Matrix.
@@ -174,18 +174,20 @@ class CF
   std::string ToString() const;
 
  private:
+  //! Initial data matrix.
+  arma::mat data;
   //! Number of recommendations.
   size_t numRecs;
   //! Number of users for similarity.
   size_t numUsersForSimilarity;
+  //! Rank used for matrix factorization.
+  size_t rank;
   //! User matrix.
   arma::mat w;
   //! Item matrix.
   arma::mat h;
   //! Rating matrix.
   arma::mat rating;
-  //! Initial data matrix.
-  arma::mat data;
   //! Cleaned data matrix.
   arma::sp_mat cleanedData;
   //! Converts the User, Item, Value Matrix to User-Item Table
