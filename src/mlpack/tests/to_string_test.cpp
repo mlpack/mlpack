@@ -291,7 +291,7 @@ BOOST_AUTO_TEST_CASE(CFString)
   c(0, 2) = 1;
   c(1, 2) = 3;
   c(2, 2) = 0.7;
-  mlpack::cf::CF d(a, a, c);
+  mlpack::cf::CF d(c, a, a);
   Log::Debug << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");

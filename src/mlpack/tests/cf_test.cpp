@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(CFConstructorTest)
   // Number of users for similarity (not the default).
   const size_t numUsersForSimilarity = 8;
 
-  CF c(numRecs, numUsersForSimilarity, dataset);
+  CF c(dataset, numRecs, numUsersForSimilarity);
 
   // Check parameters.
   BOOST_REQUIRE_EQUAL(c.NumRecs(), numRecs);
