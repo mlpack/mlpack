@@ -12,7 +12,8 @@
 
 #include "neighbor_search_rules.hpp"
 
-using namespace mlpack::neighbor;
+namespace mlpack {
+namespace neighbor {
 
 // Construct the object.
 template<typename SortPolicy, typename MetricType, typename TreeType>
@@ -321,5 +322,8 @@ std::string NeighborSearch<SortPolicy, MetricType, TreeType>::ToString() const
   convert << mlpack::util::Indent(metric.ToString(),2);
   return convert.str();
 }
+
+}; // namespace neighbor
+}; // namespace mlpack
 
 #endif
