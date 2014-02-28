@@ -13,6 +13,7 @@
 #include <mlpack/methods/nmf/als_update_rules.hpp>
 
 using namespace mlpack::nmf;
+using namespace mlpack::neighbor;
 using namespace std;
 
 namespace mlpack {

@@ -62,6 +62,7 @@ using namespace mlpack::metric;
 using namespace mlpack::nca;
 using namespace mlpack::bound;
 using namespace mlpack::tree;
+using namespace mlpack::neighbor;
 
 //using namespace mlpack::optimization;
 
