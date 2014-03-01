@@ -85,7 +85,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
   {
     // The first point in the tree is the centroid.  So we can then calculate
     // the base case between that and the query point.
-    double baseCase;
+    double baseCase = -1.0;
     if (tree::TreeTraits<TreeType>::HasSelfChildren)
     {
       // If the parent node is the same, then we have already calculated the

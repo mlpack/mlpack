@@ -34,8 +34,7 @@ NeighborSearch(const typename TreeType::Mat& referenceSet,
     hasQuerySet(true),
     naive(naive),
     singleMode(!naive && singleMode), // No single mode if naive.
-    metric(metric),
-    numberOfPrunes(0)
+    metric(metric)
 {
   // C++11 will allow us to call out to other constructors so we can avoid this
   // copypasta problem.
@@ -75,8 +74,7 @@ NeighborSearch(const typename TreeType::Mat& referenceSet,
     hasQuerySet(false),
     naive(naive),
     singleMode(!naive && singleMode), // No single mode if naive.
-    metric(metric),
-    numberOfPrunes(0)
+    metric(metric)
 {
   // We'll time tree building, but only if we are building trees.
   Timer::Start("tree_building");
@@ -111,8 +109,7 @@ NeighborSearch<SortPolicy, MetricType, TreeType>::NeighborSearch(
     hasQuerySet(true),
     naive(false),
     singleMode(singleMode),
-    metric(metric),
-    numberOfPrunes(0)
+    metric(metric)
 {
   // Nothing else to initialize.
 }
@@ -132,8 +129,7 @@ NeighborSearch<SortPolicy, MetricType, TreeType>::NeighborSearch(
     hasQuerySet(false), // In this case we will own a tree, if singleMode.
     naive(false),
     singleMode(singleMode),
-    metric(metric),
-    numberOfPrunes(0)
+    metric(metric)
 {
   Timer::Start("tree_building");
 
