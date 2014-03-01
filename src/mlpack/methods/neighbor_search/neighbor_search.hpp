@@ -230,9 +230,6 @@ class NeighborSearch
   std::vector<size_t> oldFromNewReferences;
   //! Permutations of query points during tree building.
   std::vector<size_t> oldFromNewQueries;
-
-  //! Total number of pruned nodes during the neighbor search.
-  size_t numberOfPrunes;
 }; // class NeighborSearch
 
 }; // namespace neighbor
