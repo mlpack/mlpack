@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(TestFindSplit)
 
   testDTree.logVolume = log(7.0) + log(4.0) + log(7.0);
   BOOST_REQUIRE(testDTree.FindSplit(testData, obDim, obSplit, obLeftError,
-      obRightError, 2, 1));
+      obRightError, 1));
 
   BOOST_REQUIRE(trueDim == obDim);
   BOOST_REQUIRE_CLOSE(trueSplit, obSplit, 1e-10);
