@@ -223,7 +223,7 @@ arma::vec GMM<FittingType>::Random() const
 {
   // Determine which Gaussian it will be coming from.
   double gaussRand = math::Random();
-  size_t gaussian;
+  size_t gaussian = 0;
 
   double sumProb = 0;
   for (size_t g = 0; g < gaussians; g++)
