@@ -130,7 +130,6 @@ bool DTree::FindSplit(const arma::mat& data,
                       double& splitValue,
                       double& leftError,
                       double& rightError,
-                      const size_t maxLeafSize,
                       const size_t minLeafSize) const
 {
   // Ensure the dimensionality of the data is the same as the dimensionality of
@@ -171,9 +170,6 @@ bool DTree::FindSplit(const arma::mat& data,
 
     // Sort the values in ascending order.
     dimVec = arma::sort(dimVec);
-
-    // Get ready to go through the sorted list and compute error.
-    assert(dimVec.n_elem > maxLeafSize);
 
     // Find the best split for this dimension.  We need to figure out why
     // there are spikes if this minLeafSize is enforced here...
@@ -297,8 +293,7 @@ double DTree::Grow(arma::mat& data,
     size_t dim;
     double splitValueTmp;
     double leftError, rightError;
-    if (FindSplit(data, dim, splitValueTmp, leftError, rightError, maxLeafSize,
-        minLeafSize))
+    if (FindSplit(data, dim, splitValueTmp, leftError, rightError, minLeafSize))
     {
       // Move the data around for the children to have points in a node lie
       // contiguously (to increase efficiency during the training).

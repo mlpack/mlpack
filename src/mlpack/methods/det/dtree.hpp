@@ -295,7 +295,6 @@ class DTree
                  double& splitValue,
                  double& leftError,
                  double& rightError,
-                 const size_t maxLeafSize = 10,
                  const size_t minLeafSize = 5) const;
 
   /**
