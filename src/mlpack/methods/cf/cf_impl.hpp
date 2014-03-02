@@ -22,10 +22,11 @@ namespace cf {
 /**
  * Construct the CF object.
  */
-CF::CF(arma::mat& data,
-       const size_t numRecs,
-       const size_t numUsersForSimilarity,
-       const size_t rank) :
+template<typename FactorizerType>
+CF<FactorizerType>::CF(arma::mat& data,
+                      const size_t numRecs,
+                      const size_t numUsersForSimilarity,
+                      const size_t rank) :
     data(data),
     numRecs(numRecs),
     numUsersForSimilarity(numUsersForSimilarity),
@@ -49,10 +50,15 @@ CF::CF(arma::mat& data,
     this->numUsersForSimilarity = 5;
   }
 
+  //Set default factorizer
+  FactorizerType f(10000, 1e-5);
+  Factorizer(f);
+
   CleanData();
 }
 
-void CF::GetRecommendations(arma::Mat<size_t>& recommendations)
+template<typename FactorizerType>
+void CF<FactorizerType>::GetRecommendations(arma::Mat<size_t>& recommendations)
 {
   // Used to save user IDs.
   arma::Col<size_t> users =
@@ -65,8 +71,9 @@ void CF::GetRecommendations(arma::Mat<size_t>& recommendations)
   GetRecommendations(recommendations, users);
 }
 
-void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
-                            arma::Col<size_t>& users)
+template<typename FactorizerType>
+void CF<FactorizerType>::GetRecommendations(arma::Mat<size_t>& recommendations,
+                                            arma::Col<size_t>& users)
 {
   // Base function for calculating recommendations.
 
@@ -87,11 +94,8 @@ void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
 
   // Operations independent of the query:
   // Decompose the sparse data matrix to user and data matrices.
-  // Presently only ALS (via NMF) is supported as an optimizer.  This should be
-  // converted to a template when more optimizers are available.
-  NMF<RandomInitialization, WAlternatingLeastSquaresRule,
-      HAlternatingLeastSquaresRule> als(10000, 1e-5);
-  als.Apply(cleanedData, rank, w, h);
+  // Presently only ALS (via NMF) is supported as an optimizer.
+  factorizer.Apply(cleanedData, rank, w, h);
 
   // Generate new table by multiplying approximate values.
   rating = w * h;
@@ -171,8 +175,9 @@ void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
   }
 }
 
-void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
-                            arma::Col<size_t>& users,size_t num)
+template<typename FactorizerType>
+void CF<FactorizerType>::GetRecommendations(arma::Mat<size_t>& recommendations,
+                                            arma::Col<size_t>& users,size_t num)
 {
   //Setting Number of Recommendations
   NumRecs(num);
@@ -180,8 +185,10 @@ void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
   GetRecommendations(recommendations,users);
 }
 
-void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
-                            arma::Col<size_t>& users,size_t num,size_t s)
+template<typename FactorizerType>
+void CF<FactorizerType>::GetRecommendations(arma::Mat<size_t>& recommendations,
+                                            arma::Col<size_t>& users,size_t num,
+                                            size_t s)
 {
   //Setting number of users that should be used for calculating
   //neighbours
@@ -192,7 +199,8 @@ void CF::GetRecommendations(arma::Mat<size_t>& recommendations,
   GetRecommendations(recommendations,users,num);
 }
 
-void CF::CleanData()
+template<typename FactorizerType>
+void CF<FactorizerType>::CleanData()
 {
   // Generate list of locations for batch insert constructor for sparse
   // matrices.
@@ -222,12 +230,13 @@ void CF::CleanData()
  * @param neighbor Index of item being inserted as a recommendation.
  * @param value Value of recommendation.
  */
-void CF::InsertNeighbor(const size_t queryIndex,
-                        const size_t pos,
-                        const size_t neighbor,
-                        const double value,
-                        arma::Mat<size_t>& recommendations,
-                        arma::mat& values) const
+template<typename FactorizerType>
+void CF<FactorizerType>::InsertNeighbor(const size_t queryIndex,
+                                        const size_t pos,
+                                        const size_t neighbor,
+                                        const double value,
+                                        arma::Mat<size_t>& recommendations,
+                                        arma::mat& values) const
 {
   // We only memmove() if there is actually a need to shift something.
   if (pos < (recommendations.n_rows - 1))
@@ -247,7 +256,8 @@ void CF::InsertNeighbor(const size_t queryIndex,
 }
 
 // Return string of object.
-std::string CF::ToString() const
+template<typename FactorizerType>
+std::string CF<FactorizerType>::ToString() const
 {
   std::ostringstream convert;
   convert << "Collaborative Filtering [" << this << "]" << std::endl;

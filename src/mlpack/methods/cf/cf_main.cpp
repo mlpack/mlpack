@@ -70,7 +70,7 @@ int main(int argc, char** argv)
 
   // Perform decomposition to prepare for recommendations.
   Log::Info << "Performing CF matrix decomposition on dataset..." << endl;
-  CF c(dataset);
+  CF<> c(dataset);
   c.NumRecs(numRecs);
   c.NumUsersForSimilarity(neighborhood);
 

@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(CFConstructorTest)
   // Number of users for similarity (not the default).
   const size_t numUsersForSimilarity = 8;
 
-  CF c(dataset, numRecs, numUsersForSimilarity);
+  CF<> c(dataset, numRecs, numUsersForSimilarity);
 
   // Check parameters.
   BOOST_REQUIRE_EQUAL(c.NumRecs(), numRecs);
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersTest)
   data::Load("GroupLens100k.csv", dataset);
 
   // Creat a CF object
-  CF c(dataset);
+  CF<> c(dataset);
 
   // Set number of recommendations.
   c.NumRecs(numRecs);
@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserTest)
   arma::mat dataset;
   data::Load("GroupLens100k.csv", dataset);
 
-  CF c(dataset);
+  CF<> c(dataset);
 
   // Generate recommendations when query set is specified.
   c.GetRecommendations(recommendations, users);
@@ -161,7 +161,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyTest)
   }
 
   // Now create the CF object.
-  CF c(dataset);
+  CF<> c(dataset);
 
   // Obtain 150 recommendations for the users in savedCols, and make sure the
   // missing item shows up in most of them.  First, create the list of users,

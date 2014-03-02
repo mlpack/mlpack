@@ -2,7 +2,7 @@
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
   cf.hpp
-  cf.cpp
+  cf_impl.hpp
 )
 
 # Add directory name to sources.

@@ -12,9 +12,13 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+#include <mlpack/methods/nmf/nmf.hpp>
+#include <mlpack/methods/nmf/als_update_rules.hpp>
 #include <set>
 #include <map>
 #include <iostream>
+
+using namespace mlpack::nmf;
 
 namespace mlpack {
 namespace cf /** Collaborative filtering. */{
@@ -32,7 +36,7 @@ namespace cf /** Collaborative filtering. */{
  * arma::Mat<size_t> recommendations; // Recommendations
  * size_t numRecommendations = 10;
  *
- * CF cf(data); // Default options.
+ * CF<> cf(data); // Default options.
  *
  * // Generate the default number of recommendations for all users.
  * cf.GetRecommendations(recommendations);
@@ -49,8 +53,17 @@ namespace cf /** Collaborative filtering. */{
  * should have three rows.  The first represents the user; the second represents
  * the item; and the third represents the rating.  The user and item, while they
  * are in a matrix that holds doubles, should hold integer (or size_t) values.
- * The user and item indices are assumed to be starting from 0.
+ * The user and item indices are assumed to start at 0.
+ *
+ * @tparam FactorizerType The type of matrix factorization to use to decompose
+ *     the rating matrix (a W and H matrix).  This must implement the method
+ *     Apply(arma::sp_mat& data, size_t rank, arma::mat& W, arma::mat& H).
  */
+template<
+    typename FactorizerType = NMF<RandomInitialization,
+                                  WAlternatingLeastSquaresRule,
+                                  HAlternatingLeastSquaresRule>
+>
 class CF
 {
  public:
@@ -82,13 +95,13 @@ class CF
     this->numRecs = recs;
   }
 
-  //! Gets numRecs
-  size_t NumRecs()
+  //! Gets the number of recommendations.
+  size_t NumRecs() const
   {
     return numRecs;
   }
 
-  //! Sets number of user for calculating similarity.
+  //! Sets number of users for calculating similarity.
   void NumUsersForSimilarity(const size_t num)
   {
     if (num < 1)
@@ -101,7 +114,7 @@ class CF
   }
 
   //! Gets number of users for calculating similarity.
-  size_t NumUsersForSimilarity()
+  size_t NumUsersForSimilarity() const
   {
     return numUsersForSimilarity;
   }
@@ -113,9 +126,15 @@ class CF
   }
 
   //! Gets rank parameter for matrix factorization.
-  size_t Rank()
+  size_t Rank() const
   {
     return rank;
+  }
+
+  //! Sets factorizer for NMF
+  void Factorizer(const FactorizerType& f)
+  {
+    this->factorizer = f;
   }
 
   //! Get the User Matrix.
@@ -182,6 +201,8 @@ class CF
   size_t numUsersForSimilarity;
   //! Rank used for matrix factorization.
   size_t rank;
+  //! Instantiated factorizer object.
+  FactorizerType factorizer;
   //! User matrix.
   arma::mat w;
   //! Item matrix.
@@ -213,5 +234,8 @@ class CF
 
 }; // namespace cf
 }; // namespace mlpack
+
+//Include implementation
+#include "cf_impl.hpp"
 
 #endif
