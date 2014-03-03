@@ -181,13 +181,21 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
     const double queryAdjust = queryParentDist + queryDescDist;
     adjustedScore = SortPolicy::CombineBest(adjustedScore, queryAdjust);
   }
+  else if (traversalInfo.LastQueryNode() == &queryNode)
+  {
+    adjustedScore = SortPolicy::CombineBest(adjustedScore, queryDescDist);
+  }
   else
   {
-    // If the parent node is NULL, force adjustedScore to be such that it can't
-    // be pruned.  Otherwise use the parent descendant distance.
-    const double queryParentDescDist = (queryNode.Parent() == NULL) ?
-        bestDistance : queryNode.Parent()->FurthestDescendantDistance();
-    adjustedScore = SortPolicy::CombineBest(adjustedScore, queryParentDescDist);
+    // The last query node wasn't this query node or its parent.  So we force
+    // the adjustedScore to be such that this combination can't be pruned here,
+    // because we don't really know anything about it.
+
+    // It would be possible to modify this section to try and make a prune based
+    // on the query descendant distance and the distance between the query node
+    // and last traversal query node, but this case doesn't actually happen for
+    // kd-trees or cover trees.
+    adjustedScore = SortPolicy::CombineBest(adjustedScore, bestDistance);
   }
 
   if (traversalInfo.LastReferenceNode() == referenceNode.Parent())
@@ -195,13 +203,21 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
     const double refAdjust = refParentDist + refDescDist;
     adjustedScore = SortPolicy::CombineBest(adjustedScore, refAdjust);
   }
+  else if (traversalInfo.LastReferenceNode() == &referenceNode)
+  {
+    adjustedScore = SortPolicy::CombineBest(adjustedScore, refDescDist);
+  }
   else
   {
-    // If the parent node is NULL, force adjustedScore to be such that it can't
-    // be pruned.  Otherwise use the parent descendant distance.
-    const double refParentDescDist = (referenceNode.Parent() == NULL) ?
-        bestDistance : referenceNode.Parent()->FurthestDescendantDistance();
-    adjustedScore = SortPolicy::CombineBest(adjustedScore, refParentDescDist);
+    // The last reference node wasn't this reference node or its parent.  So we
+    // force the adjustedScore to be such that this combination can't be pruned
+    // here, because we don't really know anything about it.
+
+    // It would be possible to modify this section to try and make a prune based
+    // on the reference descendant distance and the distance between the
+    // reference node and last traversal reference node, but this case doesn't
+    // actually happen for kd-trees or cover trees.
+    adjustedScore = SortPolicy::CombineBest(adjustedScore, bestDistance);
   }
 
   // Can we prune?
