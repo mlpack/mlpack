@@ -108,9 +108,9 @@ int main(int argc, char *argv[])
   // Compute densities for the training points in the optimal tree.
   FILE *fp = NULL;
 
-  if (CLI::GetParam<string>("training_set_estimate_file") != "")
+  if (CLI::GetParam<string>("training_set_estimates_file") != "")
   {
-    fp = fopen(CLI::GetParam<string>("training_set_estimate_file").c_str(),
+    fp = fopen(CLI::GetParam<string>("training_set_estimates_file").c_str(),
         "w");
 
     // Compute density estimates for each point in the training set.
