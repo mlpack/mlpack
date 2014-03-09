@@ -75,10 +75,18 @@ class WMultiplicativeDivergenceRule
         t2.set_size(H.n_cols);
         for (size_t k = 0; k < t2.n_elem; ++k)
         {
+          // This may produce NaNs if V(i, k) = 0.
+          // Technically the math in the paper does not define what to do in
+          // this case, but considering the basic intent of the update rules,
+          // we'll make this modification and take t2(k) = 0.0.
           t2(k) = H(j, k) * V(i, k) / t1(i, k);
+          if (t2(k) != t2(k))
+            t2(k) = 0.0;
         }
 
-        W(i, j) = W(i, j) * sum(t2) / sum(H.row(j));
+        // Only update if the sum is not going to be 0, so as to prevent a
+        // divide by zero.  If sum(H.row(j)) is 0, then t2 should be 0 too.
+        W(i, j) *= sum(t2) / sum(H.row(j));
       }
     }
   }
@@ -126,10 +134,18 @@ class HMultiplicativeDivergenceRule
         t2.set_size(W.n_rows);
         for (size_t k = 0; k < t2.n_elem; ++k)
         {
+          // This may produce NaNs if V(i, k) = 0.
+          // Technically the math in the paper does not define what to do in
+          // this case, but considering the basic intent of the update rules,
+          // we'll make this modification and take t2(k) = 0.0.
           t2(k) = W(k, i) * V(k, j) / t1(k, j);
+          if (t2(k) != t2(k))
+            t2(k) = 0.0;
         }
 
-        H(i,j) = H(i,j) * sum(t2) / sum(W.col(i));
+        // Only update if the sum is not going to be 0, so as to prevent a
+        // divide by zero.  If sum(W.col(j)) is 0, then t2 should be 0 too.
+        H(i, j) *= sum(t2) / sum(W.col(i));
       }
     }
   }
