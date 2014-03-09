@@ -69,8 +69,6 @@ class WMultiplicativeDivergenceRule
             t2(k) = 0.0;
         }
 
-        // Only update if the sum is not going to be 0, so as to prevent a
-        // divide by zero.  If sum(H.row(j)) is 0, then t2 should be 0 too.
         W(i, j) *= sum(t2) / sum(H.row(j));
       }
     }
@@ -128,8 +126,6 @@ class HMultiplicativeDivergenceRule
             t2(k) = 0.0;
         }
 
-        // Only update if the sum is not going to be 0, so as to prevent a
-        // divide by zero.  If sum(W.col(j)) is 0, then t2 should be 0 too.
         H(i, j) *= sum(t2) / sum(W.col(i));
       }
     }
