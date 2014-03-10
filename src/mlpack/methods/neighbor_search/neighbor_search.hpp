@@ -72,7 +72,6 @@ class NeighborSearch
                  const typename TreeType::Mat& querySet,
                  const bool naive = false,
                  const bool singleMode = false,
-                 const size_t leafSize = 20,
                  const MetricType metric = MetricType());
 
   /**
@@ -99,7 +98,6 @@ class NeighborSearch
   NeighborSearch(const typename TreeType::Mat& referenceSet,
                  const bool naive = false,
                  const bool singleMode = false,
-                 const size_t leafSize = 20,
                  const MetricType metric = MetricType());
 
   /**
