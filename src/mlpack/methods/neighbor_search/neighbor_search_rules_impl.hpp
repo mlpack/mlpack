@@ -195,7 +195,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
     // on the query descendant distance and the distance between the query node
     // and last traversal query node, but this case doesn't actually happen for
     // kd-trees or cover trees.
-    adjustedScore = SortPolicy::CombineBest(adjustedScore, adjustedScore);
+    adjustedScore = SortPolicy::BestDistance();
   }
 
   if (traversalInfo.LastReferenceNode() == referenceNode.Parent())
@@ -217,7 +217,7 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
     // on the reference descendant distance and the distance between the
     // reference node and last traversal reference node, but this case doesn't
     // actually happen for kd-trees or cover trees.
-    adjustedScore = SortPolicy::CombineBest(adjustedScore, adjustedScore);
+    adjustedScore = SortPolicy::BestDistance();
   }
 
   // Can we prune?
