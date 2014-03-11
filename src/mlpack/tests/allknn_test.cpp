@@ -203,7 +203,7 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
         allknn = new AllkNN(tree, dataMutable, false);
         break;
       case 1: // Use the single-tree method.
-        allknn = new AllkNN(tree, dataMutable, false);
+        allknn = new AllkNN(tree, dataMutable, true);
         break;
       case 2: // Use the naive method.
         allknn = new AllkNN(dataMutable, true);
