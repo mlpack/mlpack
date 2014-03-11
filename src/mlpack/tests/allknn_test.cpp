@@ -193,10 +193,10 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
     switch (i)
     {
       case 0: // Use the dual-tree method.
-        allknn = new AllkNN(dataMutable, false, false, 1);
+        allknn = new AllkNN(dataMutable, false, false);
         break;
       case 1: // Use the single-tree method.
-        allknn = new AllkNN(dataMutable, false, true, 1);
+        allknn = new AllkNN(dataMutable, false, true);
         break;
       case 2: // Use the naive method.
         allknn = new AllkNN(dataMutable, true);
