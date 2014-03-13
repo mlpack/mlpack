@@ -357,16 +357,13 @@ class and use it seamlessly with RangeSearch.
 The RangeSearch class also allows a custom tree to be used.  The standard
 \b mlpack tree, mlpack::tree::BinarySpaceTree, is also highly extensible in its
 own right, and its documentation should be consulted for more information.
-Currently, the RangeSearch tree requires a tree which only has left and right
-children, and no points in nodes (only in leaves), but this support is planned
-to be extended.
 
 A simple usage of the TreeType policy could be to use a different type of bound
-with the tree.  For instance, you could use a ball bound instead of a
-rectangular bound:
+with the existing mlpack::tree::BinarySpaceTree class.  For instance, you could
+use a ball bound instead of a rectangular bound:
 
 @code
-// Construct a NeighborSearch object with ball bounds.
+// Construct a RangeSearch object with ball bounds.
 RangeSearch<
   metric::SquaredEuclideanDistance,
   tree::BinarySpaceTree<bound::BallBound<2>,
@@ -378,6 +375,16 @@ Unlike the \ref nstutorial "NeighborSearch class", the RangeSearch class does
 not make use of tree statistics; therefore, the EmptyStatistic class should be
 used for the StatisticType parameter of the BinarySpaceTree (but this is not
 technically necessary -- RangeSearch simply makes no use of the tree statistic).
+
+It is also possible to use a completely different type of tree.  The example
+below shows the use of the RangeSearch class with the mlpack::tree::CoverTree
+class (which has the EmptyStatistic statistic type as a default, so we do not
+need to specify that).
+
+@code
+// Construct a RangeSearch object that uses cover trees.
+RangeSearch<tree::CoverTree<> > rangeSearch(dataset);
+@endcode
 
 @section further_doc_rstut Further documentation
 
