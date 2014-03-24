@@ -7,6 +7,8 @@ set(SOURCES
   binary_space_tree/binary_space_tree_impl.hpp
   binary_space_tree/dual_tree_traverser.hpp
   binary_space_tree/dual_tree_traverser_impl.hpp
+  binary_space_tree/mean_split.hpp
+  binary_space_tree/mean_split_impl.hpp
   binary_space_tree/single_tree_traverser.hpp
   binary_space_tree/single_tree_traverser_impl.hpp
   binary_space_tree/traits.hpp

@@ -7,6 +7,7 @@
 #define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_BINARY_SPACE_TREE_HPP
 
 #include <mlpack/core.hpp>
+#include "mean_split.hpp"
 
 #include "../statistic.hpp"
 
@@ -30,10 +31,15 @@ namespace tree /** Trees and tree-building procedures. */ {
  *     bounds/.
  * @tparam StatisticType Extra data contained in the node.  See statistic.hpp
  *     for the necessary skeleton interface.
+ * @tparam MatType The dataset class.
+ * @tparam SplitType The class that partitions the dataset/points at a
+ *     particular node into two parts. Its definition decides the way this split
+ *     is done.
  */
 template<typename BoundType,
          typename StatisticType = EmptyStatistic,
-         typename MatType = arma::mat>
+         typename MatType = arma::mat,
+         typename SplitType = MeanSplit<BoundType, MatType> >
 class BinarySpaceTree
 {
  private:
@@ -463,28 +469,6 @@ class BinarySpaceTree
    */
   void SplitNode(MatType& data, std::vector<size_t>& oldFromNew);
 
-  /**
-   * Find the index to split on for this node, given that we are splitting in
-   * the given split dimension on the specified split value.
-   *
-   * @param data Dataset which we are using.
-   * @param splitDim Dimension of dataset to split on.
-   * @param splitVal Value to split on, in the given split dimension.
-   */
-  size_t GetSplitIndex(MatType& data, int splitDim, double splitVal);
-
-  /**
-   * Find the index to split on for this node, given that we are splitting in
-   * the given split dimension on the specified split value.  Also returns a
-   * list of the changed indices.
-   *
-   * @param data Dataset which we are using.
-   * @param splitDim Dimension of dataset to split on.
-   * @param splitVal Value to split on, in the given split dimension.
-   * @param oldFromNew Vector holding permuted indices.
-   */
-  size_t GetSplitIndex(MatType& data, int splitDim, double splitVal,
-      std::vector<size_t>& oldFromNew);
  public:
   /**
    * Returns a string representation of this object.
