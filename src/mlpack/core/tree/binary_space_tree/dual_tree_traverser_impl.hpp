@@ -15,9 +15,12 @@
 namespace mlpack {
 namespace tree {
 
-template<typename BoundType, typename StatisticType, typename MatType>
+template<typename BoundType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType>
 template<typename RuleType>
-BinarySpaceTree<BoundType, StatisticType, MatType>::
+BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
 DualTreeTraverser<RuleType>::DualTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0),
@@ -26,12 +29,16 @@ DualTreeTraverser<RuleType>::DualTreeTraverser(RuleType& rule) :
     numBaseCases(0)
 { /* Nothing to do. */ }
 
-template<typename BoundType, typename StatisticType, typename MatType>
+template<typename BoundType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType>
 template<typename RuleType>
-void BinarySpaceTree<BoundType, StatisticType, MatType>::
+void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
 DualTreeTraverser<RuleType>::Traverse(
-    BinarySpaceTree<BoundType, StatisticType, MatType>& queryNode,
-    BinarySpaceTree<BoundType, StatisticType, MatType>& referenceNode)
+    BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>& queryNode,
+    BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>&
+        referenceNode)
 {
   // Increment the visit counter.
   ++numVisited;
