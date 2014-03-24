@@ -26,6 +26,7 @@ Copyright: Copyright 2014, Michael Fox <michaelfox99@gmail.com>
 Copyright: Copyright 2014, Ryan Birmingham <birm@gatech.edu>
 Copyright: Copyright 2014, Siddharth Agrawal <siddharth.950@gmail.com>
 Copyright: Copyright 2014, Saheb Motiani <saheb210692@gmail.com>
+Copyright: Copyright 2014, Yash Vadalia <yashdv@gmail.com>
 License: LGPL-3+
   The text of the license is available on Debian systems in the
   /usr/share/common-licenses/LGPL-3 file.
