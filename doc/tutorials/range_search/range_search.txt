@@ -321,7 +321,7 @@ very extensible, having the following template arguments:
 
 @code
 template<
-  typename MetricType = mlpack::metric::SquaredEuclideanDistance,
+  typename MetricType = mlpack::metric::EuclideanDistance,
   typename TreeType = mlpack::tree::BinarySpaceTree<bound::HRectBound<2>,
                                                     tree::EmptyStatistic>
 >
@@ -365,7 +365,7 @@ use a ball bound instead of a rectangular bound:
 @code
 // Construct a RangeSearch object with ball bounds.
 RangeSearch<
-  metric::SquaredEuclideanDistance,
+  metric::EuclideanDistance,
   tree::BinarySpaceTree<bound::BallBound<2>,
                         EmptyStatistic>
 > rangeSearch(dataset);
