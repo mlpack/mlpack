@@ -205,7 +205,7 @@ Further documentation on options should be found by using the --help option.
 @section allknn_nstut The 'AllkNN' class
 
 The 'AllkNN' class is, specifically, a typedef of the more extensible
-NeighborSearch class, querying for nearest neighbors using the squared Euclidean
+NeighborSearch class, querying for nearest neighbors using the Euclidean
 distance.
 
 @code
