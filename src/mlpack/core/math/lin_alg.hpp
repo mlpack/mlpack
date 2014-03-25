@@ -20,7 +20,7 @@ namespace math {
  * is ignored in the power operation and then re-added.  Useful for
  * eigenvalues.
  */
-void VectorPower(arma::vec& vec, double power);
+void VectorPower(arma::vec& vec, const double power);
 
 /**
  * Creates a centered matrix, where centering is done by subtracting

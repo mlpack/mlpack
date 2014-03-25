@@ -16,7 +16,7 @@ using namespace math;
  * is ignored in the power operation and then re-added.  Useful for
  * eigenvalues.
  */
-void mlpack::math::VectorPower(arma::vec& vec, double power)
+void mlpack::math::VectorPower(arma::vec& vec, const double power)
 {
   for (size_t i = 0; i < vec.n_elem; i++)
   {
