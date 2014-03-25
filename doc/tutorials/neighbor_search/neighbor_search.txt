@@ -209,7 +209,7 @@ NeighborSearch class, querying for nearest neighbors using the squared Euclidean
 distance.
 
 @code
-typedef NeighborSearch<NearestNeighborSort, metric::SquaredEuclideanDistance>
+typedef NeighborSearch<NearestNeighborSort, metric::EuclideanDistance>
     AllkNN;
 @endcode
 
@@ -292,7 +292,7 @@ arguments:
 @code
 template<
   typename SortPolicy = NearestNeighborSort,
-  typename MetricType = mlpack::metric::SquaredEuclideanDistance,
+  typename MetricType = mlpack::metric::EuclideanDistance,
   typename TreeType = mlpack::tree::BinarySpaceTree<bound::HRectBound<2>,
                                                     QueryStat<SortPolicy> >
 >
@@ -370,7 +370,7 @@ rectangular bound:
 // Construct a NeighborSearch object with ball bounds.
 NeighborSearch<
   NearestNeighborSort,
-  metric::SquaredEuclideanDistance,
+  metric::EuclideanDistance,
   tree::BinarySpaceTree<bound::BallBound<2>,
                         QueryStat<SortPolicy> >
 > neighborSearch(dataset);
