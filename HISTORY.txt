@@ -20,6 +20,9 @@
 
   * Removed incorrect PeriodicHRectBound (#30).
 
+  * Refactor LRSDP into LRSDP class and standalone function to be optimized
+    (#318).
+
 2014-01-06    mlpack 1.0.8
 
   * Memory leak in NeighborSearch index-mapping code fixed (#310).
