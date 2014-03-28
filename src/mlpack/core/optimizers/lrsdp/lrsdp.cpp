@@ -30,9 +30,6 @@ std::string LRSDP::ToString() const
 {
   std::ostringstream convert;
   convert << "LRSDP [" << this << "]" << std::endl;
-  convert << "  Matrix Size: " << function.C().n_rows << "x"
-      << function.C().n_cols << std::endl;
-  convert << "  Initial point Size : " << function.GetInitialPoint().n_rows
-      << "x" << function.GetInitialPoint().n_cols << std::endl;
+  convert << "  Optimizer: " << util::Indent(augLag.ToString(), 1) << std::endl;
   return convert.str();
 }
