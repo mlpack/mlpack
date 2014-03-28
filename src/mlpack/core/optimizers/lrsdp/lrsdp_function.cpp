@@ -55,6 +55,21 @@ void LRSDPFunction::GradientConstraint(const size_t /* index */,
       << "optimizers!" << std::endl;
 }
 
+// Return a string representation of the object.
+std::string LRSDPFunction::ToString() const
+{
+  std::stringstream convert;
+  convert << "LRSDPFunction [" << this << "]" << std::endl;
+  convert << "  Number of constraints: " << a.size() << std::endl;
+  convert << "  Constraint matrix (A_i) size: " << initialPoint.n_rows << "x"
+      << initialPoint.n_cols << std::endl;
+  convert << "  A_i modes: " << aModes.t();
+  convert << "  Constraint b_i values: " << b.t();
+  convert << "  Objective matrix (C) size: " << c.n_rows << "x" << c.n_cols
+      << std::endl;
+  return convert.str();
+}
+
 namespace mlpack {
 namespace optimization {
 
