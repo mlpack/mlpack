@@ -1,24 +1,67 @@
 /**
- * @file lrsdp_impl.hpp
+ * @file lrsdp_function.cpp
  * @author Ryan Curtin
+ * @author Abhishek Laddha
  *
- * An implementation of Monteiro and Burer's formulation of low-rank
- * semidefinite programs (LR-SDP).
+ * Implementation of the LRSDPFunction class, and also template specializations
+ * for faster execution with the AugLagrangian optimizer.
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_LRSDP_LRSDP_IMPL_HPP
-#define __MLPACK_CORE_OPTIMIZERS_LRSDP_LRSDP_IMPL_HPP
+#include "lrsdp_function.hpp"
 
-// In case it hasn't already been included.
-#include "lrsdp.hpp"
+using namespace mlpack;
+using namespace mlpack::optimization;
+
+LRSDPFunction::LRSDPFunction(const size_t numConstraints,
+                             const arma::mat& initialPoint):
+    a(numConstraints),
+    b(numConstraints),
+    initialPoint(initialPoint),
+    aModes(numConstraints)
+{ }
+
+double LRSDPFunction::Evaluate(const arma::mat& coordinates) const
+{
+  return -accu(coordinates * trans(coordinates));
+}
+
+void LRSDPFunction::Gradient(const arma::mat& /* coordinates */,
+                     arma::mat& /* gradient */) const
+{
+  Log::Fatal << "LRSDP::Gradient() not implemented for arbitrary optimizers!"
+      << std::endl;
+}
+
+double LRSDPFunction::EvaluateConstraint(const size_t index,
+                                 const arma::mat& coordinates) const
+{
+  arma::mat rrt = coordinates * trans(coordinates);
+  if (aModes[index] == 0)
+    return trace(a[index] * rrt) - b[index];
+  else
+  {
+    double value = -b[index];
+    for (size_t i = 0; i < a[index].n_cols; ++i)
+      value += a[index](2, i) * rrt(a[index](0, i), a[index](1, i));
+
+    return value;
+  }
+}
+
+void LRSDPFunction::GradientConstraint(const size_t /* index */,
+                               const arma::mat& /* coordinates */,
+                               arma::mat& /* gradient */) const
+{
+  Log::Fatal << "LRSDP::GradientConstraint() not implemented for arbitrary "
+      << "optimizers!" << std::endl;
+}
 
 namespace mlpack {
 namespace optimization {
 
-
-// Custom specializations of the AugmentedLagrangianFunction for the LRSDP case.
+// Template specializations for function and gradient evaluation.
 template<>
-double AugLagrangianFunction<LRSDP>::Evaluate(const arma::mat& coordinates)
-    const
+double AugLagrangianFunction<LRSDPFunction>::Evaluate(
+    const arma::mat& coordinates) const
 {
   // We can calculate the entire objective in a smart way.
   // L(R, y, s) = Tr(C * (R R^T)) -
@@ -56,9 +99,11 @@ double AugLagrangianFunction<LRSDP>::Evaluate(const arma::mat& coordinates)
   return objective;
 }
 
+
 template<>
-void AugLagrangianFunction<LRSDP>::Gradient(const arma::mat& coordinates,
-                                            arma::mat& gradient) const
+void AugLagrangianFunction<LRSDPFunction>::Gradient(
+    const arma::mat& coordinates,
+    arma::mat& gradient) const
 {
   // We can calculate the gradient in a smart way.
   // L'(R, y, s) = 2 * S' * R
@@ -106,6 +151,4 @@ void AugLagrangianFunction<LRSDP>::Gradient(const arma::mat& coordinates,
 
 }; // namespace optimization
 }; // namespace mlpack
-
-#endif
 
