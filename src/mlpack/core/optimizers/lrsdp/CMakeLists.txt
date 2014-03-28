@@ -1,6 +1,8 @@
 set(SOURCES
   lrsdp.hpp
   lrsdp.cpp
+  lrsdp_function.hpp
+  lrsdp_function.cpp
 )
 
 set(DIR_SRCS)
