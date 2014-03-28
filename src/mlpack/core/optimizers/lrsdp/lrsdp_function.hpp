@@ -57,7 +57,7 @@ class LRSDPFunction
   size_t NumConstraints() const { return b.n_elem; }
 
   //! Get the initial point of the LRSDP.
-  const arma::mat& GetInitialPoint() const {return initialPoint; }
+  const arma::mat& GetInitialPoint() const { return initialPoint; }
 
   //! Return the objective function matrix (C).
   const arma::mat& C() const { return c; }
@@ -78,6 +78,9 @@ class LRSDPFunction
   const arma::vec& B() const { return b; }
   //! Modify the vector of B values.
   arma::vec& B() { return b; }
+
+  //! Return string representation of object.
+  std::string ToString() const;
 
  private:
   //! Objective function matrix c.
