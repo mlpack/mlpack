@@ -70,7 +70,7 @@ class NullOutStream
 
   //! Does nothing.
   template<typename T>
-  NullOutStream& operator<<(T&) { return *this; }
+  NullOutStream& operator<<(const T&) { return *this; }
 };
 
 } // namespace util
