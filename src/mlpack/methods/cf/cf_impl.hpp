@@ -50,14 +50,14 @@ template<typename FactorizerType>
 void CF<FactorizerType>::GetRecommendations(const size_t numRecs,
                                             arma::Mat<size_t>& recommendations)
 {
-  // Used to save user IDs.
-  arma::Col<size_t> users =
-    arma::zeros<arma::Col<size_t> >(cleanedData.n_cols, 1);
-  // Getting all user IDs.
-  for (size_t i = 0; i < cleanedData.n_cols; i++)
-    users(i) = i;
+  // Generate list of users.  Maybe it would be more efficient to pass an empty
+  // users list, and then have the other overload of GetRecommendations() assume
+  // that if users is empty, then recommendations should be generated for all
+  // users?
+  arma::Col<size_t> users = arma::linspace<arma::Col<size_t> >(0,
+      cleanedData.n_cols - 1, cleanedData.n_cols);
 
-  // Calling base function for recommendations.
+  // Call the main overload for recommendations.
   GetRecommendations(numRecs, recommendations, users);
 }
 
