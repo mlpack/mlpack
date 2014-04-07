@@ -18,6 +18,10 @@
   * CF (collaborative filtering) now expects users and items to be zero-indexed,
     not one-indexed (#324).
 
+  * CF::GetRecommendations() API change: now requires the number of
+    recommendations as the first parameter.  The number of users in the local
+    neighborhood should be specified with CF::NumUsersForSimilarity().
+
   * Removed incorrect PeriodicHRectBound (#30).
 
   * Refactor LRSDP into LRSDP class and standalone function to be optimized
