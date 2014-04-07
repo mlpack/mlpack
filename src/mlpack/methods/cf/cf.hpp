@@ -38,14 +38,11 @@ namespace cf /** Collaborative filtering. */{
  *
  * CF<> cf(data); // Default options.
  *
- * // Generate the default number of recommendations for all users.
- * cf.GetRecommendations(recommendations);
- *
- * // Generate the default number of recommendations for specified users.
- * cf.GetRecommendations(recommendations, users);
+ * // Generate 10 recommendations for all users.
+ * cf.GetRecommendations(recommendations, numRecommendations);
  *
  * // Generate 10 recommendations for specified users.
- * cf.GetRecommendations(recommendations, users, numRecommendations);
+ * cf.GetRecommendations(recommendations, numRecommendations, users);
  *
  * @endcode
  *
@@ -74,32 +71,12 @@ class CF
    * a simple density-based heuristic will be used to choose a rank.
    *
    * @param data Initial (user, item, rating) matrix.
-   * @param numRecs Desired number of recommendations for each user.
    * @param numUsersForSimilarity Size of the neighborhood.
    * @param rank Rank parameter for matrix factorization.
    */
   CF(arma::mat& data,
-     const size_t numRecs = 5,
      const size_t numUsersForSimilarity = 5,
      const size_t rank = 0);
-
-  //! Sets number of Recommendations.
-  void NumRecs(const size_t recs)
-  {
-    if (recs < 1)
-    {
-      Log::Warn << "CF::NumRecs(): invalid value (< 1) "
-          "ignored." << std::endl;
-      return;
-    }
-    this->numRecs = recs;
-  }
-
-  //! Gets the number of recommendations.
-  size_t NumRecs() const
-  {
-    return numRecs;
-  }
 
   //! Sets number of users for calculating similarity.
   void NumUsersForSimilarity(const size_t num)
@@ -149,43 +126,24 @@ class CF
   const arma::sp_mat& CleanedData() const { return cleanedData; }
 
   /**
-   * Generates default number of recommendations for all users.
+   * Generates the given number of recommendations for all users.
    *
+   * @param numRecs Number of Recommendations
    * @param recommendations Matrix to save recommendations into.
    */
-  void GetRecommendations(arma::Mat<size_t>& recommendations);
+  void GetRecommendations(const size_t numRecs,
+                          arma::Mat<size_t>& recommendations);
 
   /**
-   * Generates default number of recommendations for specified users.
+   * Generates the given number of recommendations for the specified users.
    *
+   * @param numRecs Number of Recommendations
    * @param recommendations Matrix to save recommendations
    * @param users Users for which recommendations are to be generated
    */
-  void GetRecommendations(arma::Mat<size_t>& recommendations,
+  void GetRecommendations(const size_t numRecs,
+                          arma::Mat<size_t>& recommendations,
                           arma::Col<size_t>& users);
-
-  /**
-   * Generates a fixed number of recommendations for specified users.
-   *
-   * @param recommendations Matrix to save recommendations
-   * @param users Users for which recommendations are to be generated
-   * @param num Number of Recommendations
-   */
-  void GetRecommendations(arma::Mat<size_t>& recommendations,
-                          arma::Col<size_t>& users, size_t num);
-
-  /**
-   * Generates a fixed number of recommendations for specified users.
-   *
-   * @param recommendations Matrix to save recommendations
-   * @param users Users for which recommendations are to be generated
-   * @param num Number of Recommendations
-   * @param neighbours Number of user to be considered while calculating
-   *        the neighbourhood
-   */
-  void GetRecommendations(arma::Mat<size_t>& recommendations,
-                          arma::Col<size_t>& users, size_t num,
-                          size_t neighbours);
 
   /**
    * Returns a string representation of this object.
@@ -195,8 +153,6 @@ class CF
  private:
   //! Initial data matrix.
   arma::mat data;
-  //! Number of recommendations.
-  size_t numRecs;
   //! Number of users for similarity.
   size_t numUsersForSimilarity;
   //! Rank used for matrix factorization.

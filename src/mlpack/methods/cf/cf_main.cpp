@@ -71,7 +71,6 @@ int main(int argc, char** argv)
   // Perform decomposition to prepare for recommendations.
   Log::Info << "Performing CF matrix decomposition on dataset..." << endl;
   CF<> c(dataset);
-  c.NumRecs(numRecs);
   c.NumUsersForSimilarity(neighborhood);
 
   // Reading users.
@@ -86,12 +85,12 @@ int main(int argc, char** argv)
 
     Log::Info << "Generating recommendations for " << users.n_elem << " users "
         << "in '" << queryFile << "'." << endl;
-    c.GetRecommendations(recommendations, users);
+    c.GetRecommendations(numRecs, recommendations, users);
   }
   else
   {
     Log::Info << "Generating recommendations for all users." << endl;
-    c.GetRecommendations(recommendations);
+    c.GetRecommendations(numRecs, recommendations);
   }
 
   const string outputFile = CLI::GetParam<string>("output_file");

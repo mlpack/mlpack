@@ -24,23 +24,12 @@ namespace cf {
  */
 template<typename FactorizerType>
 CF<FactorizerType>::CF(arma::mat& data,
-                      const size_t numRecs,
-                      const size_t numUsersForSimilarity,
-                      const size_t rank) :
+                       const size_t numUsersForSimilarity,
+                       const size_t rank) :
     data(data),
-    numRecs(numRecs),
     numUsersForSimilarity(numUsersForSimilarity),
     rank(rank)
 {
-  // Validate number of recommendation factor.
-  if (numRecs < 1)
-  {
-    Log::Warn << "CF::CF(): number of recommendations should be > 0("
-        << numRecs << " given). Setting value to 5.\n";
-    //Setting Default Value of 5
-    this->numRecs = 5;
-  }
-
   // Validate neighbourhood size.
   if (numUsersForSimilarity < 1)
   {
@@ -50,7 +39,7 @@ CF<FactorizerType>::CF(arma::mat& data,
     this->numUsersForSimilarity = 5;
   }
 
-  //Set default factorizer
+  // Set default factorizer.
   FactorizerType f(10000, 1e-5);
   Factorizer(f);
 
@@ -58,7 +47,8 @@ CF<FactorizerType>::CF(arma::mat& data,
 }
 
 template<typename FactorizerType>
-void CF<FactorizerType>::GetRecommendations(arma::Mat<size_t>& recommendations)
+void CF<FactorizerType>::GetRecommendations(const size_t numRecs,
+                                            arma::Mat<size_t>& recommendations)
 {
   // Used to save user IDs.
   arma::Col<size_t> users =
@@ -68,11 +58,12 @@ void CF<FactorizerType>::GetRecommendations(arma::Mat<size_t>& recommendations)
     users(i) = i;
 
   // Calling base function for recommendations.
-  GetRecommendations(recommendations, users);
+  GetRecommendations(numRecs, recommendations, users);
 }
 
 template<typename FactorizerType>
-void CF<FactorizerType>::GetRecommendations(arma::Mat<size_t>& recommendations,
+void CF<FactorizerType>::GetRecommendations(const size_t numRecs,
+                                            arma::Mat<size_t>& recommendations,
                                             arma::Col<size_t>& users)
 {
   // Base function for calculating recommendations.
@@ -173,30 +164,6 @@ void CF<FactorizerType>::GetRecommendations(arma::Mat<size_t>& recommendations,
       Log::Warn << "Could not provide " << values.n_rows << " recommendations "
           << "for user " << users(i) << " (not enough un-rated items)!" << endl;
   }
-}
-
-template<typename FactorizerType>
-void CF<FactorizerType>::GetRecommendations(arma::Mat<size_t>& recommendations,
-                                            arma::Col<size_t>& users,size_t num)
-{
-  //Setting Number of Recommendations
-  NumRecs(num);
-  //Calling Base Function for Recommendations
-  GetRecommendations(recommendations,users);
-}
-
-template<typename FactorizerType>
-void CF<FactorizerType>::GetRecommendations(arma::Mat<size_t>& recommendations,
-                                            arma::Col<size_t>& users,size_t num,
-                                            size_t s)
-{
-  //Setting number of users that should be used for calculating
-  //neighbours
-  NumUsersForSimilarity(s);
-  //Setting Number of Recommendations
-  NumRecs(num);
-  //Calling Base Function for Recommendations
-  GetRecommendations(recommendations,users,num);
 }
 
 template<typename FactorizerType>

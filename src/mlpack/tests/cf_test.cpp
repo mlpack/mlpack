@@ -27,16 +27,12 @@ BOOST_AUTO_TEST_CASE(CFConstructorTest)
   arma::mat dataset;
   data::Load("GroupLens100k.csv", dataset);
 
-  // Number of recommendations (not the default).
-  const size_t numRecs = 15;
-
   // Number of users for similarity (not the default).
   const size_t numUsersForSimilarity = 8;
 
-  CF<> c(dataset, numRecs, numUsersForSimilarity);
+  CF<> c(dataset, numUsersForSimilarity);
 
   // Check parameters.
-  BOOST_REQUIRE_EQUAL(c.NumRecs(), numRecs);
   BOOST_REQUIRE_EQUAL(c.NumUsersForSimilarity(), numUsersForSimilarity);
 
   // Check data.
@@ -70,11 +66,8 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersTest)
   // Creat a CF object
   CF<> c(dataset);
 
-  // Set number of recommendations.
-  c.NumRecs(numRecs);
-
   // Generate recommendations when query set is not specified.
-  c.GetRecommendations(recommendations);
+  c.GetRecommendations(numRecs, recommendations);
 
   // Check if correct number of recommendations are generated.
   BOOST_REQUIRE_EQUAL(recommendations.n_rows, numRecs);
@@ -109,7 +102,7 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserTest)
   CF<> c(dataset);
 
   // Generate recommendations when query set is specified.
-  c.GetRecommendations(recommendations, users);
+  c.GetRecommendations(numRecsDefault, recommendations, users);
 
   // Check if correct number of recommendations are generated.
   BOOST_REQUIRE_EQUAL(recommendations.n_rows, numRecsDefault);
@@ -171,8 +164,7 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyTest)
     users(i) = (size_t) savedCols(0, i);
   arma::Mat<size_t> recommendations;
   size_t numRecs = 150;
-  c.NumRecs(numRecs);
-  c.GetRecommendations(recommendations, users);
+  c.GetRecommendations(numRecs, recommendations, users);
 
   BOOST_REQUIRE_EQUAL(recommendations.n_rows, numRecs);
   BOOST_REQUIRE_EQUAL(recommendations.n_cols, 300);
