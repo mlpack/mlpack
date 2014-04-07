@@ -18,7 +18,7 @@ namespace metric {
 /**
  * The L_p metric for arbitrary integer p, with an option to take the root.
  *
- * This class implements the standard L_p metric for two arbitary vectors @f$ x
+ * This class implements the standard L_p metric for two arbitrary vectors @f$ x
  * @f$ and @f$ y @f$ of dimensionality @f$ n @f$:
  *
  * @f[
