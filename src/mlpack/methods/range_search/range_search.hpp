@@ -9,11 +9,8 @@
 #define __MLPACK_METHODS_RANGE_SEARCH_RANGE_SEARCH_HPP
 
 #include <mlpack/core.hpp>
-
 #include <mlpack/core/metrics/lmetric.hpp>
-
 #include <mlpack/core/tree/binary_space_tree.hpp>
-
 #include "range_search_stat.hpp"
 
 namespace mlpack {
@@ -54,7 +51,6 @@ class RangeSearch
               const typename TreeType::Mat& querySet,
               const bool naive = false,
               const bool singleMode = false,
-              const size_t leafSize = 20,
               const MetricType metric = MetricType());
 
   /**
@@ -79,7 +75,6 @@ class RangeSearch
   RangeSearch(const typename TreeType::Mat& referenceSet,
               const bool naive = false,
               const bool singleMode = false,
-              const size_t leafSize = 20,
               const MetricType metric = MetricType());
 
   /**
