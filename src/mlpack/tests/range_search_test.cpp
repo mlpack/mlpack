@@ -13,6 +13,8 @@
 using namespace mlpack;
 using namespace mlpack::range;
 using namespace mlpack::math;
+using namespace mlpack::tree;
+using namespace mlpack::bound;
 using namespace std;
 
 BOOST_AUTO_TEST_SUITE(RangeSearchTest);
@@ -70,22 +72,28 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
   data[9] = 0.90;
   data[10] = 1.00;
 
+  typedef BinarySpaceTree<HRectBound<2>, RangeSearchStat> TreeType;
+
   // We will loop through three times, one for each method of performing the
   // calculation.
+  arma::mat dataMutable = data;
+  std::vector<size_t> oldFromNew;
+  std::vector<size_t> newFromOld;
+  TreeType* tree = new TreeType(dataMutable, oldFromNew, newFromOld, 1);
   for (int i = 0; i < 3; i++)
   {
     RangeSearch<>* rs;
-    arma::mat dataMutable = data;
+
     switch (i)
     {
       case 0: // Use the naive method.
         rs = new RangeSearch<>(dataMutable, true);
         break;
       case 1: // Use the single-tree method.
-        rs = new RangeSearch<>(dataMutable, false, true, 1);
+        rs = new RangeSearch<>(tree, dataMutable, true);
         break;
       case 2: // Use the dual-tree method.
-        rs = new RangeSearch<>(dataMutable, false, false, 1);
+        rs = new RangeSearch<>(tree, dataMutable);
         break;
     }
 
@@ -98,171 +106,170 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
     vector<vector<pair<double, size_t> > > sortedOutput;
     SortResults(neighbors, distances, sortedOutput);
 
-    // Neighbors of point 0.
-    BOOST_REQUIRE(sortedOutput[0].size() == 4);
-    BOOST_REQUIRE(sortedOutput[0][0].second == 2);
-    BOOST_REQUIRE_CLOSE(sortedOutput[0][0].first, 0.10, 1e-5);
-    BOOST_REQUIRE(sortedOutput[0][1].second == 5);
-    BOOST_REQUIRE_CLOSE(sortedOutput[0][1].first, 0.27, 1e-5);
-    BOOST_REQUIRE(sortedOutput[0][2].second == 1);
-    BOOST_REQUIRE_CLOSE(sortedOutput[0][2].first, 0.30, 1e-5);
-    BOOST_REQUIRE(sortedOutput[0][3].second == 8);
-    BOOST_REQUIRE_CLOSE(sortedOutput[0][3].first, 0.40, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[0]].size() == 4);
+    BOOST_REQUIRE(sortedOutput[newFromOld[0]][0].second == newFromOld[2]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[0]][0].first, 0.10, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[0]][1].second == newFromOld[5]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[0]][1].first, 0.27, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[0]][2].second == newFromOld[1]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[0]][2].first, 0.30, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[0]][3].second == newFromOld[8]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[0]][3].first, 0.40, 1e-5);
 
     // Neighbors of point 1.
-    BOOST_REQUIRE(sortedOutput[1].size() == 6);
-    BOOST_REQUIRE(sortedOutput[1][0].second == 8);
-    BOOST_REQUIRE_CLOSE(sortedOutput[1][0].first, 0.10, 1e-5);
-    BOOST_REQUIRE(sortedOutput[1][1].second == 2);
-    BOOST_REQUIRE_CLOSE(sortedOutput[1][1].first, 0.20, 1e-5);
-    BOOST_REQUIRE(sortedOutput[1][2].second == 0);
-    BOOST_REQUIRE_CLOSE(sortedOutput[1][2].first, 0.30, 1e-5);
-    BOOST_REQUIRE(sortedOutput[1][3].second == 9);
-    BOOST_REQUIRE_CLOSE(sortedOutput[1][3].first, 0.55, 1e-5);
-    BOOST_REQUIRE(sortedOutput[1][4].second == 5);
-    BOOST_REQUIRE_CLOSE(sortedOutput[1][4].first, 0.57, 1e-5);
-    BOOST_REQUIRE(sortedOutput[1][5].second == 10);
-    BOOST_REQUIRE_CLOSE(sortedOutput[1][5].first, 0.65, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[1]].size() == 6);
+    BOOST_REQUIRE(sortedOutput[newFromOld[1]][0].second == newFromOld[8]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[1]][0].first, 0.10, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[1]][1].second == newFromOld[2]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[1]][1].first, 0.20, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[1]][2].second == newFromOld[0]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[1]][2].first, 0.30, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[1]][3].second == newFromOld[9]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[1]][3].first, 0.55, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[1]][4].second == newFromOld[5]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[1]][4].first, 0.57, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[1]][5].second == newFromOld[10]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[1]][5].first, 0.65, 1e-5);
 
     // Neighbors of point 2.
-    BOOST_REQUIRE(sortedOutput[2].size() == 4);
-    BOOST_REQUIRE(sortedOutput[2][0].second == 0);
-    BOOST_REQUIRE_CLOSE(sortedOutput[2][0].first, 0.10, 1e-5);
-    BOOST_REQUIRE(sortedOutput[2][1].second == 1);
-    BOOST_REQUIRE_CLOSE(sortedOutput[2][1].first, 0.20, 1e-5);
-    BOOST_REQUIRE(sortedOutput[2][2].second == 8);
-    BOOST_REQUIRE_CLOSE(sortedOutput[2][2].first, 0.30, 1e-5);
-    BOOST_REQUIRE(sortedOutput[2][3].second == 5);
-    BOOST_REQUIRE_CLOSE(sortedOutput[2][3].first, 0.37, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[2]].size() == 4);
+    BOOST_REQUIRE(sortedOutput[newFromOld[2]][0].second == newFromOld[0]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[2]][0].first, 0.10, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[2]][1].second == newFromOld[1]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[2]][1].first, 0.20, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[2]][2].second == newFromOld[8]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[2]][2].first, 0.30, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[2]][3].second == newFromOld[5]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[2]][3].first, 0.37, 1e-5);
 
     // Neighbors of point 3.
-    BOOST_REQUIRE(sortedOutput[3].size() == 2);
-    BOOST_REQUIRE(sortedOutput[3][0].second == 10);
-    BOOST_REQUIRE_CLOSE(sortedOutput[3][0].first, 0.25, 1e-5);
-    BOOST_REQUIRE(sortedOutput[3][1].second == 9);
-    BOOST_REQUIRE_CLOSE(sortedOutput[3][1].first, 0.35, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[3]].size() == 2);
+    BOOST_REQUIRE(sortedOutput[newFromOld[3]][0].second == newFromOld[10]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[3]][0].first, 0.25, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[3]][1].second == newFromOld[9]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[3]][1].first, 0.35, 1e-5);
 
     // Neighbors of point 4.
-    BOOST_REQUIRE(sortedOutput[4].size() == 0);
+    BOOST_REQUIRE(sortedOutput[newFromOld[4]].size() == 0);
 
     // Neighbors of point 5.
-    BOOST_REQUIRE(sortedOutput[5].size() == 4);
-    BOOST_REQUIRE(sortedOutput[5][0].second == 0);
-    BOOST_REQUIRE_CLOSE(sortedOutput[5][0].first, 0.27, 1e-5);
-    BOOST_REQUIRE(sortedOutput[5][1].second == 2);
-    BOOST_REQUIRE_CLOSE(sortedOutput[5][1].first, 0.37, 1e-5);
-    BOOST_REQUIRE(sortedOutput[5][2].second == 1);
-    BOOST_REQUIRE_CLOSE(sortedOutput[5][2].first, 0.57, 1e-5);
-    BOOST_REQUIRE(sortedOutput[5][3].second == 8);
-    BOOST_REQUIRE_CLOSE(sortedOutput[5][3].first, 0.67, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[5]].size() == 4);
+    BOOST_REQUIRE(sortedOutput[newFromOld[5]][0].second == newFromOld[0]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[5]][0].first, 0.27, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[5]][1].second == newFromOld[2]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[5]][1].first, 0.37, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[5]][2].second == newFromOld[1]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[5]][2].first, 0.57, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[5]][3].second == newFromOld[8]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[5]][3].first, 0.67, 1e-5);
 
     // Neighbors of point 6.
-    BOOST_REQUIRE(sortedOutput[6].size() == 1);
-    BOOST_REQUIRE(sortedOutput[6][0].second == 7);
-    BOOST_REQUIRE_CLOSE(sortedOutput[6][0].first, 0.70, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[6]].size() == 1);
+    BOOST_REQUIRE(sortedOutput[newFromOld[6]][0].second == newFromOld[7]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[6]][0].first, 0.70, 1e-5);
 
     // Neighbors of point 7.
-    BOOST_REQUIRE(sortedOutput[7].size() == 1);
-    BOOST_REQUIRE(sortedOutput[7][0].second == 6);
-    BOOST_REQUIRE_CLOSE(sortedOutput[7][0].first, 0.70, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[7]].size() == 1);
+    BOOST_REQUIRE(sortedOutput[newFromOld[7]][0].second == newFromOld[6]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[7]][0].first, 0.70, 1e-5);
 
     // Neighbors of point 8.
-    BOOST_REQUIRE(sortedOutput[8].size() == 6);
-    BOOST_REQUIRE(sortedOutput[8][0].second == 1);
-    BOOST_REQUIRE_CLOSE(sortedOutput[8][0].first, 0.10, 1e-5);
-    BOOST_REQUIRE(sortedOutput[8][1].second == 2);
-    BOOST_REQUIRE_CLOSE(sortedOutput[8][1].first, 0.30, 1e-5);
-    BOOST_REQUIRE(sortedOutput[8][2].second == 0);
-    BOOST_REQUIRE_CLOSE(sortedOutput[8][2].first, 0.40, 1e-5);
-    BOOST_REQUIRE(sortedOutput[8][3].second == 9);
-    BOOST_REQUIRE_CLOSE(sortedOutput[8][3].first, 0.45, 1e-5);
-    BOOST_REQUIRE(sortedOutput[8][4].second == 10);
-    BOOST_REQUIRE_CLOSE(sortedOutput[8][4].first, 0.55, 1e-5);
-    BOOST_REQUIRE(sortedOutput[8][5].second == 5);
-    BOOST_REQUIRE_CLOSE(sortedOutput[8][5].first, 0.67, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[8]].size() == 6);
+    BOOST_REQUIRE(sortedOutput[newFromOld[8]][0].second == newFromOld[1]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[8]][0].first, 0.10, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[8]][1].second == newFromOld[2]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[8]][1].first, 0.30, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[8]][2].second == newFromOld[0]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[8]][2].first, 0.40, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[8]][3].second == newFromOld[9]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[8]][3].first, 0.45, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[8]][4].second == newFromOld[10]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[8]][4].first, 0.55, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[8]][5].second == newFromOld[5]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[8]][5].first, 0.67, 1e-5);
 
     // Neighbors of point 9.
-    BOOST_REQUIRE(sortedOutput[9].size() == 4);
-    BOOST_REQUIRE(sortedOutput[9][0].second == 10);
-    BOOST_REQUIRE_CLOSE(sortedOutput[9][0].first, 0.10, 1e-5);
-    BOOST_REQUIRE(sortedOutput[9][1].second == 3);
-    BOOST_REQUIRE_CLOSE(sortedOutput[9][1].first, 0.35, 1e-5);
-    BOOST_REQUIRE(sortedOutput[9][2].second == 8);
-    BOOST_REQUIRE_CLOSE(sortedOutput[9][2].first, 0.45, 1e-5);
-    BOOST_REQUIRE(sortedOutput[9][3].second == 1);
-    BOOST_REQUIRE_CLOSE(sortedOutput[9][3].first, 0.55, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[9]].size() == 4);
+    BOOST_REQUIRE(sortedOutput[newFromOld[9]][0].second == newFromOld[10]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[9]][0].first, 0.10, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[9]][1].second == newFromOld[3]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[9]][1].first, 0.35, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[9]][2].second == newFromOld[8]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[9]][2].first, 0.45, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[9]][3].second == newFromOld[1]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[9]][3].first, 0.55, 1e-5);
 
     // Neighbors of point 10.
-    BOOST_REQUIRE(sortedOutput[10].size() == 4);
-    BOOST_REQUIRE(sortedOutput[10][0].second == 9);
-    BOOST_REQUIRE_CLOSE(sortedOutput[10][0].first, 0.10, 1e-5);
-    BOOST_REQUIRE(sortedOutput[10][1].second == 3);
-    BOOST_REQUIRE_CLOSE(sortedOutput[10][1].first, 0.25, 1e-5);
-    BOOST_REQUIRE(sortedOutput[10][2].second == 8);
-    BOOST_REQUIRE_CLOSE(sortedOutput[10][2].first, 0.55, 1e-5);
-    BOOST_REQUIRE(sortedOutput[10][3].second == 1);
-    BOOST_REQUIRE_CLOSE(sortedOutput[10][3].first, 0.65, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[10]].size() == 4);
+    BOOST_REQUIRE(sortedOutput[newFromOld[10]][0].second == newFromOld[9]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[10]][0].first, 0.10, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[10]][1].second == newFromOld[3]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[10]][1].first, 0.25, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[10]][2].second == newFromOld[8]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[10]][2].first, 0.55, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[10]][3].second == newFromOld[1]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[10]][3].first, 0.65, 1e-5);
 
     // Now do it again with a different range: [sqrt(0.5) 1.0].
     rs->Search(Range(sqrt(0.5), 1.0), neighbors, distances);
     SortResults(neighbors, distances, sortedOutput);
 
     // Neighbors of point 0.
-    BOOST_REQUIRE(sortedOutput[0].size() == 2);
-    BOOST_REQUIRE(sortedOutput[0][0].second == 9);
-    BOOST_REQUIRE_CLOSE(sortedOutput[0][0].first, 0.85, 1e-5);
-    BOOST_REQUIRE(sortedOutput[0][1].second == 10);
-    BOOST_REQUIRE_CLOSE(sortedOutput[0][1].first, 0.95, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[0]].size() == 2);
+    BOOST_REQUIRE(sortedOutput[newFromOld[0]][0].second == newFromOld[9]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[0]][0].first, 0.85, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[0]][1].second == newFromOld[10]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[0]][1].first, 0.95, 1e-5);
 
     // Neighbors of point 1.
-    BOOST_REQUIRE(sortedOutput[1].size() == 1);
-    BOOST_REQUIRE(sortedOutput[1][0].second == 3);
-    BOOST_REQUIRE_CLOSE(sortedOutput[1][0].first, 0.90, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[1]].size() == 1);
+    BOOST_REQUIRE(sortedOutput[newFromOld[1]][0].second == newFromOld[3]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[1]][0].first, 0.90, 1e-5);
 
     // Neighbors of point 2.
-    BOOST_REQUIRE(sortedOutput[2].size() == 2);
-    BOOST_REQUIRE(sortedOutput[2][0].second == 9);
-    BOOST_REQUIRE_CLOSE(sortedOutput[2][0].first, 0.75, 1e-5);
-    BOOST_REQUIRE(sortedOutput[2][1].second == 10);
-    BOOST_REQUIRE_CLOSE(sortedOutput[2][1].first, 0.85, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[2]].size() == 2);
+    BOOST_REQUIRE(sortedOutput[newFromOld[2]][0].second == newFromOld[9]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[2]][0].first, 0.75, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[2]][1].second == newFromOld[10]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[2]][1].first, 0.85, 1e-5);
 
     // Neighbors of point 3.
-    BOOST_REQUIRE(sortedOutput[3].size() == 2);
-    BOOST_REQUIRE(sortedOutput[3][0].second == 8);
-    BOOST_REQUIRE_CLOSE(sortedOutput[3][0].first, 0.80, 1e-5);
-    BOOST_REQUIRE(sortedOutput[3][1].second == 1);
-    BOOST_REQUIRE_CLOSE(sortedOutput[3][1].first, 0.90, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[3]].size() == 2);
+    BOOST_REQUIRE(sortedOutput[newFromOld[3]][0].second == newFromOld[8]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[3]][0].first, 0.80, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[3]][1].second == newFromOld[1]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[3]][1].first, 0.90, 1e-5);
 
     // Neighbors of point 4.
-    BOOST_REQUIRE(sortedOutput[4].size() == 0);
+    BOOST_REQUIRE(sortedOutput[newFromOld[4]].size() == 0);
 
     // Neighbors of point 5.
-    BOOST_REQUIRE(sortedOutput[5].size() == 0);
+    BOOST_REQUIRE(sortedOutput[newFromOld[5]].size() == 0);
 
     // Neighbors of point 6.
-    BOOST_REQUIRE(sortedOutput[6].size() == 0);
+    BOOST_REQUIRE(sortedOutput[newFromOld[6]].size() == 0);
 
     // Neighbors of point 7.
-    BOOST_REQUIRE(sortedOutput[7].size() == 0);
+    BOOST_REQUIRE(sortedOutput[newFromOld[7]].size() == 0);
 
     // Neighbors of point 8.
-    BOOST_REQUIRE(sortedOutput[8].size() == 1);
-    BOOST_REQUIRE(sortedOutput[8][0].second == 3);
-    BOOST_REQUIRE_CLOSE(sortedOutput[8][0].first, 0.80, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[8]].size() == 1);
+    BOOST_REQUIRE(sortedOutput[newFromOld[8]][0].second == newFromOld[3]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[8]][0].first, 0.80, 1e-5);
 
     // Neighbors of point 9.
-    BOOST_REQUIRE(sortedOutput[9].size() == 2);
-    BOOST_REQUIRE(sortedOutput[9][0].second == 2);
-    BOOST_REQUIRE_CLOSE(sortedOutput[9][0].first, 0.75, 1e-5);
-    BOOST_REQUIRE(sortedOutput[9][1].second == 0);
-    BOOST_REQUIRE_CLOSE(sortedOutput[9][1].first, 0.85, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[9]].size() == 2);
+    BOOST_REQUIRE(sortedOutput[newFromOld[9]][0].second == newFromOld[2]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[9]][0].first, 0.75, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[9]][1].second == newFromOld[0]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[9]][1].first, 0.85, 1e-5);
 
     // Neighbors of point 10.
-    BOOST_REQUIRE(sortedOutput[10].size() == 2);
-    BOOST_REQUIRE(sortedOutput[10][0].second == 2);
-    BOOST_REQUIRE_CLOSE(sortedOutput[10][0].first, 0.85, 1e-5);
-    BOOST_REQUIRE(sortedOutput[10][1].second == 0);
-    BOOST_REQUIRE_CLOSE(sortedOutput[10][1].first, 0.95, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[10]].size() == 2);
+    BOOST_REQUIRE(sortedOutput[newFromOld[10]][0].second == newFromOld[2]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[10]][0].first, 0.85, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[10]][1].second == newFromOld[0]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[10]][1].first, 0.95, 1e-5);
 
     // Now do it again with a different range: [1.0 inf].
     rs->Search(Range(1.0, numeric_limits<double>::infinity()), neighbors,
@@ -270,165 +277,167 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
     SortResults(neighbors, distances, sortedOutput);
 
     // Neighbors of point 0.
-    BOOST_REQUIRE(sortedOutput[0].size() == 4);
-    BOOST_REQUIRE(sortedOutput[0][0].second == 3);
-    BOOST_REQUIRE_CLOSE(sortedOutput[0][0].first, 1.20, 1e-5);
-    BOOST_REQUIRE(sortedOutput[0][1].second == 7);
-    BOOST_REQUIRE_CLOSE(sortedOutput[0][1].first, 1.35, 1e-5);
-    BOOST_REQUIRE(sortedOutput[0][2].second == 6);
-    BOOST_REQUIRE_CLOSE(sortedOutput[0][2].first, 2.05, 1e-5);
-    BOOST_REQUIRE(sortedOutput[0][3].second == 4);
-    BOOST_REQUIRE_CLOSE(sortedOutput[0][3].first, 5.00, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[0]].size() == 4);
+    BOOST_REQUIRE(sortedOutput[newFromOld[0]][0].second == newFromOld[3]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[0]][0].first, 1.20, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[0]][1].second == newFromOld[7]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[0]][1].first, 1.35, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[0]][2].second == newFromOld[6]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[0]][2].first, 2.05, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[0]][3].second == newFromOld[4]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[0]][3].first, 5.00, 1e-5);
 
     // Neighbors of point 1.
-    BOOST_REQUIRE(sortedOutput[1].size() == 3);
-    BOOST_REQUIRE(sortedOutput[1][0].second == 7);
-    BOOST_REQUIRE_CLOSE(sortedOutput[1][0].first, 1.65, 1e-5);
-    BOOST_REQUIRE(sortedOutput[1][1].second == 6);
-    BOOST_REQUIRE_CLOSE(sortedOutput[1][1].first, 2.35, 1e-5);
-    BOOST_REQUIRE(sortedOutput[1][2].second == 4);
-    BOOST_REQUIRE_CLOSE(sortedOutput[1][2].first, 4.70, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[1]].size() == 3);
+    BOOST_REQUIRE(sortedOutput[newFromOld[1]][0].second == newFromOld[7]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[1]][0].first, 1.65, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[1]][1].second == newFromOld[6]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[1]][1].first, 2.35, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[1]][2].second == newFromOld[4]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[1]][2].first, 4.70, 1e-5);
 
     // Neighbors of point 2.
-    BOOST_REQUIRE(sortedOutput[2].size() == 4);
-    BOOST_REQUIRE(sortedOutput[2][0].second == 3);
-    BOOST_REQUIRE_CLOSE(sortedOutput[2][0].first, 1.10, 1e-5);
-    BOOST_REQUIRE(sortedOutput[2][1].second == 7);
-    BOOST_REQUIRE_CLOSE(sortedOutput[2][1].first, 1.45, 1e-5);
-    BOOST_REQUIRE(sortedOutput[2][2].second == 6);
-    BOOST_REQUIRE_CLOSE(sortedOutput[2][2].first, 2.15, 1e-5);
-    BOOST_REQUIRE(sortedOutput[2][3].second == 4);
-    BOOST_REQUIRE_CLOSE(sortedOutput[2][3].first, 4.90, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[2]].size() == 4);
+    BOOST_REQUIRE(sortedOutput[newFromOld[2]][0].second == newFromOld[3]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[2]][0].first, 1.10, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[2]][1].second == newFromOld[7]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[2]][1].first, 1.45, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[2]][2].second == newFromOld[6]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[2]][2].first, 2.15, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[2]][3].second == newFromOld[4]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[2]][3].first, 4.90, 1e-5);
 
     // Neighbors of point 3.
-    BOOST_REQUIRE(sortedOutput[3].size() == 6);
-    BOOST_REQUIRE(sortedOutput[3][0].second == 2);
-    BOOST_REQUIRE_CLOSE(sortedOutput[3][0].first, 1.10, 1e-5);
-    BOOST_REQUIRE(sortedOutput[3][1].second == 0);
-    BOOST_REQUIRE_CLOSE(sortedOutput[3][1].first, 1.20, 1e-5);
-    BOOST_REQUIRE(sortedOutput[3][2].second == 5);
-    BOOST_REQUIRE_CLOSE(sortedOutput[3][2].first, 1.47, 1e-5);
-    BOOST_REQUIRE(sortedOutput[3][3].second == 7);
-    BOOST_REQUIRE_CLOSE(sortedOutput[3][3].first, 2.55, 1e-5);
-    BOOST_REQUIRE(sortedOutput[3][4].second == 6);
-    BOOST_REQUIRE_CLOSE(sortedOutput[3][4].first, 3.25, 1e-5);
-    BOOST_REQUIRE(sortedOutput[3][5].second == 4);
-    BOOST_REQUIRE_CLOSE(sortedOutput[3][5].first, 3.80, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[3]].size() == 6);
+    BOOST_REQUIRE(sortedOutput[newFromOld[3]][0].second == newFromOld[2]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[3]][0].first, 1.10, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[3]][1].second == newFromOld[0]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[3]][1].first, 1.20, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[3]][2].second == newFromOld[5]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[3]][2].first, 1.47, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[3]][3].second == newFromOld[7]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[3]][3].first, 2.55, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[3]][4].second == newFromOld[6]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[3]][4].first, 3.25, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[3]][5].second == newFromOld[4]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[3]][5].first, 3.80, 1e-5);
 
     // Neighbors of point 4.
-    BOOST_REQUIRE(sortedOutput[4].size() == 10);
-    BOOST_REQUIRE(sortedOutput[4][0].second == 3);
-    BOOST_REQUIRE_CLOSE(sortedOutput[4][0].first, 3.80, 1e-5);
-    BOOST_REQUIRE(sortedOutput[4][1].second == 10);
-    BOOST_REQUIRE_CLOSE(sortedOutput[4][1].first, 4.05, 1e-5);
-    BOOST_REQUIRE(sortedOutput[4][2].second == 9);
-    BOOST_REQUIRE_CLOSE(sortedOutput[4][2].first, 4.15, 1e-5);
-    BOOST_REQUIRE(sortedOutput[4][3].second == 8);
-    BOOST_REQUIRE_CLOSE(sortedOutput[4][3].first, 4.60, 1e-5);
-    BOOST_REQUIRE(sortedOutput[4][4].second == 1);
-    BOOST_REQUIRE_CLOSE(sortedOutput[4][4].first, 4.70, 1e-5);
-    BOOST_REQUIRE(sortedOutput[4][5].second == 2);
-    BOOST_REQUIRE_CLOSE(sortedOutput[4][5].first, 4.90, 1e-5);
-    BOOST_REQUIRE(sortedOutput[4][6].second == 0);
-    BOOST_REQUIRE_CLOSE(sortedOutput[4][6].first, 5.00, 1e-5);
-    BOOST_REQUIRE(sortedOutput[4][7].second == 5);
-    BOOST_REQUIRE_CLOSE(sortedOutput[4][7].first, 5.27, 1e-5);
-    BOOST_REQUIRE(sortedOutput[4][8].second == 7);
-    BOOST_REQUIRE_CLOSE(sortedOutput[4][8].first, 6.35, 1e-5);
-    BOOST_REQUIRE(sortedOutput[4][9].second == 6);
-    BOOST_REQUIRE_CLOSE(sortedOutput[4][9].first, 7.05, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[4]].size() == 10);
+    BOOST_REQUIRE(sortedOutput[newFromOld[4]][0].second == newFromOld[3]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[4]][0].first, 3.80, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[4]][1].second == newFromOld[10]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[4]][1].first, 4.05, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[4]][2].second == newFromOld[9]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[4]][2].first, 4.15, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[4]][3].second == newFromOld[8]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[4]][3].first, 4.60, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[4]][4].second == newFromOld[1]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[4]][4].first, 4.70, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[4]][5].second == newFromOld[2]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[4]][5].first, 4.90, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[4]][6].second == newFromOld[0]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[4]][6].first, 5.00, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[4]][7].second == newFromOld[5]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[4]][7].first, 5.27, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[4]][8].second == newFromOld[7]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[4]][8].first, 6.35, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[4]][9].second == newFromOld[6]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[4]][9].first, 7.05, 1e-5);
 
     // Neighbors of point 5.
-    BOOST_REQUIRE(sortedOutput[5].size() == 6);
-    BOOST_REQUIRE(sortedOutput[5][0].second == 7);
-    BOOST_REQUIRE_CLOSE(sortedOutput[5][0].first, 1.08, 1e-5);
-    BOOST_REQUIRE(sortedOutput[5][1].second == 9);
-    BOOST_REQUIRE_CLOSE(sortedOutput[5][1].first, 1.12, 1e-5);
-    BOOST_REQUIRE(sortedOutput[5][2].second == 10);
-    BOOST_REQUIRE_CLOSE(sortedOutput[5][2].first, 1.22, 1e-5);
-    BOOST_REQUIRE(sortedOutput[5][3].second == 3);
-    BOOST_REQUIRE_CLOSE(sortedOutput[5][3].first, 1.47, 1e-5);
-    BOOST_REQUIRE(sortedOutput[5][4].second == 6);
-    BOOST_REQUIRE_CLOSE(sortedOutput[5][4].first, 1.78, 1e-5);
-    BOOST_REQUIRE(sortedOutput[5][5].second == 4);
-    BOOST_REQUIRE_CLOSE(sortedOutput[5][5].first, 5.27, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[5]].size() == 6);
+    BOOST_REQUIRE(sortedOutput[newFromOld[5]][0].second == newFromOld[7]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[5]][0].first, 1.08, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[5]][1].second == newFromOld[9]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[5]][1].first, 1.12, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[5]][2].second == newFromOld[10]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[5]][2].first, 1.22, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[5]][3].second == newFromOld[3]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[5]][3].first, 1.47, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[5]][4].second == newFromOld[6]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[5]][4].first, 1.78, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[5]][5].second == newFromOld[4]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[5]][5].first, 5.27, 1e-5);
 
     // Neighbors of point 6.
-    BOOST_REQUIRE(sortedOutput[6].size() == 9);
-    BOOST_REQUIRE(sortedOutput[6][0].second == 5);
-    BOOST_REQUIRE_CLOSE(sortedOutput[6][0].first, 1.78, 1e-5);
-    BOOST_REQUIRE(sortedOutput[6][1].second == 0);
-    BOOST_REQUIRE_CLOSE(sortedOutput[6][1].first, 2.05, 1e-5);
-    BOOST_REQUIRE(sortedOutput[6][2].second == 2);
-    BOOST_REQUIRE_CLOSE(sortedOutput[6][2].first, 2.15, 1e-5);
-    BOOST_REQUIRE(sortedOutput[6][3].second == 1);
-    BOOST_REQUIRE_CLOSE(sortedOutput[6][3].first, 2.35, 1e-5);
-    BOOST_REQUIRE(sortedOutput[6][4].second == 8);
-    BOOST_REQUIRE_CLOSE(sortedOutput[6][4].first, 2.45, 1e-5);
-    BOOST_REQUIRE(sortedOutput[6][5].second == 9);
-    BOOST_REQUIRE_CLOSE(sortedOutput[6][5].first, 2.90, 1e-5);
-    BOOST_REQUIRE(sortedOutput[6][6].second == 10);
-    BOOST_REQUIRE_CLOSE(sortedOutput[6][6].first, 3.00, 1e-5);
-    BOOST_REQUIRE(sortedOutput[6][7].second == 3);
-    BOOST_REQUIRE_CLOSE(sortedOutput[6][7].first, 3.25, 1e-5);
-    BOOST_REQUIRE(sortedOutput[6][8].second == 4);
-    BOOST_REQUIRE_CLOSE(sortedOutput[6][8].first, 7.05, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[6]].size() == 9);
+    BOOST_REQUIRE(sortedOutput[newFromOld[6]][0].second == newFromOld[5]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[6]][0].first, 1.78, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[6]][1].second == newFromOld[0]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[6]][1].first, 2.05, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[6]][2].second == newFromOld[2]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[6]][2].first, 2.15, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[6]][3].second == newFromOld[1]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[6]][3].first, 2.35, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[6]][4].second == newFromOld[8]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[6]][4].first, 2.45, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[6]][5].second == newFromOld[9]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[6]][5].first, 2.90, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[6]][6].second == newFromOld[10]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[6]][6].first, 3.00, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[6]][7].second == newFromOld[3]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[6]][7].first, 3.25, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[6]][8].second == newFromOld[4]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[6]][8].first, 7.05, 1e-5);
 
     // Neighbors of point 7.
-    BOOST_REQUIRE(sortedOutput[7].size() == 9);
-    BOOST_REQUIRE(sortedOutput[7][0].second == 5);
-    BOOST_REQUIRE_CLOSE(sortedOutput[7][0].first, 1.08, 1e-5);
-    BOOST_REQUIRE(sortedOutput[7][1].second == 0);
-    BOOST_REQUIRE_CLOSE(sortedOutput[7][1].first, 1.35, 1e-5);
-    BOOST_REQUIRE(sortedOutput[7][2].second == 2);
-    BOOST_REQUIRE_CLOSE(sortedOutput[7][2].first, 1.45, 1e-5);
-    BOOST_REQUIRE(sortedOutput[7][3].second == 1);
-    BOOST_REQUIRE_CLOSE(sortedOutput[7][3].first, 1.65, 1e-5);
-    BOOST_REQUIRE(sortedOutput[7][4].second == 8);
-    BOOST_REQUIRE_CLOSE(sortedOutput[7][4].first, 1.75, 1e-5);
-    BOOST_REQUIRE(sortedOutput[7][5].second == 9);
-    BOOST_REQUIRE_CLOSE(sortedOutput[7][5].first, 2.20, 1e-5);
-    BOOST_REQUIRE(sortedOutput[7][6].second == 10);
-    BOOST_REQUIRE_CLOSE(sortedOutput[7][6].first, 2.30, 1e-5);
-    BOOST_REQUIRE(sortedOutput[7][7].second == 3);
-    BOOST_REQUIRE_CLOSE(sortedOutput[7][7].first, 2.55, 1e-5);
-    BOOST_REQUIRE(sortedOutput[7][8].second == 4);
-    BOOST_REQUIRE_CLOSE(sortedOutput[7][8].first, 6.35, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[7]].size() == 9);
+    BOOST_REQUIRE(sortedOutput[newFromOld[7]][0].second == newFromOld[5]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[7]][0].first, 1.08, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[7]][1].second == newFromOld[0]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[7]][1].first, 1.35, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[7]][2].second == newFromOld[2]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[7]][2].first, 1.45, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[7]][3].second == newFromOld[1]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[7]][3].first, 1.65, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[7]][4].second == newFromOld[8]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[7]][4].first, 1.75, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[7]][5].second == newFromOld[9]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[7]][5].first, 2.20, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[7]][6].second == newFromOld[10]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[7]][6].first, 2.30, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[7]][7].second == newFromOld[3]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[7]][7].first, 2.55, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[7]][8].second == newFromOld[4]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[7]][8].first, 6.35, 1e-5);
 
     // Neighbors of point 8.
-    BOOST_REQUIRE(sortedOutput[8].size() == 3);
-    BOOST_REQUIRE(sortedOutput[8][0].second == 7);
-    BOOST_REQUIRE_CLOSE(sortedOutput[8][0].first, 1.75, 1e-5);
-    BOOST_REQUIRE(sortedOutput[8][1].second == 6);
-    BOOST_REQUIRE_CLOSE(sortedOutput[8][1].first, 2.45, 1e-5);
-    BOOST_REQUIRE(sortedOutput[8][2].second == 4);
-    BOOST_REQUIRE_CLOSE(sortedOutput[8][2].first, 4.60, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[8]].size() == 3);
+    BOOST_REQUIRE(sortedOutput[newFromOld[8]][0].second == newFromOld[7]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[8]][0].first, 1.75, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[8]][1].second == newFromOld[6]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[8]][1].first, 2.45, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[8]][2].second == newFromOld[4]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[8]][2].first, 4.60, 1e-5);
 
     // Neighbors of point 9.
-    BOOST_REQUIRE(sortedOutput[9].size() == 4);
-    BOOST_REQUIRE(sortedOutput[9][0].second == 5);
-    BOOST_REQUIRE_CLOSE(sortedOutput[9][0].first, 1.12, 1e-5);
-    BOOST_REQUIRE(sortedOutput[9][1].second == 7);
-    BOOST_REQUIRE_CLOSE(sortedOutput[9][1].first, 2.20, 1e-5);
-    BOOST_REQUIRE(sortedOutput[9][2].second == 6);
-    BOOST_REQUIRE_CLOSE(sortedOutput[9][2].first, 2.90, 1e-5);
-    BOOST_REQUIRE(sortedOutput[9][3].second == 4);
-    BOOST_REQUIRE_CLOSE(sortedOutput[9][3].first, 4.15, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[9]].size() == 4);
+    BOOST_REQUIRE(sortedOutput[newFromOld[9]][0].second == newFromOld[5]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[9]][0].first, 1.12, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[9]][1].second == newFromOld[7]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[9]][1].first, 2.20, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[9]][2].second == newFromOld[6]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[9]][2].first, 2.90, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[9]][3].second == newFromOld[4]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[9]][3].first, 4.15, 1e-5);
 
     // Neighbors of point 10.
-    BOOST_REQUIRE(sortedOutput[10].size() == 4);
-    BOOST_REQUIRE(sortedOutput[10][0].second == 5);
-    BOOST_REQUIRE_CLOSE(sortedOutput[10][0].first, 1.22, 1e-5);
-    BOOST_REQUIRE(sortedOutput[10][1].second == 7);
-    BOOST_REQUIRE_CLOSE(sortedOutput[10][1].first, 2.30, 1e-5);
-    BOOST_REQUIRE(sortedOutput[10][2].second == 6);
-    BOOST_REQUIRE_CLOSE(sortedOutput[10][2].first, 3.00, 1e-5);
-    BOOST_REQUIRE(sortedOutput[10][3].second == 4);
-    BOOST_REQUIRE_CLOSE(sortedOutput[10][3].first, 4.05, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[10]].size() == 4);
+    BOOST_REQUIRE(sortedOutput[newFromOld[10]][0].second == newFromOld[5]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[10]][0].first, 1.22, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[10]][1].second == newFromOld[7]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[10]][1].first, 2.30, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[10]][2].second == newFromOld[6]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[10]][2].first, 3.00, 1e-5);
+    BOOST_REQUIRE(sortedOutput[newFromOld[10]][3].second == newFromOld[4]);
+    BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[10]][3].first, 4.05, 1e-5);
 
     // Clean the memory.
     delete rs;
   }
+
+  delete tree;
 }
 
 /**
