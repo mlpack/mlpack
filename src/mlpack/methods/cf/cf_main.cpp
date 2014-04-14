@@ -51,6 +51,8 @@ PARAM_INT("recommendations", "Number of recommendations to generate for each "
 PARAM_INT("neighborhood", "Size of the neighborhood of similar users to "
     "consider for each query user.", "n", 5);
 
+PARAM_INT("rank", "Rank of decomposed matrices.", "R", 2);
+
 int main(int argc, char** argv)
 {
   // Parse command line options.
@@ -67,11 +69,13 @@ int main(int argc, char** argv)
   // Get parameters.
   const size_t numRecs = (size_t) CLI::GetParam<int>("recommendations");
   const size_t neighborhood = (size_t) CLI::GetParam<int>("neighborhood");
+  const size_t rank = (size_t) CLI::GetParam<int>("rank");
 
   // Perform decomposition to prepare for recommendations.
   Log::Info << "Performing CF matrix decomposition on dataset..." << endl;
   CF<> c(dataset);
   c.NumUsersForSimilarity(neighborhood);
+  c.Rank(rank);
 
   // Reading users.
   const string queryFile = CLI::GetParam<string>("query_file");
