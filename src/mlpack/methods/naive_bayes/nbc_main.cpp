@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
   {
     // Load labels.
     mat rawLabels;
-    data::Load(labelsFilename, rawLabels, true);
+    data::Load(labelsFilename, rawLabels, true, false);
 
     // Do the labels need to be transposed?
     if (rawLabels.n_rows == 1)
