@@ -25,8 +25,8 @@ PARAM_STRING_REQ("test_file", "A file containing the test set.", "T");
 
 PARAM_STRING("labels_file", "A file containing labels for the training set.",
     "l", "");
-PARAM_STRING("output", "The file in which the output of the test would "
-    "be written, defaults to 'output.csv')", "o", "output.csv");
+PARAM_STRING("output", "The file in which the predicted labels for the test set"
+    " will be written.", "o", "output.csv");
 
 using namespace mlpack;
 using namespace mlpack::naive_bayes;
@@ -53,6 +53,10 @@ int main(int argc, char* argv[])
     // Load labels.
     mat rawLabels;
     data::Load(labelsFilename, rawLabels, true);
+
+    // Do the labels need to be transposed?
+    if (rawLabels.n_rows == 1)
+      rawLabels = rawLabels.t();
 
     data::NormalizeLabels(rawLabels.unsafe_col(0), labels, mappings);
   }
