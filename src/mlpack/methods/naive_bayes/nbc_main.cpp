@@ -80,12 +80,9 @@ int main(int argc, char* argv[])
         << "must be the same as training data (" << trainingData.n_rows - 1
         << ")!" << std::endl;
 
-  // Calculate number of classes.
-  size_t classes = (size_t) max(trainingData.row(trainingData.n_rows - 1)) + 1;
-
   // Create and train the classifier.
   Timer::Start("training");
-  NaiveBayesClassifier<> nbc(trainingData, labels, classes);
+  NaiveBayesClassifier<> nbc(trainingData, labels, mappings.n_elem);
   Timer::Stop("training");
 
   // Time the running of the Naive Bayes Classifier.
