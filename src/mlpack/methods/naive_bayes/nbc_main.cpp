@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
   vec rawResults;
   data::RevertLabels(results, mappings, rawResults);
 
-  // Output results.
+  // Output results.  Don't transpose: one result per line.
   const string outputFilename = CLI::GetParam<string>("output");
-  data::Save(outputFilename, results, true);
+  data::Save(outputFilename, results, true, false);
 }
