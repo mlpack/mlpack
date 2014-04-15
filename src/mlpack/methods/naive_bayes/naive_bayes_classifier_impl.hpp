@@ -22,9 +22,10 @@ template<typename MatType>
 NaiveBayesClassifier<MatType>::NaiveBayesClassifier(
     const MatType& data,
     const arma::Col<size_t>& labels,
-    const size_t classes)
+    const size_t classes,
+    const bool incrementalVariance)
 {
-  size_t dimensionality = data.n_rows;
+  const size_t dimensionality = data.n_rows;
 
   // Update the variables according to the number of features and classes
   // present in the data.
@@ -37,29 +38,52 @@ NaiveBayesClassifier<MatType>::NaiveBayesClassifier(
 
   // Calculate the class probabilities as well as the sample mean and variance
   // for each of the features with respect to each of the labels.
-  for (size_t j = 0; j < data.n_cols; ++j)
+  if (incrementalVariance)
   {
-    const size_t label = labels[j];
-    ++probabilities[label];
-
-    means.col(label) += data.col(j);
-    variances.col(label) += square(data.col(j));
-  }
-
-  for (size_t i = 0; i < classes; ++i)
-  {
-    if (probabilities[i] != 0)
+    // Use incremental algorithm.
+    for (size_t j = 0; j < data.n_cols; ++j)
     {
-      variances.col(i) -= (square(means.col(i)) / probabilities[i]);
-      means.col(i) /= probabilities[i];
-      variances.col(i) /= (probabilities[i] - 1);
+      const size_t label = labels[j];
+      ++probabilities[label];
+
+      arma::vec delta = data.col(j) - means.col(label);
+      means.col(label) += delta / probabilities[label];
+      variances.col(label) += delta % (data.col(j) - means.col(label));
     }
 
-    // Make sure variance is invertible.
-    for (size_t j = 0; j < dimensionality; ++j)
-      if (variances(j, i) == 0.0)
-        variances(j, i) = 1e-50;
+    for (size_t i = 0; i < classes; ++i)
+    {
+      if (probabilities[i] > 2)
+        variances.col(i) /= (probabilities[i] - 1);
+    }
   }
+  else
+  {
+    // Don't use incremental algorithm.
+    for (size_t j = 0; j < data.n_cols; ++j)
+    {
+      const size_t label = labels[j];
+      ++probabilities[label];
+
+      means.col(label) += data.col(j);
+      variances.col(label) += square(data.col(j));
+    }
+
+    for (size_t i = 0; i < classes; ++i)
+    {
+      if (probabilities[i] != 0)
+      {
+        variances.col(i) -= (square(means.col(i)) / probabilities[i]);
+        means.col(i) /= probabilities[i];
+        variances.col(i) /= (probabilities[i] - 1);
+      }
+    }
+  }
+
+  // Ensure that the variances are invertible.
+  for (size_t i = 0; i < variances.n_elem; ++i)
+    if (variances[i] == 0.0)
+      variances[i] = 1e-50;
 
   probabilities /= data.n_cols;
 }
