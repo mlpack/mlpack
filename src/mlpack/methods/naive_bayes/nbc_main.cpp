@@ -14,11 +14,15 @@
 PROGRAM_INFO("Parametric Naive Bayes Classifier",
     "This program trains the Naive Bayes classifier on the given labeled "
     "training set and then uses the trained classifier to classify the points "
-    "in the given test set.\n"
-    "\n"
+    "in the given test set."
+    "\n\n"
     "Labels are expected to be the last row of the training set (--train_file),"
     " but labels can also be passed in separately as their own file "
-    "(--labels_file).");
+    "(--labels_file)."
+    "\n\n"
+    "The '--incremental_variance' option can be used to force the training to "
+    "use an incremental algorithm for calculating variance.  This is slower, "
+    "but can help avoid loss of precision in some cases.");
 
 PARAM_STRING_REQ("train_file", "A file containing the training set.", "t");
 PARAM_STRING_REQ("test_file", "A file containing the test set.", "T");
@@ -27,6 +31,8 @@ PARAM_STRING("labels_file", "A file containing labels for the training set.",
     "l", "");
 PARAM_STRING("output", "The file in which the predicted labels for the test set"
     " will be written.", "o", "output.csv");
+PARAM_FLAG("incremental_variance", "The variance of each class will be "
+    "calculated incrementally.", "I");
 
 using namespace mlpack;
 using namespace mlpack::naive_bayes;
@@ -80,9 +86,12 @@ int main(int argc, char* argv[])
         << "must be the same as training data (" << trainingData.n_rows - 1
         << ")!" << std::endl;
 
+  const bool incrementalVariance = CLI::HasParam("incremental_variance");
+
   // Create and train the classifier.
   Timer::Start("training");
-  NaiveBayesClassifier<> nbc(trainingData, labels, mappings.n_elem);
+  NaiveBayesClassifier<> nbc(trainingData, labels, mappings.n_elem,
+      incrementalVariance);
   Timer::Stop("training");
 
   // Time the running of the Naive Bayes Classifier.

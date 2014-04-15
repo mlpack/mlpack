@@ -69,10 +69,14 @@ class NaiveBayesClassifier
    * @param data Training data points.
    * @param labels Labels corresponding to training data points.
    * @param classes Number of classes in this classifier.
+   * @param incrementalVariance If true, an incremental algorithm is used to
+   *     calculate the variance; this can prevent loss of precision in some
+   *     cases, but will be somewhat slower to calculate.
    */
   NaiveBayesClassifier(const MatType& data,
                        const arma::Col<size_t>& labels,
-                       const size_t classes);
+                       const size_t classes,
+                       const bool incrementalVariance = false);
 
   /**
    * Given a bunch of data points, this function evaluates the class of each of
