@@ -1,3 +1,9 @@
+/**
+ * @file sparse_autoencoder_function.cpp
+ * @author Siddharth Agrawal
+ *
+ * Implementation of function to be optimized for sparse autoencoders.
+ */
 #include "sparse_autoencoder_function.hpp"
 
 using namespace mlpack;
@@ -23,7 +29,7 @@ SparseAutoencoderFunction::SparseAutoencoderFunction(const arma::mat& data,
 
 /** Initializes the parameter weights if the initial point is not passed to the
   * constructor. The weights w1, w2 are initialized to randomly in the range
-  * [-r, r] where 'r' is decided using the sizes of the visible and hidden 
+  * [-r, r] where 'r' is decided using the sizes of the visible and hidden
   * layers. The biases b1, b2 are initialized to 0.
   */
 const arma::mat SparseAutoencoderFunction::InitializeWeights()
@@ -44,22 +50,22 @@ const arma::mat SparseAutoencoderFunction::InitializeWeights()
 
   arma::mat parameters;
   parameters.zeros(2*hiddenSize + 1, visibleSize + 1);
-  
+
   // Initialize w1 and w2 to random values in the range [0, 1].
   parameters.submat(0, 0, 2*hiddenSize - 1, visibleSize - 1).randu();
-  
+
   // Decide the parameter 'r' depending on the size of the visible and hidden
   // layers. The formula used is r = sqrt(6) / sqrt(vSize + hSize + 1).
   const double range = sqrt(6) / sqrt(visibleSize + hiddenSize + 1);
-  
+
   //Shift range of w1 and w2 values from [0, 1] to [-r, r].
   parameters.submat(0, 0, 2*hiddenSize - 1, visibleSize - 1) = 2 * range *
       (parameters.submat(0, 0, 2*hiddenSize - 1, visibleSize - 1) - 0.5);
-  
+
   return parameters;
 }
 
-/** Evaluates the objective function given the parameters. 
+/** Evaluates the objective function given the parameters.
   */
 double SparseAutoencoderFunction::Evaluate(const arma::mat& parameters) const
 {
@@ -75,7 +81,7 @@ double SparseAutoencoderFunction::Evaluate(const arma::mat& parameters) const
   const size_t l1 = hiddenSize;
   const size_t l2 = visibleSize;
   const size_t l3 = 2*hiddenSize;
-  
+
   // w1, w2, b1 and b2 are not extracted separately, 'parameters' is directly
   // used in their place to avoid copying data. The following representations
   // are used:
@@ -83,31 +89,31 @@ double SparseAutoencoderFunction::Evaluate(const arma::mat& parameters) const
   // w2 <- parameters.submat(l1, 0, l3-1, l2-1).t()
   // b1 <- parameters.submat(0, l2, l1-1, l2)
   // b2 <- parameters.submat(l3, 0, l3, l2-1).t()
-  
+
   arma::mat hiddenLayer, outputLayer;
-  
+
   // Compute activations of the hidden and output layers.
   hiddenLayer = Sigmoid(parameters.submat(0, 0, l1-1, l2-1) * data +
       arma::repmat(parameters.submat(0, l2, l1-1, l2), 1, data.n_cols));
-  
+
   outputLayer = Sigmoid(parameters.submat(l1, 0, l3-1, l2-1).t() * hiddenLayer +
       arma::repmat(parameters.submat(l3, 0, l3, l2-1).t(), 1, data.n_cols));
-  
+
   arma::mat rhoCap, diff;
-  
+
   // Average activations of the hidden layer.
   rhoCap = arma::sum(hiddenLayer, 1) / data.n_cols;
   // Difference between the reconstructed data and the original data.
   diff = outputLayer - data;
-  
+
   double wL2SquaredNorm;
-  
+
   // Calculate squared L2-norms of w1 and w2.
   wL2SquaredNorm = arma::accu(parameters.submat(0, 0, l3-1, l2-1) %
       parameters.submat(0, 0, l3-1, l2-1));
-  
+
   double sumOfSquaresError, weightDecay, klDivergence, cost;
-  
+
   // Calculate the reconstruction error, the regularization cost and the KL
   // divergence cost terms. 'sumOfSquaresError' is the average squared l2-norm
   // of the reconstructed data difference. 'weightDecay' is the squared l2-norm
@@ -118,10 +124,10 @@ double SparseAutoencoderFunction::Evaluate(const arma::mat& parameters) const
   weightDecay = 0.5 * lambda * wL2SquaredNorm;
   klDivergence = beta * arma::accu(rho * arma::log(rho / rhoCap) + (1 - rho) *
       arma::log((1 - rho) / (1 - rhoCap)));
-  
+
   // The cost is the sum of the terms calculated above.
   cost = sumOfSquaresError + weightDecay + klDivergence;
-  
+
   return cost;
 }
 
@@ -140,7 +146,7 @@ void SparseAutoencoderFunction::Gradient(const arma::mat& parameters,
   const size_t l1 = hiddenSize;
   const size_t l2 = visibleSize;
   const size_t l3 = 2*hiddenSize;
-  
+
   // w1, w2, b1 and b2 are not extracted separately, 'parameters' is directly
   // used in their place to avoid copying data. The following representations
   // are used:
@@ -148,25 +154,25 @@ void SparseAutoencoderFunction::Gradient(const arma::mat& parameters,
   // w2 <- parameters.submat(l1, 0, l3-1, l2-1).t()
   // b1 <- parameters.submat(0, l2, l1-1, l2)
   // b2 <- parameters.submat(l3, 0, l3, l2-1).t()
-  
+
   arma::mat hiddenLayer, outputLayer;
-  
+
   // Compute activations of the hidden and output layers.
   hiddenLayer = Sigmoid(parameters.submat(0, 0, l1-1, l2-1) * data +
       arma::repmat(parameters.submat(0, l2, l1-1, l2), 1, data.n_cols));
-  
+
   outputLayer = Sigmoid(parameters.submat(l1, 0, l3-1, l2-1).t() * hiddenLayer +
       arma::repmat(parameters.submat(l3, 0, l3, l2-1).t(), 1, data.n_cols));
-  
+
   arma::mat rhoCap, diff;
-  
+
   // Average activations of the hidden layer.
   rhoCap = arma::sum(hiddenLayer, 1) / data.n_cols;
   // Difference between the reconstructed data and the original data.
   diff = outputLayer - data;
-  
+
   arma::mat klDivGrad, delOut, delHid;
-  
+
   // The delta vector for the output layer is given by diff * f'(z), where z is
   // the preactivation and f is the activation function. The derivative of the
   // sigmoid function turns out to be f(z) * (1 - f(z)). For every other layer
@@ -177,9 +183,9 @@ void SparseAutoencoderFunction::Gradient(const arma::mat& parameters,
   delOut = diff % outputLayer % (1 - outputLayer);
   delHid = (parameters.submat(l1, 0, l3-1, l2-1) * delOut +
       arma::repmat(klDivGrad, 1, data.n_cols)) % hiddenLayer % (1-hiddenLayer);
-            
+
   gradient.zeros(2*hiddenSize + 1, visibleSize + 1);
-  
+
   // Compute the gradient values using the activations and the delta values. The
   // formula also accounts for the regularization terms in the objective.
   // function.
