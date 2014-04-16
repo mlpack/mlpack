@@ -12,52 +12,59 @@
 
 #include "sparse_autoencoder_function.hpp"
 
-/**
-  * Sparse Autoencoder is a neural network whose aim to learn compressed
-  * representations of the data, typically for dimensionality reduction, with
-  * a constraint on the activity of the neurons in the network. Sparse
-  * Autoencoders can be stacked together to learn a hierarchy of features, which
-  * provide a better representation of the data for classification. This is a
-  * method used in the recently developed field of Deep Learning. More technical
-  * details about the model can be found on the following webpage:
-  * http://deeplearning.stanford.edu/wiki/index.php/UFLDL_Tutorial
-  *
-  * An example of how to use the interface is shown below:
-  * @code
-  * arma::mat data; // Data matrix.
-  * const size_t vSize = 64; // Size of visible layer, depends on the data.
-  * const size_t hSize = 25; // Size of hidden layer, depends on requirements.
-  *
-  * // Train the model using default options.
-  * SparseAutoencoder encoder1(data, vSize, hSize);
-  *
-  * const size_t numBasis = 5; // Parameter required for L-BFGS algorithm.
-  * const size_t numIterations = 100; // Maximum number of iterations.
-  *
-  * // Use an instantiated optimizer for the training.
-  * SparseAutoencoderFunction saf(data, vSize, hSize);
-  * L_BFGS<SparseAutoencoderFunction> optimizer(saf, numBasis, numIterations);
-  * SparseAutoencoder<L_BFGS> encoder2(optimizer);
-  *
-  * arma::mat features1, features2; // Matrices for storing new representations.
-  *
-  * // Get new representations from the trained models.
-  * encoder1.GetNewFeatures(data, features1);
-  * encoder2.GetNewFeatures(data, features2);
-  */
-
 namespace mlpack {
 namespace nn {
 
+/**
+ * A sparse autoencoder is a neural network whose aim to learn compressed
+ * representations of the data, typically for dimensionality reduction, with a
+ * constraint on the activity of the neurons in the network. Sparse autoencoders
+ * can be stacked together to learn a hierarchy of features, which provide a
+ * better representation of the data for classification. This is a method used
+ * in the recently developed field of deep learning. More technical details
+ * about the model can be found on the following webpage:
+ *
+ * http://deeplearning.stanford.edu/wiki/index.php/UFLDL_Tutorial
+ *
+ * An example of how to use the interface is shown below:
+ *
+ * @code
+ * arma::mat data; // Data matrix.
+ * const size_t vSize = 64; // Size of visible layer, depends on the data.
+ * const size_t hSize = 25; // Size of hidden layer, depends on requirements.
+ *
+ * // Train the model using default options.
+ * SparseAutoencoder encoder1(data, vSize, hSize);
+ *
+ * const size_t numBasis = 5; // Parameter required for L-BFGS algorithm.
+ * const size_t numIterations = 100; // Maximum number of iterations.
+ *
+ * // Use an instantiated optimizer for the training.
+ * SparseAutoencoderFunction saf(data, vSize, hSize);
+ * L_BFGS<SparseAutoencoderFunction> optimizer(saf, numBasis, numIterations);
+ * SparseAutoencoder<L_BFGS> encoder2(optimizer);
+ *
+ * arma::mat features1, features2; // Matrices for storing new representations.
+ *
+ * // Get new representations from the trained models.
+ * encoder1.GetNewFeatures(data, features1);
+ * encoder2.GetNewFeatures(data, features2);
+ * @endcode
+ *
+ * This implementation allows the use of arbitrary mlpack optimizers via the
+ * OptimizerType template parameter.
+ *
+ * @tparam OptimizerType The optimizer to use; by default this is L-BFGS.  Any
+ *     mlpack optimizer can be used here.
+ */
 template<
   template<typename> class OptimizerType = mlpack::optimization::L_BFGS
 >
 class SparseAutoencoder
 {
  public:
-
   /**
-   * Construct the Sparse Autoencoder model with the given training data. This
+   * Construct the sparse autoencoder model with the given training data. This
    * will train the model. The parameters 'lambda', 'beta' and 'rho' can be set
    * optionally. Changing these parameters will have an effect on regularization
    * and sparsity of the model.
@@ -77,7 +84,7 @@ class SparseAutoencoder
                     const double rho = 0.01);
 
   /**
-   * Construct the Sparse Autoencoder model with the given training data. This
+   * Construct the sparse autoencoder model with the given training data. This
    * will train the model. This overload takes an already instantiated optimizer
    * and uses it to train the model. The optimizer should hold an instantiated
    * SparseAutoencoderFunction object for the function to operate upon. This
@@ -88,8 +95,8 @@ class SparseAutoencoder
   SparseAutoencoder(OptimizerType<SparseAutoencoderFunction>& optimizer);
 
   /**
-   * Transforms the provided data into a more meaningful and compact
-   * representation. The function basically performs a feedforward computation
+   * Transforms the provided data into the representation learned by the sparse
+   * autoencoder. The function basically performs a feedforward computation
    * using the learned weights, and returns the hidden layer activations.
    *
    * @param data Matrix of the provided data.
@@ -169,7 +176,6 @@ class SparseAutoencoder
   }
 
  private:
-
   //! Parameters after optimization.
   arma::mat parameters;
   //! Size of the visible layer.
