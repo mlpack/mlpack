@@ -14,14 +14,24 @@ namespace mlpack {
 namespace nn {
 
 /**
- * This is a class for the Sparse Autoencoder objective function. It can be used
- * to create learning models like Self-Taught Learning, Stacked Autoencoders,
- * Conditional Random Fields etc.
+ * This is a class for the sparse autoencoder objective function. It can be used
+ * to create learning models like self-taught learning, stacked autoencoders,
+ * conditional random fields (CRFs), and so forth.
  */
 class SparseAutoencoderFunction
 {
  public:
-
+  /**
+   * Construct the sparse autoencoder objective function with the given
+   * parameters.
+   *
+   * @param data The data matrix.
+   * @param visibleSize Size of input vector expected at the visible layer.
+   * @param hiddenSize Size of input vector expected at the hidden layer.
+   * @param lambda L2-regularization parameter.
+   * @param beta KL divergence parameter.
+   * @param rho Sparsity parameter.
+   */
   SparseAutoencoderFunction(const arma::mat& data,
                             const size_t visibleSize,
                             const size_t hiddenSize,
@@ -29,11 +39,11 @@ class SparseAutoencoderFunction
                             const double beta = 3,
                             const double rho = 0.01);
 
-  //Initializes the parameters of the model to suitable values.
+  //! Initializes the parameters of the model to suitable values.
   const arma::mat InitializeWeights();
 
   /**
-   * Evaluates the objective function of the Sparse Autoencoder model using the
+   * Evaluates the objective function of the sparse autoencoder model using the
    * given parameters. The cost function has terms for the reconstruction
    * error, regularization cost and the sparsity cost. The objective function
    * takes a low value when the model is able to reconstruct the data well
@@ -45,13 +55,13 @@ class SparseAutoencoderFunction
   double Evaluate(const arma::mat& parameters) const;
 
   /**
-   * Evaluates the gradient values of the parameters given the current set of
-   * parameters. The function performs a feedforward pass and computes the error
-   * in reconstructing the data points. It then uses the backpropagation
-   * algorithm to compute the gradient values.
+   * Evaluates the gradient values of the objective function given the current
+   * set of parameters. The function performs a feedforward pass and computes
+   * the error in reconstructing the data points. It then uses the
+   * backpropagation algorithm to compute the gradient values.
    *
    * @param parameters Current values of the model parameters.
-   * @param gradient Pointer to matrix where gradient values are stored.
+   * @param gradient Matrix where gradient values will be stored.
    */
   void Gradient(const arma::mat& parameters, arma::mat& gradient) const;
 
@@ -130,7 +140,6 @@ class SparseAutoencoderFunction
   }
 
  private:
-
   //! The matrix of data points.
   const arma::mat& data;
   //! Intial parameter vector.
