@@ -1,6 +1,7 @@
 /**
  * @file naive_bayes_classifier_impl.hpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
+ * @author Vahab Akbarzadeh (v.akbarzadeh@gmail.com)
  *
  * A Naive Bayes Classifier which parametrically estimates the distribution of
  * the features.  This classifier makes its predictions based on the assumption
@@ -59,25 +60,36 @@ NaiveBayesClassifier<MatType>::NaiveBayesClassifier(
   }
   else
   {
-    // Don't use incremental algorithm.
+    // Don't use incremental algorithm.  This is a two-pass algorithm.  It is
+    // possible to calculate the means and variances using a faster one-pass
+    // algorithm but there are some precision and stability issues.  If this is
+    // too slow, it's an option to use the faster algorithm by default and then
+    // have this (and the incremental algorithm) be other options.
+
+    // Calculate the means.
     for (size_t j = 0; j < data.n_cols; ++j)
     {
       const size_t label = labels[j];
       ++probabilities[label];
-
       means.col(label) += data.col(j);
-      variances.col(label) += square(data.col(j));
     }
 
+    // Normalize means.
     for (size_t i = 0; i < classes; ++i)
-    {
-      if (probabilities[i] != 0)
-      {
-        variances.col(i) -= (square(means.col(i)) / probabilities[i]);
+      if (probabilities[i] != 0.0)
         means.col(i) /= probabilities[i];
-        variances.col(i) /= (probabilities[i] - 1);
-      }
+
+    // Calculate variances.
+    for (size_t j = 0; j < data.n_cols; ++j)
+    {
+      const size_t label = labels[j];
+      variances.col(label) += square(data.col(j) - means.col(label));
     }
+
+    // Normalize variances.
+    for (size_t i = 0; i < classes; ++i)
+      if (probabilities[i] > 1)
+        variances.col(i) /= (probabilities[i] - 1);
   }
 
   // Ensure that the variances are invertible.
