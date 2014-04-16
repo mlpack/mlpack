@@ -38,6 +38,7 @@ add_executable(mlpack_test
   save_restore_utility_test.cpp
   sgd_test.cpp
   sort_policy_test.cpp
+  sparse_autoencoder_test.cpp
   sparse_coding_test.cpp
   to_string_test.cpp
   tree_test.cpp
