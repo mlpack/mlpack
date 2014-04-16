@@ -22,6 +22,7 @@ set(DIRS
   radical
   range_search
   rann
+  sparse_autoencoder
   sparse_coding
 )
 
