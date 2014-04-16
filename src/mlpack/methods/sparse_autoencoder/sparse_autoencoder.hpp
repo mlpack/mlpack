@@ -1,3 +1,12 @@
+/**
+ * @file sparse_autoencoder.hpp
+ * @author Siddharth Agrawal
+ *
+ * An implementation of sparse autoencoders.
+ */
+#ifndef __MLPACK_METHODS_SPARSE_AUTOENCODER_SPARSE_AUTOENCODER_HPP
+#define __MLPACK_METHODS_SPARSE_AUTOENCODER_SPARSE_AUTOENCODER_HPP
+
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
 
@@ -10,7 +19,7 @@
   * Autoencoders can be stacked together to learn a hierarchy of features, which
   * provide a better representation of the data for classification. This is a
   * method used in the recently developed field of Deep Learning. More technical
-  * details about the model can be found on the following webpage: 
+  * details about the model can be found on the following webpage:
   * http://deeplearning.stanford.edu/wiki/index.php/UFLDL_Tutorial
   *
   * An example of how to use the interface is shown below:
@@ -66,7 +75,7 @@ class SparseAutoencoder
                     const double lambda = 0.0001,
                     const double beta = 3,
                     const double rho = 0.01);
-  
+
   /**
    * Construct the Sparse Autoencoder model with the given training data. This
    * will train the model. This overload takes an already instantiated optimizer
@@ -77,7 +86,7 @@ class SparseAutoencoder
    * @param optimizer Instantiated optimizer with instantiated error function.
    */
   SparseAutoencoder(OptimizerType<SparseAutoencoderFunction>& optimizer);
-  
+
   /**
    * Transforms the provided data into a more meaningful and compact
    * representation. The function basically performs a feedforward computation
@@ -87,11 +96,11 @@ class SparseAutoencoder
    * @param features The hidden layer representation of the provided data.
    */
   void GetNewFeatures(arma::mat& data, arma::mat& features);
-  
+
   /**
    * Returns the elementwise sigmoid of the passed matrix, where the sigmoid
    * function of a real number 'x' is [1 / (1 + exp(-x))].
-   * 
+   *
    * @param x Matrix of real values for which we require the sigmoid activation.
    */
   arma::mat Sigmoid(const arma::mat& x) const
@@ -104,7 +113,7 @@ class SparseAutoencoder
   {
     this->visibleSize = visible;
   }
-  
+
   //! Gets size of the visible layer.
   size_t VisibleSize() const
   {
@@ -117,42 +126,42 @@ class SparseAutoencoder
     this->hiddenSize = hidden;
   }
 
-  //! Gets the size of the hidden layer.  
+  //! Gets the size of the hidden layer.
   size_t HiddenSize() const
   {
     return hiddenSize;
   }
-  
+
   //! Sets the L2-regularization parameter.
   void Lambda(const double l)
   {
     this->lambda = l;
   }
-  
+
   //! Gets the L2-regularization parameter.
   double Lambda() const
   {
     return lambda;
   }
-  
+
   //! Sets the KL divergence parameter.
   void Beta(const double b)
   {
     this->beta = b;
   }
-  
+
   //! Gets the KL divergence parameter.
   double Beta() const
   {
     return beta;
   }
-  
+
   //! Sets the sparsity parameter.
   void Rho(const double r)
   {
     this->rho = r;
   }
-  
+
   //! Gets the sparsity parameter.
   double Rho() const
   {
@@ -180,3 +189,5 @@ class SparseAutoencoder
 
 // Include implementation.
 #include "sparse_autoencoder_impl.hpp"
+
+#endif

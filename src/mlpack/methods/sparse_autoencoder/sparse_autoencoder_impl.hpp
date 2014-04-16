@@ -1,3 +1,15 @@
+/**
+ * @file sparse_autoencoder_impl.hpp
+ * @author Siddharth Agrawal
+ *
+ * Implementation of sparse autoencoders.
+ */
+#ifndef __MLPACK_METHODS_SPARSE_AUTOENCODER_SPARSE_AUTOENCODER_IMPL_HPP
+#define __MLPACK_METHODS_SPARSE_AUTOENCODER_SPARSE_AUTOENCODER_IMPL_HPP
+
+// In case it hasn't been included yet.
+#include "sparse_autoencoder.hpp"
+
 namespace mlpack {
 namespace nn {
 
@@ -17,9 +29,9 @@ SparseAutoencoder<OptimizerType>::SparseAutoencoder(const arma::mat& data,
   SparseAutoencoderFunction encoderFunction(data, visibleSize, hiddenSize,
                                             lambda, beta, rho);
   OptimizerType<SparseAutoencoderFunction> optimizer(encoderFunction);
-  
+
   parameters = encoderFunction.GetInitialPoint();
-  
+
   // Train the model.
   Timer::Start("sparse_autoencoder_optimization");
   const double out = optimizer.Optimize(parameters);
@@ -60,3 +72,5 @@ void SparseAutoencoder<OptimizerType>::GetNewFeatures(arma::mat& data,
 
 }; // namespace nn
 }; // namespace mlpack
+
+#endif
