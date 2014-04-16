@@ -66,8 +66,9 @@ void SparseAutoencoder<OptimizerType>::GetNewFeatures(arma::mat& data,
   const size_t l1 = hiddenSize;
   const size_t l2 = visibleSize;
 
-  features = Sigmoid(parameters.submat(0, 0, l1 - 1, l2 - 1) * data +
-      arma::repmat(parameters.submat(0, l2, l1 - 1, l2), 1, data.n_cols));
+  Sigmoid(parameters.submat(0, 0, l1 - 1, l2 - 1) * data +
+      arma::repmat(parameters.submat(0, l2, l1 - 1, l2), 1, data.n_cols),
+      features);
 }
 
 }; // namespace nn

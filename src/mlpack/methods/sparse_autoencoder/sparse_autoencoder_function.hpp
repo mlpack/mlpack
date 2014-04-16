@@ -71,9 +71,9 @@ class SparseAutoencoderFunction
    *
    * @param x Matrix of real values for which we require the sigmoid activation.
    */
-  arma::mat Sigmoid(const arma::mat& x) const
+  void Sigmoid(const arma::mat& x, arma::mat& output) const
   {
-    return (1.0 / (1 + arma::exp(-x)));
+    output = (1.0 / (1 + arma::exp(-x)));
   }
 
   //! Return the initial point for the optimization.
