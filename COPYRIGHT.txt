@@ -28,6 +28,7 @@ Copyright: Copyright 2014, Siddharth Agrawal <siddharth.950@gmail.com>
 Copyright: Copyright 2014, Saheb Motiani <saheb210692@gmail.com>
 Copyright: Copyright 2014, Yash Vadalia <yashdv@gmail.com>
 Copyright: Copyright 2014, Abhishek Laddha <laddhaabhishek11@gmail.com>
+Copyright: Copyright 2014, Vahab Akbarzadeh <v.akbarzadeh@gmail.com>
 License: LGPL-3+
   The text of the license is available on Debian systems in the
   /usr/share/common-licenses/LGPL-3 file.
