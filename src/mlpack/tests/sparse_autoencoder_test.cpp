@@ -105,7 +105,6 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRegularizationEvaluate)
   const size_t trials = 50;
   const size_t vSize = 20;
   const size_t hSize = 10;
-  const size_t l1 = hSize;
   const size_t l2 = vSize;
   const size_t l3 = 2 * hSize;
 
@@ -119,7 +118,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRegularizationEvaluate)
   SparseAutoencoderFunction safBigReg(data, vSize, hSize, 20, 0);
 
   // Run a number of trials.
-  for(size_t i = 0; i < trials; i++)
+  for (size_t i = 0; i < trials; i++)
   {
     // Create a random set of parameters.
     arma::mat parameters;
@@ -200,10 +199,8 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionKLDivergenceEvaluate)
 BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionGradient)
 {
   const size_t points = 1000;
-  const size_t trials = 50;
   const size_t vSize = 20;
   const size_t hSize = 10;
-  const size_t l1 = hSize;
   const size_t l2 = vSize;
   const size_t l3 = 2 * hSize;
 
