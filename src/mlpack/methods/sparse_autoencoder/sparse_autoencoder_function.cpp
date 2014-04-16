@@ -93,12 +93,13 @@ double SparseAutoencoderFunction::Evaluate(const arma::mat& parameters) const
   arma::mat hiddenLayer, outputLayer;
 
   // Compute activations of the hidden and output layers.
-  hiddenLayer = Sigmoid(parameters.submat(0, 0, l1 - 1, l2 - 1) * data +
-      arma::repmat(parameters.submat(0, l2, l1 - 1, l2), 1, data.n_cols));
+  Sigmoid(parameters.submat(0, 0, l1 - 1, l2 - 1) * data +
+      arma::repmat(parameters.submat(0, l2, l1 - 1, l2), 1, data.n_cols),
+      hiddenLayer);
 
-  outputLayer = Sigmoid(
-      parameters.submat(l1, 0, l3 - 1, l2 - 1).t() * hiddenLayer +
-      arma::repmat(parameters.submat(l3, 0, l3, l2 - 1).t(), 1, data.n_cols));
+  Sigmoid(parameters.submat(l1, 0, l3 - 1, l2 - 1).t() * hiddenLayer +
+      arma::repmat(parameters.submat(l3, 0, l3, l2 - 1).t(), 1, data.n_cols),
+      outputLayer);
 
   arma::mat rhoCap, diff;
 
@@ -159,12 +160,13 @@ void SparseAutoencoderFunction::Gradient(const arma::mat& parameters,
   arma::mat hiddenLayer, outputLayer;
 
   // Compute activations of the hidden and output layers.
-  hiddenLayer = Sigmoid(parameters.submat(0, 0, l1 - 1, l2 - 1) * data +
-      arma::repmat(parameters.submat(0, l2, l1 - 1, l2), 1, data.n_cols));
+  Sigmoid(parameters.submat(0, 0, l1 - 1, l2 - 1) * data +
+      arma::repmat(parameters.submat(0, l2, l1 - 1, l2), 1, data.n_cols),
+      hiddenLayer);
 
-  outputLayer = Sigmoid(
-      parameters.submat(l1, 0, l3 - 1, l2 - 1).t() * hiddenLayer +
-      arma::repmat(parameters.submat(l3, 0, l3, l2 - 1).t(), 1, data.n_cols));
+  Sigmoid(parameters.submat(l1, 0, l3 - 1, l2 - 1).t() * hiddenLayer +
+      arma::repmat(parameters.submat(l3, 0, l3, l2 - 1).t(), 1, data.n_cols),
+      outputLayer);
 
   arma::mat rhoCap, diff;
 
