@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionEvaluate)
 {
   const size_t vSize = 5;
   const size_t hSize = 3;
-  const size_t r = 2*hSize + 1;
+  const size_t r = 2 * hSize + 1;
   const size_t c = vSize + 1;
 
   // Simple fake dataset.
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRandomEvaluate)
   const size_t hSize = 10;
   const size_t l1 = hSize;
   const size_t l2 = vSize;
-  const size_t l3 = 2*hSize;
+  const size_t l3 = 2 * hSize;
 
   // Initialize a random dataset.
   arma::mat data;
@@ -69,23 +69,25 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRandomEvaluate)
   SparseAutoencoderFunction saf(data, vSize, hSize, 0, 0);
 
   // Run a number of trials.
-  for(size_t i = 0; i < trials; i++)
+  for (size_t i = 0; i < trials; i++)
   {
     // Create a random set of parameters.
     arma::mat parameters;
-    parameters.randu(l3+1, l2+1);
+    parameters.randu(l3 + 1, l2 + 1);
 
     double reconstructionError = 0;
 
     // Compute error for each training example.
-    for(size_t j = 0; j < points; j++)
+    for (size_t j = 0; j < points; j++)
     {
       arma::mat hiddenLayer, outputLayer, diff;
 
-      hiddenLayer = 1.0 / (1 + arma::exp(-(parameters.submat(0, 0, l1-1, l2-1) *
-          data.col(j) + parameters.submat(0, l2, l1-1, l2))));
-      outputLayer = 1.0 / (1 + arma::exp(-(parameters.submat(l1,0,l3-1,l2-1).t()
-          * hiddenLayer + parameters.submat(l3, 0, l3, l2-1).t())));
+      hiddenLayer = 1.0 /
+          (1 + arma::exp(-(parameters.submat(0, 0, l1 - 1, l2 - 1) *
+          data.col(j) + parameters.submat(0, l2, l1 - 1, l2))));
+      outputLayer = 1.0 /
+          (1 + arma::exp(-(parameters.submat(l1, 0, l3 - 1,l2 - 1).t()
+          * hiddenLayer + parameters.submat(l3, 0, l3, l2 - 1).t())));
       diff = outputLayer - data.col(j);
 
       reconstructionError += 0.5 * arma::sum(arma::sum(diff % diff));
@@ -105,7 +107,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRegularizationEvaluate)
   const size_t hSize = 10;
   const size_t l1 = hSize;
   const size_t l2 = vSize;
-  const size_t l3 = 2*hSize;
+  const size_t l3 = 2 * hSize;
 
   // Initialize a random dataset.
   arma::mat data;
@@ -121,12 +123,12 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionRegularizationEvaluate)
   {
     // Create a random set of parameters.
     arma::mat parameters;
-    parameters.randu(l3+1, l2+1);
+    parameters.randu(l3 + 1, l2 + 1);
 
     double wL2SquaredNorm;
 
-    wL2SquaredNorm = arma::accu(parameters.submat(0, 0, l3-1, l2-1) %
-        parameters.submat(0, 0, l3-1, l2-1));
+    wL2SquaredNorm = arma::accu(parameters.submat(0, 0, l3 - 1, l2 - 1) %
+        parameters.submat(0, 0, l3 - 1, l2 - 1));
 
     // Calculate regularization terms.
     const double smallRegTerm = 0.25 * wL2SquaredNorm;
@@ -147,7 +149,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionKLDivergenceEvaluate)
   const size_t hSize = 10;
   const size_t l1 = hSize;
   const size_t l2 = vSize;
-  const size_t l3 = 2*hSize;
+  const size_t l3 = 2 * hSize;
 
   const double rho = 0.01;
 
@@ -165,18 +167,19 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionKLDivergenceEvaluate)
   {
     // Create a random set of parameters.
     arma::mat parameters;
-    parameters.randu(l3+1, l2+1);
+    parameters.randu(l3 + 1, l2 + 1);
 
     arma::mat rhoCap;
     rhoCap.zeros(hSize, 1);
 
     // Compute hidden layer activations for each example.
-    for(size_t j = 0; j < points; j++)
+    for (size_t j = 0; j < points; j++)
     {
       arma::mat hiddenLayer;
 
-      hiddenLayer = 1.0 / (1 + arma::exp(-(parameters.submat(0, 0, l1-1, l2-1) *
-          data.col(j) + parameters.submat(0, l2, l1-1, l2))));
+      hiddenLayer = 1.0 / (1 +
+          arma::exp(-(parameters.submat(0, 0, l1 - 1, l2 - 1) *
+          data.col(j) + parameters.submat(0, l2, l1 - 1, l2))));
       rhoCap += hiddenLayer;
     }
     rhoCap /= points;
@@ -202,7 +205,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionGradient)
   const size_t hSize = 10;
   const size_t l1 = hSize;
   const size_t l2 = vSize;
-  const size_t l3 = 2*hSize;
+  const size_t l3 = 2 * hSize;
 
   // Initialize a random dataset.
   arma::mat data;
@@ -216,7 +219,7 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionGradient)
 
   // Create a random set of parameters.
   arma::mat parameters;
-  parameters.randu(l3+1, l2+1);
+  parameters.randu(l3 + 1, l2 + 1);
 
   // Get gradients for the current parameters.
   arma::mat gradient1, gradient2, gradient3;
@@ -231,9 +234,9 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionGradient)
   double costPlus3, costMinus3, numGradient3;
 
   // For each parameter.
-  for(size_t i = 0; i <= l3; i++)
+  for (size_t i = 0; i <= l3; i++)
   {
-    for(size_t j = 0; j <= l2; j++)
+    for (size_t j = 0; j <= l2; j++)
     {
       // Perturb parameter with a positive constant and get costs.
       parameters(i, j) += epsilon;
@@ -242,15 +245,15 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionGradient)
       costPlus3 = saf3.Evaluate(parameters);
 
       // Perturb parameter with a negative constant and get costs.
-      parameters(i, j) -= 2*epsilon;
+      parameters(i, j) -= 2 * epsilon;
       costMinus1 = saf1.Evaluate(parameters);
       costMinus2 = saf2.Evaluate(parameters);
       costMinus3 = saf3.Evaluate(parameters);
 
       // Compute numerical gradients using the costs calculated above.
-      numGradient1 = (costPlus1 - costMinus1) / (2*epsilon);
-      numGradient2 = (costPlus2 - costMinus2) / (2*epsilon);
-      numGradient3 = (costPlus3 - costMinus3) / (2*epsilon);
+      numGradient1 = (costPlus1 - costMinus1) / (2 * epsilon);
+      numGradient2 = (costPlus2 - costMinus2) / (2 * epsilon);
+      numGradient3 = (costPlus3 - costMinus3) / (2 * epsilon);
 
       // Restore the parameter value.
       parameters(i, j) += epsilon;
