@@ -65,7 +65,6 @@ int main(int argc, char** argv)
 
   // Recommendation matrix.
   arma::Mat<size_t> recommendations;
-  arma::Mat<double> rbRats;
 
   // Get parameters.
   const size_t numRecs = (size_t) CLI::GetParam<int>("recommendations");
@@ -91,7 +90,6 @@ int main(int argc, char** argv)
     Log::Info << "Generating recommendations for " << users.n_elem << " users "
         << "in '" << queryFile << "'." << endl;
     c.GetRecommendations(numRecs, recommendations, users);
-    rbRats=c.Rating();
   }
   else
   {
@@ -101,5 +99,4 @@ int main(int argc, char** argv)
 
   const string outputFile = CLI::GetParam<string>("output_file");
   data::Save(outputFile, recommendations);
-  data::Save((outputFile + "2.csv"), rbRats );
 }
