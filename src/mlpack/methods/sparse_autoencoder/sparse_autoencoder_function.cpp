@@ -48,14 +48,12 @@ const arma::mat SparseAutoencoderFunction::InitializeWeights()
   // compared to the matrix size. The above structure allows for smooth matrix
   // operations without making the code too ugly.
 
+  // Initialize w1 and w2 to random values in the range [0, 1], then set b1 and
+  // b2 to 0.
   arma::mat parameters;
-  parameters.zeros(2 * hiddenSize + 1, visibleSize + 1);
-
-  // Initialize w1 and w2 to random values in the range [0, 1].
-  arma::mat w12SV = parameters.submat(0, 0, 2 * hiddenSize - 1, visibleSize - 1);
-  w12SV.randu();
-  parameters.submat(0, 0, 2 * hiddenSize - 1, visibleSize - 1) = w12SV;
-  delete &w12SV; // 55 through 58 modified so it would build. Please fix.
+  parameters.randu(2 * hiddenSize + 1, visibleSize + 1);
+  parameters.row(2 * hiddenSize).zeros();
+  parameters.col(visibleSize).zeros();
 
   // Decide the parameter 'r' depending on the size of the visible and hidden
   // layers. The formula used is r = sqrt(6) / sqrt(vSize + hSize + 1).
