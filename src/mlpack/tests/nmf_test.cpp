@@ -102,11 +102,13 @@ BOOST_AUTO_TEST_CASE(NMFALSTest)
       HAlternatingLeastSquaresRule> nmf(50000, 1e-15);
   nmf.Apply(v, r, w, h);
 
-  mat wh = w * h;
+  const mat wh = w * h;
 
-  for (size_t row = 0; row < 20; row++)
-    for (size_t col = 0; col < 20; col++)
-      BOOST_REQUIRE_CLOSE(v(row, col), wh(row, col), 18.0);
+  const double error = arma::accu(arma::abs(v - wh)) / arma::accu(v);
+
+  // Most runs seem to produce error between 0.01 and 0.03.
+  // This is a randomized test, so we don't really have guarantees.
+  BOOST_REQUIRE_SMALL(error, 0.04);
 }
 
 /**
