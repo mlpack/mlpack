@@ -39,7 +39,7 @@ class GaussianKernel
    *
    * @param bandwidth The bandwidth of the kernel (@f$\mu@f$).
    */
-  GaussianKernel(double bandwidth) :
+  GaussianKernel(const double bandwidth) :
       bandwidth(bandwidth),
       gamma(-0.5 * pow(bandwidth, -2.0))
   { }
@@ -69,7 +69,7 @@ class GaussianKernel
    * @return K(t) using the bandwidth (@f$\mu@f$) specified in the
    *     constructor.
    */
-  double Evaluate(double t) const
+  double Evaluate(const double t) const
   {
     // The precalculation of gamma saves us a little computation time.
     return exp(gamma * std::pow(t, 2.0));
@@ -81,7 +81,7 @@ class GaussianKernel
    * @param dimension
    * @return the normalization constant
    */
-  double Normalizer(size_t dimension)
+  double Normalizer(const size_t dimension)
   {
     return pow(sqrt(2.0 * M_PI) * bandwidth, (double) dimension);
   }
