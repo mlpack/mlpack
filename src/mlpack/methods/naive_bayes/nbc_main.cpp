@@ -106,5 +106,5 @@ int main(int argc, char* argv[])
 
   // Output results.  Don't transpose: one result per line.
   const string outputFilename = CLI::GetParam<string>("output");
-  data::Save(outputFilename, results, true, false);
+  data::Save(outputFilename, rawResults, true, false);
 }
