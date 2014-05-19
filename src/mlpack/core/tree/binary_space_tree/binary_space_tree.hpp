@@ -24,8 +24,6 @@ namespace tree /** Trees and tree-building procedures. */ {
  * from it.  If you need to add or delete a node, the better procedure is to
  * rebuild the tree entirely.
  *
- * This tree does take one parameter, which is the leaf size to be used.
- *
  * @tparam BoundType The bound used for each node.  The valid types of bounds
  *     and the necessary skeleton interface for this class can be found in
  *     bounds/.
@@ -307,12 +305,12 @@ class BinarySpaceTree
    */
   double FurthestDescendantDistance() const;
 
-  //! Modify the distance from the center of this node to the center of the
-  //! parent node.
-  double& ParentDistance() { return parentDistance; }
   //! Return the distance from the center of this node to the center of the
   //! parent node.
   double ParentDistance() const { return parentDistance; }
+  //! Modify the distance from the center of this node to the center of the
+  //! parent node.
+  double& ParentDistance() { return parentDistance; }
 
   /**
    * Return the specified child (0 will be left, 1 will be right).  If the index
