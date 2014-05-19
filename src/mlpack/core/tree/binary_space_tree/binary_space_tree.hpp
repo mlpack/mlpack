@@ -24,6 +24,9 @@ namespace tree /** Trees and tree-building procedures. */ {
  * from it.  If you need to add or delete a node, the better procedure is to
  * rebuild the tree entirely.
  *
+ * This tree does take one runtime parameter in the constructor, which is the
+ * leaf size to be used.
+ *
  * @tparam BoundType The bound used for each node.  The valid types of bounds
  *     and the necessary skeleton interface for this class can be found in
  *     bounds/.
