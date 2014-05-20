@@ -438,12 +438,12 @@ template<typename BoundType,
 inline double BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
     FurthestPointDistance() const
 {
-  if (IsLeaf())
+  if (!IsLeaf())
     return 0.0;
 
   // Otherwise half of the maximum bound distance is sufficient (this is the
   // distance from a corner of the bound to the centroid).
-  return bound.MaxDistance(bound);
+  return 0.5 * bound.MaxDistance(bound);
 }
 
 /**
@@ -681,7 +681,7 @@ std::string BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
   convert << "  Split dimension: " << splitDimension << std::endl;
 
   // How many levels should we print?  This will print the top two tree levels.
-  if (left != NULL && parent == NULL) 
+  if (left != NULL && parent == NULL)
   {
     convert << " Left child:" << std::endl;
     convert << mlpack::util::Indent(left->ToString(), 2);
