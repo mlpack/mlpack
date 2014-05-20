@@ -441,9 +441,8 @@ inline double BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
   if (!IsLeaf())
     return 0.0;
 
-  // Otherwise half of the maximum bound distance is sufficient (this is the
-  // distance from a corner of the bound to the centroid).
-  return 0.5 * bound.MaxDistance(bound);
+  // Otherwise return the distance from a corner of the bound to the centroid.
+  return 0.5 * bound.Diameter();
 }
 
 /**
