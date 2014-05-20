@@ -1077,7 +1077,7 @@ BOOST_AUTO_TEST_CASE(FurthestPointDistanceTest)
     BinarySpaceTree<HRectBound<2> >* node = nodeQueue.front();
     nodeQueue.pop();
 
-    if (node->NumChildren() == 0)
+    if (node->NumChildren() != 0)
       BOOST_REQUIRE_EQUAL(node->FurthestPointDistance(), 0.0);
     else
     {
