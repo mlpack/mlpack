@@ -8,13 +8,6 @@
  * specified data set.
  *
  */
-#include "cf.hpp"
-#include <mlpack/methods/nmf/nmf.hpp>
-#include <mlpack/methods/nmf/als_update_rules.hpp>
-
-using namespace mlpack::nmf;
-using namespace mlpack::neighbor;
-using namespace std;
 
 namespace mlpack {
 namespace cf {
@@ -85,7 +78,6 @@ void CF<FactorizerType>::GetRecommendations(const size_t numRecs,
 
   // Operations independent of the query:
   // Decompose the sparse data matrix to user and data matrices.
-  // Presently only ALS (via NMF) is supported as an optimizer.
   factorizer.Apply(cleanedData, rank, w, h);
 
   // Generate new table by multiplying approximate values.
@@ -106,7 +98,7 @@ void CF<FactorizerType>::GetRecommendations(const size_t numRecs,
 
   // Calculate the neighborhood of the queried users.
   // This should be a templatized option.
-  AllkNN a(rating, query);
+  neighbor::AllkNN a(rating, query);
   arma::mat resultingDistances; // Temporary storage.
   a.Search(numUsersForSimilarity, neighborhood, resultingDistances);
 
@@ -162,7 +154,7 @@ void CF<FactorizerType>::GetRecommendations(const size_t numRecs,
     // warning.
     if (recommendations(values.n_rows - 1, i) == cleanedData.n_rows + 1)
       Log::Warn << "Could not provide " << values.n_rows << " recommendations "
-          << "for user " << users(i) << " (not enough un-rated items)!" << endl;
+          << "for user " << users(i) << " (not enough un-rated items)!" << std::endl;
   }
 }
 

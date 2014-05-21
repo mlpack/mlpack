@@ -18,6 +18,7 @@ set(DIRS
   nca
   neighbor_search
   nmf
+  lmf
   pca
   radical
   range_search
