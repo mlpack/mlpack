@@ -142,16 +142,6 @@ class KMeans
                const bool initialAssignmentGuess = false,
                const bool initialCentroidGuess = false) const;
 
-  /**
-   * An implementation of k-means using the Pelleg-Moore algorithm; this is
-   * known to not work -- do not use it!  (Fixing it is TODO, of course; see
-   * #251.)
-   */
-  template<typename MatType>
-  void FastCluster(MatType& data,
-                   const size_t clusters,
-                   arma::Col<size_t>& assignments) const;
-
   //! Return the overclustering factor.
   double OverclusteringFactor() const { return overclusteringFactor; }
   //! Set the overclustering factor.  Must be greater than 1.
@@ -178,7 +168,7 @@ class KMeans
   //! Modify the empty cluster policy.
   EmptyClusterPolicy& EmptyClusterAction() { return emptyClusterAction; }
 
-  // Returns a string representation of this object. 
+  // Returns a string representation of this object.
   std::string ToString() const;
 
  private:
