@@ -31,9 +31,7 @@ BOOST_AUTO_TEST_CASE(DefaultsTraitsTest)
 {
   // An irrelevant non-tree type class is used here so that the default
   // implementation of TreeTraits is chosen.
-  bool b = TreeTraits<int>::HasParentDistance;
-  BOOST_REQUIRE_EQUAL(b, false);
-  b = TreeTraits<int>::HasOverlappingChildren;
+  bool b = TreeTraits<int>::HasOverlappingChildren;
   BOOST_REQUIRE_EQUAL(b, true);
   b = TreeTraits<int>::HasSelfChildren;
   BOOST_REQUIRE_EQUAL(b, false);
@@ -42,12 +40,9 @@ BOOST_AUTO_TEST_CASE(DefaultsTraitsTest)
 // Test the binary space tree traits.
 BOOST_AUTO_TEST_CASE(BinarySpaceTreeTraitsTest)
 {
-  // ParentDistance() is not available.
-  bool b = TreeTraits<BinarySpaceTree<LMetric<2, false> > >::HasParentDistance;
-  BOOST_REQUIRE_EQUAL(b, false);
-
   // Children are non-overlapping.
-  b = TreeTraits<BinarySpaceTree<LMetric<2, false> > >::HasOverlappingChildren;
+  bool b =
+      TreeTraits<BinarySpaceTree<LMetric<2, false> > >::HasOverlappingChildren;
   BOOST_REQUIRE_EQUAL(b, false);
 
   // Points are not contained at multiple levels.
@@ -58,12 +53,8 @@ BOOST_AUTO_TEST_CASE(BinarySpaceTreeTraitsTest)
 // Test the cover tree traits.
 BOOST_AUTO_TEST_CASE(CoverTreeTraitsTest)
 {
-  // ParentDistance() is available.
-  bool b = TreeTraits<CoverTree<> >::HasParentDistance;
-  BOOST_REQUIRE_EQUAL(b, true);
-
   // Children may be overlapping.
-  b = TreeTraits<CoverTree<> >::HasOverlappingChildren;
+  bool b = TreeTraits<CoverTree<> >::HasOverlappingChildren;
   BOOST_REQUIRE_EQUAL(b, true);
 
   // The cover tree has self-children.

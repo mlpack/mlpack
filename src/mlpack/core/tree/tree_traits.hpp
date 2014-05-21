@@ -39,17 +39,18 @@ namespace tree {
  * template<typename TreeType>
  * void Compute(TreeType& node,
  *              boost::enable_if<
- *                  TreeTraits<TreeType>::HasParentDistance>::type*)
+ *                  TreeTraits<TreeType>::RearrangesDataset>::type*)
  * {
- *   // Computation with TreeType::ParentDistance().
+ *   // Computation where special dataset-rearranging tree constructor is
+ *   // called.
  * }
  *
  * template<typename TreeType>
  * void Compute(TreeType& node,
  *              boost::enable_if<
- *                  !TreeTraits<TreeType>::HasParentDistance>::type*)
+ *                  !TreeTraits<TreeType>::RearrangesDataset>::type*)
  * {
- *   // Computation without TreeType::ParentDistance().
+ *   // Computation where normal tree constructor is called.
  * }
  * @endcode
  *
@@ -72,13 +73,6 @@ template<typename TreeType>
 class TreeTraits
 {
  public:
-  /**
-   * This is true if TreeType::ParentDistance() exists and works.  The
-   * ParentDistance() function returns the distance between the center of a node
-   * and the center of its parent.
-   */
-  static const bool HasParentDistance = false;
-
   /**
    * This is true if the subspaces represented by the children of a node can
    * overlap.
