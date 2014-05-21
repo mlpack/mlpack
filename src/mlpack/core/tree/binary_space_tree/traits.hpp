@@ -25,12 +25,6 @@ class TreeTraits<BinarySpaceTree<BoundType, StatisticType, MatType> >
 {
  public:
   /**
-   * The binary space tree cannot easily calculate the distance from a node to
-   * its parent; so BinarySpaceTree<...>::ParentDistance() does not exist.
-   */
-  static const bool HasParentDistance = false;
-
-  /**
    * Each binary space tree node has two children which represent
    * non-overlapping subsets of the space which the node represents.  Therefore,
    * children are not overlapping.

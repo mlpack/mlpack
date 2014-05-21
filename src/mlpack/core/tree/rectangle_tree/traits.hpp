@@ -24,12 +24,6 @@ class TreeTraits<RectangleTree<StatisticType, MatType> >
 {
  public:
   /**
-   * The R-tree cannot easily calculate the distance from a node to
-   * its parent; so RectangleTree<...>::ParentDistance() does not exist.
-   */
-  static const bool HasParentDistance = false;
-
-  /**
    * An R-tree can have overlapping children.
    */
   static const bool HasOverlappingChildren = true;
