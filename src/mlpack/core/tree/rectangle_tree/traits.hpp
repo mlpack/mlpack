@@ -46,6 +46,8 @@ class TreeTraits<RectangleTree<StatisticType, MatType> >
 
   /**
    * Points are rearranged during building of the tree.
+   * THIS MAY NOT BE TRUE.  IT'S HARD TO DYNAMICALLY INSERT POINTS
+   * AND REARRANGE THE MATRIX
    */
   static const bool RearrangesDataset = true;
 };
