@@ -26,13 +26,6 @@ class TreeTraits<CoverTree<MetricType, RootPointPolicy, StatisticType> >
 {
  public:
   /**
-   * The cover tree calculates the distance between parent and child during
-   * construction, so that value is saved and CoverTree<...>::ParentDistance()
-   * does exist.
-   */
-  static const bool HasParentDistance = true;
-
-  /**
    * The cover tree (or, this implementation of it) does not require that
    * children represent non-overlapping subsets of the parent node.
    */
