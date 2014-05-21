@@ -12,13 +12,11 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
-#include <mlpack/methods/nmf/nmf.hpp>
-#include <mlpack/methods/nmf/als_update_rules.hpp>
+#include <mlpack/methods/lmf/lmf.hpp>
+#include <mlpack/methods/lmf/update_rules/nmf_als.hpp>
 #include <set>
 #include <map>
 #include <iostream>
-
-using namespace mlpack::nmf;
 
 namespace mlpack {
 namespace cf /** Collaborative filtering. */{
@@ -56,10 +54,8 @@ namespace cf /** Collaborative filtering. */{
  *     Apply(arma::sp_mat& data, size_t rank, arma::mat& W, arma::mat& H).
  */
 template<
-    typename FactorizerType = NMF<RandomInitialization,
-                                  WAlternatingLeastSquaresRule,
-                                  HAlternatingLeastSquaresRule>
->
+    typename FactorizerType = lmf::LMF<lmf::RandomInitialization, 
+                                       lmf::NMF_ALSUpdate> >
 class CF
 {
  public:
