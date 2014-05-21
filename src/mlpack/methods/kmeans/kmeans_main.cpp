@@ -55,10 +55,6 @@ PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 PARAM_STRING("initial_centroids", "Start with the specified initial centroids.",
              "I", "");
 
-// This is known to not work (#251).
-//PARAM_FLAG("fast_kmeans", "Use the experimental fast k-means algorithm by "
-//    "Pelleg and Moore.", "f");
-
 // Parameters for "refined start" k-means.
 PARAM_FLAG("refined_start", "Use the refined initial point strategy by Bradley "
     "and Fayyad to choose initial points.", "r");
@@ -151,9 +147,6 @@ int main(int argc, char** argv)
           RefinedStart(samplings, percentage));
 
       Timer::Start("clustering");
-//      if (CLI::HasParam("fast_kmeans"))
-//        k.FastCluster(dataset, clusters, assignments);
-//      else
       k.Cluster(dataset, clusters, assignments, centroids);
       Timer::Stop("clustering");
     }
@@ -163,9 +156,6 @@ int main(int argc, char** argv)
           AllowEmptyClusters> k(maxIterations, overclustering);
 
       Timer::Start("clustering");
-//      if (CLI::HasParam("fast_kmeans"))
-//        k.FastCluster(dataset, clusters, assignments);
-//      else
       k.Cluster(dataset, clusters, assignments, centroids, false,
           initialCentroidGuess);
       Timer::Stop("clustering");
@@ -190,10 +180,7 @@ int main(int argc, char** argv)
           RefinedStart(samplings, percentage));
 
       Timer::Start("clustering");
-//      if (CLI::HasParam("fast_kmeans"))
-//        k.FastCluster(dataset, clusters, assignments);
-//      else
-        k.Cluster(dataset, clusters, assignments, centroids);
+      k.Cluster(dataset, clusters, assignments, centroids);
       Timer::Stop("clustering");
     }
     else
@@ -201,11 +188,8 @@ int main(int argc, char** argv)
       KMeans<> k(maxIterations, overclustering);
 
       Timer::Start("clustering");
-//      if (CLI::HasParam("fast_kmeans"))
-//        k.FastCluster(dataset, clusters, assignments);
-//      else
-        k.Cluster(dataset, clusters, assignments, centroids, false,
-            initialCentroidGuess);
+      k.Cluster(dataset, clusters, assignments, centroids, false,
+          initialCentroidGuess);
       Timer::Stop("clustering");
     }
   }
