@@ -13,6 +13,7 @@ The trees are designed to allow flexibility.  As such, the following classes are
       Splits.  The strategy for splitting the tree can be changed.
       Query rules.  The methods for determining which points are selected in a search.
       Tree traversal.  The trees support both single_tree and dual_tree traversal algorithms.
+      Statistics.  The tree tracks various items about the search, such as the latest pruning bound.
 
 There are also a few miscellanious items for tracking data about the tree and queries.
 
@@ -50,6 +51,12 @@ functionality.  All names are given relative to .../mlpack/src/mlpack/core/tree/
 	      binary_space_tree/single_tree_traverser_impl.hpp, 
 	      binary_space_tree/dual_tree_traverser.hpp,
 	      and binary_space_tree/dual_tree_traverser_impl.hpp
+      Statistics.
+	      Statistics are used to track various information about the current traversal, such as the
+	      bound on neighbors that can be pruned.
+	      
+	      See files: ../../methods/neighbor_search/neighbor_search_stat.hpp, 
+	      statistic.hpp
 
 
 Below is a list of files and what they do:
@@ -59,6 +66,8 @@ Below is a list of files and what they do:
 	These handle the query rules, which allow us to have different rules to find nearest or furthest neighbor.
 	They also handle "score" and "rescore" which evaluate the nodes of a tree to see if we should search in
 	the subtrees.  Lower scores mean the boundary is closer to the query.
+../../methods/neighbor_search/neighbor_search_stat.hpp
+	This handles the statistics about the current search, for example, the bound on neighbor distances.
 
 ../metrics/ip_metric.hpp
 ../metrics/ip_metric_impl.hpp
@@ -87,4 +96,6 @@ binary_space_tree/single_tree_traverser_impl.hpp
 hrectbound.hpp
 hrectbound_impl.hpp
 	Hyperrectangle bounds.  Used to bound the points in a node.
+statistic.hpp
+	This is a generic definition of an empty statistic.
 			
