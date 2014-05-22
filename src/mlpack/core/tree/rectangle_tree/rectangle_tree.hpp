@@ -76,7 +76,7 @@ class RectangleTree
    * @param leafSize Size of each leaf in the tree;
    * @param maxNumChildren The maximum number of child nodes a non-leaf node may have.
    */
-  RectangleTree(MatType& data, const size_t leafSize = 20, const size_t maxNumChildren = 5);
+  RectangleTree(MatType& data, const size_t leafSize = 20, const size_t maxNumChildren = 4);
 
   //TODO implement the oldFromNew stuff if applicable.
 
