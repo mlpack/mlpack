@@ -13,8 +13,9 @@ namespace mlpack {
 namespace tree {
 
 template<typename StatisticType,
-	   typename MatType>
-RectangleTree<StatisticType, MatType>::RectangleTree()
+	 typename MatType,
+	 typename SplitType>
+RectangleTree<StatisticType, MatType, SplitType>::RectangleTree()
 
 
 }; //namespace tree
