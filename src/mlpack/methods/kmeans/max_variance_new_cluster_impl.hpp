@@ -37,8 +37,12 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   }
 
   // Divide by the number of points in the cluster to produce the variance.
+  // Although a -nan will occur here for the empty cluster(s), this doesn't
+  // matter because variances.max() won't pick it up.  If the number of points
+  // in the cluster is 1, we ensure that cluster is not selected by forcing the
+  // variance to 0.
   for (size_t i = 0; i < clusterCounts.n_elem; ++i)
-    variances[i] /= clusterCounts[i];
+    variances[i] /= (clusterCounts[i] == 1) ? DBL_MAX : clusterCounts[i];
 
   // Now find the cluster with maximum variance.
   arma::uword maxVarCluster;
