@@ -18,7 +18,8 @@ namespace tree {
 
 template<typename StatisticType,
 	 typename MatType,
-	 typename SplitType>
+	 typename SplitType
+	 typename DescentType>
 RectangleTree<StatisticType, MatType, SplitType>::RectangleTree(
     MatType& data,
     const size_t leafSize):
@@ -27,6 +28,33 @@ RectangleTree<StatisticType, MatType, SplitType>::RectangleTree(
   //Do the actual stuff here
 
 }
+
+/**
+ * Recurse through the tree and insert the point at the leaf node chosen
+ * by the heuristic.
+ */
+template<typename StatisticType,
+	 typename MatType,
+	 typename SplitType>
+RectangleTree<StatisticType, MatType, SplitType>::
+    InsertPoint(const arma::vec& point)
+{
+  if(numChildren == 0) {
+    data[points++] = point;
+    return;
+  }
+  double minDist = children[0].minDistance(point);
+  int bestIndex = 0;
+  for(int i = 1; i < numChildren; i++) {
+    double dist = children[i].minDistance(point);
+    if(dist < minDist) {
+      minDist = dist;
+      bestIndex = i
+    }
+  }
+  children[bestIndex].InsertPoint(point);
+}
+
 
 /**
  * Deletes this node, deallocating the memory for the children and calling

@@ -28,7 +28,9 @@ namespace tree /** Trees and tree-building procedures. */ {
  */   
 
 template<typename StatisticType = EmptyStatistic,
-	   typename MatType = arma::mat>
+	 typename MatType = arma::mat,
+	 typename SplitType = EmptySplit,
+	 typename DescentType = EmptyDescent>
 class RectangleTree
 {
  private:
@@ -86,6 +88,12 @@ class RectangleTree
    * to any nodes which are children of this one.
    */
   ~RectangleTree();
+
+  /**
+   * Inserts a point into the tree. The point will be copied to the data matrix
+   * of the leaf node where it is finally inserted.
+   */
+  void InsertPoint(const arma::vec& point);
 
   /**
    * Find a node in this tree by its begin and count (const).
