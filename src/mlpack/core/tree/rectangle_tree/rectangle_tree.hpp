@@ -271,7 +271,7 @@ class RectangleTree
   size_t& Begin() { return begin; }
 
   /**
-   * Gets the index one beyond the last index in the subset.
+   * Gets the index one beyond the last index in the subset.  CURRENTLY MEANINGLESS!
    */
   size_t End() const;
 
@@ -305,18 +305,18 @@ class RectangleTree
   }
 
   /**
-   * Splits the current node, assigning its left and right children recursively.
+   * Splits the current node, recursing up the tree.
    *
-   * @param data Dataset which we are using.
+   * @param tree The RectangleTree object (node) to split.
    */
-  void SplitNode(MatType& data);
+  void SplitNode(RectangleTree& tree);
 
   /**
-   * Splits the current node, assigning its left and right children recursively.
-   * Also returns a list of the changed indices.
+   * Splits the current node, recursing up the tree.
+   * CURRENTLY IT DOES NOT Also returns a list of the changed indices.
    *
    * @param data Dataset which we are using.
-   * @param oldFromNew Vector holding permuted indices.
+   * @param oldFromNew Vector holding permuted indices NOT IMPLEMENTED.
    */
   void SplitNode(MatType& data, std::vector<size_t>& oldFromNew);
 
