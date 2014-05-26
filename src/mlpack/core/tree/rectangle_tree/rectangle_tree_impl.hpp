@@ -77,12 +77,121 @@ size_t RectangleTree<StatisticType, MatType, SplitType>::
 }
 
 template<typename StatisticType,
-         	typename MatType,
-         	typename SplitType>
+         typename MatType,
+         typename SplitType>
 inline bool BinarySpaceTree<StatisticType, MatType, SplitType>::
     IsLeaf() const
 {
   return numOfChildren == 0;
+}
+
+/**
+ * Returns the number of children in this node.
+ */
+template<typename StatisticType,
+	 typename MatType,
+	 typename SplitType>
+inline size_t RectangleTree<StatisticType, MatType, SplitType>::
+    NumChildren() const
+{
+  return NumChildren;
+}
+
+/**
+ * Return a bound on the furthest point in the node form the centroid.
+ * This returns 0 unless the node is a leaf.
+ */
+template<typename StatisticType,
+         typename MatType,
+         typename SplitType>
+inline double RectangleTree<StatisticType, MatType, SplitType>::
+FurthestPointDistance() const
+{
+  if(!IsLeaf())
+    return 0.0;
+
+  // Otherwise return the distance from the centroid to a corner of the bound.
+  return 0.5 * bound.Diameter();
+}
+
+/**
+ * Return the furthest possible descendant distance.  This returns the maximum
+ * distance from the centroid to the edge of the bound and not the empirical
+ * quantity which is the actual furthest descendant distance.  So the actual
+ * furthest descendant distance may be less than what this method returns (but
+ * it will never be greater than this).
+ */
+template<typename StatisiticType,
+	 typename MatType,
+	 typename SplitType>
+inline double RectangleTree<StatisticType, MatType, SplitType>::
+    FurthestDescendantDistance() const
+{
+  return furthestDescendantDistance;
+}
+
+/**
+ * Return the specified child.
+ */
+template<typename StatisticType,
+	 typename MatType,
+	 typename SplitType>
+inline RectangleTree<StatisticType, MatType, SplitType>&
+    RectangleTree<StatisticType, MatType, SplitType>::
+        Child(const size_t child) const
+{
+  return children[child];
+}
+
+/**
+ * Return the number of points contained in this node.  Zero if it is not a leaf.
+ */
+template<typename StatisticType,
+	 typename MatType,
+	 typename SplitType>
+inline size_t RectangleTree<StatisticType, MatType, SplitType>::
+    NumPoints() const
+{
+  if(numChildren == 0)
+    return 0;
+
+  return count;
+}
+
+/**
+ * Return the number of descendants contained in this node.  MEANINIGLESS AS IT CURRENTLY STANDS.
+ */
+template<typename StatisticType,
+	 typename MatType,
+	 typename SplitType>
+inline size_t RectangleTree<StatisticType, MatType, SplitType>::
+    NumDescendants() const
+{
+  return count;
+}
+
+/**
+ * Return the index of a particular descendant contained in this node.  SEE OTHER WARNINGS
+ */
+template<typename StatisticType,
+	 typename MatType,
+	 typename SplitType>
+inline size_t RectangleTree<StatisticType, MatType, SplitType>::
+    Descendant(const size_t index> const
+{
+  return (begin + index);
+}
+
+/**
+ * Return the index of a particular point contained in this node.  SEE OTHER WARNINGS
+ */
+template<typename StatisticType,
+	 typename MatType,
+	 typename SplitType>
+inline size_t RectangleTree<StatisticType, MatType, SplitType>::
+    Point(const size_t index> const
+{
+  return (begin + index);
 }
 
 /**
