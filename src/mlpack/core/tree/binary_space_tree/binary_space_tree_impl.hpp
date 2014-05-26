@@ -441,7 +441,7 @@ inline double BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
   if (!IsLeaf())
     return 0.0;
 
-  // Otherwise return the distance from a corner of the bound to the centroid.
+  // Otherwise return the distance from the centroid to a corner of the bound.
   return 0.5 * bound.Diameter();
 }
 
