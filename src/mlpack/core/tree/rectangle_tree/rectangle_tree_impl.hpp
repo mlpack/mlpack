@@ -35,20 +35,21 @@ RectangleTree<StatisticType, MatType, SplitType>::RectangleTree(
  */
 template<typename StatisticType,
 	 typename MatType,
-	 typename SplitType>
-RectangleTree<StatisticType, MatType, SplitType>::
+	 typename SplitType
+	 typename HueristicType>
+RectangleTree<StatisticType, MatType, SplitType, HueristicType>::
     InsertPoint(const arma::vec& point)
 {
   if(numChildren == 0) {
-    data[points++] = point;
+    data.col(points++) = point;
     return;
   }
-  double minDist = children[0].minDistance(point);
+  double minScore = HueristicType.EvalNode(children[0].bound, point);
   int bestIndex = 0;
   for(int i = 1; i < numChildren; i++) {
-    double dist = children[i].minDistance(point);
-    if(dist < minDist) {
-      minDist = dist;
+    double score = HueristicType.EvalNode(children[i].bound, point);
+    if(score < minScore) {
+      minScore = score;
       bestIndex = i
     }
   }
