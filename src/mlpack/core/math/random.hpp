@@ -6,11 +6,7 @@
 #ifndef __MLPACK_CORE_MATH_RANDOM_HPP
 #define __MLPACK_CORE_MATH_RANDOM_HPP
 
-#include <stdlib.h>
-#include <math.h>
-#include <float.h>
-#include <stdint.h>
-
+#include <mlpack/prereqs.hpp>
 #include <boost/random.hpp>
 
 namespace mlpack {
