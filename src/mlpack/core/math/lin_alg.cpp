@@ -6,8 +6,6 @@
  */
 #include "lin_alg.hpp"
 
-#define max_rand_i 100000
-
 using namespace mlpack;
 using namespace math;
 
