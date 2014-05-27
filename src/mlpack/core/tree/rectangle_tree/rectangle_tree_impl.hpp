@@ -18,9 +18,9 @@ namespace tree {
 
 template<typename StatisticType,
 	 typename MatType,
-	 typename SplitType
+	 typename SplitType,
 	 typename DescentType>
-RectangleTree<StatisticType, MatType, SplitType>::RectangleTree(
+RectangleTree<StatisticType, MatType, SplitType, DescentType>::RectangleTree(
     MatType& data,
     const size_t leafSize):
 
@@ -30,24 +30,50 @@ RectangleTree<StatisticType, MatType, SplitType>::RectangleTree(
 }
 
 /**
+ * Deletes this node, deallocating the memory for the children and calling
+ * their destructors in turn.  This will invalidate any pointers or references
+ * to any nodes which are children of this one.
+ */
+template<typename StatisticType,
+	 typename MatType,
+	 typename SplitType,
+	 typename DescentType>
+RectangleTree<BoundType, StatisticType, MatType, SplitType, DescentType>::
+  ~RectangleTree()
+{
+  for(int i = 0; i < numOfChildren; i++) {
+    delete children[i];
+  }
+}
+
+
+/**
  * Recurse through the tree and insert the point at the leaf node chosen
  * by the heuristic.
  */
 template<typename StatisticType,
 	 typename MatType,
-	 typename SplitType
-	 typename HueristicType>
-RectangleTree<StatisticType, MatType, SplitType, HueristicType>::
+	 typename SplitType,
+	 typename DescentType>
+RectangleTree<StatisticType, MatType, SplitType, DescentType>::
     InsertPoint(const arma::vec& point)
 {
+  // Expand the bound regardless of whether it is a leaf node.
+  bound |= point;
+  
+  // If this is a leaf node, we stop here and add the point.
   if(numChildren == 0) {
     data.col(points++) = point;
+    splitNode();
     return;
   }
-  double minScore = HueristicType.EvalNode(children[0].bound, point);
+
+  // If it is not a leaf node, we use the DescentHeuristic to choose a child
+  // to which we recurse.
+  double minScore = DescentType.EvalNode(children[0].bound, point);
   int bestIndex = 0;
   for(int i = 1; i < numChildren; i++) {
-    double score = HueristicType.EvalNode(children[i].bound, point);
+    double score = DescentType.EvalNode(children[i].bound, point);
     if(score < minScore) {
       minScore = score;
       bestIndex = i
@@ -56,27 +82,11 @@ RectangleTree<StatisticType, MatType, SplitType, HueristicType>::
   children[bestIndex].InsertPoint(point);
 }
 
-
-/**
- * Deletes this node, deallocating the memory for the children and calling
- * their destructors in turn.  This will invalidate any pointers or references
- * to any nodes which are children of this one.
- */
-template<typename StatisticType,
-	   typename MatType,
-	   typename SplitType>
-RectangleTree<BoundType, StatisticType, MatType, SplitType>::
-  ~RectangleTree()
-{
-  for(int i = 0; i < numOfChildren; i++) {
-    delete children[i];
-  }
-}
-
 template<typename StatisticType,
 	 typename MatType,
-	 typename SplitType>
-size_t RectangleTree<StatisticType, MatType, SplitType>::
+	 typename SplitType,
+	 typename DescentType>
+size_t RectangleTree<StatisticType, MatType, SplitType, DescentType>::
     TreeSize() const
 {
   int n = 0;
@@ -90,8 +100,9 @@ size_t RectangleTree<StatisticType, MatType, SplitType>::
 
 template<typename StatisticType,
 	 typename MatType,
-	 typename SplitType>
-size_t RectangleTree<StatisticType, MatType, SplitType>::
+	 typename SplitType,
+	 typename DescentType>
+size_t RectangleTree<StatisticType, MatType, SplitType, DescentType>::
     TreeDepth() const
 {
   // Recursively count the depth of each subtree.  The plus one is
@@ -107,8 +118,9 @@ size_t RectangleTree<StatisticType, MatType, SplitType>::
 
 template<typename StatisticType,
          typename MatType,
-         typename SplitType>
-inline bool BinarySpaceTree<StatisticType, MatType, SplitType>::
+         typename SplitType,
+	typename DescentType>
+inline bool BinarySpaceTree<StatisticType, MatType, SplitType, DescentType>::
     IsLeaf() const
 {
   return numOfChildren == 0;
@@ -119,8 +131,9 @@ inline bool BinarySpaceTree<StatisticType, MatType, SplitType>::
  */
 template<typename StatisticType,
 	 typename MatType,
-	 typename SplitType>
-inline size_t RectangleTree<StatisticType, MatType, SplitType>::
+	 typename SplitType,
+	 typename DescentType>
+inline size_t RectangleTree<StatisticType, MatType, SplitType, DescentType>::
     NumChildren() const
 {
   return NumChildren;
@@ -132,8 +145,9 @@ inline size_t RectangleTree<StatisticType, MatType, SplitType>::
  */
 template<typename StatisticType,
          typename MatType,
-         typename SplitType>
-inline double RectangleTree<StatisticType, MatType, SplitType>::
+         typename SplitType,
+	typename DescentType>
+inline double RectangleTree<StatisticType, MatType, SplitType, DescentType>::
 FurthestPointDistance() const
 {
   if(!IsLeaf())
@@ -152,8 +166,9 @@ FurthestPointDistance() const
  */
 template<typename StatisiticType,
 	 typename MatType,
-	 typename SplitType>
-inline double RectangleTree<StatisticType, MatType, SplitType>::
+	 typename SplitType,
+	 typename DescentType>
+inline double RectangleTree<StatisticType, MatType, SplitType, DescentType>::
     FurthestDescendantDistance() const
 {
   return furthestDescendantDistance;
@@ -164,9 +179,10 @@ inline double RectangleTree<StatisticType, MatType, SplitType>::
  */
 template<typename StatisticType,
 	 typename MatType,
-	 typename SplitType>
-inline RectangleTree<StatisticType, MatType, SplitType>&
-    RectangleTree<StatisticType, MatType, SplitType>::
+	 typename SplitType,
+	 typename DescentType>
+inline RectangleTree<StatisticType, MatType, SplitType, DescentType>&
+    RectangleTree<StatisticType, MatType, SplitType, DescentType>::
         Child(const size_t child) const
 {
   return children[child];
@@ -177,8 +193,9 @@ inline RectangleTree<StatisticType, MatType, SplitType>&
  */
 template<typename StatisticType,
 	 typename MatType,
-	 typename SplitType>
-inline size_t RectangleTree<StatisticType, MatType, SplitType>::
+	 typename SplitType,
+	 typename DescentType>
+inline size_t RectangleTree<StatisticType, MatType, SplitType, DescentType>::
     NumPoints() const
 {
   if(numChildren == 0)
@@ -192,8 +209,9 @@ inline size_t RectangleTree<StatisticType, MatType, SplitType>::
  */
 template<typename StatisticType,
 	 typename MatType,
-	 typename SplitType>
-inline size_t RectangleTree<StatisticType, MatType, SplitType>::
+	 typename SplitType,
+	 typename DescentType>
+inline size_t RectangleTree<StatisticType, MatType, SplitType, DescentType>::
     NumDescendants() const
 {
   return count;
@@ -204,8 +222,9 @@ inline size_t RectangleTree<StatisticType, MatType, SplitType>::
  */
 template<typename StatisticType,
 	 typename MatType,
-	 typename SplitType>
-inline size_t RectangleTree<StatisticType, MatType, SplitType>::
+	 typename SplitType,
+	 typename DescentType>
+inline size_t RectangleTree<StatisticType, MatType, SplitType, DescentType>::
     Descendant(const size_t index> const
 {
   return (begin + index);
@@ -216,8 +235,9 @@ inline size_t RectangleTree<StatisticType, MatType, SplitType>::
  */
 template<typename StatisticType,
 	 typename MatType,
-	 typename SplitType>
-inline size_t RectangleTree<StatisticType, MatType, SplitType>::
+	 typename SplitType,
+	 typename DescentType>
+inline size_t RectangleTree<StatisticType, MatType, SplitType, DescentType>::
     Point(const size_t index> const
 {
   return (begin + index);
@@ -229,8 +249,9 @@ inline size_t RectangleTree<StatisticType, MatType, SplitType>::
  */
 template<typename StatisticType,
 	 typename MatType,
-	 typename SplitType>
-inline size_t RectangleTree<StatisticType, MatType, SplitType>::End() const
+	 typename SplitType,
+	 typename DescentType>
+inline size_t RectangleTree<StatisticType, MatType, SplitType, DescentType>::End() const
 {
   if(numOfChildren)
     return begin + count;
@@ -240,15 +261,27 @@ inline size_t RectangleTree<StatisticType, MatType, SplitType>::End() const
   //have functions for returning the list of modified indices if we end up doing it that way.
 
 /**
- * Split the tree.  This moves up the tree recursively.
+ * Split the tree.  This calls the SplitType code to split a node.  This method should only
+ * be called on a leaf node.
  */
 template<typename StatisticType,
 	 typename MatType,
-	 typename SplitType>
-void RectangleTree<StatisticType, MatType, SplitType>::SplitNode(
+	 typename SplitType,
+	 typename DescentType>
+void RectangleTree<StatisticType, MatType, SplitType, DescentType>::SplitNode(
     RetangleTree& tree)
 {
+  // This should always be a leaf node.  When we need to split other nodes,
+  // the split will be called from here but will take place in the SplitType code.
+  boost::assert(numChildren == 0);
+
+  // See if we are full.
+  if(points < leafSize)
+    return;
   
+  // If we are full, then we need to move up the tree.  The SplitType takes
+  // care of this.
+  SplitType.SplitLeafNode(this);    
 }
 
 
@@ -257,8 +290,9 @@ void RectangleTree<StatisticType, MatType, SplitType>::SplitNode(
  */
   template<typename StatisticType,
 	   typename MatType,
-	   typename SplitType>
-std::string BinarySpaceTree<StatisticType, MatType, SplitType>::ToString() const
+	   typename SplitType,
+	 typename DescentType>
+std::string BinarySpaceTree<StatisticType, MatType, SplitType, DescentType>::ToString() const
 {
   std::ostringstream convert;
   convert << "RectangleTree [" << this << "]" << std::endl;
