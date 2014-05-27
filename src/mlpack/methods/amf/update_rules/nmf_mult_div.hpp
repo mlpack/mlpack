@@ -1,5 +1,5 @@
 /**
- * @file nmf_mult_div.hpp
+ * @file mult_div_update_rules.hpp
  * @author Mohan Rajendran
  *
  * Update rules for the Non-negative Matrix Factorization. This follows a method
@@ -9,21 +9,6 @@
  * \f$ \sum_i \sum_j (V_{ij} log\frac{V_{ij}}{(WH)_{ij}}-V_{ij}+(WH)_{ij}) \f$is
  * non-increasing between subsequent iterations. Both of the update rules
  * for W and H are defined in this file.
- *
- * This file is part of MLPACK 1.0.8.
- *
- * MLPACK is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * MLPACK is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details (LICENSE.txt).
- *
- * You should have received a copy of the GNU General Public License along with
- * MLPACK.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef __MLPACK_METHODS_LMF_UPDATE_RULES_NMF_MULT_DIV_HPP
 #define __MLPACK_METHODS_LMF_UPDATE_RULES_NMF_MULT_DIV_HPP
@@ -31,14 +16,14 @@
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace lmf {
+namespace amf {
 
 
-class NMF_MultiplicativeDivergenceUpdate
+class NMFMultiplicativeDivergenceUpdate
 {
  public:
   // Empty constructor required for the WUpdateRule template.
-  NMF_MultiplicativeDivergenceUpdate() { }
+  NMFMultiplicativeDivergenceUpdate() { }
 
   /**
    * The update rule for the basis matrix W. The formula used is
@@ -125,7 +110,7 @@ class NMF_MultiplicativeDivergenceUpdate
   }
 };
 
-}; // namespace lmf
+}; // namespace amf
 }; // namespace mlpack
 
 #endif

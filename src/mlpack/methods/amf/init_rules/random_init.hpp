@@ -5,13 +5,13 @@
  * Intialization rule for Non-Negative Matrix Factorization (NMF). This simple
  * initialization is performed by assigning a random matrix to W and H.
  */
-#ifndef __MLPACK_METHODS_NMF_RANDOM_INIT_HPP
-#define __MLPACK_METHODS_NMF_RANDOM_INIT_HPP
+#ifndef __MLPACK_METHODS_LMF_RANDOM_INIT_HPP
+#define __MLPACK_METHODS_LMF_RANDOM_INIT_HPP
 
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace nmf {
+namespace amf {
 
 class RandomInitialization
 {
@@ -35,7 +35,7 @@ class RandomInitialization
   }
 };
 
-}; // namespace nmf
+}; // namespace amf
 }; // namespace mlpack
 
 #endif

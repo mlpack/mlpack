@@ -1,8 +1,8 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-  lmf.hpp
-  lmf_impl.hpp
+  amf.hpp
+  amf_impl.hpp
 )
 
 # Add directory name to sources.
@@ -17,10 +17,10 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 add_subdirectory(update_rules)
 add_subdirectory(init_rules)
 
-add_executable(lmf
-  lmf_main.cpp
+add_executable(amf
+  amf_main.cpp
 )
-target_link_libraries(lmf
+target_link_libraries(amf
   mlpack
 )
-install(TARGETS lmf RUNTIME DESTINATION bin)
+install(TARGETS amf RUNTIME DESTINATION bin)

@@ -6,15 +6,15 @@
  */
 #include <mlpack/core.hpp>
 
-#include "nmf.hpp"
+#include <mlpack/methods/amf/amf.hpp>
 
-#include "random_init.hpp"
-#include "mult_dist_update_rules.hpp"
-#include "mult_div_update_rules.hpp"
-#include "als_update_rules.hpp"
+#include <mlpack/methods/amf/init_rules/random_init.hpp>
+#include <mlpack/methods/amf/update_rules/nmf_mult_dist.hpp>
+#include <mlpack/methods/amf/update_rules/nmf_mult_div.hpp>
+#include <mlpack/methods/amf/update_rules/nmf_als.hpp>
 
 using namespace mlpack;
-using namespace mlpack::nmf;
+using namespace mlpack::amf;
 using namespace std;
 
 // Document program.
@@ -104,26 +104,22 @@ int main(int argc, char** argv)
   {
     Log::Info << "Performing NMF with multiplicative distance-based update "
         << "rules." << std::endl;
-    NMF<> nmf(maxIterations, minResidue);
-    nmf.Apply(V, r, W, H);
+    AMF<> amf(maxIterations, minResidue);
+    amf.Apply(V, r, W, H);
   }
   else if (updateRules == "multdiv")
   {
     Log::Info << "Performing NMF with multiplicative divergence-based update "
         << "rules." << std::endl;
-    NMF<RandomInitialization,
-        WMultiplicativeDivergenceRule,
-        HMultiplicativeDivergenceRule> nmf(maxIterations, minResidue);
-    nmf.Apply(V, r, W, H);
+    AMF<RandomInitialization, NMFMultiplicativeDivergenceUpdate> amf(maxIterations, minResidue);
+    amf.Apply(V, r, W, H);
   }
   else if (updateRules == "als")
   {
     Log::Info << "Performing NMF with alternating least squared update rules."
         << std::endl;
-    NMF<RandomInitialization,
-        WAlternatingLeastSquaresRule,
-        HAlternatingLeastSquaresRule> nmf(maxIterations, minResidue);
-    nmf.Apply(V, r, W, H);
+    AMF<RandomInitialization, NMFALSUpdate> amf(maxIterations, minResidue);
+    amf.Apply(V, r, W, H);
   }
 
   // Save results.

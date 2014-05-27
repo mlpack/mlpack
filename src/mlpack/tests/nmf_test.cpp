@@ -5,10 +5,10 @@
  * Test file for NMF class.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/nmf/nmf.hpp>
-#include <mlpack/methods/nmf/random_acol_init.hpp>
-#include <mlpack/methods/nmf/mult_div_update_rules.hpp>
-#include <mlpack/methods/nmf/als_update_rules.hpp>
+#include <mlpack/methods/amf/amf.hpp>
+#include <mlpack/methods/amf/init_rules/random_acol_init.hpp>
+#include <mlpack/methods/amf/update_rules/nmf_mult_div.hpp>
+#include <mlpack/methods/amf/update_rules/nmf_als.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_SUITE(NMFTest);
 using namespace std;
 using namespace arma;
 using namespace mlpack;
-using namespace mlpack::nmf;
+using namespace mlpack::amf;
 
 /**
  * Check the if the product of the calculated factorization is close to the
@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(NMFDefaultTest)
   mat v = w * h;
   size_t r = 16;
 
-  NMF<> nmf;
+  AMF<> nmf;
   nmf.Apply(v, r, w, h);
 
   mat wh = w * h;
@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(NMFAcolDistTest)
   mat v = w * h;
   size_t r = 16;
 
-  NMF<RandomAcolInitialization<> > nmf;
+  AMF<RandomAcolInitialization<> > nmf;
   nmf.Apply(v, r, w, h);
 
   mat wh = w * h;
@@ -73,9 +73,7 @@ BOOST_AUTO_TEST_CASE(NMFRandomDivTest)
   mat v = w * h;
   size_t r = 16;
 
-  NMF<RandomInitialization,
-      WMultiplicativeDivergenceRule,
-      HMultiplicativeDivergenceRule> nmf;
+  AMF<RandomInitialization, NMFMultiplicativeDivergenceUpdate> nmf;
   nmf.Apply(v, r, w, h);
 
   mat wh = w * h;
@@ -97,9 +95,7 @@ BOOST_AUTO_TEST_CASE(NMFALSTest)
   mat v = w * h;
   size_t r = 16;
 
-  NMF<RandomInitialization,
-      WAlternatingLeastSquaresRule,
-      HAlternatingLeastSquaresRule> nmf(50000, 1e-15);
+  AMF<RandomInitialization, NMFALSUpdate> nmf(50000, 1e-15);
   nmf.Apply(v, r, w, h);
 
   const mat wh = w * h;
@@ -125,7 +121,7 @@ BOOST_AUTO_TEST_CASE(SparseNMFDefaultTest)
   size_t r = 18;
 
   // It seems to hit the iteration limit first.
-  NMF<> nmf(10000, 1e-20);
+  AMF<> nmf(10000, 1e-20);
   mlpack::math::RandomSeed(1000); // Set random seed so results are the same.
   nmf.Apply(v, r, w, h);
   mlpack::math::RandomSeed(1000);
@@ -163,7 +159,7 @@ BOOST_AUTO_TEST_CASE(SparseNMFAcolDistTest)
   mat dw, dh;
   size_t r = 16;
 
-  NMF<RandomAcolInitialization<> > nmf;
+  AMF<RandomAcolInitialization<> > nmf;
   mlpack::math::RandomSeed(1000); // Set random seed so results are the same.
   nmf.Apply(v, r, w, h);
   mlpack::math::RandomSeed(1000);
@@ -201,9 +197,7 @@ BOOST_AUTO_TEST_CASE(SparseNMFRandomDivTest)
   mat dw, dh;
   size_t r = 16;
 
-  NMF<RandomInitialization,
-      WMultiplicativeDivergenceRule,
-      HMultiplicativeDivergenceRule> nmf;
+  AMF<RandomInitialization, NMFMultiplicativeDivergenceUpdate> nmf;
   mlpack::math::RandomSeed(10); // Set random seed so the results are the same.
   nmf.Apply(v, r, w, h);
   mlpack::math::RandomSeed(10);
@@ -241,9 +235,7 @@ BOOST_AUTO_TEST_CASE(SparseNMFALSTest)
   mat dw, dh;
   size_t r = 8;
 
-  NMF<RandomInitialization,
-      WAlternatingLeastSquaresRule,
-      HAlternatingLeastSquaresRule> nmf;
+  AMF<RandomInitialization, NMFALSUpdate> nmf;
   mlpack::math::RandomSeed(40);
   nmf.Apply(v, r, w, h);
   mlpack::math::RandomSeed(40);

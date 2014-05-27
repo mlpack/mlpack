@@ -6,10 +6,10 @@
 #include "init_rules/random_init.hpp"
 
 namespace mlpack {
-namespace lmf {
+namespace amf {
 
 /**
- * This class implements the LMF on the given matrix V. Latent Matrix
+ * This class implements the AMF on the given matrix V. Alternaing Matrix
  * Factorization decomposes V in the form \f$ V \approx WH \f$ where W is
  * called the basis matrix and H is called the encoding matrix. V is taken
  * to be of size n x m and the obtained W is n x r and H is r x m. The size r is
@@ -21,7 +21,7 @@ namespace lmf {
  * user to try various update rules (including ones not supplied with MLPACK)
  * for factorization.
  *
- * A simple example of how to run LMF is shown below.
+ * A simple example of how to run AMF is shown below.
  *
  * @code
  * extern arma::mat V; // Matrix that we want to perform LMF on.
@@ -29,8 +29,8 @@ namespace lmf {
  * arma::mat W; // Basis matrix
  * arma::mat H; // Encoding matrix
  *
- * LMF<> lmf; // Default options
- * lmf.Apply(V, W, H, r);
+ * AMF<> amf; // Default options
+ * amf.Apply(V, W, H, r);
  * @endcode
  *
  * @tparam InitializationRule The initialization rule for initializing W and H
@@ -41,8 +41,8 @@ namespace lmf {
  * @see NMF_MultiplicativeDistanceUpdate
  */
 template<typename InitializationRule = RandomInitialization,
-         typename UpdateRule = NMF_MultiplicativeDistanceUpdate>
-class LMF
+         typename UpdateRule = NMFMultiplicativeDistanceUpdate>
+class AMF
 {
  public:
   /**
@@ -62,7 +62,7 @@ class LMF
    * @param Update Optional UpdateRule object; for when the update rule for
    *     the W and H vector has states that it needs to store
    */
-  LMF(const size_t maxIterations = 10000,
+  AMF(const size_t maxIterations = 10000,
       const double minResidue = 1e-10,
       const InitializationRule initializeRule = InitializationRule(),
       const UpdateRule update = UpdateRule());
@@ -109,12 +109,12 @@ class LMF
   //! Modify the update rule.
   UpdateRule& Update() { return update; }
 
-}; // class LMF
+}; // class AMF
 
-}; // namespace lmf
+}; // namespace amf
 }; // namespace mlpack
 
 // Include implementation.
-#include "lmf_impl.hpp"
+#include "amf_impl.hpp"
 
 #endif

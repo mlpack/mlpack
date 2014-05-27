@@ -8,13 +8,13 @@
  * This method sets each of the columns of W by averaging p randomly chosen
  * columns of V.
  */
-#ifndef __MLPACK_METHODS_NMF_RANDOM_ACOL_INIT_HPP
-#define __MLPACK_METHODS_NMF_RANDOM_ACOL_INIT_HPP
+#ifndef __MLPACK_METHODS_LMF_RANDOM_ACOL_INIT_HPP
+#define __MLPACK_METHODS_LMF_RANDOM_ACOL_INIT_HPP
 
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace nmf {
+namespace amf {
 
 /**
  * This class initializes the W matrix of the NMF algorithm by averaging p
@@ -66,7 +66,7 @@ class RandomAcolInitialization
   }
 }; // Class RandomAcolInitialization
 
-}; // namespace nmf
+}; // namespace amf
 }; // namespace mlpack
 
 #endif

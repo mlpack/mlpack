@@ -1,42 +1,31 @@
-/**
- * @file nmf.cpp
- * @author Mohan Rajendran
- *
- * Implementation of NMF class to perform Non-Negative Matrix Factorization
- * on the given matrix.
- */
-
 namespace mlpack {
-namespace nmf {
+namespace amf {
 
 /**
- * Construct the NMF object.
+ * Construct the LMF object.
  */
 template<typename InitializationRule,
-         typename WUpdateRule,
-         typename HUpdateRule>
-NMF<InitializationRule, WUpdateRule, HUpdateRule>::NMF(
+         typename UpdateRule>
+AMF<InitializationRule, UpdateRule>::AMF(
     const size_t maxIterations,
     const double minResidue,
     const InitializationRule initializeRule,
-    const WUpdateRule wUpdate,
-    const HUpdateRule hUpdate) :
+    const UpdateRule update) :
     maxIterations(maxIterations),
     minResidue(minResidue),
     initializeRule(initializeRule),
-    wUpdate(wUpdate),
-    hUpdate(hUpdate)
+    update(update)
 {
   if (minResidue < 0.0)
   {
-    Log::Warn << "NMF::NMF(): minResidue must be a positive value ("
+    Log::Warn << "AMF::AMF(): minResidue must be a positive value ("
         << minResidue << " given). Setting to the default value of 1e-10.\n";
     this->minResidue = 1e-10;
   }
 }
 
 /**
- * Apply Non-Negative Matrix Factorization to the provided matrix.
+ * Apply Latent Matrix Factorization to the provided matrix.
  *
  * @param V Input matrix to be factorized
  * @param W Basis matrix to be output
@@ -44,10 +33,9 @@ NMF<InitializationRule, WUpdateRule, HUpdateRule>::NMF(
  * @param r Rank r of the factorization
  */
 template<typename InitializationRule,
-         typename WUpdateRule,
-         typename HUpdateRule>
+         typename UpdateRule>
 template<typename MatType>
-void NMF<InitializationRule, WUpdateRule, HUpdateRule>::Apply(
+void AMF<InitializationRule, UpdateRule>::Apply(
     const MatType& V,
     const size_t r,
     arma::mat& W,
@@ -72,8 +60,8 @@ void NMF<InitializationRule, WUpdateRule, HUpdateRule>::Apply(
   {
     // Update step.
     // Update the value of W and H based on the Update Rules provided
-    wUpdate.Update(V, W, H);
-    hUpdate.Update(V, W, H);
+    update.WUpdate(V, W, H);
+    update.HUpdate(V, W, H);
 
     // Calculate norm of WH after each iteration.
     WH = W * H;
@@ -90,21 +78,8 @@ void NMF<InitializationRule, WUpdateRule, HUpdateRule>::Apply(
     iteration++;
   }
 
-  Log::Info << "NMF converged to residue of " << sqrt(residue) << " in "
+  Log::Info << "LMF converged to residue of " << sqrt(residue) << " in "
       << iteration << " iterations." << std::endl;
-}
-
-//Return a String of the object
-template<typename InitializationRule,
-         typename WUpdateRule,
-         typename HUpdateRule>
-std::string NMF<InitializationRule, WUpdateRule, HUpdateRule>::ToString() const
-{
-  std::ostringstream convert;
-  convert << "Non negative matrix factorization [" << this << "]" << std::endl;
-  convert << "  Max Iterations: " << maxIterations << std::endl;
-  convert << "  Minimum Residue: " << minResidue<< std::endl;
-  return convert.str();
 }
 
 }; // namespace nmf

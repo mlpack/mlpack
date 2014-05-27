@@ -1,5 +1,5 @@
 /**
- * @file als_update_rules.hpp
+ * @file nmf_als.hpp
  * @author Mohan Rajendran
  *
  * Update rules for the Non-negative Matrix Factorization. This follows a method
@@ -10,38 +10,39 @@
  * \f$ \sqrt{\sum_i \sum_j(V-WH)^2} \f$ by alternately calculating W and H
  * respectively while holding the other matrix constant.
  */
-#ifndef __MLPACK_METHODS_NMF_ALS_UPDATE_RULES_HPP
-#define __MLPACK_METHODS_NMF_ALS_UPDATE_RULES_HPP
+#ifndef __MLPACK_METHODS_LMF_UPDATE_RULES_NMF_ALS_HPP
+#define __MLPACK_METHODS_LMF_UPDATE_RULES_NMF_ALS_HPP
 
 #include <mlpack/core.hpp>
 
 namespace mlpack {
-namespace nmf {
+namespace amf {
 
 /**
- * The update rule for the basis matrix W. The formula used is
- * \f[
- * W^T = \frac{HV^T}{HH^T}
- * \f]
+ * The alternating least square update rules of matrices W and H.
  */
-class WAlternatingLeastSquaresRule
+class NMFALSUpdate
 {
  public:
-  // Empty constructor required for the WUpdateRule template.
-  WAlternatingLeastSquaresRule() { }
+  // Empty constructor required for the UpdateRule template.
+  NMFALSUpdate() { }
 
   /**
-   * The update function that actually updates the W matrix. The function takes
-   * in all the matrices and only changes the value of the W matrix.
+   * The update rule for the basis matrix W. The formula used is
+   * \f[
+   * W^T = \frac{HV^T}{HH^T}
+   * \f]
+   * The function takes in all the matrices and only changes the
+   * value of the W matrix.
    *
    * @param V Input matrix to be factorized.
    * @param W Basis matrix to be updated.
    * @param H Encoding matrix.
    */
   template<typename MatType>
-  inline static void Update(const MatType& V,
-                            arma::mat& W,
-                            const arma::mat& H)
+  inline static void WUpdate(const MatType& V,
+                             arma::mat& W,
+                             const arma::mat& H)
   {
     // The call to inv() sometimes fails; so we are using the psuedoinverse.
     // W = (inv(H * H.t()) * H * V.t()).t();
@@ -56,32 +57,23 @@ class WAlternatingLeastSquaresRule
       }
     }
   }
-};
-
-/**
- * The update rule for the encoding matrix H. The formula used is
- * \f[
- * H = \frac{W^TV}{W^TW}
- * \f]
- */
-class HAlternatingLeastSquaresRule
-{
- public:
-  // Empty constructor required for the HUpdateRule template.
-  HAlternatingLeastSquaresRule() { }
 
   /**
-   * The update function that actually updates the H matrix. The function takes
-   * in all the matrices and only changes the value of the H matrix.
+   * The update rule for the encoding matrix H. The formula used is
+   * \f[
+   * H = \frac{W^TV}{W^TW}
+   * \f]
+   * The function takes in all the matrices and only changes the
+   * value of the H matrix.
    *
    * @param V Input matrix to be factorized.
    * @param W Basis matrix.
    * @param H Encoding matrix to be updated.
    */
   template<typename MatType>
-  inline static void Update(const MatType& V,
-                            const arma::mat& W,
-                            arma::mat& H)
+  inline static void HUpdate(const MatType& V,
+                             const arma::mat& W,
+                             arma::mat& H)
   {
     H = pinv(W.t() * W) * W.t() * V;
 
@@ -96,7 +88,7 @@ class HAlternatingLeastSquaresRule
   }
 };
 
-}; // namespace nmf
+}; // namespace amf
 }; // namespace mlpack
 
 #endif
