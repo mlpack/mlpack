@@ -1,6 +1,6 @@
 #include <mlpack/core.hpp>
 
-#include "lmf.hpp"
+#include "amf.hpp"
 
 #include "init_rules/random_init.hpp"
 #include "update_rules/nmf_mult_dist.hpp"
@@ -8,11 +8,11 @@
 #include "update_rules/nmf_als.hpp"
 
 using namespace mlpack;
-using namespace mlpack::lmf;
+using namespace mlpack::amf;
 using namespace std;
 
 // Document program.
-PROGRAM_INFO("Latent Matrix Factorization", "This program performs "
+PROGRAM_INFO("Alternating Matrix Factorization", "This program performs "
     "matrix factorization on the given dataset, storing the "
     "resulting decomposed matrices in the specified files.  For an input "
     "dataset V, LMF decomposes V into two matrices W and H such that "
@@ -23,7 +23,7 @@ PROGRAM_INFO("Latent Matrix Factorization", "This program performs "
     " then W will be of size (n x r) and H will be of size (r x m), where r is "
     "the rank of the factorization (specified by --rank)."
     "\n\n"
-    "Optionally, the desired update rules for each LMF iteration can be chosen "
+    "Optionally, the desired update rules for each AMF iteration can be chosen "
     "from the following list:"
     "\n\n"
     " - multdist: multiplicative distance-based update rules (Lee and Seung "
@@ -41,7 +41,7 @@ PROGRAM_INFO("Latent Matrix Factorization", "This program performs "
     "--min_residue.");
 
 // Parameters for program.
-PARAM_STRING_REQ("input_file", "Input dataset to perform NMF on.", "i");
+PARAM_STRING_REQ("input_file", "Input dataset to perform AMF on.", "i");
 PARAM_STRING_REQ("w_file", "File to save the calculated W matrix to.", "W");
 PARAM_STRING_REQ("h_file", "File to save the calculated H matrix to.", "H");
 PARAM_INT_REQ("rank", "Rank of the factorization.", "r");
@@ -100,24 +100,24 @@ int main(int argc, char** argv)
   // Perform NMF with the specified update rules.
   if (updateRules == "multdist")
   {
-    Log::Info << "Performing LMF with multiplicative distance-based update(Non-negative Matrix Factorization) "
+    Log::Info << "Performing AMF with multiplicative distance-based update(Non-negative Matrix Factorization) "
         << "rules." << std::endl;
-    LMF<> nmf(maxIterations, minResidue);
-    nmf.Apply(V, r, W, H);
+    AMF<> amf(maxIterations, minResidue);
+    amf.Apply(V, r, W, H);
   }
   else if (updateRules == "multdiv")
   {
     Log::Info << "Performing NMF with multiplicative divergence-based update(Non-negative Matrix Factorization) "
         << "rules." << std::endl;
-    LMF<RandomInitialization,NMF_MultiplicativeDivergenceUpdate> lmf(maxIterations, minResidue);
-    lmf.Apply(V, r, W, H);
+    AMF<RandomInitialization,NMFMultiplicativeDivergenceUpdate> amf(maxIterations, minResidue);
+    amf.Apply(V, r, W, H);
   }
   else if (updateRules == "als")
   {
     Log::Info << "Performing NMF with alternating least squared update rules.(Non-negative Matrix Factorization)"
         << std::endl;
-    LMF<RandomInitialization, NMF_ALSUpdate> lmf(maxIterations, minResidue);
-    lmf.Apply(V, r, W, H);
+    AMF<RandomInitialization, NMFALSUpdate> amf(maxIterations, minResidue);
+    amf.Apply(V, r, W, H);
   }
 
   // Save results.
