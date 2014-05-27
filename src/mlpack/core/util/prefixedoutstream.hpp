@@ -5,8 +5,8 @@
  *
  * Declaration of the PrefixedOutStream class.
  */
-#ifndef __MLPACK_CORE_IO_PREFIXEDOUTSTREAM_HPP
-#define __MLPACK_CORE_IO_PREFIXEDOUTSTREAM_HPP
+#ifndef __MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_HPP
+#define __MLPACK_CORE_UTIL_PREFIXEDOUTSTREAM_HPP
 
 #include <iostream>
 #include <iomanip>
