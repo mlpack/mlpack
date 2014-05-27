@@ -9,7 +9,7 @@
 #ifndef __MLPACK_CORE_DATA_NORMALIZE_LABELS_HPP
 #define __MLPACK_CORE_DATA_NORMALIZE_LABELS_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 namespace mlpack {
 namespace data {
