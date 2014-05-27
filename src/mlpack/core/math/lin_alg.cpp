@@ -5,6 +5,7 @@
  * Linear algebra utilities.
  */
 #include "lin_alg.hpp"
+#include <mlpack/core.hpp>
 
 using namespace mlpack;
 using namespace math;
