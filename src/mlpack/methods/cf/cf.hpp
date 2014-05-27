@@ -12,8 +12,8 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
-#include <mlpack/methods/lmf/lmf.hpp>
-#include <mlpack/methods/lmf/update_rules/nmf_als.hpp>
+#include <mlpack/methods/amf/amf.hpp>
+#include <mlpack/methods/amf/update_rules/nmf_als.hpp>
 #include <set>
 #include <map>
 #include <iostream>
@@ -54,8 +54,8 @@ namespace cf /** Collaborative filtering. */{
  *     Apply(arma::sp_mat& data, size_t rank, arma::mat& W, arma::mat& H).
  */
 template<
-    typename FactorizerType = lmf::LMF<lmf::RandomInitialization, 
-                                       lmf::NMF_ALSUpdate> >
+    typename FactorizerType = amf::AMF<amf::RandomInitialization, 
+                                       amf::NMFALSUpdate> >
 class CF
 {
  public:

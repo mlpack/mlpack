@@ -47,7 +47,7 @@
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 #include <mlpack/methods/lsh/lsh_search.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
-#include <mlpack/methods/nmf/nmf.hpp>
+#include <mlpack/methods/amf/amf.hpp>
 #include <mlpack/methods/nca/nca.hpp>
 #include <mlpack/methods/pca/pca.hpp>
 #include <mlpack/methods/radical/radical.hpp>
@@ -428,15 +428,17 @@ BOOST_AUTO_TEST_CASE(NeighborString)
   BOOST_REQUIRE_NE(s, "");
 }
 
+/*
 BOOST_AUTO_TEST_CASE(NMFString)
 {
   arma::mat c(40, 40);
   c.randn();
-  mlpack::nmf::NMF<> d;
+  mlpack::amf::AMF<> d;
   Log::Debug << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
+*/
 
 BOOST_AUTO_TEST_CASE(NCAString)
 {

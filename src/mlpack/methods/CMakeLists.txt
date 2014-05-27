@@ -1,5 +1,6 @@
 # Recurse into each method mlpack provides.
 set(DIRS
+  amf
   cf
   det
   emst
@@ -18,7 +19,7 @@ set(DIRS
   nca
   neighbor_search
   nmf
-  lmf
+#  lmf
   pca
   radical
   range_search
