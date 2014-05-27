@@ -138,40 +138,10 @@
  *   - Andrew Wells <andrewmw94@gmail.com>
  */
 
-// First, standard includes.
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <limits.h>
-#include <float.h>
-#include <stdint.h>
-#include <iostream>
+// First, include all of the prerequisites.
+#include <mlpack/prereqs.hpp>
 
-// Defining _USE_MATH_DEFINES should set M_PI.
-#define _USE_MATH_DEFINES
-#include <math.h>
-
-// For tgamma().
-#include <boost/math/special_functions/gamma.hpp>
-
-// But if it's not defined, we'll do it.
-#ifndef M_PI
-  #define M_PI 3.141592653589793238462643383279
-#endif
-
-// Give ourselves a nice way to force functions to be inline if we need.
-#define force_inline
-#if defined(__GNUG__) && !defined(DEBUG)
-  #undef force_inline
-  #define force_inline __attribute__((always_inline))
-#elif defined(_MSC_VER) && !defined(DEBUG)
-  #undef force_inline
-  #define force_inline __forceinline
-#endif
-
-// Now MLPACK-specific includes.
-#include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.
+// Now the core mlpack classes.
 #include <mlpack/core/util/arma_traits.hpp>
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/cli.hpp>
