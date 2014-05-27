@@ -10,6 +10,7 @@
 
 // In case it hasn't been included already.
 #include "save_restore_utility.hpp"
+#include "log.hpp"
 
 namespace mlpack {
 namespace util {

@@ -10,6 +10,7 @@
 #ifndef __MLPACK_CORE_UTIL_SAVE_RESTORE_MODEL_HPP
 #define __MLPACK_CORE_UTIL_SAVE_RESTORE_MODEL_HPP
 
+#include <mlpack/prereqs.hpp>
 #include <list>
 #include <map>
 #include <sstream>
@@ -19,7 +20,6 @@
 #include <libxml/tree.h>
 
 #include <boost/tokenizer.hpp>
-#include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace util {
