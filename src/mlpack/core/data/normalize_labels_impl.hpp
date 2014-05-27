@@ -8,7 +8,8 @@
 #ifndef __MLPACK_CORE_DATA_NORMALIZE_LABELS_IMPL_HPP
 #define __MLPACK_CORE_DATA_NORMALIZE_LABELS_IMPL_HPP
 
-#include <mlpack/core.hpp>
+// In case it hasn't been included yet.
+#include "normalize_labels.hpp"
 
 namespace mlpack {
 namespace data {
