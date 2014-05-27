@@ -7,7 +7,7 @@
 #ifndef __MLPACK_CORE_MATH_LIN_ALG_HPP
 #define __MLPACK_CORE_MATH_LIN_ALG_HPP
 
-#include <mlpack/core.hpp>
+#include <mlpack/prereqs.hpp>
 
 /**
  * Linear algebra utility functions, generally performed on matrices or vectors.
