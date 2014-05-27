@@ -100,10 +100,6 @@
  *
  * @section remarks Final Remarks
  *
- * This software was written in the FASTLab (http://www.fast-lab.org), which is
- * in the School of Computational Science and Engineering at the Georgia
- * Institute of Technology.
- *
  * MLPACK contributors include:
  *
  *   - Ryan Curtin <gth671b@mail.gatech.edu>
