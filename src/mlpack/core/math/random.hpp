@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <float.h>
+#include <stdint.h>
 
 #include <boost/random.hpp>
 
