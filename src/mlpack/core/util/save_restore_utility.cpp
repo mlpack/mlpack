@@ -5,7 +5,7 @@
  * The SaveRestoreUtility provides helper functions in saving and
  *   restoring models.  The current output file type is XML.
  */
-#include "save_restore_utility.hpp"
+#include <mlpack/core.hpp>
 
 using namespace mlpack;
 using namespace mlpack::util;
