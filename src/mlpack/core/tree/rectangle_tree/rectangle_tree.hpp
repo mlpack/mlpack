@@ -159,8 +159,20 @@ class RectangleTree
   //! Get the centroid of the node and store it in the given vector.
   void Centroid(arma::vec& centroid) { bound.Centroid(centroid); }
 
+  // TODO.  Think of a better name that makes the difference here obvious.
+
   //! Return the number of children in this node.
   size_t NumChildren() const;
+
+  //! Return the number of child nodes.  (One level beneath this one only.)
+  size_t getNumOfChildren() const { return numOfChildren; }
+  //! Modify the number of child nodes.  Be careful.
+  size_t& getNumOfChildren() { return numOfChildren; }
+
+  //! Get the children of this node.
+  const std::vector<RectangleTree*>& getChildren() const { return children; }
+  //! Modify the children of this node.
+  std::vector<RectangleTree*>& getChildren() { return children; }
 
   /**
    * Return the furthest distance to a point held in this node.  If this is not

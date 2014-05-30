@@ -13,7 +13,7 @@ namespace mlpack {
 namespace tree {
 
 template<typename MatType>
-bool RTreeSplit<MatType>::SplitLeafNode(const RectangleTree& tree)
+void RTreeSplit<MatType>::SplitLeafNode(const RectangleTree& tree)
 {
   // Use the quadratic split method from: Guttman "R-Trees: A Dynamic Index Structure for
   // Spatial Searching"  It is simplified since we don't handle rectangles, only points.
@@ -28,7 +28,28 @@ bool RTreeSplit<MatType>::SplitLeafNode(const RectangleTree& tree)
   treeTwo.insertPoint(tree.dataset[j]);
 
   AssignPointDestNode(tree, treeOne, treeTwo, i, j);
-  return true;
+  
+  RectangleTree* par = tree.parent();
+  int index = 0;
+  for(int i = 0; i < par.numOfChildren(); i++) {
+    if(par.getChildren()[i] == this) {
+      index = i;
+      break;
+    }
+  }
+  par.getChildren()[i] = treeOne;
+  par.getChildren()[par.end++] = treeTwo;
+
+  delete tree;
+
+  // we only add one at a time, so should only need to test for equality
+  // just in case, we use an assert.
+  boost::assert(numChildren <= maxNumChildren);
+
+  if(par.numOfChildren() == par.maxNumChildren) {
+    SplitNonLeafNode(par);
+  }
+  return;
 }
 
 bool RTreeSplit<MatType>::SplitNonLeafNode(const RectangleTree& tree)
@@ -103,6 +124,7 @@ void RTreeSplit<MatType>::GetBoundSeeds(const RectangleTree& tree, int* iRet, in
   return;
 }
 
+
 void RTreeSplit<MatType>::AssignPointDestNode(
     const RectangleTree& oldTree,
     RectangleTree& treeOne,
@@ -110,13 +132,16 @@ void RTreeSplit<MatType>::AssignPointDestNode(
     const int intI,
     const int intJ)
 {
+  Log::assert(end > 1); // If this isn't true, the tree is really weird.
   int end = oldTree.count;
-  oldTree.data
-
-
-
+  oldTree.dataset.col(intI) = oldTree.dataset.col(--end); // decrement end
+  oldTree.dataset.col(intJ) = oldTree.dataset.col(--end); // decrement end
     
   int index = 0;
+
+  // In each iteration, we go through all points and find the one that causes the least
+  // increase of volume when added to one of the rectangles.  We then add it to that
+  // rectangle.  
   while() {
     int bestIndex = 0;
     double bestScore = 0;
@@ -163,11 +188,7 @@ void RTreeSplit<MatType>::AssignPointDestNode(
     else
       treeTwo.insertPoint(oldTree.dataset(bestIndex);
 
-    // I have the imaginary removePoint here.  I need to find out more about how fast doing 
-    // various things with arma::mat is before I decide how to "remove" the points from the
-    // dataset.  Make sure this is not accidentally made the function for deleting points.
-    oldTree.removePoint(index);
-    end--;
+    oldTree.dataset.col(bestIndex) = oldTree.dataset.col(--end); // decrement end.
   }
 
 
