@@ -36,6 +36,31 @@ private:
  */
 static bool SplitNonLeafNode(const RectangleTree& tree);
 
+/**
+ * Get the seeds for splitting a leaf node.
+ */
+static void GetPointSeeds(const RectangleTree& tree, int &i, int &j);
+
+/**
+ * Get the seeds for splitting a non-leaf node.
+ */
+static void GetBoundSeeds(const RectangleTree& tree, int &i, int &j);
+
+/**
+ * Get the index of the tree 
+ */
+static int GetPointDestNode(
+    const RectangleTree& oldTree,
+    const RectangleTree& treeOne,
+    const RectangleTree& treeTwo,
+    const int index);
+
+static int GetBoundDestNode(
+    const RectangleTree& oldTree,
+    const RectangleTree& treeOne,
+    const RectangleTree& treeTwo,
+    const int index);
+
 };
 
 }; // namespace tree
