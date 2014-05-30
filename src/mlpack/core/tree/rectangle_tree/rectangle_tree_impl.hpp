@@ -22,11 +22,31 @@ template<typename StatisticType,
 	 typename DescentType>
 RectangleTree<StatisticType, MatType, SplitType, DescentType>::RectangleTree(
     MatType& data,
-    const size_t leafSize):
+    const size_t leafSize,
+    const size_t minLeafSize,
+    const size_t maxNumChildren,
+    const size_t minNumChildren):
 
 {
-  //Do the actual stuff here
+  this.maxNumChildren = maxNumChildren;
+  this.minNumChildren = minNumChildren;
+  this.numChildren = 0;
+  this.parent = NULL;
+  this.begin = 0;
+  this.count = 0;
+  this.leafSize = leafSize;
+  this.minLeafSize = minLeafSize;
+  this.bound = new HRectBound(data.n_rows);
+  this.stat = EmptyStatistic;
+  this.parentDistance = 0.0;
+  this.furthestDescendantDistance = 0.0;
+  this.dataset = new MatType(leafSize+1); // Add one to make splitting the node simpler
 
+  // For now, just insert the points in order.
+  // This won't actually work for any meaningful size of data since the root changes.
+  for(int i = 0; i < n_cols; i++) {
+    insertPoint(data.col(i));
+  }
 }
 
 /**
@@ -305,8 +325,12 @@ std::string BinarySpaceTree<StatisticType, MatType, SplitType, DescentType>::ToS
   convert << "  Leaf size: " << leafSize << std::endl;
   convert << "  Split dimension: " << splitDimension << std::endl;
 
-  // How many levels should we print?  This will print the top two tree levels.
-  for(
+  // How many levels should we print?  This will print the root and it's children.
+  if(parent == NULL) {
+    for(int i = 0; i < numChildren; i++) {
+      children[i].ToString();
+    }
+  }
 }
 
 }; //namespace tree

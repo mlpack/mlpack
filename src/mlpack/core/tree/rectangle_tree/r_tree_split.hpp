@@ -47,13 +47,14 @@ static void GetPointSeeds(const RectangleTree& tree, int &i, int &j);
 static void GetBoundSeeds(const RectangleTree& tree, int &i, int &j);
 
 /**
- * Get the index of the tree 
+ * Assign points to the two new nodes.
  */
-static int GetPointDestNode(
+static void AssignPointDestNode(
     const RectangleTree& oldTree,
-    const RectangleTree& treeOne,
-    const RectangleTree& treeTwo,
-    const int index);
+    RectangleTree& treeOne,
+    RectangleTree& treeTwo,
+    const int intI,
+    const int intJ);
 
 static int GetBoundDestNode(
     const RectangleTree& oldTree,
@@ -62,6 +63,15 @@ static int GetBoundDestNode(
     const int index);
 
 };
+
+static double getPointToBoundScore(const HRectBound& bound, const arma::vec& point)
+{
+  double score = 1.0;
+  for(int i = 0; i < bound.dimensions; i++) {
+    return score;
+  }
+}
+
 
 }; // namespace tree
 }; // namespace mlpack

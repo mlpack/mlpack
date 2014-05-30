@@ -23,20 +23,24 @@ bool RTreeSplit<MatType>::SplitLeafNode(const RectangleTree& tree)
   GetPointSeeds(tree, &i, &j);
 
   RectangleTree treeOne = new RectangleTree();
-  treeOne.insertPoint(tree.points[i]);
+  treeOne.insertPoint(tree.dataset[i]);
   RectangleTree treeTwo = new RectangleTree();
-  treeTwo.insertPoint(tree.points[j]);
+  treeTwo.insertPoint(tree.dataset[j]);
 
-  int treeOneCount = 1;
-  int treeTwoCount = 1;
-
-  
-  
+  AssignPointDestNode(tree, treeOne, treeTwo, i, j);
+  return true;
 }
 
 bool RTreeSplit<MatType>::SplitNonLeafNode(const RectangleTree& tree)
 {
-
+  int i = 0;
+  int j = 0;
+  GetBoundSeeds(tree, &i, &j);
+  
+  RectangleTree treeOne = new RectangleTree();
+  treeOne.insertRectangle()
+  RectangleTree treeTwo = new RectangleTree();
+  
 }
 
 /**
@@ -52,10 +56,10 @@ void RTreeSplit<MatType>::GetPointSeeds(const RectangleTree& tree, int* iRet, in
   int worstI = 0;
   int worstJ = 0;
   for(int i = 0; i < tree.count; i++) {
-    for(int j = i; j < tree.count; j++) {
+    for(int j = i+1; j < tree.count; j++) {
       double score = 1.0;
       for(int k = 0; k < dimensions; k++) {
-	score *= std::abs(tree.points[i][k] - tree.points[j][k]);
+	score *= std::abs(tree.dataset[i][k] - tree.dataset[j][k]);
       }
       if(score > worstPairScore) {
 	worstPairScore = score;
@@ -65,10 +69,111 @@ void RTreeSplit<MatType>::GetPointSeeds(const RectangleTree& tree, int* iRet, in
     }
   }
 
-  *iRet = i;
-  *jRet = j;
+  *iRet = worstI;
+  *jRet = worstJ;
   return;
 }
+
+/**
+ * Get the two bounds that will be used as seeds for the split of the node.
+ * The indices of the bounds will be stored in iRet and jRet.
+ */
+void RTreeSplit<MatType>::GetBoundSeeds(const RectangleTree& tree, int* iRet, int* jRet)
+{
+  double worstPairScore = 0.0;
+  int worstI = 0;
+  int worstJ = 0;
+  for(int i = 0; i < tree.numChildren; i++) {
+    for(int j = i+1; j < tree.numChildren; j++) {
+      double score = 1.0;
+      for(int k = 0; k < dimensions; k++) {
+	score *= std::max(tree.children[i].bound[k].hi(), tree.children[j].bound[k].hi) - 
+	  std::min(tree.children[i].bound[k].low(), tree.children[j].bound[k].low());
+      }
+      if(score > worstPairScore) {
+	worstPairScore = score;
+	worstI = i;
+	worstJ = j;
+      }
+    }
+  }
+
+  *iRet = worstI;
+  *jRet = worstJ;
+  return;
+}
+
+void RTreeSplit<MatType>::AssignPointDestNode(
+    const RectangleTree& oldTree,
+    RectangleTree& treeOne,
+    RectangleTree& treeTwo,
+    const int intI,
+    const int intJ)
+{
+  int end = oldTree.count;
+  oldTree.data
+
+
+
+    
+  int index = 0;
+  while() {
+    int bestIndex = 0;
+    double bestScore = 0;
+    int bestRect = 0;
+
+    // Calculate the increase in volume for assigning this point to each rectangle.
+    double volOne = 1.0;
+    double volTwo = 1.0;
+    for(int i = 0; i < bound.Dim(); i++) {
+      volOne *= treeOne.bound[i].width();
+      volTwo *= treeTwo.bound[i].width();
+    }
+
+    for(int j = 0; j < end; j++) {
+      double newVolOne = 1.0;
+      double newVolTwo = 1.0;
+      for(int i = 0; i < bound.Dim(); i++) {
+	double c = oldTree.dataset.col(index)[i];      
+	newVolOne *= treeOne.bound[i].contains(c) ? treeOne.bound[i].width() :
+	  (c < treeOne.bound[i].low() ? (high - c) : (c - low));
+	newVolTwo *= treeTwo.bound[i].contains(c) ? treeTwo.bound[i].width() :
+	  (c < treeTwo.bound[i].low() ? (high - c) : (c - low));
+      }
+    
+      if((newVolOne - volOne) < (newVolTwo - volTwo)) {
+	if(newVolOne - volOne < bestScore) {
+	  bestScore = newVolOne - volOne;
+	  bestIndex = index;
+	  bestRect = 1;
+	}
+      } else {
+	if(newVolTwo - volTwo < bestScore) {
+	  bestScore = newVolTwo - volTwo;
+	  bestIndex = index;
+	  bestRect = 2;
+	}
+      }
+    }
+
+    // Assign the point that causes the least increase in volume 
+    // to the appropriate rectangle.
+    if(bestRect == 1)
+      treeOne.insertPoint(oldTree.dataset(bestIndex);
+    else
+      treeTwo.insertPoint(oldTree.dataset(bestIndex);
+
+    // I have the imaginary removePoint here.  I need to find out more about how fast doing 
+    // various things with arma::mat is before I decide how to "remove" the points from the
+    // dataset.  Make sure this is not accidentally made the function for deleting points.
+    oldTree.removePoint(index);
+    end--;
+  }
+
+
+}
+
+
 
 
 

@@ -34,8 +34,10 @@ template<typename StatisticType = EmptyStatistic,
 class RectangleTree
 {
  private:
-  //! The max number of child nodes an non-leaf node can have.
+  //! The max number of child nodes a non-leaf node can have.
   size_t maxNumChildren;
+  //! The minimum number of child nodes a non-leaf node can have.
+  size_t minNumChildren;
   //! The number of child nodes actually in use (0 if this is a leaf node).
   size_t numOfChildren;
   //! The child nodes (Starting at 0 and ending at (numOfChildren-1) ).
@@ -50,6 +52,8 @@ class RectangleTree
   size_t count;
   //! The leaf size.
   size_t leafSize;
+  //! The minimum leaf size.
+  size_t minLeafSize;
   //! The bound object for this node.
   HRectBound bound;
   //! Any extra data contained in the node.
