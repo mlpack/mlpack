@@ -78,7 +78,7 @@ void AMF<InitializationRule, UpdateRule>::Apply(
     iteration++;
   }
 
-  Log::Info << "LMF converged to residue of " << sqrt(residue) << " in "
+  Log::Info << "AMF converged to residue of " << sqrt(residue) << " in "
       << iteration << " iterations." << std::endl;
 }
 
