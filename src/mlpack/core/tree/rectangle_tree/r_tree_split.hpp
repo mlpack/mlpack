@@ -24,15 +24,17 @@ class RTreeSplit
 public:
 
 /**
- * Split a leaf node using the "default" algorithm.  The methods for splitting non-leaf
- * nodes are private since they should only be called if a leaf node overflows.
+ * Split a leaf node using the "default" algorithm.  If necessary, this split will propagate
+ * upwards through the tree.  The methods for splitting non-leaf nodes are private since
+ * they should only be called if a leaf node overflows.
  */
 static bool SplitLeafNode(const RectangleTree& tree);
 
 private:
 
 /**
- * Split a non-leaf node using the "default" algorithm.
+ * Split a non-leaf node using the "default" algorithm.  If this is the root node and
+ * we need to move up the tree, a new root node is created.
  */
 static bool SplitNonLeafNode(const RectangleTree& tree);
 
@@ -56,21 +58,15 @@ static void AssignPointDestNode(
     const int intI,
     const int intJ);
 
-static int GetBoundDestNode(
+/**
+ * Assign nodes to the two new nodes.
+ */
+static void AssignNodeDestNode(
     const RectangleTree& oldTree,
-    const RectangleTree& treeOne,
-    const RectangleTree& treeTwo,
-    const int index);
-
-};
-
-static double getPointToBoundScore(const HRectBound& bound, const arma::vec& point)
-{
-  double score = 1.0;
-  for(int i = 0; i < bound.dimensions; i++) {
-    return score;
-  }
-}
+    RectangleTree& treeOne,
+    RectangleTree& treeTwo,
+    const int intI,
+    const int intJ);
 
 
 }; // namespace tree
