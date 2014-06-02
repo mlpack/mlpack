@@ -45,12 +45,14 @@ class RectangleTree
   //! The parent node (NULL if this is the root of the tree).
   RectangleTree* parent;
   //! The index of the first point in the dataset contained in this node (and
-  //! its children).
+  //! its children).  THIS IS ALWAYS 0 AT THE MOMENT.  IT EXISTS MERELY IN CASE
+  //! I THINK OF A WAY TO CHANGE THAT.  IN OTHER WORDS, IT WILL PROBABLY BE
+  //! REMOVED.
   size_t begin;
   //! The number of points in the dataset contained in this node (and its
-  //! children).
+  //! children).  
   size_t count;
-  //! The leaf size.
+  //! The leaf size.  (Maximum allowable leaf size.)
   size_t leafSize;
   //! The minimum leaf size.
   size_t minLeafSize;
@@ -64,7 +66,7 @@ class RectangleTree
   double furthestDescendantDistance;
   //! The dataset.
   MatType& dataset;
-
+  
  public:
   //! So other classes can use TreeType::Mat.
   typedef MatType Mat;
@@ -92,10 +94,19 @@ class RectangleTree
    * to any nodes which are children of this one.
    */
   ~RectangleTree();
+  
+  /**
+   * Delete this node of the tree, but leave the stuff contained in it intact.
+   * This is used when splitting a node, where the data in this tree is moved to two
+   * other trees.
+   */
+  void softDelete();
 
   /**
    * Inserts a point into the tree. The point will be copied to the data matrix
-   * of the leaf node where it is finally inserted.
+   * of the leaf node where it is finally inserted, but we pass by reference since
+   * it may be passed many times before it actually reaches a leaf.
+   * @param point The point (arma::vec&) to be inserted.
    */
   void InsertPoint(const arma::vec& point);
 
@@ -127,12 +138,12 @@ class RectangleTree
 
   //! Return the bound object for this node.
   const HRectBound& Bound() const { return bound; }
-  //! Return the bound object for this node.
+  //! Modify the bound object for this node.
   HRectBound& Bound() { return bound; }
 
   //! Return the statistic object for this node.
   const StatisticType& Stat() const { return stat; }
-  //! Return the statistic object for this node.
+  //! Modify the statistic object for this node.
   StatisticType& Stat() { return stat; }
 
   //! Return whether or not this node is a leaf (true if it has no children).
@@ -337,7 +348,7 @@ class RectangleTree
 
   /**
    * Splits the current node, recursing up the tree.
-   * CURRENTLY IT DOES NOT Also returns a list of the changed indices.
+   * CURRENTLY IT DOES NOT Also returns a list of the changed indices (because there are none).
    *
    * @param data Dataset which we are using.
    * @param oldFromNew Vector holding permuted indices NOT IMPLEMENTED.
