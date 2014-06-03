@@ -24,13 +24,13 @@ template<typename BoundType,
          typename SplitType>
 BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
     MatType& data,
-    const size_t leafSize) :
+    const size_t maxLeafSize) :
     left(NULL),
     right(NULL),
     parent(NULL),
     begin(0), /* This root node starts at index 0, */
     count(data.n_cols), /* and spans all of the dataset. */
-    leafSize(leafSize),
+    maxLeafSize(maxLeafSize),
     bound(data.n_rows),
     parentDistance(0), // Parent distance for the root is 0: it has no parent.
     dataset(data)
@@ -49,13 +49,13 @@ template<typename BoundType,
 BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
     MatType& data,
     std::vector<size_t>& oldFromNew,
-    const size_t leafSize) :
+    const size_t maxLeafSize) :
     left(NULL),
     right(NULL),
     parent(NULL),
     begin(0),
     count(data.n_cols),
-    leafSize(leafSize),
+    maxLeafSize(maxLeafSize),
     bound(data.n_rows),
     parentDistance(0), // Parent distance for the root is 0: it has no parent.
     dataset(data)
@@ -80,13 +80,13 @@ BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
     MatType& data,
     std::vector<size_t>& oldFromNew,
     std::vector<size_t>& newFromOld,
-    const size_t leafSize) :
+    const size_t maxLeafSize) :
     left(NULL),
     right(NULL),
     parent(NULL),
     begin(0),
     count(data.n_cols),
-    leafSize(leafSize),
+    maxLeafSize(maxLeafSize),
     bound(data.n_rows),
     parentDistance(0), // Parent distance for the root is 0: it has no parent.
     dataset(data)
@@ -117,13 +117,13 @@ BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
     const size_t begin,
     const size_t count,
     BinarySpaceTree* parent,
-    const size_t leafSize) :
+    const size_t maxLeafSize) :
     left(NULL),
     right(NULL),
     parent(parent),
     begin(begin),
     count(count),
-    leafSize(leafSize),
+    maxLeafSize(maxLeafSize),
     bound(data.n_rows),
     dataset(data)
 {
@@ -144,13 +144,13 @@ BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
     const size_t count,
     std::vector<size_t>& oldFromNew,
     BinarySpaceTree* parent,
-    const size_t leafSize) :
+    const size_t maxLeafSize) :
     left(NULL),
     right(NULL),
     parent(parent),
     begin(begin),
     count(count),
-    leafSize(leafSize),
+    maxLeafSize(maxLeafSize),
     bound(data.n_rows),
     dataset(data)
 {
@@ -176,13 +176,13 @@ BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
     std::vector<size_t>& oldFromNew,
     std::vector<size_t>& newFromOld,
     BinarySpaceTree* parent,
-    const size_t leafSize) :
+    const size_t maxLeafSize) :
     left(NULL),
     right(NULL),
     parent(parent),
     begin(begin),
     count(count),
-    leafSize(leafSize),
+    maxLeafSize(maxLeafSize),
     bound(data.n_rows),
     dataset(data)
 {
@@ -212,7 +212,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType>::BinarySpaceTree() :
     count(0),
     bound(),
     stat(),
-    leafSize(20) // Default leaf size is 20.
+    maxLeafSize(20) // Default max leaf size is 20.
 {
   // Nothing to do.
 }*/
@@ -232,7 +232,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
     parent(other.parent),
     begin(other.begin),
     count(other.count),
-    leafSize(other.leafSize),
+    maxLeafSize(other.maxLeafSize),
     bound(other.bound),
     stat(other.stat),
     splitDimension(other.splitDimension),
@@ -561,7 +561,7 @@ void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::SplitNode(
   furthestDescendantDistance = 0.5 * bound.Diameter();
 
   // Now, check if we need to split at all.
-  if (count <= leafSize)
+  if (count <= maxLeafSize)
     return; // We can't split this.
 
   // splitCol denotes the two partitions of the dataset after the split. The
@@ -582,9 +582,9 @@ void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::SplitNode(
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
   left = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, begin,
-      splitCol - begin, this, leafSize);
+      splitCol - begin, this, maxLeafSize);
   right = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, splitCol,
-      begin + count - splitCol, this, leafSize);
+      begin + count - splitCol, this, maxLeafSize);
 
   // Calculate parent distances for those two nodes.
   arma::vec centroid, leftCentroid, rightCentroid;
@@ -617,7 +617,7 @@ void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::SplitNode(
   furthestDescendantDistance = 0.5 * bound.Diameter();
 
   // First, check if we need to split at all.
-  if (count <= leafSize)
+  if (count <= maxLeafSize)
     return; // We can't split this.
 
   // splitCol denotes the two partitions of the dataset after the split. The
@@ -639,9 +639,9 @@ void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::SplitNode(
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
   left = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, begin,
-      splitCol - begin, oldFromNew, this, leafSize);
+      splitCol - begin, oldFromNew, this, maxLeafSize);
   right = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, splitCol,
-      begin + count - splitCol, oldFromNew, this, leafSize);
+      begin + count - splitCol, oldFromNew, this, maxLeafSize);
 
   // Calculate parent distances for those two nodes.
   arma::vec centroid, leftCentroid, rightCentroid;
@@ -676,7 +676,7 @@ std::string BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
   convert << mlpack::util::Indent(bound.ToString(), 2);
   convert << "  Statistic: " << std::endl;
   convert << mlpack::util::Indent(stat.ToString(), 2);
-  convert << "  Leaf size: " << leafSize << std::endl;
+  convert << "  Max leaf size: " << maxLeafSize << std::endl;
   convert << "  Split dimension: " << splitDimension << std::endl;
 
   // How many levels should we print?  This will print the top two tree levels.
