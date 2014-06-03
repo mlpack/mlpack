@@ -1,5 +1,6 @@
 /**
  * @file rectangle_tree_impl.hpp
+ * @author Andrew Wells
  *
  * Implementation of generalized rectangle tree.
  */
@@ -22,7 +23,7 @@ template<typename StatisticType,
 	 typename DescentType>
 RectangleTree<StatisticType, MatType, SplitType, DescentType>::RectangleTree(
     MatType& data,
-    const size_t leafSize,
+    const size_t maxLeafSize,
     const size_t minLeafSize,
     const size_t maxNumChildren,
     const size_t minNumChildren):
@@ -34,13 +35,13 @@ RectangleTree<StatisticType, MatType, SplitType, DescentType>::RectangleTree(
   this.parent = NULL;
   this.begin = 0;
   this.count = 0;
-  this.leafSize = leafSize;
+  this.maxLeafSize = maxLeafSize;
   this.minLeafSize = minLeafSize;
   this.bound = new HRectBound(data.n_rows);
   this.stat = EmptyStatistic;
   this.parentDistance = 0.0;
   this.furthestDescendantDistance = 0.0;
-  this.dataset = new MatType(leafSize+1); // Add one to make splitting the node simpler
+  this.dataset = new MatType(maxLeafSize+1); // Add one to make splitting the node simpler
 
   // For now, just insert the points in order.
   // This won't actually work for any meaningful size of data since the root changes.
@@ -296,7 +297,7 @@ void RectangleTree<StatisticType, MatType, SplitType, DescentType>::SplitNode(
   boost::assert(numChildren == 0);
 
   // See if we are full.
-  if(points < leafSize)
+  if(points < maxLeafSize)
     return;
   
   // If we are full, then we need to move up the tree.  The SplitType takes
@@ -322,7 +323,7 @@ std::string BinarySpaceTree<StatisticType, MatType, SplitType, DescentType>::ToS
   convert << mlpack::util::Indent(bound.ToString(), 2);
   convert << "  Statistic: " << std::endl;
   convert << mlpack::util::Indent(stat.ToString(), 2);
-  convert << "  Leaf size: " << leafSize << std::endl;
+  convert << "  Max leaf size: " << maxLeafSize << std::endl;
   convert << "  Split dimension: " << splitDimension << std::endl;
 
   // How many levels should we print?  This will print the root and it's children.

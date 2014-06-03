@@ -8,6 +8,7 @@
 #define __MLPACK_CORE_TREE_RECTANGLE_TREE_R_TREE_SPLIT_IMPL_HPP
 
 #include "r_tree_split.hpp"
+#include <mlpack/core/math/range.hpp>
 
 namespace mlpack {
 namespace tree {
@@ -65,7 +66,8 @@ void RTreeSplit<MatType>::SplitLeafNode(const RectangleTree& tree)
  * We call GetBoundSeeds to get the two new nodes that this one will be broken
  * into.  Then we call AssignNodeDestNode to move the children of this node
  * into either of those two nodes.  Finally, we delete the now unused information
- * and recurse up the tree if necessary.
+ * and recurse up the tree if necessary.  We don't need to worry about the bounds
+ * higher up the tree because they were already updated if necessary.
  */
 bool RTreeSplit<MatType>::SplitNonLeafNode(const RectangleTree& tree)
 {
@@ -182,12 +184,15 @@ void RTreeSplit<MatType>::AssignPointDestNode(
   treeTwo.insertPoint(oldTree.dataset.col(intJ));
   oldTree.dataset.col(intJ) = oldTree.dataset.col(--end); // decrement end
   
-  int index = 0;
+
+  int numAssignedOne = 1;
+  int numAssignedTwo = 1;
 
   // In each iteration, we go through all points and find the one that causes the least
   // increase of volume when added to one of the rectangles.  We then add it to that
-  // rectangle.  
-  while() {
+  // rectangle.  We stop when we run out of points or when all of the remaining points
+  // need to be assigned to the same rectangle to satisfy the minimum fill requirement.
+  while(end > 1 && end < oldTree.minLeafSize() - std::min(numAssignedOne, numAssignedTwo)) {
     int bestIndex = 0;
     double bestScore = 0;
     int bestRect = 0;
@@ -200,7 +205,9 @@ void RTreeSplit<MatType>::AssignPointDestNode(
       volTwo *= treeTwo.bound[i].width();
     }
 
-    for(int j = 0; j < end; j++) {
+    // Find the point that, when assigned to one of the two new rectangles, minimizes the increase
+    // in volume.
+    for(int index = 0; index < end; index++) {
       double newVolOne = 1.0;
       double newVolTwo = 1.0;
       for(int i = 0; i < bound.Dim(); i++) {
@@ -211,6 +218,7 @@ void RTreeSplit<MatType>::AssignPointDestNode(
 	  (c < treeTwo.bound[i].low() ? (high - c) : (c - low));
       }
     
+      // Choose the rectangle that requires the lesser increase in volume.
       if((newVolOne - volOne) < (newVolTwo - volTwo)) {
 	if(newVolOne - volOne < bestScore) {
 	  bestScore = newVolOne - volOne;
@@ -234,6 +242,19 @@ void RTreeSplit<MatType>::AssignPointDestNode(
       treeTwo.insertPoint(oldTree.dataset(bestIndex);
 
     oldTree.dataset.col(bestIndex) = oldTree.dataset.col(--end); // decrement end.
+  }
+
+  // See if we need to satisfy the minimum fill.
+  if(end > 1) {
+    if(numAssignedOne < numAssignedTwo) {
+      for(int i = 0; i < end; i++) {
+        treeOne.insertPoint(oldTree.dataset(i);
+      }
+    } else {
+      for(int i = 0; i < end; i++) {
+        treeTwo.insertPoint(oldTree.dataset(i);
+      }
+    }
   }
 }
 
@@ -253,17 +274,18 @@ void RTreeSplit<MatType>::AssignNodeDestNode(
   treeTwo.getChildren()[0] = oldTree.getChildren()[intJ];
   oldTree.getChildren()[intJ] = oldTree.getChildren()[--end]; // decrement end
  
-  int index = 0;
+  int numAssignTreeOne = 1;
+  int numAssignTreeTwo = 1;
 
   // In each iteration, we go through all of the nodes and find the one that causes the least
   // increase of volume when added to one of the two new rectangles.  We then add it to that
   // rectangle.
-  while() {
+  while(end > 1 && end < oldTree.getMinNumChildren() - std::min(numAssignTreeOne, numAssignTreeTwo)) {
     int bestIndex = 0;
     double bestScore = 0;
     int bestRect = 0;
 
-    // Calculate the increase in volume for assigning this point to each rectangle.
+    // Calculate the increase in volume for assigning this node to each of the new rectangles.
     double volOne = 1.0;
     double volTwo = 1.0;
     for(int i = 0; i < bound.Dim(); i++) {
@@ -271,17 +293,22 @@ void RTreeSplit<MatType>::AssignNodeDestNode(
       volTwo *= treeTwo.bound[i].width();
     }
 
-    for(int j = 0; j < end; j++) {
+    for(int index = 0; index < end; index++) {
       double newVolOne = 1.0;
       double newVolTwo = 1.0;
       for(int i = 0; i < bound.Dim(); i++) {
-	double c = oldTree.dataset.col(index)[i];      
-	newVolOne *= treeOne.bound[i].contains(c) ? treeOne.bound[i].width() :
-	  (c < treeOne.bound[i].low() ? (high - c) : (c - low));
-	newVolTwo *= treeTwo.bound[i].contains(c) ? treeTwo.bound[i].width() :
-	  (c < treeTwo.bound[i].low() ? (high - c) : (c - low));
+	// For each of the new rectangles, find the width in this dimension if we add the rectangle at index to
+	// the new rectangle.
+	math::range range = oldTree.getChildren()[index].Bound(i);
+	newVolOne *= treeOne.Bound(i).Contains(range) ? treeOne.bound[i].width() :
+	  (range.Contains(treeOne.Bound(i)) ? range.width : (range.lo() < treeOne.Bound(i).lo() ? (treeOne.Bound(i).hi() - range.lo()) : 
+		(range.hi() - treeOne.Bound(i).lo())))
+	newVolTwo *= treeTwo.Bound(i).Contains(range) ? treeTwo.bound[i].width() :
+	  (range.Contains(treeTwo.Bound(i)) ? range.width : (range.lo() < treeTwo.Bound(i).lo() ? (treeTwo.Bound(i).hi() - range.lo()) : 
+		(range.hi() - treeTwo.Bound(i).lo())));
       }
     
+      // Choose the rectangle that requires the lesser increase in volume.
       if((newVolOne - volOne) < (newVolTwo - volTwo)) {
 	if(newVolOne - volOne < bestScore) {
 	  bestScore = newVolOne - volOne;
@@ -297,17 +324,38 @@ void RTreeSplit<MatType>::AssignNodeDestNode(
       }
     }
 
-    // Assign the point that causes the least increase in volume 
+    // Assign the rectangle that causes the least increase in volume 
     // to the appropriate rectangle.
     if(bestRect == 1)
-      treeOne.insertPoint(oldTree.dataset(bestIndex);
+      insertNodeIntoTree(treeOne, oldTree.Children()[bestIndex];
     else
-      treeTwo.insertPoint(oldTree.dataset(bestIndex);
+      insertNodeIntoTree(treeTwo, oldTree.Children()[bestIndex];
 
-    oldTree.dataset.col(bestIndex) = oldTree.dataset.col(--end); // decrement end.
+    oldTree.Children()[bestIndex] = oldTree.Children()[--end]; // Decrement end.
   }
+  // See if we need to satisfy the minimum fill.
+  if(end > 1) {
+    if(numAssignedOne < numAssignedTwo) {
+      for(int i = 0; i < end; i++) {
+        insertNodeIntoTree(treeOne, oldTree.Children()[i]);
+      }
+    } else {
+      for(int i = 0; i < end; i++) {
+        insertNodeIntoTree(treeTwo, oldTree.Children()[i]);
+      }
+    }
+  }
+}
 
-
+/**
+  * Insert a node into another node.  Expanding the bounds and updating the numberOfChildren.
+  */
+static void insertNodeIntoTree(
+    RectangleTree& destTree,
+    RectangleTree& srcNode)
+{
+  destTree.Bound() |= srcNode.Bound();
+  destTree.Children()[destTree.getNumOfChildren()++] = &srcNode;
 }
 
 

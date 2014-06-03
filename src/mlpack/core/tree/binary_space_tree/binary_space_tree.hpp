@@ -25,7 +25,7 @@ namespace tree /** Trees and tree-building procedures. */ {
  * rebuild the tree entirely.
  *
  * This tree does take one runtime parameter in the constructor, which is the
- * leaf size to be used.
+ * max leaf size to be used.
  *
  * @tparam BoundType The bound used for each node.  The valid types of bounds
  *     and the necessary skeleton interface for this class can be found in
@@ -56,8 +56,8 @@ class BinarySpaceTree
   //! The number of points of the dataset contained in this node (and its
   //! children).
   size_t count;
-  //! The leaf size.
-  size_t leafSize;
+  //! The max leaf size.
+  size_t maxLeafSize;
   //! The bound object for this node.
   BoundType bound;
   //! Any extra data contained in the node.
@@ -89,9 +89,9 @@ class BinarySpaceTree
    * dataset.  This will modify the ordering of the points in the dataset!
    *
    * @param data Dataset to create tree from.  This will be modified!
-   * @param leafSize Size of each leaf in the tree.
+   * @param maxLeafSize Size of each leaf in the tree.
    */
-  BinarySpaceTree(MatType& data, const size_t leafSize = 20);
+  BinarySpaceTree(MatType& data, const size_t maxLeafSize = 20);
 
   /**
    * Construct this as the root node of a binary space tree using the given
@@ -101,11 +101,11 @@ class BinarySpaceTree
    * @param data Dataset to create tree from.  This will be modified!
    * @param oldFromNew Vector which will be filled with the old positions for
    *     each new point.
-   * @param leafSize Size of each leaf in the tree.
+   * @param maxLeafSize Size of each leaf in the tree.
    */
   BinarySpaceTree(MatType& data,
                   std::vector<size_t>& oldFromNew,
-                  const size_t leafSize = 20);
+                  const size_t maxLeafSize = 20);
 
   /**
    * Construct this as the root node of a binary space tree using the given
@@ -118,12 +118,12 @@ class BinarySpaceTree
    *     each new point.
    * @param newFromOld Vector which will be filled with the new positions for
    *     each old point.
-   * @param leafSize Size of each leaf in the tree.
+   * @param maxLeafSize Size of each leaf in the tree.
    */
   BinarySpaceTree(MatType& data,
                   std::vector<size_t>& oldFromNew,
                   std::vector<size_t>& newFromOld,
-                  const size_t leafSize = 20);
+                  const size_t maxLeafSize = 20);
 
   /**
    * Construct this node on a subset of the given matrix, starting at column
@@ -134,13 +134,13 @@ class BinarySpaceTree
    * @param data Dataset to create tree from.  This will be modified!
    * @param begin Index of point to start tree construction with.
    * @param count Number of points to use to construct tree.
-   * @param leafSize Size of each leaf in the tree.
+   * @param maxLeafSize Size of each leaf in the tree.
    */
   BinarySpaceTree(MatType& data,
                   const size_t begin,
                   const size_t count,
                   BinarySpaceTree* parent = NULL,
-                  const size_t leafSize = 20);
+                  const size_t maxLeafSize = 20);
 
   /**
    * Construct this node on a subset of the given matrix, starting at column
@@ -158,14 +158,14 @@ class BinarySpaceTree
    * @param count Number of points to use to construct tree.
    * @param oldFromNew Vector which will be filled with the old positions for
    *     each new point.
-   * @param leafSize Size of each leaf in the tree.
+   * @param maxLeafSize Size of each leaf in the tree.
    */
   BinarySpaceTree(MatType& data,
                   const size_t begin,
                   const size_t count,
                   std::vector<size_t>& oldFromNew,
                   BinarySpaceTree* parent = NULL,
-                  const size_t leafSize = 20);
+                  const size_t maxLeafSize = 20);
 
   /**
    * Construct this node on a subset of the given matrix, starting at column
@@ -186,7 +186,7 @@ class BinarySpaceTree
    *     each new point.
    * @param newFromOld Vector which will be filled with the new positions for
    *     each old point.
-   * @param leafSize Size of each leaf in the tree.
+   * @param maxLeafSize Size of each leaf in the tree.
    */
   BinarySpaceTree(MatType& data,
                   const size_t begin,
@@ -194,7 +194,7 @@ class BinarySpaceTree
                   std::vector<size_t>& oldFromNew,
                   std::vector<size_t>& newFromOld,
                   BinarySpaceTree* parent = NULL,
-                  const size_t leafSize = 20);
+                  const size_t maxLeafSize = 20);
 
   /**
    * Create a binary space tree by copying the other tree.  Be careful!  This
@@ -251,10 +251,10 @@ class BinarySpaceTree
   //! Return whether or not this node is a leaf (true if it has no children).
   bool IsLeaf() const;
 
-  //! Return the leaf size.
-  size_t LeafSize() const { return leafSize; }
-  //! Modify the leaf size.
-  size_t& LeafSize() { return leafSize; }
+  //! Return the max leaf size.
+  size_t MaxLeafSize() const { return maxLeafSize; }
+  //! Modify the max leaf size.
+  size_t& MaxLeafSize() { return maxLeafSize; }
 
   //! Fills the tree to the specified level.
   size_t ExtendTree(const size_t level);
@@ -440,18 +440,18 @@ class BinarySpaceTree
                   const size_t count,
                   BoundType bound,
                   StatisticType stat,
-                  const int leafSize = 20) :
+                  const int maxLeafSize = 20) :
       left(NULL),
       right(NULL),
       begin(begin),
       count(count),
       bound(bound),
       stat(stat),
-      leafSize(leafSize) { }
+      maxLeafSize(maxLeafSize) { }
 
   BinarySpaceTree* CopyMe()
   {
-    return new BinarySpaceTree(begin, count, bound, stat, leafSize);
+    return new BinarySpaceTree(begin, count, bound, stat, maxLeafSize);
   }
 
   /**
