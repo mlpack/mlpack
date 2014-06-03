@@ -68,6 +68,12 @@ static void AssignNodeDestNode(
     const int intI,
     const int intJ);
 
+/**
+  * Insert a node into another node.
+  */
+static void insertNodeIntoTree(
+    RectangleTree& destTree,
+    RectangleTree& srcNode);
 
 }; // namespace tree
 }; // namespace mlpack

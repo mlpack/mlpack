@@ -1,5 +1,6 @@
 /**
  * @file rectangle_tree.hpp
+ * @author Andrew Wells
  *
  * Definition of generalized rectangle type trees (r_tree, r_star_tree, x_tree, and hilbert_r_tree).
  */
@@ -52,8 +53,8 @@ class RectangleTree
   //! The number of points in the dataset contained in this node (and its
   //! children).  
   size_t count;
-  //! The leaf size.  (Maximum allowable leaf size.)
-  size_t leafSize;
+  //! The max leaf size.
+  size_t maxLeafSize;
   //! The minimum leaf size.
   size_t minLeafSize;
   //! The bound object for this node.
@@ -81,10 +82,10 @@ class RectangleTree
    * dataset.  This will modify the ordering of the points in the dataset!
    *
    * @param data Dataset from which to create the tree.  This will be modified!
-   * @param leafSize Size of each leaf in the tree;
+   * @param maxLeafSize Maximum size of each leaf in the tree;
    * @param maxNumChildren The maximum number of child nodes a non-leaf node may have.
    */
-  RectangleTree(MatType& data, const size_t leafSize = 20, const size_t maxNumChildren = 4);
+  RectangleTree(MatType& data, const size_t maxLeafSize = 20, const size_t maxNumChildren = 4);
 
   //TODO implement the oldFromNew stuff if applicable.
 
@@ -149,10 +150,10 @@ class RectangleTree
   //! Return whether or not this node is a leaf (true if it has no children).
   bool IsLeaf() const;
 
-  //! Return the leaf size.
-  size_t LeafSize() const { return leafSize; }
-  //! Modify the leaf size.
-  size_t& LeafSize() { return leafSize; }
+  //! Return the max leaf size.
+  size_t MaxLeafSize() const { return maxLeafSize; }
+  //! Modify the max leaf size.
+  size_t& MaxLeafSize() { return maxLeafSize; }
 
   //! Gets the parent of this node.
   RectangleTree* Parent() const { return parent; }
@@ -181,9 +182,9 @@ class RectangleTree
   size_t& getNumOfChildren() { return numOfChildren; }
 
   //! Get the children of this node.
-  const std::vector<RectangleTree*>& getChildren() const { return children; }
+  const std::vector<RectangleTree*>& Children() const { return children; }
   //! Modify the children of this node.
-  std::vector<RectangleTree*>& getChildren() { return children; }
+  std::vector<RectangleTree*>& Children() { return children; }
 
   /**
    * Return the furthest distance to a point held in this node.  If this is not
@@ -327,16 +328,16 @@ class RectangleTree
                   const size_t count,
                   HRectBound bound,
                   StatisticType stat,
-                  const int leafSize = 20) :
+                  const int maxLeafSize = 20) :
       begin(begin),
       count(count),
       bound(bound),
       stat(stat),
-      leafSize(leafSize) { }
+      maxLeafSize(maxLeafSize) { }
 
   RectangleTree* CopyMe()
   {
-    return new RectangleTree(begin, count, bound, stat, leafSize);
+    return new RectangleTree(begin, count, bound, stat, maxLeafSize);
   }
 
   /**
