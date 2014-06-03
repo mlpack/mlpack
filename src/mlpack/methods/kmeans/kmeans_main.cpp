@@ -133,7 +133,7 @@ int main(int argc, char** argv)
     if (CLI::HasParam("refined_start"))
     {
       const int samplings = CLI::GetParam<int>("samplings");
-      const double percentage = CLI::GetParam<int>("percentage");
+      const double percentage = CLI::GetParam<double>("percentage");
 
       if (samplings < 0)
         Log::Fatal << "Number of samplings (" << samplings << ") must be "
