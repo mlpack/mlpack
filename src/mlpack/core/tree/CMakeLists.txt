@@ -31,6 +31,13 @@ set(SOURCES
   mrkd_statistic.hpp
   mrkd_statistic_impl.hpp
   mrkd_statistic.cpp
+  rectangle_tree.hpp
+  rectangle_tree/rectangle_tree.hpp
+  rectangle_tree/rectangle_tree_impl.hpp
+  rectangle_tree/r_tree_split.hpp
+  rectangle_tree/r_tree_split_impl.hpp
+  rectangle_tree/r_tree_descent_heuristic.hpp
+  rectangle_tree/r_tree_descent_heuristic_impl.hpp
   statistic.hpp
   traversal_info.hpp
   tree_traits.hpp
