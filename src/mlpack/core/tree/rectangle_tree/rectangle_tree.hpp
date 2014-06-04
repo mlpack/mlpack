@@ -40,8 +40,8 @@ class RectangleTree
   //! The minimum number of child nodes a non-leaf node can have.
   size_t minNumChildren;
   //! The number of child nodes actually in use (0 if this is a leaf node).
-  size_t numOfChildren;
-  //! The child nodes (Starting at 0 and ending at (numOfChildren-1) ).
+  size_t numChildren;
+  //! The child nodes (Starting at 0 and ending at (numChildren-1) ).
   std::vector<RectangleTree*> children;
   //! The parent node (NULL if this is the root of the tree).
   RectangleTree* parent;
@@ -150,10 +150,25 @@ class RectangleTree
   //! Return whether or not this node is a leaf (true if it has no children).
   bool IsLeaf() const;
 
-  //! Return the max leaf size.
+  //! Return the maximum leaf size.
   size_t MaxLeafSize() const { return maxLeafSize; }
-  //! Modify the max leaf size.
+  //! Modify the maximum leaf size.
   size_t& MaxLeafSize() { return maxLeafSize; }
+
+  //! Return the minimum leaf size.
+  size_t MinLeafSize() const { return minLeafSize; }
+  //! Modify the minimum leaf size.
+  size_t& MinLeafSize() { return minLeafSize; }
+
+  //! Return the maximum number of children (in a non-leaf node).
+  size_t MaxNumChildren() const { return maxNumChildren; }
+  //! Modify the maximum number of children (in a non-leaf node).
+  size_t& MaxNumChildren() { return maxNumChildren; }
+
+  //! Return the minimum number of children (in a non-leaf node).
+  size_t MinNumChildren() const { return minNumChildren; }
+  //! Modify the minimum number of children (in a non-leaf node).
+  size_t& MinNumChildren() { return minNumChildren; }
 
   //! Gets the parent of this node.
   RectangleTree* Parent() const { return parent; }
@@ -171,15 +186,10 @@ class RectangleTree
   //! Get the centroid of the node and store it in the given vector.
   void Centroid(arma::vec& centroid) { bound.Centroid(centroid); }
 
-  // TODO.  Think of a better name that makes the difference here obvious.
-
-  //! Return the number of children in this node.
-  size_t NumChildren() const;
-
   //! Return the number of child nodes.  (One level beneath this one only.)
-  size_t getNumOfChildren() const { return numOfChildren; }
+  size_t NumChildren() const { return numChildren; }
   //! Modify the number of child nodes.  Be careful.
-  size_t& getNumOfChildren() { return numOfChildren; }
+  size_t& NumChildren() { return numChildren; }
 
   //! Get the children of this node.
   const std::vector<RectangleTree*>& Children() const { return children; }
@@ -215,7 +225,7 @@ class RectangleTree
    */
   RectangleTree& Child(const size_t child) const;
 
-  //! Return the number of points in this node (0 if not a leaf).
+  //! Return the number of points in this node (returns 0 if this node is not a leaf).
   size_t NumPoints() const;
 
   /**

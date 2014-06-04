@@ -42,12 +42,14 @@ RectangleTree<StatisticType, MatType, SplitType, DescentType>::RectangleTree(
   this.parentDistance = 0.0;
   this.furthestDescendantDistance = 0.0;
   this.dataset = new MatType(maxLeafSize+1); // Add one to make splitting the node simpler
-
+  this.children = new std::vector<RectangleTree*>(maxNumChildren+1); // ibid.
+  
   // For now, just insert the points in order.
   // This won't actually work for any meaningful size of data since the root changes.
   for(int i = 0; i < n_cols; i++) {
     insertPoint(data.col(i));
   }
+  
 }
 
 /**
