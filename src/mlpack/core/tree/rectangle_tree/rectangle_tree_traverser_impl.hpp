@@ -1,5 +1,5 @@
 /**
-  * @file rectangle_tree_traverser.hpp
+  * @file rectangle_tree_traverser_impl.hpp
   * @author Andrew Wells
   *
   * A class for traversing rectangle type trees with a given set of rules
@@ -11,6 +11,7 @@
 
 #include "rectangle_tree_traverser.hpp"
 
+#include <algorithm>
 #include <stack>
 
 namespace mlpack {
@@ -38,7 +39,36 @@ RectangleTreeTraverser<RuleType>::Traverse(
     RectangeTree<StatisticType, MatyType, SplitType, DescentType>&
         referenceNode)
 {
-
+  // If we reach a leaf node, we need to run the base case.
+  if(referenceNode.IsLeaf()) {
+    for(size_t i = 0; i < referenceNode.Count(); i++) {
+      rule.BaseCase(queryIndex, i);
+    }
+    return;
+  }
+  
+  // This is not a leaf node so we:
+  // Sort the children of this node by their scores.
+  std::vector<RectangleTree*> nodes = new std::vector<RectangleTree*>(referenceNode.NumChildren());
+  std::vector<double> scores = new std::vector<double>(referenceNode.NumChildren());
+  for(int i = 0; i < referenceNode.NumChildren(); i++) {
+    nodes[i] = referenceNode.Children()[i];
+    scores[i] = Rule.Score(nodes[i]);
+  }  
+  Rule.sortNodesAndScores(&nodes, &scores);
+  
+  // Iterate through them starting with the best and stopping when we reach
+  // one that isn't good enough.
+  for(int i = 0; i < referenceNode.NumChildren(); i++) {
+   if(Rule.Rescore(queryIndex, nodes[i], scores[i]) != DBL_MAX)
+     Traverse(queryIndex, nodes[i]);
+   else {
+    numPrunes += referenceNode.NumChildren - i;
+    return;
+   }
+  }
+  // We only get here if we couldn't prune any of them.
+  return;
 }
 
 }; // namespace tree

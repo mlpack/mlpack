@@ -18,9 +18,10 @@ namespace tree {
 
 template<typename StatisticType,
     typename MatType,
-    typename SplitType>
+    typename SplitType
+    typename DescentType>
 template<typename RuleType>
-class RectangleTree<StatisticType, MatType, SplitType>::
+class RectangleTree<StatisticType, MatType, SplitType, DescentType>::
     RectangleTreeTraverser
 {
  public:
