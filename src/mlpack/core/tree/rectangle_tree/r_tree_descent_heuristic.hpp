@@ -18,7 +18,7 @@ namespace tree /** Trees and tree-building procedures. */ {
  * The split is done in the dimension that has the maximum width. The points are
  * divided into two parts based on the mean in this dimension.
  */
-template<typename BoundType, typename MatType = arma::mat>
+template<typename MatType = arma::mat>
 class RTreeDescentHueristic
 {
  public:
@@ -30,7 +30,7 @@ class RTreeDescentHueristic
    * @param bound The bound used for the node that is being evaluated.
    * @param point The point that is being inserted.
    */
-  static double EvalNode(const BoundType& bound, const arma::vec& point);
+  static double EvalNode(const HRectBound& bound, const arma::vec& point);
 };
 
 }; // namespace tree

@@ -16,7 +16,7 @@
 namespace mlpack {
 namespace tree {
 
-template<typename Statistic Type,
+template<typename StatisticType,
     typename MatType,
     typename SplitType>
 template<typename RuleType>
