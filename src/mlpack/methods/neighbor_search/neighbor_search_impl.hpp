@@ -252,9 +252,13 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
   }
   else if (singleMode)
   {
+    // The search doesn't work if the root node is also a leaf node.
+    // if this is the case, it is suggested that you use the naive method.
+    assert(!(referenceTree->IsLeaf()));
+    
     // Create the traverser.
     typename TreeType::template SingleTreeTraverser<RuleType> traverser(rules);
-
+    
     // Now have it traverse for each point.
     for (size_t i = 0; i < querySet.n_cols; ++i)
       traverser.Traverse(i, *referenceTree);

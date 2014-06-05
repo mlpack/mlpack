@@ -18,8 +18,8 @@ namespace tree {
  * The split is done in the dimension that has the maximum width. The points are
  * divided into two parts based on the mean in this dimension.
  */
-template<typename BoundType, typename MatType = arma::mat>
-double RTreeDescentHeuristic<BoundType, MatType>::EvalNode(const BoundType& bound, const arma::vec& point)
+template<typename MatType = arma::mat>
+double RTreeDescentHeuristic<MatType>::EvalNode(const HRectBound& bound, const arma::vec& point)
 {
   return bound.contains(point) ? 0 : bound.minDistance(point);
 }

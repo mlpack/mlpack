@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
   }
 
   // Sanity check on k value: must be greater than 0, must be less than the
-  // number of reference points.
+  // number of reference points.  Since it is unsigned, we only test the upper bound.
   if (k > referenceData.n_cols)
   {
     Log::Fatal << "Invalid k: " << k << "; must be greater than 0 and less ";
@@ -110,10 +110,10 @@ int main(int argc, char *argv[])
   }
 
   // Sanity check on leaf size.
-  if (lsInt < 0)
+  if (lsInt < 1)
   {
     Log::Fatal << "Invalid leaf size: " << lsInt << ".  Must be greater "
-        "than or equal to 0." << endl;
+        "than 0." << endl;
   }
   size_t leafSize = lsInt;
 
