@@ -34,6 +34,8 @@ set(SOURCES
   rectangle_tree.hpp
   rectangle_tree/rectangle_tree.hpp
   rectangle_tree/rectangle_tree_impl.hpp
+  rectangle_tree/rectangle_tree_traverser.hpp
+  rectangle_tree/rectangle_tree_traverser_impl.hpp
   rectangle_tree/r_tree_split.hpp
   rectangle_tree/r_tree_split_impl.hpp
   rectangle_tree/r_tree_descent_heuristic.hpp
