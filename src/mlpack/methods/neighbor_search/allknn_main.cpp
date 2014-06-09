@@ -272,11 +272,11 @@ int main(int argc, char *argv[])
       // Build the reference tree.
       Log::Info << "Building reference tree..." << endl;
       Timer::Start("tree_building");
-//       RectangleTree<NeighborSearchStat<NearestNeighborSort>,
-//                                  arma::mat,
-//                                  tree::RTreeSplit,
-//                                  tree::RTreeDescentHeuristic>
-//       refTree(referenceData, leafSize);
+//        RectangleTree<NeighborSearchStat<NearestNeighborSort>,
+//                                   arma::mat,
+//                                   tree::RTreeSplit,
+//                                   tree::RTreeDescentHeuristic>
+//        refTree(referenceData, leafSize);
       Timer::Stop("tree_building");
         
     }
