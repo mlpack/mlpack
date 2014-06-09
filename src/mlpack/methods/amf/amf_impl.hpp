@@ -1,3 +1,7 @@
+/**
+ * @file nmf_als.hpp
+ * @author Sumedh Ghaisas
+ */
 namespace mlpack {
 namespace amf {
 
@@ -8,19 +12,19 @@ template<typename InitializationRule,
          typename UpdateRule>
 AMF<InitializationRule, UpdateRule>::AMF(
     const size_t maxIterations,
-    const double minResidue,
+    const double tolerance,
     const InitializationRule initializeRule,
     const UpdateRule update) :
     maxIterations(maxIterations),
-    minResidue(minResidue),
+    tolerance(tolerance),
     initializeRule(initializeRule),
     update(update)
 {
-  if (minResidue < 0.0)
+  if (tolerance < 0.0 || tolerance > 1)
   {
-    Log::Warn << "AMF::AMF(): minResidue must be a positive value ("
-        << minResidue << " given). Setting to the default value of 1e-10.\n";
-    this->minResidue = 1e-10;
+    Log::Warn << "AMF::AMF(): tolerance must be a positive value in the range (0-1) but value "
+        << tolerance << " is given. Setting to the default value of 1e-5.\n";
+    this->tolerance = 1e-5;
   }
 }
 
@@ -35,7 +39,7 @@ AMF<InitializationRule, UpdateRule>::AMF(
 template<typename InitializationRule,
          typename UpdateRule>
 template<typename MatType>
-void AMF<InitializationRule, UpdateRule>::Apply(
+double AMF<InitializationRule, UpdateRule>::Apply(
     const MatType& V,
     const size_t r,
     arma::mat& W,
@@ -51,12 +55,15 @@ void AMF<InitializationRule, UpdateRule>::Apply(
 
   size_t iteration = 1;
   const size_t nm = n * m;
-  double residue = minResidue;
+  double residue = DBL_MIN;
+  double oldResidue = DBL_MAX;
   double normOld = 0;
   double norm = 0;
   arma::mat WH;
 
-  while (residue >= minResidue && iteration != maxIterations)
+  std::cout << tolerance << std::endl;
+
+  while (((oldResidue - residue) / oldResidue >= tolerance || iteration < 4) && iteration != maxIterations)
   {
     // Update step.
     // Update the value of W and H based on the Update Rules provided
@@ -69,6 +76,7 @@ void AMF<InitializationRule, UpdateRule>::Apply(
 
     if (iteration != 0)
     {
+      oldResidue = residue;
       residue = fabs(normOld - norm);
       residue /= normOld;
     }
@@ -76,11 +84,16 @@ void AMF<InitializationRule, UpdateRule>::Apply(
     normOld = norm;
 
     iteration++;
+
+    std::cout << residue << std::endl;
   }
 
   Log::Info << "AMF converged to residue of " << sqrt(residue) << " in "
       << iteration << " iterations." << std::endl;
+
+  return residue;
 }
 
 }; // namespace nmf
 }; // namespace mlpack
+
