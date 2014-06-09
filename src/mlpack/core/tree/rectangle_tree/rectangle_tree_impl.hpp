@@ -17,10 +17,10 @@
 namespace mlpack {
 namespace tree {
 
-template<typename StatisticType,
-	 typename MatType,
-	 typename SplitType,
-	 typename DescentType>
+template<typename SplitType,
+         typename DescentType,
+	 typename StatisticType,
+         typename MatType>
 RectangleTree<StatisticType, MatType, SplitType, DescentType>::RectangleTree(
     MatType& data,
     const size_t maxLeafSize,
@@ -319,7 +319,7 @@ void RectangleTree<StatisticType, MatType, SplitType, DescentType>::SplitNode(
 	   typename MatType,
 	   typename SplitType,
 	 typename DescentType>
-std::string BinarySpaceTree<StatisticType, MatType, SplitType, DescentType>::ToString() const
+std::string RectangleTree<StatisticType, MatType, SplitType, DescentType>::ToString() const
 {
   std::ostringstream convert;
   convert << "RectangleTree [" << this << "]" << std::endl;
