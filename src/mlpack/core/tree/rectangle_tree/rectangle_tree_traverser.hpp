@@ -2,9 +2,9 @@
   * @file rectangle_tree_traverser.hpp
   * @author Andrew Wells
   *
-  * A class for traversing rectangle type trees with a given set of rules
-  * which indicate the branches to prune and the order in which to recurse.
-  * This is a depth-first traverser.
+  * A nested class of Rectangle Tree for traversing rectangle type trees
+  * with a given set of rules which indicate the branches to prune and the
+  * order in which to recurse.  This is a depth-first traverser.
   */
 #ifndef __MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_TRAVERSER_HPP
 #define __MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_TRAVERSER_HPP
@@ -17,9 +17,9 @@ namespace mlpack {
 namespace tree {
 
 template<typename StatisticType,
-    typename MatType,
-    typename SplitType
-    typename DescentType>
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
 template<typename RuleType>
 class RectangleTree<StatisticType, MatType, SplitType, DescentType>::
     RectangleTreeTraverser
@@ -50,7 +50,7 @@ class RectangleTree<StatisticType, MatType, SplitType, DescentType>::
 
   //! The number of nodes which have been prenud during traversal.
   size_t numPrunes;
-}
+};
 
 
 }; // namespace tree
