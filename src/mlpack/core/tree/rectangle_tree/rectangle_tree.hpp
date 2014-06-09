@@ -26,6 +26,8 @@ namespace tree /** Trees and tree-building procedures. */ {
  * @tparam StatisticType Extra data contained in the node.  See statistic.hpp
  *     for the necessary skeleton interface.
  * @tparam MatType The dataset class.
+ * @tparam SplitType The type of split to use when inserting points.
+ * @tparam DescentType The heuristic to use when descending the tree to insert points.
  */   
 
 template<typename StatisticType = EmptyStatistic,
@@ -72,7 +74,7 @@ class RectangleTree
   //! So other classes can use TreeType::Mat.
   typedef MatType Mat;
 
-  //! A traverser for rectangle type trees; see
+  //! A traverser for rectangle type trees.  See
   //! rectangle_tree_traverser.hpp for implementation.
   template<typename RuleType>
   class RectangleTreeTraverser;

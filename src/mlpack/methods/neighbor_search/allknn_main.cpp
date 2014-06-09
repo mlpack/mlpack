@@ -266,8 +266,19 @@ int main(int argc, char *argv[])
 
       delete allknn;
     } else { // R tree.
+      // Make sure to notify the user that they are using an r tree.
+      Log::Info << "Using r tree for nearest-neighbor calculation." << endl;
       
-      
+      // Build the reference tree.
+      Log::Info << "Building reference tree..." << endl;
+      Timer::Start("tree_building");
+//       RectangleTree<NeighborSearchStat<NearestNeighborSort>,
+//                                  arma::mat,
+//                                  tree::RTreeSplit,
+//                                  tree::RTreeDescentHeuristic>
+//       refTree(referenceData, leafSize);
+      Timer::Stop("tree_building");
+        
     }
   }
   else // Cover trees.

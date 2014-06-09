@@ -26,7 +26,8 @@ RectangleTree<StatisticType, MatType, SplitType, DescentType>::RectangleTree(
     const size_t maxLeafSize,
     const size_t minLeafSize,
     const size_t maxNumChildren,
-    const size_t minNumChildren):
+    const size_t minNumChildren,
+    const size_t firstDataIndex = 0):
 
 {
   this.maxNumChildren = maxNumChildren;
@@ -45,9 +46,12 @@ RectangleTree<StatisticType, MatType, SplitType, DescentType>::RectangleTree(
   this.children = new std::vector<RectangleTree*>(maxNumChildren+1); // ibid.
   
   // For now, just insert the points in order.
-  // This won't actually work for any meaningful size of data since the root changes.
-  for(int i = 0; i < n_cols; i++) {
-    insertPoint(data.col(i));
+  RectangleTree* root = this;
+  for(int i = firstDataIndex; i < n_cols; i++) {
+    root.insertPoint(data.col(i));
+    if(root.Parent() != NULL) {
+      root = root.Parent(); // OK since the level increases by at most one per iteration.
+    }
   }
   
 }
