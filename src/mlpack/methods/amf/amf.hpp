@@ -1,9 +1,13 @@
+/**
+ * @file nmf_als.hpp
+ * @author Sumedh Ghaisas
+ */
 #ifndef __MLPACK_METHODS_LMF_LMF_HPP
 #define __MLPACK_METHODS_LMF_LMF_HPP
 
 #include <mlpack/core.hpp>
-#include "update_rules/nmf_mult_dist.hpp"
-#include "init_rules/random_init.hpp"
+#include <amf/update_rules/nmf_mult_dist.hpp>
+#include <amf/init_rules/random_init.hpp>
 
 namespace mlpack {
 namespace amf {
@@ -63,7 +67,7 @@ class AMF
    *     the W and H vector has states that it needs to store
    */
   AMF(const size_t maxIterations = 10000,
-      const double minResidue = 1e-10,
+      const double tolerance = 1e-5,
       const InitializationRule initializeRule = InitializationRule(),
       const UpdateRule update = UpdateRule());
 
@@ -76,7 +80,7 @@ class AMF
    * @param r Rank r of the factorization.
    */
   template<typename MatType>
-  void Apply(const MatType& V,
+  double Apply(const MatType& V,
              const size_t r,
              arma::mat& W,
              arma::mat& H) const;
@@ -85,7 +89,7 @@ class AMF
   //! The maximum number of iterations allowed before giving up.
   size_t maxIterations;
   //! The minimum residue, below which iteration is considered converged.
-  double minResidue;
+  double tolerance;
   //! Instantiated initialization Rule.
   InitializationRule initializeRule;
   //! Instantiated update rule.
@@ -97,9 +101,9 @@ class AMF
   //! Modify the maximum number of iterations.
   size_t& MaxIterations() { return maxIterations; }
   //! Access the minimum residue before termination.
-  double MinResidue() const { return minResidue; }
+  double Tolerance() const { return tolerance; }
   //! Modify the minimum residue before termination.
-  double& MinResidue() { return minResidue; }
+  double& Tolerance() { return tolerance; }
   //! Access the initialization rule.
   const InitializationRule& InitializeRule() const { return initializeRule; }
   //! Modify the initialization rule.
@@ -118,3 +122,4 @@ class AMF
 #include "amf_impl.hpp"
 
 #endif
+
