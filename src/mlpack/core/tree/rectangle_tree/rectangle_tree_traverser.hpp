@@ -16,10 +16,10 @@
 namespace mlpack {
 namespace tree {
 
-template<typename StatisticType,
-         typename MatType,
-         typename SplitType,
-         typename DescentType>
+template<typename SplitType,
+         typename DescentType,
+	 typename StatisticType,
+         typename MatType>
 template<typename RuleType>
 class RectangleTree<StatisticType, MatType, SplitType, DescentType>::
     RectangleTreeTraverser

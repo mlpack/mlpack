@@ -4,12 +4,17 @@
  *
  * Definition of generalized rectangle type trees (r_tree, r_star_tree, x_tree, and hilbert_r_tree).
  */
-#ifndef __MLPACK_CORE_TREE_RECTINGLE_TREE_RECTANGLE_TREE_HPP
-#define __MLPACK_CORE_TREE_RECTINGLE_TREE_RECTANGLE_TREE_HPP
+#ifndef __MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_HPP
+#define __MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_HPP
 
 #include <mlpack/core.hpp>
 
+#include "../hrectbound.hpp"
 #include "../statistic.hpp"
+
+#ifdef __MLPACK_CORE_TREE_HRECTBOUND_HPP
+#define max(a, b) 5  //something to break the build
+#endif
 
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
@@ -30,10 +35,10 @@ namespace tree /** Trees and tree-building procedures. */ {
  * @tparam DescentType The heuristic to use when descending the tree to insert points.
  */   
 
-template<typename StatisticType = EmptyStatistic,
-	 typename MatType = arma::mat,
-	 typename SplitType = EmptySplit,
-	 typename DescentType = EmptyDescent>
+template<typename SplitType,
+	 typename DescentType,
+	 typename StatisticType = EmptyStatistic,
+	 typename MatType = arma::mat>
 class RectangleTree
 {
  private:
@@ -183,7 +188,7 @@ class RectangleTree
   arma::mat& Dataset() { return dataset; }
 
   //! Get the metric which the tree uses.
-  typename BoundType::MetricType Metric() const { return bound.Metric(); }
+  typename HRectBound::MetricType Metric() const { return bound.Metric(); }
 
   //! Get the centroid of the node and store it in the given vector.
   void Centroid(arma::vec& centroid) { bound.Centroid(centroid); }
