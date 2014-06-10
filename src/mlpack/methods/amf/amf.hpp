@@ -6,8 +6,8 @@
 #define __MLPACK_METHODS_LMF_LMF_HPP
 
 #include <mlpack/core.hpp>
-#include <amf/update_rules/nmf_mult_dist.hpp>
-#include <amf/init_rules/random_init.hpp>
+#include <mlpack/methods/amf/update_rules/nmf_mult_dist.hpp>
+#include <mlpack/methods/amf/init_rules/random_init.hpp>
 
 namespace mlpack {
 namespace amf {
