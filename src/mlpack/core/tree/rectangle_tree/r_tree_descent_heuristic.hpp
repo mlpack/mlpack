@@ -17,7 +17,7 @@ namespace tree /** Trees and tree-building procedures. */ {
  * When descending a Rectangle tree to insert a point, we need to have a way to choose
  * a child node when the point isn't enclosed by any of them.  This heuristic is used to do so.
  */
-class RTreeDescentHueristic
+class RTreeDescentHeuristic
 {
  public:
   /**
@@ -29,6 +29,7 @@ class RTreeDescentHueristic
    * @param point The point that is being inserted.
    */
   static double EvalNode(const HRectBound<>& bound, const arma::vec& point);
+  
 };
 
 }; // namespace tree
