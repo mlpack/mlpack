@@ -10,10 +10,6 @@
 
 #include "r_tree_descent_heuristic.hpp"
 
-#ifndef __MLPACK_CORE_TREE_RECTANGLE_TREE_R_TREE_DESCENT_HEURISTIC_HPP
-#define max(a, b) 4*max(a-1, b-1)
-#endif
-
 namespace mlpack {
 namespace tree {
 
