@@ -13,9 +13,21 @@ public:
     SVDBatchLearning(double u = 0.000001,
                      double kw = 0,
                      double kh = 0,
+                     double momentum = 0.2,
                      double min = -DBL_MIN,
                      double max = DBL_MAX)
-        : u(u), kw(kw), kh(kh), min(min), max(max) {}
+        : u(u), kw(kw), kh(kh), min(min), max(max), momentum(momentum)
+    {}
+
+    template<typename MatType>
+    void Initialize(const MatType& dataset, const size_t rank)
+    {
+        const size_t n = dataset.n_rows;
+        const size_t m = dataset.n_cols;
+
+        mW.zeros(n, rank);
+        mH.zeros(rank, m);
+    }
 
     /**
     * The update rule for the basis matrix W.
@@ -29,12 +41,14 @@ public:
     template<typename MatType>
     inline void WUpdate(const MatType& V,
                                arma::mat& W,
-                               const arma::mat& H) const
+                               const arma::mat& H)
     {
         size_t n = V.n_rows;
         size_t m = V.n_cols;
 
         size_t r = W.n_cols;
+
+        mW = momentum * mW;
 
         arma::mat deltaW(n, r);
         deltaW.zeros();
@@ -46,7 +60,8 @@ public:
             deltaW.row(i) -= kw * W.row(i);
         }
 
-        W += u * deltaW;
+        mW += u * deltaW;
+        W += mW;
     }
 
     /**
@@ -61,12 +76,14 @@ public:
     template<typename MatType>
     inline void HUpdate(const MatType& V,
                                const arma::mat& W,
-                               arma::mat& H) const
+                               arma::mat& H)
     {
         size_t n = V.n_rows;
         size_t m = V.n_cols;
 
         size_t r = W.n_cols;
+
+        mH = momentum * mH;
 
         arma::mat deltaH(r, m);
         deltaH.zeros();
@@ -78,7 +95,8 @@ public:
             deltaH.col(j) -= kh * H.col(j);
         }
 
-        H += u*deltaH;
+        mH += u*deltaH;
+        H += mH;
     }
 private:
 
@@ -94,6 +112,10 @@ private:
     double kh;
     double min;
     double max;
+    double momentum;
+
+    arma::mat mW;
+    arma::mat mH;
 };
 } // namespace amf
 } // namespace mlpack

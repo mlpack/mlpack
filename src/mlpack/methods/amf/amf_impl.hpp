@@ -43,7 +43,7 @@ double AMF<InitializationRule, UpdateRule>::Apply(
     const MatType& V,
     const size_t r,
     arma::mat& W,
-    arma::mat& H) const
+    arma::mat& H)
 {
   const size_t n = V.n_rows;
   const size_t m = V.n_cols;
@@ -61,7 +61,7 @@ double AMF<InitializationRule, UpdateRule>::Apply(
   double norm = 0;
   arma::mat WH;
 
-  std::cout << tolerance << std::endl;
+  update.Initialize(V, r);
 
   while (((oldResidue - residue) / oldResidue >= tolerance || iteration < 4) && iteration != maxIterations)
   {
@@ -84,8 +84,6 @@ double AMF<InitializationRule, UpdateRule>::Apply(
     normOld = norm;
 
     iteration++;
-
-    std::cout << residue << std::endl;
   }
 
   Log::Info << "AMF converged to residue of " << sqrt(residue) << " in "
