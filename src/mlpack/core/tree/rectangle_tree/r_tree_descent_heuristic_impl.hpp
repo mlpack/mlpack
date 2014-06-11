@@ -13,7 +13,7 @@
 namespace mlpack {
 namespace tree {
 
-double RTreeDescentHeuristic::EvalNode(const HRectBound<>& bound, const arma::vec& point)
+inline double RTreeDescentHeuristic::EvalNode(const HRectBound<>& bound, const arma::vec& point)
 {
   return bound.Contains(point) ? 0 : bound.MinDistance(point);
 }
