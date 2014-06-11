@@ -12,13 +12,15 @@
 #include "../hrectbound.hpp"
 #include "../statistic.hpp"
 
-#ifdef __MLPACK_CORE_TREE_HRECTBOUND_HPP
-#define max(a, b) 5  //something to break the build
-#endif
+// #ifdef __MLPACK_CORE_TREE_HRECTBOUND_HPP
+// #define max(a, b) 5  //something to break the build
+// #endif
 
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
+using bound::HRectBound;
+  
 /**
  * A rectangle type tree tree, such as an R-tree or X-tree.  Once the
  * bound and type of dataset is defined, the tree will construct itself.  Call
@@ -65,7 +67,7 @@ class RectangleTree
   //! The minimum leaf size.
   size_t minLeafSize;
   //! The bound object for this node.
-  HRectBound bound;
+  HRectBound<> bound;
   //! Any extra data contained in the node.
   StatisticType stat;
   //! The distance from the centroid of this node to the centroid of the parent.
@@ -89,10 +91,29 @@ class RectangleTree
    * dataset.  This will modify the ordering of the points in the dataset!
    *
    * @param data Dataset from which to create the tree.  This will be modified!
-   * @param maxLeafSize Maximum size of each leaf in the tree;
+   * @param maxLeafSize Maximum size of each leaf in the tree.
+   * @param minLeafSize Minimum size of each leaf in the tree.
    * @param maxNumChildren The maximum number of child nodes a non-leaf node may have.
+   * @param minNumChildren The minimum number of child nodes a non-leaf node may have.
+   * @param firstDataIndex The index of the first data point.  UNUSED UNLESS WE ADD SUPPORT FOR HAVING A 
+   * "CENTERAL" DATA MATRIX.
    */
-  RectangleTree(MatType& data, const size_t maxLeafSize = 20, const size_t maxNumChildren = 4);
+  RectangleTree(MatType& data,
+		const size_t maxLeafSize,
+		const size_t minLeafSize,
+		const size_t maxNumChildren,
+		const size_t minNumChildren,
+		const size_t firstDataIndex
+ 	      );
+  
+  /**
+   * Construct this as an empty node with the specified parent.  Copying the parameters
+   * (maxLeafSize, minLeafSize, maxNumChildren, minNumChildren, firstDataIndex) from the parent.
+   *
+   * @param parentNode The parent of the node that is being constructed.
+   */
+  RectangleTree(const RectangleTree<SplitType, DescentType, StatisticType, MatType>& parentNode);
+
 
   //TODO implement the oldFromNew stuff if applicable.
 
@@ -145,9 +166,9 @@ class RectangleTree
   RectangleTree* FindByBeginCount(size_t begin, size_t count);
 
   //! Return the bound object for this node.
-  const HRectBound& Bound() const { return bound; }
+  const HRectBound<>& Bound() const { return bound; }
   //! Modify the bound object for this node.
-  HRectBound& Bound() { return bound; }
+  HRectBound<>& Bound() { return bound; }
 
   //! Return the statistic object for this node.
   const StatisticType& Stat() const { return stat; }
@@ -188,7 +209,7 @@ class RectangleTree
   arma::mat& Dataset() { return dataset; }
 
   //! Get the metric which the tree uses.
-  typename HRectBound::MetricType Metric() const { return bound.Metric(); }
+  typename HRectBound<>::MetricType Metric() const { return bound.Metric(); }
 
   //! Get the centroid of the node and store it in the given vector.
   void Centroid(arma::vec& centroid) { bound.Centroid(centroid); }
@@ -343,7 +364,7 @@ class RectangleTree
    */
   RectangleTree(const size_t begin,
                   const size_t count,
-                  HRectBound bound,
+                  HRectBound<> bound,
                   StatisticType stat,
                   const int maxLeafSize = 20) :
       begin(begin),
@@ -362,7 +383,7 @@ class RectangleTree
    *
    * @param tree The RectangleTree object (node) to split.
    */
-  void SplitNode(RectangleTree& tree);
+  void SplitNode();
 
   /**
    * Splits the current node, recursing up the tree.
@@ -371,7 +392,7 @@ class RectangleTree
    * @param data Dataset which we are using.
    * @param oldFromNew Vector holding permuted indices NOT IMPLEMENTED.
    */
-  void SplitNode(MatType& data, std::vector<size_t>& oldFromNew);
+  void SplitNode(std::vector<size_t>& oldFromNew);
 
  public:
   /**

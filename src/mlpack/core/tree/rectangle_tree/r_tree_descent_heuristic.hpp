@@ -14,11 +14,9 @@ namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
 /**
- * A binary space partitioning tree node is split into its left and right child.
- * The split is done in the dimension that has the maximum width. The points are
- * divided into two parts based on the mean in this dimension.
+ * When descending a Rectangle tree to insert a point, we need to have a way to choose
+ * a child node when the point isn't enclosed by any of them.  This heuristic is used to do so.
  */
-template<typename MatType = arma::mat>
 class RTreeDescentHueristic
 {
  public:
@@ -30,7 +28,7 @@ class RTreeDescentHueristic
    * @param bound The bound used for the node that is being evaluated.
    * @param point The point that is being inserted.
    */
-  static double EvalNode(const HRectBound& bound, const arma::vec& point);
+  static double EvalNode(const HRectBound<>& bound, const arma::vec& point);
 };
 
 }; // namespace tree

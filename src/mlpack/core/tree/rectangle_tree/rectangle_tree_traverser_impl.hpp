@@ -22,21 +22,21 @@ template<typename SplitType,
 	 typename StatisticType,
          typename MatType>
 template<typename RuleType>
-RectangleTree<StatisticType, MatType, SplitType, DescentType>::
+RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 RectangleTreeTraverser<RuleType>::RectangleTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0)
 { /* Nothing to do */ }
 
-template<typename StatisticType,
-    typename MatType,
-    typename SplitType
-    typename DescentType>
+template<typename SplitType,
+         typename DescentType,
+	 typename StatisticType,
+         typename MatType>
 template<typename RuleType>
-void RectangleTree<StatisticType, MatType, SplitType, DescentType>::
+void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 RectangleTreeTraverser<RuleType>::Traverse(
     const size_t queryIndex,
-    RectangeTree<StatisticType, MatyType, SplitType, DescentType>&
+    const RectangleTree<SplitType, DescentType, StatisticType, MatType>&
         referenceNode)
 {
   // If we reach a leaf node, we need to run the base case.
@@ -53,14 +53,14 @@ RectangleTreeTraverser<RuleType>::Traverse(
   std::vector<double> scores = new std::vector<double>(referenceNode.NumChildren());
   for(int i = 0; i < referenceNode.NumChildren(); i++) {
     nodes[i] = referenceNode.Children()[i];
-    scores[i] = Rule.Score(nodes[i]);
+    scores[i] = rule.Score(nodes[i]);
   }  
-  Rule.sortNodesAndScores(&nodes, &scores);
+  rule.sortNodesAndScores(&nodes, &scores);
   
   // Iterate through them starting with the best and stopping when we reach
   // one that isn't good enough.
   for(int i = 0; i < referenceNode.NumChildren(); i++) {
-   if(Rule.Rescore(queryIndex, nodes[i], scores[i]) != DBL_MAX)
+   if(rule.Rescore(queryIndex, nodes[i], scores[i]) != DBL_MAX)
      Traverse(queryIndex, nodes[i]);
    else {
     numPrunes += referenceNode.NumChildren - i;
