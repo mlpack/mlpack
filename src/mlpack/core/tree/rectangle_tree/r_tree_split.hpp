@@ -18,7 +18,10 @@ namespace tree /** Trees and tree-building procedures. */ {
  * nodes overflow, we split them, moving up the tree and splitting nodes
  * as necessary.
  */
-template<typename MatType = arma::mat>
+template<typename SplitType,
+	 typename DescentType,
+	 typename StatisticType,
+	 typename MatType>
 class RTreeSplit
 {
 public:
@@ -28,7 +31,7 @@ public:
  * upwards through the tree.  The methods for splitting non-leaf nodes are private since
  * they should only be called if a leaf node overflows.
  */
-static bool SplitLeafNode(const RectangleTree& tree);
+static void SplitLeafNode(const RectangleTree<SplitType, DescentType, StatisticType, MatType>& tree);
 
 private:
 
@@ -36,25 +39,25 @@ private:
  * Split a non-leaf node using the "default" algorithm.  If this is the root node and
  * we need to move up the tree, a new root node is created.
  */
-static bool SplitNonLeafNode(const RectangleTree& tree);
+static bool SplitNonLeafNode(const RectangleTree<SplitType, DescentType, StatisticType, MatType>& tree);
 
 /**
  * Get the seeds for splitting a leaf node.
  */
-static void GetPointSeeds(const RectangleTree& tree, int &i, int &j);
+static void GetPointSeeds(const RectangleTree<SplitType, DescentType, StatisticType, MatType>& tree, int *i, int *j);
 
 /**
  * Get the seeds for splitting a non-leaf node.
  */
-static void GetBoundSeeds(const RectangleTree& tree, int &i, int &j);
+static void GetBoundSeeds(const RectangleTree<SplitType, DescentType, StatisticType, MatType>& tree, int *i, int *j);
 
 /**
  * Assign points to the two new nodes.
  */
 static void AssignPointDestNode(
-    const RectangleTree& oldTree,
-    RectangleTree& treeOne,
-    RectangleTree& treeTwo,
+    const RectangleTree<SplitType, DescentType, StatisticType, MatType>& oldTree,
+    RectangleTree<SplitType, DescentType, StatisticType, MatType>& treeOne,
+    RectangleTree<SplitType, DescentType, StatisticType, MatType>& treeTwo,
     const int intI,
     const int intJ);
 
@@ -62,9 +65,9 @@ static void AssignPointDestNode(
  * Assign nodes to the two new nodes.
  */
 static void AssignNodeDestNode(
-    const RectangleTree& oldTree,
-    RectangleTree& treeOne,
-    RectangleTree& treeTwo,
+    const RectangleTree<SplitType, DescentType, StatisticType, MatType>& oldTree,
+    RectangleTree<SplitType, DescentType, StatisticType, MatType>& treeOne,
+    RectangleTree<SplitType, DescentType, StatisticType, MatType>& treeTwo,
     const int intI,
     const int intJ);
 
@@ -72,8 +75,9 @@ static void AssignNodeDestNode(
   * Insert a node into another node.
   */
 static void insertNodeIntoTree(
-    RectangleTree& destTree,
-    RectangleTree& srcNode);
+    RectangleTree<SplitType, DescentType, StatisticType, MatType>& destTree,
+    RectangleTree<SplitType, DescentType, StatisticType, MatType>& srcNode);
+};
 
 }; // namespace tree
 }; // namespace mlpack

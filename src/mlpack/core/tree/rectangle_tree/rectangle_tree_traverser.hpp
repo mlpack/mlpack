@@ -21,7 +21,7 @@ template<typename SplitType,
 	 typename StatisticType,
          typename MatType>
 template<typename RuleType>
-class RectangleTree<StatisticType, MatType, SplitType, DescentType>::
+class RectangleTree<SplitType, DescentType, StatisticType, MatType>::
     RectangleTreeTraverser
 {
  public:
@@ -51,7 +51,6 @@ class RectangleTree<StatisticType, MatType, SplitType, DescentType>::
   //! The number of nodes which have been prenud during traversal.
   size_t numPrunes;
 };
-
 
 }; // namespace tree
 }; // namespace mlpack
