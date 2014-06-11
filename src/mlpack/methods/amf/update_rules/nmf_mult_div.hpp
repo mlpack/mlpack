@@ -25,13 +25,20 @@ class NMFMultiplicativeDivergenceUpdate
   // Empty constructor required for the WUpdateRule template.
   NMFMultiplicativeDivergenceUpdate() { }
 
+  template<typename MatType>
+  void Initialize(const MatType& dataset, const size_t rank)
+  {
+    (void)dataset;
+    (void)rank;
+  }
+
   /**
    * The update rule for the basis matrix W. The formula used is
    * \f[
    * W_{ia} \leftarrow W_{ia} \frac{\sum_{\mu} H_{a\mu} V_{i\mu}/(WH)_{i\mu}}
    * {\sum_{\nu} H_{a\nu}}
    * \f]
-   * The function takes in all the matrices and only changes the 
+   * The function takes in all the matrices and only changes the
    * value of the W matrix.
    *
    * @param V Input matrix to be factorized.
@@ -73,7 +80,7 @@ class NMFMultiplicativeDivergenceUpdate
    * H_{a\mu} \leftarrow H_{a\mu} \frac{\sum_{i} W_{ia} V_{i\mu}/(WH)_{i\mu}}
    * {\sum_{k} H_{ka}}
    * \f]
-   * The function takes in all the matrices and only changes the value 
+   * The function takes in all the matrices and only changes the value
    * of the H matrix.
    *
    * @param V Input matrix to be factorized.

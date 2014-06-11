@@ -26,6 +26,13 @@ class NMFMultiplicativeDistanceUpdate
   // Empty constructor required for the UpdateRule template.
   NMFMultiplicativeDistanceUpdate() { }
 
+  template<typename MatType>
+  void Initialize(const MatType& dataset, const size_t rank)
+  {
+        (void)dataset;
+        (void)rank;
+  }
+
   /**
    * The update rule for the basis matrix W. The formula used is
    * \f[

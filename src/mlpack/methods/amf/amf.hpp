@@ -83,7 +83,7 @@ class AMF
   double Apply(const MatType& V,
              const size_t r,
              arma::mat& W,
-             arma::mat& H) const;
+             arma::mat& H);
 
  private:
   //! The maximum number of iterations allowed before giving up.
