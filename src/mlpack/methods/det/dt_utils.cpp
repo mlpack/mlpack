@@ -214,8 +214,10 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
         minLeafSize);
 
     // Sequentially prune with all the values of available alphas and adding
-    // values for test values.
-    for (size_t i = 0; i < prunedSequence.size() - 2; ++i)
+    // values for test values.  Don't enter this loop if there are less than two
+    // trees in the pruned sequence.
+    for (size_t i = 0;
+         i < ((prunedSequence.size() < 2) ? 0 : prunedSequence.size() - 2); ++i)
     {
       // Compute test values for this state of the tree.
       double cvVal = 0.0;
@@ -242,8 +244,9 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
       cvVal += cvDTree->ComputeValue(testPoint);
     }
 
-    regularizationConstants[prunedSequence.size() - 2] += 2.0 * cvVal /
-        (double) dataset.n_cols;
+    if (prunedSequence.size() > 2)
+      regularizationConstants[prunedSequence.size() - 2] += 2.0 * cvVal /
+          (double) dataset.n_cols;
 
     test.reset();
     delete cvDTree;
