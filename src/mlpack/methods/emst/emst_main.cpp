@@ -80,18 +80,48 @@ int main(int argc, char* argv[])
           << ")!  Must be greater than or equal to 1." << std::endl;
     }
 
-    // Initialize the tree and get ready to compute the MST.
+    // Initialize the tree and get ready to compute the MST.  Compute the tree
+    // by hand.
     const size_t leafSize = (size_t) CLI::GetParam<int>("leaf_size");
-    DualTreeBoruvka<> dtb(dataPoints, false, leafSize);
+
+    Timer::Start("tree_building");
+    std::vector<size_t> oldFromNew;
+    tree::BinarySpaceTree<bound::HRectBound<2>, DTBStat> tree(dataPoints,
+        oldFromNew, leafSize);
+    metric::LMetric<2, true> metric;
+    Timer::Stop("tree_building");
+
+    DualTreeBoruvka<> dtb(&tree, dataPoints, metric);
 
     // Run the DTB algorithm.
     Log::Info << "Calculating minimum spanning tree." << endl;
     arma::mat results;
     dtb.ComputeMST(results);
 
+    // Unmap the results.
+    arma::mat unmappedResults(results.n_rows, results.n_cols);
+    for (size_t i = 0; i < results.n_cols; ++i)
+    {
+      const size_t indexA = oldFromNew[size_t(results(0, i))];
+      const size_t indexB = oldFromNew[size_t(results(1, i))];
+
+      if (indexA < indexB)
+      {
+        unmappedResults(0, i) = indexA;
+        unmappedResults(1, i) = indexB;
+      }
+      else
+      {
+        unmappedResults(0, i) = indexB;
+        unmappedResults(1, i) = indexA;
+      }
+
+      unmappedResults(2, i) = results(2, i);
+    }
+
     // Output the results.
     const string outputFilename = CLI::GetParam<string>("output_file");
 
-    data::Save(outputFilename, results, true);
+    data::Save(outputFilename, unmappedResults, true);
   }
 }

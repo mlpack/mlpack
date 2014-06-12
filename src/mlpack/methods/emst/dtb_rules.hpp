@@ -74,7 +74,7 @@ class DTBRules
    * @param queryNode Candidate query node to recurse into.
    * @param referenceNode Candidate reference node to recurse into.
    */
-  double Score(TreeType& queryNode, TreeType& referenceNode) const;
+  double Score(TreeType& queryNode, TreeType& referenceNode);
 
   /**
    * Get the score for recursion order, passing the base case result (in the
@@ -88,7 +88,7 @@ class DTBRules
    */
   double Score(TreeType& queryNode,
                TreeType& referenceNode,
-               const double baseCaseResult) const;
+               const double baseCaseResult);
 
   /**
    * Re-evaluate the score for recursion order.  A low score indicates priority
@@ -109,6 +109,16 @@ class DTBRules
 
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
+
+  //! Get the number of base cases performed.
+  size_t BaseCases() const { return baseCases; }
+  //! Modify the number of base cases performed.
+  size_t& BaseCases() { return baseCases; }
+
+  //! Get the number of node combinations that have been scored.
+  size_t Scores() const { return scores; }
+  //! Modify the number of node combinations that have been scored.
+  size_t& Scores() { return scores; }
 
  private:
   //! The data points.
@@ -137,6 +147,11 @@ class DTBRules
   inline double CalculateBound(TreeType& queryNode) const;
 
   TraversalInfoType traversalInfo;
+
+  //! The number of base cases calculated.
+  size_t baseCases;
+  //! The number of node combinations that have been scored.
+  size_t scores;
 
 }; // class DTBRules
 
