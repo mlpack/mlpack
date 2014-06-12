@@ -50,11 +50,10 @@ template<typename MetricType, typename TreeType>
 DualTreeBoruvka<MetricType, TreeType>::DualTreeBoruvka(
     const typename TreeType::Mat& dataset,
     const bool naive,
-    const size_t leafSize,
     const MetricType metric) :
     dataCopy(dataset),
     data(dataCopy), // The reference points to our copy of the data.
-    ownTree(true),
+    ownTree(!naive),
     naive(naive),
     connections(data.n_cols),
     totalDist(0.0),
@@ -62,17 +61,10 @@ DualTreeBoruvka<MetricType, TreeType>::DualTreeBoruvka(
 {
   Timer::Start("emst/tree_building");
 
+  // Default leaf size is 1; this gives the best pruning, empirically.  Use
+  // leaf_size = 1 unless space is a big concern.
   if (!naive)
-  {
-    // Default leaf size is 1; this gives the best pruning, empirically.  Use
-    // leaf_size = 1 unless space is a big concern.
-    tree = new TreeType(data, oldFromNew, leafSize);
-  }
-  else
-  {
-    // Naive tree holds all data in one leaf.
-    tree = new TreeType(data, oldFromNew, data.n_cols);
-  }
+    tree = new TreeType(dataCopy, oldFromNew);
 
   Timer::Stop("emst/tree_building");
 
@@ -91,7 +83,7 @@ DualTreeBoruvka<MetricType, TreeType>::DualTreeBoruvka(
     const MetricType metric) :
     data(dataset),
     tree(tree),
-    ownTree(true),
+    ownTree(false),
     naive(false),
     connections(data.n_cols),
     totalDist(0.0),
@@ -126,19 +118,32 @@ void DualTreeBoruvka<MetricType, TreeType>::ComputeMST(arma::mat& results)
   typedef DTBRules<MetricType, TreeType> RuleType;
   RuleType rules(data, connections, neighborsDistances, neighborsInComponent,
                  neighborsOutComponent, metric);
-
   while (edges.size() < (data.n_cols - 1))
   {
-    typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
-
-    traverser.Traverse(*tree, *tree);
+    if (naive)
+    {
+      // Full O(N^2) traversal.
+      for (size_t i = 0; i < data.n_cols; ++i)
+        for (size_t j = 0; j < data.n_cols; ++j)
+          rules.BaseCase(i, j);
+    }
+    else
+    {
+      typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
+      traverser.Traverse(*tree, *tree);
+    }
 
     AddAllEdges();
 
     Cleanup();
 
     Log::Info << edges.size() << " edges found so far." << std::endl;
-    Log::Info << traverser.NumPrunes() << " nodes pruned." << std::endl;
+    if (!naive)
+    {
+      Log::Info << rules.BaseCases() << " cumulative base cases." << std::endl;
+      Log::Info << rules.Scores() << " cumulative node combinations scored."
+          << std::endl;
+    }
   }
 
   Timer::Stop("emst/mst_computation");
@@ -146,7 +151,7 @@ void DualTreeBoruvka<MetricType, TreeType>::ComputeMST(arma::mat& results)
   EmitResults(results);
 
   Log::Info << "Total spanning tree length: " << totalDist << std::endl;
-} // ComputeMST
+}
 
 /**
  * Adds a single edge to the edge list
