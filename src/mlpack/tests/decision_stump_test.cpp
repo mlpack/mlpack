@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(OneClass)
   Row<size_t> predictedLabels(testingData.n_cols);
   ds.Classify(testingData, predictedLabels);
 
-  for(int i = 0; i < predictedLabels.size(); i++ )
+  for(size_t i = 0; i < predictedLabels.size(); i++ )
     BOOST_CHECK_EQUAL(predictedLabels(i),1);  
 
 } 
