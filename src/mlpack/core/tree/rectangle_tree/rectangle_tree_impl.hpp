@@ -84,7 +84,7 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
  */
 template<typename SplitType,
          typename DescentType,
-	 typename StatisticType,
+	typename StatisticType,
          typename MatType>
 RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   ~RectangleTree()
@@ -95,6 +95,18 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   delete dataset;
 }
 
+/**
+  * Deletes this node but leaves the children untouched.  Needed for when we 
+  * split nodes and remove nodes (inserting and deleting points).
+  */
+template<typename SplitType,
+                  typename DescentType,
+                  typename StatisticType,
+                  typename MatType>
+RectangleTree<SplitType, DescentType, StatisticType, MatType>::
+softDelete() {
+  /* do nothing.  I'm not sure how to handle this yet, so for now, we will leak memory */
+}
 
 /**
  * Recurse through the tree and insert the point at the leaf node chosen
@@ -119,10 +131,10 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 
   // If it is not a leaf node, we use the DescentHeuristic to choose a child
   // to which we recurse.
-  double minScore = DescentType::EvalNode(children[0].bound, point);
+  double minScore = DescentType::EvalNode(children[0].Bound(), point);
   int bestIndex = 0;
   for(int i = 1; i < numChildren; i++) {
-    double score = DescentType::EvalNode(children[i].bound, point);
+    double score = DescentType::EvalNode(children[i].Bound(), point);
     if(score < minScore) {
       minScore = score;
       bestIndex = i;
@@ -154,11 +166,14 @@ template<typename SplitType,
 size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
     TreeDepth() const
 {
+  /* Because R trees are balanced, we could simplify this.  However, X trees are not 
+     guaranteed to be balanced so I keep it as is: */
+
   // Recursively count the depth of each subtree.  The plus one is
   // because we have to count this node, too.
   int maxSubDepth = 0;
   for(int i = 0; i < numChildren; i++) {
-    int d = children[i].depth();
+    int d = children[i].TreeDepth();
     if(d > maxSubDepth)
       maxSubDepth = d;
   }
@@ -212,21 +227,7 @@ inline double RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 }
 
 /**
- * Return the specified child.
- */
-template<typename SplitType,
-         typename DescentType,
-	 typename StatisticType,
-         typename MatType>
-inline RectangleTree<SplitType, DescentType, StatisticType, MatType>&
-    RectangleTree<SplitType, DescentType, StatisticType, MatType>::
-        Child(const size_t child) const
-{
-  return children[child];
-}
-
-/**
- * Return the number of points contained in this node.  Zero if it is not a leaf.
+ * Return the number of points contained in this node.  Zero if it is a non-leaf node.
  */
 template<typename SplitType,
 	 typename DescentType,
@@ -235,7 +236,7 @@ template<typename SplitType,
 inline size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
     NumPoints() const
 {
-  if(numChildren == 0)
+  if(numChildren != 0) // This is not a leaf node.
     return 0;
 
   return count;
@@ -243,6 +244,7 @@ inline size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 
 /**
  * Return the number of descendants contained in this node.  MEANINIGLESS AS IT CURRENTLY STANDS.
+ * USE NumPoints() INSTEAD.
  */
 template<typename SplitType,
 	 typename DescentType,
@@ -311,12 +313,12 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::SplitNode()
   // the split will be called from here but will take place in the SplitType code.
   assert(numChildren == 0);
 
-  // See if we are full.
+  // Check to see if we are full.
   if(count < maxLeafSize)
-    return;
+    return; // We don't need to split.
   
-  // If we are full, then we need to move up the tree.  The SplitType takes
-  // care of this.
+  // If we are full, then we need to split (or at least try).  The SplitType takes
+  // care of this and of moving up the tree if necessary.
   SplitType::SplitLeafNode(this);    
 }
 

@@ -12,10 +12,6 @@
 #include "../hrectbound.hpp"
 #include "../statistic.hpp"
 
-// #ifdef __MLPACK_CORE_TREE_HRECTBOUND_HPP
-// #define max(a, b) 5  //something to break the build
-// #endif
-
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
@@ -247,12 +243,37 @@ class RectangleTree
   double& ParentDistance() { return parentDistance; }
 
   /**
-   * Return the specified child.
-   *
-   * @param child Index of child to return.
+    * Get the specified child.
+    *
+    * @param child Index of child to return.
+    */
+  template<typename SplitType,
+           typename DescentType,
+  	 typename StatisticType,
+           typename MatType>
+  inline RectangleTree<SplitType, DescentType, StatisticType, MatType>*
+      RectangleTree<SplitType, DescentType, StatisticType, MatType>::
+          Child(const size_t child) const
+  {
+    return children[child];
+  }
+  
+  /**
+   * Modify the specified child.
+    *
+    * @param child Index of child to return.
    */
-  RectangleTree& Child(const size_t child) const;
-
+  template<typename SplitType,
+           typename DescentType,
+           typename StatisticType,
+           typename MatType>
+  inline RectangleTree<SplitType, DescentType, StatisticType, MatType>*&
+      RectangleTree<SplitType, DescentType, StatisticType, MatType>::
+          Child(const size_t child)
+  {
+    return children[child];
+  }
+  
   //! Return the number of points in this node (returns 0 if this node is not a leaf).
   size_t NumPoints() const;
 
@@ -360,7 +381,7 @@ class RectangleTree
  private:
   /**
    * Private copy constructor, available only to fill (pad) the tree to a
-   * specified level.
+   * specified level.  TO BE REMOVED
    */
   RectangleTree(const size_t begin,
                   const size_t count,
