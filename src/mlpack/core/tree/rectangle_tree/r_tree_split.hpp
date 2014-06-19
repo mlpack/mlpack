@@ -18,8 +18,7 @@ namespace tree /** Trees and tree-building procedures. */ {
  * nodes overflow, we split them, moving up the tree and splitting nodes
  * as necessary.
  */
-template<typename SplitType,
-	 typename DescentType,
+template<typename DescentType,
 	 typename StatisticType,
 	 typename MatType>
 class RTreeSplit
@@ -31,7 +30,7 @@ public:
  * upwards through the tree.  The methods for splitting non-leaf nodes are private since
  * they should only be called if a leaf node overflows.
  */
-static void SplitLeafNode(const RectangleTree<SplitType, DescentType, StatisticType, MatType>* tree);
+static void SplitLeafNode(RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree);
 
 private:
 
@@ -39,25 +38,25 @@ private:
  * Split a non-leaf node using the "default" algorithm.  If this is the root node and
  * we need to move up the tree, a new root node is created.
  */
-static bool SplitNonLeafNode(const RectangleTree<SplitType, DescentType, StatisticType, MatType>* tree);
+static bool SplitNonLeafNode(RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree);
 
 /**
  * Get the seeds for splitting a leaf node.
  */
-static void GetPointSeeds(const RectangleTree<SplitType, DescentType, StatisticType, MatType>& tree, int *i, int *j);
+static void GetPointSeeds(const RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>& tree, int *i, int *j);
 
 /**
  * Get the seeds for splitting a non-leaf node.
  */
-static void GetBoundSeeds(const RectangleTree<SplitType, DescentType, StatisticType, MatType>& tree, int *i, int *j);
+static void GetBoundSeeds(const RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>& tree, int *i, int *j);
 
 /**
  * Assign points to the two new nodes.
  */
 static void AssignPointDestNode(
-    const RectangleTree<SplitType, DescentType, StatisticType, MatType>* oldTree,
-    RectangleTree<SplitType, DescentType, StatisticType, MatType>* treeOne,
-    RectangleTree<SplitType, DescentType, StatisticType, MatType>* treeTwo,
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* oldTree,
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* treeOne,
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* treeTwo,
     const int intI,
     const int intJ);
 
@@ -65,9 +64,9 @@ static void AssignPointDestNode(
  * Assign nodes to the two new nodes.
  */
 static void AssignNodeDestNode(
-    const RectangleTree<SplitType, DescentType, StatisticType, MatType>* oldTree,
-    RectangleTree<SplitType, DescentType, StatisticType, MatType> *treeOne,
-    RectangleTree<SplitType, DescentType, StatisticType, MatType> *treeTwo,
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* oldTree,
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType> *treeOne,
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType> *treeTwo,
     const int intI,
     const int intJ);
 
@@ -75,8 +74,8 @@ static void AssignNodeDestNode(
   * Insert a node into another node.
   */
 static void insertNodeIntoTree(
-    RectangleTree<SplitType, DescentType, StatisticType, MatType>* destTree,
-    RectangleTree<SplitType, DescentType, StatisticType, MatType>* srcNode);
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* destTree,
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* srcNode);
 };
 
 }; // namespace tree
