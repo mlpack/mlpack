@@ -35,7 +35,10 @@ void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
   // If we are splitting the root node, we need will do things differently so that the constructor
   // and other methods don't confuse the end user by giving an address of another node.
   if(tree->Parent() == NULL) {
-    
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType> copy = *tree; // We actually want to copy this way.  Pointers and everything.
+    copy.Parent() = tree;
+    tree->Count() = 0;
+    tree->Children()[++(tree->NumChildren())] = &copy; // Because this was a leaf node, numChildren must be 0.
     return;
   }
   
@@ -100,8 +103,10 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
   // If we are splitting the root node, we need will do things differently so that the constructor
   // and other methods don't confuse the end user by giving an address of another node.
   if(tree->Parent() == NULL) {
-    //tree->Parent() = new RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(NULL);
-    
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType> copy = *tree; // We actually want to copy this way.  Pointers and everything.
+    copy.Parent() = tree;
+    tree->NumChildren() = 0;
+    tree->Children()[++(tree->NumChildren())] = &copy; // Because this was a leaf node, numChildren must be 0.
     return true;
   }
   
