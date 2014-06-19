@@ -19,45 +19,45 @@ namespace tree {
  * Finally, we delete the old node and insert the new nodes into the tree, spliting the parent
  * if necessary.
  */
-template<typename SplitType,
-	 typename DescentType,
+template<typename DescentType,
 	 typename StatisticType,
 	 typename MatType>
-void RTreeSplit<SplitType, DescentType, StatisticType, MatType>::SplitLeafNode(
-  const RectangleTree<SplitType, DescentType,  StatisticType, MatType>* tree)
+void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
+  RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* tree)
 {
   // Use the quadratic split method from: Guttman "R-Trees: A Dynamic Index Structure for
   // Spatial Searching"  It is simplified since we don't handle rectangles, only points.
   // It assumes that the tree uses Euclidean Distance.
   int i = 0;
   int j = 0;
-  GetPointSeeds(tree, &i, &j);
+  GetPointSeeds(*tree, &i, &j);
 
-  RectangleTree<SplitType, DescentType,  StatisticType, MatType> *treeOne = new 
-    RectangleTree<SplitType, DescentType,  StatisticType, MatType>(tree.Parent());
-  RectangleTree<SplitType, DescentType,  StatisticType, MatType> *treeTwo = new 
-    RectangleTree<SplitType, DescentType,  StatisticType, MatType>(tree.Parent());
+  // If we are splitting the root node, we need will do things differently so that the constructor
+  // and other methods don't confuse the end user by giving an address of another node.
+  if(tree->Parent() == NULL) {
+    
+    return;
+  }
+  
+  RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType> *treeOne = new 
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(*(tree->Parent()));
+  RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType> *treeTwo = new 
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(*(tree->Parent()));
   
   // This will assign the ith and jth point appropriately.
   AssignPointDestNode(tree, treeOne, treeTwo, i, j);
   
-  // If we are splitting the root node, we need will do things differently so that the constructor
-  // and other methods don't confuse the end user by giving an address of another node.
-  if(tree.Parent() == NULL) {
-    
-  }
-  
   //Remove this node and insert treeOne and treeTwo
-  RectangleTree<SplitType, DescentType,  StatisticType, MatType>* par = tree.Parent();
+  RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* par = tree->Parent();
   int index = 0;
-  for(int i = 0; i < par->numOfChildren(); i++) {
-    if(par->getChildren()[i] == tree) {
+  for(int i = 0; i < par->NumChildren(); i++) {
+    if(par->Children()[i] == tree) {
       index = i;
       break;
     }
   }
-  par->getChildren()[i] = treeOne;
-  par->getChildren()[par->end++] = treeTwo;
+  par->Children()[index] = treeOne;
+  par->Children()[par->NumChildren()++] = treeTwo;
 
   //because we copied the points to treeOne and treeTwo, we can just delete this node
   delete tree;
@@ -79,45 +79,47 @@ void RTreeSplit<SplitType, DescentType, StatisticType, MatType>::SplitLeafNode(
  * and recurse up the tree if necessary.  We don't need to worry about the bounds
  * higher up the tree because they were already updated if necessary.
  */
-template<typename SplitType,
-	 typename DescentType,
+template<typename DescentType,
 	 typename StatisticType,
 	 typename MatType>
-bool RTreeSplit<SplitType, DescentType, StatisticType, MatType>::SplitNonLeafNode(
-  const RectangleTree<SplitType, DescentType,  StatisticType, MatType>* tree)
+bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
+  RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* tree)
 {
   int i = 0;
   int j = 0;
-  GetBoundSeeds(tree, &i, &j);
+  GetBoundSeeds(*tree, &i, &j);
   
-  RectangleTree<SplitType, DescentType,  StatisticType, MatType>* treeOne = new 
-    RectangleTree<SplitType, DescentType,  StatisticType, MatType>(tree.Parent());
-  RectangleTree<SplitType, DescentType,  StatisticType, MatType>* treeTwo = new 
-    RectangleTree<SplitType, DescentType,  StatisticType, MatType>(tree.Parent());
+  RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* treeOne = new 
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(*(tree->Parent()));
+  RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* treeTwo = new 
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(*(tree->Parent()));
   
   // This will assign the ith and jth rectangles appropriately.
   AssignNodeDestNode(tree, treeOne, treeTwo, i, j);
 
-  // create the parent node if necessary
-  if(tree.Parent() == NULL) {
-    tree.Parent() = new RectangleTree<SplitType, DescentType,  StatisticType, MatType>();
+  // If we are splitting the root node, we need will do things differently so that the constructor
+  // and other methods don't confuse the end user by giving an address of another node.
+  if(tree->Parent() == NULL) {
+    //tree->Parent() = new RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(NULL);
+    
+    return true;
   }
   
   //Remove this node and insert treeOne and treeTwo
-  RectangleTree<SplitType, DescentType,  StatisticType, MatType>* par = tree.parent();
+  RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* par = tree->Parent();
   int index = 0;
-  for(int i = 0; i < par->numOfChildren(); i++) {
-    if(par->getChildren()[i] == tree) {
+  for(int i = 0; i < par->NumChildren(); i++) {
+    if(par->Children()[i] == tree) {
       index = i;
       break;
     }
   }
-  par->getChildren()[i] = treeOne;
-  par->getChildren()[par->end++] = treeTwo;
+  par->Children()[index] = treeOne;
+  par->Children()[par->NumChildren()++] = treeTwo;
 
   // Because we now have pointers to the information stored under this tree,
   // we need to delete this node carefully.
-  tree.softDelete();
+  tree->softDelete();
 
   // we only add one at a time, so should only need to test for equality
   // just in case, we use an assert.
@@ -126,19 +128,18 @@ bool RTreeSplit<SplitType, DescentType, StatisticType, MatType>::SplitNonLeafNod
   if(par->NumChildren() == par->MaxNumChildren()) {
     SplitNonLeafNode(par);
   }
-  return;
+  return false;
 }
 
 /**
  * Get the two points that will be used as seeds for the split of a leaf node.
  * The indices of these points will be stored in iRet and jRet.
  */
-template<typename SplitType,
-	 typename DescentType,
+template<typename DescentType,
 	 typename StatisticType,
 	 typename MatType>
-void RTreeSplit<SplitType, DescentType, StatisticType, MatType>::GetPointSeeds(
-  const RectangleTree<SplitType, DescentType,  StatisticType, MatType>& tree,
+void RTreeSplit<DescentType, StatisticType, MatType>::GetPointSeeds(
+  const RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>& tree,
   int* iRet,
   int* jRet)
 {
@@ -148,11 +149,11 @@ void RTreeSplit<SplitType, DescentType, StatisticType, MatType>::GetPointSeeds(
   double worstPairScore = 0.0;
   int worstI = 0;
   int worstJ = 0;
-  for(int i = 0; i < tree.count; i++) {
-    for(int j = i+1; j < tree.count; j++) {
+  for(int i = 0; i < tree.Count(); i++) {
+    for(int j = i+1; j < tree.Count(); j++) {
       double score = 1.0;
       for(int k = 0; k < tree.Bound().Dim(); k++) {
-	score *= std::abs(tree.dataset[i][k] - tree.dataset[j][k]);
+	score *= std::abs(tree.Dataset().at(k, i) - tree.Dataset().at(k, j)); // Points are stored by column, but this function takes (row, col).
       }
       if(score > worstPairScore) {
 	worstPairScore = score;
@@ -171,24 +172,23 @@ void RTreeSplit<SplitType, DescentType, StatisticType, MatType>::GetPointSeeds(
  * Get the two bounds that will be used as seeds for the split of the node.
  * The indices of the bounds will be stored in iRet and jRet.
  */
-template<typename SplitType,
-	 typename DescentType,
+template<typename DescentType,
 	 typename StatisticType,
 	 typename MatType>
-void RTreeSplit<SplitType, DescentType, StatisticType, MatType>::GetBoundSeeds(
-  const RectangleTree<SplitType, DescentType,  StatisticType, MatType>& tree,
+void RTreeSplit<DescentType, StatisticType, MatType>::GetBoundSeeds(
+  const RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>& tree,
   int* iRet,
   int* jRet)
 {
   double worstPairScore = 0.0;
   int worstI = 0;
   int worstJ = 0;
-  for(int i = 0; i < tree.numChildren; i++) {
-    for(int j = i+1; j < tree.numChildren; j++) {
+  for(int i = 0; i < tree.NumChildren(); i++) {
+    for(int j = i+1; j < tree.NumChildren(); j++) {
       double score = 1.0;
       for(int k = 0; k < tree.Bound().Dim(); k++) {
-	score *= std::max(tree.children[i].bound[k].hi(), tree.children[j].bound[k].hi) - 
-	  std::min(tree.children[i].bound[k].low(), tree.children[j].bound[k].low());
+	score *= std::max(tree.Children()[i]->Bound()[k].Hi(), tree.Children()[j]->Bound()[k].Hi()) - 
+	  std::min(tree.Children()[i]->Bound()[k].Lo(), tree.Children()[j]->Bound()[k].Lo());
       }
       if(score > worstPairScore) {
 	worstPairScore = score;
@@ -203,24 +203,23 @@ void RTreeSplit<SplitType, DescentType, StatisticType, MatType>::GetBoundSeeds(
   return;
 }
 
-template<typename SplitType,
-	 typename DescentType,
+template<typename DescentType,
 	 typename StatisticType,
 	 typename MatType>
-void RTreeSplit<SplitType, DescentType, StatisticType, MatType>::AssignPointDestNode(
-    const RectangleTree<SplitType, DescentType, StatisticType, MatType>* oldTree,
-    RectangleTree<SplitType, DescentType, StatisticType, MatType>* treeOne,
-    RectangleTree<SplitType, DescentType, StatisticType, MatType>* treeTwo,
+void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* oldTree,
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* treeOne,
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* treeTwo,
     const int intI,
     const int intJ)
 {
-  int end = oldTree.count;
+  int end = oldTree->Count();
   assert(end > 1); // If this isn't true, the tree is really weird.
 
-  treeOne->insertPoint(oldTree->dataset.col(intI));
-  oldTree->dataset.col(intI) = oldTree->dataset.col(--end); // decrement end
-  treeTwo->insertPoint(oldTree->dataset.col(intJ));
-  oldTree->dataset.col(intJ) = oldTree->dataset.col(--end); // decrement end
+  treeOne->InsertPoint(oldTree->Dataset().col(intI));
+  oldTree->Dataset().col(intI) = oldTree->Dataset().col(--end); // decrement end
+  treeTwo->InsertPoint(oldTree->Dataset().col(intJ));
+  oldTree->Dataset().col(intJ) = oldTree->Dataset().col(--end); // decrement end
   
 
   int numAssignedOne = 1;
@@ -230,17 +229,22 @@ void RTreeSplit<SplitType, DescentType, StatisticType, MatType>::AssignPointDest
   // increase of volume when added to one of the rectangles.  We then add it to that
   // rectangle.  We stop when we run out of points or when all of the remaining points
   // need to be assigned to the same rectangle to satisfy the minimum fill requirement.
-  while(end > 1 && end < oldTree->minLeafSize() - std::min(numAssignedOne, numAssignedTwo)) {
+  
+  // The below is safe because if end decreases and the right hand side of the second part of the conjunction changes
+  // on the same iteration, we added the point to the node with fewer points anyways.
+  while(end > 1 && end < oldTree->MinLeafSize() - std::min(numAssignedOne, numAssignedTwo)) {
     int bestIndex = 0;
-    double bestScore = 0;
-    int bestRect = 0;
+    double bestScore = DBL_MAX;
+    int bestRect = 1;
 
     // Calculate the increase in volume for assigning this point to each rectangle.
+    
+    // First, calculate the starting volume.
     double volOne = 1.0;
     double volTwo = 1.0;
     for(int i = 0; i < oldTree->Bound().Dim(); i++) {
-      volOne *= treeOne->bound[i].width();
-      volTwo *= treeTwo->bound[i].width();
+      volOne *= treeOne->Bound()[i].Width();
+      volTwo *= treeTwo->Bound()[i].Width();
     }
 
     // Find the point that, when assigned to one of the two new rectangles, minimizes the increase
@@ -249,11 +253,11 @@ void RTreeSplit<SplitType, DescentType, StatisticType, MatType>::AssignPointDest
       double newVolOne = 1.0;
       double newVolTwo = 1.0;
       for(int i = 0; i < oldTree->Bound().Dim(); i++) {
-	double c = oldTree->dataset.col(index)[i];      
-	newVolOne *= treeOne->bound[i].contains(c) ? treeOne->bound[i].width() :
-	  (c < treeOne->bound[i].low() ? (treeOne->bound[i].high() - c) : (c - treeOne->bound[i].low()));
-	newVolTwo *= treeTwo->bound[i].contains(c) ? treeTwo->bound[i].width() :
-	  (c < treeTwo->bound[i].low() ? (treeTwo->bound[i].high() - c) : (c - treeTwo->bound[i].low()));
+	double c = oldTree->Dataset().col(index)[i];      
+	newVolOne *= treeOne->Bound()[i].Contains(c) ? treeOne->Bound()[i].Width() :
+	  (c < treeOne->Bound()[i].Lo() ? (treeOne->Bound()[i].Hi() - c) : (c - treeOne->Bound()[i].Lo()));
+	newVolTwo *= treeTwo->Bound()[i].Contains(c) ? treeTwo->Bound()[i].Width() :
+	  (c < treeTwo->Bound()[i].Lo() ? (treeTwo->Bound()[i].Hi() - c) : (c - treeTwo->Bound()[i].Lo()));
       }
     
       // Choose the rectangle that requires the lesser increase in volume.
@@ -275,46 +279,45 @@ void RTreeSplit<SplitType, DescentType, StatisticType, MatType>::AssignPointDest
     // Assign the point that causes the least increase in volume 
     // to the appropriate rectangle.
     if(bestRect == 1)
-      treeOne->insertPoint(oldTree->dataset(bestIndex));
+      treeOne->InsertPoint(oldTree->Dataset().col(bestIndex));
     else
-      treeTwo->insertPoint(oldTree->dataset(bestIndex));
+      treeTwo->InsertPoint(oldTree->Dataset().col(bestIndex));
 
-    oldTree->dataset.col(bestIndex) = oldTree->dataset.col(--end); // decrement end.
+    oldTree->Dataset().col(bestIndex) = oldTree->Dataset().col(--end); // decrement end.
   }
 
   // See if we need to satisfy the minimum fill.
   if(end > 1) {
     if(numAssignedOne < numAssignedTwo) {
       for(int i = 0; i < end; i++) {
-        treeOne->insertPoint(oldTree.dataset(i));
+        treeOne->InsertPoint(oldTree->Dataset().col(i));
       }
     } else {
       for(int i = 0; i < end; i++) {
-        treeTwo->insertPoint(oldTree.dataset(i));
+        treeTwo->InsertPoint(oldTree->Dataset().col(i));
       }
     }
   }
 }
 
-template<typename SplitType,
-	 typename DescentType,
+template<typename DescentType,
 	 typename StatisticType,
 	 typename MatType>
-void RTreeSplit<SplitType, DescentType, StatisticType, MatType>::AssignNodeDestNode(
-    const RectangleTree<SplitType, DescentType, StatisticType, MatType>* oldTree,
-    RectangleTree<SplitType, DescentType, StatisticType, MatType>* treeOne,
-    RectangleTree<SplitType, DescentType, StatisticType, MatType>* treeTwo,
+void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* oldTree,
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* treeOne,
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* treeTwo,
     const int intI,
     const int intJ)
 {
   
-  int end = oldTree->getNumChildren();
+  int end = oldTree->NumChildren();
   assert(end > 1); // If this isn't true, the tree is really weird.
 
-  treeOne->getChildren()[0] = oldTree->getChildren()[intI];
-  oldTree->getChildren[intI] = oldTree->getChildren()[--end]; // decrement end
-  treeTwo->getChildren()[0] = oldTree->getChildren()[intJ];
-  oldTree->getChildren()[intJ] = oldTree->getChildren()[--end]; // decrement end
+  treeOne->Children()[0] = oldTree->Children()[intI];
+  oldTree->Children()[intI] = oldTree->Children()[--end]; // decrement end
+  treeTwo->Children()[0] = oldTree->Children()[intJ];
+  oldTree->Children()[intJ] = oldTree->Children()[--end]; // decrement end
  
   int numAssignTreeOne = 1;
   int numAssignTreeTwo = 1;
@@ -322,17 +325,17 @@ void RTreeSplit<SplitType, DescentType, StatisticType, MatType>::AssignNodeDestN
   // In each iteration, we go through all of the nodes and find the one that causes the least
   // increase of volume when added to one of the two new rectangles.  We then add it to that
   // rectangle.
-  while(end > 1 && end < oldTree->getMinNumChildren() - std::min(numAssignTreeOne, numAssignTreeTwo)) {
+  while(end > 1 && end < oldTree->MinNumChildren() - std::min(numAssignTreeOne, numAssignTreeTwo)) {
     int bestIndex = 0;
-    double bestScore = 0;
+    double bestScore = DBL_MAX;
     int bestRect = 0;
 
     // Calculate the increase in volume for assigning this node to each of the new rectangles.
     double volOne = 1.0;
     double volTwo = 1.0;
     for(int i = 0; i < oldTree->Bound().Dim(); i++) {
-      volOne *= treeOne->bound[i].width();
-      volTwo *= treeTwo->bound[i].width();
+      volOne *= treeOne->Bound()[i].Width();
+      volTwo *= treeTwo->Bound()[i].Width();
     }
 
     for(int index = 0; index < end; index++) {
@@ -341,13 +344,13 @@ void RTreeSplit<SplitType, DescentType, StatisticType, MatType>::AssignNodeDestN
       for(int i = 0; i < oldTree->Bound().Dim(); i++) {
 	// For each of the new rectangles, find the width in this dimension if we add the rectangle at index to
 	// the new rectangle.
-	math::Range range = oldTree->getChildren()[index].Bound(i);
-	newVolOne *= treeOne->Bound(i).Contains(range) ? treeOne->bound[i].width() :
-	  (range.Contains(treeOne->Bound(i)) ? range.Width() : (range.lo() < treeOne->Bound(i).lo() ? (treeOne->Bound(i).hi() - range.lo()) : 
-		(range.hi() - treeOne->Bound(i).lo())));
-	newVolTwo *= treeTwo.Bound(i).Contains(range) ? treeTwo.bound[i].width() :
-	  (range.Contains(treeTwo->Bound(i)) ? range.Width() : (range.lo() < treeTwo->Bound(i).lo() ? (treeTwo->Bound(i).hi() - range.lo()) : 
-		(range.hi() - treeTwo->Bound(i).lo())));
+	math::Range range = oldTree->Children()[index]->Bound()[i];
+	newVolOne *= treeOne->Bound()[i].Contains(range) ? treeOne->Bound()[i].Width() :
+	  (range.Contains(treeOne->Bound()[i]) ? range.Width() : (range.Lo() < treeOne->Bound()[i].Lo() ? (treeOne->Bound()[i].Hi() - range.Lo()) : 
+		(range.Hi() - treeOne->Bound()[i].Lo())));
+	newVolTwo *= treeTwo->Bound()[i].Contains(range) ? treeTwo->Bound()[i].Width() :
+	  (range.Contains(treeTwo->Bound()[i]) ? range.Width() : (range.Lo() < treeTwo->Bound()[i].Lo() ? (treeTwo->Bound()[i].Hi() - range.Lo()) : 
+		(range.Hi() - treeTwo->Bound()[i].Lo())));
       }
     
       // Choose the rectangle that requires the lesser increase in volume.
@@ -392,16 +395,15 @@ void RTreeSplit<SplitType, DescentType, StatisticType, MatType>::AssignNodeDestN
 /**
   * Insert a node into another node.  Expanding the bounds and updating the numberOfChildren.
   */
-template<typename SplitType,
-	 typename DescentType,
+template<typename DescentType,
 	 typename StatisticType,
 	 typename MatType>
-void RTreeSplit<SplitType, DescentType, StatisticType, MatType>::insertNodeIntoTree(
-    RectangleTree<SplitType, DescentType, StatisticType, MatType>* destTree,
-    RectangleTree<SplitType, DescentType, StatisticType, MatType>* srcNode)
+void RTreeSplit<DescentType, StatisticType, MatType>::insertNodeIntoTree(
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* destTree,
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* srcNode)
 {
-  destTree.Bound() |= srcNode->Bound();
-  destTree->Children()[destTree->getNumOfChildren()++] = &srcNode;
+  destTree->Bound() |= srcNode->Bound();
+  destTree->Children()[destTree->NumChildren()++] = srcNode;
 }
 
 

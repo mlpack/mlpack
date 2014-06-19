@@ -71,7 +71,7 @@ class RectangleTree
   //! The discance to the furthest descendant, cached to speed things up.
   double furthestDescendantDistance;
   //! The dataset.
-  MatType& dataset;
+  MatType* dataset;
   
  public:
   //! So other classes can use TreeType::Mat.
@@ -108,7 +108,7 @@ class RectangleTree
    *
    * @param parentNode The parent of the node that is being constructed.
    */
-  RectangleTree(const RectangleTree<SplitType, DescentType, StatisticType, MatType>& parentNode);
+  RectangleTree(RectangleTree<SplitType, DescentType, StatisticType, MatType>* parentNode);
 
 
   //TODO implement the oldFromNew stuff if applicable.
@@ -200,9 +200,9 @@ class RectangleTree
   RectangleTree*& Parent() { return parent; }
 
   //! Get the dataset which the tree is built on.
-  const arma::mat& Dataset() const { return dataset; }
+  const arma::mat& Dataset() const { return *dataset; }
   //! Modify the dataset which the tree is built on.  Be careful!
-  arma::mat& Dataset() { return dataset; }
+  arma::mat& Dataset() { return *dataset; }
 
   //! Get the metric which the tree uses.
   typename HRectBound<>::MetricType Metric() const { return bound.Metric(); }
@@ -247,13 +247,9 @@ class RectangleTree
     *
     * @param child Index of child to return.
     */
-  template<typename SplitType,
-           typename DescentType,
-  	 typename StatisticType,
-           typename MatType>
+
   inline RectangleTree<SplitType, DescentType, StatisticType, MatType>*
-      RectangleTree<SplitType, DescentType, StatisticType, MatType>::
-          Child(const size_t child) const
+    Child(const size_t child) const
   {
     return children[child];
   }
@@ -263,13 +259,8 @@ class RectangleTree
     *
     * @param child Index of child to return.
    */
-  template<typename SplitType,
-           typename DescentType,
-           typename StatisticType,
-           typename MatType>
   inline RectangleTree<SplitType, DescentType, StatisticType, MatType>*&
-      RectangleTree<SplitType, DescentType, StatisticType, MatType>::
-          Child(const size_t child)
+    Child(const size_t child)
   {
     return children[child];
   }

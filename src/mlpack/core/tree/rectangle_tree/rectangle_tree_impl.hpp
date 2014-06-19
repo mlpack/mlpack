@@ -38,18 +38,17 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
     maxLeafSize(maxLeafSize),
     minLeafSize(minLeafSize),
     bound(data.n_rows),
-    parentDistance(0)
-
+    parentDistance(0),
+    dataset(new MatType(data.n_rows, static_cast<int>(maxLeafSize)+1)) // Add one to make splitting the node simpler
 {
-  this.stat = EmptyStatistic(*this);
-  this.dataset = new MatType(maxLeafSize+1); // Add one to make splitting the node simpler
+  stat = StatisticType(*this);
   
   // For now, just insert the points in order.
   RectangleTree* root = this;
   for(int i = firstDataIndex; i < data.n_cols; i++) {
-    root.insertPoint(data.col(i));
-    if(root.Parent() != NULL) {
-      root = root.Parent(); // OK since the level increases by at most one per iteration.
+    root->InsertPoint(data.col(i));
+    if(root->Parent() != NULL) {
+      root = root->Parent(); // OK since the level increases by at most one per iteration.
     }
   }
   
@@ -60,22 +59,22 @@ template<typename SplitType,
 	 typename StatisticType,
 	 typename MatType>
 RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
-  const RectangleTree<SplitType, DescentType, StatisticType, MatType>& parentNode):
+  RectangleTree<SplitType, DescentType, StatisticType, MatType>* parentNode):
   maxNumChildren(parentNode.MaxNumChildren()),
   minNumChildren(parentNode.MinNumChildren()),
   numChildren(0),
   children(maxNumChildren+1),
-  parent(&parentNode),
+  parent(parentNode),
   begin(0),
   count(0),
-  maxLeafSize(parentNode.MaxLeafSize()),
-  minLeafSize(parentNode.MinLeafSize()),
-  bound(parentNode.Bound().Dim()),
-  parentDistance(0)
-  {
-    this.stat = EmptyStatistic(*this);
-    this.dataset = new MatType(maxLeafSize+1); // Add one to make splitting the node simpler
-  }
+  maxLeafSize(parentNode->MaxLeafSize()),
+  minLeafSize(parentNode->MinLeafSize()),
+  bound(parentNode->Bound().Dim()),
+  parentDistance(0),
+  dataset(new MatType(static_cast<int>(parentNode->Bound().Dim()), static_cast<int>((maxLeafSize)+1))) // Add one to make splitting the node simpler
+{
+  stat = StatisticType(*this);
+}
 
 /**
  * Deletes this node, deallocating the memory for the children and calling
@@ -103,8 +102,9 @@ template<typename SplitType,
                   typename DescentType,
                   typename StatisticType,
                   typename MatType>
-RectangleTree<SplitType, DescentType, StatisticType, MatType>::
-softDelete() {
+void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
+    softDelete()
+{
   /* do nothing.  I'm not sure how to handle this yet, so for now, we will leak memory */
 }
 
@@ -124,23 +124,23 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   
   // If this is a leaf node, we stop here and add the point.
   if(numChildren == 0) {
-    dataset.col(count++) = point;
+    dataset->col(count++) = point;
     SplitNode();
     return;
   }
 
   // If it is not a leaf node, we use the DescentHeuristic to choose a child
   // to which we recurse.
-  double minScore = DescentType::EvalNode(children[0].Bound(), point);
+  double minScore = DescentType::EvalNode(children[0]->Bound(), point);
   int bestIndex = 0;
   for(int i = 1; i < numChildren; i++) {
-    double score = DescentType::EvalNode(children[i].Bound(), point);
+    double score = DescentType::EvalNode(children[i]->Bound(), point);
     if(score < minScore) {
       minScore = score;
       bestIndex = i;
     }
   }
-  children[bestIndex].InsertPoint(point);
+  children[bestIndex]->InsertPoint(point);
 }
 
 template<typename SplitType,
@@ -152,7 +152,7 @@ size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 {
   int n = 0;
   for(int i = 0; i < numChildren; i++) {
-    n += children[i].TreeSize();
+    n += children[i]->TreeSize();
   }
   return n + 1; // we add one for this node
 }
@@ -173,7 +173,7 @@ size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   // because we have to count this node, too.
   int maxSubDepth = 0;
   for(int i = 0; i < numChildren; i++) {
-    int d = children[i].TreeDepth();
+    int d = children[i]->TreeDepth();
     if(d > maxSubDepth)
       maxSubDepth = d;
   }
@@ -294,7 +294,7 @@ inline size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::End
 {
   if(numChildren)
     return begin + count;
-  return children[numChildren-1].End();
+  return children[numChildren-1]->End();
 }
 
   //have functions for returning the list of modified indices if we end up doing it that way.
@@ -346,7 +346,7 @@ std::string RectangleTree<SplitType, DescentType, StatisticType, MatType>::ToStr
   // How many levels should we print?  This will print the root and it's children.
   if(parent == NULL) {
     for(int i = 0; i < numChildren; i++) {
-      convert << children[i].ToString();
+      convert << children[i]->ToString();
     }
   }
   return convert.str();
