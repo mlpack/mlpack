@@ -43,13 +43,20 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
 {
   stat = StatisticType(*this);
   
+  std::cout << ToString() << std::endl;
+  
+  
   // For now, just insert the points in order.
   RectangleTree* root = this;
-  for(int i = firstDataIndex; i < data.n_cols; i++) {
+  for(int i = firstDataIndex; i < 54 /*data.n_cols*/; i++) {
+    std::cout << "inserting point number: " << i << std::endl;
     root->InsertPoint(data.col(i));
+    std::cout << "finished inserting point number: " << i << std::endl;
     if(root->Parent() != NULL) {
       root = root->Parent(); // OK since the level increases by at most one per iteration.
     }
+    std::cout << "hi" << std::endl;
+    std::cout << ToString() << std::endl;
   }
   
 }
@@ -60,8 +67,8 @@ template<typename SplitType,
 	 typename MatType>
 RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
   RectangleTree<SplitType, DescentType, StatisticType, MatType>* parentNode):
-  maxNumChildren(parentNode.MaxNumChildren()),
-  minNumChildren(parentNode.MinNumChildren()),
+  maxNumChildren(parentNode->MaxNumChildren()),
+  minNumChildren(parentNode->MinNumChildren()),
   numChildren(0),
   children(maxNumChildren+1),
   parent(parentNode),
@@ -71,7 +78,7 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
   minLeafSize(parentNode->MinLeafSize()),
   bound(parentNode->Bound().Dim()),
   parentDistance(0),
-  dataset(new MatType(static_cast<int>(parentNode->Bound().Dim()), static_cast<int>((maxLeafSize)+1))) // Add one to make splitting the node simpler
+  dataset(new MatType(static_cast<int>(parentNode->Bound().Dim()), static_cast<int>(maxLeafSize)+1)) // Add one to make splitting the node simpler
 {
   stat = StatisticType(*this);
 }
@@ -119,11 +126,14 @@ template<typename SplitType,
 void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
     InsertPoint(const arma::vec& point)
 {
+  
+  std::cout << "insert point called" << std::endl;
   // Expand the bound regardless of whether it is a leaf node.
   bound |= point;
-  
+
   // If this is a leaf node, we stop here and add the point.
   if(numChildren == 0) {
+    std::cout << "count = " << count << std::endl;
     dataset->col(count++) = point;
     SplitNode();
     return;
@@ -133,6 +143,7 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   // to which we recurse.
   double minScore = DescentType::EvalNode(children[0]->Bound(), point);
   int bestIndex = 0;
+  
   for(int i = 1; i < numChildren; i++) {
     double score = DescentType::EvalNode(children[i]->Bound(), point);
     if(score < minScore) {
@@ -317,9 +328,13 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::SplitNode()
   if(count < maxLeafSize)
     return; // We don't need to split.
   
+  std::cout << "we are actually splitting the node." << std::endl;
   // If we are full, then we need to split (or at least try).  The SplitType takes
   // care of this and of moving up the tree if necessary.
-  SplitType::SplitLeafNode(this);    
+  SplitType::SplitLeafNode(this);
+  std::cout << "we finished actually splitting the node." << std::endl;
+  
+  std::cout << ToString() << std::endl;
 }
 
 
@@ -340,8 +355,12 @@ std::string RectangleTree<SplitType, DescentType, StatisticType, MatType>::ToStr
   convert << "  Bound: " << std::endl;
   convert << mlpack::util::Indent(bound.ToString(), 2);
   convert << "  Statistic: " << std::endl;
-  convert << mlpack::util::Indent(stat.ToString(), 2);
+  //convert << mlpack::util::Indent(stat.ToString(), 2);
   convert << "  Max leaf size: " << maxLeafSize << std::endl;
+  convert << "  Min leaf size: " << minLeafSize << std::endl;
+  convert << "  Max num of children: " << maxNumChildren << std::endl;
+  convert << "  Min num of children: " << minNumChildren << std::endl;
+  convert << "  Parent address: " << parent << std::endl;
 
   // How many levels should we print?  This will print the root and it's children.
   if(parent == NULL) {

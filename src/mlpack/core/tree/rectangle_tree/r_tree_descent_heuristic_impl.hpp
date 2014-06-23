@@ -15,6 +15,7 @@ namespace tree {
 
 inline double RTreeDescentHeuristic::EvalNode(const HRectBound<>& bound, const arma::vec& point)
 {
+  std::cout << "eval node called" << std::endl;
   return bound.Contains(point) ? 0 : bound.MinDistance(point);
 }
 
