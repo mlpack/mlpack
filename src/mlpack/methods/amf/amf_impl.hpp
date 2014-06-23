@@ -63,7 +63,7 @@ double AMF<InitializationRule, UpdateRule>::Apply(
 
   update.Initialize(V, r);
 
-  while (((oldResidue - residue) / oldResidue >= tolerance || iteration < 4) && iteration != maxIterations)
+  while ((std::abs(oldResidue - residue) / oldResidue >= tolerance || iteration < 4) && iteration != maxIterations)
   {
     // Update step.
     // Update the value of W and H based on the Update Rules provided
