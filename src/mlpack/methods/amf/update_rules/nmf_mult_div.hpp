@@ -9,6 +9,10 @@
  * \f$ \sum_i \sum_j (V_{ij} log\frac{V_{ij}}{(WH)_{ij}}-V_{ij}+(WH)_{ij}) \f$is
  * non-increasing between subsequent iterations. Both of the update rules
  * for W and H are defined in this file.
+ *
+ * This set of update rules is not meant to work with sparse matrices.  Using
+ * sparse matrices often causes NaNs in the output, so other choices of update
+ * rules are better in that situation.
  */
 #ifndef __MLPACK_METHODS_LMF_UPDATE_RULES_NMF_MULT_DIV_HPP
 #define __MLPACK_METHODS_LMF_UPDATE_RULES_NMF_MULT_DIV_HPP
@@ -17,7 +21,6 @@
 
 namespace mlpack {
 namespace amf {
-
 
 class NMFMultiplicativeDivergenceUpdate
 {
