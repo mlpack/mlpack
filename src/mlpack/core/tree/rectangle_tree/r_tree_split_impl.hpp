@@ -25,30 +25,45 @@ template<typename DescentType,
 void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
   RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* tree)
 {
-  // Use the quadratic split method from: Guttman "R-Trees: A Dynamic Index Structure for
-  // Spatial Searching"  It is simplified since we don't handle rectangles, only points.
-  // It assumes that the tree uses Euclidean Distance.
-  int i = 0;
-  int j = 0;
-  GetPointSeeds(*tree, &i, &j);
+  
+  std::cout << "splitting a leaf node." << std::endl;
 
   // If we are splitting the root node, we need will do things differently so that the constructor
   // and other methods don't confuse the end user by giving an address of another node.
   if(tree->Parent() == NULL) {
     RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType> copy = *tree; // We actually want to copy this way.  Pointers and everything.
+      std::cout << "copy made ." << std::endl;
+
     copy.Parent() = tree;
     tree->Count() = 0;
-    tree->Children()[++(tree->NumChildren())] = &copy; // Because this was a leaf node, numChildren must be 0.
+    tree->Children()[(tree->NumChildren())++] = &copy; // Because this was a leaf node, numChildren must be 0.
+    RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(&copy);
+    std::cout << "finished split" << std::endl;
     return;
   }
   
-  RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType> *treeOne = new 
-    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(*(tree->Parent()));
-  RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType> *treeTwo = new 
-    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(*(tree->Parent()));
+  // Use the quadratic split method from: Guttman "R-Trees: A Dynamic Index Structure for
+  // Spatial Searching"  It is simplified since we don't handle rectangles, only points.
+  // We assume that the tree uses Euclidean Distance.
+  int i = 0;
+  int j = 0;
+  GetPointSeeds(*tree, &i, &j);
+
+  std::cout << "point seeds found." << std::endl;
   
+  RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType> *treeOne = new 
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(tree->Parent());
+  RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType> *treeTwo = new 
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(tree->Parent());
+  
+  std::cout << "new trees made." << std::endl;
+ 
+    
   // This will assign the ith and jth point appropriately.
   AssignPointDestNode(tree, treeOne, treeTwo, i, j);
+  
+    std::cout << "assignments made." << std::endl;
+
   
   //Remove this node and insert treeOne and treeTwo
   RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* par = tree->Parent();
@@ -62,13 +77,17 @@ void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
   par->Children()[index] = treeOne;
   par->Children()[par->NumChildren()++] = treeTwo;
 
+  
+  std::cout << "points copied." << std::endl;
+
+      
   //because we copied the points to treeOne and treeTwo, we can just delete this node
-  delete tree;
+  // I THINK?
+  //delete tree;
 
   // we only add one at a time, so we should only need to test for equality
   // just in case, we use an assert.
   assert(par->NumChildren() <= par->MaxNumChildren());
-
   if(par->NumChildren() == par->MaxNumChildren()) {
     SplitNonLeafNode(par);
   }
@@ -93,9 +112,9 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
   GetBoundSeeds(*tree, &i, &j);
   
   RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* treeOne = new 
-    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(*(tree->Parent()));
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(tree->Parent());
   RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* treeTwo = new 
-    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(*(tree->Parent()));
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(tree->Parent());
   
   // This will assign the ith and jth rectangles appropriately.
   AssignNodeDestNode(tree, treeOne, treeTwo, i, j);
@@ -106,7 +125,8 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
     RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType> copy = *tree; // We actually want to copy this way.  Pointers and everything.
     copy.Parent() = tree;
     tree->NumChildren() = 0;
-    tree->Children()[++(tree->NumChildren())] = &copy; // Because this was a leaf node, numChildren must be 0.
+    tree->Children()[(tree->NumChildren())++] = &copy;
+    RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(&copy);
     return true;
   }
   
@@ -218,15 +238,28 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
     const int intI,
     const int intJ)
 {
+  
   int end = oldTree->Count();
   assert(end > 1); // If this isn't true, the tree is really weird.
 
+  
+  // Restart the point counts since we are going to move them.
+  oldTree->Count() = 0;
+  treeOne->Count() = 0;
+  treeTwo->Count() = 0;
+  
+  std::cout << " about to assign i and j" << std::endl;
+  
   treeOne->InsertPoint(oldTree->Dataset().col(intI));
+      std::cout << "assignment of i made." << std::endl;
+
   oldTree->Dataset().col(intI) = oldTree->Dataset().col(--end); // decrement end
   treeTwo->InsertPoint(oldTree->Dataset().col(intJ));
   oldTree->Dataset().col(intJ) = oldTree->Dataset().col(--end); // decrement end
   
 
+  std::cout << "i and j assigned" << std::endl;
+  
   int numAssignedOne = 1;
   int numAssignedTwo = 1;
 
@@ -237,7 +270,10 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
   
   // The below is safe because if end decreases and the right hand side of the second part of the conjunction changes
   // on the same iteration, we added the point to the node with fewer points anyways.
-  while(end > 1 && end < oldTree->MinLeafSize() - std::min(numAssignedOne, numAssignedTwo)) {
+  while(end > 0 && end > oldTree->MinLeafSize() - std::min(numAssignedOne, numAssignedTwo)) {
+    
+    std::cout << "while loop entered with end = "<< end << std::endl;
+    
     int bestIndex = 0;
     double bestScore = DBL_MAX;
     int bestRect = 1;
@@ -283,16 +319,20 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
 
     // Assign the point that causes the least increase in volume 
     // to the appropriate rectangle.
-    if(bestRect == 1)
+    if(bestRect == 1) {
       treeOne->InsertPoint(oldTree->Dataset().col(bestIndex));
-    else
+      numAssignedOne++;
+    }
+    else {
       treeTwo->InsertPoint(oldTree->Dataset().col(bestIndex));
+      numAssignedTwo++;      
+    }
 
     oldTree->Dataset().col(bestIndex) = oldTree->Dataset().col(--end); // decrement end.
   }
-
+  
   // See if we need to satisfy the minimum fill.
-  if(end > 1) {
+  if(end > 0) {
     if(numAssignedOne < numAssignedTwo) {
       for(int i = 0; i < end; i++) {
         treeOne->InsertPoint(oldTree->Dataset().col(i));
@@ -330,7 +370,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
   // In each iteration, we go through all of the nodes and find the one that causes the least
   // increase of volume when added to one of the two new rectangles.  We then add it to that
   // rectangle.
-  while(end > 1 && end < oldTree->MinNumChildren() - std::min(numAssignTreeOne, numAssignTreeTwo)) {
+  while(end > 0 && end > oldTree->MinNumChildren() - std::min(numAssignTreeOne, numAssignTreeTwo)) {
     int bestIndex = 0;
     double bestScore = DBL_MAX;
     int bestRect = 0;
@@ -376,15 +416,19 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
 
     // Assign the rectangle that causes the least increase in volume 
     // to the appropriate rectangle.
-    if(bestRect == 1)
+    if(bestRect == 1) {
       insertNodeIntoTree(treeOne, oldTree->Children()[bestIndex]);
-    else
+      numAssignTreeOne++;      
+    }
+    else {
       insertNodeIntoTree(treeTwo, oldTree->Children()[bestIndex]);
+      numAssignTreeTwo++;      
+    }
 
     oldTree->Children()[bestIndex] = oldTree->Children()[--end]; // Decrement end.
   }
   // See if we need to satisfy the minimum fill.
-  if(end > 1) {
+  if(end > 0) {
     if(numAssignTreeOne < numAssignTreeTwo) {
       for(int i = 0; i < end; i++) {
         insertNodeIntoTree(treeOne, oldTree->Children()[i]);
