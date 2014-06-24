@@ -2,7 +2,7 @@
  * @author: Udit Saxena
  * @file: decision_stump_main.cpp
  *
- *
+ * Main executable for the decision stump.
  */
 
 #include <mlpack/core.hpp>
@@ -52,13 +52,13 @@ int main(int argc, char *argv[])
     labelsIn = labelsIn.t();
 
   size_t inpBucketSize = CLI::GetParam<int>("bucket_size");
-  
+
   // normalize the labels
   data::NormalizeLabels(labelsIn.unsafe_col(0), labels, mappings);
 
   const size_t num_classes = CLI::GetParam<size_t>("num_classes");
   /*
-  Should number of classes be input or should it be 
+  Should number of classes be input or should it be
   derived from the labels row ?
   */
   const string testingDataFilename = CLI::GetParam<std::string>("test_file");
