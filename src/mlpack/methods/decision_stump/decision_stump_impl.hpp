@@ -38,7 +38,7 @@ DecisionStump<MatType>::DecisionStump(const MatType& data,
   numClass = classes;
   bucketSize = inpBucketSize;
 
-  /* Check whether the input labels are not all identical. */
+  // Check whether the input labels are not all identical.
   if (!isDistinct<size_t>(classLabels))
   {
     // If the classLabels are all identical, the default class is the only
@@ -46,7 +46,6 @@ DecisionStump<MatType>::DecisionStump(const MatType& data,
     oneClass = true;
     defaultClass = classLabels(0);
   }
-
   else
   {
     // If classLabels are not all identical, proceed with training.
@@ -96,34 +95,31 @@ template<typename MatType>
 void DecisionStump<MatType>::Classify(const MatType& test,
                                       arma::Row<size_t>& predictedLabels)
 {
-  bool flag;
-  double val;
   if (!oneClass)
   {
     for (int i = 0; i < test.n_cols; i++)
     {
       int j = 0;
-      flag = false;
 
-      val = test(splitCol,i);
-      while ((j < split.n_rows) && (!flag))
+      const double val = test(splitCol, i);
+      while (j < split.n_rows)
       {
         if (val < split(j, 0) && (!j))
         {
           predictedLabels(i) = split(0, 1);
-          flag = true;
+          break;
         }
         else if (val >= split(j, 0))
         {
           if (j == split.n_rows - 1)
           {
             predictedLabels(i) = split(split.n_rows - 1, 1);
-            flag = true;
+            break;
           }
           else if (val < split(j + 1, 0))
           {
             predictedLabels(i) = split(j, 1);
-            flag = true;
+            break;
           }
         }
         j++;
@@ -392,7 +388,7 @@ int DecisionStump<MatType>::isDistinct(const arma::Row<rType>& featureRow)
 }
 
 /**
- * Calculating Entropy of attribute.
+ * Calculate entropy of attribute.
  *
  * @param attribute The attribute for which we calculate the entropy.
  * @param labels Corresponding labels of the attribute.
