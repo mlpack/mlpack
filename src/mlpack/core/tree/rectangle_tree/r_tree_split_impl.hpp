@@ -31,13 +31,14 @@ void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
   // If we are splitting the root node, we need will do things differently so that the constructor
   // and other methods don't confuse the end user by giving an address of another node.
   if(tree->Parent() == NULL) {
-    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType> copy = *tree; // We actually want to copy this way.  Pointers and everything.
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* copy =
+      new RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(*tree); // We actually want to copy this way.  Pointers and everything.
       std::cout << "copy made ." << std::endl;
 
-    copy.Parent() = tree;
+    copy->Parent() = tree;
     tree->Count() = 0;
-    tree->Children()[(tree->NumChildren())++] = &copy; // Because this was a leaf node, numChildren must be 0.
-    RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(&copy);
+    tree->Children()[(tree->NumChildren())++] = copy; // Because this was a leaf node, numChildren must be 0.
+    RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(copy);
     std::cout << "finished split" << std::endl;
     return;
   }
@@ -82,15 +83,17 @@ void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
 
       
   //because we copied the points to treeOne and treeTwo, we can just delete this node
-  // I THINK?
+  // I THOUGHT?
   //delete tree;
 
   // we only add one at a time, so we should only need to test for equality
   // just in case, we use an assert.
   assert(par->NumChildren() <= par->MaxNumChildren());
   if(par->NumChildren() == par->MaxNumChildren()) {
+    std::cout << "leaf split calls non-leaf split" << std::endl;
     SplitNonLeafNode(par);
   }
+  std::cout << "about to end leaf split." << std::endl;
   return;
 }
 
@@ -107,28 +110,43 @@ template<typename DescentType,
 bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
   RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* tree)
 {
+  std::cout << "splitting non-leaf node." << std::endl;
+
+  // If we are splitting the root node, we need will do things differently so that the constructor
+  // and other methods don't confuse the end user by giving an address of another node.
+  if(tree->Parent() == NULL) {
+    std::cout << "root node" << std::endl;
+    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* copy =
+      new RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(*tree); // We actually want to copy this way.  Pointers and everything.
+    copy->Parent() = tree;
+    tree->NumChildren() = 0;
+    tree->Children()[(tree->NumChildren())++] = copy;
+    RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(copy);
+    
+    std::cout << tree->ToString() << std::endl;
+    std::cout << "root split finished" << std::endl;
+    
+    return true;
+  }
+  
+  std::cout << "about to get bound seeds" << std::endl;
   int i = 0;
   int j = 0;
   GetBoundSeeds(*tree, &i, &j);
+  
+  std::cout << "bound seeds" << std::endl;
   
   RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* treeOne = new 
     RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(tree->Parent());
   RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* treeTwo = new 
     RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(tree->Parent());
   
+  std::cout << "new nodes created" << std::endl;
+
   // This will assign the ith and jth rectangles appropriately.
   AssignNodeDestNode(tree, treeOne, treeTwo, i, j);
-
-  // If we are splitting the root node, we need will do things differently so that the constructor
-  // and other methods don't confuse the end user by giving an address of another node.
-  if(tree->Parent() == NULL) {
-    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType> copy = *tree; // We actually want to copy this way.  Pointers and everything.
-    copy.Parent() = tree;
-    tree->NumChildren() = 0;
-    tree->Children()[(tree->NumChildren())++] = &copy;
-    RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(&copy);
-    return true;
-  }
+  
+  std::cout << "nodes assigned" << std::endl;
   
   //Remove this node and insert treeOne and treeTwo
   RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* par = tree->Parent();
@@ -144,7 +162,7 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
 
   // Because we now have pointers to the information stored under this tree,
   // we need to delete this node carefully.
-  tree->softDelete();
+  tree->softDelete(); //currently does nothing but leak memory.
 
   // we only add one at a time, so should only need to test for equality
   // just in case, we use an assert.
@@ -153,6 +171,17 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
   if(par->NumChildren() == par->MaxNumChildren()) {
     SplitNonLeafNode(par);
   }
+  
+  // We have to update the children of each of these new nodes so that they record the 
+  // correct parent.
+  for(int i = 0; i < treeOne->NumChildren(); i++) {
+    treeOne->Children()[i]->Parent() = treeOne;
+  }
+  for(int i = 0; i < treeTwo->NumChildren(); i++) {
+    treeTwo->Children()[i]->Parent() = treeTwo;
+  }  
+  
+  std::cout << "about to end split non-leaf" << std::endl;
   return false;
 }
 
