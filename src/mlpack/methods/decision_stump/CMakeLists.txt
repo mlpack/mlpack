@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
   decision_stump.hpp
-  decision_stump_impl.cpp
+  decision_stump_impl.hpp
 )
 
 # Add directory name to sources.
