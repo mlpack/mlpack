@@ -278,6 +278,7 @@ int main(int argc, char *argv[])
                       arma::mat>
         refTree(referenceData, leafSize, leafSize/3, 5, 2, 0);
       Timer::Stop("tree_building");
+      std::cout << "completed tree building" << std::endl;
     }
   }
   else // Cover trees.

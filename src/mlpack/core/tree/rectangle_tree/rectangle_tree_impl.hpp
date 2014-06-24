@@ -48,14 +48,12 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
   
   // For now, just insert the points in order.
   RectangleTree* root = this;
-  for(int i = firstDataIndex; i < 54 /*data.n_cols*/; i++) {
+  
+  //for(int i = firstDataIndex; i < 57; i++) { // 56,57 are the bound for where it works/breaks
+  for(int i = firstDataIndex; i < data.n_rows; i++) {
     std::cout << "inserting point number: " << i << std::endl;
     root->InsertPoint(data.col(i));
     std::cout << "finished inserting point number: " << i << std::endl;
-    if(root->Parent() != NULL) {
-      root = root->Parent(); // OK since the level increases by at most one per iteration.
-    }
-    std::cout << "hi" << std::endl;
     std::cout << ToString() << std::endl;
   }
   
@@ -95,6 +93,8 @@ template<typename SplitType,
 RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   ~RectangleTree()
 {
+  //LEAK MEMORY
+  
   for(int i = 0; i < numChildren; i++) {
     delete children[i];
   }
@@ -363,7 +363,7 @@ std::string RectangleTree<SplitType, DescentType, StatisticType, MatType>::ToStr
   convert << "  Parent address: " << parent << std::endl;
 
   // How many levels should we print?  This will print the root and it's children.
-  if(parent == NULL) {
+  if(parent == NULL || parent->Parent() == NULL) {
     for(int i = 0; i < numChildren; i++) {
       convert << children[i]->ToString();
     }
