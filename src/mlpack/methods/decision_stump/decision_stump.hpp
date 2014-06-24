@@ -56,7 +56,7 @@ class DecisionStump
   int splitCol;
 
   //! Flag value for distinct input class labels.
-  int oneClass;
+  bool oneClass;
 
   //! Size of bucket while determining splitting criterion.
   size_t bucketSize;
