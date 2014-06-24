@@ -43,14 +43,14 @@ DecisionStump<MatType>::DecisionStump(const MatType& data,
   {
     // If the classLabels are all identical, the default class is the only
     // class.
-    oneClass = 1;
+    oneClass = true;
     defaultClass = classLabels(0);
   }
 
   else
   {
     // If classLabels are not all identical, proceed with training.
-    oneClass = 0;
+    oneClass = false;
     int bestAtt = -1;
     double entropy;
     double bestEntropy = DBL_MAX;
@@ -96,14 +96,14 @@ template<typename MatType>
 void DecisionStump<MatType>::Classify(const MatType& test,
                                       arma::Row<size_t>& predictedLabels)
 {
-  int flag;
+  bool flag;
   double val;
   if (!oneClass)
   {
     for (int i = 0; i < test.n_cols; i++)
     {
       int j = 0;
-      flag = 0;
+      flag = false;
 
       val = test(splitCol,i);
       while ((j < split.n_rows) && (!flag))
@@ -111,19 +111,19 @@ void DecisionStump<MatType>::Classify(const MatType& test,
         if (val < split(j, 0) && (!j))
         {
           predictedLabels(i) = split(0, 1);
-          flag = 1;
+          flag = true;
         }
         else if (val >= split(j, 0))
         {
           if (j == split.n_rows - 1)
           {
             predictedLabels(i) = split(split.n_rows - 1, 1);
-            flag = 1;
+            flag = true;
           }
           else if (val < split(j + 1, 0))
           {
             predictedLabels(i) = split(j, 1);
-            flag = 1;
+            flag = true;
           }
         }
         j++;
