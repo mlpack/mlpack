@@ -34,6 +34,7 @@ add_executable(mlpack_test
   nca_test.cpp
   nmf_test.cpp
   pca_test.cpp
+  perceptron_test.cpp
   radical_test.cpp
   range_search_test.cpp
   save_restore_utility_test.cpp

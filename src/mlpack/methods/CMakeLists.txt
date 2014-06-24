@@ -22,6 +22,7 @@ set(DIRS
   nmf
 #  lmf
   pca
+  perceptron
   radical
   range_search
   rann
