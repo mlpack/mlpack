@@ -50,7 +50,7 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
   RectangleTree* root = this;
   
   //for(int i = firstDataIndex; i < 57; i++) { // 56,57 are the bound for where it works/breaks
-  for(int i = firstDataIndex; i < data.n_rows; i++) {
+  for(int i = firstDataIndex; i < data.n_cols; i++) {
     std::cout << "inserting point number: " << i << std::endl;
     root->InsertPoint(data.col(i));
     std::cout << "finished inserting point number: " << i << std::endl;
