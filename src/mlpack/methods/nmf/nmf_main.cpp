@@ -12,6 +12,7 @@
 #include <mlpack/methods/amf/update_rules/nmf_mult_dist.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_mult_div.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_als.hpp>
+#include <mlpack/methods/amf/termination_policies/simple_residue_termination.hpp>
 
 using namespace mlpack;
 using namespace mlpack::amf;
@@ -104,21 +105,27 @@ int main(int argc, char** argv)
   {
     Log::Info << "Performing NMF with multiplicative distance-based update "
         << "rules." << std::endl;
-    AMF<> amf(maxIterations, minResidue);
+
+    SimpleResidueTermination srt(minResidue, maxIterations);
+    AMF<> amf(RandomInitialization(), NMFMultiplicativeDistanceUpdate(), srt);
     amf.Apply(V, r, W, H);
   }
   else if (updateRules == "multdiv")
   {
     Log::Info << "Performing NMF with multiplicative divergence-based update "
         << "rules." << std::endl;
-    AMF<RandomInitialization, NMFMultiplicativeDivergenceUpdate> amf(maxIterations, minResidue);
+    SimpleResidueTermination srt(minResidue, maxIterations);
+    AMF<RandomInitialization, NMFMultiplicativeDivergenceUpdate>
+            amf(RandomInitialization(), NMFMultiplicativeDivergenceUpdate(), srt);
     amf.Apply(V, r, W, H);
   }
   else if (updateRules == "als")
   {
     Log::Info << "Performing NMF with alternating least squared update rules."
         << std::endl;
-    AMF<RandomInitialization, NMFALSUpdate> amf(maxIterations, minResidue);
+    SimpleResidueTermination srt(minResidue, maxIterations);
+    AMF<RandomInitialization, NMFALSUpdate>
+            amf(RandomInitialization(), NMFALSUpdate(), srt);
     amf.Apply(V, r, W, H);
   }
 
