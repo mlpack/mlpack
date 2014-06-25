@@ -150,7 +150,6 @@ BOOST_AUTO_TEST_CASE(PerfectMultiClassSplit)
 BOOST_AUTO_TEST_CASE(MultiClassSplit)
 {
   const size_t numClasses = 3;
-  const char* output = "outputMultiClassSplit.csv";
   const size_t inpBucketSize = 3;
 
   mat trainingData;
