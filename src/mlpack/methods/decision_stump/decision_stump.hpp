@@ -64,8 +64,11 @@ class DecisionStump
   //! Stores the class labels for the input data.
   arma::Row<size_t> classLabels;
 
-  //! Stores the splitting criterion after training.
-  arma::mat split;
+  //! Stores the splitting values after training.
+  arma::vec split;
+
+  //! Stores the labels for each splitting bin.
+  arma::Col<size_t> binLabels;
 
   /**
    * Sets up attribute as if it were splitting on it and finds entropy when
