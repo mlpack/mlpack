@@ -61,9 +61,6 @@ class DecisionStump
   //! Size of bucket while determining splitting criterion.
   size_t bucketSize;
 
-  //! Stores the class labels for the input data.
-  arma::Row<size_t> classLabels;
-
   //! Stores the splitting values after training.
   arma::vec split;
 
@@ -77,7 +74,8 @@ class DecisionStump
    * @param attribute A row from the training data, which might be a
    *     candidate for the splitting attribute.
    */
-  double SetupSplitAttribute(const arma::rowvec& attribute);
+  double SetupSplitAttribute(const arma::rowvec& attribute,
+                             const arma::Row<size_t>& labels);
 
   /**
    * After having decided the attribute on which to split, train on that
@@ -86,7 +84,8 @@ class DecisionStump
    * @param attribute attribute is the attribute decided by the constructor
    *      on which we now train the decision stump.
    */
-  template <typename rType> void TrainOnAtt(const arma::rowvec& attribute);
+  template <typename rType> void TrainOnAtt(const arma::rowvec& attribute,
+                                            const arma::Row<size_t>& labels);
 
   /**
    * After the "split" matrix has been set up, merge ranges with identical class

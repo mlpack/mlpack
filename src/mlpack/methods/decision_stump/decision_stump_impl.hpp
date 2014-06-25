@@ -31,24 +31,19 @@ DecisionStump<MatType>::DecisionStump(const MatType& data,
                                       const size_t classes,
                                       size_t inpBucketSize)
 {
-  arma::Row<size_t> zLabels(labels.n_elem);
-  zLabels.fill(0);
-  classLabels = labels + zLabels;
-
   numClass = classes;
   bucketSize = inpBucketSize;
 
   // Check whether the input labels are not all identical.
   if (!isDistinct<size_t>(labels))
   {
-    // If the classLabels are all identical, the default class is the only
-    // class.
+    // If the labels are all identical, the default class is the only class.
     oneClass = true;
-    defaultClass = classLabels(0);
+    defaultClass = labels(0);
   }
   else
   {
-    // If classLabels are not all identical, proceed with training.
+    // If labels are not all identical, proceed with training.
     oneClass = false;
     int bestAtt = -1;
     double entropy;
@@ -56,7 +51,7 @@ DecisionStump<MatType>::DecisionStump(const MatType& data,
 
     // Set the default class to handle attribute values which are not present in
     // the training data.
-    defaultClass = CountMostFreq<size_t>(classLabels);
+    defaultClass = CountMostFreq<size_t>(labels);
 
     for (int i = 0; i < data.n_rows; i++)
     {
@@ -65,7 +60,7 @@ DecisionStump<MatType>::DecisionStump(const MatType& data,
       {
         // For each attribute with non-identical values, treat it as a potential
         // splitting attribute and calculate entropy if split on it.
-        entropy = SetupSplitAttribute(data.row(i));
+        entropy = SetupSplitAttribute(data.row(i), labels);
 
         // Find the attribute with the bestEntropy so that the gain is
         // maximized.
@@ -79,7 +74,7 @@ DecisionStump<MatType>::DecisionStump(const MatType& data,
     splitCol = bestAtt;
 
     // Once the splitting column/attribute has been decided, train on it.
-    TrainOnAtt<double>(data.row(splitCol));
+    TrainOnAtt<double>(data.row(splitCol), labels);
   }
 }
 
@@ -131,7 +126,9 @@ void DecisionStump<MatType>::Classify(const MatType& test,
  *      the splitting attribute.
  */
 template <typename MatType>
-double DecisionStump<MatType>::SetupSplitAttribute(const arma::rowvec& attribute)
+double DecisionStump<MatType>::SetupSplitAttribute(
+    const arma::rowvec& attribute,
+    const arma::Row<size_t>& labels)
 {
   int i, count, begin, end;
   double entropy = 0.0;
@@ -147,7 +144,7 @@ double DecisionStump<MatType>::SetupSplitAttribute(const arma::rowvec& attribute
   sortedLabels.fill(0);
 
   for (i = 0; i < attribute.n_elem; i++)
-    sortedLabels(i) = classLabels(sortedIndexAtt(i));
+    sortedLabels(i) = labels(sortedIndexAtt(i));
 
   arma::rowvec subColLabels;
   arma::rowvec subColAtts;
@@ -225,7 +222,8 @@ double DecisionStump<MatType>::SetupSplitAttribute(const arma::rowvec& attribute
  */
 template <typename MatType>
 template <typename rType>
-void DecisionStump<MatType>::TrainOnAtt(const arma::rowvec& attribute)
+void DecisionStump<MatType>::TrainOnAtt(const arma::rowvec& attribute,
+                                        const arma::Row<size_t>& labels)
 {
   int i, count, begin, end;
 
@@ -237,7 +235,7 @@ void DecisionStump<MatType>::TrainOnAtt(const arma::rowvec& attribute)
   arma::Row<size_t> tempLabel;
 
   for (i = 0; i < attribute.n_elem; i++)
-    sortedLabels(i) = classLabels(sortedSplitIndexAtt(i));
+    sortedLabels(i) = labels(sortedSplitIndexAtt(i));
 
   arma::rowvec subCols;
   rType mostFreq;
