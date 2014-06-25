@@ -57,7 +57,6 @@ BOOST_AUTO_TEST_CASE(OneClass)
 BOOST_AUTO_TEST_CASE(PerfectSplitOnZero)
 {
   const size_t numClasses = 2;
-  const char* output = "outputPerfectSplitOnZero.csv";
   const size_t inpBucketSize = 2;
 
   mat trainingData;
@@ -89,7 +88,6 @@ BOOST_AUTO_TEST_CASE(PerfectSplitOnZero)
 BOOST_AUTO_TEST_CASE(BinningTesting)
 {
   const size_t numClasses = 2;
-  const char* output = "outputBinningTesting.csv";
   const size_t inpBucketSize = 10;
 
   mat trainingData;
@@ -118,7 +116,6 @@ BOOST_AUTO_TEST_CASE(BinningTesting)
 BOOST_AUTO_TEST_CASE(PerfectMultiClassSplit)
 {
   const size_t numClasses = 4;
-  const char* output = "outputPerfectMultiClassSplit.csv";
   const size_t inpBucketSize = 3;
 
   mat trainingData;
