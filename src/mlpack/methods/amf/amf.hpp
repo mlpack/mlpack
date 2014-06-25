@@ -8,6 +8,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_mult_dist.hpp>
 #include <mlpack/methods/amf/init_rules/random_init.hpp>
+#include <mlpack/methods/amf/termination_policies/simple_residue_termination.hpp>
 
 namespace mlpack {
 namespace amf {
@@ -45,7 +46,8 @@ namespace amf {
  * @see NMF_MultiplicativeDistanceUpdate
  */
 template<typename InitializationRule = RandomInitialization,
-         typename UpdateRule = NMFMultiplicativeDistanceUpdate>
+         typename UpdateRule = NMFMultiplicativeDistanceUpdate,
+         typename TerminationPolicy = SimpleResidueTermination>
 class AMF
 {
  public:
@@ -66,10 +68,9 @@ class AMF
    * @param Update Optional UpdateRule object; for when the update rule for
    *     the W and H vector has states that it needs to store
    */
-  AMF(const size_t maxIterations = 10000,
-      const double tolerance = 1e-5,
-      const InitializationRule initializeRule = InitializationRule(),
-      const UpdateRule update = UpdateRule());
+  AMF(const InitializationRule& initializeRule = InitializationRule(),
+      const UpdateRule& update = UpdateRule(),
+      const TerminationPolicy& t_policy = TerminationPolicy());
 
   /**
    * Apply Latent Matrix Factorization to the provided matrix.
@@ -86,24 +87,14 @@ class AMF
              arma::mat& H);
 
  private:
-  //! The maximum number of iterations allowed before giving up.
-  size_t maxIterations;
-  //! The minimum residue, below which iteration is considered converged.
-  double tolerance;
   //! Instantiated initialization Rule.
   InitializationRule initializeRule;
   //! Instantiated update rule.
   UpdateRule update;
+  //! termination policy
+  TerminationPolicy t_policy;
 
  public:
-  //! Access the maximum number of iterations.
-  size_t MaxIterations() const { return maxIterations; }
-  //! Modify the maximum number of iterations.
-  size_t& MaxIterations() { return maxIterations; }
-  //! Access the minimum residue before termination.
-  double Tolerance() const { return tolerance; }
-  //! Modify the minimum residue before termination.
-  double& Tolerance() { return tolerance; }
   //! Access the initialization rule.
   const InitializationRule& InitializeRule() const { return initializeRule; }
   //! Modify the initialization rule.
@@ -112,6 +103,10 @@ class AMF
   const UpdateRule& Update() const { return update; }
   //! Modify the update rule.
   UpdateRule& Update() { return update; }
+  //! Access the termination policy
+  const TerminationPolicy& TPolicy() const { return t_policy; }
+  //! Modify the termination policy
+  TerminationPolicy& TPolicy() { return t_policy; }
 
 }; // class AMF
 

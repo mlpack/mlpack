@@ -21,7 +21,8 @@ CF<FactorizerType>::CF(arma::mat& data,
                        const size_t rank) :
     data(data),
     numUsersForSimilarity(numUsersForSimilarity),
-    rank(rank)
+    rank(rank),
+    factorizer()
 {
   // Validate neighbourhood size.
   if (numUsersForSimilarity < 1)
@@ -31,10 +32,6 @@ CF<FactorizerType>::CF(arma::mat& data,
     //Setting Default Value of 5
     this->numUsersForSimilarity = 5;
   }
-
-  // Set default factorizer.
-  FactorizerType f(10000, 1e-5);
-  Factorizer(f);
 
   CleanData();
 }

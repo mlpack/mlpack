@@ -1,8 +1,8 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-  amf.hpp
-  amf_impl.hpp
+     simple_residue_termination.hpp
+     simple_tolerance_termination.hpp
 )
 
 # Add directory name to sources.
@@ -13,15 +13,3 @@ endforeach()
 # Append sources (with directory name) to list of all MLPACK sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-add_subdirectory(update_rules)
-add_subdirectory(init_rules)
-add_subdirectory(termination_policies)
-
-add_executable(amf
-  amf_main.cpp
-)
-target_link_libraries(amf
-  mlpack
-)
-install(TARGETS amf RUNTIME DESTINATION bin)
