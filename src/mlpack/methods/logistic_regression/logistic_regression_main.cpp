@@ -104,11 +104,6 @@ int main(int argc, char** argv)
     Log::Fatal << "One of --model_file or --input_file must be specified."
         << endl;
 
-  // If inputFile is specified, it must also have some responses with it.
-  if (!inputFile.empty() && inputResponsesFile.empty())
-    Log::Fatal << "If --input_file is specified, then --input_responses must "
-        << "also be specified." << endl;
-
   // If they want predictions, they should supply a file to save them to.  This
   // is only a warning because the program can still work.
   if (!testFile.empty() && outputPredictionsFile.empty())
@@ -154,6 +149,8 @@ int main(int argc, char** argv)
   // Load matrices.
   if (!inputFile.empty())
     data::Load(inputFile, regressors, true);
+
+  // Check if the responses are in a separate file.
   if (!inputResponsesFile.empty())
   {
     data::Load(inputResponsesFile, responses, true);
@@ -163,6 +160,13 @@ int main(int argc, char** argv)
       Log::Fatal << "The responses (--input_responses) must have the same "
           << "number of points as the input dataset (--input_file)." << endl;
   }
+  else
+  {
+    // The initial predictors for y, Nx1.
+    responses = trans(regressors.row(regressors.n_rows - 1));
+    regressors.shed_row(regressors.n_rows - 1);
+  }
+
   if (!testFile.empty())
     data::Load(testFile, testSet, true);
   if (!modelFile.empty())
