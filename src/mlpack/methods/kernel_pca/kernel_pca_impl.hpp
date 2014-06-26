@@ -44,8 +44,8 @@ void KernelPCA<KernelType>::Apply(const arma::mat& data,
   // center the data. So, we perform a "psuedo-centering" using the kernel
   // matrix.
   arma::rowvec rowMean = arma::sum(kernelMatrix, 0) / kernelMatrix.n_cols;
-  kernelMatrix.each_row() -= rowMean;
   kernelMatrix.each_col() -= arma::sum(kernelMatrix, 1) / kernelMatrix.n_cols;
+  kernelMatrix.each_row() -= rowMean;
   kernelMatrix += arma::sum(rowMean) / kernelMatrix.n_cols;
 
   // Eigendecompose the centered kernel matrix.
