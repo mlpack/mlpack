@@ -27,7 +27,7 @@ using namespace mlpack::amf;
  */
 BOOST_AUTO_TEST_CASE(NMFDefaultTest)
 {
-  math::RandomSeed(std::time(NULL));
+  mlpack::math::RandomSeed(std::time(NULL));
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);
   mat v = w * h;
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(NMFDefaultTest)
  */
 BOOST_AUTO_TEST_CASE(NMFAcolDistTest)
 {
-  math::RandomSeed(std::time(NULL));
+  mlpack::math::RandomSeed(std::time(NULL));
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);
   mat v = w * h;
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(NMFAcolDistTest)
  */
 BOOST_AUTO_TEST_CASE(NMFRandomDivTest)
 {
-  math::RandomSeed(std::time(NULL));
+  mlpack::math::RandomSeed(std::time(NULL));
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);
   mat v = w * h;
@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(NMFRandomDivTest)
  */
 BOOST_AUTO_TEST_CASE(NMFALSTest)
 {
-  math::RandomSeed(std::time(NULL));
+  mlpack::math::RandomSeed(std::time(NULL));
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);
   mat v = w * h;
@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE(SparseNMFAcolDistTest)
 
   while (sparseResidue != sparseResidue && denseResidue != denseResidue)
   {
-    math::RandomSeed(std::time(NULL));
+    mlpack::math::RandomSeed(std::time(NULL));
     mat w, h;
     sp_mat v;
     v.sprandu(20, 20, 0.3);
@@ -180,7 +180,7 @@ BOOST_AUTO_TEST_CASE(SparseNMFALSTest)
 
   while (sparseResidue != sparseResidue && denseResidue != denseResidue)
   {
-    math::RandomSeed(std::time(NULL));
+    mlpack::math::RandomSeed(std::time(NULL));
     mat w, h;
     sp_mat v;
     v.sprandu(10, 10, 0.3);
