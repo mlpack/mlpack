@@ -49,14 +49,8 @@ class DecisionStump
   //! Stores the number of classes.
   size_t numClass;
 
-  //! Stores the default class. Provided for handling missing attribute values.
-  size_t defaultClass;
-
   //! Stores the value of the attribute on which to split.
   int splitCol;
-
-  //! Flag value for distinct input class labels.
-  bool oneClass;
 
   //! Size of bucket while determining splitting criterion.
   size_t bucketSize;
