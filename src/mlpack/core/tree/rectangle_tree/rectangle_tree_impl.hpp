@@ -43,20 +43,13 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
 {
   stat = StatisticType(*this);
   
-  std::cout << ToString() << std::endl;
-  
-  
   // For now, just insert the points in order.
   RectangleTree* root = this;
   
   //for(int i = firstDataIndex; i < 57; i++) { // 56,57 are the bound for where it works/breaks
   for(int i = firstDataIndex; i < data.n_cols; i++) {
-    std::cout << "inserting point number: " << i << std::endl;
     root->InsertPoint(data.col(i));
-    std::cout << "finished inserting point number: " << i << std::endl;
-    std::cout << ToString() << std::endl;
   }
-  
 }
 
 template<typename SplitType,
@@ -93,8 +86,6 @@ template<typename SplitType,
 RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   ~RectangleTree()
 {
-  //LEAK MEMORY
-  
   for(int i = 0; i < numChildren; i++) {
     delete children[i];
   }
@@ -126,14 +117,11 @@ template<typename SplitType,
 void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
     InsertPoint(const arma::vec& point)
 {
-  
-  std::cout << "insert point called" << std::endl;
   // Expand the bound regardless of whether it is a leaf node.
   bound |= point;
 
   // If this is a leaf node, we stop here and add the point.
   if(numChildren == 0) {
-    std::cout << "count = " << count << std::endl;
     dataset->col(count++) = point;
     SplitNode();
     return;
@@ -254,8 +242,7 @@ inline size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 }
 
 /**
- * Return the number of descendants contained in this node.  MEANINIGLESS AS IT CURRENTLY STANDS.
- * USE NumPoints() INSTEAD.
+ * Return the number of descendants under or in this node.
  */
 template<typename SplitType,
 	 typename DescentType,
@@ -264,7 +251,15 @@ template<typename SplitType,
 inline size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
     NumDescendants() const
 {
-  return count;
+  if(numChildren == 0)
+    return count;
+  else {
+    size_t n = 0;
+    for(int i = 0; i < numChildren; i++) {
+      n += children[i]->NumDescendants();
+    }
+    return n;
+  }
 }
 
 /**
@@ -328,13 +323,9 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::SplitNode()
   if(count < maxLeafSize)
     return; // We don't need to split.
   
-  std::cout << "we are actually splitting the node." << std::endl;
   // If we are full, then we need to split (or at least try).  The SplitType takes
   // care of this and of moving up the tree if necessary.
   SplitType::SplitLeafNode(this);
-  std::cout << "we finished actually splitting the node." << std::endl;
-  
-  std::cout << ToString() << std::endl;
 }
 
 
@@ -362,7 +353,7 @@ std::string RectangleTree<SplitType, DescentType, StatisticType, MatType>::ToStr
   convert << "  Min num of children: " << minNumChildren << std::endl;
   convert << "  Parent address: " << parent << std::endl;
 
-  // How many levels should we print?  This will print the root and it's children.
+  // How many levels should we print?  This will print 3 levels (counting the root).
   if(parent == NULL || parent->Parent() == NULL) {
     for(int i = 0; i < numChildren; i++) {
       convert << children[i]->ToString();

@@ -38,6 +38,7 @@ add_executable(mlpack_test
   perceptron_test.cpp
   radical_test.cpp
   range_search_test.cpp
+  rectangle_tree_test.cpp
   save_restore_utility_test.cpp
   sgd_test.cpp
   sort_policy_test.cpp

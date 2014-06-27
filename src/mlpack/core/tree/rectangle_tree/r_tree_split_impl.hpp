@@ -13,6 +13,9 @@
 namespace mlpack {
 namespace tree {
 
+  //-r ../test_data_3_1000.csv -n neighbors_out.csv -d distances_out.csv -k 3 -v --r_tree
+  
+  
 /**
  * We call GetPointSeeds to get the two points which will be the initial points in the new nodes
  * We then call AssignPointDestNode to assign the remaining points to the two new nodes.
@@ -25,23 +28,19 @@ template<typename DescentType,
 void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
   RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* tree)
 {
-  
-  std::cout << "splitting a leaf node." << std::endl;
-
   // If we are splitting the root node, we need will do things differently so that the constructor
   // and other methods don't confuse the end user by giving an address of another node.
   if(tree->Parent() == NULL) {
     RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* copy =
       new RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(*tree); // We actually want to copy this way.  Pointers and everything.
-      std::cout << "copy made ." << std::endl;
-
     copy->Parent() = tree;
     tree->Count() = 0;
     tree->Children()[(tree->NumChildren())++] = copy; // Because this was a leaf node, numChildren must be 0.
+    assert(tree->NumChildren() == 1);
     RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(copy);
-    std::cout << "finished split" << std::endl;
     return;
   }
+  assert(tree->Parent()->NumChildren() < tree->Parent()->MaxNumChildren()); 
   
   // Use the quadratic split method from: Guttman "R-Trees: A Dynamic Index Structure for
   // Spatial Searching"  It is simplified since we don't handle rectangles, only points.
@@ -49,22 +48,14 @@ void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
   int i = 0;
   int j = 0;
   GetPointSeeds(*tree, &i, &j);
-
-  std::cout << "point seeds found." << std::endl;
   
   RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType> *treeOne = new 
     RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(tree->Parent());
   RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType> *treeTwo = new 
     RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(tree->Parent());
-  
-  std::cout << "new trees made." << std::endl;
- 
     
   // This will assign the ith and jth point appropriately.
   AssignPointDestNode(tree, treeOne, treeTwo, i, j);
-  
-    std::cout << "assignments made." << std::endl;
-
   
   //Remove this node and insert treeOne and treeTwo
   RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* par = tree->Parent();
@@ -77,23 +68,21 @@ void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
   }
   par->Children()[index] = treeOne;
   par->Children()[par->NumChildren()++] = treeTwo;
-
-  
-  std::cout << "points copied." << std::endl;
-
-      
-  //because we copied the points to treeOne and treeTwo, we can just delete this node
-  // I THOUGHT?
-  //delete tree;
+     
+  // We need to delete this carefully since references to points are used.
+  tree->softDelete();
 
   // we only add one at a time, so we should only need to test for equality
   // just in case, we use an assert.
   assert(par->NumChildren() <= par->MaxNumChildren());
   if(par->NumChildren() == par->MaxNumChildren()) {
-    std::cout << "leaf split calls non-leaf split" << std::endl;
     SplitNonLeafNode(par);
   }
-  std::cout << "about to end leaf split." << std::endl;
+  
+  assert(treeOne->Parent()->NumChildren() < treeOne->MaxNumChildren());
+  assert(treeOne->Parent()->NumChildren() >= treeOne->MinNumChildren());
+  assert(treeTwo->Parent()->NumChildren() < treeTwo->MaxNumChildren());
+  assert(treeTwo->Parent()->NumChildren() >= treeTwo->MinNumChildren());
   return;
 }
 
@@ -109,61 +98,56 @@ template<typename DescentType,
 	 typename MatType>
 bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
   RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* tree)
-{
-  std::cout << "splitting non-leaf node." << std::endl;
-
+{  
   // If we are splitting the root node, we need will do things differently so that the constructor
   // and other methods don't confuse the end user by giving an address of another node.
   if(tree->Parent() == NULL) {
-    std::cout << "root node" << std::endl;
     RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* copy =
       new RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(*tree); // We actually want to copy this way.  Pointers and everything.
     copy->Parent() = tree;
     tree->NumChildren() = 0;
     tree->Children()[(tree->NumChildren())++] = copy;
     RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(copy);
-    
-    std::cout << tree->ToString() << std::endl;
-    std::cout << "root split finished" << std::endl;
-    
     return true;
   }
-  
-  std::cout << "about to get bound seeds" << std::endl;
+
   int i = 0;
   int j = 0;
   GetBoundSeeds(*tree, &i, &j);
   
-  std::cout << "bound seeds" << std::endl;
+  assert(i != j);
   
   RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* treeOne = new 
     RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(tree->Parent());
   RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* treeTwo = new 
     RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(tree->Parent());
-  
-  std::cout << "new nodes created" << std::endl;
 
   // This will assign the ith and jth rectangles appropriately.
   AssignNodeDestNode(tree, treeOne, treeTwo, i, j);
-  
-  std::cout << "nodes assigned" << std::endl;
-  
+
   //Remove this node and insert treeOne and treeTwo
   RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* par = tree->Parent();
-  int index = 0;
+  int index = -1;
   for(int i = 0; i < par->NumChildren(); i++) {
     if(par->Children()[i] == tree) {
       index = i;
       break;
     }
   }
+  assert(index != -1);
   par->Children()[index] = treeOne;
   par->Children()[par->NumChildren()++] = treeTwo;
+  
+  for(int i = 0; i < par->NumChildren(); i++) {
+    if(par->Children()[i] == tree) {
+      assert(par->Children()[i] != tree);
+    }
+  }
 
   // Because we now have pointers to the information stored under this tree,
   // we need to delete this node carefully.
   tree->softDelete(); //currently does nothing but leak memory.
-
+  
   // we only add one at a time, so should only need to test for equality
   // just in case, we use an assert.
   assert(par->NumChildren() <= par->MaxNumChildren());
@@ -179,9 +163,12 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
   }
   for(int i = 0; i < treeTwo->NumChildren(); i++) {
     treeTwo->Children()[i]->Parent() = treeTwo;
-  }  
+  }
   
-  std::cout << "about to end split non-leaf" << std::endl;
+  assert(treeOne->NumChildren() < treeOne->MaxNumChildren());
+  assert(treeTwo->NumChildren() < treeTwo->MaxNumChildren());
+  assert(treeOne->Parent()->NumChildren() < treeOne->MaxNumChildren()); 
+
   return false;
 }
 
@@ -269,26 +256,27 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
 {
   
   int end = oldTree->Count();
+  
   assert(end > 1); // If this isn't true, the tree is really weird.
 
-  
   // Restart the point counts since we are going to move them.
   oldTree->Count() = 0;
   treeOne->Count() = 0;
   treeTwo->Count() = 0;
-  
-  std::cout << " about to assign i and j" << std::endl;
-  
+
   treeOne->InsertPoint(oldTree->Dataset().col(intI));
-      std::cout << "assignment of i made." << std::endl;
-
-  oldTree->Dataset().col(intI) = oldTree->Dataset().col(--end); // decrement end
   treeTwo->InsertPoint(oldTree->Dataset().col(intJ));
-  oldTree->Dataset().col(intJ) = oldTree->Dataset().col(--end); // decrement end
   
-
-  std::cout << "i and j assigned" << std::endl;
-  
+  // If intJ is the last point in the tree, we need to switch the order so that we remove the correct points.
+  if(intI > intJ) {
+    oldTree->Dataset().col(intI) = oldTree->Dataset().col(--end); // decrement end
+    oldTree->Dataset().col(intJ) = oldTree->Dataset().col(--end); // decrement end
+  } else {
+    oldTree->Dataset().col(intJ) = oldTree->Dataset().col(--end); // decrement end
+    oldTree->Dataset().col(intI) = oldTree->Dataset().col(--end); // decrement end
+  }
+    
+    
   int numAssignedOne = 1;
   int numAssignedTwo = 1;
 
@@ -300,9 +288,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
   // The below is safe because if end decreases and the right hand side of the second part of the conjunction changes
   // on the same iteration, we added the point to the node with fewer points anyways.
   while(end > 0 && end > oldTree->MinLeafSize() - std::min(numAssignedOne, numAssignedTwo)) {
-    
-    std::cout << "while loop entered with end = "<< end << std::endl;
-    
+
     int bestIndex = 0;
     double bestScore = DBL_MAX;
     int bestRect = 1;
@@ -388,11 +374,44 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
   int end = oldTree->NumChildren();
   assert(end > 1); // If this isn't true, the tree is really weird.
 
-  treeOne->Children()[0] = oldTree->Children()[intI];
-  oldTree->Children()[intI] = oldTree->Children()[--end]; // decrement end
-  treeTwo->Children()[0] = oldTree->Children()[intJ];
-  oldTree->Children()[intJ] = oldTree->Children()[--end]; // decrement end
- 
+  assert(intI != intJ);
+  
+  for(int i = 0; i < oldTree->NumChildren(); i++) {
+    for(int j = i+1; j < oldTree->NumChildren(); j++) {
+      assert(oldTree->Children()[i] != oldTree->Children()[j]);
+    }
+  }
+  
+  insertNodeIntoTree(treeOne, oldTree->Children()[intI]);
+  insertNodeIntoTree(treeTwo, oldTree->Children()[intJ]);
+  
+  // If intJ is the last node in the tree, we need to switch the order so that we remove the correct nodes.
+  if(intI > intJ) {
+    oldTree->Children()[intI] = oldTree->Children()[--end]; // decrement end
+    oldTree->Children()[intJ] = oldTree->Children()[--end]; // decrement end
+  } else {
+    oldTree->Children()[intJ] = oldTree->Children()[--end]; // decrement end
+    oldTree->Children()[intI] = oldTree->Children()[--end]; // decrement end
+  }
+
+  assert(treeOne->NumChildren() == 1);
+  assert(treeTwo->NumChildren() == 1);
+  
+  for(int i = 0; i < end; i++) {
+    for(int j = i+1; j < end; j++) {
+      assert(oldTree->Children()[i] != oldTree->Children()[j]);
+    }
+  }
+  
+  for(int i = 0; i < end; i++) {
+      assert(oldTree->Children()[i] != treeOne->Children()[0]);
+  }
+  
+  for(int i = 0; i < end; i++) {
+      assert(oldTree->Children()[i] != treeTwo->Children()[0]);
+  }
+  
+  
   int numAssignTreeOne = 1;
   int numAssignTreeTwo = 1;
 
@@ -461,13 +480,29 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
     if(numAssignTreeOne < numAssignTreeTwo) {
       for(int i = 0; i < end; i++) {
         insertNodeIntoTree(treeOne, oldTree->Children()[i]);
+	numAssignTreeOne++;
       }
     } else {
       for(int i = 0; i < end; i++) {
         insertNodeIntoTree(treeTwo, oldTree->Children()[i]);
+	numAssignTreeTwo++;
       }
     }
   }
+  
+  for(int i = 0; i < treeOne->NumChildren(); i++) {
+    for(int j = i+1; j < treeOne->NumChildren(); j++) {
+      assert(treeOne->Children()[i] != treeOne->Children()[j]);
+    }
+  }
+  for(int i = 0; i < treeTwo->NumChildren(); i++) {
+    for(int j = i+1; j < treeTwo->NumChildren(); j++) {
+      assert(treeTwo->Children()[i] != treeTwo->Children()[j]);
+    }
+  }
+  assert(treeOne->NumChildren() == numAssignTreeOne);
+  assert(treeTwo->NumChildren() == numAssignTreeTwo);
+  assert(numAssignTreeOne+numAssignTreeTwo == 5);
 }
 
 /**
