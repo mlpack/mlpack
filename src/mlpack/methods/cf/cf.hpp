@@ -14,6 +14,7 @@
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <mlpack/methods/amf/amf.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_als.hpp>
+#include <mlpack/methods/amf/termination_policies/simple_residue_termination.hpp>
 #include <set>
 #include <map>
 #include <iostream>
@@ -54,7 +55,8 @@ namespace cf /** Collaborative filtering. */{
  *     Apply(arma::sp_mat& data, size_t rank, arma::mat& W, arma::mat& H).
  */
 template<
-    typename FactorizerType = amf::AMF<amf::RandomInitialization, 
+    typename FactorizerType = amf::AMF<amf::SimpleResidueTermination,
+                                       amf::RandomInitialization, 
                                        amf::NMFALSUpdate> >
 class CF
 {

@@ -1,9 +1,9 @@
 /**
- * @file nmf_als.hpp
+ * @file amf.hpp
  * @author Sumedh Ghaisas
  */
-#ifndef __MLPACK_METHODS_LMF_LMF_HPP
-#define __MLPACK_METHODS_LMF_LMF_HPP
+#ifndef __MLPACK_METHODS_AMF_AMF_HPP
+#define __MLPACK_METHODS_AMF_AMF_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/amf/update_rules/nmf_mult_dist.hpp>
@@ -45,9 +45,9 @@ namespace amf {
  *
  * @see NMF_MultiplicativeDistanceUpdate
  */
-template<typename InitializationRule = RandomInitialization,
-         typename UpdateRule = NMFMultiplicativeDistanceUpdate,
-         typename TerminationPolicy = SimpleResidueTermination>
+template<typename TerminationPolicy = SimpleResidueTermination,
+         typename InitializationRule = RandomInitialization,
+         typename UpdateRule = NMFMultiplicativeDistanceUpdate>
 class AMF
 {
  public:
@@ -68,9 +68,9 @@ class AMF
    * @param Update Optional UpdateRule object; for when the update rule for
    *     the W and H vector has states that it needs to store
    */
-  AMF(const InitializationRule& initializeRule = InitializationRule(),
-      const UpdateRule& update = UpdateRule(),
-      const TerminationPolicy& t_policy = TerminationPolicy());
+  AMF(const TerminationPolicy& t_policy = TerminationPolicy(),
+      const InitializationRule& initializeRule = InitializationRule(),
+      const UpdateRule& update = UpdateRule());
 
   /**
    * Apply Latent Matrix Factorization to the provided matrix.
@@ -87,12 +87,12 @@ class AMF
              arma::mat& H);
 
  private:
+  //! termination policy
+  TerminationPolicy t_policy;
   //! Instantiated initialization Rule.
   InitializationRule initializeRule;
   //! Instantiated update rule.
   UpdateRule update;
-  //! termination policy
-  TerminationPolicy t_policy;
 
  public:
   //! Access the initialization rule.
