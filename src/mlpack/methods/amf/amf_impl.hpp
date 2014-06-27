@@ -1,5 +1,5 @@
 /**
- * @file nmf_als.hpp
+ * @file amf_impl.hpp
  * @author Sumedh Ghaisas
  */
 namespace mlpack {
@@ -8,16 +8,16 @@ namespace amf {
 /**
  * Construct the LMF object.
  */
-template<typename InitializationRule,
-         typename UpdateRule,
-         typename TerminationPolicy>
-AMF<InitializationRule, UpdateRule, TerminationPolicy>::AMF(
+template<typename TerminationPolicy,
+         typename InitializationRule,
+         typename UpdateRule>
+AMF<TerminationPolicy, InitializationRule, UpdateRule>::AMF(
+    const TerminationPolicy& t_policy,
     const InitializationRule& initializeRule,
-    const UpdateRule& update,
-    const TerminationPolicy& t_policy) :
+    const UpdateRule& update) :
+    t_policy(t_policy),
     initializeRule(initializeRule),
-    update(update),
-    t_policy(t_policy)
+    update(update)
 { }
 
 /**
@@ -28,11 +28,11 @@ AMF<InitializationRule, UpdateRule, TerminationPolicy>::AMF(
  * @param H Encoding matrix to output
  * @param r Rank r of the factorization
  */
-template<typename InitializationRule,
-         typename UpdateRule,
-         typename TerminationPolicy>
+template<typename TerminationPolicy,
+         typename InitializationRule,
+         typename UpdateRule>
 template<typename MatType>
-double AMF<InitializationRule, UpdateRule, TerminationPolicy>::Apply(
+double AMF<TerminationPolicy, InitializationRule, UpdateRule>::Apply(
     const MatType& V,
     const size_t r,
     arma::mat& W,
@@ -69,4 +69,3 @@ double AMF<InitializationRule, UpdateRule, TerminationPolicy>::Apply(
 
 }; // namespace nmf
 }; // namespace mlpack
-

@@ -107,7 +107,7 @@ int main(int argc, char** argv)
         << "rules." << std::endl;
 
     SimpleResidueTermination srt(minResidue, maxIterations);
-    AMF<> amf(RandomInitialization(), NMFMultiplicativeDistanceUpdate(), srt);
+    AMF<> amf(srt);
     amf.Apply(V, r, W, H);
   }
   else if (updateRules == "multdiv")
@@ -115,8 +115,9 @@ int main(int argc, char** argv)
     Log::Info << "Performing NMF with multiplicative divergence-based update "
         << "rules." << std::endl;
     SimpleResidueTermination srt(minResidue, maxIterations);
-    AMF<RandomInitialization, NMFMultiplicativeDivergenceUpdate>
-            amf(RandomInitialization(), NMFMultiplicativeDivergenceUpdate(), srt);
+    AMF<SimpleResidueTermination, 
+        RandomInitialization, 
+        NMFMultiplicativeDivergenceUpdate> amf(srt);
     amf.Apply(V, r, W, H);
   }
   else if (updateRules == "als")
@@ -124,8 +125,9 @@ int main(int argc, char** argv)
     Log::Info << "Performing NMF with alternating least squared update rules."
         << std::endl;
     SimpleResidueTermination srt(minResidue, maxIterations);
-    AMF<RandomInitialization, NMFALSUpdate>
-            amf(RandomInitialization(), NMFALSUpdate(), srt);
+    AMF<SimpleResidueTermination,
+        RandomInitialization, 
+        NMFALSUpdate> amf(srt);
     amf.Apply(V, r, W, H);
   }
 

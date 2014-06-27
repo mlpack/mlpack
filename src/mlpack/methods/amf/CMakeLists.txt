@@ -17,11 +17,3 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 add_subdirectory(update_rules)
 add_subdirectory(init_rules)
 add_subdirectory(termination_policies)
-
-add_executable(amf
-  amf_main.cpp
-)
-target_link_libraries(amf
-  mlpack
-)
-install(TARGETS amf RUNTIME DESTINATION bin)
