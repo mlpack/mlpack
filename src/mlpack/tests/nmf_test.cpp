@@ -56,8 +56,8 @@ BOOST_AUTO_TEST_CASE(NMFAcolDistTest)
   const size_t r = 12;
 
   SimpleResidueTermination srt(1e-7, 10000);
-  AMF<RandomAcolInitialization<> >
-        nmf(RandomAcolInitialization<>(), NMFMultiplicativeDistanceUpdate(), srt);
+  AMF<SimpleResidueTermination,RandomAcolInitialization<> >
+        nmf(srt);
   nmf.Apply(v, r, w, h);
 
   mat wh = w * h;
@@ -78,7 +78,9 @@ BOOST_AUTO_TEST_CASE(NMFRandomDivTest)
   mat v = w * h;
   size_t r = 12;
 
-  AMF<RandomInitialization, NMFMultiplicativeDivergenceUpdate> nmf;
+  AMF<SimpleResidueTermination,
+      RandomInitialization, 
+      NMFMultiplicativeDivergenceUpdate> nmf;
   nmf.Apply(v, r, w, h);
 
   mat wh = w * h;
@@ -102,8 +104,8 @@ BOOST_AUTO_TEST_CASE(NMFALSTest)
   size_t r = 12;
 
   SimpleResidueTermination srt(1e-12, 50000);
-  AMF<RandomAcolInitialization<>, NMFALSUpdate>
-        nmf(RandomAcolInitialization<>(), NMFALSUpdate(), srt);
+  AMF<SimpleResidueTermination, RandomAcolInitialization<>, NMFALSUpdate>
+        nmf(srt);
   nmf.Apply(v, r, w, h);
 
   const mat wh = w * h;
@@ -143,8 +145,7 @@ BOOST_AUTO_TEST_CASE(SparseNMFAcolDistTest)
     size_t r = 15;
 
     SimpleResidueTermination srt(1e-10, 10000);
-    AMF<RandomAcolInitialization<> >
-            nmf(RandomAcolInitialization<>(), NMFMultiplicativeDistanceUpdate(), srt);
+    AMF<SimpleResidueTermination, RandomAcolInitialization<> > nmf(srt);
     const size_t seed = mlpack::math::RandInt(1000000);
     mlpack::math::RandomSeed(seed); // Set random seed so results are the same.
     nmf.Apply(v, r, w, h);
@@ -192,8 +193,7 @@ BOOST_AUTO_TEST_CASE(SparseNMFALSTest)
     size_t r = 5;
 
     SimpleResidueTermination srt(1e-10, 10000);
-    AMF<RandomInitialization, NMFALSUpdate>
-            nmf(RandomInitialization(), NMFALSUpdate(), srt);
+    AMF<SimpleResidueTermination, RandomInitialization, NMFALSUpdate> nmf(srt);
     const size_t seed = mlpack::math::RandInt(1000000);
     mlpack::math::RandomSeed(seed);
     nmf.Apply(v, r, w, h);
