@@ -170,36 +170,16 @@ include_directories(${LIBXML2_INCLUDE_DIR})
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
 set(Boost_ADDITIONAL_VERSIONS
-  "1.41" "1.41.0" "1.42" "1.42.0" "1.43" "1.43.0" "1.44" "1.44.0" "1.45.0"
-  "1.46.0" "1.46.1" "1.47.0" "1.48.0" "1.49.0")
+  "1.49.0" "1.50.0" "1.51.0" "1.52.0" "1.53.0" "1.54.0" "1.55.0")
 find_package(Boost
     COMPONENTS
       program_options
       unit_test_framework
+      random
     REQUIRED
 )
 include_directories(${Boost_INCLUDE_DIRS})
 
-# Save the actual link paths (because they will get overwritten if we discover
-# we need to find Boost.Random too).
-set(Boost_BACKUP_LIBRARIES ${Boost_LIBRARIES})
-
-# We need to include Boost.Random, but only if newer than 1.45 (as of 1.46 it
-# became a separate package with its own linkable library object).
-if(Boost_MAJOR_VERSION EQUAL 1 AND Boost_MINOR_VERSION GREATER 45)
-  find_package(Boost
-      COMPONENTS
-          random
-      REQUIRED
-  )
-
-  # Restore actual link locations of the other Boost libraries.
-  set(Boost_LIBRARIES ${Boost_LIBRARIES} ${Boost_BACKUP_LIBRARIES})
-
-  # This may be redundant.
-  include_directories(${Boost_INCLUDE_DIRS})
-
-endif(Boost_MAJOR_VERSION EQUAL 1 AND Boost_MINOR_VERSION GREATER 45)
 link_directories(${Boost_LIBRARY_DIRS})
 
 # On Windows, automatic linking is performed, so we don't need to worry about
