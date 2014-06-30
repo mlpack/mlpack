@@ -13,9 +13,18 @@
 namespace mlpack {
 namespace tree {
 
+// Return the increase in volume required when inserting point into bound.
 inline double RTreeDescentHeuristic::EvalNode(const HRectBound<>& bound, const arma::vec& point)
 {
-  return bound.Contains(point) ? 0 : bound.MinDistance(point);
+  double v1 = 1.0;
+  double v2 = 1.0;
+  for(size_t i = 0; i < bound.Dim(); i++) {
+    v1 *= bound[i].Width();
+    v2 *= bound[i].Contains(point[i]) ? bound[i].Width() : (bound[i].Hi() < point[i] ? (point[i] - bound[i].Lo()) :
+      (bound[i].Hi() - point[i]));
+  }
+  assert(v2 - v1 >= 0);
+  return v2 - v1;
 }
 
 }; // namespace tree

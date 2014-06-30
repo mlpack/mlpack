@@ -89,22 +89,45 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   for(int i = 0; i < numChildren; i++) {
     delete children[i];
   }
-  delete dataset;
+  //if(numChildren == 0)
+    delete dataset;
 }
+
 
 /**
   * Deletes this node but leaves the children untouched.  Needed for when we 
   * split nodes and remove nodes (inserting and deleting points).
   */
 template<typename SplitType,
-                  typename DescentType,
-                  typename StatisticType,
-                  typename MatType>
+         typename DescentType,
+         typename StatisticType,
+         typename MatType>
 void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
     softDelete()
 {
-  /* do nothing.  I'm not sure how to handle this yet, so for now, we will leak memory */
+  //if(numChildren != 0)
+    //dataset = NULL;
+  parent = NULL;
+  for(int i = 0; i < children.size(); i++) {
+    children[i] = NULL;    
+  }
+  numChildren = 0;
+  delete this;  
 }
+
+/**
+  * Set the dataset to null.
+  */
+template<typename SplitType,
+         typename DescentType,
+         typename StatisticType,
+         typename MatType>
+void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
+    NullifyData()
+{
+  dataset = NULL;
+}
+
 
 /**
  * Recurse through the tree and insert the point at the leaf node chosen

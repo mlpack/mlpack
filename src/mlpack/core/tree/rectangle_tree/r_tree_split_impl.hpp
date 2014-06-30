@@ -12,9 +12,6 @@
 
 namespace mlpack {
 namespace tree {
-
-  //-r ../test_data_3_1000.csv -n neighbors_out.csv -d distances_out.csv -k 3 -v --r_tree
-  
   
 /**
  * We call GetPointSeeds to get the two points which will be the initial points in the new nodes
@@ -35,6 +32,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
       new RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(*tree); // We actually want to copy this way.  Pointers and everything.
     copy->Parent() = tree;
     tree->Count() = 0;
+    tree->NullifyData();
     tree->Children()[(tree->NumChildren())++] = copy; // Because this was a leaf node, numChildren must be 0.
     assert(tree->NumChildren() == 1);
     RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(copy);
@@ -69,9 +67,6 @@ void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
   par->Children()[index] = treeOne;
   par->Children()[par->NumChildren()++] = treeTwo;
      
-  // We need to delete this carefully since references to points are used.
-  tree->softDelete();
-
   // we only add one at a time, so we should only need to test for equality
   // just in case, we use an assert.
   assert(par->NumChildren() <= par->MaxNumChildren());
@@ -83,6 +78,10 @@ void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
   assert(treeOne->Parent()->NumChildren() >= treeOne->MinNumChildren());
   assert(treeTwo->Parent()->NumChildren() < treeTwo->MaxNumChildren());
   assert(treeTwo->Parent()->NumChildren() >= treeTwo->MinNumChildren());
+  
+  // We need to delete this carefully since references to points are used.
+  tree->softDelete();
+  
   return;
 }
 
@@ -106,6 +105,7 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
       new RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>(*tree); // We actually want to copy this way.  Pointers and everything.
     copy->Parent() = tree;
     tree->NumChildren() = 0;
+    tree->NullifyData();
     tree->Children()[(tree->NumChildren())++] = copy;
     RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(copy);
     return true;
@@ -143,10 +143,6 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
       assert(par->Children()[i] != tree);
     }
   }
-
-  // Because we now have pointers to the information stored under this tree,
-  // we need to delete this node carefully.
-  tree->softDelete(); //currently does nothing but leak memory.
   
   // we only add one at a time, so should only need to test for equality
   // just in case, we use an assert.
@@ -169,6 +165,10 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
   assert(treeTwo->NumChildren() < treeTwo->MaxNumChildren());
   assert(treeOne->Parent()->NumChildren() < treeOne->MaxNumChildren()); 
 
+  // Because we now have pointers to the information stored under this tree,
+  // we need to delete this node carefully.
+  tree->softDelete(); //currently does nothing but leak memory.
+  
   return false;
 }
 
