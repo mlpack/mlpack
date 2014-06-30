@@ -157,7 +157,9 @@ double DecisionStump<MatType>::SetupSplitAttribute(
   {
     count++;
     if (i == sortedLabels.n_elem - 1)
-    {
+    { 
+      // if we're at the end, then don't worry about the bucket size
+      // just take this as the last bin.
       begin = i - count + 1;
       end = i;
 
@@ -167,17 +169,22 @@ double DecisionStump<MatType>::SetupSplitAttribute(
       arma::rowvec zSubColAtts((sortedAtt.cols(begin, end)).n_elem);
       zSubColAtts.fill(0.0);
 
-      subColLabels = sortedLabels.cols(begin, end) + zSubColLabels;
+      subColLabels = sortedLabels.cols(begin, end) + zSubColLabels; 
+              // arma::zeros<arma::rowvec>((sortedLabels.cols(begin, end)).n_elem);
 
       subColAtts = sortedAtt.cols(begin, end) + zSubColAtts;
+              // arma::zeros<arma::rowvec>((sortedAtt.cols(begin, end)).n_elem);
 
       entropy += CalculateEntropy(subColAtts, subColLabels);
       i++;
     }
     else if (sortedLabels(i) != sortedLabels(i + 1))
     {
+      // if we're not at the last element of sortedLabels, then check whether
+      // count is less than the current bucket size.
       if (count < bucketSize)
-      {
+      { 
+        // if it is, then take the minimum bucket size anyways
         begin = i - count + 1;
         end = begin + bucketSize - 1;
 
@@ -186,6 +193,7 @@ double DecisionStump<MatType>::SetupSplitAttribute(
       }
       else
       {
+        // if it is not, then take the bucket size as the value of count.
         begin = i - count + 1;
         end = i;
       }
@@ -197,10 +205,12 @@ double DecisionStump<MatType>::SetupSplitAttribute(
       zSubColAtts.fill(0.0);
 
       subColLabels = sortedLabels.cols(begin, end) + zSubColLabels;
+              // arma::zeros<arma::rowvec>((sortedLabels.cols(begin, end)).n_elem);
 
       subColAtts = sortedAtt.cols(begin, end) + zSubColAtts;
+              // arma::zeros<arma::rowvec>((sortedAtt.cols(begin, end)).n_elem);
 
-      // Now use subColLabels and subColAtts to calculate entropy.
+      // now using subColLabels and subColAtts to calculate entropuy
       entropy += CalculateEntropy(subColAtts, subColLabels);
 
       i = end + 1;
@@ -285,7 +295,7 @@ void DecisionStump<MatType>::TrainOnAtt(const arma::rowvec& attribute,
 
       // Find the most frequent element in subCols so as to assign a label to
       // the bucket of subCols.
-      mostFreq = CountMostFreq<double>(subCols);
+      mostFreq = CountMostFreq<double>(subCols);//sortedLabels.subvec(begin, end));
 
       split.resize(split.n_elem + 1);
       split(split.n_elem - 1) = sortedSplitAtt(begin);
