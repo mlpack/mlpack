@@ -47,13 +47,14 @@ BOOST_AUTO_TEST_CASE(RectangeTreeTraitsTest)
 BOOST_AUTO_TEST_CASE(RectangleTreeConstructionCountTest)
 {
   arma::mat dataset;
-  dataset.randu(3, 1000); // 1000 points in 3 dimensions.
+  dataset.randu(8, 1000); // 1000 points in 3 dimensions.
   
   RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
                       tree::RTreeDescentHeuristic,
                       NeighborSearchStat<NearestNeighborSort>,
                       arma::mat> tree(dataset, 20, 6, 5, 2, 0);
-  BOOST_REQUIRE_EQUAL(tree.NumDescendants(), 1000); 
+  BOOST_REQUIRE_EQUAL(tree.NumDescendants(), 1000);
+  std::cout << tree.ToString() << std::endl;
 }
 
 std::vector<arma::vec*> getAllPointsInTree(const RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
@@ -79,7 +80,7 @@ std::vector<arma::vec*> getAllPointsInTree(const RectangleTree<tree::RTreeSplit<
 BOOST_AUTO_TEST_CASE(RectangleTreeConstructionRepeatTest)
 {
   arma::mat dataset;
-  dataset.randu(8, 1000); // 1000 points in 8 dimensions.
+  dataset.randu(8, 15); // 1000 points in 8 dimensions.
   
   RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
                       tree::RTreeDescentHeuristic,
@@ -100,7 +101,7 @@ BOOST_AUTO_TEST_CASE(RectangleTreeConstructionRepeatTest)
   }
   for(size_t i = 0; i < allPoints.size(); i++) {
     delete allPoints[i];
-  }  
+  }
 }
 
 bool checkContainment(const RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
@@ -129,7 +130,7 @@ bool checkContainment(const RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeu
 BOOST_AUTO_TEST_CASE(RectangleTreeContainmentTest)
 {
     arma::mat dataset;
-  dataset.randu(8, 1000); // 1000 points in 8 dimensions.
+  dataset.randu(8, 15); // 1000 points in 8 dimensions.
   
   RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
                       tree::RTreeDescentHeuristic,
