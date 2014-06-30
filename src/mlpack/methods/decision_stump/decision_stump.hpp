@@ -108,8 +108,9 @@ class DecisionStump
    * @param attribute The attribute of which we calculate the entropy.
    * @param labels Corresponding labels of the attribute.
    */
-  double CalculateEntropy(const arma::rowvec& attribute,
-                          const arma::rowvec& labels);
+  template <typename AttType, typename LabelType>
+  double CalculateEntropy(arma::subview_row<AttType> attribute,
+                          arma::subview_row<LabelType> labels);
 };
 
 }; // namespace decision_stump
