@@ -145,9 +145,6 @@ double DecisionStump<MatType>::SetupSplitAttribute(
   for (i = 0; i < attribute.n_elem; i++)
     sortedLabels(i) = labels(sortedIndexAtt(i));
 
-  arma::rowvec subColLabels;
-  arma::rowvec subColAtts;
-
   i = 0;
   count = 0;
 
@@ -163,19 +160,8 @@ double DecisionStump<MatType>::SetupSplitAttribute(
       begin = i - count + 1;
       end = i;
 
-      arma::rowvec zSubColLabels((sortedLabels.cols(begin, end)).n_elem);
-      zSubColLabels.fill(0.0);
-
-      arma::rowvec zSubColAtts((sortedAtt.cols(begin, end)).n_elem);
-      zSubColAtts.fill(0.0);
-
-      subColLabels = sortedLabels.cols(begin, end) + zSubColLabels; 
-              // arma::zeros<arma::rowvec>((sortedLabels.cols(begin, end)).n_elem);
-
-      subColAtts = sortedAtt.cols(begin, end) + zSubColAtts;
-              // arma::zeros<arma::rowvec>((sortedAtt.cols(begin, end)).n_elem);
-
-      entropy += CalculateEntropy(subColAtts, subColLabels);
+      entropy += CalculateEntropy<double,long unsigned int>(
+                 sortedAtt.subvec(begin,end),sortedLabels.subvec(begin,end));
       i++;
     }
     else if (sortedLabels(i) != sortedLabels(i + 1))
@@ -198,20 +184,8 @@ double DecisionStump<MatType>::SetupSplitAttribute(
         end = i;
       }
 
-      arma::rowvec zSubColLabels((sortedLabels.cols(begin, end)).n_elem);
-      zSubColLabels.fill(0.0);
-
-      arma::rowvec zSubColAtts((sortedAtt.cols(begin, end)).n_elem);
-      zSubColAtts.fill(0.0);
-
-      subColLabels = sortedLabels.cols(begin, end) + zSubColLabels;
-              // arma::zeros<arma::rowvec>((sortedLabels.cols(begin, end)).n_elem);
-
-      subColAtts = sortedAtt.cols(begin, end) + zSubColAtts;
-              // arma::zeros<arma::rowvec>((sortedAtt.cols(begin, end)).n_elem);
-
-      // now using subColLabels and subColAtts to calculate entropuy
-      entropy += CalculateEntropy(subColAtts, subColLabels);
+      entropy += CalculateEntropy<double,long unsigned int>(
+                 sortedAtt.subvec(begin,end),sortedLabels.subvec(begin,end));
 
       i = end + 1;
       count = 0;
@@ -397,13 +371,14 @@ int DecisionStump<MatType>::isDistinct(const arma::Row<rType>& featureRow)
  * @param labels Corresponding labels of the attribute.
  */
 template<typename MatType>
-double DecisionStump<MatType>::CalculateEntropy(const arma::rowvec& attribute,
-                                                const arma::rowvec& labels)
+template<typename AttType, typename LabelType>
+double DecisionStump<MatType>::CalculateEntropy(arma::subview_row<AttType> attribute,
+                                                arma::subview_row<LabelType> labels)
 {
   double entropy = 0.0;
 
   arma::rowvec uniqueAtt = arma::unique(attribute);
-  arma::rowvec uniqueLabel = arma::unique(labels);
+  arma::Row<LabelType> uniqueLabel = arma::unique(labels);
   arma::Row<size_t> numElem(uniqueAtt.n_elem);
   numElem.fill(0);
   arma::Mat<size_t> entropyArray(uniqueAtt.n_elem,numClass);
