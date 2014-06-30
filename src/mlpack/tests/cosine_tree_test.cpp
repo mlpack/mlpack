@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(CosineTreeNoSplit)
 }
 
 /**
- * Checks CosineNode::CosineNodeSplit() by doing a depth first search on a
+ * Checks CosineTree::CosineNodeSplit() by doing a depth first search on a
  * random dataset and checking if it satisfies the split condition.
  */
 BOOST_AUTO_TEST_CASE(CosineNodeCosineSplit)
@@ -54,17 +54,17 @@ BOOST_AUTO_TEST_CASE(CosineNodeCosineSplit)
   
   // Make a random dataset and the root object.
   arma::mat data = arma::randu(numRows, numCols);
-  CosineNode root(data);
+  CosineTree root(data);
   
   // Stack for depth first search of the tree.
-  std::vector<CosineNode*> nodeStack;
+  std::vector<CosineTree*> nodeStack;
   nodeStack.push_back(&root);
   
   // While stack is not empty.
   while(nodeStack.size())
   {
     // Pop a node from the stack and split it.
-    CosineNode *currentNode, *currentLeft, *currentRight;
+    CosineTree *currentNode, *currentLeft, *currentRight;
     currentNode = nodeStack.back();
     currentNode->CosineNodeSplit();
     nodeStack.pop_back();
@@ -139,14 +139,14 @@ BOOST_AUTO_TEST_CASE(CosineTreeModifiedGramSchmidt)
   arma::mat data = arma::randu(numRows, numCols);
   
   // Declare a queue and a dummy CosineTree object.
-  CosineTree::CosineNodeQueue basisQueue;
+  CosineNodeQueue basisQueue;
   CosineTree dummyTree(data, epsilon, delta);
   
   for(size_t i = 0; i < numCols; i++)
   {
     // Make a new CosineNode object.
-    CosineNode* basisNode;
-    basisNode = new CosineNode(data);
+    CosineTree* basisNode;
+    basisNode = new CosineTree(data);
     
     // Use the columns of the dataset as random centroids.
     arma::vec centroid = data.col(i);
@@ -156,8 +156,8 @@ BOOST_AUTO_TEST_CASE(CosineTreeModifiedGramSchmidt)
     dummyTree.ModifiedGramSchmidt(basisQueue, centroid, newBasisVector);   
     
     // Check if the obtained vector is orthonormal to the basis vectors.
-    CosineTree::CosineNodeQueue::const_iterator j = basisQueue.begin();
-    CosineNode* currentNode;
+    CosineNodeQueue::const_iterator j = basisQueue.begin();
+    CosineTree* currentNode;
     
     for(; j != basisQueue.end(); j++)
     {
@@ -175,7 +175,7 @@ BOOST_AUTO_TEST_CASE(CosineTreeModifiedGramSchmidt)
   // Deallocate memory given to the objects.
   for(size_t i = 0; i < numCols; i++)
   {
-    CosineNode* currentNode;
+    CosineTree* currentNode;
     currentNode = basisQueue.top();
     basisQueue.pop();
     
