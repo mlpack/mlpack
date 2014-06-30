@@ -126,6 +126,11 @@ class RectangleTree
    * other trees.
    */
   void softDelete();
+  
+  /**
+   * Set dataset to null. Used for memory management.  Be cafeful.
+   */
+  void NullifyData();
 
   /**
    * Inserts a point into the tree. The point will be copied to the data matrix
