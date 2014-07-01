@@ -71,7 +71,9 @@ class RectangleTree
   //! The discance to the furthest descendant, cached to speed things up.
   double furthestDescendantDistance;
   //! The dataset.
-  MatType* dataset;
+  MatType& dataset;
+  //! The mapping to the dataset
+  std::vector<size_t> points;
   
  public:
   //! So other classes can use TreeType::Mat.
@@ -138,8 +140,16 @@ class RectangleTree
    * it may be passed many times before it actually reaches a leaf.
    * @param point The point (arma::vec&) to be inserted.
    */
-  void InsertPoint(const arma::vec& point);
+  void InsertPoint(const size_t point);
 
+  /**
+   * Deletes a point in the tree.  The point will be removed from the data matrix
+   * of the leaf node where it is store and the bounding rectangles will be updated.
+   * Returns true if the point is successfully removed and false if it is not.
+   * (ie. the point is not in the tree)
+   */
+  bool DeletePoint(const size_t point);
+  
   /**
    * Find a node in this tree by its begin and count (const).
    *
@@ -205,10 +215,15 @@ class RectangleTree
   RectangleTree*& Parent() { return parent; }
 
   //! Get the dataset which the tree is built on.
-  const arma::mat& Dataset() const { return *dataset; }
+  const arma::mat& Dataset() const { return dataset; }
   //! Modify the dataset which the tree is built on.  Be careful!
-  arma::mat& Dataset() { return *dataset; }
-
+  arma::mat& Dataset() { return dataset; }
+  
+  //! Get the points vector for this node.
+  const std::vector<size_t>& Points() const { return points; }
+  //! Modify the points vector for this node.  Be careful!
+  std::vector<size_t>& Points() { return points; }
+  
   //! Get the metric which the tree uses.
   typename HRectBound<>::MetricType Metric() const { return bound.Metric(); }
 
