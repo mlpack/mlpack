@@ -70,7 +70,7 @@ std::vector<arma::vec*> getAllPointsInTree(const RectangleTree<tree::RTreeSplit<
     }
   } else {
     for(size_t i = 0; i < tree.Count(); i++) {
-      arma::vec* c = new arma::vec(tree.Dataset().col(i)); 
+      arma::vec* c = new arma::vec(tree.Dataset().col(tree.Points()[i])); 
       vec.push_back(c);
     }
   }
@@ -112,7 +112,7 @@ bool checkContainment(const RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeu
   bool passed = true;
   if(tree.NumChildren() == 0) {
     for(size_t i = 0; i < tree.Count(); i++) {
-      passed &= tree.Bound().Contains(tree.Dataset().unsafe_col(i));
+      passed &= tree.Bound().Contains(tree.Dataset().unsafe_col(tree.Points()[i]));
     }
   } else {
     for(size_t i = 0; i < tree.NumChildren(); i++) {
