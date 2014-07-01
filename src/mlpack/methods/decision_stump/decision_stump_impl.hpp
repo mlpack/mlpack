@@ -154,13 +154,13 @@ double DecisionStump<MatType>::SetupSplitAttribute(
   {
     count++;
     if (i == sortedLabels.n_elem - 1)
-    { 
+    {
       // if we're at the end, then don't worry about the bucket size
       // just take this as the last bin.
       begin = i - count + 1;
       end = i;
 
-      entropy += CalculateEntropy<double,long unsigned int>(
+      entropy += CalculateEntropy<double, size_t>(
                  sortedAtt.subvec(begin,end),sortedLabels.subvec(begin,end));
       i++;
     }
@@ -169,7 +169,7 @@ double DecisionStump<MatType>::SetupSplitAttribute(
       // if we're not at the last element of sortedLabels, then check whether
       // count is less than the current bucket size.
       if (count < bucketSize)
-      { 
+      {
         // if it is, then take the minimum bucket size anyways
         begin = i - count + 1;
         end = begin + bucketSize - 1;
@@ -184,7 +184,7 @@ double DecisionStump<MatType>::SetupSplitAttribute(
         end = i;
       }
 
-      entropy += CalculateEntropy<double,long unsigned int>(
+      entropy += CalculateEntropy<double, size_t>(
                  sortedAtt.subvec(begin,end),sortedLabels.subvec(begin,end));
 
       i = end + 1;
