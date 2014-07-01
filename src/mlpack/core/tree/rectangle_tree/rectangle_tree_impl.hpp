@@ -39,7 +39,8 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
     minLeafSize(minLeafSize),
     bound(data.n_rows),
     parentDistance(0),
-    dataset(new MatType(data.n_rows, static_cast<int>(maxLeafSize)+1)) // Add one to make splitting the node simpler
+    dataset(data),
+    points(maxLeafSize+1) // Add one to make splitting the node simpler.
 {
   stat = StatisticType(*this);
   
@@ -47,8 +48,8 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
   RectangleTree* root = this;
   
   //for(int i = firstDataIndex; i < 57; i++) { // 56,57 are the bound for where it works/breaks
-  for(int i = firstDataIndex; i < data.n_cols; i++) {
-    root->InsertPoint(data.col(i));
+  for(size_t i = firstDataIndex; i < data.n_cols; i++) {
+    root->InsertPoint(i);
   }
 }
 
@@ -69,7 +70,8 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
   minLeafSize(parentNode->MinLeafSize()),
   bound(parentNode->Bound().Dim()),
   parentDistance(0),
-  dataset(new MatType(static_cast<int>(parentNode->Bound().Dim()), static_cast<int>(maxLeafSize)+1)) // Add one to make splitting the node simpler
+  dataset(parentNode->Dataset()),
+  points(maxLeafSize+1) // Add one to make splitting the node simpler.
 {
   stat = StatisticType(*this);
 }
@@ -90,7 +92,7 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::
     delete children[i];
   }
   //if(numChildren == 0)
-    delete dataset;
+  //delete points;
 }
 
 
@@ -125,7 +127,7 @@ template<typename SplitType,
 void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
     NullifyData()
 {
-  dataset = NULL;
+  //points = NULL;
 }
 
 
@@ -138,31 +140,85 @@ template<typename SplitType,
 	 typename StatisticType,
          typename MatType>
 void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
-    InsertPoint(const arma::vec& point)
+    InsertPoint(const size_t point)
 {
   // Expand the bound regardless of whether it is a leaf node.
-  bound |= point;
+  bound |= dataset.col(point);
 
   // If this is a leaf node, we stop here and add the point.
   if(numChildren == 0) {
-    dataset->col(count++) = point;
+    points[count++] = point;
     SplitNode();
     return;
   }
 
   // If it is not a leaf node, we use the DescentHeuristic to choose a child
   // to which we recurse.
-  double minScore = DescentType::EvalNode(children[0]->Bound(), point);
+  double minScore = DescentType::EvalNode(children[0]->Bound(), dataset.col(point));
   int bestIndex = 0;
   
   for(int i = 1; i < numChildren; i++) {
-    double score = DescentType::EvalNode(children[i]->Bound(), point);
+    double score = DescentType::EvalNode(children[i]->Bound(), dataset.col(point));
     if(score < minScore) {
       minScore = score;
       bestIndex = i;
     }
   }
   children[bestIndex]->InsertPoint(point);
+}
+
+/**
+ * Recurse through the tree to remove the point.  Once we find the point, we
+ * shrink the rectangles if necessary.
+ */
+template<typename SplitType,
+         typename DescentType,
+	 typename StatisticType,
+         typename MatType>
+bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::
+    DeletePoint(const size_t point)
+{
+  if(numChildren == 0) {
+    for(int i = 0; i < count; i++) {
+      if(points[i] == point) {
+	points[i] = points[--count];
+	for(int j = 0; j < bound.Dim(); j++) {
+	  if(bound[j].Lo() == dataset.col(point)[j]) {
+	    int loIndx = 0;
+	    double lo = dataset(points[0])[j];
+	    for(int k = 1; k < count; k++) {
+	      if(dataset(points[k])[j] < lo) {
+		lo = dataset(points[k])[j];
+		loIndx = k;
+	      }
+	    }
+	    bound[j].Lo() = lo;
+	  } else if(bound[j].Hi() == dataset.col(point)[j]) {
+	    int hiIndx = 0;
+	    double hi = dataset(points[0])[j];
+	    for(int k = 1; k < count; k++) {
+	      if(dataset(points[k])[j] > hi) {
+		hi = dataset(points[k])[j];
+		hiIndx = k;
+	      }
+	    }
+	    bound[j].Hi() = hi;
+	  }
+	}
+	return true;
+      }
+    }
+  } else {
+      for(int i = 0; i < numChildren; i++) {
+	if(children[i].Bound().Contains(dataset.col(point))) {
+	  if(children[i].DeletePoint(dataset.col(point))) {
+	    
+	    return true;
+	  }
+	}
+      }
+  } 
+  return false;
 }
 
 template<typename SplitType,
@@ -308,7 +364,7 @@ template<typename SplitType,
 inline size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
     Point(const size_t index) const
 {
-  return (begin + index);
+  return dataset(points[index]);
 }
 
 /**

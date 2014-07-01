@@ -194,7 +194,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::GetPointSeeds(
     for(int j = i+1; j < tree.Count(); j++) {
       double score = 1.0;
       for(int k = 0; k < tree.Bound().Dim(); k++) {
-	score *= std::abs(tree.Dataset().at(k, i) - tree.Dataset().at(k, j)); // Points are stored by column, but this function takes (row, col).
+	score *= std::abs(tree.Dataset().at(k, tree.Points()[i]) - tree.Dataset().at(k, tree.Points()[j])); // Points (in the dataset) are stored by column, but this function takes (row, col).
       }
       if(score > worstPairScore) {
 	worstPairScore = score;
@@ -264,16 +264,16 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
   treeOne->Count() = 0;
   treeTwo->Count() = 0;
 
-  treeOne->InsertPoint(oldTree->Dataset().col(intI));
-  treeTwo->InsertPoint(oldTree->Dataset().col(intJ));
+  treeOne->InsertPoint(oldTree->Points()[intI]);
+  treeTwo->InsertPoint(oldTree->Points()[intJ]);
   
   // If intJ is the last point in the tree, we need to switch the order so that we remove the correct points.
   if(intI > intJ) {
-    oldTree->Dataset().col(intI) = oldTree->Dataset().col(--end); // decrement end
-    oldTree->Dataset().col(intJ) = oldTree->Dataset().col(--end); // decrement end
+    oldTree->Points()[intI] = oldTree->Points()[--end]; // decrement end
+    oldTree->Points()[intJ] = oldTree->Points()[--end]; // decrement end
   } else {
-    oldTree->Dataset().col(intJ) = oldTree->Dataset().col(--end); // decrement end
-    oldTree->Dataset().col(intI) = oldTree->Dataset().col(--end); // decrement end
+    oldTree->Points()[intJ] = oldTree->Points()[--end]; // decrement end
+    oldTree->Points()[intI] = oldTree->Points()[--end]; // decrement end
   }
     
     
@@ -309,7 +309,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
       double newVolOne = 1.0;
       double newVolTwo = 1.0;
       for(int i = 0; i < oldTree->Bound().Dim(); i++) {
-	double c = oldTree->Dataset().col(index)[i];      
+	double c = oldTree->Dataset().col(oldTree->Points()[index])[i];      
 	newVolOne *= treeOne->Bound()[i].Contains(c) ? treeOne->Bound()[i].Width() :
 	  (c < treeOne->Bound()[i].Lo() ? (treeOne->Bound()[i].Hi() - c) : (c - treeOne->Bound()[i].Lo()));
 	newVolTwo *= treeTwo->Bound()[i].Contains(c) ? treeTwo->Bound()[i].Width() :
@@ -335,26 +335,26 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
     // Assign the point that causes the least increase in volume 
     // to the appropriate rectangle.
     if(bestRect == 1) {
-      treeOne->InsertPoint(oldTree->Dataset().col(bestIndex));
+      treeOne->InsertPoint(oldTree->Points()[bestIndex]);
       numAssignedOne++;
     }
     else {
-      treeTwo->InsertPoint(oldTree->Dataset().col(bestIndex));
+      treeTwo->InsertPoint(oldTree->Points()[bestIndex]);
       numAssignedTwo++;      
     }
 
-    oldTree->Dataset().col(bestIndex) = oldTree->Dataset().col(--end); // decrement end.
+    oldTree->Points()[bestIndex] = oldTree->Points()[--end]; // decrement end.
   }
   
   // See if we need to satisfy the minimum fill.
   if(end > 0) {
     if(numAssignedOne < numAssignedTwo) {
       for(int i = 0; i < end; i++) {
-        treeOne->InsertPoint(oldTree->Dataset().col(i));
+        treeOne->InsertPoint(oldTree->Points()[i]);
       }
     } else {
       for(int i = 0; i < end; i++) {
-        treeTwo->InsertPoint(oldTree->Dataset().col(i));
+        treeTwo->InsertPoint(oldTree->Points()[i]);
       }
     }
   }

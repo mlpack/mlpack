@@ -49,8 +49,8 @@ RectangleTreeTraverser<RuleType>::Traverse(
   
   // This is not a leaf node so we:
   // Sort the children of this node by their scores.
-  std::vector<RectangleTree*> nodes = new std::vector<RectangleTree*>(referenceNode.NumChildren());
-  std::vector<double> scores = new std::vector<double>(referenceNode.NumChildren());
+  std::vector<RectangleTree*> nodes(referenceNode.NumChildren());
+  std::vector<double> scores(referenceNode.NumChildren());
   for(int i = 0; i < referenceNode.NumChildren(); i++) {
     nodes[i] = referenceNode.Children()[i];
     scores[i] = rule.Score(nodes[i]);
@@ -60,12 +60,12 @@ RectangleTreeTraverser<RuleType>::Traverse(
   // Iterate through them starting with the best and stopping when we reach
   // one that isn't good enough.
   for(int i = 0; i < referenceNode.NumChildren(); i++) {
-   if(rule.Rescore(queryIndex, nodes[i], scores[i]) != DBL_MAX)
-     Traverse(queryIndex, nodes[i]);
-   else {
-    numPrunes += referenceNode.NumChildren - i;
-    return;
-   }
+    if(rule.Rescore(queryIndex, nodes[i], scores[i]) != DBL_MAX)
+      Traverse(queryIndex, nodes[i]);
+    else {
+      numPrunes += referenceNode.NumChildren - i;
+      return;
+    }
   }
   // We only get here if we couldn't prune any of them.
   return;
