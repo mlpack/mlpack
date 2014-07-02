@@ -1,13 +1,13 @@
 /**
-  * @file rectangle_tree_traverser.hpp
+  * @file single_tree_traverser.hpp
   * @author Andrew Wells
   *
   * A nested class of Rectangle Tree for traversing rectangle type trees
   * with a given set of rules which indicate the branches to prune and the
   * order in which to recurse.  This is a depth-first traverser.
   */
-#ifndef __MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_TRAVERSER_HPP
-#define __MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_TRAVERSER_HPP
+#ifndef __MLPACK_CORE_TREE_RECTANGLE_TREE_SINGLE_TREE_TRAVERSER_HPP
+#define __MLPACK_CORE_TREE_RECTANGLE_TREE_SINGLE_TREE_TRAVERSER_HPP
 
 #include <mlpack/core.hpp>
 
@@ -22,13 +22,13 @@ template<typename SplitType,
          typename MatType>
 template<typename RuleType>
 class RectangleTree<SplitType, DescentType, StatisticType, MatType>::
-    RectangleTreeTraverser
+    SingleTreeTraverser
 {
  public:
   /**
     * Instantiate the traverser with the given rule set.
     */
-    RectangleTreeTraverser(RuleType& rule);
+    SingleTreeTraverser(RuleType& rule);
 
   /**
     * Traverse the tree with the given point.
@@ -44,6 +44,19 @@ class RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   //! Modify the number of prunes.
   size_t& NumPrunes() { return numPrunes; }
 
+  //We use this struct and this function to make the sorting and scoring easy and efficient:
+  class NodeAndScore {
+  public:
+    RectangleTree<SplitType, DescentType, StatisticType, MatType>* node;
+    double score;
+  };
+
+  static bool nodeComparator(const NodeAndScore& obj1,
+                      const NodeAndScore& obj2)
+  {
+    return obj1.score < obj2.score;
+  }
+  
  private:
   //! Reference to the rules with which the tree will be traversed.
   RuleType& rule;
@@ -56,6 +69,6 @@ class RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 }; // namespace mlpack
 
 // Include implementation.
-#include "rectangle_tree_traverser_impl.hpp"
+#include "single_tree_traverser_impl.hpp"
 
 #endif
