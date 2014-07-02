@@ -48,14 +48,15 @@ set(INCLUDE_FILES ${INCLUDE_H_FILES} ${INCLUDE_HPP_FILES})
 
 # Move all of these header files to <builddir>/include/mlpack/ after the library
 # is built.  First we have to create that directory though.
-add_custom_command(TARGET mlpack POST_BUILD
+add_custom_target(mlpack_headers)
+add_custom_command(TARGET mlpack_headers POST_BUILD
   COMMENT "Moving header files to include/mlpack/"
   COMMAND ${CMAKE_COMMAND} ARGS -E
     make_directory ${CMAKE_BINARY_DIR}/include/mlpack/)
 
 # Then copy each of the header files over to that directory.
 foreach(incl_file ${INCLUDE_FILES})
-  add_custom_command(TARGET mlpack POST_BUILD
+  add_custom_command(TARGET mlpack_headers POST_BUILD
     COMMAND ${CMAKE_COMMAND} ARGS -E
       copy ${CMAKE_CURRENT_SOURCE_DIR}/${incl_file}
            ${CMAKE_BINARY_DIR}/include/mlpack/${incl_file})
@@ -71,6 +72,8 @@ install(TARGETS mlpack
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib)
+
+add_dependencies(mlpack mlpack_headers)
 
 # For 'make test'.
 add_custom_target(test
