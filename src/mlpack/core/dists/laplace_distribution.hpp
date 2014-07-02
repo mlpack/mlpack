@@ -1,0 +1,134 @@
+/*
+ * @file laplace.hpp
+ * @author Zhihao Lou
+ *
+ * Laplace (double exponential) distribution used in SA.
+ */
+
+#ifndef __MLPACK_CORE_OPTIMIZER_SA_LAPLACE_DISTRIBUTION_HPP
+#define __MLPACK_CORE_OPTIMIZER_SA_LAPLACE_DISTRIBUTION_HPP
+
+namespace mlpack {
+namespace distribution {
+
+/**
+ * The multivariate Laplace distribution centered at 0 has pdf
+ *
+ * \f[
+ * f(x|\theta) = \frac{1}{2 \theta}\exp\left(-\frac{\|x - \mu\|}{\theta}\right)
+ * \f]
+ *
+ * given scale parameter \f$\theta\f$ and mean \f$\mu\f$.  This implementation
+ * assumes a diagonal covariance, but a rewrite to support arbitrary covariances
+ * is possible.
+ *
+ * See the following paper for more information on the non-diagonal-covariance
+ * Laplace distribution and estimation techniques:
+ *
+ * @code
+ * @article{eltoft2006multivariate,
+ *   title={{On the Multivariate Laplace Distribution}},
+ *   author={Eltoft, Torbj\orn and Kim, Taesu and Lee, Te-Won},
+ *   journal={IEEE Signal Processing Letters},
+ *   volume={13},
+ *   number={5},
+ *   pages={300--304},
+ *   year={2006}
+ * }
+ * @endcode
+ *
+ * Note that because of the diagonal covariance restriction, much of the algebra
+ * in the paper above becomes simplified, and the PDF takes roughly the same
+ * form as the univariate case.
+ */
+class LaplaceDistribution
+{
+ public:
+  /**
+   * Default constructor, which creates a Laplace distribution with zero
+   * dimension and zero scale parameter.
+   */
+  LaplaceDistribution() : scale(0) { }
+
+  /**
+   * Construct the Laplace distribution with the given scale and dimensionality.
+   * The mean is initialized to zero.
+   *
+   * @param dimensionality Dimensionality of distribution.
+   * @param scale Scale of distribution.
+   */
+  LaplaceDistribution(const size_t dimensionality, const double scale) :
+      mean(arma::zeros<arma::vec>(dimensionality)), scale(scale) { }
+
+  /**
+   * Construct the Laplace distribution with the given mean and scale parameter.
+   *
+   * @param mean Mean of distribution.
+   * @param scale Scale of distribution.
+   */
+  LaplaceDistribution(const arma::vec& mean, const double scale) :
+      mean(mean), scale(scale) { }
+
+  //! Return the dimensionality of this distribution.
+  size_t Dimensionality() const { return mean.n_elem; }
+
+  /**
+   * Return the probability of the given observation.
+   */
+  double Probability(const arma::vec& observation) const;
+
+  /**
+   * Return a randomly generated observation according to the probability
+   * distribution defined by this object.  This is inlined for speed.
+   *
+   * @return Random observation from this Laplace distribution.
+   */
+  arma::vec Random() const
+  {
+    arma::vec result(mean.n_elem);
+    result.randu();
+
+    // Convert from uniform distribution to Laplace distribution.
+    return mean - scale * sign(result) % arma::log(1 - 2.0 * (result - 0.5));
+  }
+
+  /**
+   * Estimate the Laplace distribution directly from the given observations.
+   *
+   * @param observations List of observations.
+   */
+  void Estimate(const arma::mat& observations);
+
+  /**
+   * Estimate the Laplace distribution from the given observations, taking into
+   * account the probability of each observation actually being from this
+   * distribution.
+   */
+  void Estimate(const arma::mat& observations,
+                const arma::vec& probabilities);
+
+  //! Return the mean.
+  const arma::vec& Mean() const { return mean; }
+  //! Modify the mean.
+  arma::vec& Mean() { return mean; }
+
+  //! Return the scale parameter.
+  double Scale() const { return scale; }
+  //! Modify the scale parameter.
+  double& Scale() { return scale; }
+
+  //! Return a string representation of the object.
+  std::string ToString() const;
+
+ private:
+  //! Mean of the distribution.
+  arma::vec mean;
+  //! Scale parameter of the distribution.
+  double scale;
+
+};
+
+}; // namespace distribution
+}; // namespace mlpack
+
+#endif
