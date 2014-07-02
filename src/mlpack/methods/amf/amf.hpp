@@ -82,9 +82,9 @@ class AMF
    */
   template<typename MatType>
   double Apply(const MatType& V,
-             const size_t r,
-             arma::mat& W,
-             arma::mat& H);
+               const size_t r,
+               arma::mat& W,
+               arma::mat& H);
 
  private:
   //! termination policy
