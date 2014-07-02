@@ -1,4 +1,4 @@
-/*
+/**
  * @file sa.hpp
  * @author Zhihao Lou
  *
@@ -32,20 +32,21 @@ namespace optimization {
  * The system is considered "frozen" when its score failed to change more then
  * tolerance for consecutive maxToleranceSweep sweeps.
  *
- * For SA to work, a function must implement the following methods:
+ * For SA to work, the FunctionType parameter must implement the following
+ * two methods:
+ *
  *   double Evaluate(const arma::mat& coordinates);
  *   arma::mat& GetInitialPoint();
  *
- * In additional, a move generation distribution with overloaded operator():
- *   double operator () (const double param);
- * which returns a random value from the distribution given parameter param,
- * and a cooling schedule with method:
- *   doulbe nextTemperature(const double currentTemperature, const double currentValue);
+ * and the CoolingScheduleType parameter must implement the following method:
+ *
+ *   double NextTemperature(const double currentTemperature,
+ *                          const double currentValue);
+ *
  * which returns the next temperature given current temperature and the value
  * of the function being optimized.
  *
  * @tparam FunctionType objective function type to be minimized.
- * @tparam MoveDistributionType distribution type for move generation
  * @tparam CoolingScheduleType type for cooling schedule
  */
 template<typename FunctionType, typename CoolingScheduleType>
@@ -56,7 +57,6 @@ class SA
    * Construct the SA optimizer with the given function and paramters.
    *
    * @param function Function to be minimized.
-   * @param moveDistribution Distribution for move generation
    * @param coolingSchedule Cooling schedule
    * @param initT Initial temperature.
    * @param initMoves Iterations without changing temperature.
