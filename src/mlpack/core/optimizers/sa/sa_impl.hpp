@@ -19,6 +19,7 @@ template<
 SA<FunctionType, CoolingScheduleType>::SA(
     FunctionType& function,
     CoolingScheduleType& coolingSchedule,
+    const size_t maxIterations,
     const double initT,
     const size_t initMoves,
     const size_t moveCtrlSweep,
@@ -26,17 +27,16 @@ SA<FunctionType, CoolingScheduleType>::SA(
     const size_t maxToleranceSweep,
     const double maxMoveCoef,
     const double initMoveCoef,
-    const double gain,
-    const size_t maxIterations) :
+    const double gain) :
     function(function),
     coolingSchedule(coolingSchedule),
+    maxIterations(maxIterations),
     T(initT),
     initMoves(initMoves),
     moveCtrlSweep(moveCtrlSweep),
     tolerance(tolerance),
     maxToleranceSweep(maxToleranceSweep),
-    gain(gain),
-    maxIterations(maxIterations)
+    gain(gain)
 {
   const size_t rows = function.GetInitialPoint().n_rows;
   const size_t cols = function.GetInitialPoint().n_cols;
