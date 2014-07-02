@@ -31,7 +31,7 @@ SA<FunctionType, CoolingScheduleType>::SA(
     function(function),
     coolingSchedule(coolingSchedule),
     maxIterations(maxIterations),
-    T(initT),
+    temperature(initT),
     initMoves(initMoves),
     moveCtrlSweep(moveCtrlSweep),
     tolerance(tolerance),
@@ -78,7 +78,7 @@ double SA<FunctionType, CoolingScheduleType>::Optimize(arma::mat &iterate)
   {
     oldEnergy = energy;
     GenerateMove(iterate);
-    T = coolingSchedule.nextTemperature(T, energy);
+    temperature = coolingSchedule.nextTemperature(temperature, energy);
 
     // Determine if the optimization has entered (or continues to be in) a
     // frozen state.
@@ -135,7 +135,7 @@ void SA<FunctionType, CoolingScheduleType>::GenerateMove(
   // min{1, exp(-(E_new - E_old) / T)}.
   double xi = math::Random();
   double delta = energy - prevEnergy;
-  double criterion = std::exp(-delta / T);
+  double criterion = std::exp(-delta / temperature);
   if (delta <= 0. || criterion > xi)
   {
     accept(idx) += 1.;
@@ -209,7 +209,7 @@ ToString() const
   convert << util::Indent(function.ToString(), 2);
   convert << "  Cooling Schedule:" << std::endl;
   convert << util::Indent(coolingSchedule.ToString(), 2);
-  convert << "  Temperature: " << T << std::endl;
+  convert << "  Temperature: " << temperature << std::endl;
   convert << "  Initial moves: " << initMoves << std::endl;
   convert << "  Sweeps per move control: " << moveCtrlSweep << std::endl;
   convert << "  Tolerance: " << tolerance << std::endl;
