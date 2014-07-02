@@ -5,6 +5,8 @@ set(SOURCES
   discrete_distribution.cpp
   gaussian_distribution.hpp
   gaussian_distribution.cpp
+  laplace_distribution.hpp
+  laplace_distribution.cpp
 )
 
 # add directory name to sources

@@ -7,17 +7,17 @@
 #ifndef __MLPACK_CORE_OPTIMIZERS_SA_SA_IMPL_HPP
 #define __MLPACK_CORE_OPTIMIZERS_SA_SA_IMPL_HPP
 
+#include <mlpack/core/dists/laplace_distribution.hpp>
+
 namespace mlpack {
 namespace optimization {
 
 template<
     typename FunctionType,
-    typename MoveDistributionType,
     typename CoolingScheduleType
 >
-SA<FunctionType, MoveDistributionType, CoolingScheduleType>::SA(
+SA<FunctionType, CoolingScheduleType>::SA(
     FunctionType& function,
-    MoveDistributionType& moveDistribution,
     CoolingScheduleType& coolingSchedule,
     const double initT,
     const size_t initMoves,
@@ -29,7 +29,6 @@ SA<FunctionType, MoveDistributionType, CoolingScheduleType>::SA(
     const double gain,
     const size_t maxIterations) :
     function(function),
-    moveDistribution(moveDistribution),
     coolingSchedule(coolingSchedule),
     T(initT),
     initMoves(initMoves),
@@ -52,11 +51,9 @@ SA<FunctionType, MoveDistributionType, CoolingScheduleType>::SA(
 //! Optimize the function (minimize).
 template<
     typename FunctionType,
-    typename MoveDistributionType,
     typename CoolingScheduleType
 >
-double SA<FunctionType, MoveDistributionType, CoolingScheduleType>::Optimize(
-    arma::mat &iterate)
+double SA<FunctionType, CoolingScheduleType>::Optimize(arma::mat &iterate)
 {
   const size_t rows = function.GetInitialPoint().n_rows;
   const size_t cols = function.GetInitialPoint().n_cols;
@@ -115,15 +112,23 @@ double SA<FunctionType, MoveDistributionType, CoolingScheduleType>::Optimize(
  */
 template<
     typename FunctionType,
-    typename MoveDistributionType,
     typename CoolingScheduleType
 >
-void SA<FunctionType, MoveDistributionType, CoolingScheduleType>::GenerateMove(
+void SA<FunctionType, CoolingScheduleType>::GenerateMove(
     arma::mat& iterate)
 {
   double prevEnergy = energy;
   double prevValue = iterate(idx);
-  double move = moveDistribution(moveSize(idx));
+
+  // It is possible to use a non-Laplace distribution here, but it is difficult
+  // because the acceptance ratio should be as close to 0.44 as possible, and
+  // MoveControl() is derived for the Laplace distribution.
+
+  // Sample from a Laplace distribution with scale parameter moveSize(idx).
+  const double unif = 2.0 * math::Random() - 1.0;
+  const double move = (unif < 0) ? (moveSize(idx) * std::log(1 + unif)) :
+      (-moveSize(idx) * std::log(1 - unif));
+
   iterate(idx) += move;
   energy = function.Evaluate(iterate);
   // According to Metropolis criterion, accept the move with probability
@@ -167,14 +172,13 @@ void SA<FunctionType, MoveDistributionType, CoolingScheduleType>::GenerateMove(
  *
  * For more theory and the mysterious 0.44 value, see Jimmy K.-C. Lam and
  * Jean-Marc Delosme. `An efficient simulated annealing schedule: derivation'.
- * Technical Report 8816, Yale University, 1988
+ * Technical Report 8816, Yale University, 1988.
  */
 template<
     typename FunctionType,
-    typename MoveDistributionType,
     typename CoolingScheduleType
 >
-void SA<FunctionType, MoveDistributionType, CoolingScheduleType>::MoveControl(
+void SA<FunctionType, CoolingScheduleType>::MoveControl(
     size_t nMoves)
 {
   arma::mat target;
@@ -194,18 +198,15 @@ void SA<FunctionType, MoveDistributionType, CoolingScheduleType>::MoveControl(
 
 template<
     typename FunctionType,
-    typename MoveDistributionType,
     typename CoolingScheduleType
 >
-std::string SA<FunctionType, MoveDistributionType, CoolingScheduleType>::
+std::string SA<FunctionType, CoolingScheduleType>::
 ToString() const
 {
   std::ostringstream convert;
   convert << "SA [" << this << "]" << std::endl;
   convert << "  Function:" << std::endl;
   convert << util::Indent(function.ToString(), 2);
-  convert << "  Move Distribution:" << std::endl;
-  convert << util::Indent(moveDistribution.ToString(), 2);
   convert << "  Cooling Schedule:" << std::endl;
   convert << util::Indent(coolingSchedule.ToString(), 2);
   convert << "  Temperature: " << T << std::endl;

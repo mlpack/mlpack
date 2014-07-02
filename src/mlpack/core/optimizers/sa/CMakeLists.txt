@@ -1,8 +1,6 @@
 set(SOURCES
   sa.hpp
   sa_impl.hpp
-  laplace_distribution.hpp
-  laplace_distribution.cpp
   exponential_schedule.hpp
 )
 
