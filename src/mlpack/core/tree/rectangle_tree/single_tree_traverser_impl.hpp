@@ -26,7 +26,9 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0)
-{ /* Nothing to do */ }
+{ 
+  std::cout << "constructing traverser" << std::endl;
+  /* Nothing to do */ }
 
 template<typename SplitType,
          typename DescentType,
@@ -39,6 +41,8 @@ SingleTreeTraverser<RuleType>::Traverse(
     const RectangleTree<SplitType, DescentType, StatisticType, MatType>&
         referenceNode)
 {
+  std::cout << "traversing" << std::endl;
+  
   // If we reach a leaf node, we need to run the base case.
   if(referenceNode.IsLeaf()) {
     for(size_t i = 0; i < referenceNode.Count(); i++) {
