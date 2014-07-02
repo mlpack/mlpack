@@ -13,7 +13,8 @@
  */ 
 #include "bounds.hpp"
 #include "rectangle_tree/rectangle_tree.hpp"
-#include "rectangle_tree/rectangle_tree_traverser.hpp"
+#include "rectangle_tree/single_tree_traverser.hpp"
+#include "rectangle_tree/dual_tree_traverser.hpp"
 #include "rectangle_tree/r_tree_split.hpp"
 #include "rectangle_tree/r_tree_descent_heuristic.hpp"
 #include "rectangle_tree/traits.hpp"

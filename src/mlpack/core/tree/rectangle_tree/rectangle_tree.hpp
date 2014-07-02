@@ -79,10 +79,13 @@ class RectangleTree
   //! So other classes can use TreeType::Mat.
   typedef MatType Mat;
 
-  //! A traverser for rectangle type trees.  See
-  //! rectangle_tree_traverser.hpp for implementation.
+  //! A single traverser for rectangle type trees.  See
+  //! single_tree_traverser.hpp for implementation.
   template<typename RuleType>
-  class RectangleTreeTraverser;
+  class SingleTreeTraverser;
+  //! A dual tree traverser for rectangle type trees.
+  template<typename RuleType>
+  class DualTreeTraverser;
 
   /**
    * Construct this as the root node of a rectangle type tree using the given
