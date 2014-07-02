@@ -252,6 +252,8 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
   }
   else if (singleMode)
   {
+    
+    std::cout << " we are in NeighborSearchImpl" << std::endl;
     // The search doesn't work if the root node is also a leaf node.
     // if this is the case, it is suggested that you use the naive method.
     assert(!(referenceTree->IsLeaf()));
@@ -259,11 +261,14 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
     // Create the traverser.
     typename TreeType::template SingleTreeTraverser<RuleType> traverser(rules);
     
+        std::cout << " n_cols = " << querySet.n_cols << std::endl;
+
+    
     // Now have it traverse for each point.
     for (size_t i = 0; i < querySet.n_cols; ++i)
       traverser.Traverse(i, *referenceTree);
   }
-  else // Dual-tree recursion.
+  else // Dual-tree recursion.referenceTree
   {
     // Create the traverser.
     typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
