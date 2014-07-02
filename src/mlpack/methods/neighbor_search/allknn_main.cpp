@@ -295,7 +295,7 @@ int main(int argc, char *argv[])
       queryTree = NULL; // Empty for now.
 
       Timer::Stop("tree_building");
-
+      
       if (CLI::GetParam<string>("query_file") != "")
       {
 	Log::Info << "Loaded query data from '" << queryFile << "' ("
@@ -328,13 +328,6 @@ int main(int argc, char *argv[])
 
 
       delete allknn;
-            
-      
-      // Build the reference tree.
-      Log::Info << "Building reference tree..." << endl;
-      Timer::Start("tree_building");
-
-      Timer::Stop("tree_building");
     }
   }
   else // Cover trees.
