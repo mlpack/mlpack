@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
 
   ExponentialSchedule schedule(1e-5);
   SA<GeneralizedRosenbrockFunction, ExponentialSchedule>
-      sa(f, schedule, 1000.,1000, 100, 1e-9, 3, 20, 0.3, 0.3, 10000000);
+      sa(f, schedule, 10000000, 1000.,1000, 100, 1e-9, 3, 20, 0.3, 0.3);
   arma::mat coordinates = f.GetInitialPoint();
   double result = sa.Optimize(coordinates);
 
