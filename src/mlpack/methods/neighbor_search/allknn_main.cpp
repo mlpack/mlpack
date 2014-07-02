@@ -58,7 +58,7 @@ PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
 PARAM_FLAG("cover_tree", "If true, use cover trees to perform the search "
     "(experimental, may be slow).", "c");
 PARAM_FLAG("r_tree", "If true, use an R-Tree to perform the search "
-    "(experimental, may be slow.  Currently automatically sets single_mode.).", "R");
+    "(experimental, may be slow.  Currently automatically sets single_mode.).", "T");
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
     "random orthogonal basis.", "R");
 PARAM_INT("seed", "Random seed (if 0, std::time(NULL) is used).", "s", 0);
@@ -132,6 +132,7 @@ int main(int argc, char *argv[])
   } else if (!singleMode && CLI::HasParam("r_tree"))  // R_tree requires single mode.
   {
     Log::Warn << "--single_mode assumed because --r_tree is present." << endl;
+    singleMode = true;
   }
   
   if (naive)
@@ -269,16 +270,71 @@ int main(int argc, char *argv[])
       // Make sure to notify the user that they are using an r tree.
       Log::Info << "Using r tree for nearest-neighbor calculation." << endl;
       
+      // Because we may construct it differently, we need a pointer.
+      NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
+      RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+		    tree::RTreeDescentHeuristic,
+		    NeighborSearchStat<NearestNeighborSort>,
+		    arma::mat> >* allknn = NULL;
+
+      // Build trees by hand, so we can save memory: if we pass a tree to
+      // NeighborSearch, it does not copy the matrix.
+      Log::Info << "Building reference tree..." << endl;
+      Timer::Start("tree_building");
+
+      RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+		    tree::RTreeDescentHeuristic,
+		    NeighborSearchStat<NearestNeighborSort>,
+		    arma::mat>
+      refTree(referenceData, leafSize, leafSize/3, 5, 2, 0);
+
+      RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+		    tree::RTreeDescentHeuristic,
+		    NeighborSearchStat<NearestNeighborSort>,
+		    arma::mat>*
+      queryTree = NULL; // Empty for now.
+
+      Timer::Stop("tree_building");
+
+      if (CLI::GetParam<string>("query_file") != "")
+      {
+	Log::Info << "Loaded query data from '" << queryFile << "' ("
+	    << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
+
+        allknn = new NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
+        RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+	  	      tree::RTreeDescentHeuristic,
+  		      NeighborSearchStat<NearestNeighborSort>,
+  		      arma::mat> >(&refTree, queryTree,
+          referenceData, queryData, singleMode);
+      } else
+      {
+	      allknn = new NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
+      RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+		    tree::RTreeDescentHeuristic,
+		    NeighborSearchStat<NearestNeighborSort>,
+		    arma::mat> >(&refTree,
+        referenceData, singleMode);
+      }
+      Log::Info << "Tree built." << endl;
+      
+      arma::mat distancesOut;
+      arma::Mat<size_t> neighborsOut;
+
+      Log::Info << "Computing " << k << " nearest neighbors..." << endl;
+      allknn->Search(k, neighborsOut, distancesOut);
+
+      Log::Info << "Neighbors computed." << endl;
+
+
+      delete allknn;
+            
+      
       // Build the reference tree.
       Log::Info << "Building reference tree..." << endl;
       Timer::Start("tree_building");
-        RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
-                      tree::RTreeDescentHeuristic,
-                      NeighborSearchStat<NearestNeighborSort>,
-                      arma::mat>
-        refTree(referenceData, leafSize, leafSize/3, 5, 2, 0);
+
       Timer::Stop("tree_building");
-      std::cout << "completed tree building " << refTree.NumDescendants() << std::endl;
     }
   }
   else // Cover trees.

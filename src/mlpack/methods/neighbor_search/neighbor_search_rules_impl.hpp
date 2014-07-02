@@ -56,7 +56,7 @@ BaseCase(const size_t queryIndex, const size_t referenceIndex)
   ++baseCases;
 
   // If this distance is better than any of the current candidates, the
-  // SortDistance() function will give us the poto insert it into.
+  // SortDistance() function will give us the position to insert it into.
   arma::vec queryDist = distances.unsafe_col(queryIndex);
   arma::Col<size_t> queryIndices = neighbors.unsafe_col(queryIndex);
   const size_t insertPosition = SortPolicy::SortDistance(queryDist,
