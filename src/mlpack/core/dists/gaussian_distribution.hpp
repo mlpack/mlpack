@@ -80,24 +80,14 @@ class GaussianDistribution
   void Estimate(const arma::mat& observations,
                 const arma::vec& probabilities);
 
-  /**
-   * Return the mean.
-   */
+  //! Return the mean.
   const arma::vec& Mean() const { return mean; }
-
-  /**
-   * Return a modifiable copy of the mean.
-   */
+  //! Return a modifiable copy of the mean.
   arma::vec& Mean() { return mean; }
 
-  /**
-   * Return the covariance matrix.
-   */
+  //! Return the covariance matrix.
   const arma::mat& Covariance() const { return covariance; }
-
-  /**
-   * Return a modifiable copy of the covariance.
-   */
+  //! Return a modifiable copy of the covariance.
   arma::mat& Covariance() { return covariance; }
 
   /**
