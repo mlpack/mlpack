@@ -54,22 +54,24 @@ class SA
 {
  public:
   /*
-   * Construct the SA optimizer with the given function and paramters.
+   * Construct the SA optimizer with the given function and parameters.
    *
    * @param function Function to be minimized.
-   * @param coolingSchedule Cooling schedule
+   * @param coolingSchedule Instantiated cooling schedule.
+   * @param maxIterations Maximum number of iterations allowed (0 indicates no limit).
    * @param initT Initial temperature.
-   * @param initMoves Iterations without changing temperature.
-   * @param moveCtrlSweep Sweeps per move control.
+   * @param initMoves Number of initial iterations without changing temperature.
+   * @param moveCtrlSweep Sweeps per feedback move control.
    * @param tolerance Tolerance to consider system frozen.
-   * @param maxToleranceSweep Maximum sweeps below tolerance to consider system frozen.
+   * @param maxToleranceSweep Maximum sweeps below tolerance to consider system
+   *      frozen.
    * @param maxMoveCoef Maximum move size.
    * @param initMoveCoef Initial move size.
    * @param gain Proportional control in feedback move control.
-   * @param maxIterations Maximum number of iterations allowed (0 indicates no limit).
    */
   SA(FunctionType& function,
      CoolingScheduleType& coolingSchedule,
+     const size_t maxIterations = 1000000,
      const double initT = 10000.,
      const size_t initMoves = 1000,
      const size_t moveCtrlSweep = 100,
@@ -77,9 +79,10 @@ class SA
      const size_t maxToleranceSweep = 3,
      const double maxMoveCoef = 20,
      const double initMoveCoef = 0.3,
-     const double gain = 0.3,
-     const size_t maxIterations = 1000000);
-  /*
+     const double gain = 0.3);
+
+
+  /*&
    * Optimize the given function using simulated annealing. The given starting
    * point will be modified to store the finishing point of the algorithm, and
    * the final objective value is returned.
@@ -141,15 +144,15 @@ class SA
 
   std::string ToString() const;
  private:
-  FunctionType &function;
+  FunctionType&function;
   CoolingScheduleType &coolingSchedule;
+  size_t maxIterations;
   double T;
   size_t initMoves;
   size_t moveCtrlSweep;
   double tolerance;
   size_t maxToleranceSweep;
   double gain;
-  size_t maxIterations;
   arma::mat maxMove;
   arma::mat moveSize;
 
