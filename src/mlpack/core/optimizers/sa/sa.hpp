@@ -170,15 +170,13 @@ class SA
   arma::mat moveSize;
 
 
-  // following variables are initialized inside Optimize
-  arma::mat accept;
-  double energy;
-  size_t idx;
-  size_t nVars;
-  size_t sweepCounter;
+  void GenerateMove(arma::mat& iterate,
+                    arma::mat& accept,
+                    double& energy,
+                    size_t& idx,
+                    size_t& sweepCounter);
 
-  void GenerateMove(arma::mat& iterate);
-  void MoveControl(size_t nMoves);
+  void MoveControl(size_t nMoves, arma::mat& accept);
 };
 
 }; // namespace optimization
