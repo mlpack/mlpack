@@ -48,7 +48,7 @@ namespace optimization {
  * @tparam MoveDistributionType distribution type for move generation
  * @tparam CoolingScheduleType type for cooling schedule
  */
-template<typename FunctionType, typename MoveDistributionType, typename CoolingScheduleType>
+template<typename FunctionType, typename CoolingScheduleType>
 class SA
 {
  public:
@@ -69,7 +69,6 @@ class SA
    * @param maxIterations Maximum number of iterations allowed (0 indicates no limit).
    */
   SA(FunctionType& function,
-     MoveDistributionType& moveDistribution,
      CoolingScheduleType& coolingSchedule,
      const double initT = 10000.,
      const size_t initMoves = 1000,
@@ -143,7 +142,6 @@ class SA
   std::string ToString() const;
  private:
   FunctionType &function;
-  MoveDistributionType &moveDistribution;
   CoolingScheduleType &coolingSchedule;
   double T;
   size_t initMoves;
