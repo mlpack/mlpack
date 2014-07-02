@@ -3,6 +3,7 @@
 set(SOURCES
   simple_residue_termination.hpp
   simple_tolerance_termination.hpp
+  validation_rmse_termination.hpp
 )
 
 # Add directory name to sources.
