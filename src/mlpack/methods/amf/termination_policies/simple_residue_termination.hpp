@@ -18,7 +18,7 @@ class SimpleResidueTermination
         : minResidue(minResidue), maxIterations(maxIterations) { }
 
   template<typename MatType>
-  void Initialize(MatType& V)
+  void Initialize(const MatType& V)
   {
     residue = minResidue;
     iteration = 1;
@@ -36,8 +36,7 @@ class SimpleResidueTermination
     else return false;
   }
 
-  template<typename MatType>
-  void Step(const MatType& W, const MatType& H)
+  void Step(const arma::mat& W, const arma::mat& H)
   {
     // Calculate norm of WH after each iteration.
     arma::mat WH;
