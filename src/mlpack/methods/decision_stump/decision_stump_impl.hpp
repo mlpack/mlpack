@@ -147,21 +147,23 @@ double DecisionStump<MatType>::SetupSplitAttribute(
 
   i = 0;
   count = 0;
-
+  double ratioEl;
   // This splits the sorted into buckets of size greater than or equal to
   // inpBucketSize.
   while (i < sortedLabels.n_elem)
   {
     count++;
-    if (i == sortedLabels.n_elem - 1)
+    if (i == sortedLabels.n_elem - 1) 
     {
       // if we're at the end, then don't worry about the bucket size
       // just take this as the last bin.
       begin = i - count + 1;
       end = i;
-
-      entropy += CalculateEntropy<double, size_t>(
-                 sortedAtt.subvec(begin,end),sortedLabels.subvec(begin,end));
+      
+      // using ratioEl to calculate the ratio of elements in this split.
+      ratioEl = ((double)(end - begin + 1)/sortedLabels.n_elem);
+      
+      entropy += ratioEl * CalculateEntropy<size_t>(sortedLabels.subvec(begin,end));
       i++;
     }
     else if (sortedLabels(i) != sortedLabels(i + 1))
@@ -171,6 +173,8 @@ double DecisionStump<MatType>::SetupSplitAttribute(
       if (count < bucketSize)
       {
         // if it is, then take the minimum bucket size anyways
+        // this is where the inpBucketSize comes into use
+        // This makes sure there isn't a bucket for every change in labels.
         begin = i - count + 1;
         end = begin + bucketSize - 1;
 
@@ -183,9 +187,9 @@ double DecisionStump<MatType>::SetupSplitAttribute(
         begin = i - count + 1;
         end = i;
       }
-
-      entropy += CalculateEntropy<double, size_t>(
-                 sortedAtt.subvec(begin,end),sortedLabels.subvec(begin,end));
+      ratioEl = ((double)(end - begin + 1)/sortedLabels.n_elem);
+    
+      entropy +=ratioEl * CalculateEntropy<size_t>(sortedLabels.subvec(begin,end));
 
       i = end + 1;
       count = 0;
@@ -269,7 +273,7 @@ void DecisionStump<MatType>::TrainOnAtt(const arma::rowvec& attribute,
 
       // Find the most frequent element in subCols so as to assign a label to
       // the bucket of subCols.
-      mostFreq = CountMostFreq<double>(subCols);//sortedLabels.subvec(begin, end));
+      mostFreq = CountMostFreq<double>(subCols);
 
       split.resize(split.n_elem + 1);
       split(split.n_elem - 1) = sortedSplitAtt(begin);
@@ -372,45 +376,25 @@ int DecisionStump<MatType>::isDistinct(const arma::Row<rType>& featureRow)
  */
 template<typename MatType>
 template<typename AttType, typename LabelType>
-double DecisionStump<MatType>::CalculateEntropy(arma::subview_row<AttType> attribute,
-                                                arma::subview_row<LabelType> labels)
+double DecisionStump<MatType>::CalculateEntropy(arma::subview_row<LabelType> labels)
 {
   double entropy = 0.0;
-
-  arma::rowvec uniqueAtt = arma::unique(attribute);
-  arma::Row<LabelType> uniqueLabel = arma::unique(labels);
-  arma::Row<size_t> numElem(uniqueAtt.n_elem);
+  size_t j;
+  
+  arma::Row<size_t> numElem(numClass); 
   numElem.fill(0);
-  arma::Mat<size_t> entropyArray(uniqueAtt.n_elem,numClass);
-  entropyArray.fill(0);
 
-  // Populate entropyArray and numElem; they are used as helpers to calculate
+  // Populate numElem; they are used as helpers to calculate
   // entropy.
-  for (int j = 0; j < uniqueAtt.n_elem; j++)
+  for (j = 0; j < labels.n_elem; j++)
+    numElem(labels(j))++;
+
+  for (j = 0; j < numClass; j++)
   {
-    for (int i = 0; i < attribute.n_elem; i++)
-    {
-      if (uniqueAtt[j] == attribute[i])
-      {
-        entropyArray(j, labels(i))++;
-        numElem(j)++;
-      }
-    }
+    const double p1 = ((double) numElem(j) / labels.n_elem);
+  
+    entropy += (p1 == 0) ? 0 : p1 * log2(p1);
   }
-
-  for (int j = 0; j < uniqueAtt.size(); j++)
-  {
-    const double p1 = ((double) numElem(j) / attribute.n_elem);
-
-    for (int i = 0; i < numClass; i++)
-    {
-      const double p2 = ((double) entropyArray(j, i) / numElem(j));
-      const double p3 = (p2 == 0) ? 0 : p2 * log2(p2);
-
-      entropy += p1 * p3;
-    }
-  }
-
   return entropy;
 }
 

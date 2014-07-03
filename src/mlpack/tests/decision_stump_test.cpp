@@ -6,7 +6,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/decision_stump/decision_stump.hpp>
-
+ 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
 
@@ -46,6 +46,36 @@ BOOST_AUTO_TEST_CASE(OneClass)
   for (size_t i = 0; i < predictedLabels.size(); i++ )
     BOOST_CHECK_EQUAL(predictedLabels(i), 1);
 
+}
+/*
+This tests whether the entropy is being correctly calculated by
+checking the correct value of the splitting column value. 
+This test is for an inpBucketSize of 4 and the correct value of 
+the splitCol is 1. 
+*/
+BOOST_AUTO_TEST_CASE(CorrectAttributeChosen)
+{
+  const size_t numClasses = 2;
+  const size_t inpBucketSize = 4;
+
+  mat trainingData;
+  trainingData << 0 << 0 << 0 << 0 << 0 << 1 << 1 << 1 << 1
+               << 2  << 2  << 2  << 2  << 2 << endr
+               << 70 << 90 << 85 << 95 << 70 << 90 << 78 << 65 << 75
+               << 80  << 70  << 80  << 80  << 96 << endr
+               << 1 << 1 << 0 << 0 << 0 << 1 << 0 << 1 << 0
+               << 1  << 1  << 0  << 0  << 0 << endr;
+
+  // No need to normalize labels here.
+  Mat<size_t> labelsIn;
+  labelsIn << 0 << 1 << 1 << 1 << 0 << 0 << 0 << 0
+           << 0 << 1 << 1 << 0 << 0 << 0;
+
+  DecisionStump<> ds(trainingData, labelsIn.row(0), numClasses, inpBucketSize);
+
+  // Only need to check the value of the splitting column, no need of classification.
+
+  BOOST_CHECK_EQUAL(ds.splitCol,1);
 }
 
 /**
