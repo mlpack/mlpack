@@ -8,6 +8,7 @@ add_executable(mlpack_test
   aug_lagrangian_test.cpp
   cf_test.cpp
   cli_test.cpp
+  cosine_tree_test.cpp
   decision_stump_test.cpp
   det_test.cpp
   distribution_test.cpp
@@ -35,8 +36,11 @@ add_executable(mlpack_test
   nmf_test.cpp
   pca_test.cpp
   perceptron_test.cpp
+#  quic_svd_test.cpp
   radical_test.cpp
   range_search_test.cpp
+  rectangle_tree_test.cpp
+  sa_test.cpp
   save_restore_utility_test.cpp
   sgd_test.cpp
   sort_policy_test.cpp

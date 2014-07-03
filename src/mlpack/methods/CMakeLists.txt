@@ -23,6 +23,7 @@ set(DIRS
 #  lmf
   pca
   perceptron
+  quic_svd
   radical
   range_search
   rann

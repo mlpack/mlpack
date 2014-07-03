@@ -243,7 +243,4 @@ class CompareCosineNode
 }; // namespace tree
 }; // namespace mlpack
 
-// Include implementation.
-#include "cosine_tree_impl.hpp"
-
 #endif

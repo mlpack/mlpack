@@ -4,10 +4,6 @@
  *
  * Implementation of cosine tree.
  */
-#ifndef __MLPACK_CORE_TREE_COSINE_TREE_COSINE_TREE_IMPL_HPP
-#define __MLPACK_CORE_TREE_COSINE_TREE_COSINE_TREE_IMPL_HPP
-
-// In case it wasn't included already for some reason.
 #include "cosine_tree.hpp"
 
 #include <boost/math/distributions/normal.hpp>
@@ -127,8 +123,6 @@ CosineTree::CosineTree(const arma::mat& dataset,
     
     // Calculate Monte Carlo error estimate for the root node.
     monteCarloError = MonteCarloError(&root, treeQueue);
-    
-    std::cout << monteCarloError / root.FrobNormSquared() << "\n";
   }
   
   // Construct the subspace basis from the current priority queue.
@@ -429,5 +423,3 @@ void CosineTree::CalculateCentroid()
 
 }; // namespace tree
 }; // namespace mlpack
-
-#endif
