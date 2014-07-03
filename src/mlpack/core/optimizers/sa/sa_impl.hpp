@@ -1,4 +1,4 @@
-/*
+/**
  * @file sa_impl.hpp
  * @auther Zhihao Lou
  *
@@ -57,7 +57,6 @@ double SA<FunctionType, CoolingScheduleType>::Optimize(arma::mat &iterate)
   const size_t rows = function.GetInitialPoint().n_rows;
   const size_t cols = function.GetInitialPoint().n_cols;
 
-  size_t i;
   size_t frozenCount = 0;
   double energy = function.Evaluate(iterate);
   size_t oldEnergy = energy;
@@ -69,16 +68,16 @@ double SA<FunctionType, CoolingScheduleType>::Optimize(arma::mat &iterate)
   arma::mat accept(rows, cols);
   accept.zeros();
 
-  // Initial Moves to get rid of dependency of initial states.
-  for (i = 0; i < initMoves; ++i)
+  // Initial moves to get rid of dependency of initial states.
+  for (size_t i = 0; i < initMoves; ++i)
     GenerateMove(iterate, accept, energy, idx, sweepCounter);
 
   // Iterating and cooling.
-  for (i = 0; i != maxIterations; ++i)
+  for (size_t i = 0; i != maxIterations; ++i)
   {
     oldEnergy = energy;
     GenerateMove(iterate, accept, energy, idx, sweepCounter);
-    temperature = coolingSchedule.nextTemperature(temperature, energy);
+    temperature = coolingSchedule.NextTemperature(temperature, energy);
 
     // Determine if the optimization has entered (or continues to be in) a
     // frozen state.
@@ -121,8 +120,8 @@ void SA<FunctionType, CoolingScheduleType>::GenerateMove(
     size_t& idx,
     size_t& sweepCounter)
 {
-  double prevEnergy = energy;
-  double prevValue = iterate(idx);
+  const double prevEnergy = energy;
+  const double prevValue = iterate(idx);
 
   // It is possible to use a non-Laplace distribution here, but it is difficult
   // because the acceptance ratio should be as close to 0.44 as possible, and
@@ -135,11 +134,11 @@ void SA<FunctionType, CoolingScheduleType>::GenerateMove(
 
   iterate(idx) += move;
   energy = function.Evaluate(iterate);
-  // According to Metropolis criterion, accept the move with probability
+  // According to the Metropolis criterion, accept the move with probability
   // min{1, exp(-(E_new - E_old) / T)}.
-  double xi = math::Random();
-  double delta = energy - prevEnergy;
-  double criterion = std::exp(-delta / temperature);
+  const double xi = math::Random();
+  const double delta = energy - prevEnergy;
+  const double criterion = std::exp(-delta / temperature);
   if (delta <= 0. || criterion > xi)
   {
     accept(idx) += 1.;
@@ -164,7 +163,7 @@ void SA<FunctionType, CoolingScheduleType>::GenerateMove(
   }
 }
 
-/*
+/**
  * MoveControl() uses a proportional feedback control to determine the size
  * parameter to pass to the move generation distribution. The target of such
  * move control is to make the acceptance ratio, accept/nMoves, be as close to

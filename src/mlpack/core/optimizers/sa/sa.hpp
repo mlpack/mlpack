@@ -19,18 +19,18 @@ namespace optimization {
  * schedule can be changed via a template parameter.
  *
  * The algorithm keeps the temperature at initial temperature for initMove
- * steps to get rid of the dependency of initial condition. After that, it
+ * steps to get rid of the dependency on the initial condition. After that, it
  * cools every step until the system is considered frozen or maxIterations is
  * reached.
  *
- * At each step, SA only perturbs one parameter at a time. The process that SA
- * perturbed all parameters in a problem is called a sweep. Every moveCtrlSweep
- * the algorithm does feedback move control to change the average move size
- * depending on the responsiveness of each parameter. Parameter gain controls
- * the proportion of the feedback control.
+ * At each step, SA only perturbs one parameter at a time. When SA has perturbed
+ * all parameters in a problem, a sweep has been completed. Every moveCtrlSweep
+ * sweeps, the algorithm does feedback move control to change the average move
+ * size depending on the responsiveness of each parameter. Parameter gain
+ * controls the proportion of the feedback control.
  *
- * The system is considered "frozen" when its score failed to change more then
- * tolerance for consecutive maxToleranceSweep sweeps.
+ * The system is considered "frozen" when its score fails to change more then
+ * tolerance for maxToleranceSweep consecutive sweeps.
  *
  * For SA to work, the FunctionType parameter must implement the following
  * two methods:
@@ -53,7 +53,7 @@ template<typename FunctionType, typename CoolingScheduleType>
 class SA
 {
  public:
-  /*
+  /**
    * Construct the SA optimizer with the given function and parameters.
    *
    * @param function Function to be minimized.
@@ -81,8 +81,7 @@ class SA
      const double initMoveCoef = 0.3,
      const double gain = 0.3);
 
-
-  /*&
+  /**
    * Optimize the given function using simulated annealing. The given starting
    * point will be modified to store the finishing point of the algorithm, and
    * the final objective value is returned.
