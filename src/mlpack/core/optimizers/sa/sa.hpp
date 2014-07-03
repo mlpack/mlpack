@@ -169,14 +169,46 @@ class SA
   //! Move size of each parameter.
   arma::mat moveSize;
 
-
+  /**
+   * GenerateMove proposes a move on element iterate(idx), and determines if
+   * that move is acceptable or not according to the Metropolis criterion.
+   * After that it increments idx so the next call will make a move on next
+   * parameters. When all elements of the state have been moved (a sweep), it
+   * resets idx and increments sweepCounter. When sweepCounter reaches
+   * moveCtrlSweep, it performs MoveControl() and resets sweepCounter.
+   *
+   * @param iterate Current optimization position.
+   * @param accept Matrix representing which parameters have had accepted moves.
+   * @param energy Current energy of the system.
+   * @param idx Current parameter to modify.
+   * @param sweepCounter Current counter representing how many sweeps have been
+   *      completed.
+   */
   void GenerateMove(arma::mat& iterate,
                     arma::mat& accept,
                     double& energy,
                     size_t& idx,
                     size_t& sweepCounter);
 
-  void MoveControl(size_t nMoves, arma::mat& accept);
+  /**
+   * MoveControl() uses a proportional feedback control to determine the size
+   * parameter to pass to the move generation distribution. The target of such
+   * move control is to make the acceptance ratio, accept/nMoves, be as close to
+   * 0.44 as possible. Generally speaking, the larger the move size is, the
+   * larger the function value change of the move will be, and less likely such
+   * move will be accepted by the Metropolis criterion. Thus, the move size is
+   * controlled by
+   *
+   * log(moveSize) = log(moveSize) + gain * (accept/nMoves - target)
+   *
+   * For more theory and the mysterious 0.44 value, see Jimmy K.-C. Lam and
+   * Jean-Marc Delosme. `An efficient simulated annealing schedule: derivation'.
+   * Technical Report 8816, Yale University, 1988.
+   *
+   * @param nMoves Number of moves since last call.
+   * @param accept Matrix representing which parameters have had accepted moves.
+   */
+  void MoveControl(const size_t nMoves, arma::mat& accept);
 };
 
 }; // namespace optimization

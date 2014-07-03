@@ -182,8 +182,8 @@ template<
     typename FunctionType,
     typename CoolingScheduleType
 >
-void SA<FunctionType, CoolingScheduleType>::MoveControl(
-    size_t nMoves, arma::mat& accept)
+void SA<FunctionType, CoolingScheduleType>::MoveControl(const size_t nMoves,
+                                                        arma::mat& accept)
 {
   arma::mat target;
   target.copy_size(accept);
