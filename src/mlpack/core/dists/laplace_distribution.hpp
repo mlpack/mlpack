@@ -89,7 +89,8 @@ class LaplaceDistribution
     result.randu();
 
     // Convert from uniform distribution to Laplace distribution.
-    return mean - scale * sign(result) % arma::log(1 - 2.0 * (result - 0.5));
+    return mean - scale * arma::sign(result) % arma::log(1 - 2.0 * (result -
+        0.5));
   }
 
   /**
