@@ -7,6 +7,10 @@
 #ifndef __MLPACK_CORE_OPTIMIZERS_SA_SA_HPP
 #define __MLPACK_CORE_OPTIMIZERS_SA_SA_HPP
 
+#include <mlpack/prereqs.hpp>
+
+#include "exponential_schedule.hpp"
+
 namespace mlpack {
 namespace optimization {
 
@@ -49,7 +53,10 @@ namespace optimization {
  * @tparam FunctionType objective function type to be minimized.
  * @tparam CoolingScheduleType type for cooling schedule
  */
-template<typename FunctionType, typename CoolingScheduleType>
+template<
+    typename FunctionType,
+    typename CoolingScheduleType = ExponentialSchedule
+>
 class SA
 {
  public:
