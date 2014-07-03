@@ -41,7 +41,11 @@ class DTBStat
    * A generic initializer.  Sets the maximum neighbor distance to its default,
    * and the component membership to -1 (no component).
    */
-  DTBStat();
+  DTBStat() :
+      maxNeighborDistance(DBL_MAX),
+      minNeighborDistance(DBL_MAX),
+      bound(DBL_MAX),
+      componentMembership(-1) { }
 
   /**
    * This is called when a node is finished initializing.  We set the maximum
@@ -51,7 +55,13 @@ class DTBStat
    * @param node Node that has been finished.
    */
   template<typename TreeType>
-  DTBStat(const TreeType& node);
+  DTBStat(const TreeType& node) :
+      maxNeighborDistance(DBL_MAX),
+      minNeighborDistance(DBL_MAX),
+      bound(DBL_MAX),
+      componentMembership(
+          ((node.NumPoints() == 1) && (node.NumChildren() == 0)) ?
+            node.Point(0) : -1) { }
 
   //! Get the maximum neighbor distance.
   double MaxNeighborDistance() const { return maxNeighborDistance; }
