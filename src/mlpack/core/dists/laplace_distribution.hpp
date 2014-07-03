@@ -89,8 +89,19 @@ class LaplaceDistribution
     result.randu();
 
     // Convert from uniform distribution to Laplace distribution.
-    return mean - scale * arma::sign(result) % arma::log(1 - 2.0 * (result -
-        0.5));
+    // arma::sign() does not exist in Armadillo < 3.920 so we have to do this
+    // elementwise.
+    for (size_t i = 0; i < result.n_elem; ++i)
+    {
+      if (result[i] < 0)
+        result[i] = mean[i] + scale * result[i] * std::log(1 + 2.0 * (result[i]
+            - 0.5));
+      else
+        result[i] = mean[i] - scale * result[i] * std::log(1 - 2.0 * (result[i]
+            - 0.5));
+    }
+
+    return result;
   }
 
   /**
