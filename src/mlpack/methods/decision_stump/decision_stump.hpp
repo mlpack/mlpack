@@ -45,12 +45,13 @@ class DecisionStump
    */
   void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
 
+  int splitCol;
  private:
   //! Stores the number of classes.
   size_t numClass;
 
   //! Stores the value of the attribute on which to split.
-  int splitCol;
+  // int splitCol;
 
   //! Size of bucket while determining splitting criterion.
   size_t bucketSize;
@@ -109,8 +110,7 @@ class DecisionStump
    * @param labels Corresponding labels of the attribute.
    */
   template <typename AttType, typename LabelType>
-  double CalculateEntropy(arma::subview_row<AttType> attribute,
-                          arma::subview_row<LabelType> labels);
+  double CalculateEntropy(arma::subview_row<LabelType> labels);
 };
 
 }; // namespace decision_stump
