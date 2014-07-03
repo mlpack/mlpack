@@ -450,7 +450,7 @@ BOOST_AUTO_TEST_CASE(RefinedStartTest)
 
 /**
  * Make sure sparse k-means works okay.
- */
+ *
 BOOST_AUTO_TEST_CASE(SparseKMeansTest)
 {
   // Huge dimensionality, few points.
@@ -490,7 +490,7 @@ BOOST_AUTO_TEST_CASE(SparseKMeansTest)
   BOOST_REQUIRE_EQUAL(assignments[10], clusterTwo);
   BOOST_REQUIRE_EQUAL(assignments[11], clusterTwo);
 }
-
+*/
 #endif // Exclude Armadillo 3.4.
 #endif // ARMA_HAS_SPMAT
 
