@@ -24,8 +24,8 @@ BOOST_AUTO_TEST_CASE(QUICSVDReconstructionError)
   // Load the dataset.
   arma::mat dataset;
   data::Load("test_data_3_1000.csv", dataset);
-	
-	// Obtain the SVD using default parameters.
+
+  // Obtain the SVD using default parameters.
   arma::mat u, v, sigma;
   QUIC_SVD quicsvd(dataset, u, v, sigma);
   
