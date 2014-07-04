@@ -284,7 +284,7 @@ void CosineTree::CosineNodeSplit()
   
   // Split columns into left and right children. The splitting condition for the
   // column to be in the left child is as follows:
-  // 			cos_max - cos(i) <= cos(i) - cos_min
+  //       cos_max - cos(i) <= cos(i) - cos_min
   for(size_t i = 0; i < numColumns; i++)
   {
     if(cosineMax - cosines(i) <= cosines(i) - cosineMin)
