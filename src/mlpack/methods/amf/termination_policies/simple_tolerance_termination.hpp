@@ -15,8 +15,11 @@ class SimpleToleranceTermination
 {
  public:
   SimpleToleranceTermination(const double tolerance = 1e-5,
-                             const size_t maxIterations = 10000)
-            : tolerance(tolerance), maxIterations(maxIterations) {}
+                             const size_t maxIterations = 10000,
+                             const size_t reverseStepTolerance = 3)
+            : tolerance(tolerance),
+              maxIterations(maxIterations),
+              reverseStepTolerance(reverseStepTolerance) {}
 
   void Initialize(const MatType& V)
   {
@@ -29,8 +32,12 @@ class SimpleToleranceTermination
 
   bool IsConverged()
   {
-    if(((residueOld - residue) / residueOld < tolerance && iteration > 4)
-        || iteration > maxIterations) return true;
+    if((residueOld - residue) / residueOld < tolerance && iteration > 4)
+      reverseStepCount++;
+    else reverseStepCount = 0;
+
+    if(reverseStepCount == reverseStepTolerance || iteration > maxIterations)
+      return true;
     else return false;
   }
 
@@ -48,17 +55,17 @@ class SimpleToleranceTermination
     size_t count = 0;
     for(size_t i = 0;i < n;i++)
     {
-      for(size_t j = 0;j < m;j++)
-      {
-        double temp = 0;
-        if((temp = (*V)(i,j)) != 0)
+        for(size_t j = 0;j < m;j++)
         {
-          temp = (temp - WH(i, j));
-          temp = temp * temp;
-          sum += temp;
-          count++;
+            double temp = 0;
+            if((temp = (*V)(i,j)) != 0)
+            {
+                temp = (temp - WH(i, j));
+                temp = temp * temp;
+                sum += temp;
+                count++;
+            }
         }
-      }
     }
     residue = sum / count;
     residue = sqrt(residue);
@@ -79,6 +86,9 @@ class SimpleToleranceTermination
   double residueOld;
   double residue;
   double normOld;
+
+  size_t reverseStepTolerance;
+  size_t reverseStepCount;
 }; // class SimpleToleranceTermination
 
 }; // namespace amf
