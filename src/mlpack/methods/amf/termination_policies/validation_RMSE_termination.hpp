@@ -14,10 +14,12 @@ class ValidationRMSETermination
   ValidationRMSETermination(MatType& V,
                             size_t num_test_points,
                             double tolerance = 1e-5,
-                            size_t maxIterations = 10000)
+                            size_t maxIterations = 10000,
+                            size_t reverseStepTolerance = 3)
         : tolerance(tolerance),
           maxIterations(maxIterations),
-          num_test_points(num_test_points)
+          num_test_points(num_test_points),
+          reverseStepTolerance(reverseStepTolerance)
   {
     size_t n = V.n_rows;
     size_t m = V.n_cols;
@@ -44,19 +46,22 @@ class ValidationRMSETermination
 
   void Initialize(const MatType& V)
   {
+    (void)V;
     iteration = 1;
 
     rmse = DBL_MAX;
     rmseOld = DBL_MAX;
-    t_count = 0;
+    reverseStepCount = 0;
   }
 
   bool IsConverged()
   {
-    if((rmseOld - rmse) / rmseOld < tolerance && iteration > 4) t_count++;
-    else t_count = 0;
+    if((rmseOld - rmse) / rmseOld < tolerance && iteration > 4) 
+      reverseStepCount++;
+    else reverseStepCount = 0;
 
-    if(t_count == 3 || iteration > maxIterations) return true;
+    if(reverseStepCount == reverseStepTolerance || iteration > maxIterations) 
+      return true;
     else return false;
   }
 
@@ -108,7 +113,8 @@ class ValidationRMSETermination
   double rmseOld;
   double rmse;
 
-  size_t t_count;
+  size_t reverseStepTolerance;
+  size_t reverseStepCount;
 };
 
 } // namespace amf
