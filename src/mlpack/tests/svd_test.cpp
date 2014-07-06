@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(SVDNegativeElementTest)
   test(0, 2) = 3;
   test(1, 0) = 2;
   test(1, 1) = -1;
-  test(1, 2) = 1;
+  test(1, 2) = 2;
   test(2, 0) = 2;
   test(2, 1) = 2;
   test(2, 2) = 2;
@@ -144,6 +144,9 @@ BOOST_AUTO_TEST_CASE(SVDNegativeElementTest)
   amf.Apply(test, 2, m1, m2);
 
   arma::mat result = m1 * m2;
+  
+  std::cout << result << std::endl;
+  
   for(size_t i = 0;i < 3;i++)
   {
     for(size_t j = 0;j < 3;j++)
