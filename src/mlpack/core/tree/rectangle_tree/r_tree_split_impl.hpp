@@ -115,6 +115,9 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
   int j = 0;
   GetBoundSeeds(*tree, &i, &j);
   
+
+  if(i == j)
+    std::cout << i << ", " << j << "; " << tree->NumChildren() << std::endl;
   assert(i != j);
   
   RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* treeOne = new 
@@ -187,7 +190,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::GetPointSeeds(
   // Here we want to find the pair of points that it is worst to place in the same
   // node.  Because we are just using points, we will simply choose the two that would
   // create the most voluminous hyperrectangle.
-  double worstPairScore = 0.0;
+  double worstPairScore = -1.0;
   int worstI = 0;
   int worstJ = 0;
   for(int i = 0; i < tree.Count(); i++) {
@@ -221,7 +224,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::GetBoundSeeds(
   int* iRet,
   int* jRet)
 {
-  double worstPairScore = 0.0;
+  double worstPairScore = -1.0;
   int worstI = 0;
   int worstJ = 0;
   for(int i = 0; i < tree.NumChildren(); i++) {
