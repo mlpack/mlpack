@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
   perceptron.hpp
-  perceptron_impl.cpp
+  perceptron_impl.hpp
 )
 
 # Add directory name to sources.
@@ -16,8 +16,8 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_subdirectory(InitializationMethods)
-add_subdirectory(LearnPolicy)
+add_subdirectory(initialization_methods)
+add_subdirectory(learning_policies)
 
 add_executable(percep
   perceptron_main.cpp
