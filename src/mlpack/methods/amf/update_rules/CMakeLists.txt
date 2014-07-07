@@ -4,6 +4,8 @@ set(SOURCES
   nmf_als.hpp
   nmf_mult_dist.hpp
   nmf_mult_div.hpp
+  svd_batchlearning.hpp
+  svd_incremental_learning.hpp
 )
 
 # Add directory name to sources.
