@@ -79,7 +79,6 @@ class RASearch
            const typename TreeType::Mat& querySet,
            const bool naive = false,
            const bool singleMode = false,
-           const size_t leafSize = 20,
            const MetricType metric = MetricType());
 
   /**
@@ -107,7 +106,6 @@ class RASearch
   RASearch(const typename TreeType::Mat& referenceSet,
            const bool naive = false,
            const bool singleMode = false,
-           const size_t leafSize = 20,
            const MetricType metric = MetricType());
 
   /**
@@ -258,10 +256,10 @@ class RASearch
   //! Pointer to the root of the query tree (might not exist).
   TreeType* queryTree;
 
-  //! Indicates if we should free the reference tree at deletion time.
-  bool ownReferenceTree;
-  //! Indicates if we should free the query tree at deletion time.
-  bool ownQueryTree;
+  //! If true, this object created the trees and is responsible for them.
+  bool treeOwner;
+  //! Indicates if a separate query set was passed.
+  bool hasQuerySet;
 
   //! Indicates if naive random sampling on the set is being used.
   bool naive;
