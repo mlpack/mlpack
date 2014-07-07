@@ -2,16 +2,18 @@
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
 set(SOURCES
-
   # rank-approximate search files
   ra_search.hpp
   ra_search_impl.hpp
 
-  # The rank-approximate search rules
+  # rank-approximate search rules
   ra_search_rules.hpp
   ra_search_rules_impl.hpp
 
-  # The typedefs
+  # query statistic
+  ra_query_stat.hpp
+
+  # typedefs
   ra_typedef.hpp
 )
 
