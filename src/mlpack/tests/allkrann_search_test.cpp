@@ -162,7 +162,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeSearch)
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  RASearch<> tssRann(refData, queryData, false, true, 5);
+  RASearch<> tssRann(refData, queryData, false, true);
 
   // The relative ranks for the given query reference pair
   arma::Mat<size_t> qrRanks;
@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeSearch)
 
   for (size_t rounds = 0; rounds < numRounds; rounds++)
   {
-    tssRann.Search(1, neighbors, distances, 1.0, 0.95, false, false, 5);
+    tssRann.Search(1, neighbors, distances, 1.0, 0.95, false, false);
 
     for (size_t i = 0; i < queryData.n_cols; i++)
       if (qrRanks(i, neighbors(0, i)) < expectedRankErrorUB)
@@ -221,7 +221,7 @@ BOOST_AUTO_TEST_CASE(DualTreeSearch)
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  RASearch<> tsdRann(refData, queryData, false, false, 5);
+  RASearch<> tsdRann(refData, queryData, false, false);
 
   arma::Mat<size_t> qrRanks;
   data::Load("rann_test_qr_ranks.csv", qrRanks, true, false); // No transpose.
@@ -344,8 +344,7 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
   typedef RASearch<NearestNeighborSort, metric::EuclideanDistance, TreeType>
       RACoverTreeSearch;
 
-  TreeType refTree(refData);
-  RACoverTreeSearch tssRann(&refTree, NULL, refData, queryData, true);
+  RACoverTreeSearch tssRann(refData, queryData, true);
 
   // The relative ranks for the given query reference pair.
   arma::Mat<size_t> qrRanks;
