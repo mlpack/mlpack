@@ -143,7 +143,8 @@ inline void SVDBatchLearning::WUpdate<arma::sp_mat>(const arma::sp_mat& V,
   {
     size_t row = it.row();
     size_t col = it.col();
-    deltaW.row(it.row()) += (*it - arma::dot(W.row(row), H.col(col))) * arma::trans(H.col(col));
+    deltaW.row(it.row()) += (*it - arma::dot(W.row(row), H.col(col))) * 
+                                                  arma::trans(H.col(col));
   }
 
   if(kw != 0) for(size_t i = 0; i < n; i++)
@@ -173,7 +174,8 @@ inline void SVDBatchLearning::HUpdate<arma::sp_mat>(const arma::sp_mat& V,
   {
     size_t row = it.row();
     size_t col = it.col();
-    deltaH.col(col) += (*it - arma::dot(W.row(row), H.col(col))) * arma::trans(W.row(row));
+    deltaH.col(col) += (*it - arma::dot(W.row(row), H.col(col))) * 
+                                                arma::trans(W.row(row));
   }
 
   if(kh != 0) for(size_t j = 0; j < m; j++)
