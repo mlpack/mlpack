@@ -138,7 +138,12 @@
  *   - Andrew Wells <andrewmw94@gmail.com>
  */
 
-// First, include all of the prerequisites.
+// First, Check if armadillo was included before, warning if so
+#ifdef ARMA_INCLUDES
+#pragma message "Armadillo was included before mlpack."
+#endif
+
+// Next, include all of the prerequisites.
 #include <mlpack/prereqs.hpp>
 
 // Now the core mlpack classes.
