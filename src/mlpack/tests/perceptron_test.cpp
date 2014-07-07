@@ -1,7 +1,7 @@
-/*
- * @file: perceptron_test.cpp
- * @author: Udit Saxena
- * 
+/**
+ * @file perceptron_test.cpp
+ * @author Udit Saxena
+ *
  * Tests for perceptron.
  */
 #include <mlpack/core.hpp>
@@ -14,12 +14,12 @@ using namespace mlpack;
 using namespace arma;
 using namespace mlpack::perceptron;
 
-BOOST_AUTO_TEST_SUITE(PERCEPTRONTEST);
-/*
-This test tests whether the perceptron converges for the 
-AND gate classifier.
-*/
-BOOST_AUTO_TEST_CASE(AND)
+BOOST_AUTO_TEST_SUITE(PerceptronTest);
+
+/**
+ * This test tests whether the perceptron converges for the AND gate classifier.
+ */
+BOOST_AUTO_TEST_CASE(And)
 {
   mat trainData;
   trainData << 0 << 1 << 1 << 0 << endr
@@ -35,18 +35,16 @@ BOOST_AUTO_TEST_CASE(AND)
   Row<size_t> predictedLabels(testData.n_cols);
   p.Classify(testData, predictedLabels);
 
-  BOOST_CHECK_EQUAL(predictedLabels(0,0),0);
-  BOOST_CHECK_EQUAL(predictedLabels(0,1),0);
-  BOOST_CHECK_EQUAL(predictedLabels(0,2),1);
-  BOOST_CHECK_EQUAL(predictedLabels(0,3),0);
-  
+  BOOST_CHECK_EQUAL(predictedLabels(0, 0), 0);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 1), 0);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 2), 1);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 3), 0);
 }
 
-/*
-This test tests whether the perceptron converges for the 
-OR gate classifier. 
-*/
-BOOST_AUTO_TEST_CASE(OR)
+/**
+ * This test tests whether the perceptron converges for the OR gate classifier.
+ */
+BOOST_AUTO_TEST_CASE(Or)
 {
   mat trainData;
   trainData << 0 << 1 << 1 << 0 << endr
@@ -59,25 +57,25 @@ BOOST_AUTO_TEST_CASE(OR)
 
   mat testData;
   testData << 0 << 1 << 1 << 0 << endr
-            << 1 << 0 << 1 << 0 << endr;
+           << 1 << 0 << 1 << 0 << endr;
   Row<size_t> predictedLabels(testData.n_cols);
   p.Classify(testData, predictedLabels);
 
-  BOOST_CHECK_EQUAL(predictedLabels(0,0),1);
-  BOOST_CHECK_EQUAL(predictedLabels(0,1),1);
-  BOOST_CHECK_EQUAL(predictedLabels(0,2),1);
-  BOOST_CHECK_EQUAL(predictedLabels(0,3),0);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 0), 1);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 1), 1);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 2), 1);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 3), 0);
 }
 
-/*
-This tests the convergence on a set of linearly 
-separable data with 3 classes. 
-*/
-BOOST_AUTO_TEST_CASE(RANDOM3)
+/**
+ * This tests the convergence on a set of linearly separable data with 3
+ * classes.
+ */
+BOOST_AUTO_TEST_CASE(Random3)
 {
   mat trainData;
   trainData << 0 << 1 << 1 << 4 << 5 << 4 << 1 << 2 << 1 << endr
-           << 1 << 0 << 1 << 1 << 1 << 2 << 4 << 5 << 4 << endr;
+            << 1 << 0 << 1 << 1 << 1 << 2 << 4 << 5 << 4 << endr;
 
   Mat<size_t> labels;
   labels << 0 << 0 << 0 << 1 << 1 << 1 << 2 << 2 << 2;
@@ -89,24 +87,24 @@ BOOST_AUTO_TEST_CASE(RANDOM3)
            << 1 << 0 << 1 << endr;
   Row<size_t> predictedLabels(testData.n_cols);
   p.Classify(testData, predictedLabels);
-  
-  for (size_t i = 0; i<predictedLabels.n_cols; i++)
-    BOOST_CHECK_EQUAL(predictedLabels(0,i),0);
+
+  for (size_t i = 0; i < predictedLabels.n_cols; i++)
+    BOOST_CHECK_EQUAL(predictedLabels(0, i), 0);
 
 }
 
-/*
-This tests the convergence of the perceptron on a dataset
-which has only TWO points which belong to different classes.
-*/
-BOOST_AUTO_TEST_CASE(TWOPOINTS)
+/**
+ * This tests the convergence of the perceptron on a dataset
+ * which has only TWO points which belong to different classes.
+ */
+BOOST_AUTO_TEST_CASE(TwoPoints)
 {
   mat trainData;
   trainData << 0 << 1 << endr
-           << 1 << 0 << endr;
+            << 1 << 0 << endr;
 
   Mat<size_t> labels;
-  labels << 0 << 1 ;
+  labels << 0 << 1;
 
   Perceptron<> p(trainData, labels.row(0), 1000);
 
@@ -116,19 +114,20 @@ BOOST_AUTO_TEST_CASE(TWOPOINTS)
   Row<size_t> predictedLabels(testData.n_cols);
   p.Classify(testData, predictedLabels);
 
-  BOOST_CHECK_EQUAL(predictedLabels(0,0),0);
-  BOOST_CHECK_EQUAL(predictedLabels(0,1),1);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 0), 0);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 1), 1);
 }
-/*
-This tests the convergence of the perceptron on a dataset
-which has a non-linearly separable dataset.
-*/
-BOOST_AUTO_TEST_CASE(NONLINSEPDS)
+
+/**
+ * This tests the convergence of the perceptron on a dataset
+ * which has a non-linearly separable dataset.
+ */
+BOOST_AUTO_TEST_CASE(NonLinearlySeparableDataset)
 {
   mat trainData;
-  trainData << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 
+  trainData << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8
             << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << endr
-            << 1 << 1 << 1 << 1 << 1 << 1 << 1 << 1 
+            << 1 << 1 << 1 << 1 << 1 << 1 << 1 << 1
             << 2 << 2 << 2 << 2 << 2 << 2 << 2 << 2 << endr;
 
   Mat<size_t> labels;
@@ -137,14 +136,15 @@ BOOST_AUTO_TEST_CASE(NONLINSEPDS)
   Perceptron<> p(trainData, labels.row(0), 1000);
 
   mat testData;
-  testData << 3 << 4 << 5 << 6 << endr
+  testData << 3 << 4   << 5   << 6   << endr
            << 3 << 2.3 << 1.7 << 1.5 << endr;
   Row<size_t> predictedLabels(testData.n_cols);
   p.Classify(testData, predictedLabels);
 
-  BOOST_CHECK_EQUAL(predictedLabels(0,0),0);
-  BOOST_CHECK_EQUAL(predictedLabels(0,1),0);
-  BOOST_CHECK_EQUAL(predictedLabels(0,2),1);
-  BOOST_CHECK_EQUAL(predictedLabels(0,3),1);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 0), 0);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 1), 0);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 2), 1);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 3), 1);
 }
+
 BOOST_AUTO_TEST_SUITE_END();
