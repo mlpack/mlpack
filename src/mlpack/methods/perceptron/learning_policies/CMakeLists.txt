@@ -1,7 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-  SimpleWeightUpdate.hpp
+  simple_weight_update.hpp
 )
 
 # Add directory name to sources.
