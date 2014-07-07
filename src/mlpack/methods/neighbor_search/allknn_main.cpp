@@ -318,13 +318,14 @@ int main(int argc, char *argv[])
       }
       Log::Info << "Tree built." << endl;
       
-      arma::mat distancesOut;
-      arma::Mat<size_t> neighborsOut;
+      //arma::mat distancesOut;
+      //arma::Mat<size_t> neighborsOut;
 
       Log::Info << "Computing " << k << " nearest neighbors..." << endl;
-      allknn->Search(k, neighborsOut, distancesOut);
+      allknn->Search(k, neighbors, distances);
 
       Log::Info << "Neighbors computed." << endl;
+
 
 
       delete allknn;
@@ -387,7 +388,7 @@ int main(int argc, char *argv[])
       delete queryTree;
   }
 
-  // Save output.
+  // Save put.
   data::Save(distancesFile, distances);
   data::Save(neighborsFile, neighbors);
 }

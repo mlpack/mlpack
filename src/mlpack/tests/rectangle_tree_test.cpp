@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(RectangeTreeTraitsTest)
 BOOST_AUTO_TEST_CASE(RectangleTreeConstructionCountTest)
 {
   arma::mat dataset;
-  dataset.randu(8, 1000); // 1000 points in 3 dimensions.
+  dataset.randu(3, 1000); // 1000 points in 3 dimensions.
   
   RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
                       tree::RTreeDescentHeuristic,
@@ -80,7 +80,7 @@ std::vector<arma::vec*> getAllPointsInTree(const RectangleTree<tree::RTreeSplit<
 BOOST_AUTO_TEST_CASE(RectangleTreeConstructionRepeatTest)
 {
   arma::mat dataset;
-  dataset.randu(8, 15); // 1000 points in 8 dimensions.
+  dataset.randu(8, 1000); // 1000 points in 8 dimensions.
   
   RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
                       tree::RTreeDescentHeuristic,
@@ -130,7 +130,7 @@ bool checkContainment(const RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeu
 BOOST_AUTO_TEST_CASE(RectangleTreeContainmentTest)
 {
     arma::mat dataset;
-  dataset.randu(8, 15); // 1000 points in 8 dimensions.
+  dataset.randu(8, 1000); // 1000 points in 8 dimensions.
   
   RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
                       tree::RTreeDescentHeuristic,

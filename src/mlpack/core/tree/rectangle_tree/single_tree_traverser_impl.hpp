@@ -6,8 +6,8 @@
   * which indicate the branches to prune and the order in which to recurse.
   * This is a depth-first traverser.
   */
-#ifndef __MLPAC_CORE_TREE_RECTANGLE_TREE_SINGLE_TREE_TRAVERSER_IMPL_HPP
-#define __MLPAC_CORE_TREE_RECTANGLE_TREE_SINGLE_TREE_TRAVERSER_IMPL_HPP
+#ifndef __MLPACK_CORE_TREE_RECTANGLE_TREE_SINGLE_TREE_TRAVERSER_IMPL_HPP
+#define __MLPACK_CORE_TREE_RECTANGLE_TREE_SINGLE_TREE_TRAVERSER_IMPL_HPP
 
 #include "single_tree_traverser.hpp"
 
@@ -42,7 +42,6 @@ SingleTreeTraverser<RuleType>::Traverse(
   
   // If we reach a leaf node, we need to run the base case.
   if(referenceNode.IsLeaf()) {
-    std::cout << "we reached a leaf" << std::endl;
     for(size_t i = 0; i < referenceNode.Count(); i++) {
       rule.BaseCase(queryIndex, referenceNode.Points()[i]);
     }
@@ -62,9 +61,8 @@ SingleTreeTraverser<RuleType>::Traverse(
   // one that isn't good enough.
   for(int i = 0; i < referenceNode.NumChildren(); i++) {
     if(rule.Rescore(queryIndex, *nodesAndScores[i].node, nodesAndScores[i].score) != DBL_MAX)
-      Traverse(queryIndex, nodesAndScores[i].node);
+      Traverse(queryIndex, *nodesAndScores[i].node);
     else {
-      std::cout << "we are pruning: " << referenceNode.NumChildren() - i << " nodes." << std::endl;
       numPrunes += referenceNode.NumChildren() - i;
       return;
     }

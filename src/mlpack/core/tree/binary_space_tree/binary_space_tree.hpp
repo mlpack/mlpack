@@ -66,7 +66,7 @@ class BinarySpaceTree
   size_t splitDimension;
   //! The distance from the centroid of this node to the centroid of the parent.
   double parentDistance;
-  //! The distance to the furthest descendant, cached to speed things up.
+  //! The worst possible distance to the furthest descendant, cached to speed things up.
   double furthestDescendantDistance;
   //! The dataset.
   MatType& dataset;
