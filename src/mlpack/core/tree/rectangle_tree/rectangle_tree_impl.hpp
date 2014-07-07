@@ -268,7 +268,6 @@ inline bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   return numChildren == 0;
 }
 
-
 /**
  * Return a bound on the furthest point in the node form the centroid.
  * This returns 0 unless the node is a leaf.
@@ -301,7 +300,8 @@ template<typename SplitType,
 inline double RectangleTree<SplitType, DescentType, StatisticType, MatType>::
     FurthestDescendantDistance() const
 {
-  return furthestDescendantDistance;
+  //return the distance from the centroid to a corner of the bound.
+  return 0.5 * bound.Diameter();
 }
 
 /**
@@ -342,7 +342,7 @@ inline size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 }
 
 /**
- * Return the index of a particular descendant contained in this node.  SEE OTHER WARNINGS
+ * Return the index of a particular descendant contained in this node.
  */
 template<typename SplitType,
 	 typename DescentType,
@@ -351,11 +351,11 @@ template<typename SplitType,
 inline size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
     Descendant(const size_t index) const
 {
-  return (begin + index);
+  return (points[index]);
 }
 
 /**
- * Return the index of a particular point contained in this node.  SEE OTHER WARNINGS
+ * Return the index of a particular point contained in this node.
  */
 template<typename SplitType,
 	 typename DescentType,
@@ -368,8 +368,8 @@ inline size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 }
 
 /**
- * Return the last point in the tree.  SINCE THE TREE STORES DATA SEPARATELY IN EACH LEAF
- * THIS IS CURRENTLY MEANINGLESS.
+ * Return the last point in the tree.  WARNING: POINTS ARE NOT MOVED IN THE ORIGINAL DATASET,
+ * SO THIS IS RATHER POINTLESS.
  */
 template<typename SplitType,
 	 typename DescentType,
