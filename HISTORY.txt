@@ -1,7 +1,5 @@
 ????-??-??    mlpack 1.0.9
 
-  * Added simulated annealing (SA) optimizer, contributed by Zhihao Lou.
-
   * GMM initialization is now safer and provides a working GMM when constructed
     with only the dimensionality and number of Gaussians (#314).
 
@@ -30,6 +28,11 @@
     (#318).
 
   * Fix for centering in kernel PCA (#355).
+
+  * Added simulated annealing (SA) optimizer, contributed by Zhihao Lou.
+
+  * HMMs now support initial state probabilities; these can be set in the
+    constructor, trained, or set manually with HMM::Initial() (#315).
 
 2014-01-06    mlpack 1.0.8
 
