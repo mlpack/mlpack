@@ -1,12 +1,12 @@
 /**
  * @file local_coordinate_coding_test.cpp
+ * @author Nishant Mehta
  *
- * Test for Local Coordinate Coding
+ * Test for Local Coordinate Coding.
  */
 
 // Note: We don't use BOOST_REQUIRE_CLOSE in the code below because we need
 // to use FPC_WEAK, and it's not at all intuitive how to do that.
-#include <armadillo>
 #include <mlpack/methods/local_coordinate_coding/lcc.hpp>
 
 #include <boost/test/unit_test.hpp>
