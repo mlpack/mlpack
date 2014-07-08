@@ -16,7 +16,7 @@ namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
 using bound::HRectBound;
-  
+
 /**
  * A rectangle type tree tree, such as an R-tree or X-tree.  Once the
  * bound and type of dataset is defined, the tree will construct itself.  Call
@@ -31,7 +31,7 @@ using bound::HRectBound;
  * @tparam MatType The dataset class.
  * @tparam SplitType The type of split to use when inserting points.
  * @tparam DescentType The heuristic to use when descending the tree to insert points.
- */   
+ */
 
 template<typename SplitType,
 	 typename DescentType,
@@ -56,7 +56,7 @@ class RectangleTree
   //! REMOVED.
   size_t begin;
   //! The number of points in the dataset contained in this node (and its
-  //! children).  
+  //! children).
   size_t count;
   //! The max leaf size.
   size_t maxLeafSize;
@@ -74,7 +74,7 @@ class RectangleTree
   MatType& dataset;
   //! The mapping to the dataset
   std::vector<size_t> points;
-  
+
  public:
   //! So other classes can use TreeType::Mat.
   typedef MatType Mat;
@@ -96,17 +96,17 @@ class RectangleTree
    * @param minLeafSize Minimum size of each leaf in the tree.
    * @param maxNumChildren The maximum number of child nodes a non-leaf node may have.
    * @param minNumChildren The minimum number of child nodes a non-leaf node may have.
-   * @param firstDataIndex The index of the first data point.  UNUSED UNLESS WE ADD SUPPORT FOR HAVING A 
+   * @param firstDataIndex The index of the first data point.  UNUSED UNLESS WE ADD SUPPORT FOR HAVING A
    * "CENTERAL" DATA MATRIX.
    */
   RectangleTree(MatType& data,
-		const size_t maxLeafSize,
-		const size_t minLeafSize,
-		const size_t maxNumChildren,
-		const size_t minNumChildren,
-		const size_t firstDataIndex
+		const size_t maxLeafSize = 20,
+		const size_t minLeafSize = 6,
+		const size_t maxNumChildren = 4,
+		const size_t minNumChildren = 0,
+		const size_t firstDataIndex = 0
  	      );
-  
+
   /**
    * Construct this as an empty node with the specified parent.  Copying the parameters
    * (maxLeafSize, minLeafSize, maxNumChildren, minNumChildren, firstDataIndex) from the parent.
@@ -124,14 +124,14 @@ class RectangleTree
    * to any nodes which are children of this one.
    */
   ~RectangleTree();
-  
+
   /**
    * Delete this node of the tree, but leave the stuff contained in it intact.
    * This is used when splitting a node, where the data in this tree is moved to two
    * other trees.
    */
   void softDelete();
-  
+
   /**
    * Set dataset to null. Used for memory management.  Be cafeful.
    */
@@ -152,7 +152,7 @@ class RectangleTree
    * (ie. the point is not in the tree)
    */
   bool DeletePoint(const size_t point);
-  
+
   /**
    * Find a node in this tree by its begin and count (const).
    *
@@ -221,12 +221,12 @@ class RectangleTree
   const arma::mat& Dataset() const { return dataset; }
   //! Modify the dataset which the tree is built on.  Be careful!
   arma::mat& Dataset() { return dataset; }
-  
+
   //! Get the points vector for this node.
   const std::vector<size_t>& Points() const { return points; }
   //! Modify the points vector for this node.  Be careful!
   std::vector<size_t>& Points() { return points; }
-  
+
   //! Get the metric which the tree uses.
   typename HRectBound<>::MetricType Metric() const { return bound.Metric(); }
 
@@ -276,7 +276,7 @@ class RectangleTree
   {
     return children[child];
   }
-  
+
   /**
    * Modify the specified child.
     *
@@ -287,7 +287,7 @@ class RectangleTree
   {
     return children[child];
   }
-  
+
   //! Return the number of points in this node (returns 0 if this node is not a leaf).
   size_t NumPoints() const;
 
