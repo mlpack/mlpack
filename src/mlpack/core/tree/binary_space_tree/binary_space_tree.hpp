@@ -280,9 +280,9 @@ class BinarySpaceTree
   size_t& SplitDimension() { return splitDimension; }
 
   //! Get the dataset which the tree is built on.
-  const arma::mat& Dataset() const { return dataset; }
+  const MatType& Dataset() const { return dataset; }
   //! Modify the dataset which the tree is built on.  Be careful!
-  arma::mat& Dataset() { return dataset; }
+  MatType& Dataset() { return dataset; }
 
   //! Get the metric which the tree uses.
   typename BoundType::MetricType Metric() const { return bound.Metric(); }
