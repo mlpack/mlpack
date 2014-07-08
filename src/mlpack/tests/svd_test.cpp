@@ -44,26 +44,26 @@ BOOST_AUTO_TEST_CASE(SVDMomentumTest)
 
   math::RandomSeed(10);
   ValidationRMSETermination<sp_mat> vrt(cleanedData, 2000);
-  AMF<ValidationRMSETermination<sp_mat>, 
-      RandomInitialization, 
-      SVDBatchLearning> amf_1(vrt, 
-                              RandomInitialization(), 
+  AMF<ValidationRMSETermination<sp_mat>,
+      RandomInitialization,
+      SVDBatchLearning> amf_1(vrt,
+                              RandomInitialization(),
                               SVDBatchLearning(0.0009, 0, 0, 0));
-  
+
   mat m1,m2;
   size_t RMSE_1 = amf_1.Apply(cleanedData, 2, m1, m2);
-  size_t iter_1 = amf_1.TPolicy().Iteration();
-  
+  size_t iter_1 = amf_1.TerminationPolicy().Iteration();
+
   math::RandomSeed(10);
-  AMF<ValidationRMSETermination<sp_mat>, 
-      RandomInitialization, 
-      SVDBatchLearning> amf_2(vrt, 
-                              RandomInitialization(), 
+  AMF<ValidationRMSETermination<sp_mat>,
+      RandomInitialization,
+      SVDBatchLearning> amf_2(vrt,
+                              RandomInitialization(),
                               SVDBatchLearning(0.0009, 0, 0, 0.8));
-                              
+
   size_t RMSE_2 = amf_2.Apply(cleanedData, 2, m1, m2);
-  size_t iter_2 = amf_2.TPolicy().Iteration();
-  
+  size_t iter_2 = amf_2.TerminationPolicy().Iteration();
+
   BOOST_REQUIRE_LE(RMSE_2, RMSE_1);
   BOOST_REQUIRE_LE(iter_2, iter_1);
 }
@@ -97,24 +97,24 @@ BOOST_AUTO_TEST_CASE(SVDRegularizationTest)
 
   math::RandomSeed(10);
   ValidationRMSETermination<sp_mat> vrt(cleanedData, 2000);
-  AMF<ValidationRMSETermination<sp_mat>, 
-      RandomInitialization, 
-      SVDBatchLearning> amf_1(vrt, 
-                              RandomInitialization(), 
+  AMF<ValidationRMSETermination<sp_mat>,
+      RandomInitialization,
+      SVDBatchLearning> amf_1(vrt,
+                              RandomInitialization(),
                               SVDBatchLearning(0.0009, 0, 0, 0));
-  
+
   mat m1,m2;
   size_t RMSE_1 = amf_1.Apply(cleanedData, 2, m1, m2);
-  
+
   math::RandomSeed(10);
-  AMF<ValidationRMSETermination<sp_mat>, 
-      RandomInitialization, 
-      SVDBatchLearning> amf_2(vrt, 
-                              RandomInitialization(), 
+  AMF<ValidationRMSETermination<sp_mat>,
+      RandomInitialization,
+      SVDBatchLearning> amf_2(vrt,
+                              RandomInitialization(),
                               SVDBatchLearning(0.0009, 0.5, 0.5, 0.8));
-                              
+
   size_t RMSE_2 = amf_2.Apply(cleanedData, 2, m1, m2);
-  
+
   BOOST_REQUIRE_LE(RMSE_2, RMSE_1);
 }
 
@@ -135,8 +135,8 @@ BOOST_AUTO_TEST_CASE(SVDNegativeElementTest)
   test(2, 1) = 2;
   test(2, 2) = 2;
 
-  AMF<SimpleToleranceTermination<mat>, 
-      RandomInitialization, 
+  AMF<SimpleToleranceTermination<mat>,
+      RandomInitialization,
       SVDBatchLearning> amf(SimpleToleranceTermination<mat>(),
                             RandomInitialization(),
                             SVDBatchLearning(0.3, 0.001, 0.001, 0));
@@ -144,9 +144,9 @@ BOOST_AUTO_TEST_CASE(SVDNegativeElementTest)
   amf.Apply(test, 2, m1, m2);
 
   arma::mat result = m1 * m2;
-  
+
   std::cout << result << std::endl;
-  
+
   for(size_t i = 0;i < 3;i++)
   {
     for(size_t j = 0;j < 3;j++)
