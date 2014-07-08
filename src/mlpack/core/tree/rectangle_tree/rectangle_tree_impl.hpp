@@ -23,11 +23,11 @@ template<typename SplitType,
          typename MatType>
 RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
     MatType& data,
-    const size_t maxLeafSize = 20,
-    const size_t minLeafSize = 6,
-    const size_t maxNumChildren = 4,
-    const size_t minNumChildren = 0,
-    const size_t firstDataIndex = 0):
+    const size_t maxLeafSize,
+    const size_t minLeafSize,
+    const size_t maxNumChildren,
+    const size_t minNumChildren,
+    const size_t firstDataIndex):
     maxNumChildren(maxNumChildren),
     minNumChildren(minNumChildren),
     numChildren(0),
@@ -43,10 +43,10 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
     points(maxLeafSize+1) // Add one to make splitting the node simpler.
 {
   stat = StatisticType(*this);
-  
+
   // For now, just insert the points in order.
   RectangleTree* root = this;
-  
+
   //for(int i = firstDataIndex; i < 57; i++) { // 56,57 are the bound for where it works/breaks
   for(size_t i = firstDataIndex; i < data.n_cols; i++) {
     root->InsertPoint(i);
@@ -97,7 +97,7 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 
 
 /**
-  * Deletes this node but leaves the children untouched.  Needed for when we 
+  * Deletes this node but leaves the children untouched.  Needed for when we
   * split nodes and remove nodes (inserting and deleting points).
   */
 template<typename SplitType,
@@ -111,10 +111,10 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
     //dataset = NULL;
   parent = NULL;
   for(int i = 0; i < children.size(); i++) {
-    children[i] = NULL;    
+    children[i] = NULL;
   }
   numChildren = 0;
-  delete this;  
+  delete this;
 }
 
 /**
@@ -156,7 +156,7 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   // to which we recurse.
   double minScore = DescentType::EvalNode(children[0]->Bound(), dataset.col(point));
   int bestIndex = 0;
-  
+
   for(int i = 1; i < numChildren; i++) {
     double score = DescentType::EvalNode(children[i]->Bound(), dataset.col(point));
     if(score < minScore) {
@@ -212,12 +212,12 @@ bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::
       for(int i = 0; i < numChildren; i++) {
 	if(children[i].Bound().Contains(dataset.col(point))) {
 	  if(children[i].DeletePoint(dataset.col(point))) {
-	    
+
 	    return true;
 	  }
 	}
       }
-  } 
+  }
   return false;
 }
 
@@ -244,7 +244,7 @@ template<typename SplitType,
 size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
     TreeDepth() const
 {
-  /* Because R trees are balanced, we could simplify this.  However, X trees are not 
+  /* Because R trees are balanced, we could simplify this.  However, X trees are not
      guaranteed to be balanced so I keep it as is: */
 
   // Recursively count the depth of each subtree.  The plus one is
@@ -401,7 +401,7 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::SplitNode()
   // Check to see if we are full.
   if(count < maxLeafSize)
     return; // We don't need to split.
-  
+
   // If we are full, then we need to split (or at least try).  The SplitType takes
   // care of this and of moving up the tree if necessary.
   SplitType::SplitLeafNode(this);
