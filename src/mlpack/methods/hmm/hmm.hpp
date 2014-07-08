@@ -87,6 +87,9 @@ class HMM
    * Optionally, the tolerance for convergence of the Baum-Welch algorithm can
    * be set.
    *
+   * By default, the transition matrix and initial probability vector are set to
+   * contain equal probability for each state.
+   *
    * @param states Number of states.
    * @param emissions Default distribution for emissions.
    * @param tolerance Tolerance for convergence of training algorithm
@@ -97,10 +100,15 @@ class HMM
       const double tolerance = 1e-5);
 
   /**
-   * Create the Hidden Markov Model with the given transition matrix and the
-   * given emission distributions.  The dimensionality of the observations of
-   * the HMM are taken from the given emission distributions.  Alternately, the
-   * dimensionality can be set with Dimensionality().
+   * Create the Hidden Markov Model with the given initial probability vector,
+   * the given transition matrix, and the given emission distributions.  The
+   * dimensionality of the observations of the HMM are taken from the given
+   * emission distributions.  Alternately, the dimensionality can be set with
+   * Dimensionality().
+   *
+   * The initial state probability vector should have length equal to the number
+   * of states, and each entry represents the probability of being in the given
+   * state at time T = 0 (the beginning of a sequence).
    *
    * The transition matrix should be such that T(i, j) is the probability of
    * transition to state i from state j.  The columns of the matrix should sum
@@ -112,12 +120,14 @@ class HMM
    * Optionally, the tolerance for convergence of the Baum-Welch algorithm can
    * be set.
    *
+   * @param initial Initial state probabilities.
    * @param transition Transition matrix.
    * @param emission Emission distributions.
    * @param tolerance Tolerance for convergence of training algorithm
    *      (Baum-Welch).
    */
-  HMM(const arma::mat& transition,
+  HMM(const arma::vec& initial,
+      const arma::mat& transition,
       const std::vector<Distribution>& emission,
       const double tolerance = 1e-5);
 
@@ -250,6 +260,11 @@ class HMM
    */
   double LogLikelihood(const arma::mat& dataSeq) const;
 
+  //! Return the vector of initial state probabilities.
+  const arma::vec& Initial() const { return initial; }
+  //! Modify the vector of initial state probabilities.
+  arma::vec& Initial() { return initial; }
+
   //! Return the transition matrix.
   const arma::mat& Transition() const { return transition; }
   //! Return a modifiable transition matrix reference.
@@ -306,6 +321,9 @@ class HMM
   void Backward(const arma::mat& dataSeq,
                 const arma::vec& scales,
                 arma::mat& backwardProb) const;
+
+  //! Initial state probability vector.
+  arma::vec initial;
 
   //! Transition probability matrix.
   arma::mat transition;
