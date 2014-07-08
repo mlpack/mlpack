@@ -1,14 +1,12 @@
 /**
  * @file lars_test.cpp
+ * @author Nishant Mehta
  *
- * Test for LARS
+ * Test for LARS.
  */
 
 // Note: We don't use BOOST_REQUIRE_CLOSE in the code below because we need
 // to use FPC_WEAK, and it's not at all intuitive how to do that.
-
-
-#include <armadillo>
 #include <mlpack/methods/lars/lars.hpp>
 
 #include <boost/test/unit_test.hpp>
