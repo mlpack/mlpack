@@ -1,65 +1,66 @@
 /**
  * @file amf_impl.hpp
  * @author Sumedh Ghaisas
+ * @author Mohan Rajendran
+ * @author Ryan Curtin
+ *
+ * Implementation of AMF class.
  */
 namespace mlpack {
 namespace amf {
 
 /**
- * Construct the LMF object.
+ * Construct the AMF object.
  */
-template<typename TerminationPolicy,
-         typename InitializationRule,
-         typename UpdateRule>
-AMF<TerminationPolicy, InitializationRule, UpdateRule>::AMF(
-    const TerminationPolicy& t_policy,
-    const InitializationRule& initializeRule,
-    const UpdateRule& update) :
-    t_policy(t_policy),
-    initializeRule(initializeRule),
+template<typename TerminationPolicyType,
+         typename InitializationRuleType,
+         typename UpdateRuleType>
+AMF<TerminationPolicyType, InitializationRuleType, UpdateRuleType>::AMF(
+    const TerminationPolicyType& terminationPolicy,
+    const InitializationRuleType& initializationRule,
+    const UpdateRuleType& update) :
+    terminationPolicy(terminationPolicy),
+    initializationRule(initializationRule),
     update(update)
 { }
 
 /**
- * Apply Latent Matrix Factorization to the provided matrix.
+ * Apply Alternating Matrix Factorization to the provided matrix.
  *
  * @param V Input matrix to be factorized
  * @param W Basis matrix to be output
  * @param H Encoding matrix to output
  * @param r Rank r of the factorization
  */
-template<typename TerminationPolicy,
-         typename InitializationRule,
-         typename UpdateRule>
+template<typename TerminationPolicyType,
+         typename InitializationRuleType,
+         typename UpdateRuleType>
 template<typename MatType>
-double AMF<TerminationPolicy, InitializationRule, UpdateRule>::Apply(
-    const MatType& V,
-    const size_t r,
-    arma::mat& W,
-    arma::mat& H)
+double AMF<TerminationPolicyType, InitializationRuleType, UpdateRuleType>::
+Apply(const MatType& V,
+      const size_t r,
+      arma::mat& W,
+      arma::mat& H)
 {
   // Initialize W and H.
-  initializeRule.Initialize(V, r, W, H);
+  initializationRule.Initialize(V, r, W, H);
 
   Log::Info << "Initialized W and H." << std::endl;
 
-  arma::mat WH;
-
   update.Initialize(V, r);
-  t_policy.Initialize(V);
+  terminationPolicy.Initialize(V);
 
-  while (!t_policy.IsConverged())
+  while (!terminationPolicy.IsConverged())
   {
-    // Update step.
-    // Update the value of W and H based on the Update Rules provided
+    // Update the values of W and H based on the update rules provided.
     update.WUpdate(V, W, H);
     update.HUpdate(V, W, H);
 
-    t_policy.Step(W, H);
+    terminationPolicy.Step(W, H);
   }
 
-  double residue = sqrt(t_policy.Index());
-  size_t iteration = t_policy.Iteration();
+  const double residue = sqrt(terminationPolicy.Index());
+  const size_t iteration = terminationPolicy.Iteration();
 
   Log::Info << "AMF converged to residue of " << residue << " in "
       << iteration << " iterations." << std::endl;
@@ -67,5 +68,5 @@ double AMF<TerminationPolicy, InitializationRule, UpdateRule>::Apply(
   return residue;
 }
 
-}; // namespace nmf
+}; // namespace amf
 }; // namespace mlpack
