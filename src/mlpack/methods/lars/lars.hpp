@@ -19,7 +19,6 @@
 #ifndef __MLPACK_METHODS_LARS_LARS_HPP
 #define __MLPACK_METHODS_LARS_LARS_HPP
 
-#include <armadillo>
 #include <mlpack/core.hpp>
 
 namespace mlpack {
@@ -151,9 +150,9 @@ class LARS
   //! Access the upper triangular cholesky factor
   const arma::mat& MatUtriCholFactor() const { return matUtriCholFactor; }
 
-  // Returns a string representation of this object. 
+  // Returns a string representation of this object.
   std::string ToString() const;
-  
+
  private:
   //! Gram matrix.
   arma::mat matGramInternal;
