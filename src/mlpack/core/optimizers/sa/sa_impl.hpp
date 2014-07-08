@@ -59,7 +59,7 @@ double SA<FunctionType, CoolingScheduleType>::Optimize(arma::mat &iterate)
 
   size_t frozenCount = 0;
   double energy = function.Evaluate(iterate);
-  size_t oldEnergy = energy;
+  double oldEnergy = energy;
   math::RandomSeed(std::time(NULL));
 
   size_t idx = 0;
@@ -87,7 +87,7 @@ double SA<FunctionType, CoolingScheduleType>::Optimize(arma::mat &iterate)
       frozenCount = 0;
 
     // Terminate, if possible.
-    if (frozenCount >= maxToleranceSweep * iterate.n_elem)
+    if (frozenCount >= maxToleranceSweep * moveCtrlSweep * iterate.n_elem)
     {
       Log::Debug << "SA: minimized within tolerance " << tolerance << " for "
           << maxToleranceSweep << " sweeps after " << i << " iterations; "
