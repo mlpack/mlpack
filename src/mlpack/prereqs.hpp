@@ -6,7 +6,14 @@
 #ifndef __MLPACK_PREREQS_HPP
 #define __MLPACK_PREREQS_HPP
 
-// First, standard includes.
+// First, check if Armadillo was included before, warning if so.
+#ifdef ARMA_INCLUDES
+#pragma message "Armadillo was included before mlpack; this can sometimes cause\
+problems.  It should only be necessary to include <mlpack/core.hpp> and not\
+<armadillo>."
+#endif
+
+// Next, standard includes.
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
