@@ -22,6 +22,7 @@ template<typename Distribution>
 HMM<Distribution>::HMM(const size_t states,
                        const Distribution emissions,
                        const double tolerance) :
+    initial(arma::ones<arma::vec>(states) / (double) states),
     transition(arma::ones<arma::mat>(states, states) / (double) states),
     emission(states, /* default distribution */ emissions),
     dimensionality(emissions.Dimensionality()),
@@ -33,9 +34,11 @@ HMM<Distribution>::HMM(const size_t states,
  * emission probability matrix.
  */
 template<typename Distribution>
-HMM<Distribution>::HMM(const arma::mat& transition,
+HMM<Distribution>::HMM(const arma::vec& initial,
+                       const arma::mat& transition,
                        const std::vector<Distribution>& emission,
                        const double tolerance) :
+    initial(initial),
     transition(transition),
     emission(emission),
     tolerance(tolerance)
@@ -101,6 +104,8 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
   for (size_t iter = 0; iter < iterations; iter++)
   {
     // Clear new transition matrix and emission probabilities.
+    arma::vec newInitial(transition.n_rows);
+    newInitial.zeros();
     arma::mat newTransition(transition.n_rows, transition.n_cols);
     newTransition.zeros();
 
@@ -122,6 +127,7 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
       loglik += Estimate(dataSeq[seq], stateProb, forward, backward, scales);
 
       // Now re-estimate the parameters.  This is the M-step.
+      //   pi_i = sum_d ((1 / P(seq[d])) sum_t (f(i, 0) b(i, 0))
       //   T_ij = sum_d ((1 / P(seq[d])) sum_t (f(i, t) T_ij E_i(seq[d][t]) b(i,
       //           t + 1)))
       //   E_ij = sum_d ((1 / P(seq[d])) sum_{t | seq[d][t] = j} f(i, t) b(i, t)
@@ -130,6 +136,9 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
       {
         for (size_t j = 0; j < transition.n_cols; j++)
         {
+          // Add to estimate of initial probability for state j.
+          newInitial[j] = stateProb(j, 0);
+
           if (t < dataSeq[seq].n_cols - 1)
           {
             // Estimate of T_ij (probability of transition from state j to state
@@ -147,6 +156,10 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq)
         sumTime++;
       }
     }
+
+    // Normalize the new initial probabilities.
+    if (dataSeq.size() == 0)
+      initial = newInitial / dataSeq.size();
 
     // Assign the new transition matrix.  We use %= (element-wise
     // multiplication) because every element of the new transition matrix must
@@ -191,6 +204,7 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
         << ")." << std::endl;
   }
 
+  initial.zeros();
   transition.zeros();
 
   // Estimate the transition and emission matrices directly from the
@@ -218,6 +232,7 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
 
     // Loop over each observation in the sequence.  For estimation of the
     // transition matrix, we must ignore the last observation.
+    initial[stateSeq[seq][0]]++;
     for (size_t t = 0; t < dataSeq[seq].n_cols - 1; t++)
     {
       transition(stateSeq[seq][t + 1], stateSeq[seq][t])++;
@@ -228,6 +243,9 @@ void HMM<Distribution>::Train(const std::vector<arma::mat>& dataSeq,
     emissionList[stateSeq[seq][stateSeq[seq].n_elem - 1]].push_back(
         std::make_pair(seq, stateSeq[seq].n_elem - 1));
   }
+
+  // Normalize initial weights.
+  initial /= accu(initial);
 
   // Normalize transition matrix.
   for (size_t col = 0; col < transition.n_cols; col++)
@@ -370,9 +388,9 @@ double HMM<Distribution>::Predict(const arma::mat& dataSeq,
   logStateProb.col(0).zeros();
   for (size_t state = 0; state < transition.n_rows; state++)
   {
-    logStateProb[state] = log(transition.unsafe_col(state).max() *
+    logStateProb(state, 0) = log(initial[state] *
         emission[state].Probability(dataSeq.unsafe_col(0)));
-    stateSeqBack[state] = state;
+    stateSeqBack(state, 0) = state;
   }
 
   // Store the best first state.
@@ -429,10 +447,13 @@ void HMM<Distribution>::Forward(const arma::mat& dataSeq,
   forwardProb.zeros(transition.n_rows, dataSeq.n_cols);
   scales.zeros(dataSeq.n_cols);
 
-  // Starting state (at t = -1) is assumed to be state 0.  This is what MATLAB
-  // does in their hmmdecode() function, so we will emulate that behavior.
+  // The first entry in the forward algorithm uses the initial state
+  // probabilities.  Note that MATLAB assumes that the starting state (at
+  // t = -1) is state 0; this is not our assumption here.  To force that
+  // behavior, you could append a single starting state to every single data
+  // sequence and that should produce results in line with MATLAB.
   for (size_t state = 0; state < transition.n_rows; state++)
-    forwardProb(state, 0) = transition(state, 0) *
+    forwardProb(state, 0) = initial(state) *
         emission[state].Probability(dataSeq.unsafe_col(0));
 
   // Then normalize the column.
