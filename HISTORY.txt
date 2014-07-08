@@ -1,5 +1,7 @@
 ????-??-??    mlpack 1.0.9
 
+  * Added simulated annealing (SA) optimizer, contributed by Zhihao Lou.
+
   * GMM initialization is now safer and provides a working GMM when constructed
     with only the dimensionality and number of Gaussians (#314).
 
