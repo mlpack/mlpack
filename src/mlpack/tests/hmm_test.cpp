@@ -33,12 +33,13 @@ BOOST_AUTO_TEST_CASE(SimpleDiscreteHMMTestViterbi)
   //  rain dry
   // [[0.9 0.2]  umbrella
   //  [0.1 0.8]] no umbrella
+  arma::vec initial("1 0"); // Default MATLAB initial states.
   arma::mat transition("0.7 0.3; 0.3 0.7");
   std::vector<DiscreteDistribution> emission(2);
   emission[0] = DiscreteDistribution("0.9 0.1");
   emission[1] = DiscreteDistribution("0.2 0.8");
 
-  HMM<DiscreteDistribution> hmm(transition, emission);
+  HMM<DiscreteDistribution> hmm(initial, transition, emission);
 
   // Now let's take a sequence and find what the most likely state is.
   // We'll use the sequence [U U N U U] (U = umbrella, N = no umbrella) like on
@@ -61,6 +62,10 @@ BOOST_AUTO_TEST_CASE(SimpleDiscreteHMMTestViterbi)
  */
 BOOST_AUTO_TEST_CASE(BorodovskyHMMTestViterbi)
 {
+  // Equally probable initial states.
+  arma::vec initial(3);
+  initial.fill(1.0 / 3.0);
+
   // Two hidden states: H (high GC content) and L (low GC content), as well as a
   // start state.
   arma::mat transition("0.0 0.0 0.0;"
@@ -72,7 +77,7 @@ BOOST_AUTO_TEST_CASE(BorodovskyHMMTestViterbi)
   emission[1] = DiscreteDistribution("0.20 0.30 0.30 0.20");
   emission[2] = DiscreteDistribution("0.30 0.20 0.20 0.30");
 
-  HMM<DiscreteDistribution> hmm(transition, emission);
+  HMM<DiscreteDistribution> hmm(initial, transition, emission);
 
   // GGCACTGAA.
   arma::mat observation("2 2 1 0 1 3 2 0 0");
@@ -100,12 +105,18 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTwoState)
 {
   arma::mat obs("3 3 2 1 1 1 1 3 3 1");
 
+  // The values used for the initial distribution here don't entirely make
+  // sense.  I am not sure how the output came from hmmdecode(), and the
+  // documentation below doesn't completely say.  It seems like maybe the
+  // transition matrix needs to be transposed and the results recalculated, but
+  // I am not certain.
+  arma::vec initial("0.1 0.4");
   arma::mat transition("0.1 0.9; 0.4 0.6");
   std::vector<DiscreteDistribution> emis(2);
   emis[0] = DiscreteDistribution("0.85 0.15 0.00 0.00");
   emis[1] = DiscreteDistribution("0.00 0.00 0.50 0.50");
 
-  HMM<DiscreteDistribution> hmm(transition, emis);
+  HMM<DiscreteDistribution> hmm(initial, transition, emis);
 
   // Now check we are getting the same results as MATLAB for this sequence.
   arma::mat stateProb;
@@ -113,7 +124,8 @@ BOOST_AUTO_TEST_CASE(ForwardBackwardTwoState)
   arma::mat backwardProb;
   arma::vec scales;
 
-  double log = hmm.Estimate(obs, stateProb, forwardProb, backwardProb, scales);
+  const double log = hmm.Estimate(obs, stateProb, forwardProb, backwardProb,
+      scales);
 
   // All values obtained from MATLAB hmmdecode().
   BOOST_REQUIRE_CLOSE(log, -23.4349, 1e-3);
@@ -158,6 +170,7 @@ BOOST_AUTO_TEST_CASE(SimplestBaumWelchDiscreteHMM)
 
   hmm.Train(observations);
 
+  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 1e-5);
   BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("0"), 1.0, 1e-5);
   BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 0), 1.0, 1e-5);
 }
@@ -193,6 +206,7 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM)
   BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("0"), 0.5, 1e-5);
   BOOST_REQUIRE_CLOSE(hmm.Emission()[0].Probability("1"), 0.5, 1e-5);
   BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 0), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 1e-5);
 }
 
 /**
@@ -268,6 +282,9 @@ BOOST_AUTO_TEST_CASE(SimpleBaumWelchDiscreteHMM_2)
   hmm.Train(observations);
 
   // Only require 2.5% tolerance, because this is a little fuzzier.
+  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 0.5, 2.5);
+  BOOST_REQUIRE_CLOSE(hmm.Initial()[1], 0.5, 2.5);
+
   BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 0), 0.5, 2.5);
   BOOST_REQUIRE_CLOSE(hmm.Transition()(1, 0), 0.5, 2.5);
   BOOST_REQUIRE_CLOSE(hmm.Transition()(0, 1), 0.5, 2.5);
@@ -348,6 +365,10 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLabeledTrainTest)
 
   hmm.Train(observations, states);
 
+  // Make sure the initial weights are fine.  They should be equal (or close).
+  for (size_t row = 0; row < hmm.Transition().n_rows; ++row)
+    BOOST_REQUIRE_SMALL(hmm.Initial()[row] - 1.0 / 3.0, 0.07);
+
   // We can't use % tolerance here because percent error increases as the actual
   // value gets very small.  So, instead, we just ensure that every value is no
   // more than 0.009 away from the actual value.
@@ -417,6 +438,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMSimpleGenerateTest)
 BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
 {
   // 6 emissions, 4 states.  Random transition and emission probability.
+  arma::vec initial("1 0 0 0");
   arma::mat transition(4, 4);
   std::vector<DiscreteDistribution> emission(4);
   emission[0].Probabilities() = arma::randu<arma::vec>(6);
@@ -435,7 +457,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
     transition.col(col) /= accu(transition.col(col));
 
   // Create HMM object.
-  HMM<DiscreteDistribution> hmm(transition, emission);
+  HMM<DiscreteDistribution> hmm(initial, transition, emission);
 
   // We'll create a bunch of sequences.
   int numSeq = 400;
@@ -475,6 +497,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMGenerateTest)
 BOOST_AUTO_TEST_CASE(DiscreteHMMLogLikelihoodTest)
 {
   // Create a simple HMM with three states and four emissions.
+  arma::vec initial("0.5 0.2 0.3"); // Default MATLAB initial states.
   arma::mat transition("0.5 0.0 0.1;"
                        "0.2 0.6 0.2;"
                        "0.3 0.4 0.7");
@@ -483,7 +506,7 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLogLikelihoodTest)
   emission[1].Probabilities() = "0.00 0.25 0.25 0.50";
   emission[2].Probabilities() = "0.10 0.40 0.40 0.10";
 
-  HMM<DiscreteDistribution> hmm(transition, emission);
+  HMM<DiscreteDistribution> hmm(initial, transition, emission);
 
   // Now generate some sequences and check that the log-likelihood is the same
   // as MATLAB gives for this HMM.
@@ -509,13 +532,14 @@ BOOST_AUTO_TEST_CASE(GaussianHMMSimpleTest)
   GaussianDistribution g1("5.0 5.0", "1.0 0.0; 0.0 1.0");
   GaussianDistribution g2("-5.0 -5.0", "1.0 0.0; 0.0 1.0");
 
+  arma::vec initial("1 0"); // Default MATLAB initial states.
   arma::mat transition("0.75 0.25; 0.25 0.75");
 
   std::vector<GaussianDistribution> emission;
   emission.push_back(g1);
   emission.push_back(g2);
 
-  HMM<GaussianDistribution> hmm(transition, emission);
+  HMM<GaussianDistribution> hmm(initial, transition, emission);
 
   // Now, generate some sequences.
   arma::mat observations(2, 1000);
@@ -617,6 +641,11 @@ BOOST_AUTO_TEST_CASE(GaussianHMMTrainTest)
 
   hmm.Train(observations, states);
 
+  // Check initial weights.
+  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 1e-5);
+  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 1e-3);
+  BOOST_REQUIRE_SMALL(hmm.Initial()[2], 1e-3);
+
   // We use an absolute tolerance of 0.01 for the transition matrices.
   // Check that the transition matrix is correct.
   for (size_t row = 0; row < 3; row++)
@@ -654,6 +683,10 @@ BOOST_AUTO_TEST_CASE(GaussianHMMTrainTest)
   observations.resize(20);
 
   hmm.Train(observations);
+
+  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 0.1);
+  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 0.05);
+  BOOST_REQUIRE_SMALL(hmm.Initial()[2], 0.05);
 
   // The tolerances are increased because there is more error in unlabeled
   // training; we use an absolute tolerance of 0.03 for the transition matrices.
@@ -763,12 +796,15 @@ BOOST_AUTO_TEST_CASE(GMMHMMPredictTest)
   gmms[1].Means()[2] = arma::vec("-6.15 -2.00");
   gmms[1].Covariances()[2] = arma::mat("1.00 0.80; 0.80 1.00");
 
+  // Default MATLAB initial probabilities.
+  arma::vec initial("1 0");
+
   // Transition matrix.
   arma::mat trans("0.30 0.50;"
                   "0.70 0.50");
 
   // Now build the model.
-  HMM<GMM<> > hmm(trans, gmms);
+  HMM<GMM<> > hmm(initial, trans, gmms);
 
   // Make a sequence of observations.
   arma::mat observations(2, 1000);
@@ -855,6 +891,11 @@ BOOST_AUTO_TEST_CASE(GMMHMMLabeledTrainingTest)
 
   // Train the HMM.
   hmm.Train(observations, states);
+
+  // Check the initial weights.  The dataset was generated with 100% probability
+  // of a sequence starting in state 0.
+  BOOST_REQUIRE_CLOSE(hmm.Initial()[0], 1.0, 0.01);
+  BOOST_REQUIRE_SMALL(hmm.Initial()[1], 0.01);
 
   // Check the results.  Use absolute tolerances instead of percentages.
   BOOST_REQUIRE_SMALL(hmm.Transition()(0, 0) - transMat(0, 0), 0.02);
