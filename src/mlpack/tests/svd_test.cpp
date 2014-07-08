@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(SVDMomentumTest)
   // Fill sparse matrix.
   sp_mat cleanedData = arma::sp_mat(locations, values, maxUserID, maxItemID);
 
-  math::RandomSeed(10);
+  mlpack::math::RandomSeed(10);
   ValidationRMSETermination<sp_mat> vrt(cleanedData, 2000);
   AMF<ValidationRMSETermination<sp_mat>,
       RandomInitialization,
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(SVDMomentumTest)
   size_t RMSE_1 = amf_1.Apply(cleanedData, 2, m1, m2);
   size_t iter_1 = amf_1.TerminationPolicy().Iteration();
 
-  math::RandomSeed(10);
+  mlpack::math::RandomSeed(10);
   AMF<ValidationRMSETermination<sp_mat>,
       RandomInitialization,
       SVDBatchLearning> amf_2(vrt,
@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(SVDRegularizationTest)
   // Fill sparse matrix.
   sp_mat cleanedData = arma::sp_mat(locations, values, maxUserID, maxItemID);
 
-  math::RandomSeed(10);
+  mlpack::math::RandomSeed(10);
   ValidationRMSETermination<sp_mat> vrt(cleanedData, 2000);
   AMF<ValidationRMSETermination<sp_mat>,
       RandomInitialization,
@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(SVDRegularizationTest)
   mat m1,m2;
   size_t RMSE_1 = amf_1.Apply(cleanedData, 2, m1, m2);
 
-  math::RandomSeed(10);
+  mlpack::math::RandomSeed(10);
   AMF<ValidationRMSETermination<sp_mat>,
       RandomInitialization,
       SVDBatchLearning> amf_2(vrt,
