@@ -2,9 +2,8 @@
  * @file radical_main.cpp
  * @author Nishant Mehta
  *
- * Executable for RADICAL
+ * Test for RADICAL.
  */
-#include <armadillo>
 #include <mlpack/core.hpp>
 #include <mlpack/methods/radical/radical.hpp>
 #include <boost/test/unit_test.hpp>
