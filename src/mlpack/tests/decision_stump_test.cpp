@@ -221,7 +221,7 @@ BOOST_AUTO_TEST_CASE(MultiClassSplit)
 BOOST_AUTO_TEST_CASE(DimensionSelectionTest)
 {
   const size_t numClasses = 2;
-  const size_t inpBucketSize = 25;
+  const size_t inpBucketSize = 2500;
 
   arma::mat dataset(4, 5000);
 
@@ -294,17 +294,35 @@ BOOST_AUTO_TEST_CASE(DimensionSelectionTest)
   DecisionStump<> ds(dataset, labels, numClasses, inpBucketSize);
 
   // Make sure it split on the dimension that is most separable.
-  BOOST_REQUIRE_EQUAL(ds.SplitAttribute(), 1);
+  BOOST_CHECK_EQUAL(ds.SplitAttribute(), 1);
 
   // Make sure every bin below -1 classifies as label 0, and every bin above 1
   // classifies as label 1 (What happens in [-1, 1] isn't that big a deal.).
   for (size_t i = 0; i < ds.Split().n_elem; ++i)
   {
     if (ds.Split()[i] <= -3.0)
-      BOOST_REQUIRE_EQUAL(ds.BinLabels()[i], 0);
+      BOOST_CHECK_EQUAL(ds.BinLabels()[i], 0);
     else if (ds.Split()[i] >= 3.0)
-      BOOST_REQUIRE_EQUAL(ds.BinLabels()[i], 1);
+      BOOST_CHECK_EQUAL(ds.BinLabels()[i], 1);
   }
 }
 
+BOOST_AUTO_TEST_CASE(TempAttributeSplit)
+{
+  const size_t numClasses = 2;
+  const size_t inpBucketSize = 3;
+
+  mat trainingData;
+  trainingData << 1 << 1 << 1 << 2 << 2 << 2 << endr
+               << 0.5  << 0.6  << 0.7  << 0.4  << 0.3  << 0.5 << endr;
+
+  Mat<size_t> labelsIn;
+  labelsIn << 0 << 0 << 0 << 0 << 1 << 1 << 1;
+
+  DecisionStump<> ds(trainingData, labelsIn.row(0), numClasses, inpBucketSize);
+
+  // Row<size_t> predictedLabels(testingData.n_cols);
+  // ds.Classify(testingData, predictedLabels);
+  BOOST_CHECK_EQUAL(ds.SplitAttribute(), 0);
+}
 BOOST_AUTO_TEST_SUITE_END();
