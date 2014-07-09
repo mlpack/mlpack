@@ -16,6 +16,14 @@ namespace decision_stump {
  * This class implements a decision stump. It constructs a single level
  * decision tree, i.e., a decision stump. It uses entropy to decide splitting
  * ranges.
+ *
+ * The stump is parameterized by a splitting attribute (the dimension on which
+ * points are split), a vector of bin split values, and a vector of labels for
+ * each bin.  Bin i is specified by the range [split[i], split[i + 1]).  The
+ * last bin has range up to \infty (split[i + 1] does not exist in that case).
+ * Points that are below the first bin will take the label of the first bin.
+ *
+ * @tparam MatType Type of matrix that is being used (sparse or dense).
  */
 template <typename MatType = arma::mat>
 class DecisionStump
@@ -45,13 +53,27 @@ class DecisionStump
    */
   void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
 
-  int splitCol;
+  //! Access the splitting attribute.
+  int SplitAttribute() const { return splitAttribute; }
+  //! Modify the splitting attribute (be careful!).
+  int& SplitAttribute() { return splitAttribute; }
+
+  //! Access the splitting values.
+  const arma::vec& Split() const { return split; }
+  //! Modify the splitting values (be careful!).
+  arma::vec& Split() { return split; }
+
+  //! Access the labels for each split bin.
+  const arma::Col<size_t> BinLabels() const { return binLabels; }
+  //! Modify the labels for each split bin (be careful!).
+  arma::Col<size_t>& BinLabels() { return binLabels; }
+
  private:
   //! Stores the number of classes.
   size_t numClass;
 
   //! Stores the value of the attribute on which to split.
-  // int splitCol;
+  int splitAttribute;
 
   //! Size of bucket while determining splitting criterion.
   size_t bucketSize;
