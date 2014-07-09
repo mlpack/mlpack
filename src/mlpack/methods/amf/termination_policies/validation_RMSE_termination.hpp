@@ -54,14 +54,39 @@ class ValidationRMSETermination
     reverseStepCount = 0;
   }
 
-  bool IsConverged()
+  bool IsConverged(arma::mat& W, arma::mat& H)
   {
-    if((rmseOld - rmse) / rmseOld < tolerance && iteration > 4) 
+    if((rmseOld - rmse) / rmseOld < tolerance && iteration > 4)
+    {
+      if(reverseStepCount == 0 && isCopy == false)
+      {
+        isCopy = true;
+        this->W = W;
+        this->H = H;
+        c_indexOld = rmseOld;
+        c_index = rmse;
+      }
       reverseStepCount++;
-    else reverseStepCount = 0;
+    }
+    else
+    {
+      reverseStepCount = 0;
+      if(rmse <= c_indexOld && isCopy == true)
+      {
+        isCopy = false;
+      }
+    }
 
-    if(reverseStepCount == reverseStepTolerance || iteration > maxIterations) 
+    if(reverseStepCount == reverseStepTolerance || iteration > maxIterations)
+    {
+      if(isCopy)
+      {
+        W = this->W;
+        H = this->H;
+        rmse = c_index;
+      }
       return true;
+    }
     else return false;
   }
 
@@ -115,6 +140,12 @@ class ValidationRMSETermination
 
   size_t reverseStepTolerance;
   size_t reverseStepCount;
+  
+  bool isCopy;
+  arma::mat W;
+  arma::mat H;
+  double c_indexOld;
+  double c_index;
 };
 
 } // namespace amf
