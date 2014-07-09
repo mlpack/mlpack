@@ -40,7 +40,8 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
     bound(data.n_rows),
     parentDistance(0),
     dataset(data),
-    points(maxLeafSize+1) // Add one to make splitting the node simpler.
+    points(maxLeafSize+1), // Add one to make splitting the node simpler.
+    localDataset(new MatType(data.n_rows, static_cast<int>(maxLeafSize)+1)) // Add one to make splitting the node simpler
 {
   stat = StatisticType(*this);
 
@@ -71,7 +72,8 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
   bound(parentNode->Bound().Dim()),
   parentDistance(0),
   dataset(parentNode->Dataset()),
-  points(maxLeafSize+1) // Add one to make splitting the node simpler.
+  points(maxLeafSize+1), // Add one to make splitting the node simpler.
+  localDataset(new MatType(static_cast<int>(parentNode->Bound().Dim()), static_cast<int>(maxLeafSize)+1)) // Add one to make splitting the node simpler
 {
   stat = StatisticType(*this);
 }
@@ -92,7 +94,7 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::
     delete children[i];
   }
   //if(numChildren == 0)
-  //delete points;
+  delete localDataset;
 }
 
 
@@ -127,7 +129,7 @@ template<typename SplitType,
 void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
     NullifyData()
 {
-  //points = NULL;
+  localDataset = NULL;
 }
 
 
@@ -148,6 +150,7 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   // If this is a leaf node, we stop here and add the point.
   if(numChildren == 0) {
     points[count++] = point;
+    localDataset->col(count) = dataset.col(point);
     SplitNode();
     return;
   }

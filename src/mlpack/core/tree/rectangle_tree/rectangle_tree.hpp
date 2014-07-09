@@ -74,6 +74,8 @@ class RectangleTree
   MatType& dataset;
   //! The mapping to the dataset
   std::vector<size_t> points;
+  //! The local dataset
+  MatType* localDataset;
 
  public:
   //! So other classes can use TreeType::Mat.
@@ -226,6 +228,11 @@ class RectangleTree
   const std::vector<size_t>& Points() const { return points; }
   //! Modify the points vector for this node.  Be careful!
   std::vector<size_t>& Points() { return points; }
+  
+  //! Get the local dataset of this node.
+  const arma::mat& LocalDataset() const { return *localDataset; }
+  //! Modify the local dataset of this node.
+  arma::mat& LocalDataset() { return *localDataset; }
 
   //! Get the metric which the tree uses.
   typename HRectBound<>::MetricType Metric() const { return bound.Metric(); }
