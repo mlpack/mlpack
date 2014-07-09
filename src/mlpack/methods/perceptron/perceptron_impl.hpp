@@ -33,10 +33,8 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
     const arma::Row<size_t>& labels,
     int iterations)
 {
-  arma::Row<size_t> uniqueLabels = arma::unique(labels);
-
   WeightInitializationPolicy WIP;
-  WIP.Initialize(weightVectors, uniqueLabels.n_elem, data.n_rows + 1);
+  WIP.Initialize(weightVectors, arma::max(labels) + 1, data.n_rows + 1);
 
   // Start training.
   classLabels = labels;
