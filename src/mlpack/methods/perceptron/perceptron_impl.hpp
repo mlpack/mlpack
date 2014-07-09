@@ -73,7 +73,7 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
       // Check whether prediction is correct.
       if (maxIndexRow != classLabels(0, j))
       {
-        // Due to incorrect prediction, convergence set to 0.
+        // Due to incorrect prediction, convergence set to false.
         converged = false;
         tempLabel = labels(0, j);
         // Send maxIndexRow for knowing which weight to update, send j to know
@@ -95,7 +95,8 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
  */
 template <typename LearnPolicy, typename WeightInitializationPolicy, typename MatType>
 void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
-                const MatType& test, arma::Row<size_t>& predictedLabels)
+    const MatType& test,
+    arma::Row<size_t>& predictedLabels)
 {
   arma::mat tempLabelMat;
   arma::uword maxIndexRow, maxIndexCol;
