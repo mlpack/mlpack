@@ -1,52 +1,56 @@
-/*
- *  @file: SimpleWeightUpdate.hpp
- *  @author: Udit Saxena
+/**
+ * @file simple_weight_update.hpp
+ * @author Udit Saxena
  *
+ * Simple weight update rule for the perceptron.
  */
-
-#ifndef _MLPACK_METHOD_PERCEPTRON_LEARN_SIMPLEWEIGHTUPDATE
-#define _MLPACK_METHOD_PERCEPTRON_LEARN_SIMPLEWEIGHTUPDATE
+#ifndef _MLPACK_METHODS_PERCEPTRON_LEARNING_POLICIES_SIMPLE_WEIGHT_UPDATE_HPP
+#define _MLPACK_METHODS_PERCEPTRON_LEARNING_POLICIES_SIMPLE_WEIGHT_UPDATE_HPP
 
 #include <mlpack/core.hpp>
-/*
-This class is used to update the weightVectors matrix according to 
-the simple update rule as discussed by Rosenblatt:
-  if a vector x has been incorrectly classified by a weight w, 
-  then w = w - x
-  and  w'= w'+ x
-  where w' is the weight vector which correctly classifies x.
-*/
+
+/**
+ * This class is used to update the weightVectors matrix according to the simple
+ * update rule as discussed by Rosenblatt:
+ *
+ *  if a vector x has been incorrectly classified by a weight w,
+ *  then w = w - x
+ *  and  w'= w'+ x
+ *
+ *  where w' is the weight vector which correctly classifies x.
+ */
 namespace mlpack {
 namespace perceptron {
 
-class SimpleWeightUpdate 
+class SimpleWeightUpdate
 {
-public:
-  SimpleWeightUpdate()
-  { }
-  /*
-  This function is called to update the weightVectors matrix. 
-  It decreases the weights of the incorrectly classified class while
-  increasing the weight of the correct class it should have been classified to.
-  
-  @param: trainData - the training dataset.
-  @param: weightVectors - matrix of weight vectors.
-  @param: rowIndex - index of the row which has been incorrectly predicted.
-  @param: labelIndex - index of the vector in trainData.
-  @param: vectorIndex - index of the class which should have been predicted.
- */
-  void UpdateWeights(const arma::mat& trainData, arma::mat& weightVectors,
-                     size_t labelIndex, size_t vectorIndex, size_t rowIndex )
+ public:
+  /**
+   * This function is called to update the weightVectors matrix.
+   *  It decreases the weights of the incorrectly classified class while
+   * increasing the weight of the correct class it should have been classified to.
+   *
+   * @param trainData The training dataset.
+   * @param weightVectors Matrix of weight vectors.
+   * @param rowIndex Index of the row which has been incorrectly predicted.
+   * @param labelIndex Index of the vector in trainData.
+   * @param vectorIndex Index of the class which should have been predicted.
+   */
+  void UpdateWeights(const arma::mat& trainData,
+                     arma::mat& weightVectors,
+                     const size_t labelIndex,
+                     const size_t vectorIndex,
+                     const size_t rowIndex)
   {
     arma::mat instance = trainData.col(labelIndex);
-  
-    weightVectors.row(rowIndex) = weightVectors.row(rowIndex) - 
-                               instance.t();
 
-    weightVectors.row(vectorIndex) = weightVectors.row(vectorIndex) + 
-                                 instance.t();
+    weightVectors.row(rowIndex) = weightVectors.row(rowIndex) - instance.t();
+
+    weightVectors.row(vectorIndex) = weightVectors.row(vectorIndex) +
+        instance.t();
   }
 };
+
 }; // namespace perceptron
 }; // namespace mlpack
 
