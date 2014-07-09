@@ -26,9 +26,9 @@ class IncompleteIncrementalTermination
     iteration = 0;
   }
 
-  bool IsConverged()
+  bool IsConverged(arma::mat& W, arma::mat& H)
   {
-    return t_policy.IsConverged();
+    return t_policy.IsConverged(W, H);
   }
 
   void Step(const arma::mat& W, const arma::mat& H)

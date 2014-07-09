@@ -50,7 +50,7 @@ add_executable(mlpack_test
   tree_test.cpp
   tree_traits_test.cpp
   union_find_test.cpp
-  svd_test.cpp
+  svd_batch_test.cpp
 )
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test

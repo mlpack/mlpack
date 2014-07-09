@@ -30,8 +30,10 @@ class SimpleResidueTermination
     nm = n * m;
   }
 
-  bool IsConverged()
+  bool IsConverged(arma::mat& W, arma::mat& H)
   {
+    (void)W;
+    (void)H;
     if(residue < minResidue || iteration > maxIterations) return true;
     else return false;
   }
