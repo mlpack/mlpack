@@ -128,7 +128,7 @@ bool checkContainment(const RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeu
 
 BOOST_AUTO_TEST_CASE(RectangleTreeContainmentTest)
 {
-    arma::mat dataset;
+  arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
   
   RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
@@ -136,6 +136,37 @@ BOOST_AUTO_TEST_CASE(RectangleTreeContainmentTest)
                       NeighborSearchStat<NearestNeighborSort>,
                       arma::mat> tree(dataset, 20, 6, 5, 2, 0);
   assert(checkContainment(tree) == true);
+}
+
+bool checkSync(const RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+               tree::RTreeDescentHeuristic,
+               NeighborSearchStat<NearestNeighborSort>,
+               arma::mat>& tree) {
+  if(tree.IsLeaf()) {
+    for(size_t i = 0; i < tree.Count(); i++) {
+      for(size_t j = 0; j < tree.LocalDataset().n_rows; j++) {
+	if(tree.LocalDataset().col(i)[j] != tree.Dataset().col(tree.Points()[i])[j])
+	  return false;
+      }
+    }
+  } else {
+    for(size_t i = 0; i < tree.NumChildren(); i++) {
+      if(!checkSync(tree.Children()[i]))
+	return false;
+    }
+  }
+  return true;
+}
+
+BOOST_AUTO_TEST_CASE(TreeLocalDatasetInSync) {
+  arma::mat dataset;
+  dataset.randu(8, 1000); // 1000 points in 8 dimensions.
+  
+  RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+                      tree::RTreeDescentHeuristic,
+                      NeighborSearchStat<NearestNeighborSort>,
+                      arma::mat> tree(dataset, 20, 6, 5, 2, 0);
+  assert(checkSync(tree) == true);
 }
 
 BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
@@ -173,6 +204,5 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
     assert(distances1[i] == distances2[i]);
   }
 }
-
 
 BOOST_AUTO_TEST_SUITE_END();
