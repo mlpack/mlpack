@@ -197,7 +197,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::GetPointSeeds(
     for(int j = i+1; j < tree.Count(); j++) {
       double score = 1.0;
       for(int k = 0; k < tree.Bound().Dim(); k++) {
-	score *= std::abs(tree.Dataset().at(k, tree.Points()[i]) - tree.Dataset().at(k, tree.Points()[j])); // Points (in the dataset) are stored by column, but this function takes (row, col).
+	score *= std::abs(tree.LocalDataset().at(k, i) - tree.LocalDataset().at(k, j)); // Points (in the dataset) are stored by column, but this function takes (row, col).
       }
       if(score > worstPairScore) {
 	worstPairScore = score;
@@ -312,7 +312,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
       double newVolOne = 1.0;
       double newVolTwo = 1.0;
       for(int i = 0; i < oldTree->Bound().Dim(); i++) {
-	double c = oldTree->Dataset().col(oldTree->Points()[index])[i];      
+	double c = oldTree->LocalDataset().col(index)[i];      
 	newVolOne *= treeOne->Bound()[i].Contains(c) ? treeOne->Bound()[i].Width() :
 	  (c < treeOne->Bound()[i].Lo() ? (treeOne->Bound()[i].Hi() - c) : (c - treeOne->Bound()[i].Lo()));
 	newVolTwo *= treeTwo->Bound()[i].Contains(c) ? treeTwo->Bound()[i].Width() :
@@ -347,6 +347,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
     }
 
     oldTree->Points()[bestIndex] = oldTree->Points()[--end]; // decrement end.
+    oldTree->LocalDataset().col(bestIndex) = oldTree->LocalDataset().col(end);
   }
   
   // See if we need to satisfy the minimum fill.
