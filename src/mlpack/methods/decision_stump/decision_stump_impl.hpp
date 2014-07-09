@@ -37,9 +37,9 @@ DecisionStump<MatType>::DecisionStump(const MatType& data,
   // If classLabels are not all identical, proceed with training.
   int bestAtt = 0;
   double entropy;
-  double rootEntropy = CalculateEntropy<size_t>(labels.subvec(0,labels.n_elem-1));
-  // std::cout<<"rootEntropy is: "<<rootEntropy<<"\n";
-  // double bestEntropy = DBL_MAX;
+  const double rootEntropy = CalculateEntropy<size_t>(
+      labels.subvec(0, labels.n_elem - 1));
+
   double gain, bestGain = 0.0;
   for (int i = 0; i < data.n_rows; i++)
   {
@@ -56,12 +56,11 @@ DecisionStump<MatType>::DecisionStump(const MatType& data,
       // maximized.
 
       // if (entropy < bestEntropy)
-      // Instead of the above rule, we are maximizing gain, which was 
+      // Instead of the above rule, we are maximizing gain, which was
       // what is returned from SetupSplitAttribute.
       if (gain < bestGain)
       {
         bestAtt = i;
-        // bestEntropy = entropy;
         bestGain = gain;
       }
     }
@@ -372,8 +371,8 @@ double DecisionStump<MatType>::CalculateEntropy(arma::subview_row<LabelType> lab
 {
   double entropy = 0.0;
   size_t j;
-  
-  arma::Row<size_t> numElem(numClass); 
+
+  arma::Row<size_t> numElem(numClass);
   numElem.fill(0);
 
   // Populate numElem; they are used as helpers to calculate
@@ -384,10 +383,10 @@ double DecisionStump<MatType>::CalculateEntropy(arma::subview_row<LabelType> lab
   for (j = 0; j < numClass; j++)
   {
     const double p1 = ((double) numElem(j) / labels.n_elem);
-  
+
     entropy += (p1 == 0) ? 0 : p1 * log2(p1);
   }
-  
+
   return entropy;
 }
 
