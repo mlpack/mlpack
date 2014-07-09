@@ -44,13 +44,13 @@ DecisionStump<MatType>::DecisionStump(const MatType& data,
   for (int i = 0; i < data.n_rows; i++)
   {
     // Go through each attribute of the data.
-    if (isDistinct<double>(data.row(i)))
+    if (IsDistinct<double>(data.row(i)))
     {
       // For each attribute with non-identical values, treat it as a potential
       // splitting attribute and calculate entropy if split on it.
       entropy = SetupSplitAttribute(data.row(i), labels);
 
-      Log::Debug << "Entropy for attribute " << i << " is " << entropy << ".\n";
+      // Log::Debug << "Entropy for attribute " << i << " is " << entropy << ".\n";
       gain = rootEntropy - entropy;
       // Find the attribute with the best entropy so that the gain is
       // maximized.
@@ -351,12 +351,13 @@ rType DecisionStump<MatType>::CountMostFreq(const arma::Row<rType>& subCols)
  */
 template <typename MatType>
 template <typename rType>
-int DecisionStump<MatType>::isDistinct(const arma::Row<rType>& featureRow)
+int DecisionStump<MatType>::IsDistinct(const arma::Row<rType>& featureRow)
 {
-  if (featureRow.max() - featureRow.min() > 0)
-    return 1;
-  else
-    return 0;
+  rType val = featureRow(0);
+  for (size_t i = 1; i < featureRow.n_elem; ++i)
+    if (val != featureRow(i))
+      return 1;
+  return 0;
 }
 
 /**

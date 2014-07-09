@@ -123,7 +123,7 @@ class DecisionStump
    *
    * @param featureRow The attribute which is checked for identical values.
    */
-  template <typename rType> int isDistinct(const arma::Row<rType>& featureRow);
+  template <typename rType> int IsDistinct(const arma::Row<rType>& featureRow);
 
   /**
    * Calculate the entropy of the given attribute.
