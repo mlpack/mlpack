@@ -47,7 +47,8 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
   zOnes.fill(1);
   trainData.insert_rows(0, zOnes);
 
-  int j, i = 0, converged = 0;
+  int j, i = 0;
+  bool converged = false;
   size_t tempLabel;
   arma::uword maxIndexRow, maxIndexCol;
   double maxVal;
@@ -60,7 +61,7 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
     // This outer loop is for each iteration, and we use the 'converged'
     // variable for noting whether or not convergence has been reached.
     i++;
-    converged = 1;
+    converged = true;
 
     // Now this inner loop is for going through the dataset in each iteration.
     for (j = 0; j < data.n_cols; j++)
@@ -75,7 +76,7 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
       if (maxIndexRow != classLabels(0, j))
       {
         // Due to incorrect prediction, convergence set to 0.
-        converged = 0;
+        converged = false;
         tempLabel = labels(0, j);
         // Send maxIndexRow for knowing which weight to update, send j to know
         // the value of the vector to update it with.  Send tempLabel to know
