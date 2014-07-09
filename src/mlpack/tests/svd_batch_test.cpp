@@ -1,6 +1,6 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/amf/amf.hpp>
-#include <mlpack/methods/amf/update_rules/svd_batchlearning.hpp>
+#include <mlpack/methods/amf/update_rules/svd_batch_learning.hpp>
 #include <mlpack/methods/amf/init_rules/random_init.hpp>
 #include <mlpack/methods/amf/termination_policies/validation_RMSE_termination.hpp>
 #include <mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp>
@@ -144,8 +144,6 @@ BOOST_AUTO_TEST_CASE(SVDNegativeElementTest)
   amf.Apply(test, 2, m1, m2);
 
   arma::mat result = m1 * m2;
-
-  std::cout << result << std::endl;
 
   for(size_t i = 0;i < 3;i++)
   {

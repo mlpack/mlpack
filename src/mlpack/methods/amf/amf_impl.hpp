@@ -50,7 +50,7 @@ Apply(const MatType& V,
   update.Initialize(V, r);
   terminationPolicy.Initialize(V);
 
-  while (!terminationPolicy.IsConverged())
+  while (!terminationPolicy.IsConverged(W, H))
   {
     // Update the values of W and H based on the update rules provided.
     update.WUpdate(V, W, H);

@@ -4,7 +4,7 @@ set(SOURCES
   nmf_als.hpp
   nmf_mult_dist.hpp
   nmf_mult_div.hpp
-  svd_batchlearning.hpp
+  svd_batch_learning.hpp
   svd_incremental_learning.hpp
 )
 

@@ -30,14 +30,39 @@ class SimpleToleranceTermination
     this->V = &V;
   }
 
-  bool IsConverged()
+  bool IsConverged(arma::mat& W, arma::mat& H)
   {
     if((residueOld - residue) / residueOld < tolerance && iteration > 4)
+    {
+      if(reverseStepCount == 0 && isCopy == false)
+      {
+        isCopy = true;
+        this->W = W;
+        this->H = H;
+        c_index = residue;
+        c_indexOld = residueOld;
+      }
       reverseStepCount++;
-    else reverseStepCount = 0;
+    }
+    else
+    {
+      reverseStepCount = 0;
+      if(residue <= c_indexOld && isCopy == true)
+      {
+        isCopy = false;
+      }
+    }
 
     if(reverseStepCount == reverseStepTolerance || iteration > maxIterations)
+    {
+      if(isCopy)
+      {
+        W = this->W;
+        H = this->H;
+        residue = c_index;
+      }
       return true;
+    }
     else return false;
   }
 
@@ -89,6 +114,12 @@ class SimpleToleranceTermination
 
   size_t reverseStepTolerance;
   size_t reverseStepCount;
+  
+  bool isCopy;
+  arma::mat W;
+  arma::mat H;
+  double c_indexOld;
+  double c_index;
 }; // class SimpleToleranceTermination
 
 }; // namespace amf
