@@ -94,8 +94,8 @@ BOOST_AUTO_TEST_CASE(Random3)
 }
 
 /**
- * This tests the convergence of the perceptron on a dataset
- * which has only TWO points which belong to different classes.
+ * This tests the convergence of the perceptron on a dataset which has only TWO
+ * points which belong to different classes.
  */
 BOOST_AUTO_TEST_CASE(TwoPoints)
 {
@@ -119,8 +119,8 @@ BOOST_AUTO_TEST_CASE(TwoPoints)
 }
 
 /**
- * This tests the convergence of the perceptron on a dataset
- * which has a non-linearly separable dataset.
+ * This tests the convergence of the perceptron on a dataset which has a
+ * non-linearly separable dataset.
  */
 BOOST_AUTO_TEST_CASE(NonLinearlySeparableDataset)
 {
