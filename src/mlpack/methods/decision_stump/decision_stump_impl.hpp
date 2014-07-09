@@ -35,10 +35,12 @@ DecisionStump<MatType>::DecisionStump(const MatType& data,
   bucketSize = inpBucketSize;
 
   // If classLabels are not all identical, proceed with training.
-  int bestAtt = -1;
+  int bestAtt = 0;
   double entropy;
-  double bestEntropy = -DBL_MAX;
-
+  double rootEntropy = CalculateEntropy<size_t>(labels.subvec(0,labels.n_elem-1));
+  // std::cout<<"rootEntropy is: "<<rootEntropy<<"\n";
+  // double bestEntropy = DBL_MAX;
+  double gain, bestGain = 0.0;
   for (int i = 0; i < data.n_rows; i++)
   {
     // Go through each attribute of the data.
@@ -49,13 +51,18 @@ DecisionStump<MatType>::DecisionStump(const MatType& data,
       entropy = SetupSplitAttribute(data.row(i), labels);
 
       Log::Debug << "Entropy for attribute " << i << " is " << entropy << ".\n";
-
+      gain = rootEntropy - entropy;
       // Find the attribute with the best entropy so that the gain is
       // maximized.
-      if (entropy > bestEntropy)
+
+      // if (entropy < bestEntropy)
+      // Instead of the above rule, we are maximizing gain, which was 
+      // what is returned from SetupSplitAttribute.
+      if (gain < bestGain)
       {
         bestAtt = i;
-        bestEntropy = entropy;
+        // bestEntropy = entropy;
+        bestGain = gain;
       }
     }
   }
@@ -380,6 +387,7 @@ double DecisionStump<MatType>::CalculateEntropy(arma::subview_row<LabelType> lab
   
     entropy += (p1 == 0) ? 0 : p1 * log2(p1);
   }
+  
   return entropy;
 }
 
