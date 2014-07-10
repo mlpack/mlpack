@@ -23,7 +23,8 @@ namespace bound {
 template<int Power, bool TakeRoot>
 HRectBound<Power, TakeRoot>::HRectBound() :
     dim(0),
-    bounds(NULL)
+    bounds(NULL),
+    minWidth(0)
 { /* Nothing to do. */ }
 
 /**
@@ -33,7 +34,8 @@ HRectBound<Power, TakeRoot>::HRectBound() :
 template<int Power, bool TakeRoot>
 HRectBound<Power, TakeRoot>::HRectBound(const size_t dimension) :
     dim(dimension),
-    bounds(new math::Range[dim])
+    bounds(new math::Range[dim]),
+    minWidth(0)
 { /* Nothing to do. */ }
 
 /***
@@ -42,7 +44,8 @@ HRectBound<Power, TakeRoot>::HRectBound(const size_t dimension) :
 template<int Power, bool TakeRoot>
 HRectBound<Power, TakeRoot>::HRectBound(const HRectBound& other) :
     dim(other.Dim()),
-    bounds(new math::Range[dim])
+    bounds(new math::Range[dim]),
+    minWidth(other.MinWidth())
 {
   // Copy other bounds over.
   for (size_t i = 0; i < dim; i++)
@@ -70,6 +73,8 @@ HRectBound<Power, TakeRoot>& HRectBound<Power, TakeRoot>::operator=(
   for (size_t i = 0; i < dim; i++)
     bounds[i] = other[i];
 
+  minWidth = other.MinWidth();
+
   return *this;
 }
 
@@ -91,6 +96,7 @@ void HRectBound<Power, TakeRoot>::Clear()
 {
   for (size_t i = 0; i < dim; i++)
     bounds[i] = math::Range();
+  minWidth = 0;
 }
 
 /***
@@ -333,8 +339,14 @@ HRectBound<Power, TakeRoot>& HRectBound<Power, TakeRoot>::operator|=(
   arma::vec mins(min(data, 1));
   arma::vec maxs(max(data, 1));
 
+  minWidth = DBL_MAX;
   for (size_t i = 0; i < dim; i++)
+  {
     bounds[i] |= math::Range(mins[i], maxs[i]);
+    const double width = bounds[i].Hi() - bounds[i].Lo();
+    if (width < minWidth)
+      minWidth = width;
+  }
 
   return *this;
 }
@@ -348,8 +360,14 @@ HRectBound<Power, TakeRoot>& HRectBound<Power, TakeRoot>::operator|=(
 {
   assert(other.dim == dim);
 
+  minWidth = DBL_MAX;
   for (size_t i = 0; i < dim; i++)
+  {
     bounds[i] |= other.bounds[i];
+    const double width = bounds[i].Hi() - bounds[i].Lo();
+    if (width < minWidth)
+      minWidth = width;
+  }
 
   return *this;
 }
@@ -400,6 +418,7 @@ std::string HRectBound<Power, TakeRoot>::ToString() const
   convert << "  Bounds: " << std::endl;
   for (size_t i = 0; i < dim; ++i)
     convert << util::Indent(bounds[i].ToString()) << std::endl;
+  convert << "  Minimum width: " << minWidth << std::endl;
 
   return convert.str();
 }
