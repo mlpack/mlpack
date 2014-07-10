@@ -49,7 +49,6 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
   bool converged = false;
   size_t tempLabel;
   arma::uword maxIndexRow, maxIndexCol;
-  double maxVal;
   arma::mat tempLabelMat;
 
   LearnPolicy LP;
@@ -68,8 +67,8 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
       // correctly classifies this.
       tempLabelMat = weightVectors * trainData.col(j);
 
-      maxVal = tempLabelMat.max(maxIndexRow, maxIndexCol);
-      maxVal *= 2;
+      tempLabelMat.max(maxIndexRow, maxIndexCol);
+      
       // Check whether prediction is correct.
       if (maxIndexRow != classLabels(0, j))
       {
@@ -100,15 +99,13 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
 {
   arma::mat tempLabelMat;
   arma::uword maxIndexRow, maxIndexCol;
-  double maxVal;
 
   for (int i = 0; i < test.n_cols; i++)
   {
-    tempLabelMat = weightVectors.submat(0,1,weightVectors.n_rows-1,
-                                        weightVectors.n_cols-1) * 
+    tempLabelMat = weightVectors.submat(0, 1, weightVectors.n_rows - 1,
+                                        weightVectors.n_cols - 1) * 
                                         test.col(i) + weightVectors.col(0);
-    maxVal = tempLabelMat.max(maxIndexRow, maxIndexCol);
-    maxVal *= 2;
+    tempLabelMat.max(maxIndexRow, maxIndexCol);
     predictedLabels(0, i) = maxIndexRow;
   }
 }
