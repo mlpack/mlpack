@@ -60,10 +60,16 @@ class HRectBound
   //! Gets the dimensionality.
   size_t Dim() const { return dim; }
 
-  //! Get the range for a particular dimension.  No bounds checking.
+  //! Get the range for a particular dimension.  No bounds checking.  Be
+  //! careful: this may make MinWidth() invalid.
   math::Range& operator[](const size_t i) { return bounds[i]; }
   //! Modify the range for a particular dimension.  No bounds checking.
   const math::Range& operator[](const size_t i) const { return bounds[i]; }
+
+  //! Get the minimum width of the bound.
+  double MinWidth() const { return minWidth; }
+  //! Modify the minimum width of the bound.
+  double& MinWidth() { return minWidth; }
 
   /**
    * Calculates the centroid of the range, placing it into the given vector.
@@ -166,6 +172,8 @@ class HRectBound
   size_t dim;
   //! The bounds for each dimension.
   math::Range* bounds;
+  //! Cached minimum width of bound.
+  double minWidth;
 };
 
 }; // namespace bound
