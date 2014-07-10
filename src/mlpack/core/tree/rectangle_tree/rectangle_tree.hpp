@@ -228,7 +228,7 @@ class RectangleTree
   const std::vector<size_t>& Points() const { return points; }
   //! Modify the points vector for this node.  Be careful!
   std::vector<size_t>& Points() { return points; }
-  
+
   //! Get the local dataset of this node.
   const arma::mat& LocalDataset() const { return *localDataset; }
   //! Modify the local dataset of this node.
@@ -264,6 +264,11 @@ class RectangleTree
    * it will never be greater than this).
    */
   double FurthestDescendantDistance() const;
+
+  //! Return the minimum distance from the center to any edge of the bound.
+  //! Currently, this returns 0, which doesn't break algorithms, but it isn't
+  //! necessarily correct, either.
+  double MinimumBoundDistance() const { return 0.0; }
 
   //! Return the distance from the center of this node to the center of the
   //! parent node.
