@@ -268,7 +268,7 @@ class RectangleTree
   //! Return the minimum distance from the center to any edge of the bound.
   //! Currently, this returns 0, which doesn't break algorithms, but it isn't
   //! necessarily correct, either.
-  double MinimumBoundDistance() const { return 0.0; }
+  double MinimumBoundDistance() const { return bound.MinWidth(); }
 
   //! Return the distance from the center of this node to the center of the
   //! parent node.
