@@ -343,7 +343,7 @@ HRectBound<Power, TakeRoot>& HRectBound<Power, TakeRoot>::operator|=(
   for (size_t i = 0; i < dim; i++)
   {
     bounds[i] |= math::Range(mins[i], maxs[i]);
-    const double width = bounds[i].Hi() - bounds[i].Lo();
+    const double width = bounds[i].Width();
     if (width < minWidth)
       minWidth = width;
   }
@@ -364,7 +364,7 @@ HRectBound<Power, TakeRoot>& HRectBound<Power, TakeRoot>::operator|=(
   for (size_t i = 0; i < dim; i++)
   {
     bounds[i] |= other.bounds[i];
-    const double width = bounds[i].Hi() - bounds[i].Lo();
+    const double width = bounds[i].Width();
     if (width < minWidth)
       minWidth = width;
   }
