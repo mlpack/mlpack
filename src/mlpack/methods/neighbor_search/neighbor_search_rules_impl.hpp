@@ -151,7 +151,9 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
   const double score = traversalInfo.LastScore();
   double adjustedScore;
 
-  // In some cases we can just use the last base case.
+  // We want to set adjustedScore to be the distance between the centroid of the
+  // last query node and last reference node.  We will do this by adjusting the
+  // last score.  In some cases, we can just use the last base case.
   if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
   {
     adjustedScore = traversalInfo.LastBaseCase();
@@ -162,10 +164,16 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::Score(
   }
   else
   {
+    // The last score is equal to the distance between the centroids minus the
+    // radii of the query and reference bounds along the axis of the line
+    // between the two centroids.  In the best case, these radii are the
+    // furthest descendant distances, but that is not always true.  It would
+    // take too long to calculate the exact radii, so we are forced to use
+    // MinimumBoundDistance() as a lower-bound approximation.
     const double lastQueryDescDist =
-        traversalInfo.LastQueryNode()->FurthestDescendantDistance();
+        traversalInfo.LastQueryNode()->MinimumBoundDistance();
     const double lastRefDescDist =
-        traversalInfo.LastReferenceNode()->FurthestDescendantDistance();
+        traversalInfo.LastReferenceNode()->MinimumBoundDistance();
     adjustedScore = SortPolicy::CombineWorst(score, lastQueryDescDist);
     adjustedScore = SortPolicy::CombineWorst(score, lastRefDescDist);
   }
