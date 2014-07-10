@@ -32,6 +32,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundEmptyConstructor)
   HRectBound<2> b;
 
   BOOST_REQUIRE_EQUAL((int) b.Dim(), 0);
+  BOOST_REQUIRE_EQUAL(b.MinWidth(), 0.0);
 }
 
 /**
@@ -54,6 +55,8 @@ BOOST_AUTO_TEST_CASE(HRectBoundDimConstructor)
   BOOST_REQUIRE_SMALL(b[2].Width(), 1e-5);
   BOOST_REQUIRE_SMALL(b[3].Width(), 1e-5);
   BOOST_REQUIRE_SMALL(b[4].Width(), 1e-5);
+
+  BOOST_REQUIRE_EQUAL(b.MinWidth(), 0.0);
 }
 
 /**
@@ -64,6 +67,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundCopyConstructor)
   HRectBound<2> b(2);
   b[0] = Range(0.0, 2.0);
   b[1] = Range(2.0, 3.0);
+  b.MinWidth() = 0.5;
 
   HRectBound<2> c(b);
 
@@ -72,6 +76,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundCopyConstructor)
   BOOST_REQUIRE_CLOSE(c[0].Hi(), 2.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c[1].Lo(), 2.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c[1].Hi(), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MinWidth(), 0.5, 1e-5);
 }
 
 /**
@@ -82,6 +87,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundAssignmentOperator)
   HRectBound<2> b(2);
   b[0] = Range(0.0, 2.0);
   b[1] = Range(2.0, 3.0);
+  b.MinWidth() = 0.5;
 
   HRectBound<2> c(4);
 
@@ -92,6 +98,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundAssignmentOperator)
   BOOST_REQUIRE_CLOSE(c[0].Hi(), 2.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c[1].Lo(), 2.0, 1e-5);
   BOOST_REQUIRE_CLOSE(c[1].Hi(), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MinWidth(), 0.5, 1e-5);
 }
 
 /**
@@ -103,12 +110,14 @@ BOOST_AUTO_TEST_CASE(HRectBoundClear)
 
   b[0] = Range(0.0, 2.0);
   b[1] = Range(2.0, 4.0);
+  b.MinWidth() = 1.0;
 
   // Now we just need to make sure that we clear the range.
   b.Clear();
 
   BOOST_REQUIRE_SMALL(b[0].Width(), 1e-5);
   BOOST_REQUIRE_SMALL(b[1].Width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b.MinWidth(), 1e-5);
 }
 
 /**
@@ -454,6 +463,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundOrOperatorPoint)
   b[2] = Range(-2.0, -1.0);
   b[3] = Range(0.0, 0.0);
   b[4] = Range(); // Empty range.
+  b.MinWidth() = 0.0;
 
   arma::vec point = "2.0 4.0 2.0 -1.0 6.0";
 
@@ -469,6 +479,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundOrOperatorPoint)
   BOOST_REQUIRE_SMALL(b[3].Hi(), 1e-5);
   BOOST_REQUIRE_CLOSE(b[4].Lo(), 6.0, 1e-5);
   BOOST_REQUIRE_CLOSE(b[4].Hi(), 6.0, 1e-5);
+  BOOST_REQUIRE_SMALL(b.MinWidth(), 1e-5);
 }
 
 /**
@@ -544,6 +555,9 @@ BOOST_AUTO_TEST_CASE(HRectBoundOrOperatorBound)
   BOOST_REQUIRE_CLOSE(b[7].Hi(), 3.0, 1e-5);
   BOOST_REQUIRE_CLOSE(d[7].Lo(), 1.0, 1e-5);
   BOOST_REQUIRE_CLOSE(d[7].Hi(), 3.0, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(b.MinWidth(), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.MinWidth(), 1.0, 1e-5);
 }
 
 /**
