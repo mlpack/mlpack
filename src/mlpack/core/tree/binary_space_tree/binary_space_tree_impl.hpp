@@ -238,6 +238,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
     splitDimension(other.splitDimension),
     parentDistance(other.parentDistance),
     furthestDescendantDistance(other.furthestDescendantDistance),
+    minimumBoundDistance(other.minimumBoundDistance),
     dataset(other.dataset)
 {
   // Create left and right children (if any).
@@ -462,6 +463,17 @@ inline double BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
   return furthestDescendantDistance;
 }
 
+//! Return the minimum distance from the center to any bound edge.
+template<typename BoundType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType>
+inline double BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
+    MinimumBoundDistance() const
+{
+  return minimumBoundDistance;
+}
+
 /**
  * Return the specified child.
  */
@@ -560,6 +572,15 @@ void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::SplitNode(
   // Calculate the furthest descendant distance.
   furthestDescendantDistance = 0.5 * bound.Diameter();
 
+  // Find the minimum distance to any bound edge.
+  minimumBoundDistance = DBL_MAX;
+  for (size_t i = 0; i < bound.Dim(); ++i)
+  {
+    const double dist = std::max(bound[i].Hi() - bound[i].Lo(), 0.0);
+    if (dist < minimumBoundDistance)
+      minimumBoundDistance = dist;
+  }
+
   // Now, check if we need to split at all.
   if (count <= maxLeafSize)
     return; // We can't split this.
@@ -615,6 +636,15 @@ void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::SplitNode(
 
   // Calculate the furthest descendant distance.
   furthestDescendantDistance = 0.5 * bound.Diameter();
+
+  // Find the minimum distance to any bound edge.
+  minimumBoundDistance = DBL_MAX;
+  for (size_t i = 0; i < bound.Dim(); ++i)
+  {
+    const double dist = std::max(bound[i].Hi() - bound[i].Lo(), 0.0);
+    if (dist < minimumBoundDistance)
+      minimumBoundDistance = dist;
+  }
 
   // First, check if we need to split at all.
   if (count <= maxLeafSize)

@@ -320,6 +320,10 @@ class CoverTree
   //! descendant.
   double& FurthestDescendantDistance() { return furthestDescendantDistance; }
 
+  //! Get the minimum distance from the center to any bound edge (this is the
+  //! same as furthestDescendantDistance).
+  double MinimumBoundDistance() const { return furthestDescendantDistance; }
+
   //! Get the centroid of the node and store it in the given vector.
   void Centroid(arma::vec& centroid) const { centroid = dataset.col(point); }
 
