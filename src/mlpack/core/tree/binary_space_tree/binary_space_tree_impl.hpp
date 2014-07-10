@@ -470,7 +470,7 @@ template<typename BoundType,
 inline double BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
     MinimumBoundDistance() const
 {
-  return bound.MinWidth();
+  return bound.MinWidth() / 2.0;
 }
 
 /**
