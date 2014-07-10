@@ -66,8 +66,11 @@ class BinarySpaceTree
   size_t splitDimension;
   //! The distance from the centroid of this node to the centroid of the parent.
   double parentDistance;
-  //! The worst possible distance to the furthest descendant, cached to speed things up.
+  //! The worst possible distance to the furthest descendant, cached to speed
+  //! things up.
   double furthestDescendantDistance;
+  //! The minimum distance from the center to any edge of the bound.
+  double minimumBoundDistance;
   //! The dataset.
   MatType& dataset;
 
@@ -307,6 +310,9 @@ class BinarySpaceTree
    * it will never be greater than this).
    */
   double FurthestDescendantDistance() const;
+
+  //! Return the minimum distance from the center of the node to any bound edge.
+  double MinimumBoundDistance() const;
 
   //! Return the distance from the center of this node to the center of the
   //! parent node.
