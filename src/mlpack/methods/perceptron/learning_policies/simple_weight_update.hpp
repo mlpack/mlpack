@@ -42,12 +42,11 @@ class SimpleWeightUpdate
                      const size_t vectorIndex,
                      const size_t rowIndex)
   {
-    arma::mat instance = trainData.col(labelIndex);
-
-    weightVectors.row(rowIndex) = weightVectors.row(rowIndex) - instance.t();
+    weightVectors.row(rowIndex) = weightVectors.row(rowIndex) - 
+                                  trainData.col(labelIndex).t();
 
     weightVectors.row(vectorIndex) = weightVectors.row(vectorIndex) +
-        instance.t();
+                                     trainData.col(labelIndex).t();
   }
 };
 

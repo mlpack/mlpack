@@ -101,15 +101,12 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
   arma::mat tempLabelMat;
   arma::uword maxIndexRow, maxIndexCol;
   double maxVal;
-  MatType testData = test;
-
-  MatType zOnes(1, test.n_cols);
-  zOnes.fill(1);
-  testData.insert_rows(0, zOnes);
 
   for (int i = 0; i < test.n_cols; i++)
   {
-    tempLabelMat = weightVectors * testData.col(i);
+    tempLabelMat = weightVectors.submat(0,1,weightVectors.n_rows-1,
+                                        weightVectors.n_cols-1) * 
+                                        test.col(i) + weightVectors.col(0);
     maxVal = tempLabelMat.max(maxIndexRow, maxIndexCol);
     maxVal *= 2;
     predictedLabels(0, i) = maxIndexRow;
