@@ -16,7 +16,7 @@ namespace svd {
 class QUIC_SVD
 {
  public:
- 
+
   /**
    * Constructor which implements the QUIC-SVD algorithm. The function calls the
    * CosineTree constructor to create a subspace basis, where the original
@@ -37,7 +37,7 @@ class QUIC_SVD
            arma::mat& sigma,
            const double epsilon = 0.03,
            const double delta = 0.1);
-  
+
   /**
    * This function uses the vector subspace created using a cosine tree to
    * calculate an approximate SVD of the original matrix.
@@ -49,7 +49,7 @@ class QUIC_SVD
   void ExtractSVD(arma::mat& u,
                   arma::mat& v,
                   arma::mat& sigma);
-  
+
  private:
   //! Matrix for which cosine tree is constructed.
   const arma::mat& dataset;
