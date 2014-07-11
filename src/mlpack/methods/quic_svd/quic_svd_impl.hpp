@@ -28,14 +28,14 @@ QUIC_SVD::QUIC_SVD(const arma::mat& dataset,
   // Since columns are sample in the implementation, the matrix is transposed if
   // necessary for maximum speedup.
   CosineTree* ctree;
-  if(dataset.n_cols > dataset.n_rows)
+  if (dataset.n_cols > dataset.n_rows)
     ctree = new CosineTree(dataset, epsilon, delta);
   else
     ctree = new CosineTree(dataset.t(), epsilon, delta);
-    
+
   // Get subspace basis by creating the cosine tree.
   ctree->GetFinalBasis(basis);
-  
+
   // Use the ExtractSVD algorithm mentioned in the paper to extract the SVD of
   // the original dataset in the obtained subspace.
   ExtractSVD(u, v, sigma);
@@ -47,11 +47,11 @@ void QUIC_SVD::ExtractSVD(arma::mat& u,
 {
   // Calculate A * V_hat, necessary for further calculations.
   arma::mat projectedMat;
-  if(dataset.n_cols > dataset.n_rows)
+  if (dataset.n_cols > dataset.n_rows)
     projectedMat = dataset.t() * basis;
   else
     projectedMat = dataset * basis;
-  
+
   // Calculate the squared projected matrix.
   arma::mat projectedMatSquared = projectedMat.t() * projectedMat;
 
@@ -65,10 +65,10 @@ void QUIC_SVD::ExtractSVD(arma::mat& u,
   v = basis * vBar;
   sigma = arma::sqrt(diagmat(sigmaBar));
   u = projectedMat * vBar * sigma.i();
-  
+
   // Since columns are sampled, the unitary matrices have to be exchanged, if
   // the transposed matrix is not passed.
-  if(dataset.n_cols > dataset.n_rows)
+  if (dataset.n_cols > dataset.n_rows)
   {
     arma::mat tempMat = u;
     u = v;
