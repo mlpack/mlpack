@@ -170,7 +170,6 @@ int main(int argc, char* argv[])
     Timer::Stop("prediction");
 
     // Save predictions.
-    predictions = arma::trans(predictions);
-    data::Save(outputPredictions, predictions, true);
+    data::Save(outputPredictions, predictions, true, false);
   }
 }
