@@ -33,7 +33,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
     copy->Parent() = tree;
     tree->Count() = 0;
     tree->NullifyData();
-    tree->Children()[(tree->NumChildren())++] = copy; // Because this was a leaf node, numChildren must be 0.
+    tree->Child((tree->NumChildren())++) = copy; // Because this was a leaf node, numChildren must be 0.
     assert(tree->NumChildren() == 1);
     RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(copy);
     return;
@@ -59,13 +59,13 @@ void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
   RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* par = tree->Parent();
   int index = 0;
   for(int i = 0; i < par->NumChildren(); i++) {
-    if(par->Children()[i] == tree) {
+    if(par->Child(i) == tree) {
       index = i;
       break;
     }
   }
-  par->Children()[index] = treeOne;
-  par->Children()[par->NumChildren()++] = treeTwo;
+  par->Child(index) = treeOne;
+  par->Child(par->NumChildren()++) = treeTwo;
      
   // we only add one at a time, so we should only need to test for equality
   // just in case, we use an assert.
@@ -80,7 +80,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
   assert(treeTwo->Parent()->NumChildren() >= treeTwo->MinNumChildren());
   
   // We need to delete this carefully since references to points are used.
-  tree->softDelete();
+  tree->SoftDelete();
   
   return;
 }
@@ -106,7 +106,7 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
     copy->Parent() = tree;
     tree->NumChildren() = 0;
     tree->NullifyData();
-    tree->Children()[(tree->NumChildren())++] = copy;
+    tree->Child((tree->NumChildren())++) = copy;
     RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(copy);
     return true;
   }
@@ -132,18 +132,18 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
   RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType,  StatisticType, MatType>* par = tree->Parent();
   int index = -1;
   for(int i = 0; i < par->NumChildren(); i++) {
-    if(par->Children()[i] == tree) {
+    if(par->Child(i) == tree) {
       index = i;
       break;
     }
   }
   assert(index != -1);
-  par->Children()[index] = treeOne;
-  par->Children()[par->NumChildren()++] = treeTwo;
+  par->Child(index) = treeOne;
+  par->Child(par->NumChildren()++) = treeTwo;
   
   for(int i = 0; i < par->NumChildren(); i++) {
-    if(par->Children()[i] == tree) {
-      assert(par->Children()[i] != tree);
+    if(par->Child(i) == tree) {
+      assert(par->Child(i) != tree);
     }
   }
   
@@ -158,10 +158,10 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
   // We have to update the children of each of these new nodes so that they record the 
   // correct parent.
   for(int i = 0; i < treeOne->NumChildren(); i++) {
-    treeOne->Children()[i]->Parent() = treeOne;
+    treeOne->Child(i)->Parent() = treeOne;
   }
   for(int i = 0; i < treeTwo->NumChildren(); i++) {
-    treeTwo->Children()[i]->Parent() = treeTwo;
+    treeTwo->Child(i)->Parent() = treeTwo;
   }
   
   assert(treeOne->NumChildren() < treeOne->MaxNumChildren());
@@ -170,7 +170,7 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
 
   // Because we now have pointers to the information stored under this tree,
   // we need to delete this node carefully.
-  tree->softDelete(); //currently does nothing but leak memory.
+  tree->SoftDelete(); //currently does nothing but leak memory.
   
   return false;
 }
@@ -231,8 +231,8 @@ void RTreeSplit<DescentType, StatisticType, MatType>::GetBoundSeeds(
     for(int j = i+1; j < tree.NumChildren(); j++) {
       double score = 1.0;
       for(int k = 0; k < tree.Bound().Dim(); k++) {
-	score *= std::max(tree.Children()[i]->Bound()[k].Hi(), tree.Children()[j]->Bound()[k].Hi()) - 
-	  std::min(tree.Children()[i]->Bound()[k].Lo(), tree.Children()[j]->Bound()[k].Lo());
+	score *= std::max(tree.Child(i)->Bound()[k].Hi(), tree.Child(j)->Bound()[k].Hi()) - 
+	  std::min(tree.Child(i)->Bound()[k].Lo(), tree.Child(j)->Bound()[k].Lo());
       }
       if(score > worstPairScore) {
 	worstPairScore = score;
@@ -382,20 +382,20 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
   
   for(int i = 0; i < oldTree->NumChildren(); i++) {
     for(int j = i+1; j < oldTree->NumChildren(); j++) {
-      assert(oldTree->Children()[i] != oldTree->Children()[j]);
+      assert(oldTree->Child(i) != oldTree->Child(j));
     }
   }
   
-  insertNodeIntoTree(treeOne, oldTree->Children()[intI]);
-  insertNodeIntoTree(treeTwo, oldTree->Children()[intJ]);
+  insertNodeIntoTree(treeOne, oldTree->Child(intI));
+  insertNodeIntoTree(treeTwo, oldTree->Child(intJ));
   
   // If intJ is the last node in the tree, we need to switch the order so that we remove the correct nodes.
   if(intI > intJ) {
-    oldTree->Children()[intI] = oldTree->Children()[--end]; // decrement end
-    oldTree->Children()[intJ] = oldTree->Children()[--end]; // decrement end
+    oldTree->Child(intI) = oldTree->Child(--end); // decrement end
+    oldTree->Child(intJ) = oldTree->Child(--end); // decrement end
   } else {
-    oldTree->Children()[intJ] = oldTree->Children()[--end]; // decrement end
-    oldTree->Children()[intI] = oldTree->Children()[--end]; // decrement end
+    oldTree->Child(intJ) = oldTree->Child(--end); // decrement end
+    oldTree->Child(intI) = oldTree->Child(--end); // decrement end
   }
 
   assert(treeOne->NumChildren() == 1);
@@ -403,16 +403,16 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
   
   for(int i = 0; i < end; i++) {
     for(int j = i+1; j < end; j++) {
-      assert(oldTree->Children()[i] != oldTree->Children()[j]);
+      assert(oldTree->Child(i) != oldTree->Child(j));
     }
   }
   
   for(int i = 0; i < end; i++) {
-      assert(oldTree->Children()[i] != treeOne->Children()[0]);
+      assert(oldTree->Child(i) != treeOne->Child(0));
   }
   
   for(int i = 0; i < end; i++) {
-      assert(oldTree->Children()[i] != treeTwo->Children()[0]);
+      assert(oldTree->Child(i) != treeTwo->Child(0));
   }
   
   
@@ -441,7 +441,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
       for(int i = 0; i < oldTree->Bound().Dim(); i++) {
 	// For each of the new rectangles, find the width in this dimension if we add the rectangle at index to
 	// the new rectangle.
-	math::Range range = oldTree->Children()[index]->Bound()[i];
+	math::Range range = oldTree->Child(index)->Bound()[i];
 	newVolOne *= treeOne->Bound()[i].Contains(range) ? treeOne->Bound()[i].Width() :
 	  (range.Contains(treeOne->Bound()[i]) ? range.Width() : (range.Lo() < treeOne->Bound()[i].Lo() ? (treeOne->Bound()[i].Hi() - range.Lo()) : 
 		(range.Hi() - treeOne->Bound()[i].Lo())));
@@ -469,26 +469,26 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
     // Assign the rectangle that causes the least increase in volume 
     // to the appropriate rectangle.
     if(bestRect == 1) {
-      insertNodeIntoTree(treeOne, oldTree->Children()[bestIndex]);
+      insertNodeIntoTree(treeOne, oldTree->Child(bestIndex));
       numAssignTreeOne++;      
     }
     else {
-      insertNodeIntoTree(treeTwo, oldTree->Children()[bestIndex]);
+      insertNodeIntoTree(treeTwo, oldTree->Child(bestIndex));
       numAssignTreeTwo++;      
     }
 
-    oldTree->Children()[bestIndex] = oldTree->Children()[--end]; // Decrement end.
+    oldTree->Child(bestIndex) = oldTree->Child(--end); // Decrement end.
   }
   // See if we need to satisfy the minimum fill.
   if(end > 0) {
     if(numAssignTreeOne < numAssignTreeTwo) {
       for(int i = 0; i < end; i++) {
-        insertNodeIntoTree(treeOne, oldTree->Children()[i]);
+        insertNodeIntoTree(treeOne, oldTree->Child(i));
 	numAssignTreeOne++;
       }
     } else {
       for(int i = 0; i < end; i++) {
-        insertNodeIntoTree(treeTwo, oldTree->Children()[i]);
+        insertNodeIntoTree(treeTwo, oldTree->Child(i));
 	numAssignTreeTwo++;
       }
     }
@@ -496,12 +496,12 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
   
   for(int i = 0; i < treeOne->NumChildren(); i++) {
     for(int j = i+1; j < treeOne->NumChildren(); j++) {
-      assert(treeOne->Children()[i] != treeOne->Children()[j]);
+      assert(treeOne->Child(i) != treeOne->Child(j));
     }
   }
   for(int i = 0; i < treeTwo->NumChildren(); i++) {
     for(int j = i+1; j < treeTwo->NumChildren(); j++) {
-      assert(treeTwo->Children()[i] != treeTwo->Children()[j]);
+      assert(treeTwo->Child(i) != treeTwo->Child(j));
     }
   }
   assert(treeOne->NumChildren() == numAssignTreeOne);
@@ -520,7 +520,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::insertNodeIntoTree(
     RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();
-  destTree->Children()[destTree->NumChildren()++] = srcNode;
+  destTree->Child(destTree->NumChildren()++) = srcNode;
 }
 
 

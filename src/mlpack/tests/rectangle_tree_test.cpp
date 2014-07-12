@@ -169,6 +169,19 @@ BOOST_AUTO_TEST_CASE(TreeLocalDatasetInSync) {
   assert(checkSync(tree) == true);
 }
 
+BOOST_AUTO_TEST_CASE(PointDeletion) {
+  arma::mat dataset;
+  dataset.randu(8, 1000); // 1000 points in 8 dimensions.
+
+  RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+                      tree::RTreeDescentHeuristic,
+                      NeighborSearchStat<NearestNeighborSort>,
+                      arma::mat> tree(dataset, 20, 6, 5, 2, 0);
+  tree.DeletePoint(999);
+  assert(tree.NumDescendants() == 999);
+
+}
+
 BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
 {
   arma::mat dataset;

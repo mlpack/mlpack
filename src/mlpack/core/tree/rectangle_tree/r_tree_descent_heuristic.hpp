@@ -28,8 +28,11 @@ class RTreeDescentHeuristic
    * @param bound The bound used for the node that is being evaluated.
    * @param point The point that is being inserted.
    */
-  static double EvalNode(const HRectBound<>& bound, const arma::vec& point);
+  template<typename TreeType>
+  static size_t ChooseDescentNode(const TreeType* node, const arma::vec& point);
   
+  template<typename TreeType>
+  static size_t ChooseDescentNode(const TreeType* node, const TreeType* insertedNode);
 };
 
 }; // namespace tree
