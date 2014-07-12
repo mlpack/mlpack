@@ -32,13 +32,13 @@ public:
  */
 static void SplitLeafNode(RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree);
 
-private:
-
 /**
- * Split a non-leaf node using the "default" algorithm.  If this is the root node and
- * we need to move up the tree, a new root node is created.
+ * Split a non-leaf node using the "default" algorithm.  If this is a root node, the 
+ * tree increases in depth.
  */
 static bool SplitNonLeafNode(RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree);
+
+private:
 
 /**
  * Get the seeds for splitting a leaf node.
