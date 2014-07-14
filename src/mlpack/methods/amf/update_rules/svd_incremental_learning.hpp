@@ -19,6 +19,8 @@ class SVDIncrementalLearning
   template<typename MatType>
   void Initialize(const MatType& dataset, const size_t rank)
   {
+    (void)rank;
+  
     n = dataset.n_rows;
     m = dataset.n_cols;
 
