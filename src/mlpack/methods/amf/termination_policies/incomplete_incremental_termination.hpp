@@ -45,7 +45,11 @@ class IncompleteIncrementalTermination
   {
     return iteration;
   }
-
+  const size_t& MaxIterations()
+  {
+    return t_policy.MaxIterations();
+  }
+  
  private:
   TerminationPolicy t_policy;
 
