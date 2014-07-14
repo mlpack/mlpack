@@ -169,12 +169,12 @@ typename MatType>
 bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 DeletePoint(const size_t point)
 {
-
   if (numChildren == 0) {
     for (size_t i = 0; i < count; i++) {
       if (points[i] == point) {
         localDataset->col(i) = localDataset->col(--count); // decrement count
         points[i] = points[count];
+        std::cout << count << std::endl;
         CondenseTree(dataset.col(point)); // This function will ensure that minFill is satisfied.
         return true;
       }
@@ -388,11 +388,13 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::CondenseTree
         parent->ShrinkBoundForBound(bound); // We want to do this before reinserting points.
 
         // Reinsert the points at the root node.
-        RectangleTree<SplitType, DescentType, StatisticType, MatType>* root = this;
+        RectangleTree<SplitType, DescentType, StatisticType, MatType>* root = parent;
         while (root->Parent() != NULL)
           root = root->Parent();
-        for (size_t j = 0; j < numChildren; j++)
+        
+        for (size_t j = 0; j < count; j++) {
           root->InsertPoint(points[j]);
+        }
 
         parent->CondenseTree(point); // This will check the MinFill of the parent.
         //Now it should be safe to delete this node.

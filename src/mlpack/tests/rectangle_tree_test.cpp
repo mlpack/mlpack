@@ -173,13 +173,32 @@ BOOST_AUTO_TEST_CASE(PointDeletion) {
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
 
+  const int numIter = 50;
+  
   RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
                       tree::RTreeDescentHeuristic,
                       NeighborSearchStat<NearestNeighborSort>,
                       arma::mat> tree(dataset, 20, 6, 5, 2, 0);
-  tree.DeletePoint(999);
-  assert(tree.NumDescendants() == 999);
+  for(int i = 0; i < numIter; i++) {
+      tree.DeletePoint(i);
+  }
+  std::cout << tree.NumDescendants() << std::endl;
+  assert(tree.NumDescendants() == 1000-numIter);
+          
+    mlpack::neighbor::NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
+        RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+	  	      tree::RTreeDescentHeuristic,
+  		      NeighborSearchStat<NearestNeighborSort>,
+  		      arma::mat> > allknn1(&tree,
+        dataset, true);
+  
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+  allknn1.Search(5, neighbors, distances);
 
+  for(int i = 0; i < numIter; i++)
+    assert(distances.at(0, i) > 0);
+  
 }
 
 BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
