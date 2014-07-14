@@ -16,9 +16,27 @@ using namespace mlpack::amf;
 using namespace arma;
 
 /**
+ * Make sure the SVD Batch lerning is converging.
+ */
+BOOST_AUTO_TEST_CASE(SVDBatchConvergenceElementTest)
+{
+  mlpack::math::RandomSeed(10);
+  sp_mat data;
+  data.sprandn(1000, 1000, 0.2);
+  AMF<SimpleToleranceTermination<sp_mat>, 
+      RandomInitialization, 
+      SVDBatchLearning> amf;
+  mat m1,m2;
+  amf.Apply(data, 2, m1, m2);
+  
+  BOOST_REQUIRE_NE(amf.TerminationPolicy().Iteration(), 
+                    amf.TerminationPolicy().MaxIterations());
+}
+
+/**
  * Make sure the momentum is working okay.
  */
-BOOST_AUTO_TEST_CASE(SVDMomentumTest)
+BOOST_AUTO_TEST_CASE(SVDBatchMomentumTest)
 {
   mat dataset;
   data::Load("GroupLens100k.csv", dataset);
@@ -51,7 +69,7 @@ BOOST_AUTO_TEST_CASE(SVDMomentumTest)
                               SVDBatchLearning(0.0009, 0, 0, 0));
 
   mat m1,m2;
-  size_t RMSE_1 = amf_1.Apply(cleanedData, 2, m1, m2);
+  double RMSE_1 = amf_1.Apply(cleanedData, 2, m1, m2);
   size_t iter_1 = amf_1.TerminationPolicy().Iteration();
 
   mlpack::math::RandomSeed(10);
@@ -61,7 +79,7 @@ BOOST_AUTO_TEST_CASE(SVDMomentumTest)
                               RandomInitialization(),
                               SVDBatchLearning(0.0009, 0, 0, 0.8));
 
-  size_t RMSE_2 = amf_2.Apply(cleanedData, 2, m1, m2);
+  double RMSE_2 = amf_2.Apply(cleanedData, 2, m1, m2);
   size_t iter_2 = amf_2.TerminationPolicy().Iteration();
 
   BOOST_REQUIRE_LE(RMSE_2, RMSE_1);
@@ -71,7 +89,7 @@ BOOST_AUTO_TEST_CASE(SVDMomentumTest)
 /**
  * Make sure the regularization is working okay.
  */
-BOOST_AUTO_TEST_CASE(SVDRegularizationTest)
+BOOST_AUTO_TEST_CASE(SVDBatchRegularizationTest)
 {
   mat dataset;
   data::Load("GroupLens100k.csv", dataset);
@@ -104,7 +122,7 @@ BOOST_AUTO_TEST_CASE(SVDRegularizationTest)
                               SVDBatchLearning(0.0009, 0, 0, 0));
 
   mat m1,m2;
-  size_t RMSE_1 = amf_1.Apply(cleanedData, 2, m1, m2);
+  double RMSE_1 = amf_1.Apply(cleanedData, 2, m1, m2);
 
   mlpack::math::RandomSeed(10);
   AMF<ValidationRMSETermination<sp_mat>,
@@ -113,7 +131,7 @@ BOOST_AUTO_TEST_CASE(SVDRegularizationTest)
                               RandomInitialization(),
                               SVDBatchLearning(0.0009, 0.5, 0.5, 0.8));
 
-  size_t RMSE_2 = amf_2.Apply(cleanedData, 2, m1, m2);
+  double RMSE_2 = amf_2.Apply(cleanedData, 2, m1, m2);
 
   BOOST_REQUIRE_LE(RMSE_2, RMSE_1);
 }
@@ -121,7 +139,7 @@ BOOST_AUTO_TEST_CASE(SVDRegularizationTest)
 /**
  * Make sure the SVD can factorize matrices with negative entries.
  */
-BOOST_AUTO_TEST_CASE(SVDNegativeElementTest)
+BOOST_AUTO_TEST_CASE(SVDBatchNegativeElementTest)
 {
   mat test;
   test.zeros(3,3);

@@ -100,6 +100,7 @@ class SimpleToleranceTermination
 
   const double& Index() { return residue; }
   const size_t& Iteration() { return iteration; }
+  const size_t& MaxIterations() { return maxIterations; }
 
  private:
   double tolerance;
