@@ -19,11 +19,11 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 add_subdirectory(initialization_methods)
 add_subdirectory(learning_policies)
 
-add_executable(percep
+add_executable(perceptron
   perceptron_main.cpp
 )
-target_link_libraries(percep
+target_link_libraries(perceptron
   mlpack
 )
 
-install(TARGETS percep RUNTIME DESTINATION bin)
+install(TARGETS perceptron RUNTIME DESTINATION bin)
