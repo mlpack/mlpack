@@ -16,11 +16,11 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(dec_stu
+add_executable(decision_stump
   decision_stump_main.cpp
 )
-target_link_libraries(dec_stu
+target_link_libraries(decision_stump
   mlpack
 )
 
-install(TARGETS dec_stu RUNTIME DESTINATION bin)
+install(TARGETS decision_stump RUNTIME DESTINATION bin)
