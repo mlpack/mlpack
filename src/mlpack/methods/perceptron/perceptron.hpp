@@ -53,6 +53,20 @@ class Perceptron
    */
   void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
 
+  /**
+   *
+   *
+   *
+   */
+  Perceptron(const Perceptron<>& p);
+
+  /**
+   *
+   *
+   *
+   *
+   ModifyData(MatType& data, const arma::Row<double>& D);
+   */
 private:
   //! Stores the class labels for the input data.
   arma::Row<size_t> classLabels;

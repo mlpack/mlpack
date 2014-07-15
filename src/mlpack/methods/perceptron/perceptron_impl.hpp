@@ -110,6 +110,26 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
   }
 }
 
+template <typename LearnPolicy, typename WeightInitializationPolicy, typename MatType>
+Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
+  const Perceptron<>& p)
+{
+  classLabels = p.classLabels;
+
+  weightVectors = p.weightVectors;
+
+  trainData = p.trainData;
+}
+
+/*
+template <typename LearnPolicy, typename WeightInitializationPolicy, typename MatType>
+Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::ModifyData(
+  MatType& data, const arma::Row<double>& D)
+{
+  for (int j = 0;j < data.n_cols;j++)
+      data.col(i) = D(i) * data.col(i);
+}
+*/
 }; // namespace perceptron
 }; // namespace mlpack
 
