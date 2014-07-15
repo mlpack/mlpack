@@ -104,6 +104,38 @@ void DecisionStump<MatType>::Classify(const MatType& test,
 }
 
 /**
+ *
+ *
+ *
+ *
+ *
+ */
+template <typename MatType>
+DecisionStump<MatType>::DecisionStump(const DecisionStump<>& ds)
+{
+  numClass = ds.numClass;
+
+  splitAttribute = ds.splitAttribute;
+
+  bucketSize = ds.bucketSize;
+
+  split = ds.split;
+
+  binLabels = ds.binLabels;
+}
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+template <typename MatType>
+DecisionStump<MatType>::ModifyData(MatType& data, const arma::Row<double>& D)
+ */
+
+/**
  * Sets up attribute as if it were splitting on it and finds entropy when
  * splitting on attribute.
  *

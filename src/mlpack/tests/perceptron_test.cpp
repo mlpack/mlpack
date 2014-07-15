@@ -149,4 +149,21 @@ BOOST_AUTO_TEST_CASE(NonLinearlySeparableDataset)
   BOOST_CHECK_EQUAL(predictedLabels(0, 3), 1);
 }
 
+BOOST_AUTO_TEST_CASE(SecondaryConstructor)
+{
+  mat trainData;
+  trainData << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8
+            << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << endr
+            << 1 << 1 << 1 << 1 << 1 << 1 << 1 << 1
+            << 2 << 2 << 2 << 2 << 2 << 2 << 2 << 2 << endr;
+
+  Mat<size_t> labels;
+  labels << 0 << 0 << 0 << 1 << 0 << 1 << 1 << 1
+         << 0 << 0 << 0 << 1 << 0 << 1 << 1 << 1;
+         
+  Perceptron<> p1(trainData, labels.row(0), 1000);
+
+  Perceptron<> p2(p1);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
