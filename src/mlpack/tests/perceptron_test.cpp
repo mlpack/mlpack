@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(NonLinearlySeparableDataset)
   Mat<size_t> labels;
   labels << 0 << 0 << 0 << 1 << 0 << 1 << 1 << 1
          << 0 << 0 << 0 << 1 << 0 << 1 << 1 << 1;
-  // labels.print("Here too.");
+         
   Perceptron<> p(trainData, labels.row(0), 1000);
 
   mat testData;
