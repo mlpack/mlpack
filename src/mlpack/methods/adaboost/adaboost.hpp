@@ -9,7 +9,7 @@
 #define _MLPACK_METHODS_ADABOOST_ADABOOST_HPP
 
 #include <mlpack/core.hpp>
-#include "../perceptron/main/perceptron.hpp"
+#include <mlpack/methods/perceptron/perceptron.hpp>
  
 namespace mlpack {
 namespace adaboost {

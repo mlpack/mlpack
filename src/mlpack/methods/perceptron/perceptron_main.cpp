@@ -38,8 +38,8 @@ PROGRAM_INFO("Perceptron",
 
 // Necessary parameters
 PARAM_STRING_REQ("train_file", "A file containing the training set.", "t");
-PARAM_STRING_REQ("labels_file", "A file containing labels for the training set.",
-  "l");
+PARAM_STRING("labels_file", "A file containing labels for the training set.",
+  "l","");
 PARAM_STRING_REQ("test_file", "A file containing the test set.", "T");
 
 // Optional parameters.
