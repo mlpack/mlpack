@@ -147,8 +147,8 @@ InsertPoint(const size_t point)
 
   // If this is a leaf node, we stop here and add the point.
   if (numChildren == 0) {
-    points[count++] = point;
     localDataset->col(count) = dataset.col(point);
+    points[count++] = point;
     SplitNode();
     return;
   }
@@ -174,7 +174,6 @@ DeletePoint(const size_t point)
       if (points[i] == point) {
         localDataset->col(i) = localDataset->col(--count); // decrement count
         points[i] = points[count];
-        std::cout << count << std::endl;
         CondenseTree(dataset.col(point)); // This function will ensure that minFill is satisfied.
         return true;
       }
@@ -380,6 +379,7 @@ typename StatisticType,
 typename MatType>
 void RectangleTree<SplitType, DescentType, StatisticType, MatType>::CondenseTree(const arma::vec& point)
 {
+  
   // First delete the node if we need to.  There's no point in shrinking the bound first.
   if (IsLeaf() && count < minLeafSize && parent != NULL) { //We can't delete the root node
     for (size_t i = 0; i < parent->NumChildren(); i++) {
@@ -405,6 +405,7 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::CondenseTree
     // Control should never reach here.
     assert(true == false);
   } else if (!IsLeaf() && numChildren < minNumChildren) {
+
     if (parent != NULL) { // The normal case.  We need to be careful with the root.
       for (size_t j = 0; j < parent->NumChildren(); j++) {
         if (parent->Children()[j] == this) {
@@ -430,17 +431,20 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::CondenseTree
       for (size_t i = 0; i < child->NumChildren(); i++) {
         children[i] = child->Children()[i];
       }
+      numChildren = child->NumChildren();
       for (size_t i = 0; i < child->Count(); i++) { // In case the tree has a height of two.
         points[i] = child->Points()[i];
         localDataset->col(i) = child->LocalDataset().col(i);
       }
+      count = child->Count();
       child->SoftDelete();
     }
   }
 
   // If we didn't delete it, shrink the bound if we need to.
-  if (ShrinkBoundForPoint(point))
+  if (ShrinkBoundForPoint(point) && parent != NULL) {
     parent->CondenseTree(point);
+  }
 
 }
 
@@ -455,47 +459,52 @@ bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::ShrinkBoundF
 {
   bool shrunk = false;
   if (IsLeaf()) {
-    for (size_t i = 0; i < point.n_elem; i++) {
+    for (size_t i = 0; i < bound.Dim(); i++) {
       if (bound[i].Lo() == point[i]) {
         double min = DBL_MAX;
         for (size_t j = 0; j < count; j++) {
           if (localDataset->col(j)[i] < min)
             min = localDataset->col(j)[i];
         }
-        if (bound[i].Lo() < min)
+        if (bound[i].Lo() < min) {
           shrunk = true;
-        bound[i].Lo() = min;
+          bound[i].Lo() = min;
+        } else if(min < bound[i].Lo()) {
+          assert(true == false); // we have a problem.
+        }
       } else if (bound[i].Hi() == point[i]) {
         double max = -1 * DBL_MAX;
         for (size_t j = 0; j < count; j++) {
           if (localDataset->col(j)[i] > max)
             max = localDataset->col(j)[i];
         }
-        if (bound[i].Hi() > max)
+        if (bound[i].Hi() > max) {
           shrunk = true;
-        bound[i].Hi() = max;
+          bound[i].Hi() = max;
+        } else if(max > bound[i].Hi()) {
+          assert(true == false); // we have a problem.
+        }
       }
     }
   } else {
     for (size_t i = 0; i < point.n_elem; i++) {
       if (bound[i].Lo() == point[i]) {
         double min = DBL_MAX;
+        double max = -1 * DBL_MAX;
         for (size_t j = 0; j < numChildren; j++) {
           if (children[j]->Bound()[i].Lo() < min)
             min = children[j]->Bound()[i].Lo();
-        }
-        if (bound[i].Lo() < min)
-          shrunk = true;
-        bound[i].Lo() = min;
-      } else if (bound[i].Hi() == point[i]) {
-        double max = -1 * DBL_MAX;
-        for (size_t j = 0; j < numChildren; j++) {
           if (children[j]->Bound()[i].Hi() > max)
             max = children[j]->Bound()[i].Hi();
         }
-        if (bound[i].Hi() > max)
+        if (bound[i].Lo() < min) {
           shrunk = true;
-        bound[i].Hi() = max;
+          bound[i].Lo() = min;
+        }
+        if (bound[i].Hi() > max) {
+          shrunk = true;
+          bound[i].Hi() = max;
+        }
       }
     }
   }
@@ -524,7 +533,8 @@ bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::ShrinkBoundF
   double sum2 = 0;
   for (size_t i = 0; i < bound.Dim(); i++)
     sum2 += bound[i].Width();
-  return sum == sum2;
+  
+  return sum != sum2;
 }
 
 /**
@@ -562,25 +572,25 @@ std::string RectangleTree<SplitType, DescentType, StatisticType, MatType>::ToStr
 {
   std::ostringstream convert;
   convert << "RectangleTree [" << this << "]" << std::endl;
-  convert << "  First point: " << begin << std::endl;
-  convert << "  Number of descendants: " << numChildren << std::endl;
-  convert << "  Number of points: " << count << std::endl;
-  convert << "  Bound: " << std::endl;
-  convert << mlpack::util::Indent(bound.ToString(), 2);
-  convert << "  Statistic: " << std::endl;
-  //convert << mlpack::util::Indent(stat.ToString(), 2);
-  convert << "  Max leaf size: " << maxLeafSize << std::endl;
-  convert << "  Min leaf size: " << minLeafSize << std::endl;
-  convert << "  Max num of children: " << maxNumChildren << std::endl;
-  convert << "  Min num of children: " << minNumChildren << std::endl;
-  convert << "  Parent address: " << parent << std::endl;
-
-  // How many levels should we print?  This will print 3 levels (counting the root).
-  if (parent == NULL || parent->Parent() == NULL) {
-    for (int i = 0; i < numChildren; i++) {
-      convert << children[i]->ToString();
-    }
-  }
+//  convert << "  First point: " << begin << std::endl;
+//  convert << "  Number of descendants: " << numChildren << std::endl;
+//  convert << "  Number of points: " << count << std::endl;
+//  convert << "  Bound: " << std::endl;
+//  convert << mlpack::util::Indent(bound.ToString(), 2);
+//  convert << "  Statistic: " << std::endl;
+//  //convert << mlpack::util::Indent(stat.ToString(), 2);
+//  convert << "  Max leaf size: " << maxLeafSize << std::endl;
+//  convert << "  Min leaf size: " << minLeafSize << std::endl;
+//  convert << "  Max num of children: " << maxNumChildren << std::endl;
+//  convert << "  Min num of children: " << minNumChildren << std::endl;
+//  convert << "  Parent address: " << parent << std::endl;
+//
+//  // How many levels should we print?  This will print 3 levels (counting the root).
+//  if (parent == NULL || parent->Parent() == NULL) {
+//    for (int i = 0; i < numChildren; i++) {
+//      convert << children[i]->ToString();
+//    }
+//  }
   return convert.str();
 }
 
