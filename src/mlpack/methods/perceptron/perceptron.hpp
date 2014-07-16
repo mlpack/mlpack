@@ -58,16 +58,12 @@ class Perceptron
    *
    *
    */
-  Perceptron(const Perceptron<>& p);
+  Perceptron(const Perceptron<>& other, MatType& data, const arma::Row<double>& D, const arma::Row<size_t>& labels);
 
-  /**
-   *
-   *
-   *
-   *
-   ModifyData(MatType& data, const arma::Row<double>& D);
-   */
 private:
+  //! To store the number of iterations
+  size_t iter;
+
   //! Stores the class labels for the input data.
   arma::Row<size_t> classLabels;
 
@@ -76,6 +72,12 @@ private:
 
   //! Stores the training data to be used later on in UpdateWeights.
   arma::mat trainData;
+
+  /**
+   * Train function.
+   *
+   */
+  void Train();
 };
 
 } // namespace perceptron
