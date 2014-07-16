@@ -45,44 +45,10 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
   zOnes.fill(1);
   trainData.insert_rows(0, zOnes);
 
-  int j, i = 0;
-  bool converged = false;
-  size_t tempLabel;
-  arma::uword maxIndexRow, maxIndexCol;
-  arma::mat tempLabelMat;
-
-  LearnPolicy LP;
-
-  while ((i < iterations) && (!converged))
-  {
-    // This outer loop is for each iteration, and we use the 'converged'
-    // variable for noting whether or not convergence has been reached.
-    i++;
-    converged = true;
-
-    // Now this inner loop is for going through the dataset in each iteration.
-    for (j = 0; j < data.n_cols; j++)
-    {
-      // Multiply for each variable and check whether the current weight vector
-      // correctly classifies this.
-      tempLabelMat = weightVectors * trainData.col(j);
-
-      tempLabelMat.max(maxIndexRow, maxIndexCol);
-      
-      // Check whether prediction is correct.
-      if (maxIndexRow != classLabels(0, j))
-      {
-        // Due to incorrect prediction, convergence set to false.
-        converged = false;
-        tempLabel = labels(0, j);
-        // Send maxIndexRow for knowing which weight to update, send j to know
-        // the value of the vector to update it with.  Send tempLabel to know
-        // the correct class.
-        LP.UpdateWeights(trainData, weightVectors, j, tempLabel, maxIndexRow);
-      }
-    }
-  }
+  iter = iterations;
+  Train();
 }
+
 
 /**
  * Classification function. After training, use the weightVectors matrix to
@@ -112,24 +78,70 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
 
 template <typename LearnPolicy, typename WeightInitializationPolicy, typename MatType>
 Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
-  const Perceptron<>& p)
+  const Perceptron<>& other, MatType& data, const arma::Row<double>& D, const arma::Row<size_t>& labels)
 {
-  classLabels = p.classLabels;
+  int i;
+  //transform data, as per rules for perceptron
+  for (i = 0;i < data.n_cols; i++)
+    data.col(i) = D(i) * data.col(i);
 
-  weightVectors = p.weightVectors;
+  classLabels = labels;
+  trainData = data;
+  iter = other.iter;
 
-  trainData = p.trainData;
+  Train();
 }
 
-/*
-template <typename LearnPolicy, typename WeightInitializationPolicy, typename MatType>
-Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::ModifyData(
-  MatType& data, const arma::Row<double>& D)
+/**
+ *  Training Function. 
+ *
+ */
+template<
+    typename LearnPolicy,
+    typename WeightInitializationPolicy,
+    typename MatType
+>
+void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train()
 {
-  for (int j = 0;j < data.n_cols;j++)
-      data.col(i) = D(i) * data.col(i);
+  int j, i = 0;
+  bool converged = false;
+  size_t tempLabel;
+  arma::uword maxIndexRow, maxIndexCol;
+  arma::mat tempLabelMat;
+
+  LearnPolicy LP;
+
+  while ((i < iter) && (!converged))
+  {
+    // This outer loop is for each iteration, and we use the 'converged'
+    // variable for noting whether or not convergence has been reached.
+    i++;
+    converged = true;
+
+    // Now this inner loop is for going through the dataset in each iteration.
+    for (j = 0; j < trainData.n_cols; j++)
+    {
+      // Multiply for each variable and check whether the current weight vector
+      // correctly classifies this.
+      tempLabelMat = weightVectors * trainData.col(j);
+
+      tempLabelMat.max(maxIndexRow, maxIndexCol);
+      
+      // Check whether prediction is correct.
+      if (maxIndexRow != classLabels(0, j))
+      {
+        // Due to incorrect prediction, convergence set to false.
+        converged = false;
+        tempLabel = classLabels(0, j);
+        // Send maxIndexRow for knowing which weight to update, send j to know
+        // the value of the vector to update it with.  Send tempLabel to know
+        // the correct class.
+        LP.UpdateWeights(trainData, weightVectors, j, tempLabel, maxIndexRow);
+      }
+    }
+  }
 }
-*/
+
 }; // namespace perceptron
 }; // namespace mlpack
 

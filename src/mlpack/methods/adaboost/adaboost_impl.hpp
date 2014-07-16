@@ -20,6 +20,9 @@ Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data, const arma::Row<si
 {
   int j, i;
   
+  // note: put a fail safe for classes or remove it entirely
+  // by using unique function.
+
   // load the initial weights
   
   const double initWeight = 1 / (data.n_cols * classes);
@@ -34,14 +37,9 @@ Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data, const arma::Row<si
   {
     rt = 0.0;
     zt = 0.0;
-
-    //transform data, as per rules for perceptron
-    for (j = 0;j < tempData.n_cols;j++)
-      tempData.col(i) = D(i) * tempData.col(i);
-
-    // for now, perceptron initialized with default parameters
-    //mlpack::perceptron::Perceptron<> p(tempData, labels, 1000);
-    WeakLearner w(other);
+    
+    // call the other weak learner and train the labels.
+    WeakLearner w(other, tempData, D, labels);
     w.Classify(tempData, predictedLabels);
 
     // Now, start calculation of alpha(t)
