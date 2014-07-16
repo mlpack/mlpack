@@ -32,6 +32,35 @@ class SimpleToleranceTermination
 
   bool IsConverged(arma::mat& W, arma::mat& H)
   {
+    // Calculate norm of WH after each iteration.
+    arma::mat WH;
+
+    WH = W * H;
+
+    residueOld = residue;
+    size_t n = V->n_rows;
+    size_t m = V->n_cols;
+    double sum = 0;
+    size_t count = 0;
+    for(size_t i = 0;i < n;i++)
+    {
+        for(size_t j = 0;j < m;j++)
+        {
+            double temp = 0;
+            if((temp = (*V)(i,j)) != 0)
+            {
+                temp = (temp - WH(i, j));
+                temp = temp * temp;
+                sum += temp;
+                count++;
+            }
+        }
+    }
+    residue = sum / count;
+    residue = sqrt(residue);
+
+    iteration++;  
+  
     if((residueOld - residue) / residueOld < tolerance && iteration > 4)
     {
       if(reverseStepCount == 0 && isCopy == false)
@@ -64,38 +93,6 @@ class SimpleToleranceTermination
       return true;
     }
     else return false;
-  }
-
-  void Step(const arma::mat& W, const arma::mat& H)
-  {
-    // Calculate norm of WH after each iteration.
-    arma::mat WH;
-
-    WH = W * H;
-
-    residueOld = residue;
-    size_t n = V->n_rows;
-    size_t m = V->n_cols;
-    double sum = 0;
-    size_t count = 0;
-    for(size_t i = 0;i < n;i++)
-    {
-        for(size_t j = 0;j < m;j++)
-        {
-            double temp = 0;
-            if((temp = (*V)(i,j)) != 0)
-            {
-                temp = (temp - WH(i, j));
-                temp = temp * temp;
-                sum += temp;
-                count++;
-            }
-        }
-    }
-    residue = sum / count;
-    residue = sqrt(residue);
-
-    iteration++;
   }
 
   const double& Index() { return residue; }

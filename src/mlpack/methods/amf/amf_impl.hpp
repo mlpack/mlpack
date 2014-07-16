@@ -55,11 +55,9 @@ Apply(const MatType& V,
     // Update the values of W and H based on the update rules provided.
     update.WUpdate(V, W, H);
     update.HUpdate(V, W, H);
-
-    terminationPolicy.Step(W, H);
   }
 
-  const double residue = sqrt(terminationPolicy.Index());
+  const double residue = terminationPolicy.Index();
   const size_t iteration = terminationPolicy.Iteration();
 
   Log::Info << "AMF converged to residue of " << residue << " in "
