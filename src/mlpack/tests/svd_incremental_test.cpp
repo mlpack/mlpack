@@ -4,6 +4,7 @@
 #include <mlpack/methods/amf/init_rules/random_init.hpp>
 #include <mlpack/methods/amf/termination_policies/incomplete_incremental_termination.hpp>
 #include <mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp>
+#include <mlpack/methods/amf/termination_policies/validation_RMSE_termination.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -35,7 +36,7 @@ BOOST_AUTO_TEST_CASE(SVDIncrementalConvergenceTest)
                     amf.TerminationPolicy().MaxIterations());
 }
 
-/*
+
 BOOST_AUTO_TEST_CASE(SVDIncrementalRegularizationTest)
 {
   mat dataset;
@@ -78,14 +79,12 @@ BOOST_AUTO_TEST_CASE(SVDIncrementalRegularizationTest)
       RandomInitialization,
       SVDIncrementalLearning> amf_2(vrt2,
                               RandomInitialization(),
-                              SVDIncrementalLearning(0.001, 1e-5, 2e-5));
+                              SVDIncrementalLearning(0.001, 0.01, 0.01));
 
   mat m3, m4;
   double RMSE_2 = amf_2.Apply(cleanedData2, 2, m3, m4);
-
-  // RMSE_2 should be less than RMSE_1
-  std::cout << RMSE_1 << " " << RMSE_2 << std::endl;
+  
+  BOOST_REQUIRE_LT(RMSE_2, RMSE_1);
 }
-*/
 
 BOOST_AUTO_TEST_SUITE_END();

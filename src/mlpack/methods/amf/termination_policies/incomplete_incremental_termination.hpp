@@ -28,13 +28,10 @@ class IncompleteIncrementalTermination
 
   bool IsConverged(arma::mat& W, arma::mat& H)
   {
-    return t_policy.IsConverged(W, H);
-  }
-
-  void Step(const arma::mat& W, const arma::mat& H)
-  {
-    if(iteration % incrementalIndex == 0) t_policy.Step(W, H);
     iteration++;
+    if(iteration % incrementalIndex == 0)  
+      return t_policy.IsConverged(W, H);
+    else return false;
   }
 
   const double& Index()
