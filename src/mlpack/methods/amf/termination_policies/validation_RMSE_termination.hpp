@@ -56,6 +56,30 @@ class ValidationRMSETermination
 
   bool IsConverged(arma::mat& W, arma::mat& H)
   {
+    // Calculate norm of WH after each iteration.
+    arma::mat WH;
+
+    WH = W * H;
+
+    if (iteration != 0)
+    {
+      rmseOld = rmse;
+      rmse = 0;
+      for(size_t i = 0; i < num_test_points; i++)
+      {
+        size_t t_row = test_points(i, 0);
+        size_t t_col = test_points(i, 1);
+        double t_val = test_points(i, 2);
+        double temp = (t_val - WH(t_row, t_col));
+        temp *= temp;
+        rmse += temp;
+      }
+      rmse /= num_test_points;
+      rmse = sqrt(rmse);
+    }
+
+    iteration++;
+  
     if((rmseOld - rmse) / rmseOld < tolerance && iteration > 4)
     {
       if(reverseStepCount == 0 && isCopy == false)
@@ -89,34 +113,7 @@ class ValidationRMSETermination
     }
     else return false;
   }
-
-  void Step(const arma::mat& W, const arma::mat& H)
-  {
-    // Calculate norm of WH after each iteration.
-    arma::mat WH;
-
-    WH = W * H;
-
-    if (iteration != 0)
-    {
-      rmseOld = rmse;
-      rmse = 0;
-      for(size_t i = 0; i < num_test_points; i++)
-      {
-        size_t t_row = test_points(i, 0);
-        size_t t_col = test_points(i, 1);
-        double t_val = test_points(i, 2);
-        double temp = (t_val - WH(t_row, t_col));
-        temp *= temp;
-        rmse += temp;
-      }
-      rmse /= num_test_points;
-      rmse = sqrt(rmse);
-    }
-
-    iteration++;
-  }
-
+  
   const double& Index() { return rmse; }
 
   const size_t& Iteration() { return iteration; }

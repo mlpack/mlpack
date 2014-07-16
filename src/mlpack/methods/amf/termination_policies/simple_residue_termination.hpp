@@ -32,14 +32,6 @@ class SimpleResidueTermination
 
   bool IsConverged(arma::mat& W, arma::mat& H)
   {
-    (void)W;
-    (void)H;
-    if(residue < minResidue || iteration > maxIterations) return true;
-    else return false;
-  }
-
-  void Step(const arma::mat& W, const arma::mat& H)
-  {
     // Calculate norm of WH after each iteration.
     arma::mat WH;
 
@@ -55,6 +47,9 @@ class SimpleResidueTermination
     normOld = norm;
 
     iteration++;
+    
+    if(residue < minResidue || iteration > maxIterations) return true;
+    else return false;
   }
 
   const double& Index() { return residue; }

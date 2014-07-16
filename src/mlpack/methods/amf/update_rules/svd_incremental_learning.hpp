@@ -49,7 +49,7 @@ class SVDIncrementalLearning
       if((val = V(i, currentUserIndex)) != 0)
         deltaW.row(i) += (val - arma::dot(W.row(i), H.col(currentUserIndex))) *
                                          arma::trans(H.col(currentUserIndex));
-      if(kw != 0) deltaW -= kw * W.row(i);
+      if(kw != 0) deltaW.row(i) -= kw * W.row(i);
     }
 
     W += u*deltaW;
@@ -112,7 +112,7 @@ inline void SVDIncrementalLearning::WUpdate<arma::sp_mat>(const arma::sp_mat& V,
     size_t i = it.row();
     deltaW.row(i) += (val - arma::dot(W.row(i), H.col(currentUserIndex))) *
                                          arma::trans(H.col(currentUserIndex));
-    if(kw != 0) deltaW -= kw * W.row(i);
+    if(kw != 0) deltaW.row(i) -= kw * W.row(i);
   }
 
   W += u*deltaW;
