@@ -115,7 +115,7 @@ class RectangleTree
    *
    * @param parentNode The parent of the node that is being constructed.
    */
-  RectangleTree(RectangleTree<SplitType, DescentType, StatisticType, MatType>* parentNode);
+  explicit RectangleTree(RectangleTree<SplitType, DescentType, StatisticType, MatType>* parentNode);
 
 
   //TODO implement the oldFromNew stuff if applicable.
