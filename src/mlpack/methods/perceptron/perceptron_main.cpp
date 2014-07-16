@@ -13,7 +13,7 @@ using namespace mlpack::perceptron;
 using namespace std;
 using namespace arma;
 
-PROGRAM_INFO("","");
+PROGRAM_INFO("Perceptron","");
 
 //necessary parameters
 PARAM_STRING_REQ("train_file", "A file containing the training set.", "tr");
