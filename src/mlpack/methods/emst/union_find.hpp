@@ -40,12 +40,13 @@ namespace emst {
 class UnionFind
 {
  private:
+  size_t size;
   arma::Col<size_t> parent;
   arma::ivec rank;
 
  public:
   //! Construct the object with the given size.
-  UnionFind(const size_t size) : parent(size), rank(size)
+  UnionFind(const size_t size) : size(size), parent(size), rank(size)
   {
     for (size_t i = 0; i < size; ++i)
     {
