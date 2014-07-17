@@ -5,6 +5,7 @@ set(SOURCES
   simple_tolerance_termination.hpp
   validation_rmse_termination.hpp
   incomplete_incremental_termination.hpp
+  complete_incremental_termination.hpp
 )
 
 # Add directory name to sources.
