@@ -34,8 +34,11 @@ DualTreeTraverser<RuleType>::Traverse(
   DualCoverTreeMapEntry rootRefEntry;
 
   rootRefEntry.referenceNode = &referenceNode;
-  rootRefEntry.score = 0.0; // Must recurse into.
-  rootRefEntry.baseCase = 0.0;
+
+  // Perform the evaluation between the roots of either tree.
+  rootRefEntry.score = rule.Score(queryNode, referenceNode);
+  rootRefEntry.baseCase = rule.BaseCase(queryNode.Point(),
+      referenceNode.Point());
   rootRefEntry.traversalInfo = rule.TraversalInfo();
 
   refMap[referenceNode.Scale()].push_back(rootRefEntry);
