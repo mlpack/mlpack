@@ -5,15 +5,13 @@ namespace mlpack
 {
 namespace amf
 {
-class SVDIncrementalLearning
+class SVDIncompleteIncrementalLearning
 {
  public:
-  SVDIncrementalLearning(double u = 0.001,
-                   double kw = 0,
-                   double kh = 0,
-                   double min = -DBL_MIN,
-                   double max = DBL_MAX)
-        : u(u), kw(kw), kh(kh), min(min), max(max)
+  SVDIncompleteIncrementalLearning(double u = 0.001,
+                                   double kw = 0,
+                                   double kh = 0)
+          : u(u), kw(kw), kh(kh)
     {}
 
   template<typename MatType>
@@ -89,8 +87,6 @@ class SVDIncrementalLearning
   double u;
   double kw;
   double kh;
-  double min;
-  double max;
 
   size_t n;
   size_t m;
@@ -99,7 +95,8 @@ class SVDIncrementalLearning
 };
 
 template<>
-inline void SVDIncrementalLearning::WUpdate<arma::sp_mat>(const arma::sp_mat& V,
+inline void SVDIncompleteIncrementalLearning::
+                                    WUpdate<arma::sp_mat>(const arma::sp_mat& V,
                                                           arma::mat& W,
                                                           const arma::mat& H)
 {
@@ -119,7 +116,8 @@ inline void SVDIncrementalLearning::WUpdate<arma::sp_mat>(const arma::sp_mat& V,
 }
 
 template<>
-inline void SVDIncrementalLearning::HUpdate<arma::sp_mat>(const arma::sp_mat& V,
+inline void SVDIncompleteIncrementalLearning::
+                              HUpdate<arma::sp_mat>(const arma::sp_mat& V,
                                                     const arma::mat& W,
                                                     arma::mat& H)
 {

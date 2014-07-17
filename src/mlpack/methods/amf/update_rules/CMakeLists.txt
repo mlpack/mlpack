@@ -5,7 +5,8 @@ set(SOURCES
   nmf_mult_dist.hpp
   nmf_mult_div.hpp
   svd_batch_learning.hpp
-  svd_incremental_learning.hpp
+  svd_incomplete_incremental_learning.hpp
+  svd_complete_incremental_learning.hpp
 )
 
 # Add directory name to sources.
