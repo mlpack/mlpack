@@ -27,8 +27,7 @@ public:
 
 /**
  * Split a leaf node using the "default" algorithm.  If necessary, this split will propagate
- * upwards through the tree.  The methods for splitting non-leaf nodes are private since
- * they should only be called if a leaf node overflows.
+ * upwards through the tree.
  */
 static void SplitLeafNode(RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree);
 
