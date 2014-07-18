@@ -209,15 +209,15 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest) {
   arma::Mat<size_t> neighbors2;
   arma::mat distances2;
 
-  RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
-          tree::RTreeDescentHeuristic,
+  RectangleTree<tree::RTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+          tree::RStarTreeDescentHeuristic,
           NeighborSearchStat<NearestNeighborSort>,
           arma::mat> RTree(dataset, 20, 6, 5, 2, 0);
 
   // nearest neighbor search with the R tree.
   mlpack::neighbor::NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
-          RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
-          tree::RTreeDescentHeuristic,
+          RectangleTree<tree::RTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+          tree::RStarTreeDescentHeuristic,
           NeighborSearchStat<NearestNeighborSort>,
           arma::mat> > allknn1(&RTree,
           dataset, true);

@@ -40,6 +40,8 @@ set(SOURCES
   rectangle_tree/r_tree_split_impl.hpp
   rectangle_tree/r_tree_descent_heuristic.hpp
   rectangle_tree/r_tree_descent_heuristic_impl.hpp
+  rectangle_tree/r_star_tree_descent_heuristic.hpp
+  rectangle_tree/r_star_tree_descent_heuristic_impl.hpp
   statistic.hpp
   traversal_info.hpp
   tree_traits.hpp
