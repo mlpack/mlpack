@@ -31,6 +31,7 @@ set(DIRS
   regularized_svd
   sparse_autoencoder
   sparse_coding
+  nystroem_method
 )
 
 foreach(dir ${DIRS})
