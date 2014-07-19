@@ -3,7 +3,7 @@
  * @author Ajinkya Kale
  * @author Marcus Edel
  *
- * Implementation of KernelPCA class to perform Kernel Principal Components
+ * Implementation of Kernel PCA class to perform Kernel Principal Components
  * Analysis on the specified data set.
  */
 #ifndef __MLPACK_METHODS_KERNEL_PCA_KERNEL_PCA_IMPL_HPP
@@ -12,54 +12,26 @@
 // In case it hasn't already been included.
 #include "kernel_pca.hpp"
 
-#include <iostream>
-
 namespace mlpack {
 namespace kpca {
 
-template <typename KernelType>
-arma::mat GetKernelMatrix(KernelType kernel, arma::mat transData);
-
-template <typename KernelType>
-KernelPCA<KernelType>::KernelPCA(const KernelType kernel,
+template <typename KernelType, typename KernelRule>
+KernelPCA<KernelType, KernelRule>::KernelPCA(const KernelType kernel,
                                  const bool centerTransformedData) :
       kernel(kernel),
       centerTransformedData(centerTransformedData)
 { }
 
 //! Apply Kernel Principal Component Analysis to the provided data set.
-template <typename KernelType>
-void KernelPCA<KernelType>::Apply(const arma::mat& data,
+template <typename KernelType, typename KernelRule>
+void KernelPCA<KernelType, KernelRule>::Apply(const arma::mat& data,
                                   arma::mat& transformedData,
                                   arma::vec& eigval,
-                                  arma::mat& eigvec)
+                                  arma::mat& eigvec,
+                                  const size_t newDimension)
 {
-  // Construct the kernel matrix.
-  arma::mat kernelMatrix;
-  GetKernelMatrix(data, kernelMatrix);
-
-  // For PCA the data has to be centered, even if the data is centered.  But it
-  // is not guaranteed that the data, when mapped to the kernel space, is also
-  // centered. Since we actually never work in the feature space we cannot
-  // center the data. So, we perform a "psuedo-centering" using the kernel
-  // matrix.
-  arma::rowvec rowMean = arma::sum(kernelMatrix, 0) / kernelMatrix.n_cols;
-  kernelMatrix.each_col() -= arma::sum(kernelMatrix, 1) / kernelMatrix.n_cols;
-  kernelMatrix.each_row() -= rowMean;
-  kernelMatrix += arma::sum(rowMean) / kernelMatrix.n_cols;
-
-  // Eigendecompose the centered kernel matrix.
-  arma::eig_sym(eigval, eigvec, kernelMatrix);
-
-  // Swap the eigenvalues since they are ordered backwards (we need largest to
-  // smallest).
-  for (size_t i = 0; i < floor(eigval.n_elem / 2.0); ++i)
-    eigval.swap_rows(i, (eigval.n_elem - 1) - i);
-
-  // Flip the coefficients to produce the same effect.
-  eigvec = arma::fliplr(eigvec);
-
-  transformedData = eigvec.t() * kernelMatrix;
+  KernelRule::ApplyKernelMatrix(data, transformedData, eigval,
+                                eigvec, newDimension, kernel);
 
   // Center the transformed data, if the user asked for it.
   if (centerTransformedData)
@@ -71,58 +43,42 @@ void KernelPCA<KernelType>::Apply(const arma::mat& data,
 }
 
 //! Apply Kernel Principal Component Analysis to the provided data set.
-template <typename KernelType>
-void KernelPCA<KernelType>::Apply(const arma::mat& data,
+template <typename KernelType, typename KernelRule>
+void KernelPCA<KernelType, KernelRule>::Apply(const arma::mat& data,
+                                  arma::mat& transformedData,
+                                  arma::vec& eigval,
+                                  arma::mat& eigvec)
+{
+  Apply(data, transformedData, eigval, eigvec, data.n_cols);
+}
+
+//! Apply Kernel Principal Component Analysis to the provided data set.
+template <typename KernelType, typename KernelRule>
+void KernelPCA<KernelType, KernelRule>::Apply(const arma::mat& data,
                                   arma::mat& transformedData,
                                   arma::vec& eigVal)
 {
   arma::mat coeffs;
-  Apply(data, transformedData, eigVal, coeffs);
+  Apply(data, transformedData, eigVal, coeffs, data.n_cols);
 }
 
 //! Use KPCA for dimensionality reduction.
-template <typename KernelType>
-void KernelPCA<KernelType>::Apply(arma::mat& data, const size_t newDimension)
+template <typename KernelType, typename KernelRule>
+void KernelPCA<KernelType, KernelRule>::Apply(arma::mat& data,
+                                    const size_t newDimension)
 {
   arma::mat coeffs;
   arma::vec eigVal;
 
-  Apply(data, data, eigVal, coeffs);
+  Apply(data, data, eigVal, coeffs, newDimension);
 
   if (newDimension < coeffs.n_rows && newDimension > 0)
     data.shed_rows(newDimension, data.n_rows - 1);
 }
 
-//! Construct the kernel matrix.
-template <typename KernelType>
-void KernelPCA<KernelType>::GetKernelMatrix(const arma::mat& data,
-                                            arma::mat& kernelMatrix)
-{
-  // Resize the kernel matrix to the right size.
-  kernelMatrix.set_size(data.n_cols, data.n_cols);
-
-  // Note that we only need to calculate the upper triangular part of the kernel
-  // matrix, since it is symmetric.  This helps minimize the number of kernel
-  // evaluations.
-  for (size_t i = 0; i < data.n_cols; ++i)
-  {
-    for (size_t j = i; j < data.n_cols; ++j)
-    {
-      // Evaluate the kernel on these two points.
-      kernelMatrix(i, j) = kernel.Evaluate(data.unsafe_col(i),
-                                           data.unsafe_col(j));
-    }
-  }
-
-  // Copy to the lower triangular part of the matrix.
-  for (size_t i = 1; i < data.n_cols; ++i)
-    for (size_t j = 0; j < i; ++j)
-      kernelMatrix(i, j) = kernelMatrix(j, i);
-}
-
 // Returns a String of the Object
-template <typename KernelType>
-std::string KernelPCA<KernelType>::ToString() const
+template <typename KernelType, typename KernelRule>
+std::string KernelPCA<KernelType, KernelRule>::ToString() const
 {
   std::ostringstream convert;
   convert << "KernelPCA [" << this << "]" << std::endl;

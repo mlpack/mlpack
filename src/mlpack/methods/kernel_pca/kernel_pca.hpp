@@ -1,6 +1,7 @@
 /**
  * @file kernel_pca.hpp
  * @author Ajinkya Kale
+ * @author Marcus Edel
  *
  * Defines the KernelPCA class to perform Kernel Principal Components Analysis
  * on the specified data set.
@@ -9,7 +10,7 @@
 #define __MLPACK_METHODS_KERNEL_PCA_KERNEL_PCA_HPP
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/kernels/linear_kernel.hpp>
+#include <mlpack/methods/kernel_pca/kernel_rules/naive_method.hpp>
 
 namespace mlpack {
 namespace kpca {
@@ -27,7 +28,10 @@ namespace kpca {
  * files in mlpack/core/kernels/) and it is easy to write your own; see other
  * implementations for examples.
  */
-template <typename KernelType>
+template <
+  typename KernelType,
+  typename KernelRule = NaiveKernelRule<KernelType>
+>
 class KernelPCA
 {
  public:
@@ -38,9 +42,25 @@ class KernelPCA
    * much).
    *
    * @param kernel Kernel to be used for computation.
+   * @param centerTransformedData Center transformed data.
    */
   KernelPCA(const KernelType kernel = KernelType(),
             const bool centerTransformedData = false);
+
+  /**
+   * Apply Kernel Principal Components Analysis to the provided data set.
+   *
+   * @param data Data matrix.
+   * @param transformedData Matrix to output results into.
+   * @param eigval KPCA eigenvalues will be written to this vector.
+   * @param eigvec KPCA eigenvectors will be written to this matrix.
+   * @param newDimension New dimension for the dataset.
+   */
+  void Apply(const arma::mat& data,
+             arma::mat& transformedData,
+             arma::vec& eigval,
+             arma::mat& eigvec,
+             const size_t newDimension);
 
   /**
    * Apply Kernel Principal Components Analysis to the provided data set.
@@ -90,7 +110,6 @@ class KernelPCA
   bool CenterTransformedData() const { return centerTransformedData; }
   //! Return whether or not the transformed data is centered.
   bool& CenterTransformedData() { return centerTransformedData; }
-
    
   // Returns a string representation of this object. 
   std::string ToString() const;
@@ -101,14 +120,6 @@ class KernelPCA
   //! If true, the data will be scaled (by standard deviation) when Apply() is
   //! run.
   bool centerTransformedData;
-
-  /**
-   * Construct the kernel matrix.
-   *
-   * @param data Input data points.
-   * @param kernelMatrix Matrix to store the constructed kernel matrix in.
-   */
-  void GetKernelMatrix(const arma::mat& data, arma::mat& kernelMatrix);
 
 }; // class KernelPCA
 
