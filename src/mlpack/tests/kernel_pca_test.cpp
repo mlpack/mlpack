@@ -6,8 +6,8 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
-#include <mlpack/methods/kernel_pca/kernel_pca.hpp>
 #include <mlpack/methods/kernel_pca/kernel_rules/nystroem_method.hpp>
+#include <mlpack/methods/kernel_pca/kernel_pca.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
