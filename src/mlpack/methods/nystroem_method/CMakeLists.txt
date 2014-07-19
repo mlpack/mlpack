@@ -1,8 +1,11 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-  kernel_pca.hpp
-  kernel_pca_impl.hpp
+  nystroem_method.hpp
+  nystroem_method_impl.hpp
+  ordered_selection.hpp
+  random_selection.hpp
+  kmeans_selection.hpp
 )
 
 # Add directory name to sources.
@@ -13,13 +16,3 @@ endforeach()
 # Append sources (with directory name) to list of all MLPACK sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-add_subdirectory(kernel_rules)
-
-add_executable(kernel_pca
-  kernel_pca_main.cpp
-)
-target_link_libraries(kernel_pca
-  mlpack
-)
-install(TARGETS kernel_pca RUNTIME DESTINATION bin)
