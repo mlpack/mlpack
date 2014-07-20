@@ -21,6 +21,11 @@ class Adaboost
 public:
   Adaboost(const MatType& data, const arma::Row<size_t>& labels,
            int iterations, size_t classes, const WeakLearner& other);
+
+  void buildClassificationMatrix(arma::mat& t, const arma::Row<size_t>& l);
+
+  void buildWeightMatrix(const arma::mat& D, arma::rowvec& weights);
+
 }; // class Adaboost
 
 } // namespace adaboost

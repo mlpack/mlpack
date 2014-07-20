@@ -2,7 +2,7 @@
  * @file adaboost_impl.hpp
  * @author Udit Saxena
  *
- * Implementation of the AdaBoost class
+ * Implementation of the Adaboost class
  *
  */
 
@@ -13,115 +13,181 @@
 
 namespace mlpack {
 namespace adaboost {
-
-//
-// Currently this is an implementation of adaboost.m1
-// which will be templatized later and adaboost.mh and
-// adaboost.samme will be added.
-// 
-
+/**
+ *  Constructor. Currently runs the Adaboost.mh algorithm
+ *  
+ *  @param data Input data
+ *  @param labels Corresponding labels
+ *  @param iterations Number of boosting rounds 
+ *  @param classes Number of classes in labels
+ *  @param other Weak Learner, which has been initialized already
+ */
 template<typename MatType, typename WeakLearner>
-Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data, const arma::Row<size_t>& labels,
-         int iterations, size_t classes, const WeakLearner& other)
+Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data, 
+        const arma::Row<size_t>& labels, int iterations, 
+        size_t classes, const WeakLearner& other)
 {
-  int j, i;
+  // note: put a fail safe for the variable 'classes' or 
+  // remove it entirely by using unique function.
+  int i, j, k;
+  double rt, alphat = 0.0, zt;
   
-  // note: put a fail safe for classes or remove it entirely
-  // by using unique function.
-
-  // load the initial weights
-  
-  const double initWeight = 1 / (data.n_cols * classes);
-  arma::rowvec D(data.n_cols);
-  D.fill(initWeight);
-
-  size_t countMP; // for counting mispredictions.
-  double rt, alphat = 0.0, zt, et;
+  // To be used for prediction by the Weak Learner for prediction.
   arma::Row<size_t> predictedLabels(labels.n_cols);
+  
+  // Use tempData to modify input Data for incorporating weights.
   MatType tempData(data);
   
-  // This behaves as ht(x)
-  arma::rowvec mispredict(predictedLabels.n_cols);
+  // Build the classification Matrix yt from labels
+  arma::mat yt(predictedLabels.n_cols, classes);
+  
+  // Build a classification matrix of the form D(i,l)
+  // where i is the ith instance
+  // l is the lth class.
+  buildClassificationMatrix(yt, labels);
+  
+  // ht(x), to be loaded after a round of prediction every time the weak
+  // learner is run, by using the buildClassificationMatrix function
+  arma::mat ht(predictedLabels.n_cols, classes);
 
-  arma::mat sumFinalH(data.n_cols, classes);
+  // This matrix is a helper matrix used to calculate the final hypothesis.
+  arma::mat sumFinalH(predictedLabels.n_cols, classes);
   sumFinalH.fill(0.0);
+  
+  // load the initial weights into a 2-D matrix
+  const double initWeight = 1 / (data.n_cols * classes);
+  arma::mat D(data.n_cols, classes);
+  D.fill(initWeight);
 
-  arma::rowvec finalH(labels.n_cols);
+  // Weights are to be compressed into this rowvector
+  // for focussing on the perceptron weights.
+  arma::rowvec weights(predictedLabels.n_cols);
+
+  // This is the final hypothesis.
+  arma::rowvec finalH(predictedLabels.n_cols);
+
   // now start the boosting rounds
   for (i = 0; i < iterations; i++)
   {
-    countMP = 0;
-    rt = 0.0;
+    // Initialized to zero in every round.
+    rt = 0.0; 
     zt = 0.0;
     
+    // Build the weight vectors
+    buildWeightMatrix(D, weights);
+    
     // call the other weak learner and train the labels.
-    WeakLearner w(other, tempData, D, labels);
+    WeakLearner w(other, tempData, weights, labels);
     w.Classify(tempData, predictedLabels);
 
-    // Now, start calculation of alpha(t)
+    //Now from predictedLabels, build ht, the weak hypothesis
+    buildClassificationMatrix(ht, predictedLabels);
 
-    // building a helper rowvector, mispredict to help in calculations.
-    // this stores the value of Yi(l)*ht(xi,l)
+    // Now, start calculation of alpha(t) using ht
     
-    // first calculate error: 
-    for(j = 0;j < predictedLabels.n_cols; j++)
+    // begin calculation of rt
+
+    for (j = 0;j < ht.n_rows; j++)
     {
-      if (predictedLabels(j) != labels(j))
-      {  
-        mispredict(j) = -predictedLabels(j);
-        countMP++;
-      }
-      else
-        mispredict(j) = predictedLabels(j);
+      for (k = 0;k < ht.n_cols; k++)
+        rt += (D(j,k) * yt(j,k) * ht(j,k));
     }
-    et = ((double) countMP / predictedLabels.n_cols);
 
-    if (et < 0.5)
+    // end calculation of rt
+
+    alphat = 0.5 * log((1 + rt) / (1 - rt));
+
+    // end calculation of alphat
+    
+    // now start modifying weights
+
+    for (j = 0;j < D.n_rows; j++)
     {
-      // begin calculation of rt
-
-      // for (j = 0;j < predictedLabels.n_cols; j++)
-      //   rt +=(D(j) * mispredict(j));
-
-      // end calculation of rt
-
-      // alphat = 0.5 * log((1 + rt) / (1 - rt));
-
-      alphat = 0.5 * log((1 - et) / et);  
-
-      // end calculation of alphat
-      
-      // now start modifying weights
-
-      for (j = 0;j < mispredict.n_cols; j++)
-      {
+      for (k = 0;k < D.n_cols; k++)
+      {  
         // we calculate zt, the normalization constant
-        zt += D(j) * exp(-1 * alphat * (mispredict(j) / predictedLabels(j)));
-        D(j) = D(j) * exp(-1 * alphat * (mispredict(j) / predictedLabels(j)));
+        zt += D(j,k) * exp(-1 * alphat * yt(j,k) * ht(j,k));
+        D(j,k) = D(j,k) * exp(-1 * alphat * yt(j,k) * ht(j,k));
 
         // adding to the matrix of FinalHypothesis 
-        if (mispredict(j) == predictedLabels(j)) // if correct prediction
-          sumFinalH(j, mispredict(j)) += alphat;
+        sumFinalH(j,k) += (alphat * ht(j,k));
       }
-      // normalization of D
-
-      D = D / zt;
     }
+
+    // normalization of D
+
+    D = D / zt;
+  
   }
 
-  // build a strong hypothesis from a weighted combination of these weak hypotheses.
+  // Iterations are over, now build a strong hypothesis
+  // from a weighted combination of these weak hypotheses.
   
-  // This step of storing it in a temporary row vector can be improved upon.
+  // This step of storing it in a temporary row vector can be improved upon ? 
   arma::rowvec tempSumFinalH;
-
+  arma::uword max_index;
   for (i = 0;i < sumFinalH.n_rows; i++)
   {
     tempSumFinalH = sumFinalH.row(i);
     tempSumFinalH.max(max_index);
     finalH(i) = max_index;
   }
+
+  //finalH is the final hypothesis.
+}
+
+/**
+ *  This function helps in building a classification Matrix which is of 
+ *  form: 
+ *  -1 if l is not the correct label
+ *  1 if l is the correct label
+ *
+ *  @param t The classification matrix to be built
+ *  @param l The labels from which the classification matrix is to be built.
+ */
+template <typename MatType, typename WeakLearner>
+void Adaboost<MatType, WeakLearner>::buildClassificationMatrix(
+                                     arma::mat& t, const arma::Row<size_t>& l)
+{
+  int i, j;
+
+  for (i = 0;i < t.n_rows; i++)
+  {
+    for (j = 0;j < t.n_cols; j++)
+    {
+      if (j == l(i))
+        t(i,j) = 1.0;
+      else
+        t(i,j) = -1.0;
+    }
+  }
+}
+
+/**
+ *  This function helps in building the Weight Distribution matrix
+ *  which is updated during every iteration. It calculates the 
+ *  "difficulty" in classifying a point by adding the weights for all 
+ *  instances, using D.
+ *  
+ *  @param D The 2 Dimensional weight matrix from which the weights are
+ *            to be calculated.
+ *  @param weights The output weight vector.
+ */
+template <typename MatType, typename WeakLearner>
+void Adaboost<MatType, WeakLearner>::buildWeightMatrix(
+                                     const arma::mat& D, arma::rowvec& weights)
+{
+  int i, j;
+  weights.fill(0.0);
+
+  for (i = 0;i < D.n_rows; i++)
+  {
+    for (j = 0;j < D.n_cols; j++)
+      weights(i) += D(i,j);
+  }
 }
 
 } // namespace adaboost
 } // namespace mlpack
+
 #endif
