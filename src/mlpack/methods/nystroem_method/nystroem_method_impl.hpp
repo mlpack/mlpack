@@ -81,8 +81,8 @@ void NystroemMethod<KernelType, PointSelectionPolicy>::Apply(arma::mat& output)
   arma::svd(U, s, V, miniKernel);
 
   // Construct the output matrix.
-  arma::mat normalization = (U * arma::diagmat(1.0 / sqrt(s)));
-  output = semiKernel * normalization * V;
+  arma::mat normalization = arma::diagmat(1.0 / sqrt(s));
+  output = semiKernel * U * normalization * V;
 }
 
 }; // namespace kernel
