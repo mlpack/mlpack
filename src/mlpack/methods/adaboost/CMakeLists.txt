@@ -16,6 +16,7 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
+
 add_executable(adaboost
   adaboost_main.cpp
 )
