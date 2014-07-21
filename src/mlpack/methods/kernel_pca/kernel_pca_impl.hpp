@@ -76,7 +76,7 @@ void KernelPCA<KernelType, KernelRule>::Apply(arma::mat& data,
     data.shed_rows(newDimension, data.n_rows - 1);
 }
 
-// Returns a String of the Object
+//! Returns a string representation of the object.
 template <typename KernelType, typename KernelRule>
 std::string KernelPCA<KernelType, KernelRule>::ToString() const
 {
