@@ -59,7 +59,7 @@ class NystroemMethod
    * @param miniKernel to store the constructed mini-kernel matrix in.
    * @param miniKernel to store the constructed semi-kernel matrix in.
    */
-  void GetKernelMatrix(const arma::vec& points, 
+  void GetKernelMatrix(const arma::Col<size_t>& selectedPoints, 
                        arma::mat& miniKernel, 
                        arma::mat& semiKernel);
 

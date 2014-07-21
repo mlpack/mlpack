@@ -26,31 +26,31 @@ NystroemMethod<KernelType, PointSelectionPolicy>::NystroemMethod(
 
 template<typename KernelType, typename PointSelectionPolicy>
 void NystroemMethod<KernelType, PointSelectionPolicy>::GetKernelMatrix(
-                                       const arma::mat* seletedData, 
-                                       arma::mat& miniKernel, 
-                                       arma::mat& semiKernel)
+    const arma::mat* selectedData, 
+    arma::mat& miniKernel, 
+    arma::mat& semiKernel)
 {
   // Assemble mini-kernel matrix.
   for (size_t i = 0; i < rank; ++i)
     for (size_t j = 0; j < rank; ++j)
-      miniKernel(i, j) = kernel.Evaluate(seletedData->col(i),
-                                         seletedData->col(j));
+      miniKernel(i, j) = kernel.Evaluate(selectedData->col(i),
+                                         selectedData->col(j));
 
   // Construct semi-kernel matrix with interactions between selected data and
   // all points.
   for (size_t i = 0; i < data.n_cols; ++i)
     for (size_t j = 0; j < rank; ++j)
       semiKernel(i, j) = kernel.Evaluate(data.col(i), 
-                                         seletedData->col(j));
+                                         selectedData->col(j));
   // Clean the memory.
-  delete seletedData;
+  delete selectedData;
 }
 
 template<typename KernelType, typename PointSelectionPolicy>
 void NystroemMethod<KernelType, PointSelectionPolicy>::GetKernelMatrix(
-                                       const arma::vec& selectedPoints, 
-                                       arma::mat& miniKernel, 
-                                       arma::mat& semiKernel)
+    const arma::Col<size_t>& selectedPoints,
+    arma::mat& miniKernel,
+    arma::mat& semiKernel)
 {
   // Assemble mini-kernel matrix.
   for (size_t i = 0; i < rank; ++i)

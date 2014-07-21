@@ -20,7 +20,7 @@ class KMeansSelection
  public:
   /**
    * Use the K-Means clustering method to select the specified number of points
-   * in the dataset.
+   * in the dataset.  You are responsible for deleting the returned matrix!
    *
    * @param data Dataset to sample from.
    * @param m Number of points to select.
