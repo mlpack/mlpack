@@ -72,7 +72,7 @@ static void AssignNodeDestNode(
 /**
   * Insert a node into another node.
   */
-static void insertNodeIntoTree(
+static void InsertNodeIntoTree(
     RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* destTree,
     RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* srcNode);
 };

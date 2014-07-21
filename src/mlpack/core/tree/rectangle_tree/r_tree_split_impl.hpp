@@ -387,8 +387,8 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
     }
   }
 
-  insertNodeIntoTree(treeOne, oldTree->Child(intI));
-  insertNodeIntoTree(treeTwo, oldTree->Child(intJ));
+  InsertNodeIntoTree(treeOne, oldTree->Child(intI));
+  InsertNodeIntoTree(treeTwo, oldTree->Child(intJ));
 
   // If intJ is the last node in the tree, we need to switch the order so that we remove the correct nodes.
   if (intI > intJ) {
@@ -470,10 +470,10 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
     // Assign the rectangle that causes the least increase in volume 
     // to the appropriate rectangle.
     if (bestRect == 1) {
-      insertNodeIntoTree(treeOne, oldTree->Child(bestIndex));
+      InsertNodeIntoTree(treeOne, oldTree->Child(bestIndex));
       numAssignTreeOne++;
     } else {
-      insertNodeIntoTree(treeTwo, oldTree->Child(bestIndex));
+      InsertNodeIntoTree(treeTwo, oldTree->Child(bestIndex));
       numAssignTreeTwo++;
     }
 
@@ -483,12 +483,12 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
   if (end > 0) {
     if (numAssignTreeOne < numAssignTreeTwo) {
       for (int i = 0; i < end; i++) {
-        insertNodeIntoTree(treeOne, oldTree->Child(i));
+        InsertNodeIntoTree(treeOne, oldTree->Child(i));
         numAssignTreeOne++;
       }
     } else {
       for (int i = 0; i < end; i++) {
-        insertNodeIntoTree(treeTwo, oldTree->Child(i));
+        InsertNodeIntoTree(treeTwo, oldTree->Child(i));
         numAssignTreeTwo++;
       }
     }
@@ -515,7 +515,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
 template<typename DescentType,
 typename StatisticType,
 typename MatType>
-void RTreeSplit<DescentType, StatisticType, MatType>::insertNodeIntoTree(
+void RTreeSplit<DescentType, StatisticType, MatType>::InsertNodeIntoTree(
         RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* destTree,
         RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* srcNode)
 {

@@ -201,6 +201,55 @@ BOOST_AUTO_TEST_CASE(PointDeletion) {
 
 }
 
+bool checkContainment(const RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+        tree::RStarTreeDescentHeuristic,
+        NeighborSearchStat<NearestNeighborSort>,
+        arma::mat>& tree) {
+  bool passed = true;
+  if (tree.NumChildren() == 0) {
+    for (size_t i = 0; i < tree.Count(); i++) {
+      passed &= tree.Bound().Contains(tree.Dataset().unsafe_col(tree.Points()[i]));
+      if(!passed)
+	std::cout << ".................PointContainmentFailed" << std::endl;
+    }
+  } else {
+    for (size_t i = 0; i < tree.NumChildren(); i++) {
+      bool p1 = true;
+      for (size_t j = 0; j < tree.Bound().Dim(); j++) {
+        p1 &= tree.Bound()[j].Contains(tree.Children()[i]->Bound()[j]);
+	      if(!p1)
+	std::cout << ".................BoundContainmentFailed" << std::endl;
+      }
+      passed &= p1;
+      passed &= checkContainment(*(tree.Child(i)));
+    }
+  }
+  return passed;
+}
+
+
+bool checkSync(const RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+        tree::RStarTreeDescentHeuristic,
+        NeighborSearchStat<NearestNeighborSort>,
+        arma::mat>& tree) {
+  if (tree.IsLeaf()) {
+    for (size_t i = 0; i < tree.Count(); i++) {
+      for (size_t j = 0; j < tree.LocalDataset().n_rows; j++) {
+        if (tree.LocalDataset().col(i)[j] != tree.Dataset().col(tree.Points()[i])[j]) {
+          return false;
+        }
+      }
+    }
+  } else {
+    for (size_t i = 0; i < tree.NumChildren(); i++) {
+      if (!checkSync(*tree.Child(i)))
+        return false;
+    }
+  }
+  return true;
+}
+
+
 BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest) {
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
@@ -209,18 +258,23 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest) {
   arma::Mat<size_t> neighbors2;
   arma::mat distances2;
 
-  RectangleTree<tree::RTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+  RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
           tree::RStarTreeDescentHeuristic,
           NeighborSearchStat<NearestNeighborSort>,
           arma::mat> RTree(dataset, 20, 6, 5, 2, 0);
 
   // nearest neighbor search with the R tree.
   mlpack::neighbor::NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
-          RectangleTree<tree::RTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+          RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
           tree::RStarTreeDescentHeuristic,
           NeighborSearchStat<NearestNeighborSort>,
           arma::mat> > allknn1(&RTree,
           dataset, true);
+
+  assert(RTree.NumDescendants() == 1000);
+  assert(checkSync(RTree) == true);
+  assert(checkContainment(RTree) == true);
+
 
   allknn1.Search(5, neighbors1, distances1);
 
