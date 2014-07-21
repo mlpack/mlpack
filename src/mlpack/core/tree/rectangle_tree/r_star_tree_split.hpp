@@ -43,6 +43,7 @@ private:
  * Class to allow for faster sorting.
  */
 class sortStruct {
+public:
   double d;
   int n;
 };
@@ -53,6 +54,15 @@ class sortStruct {
 static bool structComp(const sortStruct& s1, const sortStruct& s2) {
   return s1.d < s2.d;
 }
+
+/**
+  * Insert a node into another node.
+  */
+static void InsertNodeIntoTree(
+    RectangleTree<RStarTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* destTree,
+    RectangleTree<RStarTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* srcNode);
+
+};
 
 }; // namespace tree
 }; // namespace mlpack

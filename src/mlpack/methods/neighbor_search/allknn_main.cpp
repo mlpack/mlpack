@@ -272,7 +272,7 @@ int main(int argc, char *argv[])
       
       // Because we may construct it differently, we need a pointer.
       NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
-      RectangleTree<tree::RTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+      RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
 		    tree::RStarTreeDescentHeuristic,
 		    NeighborSearchStat<NearestNeighborSort>,
 		    arma::mat> >* allknn = NULL;
@@ -282,13 +282,13 @@ int main(int argc, char *argv[])
       Log::Info << "Building reference tree..." << endl;
       Timer::Start("tree_building");
 
-      RectangleTree<tree::RTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+      RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
 		    tree::RStarTreeDescentHeuristic,
 		    NeighborSearchStat<NearestNeighborSort>,
 		    arma::mat>
       refTree(referenceData, leafSize, leafSize/3, 5, 2, 0);
 
-      RectangleTree<tree::RTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+      RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
 		    tree::RStarTreeDescentHeuristic,
 		    NeighborSearchStat<NearestNeighborSort>,
 		    arma::mat>*
@@ -302,7 +302,7 @@ int main(int argc, char *argv[])
 	    << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
 
         allknn = new NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
-        RectangleTree<tree::RTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+        RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
 	  	      tree::RStarTreeDescentHeuristic,
   		      NeighborSearchStat<NearestNeighborSort>,
   		      arma::mat> >(&refTree, queryTree,
@@ -310,7 +310,7 @@ int main(int argc, char *argv[])
       } else
       {
 	      allknn = new NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
-      RectangleTree<tree::RTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+      RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
 		    tree::RStarTreeDescentHeuristic,
 		    NeighborSearchStat<NearestNeighborSort>,
 		    arma::mat> >(&refTree,
