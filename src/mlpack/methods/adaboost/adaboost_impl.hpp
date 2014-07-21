@@ -4,6 +4,29 @@
  *
  * Implementation of the Adaboost class
  *
+ *  @code
+ *  @article{Schapire:1999:IBA:337859.337870,
+ *  author = {Schapire, Robert E. and Singer, Yoram},
+ *  title = {Improved Boosting Algorithms Using Confidence-rated Predictions},
+ *  journal = {Mach. Learn.},
+ *  issue_date = {Dec. 1999},
+ *  volume = {37},
+ *  number = {3},
+ *  month = dec,
+ *  year = {1999},
+ *  issn = {0885-6125},
+ *  pages = {297--336},
+ *  numpages = {40},
+ *  url = {http://dx.doi.org/10.1023/A:1007614523901},
+ *  doi = {10.1023/A:1007614523901},
+ *  acmid = {337870},
+ *  publisher = {Kluwer Academic Publishers},
+ *  address = {Hingham, MA, USA},
+ *  keywords = {boosting algorithms, decision trees, multiclass classification, output coding
+ *  }
+ *  @endcode
+ *
+}
  */
 
 #ifndef _MLPACK_METHODS_ADABOOST_ADABOOST_IMPL_HPP
