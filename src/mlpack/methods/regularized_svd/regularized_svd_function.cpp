@@ -109,10 +109,10 @@ void RegularizedSVDFunction::Gradient(const arma::mat& parameters,
 
     // Gradient is non-zero only for the parameter columns corresponding to the
     // example.
-    gradient.col(user) += lambda * parameters.col(user) -
-                          ratingError * parameters.col(item);
-    gradient.col(item) += lambda * parameters.col(item) -
-                          ratingError * parameters.col(user);
+    gradient.col(user) += 2 * (lambda * parameters.col(user) -
+                               ratingError * parameters.col(item));
+    gradient.col(item) += 2 * (lambda * parameters.col(item) -
+                               ratingError * parameters.col(user));
   }
 }
 
