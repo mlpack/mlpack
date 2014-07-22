@@ -5,13 +5,6 @@
  * Main executable for maximum inner product search.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/kernels/linear_kernel.hpp>
-#include <mlpack/core/kernels/polynomial_kernel.hpp>
-#include <mlpack/core/kernels/cosine_distance.hpp>
-#include <mlpack/core/kernels/gaussian_kernel.hpp>
-#include <mlpack/core/kernels/hyperbolic_tangent_kernel.hpp>
-#include <mlpack/core/kernels/triangular_kernel.hpp>
-#include <mlpack/core/kernels/epanechnikov_kernel.hpp>
 
 #include "fastmks.hpp"
 
