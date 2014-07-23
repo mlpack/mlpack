@@ -78,25 +78,30 @@ Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data,
   sumFinalH.fill(0.0);
   
   // load the initial weights into a 2-D matrix
-  const double initWeight = 1 / (data.n_cols * classes);
+  const double initWeight = (double) 1 / (data.n_cols * classes);
   arma::mat D(data.n_cols, classes);
   D.fill(initWeight);
-
+  // D.print("The value of D after initialization.");
+  
   // Weights are to be compressed into this rowvector
   // for focussing on the perceptron weights.
   arma::rowvec weights(predictedLabels.n_cols);
-
+  // weights.print("This is the value of weight just after initialization.");
   // This is the final hypothesis.
-  arma::rowvec finalH(predictedLabels.n_cols);
+  arma::Row<size_t> finalH(predictedLabels.n_cols);
 
+  
+  // int localErrorCount;
   // now start the boosting rounds
   for (i = 0; i < iterations; i++)
   {
+    
     // Initialized to zero in every round.
     rt = 0.0; 
     zt = 0.0;
     
     // Build the weight vectors
+
     buildWeightMatrix(D, weights);
     
     // call the other weak learner and train the labels.
@@ -105,7 +110,16 @@ Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data,
 
     //Now from predictedLabels, build ht, the weak hypothesis
     buildClassificationMatrix(ht, predictedLabels);
-
+    
+/*    localErrorCount = 0;
+    for (int m = 0; m < labels.n_cols; m++)
+      if (labels(m) != predictedLabels(m))
+      {
+        localErrorCount++;
+        // std::cout<<m<<"th error.\n";
+      }
+    std::cout<<"Local Error is: "<<localErrorCount<<"\n";
+    std::cout<<"Local Error Rate: "<<(double)localErrorCount/predictedLabels.n_cols<<"\n";*/
     // Now, start calculation of alpha(t) using ht
     
     // begin calculation of rt
@@ -115,11 +129,9 @@ Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data,
       for (k = 0;k < ht.n_cols; k++)
         rt += (D(j,k) * yt(j,k) * ht(j,k));
     }
-
     // end calculation of rt
 
     alphat = 0.5 * log((1 + rt) / (1 - rt));
-
     // end calculation of alphat
     
     // now start modifying weights
@@ -128,6 +140,7 @@ Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data,
     {
       for (k = 0;k < D.n_cols; k++)
       {  
+        
         // we calculate zt, the normalization constant
         zt += D(j,k) * exp(-1 * alphat * yt(j,k) * ht(j,k));
         D(j,k) = D(j,k) * exp(-1 * alphat * yt(j,k) * ht(j,k));
@@ -136,11 +149,9 @@ Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data,
         sumFinalH(j,k) += (alphat * ht(j,k));
       }
     }
-
     // normalization of D
 
     D = D / zt;
-  
   }
 
   // Iterations are over, now build a strong hypothesis
@@ -155,7 +166,18 @@ Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data,
     tempSumFinalH.max(max_index);
     finalH(i) = max_index;
   }
-
+  finalHypothesis = finalH;
+  // labels.print("These are the labels.");
+  // finalH.print("This is the final hypothesis.");
+  /*int counterror = 0;
+  for (i = 0; i < labels.n_cols; i++)
+    if(labels(i) != finalH(i))
+    { 
+      std::cout<<i<<"th prediction not correct!\n";
+      counterror++;
+    }
+  std::cout<<"\nFinally - There are "<<counterror<<" number of misclassified records.\n";  
+  std::cout<<"The error rate is: "<<(double)counterror/labels.n_cols;*/
   //finalH is the final hypothesis.
 }
 
