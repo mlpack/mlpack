@@ -24,7 +24,8 @@ template<typename DescentType,
 typename StatisticType,
 typename MatType>
 void RStarTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
-        RectangleTree<RStarTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree)
+        RectangleTree<RStarTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree,
+        std::vector<bool>& relevels)
 {
   // If we are splitting the root node, we need will do things differently so that the constructor
   // and other methods don't confuse the end user by giving an address of another node.
@@ -36,7 +37,7 @@ void RStarTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
     tree->NullifyData();
     tree->Child((tree->NumChildren())++) = copy; // Because this was a leaf node, numChildren must be 0.
     assert(tree->NumChildren() == 1);
-    RStarTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(copy);
+    RStarTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(copy, relevels);
     return;
   }
 
@@ -168,14 +169,14 @@ void RStarTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
 
   // we only add one at a time, so we should only need to test for equality
   // just in case, we use an assert.
-  assert(par->NumChildren() <= par->MaxNumChildren());
-  if (par->NumChildren() == par->MaxNumChildren()) {
-    SplitNonLeafNode(par);
+  assert(par->NumChildren() <= par->MaxNumChildren()+1);
+  if (par->NumChildren() == par->MaxNumChildren()+1) {
+    SplitNonLeafNode(par, relevels);
   }
 
-  assert(treeOne->Parent()->NumChildren() < treeOne->MaxNumChildren());
+  assert(treeOne->Parent()->NumChildren() <= treeOne->MaxNumChildren());
   assert(treeOne->Parent()->NumChildren() >= treeOne->MinNumChildren());
-  assert(treeTwo->Parent()->NumChildren() < treeTwo->MaxNumChildren());
+  assert(treeTwo->Parent()->NumChildren() <= treeTwo->MaxNumChildren());
   assert(treeTwo->Parent()->NumChildren() >= treeTwo->MinNumChildren());
 
   tree->SoftDelete();
@@ -194,7 +195,8 @@ template<typename DescentType,
 typename StatisticType,
 typename MatType>
 bool RStarTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
-        RectangleTree<RStarTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree)
+        RectangleTree<RStarTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree,
+        std::vector<bool>& relevels)
 {
   // If we are splitting the root node, we need will do things differently so that the constructor
   // and other methods don't confuse the end user by giving an address of another node.
@@ -205,7 +207,7 @@ bool RStarTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
     tree->NumChildren() = 0;
     tree->NullifyData();
     tree->Child((tree->NumChildren())++) = copy;
-    RStarTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(copy);
+    RStarTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(copy, relevels);
     return true;
   }
 
@@ -433,9 +435,9 @@ bool RStarTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
 
   // we only add one at a time, so we should only need to test for equality
   // just in case, we use an assert.
-  assert(par->NumChildren() <= par->MaxNumChildren());
-  if (par->NumChildren() == par->MaxNumChildren()) {
-    SplitNonLeafNode(par);
+  assert(par->NumChildren() <= par->MaxNumChildren()+1);
+  if (par->NumChildren() == par->MaxNumChildren()+1) {
+    SplitNonLeafNode(par, relevels);
   }
   
   // We have to update the children of each of these new nodes so that they record the 
@@ -447,9 +449,9 @@ bool RStarTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
     treeTwo->Child(i)->Parent() = treeTwo;
   }
 
-  assert(treeOne->Parent()->NumChildren() < treeOne->MaxNumChildren());
+  assert(treeOne->Parent()->NumChildren() <= treeOne->MaxNumChildren());
   assert(treeOne->Parent()->NumChildren() >= treeOne->MinNumChildren());
-  assert(treeTwo->Parent()->NumChildren() < treeTwo->MaxNumChildren());
+  assert(treeTwo->Parent()->NumChildren() <= treeTwo->MaxNumChildren());
   assert(treeTwo->Parent()->NumChildren() >= treeTwo->MinNumChildren());
 
   tree->SoftDelete();

@@ -24,7 +24,8 @@ template<typename DescentType,
 typename StatisticType,
 typename MatType>
 void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
-        RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree)
+        RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree,
+        std::vector<bool>& relevels)
 {
   // If we are splitting the root node, we need will do things differently so that the constructor
   // and other methods don't confuse the end user by giving an address of another node.
@@ -35,11 +36,10 @@ void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
     tree->Count() = 0;
     tree->NullifyData();
     tree->Child((tree->NumChildren())++) = copy; // Because this was a leaf node, numChildren must be 0.
-    assert(tree->NumChildren() == 1);
-    RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(copy);
+    RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(copy, relevels);
     return;
   }
-  assert(tree->Parent()->NumChildren() < tree->Parent()->MaxNumChildren());
+  assert(tree->Parent()->NumChildren() <= tree->Parent()->MaxNumChildren());
 
   // Use the quadratic split method from: Guttman "R-Trees: A Dynamic Index Structure for
   // Spatial Searching"  It is simplified since we don't handle rectangles, only points.
@@ -70,14 +70,14 @@ void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
 
   // we only add one at a time, so we should only need to test for equality
   // just in case, we use an assert.
-  assert(par->NumChildren() <= par->MaxNumChildren());
-  if (par->NumChildren() == par->MaxNumChildren()) {
-    SplitNonLeafNode(par);
+  assert(par->NumChildren() <= par->MaxNumChildren()+1);
+  if (par->NumChildren() == par->MaxNumChildren()+1) {
+    SplitNonLeafNode(par, relevels);
   }
 
-  assert(treeOne->Parent()->NumChildren() < treeOne->MaxNumChildren());
+  assert(treeOne->Parent()->NumChildren() <= treeOne->MaxNumChildren());
   assert(treeOne->Parent()->NumChildren() >= treeOne->MinNumChildren());
-  assert(treeTwo->Parent()->NumChildren() < treeTwo->MaxNumChildren());
+  assert(treeTwo->Parent()->NumChildren() <= treeTwo->MaxNumChildren());
   assert(treeTwo->Parent()->NumChildren() >= treeTwo->MinNumChildren());
 
   // We need to delete this carefully since references to points are used.
@@ -97,7 +97,8 @@ template<typename DescentType,
 typename StatisticType,
 typename MatType>
 bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
-        RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree)
+        RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree,
+        std::vector<bool>& relevels)
 {
   // If we are splitting the root node, we need will do things differently so that the constructor
   // and other methods don't confuse the end user by giving an address of another node.
@@ -108,7 +109,7 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
     tree->NumChildren() = 0;
     tree->NullifyData();
     tree->Child((tree->NumChildren())++) = copy;
-    RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(copy);
+    RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(copy, relevels);
     return true;
   }
 
@@ -140,17 +141,15 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
   par->Child(par->NumChildren()++) = treeTwo;
 
   for (int i = 0; i < par->NumChildren(); i++) {
-    if (par->Child(i) == tree) {
-      assert(par->Child(i) != tree);
-    }
+    assert(par->Child(i) != tree);
   }
 
   // we only add one at a time, so should only need to test for equality
   // just in case, we use an assert.
-  assert(par->NumChildren() <= par->MaxNumChildren());
+  assert(par->NumChildren() <= par->MaxNumChildren()+1);
 
-  if (par->NumChildren() == par->MaxNumChildren()) {
-    SplitNonLeafNode(par);
+  if (par->NumChildren() == par->MaxNumChildren()+1) {
+    SplitNonLeafNode(par, relevels);
   }
 
   // We have to update the children of each of these new nodes so that they record the 
@@ -162,9 +161,9 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
     treeTwo->Child(i)->Parent() = treeTwo;
   }
 
-  assert(treeOne->NumChildren() < treeOne->MaxNumChildren());
-  assert(treeTwo->NumChildren() < treeTwo->MaxNumChildren());
-  assert(treeOne->Parent()->NumChildren() < treeOne->MaxNumChildren());
+  assert(treeOne->NumChildren() <= treeOne->MaxNumChildren());
+  assert(treeTwo->NumChildren() <= treeTwo->MaxNumChildren());
+  assert(treeOne->Parent()->NumChildren() <= treeOne->MaxNumChildren());
 
   // Because we now have pointers to the information stored under this tree,
   // we need to delete this node carefully.
@@ -504,9 +503,6 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
       assert(treeTwo->Child(i) != treeTwo->Child(j));
     }
   }
-  assert(treeOne->NumChildren() == numAssignTreeOne);
-  assert(treeTwo->NumChildren() == numAssignTreeTwo);
-  assert(numAssignTreeOne + numAssignTreeTwo == 5);
 }
 
 /**

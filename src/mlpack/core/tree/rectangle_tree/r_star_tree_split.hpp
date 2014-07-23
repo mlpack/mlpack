@@ -30,13 +30,13 @@ public:
  * for Points and Rectangles."  If necessary, this split will propagate
  * upwards through the tree.
  */
-static void SplitLeafNode(RectangleTree<RStarTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree);
+static void SplitLeafNode(RectangleTree<RStarTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree, std::vector<bool>& relevels);
 
 /**
  * Split a non-leaf node using the "default" algorithm.  If this is a root node, the 
  * tree increases in depth.
  */
-static bool SplitNonLeafNode(RectangleTree<RStarTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree);
+static bool SplitNonLeafNode(RectangleTree<RStarTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree, std::vector<bool>& relevels);
 
 private:
 /**
