@@ -29,13 +29,15 @@ public:
  * Split a leaf node using the "default" algorithm.  If necessary, this split will propagate
  * upwards through the tree.
  */
-static void SplitLeafNode(RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree);
+static void SplitLeafNode(RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree,
+        std::vector<bool>& relevels);
 
 /**
  * Split a non-leaf node using the "default" algorithm.  If this is a root node, the 
  * tree increases in depth.
  */
-static bool SplitNonLeafNode(RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree);
+static bool SplitNonLeafNode(RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree,
+        std::vector<bool>& relevels);
 
 private:
 
