@@ -146,6 +146,27 @@ class RectangleTree
    * @param point The point (arma::vec&) to be inserted.
    */
   void InsertPoint(const size_t point);
+  
+  /**
+   * Inserts a point into the tree, tracking which levels have been inserted into.
+   * The point will be copied to the data matrix of the leaf node where it is 
+   * finally inserted, but we pass by reference since it may be passed many times
+   * before it actually reaches a leaf.
+   * @param point The point (arma::vec&) to be inserted.
+   * @param relevels The levels that have been reinserted to on this top level insertion.
+   */
+  void InsertPoint(const size_t point, std::vector<bool>& relevels);
+  
+  /**
+   * Inserts a node into the tree, tracking which levels have been inserted into.
+   * The node will be inserted so that the tree remains valid.
+   * @param node The node to be inserted.
+   * @param level The depth that should match the node where this node is finally inserted.
+   * This should be the number returned by calling TreeDepth() from the node that originally
+   * contained "node".
+   * @param relevels The levels that have been reinserted to on this top level insertion.
+   */
+  void InsertNode(const RectangleTree* node, const size_t level, std::vector<bool>& relevels);
 
   /**
    * Deletes a point in the tree.  The point will be removed from the data matrix
@@ -156,6 +177,21 @@ class RectangleTree
    * (ie. the point is not in the tree)
    */
   bool DeletePoint(const size_t point);
+  
+  /**
+   * Deletes a point in the tree, tracking levels.  The point will be removed from the data matrix
+   * of the leaf node where it is store and the bounding rectangles will be updated.
+   * However, the point will be kept in the centeral dataset. (The user may remove it
+   * from there if he wants, but he must not change the indices of the other points.)
+   * Returns true if the point is successfully removed and false if it is not.
+   * (ie. the point is not in the tree)
+   */
+  bool DeletePoint(const size_t point, std::vector<bool>& relevels);
+  
+  /**
+   * Deletes a node from the tree (along with all descendants).
+   */
+  bool DeleteNode(const RectangleTree* node, std::vector<bool>& relevels);
 
   /**
    * Find a node in this tree by its begin and count (const).
@@ -429,9 +465,9 @@ class RectangleTree
   /**
    * Splits the current node, recursing up the tree.
    *
-   * @param tree The RectangleTree object (node) to split.
+   * @param relevels Vector to track which levels have been inserted to.
    */
-  void SplitNode();
+  void SplitNode(std::vector<bool>& relevels);
 
   /**
    * Splits the current node, recursing up the tree.
@@ -450,8 +486,11 @@ class RectangleTree
    *
    * @param point The arma::vec& of the point that was removed to require this
    * condesation of the tree.
+   * @param usePoint True if we use the optimized version of the algorithm that is
+   * possible when we now what point was deleted.  False otherwise (eg. if we 
+   * deleted a node instead of a point).
    */
-  void CondenseTree(const arma::vec& point);
+  void CondenseTree(const arma::vec& point, std::vector<bool>& relevels, const bool usePoint);
     
   /**
    * Shrink the bound object of this node for the removal of a point.
@@ -470,18 +509,6 @@ class RectangleTree
    * @return true if the bound needed to be changed, false if it did not.
    */
   bool ShrinkBoundForBound(const HRectBound<>& changedBound);
-
-  /**
-   * Inserts a node into the tree. The node will be inserted so that the tree
-   * remains valid.
-   *
-   * @param node The node to insert into the tree.
-   * @param level The depth that should match the node where this node is finally inserted.
-   * This should be the number returned by calling TreeDepth() from the node that originally
-   * contained "node".
-   */
-  void InsertNode(const RectangleTree<SplitType, DescentType, StatisticType, MatType>* node,
-		  const size_t level);
   
   /**
    * Returns a string representation of this object.
