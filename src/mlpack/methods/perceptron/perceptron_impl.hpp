@@ -46,7 +46,10 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
   trainData.insert_rows(0, zOnes);
 
   iter = iterations;
-  Train();
+  arma::rowvec D(data.n_cols);
+  D.fill(1.0);// giving equal weight to all the points.
+  
+  Train(D);
 }
 
 
@@ -74,34 +77,51 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
     tempLabelMat.max(maxIndexRow, maxIndexCol);
     predictedLabels(0, i) = maxIndexRow;
   }
+  // predictedLabels.print("These are the labels predicted by the perceptron");
 }
 
+/**
+ *  Alternate constructor which copies parameters from an already initiated 
+ *  perceptron.
+ *  
+ *  @param other The other initiated Perceptron object from which we copy the
+ *               values from.
+ *  @param data The data on which to train this Perceptron object on.
+ *  @param D Weight vector to use while training. For boosting purposes.
+ *  @param labels The labels of data.
+ */
 template <typename LearnPolicy, typename WeightInitializationPolicy, typename MatType>
 Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
-  const Perceptron<>& other, MatType& data, const arma::Row<double>& D, const arma::Row<size_t>& labels)
+  const Perceptron<>& other, MatType& data, const arma::rowvec& D, const arma::Row<size_t>& labels)
 {
-  int i;
-  //transform data, as per rules for perceptron
-  for (i = 0;i < data.n_cols; i++)
-    data.col(i) = D(i) * data.col(i);
-
+  
   classLabels = labels;
   trainData = data;
   iter = other.iter;
 
-  Train();
+  // Insert a row of ones at the top of the training data set.
+  MatType zOnes(1, data.n_cols);
+  zOnes.fill(1);
+  trainData.insert_rows(0, zOnes);
+
+  WeightInitializationPolicy WIP;
+  WIP.Initialize(weightVectors, arma::max(labels) + 1, data.n_rows + 1);
+
+  Train(D);
 }
 
 /**
- *  Training Function. 
- *
+ *  Training Function. It trains on trainData using the cost matrix D
+ *  
+ *  @param D Cost matrix. Stores the cost of mispredicting instances
  */
 template<
     typename LearnPolicy,
     typename WeightInitializationPolicy,
     typename MatType
 >
-void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train()
+void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
+     const arma::rowvec& D)
 {
   int j, i = 0;
   bool converged = false;
@@ -136,7 +156,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train()
         // Send maxIndexRow for knowing which weight to update, send j to know
         // the value of the vector to update it with.  Send tempLabel to know
         // the correct class.
-        LP.UpdateWeights(trainData, weightVectors, j, tempLabel, maxIndexRow);
+        LP.UpdateWeights(trainData, weightVectors, j, tempLabel, maxIndexRow, D);
       }
     }
   }
