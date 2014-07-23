@@ -19,6 +19,8 @@ template <typename MatType = arma::mat, typename WeakLearner =
 class Adaboost 
 {
 public:
+  arma::Row<size_t> finalHypothesis;
+
   Adaboost(const MatType& data, const arma::Row<size_t>& labels,
            int iterations, size_t classes, const WeakLearner& other);
 

@@ -35,18 +35,20 @@ class SimpleWeightUpdate
    * @param rowIndex Index of the row which has been incorrectly predicted.
    * @param labelIndex Index of the vector in trainData.
    * @param vectorIndex Index of the class which should have been predicted.
+   * @param D Cost of mispredicting the labelIndex instance.
    */
   void UpdateWeights(const arma::mat& trainData,
                      arma::mat& weightVectors,
                      const size_t labelIndex,
                      const size_t vectorIndex,
-                     const size_t rowIndex)
+                     const size_t rowIndex,
+                     const arma::rowvec& D)
   {
     weightVectors.row(rowIndex) = weightVectors.row(rowIndex) - 
-                                  trainData.col(labelIndex).t();
+                                  D(labelIndex) * trainData.col(labelIndex).t();
 
     weightVectors.row(vectorIndex) = weightVectors.row(vectorIndex) +
-                                     trainData.col(labelIndex).t();
+                                     D(labelIndex) * trainData.col(labelIndex).t();
   }
 };
 
