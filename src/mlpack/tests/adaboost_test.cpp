@@ -17,7 +17,12 @@ using namespace mlpack::adaboost;
 
 BOOST_AUTO_TEST_SUITE(AdaboostTest);
 
-BOOST_AUTO_TEST_CASE(IrisSet)
+/**
+ *  This test case runs the Adaboost.mh algorithm on the UCI Iris dataset.
+ *  It checks whether the hamming loss breaches the upperbound, which
+ *  is provided by ztAccumulator.
+ */
+BOOST_AUTO_TEST_CASE(HammingLossBound)
 {
   arma::mat inputData;
 
@@ -38,17 +43,15 @@ BOOST_AUTO_TEST_CASE(IrisSet)
   perceptron::Perceptron<> p(inputData, labels.row(0), perceptron_iter);
 
   // Define parameters for the adaboost
-  int iterations = 15;
-  int classes = 3;
-  Adaboost<> a(inputData, labels.row(0), iterations, classes, p);
+  int iterations = 100;
+  Adaboost<> a(inputData, labels.row(0), iterations, p);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != a.finalHypothesis(i))
-    { 
-      std::cout<<i<<" prediction not correct!\n";
       countError++;
-    }
-  std::cout<<"\nFinally - There are "<<countError<<" number of misclassified records.\n";  
-  std::cout<<"The error rate is: "<<(double)countError * 100/labels.n_cols<<"%\n";
+  double hammingLoss = (double) countError / labels.n_cols;
+
+  BOOST_REQUIRE(hammingLoss <= a.ztAccumulator);
 }
+
 BOOST_AUTO_TEST_SUITE_END();
