@@ -42,18 +42,20 @@ namespace adaboost {
  *  @param data Input data
  *  @param labels Corresponding labels
  *  @param iterations Number of boosting rounds 
- *  @param classes Number of classes in labels
  *  @param other Weak Learner, which has been initialized already
  */
 template<typename MatType, typename WeakLearner>
 Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data, 
         const arma::Row<size_t>& labels, int iterations, 
-        size_t classes, const WeakLearner& other)
+        const WeakLearner& other)
 {
-  // note: put a fail safe for the variable 'classes' or 
-  // remove it entirely by using unique function.
+  // Counting the number of classes into numClasses.
+  size_t numClasses = (arma::max(labels) - arma::min(labels)) + 1;
+
   int i, j, k;
   double rt, alphat = 0.0, zt;
+  
+  ztAccumulator = 1.0; 
   
   // To be used for prediction by the Weak Learner for prediction.
   arma::Row<size_t> predictedLabels(labels.n_cols);
@@ -62,7 +64,7 @@ Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data,
   MatType tempData(data);
   
   // Build the classification Matrix yt from labels
-  arma::mat yt(predictedLabels.n_cols, classes);
+  arma::mat yt(predictedLabels.n_cols, numClasses);
   
   // Build a classification matrix of the form D(i,l)
   // where i is the ith instance
@@ -71,37 +73,32 @@ Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data,
   
   // ht(x), to be loaded after a round of prediction every time the weak
   // learner is run, by using the buildClassificationMatrix function
-  arma::mat ht(predictedLabels.n_cols, classes);
+  arma::mat ht(predictedLabels.n_cols, numClasses);
 
   // This matrix is a helper matrix used to calculate the final hypothesis.
-  arma::mat sumFinalH(predictedLabels.n_cols, classes);
+  arma::mat sumFinalH(predictedLabels.n_cols, numClasses);
   sumFinalH.fill(0.0);
   
   // load the initial weights into a 2-D matrix
-  const double initWeight = (double) 1 / (data.n_cols * classes);
-  arma::mat D(data.n_cols, classes);
+  const double initWeight = (double) 1 / (data.n_cols * numClasses);
+  arma::mat D(data.n_cols, numClasses);
   D.fill(initWeight);
-  // D.print("The value of D after initialization.");
   
   // Weights are to be compressed into this rowvector
   // for focussing on the perceptron weights.
   arma::rowvec weights(predictedLabels.n_cols);
-  // weights.print("This is the value of weight just after initialization.");
+  
   // This is the final hypothesis.
   arma::Row<size_t> finalH(predictedLabels.n_cols);
 
-  
-  // int localErrorCount;
   // now start the boosting rounds
   for (i = 0; i < iterations; i++)
   {
-    
     // Initialized to zero in every round.
     rt = 0.0; 
     zt = 0.0;
     
     // Build the weight vectors
-
     buildWeightMatrix(D, weights);
     
     // call the other weak learner and train the labels.
@@ -111,15 +108,6 @@ Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data,
     //Now from predictedLabels, build ht, the weak hypothesis
     buildClassificationMatrix(ht, predictedLabels);
     
-/*    localErrorCount = 0;
-    for (int m = 0; m < labels.n_cols; m++)
-      if (labels(m) != predictedLabels(m))
-      {
-        localErrorCount++;
-        // std::cout<<m<<"th error.\n";
-      }
-    std::cout<<"Local Error is: "<<localErrorCount<<"\n";
-    std::cout<<"Local Error Rate: "<<(double)localErrorCount/predictedLabels.n_cols<<"\n";*/
     // Now, start calculation of alpha(t) using ht
     
     // begin calculation of rt
@@ -140,7 +128,6 @@ Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data,
     {
       for (k = 0;k < D.n_cols; k++)
       {  
-        
         // we calculate zt, the normalization constant
         zt += D(j,k) * exp(-1 * alphat * yt(j,k) * ht(j,k));
         D(j,k) = D(j,k) * exp(-1 * alphat * yt(j,k) * ht(j,k));
@@ -149,15 +136,17 @@ Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data,
         sumFinalH(j,k) += (alphat * ht(j,k));
       }
     }
+    
     // normalization of D
-
     D = D / zt;
+    
+    // Accumulating the value of zt for the Hamming Loss bound.
+    ztAccumulator *= zt;
   }
 
   // Iterations are over, now build a strong hypothesis
   // from a weighted combination of these weak hypotheses.
   
-  // This step of storing it in a temporary row vector can be improved upon ? 
   arma::rowvec tempSumFinalH;
   arma::uword max_index;
   for (i = 0;i < sumFinalH.n_rows; i++)
@@ -167,18 +156,6 @@ Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data,
     finalH(i) = max_index;
   }
   finalHypothesis = finalH;
-  // labels.print("These are the labels.");
-  // finalH.print("This is the final hypothesis.");
-  /*int counterror = 0;
-  for (i = 0; i < labels.n_cols; i++)
-    if(labels(i) != finalH(i))
-    { 
-      std::cout<<i<<"th prediction not correct!\n";
-      counterror++;
-    }
-  std::cout<<"\nFinally - There are "<<counterror<<" number of misclassified records.\n";  
-  std::cout<<"The error rate is: "<<(double)counterror/labels.n_cols;*/
-  //finalH is the final hypothesis.
 }
 
 /**

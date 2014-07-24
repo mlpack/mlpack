@@ -2,7 +2,7 @@
  * @file: adaboost_main.cpp
  * @author: Udit Saxena
  *
- *
+ * 
  */
 
 #include <mlpack/core.hpp>
@@ -81,22 +81,15 @@ int main(int argc, char *argv[])
         << ")!" << std::endl;
   int iterations = CLI::GetParam<int>("iterations");
   
-  int classes = 3;
-  
   // define your own weak learner, perceptron in this case.
-  int iter = 4000;
+  // defining the number of iterations of the perceptron.
+  int iter = 400;
   
   perceptron::Perceptron<> p(trainingData, labels.t(), iter);
   
   Timer::Start("Training");
-  Adaboost<> a(trainingData, labels.t(), iterations, classes, p);
+  Adaboost<> a(trainingData, labels.t(), iterations, p);
   Timer::Stop("Training");
-
-  // vec results;
-  // data::RevertLabels(predictedLabels, mappings, results);
-
-  // const string outputFilename = CLI::GetParam<string>("output");
-  // data::Save(outputFilename, results, true, true);
 
   return 0;
 }
