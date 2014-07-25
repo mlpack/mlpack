@@ -245,4 +245,37 @@ BOOST_AUTO_TEST_CASE(CoverTreeTest)
 
 }
 
+/**
+ * Test BinarySpaceTree with Ball Bound.
+ */
+BOOST_AUTO_TEST_CASE(BallTreeTest)
+{
+  arma::mat inputData;
+  if (!data::Load("test_data_3_1000.csv", inputData))
+    BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
+
+  typedef BinarySpaceTree<BallBound<>, DTBStat> TreeType;
+
+  // naive mode.
+  DualTreeBoruvka<> bst(inputData, true);
+  // Ball tree.
+  DualTreeBoruvka<EuclideanDistance,
+                  BinarySpaceTree<BallBound<>, DTBStat> > ballt(inputData);
+
+  arma::mat bstResults;
+  arma::mat ballResults;
+
+  // Run the algorithms.
+  bst.ComputeMST(bstResults);
+  ballt.ComputeMST(ballResults);
+
+  for (size_t i = 0; i < bstResults.n_cols; i++)
+  {
+    BOOST_REQUIRE_EQUAL(bstResults(0, i), ballResults(0, i));
+    BOOST_REQUIRE_EQUAL(bstResults(1, i), ballResults(1, i));
+    BOOST_REQUIRE_CLOSE(bstResults(2, i), ballResults(2, i), 1e-5);
+  }
+
+}
+
 BOOST_AUTO_TEST_SUITE_END();
