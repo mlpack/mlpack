@@ -10,6 +10,7 @@
 #include "old_boost_test_definitions.hpp"
 
 using namespace mlpack;
+using namespace arma;
 
 BOOST_AUTO_TEST_SUITE(ArmaExtendTest);
 
@@ -45,6 +46,48 @@ BOOST_AUTO_TEST_CASE(InplaceReshapeMatrixTest)
   BOOST_REQUIRE_EQUAL(X.n_cols, 8);
   for (size_t i = 0; i < 80; ++i)
     BOOST_REQUIRE_CLOSE(X[i], oldX[i], 1e-5); // Order should be preserved.
+}
+
+/**
+ * Test const_row_col_iterator for basic functionality.
+ */
+BOOST_AUTO_TEST_CASE(ConstRowColIteratorTest)
+{
+  mat X;
+  X.ones(2, 2);
+  // make sure default costructor works okay
+  mat::const_row_col_iterator it;
+  // make sure ++ operator, operator* and comparison operators work fine
+  size_t count = 0;
+  for(it = X.begin_row_col();it != X.end_row_col();it++)
+  {
+    count++;
+    BOOST_REQUIRE_EQUAL(*it, 1);
+  }
+  BOOST_REQUIRE_EQUAL(count, 4);
+  // make sure it can be constructed from row_iterator
+  it = X.begin_row(0);
+}
+
+/**
+ * Test row_col_iterator for basic functionality.
+ */
+BOOST_AUTO_TEST_CASE(RowColIteratorTest)
+{
+  mat X;
+  X.ones(2, 2);
+  // make sure default costructor works okay
+  mat::row_col_iterator it;
+  // make sure ++ operator, operator* and comparison operators work fine
+  size_t count = 0;
+  for(it = X.begin_row_col();it != X.end_row_col();it++)
+  {
+    count++;
+    BOOST_REQUIRE_EQUAL(*it, 1);
+  }
+  BOOST_REQUIRE_EQUAL(count, 4);
+  // make sure it can be constructed from row_iterator
+  it = X.begin_row(0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
