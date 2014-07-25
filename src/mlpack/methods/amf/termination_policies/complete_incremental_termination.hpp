@@ -1,8 +1,6 @@
 #ifndef COMPLETE_INCREMENTAL_TERMINATION_HPP_INCLUDED
 #define COMPLETE_INCREMENTAL_TERMINATION_HPP_INCLUDED
 
-#include "amf/termination_policies/simple_tolerance_termination.hpp"
-
 namespace mlpack
 {
 namespace amf
@@ -47,6 +45,11 @@ class CompleteIncrementalTermination
   const size_t& Iteration()
   {
     return iteration;
+  }
+  
+  const size_t& MaxIterations()
+  {
+    return t_policy.MaxIterations();
   }
 
  private:
