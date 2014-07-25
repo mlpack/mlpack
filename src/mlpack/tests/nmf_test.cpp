@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(NMFDefaultTest)
 
   // Make sure reconstruction error is not too high.  0.5% tolerance.
   BOOST_REQUIRE_SMALL(arma::norm(v - wh, "fro") / arma::norm(v, "fro"),
-      0.01);
+      0.012);
 }
 
 /**
@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE(NMFAcolDistTest)
   mat wh = w * h;
 
   BOOST_REQUIRE_SMALL(arma::norm(v - wh, "fro") / arma::norm(v, "fro"),
-      0.01);
+      0.012);
 }
 
 /**
@@ -87,7 +87,7 @@ BOOST_AUTO_TEST_CASE(NMFRandomDivTest)
 
   // Make sure reconstruction error is not too high.  0.5% tolerance.
   BOOST_REQUIRE_SMALL(arma::norm(v - wh, "fro") / arma::norm(v, "fro"),
-      0.01);
+      0.012);
 }
 
 /**
@@ -110,11 +110,11 @@ BOOST_AUTO_TEST_CASE(NMFALSTest)
 
   const mat wh = w * h;
 
-  // Make sure reconstruction error is not too high.  6% tolerance.  It seems
+  // Make sure reconstruction error is not too high.  8% tolerance.  It seems
   // like ALS doesn't converge to results that are as good.  It also seems to be
   // particularly sensitive to initial conditions.
   BOOST_REQUIRE_SMALL(arma::norm(v - wh, "fro") / arma::norm(v, "fro"),
-      0.06);
+      0.08);
 }
 
 /**
