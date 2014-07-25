@@ -34,6 +34,13 @@
   * HMMs now support initial state probabilities; these can be set in the
     constructor, trained, or set manually with HMM::Initial() (#315).
 
+  * Added Nyström method for kernel matrix approximation by Marcus Edel.
+
+  * Kernel PCA now supports using Nyström method for approximation.
+
+  * Ball trees now work with dual-tree algorithms, via the BallBound<> bound
+    structure (#320); fixed by Yash Vadalia.
+
 2014-01-06    mlpack 1.0.8
 
   * Memory leak in NeighborSearch index-mapping code fixed (#310).
