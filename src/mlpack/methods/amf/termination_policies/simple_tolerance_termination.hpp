@@ -29,6 +29,11 @@ class SimpleToleranceTermination
     reverseStepCount = 0;
 
     this->V = &V;
+    
+    c_index = 0;
+    c_indexOld = 0;
+
+    reverseStepCount = 0;
   }
 
   bool IsConverged(arma::mat& W, arma::mat& H)
