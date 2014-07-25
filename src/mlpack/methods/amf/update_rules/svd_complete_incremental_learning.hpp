@@ -2,7 +2,6 @@
 #define SVD_COMPLETE_INCREMENTAL_LEARNING_HPP_INCLUDED
 
 #include <mlpack/core.hpp>
-#include <vector>
 
 namespace mlpack
 {
@@ -21,6 +20,7 @@ class SVDCompleteIncrementalLearning
 
   void Initialize(const MatType& dataset, const size_t rank)
   {
+    (void)rank;
     n = dataset.n_rows;
     m = dataset.n_cols;
 
@@ -128,6 +128,7 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
 
   void Initialize(const arma::sp_mat& dataset, const size_t rank)
   {
+    (void)rank;
     n = dataset.n_rows;
     m = dataset.n_cols;
 
@@ -183,6 +184,8 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
                       const arma::mat& W,
                       arma::mat& H)
   {
+    (void)V;
+  
     arma::mat deltaH(H.n_rows, 1);
     deltaH.zeros();
 

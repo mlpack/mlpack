@@ -50,6 +50,10 @@ class ValidationRMSETermination
 
     rmse = DBL_MAX;
     rmseOld = DBL_MAX;
+
+    c_index = 0;
+    c_indexOld = 0;
+
     reverseStepCount = 0;
     isCopy = false;
   }
