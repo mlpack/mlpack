@@ -43,6 +43,8 @@
  *   year={2009}
  * }
  *
+ * RASearch is currently known to not work with ball trees (#356).
+ *
  * @tparam SortPolicy The sort policy for distances; see NearestNeighborSort.
  * @tparam MetricType The metric to use for computation.
  * @tparam TreeType The tree type to use.
