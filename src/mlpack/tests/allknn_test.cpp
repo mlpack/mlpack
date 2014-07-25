@@ -663,6 +663,79 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
   }
 }
 
+/**
+ * Test the ball tree single-tree nearest-neighbors method against the naive
+ * method.  This uses only a random reference dataset.
+ *
+ * Errors are produced if the results are not identical.
+ */
+BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
+{
+  arma::mat data;
+  data.randu(75, 1000); // 75 dimensional, 1000 points.
+
+  typedef BinarySpaceTree<BallBound<arma::vec, LMetric<2, true> >,
+      NeighborSearchStat<NearestNeighborSort> > TreeType;
+  TreeType tree = TreeType(data);
+
+  // BinarySpaceTree modifies data. Use modified data to maintain the
+  // correspondance between points in the dataset for both methods. The order of
+  // query points in both methods should be same.
+  arma::mat naiveQuery(data); // For naive AllkNN.
+
+  NeighborSearch<NearestNeighborSort, LMetric<2>, TreeType>
+      ballTreeSearch(&tree, data, true);
+
+  AllkNN naive(naiveQuery, true);
+
+  arma::Mat<size_t> ballTreeNeighbors;
+  arma::mat ballTreeDistances;
+  ballTreeSearch.Search(1, ballTreeNeighbors, ballTreeDistances);
+
+  arma::Mat<size_t> naiveNeighbors;
+  arma::mat naiveDistances;
+  naive.Search(1, naiveNeighbors, naiveDistances);
+
+  for (size_t i = 0; i < ballTreeNeighbors.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(ballTreeNeighbors[i], naiveNeighbors[i]);
+    BOOST_REQUIRE_CLOSE(ballTreeDistances[i], naiveDistances[i], 1e-5);
+  }
+}
+
+/**
+ * Test the ball tree dual-tree nearest neighbors method against the naive
+ * method.
+ */
+BOOST_AUTO_TEST_CASE(DualBallTreeTest)
+{
+  arma::mat dataset;
+  data::Load("test_data_3_1000.csv", dataset);
+
+  arma::mat kdtreeData(dataset);
+
+  AllkNN tree(kdtreeData);
+
+  arma::Mat<size_t> kdNeighbors;
+  arma::mat kdDistances;
+  tree.Search(5, kdNeighbors, kdDistances);
+
+  NeighborSearch<NearestNeighborSort, LMetric<2, true>,
+      BinarySpaceTree<BallBound<arma::vec, LMetric<2, true> >,
+      NeighborSearchStat<NearestNeighborSort> > >
+      ballTreeSearch(dataset);
+
+  arma::Mat<size_t> ballNeighbors;
+  arma::mat ballDistances;
+  ballTreeSearch.Search(5, ballNeighbors, ballDistances);
+
+  for (size_t i = 0; i < ballNeighbors.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(ballNeighbors(i), kdNeighbors(i));
+    BOOST_REQUIRE_CLOSE(ballDistances(i), kdDistances(i), 1e-5);
+  }
+}
+
 // Make sure sparse nearest neighbors works with kd trees.
 BOOST_AUTO_TEST_CASE(SparseAllkNNKDTreeTest)
 {
