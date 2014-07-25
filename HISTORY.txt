@@ -41,6 +41,15 @@
   * Ball trees now work with dual-tree algorithms, via the BallBound<> bound
     structure (#320); fixed by Yash Vadalia.
 
+  * The NMF class is now AMF<>, and supports far more types of factorizations,
+    by Sumedh Ghaisas.
+
+  * A QUIC-SVD implementation has returned, written by Siddharth Agrawal and
+    based on older code from Mudit Gupta.
+
+  * Added perceptron and decision stump by Udit Saxena (these are weak learners
+    for an eventual AdaBoost class).
+
 2014-01-06    mlpack 1.0.8
 
   * Memory leak in NeighborSearch index-mapping code fixed (#310).
