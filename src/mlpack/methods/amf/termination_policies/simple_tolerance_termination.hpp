@@ -26,6 +26,7 @@ class SimpleToleranceTermination
     residueOld = DBL_MAX;
     iteration = 1;
     residue = DBL_MIN;
+    reverseStepCount = 0;
 
     this->V = &V;
   }
