@@ -15,29 +15,52 @@ namespace mlpack {
 namespace bound {
 
 /**
- * Ball bound that works in the regular Euclidean metric space.
+ * Ball bound encloses a set of points at a specific distance (radius) from a
+ * specific point (center). TMetricType is the custom metric type that defaults
+ * to the Euclidean (L2) distance.
  *
  * @tparam VecType Type of vector (arma::vec or arma::sp_vec).
+ * @tparam TMetricType metric type used in the distance measure.
  */
-template<typename VecType = arma::vec>
+template<typename VecType = arma::vec,
+         typename TMetricType = metric::LMetric<2, true> >
 class BallBound
 {
  public:
   typedef VecType Vec;
+  //! Need this for Binary Space Partion Tree
+  typedef TMetricType MetricType;
 
  private:
+
+  //! The radius of the ball bound.
   double radius;
+
+  //! The center of the ball bound.
   VecType center;
 
+  //! The metric used in this bound.
+  TMetricType* metric;
+
+  /**
+   * To know whether this object allocated memory to the metric member
+   * variable. This will be true except in the copy constructor and the
+   * overloaded assignment operator. We need this to know whether we should
+   * delete the metric member variable in the destructor.
+   */
+  bool ownsMetric;
+
  public:
-  BallBound() : radius(0) { }
+
+  //! Empty Constructor.
+  BallBound();
 
   /**
    * Create the ball bound with the specified dimensionality.
    *
    * @param dimension Dimensionality of ball bound.
    */
-  BallBound(const size_t dimension) : radius(0), center(dimension) { }
+  BallBound(const size_t dimension);
 
   /**
    * Create the ball bound with the specified radius and center.
@@ -45,8 +68,16 @@ class BallBound
    * @param radius Radius of ball bound.
    * @param center Center of ball bound.
    */
-  BallBound(const double radius, const VecType& center) :
-      radius(radius), center(center) { }
+  BallBound(const double radius, const VecType& center);
+
+  //! Copy constructor. To prevent memory leaks.
+  BallBound(const BallBound& other);
+
+  //! For the same reason as the Copy Constructor. To prevent memory leaks.
+  BallBound& operator=(const BallBound& other);
+
+  //! Destructor to release allocated memory.
+  ~BallBound();
 
   //! Get the radius of the ball.
   double Radius() const { return radius; }
@@ -58,7 +89,16 @@ class BallBound
   //! Modify the center point of the ball.
   VecType& Center() { return center; }
 
-  // Get the range in a certain dimension.
+  //! Get the dimensionality of the ball.
+  double Dim() const { return center.n_elem; }
+
+  /**
+   * Get the minimum width of the bound (this is same as the diameter).
+   * For ball bounds, width along all dimensions remain same.
+   */
+  double MinWidth() const { return radius * 2.0; }
+
+  //! Get the range in a certain dimension.
   math::Range operator[](const size_t i) const;
 
   /**
@@ -67,13 +107,11 @@ class BallBound
   bool Contains(const VecType& point) const;
 
   /**
-   * Gets the center.
+   * Place the centroid of BallBound into the given vector.
    *
-   * Don't really use this directly.  This is only here for consistency
-   * with DHrectBound, so it can plug in more directly if a "centroid"
-   * is needed.
+   * @param centroid Vector which the centroid will be written to.
    */
-  void CalculateMidpoint(VecType& centroid) const;
+  void Centroid(VecType& centroid) const { centroid = center; }
 
   /**
    * Calculates minimum bound-to-point squared distance.
@@ -131,6 +169,16 @@ class BallBound
    */
   template<typename MatType>
   const BallBound& operator|=(const MatType& data);
+
+  /**
+   * Returns the diameter of the ballbound.
+   */
+  double Diameter() const { return 2 * radius; }
+
+  /**
+   * Returns the distance metric used in this bound.
+   */
+  TMetricType Metric() const { return *metric; }
 
   /**
    * Returns a string representation of this object.
