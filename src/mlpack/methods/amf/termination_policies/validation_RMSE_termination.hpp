@@ -44,14 +44,14 @@ class ValidationRMSETermination
     }
   }
 
-  void Initialize(const MatType& V)
+  void Initialize(const MatType& /* V */)
   {
-    (void)V;
     iteration = 1;
 
     rmse = DBL_MAX;
     rmseOld = DBL_MAX;
     reverseStepCount = 0;
+    isCopy = false;
   }
 
   bool IsConverged(arma::mat& W, arma::mat& H)
