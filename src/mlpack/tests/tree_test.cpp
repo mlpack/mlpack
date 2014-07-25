@@ -1206,7 +1206,7 @@ BOOST_AUTO_TEST_CASE(ParentDistanceTestWithMapping)
 
 // Forward declaration of methods we need for the next test.
 template<typename TreeType, typename MatType>
-bool CheckPointBounds(TreeType* node, const MatType& data);
+bool CheckPointBounds(TreeType& node, const MatType& data);
 
 template<typename TreeType>
 void GenerateVectorOfTree(TreeType* node,
@@ -1274,7 +1274,7 @@ BOOST_AUTO_TEST_CASE(KdTreeTest)
     }
 
     // Now check that each point is contained inside of all bounds above it.
-    CheckPointBounds(&root, dataset);
+    CheckPointBounds(root, dataset);
 
     // Now check that no peers overlap.
     std::vector<TreeType*> v;
@@ -1309,20 +1309,74 @@ BOOST_AUTO_TEST_CASE(KdTreeTest)
 
 // Recursively checks that each node contains all points that it claims to have.
 template<typename TreeType, typename MatType>
-bool CheckPointBounds(TreeType* node, const MatType& data)
+bool CheckPointBounds(TreeType& node, const MatType& data)
 {
-  if (node == NULL) // We have passed a leaf node.
-    return true;
-
-  TreeType* left = node->Left();
-  TreeType* right = node->Right();
-
   // Check that each point which this tree claims is actually inside the tree.
-  for (size_t index = 0; index < node->NumDescendants(); index++)
-    if (!node->Bound().Contains(data.col(node->Descendant(index))))
+  for (size_t index = 0; index < node.NumDescendants(); index++)
+    if (!node.Bound().Contains(data.col(node.Descendant(index))))
       return false;
 
-  return CheckPointBounds(left, data) && CheckPointBounds(right, data);
+  bool result = true;
+  for (size_t child = 0; child < node.NumChildren(); ++child)
+    result &= CheckPointBounds(node.Child(child), data);
+  return result;
+}
+
+/**
+ * Exhaustive ball tree test based on #125.
+ *
+ * - Generate a random dataset of a random size.
+ * - Build a tree on that dataset.
+ * - Ensure all the permutation indices map back to the correct points.
+ * - Verify that each point is contained inside all of the bounds of its parent
+ *     nodes.
+ *
+ * Then, we do that whole process a handful of times.
+ */
+BOOST_AUTO_TEST_CASE(BallTreeTest)
+{
+  typedef BinarySpaceTree<BallBound<> > TreeType;
+
+  size_t maxRuns = 10; // Ten total tests.
+  size_t pointIncrements = 1000; // Range is from 2000 points to 11000.
+
+  // We use the default leaf size of 20.
+  for(size_t run = 0; run < maxRuns; run++)
+  {
+    size_t dimensions = run + 2;
+    size_t maxPoints = (run + 1) * pointIncrements;
+
+    size_t size = maxPoints;
+    arma::mat dataset = arma::mat(dimensions, size);
+    arma::mat datacopy; // Used to test mappings.
+
+    // Mappings for post-sort verification of data.
+    std::vector<size_t> newToOld;
+    std::vector<size_t> oldToNew;
+
+    // Generate data.
+    dataset.randu();
+    datacopy = dataset; // Save a copy.
+
+    // Build the tree itself.
+    TreeType root(dataset, newToOld, oldToNew);
+
+    // Ensure the size of the tree is correct.
+    BOOST_REQUIRE_EQUAL(root.NumDescendants(), size);
+
+    // Check the forward and backward mappings for correctness.
+    for(size_t i = 0; i < size; i++)
+    {
+      for(size_t j = 0; j < dimensions; j++)
+      {
+        BOOST_REQUIRE_EQUAL(dataset(j, i), datacopy(j, newToOld[i]));
+        BOOST_REQUIRE_EQUAL(dataset(j, oldToNew[i]), datacopy(j, i));
+      }
+    }
+
+    // Now check that each point is contained inside of all bounds above it.
+    CheckPointBounds(root, dataset);
+  }
 }
 
 template<int t_pow>
@@ -1429,7 +1483,7 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSparseKDTreeTest)
     }
 
     // Now check that each point is contained inside of all bounds above it.
-    CheckPointBounds(&root, dataset);
+    CheckPointBounds(root, dataset);
 
     // Now check that no peers overlap.
     std::vector<TreeType*> v;
