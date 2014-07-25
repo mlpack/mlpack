@@ -5,12 +5,14 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+#include <mlpack/core/tree/cover_tree.hpp>
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
 
 using namespace mlpack;
 using namespace mlpack::neighbor;
 using namespace mlpack::tree;
+using namespace mlpack::metric;
 using namespace mlpack::bound;
 
 BOOST_AUTO_TEST_SUITE(AllkFNTest);
@@ -436,6 +438,153 @@ BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
   {
     BOOST_REQUIRE(resultingNeighborsTree[i] == resultingNeighborsNaive[i]);
     BOOST_REQUIRE_CLOSE(distancesTree[i], distancesNaive[i], 1e-5);
+  }
+}
+
+/**
+ * Test the cover tree single-tree furthest-neighbors method against the naive
+ * method.  This uses only a random reference dataset.
+ *
+ * Errors are produced if the results are not identical.
+ */
+BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
+{
+  arma::mat data;
+  data.randu(75, 1000); // 75 dimensional, 1000 points.
+
+  arma::mat naiveQuery(data); // For naive AllkNN.
+
+  CoverTree<LMetric<2>, FirstPointIsRoot,
+      NeighborSearchStat<FurthestNeighborSort> > tree = CoverTree<LMetric<2>,
+      FirstPointIsRoot, NeighborSearchStat<FurthestNeighborSort> >(data);
+
+  NeighborSearch<FurthestNeighborSort, LMetric<2>, CoverTree<LMetric<2>,
+      FirstPointIsRoot, NeighborSearchStat<FurthestNeighborSort> > >
+      coverTreeSearch(&tree, data, true);
+
+  AllkFN naive(naiveQuery, true);
+
+  arma::Mat<size_t> coverTreeNeighbors;
+  arma::mat coverTreeDistances;
+  coverTreeSearch.Search(15, coverTreeNeighbors, coverTreeDistances);
+
+  arma::Mat<size_t> naiveNeighbors;
+  arma::mat naiveDistances;
+  naive.Search(15, naiveNeighbors, naiveDistances);
+
+  for (size_t i = 0; i < coverTreeNeighbors.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(coverTreeNeighbors[i], naiveNeighbors[i]);
+    BOOST_REQUIRE_CLOSE(coverTreeDistances[i], naiveDistances[i], 1e-5);
+  }
+}
+
+/**
+ * Test the cover tree dual-tree furthest neighbors method against the naive
+ * method.
+ */
+BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
+{
+  arma::mat dataset;
+  data::Load("test_data_3_1000.csv", dataset);
+
+  arma::mat kdtreeData(dataset);
+
+  AllkFN tree(kdtreeData);
+
+  arma::Mat<size_t> kdNeighbors;
+  arma::mat kdDistances;
+  tree.Search(5, kdNeighbors, kdDistances);
+
+  typedef CoverTree<LMetric<2, true>, FirstPointIsRoot,
+      NeighborSearchStat<FurthestNeighborSort> > TreeType;
+
+  TreeType referenceTree = TreeType(dataset);
+
+  NeighborSearch<FurthestNeighborSort, LMetric<2, true>,
+      TreeType> coverTreeSearch(&referenceTree, dataset);
+
+  arma::Mat<size_t> coverNeighbors;
+  arma::mat coverDistances;
+  coverTreeSearch.Search(5, coverNeighbors, coverDistances);
+
+  for (size_t i = 0; i < coverNeighbors.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(coverNeighbors(i), kdNeighbors(i));
+    BOOST_REQUIRE_CLOSE(coverDistances(i), kdDistances(i), 1e-5);
+  }
+}
+
+/**
+ * Test the ball tree single-tree furthest-neighbors method against the naive
+ * method.  This uses only a random reference dataset.
+ *
+ * Errors are produced if the results are not identical.
+ */
+BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
+{
+  arma::mat data;
+  data.randu(75, 1000); // 75 dimensional, 1000 points.
+
+  typedef BinarySpaceTree<BallBound<arma::vec, LMetric<2, true> >,
+      NeighborSearchStat<FurthestNeighborSort> > TreeType;
+  TreeType tree = TreeType(data);
+
+  // BinarySpaceTree modifies data. Use modified data to maintain the
+  // correspondance between points in the dataset for both methods. The order of
+  // query points in both methods should be same.
+  arma::mat naiveQuery(data); // For naive AllkNN.
+
+  NeighborSearch<FurthestNeighborSort, LMetric<2>, TreeType>
+      ballTreeSearch(&tree, data, true);
+
+  AllkFN naive(naiveQuery, true);
+
+  arma::Mat<size_t> ballTreeNeighbors;
+  arma::mat ballTreeDistances;
+  ballTreeSearch.Search(15, ballTreeNeighbors, ballTreeDistances);
+
+  arma::Mat<size_t> naiveNeighbors;
+  arma::mat naiveDistances;
+  naive.Search(15, naiveNeighbors, naiveDistances);
+
+  for (size_t i = 0; i < ballTreeNeighbors.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(ballTreeNeighbors[i], naiveNeighbors[i]);
+    BOOST_REQUIRE_CLOSE(ballTreeDistances[i], naiveDistances[i], 1e-5);
+  }
+}
+
+/**
+ * Test the ball tree dual-tree furthest neighbors method against the naive
+ * method.
+ */
+BOOST_AUTO_TEST_CASE(DualBallTreeTest)
+{
+  arma::mat dataset;
+  data::Load("test_data_3_1000.csv", dataset);
+
+  arma::mat kdtreeData(dataset);
+
+  AllkFN tree(kdtreeData);
+
+  arma::Mat<size_t> kdNeighbors;
+  arma::mat kdDistances;
+  tree.Search(5, kdNeighbors, kdDistances);
+
+  NeighborSearch<FurthestNeighborSort, LMetric<2, true>,
+      BinarySpaceTree<BallBound<arma::vec, LMetric<2, true> >,
+      NeighborSearchStat<FurthestNeighborSort> > >
+      ballTreeSearch(dataset);
+
+  arma::Mat<size_t> ballNeighbors;
+  arma::mat ballDistances;
+  ballTreeSearch.Search(5, ballNeighbors, ballDistances);
+
+  for (size_t i = 0; i < ballNeighbors.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(ballNeighbors(i), kdNeighbors(i));
+    BOOST_REQUIRE_CLOSE(ballDistances(i), kdDistances(i), 1e-5);
   }
 }
 

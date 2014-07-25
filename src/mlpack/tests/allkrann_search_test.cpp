@@ -17,6 +17,9 @@
 using namespace std;
 using namespace mlpack;
 using namespace mlpack::neighbor;
+using namespace mlpack::tree;
+using namespace mlpack::metric;
+using namespace mlpack::bound;
 
 BOOST_AUTO_TEST_SUITE(AllkRANNTest);
 
@@ -344,7 +347,7 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
   typedef RASearch<NearestNeighborSort, metric::EuclideanDistance, TreeType>
       RACoverTreeSearch;
 
-  RACoverTreeSearch tssRann(refData, queryData, true);
+  RACoverTreeSearch tssRann(refData, queryData, false, true);
 
   // The relative ranks for the given query reference pair.
   arma::Mat<size_t> qrRanks;
@@ -454,5 +457,138 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
 
   BOOST_REQUIRE_LT(numQueriesFail, maxNumQueriesFail);
 }
+
+// Test single-tree rank-approximate search with ball trees.
+// This is known to not work right now.
+/*
+BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
+{
+  arma::mat refData;
+  arma::mat queryData;
+
+  data::Load("rann_test_r_3_900.csv", refData, true);
+  data::Load("rann_test_q_3_100.csv", queryData, true);
+
+  // Search for 1 rank-approximate nearest-neighbors in the top 30% of the point
+  // (rank error of 3).
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+
+  typedef BinarySpaceTree<BallBound<>, RAQueryStat<NearestNeighborSort> >
+      TreeType;
+  typedef RASearch<NearestNeighborSort, metric::EuclideanDistance, TreeType>
+      RABallTreeSearch;
+
+  RABallTreeSearch tssRann(refData, queryData, false, true);
+
+  // The relative ranks for the given query reference pair.
+  arma::Mat<size_t> qrRanks;
+  data::Load("rann_test_qr_ranks.csv", qrRanks, true, false); // No transpose.
+
+  size_t numRounds = 30;
+  arma::Col<size_t> numSuccessRounds(queryData.n_cols);
+  numSuccessRounds.fill(0);
+
+  // 1% of 900 is 9, so the rank is expected to be less than 10.
+  size_t expectedRankErrorUB = 10;
+
+  for (size_t rounds = 0; rounds < numRounds; rounds++)
+  {
+    tssRann.Search(1, neighbors, distances, 1.0, 0.95, false, false, 5);
+
+    for (size_t i = 0; i < queryData.n_cols; i++)
+      if (qrRanks(i, neighbors(0, i)) < expectedRankErrorUB)
+        numSuccessRounds[i]++;
+
+    neighbors.reset();
+    distances.reset();
+  }
+
+  // Find the 95%-tile threshold so that 95% of the queries should pass this
+  // threshold.
+  size_t threshold = floor(numRounds *
+      (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
+  size_t numQueriesFail = 0;
+  for (size_t i = 0; i < queryData.n_cols; i++)
+    if (numSuccessRounds[i] < threshold)
+      numQueriesFail++;
+
+  Log::Warn << "RANN-TSS (ball tree): RANN guarantee fails on "
+      << numQueriesFail << " queries." << endl;
+
+  // Assert that at most 5% of the queries fall out of this threshold.
+  // 5% of 100 queries is 5.
+  size_t maxNumQueriesFail = 6;
+
+  BOOST_REQUIRE_LT(numQueriesFail, maxNumQueriesFail);
+}
+
+// Test dual-tree rank-approximate search with Ball trees.
+BOOST_AUTO_TEST_CASE(DualBallTreeTest)
+{
+  arma::mat refData;
+  arma::mat queryData;
+
+  data::Load("rann_test_r_3_900.csv", refData, true);
+  data::Load("rann_test_q_3_100.csv", queryData, true);
+
+  // Search for 1 rank-approximate nearest-neighbors in the top 30% of the point
+  // (rank error of 3).
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+
+  typedef BinarySpaceTree<BallBound<>, RAQueryStat<NearestNeighborSort> >
+    TreeType;
+  typedef RASearch<NearestNeighborSort, metric::EuclideanDistance, TreeType>
+      RABallTreeSearch;
+
+  TreeType refTree(refData);
+  TreeType queryTree(queryData);
+
+  RABallTreeSearch tsdRann(&refTree, &queryTree, refData, queryData, false);
+
+  arma::Mat<size_t> qrRanks;
+  data::Load("rann_test_qr_ranks.csv", qrRanks, true, false); // No transpose.
+
+  size_t numRounds = 1000;
+  arma::Col<size_t> numSuccessRounds(queryData.n_cols);
+  numSuccessRounds.fill(0);
+
+  // 1% of 900 is 9, so the rank is expected to be less than 10.
+  size_t expectedRankErrorUB = 10;
+
+  for (size_t rounds = 0; rounds < numRounds; rounds++)
+  {
+    tsdRann.Search(1, neighbors, distances, 1.0, 0.95, false, false, 5);
+
+    for (size_t i = 0; i < queryData.n_cols; i++)
+      if (qrRanks(i, neighbors(0, i)) < expectedRankErrorUB)
+        numSuccessRounds[i]++;
+
+    neighbors.reset();
+    distances.reset();
+
+    tsdRann.ResetQueryTree();
+  }
+
+  // Find the 95%-tile threshold so that 95% of the queries should pass this
+  // threshold.
+  size_t threshold = floor(numRounds *
+      (0.95 - (1.96 * sqrt(0.95 * 0.05 / numRounds))));
+  size_t numQueriesFail = 0;
+  for (size_t i = 0; i < queryData.n_cols; i++)
+    if (numSuccessRounds[i] < threshold)
+      numQueriesFail++;
+
+  Log::Warn << "RANN-TSD (Ball tree): RANN guarantee fails on "
+      << numQueriesFail << " queries." << endl;
+
+  // assert that at most 5% of the queries fall out of this threshold
+  // 5% of 100 queries is 5.
+  size_t maxNumQueriesFail = 6;
+
+  BOOST_REQUIRE_LT(numQueriesFail, maxNumQueriesFail);
+}
+*/
 
 BOOST_AUTO_TEST_SUITE_END();
