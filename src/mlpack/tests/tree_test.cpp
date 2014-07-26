@@ -8,7 +8,6 @@
 #include <mlpack/core/tree/binary_space_tree/binary_space_tree.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>
-#include <mlpack/core/tree/rectangle_tree.hpp>
 
 #include <queue>
 #include <stack>

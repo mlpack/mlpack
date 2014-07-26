@@ -40,7 +40,6 @@ add_executable(mlpack_test
   quic_svd_test.cpp
   radical_test.cpp
   range_search_test.cpp
-  rectangle_tree_test.cpp
   regularized_svd_test.cpp
   sa_test.cpp
   save_restore_utility_test.cpp
