@@ -50,8 +50,7 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(const TreeType* node, con
         }
       }
     }
-  }
-  
+  }  
   return bestIndex;
 }
 

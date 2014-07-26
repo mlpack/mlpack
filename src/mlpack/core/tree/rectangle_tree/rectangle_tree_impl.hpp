@@ -145,18 +145,20 @@ InsertPoint(const size_t point)
   // Expand the bound regardless of whether it is a leaf node.
   bound |= dataset.col(point);
 
+  std::vector<bool> lvls(TreeDepth());
+  for (int i = 0; i < lvls.size(); i++)
+    lvls[i] = true;
   // If this is a leaf node, we stop here and add the point.
   if (numChildren == 0) {
     localDataset->col(count) = dataset.col(point);
     points[count++] = point;
-    std::vector<bool> lvls(TreeDepth());
     SplitNode(lvls);
     return;
   }
 
   // If it is not a leaf node, we use the DescentHeuristic to choose a child
   // to which we recurse.
-  children[DescentType::ChooseDescentNode(this, dataset.col(point))]->InsertPoint(point);
+  children[DescentType::ChooseDescentNode(this, dataset.col(point))]->InsertPoint(point, lvls);
 }
 
 /**
@@ -178,14 +180,13 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::InsertPoint(
   if (numChildren == 0) {
     localDataset->col(count) = dataset.col(point);
     points[count++] = point;
-    std::vector<bool> lvls(TreeDepth());
-    SplitNode(lvls);
+    SplitNode(relevels);
     return;
   }
 
   // If it is not a leaf node, we use the DescentHeuristic to choose a child
   // to which we recurse.
-  children[DescentType::ChooseDescentNode(this, dataset.col(point))]->InsertPoint(point);
+  children[DescentType::ChooseDescentNode(this, dataset.col(point))]->InsertPoint(point, relevels);
 }
 
 /**
@@ -198,16 +199,14 @@ template<typename SplitType,
 typename DescentType,
 typename StatisticType,
 typename MatType>
-void RectangleTree<SplitType, DescentType, StatisticType, MatType>::InsertNode(const RectangleTree* node, const size_t level, std::vector<bool>& relevels)
+void RectangleTree<SplitType, DescentType, StatisticType, MatType>::InsertNode(RectangleTree* node, const size_t level, std::vector<bool>& relevels)
 {
   // Expand the bound regardless of the level.
   bound |= node->Bound();
-
   if (level == TreeDepth()) {
-    children[numChildren++] = const_cast<RectangleTree*> (node);
-    assert(numChildren <= maxNumChildren); // We should never have increased without splitting.
-    if (numChildren == maxNumChildren)
-      SplitType::SplitNonLeafNode(this, relevels);
+    children[numChildren++] = node;
+    node->Parent() = this;
+    SplitNode(relevels);
   } else {
     children[DescentType::ChooseDescentNode(this, node)]->InsertNode(node, level, relevels);
   }
@@ -224,16 +223,18 @@ typename MatType>
 bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 DeletePoint(const size_t point)
 {
+  //It is possible that this will cause a reinsertion, so we need to handle the lvls properly.
+  RectangleTree* root = this;
+  while (root->Parent() != NULL)
+    root = root->Parent();
+  std::vector<bool> lvls(root->TreeDepth());
+  for (int i = 0; i < lvls.size(); i++)
+    lvls[i] = true;
   if (numChildren == 0) {
     for (size_t i = 0; i < count; i++) {
       if (points[i] == point) {
         localDataset->col(i) = localDataset->col(--count); // decrement count
         points[i] = points[count];
-        //It is possible that this will cause a reinsertion, so we need to handle the lvls properly.
-        RectangleTree* root = this;
-        while(root->Parent() != NULL)
-          root = root->Parent();
-        std::vector<bool> lvls(root->TreeDepth());
         CondenseTree(dataset.col(point), lvls, true); // This function will ensure that minFill is satisfied.
         return true;
       }
@@ -241,7 +242,7 @@ DeletePoint(const size_t point)
   }
   for (size_t i = 0; i < numChildren; i++) {
     if (children[i]->Bound().Contains(dataset.col(point)))
-      if (children[i]->DeletePoint(point))
+      if (children[i]->DeletePoint(point, lvls))
         return true;
   }
   return false;
@@ -270,7 +271,7 @@ DeletePoint(const size_t point, std::vector<bool>& relevels)
   }
   for (size_t i = 0; i < numChildren; i++) {
     if (children[i]->Bound().Contains(dataset.col(point)))
-      if (children[i]->DeletePoint(point))
+      if (children[i]->DeletePoint(point, relevels))
         return true;
   }
   return false;
@@ -285,16 +286,20 @@ typename DescentType,
 typename StatisticType,
 typename MatType>
 bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::
-DeleteNode(const RectangleTree* node, std::vector<bool>& relevels)
+RemoveNode(const RectangleTree* node, std::vector<bool>& relevels)
 {
   for (size_t i = 0; i < numChildren; i++) {
     if (children[i] == node) {
       children[i] = children[--numChildren]; // Decrement numChildren
-      CondenseTree(arma::vec(), false);
+      CondenseTree(arma::vec(), relevels, false);
       return true;
     }
-    if (children[i]->Bound().Contains(node->Bound()))
-      if (children[i]->DeleteNode(node))
+    bool contains = true;
+    for (size_t j = 0; j < node->Bound().Dim(); j++) {
+      contains &= Child(i)->Bound()[j].Contains(node->Bound()[j]);
+    }
+    if (contains)
+      if (children[i]->RemoveNode(node, relevels))
         return true;
   }
   return false;
@@ -469,17 +474,24 @@ typename StatisticType,
 typename MatType>
 void RectangleTree<SplitType, DescentType, StatisticType, MatType>::SplitNode(std::vector<bool>& relevels)
 {
-  // This should always be a leaf node.  When we need to split other nodes,
-  // the split will be called from here but will take place in the SplitType code.
-  assert(numChildren == 0);
+  if (numChildren == 0) {
 
-  // Check to see if we are full.
-  if (count < maxLeafSize)
-    return; // We don't need to split.
+    // Check to see if we are full.
+    if (count <= maxLeafSize)
+      return; // We don't need to split.
 
-  // If we are full, then we need to split (or at least try).  The SplitType takes
-  // care of this and of moving up the tree if necessary.
-  SplitType::SplitLeafNode(this, relevels);
+    // If we are full, then we need to split (or at least try).  The SplitType takes
+    // care of this and of moving up the tree if necessary.
+    SplitType::SplitLeafNode(this, relevels);
+  } else {
+    // Check to see if we are full.
+    if (numChildren <= maxNumChildren)
+      return; // We don't need to split.
+
+    // If we are full, then we need to split (or at least try).  The SplitType takes
+    // care of this and of moving up the tree if necessary.
+    SplitType::SplitNonLeafNode(this, relevels);
+  }
 }
 
 /**
@@ -505,7 +517,7 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::CondenseTree
           root = root->Parent();
 
         for (size_t j = 0; j < count; j++) {
-          root->InsertPoint(points[j]);
+          root->InsertPoint(points[j], relevels);
         }
 
         parent->CondenseTree(point, relevels, usePoint); // This will check the MinFill of the parent.

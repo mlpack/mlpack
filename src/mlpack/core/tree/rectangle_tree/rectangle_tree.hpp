@@ -103,9 +103,9 @@ class RectangleTree
    */
   RectangleTree(MatType& data,
 		const size_t maxLeafSize = 20,
-		const size_t minLeafSize = 6,
-		const size_t maxNumChildren = 4,
-		const size_t minNumChildren = 0,
+		const size_t minLeafSize = 8,
+		const size_t maxNumChildren = 5,
+		const size_t minNumChildren = 2,
 		const size_t firstDataIndex = 0
  	      );
 
@@ -116,9 +116,6 @@ class RectangleTree
    * @param parentNode The parent of the node that is being constructed.
    */
   explicit RectangleTree(RectangleTree<SplitType, DescentType, StatisticType, MatType>* parentNode);
-
-
-  //TODO implement the oldFromNew stuff if applicable.
 
   /**
    * Deletes this node, deallocating the memory for the children and calling
@@ -166,7 +163,7 @@ class RectangleTree
    * contained "node".
    * @param relevels The levels that have been reinserted to on this top level insertion.
    */
-  void InsertNode(const RectangleTree* node, const size_t level, std::vector<bool>& relevels);
+  void InsertNode(RectangleTree* node, const size_t level, std::vector<bool>& relevels);
 
   /**
    * Deletes a point in the tree.  The point will be removed from the data matrix
@@ -189,9 +186,9 @@ class RectangleTree
   bool DeletePoint(const size_t point, std::vector<bool>& relevels);
   
   /**
-   * Deletes a node from the tree (along with all descendants).
+   * Removes a node from the tree.  You are responsible for deleting it if you wish to do so.
    */
-  bool DeleteNode(const RectangleTree* node, std::vector<bool>& relevels);
+  bool RemoveNode(const RectangleTree* node, std::vector<bool>& relevels);
 
   /**
    * Find a node in this tree by its begin and count (const).
