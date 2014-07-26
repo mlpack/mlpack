@@ -270,17 +270,16 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
   // If intJ is the last point in the tree, we need to switch the order so that we remove the correct points.
   if (intI > intJ) {
     oldTree->Points()[intI] = oldTree->Points()[--end]; // decrement end
-    oldTree->LocalDataset()[intI] = oldTree->LocalDataset()[end];
+    oldTree->LocalDataset().col(intI) = oldTree->LocalDataset().col(end);
     oldTree->Points()[intJ] = oldTree->Points()[--end]; // decrement end
-    oldTree->LocalDataset()[intJ] = oldTree->LocalDataset()[end];
+    oldTree->LocalDataset().col(intJ) = oldTree->LocalDataset().col(end);
   } else {
     oldTree->Points()[intJ] = oldTree->Points()[--end]; // decrement end
-    oldTree->LocalDataset()[intJ] = oldTree->LocalDataset()[end];
+    oldTree->LocalDataset().col(intJ) = oldTree->LocalDataset().col(end);
     oldTree->Points()[intI] = oldTree->Points()[--end]; // decrement end
-    oldTree->LocalDataset()[intI] = oldTree->LocalDataset()[end];
-  }
-
-
+    oldTree->LocalDataset().col(intI) = oldTree->LocalDataset().col(end);
+  }  
+  
   int numAssignedOne = 1;
   int numAssignedTwo = 1;
 
@@ -292,7 +291,6 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
   // The below is safe because if end decreases and the right hand side of the second part of the conjunction changes
   // on the same iteration, we added the point to the node with fewer points anyways.
   while (end > 0 && end > oldTree->MinLeafSize() - std::min(numAssignedOne, numAssignedTwo)) {
-
     int bestIndex = 0;
     double bestScore = DBL_MAX;
     int bestRect = 1;
@@ -345,7 +343,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
       treeTwo->InsertPoint(oldTree->Points()[bestIndex]);
       numAssignedTwo++;
     }
-
+    
     oldTree->Points()[bestIndex] = oldTree->Points()[--end]; // decrement end.
     oldTree->LocalDataset().col(bestIndex) = oldTree->LocalDataset().col(end);
   }
