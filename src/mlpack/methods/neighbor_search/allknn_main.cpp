@@ -286,7 +286,7 @@ int main(int argc, char *argv[])
 		    tree::RStarTreeDescentHeuristic,
 		    NeighborSearchStat<NearestNeighborSort>,
 		    arma::mat>
-      refTree(referenceData, leafSize, leafSize/3, 5, 2, 0);
+      refTree(referenceData, leafSize, leafSize * 0.4, 5, 2, 0);
 
       RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
 		    tree::RStarTreeDescentHeuristic,

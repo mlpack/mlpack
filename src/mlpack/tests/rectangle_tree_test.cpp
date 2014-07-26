@@ -21,6 +21,8 @@ using namespace mlpack::metric;
 
 BOOST_AUTO_TEST_SUITE(RectangleTreeTest);
 
+
+
 // Be careful!  When writing new tests, always get the boolean value and store
 // it in a temporary, because the Boost unit test macros do weird things and
 // will cause bizarre problems.
@@ -537,6 +539,7 @@ BOOST_AUTO_TEST_CASE(RTreeSplitTest) {
           NeighborSearchStat<NearestNeighborSort>,
           arma::mat> RTree(data, 5, 2, 2, 1, 0);
     
+  
     //There's technically no reason they have to be in a certain order, so we
     //use firstChild etc. to arbitrarily name them.
     BOOST_REQUIRE_EQUAL(RTree.NumChildren(), 2);
@@ -585,6 +588,7 @@ BOOST_AUTO_TEST_CASE(RTreeSplitTest) {
   
 }
 
+
 // Test the tree splitting.  We set MaxLeafSize and MaxNumChildren rather low
 // to allow us to test by hand without adding hundreds of points.
 BOOST_AUTO_TEST_CASE(RStarTreeSplitTest) {
@@ -603,7 +607,7 @@ BOOST_AUTO_TEST_CASE(RStarTreeSplitTest) {
           tree::RStarTreeDescentHeuristic,
           NeighborSearchStat<NearestNeighborSort>,
           arma::mat> RTree(data, 5, 2, 2, 1, 0);
-    
+	
     //There's technically no reason they have to be in a certain order, so we
     //use firstChild etc. to arbitrarily name them.
     BOOST_REQUIRE_EQUAL(RTree.NumChildren(), 2);
@@ -641,14 +645,14 @@ BOOST_AUTO_TEST_CASE(RStarTreeSplitTest) {
     BOOST_REQUIRE_EQUAL(RTree.Child(secondChild)->NumChildren(), 2);
     BOOST_REQUIRE_EQUAL(RTree.Child(secondChild)->Child(firstPrime)->Count(), 4);
     BOOST_REQUIRE_EQUAL(RTree.Child(secondChild)->Child(firstPrime)->Bound()[0].Lo(), 0.3);
-    BOOST_REQUIRE_EQUAL(RTree.Child(secondChild)->Child(firstPrime)->Bound()[0].Hi(), 1.0);
-    BOOST_REQUIRE_EQUAL(RTree.Child(secondChild)->Child(firstPrime)->Bound()[1].Lo(), 0.5);
-    BOOST_REQUIRE_EQUAL(RTree.Child(secondChild)->Child(firstPrime)->Bound()[1].Hi(), 0.9);
+    BOOST_REQUIRE_EQUAL(RTree.Child(secondChild)->Child(firstPrime)->Bound()[0].Hi(), 0.7);
+    BOOST_REQUIRE_EQUAL(RTree.Child(secondChild)->Child(firstPrime)->Bound()[1].Lo(), 0.3);
+    BOOST_REQUIRE_EQUAL(RTree.Child(secondChild)->Child(firstPrime)->Bound()[1].Hi(), 0.7);
     BOOST_REQUIRE_EQUAL(RTree.Child(secondChild)->Child(secondPrime)->Count(), 3);
-    BOOST_REQUIRE_EQUAL(RTree.Child(secondChild)->Child(secondPrime)->Bound()[0].Lo(), 0.6);
+    BOOST_REQUIRE_EQUAL(RTree.Child(secondChild)->Child(secondPrime)->Bound()[0].Lo(), 0.9);
     BOOST_REQUIRE_EQUAL(RTree.Child(secondChild)->Child(secondPrime)->Bound()[0].Hi(), 1.0);
     BOOST_REQUIRE_EQUAL(RTree.Child(secondChild)->Child(secondPrime)->Bound()[1].Lo(), 0.1);
-    BOOST_REQUIRE_EQUAL(RTree.Child(secondChild)->Child(secondPrime)->Bound()[1].Hi(), 0.3);
+    BOOST_REQUIRE_EQUAL(RTree.Child(secondChild)->Child(secondPrime)->Bound()[1].Hi(), 0.9);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
