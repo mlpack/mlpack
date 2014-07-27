@@ -50,6 +50,8 @@
   * Added perceptron and decision stump by Udit Saxena (these are weak learners
     for an eventual AdaBoost class).
 
+  * Sparse autoencoder added by Siddharth Agrawal.
+
 2014-01-06    mlpack 1.0.8
 
   * Memory leak in NeighborSearch index-mapping code fixed (#310).
