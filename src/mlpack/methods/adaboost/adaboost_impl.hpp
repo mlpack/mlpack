@@ -53,7 +53,11 @@ Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data,
   size_t numClasses = (arma::max(labels) - arma::min(labels)) + 1;
 
   int i, j, k;
-  double rt, alphat = 0.0, zt;
+  double rt, crt, alphat = 0.0, zt;
+  double tolerance = 1e-20;
+  // std::cout<<"Tolerance is "<<tolerance<<"\n";
+  // crt is for stopping the iterations when rt 
+  // stops changing by less than a tolerant value.
   
   ztAccumulator = 1.0; 
   
@@ -94,6 +98,7 @@ Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data,
   // now start the boosting rounds
   for (i = 0; i < iterations; i++)
   {
+    // std::cout<<"Run "<<i<<" times.\n";
     // Initialized to zero in every round.
     rt = 0.0; 
     zt = 0.0;
@@ -118,6 +123,17 @@ Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data,
         rt += (D(j,k) * yt(j,k) * ht(j,k));
     }
     // end calculation of rt
+    // std::cout<<"Value of rt is: "<<rt<<"\n";
+
+    if (i > 0)
+    {
+      if ( (rt - crt) < tolerance)
+      {
+        // std::cout<<(rt-crt)<<"\n";
+        i = iterations;
+      }
+    }
+    crt = rt;
 
     alphat = 0.5 * log((1 + rt) / (1 - rt));
     // end calculation of alphat
