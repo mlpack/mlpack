@@ -1,3 +1,9 @@
+/**
+ * @file validation_RMSE_termination.hpp
+ * @author Sumedh Ghaisas
+ *
+ * Termination policy that checks validation RMSE.
+ */
 #ifndef VALIDATION_RMSE_TERMINATION_HPP_INCLUDED
 #define VALIDATION_RMSE_TERMINATION_HPP_INCLUDED
 

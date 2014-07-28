@@ -1,3 +1,9 @@
+/**
+ * @file complete_incremental_termination_hpp
+ * @author Sumedh Ghaisas
+ *
+ * Complete incremental learning termination policy.
+ */
 #ifndef COMPLETE_INCREMENTAL_TERMINATION_HPP_INCLUDED
 #define COMPLETE_INCREMENTAL_TERMINATION_HPP_INCLUDED
 

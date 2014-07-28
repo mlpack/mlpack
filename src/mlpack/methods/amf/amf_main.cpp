@@ -1,3 +1,9 @@
+/**
+ * @file amf_main.cpp
+ * @author Sumedh Ghaisas
+ *
+ * Main executable for AMF.
+ */
 #include <mlpack/core.hpp>
 
 #include "amf.hpp"
