@@ -425,11 +425,6 @@ class RectangleTree
   //! Modify the index of the beginning point of this subset.
   size_t& Begin() { return begin; }
 
-  /**
-   * Gets the index one beyond the last index in the subset.  CURRENTLY MEANINGLESS!
-   */
-  size_t End() const;
-
   //! Return the number of points in this subset.
   size_t Count() const { return count; }
   //! Modify the number of points in this subset.
@@ -465,15 +460,6 @@ class RectangleTree
    * @param relevels Vector to track which levels have been inserted to.
    */
   void SplitNode(std::vector<bool>& relevels);
-
-  /**
-   * Splits the current node, recursing up the tree.
-   * CURRENTLY IT DOES NOT Also returns a list of the changed indices (because there are none).
-   *
-   * @param data Dataset which we are using.
-   * @param oldFromNew Vector holding permuted indices NOT IMPLEMENTED.
-   */
-  void SplitNode(std::vector<size_t>& oldFromNew);
 
  public:
   /**
