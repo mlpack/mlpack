@@ -36,7 +36,8 @@ class NMFMultiplicativeDistanceUpdate
   /**
    * The update rule for the basis matrix W. The formula used is
    * \f[
-   * W_{ia} \leftarrow W_{ia} \frac{(VH^T)_{ia}}{
+   * W_{ia} \leftarrow W_{ia} \frac{(VH^T)_{ia}}{(WHH^T)_{ia}}
+   * \f]
    * The function takes in all the matrices and only changes the
    * value of the W matrix.
    *
