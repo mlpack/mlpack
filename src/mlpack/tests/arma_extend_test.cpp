@@ -54,17 +54,44 @@ BOOST_AUTO_TEST_CASE(InplaceReshapeMatrixTest)
 BOOST_AUTO_TEST_CASE(ConstRowColIteratorTest)
 {
   mat X;
-  X.ones(2, 2);
-  // make sure default costructor works okay
+  X.zeros(5, 5);
+  for (size_t i = 0; i < 5; ++i)
+    X.col(i) += i;
+
+  for (size_t i = 0; i < 5; ++i)
+    X.row(i) += 3 * i;
+
+  // Make sure default constructor works okay.
   mat::const_row_col_iterator it;
-  // make sure ++ operator, operator* and comparison operators work fine
+  // Make sure ++ operator, operator* and comparison operators work fine.
   size_t count = 0;
-  for(it = X.begin_row_col();it != X.end_row_col();it++)
+  for (it = X.begin_row_col(); it != X.end_row_col(); it++)
   {
+    // Check iterator value.
+    BOOST_REQUIRE_EQUAL(*it, (count % 5) * 3 + (count / 5));
+
+    // Check iterator position.
+    BOOST_REQUIRE_EQUAL(it.row(), count % 5);
+    BOOST_REQUIRE_EQUAL(it.col(), count / 5);
+
     count++;
-    BOOST_REQUIRE_EQUAL(*it, 1);
   }
-  BOOST_REQUIRE_EQUAL(count, 4);
+  BOOST_REQUIRE_EQUAL(count, 25);
+  it = X.end_row_col();
+  do
+  {
+    it--;
+    count--;
+
+    // Check iterator value.
+    BOOST_REQUIRE_EQUAL(*it, (count % 5) * 3 + (count / 5));
+
+    // Check iterator position.
+    BOOST_REQUIRE_EQUAL(it.row(), count % 5);
+    BOOST_REQUIRE_EQUAL(it.col(), count / 5);
+  } while (it != X.begin_row_col());
+
+  BOOST_REQUIRE_EQUAL(count, 0);
   // make sure it can be constructed from row_iterator
   it = X.begin_row(0);
 }
@@ -75,18 +102,46 @@ BOOST_AUTO_TEST_CASE(ConstRowColIteratorTest)
 BOOST_AUTO_TEST_CASE(RowColIteratorTest)
 {
   mat X;
-  X.ones(2, 2);
-  // make sure default costructor works okay
+  X.zeros(5, 5);
+  for (size_t i = 0; i < 5; ++i)
+    X.col(i) += i;
+
+  for (size_t i = 0; i < 5; ++i)
+    X.row(i) += 3 * i;
+
+  // Make sure default constructor works okay.
   mat::row_col_iterator it;
-  // make sure ++ operator, operator* and comparison operators work fine
+  // Make sure ++ operator, operator* and comparison operators work fine.
   size_t count = 0;
-  for(it = X.begin_row_col();it != X.end_row_col();it++)
+  for (it = X.begin_row_col(); it != X.end_row_col(); it++)
   {
+    // Check iterator value.
+    BOOST_REQUIRE_EQUAL(*it, (count % 5) * 3 + (count / 5));
+
+    // Check iterator position.
+    BOOST_REQUIRE_EQUAL(it.row(), count % 5);
+    BOOST_REQUIRE_EQUAL(it.col(), count / 5);
+
     count++;
-    BOOST_REQUIRE_EQUAL(*it, 1);
   }
-  BOOST_REQUIRE_EQUAL(count, 4);
-  // make sure it can be constructed from row_iterator
+  BOOST_REQUIRE_EQUAL(count, 25);
+  it = X.end_row_col();
+  do
+  {
+    it--;
+    count--;
+
+    // Check iterator value.
+    BOOST_REQUIRE_EQUAL(*it, (count % 5) * 3 + (count / 5));
+
+    // Check iterator position.
+    BOOST_REQUIRE_EQUAL(it.row(), count % 5);
+    BOOST_REQUIRE_EQUAL(it.col(), count / 5);
+  } while (it != X.begin_row_col());
+
+  BOOST_REQUIRE_EQUAL(count, 0);
+
+  // Make sure it can be constructed from row_iterator.
   it = X.begin_row(0);
 }
 
