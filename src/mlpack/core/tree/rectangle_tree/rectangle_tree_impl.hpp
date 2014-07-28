@@ -48,7 +48,6 @@ localDataset(new MatType(data.n_rows, static_cast<int> (maxLeafSize) + 1)) // Ad
   // For now, just insert the points in order.
   RectangleTree* root = this;
 
-  //for(int i = firstDataIndex; i < 57; i++) { // 56,57 are the bound for where it works/breaks
   for (size_t i = firstDataIndex; i < data.n_cols; i++) {
     root->InsertPoint(i);
   }
@@ -93,7 +92,6 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   for (int i = 0; i < numChildren; i++) {
     delete children[i];
   }
-  //if(numChildren == 0)
   delete localDataset;
 }
 
@@ -108,8 +106,6 @@ typename MatType>
 void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 SoftDelete()
 {
-  //if(numChildren != 0)
-  //dataset = NULL;
   parent = NULL;
   for (int i = 0; i < children.size(); i++) {
     children[i] = NULL;
@@ -119,7 +115,7 @@ SoftDelete()
 }
 
 /**
- * Set the dataset to null.
+ * Set the local dataset to null.
  */
 template<typename SplitType,
 typename DescentType,
@@ -326,8 +322,6 @@ typename MatType>
 size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 TreeDepth() const
 {
-  /* Because R trees are balanced, we could simplify this.  However, X trees are not
-     guaranteed to be balanced so I keep it as is: */
   int n = 1;
   RectangleTree<SplitType, DescentType, StatisticType, MatType>* currentNode =
           const_cast<RectangleTree*> (this);
@@ -444,25 +438,8 @@ typename MatType>
 inline size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 Point(const size_t index) const
 {
-  return dataset(points[index]);
+  return points[index];
 }
-
-/**
- * Return the last point in the tree.  WARNING: POINTS ARE NOT MOVED IN THE ORIGINAL DATASET,
- * SO THIS IS RATHER POINTLESS.
- */
-template<typename SplitType,
-typename DescentType,
-typename StatisticType,
-typename MatType>
-inline size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::End() const
-{
-  if (numChildren)
-    return begin + count;
-  return children[numChildren - 1]->End();
-}
-
-//have functions for returning the list of modified indices if we end up doing it that way.
 
 /**
  * Split the tree.  This calls the SplitType code to split a node.  This method should only
@@ -637,7 +614,7 @@ bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::ShrinkBoundF
 }
 
 /**
- * Shrink the bound so it fits tightly after the removal of this bound.
+ * Shrink the bound so it fits tightly after the removal of another bound.
  */
 template<typename SplitType,
 typename DescentType,
@@ -686,7 +663,7 @@ std::string RectangleTree<SplitType, DescentType, StatisticType, MatType>::ToStr
   convert << "  Min num of children: " << minNumChildren << std::endl;
   convert << "  Parent address: " << parent << std::endl;
 
-  // How many levels should we print?  This will print 3 levels (counting the root).
+  // How many levels should we print?  This will print the top 3 levels (counting the root).
   if (parent == NULL || parent->Parent() == NULL) {
     for (int i = 0; i < numChildren; i++) {
       convert << children[i]->ToString();
