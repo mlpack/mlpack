@@ -78,6 +78,7 @@
  *
  * The following methods are included in MLPACK:
  *
+ *  - Decision Stump - mlpack::decision_stump::DecisionStump
  *  - Density Estimation Trees - mlpack::det::DTree
  *  - Euclidean Minimum Spanning Trees - mlpack::emst::DualTreeBoruvka
  *  - Gaussian Mixture Models (GMMs) - mlpack::gmm::GMM
@@ -91,6 +92,7 @@
  *  - Neighborhood Components Analysis (NCA) - mlpack::nca::NCA
  *  - Nonnegative Matrix Factorization (NMF) - mlpack::amf::AMF<>
  *  - Nystroem Method - mlpack::kernel::NystroemMethod
+ *  - Perceptron - mlpack::perceptron::Perceptron
  *  - Principal Components Analysis (PCA) - mlpack::pca::PCA
  *  - QUIC-SVD - mlpack::svd::QUIC_SVD
  *  - RADICAL (ICA) - mlpack::radical::Radical
