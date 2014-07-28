@@ -1,4 +1,4 @@
-????-??-??    mlpack 1.0.9
+2014-07-28    mlpack 1.0.9
 
   * GMM initialization is now safer and provides a working GMM when constructed
     with only the dimensionality and number of Gaussians (#314).
