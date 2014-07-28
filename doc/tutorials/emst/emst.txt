@@ -17,9 +17,10 @@ Among other applications, the EMST can be used to compute hierarchical clusterin
 of data.  A <em>single-linkage clustering</em> can be obtained from the EMST by deleting
 all edges longer than a given cluster length.  This technique is also referred to as a <em>Friends-of-Friends</em> clustering in the astronomy literature.
 
-MLPACK includes an implementation of <b>Dual-Tree Boruvka</b> on \f$kd\f$-trees,
-the empirically and theoretically fastest EMST algorithm.  For more details,
-see the following paper:
+MLPACK includes an implementation of <b>Dual-Tree Boruvka</b> which uses
+\f$kd\f$-trees by default; this is the empirically and theoretically fastest
+EMST algorithm.  In addition, the implementation supports the use of different
+trees via templates.  For more details, see the following paper:
 
 @code
 @inproceedings{march2010fast,
@@ -118,7 +119,10 @@ Note that it is also possible to compute the EMST using a naive (\f$O(N^2)\f$) a
 
 The 'DualTreeBoruvka' class contains our implementation of the Dual-Tree Boruvka algorithm.
 
-The class has two constructors: the first takes the data set, constructs the \f$kd\f$-tree, and computes the MST.  The second takes data set and an already constructed tree.
+The class has two constructors: the first takes the data set, constructs the
+tree (where the type of tree constructed is the TreeType template parameter),
+and computes the MST.  The second takes data set and an already constructed
+tree.
 
 The class provides one method that performs the MST computation:
 @code
