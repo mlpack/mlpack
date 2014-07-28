@@ -1,11 +1,10 @@
 /**
- * @file ToStringTest.cpp
+ * @file to_string_test.cpp
  * @author Ryan Birmingham
  *
  * Test of the AugmentedLagrangian class using the test functions defined in
  * aug_lagrangian_test_functions.hpp.
- **/
-
+ */
 #include <mlpack/core.hpp>
 #include <mlpack/core.hpp>
 #include <boost/test/unit_test.hpp>
