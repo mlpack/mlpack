@@ -102,13 +102,13 @@ class RectangleTree
    * "CENTERAL" DATA MATRIX.
    */
   RectangleTree(MatType& data,
-		const size_t maxLeafSize = 20,
-		const size_t minLeafSize = 8,
-		const size_t maxNumChildren = 5,
-		const size_t minNumChildren = 2,
-		const size_t firstDataIndex = 0
- 	      );
-
+    const size_t maxLeafSize = 20,
+    const size_t minLeafSize = 8,
+    const size_t maxNumChildren = 5,
+    const size_t minNumChildren = 2,
+    const size_t firstDataIndex = 0
+  );
+  
   /**
    * Construct this as an empty node with the specified parent.  Copying the parameters
    * (maxLeafSize, minLeafSize, maxNumChildren, minNumChildren, firstDataIndex) from the parent.
@@ -116,6 +116,14 @@ class RectangleTree
    * @param parentNode The parent of the node that is being constructed.
    */
   explicit RectangleTree(RectangleTree<SplitType, DescentType, StatisticType, MatType>* parentNode);
+  
+  /**
+   * Create a rectangle tree by copying the other tree.  Be careful!  This can
+   * take a long time and use a lot of memory.
+   * 
+   * @param other The tree to be copied.
+   */
+  RectangleTree(const RectangleTree& other, const bool deepCopy = true);
 
   /**
    * Deletes this node, deallocating the memory for the children and calling
@@ -317,10 +325,10 @@ class RectangleTree
     *
     * @param child Index of child to return.
     */
-  inline RectangleTree<SplitType, DescentType, StatisticType, MatType>*
+  inline RectangleTree<SplitType, DescentType, StatisticType, MatType>&
     Child(const size_t child) const
   {
-    return children[child];
+    return *children[child];
   }
 
   /**
@@ -328,10 +336,10 @@ class RectangleTree
     *
     * @param child Index of child to return.
    */
-  inline RectangleTree<SplitType, DescentType, StatisticType, MatType>*&
+  inline RectangleTree<SplitType, DescentType, StatisticType, MatType>&
     Child(const size_t child)
   {
-    return children[child];
+    return *children[child];
   }
 
   //! Return the number of points in this node (returns 0 if this node is not a leaf).
@@ -492,6 +500,11 @@ class RectangleTree
    * @return true if the bound needed to be changed, false if it did not.
    */
   bool ShrinkBoundForBound(const HRectBound<>& changedBound);
+  
+  /**
+   * Make an exact copy of this node, pointers and everything.
+   */
+  RectangleTree* ExactClone();
   
   /**
    * Returns a string representation of this object.

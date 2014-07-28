@@ -78,6 +78,46 @@ localDataset(new MatType(static_cast<int> (parentNode->Bound().Dim()), static_ca
 }
 
 /**
+ * Create a rectangle tree by copying the other tree.  Be careful!  This can
+ * take a long time and use a lot of memory.
+ */
+template<typename SplitType,
+typename DescentType,
+typename StatisticType,
+typename MatType>
+RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
+  const RectangleTree& other, const bool deepCopy) :
+  maxNumChildren(other.MaxNumChildren()),
+  minNumChildren(other.MinNumChildren()),
+  numChildren(other.NumChildren()),
+  children(maxNumChildren + 1),
+  parent(other.Parent()),
+  begin(other.Begin()),
+  count(other.Count()),
+  maxLeafSize(other.MaxLeafSize()),
+  minLeafSize(other.MinLeafSize()),
+  bound(other.bound),
+  parentDistance(other.ParentDistance()),
+  dataset(other.dataset),
+  points(other.Points()),
+  localDataset(NULL)
+{
+  if(deepCopy) {
+    if(numChildren > 0) {
+      for(size_t i = 0; i < numChildren; i++) {
+        children[i] = new RectangleTree(*(other.Children()[i]));
+      }
+    } else {
+      localDataset = new MatType(other.LocalDataset());
+    }
+  } else {
+    children = other.Children();
+    arma::mat& otherData = const_cast<arma::mat&> (other.LocalDataset());
+    localDataset = &otherData;
+  }
+}
+
+/**
  * Deletes this node, deallocating the memory for the children and calling
  * their destructors in turn.  This will invalidate any pointers or references
  * to any nodes which are children of this one.
@@ -292,7 +332,7 @@ RemoveNode(const RectangleTree* node, std::vector<bool>& relevels)
     }
     bool contains = true;
     for (size_t j = 0; j < node->Bound().Dim(); j++) {
-      contains &= Child(i)->Bound()[j].Contains(node->Bound()[j]);
+      contains &= Children()[i]->Bound()[j].Contains(node->Bound()[j]);
     }
     if (contains)
       if (children[i]->RemoveNode(node, relevels))
