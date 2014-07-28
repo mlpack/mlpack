@@ -175,10 +175,11 @@ $ range_search -q query_dataset.csv -r reference_dataset.csv -n \
 
 @subsection cli_ex3_rstut One dataset, range [4.1 4.2], leaf size of 15 points
 
-The \b mlpack implementation of range search is a dual-tree method, meaning that
-the leaf size of the tree can be changed.  Depending on the characteristics of
-the dataset, a larger or smaller leaf size can provide faster computation.  The
-leaf size is modifiable through the command-line interface, as shown below.
+The \b mlpack implementation of range search is a dual-tree algorithm; when
+\f$kd\f$-trees are used, the leaf size of the tree can be changed.  Depending on
+the characteristics of the dataset, a larger or smaller leaf size can provide
+faster computation.  The leaf size is modifiable through the command-line
+interface, as shown below.
 
 @code
 $ range_search -r dataset.csv -n neighbors_out.csv -d distances_out.csv -m 4.1 \
