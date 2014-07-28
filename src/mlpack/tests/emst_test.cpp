@@ -259,8 +259,7 @@ BOOST_AUTO_TEST_CASE(BallTreeTest)
   // naive mode.
   DualTreeBoruvka<> bst(inputData, true);
   // Ball tree.
-  DualTreeBoruvka<EuclideanDistance,
-                  BinarySpaceTree<BallBound<>, DTBStat> > ballt(inputData);
+  DualTreeBoruvka<EuclideanDistance, TreeType> ballt(inputData);
 
   arma::mat bstResults;
   arma::mat ballResults;
