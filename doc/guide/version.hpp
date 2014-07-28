@@ -17,7 +17,7 @@ __MLPACK_VERSION_PATCH
 @endcode
 
 In addition, the function \c mlpack::util::GetVersion() returns the mlpack
-version as a string (for instance, "mlpack 1.0.8").
+version as a string (for instance, "mlpack 1.0.9").
 
 @section verex mlpack executable versions
 
