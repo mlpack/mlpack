@@ -29,7 +29,7 @@ system and have headers present:
 
  - Armadillo >= 3.6.0 (with LAPACK support)
  - LibXML2 >= 2.6.0
- - Boost (math_c99, program_options, unit_test_framework, random) >= 1.49
+ - Boost (math_c99, program_options, unit_test_framework, random, heap) >= 1.49
 
 In Ubuntu and Debian, you can get all of these dependencies through apt:
 
