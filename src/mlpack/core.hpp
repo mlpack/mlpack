@@ -89,10 +89,15 @@
  *  - Locality-Sensitive Hashing - mlpack::neighbor::LSHSearch
  *  - Naive Bayes Classifier - mlpack::naive_bayes::NaiveBayesClassifier
  *  - Neighborhood Components Analysis (NCA) - mlpack::nca::NCA
+ *  - Nonnegative Matrix Factorization (NMF) - mlpack::amf::AMF<>
+ *  - Nystroem Method - mlpack::kernel::NystroemMethod
  *  - Principal Components Analysis (PCA) - mlpack::pca::PCA
+ *  - QUIC-SVD - mlpack::svd::QUIC_SVD
  *  - RADICAL (ICA) - mlpack::radical::Radical
+ *  - Regularized SVD - mlpack::svd::RegularizedSVD
  *  - Simple Least-Squares Linear Regression -
  *        mlpack::regression::LinearRegression
+ *  - Sparse Autoencoding - mlpack::nn::SparseAutoencoder
  *  - Sparse Coding - mlpack::sparse_coding::SparseCoding
  *  - Tree-based neighbor search (AllkNN, AllkFN) -
  *        mlpack::neighbor::NeighborSearch
