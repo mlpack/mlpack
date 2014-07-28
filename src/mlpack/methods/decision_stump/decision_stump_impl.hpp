@@ -232,7 +232,7 @@ template <typename rType>
 void DecisionStump<MatType>::TrainOnAtt(const arma::rowvec& attribute,
                                         const arma::Row<size_t>& labels)
 {
-  int i, count, begin, end;
+  size_t i, count, begin, end;
 
   arma::rowvec sortedSplitAtt = arma::sort(attribute);
   arma::uvec sortedSplitIndexAtt = arma::stable_sort_index(attribute.t());
