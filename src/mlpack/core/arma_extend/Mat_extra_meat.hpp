@@ -253,7 +253,7 @@ template<typename eT>
 inline typename Mat<eT>::row_col_iterator
 Mat<eT>::row_col_iterator::operator--(int)
 {
-  typename Mat<eT>::const_row_col_iterator temp(*this);
+  typename Mat<eT>::row_col_iterator temp(*this);
   
   --(*this);
   
