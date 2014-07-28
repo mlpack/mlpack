@@ -268,7 +268,7 @@ void DualTreeBoruvka<MetricType, TreeType>::CleanupHelper(TreeType* tree)
 
   // Check components of points.
   for (size_t i = 0; i < tree->NumPoints(); ++i)
-    if (connections.Find(tree->Point(i)) != component)
+    if (connections.Find(tree->Point(i)) != int(component))
       return;
 
   // If we made it this far, all components are the same.

@@ -69,7 +69,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
   arma::mat tempLabelMat;
   arma::uword maxIndexRow, maxIndexCol;
 
-  for (int i = 0; i < test.n_cols; i++)
+  for (size_t i = 0; i < test.n_cols; i++)
   {
     tempLabelMat = weightVectors.submat(0, 1, weightVectors.n_rows - 1,
                                         weightVectors.n_cols - 1) * 
@@ -123,7 +123,7 @@ template<
 void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
      const arma::rowvec& D)
 {
-  int j, i = 0;
+  size_t j, i = 0;
   bool converged = false;
   size_t tempLabel;
   arma::uword maxIndexRow, maxIndexCol;
