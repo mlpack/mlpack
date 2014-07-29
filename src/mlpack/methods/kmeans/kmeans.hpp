@@ -12,6 +12,7 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 #include "random_partition.hpp"
 #include "max_variance_new_cluster.hpp"
+#include "naive_kmeans.hpp"
 
 #include <mlpack/core/tree/binary_space_tree.hpp>
 
@@ -51,12 +52,16 @@ namespace kmeans /** K-Means clustering. */ {
  * @tparam EmptyClusterPolicy Policy for what to do on an empty cluster; must
  *     implement a default constructor and 'void EmptyCluster(const arma::mat&,
  *     arma::Col<size_t&)'.
+ * @tparam LloydStepType Implementation of single Lloyd step to use.
  *
- * @see RandomPartition, RefinedStart, AllowEmptyClusters, MaxVarianceNewCluster
+ * @see RandomPartition, RefinedStart, AllowEmptyClusters,
+ *      MaxVarianceNewCluster, NaiveKMeans
  */
 template<typename MetricType = metric::EuclideanDistance,
          typename InitialPartitionPolicy = RandomPartition,
-         typename EmptyClusterPolicy = MaxVarianceNewCluster>
+         typename EmptyClusterPolicy = MaxVarianceNewCluster,
+         template<class, class> class LloydStepType = NaiveKMeans,
+         typename MatType = arma::mat>
 class KMeans
 {
  public:
@@ -102,11 +107,10 @@ class KMeans
    * @param initialGuess If true, then it is assumed that assignments has a list
    *      of initial cluster assignments.
    */
-  template<typename MatType>
   void Cluster(const MatType& data,
                const size_t clusters,
                arma::Col<size_t>& assignments,
-               const bool initialGuess = false) const;
+               const bool initialGuess = false);
 
   /**
    * Perform k-means clustering on the data, returning a list of cluster
@@ -134,13 +138,12 @@ class KMeans
    * @param initialCentroidGuess If true, then it is assumed that centroids
    *      contains the initial centroids of each cluster.
    */
-  template<typename MatType>
   void Cluster(const MatType& data,
                const size_t clusters,
                arma::Col<size_t>& assignments,
-               MatType& centroids,
+               arma::mat& centroids,
                const bool initialAssignmentGuess = false,
-               const bool initialCentroidGuess = false) const;
+               const bool initialCentroidGuess = false);
 
   //! Return the overclustering factor.
   double OverclusteringFactor() const { return overclusteringFactor; }

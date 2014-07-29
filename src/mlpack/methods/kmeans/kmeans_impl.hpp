@@ -10,9 +10,6 @@
 #include <mlpack/core/tree/mrkd_statistic.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 
-#include <stack>
-#include <limits>
-
 namespace mlpack {
 namespace kmeans {
 
@@ -21,11 +18,15 @@ namespace kmeans {
  */
 template<typename MetricType,
          typename InitialPartitionPolicy,
-         typename EmptyClusterPolicy>
+         typename EmptyClusterPolicy,
+         template<class, class> class LloydStepType,
+         typename MatType>
 KMeans<
     MetricType,
     InitialPartitionPolicy,
-    EmptyClusterPolicy>::
+    EmptyClusterPolicy,
+    LloydStepType,
+    MatType>::
 KMeans(const size_t maxIterations,
        const double overclusteringFactor,
        const MetricType metric,
@@ -57,18 +58,21 @@ KMeans(const size_t maxIterations,
  */
 template<typename MetricType,
          typename InitialPartitionPolicy,
-         typename EmptyClusterPolicy>
-template<typename MatType>
+         typename EmptyClusterPolicy,
+         template<class, class> class LloydStepType,
+         typename MatType>
 inline void KMeans<
     MetricType,
     InitialPartitionPolicy,
-    EmptyClusterPolicy>::
+    EmptyClusterPolicy,
+    LloydStepType,
+    MatType>::
 Cluster(const MatType& data,
         const size_t clusters,
         arma::Col<size_t>& assignments,
-        const bool initialGuess) const
+        const bool initialGuess)
 {
-  MatType centroids(data.n_rows, clusters);
+  arma::mat centroids(data.n_rows, clusters);
   Cluster(data, clusters, assignments, centroids, initialGuess);
 }
 
@@ -78,18 +82,21 @@ Cluster(const MatType& data,
  */
 template<typename MetricType,
          typename InitialPartitionPolicy,
-         typename EmptyClusterPolicy>
-template<typename MatType>
+         typename EmptyClusterPolicy,
+         template<class, class> class LloydStepType,
+         typename MatType>
 void KMeans<
     MetricType,
     InitialPartitionPolicy,
-    EmptyClusterPolicy>::
+    EmptyClusterPolicy,
+    LloydStepType,
+    MatType>::
 Cluster(const MatType& data,
         const size_t clusters,
         arma::Col<size_t>& assignments,
-        MatType& centroids,
+        arma::mat& centroids,
         const bool initialAssignmentGuess,
-        const bool initialCentroidGuess) const
+        const bool initialCentroidGuess)
 {
   // Make sure we have more points than clusters.
   if (clusters > data.n_cols)
@@ -105,6 +112,9 @@ Cluster(const MatType& data,
     actualClusters = clusters;
   }
 
+  // Counts of points in each cluster.
+  arma::Col<size_t> counts(actualClusters);
+
   // Now, the initial assignments.  First determine if they are necessary.
   if (initialAssignmentGuess)
   {
@@ -112,6 +122,19 @@ Cluster(const MatType& data,
       Log::Fatal << "KMeans::Cluster(): initial cluster assignments (length "
           << assignments.n_elem << ") not the same size as the dataset (size "
           << data.n_cols << ")!" << std::endl;
+
+    // Calculate initial centroids.
+    counts.zeros(actualClusters);
+    centroids.zeros(data.n_rows, actualClusters);
+    for (size_t i = 0; i < data.n_cols; ++i)
+    {
+      centroids.col(assignments[i]) += data.col(i);
+      counts[assignments[i]]++;
+    }
+
+    for (size_t i = 0; i < actualClusters; ++i)
+      if (counts[i] != 0)
+        centroids.col(i) /= counts[i];
   }
   else if (initialCentroidGuess)
   {
@@ -153,65 +176,36 @@ Cluster(const MatType& data,
   {
     // Use the partitioner to come up with the partition assignments.
     partitioner.Cluster(data, actualClusters, assignments);
+
+    // Calculate initial centroids.
+    counts.zeros(actualClusters);
+    centroids.zeros(data.n_rows, actualClusters);
+    for (size_t i = 0; i < data.n_cols; ++i)
+    {
+      centroids.col(assignments[i]) += data.col(i);
+      counts[assignments[i]]++;
+    }
+
+    for (size_t i = 0; i < actualClusters; ++i)
+      if (counts[i] != 0)
+        centroids.col(i) /= counts[i];
   }
-
-  // Counts of points in each cluster.
-  arma::Col<size_t> counts(actualClusters);
-  counts.zeros();
-
-  // Resize to correct size.
-  centroids.set_size(data.n_rows, actualClusters);
-
-  // Set counts correctly.
-  for (size_t i = 0; i < assignments.n_elem; i++)
-    counts[assignments[i]]++;
 
   size_t changedAssignments = 0;
   size_t iteration = 0;
+
+  LloydStepType<MetricType, MatType> lloydStep(data, metric);
+  arma::mat centroidsOther;
+  double cNorm;
+
   do
   {
-    // Update step.
-    // Calculate centroids based on given assignments.
-    centroids.zeros();
-
-    for (size_t i = 0; i < data.n_cols; i++)
-      centroids.col(assignments[i]) += data.col(i);
-
-    for (size_t i = 0; i < actualClusters; i++)
-      centroids.col(i) /= counts[i];
-
-    // Assignment step.
-    // Find the closest centroid to each point.  We will keep track of how many
-    // assignments change.  When no assignments change, we are done.
-    changedAssignments = 0;
-    for (size_t i = 0; i < data.n_cols; i++)
-    {
-      // Find the closest centroid to this point.
-      double minDistance = std::numeric_limits<double>::infinity();
-      size_t closestCluster = actualClusters; // Invalid value.
-
-      for (size_t j = 0; j < actualClusters; j++)
-      {
-        double distance = metric.Evaluate(data.col(i), centroids.col(j));
-
-        if (distance < minDistance)
-        {
-          minDistance = distance;
-          closestCluster = j;
-        }
-      }
-
-      // Reassign this point to the closest cluster.
-      if (assignments[i] != closestCluster)
-      {
-        // Update counts.
-        counts[assignments[i]]--;
-        counts[closestCluster]++;
-        // Update assignment.
-        assignments[i] = closestCluster;
-        changedAssignments++;
-      }
-    }
+    // We have two centroid matrices.  We don't want to copy anything, so,
+    // depending on the iteration number, we use a different centroid matrix...
+    if (iteration % 2 == 0)
+      lloydStep.Iterate(centroids, centroidsOther, counts);
+    else
+      lloydStep.Iterate(centroidsOther, centroids, counts);
 
     // If we are not allowing empty clusters, then check that all of our
     // clusters have points.
@@ -220,9 +214,23 @@ Cluster(const MatType& data,
         changedAssignments += emptyClusterAction.EmptyCluster(data, i,
             centroids, counts, assignments);
 
+    // Calculate cluster distortion for this iteration.
+    cNorm = 0.0;
+    for (size_t i = 0; i < centroids.n_cols; ++i)
+    {
+      const double dist = metric.Evaluate(centroids.col(i),
+          centroidsOther.col(i));
+      cNorm += std::pow(dist, 2.0);
+    }
+    cNorm = sqrt(cNorm);
+
     iteration++;
 
-  } while (changedAssignments > 0 && iteration != maxIterations);
+  } while (cNorm > 1e-5 && iteration != maxIterations);
+
+  // Unfortunate copy that is sometimes necessary.
+  if (iteration % 2 == 0)
+    centroids = centroidsOther;
 
   if (iteration != maxIterations)
   {
@@ -233,15 +241,28 @@ Cluster(const MatType& data,
   {
     Log::Debug << "KMeans::Cluster(): terminated after limit of " << iteration
         << " iterations." << std::endl;
+  }
 
-    // Recalculate final clusters.
-    centroids.zeros();
+  // Calculate final assignments.
+  for (size_t i = 0; i < data.n_cols; ++i)
+  {
+    // Find the closest centroid to this point.
+    double minDistance = std::numeric_limits<double>::infinity();
+    size_t closestCluster = centroids.n_cols; // Invalid value.
 
-    for (size_t i = 0; i < data.n_cols; i++)
-      centroids.col(assignments[i]) += data.col(i);
+    for (size_t j = 0; j < centroids.n_cols; j++)
+    {
+      const double distance = metric.Evaluate(data.col(i), centroids.col(j));
 
-    for (size_t i = 0; i < actualClusters; i++)
-      centroids.col(i) /= counts[i];
+      if (distance < minDistance)
+      {
+        minDistance = distance;
+        closestCluster = j;
+      }
+    }
+
+    Log::Assert(closestCluster != centroids.n_cols);
+    assignments[i] = closestCluster;
   }
 
   // If we have overclustered, we need to merge the nearest clusters.
@@ -372,17 +393,21 @@ Cluster(const MatType& data,
 
 template<typename MetricType,
          typename InitialPartitionPolicy,
-         typename EmptyClusterPolicy>
+         typename EmptyClusterPolicy,
+         template<class, class> class LloydStepType,
+         typename MatType>
 std::string KMeans<MetricType,
     InitialPartitionPolicy,
-    EmptyClusterPolicy>::ToString() const
+    EmptyClusterPolicy,
+    LloydStepType,
+    MatType>::ToString() const
 {
   std::ostringstream convert;
   convert << "KMeans [" << this << "]" << std::endl;
-  convert << "  Overclustering Factor: " << overclusteringFactor <<std::endl;
-  convert << "  Max Iterations: " << maxIterations <<std::endl;
+  convert << "  Overclustering Factor: " << overclusteringFactor << std::endl;
+  convert << "  Max Iterations: " << maxIterations << std::endl;
   convert << "  Metric: " << std::endl;
-  convert << mlpack::util::Indent(metric.ToString(),2);
+  convert << mlpack::util::Indent(metric.ToString(), 2);
   convert << std::endl;
   return convert.str();
 }
