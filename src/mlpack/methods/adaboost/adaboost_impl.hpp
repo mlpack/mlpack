@@ -46,15 +46,15 @@ namespace adaboost {
  */
 template<typename MatType, typename WeakLearner>
 Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data, 
-        const arma::Row<size_t>& labels, int iterations, 
+        const arma::Row<size_t>& labels, int iterations, double tol,
         const WeakLearner& other)
 {
   // Counting the number of classes into numClasses.
   size_t numClasses = (arma::max(labels) - arma::min(labels)) + 1;
-
+  tolerance = tol;
   int i, j, k;
   double rt, crt, alphat = 0.0, zt;
-  double tolerance = 1e-20;
+  // double tolerance = 1e-8;
   // std::cout<<"Tolerance is "<<tolerance<<"\n";
   // crt is for stopping the iterations when rt 
   // stops changing by less than a tolerant value.
@@ -127,11 +127,8 @@ Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data,
 
     if (i > 0)
     {
-      if ( (rt - crt) < tolerance)
-      {
-        // std::cout<<(rt-crt)<<"\n";
-        i = iterations;
-      }
+      if ( std::abs(rt - crt) < tolerance )
+        break;
     }
     crt = rt;
 

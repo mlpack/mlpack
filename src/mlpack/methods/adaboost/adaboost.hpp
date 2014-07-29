@@ -25,10 +25,11 @@ public:
    *  @param data Input data
    *  @param labels Corresponding labels
    *  @param iterations Number of boosting rounds 
+   *  @param tol The tolerance for change in values of rt.
    *  @param other Weak Learner, which has been initialized already
    */
   Adaboost(const MatType& data, const arma::Row<size_t>& labels,
-           int iterations, const WeakLearner& other);
+           int iterations, double tol, const WeakLearner& other);
 
   /**
    *  This function helps in building a classification Matrix which is of 
@@ -59,6 +60,8 @@ public:
   // To check for the bound for the hammingLoss.
   double ztAccumulator;
 
+  // The tolerance for change in rt and when to stop.
+  double tolerance;
 }; // class Adaboost
 
 } // namespace adaboost

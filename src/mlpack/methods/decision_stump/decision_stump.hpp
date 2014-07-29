@@ -110,7 +110,8 @@ class DecisionStump
    *     candidate for the splitting attribute.
    */
   double SetupSplitAttribute(const arma::rowvec& attribute,
-                             const arma::Row<size_t>& labels);
+                             const arma::Row<size_t>& labels,
+                             const arma::rowvec& D);
 
   /**
    * After having decided the attribute on which to split, train on that
@@ -151,6 +152,12 @@ class DecisionStump
    */
   template <typename AttType, typename LabelType>
   double CalculateEntropy(arma::subview_row<LabelType> labels);
+
+  /**
+   *
+   *
+   */
+  void Train(const MatType& data, const arma::Row<size_t>& labels, const arma::rowvec& D);
 };
 
 }; // namespace decision_stump
