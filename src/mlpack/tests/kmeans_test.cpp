@@ -470,7 +470,8 @@ BOOST_AUTO_TEST_CASE(SparseKMeansTest)
 
   arma::Col<size_t> assignments;
 
-  KMeans<> kmeans; // Default options.
+  KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
+         NaiveKMeans, arma::sp_mat> kmeans; // Default options.
 
   kmeans.Cluster(data, 2, assignments);
 
