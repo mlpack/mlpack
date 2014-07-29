@@ -54,7 +54,7 @@ namespace kmeans /** K-Means clustering. */ {
  *
  * @see RandomPartition, RefinedStart, AllowEmptyClusters, MaxVarianceNewCluster
  */
-template<typename MetricType = metric::SquaredEuclideanDistance,
+template<typename MetricType = metric::EuclideanDistance,
          typename InitialPartitionPolicy = RandomPartition,
          typename EmptyClusterPolicy = MaxVarianceNewCluster>
 class KMeans
@@ -190,4 +190,4 @@ class KMeans
 // Include implementation.
 #include "kmeans_impl.hpp"
 
-#endif // __MLPACK_METHODS_MOG_KMEANS_HPP
+#endif // __MLPACK_METHODS_KMEANS_KMEANS_HPP
