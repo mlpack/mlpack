@@ -19,7 +19,7 @@ namespace kmeans {
 template<typename MatType>
 size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
                                            const size_t emptyCluster,
-                                           const MatType& centroids,
+                                           arma::mat& centroids,
                                            arma::Col<size_t>& clusterCounts,
                                            arma::Col<size_t>& assignments)
 {
@@ -67,9 +67,14 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   }
 
   // Take that point and add it to the empty cluster.
-  clusterCounts[maxVarCluster]--;
+  centroids.col(maxVarCluster) *= (clusterCounts[maxVarCluster] /
+      --clusterCounts[maxVarCluster]);
+  centroids.col(maxVarCluster) -= (1.0 / clusterCounts[maxVarCluster]) *
+      data.col(furthestPoint);
   clusterCounts[emptyCluster]++;
+  centroids.col(emptyCluster) = arma::vec(data.col(furthestPoint));
   assignments[furthestPoint] = emptyCluster;
+
 
   // Output some debugging information.
   Log::Debug << "Point " << furthestPoint << " assigned to empty cluster " <<
