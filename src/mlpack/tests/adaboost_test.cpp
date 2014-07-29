@@ -44,7 +44,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundIris)
 
   // Define parameters for the adaboost
   int iterations = 100;
-  Adaboost<> a(inputData, labels.row(0), iterations, p);
+  double tolerance = 1e-10;
+  Adaboost<> a(inputData, labels.row(0), iterations, tolerance, p);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != a.finalHypothesis(i))
@@ -90,7 +91,8 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
 
   // Define parameters for the adaboost
   int iterations = 100;
-  Adaboost<> a(inputData, labels.row(0), iterations, p);
+  double tolerance = 1e-10;
+  Adaboost<> a(inputData, labels.row(0), iterations, tolerance, p);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != a.finalHypothesis(i))
@@ -128,7 +130,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
 
   // Define parameters for the adaboost
   int iterations = 50;
-  Adaboost<> a(inputData, labels.row(0), iterations, p);
+  double tolerance = 1e-10;
+  Adaboost<> a(inputData, labels.row(0), iterations, tolerance, p);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != a.finalHypothesis(i))
@@ -175,7 +178,95 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
 
   // Define parameters for the adaboost
   int iterations = 50;
-  Adaboost<> a(inputData, labels.row(0), iterations, p);
+  double tolerance = 1e-10;
+  Adaboost<> a(inputData, labels.row(0), iterations, tolerance, p);
+  int countError = 0;
+  for (size_t i = 0; i < labels.n_cols; i++)
+    if(labels(i) != a.finalHypothesis(i))
+      countError++;
+  double error = (double) countError / labels.n_cols;
+  
+  BOOST_REQUIRE(error <= weakLearnerErrorRate);
+}
+
+/**
+ *  This test case runs the Adaboost.mh algorithm on non-linearly 
+ *  separable dataset. 
+ *  It checks whether the hamming loss breaches the upperbound, which
+ *  is provided by ztAccumulator.
+ */
+BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
+{
+  arma::mat inputData;
+
+  if (!data::Load("nonlinsepdata.txt", inputData))
+    BOOST_FAIL("Cannot load test dataset nonlinsepdata.txt!");
+
+  arma::Mat<size_t> labels;
+
+  if (!data::Load("nonlinsepdata_labels.txt",labels))
+    BOOST_FAIL("Cannot load labels for nonlinsepdata_labels.txt");
+  
+  // no need to map the labels here
+
+  // Define your own weak learner, perceptron in this case.
+  // Run the perceptron for perceptron_iter iterations.
+  int perceptron_iter = 800;
+
+  perceptron::Perceptron<> p(inputData, labels.row(0), perceptron_iter);
+
+  // Define parameters for the adaboost
+  int iterations = 50;
+  double tolerance = 1e-10;
+  Adaboost<> a(inputData, labels.row(0), iterations, tolerance, p);
+  int countError = 0;
+  for (size_t i = 0; i < labels.n_cols; i++)
+    if(labels(i) != a.finalHypothesis(i))
+      countError++;
+  double hammingLoss = (double) countError / labels.n_cols;
+
+  BOOST_REQUIRE(hammingLoss <= a.ztAccumulator);
+}
+
+/**
+ *  This test case runs the Adaboost.mh algorithm on a non-linearly 
+ *  separable dataset. 
+ *  It checks if the error returned by running a single instance of the 
+ *  weak learner is worse than running the boosted weak learner using 
+ *  adaboost.
+ */
+BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
+{
+  arma::mat inputData;
+
+  if (!data::Load("nonlinsepdata.txt", inputData))
+    BOOST_FAIL("Cannot load test dataset nonlinsepdata.txt!");
+
+  arma::Mat<size_t> labels;
+
+  if (!data::Load("nonlinsepdata_labels.txt",labels))
+    BOOST_FAIL("Cannot load labels for nonlinsepdata_labels.txt");
+  
+  // no need to map the labels here
+
+  // Define your own weak learner, perceptron in this case.
+  // Run the perceptron for perceptron_iter iterations.
+  int perceptron_iter = 800;
+
+  arma::Row<size_t> perceptronPrediction(labels.n_cols);
+  perceptron::Perceptron<> p(inputData, labels.row(0), perceptron_iter);
+  p.Classify(inputData, perceptronPrediction);
+  
+  int countWeakLearnerError = 0;
+  for (size_t i = 0; i < labels.n_cols; i++)
+    if(labels(i) != perceptronPrediction(i))
+      countWeakLearnerError++;
+  double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
+
+  // Define parameters for the adaboost
+  int iterations = 50;
+  double tolerance = 1e-10;
+  Adaboost<> a(inputData, labels.row(0), iterations, tolerance, p);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != a.finalHypothesis(i))
