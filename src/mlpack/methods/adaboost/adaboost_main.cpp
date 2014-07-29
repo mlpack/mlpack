@@ -27,6 +27,7 @@ PARAM_STRING("output", "The file in which the predicted labels for the test set"
 PARAM_INT("iterations","The maximum number of boosting iterations "
   "to be run", "i", 1000);
 PARAM_INT_REQ("classes","The number of classes in the input label set.","c");
+PARAM_DOUBLE("tolerance","The tolerance for change in values of rt","e",1e-10);
 
 int main(int argc, char *argv[])
 {
@@ -75,6 +76,8 @@ int main(int argc, char *argv[])
   mat testingData;
   data::Load(testingDataFilename, testingData, true);
 
+  const double tolerance = CLI::GetParam<double>("tolerance");
+
   if (testingData.n_rows != trainingData.n_rows)
     Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
         << "must be the same as training data (" << trainingData.n_rows - 1
@@ -88,7 +91,7 @@ int main(int argc, char *argv[])
   perceptron::Perceptron<> p(trainingData, labels.t(), iter);
   
   Timer::Start("Training");
-  Adaboost<> a(trainingData, labels.t(), iterations, p);
+  Adaboost<> a(trainingData, labels.t(), iterations, tolerance, p);
   Timer::Stop("Training");
 
   return 0;
