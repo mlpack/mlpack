@@ -40,7 +40,7 @@ class MaxVarianceNewCluster
   template<typename MatType>
   static size_t EmptyCluster(const MatType& data,
                              const size_t emptyCluster,
-                             const MatType& centroids,
+                             arma::mat& centroids,
                              arma::Col<size_t>& clusterCounts,
                              arma::Col<size_t>& assignments);
 };

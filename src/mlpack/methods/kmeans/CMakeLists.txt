@@ -6,6 +6,8 @@ set(SOURCES
   kmeans_impl.hpp
   max_variance_new_cluster.hpp
   max_variance_new_cluster_impl.hpp
+  naive_kmeans.hpp
+  naive_kmeans_impl.hpp
   random_partition.hpp
   refined_start.hpp
   refined_start_impl.hpp
