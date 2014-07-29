@@ -12,10 +12,25 @@
 namespace mlpack {
 namespace kmeans {
 
+/**
+ * This is an implementation of a single iteration of Lloyd's algorithm for
+ * k-means.  If your intention is to run the full k-means algorithm, you are
+ * looking for the mlpack::kmeans::KMeans class instead of this one.  This class
+ * is used by KMeans as the actual implementation of the Lloyd iteration.
+ *
+ * @param MetricType Type of metric used with this implementation.
+ * @param MatType Matrix type (arma::mat or arma::sp_mat).
+ */
 template<typename MetricType, typename MatType>
 class NaiveKMeans
 {
  public:
+  /**
+   * Construct the NaiveKMeans object with the given dataset and metric.
+   *
+   * @param dataset Dataset.
+   * @param metric Instantiated metric.
+   */
   NaiveKMeans(const MatType& dataset, MetricType& metric);
 
   /**
