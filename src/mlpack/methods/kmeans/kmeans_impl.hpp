@@ -122,19 +122,6 @@ Cluster(const MatType& data,
       Log::Fatal << "KMeans::Cluster(): initial cluster assignments (length "
           << assignments.n_elem << ") not the same size as the dataset (size "
           << data.n_cols << ")!" << std::endl;
-
-    // Calculate initial centroids.
-    counts.zeros(actualClusters);
-    centroids.zeros(data.n_rows, actualClusters);
-    for (size_t i = 0; i < data.n_cols; ++i)
-    {
-      centroids.col(assignments[i]) += data.col(i);
-      counts[assignments[i]]++;
-    }
-
-    for (size_t i = 0; i < actualClusters; ++i)
-      if (counts[i] != 0)
-        centroids.col(i) /= counts[i];
   }
   else if (initialCentroidGuess)
   {
@@ -147,36 +134,16 @@ Cluster(const MatType& data,
       Log::Fatal << "KMeans::Cluster(): initial cluster centroids have wrong "
         << " dimensionality (" << centroids.n_rows << ", should be "
         << data.n_rows << ")!" << std::endl;
-
-    // If there were no problems, construct the initial assignments from the
-    // given centroids.
-    assignments.set_size(data.n_cols);
-    for (size_t i = 0; i < data.n_cols; ++i)
-    {
-      // Find the closest centroid to this point.
-      double minDistance = std::numeric_limits<double>::infinity();
-      size_t closestCluster = clusters; // Invalid value.
-
-      for (size_t j = 0; j < clusters; j++)
-      {
-        double distance = metric.Evaluate(data.col(i), centroids.col(j));
-
-        if (distance < minDistance)
-        {
-          minDistance = distance;
-          closestCluster = j;
-        }
-      }
-
-      // Assign the point to the closest cluster that we found.
-      assignments[i] = closestCluster;
-    }
   }
   else
   {
     // Use the partitioner to come up with the partition assignments.
     partitioner.Cluster(data, actualClusters, assignments);
+  }
 
+  // Calculate the initial centroids, if we need to.
+  if (!initialCentroidGuess || (initialAssignmentGuess && initialCentroidGuess))
+  {
     // Calculate initial centroids.
     counts.zeros(actualClusters);
     centroids.zeros(data.n_rows, actualClusters);
@@ -191,7 +158,6 @@ Cluster(const MatType& data,
         centroids.col(i) /= counts[i];
   }
 
-  size_t changedAssignments = 0;
   size_t iteration = 0;
 
   LloydStepType<MetricType, MatType> lloydStep(data, metric);
@@ -210,9 +176,17 @@ Cluster(const MatType& data,
     // If we are not allowing empty clusters, then check that all of our
     // clusters have points.
     for (size_t i = 0; i < actualClusters; i++)
+    {
       if (counts[i] == 0)
-        changedAssignments += emptyClusterAction.EmptyCluster(data, i,
-            centroids, counts, assignments);
+      {
+        Log::Debug << "Cluster " << i << " is empty.\n";
+        if (iteration % 2 == 0)
+          emptyClusterAction.EmptyCluster(data, i, centroidsOther, counts,
+              metric);
+        else
+          emptyClusterAction.EmptyCluster(data, i, centroids, counts, metric);
+      }
+    }
 
     // Calculate cluster distortion for this iteration.
     cNorm = 0.0;
@@ -228,9 +202,11 @@ Cluster(const MatType& data,
 
   } while (cNorm > 1e-5 && iteration != maxIterations);
 
-  // Unfortunate copy that is sometimes necessary.
+  // If we ended on an even iteration, then the centroids are in the
+  // centroidsOther matrix, and we need to steal its memory (steal_mem() avoids
+  // a copy if possible).
   if (iteration % 2 == 0)
-    centroids = centroidsOther;
+    centroids.steal_mem(centroidsOther);
 
   if (iteration != maxIterations)
   {
@@ -244,6 +220,7 @@ Cluster(const MatType& data,
   }
 
   // Calculate final assignments.
+  assignments.set_size(data.n_cols);
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     // Find the closest centroid to this point.
