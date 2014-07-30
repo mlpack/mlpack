@@ -137,8 +137,9 @@ BOOST_AUTO_TEST_CASE(AllowEmptyClusterTest)
   arma::Col<size_t> countsOld = counts;
 
   // Make sure the method doesn't modify any points.
+  metric::LMetric<2, true> metric;
   BOOST_REQUIRE_EQUAL(AllowEmptyClusters::EmptyCluster(kMeansData, 2, centroids,
-      counts, assignments), 0);
+      counts, metric), 0);
 
   // Make sure no assignments were changed.
   for (size_t i = 0; i < assignments.n_elem; i++)
@@ -164,16 +165,39 @@ BOOST_AUTO_TEST_CASE(MaxVarianceNewClusterTest)
   arma::mat centroids(2, 3);
   centroids.col(0) = (1.0 / 3.0) * (data.col(0) + data.col(1) + data.col(2));
   centroids.col(1) = 0.5 * (data.col(3) + data.col(4));
-  centroids(0, 2) = 0;
-  centroids(1, 2) = 0;
+  centroids(0, 2) = DBL_MAX;
+  centroids(1, 2) = DBL_MAX;
 
   arma::Col<size_t> counts("3 2 0");
 
+  metric::LMetric<2, true> metric;
+
   // This should only change one point.
   BOOST_REQUIRE_EQUAL(MaxVarianceNewCluster::EmptyCluster(data, 2, centroids,
-      counts, assignments), 1);
+      counts, metric), 1);
 
-  // Ensure that the cluster assignments are right.
+  // Add the variance of each point's distance away from the cluster.  I think
+  // this is the sensible thing to do.
+  for (size_t i = 0; i < data.n_cols; ++i)
+  {
+    // Find the closest centroid to this point.
+    double minDistance = std::numeric_limits<double>::infinity();
+    size_t closestCluster = centroids.n_cols; // Invalid value.
+
+    for (size_t j = 0; j < centroids.n_cols; j++)
+    {
+      const double distance = metric.Evaluate(data.col(i), centroids.col(j));
+
+      if (distance < minDistance)
+      {
+        minDistance = distance;
+        closestCluster = j;
+      }
+    }
+
+    assignments[i] = closestCluster;
+  }
+
   BOOST_REQUIRE_EQUAL(assignments[0], 0);
   BOOST_REQUIRE_EQUAL(assignments[1], 0);
   BOOST_REQUIRE_EQUAL(assignments[2], 2);
