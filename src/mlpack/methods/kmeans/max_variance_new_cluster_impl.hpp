@@ -38,7 +38,7 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
     size_t closestCluster = centroids.n_cols; // Invalid value.
 
     for (size_t j = 0; j < centroids.n_cols; j++)
-    { 
+    {
       const double distance = metric.Evaluate(data.col(i), centroids.col(j));
 
       if (distance < minDistance)
@@ -87,7 +87,7 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   centroids.col(maxVarCluster) *= (double(clusterCounts[maxVarCluster]) /
       double(clusterCounts[maxVarCluster] - 1));
   centroids.col(maxVarCluster) -= (1.0 / (clusterCounts[maxVarCluster] - 1.0)) *
-      data.col(furthestPoint);
+      arma::vec(data.col(furthestPoint));
   clusterCounts[maxVarCluster]--;
   clusterCounts[emptyCluster]++;
   centroids.col(emptyCluster) = arma::vec(data.col(furthestPoint));
