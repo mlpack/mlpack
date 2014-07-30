@@ -149,7 +149,7 @@ Cluster(const MatType& data,
     centroids.zeros(data.n_rows, actualClusters);
     for (size_t i = 0; i < data.n_cols; ++i)
     {
-      centroids.col(assignments[i]) += data.col(i);
+      centroids.col(assignments[i]) += arma::vec(data.col(i));
       counts[assignments[i]]++;
     }
 
