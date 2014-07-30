@@ -16,24 +16,41 @@ namespace kmeans {
 /**
  * Take action about an empty cluster.
  */
-template<typename MatType>
+template<typename MetricType, typename MatType>
 size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
                                            const size_t emptyCluster,
                                            arma::mat& centroids,
                                            arma::Col<size_t>& clusterCounts,
-                                           arma::Col<size_t>& assignments)
+                                           MetricType& metric)
 {
   // First, we need to find the cluster with maximum variance (by which I mean
   // the sum of the covariance matrices).
   arma::vec variances;
   variances.zeros(clusterCounts.n_elem); // Start with 0.
+  arma::Col<size_t> assignments(data.n_cols);
 
   // Add the variance of each point's distance away from the cluster.  I think
   // this is the sensible thing to do.
   for (size_t i = 0; i < data.n_cols; ++i)
   {
-    variances[assignments[i]] += metric::SquaredEuclideanDistance::Evaluate(
-        data.col(i), centroids.col(assignments[i]));
+    // Find the closest centroid to this point.
+    double minDistance = std::numeric_limits<double>::infinity();
+    size_t closestCluster = centroids.n_cols; // Invalid value.
+
+    for (size_t j = 0; j < centroids.n_cols; j++)
+    { 
+      const double distance = metric.Evaluate(data.col(i), centroids.col(j));
+
+      if (distance < minDistance)
+      {
+        minDistance = distance;
+        closestCluster = j;
+      }
+    }
+
+    assignments[i] = closestCluster;
+    variances[closestCluster] += metric.Evaluate(data.col(i),
+        centroids.col(closestCluster));
   }
 
   // Divide by the number of points in the cluster to produce the variance.
@@ -55,8 +72,8 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   {
     if (assignments[i] == maxVarCluster)
     {
-      double distance = arma::as_scalar(
-          arma::var(data.col(i) - centroids.col(maxVarCluster)));
+      const double distance = metric.Evaluate(data.col(i),
+          centroids.col(maxVarCluster));
 
       if (distance > maxDistance)
       {
@@ -67,14 +84,14 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   }
 
   // Take that point and add it to the empty cluster.
-  centroids.col(maxVarCluster) *= (clusterCounts[maxVarCluster] /
-      --clusterCounts[maxVarCluster]);
-  centroids.col(maxVarCluster) -= (1.0 / clusterCounts[maxVarCluster]) *
+  centroids.col(maxVarCluster) *= (double(clusterCounts[maxVarCluster]) /
+      double(clusterCounts[maxVarCluster] - 1));
+  centroids.col(maxVarCluster) -= (1.0 / (clusterCounts[maxVarCluster] - 1.0)) *
       data.col(furthestPoint);
+  clusterCounts[maxVarCluster]--;
   clusterCounts[emptyCluster]++;
   centroids.col(emptyCluster) = arma::vec(data.col(furthestPoint));
   assignments[furthestPoint] = emptyCluster;
-
 
   // Output some debugging information.
   Log::Debug << "Point " << furthestPoint << " assigned to empty cluster " <<

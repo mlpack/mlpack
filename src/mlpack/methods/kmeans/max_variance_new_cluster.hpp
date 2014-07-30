@@ -37,12 +37,12 @@ class MaxVarianceNewCluster
    *
    * @return Number of points changed.
    */
-  template<typename MatType>
+  template<typename MetricType, typename MatType>
   static size_t EmptyCluster(const MatType& data,
                              const size_t emptyCluster,
                              arma::mat& centroids,
                              arma::Col<size_t>& clusterCounts,
-                             arma::Col<size_t>& assignments);
+                             MetricType& metric);
 };
 
 }; // namespace kmeans
