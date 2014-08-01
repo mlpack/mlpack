@@ -157,6 +157,7 @@
 #include <mlpack/core/util/save_restore_utility.hpp>
 #include <mlpack/core/dists/discrete_distribution.hpp>
 #include <mlpack/core/dists/gaussian_distribution.hpp>
+#include <mlpack/core/dists/laplace_distribution.hpp>
 
 // Include kernel traits.
 #include <mlpack/core/kernels/kernel_traits.hpp>
