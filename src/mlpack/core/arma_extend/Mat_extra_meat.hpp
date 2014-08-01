@@ -5,7 +5,7 @@
 template<typename eT>
 inline
 Mat<eT>::const_row_col_iterator::const_row_col_iterator()
-    : M(NULL), current_pos(NULL), internal_row(0), internal_col(0)
+    : M(NULL), current_pos(NULL), internal_col(0), internal_row(0)
 {
   // Technically this iterator is invalid (it may not point to a real element)
 }
@@ -38,7 +38,7 @@ Mat<eT>::const_row_col_iterator::const_row_col_iterator(const row_iterator& it)
 template<typename eT>
 inline
 Mat<eT>::const_row_col_iterator::const_row_col_iterator(const Mat<eT>& in_M, const uword row, const uword col)
-    : M(&in_M), current_pos(&in_M(row,col)), internal_row(row), internal_col(col)
+    : M(&in_M), current_pos(&in_M(row,col)), internal_col(col), internal_row(row)
 {
   // Nothing to do.
 }
@@ -190,7 +190,7 @@ Mat<eT>::const_row_col_iterator::operator!=(const row_iterator& rhs) const
 template<typename eT>
 inline
 Mat<eT>::row_col_iterator::row_col_iterator()
-    : M(NULL), current_pos(NULL), internal_row(0), internal_col(0)
+    : M(NULL), current_pos(NULL), internal_col(0), internal_row(0)
 {
   // Technically this iterator is invalid (it may not point to a real element)
 }
@@ -207,7 +207,7 @@ Mat<eT>::row_col_iterator::row_col_iterator(const row_iterator& it)
 template<typename eT>
 inline
 Mat<eT>::row_col_iterator::row_col_iterator(Mat<eT>& in_M, const uword row, const uword col)
-    : M(&in_M), current_pos(&in_M(row,col)), internal_row(row), internal_col(col)
+    : M(&in_M), current_pos(&in_M(row,col)), internal_col(col), internal_row(row)
 {
   // Nothing to do.
 }
