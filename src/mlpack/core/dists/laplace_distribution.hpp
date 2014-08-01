@@ -93,12 +93,10 @@ class LaplaceDistribution
     // elementwise.
     for (size_t i = 0; i < result.n_elem; ++i)
     {
-      if (result[i] < 0)
-        result[i] = mean[i] + scale * result[i] * std::log(1 + 2.0 * (result[i]
-            - 0.5));
+      if (result[i] < 0.5)
+        result[i] = mean[i] + scale * std::log(1 + 2.0 * (result[i] - 0.5));
       else
-        result[i] = mean[i] - scale * result[i] * std::log(1 - 2.0 * (result[i]
-            - 0.5));
+        result[i] = mean[i] - scale * std::log(1 - 2.0 * (result[i] - 0.5));
     }
 
     return result;
