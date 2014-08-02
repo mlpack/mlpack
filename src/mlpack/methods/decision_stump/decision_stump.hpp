@@ -54,22 +54,22 @@ class DecisionStump
   void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
 
   /**
+   *  Alternate constructor which copies parameters bucketSize and numClass
+   *  from an already initiated decision stump, other. It appropriately 
+   *  sets the Weight vector.
    *
-   *
-   *
-   *
+   *  @param other The other initiated Decision Stump object from 
+   *               which we copy the values from.
+   *  @param data The data on which to train this object on.
+   *  @param D Weight vector to use while training. For boosting purposes.
+   *  @param labels The labels of data.
    */
-  DecisionStump(const DecisionStump<>& ds);
-
-  /**
-   *
-   *
-   *
-   *
-   *
-   *
-  ModifyData(MatType& data, const arma::Row<double>& D);
-  */
+  DecisionStump(
+    const DecisionStump<>& other, 
+    const MatType& data, 
+    const arma::rowvec& weights, 
+    const arma::Row<size_t>& labels
+    );
   
   //! Access the splitting attribute.
   int SplitAttribute() const { return splitAttribute; }
@@ -110,8 +110,7 @@ class DecisionStump
    *     candidate for the splitting attribute.
    */
   double SetupSplitAttribute(const arma::rowvec& attribute,
-                             const arma::Row<size_t>& labels,
-                             const arma::rowvec& D);
+                             const arma::Row<size_t>& labels);
 
   /**
    * After having decided the attribute on which to split, train on that
@@ -150,14 +149,20 @@ class DecisionStump
    * @param attribute The attribute of which we calculate the entropy.
    * @param labels Corresponding labels of the attribute.
    */
-  template <typename AttType, typename LabelType>
-  double CalculateEntropy(arma::subview_row<LabelType> labels);
+  template <typename LabelType>
+  double CalculateEntropy(arma::subview_row<LabelType> labels, int begin);
 
   /**
    *
    *
    */
-  void Train(const MatType& data, const arma::Row<size_t>& labels, const arma::rowvec& D);
+  void Train(const MatType& data, const arma::Row<size_t>& labels);
+
+  //! To store the weight vectors for boosting purposes.
+  arma::rowvec weightD;
+
+  //! To store reordered weight vectors for boosting purposes.
+  arma::rowvec tempD;
 };
 
 }; // namespace decision_stump
