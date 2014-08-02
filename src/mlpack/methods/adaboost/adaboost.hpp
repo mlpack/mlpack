@@ -10,6 +10,7 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/perceptron/perceptron.hpp>
+#include <mlpack/methods/decision_stump/decision_stump.hpp>
  
 namespace mlpack {
 namespace adaboost {
