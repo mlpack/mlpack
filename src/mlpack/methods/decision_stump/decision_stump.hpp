@@ -54,23 +54,21 @@ class DecisionStump
   void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
 
   /**
-   *  Alternate constructor which copies parameters bucketSize and numClass
-   *  from an already initiated decision stump, other. It appropriately 
-   *  sets the Weight vector.
+   * Alternate constructor which copies parameters bucketSize and numClass from
+   * an already initiated decision stump, other. It appropriately sets the
+   * weight vector.
    *
-   *  @param other The other initiated Decision Stump object from 
-   *               which we copy the values from.
-   *  @param data The data on which to train this object on.
-   *  @param D Weight vector to use while training. For boosting purposes.
-   *  @param labels The labels of data.
+   * @param other The other initiated Decision Stump object from
+   *      which we copy the values from.
+   * @param data The data on which to train this object on.
+   * @param D Weight vector to use while training. For boosting purposes.
+   * @param labels The labels of data.
    */
-  DecisionStump(
-    const DecisionStump<>& other, 
-    const MatType& data, 
-    const arma::rowvec& weights, 
-    const arma::Row<size_t>& labels
-    );
-  
+  DecisionStump(const DecisionStump<>& other,
+                const MatType& data,
+                const arma::rowvec& weights,
+                const arma::Row<size_t>& labels);
+
   //! Access the splitting attribute.
   int SplitAttribute() const { return splitAttribute; }
   //! Modify the splitting attribute (be careful!).
@@ -134,7 +132,8 @@ class DecisionStump
    * @param subCols The vector in which to find the most frequently
    *     occurring element.
    */
-  template <typename rType> rType CountMostFreq(const arma::Row<rType>& subCols);
+  template <typename rType> rType CountMostFreq(const arma::Row<rType>&
+      subCols);
 
   /**
    * Returns 1 if all the values of featureRow are not same.
@@ -153,8 +152,10 @@ class DecisionStump
   double CalculateEntropy(arma::subview_row<LabelType> labels, int begin);
 
   /**
+   * Train the decision stump on the given data and labels.
    *
-   *
+   * @param data Dataset to train on.
+   * @param labels Labels for dataset.
    */
   void Train(const MatType& data, const arma::Row<size_t>& labels);
 
