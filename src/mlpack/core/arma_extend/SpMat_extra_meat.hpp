@@ -249,3 +249,31 @@ SpMat<eT>::SpMat(const Base<uword,T1>& locations_expr, const Base<eT,T2>& vals_e
   }
 
 #endif
+
+template<typename eT>
+inline typename SpMat<eT>::const_row_col_iterator 
+SpMat<eT>::begin_row_col() const
+  {
+  return begin();
+  }
+  
+template<typename eT>
+inline typename SpMat<eT>::row_col_iterator
+SpMat<eT>::begin_row_col()
+  {
+  return begin();
+  }
+  
+template<typename eT>
+inline typename SpMat<eT>::const_row_col_iterator
+SpMat<eT>::end_row_col() const
+  {
+  return end();
+  }
+  
+template<typename eT>
+inline typename SpMat<eT>::row_col_iterator
+SpMat<eT>::end_row_col()
+  {
+  return end();
+  }
