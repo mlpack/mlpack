@@ -1,5 +1,14 @@
-#ifndef COMPLETE_INCREMENTAL_TERMINATION_HPP_INCLUDED
-#define COMPLETE_INCREMENTAL_TERMINATION_HPP_INCLUDED
+/**
+ * @file cf.hpp
+ * @author Sumedh Ghaisas
+ *
+ * Collaborative filtering.
+ *
+ * Defines the CF class to perform collaborative filtering on the specified data
+ * set using alternating least squares (ALS).
+ */
+#ifndef _MLPACK_METHODS_AMF_COMPLETE_INCREMENTAL_TERMINATION_HPP_INCLUDED
+#define _MLPACK_METHODS_AMF_COMPLETE_INCREMENTAL_TERMINATION_HPP_INCLUDED
 
 namespace mlpack
 {
