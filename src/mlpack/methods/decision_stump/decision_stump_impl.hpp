@@ -60,7 +60,6 @@ void DecisionStump<MatType>::Train(const MatType& data, const arma::Row<size_t>&
       // splitting attribute and calculate entropy if split on it.
       entropy = SetupSplitAttribute(data.row(i), labels);
 
-      // Log::Debug << "Entropy for attribute " << i << " is " << entropy << ".\n";
       gain = rootEntropy - entropy;
       // Find the attribute with the best entropy so that the gain is
       // maximized.
@@ -114,21 +113,21 @@ void DecisionStump<MatType>::Classify(const MatType& test,
 }
 
 /**
- *  Alternate constructor which copies parameters bucketSize and numClass
- *  from an already initiated decision stump, other. It appropriately 
- *  sets the Weight vector.
+ * Alternate constructor which copies parameters bucketSize and numClass
+ * from an already initiated decision stump, other. It appropriately
+ * sets the Weight vector.
  *
- *  @param other The other initiated Decision Stump object from 
- *               which we copy the values from.
- *  @param data The data on which to train this object on.
- *  @param D Weight vector to use while training. For boosting purposes.
- *  @param labels The labels of data.
+ * @param other The other initiated Decision Stump object from
+ *      which we copy the values from.
+ * @param data The data on which to train this object on.
+ * @param D Weight vector to use while training. For boosting purposes.
+ * @param labels The labels of data.
  */
 template <typename MatType>
 DecisionStump<MatType>::DecisionStump(
-                        const DecisionStump<>& other, 
-                        const MatType& data, 
-                        const arma::rowvec& weights, 
+                        const DecisionStump<>& other,
+                        const MatType& data,
+                        const arma::rowvec& weights,
                         const arma::Row<size_t>& labels
                         )
 {
@@ -173,7 +172,7 @@ double DecisionStump<MatType>::SetupSplitAttribute(
     sortedLabels(i) = labels(sortedIndexAtt(i));
     tempD(i) = weightD(sortedIndexAtt(i));
   }
-  
+
   i = 0;
   count = 0;
 
@@ -411,7 +410,9 @@ int DecisionStump<MatType>::IsDistinct(const arma::Row<rType>& featureRow)
  */
 template<typename MatType>
 template<typename LabelType>
-double DecisionStump<MatType>::CalculateEntropy(arma::subview_row<LabelType> labels, int begin)
+double DecisionStump<MatType>::CalculateEntropy(
+    arma::subview_row<LabelType> labels,
+    int begin)
 {
   double entropy = 0.0;
   size_t j;
@@ -419,21 +420,20 @@ double DecisionStump<MatType>::CalculateEntropy(arma::subview_row<LabelType> lab
   arma::Row<size_t> numElem(numClass);
   numElem.fill(0);
 
-  // variable to accumulate the weight in this subview_row
+  // Variable to accumulate the weight in this subview_row.
   double accWeight = 0.0;
-  // Populate numElem; they are used as helpers to calculate
-  // entropy.
-  
+  // Populate numElem; they are used as helpers to calculate entropy.
+
   for (j = 0; j < labels.n_elem; j++)
   {
     numElem(labels(j)) += tempD(j + begin);
     accWeight += tempD(j + begin);
-  }  
+  }
     // numElem(labels(j))++;
 
   for (j = 0; j < numClass; j++)
   {
-    const double p1 = ((double) numElem(j) / accWeight); 
+    const double p1 = ((double) numElem(j) / accWeight);
 
     entropy += (p1 == 0) ? 0 : p1 * log2(p1);
   }
