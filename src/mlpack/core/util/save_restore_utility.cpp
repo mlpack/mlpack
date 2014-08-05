@@ -62,7 +62,6 @@ bool SaveRestoreUtility::WriteFile(const std::string& filename)
   return success;
 }
 
-// this should be private member function
 void SaveRestoreUtility::WriteFile(xmlNode* n)
 {
   for (std::map<std::string, std::string>::reverse_iterator it =
