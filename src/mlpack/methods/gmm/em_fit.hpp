@@ -1,6 +1,7 @@
 /**
  * @file em_fit.hpp
  * @author Ryan Curtin
+ * @author Michael Fox
  *
  * Utility class to fit a GMM using the EM algorithm.  Used by
  * GMM::Estimate<>().
@@ -74,8 +75,7 @@ class EMFit
    *      clustering.
    */
   void Estimate(const arma::mat& observations,
-                std::vector<arma::vec>& means,
-                std::vector<arma::mat>& covariances,
+                std::vector<distribution::GaussianDistribution>& dists,
                 arma::vec& weights,
                 const bool useInitialModel = false);
 
@@ -98,8 +98,7 @@ class EMFit
    */
   void Estimate(const arma::mat& observations,
                 const arma::vec& probabilities,
-                std::vector<arma::vec>& means,
-                std::vector<arma::mat>& covariances,
+                std::vector<distribution::GaussianDistribution>& dists,
                 arma::vec& weights,
                 const bool useInitialModel = false);
 
@@ -135,8 +134,7 @@ class EMFit
    * @param weights Vector to store a priori weights in.
    */
   void InitialClustering(const arma::mat& observations,
-                         std::vector<arma::vec>& means,
-                         std::vector<arma::mat>& covariances,
+                         std::vector<distribution::GaussianDistribution>& dists,
                          arma::vec& weights);
 
   /**
@@ -150,8 +148,8 @@ class EMFit
    * @param weights Vector of a priori weights.
    */
   double LogLikelihood(const arma::mat& data,
-                       const std::vector<arma::vec>& means,
-                       const std::vector<arma::mat>& covariances,
+                       const std::vector<distribution::GaussianDistribution>&
+                           dists,
                        const arma::vec& weights) const;
 
   //! Maximum iterations of EM algorithm.
