@@ -16,9 +16,9 @@ namespace mlpack {
 namespace util {
 
 template<typename T>
-T& SaveRestoreUtility::LoadParameter(T& t, const std::string& name)
+T& SaveRestoreUtility::LoadParameter(T& t, const std::string& name) const
 {
-  std::map<std::string, std::string>::iterator it = parameters.find(name);
+  std::map<std::string, std::string>::const_iterator it = parameters.find(name);
   if (it != parameters.end())
   {
     std::string value = (*it).second;
@@ -35,9 +35,9 @@ T& SaveRestoreUtility::LoadParameter(T& t, const std::string& name)
 
 template<typename T>
 std::vector<T>& SaveRestoreUtility::LoadParameter(std::vector<T>& v,
-                                                  const std::string& name)
+                                                  const std::string& name) const
 {
-  std::map<std::string, std::string>::iterator it = parameters.find(name);
+  std::map<std::string, std::string>::const_iterator it = parameters.find(name);
   if (it != parameters.end())
   {
     v.clear();
@@ -87,6 +87,7 @@ void SaveRestoreUtility::SaveParameter(const std::vector<T>& t,
   parameters[name] = vectorAsStr;
 }
 
+    
 }; // namespace util
 }; // namespace mlpack
 
