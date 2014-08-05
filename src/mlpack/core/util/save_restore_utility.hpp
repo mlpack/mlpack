@@ -52,7 +52,6 @@ class SaveRestoreUtility
    * ReadFile reads an XML tree from a file.
    */
   bool ReadFile(const std::string& filename);
-  void ReadFile(xmlNode* n);
 
   /**
    * WriteFile writes the XML tree to a file.
@@ -130,6 +129,12 @@ class SaveRestoreUtility
   * WriteFile creates XML tree recursively.
   */
   void WriteFile(xmlNode* n);
+  
+  /**
+   * ReadFile reads an XML tree recursively.
+   */
+  bool ReadFile(const std::string& filename);
+  void ReadFile(xmlNode* n);
     
 };
 
