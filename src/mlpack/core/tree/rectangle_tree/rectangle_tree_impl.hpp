@@ -523,16 +523,23 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::CondenseTree
 {
   // First delete the node if we need to.  There's no point in shrinking the bound first.
   if (IsLeaf() && count < minLeafSize && parent != NULL) { //We can't delete the root node
-    for (size_t i = 0; i < parent->NumChildren(); i++) {
+    
+for (size_t i = 0; i < parent->NumChildren(); i++) {
       if (parent->Children()[i] == this) {
         parent->Children()[i] = parent->Children()[--parent->NumChildren()]; // decrement numChildren
-        parent->ShrinkBoundForBound(bound); // We want to do this before reinserting points.
-
-        // Reinsert the points at the root node.
+        
+        // We find the root and shrink bounds at the same time.
+	bool stillShrinking = true;
         RectangleTree<SplitType, DescentType, StatisticType, MatType>* root = parent;
-        while (root->Parent() != NULL)
+        while (root->Parent() != NULL) {
+	  if(stillShrinking)
+	    stillShrinking = root->ShrinkBoundForBound(bound);
           root = root->Parent();
+	}
+        if(stillShrinking)
+          stillShrinking = root->ShrinkBoundForBound(bound);
 
+	// Reinsert the points at the root node.
         for (size_t j = 0; j < count; j++) {
           root->InsertPoint(points[j], relevels);
         }
@@ -546,19 +553,25 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::CondenseTree
     // Control should never reach here.
     assert(true == false);
   } else if (!IsLeaf() && numChildren < minNumChildren) {
-
     if (parent != NULL) { // The normal case.  We need to be careful with the root.
       for (size_t j = 0; j < parent->NumChildren(); j++) {
         if (parent->Children()[j] == this) {
           parent->Children()[j] = parent->Children()[--parent->NumChildren()]; // decrement numChildren
-          parent->ShrinkBoundForBound(bound); // We want to do this before reinserting nodes.          
-
           size_t level = TreeDepth();
-          // Reinsert the nodes at the root node.
-          RectangleTree<SplitType, DescentType, StatisticType, MatType>* root = this;
-          while (root->Parent() != NULL)
+
+          // We find the root and shrink bounds at the same time.
+	  bool stillShrinking = true;
+          RectangleTree<SplitType, DescentType, StatisticType, MatType>* root = parent;
+          while (root->Parent() != NULL) {
+	    if(stillShrinking)
+	      stillShrinking = root->ShrinkBoundForBound(bound);
             root = root->Parent();
-          for (size_t i = 0; i < numChildren; i++)
+	  }
+          if(stillShrinking)
+            stillShrinking = root->ShrinkBoundForBound(bound);
+
+	  // Reinsert the nodes at the root node.
+	  for (size_t i = 0; i < numChildren; i++)
             root->InsertNode(children[i], level, relevels);
 
           parent->CondenseTree(point, relevels, usePoint); // This will check the MinFill of the parent.
@@ -579,6 +592,7 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::CondenseTree
       }
       count = child->Count();
       child->SoftDelete();
+      return;
     }
   }
 
@@ -629,19 +643,22 @@ bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::ShrinkBoundF
       }
     }
   } else {
-    for (size_t i = 0; i < point.n_elem; i++) {
+    for (size_t i = 0; i < bound.Dim(); i++) {
       if (bound[i].Lo() == point[i]) {
         double min = DBL_MAX;
-        double max = -1 * DBL_MAX;
         for (size_t j = 0; j < numChildren; j++) {
           if (children[j]->Bound()[i].Lo() < min)
             min = children[j]->Bound()[i].Lo();
-          if (children[j]->Bound()[i].Hi() > max)
-            max = children[j]->Bound()[i].Hi();
         }
         if (bound[i].Lo() < min) {
           shrunk = true;
           bound[i].Lo() = min;
+        }
+      } else if(bound[i].Hi() == point[i]) {
+        double max = -1 * DBL_MAX;
+        for (size_t j = 0; j < numChildren; j++) {
+          if (children[j]->Bound()[i].Hi() > max)
+            max = children[j]->Bound()[i].Hi();
         }
         if (bound[i].Hi() > max) {
           shrunk = true;
