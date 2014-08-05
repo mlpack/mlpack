@@ -77,7 +77,7 @@ class DiscreteDistribution
   /**
    * Get the dimensionality of the distribution.
    */
-  static size_t const Dimensionality() { return 1; }
+  static size_t Dimensionality() { return 1; }
 
   /**
    * Return the probability of the given observation.  If the observation is
@@ -150,7 +150,7 @@ class DiscreteDistribution
   void Save(util::SaveRestoreUtility& n) const;
   void Load(const util::SaveRestoreUtility& n) { n.LoadParameter(probabilities, "probabilities"); }
   static std::string const Type() { return "DiscreteDistribution"; }
-    
+
  private:
   arma::vec probabilities;
 };
