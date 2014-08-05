@@ -1,6 +1,7 @@
 /**
  * @file gaussian_distribution.cpp
  * @author Ryan Curtin
+ * @author Michael Fox
  *
  * Implementation of Gaussian distribution class.
  */
@@ -8,6 +9,31 @@
 
 using namespace mlpack;
 using namespace mlpack::distribution;
+
+/**
+ * Calculates the multivariate Gaussian probability density function for each
+ * data point (column) in the given matrix, with respect to the given mean and
+ * variance.
+ *
+ * @param x List of observations.
+ * @param mean Mean of multivariate Gaussian.
+ * @param cov Covariance of multivariate Gaussian.
+ * @param probabilities Output probabilities for each input observation.
+ */
+
+double GaussianDistribution::Probability(const arma::vec& observation) const
+{
+  arma::vec diff = mean - observation;
+  
+  // Parentheses required for Armadillo 3.0.0 bug.
+  arma::vec exponent = -0.5 * (trans(diff) * inv(covariance) * diff);
+  
+  // TODO: What if det(cov) < 0?
+  return pow(2 * M_PI, (double) observation.n_elem / -2.0) *
+      pow(det(covariance), -0.5) * exp(exponent[0]);
+}
+
+
 
 arma::vec GaussianDistribution::Random() const
 {
@@ -148,4 +174,18 @@ std::string GaussianDistribution::ToString() const
 
   convert << util::Indent(data.str());
   return convert.str();
+}
+
+
+/*
+ * Save to or Load from SaveRestoreUtility
+ */
+void GaussianDistribution::Save(util::SaveRestoreUtility& sr) const {
+  sr.SaveParameter(Type(), "type");
+  sr.SaveParameter(mean, "mean");
+  sr.SaveParameter(covariance, "covariance");
+}
+void GaussianDistribution::Load(const util::SaveRestoreUtility& sr) {
+  sr.LoadParameter(mean, "mean");
+  sr.LoadParameter(covariance, "covariance");
 }
