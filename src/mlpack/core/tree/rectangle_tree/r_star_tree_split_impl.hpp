@@ -88,6 +88,7 @@ void RStarTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
 //    }
    return;
  }
+ 
 
   int bestOverlapIndexOnBestAxis = 0;
   int bestAreaIndexOnBestAxis = 0;
@@ -261,6 +262,7 @@ bool RStarTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
     return true;
   }
 
+ 
   // If we haven't yet reinserted on this level, we try doing so now.
   if(relevels[tree->TreeDepth()]) {
     relevels[tree->TreeDepth()] = false;
@@ -319,6 +321,7 @@ bool RStarTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
    
    return false;
  }
+ 
 
   int bestOverlapIndexOnBestAxis = 0;
   int bestAreaIndexOnBestAxis = 0;
