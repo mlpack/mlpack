@@ -44,5 +44,12 @@ target_link_libraries(hmm_generate
   mlpack
 )
 
-install(TARGETS hmm_train hmm_loglik hmm_viterbi hmm_generate
+add_executable(hmm_convert
+  hmm_convert_main.cpp
+)
+target_link_libraries(hmm_convert
+  mlpack
+)
+
+install(TARGETS hmm_train hmm_loglik hmm_viterbi hmm_generate hmm_convert
   RUNTIME DESTINATION bin)
