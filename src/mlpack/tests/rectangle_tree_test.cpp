@@ -143,6 +143,87 @@ void checkContainment(const RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeu
   return;
 }
 
+/**
+ * A function to check that containment is as tight as possible.
+ */
+void checkExactContainment(const RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+        tree::RTreeDescentHeuristic,
+        NeighborSearchStat<NearestNeighborSort>,
+        arma::mat>& tree) {
+  if(tree.NumChildren() == 0) {
+    for(size_t i = 0; i < tree.Bound().Dim(); i++) {
+      double min = DBL_MAX;
+      double max = -1.0 * DBL_MAX;
+      for(size_t j = 0; j < tree.Count(); j++) {
+	if(tree.LocalDataset().col(j)[i] < min)
+	  min = tree.LocalDataset().col(j)[i];
+	if(tree.LocalDataset().col(j)[i] > max)
+	  max = tree.LocalDataset().col(j)[i];
+      }
+      BOOST_REQUIRE_EQUAL(max, tree.Bound()[i].Hi());
+      BOOST_REQUIRE_EQUAL(min, tree.Bound()[i].Lo());
+    }
+  } else {
+    for(size_t i = 0; i < tree.Bound().Dim(); i++) {
+            double min = DBL_MAX;
+      double max = -1.0 * DBL_MAX;
+      for(size_t j = 0; j < tree.NumChildren(); j++) {
+	if(tree.Child(j).Bound()[i].Lo() < min)
+	  min = tree.Child(j).Bound()[i].Lo();
+	if(tree.Child(j).Bound()[i].Hi() > max)
+	  max = tree.Child(j).Bound()[i].Hi();
+      }
+
+      if(max != tree.Bound()[i].Hi())
+	std::cout<<"error max"<<std::endl<<std::endl<<std::endl<<tree.ToString()<<std::endl<<std::endl;
+      if(min != tree.Bound()[i].Lo())
+	std::cout<<"error min"<<std::endl;
+      BOOST_REQUIRE_EQUAL(max, tree.Bound()[i].Hi());
+      BOOST_REQUIRE_EQUAL(min, tree.Bound()[i].Lo());
+    }
+    for(size_t i = 0; i < tree.NumChildren(); i++)
+      checkExactContainment(tree.Child(i));
+  }
+}
+
+/**
+ * A function to check that containment is as tight as possible.
+ */
+void checkExactContainment(const RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+        tree::RStarTreeDescentHeuristic,
+        NeighborSearchStat<NearestNeighborSort>,
+        arma::mat>& tree) {
+  if(tree.NumChildren() == 0) {
+    for(size_t i = 0; i < tree.Bound().Dim(); i++) {
+      double min = DBL_MAX;
+      double max = -1.0 * DBL_MAX;
+      for(size_t j = 0; j < tree.Count(); j++) {
+	if(tree.LocalDataset().col(j)[i] < min)
+	  min = tree.LocalDataset().col(j)[i];
+	if(tree.LocalDataset().col(j)[i] > max)
+	  max = tree.LocalDataset().col(j)[i];
+      }
+      BOOST_REQUIRE_EQUAL(max, tree.Bound()[i].Hi());
+      BOOST_REQUIRE_EQUAL(min, tree.Bound()[i].Lo());
+    }
+  } else {
+    for(size_t i = 0; i < tree.Bound().Dim(); i++) {
+      double min = DBL_MAX;
+      double max = -1.0 * DBL_MAX;
+      for(size_t j = 0; j < tree.NumChildren(); j++) {
+	if(tree.Child(j).Bound()[i].Lo() < min)
+	  min = tree.Child(j).Bound()[i].Lo();
+	if(tree.Child(j).Bound()[i].Hi() > max)
+	  max = tree.Child(j).Bound()[i].Hi();
+      }
+      BOOST_REQUIRE_EQUAL(max, tree.Bound()[i].Hi());
+      BOOST_REQUIRE_EQUAL(min, tree.Bound()[i].Lo());
+    }
+    for(size_t i = 0; i < tree.NumChildren(); i++)
+      checkExactContainment(tree.Child(i));
+  }
+}
+
 // Test to see if the bounds of the tree are correct. (Cover all bounds and points
 // beneath this node of the tree).
 BOOST_AUTO_TEST_CASE(RectangleTreeContainmentTest) {
@@ -154,6 +235,7 @@ BOOST_AUTO_TEST_CASE(RectangleTreeContainmentTest) {
           NeighborSearchStat<NearestNeighborSort>,
           arma::mat> tree(dataset, 20, 6, 5, 2, 0);
   checkContainment(tree);
+  checkExactContainment(tree);
 }
 
 /**
@@ -308,7 +390,7 @@ BOOST_AUTO_TEST_CASE(PointDeletion) {
 
   for (int i = 0; i < numIter; i++) {
     tree.DeletePoint(999 - i);
-  }
+  }  
   
   // Do a few sanity checks.  Ensure each point is unique, the tree has the correct
   // number of points, the tree has legal containment, and the tree's data is in sync.
@@ -330,6 +412,7 @@ BOOST_AUTO_TEST_CASE(PointDeletion) {
   BOOST_REQUIRE_EQUAL(tree.NumDescendants(), 1000 - numIter);
   checkContainment(tree);
   checkSync(tree);
+  checkExactContainment(tree);
 
   mlpack::neighbor::NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
           RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
@@ -407,6 +490,7 @@ BOOST_AUTO_TEST_CASE(PointDynamicAdd) {
   BOOST_REQUIRE_EQUAL(tree.NumDescendants(), 1000 + numIter);
   checkContainment(tree);
   checkSync(tree);
+  checkExactContainment(tree);
   
   // Now we will compare the output of the R Tree vs the output of a naive search. 
   arma::Mat<size_t> neighbors1;
@@ -510,7 +594,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest) {
   BOOST_REQUIRE_EQUAL(RTree.NumDescendants(), 1000);
   checkSync(RTree);
   checkContainment(RTree);
-
+  checkExactContainment(RTree);
 
   allknn1.Search(5, neighbors1, distances1);
 
