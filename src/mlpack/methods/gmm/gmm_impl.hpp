@@ -2,6 +2,7 @@
  * @file gmm_impl.hpp
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @author Ryan Curtin
+ * @author Michael Fox
  *
  * Implementation of template-based GMM methods.
  */
@@ -27,20 +28,14 @@ template<typename FittingType>
 GMM<FittingType>::GMM(const size_t gaussians, const size_t dimensionality) :
     gaussians(gaussians),
     dimensionality(dimensionality),
-    means(gaussians, arma::vec(dimensionality)),
-    covariances(gaussians, arma::mat(dimensionality, dimensionality)),
+    dists(gaussians, distribution::GaussianDistribution(dimensionality)),
     weights(gaussians),
     localFitter(FittingType()),
     fitter(localFitter)
 {
-  // Clear the memory; set it to 0.  Technically this model is still valid, but
+  // Set weights to 0.  Technically this model is still valid, but
   // only barely.
   weights.fill(1.0 / gaussians);
-  for (size_t i = 0; i < gaussians; ++i)
-  {
-    means[i].zeros();
-    covariances[i].eye();
-  }
 }
 
 /**
@@ -59,30 +54,24 @@ GMM<FittingType>::GMM(const size_t gaussians,
                       FittingType& fitter) :
     gaussians(gaussians),
     dimensionality(dimensionality),
-    means(gaussians, arma::vec(dimensionality)),
-    covariances(gaussians, arma::mat(dimensionality, dimensionality)),
+    dists(gaussians, distribution::GaussianDistribution(dimensionality)),
     weights(gaussians),
     fitter(fitter)
 {
-  // Clear the memory; set it to 0.  Technically this model is still valid, but
+  // Set weights to 0.  Technically this model is still valid, but
   // only barely.
   weights.fill(1.0 / gaussians);
-  for (size_t i = 0; i < gaussians; ++i)
-  {
-    means[i].zeros();
-    covariances[i].eye();
-  }
 }
 
+  
 // Copy constructor.
 template<typename FittingType>
 template<typename OtherFittingType>
 GMM<FittingType>::GMM(const GMM<OtherFittingType>& other) :
-    gaussians(other.Gaussians()),
-    dimensionality(other.Dimensionality()),
-    means(other.Means()),
-    covariances(other.Covariances()),
-    weights(other.Weights()),
+    gaussians(other.gaussians),
+    dimensionality(other.dimensionality),
+    dists(other.dists),
+    weights(other.weights),
     localFitter(FittingType()),
     fitter(localFitter) { /* Nothing to do. */ }
 
@@ -90,11 +79,10 @@ GMM<FittingType>::GMM(const GMM<OtherFittingType>& other) :
 template<typename FittingType>
 GMM<FittingType>::GMM(const GMM<FittingType>& other) :
     gaussians(other.Gaussians()),
-    dimensionality(other.Dimensionality()),
-    means(other.Means()),
-    covariances(other.Covariances()),
-    weights(other.Weights()),
-    localFitter(other.Fitter()),
+    dimensionality(other.dimensionality),
+    dists(other.dists),
+    weights(other.weights),
+    localFitter(other.fitter),
     fitter(localFitter) { /* Nothing to do. */ }
 
 template<typename FittingType>
@@ -102,11 +90,10 @@ template<typename OtherFittingType>
 GMM<FittingType>& GMM<FittingType>::operator=(
     const GMM<OtherFittingType>& other)
 {
-  gaussians = other.Gaussians();
-  dimensionality = other.Dimensionality();
-  means = other.Means();
-  covariances = other.Covariances();
-  weights = other.Weights();
+  gaussians = other.gaussians;
+  dimensionality = other.dimensionality;
+  dists = other.dists;
+  weights = other.weights;
 
   return *this;
 }
@@ -114,12 +101,11 @@ GMM<FittingType>& GMM<FittingType>::operator=(
 template<typename FittingType>
 GMM<FittingType>& GMM<FittingType>::operator=(const GMM<FittingType>& other)
 {
-  gaussians = other.Gaussians();
-  dimensionality = other.Dimensionality();
-  means = other.Means();
-  covariances = other.Covariances();
-  weights = other.Weights();
-  localFitter = other.Fitter();
+  gaussians = other.gaussians;
+  dimensionality = other.dimensionality;
+  dists = other.dists;
+  weights = other.weights;
+  localFitter = other.fitter;
 
   return *this;
 }
@@ -132,32 +118,7 @@ void GMM<FittingType>::Load(const std::string& filename)
 
   if (!load.ReadFile(filename))
     Log::Fatal << "GMM::Load(): could not read file '" << filename << "'!\n";
-
-  load.LoadParameter(gaussians, "gaussians");
-  load.LoadParameter(dimensionality, "dimensionality");
-  load.LoadParameter(weights, "weights");
-
-  // We need to do a little error checking here.
-  if (weights.n_elem != gaussians)
-  {
-    Log::Fatal << "GMM::Load('" << filename << "'): file reports " << gaussians
-        << " gaussians but weights vector only contains " << weights.n_elem
-        << " elements!" << std::endl;
-  }
-
-  means.resize(gaussians);
-  covariances.resize(gaussians);
-
-  for (size_t i = 0; i < gaussians; ++i)
-  {
-    std::stringstream o;
-    o << i;
-    std::string meanName = "mean" + o.str();
-    std::string covName = "covariance" + o.str();
-
-    load.LoadParameter(means[i], meanName);
-    load.LoadParameter(covariances[i], covName);
-  }
+  Load(load);
 }
 
 // Save a GMM to a file.
@@ -165,24 +126,59 @@ template<typename FittingType>
 void GMM<FittingType>::Save(const std::string& filename) const
 {
   util::SaveRestoreUtility save;
-  save.SaveParameter(gaussians, "gaussians");
-  save.SaveParameter(dimensionality, "dimensionality");
-  save.SaveParameter(weights, "weights");
+  Save(save);
+
+  if (!save.WriteFile(filename))
+    Log::Warn << "GMM::Save(): error saving to '" << filename << "'.\n";
+}
+
+  
+// Save a GMM to a SaveRestoreUtility.
+template<typename FittingType>
+void GMM<FittingType>::Save(util::SaveRestoreUtility& sr) const
+{
+  sr.SaveParameter(gaussians, "gaussians");
+  sr.SaveParameter(dimensionality, "dimensionality");
+  sr.SaveParameter(weights, "weights");
+
+  util::SaveRestoreUtility child;
   for (size_t i = 0; i < gaussians; ++i)
   {
     // Generate names for the XML nodes.
     std::stringstream o;
     o << i;
-    std::string meanName = "mean" + o.str();
-    std::string covName = "covariance" + o.str();
-
+    std::string gaussianName = "gaussian" + o.str();
+    
     // Now save them.
-    save.SaveParameter(means[i], meanName);
-    save.SaveParameter(covariances[i], covName);
+    dists[i].Save(child);
+    sr.AddChild(child, gaussianName);
   }
+}
 
-  if (!save.WriteFile(filename))
-    Log::Warn << "GMM::Save(): error saving to '" << filename << "'.\n";
+// Load a GMM from SaveRestoreUtility.
+template<typename FittingType>
+void GMM<FittingType>::Load(const util::SaveRestoreUtility& sr)
+{
+    sr.LoadParameter(gaussians, "gaussians");
+    sr.LoadParameter(dimensionality, "dimensionality");
+    sr.LoadParameter(weights, "weights");
+    
+    // We need to do a little error checking here.
+    if (weights.n_elem != gaussians)
+    {
+      Log::Fatal << "GMM::Load reports " << gaussians
+      << " gaussians but weights vector only contains " << weights.n_elem
+      << " elements!" << std::endl;
+    }
+  
+    dists.resize(gaussians);
+    
+    for (size_t i = 0; i < gaussians; ++i)
+    {
+      std::stringstream o;
+      o << "gaussian" << i;
+      dists[i].Load(sr.Children().at(o.str()));
+    }
 }
 
 /**
@@ -195,8 +191,8 @@ double GMM<FittingType>::Probability(const arma::vec& observation) const
   // multiply by the prior for each Gaussian too).
   double sum = 0;
   for (size_t i = 0; i < gaussians; i++)
-    sum += weights[i] * phi(observation, means[i], covariances[i]);
-
+    sum += weights[i] * dists[i].Probability(observation);
+  
   return sum;
 }
 
@@ -209,9 +205,8 @@ double GMM<FittingType>::Probability(const arma::vec& observation,
                                      const size_t component) const
 {
   // We are only considering one Gaussian component -- so we only need to call
-  // phi() once.  We do consider the prior probability!
-  return weights[component] *
-      phi(observation, means[component], covariances[component]);
+  // Probability() once.  We do consider the prior probability!
+  return weights[component] * dists[component].Probability(observation);
 }
 
 /**
@@ -236,8 +231,8 @@ arma::vec GMM<FittingType>::Random() const
     }
   }
 
-  return trans(chol(covariances[gaussian])) *
-      arma::randn<arma::vec>(dimensionality) + means[gaussian];
+  return trans(chol(dists[gaussian].Covariance())) *
+      arma::randn<arma::vec>(dimensionality) + dists[gaussian].Mean();
 }
 
 /**
@@ -255,10 +250,9 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
   {
     // Train the model.  The user will have been warned earlier if the GMM was
     // initialized with no parameters (0 gaussians, dimensionality of 0).
-    fitter.Estimate(observations, means, covariances, weights,
+    fitter.Estimate(observations, dists, weights,
         useExistingModel);
-
-    bestLikelihood = LogLikelihood(observations, means, covariances, weights);
+    bestLikelihood = LogLikelihood(observations, dists, weights);
   }
   else
   {
@@ -266,47 +260,43 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
       return -DBL_MAX; // It's what they asked for...
 
     // If each trial must start from the same initial location, we must save it.
-    std::vector<arma::vec> meansOrig;
-    std::vector<arma::mat> covariancesOrig;
+    std::vector<distribution::GaussianDistribution> distsOrig;
     arma::vec weightsOrig;
     if (useExistingModel)
     {
-      meansOrig = means;
-      covariancesOrig = covariances;
+      distsOrig = dists;
       weightsOrig = weights;
     }
 
     // We need to keep temporary copies.  We'll do the first training into the
     // actual model position, so that if it's the best we don't need to copy it.
-    fitter.Estimate(observations, means, covariances, weights,
+    fitter.Estimate(observations, dists, weights,
         useExistingModel);
 
-    bestLikelihood = LogLikelihood(observations, means, covariances, weights);
+    bestLikelihood = LogLikelihood(observations, dists, weights);
 
     Log::Info << "GMM::Estimate(): Log-likelihood of trial 0 is "
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<arma::vec> meansTrial(gaussians, arma::vec(dimensionality));
-    std::vector<arma::mat> covariancesTrial(gaussians,
-        arma::mat(dimensionality, dimensionality));
+    std::vector<distribution::GaussianDistribution> distsTrial(gaussians,
+        distribution::GaussianDistribution(dimensionality));
     arma::vec weightsTrial(gaussians);
 
     for (size_t trial = 1; trial < trials; ++trial)
     {
       if (useExistingModel)
       {
-        meansTrial = meansOrig;
-        covariancesTrial = covariancesOrig;
+        distsTrial = distsOrig;
         weightsTrial = weightsOrig;
       }
 
-      fitter.Estimate(observations, meansTrial, covariancesTrial, weightsTrial,
+      fitter.Estimate(observations, distsTrial, weightsTrial,
           useExistingModel);
 
       // Check to see if the log-likelihood of this one is better.
-      double newLikelihood = LogLikelihood(observations, meansTrial,
-          covariancesTrial, weightsTrial);
+      double newLikelihood = LogLikelihood(observations, distsTrial,
+          weightsTrial);
 
       Log::Info << "GMM::Estimate(): Log-likelihood of trial " << trial
           << " is " << newLikelihood << "." << std::endl;
@@ -316,8 +306,7 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
         // Save new likelihood and copy new model.
         bestLikelihood = newLikelihood;
 
-        means = meansTrial;
-        covariances = covariancesTrial;
+        dists = distsTrial;
         weights = weightsTrial;
       }
     }
@@ -346,10 +335,10 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
   {
     // Train the model.  The user will have been warned earlier if the GMM was
     // initialized with no parameters (0 gaussians, dimensionality of 0).
-    fitter.Estimate(observations, probabilities, means, covariances, weights,
+    fitter.Estimate(observations, probabilities, dists, weights,
         useExistingModel);
-
-    bestLikelihood = LogLikelihood(observations, means, covariances, weights);
+    std::cout<<"3";
+    bestLikelihood = LogLikelihood(observations, dists, weights);
   }
   else
   {
@@ -357,47 +346,43 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
       return -DBL_MAX; // It's what they asked for...
 
     // If each trial must start from the same initial location, we must save it.
-    std::vector<arma::vec> meansOrig;
-    std::vector<arma::mat> covariancesOrig;
+    std::vector<distribution::GaussianDistribution> distsOrig;
     arma::vec weightsOrig;
     if (useExistingModel)
     {
-      meansOrig = means;
-      covariancesOrig = covariances;
+      distsOrig = dists;
       weightsOrig = weights;
     }
 
     // We need to keep temporary copies.  We'll do the first training into the
     // actual model position, so that if it's the best we don't need to copy it.
-    fitter.Estimate(observations, probabilities, means, covariances, weights,
+    fitter.Estimate(observations, probabilities, dists, weights,
         useExistingModel);
 
-    bestLikelihood = LogLikelihood(observations, means, covariances, weights);
+    bestLikelihood = LogLikelihood(observations, dists, weights);
 
     Log::Debug << "GMM::Estimate(): Log-likelihood of trial 0 is "
         << bestLikelihood << "." << std::endl;
 
     // Now the temporary model.
-    std::vector<arma::vec> meansTrial(gaussians, arma::vec(dimensionality));
-    std::vector<arma::mat> covariancesTrial(gaussians,
-        arma::mat(dimensionality, dimensionality));
+    std::vector<distribution::GaussianDistribution> distsTrial(gaussians,
+        distribution::GaussianDistribution(dimensionality));
     arma::vec weightsTrial(gaussians);
 
     for (size_t trial = 1; trial < trials; ++trial)
     {
       if (useExistingModel)
       {
-        meansTrial = meansOrig;
-        covariancesTrial = covariancesOrig;
+        distsTrial = distsOrig;
         weightsTrial = weightsOrig;
       }
 
-      fitter.Estimate(observations, meansTrial, covariancesTrial, weightsTrial,
+      fitter.Estimate(observations, distsTrial, weightsTrial,
           useExistingModel);
 
       // Check to see if the log-likelihood of this one is better.
-      double newLikelihood = LogLikelihood(observations, meansTrial,
-          covariancesTrial, weightsTrial);
+      double newLikelihood = LogLikelihood(observations, distsTrial,
+          weightsTrial);
 
       Log::Debug << "GMM::Estimate(): Log-likelihood of trial " << trial
           << " is " << newLikelihood << "." << std::endl;
@@ -407,8 +392,7 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
         // Save new likelihood and copy new model.
         bestLikelihood = newLikelihood;
 
-        means = meansTrial;
-        covariances = covariancesTrial;
+        dists=distsTrial;
         weights = weightsTrial;
       }
     }
@@ -455,27 +439,28 @@ void GMM<FittingType>::Classify(const arma::mat& observations,
 template<typename FittingType>
 double GMM<FittingType>::LogLikelihood(
     const arma::mat& data,
-    const std::vector<arma::vec>& meansL,
-    const std::vector<arma::mat>& covariancesL,
+    const std::vector<distribution::GaussianDistribution>& distsL,
     const arma::vec& weightsL) const
 {
   double loglikelihood = 0;
-
   arma::vec phis;
   arma::mat likelihoods(gaussians, data.n_cols);
+
   for (size_t i = 0; i < gaussians; i++)
   {
-    phi(data, meansL[i], covariancesL[i], phis);
+    distsL[i].Probability(data, phis);
     likelihoods.row(i) = weightsL(i) * trans(phis);
   }
 
   // Now sum over every point.
   for (size_t j = 0; j < data.n_cols; j++)
     loglikelihood += log(accu(likelihoods.col(j)));
-
   return loglikelihood;
 }
 
+/**
+* Returns a string representation of this object.
+*/
 template<typename FittingType>
 std::string GMM<FittingType>::ToString() const
 {
@@ -488,10 +473,11 @@ std::string GMM<FittingType>::ToString() const
   // Secondary ostringstream so things can be indented properly.
   for (size_t ind=0; ind < gaussians; ind++)
   {
-    data << "Means of Gaussian " << ind << ": " << std::endl << means[ind]; 
+    data << "Means of Gaussian " << ind << ": " << std::endl
+        << dists[ind].Mean();
     data << std::endl;
     data << "Covariances of Gaussian " << ind << ": " << std::endl ;
-    data << covariances[ind] << std::endl;
+    data << dists[ind].Covariance() << std::endl;
     data << "Weight of Gaussian " << ind << ": " << std::endl ;
     data << weights[ind] << std::endl;
   }
@@ -500,6 +486,7 @@ std::string GMM<FittingType>::ToString() const
 
   return convert.str();
 }
+
 
 }; // namespace gmm
 }; // namespace mlpack
