@@ -2,6 +2,7 @@
  * @file hmm.hpp
  * @author Ryan Curtin
  * @author Tran Quoc Long
+ * @author Michael Fox
  *
  * Definition of HMM class.
  */
@@ -290,6 +291,16 @@ class HMM
    */
   std::string ToString() const;
 
+  //! Save to SaveRestoreUtility
+  void Save(util::SaveRestoreUtility& sr) const;
+  //! Load from SaveRestoreUtility
+  void Load(const util::SaveRestoreUtility& sr);
+  
+  /**
+   * Returns a string indicating the type.
+   */
+  static std::string const Type() { return "HMM"; }
+  
  private:
   // Helper functions.
 
