@@ -3,7 +3,6 @@
 set(SOURCES
   gmm.hpp
   gmm_impl.hpp
-  phi.hpp
   em_fit.hpp
   em_fit_impl.hpp
   no_constraint.hpp
@@ -25,8 +24,16 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 add_executable(gmm
   gmm_main.cpp
 )
+
 # link dependencies of mog_em
-target_link_libraries(gmm
+target_link_libraries(gmm 
   mlpack
 )
-install(TARGETS gmm RUNTIME DESTINATION bin)
+
+add_executable(gmm_convert
+  gmm_convert_main.cpp
+)
+target_link_libraries(gmm_convert 
+  mlpack
+)
+install(TARGETS gmm gmm_convert RUNTIME DESTINATION bin)
