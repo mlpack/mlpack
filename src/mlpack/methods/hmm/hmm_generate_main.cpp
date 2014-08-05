@@ -1,6 +1,7 @@
 /**
- * @file hmm_viterbi_main.cpp
+ * @file hmm_generate_main.cpp
  * @author Ryan Curtin
+ * @author Michael Fox
  *
  * Compute the most probably hidden state sequence of a given observation
  * sequence for a given HMM.
@@ -62,16 +63,15 @@ int main(int argc, char** argv)
   // Load model, but first we have to determine its type.
   SaveRestoreUtility sr;
   sr.ReadFile(modelFile);
-  string type;
-  sr.LoadParameter(type, "hmm_type");
+  string emissionType;
+  sr.LoadParameter(emissionType, "emission_type");
 
   mat observations;
   Col<size_t> sequence;
-  if (type == "discrete")
+  if (emissionType == "DiscreteDistribution")
   {
     HMM<DiscreteDistribution> hmm(1, DiscreteDistribution(1));
-
-    LoadHMM(hmm, sr);
+    hmm.Load(sr);
 
     if (startState < 0 || startState >= (int) hmm.Transition().n_rows)
     {
@@ -82,11 +82,10 @@ int main(int argc, char** argv)
 
     hmm.Generate(size_t(length), observations, sequence, size_t(startState));
   }
-  else if (type == "gaussian")
+  else if (emissionType == "GaussianDistribution")
   {
     HMM<GaussianDistribution> hmm(1, GaussianDistribution(1));
-
-    LoadHMM(hmm, sr);
+    hmm.Load(sr);
 
     if (startState < 0 || startState >= (int) hmm.Transition().n_rows)
     {
@@ -97,11 +96,10 @@ int main(int argc, char** argv)
 
     hmm.Generate(size_t(length), observations, sequence, size_t(startState));
   }
-  else if (type == "gmm")
+  else if (emissionType == "GMM")
   {
     HMM<GMM<> > hmm(1, GMM<>(1, 1));
-
-    LoadHMM(hmm, sr);
+    hmm.Load(sr);
 
     if (startState < 0 || startState >= (int) hmm.Transition().n_rows)
     {
@@ -114,7 +112,7 @@ int main(int argc, char** argv)
   }
   else
   {
-    Log::Fatal << "Unknown HMM type '" << type << "' in file '" << modelFile
+    Log::Fatal << "Unknown HMM type '" << emissionType << "' in file '" << modelFile
         << "'!" << endl;
   }
 
@@ -126,4 +124,6 @@ int main(int argc, char** argv)
   const string sequenceFile = CLI::GetParam<string>("state_file");
   if (sequenceFile != "")
     data::Save(sequenceFile, sequence, true);
+  
+  return 0;
 }
