@@ -2,6 +2,7 @@
  * @file hmm_impl.hpp
  * @author Ryan Curtin
  * @author Tran Quoc Long
+ * @author Michael Fox
  *
  * Implementation of HMM class.
  */
@@ -520,6 +521,47 @@ std::string HMM<Distribution>::ToString() const
   convert << "  Transition matrix: " << transition.n_rows << "x" ;
   convert << transition.n_cols << std::endl;
   return convert.str();
+}
+
+//! Save to SaveRestoreUtility
+template<typename Distribution>
+void HMM<Distribution>::Save(util::SaveRestoreUtility& sr) const
+{
+  //  Save parameters.
+  sr.SaveParameter(Type(), "type");
+  sr.SaveParameter(Emission()[0].Type(), "emission_type");
+  sr.SaveParameter(dimensionality, "dimensionality");
+  sr.SaveParameter(transition.n_rows, "states");
+  sr.SaveParameter(transition, "transition");
+  
+  // Now the emissions.
+  util::SaveRestoreUtility mn;
+  for (size_t i = 0; i < transition.n_rows; ++i)
+  {
+    // Generate name.
+    std::stringstream s;
+    s << "emission_distribution_" << i;
+    Emission()[i].Save(mn);
+    sr.AddChild(mn, s.str());
+  }
+}
+
+//! Load from SaveRestoreUtility
+template<typename Distribution>
+void HMM<Distribution>::Load(const util::SaveRestoreUtility& sr)
+{
+  // Load parameters.
+  sr.LoadParameter(dimensionality, "dimensionality");
+  sr.LoadParameter(transition, "transition");
+
+  // Now each emission distribution.
+  Emission().resize(transition.n_rows);
+  for (size_t i = 0; i < transition.n_rows; ++i)
+  {
+    std::stringstream s;
+    s << "emission_distribution_" << i;
+    Emission()[i].Load(sr.Children().at(s.str()));
+  }
 }
 
 }; // namespace hmm
