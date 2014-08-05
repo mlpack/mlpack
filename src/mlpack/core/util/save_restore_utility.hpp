@@ -44,7 +44,7 @@ class SaveRestoreUtility
   void RecurseOnNodes(xmlNode* n);
 
  public:
-    
+
   SaveRestoreUtility() {}
   ~SaveRestoreUtility() { parameters.clear(); }
 
@@ -107,35 +107,34 @@ class SaveRestoreUtility
    * SaveParameter saves an arma::mat to the parameters map.
    */
   void SaveParameter(const arma::mat& mat, const std::string& name);
-    
+
   /**
    * SaveSubModel saves a SaveRestoreUtility to the children map.
    */
   void AddChild(SaveRestoreUtility& mn, const std::string& name);
-  
+
   /**
    * Return the children.
    */
   const std::map<std::string, SaveRestoreUtility> Children() const { return
     children; }
-  
+
   /**
    * Return modifiable copy of the children.
    */
   std::map<std::string, SaveRestoreUtility> Children() { return children; }
- 
+
  private:
   /**
   * WriteFile creates XML tree recursively.
   */
   void WriteFile(xmlNode* n);
-  
+
   /**
    * ReadFile reads an XML tree recursively.
    */
-  bool ReadFile(const std::string& filename);
   void ReadFile(xmlNode* n);
-    
+
 };
 
 //! Specialization for arma::vec.
@@ -149,7 +148,7 @@ void SaveRestoreUtility::SaveParameter(const arma::vec& t,
                                        const std::string& name);
 
 
-    
+
 }; /* namespace util */
 }; /* namespace mlpack */
 
