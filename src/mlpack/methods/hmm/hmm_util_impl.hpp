@@ -1,6 +1,7 @@
 /**
  * @file hmm_util_impl.hpp
  * @author Ryan Curtin
+ * @author Michael Fox
  *
  * Implementation of HMM load/save functions.
  */
@@ -9,111 +10,54 @@
 
 // In case it hasn't already been included.
 #include "hmm_util.hpp"
-
+// Only required for conversion util
 #include <mlpack/methods/gmm/gmm.hpp>
 
 namespace mlpack {
 namespace hmm {
 
+/**
+ * Save an HMM to file (deprecated).
+ *
+ * @tparam Distribution Distribution type of HMM.
+ * @param sr SaveRestoreUtility to use.
+ */    
 template<typename Distribution>
 void SaveHMM(const HMM<Distribution>& hmm, util::SaveRestoreUtility& sr)
 {
-  Log::Fatal << "HMM save not implemented for arbitrary distributions."
-      << std::endl;
+  Log::Warn << "SaveHMM is deprecated. See HMM::Save.";
+  hmm.Save(sr);
 }
 
-template<>
-void SaveHMM(const HMM<distribution::DiscreteDistribution>& hmm,
-             util::SaveRestoreUtility& sr)
-{
-  std::string type = "discrete";
-  size_t states = hmm.Transition().n_rows;
-
-  sr.SaveParameter(type, "hmm_type");
-  sr.SaveParameter(states, "hmm_states");
-  sr.SaveParameter(hmm.Transition(), "hmm_transition");
-
-  // Now the emissions.
-  for (size_t i = 0; i < states; ++i)
-  {
-    // Generate name.
-    std::stringstream s;
-    s << "hmm_emission_distribution_" << i;
-    sr.SaveParameter(hmm.Emission()[i].Probabilities(), s.str());
-  }
-}
-
-template<>
-void SaveHMM(const HMM<distribution::GaussianDistribution>& hmm,
-             util::SaveRestoreUtility& sr)
-{
-  std::string type = "gaussian";
-  size_t states = hmm.Transition().n_rows;
-
-  sr.SaveParameter(type, "hmm_type");
-  sr.SaveParameter(states, "hmm_states");
-  sr.SaveParameter(hmm.Transition(), "hmm_transition");
-
-  // Now the emissions.
-  for (size_t i = 0; i < states; ++i)
-  {
-    // Generate name.
-    std::stringstream s;
-    s << "hmm_emission_mean_" << i;
-    sr.SaveParameter(hmm.Emission()[i].Mean(), s.str());
-
-    s.str("");
-    s << "hmm_emission_covariance_" << i;
-    sr.SaveParameter(hmm.Emission()[i].Covariance(), s.str());
-  }
-}
-
-template<>
-void SaveHMM(const HMM<gmm::GMM<> >& hmm,
-             util::SaveRestoreUtility& sr)
-{
-  std::string type = "gmm";
-  size_t states = hmm.Transition().n_rows;
-
-  sr.SaveParameter(type, "hmm_type");
-  sr.SaveParameter(states, "hmm_states");
-  sr.SaveParameter(hmm.Transition(), "hmm_transition");
-
-  // Now the emissions.
-  for (size_t i = 0; i < states; ++i)
-  {
-    // Generate name.
-    std::stringstream s;
-    s << "hmm_emission_" << i << "_gaussians";
-    sr.SaveParameter(hmm.Emission()[i].Gaussians(), s.str());
-
-    s.str("");
-    s << "hmm_emission_" << i << "_weights";
-    sr.SaveParameter(hmm.Emission()[i].Weights(), s.str());
-
-    for (size_t g = 0; g < hmm.Emission()[i].Gaussians(); ++g)
-    {
-      s.str("");
-      s << "hmm_emission_" << i << "_gaussian_" << g << "_mean";
-      sr.SaveParameter(hmm.Emission()[i].Means()[g], s.str());
-
-      s.str("");
-      s << "hmm_emission_" << i << "_gaussian_" << g << "_covariance";
-      sr.SaveParameter(hmm.Emission()[i].Covariances()[g], s.str());
-    }
-  }
-}
-
+/**
+ * Load an HMM from file (deprecated).
+ *
+ * @tparam Distribution Distribution type of HMM.
+ * @param sr SaveRestoreUtility to use.
+ */
 template<typename Distribution>
 void LoadHMM(HMM<Distribution>& hmm, util::SaveRestoreUtility& sr)
 {
-  Log::Fatal << "HMM load not implemented for arbitrary distributions."
+  Log::Warn << "LoadHMM is deprecated. See HMM::Load.";
+  hmm.Load(sr);
+}
+
+/**
+ * Converter for HMMs saved using older MLPACK versions.
+ *
+ * @tparam Distribution Distribution type of HMM.
+ * @param sr SaveRestoreUtility to use.
+ */
+template<typename Distribution>
+void ConvertHMM(HMM<Distribution>& hmm, const util::SaveRestoreUtility& sr)
+{
+  Log::Fatal << "HMM conversion not implemented for arbitrary distributions."
       << std::endl;
 }
 
 template<>
-void LoadHMM(HMM<distribution::DiscreteDistribution>& hmm,
-             util::SaveRestoreUtility& sr)
+void ConvertHMM(HMM<distribution::DiscreteDistribution>& hmm,
+             const util::SaveRestoreUtility& sr)
 {
   std::string type;
   size_t states;
@@ -143,8 +87,8 @@ void LoadHMM(HMM<distribution::DiscreteDistribution>& hmm,
 }
 
 template<>
-void LoadHMM(HMM<distribution::GaussianDistribution>& hmm,
-             util::SaveRestoreUtility& sr)
+void ConvertHMM(HMM<distribution::GaussianDistribution>& hmm,
+                const util::SaveRestoreUtility& sr)
 {
   std::string type;
   size_t states;
@@ -178,8 +122,7 @@ void LoadHMM(HMM<distribution::GaussianDistribution>& hmm,
 }
 
 template<>
-void LoadHMM(HMM<gmm::GMM<> >& hmm,
-             util::SaveRestoreUtility& sr)
+void ConvertHMM(HMM<gmm::GMM<> >& hmm, const util::SaveRestoreUtility& sr)
 {
   std::string type;
   size_t states;
@@ -220,11 +163,11 @@ void LoadHMM(HMM<gmm::GMM<> >& hmm,
     {
       s.str("");
       s << "hmm_emission_" << i << "_gaussian_" << g << "_mean";
-      sr.LoadParameter(hmm.Emission()[i].Means()[g], s.str());
+      sr.LoadParameter(hmm.Emission()[i].Component(g).Mean(), s.str());
 
       s.str("");
       s << "hmm_emission_" << i << "_gaussian_" << g << "_covariance";
-      sr.LoadParameter(hmm.Emission()[i].Covariances()[g], s.str());
+      sr.LoadParameter(hmm.Emission()[i].Component(g).Covariance(), s.str());
     }
 
     s.str("");
