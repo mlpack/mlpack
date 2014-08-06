@@ -18,20 +18,7 @@ double PlainSVD::Apply(const arma::mat& V,
 
   arma::mat V_rec = W * sigma * arma::trans(H);
 
-  size_t n = V.n_rows;
-  size_t m = V.n_cols;
-  double sum = 0;
-  for(size_t i = 0;i < n;i++)
-  {
-    for(size_t j = 0;j < m;j++)
-    {
-      double temp = V(i, j);
-      temp = (temp - V_rec(i, j));
-      temp = temp * temp;
-      sum += temp;
-    }
-  }
-  return sqrt(sum / (n * m));
+  return arma::norm(V - V_rec, "fro") / arma::norm(V, "fro");
 }
 
 double PlainSVD::Apply(const arma::mat& V,
@@ -60,18 +47,5 @@ double PlainSVD::Apply(const arma::mat& V,
 
   arma::mat V_rec = W * H;
 
-  size_t n = V.n_rows;
-  size_t m = V.n_cols;
-  double sum = 0;
-  for(size_t i = 0;i < n;i++)
-  {
-    for(size_t j = 0;j < m;j++)
-    {
-      double temp = V(i, j);
-      temp = (temp - V_rec(i, j));
-      temp = temp * temp;
-      sum += temp;
-    }
-  }
-  return sqrt(sum / (n * m));
+  return arma::norm(V - V_rec, "fro") / arma::norm(V, "fro");
 }

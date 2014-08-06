@@ -88,12 +88,12 @@ template<typename eT>
 inline typename Mat<eT>::const_row_col_iterator&
 Mat<eT>::const_row_col_iterator::operator--()
     {
-  if(internal_row != 0)
+  if(internal_row > 0)
     {
     current_pos--;
     internal_row--;
     }
-  else if(internal_col != 0)
+  else if(internal_col > 0)
     {
     current_pos--;
     internal_col--;
