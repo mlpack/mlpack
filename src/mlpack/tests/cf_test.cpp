@@ -19,33 +19,6 @@ using namespace mlpack::cf;
 using namespace std;
 
 /**
- * Make sure that the constructor works okay.
- */
-BOOST_AUTO_TEST_CASE(CFConstructorTest)
-{
-  // Load GroupLens data.
-  arma::mat dataset;
-  data::Load("GroupLens100k.csv", dataset);
-
-  // Number of users for similarity (not the default).
-  const size_t numUsersForSimilarity = 8;
-
-  CF<> c(dataset, numUsersForSimilarity);
-
-  // Check parameters.
-  BOOST_REQUIRE_EQUAL(c.NumUsersForSimilarity(), numUsersForSimilarity);
-
-  // Check data.
-  BOOST_REQUIRE_EQUAL(c.Data().n_rows, dataset.n_rows);
-  BOOST_REQUIRE_EQUAL(c.Data().n_cols, dataset.n_cols);
-
-  // Check values (this should be superfluous...).
-  for (size_t i = 0; i < dataset.n_rows; i++)
-    for (size_t j = 0; j < dataset.n_cols; j++)
-      BOOST_REQUIRE_EQUAL(c.Data()(i, j), dataset(i, j));
-}
-
-/**
  * Make sure that correct number of recommendations are generated when query
  * set. Default case.
  */

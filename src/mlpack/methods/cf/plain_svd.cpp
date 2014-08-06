@@ -55,8 +55,10 @@ double PlainSVD::Apply(const arma::mat& V,
   sigma = sigma.subvec(0, r - 1);
 
   W = W * arma::diagmat(sigma);
+  
+  H = arma::trans(H);
 
-  arma::mat V_rec = W * arma::trans(H);
+  arma::mat V_rec = W * H;
 
   size_t n = V.n_rows;
   size_t m = V.n_cols;
