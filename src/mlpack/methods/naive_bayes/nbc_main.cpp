@@ -81,9 +81,9 @@ int main(int argc, char* argv[])
   mat testingData;
   data::Load(testingDataFilename, testingData, true);
 
-  if (testingData.n_rows != (trainingData.n_rows - 1))
+  if (testingData.n_rows != trainingData.n_rows)
     Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
-        << "must be the same as training data (" << trainingData.n_rows - 1
+        << "must be the same as training data (" << trainingData.n_rows
         << ")!" << std::endl;
 
   const bool incrementalVariance = CLI::HasParam("incremental_variance");
