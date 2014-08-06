@@ -38,6 +38,7 @@ BOOST_AUTO_TEST_CASE(PlainSVDLowRankFactorizationTest)
   mat W_t = randu<mat>(30, 3);
   mat H_t = randu<mat>(3, 40);
   
+  // create a row-rank matrix
   mat test = W_t * H_t;
 
   PlainSVD svd;
