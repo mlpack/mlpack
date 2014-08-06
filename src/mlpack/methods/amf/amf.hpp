@@ -54,7 +54,7 @@ namespace amf {
  * @tparam UpdateRule The update rule for calculating W and H matrix at each
  *     iteration.
  *
- * @see NMF_MultiplicativeDistanceUpdate
+ * @see NMF_MultiplicativeDistanceUpdate, SimpleResidueTermination
  */
 template<typename TerminationPolicyType = SimpleResidueTermination,
          typename InitializationRuleType = RandomInitialization,

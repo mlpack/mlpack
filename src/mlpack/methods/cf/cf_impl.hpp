@@ -6,7 +6,6 @@
  *
  * Implementation of CF class to perform Collaborative Filtering on the
  * specified data set.
- *
  */
 
 namespace mlpack {
@@ -19,7 +18,6 @@ template<typename FactorizerType>
 CF<FactorizerType>::CF(arma::mat& data,
                        const size_t numUsersForSimilarity,
                        const size_t rank) :
-    data(data),
     numUsersForSimilarity(numUsersForSimilarity),
     rank(rank),
     factorizer()
@@ -33,7 +31,26 @@ CF<FactorizerType>::CF(arma::mat& data,
     this->numUsersForSimilarity = 5;
   }
 
-  CleanData();
+  CleanData(data);
+
+  // Check if the user wanted us to choose a rank for them.
+  if (rank == 0)
+  {
+    // This is a simple heuristic that picks a rank based on the density of the
+    // dataset between 5 and 105.
+    const double density = (cleanedData.n_nonzero * 100.0) / cleanedData.n_elem;
+    const size_t rankEstimate = size_t(density) + 5;
+
+    // Set to heuristic value.
+    Log::Info << "No rank given for decomposition; using rank of "
+        << rankEstimate << " calculated by density-based heuristic."
+        << std::endl;
+    this->rank = rankEstimate;
+  }
+
+  // Operations independent of the query:
+  // Decompose the sparse data matrix to user and data matrices.
+  factorizer.Apply(cleanedData, this->rank, w, h);
 }
 
 template<typename FactorizerType>
@@ -56,27 +73,6 @@ void CF<FactorizerType>::GetRecommendations(const size_t numRecs,
                                             arma::Mat<size_t>& recommendations,
                                             arma::Col<size_t>& users)
 {
-  // Base function for calculating recommendations.
-
-  // Check if the user wanted us to choose a rank for them.
-  if (rank == 0)
-  {
-    // This is a simple heuristic that picks a rank based on the density of the
-    // dataset between 5 and 105.
-    const double density = (cleanedData.n_nonzero * 100.0) / cleanedData.n_elem;
-    const size_t rankEstimate = size_t(density) + 5;
-
-    // Set to heuristic value.
-    Log::Info << "No rank given for decomposition; using rank of "
-        << rankEstimate << " calculated by density-based heuristic."
-        << std::endl;
-    rank = rankEstimate;
-  }
-
-  // Operations independent of the query:
-  // Decompose the sparse data matrix to user and data matrices.
-  factorizer.Apply(cleanedData, rank, w, h);
-
   // Generate new table by multiplying approximate values.
   rating = w * h;
 
@@ -156,7 +152,7 @@ void CF<FactorizerType>::GetRecommendations(const size_t numRecs,
 }
 
 template<typename FactorizerType>
-void CF<FactorizerType>::CleanData()
+void CF<FactorizerType>::CleanData(const arma::mat& data)
 {
   // Generate list of locations for batch insert constructor for sparse
   // matrices.
