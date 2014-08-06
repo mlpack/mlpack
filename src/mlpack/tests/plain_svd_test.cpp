@@ -16,29 +16,36 @@ using namespace arma;
  */
 BOOST_AUTO_TEST_CASE(PlainSVDNormalFactorizationTest)
 {
-  mlpack::math::RandomSeed(10);
-  mat test = randu<mat>(5,4);
+  mat test = randu<mat>(20, 20);
 
   PlainSVD svd;
   arma::mat W, H, sigma;
   double result = svd.Apply(test, W, sigma, H);
   
-  BOOST_REQUIRE_LT(result, 1e-15);
+  BOOST_REQUIRE_LT(result, 0.01);
+  
+  test = randu<mat>(50, 50);
+  result = svd.Apply(test, W, sigma, H);
+  
+  BOOST_REQUIRE_LT(result, 0.01);
 }
 
 /**
- * Test PlainSVD as wrapper for CF.
+ * Test PlainSVD for low rank matrix factorization
  */
-BOOST_AUTO_TEST_CASE(PlainSVDCFWrapperTest)
+BOOST_AUTO_TEST_CASE(PlainSVDLowRankFactorizationTest)
 {
-  mlpack::math::RandomSeed(10);
-  mat test = randu<mat>(5,4);
+  mat W_t = randu<mat>(30, 3);
+  mat H_t = randu<mat>(3, 40);
   
+  mat test = W_t * H_t;
+
   PlainSVD svd;
-  mat W, H;
+  arma::mat W, H;
   double result = svd.Apply(test, 3, W, H);
   
-  BOOST_REQUIRE_LT(result, 0.1);
+  BOOST_REQUIRE_LT(result, 0.01);
 }
+
 
 BOOST_AUTO_TEST_SUITE_END();

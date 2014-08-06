@@ -145,6 +145,29 @@ BOOST_AUTO_TEST_CASE(RowColIteratorTest)
   it = X.begin_row(0);
 }
 
+/**
+ * Operator-- test for mat::row_col_iterator and mat::const_row_col_iterator
+ */
+BOOST_AUTO_TEST_CASE(MatRowColIteratorDecrementOperatorTest)
+{
+  mat test = ones<mat>(5, 5);
+  
+  mat::row_col_iterator it1 = test.begin_row_col();
+  mat::row_col_iterator it2 = it1;
+  
+  // check that postfix-- does not decrement the position when position is pointing
+  // to the begining
+  it2--;
+  BOOST_REQUIRE_EQUAL(it1.row(), it2.row());
+  BOOST_REQUIRE_EQUAL(it1.col(), it2.col());
+  
+  // check that prefix-- does not decrement the position when position is pointing
+  // to the begining
+  --it2;
+  BOOST_REQUIRE_EQUAL(it1.row(), it2.row());
+  BOOST_REQUIRE_EQUAL(it1.col(), it2.col());
+}
+
 // These tests don't work when the sparse iterators hold references and not
 // pointers internally because of the lack of default constructor.
 #if ARMA_VERSION_MAJOR > 4 || \
