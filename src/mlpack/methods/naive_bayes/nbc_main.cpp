@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
   mat testingData;
   data::Load(testingDataFilename, testingData, true);
 
-  if (testingData.n_rows != trainingData.n_rows)
+  if (testingData.n_rows != (trainingData.n_rows - 1))
     Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
         << "must be the same as training data (" << trainingData.n_rows - 1
         << ")!" << std::endl;
