@@ -1,6 +1,8 @@
 /**
- * @file simple_residue_termination.hpp
+ * @file svd_batch_learning.hpp
  * @author Sumedh Ghaisas
+ *
+ * SVD factorization used in AMF (Alternating Matrix Factorization).
  */
 #ifndef __MLPACK_METHODS_AMF_UPDATE_RULES_SVD_BATCHLEARNING_HPP
 #define __MLPACK_METHODS_AMF_UPDATE_RULES_SVD_BATCHLEARNING_HPP
@@ -14,13 +16,19 @@ namespace amf
 class SVDBatchLearning
 {
  public:
+  /**
+   * SVD Batch learning constructor. 
+   *
+   * @param u step value used in batch learning
+   * @param kw regularization constant for W matrix
+   * @param kh regularization constant for H matrix
+   * @param momentum momentum applied to batch learning process
+   */
   SVDBatchLearning(double u = 0.0002,
                    double kw = 0,
                    double kh = 0,
-                   double momentum = 0.9,
-                   double min = -DBL_MIN,
-                   double max = DBL_MAX)
-        : u(u), kw(kw), kh(kh), min(min), max(max), momentum(momentum)
+                   double momentum = 0.9)
+        : u(u), kw(kw), kh(kh), momentum(momentum)
     {}
 
   template<typename MatType>
@@ -117,8 +125,6 @@ class SVDBatchLearning
   double u;
   double kw;
   double kh;
-  double min;
-  double max;
   double momentum;
 
   arma::mat mW;

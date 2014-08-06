@@ -47,16 +47,20 @@ Apply(const MatType& V,
 
   Log::Info << "Initialized W and H." << std::endl;
 
+  // initialize the update rule
   update.Initialize(V, r);
+  // initialize the termination policy
   terminationPolicy.Initialize(V);
 
+  // check if termination conditions are met
   while (!terminationPolicy.IsConverged(W, H))
   {
     // Update the values of W and H based on the update rules provided.
     update.WUpdate(V, W, H);
     update.HUpdate(V, W, H);
   }
-
+  
+  // get final residue and iteration count from termination policy
   const double residue = terminationPolicy.Index();
   const size_t iteration = terminationPolicy.Iteration();
 

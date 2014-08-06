@@ -117,8 +117,6 @@ class CF
   const arma::mat& H() const { return h; }
   //! Get the Rating Matrix.
   const arma::mat& Rating() const { return rating; }
-  //! Get the data matrix.
-  const arma::mat& Data() const { return data; }
   //! Get the cleaned data matrix.
   const arma::sp_mat& CleanedData() const { return cleanedData; }
 
@@ -148,8 +146,6 @@ class CF
   std::string ToString() const;
 
  private:
-  //! Initial data matrix.
-  arma::mat data;
   //! Number of users for similarity.
   size_t numUsersForSimilarity;
   //! Rank used for matrix factorization.
@@ -165,7 +161,7 @@ class CF
   //! Cleaned data matrix.
   arma::sp_mat cleanedData;
   //! Converts the User, Item, Value Matrix to User-Item Table
-  void CleanData();
+  void CleanData(const arma::mat& data);
 
   /**
    * Helper function to insert a point into the recommendation matrices.
