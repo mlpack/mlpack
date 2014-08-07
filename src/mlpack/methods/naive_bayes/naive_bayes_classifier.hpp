@@ -10,7 +10,6 @@
 #define __MLPACK_METHODS_NAIVE_BAYES_NAIVE_BAYES_CLASSIFIER_HPP
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/gmm/phi.hpp>
 
 namespace mlpack {
 namespace naive_bayes /** The Naive Bayes Classifier. */ {
