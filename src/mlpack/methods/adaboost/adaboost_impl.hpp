@@ -25,6 +25,7 @@
 
 namespace mlpack {
 namespace adaboost {
+
 /**
  *  Constructor. Currently runs the Adaboost.mh algorithm
  *
@@ -34,12 +35,15 @@ namespace adaboost {
  *  @param other Weak Learner, which has been initialized already
  */
 template<typename MatType, typename WeakLearner>
-Adaboost<MatType, WeakLearner>::Adaboost(const MatType& data,
-        const arma::Row<size_t>& labels, int iterations, double tol,
-        const WeakLearner& other)
+Adaboost<MatType, WeakLearner>::Adaboost(
+    const MatType& data,
+    const arma::Row<size_t>& labels,
+    const int iterations,
+    const double tol,
+    const WeakLearner& other)
 {
-  // Counting the number of classes into numClasses.
-  size_t numClasses = (arma::max(labels) - arma::min(labels)) + 1;
+  // Count the number of classes.
+  const size_t numClasses = (arma::max(labels) - arma::min(labels)) + 1;
   tolerance = tol;
   int i, j, k;
   double rt, crt, alphat = 0.0, zt;
