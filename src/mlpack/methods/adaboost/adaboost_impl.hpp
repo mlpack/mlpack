@@ -77,7 +77,7 @@ Adaboost<MatType, WeakLearner>::Adaboost(
   sumFinalH.fill(0.0);
 
   // load the initial weights into a 2-D matrix
-  const double initWeight = (double) 1 / (data.n_cols * numClasses);
+  const double initWeight = 1.0 / double(data.n_cols * numClasses);
   arma::mat D(data.n_cols, numClasses);
   D.fill(initWeight);
 
@@ -110,17 +110,17 @@ Adaboost<MatType, WeakLearner>::Adaboost(
 
     // begin calculation of rt
 
-    for (j = 0;j < ht.n_rows; j++)
+    for (j = 0; j < ht.n_rows; j++)
     {
-      for (k = 0;k < ht.n_cols; k++)
-        rt += (D(j,k) * yt(j,k) * ht(j,k));
+      for (k = 0; k < ht.n_cols; k++)
+        rt += (D(j, k) * yt(j, k) * ht(j, k));
     }
     // end calculation of rt
     // std::cout<<"Value of rt is: "<<rt<<"\n";
 
     if (i > 0)
     {
-      if ( std::abs(rt - crt) < tolerance )
+      if (std::abs(rt - crt) < tolerance)
         break;
     }
     crt = rt;
@@ -130,16 +130,16 @@ Adaboost<MatType, WeakLearner>::Adaboost(
 
     // now start modifying weights
 
-    for (j = 0;j < D.n_rows; j++)
+    for (j = 0; j < D.n_rows; j++)
     {
-      for (k = 0;k < D.n_cols; k++)
+      for (k = 0; k < D.n_cols; k++)
       {
         // we calculate zt, the normalization constant
-        zt += D(j,k) * exp(-1 * alphat * yt(j,k) * ht(j,k));
-        D(j,k) = D(j,k) * exp(-1 * alphat * yt(j,k) * ht(j,k));
+        zt += D(j, k) * exp(-alphat * yt(j, k) * ht(j, k));
+        D(j, k) = D(j, k) * exp(-alphat * yt(j, k) * ht(j, k));
 
         // adding to the matrix of FinalHypothesis
-        sumFinalH(j,k) += (alphat * ht(j,k));
+        sumFinalH(j, k) += (alphat * ht(j, k));
       }
     }
 
@@ -155,7 +155,7 @@ Adaboost<MatType, WeakLearner>::Adaboost(
 
   arma::rowvec tempSumFinalH;
   arma::uword max_index;
-  for (i = 0;i < sumFinalH.n_rows; i++)
+  for (i = 0; i < sumFinalH.n_rows; i++)
   {
     tempSumFinalH = sumFinalH.row(i);
     tempSumFinalH.max(max_index);
@@ -175,7 +175,8 @@ Adaboost<MatType, WeakLearner>::Adaboost(
  */
 template <typename MatType, typename WeakLearner>
 void Adaboost<MatType, WeakLearner>::BuildClassificationMatrix(
-                                     arma::mat& t, const arma::Row<size_t>& l)
+    arma::mat& t,
+    const arma::Row<size_t>& l)
 {
   int i, j;
 
@@ -184,9 +185,9 @@ void Adaboost<MatType, WeakLearner>::BuildClassificationMatrix(
     for (j = 0;j < t.n_cols; j++)
     {
       if (j == l(i))
-        t(i,j) = 1.0;
+        t(i, j) = 1.0;
       else
-        t(i,j) = -1.0;
+        t(i, j) = -1.0;
     }
   }
 }
@@ -203,15 +204,16 @@ void Adaboost<MatType, WeakLearner>::BuildClassificationMatrix(
  */
 template <typename MatType, typename WeakLearner>
 void Adaboost<MatType, WeakLearner>::BuildWeightMatrix(
-                                     const arma::mat& D, arma::rowvec& weights)
+    const arma::mat& D,
+    arma::rowvec& weights)
 {
   int i, j;
   weights.fill(0.0);
 
-  for (i = 0;i < D.n_rows; i++)
+  for (i = 0; i < D.n_rows; i++)
   {
-    for (j = 0;j < D.n_cols; j++)
-      weights(i) += D(i,j);
+    for (j = 0; j < D.n_cols; j++)
+      weights(i) += D(i, j);
   }
 }
 
