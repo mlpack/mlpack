@@ -30,22 +30,25 @@
 namespace mlpack {
 namespace adaboost {
 
-template <typename MatType = arma::mat, typename WeakLearner =
-          mlpack::perceptron::Perceptron<> >
+template<typename MatType = arma::mat,
+         typename WeakLearner = mlpack::perceptron::Perceptron<> >
 class Adaboost
 {
-public:
+ public:
   /**
-   *  Constructor. Currently runs the Adaboost.mh algorithm
+   * Constructor. Currently runs the Adaboost.mh algorithm.
    *
-   *  @param data Input data
-   *  @param labels Corresponding labels
-   *  @param iterations Number of boosting rounds
-   *  @param tol The tolerance for change in values of rt.
-   *  @param other Weak Learner, which has been initialized already
+   * @param data Input data.
+   * @param labels Corresponding labels.
+   * @param iterations Number of boosting rounds.
+   * @param tol The tolerance for change in values of rt.
+   * @param other Weak Learner, which has been initialized already.
    */
-  Adaboost(const MatType& data, const arma::Row<size_t>& labels,
-           int iterations, double tol, const WeakLearner& other);
+  Adaboost(const MatType& data,
+           const arma::Row<size_t>& labels,
+           const int iterations,
+           const double tol,
+           const WeakLearner& other);
 
   /**
    *  This function helps in building a classification Matrix which is of
