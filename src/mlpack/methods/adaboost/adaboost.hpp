@@ -2,30 +2,45 @@
  * @file adaboost.hpp
  * @author Udit Saxena
  *
- * AdaBoost header file
+ * The AdaBoost class.  AdaBoost is a boosting algorithm, meaning that it
+ * combines an ensemble of weak learners to produce a strong learner.  For more
+ * information on AdaBoost, see the following paper:
+ *
+ * @code
+ * @article{schapire1999improved,
+ *   author = {Schapire, Robert E. and Singer, Yoram},
+ *   title = {Improved Boosting Algorithms Using Confidence-rated Predictions},
+ *   journal = {Machine Learning},
+ *   volume = {37},
+ *   number = {3},
+ *   month = dec,
+ *   year = {1999},
+ *   issn = {0885-6125},
+ *   pages = {297--336},
+ * }
+ * @endcode
  */
-
-#ifndef _MLPACK_METHODS_ADABOOST_ADABOOST_HPP
-#define _MLPACK_METHODS_ADABOOST_ADABOOST_HPP
+#ifndef __MLPACK_METHODS_ADABOOST_ADABOOST_HPP
+#define __MLPACK_METHODS_ADABOOST_ADABOOST_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/perceptron/perceptron.hpp>
 #include <mlpack/methods/decision_stump/decision_stump.hpp>
- 
+
 namespace mlpack {
 namespace adaboost {
 
-template <typename MatType = arma::mat, typename WeakLearner = 
+template <typename MatType = arma::mat, typename WeakLearner =
           mlpack::perceptron::Perceptron<> >
-class Adaboost 
+class Adaboost
 {
 public:
   /**
    *  Constructor. Currently runs the Adaboost.mh algorithm
-   *  
+   *
    *  @param data Input data
    *  @param labels Corresponding labels
-   *  @param iterations Number of boosting rounds 
+   *  @param iterations Number of boosting rounds
    *  @param tol The tolerance for change in values of rt.
    *  @param other Weak Learner, which has been initialized already
    */
@@ -33,8 +48,8 @@ public:
            int iterations, double tol, const WeakLearner& other);
 
   /**
-   *  This function helps in building a classification Matrix which is of 
-   *  form: 
+   *  This function helps in building a classification Matrix which is of
+   *  form:
    *  -1 if l is not the correct label
    *  1 if l is the correct label
    *
@@ -45,10 +60,10 @@ public:
 
   /**
    *  This function helps in building the Weight Distribution matrix
-   *  which is updated during every iteration. It calculates the 
-   *  "difficulty" in classifying a point by adding the weights for all 
+   *  which is updated during every iteration. It calculates the
+   *  "difficulty" in classifying a point by adding the weights for all
    *  instances, using D.
-   *  
+   *
    *  @param D The 2 Dimensional weight matrix from which the weights are
    *            to be calculated.
    *  @param weights The output weight vector.
