@@ -59,7 +59,7 @@ class Adaboost
    *  @param t The classification matrix to be built
    *  @param l The labels from which the classification matrix is to be built.
    */
-  void buildClassificationMatrix(arma::mat& t, const arma::Row<size_t>& l);
+  void BuildClassificationMatrix(arma::mat& t, const arma::Row<size_t>& l);
 
   /**
    *  This function helps in building the Weight Distribution matrix
@@ -71,7 +71,7 @@ class Adaboost
    *            to be calculated.
    *  @param weights The output weight vector.
    */
-  void buildWeightMatrix(const arma::mat& D, arma::rowvec& weights);
+  void BuildWeightMatrix(const arma::mat& D, arma::rowvec& weights);
 
   // Stores the final classification of the Labels.
   arma::Row<size_t> finalHypothesis;
