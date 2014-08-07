@@ -137,6 +137,7 @@ void GMM<FittingType>::Save(const std::string& filename) const
 template<typename FittingType>
 void GMM<FittingType>::Save(util::SaveRestoreUtility& sr) const
 {
+  sr.SaveParameter(Type(), "type");
   sr.SaveParameter(gaussians, "gaussians");
   sr.SaveParameter(dimensionality, "dimensionality");
   sr.SaveParameter(weights, "weights");
