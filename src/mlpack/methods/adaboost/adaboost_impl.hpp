@@ -108,15 +108,7 @@ Adaboost<MatType, WeakLearner>::Adaboost(
 
     // Now, start calculation of alpha(t) using ht
 
-    // begin calculation of rt
-
-    for (j = 0; j < ht.n_rows; j++)
-    {
-      for (k = 0; k < ht.n_cols; k++)
-        rt += (D(j, k) * yt(j, k) * ht(j, k));
-    }
-    // end calculation of rt
-    // std::cout<<"Value of rt is: "<<rt<<"\n";
+    rt += arma::accu(D % yt % ht);
 
     if (i > 0)
     {
@@ -180,9 +172,9 @@ void Adaboost<MatType, WeakLearner>::BuildClassificationMatrix(
 {
   int i, j;
 
-  for (i = 0;i < t.n_rows; i++)
+  for (i = 0; i < t.n_rows; i++)
   {
-    for (j = 0;j < t.n_cols; j++)
+    for (j = 0; j < t.n_cols; j++)
     {
       if (j == l(i))
         t(i, j) = 1.0;
