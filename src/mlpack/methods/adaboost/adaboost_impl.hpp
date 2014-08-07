@@ -66,10 +66,10 @@ Adaboost<MatType, WeakLearner>::Adaboost(
   // Build a classification matrix of the form D(i,l)
   // where i is the ith instance
   // l is the lth class.
-  buildClassificationMatrix(yt, labels);
+  BuildClassificationMatrix(yt, labels);
 
   // ht(x), to be loaded after a round of prediction every time the weak
-  // learner is run, by using the buildClassificationMatrix function
+  // learner is run, by using the BuildClassificationMatrix function
   arma::mat ht(predictedLabels.n_cols, numClasses);
 
   // This matrix is a helper matrix used to calculate the final hypothesis.
@@ -97,14 +97,14 @@ Adaboost<MatType, WeakLearner>::Adaboost(
     zt = 0.0;
 
     // Build the weight vectors
-    buildWeightMatrix(D, weights);
+    BuildWeightMatrix(D, weights);
 
     // call the other weak learner and train the labels.
     WeakLearner w(other, tempData, weights, labels);
     w.Classify(tempData, predictedLabels);
 
     //Now from predictedLabels, build ht, the weak hypothesis
-    buildClassificationMatrix(ht, predictedLabels);
+    BuildClassificationMatrix(ht, predictedLabels);
 
     // Now, start calculation of alpha(t) using ht
 
@@ -174,7 +174,7 @@ Adaboost<MatType, WeakLearner>::Adaboost(
  *  @param l The labels from which the classification matrix is to be built.
  */
 template <typename MatType, typename WeakLearner>
-void Adaboost<MatType, WeakLearner>::buildClassificationMatrix(
+void Adaboost<MatType, WeakLearner>::BuildClassificationMatrix(
                                      arma::mat& t, const arma::Row<size_t>& l)
 {
   int i, j;
@@ -202,7 +202,7 @@ void Adaboost<MatType, WeakLearner>::buildClassificationMatrix(
  *  @param weights The output weight vector.
  */
 template <typename MatType, typename WeakLearner>
-void Adaboost<MatType, WeakLearner>::buildWeightMatrix(
+void Adaboost<MatType, WeakLearner>::BuildWeightMatrix(
                                      const arma::mat& D, arma::rowvec& weights)
 {
   int i, j;
