@@ -16,9 +16,14 @@
 #define ARMA_EXTRA_SPMAT_PROTO mlpack/core/arma_extend/SpMat_extra_bones.hpp
 #define ARMA_EXTRA_SPMAT_MEAT  mlpack/core/arma_extend/SpMat_extra_meat.hpp
 
-// add row_col_iterator and row_col_const_iterator for Mat
+// Add row_col_iterator and row_col_const_iterator for Mat.
 #define ARMA_EXTRA_MAT_PROTO mlpack/core/arma_extend/Mat_extra_bones.hpp
 #define ARMA_EXTRA_MAT_MEAT mlpack/core/arma_extend/Mat_extra_meat.hpp
+
+// Make sure that U64 and S64 support is enabled.
+#ifndef ARMA_USE_U64S64
+  #define ARMA_USE_U64S64
+#endif
 
 #include <armadillo>
 
