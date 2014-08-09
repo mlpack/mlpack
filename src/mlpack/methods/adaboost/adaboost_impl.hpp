@@ -45,7 +45,7 @@ Adaboost<MatType, WeakLearner>::Adaboost(
   // Count the number of classes.
   const size_t numClasses = (arma::max(labels) - arma::min(labels)) + 1;
   tolerance = tol;
-  int i, j, k;
+
   double rt, crt, alphat = 0.0, zt;
   // double tolerance = 1e-8;
   // std::cout<<"Tolerance is "<<tolerance<<"\n";
@@ -53,24 +53,18 @@ Adaboost<MatType, WeakLearner>::Adaboost(
   // stops changing by less than a tolerant value.
 
   ztAccumulator = 1.0;
-
+  
+  // crt is cumulative rt for stopping the iterations when rt 
+  // stops changing by less than a tolerant value.
+  
+  ztAccumulator = 1.0; 
+  // ztAccumulator is 
+  
   // To be used for prediction by the Weak Learner for prediction.
   arma::Row<size_t> predictedLabels(labels.n_cols);
 
   // Use tempData to modify input Data for incorporating weights.
   MatType tempData(data);
-
-  // Build the classification Matrix yt from labels
-  arma::mat yt(predictedLabels.n_cols, numClasses);
-
-  // Build a classification matrix of the form D(i,l)
-  // where i is the ith instance
-  // l is the lth class.
-  BuildClassificationMatrix(yt, labels);
-
-  // ht(x), to be loaded after a round of prediction every time the weak
-  // learner is run, by using the BuildClassificationMatrix function
-  arma::mat ht(predictedLabels.n_cols, numClasses);
 
   // This matrix is a helper matrix used to calculate the final hypothesis.
   arma::mat sumFinalH(predictedLabels.n_cols, numClasses);
@@ -89,11 +83,15 @@ Adaboost<MatType, WeakLearner>::Adaboost(
   arma::Row<size_t> finalH(predictedLabels.n_cols);
 
   // now start the boosting rounds
-  for (i = 0; i < iterations; i++)
+  for (int i = 0; i < iterations; i++)
   {
     // std::cout<<"Run "<<i<<" times.\n";
     // Initialized to zero in every round.
-    rt = 0.0;
+    // rt is used for calculation of alphat, is the weighted error
+    // rt = (sum)D(i)y(i)ht(xi)
+    rt = 0.0; 
+    
+    // zt is used for weight normalization.
     zt = 0.0;
 
     // Build the weight vectors
@@ -104,11 +102,27 @@ Adaboost<MatType, WeakLearner>::Adaboost(
     w.Classify(tempData, predictedLabels);
 
     //Now from predictedLabels, build ht, the weak hypothesis
-    BuildClassificationMatrix(ht, predictedLabels);
-
+    // buildClassificationMatrix(ht, predictedLabels);
+    
     // Now, start calculation of alpha(t) using ht
 
-    rt += arma::accu(D % yt % ht);
+    for (int j = 0;j < D.n_rows; j++) // instead of D, ht
+    {
+      if (predictedLabels(j) == labels(j))
+      {
+        for (int k = 0;k < numClasses; k++) 
+          rt += D(j,k);
+      }
+
+      else
+      {
+        for (int k = 0;k < numClasses; k++)
+          rt -= D(j,k); 
+      }
+    }
+    // end calculation of rt
+    // std::cout<<"Value of rt is: "<<rt<<"\n";
+
 
     if (i > 0)
     {
@@ -117,21 +131,45 @@ Adaboost<MatType, WeakLearner>::Adaboost(
     }
     crt = rt;
 
+    // our goal is to find alphat which mizimizes or approximately minimizes
+    // the value of Z as a function of alpha.
     alphat = 0.5 * log((1 + rt) / (1 - rt));
     // end calculation of alphat
 
     // now start modifying weights
-
-    for (j = 0; j < D.n_rows; j++)
+    for (int j = 0;j < D.n_rows; j++)
     {
-      for (k = 0; k < D.n_cols; k++)
+      double expo = exp(alphat);
+      if (predictedLabels(j) == labels(j))
       {
-        // we calculate zt, the normalization constant
-        zt += D(j, k) * exp(-alphat * yt(j, k) * ht(j, k));
-        D(j, k) = D(j, k) * exp(-alphat * yt(j, k) * ht(j, k));
+          for (int k = 0;k < D.n_cols; k++)
+          {  
+            // we calculate zt, the normalization constant
+            zt += D(j,k) / expo; // * exp(-1 * alphat * yt(j,k) * ht(j,k));
+            D(j,k) = D(j,k) / expo; 
 
-        // adding to the matrix of FinalHypothesis
-        sumFinalH(j, k) += (alphat * ht(j, k));
+            // adding to the matrix of FinalHypothesis 
+            // sumFinalH(j,k) += (alphat * ht(j,k));
+            if (k == labels(j))
+              sumFinalH(j,k) += (alphat);// * ht(j,k));
+            else
+              sumFinalH(j,k) -= (alphat);
+          }
+      }
+      else
+      {
+        for (int k = 0;k < D.n_cols; k++)
+          {  
+            // we calculate zt, the normalization constant
+            zt += D(j,k) * expo; 
+            D(j,k) = D(j,k) * expo; 
+
+            // adding to the matrix of FinalHypothesis 
+            if (k == labels(j))
+              sumFinalH(j,k) += (alphat);// * ht(j,k));
+            else
+              sumFinalH(j,k) -= (alphat);
+          }
       }
     }
 
@@ -147,41 +185,14 @@ Adaboost<MatType, WeakLearner>::Adaboost(
 
   arma::rowvec tempSumFinalH;
   arma::uword max_index;
-  for (i = 0; i < sumFinalH.n_rows; i++)
+
+  for (int i = 0;i < sumFinalH.n_rows; i++)
   {
     tempSumFinalH = sumFinalH.row(i);
     tempSumFinalH.max(max_index);
     finalH(i) = max_index;
   }
   finalHypothesis = finalH;
-}
-
-/**
- *  This function helps in building a classification Matrix which is of
- *  form:
- *  -1 if l is not the correct label
- *  1 if l is the correct label
- *
- *  @param t The classification matrix to be built
- *  @param l The labels from which the classification matrix is to be built.
- */
-template <typename MatType, typename WeakLearner>
-void Adaboost<MatType, WeakLearner>::BuildClassificationMatrix(
-    arma::mat& t,
-    const arma::Row<size_t>& l)
-{
-  int i, j;
-
-  for (i = 0; i < t.n_rows; i++)
-  {
-    for (j = 0; j < t.n_cols; j++)
-    {
-      if (j == l(i))
-        t(i, j) = 1.0;
-      else
-        t(i, j) = -1.0;
-    }
-  }
 }
 
 /**
