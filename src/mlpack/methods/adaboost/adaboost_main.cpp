@@ -2,6 +2,30 @@
  * @file: adaboost_main.cpp
  * @author: Udit Saxena
  *
+ * Implementation of the Adaboost main file
+ *
+ *  @code
+ *  @article{Schapire:1999:IBA:337859.337870,
+ *  author = {Schapire, Robert E. and Singer, Yoram},
+ *  title = {Improved Boosting Algorithms Using Confidence-rated Predictions},
+ *  journal = {Mach. Learn.},
+ *  issue_date = {Dec. 1999},
+ *  volume = {37},
+ *  number = {3},
+ *  month = dec,
+ *  year = {1999},
+ *  issn = {0885-6125},
+ *  pages = {297--336},
+ *  numpages = {40},
+ *  url = {http://dx.doi.org/10.1023/A:1007614523901},
+ *  doi = {10.1023/A:1007614523901},
+ *  acmid = {337870},
+ *  publisher = {Kluwer Academic Publishers},
+ *  address = {Hingham, MA, USA},
+ *  keywords = {boosting algorithms, decision trees, multiclass classification, 
+ *  output coding
+ *  }
+ *  @endcode
  * 
  */
 
@@ -13,7 +37,21 @@ using namespace std;
 using namespace arma;
 using namespace mlpack::adaboost;
 
-PROGRAM_INFO("","");
+PROGRAM_INFO("Adaboost","This program implements the Adaboost (or Adaptive Boost)"
+ " algorithm. The variant of Adaboost implemented here is Adaboost.mh. It uses a"
+ " weak learner, either of Decision Stumps or a Perceptron, and over many"
+ " iterations, creates a strong learner. It runs these iterations till a tolerance"
+ " value is crossed for change in the value of rt."
+ "\n"
+ "This program allows training of a adaboost object, and then application of "
+ "the strong learner to a test dataset.  To train "
+ "a training dataset must be passed to --train_file (-t).  Labels can either"
+ " be present as the last dimension of the training dataset, or given "
+ "explicitly with the --labels_file (-l) parameter.\n"
+ "\n"
+ "A test file is given through the --test_file (-T) parameter.  The "
+ "predicted labels for the test set will be stored in the file specified by "
+ "the --output_file (-o) parameter.");
 
 //necessary parameters
 PARAM_STRING_REQ("train_file", "A file containing the training set.", "t");

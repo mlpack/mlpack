@@ -50,17 +50,16 @@ class Adaboost
            const double tol,
            const WeakLearner& other);
 
-  /**
-   *  This function helps in building a classification Matrix which is of
-   *  form:
-   *  -1 if l is not the correct label
-   *  1 if l is the correct label
-   *
-   *  @param t The classification matrix to be built
-   *  @param l The labels from which the classification matrix is to be built.
-   */
-  void BuildClassificationMatrix(arma::mat& t, const arma::Row<size_t>& l);
+  // Stores the final classification of the Labels.
+  arma::Row<size_t> finalHypothesis;
 
+  // To check for the bound for the hammingLoss.
+  double ztAccumulator;
+
+  // The tolerance for change in rt and when to stop.
+  double tolerance;
+
+private:
   /**
    *  This function helps in building the Weight Distribution matrix
    *  which is updated during every iteration. It calculates the
@@ -73,14 +72,7 @@ class Adaboost
    */
   void BuildWeightMatrix(const arma::mat& D, arma::rowvec& weights);
 
-  // Stores the final classification of the Labels.
-  arma::Row<size_t> finalHypothesis;
-
-  // To check for the bound for the hammingLoss.
-  double ztAccumulator;
-
-  // The tolerance for change in rt and when to stop.
-  double tolerance;
+  
 }; // class Adaboost
 
 } // namespace adaboost
