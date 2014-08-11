@@ -3,8 +3,8 @@
 set(SOURCES
   cf.hpp
   cf_impl.hpp
-  plain_svd.hpp
-  plain_svd.cpp
+  svd_wrapper.hpp
+  svd_wrapper_impl.hpp
 )
 
 # Add directory name to sources.

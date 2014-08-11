@@ -12,9 +12,17 @@
 #define __MLPACK_METHODS_AMF_AMF_HPP
 
 #include <mlpack/core.hpp>
+
 #include <mlpack/methods/amf/update_rules/nmf_mult_dist.hpp>
+#include <mlpack/methods/amf/update_rules/nmf_als.hpp>
+#include <mlpack/methods/amf/update_rules/svd_batch_learning.hpp>
+#include <mlpack/methods/amf/update_rules/svd_incomplete_incremental_learning.hpp>
+#include <mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp>
+
 #include <mlpack/methods/amf/init_rules/random_init.hpp>
+
 #include <mlpack/methods/amf/termination_policies/simple_residue_termination.hpp>
+#include <mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp>
 
 namespace mlpack {
 namespace amf {
@@ -121,6 +129,60 @@ class AMF
   //! Instantiated update rule.
   UpdateRuleType update;
 }; // class AMF
+
+typedef amf::AMF<amf::SimpleResidueTermination,
+                 amf::RandomInitialization, 
+                 amf::NMFALSUpdate> NMFALSFactorizer;
+
+//! Add simple typedefs 
+#ifdef MLPACK_USE_CXX11
+
+template<class MatType>
+using SVDBatchFactorizer = amf::AMF<amf::SimpleToleranceTermination<MatType>,
+                                    amf::RandomInitialization,
+                                    amf::SVDBatchLearning>;
+                                    
+template<class MatType>
+using SVDIncompleteIncrementalFactorizer = amf::AMF<amf::SimpleToleranceTermination<MatType>,
+                                                    amf::RandomInitialization,
+                                                    amf::SVDIncompleteIncrementalLearning>;
+                                                    
+template<class MatType>
+using SVDCompleteIncrementalFactorizer = amf::AMF<amf::SimpleToleranceTermination<MatType>,
+                                                  amf::RandomInitialization,
+                                                  amf::SVDCompleteIncrementalLearning<MatType> >;
+
+#else                
+typedef amf::AMF<amf::SimpleToleranceTermination<arma::sp_mat>,
+                 amf::RandomInitialization,
+               amf::SVDBatchLearning> SparseSVDBatchFactorizer;
+                 
+typedef amf::AMF<amf::SimpleToleranceTermination<arma::mat>,
+                 amf::RandomInitialization,
+                 amf::SVDBatchLearning> SVDBatchFactorizer;
+                 
+typedef amf::AMF<amf::SimpleToleranceTermination<arma::sp_mat>,
+                 amf::RandomInitialization,
+                 amf::SVDIncompleteIncrementalLearning> 
+        SparseSVDIncompleteIncrementalFactorizer;
+                 
+typedef amf::AMF<amf::SimpleToleranceTermination<arma::mat>,
+                 amf::RandomInitialization,
+                 amf::SVDIncompleteIncrementalLearning> 
+        SVDIncompleteIncrementalFactorizer;
+
+typedef amf::AMF<amf::SimpleToleranceTermination<arma::sp_mat>,
+                 amf::RandomInitialization,
+                 amf::SVDCompleteIncrementalLearning<arma::sp_mat> > 
+        SparseSVDCompleteIncrementalFactorizer;
+                 
+typedef amf::AMF<amf::SimpleToleranceTermination<arma::mat>,
+                 amf::RandomInitialization,
+                 amf::SVDCompleteIncrementalLearning<arma::mat> > 
+        SVDCompleteIncrementalFactorizer;
+
+#endif
+
 
 }; // namespace amf
 }; // namespace mlpack

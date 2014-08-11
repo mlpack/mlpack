@@ -55,7 +55,7 @@ add_executable(mlpack_test
   svd_batch_test.cpp
   svd_incremental_test.cpp
   nystroem_method_test.cpp
-  plain_svd_test.cpp
+  armadillo_svd_test.cpp
 )
 # Link dependencies of test executable.
 target_link_libraries(mlpack_test
