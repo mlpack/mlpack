@@ -87,7 +87,7 @@ Mat<eT>::const_row_col_iterator::operator++(int)
 template<typename eT>
 inline typename Mat<eT>::const_row_col_iterator&
 Mat<eT>::const_row_col_iterator::operator--()
-    {
+  {
   if(internal_row > 0)
     {
     current_pos--;
@@ -295,7 +295,7 @@ Mat<eT>::row_col_iterator::operator++(int)
 template<typename eT>
 inline typename Mat<eT>::row_col_iterator&
 Mat<eT>::row_col_iterator::operator--()
-    {
+  {
   if(internal_row != 0)
     {
     current_pos--;
