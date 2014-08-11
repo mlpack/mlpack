@@ -1,30 +1,33 @@
 /**
- * @file plain_svd.hpp
+ * @file svd_wrapper.hpp
  * @author Sumedh Ghaisas
  *
- * Wrapper class for Armadillo's SVD.
+ * Wrapper class for SVD factorizers used for Collaborative Filtering.
  */
-#ifndef __MLPACK_METHODS_PLAIN_SVD_HPP
-#define __MLPACK_METHODS_PLAIN_SVD_HPP
+#ifndef __MLPACK_METHODS_SVDWRAPPER_HPP
+#define __MLPACK_METHODS_SVDWRAPPER_HPP
 
 #include <mlpack/core.hpp>
 
 namespace mlpack
 {
-namespace svd
+namespace cf
 {
 
 /**
- * This class acts as a wrapper class for Armadillo's SVD implementation to be 
- * used by Collaborative Filteraing module.
  *
  * @see CF
  */
-class PlainSVD
+
+class DummyClass {}; 
+ 
+template<class Factorizer = DummyClass>
+class SVDWrapper
 {
  public:
   // empty constructor
-  PlainSVD() {};
+  SVDWrapper(const Factorizer& factorizer = Factorizer()) 
+    : factorizer(factorizer) {};
 
   /**
    * Factorizer function which takes SVD of the given matrix and returns the 
@@ -55,9 +58,16 @@ class PlainSVD
                size_t r,
                arma::mat& W,
                arma::mat& H) const;
-}; // class PlainSVD
+               
+ private:
+  //! svd factorizer
+  Factorizer factorizer;
+}; // class SVDWrapper
 
-}; // namespace svd
+//! include the implementation
+#include "svd_wrapper_impl.hpp"
+
+}; // namespace cf
 }; // namespace mlpack
 
 #endif

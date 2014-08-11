@@ -172,6 +172,11 @@
 #include <mlpack/core/kernels/spherical_kernel.hpp>
 #include <mlpack/core/kernels/triangular_kernel.hpp>
 
+// Use armadillo's C++ version detection
+#ifdef ARMA_USE_CXX11
+  #define MLPACK_USE_CX11
+#endif
+
 #endif
 
 // Clean up unfortunate Windows preprocessor definitions, even if this file was

@@ -1,5 +1,11 @@
-#ifndef SVD_COMPLETE_INCREMENTAL_LEARNING_HPP_INCLUDED
-#define SVD_COMPLETE_INCREMENTAL_LEARNING_HPP_INCLUDED
+/**
+ * @file svd_batch_learning.hpp
+ * @author Sumedh Ghaisas
+ *
+ * SVD factorizer used in AMF (Alternating Matrix Factorization).
+ */
+#ifndef _MLPACK_METHODS_AMF_SVDCOMPLETEINCREMENTALLEARNING_HPP_INCLUDED
+#define _MLPACK_METHODS_AMF_SVDCOMPLETEINCREMENTALLEARNING_HPP_INCLUDED
 
 #include <mlpack/core.hpp>
 
@@ -217,5 +223,5 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
 }
 
 
-#endif // SVD_COMPLETE_INCREMENTAL_LEARNING_HPP_INCLUDED
+#endif // _MLPACK_METHODS_AMF_SVDCOMPLETEINCREMENTALLEARNING_HPP_INCLUDED
 

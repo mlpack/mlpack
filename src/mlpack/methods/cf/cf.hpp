@@ -21,7 +21,7 @@
 #include <iostream>
 
 namespace mlpack {
-namespace cf /** Collaborative filtering. */{
+namespace cf /** Collaborative filtering. */ {
 
 /**
  * This class implements Collaborative Filtering (CF). This implementation
@@ -56,9 +56,7 @@ namespace cf /** Collaborative filtering. */{
  *     Apply(arma::sp_mat& data, size_t rank, arma::mat& W, arma::mat& H).
  */
 template<
-    typename FactorizerType = amf::AMF<amf::SimpleResidueTermination,
-                                       amf::RandomInitialization, 
-                                       amf::NMFALSUpdate> >
+    typename FactorizerType = amf::NMFALSFactorizer>
 class CF
 {
  public:

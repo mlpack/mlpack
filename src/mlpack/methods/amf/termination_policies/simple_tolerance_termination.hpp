@@ -177,7 +177,7 @@ class SimpleToleranceTermination
   //! minimum residue point
   bool isCopy;
   
-  //! variables to store information of minimum residue point
+  //! variables to store information of minimum residue poi
   arma::mat W;
   arma::mat H;
   double c_indexOld;
