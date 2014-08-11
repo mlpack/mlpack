@@ -28,8 +28,8 @@ Mat<eT>::const_row_col_iterator::const_row_col_iterator(const const_row_iterator
     : M(&it.M), current_pos(&it.M(it.row, it.col)), internal_col(it.col), internal_row(it.row)
   {
   // Nothing to do.
-  } 
-  
+  }
+
 
 
 template<typename eT>
@@ -99,6 +99,8 @@ Mat<eT>::const_row_col_iterator::operator--()
     internal_col--;
     internal_row = M->n_rows - 1;
     }
+
+  return *this;
   }
 
 
@@ -176,7 +178,7 @@ Mat<eT>::const_row_col_iterator::operator==(const iterator& rhs) const
   {
   return (rhs == current_pos);
   }
-  
+
 
 
 template<typename eT>
@@ -212,7 +214,7 @@ Mat<eT>::const_row_col_iterator::operator==(const row_iterator& rhs) const
   {
   return (&rhs.M(rhs.row, rhs.col) == current_pos);
   }
-  
+
 
 
 template<typename eT>
@@ -305,6 +307,8 @@ Mat<eT>::row_col_iterator::operator--()
     internal_col--;
     internal_row = M->n_rows - 1;
     }
+
+  return *this;
   }
 
 
@@ -318,7 +322,7 @@ Mat<eT>::row_col_iterator::operator--(int)
   --(*this);
 
   return temp;
-  } 
+  }
 
 
 
@@ -327,7 +331,7 @@ inline bool
 Mat<eT>::row_col_iterator::operator==(const const_row_col_iterator& rhs) const
   {
   return (rhs.current_pos == current_pos);
-  } 
+  }
 
 
 
