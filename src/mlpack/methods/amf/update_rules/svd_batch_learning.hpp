@@ -44,8 +44,8 @@ class SVDBatchLearning
   }
 
   /**
-   * Initialize value before factorization.
-   * This function must be called before each new factorization.
+   * Initialize parameters before factorization.
+   * This function must be called before a new factorization.
    *
    * @param dataset Input matrix to be factorized.
    * @param rank rank of factorization
