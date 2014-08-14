@@ -1,3 +1,5 @@
+#if ARMA_VERSION_MAJOR < 4 || \
+    (ARMA_VERSION_MAJOR == 4 && ARMA_VERSION_MINOR < 349)
 ///////////////////////////////////////////////////////////////////////////////
 // Mat::const_row_col_iterator implementation                                //
 ///////////////////////////////////////////////////////////////////////////////
@@ -471,3 +473,5 @@ Mat<eT>::end_row_col()
   {
   return ++row_col_iterator(*this, n_rows - 1, n_cols - 1);
   }
+
+#endif
