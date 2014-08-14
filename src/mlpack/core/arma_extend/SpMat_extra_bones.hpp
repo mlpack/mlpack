@@ -19,9 +19,11 @@ template<typename T1, typename T2> inline SpMat(
 #endif
 
 /*
- * Extra functions for SpMat<eT> 
+ * Extra functions for SpMat<eT>
  * Adding definition of row_col_iterator to generalize with Mat<eT>::row_col_iterator
  */
+#if ARMA_VERSION_MAJOR < 4 || \
+    (ARMA_VERSION_MAJOR == 4 && ARMA_VERSION_MINOR < 349)
 typedef iterator row_col_iterator;
 typedef const_iterator const_row_col_iterator;
 
@@ -32,3 +34,4 @@ inline row_col_iterator begin_row_col();
 // end for iterator row_col_iterator
 inline const_row_col_iterator end_row_col() const;
 inline row_col_iterator end_row_col();
+#endif

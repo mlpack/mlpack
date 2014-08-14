@@ -250,6 +250,8 @@ SpMat<eT>::SpMat(const Base<uword,T1>& locations_expr, const Base<eT,T2>& vals_e
 
 #endif
 
+#if ARMA_VERSION_MAJOR < 4 || \
+    (ARMA_VERSION_MAJOR == 4 && ARMA_VERSION_MINOR < 349)
 template<typename eT>
 inline typename SpMat<eT>::const_row_col_iterator
 SpMat<eT>::begin_row_col() const
@@ -283,3 +285,4 @@ SpMat<eT>::end_row_col()
   {
   return end();
   }
+#endif
