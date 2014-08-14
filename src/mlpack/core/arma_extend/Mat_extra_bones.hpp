@@ -8,6 +8,8 @@
  * to sparse matrix iterators.
  */
 
+#if ARMA_VERSION_MAJOR < 4 || \
+    (ARMA_VERSION_MAJOR == 4 && ARMA_VERSION_MINOR < 349)
 class row_col_iterator;
 
 class const_row_col_iterator
@@ -136,3 +138,4 @@ inline row_col_iterator begin_row_col();
 // end for iterator row_col_iterator
 inline const_row_col_iterator end_row_col() const;
 inline row_col_iterator end_row_col();
+#endif
