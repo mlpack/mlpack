@@ -2,7 +2,8 @@
  * @file rectangle_tree.hpp
  * @author Andrew Wells
  *
- * Definition of generalized rectangle type trees (r_tree, r_star_tree, x_tree, and hilbert_r_tree).
+ * Definition of generalized rectangle type trees (r_tree, r_star_tree, x_tree,
+ * and hilbert_r_tree).
  */
 #ifndef __MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_HPP
 #define __MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_HPP
@@ -30,32 +31,33 @@ using bound::HRectBound;
  *     for the necessary skeleton interface.
  * @tparam MatType The dataset class.
  * @tparam SplitType The type of split to use when inserting points.
- * @tparam DescentType The heuristic to use when descending the tree to insert points.
+ * @tparam DescentType The heuristic to use when descending the tree to insert
+ *    points.
  */
 
 template<typename SplitType,
-	 typename DescentType,
-	 typename StatisticType = EmptyStatistic,
-	 typename MatType = arma::mat>
+         typename DescentType,
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 class RectangleTree
 {
  public:
   /**
-   * The X tree requires that the tree records it's "split history".  To make this easy, we
-   * use the following structure.
+   * The X tree requires that the tree records it's "split history".  To make
+   * this easy, we use the following structure.
    */
-  typedef struct SplitHistoryStruct {
+  typedef struct SplitHistoryStruct
+  {
     int lastDimension;
     std::vector<bool> history;
-    SplitHistoryStruct(int dim):
-      history(dim)
+
+    SplitHistoryStruct(int dim) : history(dim)
     {
-      for(int i = 0; i < dim; i++)
+      for (int i = 0; i < dim; i++)
         history[i] = false;
     }
-    
-  } SplitHistoryStruct;  
-  
+  } SplitHistoryStruct;
+
  private:
   //! The max number of child nodes a non-leaf node can have.
   size_t maxNumChildren;
@@ -97,7 +99,6 @@ class RectangleTree
   MatType* localDataset;
 
  public:
-   
   //! So other classes can use TreeType::Mat.
   typedef MatType Mat;
 
@@ -116,32 +117,37 @@ class RectangleTree
    * @param data Dataset from which to create the tree.  This will be modified!
    * @param maxLeafSize Maximum size of each leaf in the tree.
    * @param minLeafSize Minimum size of each leaf in the tree.
-   * @param maxNumChildren The maximum number of child nodes a non-leaf node may have.
-   * @param minNumChildren The minimum number of child nodes a non-leaf node may have.
-   * @param firstDataIndex The index of the first data point.  UNUSED UNLESS WE ADD SUPPORT FOR HAVING A
-   * "CENTERAL" DATA MATRIX.
+   * @param maxNumChildren The maximum number of child nodes a non-leaf node may
+   *      have.
+   * @param minNumChildren The minimum number of child nodes a non-leaf node may
+   *      have.
+   * @param firstDataIndex The index of the first data point.  UNUSED UNLESS WE
+   *      ADD SUPPORT FOR HAVING A "CENTERAL" DATA MATRIX.
    */
   RectangleTree(MatType& data,
-    const size_t maxLeafSize = 20,
-    const size_t minLeafSize = 8,
-    const size_t maxNumChildren = 5,
-    const size_t minNumChildren = 2,
-    const size_t firstDataIndex = 0
-  );
-  
+                const size_t maxLeafSize = 20,
+                const size_t minLeafSize = 8,
+                const size_t maxNumChildren = 5,
+                const size_t minNumChildren = 2,
+                const size_t firstDataIndex = 0);
+
   /**
-   * Construct this as an empty node with the specified parent.  Copying the parameters
-   * (maxLeafSize, minLeafSize, maxNumChildren, minNumChildren, firstDataIndex) from the parent.
+   * Construct this as an empty node with the specified parent.  Copying the
+   * parameters (maxLeafSize, minLeafSize, maxNumChildren, minNumChildren,
+   * firstDataIndex) from the parent.
    *
    * @param parentNode The parent of the node that is being constructed.
    */
-  explicit RectangleTree(RectangleTree<SplitType, DescentType, StatisticType, MatType>* parentNode);
-  
+  explicit RectangleTree(
+      RectangleTree<SplitType, DescentType, StatisticType, MatType>*
+      parentNode);
+
   /**
    * Create a rectangle tree by copying the other tree.  Be careful!  This can
    * take a long time and use a lot of memory.
-   * 
+   *
    * @param other The tree to be copied.
+   * @param deepCopy If false, the children are not recursively copied.
    */
   RectangleTree(const RectangleTree& other, const bool deepCopy = true);
 
@@ -154,8 +160,8 @@ class RectangleTree
 
   /**
    * Delete this node of the tree, but leave the stuff contained in it intact.
-   * This is used when splitting a node, where the data in this tree is moved to two
-   * other trees.
+   * This is used when splitting a node, where the data in this tree is moved to
+   * two other trees.
    */
   void SoftDelete();
 
@@ -166,55 +172,64 @@ class RectangleTree
 
   /**
    * Inserts a point into the tree. The point will be copied to the data matrix
-   * of the leaf node where it is finally inserted, but we pass by reference since
-   * it may be passed many times before it actually reaches a leaf.
+   * of the leaf node where it is finally inserted, but we pass by reference
+   * since it may be passed many times before it actually reaches a leaf.
+   *
    * @param point The point (arma::vec&) to be inserted.
    */
   void InsertPoint(const size_t point);
-  
-  /**
-   * Inserts a point into the tree, tracking which levels have been inserted into.
-   * The point will be copied to the data matrix of the leaf node where it is 
-   * finally inserted, but we pass by reference since it may be passed many times
-   * before it actually reaches a leaf.
-   * @param point The point (arma::vec&) to be inserted.
-   * @param relevels The levels that have been reinserted to on this top level insertion.
-   */
-  void InsertPoint(const size_t point, std::vector<bool>& relevels);
-  
-  /**
-   * Inserts a node into the tree, tracking which levels have been inserted into.
-   * The node will be inserted so that the tree remains valid.
-   * @param node The node to be inserted.
-   * @param level The depth that should match the node where this node is finally inserted.
-   * This should be the number returned by calling TreeDepth() from the node that originally
-   * contained "node".
-   * @param relevels The levels that have been reinserted to on this top level insertion.
-   */
-  void InsertNode(RectangleTree* node, const size_t level, std::vector<bool>& relevels);
 
   /**
-   * Deletes a point in the tree.  The point will be removed from the data matrix
-   * of the leaf node where it is store and the bounding rectangles will be updated.
-   * However, the point will be kept in the centeral dataset. (The user may remove it
-   * from there if he wants, but he must not change the indices of the other points.)
-   * Returns true if the point is successfully removed and false if it is not.
-   * (ie. the point is not in the tree)
+   * Inserts a point into the tree, tracking which levels have been inserted
+   * into.  The point will be copied to the data matrix of the leaf node where
+   * it is finally inserted, but we pass by reference since it may be passed
+   * many times before it actually reaches a leaf.
+   *
+   * @param point The point (arma::vec&) to be inserted.
+   * @param relevels The levels that have been reinserted to on this top level
+   *      insertion.
+   */
+  void InsertPoint(const size_t point, std::vector<bool>& relevels);
+
+  /**
+   * Inserts a node into the tree, tracking which levels have been inserted
+   * into.  The node will be inserted so that the tree remains valid.
+   *
+   * @param node The node to be inserted.
+   * @param level The depth that should match the node where this node is
+   *      finally inserted.  This should be the number returned by calling
+   *      TreeDepth() from the node that originally contained "node".
+   * @param relevels The levels that have been reinserted to on this top level
+   *      insertion.
+   */
+  void InsertNode(RectangleTree* node,
+                  const size_t level,
+                  std::vector<bool>& relevels);
+
+  /**
+   * Deletes a point in the tree.  The point will be removed from the data
+   * matrix of the leaf node where it is store and the bounding rectangles will
+   * be updated.  However, the point will be kept in the centeral dataset. (The
+   * user may remove it from there if he wants, but he must not change the
+   * indices of the other points.) Returns true if the point is successfully
+   * removed and false if it is not.  (ie. the point is not in the tree)
    */
   bool DeletePoint(const size_t point);
-  
+
   /**
-   * Deletes a point in the tree, tracking levels.  The point will be removed from the data matrix
-   * of the leaf node where it is store and the bounding rectangles will be updated.
-   * However, the point will be kept in the centeral dataset. (The user may remove it
-   * from there if he wants, but he must not change the indices of the other points.)
-   * Returns true if the point is successfully removed and false if it is not.
-   * (ie. the point is not in the tree)
+   * Deletes a point in the tree, tracking levels.  The point will be removed
+   * from the data matrix of the leaf node where it is store and the bounding
+   * rectangles will be updated.  However, the point will be kept in the
+   * centeral dataset. (The user may remove it from there if he wants, but he
+   * must not change the indices of the other points.) Returns true if the point
+   * is successfully removed and false if it is not.  (ie. the point is not in
+   * the tree)
    */
   bool DeletePoint(const size_t point, std::vector<bool>& relevels);
-  
+
   /**
-   * Removes a node from the tree.  You are responsible for deleting it if you wish to do so.
+   * Removes a node from the tree.  You are responsible for deleting it if you
+   * wish to do so.
    */
   bool RemoveNode(const RectangleTree* node, std::vector<bool>& relevels);
 
@@ -253,7 +268,7 @@ class RectangleTree
   const StatisticType& Stat() const { return stat; }
   //! Modify the statistic object for this node.
   StatisticType& Stat() { return stat; }
-  
+
   //! Return the split history object of this node.
   const SplitHistoryStruct& SplitHistory() const { return splitHistory; }
   //! Modify the split history object of this node.
@@ -346,28 +361,29 @@ class RectangleTree
   double& ParentDistance() { return parentDistance; }
 
   /**
-    * Get the specified child.
-    *
-    * @param child Index of child to return.
-    */
-  inline RectangleTree<SplitType, DescentType, StatisticType, MatType>&
-    Child(const size_t child) const
+   * Get the specified child.
+   *
+   * @param child Index of child to return.
+   */
+  inline RectangleTree<SplitType, DescentType, StatisticType, MatType>& Child(
+      const size_t child) const
   {
     return *children[child];
   }
 
   /**
    * Modify the specified child.
-    *
-    * @param child Index of child to return.
+   *
+   * @param child Index of child to return.
    */
-  inline RectangleTree<SplitType, DescentType, StatisticType, MatType>&
-    Child(const size_t child)
+  inline RectangleTree<SplitType, DescentType, StatisticType, MatType>& Child(
+      const size_t child)
   {
     return *children[child];
   }
 
-  //! Return the number of points in this node (returns 0 if this node is not a leaf).
+  //! Return the number of points in this node (returns 0 if this node is not a
+  //! leaf).
   size_t NumPoints() const;
 
   /**
@@ -414,7 +430,6 @@ class RectangleTree
     return bound.RangeDistance(other->Bound());
   }
 
-
   //! Return the minimum distance to another point.
   template<typename VecType>
   double MinDistance(const VecType& point,
@@ -442,7 +457,7 @@ class RectangleTree
     return bound.RangeDistance(point);
   }
 
- /**
+  /**
    * Obtains the number of nodes in the tree, starting with this.
    */
   size_t TreeSize() const;
@@ -472,10 +487,10 @@ class RectangleTree
    * specified level.  TO BE REMOVED
    */
   RectangleTree(const size_t begin,
-                  const size_t count,
-                  HRectBound<> bound,
-                  StatisticType stat,
-                  const int maxLeafSize = 20) :
+                const size_t count,
+                HRectBound<> bound,
+                StatisticType stat,
+                const int maxLeafSize = 20) :
       begin(begin),
       count(count),
       bound(bound),
@@ -496,46 +511,47 @@ class RectangleTree
 
  public:
   /**
-   * Condense the bounding rectangles for this node based on the removal of
-   * the point specified by the arma::vec&.  This recurses up the tree.  If a node
+   * Condense the bounding rectangles for this node based on the removal of the
+   * point specified by the arma::vec&.  This recurses up the tree.  If a node
    * goes below the minimum fill, this function will fix the tree.
    *
    * @param point The arma::vec& of the point that was removed to require this
-   * condesation of the tree.
-   * @param usePoint True if we use the optimized version of the algorithm that is
-   * possible when we now what point was deleted.  False otherwise (eg. if we 
-   * deleted a node instead of a point).
+   *      condesation of the tree.
+   * @param usePoint True if we use the optimized version of the algorithm that
+   *      is possible when we now what point was deleted.  False otherwise (eg.
+   *      if we deleted a node instead of a point).
    */
-  void CondenseTree(const arma::vec& point, std::vector<bool>& relevels, const bool usePoint);
-    
+  void CondenseTree(const arma::vec& point,
+                    std::vector<bool>& relevels,
+                    const bool usePoint);
+
   /**
    * Shrink the bound object of this node for the removal of a point.
    *
-   * @param point  The arma::vec& of the point that was removed to require this
-   * shrinking.
+   * @param point The arma::vec& of the point that was removed to require this
+   *      shrinking.
    * @return true if the bound needed to be changed, false if it did not.
    */
   bool ShrinkBoundForPoint(const arma::vec& point);
-   
+
   /**
    * Shrink the bound object of this node for the removal of a child node.
    *
-   * @param bound  The HRectBound<>& of the bound that was removed to reqire this
-   * shrinking.
+   * @param bound The HRectBound<>& of the bound that was removed to reqire this
+   *      shrinking.
    * @return true if the bound needed to be changed, false if it did not.
    */
   bool ShrinkBoundForBound(const HRectBound<>& changedBound);
-  
+
   /**
    * Make an exact copy of this node, pointers and everything.
    */
   RectangleTree* ExactClone();
-  
+
   /**
    * Returns a string representation of this object.
    */
   std::string ToString() const;
-
 };
 
 }; // namespace tree
