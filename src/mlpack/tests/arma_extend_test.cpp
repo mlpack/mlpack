@@ -35,6 +35,8 @@ BOOST_AUTO_TEST_CASE(InplaceReshapeColumnTest)
  * Make sure we can reshape a large matrix.
  */
 BOOST_AUTO_TEST_CASE(InplaceReshapeMatrixTest)
+{
+  arma::mat X;
   X.randu(8, 10);
   arma::mat oldX = X;
 
