@@ -39,6 +39,23 @@ template<typename SplitType,
 	 typename MatType = arma::mat>
 class RectangleTree
 {
+ public:
+  /**
+   * The X tree requires that the tree records it's "split history".  To make this easy, we
+   * use the following structure.
+   */
+  typedef struct SplitHistoryStruct {
+    int lastDimension;
+    std::vector<bool> history;
+    SplitHistoryStruct(int dim):
+      history(dim)
+    {
+      for(int i = 0; i < dim; i++)
+        history[i] = false;
+    }
+    
+  } SplitHistoryStruct;  
+  
  private:
   //! The max number of child nodes a non-leaf node can have.
   size_t maxNumChildren;
@@ -66,6 +83,8 @@ class RectangleTree
   HRectBound<> bound;
   //! Any extra data contained in the node.
   StatisticType stat;
+  //! A struct to store the "split history" for X trees.
+  SplitHistoryStruct splitHistory;
   //! The distance from the centroid of this node to the centroid of the parent.
   double parentDistance;
   //! The discance to the furthest descendant, cached to speed things up.
@@ -78,6 +97,7 @@ class RectangleTree
   MatType* localDataset;
 
  public:
+   
   //! So other classes can use TreeType::Mat.
   typedef MatType Mat;
 
@@ -233,6 +253,11 @@ class RectangleTree
   const StatisticType& Stat() const { return stat; }
   //! Modify the statistic object for this node.
   StatisticType& Stat() { return stat; }
+  
+  //! Return the split history object of this node.
+  const SplitHistoryStruct& SplitHistory() const { return splitHistory; }
+  //! Modify the split history object of this node.
+  SplitHistoryStruct& SplitHistory() { return splitHistory; }
 
   //! Return whether or not this node is a leaf (true if it has no children).
   bool IsLeaf() const;

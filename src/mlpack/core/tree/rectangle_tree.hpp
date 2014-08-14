@@ -22,5 +22,6 @@
 #include "rectangle_tree/r_tree_descent_heuristic.hpp"
 #include "rectangle_tree/r_star_tree_descent_heuristic.hpp"
 #include "rectangle_tree/traits.hpp"
+#include "rectangle_tree/x_tree_split.hpp"
 
 #endif
