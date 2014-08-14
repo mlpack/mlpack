@@ -35,8 +35,6 @@ BOOST_AUTO_TEST_CASE(InplaceReshapeColumnTest)
  * Make sure we can reshape a large matrix.
  */
 BOOST_AUTO_TEST_CASE(InplaceReshapeMatrixTest)
-{
-  arma::mat X;
   X.randu(8, 10);
   arma::mat oldX = X;
 
@@ -92,8 +90,6 @@ BOOST_AUTO_TEST_CASE(ConstRowColIteratorTest)
   } while (it != X.begin_row_col());
 
   BOOST_REQUIRE_EQUAL(count, 0);
-  // make sure it can be constructed from row_iterator
-  it = X.begin_row(0);
 }
 
 /**
@@ -140,9 +136,6 @@ BOOST_AUTO_TEST_CASE(RowColIteratorTest)
   } while (it != X.begin_row_col());
 
   BOOST_REQUIRE_EQUAL(count, 0);
-
-  // Make sure it can be constructed from row_iterator.
-  it = X.begin_row(0);
 }
 
 /**
@@ -151,18 +144,18 @@ BOOST_AUTO_TEST_CASE(RowColIteratorTest)
 BOOST_AUTO_TEST_CASE(MatRowColIteratorDecrementOperatorTest)
 {
   mat test = ones<mat>(5, 5);
-  
+
   mat::row_col_iterator it1 = test.begin_row_col();
   mat::row_col_iterator it2 = it1;
-  
-  // check that postfix-- does not decrement the position when position is pointing
-  // to the begining
+
+  // check that postfix-- does not decrement the position when position is
+  // pointing to the begining
   it2--;
   BOOST_REQUIRE_EQUAL(it1.row(), it2.row());
   BOOST_REQUIRE_EQUAL(it1.col(), it2.col());
-  
-  // check that prefix-- does not decrement the position when position is pointing
-  // to the begining
+
+  // check that prefix-- does not decrement the position when position is
+  // pointing to the begining
   --it2;
   BOOST_REQUIRE_EQUAL(it1.row(), it2.row());
   BOOST_REQUIRE_EQUAL(it1.col(), it2.col());
