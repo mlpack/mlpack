@@ -610,6 +610,99 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest) {
   }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+
+// A test to ensure that the SingleTreeTraverser is working correctly by comparing
+// its results to the results of a naive search.
+BOOST_AUTO_TEST_CASE(XTreeTraverserTest) {
+  arma::mat dataset;
+  dataset.randu(8, 1000); // 1000 points in 8 dimensions.
+  arma::Mat<size_t> neighbors1;
+  arma::mat distances1;
+  arma::Mat<size_t> neighbors2;
+  arma::mat distances2;
+
+  RectangleTree<tree::XTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+          tree::RStarTreeDescentHeuristic,
+          NeighborSearchStat<NearestNeighborSort>,
+          arma::mat> RTree(dataset, 20, 6, 5, 2, 0);
+
+  // nearest neighbor search with the R tree.
+  mlpack::neighbor::NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
+          RectangleTree<tree::XTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+          tree::RStarTreeDescentHeuristic,
+          NeighborSearchStat<NearestNeighborSort>,
+          arma::mat> > allknn1(&RTree,
+          dataset, true);
+
+  BOOST_REQUIRE_EQUAL(RTree.NumDescendants(), 1000);
+//   checkSync(RTree);
+//   checkContainment(RTree);
+//   checkExactContainment(RTree);
+
+  allknn1.Search(5, neighbors1, distances1);
+
+  // nearest neighbor search the naive way.
+  mlpack::neighbor::AllkNN allknn2(dataset,
+          true, true);
+
+  allknn2.Search(5, neighbors2, distances2);
+
+  for (size_t i = 0; i < neighbors1.size(); i++) {
+    BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
+    BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
+  }
+}
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Test the tree splitting.  We set MaxLeafSize and MaxNumChildren rather low
 // to allow us to test by hand without adding hundreds of points.
 BOOST_AUTO_TEST_CASE(RTreeSplitTest) {
