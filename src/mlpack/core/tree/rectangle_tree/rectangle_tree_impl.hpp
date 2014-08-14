@@ -206,7 +206,7 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::InsertPoint(
 
   // If it is not a leaf node, we use the DescentHeuristic to choose a child
   // to which we recurse.
-  const size_t descentNode = DescentType::ChooseDescentType(this,
+  const size_t descentNode = DescentType::ChooseDescentNode(this,
       dataset.col(point));
   children[descentNode]->InsertPoint(point, lvls);
 }
