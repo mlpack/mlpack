@@ -14,7 +14,13 @@
 namespace mlpack {
 namespace kernel {
 
-template<typename ClusteringType = kmeans::KMeans<> >
+/**
+ * Implementation of the kmeans sampling scheme.
+ *
+ * @tparam ClusteringType Type of clustering.
+ * @tparam maxIterations Maximum number of iterations allowed before giving up.
+ */
+template<typename ClusteringType = kmeans::KMeans<>, size_t maxIterations = 5>
 class KMeansSelection
 {
  public:
@@ -26,9 +32,7 @@ class KMeansSelection
    * @param m Number of points to select.
    * @return Matrix pointer in which centroids are stored.
    */
-  const static arma::mat* Select(const arma::mat& data,
-                                 const size_t m,
-                                 const size_t maxIterations = 5)
+  const static arma::mat* Select(const arma::mat& data, const size_t m)
   {
     arma::Col<size_t> assignments;
     arma::mat* centroids = new arma::mat;
