@@ -45,21 +45,29 @@ class NystroemKernelRule
       nm.Apply(G);
       transformedData = G.t() * G;
 
+      // Center the reconstructed approximation.
+      math::Center(transformedData, transformedData);
+
       // For PCA the data has to be centered, even if the data is centered. But
       // it is not guaranteed that the data, when mapped to the kernel space, is
-      // also centered. Since we actually never work in the feature space we 
+      // also centered. Since we actually never work in the feature space we
       // cannot center the data. So, we perform a "psuedo-centering" using the
       // kernel matrix.
-      arma::rowvec rowMean = arma::sum(transformedData, 0) / 
-          transformedData.n_cols;
-      transformedData.each_col() -= arma::sum(transformedData, 1) /
-          transformedData.n_cols;
-      transformedData.each_row() -= rowMean;
-      transformedData += arma::sum(rowMean) / transformedData.n_cols;
+      arma::colvec colMean = arma::sum(G, 1) / G.n_rows;
+      G.each_row() -= arma::sum(G, 0) / G.n_rows;
+      G.each_col() -= colMean;
+      G += arma::sum(colMean) / G.n_rows;
 
       // Eigendecompose the centered kernel matrix.
-      arma::svd(eigvec, eigval, v, transformedData);
-      eigval %= eigval / (data.n_cols - 1);
+      arma::eig_sym(eigval, eigvec, transformedData);
+
+      // Swap the eigenvalues since they are ordered backwards (we need largest
+      // to smallest).
+      for (size_t i = 0; i < floor(eigval.n_elem / 2.0); ++i)
+        eigval.swap_rows(i, (eigval.n_elem - 1) - i);
+
+      // Flip the coefficients to produce the same effect.
+      eigvec = arma::fliplr(eigvec);
 
       transformedData = eigvec.t() * G.t();
     }
