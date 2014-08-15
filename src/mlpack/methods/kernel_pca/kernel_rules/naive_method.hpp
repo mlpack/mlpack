@@ -16,7 +16,6 @@ namespace kpca {
 template<typename KernelType>
 class NaiveKernelRule
 {
- public:
   public:
     /**
      * Construct the kernel matrix approximation using the nystroem method.
@@ -80,6 +79,7 @@ class NaiveKernelRule
     eigvec = arma::fliplr(eigvec);
 
     transformedData = eigvec.t() * kernelMatrix;
+    transformedData.each_col() /= arma::sqrt(eigval);
   }
 };
 
