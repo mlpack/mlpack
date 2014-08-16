@@ -232,11 +232,11 @@ void XTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
   if (par->NumChildren() == par->MaxNumChildren()+1) {
     SplitNonLeafNode(par, relevels);
   }
-
-  assert(treeOne->Parent()->NumChildren() <= treeOne->MaxNumChildren());
-  assert(treeOne->Parent()->NumChildren() >= treeOne->MinNumChildren());
-  assert(treeTwo->Parent()->NumChildren() <= treeTwo->MaxNumChildren());
-  assert(treeTwo->Parent()->NumChildren() >= treeTwo->MinNumChildren());
+  
+  assert(treeOne->Parent()->NumChildren() <= treeOne->Parent()->MaxNumChildren());
+  assert(treeOne->Parent()->NumChildren() >= treeOne->Parent()->MinNumChildren());
+  assert(treeTwo->Parent()->NumChildren() <= treeTwo->Parent()->MaxNumChildren());
+  assert(treeTwo->Parent()->NumChildren() >= treeTwo->Parent()->MinNumChildren());
 
   tree->SoftDelete();
 
@@ -600,17 +600,41 @@ bool XTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
       
       
       
+      // We don't create a supernode that would be the only child of the root.
+      // (Note that if you did try to do so you would need to update the parent field on
+      // each child of this new node as creating a supernode causes the function to return
+      // before that is done.
+      
+      // I thought commenting out the bellow would make the tree less efficient but would still work.
+      // It doesn't.  I should look into that to see if there is another bug.
       
       
-      // The min overlap split failed so we create a supernode instead.
+      if(tree->Parent()->Parent() == NULL && tree->Parent()->NumChildren() == 1) {
+        // We make the root a supernode instead.
+        tree->Parent()->MaxNumChildren() *= 2;
+        tree->Parent()->Children().resize(tree->Parent()->MaxNumChildren()+1);
+        tree->Parent()->NumChildren() = tree->NumChildren();
+        for(int i = 0; i < tree->NumChildren(); i++) {
+          tree->Parent()->Children()[i] = tree->Children()[i];
+        }
+        delete treeOne;
+        delete treeTwo;
+        tree->NullifyData();
+        tree->SoftDelete();
+        return false;
+      }
+      
+      
+      
+      // If we don't have to worry about the root, we just enlarge this node.
       tree->MaxNumChildren() *= 2;
-      tree->MaxLeafSize() *= 2;
-      tree->LocalDataset().resize(tree->LocalDataset().n_rows, 2*tree->LocalDataset().n_cols);
       tree->Children().resize(tree->MaxNumChildren()+1);
-      tree->Points().resize(tree->MaxLeafSize()+1);
+      for(int i = 0; i < tree->NumChildren(); i++)
+        tree->Child(i).Parent() = tree;
+      delete treeOne;
+      delete treeTwo;
       
-      return false;
-      
+      return false;     
     }
   }
 
@@ -637,11 +661,15 @@ bool XTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
       break;
     }
   }
+  
   par->Children()[index] = treeOne;
   par->Children()[par->NumChildren()++] = treeTwo;
 
   // we only add one at a time, so we should only need to test for equality
   // just in case, we use an assert.
+  
+  if(!(par->NumChildren() <= par->MaxNumChildren()+1))
+    std::cout<<"error " << par->NumChildren() << ", "<<par->MaxNumChildren()+1<<std::endl;
   assert(par->NumChildren() <= par->MaxNumChildren()+1);
   if (par->NumChildren() == par->MaxNumChildren()+1) {
     SplitNonLeafNode(par, relevels);
@@ -655,15 +683,12 @@ bool XTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
   for (int i = 0; i < treeTwo->NumChildren(); i++) {
     treeTwo->Children()[i]->Parent() = treeTwo;
   }
-    
-
-  assert(treeOne->Parent()->NumChildren() <= treeOne->MaxNumChildren());
-  assert(treeOne->Parent()->NumChildren() >= treeOne->MinNumChildren());
-  assert(treeTwo->Parent()->NumChildren() <= treeTwo->MaxNumChildren());
-  assert(treeTwo->Parent()->NumChildren() >= treeTwo->MinNumChildren());
   
-  assert(treeOne->MaxNumChildren() < 7);
-  assert(treeTwo->MaxNumChildren() < 7);
+  
+  assert(treeOne->Parent()->NumChildren() <= treeOne->Parent()->MaxNumChildren());
+  assert(treeOne->Parent()->NumChildren() >= treeOne->Parent()->MinNumChildren());
+  assert(treeTwo->Parent()->NumChildren() <= treeTwo->Parent()->MaxNumChildren());
+  assert(treeTwo->Parent()->NumChildren() >= treeTwo->Parent()->MinNumChildren());
 
   tree->SoftDelete();
   

@@ -665,8 +665,11 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
       // If there are multiple children, we can't do anything to the root.
       RectangleTree<SplitType, DescentType, StatisticType, MatType>* child =
           children[0];
-      for (size_t i = 0; i < child->NumChildren(); i++)
+      for (size_t i = 0; i < child->NumChildren(); i++) {
         children[i] = child->Children()[i];
+        children[i]->Parent() = this;
+      }
+      
       numChildren = child->NumChildren();
 
       for (size_t i = 0; i < child->Count(); i++)
@@ -677,6 +680,7 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
       }
 
       count = child->Count();
+      maxNumChildren = child->MaxNumChildren(); // Required for the X tree.
       child->SoftDelete();
       return;
     }
