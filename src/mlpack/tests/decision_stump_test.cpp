@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_CASE(OneClass)
 {
   const size_t numClasses = 2;
   const size_t inpBucketSize = 6;
-
+  
   mat trainingData;
   trainingData << 2.4 << 3.8 << 3.8 << endr
                << 1   << 1   << 2   << endr

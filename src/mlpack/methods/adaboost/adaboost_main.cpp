@@ -2,7 +2,7 @@
  * @file: adaboost_main.cpp
  * @author: Udit Saxena
  *
- * Implementation of the Adaboost main file
+ * Implementation of the AdaBoost main file
  *
  *  @code
  *  @article{Schapire:1999:IBA:337859.337870,
@@ -37,8 +37,8 @@ using namespace std;
 using namespace arma;
 using namespace mlpack::adaboost;
 
-PROGRAM_INFO("Adaboost","This program implements the Adaboost (or Adaptive Boost)"
- " algorithm. The variant of Adaboost implemented here is Adaboost.mh. It uses a"
+PROGRAM_INFO("AdaBoost","This program implements the AdaBoost (or Adaptive Boost)"
+ " algorithm. The variant of AdaBoost implemented here is AdaBoost.mh. It uses a"
  " weak learner, either of Decision Stumps or a Perceptron, and over many"
  " iterations, creates a strong learner. It runs these iterations till a tolerance"
  " value is crossed for change in the value of rt."
@@ -64,7 +64,7 @@ PARAM_STRING("output", "The file in which the predicted labels for the test set"
     " will be written.", "o", "output.csv");
 PARAM_INT("iterations","The maximum number of boosting iterations "
   "to be run", "i", 1000);
-PARAM_INT_REQ("classes","The number of classes in the input label set.","c");
+// PARAM_INT("classes","The number of classes in the input label set.","c");
 PARAM_DOUBLE("tolerance","The tolerance for change in values of rt","e",1e-10);
 
 int main(int argc, char *argv[])
@@ -129,8 +129,19 @@ int main(int argc, char *argv[])
   perceptron::Perceptron<> p(trainingData, labels.t(), iter);
   
   Timer::Start("Training");
-  Adaboost<> a(trainingData, labels.t(), iterations, tolerance, p);
+  AdaBoost<> a(trainingData, labels.t(), iterations, tolerance, p);
   Timer::Stop("Training");
 
+  Row<size_t> predictedLabels(testingData.n_cols);
+  Timer::Start("testing");
+  a.Classify(testingData, predictedLabels);
+  Timer::Stop("testing");
+
+  vec results;
+  data::RevertLabels(predictedLabels.t(), mappings, results);
+
+  // Save the predicted labels in a transposed form as output.
+  const string outputFilename = CLI::GetParam<string>("output_file");
+  data::Save(outputFilename, results, true, false);
   return 0;
 }

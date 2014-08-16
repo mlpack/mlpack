@@ -63,11 +63,13 @@ class DecisionStump
    * @param data The data on which to train this object on.
    * @param D Weight vector to use while training. For boosting purposes.
    * @param labels The labels of data.
+   * @param isWeight Whether we need to run a weighted Decision Stump.
    */
   DecisionStump(const DecisionStump<>& other,
                 const MatType& data,
                 const arma::rowvec& weights,
-                const arma::Row<size_t>& labels);
+                const arma::Row<size_t>& labels
+                );
 
   //! Access the splitting attribute.
   int SplitAttribute() const { return splitAttribute; }
@@ -106,9 +108,12 @@ class DecisionStump
    *
    * @param attribute A row from the training data, which might be a
    *     candidate for the splitting attribute.
+   * @param isWeight Whether we need to run a weighted Decision Stump.
    */
+  template <typename W>
   double SetupSplitAttribute(const arma::rowvec& attribute,
-                             const arma::Row<size_t>& labels);
+                             const arma::Row<size_t>& labels,
+                             W isWeight);
 
   /**
    * After having decided the attribute on which to split, train on that
@@ -147,17 +152,21 @@ class DecisionStump
    *
    * @param attribute The attribute of which we calculate the entropy.
    * @param labels Corresponding labels of the attribute.
+   * @param isWeight Whether we need to run a weighted Decision Stump.
    */
-  template <typename LabelType>
-  double CalculateEntropy(arma::subview_row<LabelType> labels, int begin);
+  template <typename LabelType, typename W>
+  double CalculateEntropy(arma::subview_row<LabelType> labels, int begin,
+                          W isWeight);
 
   /**
    * Train the decision stump on the given data and labels.
    *
    * @param data Dataset to train on.
    * @param labels Labels for dataset.
+   * @param isWeight Whether we need to run a weighted Decision Stump.
    */
-  void Train(const MatType& data, const arma::Row<size_t>& labels);
+  template <typename W>
+  void Train(const MatType& data, const arma::Row<size_t>& labels, W isWeight);
 
   //! To store the weight vectors for boosting purposes.
   arma::rowvec weightD;

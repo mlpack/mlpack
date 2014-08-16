@@ -1,8 +1,8 @@
 /**
- * @file Adaboost_test.cpp
+ * @file AdaBoost_test.cpp
  * @author Udit Saxena
  *
- * Tests for Adaboost class.
+ * Tests for AdaBoost class.
  */
 
 #include <mlpack/core.hpp>
@@ -15,10 +15,10 @@ using namespace mlpack;
 using namespace arma;
 using namespace mlpack::adaboost;
 
-BOOST_AUTO_TEST_SUITE(AdaboostTest);
+BOOST_AUTO_TEST_SUITE(AdaBoostTest);
 
 /**
- *  This test case runs the Adaboost.mh algorithm on the UCI Iris dataset.
+ *  This test case runs the AdaBoost.mh algorithm on the UCI Iris dataset.
  *  It checks whether the hamming loss breaches the upperbound, which
  *  is provided by ztAccumulator.
  */
@@ -45,7 +45,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundIris)
   // Define parameters for the adaboost
   int iterations = 100;
   double tolerance = 1e-10;
-  Adaboost<> a(inputData, labels.row(0), iterations, tolerance, p);
+  AdaBoost<> a(inputData, labels.row(0), iterations, tolerance, p);
+
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != a.finalHypothesis(i))
@@ -56,7 +57,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundIris)
 }
 
 /**
- *  This test case runs the Adaboost.mh algorithm on the UCI Iris dataset.
+ *  This test case runs the AdaBoost.mh algorithm on the UCI Iris dataset.
  *  It checks if the error returned by running a single instance of the 
  *  weak learner is worse than running the boosted weak learner using 
  *  adaboost.
@@ -92,7 +93,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
   // Define parameters for the adaboost
   int iterations = 100;
   double tolerance = 1e-10;
-  Adaboost<> a(inputData, labels.row(0), iterations, tolerance, p);
+  AdaBoost<> a(inputData, labels.row(0), iterations, tolerance, p);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != a.finalHypothesis(i))
@@ -103,7 +104,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
 }
 
 /**
- *  This test case runs the Adaboost.mh algorithm on the UCI Vertebral 
+ *  This test case runs the AdaBoost.mh algorithm on the UCI Vertebral 
  *  Column dataset.
  *  It checks whether the hamming loss breaches the upperbound, which
  *  is provided by ztAccumulator.
@@ -131,7 +132,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
   // Define parameters for the adaboost
   int iterations = 50;
   double tolerance = 1e-10;
-  Adaboost<> a(inputData, labels.row(0), iterations, tolerance, p);
+  AdaBoost<> a(inputData, labels.row(0), iterations, tolerance, p);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != a.finalHypothesis(i))
@@ -142,7 +143,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
 }
 
 /**
- *  This test case runs the Adaboost.mh algorithm on the UCI Vertebral 
+ *  This test case runs the AdaBoost.mh algorithm on the UCI Vertebral 
  *  Column dataset.
  *  It checks if the error returned by running a single instance of the 
  *  weak learner is worse than running the boosted weak learner using 
@@ -179,7 +180,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
   // Define parameters for the adaboost
   int iterations = 50;
   double tolerance = 1e-10;
-  Adaboost<> a(inputData, labels.row(0), iterations, tolerance, p);
+  AdaBoost<> a(inputData, labels.row(0), iterations, tolerance, p);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != a.finalHypothesis(i))
@@ -190,7 +191,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
 }
 
 /**
- *  This test case runs the Adaboost.mh algorithm on non-linearly 
+ *  This test case runs the AdaBoost.mh algorithm on non-linearly 
  *  separable dataset. 
  *  It checks whether the hamming loss breaches the upperbound, which
  *  is provided by ztAccumulator.
@@ -218,7 +219,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
   // Define parameters for the adaboost
   int iterations = 50;
   double tolerance = 1e-10;
-  Adaboost<> a(inputData, labels.row(0), iterations, tolerance, p);
+  AdaBoost<> a(inputData, labels.row(0), iterations, tolerance, p);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != a.finalHypothesis(i))
@@ -229,7 +230,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
 }
 
 /**
- *  This test case runs the Adaboost.mh algorithm on a non-linearly 
+ *  This test case runs the AdaBoost.mh algorithm on a non-linearly 
  *  separable dataset. 
  *  It checks if the error returned by running a single instance of the 
  *  weak learner is worse than running the boosted weak learner using 
@@ -266,7 +267,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
   // Define parameters for the adaboost
   int iterations = 50;
   double tolerance = 1e-10;
-  Adaboost<> a(inputData, labels.row(0), iterations, tolerance, p);
+  AdaBoost<> a(inputData, labels.row(0), iterations, tolerance, p);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != a.finalHypothesis(i))
@@ -277,7 +278,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
 }
 
 /**
- *  This test case runs the Adaboost.mh algorithm on the UCI Iris dataset.
+ *  This test case runs the AdaBoost.mh algorithm on the UCI Iris dataset.
  *  It checks whether the hamming loss breaches the upperbound, which
  *  is provided by ztAccumulator.
  *  This is for the weak learner: Decision Stumps.
@@ -307,7 +308,7 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
   int iterations = 50;
   double tolerance = 1e-10;
   
-  Adaboost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData, 
+  AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData, 
           labels.row(0), iterations, tolerance, ds);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -319,7 +320,7 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
 }
 
 /**
- *  This test case runs the Adaboost.mh algorithm on a non-linearly 
+ *  This test case runs the AdaBoost.mh algorithm on a non-linearly 
  *  separable dataset. 
  *  It checks if the error returned by running a single instance of the 
  *  weak learner is worse than running the boosted weak learner using 
@@ -360,7 +361,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
   int iterations = 50;
   double tolerance = 1e-10;
   
-  Adaboost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData, 
+  AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData, 
            labels.row(0), iterations, tolerance, ds);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -371,7 +372,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
   BOOST_REQUIRE(error <= weakLearnerErrorRate);
 }
 /**
- *  This test case runs the Adaboost.mh algorithm on the UCI Vertebral 
+ *  This test case runs the AdaBoost.mh algorithm on the UCI Vertebral 
  *  Column dataset.
  *  It checks if the error returned by running a single instance of the 
  *  weak learner is worse than running the boosted weak learner using 
@@ -404,7 +405,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
   int iterations = 50;
   double tolerance = 1e-10;
   
-  Adaboost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData,
+  AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData,
            labels.row(0), iterations, tolerance, ds);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -416,7 +417,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
 }
 
 /**
- *  This test case runs the Adaboost.mh algorithm on the UCI Vertebral 
+ *  This test case runs the AdaBoost.mh algorithm on the UCI Vertebral 
  *  Column dataset.
  *  It checks if the error returned by running a single instance of the 
  *  weak learner is worse than running the boosted weak learner using 
@@ -456,7 +457,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn_DS)
   // Define parameters for the adaboost
   int iterations = 50;
   double tolerance = 1e-10;
-  Adaboost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData, 
+  AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData, 
            labels.row(0), iterations, tolerance, ds);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -467,7 +468,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn_DS)
   BOOST_REQUIRE(error <= weakLearnerErrorRate);
 }
 /**
- *  This test case runs the Adaboost.mh algorithm on non-linearly 
+ *  This test case runs the AdaBoost.mh algorithm on non-linearly 
  *  separable dataset. 
  *  It checks whether the hamming loss breaches the upperbound, which
  *  is provided by ztAccumulator.
@@ -499,7 +500,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
   int iterations = 50;
   double tolerance = 1e-10;
   
-  Adaboost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData, 
+  AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData, 
            labels.row(0), iterations, tolerance, ds);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -511,7 +512,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
 }
 
 /**
- *  This test case runs the Adaboost.mh algorithm on a non-linearly 
+ *  This test case runs the AdaBoost.mh algorithm on a non-linearly 
  *  separable dataset. 
  *  It checks if the error returned by running a single instance of the 
  *  weak learner is worse than running the boosted weak learner using 
@@ -535,7 +536,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
   // Define your own weak learner, Decision Stump in this case.
 
   const size_t numClasses = 2;
-  const size_t inpBucketSize = 6;
+  const size_t inpBucketSize = 3;
 
   arma::Row<size_t> dsPrediction(labels.n_cols);
 
@@ -549,10 +550,10 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
   double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
   
   // Define parameters for the adaboost
-  int iterations = 50;
-  double tolerance = 1e-10;
+  int iterations = 500;
+  double tolerance = 1e-23;
   
-  Adaboost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData, 
+  AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData, 
            labels.row(0), iterations, tolerance, ds);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
