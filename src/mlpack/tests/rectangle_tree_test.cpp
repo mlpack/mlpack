@@ -224,6 +224,86 @@ void checkExactContainment(const RectangleTree<tree::RStarTreeSplit<tree::RStarT
   }
 }
 
+/**
+ * A function to check that containment is as tight as possible.
+ */
+void checkExactContainment(const RectangleTree<tree::XTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+        tree::RStarTreeDescentHeuristic,
+        NeighborSearchStat<NearestNeighborSort>,
+        arma::mat>& tree) {
+  if(tree.NumChildren() == 0) {
+    for(size_t i = 0; i < tree.Bound().Dim(); i++) {
+      double min = DBL_MAX;
+      double max = -1.0 * DBL_MAX;
+      for(size_t j = 0; j < tree.Count(); j++) {
+	if(tree.LocalDataset().col(j)[i] < min)
+	  min = tree.LocalDataset().col(j)[i];
+	if(tree.LocalDataset().col(j)[i] > max)
+	  max = tree.LocalDataset().col(j)[i];
+      }
+      BOOST_REQUIRE_EQUAL(max, tree.Bound()[i].Hi());
+      BOOST_REQUIRE_EQUAL(min, tree.Bound()[i].Lo());
+    }
+  } else {
+    for(size_t i = 0; i < tree.Bound().Dim(); i++) {
+      double min = DBL_MAX;
+      double max = -1.0 * DBL_MAX;
+      for(size_t j = 0; j < tree.NumChildren(); j++) {
+	if(tree.Child(j).Bound()[i].Lo() < min)
+	  min = tree.Child(j).Bound()[i].Lo();
+	if(tree.Child(j).Bound()[i].Hi() > max)
+	  max = tree.Child(j).Bound()[i].Hi();
+      }
+      BOOST_REQUIRE_EQUAL(max, tree.Bound()[i].Hi());
+      BOOST_REQUIRE_EQUAL(min, tree.Bound()[i].Lo());
+    }
+    for(size_t i = 0; i < tree.NumChildren(); i++)
+      checkExactContainment(tree.Child(i));
+  }
+}
+
+/**
+ * A function to check that parents and children are set correctly.
+ */
+void checkHierarchy(const RectangleTree<tree::RTreeSplit<tree::RTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+        tree::RTreeDescentHeuristic,
+        NeighborSearchStat<NearestNeighborSort>,
+        arma::mat>& tree) {
+    for(size_t i = 0; i < tree.NumChildren(); i++) {
+      BOOST_REQUIRE_EQUAL(&tree, tree.Child(i).Parent());
+      checkHierarchy(tree.Child(i));
+    }
+}
+
+/**
+ * A function to check that parents and children are set correctly.
+ */
+void checkHierarchy(const RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+        tree::RStarTreeDescentHeuristic,
+        NeighborSearchStat<NearestNeighborSort>,
+        arma::mat>& tree) {
+    for(size_t i = 0; i < tree.NumChildren(); i++) {
+      BOOST_REQUIRE_EQUAL(&tree, tree.Child(i).Parent());
+      checkHierarchy(tree.Child(i));
+    }
+}
+
+/**
+ * A function to check that parents and children are set correctly.
+ */
+void checkHierarchy(const RectangleTree<tree::XTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+        tree::RStarTreeDescentHeuristic,
+        NeighborSearchStat<NearestNeighborSort>,
+        arma::mat>& tree) {
+    for(size_t i = 0; i < tree.NumChildren(); i++) {
+      BOOST_REQUIRE_EQUAL(&tree, tree.Child(i).Parent());
+      checkHierarchy(tree.Child(i));
+    }
+}
+
+
+
+
 // Test to see if the bounds of the tree are correct. (Cover all bounds and points
 // beneath this node of the tree).
 BOOST_AUTO_TEST_CASE(RectangleTreeContainmentTest) {
@@ -568,6 +648,29 @@ void checkSync(const RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHe
   return;
 }
 
+/**
+ * A function to ensure that the dataset for the tree, and the datasets stored
+ * in each leaf node are in sync.
+ * @param tree The tree to check.
+ */
+void checkSync(const RectangleTree<tree::XTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
+        tree::RStarTreeDescentHeuristic,
+        NeighborSearchStat<NearestNeighborSort>,
+        arma::mat>& tree) {
+  if (tree.IsLeaf()) {
+    for (size_t i = 0; i < tree.Count(); i++) {
+      for (size_t j = 0; j < tree.LocalDataset().n_rows; j++) {
+        BOOST_REQUIRE_EQUAL(tree.LocalDataset().col(i)[j], tree.Dataset().col(tree.Points()[i])[j]);
+      }
+    }
+  } else {
+    for (size_t i = 0; i < tree.NumChildren(); i++) {
+      checkSync(*tree.Children()[i]);
+    }
+  }
+  return;
+}
+
 // A test to ensure that the SingleTreeTraverser is working correctly by comparing
 // its results to the results of a naive search.
 BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest) {
@@ -595,6 +698,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest) {
   checkSync(RTree);
   checkContainment(RTree);
   checkExactContainment(RTree);
+  checkHierarchy(RTree);
 
   allknn1.Search(5, neighbors1, distances1);
 
@@ -631,14 +735,25 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest) {
 
 
 
-/*
+
+
+
+
+
+
+
+
+
 
 
 // A test to ensure that the SingleTreeTraverser is working correctly by comparing
 // its results to the results of a naive search.
 BOOST_AUTO_TEST_CASE(XTreeTraverserTest) {
   arma::mat dataset;
-  dataset.randu(8, 1000); // 1000 points in 8 dimensions.
+  
+  const int numP = 1000;
+  
+  dataset.randu(8, numP); // 1000 points in 8 dimensions.
   arma::Mat<size_t> neighbors1;
   arma::mat distances1;
   arma::Mat<size_t> neighbors2;
@@ -657,10 +772,11 @@ BOOST_AUTO_TEST_CASE(XTreeTraverserTest) {
           arma::mat> > allknn1(&RTree,
           dataset, true);
 
-  BOOST_REQUIRE_EQUAL(RTree.NumDescendants(), 1000);
-//   checkSync(RTree);
-//   checkContainment(RTree);
-//   checkExactContainment(RTree);
+  BOOST_REQUIRE_EQUAL(RTree.NumDescendants(), numP);
+   checkSync(RTree);
+   //checkContainment(RTree);
+   checkExactContainment(RTree);
+   checkHierarchy(RTree);
 
   allknn1.Search(5, neighbors1, distances1);
 
@@ -674,13 +790,30 @@ BOOST_AUTO_TEST_CASE(XTreeTraverserTest) {
     BOOST_REQUIRE_EQUAL(neighbors1[i], neighbors2[i]);
     BOOST_REQUIRE_EQUAL(distances1[i], distances2[i]);
   }
+  
+  //std::cout<<""<<RTree.ToString()<<std::endl;
 }
 
 
 
 
 
-*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
