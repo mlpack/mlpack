@@ -10,6 +10,7 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
+#include <mlpack/methods/cf/cf.hpp>
 
 #include "regularized_svd_function.hpp"
 
@@ -29,39 +30,52 @@ class RegularizedSVD
    * RegularizedSVDFunction for optimization. It uses the SGD optimizer by
    * default. The optimizer uses a template specialization of Optimize().
    *
-   * @param data Dataset for which SVD is calculated.
-   * @param u User matrix in the matrix decomposition.
-   * @param v Item matrix in the matrix decomposition.
-   * @param rank Rank used for matrix factorization.
    * @param iterations Number of optimization iterations.
+   * @param alpha Learning rate for the SGD optimizer.
    * @param lambda Regularization parameter for the optimization.
    */
-  RegularizedSVD(const arma::mat& data,
-                 arma::mat& u,
-                 arma::mat& v,
-                 const size_t rank,
-                 const size_t iterations = 10,
+  RegularizedSVD(const size_t iterations = 10,
                  const double alpha = 0.01,
                  const double lambda = 0.02);
+  
+  /**
+   * Obtains the user and item matrices using the provided data and rank.
+   *
+   * @param data Rating data matrix.
+   * @param rank Rank parameter to be used for optimization.
+   * @param u Item matrix obtained on decomposition.
+   * @param v User matrix obtained on decomposition.
+   */
+  void Apply(const arma::mat& data,
+             const size_t rank,
+             arma::mat& u,
+             arma::mat& v);
                  
  private:
-  //! Rating data.
-  const arma::mat& data;
-  //! Rank used for matrix factorization.
-  size_t rank;
   //! Number of optimization iterations.
   size_t iterations;
   //! Learning rate for the SGD optimizer.
   double alpha;
   //! Regularization parameter for the optimization.
   double lambda;
-  //! Function that will be held by the optimizer.
-  RegularizedSVDFunction rSVDFunc;
-  //! Default SGD optimizer for the class.
-  mlpack::optimization::SGD<RegularizedSVDFunction> optimizer;
 };
 
 }; // namespace svd
+}; // namespace mlpack
+
+namespace mlpack {
+namespace cf {
+
+//! Factorizer traits of Regularized SVD.
+template<>
+class FactorizerTraits<mlpack::svd::RegularizedSVD<> >
+{
+ public:
+  //! Data provided to RegularizedSVD need not be cleaned.
+  static const bool IsCleaned = true;
+};
+
+}; // namespace cf
 }; // namespace mlpack
 
 // Include implementation.
