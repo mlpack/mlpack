@@ -24,6 +24,24 @@ namespace mlpack {
 namespace cf /** Collaborative filtering. */ {
 
 /**
+ * Template class for factorizer traits. This stores the default values for the
+ * variables to be assumed for a given factorizer. If any of the factorizers
+ * needs to have a different value for the traits, a template specialization has
+ * be wriiten for that factorizer. An example can be found in the module for
+ * Regularized SVD.
+ */
+template<typename FactorizerType>
+class FactorizerTraits
+{
+ public:
+  /**
+   * If true, then the passed data matrix is used for factorizer.Apply().
+   * Otherwise, it is modified into a form suitable for factorization.
+   */
+  static const bool IsCleaned = false;
+};
+
+/**
  * This class implements Collaborative Filtering (CF). This implementation
  * presently supports Alternating Least Squares (ALS) for collaborative
  * filtering.
@@ -73,6 +91,29 @@ class CF
   CF(arma::mat& data,
      const size_t numUsersForSimilarity = 5,
      const size_t rank = 0);
+  
+  /**
+   * Initialize the CF object using an instantiated factorizer. Store a
+   * reference to the data that we will be using. There are parameters that can
+   * be set; default values are provided for each of them. If the rank is left
+   * unset (or is set to 0), a simple density-based heuristic will be used to
+   * choose a rank.
+   *
+   * @param data Initial (user, item, rating) matrix.
+   * @param factorizer Instantiated factorizer object.
+   * @param numUsersForSimilarity Size of the neighborhood.
+   * @param rank Rank parameter for matrix factorization.
+   */
+  CF(arma::mat& data,
+     FactorizerType& factorizer,
+     const size_t numUsersForSimilarity = 5,
+     const size_t rank = 0);
+   
+  /*void ApplyFactorizer(arma::mat& data, const typename boost::enable_if_c<
+      FactorizerTraits<FactorizerType>::IsCleaned == false, int*>::type);
+      
+  void ApplyFactorizer(arma::mat& data, const typename boost::enable_if_c<
+      FactorizerTraits<FactorizerType>::IsCleaned == true, int*>::type);*/
 
   //! Sets number of users for calculating similarity.
   void NumUsersForSimilarity(const size_t num)

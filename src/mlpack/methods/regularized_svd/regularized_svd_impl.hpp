@@ -12,33 +12,38 @@ namespace mlpack {
 namespace svd {
 
 template<template<typename> class OptimizerType>
-RegularizedSVD<OptimizerType>::RegularizedSVD(const arma::mat& data,
-                                              arma::mat& u,
-                                              arma::mat& v,
-                                              const size_t rank,
-                                              const size_t iterations,
+RegularizedSVD<OptimizerType>::RegularizedSVD(const size_t iterations,
                                               const double alpha,
                                               const double lambda) :
-    data(data),
-    rank(rank),
     iterations(iterations),
     alpha(alpha),
-    lambda(lambda),
-    rSVDFunc(data, rank, lambda),
-    optimizer(rSVDFunc, alpha, iterations * data.n_cols)
+    lambda(lambda)
 {
-  arma::mat parameters = rSVDFunc.GetInitialPoint();
+  // Nothing to do.
+}
 
-  // Train the model.
-  Timer::Start("regularized_svd_optimization");
-  const double out = optimizer.Optimize(parameters);
-  Timer::Stop("regularized_svd_optimization");
+template<template<typename> class OptimizerType>
+void RegularizedSVD<OptimizerType>::Apply(const arma::mat& data,
+                                          const size_t rank,
+                                          arma::mat& u,
+                                          arma::mat& v)
+{
+  // Make the optimizer object using a RegularizedSVDFunction object.
+  RegularizedSVDFunction rSVDFunc(data, rank, lambda);
+  mlpack::optimization::SGD<RegularizedSVDFunction> optimizer(rSVDFunc, alpha,
+      iterations * data.n_cols);
   
+  // Get optimized parameters.
+  arma::mat parameters = rSVDFunc.GetInitialPoint();
+  optimizer.Optimize(parameters);
+  
+  // Constants for extracting user and item matrices.
   const size_t numUsers = max(data.row(0)) + 1;
   const size_t numItems = max(data.row(1)) + 1;
   
-  u = parameters.submat(0, 0, rank - 1, numUsers - 1);
-  v = parameters.submat(0, numUsers, rank - 1, numUsers + numItems - 1);
+  // Extract user and item matrices from the optimized parameters.
+  u = parameters.submat(0, numUsers, rank - 1, numUsers + numItems - 1).t();
+  v = parameters.submat(0, 0, rank - 1, numUsers - 1);
 }
 
 }; // namespace svd

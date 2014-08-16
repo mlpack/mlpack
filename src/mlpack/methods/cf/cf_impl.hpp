@@ -12,6 +12,32 @@
 namespace mlpack {
 namespace cf {
 
+template<typename FactorizerType>
+void ApplyFactorizer(arma::mat& data,
+    arma::sp_mat& cleanedData,
+    FactorizerType& factorizer,
+    const size_t rank,
+    arma::mat& w,
+    arma::mat& h,
+    const typename boost::enable_if_c<
+    FactorizerTraits<FactorizerType>::IsCleaned == false, int*>::type = 0)
+{
+  factorizer.Apply(cleanedData, rank, w, h);
+}
+
+template<typename FactorizerType>
+void ApplyFactorizer(arma::mat& data,
+    arma::sp_mat& cleanedData,
+    FactorizerType& factorizer,
+    const size_t rank,
+    arma::mat& w,
+    arma::mat& h,
+    const typename boost::enable_if_c<
+    FactorizerTraits<FactorizerType>::IsCleaned == true, int*>::type = 0)
+{
+  factorizer.Apply(data, rank, w, h);
+}
+
 /**
  * Construct the CF object.
  */
@@ -24,7 +50,7 @@ CF<FactorizerType>::CF(arma::mat& data,
     factorizer()
 {
   // Validate neighbourhood size.
-  if (numUsersForSimilarity < 1)
+  if(numUsersForSimilarity < 1)
   {
     Log::Warn << "CF::CF(): neighbourhood size should be > 0("
         << numUsersForSimilarity << " given). Setting value to 5.\n";
@@ -35,7 +61,7 @@ CF<FactorizerType>::CF(arma::mat& data,
   CleanData(data);
 
   // Check if the user wanted us to choose a rank for them.
-  if (rank == 0)
+  if(rank == 0)
   {
     // This is a simple heuristic that picks a rank based on the density of the
     // dataset between 5 and 105.
@@ -51,7 +77,50 @@ CF<FactorizerType>::CF(arma::mat& data,
 
   // Operations independent of the query:
   // Decompose the sparse data matrix to user and data matrices.
-  factorizer.Apply(cleanedData, this->rank, w, h);
+  ApplyFactorizer<FactorizerType>(data, cleanedData, factorizer, this->rank, w, h);
+}
+
+/**
+ * Construct the CF object using an instantiated factorizer.
+ */
+template<typename FactorizerType>
+CF<FactorizerType>::CF(arma::mat& data,
+                       FactorizerType& factorizer,
+                       const size_t numUsersForSimilarity,
+                       const size_t rank) :
+    numUsersForSimilarity(numUsersForSimilarity),
+    rank(rank),
+    factorizer(factorizer)
+{
+  // Validate neighbourhood size.
+  if(numUsersForSimilarity < 1)
+  {
+    Log::Warn << "CF::CF(): neighbourhood size should be > 0("
+        << numUsersForSimilarity << " given). Setting value to 5.\n";
+    //Setting Default Value of 5
+    this->numUsersForSimilarity = 5;
+  }
+
+  CleanData(data);
+
+  // Check if the user wanted us to choose a rank for them.
+  if(rank == 0)
+  {
+    // This is a simple heuristic that picks a rank based on the density of the
+    // dataset between 5 and 105.
+    const double density = (cleanedData.n_nonzero * 100.0) / cleanedData.n_elem;
+    const size_t rankEstimate = size_t(density) + 5;
+
+    // Set to heuristic value.
+    Log::Info << "No rank given for decomposition; using rank of "
+        << rankEstimate << " calculated by density-based heuristic."
+        << std::endl;
+    this->rank = rankEstimate;
+  }
+
+  // Operations independent of the query:
+  // Decompose the sparse data matrix to user and data matrices.
+  ApplyFactorizer<FactorizerType>(data, cleanedData, factorizer, this->rank, w, h);
 }
 
 template<typename FactorizerType>
