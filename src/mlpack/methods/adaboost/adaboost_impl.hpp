@@ -2,7 +2,7 @@
  * @file adaboost_impl.hpp
  * @author Udit Saxena
  *
- * Implementation of the Adaboost class.
+ * Implementation of the AdaBoost class.
  *
  * @code
  * @article{schapire1999improved,
@@ -27,7 +27,7 @@ namespace mlpack {
 namespace adaboost {
 
 /**
- *  Constructor. Currently runs the Adaboost.mh algorithm
+ *  Constructor. Currently runs the AdaBoost.mh algorithm
  *
  *  @param data Input data
  *  @param labels Corresponding labels
@@ -35,7 +35,7 @@ namespace adaboost {
  *  @param other Weak Learner, which has been initialized already
  */
 template<typename MatType, typename WeakLearner>
-Adaboost<MatType, WeakLearner>::Adaboost(
+AdaBoost<MatType, WeakLearner>::AdaBoost(
     const MatType& data,
     const arma::Row<size_t>& labels,
     const int iterations,
@@ -43,7 +43,7 @@ Adaboost<MatType, WeakLearner>::Adaboost(
     const WeakLearner& other)
 {
   // Count the number of classes.
-  const size_t numClasses = (arma::max(labels) - arma::min(labels)) + 1;
+  numClasses = (arma::max(labels) - arma::min(labels)) + 1;
   tolerance = tol;
 
   double rt, crt, alphat = 0.0, zt;
@@ -97,6 +97,7 @@ Adaboost<MatType, WeakLearner>::Adaboost(
     // Build the weight vectors
     BuildWeightMatrix(D, weights);
 
+    // std::cout<<"Just about to call the weak leaerner. \n";
     // call the other weak learner and train the labels.
     WeakLearner w(other, tempData, weights, labels);
     w.Classify(tempData, predictedLabels);
@@ -110,14 +111,16 @@ Adaboost<MatType, WeakLearner>::Adaboost(
     {
       if (predictedLabels(j) == labels(j))
       {
-        for (int k = 0;k < numClasses; k++) 
-          rt += D(j,k);
+        // for (int k = 0;k < numClasses; k++) 
+        //   rt += D(j,k);
+        rt += arma::accu(D.row(j));
       }
 
       else
       {
-        for (int k = 0;k < numClasses; k++)
-          rt -= D(j,k); 
+        // for (int k = 0;k < numClasses; k++)
+        //   rt -= D(j,k); 
+        rt -= arma::accu(D.row(j));
       }
     }
     // end calculation of rt
@@ -135,6 +138,9 @@ Adaboost<MatType, WeakLearner>::Adaboost(
     // the value of Z as a function of alpha.
     alphat = 0.5 * log((1 + rt) / (1 - rt));
     // end calculation of alphat
+
+    alpha.push_back(alphat);
+    wl.push_back(w);
 
     // now start modifying weights
     for (int j = 0;j < D.n_rows; j++)
@@ -178,22 +184,63 @@ Adaboost<MatType, WeakLearner>::Adaboost(
 
     // Accumulating the value of zt for the Hamming Loss bound.
     ztAccumulator *= zt;
+    z.push_back(zt);
   }
 
   // Iterations are over, now build a strong hypothesis
   // from a weighted combination of these weak hypotheses.
 
-  arma::rowvec tempSumFinalH;
+  // std::cout<<"Just about to look at the final hypo.\n";
+  arma::colvec tempSumFinalH;
   arma::uword max_index;
-
-  for (int i = 0;i < sumFinalH.n_rows; i++)
+  arma::mat sfh = sumFinalH.t();
+  
+  for (int i = 0;i < sfh.n_cols; i++)
   {
-    tempSumFinalH = sumFinalH.row(i);
+    tempSumFinalH = sfh.col(i);
     tempSumFinalH.max(max_index);
     finalH(i) = max_index;
   }
   finalHypothesis = finalH;
 }
+
+/**
+ *
+ */
+ template <typename MatType, typename WeakLearner>
+ void AdaBoost<MatType, WeakLearner>::Classify(
+                                      const MatType& test, 
+                                      arma::Row<size_t>& predictedLabels
+                                      )
+ {
+  arma::Row<size_t> tempPredictedLabels(predictedLabels.n_cols);
+  arma::mat cMatrix(test.n_cols, numClasses);
+
+  cMatrix.fill(0.0);
+  predictedLabels.fill(0);
+
+  for(int i = 0;i < wl.size();i++)
+  {
+    wl[i].Classify(test,tempPredictedLabels);
+
+    for(int j = 0;j < tempPredictedLabels.n_cols; j++)
+    {
+      cMatrix(j,tempPredictedLabels(j)) += (alpha[i] * tempPredictedLabels(j)); 
+    }
+    
+  }
+
+  arma::rowvec cMRow;
+  arma::uword max_index;
+
+  for(int i = 0;i < predictedLabels.n_cols;i++)
+  {
+    cMRow = cMatrix.row(i);
+    cMRow.max(max_index);
+    predictedLabels(i) = max_index;
+  }
+
+ }
 
 /**
  *  This function helps in building the Weight Distribution matrix
@@ -206,7 +253,7 @@ Adaboost<MatType, WeakLearner>::Adaboost(
  *  @param weights The output weight vector.
  */
 template <typename MatType, typename WeakLearner>
-void Adaboost<MatType, WeakLearner>::BuildWeightMatrix(
+void AdaBoost<MatType, WeakLearner>::BuildWeightMatrix(
     const arma::mat& D,
     arma::rowvec& weights)
 {

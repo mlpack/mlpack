@@ -32,11 +32,11 @@ namespace adaboost {
 
 template<typename MatType = arma::mat,
          typename WeakLearner = mlpack::perceptron::Perceptron<> >
-class Adaboost
+class AdaBoost
 {
  public:
   /**
-   * Constructor. Currently runs the Adaboost.mh algorithm.
+   * Constructor. Currently runs the AdaBoost.mh algorithm.
    *
    * @param data Input data.
    * @param labels Corresponding labels.
@@ -44,7 +44,7 @@ class Adaboost
    * @param tol The tolerance for change in values of rt.
    * @param other Weak Learner, which has been initialized already.
    */
-  Adaboost(const MatType& data,
+  AdaBoost(const MatType& data,
            const arma::Row<size_t>& labels,
            const int iterations,
            const double tol,
@@ -59,6 +59,8 @@ class Adaboost
   // The tolerance for change in rt and when to stop.
   double tolerance;
 
+  void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
+
 private:
   /**
    *  This function helps in building the Weight Distribution matrix
@@ -72,8 +74,14 @@ private:
    */
   void BuildWeightMatrix(const arma::mat& D, arma::rowvec& weights);
 
+  size_t numClasses;
   
-}; // class Adaboost
+  std::vector<WeakLearner> wl;
+  std::vector<double> alpha;
+  std::vector<double> z;
+
+  
+}; // class AdaBoost
 
 } // namespace adaboost
 } // namespace mlpack

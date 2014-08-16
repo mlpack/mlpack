@@ -95,7 +95,8 @@ int main(int argc, char *argv[])
         << ")!" << std::endl;
 
   Timer::Start("training");
-  DecisionStump<> ds(trainingData, labels.t(), numClasses, inpBucketSize);
+  DecisionStump<> ds(trainingData, labels.t(), numClasses,
+                     inpBucketSize);
   Timer::Stop("training");
 
   Row<size_t> predictedLabels(testingData.n_cols);
