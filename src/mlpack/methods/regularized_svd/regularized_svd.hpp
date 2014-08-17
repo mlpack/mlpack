@@ -72,7 +72,7 @@ class FactorizerTraits<mlpack::svd::RegularizedSVD<> >
 {
  public:
   //! Data provided to RegularizedSVD need not be cleaned.
-  static const bool IsCleaned = true;
+  static const bool UsesCoordinateList = true;
 };
 
 }; // namespace cf
