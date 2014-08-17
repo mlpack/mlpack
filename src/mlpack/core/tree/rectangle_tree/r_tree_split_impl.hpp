@@ -24,7 +24,7 @@ template<typename DescentType,
 typename StatisticType,
 typename MatType>
 void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
-    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree,
+    TreeType* tree,
     std::vector<bool>& relevels)
 {
   // If we are splitting the root node, we need will do things differently so
@@ -33,15 +33,13 @@ void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
   if (tree->Parent() == NULL)
   {
     // We actually want to copy this way.  Pointers and everything.
-    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* copy =
-    new RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>(*tree, false);
+    TreeType* copy = new TreeType(*tree, false);
     copy->Parent() = tree;
     tree->Count() = 0;
     tree->NullifyData();
     // Because this was a leaf node, numChildren must be 0.
     tree->Children()[(tree->NumChildren())++] = copy;
-    RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(copy,
-        relevels);
+    SplitLeafNode(copy, relevels);
     return;
   }
 
@@ -54,16 +52,14 @@ void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
   int j = 0;
   GetPointSeeds(*tree, &i, &j);
 
-  RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType> *treeOne = new
-          RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>(tree->Parent());
-  RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType> *treeTwo = new
-          RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>(tree->Parent());
+  TreeType* treeOne = new TreeType(tree->Parent());
+  TreeType* treeTwo = new TreeType(tree->Parent());
 
   // This will assign the ith and jth point appropriately.
   AssignPointDestNode(tree, treeOne, treeTwo, i, j);
 
-  //Remove this node and insert treeOne and treeTwo
-  RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* par = tree->Parent();
+  // Remove this node and insert treeOne and treeTwo.
+  TreeType* par = tree->Parent();
   int index = 0;
   for (int i = 0; i < par->NumChildren(); i++)
   {
@@ -102,22 +98,21 @@ template<typename DescentType,
          typename StatisticType,
          typename MatType>
 bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
-        RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree,
-        std::vector<bool>& relevels)
+    TreeType* tree,
+    std::vector<bool>& relevels)
 {
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
   // an address of another node.
   if (tree->Parent() == NULL)
   {
-    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* copy =
-        new RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>(*tree, false); // We actually want to copy this way.  Pointers and everything.
-
+    // We actually want to copy this way.  Pointers and everything.
+    TreeType* copy = new TreeType(*tree, false);
     copy->Parent() = tree;
     tree->NumChildren() = 0;
     tree->NullifyData();
     tree->Children()[(tree->NumChildren())++] = copy;
-    RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(copy, relevels);
+    SplitNonLeafNode(copy, relevels);
     return true;
   }
 
@@ -127,16 +122,14 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
 
   assert(i != j);
 
-  RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* treeOne = new
-      RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>(tree->Parent());
-  RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* treeTwo = new
-      RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>(tree->Parent());
+  TreeType* treeOne = new TreeType(tree->Parent());
+  TreeType* treeTwo = new TreeType(tree->Parent());
 
   // This will assign the ith and jth rectangles appropriately.
   AssignNodeDestNode(tree, treeOne, treeTwo, i, j);
 
-  //Remove this node and insert treeOne and treeTwo
-  RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* par = tree->Parent();
+  // Remove this node and insert treeOne and treeTwo.
+  TreeType* par = tree->Parent();
   int index = -1;
   for (int i = 0; i < par->NumChildren(); i++)
   {
@@ -187,7 +180,7 @@ template<typename DescentType,
          typename StatisticType,
          typename MatType>
 void RTreeSplit<DescentType, StatisticType, MatType>::GetPointSeeds(
-    const RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>& tree,
+    const TreeType& tree,
     int* iRet,
     int* jRet)
 {
@@ -231,7 +224,7 @@ template<typename DescentType,
          typename StatisticType,
          typename MatType>
 void RTreeSplit<DescentType, StatisticType, MatType>::GetBoundSeeds(
-    const RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>& tree,
+    const TreeType& tree,
     int* iRet,
     int* jRet)
 {
@@ -268,9 +261,9 @@ template<typename DescentType,
          typename StatisticType,
          typename MatType>
 void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
-    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* oldTree,
-    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* treeOne,
-    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* treeTwo,
+    TreeType* oldTree,
+    TreeType* treeOne,
+    TreeType* treeTwo,
     const int intI,
     const int intJ)
 {
@@ -409,9 +402,9 @@ template<typename DescentType,
          typename StatisticType,
          typename MatType>
 void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
-    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* oldTree,
-    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* treeOne,
-    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* treeTwo,
+    TreeType* oldTree,
+    TreeType* treeOne,
+    TreeType* treeTwo,
     const int intI,
     const int intJ)
 {
@@ -574,8 +567,7 @@ template<typename DescentType,
          typename StatisticType,
          typename MatType>
 void RTreeSplit<DescentType, StatisticType, MatType>::InsertNodeIntoTree(
-    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* destTree,
-    RectangleTree<RTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* srcNode)
+    TreeType* destTree, TreeType* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();
   destTree->Children()[destTree->NumChildren()++] = srcNode;
