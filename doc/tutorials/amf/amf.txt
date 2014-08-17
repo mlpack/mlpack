@@ -72,14 +72,14 @@ the threshold or the number of iterations goes beyond the threshold, positive
 termination signal is passed to AMF.
 
 In SimpleToleranceTermination, termination criterion is met when increase in
-residue value drops below the given tolerance. To accomodate spikes, certain
+residue value drops below the given tolerance. To accommodate spikes, certain
 number of successive residue drops are accepted. Secondary termination criterion
 terminates algorithm when iteration count goes beyond the threshold.
 
 ValidationRMSETermination divids the data into 2 sets, training set and
 validation set. Entries of validation set are nullifed in the input matrix.
 Termination criterion is met when increase in validation set RMSe value drops
-below the given tolerance. To accomodate spikes certain number of successive
+below the given tolerance. To accommodate spikes certain number of successive
 validation RMSE drops are accepted. This upper imit on successive drops can be
 adjusted with reverseStepCount. Secondary termination criterion terminates
 algorithm when iteration count goes above the threshold. Though this termination
@@ -101,7 +101,7 @@ The AMF class comes with 2 initialization policies
 
 RandomInitialization initializes matrices W and H with random uniform distribution
 while RandomAcolInitialization initializes the W matrix by averaging p randomly
-chosen columns of V.  In case of RandomAcolIntialization, p is a template parameter.
+chosen columns of V.  In case of RandomAcolInitialization, p is a template parameter.
 
 To implement their own initialization policy, users need to define the following
 function in their class.
@@ -160,7 +160,7 @@ int main()
 }
 @endcode
 
-NMFALSFactorizer uses SimpleResidueTermination which is most prefered with
+NMFALSFactorizer uses SimpleResidueTermination which is most preferred with
 Non-Negative Matrix factorizers. Initialization of W and H in NMFALSFactorizer
 is random. The Apply function returns the residue obtained by comparing the
 constructed matrix W * H with the original matrix V.

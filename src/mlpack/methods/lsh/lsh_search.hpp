@@ -185,8 +185,8 @@ class LSHSearch
    * standard hash.
    *
    * This function does not have any parameters and relies on parameters which
-   * are private members of this class, intialized during the class
-   * intialization.
+   * are private members of this class, initialized during the class
+   * initialization.
    */
   void BuildHash();
 

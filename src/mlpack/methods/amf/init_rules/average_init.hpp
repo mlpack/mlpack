@@ -2,7 +2,7 @@
  * @file averge_init.hpp
  * @author Sumedh Ghaisas
  *
- * Intialization rule for Alternating Matrix Factorization.
+ * Initialization rule for Alternating Matrix Factorization.
  */
 #ifndef __MLPACK_METHODS_AMF_AVERAGE_INIT_HPP
 #define __MLPACK_METHODS_AMF_AVERAGE_INIT_HPP
@@ -61,7 +61,7 @@ class AverageInitialization
 
     avgV = sqrt(((avgV / (n * m)) - min) / r);
 
-    // Intialize to random values.
+    // Initialize to random values.
     W.randu(n, r);
     H.randu(r, m);
 

@@ -256,7 +256,7 @@ BallBound<VecType, TMetricType>::operator|=(const MatType& data)
     if (dist > radius)
     {
       // Move towards the new point and increase the radius just enough to
-      // accomodate the new point.
+      // accommodate the new point.
       arma::vec diff = data.col(i) - center;
       center += ((dist - radius) / (2 * dist)) * diff;
       radius = 0.5 * (dist + radius);
