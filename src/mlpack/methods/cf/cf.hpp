@@ -79,20 +79,6 @@ class CF
 {
  public:
   /**
-   * Initialize the CF object. Store a reference to the data that we
-   * will be using. There are parameters that can be set; default values
-   * are provided for each of them.  If the rank is left unset (or is set to 0),
-   * a simple density-based heuristic will be used to choose a rank.
-   *
-   * @param data Initial (user, item, rating) matrix.
-   * @param numUsersForSimilarity Size of the neighborhood.
-   * @param rank Rank parameter for matrix factorization.
-   */
-  CF(arma::mat& data,
-     const size_t numUsersForSimilarity = 5,
-     const size_t rank = 0);
-  
-  /**
    * Initialize the CF object using an instantiated factorizer. Store a
    * reference to the data that we will be using. There are parameters that can
    * be set; default values are provided for each of them. If the rank is left
@@ -105,7 +91,7 @@ class CF
    * @param rank Rank parameter for matrix factorization.
    */
   CF(arma::mat& data,
-     FactorizerType& factorizer,
+     FactorizerType factorizer = FactorizerType(),
      const size_t numUsersForSimilarity = 5,
      const size_t rank = 0);
    

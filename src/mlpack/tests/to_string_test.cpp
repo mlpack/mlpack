@@ -281,7 +281,6 @@ BOOST_AUTO_TEST_CASE(MRKDString)
 
 BOOST_AUTO_TEST_CASE(CFString)
 {
-  size_t a = 1 ;
   arma::mat c(3, 3);
   c(0, 0) = 1;
   c(1, 0) = 2;
@@ -292,7 +291,7 @@ BOOST_AUTO_TEST_CASE(CFString)
   c(0, 2) = 1;
   c(1, 2) = 3;
   c(2, 2) = 0.7;
-  mlpack::cf::CF<> d(c, a, a);
+  mlpack::cf::CF<> d(c);
   Log::Debug << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");

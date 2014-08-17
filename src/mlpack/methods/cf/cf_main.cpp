@@ -6,10 +6,13 @@
  */
 
 #include <mlpack/core.hpp>
+
+#include <mlpack/methods/amf/amf.hpp>
 #include "cf.hpp"
 
 using namespace mlpack;
 using namespace mlpack::cf;
+using namespace mlpack::amf;
 using namespace std;
 
 // Document program.
@@ -40,11 +43,8 @@ PARAM_STRING("query_file", "List of users for which recommendations are to "
 PARAM_STRING("output_file","File to save output recommendations to.", "o",
     "recommendations.csv");
 
-// These features are not yet available in the CF code.
-//PARAM_STRING("algorithm", "Algorithm used for CF ('als' or 'svd').", "a",
-//    "als");
-//PARAM_STRING("nearest_neighbor_algorithm", "Similarity search procedure to "
-//    "be used for generating recommendations.", "s", "knn");
+PARAM_STRING("algorithm", "Algorithm used for matrix factorization.", "a",
+    "NMF");
 
 PARAM_INT("recommendations", "Number of recommendations to generate for each "
     "query user.", "r", 5);
@@ -52,6 +52,39 @@ PARAM_INT("neighborhood", "Size of the neighborhood of similar users to "
     "consider for each query user.", "n", 5);
 
 PARAM_INT("rank", "Rank of decomposed matrices.", "R", 2);
+
+template<typename Factorizer>
+void ComputeRecommendations(Factorizer factorizer,
+                            arma::mat& dataset,
+                            const size_t numRecs,
+                            const size_t neighbourhood,
+                            const size_t rank,
+                            arma::Mat<size_t>& recommendations)
+{
+  CF<Factorizer> c(dataset, factorizer, neighbourhood, rank);
+
+  // Reading users.
+  const string queryFile = CLI::GetParam<string>("query_file");
+  if (queryFile != "")
+  {
+    // User matrix.
+    arma::Mat<size_t> userTmp;
+    arma::Col<size_t> users;
+    data::Load(queryFile, userTmp, true, false /* Don't transpose. */);
+    users = userTmp.col(0);
+
+    Log::Info << "Generating recommendations for " << users.n_elem << " users "
+        << "in '" << queryFile << "'." << endl;
+    c.GetRecommendations(numRecs, recommendations, users);
+  }
+  else
+  {
+    Log::Info << "Generating recommendations for all users." << endl;
+    c.GetRecommendations(numRecs, recommendations);
+  }
+}
+                            
+#define CR(x) ComputeRecommendations(x, dataset, numRecs, neighborhood, rank, recommendations)
 
 int main(int argc, char** argv)
 {
@@ -73,29 +106,17 @@ int main(int argc, char** argv)
 
   // Perform decomposition to prepare for recommendations.
   Log::Info << "Performing CF matrix decomposition on dataset..." << endl;
-  CF<> c(dataset);
-  c.NumUsersForSimilarity(neighborhood);
-  c.Rank(rank);
-
-  // Reading users.
-  const string queryFile = CLI::GetParam<string>("query_file");
-  if (queryFile != "")
-  {
-    // User matrix.
-    arma::Mat<size_t> userTmp;
-    arma::Col<size_t> users;
-    data::Load(queryFile, userTmp, true, false /* Don't transpose. */);
-    users = userTmp.col(0);
-
-    Log::Info << "Generating recommendations for " << users.n_elem << " users "
-        << "in '" << queryFile << "'." << endl;
-    c.GetRecommendations(numRecs, recommendations, users);
-  }
-  else
-  {
-    Log::Info << "Generating recommendations for all users." << endl;
-    c.GetRecommendations(numRecs, recommendations);
-  }
+  
+  const string algo = CLI::GetParam<string>("algorithm");
+  
+  if(algo == "NMF") 
+    CR(NMFALSFactorizer());  
+  else if(algo == "SVDBatch") 
+    CR(SparseSVDBatchFactorizer());
+  else if(algo == "SVDIncompleteIncremental") 
+    CR(SparseSVDIncompleteIncrementalFactorizer());
+  else if(algo == "SVDCompleteIncremental")
+    CR(SparseSVDCompleteIncrementalFactorizer());                 
 
   const string outputFile = CLI::GetParam<string>("output_file");
   data::Save(outputFile, recommendations);
