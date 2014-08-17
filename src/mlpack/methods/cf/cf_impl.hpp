@@ -12,6 +12,12 @@
 namespace mlpack {
 namespace cf {
 
+/**
+ * This function is used to factorize the rating matrix into the user and item
+ * matrices, when UsesCoordinateList of property of the factorizer is set to
+ * false. It uses the cleaned rating matrix instead of a (user, item, rating)
+ * list.
+ */
 template<typename FactorizerType>
 void ApplyFactorizer(arma::mat& data,
     arma::sp_mat& cleanedData,
@@ -20,11 +26,17 @@ void ApplyFactorizer(arma::mat& data,
     arma::mat& w,
     arma::mat& h,
     const typename boost::enable_if_c<
-    FactorizerTraits<FactorizerType>::IsCleaned == false, int*>::type = 0)
+        FactorizerTraits<FactorizerType>::UsesCoordinateList == false,
+        int*>::type = 0)
 {
   factorizer.Apply(cleanedData, rank, w, h);
 }
 
+/**
+ * This function is used to factorize the rating matrix into the user and item
+ * matrices, when UsesCoordinateList of property of the factorizer is set to
+ * true. It uses the (user, item, rating) list for factorization.
+ */
 template<typename FactorizerType>
 void ApplyFactorizer(arma::mat& data,
     arma::sp_mat& cleanedData,
@@ -33,7 +45,8 @@ void ApplyFactorizer(arma::mat& data,
     arma::mat& w,
     arma::mat& h,
     const typename boost::enable_if_c<
-    FactorizerTraits<FactorizerType>::IsCleaned == true, int*>::type = 0)
+        FactorizerTraits<FactorizerType>::UsesCoordinateList == true,
+        int*>::type = 0)
 {
   factorizer.Apply(data, rank, w, h);
 }
