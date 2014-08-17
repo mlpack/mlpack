@@ -16,10 +16,10 @@
 
 namespace mlpack {
 namespace tree {
-  
+
 template<typename SplitType,
          typename DescentType,
-	 typename StatisticType,
+         typename StatisticType,
          typename MatType>
 template<typename RuleType>
 RectangleTree<SplitType, DescentType, StatisticType, MatType>::
@@ -30,7 +30,7 @@ SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
 
 template<typename SplitType,
          typename DescentType,
-	 typename StatisticType,
+         typename StatisticType,
          typename MatType>
 template<typename RuleType>
 void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
@@ -39,36 +39,42 @@ SingleTreeTraverser<RuleType>::Traverse(
     const RectangleTree<SplitType, DescentType, StatisticType, MatType>&
         referenceNode)
 {
-  
+
   // If we reach a leaf node, we need to run the base case.
-  if(referenceNode.IsLeaf()) {
-    for(size_t i = 0; i < referenceNode.Count(); i++) {
+  if (referenceNode.IsLeaf())
+  {
+    for (size_t i = 0; i < referenceNode.Count(); i++)
       rule.BaseCase(queryIndex, referenceNode.Points()[i]);
-    }
+
     return;
   }
-  
-  // This is not a leaf node so we sort the children of this node by their scores.    
+
+  // This is not a leaf node so we sort the children of this node by their
+  // scores.
   std::vector<NodeAndScore> nodesAndScores(referenceNode.NumChildren());
-  for(int i = 0; i < referenceNode.NumChildren(); i++) {
+  for (int i = 0; i < referenceNode.NumChildren(); i++)
+  {
     nodesAndScores[i].node = referenceNode.Children()[i];
     nodesAndScores[i].score = rule.Score(queryIndex, *nodesAndScores[i].node);
   }
-  
-  std::sort(nodesAndScores.begin(), nodesAndScores.end(), nodeComparator);
-  
+
+  std::sort(nodesAndScores.begin(), nodesAndScores.end(), NodeComparator);
+
   // Now iterate through them starting with the best and stopping when we reach
   // one that isn't good enough.
-  for(int i = 0; i < referenceNode.NumChildren(); i++) {
-    if(rule.Rescore(queryIndex, *nodesAndScores[i].node, nodesAndScores[i].score) != DBL_MAX)
+  for (int i = 0; i < referenceNode.NumChildren(); i++)
+  {
+    if (rule.Rescore(queryIndex, *nodesAndScores[i].node,
+        nodesAndScores[i].score) != DBL_MAX)
+    {
       Traverse(queryIndex, *nodesAndScores[i].node);
-    else {
+    }
+    else
+    {
       numPrunes += referenceNode.NumChildren() - i;
       return;
     }
   }
-  // We only get here if we couldn't prune any of them.
-  return;
 }
 
 }; // namespace tree

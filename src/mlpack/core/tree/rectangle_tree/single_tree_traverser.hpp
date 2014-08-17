@@ -26,17 +26,17 @@ class RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 {
  public:
   /**
-    * Instantiate the traverser with the given rule set.
-    */
-    SingleTreeTraverser(RuleType& rule);
+   * Instantiate the traverser with the given rule set.
+   */
+  SingleTreeTraverser(RuleType& rule);
 
   /**
-    * Traverse the tree with the given point.
-    *
-    * @param queryIndex The index of the point in the query set which is being
-    *     used as the query point.
-    * @param referenceNode The tree node to be traversed.
-    */
+   * Traverse the tree with the given point.
+   *
+   * @param queryIndex The index of the point in the query set which is being
+   *     used as the query point.
+   * @param referenceNode The tree node to be traversed.
+   */
   void Traverse(const size_t queryIndex, const RectangleTree& referenceNode);
 
   //! Get the number of prunes.
@@ -44,19 +44,19 @@ class RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   //! Modify the number of prunes.
   size_t& NumPrunes() { return numPrunes; }
 
-  //We use this struct and this function to make the sorting and scoring easy and efficient:
-  class NodeAndScore {
-  public:
+  // We use this struct and this function to make the sorting and scoring easy
+  // and efficient:
+  struct NodeAndScore
+  {
     RectangleTree<SplitType, DescentType, StatisticType, MatType>* node;
     double score;
   };
 
-  static bool nodeComparator(const NodeAndScore& obj1,
-                      const NodeAndScore& obj2)
+  static bool NodeComparator(const NodeAndScore& obj1, const NodeAndScore& obj2)
   {
     return obj1.score < obj2.score;
   }
-  
+
  private:
   //! Reference to the rules with which the tree will be traversed.
   RuleType& rule;
