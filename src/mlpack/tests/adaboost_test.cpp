@@ -53,7 +53,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundIris)
       countError++;
   double hammingLoss = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE(hammingLoss <= a.ztAccumulator);
+  double ztP = a.GetztProduct();
+  BOOST_REQUIRE(hammingLoss <= ztP);
 }
 
 /**
@@ -139,7 +140,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
       countError++;
   double hammingLoss = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE(hammingLoss <= a.ztAccumulator);
+  double ztP = a.GetztProduct();
+  BOOST_REQUIRE(hammingLoss <= ztP);
 }
 
 /**
@@ -226,7 +228,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
       countError++;
   double hammingLoss = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE(hammingLoss <= a.ztAccumulator);
+  double ztP = a.GetztProduct();
+  BOOST_REQUIRE(hammingLoss <= ztP);
 }
 
 /**
@@ -316,7 +319,8 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
       countError++;
   double hammingLoss = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE(hammingLoss <= a.ztAccumulator);
+  double ztP = a.GetztProduct();
+  BOOST_REQUIRE(hammingLoss <= ztP);
 }
 
 /**
@@ -413,7 +417,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
       countError++;
   double hammingLoss = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE(hammingLoss <= a.ztAccumulator);
+  double ztP = a.GetztProduct();
+  BOOST_REQUIRE(hammingLoss <= ztP);
 }
 
 /**
@@ -508,7 +513,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
       countError++;
   double hammingLoss = (double) countError / labels.n_cols;
 
-  BOOST_REQUIRE(hammingLoss <= a.ztAccumulator);
+  double ztP = a.GetztProduct();
+  BOOST_REQUIRE(hammingLoss <= ztP);
 }
 
 /**

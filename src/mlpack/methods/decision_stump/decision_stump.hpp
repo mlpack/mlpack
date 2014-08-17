@@ -110,10 +110,10 @@ class DecisionStump
    *     candidate for the splitting attribute.
    * @param isWeight Whether we need to run a weighted Decision Stump.
    */
-  template <typename W>
+  template <bool isWeight>
   double SetupSplitAttribute(const arma::rowvec& attribute,
                              const arma::Row<size_t>& labels,
-                             W isWeight);
+                             const arma::rowvec& weightD);
 
   /**
    * After having decided the attribute on which to split, train on that
@@ -154,9 +154,9 @@ class DecisionStump
    * @param labels Corresponding labels of the attribute.
    * @param isWeight Whether we need to run a weighted Decision Stump.
    */
-  template <typename LabelType, typename W>
+  template <typename LabelType, bool isWeight>
   double CalculateEntropy(arma::subview_row<LabelType> labels, int begin,
-                          W isWeight);
+                          const arma::rowvec& tempD);
 
   /**
    * Train the decision stump on the given data and labels.
@@ -165,14 +165,10 @@ class DecisionStump
    * @param labels Labels for dataset.
    * @param isWeight Whether we need to run a weighted Decision Stump.
    */
-  template <typename W>
-  void Train(const MatType& data, const arma::Row<size_t>& labels, W isWeight);
+  template <bool isWeight>
+  void Train(const MatType& data, const arma::Row<size_t>& labels, 
+             const arma::rowvec& weightD);
 
-  //! To store the weight vectors for boosting purposes.
-  arma::rowvec weightD;
-
-  //! To store reordered weight vectors for boosting purposes.
-  arma::rowvec tempD;
 };
 
 }; // namespace decision_stump
