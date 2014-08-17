@@ -2,7 +2,7 @@
  * @file random_init.hpp
  * @author Mohan Rajendran
  *
- * Intialization rule for alternating matrix forization (AMF). This simple
+ * Initialization rule for alternating matrix forization (AMF). This simple
  * initialization is performed by assigning a random matrix to W and H.
  *
  * This file is part of mlpack 2.0.0.
@@ -48,7 +48,7 @@ class RandomInitialization
     const size_t n = V.n_rows;
     const size_t m = V.n_cols;
 
-    // Intialize to random values.
+    // Initialize to random values.
     W.randu(n, r);
     H.randu(r, m);
   }

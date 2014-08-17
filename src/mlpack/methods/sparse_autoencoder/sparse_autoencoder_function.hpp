@@ -149,7 +149,7 @@ class SparseAutoencoderFunction
  private:
   //! The matrix of data points.
   const arma::mat& data;
-  //! Intial parameter vector.
+  //! Initial parameter vector.
   arma::mat initialPoint;
   //! Size of the visible layer.
   size_t visibleSize;

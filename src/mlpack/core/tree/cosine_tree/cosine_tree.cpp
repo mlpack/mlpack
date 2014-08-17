@@ -332,7 +332,7 @@ void CosineTree::ColumnSamplesLS(std::vector<size_t>& sampledIndices,
     cDistribution(i+1) = cDistribution(i) + l2NormsSquared(i) / frobNormSquared;
   }
 
-  // Intialize sizes of the 'sampledIndices' and 'probabilities' vectors.
+  // Initialize sizes of the 'sampledIndices' and 'probabilities' vectors.
   sampledIndices.resize(numSamples);
   probabilities.zeros(numSamples);
 

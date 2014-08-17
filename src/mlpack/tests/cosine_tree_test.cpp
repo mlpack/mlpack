@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(CosineTreeNoSplit)
  */
 BOOST_AUTO_TEST_CASE(CosineNodeCosineSplit)
 {
-  // Intialize constants required for the test.
+  // Initialize constants required for the test.
   const size_t numRows = 500;
   const size_t numCols = 1000;
 

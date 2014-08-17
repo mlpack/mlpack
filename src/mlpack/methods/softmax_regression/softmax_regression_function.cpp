@@ -27,7 +27,7 @@ SoftmaxRegressionFunction::SoftmaxRegressionFunction(
     lambda(lambda),
     fitIntercept(fitIntercept)
 {
-  // Intialize the parameters to suitable values.
+  // Initialize the parameters to suitable values.
   initialPoint = InitializeWeights();
 
   // Calculate the label matrix.
