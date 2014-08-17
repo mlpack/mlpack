@@ -15,12 +15,22 @@ namespace cf
 {
 
 /**
- *
- * @see CF
+ * This class acts as a dummy class for passing as template parameter. Passing 
+ * this class as a template parameter to class SVDWrapper will force SVDWrapper
+ * to use Armadillo's SVD implementation.
  */
-
 class DummyClass {}; 
- 
+
+/**
+ * This class acts as the wrapper for all SVD factorizers which are incompatible 
+ * with CF module. Normally SVD factrorizers implement Apply method which takes 
+ * matrix V and factorizes it into P, sigma and Q where V = P * sigma * trans(Q).
+ * But CF module requires factrorization to be V = W * H. This class multiplies 
+ * P and sigma and takes the first 'r' eigenvectors out where 'r' is the rank
+ * of factorization. Q matrix is transposed and trimmed to support the rank 
+ * of factorization. The Factroizer class should implement Apply which takes 
+ * matrices P, sigma, Q and V as their parameter respectively. 
+ */
 template<class Factorizer = DummyClass>
 class SVDWrapper
 {
