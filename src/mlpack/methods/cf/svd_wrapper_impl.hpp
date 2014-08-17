@@ -4,7 +4,6 @@
  *
  * Implementation of the SVD wrapper class.
  */
-
 template<class Factorizer>
 double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
                          arma::mat& W,
