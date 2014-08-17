@@ -52,12 +52,10 @@ AdaBoost<MatType, WeakLearner>::AdaBoost(
   // crt is for stopping the iterations when rt
   // stops changing by less than a tolerant value.
 
-  ztAccumulator = 1.0;
-
   // crt is cumulative rt for stopping the iterations when rt
   // stops changing by less than a tolerant value.
 
-  ztAccumulator = 1.0;
+  ztProduct = 1.0;
   // ztAccumulator is
 
   // To be used for prediction by the Weak Learner for prediction.
@@ -183,8 +181,7 @@ AdaBoost<MatType, WeakLearner>::AdaBoost(
     D = D / zt;
 
     // Accumulating the value of zt for the Hamming Loss bound.
-    ztAccumulator *= zt;
-    z.push_back(zt);
+    ztProduct *= zt;
   }
 
   // Iterations are over, now build a strong hypothesis
@@ -213,7 +210,7 @@ void AdaBoost<MatType, WeakLearner>::Classify(
     arma::Row<size_t>& predictedLabels)
 {
   arma::Row<size_t> tempPredictedLabels(predictedLabels.n_cols);
-  arma::mat cMatrix(test.n_cols, numClasses);
+  arma::mat cMatrix(numClasses, test.n_cols);
 
   cMatrix.zeros();
   predictedLabels.zeros();
@@ -223,7 +220,7 @@ void AdaBoost<MatType, WeakLearner>::Classify(
     wl[i].Classify(test, tempPredictedLabels);
 
     for (int j = 0; j < tempPredictedLabels.n_cols; j++)
-      cMatrix(j, tempPredictedLabels(j)) += (alpha[i] * tempPredictedLabels(j));
+      cMatrix(tempPredictedLabels(j), j) += (alpha[i] * tempPredictedLabels(j));
   }
 
   arma::rowvec cMRow;
@@ -261,6 +258,15 @@ void AdaBoost<MatType, WeakLearner>::BuildWeightMatrix(
   }
 }
 
+/*/**
+ * Return the value of ztProduct
+ */
+ /*
+template <typename MatType, typename WeakLearner>
+double GetztProduct()
+{
+  return ztProduct;
+}*/
 } // namespace adaboost
 } // namespace mlpack
 

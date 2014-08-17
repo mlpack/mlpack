@@ -30,9 +30,10 @@ DecisionStump<MatType>::DecisionStump(const MatType& data,
 {
   numClass = classes;
   bucketSize = inpBucketSize;
-  const bool isWeight = false;
 
-  Train<bool>(data, labels, isWeight);
+  arma::rowvec weightD;
+
+  Train<false>(data, labels, weightD);
 }
 
 /**
@@ -43,14 +44,15 @@ DecisionStump<MatType>::DecisionStump(const MatType& data,
  * @param isWeight Whether we need to run a weighted Decision Stump.
  */
 template<typename MatType>
-template <typename W>
-void DecisionStump<MatType>::Train(const MatType& data, const arma::Row<size_t>& labels, W isWeight)
+template <bool isWeight>
+void DecisionStump<MatType>::Train(const MatType& data, const arma::Row<size_t>& labels,
+                                    const arma::rowvec& weightD)
 {
   // If classLabels are not all identical, proceed with training.
   int bestAtt = 0;
   double entropy;
-  const double rootEntropy = CalculateEntropy<size_t, W>(
-      labels.subvec(0, labels.n_elem - 1), 0, isWeight);
+  const double rootEntropy = CalculateEntropy<size_t, isWeight>(
+      labels.subvec(0, labels.n_elem - 1), 0, weightD);
 
   double gain, bestGain = 0.0;
   for (int i = 0; i < data.n_rows; i++)
@@ -60,7 +62,7 @@ void DecisionStump<MatType>::Train(const MatType& data, const arma::Row<size_t>&
     {
       // For each attribute with non-identical values, treat it as a potential
       // splitting attribute and calculate entropy if split on it.
-      entropy = SetupSplitAttribute<W>(data.row(i), labels, isWeight);
+      entropy = SetupSplitAttribute<isWeight>(data.row(i), labels, weightD);
 
       gain = rootEntropy - entropy;
       // Find the attribute with the best entropy so that the gain is
@@ -137,10 +139,10 @@ DecisionStump<MatType>::DecisionStump(
   numClass = other.numClass;
   bucketSize = other.bucketSize;
 
-  weightD = weights;
-  tempD = weightD;
-  const bool isWeight = true;
-  Train<bool>(data, labels, isWeight);
+  // weightD = weights;
+  // tempD = weightD;
+
+  Train<true>(data, labels, weights);
 }
 
 /**
@@ -152,11 +154,11 @@ DecisionStump<MatType>::DecisionStump(
  * @param isWeight Whether we need to run a weighted Decision Stump.
  */
 template <typename MatType>
-template <typename W>
+template <bool isWeight>
 double DecisionStump<MatType>::SetupSplitAttribute(
     const arma::rowvec& attribute,
     const arma::Row<size_t>& labels,
-    W isWeight)
+    const arma::rowvec& weightD)
 {
   int i, count, begin, end;
   double entropy = 0.0;
@@ -171,7 +173,7 @@ double DecisionStump<MatType>::SetupSplitAttribute(
   arma::Row<size_t> sortedLabels(attribute.n_elem);
   sortedLabels.fill(0);
 
-  tempD = arma::rowvec(weightD.n_cols);
+  arma::rowvec tempD = arma::rowvec(weightD.n_cols);
 
   for (i = 0; i < attribute.n_elem; i++)
   {
@@ -199,8 +201,8 @@ double DecisionStump<MatType>::SetupSplitAttribute(
       // Use ratioEl to calculate the ratio of elements in this split.
       const double ratioEl = ((double) (end - begin + 1) / sortedLabels.n_elem);
 
-      entropy += ratioEl * CalculateEntropy<size_t, W>(
-          sortedLabels.subvec(begin, end), begin, isWeight);
+      entropy += ratioEl * CalculateEntropy<size_t, isWeight>(
+          sortedLabels.subvec(begin, end), begin, tempD);
       i++;
     }
     else if (sortedLabels(i) != sortedLabels(i + 1))
@@ -226,8 +228,8 @@ double DecisionStump<MatType>::SetupSplitAttribute(
       }
       const double ratioEl = ((double) (end - begin + 1) / sortedLabels.n_elem);
 
-      entropy += ratioEl * CalculateEntropy<size_t, W>(
-          sortedLabels.subvec(begin, end), begin, isWeight);
+      entropy += ratioEl * CalculateEntropy<size_t, isWeight>(
+          sortedLabels.subvec(begin, end), begin, tempD);
 
       i = end + 1;
       count = 0;
@@ -418,10 +420,10 @@ int DecisionStump<MatType>::IsDistinct(const arma::Row<rType>& featureRow)
  * @param isWeight Whether we need to run a weighted Decision Stump.
  */
 template<typename MatType>
-template<typename LabelType, typename W>
+template<typename LabelType, bool isWeight>
 double DecisionStump<MatType>::CalculateEntropy(
     arma::subview_row<LabelType> labels,
-    int begin, W isWeight)
+    int begin, const arma::rowvec& tempD)
 {
   double entropy = 0.0;
   size_t j;
