@@ -53,8 +53,8 @@ class AdaBoost
   // Stores the final classification of the Labels.
   arma::Row<size_t> finalHypothesis;
 
-  // To check for the bound for the hammingLoss.
-  double ztAccumulator;
+  // Return the value of ztProduct
+  double GetztProduct() { return ztProduct; }
 
   // The tolerance for change in rt and when to stop.
   double tolerance;
@@ -78,8 +78,9 @@ private:
   
   std::vector<WeakLearner> wl;
   std::vector<double> alpha;
-  std::vector<double> z;
 
+  // To check for the bound for the hammingLoss.
+  double ztProduct;
   
 }; // class AdaBoost
 
