@@ -106,23 +106,24 @@ void RunKPCA(arma::mat& dataset,
              const string& sampling,
              KernelType& kernel)
 {
-  if (nystroem) {
+  if (nystroem)
+  {
     // Make sure the sampling scheme is valid.
     if (sampling == "kmeans")
     {
-      KernelPCA<KernelType, NystroemKernelRule<KernelType, 
+      KernelPCA<KernelType, NystroemKernelRule<KernelType,
           KMeansSelection<> > >kpca;
       kpca.Apply(dataset, newDim);
     }
     else if (sampling == "random")
     {
-      KernelPCA<KernelType, NystroemKernelRule<KernelType, 
+      KernelPCA<KernelType, NystroemKernelRule<KernelType,
           RandomSelection> > kpca;
       kpca.Apply(dataset, newDim);
     }
     else if (sampling == "ordered")
     {
-      KernelPCA<KernelType, NystroemKernelRule<KernelType, 
+      KernelPCA<KernelType, NystroemKernelRule<KernelType,
           OrderedSelection> > kpca;
       kpca.Apply(dataset, newDim);
     }
@@ -133,9 +134,10 @@ void RunKPCA(arma::mat& dataset,
         << "choices are 'kmeans', 'random' and 'ordered'" << endl;
     }
   }
-  else {
+  else
+  {
     KernelPCA<KernelType> kpca(kernel, centerTransformedData);
-    kpca.Apply(dataset, newDim);    
+    kpca.Apply(dataset, newDim);
   }
 }
 
@@ -173,7 +175,7 @@ int main(int argc, char** argv)
   if (kernelType == "linear")
   {
     LinearKernel kernel;
-    RunKPCA<LinearKernel>(dataset, centerTransformedData, nystroem, newDim, 
+    RunKPCA<LinearKernel>(dataset, centerTransformedData, nystroem, newDim,
         sampling, kernel);
   }
   else if (kernelType == "gaussian")
