@@ -60,15 +60,9 @@ void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
 
   // Remove this node and insert treeOne and treeTwo.
   TreeType* par = tree->Parent();
-  int index = 0;
-  for (int i = 0; i < par->NumChildren(); i++)
-  {
-    if (par->Children()[i] == tree)
-    {
-      index = i;
-      break;
-    }
-  }
+  size_t index = 0;
+  while (par->Children()[index] != tree) { ++index; }
+
   par->Children()[index] = treeOne;
   par->Children()[par->NumChildren()++] = treeTwo;
 
@@ -130,15 +124,9 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
 
   // Remove this node and insert treeOne and treeTwo.
   TreeType* par = tree->Parent();
-  int index = -1;
-  for (int i = 0; i < par->NumChildren(); i++)
-  {
-    if (par->Children()[i] == tree)
-    {
-      index = i;
-      break;
-    }
-  }
+  size_t index = 0;
+  while (par->Children()[index] != tree) { ++index; }
+
   assert(index != -1);
   par->Children()[index] = treeOne;
   par->Children()[par->NumChildren()++] = treeTwo;
