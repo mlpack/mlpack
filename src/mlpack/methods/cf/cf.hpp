@@ -38,7 +38,7 @@ class FactorizerTraits
    * If true, then the passed data matrix is used for factorizer.Apply().
    * Otherwise, it is modified into a form suitable for factorization.
    */
-  static const bool IsCleaned = false;
+  static const bool UsesCoordinateList = false;
 };
 
 /**
