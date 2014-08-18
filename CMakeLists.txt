@@ -182,18 +182,27 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 link_directories(${Boost_LIBRARY_DIRS})
 
-# On Windows, automatic linking is performed, so we don't need to worry about
-# it.  Clear the list of libraries to link against and let Visual Studio handle
-# it.
-if (WIN32)
+# In Visual Studio, automatic linking is performed, so we don't need to worry
+# about it.  Clear the list of libraries to link against and let Visual Studio
+# handle it.
+if (MSVC)
   link_directories(${Boost_LIBRARY_DIRS})
   set(Boost_LIBRARIES "")
-endif (WIN32)
+endif (MSVC)
 
 # For Boost testing framework (will have no effect on non-testing executables).
 # This specifies to Boost that we are dynamically linking to the Boost test
 # library.
 add_definitions(-DBOOST_TEST_DYN_LINK)
+
+# We require OpenMP now.
+#find_package(OpenMP REQUIRED)
+#if (OPENMP_FOUND)
+#  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+#  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+#  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}
+#      ${OpenMP_EXE_LINKER_FLAGS}")
+#endif (OPENMP_FOUND)
 
 # Create a 'distclean' target in case the user is using an in-source build for
 # some reason.
