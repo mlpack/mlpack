@@ -17,6 +17,39 @@
 namespace mlpack {
 namespace svd {
 
+/**
+ * Regularized SVD is a matrix factorization technique that seeks to reduce the 
+ * error on the training set, that is on the examples for which the ratings have
+ * been provided by the users. It is a fairly straightforward technique where
+ * the user and item matrices are updated with the help of Stochastic Gradient
+ * Descent(SGD) updates. The updates also penalize the learning of large feature
+ * values by means of regularization. More details can be found in the following
+ * links:
+ *
+ * http://sifter.org/~simon/journal/20061211.html
+ * http://www.cs.uic.edu/~liub/KDD-cup-2007/proceedings/Regular-Paterek.pdf
+ *
+ * An example of how to use the interface is shown below:
+ *
+ * @code
+ * arma::mat data; // Rating data in the form of coordinate list.
+ *
+ * const size_t rank = 20; // Rank used for the decomposition.
+ * const size_t iterations = 10; // Number of iterations used for optimization.
+ *
+ * const double alpha = 0.01 // Learning rate for the SGD optimizer.
+ * const double lambda = 0.1 // Regularization parameter for the optimization.
+ *
+ * // Make a RegularizedSVD object.
+ * RegularizedSVD<> rSVD(iterations, alpha, lambda);
+ *
+ * arma::mat u, v; // User and item matrices.
+ *
+ * // Use the Apply() method to get a factorization.
+ * rSVD.Apply(data, rank, u, v);
+ * @endcode
+ */
+
 template<
   template<typename> class OptimizerType = mlpack::optimization::SGD
 >
