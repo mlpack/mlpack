@@ -116,6 +116,21 @@ void HRectBound<Power, TakeRoot>::Centroid(arma::vec& centroid) const
 }
 
 /**
+ * Calculate the volume of the hyperrectangle.
+ *
+ * @return Volume of the hyperrectangle.
+ */
+template<int Power, bool TakeRoot>
+double HRectBound<Power, TakeRoot>::Volume() const
+{
+  double volume = 1.0;
+  for (size_t i = 0; i < dim; ++i)
+    volume *= (bounds[i].Hi() - bounds[i].Lo());
+
+  return volume;
+}
+
+/**
  * Calculates minimum bound-to-point squared distance.
  */
 template<int Power, bool TakeRoot>
