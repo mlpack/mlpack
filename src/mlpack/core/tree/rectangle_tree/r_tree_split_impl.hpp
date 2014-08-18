@@ -308,20 +308,30 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
     // rectangle.
 
     // First, calculate the starting volume.
-    const double volOne = treeOne->Bound().Volume();
-    const double volTwo = treeTwo->Bound().Volume();
+    double volOne = 1.0;
+    double volTwo = 1.0;
+    for (int i = 0; i < oldTree->Bound().Dim(); i++)
+    {
+      volOne *= treeOne->Bound()[i].Width();
+      volTwo *= treeTwo->Bound()[i].Width();
+    }
 
     // Find the point that, when assigned to one of the two new rectangles,
     // minimizes the increase in volume.
     for (int index = 0; index < end; index++)
     {
-      HRectBound<> newBoundOne = treeOne->Bound();
-      newBoundOne |= oldTree->LocalDataset().col(index);
-      const double newVolOne = newBoundOne.Volume();
-
-      HRectBound<> newBoundTwo = treeTwo->Bound();
-      newBoundTwo |= oldTree->LocalDataset().col(index);
-      const double newVolTwo = newBoundTwo.Volume();
+      double newVolOne = 1.0;
+      double newVolTwo = 1.0;
+      for (int i = 0; i < oldTree->Bound().Dim(); i++)
+      {
+        double c = oldTree->LocalDataset().col(index)[i];
+        newVolOne *= treeOne->Bound()[i].Contains(c) ?
+            treeOne->Bound()[i].Width() : (c < treeOne->Bound()[i].Lo() ?
+            (treeOne->Bound()[i].Hi() - c) : (c - treeOne->Bound()[i].Lo()));
+        newVolTwo *= treeTwo->Bound()[i].Contains(c) ?
+            treeTwo->Bound()[i].Width() : (c < treeTwo->Bound()[i].Lo() ?
+            (treeTwo->Bound()[i].Hi() - c) : (c - treeTwo->Bound()[i].Lo()));
+      }
 
       // Choose the rectangle that requires the lesser increase in volume.
       if ((newVolOne - volOne) < (newVolTwo - volTwo))
@@ -441,18 +451,35 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
 
     // Calculate the increase in volume for assigning this node to each of the
     // new rectangles.
-    const double volOne = treeOne->Bound().Volume();
-    const double volTwo = treeTwo->Bound().Volume();
+    double volOne = 1.0;
+    double volTwo = 1.0;
+    for (int i = 0; i < oldTree->Bound().Dim(); i++)
+    {
+      volOne *= treeOne->Bound()[i].Width();
+      volTwo *= treeTwo->Bound()[i].Width();
+    }
 
     for (int index = 0; index < end; index++)
     {
-      HRectBound<> newBoundOne = treeOne->Bound();
-      newBoundOne |= oldTree->Children()[index]->Bound();
-      const double newVolOne = newBoundOne.Volume();
+      double newVolOne = 1.0;
+      double newVolTwo = 1.0;
+      for (int i = 0; i < oldTree->Bound().Dim(); i++)
+      {
+        // For each of the new rectangles, find the width in this dimension if
+        // we add the rectangle at index to the new rectangle.
+        math::Range range = oldTree->Children()[index]->Bound()[i];
+        newVolOne *= treeOne->Bound()[i].Contains(range) ?
+            treeOne->Bound()[i].Width() : (range.Contains(treeOne->Bound()[i]) ?
+            range.Width() : (range.Lo() < treeOne->Bound()[i].Lo() ?
+            (treeOne->Bound()[i].Hi() - range.Lo()) : (range.Hi() -
+            treeOne->Bound()[i].Lo())));
 
-      HRectBound<> newBoundTwo = treeTwo->Bound();
-      newBoundTwo |= oldTree->Children()[index]->Bound();
-      const double newVolTwo = newBoundTwo.Volume();
+        newVolTwo *= treeTwo->Bound()[i].Contains(range) ?
+            treeTwo->Bound()[i].Width() : (range.Contains(treeTwo->Bound()[i]) ?
+            range.Width() : (range.Lo() < treeTwo->Bound()[i].Lo() ?
+            (treeTwo->Bound()[i].Hi() - range.Lo()) : (range.Hi() -
+            treeTwo->Bound()[i].Lo())));
+      }
 
       // Choose the rectangle that requires the lesser increase in volume.
       if ((newVolOne - volOne) < (newVolTwo - volTwo))
