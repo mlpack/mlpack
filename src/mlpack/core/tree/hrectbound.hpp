@@ -79,6 +79,13 @@ class HRectBound
   void Centroid(arma::vec& centroid) const;
 
   /**
+   * Calculate the volume of the hyperrectangle.
+   *
+   * @return Volume of the hyperrectangle.
+   */
+  double Volume() const;
+
+  /**
    * Calculates minimum bound-to-point distance.
    *
    * @param point Point to which the minimum distance is requested.

@@ -143,6 +143,21 @@ BOOST_AUTO_TEST_CASE(HRectBoundCentroid)
 }
 
 /**
+ * Ensure the volume calculation is correct.
+ */
+BOOST_AUTO_TEST_CASE(HRectBoundVolume)
+{
+  // Create a simple 3-dimensional bound.
+  HRectBound<2> b(3);
+
+  b[0] = Range(0.0, 5.0);
+  b[1] = Range(-2.0, -1.0);
+  b[2] = Range(-10.0, 50.0);
+
+  BOOST_REQUIRE_CLOSE(b.Volume(), 300.0, 1e-5);
+}
+
+/**
  * Ensure that we calculate the correct minimum distance between a point and a
  * bound.
  */
