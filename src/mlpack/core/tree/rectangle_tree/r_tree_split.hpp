@@ -46,12 +46,12 @@ class RTreeSplit
   /**
    * Get the seeds for splitting a leaf node.
    */
-  static void GetPointSeeds(const TreeType& tree, int* i, int* j);
+  static void GetPointSeeds(const TreeType& tree, int& i, int& j);
 
   /**
    * Get the seeds for splitting a non-leaf node.
    */
-  static void GetBoundSeeds(const TreeType& tree, int* i, int* j);
+  static void GetBoundSeeds(const TreeType& tree, int& i, int& j);
 
   /**
    * Assign points to the two new nodes.
