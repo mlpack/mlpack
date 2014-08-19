@@ -34,7 +34,12 @@ PROGRAM_INFO("Collaborating Filtering", "This program performs collaborative "
     "first column is the user, the second column is the item, and the third "
     "column is that user's rating of that item.  Both the users and items "
     "should be numeric indices, not names. The indices are assumed to start "
-    "from 0.");
+    "from 0."
+    "\n\n"
+    "The following optimization algorithms can be used with --algorithm (-a) "
+    "parameter: "
+    "\n"
+    "RegSVD -- Regularized SVD using a SGD optimizer ");
 
 // Parameters for program.
 PARAM_STRING_REQ("input_file", "Input dataset to perform CF on.", "i");
