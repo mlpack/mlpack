@@ -50,7 +50,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
   // rectangles, only points.  We assume that the tree uses Euclidean Distance.
   int i = 0;
   int j = 0;
-  GetPointSeeds(*tree, &i, &j);
+  GetPointSeeds(*tree, i, j);
 
   TreeType* treeOne = new TreeType(tree->Parent());
   TreeType* treeTwo = new TreeType(tree->Parent());
@@ -112,7 +112,7 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
 
   int i = 0;
   int j = 0;
-  GetBoundSeeds(*tree, &i, &j);
+  GetBoundSeeds(*tree, i, j);
 
   assert(i != j);
 
@@ -169,15 +169,13 @@ template<typename DescentType,
          typename MatType>
 void RTreeSplit<DescentType, StatisticType, MatType>::GetPointSeeds(
     const TreeType& tree,
-    int* iRet,
-    int* jRet)
+    int& iRet,
+    int& jRet)
 {
   // Here we want to find the pair of points that it is worst to place in the
   // same node.  Because we are just using points, we will simply choose the two
   // that would create the most voluminous hyperrectangle.
   double worstPairScore = -1.0;
-  int worstI = 0;
-  int worstJ = 0;
   for (int i = 0; i < tree.Count(); i++)
   {
     for (int j = i + 1; j < tree.Count(); j++)
@@ -188,14 +186,11 @@ void RTreeSplit<DescentType, StatisticType, MatType>::GetPointSeeds(
       if (score > worstPairScore)
       {
         worstPairScore = score;
-        worstI = i;
-        worstJ = j;
+        iRet = i;
+        jRet = j;
       }
     }
   }
-
-  *iRet = worstI;
-  *jRet = worstJ;
 }
 
 /**
@@ -207,12 +202,10 @@ template<typename DescentType,
          typename MatType>
 void RTreeSplit<DescentType, StatisticType, MatType>::GetBoundSeeds(
     const TreeType& tree,
-    int* iRet,
-    int* jRet)
+    int& iRet,
+    int& jRet)
 {
   double worstPairScore = -1.0;
-  int worstI = 0;
-  int worstJ = 0;
   for (int i = 0; i < tree.NumChildren(); i++)
   {
     for (int j = i + 1; j < tree.NumChildren(); j++)
@@ -230,14 +223,11 @@ void RTreeSplit<DescentType, StatisticType, MatType>::GetBoundSeeds(
       if (score > worstPairScore)
       {
         worstPairScore = score;
-        worstI = i;
-        worstJ = j;
+        iRet = i;
+        jRet = j;
       }
     }
   }
-
-  *iRet = worstI;
-  *jRet = worstJ;
 }
 
 template<typename DescentType,
