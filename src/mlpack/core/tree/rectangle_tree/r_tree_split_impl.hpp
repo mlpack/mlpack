@@ -461,7 +461,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
       {
         // For each of the new rectangles, find the width in this dimension if
         // we add the rectangle at index to the new rectangle.
-        math::Range range = oldTree->Children()[index]->Bound()[i];
+        const math::Range& range = oldTree->Children()[index]->Bound()[i];
         newVolOne *= treeOne->Bound()[i].Contains(range) ?
             treeOne->Bound()[i].Width() : (range.Contains(treeOne->Bound()[i]) ?
             range.Width() : (range.Lo() < treeOne->Bound()[i].Lo() ?
