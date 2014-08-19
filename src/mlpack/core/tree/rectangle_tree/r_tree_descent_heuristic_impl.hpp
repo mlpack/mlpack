@@ -17,11 +17,9 @@ template<typename TreeType>
 inline size_t RTreeDescentHeuristic::ChooseDescentNode(const TreeType* node,
                                                        const arma::vec& point)
 {
-  std::vector<double> scores(node->NumChildren());
-  std::vector<int> vols(node->NumChildren());
   double minScore = DBL_MAX;
   int bestIndex = 0;
-  bool tied = false;
+  double bestVol = 0.0;
 
   for (size_t i = 0; i < node->NumChildren(); i++)
   {
@@ -39,35 +37,16 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(const TreeType* node,
 
     assert(v2 - v1 >= 0);
 
-    vols[i] = v1;
-    scores[i] = v2 - v1;
-
-    if (v2 - v1 < minScore)
+    if ((v2 - v1) < minScore)
     {
       minScore = v2 - v1;
+      bestVol = v1;
       bestIndex = i;
     }
-    else if (v2 - v1 == minScore)
+    else if ((v2 - v1) == minScore && v1 < bestVol)
     {
-      tied = true;
-    }
-  }
-
-  if (tied)
-  {
-    // We break ties by choosing the smallest bound.
-    double minVol = DBL_MAX;
-    bestIndex = 0;
-    for (int i = 0; i < scores.size(); i++)
-    {
-      if (scores[i] == minScore)
-      {
-        if (vols[i] < minVol)
-        {
-          minVol = vols[i];
-          bestIndex = i;
-        }
-      }
+      bestVol = v1;
+      bestIndex = i;
     }
   }
 
@@ -79,12 +58,9 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(
     const TreeType* node,
     const TreeType* insertedNode)
 {
-  std::vector<double> scores(node->NumChildren());
-  std::vector<int> vols(node->NumChildren());
-
   double minScore = DBL_MAX;
   int bestIndex = 0;
-  bool tied = false;
+  double bestVol = 0.0;
 
   for (size_t i = 0; i < node->NumChildren(); i++)
   {
@@ -105,35 +81,16 @@ inline size_t RTreeDescentHeuristic::ChooseDescentNode(
 
     assert(v2 - v1 >= 0);
 
-    vols[i] = v1;
-    scores[i] = v2 - v1;
-
-    if (v2 - v1 < minScore)
+    if ((v2 - v1) < minScore)
     {
       minScore = v2 - v1;
+      bestVol = v1;
       bestIndex = i;
     }
-    else if (v2 - v1 == minScore)
+    else if ((v2 - v1) == minScore && v1 < bestVol)
     {
-      tied = true;
-    }
-  }
-
-  if (tied)
-  {
-    // We break ties by choosing the smallest bound.
-    double minVol = DBL_MAX;
-    bestIndex = 0;
-    for (int i = 0; i < scores.size(); i++)
-    {
-      if (scores[i] == minScore)
-      {
-        if(vols[i] < minVol)
-        {
-          minVol = vols[i];
-          bestIndex = i;
-        }
-      }
+      bestVol = v1;
+      bestIndex = i;
     }
   }
 
