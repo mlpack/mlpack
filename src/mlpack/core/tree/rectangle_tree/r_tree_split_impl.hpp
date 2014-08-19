@@ -182,14 +182,8 @@ void RTreeSplit<DescentType, StatisticType, MatType>::GetPointSeeds(
   {
     for (int j = i + 1; j < tree.Count(); j++)
     {
-      double score = 1.0;
-      for (int k = 0; k < tree.Bound().Dim(); k++)
-      {
-        // Points (in the dataset) are stored by column, but this function takes
-        // (row, col).
-        score *= std::abs(tree.LocalDataset().at(k, i) -
-            tree.LocalDataset().at(k, j));
-      }
+      const double score = arma::prod(arma::abs(tree.LocalDataset().col(i) -
+          tree.LocalDataset().col(j)));
 
       if (score > worstPairScore)
       {
