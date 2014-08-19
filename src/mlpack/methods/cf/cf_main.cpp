@@ -8,11 +8,13 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/amf/amf.hpp>
+#include <mlpack/methods/regularized_svd/regularized_svd.hpp>
 #include "cf.hpp"
 
 using namespace mlpack;
 using namespace mlpack::cf;
 using namespace mlpack::amf;
+using namespace mlpack::svd;
 using namespace std;
 
 // Document program.
@@ -116,7 +118,9 @@ int main(int argc, char** argv)
   else if(algo == "SVDIncompleteIncremental") 
     CR(SparseSVDIncompleteIncrementalFactorizer());
   else if(algo == "SVDCompleteIncremental")
-    CR(SparseSVDCompleteIncrementalFactorizer());                 
+    CR(SparseSVDCompleteIncrementalFactorizer());
+  else if(algo == "RegSVD")
+    CR(RegularizedSVD<>());
 
   const string outputFile = CLI::GetParam<string>("output_file");
   data::Save(outputFile, recommendations);
