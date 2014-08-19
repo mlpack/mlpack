@@ -21,7 +21,7 @@ namespace bound {
  * Empty constructor.
  */
 template<int Power, bool TakeRoot>
-HRectBound<Power, TakeRoot>::HRectBound() :
+inline HRectBound<Power, TakeRoot>::HRectBound() :
     dim(0),
     bounds(NULL),
     minWidth(0)
@@ -32,7 +32,7 @@ HRectBound<Power, TakeRoot>::HRectBound() :
  * set.
  */
 template<int Power, bool TakeRoot>
-HRectBound<Power, TakeRoot>::HRectBound(const size_t dimension) :
+inline HRectBound<Power, TakeRoot>::HRectBound(const size_t dimension) :
     dim(dimension),
     bounds(new math::Range[dim]),
     minWidth(0)
@@ -42,7 +42,7 @@ HRectBound<Power, TakeRoot>::HRectBound(const size_t dimension) :
  * Copy constructor necessary to prevent memory leaks.
  */
 template<int Power, bool TakeRoot>
-HRectBound<Power, TakeRoot>::HRectBound(const HRectBound& other) :
+inline HRectBound<Power, TakeRoot>::HRectBound(const HRectBound& other) :
     dim(other.Dim()),
     bounds(new math::Range[dim]),
     minWidth(other.MinWidth())
@@ -56,7 +56,7 @@ HRectBound<Power, TakeRoot>::HRectBound(const HRectBound& other) :
  * Same as the copy constructor.
  */
 template<int Power, bool TakeRoot>
-HRectBound<Power, TakeRoot>& HRectBound<Power, TakeRoot>::operator=(
+inline HRectBound<Power, TakeRoot>& HRectBound<Power, TakeRoot>::operator=(
     const HRectBound& other)
 {
   if (dim != other.Dim())
@@ -82,7 +82,7 @@ HRectBound<Power, TakeRoot>& HRectBound<Power, TakeRoot>::operator=(
  * Destructor: clean up memory.
  */
 template<int Power, bool TakeRoot>
-HRectBound<Power, TakeRoot>::~HRectBound()
+inline HRectBound<Power, TakeRoot>::~HRectBound()
 {
   if (bounds)
     delete[] bounds;
@@ -92,7 +92,7 @@ HRectBound<Power, TakeRoot>::~HRectBound()
  * Resets all dimensions to the empty set.
  */
 template<int Power, bool TakeRoot>
-void HRectBound<Power, TakeRoot>::Clear()
+inline void HRectBound<Power, TakeRoot>::Clear()
 {
   for (size_t i = 0; i < dim; i++)
     bounds[i] = math::Range();
@@ -105,7 +105,7 @@ void HRectBound<Power, TakeRoot>::Clear()
  * @param centroid Vector which the centroid will be written to.
  */
 template<int Power, bool TakeRoot>
-void HRectBound<Power, TakeRoot>::Centroid(arma::vec& centroid) const
+inline void HRectBound<Power, TakeRoot>::Centroid(arma::vec& centroid) const
 {
   // Set size correctly if necessary.
   if (!(centroid.n_elem == dim))
@@ -121,7 +121,7 @@ void HRectBound<Power, TakeRoot>::Centroid(arma::vec& centroid) const
  * @return Volume of the hyperrectangle.
  */
 template<int Power, bool TakeRoot>
-double HRectBound<Power, TakeRoot>::Volume() const
+inline double HRectBound<Power, TakeRoot>::Volume() const
 {
   double volume = 1.0;
   for (size_t i = 0; i < dim; ++i)
@@ -135,7 +135,7 @@ double HRectBound<Power, TakeRoot>::Volume() const
  */
 template<int Power, bool TakeRoot>
 template<typename VecType>
-double HRectBound<Power, TakeRoot>::MinDistance(
+inline double HRectBound<Power, TakeRoot>::MinDistance(
     const VecType& point,
     typename boost::enable_if<IsVector<VecType> >* /* junk */) const
 {
@@ -204,7 +204,7 @@ double HRectBound<Power, TakeRoot>::MinDistance(const HRectBound& other) const
  */
 template<int Power, bool TakeRoot>
 template<typename VecType>
-double HRectBound<Power, TakeRoot>::MaxDistance(
+inline double HRectBound<Power, TakeRoot>::MaxDistance(
     const VecType& point,
     typename boost::enable_if<IsVector<VecType> >* /* junk */) const
 {
@@ -230,7 +230,8 @@ double HRectBound<Power, TakeRoot>::MaxDistance(
  * Computes maximum distance.
  */
 template<int Power, bool TakeRoot>
-double HRectBound<Power, TakeRoot>::MaxDistance(const HRectBound& other) const
+inline double HRectBound<Power, TakeRoot>::MaxDistance(const HRectBound& other)
+    const
 {
   double sum = 0;
 
@@ -255,8 +256,8 @@ double HRectBound<Power, TakeRoot>::MaxDistance(const HRectBound& other) const
  * Calculates minimum and maximum bound-to-bound squared distance.
  */
 template<int Power, bool TakeRoot>
-math::Range HRectBound<Power, TakeRoot>::RangeDistance(const HRectBound& other)
-    const
+inline math::Range HRectBound<Power, TakeRoot>::RangeDistance(
+    const HRectBound& other) const
 {
   double loSum = 0;
   double hiSum = 0;
@@ -296,7 +297,7 @@ math::Range HRectBound<Power, TakeRoot>::RangeDistance(const HRectBound& other)
  */
 template<int Power, bool TakeRoot>
 template<typename VecType>
-math::Range HRectBound<Power, TakeRoot>::RangeDistance(
+inline math::Range HRectBound<Power, TakeRoot>::RangeDistance(
     const VecType& point,
     typename boost::enable_if<IsVector<VecType> >* /* junk */) const
 {
@@ -346,7 +347,7 @@ math::Range HRectBound<Power, TakeRoot>::RangeDistance(
  */
 template<int Power, bool TakeRoot>
 template<typename MatType>
-HRectBound<Power, TakeRoot>& HRectBound<Power, TakeRoot>::operator|=(
+inline HRectBound<Power, TakeRoot>& HRectBound<Power, TakeRoot>::operator|=(
     const MatType& data)
 {
   Log::Assert(data.n_rows == dim);
@@ -370,7 +371,7 @@ HRectBound<Power, TakeRoot>& HRectBound<Power, TakeRoot>::operator|=(
  * Expands this region to encompass another bound.
  */
 template<int Power, bool TakeRoot>
-HRectBound<Power, TakeRoot>& HRectBound<Power, TakeRoot>::operator|=(
+inline HRectBound<Power, TakeRoot>& HRectBound<Power, TakeRoot>::operator|=(
     const HRectBound& other)
 {
   assert(other.dim == dim);
@@ -392,7 +393,7 @@ HRectBound<Power, TakeRoot>& HRectBound<Power, TakeRoot>::operator|=(
  */
 template<int Power, bool TakeRoot>
 template<typename VecType>
-bool HRectBound<Power, TakeRoot>::Contains(const VecType& point) const
+inline bool HRectBound<Power, TakeRoot>::Contains(const VecType& point) const
 {
   for (size_t i = 0; i < point.n_elem; i++)
   {
@@ -407,7 +408,7 @@ bool HRectBound<Power, TakeRoot>::Contains(const VecType& point) const
  * Returns the diameter of the hyperrectangle (that is, the longest diagonal).
  */
 template<int Power, bool TakeRoot>
-double HRectBound<Power, TakeRoot>::Diameter() const
+inline double HRectBound<Power, TakeRoot>::Diameter() const
 {
   double d = 0;
   for (size_t i = 0; i < dim; ++i)
