@@ -33,8 +33,7 @@ GMM<FittingType>::GMM(const size_t gaussians, const size_t dimensionality) :
     localFitter(FittingType()),
     fitter(localFitter)
 {
-  // Set weights to 0.  Technically this model is still valid, but
-  // only barely.
+  // Set equal weights.  Technically this model is still valid, but only barely.
   weights.fill(1.0 / gaussians);
 }
 
@@ -58,12 +57,11 @@ GMM<FittingType>::GMM(const size_t gaussians,
     weights(gaussians),
     fitter(fitter)
 {
-  // Set weights to 0.  Technically this model is still valid, but
-  // only barely.
+  // Set equal weights.  Technically this model is still valid, but only barely.
   weights.fill(1.0 / gaussians);
 }
 
-  
+
 // Copy constructor.
 template<typename FittingType>
 template<typename OtherFittingType>
@@ -132,7 +130,7 @@ void GMM<FittingType>::Save(const std::string& filename) const
     Log::Warn << "GMM::Save(): error saving to '" << filename << "'.\n";
 }
 
-  
+
 // Save a GMM to a SaveRestoreUtility.
 template<typename FittingType>
 void GMM<FittingType>::Save(util::SaveRestoreUtility& sr) const
@@ -149,7 +147,7 @@ void GMM<FittingType>::Save(util::SaveRestoreUtility& sr) const
     std::stringstream o;
     o << i;
     std::string gaussianName = "gaussian" + o.str();
-    
+
     // Now save them.
     dists[i].Save(child);
     sr.AddChild(child, gaussianName);
@@ -163,7 +161,7 @@ void GMM<FittingType>::Load(const util::SaveRestoreUtility& sr)
     sr.LoadParameter(gaussians, "gaussians");
     sr.LoadParameter(dimensionality, "dimensionality");
     sr.LoadParameter(weights, "weights");
-    
+
     // We need to do a little error checking here.
     if (weights.n_elem != gaussians)
     {
@@ -171,9 +169,9 @@ void GMM<FittingType>::Load(const util::SaveRestoreUtility& sr)
       << " gaussians but weights vector only contains " << weights.n_elem
       << " elements!" << std::endl;
     }
-  
+
     dists.resize(gaussians);
-    
+
     for (size_t i = 0; i < gaussians; ++i)
     {
       std::stringstream o;
@@ -193,7 +191,7 @@ double GMM<FittingType>::Probability(const arma::vec& observation) const
   double sum = 0;
   for (size_t i = 0; i < gaussians; i++)
     sum += weights[i] * dists[i].Probability(observation);
-  
+
   return sum;
 }
 
