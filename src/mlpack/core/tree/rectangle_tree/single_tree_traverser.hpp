@@ -44,10 +44,12 @@ class RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   //! Modify the number of prunes.
   size_t& NumPrunes() { return numPrunes; }
 
-  // We use this struct and this function to make the sorting and scoring easy
+ private:
+  
+  // We use this class and this function to make the sorting and scoring easy
   // and efficient:
-  struct NodeAndScore
-  {
+  class NodeAndScore {
+   public:
     RectangleTree<SplitType, DescentType, StatisticType, MatType>* node;
     double score;
   };
@@ -57,7 +59,6 @@ class RectangleTree<SplitType, DescentType, StatisticType, MatType>::
     return obj1.score < obj2.score;
   }
 
- private:
   //! Reference to the rules with which the tree will be traversed.
   RuleType& rule;
 
