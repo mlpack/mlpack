@@ -61,6 +61,20 @@ class RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   size_t& NumBaseCases() { return numBaseCases; }
 
  private:
+   
+  //We use this struct and this function to make the sorting and scoring easy and efficient:
+  class NodeAndScore {
+  public:
+    RectangleTree<SplitType, DescentType, StatisticType, MatType>* node;
+    double score;
+  };
+
+  static bool nodeComparator(const NodeAndScore& obj1,
+                      const NodeAndScore& obj2)
+  {
+    return obj1.score < obj2.score;
+  }
+  
   //! Reference to the rules with which the trees will be traversed.
   RuleType& rule;
 
