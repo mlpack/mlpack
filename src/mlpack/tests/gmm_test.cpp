@@ -28,8 +28,8 @@ BOOST_AUTO_TEST_CASE(GMMProbabilityTest)
 {
   // Create a GMM.
   GMM<> gmm(2, 2);
-	gmm.Component(0) = distribution::GaussianDistribution("0 0", "1 0; 0 1");
-	gmm.Component(1) = distribution::GaussianDistribution("3 3", "2 1; 1 2");
+  gmm.Component(0) = distribution::GaussianDistribution("0 0", "1 0; 0 1");
+  gmm.Component(1) = distribution::GaussianDistribution("3 3", "2 1; 1 2");
   gmm.Weights() = "0.3 0.7";
 
   // Now test a couple observations.  These comparisons are calculated by hand.
@@ -49,8 +49,8 @@ BOOST_AUTO_TEST_CASE(GMMProbabilityComponentTest)
 {
   // Create a GMM (same as the last test).
   GMM<> gmm(2, 2);
-	gmm.Component(0) = distribution::GaussianDistribution("0 0", "1 0; 0 1");
-	gmm.Component(1) = distribution::GaussianDistribution("3 3", "2 1; 1 2");
+  gmm.Component(0) = distribution::GaussianDistribution("0 0", "1 0; 0 1");
+  gmm.Component(1) = distribution::GaussianDistribution("3 3", "2 1; 1 2");
   gmm.Weights() = "0.3 0.7";
 
   // Now test a couple observations.  These comparisons are calculated by hand.
@@ -106,17 +106,17 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMOneGaussian)
     arma::mat actualCovar = ccov(data, 1 /* biased estimator */);
 
     // Check the model to see that it is correct.
-		BOOST_REQUIRE_CLOSE(gmm.Component(0).Mean()[0], actualMean(0), 1e-5);
-		BOOST_REQUIRE_CLOSE(gmm.Component(0).Mean()[1], actualMean(1), 1e-5);
-		
-		BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(0, 0),
-		    actualCovar(0, 0), 1e-5);
-		BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(0, 1),
-		    actualCovar(0, 1), 1e-5);
-		BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(1, 0),
-		    actualCovar(1, 0), 1e-5);
-		BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(1, 1),
-		    actualCovar(1, 1), 1e-5);		
+    BOOST_REQUIRE_CLOSE(gmm.Component(0).Mean()[0], actualMean(0), 1e-5);
+    BOOST_REQUIRE_CLOSE(gmm.Component(0).Mean()[1], actualMean(1), 1e-5);
+
+    BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(0, 0),
+        actualCovar(0, 0), 1e-5);
+    BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(0, 1),
+        actualCovar(0, 1), 1e-5);
+    BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(1, 0),
+        actualCovar(1, 0), 1e-5);
+    BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(1, 1),
+        actualCovar(1, 1), 1e-5);
 
     BOOST_REQUIRE_CLOSE(gmm.Weights()[0], 1.0, 1e-5);
   }
@@ -326,48 +326,48 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
 
   for (size_t i = 0; i < 3; i++)
     BOOST_REQUIRE_SMALL((g.Component(sortedIndices[0]).Mean()[i]
-		    - d4.Mean()[i]), 0.4);
+        - d4.Mean()[i]), 0.4);
 
   for (size_t row = 0; row < 3; row++)
     for (size_t col = 0; col < 3; col++)
       BOOST_REQUIRE_SMALL((g.Component(sortedIndices[0]).Covariance()(row, col)
-			    - d4.Covariance()(row, col)), 0.60); // Big tolerance!  Lots of noise.
+          - d4.Covariance()(row, col)), 0.60); // Big tolerance!  Lots of noise.
 
   // Second Gaussian (d1).
   BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[1]] - 0.2, 0.1);
 
   for (size_t i = 0; i < 3; i++)
     BOOST_REQUIRE_SMALL((g.Component(sortedIndices[1]).Mean()[i]
-		    - d1.Mean()[i]), 0.4);
+        - d1.Mean()[i]), 0.4);
 
   for (size_t row = 0; row < 3; row++)
     for (size_t col = 0; col < 3; col++)
       BOOST_REQUIRE_SMALL((g.Component(sortedIndices[1]).Covariance()(row, col)
-			    - d1.Covariance()(row, col)), 0.55); // Big tolerance!  Lots of noise.
+          - d1.Covariance()(row, col)), 0.55); // Big tolerance!  Lots of noise.
 
   // Third Gaussian (d2).
   BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[2]] - 0.3, 0.1);
 
   for (size_t i = 0; i < 3; i++)
     BOOST_REQUIRE_SMALL((g.Component(sortedIndices[2]).Mean()[i]
-		    - d2.Mean()[i]), 0.4);
+        - d2.Mean()[i]), 0.4);
 
   for (size_t row = 0; row < 3; row++)
     for (size_t col = 0; col < 3; col++)
       BOOST_REQUIRE_SMALL((g.Component(sortedIndices[2]).Covariance()(row, col)
-			    - d2.Covariance()(row, col)), 0.50); // Big tolerance!  Lots of noise.
+          - d2.Covariance()(row, col)), 0.50); // Big tolerance!  Lots of noise.
 
   // Fourth gaussian (d3).
   BOOST_REQUIRE_SMALL(g.Weights()[sortedIndices[3]] - 0.4, 0.1);
 
   for (size_t i = 0; i < 3; ++i)
     BOOST_REQUIRE_SMALL((g.Component(sortedIndices[3]).Mean()[i]
-	      - d3.Mean()[i]), 0.4);
+        - d3.Mean()[i]), 0.4);
 
   for (size_t row = 0; row < 3; ++row)
     for (size_t col = 0; col < 3; ++col)
       BOOST_REQUIRE_SMALL((g.Component(sortedIndices[3]).Covariance()(row, col)
-			    - d3.Covariance()(row, col)), 0.50);
+          - d3.Covariance()(row, col)), 0.50);
 }
 
 /**
@@ -382,13 +382,13 @@ BOOST_AUTO_TEST_CASE(GMMRandomTest)
   gmm.Weights() = arma::vec("0.40 0.60");
 
   // N([2.25 3.10], [1.00 0.20; 0.20 0.89])
-	gmm.Component(0) = distribution::GaussianDistribution("2.25 3.10",
-	    "1.00 0.60; 0.60 0.89");
+  gmm.Component(0) = distribution::GaussianDistribution("2.25 3.10",
+      "1.00 0.60; 0.60 0.89");
 
 
   // N([4.10 1.01], [1.00 0.00; 0.00 1.01])
-	gmm.Component(1) = distribution::GaussianDistribution("4.10 1.01",
-	    "1.00 0.70; 0.70 1.01");
+  gmm.Component(1) = distribution::GaussianDistribution("4.10 1.01",
+      "1.00 0.70; 0.70 1.01");
 
   // Now generate a bunch of observations.
   arma::mat observations(2, 4000);
@@ -409,32 +409,32 @@ BOOST_AUTO_TEST_CASE(GMMRandomTest)
   BOOST_REQUIRE_CLOSE(gmm.Weights()[1], gmm2.Weights()[sortedIndices[1]], 7.0);
 
   BOOST_REQUIRE_CLOSE(gmm.Component(0).Mean()[0],
-	    gmm2.Component(sortedIndices[0]).Mean()[0], 6.5);
+      gmm2.Component(sortedIndices[0]).Mean()[0], 6.5);
   BOOST_REQUIRE_CLOSE(gmm.Component(0).Mean()[1],
-	    gmm2.Component(sortedIndices[0]).Mean()[1], 6.5);
+      gmm2.Component(sortedIndices[0]).Mean()[1], 6.5);
 
   BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(0, 0),
-      gmm2.Component(sortedIndices[0]).Covariance()(0, 0), 13.0);	
+      gmm2.Component(sortedIndices[0]).Covariance()(0, 0), 13.0);
   BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(0, 1),
-      gmm2.Component(sortedIndices[0]).Covariance()(0, 1), 22.0);	
+      gmm2.Component(sortedIndices[0]).Covariance()(0, 1), 22.0);
   BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(1, 0),
-      gmm2.Component(sortedIndices[0]).Covariance()(1, 0), 22.0);	
+      gmm2.Component(sortedIndices[0]).Covariance()(1, 0), 22.0);
   BOOST_REQUIRE_CLOSE(gmm.Component(0).Covariance()(1, 1),
-      gmm2.Component(sortedIndices[0]).Covariance()(1, 1), 13.0);	
-	
+      gmm2.Component(sortedIndices[0]).Covariance()(1, 1), 13.0);
+
   BOOST_REQUIRE_CLOSE(gmm.Component(1).Mean()[0],
-	    gmm2.Component(sortedIndices[1]).Mean()[0], 6.5);
+      gmm2.Component(sortedIndices[1]).Mean()[0], 6.5);
   BOOST_REQUIRE_CLOSE(gmm.Component(1).Mean()[1],
-	    gmm2.Component(sortedIndices[1]).Mean()[1], 6.5);
+      gmm2.Component(sortedIndices[1]).Mean()[1], 6.5);
 
   BOOST_REQUIRE_CLOSE(gmm.Component(1).Covariance()(0, 0),
-      gmm2.Component(sortedIndices[1]).Covariance()(0, 0), 13.0);	
+      gmm2.Component(sortedIndices[1]).Covariance()(0, 0), 13.0);
   BOOST_REQUIRE_CLOSE(gmm.Component(1).Covariance()(0, 1),
-      gmm2.Component(sortedIndices[1]).Covariance()(0, 1), 22.0);	
+      gmm2.Component(sortedIndices[1]).Covariance()(0, 1), 22.0);
   BOOST_REQUIRE_CLOSE(gmm.Component(1).Covariance()(1, 0),
-      gmm2.Component(sortedIndices[1]).Covariance()(1, 0), 22.0);	
+      gmm2.Component(sortedIndices[1]).Covariance()(1, 0), 22.0);
   BOOST_REQUIRE_CLOSE(gmm.Component(1).Covariance()(1, 1),
-      gmm2.Component(sortedIndices[1]).Covariance()(1, 1), 13.0);	
+      gmm2.Component(sortedIndices[1]).Covariance()(1, 1), 13.0);
 }
 
 /**
@@ -444,11 +444,11 @@ BOOST_AUTO_TEST_CASE(GMMClassifyTest)
 {
   // First create a Gaussian with a few components.
   GMM<> gmm(3, 2);
-	gmm.Component(0) = distribution::GaussianDistribution("0 0", "1 0; 0 1");
-	gmm.Component(1) = distribution::GaussianDistribution("1 3", "3 2; 2 3");
-	gmm.Component(2) = distribution::GaussianDistribution("-2 -2",
+  gmm.Component(0) = distribution::GaussianDistribution("0 0", "1 0; 0 1");
+  gmm.Component(1) = distribution::GaussianDistribution("1 3", "3 2; 2 3");
+  gmm.Component(2) = distribution::GaussianDistribution("-2 -2",
       "2.2 1.4; 1.4 5.1");
-	gmm.Weights() = "0.6 0.25 0.15";
+  gmm.Weights() = "0.6 0.25 0.15";
 
   arma::mat observations = arma::trans(arma::mat(
     " 0  0;"
@@ -515,7 +515,7 @@ BOOST_AUTO_TEST_CASE(GMMLoadSaveTest)
   {
     for (size_t j = 0; j < gmm.Dimensionality(); ++j)
       BOOST_REQUIRE_CLOSE(gmm.Component(i).Mean()[j],
-		      gmm2.Component(i).Mean()[j], 1e-3);
+          gmm2.Component(i).Mean()[j], 1e-3);
 
     for (size_t j = 0; j < gmm.Dimensionality(); ++j)
     {
@@ -687,7 +687,7 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
     for (size_t j = 0; j < gmm.Dimensionality(); ++j)
     {
       BOOST_REQUIRE_CLOSE(gmm.Component(i).Mean()[j],
-			                    oldgmm.Component(i).Mean()[j], 1e-3);
+                          oldgmm.Component(i).Mean()[j], 1e-3);
 
       for (size_t k = 0; k < gmm.Dimensionality(); ++k)
         BOOST_REQUIRE_CLOSE(gmm.Component(i).Covariance()(j, k),
@@ -709,7 +709,7 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
     for (size_t j = 0; j < gmm.Dimensionality(); ++j)
     {
       BOOST_REQUIRE_CLOSE(gmm.Component(i).Mean()[j],
-		                      oldgmm.Component(i).Mean()[j], 1e-3);
+                          oldgmm.Component(i).Mean()[j], 1e-3);
 
       for (size_t k = 0; k < gmm.Dimensionality(); ++k)
         BOOST_REQUIRE_CLOSE(gmm.Component(i).Covariance()(j, k),
@@ -733,7 +733,7 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
     for (size_t j = 0; j < gmm.Dimensionality(); ++j)
     {
       BOOST_REQUIRE_CLOSE(gmm.Component(i).Mean()[j],
-		      oldgmm.Component(i).Mean()[j], 1e-3);
+          oldgmm.Component(i).Mean()[j], 1e-3);
 
       for (size_t k = 0; k < gmm.Dimensionality(); ++k)
         BOOST_REQUIRE_CLOSE(gmm.Component(i).Covariance()(j, k),
@@ -753,7 +753,7 @@ BOOST_AUTO_TEST_CASE(UseExistingModelTest)
     for (size_t j = 0; j < gmm.Dimensionality(); ++j)
     {
       BOOST_REQUIRE_CLOSE(gmm.Component(i).Mean()[j],
-			    oldgmm.Component(i).Mean()[j], 1e-3);
+          oldgmm.Component(i).Mean()[j], 1e-3);
 
       for (size_t k = 0; k < gmm.Dimensionality(); ++k)
         BOOST_REQUIRE_CLOSE(gmm.Component(i).Covariance()(j, k),
