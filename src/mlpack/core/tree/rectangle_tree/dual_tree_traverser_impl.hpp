@@ -76,13 +76,7 @@ DualTreeTraverser<RuleType>::Traverse(
   else if(!queryNode.IsLeaf() && referenceNode.IsLeaf())
   {
     // We only need to traverse down the query node.  Order doesn't matter here.
-    ++numScores;
-    if(rule.Score(queryNode.Child(0), referenceNode) < DBL_MAX)
-      Traverse(queryNode.Child(0), referenceNode);
-    else
-      numPrunes++;
-    
-    for(size_t i = 1; i < queryNode.NumChildren(); ++i)
+    for(size_t i = 0; i < queryNode.NumChildren(); ++i)
     {
       // Before recursing, we have to set the traversal information correctly.
       rule.TraversalInfo() = traversalInfo;
@@ -101,16 +95,18 @@ DualTreeTraverser<RuleType>::Traverse(
     std::vector<NodeAndScore> nodesAndScores(referenceNode.NumChildren());
     for(int i = 0; i < referenceNode.NumChildren(); i++)
     {
+      rule.TraversalInfo() = traversalInfo;
       nodesAndScores[i].node = referenceNode.Children()[i];
       nodesAndScores[i].score = rule.Score(queryNode, *(nodesAndScores[i].node));
+      nodesAndScores[i].travInfo = rule.TraversalInfo();
     }
     std::sort(nodesAndScores.begin(), nodesAndScores.end(), nodeComparator);
     numScores += nodesAndScores.size();
     
     for(int i = 0; i < nodesAndScores.size(); i++)
     {
+      rule.TraversalInfo() = nodesAndScores[i].travInfo;
       if(rule.Rescore(queryNode, *(nodesAndScores[i].node), nodesAndScores[i].score) < DBL_MAX) {
-        rule.TraversalInfo() = traversalInfo;
         Traverse(queryNode, *(nodesAndScores[i].node));
       } else {
         numPrunes += nodesAndScores.size() - i;
@@ -130,16 +126,18 @@ DualTreeTraverser<RuleType>::Traverse(
       std::vector<NodeAndScore> nodesAndScores(referenceNode.NumChildren());
       for(int i = 0; i < referenceNode.NumChildren(); i++)
       {
+        rule.TraversalInfo() = traversalInfo;
         nodesAndScores[i].node = referenceNode.Children()[i];
         nodesAndScores[i].score = rule.Score(queryNode, *nodesAndScores[i].node);
+        nodesAndScores[i].travInfo = rule.TraversalInfo();
       }
       std::sort(nodesAndScores.begin(), nodesAndScores.end(), nodeComparator);
       numScores += nodesAndScores.size();
     
       for(int i = 0; i < nodesAndScores.size(); i++)
       {
+        rule.TraversalInfo() = nodesAndScores[i].travInfo;
         if(rule.Rescore(queryNode, *(nodesAndScores[i].node), nodesAndScores[i].score) < DBL_MAX) {
-          rule.TraversalInfo() = traversalInfo;
           Traverse(queryNode, *(nodesAndScores[i].node));
         } else {
           numPrunes += nodesAndScores.size() - i;
