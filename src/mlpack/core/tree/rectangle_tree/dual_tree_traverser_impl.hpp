@@ -128,7 +128,7 @@ DualTreeTraverser<RuleType>::Traverse(
       {
         rule.TraversalInfo() = traversalInfo;
         nodesAndScores[i].node = referenceNode.Children()[i];
-        nodesAndScores[i].score = rule.Score(queryNode, *nodesAndScores[i].node);
+        nodesAndScores[i].score = rule.Score(queryNode.Child(j), *nodesAndScores[i].node);
         nodesAndScores[i].travInfo = rule.TraversalInfo();
       }
       std::sort(nodesAndScores.begin(), nodesAndScores.end(), nodeComparator);
@@ -137,8 +137,8 @@ DualTreeTraverser<RuleType>::Traverse(
       for(int i = 0; i < nodesAndScores.size(); i++)
       {
         rule.TraversalInfo() = nodesAndScores[i].travInfo;
-        if(rule.Rescore(queryNode, *(nodesAndScores[i].node), nodesAndScores[i].score) < DBL_MAX) {
-          Traverse(queryNode, *(nodesAndScores[i].node));
+        if(rule.Rescore(queryNode.Child(j), *(nodesAndScores[i].node), nodesAndScores[i].score) < DBL_MAX) {
+          Traverse(queryNode.Child(j), *(nodesAndScores[i].node));
         } else {
           numPrunes += nodesAndScores.size() - i;
           break;
