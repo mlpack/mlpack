@@ -104,7 +104,8 @@ void DiscreteDistribution::Estimate(const arma::mat& observations,
     probabilities.fill(1 / probabilities.n_elem); // Force normalization.
 }
 
-/** Save to SaveRestoreUtility
+/**
+ * Save to SaveRestoreUtility.
  */
 void DiscreteDistribution::Save(util::SaveRestoreUtility& n) const
 {
@@ -112,7 +113,7 @@ void DiscreteDistribution::Save(util::SaveRestoreUtility& n) const
   n.SaveParameter(Type(), "type");
 }
 
-/*
+/**
  * Returns a string representation of this object.
  */
 std::string DiscreteDistribution::ToString() const
