@@ -24,10 +24,9 @@ using namespace mlpack::distribution;
 double GaussianDistribution::Probability(const arma::vec& observation) const
 {
   arma::vec diff = mean - observation;
-  
-  // Parentheses required for Armadillo 3.0.0 bug.
+
   arma::vec exponent = -0.5 * (trans(diff) * inv(covariance) * diff);
-  
+
   // TODO: What if det(cov) < 0?
   return pow(2 * M_PI, (double) observation.n_elem / -2.0) *
       pow(det(covariance), -0.5) * exp(exponent[0]);
@@ -177,15 +176,21 @@ std::string GaussianDistribution::ToString() const
 }
 
 
-/*
- * Save to or Load from SaveRestoreUtility
+/*&
+ * Save to SaveRestoreUtility.
  */
-void GaussianDistribution::Save(util::SaveRestoreUtility& sr) const {
+void GaussianDistribution::Save(util::SaveRestoreUtility& sr) const
+{
   sr.SaveParameter(Type(), "type");
   sr.SaveParameter(mean, "mean");
   sr.SaveParameter(covariance, "covariance");
 }
-void GaussianDistribution::Load(const util::SaveRestoreUtility& sr) {
+
+/**
+ * Load from SaveRestoreUtility.
+ */
+void GaussianDistribution::Load(const util::SaveRestoreUtility& sr)
+{
   sr.LoadParameter(mean, "mean");
   sr.LoadParameter(covariance, "covariance");
 }
