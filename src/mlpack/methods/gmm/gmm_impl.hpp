@@ -290,8 +290,7 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
         weightsTrial = weightsOrig;
       }
 
-      fitter.Estimate(observations, distsTrial, weightsTrial,
-          useExistingModel);
+      fitter.Estimate(observations, distsTrial, weightsTrial, useExistingModel);
 
       // Check to see if the log-likelihood of this one is better.
       double newLikelihood = LogLikelihood(observations, distsTrial,
@@ -336,7 +335,6 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
     // initialized with no parameters (0 gaussians, dimensionality of 0).
     fitter.Estimate(observations, probabilities, dists, weights,
         useExistingModel);
-    std::cout<<"3";
     bestLikelihood = LogLikelihood(observations, dists, weights);
   }
   else
@@ -391,7 +389,7 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
         // Save new likelihood and copy new model.
         bestLikelihood = newLikelihood;
 
-        dists=distsTrial;
+        dists = distsTrial;
         weights = weightsTrial;
       }
     }
