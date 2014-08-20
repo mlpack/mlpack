@@ -77,14 +77,14 @@ class GMM
   size_t gaussians;
   //! The dimensionality of the model.
   size_t dimensionality;
-  
+
   //! Vector of Gaussians
   std::vector<distribution::GaussianDistribution> dists;
-  
+
   //! Legacy member data, not used.
   std::vector<arma::vec> means;
   std::vector<arma::mat> covariances;
-  
+
   //! Vector of a priori weights for each Gaussian.
   arma::vec weights;
 
@@ -214,7 +214,7 @@ class GMM
    * @param SaveRestoreUtility object to save to.
    */
   void Save(util::SaveRestoreUtility& sr) const;
-    
+
   //! Return the number of gaussians in the model.
   size_t Gaussians() const { return gaussians; }
   //! Modify the number of gaussians in the model.  Careful!  You will have to
@@ -231,14 +231,14 @@ class GMM
    * Return a const reference to a component distribution.
    *
    * @param i index of component.
-   */  
+   */
   const distribution::GaussianDistribution& Component(size_t i) const {
       return dists[i]; }
   /**
    * Return a reference to a component distribution.
    *
    * @param i index of component.
-   */  
+   */
   distribution::GaussianDistribution& Component(size_t i) { return dists[i]; }
 
   //! Functions from earlier releases give errors
@@ -382,7 +382,7 @@ class GMM
    * Returns a string representation of this object.
    */
   std::string ToString() const;
-  
+
   /**
    * Returns a string indicating the type.
    */
