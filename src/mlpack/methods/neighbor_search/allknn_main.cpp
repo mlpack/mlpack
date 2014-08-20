@@ -131,8 +131,8 @@ int main(int argc, char *argv[])
     Log::Warn << "--cover_tree overrides --r_tree." << endl;
   } else if (!singleMode && CLI::HasParam("r_tree"))  // R_tree requires single mode.
   {
-    Log::Warn << "--single_mode assumed because --r_tree is present." << endl;
-    singleMode = true;
+//     Log::Warn << "--single_mode assumed because --r_tree is present." << endl;
+//     singleMode = true;
   }
   
   if (naive)
