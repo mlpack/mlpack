@@ -67,6 +67,7 @@ class RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   public:
     RectangleTree<SplitType, DescentType, StatisticType, MatType>* node;
     double score;
+    typename RuleType::TraversalInfoType travInfo;
   };
 
   static bool nodeComparator(const NodeAndScore& obj1,
