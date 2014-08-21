@@ -25,6 +25,7 @@ class LinearRegression
    *
    * @param predictors X, matrix of data points to create B with.
    * @param responses y, the measured data for each point in X
+   * @param lambda regularization constant
    */
   LinearRegression(const arma::mat& predictors,
                    const arma::vec& responses,
@@ -71,7 +72,7 @@ class LinearRegression
    *
    * As this number decreases to 0, the linear regression fit is better.
    *
-   * @param predictors Matrix of predictors (X).
+   * @param points Matrix of predictors (X).
    * @param responses Vector of responses (y).
    */
   double ComputeError(const arma::mat& points,

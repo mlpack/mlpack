@@ -73,6 +73,7 @@
  *  - @ref emst_tutorial
  *  - @ref kmtutorial
  *  - @ref fmkstutorial
+ *  - @ref amftutorial
  *
  * @section methods Methods in MLPACK
  *
