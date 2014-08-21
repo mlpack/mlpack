@@ -569,4 +569,148 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
   
   BOOST_REQUIRE(error <= weakLearnerErrorRate);
 }
+
+/**
+ *  This test case runs the AdaBoost.mh algorithm on the UCI Vertebral 
+ *  Column dataset.
+ *  It tests the Classify function and checks if the error returned by 
+ *  running the boosted weak learner using adaboost is comparable to the 
+ *  error returned by running Classify() on the same function.
+ */
+BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
+{
+  arma::mat inputData;
+
+  if (!data::Load("vc2.txt", inputData))
+    BOOST_FAIL("Cannot load test dataset vc2.txt!");
+
+  arma::Mat<size_t> labels;
+
+  if (!data::Load("vc2_labels.txt",labels))
+    BOOST_FAIL("Cannot load labels for vc2_labels.txt");
+  
+  // no need to map the labels here
+
+  // Define your own weak learner, perceptron in this case.
+  // Run the perceptron for perceptron_iter iterations.
+  int perceptron_iter = 800;
+
+  arma::Row<size_t> perceptronPrediction(labels.n_cols);
+  perceptron::Perceptron<> p(inputData, labels.row(0), perceptron_iter);
+  p.Classify(inputData, perceptronPrediction);
+  
+  // Define parameters for the adaboost
+  int iterations = 50;
+  double tolerance = 1e-10;
+  AdaBoost<> a(inputData, labels.row(0), iterations, tolerance, p);
+  
+  arma::Row<size_t> predictedLabels(inputData.n_cols);
+  a.Classify(inputData, predictedLabels);
+
+  int localError = 0;
+
+  for (size_t i = 0; i < labels.n_cols; i++)
+    if(labels(i) != predictedLabels(i))
+      localError++;
+  double lError = (double) localError / labels.n_cols;
+  
+  BOOST_REQUIRE(lError <= 0.30);
+}
+
+/**
+ *  This test case runs the AdaBoost.mh algorithm on a non linearly 
+ *  separable dataset.
+ *  It tests the Classify function and checks if the error returned by 
+ *  running the boosted weak learner using adaboost is comparable to the 
+ *  error returned by running Classify() on the same function.
+ */
+BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
+{
+  arma::mat inputData;
+
+  if (!data::Load("nonlinsepdata.txt", inputData))
+    BOOST_FAIL("Cannot load test dataset nonlinsepdata.txt!");
+
+  arma::Mat<size_t> labels;
+
+  if (!data::Load("nonlinsepdata_labels.txt",labels))
+    BOOST_FAIL("Cannot load labels for nonlinsepdata_labels.txt");
+  
+  // no need to map the labels here
+
+  // Define your own weak learner, perceptron in this case.
+  // Run the perceptron for perceptron_iter iterations.
+  
+  const size_t numClasses = 2;
+  const size_t inpBucketSize = 3;
+
+  arma::Row<size_t> dsPrediction(labels.n_cols);
+
+  decision_stump::DecisionStump<> ds(inputData, labels.row(0), 
+                                     numClasses, inpBucketSize);
+  
+  // Define parameters for the adaboost
+  int iterations = 50;
+  double tolerance = 1e-10;
+  AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(
+           inputData, labels.row(0), iterations, tolerance, ds);
+
+  arma::Row<size_t> predictedLabels(inputData.n_cols);
+  a.Classify(inputData, predictedLabels);
+
+  int localError = 0;
+  for (size_t i = 0; i < labels.n_cols; i++)
+    if(labels(i) != predictedLabels(i))
+      localError++;
+  double lError = (double) localError / labels.n_cols;
+  
+  BOOST_REQUIRE(lError <= 0.30);
+}
+
+BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
+{
+  arma::mat inputData;
+
+  if (!data::Load("iris_train.csv", inputData))
+    BOOST_FAIL("Cannot load test dataset iris_train.csv!");
+
+  arma::Mat<size_t> labels;
+
+  if (!data::Load("iris_train_labels.csv",labels))
+    BOOST_FAIL("Cannot load labels for iris_train_labels.csv");
+  
+  // no need to map the labels here
+
+  // Define your own weak learner, perceptron in this case.
+  // Run the perceptron for perceptron_iter iterations.
+  int perceptron_iter = 800;
+
+  perceptron::Perceptron<> p(inputData, labels.row(0), perceptron_iter);
+
+  // Define parameters for the adaboost
+  int iterations = 50;
+  double tolerance = 1e-10;
+  AdaBoost<> a(inputData, labels.row(0), iterations, tolerance, p);
+  
+  arma::mat testData;
+  if (!data::Load("iris_test.csv", inputData))
+    BOOST_FAIL("Cannot load test dataset iris_test.csv!");
+
+  arma::Row<size_t> predictedLabels(testData.n_cols);
+
+  a.Classify(testData, predictedLabels);
+
+  arma::Row<size_t> trueTestLabels;
+  if (!data::Load("iris_test_labels.csv", inputData))
+    BOOST_FAIL("Cannot load test dataset iris_test_labels.csv!");
+
+  int localError = 0;
+  for (size_t i = 0; i < trueTestLabels.n_cols; i++)
+    if(trueTestLabels(i) != predictedLabels(i))
+      localError++;
+  double lError = (double) localError / labels.n_cols;
+
+  BOOST_REQUIRE(lError <= 0.30);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

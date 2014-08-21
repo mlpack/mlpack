@@ -222,13 +222,13 @@ void AdaBoost<MatType, WeakLearner>::Classify(
     for (int j = 0; j < tempPredictedLabels.n_cols; j++)
       cMatrix(tempPredictedLabels(j), j) += (alpha[i] * tempPredictedLabels(j));
   }
-
-  arma::rowvec cMRow;
+  // std::cout<<"Not working here ?\n";
+  arma::colvec cMRow;
   arma::uword max_index;
 
   for (int i = 0; i < predictedLabels.n_cols; i++)
   {
-    cMRow = cMatrix.row(i);
+    cMRow = cMatrix.col(i);
     cMRow.max(max_index);
     predictedLabels(i) = max_index;
   }
