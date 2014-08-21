@@ -23,7 +23,11 @@ template <class TerminationPolicy>
 class IncompleteIncrementalTermination
 {
  public:
-  //! empty constructor
+  /**
+   * Empty constructor
+   *
+   * @param t_policy object of wrapped class.
+   */
   IncompleteIncrementalTermination(TerminationPolicy t_policy = TerminationPolicy())
             : t_policy(t_policy) {}
 
