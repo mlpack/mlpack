@@ -2,12 +2,7 @@
  * @file nmf_mult_dist.hpp
  * @author Mohan Rajendran
  *
- * Update rules for the Non-negative Matrix Factorization. This follows a method
- * described in the paper 'Algorithms for Non-negative Matrix Factorization'
- * by D. D. Lee and H. S. Seung. This is a multiplicative rule that ensures
- * that the Frobenius norm \f$ \sqrt{\sum_i \sum_j(V-WH)^2} \f$ is
- * non-increasing between subsequent iterations. Both of the update rules
- * for W and H are defined in this file.
+ * Update rules for the Non-negative Matrix Factorization.
  */
 #ifndef __MLPACK_METHODS_LMF_UPDATE_RULES_NMF_MULT_DIST_UPDATE_RULES_HPP
 #define __MLPACK_METHODS_LMF_UPDATE_RULES_NMF_MULT_DIST_UPDATE_RULES_HPP
@@ -18,12 +13,17 @@ namespace mlpack {
 namespace amf {
 
 /**
- * The multiplicative distance update rules for matrices W and H.
+ * The multiplicative distance update rules for matrices W and H. This follows 
+ * a method described in the paper 'Algorithms for Non-negative Matrix Factorization'
+ * by D. D. Lee and H. S. Seung. This is a multiplicative rule that ensures
+ * that the Frobenius norm \f$ \sqrt{\sum_i \sum_j(V-WH)^2} \f$ is
+ * non-increasing between subsequent iterations. Both of the update rules
+ * for W and H are defined in this file.
  */
 class NMFMultiplicativeDistanceUpdate
 {
  public:
-  // Empty constructor required for the UpdateRule template.
+  // Empty constructor required for the UpdateRule template. 
   NMFMultiplicativeDistanceUpdate() { }
 
   template<typename MatType>

@@ -2,13 +2,7 @@
  * @file nmf_als.hpp
  * @author Mohan Rajendran
  *
- * Update rules for the Non-negative Matrix Factorization. This follows a method
- * titled 'Alternating Least Squares' described in the paper 'Positive Matrix
- * Factorization: A Non-negative Factor Model with Optimal Utilization of
- * Error Estimates of Data Values' by P. Paatero and U. Tapper. It uses least
- * squares projection formula to reduce the error value of
- * \f$ \sqrt{\sum_i \sum_j(V-WH)^2} \f$ by alternately calculating W and H
- * respectively while holding the other matrix constant.
+ * Update rules for the Non-negative Matrix Factorization. 
  */
 #ifndef __MLPACK_METHODS_LMF_UPDATE_RULES_NMF_ALS_HPP
 #define __MLPACK_METHODS_LMF_UPDATE_RULES_NMF_ALS_HPP
@@ -19,12 +13,17 @@ namespace mlpack {
 namespace amf {
 
 /**
- * The alternating least square update rules of matrices W and H.
+ * This class implements a method titled 'Alternating Least Squares' described 
+ * in the paper 'Positive Matrix Factorization: A Non-negative Factor Model with 
+ * Optimal Utilization of Error Estimates of Data Values' by P Paatero and 
+ * U Tapper. It uses least squares projection formula to reduce the error 
+ * value of \f$ \sqrt{\sum_i \sum_j(V-WH)^2} \f$ by alternately calculating W 
+ * and H respectively while holding the other matrix constant.
  */
 class NMFALSUpdate
 {
  public:
-  // Empty constructor required for the UpdateRule template.
+  //! Empty constructor required for the UpdateRule template.
   NMFALSUpdate() { }
 
   template<typename MatType>
@@ -93,7 +92,7 @@ class NMFALSUpdate
       }
     }
   }
-};
+}; // class NMFALSUpdate
 
 }; // namespace amf
 }; // namespace mlpack
