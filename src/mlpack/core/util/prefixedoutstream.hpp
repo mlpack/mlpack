@@ -56,6 +56,8 @@ class PrefixedOutStream
    *
    * @param destination ostream which receives output from this object.
    * @param prefix The prefix to prepend to each line.
+   * @param ignoreInput if true the stream will not be printed
+   * @param fatal is true program will exit after printing a line
    */
   PrefixedOutStream(std::ostream& destination,
                     const char* prefix,
