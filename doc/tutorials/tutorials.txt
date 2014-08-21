@@ -31,5 +31,5 @@ examples and progress to complex, extensible uses.
  - \ref kmtutorial
  - \ref fmkstutorial
  - \ref emst_tutorial
-
+ - \ref amftutorial
 */
