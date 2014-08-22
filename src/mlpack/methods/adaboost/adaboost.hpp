@@ -59,6 +59,12 @@ class AdaBoost
   // The tolerance for change in rt and when to stop.
   double tolerance;
 
+  /**
+   * Classification Function. 
+   * @param test Testing data.
+   * @param predictedLabels Vector to store the predicted labels of the 
+   *                         test set.
+   */
   void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
 
 private:
