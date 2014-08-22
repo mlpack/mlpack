@@ -30,11 +30,6 @@
 #  License text for the above reference.)
 
 
-# UNIX paths are standard, no need to write.
-find_library(ARMADILLO_LIBRARY
-  NAMES armadillo
-  PATHS "$ENV{ProgramFiles}/Armadillo/lib"  "$ENV{ProgramFiles}/Armadillo/lib64" "$ENV{ProgramFiles}/Armadillo"
-  )
 find_path(ARMADILLO_INCLUDE_DIR
   NAMES armadillo
   PATHS "$ENV{ProgramFiles}/Armadillo/include"
@@ -74,34 +69,201 @@ endif (ARMADILLO_INCLUDE_DIR)
 
 #======================
 
-# Determine whether or not we need to link against HDF5.  We need to look in
-# config.hpp.
+# Determine what support libraries are being used, and whether or not we need to
+# link against them.  We need to look in config.hpp.
+set(SUPPORT_INCLUDE_DIRS "")
+set(SUPPORT_LIBRARIES "")
+set(ARMA_NEED_LIBRARY true) # Assume true.
 if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
-  # Look for #define ARMA_USE_HDF5.
   file(READ "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp" _armadillo_CONFIG_CONTENTS)
-  string(REGEX MATCH "[\r\n][\t ]*#define[ \t]+ARMA_USE_HDF5[ \t\r\n]" ARMA_USE_HDF5 "${_armadillo_CONFIG_CONTENTS}")
+  # ARMA_USE_WRAPPER
+  string(REGEX MATCH "\r?\n[\t ]*#define[ \t]+ARMA_USE_WRAPPER[ \t]*\r?\n" ARMA_USE_WRAPPER "${_armadillo_CONFIG_CONTENTS}")
 
-  if(NOT "${ARMA_USE_HDF5}" STREQUAL "")
-    message(STATUS "Armadillo HDF5 support is enabled.")
-    # We have HDF5 support and need to link against HDF5.
-    find_package(HDF5 REQUIRED)
-  endif(NOT "${ARMA_USE_HDF5}" STREQUAL "")
+  # ARMA_USE_LAPACK
+  string(REGEX MATCH "\r?\n[\t ]*#define[ \t]+ARMA_USE_LAPACK[ \t]*\r?\n" ARMA_USE_LAPACK "${_armadillo_CONFIG_CONTENTS}")
+
+  # ARMA_USE_BLAS
+  string(REGEX MATCH "\r?\n[\t ]*#define[ \t]+ARMA_USE_BLAS[ \t]*\r?\n" ARMA_USE_BLAS "${_armadillo_CONFIG_CONTENTS}")
+    # ARMA_USE_ARPACK
+  # ARMA_USE_ARPACK
+  string(REGEX MATCH "\r?\n[\t ]*#define[ \t]+ARMA_USE_ARPACK[ \t]*\r?\n" ARMA_USE_ARPACK "${_armadillo_CONFIG_CONTENTS}")
+
+  # Look for #define ARMA_USE_HDF5.
+  string(REGEX MATCH "\r?\n[\t ]*#define[ \t]+ARMA_USE_HDF5[ \t]*\r?\n" ARMA_USE_HDF5 "${_armadillo_CONFIG_CONTENTS}")
+
+  # If we aren't wrapping, things get a little more complex.
+  if("${ARMA_USE_WRAPPER}" STREQUAL "")
+    set(ARMA_NEED_LIBRARY false)
+    message(STATUS "ARMA_USE_WRAPPER is not defined, so all dependencies of "
+                   "Armadillo must be manually linked.")
+
+    set(HAVE_LAPACK false)
+    set(HAVE_BLAS   false)
+
+    # Search for LAPACK/BLAS (or replacement).
+    if ((NOT "${ARMA_USE_LAPACK}" STREQUAL "") AND
+        (NOT "${ARMA_USE_BLAS}" STREQUAL ""))
+      # In order of preference: MKL, ACML, OpenBLAS, ATLAS
+      include(ARMA_FindMKL)
+      include(ARMA_FindACMLMP)
+      include(ARMA_FindACML)
+
+      if (MKL_FOUND)
+        message(STATUS "Using MKL for LAPACK/BLAS: ${MKL_LIBRARIES}")
+
+        set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${MKL_LIBRARIES}")
+        set(HAVE_LAPACK true)
+        set(HAVE_BLAS   true)
+      elseif (ACMLMP_FOUND)
+        message(STATUS "Using multi-core ACML libraries for LAPACK/BLAS:
+            ${ACMLMP_LIBRARIES}")
+
+        set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${ACMLMP_LIBRARIES}")
+        set(HAVE_LAPACK true)
+        set(HAVE_BLAS   true)
+      elseif (ACML_FOUND)
+        message(STATUS "Using ACML for LAPACK/BLAS: ${ACML_LIBRARIES}")
+
+        set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${ACML_LIBRARIES}")
+        set(HAVE_LAPACK true)
+        set(HAVE_BLAS   true)
+      endif ()
+    endif ((NOT "${ARMA_USE_LAPACK}" STREQUAL "") AND
+           (NOT "${ARMA_USE_BLAS}" STREQUAL ""))
+
+    # If we haven't found BLAS, try.
+    if (NOT "${ARMA_USE_BLAS}" STREQUAL "" AND NOT HAVE_BLAS)
+      # Search for BLAS.
+      include(ARMA_FindOpenBLAS)
+      include(ARMA_FindCBLAS)
+      include(ARMA_FindBLAS)
+
+      if (OpenBLAS_FOUND)
+        # Warn if ATLAS is found also.
+        if (CBLAS_FOUND)
+          message(STATUS "Warning: both OpenBLAS and ATLAS have been found; "
+              "ATLAS will not be used.")
+        endif (CBLAS_FOUND)
+        message(STATUS "Using OpenBLAS for BLAS: ${OpenBLAS_LIBRARIES}")
+
+        set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${OpenBLAS_LIBRARIES}")
+        set(HAVE_BLAS true)
+      elseif (CBLAS_FOUND)
+        message(STATUS "Using ATLAS for BLAS: ${CBLAS_LIBRARIES}")
+
+        set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${CBLAS_LIBRARIES}")
+        set(SUPPORT_INCLUDE_DIRS "${SUPPORT_INCLUDE_DIRS}"
+            "${CBLAS_INCLUDE_DIR}")
+        set(HAVE_BLAS true)
+      elseif (BLAS_FOUND)
+        message(STATUS "Using standard BLAS: ${BLAS_LIBRARIES}")
+
+        set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${BLAS_LIBRARIES}")
+        set(HAVE_BLAS true)
+      endif ()
+    endif (NOT "${ARMA_USE_BLAS}" STREQUAL "" AND NOT HAVE_BLAS)
+
+    # If we haven't found LAPACK, try.
+    if (NOT "${ARMA_USE_LAPACK}" STREQUAL "" AND NOT HAVE_LAPACK)
+      # Search for LAPACK.
+      include(ARMA_FindCLAPACK)
+      include(ARMA_FindLAPACK)
+
+      # Only use ATLAS if OpenBLAS isn't being used.
+      if (CLAPACK_FOUND AND NOT OpenBLAS_FOUND)
+        message(STATUS "Using ATLAS for LAPACK: ${CLAPACK_LIBRARIES}")
+
+        set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${CLAPACK_LIBRARIES}")
+        set(SUPPORT_INCLUDE_DIRS "${SUPPORT_INCLUDE_DIRS}"
+            "${CLAPACK_INCLUDE_DIR}")
+        set(HAVE_LAPACK true)
+      elseif (LAPACK_FOUND)
+        message(STATUS "Using standard LAPACK: ${LAPACK_LIBRARIES}")
+
+        set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${LAPACK_LIBRARIES}")
+        set(HAVE_LAPACK true)
+      endif ()
+    endif (NOT "${ARMA_USE_LAPACK}" STREQUAL "" AND NOT HAVE_LAPACK)
+
+    if (NOT "${ARMA_USE_LAPACK}" STREQUAL "" AND NOT LAPACK_FOUND)
+      message(FATAL "Cannot find LAPACK library, but ARMA_USE_LAPACK is set. "
+                    "Try specifying LAPACK libraries manually by setting the "
+                    "LAPACK_LIBRARY variable.")
+    endif (NOT "${ARMA_USE_LAPACK}" STREQUAL "" AND NOT LAPACK_FOUND)
+
+    if (NOT "${ARMA_USE_BLAS}" STREQUAL "" AND NOT BLAS_FOUND)
+      message(FATAL "Cannot find BLAS library, but ARMA_USE_BLAS is set.  Try "
+                    "specifying BLAS libraries manually by setting the "
+                    "BLAS_LIBRARY variable.")
+    endif (NOT "${ARMA_USE_BLAS}" STREQUAL "" AND NOT BLAS_FOUND)
+
+    # Search for ARPACK (or replacement).
+    if (NOT "${ARMA_USE_ARPACK}" STREQUAL "")
+      # Use Armadillo ARPACK-finding procedure.
+      include(ARMA_FindARPACK)
+
+      if (NOT ARPACK_FOUND)
+        message(ERROR "ARMA_USE_ARPACK is defined in armadillo_bits/config.hpp,"
+                      " but ARPACK cannot be found.  Try specifying "
+                      "ARPACK_LIBRARY.")
+      endif (NOT ARPACK_FOUND)
+
+      set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${ARPACK_LIBRARY}")
+    endif (NOT "${ARMA_USE_ARPACK}" STREQUAL "")
+
+    # Search for HDF5 (or replacement).
+    if (NOT "${ARMA_USE_HDF5}" STREQUAL "")
+      find_package(HDF5 REQUIRED)
+
+      set(SUPPORT_INCLUDE_DIRS "${SUPPORT_INCLUDE_DIRS}" "${HDF5_INCLUDE_DIRS}")
+      set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${HDF5_LIBRARIES}")
+    endif (NOT "${ARMA_USE_HDF5}" STREQUAL "")
+
+  else("${ARMA_USE_WRAPPER}" STREQUAL "")
+    # Some older versions still require linking against HDF5 since they did not
+    # wrap libhdf5.  This was true until 4.300 (check this!).
+
+    if(NOT "${ARMA_USE_HDF5}" STREQUAL "")
+      message(STATUS "Armadillo HDF5 support is enabled and manual linking is "
+                     "required.")
+      # We have HDF5 support and need to link against HDF5.
+      find_package(HDF5 REQUIRED)
+
+      set(SUPPORT_INCLUDE_DIRS "${HDF5_INCLUDE_DIRS}")
+      set(SUPPORT_LIBRARIES "${HDF5_LIBRARIES}")
+    endif(NOT "${ARMA_USE_HDF5}" STREQUAL "")
+
+  endif("${ARMA_USE_WRAPPER}" STREQUAL "")
+
 endif(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
 
-#======================
+if (ARMA_NEED_LIBRARY)
+  # UNIX paths are standard, no need to write.
+  find_library(ARMADILLO_LIBRARY
+    NAMES armadillo
+    PATHS "$ENV{ProgramFiles}/Armadillo/lib"  "$ENV{ProgramFiles}/Armadillo/lib64" "$ENV{ProgramFiles}/Armadillo"
+    )
 
-
-# Checks 'REQUIRED', 'QUIET' and versions.
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Armadillo
-  REQUIRED_VARS ARMADILLO_LIBRARY ARMADILLO_INCLUDE_DIR
-  VERSION_VAR ARMADILLO_VERSION_STRING)
-# version_var fails with cmake < 2.8.4.
+  # Checks 'REQUIRED', 'QUIET' and versions.
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(Armadillo
+    REQUIRED_VARS ARMADILLO_LIBRARY ARMADILLO_INCLUDE_DIR
+    VERSION_VAR ARMADILLO_VERSION_STRING)
+  # version_var fails with cmake < 2.8.4.
+else (ARMA_NEED_LIBRARY)
+  # Checks 'REQUIRED', 'QUIET' and versions.
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(Armadillo
+    REQUIRED_VARS ARMADILLO_INCLUDE_DIR
+    VERSION_VAR ARMADILLO_VERSION_STRING)
+endif (ARMA_NEED_LIBRARY)
 
 if (ARMADILLO_FOUND)
-  set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR})
-  # HDF5 libraries are stored in HDF5_LIBRARIES, if they were necessary.
-  set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARY} ${HDF5_LIBRARIES})
+  # Also include support include directories.
+  set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR} ${SUPPORT_INCLUDE_DIRS})
+  # Also include support libraries to link against.
+  set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARY} ${SUPPORT_LIBRARIES})
+  message(STATUS "Armadillo libraries: ${ARMADILLO_LIBRARIES}")
 endif (ARMADILLO_FOUND)
 
 
