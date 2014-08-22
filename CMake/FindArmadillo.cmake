@@ -104,8 +104,11 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
     if ((NOT "${ARMA_USE_LAPACK}" STREQUAL "") AND
         (NOT "${ARMA_USE_BLAS}" STREQUAL ""))
       # In order of preference: MKL, ACML, OpenBLAS, ATLAS
+      set(MKL_FIND_QUIETLY true)
       include(ARMA_FindMKL)
+      set(ACMLMP_FIND_QUIETLY true)
       include(ARMA_FindACMLMP)
+      set(ACML_FIND_QUIETLY true)
       include(ARMA_FindACML)
 
       if (MKL_FOUND)
@@ -134,8 +137,11 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
     # If we haven't found BLAS, try.
     if (NOT "${ARMA_USE_BLAS}" STREQUAL "" AND NOT HAVE_BLAS)
       # Search for BLAS.
+      set(OpenBLAS_FIND_QUIETLY true)
       include(ARMA_FindOpenBLAS)
+      set(CBLAS_FIND_QUIETLY true)
       include(ARMA_FindCBLAS)
+      set(BLAS_FIND_QUIETLY true)
       include(ARMA_FindBLAS)
 
       if (OpenBLAS_FOUND)
@@ -166,7 +172,9 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
     # If we haven't found LAPACK, try.
     if (NOT "${ARMA_USE_LAPACK}" STREQUAL "" AND NOT HAVE_LAPACK)
       # Search for LAPACK.
+      set(CLAPACK_FIND_QUIETLY true)
       include(ARMA_FindCLAPACK)
+      set(LAPACK_FIND_QUIETLY true)
       include(ARMA_FindLAPACK)
 
       # Only use ATLAS if OpenBLAS isn't being used.
