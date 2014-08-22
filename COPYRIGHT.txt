@@ -31,6 +31,7 @@ Copyright: Copyright 2014, Abhishek Laddha <laddhaabhishek11@gmail.com>
 Copyright: Copyright 2014, Vahab Akbarzadeh <v.akbarzadeh@gmail.com>
 Copyright: Copyright 2014, Andrew Wells <andrewmw94@gmail.com>
 Copyright: Copyright 2014, Zhihao Lou <lzh1984@gmail.com>
+Copyright: Copyright 2014, Udit Saxena <saxenda.udit@gmail.com>
 License: LGPL-3+
   The text of the license is available on Debian systems in the
   /usr/share/common-licenses/LGPL-3 file.
