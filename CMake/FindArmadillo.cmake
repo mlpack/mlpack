@@ -194,26 +194,27 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
     endif (NOT "${ARMA_USE_LAPACK}" STREQUAL "" AND NOT HAVE_LAPACK)
 
     if (NOT "${ARMA_USE_LAPACK}" STREQUAL "" AND NOT LAPACK_FOUND)
-      message(FATAL "Cannot find LAPACK library, but ARMA_USE_LAPACK is set. "
-                    "Try specifying LAPACK libraries manually by setting the "
-                    "LAPACK_LIBRARY variable.")
+      message(FATAL_ERROR "Cannot find LAPACK library, but ARMA_USE_LAPACK is "
+          "set. Try specifying LAPACK libraries manually by setting the "
+          "LAPACK_LIBRARY variable.")
     endif (NOT "${ARMA_USE_LAPACK}" STREQUAL "" AND NOT LAPACK_FOUND)
 
     if (NOT "${ARMA_USE_BLAS}" STREQUAL "" AND NOT BLAS_FOUND)
-      message(FATAL "Cannot find BLAS library, but ARMA_USE_BLAS is set.  Try "
-                    "specifying BLAS libraries manually by setting the "
-                    "BLAS_LIBRARY variable.")
+      message(FATAL_ERROR "Cannot find BLAS library, but ARMA_USE_BLAS is set. "
+          "Try specifying BLAS libraries manually by setting the BLAS_LIBRARY "
+          "variable.")
     endif (NOT "${ARMA_USE_BLAS}" STREQUAL "" AND NOT BLAS_FOUND)
 
     # Search for ARPACK (or replacement).
     if (NOT "${ARMA_USE_ARPACK}" STREQUAL "")
       # Use Armadillo ARPACK-finding procedure.
+      set(ARPACK_FIND_QUIETLY true)
       include(ARMA_FindARPACK)
 
       if (NOT ARPACK_FOUND)
-        message(ERROR "ARMA_USE_ARPACK is defined in armadillo_bits/config.hpp,"
-                      " but ARPACK cannot be found.  Try specifying "
-                      "ARPACK_LIBRARY.")
+        message(FATAL_ERROR "ARMA_USE_ARPACK is defined in "
+            "armadillo_bits/config.hpp, but ARPACK cannot be found.  Try "
+            "specifying ARPACK_LIBRARY.")
       endif (NOT ARPACK_FOUND)
 
       set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${ARPACK_LIBRARY}")
