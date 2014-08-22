@@ -47,8 +47,7 @@ AdaBoost<MatType, WeakLearner>::AdaBoost(
   tolerance = tol;
 
   double rt, crt, alphat = 0.0, zt;
-  // double tolerance = 1e-8;
-  // std::cout<<"Tolerance is "<<tolerance<<"\n";
+  
   // crt is for stopping the iterations when rt
   // stops changing by less than a tolerant value.
 
@@ -56,7 +55,6 @@ AdaBoost<MatType, WeakLearner>::AdaBoost(
   // stops changing by less than a tolerant value.
 
   ztProduct = 1.0;
-  // ztAccumulator is
 
   // To be used for prediction by the Weak Learner for prediction.
   arma::Row<size_t> predictedLabels(labels.n_cols);
@@ -83,7 +81,6 @@ AdaBoost<MatType, WeakLearner>::AdaBoost(
   // now start the boosting rounds
   for (int i = 0; i < iterations; i++)
   {
-    // std::cout<<"Run "<<i<<" times.\n";
     // Initialized to zero in every round.
     // rt is used for calculation of alphat, is the weighted error
     // rt = (sum)D(i)y(i)ht(xi)
@@ -95,12 +92,11 @@ AdaBoost<MatType, WeakLearner>::AdaBoost(
     // Build the weight vectors
     BuildWeightMatrix(D, weights);
 
-    // std::cout<<"Just about to call the weak leaerner. \n";
     // call the other weak learner and train the labels.
     WeakLearner w(other, tempData, weights, labels);
     w.Classify(tempData, predictedLabels);
 
-    //Now from predictedLabels, build ht, the weak hypothesis
+    // Now from predictedLabels, build ht, the weak hypothesis
     // buildClassificationMatrix(ht, predictedLabels);
 
     // Now, start calculation of alpha(t) using ht
@@ -122,8 +118,6 @@ AdaBoost<MatType, WeakLearner>::AdaBoost(
       }
     }
     // end calculation of rt
-    // std::cout<<"Value of rt is: "<<rt<<"\n";
-
 
     if (i > 0)
     {
@@ -187,7 +181,6 @@ AdaBoost<MatType, WeakLearner>::AdaBoost(
   // Iterations are over, now build a strong hypothesis
   // from a weighted combination of these weak hypotheses.
 
-  // std::cout<<"Just about to look at the final hypo.\n";
   arma::colvec tempSumFinalH;
   arma::uword max_index;
   arma::mat sfh = sumFinalH.t();
@@ -202,7 +195,10 @@ AdaBoost<MatType, WeakLearner>::AdaBoost(
 }
 
 /**
- *
+ * Classification Function. 
+ * @param test Testing data.
+ * @param predictedLabels Vector to store the predicted labels of the 
+ *                         test set.
  */
 template <typename MatType, typename WeakLearner>
 void AdaBoost<MatType, WeakLearner>::Classify(
@@ -222,7 +218,7 @@ void AdaBoost<MatType, WeakLearner>::Classify(
     for (int j = 0; j < tempPredictedLabels.n_cols; j++)
       cMatrix(tempPredictedLabels(j), j) += (alpha[i] * tempPredictedLabels(j));
   }
-  // std::cout<<"Not working here ?\n";
+  
   arma::colvec cMRow;
   arma::uword max_index;
 
@@ -258,15 +254,6 @@ void AdaBoost<MatType, WeakLearner>::BuildWeightMatrix(
   }
 }
 
-/*/**
- * Return the value of ztProduct
- */
- /*
-template <typename MatType, typename WeakLearner>
-double GetztProduct()
-{
-  return ztProduct;
-}*/
 } // namespace adaboost
 } // namespace mlpack
 

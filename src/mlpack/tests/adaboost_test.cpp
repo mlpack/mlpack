@@ -573,9 +573,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
 /**
  *  This test case runs the AdaBoost.mh algorithm on the UCI Vertebral 
  *  Column dataset.
- *  It tests the Classify function and checks if the error returned by 
- *  running the boosted weak learner using adaboost is comparable to the 
- *  error returned by running Classify() on the same function.
+ *  It tests the Classify function and checks for a satisfiable error rate.
  */
 BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
 {
@@ -620,9 +618,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
 /**
  *  This test case runs the AdaBoost.mh algorithm on a non linearly 
  *  separable dataset.
- *  It tests the Classify function and checks if the error returned by 
- *  running the boosted weak learner using adaboost is comparable to the 
- *  error returned by running Classify() on the same function.
+ *  It tests the Classify function and checks for a satisfiable error rate.
  */
 BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
 {
@@ -667,6 +663,12 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
   BOOST_REQUIRE(lError <= 0.30);
 }
 
+/**
+ *  This test case runs the AdaBoost.mh algorithm on the UCI Iris Dataset.
+ *  It trains it on two thirds of the Iris dataset (iris_train.csv), 
+ *  and tests on the remaining third of the dataset (iris_test.csv). 
+ *  It tests the Classify function and checks for a satisfiable error rate.
+ */
 BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
 {
   arma::mat inputData;

@@ -64,7 +64,6 @@ PARAM_STRING("output", "The file in which the predicted labels for the test set"
     " will be written.", "o", "output.csv");
 PARAM_INT("iterations","The maximum number of boosting iterations "
   "to be run", "i", 1000);
-// PARAM_INT("classes","The number of classes in the input label set.","c");
 PARAM_DOUBLE("tolerance","The tolerance for change in values of rt","e",1e-10);
 
 int main(int argc, char *argv[])
