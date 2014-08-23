@@ -2,7 +2,7 @@
  * @file sparse_autoencoder_function.hpp
  * @author Siddharth Agrawal
  *
- * The function to be optimized for sparse autoencoders.  Any mlpack optimizer
+ * The function to be optimized for sparse autoencoders. Any mlpack optimizer
  * can be used.
  */
 #ifndef __MLPACK_METHODS_SPARSE_AUTOENCODER_SPARSE_AUTOENCODER_FUNCTION_HPP
