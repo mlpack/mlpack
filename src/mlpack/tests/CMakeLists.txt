@@ -45,6 +45,7 @@ add_executable(mlpack_test
   sa_test.cpp
   save_restore_utility_test.cpp
   sgd_test.cpp
+  softmax_regression_test.cpp
   sort_policy_test.cpp
   sparse_autoencoder_test.cpp
   sparse_coding_test.cpp
