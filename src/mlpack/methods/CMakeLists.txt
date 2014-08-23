@@ -29,6 +29,7 @@ set(DIRS
   range_search
   rann
   regularized_svd
+  softmax_regression
   sparse_autoencoder
   sparse_coding
   nystroem_method
