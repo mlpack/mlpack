@@ -108,7 +108,7 @@ class LinearRegression
    * regression).
    */
   double lambda;
-  //! Indicates whether last parameter is intercept.
+  //! Indicates whether first parameter is intercept.
   bool intercept;
 };
 
