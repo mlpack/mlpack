@@ -364,10 +364,11 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
   for (size_t i = 0; i < queryNode.NumChildren(); ++i)
   {
     const double firstBound = queryNode.Child(i).Stat().FirstBound();
+    const double adjustment = std::max(0.0,
+        queryNode.FurthestDescendantDistance() -
+        queryNode.Child(i).FurthestDescendantDistance());
     const double adjustedSecondBound = SortPolicy::CombineWorst(
-        queryNode.Child(i).Stat().SecondBound(),
-        2 * (queryNode.FurthestDescendantDistance() -
-             queryNode.Child(i).FurthestDescendantDistance()));
+        queryNode.Child(i).Stat().SecondBound(), 2 * adjustment);
 
     if (SortPolicy::IsBetter(worstDistance, firstBound))
       worstDistance = firstBound;
