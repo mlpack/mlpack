@@ -355,17 +355,20 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
 
   // Add triangle inequality adjustment to best distance.  It is possible this
   // could be tighter for some certain types of trees.
-  bestDistance += queryNode.FurthestPointDistance() +
-      queryNode.FurthestDescendantDistance();
+  bestDistance = SortPolicy::CombineWorst(bestDistance,
+      queryNode.FurthestPointDistance() +
+      queryNode.FurthestDescendantDistance());
 
   // Loop over children of the node, and use their cached information to
   // assemble bounds.
   for (size_t i = 0; i < queryNode.NumChildren(); ++i)
   {
     const double firstBound = queryNode.Child(i).Stat().FirstBound();
-    const double adjustedSecondBound = queryNode.Child(i).Stat().SecondBound() +
-        2 * (queryNode.FurthestDescendantDistance() -
-             queryNode.Child(i).FurthestDescendantDistance());
+    const double adjustment = std::max(0.0,
+        queryNode.FurthestDescendantDistance() -
+        queryNode.Child(i).FurthestDescendantDistance());
+    const double adjustedSecondBound = SortPolicy::CombineWorst(
+        queryNode.Child(i).Stat().SecondBound(), 2 * adjustment);
 
     if (SortPolicy::IsBetter(worstDistance, firstBound))
       worstDistance = firstBound;
