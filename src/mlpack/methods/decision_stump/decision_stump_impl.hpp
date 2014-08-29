@@ -428,14 +428,17 @@ double DecisionStump<MatType>::CalculateEntropy(arma::subview_row<LabelType> lab
   for (j = 0; j < labels.n_elem; j++)
     numElem(labels(j))++;
 
+  // The equation for entropy uses log2(), but log2() is from C99 and thus
+  // Visual Studio will not have it.  Therefore, we will use std::log(), and
+  // then apply the change-of-base formula at the end of the calculation.
   for (j = 0; j < numClass; j++)
   {
     const double p1 = ((double) numElem(j) / labels.n_elem);
 
-    entropy += (p1 == 0) ? 0 : p1 * log2(p1);
+    entropy += (p1 == 0) ? 0 : p1 * std::log(p1);
   }
 
-  return entropy;
+  return entropy / std::log(2.0);
 }
 
 }; // namespace decision_stump
