@@ -50,13 +50,13 @@ DecisionStump<MatType>::DecisionStump(const MatType& data,
   bucketSize = inpBucketSize;
 
   // If classLabels are not all identical, proceed with training.
-  int bestAtt = 0;
+  size_t bestAtt = 0;
   double entropy;
   const double rootEntropy = CalculateEntropy<size_t>(
       labels.subvec(0, labels.n_elem - 1));
 
   double gain, bestGain = 0.0;
-  for (int i = 0; i < data.n_rows; i++)
+  for (size_t i = 0; i < data.n_rows; i++)
   {
     // Go through each attribute of the data.
     if (IsDistinct<double>(data.row(i)))
@@ -98,12 +98,12 @@ template<typename MatType>
 void DecisionStump<MatType>::Classify(const MatType& test,
                                       arma::Row<size_t>& predictedLabels)
 {
-  for (int i = 0; i < test.n_cols; i++)
+  for (size_t i = 0; i < test.n_cols; i++)
   {
     // Determine which bin the test point falls into.
     // Assume first that it falls into the first bin, then proceed through the
     // bins until it is known which bin it falls into.
-    int bin = 0;
+    size_t bin = 0;
     const double val = test(splitAttribute, i);
 
     while (bin < split.n_elem - 1)
@@ -162,7 +162,7 @@ double DecisionStump<MatType>::SetupSplitAttribute(
     const arma::rowvec& attribute,
     const arma::Row<size_t>& labels)
 {
-  int i, count, begin, end;
+  size_t i, count, begin, end;
   double entropy = 0.0;
 
   // Sort the attribute in order to calculate splitting ranges.
@@ -334,7 +334,7 @@ void DecisionStump<MatType>::TrainOnAtt(const arma::rowvec& attribute,
 template <typename MatType>
 void DecisionStump<MatType>::MergeRanges()
 {
-  for (int i = 1; i < split.n_rows; i++)
+  for (size_t i = 1; i < split.n_rows; i++)
   {
     if (binLabels(i) == binLabels(i - 1))
     {
@@ -353,14 +353,14 @@ rType DecisionStump<MatType>::CountMostFreq(const arma::Row<rType>& subCols)
 {
   // Sort subCols for easier processing.
   arma::Row<rType> sortCounts = arma::sort(subCols);
-  rType element;
-  int count = 0, localCount = 0;
+  rType element = sortCounts[0];
+  size_t count = 0, localCount = 0;
 
   if (sortCounts.n_elem == 1)
     return sortCounts[0];
 
-  // An O(n) loop which counts the most frequent element in sortCounts
-  for (int i = 0; i < sortCounts.n_elem; ++i)
+  // An O(n) loop which counts the most frequent element in sortCounts.
+  for (size_t i = 0; i < sortCounts.n_elem; ++i)
   {
     if (i == sortCounts.n_elem - 1)
     {
