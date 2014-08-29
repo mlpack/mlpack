@@ -1,0 +1,8 @@
+The ARMA_*.cmake files in this directory are from the Armadillo project, and are
+generally written by Conrad Sanderson and other Armadillo contributors.  The
+Armadillo project, which is used heavily in mlpack, can be found at
+
+  http://arma.sourceforge.net/
+
+Those files are subject to the terms of the Mozilla Public License, v. 2.0.  A
+copy of the license may be obtained at http://mozilla.org/MPL/2.0/.
