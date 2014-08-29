@@ -178,7 +178,7 @@ double DecisionStump<MatType>::SetupSplitAttribute(
   for (i = 0; i < attribute.n_elem; i++)
   {
     sortedLabels(i) = labels(sortedIndexAtt(i));
-    
+
     if(isWeight)
       tempD(i) = weightD(sortedIndexAtt(i));
   }
@@ -435,7 +435,7 @@ double DecisionStump<MatType>::CalculateEntropy(
   double accWeight = 0.0;
   // Populate numElem; they are used as helpers to calculate entropy.
 
-  if(isWeight)
+  if (isWeight)
   {
     for (j = 0; j < labels.n_elem; j++)
     {
@@ -448,7 +448,10 @@ double DecisionStump<MatType>::CalculateEntropy(
     {
       const double p1 = ((double) numElem(j) / accWeight);
 
-      entropy += (p1 == 0) ? 0 : p1 * log2(p1);
+      // Instead of using log2(), which is C99 and may not exist on some
+      // compilers, use std::log(), then use the change-of-base formula to make
+      // the result correct.
+      entropy += (p1 == 0) ? 0 : p1 * std::log(p1);
     }
   }
   else
@@ -460,10 +463,14 @@ double DecisionStump<MatType>::CalculateEntropy(
     {
       const double p1 = ((double) numElem(j) / labels.n_elem);
 
-      entropy += (p1 == 0) ? 0 : p1 * log2(p1);
+      // Instead of using log2(), which is C99 and may not exist on some
+      // compilers, use std::log(), then use the change-of-base formula to make
+      // the result correct.
+      entropy += (p1 == 0) ? 0 : p1 * std::log(p1);
     }
   }
-  return entropy;
+
+  return entropy / std::log(2.0);
 }
 
 }; // namespace decision_stump
