@@ -59,7 +59,7 @@ class DecisionStump
    * weight vector.
    *
    * @param other The other initiated Decision Stump object from
-   *      which we copy the values from.
+   *      which we copy the values.
    * @param data The data on which to train this object on.
    * @param D Weight vector to use while training. For boosting purposes.
    * @param labels The labels of data.
@@ -68,8 +68,7 @@ class DecisionStump
   DecisionStump(const DecisionStump<>& other,
                 const MatType& data,
                 const arma::rowvec& weights,
-                const arma::Row<size_t>& labels
-                );
+                const arma::Row<size_t>& labels);
 
   //! Access the splitting attribute.
   int SplitAttribute() const { return splitAttribute; }
