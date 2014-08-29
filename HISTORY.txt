@@ -1,3 +1,14 @@
+2014-08-29    mlpack 1.0.10
+
+  * Bugfix for NeighborSearch regression which caused very slow allknn/allkfn.
+    Speeds are now restored to approximately 1.0.8 speeds, with significant
+    improvement for the cover tree.
+
+  * Detect dependencies correctly when ARMA_USE_WRAPPER is not being defined
+    (i.e., libarmadillo.so does not exist).
+
+  * Bugfix for compilation under Visual Studio.
+
 2014-07-28    mlpack 1.0.9
 
   * GMM initialization is now safer and provides a working GMM when constructed
