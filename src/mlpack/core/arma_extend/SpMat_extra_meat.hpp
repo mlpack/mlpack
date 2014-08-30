@@ -250,6 +250,66 @@ SpMat<eT>::SpMat(const Base<uword,T1>& locations_expr, const Base<eT,T2>& vals_e
 
 #endif
 
+#if ARMA_VERSION_MAJOR == 3 && ARMA_VERSION_MINOR < 920
+//! Insert a large number of values at once.
+//! Per CSC format, rowind_expr should be row indices,~
+//! colptr_expr should column ptr indices locations,
+//! and values should be the corresponding values.
+//! In this constructor the size is explicitly given.
+//! Values are assumed to be sorted, and the size~
+//! information is trusted
+template<typename eT>
+template<typename T1, typename T2, typename T3>
+inline
+SpMat<eT>::SpMat
+  (
+  const Base<uword,T1>& rowind_expr,
+  const Base<uword,T2>& colptr_expr,
+  const Base<eT,   T3>& values_expr,
+  const uword           in_n_rows,
+  const uword           in_n_cols
+  )
+  : n_rows(0)
+  , n_cols(0)
+  , n_elem(0)
+  , n_nonzero(0)
+  , vec_state(0)
+  , values(NULL)
+  , row_indices(NULL)
+  , col_ptrs(NULL)
+  {
+  arma_extra_debug_sigprint_this(this);
+
+  init(in_n_rows, in_n_cols);
+
+  const unwrap<T1> rowind_tmp( rowind_expr.get_ref() );
+  const unwrap<T2> colptr_tmp( colptr_expr.get_ref() );
+  const unwrap<T3>   vals_tmp( values_expr.get_ref() );
+
+  const Mat<uword>& rowind = rowind_tmp.M;
+  const Mat<uword>& colptr = colptr_tmp.M;
+  const Mat<eT>&      vals = vals_tmp.M;
+
+  arma_debug_check( (rowind.is_vec() == false), "SpMat::SpMat(): given 'rowind' object is not a vector" );
+  arma_debug_check( (colptr.is_vec() == false), "SpMat::SpMat(): given 'colptr' object is not a vector" );
+  arma_debug_check( (vals.is_vec()   == false), "SpMat::SpMat(): given 'values' object is not a vector" );
+
+  arma_debug_check( (rowind.n_elem != vals.n_elem), "SpMat::SpMat(): number of row indices is not equal to number of values" );
+  arma_debug_check( (colptr.n_elem != (n_cols+1) ), "SpMat::SpMat(): number of column pointers is not equal to n_cols+1" );
+
+  // Resize to correct number of elements (this also sets n_nonzero)
+  mem_resize(vals.n_elem);
+
+  // copy supplied values into sparse matrix -- not checked for consistency
+  arrayops::copy(access::rwp(row_indices), rowind.memptr(), rowind.n_elem );
+  arrayops::copy(access::rwp(col_ptrs),    colptr.memptr(), colptr.n_elem );
+  arrayops::copy(access::rwp(values),      vals.memptr(),   vals.n_elem   );
+
+  // important: set the sentinel as well
+  access::rw(col_ptrs[n_cols + 1]) = std::numeric_limits<uword>::max();
+  }
+#endif
+
 #if ARMA_VERSION_MAJOR < 4 || \
     (ARMA_VERSION_MAJOR == 4 && ARMA_VERSION_MINOR < 349)
 template<typename eT>
