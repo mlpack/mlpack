@@ -7,9 +7,6 @@
  */
 #include "pca.hpp"
 #include <mlpack/core.hpp>
-#include <iostream>
-#include <complex>
-#include <algorithm>
 
 using namespace std;
 using namespace mlpack;
