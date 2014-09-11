@@ -127,11 +127,11 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
   size_t index = 0;
   while (par->Children()[index] != tree) { ++index; }
 
-  assert(index != -1);
+  assert(index != par->NumChildren());
   par->Children()[index] = treeOne;
   par->Children()[par->NumChildren()++] = treeTwo;
 
-  for (int i = 0; i < par->NumChildren(); i++)
+  for (size_t i = 0; i < par->NumChildren(); i++)
     assert(par->Children()[i] != tree);
 
   // We only add one at a time, so should only need to test for equality just in
@@ -143,10 +143,10 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
 
   // We have to update the children of each of these new nodes so that they
   // record the correct parent.
-  for (int i = 0; i < treeOne->NumChildren(); i++)
+  for (size_t i = 0; i < treeOne->NumChildren(); i++)
     treeOne->Children()[i]->Parent() = treeOne;
 
-  for (int i = 0; i < treeTwo->NumChildren(); i++)
+  for (size_t i = 0; i < treeTwo->NumChildren(); i++)
     treeTwo->Children()[i]->Parent() = treeTwo;
 
   assert(treeOne->NumChildren() <= treeOne->MaxNumChildren());
@@ -176,9 +176,9 @@ void RTreeSplit<DescentType, StatisticType, MatType>::GetPointSeeds(
   // same node.  Because we are just using points, we will simply choose the two
   // that would create the most voluminous hyperrectangle.
   double worstPairScore = -1.0;
-  for (int i = 0; i < tree.Count(); i++)
+  for (size_t i = 0; i < tree.Count(); i++)
   {
-    for (int j = i + 1; j < tree.Count(); j++)
+    for (size_t j = i + 1; j < tree.Count(); j++)
     {
       const double score = arma::prod(arma::abs(tree.LocalDataset().col(i) -
           tree.LocalDataset().col(j)));
@@ -206,12 +206,12 @@ void RTreeSplit<DescentType, StatisticType, MatType>::GetBoundSeeds(
     int& jRet)
 {
   double worstPairScore = -1.0;
-  for (int i = 0; i < tree.NumChildren(); i++)
+  for (size_t i = 0; i < tree.NumChildren(); i++)
   {
-    for (int j = i + 1; j < tree.NumChildren(); j++)
+    for (size_t j = i + 1; j < tree.NumChildren(); j++)
     {
       double score = 1.0;
-      for (int k = 0; k < tree.Bound().Dim(); k++)
+      for (size_t k = 0; k < tree.Bound().Dim(); k++)
       {
         const double hiMax = std::max(tree.Children()[i]->Bound()[k].Hi(),
                                       tree.Children()[j]->Bound()[k].Hi());
@@ -269,8 +269,8 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
     oldTree->LocalDataset().col(intI) = oldTree->LocalDataset().col(end);
   }
 
-  int numAssignedOne = 1;
-  int numAssignedTwo = 1;
+  size_t numAssignedOne = 1;
+  size_t numAssignedTwo = 1;
 
   // In each iteration, we go through all points and find the one that causes
   // the least increase of volume when added to one of the rectangles.  We then
@@ -302,11 +302,11 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
 
     // Find the point that, when assigned to one of the two new rectangles,
     // minimizes the increase in volume.
-    for (int index = 0; index < end; index++)
+    for (size_t index = 0; index < end; index++)
     {
       double newVolOne = 1.0;
       double newVolTwo = 1.0;
-      for (int i = 0; i < oldTree->Bound().Dim(); i++)
+      for (size_t i = 0; i < oldTree->Bound().Dim(); i++)
       {
         double c = oldTree->LocalDataset().col(index)[i];
         newVolOne *= treeOne->Bound()[i].Contains(c) ?
@@ -387,8 +387,8 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
 
   assert(intI != intJ);
 
-  for (int i = 0; i < oldTree->NumChildren(); i++)
-    for (int j = i + 1; j < oldTree->NumChildren(); j++)
+  for (size_t i = 0; i < oldTree->NumChildren(); i++)
+    for (size_t j = i + 1; j < oldTree->NumChildren(); j++)
       assert(oldTree->Children()[i] != oldTree->Children()[j]);
 
   InsertNodeIntoTree(treeOne, oldTree->Children()[intI]);
@@ -420,8 +420,8 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
   for (int i = 0; i < end; i++)
     assert(oldTree->Children()[i] != treeTwo->Children()[0]);
 
-  int numAssignTreeOne = 1;
-  int numAssignTreeTwo = 1;
+  size_t numAssignTreeOne = 1;
+  size_t numAssignTreeTwo = 1;
 
   // In each iteration, we go through all of the nodes and find the one that
   // causes the least increase of volume when added to one of the two new
@@ -437,17 +437,17 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
     // new rectangles.
     double volOne = 1.0;
     double volTwo = 1.0;
-    for (int i = 0; i < oldTree->Bound().Dim(); i++)
+    for (size_t i = 0; i < oldTree->Bound().Dim(); i++)
     {
       volOne *= treeOne->Bound()[i].Width();
       volTwo *= treeTwo->Bound()[i].Width();
     }
 
-    for (int index = 0; index < end; index++)
+    for (size_t index = 0; index < end; index++)
     {
       double newVolOne = 1.0;
       double newVolTwo = 1.0;
-      for (int i = 0; i < oldTree->Bound().Dim(); i++)
+      for (size_t i = 0; i < oldTree->Bound().Dim(); i++)
       {
         // For each of the new rectangles, find the width in this dimension if
         // we add the rectangle at index to the new rectangle.
@@ -523,12 +523,12 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
     }
   }
 
-  for (int i = 0; i < treeOne->NumChildren(); i++)
-    for (int j = i + 1; j < treeOne->NumChildren(); j++)
+  for (size_t i = 0; i < treeOne->NumChildren(); i++)
+    for (size_t j = i + 1; j < treeOne->NumChildren(); j++)
       assert(treeOne->Children()[i] != treeOne->Children()[j]);
 
-  for (int i = 0; i < treeTwo->NumChildren(); i++)
-    for (int j = i + 1; j < treeTwo->NumChildren(); j++)
+  for (size_t i = 0; i < treeTwo->NumChildren(); i++)
+    for (size_t j = i + 1; j < treeTwo->NumChildren(); j++)
       assert(treeTwo->Children()[i] != treeTwo->Children()[j]);
 }
 

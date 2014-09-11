@@ -113,7 +113,7 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
     // We break ties by choosing the smallest bound.
     double minVol = DBL_MAX;
     bestIndex = 0;
-    for (int i = 0; i < scores.size(); i++)
+    for (size_t i = 0; i < scores.size(); i++)
     {
       if (scores[i] == minScore)
       {
@@ -178,7 +178,7 @@ inline size_t RStarTreeDescentHeuristic::ChooseDescentNode(
     // We break ties by choosing the smallest bound.
     double minVol = DBL_MAX;
     bestIndex = 0;
-    for (int i = 0; i < scores.size(); i++)
+    for (size_t i = 0; i < scores.size(); i++)
     {
       if (scores[i] == minScore)
       {
