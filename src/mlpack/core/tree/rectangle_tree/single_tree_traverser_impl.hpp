@@ -52,7 +52,7 @@ SingleTreeTraverser<RuleType>::Traverse(
   // This is not a leaf node so we sort the children of this node by their
   // scores.
   std::vector<NodeAndScore> nodesAndScores(referenceNode.NumChildren());
-  for (int i = 0; i < referenceNode.NumChildren(); i++)
+  for (size_t i = 0; i < referenceNode.NumChildren(); i++)
   {
     nodesAndScores[i].node = referenceNode.Children()[i];
     nodesAndScores[i].score = rule.Score(queryIndex, *nodesAndScores[i].node);
@@ -62,7 +62,7 @@ SingleTreeTraverser<RuleType>::Traverse(
 
   // Now iterate through them starting with the best and stopping when we reach
   // one that isn't good enough.
-  for (int i = 0; i < referenceNode.NumChildren(); i++)
+  for (size_t i = 0; i < referenceNode.NumChildren(); i++)
   {
     if (rule.Rescore(queryIndex, *nodesAndScores[i].node,
         nodesAndScores[i].score) != DBL_MAX)

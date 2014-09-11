@@ -43,17 +43,17 @@ DualTreeTraverser<RuleType>::Traverse(
 {
   // Increment the visit counter.
   ++numVisited;
-  
+
   // Store the current traversal info.
   traversalInfo = rule.TraversalInfo();
-  
+
   // We now have four options.
   // 1)  Both nodes are leaf nodes.
   // 2)  Only the reference node is a leaf node.
   // 3)  Only the query node is a leaf node.
   // 4)  Niether node is a leaf node.
   // We go through those options in that order.
-  
+
   if(queryNode.IsLeaf() && referenceNode.IsLeaf())
   {
     // Evaluate the base case.  Do the query points on the outside so we can possibly
@@ -63,13 +63,13 @@ DualTreeTraverser<RuleType>::Traverse(
       // Restore the traversal information.
       rule.TraversalInfo() = traversalInfo;
       const double childScore = rule.Score(queryNode.Points()[query], referenceNode);
-      
+
       if(childScore == DBL_MAX)
         continue;  // This point doesn't require a search in this reference node.
-      
+
       for(size_t ref = 0; ref < referenceNode.Count(); ++ref)
         rule.BaseCase(queryNode.Points()[query], referenceNode.Points()[ref]);
-      
+
       numBaseCases += referenceNode.Count();
     }
   }
@@ -85,15 +85,15 @@ DualTreeTraverser<RuleType>::Traverse(
         Traverse(queryNode.Child(i), referenceNode);
       else
         numPrunes++;
-    }       
+    }
   }
   else if(queryNode.IsLeaf() && !referenceNode.IsLeaf())
   {
     // We only need to traverse down the reference node.  Order does matter here.
-    
-    // We sort the children of the reference node by their scores.    
+
+    // We sort the children of the reference node by their scores.
     std::vector<NodeAndScore> nodesAndScores(referenceNode.NumChildren());
-    for(int i = 0; i < referenceNode.NumChildren(); i++)
+    for (size_t i = 0; i < referenceNode.NumChildren(); i++)
     {
       rule.TraversalInfo() = traversalInfo;
       nodesAndScores[i].node = referenceNode.Children()[i];
@@ -102,8 +102,8 @@ DualTreeTraverser<RuleType>::Traverse(
     }
     std::sort(nodesAndScores.begin(), nodesAndScores.end(), nodeComparator);
     numScores += nodesAndScores.size();
-    
-    for(int i = 0; i < nodesAndScores.size(); i++)
+
+    for (size_t i = 0; i < nodesAndScores.size(); i++)
     {
       rule.TraversalInfo() = nodesAndScores[i].travInfo;
       if(rule.Rescore(queryNode, *(nodesAndScores[i].node), nodesAndScores[i].score) < DBL_MAX) {
@@ -119,12 +119,12 @@ DualTreeTraverser<RuleType>::Traverse(
     // We need to traverse down both the reference and the query trees.
     // We loop through all of the query nodes, and for each of them, we
     // loop through the reference nodes to see where we need to descend.
-    
-    for(int j = 0; j < queryNode.NumChildren(); j++)
+
+    for (size_t j = 0; j < queryNode.NumChildren(); j++)
     {
-      // We sort the children of the reference node by their scores.    
+      // We sort the children of the reference node by their scores.
       std::vector<NodeAndScore> nodesAndScores(referenceNode.NumChildren());
-      for(int i = 0; i < referenceNode.NumChildren(); i++)
+      for (size_t i = 0; i < referenceNode.NumChildren(); i++)
       {
         rule.TraversalInfo() = traversalInfo;
         nodesAndScores[i].node = referenceNode.Children()[i];
@@ -133,8 +133,8 @@ DualTreeTraverser<RuleType>::Traverse(
       }
       std::sort(nodesAndScores.begin(), nodesAndScores.end(), nodeComparator);
       numScores += nodesAndScores.size();
-    
-      for(int i = 0; i < nodesAndScores.size(); i++)
+
+      for (size_t i = 0; i < nodesAndScores.size(); i++)
       {
         rule.TraversalInfo() = nodesAndScores[i].travInfo;
         if(rule.Rescore(queryNode.Child(j), *(nodesAndScores[i].node), nodesAndScores[i].score) < DBL_MAX) {

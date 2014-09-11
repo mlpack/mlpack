@@ -139,7 +139,7 @@ template<typename SplitType,
          typename MatType>
 RectangleTree<SplitType, DescentType, StatisticType, MatType>::~RectangleTree()
 {
-  for (int i = 0; i < numChildren; i++)
+  for (size_t i = 0; i < numChildren; i++)
     delete children[i];
 
   delete localDataset;
@@ -157,7 +157,7 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::SoftDelete()
 {
   parent = NULL;
 
-  for (int i = 0; i < children.size(); i++)
+  for (size_t i = 0; i < children.size(); i++)
     children[i] = NULL;
 
   numChildren = 0;
@@ -192,7 +192,7 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::InsertPoint(
   bound |= dataset.col(point);
 
   std::vector<bool> lvls(TreeDepth());
-  for (int i = 0; i < lvls.size(); i++)
+  for (size_t i = 0; i < lvls.size(); i++)
     lvls[i] = true;
 
   // If this is a leaf node, we stop here and add the point.
@@ -294,7 +294,7 @@ bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::DeletePoint(
     root = root->Parent();
 
   std::vector<bool> lvls(root->TreeDepth());
-  for (int i = 0; i < lvls.size(); i++)
+  for (size_t i = 0; i < lvls.size(); i++)
     lvls[i] = true;
 
   if (numChildren == 0)
@@ -502,7 +502,7 @@ inline size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   else
   {
     size_t n = 0;
-    for (int i = 0; i < numChildren; i++)
+    for (size_t i = 0; i < numChildren; i++)
       n += children[i]->NumDescendants();
 
     return n;
@@ -669,7 +669,7 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
         children[i] = child->Children()[i];
         children[i]->Parent() = this;
       }
-      
+
       numChildren = child->NumChildren();
 
       for (size_t i = 0; i < child->Count(); i++)
