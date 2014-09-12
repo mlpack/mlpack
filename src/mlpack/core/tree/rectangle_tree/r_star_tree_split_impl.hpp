@@ -132,7 +132,7 @@ void RStarTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
       // tree->MinLeafSize() + i points in one rectangle and the rest in
       // another.  Then we calculate the three scores for that distribution.
 
-      int cutOff = tree->MinLeafSize() + i;
+      size_t cutOff = tree->MinLeafSize() + i;
 
       // We'll calculate the max and min in each dimension by hand to save time.
       std::vector<double> maxG1(tree->Bound().Dim());
@@ -396,7 +396,7 @@ bool RStarTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
       // tree->MinNumChildren() + i points in one rectangle and the rest in
       // another.  Then we calculate the three scores for that distribution.
 
-      int cutOff = tree->MinNumChildren() + i;
+      size_t cutOff = tree->MinNumChildren() + i;
 
       // We'll calculate the max and min in each dimension by hand to save time.
       std::vector<double> maxG1(tree->Bound().Dim());
@@ -508,7 +508,7 @@ bool RStarTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
       // tree->MinNumChildren() + i points in one rectangle and the rest in
       // another.  Then we calculate the three scores for that distribution.
 
-      int cutOff = tree->MinNumChildren() + i;
+      size_t cutOff = tree->MinNumChildren() + i;
 
       // We'll calculate the max and min in each dimension by hand to save time.
       std::vector<double> maxG1(tree->Bound().Dim());
