@@ -415,7 +415,8 @@ bool XTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
     }
 
     // Track the minOverlapSplit data
-    if(minOverlapSplitDimension != -1 && j == minOverlapSplitDimension) {
+    if(minOverlapSplitDimension != tree->Bound().Dim() &&
+       j == minOverlapSplitDimension) {
       for(size_t i = 0; i < overlapedAreas.size(); i++) {
         if(overlapedAreas[i] < bestScoreMinOverlapSplit) {
           bestScoreMinOverlapSplit = overlapedAreas[i];
@@ -516,7 +517,8 @@ bool XTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
     }
 
     // Track the minOverlapSplit data
-    if(minOverlapSplitDimension != -1 && j == minOverlapSplitDimension) {
+    if(minOverlapSplitDimension != tree->Bound().Dim() &&
+       j == minOverlapSplitDimension) {
       for(size_t i = 0; i < overlapedAreas.size(); i++) {
         if(overlapedAreas[i] < bestScoreMinOverlapSplit) {
           minOverlapSplitUsesHi = true;
@@ -576,7 +578,7 @@ bool XTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
   // a "super node" (more accurately we resize this one to make it a super node).
   if(useMinOverlapSplit) {
     // If there is a dimension that might work, try that.
-    if(minOverlapSplitDimension != -1 && bestScoreMinOverlapSplit / areaOfBestMinOverlapSplit < MAX_OVERLAP) {
+    if(minOverlapSplitDimension != tree->Bound().Dim() && bestScoreMinOverlapSplit / areaOfBestMinOverlapSplit < MAX_OVERLAP) {
       std::vector<sortStruct> sorted2(tree->NumChildren());
       if (minOverlapSplitUsesHi) {
         for (size_t i = 0; i < sorted2.size(); i++) {
@@ -584,7 +586,7 @@ bool XTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
           sorted2[i].n = i;
         }
       } else {
-        for (int i = 0; i < sorted2.size(); i++) {
+        for (size_t i = 0; i < sorted2.size(); i++) {
           sorted2[i].d = tree->Children()[i]->Bound()[bestAxis].Lo();
           sorted2[i].n = i;
         }
