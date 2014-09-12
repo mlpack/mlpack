@@ -240,7 +240,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
     const int intI,
     const int intJ)
 {
-  int end = oldTree->Count();
+  size_t end = oldTree->Count();
 
   assert(end > 1); // If this isn't true, the tree is really weird.
 
@@ -294,7 +294,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
     // First, calculate the starting volume.
     double volOne = 1.0;
     double volTwo = 1.0;
-    for (int i = 0; i < oldTree->Bound().Dim(); i++)
+    for (size_t i = 0; i < oldTree->Bound().Dim(); i++)
     {
       volOne *= treeOne->Bound()[i].Width();
       volTwo *= treeTwo->Bound()[i].Width();
@@ -382,7 +382,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
     const int intJ)
 {
 
-  int end = oldTree->NumChildren();
+  size_t end = oldTree->NumChildren();
   assert(end > 1); // If this isn't true, the tree is really weird.
 
   assert(intI != intJ);
