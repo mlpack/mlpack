@@ -101,7 +101,7 @@ AdaBoost<MatType, WeakLearner>::AdaBoost(
 
     // Now, start calculation of alpha(t) using ht
 
-    for (int j = 0;j < D.n_rows; j++) // instead of D, ht
+    for (size_t j = 0;j < D.n_rows; j++) // instead of D, ht
     {
       if (predictedLabels(j) == labels(j))
       {
@@ -135,12 +135,12 @@ AdaBoost<MatType, WeakLearner>::AdaBoost(
     wl.push_back(w);
 
     // now start modifying weights
-    for (int j = 0;j < D.n_rows; j++)
+    for (size_t j = 0;j < D.n_rows; j++)
     {
       double expo = exp(alphat);
       if (predictedLabels(j) == labels(j))
       {
-          for (int k = 0;k < D.n_cols; k++)
+          for (size_t k = 0;k < D.n_cols; k++)
           {
             // we calculate zt, the normalization constant
             zt += D(j,k) / expo; // * exp(-1 * alphat * yt(j,k) * ht(j,k));
@@ -156,7 +156,7 @@ AdaBoost<MatType, WeakLearner>::AdaBoost(
       }
       else
       {
-        for (int k = 0;k < D.n_cols; k++)
+        for (size_t k = 0;k < D.n_cols; k++)
           {
             // we calculate zt, the normalization constant
             zt += D(j,k) * expo;
@@ -185,7 +185,7 @@ AdaBoost<MatType, WeakLearner>::AdaBoost(
   arma::uword max_index;
   arma::mat sfh = sumFinalH.t();
 
-  for (int i = 0;i < sfh.n_cols; i++)
+  for (size_t i = 0;i < sfh.n_cols; i++)
   {
     tempSumFinalH = sfh.col(i);
     tempSumFinalH.max(max_index);
@@ -211,18 +211,18 @@ void AdaBoost<MatType, WeakLearner>::Classify(
   cMatrix.zeros();
   predictedLabels.zeros();
 
-  for (int i = 0;i < wl.size(); i++)
+  for (size_t i = 0;i < wl.size(); i++)
   {
     wl[i].Classify(test, tempPredictedLabels);
 
-    for (int j = 0; j < tempPredictedLabels.n_cols; j++)
+    for (size_t j = 0; j < tempPredictedLabels.n_cols; j++)
       cMatrix(tempPredictedLabels(j), j) += (alpha[i] * tempPredictedLabels(j));
   }
   
   arma::colvec cMRow;
   arma::uword max_index;
 
-  for (int i = 0; i < predictedLabels.n_cols; i++)
+  for (size_t i = 0; i < predictedLabels.n_cols; i++)
   {
     cMRow = cMatrix.col(i);
     cMRow.max(max_index);
@@ -244,7 +244,7 @@ void AdaBoost<MatType, WeakLearner>::BuildWeightMatrix(
     const arma::mat& D,
     arma::rowvec& weights)
 {
-  int i, j;
+  size_t i, j;
   weights.fill(0.0);
 
   for (i = 0; i < D.n_rows; i++)

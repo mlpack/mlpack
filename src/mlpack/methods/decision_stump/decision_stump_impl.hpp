@@ -55,7 +55,7 @@ void DecisionStump<MatType>::Train(const MatType& data, const arma::Row<size_t>&
       labels.subvec(0, labels.n_elem - 1), 0, weightD);
 
   double gain, bestGain = 0.0;
-  for (int i = 0; i < data.n_rows; i++)
+  for (size_t i = 0; i < data.n_rows; i++)
   {
     // Go through each attribute of the data.
     if (IsDistinct<double>(data.row(i)))
@@ -96,12 +96,12 @@ template<typename MatType>
 void DecisionStump<MatType>::Classify(const MatType& test,
                                       arma::Row<size_t>& predictedLabels)
 {
-  for (int i = 0; i < test.n_cols; i++)
+  for (size_t i = 0; i < test.n_cols; i++)
   {
     // Determine which bin the test point falls into.
     // Assume first that it falls into the first bin, then proceed through the
     // bins until it is known which bin it falls into.
-    int bin = 0;
+    size_t bin = 0;
     const double val = test(splitAttribute, i);
 
     while (bin < split.n_elem - 1)
@@ -160,7 +160,7 @@ double DecisionStump<MatType>::SetupSplitAttribute(
     const arma::Row<size_t>& labels,
     const arma::rowvec& weightD)
 {
-  int i, count, begin, end;
+  size_t i, count, begin, end;
   double entropy = 0.0;
 
   // Sort the attribute in order to calculate splitting ranges.
@@ -252,7 +252,7 @@ template <typename rType>
 void DecisionStump<MatType>::TrainOnAtt(const arma::rowvec& attribute,
                                         const arma::Row<size_t>& labels)
 {
-  int i, count, begin, end;
+  size_t i, count, begin, end;
 
   arma::rowvec sortedSplitAtt = arma::sort(attribute);
   arma::uvec sortedSplitIndexAtt = arma::stable_sort_index(attribute.t());
@@ -339,7 +339,7 @@ void DecisionStump<MatType>::TrainOnAtt(const arma::rowvec& attribute,
 template <typename MatType>
 void DecisionStump<MatType>::MergeRanges()
 {
-  for (int i = 1; i < split.n_rows; i++)
+  for (size_t i = 1; i < split.n_rows; i++)
   {
     if (binLabels(i) == binLabels(i - 1))
     {
@@ -365,7 +365,7 @@ rType DecisionStump<MatType>::CountMostFreq(const arma::Row<rType>& subCols)
     return sortCounts[0];
 
   // An O(n) loop which counts the most frequent element in sortCounts
-  for (int i = 0; i < sortCounts.n_elem; ++i)
+  for (size_t i = 0; i < sortCounts.n_elem; ++i)
   {
     if (i == sortCounts.n_elem - 1)
     {
