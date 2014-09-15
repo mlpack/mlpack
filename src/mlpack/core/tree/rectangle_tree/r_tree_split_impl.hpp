@@ -360,12 +360,12 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
   {
     if (numAssignedOne < numAssignedTwo)
     {
-      for (int i = 0; i < end; i++)
+      for (size_t i = 0; i < end; i++)
         treeOne->InsertPoint(oldTree->Points()[i]);
     }
     else
     {
-      for (int i = 0; i < end; i++)
+      for (size_t i = 0; i < end; i++)
         treeTwo->InsertPoint(oldTree->Points()[i]);
     }
   }
@@ -410,14 +410,14 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
   assert(treeOne->NumChildren() == 1);
   assert(treeTwo->NumChildren() == 1);
 
-  for (int i = 0; i < end; i++)
-    for (int j = i + 1; j < end; j++)
+  for (size_t i = 0; i < end; i++)
+    for (size_t j = i + 1; j < end; j++)
       assert(oldTree->Children()[i] != oldTree->Children()[j]);
 
-  for (int i = 0; i < end; i++)
+  for (size_t i = 0; i < end; i++)
     assert(oldTree->Children()[i] != treeOne->Children()[0]);
 
-  for (int i = 0; i < end; i++)
+  for (size_t i = 0; i < end; i++)
     assert(oldTree->Children()[i] != treeTwo->Children()[0]);
 
   size_t numAssignTreeOne = 1;
@@ -507,7 +507,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
   {
     if (numAssignTreeOne < numAssignTreeTwo)
     {
-      for (int i = 0; i < end; i++)
+      for (size_t i = 0; i < end; i++)
       {
         InsertNodeIntoTree(treeOne, oldTree->Children()[i]);
         numAssignTreeOne++;
@@ -515,7 +515,7 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
     }
     else
     {
-      for (int i = 0; i < end; i++)
+      for (size_t i = 0; i < end; i++)
       {
         InsertNodeIntoTree(treeTwo, oldTree->Children()[i]);
         numAssignTreeTwo++;
