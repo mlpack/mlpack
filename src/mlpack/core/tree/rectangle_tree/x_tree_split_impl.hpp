@@ -707,7 +707,8 @@ void XTreeSplit<DescentType, StatisticType, MatType>::InsertNodeIntoTree(
         RectangleTree<XTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();
-  destTree->Children()[destTree->NumChildren()++] = srcNode;
+  destTree->Children().push_back(srcNode);
+  destTree->NumChildren()++;
 }
 
 }; // namespace tree
