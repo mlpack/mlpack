@@ -96,6 +96,16 @@ class LRSDPFunction
   arma::uvec aModes;
 };
 
+// Declare specializations in lrsdp_function.cpp.
+template<>
+double AugLagrangianFunction<LRSDPFunction>::Evaluate(
+    const arma::mat& coordinates) const;
+
+template<>
+void AugLagrangianFunction<LRSDPFunction>::Gradient(
+    const arma::mat& coordinates,
+    arma::mat& gradient) const;
+
 };
 };
 
