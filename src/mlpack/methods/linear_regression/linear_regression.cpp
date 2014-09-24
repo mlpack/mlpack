@@ -81,7 +81,9 @@ LinearRegression::LinearRegression(const arma::mat& predictors,
 LinearRegression::LinearRegression(const std::string& filename) :
     lambda(0.0)
 {
-  data::Load(filename, parameters, true);
+  arma::mat parameter;
+  data::Load(filename, parameter, true);
+  parameters = parameter.unsafe_col(0);
 }
 
 LinearRegression::LinearRegression(const LinearRegression& linearRegression) :
