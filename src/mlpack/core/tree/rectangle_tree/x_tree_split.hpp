@@ -16,6 +16,14 @@ namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
 /**
+ * The X-tree paper says that a maximum allowable overlap of 20% works well.
+ *
+ * This code should eventually be refactored so as to avoid polluting
+ * mlpack::tree with this random double.
+ */
+const double MAX_OVERLAP = 0.2;
+
+/**
  * A Rectangle Tree has new points inserted at the bottom.  When these
  * nodes overflow, we split them, moving up the tree and splitting nodes
  * as necessary.
@@ -26,11 +34,6 @@ template<typename DescentType,
 class XTreeSplit
 {
 public:
-
-/**
- * The X-tree paper says that a maximum allowable overlap of 20% works well.
- */
-const static double MAX_OVERLAP = 0.2;
 
 /**
  * Split a leaf node using the algorithm described in "The R*-tree: An Efficient and Robust Access method
