@@ -84,17 +84,28 @@ double SGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
     }
 
     // Evaluate the gradient for this iteration.
-    function.Gradient(iterate, currentFunction, gradient);
+    if (shuffle)
+      function.Gradient(iterate, visitationOrder[currentFunction], gradient);
+    else
+      function.Gradient(iterate, currentFunction, gradient);
 
     // And update the iterate.
     iterate -= stepSize * gradient;
 
     // Now add that to the overall objective function.
-    overallObjective += function.Evaluate(iterate, currentFunction);
+    if (shuffle)
+      overallObjective += function.Evaluate(iterate,
+          visitationOrder[currentFunction]);
+    else
+      overallObjective += function.Evaluate(iterate, currentFunction);
   }
 
   Log::Info << "SGD: maximum iterations (" << maxIterations << ") reached; "
       << "terminating optimization." << std::endl;
+  // Calculate final objective.
+  overallObjective = 0;
+  for (size_t i = 0; i < numFunctions; ++i)
+    overallObjective += function.Evaluate(iterate, i);
   return overallObjective;
 }
 
