@@ -15,7 +15,7 @@ Download latest mlpack build from here : <a href="http://www.mlpack.org/files/ml
 Once the MLPACK source is unpacked, you should create a build directory.
 
 @code
-$ cd mlpack-1.0.7
+$ cd mlpack-1.0.10
 $ mkdir build
 @endcode
 
@@ -56,16 +56,19 @@ Fedora 16 and older.
 @section config Configuring CMake
 
 Running CMake is the equivalent to running `./configure` with autotools.  If you
-run CMake with no options, it will configure the project to build with debugging
-symbols and profiling information:
+are working with the svn trunk version of mlpack and run CMake with no options,
+it will configure the project to build with debugging symbols and profiling
+information:  If you are working with a release of mlpack, running CMake with no
+options will configure the project to build without debugging or profiling
+information (for speed).
 
 @code
 $ cd build
 $ cmake ../
 @endcode
 
-You can specify options to compile without debugging information and profiling
-information (i.e. as fast as possible):
+You can manually specify options to compile with or without debugging
+information and profiling information (i.e. as fast as possible):
 
 @code
 $ cd build
@@ -74,8 +77,10 @@ $ cmake -D DEBUG=OFF -D PROFILE=OFF ../
 
 The full list of options MLPACK allows:
 
- - DEBUG=(ON/OFF): compile with debugging symbols (default ON)
- - PROFILE=(ON/OFF): compile with profiling symbols (default ON)
+ - DEBUG=(ON/OFF): compile with debugging symbols (default ON in svn trunk, OFF
+   in releases)
+ - PROFILE=(ON/OFF): compile with profiling symbols (default ON in svn trunk,
+   OFF in releases)
  - ARMA_EXTRA_DEBUG=(ON/OFF): compile with extra Armadillo debugging symbols
        (default OFF)
 
