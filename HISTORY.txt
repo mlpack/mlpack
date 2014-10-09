@@ -1,3 +1,14 @@
+????-??-??    mlpack 1.1.0
+
+  * Removed overclustering support from k-means because it is not well-tested,
+    may be buggy, and is (I think) unused.  If this was support you were using,
+    open a bug or get in touch with us; it would not be hard for us to
+    reimplement it.
+
+  * Refactored KMeans to allow different types of Lloyd iterations.
+
+  * Added an implementation of Elkan's k-means algorithm.
+
 2014-08-29    mlpack 1.0.10
 
   * Bugfix for NeighborSearch regression which caused very slow allknn/allkfn.
