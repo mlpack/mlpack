@@ -356,7 +356,7 @@ BOOST_AUTO_TEST_CASE(KPCAString)
 
 BOOST_AUTO_TEST_CASE(KMeansString)
 {
-  mlpack::kmeans::KMeans<metric::ManhattanDistance> d(100, 4.0);
+  mlpack::kmeans::KMeans<metric::ManhattanDistance> d(100);
   Log::Debug << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
