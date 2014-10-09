@@ -7,6 +7,7 @@
 #include <mlpack/methods/kmeans/kmeans.hpp>
 #include <mlpack/methods/kmeans/allow_empty_clusters.hpp>
 #include <mlpack/methods/kmeans/refined_start.hpp>
+#include <mlpack/methods/kmeans/elkan_kmeans.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -49,46 +50,11 @@ arma::mat kMeansData("  0.0   0.0;" // Class 1.
                      " -9.8   5.1;");
 
 /**
- * 30-point 3-class test case for K-Means, with no overclustering.
+ * 30-point 3-class test case for K-Means.
  */
-BOOST_AUTO_TEST_CASE(KMeansNoOverclusteringTest)
+BOOST_AUTO_TEST_CASE(KMeansSimpleTest)
 {
-  KMeans<> kmeans; // No overclustering.
-
-  arma::Col<size_t> assignments;
-  kmeans.Cluster((arma::mat) trans(kMeansData), 3, assignments);
-
-  // Now make sure we got it all right.  There is no restriction on how the
-  // clusters are ordered, so we have to be careful about that.
-  size_t firstClass = assignments(0);
-
-  for (size_t i = 1; i < 13; i++)
-    BOOST_REQUIRE_EQUAL(assignments(i), firstClass);
-
-  size_t secondClass = assignments(13);
-
-  // To ensure that class 1 != class 2.
-  BOOST_REQUIRE_NE(firstClass, secondClass);
-
-  for (size_t i = 13; i < 20; i++)
-    BOOST_REQUIRE_EQUAL(assignments(i), secondClass);
-
-  size_t thirdClass = assignments(20);
-
-  // To ensure that this is the third class which we haven't seen yet.
-  BOOST_REQUIRE_NE(firstClass, thirdClass);
-  BOOST_REQUIRE_NE(secondClass, thirdClass);
-
-  for (size_t i = 20; i < 30; i++)
-    BOOST_REQUIRE_EQUAL(assignments(i), thirdClass);
-}
-
-/**
- * 30-point 3-class test case for K-Means, with overclustering.
- */
-BOOST_AUTO_TEST_CASE(KMeansOverclusteringTest)
-{
-  KMeans<> kmeans(1000, 4.0); // Overclustering factor of 4.0.
+  KMeans<> kmeans;
 
   arma::Col<size_t> assignments;
   kmeans.Cluster((arma::mat) trans(kMeansData), 3, assignments);
@@ -518,5 +484,32 @@ BOOST_AUTO_TEST_CASE(SparseKMeansTest)
 
 #endif // Exclude Armadillo 3.4.
 #endif // ARMA_HAS_SPMAT
+
+BOOST_AUTO_TEST_CASE(ElkanTest)
+{
+  arma::mat dataset(10, 1000);
+  dataset.randu();
+
+  arma::mat centroids(10, 20);
+  centroids.randu();
+
+  // Make sure Elkan's algorithm and the naive method return the same clusters.
+  arma::mat naiveCentroids(centroids);
+  KMeans<> km;
+  arma::Col<size_t> assignments;
+  km.Cluster(dataset, 20, assignments, naiveCentroids, false, true);
+
+  KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
+         ElkanKMeans> elkan;
+  arma::Col<size_t> elkanAssignments;
+  arma::mat elkanCentroids(centroids);
+  elkan.Cluster(dataset, 20, elkanAssignments, elkanCentroids, false, true);
+
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+    BOOST_REQUIRE_EQUAL(assignments[i], elkanAssignments[i]);
+
+  for (size_t i = 0; i < centroids.n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(naiveCentroids[i], elkanCentroids[i], 1e-5);
+}
 
 BOOST_AUTO_TEST_SUITE_END();
