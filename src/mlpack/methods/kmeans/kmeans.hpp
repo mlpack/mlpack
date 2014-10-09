@@ -20,28 +20,28 @@ namespace mlpack {
 namespace kmeans /** K-Means clustering. */ {
 
 /**
- * This class implements K-Means clustering.  This implementation supports
- * overclustering, which means that more clusters than are requested will be
- * found; then, those clusters will be merged together to produce the desired
- * number of clusters.
+ * This class implements K-Means clustering, using a variety of possible
+ * implementations of Lloyd's algorithm.
  *
- * Two template parameters can (optionally) be supplied: the policy for how to
- * find the initial partition of the data, and the actions to be taken when an
- * empty cluster is encountered, as well as the distance metric to be used.
+ * Four template parameters can (optionally) be supplied: the distance metric to
+ * use, the policy for how to find the initial partition of the data, the
+ * actions to be taken when an empty cluster is encountered, and the
+ * implementation of a single Lloyd step to use.
  *
  * A simple example of how to run K-Means clustering is shown below.
  *
  * @code
  * extern arma::mat data; // Dataset we want to run K-Means on.
  * arma::Col<size_t> assignments; // Cluster assignments.
+ * arma::mat centroids; // Cluster centroids.
  *
  * KMeans<> k; // Default options.
- * k.Cluster(data, 3, assignments); // 3 clusters.
+ * k.Cluster(data, 3, assignments, centroids); // 3 clusters.
  *
- * // Cluster using the Manhattan distance, 100 iterations maximum, and an
- * // overclustering factor of 4.0.
- * KMeans<metric::ManhattanDistance> k(100, 4.0);
- * k.Cluster(data, 6, assignments); // 6 clusters.
+ * // Cluster using the Manhattan distance, 100 iterations maximum, saving only
+ * // the centroids.
+ * KMeans<metric::ManhattanDistance> k(100);
+ * k.Cluster(data, 6, centroids); // 6 clusters.
  * @endcode
  *
  * @tparam MetricType The distance metric to use for this KMeans; see
@@ -55,7 +55,7 @@ namespace kmeans /** K-Means clustering. */ {
  * @tparam LloydStepType Implementation of single Lloyd step to use.
  *
  * @see RandomPartition, RefinedStart, AllowEmptyClusters,
- *      MaxVarianceNewCluster, NaiveKMeans
+ *      MaxVarianceNewCluster, NaiveKMeans, ElkanKMeans
  */
 template<typename MetricType = metric::EuclideanDistance,
          typename InitialPartitionPolicy = RandomPartition,
@@ -71,15 +71,8 @@ class KMeans
    * the performance of K-Means, including "overclustering" and disallowing
    * empty clusters.
    *
-   * The overclustering factor controls how many clusters are
-   * actually found; for instance, with an overclustering factor of 4, if
-   * K-Means is run to find 3 clusters, it will actually find 12, then merge the
-   * nearest clusters until only 3 are left.
-   *
    * @param maxIterations Maximum number of iterations allowed before giving up
    *     (0 is valid, but the algorithm may never terminate).
-   * @param overclusteringFactor Factor controlling how many extra clusters are
-   *     found and then merged to get the desired number of clusters.
    * @param metric Optional MetricType object; for when the metric has state
    *     it needs to store.
    * @param partitioner Optional InitialPartitionPolicy object; for when a
@@ -88,7 +81,6 @@ class KMeans
    *     specially initialized empty cluster policy is required.
    */
   KMeans(const size_t maxIterations = 1000,
-         const double overclusteringFactor = 1.0,
          const MetricType metric = MetricType(),
          const InitialPartitionPolicy partitioner = InitialPartitionPolicy(),
          const EmptyClusterPolicy emptyClusterAction = EmptyClusterPolicy());
@@ -113,6 +105,24 @@ class KMeans
                const bool initialGuess = false);
 
   /**
+   * Perform k-means clustering on the data, returning the centroids of each
+   * cluster in the centroids matrix.  Optionally, the initial centroids can be
+   * specified by filling the centroids matrix with the initial centroids and
+   * specifying initialGuess = true.
+   *
+   * @tparam MatType Type of matrix (arma::mat or arma::sp_mat).
+   * @param data Dataset to cluster.
+   * @param clusters Number of clusters to compute.
+   * @param centroids Matrix in which centroids are stored.
+   * @param initialGuess If true, then it is assumed that centroids contains the
+   *      initial cluster centroids.
+   */
+  void Cluster(const MatType& data,
+               const size_t clusters,
+               arma::mat& centroids,
+               const bool initialGuess = false);
+
+  /**
    * Perform k-means clustering on the data, returning a list of cluster
    * assignments and also the centroids of each cluster.  Optionally, the vector
    * of assignments can be set to an initial guess of the cluster assignments;
@@ -121,12 +131,6 @@ class KMeans
    * and then set initialCentroidGuess to true.  initialAssignmentGuess
    * supersedes initialCentroidGuess, so if both are set to true, the
    * assignments vector is used.
-   *
-   * Note that if the overclustering factor is greater than 1, the centroids
-   * matrix will be resized in the method.  Regardless of the overclustering
-   * factor, the centroid guess matrix (if initialCentroidGuess is set to true)
-   * should have the same number of rows as the data matrix, and number of
-   * columns equal to 'clusters'.
    *
    * @tparam MatType Type of matrix (arma::mat or arma::sp_mat).
    * @param data Dataset to cluster.
@@ -144,11 +148,6 @@ class KMeans
                arma::mat& centroids,
                const bool initialAssignmentGuess = false,
                const bool initialCentroidGuess = false);
-
-  //! Return the overclustering factor.
-  double OverclusteringFactor() const { return overclusteringFactor; }
-  //! Set the overclustering factor.  Must be greater than 1.
-  double& OverclusteringFactor() { return overclusteringFactor; }
 
   //! Get the maximum number of iterations.
   size_t MaxIterations() const { return maxIterations; }
@@ -175,8 +174,6 @@ class KMeans
   std::string ToString() const;
 
  private:
-  //! Factor controlling how many clusters are actually found.
-  double overclusteringFactor;
   //! Maximum number of iterations before giving up.
   size_t maxIterations;
   //! Instantiated distance metric.

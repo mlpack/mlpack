@@ -2,6 +2,8 @@
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
   allow_empty_clusters.hpp
+  elkan_kmeans.hpp
+  elkan_kmeans_impl.hpp
   kmeans.hpp
   kmeans_impl.hpp
   max_variance_new_cluster.hpp
