@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
     typedef KMeans<metric::SquaredEuclideanDistance, RefinedStart> KMeansType;
 
     // These are default parameters.
-    KMeansType k(1000, 1.0, metric::SquaredEuclideanDistance(),
+    KMeansType k(1000, metric::SquaredEuclideanDistance(),
         RefinedStart(samplings, percentage));
 
     // Depending on the value of 'forcePositive', we have to use different
