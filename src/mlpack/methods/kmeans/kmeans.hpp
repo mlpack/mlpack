@@ -67,9 +67,7 @@ class KMeans
  public:
   /**
    * Create a K-Means object and (optionally) set the parameters which K-Means
-   * will be run with.  This implementation allows a few strategies to improve
-   * the performance of K-Means, including "overclustering" and disallowing
-   * empty clusters.
+   * will be run with.
    *
    * @param maxIterations Maximum number of iterations allowed before giving up
    *     (0 is valid, but the algorithm may never terminate).
