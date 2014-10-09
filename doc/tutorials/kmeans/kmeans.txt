@@ -67,24 +67,22 @@ A list of all the sections this tutorial contains.
  - \ref intro_kmtut
  - \ref toc_kmtut
  - \ref cli_kmtut
-   - \ref cli_ex1_kmtut 
-   - \ref cli_ex2_kmtut 
-   - \ref cli_ex3_kmtut 
-   - \ref cli_ex4_kmtut 
-   - \ref cli_ex5_kmtut 
-   - \ref cli_ex6_kmtut 
+   - \ref cli_ex1_kmtut
+   - \ref cli_ex2_kmtut
+   - \ref cli_ex3_kmtut
+   - \ref cli_ex4_kmtut
+   - \ref cli_ex6_kmtut
  - \ref kmeans_kmtut
-   - \ref kmeans_ex1_kmtut 
-   - \ref kmeans_ex2_kmtut 
-   - \ref kmeans_ex3_kmtut 
-   - \ref kmeans_ex4_kmtut 
-   - \ref kmeans_ex5_kmtut 
-   - \ref kmeans_ex6_kmtut 
-   - \ref kmeans_ex7_kmtut 
+   - \ref kmeans_ex1_kmtut
+   - \ref kmeans_ex2_kmtut
+   - \ref kmeans_ex3_kmtut
+   - \ref kmeans_ex5_kmtut
+   - \ref kmeans_ex6_kmtut
+   - \ref kmeans_ex7_kmtut
  - \ref kmeans_template_kmtut
-   - \ref kmeans_metric_kmtut 
-   - \ref kmeans_initial_partition_kmtut 
-   - \ref kmeans_empty_cluster_kmtut 
+   - \ref kmeans_metric_kmtut
+   - \ref kmeans_initial_partition_kmtut
+   - \ref kmeans_empty_cluster_kmtut
  - \ref further_doc_kmtut
 
 @section cli_kmtut Command-Line 'kmeans'
@@ -96,6 +94,11 @@ be found by typing
 @code
 $ kmeans --help
 @endcode
+
+As of October 2014, support for overclustering has been removed due to bugs and
+lack of usage.  If this is support you were using, or are interested, please
+file a bug or get in touch with the \b mlpack developers in some way so that the
+support can be re-implemented.
 
 Below are several examples demonstrating simple use of the \c kmeans executable.
 
@@ -145,26 +148,6 @@ potentially forever.  The example below sets a maximum of 250 iterations.
 
 @code
 $ kmeans -c 5 -i dataset.csv -v -o assignments.csv -m 250
-@endcode
-
-@subsection cli_ex5_kmtut Setting the overclustering factor
-
-The \b mlpack k-means implementation allows "overclustering", which is when the
-k-means algorithm is run with more than the requested number of clusters.  Upon
-convergence, the clusters with the nearest centroids are merged until only the
-requested number of centroids remain.  This can provide better clustering
-results.  The overclustering factor, specified with \c -O or \c
---overclustering, determines how many more clusters are found than were
-requested.  For instance, with \c k set to 5 and an overclustering factor of 2,
-10 clusters will be found.  Note that the overclustering factor does not need to
-be an integer.
-
-The following code snippet finds 5 clusters, but with an overclustering factor
-of 2.4 (so 12 clusters are found and then merged together to produce 5 final
-clusters).
-
-@code
-$ kmeans -c 5 -O 2.4 -i dataset.csv -v -o assignments.csv
 @endcode
 
 @subsection cli_ex6_kmtut Using Bradley-Fayyad "refined start"
@@ -274,23 +257,6 @@ iterations is 1000.
 // The first argument is the maximum number of iterations.  Here we set it to
 // 500 iterations.
 KMeans<> k(500);
-@endcode
-
-Then you can run \c Cluster() as normal.
-
-@subsection kmeans_ex4_kmtut Setting the overclustering factor
-
-For a description of what overclustering is, see
-@ref cli_ex5_kmtut "the command-line interface tutorial about overclustering".
-
-The overclustering factor, which by default is 1.0 (this indicates that no
-overclustering is happening), is specified in the second argument to the
-constructor.
-
-@code
-// We will keep the default maximum iterations of 1000, but set the
-// overclustering factor to 2.5.
-KMeans<> k(1000, 2.5);
 @endcode
 
 Then you can run \c Cluster() as normal.
@@ -493,9 +459,9 @@ MahalanobisDistance in the constructor.
 // The initialized Mahalanobis distance.
 extern mlpack::metric::MahalanobisDistance distance;
 
-// We keep the default arguments for the maximum number of iterations and
-// overclustering factor, but pass our instantiated metric.
-KMeans<mlpack::metric::MahalanobisDistance> k(1000, 1.0, distance);
+// We keep the default arguments for the maximum number of iterations, but pass
+// our instantiated metric.
+KMeans<mlpack::metric::MahalanobisDistance> k(1000, distance);
 @endcode
 
 @note
