@@ -19,14 +19,15 @@ template<typename MetricType, typename MatType>
 NaiveKMeans<MetricType, MatType>::NaiveKMeans(const MatType& dataset,
                                               MetricType& metric) :
     dataset(dataset),
-    metric(metric)
+    metric(metric),
+    distanceCalculations(0)
 { /* Nothing to do. */ }
 
 // Run a single iteration.
 template<typename MetricType, typename MatType>
-void NaiveKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
-                                               arma::mat& newCentroids,
-                                               arma::Col<size_t>& counts)
+double NaiveKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
+                                                 arma::mat& newCentroids,
+                                                 arma::Col<size_t>& counts)
 {
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);
   counts.zeros(centroids.n_cols);
@@ -62,6 +63,18 @@ void NaiveKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
       newCentroids.col(i) /= counts(i);
     else
       newCentroids.col(i).fill(DBL_MAX); // Invalid value.
+
+  distanceCalculations += centroids.n_cols * dataset.n_cols;
+
+  // Calculate cluster distortion for this iteration.
+  double cNorm = 0.0;
+  for (size_t i = 0; i < centroids.n_cols; ++i)
+  {
+    const double dist = std::pow(
+        metric.Evaluate(centroids.col(i), newCentroids.col(i)), 2.0);
+    cNorm += std::pow(dist, 2.0);
+  }
+  return sqrt(cNorm);
 }
 
 } // namespace kmeans

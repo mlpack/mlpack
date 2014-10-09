@@ -40,15 +40,20 @@ class NaiveKMeans
    * @param centroids Current cluster centroids.
    * @param newCentroids New cluster centroids.
    */
-  void Iterate(const arma::mat& centroids,
-               arma::mat& newCentroids,
-               arma::Col<size_t>& counts);
+  double Iterate(const arma::mat& centroids,
+                 arma::mat& newCentroids,
+                 arma::Col<size_t>& counts);
+
+  size_t DistanceCalculations() const { return distanceCalculations; }
 
  private:
   //! The dataset.
   const MatType& dataset;
   //! The instantiated metric.
   MetricType& metric;
+
+  //! Number of distance calculations.
+  size_t distanceCalculations;
 };
 
 } // namespace kmeans
