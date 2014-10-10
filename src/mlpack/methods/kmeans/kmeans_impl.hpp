@@ -89,6 +89,9 @@ Cluster(const MatType& data,
   if (clusters > data.n_cols)
     Log::Warn << "KMeans::Cluster(): more clusters requested than points given."
         << std::endl;
+  else if (clusters == 0)
+    Log::Warn << "KMeans::Cluster(): zero clusters requested.  This probably "
+        << "isn't going to work.  Brace for crash." << std::endl;
 
   // Check validity of initial guess.
   if (initialGuess)
