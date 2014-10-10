@@ -74,7 +74,7 @@ double NaiveKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
         metric.Evaluate(centroids.col(i), newCentroids.col(i)), 2.0);
     cNorm += std::pow(dist, 2.0);
   }
-  return sqrt(cNorm);
+  return std::sqrt(cNorm);
 }
 
 } // namespace kmeans
