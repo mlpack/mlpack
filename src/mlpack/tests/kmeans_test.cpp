@@ -8,6 +8,7 @@
 #include <mlpack/methods/kmeans/allow_empty_clusters.hpp>
 #include <mlpack/methods/kmeans/refined_start.hpp>
 #include <mlpack/methods/kmeans/elkan_kmeans.hpp>
+#include <mlpack/methods/kmeans/hamerly_kmeans.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -487,29 +488,71 @@ BOOST_AUTO_TEST_CASE(SparseKMeansTest)
 
 BOOST_AUTO_TEST_CASE(ElkanTest)
 {
-  arma::mat dataset(10, 1000);
-  dataset.randu();
+  const size_t trials = 5;
 
-  arma::mat centroids(10, 20);
-  centroids.randu();
+  for (size_t t = 0; t < trials; ++t)
+  {
+    arma::mat dataset(10, 1000);
+    dataset.randu();
 
-  // Make sure Elkan's algorithm and the naive method return the same clusters.
-  arma::mat naiveCentroids(centroids);
-  KMeans<> km;
-  arma::Col<size_t> assignments;
-  km.Cluster(dataset, 20, assignments, naiveCentroids, false, true);
+    const size_t k = 5 * (t + 1);
+    arma::mat centroids(10, k);
+    centroids.randu();
 
-  KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
+    // Make sure Elkan's algorithm and the naive method return the same
+    // clusters.
+    arma::mat naiveCentroids(centroids);
+    KMeans<> km;
+    arma::Col<size_t> assignments;
+    km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
+
+    KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
          ElkanKMeans> elkan;
-  arma::Col<size_t> elkanAssignments;
-  arma::mat elkanCentroids(centroids);
-  elkan.Cluster(dataset, 20, elkanAssignments, elkanCentroids, false, true);
+    arma::Col<size_t> elkanAssignments;
+    arma::mat elkanCentroids(centroids);
+    elkan.Cluster(dataset, k, elkanAssignments, elkanCentroids, false, true);
 
-  for (size_t i = 0; i < dataset.n_cols; ++i)
-    BOOST_REQUIRE_EQUAL(assignments[i], elkanAssignments[i]);
+    for (size_t i = 0; i < dataset.n_cols; ++i)
+      BOOST_REQUIRE_EQUAL(assignments[i], elkanAssignments[i]);
 
-  for (size_t i = 0; i < centroids.n_elem; ++i)
-    BOOST_REQUIRE_CLOSE(naiveCentroids[i], elkanCentroids[i], 1e-5);
+    for (size_t i = 0; i < centroids.n_elem; ++i)
+      BOOST_REQUIRE_CLOSE(naiveCentroids[i], elkanCentroids[i], 1e-5);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(HamerlyTest)
+{
+  const size_t trials = 5;
+
+  for (size_t t = 0; t < trials; ++t)
+  {
+    arma::mat dataset(10, 1000);
+    dataset.randu();
+
+    const size_t k = 5 * (t + 1);
+    arma::mat centroids(10, k);
+    centroids.randu();
+
+    // Make sure Hamerly's algorithm and the naive method return the same
+    // clusters.
+    arma::mat naiveCentroids(centroids);
+    KMeans<> km;
+    arma::Col<size_t> assignments;
+    km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
+
+    KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
+        HamerlyKMeans> hamerly;
+    arma::Col<size_t> hamerlyAssignments;
+    arma::mat hamerlyCentroids(centroids);
+    hamerly.Cluster(dataset, k, hamerlyAssignments, hamerlyCentroids, false,
+        true);
+
+    for (size_t i = 0; i < dataset.n_cols; ++i)
+      BOOST_REQUIRE_EQUAL(assignments[i], hamerlyAssignments[i]);
+
+    for (size_t i = 0; i < centroids.n_elem; ++i)
+      BOOST_REQUIRE_CLOSE(naiveCentroids[i], hamerlyCentroids[i], 1e-5);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();
