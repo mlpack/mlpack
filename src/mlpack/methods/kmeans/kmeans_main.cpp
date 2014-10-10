@@ -10,6 +10,7 @@
 #include "allow_empty_clusters.hpp"
 #include "refined_start.hpp"
 #include "elkan_kmeans.hpp"
+#include "hamerly_kmeans.hpp"
 
 using namespace mlpack;
 using namespace mlpack::kmeans;
@@ -64,7 +65,9 @@ PARAM_INT("samplings", "Number of samplings to perform for refined start (use "
     "when --refined_start is specified).", "S", 100);
 PARAM_DOUBLE("percentage", "Percentage of dataset to use for each refined start"
     " sampling (use when --refined_start is specified).", "p", 0.02);
-PARAM_FLAG("elkan", "Use Elkan's algorithm.", "E");
+
+PARAM_STRING("algorithm", "Algorithm to use for the Lloyd iteration ('naive', "
+    "'elkan', or 'hamerly').", "a", "naive");
 
 // Given the type of initial partition policy, figure out the empty cluster
 // policy and run k-means.
@@ -131,10 +134,16 @@ void FindEmptyClusterPolicy(const InitialPartitionPolicy& ipp)
 template<typename InitialPartitionPolicy, typename EmptyClusterPolicy>
 void FindLloydStepType(const InitialPartitionPolicy& ipp)
 {
-  if (CLI::HasParam("elkan"))
+  const string algorithm = CLI::GetParam<string>("algorithm");
+  if (algorithm == "elkan")
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy, ElkanKMeans>(ipp);
-  else
+  else if (algorithm == "hamerly")
+    RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy, HamerlyKMeans>(ipp);
+  else if (algorithm == "naive")
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy, NaiveKMeans>(ipp);
+  else
+    Log::Fatal << "Unknown algorithm: '" << algorithm << "'.  Supported options"
+        << " are 'naive', 'elkan', and 'hamerly'." << endl;
 }
 
 // Given the template parameters, sanitize/load input and run k-means.
