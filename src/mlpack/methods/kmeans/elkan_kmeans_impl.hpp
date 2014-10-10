@@ -176,7 +176,7 @@ double ElkanKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
     upperBounds(i) += moveDistances(assignments[i]);
   }
 
-  return sqrt(cNorm);
+  return std::sqrt(cNorm);
 }
 
 } // namespace kmeans
