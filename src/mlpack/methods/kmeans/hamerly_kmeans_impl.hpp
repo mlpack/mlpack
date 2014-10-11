@@ -45,7 +45,8 @@ double HamerlyKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
   {
     for (size_t j = i + 1; j < centroids.n_cols; ++j)
     {
-      const double dist = metric.Evaluate(centroids.col(i), centroids.col(j));
+      const double dist = metric.Evaluate(centroids.col(i), centroids.col(j)) /
+          2.0;
       ++distanceCalculations;
 
       // Update bounds, if this intra-cluster distance is smaller.
@@ -58,7 +59,7 @@ double HamerlyKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
 
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
-    const double m = std::max(minClusterDistances(assignments[i]) / 2.0,
+    const double m = std::max(minClusterDistances(assignments[i]),
                               lowerBounds(i));
 
     // First bound test.
@@ -84,13 +85,14 @@ double HamerlyKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
 
     // The bounds failed.  So test against all other clusters.
     // This is Hamerly's Point-All-Ctrs() function from the paper.
+    // We have to reset the lower bound first.
+    lowerBounds(i) = DBL_MAX;
     for (size_t c = 0; c < centroids.n_cols; ++c)
     {
       if (c == assignments[i])
         continue;
 
       const double dist = metric.Evaluate(dataset.col(i), centroids.col(c));
-      ++distanceCalculations;
 
       // Is this a better cluster?  At this point, upperBounds[i] = d(i, c(i)).
       if (dist < upperBounds(i))
@@ -106,6 +108,7 @@ double HamerlyKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
         lowerBounds(i) = dist;
       }
     }
+    distanceCalculations += centroids.n_cols - 1;
 
     // Update new centroids.
     newCentroids.col(assignments[i]) += dataset.col(i);
