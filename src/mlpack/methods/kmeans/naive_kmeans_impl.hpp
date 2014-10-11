@@ -70,10 +70,11 @@ double NaiveKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
   double cNorm = 0.0;
   for (size_t i = 0; i < centroids.n_cols; ++i)
   {
-    const double dist = std::pow(
-        metric.Evaluate(centroids.col(i), newCentroids.col(i)), 2.0);
-    cNorm += std::pow(dist, 2.0);
+    cNorm += std::pow(metric.Evaluate(centroids.col(i), newCentroids.col(i)),
+        2.0);
   }
+  distanceCalculations += centroids.n_cols;
+
   return std::sqrt(cNorm);
 }
 
