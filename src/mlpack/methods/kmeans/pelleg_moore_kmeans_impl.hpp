@@ -39,7 +39,8 @@ PellegMooreKMeans<MetricType, MatType>::PellegMooreKMeans(
 template<typename MetricType, typename MatType>
 PellegMooreKMeans<MetricType, MatType>::~PellegMooreKMeans()
 {
-  delete tree;
+  if (tree)
+    delete tree;
 }
 
 // Run a single iteration.
