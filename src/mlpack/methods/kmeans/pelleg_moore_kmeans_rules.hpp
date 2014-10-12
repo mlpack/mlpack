@@ -32,23 +32,10 @@ class PellegMooreKMeansRules
                  TreeType& referenceNode,
                  const double oldScore);
 
-  //! Get the number of base cases that have been performed.
-  size_t BaseCases() const { return baseCases; }
-  //! Modify the number of base cases that have been performed.
-  size_t& BaseCases() { return baseCases; }
-
-  //! Get the number of scores that have been performed.
-  size_t Scores() const { return scores; }
-  //! Modify the number of scores that have been performed.
-  size_t& Scores() { return scores; }
-
-  //! Convenience typedef.
-  typedef neighbor::NeighborSearchTraversalInfo<TreeType> TraversalInfoType;
-
-  //! Get the traversal info.
-  const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
-  //! Modify the traversal info.
-  TraversalInfoType& TraversalInfo() { return traversalInfo; }
+  //! Get the number of distance calculations that have been performed.
+  size_t DistanceCalculations() const { return distanceCalculations; }
+  //! Modify the number of distance calculations that have been performed.
+  size_t& DistanceCalculations() { return distanceCalculations; }
 
  private:
   //! The dataset.
@@ -62,13 +49,10 @@ class PellegMooreKMeansRules
   //! Instantiated metric.
   MetricType& metric;
 
-  //! The number of base cases that have been performed.
-  size_t baseCases;
-  //! The number of scores that have been performed.
-  size_t scores;
+  //! The number of O(d) distance calculations that have been performed.
+  size_t distanceCalculations;
 
-  TraversalInfoType traversalInfo;
-
+  //! Spare blacklist; I think it's only used by the root node.
   arma::uvec spareBlacklist;
 };
 

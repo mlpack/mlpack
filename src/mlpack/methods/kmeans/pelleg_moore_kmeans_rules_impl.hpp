@@ -24,8 +24,7 @@ PellegMooreKMeansRules<MetricType, TreeType>::PellegMooreKMeansRules(
     newCentroids(newCentroids),
     counts(counts),
     metric(metric),
-    baseCases(0),
-    scores(0),
+    distanceCalculations(0),
     spareBlacklist(centroids.n_cols)
 {
   // Nothing to do.
@@ -66,7 +65,7 @@ double PellegMooreKMeansRules<MetricType, TreeType>::Score(
   // or not this node is dominated by a single cluster.
   const size_t whitelisted = centroids.n_cols - arma::accu(*blacklistPtr);
 
-  scores += whitelisted;
+  distanceCalculations += whitelisted;
 
   arma::vec minDistances(whitelisted);
   minDistances.fill(DBL_MAX);
@@ -117,6 +116,8 @@ double PellegMooreKMeansRules<MetricType, TreeType>::Score(
         centroids.col(closestCluster));
     const double otherDist = metric.Evaluate(cornerPoint, centroids.col(c));
 
+    distanceCalculations += 3; // One for cornerPoint, then two distances.
+
     if (closestDist < otherDist)
     {
       // The closest cluster dominates the node with respect to the cluster c.
@@ -159,7 +160,7 @@ double PellegMooreKMeansRules<MetricType, TreeType>::Score(
       if (referenceNode.Stat().Blacklist()[c] == 1)
         continue;
 
-      ++baseCases;
+      ++distanceCalculations;
 
       // The reference index is the index of the data point.
       const double distance = metric.Evaluate(centroids.col(c),
