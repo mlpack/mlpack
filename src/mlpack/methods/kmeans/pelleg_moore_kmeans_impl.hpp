@@ -63,7 +63,7 @@ double PellegMooreKMeans<MetricType, MatType>::Iterate(
   // irrelevant; we are checking each node with all clusters.
   traverser.Traverse(0, *tree);
 
-  distanceCalculations += rules.BaseCases() + rules.Scores();
+  distanceCalculations += rules.DistanceCalculations();
 
   // Now, calculate how far the clusters moved, after normalizing them.
   double residual = 0.0;
