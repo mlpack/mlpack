@@ -24,11 +24,9 @@ PellegMooreKMeansRules<MetricType, TreeType>::PellegMooreKMeansRules(
     newCentroids(newCentroids),
     counts(counts),
     metric(metric),
-    distanceCalculations(0),
-    spareBlacklist(centroids.n_cols)
+    distanceCalculations(0)
 {
   // Nothing to do.
-  spareBlacklist.zeros();
 }
 
 template<typename MetricType, typename TreeType>
@@ -48,46 +46,36 @@ double PellegMooreKMeansRules<MetricType, TreeType>::Score(
   // Obtain the parent's blacklist.  If this is the root node, we'll start with
   // an empty blacklist.  This means that after each iteration, we don't need to
   // reset any statistics.
-  arma::uvec* blacklistPtr = NULL;
   if (referenceNode.Parent() == NULL ||
-      referenceNode.Parent()->Stat().Blacklist().size() == 0)
-    blacklistPtr = &spareBlacklist;
+      referenceNode.Parent()->Stat().Blacklist().n_elem == 0)
+    referenceNode.Stat().Blacklist().zeros(centroids.n_cols);
   else
-    blacklistPtr = &referenceNode.Parent()->Stat().Blacklist();
-
-  // If the blacklist hasn't been initialized, fill it with zeros.
-  if (blacklistPtr->n_elem == 0)
-    blacklistPtr->zeros(centroids.n_cols);
-  referenceNode.Stat().Blacklist() = *blacklistPtr;
+    referenceNode.Stat().Blacklist() =
+        referenceNode.Parent()->Stat().Blacklist();
 
   // The query index is a fake index that we won't use, and the reference node
   // holds all of the points in the dataset.  Our goal is to determine whether
   // or not this node is dominated by a single cluster.
-  const size_t whitelisted = centroids.n_cols - arma::accu(*blacklistPtr);
+  const size_t whitelisted = centroids.n_cols -
+      arma::accu(referenceNode.Stat().Blacklist());
 
   distanceCalculations += whitelisted;
 
-  arma::vec minDistances(whitelisted);
-  minDistances.fill(DBL_MAX);
-  arma::Col<size_t> indexMappings(whitelisted);
-  size_t index = 0;
+  // Which cluster has minimum distance to the node?
+  size_t closestCluster = centroids.n_cols;
+  double minMinDistance = DBL_MAX;
   for (size_t i = 0; i < centroids.n_cols; ++i)
   {
-    if ((*blacklistPtr)[i] == 0)
+    if (referenceNode.Stat().Blacklist()[i] == 0)
     {
-      minDistances(index) = referenceNode.MinDistance(centroids.col(i));
-      indexMappings(index) = i;
-      ++index;
+      const double minDistance = referenceNode.MinDistance(centroids.col(i));
+      if (minDistance < minMinDistance)
+      {
+        minMinDistance = minDistance;
+        closestCluster = i;
+      }
     }
   }
-
-  // Which cluster has minimum distance to the node?  Sort by distance.
-  // This should probably be rewritten -- we only need the minimum, not the
-  // entire sorted list.  That'll cost O(k) not O(k log k) (depending on sort
-  // type).
-  arma::uvec sortedClusterIndices = sort_index(minDistances);
-  const size_t closestCluster = indexMappings(sortedClusterIndices[0]);
-
 
   // Now, for every other whitelisted cluster, determine if the closest cluster
   // owns the point.  This calculation is specific to hyperrectangle trees (but,
@@ -129,25 +117,12 @@ double PellegMooreKMeansRules<MetricType, TreeType>::Score(
 
   if (whitelisted - newBlacklisted == 1)
   {
-    // This node is dominated by the first cluster.
-    const size_t cluster = indexMappings(sortedClusterIndices[0]);
-    counts[cluster] += referenceNode.NumDescendants();
-    newCentroids.col(cluster) += referenceNode.NumDescendants() *
+    // This node is dominated by the closest cluster.
+    counts[closestCluster] += referenceNode.NumDescendants();
+    newCentroids.col(closestCluster) += referenceNode.NumDescendants() *
         referenceNode.Stat().Centroid();
 
-    if (referenceNode.Parent() == NULL ||
-        referenceNode.Parent()->Stat().Blacklist().size() == 0)
-    {
-      spareBlacklist.zeros(centroids.n_cols);
-    }
-
     return DBL_MAX;
-  }
-
-  if (referenceNode.Parent() == NULL ||
-      referenceNode.Parent()->Stat().Blacklist().size() == 0)
-  {
-    spareBlacklist.zeros(centroids.n_cols);
   }
 
   // Perform the base case here.

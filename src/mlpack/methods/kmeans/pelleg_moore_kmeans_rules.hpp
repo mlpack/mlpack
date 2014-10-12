@@ -51,9 +51,6 @@ class PellegMooreKMeansRules
 
   //! The number of O(d) distance calculations that have been performed.
   size_t distanceCalculations;
-
-  //! Spare blacklist; I think it's only used by the root node.
-  arma::uvec spareBlacklist;
 };
 
 }; // namespace kmeans
