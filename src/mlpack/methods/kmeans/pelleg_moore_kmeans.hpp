@@ -14,6 +14,25 @@
 namespace mlpack {
 namespace kmeans {
 
+/**
+ * An implementation of Pelleg-Moore's 'blacklist' algorithm for k-means
+ * clustering.  This algorithm builds a kd-tree on the data points and traverses
+ * it in order to determine the closest clusters to each point.
+ *
+ * For more information on the algorithm, see
+ *
+ * @code
+ * @inproceedings{pelleg1999accelerating,
+ *     title={Accelerating exact k-means algorithms with geometric reasoning},
+ *     author={Pelleg, Dan and Moore, Andrew W.},
+ *     booktitle={Proceedings of the Fifth ACM SIGKDD International Conference
+ *       on Knowledge Discovery and Data Mining (KDD '99)},
+ * pages={277--281},
+ * year={1999},
+ * organization={ACM}
+ * }
+ * @endcode
+ */
 template<typename MetricType, typename MatType>
 class PellegMooreKMeans
 {
@@ -40,8 +59,12 @@ class PellegMooreKMeans
                  arma::mat& newCentroids,
                  arma::Col<size_t>& counts);
 
+  //! Return the number of distance calculations.
   size_t DistanceCalculations() const { return distanceCalculations; }
+  //! Modify the number of distance calculations.
+  size_t& DistanceCalculations() { return distanceCalculations; }
 
+  //! Convenience typedef for the tree.
   typedef tree::BinarySpaceTree<bound::HRectBound<2, true>,
       PellegMooreKMeansStatistic, MatType> TreeType;
 
