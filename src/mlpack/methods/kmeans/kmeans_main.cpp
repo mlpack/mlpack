@@ -11,6 +11,7 @@
 #include "refined_start.hpp"
 #include "elkan_kmeans.hpp"
 #include "hamerly_kmeans.hpp"
+#include "pelleg_moore_kmeans.hpp"
 
 using namespace mlpack;
 using namespace mlpack::kmeans;
@@ -31,6 +32,13 @@ PROGRAM_INFO("K-Means Clustering", "This program performs K-Means clustering "
     "--samples parameter is used, and to specify the percentage of the dataset "
     "to be used in each sample, the --percentage parameter is used (it should "
     "be a value between 0.0 and 1.0)."
+    "\n\n"
+    "There are several options available for the algorithm used for each Lloyd "
+    "iteration, specified with the --algorithm (-a) option.  The standard O(kN)"
+    " approach can be used ('naive').  Other options include the Pelleg-Moore "
+    "tree-based algorithm ('pelleg-moore'), Elkan's triangle-inequality based "
+    "algorithm ('elkan'), and Hamerly's modification to Elkan's algorithm "
+    "('hamerly')."
     "\n\n"
     "As of October 2014, the --overclustering option has been removed.  If you "
     "want this support back, let us know -- file a bug at "
@@ -67,7 +75,7 @@ PARAM_DOUBLE("percentage", "Percentage of dataset to use for each refined start"
     " sampling (use when --refined_start is specified).", "p", 0.02);
 
 PARAM_STRING("algorithm", "Algorithm to use for the Lloyd iteration ('naive', "
-    "'elkan', or 'hamerly').", "a", "naive");
+    "'pelleg-moore', 'elkan', or 'hamerly').", "a", "naive");
 
 // Given the type of initial partition policy, figure out the empty cluster
 // policy and run k-means.
@@ -139,11 +147,14 @@ void FindLloydStepType(const InitialPartitionPolicy& ipp)
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy, ElkanKMeans>(ipp);
   else if (algorithm == "hamerly")
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy, HamerlyKMeans>(ipp);
+  else if (algorithm == "pelleg-moore")
+    RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy,
+        PellegMooreKMeans>(ipp);
   else if (algorithm == "naive")
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy, NaiveKMeans>(ipp);
   else
     Log::Fatal << "Unknown algorithm: '" << algorithm << "'.  Supported options"
-        << " are 'naive', 'elkan', and 'hamerly'." << endl;
+        << " are 'naive', 'pelleg-moore', 'elkan', and 'hamerly'." << endl;
 }
 
 // Given the template parameters, sanitize/load input and run k-means.
