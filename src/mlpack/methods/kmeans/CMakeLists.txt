@@ -12,6 +12,11 @@ set(SOURCES
   max_variance_new_cluster_impl.hpp
   naive_kmeans.hpp
   naive_kmeans_impl.hpp
+  pelleg_moore_kmeans.hpp
+  pelleg_moore_kmeans_impl.hpp
+  pelleg_moore_kmeans_rules.hpp
+  pelleg_moore_kmeans_rules_impl.hpp
+  pelleg_moore_kmeans_statistic.hpp
   random_partition.hpp
   refined_start.hpp
   refined_start_impl.hpp
