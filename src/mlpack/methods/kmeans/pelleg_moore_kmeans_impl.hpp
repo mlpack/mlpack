@@ -81,6 +81,7 @@ double PellegMooreKMeans<MetricType, MatType>::Iterate(
                                            newCentroids.col(c)), 2.0);
     }
   }
+  distanceCalculations += centroids.n_cols;
 
   return std::sqrt(residual);
 }
