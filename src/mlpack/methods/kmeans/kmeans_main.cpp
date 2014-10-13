@@ -12,6 +12,7 @@
 #include "elkan_kmeans.hpp"
 #include "hamerly_kmeans.hpp"
 #include "pelleg_moore_kmeans.hpp"
+#include "dtnn_kmeans.hpp"
 
 using namespace mlpack;
 using namespace mlpack::kmeans;
@@ -75,7 +76,7 @@ PARAM_DOUBLE("percentage", "Percentage of dataset to use for each refined start"
     " sampling (use when --refined_start is specified).", "p", 0.02);
 
 PARAM_STRING("algorithm", "Algorithm to use for the Lloyd iteration ('naive', "
-    "'pelleg-moore', 'elkan', or 'hamerly').", "a", "naive");
+    "'pelleg-moore', 'elkan', 'hamerly', or 'dtnn').", "a", "naive");
 
 // Given the type of initial partition policy, figure out the empty cluster
 // policy and run k-means.
@@ -150,6 +151,9 @@ void FindLloydStepType(const InitialPartitionPolicy& ipp)
   else if (algorithm == "pelleg-moore")
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy,
         PellegMooreKMeans>(ipp);
+  else if (algorithm == "dtnn")
+    RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy,
+        DefaultDTNNKMeans>(ipp);
   else if (algorithm == "naive")
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy, NaiveKMeans>(ipp);
   else
