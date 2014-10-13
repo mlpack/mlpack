@@ -57,8 +57,13 @@ NeighborSearch(const typename TreeType::Mat& referenceSetIn,
     hasQuerySet(true),
     naive(naive),
     singleMode(!naive && singleMode), // No single mode if naive.
-    metric(metric)
+    metric(metric),
+    baseCases(0),
+    scores(0)
 {
+  // C++11 will allow us to call out to other constructors so we can avoid this
+  // copypasta problem.
+
   // We'll time tree building, but only if we are building trees.
   Timer::Start("tree_building");
 
@@ -105,7 +110,9 @@ NeighborSearch(const typename TreeType::Mat& referenceSetIn,
     hasQuerySet(false),
     naive(naive),
     singleMode(!naive && singleMode), // No single mode if naive.
-    metric(metric)
+    metric(metric),
+    baseCases(0),
+    scores(0)
 {
   // We'll time tree building, but only if we are building trees.
   Timer::Start("tree_building");
@@ -149,7 +156,9 @@ NeighborSearch<SortPolicy, MetricType, TreeType>::NeighborSearch(
     hasQuerySet(true),
     naive(false),
     singleMode(singleMode),
-    metric(metric)
+    metric(metric),
+    baseCases(0),
+    scores(0)
 {
   // Nothing else to initialize.
 }
@@ -169,7 +178,9 @@ NeighborSearch<SortPolicy, MetricType, TreeType>::NeighborSearch(
     hasQuerySet(false), // In this case we will own a tree, if singleMode.
     naive(false),
     singleMode(singleMode),
-    metric(metric)
+    metric(metric),
+    baseCases(0),
+    scores(0)
 {
   Timer::Start("tree_building");
 
@@ -246,12 +257,14 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
     for (size_t i = 0; i < querySet.n_cols; ++i)
       for (size_t j = 0; j < referenceSet.n_cols; ++j)
         rules.BaseCase(i, j);
+
+    baseCases += querySet.n_cols * referenceSet.n_cols;
   }
   else if (singleMode)
   {
     // The search doesn't work if the root node is also a leaf node.
-    // if this is the case, it is suggested that you use the naive method.
-    assert(!(referenceTree->IsLeaf()));
+    // If this is the case, it is suggested that you use the naive method.
+    Log::Assert(!(referenceTree->IsLeaf()));
 
     // Create the traverser.
     typename TreeType::template SingleTreeTraverser<RuleType> traverser(rules);
@@ -259,6 +272,9 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
     // Now have it traverse for each point.
     for (size_t i = 0; i < querySet.n_cols; ++i)
       traverser.Traverse(i, *referenceTree);
+
+    scores += rules.Scores();
+    baseCases += rules.BaseCases();
 
     Log::Info << rules.Scores() << " node combinations were scored.\n";
     Log::Info << rules.BaseCases() << " base cases were calculated.\n";
@@ -269,6 +285,9 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
     typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
 
     traverser.Traverse(*queryTree, *referenceTree);
+
+    scores += rules.Scores();
+    baseCases += rules.BaseCases();
 
     Log::Info << rules.Scores() << " node combinations were scored.\n";
     Log::Info << rules.BaseCases() << " base cases were calculated.\n";
