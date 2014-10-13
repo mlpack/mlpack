@@ -68,10 +68,13 @@ using namespace mlpack::neighbor;
 
 BOOST_AUTO_TEST_SUITE(ToStringTest);
 
+std::ostringstream testOstream;
+
 BOOST_AUTO_TEST_CASE(DiscreteDistributionString)
 {
   DiscreteDistribution d("0.4 0.5 0.1");
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -80,6 +83,7 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionString)
 {
   GaussianDistribution d("0.1 0.3", "1.0 0.1; 0.1 1.0");
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -88,6 +92,7 @@ BOOST_AUTO_TEST_CASE(CosineDistanceString)
 {
   CosineDistance d;
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -96,6 +101,7 @@ BOOST_AUTO_TEST_CASE(EpanechnikovKernelString)
 {
   EpanechnikovKernel d;
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -104,6 +110,7 @@ BOOST_AUTO_TEST_CASE(ExampleKernelString)
 {
   ExampleKernel d;
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -112,6 +119,7 @@ BOOST_AUTO_TEST_CASE(GaussianKernelString)
 {
   GaussianKernel d;
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -120,6 +128,7 @@ BOOST_AUTO_TEST_CASE(HyperbolicTangentKernelString)
 {
   HyperbolicTangentKernel d;
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -128,6 +137,7 @@ BOOST_AUTO_TEST_CASE(LaplacianKernelString)
 {
   LaplacianKernel d;
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -136,6 +146,7 @@ BOOST_AUTO_TEST_CASE(LinearKernelString)
 {
   LinearKernel d;
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -144,6 +155,7 @@ BOOST_AUTO_TEST_CASE(PolynomialKernelString)
 {
   PolynomialKernel d;
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -154,6 +166,7 @@ BOOST_AUTO_TEST_CASE(PSpectrumStringKernelString)
   const size_t t = 1;
   PSpectrumStringKernel d(s, t);
   Log::Debug << d;
+  testOstream << d;
   std::string sttm = d.ToString();
   BOOST_REQUIRE_NE(sttm, "");
 }
@@ -162,6 +175,7 @@ BOOST_AUTO_TEST_CASE(SphericalKernelString)
 {
   SphericalKernel d;
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -170,6 +184,7 @@ BOOST_AUTO_TEST_CASE(TriangularKernelString)
 {
   TriangularKernel d;
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -178,6 +193,7 @@ BOOST_AUTO_TEST_CASE(IPMetricString)
 {
   IPMetric<TriangularKernel> d;
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -186,6 +202,7 @@ BOOST_AUTO_TEST_CASE(LMetricString)
 {
   LMetric<1> d;
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -194,6 +211,7 @@ BOOST_AUTO_TEST_CASE(MahalanobisDistanceString)
 {
   MahalanobisDistance<> d;
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -205,6 +223,7 @@ BOOST_AUTO_TEST_CASE(SGDString)
   SoftmaxErrorFunction<> a(g, v);
   mlpack::optimization::SGD<SoftmaxErrorFunction<> > d(a);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -216,6 +235,7 @@ BOOST_AUTO_TEST_CASE(L_BFGSString)
   SoftmaxErrorFunction<> a(g, v);
   mlpack::optimization::L_BFGS<SoftmaxErrorFunction<> > d(a);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -226,6 +246,7 @@ BOOST_AUTO_TEST_CASE(AugLagString)
   mlpack::optimization::AugLagrangian<
       mlpack::optimization::AugLagrangianTestFunction> d(a);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -237,6 +258,7 @@ BOOST_AUTO_TEST_CASE(LRSDPString)
   const size_t b=3;
   mlpack::optimization::LRSDP d(b,c);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -245,6 +267,7 @@ BOOST_AUTO_TEST_CASE(BallBoundString)
 {
   BallBound<> d(3.5, "1.0 2.0");
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -255,6 +278,7 @@ BOOST_AUTO_TEST_CASE(BinSpaceString)
   q.randu();
   BinarySpaceTree<HRectBound<1> > d(q);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -265,6 +289,7 @@ BOOST_AUTO_TEST_CASE(CoverTreeString)
   q.randu();
   mlpack::tree::CoverTree<> d(q);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -275,6 +300,7 @@ BOOST_AUTO_TEST_CASE(MRKDString)
   q.randu();
   mlpack::tree::MRKDStatistic d(q);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -293,6 +319,7 @@ BOOST_AUTO_TEST_CASE(CFString)
   c(2, 2) = 0.7;
   mlpack::cf::CF<> d(c);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -303,6 +330,7 @@ BOOST_AUTO_TEST_CASE(DetString)
   c.randn();
   mlpack::det::DTree d(c);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -313,6 +341,7 @@ BOOST_AUTO_TEST_CASE(EmstString)
   c.randu();
   mlpack::emst::DualTreeBoruvka<> d(c);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -323,6 +352,7 @@ BOOST_AUTO_TEST_CASE(FastMKSString)
   c.randn();
   mlpack::fastmks::FastMKS<LinearKernel> d(c);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -333,6 +363,7 @@ BOOST_AUTO_TEST_CASE(GMMString)
   c.randn();
   mlpack::gmm::GMM<> d(5, 4);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -341,6 +372,7 @@ BOOST_AUTO_TEST_CASE(HMMString)
 {
   mlpack::hmm::HMM<> d(5, 4);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -350,6 +382,7 @@ BOOST_AUTO_TEST_CASE(KPCAString)
   LinearKernel k;
   mlpack::kpca::KernelPCA<LinearKernel> d(k, false);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -358,6 +391,7 @@ BOOST_AUTO_TEST_CASE(KMeansString)
 {
   mlpack::kmeans::KMeans<metric::ManhattanDistance> d(100);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -366,6 +400,7 @@ BOOST_AUTO_TEST_CASE(LarsString)
 {
   mlpack::regression::LARS d(false);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -378,6 +413,7 @@ BOOST_AUTO_TEST_CASE(LinRegString)
   b.randn();
   mlpack::regression::LinearRegression d(c, b);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -390,6 +426,7 @@ BOOST_AUTO_TEST_CASE(LCCString)
   c.randn();
   mlpack::lcc::LocalCoordinateCoding<> d(c, b, a);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -402,6 +439,7 @@ BOOST_AUTO_TEST_CASE(LogRegString)
   b.randn();
   mlpack::regression::LogisticRegression<> d(c, b);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -413,6 +451,7 @@ BOOST_AUTO_TEST_CASE(LSHString)
   c.randn();
   mlpack::neighbor::LSHSearch<NearestNeighborSort> d(c, b, b);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -423,6 +462,7 @@ BOOST_AUTO_TEST_CASE(NeighborString)
   c.randn();
   mlpack::neighbor::NeighborSearch<> d(c, c);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -446,6 +486,7 @@ BOOST_AUTO_TEST_CASE(NCAString)
   c.randn();
   mlpack::nca::NCA<> d(c, b);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -454,6 +495,7 @@ BOOST_AUTO_TEST_CASE(PCAString)
 {
   mlpack::pca::PCA d(true);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -462,6 +504,7 @@ BOOST_AUTO_TEST_CASE(RadicalString)
 {
   mlpack::radical::Radical d;
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -472,6 +515,7 @@ BOOST_AUTO_TEST_CASE(RangeSearchString)
   c.randn();
   mlpack::range::RangeSearch<> d(c);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -482,6 +526,7 @@ BOOST_AUTO_TEST_CASE(RannString)
   c.randn();
   mlpack::neighbor::RASearch<> d(c);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
@@ -494,6 +539,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingString)
   double a=0.1;
   mlpack::sparse_coding::SparseCoding<> d(c,b,a);
   Log::Debug << d;
+  testOstream << d;
   std::string s = d.ToString();
   BOOST_REQUIRE_NE(s, "");
 }
