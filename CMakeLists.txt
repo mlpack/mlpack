@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 2.8.5)
 project(mlpack C CXX)
 
+# Ensure that we have a C++11 compiler.
+include(CMake/CXX11.cmake)
+check_for_cxx11_compiler(HAS_CXX11)
+if(NOT HAS_CXX11)
+  message(FATAL "No C++11 compiler available!")
+endif(NOT HAS_CXX11)
+enable_cxx11()
+
 # First, define all the compilation options.
 # We default to debugging mode for developers.
 option(DEBUG "Compile with debugging information" ON)
@@ -55,6 +63,7 @@ endif(ARMA_EXTRA_DEBUG)
 # resides.
 #   ARMADILLO_LIBRARY - location of libarmadillo.so / armadillo.lib
 #   ARMADILLO_INCLUDE_DIR - directory containing <armadillo>
+#   ARMADILLO_INCLUDE_DIRS - directories necessary for Armadillo includes
 #   LIBXML2_INCLUDE_DIR - location of LibXml2 includes
 #   LIBXML2_LIBRARIES - locations of libxml2.so or libxml2.lib
 #   BOOST_ROOT - root of Boost installation
@@ -71,12 +80,12 @@ find_package(Armadillo 3.6.0 REQUIRED)
 # compile Armadillo with 64-bit words.
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
   # Can we open the configuration file?  If not, issue a warning.
-  if(NOT EXISTS "${ARMADILLO_INCLUDE_DIRS}/armadillo_bits/config.hpp")
+  if(NOT EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
     message(WARNING "Armadillo configuration file "
-        "(${ARMADILLO_INCLUDE_DIRS}/armadillo_bits/config.hpp) does not exist!")
-  else(NOT EXISTS "${ARMADILLO_INCLUDE_DIRS}/armadillo_bits/config.hpp")
+        "(${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp) does not exist!")
+  else(NOT EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
     # We are on a 64-bit system.  Does Armadillo have ARMA_64BIT_WORD enabled?
-    file(READ "${ARMADILLO_INCLUDE_DIRS}/armadillo_bits/config.hpp" ARMA_CONFIG)
+    file(READ "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp" ARMA_CONFIG)
     string(REGEX MATCH
         "[\r\n][ ]*#define ARMA_64BIT_WORD"
         ARMA_HAS_64BIT_WORD_PRE
@@ -91,7 +100,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8)
           "MLPACK will still work without ARMA_64BIT_WORD defined, but will not "
           "scale to matrices with more than 4 billion elements.")
     endif(ARMA_HAS_64BIT_WORD EQUAL 0)
-  endif(NOT EXISTS "${ARMADILLO_INCLUDE_DIRS}/armadillo_bits/config.hpp")
+  endif(NOT EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
 endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
 # On Windows, Armadillo should be using LAPACK and BLAS but we still need to
