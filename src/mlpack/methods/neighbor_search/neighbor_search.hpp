@@ -192,8 +192,19 @@ class NeighborSearch
               arma::Mat<size_t>& resultingNeighbors,
               arma::mat& distances);
 
-  // Returns a string representation of this object. 
+  //! Returns a string representation of this object.
   std::string ToString() const;
+
+  //! Return the total number of base case evaluations performed during
+  //! searches.
+  size_t BaseCases() const { return baseCases; }
+  //! Modify the total number of base case evaluations.
+  size_t& BaseCases() { return baseCases; }
+
+  //! Return the number of node combination scores during the search.
+  size_t Scores() const { return scores; }
+  //! Modify the number of node combination scores.
+  size_t& Scores() { return scores; }
 
  private:
   //! Copy of reference dataset (if we need it, because tree building modifies
@@ -229,6 +240,12 @@ class NeighborSearch
   std::vector<size_t> oldFromNewReferences;
   //! Permutations of query points during tree building.
   std::vector<size_t> oldFromNewQueries;
+
+  //! The total number of base cases.
+  size_t baseCases;
+  //! The total number of scores (applicable for non-naive search).
+  size_t scores;
+
 }; // class NeighborSearch
 
 }; // namespace neighbor
