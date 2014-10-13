@@ -10,6 +10,9 @@
 #ifndef __MLPACK_METHODS_KMEANS_DTNN_KMEANS_IMPL_HPP
 #define __MLPACK_METHODS_KMEANS_DTNN_KMEANS_IMPL_HPP
 
+// In case it hasn't been included yet.
+#include "dtnn_kmeans.hpp"
+
 namespace mlpack {
 namespace kmeans {
 

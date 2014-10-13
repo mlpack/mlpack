@@ -9,6 +9,9 @@
 #ifndef __MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_RULES_IMPL_HPP
 #define __MLPACK_METHODS_KMEANS_PELLEG_MOORE_KMEANS_RULES_IMPL_HPP
 
+// In case it hasn't been included yet.
+#include "pelleg_moore_kmeans_rules.hpp"
+
 namespace mlpack {
 namespace kmeans {
 
