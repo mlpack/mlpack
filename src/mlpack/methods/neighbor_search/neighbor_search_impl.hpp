@@ -59,9 +59,6 @@ NeighborSearch(const typename TreeType::Mat& referenceSetIn,
     singleMode(!naive && singleMode), // No single mode if naive.
     metric(metric)
 {
-  // C++11 will allow us to call out to other constructors so we can avoid this
-  // copy/paste problem.
-
   // We'll time tree building, but only if we are building trees.
   Timer::Start("tree_building");
 
