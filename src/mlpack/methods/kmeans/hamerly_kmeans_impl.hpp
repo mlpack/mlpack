@@ -7,6 +7,9 @@
 #ifndef __MLPACK_METHODS_KMEANS_HAMERLY_KMEANS_IMPL_HPP
 #define __MLPACK_METHODS_KMEANS_HAMERLY_KMEANS_IMPL_HPP
 
+// In case it hasn't been included yet.
+#include "hamerly_kmeans.hpp"
+
 namespace mlpack {
 namespace kmeans {
 
