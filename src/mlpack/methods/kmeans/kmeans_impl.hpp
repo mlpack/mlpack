@@ -174,7 +174,7 @@ Cluster(const MatType& data,
   // If we ended on an even iteration, then the centroids are in the
   // centroidsOther matrix, and we need to steal its memory (steal_mem() avoids
   // a copy if possible).
-  if (iteration % 2 == 0)
+  if ((iteration - 1) % 2 == 0)
     centroids.steal_mem(centroidsOther);
 
   if (iteration != maxIterations)
