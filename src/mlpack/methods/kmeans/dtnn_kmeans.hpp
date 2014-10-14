@@ -12,6 +12,7 @@
 
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+#include <mlpack/core/tree/cover_tree.hpp>
 
 namespace mlpack {
 namespace kmeans {
@@ -78,8 +79,16 @@ class DTNNKMeans
   void UpdateTree(TreeType& node, const double tolerance);
 };
 
+//! A template typedef for the DTNNKMeans algorithm with the default tree type
+//! (a kd-tree).
 template<typename MetricType, typename MatType>
 using DefaultDTNNKMeans = DTNNKMeans<MetricType, MatType>;
+
+//! A template typedef for the DTNNKMeans algorithm with the cover tree type.
+template<typename MetricType, typename MatType>
+using CoverTreeDTNNKMeans = DTNNKMeans<MetricType, MatType,
+    tree::CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
+    neighbor::NeighborSearchStat<neighbor::NearestNeighborSort> > >;
 
 } // namespace kmeans
 } // namespace mlpack

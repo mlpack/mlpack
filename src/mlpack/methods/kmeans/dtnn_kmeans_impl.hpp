@@ -16,6 +16,32 @@
 namespace mlpack {
 namespace kmeans {
 
+//! Call the tree constructor that does mapping.
+template<typename TreeType>
+TreeType* BuildTree(
+    typename TreeType::Mat& dataset,
+    std::vector<size_t>& oldFromNew,
+    typename boost::enable_if_c<
+        tree::TreeTraits<TreeType>::RearrangesDataset == true, TreeType*
+    >::type = 0)
+{
+  // This is a hack.  I know this will be BinarySpaceTree, so force a leaf size
+  // of two.
+  return new TreeType(dataset, oldFromNew, 1);
+}
+
+//! Call the tree constructor that does not do mapping.
+template<typename TreeType>
+TreeType* BuildTree(
+    const typename TreeType::Mat& dataset,
+    const std::vector<size_t>& /* oldFromNew */,
+    const typename boost::enable_if_c<
+        tree::TreeTraits<TreeType>::RearrangesDataset == false, TreeType*
+    >::type = 0)
+{
+  return new TreeType(dataset);
+}
+
 template<typename MetricType, typename MatType, typename TreeType>
 DTNNKMeans<MetricType, MatType, TreeType>::DTNNKMeans(const MatType& dataset,
                                                       MetricType& metric) :
@@ -53,27 +79,15 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
 {
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);
   counts.zeros(centroids.n_cols);
-  arma::mat centroidsCopy;
 
   // Build a tree on the centroids.
   std::vector<size_t> oldFromNewCentroids;
-  TreeType* centroidTree;
-  if (tree::TreeTraits<TreeType>::RearrangesDataset)
-  {
-    // Manually set leaf size of 2.  This may not always be appropriate.
-    centroidsCopy = centroids;
-    centroidTree = new TreeType(centroidsCopy, oldFromNewCentroids, 2);
-  }
-  else
-  {
-    centroidTree = new TreeType(centroidsCopy);
-  }
+  TreeType* centroidTree = BuildTree<TreeType>(
+      const_cast<typename TreeType::Mat&>(centroids), oldFromNewCentroids);
 
   typedef neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType,
       TreeType> AllkNNType;
-  AllkNNType allknn(centroidTree, tree,
-      (tree::TreeTraits<TreeType>::RearrangesDataset) ? centroidsCopy :
-      centroids, dataset, false, metric);
+  AllkNNType allknn(centroidTree, tree, centroids, dataset, false, metric);
 
   // This is a lot of overhead.  We don't need the distances.
   arma::mat distances;
@@ -92,7 +106,7 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
     else
     {
       newCentroids.col(assignments[i]) += dataset.col(i);
-      ++counts(i);
+      ++counts(assignments[i]);
     }
   }
 
@@ -101,15 +115,18 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   double maxMovement = 0.0;
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
-    if (counts[c] == 0)
+    // Get the mapping to the old cluster, if necessary.
+    const size_t old = (tree::TreeTraits<TreeType>::RearrangesDataset) ?
+        oldFromNewCentroids[c] : c;
+    if (counts[old] == 0)
     {
-      newCentroids.col(c).fill(DBL_MAX); // Should have happened anyway I think.
+      newCentroids.col(old).fill(DBL_MAX);
     }
     else
     {
-      newCentroids.col(c) /= counts(c);
+      newCentroids.col(old) /= counts(old);
       const double movement = metric.Evaluate(centroids.col(c),
-          newCentroids.col(c));
+          newCentroids.col(old));
       residual += std::pow(movement, 2.0);
 
       if (movement > maxMovement)
