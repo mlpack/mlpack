@@ -40,9 +40,11 @@ namespace metric {
  * which is faster to evaluate.
  *
  * @tparam TakeRoot If true, takes the root of the output.  It is slightly
- *   faster to leave this at the default of false.
+ *   faster to leave this at the default of false, but this means the metric may
+ *   not satisfy the triangle inequality and may not be usable for methods that
+ *   expect a true metric.
  */
-template<bool TakeRoot = false>
+template<bool TakeRoot = true>
 class MahalanobisDistance
 {
  public:
