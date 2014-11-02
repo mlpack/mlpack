@@ -7,8 +7,8 @@ set(SOURCES
   gaussian_distribution.cpp
   laplace_distribution.hpp
   laplace_distribution.cpp
-  hmm_regression.hpp
-  hmm_regression_impl.hpp
+  regression_distribution.hpp
+  regression_distribution.cpp
 )
 
 # add directory name to sources
