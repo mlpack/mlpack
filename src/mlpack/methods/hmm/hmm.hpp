@@ -261,6 +261,36 @@ class HMM
    */
   double LogLikelihood(const arma::mat& dataSeq) const;
 
+  /**
+   * HMM filtering. Computes the k-step-ahead expected emission at each time
+   * conditioned only on prior observations. That is
+   * E{ Y[t+k] | Y[0], ..., Y[t] }.
+   * The returned matrix has columns equal to the number of observations. Note
+   * that the expectation may not be meaningful for discrete emissions.
+   * 
+   * @param dataSeq Sequence of observations.
+   * @param filterSeq Vector in which the expected emission sequence will be
+   *    stored.
+   * @param ahead Number of steps ahead (k) for expectations.
+   */
+  void Filter(const arma::mat& dataSeq,
+              arma::mat& filterSeq,
+              size_t ahead = 0) const;
+  
+  /**
+   * HMM smoothing. Computes expected emission at each time conditioned on all
+   * observations. That is
+   * E{ Y[t] | Y[0], ..., Y[T] }.
+   * The returned matrix has columns equal to the number of observations. Note
+   * that the expectation may not be meaningful for discrete emissions.
+   *  
+   * @param dataSeq Sequence of observations.
+   * @param smoothSeq Vector in which the expected emission sequence will be
+   *    stored.
+   */
+  void Smooth(const arma::mat& dataSeq,
+              arma::mat& smoothSeq) const;
+  
   //! Return the vector of initial state probabilities.
   const arma::vec& Initial() const { return initial; }
   //! Modify the vector of initial state probabilities.
@@ -300,10 +330,9 @@ class HMM
    * Returns a string indicating the type.
    */
   static std::string const Type() { return "HMM"; }
-  
- private:
-  // Helper functions.
 
+ protected:
+  // Helper functions.
   /**
    * The Forward algorithm (part of the Forward-Backward algorithm).  Computes
    * forward probabilities for each state for each observation in the given data
@@ -333,14 +362,15 @@ class HMM
                 const arma::vec& scales,
                 arma::mat& backwardProb) const;
 
+  //! Set of emission probability distributions; one for each state.
+  std::vector<Distribution> emission;
+  
+ private:
   //! Initial state probability vector.
   arma::vec initial;
 
   //! Transition probability matrix.
   arma::mat transition;
-
-  //! Set of emission probability distributions; one for each state.
-  std::vector<Distribution> emission;
 
   //! Dimensionality of observations.
   size_t dimensionality;
