@@ -92,7 +92,7 @@ class RegressionDistribution
   const arma::vec& Parameters() const { return rf.Parameters(); }
 
   //! Return the dimensionality (2) NEED TO FIX THIS
-  static const size_t Dimensionality() { return 2; }
+  static size_t Dimensionality() { return 2; }
 };
 
 
