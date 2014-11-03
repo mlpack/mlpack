@@ -443,23 +443,20 @@ void HMM<Distribution>::Filter(const arma::mat& dataSeq,
                                arma::mat& filterSeq,
                                size_t ahead) const
 {
-  // First run the forward algorithm
+  // First run the forward algorithm.
   arma::mat forwardProb;
   arma::vec scales;
   Forward(dataSeq, scales, forwardProb);
 
-  // Propagate state ahead
-  if(ahead != 0) {
-    forwardProb = pow(transition, ahead)*forwardProb;
-  }
+  // Propagate state ahead.
+  if (ahead != 0)
+    forwardProb = pow(transition, ahead) * forwardProb;
 
   // Compute expected emissions.
   // Will not work for distributions without a Mean() function.
   filterSeq.zeros(dimensionality, dataSeq.n_cols);
-  for(size_t i = 0; i < emission.size(); i++)
-  {
-    filterSeq = filterSeq + (emission[i].Mean())*(forwardProb.row(i));
-  }
+  for (size_t i = 0; i < emission.size(); i++)
+    filterSeq += emission[i].Mean() * forwardProb.row(i);
 }
 
 /**
@@ -469,17 +466,15 @@ template<typename Distribution>
 void HMM<Distribution>::Smooth(const arma::mat& dataSeq,
                                arma::mat& smoothSeq) const
 {
-  // First run the forward algorithm
+  // First run the forward algorithm.
   arma::mat stateProb;
   Estimate(dataSeq, stateProb);
 
   // Compute expected emissions.
   // Will not work for distributions without a Mean() function.
   smoothSeq.zeros(dimensionality, dataSeq.n_cols);
-  for(size_t i = 0; i < emission.size(); i++)
-  {
-    smoothSeq = smoothSeq + (emission[i].Mean())*(stateProb.row(i));
-  }
+  for (size_t i = 0; i < emission.size(); i++)
+    smoothSeq += emission[i].Mean() * stateProb.row(i);
 }
 
 /**
