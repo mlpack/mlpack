@@ -13,12 +13,12 @@ namespace mlpack {
 namespace amf {
 
 /**
- * This class implements residue tolerance termination policy. Termination 
+ * This class implements residue tolerance termination policy. Termination
  * criterion is met when increase in residue value drops below the given tolerance.
  * To accomodate spikes certain number of successive residue drops are accepted.
  * This upper imit on successive drops can be adjusted with reverseStepCount.
- * Secondary termination criterion terminates algorithm when iteration count 
- * goes above the threshold. 
+ * Secondary termination criterion terminates algorithm when iteration count
+ * goes above the threshold.
  *
  * @see AMF
  */
@@ -45,9 +45,10 @@ class SimpleToleranceTermination
     iteration = 1;
     residue = DBL_MIN;
     reverseStepCount = 0;
+    isCopy = false;
 
     this->V = &V;
-    
+
     c_index = 0;
     c_indexOld = 0;
 
@@ -90,13 +91,13 @@ class SimpleToleranceTermination
     residue = sqrt(residue);
 
     // increment iteration count
-    iteration++;  
-    
+    iteration++;
+
     // if residue tolerance is not satisfied
-    if((residueOld - residue) / residueOld < tolerance && iteration > 4)
+    if ((residueOld - residue) / residueOld < tolerance && iteration > 4)
     {
       // check if this is a first of successive drops
-      if(reverseStepCount == 0 && isCopy == false)
+      if (reverseStepCount == 0 && isCopy == false)
       {
         // store a copy of W and H matrix
         isCopy = true;
@@ -140,19 +141,19 @@ class SimpleToleranceTermination
   //! Get current value of residue
   const double& Index() const { return residue; }
 
-  //! Get current iteration count  
+  //! Get current iteration count
   const size_t& Iteration() const { return iteration; }
-  
+
   //! Access upper limit of iteration count
   const size_t& MaxIterations() const { return maxIterations; }
   size_t& MaxIterations() { return maxIterations; }
-  
+
   //! Access tolerance value
   const double& Tolerance() const { return tolerance; }
   double& Tolerance() { return tolerance; }
 
  private:
-  //! tolerance 
+  //! tolerance
   double tolerance;
   //! iteration threshold
   size_t maxIterations;
@@ -162,7 +163,7 @@ class SimpleToleranceTermination
 
   //! current iteration count
   size_t iteration;
-  
+
   //! residue values
   double residueOld;
   double residue;
@@ -170,13 +171,13 @@ class SimpleToleranceTermination
 
   //! tolerance on successive residue drops
   size_t reverseStepTolerance;
-  //! successive residue drops 
+  //! successive residue drops
   size_t reverseStepCount;
-  
+
   //! indicates whether a copy of information is available which corresponds to
   //! minimum residue point
   bool isCopy;
-  
+
   //! variables to store information of minimum residue poi
   arma::mat W;
   arma::mat H;
