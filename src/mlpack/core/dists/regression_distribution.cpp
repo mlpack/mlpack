@@ -13,8 +13,7 @@ using namespace mlpack::distribution;
 /**
  * Returns a string representation of this object.
  */
-std::string RegressionDistribution::ToString()
-    const
+std::string RegressionDistribution::ToString() const
 {
   std::ostringstream convert;
   convert << "HMMRegression [" << this << "]" << std::endl;
@@ -30,41 +29,41 @@ std::string RegressionDistribution::ToString()
 }
 
 /**
-* Estimate parameters using provided observation weights
-*
-* @param observations List of observations.
-*/
+ * Estimate parameters using provided observation weights
+ *
+ * @param observations List of observations.
+ */
 void RegressionDistribution::Estimate(const arma::mat& observations)
 {
-  regression::LinearRegression lr(observations.rows(1, observations.n_rows-1),
+  regression::LinearRegression lr(observations.rows(1, observations.n_rows - 1),
       (observations.row(0)).t(), 0, true);
   rf = lr;
   arma::vec fitted;
-  lr.Predict(observations.rows(1, observations.n_rows-1), fitted);
-  err.Estimate(observations.row(0)-fitted.t());
+  lr.Predict(observations.rows(1, observations.n_rows - 1), fitted);
+  err.Estimate(observations.row(0) - fitted.t());
 }
 
 /**
-* Estimate parameters using provided observation weights
-*
-* @param weights probability that given observation is from distribution
-*/
+ * Estimate parameters using provided observation weights.
+ *
+ * @param weights probability that given observation is from distribution
+ */
 void RegressionDistribution::Estimate(const arma::mat& observations,
                              const arma::vec& weights)
 {
-  regression::LinearRegression lr(observations.rows(1, observations.n_rows-1),
+  regression::LinearRegression lr(observations.rows(1, observations.n_rows - 1),
       (observations.row(0)).t(), 0, true, weights);
   rf = lr;
   arma::vec fitted;
-  lr.Predict(observations.rows(1, observations.n_rows-1), fitted);
-  err.Estimate(observations.row(0)-fitted.t(), weights);
+  lr.Predict(observations.rows(1, observations.n_rows - 1), fitted);
+  err.Estimate(observations.row(0) - fitted.t(), weights);
 }
 
 /**
-* Evaluate probability density function of given observation  
-*
-* @param observation point to evaluate probability at
-*/
+ * Evaluate probability density function of given observation.
+ *
+ * @param observation point to evaluate probability at
+ */
 double RegressionDistribution::Probability(const arma::vec& observation) const
 {
   arma::vec fitted;
@@ -73,7 +72,7 @@ double RegressionDistribution::Probability(const arma::vec& observation) const
 }
 
 void RegressionDistribution::Predict(const arma::mat& points,
-				                             arma::vec& predictions) const
+                                     arma::vec& predictions) const
 {
-	rf.Predict(points, predictions);
+  rf.Predict(points, predictions);
 }
