@@ -23,9 +23,9 @@ template<typename Distribution>
 HMM<Distribution>::HMM(const size_t states,
                        const Distribution emissions,
                        const double tolerance) :
+    emission(states, /* default distribution */ emissions),
     initial(arma::ones<arma::vec>(states) / (double) states),
     transition(arma::ones<arma::mat>(states, states) / (double) states),
-    emission(states, /* default distribution */ emissions),
     dimensionality(emissions.Dimensionality()),
     tolerance(tolerance)
 { /* nothing to do */ }
@@ -39,9 +39,9 @@ HMM<Distribution>::HMM(const arma::vec& initial,
                        const arma::mat& transition,
                        const std::vector<Distribution>& emission,
                        const double tolerance) :
+    emission(emission),
     initial(initial),
     transition(transition),
-    emission(emission),
     tolerance(tolerance)
 {
   // Set the dimensionality, if we can.
@@ -447,12 +447,12 @@ void HMM<Distribution>::Filter(const arma::mat& dataSeq,
   arma::mat forwardProb;
   arma::vec scales;
   Forward(dataSeq, scales, forwardProb);
-  
+
   // Propagate state ahead
   if(ahead != 0) {
     forwardProb = pow(transition, ahead)*forwardProb;
   }
-  
+
   // Compute expected emissions.
   // Will not work for distributions without a Mean() function.
   filterSeq.zeros(dimensionality, dataSeq.n_cols);
@@ -472,7 +472,7 @@ void HMM<Distribution>::Smooth(const arma::mat& dataSeq,
   // First run the forward algorithm
   arma::mat stateProb;
   Estimate(dataSeq, stateProb);
-  
+
   // Compute expected emissions.
   // Will not work for distributions without a Mean() function.
   smoothSeq.zeros(dimensionality, dataSeq.n_cols);
@@ -580,7 +580,7 @@ void HMM<Distribution>::Save(util::SaveRestoreUtility& sr) const
   sr.SaveParameter(dimensionality, "dimensionality");
   sr.SaveParameter(transition.n_rows, "states");
   sr.SaveParameter(transition, "transition");
-  
+
   // Now the emissions.
   util::SaveRestoreUtility mn;
   for (size_t i = 0; i < transition.n_rows; ++i)
