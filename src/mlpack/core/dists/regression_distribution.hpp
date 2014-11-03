@@ -20,16 +20,16 @@ namespace distribution {
  * regression (HMMR) as described in
  * https://www.ima.umn.edu/preprints/January1994/1195.pdf
  * The hmm observations should have the dependent variable in the first row,
- * with the independent variables in the other rows. 
+ * with the independent variables in the other rows.
  */
 class RegressionDistribution
 {
  private:
-  //! Regression function for representing conditional mean.   
-  regression::LinearRegression rf;   
+  //! Regression function for representing conditional mean.
+  regression::LinearRegression rf;
   //! Error distribution
   GaussianDistribution err;
-  
+
  public:
   /**
    * Default constructor, which creates a Gaussian with zero dimension.
@@ -38,24 +38,24 @@ class RegressionDistribution
 
   /**
    * Create a Conditional Gaussian distribution with conditional mean function
-   * obtained by running RegressionFunction on predictors, responses. 
-   * 
+   * obtained by running RegressionFunction on predictors, responses.
+   *
    * @param predictors Matrix of predictors (X).
    * @param responses Vector of responses (y).
    */
   RegressionDistribution(const arma::mat& predictors,
-                                  const arma::vec& responses) :
-      rf(regression::LinearRegression(predictors, responses))    
+                         const arma::vec& responses) :
+      rf(regression::LinearRegression(predictors, responses))
   {
-      err = GaussianDistribution(1);
-      err.Covariance() = rf.ComputeError(predictors, responses);
+    err = GaussianDistribution(1);
+    err.Covariance() = rf.ComputeError(predictors, responses);
   }
 
   /**
    * Returns a string representation of this object.
    */
   std::string ToString() const;
- 
+
   // Return regression function
   const regression::LinearRegression& Rf() {return rf;}
 
@@ -65,21 +65,21 @@ class RegressionDistribution
    * @param observations List of observations.
    */
   void Estimate(const arma::mat& observations);
-  
+
   /**
    * Estimate parameters using provided observation weights
    *
    * @param weights probability that given observation is from distribution
    */
   void Estimate(const arma::mat& observations, const arma::vec& weights);
-  
+
   /**
-  * Evaluate probability density function of given observation  
+  * Evaluate probability density function of given observation
   *
   * @param observation point to evaluate probability at
   */
   double Probability(const arma::vec& observation) const;
-  
+
   /**
    * Calculate y_i for each data point in points.
    *
@@ -87,8 +87,8 @@ class RegressionDistribution
    * @param predictions y, will contain calculated values on completion.
    */
   void Predict(const arma::mat& points, arma::vec& predictions) const;
-  
-   //! Return the parameters (the b vector).
+
+  //! Return the parameters (the b vector).
   const arma::vec& Parameters() const { return rf.Parameters(); }
 
   //! Return the dimensionality (2) NEED TO FIX THIS
