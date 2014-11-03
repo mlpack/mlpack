@@ -57,7 +57,7 @@ class RegressionDistribution
   std::string ToString() const;
 
   // Return regression function
-  const regression::LinearRegression& Rf() {return rf;}
+  const regression::LinearRegression& Rf() { return rf; }
 
   /**
    * Estimate the Gaussian distribution directly from the given observations.
