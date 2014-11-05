@@ -495,8 +495,11 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDSimpleTest)
                  "1 2 3");
   arma::vec responses("1 1 0");
 
-  // Create a logistic regression object using SGD.
-  LogisticRegression<SGD> lr(data, responses);
+  // Create a logistic regression object using a custom SGD object with a much
+  // smaller tolerance.
+  LogisticRegressionFunction lrf(data, responses, 0.001);
+  SGD<LogisticRegressionFunction> sgd(lrf, 0.01, 100000, 1e-10);
+  LogisticRegression<SGD> lr(sgd);
 
   // Test sigmoid function.
   arma::vec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
@@ -536,13 +539,17 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionLBFGSRegularizationSimpleTest)
 // regularization.
 BOOST_AUTO_TEST_CASE(LogisticRegressionSGDRegularizationSimpleTest)
 {
+  math::RandomSeed(std::time(NULL));
   // Very simple fake dataset.
   arma::mat data("1 2 3;"
                  "1 2 3");
   arma::vec responses("1 1 0");
 
-  // Create a logistic regression object using SGD.
-  LogisticRegression<SGD> lr(data, responses, 0.001);
+  // Create a logistic regression object using custom SGD with a much smaller
+  // tolerance.
+  LogisticRegressionFunction lrf(data, responses, 0.001);
+  SGD<LogisticRegressionFunction> sgd(lrf, 0.01, 100000, 1e-10);
+  LogisticRegression<SGD> lr(sgd);
 
   // Test sigmoid function.
   arma::vec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
@@ -582,7 +589,6 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionLBFGSGaussianTest)
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
-
   BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3); // 0.3% error tolerance.
 
   // Create a test set.
