@@ -5,7 +5,7 @@ project(mlpack C CXX)
 include(CMake/CXX11.cmake)
 check_for_cxx11_compiler(HAS_CXX11)
 if(NOT HAS_CXX11)
-  message(FATAL "No C++11 compiler available!")
+  message(FATAL_ERROR "No C++11 compiler available!")
 endif(NOT HAS_CXX11)
 enable_cxx11()
 
