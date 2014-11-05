@@ -11,6 +11,7 @@
 #include <mlpack/methods/kmeans/hamerly_kmeans.hpp>
 #include <mlpack/methods/kmeans/pelleg_moore_kmeans.hpp>
 #include <mlpack/methods/kmeans/dtnn_kmeans.hpp>
+#include <mlpack/methods/kmeans/dual_tree_kmeans.hpp>
 
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>
 
@@ -645,6 +646,38 @@ BOOST_AUTO_TEST_CASE(DTNNCoverTreeTest)
 
     KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
         CoverTreeDTNNKMeans> dtnn;
+    arma::Col<size_t> dtnnAssignments;
+    arma::mat dtnnCentroids(centroids);
+    dtnn.Cluster(dataset, k, dtnnAssignments, dtnnCentroids, false, true);
+
+    for (size_t i = 0; i < dataset.n_cols; ++i)
+      BOOST_REQUIRE_EQUAL(assignments[i], dtnnAssignments[i]);
+
+    for (size_t i = 0; i < centroids.n_elem; ++i)
+      BOOST_REQUIRE_CLOSE(naiveCentroids[i], dtnnCentroids[i], 1e-5);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(DualTreeKMeansTest)
+{
+  const size_t trials = 5;
+
+  for (size_t t = 0; t < trials; ++t)
+  {
+    arma::mat dataset(10, 1000);
+    dataset.randu();
+
+    const size_t k = 5 * (t + 1);
+    arma::mat centroids(10, k);
+    centroids.randu();
+
+    arma::mat naiveCentroids(centroids);
+    KMeans<> km;
+    arma::Col<size_t> assignments;
+    km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
+
+    KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
+        DefaultDualTreeKMeans> dtnn;
     arma::Col<size_t> dtnnAssignments;
     arma::mat dtnnCentroids(centroids);
     dtnn.Cluster(dataset, k, dtnnAssignments, dtnnCentroids, false, true);
