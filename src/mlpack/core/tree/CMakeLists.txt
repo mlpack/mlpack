@@ -5,6 +5,8 @@ set(SOURCES
   ballbound_impl.hpp
   binary_space_tree/binary_space_tree.hpp
   binary_space_tree/binary_space_tree_impl.hpp
+  binary_space_tree/breadth_first_dual_tree_traverser.hpp
+  binary_space_tree/breadth_first_dual_tree_traverser_impl.hpp
   binary_space_tree/dual_tree_traverser.hpp
   binary_space_tree/dual_tree_traverser_impl.hpp
   binary_space_tree/mean_split.hpp
