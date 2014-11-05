@@ -2,6 +2,11 @@
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
   allow_empty_clusters.hpp
+  dual_tree_kmeans.hpp
+  dual_tree_kmeans_impl.hpp
+  dual_tree_kmeans_rules.hpp
+  dual_tree_kmeans_rules_impl.hpp
+  dual_tree_kmeans_statistic.hpp
   elkan_kmeans.hpp
   elkan_kmeans_impl.hpp
   hamerly_kmeans.hpp
