@@ -149,7 +149,7 @@ double SparseCoding<DictionaryInitializer>::OptimizeDictionary(
 
   for (size_t j = 0; j < atoms; ++j)
   {
-    if (accu(codes.row(j) != 0) == 0)
+    if (arma::accu(codes.row(j) != 0) == 0)
       inactiveAtoms.push_back(j);
   }
 
@@ -231,11 +231,11 @@ double SparseCoding<DictionaryInitializer>::OptimizeDictionary(
     while (true)
     {
       // Calculate objective.
-      double sumDualVars = sum(dualVars);
+      double sumDualVars = arma::sum(dualVars);
       double fOld = -(-trace(trans(codesXT) * matAInvZXT) - sumDualVars);
       double fNew = -(-trace(trans(codesXT) * solve(codesZT +
           diagmat(dualVars + alpha * searchDirection), codesXT)) -
-          (sumDualVars + alpha * sum(searchDirection)));
+          (sumDualVars + alpha * arma::sum(searchDirection)));
 
       if (fNew <= fOld + alpha * sufficientDecrease)
       {
@@ -249,7 +249,7 @@ double SparseCoding<DictionaryInitializer>::OptimizeDictionary(
 
     // Take step and print useful information.
     dualVars += searchDirection;
-    normGradient = norm(gradient, 2);
+    normGradient = arma::norm(gradient, 2);
     Log::Debug << "Newton Method iteration " << t << ":" << std::endl;
     Log::Debug << "  Gradient norm: " << std::scientific << normGradient
         << "." << std::endl;
@@ -280,7 +280,7 @@ double SparseCoding<DictionaryInitializer>::OptimizeDictionary(
                              data.col(math::RandInt(data.n_cols)) +
                              data.col(math::RandInt(data.n_cols)));
 
-        dictionary.col(i) /= norm(dictionary.col(i), 2);
+        dictionary.col(i) /= arma::norm(dictionary.col(i), 2);
 
         // Increment inactive index counter.
         ++currentInactiveIndex;
@@ -302,7 +302,7 @@ void SparseCoding<DictionaryInitializer>::ProjectDictionary()
 {
   for (size_t j = 0; j < atoms; j++)
   {
-    double atomNorm = norm(dictionary.col(j), 2);
+    double atomNorm = arma::norm(dictionary.col(j), 2);
     if (atomNorm > 1)
     {
       Log::Info << "Norm of atom " << j << " exceeds 1 (" << std::scientific
@@ -316,12 +316,12 @@ void SparseCoding<DictionaryInitializer>::ProjectDictionary()
 template<typename DictionaryInitializer>
 double SparseCoding<DictionaryInitializer>::Objective() const
 {
-  double l11NormZ = sum(sum(abs(codes)));
-  double froNormResidual = norm(data - (dictionary * codes), "fro");
+  double l11NormZ = arma::sum(arma::sum(arma::abs(codes)));
+  double froNormResidual = arma::norm(data - (dictionary * codes), "fro");
 
   if (lambda2 > 0)
   {
-    double froNormZ = norm(codes, "fro");
+    double froNormZ = arma::norm(codes, "fro");
     return 0.5 * (std::pow(froNormResidual, 2.0) + (lambda2 *
         std::pow(froNormZ, 2.0))) + (lambda1 * l11NormZ);
   }
@@ -338,9 +338,9 @@ std::string SparseCoding<DictionaryInitializer>::ToString() const
   convert << "Sparse Coding  [" << this << "]" << std::endl;
   convert << "  Data: " << data.n_rows << "x" ;
   convert <<  data.n_cols << std::endl;
-  convert << "  Atoms: " << atoms << std::endl; 
-  convert << "  Lambda 1: " << lambda1 << std::endl; 
-  convert << "  Lambda 2: " << lambda2 << std::endl; 
+  convert << "  Atoms: " << atoms << std::endl;
+  convert << "  Lambda 1: " << lambda1 << std::endl;
+  convert << "  Lambda 2: " << lambda2 << std::endl;
   return convert.str();
 }
 
