@@ -87,6 +87,9 @@ class BinarySpaceTree
   template<typename RuleType>
   class DualTreeTraverser;
 
+  template<typename RuleType>
+  class BreadthFirstDualTreeTraverser;
+
   /**
    * Construct this as the root node of a binary space tree using the given
    * dataset.  This will modify the ordering of the points in the dataset!
