@@ -70,6 +70,39 @@ class DualTreeKMeansRules
 
   bool IsDescendantOf(const TreeType& potentialParent, const TreeType&
       potentialChild) const;
+
+  /**
+   * See if an Elkan-type prune can be performed.  If so, return DBL_MAX;
+   * otherwise, return a score.  The Elkan-type prune can occur when the minimum
+   * distance between the query node and the current best query node for the
+   * reference node (referenceNode.Stat().ClosestQueryNode()) is greater than
+   * two times the maximum distance between the reference node and the current
+   * best query node (again, referenceNode.Stat().ClosestQueryNode()).
+   *
+   * @param queryNode Query node.
+   * @param referenceNode Reference node.
+   */
+  double ElkanTypeScore(TreeType& queryNode, TreeType& referenceNode) const;
+
+  /**
+   * See if an Elkan-type prune can be performed.  If so, return DBL_MAX;
+   * otherwise, return a score.  The Elkan-type prune can occur when the minimum
+   * distance between the query node and the current best query node for the
+   * reference node (referenceNode.Stat().ClosestQueryNode()) is greater than
+   * two times the maximum distance between the reference node and the current
+   * best query node (again, referenceNode.Stat().ClosestQueryNode()).
+   *
+   * This particular overload is for when the minimum distance between the query
+   * noed and the current best query node has already been calculated.
+   *
+   * @param queryNode Query node.
+   * @param referenceNode Reference node.
+   * @param minQueryDistance Minimum distance between query node and current
+   *      best query node for the reference node.
+   */
+  double ElkanTypeScore(TreeType& queryNode,
+                        TreeType& referenceNode,
+                        const double minQueryDistance) const;
 };
 
 } // namespace kmeans

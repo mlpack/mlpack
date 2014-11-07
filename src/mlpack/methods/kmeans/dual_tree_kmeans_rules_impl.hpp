@@ -140,48 +140,9 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
     return 0.0; // Pruning is not possible.
   }
 
-  // See if we can do an Elkan-type prune on between-centroid distances.
-  const double maxDistance = referenceNode.Stat().MaxQueryNodeDistance();
-  const double minQueryDistance = queryNode.MinDistance((TreeType*)
-      referenceNode.Stat().ClosestQueryNode());
   ++distanceCalculations;
 
-  if (minQueryDistance > 2.0 * maxDistance)
-  {
-    // Then we can conclude d_max(best(N_r), N_r) <= d_min(N_q, N_r) which
-    // means that N_q cannot possibly hold any clusters that own any points in
-    // N_r.
-    referenceNode.Stat().ClustersPruned() += queryNode.NumDescendants();
-
-    // Have we pruned everything?
-    if (referenceNode.Stat().ClustersPruned() == centroids.n_cols - 1)
-    {
-      // Then the best query node must contain just one point.
-      const TreeType* bestQueryNode = (TreeType*)
-          referenceNode.Stat().ClosestQueryNode();
-      const size_t cluster = mappings[bestQueryNode->Descendant(0)];
-
-      referenceNode.Stat().Owner() = cluster;
-      newCentroids.col(cluster) += referenceNode.NumDescendants() *
-          referenceNode.Stat().Centroid();
-      counts(cluster) += referenceNode.NumDescendants();
-      referenceNode.Stat().ClustersPruned()++;
-    }
-    else if (referenceNode.Stat().ClustersPruned() +
-        visited[referenceNode.Descendant(0)] == centroids.n_cols)
-    {
-      for (size_t i = 0; i < referenceNode.NumPoints(); ++i)
-      {
-        const size_t cluster = assignments[referenceNode.Point(i)];
-        newCentroids.col(cluster) += dataset.col(referenceNode.Point(i));
-        counts(cluster)++;
-      }
-    }
-
-    return DBL_MAX;
-  }
-
-  return minQueryDistance;
+  return ElkanTypeScore(queryNode, referenceNode);
 }
 
 template<typename MetricType, typename TreeType>
@@ -202,48 +163,7 @@ double DualTreeKMeansRules<MetricType, TreeType>::Rescore(
   if (oldScore == DBL_MAX)
     return oldScore; // We can't unprune something.  This shouldn't happen.
 
-  // Can we update the minimum query node distance for this reference node?
-  const double minQueryDistance = oldScore;
-
-  // See if we can do an Elkan-type prune on between-centroid distances.
-  const double maxDistance = referenceNode.Stat().MaxQueryNodeDistance();
-
-  if (minQueryDistance > 2.0 * maxDistance)
-  {
-    // Then we can conclude d_max(best(N_r), N_r) <= d_min(N_q, N_r) which
-    // means that N_q cannot possibly hold any clusters that own any points in
-    // N_r.
-    referenceNode.Stat().ClustersPruned() += queryNode.NumDescendants();
-
-    // Have we pruned everything?
-    if (referenceNode.Stat().ClustersPruned() == centroids.n_cols - 1)
-    {
-      // Then the best query node must contain just one point.
-      const TreeType* bestQueryNode = (TreeType*)
-          referenceNode.Stat().ClosestQueryNode();
-      const size_t cluster = mappings[bestQueryNode->Descendant(0)];
-
-      referenceNode.Stat().Owner() = cluster;
-      newCentroids.col(cluster) += referenceNode.NumDescendants() *
-          referenceNode.Stat().Centroid();
-      counts(cluster) += referenceNode.NumDescendants();
-      referenceNode.Stat().ClustersPruned()++;
-    }
-    else if (referenceNode.Stat().ClustersPruned() +
-        visited[referenceNode.Descendant(0)] == centroids.n_cols)
-    {
-      for (size_t i = 0; i < referenceNode.NumPoints(); ++i)
-      {
-        const size_t cluster = assignments[referenceNode.Point(i)];
-        newCentroids.col(cluster) += dataset.col(referenceNode.Point(i));
-        counts(cluster)++;
-      }
-    }
-
-    return DBL_MAX;
-  }
-
-  return oldScore;
+  return ElkanTypeScore(queryNode, referenceNode, oldScore);
 }
 
 template<typename MetricType, typename TreeType>
@@ -309,6 +229,65 @@ bool DualTreeKMeansRules<MetricType, TreeType>::IsDescendantOf(
     return false;
   else
     return IsDescendantOf(potentialParent, *potentialChild.Parent());
+}
+
+template<typename MetricType, typename TreeType>
+double DualTreeKMeansRules<MetricType, TreeType>::ElkanTypeScore(
+    TreeType& queryNode,
+    TreeType& referenceNode) const
+{
+  // We have to calculate the minimum distance between the query node and the
+  // reference node's best query node.
+  const double minQueryDistance = queryNode.MinDistance((TreeType*)
+      referenceNode.Stat().ClosestQueryNode());
+  return ElkanTypeScore(queryNode, referenceNode, minQueryDistance);
+}
+
+template<typename MetricType, typename TreeType>
+double DualTreeKMeansRules<MetricType, TreeType>::ElkanTypeScore(
+    TreeType& queryNode,
+    TreeType& referenceNode,
+    const double minQueryDistance) const
+{
+  // See if we can do an Elkan-type prune on between-centroid distances.
+  const double maxDistance = referenceNode.Stat().MaxQueryNodeDistance();
+
+  if (minQueryDistance > 2.0 * maxDistance)
+  {
+    // Then we can conclude d_max(best(N_r), N_r) <= d_min(N_q, N_r) which
+    // means that N_q cannot possibly hold any clusters that own any points in
+    // N_r.
+    referenceNode.Stat().ClustersPruned() += queryNode.NumDescendants();
+
+    // Have we pruned everything?
+    if (referenceNode.Stat().ClustersPruned() == centroids.n_cols - 1)
+    {
+      // Then the best query node must contain just one point.
+      const TreeType* bestQueryNode = (TreeType*)
+          referenceNode.Stat().ClosestQueryNode();
+      const size_t cluster = mappings[bestQueryNode->Descendant(0)];
+
+      referenceNode.Stat().Owner() = cluster;
+      newCentroids.col(cluster) += referenceNode.NumDescendants() *
+          referenceNode.Stat().Centroid();
+      counts(cluster) += referenceNode.NumDescendants();
+      referenceNode.Stat().ClustersPruned()++;
+    }
+    else if (referenceNode.Stat().ClustersPruned() +
+        visited[referenceNode.Descendant(0)] == centroids.n_cols)
+    {
+      for (size_t i = 0; i < referenceNode.NumPoints(); ++i)
+      {
+        const size_t cluster = assignments[referenceNode.Point(i)];
+        newCentroids.col(cluster) += dataset.col(referenceNode.Point(i));
+        counts(cluster)++;
+      }
+    }
+
+    return DBL_MAX;
+  }
+
+  return minQueryDistance;
 }
 
 } // namespace kmeans
