@@ -371,7 +371,7 @@ template<typename SortPolicy, typename MetricType, typename TreeType>
 std::string NeighborSearch<SortPolicy, MetricType, TreeType>::ToString() const
 {
   std::ostringstream convert;
-  convert << "NearestNeighborSearch [" << this << "]" << std::endl;
+  convert << "NeighborSearch [" << this << "]" << std::endl;
   convert << "  Reference Set: " << referenceSet.n_rows << "x" ;
   convert <<  referenceSet.n_cols << std::endl;
   if (&referenceSet != &querySet)
