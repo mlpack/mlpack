@@ -82,7 +82,7 @@ class DualTreeKMeansRules
    * @param queryNode Query node.
    * @param referenceNode Reference node.
    */
-  double ElkanTypeScore(TreeType& queryNode, TreeType& referenceNode) const;
+  double ElkanTypeScore(TreeType& queryNode, TreeType& referenceNode);
 
   /**
    * See if an Elkan-type prune can be performed.  If so, return DBL_MAX;
@@ -103,6 +103,10 @@ class DualTreeKMeansRules
   double ElkanTypeScore(TreeType& queryNode,
                         TreeType& referenceNode,
                         const double minQueryDistance) const;
+
+  double PellegMooreScore(TreeType& /* queryNode */,
+                          TreeType& referenceNode,
+                          const double minDistance) const;
 };
 
 } // namespace kmeans
