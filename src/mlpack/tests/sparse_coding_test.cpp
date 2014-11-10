@@ -103,7 +103,6 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepElasticNet)
 
 BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
 {
-  math::RandomSeed(std::time(NULL));
   const double tol = 1e-6;
 
   double lambda1 = 0.1;
