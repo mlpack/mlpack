@@ -103,7 +103,8 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestCodingStepElasticNet)
 
 BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
 {
-  const double tol = 2e-7;
+  math::RandomSeed(std::time(NULL));
+  const double tol = 1e-6;
 
   double lambda1 = 0.1;
   uword nAtoms = 25;
@@ -123,7 +124,7 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
   mat Z = sc.Codes();
 
   uvec adjacencies = find(Z);
-  double normGradient = sc.OptimizeDictionary(adjacencies, 1e-12);
+  double normGradient = sc.OptimizeDictionary(adjacencies, 1e-15);
 
   BOOST_REQUIRE_SMALL(normGradient, tol);
 }
