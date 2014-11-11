@@ -165,7 +165,7 @@ class DecisionStump
    * @param isWeight Whether we need to run a weighted Decision Stump.
    */
   template <bool isWeight>
-  void Train(const MatType& data, const arma::Row<size_t>& labels, 
+  void Train(const MatType& data, const arma::Row<size_t>& labels,
              const arma::rowvec& weightD);
 
 };
