@@ -6,7 +6,7 @@
  */
 #include <mlpack/core.hpp>
 #include <mlpack/methods/decision_stump/decision_stump.hpp>
- 
+
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
 
@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_CASE(OneClass)
 {
   const size_t numClasses = 2;
   const size_t inpBucketSize = 6;
-  
+
   mat trainingData;
   trainingData << 2.4 << 3.8 << 3.8 << endr
                << 1   << 1   << 2   << endr
@@ -206,9 +206,9 @@ BOOST_AUTO_TEST_CASE(MultiClassSplit)
 
   BOOST_CHECK_EQUAL(predictedLabels(0, 0), 0);
   BOOST_CHECK_EQUAL(predictedLabels(0, 1), 0);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 2), 0);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 3), 0);
-  BOOST_CHECK_EQUAL(predictedLabels(0, 4), 0);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 2), 1);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 3), 1);
+  BOOST_CHECK_EQUAL(predictedLabels(0, 4), 1);
   BOOST_CHECK_EQUAL(predictedLabels(0, 5), 1);
   BOOST_CHECK_EQUAL(predictedLabels(0, 6), 2);
   BOOST_CHECK_EQUAL(predictedLabels(0, 7), 2);
