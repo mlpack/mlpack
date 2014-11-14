@@ -37,7 +37,6 @@ find_path(ARMADILLO_INCLUDE_DIR
 
 
 if(ARMADILLO_INCLUDE_DIR)
-
   # ------------------------------------------------------------------------
   #  Extract version information from <armadillo>
   # ------------------------------------------------------------------------
@@ -244,6 +243,12 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
         endif()
       endif()
 
+      if(NOT HDF5_FOUND)
+        # We tried but didn't find it.
+        message(FATAL_ERROR "Armadillo HDF5 support is enabled, but HDF5 "
+            "cannot be found on the system.  Consider disabling HDF5 support.")
+      endif()
+
       set(SUPPORT_INCLUDE_DIRS "${SUPPORT_INCLUDE_DIRS}" "${HDF5_INCLUDE_DIRS}")
       set(SUPPORT_LIBRARIES "${SUPPORT_LIBRARIES}" "${HDF5_LIBRARIES}")
     endif (NOT "${ARMA_USE_HDF5}" STREQUAL "")
@@ -251,7 +256,6 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
   else("${ARMA_USE_WRAPPER}" STREQUAL "")
     # Some older versions still require linking against HDF5 since they did not
     # wrap libhdf5.  This was true for versions older than 4.300.
-
     if(NOT "${ARMA_USE_HDF5}" STREQUAL "" AND
        "${ARMADILLO_VERSION_STRING}" VERSION_LESS "4.300.0")
       message(STATUS "Armadillo HDF5 support is enabled and manual linking is "
@@ -277,10 +281,45 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
             link_directories("${HDF5_LIBRARY_DIRS}")
           endif()
         endif()
-
-        set(SUPPORT_INCLUDE_DIRS "${HDF5_INCLUDE_DIRS}")
-        set(SUPPORT_LIBRARIES "${HDF5_LIBRARIES}")
       endif()
+      
+      if(NOT HDF5_FOUND)
+        # We tried but didn't find it.
+        message(FATAL_ERROR "Armadillo HDF5 support is enabled, but HDF5 "
+            "cannot be found on the system.  Consider disabling HDF5 support.")
+      endif()
+        
+      set(SUPPORT_INCLUDE_DIRS "${HDF5_INCLUDE_DIRS}")
+      set(SUPPORT_LIBRARIES "${HDF5_LIBRARIES}")
+    endif()
+
+    # Versions between 4.300 and 4.500 did successfully wrap HDF5, but didn't have good support for setting the include directory correctly.
+    if(NOT "${ARMA_USE_HDF5}" STREQUAL "" AND
+       "${ARMADILLO_VERSION_STRING}" VERSION_GREATER "4.299.0" AND
+       "${ARMADILLO_VERSION_STRING}" VERSION_LESS "4.450.0")
+      message(STATUS "Armadillo HDF5 support is enabled and include "
+                     "directories must be found.")
+      find_package(HDF5)
+
+      if(NOT HDF5_FOUND)
+        # On Debian systems, the HDF5 package has been split into multiple
+        # packages so that it is co-installable.  But this may mean that the
+        # include files are hidden somewhere very odd that the FindHDF5.cmake
+        # script will not find.  Thus, we'll also quickly check pkgconfig to see
+        # if there is information on what to use there.
+        find_package(PkgConfig)
+        if (PKG_CONFIG_FOUND)
+          pkg_check_modules(HDF5 hdf5)
+        endif()
+      endif()
+
+      if(NOT HDF5_FOUND)
+        # We tried but didn't find it.
+        message(FATAL_ERROR "Armadillo HDF5 support is enabled, but HDF5 "
+            "cannot be found on the system.  Consider disabling HDF5 support.")
+      endif()
+        
+      set(SUPPORT_INCLUDE_DIRS "${HDF5_INCLUDE_DIRS}")
     endif()
 
   endif("${ARMA_USE_WRAPPER}" STREQUAL "")
