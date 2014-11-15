@@ -91,8 +91,8 @@ class RegressionDistribution
   //! Return the parameters (the b vector).
   const arma::vec& Parameters() const { return rf.Parameters(); }
 
-  //! Return the dimensionality (2) NEED TO FIX THIS
-  static size_t Dimensionality() { return 2; }
+  //! Return the dimensionality 
+    size_t Dimensionality() const { return rf.Parameters().n_elem; }
 };
 
 
