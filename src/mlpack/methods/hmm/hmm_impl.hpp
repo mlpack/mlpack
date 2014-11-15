@@ -24,8 +24,8 @@ HMM<Distribution>::HMM(const size_t states,
                        const Distribution emissions,
                        const double tolerance) :
     emission(states, /* default distribution */ emissions),
-    initial(arma::ones<arma::vec>(states) / (double) states),
     transition(arma::ones<arma::mat>(states, states) / (double) states),
+    initial(arma::ones<arma::vec>(states) / (double) states),
     dimensionality(emissions.Dimensionality()),
     tolerance(tolerance)
 { /* nothing to do */ }
@@ -40,8 +40,8 @@ HMM<Distribution>::HMM(const arma::vec& initial,
                        const std::vector<Distribution>& emission,
                        const double tolerance) :
     emission(emission),
-    initial(initial),
     transition(transition),
+    initial(initial),
     tolerance(tolerance)
 {
   // Set the dimensionality, if we can.
