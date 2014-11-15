@@ -364,13 +364,13 @@ class HMM
 
   //! Set of emission probability distributions; one for each state.
   std::vector<Distribution> emission;
+
+  //! Transition probability matrix.
+  arma::mat transition;
   
  private:
   //! Initial state probability vector.
   arma::vec initial;
-
-  //! Transition probability matrix.
-  arma::mat transition;
 
   //! Dimensionality of observations.
   size_t dimensionality;
