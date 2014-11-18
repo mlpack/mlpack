@@ -80,6 +80,4 @@ int main(int argc, char** argv)
   // Now save the results.
   string outputFile = CLI::GetParam<string>("output_file");
   data::Save(outputFile, dataset);
-
-  return 0;
 }
