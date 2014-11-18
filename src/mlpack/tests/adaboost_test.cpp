@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundIris)
 
   if (!data::Load("iris_labels.txt",labels))
     BOOST_FAIL("Cannot load labels for iris iris_labels.txt");
-  
+
   // no need to map the labels here
 
   // Define your own weak learner, perceptron in this case.
@@ -59,8 +59,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundIris)
 
 /**
  *  This test case runs the AdaBoost.mh algorithm on the UCI Iris dataset.
- *  It checks if the error returned by running a single instance of the 
- *  weak learner is worse than running the boosted weak learner using 
+ *  It checks if the error returned by running a single instance of the
+ *  weak learner is worse than running the boosted weak learner using
  *  adaboost.
  */
 BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
 
   if (!data::Load("iris_labels.txt",labels))
     BOOST_FAIL("Cannot load labels for iris iris_labels.txt");
-  
+
   // no need to map the labels here
 
   // Define your own weak learner, perceptron in this case.
@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
   arma::Row<size_t> perceptronPrediction(labels.n_cols);
   perceptron::Perceptron<> p(inputData, labels.row(0), perceptron_iter);
   p.Classify(inputData, perceptronPrediction);
-  
+
   int countWeakLearnerError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != perceptronPrediction(i))
@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
 }
 
 /**
- *  This test case runs the AdaBoost.mh algorithm on the UCI Vertebral 
+ *  This test case runs the AdaBoost.mh algorithm on the UCI Vertebral
  *  Column dataset.
  *  It checks whether the hamming loss breaches the upperbound, which
  *  is provided by ztAccumulator.
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
 
   if (!data::Load("vc2_labels.txt",labels))
     BOOST_FAIL("Cannot load labels for vc2_labels.txt");
-  
+
   // no need to map the labels here
 
   // Define your own weak learner, perceptron in this case.
@@ -145,10 +145,10 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
 }
 
 /**
- *  This test case runs the AdaBoost.mh algorithm on the UCI Vertebral 
+ *  This test case runs the AdaBoost.mh algorithm on the UCI Vertebral
  *  Column dataset.
- *  It checks if the error returned by running a single instance of the 
- *  weak learner is worse than running the boosted weak learner using 
+ *  It checks if the error returned by running a single instance of the
+ *  weak learner is worse than running the boosted weak learner using
  *  adaboost.
  */
 BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
@@ -162,7 +162,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
 
   if (!data::Load("vc2_labels.txt",labels))
     BOOST_FAIL("Cannot load labels for vc2_labels.txt");
-  
+
   // no need to map the labels here
 
   // Define your own weak learner, perceptron in this case.
@@ -172,7 +172,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
   arma::Row<size_t> perceptronPrediction(labels.n_cols);
   perceptron::Perceptron<> p(inputData, labels.row(0), perceptron_iter);
   p.Classify(inputData, perceptronPrediction);
-  
+
   int countWeakLearnerError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != perceptronPrediction(i))
@@ -188,13 +188,13 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
     if(labels(i) != a.finalHypothesis(i))
       countError++;
   double error = (double) countError / labels.n_cols;
-  
+
   BOOST_REQUIRE(error <= weakLearnerErrorRate);
 }
 
 /**
- *  This test case runs the AdaBoost.mh algorithm on non-linearly 
- *  separable dataset. 
+ *  This test case runs the AdaBoost.mh algorithm on non-linearly
+ *  separable dataset.
  *  It checks whether the hamming loss breaches the upperbound, which
  *  is provided by ztAccumulator.
  */
@@ -207,9 +207,9 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
 
   arma::Mat<size_t> labels;
 
-  if (!data::Load("nonlinsepdata_labels.txt",labels))
+  if (!data::Load("nonlinsepdata_labels.txt", labels))
     BOOST_FAIL("Cannot load labels for nonlinsepdata_labels.txt");
-  
+
   // no need to map the labels here
 
   // Define your own weak learner, perceptron in this case.
@@ -233,10 +233,10 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
 }
 
 /**
- *  This test case runs the AdaBoost.mh algorithm on a non-linearly 
- *  separable dataset. 
- *  It checks if the error returned by running a single instance of the 
- *  weak learner is worse than running the boosted weak learner using 
+ *  This test case runs the AdaBoost.mh algorithm on a non-linearly
+ *  separable dataset.
+ *  It checks if the error returned by running a single instance of the
+ *  weak learner is worse than running the boosted weak learner using
  *  adaboost.
  */
 BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
@@ -250,7 +250,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
 
   if (!data::Load("nonlinsepdata_labels.txt",labels))
     BOOST_FAIL("Cannot load labels for nonlinsepdata_labels.txt");
-  
+
   // no need to map the labels here
 
   // Define your own weak learner, perceptron in this case.
@@ -260,7 +260,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
   arma::Row<size_t> perceptronPrediction(labels.n_cols);
   perceptron::Perceptron<> p(inputData, labels.row(0), perceptron_iter);
   p.Classify(inputData, perceptronPrediction);
-  
+
   int countWeakLearnerError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != perceptronPrediction(i))
@@ -276,7 +276,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
     if(labels(i) != a.finalHypothesis(i))
       countError++;
   double error = (double) countError / labels.n_cols;
-  
+
   BOOST_REQUIRE(error <= weakLearnerErrorRate);
 }
 
@@ -297,7 +297,7 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
 
   if (!data::Load("iris_labels.txt",labels))
     BOOST_FAIL("Cannot load labels for iris_labels.txt");
-  
+
   // no need to map the labels here
 
   // Define your own weak learner, Decision Stumps in this case.
@@ -306,12 +306,12 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
   const size_t numClasses = 3;
   const size_t inpBucketSize = 6;
 
-  decision_stump::DecisionStump<> ds(inputData, labels.row(0), 
+  decision_stump::DecisionStump<> ds(inputData, labels.row(0),
                                      numClasses, inpBucketSize);
   int iterations = 50;
   double tolerance = 1e-10;
-  
-  AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData, 
+
+  AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData,
           labels.row(0), iterations, tolerance, ds);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -324,10 +324,10 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
 }
 
 /**
- *  This test case runs the AdaBoost.mh algorithm on a non-linearly 
- *  separable dataset. 
- *  It checks if the error returned by running a single instance of the 
- *  weak learner is worse than running the boosted weak learner using 
+ *  This test case runs the AdaBoost.mh algorithm on a non-linearly
+ *  separable dataset.
+ *  It checks if the error returned by running a single instance of the
+ *  weak learner is worse than running the boosted weak learner using
  *  adaboost.
  *  This is for the weak learner: Decision Stumps.
  */
@@ -342,7 +342,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
 
   if (!data::Load("iris_labels.txt",labels))
     BOOST_FAIL("Cannot load labels for iris_labels.txt");
-  
+
   // no need to map the labels here
 
   // Define your own weak learner, Decision Stump in this case.
@@ -351,35 +351,36 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
   const size_t inpBucketSize = 6;
 
   arma::Row<size_t> dsPrediction(labels.n_cols);
-  
-  decision_stump::DecisionStump<> ds(inputData, labels.row(0), 
+
+  decision_stump::DecisionStump<> ds(inputData, labels.row(0),
                                      numClasses, inpBucketSize);
-  
+  ds.Classify(inputData, dsPrediction);
+
   int countWeakLearnerError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != dsPrediction(i))
       countWeakLearnerError++;
   double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
-  
+
   // Define parameters for the adaboost
   int iterations = 50;
   double tolerance = 1e-10;
-  
-  AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData, 
+
+  AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData,
            labels.row(0), iterations, tolerance, ds);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != a.finalHypothesis(i))
       countError++;
   double error = (double) countError / labels.n_cols;
-  
+
   BOOST_REQUIRE(error <= weakLearnerErrorRate);
 }
 /**
- *  This test case runs the AdaBoost.mh algorithm on the UCI Vertebral 
+ *  This test case runs the AdaBoost.mh algorithm on the UCI Vertebral
  *  Column dataset.
- *  It checks if the error returned by running a single instance of the 
- *  weak learner is worse than running the boosted weak learner using 
+ *  It checks if the error returned by running a single instance of the
+ *  weak learner is worse than running the boosted weak learner using
  *  adaboost.
  *  This is for the weak learner: Decision Stumps.
  */
@@ -394,7 +395,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
 
   if (!data::Load("vc2_labels.txt",labels))
     BOOST_FAIL("Cannot load labels for vc2_labels.txt");
-  
+
   // no need to map the labels here
 
   // Define your own weak learner, Decision Stump in this case.
@@ -403,12 +404,12 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
   const size_t numClasses = 3;
   const size_t inpBucketSize = 6;
 
-  decision_stump::DecisionStump<> ds(inputData, labels.row(0), 
+  decision_stump::DecisionStump<> ds(inputData, labels.row(0),
                                      numClasses, inpBucketSize);
-  
+
   int iterations = 50;
   double tolerance = 1e-10;
-  
+
   AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData,
            labels.row(0), iterations, tolerance, ds);
   int countError = 0;
@@ -422,10 +423,10 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
 }
 
 /**
- *  This test case runs the AdaBoost.mh algorithm on the UCI Vertebral 
+ *  This test case runs the AdaBoost.mh algorithm on the UCI Vertebral
  *  Column dataset.
- *  It checks if the error returned by running a single instance of the 
- *  weak learner is worse than running the boosted weak learner using 
+ *  It checks if the error returned by running a single instance of the
+ *  weak learner is worse than running the boosted weak learner using
  *  adaboost.
  *  This is for the weak learner: Decision Stumps.
  */
@@ -440,7 +441,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn_DS)
 
   if (!data::Load("vc2_labels.txt",labels))
     BOOST_FAIL("Cannot load labels for vc2_labels.txt");
-  
+
   // no need to map the labels here
 
   // Define your own weak learner, Decision Stump in this case.
@@ -449,32 +450,32 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn_DS)
   const size_t inpBucketSize = 6;
 
   arma::Row<size_t> dsPrediction(labels.n_cols);
-  
-  decision_stump::DecisionStump<> ds(inputData, labels.row(0), 
+
+  decision_stump::DecisionStump<> ds(inputData, labels.row(0),
                                      numClasses, inpBucketSize);
-  
+
   int countWeakLearnerError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != dsPrediction(i))
       countWeakLearnerError++;
   double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
-  
+
   // Define parameters for the adaboost
   int iterations = 50;
   double tolerance = 1e-10;
-  AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData, 
+  AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData,
            labels.row(0), iterations, tolerance, ds);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != a.finalHypothesis(i))
       countError++;
   double error = (double) countError / labels.n_cols;
-  
+
   BOOST_REQUIRE(error <= weakLearnerErrorRate);
 }
 /**
- *  This test case runs the AdaBoost.mh algorithm on non-linearly 
- *  separable dataset. 
+ *  This test case runs the AdaBoost.mh algorithm on non-linearly
+ *  separable dataset.
  *  It checks whether the hamming loss breaches the upperbound, which
  *  is provided by ztAccumulator.
  *  This is for the weak learner: Decision Stumps.
@@ -490,7 +491,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
 
   if (!data::Load("nonlinsepdata_labels.txt",labels))
     BOOST_FAIL("Cannot load labels for nonlinsepdata_labels.txt");
-  
+
   // no need to map the labels here
 
   // Define your own weak learner, Decision Stump in this case.
@@ -499,13 +500,13 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
   const size_t numClasses = 2;
   const size_t inpBucketSize = 6;
 
-  decision_stump::DecisionStump<> ds(inputData, labels.row(0), 
+  decision_stump::DecisionStump<> ds(inputData, labels.row(0),
                                      numClasses, inpBucketSize);
-  
+
   int iterations = 50;
   double tolerance = 1e-10;
-  
-  AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData, 
+
+  AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData,
            labels.row(0), iterations, tolerance, ds);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
@@ -518,10 +519,10 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
 }
 
 /**
- *  This test case runs the AdaBoost.mh algorithm on a non-linearly 
- *  separable dataset. 
- *  It checks if the error returned by running a single instance of the 
- *  weak learner is worse than running the boosted weak learner using 
+ *  This test case runs the AdaBoost.mh algorithm on a non-linearly
+ *  separable dataset.
+ *  It checks if the error returned by running a single instance of the
+ *  weak learner is worse than running the boosted weak learner using
  *  adaboost.
  *  This for the weak learner: Decision Stumps.
  */
@@ -536,7 +537,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
 
   if (!data::Load("nonlinsepdata_labels.txt",labels))
     BOOST_FAIL("Cannot load labels for nonlinsepdata_labels.txt");
-  
+
   // no need to map the labels here
 
   // Define your own weak learner, Decision Stump in this case.
@@ -546,37 +547,38 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
 
   arma::Row<size_t> dsPrediction(labels.n_cols);
 
-  decision_stump::DecisionStump<> ds(inputData, labels.row(0), 
+  decision_stump::DecisionStump<> ds(inputData, labels.row(0),
                                      numClasses, inpBucketSize);
-  
+
   int countWeakLearnerError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != dsPrediction(i))
       countWeakLearnerError++;
   double weakLearnerErrorRate = (double) countWeakLearnerError / labels.n_cols;
-  
+
   // Define parameters for the adaboost
   int iterations = 500;
   double tolerance = 1e-23;
-  
-  AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData, 
+
+  AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(inputData,
            labels.row(0), iterations, tolerance, ds);
   int countError = 0;
   for (size_t i = 0; i < labels.n_cols; i++)
     if(labels(i) != a.finalHypothesis(i))
       countError++;
   double error = (double) countError / labels.n_cols;
-  
+
   BOOST_REQUIRE(error <= weakLearnerErrorRate);
 }
 
 /**
- *  This test case runs the AdaBoost.mh algorithm on the UCI Vertebral 
+ *  This test case runs the AdaBoost.mh algorithm on the UCI Vertebral
  *  Column dataset.
  *  It tests the Classify function and checks for a satisfiable error rate.
  */
 BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
 {
+  math::RandomSeed(std::time(NULL));
   arma::mat inputData;
 
   if (!data::Load("vc2.txt", inputData))
@@ -586,22 +588,22 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
 
   if (!data::Load("vc2_labels.txt",labels))
     BOOST_FAIL("Cannot load labels for vc2_labels.txt");
-  
+
   // no need to map the labels here
 
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptron_iter iterations.
-  int perceptron_iter = 800;
+  int perceptron_iter = 5000;
 
   arma::Row<size_t> perceptronPrediction(labels.n_cols);
   perceptron::Perceptron<> p(inputData, labels.row(0), perceptron_iter);
   p.Classify(inputData, perceptronPrediction);
-  
+
   // Define parameters for the adaboost
-  int iterations = 50;
+  int iterations = 250;
   double tolerance = 1e-10;
   AdaBoost<> a(inputData, labels.row(0), iterations, tolerance, p);
-  
+
   arma::Row<size_t> predictedLabels(inputData.n_cols);
   a.Classify(inputData, predictedLabels);
 
@@ -611,12 +613,12 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
     if(labels(i) != predictedLabels(i))
       localError++;
   double lError = (double) localError / labels.n_cols;
-  
-  BOOST_REQUIRE(lError <= 0.30);
+
+  BOOST_REQUIRE_LT(lError, 0.30);
 }
 
 /**
- *  This test case runs the AdaBoost.mh algorithm on a non linearly 
+ *  This test case runs the AdaBoost.mh algorithm on a non linearly
  *  separable dataset.
  *  It tests the Classify function and checks for a satisfiable error rate.
  */
@@ -631,20 +633,20 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
 
   if (!data::Load("nonlinsepdata_labels.txt",labels))
     BOOST_FAIL("Cannot load labels for nonlinsepdata_labels.txt");
-  
+
   // no need to map the labels here
 
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptron_iter iterations.
-  
+
   const size_t numClasses = 2;
   const size_t inpBucketSize = 3;
 
   arma::Row<size_t> dsPrediction(labels.n_cols);
 
-  decision_stump::DecisionStump<> ds(inputData, labels.row(0), 
+  decision_stump::DecisionStump<> ds(inputData, labels.row(0),
                                      numClasses, inpBucketSize);
-  
+
   // Define parameters for the adaboost
   int iterations = 50;
   double tolerance = 1e-10;
@@ -659,14 +661,14 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
     if(labels(i) != predictedLabels(i))
       localError++;
   double lError = (double) localError / labels.n_cols;
-  
+
   BOOST_REQUIRE(lError <= 0.30);
 }
 
 /**
  *  This test case runs the AdaBoost.mh algorithm on the UCI Iris Dataset.
- *  It trains it on two thirds of the Iris dataset (iris_train.csv), 
- *  and tests on the remaining third of the dataset (iris_test.csv). 
+ *  It trains it on two thirds of the Iris dataset (iris_train.csv),
+ *  and tests on the remaining third of the dataset (iris_test.csv).
  *  It tests the Classify function and checks for a satisfiable error rate.
  */
 BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
@@ -680,7 +682,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
 
   if (!data::Load("iris_train_labels.csv",labels))
     BOOST_FAIL("Cannot load labels for iris_train_labels.csv");
-  
+
   // no need to map the labels here
 
   // Define your own weak learner, perceptron in this case.
@@ -693,7 +695,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
   int iterations = 50;
   double tolerance = 1e-10;
   AdaBoost<> a(inputData, labels.row(0), iterations, tolerance, p);
-  
+
   arma::mat testData;
   if (!data::Load("iris_test.csv", inputData))
     BOOST_FAIL("Cannot load test dataset iris_test.csv!");
