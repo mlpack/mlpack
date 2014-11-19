@@ -201,8 +201,6 @@ bool Load(const std::string& filename,
     Log::Info << "Loading '" << filename << "' as " << stringType << ".  "
         << std::flush;
 
-  Log::Debug << "load type " << loadType << "\n";
-
   const bool success = matrix.load(stream, loadType);
 
   if (!success)
