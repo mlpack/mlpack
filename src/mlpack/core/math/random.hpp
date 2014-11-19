@@ -49,6 +49,12 @@ inline void RandomSeed(const size_t seed)
 {
   randGen.seed((uint32_t) seed);
   srand((unsigned int) seed);
+#if ARMA_VERSION_MAJOR > 3 || \
+    (ARMA_VERSION_MAJOR == 3 && ARMA_VERSION_MINOR >= 930)
+  // Armadillo >= 3.930 has its own random number generator internally that we
+  // need to set the seed for also.
+  arma::arma_rng::set_seed(seed);
+#endif
 }
 
 /**
