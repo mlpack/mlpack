@@ -106,6 +106,8 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   }
   Log::Info << clusterDistances.t();
 
+  delete centroidTree;
+
   ++iteration;
   return std::sqrt(residual);
 }
