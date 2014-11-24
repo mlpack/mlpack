@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(Radical_Test_Radical3D)
     valBest += rad.Vasicek(y);
   }
 
-  BOOST_REQUIRE_CLOSE(valBest, valEst, 0.2);
+  BOOST_REQUIRE_CLOSE(valBest, valEst, 0.25);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
