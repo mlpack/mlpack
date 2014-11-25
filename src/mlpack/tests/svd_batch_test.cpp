@@ -166,10 +166,8 @@ BOOST_AUTO_TEST_CASE(SVDBatchNegativeElementTest)
 
   arma::mat result = m1 * m2;
 
-  // 5% element-wise tolerance.
-  for (size_t i = 0; i < 3; i++)
-    for (size_t j = 0; j < 3; j++)
-      BOOST_REQUIRE_CLOSE(test(i, j), result(i, j), 5.0);
+  // 2% tolerance on the norm.
+  BOOST_REQUIRE_CLOSE(arma::norm(test, "fro"), arma::norm(result, "fro"), 2.0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
