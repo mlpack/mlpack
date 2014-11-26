@@ -22,40 +22,40 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionEvaluate)
   const size_t trials = 50;
   const size_t inputSize = 10;
   const size_t numClasses = 5;
-
+  
   // Initialize a random dataset.
   arma::mat data;
   data.randu(inputSize, points);
-
+  
   // Create random class labels.
   arma::vec labels(points);
   for(size_t i = 0; i < points; i++)
     labels(i) = math::RandInt(0, numClasses);
-
+  
   // Create a SoftmaxRegressionFunction. Regularization term ignored.
   SoftmaxRegressionFunction srf(data, labels, inputSize, numClasses, 0);
-
+  
   // Run a number of trials.
   for(size_t i = 0; i < trials; i++)
   {
     // Create a random set of parameters.
     arma::mat parameters;
     parameters.randu(numClasses, inputSize);
-
+    
     double logLikelihood = 0;
-
+    
     // Compute error for each training example.
     for(size_t j = 0; j < points; j++)
     {
       arma::mat hypothesis, probabilities;
-
+      
       hypothesis = arma::exp(parameters * data.col(j));
       probabilities = hypothesis / arma::accu(hypothesis);
-
+      
       logLikelihood += log(probabilities(labels(j), 0));
     }
     logLikelihood /= points;
-
+    
     // Compare with the value returned by the function.
     BOOST_REQUIRE_CLOSE(srf.Evaluate(parameters), -logLikelihood, 1e-5);
   }
@@ -67,11 +67,11 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionRegularizationEvaluate)
   const size_t trials = 50;
   const size_t inputSize = 10;
   const size_t numClasses = 5;
-
+  
   // Initialize a random dataset.
   arma::mat data;
   data.randu(inputSize, points);
-
+  
   // Create random class labels.
   arma::vec labels(points);
   for(size_t i = 0; i < points; i++)
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionRegularizationEvaluate)
   SoftmaxRegressionFunction srfNoReg(data, labels, inputSize, numClasses, 0);
   SoftmaxRegressionFunction srfSmallReg(data, labels, inputSize, numClasses, 1);
   SoftmaxRegressionFunction srfBigReg(data, labels, inputSize, numClasses, 20);
-
+  
   // Run a number of trials.
   for (size_t i = 0; i < trials; i++)
   {
@@ -108,21 +108,21 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionGradient)
   const size_t points = 1000;
   const size_t inputSize = 10;
   const size_t numClasses = 5;
-
+  
   // Initialize a random dataset.
   arma::mat data;
   data.randu(inputSize, points);
-
+  
   // Create random class labels.
   arma::vec labels(points);
   for(size_t i = 0; i < points; i++)
     labels(i) = math::RandInt(0, numClasses);
-
+    
   // 2 objects for 2 terms in the cost function. Each term contributes towards
   // the gradient and thus need to be checked independently.
   SoftmaxRegressionFunction srf1(data, labels, inputSize, numClasses, 0);
   SoftmaxRegressionFunction srf2(data, labels, inputSize, numClasses, 20);
-
+  
   // Create a random set of parameters.
   arma::mat parameters;
   parameters.randu(numClasses, inputSize);
@@ -136,7 +136,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionGradient)
   const double epsilon = 0.0001;
   double costPlus1, costMinus1, numGradient1;
   double costPlus2, costMinus2, numGradient2;
-
+  
   // For each parameter.
   for (size_t i = 0; i < numClasses; i++)
   {
@@ -174,12 +174,12 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
   const double lambda = 0.5;
 
   // Generate two-Gaussian dataset.
-  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
-  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g1(arma::vec("1.0 9.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("4.0 3.0 4.0"), arma::eye<arma::mat>(3, 3));
 
   arma::mat data(inputSize, points);
   arma::vec labels(points);
-
+  
   for (size_t i = 0; i < points/2; i++)
   {
     data.col(i) = g1.Random();
@@ -190,19 +190,13 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  arma::rowvec ones;
-  ones.ones(points);
-  data.insert_rows(0, ones);
 
   // Train softmax regression object.
-  SoftmaxRegression<> sr(data, labels, inputSize + 1, numClasses, lambda);
+  SoftmaxRegression<> sr(data, labels, inputSize, numClasses, lambda);
 
   // Compare training accuracy to 100.
   const double acc = sr.ComputeAccuracy(data, labels);
-  Log::Debug << acc << " acc\n";
-  Log::Debug << sr.Lambda() << " lambda\n";
-  Log::Debug << sr.Parameters().t() << "\n";
-  BOOST_CHECK_CLOSE(acc, 100.0, 0.5);
+  BOOST_REQUIRE_CLOSE(acc, 100.0, 0.3);
 
   // Create test dataset.
   for (size_t i = 0; i < points/2; i++)
@@ -218,7 +212,6 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
 
   // Compare test accuracy to 100.
   const double testAcc = sr.ComputeAccuracy(data, labels);
-  Log::Debug << testAcc << " acc\n";
   BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6);
 }
 
@@ -239,7 +232,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionMultipleClasses)
 
   arma::mat data(inputSize, points);
   arma::vec labels(points);
-
+  
   for (size_t i = 0; i < points/5; i++)
   {
     data.col(i) = g1.Random();
