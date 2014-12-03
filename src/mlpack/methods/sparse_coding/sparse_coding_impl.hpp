@@ -255,7 +255,7 @@ double SparseCoding<DictionaryInitializer>::OptimizeDictionary(
         << "." << std::endl;
     Log::Debug << "  Improvement: " << std::scientific << improvement << ".\n";
 
-    if (improvement < newtonTolerance)
+    if (normGradient < newtonTolerance)
       converged = true;
   }
 
@@ -292,7 +292,7 @@ double SparseCoding<DictionaryInitializer>::OptimizeDictionary(
       }
     }
   }
-  //printf("final reconstruction error: %e\n", norm(data - dictionary * codes, "fro"));
+
   return normGradient;
 }
 
