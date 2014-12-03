@@ -539,7 +539,6 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionLBFGSRegularizationSimpleTest)
 // regularization.
 BOOST_AUTO_TEST_CASE(LogisticRegressionSGDRegularizationSimpleTest)
 {
-  math::RandomSeed(std::time(NULL));
   // Very simple fake dataset.
   arma::mat data("1 2 3;"
                  "1 2 3");
