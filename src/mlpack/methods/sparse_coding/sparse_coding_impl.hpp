@@ -119,7 +119,8 @@ void SparseCoding<DictionaryInitializer>::OptimizeCode()
 template<typename DictionaryInitializer>
 double SparseCoding<DictionaryInitializer>::OptimizeDictionary(
     const arma::uvec& adjacencies,
-    const double newtonTolerance)
+    const double newtonTolerance,
+    const size_t maxIterations)
 {
   // Count the number of atomic neighbors for each point x^i.
   arma::uvec neighborCounts = arma::zeros<arma::uvec>(data.n_cols, 1);
@@ -207,7 +208,7 @@ double SparseCoding<DictionaryInitializer>::OptimizeDictionary(
   }
 
   double normGradient;
-  double improvement;
+  double improvement = 0;
   for (size_t t = 1; !converged; ++t)
   {
     arma::mat A = codesZT + diagmat(dualVars);
@@ -228,7 +229,7 @@ double SparseCoding<DictionaryInitializer>::OptimizeDictionary(
     const double rho = 0.9;
     double sufficientDecrease = c * dot(gradient, searchDirection);
 
-    while (true)
+    for (size_t t = 1; t != maxIterations; ++t)
     {
       // Calculate objective.
       double sumDualVars = arma::sum(dualVars);
