@@ -578,7 +578,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
  */
 BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
 {
-  math::RandomSeed(std::time(NULL));
+  mlpack::math::RandomSeed(std::time(NULL));
   arma::mat inputData;
 
   if (!data::Load("vc2.txt", inputData))
