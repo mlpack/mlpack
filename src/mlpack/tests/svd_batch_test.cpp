@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE(SVDBatchRegularizationTest)
  */
 BOOST_AUTO_TEST_CASE(SVDBatchNegativeElementTest)
 {
-  math::RandomSeed(std::time(NULL));
+  mlpack::math::RandomSeed(std::time(NULL));
   // Create two 5x3 matrices that we should be able to recover.
   mat testLeft;
   testLeft.randu(5, 3);
