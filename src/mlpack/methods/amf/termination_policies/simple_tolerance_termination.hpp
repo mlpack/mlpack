@@ -25,6 +25,16 @@
 namespace mlpack {
 namespace amf {
 
+/**
+ * This class implements residue tolerance termination policy. Termination
+ * criterion is met when increase in residue value drops below the given tolerance.
+ * To accomodate spikes certain number of successive residue drops are accepted.
+ * This upper imit on successive drops can be adjusted with reverseStepCount.
+ * Secondary termination criterion terminates algorithm when iteration count
+ * goes above the threshold.
+ *
+ * @see AMF
+ */
 template <class MatType>
 class SimpleToleranceTermination
 {
@@ -42,9 +52,10 @@ class SimpleToleranceTermination
     iteration = 1;
     residue = DBL_MIN;
     reverseStepCount = 0;
+    isCopy = false;
 
     this->V = &V;
-    
+
     c_index = 0;
     c_indexOld = 0;
 
@@ -80,11 +91,17 @@ class SimpleToleranceTermination
     residue = sum / count;
     residue = sqrt(residue);
 
-    iteration++;  
-  
-    if((residueOld - residue) / residueOld < tolerance && iteration > 4)
+<<<<<<< .working
+    iteration++;
+
+=======
+    iteration++;
+
+    // if residue tolerance is not satisfied
+>>>>>>> .merge-right.r17287
+    if ((residueOld - residue) / residueOld < tolerance && iteration > 4)
     {
-      if(reverseStepCount == 0 && isCopy == false)
+      if (reverseStepCount == 0 && isCopy == false)
       {
         isCopy = true;
         this->W = W;
@@ -120,21 +137,38 @@ class SimpleToleranceTermination
   const size_t& Iteration() { return iteration; }
   const size_t& MaxIterations() { return maxIterations; }
 
+  //! Get current iteration count
+  const size_t& Iteration() const { return iteration; }
+
+  //! Access upper limit of iteration count
+  const size_t& MaxIterations() const { return maxIterations; }
+  size_t& MaxIterations() { return maxIterations; }
+
+  //! Access tolerance value
+  const double& Tolerance() const { return tolerance; }
+  double& Tolerance() { return tolerance; }
+
  private:
+  //! tolerance
   double tolerance;
   size_t maxIterations;
 
   const MatType* V;
 
   size_t iteration;
+
+  //! residue values
   double residueOld;
   double residue;
   double normOld;
 
   size_t reverseStepTolerance;
+  //! successive residue drops
   size_t reverseStepCount;
-  
+
   bool isCopy;
+
+  //! variables to store information of minimum residue poi
   arma::mat W;
   arma::mat H;
   double c_indexOld;
