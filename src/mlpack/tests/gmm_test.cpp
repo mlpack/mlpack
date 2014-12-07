@@ -342,8 +342,6 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussians)
  */
 BOOST_AUTO_TEST_CASE(GMMTrainEMSingleGaussianWithProbability)
 {
-  math::RandomSeed(std::time(NULL));
-
   // Generate observations from a Gaussian distribution.
   distribution::GaussianDistribution d("0.5 1.0", "1.0 0.3; 0.3 1.0");
 
@@ -378,8 +376,6 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMSingleGaussianWithProbability)
  */
 BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
 {
-  srand(time(NULL));
-
   // We'll have three Gaussian distributions from this mixture, and one Gaussian
   // not from this mixture (but we'll put some observations from it in).
   distribution::GaussianDistribution d1("0.0 1.0 0.0", "1.0 0.0 0.5;"
@@ -397,10 +393,10 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
 
   // Now we'll generate points and probabilities.  1500 points.  Slower than I
   // would like...
-  arma::mat points(3, 2000);
-  arma::vec probabilities(2000);
+  arma::mat points(3, 5000);
+  arma::vec probabilities(5000);
 
-  for (size_t i = 0; i < 2000; i++)
+  for (size_t i = 0; i < 5000; i++)
   {
     double randValue = math::Random();
 
@@ -417,8 +413,8 @@ BOOST_AUTO_TEST_CASE(GMMTrainEMMultipleGaussiansWithProbability)
     // 0.97 plus or minus a little bit of noise.  If not, then it should be 0.03
     // plus or minus a little bit of noise.  The base probability (minus the
     // noise) is parameterizable for easy modification of the test.
-    double confidence = 0.995;
-    double perturbation = math::Random(-0.005, 0.005);
+    double confidence = 0.998;
+    double perturbation = math::Random(-0.002, 0.002);
 
     if (randValue <= 0.90)
       probabilities(i) = confidence + perturbation;

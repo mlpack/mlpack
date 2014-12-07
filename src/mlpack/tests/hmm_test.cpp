@@ -913,10 +913,10 @@ BOOST_AUTO_TEST_CASE(GMMHMMLabeledTrainingTest)
   BOOST_REQUIRE_SMALL(hmm.Initial()[1], 0.01);
 
   // Check the results.  Use absolute tolerances instead of percentages.
-  BOOST_REQUIRE_SMALL(hmm.Transition()(0, 0) - transMat(0, 0), 0.02);
-  BOOST_REQUIRE_SMALL(hmm.Transition()(0, 1) - transMat(0, 1), 0.02);
-  BOOST_REQUIRE_SMALL(hmm.Transition()(1, 0) - transMat(1, 0), 0.02);
-  BOOST_REQUIRE_SMALL(hmm.Transition()(1, 1) - transMat(1, 1), 0.02);
+  BOOST_REQUIRE_SMALL(hmm.Transition()(0, 0) - transMat(0, 0), 0.03);
+  BOOST_REQUIRE_SMALL(hmm.Transition()(0, 1) - transMat(0, 1), 0.03);
+  BOOST_REQUIRE_SMALL(hmm.Transition()(1, 0) - transMat(1, 0), 0.03);
+  BOOST_REQUIRE_SMALL(hmm.Transition()(1, 1) - transMat(1, 1), 0.03);
 
   // Now the emission probabilities (the GMMs).
   // We have to sort each GMM for comparison.

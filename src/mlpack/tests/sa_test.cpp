@@ -126,7 +126,7 @@ BOOST_AUTO_TEST_CASE(RastrigrinFunctionTest)
     RastrigrinFunction f;
     ExponentialSchedule schedule(3e-6);
     SA<RastrigrinFunction> //sa(f, schedule);
-        sa(f, schedule, 20000000, 100, 50, 1000, 1e-9, 2, 0.2, 0.01, 0.1);
+        sa(f, schedule, 20000000, 100, 50, 1000, 1e-12, 2, 0.2, 0.01, 0.1);
     arma::mat coordinates = f.GetInitialPoint();
 
     const double result = sa.Optimize(coordinates);
