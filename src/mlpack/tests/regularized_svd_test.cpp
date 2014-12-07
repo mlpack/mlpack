@@ -191,8 +191,15 @@ BOOST_AUTO_TEST_CASE(RegularizedSVDFunctionGradient)
       parameters(i, j) += epsilon;
 
       // Compare numerical and backpropagation gradient values.
-      BOOST_REQUIRE_CLOSE(numGradient1, gradient1(i, j), 1e-2);
-      BOOST_REQUIRE_CLOSE(numGradient2, gradient2(i, j), 1e-2);
+      if (gradient1(i, j) == 0.0)
+        BOOST_REQUIRE_SMALL(numGradient1, 1e-5);
+      else
+        BOOST_REQUIRE_CLOSE(numGradient1, gradient1(i, j), 1e-2);
+
+      if (gradient2(i, j) == 0.0)
+        BOOST_REQUIRE_SMALL(numGradient2, 1e-5);
+      else
+        BOOST_REQUIRE_CLOSE(numGradient2, gradient2(i, j), 1e-2);
     }
   }
 }

@@ -85,7 +85,7 @@ class DecisionStump
    *
   ModifyData(MatType& data, const arma::Row<double>& D);
   */
-  
+
   //! Access the splitting attribute.
   int SplitAttribute() const { return splitAttribute; }
   //! Modify the splitting attribute (be careful!).
@@ -164,8 +164,20 @@ class DecisionStump
    * @param attribute The attribute of which we calculate the entropy.
    * @param labels Corresponding labels of the attribute.
    */
-  template <typename AttType, typename LabelType>
-  double CalculateEntropy(arma::subview_row<LabelType> labels);
+  template <typename LabelType, bool isWeight>
+  double CalculateEntropy(arma::subview_row<LabelType> labels, int begin,
+                          const arma::rowvec& tempD);
+
+  /**
+   * Train the decision stump on the given data and labels.
+   *
+   * @param data Dataset to train on.
+   * @param labels Labels for dataset.
+   * @param isWeight Whether we need to run a weighted Decision Stump.
+   */
+  template <bool isWeight>
+  void Train(const MatType& data, const arma::Row<size_t>& labels,
+             const arma::rowvec& weightD);
 };
 
 }; // namespace decision_stump

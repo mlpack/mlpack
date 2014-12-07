@@ -351,44 +351,35 @@ template <typename MatType>
 template <typename rType>
 rType DecisionStump<MatType>::CountMostFreq(const arma::Row<rType>& subCols)
 {
-  // Sort subCols for easier processing.
-  arma::Row<rType> sortCounts = arma::sort(subCols);
-  rType element = sortCounts[0];
-  size_t count = 0, localCount = 0;
+  // We'll create a map of elements and the number of times that each element is
+  // seen.
+  std::map<rType, size_t> countMap;
 
-  if (sortCounts.n_elem == 1)
-    return sortCounts[0];
-
-  // An O(n) loop which counts the most frequent element in sortCounts.
-  for (size_t i = 0; i < sortCounts.n_elem; ++i)
+  for (size_t i = 0; i < subCols.n_elem; ++i)
   {
-    if (i == sortCounts.n_elem - 1)
-    {
-      if (sortCounts(i - 1) == sortCounts(i))
-      {
-        // element = sortCounts(i - 1);
-        localCount++;
-      }
-      else if (localCount > count)
-        count = localCount;
-    }
-    else if (sortCounts(i) != sortCounts(i + 1))
-    {
-      localCount = 0;
-      count++;
-    }
+    if (countMap.count(subCols[i]) == 0)
+      countMap[subCols[i]] = 1;
     else
-    {
-      localCount++;
-      if (localCount > count)
-      {
-        count = localCount;
-        if (localCount == 1)
-          element = sortCounts(i);
-      }
-    }
+      ++countMap[subCols[i]];
   }
-  return element;
+
+  // Now find the maximum value.
+  typename std::map<rType, size_t>::iterator it = countMap.begin();
+  rType mostFreq = it->first;
+  size_t mostFreqCount = it->second;
+  while (it != countMap.end())
+>>>>>>> .merge-right.r17318
+  {
+    if (it->second >= mostFreqCount)
+    {
+      mostFreq = it->first;
+      mostFreqCount = it->second;
+    }
+
+    ++it;
+  }
+
+  return mostFreq;
 }
 
 /**
