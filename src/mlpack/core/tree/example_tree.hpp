@@ -6,7 +6,7 @@
  * implement (although the actual implementations here don't make any sense
  * because this is just an example).
  *
- * This file is part of MLPACK 1.0.10.
+ * This file is part of MLPACK 1.0.11.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free

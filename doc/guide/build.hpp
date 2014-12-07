@@ -8,14 +8,14 @@ further documentation, but this tutorial should be enough to get MLPACK built
 and installed.
 
 @section Download latest mlpack build
-Download latest mlpack build from here : <a href="http://www.mlpack.org/files/mlpack-1.0.10.tar.gz">mlpack-1.0.10</a>
+Download latest mlpack build from here : <a href="http://www.mlpack.org/files/mlpack-1.0.11.tar.gz">mlpack-1.0.11</a>
 
 @section builddir Creating Build Directory
 
 Once the MLPACK source is unpacked, you should create a build directory.
 
 @code
-$ cd mlpack-1.0.10
+$ cd mlpack-1.0.11
 $ mkdir build
 @endcode
 

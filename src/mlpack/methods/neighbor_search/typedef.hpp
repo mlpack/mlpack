@@ -6,7 +6,7 @@
  * class which are commonly used.  This is meant to be included by
  * neighbor_search.h but is a separate file for simplicity.
  *
- * This file is part of MLPACK 1.0.10.
+ * This file is part of MLPACK 1.0.11.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free
