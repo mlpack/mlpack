@@ -29,9 +29,9 @@ namespace optimization {
 namespace test {
 
 //! Very, very simple test function which is the composite of three other
-//! functions.  It turns out that although this function is very simple,
-//! optimizing it fully can take a very long time.  It seems to take in excess
-//! of 10 million iterations with a step size of 0.0005.
+//! functions.  The gradient is not very steep far away from the optimum, so a
+//! larger step size may be required to optimize it in a reasonable number of
+//! iterations.
 class SGDTestFunction
 {
  public:
