@@ -224,7 +224,7 @@ double SparseCoding<DictionaryInitializer>::OptimizeDictionary(
 
   double normGradient;
   double improvement = 0;
-  for (size_t t = 1; !converged; ++t)
+  for (size_t t = 1; (t != maxIterations) && !converged; ++t)
   {
     arma::mat A = codesZT + diagmat(dualVars);
 
@@ -244,7 +244,9 @@ double SparseCoding<DictionaryInitializer>::OptimizeDictionary(
     const double rho = 0.9;
     double sufficientDecrease = c * dot(gradient, searchDirection);
 
-    for (size_t t = 1; t != maxIterations; ++t)
+    // A maxIterations parameter for the Armijo line search may be a good idea,
+    // but it doesn't seem to be causing any problems for now.
+    while (true)
     {
       // Calculate objective.
       double sumDualVars = sum(dualVars);
