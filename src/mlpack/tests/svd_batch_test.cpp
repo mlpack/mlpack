@@ -35,17 +35,16 @@ using namespace arma;
  */
 BOOST_AUTO_TEST_CASE(SVDBatchConvergenceElementTest)
 {
-  mlpack::math::RandomSeed(10);
   sp_mat data;
   data.sprandn(1000, 1000, 0.2);
-  AMF<SimpleToleranceTermination<sp_mat>, 
-      RandomInitialization, 
+  AMF<SimpleToleranceTermination<sp_mat>,
+      AverageInitialization,
       SVDBatchLearning> amf;
-  mat m1,m2;
+  mat m1, m2;
   amf.Apply(data, 2, m1, m2);
-  
-  BOOST_REQUIRE_NE(amf.TerminationPolicy().Iteration(), 
-                    amf.TerminationPolicy().MaxIterations());
+
+  BOOST_REQUIRE_NE(amf.TerminationPolicy().Iteration(),
+                   amf.TerminationPolicy().MaxIterations());
 }
 
 /**
@@ -75,6 +74,8 @@ BOOST_AUTO_TEST_CASE(SVDBatchMomentumTest)
   // Fill sparse matrix.
   sp_mat cleanedData = arma::sp_mat(locations, values, maxUserID, maxItemID);
 
+  // Explicitly setting the random seed forces the random initialization to be
+  // the same.  There may be a better way to do this.
   mlpack::math::RandomSeed(10);
   ValidationRMSETermination<sp_mat> vrt(cleanedData, 2000);
   AMF<ValidationRMSETermination<sp_mat>,
@@ -136,7 +137,7 @@ BOOST_AUTO_TEST_CASE(SVDBatchRegularizationTest)
                               RandomInitialization(),
                               SVDBatchLearning(0.0009, 0, 0, 0));
 
-  mat m1,m2;
+  mat m1, m2;
   double RMSE_1 = amf_1.Apply(cleanedData, 2, m1, m2);
 
   mlpack::math::RandomSeed(10);
@@ -156,17 +157,18 @@ BOOST_AUTO_TEST_CASE(SVDBatchRegularizationTest)
  */
 BOOST_AUTO_TEST_CASE(SVDBatchNegativeElementTest)
 {
-  mat test;
-  test.zeros(3,3);
-  test(0, 0) = 1;
-  test(0, 1) = -2;
-  test(0, 2) = 3;
-  test(1, 0) = 2;
-  test(1, 1) = -1;
-  test(1, 2) = 2;
-  test(2, 0) = 2;
-  test(2, 1) = 2;
-  test(2, 2) = 2;
+  math::RandomSeed(std::time(NULL));
+  // Create two 5x3 matrices that we should be able to recover.
+  mat testLeft;
+  testLeft.randu(5, 3);
+  testLeft -= 0.5; // Shift so elements are negative.
+
+  mat testRight;
+  testRight.randu(3, 5);
+  testRight -= 0.5; // Shift so elements are negative.
+
+  // Assemble a rank-3 matrix that is 5x5.
+  mat test = testLeft * testRight;
 
   AMF<SimpleToleranceTermination<mat>,
       RandomInitialization,
@@ -174,17 +176,14 @@ BOOST_AUTO_TEST_CASE(SVDBatchNegativeElementTest)
                             RandomInitialization(),
                             SVDBatchLearning(0.3, 0.001, 0.001, 0));
   mat m1, m2;
-  amf.Apply(test, 2, m1, m2);
+  amf.Apply(test, 3, m1, m2);
 
   arma::mat result = m1 * m2;
 
-  for(size_t i = 0;i < 3;i++)
-  {
-    for(size_t j = 0;j < 3;j++)
-    {
-      BOOST_REQUIRE_LE(abs(test(i,j) - result(i,j)), 0.5);
-    }
-  }
+  // 5% element-wise tolerance.
+  for (size_t i = 0; i < 3; i++)
+    for (size_t j = 0; j < 3; j++)
+      BOOST_REQUIRE_CLOSE(test(i, j), result(i, j), 5.0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -27,6 +27,7 @@
 
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits.hpp>
+#include <mlpack/prereqs.hpp>
 
 /*
  * Constructs a template supporting the SFINAE pattern.
