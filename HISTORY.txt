@@ -18,6 +18,9 @@
   * math::RandomSeed() now sets the random seed for recent (>=3.930) Armadillo
     versions.
 
+  * Handle Newton method convergence better for
+    SparseCoding::OptimizeDictionary() and make maximum iterations a parameter.
+
 2014-08-29    mlpack 1.0.10
 
   * Bugfix for NeighborSearch regression which caused very slow allknn/allkfn.

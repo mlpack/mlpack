@@ -556,8 +556,11 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDRegularizationSimpleTest)
                  "1 2 3");
   arma::vec responses("1 1 0");
 
-  // Create a logistic regression object using SGD.
-  LogisticRegression<SGD> lr(data, responses, 0.001);
+  // Create a logistic regression object using custom SGD with a much smaller
+  // tolerance.
+  LogisticRegressionFunction lrf(data, responses, 0.001);
+  SGD<LogisticRegressionFunction> sgd(lrf, 0.005, 500000, 1e-10);
+  LogisticRegression<SGD> lr(sgd);
 
   // Test sigmoid function.
   arma::vec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]

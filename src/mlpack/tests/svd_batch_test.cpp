@@ -174,14 +174,14 @@ BOOST_AUTO_TEST_CASE(SVDBatchNegativeElementTest)
       RandomInitialization,
       SVDBatchLearning> amf(SimpleToleranceTermination<mat>(),
                             RandomInitialization(),
-                            SVDBatchLearning(0.3, 0.001, 0.001, 0));
+                            SVDBatchLearning(0.1, 0.001, 0.001, 0));
   mat m1, m2;
   amf.Apply(test, 3, m1, m2);
 
   arma::mat result = m1 * m2;
 
-  // 2% tolerance on the norm.
-  BOOST_REQUIRE_CLOSE(arma::norm(test, "fro"), arma::norm(result, "fro"), 2.0);
+  // 5% tolerance on the norm.
+  BOOST_REQUIRE_CLOSE(arma::norm(test, "fro"), arma::norm(result, "fro"), 5.0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

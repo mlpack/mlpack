@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
     result = sa.Optimize(coordinates);
     ++iteration;
 
-    BOOST_REQUIRE_LT(iteration, 3); // No more than three tries.
+    BOOST_REQUIRE_LT(iteration, 4); // No more than three tries.
   }
 
   // 0.1% tolerance for each coordinate.
