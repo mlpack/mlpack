@@ -173,9 +173,9 @@ bool DTree::FindSplit(const arma::mat& data,
     bool dimSplitFound = false;
     // Take an error estimate for this dimension.
     double minDimError = std::pow(points, 2.0) / (max - min);
-    double dimLeftError;
-    double dimRightError;
-    double dimSplitValue;
+    double dimLeftError = 0.0; // For -Wuninitialized.  These variables will
+    double dimRightError = 0.0; // always be set to something else before use.
+    double dimSplitValue = 0.0;
 
     // Find the log volume of all the other dimensions.
     double volumeWithoutDim = logVolume - std::log(max - min);
@@ -676,7 +676,7 @@ void DTree::ComputeVariableImportance(arma::vec& importances) const
   }
 }
 
-// Return string of object. 
+// Return string of object.
 std::string DTree::ToString() const
 {
   std::ostringstream convert;
