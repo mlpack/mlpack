@@ -393,7 +393,9 @@ BOOST_AUTO_TEST_CASE(SavePGMBinaryTest)
   remove("test_file.pgm");
 }
 
-#ifdef ARMA_USE_HDF5
+#if defined(ARMA_USE_HDF5) && (ARMA_VERSION_MAJOR == 3 \
+    || (ARMA_VERSION_MAJOR == 4 && (ARMA_VERSION_MINOR < 300 \
+    ||  ARMA_VERSION_MINOR > 400)))
 /**
  * Make sure load as HDF5 is successful.
  */
