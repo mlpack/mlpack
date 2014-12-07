@@ -11,6 +11,10 @@
   * MahalanobisDistance<> now takes root of the distance by default and
     therefore satisfies the triangle inequality (TakeRoot now defaults to true).
 
+  * Better handling of optional Armadillo HDF5 dependency.
+
+  * Fixes for numerous intermittent test failures.
+
 2014-08-29    mlpack 1.0.10
 
   * Bugfix for NeighborSearch regression which caused very slow allknn/allkfn.
