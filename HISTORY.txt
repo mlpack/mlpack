@@ -2,6 +2,8 @@
 
   * Proper handling of dimension calculation in PCA.
 
+  * Load parameter vectors properly for LinearRegression models.
+
 2014-08-29    mlpack 1.0.10
 
   * Bugfix for NeighborSearch regression which caused very slow allknn/allkfn.
