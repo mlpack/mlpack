@@ -1,3 +1,4 @@
+<<<<<<< .working
 /**
  * @file allknn_test.cpp
  *
@@ -762,9 +763,9 @@ BOOST_AUTO_TEST_CASE(SparseAllkNNKDTreeTest)
   // 70, the probability of all 70 dimensions being zero is 0.8^70 = 1.65e-7 in
   // the reference set and 0.9^70 = 6.27e-4 in the query set.
   arma::sp_mat queryDataset;
-  queryDataset.sprandu(50, 5000, 0.2);
+  queryDataset.sprandu(70, 500, 0.2);
   arma::sp_mat referenceDataset;
-  referenceDataset.sprandu(50, 8000, 0.1);
+  referenceDataset.sprandu(70, 800, 0.1);
   arma::mat denseQuery(queryDataset);
   arma::mat denseReference(referenceDataset);
 
