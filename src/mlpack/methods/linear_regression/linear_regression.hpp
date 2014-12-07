@@ -1,6 +1,7 @@
 /**
  * @file linear_regression.hpp
  * @author James Cline
+ * @author Michael Fox
  *
  * Simple least-squares linear regression.
  *
@@ -40,10 +41,15 @@ class LinearRegression
    *
    * @param predictors X, matrix of data points to create B with.
    * @param responses y, the measured data for each point in X
+   * @param intercept include intercept?
+   * @param weights observation weights
    */
   LinearRegression(const arma::mat& predictors,
                    const arma::vec& responses,
-                   const double lambda = 0);
+                   const double lambda = 0,
+                   const bool intercept = true,
+                   const arma::vec& weights = arma::vec()
+                   );
 
   /**
    * Initialize the model from a file.
@@ -111,12 +117,13 @@ class LinearRegression
    * Initialized and filled by constructor to hold the least squares solution.
    */
   arma::vec parameters;
-
   /**
    * The Tikhonov regularization parameter for ridge regression (0 for linear
    * regression).
    */
   double lambda;
+  //! Indicates whether first parameter is intercept.
+  bool intercept;
 };
 
 }; // namespace linear_regression
