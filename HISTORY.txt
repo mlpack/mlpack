@@ -4,6 +4,8 @@
 
   * Load parameter vectors properly for LinearRegression models.
 
+  * Linker fixes for AugLagrangian specializations under Visual Studio.
+
 2014-08-29    mlpack 1.0.10
 
   * Bugfix for NeighborSearch regression which caused very slow allknn/allkfn.
