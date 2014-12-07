@@ -2,17 +2,7 @@
  * @file mult_div_update_rules.hpp
  * @author Mohan Rajendran
  *
- * Update rules for the Non-negative Matrix Factorization. This follows a method
- * described in the paper 'Algorithms for Non-negative Matrix Factorization'
- * by D. D. Lee and H. S. Seung. This is a multiplicative rule that ensures
- * that the Kullback–Leibler divergence
- * \f$ \sum_i \sum_j (V_{ij} log\frac{V_{ij}}{(WH)_{ij}}-V_{ij}+(WH)_{ij}) \f$is
- * non-increasing between subsequent iterations. Both of the update rules
- * for W and H are defined in this file.
- *
- * This set of update rules is not meant to work with sparse matrices.  Using
- * sparse matrices often causes NaNs in the output, so other choices of update
- * rules are better in that situation.
+ * Update rules for the Non-negative Matrix Factorization. 
  *
  * This file is part of MLPACK 1.0.10.
  *
@@ -37,6 +27,18 @@
 namespace mlpack {
 namespace amf {
 
+/**
+ * This follows a method described in the paper 'Algorithms for Non-negative 
+ * Matrix Factorization' by D. D. Lee and H. S. Seung. This is a multiplicative 
+ * rule that ensures that the Kullback–Leibler divergence
+ * \f$ \sum_i \sum_j (V_{ij} log\frac{V_{ij}}{(WH)_{ij}}-V_{ij}+(WH)_{ij}) \f$
+ * is non-increasing between subsequent iterations. Both of the update rules
+ * for W and H are defined in this file.
+ *
+ * This set of update rules is not meant to work with sparse matrices.  Using
+ * sparse matrices often causes NaNs in the output, so other choices of update
+ * rules are better in that situation.
+ */
 class NMFMultiplicativeDivergenceUpdate
 {
  public:

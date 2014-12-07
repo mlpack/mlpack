@@ -29,6 +29,11 @@ template <class TerminationPolicy>
 class IncompleteIncrementalTermination
 {
  public:
+  /**
+   * Empty constructor
+   *
+   * @param t_policy object of wrapped class.
+   */
   IncompleteIncrementalTermination(TerminationPolicy t_policy = TerminationPolicy())
             : t_policy(t_policy) {}
 
@@ -44,7 +49,7 @@ class IncompleteIncrementalTermination
   bool IsConverged(arma::mat& W, arma::mat& H)
   {
     iteration++;
-    if(iteration % incrementalIndex == 0)  
+    if(iteration % incrementalIndex == 0)
       return t_policy.IsConverged(W, H);
     else return false;
   }
@@ -61,7 +66,7 @@ class IncompleteIncrementalTermination
   {
     return t_policy.MaxIterations();
   }
-  
+
  private:
   TerminationPolicy t_policy;
 

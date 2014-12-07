@@ -2,11 +2,7 @@
  * @file random_acol_init.hpp
  * @author Mohan Rajendran
  *
- * Intialization rule for Non-Negative Matrix Factorization. This simple
- * initialization is performed by the random Acol initialization introduced in
- * the paper 'Algorithms, Initializations and Convergence' by Langville et al.
- * This method sets each of the columns of W by averaging p randomly chosen
- * columns of V.
+ * Intialization rule for Alternating Matrix Factorization. 
  *
  * This file is part of MLPACK 1.0.10.
  *
@@ -32,9 +28,11 @@ namespace mlpack {
 namespace amf {
 
 /**
- * This class initializes the W matrix of the NMF algorithm by averaging p
+ * This class initializes the W matrix of the AMF algorithm by averaging p
  * randomly chosen columns of V.  In this case, p is a template parameter.  H is
- * then set randomly.
+ * then set randomly This simple initialization is performed by the random 
+ * Acol initialization introduced in the paper 'Algorithms, Initializations and 
+ * Convergence' by Langville et al.
  *
  * @tparam The number of random columns to average for each column of W.
  */

@@ -31,6 +31,11 @@ template <class TerminationPolicy>
 class CompleteIncrementalTermination
 {
  public:
+  /**
+   * Empty constructor
+   *
+   * @param t_policy object of wrapped class.
+   */
   CompleteIncrementalTermination(TerminationPolicy t_policy = TerminationPolicy())
             : t_policy(t_policy) {}
 
@@ -67,7 +72,7 @@ class CompleteIncrementalTermination
   {
     return iteration;
   }
-  
+
   const size_t& MaxIterations()
   {
     return t_policy.MaxIterations();

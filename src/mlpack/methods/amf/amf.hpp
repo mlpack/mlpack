@@ -4,6 +4,8 @@
  * @author Mohan Rajendran
  * @author Ryan Curtin
  *
+ * Alternating Matrix Factorization
+ *
  * The AMF (alternating matrix factorization) class, from which more commonly
  * known techniques such as incremental SVD, NMF, and batch-learning SVD can be
  * derived.
@@ -32,7 +34,7 @@
 #include <mlpack/methods/amf/termination_policies/simple_residue_termination.hpp>
 
 namespace mlpack {
-namespace amf {
+namespace amf /** Alternating Matrix Factorization **/ {
 
 /**
  * This class implements AMF (alternating matrix factorization) on the given
@@ -69,7 +71,7 @@ namespace amf {
  * @tparam UpdateRule The update rule for calculating W and H matrix at each
  *     iteration.
  *
- * @see NMF_MultiplicativeDistanceUpdate
+ * @see NMFMultiplicativeDistanceUpdate, SimpleResidueTermination
  */
 template<typename TerminationPolicyType = SimpleResidueTermination,
          typename InitializationRuleType = RandomInitialization,
