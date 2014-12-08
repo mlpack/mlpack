@@ -14,6 +14,8 @@ set(SOURCES
   typedef.hpp
   SpMat_extra_bones.hpp
   SpMat_extra_meat.hpp
+  Mat_extra_bones.hpp
+  Mat_extra_meat.hpp
 )
 
 # add directory name to sources
