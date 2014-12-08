@@ -69,22 +69,21 @@ class DecisionStump
   void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
 
   /**
+   * Alternate constructor which copies parameters bucketSize and numClass from
+   * an already initiated decision stump, other. It appropriately sets the
+   * weight vector.
    *
-   *
-   *
-   *
+   * @param other The other initiated Decision Stump object from
+   *      which we copy the values.
+   * @param data The data on which to train this object on.
+   * @param D Weight vector to use while training. For boosting purposes.
+   * @param labels The labels of data.
+   * @param isWeight Whether we need to run a weighted Decision Stump.
    */
-  DecisionStump(const DecisionStump<>& ds);
-
-  /**
-   *
-   *
-   *
-   *
-   *
-   *
-  ModifyData(MatType& data, const arma::Row<double>& D);
-  */
+  DecisionStump(const DecisionStump<>& other,
+                const MatType& data,
+                const arma::rowvec& weights,
+                const arma::Row<size_t>& labels);
 
   //! Access the splitting attribute.
   int SplitAttribute() const { return splitAttribute; }
@@ -123,9 +122,12 @@ class DecisionStump
    *
    * @param attribute A row from the training data, which might be a
    *     candidate for the splitting attribute.
+   * @param isWeight Whether we need to run a weighted Decision Stump.
    */
+  template <bool isWeight>
   double SetupSplitAttribute(const arma::rowvec& attribute,
-                             const arma::Row<size_t>& labels);
+                             const arma::Row<size_t>& labels,
+                             const arma::rowvec& weightD);
 
   /**
    * After having decided the attribute on which to split, train on that
@@ -149,7 +151,8 @@ class DecisionStump
    * @param subCols The vector in which to find the most frequently
    *     occurring element.
    */
-  template <typename rType> rType CountMostFreq(const arma::Row<rType>& subCols);
+  template <typename rType> rType CountMostFreq(const arma::Row<rType>&
+      subCols);
 
   /**
    * Returns 1 if all the values of featureRow are not same.
@@ -163,6 +166,7 @@ class DecisionStump
    *
    * @param attribute The attribute of which we calculate the entropy.
    * @param labels Corresponding labels of the attribute.
+   * @param isWeight Whether we need to run a weighted Decision Stump.
    */
   template <typename LabelType, bool isWeight>
   double CalculateEntropy(arma::subview_row<LabelType> labels, int begin,
@@ -178,6 +182,7 @@ class DecisionStump
   template <bool isWeight>
   void Train(const MatType& data, const arma::Row<size_t>& labels,
              const arma::rowvec& weightD);
+
 };
 
 }; // namespace decision_stump

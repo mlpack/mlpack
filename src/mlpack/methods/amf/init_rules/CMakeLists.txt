@@ -1,6 +1,7 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
+  average_init.hpp
   random_init.hpp
   random_acol_init.hpp
 )

@@ -2,6 +2,8 @@
  * @file simple_residue_termination.hpp
  * @author Sumedh Ghaisas
  *
+ * Termination policy used in AMF (Alternating Matrix Factorization).
+ *
  * This file is part of MLPACK 1.0.11.
  *
  * MLPACK is free software: you can redistribute it and/or modify it under the
@@ -51,18 +53,20 @@ class SimpleResidueTermination
                            const size_t maxIterations = 10000)
       : minResidue(minResidue), maxIterations(maxIterations) { }
 
+  /**
+   * Initializes the termination policy before stating the factorization.
+   *
+   * @param V Input matrix being factorized.
+   */
   template<typename MatType>
   void Initialize(const MatType& V)
   {
     // Initialize the things we keep track of.
     residue = DBL_MAX;
     iteration = 1;
+    nm = V.n_rows * V.n_cols;
+    // Remove history.
     normOld = 0;
-
-    const size_t n = V.n_rows;
-    const size_t m = V.n_cols;
-
-    nm = n * m;
   }
 
   /**
@@ -87,9 +91,8 @@ class SimpleResidueTermination
     return (residue < minResidue || iteration > maxIterations);
   }
 
-  const double& Index() { return residue; }
-  const size_t& Iteration() { return iteration; }
-  const size_t& MaxIterations() { return maxIterations; }
+  //! Get current value of residue
+  const double& Index() const { return residue; }
 
   //! Get current iteration count
   const size_t& Iteration() const { return iteration; }
@@ -102,12 +105,17 @@ class SimpleResidueTermination
   const double& MinResidue() const { return minResidue; }
   double& MinResidue() { return minResidue; }
 
- public:
+public:
+  //! residue threshold
   double minResidue;
+  //! iteration threshold
   size_t maxIterations;
 
+  //! current value of residue
   double residue;
+  //! current iteration count
   size_t iteration;
+  //! norm of previous iteration
   double normOld;
 
   size_t nm;

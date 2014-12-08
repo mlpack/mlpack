@@ -1,4 +1,3 @@
-<<<<<<< .working
 /**
  * @file allknn_test.cpp
  *
