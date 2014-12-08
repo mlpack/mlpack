@@ -72,10 +72,11 @@ BOOST_AUTO_TEST_CASE(DiscreteDistributionRandomTest)
   arma::vec actualProb(3);
   actualProb.zeros();
 
-  for (size_t i = 0; i < 10000; i++)
+  for (size_t i = 0; i < 50000; i++)
     actualProb((size_t) (d.Random()[0] + 0.5))++;
 
   // Normalize.
+  Log::Debug << actualProb.t();
   actualProb /= accu(actualProb);
 
   // 8% tolerance, because this can be a noisy process.
