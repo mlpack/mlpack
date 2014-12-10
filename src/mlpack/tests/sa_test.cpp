@@ -102,11 +102,11 @@ class RastrigrinFunction
 BOOST_AUTO_TEST_CASE(RastrigrinFunctionTest)
 {
   // Simulated annealing isn't guaranteed to converge (except in very specific
-  // situations).  If this works 1 of 4 times, I'm fine with that.  All I want
+  // situations).  If this works 1 of 5 times, I'm fine with that.  All I want
   // to know is that this implementation will escape from local minima.
   size_t successes = 0;
 
-  for (size_t trial = 0; trial < 4; ++trial)
+  for (size_t trial = 0; trial < 5; ++trial)
   {
     RastrigrinFunction f;
     ExponentialSchedule schedule(3e-6);
