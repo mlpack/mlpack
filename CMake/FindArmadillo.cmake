@@ -79,16 +79,16 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
   string(REGEX MATCH "\r?\n[\t ]*#define[ \t]+ARMA_USE_WRAPPER[ \t]*\r?\n" ARMA_USE_WRAPPER "${_armadillo_CONFIG_CONTENTS}")
 
   # ARMA_USE_LAPACK
-  string(REGEX MATCH "\r?\n[\t ]*#define[ \t]+ARMA_USE_LAPACK[ \t]*\r?\n" ARMA_USE_LAPACK "${_armadillo_CONFIG_CONTENTS}")
+  string(REGEX MATCH "\r?\n[\t ]*#if[\t ]+!defined[(]ARMA_USE_LAPACK[)][\t ]*\r?\n[\t ]*#define[ \t]+ARMA_USE_LAPACK[ \t]*\r?\n" ARMA_USE_LAPACK "${_armadillo_CONFIG_CONTENTS}")
 
   # ARMA_USE_BLAS
-  string(REGEX MATCH "\r?\n[\t ]*#define[ \t]+ARMA_USE_BLAS[ \t]*\r?\n" ARMA_USE_BLAS "${_armadillo_CONFIG_CONTENTS}")
+  string(REGEX MATCH "\r?\n[\t ]*#if[\t ]+!defined[(]ARMA_USE_BLAS[)][\t ]*\r?\n[\t ]*#define[ \t]+ARMA_USE_BLAS[ \t]*\r?\n" ARMA_USE_BLAS "${_armadillo_CONFIG_CONTENTS}")
     # ARMA_USE_ARPACK
   # ARMA_USE_ARPACK
-  string(REGEX MATCH "\r?\n[\t ]*#define[ \t]+ARMA_USE_ARPACK[ \t]*\r?\n" ARMA_USE_ARPACK "${_armadillo_CONFIG_CONTENTS}")
+  string(REGEX MATCH "\r?\n[\t ]*#if[\t ]+!defined[(]ARMA_USE_ARPACK[)][\t ]*\r?\n[\t ]*#define[ \t]+ARMA_USE_ARPACK[ \t]*\r?\n" ARMA_USE_ARPACK "${_armadillo_CONFIG_CONTENTS}")
 
   # Look for #define ARMA_USE_HDF5.
-  string(REGEX MATCH "\r?\n[\t ]*#define[ \t]+ARMA_USE_HDF5[ \t]*\r?\n" ARMA_USE_HDF5 "${_armadillo_CONFIG_CONTENTS}")
+  string(REGEX MATCH "\r?\n[\t ]*#if[\t ]+!defined[(]ARMA_USE_HDF5[)][\t ]*\r?\n[\t ]*#define[ \t]+ARMA_USE_HDF5[ \t]*\r?\n" ARMA_USE_HDF5 "${_armadillo_CONFIG_CONTENTS}")
 
   # If we aren't wrapping, things get a little more complex.
   if("${ARMA_USE_WRAPPER}" STREQUAL "")
@@ -282,13 +282,13 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
           endif()
         endif()
       endif()
-      
+
       if(NOT HDF5_FOUND)
         # We tried but didn't find it.
         message(FATAL_ERROR "Armadillo HDF5 support is enabled, but HDF5 "
             "cannot be found on the system.  Consider disabling HDF5 support.")
       endif()
-        
+
       set(SUPPORT_INCLUDE_DIRS "${HDF5_INCLUDE_DIRS}")
       set(SUPPORT_LIBRARIES "${HDF5_LIBRARIES}")
     endif()
@@ -318,7 +318,7 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
         message(FATAL_ERROR "Armadillo HDF5 support is enabled, but HDF5 "
             "cannot be found on the system.  Consider disabling HDF5 support.")
       endif()
-        
+
       set(SUPPORT_INCLUDE_DIRS "${HDF5_INCLUDE_DIRS}")
     endif()
 
@@ -351,7 +351,11 @@ if (ARMADILLO_FOUND)
   # Also include support include directories.
   set(ARMADILLO_INCLUDE_DIRS ${ARMADILLO_INCLUDE_DIR} ${SUPPORT_INCLUDE_DIRS})
   # Also include support libraries to link against.
-  set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARY} ${SUPPORT_LIBRARIES})
+  if (ARMA_NEED_LIBRARY)
+    set(ARMADILLO_LIBRARIES ${ARMADILLO_LIBRARY} ${SUPPORT_LIBRARIES})
+  else (ARMA_NEED_LIBRARY)
+    set(ARMADILLO_LIBRARIES ${SUPPORT_LIBRARIES})
+  endif (ARMA_NEED_LIBRARY)
   message(STATUS "Armadillo libraries: ${ARMADILLO_LIBRARIES}")
 endif (ARMADILLO_FOUND)
 
