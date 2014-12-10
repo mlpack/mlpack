@@ -21,6 +21,9 @@
   * Handle Newton method convergence better for
     SparseCoding::OptimizeDictionary() and make maximum iterations a parameter.
 
+  * Known bug: CosineTree construction may fail in some cases on i386 systems.
+    (#376)
+
 2014-08-29    mlpack 1.0.10
 
   * Bugfix for NeighborSearch regression which caused very slow allknn/allkfn.
