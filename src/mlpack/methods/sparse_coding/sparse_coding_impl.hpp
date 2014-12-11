@@ -222,7 +222,7 @@ double SparseCoding<DictionaryInitializer>::OptimizeDictionary(
     codesZT = matActiveZ * trans(matActiveZ);
   }
 
-  double normGradient;
+  double normGradient = 0;
   double improvement = 0;
   for (size_t t = 1; (t != maxIterations) && !converged; ++t)
   {
@@ -356,9 +356,9 @@ std::string SparseCoding<DictionaryInitializer>::ToString() const
   convert << "Sparse Coding  [" << this << "]" << std::endl;
   convert << "  Data: " << data.n_rows << "x" ;
   convert <<  data.n_cols << std::endl;
-  convert << "  Atoms: " << atoms << std::endl; 
-  convert << "  Lambda 1: " << lambda1 << std::endl; 
-  convert << "  Lambda 2: " << lambda2 << std::endl; 
+  convert << "  Atoms: " << atoms << std::endl;
+  convert << "  Lambda 1: " << lambda1 << std::endl;
+  convert << "  Lambda 2: " << lambda2 << std::endl;
   return convert.str();
 }
 
