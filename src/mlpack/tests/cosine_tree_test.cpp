@@ -105,8 +105,8 @@ BOOST_AUTO_TEST_CASE(CosineNodeCosineSplit)
 
       // Check if the columns assigned to the children agree with the splitting
       // condition.
-      double cosineMax = arma::max(cosines % (cosines < 1));
-      double cosineMin = arma::min(cosines);
+//      double cosineMax = arma::max(cosines % (cosines < 1));
+//      double cosineMin = arma::min(cosines);
 
       for (i = 0; i < leftIndices.size(); i++)
         BOOST_CHECK_LT(cosineMax - cosines(i), cosines(i) - cosineMin);
