@@ -207,7 +207,7 @@ double SparseCoding<DictionaryInitializer>::OptimizeDictionary(
     codesZT = matActiveZ * trans(matActiveZ);
   }
 
-  double normGradient;
+  double normGradient = 0;
   double improvement = 0;
   for (size_t t = 1; (t != maxIterations) && !converged; ++t)
   {
