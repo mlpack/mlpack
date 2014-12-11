@@ -9,6 +9,32 @@
 
   * Added an implementation of Elkan's k-means algorithm.
 
+2014-12-11    mlpack 1.0.11
+
+  * Proper handling of dimension calculation in PCA.
+
+  * Load parameter vectors properly for LinearRegression models.
+
+  * Linker fixes for AugLagrangian specializations under Visual Studio.
+
+  * Add support for observation weights to LinearRegression.
+
+  * MahalanobisDistance<> now takes root of the distance by default and
+    therefore satisfies the triangle inequality (TakeRoot now defaults to true).
+
+  * Better handling of optional Armadillo HDF5 dependency.
+
+  * Fixes for numerous intermittent test failures.
+
+  * math::RandomSeed() now sets the random seed for recent (>=3.930) Armadillo
+    versions.
+
+  * Handle Newton method convergence better for
+    SparseCoding::OptimizeDictionary() and make maximum iterations a parameter.
+
+  * Known bug: CosineTree construction may fail in some cases on i386 systems.
+    (#376)
+
 2014-08-29    mlpack 1.0.10
 
   * Bugfix for NeighborSearch regression which caused very slow allknn/allkfn.
