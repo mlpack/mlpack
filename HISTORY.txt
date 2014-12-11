@@ -7,7 +7,9 @@
 
   * Refactored KMeans to allow different types of Lloyd iterations.
 
-  * Added an implementation of Elkan's k-means algorithm.
+  * Added implementations of k-means: Elkan's algorithm, Hamerly's algorithm,
+    Pelleg-Moore's algorithm, and the DTNN (dual-tree nearest neighbor)
+    algorithm.
 
 2014-12-11    mlpack 1.0.11
 
