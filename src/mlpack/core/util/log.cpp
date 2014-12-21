@@ -5,6 +5,7 @@
  * Implementation of the Log class.
  */
 #ifndef _WIN32
+  #include <cstddef>
   #include <cxxabi.h>
   #include <execinfo.h>
 #endif
