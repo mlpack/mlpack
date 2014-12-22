@@ -29,8 +29,8 @@ const double MAX_OVERLAP = 0.2;
  * as necessary.
  */
 template<typename DescentType,
-	 typename StatisticType,
-	 typename MatType>
+         typename StatisticType,
+         typename MatType>
 class XTreeSplit
 {
 public:
