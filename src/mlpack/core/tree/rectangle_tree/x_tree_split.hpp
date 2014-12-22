@@ -33,44 +33,45 @@ template<typename DescentType,
          typename MatType>
 class XTreeSplit
 {
-public:
+ public:
+  /**
+   * Split a leaf node using the algorithm described in "The R*-tree: An
+   * Efficient and Robust Access method for Points and Rectangles."  If
+   * necessary, this split will propagate upwards through the tree.
+   */
+  static void SplitLeafNode(RectangleTree<XTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree, std::vector<bool>& relevels);
 
-/**
- * Split a leaf node using the algorithm described in "The R*-tree: An Efficient and Robust Access method
- * for Points and Rectangles."  If necessary, this split will propagate
- * upwards through the tree.
- */
-static void SplitLeafNode(RectangleTree<XTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree, std::vector<bool>& relevels);
+  /**
+   * Split a non-leaf node using the "default" algorithm.  If this is a root node, the
+   * tree increases in depth.
+   */
+  static bool SplitNonLeafNode(RectangleTree<XTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree, std::vector<bool>& relevels);
 
-/**
- * Split a non-leaf node using the "default" algorithm.  If this is a root node, the
- * tree increases in depth.
- */
-static bool SplitNonLeafNode(RectangleTree<XTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree, std::vector<bool>& relevels);
+ private:
+  /**
+   * Class to allow for faster sorting.
+   */
+  class sortStruct
+  {
+   public:
+    double d;
+    int n;
+  };
 
-private:
-/**
- * Class to allow for faster sorting.
- */
-class sortStruct {
-public:
-  double d;
-  int n;
-};
+  /**
+   * Comparator for sorting with sortStruct.
+   */
+  static bool structComp(const sortStruct& s1, const sortStruct& s2)
+  {
+    return s1.d < s2.d;
+  }
 
-/**
- * Comparator for sorting with sortStruct.
- */
-static bool structComp(const sortStruct& s1, const sortStruct& s2) {
-  return s1.d < s2.d;
-}
-
-/**
-  * Insert a node into another node.
-  */
-static void InsertNodeIntoTree(
-    RectangleTree<XTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* destTree,
-    RectangleTree<XTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* srcNode);
+  /**
+   * Insert a node into another node.
+   */
+  static void InsertNodeIntoTree(
+      RectangleTree<XTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* destTree,
+      RectangleTree<XTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* srcNode);
 
 };
 
