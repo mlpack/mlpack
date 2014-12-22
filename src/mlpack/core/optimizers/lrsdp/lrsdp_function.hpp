@@ -22,10 +22,13 @@ class LRSDPFunction
  public:
   /**
    * Construct the LRSDPFunction with the given initial point and number of
-   * constraints.  Set the A, B, and C matrices for each constraint using the
-   * A(), B(), and C() functions.
+   * constraints. Note n_cols of the initialPoint specifies the rank.
+   *
+   * Set the A_x, B_x, and C_x  matrices for each constraint using the A_x(),
+   * B_x(), and C_x() functions, for x in {sparse, dense}.
    */
-  LRSDPFunction(const size_t numConstraints,
+  LRSDPFunction(const size_t numSparseConstraints,
+                const size_t numDenseConstraints,
                 const arma::mat& initialPoint);
 
   /**
@@ -53,47 +56,98 @@ class LRSDPFunction
                           const arma::mat& coordinates,
                           arma::mat& gradient) const;
 
-  //! Get the number of constraints in the LRSDP.
-  size_t NumConstraints() const { return b.n_elem; }
+  //! Get the number of sparse constraints in the LRSDP.
+  inline size_t NumSparseConstraints() const { return b_sparse.n_elem; }
+
+  //! Get the number of dense constraints in the LRSDP.
+  inline size_t NumDenseConstraints() const { return b_dense.n_elem; }
+
+  //! Get the total number of constraints in the LRSDP.
+  inline size_t NumConstraints() const {
+    return NumSparseConstraints() + NumDenseConstraints();
+  }
 
   //! Get the initial point of the LRSDP.
-  const arma::mat& GetInitialPoint() const { return initialPoint; }
+  inline const arma::mat& GetInitialPoint() const { return initialPoint; }
 
-  //! Return the objective function matrix (C).
-  const arma::mat& C() const { return c; }
-  //! Modify the objective function matrix (C).
-  arma::mat& C() { return c; }
+  inline size_t n() const { return initialPoint.n_rows; }
 
-  //! Return the vector of A matrices (which correspond to the constraints).
-  const std::vector<arma::mat>& A() const { return a; }
-  //! Modify the veector of A matrices (which correspond to the constraints).
-  std::vector<arma::mat>& A() { return a; }
+  //! Return the sparse objective function matrix (C_sparse).
+  inline const arma::sp_mat& C_sparse() const { return c_sparse; }
 
-  //! Return the vector of modes for the A matrices.
-  const arma::uvec& AModes() const { return aModes; }
-  //! Modify the vector of modes for the A matrices.
-  arma::uvec& AModes() { return aModes; }
+  //! Modify the sparse objective function matrix (C_sparse).
+  inline arma::sp_mat& C_sparse() {
+    hasModifiedSparseObjective = true;
+    return c_sparse;
+  }
 
-  //! Return the vector of B values.
-  const arma::vec& B() const { return b; }
-  //! Modify the vector of B values.
-  arma::vec& B() { return b; }
+  //! Return the dense objective function matrix (C_dense).
+  inline const arma::mat& C_dense() const { return c_dense; }
+
+  //! Modify the dense objective function matrix (C_dense).
+  inline arma::mat& C_dense() {
+    hasModifiedDenseObjective = true;
+    return c_dense;
+  }
+
+  //! Return the vector of sparse A matrices (which correspond to the sparse
+  // constraints).
+  inline const std::vector<arma::sp_mat>& A_sparse() const { return a_sparse; }
+
+  //! Modify the veector of sparse A matrices (which correspond to the sparse
+  // constraints).
+  inline std::vector<arma::sp_mat>& A_sparse() { return a_sparse; }
+
+  //! Return the vector of dense A matrices (which correspond to the dense
+  // constraints).
+  inline const std::vector<arma::mat>& A_dense() const { return a_dense; }
+
+  //! Modify the veector of dense A matrices (which correspond to the dense
+  // constraints).
+  inline std::vector<arma::mat>& A_dense() { return a_dense; }
+
+  //! Return the vector of sparse B values.
+  inline const arma::vec& B_sparse() const { return b_sparse; }
+  //! Modify the vector of sparse B values.
+  inline arma::vec& B_sparse() { return b_sparse; }
+
+  //! Return the vector of dense B values.
+  inline const arma::vec& B_dense() const { return b_dense; }
+  //! Modify the vector of dense B values.
+  inline arma::vec& B_dense() { return b_dense; }
+
+  inline bool hasSparseObjective() const { return hasModifiedSparseObjective; }
+
+  inline bool hasDenseObjective() const { return hasModifiedDenseObjective; }
 
   //! Return string representation of object.
   std::string ToString() const;
 
  private:
-  //! Objective function matrix c.
-  arma::mat c;
-  //! A_i for each constraint.
-  std::vector<arma::mat> a;
-  //! b_i for each constraint.
-  arma::vec b;
+  //! Sparse objective function matrix c.
+  arma::sp_mat c_sparse;
+
+  //! Dense objective function matrix c.
+  arma::mat c_dense;
+
+  //! If false, c_sparse is zero
+  bool hasModifiedSparseObjective;
+
+  //! If false, c_dense is zero
+  bool hasModifiedDenseObjective;
+
+  //! A_i for each sparse constraint.
+  std::vector<arma::sp_mat> a_sparse;
+  //! b_i for each sparse constraint.
+  arma::vec b_sparse;
+
+  //! A_i for each dense constraint.
+  std::vector<arma::mat> a_dense;
+  //! b_i for each dense constraint.
+  arma::vec b_dense;
 
   //! Initial point.
   arma::mat initialPoint;
-  //! 1 if entries in matrix, 0 for normal.
-  arma::uvec aModes;
 };
 
 // Declare specializations in lrsdp_function.cpp.
