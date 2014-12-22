@@ -10,14 +10,24 @@
 
 using namespace mlpack;
 using namespace mlpack::optimization;
+using namespace std;
 
-LRSDPFunction::LRSDPFunction(const size_t numConstraints,
+LRSDPFunction::LRSDPFunction(const size_t numSparseConstraints,
+                             const size_t numDenseConstraints,
                              const arma::mat& initialPoint):
-    a(numConstraints),
-    b(numConstraints),
-    initialPoint(initialPoint),
-    aModes(numConstraints)
-{ }
+    c_sparse(initialPoint.n_rows, initialPoint.n_rows),
+    c_dense(initialPoint.n_rows, initialPoint.n_rows, arma::fill::zeros),
+    hasModifiedSparseObjective(false),
+    hasModifiedDenseObjective(false),
+    a_sparse(numSparseConstraints),
+    b_sparse(numSparseConstraints),
+    a_dense(numDenseConstraints),
+    b_dense(numDenseConstraints),
+    initialPoint(initialPoint)
+{
+  if (initialPoint.n_rows < initialPoint.n_cols)
+    throw invalid_argument("initialPoint n_cols > n_rows");
+}
 
 double LRSDPFunction::Evaluate(const arma::mat& coordinates) const
 {
@@ -34,17 +44,11 @@ void LRSDPFunction::Gradient(const arma::mat& /* coordinates */,
 double LRSDPFunction::EvaluateConstraint(const size_t index,
                                  const arma::mat& coordinates) const
 {
-  arma::mat rrt = coordinates * trans(coordinates);
-  if (aModes[index] == 0)
-    return trace(a[index] * rrt) - b[index];
-  else
-  {
-    double value = -b[index];
-    for (size_t i = 0; i < a[index].n_cols; ++i)
-      value += a[index](2, i) * rrt(a[index](0, i), a[index](1, i));
-
-    return value;
-  }
+  const arma::mat rrt = coordinates * trans(coordinates);
+  if (index < NumSparseConstraints())
+    return trace(a_sparse[index] * rrt) - b_sparse[index];
+  const size_t index1 = index - NumSparseConstraints();
+  return trace(a_dense[index1] * rrt) - b_dense[index1];
 }
 
 void LRSDPFunction::GradientConstraint(const size_t /* index */,
@@ -58,16 +62,51 @@ void LRSDPFunction::GradientConstraint(const size_t /* index */,
 // Return a string representation of the object.
 std::string LRSDPFunction::ToString() const
 {
-  std::stringstream convert;
+  std::ostringstream convert;
   convert << "LRSDPFunction [" << this << "]" << std::endl;
-  convert << "  Number of constraints: " << a.size() << std::endl;
-  convert << "  Constraint matrix (A_i) size: " << initialPoint.n_rows << "x"
+  convert << "  Number of constraints: " << NumConstraints() << std::endl;
+  convert << "  Problem size: n=" << initialPoint.n_rows << ", r="
       << initialPoint.n_cols << std::endl;
-  convert << "  A_i modes: " << aModes.t();
-  convert << "  Constraint b_i values: " << b.t();
-  convert << "  Objective matrix (C) size: " << c.n_rows << "x" << c.n_cols
-      << std::endl;
+  convert << "  Sparse Constraint b_i values: " << b_sparse.t();
+  convert << "  Dense Constraint b_i values: " << b_dense.t();
   return convert.str();
+}
+
+template <typename MatrixType>
+static inline void
+updateObjective(double &objective,
+                const arma::mat &rrt,
+                const std::vector<MatrixType> &ais,
+                const arma::vec &bis,
+                const arma::vec &lambda,
+                size_t lambda_offset,
+                double sigma)
+{
+  for (size_t i = 0; i < ais.size(); ++i)
+  {
+    // Take the trace subtracted by the b_i.
+    double constraint = trace(ais[i] * rrt) - bis[i];
+    objective -= (lambda[lambda_offset + i] * constraint);
+    objective += (sigma / 2.) * constraint * constraint;
+  }
+}
+
+template <typename MatrixType>
+static inline void
+updateGradient(arma::mat &s,
+               const arma::mat &rrt,
+               const std::vector<MatrixType> &ais,
+               const arma::vec &bis,
+               const arma::vec &lambda,
+               size_t lambda_offset,
+               double sigma)
+{
+  for (size_t i = 0; i < ais.size(); ++i)
+  {
+    const double constraint = trace(ais[i] * rrt) - bis[i];
+    const double y = lambda[lambda_offset + i] - sigma * constraint;
+    s -= y * ais[i];
+  }
 }
 
 namespace mlpack {
@@ -84,32 +123,27 @@ double AugLagrangianFunction<LRSDPFunction>::Evaluate(
   //     (sigma / 2) * sum_{i = 1}^{m} (Tr(A_i * (R R^T)) - b_i)^2
 
   // Let's start with the objective: Tr(C * (R R^T)).
-  // Simple, possibly slow solution.
-  arma::mat rrt = coordinates * trans(coordinates);
-  double objective = trace(function.C() * rrt);
+  // Simple, possibly slow solution-- see below for optimization opportunity
+  //
+  // TODO: Note that Tr(C^T * (R R^T)) = Tr( (CR)^T * R ), so
+  // multiplying C*R first, and then taking the trace dot should be more memory
+  // efficient
+  //
+  // Similarly for the constraints, taking A*R first should be more efficient
+  const arma::mat rrt = coordinates * trans(coordinates);
+  double objective = 0.;
+  if (function.hasSparseObjective())
+    objective += trace(function.C_sparse() * rrt);
+  if (function.hasDenseObjective())
+    objective += trace(function.C_dense() * rrt);
 
   // Now each constraint.
-  for (size_t i = 0; i < function.B().n_elem; ++i)
-  {
-    // Take the trace subtracted by the b_i.
-    double constraint = -function.B()[i];
-
-    if (function.AModes()[i] == 0)
-    {
-      constraint += trace(function.A()[i] * rrt);
-    }
-    else
-    {
-      for (size_t j = 0; j < function.A()[i].n_cols; ++j)
-      {
-        constraint += function.A()[i](2, j) *
-            rrt(function.A()[i](0, j), function.A()[i](1, j));
-      }
-    }
-
-    objective -= (lambda[i] * constraint);
-    objective += (sigma / 2) * std::pow(constraint, 2.0);
-  }
+  updateObjective(
+      objective, rrt, function.A_sparse(), function.B_sparse(),
+      lambda, 0, sigma);
+  updateObjective(
+      objective, rrt, function.A_dense(), function.B_dense(),
+      lambda, function.NumSparseConstraints(), sigma);
 
   return objective;
 }
@@ -125,45 +159,23 @@ void AugLagrangianFunction<LRSDPFunction>::Gradient(
   //   with
   // S' = C - sum_{i = 1}^{m} y'_i A_i
   // y'_i = y_i - sigma * (Trace(A_i * (R R^T)) - b_i)
-  arma::mat rrt = coordinates * trans(coordinates);
-  arma::mat s = function.C();
+  const arma::mat rrt = coordinates * trans(coordinates);
+  arma::mat s(function.n(), function.n(), arma::fill::zeros);
 
-  for (size_t i = 0; i < function.B().n_elem; ++i)
-  {
-    double constraint = -function.B()[i];
+  if (function.hasSparseObjective())
+    s += function.C_sparse();
+  if (function.hasDenseObjective())
+    s += function.C_dense();
 
-    if (function.AModes()[i] == 0)
-    {
-      constraint += trace(function.A()[i] * rrt);
-    }
-    else
-    {
-      for (size_t j = 0; j < function.A()[i].n_cols; ++j)
-      {
-        constraint += function.A()[i](2, j) *
-            rrt(function.A()[i](0, j), function.A()[i](1, j));
-      }
-    }
-
-    double y = lambda[i] - sigma * constraint;
-
-    if (function.AModes()[i] == 0)
-    {
-      s -= (y * function.A()[i]);
-    }
-    else
-    {
-      // We only need to subtract the entries which could be modified.
-      for (size_t j = 0; j < function.A()[i].n_cols; ++j)
-      {
-        s(function.A()[i](0, j), function.A()[i](1, j)) -= y;
-      }
-    }
-  }
+  updateGradient(
+      s, rrt, function.A_sparse(), function.B_sparse(),
+      lambda, 0, sigma);
+  updateGradient(
+      s, rrt, function.A_dense(), function.B_dense(),
+      lambda, function.NumSparseConstraints(), sigma);
 
   gradient = 2 * s * coordinates;
 }
 
 }; // namespace optimization
 }; // namespace mlpack
-

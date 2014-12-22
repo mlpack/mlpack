@@ -26,28 +26,15 @@ class LRSDP
  public:
   /**
    * Create an LRSDP to be optimized.  The solution will end up being a matrix
-   * of size (rank) x (rows).  To construct each constraint and the objective
+   * of size (rows) x (rank).  To construct each constraint and the objective
    * function, use the functions A(), B(), and C() to set them correctly.
    *
    * @param numConstraints Number of constraints in the problem.
-   * @param rank Rank of the solution (<= rows).
-   * @param rows Number of rows in the solution.
-   */
-  LRSDP(const size_t numConstraints,
-        const arma::mat& initialPoint);
-
-  /**
-   * Create an LRSDP to be optimized, passing in an already-created
-   * AugLagrangian object.  The given initial point should be set to the size
-   * (rows) x (rank), where (rank) is the reduced rank of the problem.
-   *
-   * @param numConstraints Number of constraints in the problem.
    * @param initialPoint Initial point of the optimization.
-   * @param auglag Pre-initialized AugLagrangian<LRSDP> object.
    */
-  LRSDP(const size_t numConstraints,
-        const arma::mat& initialPoint,
-        AugLagrangian<LRSDPFunction>& augLagrangian);
+  LRSDP(const size_t numSparseConstraints,
+        const size_t numDenseConstraints,
+        const arma::mat& initialPoint);
 
   /**
    * Optimize the LRSDP and return the final objective value.  The given
@@ -57,25 +44,43 @@ class LRSDP
    */
   double Optimize(arma::mat& coordinates);
 
-  //! Return the objective function matrix (C).
-  const arma::mat& C() const { return function.C(); }
-  //! Modify the objective function matrix (C).
-  arma::mat& C() { return function.C(); }
+  //! Return the sparse objective function matrix (C_sparse).
+  inline const arma::sp_mat& C_sparse() const { return function.C_sparse(); }
 
-  //! Return the vector of A matrices (which correspond to the constraints).
-  const std::vector<arma::mat>& A() const { return function.A(); }
-  //! Modify the veector of A matrices (which correspond to the constraints).
-  std::vector<arma::mat>& A() { return function.A(); }
+  //! Modify the sparse objective function matrix (C_sparse).
+  inline arma::sp_mat& C_sparse() { return function.C_sparse(); }
 
-  //! Return the vector of modes for the A matrices.
-  const arma::uvec& AModes() const { return function.AModes(); }
-  //! Modify the vector of modes for the A matrices.
-  arma::uvec& AModes() { return function.AModes(); }
+  //! Return the dense objective function matrix (C_dense).
+  inline const arma::mat& C_dense() const { return function.C_dense(); }
 
-  //! Return the vector of B values.
-  const arma::vec& B() const { return function.B(); }
-  //! Modify the vector of B values.
-  arma::vec& B() { return function.B(); }
+  //! Modify the dense objective function matrix (C_dense).
+  inline arma::mat& C_dense() { return function.C_dense(); }
+
+  //! Return the vector of sparse A matrices (which correspond to the sparse
+  // constraints).
+  inline const std::vector<arma::sp_mat>& A_sparse() const { return function.A_sparse(); }
+
+  //! Modify the veector of sparse A matrices (which correspond to the sparse
+  // constraints).
+  inline std::vector<arma::sp_mat>& A_sparse() { return function.A_sparse(); }
+
+  //! Return the vector of dense A matrices (which correspond to the dense
+  // constraints).
+  inline const std::vector<arma::mat>& A_dense() const { return function.A_dense(); }
+
+  //! Modify the veector of dense A matrices (which correspond to the dense
+  // constraints).
+  inline std::vector<arma::mat>& A_dense() { return function.A_dense(); }
+
+  //! Return the vector of sparse B values.
+  inline const arma::vec& B_sparse() const { return function.B_sparse(); }
+  //! Modify the vector of sparse B values.
+  inline arma::vec& B_sparse() { return function.B_sparse(); }
+
+  //! Return the vector of dense B values.
+  inline const arma::vec& B_dense() const { return function.B_dense(); }
+  //! Modify the vector of dense B values.
+  inline arma::vec& B_dense() { return function.B_dense(); }
 
   //! Return the function to be optimized.
   const LRSDPFunction& Function() const { return function; }

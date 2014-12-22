@@ -256,7 +256,7 @@ BOOST_AUTO_TEST_CASE(LRSDPString)
   arma::mat c(40, 40);
   c.randn();
   const size_t b=3;
-  mlpack::optimization::LRSDP d(b,c);
+  mlpack::optimization::LRSDP d(b,b,c);
   Log::Debug << d;
   testOstream << d;
   std::string s = d.ToString();
