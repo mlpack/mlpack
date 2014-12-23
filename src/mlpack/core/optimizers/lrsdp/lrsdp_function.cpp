@@ -15,14 +15,14 @@ using namespace std;
 LRSDPFunction::LRSDPFunction(const size_t numSparseConstraints,
                              const size_t numDenseConstraints,
                              const arma::mat& initialPoint):
-    c_sparse(initialPoint.n_rows, initialPoint.n_rows),
-    c_dense(initialPoint.n_rows, initialPoint.n_rows, arma::fill::zeros),
+    sparseC(initialPoint.n_rows, initialPoint.n_rows),
+    denseC(initialPoint.n_rows, initialPoint.n_rows, arma::fill::zeros),
     hasModifiedSparseObjective(false),
     hasModifiedDenseObjective(false),
-    a_sparse(numSparseConstraints),
-    b_sparse(numSparseConstraints),
-    a_dense(numDenseConstraints),
-    b_dense(numDenseConstraints),
+    sparseA(numSparseConstraints),
+    sparseB(numSparseConstraints),
+    denseA(numDenseConstraints),
+    denseB(numDenseConstraints),
     initialPoint(initialPoint)
 {
   if (initialPoint.n_rows < initialPoint.n_cols)
@@ -46,9 +46,9 @@ double LRSDPFunction::EvaluateConstraint(const size_t index,
 {
   const arma::mat rrt = coordinates * trans(coordinates);
   if (index < NumSparseConstraints())
-    return trace(a_sparse[index] * rrt) - b_sparse[index];
+    return trace(sparseA[index] * rrt) - sparseB[index];
   const size_t index1 = index - NumSparseConstraints();
-  return trace(a_dense[index1] * rrt) - b_dense[index1];
+  return trace(denseA[index1] * rrt) - denseB[index1];
 }
 
 void LRSDPFunction::GradientConstraint(const size_t /* index */,
@@ -67,8 +67,8 @@ std::string LRSDPFunction::ToString() const
   convert << "  Number of constraints: " << NumConstraints() << std::endl;
   convert << "  Problem size: n=" << initialPoint.n_rows << ", r="
       << initialPoint.n_cols << std::endl;
-  convert << "  Sparse Constraint b_i values: " << b_sparse.t();
-  convert << "  Dense Constraint b_i values: " << b_dense.t();
+  convert << "  Sparse Constraint b_i values: " << sparseB.t();
+  convert << "  Dense Constraint b_i values: " << denseB.t();
   return convert.str();
 }
 
@@ -133,16 +133,16 @@ double AugLagrangianFunction<LRSDPFunction>::Evaluate(
   const arma::mat rrt = coordinates * trans(coordinates);
   double objective = 0.;
   if (function.hasSparseObjective())
-    objective += trace(function.C_sparse() * rrt);
+    objective += trace(function.SparseC() * rrt);
   if (function.hasDenseObjective())
-    objective += trace(function.C_dense() * rrt);
+    objective += trace(function.DenseC() * rrt);
 
   // Now each constraint.
   updateObjective(
-      objective, rrt, function.A_sparse(), function.B_sparse(),
+      objective, rrt, function.SparseA(), function.SparseB(),
       lambda, 0, sigma);
   updateObjective(
-      objective, rrt, function.A_dense(), function.B_dense(),
+      objective, rrt, function.DenseA(), function.DenseB(),
       lambda, function.NumSparseConstraints(), sigma);
 
   return objective;
@@ -163,15 +163,15 @@ void AugLagrangianFunction<LRSDPFunction>::Gradient(
   arma::mat s(function.n(), function.n(), arma::fill::zeros);
 
   if (function.hasSparseObjective())
-    s += function.C_sparse();
+    s += function.SparseC();
   if (function.hasDenseObjective())
-    s += function.C_dense();
+    s += function.DenseC();
 
   updateGradient(
-      s, rrt, function.A_sparse(), function.B_sparse(),
+      s, rrt, function.SparseA(), function.SparseB(),
       lambda, 0, sigma);
   updateGradient(
-      s, rrt, function.A_dense(), function.B_dense(),
+      s, rrt, function.DenseA(), function.DenseB(),
       lambda, function.NumSparseConstraints(), sigma);
 
   gradient = 2 * s * coordinates;

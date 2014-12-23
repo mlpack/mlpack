@@ -58,22 +58,22 @@ void setupLovaszTheta(const arma::mat& edges,
   const size_t vertices = max(max(edges)) + 1;
 
   // C = -(e e^T) = -ones().
-  lovasz.C_dense().ones(vertices, vertices);
-  lovasz.C_dense() *= -1;
+  lovasz.DenseC().ones(vertices, vertices);
+  lovasz.DenseC() *= -1;
 
   // b_0 = 1; else = 0.
-  lovasz.B_sparse().zeros(edges.n_cols);
-  lovasz.B_sparse()[0] = 1;
+  lovasz.SparseB().zeros(edges.n_cols);
+  lovasz.SparseB()[0] = 1;
 
   // A_0 = I_n.
-  lovasz.A_sparse()[0].eye(vertices, vertices);
+  lovasz.SparseA()[0].eye(vertices, vertices);
 
   // A_ij only has ones at (i, j) and (j, i) and 0 elsewhere.
   for (size_t i = 0; i < edges.n_cols; ++i)
   {
-    lovasz.A_sparse()[i + 1].zeros(vertices, vertices);
-    lovasz.A_sparse()[i + 1](edges(0, i), edges(1, i)) = 1.;
-    lovasz.A_sparse()[i + 1](edges(1, i), edges(0, i)) = 1.;
+    lovasz.SparseA()[i + 1].zeros(vertices, vertices);
+    lovasz.SparseA()[i + 1](edges(0, i), edges(1, i)) = 1.;
+    lovasz.SparseA()[i + 1](edges(1, i), edges(0, i)) = 1.;
   }
 
   // Set the Lagrange multipliers right.
