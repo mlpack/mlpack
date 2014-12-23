@@ -57,68 +57,68 @@ class LRSDPFunction
                           arma::mat& gradient) const;
 
   //! Get the number of sparse constraints in the LRSDP.
-  inline size_t NumSparseConstraints() const { return b_sparse.n_elem; }
+  size_t NumSparseConstraints() const { return b_sparse.n_elem; }
 
   //! Get the number of dense constraints in the LRSDP.
-  inline size_t NumDenseConstraints() const { return b_dense.n_elem; }
+  size_t NumDenseConstraints() const { return b_dense.n_elem; }
 
   //! Get the total number of constraints in the LRSDP.
-  inline size_t NumConstraints() const {
+  size_t NumConstraints() const {
     return NumSparseConstraints() + NumDenseConstraints();
   }
 
   //! Get the initial point of the LRSDP.
-  inline const arma::mat& GetInitialPoint() const { return initialPoint; }
+  const arma::mat& GetInitialPoint() const { return initialPoint; }
 
-  inline size_t n() const { return initialPoint.n_rows; }
+  size_t n() const { return initialPoint.n_rows; }
 
   //! Return the sparse objective function matrix (C_sparse).
-  inline const arma::sp_mat& C_sparse() const { return c_sparse; }
+  const arma::sp_mat& C_sparse() const { return c_sparse; }
 
   //! Modify the sparse objective function matrix (C_sparse).
-  inline arma::sp_mat& C_sparse() {
+  arma::sp_mat& C_sparse() {
     hasModifiedSparseObjective = true;
     return c_sparse;
   }
 
   //! Return the dense objective function matrix (C_dense).
-  inline const arma::mat& C_dense() const { return c_dense; }
+  const arma::mat& C_dense() const { return c_dense; }
 
   //! Modify the dense objective function matrix (C_dense).
-  inline arma::mat& C_dense() {
+  arma::mat& C_dense() {
     hasModifiedDenseObjective = true;
     return c_dense;
   }
 
   //! Return the vector of sparse A matrices (which correspond to the sparse
   // constraints).
-  inline const std::vector<arma::sp_mat>& A_sparse() const { return a_sparse; }
+  const std::vector<arma::sp_mat>& A_sparse() const { return a_sparse; }
 
   //! Modify the veector of sparse A matrices (which correspond to the sparse
   // constraints).
-  inline std::vector<arma::sp_mat>& A_sparse() { return a_sparse; }
+  std::vector<arma::sp_mat>& A_sparse() { return a_sparse; }
 
   //! Return the vector of dense A matrices (which correspond to the dense
   // constraints).
-  inline const std::vector<arma::mat>& A_dense() const { return a_dense; }
+  const std::vector<arma::mat>& A_dense() const { return a_dense; }
 
   //! Modify the veector of dense A matrices (which correspond to the dense
   // constraints).
-  inline std::vector<arma::mat>& A_dense() { return a_dense; }
+  std::vector<arma::mat>& A_dense() { return a_dense; }
 
   //! Return the vector of sparse B values.
-  inline const arma::vec& B_sparse() const { return b_sparse; }
+  const arma::vec& B_sparse() const { return b_sparse; }
   //! Modify the vector of sparse B values.
-  inline arma::vec& B_sparse() { return b_sparse; }
+  arma::vec& B_sparse() { return b_sparse; }
 
   //! Return the vector of dense B values.
-  inline const arma::vec& B_dense() const { return b_dense; }
+  const arma::vec& B_dense() const { return b_dense; }
   //! Modify the vector of dense B values.
-  inline arma::vec& B_dense() { return b_dense; }
+  arma::vec& B_dense() { return b_dense; }
 
-  inline bool hasSparseObjective() const { return hasModifiedSparseObjective; }
+  bool hasSparseObjective() const { return hasModifiedSparseObjective; }
 
-  inline bool hasDenseObjective() const { return hasModifiedDenseObjective; }
+  bool hasDenseObjective() const { return hasModifiedDenseObjective; }
 
   //! Return string representation of object.
   std::string ToString() const;
