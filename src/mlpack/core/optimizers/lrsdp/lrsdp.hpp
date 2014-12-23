@@ -44,43 +44,43 @@ class LRSDP
    */
   double Optimize(arma::mat& coordinates);
 
-  //! Return the sparse objective function matrix (C_sparse).
-  const arma::sp_mat& C_sparse() const { return function.C_sparse(); }
+  //! Return the sparse objective function matrix (sparseC).
+  const arma::sp_mat& SparseC() const { return function.SparseC(); }
 
-  //! Modify the sparse objective function matrix (C_sparse).
-  arma::sp_mat& C_sparse() { return function.C_sparse(); }
+  //! Modify the sparse objective function matrix (sparseC).
+  arma::sp_mat& SparseC() { return function.SparseC(); }
 
-  //! Return the dense objective function matrix (C_dense).
-  const arma::mat& C_dense() const { return function.C_dense(); }
+  //! Return the dense objective function matrix (denseC).
+  const arma::mat& DenseC() const { return function.DenseC(); }
 
-  //! Modify the dense objective function matrix (C_dense).
-  arma::mat& C_dense() { return function.C_dense(); }
+  //! Modify the dense objective function matrix (denseC).
+  arma::mat& DenseC() { return function.DenseC(); }
 
   //! Return the vector of sparse A matrices (which correspond to the sparse
   // constraints).
-  const std::vector<arma::sp_mat>& A_sparse() const { return function.A_sparse(); }
+  const std::vector<arma::sp_mat>& SparseA() const { return function.SparseA(); }
 
   //! Modify the veector of sparse A matrices (which correspond to the sparse
   // constraints).
-  std::vector<arma::sp_mat>& A_sparse() { return function.A_sparse(); }
+  std::vector<arma::sp_mat>& SparseA() { return function.SparseA(); }
 
   //! Return the vector of dense A matrices (which correspond to the dense
   // constraints).
-  const std::vector<arma::mat>& A_dense() const { return function.A_dense(); }
+  const std::vector<arma::mat>& DenseA() const { return function.DenseA(); }
 
   //! Modify the veector of dense A matrices (which correspond to the dense
   // constraints).
-  std::vector<arma::mat>& A_dense() { return function.A_dense(); }
+  std::vector<arma::mat>& DenseA() { return function.DenseA(); }
 
   //! Return the vector of sparse B values.
-  const arma::vec& B_sparse() const { return function.B_sparse(); }
+  const arma::vec& SparseB() const { return function.SparseB(); }
   //! Modify the vector of sparse B values.
-  arma::vec& B_sparse() { return function.B_sparse(); }
+  arma::vec& SparseB() { return function.SparseB(); }
 
   //! Return the vector of dense B values.
-  const arma::vec& B_dense() const { return function.B_dense(); }
+  const arma::vec& DenseB() const { return function.DenseB(); }
   //! Modify the vector of dense B values.
-  arma::vec& B_dense() { return function.B_dense(); }
+  arma::vec& DenseB() { return function.DenseB(); }
 
   //! Return the function to be optimized.
   const LRSDPFunction& Function() const { return function; }

@@ -57,10 +57,10 @@ class LRSDPFunction
                           arma::mat& gradient) const;
 
   //! Get the number of sparse constraints in the LRSDP.
-  size_t NumSparseConstraints() const { return b_sparse.n_elem; }
+  size_t NumSparseConstraints() const { return sparseB.n_elem; }
 
   //! Get the number of dense constraints in the LRSDP.
-  size_t NumDenseConstraints() const { return b_dense.n_elem; }
+  size_t NumDenseConstraints() const { return denseB.n_elem; }
 
   //! Get the total number of constraints in the LRSDP.
   size_t NumConstraints() const {
@@ -72,49 +72,49 @@ class LRSDPFunction
 
   size_t n() const { return initialPoint.n_rows; }
 
-  //! Return the sparse objective function matrix (C_sparse).
-  const arma::sp_mat& C_sparse() const { return c_sparse; }
+  //! Return the sparse objective function matrix (sparseC).
+  const arma::sp_mat& SparseC() const { return sparseC; }
 
-  //! Modify the sparse objective function matrix (C_sparse).
-  arma::sp_mat& C_sparse() {
+  //! Modify the sparse objective function matrix (sparseC).
+  arma::sp_mat& SparseC() {
     hasModifiedSparseObjective = true;
-    return c_sparse;
+    return sparseC;
   }
 
-  //! Return the dense objective function matrix (C_dense).
-  const arma::mat& C_dense() const { return c_dense; }
+  //! Return the dense objective function matrix (denseC).
+  const arma::mat& DenseC() const { return denseC; }
 
-  //! Modify the dense objective function matrix (C_dense).
-  arma::mat& C_dense() {
+  //! Modify the dense objective function matrix (denseC).
+  arma::mat& DenseC() {
     hasModifiedDenseObjective = true;
-    return c_dense;
+    return denseC;
   }
 
   //! Return the vector of sparse A matrices (which correspond to the sparse
   // constraints).
-  const std::vector<arma::sp_mat>& A_sparse() const { return a_sparse; }
+  const std::vector<arma::sp_mat>& SparseA() const { return sparseA; }
 
   //! Modify the veector of sparse A matrices (which correspond to the sparse
   // constraints).
-  std::vector<arma::sp_mat>& A_sparse() { return a_sparse; }
+  std::vector<arma::sp_mat>& SparseA() { return sparseA; }
 
   //! Return the vector of dense A matrices (which correspond to the dense
   // constraints).
-  const std::vector<arma::mat>& A_dense() const { return a_dense; }
+  const std::vector<arma::mat>& DenseA() const { return denseA; }
 
   //! Modify the veector of dense A matrices (which correspond to the dense
   // constraints).
-  std::vector<arma::mat>& A_dense() { return a_dense; }
+  std::vector<arma::mat>& DenseA() { return denseA; }
 
   //! Return the vector of sparse B values.
-  const arma::vec& B_sparse() const { return b_sparse; }
+  const arma::vec& SparseB() const { return sparseB; }
   //! Modify the vector of sparse B values.
-  arma::vec& B_sparse() { return b_sparse; }
+  arma::vec& SparseB() { return sparseB; }
 
   //! Return the vector of dense B values.
-  const arma::vec& B_dense() const { return b_dense; }
+  const arma::vec& DenseB() const { return denseB; }
   //! Modify the vector of dense B values.
-  arma::vec& B_dense() { return b_dense; }
+  arma::vec& DenseB() { return denseB; }
 
   bool hasSparseObjective() const { return hasModifiedSparseObjective; }
 
@@ -125,26 +125,26 @@ class LRSDPFunction
 
  private:
   //! Sparse objective function matrix c.
-  arma::sp_mat c_sparse;
+  arma::sp_mat sparseC;
 
   //! Dense objective function matrix c.
-  arma::mat c_dense;
+  arma::mat denseC;
 
-  //! If false, c_sparse is zero
+  //! If false, sparseC is zero
   bool hasModifiedSparseObjective;
 
-  //! If false, c_dense is zero
+  //! If false, denseC is zero
   bool hasModifiedDenseObjective;
 
   //! A_i for each sparse constraint.
-  std::vector<arma::sp_mat> a_sparse;
+  std::vector<arma::sp_mat> sparseA;
   //! b_i for each sparse constraint.
-  arma::vec b_sparse;
+  arma::vec sparseB;
 
   //! A_i for each dense constraint.
-  std::vector<arma::mat> a_dense;
+  std::vector<arma::mat> denseA;
   //! b_i for each dense constraint.
-  arma::vec b_dense;
+  arma::vec denseB;
 
   //! Initial point.
   arma::mat initialPoint;
