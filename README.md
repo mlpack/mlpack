@@ -1,11 +1,7 @@
-================================================================================
 
-           mlpack: open-source scalable c++ machine learning library
-                             http://www.mlpack.org
+## MLPACK : Scalable C++ Machine Learning Library
 
-================================================================================
-
-0. Contents
+### 0. Contents
 
   1. Introduction
   2. Citation details
@@ -15,9 +11,7 @@
   6. Further documentation
   7. Bug reporting
 
-================================================================================
-
-1. Introduction
+### 1. Introduction
 
 mlpack is an intuitive, fast, scalable C++ machine learning library, meant to be
 a machine learning analog to LAPACK. It aims to implement a wide array of
@@ -29,42 +23,40 @@ tutorials and extensive documentation.  This README serves as a guide for what
 mlpack is, how to install it, how to run it, and where to find more
 documentation.  The website should be consulted for further information:
 
-  http://www.mlpack.org/
+  [MLPACK homepage]http://www.mlpack.org/
 
-  http://www.mlpack.org/tutorial.html  <-- tutorials
-  http://www.mlpack.org/trac/          <-- development site (Trac)
-  http://www.mlpack.org/doxygen.php    <-- API documentation
+  [Tutorials](http://www.mlpack.org/tutorial.html)
+  
+  [Development Site (Trac)](http://www.mlpack.org/trac/)
+  
+  [API documentation](http://www.mlpack.org/doxygen.php)
 
-================================================================================
-
-2. Citation details
+### 2. Citation details
 
 If you use mlpack in your research or software, please cite mlpack using the
 citation below (given in BiBTeX format):
 
-@article{mlpack2013,
-  title     = {{MLPACK}: A Scalable {C++} Machine Learning Library},
-  author    = {Curtin, Ryan R. and Cline, James R. and Slagle, Neil P. and
-               March, William B. and Ram, P. and Mehta, Nishant A. and Gray,
-               Alexander G.},
-  journal   = {Journal of Machine Learning Research},
-  volume    = {14},
-  pages     = {801--805},
-  year      = {2013}
-}
+    @article{mlpack2013,
+      title     = {{MLPACK}: A Scalable {C++} Machine Learning Library},
+      author    = {Curtin, Ryan R. and Cline, James R. and Slagle, Neil P. and
+                   March, William B. and Ram, P. and Mehta, Nishant A. and Gray,
+                   Alexander G.},
+      journal   = {Journal of Machine Learning Research},
+      volume    = {14},
+      pages     = {801--805},
+      year      = {2013}
+    }
 
 Citations are beneficial for the growth and improvement of mlpack.
 
-================================================================================
-
-3. Dependencies
+### 3. Dependencies
 
 mlpack has the following dependencies:
 
-  Armadillo     >= 3.6.0
-  LibXml2       >= 2.6.0
-  Boost (program_options, math_c99, unit_test_framework, random)
-  CMake         >= 2.8.5
+      Armadillo     >= 3.6.0
+      LibXml2       >= 2.6.0
+      Boost (program_options, math_c99, unit_test_framework, random)
+      CMake         >= 2.8.5
 
 All of those should be available in your distribution's package manager.  If
 not, you will have to compile each of them by hand.  See the documentation for
@@ -72,10 +64,8 @@ each of those packages for more information.
 
 If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 
-================================================================================
-
-4. Building mlpack from source
-   (see also http://www.mlpack.org/doxygen.php?doc=build.html )
+### 4. Building mlpack from source
+(see also [Building mlpack From Source](http://www.mlpack.org/doxygen.php?doc=build.html) )
 
 mlpack uses CMake as a build system and allows several flexible build
 configuration options. One can consult any of numerous CMake tutorials for
@@ -85,35 +75,35 @@ and installed.
 First, unpack the mlpack source and change into the unpacked directory.  Here we
 use mlpack-x.y.z where x.y.z is the version.
 
-$ tar -xzf mlpack-x.y.z.tar.gz
-$ cd mlpack-x.y.z
+    $ tar -xzf mlpack-x.y.z.tar.gz
+    $ cd mlpack-x.y.z
 
 Then, make a build directory.  The directory can have any name, not just
 'build', but 'build' is sufficient.
 
-$ mkdir build
-$ cd build
+    $ mkdir build
+    $ cd build
 
 The next step is to run CMake to configure the project.  Running CMake is the
 equivalent to running `./configure` with autotools. If you run CMake with no
 options, it will configure the project to build with no debugging symbols and no
 profiling information:
 
-$ cmake ../
+    $ cmake ../
 
 You can specify options to compile with debugging information and profiling
 information:
 
-$ cmake -D DEBUG=ON -D PROFILE=ON ../
+    $ cmake -D DEBUG=ON -D PROFILE=ON ../
 
 Options are specified with the -D flag.  A list of options allowed:
 
-  DEBUG=(ON/OFF): compile with debugging symbols
-  PROFILE=(ON/OFF): compile with profiling symbols
-  ARMA_EXTRA_DEBUG=(ON/OFF): compile with extra Armadillo debugging symbols
-  BOOST_ROOT=(/path/to/boost/): path to root of boost installation
-  ARMADILLO_INCLUDE_DIR=(/path/to/armadillo/include/): path to Armadillo headers
-  ARMADILLO_LIBRARY=(/path/to/armadillo/libarmadillo.so): Armadillo library
+    DEBUG=(ON/OFF): compile with debugging symbols
+    PROFILE=(ON/OFF): compile with profiling symbols
+    ARMA_EXTRA_DEBUG=(ON/OFF): compile with extra Armadillo debugging symbols
+    BOOST_ROOT=(/path/to/boost/): path to root of boost installation
+    ARMADILLO_INCLUDE_DIR=(/path/to/armadillo/include/): path to Armadillo headers
+    ARMADILLO_LIBRARY=(/path/to/armadillo/libarmadillo.so): Armadillo library
 
 Other tools can also be used to configure CMake, but those are not documented
 here.
@@ -121,18 +111,18 @@ here.
 Once CMake is configured, building the library is as simple as typing 'make'.
 This will build all library components as well as 'mlpack_test'.
 
-$ make
+    $ make
 
 You can specify individual components which you want to build, if you do not
 want to build everything in the library:
 
-$ make pca allknn allkfn
+    $ make pca allknn allkfn
 
 If the build fails and you cannot figure out why, register an account on Trac
 and submit a ticket and the mlpack developers will quickly help you figure it
 out:
 
-http://mlpack.org/trac/
+[mlpack Trac](http://mlpack.org/trac/)
 
 Alternately, mlpack help can be found in IRC at #mlpack on irc.freenode.net.
 
@@ -140,14 +130,15 @@ If you wish to install mlpack to /usr/include/mlpack/ and /usr/lib/ and
 /usr/bin/, once it has built, make sure you have root privileges (or write
 permissions to those two directories), and simply type
 
-# make install
+#### make install
 
 You can now run the executables by name; you can link against mlpack with
--lmlpack, and the mlpack headers are found in /usr/include/mlpack/.
+    -lmlpack
+and the mlpack headers are found in 
+    /usr/include/mlpack/.
 
-================================================================================
 
-5. Running mlpack programs
+### 5. Running mlpack programs
 
 After building mlpack, the executables will reside in build/bin/.  You can call
 them from there, or you can install the library and (depending on system
@@ -167,34 +158,34 @@ nearest points to that point.
 Each mlpack program has extensive help documentation which details what the
 method does, what each of the parameters are, and how to use them:
 
-$ allknn --help
+    $ allknn --help
 
 Running allknn on one dataset (that is, the query and reference datasets are the
 same) and finding the 5 nearest neighbors is very simple:
 
-$ allknn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
+    $ allknn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
 
 The -v (--verbose) flag is optional; it gives informational output.  It is not
 unique to allknn but is available in all mlpack programs.  Verbose output also
 gives timing output at the end of the program, which can be very useful.
 
-================================================================================
-
-6. Further documentation
+### 6. Further documentation
 
 The documentation given here is only a fraction of the available documentation
 for mlpack.  If doxygen is installed, you can type 'make doc' to build the
 documentation locally.  Alternately, up-to-date documentation is available for
 older versions of mlpack:
 
-  http://www.mlpack.org/tutorial.html   <-- tutorials for mlpack
-  http://www.mlpack.org/doxygen.php     <-- API documentation for mlpack
-  http://www.mlpack.org/trac/           <-- development site for mlpack (Trac)
+  [MLPACK homepage]http://www.mlpack.org/
 
-================================================================================
+  [Tutorials](http://www.mlpack.org/tutorial.html)
+  
+  [Development Site (Trac)](http://www.mlpack.org/trac/)
+  
+  [API documentation](http://www.mlpack.org/doxygen.php)
 
-7. Bug reporting
-   (see also http://www.mlpack.org/help.html )
+### 7. Bug reporting
+   (see also [mlpack help](http://www.mlpack.org/help.html) )
 
 If you find a bug in mlpack or have any problems, numerous routes are available
 for help.
@@ -206,12 +197,10 @@ development team will try to quickly resolve your issue.
 In addition, mailing lists are available.  The mlpack discussion list is
 available at
 
-  https://lists.cc.gatech.edu/mailman/listinfo/mlpack
+  [mlpack discussion list](https://lists.cc.gatech.edu/mailman/listinfo/mlpack)
 
 and the subversion commit list is available at
 
-  https://lists.cc.gatech.edu/mailman/listinfo/mlpack-svn
+  [commit list](https://lists.cc.gatech.edu/mailman/listinfo/mlpack-svn)
 
-Lastly, the IRC channel #mlpack on Freenode can be used to get help.
-
-================================================================================
+Lastly, the IRC channel ```#mlpack``` on Freenode can be used to get help.
