@@ -23,7 +23,7 @@ tutorials and extensive documentation.  This README serves as a guide for what
 mlpack is, how to install it, how to run it, and where to find more
 documentation.  The website should be consulted for further information:
 
-  [MLPACK homepage]http://www.mlpack.org/
+  [MLPACK homepage](http://www.mlpack.org/)
 
   [Tutorials](http://www.mlpack.org/tutorial.html)
   
@@ -176,7 +176,7 @@ for mlpack.  If doxygen is installed, you can type 'make doc' to build the
 documentation locally.  Alternately, up-to-date documentation is available for
 older versions of mlpack:
 
-  [MLPACK homepage]http://www.mlpack.org/
+  [MLPACK homepage](http://www.mlpack.org/)
 
   [Tutorials](http://www.mlpack.org/tutorial.html)
   
