@@ -3,13 +3,13 @@
 
 ### 0. Contents
 
-  1. Introduction
-  2. Citation details
-  3. Dependencies
-  4. Building mlpack from source
-  5. Running mlpack programs
-  6. Further documentation
-  7. Bug reporting
+  1. [Introduction](https://github.com/mlpack/mlpack#1-introduction)
+  2. [Citation details](https://github.com/mlpack/mlpack#2-citation-details)
+  3. [Dependencies](https://github.com/mlpack/mlpack#3-dependencies)
+  4. [Building mlpack from source](https://github.com/mlpack/mlpack#4-building-mlpack-from-source)
+  5. [Running mlpack programs](https://github.com/mlpack/mlpack#5-running-mlpack-programs)
+  6. [Further documentation](https://github.com/mlpack/mlpack#6-further-documentation)
+  7. [Bug reporting](https://github.com/mlpack/mlpack#7-bug-reporting)
 
 ### 1. Introduction
 
