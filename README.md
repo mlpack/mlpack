@@ -1,6 +1,13 @@
 
 ## MLPACK : Scalable C++ Machine Learning Library
 
+mlpack is an intuitive, fast, scalable C++ machine learning library, meant to be
+a machine learning analog to LAPACK. It aims to implement a wide array of
+machine learning methods and function as a "swiss army knife" for machine
+learning researchers.
+
+[![Build Status](http://big.cc.gt.atl.ga.us/job/mlpack%20-%20svn%20checkin%20test/badge/icon)](http://big.cc.gt.atl.ga.us/job/mlpack%20-%20svn%20checkin%20test/)
+
 ### 0. Contents
 
   1. [Introduction](https://github.com/mlpack/mlpack#1-introduction)
@@ -13,23 +20,15 @@
 
 ### 1. Introduction
 
-mlpack is an intuitive, fast, scalable C++ machine learning library, meant to be
-a machine learning analog to LAPACK. It aims to implement a wide array of
-machine learning methods and function as a "swiss army knife" for machine
-learning researchers.
-
 The mlpack website can be found at http://mlpack.org and contains numerous
 tutorials and extensive documentation.  This README serves as a guide for what
 mlpack is, how to install it, how to run it, and where to find more
-documentation.  The website should be consulted for further information:
+documentation. The website should be consulted for further information:
 
-  [MLPACK homepage](http://www.mlpack.org/)
-
-  [Tutorials](http://www.mlpack.org/tutorial.html)
-  
-  [Development Site (Trac)](http://www.mlpack.org/trac/)
-  
-  [API documentation](http://www.mlpack.org/doxygen.php)
+  - [MLPACK homepage](http://www.mlpack.org/)
+  - [Tutorials](http://www.mlpack.org/tutorial.html)
+  - [Development Site (Trac)](http://www.mlpack.org/trac/)
+  - [API documentation](http://www.mlpack.org/doxygen.php)
 
 ### 2. Citation details
 
@@ -176,13 +175,10 @@ for mlpack.  If doxygen is installed, you can type 'make doc' to build the
 documentation locally.  Alternately, up-to-date documentation is available for
 older versions of mlpack:
 
-  [MLPACK homepage](http://www.mlpack.org/)
-
-  [Tutorials](http://www.mlpack.org/tutorial.html)
-  
-  [Development Site (Trac)](http://www.mlpack.org/trac/)
-  
-  [API documentation](http://www.mlpack.org/doxygen.php)
+  - [MLPACK homepage](http://www.mlpack.org/)
+  - [Tutorials](http://www.mlpack.org/tutorial.html)
+  - [Development Site (Trac)](http://www.mlpack.org/trac/)
+  - [API documentation](http://www.mlpack.org/doxygen.php)
 
 ### 7. Bug reporting
    (see also [mlpack help](http://www.mlpack.org/help.html) )
