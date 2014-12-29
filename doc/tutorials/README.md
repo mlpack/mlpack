@@ -1,4 +1,7 @@
-Tutorials for mlpack can be found [here mlpack tutorials](http://www.mlpack.org/tutorial.html).
+
+## Tutorials
+
+Tutorials for mlpack can be found [here : mlpack tutorials](http://www.mlpack.org/tutorial.html).
 
 ### Method-specific tutorials:
 * [NeighborSearch tutorial (allknn / allkfn)](http://www.mlpack.org/doxygen.php?doc=nstutorial.html)
