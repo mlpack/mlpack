@@ -8,6 +8,7 @@ Tutorials for mlpack can be found [here mlpack tutorials](http://www.mlpack.org/
 * [Euclidean Minimum Spanning Trees tutorial (emst)](http://www.mlpack.org/doxygen.php?doc=emst_tutorial.html)
 * [K-Means tutorial (kmeans)](http://www.mlpack.org/doxygen.php?doc=kmtutorial.html)
 * [FastMKS tutorial (fastmks)](http://www.mlpack.org/doxygen.php?doc=fmkstutorial.html)
+
 ### General mlpack tutorials:
 * [Building mlpack from source](http://www.mlpack.org/doxygen.php?doc=build.html)
 * [mlpack input and output](http://www.mlpack.org/doxygen.php?doc=iodoc.html)
