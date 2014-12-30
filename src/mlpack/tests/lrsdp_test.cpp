@@ -62,7 +62,7 @@ void setupLovaszTheta(const arma::mat& edges,
   lovasz.DenseC() *= -1;
 
   // b_0 = 1; else = 0.
-  lovasz.SparseB().zeros(edges.n_cols);
+  lovasz.SparseB().zeros(edges.n_cols + 1);
   lovasz.SparseB()[0] = 1;
 
   // A_0 = I_n.
@@ -77,7 +77,7 @@ void setupLovaszTheta(const arma::mat& edges,
   }
 
   // Set the Lagrange multipliers right.
-  lovasz.AugLag().Lambda().ones(edges.n_cols);
+  lovasz.AugLag().Lambda().ones(edges.n_cols + 1);
   lovasz.AugLag().Lambda() *= -1;
   lovasz.AugLag().Lambda()[0] = -double(vertices);
 }
