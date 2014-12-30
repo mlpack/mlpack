@@ -1,5 +1,5 @@
-????-??-??    mlpack 1.1.0
-
+### mlpack 1.1.0
+###### ????-??-?? 
   * Removed overclustering support from k-means because it is not well-tested,
     may be buggy, and is (I think) unused.  If this was support you were using,
     open a bug or get in touch with us; it would not be hard for us to
@@ -11,8 +11,8 @@
     Pelleg-Moore's algorithm, and the DTNN (dual-tree nearest neighbor)
     algorithm.
 
-2014-12-11    mlpack 1.0.11
-
+### mlpack 1.0.11 
+###### 2014-12-11
   * Proper handling of dimension calculation in PCA.
 
   * Load parameter vectors properly for LinearRegression models.
@@ -37,8 +37,8 @@
   * Known bug: CosineTree construction may fail in some cases on i386 systems.
     (#376)
 
-2014-08-29    mlpack 1.0.10
-
+### mlpack 1.0.10
+###### 2014-08-29    
   * Bugfix for NeighborSearch regression which caused very slow allknn/allkfn.
     Speeds are now restored to approximately 1.0.8 speeds, with significant
     improvement for the cover tree.
@@ -48,8 +48,8 @@
 
   * Bugfix for compilation under Visual Studio.
 
-2014-07-28    mlpack 1.0.9
-
+### mlpack 1.0.9
+###### 2014-07-28
   * GMM initialization is now safer and provides a working GMM when constructed
     with only the dimensionality and number of Gaussians (#314).
 
@@ -60,8 +60,7 @@
 
   * Fixed implementation of Viterbi algorithm in HMM::Predict() (#316).
 
-  * Significant speedups for dual-tree algorithms using the cover tree (#243,
-    #329) including a faster implementation of FastMKS.
+  * Significant speedups for dual-tree algorithms using the cover tree (#243, #329) including a faster implementation of FastMKS.
 
   * Fix for LRSDP optimizer so that it compiles and can be used (#325).
 
@@ -102,8 +101,8 @@
 
   * Sparse autoencoder added by Siddharth Agrawal.
 
-2014-01-06    mlpack 1.0.8
-
+### mlpack 1.0.8
+###### 2014-01-06    
   * Memory leak in NeighborSearch index-mapping code fixed (#310).
 
   * GMMs can be trained using the existing model as a starting point by
@@ -120,8 +119,8 @@
 
   * Fix typos in allkfn and allkrann output.
 
-2013-10-04    mlpack 1.0.7
-
+### mlpack 1.0.7
+###### 2013-10-04    
   * Cover tree support for range search (range_search), rank-approximate nearest
     neighbors (allkrann), minimum spanning tree calculation (emst), and FastMKS
     (fastmks).
@@ -151,12 +150,12 @@
 
   * Minor updates and fixes for kernels (in mlpack::kernel).
 
-2013-06-13    mlpack 1.0.6
-
+### mlpack 1.0.6
+###### 2013-06-13    
   * Minor bugfix so that FastMKS gets built.
 
-2013-05-01    mlpack 1.0.5
-
+### mlpack 1.0.5
+###### 2013-05-01   
   * Speedups of cover tree traversers (#243).
 
   * Addition of rank-approximate nearest neighbors (RANN), found in
@@ -179,8 +178,8 @@
 
   * Fix for k-furthest-neighbor-search.
 
-2013-02-08    mlpack 1.0.4
-
+### mlpack 1.0.4
+###### 2013-02-08    
   * Force minimum Armadillo version to 2.4.2.
 
   * Better output of class types to streams; a class with a ToString() method
@@ -197,7 +196,8 @@
   * Better tests for SGD (stochastic gradient descent) and NCA (neighborhood
     components analysis).
 
-2012-09-16    mlpack 1.0.3
+### mlpack 1.0.3
+###### 2012-09-16    
 
   * Remove internal sparse matrix support because Armadillo 3.4.0 now includes
     it.  When using Armadillo versions older than 3.4.0, sparse matrix support
@@ -206,8 +206,8 @@
   * NCA (neighborhood components analysis) now support an arbitrary optimizer
     (#254), including stochastic gradient descent (#258).
 
-2012-08-15    mlpack 1.0.2
-
+### mlpack 1.0.2
+###### 2012-08-15    
   * Added density estimation trees, found in src/mlpack/methods/det/.
 
   * Added non-negative matrix factorization, found in src/mlpack/methods/nmf/.
@@ -223,8 +223,8 @@
 
   * Sparse coding dictionary initialization is now a template parameter (#226).
 
-2012-03-03    mlpack 1.0.1
-
+### mlpack 1.0.1
+###### 2012-03-03    
   * Added kernel principal components analysis (kernel PCA), found in
     src/mlpack/methods/kernel_pca/ (#47).
 
@@ -241,8 +241,8 @@
 
   * Support seeds for random numbers (#182).
 
-2011-12-17    mlpack 1.0.0
-
+### mlpack 1.0.0
+###### 2011-12-17    
   * Initial release.  See any resolved tickets numbered less than #196 or
     execute this query:
     http://www.mlpack.org/trac/query?status=closed&milestone=mlpack+1.0.0
