@@ -3,7 +3,7 @@ mlpack: a scalable C++ machine learning library
 
 mlpack is an intuitive, fast, scalable C++ machine learning library, meant to be
 a machine learning analog to LAPACK. It aims to implement a wide array of
-machine learning methods and function as a "swiss army knife" for machine
+machine learning methods and functions as a "swiss army knife" for machine
 learning researchers.
 
 [![Build Status](http://big.cc.gt.atl.ga.us/job/mlpack%20-%20svn%20checkin%20test/badge/icon)](http://big.cc.gt.atl.ga.us/job/mlpack%20-%20svn%20checkin%20test/)
