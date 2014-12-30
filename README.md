@@ -1,5 +1,5 @@
-
-## MLPACK : Scalable C++ Machine Learning Library
+mlpack: a scalable C++ machine learning library
+===============================================
 
 mlpack is an intuitive, fast, scalable C++ machine learning library, meant to be
 a machine learning analog to LAPACK. It aims to implement a wide array of
@@ -8,29 +8,32 @@ learning researchers.
 
 [![Build Status](http://big.cc.gt.atl.ga.us/job/mlpack%20-%20svn%20checkin%20test/badge/icon)](http://big.cc.gt.atl.ga.us/job/mlpack%20-%20svn%20checkin%20test/)
 
-### 0. Contents
+0. Contents
+-----------
 
-  1. [Introduction](https://github.com/mlpack/mlpack#1-introduction)
-  2. [Citation details](https://github.com/mlpack/mlpack#2-citation-details)
-  3. [Dependencies](https://github.com/mlpack/mlpack#3-dependencies)
-  4. [Building mlpack from source](https://github.com/mlpack/mlpack#4-building-mlpack-from-source)
-  5. [Running mlpack programs](https://github.com/mlpack/mlpack#5-running-mlpack-programs)
-  6. [Further documentation](https://github.com/mlpack/mlpack#6-further-documentation)
-  7. [Bug reporting](https://github.com/mlpack/mlpack#7-bug-reporting)
+  1. [Introduction](#1-introduction)
+  2. [Citation details](#2-citation-details)
+  3. [Dependencies](#3-dependencies)
+  4. [Building mlpack from source](#4-building-mlpack-from-source)
+  5. [Running mlpack programs](#5-running-mlpack-programs)
+  6. [Further documentation](#6-further-documentation)
+  7. [Bug reporting](#7-bug-reporting)
 
-### 1. Introduction
+1. Introduction
+---------------
 
 The mlpack website can be found at http://mlpack.org and contains numerous
 tutorials and extensive documentation.  This README serves as a guide for what
 mlpack is, how to install it, how to run it, and where to find more
 documentation. The website should be consulted for further information:
 
-  - [MLPACK homepage](http://www.mlpack.org/)
+  - [mlpack homepage](http://www.mlpack.org/)
   - [Tutorials](http://www.mlpack.org/tutorial.html)
   - [Development Site (Trac)](http://www.mlpack.org/trac/)
   - [API documentation](http://www.mlpack.org/doxygen.php)
 
-### 2. Citation details
+2. Citation details
+-------------------
 
 If you use mlpack in your research or software, please cite mlpack using the
 citation below (given in BiBTeX format):
@@ -48,7 +51,8 @@ citation below (given in BiBTeX format):
 
 Citations are beneficial for the growth and improvement of mlpack.
 
-### 3. Dependencies
+3. Dependencies
+---------------
 
 mlpack has the following dependencies:
 
@@ -63,7 +67,9 @@ each of those packages for more information.
 
 If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 
-### 4. Building mlpack from source
+4. Building mlpack from source
+------------------------------
+
 (see also [Building mlpack From Source](http://www.mlpack.org/doxygen.php?doc=build.html) )
 
 mlpack uses CMake as a build system and allows several flexible build
@@ -129,7 +135,7 @@ If you wish to install mlpack to /usr/include/mlpack/ and /usr/lib/ and
 /usr/bin/, once it has built, make sure you have root privileges (or write
 permissions to those two directories), and simply type
 
-#### make install
+    $ make install
 
 You can now run the executables by name; you can link against mlpack with
     -lmlpack
@@ -137,7 +143,8 @@ and the mlpack headers are found in
     /usr/include/mlpack/.
 
 
-### 5. Running mlpack programs
+5. Running mlpack programs
+--------------------------
 
 After building mlpack, the executables will reside in build/bin/.  You can call
 them from there, or you can install the library and (depending on system
@@ -168,20 +175,22 @@ The -v (--verbose) flag is optional; it gives informational output.  It is not
 unique to allknn but is available in all mlpack programs.  Verbose output also
 gives timing output at the end of the program, which can be very useful.
 
-### 6. Further documentation
+6. Further documentation
+------------------------
 
 The documentation given here is only a fraction of the available documentation
 for mlpack.  If doxygen is installed, you can type 'make doc' to build the
 documentation locally.  Alternately, up-to-date documentation is available for
 older versions of mlpack:
 
-  - [MLPACK homepage](http://www.mlpack.org/)
+  - [mlpack homepage](http://www.mlpack.org/)
   - [Tutorials](http://www.mlpack.org/tutorial.html)
   - [Development Site (Trac)](http://www.mlpack.org/trac/)
   - [API documentation](http://www.mlpack.org/doxygen.php)
 
-### 7. Bug reporting
-   (see also [mlpack help](http://www.mlpack.org/help.html) )
+7. Bug reporting
+----------------
+   (see also [mlpack help](http://www.mlpack.org/help.html))
 
 If you find a bug in mlpack or have any problems, numerous routes are available
 for help.
