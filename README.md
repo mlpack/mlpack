@@ -6,6 +6,8 @@ a machine learning analog to LAPACK. It aims to implement a wide array of
 machine learning methods and functions as a "swiss army knife" for machine
 learning researchers.
 
+*Download [current stable version (1.0.11)](http://www.mlpack.org/files/mlpack-1.0.11.tar.gz)*
+
 [![Build Status](http://big.cc.gt.atl.ga.us/job/mlpack%20-%20svn%20checkin%20test/badge/icon)](http://big.cc.gt.atl.ga.us/job/mlpack%20-%20svn%20checkin%20test/)
 
 0. Contents
@@ -22,7 +24,7 @@ learning researchers.
 1. Introduction
 ---------------
 
-The mlpack website can be found at http://mlpack.org and contains numerous
+The mlpack website can be found at http://www.mlpack.org and contains numerous
 tutorials and extensive documentation.  This README serves as a guide for what
 mlpack is, how to install it, how to run it, and where to find more
 documentation. The website should be consulted for further information:
@@ -70,7 +72,7 @@ If you are compiling Armadillo by hand, ensure that LAPACK and BLAS are enabled.
 4. Building mlpack from source
 ------------------------------
 
-(see also [Building mlpack From Source](http://www.mlpack.org/doxygen.php?doc=build.html) )
+(see also [Building mlpack From Source](http://www.mlpack.org/doxygen.php?doc=build.html))
 
 mlpack uses CMake as a build system and allows several flexible build
 configuration options. One can consult any of numerous CMake tutorials for
