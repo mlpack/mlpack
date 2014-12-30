@@ -16,7 +16,7 @@ LRSDPFunction::LRSDPFunction(const size_t numSparseConstraints,
                              const size_t numDenseConstraints,
                              const arma::mat& initialPoint):
     sparseC(initialPoint.n_rows, initialPoint.n_rows),
-    denseC(initialPoint.n_rows, initialPoint.n_rows, arma::fill::zeros),
+    denseC(initialPoint.n_rows, initialPoint.n_rows),
     hasModifiedSparseObjective(false),
     hasModifiedDenseObjective(false),
     sparseA(numSparseConstraints),
@@ -25,8 +25,9 @@ LRSDPFunction::LRSDPFunction(const size_t numSparseConstraints,
     denseB(numDenseConstraints),
     initialPoint(initialPoint)
 {
+  denseC.zeros();
   if (initialPoint.n_rows < initialPoint.n_cols)
-    throw invalid_argument("initialPoint n_cols > n_rows");
+    Log::Warn << "initialPoint n_cols > n_rows" << endl;
 }
 
 double LRSDPFunction::Evaluate(const arma::mat& coordinates) const
@@ -160,7 +161,8 @@ void AugLagrangianFunction<LRSDPFunction>::Gradient(
   // S' = C - sum_{i = 1}^{m} y'_i A_i
   // y'_i = y_i - sigma * (Trace(A_i * (R R^T)) - b_i)
   const arma::mat rrt = coordinates * trans(coordinates);
-  arma::mat s(function.n(), function.n(), arma::fill::zeros);
+  arma::mat s(function.n(), function.n());
+  s.zeros();
 
   if (function.hasSparseObjective())
     s += function.SparseC();
