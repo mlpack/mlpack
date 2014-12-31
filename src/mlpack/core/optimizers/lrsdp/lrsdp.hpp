@@ -26,28 +26,15 @@ class LRSDP
  public:
   /**
    * Create an LRSDP to be optimized.  The solution will end up being a matrix
-   * of size (rank) x (rows).  To construct each constraint and the objective
+   * of size (rows) x (rank).  To construct each constraint and the objective
    * function, use the functions A(), B(), and C() to set them correctly.
    *
    * @param numConstraints Number of constraints in the problem.
-   * @param rank Rank of the solution (<= rows).
-   * @param rows Number of rows in the solution.
-   */
-  LRSDP(const size_t numConstraints,
-        const arma::mat& initialPoint);
-
-  /**
-   * Create an LRSDP to be optimized, passing in an already-created
-   * AugLagrangian object.  The given initial point should be set to the size
-   * (rows) x (rank), where (rank) is the reduced rank of the problem.
-   *
-   * @param numConstraints Number of constraints in the problem.
    * @param initialPoint Initial point of the optimization.
-   * @param auglag Pre-initialized AugLagrangian<LRSDP> object.
    */
-  LRSDP(const size_t numConstraints,
-        const arma::mat& initialPoint,
-        AugLagrangian<LRSDPFunction>& augLagrangian);
+  LRSDP(const size_t numSparseConstraints,
+        const size_t numDenseConstraints,
+        const arma::mat& initialPoint);
 
   /**
    * Optimize the LRSDP and return the final objective value.  The given
@@ -57,25 +44,43 @@ class LRSDP
    */
   double Optimize(arma::mat& coordinates);
 
-  //! Return the objective function matrix (C).
-  const arma::mat& C() const { return function.C(); }
-  //! Modify the objective function matrix (C).
-  arma::mat& C() { return function.C(); }
+  //! Return the sparse objective function matrix (sparseC).
+  const arma::sp_mat& SparseC() const { return function.SparseC(); }
 
-  //! Return the vector of A matrices (which correspond to the constraints).
-  const std::vector<arma::mat>& A() const { return function.A(); }
-  //! Modify the veector of A matrices (which correspond to the constraints).
-  std::vector<arma::mat>& A() { return function.A(); }
+  //! Modify the sparse objective function matrix (sparseC).
+  arma::sp_mat& SparseC() { return function.SparseC(); }
 
-  //! Return the vector of modes for the A matrices.
-  const arma::uvec& AModes() const { return function.AModes(); }
-  //! Modify the vector of modes for the A matrices.
-  arma::uvec& AModes() { return function.AModes(); }
+  //! Return the dense objective function matrix (denseC).
+  const arma::mat& DenseC() const { return function.DenseC(); }
 
-  //! Return the vector of B values.
-  const arma::vec& B() const { return function.B(); }
-  //! Modify the vector of B values.
-  arma::vec& B() { return function.B(); }
+  //! Modify the dense objective function matrix (denseC).
+  arma::mat& DenseC() { return function.DenseC(); }
+
+  //! Return the vector of sparse A matrices (which correspond to the sparse
+  // constraints).
+  const std::vector<arma::sp_mat>& SparseA() const { return function.SparseA(); }
+
+  //! Modify the veector of sparse A matrices (which correspond to the sparse
+  // constraints).
+  std::vector<arma::sp_mat>& SparseA() { return function.SparseA(); }
+
+  //! Return the vector of dense A matrices (which correspond to the dense
+  // constraints).
+  const std::vector<arma::mat>& DenseA() const { return function.DenseA(); }
+
+  //! Modify the veector of dense A matrices (which correspond to the dense
+  // constraints).
+  std::vector<arma::mat>& DenseA() { return function.DenseA(); }
+
+  //! Return the vector of sparse B values.
+  const arma::vec& SparseB() const { return function.SparseB(); }
+  //! Modify the vector of sparse B values.
+  arma::vec& SparseB() { return function.SparseB(); }
+
+  //! Return the vector of dense B values.
+  const arma::vec& DenseB() const { return function.DenseB(); }
+  //! Modify the vector of dense B values.
+  arma::vec& DenseB() { return function.DenseB(); }
 
   //! Return the function to be optimized.
   const LRSDPFunction& Function() const { return function; }
