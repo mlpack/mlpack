@@ -70,7 +70,7 @@ endif(ARMA_EXTRA_DEBUG)
 #   BOOST_INCLUDEDIR - include directory for Boost
 #   BOOST_LIBRARYDIR - library directory for Boost
 
-# set path right
+# Include modules in the CMake directory.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
 find_package(Armadillo 3.6.0 REQUIRED)
