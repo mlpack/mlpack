@@ -27,7 +27,9 @@ LRSDPFunction::LRSDPFunction(const size_t numSparseConstraints,
 {
   denseC.zeros();
   if (initialPoint.n_rows < initialPoint.n_cols)
-    Log::Warn << "initialPoint n_cols > n_rows" << endl;
+    Log::Warn << "LRSDPFunction::LRSDPFunction(): solution matrix will have "
+        << "more columns than rows.  It may be more efficient to find the "
+        << "transposed solution." << endl;
 }
 
 double LRSDPFunction::Evaluate(const arma::mat& coordinates) const
