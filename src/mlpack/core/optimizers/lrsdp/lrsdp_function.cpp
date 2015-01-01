@@ -75,45 +75,49 @@ std::string LRSDPFunction::ToString() const
   return convert.str();
 }
 
+namespace mlpack {
+namespace optimization {
+
+//! Utility function for calculating part of the objective when AugLagrangian is
+//! used with an LRSDPFunction.
 template <typename MatrixType>
 static inline void
-updateObjective(double &objective,
-                const arma::mat &rrt,
-                const std::vector<MatrixType> &ais,
-                const arma::vec &bis,
-                const arma::vec &lambda,
-                size_t lambda_offset,
-                double sigma)
+UpdateObjective(double& objective,
+                const arma::mat& rrt,
+                const std::vector<MatrixType>& ais,
+                const arma::vec& bis,
+                const arma::vec& lambda,
+                const size_t lambdaOffset,
+                const double sigma)
 {
   for (size_t i = 0; i < ais.size(); ++i)
   {
     // Take the trace subtracted by the b_i.
-    double constraint = trace(ais[i] * rrt) - bis[i];
-    objective -= (lambda[lambda_offset + i] * constraint);
+    const double constraint = trace(ais[i] * rrt) - bis[i];
+    objective -= (lambda[lambdaOffset + i] * constraint);
     objective += (sigma / 2.) * constraint * constraint;
   }
 }
 
+//! Utility function for calculating part of the gradient when AugLagrangian is
+//! used with an LRSDPFunction.
 template <typename MatrixType>
 static inline void
-updateGradient(arma::mat &s,
-               const arma::mat &rrt,
-               const std::vector<MatrixType> &ais,
-               const arma::vec &bis,
-               const arma::vec &lambda,
-               size_t lambda_offset,
-               double sigma)
+UpdateGradient(arma::mat& s,
+               const arma::mat& rrt,
+               const std::vector<MatrixType>& ais,
+               const arma::vec& bis,
+               const arma::vec& lambda,
+               const size_t lambdaOffset,
+               const double sigma)
 {
   for (size_t i = 0; i < ais.size(); ++i)
   {
     const double constraint = trace(ais[i] * rrt) - bis[i];
-    const double y = lambda[lambda_offset + i] - sigma * constraint;
+    const double y = lambda[lambdaOffset + i] - sigma * constraint;
     s -= y * ais[i];
   }
 }
-
-namespace mlpack {
-namespace optimization {
 
 // Template specializations for function and gradient evaluation.
 template<>
@@ -141,12 +145,10 @@ double AugLagrangianFunction<LRSDPFunction>::Evaluate(
     objective += trace(function.DenseC() * rrt);
 
   // Now each constraint.
-  updateObjective(
-      objective, rrt, function.SparseA(), function.SparseB(),
+  UpdateObjective(objective, rrt, function.SparseA(), function.SparseB(),
       lambda, 0, sigma);
-  updateObjective(
-      objective, rrt, function.DenseA(), function.DenseB(),
-      lambda, function.NumSparseConstraints(), sigma);
+  UpdateObjective(objective, rrt, function.DenseA(), function.DenseB(), lambda,
+      function.NumSparseConstraints(), sigma);
 
   return objective;
 }
@@ -171,10 +173,10 @@ void AugLagrangianFunction<LRSDPFunction>::Gradient(
   if (function.hasDenseObjective())
     s += function.DenseC();
 
-  updateGradient(
+  UpdateGradient(
       s, rrt, function.SparseA(), function.SparseB(),
       lambda, 0, sigma);
-  updateGradient(
+  UpdateGradient(
       s, rrt, function.DenseA(), function.DenseB(),
       lambda, function.NumSparseConstraints(), sigma);
 
