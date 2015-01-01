@@ -1,0 +1,44 @@
+/**
+ * @file layer_traits.hpp
+ * @author Marcus Edel
+ *
+ * This provides the LayerTraits class, a template class to get information
+ * about various layers.
+ */
+#ifndef __MLPACK_METHOS_ANN_LAYER_LAYER_TRAITS_HPP
+#define __MLPACK_METHOS_ANN_LAYER_LAYER_TRAITS_HPP
+
+namespace mlpack {
+namespace ann {
+
+/**
+ * This is a template class that can provide information about various layers.
+ * By default, this class will provide the weakest possible assumptions on
+ * layer, and each layer should override values as necessary.  If a layer
+ * doesn't need to override a value, then there's no need to write a LayerTraits
+ * specialization for that class.
+ */
+template<typename LayerType>
+class LayerTraits
+{
+ public:
+  /**
+   * This is true if the layer is a binary layer.
+   */
+  static const bool IsBinary = false;
+
+  /**
+   * This is true if the layer is an output layer.
+   */
+  static const bool IsOutputLayer = false;
+
+  /**
+   * This is true if the layer is a bias layer.
+   */
+  static const bool IsBiasLayer = false;
+};
+
+}; // namespace ann
+}; // namespace mlpack
+
+#endif
