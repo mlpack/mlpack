@@ -66,7 +66,7 @@ class DualTreeKMeansRules
 
   TraversalInfoType traversalInfo;
 
-  size_t IterationUpdate(TreeType& referenceNode) const;
+  double IterationUpdate(TreeType& referenceNode);
 
   bool IsDescendantOf(const TreeType& potentialParent, const TreeType&
       potentialChild) const;

@@ -112,6 +112,81 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   return std::sqrt(residual);
 }
 
+/*
+template<typename MetricType, typename MatType, typename TreeType>
+void DualTreeKMeans<MetricType, MatType, TreeType>::ClusterTreeUpdate(
+    TreeType* node)
+{
+  // We will abuse stat.owner to hold the cluster with the most change.
+  // stat.minQueryNodeDistance will hold the distance.
+  double maxChange = 0.0;
+  size_t maxChangeCluster = 0;
+
+  for (size_t i = 0; i < node->NumChildren(); ++i)
+  {
+    ClusterTreeUpdate(&node->Child(i));
+
+    const double nodeChange = node->Child(i).Stat().MinQueryNodeDistance();
+    if (nodeChange > maxChange)
+    {
+      maxChange = nodeChange;
+      maxChangeCluster = node->Child(i).Stat().Owner();
+    }
+  }
+
+  for (size_t i = 0; i < node->NumPoints(); ++i)
+  {
+    const size_t cluster = oldFromNewCentroids[node->Point(i)];
+    const double pointChange = clusterDistances[cluster];
+    if (pointChange > maxChange)
+    {
+      maxChange = pointChange;
+      maxChangeCluster = cluster;
+    }
+  }
+
+  node->Stat().Owner() = maxChangeCluster;
+  node->Stat().MinQueryNodeDistance() = maxChange;
+}
+
+template<typename MetricType, typename MatType, typename TreeType>
+void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
+    TreeType* node)
+{
+  // This is basically IterationUpdate(), but pulled out to be separate from the
+  // actual dual-tree algorithm.
+
+  // First, update the iteration.
+  const size_t itDiff = node->Stat().Iteration() - iteration;
+
+  if (itDiff == 1)
+  {
+    // The easy case.
+    if (node->Stat().Owner() < centroids.n_cols)
+    {
+      // During the last iteration, this node was pruned.  In addition, we have
+      // cached a lower bound on the second closest cluster.  So, use the
+      // triangle inequality: if the maximum distance between the point and the
+      // cluster centroid plus the distance that centroid moved is less than the
+      // lower bound minus the maximum moving centroid, then this cluster *must*
+      // still have the same owner.
+      const size_t owner = node->Stat().Owner();
+      const double closestUpperBound = node->Stat().MaxQueryNodeDistance() +
+          clusterDistances[owner];
+      const TreeType* nonOwner = (TreeType*) node->Stat().ClosestNonOwner();
+      const double tightestLowerBound = node->Stat().ClosestNonOwnerDistance() -
+          nonOwner->Stat().MinQueryNodeDistance() /* abused from earlier *;
+      if (closestUpperBound <= tightestLowerBound)
+      {
+        // Then the owner must not have changed.
+
+      }
+    }
+  }
+}
+*/
+
+
 } // namespace kmeans
 } // namespace mlpack
 

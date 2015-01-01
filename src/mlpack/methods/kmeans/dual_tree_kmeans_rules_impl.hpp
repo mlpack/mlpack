@@ -112,7 +112,11 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
     TreeType& queryNode,
     TreeType& referenceNode)
 {
-  IterationUpdate(referenceNode);
+  if (IterationUpdate(referenceNode) == DBL_MAX)
+  {
+    // The iteration update showed that the owner could not possibly change.
+    return DBL_MAX;
+  }
 
   traversalInfo.LastReferenceNode() = &referenceNode;
 
@@ -201,12 +205,13 @@ double DualTreeKMeansRules<MetricType, TreeType>::Rescore(
 }
 
 template<typename MetricType, typename TreeType>
-inline size_t DualTreeKMeansRules<MetricType, TreeType>::IterationUpdate(
-    TreeType& referenceNode) const
+inline double DualTreeKMeansRules<MetricType, TreeType>::IterationUpdate(
+    TreeType& referenceNode)
 {
   if (referenceNode.Stat().Iteration() == iteration)
     return 0;
 
+  const size_t itDiff = iteration - referenceNode.Stat().Iteration();
   referenceNode.Stat().Iteration() = iteration;
   referenceNode.Stat().ClustersPruned() = (referenceNode.Parent() == NULL) ?
       0 : referenceNode.Parent()->Stat().ClustersPruned();
@@ -214,15 +219,22 @@ inline size_t DualTreeKMeansRules<MetricType, TreeType>::IterationUpdate(
       NULL : referenceNode.Parent()->Stat().ClosestQueryNode();
 
   if (referenceNode.Stat().ClosestQueryNode() != NULL)
+  {
     referenceNode.Stat().MinQueryNodeDistance() =
         referenceNode.MinDistance((TreeType*)
         referenceNode.Stat().ClosestQueryNode());
+    referenceNode.Stat().MaxQueryNodeDistance() =
+        referenceNode.MaxDistance((TreeType*)
+        referenceNode.Stat().ClosestQueryNode());
+    distanceCalculations += 2;
+  }
 
-  const size_t itDiff = iteration - referenceNode.Stat().Iteration();
+
   if (itDiff > 1)
   {
-    // Maybe this can be tighter?
+//    referenceNode.Stat().BestMaxDistance() = DBL_MAX;
     referenceNode.Stat().MinQueryNodeDistance() = DBL_MAX;
+    referenceNode.Stat().MaxQueryNodeDistance() = DBL_MAX;
   }
   else
   {
@@ -231,23 +243,38 @@ inline size_t DualTreeKMeansRules<MetricType, TreeType>::IterationUpdate(
       // Update the distance to the closest query node.  If this node has an
       // owner, we know how far to increase the bound.  Otherwise, increase it
       // by the furthest amount that any centroid moved.
-//      if (referenceNode.Stat().Owner() < centroids.n_cols)
-//        referenceNode.Stat().MinQueryNodeDistance() +=
-//            clusterDistances(referenceNode.Stat().Owner());
-//      else
-//        referenceNode.Stat().MinQueryNodeDistance() = DBL_MAX;
-//            clusterDistances(centroids.n_cols);
-      if (referenceNode.Stat().MaxQueryNodeDistance() == DBL_MAX)
-        referenceNode.Stat().MinQueryNodeDistance() = DBL_MAX;
+      if (referenceNode.Stat().Owner() < centroids.n_cols)
+      {
+        referenceNode.Stat().MinQueryNodeDistance() +=
+            clusterDistances(referenceNode.Stat().Owner());
+        referenceNode.Stat().MaxQueryNodeDistance() +=
+            clusterDistances(referenceNode.Stat().Owner());
+      }
       else
       {
         referenceNode.Stat().MinQueryNodeDistance() +=
             clusterDistances(centroids.n_cols);
-//referenceNode.Stat().MaxQueryNodeDistance() +
-//clusterDistances(centroids.n_cols);
+        referenceNode.Stat().MaxQueryNodeDistance() +=
+            clusterDistances(centroids.n_cols);
       }
     }
+    else
+    {
+      referenceNode.Stat().MinQueryNodeDistance() = DBL_MAX;
+      referenceNode.Stat().MaxQueryNodeDistance() = DBL_MAX;
+    }
   }
+
+//    if (referenceNode.Stat().BestMaxDistance() != DBL_MAX)
+//    {
+//      if (referenceNode.Stat().Owner() < centroids.n_cols)
+//        referenceNode.Stat().BestMaxDistance() +=
+//            clusterDistances(referenceNode.Stat().Owner());
+//      else
+//        referenceNode.Stat().BestMaxDistance() +=
+//            clusterDistances(centroids.n_cols);
+//    }
+//  }
 
   return 1;
 }
