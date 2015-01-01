@@ -8,7 +8,7 @@ learning researchers.
 
 **Download [current stable version (1.0.11)](http://www.mlpack.org/files/mlpack-1.0.11.tar.gz).**
 
-[![Build Status](http://big.cc.gt.atl.ga.us/job/mlpack%20-%20svn%20checkin%20test/badge/icon)](http://big.cc.gt.atl.ga.us/job/mlpack%20-%20svn%20checkin%20test/)
+[![Build Status](http://big.cc.gt.atl.ga.us/job/mlpack%20-%20git%20commit%20test/badge/icon)](http://big.cc.gt.atl.ga.us/job/mlpack%20-%20git%20commit%20test/)
 
 0. Contents
 -----------
