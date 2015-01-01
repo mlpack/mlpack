@@ -43,8 +43,9 @@ void XTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
     return;
   }
 
- // If we haven't yet reinserted on this level, we try doing so now.
- if(relevels[tree->TreeDepth()]) {
+  // If we haven't yet reinserted on this level, we try doing so now.
+  if (relevels[tree->TreeDepth()])
+  {
    relevels[tree->TreeDepth()] = false;
    // We sort the points by decreasing distance to the centroid of the bound.
    // We then remove the first p entries and reinsert them at the root.
