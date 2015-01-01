@@ -126,15 +126,14 @@ class SaveRestoreUtility
 
  private:
   /**
-  * WriteFile creates XML tree recursively.
-  */
+   * WriteFile creates XML tree recursively.
+   */
   void WriteFile(xmlNode* n);
 
   /**
    * ReadFile reads an XML tree recursively.
    */
   void ReadFile(xmlNode* n);
-
 };
 
 //! Specialization for arma::vec.
