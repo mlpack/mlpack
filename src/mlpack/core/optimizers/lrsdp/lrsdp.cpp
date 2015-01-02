@@ -20,7 +20,7 @@ LRSDP::LRSDP(const size_t numSparseConstraints,
 
 double LRSDP::Optimize(arma::mat& coordinates)
 {
-  augLag.Sigma() = 20;
+  augLag.Sigma() = 10;
   augLag.Optimize(coordinates, 1000);
 
   return augLag.Function().Evaluate(coordinates);
