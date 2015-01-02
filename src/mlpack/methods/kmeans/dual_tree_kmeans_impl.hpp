@@ -106,6 +106,9 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   }
   Log::Info << clusterDistances.t();
 
+  // Update the tree with the centroid movement information.
+  TreeUpdate(tree, centroids.n_cols, clusterDistances);
+
   delete centroidTree;
 
   ++iteration;
@@ -148,43 +151,72 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::ClusterTreeUpdate(
   node->Stat().Owner() = maxChangeCluster;
   node->Stat().MinQueryNodeDistance() = maxChange;
 }
+*/
 
 template<typename MetricType, typename MatType, typename TreeType>
 void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
-    TreeType* node)
+    TreeType* node,
+    const size_t clusters,
+    const arma::vec& clusterDistances)
 {
   // This is basically IterationUpdate(), but pulled out to be separate from the
   // actual dual-tree algorithm.
 
-  // First, update the iteration.
-  const size_t itDiff = node->Stat().Iteration() - iteration;
+  if (node->Parent() != NULL && node->Parent()->Stat().Owner() < clusters)
+    node->Stat().Owner() = node->Parent()->Stat().Owner();
 
-  if (itDiff == 1)
+  // The easy case: this node had an owner.
+  if (node->Stat().Owner() < clusters)
   {
-    // The easy case.
-    if (node->Stat().Owner() < centroids.n_cols)
-    {
-      // During the last iteration, this node was pruned.  In addition, we have
-      // cached a lower bound on the second closest cluster.  So, use the
-      // triangle inequality: if the maximum distance between the point and the
-      // cluster centroid plus the distance that centroid moved is less than the
-      // lower bound minus the maximum moving centroid, then this cluster *must*
-      // still have the same owner.
-      const size_t owner = node->Stat().Owner();
-      const double closestUpperBound = node->Stat().MaxQueryNodeDistance() +
-          clusterDistances[owner];
-      const TreeType* nonOwner = (TreeType*) node->Stat().ClosestNonOwner();
-      const double tightestLowerBound = node->Stat().ClosestNonOwnerDistance() -
-          nonOwner->Stat().MinQueryNodeDistance() /* abused from earlier *;
-      if (closestUpperBound <= tightestLowerBound)
-      {
-        // Then the owner must not have changed.
+    // During the last iteration, this node was pruned.
+    const size_t owner = node->Stat().Owner();
+    if (node->Stat().MaxQueryNodeDistance() != DBL_MAX)
+      node->Stat().MaxQueryNodeDistance() += clusterDistances[owner];
+    if (node->Stat().MinQueryNodeDistance() != DBL_MAX)
+      node->Stat().MinQueryNodeDistance() += clusterDistances[owner];
 
-      }
+/*
+    // During the last iteration, this node was pruned.  In addition, we have
+    // cached a lower bound on the second closest cluster.  So, use the
+    // triangle inequality: if the maximum distance between the point and the
+    // cluster centroid plus the distance that centroid moved is less than the
+    // lower bound minus the maximum moving centroid, then this cluster *must*
+    // still have the same owner.
+    const size_t owner = node->Stat().Owner();
+    const double closestUpperBound = node->Stat().MaxQueryNodeDistance() +
+        clusterDistances[owner];
+    const TreeType* nonOwner = (TreeType*) node->Stat().ClosestNonOwner();
+    const double tightestLowerBound = node->Stat().ClosestNonOwnerDistance() -
+        nonOwner->Stat().MinQueryNodeDistance();
+    if (closestUpperBound <= tightestLowerBound)
+    {
+      // Then the owner must not have changed.
     }
-  }
-}
 */
+  }
+  else
+  {
+    // This node did not have a single owner, but did have a closest query
+    // node.  So we will simply loosen that bound.  The loosening here is too
+    // loose; TODO: tighten to the max cluster movement in the closest query
+    // node.
+    if (node->Stat().MaxQueryNodeDistance() != DBL_MAX)
+      node->Stat().MaxQueryNodeDistance() += clusterDistances[clusters];
+    if (node->Stat().MinQueryNodeDistance() != DBL_MAX)
+      node->Stat().MinQueryNodeDistance() += clusterDistances[clusters];
+  }
+
+  node->Stat().Iteration() = iteration;
+  node->Stat().ClustersPruned() = (node->Parent() == NULL) ? 0 : -1;
+  // We have to set the closest query node to NULL because the cluster tree will
+  // be rebuilt.
+  node->Stat().ClosestQueryNode() = NULL;
+//  node->Stat().MaxQueryNodeDistance() = DBL_MAX;
+//  node->Stat().MinQueryNodeDistance() = DBL_MAX;
+
+  for (size_t i = 0; i < node->NumChildren(); ++i)
+    TreeUpdate(&node->Child(i), clusters, clusterDistances);
+}
 
 
 } // namespace kmeans

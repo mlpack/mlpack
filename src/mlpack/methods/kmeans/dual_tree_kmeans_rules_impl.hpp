@@ -53,8 +53,8 @@ inline force_inline double DualTreeKMeansRules<MetricType, TreeType>::BaseCase(
 
   // Collect the number of clusters that have been pruned during the traversal.
   // The ternary operator may not be necessary.
-  const size_t traversalPruned = (traversalInfo.LastReferenceNode() != NULL &&
-      traversalInfo.LastReferenceNode()->Stat().Iteration() == iteration) ?
+  const size_t traversalPruned = (traversalInfo.LastReferenceNode() != NULL) ?
+//      traversalInfo.LastReferenceNode()->Stat().Iteration() == iteration) ?
       traversalInfo.LastReferenceNode()->Stat().ClustersPruned() : 0;
 
   // It's possible that the reference node has been pruned before we got to the
@@ -101,7 +101,7 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
     TreeType& referenceNode)
 {
   // Update from previous iteration, if necessary.
-  IterationUpdate(referenceNode);
+//  IterationUpdate(referenceNode);
 
   // No pruning here, for now.
   return 0.0;
@@ -112,26 +112,32 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
     TreeType& queryNode,
     TreeType& referenceNode)
 {
-  if (IterationUpdate(referenceNode) == DBL_MAX)
-  {
+//  if (IterationUpdate(referenceNode) == DBL_MAX)
+//  {
     // The iteration update showed that the owner could not possibly change.
-    return DBL_MAX;
-  }
+//    return DBL_MAX;
+//  }
+
+  if (referenceNode.Stat().ClustersPruned() == size_t(-1))
+    referenceNode.Stat().ClustersPruned() =
+        referenceNode.Parent()->Stat().ClustersPruned();
 
   traversalInfo.LastReferenceNode() = &referenceNode;
 
   // Can we update the minimum query node distance for this reference node?
   const double minDistance = referenceNode.MinDistance(&queryNode);
-  ++distanceCalculations;
-  if (minDistance < referenceNode.Stat().MinQueryNodeDistance())
+  const double maxDistance = referenceNode.MaxDistance(&queryNode);
+  distanceCalculations += 2;
+  if (maxDistance < referenceNode.Stat().MaxQueryNodeDistance())
   {
     referenceNode.Stat().ClosestQueryNode() = (void*) &queryNode;
     referenceNode.Stat().MinQueryNodeDistance() = minDistance;
-    referenceNode.Stat().MaxQueryNodeDistance() =
+    referenceNode.Stat().MaxQueryNodeDistance() = maxDistance;
         referenceNode.MaxDistance(&queryNode);
-    ++distanceCalculations;
+//    ++distanceCalculations;
     return 0.0; // Pruning is not possible.
   }
+
   else if (IsDescendantOf(
       *((TreeType*) referenceNode.Stat().ClosestQueryNode()), queryNode))
   {
@@ -144,9 +150,10 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
     return 0.0; // Pruning is not possible.
   }
 
-  double score = ElkanTypeScore(queryNode, referenceNode);
-  if (score != DBL_MAX)
-    score = PellegMooreScore(queryNode, referenceNode, minDistance);
+//  double score = ElkanTypeScore(queryNode, referenceNode);
+//  if (score != DBL_MAX)
+
+  double score = PellegMooreScore(queryNode, referenceNode, minDistance);
 
   if (score == DBL_MAX)
   {
@@ -179,6 +186,7 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
   }
 
   return score;
+//  return 0.0;
 }
 
 template<typename MetricType, typename TreeType>
@@ -208,6 +216,7 @@ template<typename MetricType, typename TreeType>
 inline double DualTreeKMeansRules<MetricType, TreeType>::IterationUpdate(
     TreeType& referenceNode)
 {
+  Log::Fatal << "Update! Why!\n";
   if (referenceNode.Stat().Iteration() == iteration)
     return 0;
 
