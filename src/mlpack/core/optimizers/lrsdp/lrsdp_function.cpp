@@ -34,7 +34,13 @@ LRSDPFunction::LRSDPFunction(const size_t numSparseConstraints,
 
 double LRSDPFunction::Evaluate(const arma::mat& coordinates) const
 {
-  return -accu(coordinates * trans(coordinates));
+  const arma::mat rrt = coordinates * trans(coordinates);
+  double objective = 0.;
+  if (hasSparseObjective())
+    objective += trace(SparseC() * rrt);
+  if (hasDenseObjective())
+    objective += trace(DenseC() * rrt);
+  return objective;
 }
 
 void LRSDPFunction::Gradient(const arma::mat& /* coordinates */,
