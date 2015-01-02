@@ -48,7 +48,7 @@ class OrthogonalInitialization
   }
 
  private:
-  //! The number used as lower bound.
+  //! The number used as gain.
   const double gain;
 }; // class OrthogonalInitialization
 
