@@ -34,6 +34,7 @@ L_BFGS<FunctionType>::L_BFGS(FunctionType& function,
                              const double armijoConstant,
                              const double wolfe,
                              const double minGradientNorm,
+                             const double factr,
                              const size_t maxLineSearchTrials,
                              const double minStep,
                              const double maxStep) :
@@ -43,6 +44,7 @@ L_BFGS<FunctionType>::L_BFGS(FunctionType& function,
     armijoConstant(armijoConstant),
     wolfe(wolfe),
     minGradientNorm(minGradientNorm),
+    factr(factr),
     maxLineSearchTrials(maxLineSearchTrials),
     minStep(minStep),
     maxStep(maxStep)
@@ -215,10 +217,18 @@ bool L_BFGS<FunctionType>::LineSearch(double& functionValue,
 
     // Terminate when the step size gets too small or too big or it
     // exceeds the max number of iterations.
-    if ((stepSize < minStep) || (stepSize > maxStep) ||
-        (numIterations >= maxLineSearchTrials))
+    const bool cond1 = (stepSize < minStep);
+    const bool cond2 = (stepSize > maxStep);
+    const bool cond3 = (numIterations >= maxLineSearchTrials);
+    if (cond1 || cond2 || cond3)
     {
-      return false;
+      if (cond1)
+        Log::Debug << "stepSize < minStep" << std::endl;
+      if (cond2)
+        Log::Debug << "stepSize > maxStep" << std::endl;
+      if (cond3)
+        Log::Debug << "numIterations >= maxLineSearchTrials (stepSize=" << stepSize << ")" << std::endl;
+      break;
     }
 
     // Scale the step size.
@@ -355,6 +365,7 @@ double L_BFGS<FunctionType>::Optimize(arma::mat& iterate,
 
   // The initial function value.
   double functionValue = Evaluate(iterate);
+  double prevFunctionValue = functionValue;
 
   // The gradient: the current and the old.
   arma::mat gradient;
@@ -374,10 +385,18 @@ double L_BFGS<FunctionType>::Optimize(arma::mat& iterate,
        ++itNum)
   {
     Log::Debug << "L-BFGS iteration " << itNum << "; objective " <<
-        function.Evaluate(iterate) << "." << std::endl;
+        function.Evaluate(iterate) << ", gradient norm " <<
+        arma::norm(gradient, 2) << ", " <<
+        ((prevFunctionValue - functionValue) /
+         std::max(std::max(fabs(prevFunctionValue), fabs(functionValue)), 1.0)) << "." << std::endl;
+
+    prevFunctionValue = functionValue;
 
     // Break when the norm of the gradient becomes too small.
-    if (GradientNormTooSmall(gradient))
+    //
+    // But don't do this on the first iteration to ensure we always take at
+    // least one descent step.
+    if (itNum > 0 && GradientNormTooSmall(gradient))
     {
       Log::Debug << "L-BFGS gradient norm too small (terminating successfully)."
           << std::endl;
@@ -407,6 +426,19 @@ double L_BFGS<FunctionType>::Optimize(arma::mat& iterate,
     if (accu(iterate != oldIterate) == 0)
     {
       Log::Debug << "L-BFGS step size of 0 (terminating successfully)."
+          << std::endl;
+      break;
+    }
+
+    // If we can't make progress on the gradient, then we'll also accept
+    // a stable function value
+    const double denom =
+      std::max(
+        std::max(fabs(prevFunctionValue), fabs(functionValue)),
+        1.0);
+    if ((prevFunctionValue - functionValue) / denom <= factr)
+    {
+      Log::Debug << "L-BFGS function value stable (terminating successfully)."
           << std::endl;
       break;
     }

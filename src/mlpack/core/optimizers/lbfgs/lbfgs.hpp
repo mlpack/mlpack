@@ -50,11 +50,12 @@ class L_BFGS
    * @param maxStep The maximum step of the line search.
    */
   L_BFGS(FunctionType& function,
-         const size_t numBasis = 5, /* entirely arbitrary */
+         const size_t numBasis = 10, /* same default as scipy */
          const size_t maxIterations = 0, /* run forever */
          const double armijoConstant = 1e-4,
          const double wolfe = 0.9,
-         const double minGradientNorm = 1e-10,
+         const double minGradientNorm = 1e-6,
+         const double factr = 1e-15,
          const size_t maxLineSearchTrials = 50,
          const double minStep = 1e-20,
          const double maxStep = 1e20);
@@ -124,6 +125,11 @@ class L_BFGS
   //! Modify the minimum gradient norm.
   double& MinGradientNorm() { return minGradientNorm; }
 
+  //! Get the factr value.
+  double Factr() const { return factr; }
+  //! Modify the factr value.
+  double& Factr() { return factr; }
+
   //! Get the maximum number of line search trials.
   size_t MaxLineSearchTrials() const { return maxLineSearchTrials; }
   //! Modify the maximum number of line search trials.
@@ -163,6 +169,8 @@ class L_BFGS
   double wolfe;
   //! Minimum gradient norm required to continue the optimization.
   double minGradientNorm;
+  //! Minimum relative function value decrease to continue the optimization.
+  double factr;
   //! Maximum number of trials for the line search.
   size_t maxLineSearchTrials;
   //! Minimum step of the line search.
