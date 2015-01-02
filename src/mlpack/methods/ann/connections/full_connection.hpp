@@ -40,8 +40,13 @@ class FullConnection
    * Create the FullConnection object using the specified input layer, output
    * layer, optimizer and weight initialize rule.
    *
-   * @param lowerBound The number used as lower bound.
-   * @param upperBound The number used as upper bound.
+   * @param InputLayerType The input layer which is connected with the output
+   * layer.
+   * @param OutputLayerType The output layer which is connected with the input
+   * layer.
+   * @param OptimizerType The optimizer used to update the weight matrix.
+   * @param WeightInitRule The weight initialize rule used to initialize the
+   * weight matrix.
    */
   FullConnection(InputLayerType& inputLayer,
                  OutputLayerType& outputLayer,
