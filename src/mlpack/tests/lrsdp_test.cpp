@@ -146,14 +146,16 @@ BOOST_AUTO_TEST_CASE(GaussianMatrixSensingSDP)
   LRSDP sensing(0, p, coordinates);
   sensing.SparseC().eye(m + n, m + n);
   sensing.DenseB() = 2. * b;
+
+  const auto block_rows = arma::span(0, m - 1);
+  const auto block_cols = arma::span(m, m + n - 1);
+
   for (size_t i = 0; i < p; ++i)
   {
-    const auto rows = arma::span(0, m - 1);
-    const auto cols = arma::span(m, m + n - 1);
     const auto Ai = arma::reshape(A.row(i), n, m);
     sensing.DenseA()[i].zeros(m + n, m + n);
-    sensing.DenseA()[i](rows, cols) = trans(Ai);
-    sensing.DenseA()[i](cols, rows) = Ai;
+    sensing.DenseA()[i](block_rows, block_cols) = trans(Ai);
+    sensing.DenseA()[i](block_cols, block_rows) = Ai;
   }
 
   double finalValue = sensing.Optimize(coordinates);
@@ -162,11 +164,15 @@ BOOST_AUTO_TEST_CASE(GaussianMatrixSensingSDP)
   const arma::mat rrt = coordinates * trans(coordinates);
   for (size_t i = 0; i < p; ++i)
   {
-    const auto rows = arma::span(0, m - 1);
-    const auto cols = arma::span(m, m + n - 1);
     const auto Ai = arma::reshape(A.row(i), n, m);
-    BOOST_REQUIRE_CLOSE(arma::dot(trans(Ai), rrt(rows, cols)), b(i), 1e-3);
+    const double measurement = arma::dot(trans(Ai), rrt(block_rows, block_cols));
+    BOOST_REQUIRE_CLOSE(measurement, b(i), 1e-3);
   }
+
+  // check matrix recovery
+  const double err = arma::norm(Xorig - rrt(block_rows, block_cols), "fro") /
+    arma::norm(Xorig, "fro");
+  BOOST_REQUIRE_SMALL(err, 1e-3);
 }
 
 /**
