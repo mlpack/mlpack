@@ -118,7 +118,6 @@ BOOST_AUTO_TEST_CASE(Johnson844LovaszThetaSDP)
   }
 }
 
-
 /**
  * Create an unweighted graph laplacian from the edges.
  */
@@ -183,6 +182,57 @@ BOOST_AUTO_TEST_CASE(ErdosRenyiRandomGraphMaxCutSDP)
 
   // Final value taken by solving with Mosek
   BOOST_REQUIRE_CLOSE(finalValue, -3672.7, 1e-1);
+}
+
+BOOST_AUTO_TEST_CASE(GaussianMatrixSensingSDP)
+{
+  arma::mat Xorig, A, bmat;
+
+  data::Load("sensing_X.csv", Xorig, true, false);
+  data::Load("sensing_A.csv", A, true, false);
+  data::Load("sensing_b.csv", bmat, true, false);
+
+  arma::vec b = bmat;
+
+  const size_t m = Xorig.n_rows;
+  const size_t n = Xorig.n_cols;
+  const size_t p = b.n_elem;
+
+  assert(A.n_rows == p);
+  assert(A.n_cols == m * m);
+
+  float r = 0.5 + sqrt(0.25 + 2 * p);
+  if (ceil(r) > m + n)
+    r = m + n;
+
+  std::srand(0x0FAE8543);
+  arma::mat coordinates = arma::randu<arma::mat>(m + n, ceil(r));
+  std::srand(std::time(nullptr));
+
+  LRSDP sensing(0, p, coordinates);
+  sensing.SparseC().eye(m + n, m + n);
+  sensing.DenseB() = 2. * b;
+  for (size_t i = 0; i < p; ++i)
+  {
+    const auto rows = arma::span(0, m - 1);
+    const auto cols = arma::span(m, m + n - 1);
+    const auto Ai = arma::reshape(A.row(i), n, m);
+    sensing.DenseA()[i].zeros(m + n, m + n);
+    sensing.DenseA()[i](rows, cols) = trans(Ai);
+    sensing.DenseA()[i](cols, rows) = Ai;
+  }
+
+  double finalValue = sensing.Optimize(coordinates);
+  BOOST_REQUIRE_CLOSE(finalValue, 44.7550132629, 1e-1);
+
+  const arma::mat rrt = coordinates * trans(coordinates);
+  for (size_t i = 0; i < p; ++i)
+  {
+    const auto rows = arma::span(0, m - 1);
+    const auto cols = arma::span(m, m + n - 1);
+    const auto Ai = arma::reshape(A.row(i), n, m);
+    BOOST_REQUIRE_CLOSE(arma::dot(trans(Ai), rrt(rows, cols)), b(i), 1e-3);
+  }
 }
 
 /**
