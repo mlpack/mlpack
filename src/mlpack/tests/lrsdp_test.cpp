@@ -155,9 +155,13 @@ BOOST_AUTO_TEST_CASE(ErdosRenyiRandomGraphMaxCutSDP)
   if (ceil(r) > laplacian.n_rows)
     r = laplacian.n_rows;
 
-  std::srand(0xDEADBEEF);
-  arma::mat coordinates = arma::randu<arma::mat>(laplacian.n_rows, ceil(r));
-  std::srand(std::time(nullptr));
+  // initialize coordinates to a feasible point
+  arma::mat coordinates(laplacian.n_rows, ceil(r));
+  coordinates.zeros();
+  for (size_t i = 0; i < coordinates.n_rows; ++i)
+  {
+    coordinates(i, i % coordinates.n_cols) = 1.;
+  }
 
   LRSDP maxcut(laplacian.n_rows, 0, coordinates);
   maxcut.SparseC() = laplacian;
