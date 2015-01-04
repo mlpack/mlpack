@@ -4,7 +4,7 @@ Upstream-Contact: Ryan Curtin <gth671b@mail.gatech.edu>
 Source: http://www.mlpack.org/
 
 Files: *
-Copyright: Copyright 2008-2014, Ryan Curtin <gth671b@mail.gatech.edu>
+Copyright: Copyright 2008-2015, Ryan Curtin <gth671b@mail.gatech.edu>
 Copyright: Copyright 2008-2013, Bill March <march@gatech.edu>
 Copyright: Copyright 2008-2012, Dongryeol Lee <dongryel@cc.gatech.edu>
 Copyright: Copyright 2008-2013, Nishant Mehta <niche@cc.gatech.edu>
@@ -19,7 +19,7 @@ Copyright: Copyright 2011, Noah Kauffman <notoriousnoah@gmail.com>
 Copyright: Copyright 2012, Rajendran Mohan <rmohan88@gatech.edu>
 Copyright: Copyright 2012, Trironk Kiatkungwanglai <trironk@gmail.com>
 Copyright: Copyright 2012, Patrick Mason <patrick.s.mason@gmail.com>
-Copyright: Copyright 2013-2014, Marcus Edel <marcus.edel@fu-berlin.de>
+Copyright: Copyright 2013-2015, Marcus Edel <marcus.edel@fu-berlin.de>
 Copyright: Copyright 2013, Mudit Raj Gupta <mudit.raaj.gupta@gmail.com>
 Copyright: Copyright 2013, Sumedh Ghaisas <sumedhghaisas@gmail.com>
 Copyright: Copyright 2014, Michael Fox <michaelfox99@gmail.com>
@@ -32,6 +32,7 @@ Copyright: Copyright 2014, Vahab Akbarzadeh <v.akbarzadeh@gmail.com>
 Copyright: Copyright 2014, Andrew Wells <andrewmw94@gmail.com>
 Copyright: Copyright 2014, Zhihao Lou <lzh1984@gmail.com>
 Copyright: Copyright 2014, Udit Saxena <saxenda.udit@gmail.com>
+Copyright: Copyright 2014-2015, Stephen Tu <tu.stephenl@gmail.com>
 License: LGPL-3+
   The text of the license is available on Debian systems in the
   /usr/share/common-licenses/LGPL-3 file.
