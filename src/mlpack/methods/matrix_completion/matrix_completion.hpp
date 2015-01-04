@@ -18,19 +18,25 @@ class MatrixCompletion
 public:
   MatrixCompletion(const size_t m,
                    const size_t n,
-                   const arma::mat& entries,
+                   const arma::umat& indices,
+                   const arma::vec& values,
                    const size_t r);
 
   MatrixCompletion(const size_t m,
                    const size_t n,
-                   const arma::mat& entries,
+                   const arma::umat& indices,
+                   const arma::vec& values,
                    const arma::mat& initialPoint);
 
   MatrixCompletion(const size_t m,
                    const size_t n,
-                   const arma::mat& entries);
+                   const arma::umat& indices,
+                   const arma::vec& values);
 
   void Recover();
+
+  const optimization::LRSDP& Sdp() const { return sdp; }
+  optimization::LRSDP& Sdp() { return sdp; }
 
   const arma::mat& Recovered() const { return recovered; }
   arma::mat& Recovered() { return recovered; }
@@ -38,11 +44,13 @@ public:
 private:
   size_t m;
   size_t n;
-  arma::mat entries;
+  arma::umat indices;
+  arma::mat values;
 
   optimization::LRSDP sdp;
   arma::mat recovered;
 
+  void checkValues();
   void initSdp();
 
   static size_t
