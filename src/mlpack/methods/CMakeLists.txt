@@ -17,6 +17,7 @@ set(DIRS
   logistic_regression
   lsh
 #  mvu
+  matrix_completion
   naive_bayes
   nca
   neighbor_search
