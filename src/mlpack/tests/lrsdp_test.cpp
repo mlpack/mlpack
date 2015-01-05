@@ -118,6 +118,73 @@ BOOST_AUTO_TEST_CASE(Johnson844LovaszThetaSDP)
   }
 }
 
+
+/**
+ * Create an unweighted graph laplacian from the edges.
+ */
+void createSparseGraphLaplacian(const arma::mat& edges,
+                                arma::sp_mat& laplacian)
+{
+  // Get the number of vertices in the problem.
+  const size_t vertices = max(max(edges)) + 1;
+
+  laplacian.zeros(vertices, vertices);
+
+  for (size_t i = 0; i < edges.n_cols; ++i)
+  {
+    laplacian(edges(0, i), edges(1, i)) = -1.0;
+    laplacian(edges(1, i), edges(0, i)) = -1.0;
+  }
+
+  for (size_t i = 0; i < vertices; ++i)
+  {
+    laplacian(i, i) = -arma::accu(laplacian.row(i));
+  }
+}
+
+BOOST_AUTO_TEST_CASE(ErdosRenyiRandomGraphMaxCutSDP)
+{
+  // Load the edges.
+  arma::mat edges;
+  data::Load("erdosrenyi-n100.csv", edges, true);
+
+  arma::sp_mat laplacian;
+  createSparseGraphLaplacian(edges, laplacian);
+
+  float r = 0.5 + sqrt(0.25 + 2 * edges.n_cols);
+  if (ceil(r) > laplacian.n_rows)
+    r = laplacian.n_rows;
+
+  // initialize coordinates to a feasible point
+  arma::mat coordinates(laplacian.n_rows, ceil(r));
+  coordinates.zeros();
+  for (size_t i = 0; i < coordinates.n_rows; ++i)
+  {
+    coordinates(i, i % coordinates.n_cols) = 1.;
+  }
+
+  LRSDP maxcut(laplacian.n_rows, 0, coordinates);
+  maxcut.SparseC() = laplacian;
+  maxcut.SparseC() *= -1.; // need to minimize the negative
+  maxcut.SparseB().ones(laplacian.n_rows);
+  for (size_t i = 0; i < laplacian.n_rows; ++i)
+  {
+    maxcut.SparseA()[i].zeros(laplacian.n_rows, laplacian.n_rows);
+    maxcut.SparseA()[i](i, i) = 1.;
+  }
+
+  const double finalValue = maxcut.Optimize(coordinates);
+  const arma::mat rrt = coordinates * trans(coordinates);
+
+  for (size_t i = 0; i < laplacian.n_rows; ++i)
+  {
+    BOOST_REQUIRE_CLOSE(rrt(i, i), 1., 1e-5);
+  }
+
+  // Final value taken by solving with Mosek
+  BOOST_REQUIRE_CLOSE(finalValue, -3672.7, 1e-1);
+}
+
 /**
  * keller4.co test case for Lovasz-Theta LRSDP.
  * This is commented out because it takes a long time to run.
