@@ -38,9 +38,9 @@ BOOST_AUTO_TEST_CASE(NMFDefaultTest)
 
   mat wh = w * h;
 
-  // Make sure reconstruction error is not too high.  1.5% tolerance.
+  // Make sure reconstruction error is not too high.  5.0% tolerance.
   BOOST_REQUIRE_SMALL(arma::norm(v - wh, "fro") / arma::norm(v, "fro"),
-      0.015);
+      0.05);
 }
 
 /**
@@ -78,9 +78,11 @@ BOOST_AUTO_TEST_CASE(NMFRandomDivTest)
   mat v = w * h;
   size_t r = 12;
 
+  // Custom tighter tolerance.
+  SimpleResidueTermination srt(1e-8, 10000);
   AMF<SimpleResidueTermination,
       RandomInitialization,
-      NMFMultiplicativeDivergenceUpdate> nmf;
+      NMFMultiplicativeDivergenceUpdate> nmf(srt);
   nmf.Apply(v, r, w, h);
 
   mat wh = w * h;
