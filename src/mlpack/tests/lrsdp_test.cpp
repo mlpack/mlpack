@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_SUITE(LRSDPTest);
 /**
  * Create a Lovasz-Theta initial point.
  */
-void createLovaszThetaInitialPoint(const arma::mat& edges,
+void CreateLovaszThetaInitialPoint(const arma::mat& edges,
                                    arma::mat& coordinates)
 {
   // Get the number of vertices in the problem.
@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(Johnson844LovaszThetaSDP)
   // The LRSDP itself and the initial point.
   arma::mat coordinates;
 
-  createLovaszThetaInitialPoint(edges, coordinates);
+  CreateLovaszThetaInitialPoint(edges, coordinates);
 
   LRSDP lovasz(edges.n_cols + 1, 0, coordinates);
 
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(Johnson844LovaszThetaSDP)
 /**
  * Create an unweighted graph laplacian from the edges.
  */
-void createSparseGraphLaplacian(const arma::mat& edges,
+void CreateSparseGraphLaplacian(const arma::mat& edges,
                                 arma::sp_mat& laplacian)
 {
   // Get the number of vertices in the problem.
@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(ErdosRenyiRandomGraphMaxCutSDP)
   data::Load("erdosrenyi-n100.csv", edges, true);
 
   arma::sp_mat laplacian;
-  createSparseGraphLaplacian(edges, laplacian);
+  CreateSparseGraphLaplacian(edges, laplacian);
 
   float r = 0.5 + sqrt(0.25 + 2 * edges.n_cols);
   if (ceil(r) > laplacian.n_rows)
@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE(Keller4LovaszThetaSDP)
   // The LRSDP itself and the initial point.
   arma::mat coordinates;
 
-  createLovaszThetaInitialPoint(edges, coordinates);
+  CreateLovaszThetaInitialPoint(edges, coordinates);
 
   LRSDP lovasz(edges.n_cols, coordinates);
 
