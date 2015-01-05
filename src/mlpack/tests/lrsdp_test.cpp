@@ -118,30 +118,58 @@ BOOST_AUTO_TEST_CASE(Johnson844LovaszThetaSDP)
   }
 }
 
+/**
+ * Test a nuclear norm minimization SDP.
+ *
+ * Specifically, fix an unknown m x n matrix X. Our goal is to recover X from p
+ * measurements of X, where the i-th measurement is of the form
+ *
+ *    b_i = dot(A_i, X)
+ *
+ * where the A_i's have iid entries from Normal(0, 1/p). We do this by solving the
+ * the following semi-definite program
+ *
+ *    min ||X||_* subj to dot(A_i, X) = b_i, i=1,...,p
+ *
+ * where ||X||_* denotes the nuclear norm (sum of singular values) of X. The equivalent
+ * SDP is
+ *
+ *    min tr(W1) + tr(W2) : [ W1, X ; X', W2 ] is PSD, dot(A_i, X) = b_i, i=1,...,p
+ *
+ * For more details on matrix sensing and nuclear norm minimization, see
+ *
+ *    Guaranteed Minimum-Rank Solutions of Linear Matrix Equations via Nuclear
+ *    Norm Minimization.
+ *    Benjamin Recht, Maryam Fazel, Pablo Parrilo.
+ *    SIAM Review 2010.
+ *
+ */
 BOOST_AUTO_TEST_CASE(GaussianMatrixSensingSDP)
 {
-  arma::mat Xorig, A, bmat;
+  arma::mat Xorig, A;
 
+  // read the unknown matrix X and the measurement matrices A_i in
   data::Load("sensing_X.csv", Xorig, true, false);
   data::Load("sensing_A.csv", A, true, false);
-  data::Load("sensing_b.csv", bmat, true, false);
-
-  arma::vec b = bmat;
 
   const size_t m = Xorig.n_rows;
   const size_t n = Xorig.n_cols;
-  const size_t p = b.n_elem;
-
-  assert(A.n_rows == p);
+  const size_t p = A.n_rows;
   assert(A.n_cols == m * m);
+
+  arma::vec b(p);
+  for (size_t i = 0; i < p; ++i)
+  {
+    const auto Ai = arma::reshape(A.row(i), n, m);
+    b(i) = arma::dot(trans(Ai), Xorig);
+  }
 
   float r = 0.5 + sqrt(0.25 + 2 * p);
   if (ceil(r) > m + n)
     r = m + n;
 
-  std::srand(0x0FAE8543);
-  arma::mat coordinates = arma::randu<arma::mat>(m + n, ceil(r));
-  std::srand(std::time(nullptr));
+  arma::mat coordinates;
+  coordinates.eye(m + n, ceil(r));
 
   LRSDP sensing(0, p, coordinates);
   sensing.SparseC().eye(m + n, m + n);
@@ -165,12 +193,14 @@ BOOST_AUTO_TEST_CASE(GaussianMatrixSensingSDP)
   for (size_t i = 0; i < p; ++i)
   {
     const auto Ai = arma::reshape(A.row(i), n, m);
-    const double measurement = arma::dot(trans(Ai), rrt(block_rows, block_cols));
+    const double measurement =
+      arma::dot(trans(Ai), rrt(block_rows, block_cols));
     BOOST_REQUIRE_CLOSE(measurement, b(i), 1e-3);
   }
 
   // check matrix recovery
-  const double err = arma::norm(Xorig - rrt(block_rows, block_cols), "fro") /
+  const double err =
+    arma::norm(Xorig - rrt(block_rows, block_cols), "fro") /
     arma::norm(Xorig, "fro");
   BOOST_REQUIRE_SMALL(err, 1e-3);
 }
