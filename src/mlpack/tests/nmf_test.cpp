@@ -27,7 +27,6 @@ using namespace mlpack::amf;
  */
 BOOST_AUTO_TEST_CASE(NMFDefaultTest)
 {
-  mlpack::math::RandomSeed(std::time(NULL));
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);
   mat v = w * h;
@@ -49,7 +48,6 @@ BOOST_AUTO_TEST_CASE(NMFDefaultTest)
  */
 BOOST_AUTO_TEST_CASE(NMFAcolDistTest)
 {
-  mlpack::math::RandomSeed(std::time(NULL));
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);
   mat v = w * h;
@@ -72,7 +70,6 @@ BOOST_AUTO_TEST_CASE(NMFAcolDistTest)
  */
 BOOST_AUTO_TEST_CASE(NMFRandomDivTest)
 {
-  mlpack::math::RandomSeed(std::time(NULL));
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);
   mat v = w * h;
@@ -99,7 +96,6 @@ BOOST_AUTO_TEST_CASE(NMFRandomDivTest)
  */
 BOOST_AUTO_TEST_CASE(NMFALSTest)
 {
-  mlpack::math::RandomSeed(std::time(NULL));
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);
   mat v = w * h;
