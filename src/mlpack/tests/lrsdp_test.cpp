@@ -51,7 +51,7 @@ void CreateLovaszThetaInitialPoint(const arma::mat& edges,
  * is all that is necessary to set up the problem.  A matrix which will contain
  * initial point coordinates should be given also.
  */
-void setupLovaszTheta(const arma::mat& edges,
+void SetupLovaszTheta(const arma::mat& edges,
                       LRSDP& lovasz)
 {
   // Get the number of vertices in the problem.
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(Johnson844LovaszThetaSDP)
 
   LRSDP lovasz(edges.n_cols + 1, 0, coordinates);
 
-  setupLovaszTheta(edges, lovasz);
+  SetupLovaszTheta(edges, lovasz);
 
   double finalValue = lovasz.Optimize(coordinates);
 
@@ -290,7 +290,7 @@ BOOST_AUTO_TEST_CASE(Keller4LovaszThetaSDP)
 
   LRSDP lovasz(edges.n_cols, coordinates);
 
-  setupLovaszTheta(edges, lovasz);
+  SetupLovaszTheta(edges, lovasz);
 
   double finalValue = lovasz.Optimize(coordinates);
 
