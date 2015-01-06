@@ -227,7 +227,7 @@ BOOST_AUTO_TEST_CASE(GaussianMatrixSensingSDP)
   arma::vec b(p);
   for (size_t i = 0; i < p; ++i)
   {
-    const auto Ai = arma::reshape(A.row(i), n, m);
+    const arma::mat Ai = arma::reshape(A.row(i), n, m);
     b(i) = arma::dot(trans(Ai), Xorig);
   }
 
@@ -247,7 +247,7 @@ BOOST_AUTO_TEST_CASE(GaussianMatrixSensingSDP)
 
   for (size_t i = 0; i < p; ++i)
   {
-    const auto Ai = arma::reshape(A.row(i), n, m);
+    const arma::mat Ai = arma::reshape(A.row(i), n, m);
     sensing.DenseA()[i].zeros(m + n, m + n);
     sensing.DenseA()[i](block_rows, block_cols) = trans(Ai);
     sensing.DenseA()[i](block_cols, block_rows) = Ai;
@@ -259,7 +259,7 @@ BOOST_AUTO_TEST_CASE(GaussianMatrixSensingSDP)
   const arma::mat rrt = coordinates * trans(coordinates);
   for (size_t i = 0; i < p; ++i)
   {
-    const auto Ai = arma::reshape(A.row(i), n, m);
+    const arma::mat Ai = arma::reshape(A.row(i), n, m);
     const double measurement =
       arma::dot(trans(Ai), rrt(block_rows, block_cols));
     BOOST_REQUIRE_CLOSE(measurement, b(i), 1e-3);
