@@ -29,6 +29,10 @@ using namespace mlpack::ann;
 
 BOOST_AUTO_TEST_SUITE(ActivationFunctionsTest);
 
+// Be careful!  When writing new tests, always get the boolean value and store
+// it in a temporary, because the Boost unit test macros do weird things and
+// will cause bizarre problems.
+
 // Generate dataset for activation function tests.
 const arma::colvec activationData("-2 3.2 4.5 -100.2 1 -1 2 0");
 
@@ -323,7 +327,8 @@ void CheckGradientNumericallyCorrect(const arma::colvec input,
         dW = (pLoss - mLoss) / (2 * perturbation);
         e = std::abs(dW - gradient[l].at(i, j));
 
-        BOOST_REQUIRE_EQUAL(e < threshold, 1);
+        bool b = e < threshold;
+        BOOST_REQUIRE_EQUAL(b, 1);
 
         // Restore original weight.
         layer[l].get().Weights().at(i, j) = weight;
