@@ -261,14 +261,13 @@ BOOST_AUTO_TEST_CASE(GaussianMatrixSensingSDP)
   {
     const arma::mat Ai = arma::reshape(A.row(i), n, m);
     const double measurement =
-      arma::dot(trans(Ai), rrt(block_rows, block_cols));
+        arma::dot(trans(Ai), rrt(block_rows, block_cols));
     BOOST_REQUIRE_CLOSE(measurement, b(i), 1e-3);
   }
 
   // check matrix recovery
-  const double err =
-    arma::norm(Xorig - rrt(block_rows, block_cols), "fro") /
-    arma::norm(Xorig, "fro");
+  const double err = arma::norm(Xorig - rrt(block_rows, block_cols), "fro") /
+      arma::norm(Xorig, "fro");
   BOOST_REQUIRE_SMALL(err, 1e-3);
 }
 
