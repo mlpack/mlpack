@@ -1,10 +1,10 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: MLPACK
-Upstream-Contact: Ryan Curtin <gth671b@mail.gatech.edu>
+Upstream-Name: mlpack
+Upstream-Contact: Ryan Curtin <ryan@ratml.org>
 Source: http://www.mlpack.org/
 
 Files: *
-Copyright: Copyright 2008-2014, Ryan Curtin <gth671b@mail.gatech.edu>
+Copyright: Copyright 2008-2015, Ryan Curtin <ryan@ratml.org>
 Copyright: Copyright 2008-2013, Bill March <march@gatech.edu>
 Copyright: Copyright 2008-2012, Dongryeol Lee <dongryel@cc.gatech.edu>
 Copyright: Copyright 2008-2013, Nishant Mehta <niche@cc.gatech.edu>
@@ -31,6 +31,6 @@ Copyright: Copyright 2014, Abhishek Laddha <laddhaabhishek11@gmail.com>
 Copyright: Copyright 2014, Vahab Akbarzadeh <v.akbarzadeh@gmail.com>
 Copyright: Copyright 2014, Andrew Wells <andrewmw94@gmail.com>
 Copyright: Copyright 2014, Zhihao Lou <lzh1984@gmail.com>
-License: LGPL-3+
+License: BSD-3-clause
   The text of the license is available on Debian systems in the
-  /usr/share/common-licenses/LGPL-3 file.
+  /usr/share/common-licenses/BSD file.
