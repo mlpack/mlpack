@@ -1,3 +1,7 @@
+2015-01-07    mlpack 1.0.12
+
+  * Switch to 3-clause BSD license.
+
 2014-12-11    mlpack 1.0.11
 
   * Proper handling of dimension calculation in PCA.
