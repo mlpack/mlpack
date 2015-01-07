@@ -1,21 +1,3 @@
-// Copyright (C) 2010 NICTA and the authors listed below
-// http://nicta.com.au
-// 
-// Authors:
-// - Conrad Sanderson (conradsand at ieee dot org)
-// - Dimitrios Bouzas (dimitris dot mpouzas at gmail dot com)
-// - Ryan Curtin (ryan at igglybob dot com)
-// 
-// This file is part of the Armadillo C++ library.
-// It is provided without any warranty of fitness
-// for any purpose. You can redistribute this file
-// and/or modify it under the terms of the GNU
-// Lesser General Public License (LGPL) as published
-// by the Free Software Foundation, either version 3
-// of the License or (at your option) any later version.
-// (see http://www.opensource.org/licenses for more info)
-
-
 //! \addtogroup glue_cov
 //! @{
 
@@ -84,11 +66,11 @@ glue_ccov::direct_ccov(Mat< std::complex<T> >& out, const Mat< std::complex<T> >
   typedef typename std::complex<T> eT;
 
   if(A.is_vec() && B.is_vec())
-    { 
+    {
     arma_debug_check( (A.n_elem != B.n_elem), "cov(): the number of elements in A and B must match" );
 
     const eT* A_ptr = A.memptr();
-    const eT* B_ptr = B.memptr();   
+    const eT* B_ptr = B.memptr();
 
     eT A_acc   = eT(0);
     eT B_acc   = eT(0);
@@ -117,10 +99,10 @@ glue_ccov::direct_ccov(Mat< std::complex<T> >& out, const Mat< std::complex<T> >
   else
     {
     arma_debug_assert_same_size(A, B, "ccov()");
-  
+
     const uword N = A.n_cols;
     const eT norm_val = (norm_type == 0) ? ( (N > 1) ? eT(N-1) : eT(1) ) : eT(N);
-    
+
     out = A * trans(conj(B));
     out -= (sum(A) * trans(conj(sum(B)))) / eT(N);
     out /= norm_val;
@@ -143,7 +125,7 @@ glue_ccov::apply(Mat<typename T1::elem_type>& out, const Glue<T1,T2,glue_ccov>& 
 
   const Mat<eT>& A = A_tmp.M;
   const Mat<eT>& B = B_tmp.M;
-  
+
   const uword norm_type = X.aux_uword;
 
   if(&A != &B)
@@ -154,7 +136,7 @@ glue_ccov::apply(Mat<typename T1::elem_type>& out, const Glue<T1,T2,glue_ccov>& 
     {
     op_ccov::direct_ccov(out, A, norm_type);
     }
-  
+
   }
 
 
