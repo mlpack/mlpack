@@ -12,8 +12,8 @@
 // The version of mlpack.  If this is svn trunk, this will be a version with
 // higher number than the most recent release.
 #define __MLPACK_VERSION_MAJOR 1
-#define __MLPACK_VERSION_MINOR 0
-#define __MLPACK_VERSION_PATCH 8
+#define __MLPACK_VERSION_MINOR x
+#define __MLPACK_VERSION_PATCH x
 
 // The name of the version (for use by --version).
 namespace mlpack {
