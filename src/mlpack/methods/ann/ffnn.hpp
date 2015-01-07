@@ -9,6 +9,7 @@
 
 #include <mlpack/core.hpp>
 
+#include <mlpack/methods/ann/network_traits.hpp>
 #include <mlpack/methods/ann/performance_functions/cee_function.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
 
@@ -316,7 +317,23 @@ class FFNN
     double err;
 }; // class FFNN
 
+
+//! Network traits for the FFNN network.
+template <
+  typename ConnectionTypes,
+  typename OutputLayerType,
+  class PerformanceFunction
+>
+class NetworkTraits<
+    FFNN<ConnectionTypes, OutputLayerType, PerformanceFunction> >
+{
+ public:
+  static const bool IsFNN = true;
+  static const bool IsRNN = false;
+};
+
 }; // namespace ann
 }; // namespace mlpack
 
 #endif
+

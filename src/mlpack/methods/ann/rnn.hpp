@@ -11,6 +11,7 @@
 
 #include <boost/ptr_container/ptr_vector.hpp>
 
+#include <mlpack/methods/ann/network_traits.hpp>
 #include <mlpack/methods/ann/performance_functions/cee_function.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
 #include <mlpack/methods/ann/connections/connection_traits.hpp>
@@ -74,6 +75,7 @@ class RNN
 
       // Reset the overall error.
       err = 0;
+      error = MatType(target.n_elem, input.n_rows);
 
       // Iterate through the input sequence and perform the feed forward pass.
       for (seqNum = 0; seqNum < input.n_rows; seqNum++)
@@ -581,7 +583,21 @@ class RNN
     OutputLayerType& outputLayer;
 }; // class RNN
 
+//! Network traits for the FFNN network.
+template <
+  typename ConnectionTypes,
+  typename OutputLayerType,
+  class PerformanceFunction
+>
+class NetworkTraits<RNN<ConnectionTypes, OutputLayerType, PerformanceFunction> >
+{
+ public:
+  static const bool IsFNN = false;
+  static const bool IsRNN = true;
+};
+
 }; // namespace ann
 }; // namespace mlpack
 
 #endif
+
