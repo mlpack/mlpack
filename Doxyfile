@@ -3,8 +3,8 @@
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
-PROJECT_NAME           = MLPACK
-PROJECT_NUMBER         = 1.0.11
+PROJECT_NAME           = mlpack
+PROJECT_NUMBER         = 1.0.12
 OUTPUT_DIRECTORY       = ./doc
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
