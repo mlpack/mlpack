@@ -3,7 +3,7 @@
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
-PROJECT_NAME           = MLPACK
+PROJECT_NAME           = mlpack
 PROJECT_NUMBER         = trunk
 OUTPUT_DIRECTORY       = ./doc
 CREATE_SUBDIRS         = NO
