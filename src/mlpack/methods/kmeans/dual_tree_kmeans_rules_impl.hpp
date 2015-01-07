@@ -25,6 +25,7 @@ DualTreeKMeansRules<MetricType, TreeType>::DualTreeKMeansRules(
     arma::vec& distances,
     arma::Col<size_t>& assignments,
     arma::Col<size_t>& distanceIteration,
+    const arma::mat& interclusterDistances,
     MetricType& metric) :
     dataset(dataset),
     centroids(centroids),
@@ -36,6 +37,7 @@ DualTreeKMeansRules<MetricType, TreeType>::DualTreeKMeansRules(
     distances(distances),
     assignments(assignments),
     distanceIteration(distanceIteration),
+    interclusterDistances(interclusterDistances),
     metric(metric),
     distanceCalculations(0)
 {
@@ -112,48 +114,46 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
     TreeType& queryNode,
     TreeType& referenceNode)
 {
-//  if (IterationUpdate(referenceNode) == DBL_MAX)
-//  {
-    // The iteration update showed that the owner could not possibly change.
-//    return DBL_MAX;
-//  }
-
   if (referenceNode.Stat().ClustersPruned() == size_t(-1))
     referenceNode.Stat().ClustersPruned() =
         referenceNode.Parent()->Stat().ClustersPruned();
 
   traversalInfo.LastReferenceNode() = &referenceNode;
 
-  // Can we update the minimum query node distance for this reference node?
-  const double minDistance = referenceNode.MinDistance(&queryNode);
-  const double maxDistance = referenceNode.MaxDistance(&queryNode);
-  distanceCalculations += 2;
-  if (maxDistance < referenceNode.Stat().MaxQueryNodeDistance())
+  double score = ElkanTypeScore(queryNode, referenceNode);
+
+  // We also have to update things if the closest query node is null.  This can
+  // probably be improved.
+  if (score != DBL_MAX || referenceNode.Stat().ClosestQueryNode() == NULL)
   {
-    referenceNode.Stat().ClosestQueryNode() = (void*) &queryNode;
-    referenceNode.Stat().MinQueryNodeDistance() = minDistance;
-    referenceNode.Stat().MaxQueryNodeDistance() = maxDistance;
-        referenceNode.MaxDistance(&queryNode);
-//    ++distanceCalculations;
-    return 0.0; // Pruning is not possible.
+    // Can we update the minimum query node distance for this reference node?
+    const double minDistance = referenceNode.MinDistance(&queryNode);
+    const double maxDistance = referenceNode.MaxDistance(&queryNode);
+    distanceCalculations += 2;
+    if (maxDistance < referenceNode.Stat().MaxQueryNodeDistance())
+    {
+      referenceNode.Stat().ClosestQueryNode() = (void*) &queryNode;
+      referenceNode.Stat().MinQueryNodeDistance() = minDistance;
+      referenceNode.Stat().MaxQueryNodeDistance() = maxDistance;
+//          referenceNode.MaxDistance(&queryNode);
+//      ++distanceCalculations;
+      return 0.0; // Pruning is not possible.
+    }
+
+    else if (IsDescendantOf(
+        *((TreeType*) referenceNode.Stat().ClosestQueryNode()), queryNode))
+    {
+      // Just update.
+      referenceNode.Stat().ClosestQueryNode() = (void*) &queryNode;
+      referenceNode.Stat().MinQueryNodeDistance() = minDistance;
+      referenceNode.Stat().MaxQueryNodeDistance() =
+          referenceNode.MaxDistance(&queryNode);
+      ++distanceCalculations;
+      return 0.0; // Pruning is not possible.
+    }
+
+    score = PellegMooreScore(queryNode, referenceNode, minDistance);
   }
-
-  else if (IsDescendantOf(
-      *((TreeType*) referenceNode.Stat().ClosestQueryNode()), queryNode))
-  {
-    // Just update.
-    referenceNode.Stat().ClosestQueryNode() = (void*) &queryNode;
-    referenceNode.Stat().MinQueryNodeDistance() = minDistance;
-    referenceNode.Stat().MaxQueryNodeDistance() =
-        referenceNode.MaxDistance(&queryNode);
-    ++distanceCalculations;
-    return 0.0; // Pruning is not possible.
-  }
-
-//  double score = ElkanTypeScore(queryNode, referenceNode);
-//  if (score != DBL_MAX)
-
-  double score = PellegMooreScore(queryNode, referenceNode, minDistance);
 
   if (score == DBL_MAX)
   {
@@ -307,11 +307,17 @@ double DualTreeKMeansRules<MetricType, TreeType>::ElkanTypeScore(
     TreeType& referenceNode)
 {
   // We have to calculate the minimum distance between the query node and the
-  // reference node's best query node.
-  const double minQueryDistance = queryNode.MinDistance((TreeType*)
-      referenceNode.Stat().ClosestQueryNode());
-  ++distanceCalculations;
-  return ElkanTypeScore(queryNode, referenceNode, minQueryDistance);
+  // reference node's best query node.  First, try to use the cached distance.
+//  const double minQueryDistance = queryNode.Stat().FirstBound();
+  if (queryNode.NumDescendants() == 1)
+  {
+    const double score = ElkanTypeScore(queryNode, referenceNode,
+        interclusterDistances[queryNode.Descendant(0)]);
+//    Log::Warn << "Elkan scoring: " << score << ".\n";
+    return score;
+  }
+  else
+    return 0.0;
 }
 
 template<typename MetricType, typename TreeType>
@@ -322,6 +328,8 @@ double DualTreeKMeansRules<MetricType, TreeType>::ElkanTypeScore(
 {
   // See if we can do an Elkan-type prune on between-centroid distances.
   const double maxDistance = referenceNode.Stat().MaxQueryNodeDistance();
+  if (maxDistance == DBL_MAX)
+    return minQueryDistance;
 
   if (minQueryDistance > 2.0 * maxDistance)
   {

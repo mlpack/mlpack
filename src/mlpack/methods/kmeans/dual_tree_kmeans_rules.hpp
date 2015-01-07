@@ -24,6 +24,7 @@ class DualTreeKMeansRules
                       arma::vec& distances,
                       arma::Col<size_t>& assignments,
                       arma::Col<size_t>& distanceIteration,
+                      const arma::mat& interclusterDistances,
                       MetricType& metric);
 
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
@@ -60,6 +61,7 @@ class DualTreeKMeansRules
   arma::Col<size_t>& assignments;
   arma::Col<size_t> visited;
   arma::Col<size_t>& distanceIteration;
+  const arma::mat& interclusterDistances;
   MetricType& metric;
 
   size_t distanceCalculations;

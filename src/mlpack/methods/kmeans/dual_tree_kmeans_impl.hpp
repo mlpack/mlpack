@@ -11,6 +11,8 @@
 #include "dual_tree_kmeans.hpp"
 #include "dual_tree_kmeans_rules.hpp"
 
+#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+
 namespace mlpack {
 namespace kmeans {
 
@@ -68,11 +70,18 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   TreeType* centroidTree = BuildTree<TreeType>(
       const_cast<typename TreeType::Mat&>(centroids), oldFromNewCentroids);
 
+  // Now calculate distances between centroids.
+  neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType, TreeType>
+      nns(centroidTree, centroids);
+  arma::mat interclusterDistances;
+  arma::Mat<size_t> closestClusters; // We don't actually care about these.
+  nns.Search(1, closestClusters, interclusterDistances);
+
   // Now run the dual-tree algorithm.
   typedef DualTreeKMeansRules<MetricType, TreeType> RulesType;
   RulesType rules(dataset, centroids, newCentroids, counts, oldFromNewCentroids,
       iteration, clusterDistances, distances, assignments, distanceIteration,
-      metric);
+      interclusterDistances, metric);
 
   // Use the dual-tree traverser.
 //typename TreeType::template DualTreeTraverser<RulesType> traverser(rules);

@@ -21,7 +21,12 @@ class DualTreeKMeansStatistic
       minQueryNodeDistance(DBL_MAX),
       maxQueryNodeDistance(DBL_MAX),
       clustersPruned(0),
-      iteration(size_t() - 1)
+      iteration(size_t() - 1),
+      firstBound(DBL_MAX),
+      secondBound(DBL_MAX),
+      bound(DBL_MAX),
+      lastDistanceNode(NULL),
+      lastDistance(0.0)
   {
     // Empirically calculate the centroid.
     centroid.zeros(node.Dataset().n_rows);
@@ -70,6 +75,29 @@ class DualTreeKMeansStatistic
   //! Modify the current owner (if any) of these reference points.
   size_t& Owner() { return owner; }
 
+  // For nearest neighbor search.
+
+  //! Get the first bound.
+  double FirstBound() const { return firstBound; }
+  //! Modify the first bound.
+  double& FirstBound() { return firstBound; }
+  //! Get the second bound.
+  double SecondBound() const { return secondBound; }
+  //! Modify the second bound.
+  double& SecondBound() { return secondBound; }
+  //! Get the overall bound.
+  double Bound() const { return bound; }
+  //! Modify the overall bound.
+  double& Bound() { return bound; }
+  //! Get the last distance evaluation node.
+  void* LastDistanceNode() const { return lastDistanceNode; }
+  //! Modify the last distance evaluation node.
+  void*& LastDistanceNode() { return lastDistanceNode; }
+  //! Get the last distance calculation.
+  double LastDistance() const { return lastDistance; }
+  //! Modify the last distance calculation.
+  double& LastDistance() { return lastDistance; }
+
  private:
   //! The empirically calculated centroid of the node.
   arma::vec centroid;
@@ -88,6 +116,14 @@ class DualTreeKMeansStatistic
   //! The owner of these reference nodes (centroids.n_cols if there is no
   //! owner).
   size_t owner;
+
+  // For nearest neighbor search.
+
+  double firstBound;
+  double secondBound;
+  double bound;
+  void* lastDistanceNode;
+  double lastDistance;
 };
 
 } // namespace kmeans
