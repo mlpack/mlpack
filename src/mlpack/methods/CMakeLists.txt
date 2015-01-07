@@ -1,6 +1,6 @@
 # Recurse into each method mlpack provides.
 set(DIRS
-  adaboost 
+#  adaboost
   amf
   cf
   decision_stump
