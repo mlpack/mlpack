@@ -241,33 +241,6 @@ class GMM
    */
   distribution::GaussianDistribution& Component(size_t i) { return dists[i]; }
 
-  //! Functions from earlier releases give errors
-  const std::vector<arma::vec>& Means() const
-  {
-    Log::Fatal << "GMM::Means() no longer supported."
-        << "See GMM::Components().";
-    return means;
-  }
-  std::vector<arma::vec>& Means()
-  {
-    Log::Fatal << "GMM::Means() no longer supported."
-        << "See GMM::Components().";
-    return means;
-  }
-  const std::vector<arma::mat>& Covariances() const
-  {
-    Log::Fatal << "GMM::Covariances() no longer supported."
-        << "See GMM::Components().";
-    return covariances;
-  }
-  std::vector<arma::mat>& Covariances()
-  {
-    Log::Fatal << "GMM::Covariances() no longer supported."
-        << "See GMM::Components().";
-    return covariances;
-  }
-
-
   //! Return a const reference to the a priori weights of each Gaussian.
   const arma::vec& Weights() const { return weights; }
   //! Return a reference to the a priori weights of each Gaussian.
