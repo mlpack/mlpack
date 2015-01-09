@@ -67,6 +67,7 @@ class FFNN
       ResetActivations(network);
       std::get<0>(
             std::get<0>(network)).InputLayer().InputActivation() = input;
+
       FeedForward(network, target, error);
     }
 
@@ -406,7 +407,7 @@ class FFNN
     Layer(std::tuple<Tp...>& t)
     {
       gradients.push_back(new MatType(std::get<I>(t).Weights().n_rows,
-          std::get<I>(t).Weights().n_cols));
+          std::get<I>(t).Weights().n_cols, arma::fill::zeros));
 
       Layer<I + 1, Tp...>(t);
     }
