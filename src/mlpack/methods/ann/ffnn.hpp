@@ -91,13 +91,10 @@ class FFNN
     }
 
     /**
-     * Updating the weights using the specified optimizer and the given input.
+     * Updating the weights using the specified optimizer.
      *
-     * @param input Input data used to evaluate the network.
-     * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
      */
-    template <typename VecType>
-    void ApplyGradients(const VecType& /* unused */)
+    void ApplyGradients()
     {
       gradientNum = 0;
       ApplyGradients(network);
