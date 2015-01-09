@@ -130,17 +130,17 @@ class RNN
     }
 
     /**
-     * Updating the weights using the specified optimizer and the given input.
+     * Updating the weights using the specified optimizer.
      *
-     * @param input Input data used for evaluating the network.
-     * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
      */
-    template <typename VecType>
-    void ApplyGradients(const VecType& input)
+    void ApplyGradients()
     {
       gradientNum = 0;
-      ApplyGradients(network, input);
+      ApplyGradients(network);
     }
+
+    //! Get the error of the network.
+    double Error() const { return err; }
 
   private:
     /**
@@ -335,7 +335,7 @@ class RNN
     }
 
     /**
-     * Sum up all gradients and store the  results in the gradients storage.
+     * Sum up all gradients and store the results in the gradients storage.
      *
      * enable_if (SFINAE) is used to iterate through the network connections.
      * The general case peels off the first type and recurses, as usual with
@@ -364,17 +364,16 @@ class RNN
      * connections, and one for the general case which peels off the first type
      * and recurses, as usual with variadic function templates.
      */
-    template<size_t I = 0, typename VecType, typename... Tp>
+    template<size_t I = 0, typename... Tp>
     typename std::enable_if<I == sizeof...(Tp) - 1, void>::type
-    ApplyGradients(std::tuple<Tp...>& /* unused */,
-                   const VecType& /* unused */) { }
+    ApplyGradients(std::tuple<Tp...>& /* unused */) { }
 
-    template<size_t I = 0, typename VecType, typename... Tp>
+    template<size_t I = 0, typename... Tp>
     typename std::enable_if<I < sizeof...(Tp) - 1, void>::type
-    ApplyGradients(std::tuple<Tp...>& t, const VecType& input)
+    ApplyGradients(std::tuple<Tp...>& t)
     {
       Gradients(std::get<I>(t));
-      ApplyGradients<I + 1, VecType, Tp...>(t, input);
+      ApplyGradients<I + 1, Tp...>(t);
     }
 
     /**
