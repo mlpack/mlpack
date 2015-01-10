@@ -25,7 +25,7 @@ namespace ann /** Artificial Neural Network. */ {
  * be used to construct the network.
  * @tparam OutputLayerType The outputlayer type used to evaluate the network.
  * @tparam PerformanceFunction Performance strategy used to claculate the error.
- * @tparam MaType of gradients. (arma::mat or arma::sp_mat).
+ * @tparam MaType Type of the gradients. (arma::mat or arma::sp_mat).
  */
 template <
   typename ConnectionTypes,
@@ -54,7 +54,7 @@ class FFNN
      * input and target vector, updating the resulting error into the error
      * vector.
      *
-     * @param input Input data used to evaluat the network.
+     * @param input Input data used to evaluate the network.
      * @param target Target data used to calculate the network error.
      * @param error The calulated error of the output layer.
      * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
