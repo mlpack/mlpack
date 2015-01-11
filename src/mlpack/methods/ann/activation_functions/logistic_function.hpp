@@ -35,9 +35,8 @@ class LogisticFunction
   {
     if(x < arma::Math<eT>::log_max())
     {
-      if (x > -arma::Math<eT>::log_max()) {
+      if (x > -arma::Math<eT>::log_max())
         return 1.0 /  (1.0 + std::exp(-x));
-      }
 
       return 0.0;
     }
