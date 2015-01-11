@@ -16,7 +16,7 @@ MatrixCompletion::MatrixCompletion(const size_t m,
                                    const arma::vec& values,
                                    const size_t r)
   : m(m), n(n), indices(indices), values(values),
-    sdp(indices.n_cols, 0, CreateInitialPoint(m, n, r))
+    sdp(indices.n_cols, 0, arma::randu<arma::mat>(m + n, r))
 {
   checkValues();
   initSdp();
@@ -39,7 +39,9 @@ MatrixCompletion::MatrixCompletion(const size_t m,
                                    const arma::umat& indices,
                                    const arma::vec& values)
   : m(m), n(n), indices(indices), values(values),
-    sdp(indices.n_cols, 0, CreateInitialPoint(m, n, DefaultRank(m, n, indices.n_cols)))
+    sdp(indices.n_cols, 0,
+        arma::randu<arma::mat>(m + n,
+                               DefaultRank(m, n, indices.n_cols)))
 {
   checkValues();
   initSdp();
@@ -48,15 +50,22 @@ MatrixCompletion::MatrixCompletion(const size_t m,
 void MatrixCompletion::checkValues()
 {
   if (indices.n_rows != 2)
-    Log::Fatal << "indices.n_rows != 2" << std::endl;
+    Log::Fatal << "matrix of constraint indices does not have 2 rows"
+      << std::endl;
 
   if (indices.n_cols != values.n_elem)
-    Log::Fatal << "indices.n_cols != values.n_elem" << std::endl;
+    Log::Fatal << "the number of constraint indices "
+      << "(columns of constraint indices matrix) "
+      << "does not match the number of constraint values "
+      << "(length of constraint value vector)"
+      << std::endl;
 
   for (size_t i = 0; i < values.n_elem; i++)
   {
     if (indices(0, i) >= m || indices(1, i) >= n)
-      Log::Fatal << "index out of bounds" << std::endl;
+      Log::Fatal << "indices (" << indices(0, i) << ", " << indices(1, i) << ")"
+        << " are out of bounds for matrix of size " << m << " x " << "n"
+        << std::endl;
   }
 }
 
@@ -73,7 +82,7 @@ void MatrixCompletion::initSdp()
   }
 }
 
-void MatrixCompletion::Recover()
+void MatrixCompletion::Recover(arma::mat& recovered)
 {
   recovered = sdp.Function().GetInitialPoint();
   sdp.Optimize(recovered);
@@ -85,19 +94,19 @@ size_t MatrixCompletion::DefaultRank(const size_t m,
                                      const size_t n,
                                      const size_t p)
 {
+  // If r = O(sqrt(p)), then we are guaranteed an exact solution.
+  // For more details, see
+  //
+  //   On the rank of extreme matrices in semidefinite programs and the
+  //   multiplicity of optimal eigenvalues.
+  //   Pablo Moscato, Michael Norman, and Gabor Pataki.
+  //   Math Oper. Res., 23(2). 1998.
+
   const size_t mpn = m + n;
   float r = 0.5 + sqrt(0.25 + 2 * p);
   if (ceil(r) > mpn)
     r = mpn; // An upper bound on the dimension.
   return ceil(r);
-}
-
-arma::mat MatrixCompletion::CreateInitialPoint(const size_t m,
-                                               const size_t n,
-                                               const size_t r)
-{
-  const size_t mpn = m + n;
-  return arma::randu<arma::mat>(mpn, r);
 }
 
 } // namespace matrix_completion
