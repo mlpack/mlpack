@@ -33,13 +33,13 @@ namespace matrix_completion {
  * An example of how to use this class is shown below:
  *
  * @code
- * size_t m, n;        // size of unknown matrix
- * arma::umat indices; // contains the known indices [2 x n_entries]
- * arma::vec values;   // contains the known values [n_entries]
+ * size_t m, n;         // size of unknown matrix
+ * arma::umat indices;  // contains the known indices [2 x n_entries]
+ * arma::vec values;    // contains the known values [n_entries]
+ * arma::mat recovered; // will contain the completed matrix
  *
  * MatrixCompletion mc(m, n, indices, values);
- * mc.Recover();
- * mc.Recovered();     // access completed matrix
+ * mc.Recover(recovered);
  * @endcode
  *
  * @see LRSDP
@@ -101,16 +101,15 @@ class MatrixCompletion
 
   /**
    * Solve the underlying SDP to fill in the remaining values.
+   *
+   * @param recovered Will contain the completed matrix.
    */
-  void Recover();
+  void Recover(arma::mat& recovered);
 
   //! Return the underlying SDP.
   const optimization::LRSDP& Sdp() const { return sdp; }
   //! Modify the underlying SDP.
   optimization::LRSDP& Sdp() { return sdp; }
-
-  //! Return the recovered matrix.
-  const arma::mat& Recovered() const { return recovered; }
 
  private:
   size_t m;
@@ -123,8 +122,6 @@ class MatrixCompletion
 
   optimization::LRSDP sdp;
 
-  arma::mat recovered;
-
   void checkValues();
 
   void initSdp();
@@ -133,12 +130,6 @@ class MatrixCompletion
   DefaultRank(const size_t m,
               const size_t n,
               const size_t p);
-
-  static arma::mat
-  CreateInitialPoint(const size_t m,
-                     const size_t n,
-                     const size_t r);
-
 };
 
 } // namespace matrix_completion
