@@ -207,6 +207,9 @@ void CF<FactorizerType>::CleanData(const arma::mat& data)
     locations(1, i) = ((arma::uword) data(0, i));
     locations(0, i) = ((arma::uword) data(1, i));
     values(i) = data(2, i);
+    if (values(i) == 0)
+      Log::Warn << "User rating of 0 ignored for user "
+        << locations(1, i) << ", item " << locations(0, i) << std::endl;
   }
 
   // Find maximum user and item IDs.
