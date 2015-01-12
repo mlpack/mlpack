@@ -21,7 +21,7 @@ namespace hmm {
  *
  * @tparam Distribution Distribution type of HMM.
  * @param sr SaveRestoreUtility to use.
- */    
+ */
 template<typename Distribution>
 void SaveHMM(const HMM<Distribution>& hmm, util::SaveRestoreUtility& sr)
 {
@@ -49,7 +49,8 @@ void LoadHMM(HMM<Distribution>& hmm, util::SaveRestoreUtility& sr)
  * @param sr SaveRestoreUtility to use.
  */
 template<typename Distribution>
-void ConvertHMM(HMM<Distribution>& hmm, const util::SaveRestoreUtility& sr)
+void ConvertHMM(HMM<Distribution>& /* hmm */,
+                const util::SaveRestoreUtility& /* sr */)
 {
   Log::Fatal << "HMM conversion not implemented for arbitrary distributions."
       << std::endl;
@@ -57,7 +58,7 @@ void ConvertHMM(HMM<Distribution>& hmm, const util::SaveRestoreUtility& sr)
 
 template<>
 void ConvertHMM(HMM<distribution::DiscreteDistribution>& hmm,
-             const util::SaveRestoreUtility& sr)
+                const util::SaveRestoreUtility& sr)
 {
   std::string type;
   size_t states;

@@ -99,7 +99,8 @@ class ExampleKernel
    * @return K(a, b).
    */
   template<typename VecType>
-  static double Evaluate(const VecType& a, const VecType& b) { return 0; }
+  static double Evaluate(const VecType& /* a */, const VecType& /* b */)
+  { return 0; }
 
   /**
    * Returns a string for the kernel object; in this case, with only the memory
@@ -126,8 +127,8 @@ class ExampleKernel
    * @return the convolution integral value.
    */
   template<typename VecType>
-  static double ConvolutionIntegral(const VecType& a, const VecType& b)
-  { return 0; }
+  static double ConvolutionIntegral(const VecType& /* a */,
+                                    const VecType& /* b */) { return 0; }
 
   /**
    * Obtains the normalizing volume for the kernel with dimension $dimension$.
