@@ -27,7 +27,6 @@ BOOST_AUTO_TEST_SUITE(SATest);
 
 BOOST_AUTO_TEST_CASE(GeneralizedRosenbrockTest)
 {
-  mlpack::math::RandomSeed(std::time(NULL));
   size_t dim = 50;
   GeneralizedRosenbrockFunction f(dim);
 
