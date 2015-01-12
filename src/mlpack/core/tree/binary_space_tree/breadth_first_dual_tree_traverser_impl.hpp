@@ -52,6 +52,11 @@ BreadthFirstDualTreeTraverser<RuleType>::Traverse(
   typedef BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>
       TreeType;
 
+  // Must score the root combination.
+  const double rootScore = rule.Score(queryRoot, referenceRoot);
+  if (rootScore == DBL_MAX)
+    return; // This probably means something is wrong.
+
   std::queue<TreeType*> queryList;
   std::queue<TreeType*> referenceList;
   std::queue<typename RuleType::TraversalInfoType> traversalInfos;
