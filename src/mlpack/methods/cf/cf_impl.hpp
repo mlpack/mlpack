@@ -193,7 +193,8 @@ void CF<FactorizerType>::GetRecommendations(const size_t numRecs,
     // warning.
     if (recommendations(values.n_rows - 1, i) == cleanedData.n_rows + 1)
       Log::Warn << "Could not provide " << values.n_rows << " recommendations "
-          << "for user " << users(i) << " (not enough un-rated items)!" << std::endl;
+          << "for user " << users(i) << " (not enough un-rated items)!"
+          << std::endl;
   }
 }
 
@@ -211,8 +212,8 @@ void CF<FactorizerType>::CleanData(const arma::mat& data)
     locations(0, i) = ((arma::uword) data(1, i));
     values(i) = data(2, i);
     if (values(i) == 0)
-      Log::Warn << "User rating of 0 ignored for user "
-        << locations(1, i) << ", item " << locations(0, i) << std::endl;
+      Log::Warn << "User rating of 0 ignored for user " << locations(1, i)
+          << ", item " << locations(0, i) << "." << std::endl;
   }
 
   // Find maximum user and item IDs.
