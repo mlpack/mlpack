@@ -29,7 +29,6 @@
 #include <mlpack/core/tree/ballbound.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/bounds.hpp>
-#include <mlpack/core/tree/mrkd_statistic.hpp>
 #include <mlpack/core/tree/hrectbound.hpp>
 #include <mlpack/core/tree/statistic.hpp>
 
@@ -288,17 +287,6 @@ BOOST_AUTO_TEST_CASE(CoverTreeString)
   arma::mat q(2, 50);
   q.randu();
   mlpack::tree::CoverTree<> d(q);
-  Log::Debug << d;
-  testOstream << d;
-  std::string s = d.ToString();
-  BOOST_REQUIRE_NE(s, "");
-}
-
-BOOST_AUTO_TEST_CASE(MRKDString)
-{
-  arma::mat q(2, 50);
-  q.randu();
-  mlpack::tree::MRKDStatistic d(q);
   Log::Debug << d;
   testOstream << d;
   std::string s = d.ToString();
