@@ -121,15 +121,19 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
   distanceCalculations += 2;
   score = PellegMooreScore(queryNode, referenceNode, minDistance);
 
-  if (referenceNode.Stat().MaxQueryNodeDistance() == DBL_MAX &&
+  if (referenceNode.Stat().ClosestQueryNode() == NULL &&
       referenceNode.Parent() != NULL &&
-      referenceNode.Parent()->Stat().MaxQueryNodeDistance() != DBL_MAX)
+      referenceNode.Parent()->Stat().ClosestQueryNode() != NULL)
   {
     referenceNode.Stat().ClosestQueryNode() =
         referenceNode.Parent()->Stat().ClosestQueryNode();
-    referenceNode.Stat().MaxQueryNodeDistance() =
-        referenceNode.Parent()->Stat().MaxQueryNodeDistance();
+    referenceNode.Stat().MaxQueryNodeDistance() = std::min(
+        referenceNode.Parent()->Stat().MaxQueryNodeDistance(),
+        referenceNode.Stat().MaxQueryNodeDistance());
   }
+  else if (referenceNode.Parent() != NULL &&
+           referenceNode.Parent()->Stat().ClosestQueryNode() == NULL)
+    Log::Fatal << "wtf\n";
 
   if (maxDistance < referenceNode.Stat().MaxQueryNodeDistance() ||
       referenceNode.Stat().ClosestQueryNode() == NULL)
