@@ -171,7 +171,6 @@ class CosineTree
 
   //! Set the Monte Carlo error.
   void L2Error(const double error) { this->l2Error = error; }
-
   //! Get the Monte Carlo error.
   double L2Error() const { return l2Error; }
 
@@ -184,11 +183,20 @@ class CosineTree
   //! Get the basis vector of the node.
   arma::vec& BasisVector() { return basisVector; }
 
+  //! Get pointer to the parent node.
+  CosineTree* Parent() const { return parent; }
+  //! Modify the pointer to the parent node.
+  CosineTree*& Parent() { return parent; }
+
   //! Get pointer to the left child of the node.
-  CosineTree* Left() { return left; }
+  CosineTree* Left() const { return left; }
+  //! Modify the pointer to the left child of the node.
+  CosineTree*& Left() { return left; }
 
   //! Get pointer to the right child of the node.
-  CosineTree* Right() { return right; }
+  CosineTree* Right() const { return right; }
+  //! Modify the pointer to the left child of the node.
+  CosineTree*& Right() { return right; }
 
   //! Get number of columns of input matrix in the node.
   size_t NumColumns() const { return numColumns; }
@@ -202,8 +210,6 @@ class CosineTree
  private:
   //! Matrix for which cosine tree is constructed.
   const arma::mat& dataset;
-  //! Error tolerance fraction for calculated subspace.
-  double epsilon;
   //! Cumulative probability for Monte Carlo error lower bound.
   double delta;
   //! Subspace basis of the input dataset.

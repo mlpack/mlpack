@@ -21,9 +21,7 @@ QUIC_SVD::QUIC_SVD(const arma::mat& dataset,
                    arma::mat& sigma,
                    const double epsilon,
                    const double delta) :
-    dataset(dataset),
-    epsilon(epsilon),
-    delta(delta)
+    dataset(dataset)
 {
   // Since columns are sample in the implementation, the matrix is transposed if
   // necessary for maximum speedup.

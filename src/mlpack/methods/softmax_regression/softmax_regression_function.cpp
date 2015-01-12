@@ -15,7 +15,6 @@ SoftmaxRegressionFunction::SoftmaxRegressionFunction(const arma::mat& data,
                                                      const size_t numClasses,
                                                      const double lambda) :
     data(data),
-    labels(labels),
     inputSize(inputSize),
     numClasses(numClasses),
     lambda(lambda)
