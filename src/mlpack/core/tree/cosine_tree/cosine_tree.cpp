@@ -71,7 +71,6 @@ CosineTree::CosineTree(const arma::mat& dataset,
                        const double epsilon,
                        const double delta) :
     dataset(dataset),
-    epsilon(epsilon),
     delta(delta),
     left(NULL),
     right(NULL)

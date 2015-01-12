@@ -14,8 +14,8 @@ namespace mlpack {
 namespace svd {
 
 /**
- * QUIC-SVD is a matrix factorization technique, which operates in a subspace 
- * such that A's approximation in that subspace has minimum error(A being the 
+ * QUIC-SVD is a matrix factorization technique, which operates in a subspace
+ * such that A's approximation in that subspace has minimum error(A being the
  * data matrix). The subspace is constructed using a cosine tree, which ensures
  * minimum representative rank(and thus a fast running time). It follows a
  * splitting policy based on Length-squared(LS) sampling and constructs the
@@ -45,11 +45,9 @@ namespace svd {
  * QUIC_SVD(data, u, v, sigma, epsilon, delta);
  * @endcode
  */
-
 class QUIC_SVD
 {
  public:
-
   /**
    * Constructor which implements the QUIC-SVD algorithm. The function calls the
    * CosineTree constructor to create a subspace basis, where the original
@@ -86,10 +84,6 @@ class QUIC_SVD
  private:
   //! Matrix for which cosine tree is constructed.
   const arma::mat& dataset;
-  //! Error tolerance fraction for calculated subspace.
-  double epsilon;
-  //! Cumulative probability for Monte Carlo error lower bound.
-  double delta;
   //! Subspace basis of the input dataset.
   arma::mat basis;
 };
