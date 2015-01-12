@@ -20,7 +20,7 @@ class DualTreeKMeansStatistic
       closestQueryNode(NULL),
       minQueryNodeDistance(DBL_MAX),
       maxQueryNodeDistance(DBL_MAX),
-      clustersPruned(0),
+      clustersPruned(size_t(-1)),
       iteration(size_t() - 1),
       firstBound(DBL_MAX),
       secondBound(DBL_MAX),

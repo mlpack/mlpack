@@ -88,6 +88,7 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   typename TreeType::template BreadthFirstDualTreeTraverser<RulesType>
       traverser(rules);
 
+  tree->Stat().ClustersPruned() = 0; // The constructor sets this to -1.
   traverser.Traverse(*centroidTree, *tree);
 
   distanceCalculations += rules.DistanceCalculations();
@@ -220,8 +221,8 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
   // We have to set the closest query node to NULL because the cluster tree will
   // be rebuilt.
   node->Stat().ClosestQueryNode() = NULL;
-//  node->Stat().MaxQueryNodeDistance() = DBL_MAX;
-//  node->Stat().MinQueryNodeDistance() = DBL_MAX;
+  node->Stat().MaxQueryNodeDistance() = DBL_MAX;
+  node->Stat().MinQueryNodeDistance() = DBL_MAX;
 
   for (size_t i = 0; i < node->NumChildren(); ++i)
     TreeUpdate(&node->Child(i), clusters, clusterDistances);
