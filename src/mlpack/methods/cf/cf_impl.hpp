@@ -64,7 +64,7 @@ CF<FactorizerType>::CF(arma::mat& data,
     factorizer(factorizer)
 {
   // Validate neighbourhood size.
-  if(numUsersForSimilarity < 1)
+  if (numUsersForSimilarity < 1)
   {
     Log::Warn << "CF::CF(): neighbourhood size should be > 0("
         << numUsersForSimilarity << " given). Setting value to 5.\n";
@@ -75,7 +75,7 @@ CF<FactorizerType>::CF(arma::mat& data,
   CleanData(data);
 
   // Check if the user wanted us to choose a rank for them.
-  if(rank == 0)
+  if (rank == 0)
   {
     // This is a simple heuristic that picks a rank based on the density of the
     // dataset between 5 and 105.
