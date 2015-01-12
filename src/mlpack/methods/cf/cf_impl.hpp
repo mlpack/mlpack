@@ -39,7 +39,7 @@ void ApplyFactorizer(arma::mat& /* data */,
  */
 template<typename FactorizerType>
 void ApplyFactorizer(arma::mat& data,
-    arma::sp_mat& cleanedData,
+    arma::sp_mat& /* cleanedData */,
     FactorizerType& factorizer,
     const size_t rank,
     arma::mat& w,
@@ -48,7 +48,6 @@ void ApplyFactorizer(arma::mat& data,
         FactorizerTraits<FactorizerType>::UsesCoordinateList == true,
         int*>::type = 0)
 {
-  (void)cleanedData;
   factorizer.Apply(data, rank, w, h);
 }
 
