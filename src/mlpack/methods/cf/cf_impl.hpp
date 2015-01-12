@@ -19,7 +19,7 @@ namespace cf {
  * list.
  */
 template<typename FactorizerType>
-void ApplyFactorizer(arma::mat& data,
+void ApplyFactorizer(arma::mat& /* data */,
     arma::sp_mat& cleanedData,
     FactorizerType& factorizer,
     const size_t rank,
@@ -29,7 +29,6 @@ void ApplyFactorizer(arma::mat& data,
         FactorizerTraits<FactorizerType>::UsesCoordinateList == false,
         int*>::type = 0)
 {
-  (void)data;
   factorizer.Apply(cleanedData, rank, w, h);
 }
 
