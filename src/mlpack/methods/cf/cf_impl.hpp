@@ -1,5 +1,5 @@
 /**
- * @file cf.cpp
+ * @file cf_impl.hpp
  * @author Mudit Raj Gupta
  * @author Sumedh Ghaisas
  *
@@ -8,6 +8,11 @@
  * Implementation of CF class to perform Collaborative Filtering on the
  * specified data set.
  */
+#ifndef __MLPACK_METHODS_CF_CF_IMPL_HPP
+#define __MLPACK_METHODS_CF_CF_IMPL_HPP
+
+// In case it hasn't been included yet.
+#include "cf.hpp"
 
 namespace mlpack {
 namespace cf {
@@ -263,3 +268,5 @@ std::string CF<FactorizerType>::ToString() const
 
 }; // namespace mlpack
 }; // namespace cf
+
+#endif
