@@ -148,7 +148,7 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
     {
       const double maxDistance = referenceNode.MaxDistance(&queryNode);
       ++distanceCalculations;
-      referenceNode.Stat().ClosestQueryNode() == (void*) &queryNode;
+      referenceNode.Stat().ClosestQueryNode() = (void*) &queryNode;
       referenceNode.Stat().MinQueryNodeDistance() = minDistance;
       referenceNode.Stat().MaxQueryNodeDistance() = maxDistance;
     }
