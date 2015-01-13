@@ -100,9 +100,8 @@ size_t MatrixCompletion::DefaultRank(const size_t m,
   //   multiplicity of optimal eigenvalues.
   //   Pablo Moscato, Michael Norman, and Gabor Pataki.
   //   Math Oper. Res., 23(2). 1998.
-
   const size_t mpn = m + n;
-  float r = 0.5 + sqrt(0.25 + 2 * p);
+  const float r = 0.5 + sqrt(0.25 + 2 * p);
   if (ceil(r) > mpn)
     r = mpn; // An upper bound on the dimension.
   return ceil(r);
