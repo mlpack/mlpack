@@ -132,13 +132,14 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
     // We also have to update things if the closest query node is null.  This
     // can probably be improved.
     const double minDistance = referenceNode.MinDistance(&queryNode);
-    const double maxDistance = referenceNode.MaxDistance(&queryNode);
-    distanceCalculations += 2;
+    ++distanceCalculations;
     score = PellegMooreScore(queryNode, referenceNode, minDistance);
 
-    if (maxDistance < referenceNode.Stat().MaxQueryNodeDistance() ||
+    if (minDistance < referenceNode.Stat().MinQueryNodeDistance() ||
         referenceNode.Stat().ClosestQueryNode() == NULL)
     {
+      const double maxDistance = referenceNode.MaxDistance(&queryNode);
+      ++distanceCalculations;
       referenceNode.Stat().ClosestQueryNode() = (void*) &queryNode;
       referenceNode.Stat().MinQueryNodeDistance() = minDistance;
       referenceNode.Stat().MaxQueryNodeDistance() = maxDistance;
@@ -146,6 +147,8 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
     else if (IsDescendantOf(*((TreeType*)
         referenceNode.Stat().ClosestQueryNode()), queryNode))
     {
+      const double maxDistance = referenceNode.MaxDistance(&queryNode);
+      ++distanceCalculations;
       referenceNode.Stat().ClosestQueryNode() == (void*) &queryNode;
       referenceNode.Stat().MinQueryNodeDistance() = minDistance;
       referenceNode.Stat().MaxQueryNodeDistance() = maxDistance;
