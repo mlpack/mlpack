@@ -77,6 +77,9 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   arma::Mat<size_t> closestClusters; // We don't actually care about these.
   nns.Search(1, closestClusters, interclusterDistances);
 
+  distanceCalculations += nns.BaseCases();
+  distanceCalculations += nns.Scores();
+
   // Now run the dual-tree algorithm.
   typedef DualTreeKMeansRules<MetricType, TreeType> RulesType;
   RulesType rules(dataset, centroids, newCentroids, counts, oldFromNewCentroids,
