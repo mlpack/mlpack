@@ -135,8 +135,7 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
     ++distanceCalculations;
     score = PellegMooreScore(queryNode, referenceNode, minDistance);
 
-    if (minDistance < referenceNode.Stat().MinQueryNodeDistance() ||
-        referenceNode.Stat().ClosestQueryNode() == NULL)
+    if (minDistance < referenceNode.Stat().MinQueryNodeDistance())
     {
       const double maxDistance = referenceNode.MaxDistance(&queryNode);
       ++distanceCalculations;
