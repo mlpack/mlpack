@@ -58,6 +58,8 @@ class DualTreeKMeans
   //! Track distance calculations.
   size_t distanceCalculations;
 
+  void ClusterTreeUpdate(TreeType* node);
+
   void TreeUpdate(TreeType* node,
                   const size_t clusters,
                   const arma::vec& clusterDistances);

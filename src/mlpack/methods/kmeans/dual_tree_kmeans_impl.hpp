@@ -80,6 +80,9 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   distanceCalculations += nns.BaseCases();
   distanceCalculations += nns.Scores();
 
+  // Update FirstBound().
+  ClusterTreeUpdate(centroidTree);
+
   // Now run the dual-tree algorithm.
   typedef DualTreeKMeansRules<MetricType, TreeType> RulesType;
   RulesType rules(dataset, centroids, newCentroids, counts, oldFromNewCentroids,
@@ -128,43 +131,21 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   return std::sqrt(residual);
 }
 
-/*
 template<typename MetricType, typename MatType, typename TreeType>
 void DualTreeKMeans<MetricType, MatType, TreeType>::ClusterTreeUpdate(
     TreeType* node)
 {
-  // We will abuse stat.owner to hold the cluster with the most change.
-  // stat.minQueryNodeDistance will hold the distance.
-  double maxChange = 0.0;
-  size_t maxChangeCluster = 0;
-
+  // Just update the first bound, after recursing to the bottom.
+  double firstBound = 0.0;
   for (size_t i = 0; i < node->NumChildren(); ++i)
   {
     ClusterTreeUpdate(&node->Child(i));
-
-    const double nodeChange = node->Child(i).Stat().MinQueryNodeDistance();
-    if (nodeChange > maxChange)
-    {
-      maxChange = nodeChange;
-      maxChangeCluster = node->Child(i).Stat().Owner();
-    }
+    if (node->Child(i).Stat().FirstBound() >= firstBound)
+      firstBound = node->Child(i).Stat().FirstBound();
   }
 
-  for (size_t i = 0; i < node->NumPoints(); ++i)
-  {
-    const size_t cluster = oldFromNewCentroids[node->Point(i)];
-    const double pointChange = clusterDistances[cluster];
-    if (pointChange > maxChange)
-    {
-      maxChange = pointChange;
-      maxChangeCluster = cluster;
-    }
-  }
-
-  node->Stat().Owner() = maxChangeCluster;
-  node->Stat().MinQueryNodeDistance() = maxChange;
+  node->Stat().FirstBound() = firstBound;
 }
-*/
 
 template<typename MetricType, typename MatType, typename TreeType>
 void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(

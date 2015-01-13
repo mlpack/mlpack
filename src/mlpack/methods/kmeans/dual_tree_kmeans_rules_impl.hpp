@@ -215,10 +215,6 @@ double DualTreeKMeansRules<MetricType, TreeType>::ElkanTypeScore(
   if (queryNode.NumDescendants() > 1)
   {
     const double minQueryDistance = queryNode.Stat().FirstBound();
-    if (minQueryDistance == DBL_MAX)
-      return 0.0;
-    else
-      Log::Warn << "Not DBL_MAX!\n";
     const double score = ElkanTypeScore(queryNode, referenceNode,
         minQueryDistance);
     return score;
