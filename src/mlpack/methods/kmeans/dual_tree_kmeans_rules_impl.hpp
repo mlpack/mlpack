@@ -212,15 +212,23 @@ double DualTreeKMeansRules<MetricType, TreeType>::ElkanTypeScore(
 {
   // We have to calculate the minimum distance between the query node and the
   // reference node's best query node.  First, try to use the cached distance.
-//  const double minQueryDistance = queryNode.Stat().FirstBound();
-  if (queryNode.NumDescendants() == 1)
+  if (queryNode.NumDescendants() > 1)
+  {
+    const double minQueryDistance = queryNode.Stat().FirstBound();
+    if (minQueryDistance == DBL_MAX)
+      return 0.0;
+    else
+      Log::Warn << "Not DBL_MAX!\n";
+    const double score = ElkanTypeScore(queryNode, referenceNode,
+        minQueryDistance);
+    return score;
+  }
+  else
   {
     const double score = ElkanTypeScore(queryNode, referenceNode,
         interclusterDistances[queryNode.Descendant(0)]);
     return score;
   }
-  else
-    return 0.0;
 }
 
 template<typename MetricType, typename TreeType>
