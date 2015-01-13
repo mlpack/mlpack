@@ -4,8 +4,8 @@
  *
  * Implementation of MatrixCompletion class.
  */
-#ifndef __MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_IMPL_HPP
-#define __MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_IMPL_HPP
+
+#include "matrix_completion.hpp"
 
 namespace mlpack {
 namespace matrix_completion {
@@ -107,5 +107,3 @@ size_t MatrixCompletion::DefaultRank(const size_t m,
 
 } // namespace matrix_completion
 } // namespace mlpack
-
-#endif
