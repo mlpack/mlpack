@@ -47,7 +47,6 @@ namespace matrix_completion {
 class MatrixCompletion
 {
  public:
-
   /**
    * Construct a matrix completion problem, specifying the maximum rank of the
    * solution.
@@ -112,24 +111,26 @@ class MatrixCompletion
   optimization::LRSDP& Sdp() { return sdp; }
 
  private:
+  //! Number of rows in original matrix.
   size_t m;
-
+  //! Number of columns in original matrix.
   size_t n;
-
+  //! Matrix containing the indices of the known entries (has two rows).
   arma::umat indices;
-
+  //! Vector containing the values of the known entries.
   arma::mat values;
 
+  //! The underlying SDP to be solved.
   optimization::LRSDP sdp;
 
+  //! Validate the input matrices.
   void checkValues();
-
+  //! Initialize the SDP.
   void initSdp();
 
-  static size_t
-  DefaultRank(const size_t m,
-              const size_t n,
-              const size_t p);
+  //! Select a rank of the matrix given that is of size m x n and has p known
+  //! elements.
+  static size_t DefaultRank(const size_t m, const size_t n, const size_t p);
 };
 
 } // namespace matrix_completion
