@@ -49,11 +49,11 @@ else()
 endif(DEBUG)
 
 # Profiling CFLAGS.  Turn profiling information on.
-if(PROFILE)
+if(CMAKE_COMPILER_IS_GNUCC AND PROFILE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pg")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
-endif(PROFILE)
+endif(CMAKE_COMPILER_IS_GNUCC AND PROFILE)
 
 # If the user asked for extra Armadillo debugging output, turn that on.
 if(ARMA_EXTRA_DEBUG)
