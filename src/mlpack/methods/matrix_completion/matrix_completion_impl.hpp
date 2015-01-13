@@ -18,8 +18,8 @@ MatrixCompletion::MatrixCompletion(const size_t m,
     m(m), n(n), indices(indices), values(values),
     sdp(indices.n_cols, 0, arma::randu<arma::mat>(m + n, r))
 {
-  checkValues();
-  initSdp();
+  CheckValues();
+  InitSDP();
 }
 
 MatrixCompletion::MatrixCompletion(const size_t m,
@@ -30,8 +30,8 @@ MatrixCompletion::MatrixCompletion(const size_t m,
     m(m), n(n), indices(indices), values(values),
     sdp(indices.n_cols, 0, initialPoint)
 {
-  checkValues();
-  initSdp();
+  CheckValues();
+  InitSDP();
 }
 
 MatrixCompletion::MatrixCompletion(const size_t m,
@@ -42,11 +42,11 @@ MatrixCompletion::MatrixCompletion(const size_t m,
     sdp(indices.n_cols, 0,
         arma::randu<arma::mat>(m + n, DefaultRank(m, n, indices.n_cols)))
 {
-  checkValues();
-  initSdp();
+  CheckValues();
+  InitSDP();
 }
 
-void MatrixCompletion::checkValues()
+void MatrixCompletion::CheckValues()
 {
   if (indices.n_rows != 2)
     Log::Fatal << "matrix of constraint indices does not have 2 rows"
@@ -68,7 +68,7 @@ void MatrixCompletion::checkValues()
   }
 }
 
-void MatrixCompletion::initSdp()
+void MatrixCompletion::InitSDP()
 {
   sdp.SparseC().eye(m + n, m + n);
   sdp.SparseB() = 2. * values;
