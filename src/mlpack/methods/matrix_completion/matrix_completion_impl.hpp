@@ -49,22 +49,20 @@ MatrixCompletion::MatrixCompletion(const size_t m,
 void MatrixCompletion::CheckValues()
 {
   if (indices.n_rows != 2)
-    Log::Fatal << "matrix of constraint indices does not have 2 rows"
-      << std::endl;
+    Log::Fatal << "MatrixCompletion::CheckValues(): matrix of constraint indices does "
+        << "not have 2 rows!" << std::endl;
 
   if (indices.n_cols != values.n_elem)
-    Log::Fatal << "the number of constraint indices "
-      << "(columns of constraint indices matrix) "
-      << "does not match the number of constraint values "
-      << "(length of constraint value vector)"
-      << std::endl;
+    Log::Fatal << "MatrixCompletion::CheckValues(): the number of constraint indices "
+        << "(columns of constraint indices matrix) does not match the number of "
+        << "constraint values (length of constraint value vector)!" << std::endl;
 
   for (size_t i = 0; i < values.n_elem; i++)
   {
     if (indices(0, i) >= m || indices(1, i) >= n)
-      Log::Fatal << "indices (" << indices(0, i) << ", " << indices(1, i) << ")"
-        << " are out of bounds for matrix of size " << m << " x " << "n"
-        << std::endl;
+      Log::Fatal << "MatrixCompletion::CheckValues(): indices (" << indices(0, i) << ", "
+          << indices(1, i) << ") are out of bounds for matrix of size " << m << " x "
+          << "n!" << std::endl;
   }
 }
 
