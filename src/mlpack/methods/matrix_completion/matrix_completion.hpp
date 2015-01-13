@@ -124,9 +124,9 @@ class MatrixCompletion
   optimization::LRSDP sdp;
 
   //! Validate the input matrices.
-  void checkValues();
+  void CheckValues();
   //! Initialize the SDP.
-  void initSdp();
+  void InitSDP();
 
   //! Select a rank of the matrix given that is of size m x n and has p known
   //! elements.
