@@ -114,13 +114,8 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
 
   double score = ElkanTypeScore(queryNode, referenceNode);
 
-  // We also have to update things if the closest query node is null.  This can
-  // probably be improved.
-  const double minDistance = referenceNode.MinDistance(&queryNode);
-  const double maxDistance = referenceNode.MaxDistance(&queryNode);
-  distanceCalculations += 2;
-  score = PellegMooreScore(queryNode, referenceNode, minDistance);
-
+  // If there's no closest query node assigned, but the parent has one, take
+  // that one.
   if (referenceNode.Stat().ClosestQueryNode() == NULL &&
       referenceNode.Parent() != NULL &&
       referenceNode.Parent()->Stat().ClosestQueryNode() != NULL)
@@ -132,19 +127,29 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
         referenceNode.Stat().MaxQueryNodeDistance());
   }
 
-  if (maxDistance < referenceNode.Stat().MaxQueryNodeDistance() ||
-      referenceNode.Stat().ClosestQueryNode() == NULL)
+  if (score != DBL_MAX)
   {
-    referenceNode.Stat().ClosestQueryNode() = (void*) &queryNode;
-    referenceNode.Stat().MinQueryNodeDistance() = minDistance;
-    referenceNode.Stat().MaxQueryNodeDistance() = maxDistance;
-  }
-  else if (IsDescendantOf(*((TreeType*)
-      referenceNode.Stat().ClosestQueryNode()), queryNode))
-  {
-    referenceNode.Stat().ClosestQueryNode() == (void*) &queryNode;
-    referenceNode.Stat().MinQueryNodeDistance() = minDistance;
-    referenceNode.Stat().MaxQueryNodeDistance() = maxDistance;
+    // We also have to update things if the closest query node is null.  This
+    // can probably be improved.
+    const double minDistance = referenceNode.MinDistance(&queryNode);
+    const double maxDistance = referenceNode.MaxDistance(&queryNode);
+    distanceCalculations += 2;
+    score = PellegMooreScore(queryNode, referenceNode, minDistance);
+
+    if (maxDistance < referenceNode.Stat().MaxQueryNodeDistance() ||
+        referenceNode.Stat().ClosestQueryNode() == NULL)
+    {
+      referenceNode.Stat().ClosestQueryNode() = (void*) &queryNode;
+      referenceNode.Stat().MinQueryNodeDistance() = minDistance;
+      referenceNode.Stat().MaxQueryNodeDistance() = maxDistance;
+    }
+    else if (IsDescendantOf(*((TreeType*)
+        referenceNode.Stat().ClosestQueryNode()), queryNode))
+    {
+      referenceNode.Stat().ClosestQueryNode() == (void*) &queryNode;
+      referenceNode.Stat().MinQueryNodeDistance() = minDistance;
+      referenceNode.Stat().MaxQueryNodeDistance() = maxDistance;
+    }
   }
 
   if (score == DBL_MAX)
