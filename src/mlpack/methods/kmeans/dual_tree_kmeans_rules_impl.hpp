@@ -131,9 +131,6 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
         referenceNode.Parent()->Stat().MaxQueryNodeDistance(),
         referenceNode.Stat().MaxQueryNodeDistance());
   }
-  else if (referenceNode.Parent() != NULL &&
-           referenceNode.Parent()->Stat().ClosestQueryNode() == NULL)
-    Log::Fatal << "wtf\n";
 
   if (maxDistance < referenceNode.Stat().MaxQueryNodeDistance() ||
       referenceNode.Stat().ClosestQueryNode() == NULL)
@@ -155,20 +152,7 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
     referenceNode.Stat().ClustersPruned() += queryNode.NumDescendants();
 
     // Have we pruned everything?
-    if (referenceNode.Stat().ClustersPruned() == centroids.n_cols - 1)
-    {
-      // Then the best query node must contain just one point.
-      const TreeType* bestQueryNode = (TreeType*)
-          referenceNode.Stat().ClosestQueryNode();
-      const size_t cluster = mappings[bestQueryNode->Descendant(0)];
-
-      referenceNode.Stat().Owner() = cluster;
-      newCentroids.col(cluster) += referenceNode.NumDescendants() *
-          referenceNode.Stat().Centroid();
-      counts(cluster) += referenceNode.NumDescendants();
-      referenceNode.Stat().ClustersPruned()++;
-    }
-    else if (referenceNode.Stat().ClustersPruned() +
+    if (referenceNode.Stat().ClustersPruned() +
         visited[referenceNode.Descendant(0)] == centroids.n_cols)
     {
       for (size_t i = 0; i < referenceNode.NumDescendants(); ++i)
@@ -221,7 +205,7 @@ double DualTreeKMeansRules<MetricType, TreeType>::ElkanTypeScore(
 {
   // We have to calculate the minimum distance between the query node and the
   // reference node's best query node.  First, try to use the cached distance.
-  const double minQueryDistance = queryNode.Stat().FirstBound();
+//  const double minQueryDistance = queryNode.Stat().FirstBound();
   if (queryNode.NumDescendants() == 1)
   {
     const double score = ElkanTypeScore(queryNode, referenceNode,
