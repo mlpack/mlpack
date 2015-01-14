@@ -37,9 +37,9 @@ double LRSDPFunction::Evaluate(const arma::mat& coordinates) const
   const arma::mat rrt = coordinates * trans(coordinates);
   double objective = 0.;
   if (hasSparseObjective())
-    objective += trace(SparseC() * rrt);
+    objective += accu(SparseC() % rrt);
   if (hasDenseObjective())
-    objective += trace(DenseC() * rrt);
+    objective += accu(DenseC() % rrt);
   return objective;
 }
 
@@ -55,9 +55,9 @@ double LRSDPFunction::EvaluateConstraint(const size_t index,
 {
   const arma::mat rrt = coordinates * trans(coordinates);
   if (index < NumSparseConstraints())
-    return trace(sparseA[index] * rrt) - sparseB[index];
+    return accu(sparseA[index] % rrt) - sparseB[index];
   const size_t index1 = index - NumSparseConstraints();
-  return trace(denseA[index1] * rrt) - denseB[index1];
+  return accu(denseA[index1] % rrt) - denseB[index1];
 }
 
 void LRSDPFunction::GradientConstraint(const size_t /* index */,
@@ -99,7 +99,7 @@ UpdateObjective(double& objective,
   for (size_t i = 0; i < ais.size(); ++i)
   {
     // Take the trace subtracted by the b_i.
-    const double constraint = trace(ais[i] * rrt) - bis[i];
+    const double constraint = accu(ais[i] % rrt) - bis[i];
     objective -= (lambda[lambdaOffset + i] * constraint);
     objective += (sigma / 2.) * constraint * constraint;
   }
@@ -119,7 +119,7 @@ UpdateGradient(arma::mat& s,
 {
   for (size_t i = 0; i < ais.size(); ++i)
   {
-    const double constraint = trace(ais[i] * rrt) - bis[i];
+    const double constraint = accu(ais[i] % rrt) - bis[i];
     const double y = lambda[lambdaOffset + i] - sigma * constraint;
     s -= y * ais[i];
   }
@@ -146,9 +146,9 @@ double AugLagrangianFunction<LRSDPFunction>::Evaluate(
   const arma::mat rrt = coordinates * trans(coordinates);
   double objective = 0.;
   if (function.hasSparseObjective())
-    objective += trace(function.SparseC() * rrt);
+    objective += accu(function.SparseC() % rrt);
   if (function.hasDenseObjective())
-    objective += trace(function.DenseC() * rrt);
+    objective += accu(function.DenseC() % rrt);
 
   // Now each constraint.
   UpdateObjective(objective, rrt, function.SparseA(), function.SparseB(),
