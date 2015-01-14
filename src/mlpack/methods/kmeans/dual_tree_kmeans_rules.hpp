@@ -77,7 +77,7 @@ class DualTreeKMeansRules
    *
    * This is not a function of the query node, so it does not need to be passed.
    */
-  double ElkanOverallTypeScore(TreeType& queryNode);
+  double ElkanOverallTypeScore(TreeType& referenceNode);
 
   /**
    * See if an Elkan-type prune can be performed.  If so, return DBL_MAX;
