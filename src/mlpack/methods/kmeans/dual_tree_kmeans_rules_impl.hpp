@@ -112,8 +112,6 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
 
   traversalInfo.LastReferenceNode() = &referenceNode;
 
-  double score = ElkanTypeScore(queryNode, referenceNode);
-
   // If there's no closest query node assigned, but the parent has one, take
   // that one.
   if (referenceNode.Stat().ClosestQueryNode() == NULL &&
@@ -126,6 +124,8 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
         referenceNode.Parent()->Stat().MaxQueryNodeDistance(),
         referenceNode.Stat().MaxQueryNodeDistance());
   }
+
+  double score = ElkanTypeScore(queryNode, referenceNode);
 
   if (score != DBL_MAX)
   {
@@ -229,16 +229,20 @@ double DualTreeKMeansRules<MetricType, TreeType>::ElkanTypeScore(
 
 template<typename MetricType, typename TreeType>
 double DualTreeKMeansRules<MetricType, TreeType>::ElkanTypeScore(
-    TreeType& /* queryNode */,
+    TreeType& queryNode,
     TreeType& referenceNode,
     const double minQueryDistance) const
 {
   // See if we can do an Elkan-type prune on between-centroid distances.
+
   const double maxDistance = referenceNode.Stat().MaxQueryNodeDistance();
   if (maxDistance == DBL_MAX)
     return minQueryDistance;
 
-  if (minQueryDistance > 2.0 * maxDistance)
+  if ((minQueryDistance > 2.0 * maxDistance) &&
+      !(IsDescendantOf(*(TreeType*) referenceNode.Stat().ClosestQueryNode(),
+          queryNode)) &&
+      (&queryNode != (TreeType*) referenceNode.Stat().ClosestQueryNode()))
   {
     // Then we can conclude d_max(best(N_r), N_r) <= d_min(N_q, N_r) which
     // means that N_q cannot possibly hold any clusters that own any points in
