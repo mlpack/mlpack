@@ -81,7 +81,7 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   distanceCalculations += nns.Scores();
 
   // Update FirstBound().
-  ClusterTreeUpdate(centroidTree);
+  ClusterTreeUpdate(centroidTree, interclusterDistances);
 
   // Now run the dual-tree algorithm.
   typedef DualTreeKMeansRules<MetricType, TreeType> RulesType;
@@ -133,15 +133,21 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
 
 template<typename MetricType, typename MatType, typename TreeType>
 void DualTreeKMeans<MetricType, MatType, TreeType>::ClusterTreeUpdate(
-    TreeType* node)
+    TreeType* node,
+    const arma::mat& distances)
 {
   // Just update the first bound, after recursing to the bottom.
   double firstBound = 0.0;
   for (size_t i = 0; i < node->NumChildren(); ++i)
   {
-    ClusterTreeUpdate(&node->Child(i));
+    ClusterTreeUpdate(&node->Child(i), distances);
     if (node->Child(i).Stat().FirstBound() >= firstBound)
       firstBound = node->Child(i).Stat().FirstBound();
+  }
+  for (size_t i = 0; i < node->NumPoints(); ++i)
+  {
+    if (distances(1, node->Point(i)) > firstBound)
+      firstBound = distances(1, node->Point(i));
   }
 
   node->Stat().FirstBound() = firstBound;
