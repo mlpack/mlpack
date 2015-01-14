@@ -72,6 +72,14 @@ class DualTreeKMeansRules
       potentialChild) const;
 
   /**
+   * See if an Elkan-type overall prune can be performed.  This means that the
+   * previous iteration owner _must_ be the owner during this iteration.
+   *
+   * This is not a function of the query node, so it does not need to be passed.
+   */
+  double ElkanOverallTypeScore(TreeType& queryNode);
+
+  /**
    * See if an Elkan-type prune can be performed.  If so, return DBL_MAX;
    * otherwise, return a score.  The Elkan-type prune can occur when the minimum
    * distance between the query node and the current best query node for the

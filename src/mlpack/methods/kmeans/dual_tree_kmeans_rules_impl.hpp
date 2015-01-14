@@ -206,6 +206,28 @@ bool DualTreeKMeansRules<MetricType, TreeType>::IsDescendantOf(
 }
 
 template<typename MetricType, typename TreeType>
+double DualTreeKMeansRules<MetricType, TreeType>::ElkanOverallTypeScore(
+    TreeType& referenceNode)
+{
+  // Does the reference node have an owner?
+  if (referenceNode.Owner() < centroids.n_cols)
+  {
+    // Has the owner stayed stationary enough and no other centroids moved
+    // enough that this owner _must_ be the continued owner?
+    if (referenceNode.MaxQueryNodeDistance() +
+        clusterDistances[referenceNode.Owner()] <
+        referenceNode.SecondClosestQueryNodeDistance() -
+        clusterDistances[centroids.n_cols])
+    {
+      return DBL_MAX;
+      // Not yet handled: when to add this to the finished counts?
+    }
+  }
+
+  return 0.0;
+}
+
+template<typename MetricType, typename TreeType>
 double DualTreeKMeansRules<MetricType, TreeType>::ElkanTypeScore(
     TreeType& queryNode,
     TreeType& referenceNode)
