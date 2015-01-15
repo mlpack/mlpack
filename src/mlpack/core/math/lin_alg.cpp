@@ -208,3 +208,80 @@ void mlpack::math::RemoveRows(const arma::mat& input,
     }
   }
 }
+
+static const double sq2 = 1.41421356237309504880; // sqrt(2)
+static const double one_over_sq2 = 0.707106781186547524401; // 1/sqrt(2)
+
+void mlpack::math::Svec(const arma::mat& input, arma::vec& output)
+{
+  const size_t n = input.n_rows;
+  const size_t n2bar = n * (n + 1) / 2;
+
+  output.zeros(n2bar);
+
+  size_t idx = 0;
+  for (size_t i = 0; i < n; i++)
+  {
+    for (size_t j = i; j < n; j++)
+    {
+      if (i == j)
+        output(idx++) = input(i, j);
+      else
+        output(idx++) = sq2 * input(i, j);
+    }
+  }
+}
+
+void mlpack::math::Smat(const arma::vec& input, arma::mat& output)
+{
+  const size_t n = static_cast<size_t>(ceil((-1. + sqrt(1. + 8. * input.n_elem))/2.));
+
+  output.zeros(n, n);
+
+  size_t idx = 0;
+  for (size_t i = 0; i < n; i++)
+  {
+    for (size_t j = i; j < n; j++)
+    {
+      if (i == j)
+        output(i, j) = input(idx++);
+      else
+        output(i, j) = output(j, i) = one_over_sq2 * input(idx++);
+    }
+  }
+}
+
+size_t mlpack::math::SvecIndex(size_t i, size_t j, size_t n)
+{
+  if (i > j)
+    std::swap(i, j);
+  return (j-i) + (n*(n+1) - (n-i)*(n-i+1))/2;
+}
+
+
+void mlpack::math::SymKronId(const arma::mat& A, arma::mat& op)
+{
+  // TODO(stephentu): there's probably an easier way to build this operator
+
+  const size_t n = A.n_rows;
+  const size_t n2bar = n * (n + 1) / 2;
+  op.zeros(n2bar, n2bar);
+
+  size_t idx = 0;
+  for (size_t i = 0; i < n; i++)
+  {
+    for (size_t j = 0; j < i; j++, idx++)
+    {
+      for (size_t k = 0; k < n; k++)
+      {
+        op(idx, SvecIndex(k, j, n)) +=
+          ((k == j) ? 1. : one_over_sq2) * A(i, k);
+        op(idx, SvecIndex(i, k, n)) +=
+          ((k == i) ? 1. : one_over_sq2) * A(k, j);
+        op.row(idx) *= 0.5;
+        if (i != j)
+          op.row(idx) *= sq2;
+      }
+    }
+  }
+}
