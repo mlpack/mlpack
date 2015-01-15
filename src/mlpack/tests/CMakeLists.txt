@@ -45,6 +45,7 @@ add_executable(mlpack_test
   regularized_svd_test.cpp
   sa_test.cpp
   save_restore_utility_test.cpp
+  sdp_primal_dual_test.cpp
   sgd_test.cpp
   softmax_regression_test.cpp
   sort_policy_test.cpp
