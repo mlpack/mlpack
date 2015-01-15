@@ -20,6 +20,7 @@ class DualTreeKMeansStatistic
       closestQueryNode(NULL),
       minQueryNodeDistance(DBL_MAX),
       maxQueryNodeDistance(DBL_MAX),
+      secondClosestBound(DBL_MAX),
       clustersPruned(size_t(-1)),
       iteration(size_t() - 1),
       firstBound(DBL_MAX),
@@ -59,6 +60,11 @@ class DualTreeKMeansStatistic
   double MaxQueryNodeDistance() const { return maxQueryNodeDistance; }
   //! Modify the maximum distance to the closest query node.
   double& MaxQueryNodeDistance() { return maxQueryNodeDistance; }
+
+  //! Get a lower bound on the second closest cluster distance.
+  double SecondClosestBound() const { return secondClosestBound; }
+  //! Modify the lower bound on the second closest cluster distance.
+  double& SecondClosestBound() { return secondClosestBound; }
 
   //! Get the number of clusters that have been pruned during this iteration.
   size_t ClustersPruned() const { return clustersPruned; }
@@ -108,6 +114,8 @@ class DualTreeKMeansStatistic
   double minQueryNodeDistance;
   //! The maximum distance to the closest query node.
   double maxQueryNodeDistance;
+  //! A lower bound on the distance to the second closest cluster.
+  double secondClosestBound;
 
   //! The number of clusters that have been pruned.
   size_t clustersPruned;
