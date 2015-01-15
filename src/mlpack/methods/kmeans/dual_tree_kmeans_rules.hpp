@@ -72,12 +72,12 @@ class DualTreeKMeansRules
       potentialChild) const;
 
   /**
-   * See if an Elkan-type overall prune can be performed.  This means that the
-   * previous iteration owner _must_ be the owner during this iteration.
+   * See if a Hamerly-type prune can be performed.  This means that the previous
+   * iteration owner _must_ be the owner during this iteration.
    *
    * This is not a function of the query node, so it does not need to be passed.
    */
-  double ElkanOverallTypeScore(TreeType& referenceNode);
+  double HamerlyTypeScore(TreeType& referenceNode);
 
   /**
    * See if an Elkan-type prune can be performed.  If so, return DBL_MAX;

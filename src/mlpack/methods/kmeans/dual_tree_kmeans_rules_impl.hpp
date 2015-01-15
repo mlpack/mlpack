@@ -206,7 +206,7 @@ bool DualTreeKMeansRules<MetricType, TreeType>::IsDescendantOf(
 }
 
 template<typename MetricType, typename TreeType>
-double DualTreeKMeansRules<MetricType, TreeType>::ElkanOverallTypeScore(
+double DualTreeKMeansRules<MetricType, TreeType>::HamerlyTypeScore(
     TreeType& referenceNode)
 {
   // Does the reference node have an owner?
