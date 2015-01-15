@@ -76,6 +76,38 @@ void RemoveRows(const arma::mat& input,
                 const std::vector<size_t>& rowsToRemove,
                 arma::mat& output);
 
+/**
+ *
+ * @param input A symmetric matrix
+ * @param output
+ */
+void Svec(const arma::mat& input, arma::vec& output);
+
+/**
+ * The inverse of Svec
+ *
+ * @param input
+ * @param output A symmetric matrix
+ */
+void Smat(const arma::vec& input, arma::mat& output);
+
+/**
+ * Return the index such that A[i,j] == factr(i, j) * svec(A)[pos(i, j)],
+ * where factr(i, j) = sqrt(2) if i != j and 1 otherwise.
+ *
+ * @param i
+ * @param j
+ * @param n
+ */
+size_t SvecIndex(size_t i, size_t j, size_t n);
+
+/**
+ *
+ * @param A
+ * @param op
+ */
+void SymKronId(const arma::mat& A, arma::mat& op);
+
 }; // namespace math
 }; // namespace mlpack
 

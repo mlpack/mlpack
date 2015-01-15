@@ -3,6 +3,7 @@ set(DIRS
   lbfgs
   lrsdp
   sa
+  sdp
   sgd
 )
 
