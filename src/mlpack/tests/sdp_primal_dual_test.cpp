@@ -44,7 +44,7 @@ class UndirectedGraph
   static void LoadFromEdges(UndirectedGraph& g,
                             const std::string& edgesFilename)
   {
-    data::Load(edgesFilename, g.edges, true);
+    data::Load(edgesFilename, g.edges, true, false);
     if (g.edges.n_rows != 2)
       Log::Fatal << "Invalid datafile" << std::endl;
     g.weights.ones(g.edges.n_cols);
@@ -55,10 +55,10 @@ class UndirectedGraph
                                       const std::string& edgesFilename,
                                       const std::string& weightsFilename)
   {
-    data::Load(edgesFilename, g.edges, true);
+    data::Load(edgesFilename, g.edges, true, false);
     if (g.edges.n_rows != 2)
       Log::Fatal << "Invalid datafile" << std::endl;
-    data::Load(weightsFilename, g.weights);
+    data::Load(weightsFilename, g.weights, true, false);
     if (g.weights.n_elem != g.edges.n_cols)
       Log::Fatal << "Size mismatch" << std::endl;
     g.ComputeVertices();
@@ -142,7 +142,7 @@ static inline SDP
 ConstructMaxCutSDPFromLaplacian(const std::string& laplacianFilename)
 {
   arma::mat laplacian;
-  data::Load(laplacianFilename, laplacian, false);
+  data::Load(laplacianFilename, laplacian, true, false);
   if (laplacian.n_rows != laplacian.n_cols)
     Log::Fatal << "laplacian not square" << std::endl;
   SDP sdp(laplacian.n_rows, laplacian.n_rows, 0);
