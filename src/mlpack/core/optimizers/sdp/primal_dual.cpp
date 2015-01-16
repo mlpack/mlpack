@@ -1,3 +1,22 @@
+/**
+ * @file primal_dual.cpp
+ * @author Stephen Tu
+ *
+ * Contains an implementation of the "XZ+ZX" primal-dual IP method presented
+ * and analyzed in:
+ *
+ *   Primal-dual interior-point methods for semidefinite programming:
+ *   Convergence rates, stability and numerical results.
+ *   Farid Alizadeh, Jean-Pierre Haeberly, and Michael Overton.
+ *   SIAM J. Optim. 1998.
+ *   https://www.cs.nyu.edu/overton/papers/pdffiles/pdsdp.pdf
+ *
+ * We will refer to this paper as [AHO98] in this file.
+ *
+ * Note there are many optimizations that still need to be implemented. See the
+ * code comments for more details.
+ */
+
 #include "primal_dual.hpp"
 
 namespace mlpack {
@@ -92,7 +111,11 @@ AlphaHat(const arma::mat& A, const arma::mat& dA)
  *
  *   AX + XA = H
  *
- * where A, H are symmetric matrices
+ * where A, H are symmetric matrices.
+ *
+ * TODO(stephentu): Note this method current uses arma's builtin arma::syl
+ * method, which is overkill for this situation. See Lemma 7.2 of [AHO98] for
+ * how to solve this Lyapunov equation using an eigenvalue decomposition of A.
  *
  */
 static inline void
@@ -107,10 +130,13 @@ PrimalDualSolver::Optimize(arma::mat& X,
                            arma::vec& ydense,
                            arma::mat& Z)
 {
+  // TODO(stephentu): We need a method which deals with the case when the Ais
+  // are not linearly independent.
+
   const size_t n = sdp.N();
   const size_t n2bar = sdp.N2bar();
 
-  // TODO: implementation does not take adv of sparsity yet
+  // TODO(stephentu): implementation does not take adv of sparsity yet
 
   arma::mat Asparse(sdp.NumSparseConstraints(), n2bar);
   arma::vec Ai;
@@ -261,6 +287,10 @@ PrimalDualSolver::Optimize(arma::mat& X,
     math::Smat(dsx, dX);
     math::Smat(dsz, dZ);
 
+    // TODO(stephentu): computing these alphahats should take advantage of
+    // the cholesky decomposition of X and Z which we should have available
+    // when we use more efficient methods above.
+
     double alphahatX = AlphaHat(X, dX);
     if (alphahatX < 0.)
       // dX is PSD
@@ -273,6 +303,11 @@ PrimalDualSolver::Optimize(arma::mat& X,
 
     const double alpha = std::min(1., tau * alphahatX);
     const double beta = std::min(1., tau * alphahatZ);
+
+    // TODO(stephentu): Implement the Mehrotra's predictor-corrector rule.  See
+    // Section 7 of [AHO98]. This will require making the above KKT system
+    // solver more modular (since we'll have to solve another similar KKT
+    // system).
 
     X += alpha * dX;
     math::Svec(X, sx);
@@ -301,6 +336,8 @@ PrimalDualSolver::Optimize(arma::mat& X,
 
     const double duality_gap = primal_obj - dual_obj;
 
+    // TODO(stephentu): this dual check is quite expensive,
+    // maybe make it optional?
     DualCheck = Z;
     if (sdp.HasSparseObjective())
       DualCheck -= sdp.SparseC();
