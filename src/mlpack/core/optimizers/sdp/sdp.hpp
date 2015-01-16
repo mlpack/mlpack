@@ -80,6 +80,13 @@ class SDP
 
   bool HasDenseObjective() const { return hasModifiedDenseObjective; }
 
+  /**
+   * Check whether or not the constraint matrices are linearly independent.
+   *
+   * Warning: possibly very expensive check
+   */
+  bool HasLinearlyIndependentConstraints() const;
+
  private:
 
   //! Dimension of the objective variable.
