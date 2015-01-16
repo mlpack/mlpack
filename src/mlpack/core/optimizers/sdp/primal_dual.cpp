@@ -103,14 +103,14 @@ double PrimalDualSolver::Optimize(arma::mat& X,
   for (size_t i = 0; i < sdp.NumSparseConstraints(); i++)
   {
     math::Svec(DenseFromSparse(sdp.SparseA()[i]), Ai);
-    Asparse.row(i) = Ai;
+    Asparse.row(i) = Ai.t();
   }
 
   arma::mat Adense(sdp.NumDenseConstraints(), n2bar);
   for (size_t i = 0; i < sdp.NumDenseConstraints(); i++)
   {
     math::Svec(sdp.DenseA()[i], Ai);
-    Adense.row(i) = Ai;
+    Adense.row(i) = Ai.t();
   }
 
   arma::vec scsparse;
@@ -143,7 +143,7 @@ double PrimalDualSolver::Optimize(arma::mat& X,
   rhs.set_size(sdp.NumConstraints());
 
   Einv_F_AsparseT.set_size(n2bar, sdp.NumSparseConstraints());
-  Einv_F_AsparseT.set_size(n2bar, sdp.NumDenseConstraints());
+  Einv_F_AdenseT.set_size(n2bar, sdp.NumDenseConstraints());
   M.set_size(sdp.NumConstraints(), sdp.NumConstraints());
 
   for (;;)
@@ -183,6 +183,7 @@ double PrimalDualSolver::Optimize(arma::mat& X,
       math::Svec(Gk, gk);
       Einv_F_AdenseT.col(i) = gk;
     }
+
 
     if (sdp.NumSparseConstraints())
     {
@@ -284,8 +285,7 @@ double PrimalDualSolver::Optimize(arma::mat& X,
 
     const double duality_gap = dual_obj - primal_obj;
 
-
-    Log::Info
+    Log::Debug
       << "primal=" << primal_obj << ", "
       << "dual=" << dual_obj << ", "
       << "gap=" << duality_gap << ", "

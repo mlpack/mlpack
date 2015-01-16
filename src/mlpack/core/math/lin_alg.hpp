@@ -77,6 +77,10 @@ void RemoveRows(const arma::mat& input,
                 arma::mat& output);
 
 /**
+ * Upper triangular representation of a symmetric matrix, scaled such that,
+ * dot(Svec(A), Svec(B)) == dot(A, B) for symmetric A, B. Specifically,
+ *
+ * Svec(K) = [ K_11, sqrt(2) K_12, ..., sqrt(2) K_1n, K_22, ..., sqrt(2) K_2n, ..., K_nn ]^T
  *
  * @param input A symmetric matrix
  * @param output
@@ -84,7 +88,7 @@ void RemoveRows(const arma::mat& input,
 void Svec(const arma::mat& input, arma::vec& output);
 
 /**
- * The inverse of Svec
+ * The inverse of Svec. That is, Smat(Svec(A)) == A.
  *
  * @param input
  * @param output A symmetric matrix
@@ -102,6 +106,11 @@ void Smat(const arma::vec& input, arma::mat& output);
 size_t SvecIndex(size_t i, size_t j, size_t n);
 
 /**
+ * If A is a symmetric matrix, then SymKronId returns an operator Op such that
+ *
+ *    Op * svec(X) == svec(0.5 * (AX + XA))
+ *
+ * for every symmetric matrix X
  *
  * @param A
  * @param op
