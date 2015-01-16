@@ -111,7 +111,7 @@ class UndirectedGraph
 };
 
 static inline SDP
-ConstructMaxCutSDP(const UndirectedGraph& g)
+ConstructMaxCutSDPFromGraph(const UndirectedGraph& g)
 {
   SDP sdp(g.NumVertices(), g.NumVertices(), 0);
   g.Laplacian(sdp.SparseC());
@@ -138,6 +138,25 @@ Diag(const arma::vec& diag)
   return ret;
 }
 
+static inline SDP
+ConstructMaxCutSDPFromLaplacian(const std::string& laplacianFilename)
+{
+  arma::mat laplacian;
+  data::Load(laplacianFilename, laplacian, false);
+  if (laplacian.n_rows != laplacian.n_cols)
+    Log::Fatal << "laplacian not square" << std::endl;
+  SDP sdp(laplacian.n_rows, laplacian.n_rows, 0);
+  sdp.SparseC() = -arma::sp_mat(laplacian);
+  for (size_t i = 0; i < laplacian.n_rows; i++)
+  {
+    sdp.SparseA()[i].zeros(laplacian.n_rows, laplacian.n_rows);
+    sdp.SparseA()[i](i, i) = 1.;
+  }
+  sdp.SparseB().ones();
+  return sdp;
+}
+
+
 BOOST_AUTO_TEST_SUITE(SdpPrimalDualTest);
 
 /**
@@ -145,19 +164,25 @@ BOOST_AUTO_TEST_SUITE(SdpPrimalDualTest);
  */
 BOOST_AUTO_TEST_CASE(SmallMaxCutFeasibleSdp)
 {
-  UndirectedGraph g;
-  UndirectedGraph::ErdosRenyiRandomGraph(g, 10, 0.3, true);
-  SDP sdp = ConstructMaxCutSDP(g);
+  //UndirectedGraph g;
+  //UndirectedGraph::ErdosRenyiRandomGraph(g, 10, 0.3, true);
+  //SDP sdp = ConstructMaxCutSDPFromGraph(g);
+
+  SDP sdp = ConstructMaxCutSDPFromLaplacian("r10.txt");
 
   arma::mat X0, Z0;
   arma::vec ysparse0, ydense0;
   ydense0.set_size(0);
 
-  X0.eye(g.NumVertices(), g.NumVertices());
+  X0.eye(sdp.N(), sdp.N());
   ysparse0 = -1.1 * arma::vec(arma::sum(arma::abs(sdp.SparseC()), 0).t());
   Z0 = -Diag(ysparse0) + sdp.SparseC();
 
+  //std::cout << "ysparse0" << std::endl;
+  //std::cout << ysparse0 << std::endl;
+
   PrimalDualSolver solver(sdp, X0, ysparse0, ydense0, Z0);
+  //solver.MaxIterations() = 1;
 
   arma::mat X, Z;
   arma::vec ysparse, ydense;

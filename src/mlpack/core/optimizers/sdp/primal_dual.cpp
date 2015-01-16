@@ -13,7 +13,8 @@ PrimalDualSolver::PrimalDualSolver(const SDP& sdp)
     tau(0.5),
     normXzTol(1e-7),
     primalInfeasTol(1e-7),
-    dualInfeasTol(1e-7)
+    dualInfeasTol(1e-7),
+    maxIterations(1000)
 {
 
 }
@@ -32,7 +33,8 @@ PrimalDualSolver::PrimalDualSolver(const SDP& sdp,
     tau(0.5),
     normXzTol(1e-7),
     primalInfeasTol(1e-7),
-    dualInfeasTol(1e-7)
+    dualInfeasTol(1e-7),
+    maxIterations(1000)
 {
   if (X0.n_rows != sdp.N() || X0.n_cols != sdp.N())
     Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
@@ -136,7 +138,7 @@ double PrimalDualSolver::Optimize(arma::mat& X,
   arma::vec rp, rd, rc, gk, Einv_Frd_rc, Einv_Frd_ATdy_rc, rhs;
 
   arma::mat Rc, E, F, Einv_F_AsparseT, Einv_F_AdenseT, Gk,
-            M, Einv_Frd_rc_Mat, Frd_rc_Mat, Frd_ATdy_Mat,
+            M, Einv_Frd_rc_Mat, Frd_rc_Mat, Frd_ATdy_rc_Mat,
             Einv_Frd_ATdy_rc_Mat;
 
   rp.set_size(sdp.NumConstraints());
@@ -146,7 +148,7 @@ double PrimalDualSolver::Optimize(arma::mat& X,
   Einv_F_AdenseT.set_size(n2bar, sdp.NumDenseConstraints());
   M.set_size(sdp.NumConstraints(), sdp.NumConstraints());
 
-  for (;;)
+  for (size_t iteration = 0; iteration < maxIterations; iteration++)
   {
 
     const double mu = sigma * arma::dot(sx, sz) / n;
@@ -158,17 +160,32 @@ double PrimalDualSolver::Optimize(arma::mat& X,
       rp(arma::span(sdp.NumSparseConstraints(), sdp.NumConstraints() - 1)) =
           sdp.DenseB() - Adense * sx;
 
+    //std::cout << "rp" << std::endl;
+    //std::cout << rp << std::endl;
+
     rd = - sz - Asparse.t() * ysparse - Adense.t() * ydense;
     if (sdp.HasSparseObjective())
       rd += scsparse;
     if (sdp.HasDenseObjective())
       rd += scdense;
 
+    //std::cout << "rd" << std::endl;
+    //std::cout << rd << std::endl;
+
     Rc = mu*arma::eye<arma::mat>(n, n) - 0.5*(X*Z + Z*X);
     math::Svec(Rc, rc);
 
+    //std::cout << "rc" << std::endl;
+    //std::cout << rc << std::endl;
+
     math::SymKronId(Z, E);
     math::SymKronId(X, F);
+
+    //std::cout << "E" << std::endl;
+    //std::cout << E << std::endl;
+
+    //std::cout << "F" << std::endl;
+    //std::cout << F << std::endl;
 
     for (size_t i = 0; i < sdp.NumSparseConstraints(); i++)
     {
@@ -177,13 +194,15 @@ double PrimalDualSolver::Optimize(arma::mat& X,
       Einv_F_AsparseT.col(i) = gk;
     }
 
+    //std::cout << "Einv_F_AsparseT" << std::endl;
+    //std::cout << Einv_F_AsparseT << std::endl;
+
     for (size_t i = 0; i < sdp.NumDenseConstraints(); i++)
     {
       SolveLyapunov(Gk, Z, X * sdp.DenseA()[i] + sdp.DenseA()[i] * X);
       math::Svec(Gk, gk);
       Einv_F_AdenseT.col(i) = gk;
     }
-
 
     if (sdp.NumSparseConstraints())
     {
@@ -218,6 +237,8 @@ double PrimalDualSolver::Optimize(arma::mat& X,
         Adense * Einv_F_AdenseT;
     }
 
+    //std::cout << "M" << std::endl;
+    //std::cout << M << std::endl;
 
     math::Smat(F * rd - rc, Frd_rc_Mat);
     SolveLyapunov(Einv_Frd_rc_Mat, Z, 2. * Frd_rc_Mat);
@@ -230,17 +251,29 @@ double PrimalDualSolver::Optimize(arma::mat& X,
       rhs(arma::span(sdp.NumSparseConstraints(), sdp.NumConstraints() - 1)) += Adense * Einv_Frd_rc;
 
     // TODO(stephentu): use a more efficient method (e.g. LU decomposition)
+    //std::cout << "rhs" << std::endl;
+    //std::cout << rhs << std::endl;
+
     arma::solve(dy, M, rhs);
     if (sdp.NumSparseConstraints())
       dysparse = dy(arma::span(0, sdp.NumSparseConstraints() - 1));
     if (sdp.NumDenseConstraints())
       dydense = dy(arma::span(sdp.NumSparseConstraints(), sdp.NumConstraints() - 1));
+    //std::cout << "dy" << std::endl;
+    //std::cout << dy << std::endl;
 
-    math::Smat(F * (rd - Asparse.t() * dysparse - Adense.t() * dydense), Frd_ATdy_Mat);
-    SolveLyapunov(Einv_Frd_ATdy_rc_Mat, Z, 2. * Frd_ATdy_Mat);
+    math::Smat(F * (rd - Asparse.t() * dysparse - Adense.t() * dydense) - rc, Frd_ATdy_rc_Mat);
+    SolveLyapunov(Einv_Frd_ATdy_rc_Mat, Z, 2. * Frd_ATdy_rc_Mat);
     math::Svec(Einv_Frd_ATdy_rc_Mat, Einv_Frd_ATdy_rc);
     dsx = -Einv_Frd_ATdy_rc;
+
+    //std::cout << "dsx" << std::endl;
+    //std::cout << dsx << std::endl;
+
     dsz = rd - Asparse.t() * dysparse - Adense.t() * dydense;
+
+    //std::cout << "dsz" << std::endl;
+    //std::cout << dsz << std::endl;
 
     math::Smat(dsx, dX);
     math::Smat(dsz, dZ);
@@ -283,9 +316,10 @@ double PrimalDualSolver::Optimize(arma::mat& X,
       arma::dot(sdp.SparseB(), ysparse) +
       arma::dot(sdp.DenseB(), ydense);
 
-    const double duality_gap = dual_obj - primal_obj;
+    const double duality_gap = primal_obj - dual_obj;
 
     Log::Debug
+      << "iter=" << iteration + 1 << ", "
       << "primal=" << primal_obj << ", "
       << "dual=" << dual_obj << ", "
       << "gap=" << duality_gap << ", "
@@ -298,6 +332,9 @@ double PrimalDualSolver::Optimize(arma::mat& X,
         primal_infeas <= primalInfeasTol)
       return primal_obj;
   }
+
+  Log::Warn << "did not converge" << std::endl;
+  return -1;
 }
 
 } // namespace optimization
