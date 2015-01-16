@@ -39,6 +39,7 @@ class PrimalDualSolver {
   double& NormXzTol() { return normXzTol; }
   double& PrimalInfeasTol() { return primalInfeasTol; }
   double& DualInfeasTol() { return dualInfeasTol; }
+  size_t& MaxIterations() { return maxIterations; }
 
  private:
   SDP sdp;
@@ -53,6 +54,8 @@ class PrimalDualSolver {
   double normXzTol;
   double primalInfeasTol;
   double dualInfeasTol;
+
+  size_t maxIterations;
 
 };
 
