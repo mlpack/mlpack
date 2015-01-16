@@ -25,5 +25,31 @@ SDP::SDP(const size_t n,
   denseC.zeros();
 }
 
+bool SDP::HasLinearlyIndependentConstraints() const
+{
+  // Very inefficient, should only be used for testing/debugging
+
+  const size_t n2bar = N2bar();
+  arma::mat A(NumConstraints(), n2bar);
+  if (A.n_rows > n2bar)
+    return false;
+
+  for (size_t i = 0; i < NumSparseConstraints(); i++)
+  {
+    arma::vec sa;
+    math::Svec(arma::mat(SparseA()[i]), sa);
+    A.row(i) = sa.t();
+  }
+  for (size_t i = 0; i < NumDenseConstraints(); i++)
+  {
+    arma::vec sa;
+    math::Svec(DenseA()[i], sa);
+    A.row(NumSparseConstraints() + i) = sa.t();
+  }
+
+  const arma::vec s = arma::svd(A);
+  return s(s.n_elem - 1) > 1e-5;
+}
+
 } // namespace optimization
 } // namespace mlpack

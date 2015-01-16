@@ -268,7 +268,9 @@ PrimalDualSolver::Optimize(arma::mat& X,
     //std::cout << "rhs" << std::endl;
     //std::cout << rhs << std::endl;
 
-    arma::solve(dy, M, rhs);
+    if (!arma::solve(dy, M, rhs))
+      Log::Fatal << "PrimalDualSolver::Optimize(): Could not solve KKT system" << std::endl;
+
     if (sdp.NumSparseConstraints())
       dysparse = dy(arma::span(0, sdp.NumSparseConstraints() - 1));
     if (sdp.NumDenseConstraints())

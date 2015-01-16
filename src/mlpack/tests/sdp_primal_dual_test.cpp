@@ -6,12 +6,15 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/sdp/sdp.hpp>
 #include <mlpack/core/optimizers/sdp/primal_dual.hpp>
+#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
 
 using namespace mlpack;
 using namespace mlpack::optimization;
+using namespace mlpack::distribution;
+using namespace mlpack::neighbor;
 
 class UndirectedGraph
 {
@@ -386,6 +389,94 @@ BOOST_AUTO_TEST_CASE(LogChebychevApproxSdp)
   arma::vec ysparse1, ydense1;
   const auto stat1 = solver1.Optimize(X1, ysparse1, ydense1, Z1);
   BOOST_REQUIRE(stat1.first);
+}
+
+/**
+ * Maximum variance unfolding (MVU) SDP to learn the unrolled gram matrix. For
+ * the SDP formulation, see:
+ *
+ *   Unsupervised learning of image manifolds by semidefinite programming.
+ *   Kilian Weinberger and Lawrence Saul. CVPR 04.
+ *   http://repository.upenn.edu/cgi/viewcontent.cgi?article=1000&context=cis_papers
+ *
+ * @param origData origDim x numPoints
+ * @param numNeighbors
+ */
+static inline SDP ConstructMvuSDP(const arma::mat& origData,
+                                  size_t numNeighbors)
+{
+  const size_t numPoints = origData.n_cols;
+
+  assert(numNeighbors <= numPoints);
+
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+  AllkNN allknn(origData);
+  allknn.Search(numNeighbors, neighbors, distances);
+
+  SDP sdp(numPoints, numNeighbors * numPoints, 1);
+  sdp.SparseC().eye(numPoints, numPoints);
+  sdp.SparseC() *= -1;
+  sdp.DenseA()[0].ones(numPoints, numPoints);
+  sdp.DenseB()[0] = 0;
+
+  for (size_t i = 0; i < neighbors.n_cols; ++i)
+  {
+    for (size_t j = 0; j < numNeighbors; ++j)
+    {
+      // This is the index of the constraint.
+      const size_t index = (i * numNeighbors) + j;
+
+      arma::sp_mat& aRef = sdp.SparseA()[index];
+      aRef.zeros(numPoints, numPoints);
+
+      // A_ij(i, i) = 1.
+      aRef(i, i) = 1;
+
+      // A_ij(i, j) = -1.
+      aRef(i, neighbors(j, i)) = -1;
+
+      // A_ij(j, i) = -1.
+      aRef(neighbors(j, i), i) = -1;
+
+      // A_ij(j, j) = 1.
+      aRef(neighbors(j, i), neighbors(j, i)) = 1;
+
+      // The constraint b_ij is the distance between these two points.
+      sdp.SparseB()[index] = distances(j, i);
+    }
+  }
+
+  return sdp;
+}
+
+/**
+ * Maximum variance unfolding
+ *
+ * Test doesn't work, because the constraint matrices are not linearly
+ * independent.
+ */
+BOOST_AUTO_TEST_CASE(SmallMvuSdp)
+{
+  const size_t n = 20;
+
+  arma::mat origData(3, n);
+
+  // sample n random points on 3-dim unit sphere
+  GaussianDistribution gauss(3);
+  for (size_t i = 0; i < n; i++)
+  {
+    // how european of them
+    origData.col(i) = arma::normalise(gauss.Random());
+  }
+
+  SDP sdp = ConstructMvuSDP(origData, 5);
+
+  PrimalDualSolver solver(sdp);
+  arma::mat X, Z;
+  arma::vec ysparse, ydense;
+  const auto p = solver.Optimize(X, ysparse, ydense, Z);
+  BOOST_REQUIRE(p.first);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
