@@ -174,32 +174,17 @@ PrimalDualSolver::Optimize(arma::mat& X,
       rp(arma::span(sdp.NumSparseConstraints(), sdp.NumConstraints() - 1)) =
           sdp.DenseB() - Adense * sx;
 
-    //std::cout << "rp" << std::endl;
-    //std::cout << rp << std::endl;
-
     rd = - sz - Asparse.t() * ysparse - Adense.t() * ydense;
     if (sdp.HasSparseObjective())
       rd += scsparse;
     if (sdp.HasDenseObjective())
       rd += scdense;
 
-    //std::cout << "rd" << std::endl;
-    //std::cout << rd << std::endl;
-
     Rc = mu*arma::eye<arma::mat>(n, n) - 0.5*(X*Z + Z*X);
     math::Svec(Rc, rc);
 
-    //std::cout << "rc" << std::endl;
-    //std::cout << rc << std::endl;
-
     math::SymKronId(Z, E);
     math::SymKronId(X, F);
-
-    //std::cout << "E" << std::endl;
-    //std::cout << E << std::endl;
-
-    //std::cout << "F" << std::endl;
-    //std::cout << F << std::endl;
 
     for (size_t i = 0; i < sdp.NumSparseConstraints(); i++)
     {
@@ -207,9 +192,6 @@ PrimalDualSolver::Optimize(arma::mat& X,
       math::Svec(Gk, gk);
       Einv_F_AsparseT.col(i) = gk;
     }
-
-    //std::cout << "Einv_F_AsparseT" << std::endl;
-    //std::cout << Einv_F_AsparseT << std::endl;
 
     for (size_t i = 0; i < sdp.NumDenseConstraints(); i++)
     {
@@ -251,9 +233,6 @@ PrimalDualSolver::Optimize(arma::mat& X,
         Adense * Einv_F_AdenseT;
     }
 
-    //std::cout << "M" << std::endl;
-    //std::cout << M << std::endl;
-
     math::Smat(F * rd - rc, Frd_rc_Mat);
     SolveLyapunov(Einv_Frd_rc_Mat, Z, 2. * Frd_rc_Mat);
     math::Svec(Einv_Frd_rc_Mat, Einv_Frd_rc);
@@ -265,9 +244,6 @@ PrimalDualSolver::Optimize(arma::mat& X,
       rhs(arma::span(sdp.NumSparseConstraints(), sdp.NumConstraints() - 1)) += Adense * Einv_Frd_rc;
 
     // TODO(stephentu): use a more efficient method (e.g. LU decomposition)
-    //std::cout << "rhs" << std::endl;
-    //std::cout << rhs << std::endl;
-
     if (!arma::solve(dy, M, rhs))
       Log::Fatal << "PrimalDualSolver::Optimize(): Could not solve KKT system" << std::endl;
 
@@ -275,21 +251,12 @@ PrimalDualSolver::Optimize(arma::mat& X,
       dysparse = dy(arma::span(0, sdp.NumSparseConstraints() - 1));
     if (sdp.NumDenseConstraints())
       dydense = dy(arma::span(sdp.NumSparseConstraints(), sdp.NumConstraints() - 1));
-    //std::cout << "dy" << std::endl;
-    //std::cout << dy << std::endl;
 
     math::Smat(F * (rd - Asparse.t() * dysparse - Adense.t() * dydense) - rc, Frd_ATdy_rc_Mat);
     SolveLyapunov(Einv_Frd_ATdy_rc_Mat, Z, 2. * Frd_ATdy_rc_Mat);
     math::Svec(Einv_Frd_ATdy_rc_Mat, Einv_Frd_ATdy_rc);
     dsx = -Einv_Frd_ATdy_rc;
-
-    //std::cout << "dsx" << std::endl;
-    //std::cout << dsx << std::endl;
-
     dsz = rd - Asparse.t() * dysparse - Adense.t() * dydense;
-
-    //std::cout << "dsz" << std::endl;
-    //std::cout << dsz << std::endl;
 
     math::Smat(dsx, dX);
     math::Smat(dsz, dZ);
