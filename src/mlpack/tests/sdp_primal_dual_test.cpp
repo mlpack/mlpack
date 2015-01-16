@@ -42,9 +42,10 @@ class UndirectedGraph
   }
 
   static void LoadFromEdges(UndirectedGraph& g,
-                            const std::string& edgesFilename)
+                            const std::string& edgesFilename,
+                            bool transposeEdges)
   {
-    data::Load(edgesFilename, g.edges, true, false);
+    data::Load(edgesFilename, g.edges, true, transposeEdges);
     if (g.edges.n_rows != 2)
       Log::Fatal << "Invalid datafile" << std::endl;
     g.weights.ones(g.edges.n_cols);
@@ -53,12 +54,14 @@ class UndirectedGraph
 
   static void LoadFromEdgesAndWeights(UndirectedGraph& g,
                                       const std::string& edgesFilename,
-                                      const std::string& weightsFilename)
+                                      bool transposeEdges,
+                                      const std::string& weightsFilename,
+                                      bool transposeWeights)
   {
-    data::Load(edgesFilename, g.edges, true, false);
+    data::Load(edgesFilename, g.edges, true, transposeEdges);
     if (g.edges.n_rows != 2)
       Log::Fatal << "Invalid datafile" << std::endl;
-    data::Load(weightsFilename, g.weights, true, false);
+    data::Load(weightsFilename, g.weights, true, transposeWeights);
     if (g.weights.n_elem != g.edges.n_cols)
       Log::Fatal << "Size mismatch" << std::endl;
     g.ComputeVertices();
@@ -122,6 +125,24 @@ ConstructMaxCutSDPFromGraph(const UndirectedGraph& g)
     sdp.SparseA()[i](i, i) = 1.;
   }
   sdp.SparseB().ones();
+  return sdp;
+}
+
+static inline SDP
+ConstructLovaszThetaSDPFromGraph(const UndirectedGraph& g)
+{
+  SDP sdp(g.NumVertices(), g.NumEdges() + 1, 0);
+  sdp.DenseC().ones();
+  sdp.DenseC() *= -1.;
+  sdp.SparseA()[0].eye(g.NumVertices(), g.NumVertices());
+  for (size_t i = 0; i < g.NumEdges(); i++)
+  {
+    sdp.SparseA()[i + 1].zeros(g.NumVertices(), g.NumVertices());
+    sdp.SparseA()[i + 1](g.Edges()(0, i), g.Edges()(1, i)) = 1.;
+    sdp.SparseA()[i + 1](g.Edges()(1, i), g.Edges()(0, i)) = 1.;
+  }
+  sdp.SparseB().zeros();
+  sdp.SparseB()[0] = 1.;
   return sdp;
 }
 
@@ -200,9 +221,6 @@ static void SolveMaxCutPositiveSDP(const SDP& sdp)
   BOOST_REQUIRE(p.first);
 }
 
-/**
- * Start from a strictly feasible point
- */
 BOOST_AUTO_TEST_CASE(SmallMaxCutSdp)
 {
   SDP sdp = ConstructMaxCutSDPFromLaplacian("r10.txt");
@@ -214,6 +232,20 @@ BOOST_AUTO_TEST_CASE(SmallMaxCutSdp)
   sdp = ConstructMaxCutSDPFromGraph(g);
   SolveMaxCutFeasibleSDP(sdp);
   SolveMaxCutPositiveSDP(sdp);
+}
+
+BOOST_AUTO_TEST_CASE(SmallLovaszThetaSdp)
+{
+  UndirectedGraph g;
+  UndirectedGraph::LoadFromEdges(g, "johnson8-4-4.csv", true);
+  SDP sdp = ConstructLovaszThetaSDPFromGraph(g);
+
+  PrimalDualSolver solver(sdp);
+
+  arma::mat X, Z;
+  arma::vec ysparse, ydense;
+  const auto p = solver.Optimize(X, ysparse, ydense, Z);
+  BOOST_REQUIRE(p.first);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
