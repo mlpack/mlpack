@@ -165,6 +165,7 @@ static void SolveMaxCutFeasibleSDP(const SDP& sdp)
   arma::vec ysparse0, ydense0;
   ydense0.set_size(0);
 
+  // strictly feasible starting point
   X0.eye(sdp.N(), sdp.N());
   ysparse0 = -1.1 * arma::vec(arma::sum(arma::abs(sdp.SparseC()), 0).t());
   Z0 = -Diag(ysparse0) + sdp.SparseC();
@@ -177,18 +178,42 @@ static void SolveMaxCutFeasibleSDP(const SDP& sdp)
   BOOST_REQUIRE(p.first);
 }
 
+static void SolveMaxCutPositiveSDP(const SDP& sdp)
+{
+  arma::mat X0, Z0;
+  arma::vec ysparse0, ydense0;
+  ydense0.set_size(0);
+
+  // infeasible, but positive starting point
+  X0.randu(sdp.N(), sdp.N());
+  X0 *= X0.t();
+  X0 += 0.01 * arma::eye<arma::mat>(sdp.N(), sdp.N());
+
+  ysparse0 = arma::randu<arma::vec>(sdp.NumSparseConstraints());
+  Z0.eye(sdp.N(), sdp.N());
+
+  PrimalDualSolver solver(sdp, X0, ysparse0, ydense0, Z0);
+
+  arma::mat X, Z;
+  arma::vec ysparse, ydense;
+  const auto p = solver.Optimize(X, ysparse, ydense, Z);
+  BOOST_REQUIRE(p.first);
+}
+
 /**
  * Start from a strictly feasible point
  */
-BOOST_AUTO_TEST_CASE(SmallMaxCutFeasibleSdp)
+BOOST_AUTO_TEST_CASE(SmallMaxCutSdp)
 {
   SDP sdp = ConstructMaxCutSDPFromLaplacian("r10.txt");
   SolveMaxCutFeasibleSDP(sdp);
+  SolveMaxCutPositiveSDP(sdp);
 
   UndirectedGraph g;
   UndirectedGraph::ErdosRenyiRandomGraph(g, 10, 0.3, true);
   sdp = ConstructMaxCutSDPFromGraph(g);
   SolveMaxCutFeasibleSDP(sdp);
+  SolveMaxCutPositiveSDP(sdp);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
