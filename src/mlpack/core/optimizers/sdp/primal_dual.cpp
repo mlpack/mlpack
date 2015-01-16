@@ -36,9 +36,16 @@ PrimalDualSolver::PrimalDualSolver(const SDP& sdp,
     dualInfeasTol(1e-7),
     maxIterations(1000)
 {
+  arma::mat tmp;
+
   if (X0.n_rows != sdp.N() || X0.n_cols != sdp.N())
     Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
       << "X0 needs to be square n x n matrix"
+      << std::endl;
+
+  if (!arma::chol(tmp, X0))
+    Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
+      << "X0 needs to be symmetric positive definite"
       << std::endl;
 
   if (ysparse0.n_elem != sdp.NumSparseConstraints())
@@ -54,6 +61,11 @@ PrimalDualSolver::PrimalDualSolver(const SDP& sdp,
   if (Z0.n_rows != sdp.N() || Z0.n_cols != sdp.N())
     Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
       << "Z0 needs to be square n x n matrix"
+      << std::endl;
+
+  if (!arma::chol(tmp, Z0))
+    Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
+      << "Z0 needs to be symmetric positive definite"
       << std::endl;
 }
 
