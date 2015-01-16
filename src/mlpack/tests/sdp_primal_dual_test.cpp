@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE(SmallMaxCutFeasibleSdp)
   ydense0.set_size(0);
 
   X0.eye(g.NumVertices(), g.NumVertices());
-  ysparse0 = -1.1 * arma::vec(arma::sum(arma::abs(sdp.SparseC()), 0));
+  ysparse0 = -1.1 * arma::vec(arma::sum(arma::abs(sdp.SparseC()), 0).t());
   Z0 = -Diag(ysparse0) + sdp.SparseC();
 
   PrimalDualSolver solver(sdp, X0, ysparse0, ydense0, Z0);

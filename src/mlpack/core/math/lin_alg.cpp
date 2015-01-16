@@ -270,7 +270,7 @@ void mlpack::math::SymKronId(const arma::mat& A, arma::mat& op)
   size_t idx = 0;
   for (size_t i = 0; i < n; i++)
   {
-    for (size_t j = 0; j < i; j++, idx++)
+    for (size_t j = i; j < n; j++)
     {
       for (size_t k = 0; k < n; k++)
       {
@@ -278,10 +278,11 @@ void mlpack::math::SymKronId(const arma::mat& A, arma::mat& op)
           ((k == j) ? 1. : one_over_sq2) * A(i, k);
         op(idx, SvecIndex(i, k, n)) +=
           ((k == i) ? 1. : one_over_sq2) * A(k, j);
-        op.row(idx) *= 0.5;
-        if (i != j)
-          op.row(idx) *= sq2;
       }
+      op.row(idx) *= 0.5;
+      if (i != j)
+        op.row(idx) *= sq2;
+      idx++;
     }
   }
 }
