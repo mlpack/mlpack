@@ -139,7 +139,7 @@ double PrimalDualSolver::Optimize(arma::mat& X,
 
   arma::mat Rc, E, F, Einv_F_AsparseT, Einv_F_AdenseT, Gk,
             M, Einv_Frd_rc_Mat, Frd_rc_Mat, Frd_ATdy_rc_Mat,
-            Einv_Frd_ATdy_rc_Mat;
+            Einv_Frd_ATdy_rc_Mat, DualCheck;
 
   rp.set_size(sdp.NumConstraints());
   rhs.set_size(sdp.NumConstraints());
@@ -318,6 +318,17 @@ double PrimalDualSolver::Optimize(arma::mat& X,
 
     const double duality_gap = primal_obj - dual_obj;
 
+    DualCheck = Z;
+    if (sdp.HasSparseObjective())
+      DualCheck -= sdp.SparseC();
+    if (sdp.HasDenseObjective())
+      DualCheck -= sdp.DenseC();
+    for (size_t i = 0; i < sdp.NumSparseConstraints(); i++)
+      DualCheck += ysparse(i) * sdp.SparseA()[i];
+    for (size_t i = 0; i < sdp.NumDenseConstraints(); i++)
+      DualCheck += ydense(i) * sdp.DenseA()[i];
+    const double dual_infeas = arma::norm(DualCheck, "fro");
+
     Log::Debug
       << "iter=" << iteration + 1 << ", "
       << "primal=" << primal_obj << ", "
@@ -325,11 +336,13 @@ double PrimalDualSolver::Optimize(arma::mat& X,
       << "gap=" << duality_gap << ", "
       << "||XZ||=" << norm_XZ << ", "
       << "primal_infeas=" << primal_infeas << ", "
+      << "dual_infeas=" << dual_infeas << ", "
       << "mu=" << mu
       << std::endl;
 
     if (norm_XZ <= normXzTol &&
-        primal_infeas <= primalInfeasTol)
+        primal_infeas <= primalInfeasTol &&
+        dual_infeas <= dualInfeasTol)
       return primal_obj;
   }
 
