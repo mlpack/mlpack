@@ -23,12 +23,15 @@ class PrimalDualSolver {
                    const arma::vec& ydense0,
                    const arma::mat& Z0);
 
-  double Optimize(arma::mat& X,
-                  arma::vec& ysparse,
-                  arma::vec& ydense,
-                  arma::mat &Z);
+  std::pair<bool, double>
+  Optimize(arma::mat& X,
+           arma::vec& ysparse,
+           arma::vec& ydense,
+           arma::mat &Z);
 
-  double Optimize(arma::mat& X) {
+  std::pair<bool, double>
+  Optimize(arma::mat& X)
+  {
     arma::vec ysparse, ydense;
     arma::mat Z;
     return Optimize(X, ysparse, ydense, Z);

@@ -159,17 +159,8 @@ ConstructMaxCutSDPFromLaplacian(const std::string& laplacianFilename)
 
 BOOST_AUTO_TEST_SUITE(SdpPrimalDualTest);
 
-/**
- * Start from a strictly feasible point
- */
-BOOST_AUTO_TEST_CASE(SmallMaxCutFeasibleSdp)
+static void SolveMaxCutFeasibleSDP(const SDP& sdp)
 {
-  //UndirectedGraph g;
-  //UndirectedGraph::ErdosRenyiRandomGraph(g, 10, 0.3, true);
-  //SDP sdp = ConstructMaxCutSDPFromGraph(g);
-
-  SDP sdp = ConstructMaxCutSDPFromLaplacian("r10.txt");
-
   arma::mat X0, Z0;
   arma::vec ysparse0, ydense0;
   ydense0.set_size(0);
@@ -178,16 +169,26 @@ BOOST_AUTO_TEST_CASE(SmallMaxCutFeasibleSdp)
   ysparse0 = -1.1 * arma::vec(arma::sum(arma::abs(sdp.SparseC()), 0).t());
   Z0 = -Diag(ysparse0) + sdp.SparseC();
 
-  //std::cout << "ysparse0" << std::endl;
-  //std::cout << ysparse0 << std::endl;
-
   PrimalDualSolver solver(sdp, X0, ysparse0, ydense0, Z0);
-  //solver.MaxIterations() = 1;
 
   arma::mat X, Z;
   arma::vec ysparse, ydense;
-  solver.Optimize(X, ysparse, ydense, Z);
+  const auto p = solver.Optimize(X, ysparse, ydense, Z);
+  BOOST_REQUIRE(p.first);
+}
 
+/**
+ * Start from a strictly feasible point
+ */
+BOOST_AUTO_TEST_CASE(SmallMaxCutFeasibleSdp)
+{
+  SDP sdp = ConstructMaxCutSDPFromLaplacian("r10.txt");
+  SolveMaxCutFeasibleSDP(sdp);
+
+  UndirectedGraph g;
+  UndirectedGraph::ErdosRenyiRandomGraph(g, 10, 0.3, true);
+  sdp = ConstructMaxCutSDPFromGraph(g);
+  SolveMaxCutFeasibleSDP(sdp);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

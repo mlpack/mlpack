@@ -89,10 +89,11 @@ SolveLyapunov(arma::mat& X, const arma::mat& A, const arma::mat& H)
   arma::syl(X, A, A, -H);
 }
 
-double PrimalDualSolver::Optimize(arma::mat& X,
-                                  arma::vec& ysparse,
-                                  arma::vec& ydense,
-                                  arma::mat& Z)
+std::pair<bool, double>
+PrimalDualSolver::Optimize(arma::mat& X,
+                           arma::vec& ysparse,
+                           arma::vec& ydense,
+                           arma::mat& Z)
 {
   const size_t n = sdp.N();
   const size_t n2bar = sdp.N2bar();
@@ -148,6 +149,7 @@ double PrimalDualSolver::Optimize(arma::mat& X,
   Einv_F_AdenseT.set_size(n2bar, sdp.NumDenseConstraints());
   M.set_size(sdp.NumConstraints(), sdp.NumConstraints());
 
+  double primal_obj = 0.;
   for (size_t iteration = 0; iteration < maxIterations; iteration++)
   {
 
@@ -306,7 +308,7 @@ double PrimalDualSolver::Optimize(arma::mat& X,
         sparse_primal_infeas * sparse_primal_infeas +
         dense_primal_infeas * dense_primal_infeas);
 
-    double primal_obj = 0.;
+    primal_obj = 0.;
     if (sdp.HasSparseObjective())
       primal_obj += arma::dot(sdp.SparseC(), X);
     if (sdp.HasDenseObjective())
@@ -343,11 +345,11 @@ double PrimalDualSolver::Optimize(arma::mat& X,
     if (norm_XZ <= normXzTol &&
         primal_infeas <= primalInfeasTol &&
         dual_infeas <= dualInfeasTol)
-      return primal_obj;
+      return std::make_pair(true, primal_obj);
   }
 
-  Log::Warn << "did not converge" << std::endl;
-  return -1;
+  Log::Warn << "Did not converge!" << std::endl;
+  return std::make_pair(false, primal_obj);
 }
 
 } // namespace optimization
