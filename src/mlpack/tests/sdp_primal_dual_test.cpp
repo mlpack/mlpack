@@ -248,4 +248,144 @@ BOOST_AUTO_TEST_CASE(SmallLovaszThetaSdp)
   BOOST_REQUIRE(p.first);
 }
 
+static inline arma::sp_mat
+RepeatBlockDiag(const arma::sp_mat& block, size_t repeat)
+{
+  assert(block.n_rows == block.n_cols);
+  arma::sp_mat ret(block.n_rows * repeat, block.n_rows * repeat);
+  ret.zeros();
+  for (size_t i = 0; i < repeat; i++)
+    ret(arma::span(i * block.n_rows, (i + 1) * block.n_rows - 1),
+        arma::span(i * block.n_rows, (i + 1) * block.n_rows - 1)) = block;
+  return ret;
+}
+
+static inline arma::sp_mat
+BlockDiag(const std::vector<arma::sp_mat>& blocks)
+{
+  // assumes all blocks are the same size
+  const size_t n = blocks.front().n_rows;
+  assert(blocks.front().n_cols == n);
+  arma::sp_mat ret(n * blocks.size(), n * blocks.size());
+  ret.zeros();
+  for (size_t i = 0; i < blocks.size(); i++)
+    ret(arma::span(i * n, (i + 1) * n - 1),
+        arma::span(i * n, (i + 1) * n - 1)) = blocks[i];
+  return ret;
+}
+
+static inline SDP
+ConstructLogChebychevApproxSdp(const arma::mat& A, const arma::vec& b)
+{
+  if (A.n_rows != b.n_elem)
+    Log::Fatal << "A.n_rows != len(b)" << std::endl;
+  const size_t p = A.n_rows;
+  const size_t k = A.n_cols;
+
+  // [0, 0, 0]
+  // [0, 0, 1]
+  // [0, 1, 0]
+  arma::sp_mat cblock(3, 3);
+  cblock(1, 2) = cblock(2, 1) = 1.;
+  const arma::sp_mat C = RepeatBlockDiag(cblock, p);
+
+  SDP sdp(C.n_rows, k + 1, 0);
+  sdp.SparseC() = C;
+  sdp.SparseB().zeros();
+  sdp.SparseB()[0] = -1;
+
+  // [1, 0, 0]
+  // [0, 0, 0]
+  // [0, 0, 1]
+  arma::sp_mat a0block(3, 3);
+  a0block(0, 0) = a0block(2, 2) = 1.;
+  sdp.SparseA()[0] = RepeatBlockDiag(a0block, p);
+  sdp.SparseA()[0] *= -1.;
+
+  for (size_t i = 0; i < k; i++)
+  {
+    std::vector<arma::sp_mat> blocks;
+    for (size_t j = 0; j < p; j++)
+    {
+      arma::sp_mat block(3, 3);
+      const double f = A(j, i) / b(j);
+      // [ -a_j(i)/b_j     0        0 ]
+      // [      0       a_j(i)/b_j  0 ]
+      // [      0          0        0 ]
+      block(0, 0) = -f;
+      block(1, 1) = f;
+      blocks.emplace_back(block);
+    }
+    sdp.SparseA()[i + 1] = BlockDiag(blocks);
+    sdp.SparseA()[i + 1] *= -1;
+  }
+
+  return sdp;
+}
+
+static inline arma::mat
+RandomOrthogonalMatrix(size_t rows, size_t cols)
+{
+  arma::mat Q, R;
+  if (!arma::qr(Q, R, arma::randu<arma::mat>(rows, cols)))
+    Log::Fatal << "could not compute QR decomposition" << std::endl;
+  return Q;
+}
+
+static inline arma::mat
+RandomFullRowRankMatrix(size_t rows, size_t cols)
+{
+  const arma::mat U = RandomOrthogonalMatrix(rows, rows);
+  const arma::mat V = RandomOrthogonalMatrix(cols, cols);
+  arma::mat S;
+  S.zeros(rows, cols);
+  for (size_t i = 0; i < std::min(rows, cols); i++)
+  {
+    S(i, i) = math::Random() + 1e-3;
+  }
+  return U * S * V;
+}
+
+/**
+ * See the examples section, Eq. 9, of
+ *
+ *   Semidefinite Programming.
+ *   Lieven Vandenberghe and Stephen Boyd.
+ *   SIAM Review. 1996.
+ *
+ * The logarithmic Chebychev approximation to Ax = b, A is p x k and b is
+ * length p is given by the SDP:
+ *
+ *   min    t
+ *   s.t.
+ *          [ t - dot(a_i, x)          0             0 ]
+ *          [       0           dot(a_i, x) / b_i    1 ]  >= 0, i=1,...,p
+ *          [       0                  1             t ]
+ *
+ */
+BOOST_AUTO_TEST_CASE(LogChebychevApproxSdp)
+{
+  const size_t p0 = 5;
+  const size_t k0 = 10;
+  const arma::mat A0 = RandomFullRowRankMatrix(p0, k0);
+  const arma::vec b0 = arma::randu<arma::vec>(p0);
+  const SDP sdp0 = ConstructLogChebychevApproxSdp(A0, b0);
+  PrimalDualSolver solver0(sdp0);
+  arma::mat X0, Z0;
+  arma::vec ysparse0, ydense0;
+  const auto stat0 = solver0.Optimize(X0, ysparse0, ydense0, Z0);
+  BOOST_REQUIRE(stat0.first);
+
+  const size_t p1 = 10;
+  const size_t k1 = 5;
+  const arma::mat A1 = RandomFullRowRankMatrix(p1, k1);
+  const arma::vec b1 = arma::randu<arma::vec>(p1);
+  const SDP sdp1 = ConstructLogChebychevApproxSdp(A1, b1);
+  PrimalDualSolver solver1(sdp1);
+  arma::mat X1, Z1;
+  arma::vec ysparse1, ydense1;
+  const auto stat1 = solver1.Optimize(X1, ysparse1, ydense1, Z1);
+  BOOST_REQUIRE(stat1.first);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
