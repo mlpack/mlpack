@@ -10,29 +10,16 @@
 using namespace mlpack;
 using namespace mlpack::distribution;
 
-/**
- * Calculates the multivariate Gaussian probability density function for each
- * data point (column) in the given matrix, with respect to the given mean and
- * variance.
- *
- * @param x List of observations.
- * @param mean Mean of multivariate Gaussian.
- * @param cov Covariance of multivariate Gaussian.
- * @param probabilities Output probabilities for each input observation.
- */
-
-double GaussianDistribution::Probability(const arma::vec& observation) const
+double GaussianDistribution::LogProbability(const arma::vec& observation) const
 {
-  arma::vec diff = mean - observation;
-
-  arma::vec exponent = -0.5 * (trans(diff) * inv(covariance) * diff);
-
-  // TODO: What if det(cov) < 0?
-  return pow(2 * M_PI, (double) observation.n_elem / -2.0) *
-      pow(det(covariance), -0.5) * exp(exponent[0]);
+  const size_t k = observation.n_elem;
+  double logdetsigma = 0;
+  double sign = 0.;
+  arma::log_det(logdetsigma, sign, covariance);
+  const arma::vec diff = mean - observation;
+  const arma::vec v = (diff.t() * arma::inv(covariance) * diff);
+  return -0.5 * k * log2pi - 0.5 * logdetsigma - 0.5 * v(0);
 }
-
-
 
 arma::vec GaussianDistribution::Random() const
 {

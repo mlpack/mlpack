@@ -4,8 +4,8 @@
  *
  * Implementation of conditional Gaussian distribution for HMM regression (HMMR)
  */
-#ifndef __MLPACK_METHODS_HMM_DISTRIBUTIONS_REGRESSION_DISTRIBUTION_HPP
-#define __MLPACK_METHODS_HMM_DISTRIBUTIONS_REGRESSION_DISTRIBUTION_HPP
+#ifndef __MLPACK_CORE_DISTRIBUTIONS_REGRESSION_DISTRIBUTION_HPP
+#define __MLPACK_CORE_DISTRIBUTIONS_REGRESSION_DISTRIBUTION_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/dists/gaussian_distribution.hpp>
@@ -81,6 +81,15 @@ class RegressionDistribution
   double Probability(const arma::vec& observation) const;
 
   /**
+  * Evaluate log probability density function of given observation
+  *
+  * @param observation point to evaluate log probability at
+  */
+  double LogProbability(const arma::vec& observation) const {
+    return log(Probability(observation));
+  }
+
+  /**
    * Calculate y_i for each data point in points.
    *
    * @param points the data points to calculate with.
@@ -91,8 +100,8 @@ class RegressionDistribution
   //! Return the parameters (the b vector).
   const arma::vec& Parameters() const { return rf.Parameters(); }
 
-  //! Return the dimensionality 
-    size_t Dimensionality() const { return rf.Parameters().n_elem; }
+  //! Return the dimensionality
+  size_t Dimensionality() const { return rf.Parameters().n_elem; }
 };
 
 

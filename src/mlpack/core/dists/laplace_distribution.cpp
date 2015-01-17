@@ -12,12 +12,12 @@ using namespace mlpack;
 using namespace mlpack::distribution;
 
 /**
- * Return the probability of the given observation.
+ * Return the log probability of the given observation.
  */
-double LaplaceDistribution::Probability(const arma::vec& observation) const
+double LaplaceDistribution::LogProbability(const arma::vec& observation) const
 {
-  // Evaluate the PDF of the Laplace distribution to determine the probability.
-  return (0.5 / scale) * std::exp(arma::norm(observation - mean, 2) / scale);
+  // Evaluate the PDF of the Laplace distribution to determine the log probability.
+  return -log(2. * scale) - arma::norm(observation - mean, 2) / scale;
 }
 
 /**

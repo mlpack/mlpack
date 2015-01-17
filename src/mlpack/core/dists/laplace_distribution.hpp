@@ -5,8 +5,8 @@
  * Laplace (double exponential) distribution used in SA.
  */
 
-#ifndef __MLPACK_CORE_OPTIMIZER_SA_LAPLACE_DISTRIBUTION_HPP
-#define __MLPACK_CORE_OPTIMIZER_SA_LAPLACE_DISTRIBUTION_HPP
+#ifndef __MLPACK_CORE_DISTRIBUTIONS_LAPLACE_DISTRIBUTION_HPP
+#define __MLPACK_CORE_DISTRIBUTIONS_LAPLACE_DISTRIBUTION_HPP
 
 namespace mlpack {
 namespace distribution {
@@ -75,7 +75,15 @@ class LaplaceDistribution
   /**
    * Return the probability of the given observation.
    */
-  double Probability(const arma::vec& observation) const;
+  double Probability(const arma::vec& observation) const
+  {
+    return exp(LogProbability(observation));
+  }
+
+  /**
+   * Return the log probability of the given observation.
+   */
+  double LogProbability(const arma::vec& observation) const;
 
   /**
    * Return a randomly generated observation according to the probability
@@ -135,8 +143,8 @@ class LaplaceDistribution
   */
   void Save(util::SaveRestoreUtility& n) const;
   void Load(const util::SaveRestoreUtility& n);
-  static std::string const Type() { return "LaplaceDistribution"; } 
-  
+  static std::string const Type() { return "LaplaceDistribution"; }
+
  private:
   //! Mean of the distribution.
   arma::vec mean;
