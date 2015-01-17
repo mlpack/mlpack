@@ -5,8 +5,8 @@
  * Implementation of the discrete distribution, where each discrete observation
  * has a given probability.
  */
-#ifndef __MLPACK_METHODS_HMM_DISTRIBUTIONS_DISCRETE_DISTRIBUTION_HPP
-#define __MLPACK_METHODS_HMM_DISTRIBUTIONS_DISCRETE_DISTRIBUTION_HPP
+#ifndef __MLPACK_CORE_DISTRIBUTIONS_DISCRETE_DISTRIBUTION_HPP
+#define __MLPACK_CORE_DISTRIBUTIONS_DISCRETE_DISTRIBUTION_HPP
 
 #include <mlpack/core.hpp>
 
@@ -102,6 +102,20 @@ class DiscreteDistribution
     }
 
     return probabilities(obs);
+  }
+
+  /**
+   * Return the log probability of the given observation.  If the observation is
+   * greater than the number of possible observations, then a crash will
+   * probably occur -- bounds checking is not performed.
+   *
+   * @param observation Observation to return the log probability of.
+   * @return Log probability of the given observation.
+   */
+  double LogProbability(const arma::vec& observation) const
+  {
+    // TODO: consider storing log_probabilities instead
+    return log(Probability(observation));
   }
 
   /**
