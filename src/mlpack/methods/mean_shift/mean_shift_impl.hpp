@@ -6,7 +6,6 @@
  */
 
 #include "mean_shift.hpp"
-#include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 
 namespace mlpack {
