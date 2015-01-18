@@ -11,6 +11,7 @@ set(DIRS
   hmm
   kernel_pca
   kmeans
+  mean_shift
   lars
   linear_regression
   local_coordinate_coding
