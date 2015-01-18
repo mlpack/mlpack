@@ -10,7 +10,7 @@
 
 #include <mlpack/core.hpp>
 
-#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/kernels/gaussian_kernel.hpp>
 
 namespace mlpack {
 namespace meanshift /** Mean Shift clustering. */ {
@@ -27,21 +27,16 @@ namespace meanshift /** Mean Shift clustering. */ {
  * extern arma::mat data; // Dataset we want to run Mean Shift on.
  * arma::Col<size_t> assignments; // Cluster assignments.
  * arma::mat centroids; // Cluster centroids.
- * extern int maxIterations; // Maximum number of iterations.
- * extern double stopThresh; //
- * extern double radius; //
  *
- * MeanShift<arma::mat, metric::EuclideanDistance> meanShift(maxIterations, 
- *          stopThresh, radius);
+ * MeanShift<arma::mat, kernel::GaussianKernel> meanShift();
  * meanShift.Cluster(dataset, assignments, centroids);
  * @endcode
  *
- * @tparam MetricType The distance metric to use for this KMeans; see
- *     metric::LMetric for an example.
+ * @tparam KernelType the kernel to use.
  */
   
 template<typename MatType = arma::mat,
-         typename MetricType = metric::EuclideanDistance>
+         typename KernelType = kernel::GaussianKernel>
 class MeanShift
 {
  public:
@@ -49,19 +44,16 @@ class MeanShift
    * Create a Mean Shift object and set the parameters which Mean Shift
    * will be run with.
    *
+   * @param duplicateThresh If distance of two centroids is less than it, one will be removed.
    * @param maxIterations Maximum number of iterations allowed before giving up
    * @param stopThresh If the 2-norm of the mean shift vector is less than stopThresh, 
-   *     iterations will terminate.
-   * @param radius When iterating, take points within distance of
-   *     radius into consideration and two centroids within distance
-   *     of radius will be ragarded as one centroid.
-   * @param metric Optional MetricType object; for when the metric has state
-   *     it needs to store.
+   *        iterations will terminate.
+   * @param kernel Optional KernelType object.
    */
-  MeanShift(const size_t maxIterations,
-            const double stopThresh,
-            const double radius,
-            const MetricType metric = MetricType());
+  MeanShift(const double duplicateThresh = 1.0,
+            const size_t maxIterations = 1000,
+            const double stopThresh = 1e-3,
+            const KernelType kernel = KernelType());
   
   
   /**
@@ -87,34 +79,32 @@ class MeanShift
   //! Set the stop thresh.
   double& StopThresh() { return stopThresh; }
   
-  //! Get the radius of the concerning points.
-  double Radius() const { return radius; }
-  //! Set the radius of the concerning points.
-  double& Radius() { return radius; }
+  //! Get the kernel.
+  const KernelType& Kernel() const { return kernel; }
+  //! Modify the kernel.
+  KernelType& Kernel() { return kernel; }
   
-  //! Get the distance metric.
-  const MetricType& Metric() const { return metric; }
-  //! Modify the distance metric.
-  MetricType& Metric() { return metric; }
+  //! Get the duplicate thresh.
+  double DuplicateThresh() const { return duplicateThresh; }
+  //! Set the duplicate thresh.
+  double& DuplicateThresh() { return duplicateThresh; }
   
  private:
+  
+  // If distance of two centroids is less than duplicateThresh, one will be removed.
+  double duplicateThresh;
   
   //! Maximum number of iterations before giving up.
   size_t maxIterations;
   
-  /** If the 2-norm of the mean shift vector is less than stopThresh,
+  /** 
+   * If the 2-norm of the mean shift vector is less than stopThresh,
    *  iterations will terminate.
    */
   double stopThresh;
   
-  /** When iterating, take points within distance of
-   *     radius into consideration and two centroids within distance
-   *     of radius will be ragarded as one centroid.
-   */
-  double radius;
-  
-  //! Instantiated distance metric.
-  MetricType metric;
+  //! Instantiated kernel.
+  KernelType kernel;
   
 };
 

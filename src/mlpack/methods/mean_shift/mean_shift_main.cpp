@@ -6,6 +6,7 @@
  */
 
 #include <mlpack/core.hpp>
+#include <mlpack/core/kernels/gaussian_kernel.hpp>
 #include "mean_shift.hpp"
 
 using namespace mlpack;
@@ -21,11 +22,6 @@ PROGRAM_INFO("Mean Shift Clustering", "This program performs mean shift clusteri
 
 // Required options.
 PARAM_STRING_REQ("inputFile", "Input dataset to perform clustering on.", "i");
-PARAM_DOUBLE_REQ("stopThresh", "If the 2-norm of the mean shift vector "
-                 "is less than stopThresh, iterations will terminate. ", "s");
-PARAM_DOUBLE_REQ("radius", "When iterating, take points within distance of "
-                 "radius into consideration and two centroids within distance "
-                 "of radius will be ragarded as one centroid. ", "r");
 
 // Output options.
 PARAM_FLAG("in_place", "If specified, a column containing the learned cluster "
@@ -39,6 +35,11 @@ PARAM_STRING("centroid_file", "If specified, the centroids of each cluster will"
 // Mean Shift configuration options.
 PARAM_INT("max_iterations", "Maximum number of iterations before Mean Shift "
           "terminates.", "m", 1000);
+PARAM_DOUBLE("stopThresh", "If the 2-norm of the mean shift vector "
+             "is less than stopThresh, iterations will terminate. ", "s", 1e-3);
+PARAM_DOUBLE("bandwidth", "bandwidth of Gaussian kernel ", "b", 1.0);
+PARAM_DOUBLE("duplicateThresh", "If distance of two centroids is less than duplicate thresh "
+             "one will be removed. ", "d", 1.0);
 
 
 int main(int argc, char** argv) {
@@ -47,8 +48,9 @@ int main(int argc, char** argv) {
   
   const string inputFile = CLI::GetParam<string>("inputFile");
   const double stopThresh = CLI::GetParam<double>("stopThresh");
-  const double radius = CLI::GetParam<double>("radius");
+  const double bandwidth = CLI::GetParam<double>("bandwidth");
   const int maxIterations = CLI::GetParam<int>("max_iterations");
+  const double duplicateThresh = CLI::GetParam<double>("duplicateThresh");
   
   if (maxIterations < 0) {
     Log::Fatal << "Invalid value for maximum iterations (" << maxIterations <<
@@ -67,7 +69,11 @@ int main(int argc, char** argv) {
   arma::mat centroids;
   arma::Col<size_t> assignments;
   
-  MeanShift<arma::mat, metric::EuclideanDistance> meanShift(maxIterations, stopThresh, radius);
+  kernel::GaussianKernel kernel;
+  kernel.Bandwidth(bandwidth);
+  
+  MeanShift<arma::mat, kernel::GaussianKernel> meanShift(duplicateThresh,
+                                                         maxIterations, stopThresh, kernel);
   Timer::Start("clustering");
   meanShift.Cluster(dataset, assignments, centroids);
   Timer::Stop("clustering");
