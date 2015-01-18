@@ -9,7 +9,6 @@
 #define __MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_HPP
 
 #include <mlpack/core.hpp>
-
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 
 namespace mlpack {
