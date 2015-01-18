@@ -7,6 +7,7 @@
 
 #include "mean_shift.hpp"
 #include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/core/kernels/gaussian_kernel.hpp>
 
 namespace mlpack {
 namespace meanshift {
@@ -15,18 +16,18 @@ namespace meanshift {
   * Construct the Mean Shift object.
   */
 template<typename MatType,
-         typename MetricType>
+         typename KernelType>
 MeanShift<
     MatType,
-    MetricType>::
-MeanShift(const size_t maxIterations,
+    KernelType>::
+MeanShift(const double duplicateThresh,
+          const size_t maxIterations,
           const double stopThresh,
-          const double radius,
-          const MetricType metric) :
+          const KernelType kernel) :
+    duplicateThresh(duplicateThresh),
     maxIterations(maxIterations),
     stopThresh(stopThresh),
-    radius(radius),
-    metric(metric)
+    kernel(kernel)
 {
   // Nothing to do.
 }
@@ -36,10 +37,10 @@ MeanShift(const size_t maxIterations,
   * assignments and centroids.
   */
 template<typename MatType,
-         typename MetricType>
+         typename KernelType>
 inline void MeanShift<
     MatType,
-    MetricType>::
+    KernelType>::
 Cluster(const MatType& data,
         arma::Col<size_t>& assignments,
         arma::mat& centroids) {
@@ -58,27 +59,30 @@ Cluster(const MatType& data,
     
     while (true) {
       
-      // mean shift vector.
-      arma::Col<double> mhVector = arma::zeros(data.n_rows, 1);
+      // new centroid
+      arma::Col<double> newCentroid = arma::zeros(data.n_rows, 1);
       
-      // number of neighbouring points.
-      int vecCount = 0;
+      double sumWeight = 0;
       for (size_t j = 0; j < data.n_cols; ++j) {
         
-        // find neighbouring points.
-        double dist = metric.Evaluate(data.col(j), allCentroids.col(i));
-        if (dist < radius) {
-          vecCount ++;
-          
-          // update mean shift vector.
-          mhVector += data.col(j) - allCentroids.col(i);
-        }
+        // calc weight for each point
+        double weight = kernel.Evaluate(allCentroids.col(i), data.col(j));
+        sumWeight += weight;
+        
+        // update new centroid.
+        newCentroid += weight * data.col(j);
+        
       }
-      mhVector /= vecCount;
+      
+      newCentroid /= sumWeight;
       
       completedIterations ++;
-      // update centroid.
-      allCentroids.col(i) += mhVector;
+      
+      // calc the mean shift vector.
+      arma::Col<double> mhVector = newCentroid - allCentroids.col(i);
+      
+      // update the centroid.
+      allCentroids.col(i) = newCentroid;
       
       if (arma::norm(mhVector, 2) < stopThresh ||
           completedIterations > maxIterations) {
@@ -100,7 +104,7 @@ Cluster(const MatType& data,
      */
     for (size_t j = 0; j < centroids.n_cols; ++j) {
       arma::Col<double> delta = allCentroids.col(i) - centroids.col(j);
-      if (norm(delta, 2) < radius) {
+      if (norm(delta, 2) < duplicateThresh) {
         isDuplicated = true;
         assignments(i) = j;
         break;
