@@ -49,7 +49,7 @@ class BinaryClassificationLayer
                       const VecType& target,
                       VecType& error)
   {
-    error = -(target - inputActivations);
+    error = inputActivations - target;
   }
 
   /*

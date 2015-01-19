@@ -18,7 +18,7 @@ namespace ann /** Artificial Neural Network. */ {
  * An implementation of a multiclass classification layer that can be used as
  * output layer.
  *
- * * A convenience typedef is given:
+ * A convenience typedef is given:
  *
  *  - ClassificationLayer
  *
@@ -53,7 +53,18 @@ class MulticlassClassificationLayer
                       const VecType& target,
                       VecType& error)
   {
-    error = -(target - inputActivations);
+    error = inputActivations - target;
+  }
+
+  /*
+   * Calculate the output class using the specified input activation.
+   *
+   * @param inputActivations Input data used to calculate the output class.
+   * @param output Output class of the input activation.
+   */
+  void outputClass(const VecType& inputActivations, VecType& output)
+  {
+    output = inputActivations;
   }
 }; // class MulticlassClassificationLayer
 
