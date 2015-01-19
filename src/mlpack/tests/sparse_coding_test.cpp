@@ -128,12 +128,5 @@ BOOST_AUTO_TEST_CASE(SparseCodingTestDictionaryStep)
   BOOST_REQUIRE_SMALL(normGradient, tol);
 }
 
-/*
-BOOST_AUTO_TEST_CASE(SparseCodingTestWhole)
-{
-
-}
-*/
-
 
 BOOST_AUTO_TEST_SUITE_END();
