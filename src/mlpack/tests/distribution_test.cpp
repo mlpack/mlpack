@@ -140,6 +140,8 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionDistributionConstructor)
 
   mean.randu();
   covariance.randu();
+  covariance *= covariance.t();
+  covariance += arma::eye<arma::mat>(3, 3);
 
   GaussianDistribution d(mean, covariance);
 
