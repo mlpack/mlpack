@@ -14,11 +14,11 @@ namespace meanshift {
 /**
   * Construct the Mean Shift object.
   */
-template<typename MatType,
-         typename KernelType>
+template<typename KernelType,
+         typename MatType>
 MeanShift<
-    MatType,
-    KernelType>::
+  KernelType,
+  MatType>::
 MeanShift(const double duplicateThresh,
           const size_t maxIterations,
           const double stopThresh,
@@ -35,11 +35,11 @@ MeanShift(const double duplicateThresh,
   * Perform Mean Shift clustering on the data, returning a list of cluster
   * assignments and centroids.
   */
-template<typename MatType,
-         typename KernelType>
+template<typename KernelType,
+         typename MatType>
 inline void MeanShift<
-    MatType,
-    KernelType>::
+    KernelType,
+    MatType>::
 Cluster(const MatType& data,
         arma::Col<size_t>& assignments,
         arma::mat& centroids) {

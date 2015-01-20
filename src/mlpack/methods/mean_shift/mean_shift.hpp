@@ -34,8 +34,8 @@ namespace meanshift /** Mean Shift clustering. */ {
  * @tparam KernelType the kernel to use.
  */
   
-template<typename MatType = arma::mat,
-         typename KernelType = kernel::GaussianKernel>
+template<typename KernelType = kernel::GaussianKernel,
+         typename MatType = arma::mat>
 class MeanShift
 {
  public:
