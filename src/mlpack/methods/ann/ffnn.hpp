@@ -65,10 +65,12 @@ class FFNN
                      VecType& error)
     {
       ResetActivations(network);
-      std::get<0>(
-            std::get<0>(network)).InputLayer().InputActivation() = input;
+      seqNum++;
 
-      FeedForward(network, target, error);
+      std::get<0>(std::get<0>(network)).InputLayer().InputActivation() = input;
+
+      FeedForward(network);
+      OutputError(network, target, error);
     }
 
     /**
@@ -101,6 +103,26 @@ class FFNN
 
       // Reset the overall error.
       err = 0;
+      seqNum = 0;
+    }
+
+    /**
+     * Evaluate the network using the given input. The output activation is
+     * stored into the output parameter.
+     *
+     * @param input Input data used to evaluate the network.
+     * @param output Output data used to store the output activation
+     * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
+     */
+    template <typename VecType>
+    void Predict(const VecType& input, VecType& output)
+    {
+      ResetActivations(network);
+
+      std::get<0>(std::get<0>(network)).InputLayer().InputActivation() = input;
+
+      FeedForward(network);
+      OutputPrediction(network, output);
     }
 
     //! Get the error of the network.
@@ -155,32 +177,13 @@ class FFNN
      * connections, and one for the general case which peels off the first type
      * and recurses, as usual with variadic function templates.
      */
-    template<size_t I = 0,  typename VecType, typename... Tp>
+    template<size_t I = 0, typename... Tp>
     typename std::enable_if<I == sizeof...(Tp), void>::type
-    FeedForward(std::tuple<Tp...>& t,
-                const VecType& target,
-                VecType& error)
+    FeedForward(std::tuple<Tp...>& /* unused */) { }
 
-    {
-      // Calculate and store the output error.
-      outputLayer.calculateError(std::get<0>(
-          std::get<I - 1>(t)).OutputLayer().InputActivation(), target,
-          error);
-
-      // Masures the network's performance with the specified performance
-      // function.
-      err += PerformanceFunction::error(std::get<0>(
-          std::get<I - 1>(t)).OutputLayer().InputActivation(), target);
-
-      // Update the final training error.
-      trainError = err;
-    }
-
-    template<size_t I = 0, typename VecType, typename... Tp>
+    template<size_t I = 0, typename... Tp>
     typename std::enable_if<I < sizeof...(Tp), void>::type
-    FeedForward(std::tuple<Tp...>& t,
-                const VecType& target,
-                VecType& error)
+    FeedForward(std::tuple<Tp...>& t)
     {
       Forward(std::get<I>(t));
 
@@ -189,7 +192,7 @@ class FFNN
           std::get<0>(std::get<I>(t)).OutputLayer().InputActivation(),
           std::get<0>(std::get<I>(t)).OutputLayer().InputActivation());
 
-      FeedForward<I + 1, VecType, Tp...>(t, target, error);
+      FeedForward<I + 1, Tp...>(t);
     }
 
     /**
@@ -209,6 +212,41 @@ class FFNN
     {
       std::get<I>(t).FeedForward(std::get<I>(t).InputLayer().InputActivation());
       Forward<I + 1, Tp...>(t);
+    }
+
+    /*
+     * Calculate the output error and update the overall error.
+     */
+    template<typename VecType, typename... Tp>
+    void OutputError(std::tuple<Tp...>& t,
+                     const VecType& target,
+                     VecType& error)
+    {
+       // Calculate and store the output error.
+      outputLayer.calculateError(std::get<0>(
+          std::get<sizeof...(Tp) - 1>(t)).OutputLayer().InputActivation(),
+          target, error);
+
+      // Masures the network's performance with the specified performance
+      // function.
+      err += PerformanceFunction::error(std::get<0>(
+          std::get<sizeof...(Tp) - 1>(t)).OutputLayer().InputActivation(),
+          target);
+
+      // Update the final training error.
+      trainError = err;
+    }
+
+    /*
+     * Calculate and store the output activation.
+     */
+    template<typename VecType, typename... Tp>
+    void OutputPrediction(std::tuple<Tp...>& t, VecType& output)
+    {
+       // Calculate and store the output prediction.
+      outputLayer.outputClass(std::get<0>(
+          std::get<sizeof...(Tp) - 1>(t)).OutputLayer().InputActivation(),
+          output);
     }
 
     /**
@@ -357,6 +395,9 @@ class FFNN
     typename std::enable_if<I < sizeof...(Tp), void>::type
     Apply(std::tuple<Tp...>& t)
     {
+      if (seqNum > 1)
+        gradients[gradientNum] /= seqNum;
+
       std::get<I>(t).Optimzer().UpdateWeights(std::get<I>(t).Weights(),
           gradients[gradientNum], err);
 
@@ -426,6 +467,9 @@ class FFNN
 
     //! The index of the currently activate gradient.
     size_t gradientNum;
+
+    //! The number of the current input sequence.
+    size_t seqNum;
 }; // class FFNN
 
 
