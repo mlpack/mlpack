@@ -187,16 +187,23 @@ BOOST_AUTO_TEST_CASE(GaussianUnivariateProbabilityTest)
       1e-5);
 
   // A few more cases...
-  g.Covariance().fill(2.0);
+  arma::mat covariance;
+  covariance.set_size(g.Covariance().n_rows, g.Covariance().n_cols);
+
+  covariance.fill(2.0);
+  g.Covariance(std::move(covariance));
   BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("0.0")), 0.282094791773878, 1e-5);
   BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("1.0")), 0.219695644733861, 1e-5);
   BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("-1.0")), 0.219695644733861,
       1e-5);
 
   g.Mean().fill(1.0);
-  g.Covariance().fill(1.0);
+  covariance.fill(1.0);
+  g.Covariance(std::move(covariance));
   BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("1.0")), 0.398942280401433, 1e-5);
-  g.Covariance().fill(2.0);
+
+  covariance.fill(2.0);
+  g.Covariance(std::move(covariance));
   BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("-1.0")), 0.103776874355149,
       1e-5);
 }
@@ -215,7 +222,9 @@ BOOST_AUTO_TEST_CASE(GaussianMultivariateProbabilityTest)
 
   BOOST_REQUIRE_CLOSE(g.Probability(x), 0.159154943091895, 1e-5);
 
-  g.Covariance() = "2 0; 0 2";
+  arma::mat covariance;
+  covariance = "2 0; 0 2";
+  g.Covariance(std::move(covariance));
 
   BOOST_REQUIRE_CLOSE(g.Probability(x), 0.0795774715459477, 1e-5);
 
@@ -230,7 +239,8 @@ BOOST_AUTO_TEST_CASE(GaussianMultivariateProbabilityTest)
   BOOST_REQUIRE_CLOSE(g.Probability(-x), 0.0795774715459477, 1e-5);
 
   g.Mean() = "1 1";
-  g.Covariance() = "2 1.5; 1 4";
+  covariance = "2 1.5; 1 4";
+  g.Covariance(std::move(covariance));
 
   BOOST_REQUIRE_CLOSE(g.Probability(x), 0.0624257046546403, 1e-5);
   g.Mean() *= -1;
@@ -245,11 +255,13 @@ BOOST_AUTO_TEST_CASE(GaussianMultivariateProbabilityTest)
   // Higher-dimensional case.
   x = "0 1 2 3 4";
   g.Mean() = "5 6 3 3 2";
-  g.Covariance() = "6 1 1 0 2;"
-                   "0 7 1 0 1;"
-                   "1 1 4 1 1;"
-                   "1 0 1 7 0;"
-                   "2 0 1 1 6";
+
+  covariance = "6 1 1 0 2;"
+               "0 7 1 0 1;"
+               "1 1 4 1 1;"
+               "1 0 1 7 0;"
+               "2 0 1 1 6";
+  g.Covariance(std::move(covariance));
 
   BOOST_REQUIRE_CLOSE(g.Probability(x), 1.02531207499358e-6, 1e-5);
   BOOST_REQUIRE_CLOSE(g.Probability(-x), 1.06784794079363e-8, 1e-5);
