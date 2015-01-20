@@ -146,8 +146,8 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::ClusterTreeUpdate(
   }
   for (size_t i = 0; i < node->NumPoints(); ++i)
   {
-    if (distances(1, node->Point(i)) > firstBound)
-      firstBound = distances(1, node->Point(i));
+    if (distances(0, node->Point(i)) > firstBound)
+      firstBound = distances(0, node->Point(i));
   }
 
   node->Stat().FirstBound() = firstBound;
