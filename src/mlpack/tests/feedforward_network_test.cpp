@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
                     SteepestDescent<>,
                     BinaryClassificationLayer<>,
                     MeanSquaredErrorFunction<> >
-    (dataset, labels, dataset, labels, 40, 450, 0.6, 90, randInitB);
+    (dataset, labels, dataset, labels, 10, 450, 0.6, 90, randInitB);
 }
 
 /**
