@@ -10,21 +10,49 @@
 using namespace mlpack;
 using namespace mlpack::distribution;
 
+
+GaussianDistribution::GaussianDistribution(const arma::vec& mean,
+                                           const arma::mat& covariance)
+  : mean(mean)
+{
+  Covariance(covariance);
+}
+
+void GaussianDistribution::Covariance(const arma::mat& covariance)
+{
+  this->covariance = covariance;
+  FactorCovariance();
+}
+
+void GaussianDistribution::Covariance(arma::mat&& covariance)
+{
+  this->covariance = std::move(covariance);
+  FactorCovariance();
+}
+
+void GaussianDistribution::FactorCovariance()
+{
+  covLower = arma::chol(covariance, "lower");
+  // tell arma that this is lower triangular matrix (for faster inversion)
+  covLower = arma::trimatl(covLower);
+  const arma::mat invCovLower = covLower.i();
+  invCov = invCovLower.t() * invCovLower;
+  double sign = 0.;
+  arma::log_det(logDetCov, sign, covLower);
+  logDetCov *= 2;
+}
+
 double GaussianDistribution::LogProbability(const arma::vec& observation) const
 {
   const size_t k = observation.n_elem;
-  double logdetsigma = 0;
-  double sign = 0.;
-  arma::log_det(logdetsigma, sign, covariance);
   const arma::vec diff = mean - observation;
-  const arma::vec v = (diff.t() * arma::inv(covariance) * diff);
-  return -0.5 * k * log2pi - 0.5 * logdetsigma - 0.5 * v(0);
+  const arma::vec v = (diff.t() * invCov * diff);
+  return -0.5 * k * log2pi - 0.5 * logDetCov - 0.5 * v(0);
 }
 
 arma::vec GaussianDistribution::Random() const
 {
-  // Should we store chol(covariance) for easier calculation later?
-  return trans(chol(covariance)) * arma::randn<arma::vec>(mean.n_elem) + mean;
+  return covLower * arma::randn<arma::vec>(mean.n_elem) + mean;
 }
 
 /**
@@ -41,6 +69,7 @@ void GaussianDistribution::Estimate(const arma::mat& observations)
   }
   else // This will end up just being empty.
   {
+    // TODO(stephentu): why do we allow this case? why not throw an error?
     mean.zeros(0);
     covariance.zeros(0);
     return;
@@ -77,6 +106,8 @@ void GaussianDistribution::Estimate(const arma::mat& observations)
       perturbation *= 10; // Slow, but we don't want to add too much.
     }
   }
+
+  FactorCovariance();
 }
 
 /**
@@ -94,6 +125,7 @@ void GaussianDistribution::Estimate(const arma::mat& observations,
   }
   else // This will end up just being empty.
   {
+    // TODO(stephentu): same as above
     mean.zeros(0);
     covariance.zeros(0);
     return;
@@ -114,6 +146,7 @@ void GaussianDistribution::Estimate(const arma::mat& observations,
     // Nothing in this Gaussian!  At least set the covariance so that it's
     // invertible.
     covariance.diag() += 1e-50;
+    // TODO(stephentu): why do we allow this case?
     return;
   }
 
@@ -143,6 +176,8 @@ void GaussianDistribution::Estimate(const arma::mat& observations,
       perturbation *= 10; // Slow, but we don't want to add too much.
     }
   }
+
+  FactorCovariance();
 }
 
 /**
@@ -180,4 +215,5 @@ void GaussianDistribution::Load(const util::SaveRestoreUtility& sr)
 {
   sr.LoadParameter(mean, "mean");
   sr.LoadParameter(covariance, "covariance");
+  FactorCovariance();
 }
