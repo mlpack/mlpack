@@ -43,9 +43,10 @@ class Trainer
      * each epoch (Default 1).
      *
      * @param net The network that should be trained.
-     * @param maxEpochs The number of maximal trained iterations.
+     * @param maxEpochs The number of maximal trained iterations (0 means no
+     * limit).
      * @param batchSize The batch size used to train the network.
-     * @param convergenceThreshold Train the network until it converges against
+     * @param tolerance Train the network until it converges against
      * the specified threshold.
      * @param shuffle If true, the order of the training set is shuffled;
      * otherwise, each data is visited in linear order.
@@ -53,12 +54,12 @@ class Trainer
     Trainer(NetworkType& net,
             const size_t maxEpochs = 0,
             const size_t batchSize = 1,
-            const double convergenceThreshold  = 0.0001,
+            const double tolerance = 0.0001,
             const bool shuffle = true) :
         net(net),
         maxEpochs(maxEpochs),
         batchSize(batchSize),
-        convergenceThreshold(convergenceThreshold),
+        tolerance(tolerance),
         shuffle(shuffle)
     {
       // Nothing to do here.
@@ -94,7 +95,7 @@ class Trainer
         Train(trainingData, trainingLabels);
         Evaluate(validationData, validationLabels);
 
-        if (validationError <= convergenceThreshold)
+        if (validationError <= tolerance)
           break;
 
         if (maxEpochs > 0 && ++epoch > maxEpochs)
@@ -112,6 +113,21 @@ class Trainer
     bool Shuffle() const { return shuffle; }
     //! Modify whether or not the individual inputs are shuffled.
     bool& Shuffle() { return shuffle; }
+
+    //! Get the batch size.
+    size_t StepSize() const { return batchSize; }
+    //! Modify the batch size.
+    size_t& StepSize() { return batchSize; }
+
+    //! Get the maximum number of iterations (0 indicates no limit).
+    size_t MaxEpochs() const { return maxEpochs; }
+    //! Modify the maximum number of iterations (0 indicates no limit).
+    size_t& MaxEpochs() { return maxEpochs; }
+
+    //! Get the tolerance for termination.
+    double Tolerance() const { return tolerance; }
+    //! Modify the tolerance for termination.
+    double& Tolerance() { return tolerance; }
 
   private:
     /**
@@ -188,8 +204,8 @@ class Trainer
     //! The overall validation error.
     double validationError;
 
-    //! The threshold used as convergence.
-    double convergenceThreshold;
+    //! The tolerance for termination.
+    double tolerance;
 
     //! Controls whether or not the individual inputs are shuffled when
     //! iterating.
