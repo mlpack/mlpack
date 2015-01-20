@@ -47,15 +47,19 @@ class Trainer
      * @param batchSize The batch size used to train the network.
      * @param convergenceThreshold Train the network until it converges against
      * the specified threshold.
+     * @param shuffle If true, the order of the training set is shuffled;
+     * otherwise, each data is visited in linear order.
      */
     Trainer(NetworkType& net,
             const size_t maxEpochs = 0,
             const size_t batchSize = 1,
-            const double convergenceThreshold  = 0.0001) :
+            const double convergenceThreshold  = 0.0001,
+            const bool shuffle = true) :
         net(net),
         maxEpochs(maxEpochs),
         batchSize(batchSize),
-        convergenceThreshold(convergenceThreshold)
+        convergenceThreshold(convergenceThreshold),
+        shuffle(shuffle)
     {
       // Nothing to do here.
     }
@@ -82,8 +86,10 @@ class Trainer
 
       while(true)
       {
-        // Randomly shuffle the index sequence.
-        index = arma::shuffle(index);
+
+        // Randomly shuffle the index sequence if not in batch mode.
+        if (shuffle)
+          index = arma::shuffle(index);
 
         Train(trainingData, trainingLabels);
         Evaluate(validationData, validationLabels);
@@ -101,6 +107,11 @@ class Trainer
 
     //! Get the validation error.
     double ValidationError() const { return validationError; }
+
+    //! Get whether or not the individual inputs are shuffled.
+    bool Shuffle() const { return shuffle; }
+    //! Modify whether or not the individual inputs are shuffled.
+    bool& Shuffle() { return shuffle; }
 
   private:
     /**
@@ -168,7 +179,7 @@ class Trainer
     //! The size until a update is performed.
     size_t batchSize;
 
-    //! Index sequence used to train the network.
+    //! The shuffel sequence index used to train the network.
     arma::Col<size_t> index;
 
     //! The overall traing error.
@@ -179,6 +190,10 @@ class Trainer
 
     //! The threshold used as convergence.
     double convergenceThreshold;
+
+    //! Controls whether or not the individual inputs are shuffled when
+    //! iterating.
+    bool shuffle;
 }; // class Trainer
 
 }; // namespace ann
