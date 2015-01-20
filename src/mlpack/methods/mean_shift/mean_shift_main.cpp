@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
   kernel::GaussianKernel kernel;
   kernel.Bandwidth(bandwidth);
   
-  MeanShift<arma::mat, kernel::GaussianKernel> meanShift(duplicateThresh,
+  MeanShift<> meanShift(duplicateThresh,
                                                          maxIterations, stopThresh, kernel);
   Timer::Start("clustering");
   meanShift.Cluster(dataset, assignments, centroids);
