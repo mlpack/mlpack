@@ -86,12 +86,6 @@ PrimalDualSolver::PrimalDualSolver(const SDP& sdp,
       << std::endl;
 }
 
-static inline arma::mat
-DenseFromSparse(const arma::sp_mat& input)
-{
-  return arma::mat(input);
-}
-
 static inline double
 AlphaHat(const arma::mat& A, const arma::mat& dA)
 {
@@ -133,7 +127,7 @@ SolveLyapunov(arma::mat& X, const arma::mat& A, const arma::mat& H)
 }
 
 static inline void
-SolveKKTSystem(const arma::mat& Asparse,
+SolveKKTSystem(const arma::sp_mat& Asparse,
                const arma::mat& Adense,
                const arma::mat& Z,
                const arma::mat& M,
@@ -189,32 +183,30 @@ PrimalDualSolver::Optimize(arma::mat& X,
   const size_t n = sdp.N();
   const size_t n2bar = sdp.N2bar();
 
-  // TODO(stephentu): implementation does not take adv of sparsity yet
-
-  arma::mat Asparse(sdp.NumSparseConstraints(), n2bar);
-  arma::vec Ai;
+  arma::sp_mat Asparse(sdp.NumSparseConstraints(), n2bar);
+  arma::sp_mat Aisparse;
 
   for (size_t i = 0; i < sdp.NumSparseConstraints(); i++)
   {
-    math::Svec(DenseFromSparse(sdp.SparseA()[i]), Ai);
-    Asparse.row(i) = Ai.t();
+    math::Svec(sdp.SparseA()[i], Aisparse);
+    Asparse.row(i) = Aisparse.col(0).t();
   }
 
   arma::mat Adense(sdp.NumDenseConstraints(), n2bar);
+  arma::vec Aidense;
   for (size_t i = 0; i < sdp.NumDenseConstraints(); i++)
   {
-    math::Svec(sdp.DenseA()[i], Ai);
-    Adense.row(i) = Ai.t();
+    math::Svec(sdp.DenseA()[i], Aidense);
+    Adense.row(i) = Aidense.t();
   }
 
-  arma::vec scsparse;
+  arma::sp_mat scsparse;
   if (sdp.HasSparseObjective())
-    math::Svec(DenseFromSparse(sdp.SparseC()), scsparse);
+    math::Svec(sdp.SparseC(), scsparse);
 
   arma::vec scdense;
   if (sdp.HasDenseObjective())
     math::Svec(sdp.DenseC(), scdense);
-
 
   X = X0;
   ysparse = ysparse0;
@@ -250,7 +242,7 @@ PrimalDualSolver::Optimize(arma::mat& X,
 
     rd = - sz - Asparse.t() * ysparse - Adense.t() * ydense;
     if (sdp.HasSparseObjective())
-      rd += scsparse;
+      rd += scsparse.col(0);
     if (sdp.HasDenseObjective())
       rd += scdense;
 
