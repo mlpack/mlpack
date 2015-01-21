@@ -223,6 +223,13 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
           distances(i) = distance;
         }
 
+        // Re-set second closest bound if necessary.
+        if (node->Stat().ClustersPruned() == size_t(-1))
+        {
+//          Log::Warn << "Update second closest bound!\n";
+          node->Stat().SecondClosestBound() = node->Parent()->Stat().SecondClosestBound();
+        }
+
         if (secondClosestDist < node->Stat().SecondClosestBound() - 1e-15)
         {
           Log::Warn << "Owner " << node->Stat().Owner() << ", mqnd " <<
@@ -272,9 +279,6 @@ node->Stat().SecondClosestBound() << " is too loose! -- " << secondClosestDist
   // We have to set the closest query node to NULL because the cluster tree will
   // be rebuilt.
   node->Stat().ClosestQueryNode() = NULL;
-  node->Stat().SecondClosestBound() -= clusterDistances[clusters];
-  if (node->Stat().SecondClosestBound() < 0)
-    node->Stat().SecondClosestBound() = 0;
 
 //  if (node->Begin() == 37591)
 //    Log::Warn << "scb for r37591c" << node->Count() << " updated to " <<
