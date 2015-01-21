@@ -104,6 +104,16 @@ AlphaHat(const arma::mat& A, const arma::mat& dA)
   return 1. / alphahatinv;
 }
 
+static inline double
+Alpha(const arma::mat& A, const arma::mat& dA, double tau)
+{
+  double alphahat = AlphaHat(A, dA);
+  if (alphahat < 0.)
+    // dA is PSD already
+    alphahat = 1.;
+  return std::min(1., tau * alphahat);
+}
+
 /**
  * Solve the following Lyapunov equation (for X)
  *
@@ -211,7 +221,7 @@ PrimalDualSolver::Optimize(arma::mat& X,
   ydense = ydense0;
   Z = Z0;
 
-  arma::vec sx, sz, /*dy,*/ dysparse, dydense, dsx, dsz;
+  arma::vec sx, sz, dysparse, dydense, dsx, dsz;
   arma::mat dX, dZ;
 
   math::Svec(X, sx);
@@ -219,7 +229,7 @@ PrimalDualSolver::Optimize(arma::mat& X,
 
   arma::vec rp, rd, rc, gk;
 
-  arma::mat Rc, /*E,*/ F, Einv_F_AsparseT, Einv_F_AdenseT, Gk,
+  arma::mat Rc, F, Einv_F_AsparseT, Einv_F_AdenseT, Gk,
             M, DualCheck;
 
   rp.set_size(sdp.NumConstraints());
@@ -228,7 +238,7 @@ PrimalDualSolver::Optimize(arma::mat& X,
   Einv_F_AdenseT.set_size(n2bar, sdp.NumDenseConstraints());
   M.set_size(sdp.NumConstraints(), sdp.NumConstraints());
 
-  double primal_obj = 0., alpha, beta, sigma, mu, alphahatX, alphahatZ;
+  double primal_obj = 0., alpha, beta;
   for (size_t iteration = 0; iteration < maxIterations; iteration++)
   {
     if (sdp.NumSparseConstraints())
@@ -244,7 +254,6 @@ PrimalDualSolver::Optimize(arma::mat& X,
     if (sdp.HasDenseObjective())
       rd += scdense;
 
-    //math::SymKronId(Z, E);
     math::SymKronId(X, F);
 
     for (size_t i = 0; i < sdp.NumSparseConstraints(); i++)
@@ -296,54 +305,29 @@ PrimalDualSolver::Optimize(arma::mat& X,
 
     const double sxdotsz = arma::dot(sx, sz);
 
-    Rc = -0.5*(X*Z + Z*X);
-    math::Svec(Rc, rc);
-
-    SolveKKTSystem(Asparse, Adense, Z, M, F, rp, rd, rc, dsx, dysparse, dydense, dsz);
-
-    math::Smat(dsx, dX);
-    math::Smat(dsz, dZ);
-
     // TODO(stephentu): computing these alphahats should take advantage of
     // the cholesky decomposition of X and Z which we should have available
     // when we use more efficient methods above.
 
-    alphahatX = AlphaHat(X, dX);
-    if (alphahatX < 0.)
-      // dX is PSD
-      alphahatX = 1.;
+    Rc = -0.5*(X*Z + Z*X);
+    math::Svec(Rc, rc);
+    SolveKKTSystem(Asparse, Adense, Z, M, F, rp, rd, rc, dsx, dysparse, dydense, dsz);
+    math::Smat(dsx, dX);
+    math::Smat(dsz, dZ);
+    alpha = Alpha(X, dX, tau);
+    beta = Alpha(Z, dZ, tau);
 
-    alphahatZ = AlphaHat(Z, dZ);
-    if (alphahatZ < 0.)
-      // dZ is PSD
-      alphahatZ = 1.;
-
-    alpha = std::min(1., tau * alphahatX);
-    beta = std::min(1., tau * alphahatZ);
-
-    sigma = std::pow(arma::dot(X + alpha * dX, Z + beta * dZ) / sxdotsz, 3);
-    mu = sigma * sxdotsz / n;
+    const double sigma =
+      std::pow(arma::dot(X + alpha * dX, Z + beta * dZ) / sxdotsz, 3);
+    const double mu = sigma * sxdotsz / n;
 
     Rc = mu*arma::eye<arma::mat>(n, n) - 0.5*(X*Z + Z*X + dX*dZ + dZ*dX);
     math::Svec(Rc, rc);
-
     SolveKKTSystem(Asparse, Adense, Z, M, F, rp, rd, rc, dsx, dysparse, dydense, dsz);
-
     math::Smat(dsx, dX);
     math::Smat(dsz, dZ);
-
-    alphahatX = AlphaHat(X, dX);
-    if (alphahatX < 0.)
-      // dX is PSD
-      alphahatX = 1.;
-
-    alphahatZ = AlphaHat(Z, dZ);
-    if (alphahatZ < 0.)
-      // dZ is PSD
-      alphahatZ = 1.;
-
-    alpha = std::min(1., tau * alphahatX);
-    beta = std::min(1., tau * alphahatZ);
+    alpha = Alpha(X, dX, tau);
+    beta = Alpha(Z, dZ, tau);
 
     X += alpha * dX;
     math::Svec(X, sx);
