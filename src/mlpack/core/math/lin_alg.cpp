@@ -232,6 +232,28 @@ void mlpack::math::Svec(const arma::mat& input, arma::vec& output)
   }
 }
 
+void mlpack::math::Svec(const arma::sp_mat& input, arma::sp_mat& output)
+{
+  const size_t n = input.n_rows;
+  const size_t n2bar = n * (n + 1) / 2;
+
+  output.zeros(n2bar, 1);
+
+  size_t idx = 0;
+
+  for (auto it = input.begin(); it != input.end(); ++it)
+  {
+    const size_t i = it.row();
+    const size_t j = it.col();
+    if (i > j)
+      continue;
+    if (i == j)
+      output(SvecIndex(i, j, n)) = *it;
+    else
+      output(SvecIndex(i, j, n)) = sq2 * (*it);
+  }
+}
+
 void mlpack::math::Smat(const arma::vec& input, arma::mat& output)
 {
   const size_t n = static_cast<size_t>(ceil((-1. + sqrt(1. + 8. * input.n_elem))/2.));

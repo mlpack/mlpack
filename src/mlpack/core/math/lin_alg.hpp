@@ -88,6 +88,15 @@ void RemoveRows(const arma::mat& input,
 void Svec(const arma::mat& input, arma::vec& output);
 
 /**
+ * Svec for sparse matrices.
+ * NOTE: armadillo doesn't have an sp_vec type, so the output type is sp_mat.
+ *
+ * @param input sparse A symmetric matrix
+ * @param output
+ */
+void Svec(const arma::sp_mat& input, arma::sp_mat& output);
+
+/**
  * The inverse of Svec. That is, Smat(Svec(A)) == A.
  *
  * @param input
