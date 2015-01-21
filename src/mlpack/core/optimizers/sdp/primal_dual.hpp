@@ -37,7 +37,6 @@ class PrimalDualSolver {
     return Optimize(X, ysparse, ydense, Z);
   }
 
-  double& Sigma() { return sigma; }
   double& Tau() { return tau; }
   double& NormXzTol() { return normXzTol; }
   double& PrimalInfeasTol() { return primalInfeasTol; }
@@ -52,7 +51,6 @@ class PrimalDualSolver {
   arma::vec ydense0;
   arma::mat Z0;
 
-  double sigma;
   double tau;
   double normXzTol;
   double primalInfeasTol;
