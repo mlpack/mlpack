@@ -66,6 +66,7 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   }
 
   // Build a tree on the centroids.
+  arma::mat oldCentroids(centroids);
   std::vector<size_t> oldFromNewCentroids;
   TreeType* centroidTree = BuildTree<TreeType>(
       const_cast<typename TreeType::Mat&>(centroids), oldFromNewCentroids);
@@ -120,10 +121,10 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
       residual += std::pow(dist, 2.0);
     }
   }
-//  Log::Info << clusterDistances.t();
 
   // Update the tree with the centroid movement information.
-  TreeUpdate(tree, centroids.n_cols, clusterDistances);
+  TreeUpdate(tree, centroids.n_cols, clusterDistances, assignments,
+      oldCentroids, dataset);
 
   delete centroidTree;
 
@@ -157,13 +158,32 @@ template<typename MetricType, typename MatType, typename TreeType>
 void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
     TreeType* node,
     const size_t clusters,
-    const arma::vec& clusterDistances)
+    const arma::vec& clusterDistances,
+    const arma::Col<size_t>& assignments,
+    const arma::mat& centroids,
+    const arma::mat& dataset)
 {
   // This is basically IterationUpdate(), but pulled out to be separate from the
   // actual dual-tree algorithm.
 
   if (node->Parent() != NULL && node->Parent()->Stat().Owner() < clusters)
     node->Stat().Owner() = node->Parent()->Stat().Owner();
+
+  const size_t cluster = assignments[node->Descendant(0)];
+  bool allSame = true;
+  for (size_t i = 1; i < node->NumDescendants(); ++i)
+  {
+    if (assignments[node->Descendant(i)] != cluster)
+    {
+      allSame = false;
+      break;
+    }
+  }
+
+  if (allSame)
+    node->Stat().Owner() = cluster;
+
+  node->Stat().HamerlyPruned() = false;
 
   // The easy case: this node had an owner.
   if (node->Stat().Owner() < clusters)
@@ -175,24 +195,62 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
     if (node->Stat().MinQueryNodeDistance() != DBL_MAX)
       node->Stat().MinQueryNodeDistance() += clusterDistances[owner];
 
-/*
-    // During the last iteration, this node was pruned.  In addition, we have
-    // cached a lower bound on the second closest cluster.  So, use the
-    // triangle inequality: if the maximum distance between the point and the
-    // cluster centroid plus the distance that centroid moved is less than the
-    // lower bound minus the maximum moving centroid, then this cluster *must*
-    // still have the same owner.
-    const size_t owner = node->Stat().Owner();
-    const double closestUpperBound = node->Stat().MaxQueryNodeDistance() +
-        clusterDistances[owner];
-    const TreeType* nonOwner = (TreeType*) node->Stat().ClosestNonOwner();
-    const double tightestLowerBound = node->Stat().ClosestNonOwnerDistance() -
-        nonOwner->Stat().MinQueryNodeDistance();
-    if (closestUpperBound <= tightestLowerBound)
+    // Check if we can perform a Hamerly prune: if the node has an owner, and
+    // the second closest cluster could not have moved close enough that any
+    // points could have changed assignment, then this node *must* belong to the
+    // same owner in the next iteration.  Note that MaxQueryNodeDistance() has
+    // already been adjusted for cluster movement.
+
+    if (node->Stat().MaxQueryNodeDistance() < node->Stat().SecondClosestBound()
+        - clusterDistances[clusters])
     {
-      // Then the owner must not have changed.
+      node->Stat().HamerlyPruned() = true;
+      Log::Warn << "Mark r" << node->Begin() << "c" << node->Count() << " as "
+          << "Hamerly pruned.\n";
+
+      // Check the second bound.  (This is time-consuming...)
+      for (size_t j = 0; j < node->NumDescendants(); ++j)
+      {
+        arma::vec distances(centroids.n_cols);
+        double secondClosestDist = DBL_MAX;
+        for (size_t i = 0; i < centroids.n_cols; ++i)
+        {
+          const double distance = MetricType::Evaluate(centroids.col(i),
+              dataset.col(node->Descendant(j)));
+          if (distance < secondClosestDist && i != node->Stat().Owner())
+            secondClosestDist = distance;
+
+          distances(i) = distance;
+        }
+
+        if (secondClosestDist < node->Stat().SecondClosestBound() - 1e-15)
+        {
+          Log::Warn << "Owner " << node->Stat().Owner() << ", mqnd " <<
+node->Stat().MaxQueryNodeDistance() << ", mnqnd " <<
+node->Stat().MinQueryNodeDistance() << ".\n";
+          Log::Warn << distances.t();
+          Log::Fatal << "Second closest bound " <<
+node->Stat().SecondClosestBound() << " is too loose! -- " << secondClosestDist
+              << "! (" << node->Stat().SecondClosestBound() - secondClosestDist
+<< ")\n";
+        }
+//        if (node->Begin() == 37591)
+//          Log::Warn << "r37591c" << node->Count() << ": " << distances.t();
+      }
     }
-*/
+//    else
+//    {
+//      Log::Warn << "Failed Hamerly prune for r" << node->Begin() << "c" <<
+//          node->Count() << "; mqnd " << node->Stat().MaxQueryNodeDistance() <<
+//          ", scb " << node->Stat().SecondClosestBound() << ".\n";
+//    }
+
+//    if (node->Stat().SecondClosestBound() == DBL_MAX)
+//   {
+//      Log::Warn << "r" << node->Begin() << "c" << node->Count() << " never had "
+//          << "the second bound updated.\n";
+//    }
+
   }
   else
   {
@@ -204,6 +262,9 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
       node->Stat().MaxQueryNodeDistance() += clusterDistances[clusters];
     if (node->Stat().MinQueryNodeDistance() != DBL_MAX)
       node->Stat().MinQueryNodeDistance() += clusterDistances[clusters];
+
+    // Since the node didn't have an owner, it can't be Hamerly pruned.
+    node->Stat().HamerlyPruned() = false;
   }
 
   node->Stat().Iteration() = iteration;
@@ -211,11 +272,18 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
   // We have to set the closest query node to NULL because the cluster tree will
   // be rebuilt.
   node->Stat().ClosestQueryNode() = NULL;
-//  node->Stat().MaxQueryNodeDistance() = DBL_MAX;
-//  node->Stat().MinQueryNodeDistance() = DBL_MAX;
+  node->Stat().SecondClosestBound() -= clusterDistances[clusters];
+  if (node->Stat().SecondClosestBound() < 0)
+    node->Stat().SecondClosestBound() = 0;
 
-  for (size_t i = 0; i < node->NumChildren(); ++i)
-    TreeUpdate(&node->Child(i), clusters, clusterDistances);
+//  if (node->Begin() == 37591)
+//    Log::Warn << "scb for r37591c" << node->Count() << " updated to " <<
+//node->Stat().SecondClosestBound() << ".\n";
+
+//  if (!node->Stat().HamerlyPruned())
+    for (size_t i = 0; i < node->NumChildren(); ++i)
+      TreeUpdate(&node->Child(i), clusters, clusterDistances, assignments,
+          centroids, dataset);
 }
 
 

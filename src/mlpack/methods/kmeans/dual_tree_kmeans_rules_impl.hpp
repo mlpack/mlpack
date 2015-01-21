@@ -106,6 +106,7 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
     TreeType& referenceNode)
 {
   // This won't happen with the root since it is explicitly set to 0.
+  const size_t origPruned = referenceNode.Stat().ClustersPruned();
   if (referenceNode.Stat().ClustersPruned() == size_t(-1))
     referenceNode.Stat().ClustersPruned() =
         referenceNode.Parent()->Stat().ClustersPruned();
@@ -123,34 +124,67 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
     referenceNode.Stat().MaxQueryNodeDistance() = std::min(
         referenceNode.Parent()->Stat().MaxQueryNodeDistance(),
         referenceNode.Stat().MaxQueryNodeDistance());
+    referenceNode.Stat().SecondClosestBound() = std::min(
+        referenceNode.Parent()->Stat().SecondClosestBound(),
+        referenceNode.Stat().SecondClosestBound());
   }
 
-  double score = ElkanTypeScore(queryNode, referenceNode);
+  double score = HamerlyTypeScore(referenceNode);
+  if (score == DBL_MAX)
+  {
+    if (origPruned == size_t(-1))
+    {
+      const size_t cluster = referenceNode.Stat().Owner();
+      newCentroids.col(cluster) += referenceNode.Stat().Centroid() *
+          referenceNode.NumDescendants();
+      counts(cluster) += referenceNode.NumDescendants();
+      referenceNode.Stat().ClustersPruned() += queryNode.NumDescendants();
+    }
+    return DBL_MAX; // No other bookkeeping to do.
+  }
 
   if (score != DBL_MAX)
   {
-    // We also have to update things if the closest query node is null.  This
-    // can probably be improved.
-    const double minDistance = referenceNode.MinDistance(&queryNode);
-    ++distanceCalculations;
-    score = PellegMooreScore(queryNode, referenceNode, minDistance);
+    score = ElkanTypeScore(queryNode, referenceNode);
 
-    if (minDistance < referenceNode.Stat().MinQueryNodeDistance())
+    if (score != DBL_MAX)
     {
-      const double maxDistance = referenceNode.MaxDistance(&queryNode);
+      // We also have to update things if the closest query node is null.  This
+      // can probably be improved.
+      const double minDistance = referenceNode.MinDistance(&queryNode);
       ++distanceCalculations;
-      referenceNode.Stat().ClosestQueryNode() = (void*) &queryNode;
-      referenceNode.Stat().MinQueryNodeDistance() = minDistance;
-      referenceNode.Stat().MaxQueryNodeDistance() = maxDistance;
-    }
-    else if (IsDescendantOf(*((TreeType*)
-        referenceNode.Stat().ClosestQueryNode()), queryNode))
-    {
-      const double maxDistance = referenceNode.MaxDistance(&queryNode);
-      ++distanceCalculations;
-      referenceNode.Stat().ClosestQueryNode() = (void*) &queryNode;
-      referenceNode.Stat().MinQueryNodeDistance() = minDistance;
-      referenceNode.Stat().MaxQueryNodeDistance() = maxDistance;
+      score = PellegMooreScore(queryNode, referenceNode, minDistance);
+
+      if (minDistance < referenceNode.Stat().MinQueryNodeDistance())
+      {
+        const double maxDistance = referenceNode.MaxDistance(&queryNode);
+        // Only take the previous minimum query node distance in some
+        // circumstances.
+        if (!IsDescendantOf(*((TreeType*)
+            referenceNode.Stat().ClosestQueryNode()), queryNode) &&
+            referenceNode.Stat().MinQueryNodeDistance() != DBL_MAX &&
+            referenceNode.Stat().MinQueryNodeDistance() <
+                referenceNode.Stat().SecondClosestBound())
+          referenceNode.Stat().SecondClosestBound() =
+              referenceNode.Stat().MinQueryNodeDistance();
+        ++distanceCalculations;
+        referenceNode.Stat().ClosestQueryNode() = (void*) &queryNode;
+        referenceNode.Stat().MinQueryNodeDistance() = minDistance;
+        referenceNode.Stat().MaxQueryNodeDistance() = maxDistance;
+      }
+      else if (IsDescendantOf(*((TreeType*)
+          referenceNode.Stat().ClosestQueryNode()), queryNode))
+      {
+        const double maxDistance = referenceNode.MaxDistance(&queryNode);
+        ++distanceCalculations;
+        referenceNode.Stat().ClosestQueryNode() = (void*) &queryNode;
+        referenceNode.Stat().MinQueryNodeDistance() = minDistance;
+        referenceNode.Stat().MaxQueryNodeDistance() = maxDistance;
+      }
+      else if (minDistance < referenceNode.Stat().SecondClosestBound())
+      {
+        referenceNode.Stat().SecondClosestBound() = minDistance;
+      }
     }
   }
 
@@ -209,20 +243,8 @@ template<typename MetricType, typename TreeType>
 double DualTreeKMeansRules<MetricType, TreeType>::HamerlyTypeScore(
     TreeType& referenceNode)
 {
-  // Does the reference node have an owner?
-  if (referenceNode.Owner() < centroids.n_cols)
-  {
-    // Has the owner stayed stationary enough and no other centroids moved
-    // enough that this owner _must_ be the continued owner?
-    if (referenceNode.MaxQueryNodeDistance() +
-        clusterDistances[referenceNode.Owner()] <
-        referenceNode.SecondClosestQueryNodeDistance() -
-        clusterDistances[centroids.n_cols])
-    {
-      return DBL_MAX;
-      // Not yet handled: when to add this to the finished counts?
-    }
-  }
+  if (referenceNode.Stat().HamerlyPruned())
+    return DBL_MAX;
 
   return 0.0;
 }

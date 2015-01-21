@@ -63,7 +63,10 @@ class DualTreeKMeans
 
   void TreeUpdate(TreeType* node,
                   const size_t clusters,
-                  const arma::vec& clusterDistances);
+                  const arma::vec& clusterDistances,
+                  const arma::Col<size_t>& assignments,
+                  const arma::mat& oldCentroids,
+                  const arma::mat& dataset);
 };
 
 template<typename MetricType, typename MatType>
