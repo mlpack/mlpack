@@ -44,7 +44,7 @@ class FFNN
      * @param outputLayer The outputlayer used to evaluate the network.
      */
     FFNN(const ConnectionTypes& network, OutputLayerType& outputLayer)
-        : network(network), outputLayer(outputLayer), err(0)
+        : network(network), outputLayer(outputLayer), err(0), seqNum(0)
     {
       // Nothing to do here.
     }
