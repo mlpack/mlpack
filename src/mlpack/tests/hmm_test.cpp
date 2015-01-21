@@ -995,6 +995,8 @@ BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
       arma::mat covariance = arma::randu<arma::mat>(
           hmm.Emission()[j].Component(i).Covariance().n_rows,
           hmm.Emission()[j].Component(i).Covariance().n_cols);
+      covariance *= covariance.t();
+      covariance += arma::eye<arma::mat>(covariance.n_rows, covariance.n_cols);
       hmm.Emission()[j].Component(i).Covariance(std::move(covariance));
     }
   }
@@ -1054,6 +1056,8 @@ BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
     arma::mat covariance = arma::randu<arma::mat>(
         hmm.Emission()[j].Covariance().n_rows,
         hmm.Emission()[j].Covariance().n_cols);
+    covariance *= covariance.t();
+    covariance += arma::eye<arma::mat>(covariance.n_rows, covariance.n_cols);
     hmm.Emission()[j].Covariance(std::move(covariance));
   }
 
