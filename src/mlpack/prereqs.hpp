@@ -9,7 +9,7 @@
 // First, check if Armadillo was included before, warning if so.
 #ifdef ARMA_INCLUDES
 #pragma message "Armadillo was included before mlpack; this can sometimes cause\
-problems.  It should only be necessary to include <mlpack/core.hpp> and not\
+ problems.  It should only be necessary to include <mlpack/core.hpp> and not \
 <armadillo>."
 #endif
 
