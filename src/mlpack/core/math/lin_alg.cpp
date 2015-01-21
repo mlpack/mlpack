@@ -209,9 +209,6 @@ void mlpack::math::RemoveRows(const arma::mat& input,
   }
 }
 
-static const double sq2 = 1.41421356237309504880; // sqrt(2)
-static const double one_over_sq2 = 0.707106781186547524401; // 1/sqrt(2)
-
 void mlpack::math::Svec(const arma::mat& input, arma::vec& output)
 {
   const size_t n = input.n_rows;
@@ -227,7 +224,7 @@ void mlpack::math::Svec(const arma::mat& input, arma::vec& output)
       if (i == j)
         output(idx++) = input(i, j);
       else
-        output(idx++) = sq2 * input(i, j);
+        output(idx++) = M_SQRT2 * input(i, j);
     }
   }
 }
@@ -250,7 +247,7 @@ void mlpack::math::Svec(const arma::sp_mat& input, arma::sp_mat& output)
     if (i == j)
       output(SvecIndex(i, j, n)) = *it;
     else
-      output(SvecIndex(i, j, n)) = sq2 * (*it);
+      output(SvecIndex(i, j, n)) = M_SQRT2 * (*it);
   }
 }
 
@@ -268,7 +265,7 @@ void mlpack::math::Smat(const arma::vec& input, arma::mat& output)
       if (i == j)
         output(i, j) = input(idx++);
       else
-        output(i, j) = output(j, i) = one_over_sq2 * input(idx++);
+        output(i, j) = output(j, i) = M_SQRT1_2 * input(idx++);
     }
   }
 }
@@ -297,13 +294,13 @@ void mlpack::math::SymKronId(const arma::mat& A, arma::mat& op)
       for (size_t k = 0; k < n; k++)
       {
         op(idx, SvecIndex(k, j, n)) +=
-          ((k == j) ? 1. : one_over_sq2) * A(i, k);
+          ((k == j) ? 1. : M_SQRT1_2) * A(i, k);
         op(idx, SvecIndex(i, k, n)) +=
-          ((k == i) ? 1. : one_over_sq2) * A(k, j);
+          ((k == i) ? 1. : M_SQRT1_2) * A(k, j);
       }
       op.row(idx) *= 0.5;
       if (i != j)
-        op.row(idx) *= sq2;
+        op.row(idx) *= M_SQRT2;
       idx++;
     }
   }
