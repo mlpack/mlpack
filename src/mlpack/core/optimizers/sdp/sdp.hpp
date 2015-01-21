@@ -13,10 +13,18 @@ namespace optimization {
 
 /**
  * Specify an SDP in primal form
+ *
+ *     min    dot(C, X)
+ *     s.t.   dot(Ai, X) = bi, i=1,...,m, X >= 0
+ *
+ * @tparam ObjectiveMatrixType Should be either arma::mat or arma::sp_mat
  */
+template <typename ObjectiveMatrixType>
 class SDP
 {
  public:
+
+  typedef ObjectiveMatrixType objective_matrix_type;
 
   SDP(const size_t n,
       const size_t numSparseConstraints,
@@ -32,23 +40,11 @@ class SDP
 
   size_t NumConstraints() const { return sparseB.n_elem + denseB.n_elem; }
 
-  //! Return the sparse objective function matrix (sparseC).
-  const arma::sp_mat& SparseC() const { return sparseC; }
-
   //! Modify the sparse objective function matrix (sparseC).
-  arma::sp_mat& SparseC() {
-    hasModifiedSparseObjective = true;
-    return sparseC;
-  }
+  ObjectiveMatrixType& C() { return c; }
 
-  //! Return the dense objective function matrix (denseC).
-  const arma::mat& DenseC() const { return denseC; }
-
-  //! Modify the dense objective function matrix (denseC).
-  arma::mat& DenseC() {
-    hasModifiedDenseObjective = true;
-    return denseC;
-  }
+  //! Return the sparse objective function matrix (sparseC).
+  const ObjectiveMatrixType& C() const { return c; }
 
   //! Return the vector of sparse A matrices (which correspond to the sparse
   // constraints).
@@ -76,10 +72,6 @@ class SDP
   //! Modify the vector of dense B values.
   arma::vec& DenseB() { return denseB; }
 
-  bool HasSparseObjective() const { return hasModifiedSparseObjective; }
-
-  bool HasDenseObjective() const { return hasModifiedDenseObjective; }
-
   /**
    * Check whether or not the constraint matrices are linearly independent.
    *
@@ -92,17 +84,8 @@ class SDP
   //! Dimension of the objective variable.
   size_t n;
 
-  //! Sparse objective function matrix c.
-  arma::sp_mat sparseC;
-
-  //! Dense objective function matrix c.
-  arma::mat denseC;
-
-  //! If false, sparseC is zero
-  bool hasModifiedSparseObjective;
-
-  //! If false, denseC is zero
-  bool hasModifiedDenseObjective;
+  //! Objective function matrix c.
+  ObjectiveMatrixType c;
 
   //! A_i for each sparse constraint.
   std::vector<arma::sp_mat> sparseA;
@@ -117,5 +100,8 @@ class SDP
 
 } // namespace optimization
 } // namespace mlpack
+
+// Include implementation.
+#include "sdp_impl.hpp"
 
 #endif

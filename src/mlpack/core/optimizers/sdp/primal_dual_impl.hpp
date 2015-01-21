@@ -1,9 +1,10 @@
 /**
- * @file primal_dual.cpp
+ * @file primal_dual_impl.hpp
  * @author Stephen Tu
  *
- * Contains an implementation of the "XZ+ZX" primal-dual IP method presented
- * and analyzed in:
+ * Contains an implementation of the "XZ+ZX" primal-dual infeasible interior
+ * point method with a Mehrotra predictor-corrector update step presented and
+ * analyzed in:
  *
  *   Primal-dual interior-point methods for semidefinite programming:
  *   Convergence rates, stability and numerical results.
@@ -16,18 +17,21 @@
  * Note there are many optimizations that still need to be implemented. See the
  * code comments for more details.
  */
+#ifndef __MLPACK_CORE_OPTIMIZERS_SDP_PRIMAL_DUAL_IMPL_HPP
+#define __MLPACK_CORE_OPTIMIZERS_SDP_PRIMAL_DUAL_IMPL_HPP
 
 #include "primal_dual.hpp"
 
 namespace mlpack {
 namespace optimization {
 
-PrimalDualSolver::PrimalDualSolver(const SDP& sdp)
+template <typename SDPType>
+PrimalDualSolver<SDPType>::PrimalDualSolver(const SDPType& sdp)
   : sdp(sdp),
-    X0(arma::eye<arma::mat>(sdp.N(), sdp.N())),
-    ysparse0(arma::ones<arma::vec>(sdp.NumSparseConstraints())),
-    ydense0(arma::ones<arma::vec>(sdp.NumDenseConstraints())),
-    Z0(arma::eye<arma::mat>(sdp.N(), sdp.N())),
+    initialX(arma::eye<arma::mat>(sdp.N(), sdp.N())),
+    initialYsparse(arma::ones<arma::vec>(sdp.NumSparseConstraints())),
+    initialYdense(arma::ones<arma::vec>(sdp.NumDenseConstraints())),
+    initialZ(arma::eye<arma::mat>(sdp.N(), sdp.N())),
     tau(0.99),
     normXzTol(1e-7),
     primalInfeasTol(1e-7),
@@ -37,16 +41,17 @@ PrimalDualSolver::PrimalDualSolver(const SDP& sdp)
 
 }
 
-PrimalDualSolver::PrimalDualSolver(const SDP& sdp,
-                                   const arma::mat& X0,
-                                   const arma::vec& ysparse0,
-                                   const arma::vec& ydense0,
-                                   const arma::mat& Z0)
+template <typename SDPType>
+PrimalDualSolver<SDPType>::PrimalDualSolver(const SDPType& sdp,
+                                            const arma::mat& initialX,
+                                            const arma::vec& initialYsparse,
+                                            const arma::vec& initialYdense,
+                                            const arma::mat& initialZ)
   : sdp(sdp),
-    X0(X0),
-    ysparse0(ysparse0),
-    ydense0(ydense0),
-    Z0(Z0),
+    initialX(initialX),
+    initialYsparse(initialYsparse),
+    initialYdense(initialYdense),
+    initialZ(initialZ),
     tau(0.99),
     normXzTol(1e-7),
     primalInfeasTol(1e-7),
@@ -55,34 +60,34 @@ PrimalDualSolver::PrimalDualSolver(const SDP& sdp,
 {
   arma::mat tmp;
 
-  if (X0.n_rows != sdp.N() || X0.n_cols != sdp.N())
+  if (initialX.n_rows != sdp.N() || initialX.n_cols != sdp.N())
     Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
-      << "X0 needs to be square n x n matrix"
+      << "initialX needs to be square n x n matrix"
       << std::endl;
 
-  if (!arma::chol(tmp, X0))
+  if (!arma::chol(tmp, initialX))
     Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
-      << "X0 needs to be symmetric positive definite"
+      << "initialX needs to be symmetric positive definite"
       << std::endl;
 
-  if (ysparse0.n_elem != sdp.NumSparseConstraints())
+  if (initialYsparse.n_elem != sdp.NumSparseConstraints())
     Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
-      << "ysparse0 needs to have the same length as the number of sparse constraints"
+      << "initialYsparse needs to have the same length as the number of sparse constraints"
       << std::endl;
 
-  if (ydense0.n_elem != sdp.NumDenseConstraints())
+  if (initialYdense.n_elem != sdp.NumDenseConstraints())
     Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
-      << "ydense0 needs to have the same length as the number of dense constraints"
+      << "initialYdense needs to have the same length as the number of dense constraints"
       << std::endl;
 
-  if (Z0.n_rows != sdp.N() || Z0.n_cols != sdp.N())
+  if (initialZ.n_rows != sdp.N() || initialZ.n_cols != sdp.N())
     Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
-      << "Z0 needs to be square n x n matrix"
+      << "initialZ needs to be square n x n matrix"
       << std::endl;
 
-  if (!arma::chol(tmp, Z0))
+  if (!arma::chol(tmp, initialZ))
     Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
-      << "Z0 needs to be symmetric positive definite"
+      << "initialZ needs to be symmetric positive definite"
       << std::endl;
 }
 
@@ -91,8 +96,8 @@ AlphaHat(const arma::mat& A, const arma::mat& dA)
 {
   // note: arma::chol(A) returns an upper triangular matrix (instead of the
   // usual lower triangular)
-  const arma::mat L = arma::trimatl(arma::chol(A).t());
-  const arma::mat Linv = L.i();
+  const arma::mat L = arma::chol(A).t();
+  const arma::mat Linv = arma::inv(arma::trimatl(L));
   const arma::vec evals = arma::eig_sym(-Linv * dA * Linv.t());
   const double alphahatinv = evals(evals.n_elem - 1);
   return 1. / alphahatinv;
@@ -171,11 +176,21 @@ SolveKKTSystem(const arma::sp_mat& Asparse,
   dsz = rd - Asparse.t() * dysparse - Adense.t() * dydense;
 }
 
+namespace private_ {
+
+// TODO(stephentu): should we move this somewhere more general
+template <typename T> struct vectype { };
+template <typename eT> struct vectype<arma::Mat<eT>> { typedef arma::Col<eT> type; };
+template <typename eT> struct vectype<arma::SpMat<eT>> { typedef arma::SpCol<eT> type; };
+
+} // namespace private_
+
+template <typename SDPType>
 std::pair<bool, double>
-PrimalDualSolver::Optimize(arma::mat& X,
-                           arma::vec& ysparse,
-                           arma::vec& ydense,
-                           arma::mat& Z)
+PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
+                                    arma::vec& ysparse,
+                                    arma::vec& ydense,
+                                    arma::mat& Z)
 {
   // TODO(stephentu): We need a method which deals with the case when the Ais
   // are not linearly independent.
@@ -184,12 +199,12 @@ PrimalDualSolver::Optimize(arma::mat& X,
   const size_t n2bar = sdp.N2bar();
 
   arma::sp_mat Asparse(sdp.NumSparseConstraints(), n2bar);
-  arma::sp_mat Aisparse;
+  arma::sp_vec Aisparse;
 
   for (size_t i = 0; i < sdp.NumSparseConstraints(); i++)
   {
     math::Svec(sdp.SparseA()[i], Aisparse);
-    Asparse.row(i) = Aisparse.col(0).t();
+    Asparse.row(i) = Aisparse.t();
   }
 
   arma::mat Adense(sdp.NumDenseConstraints(), n2bar);
@@ -200,18 +215,13 @@ PrimalDualSolver::Optimize(arma::mat& X,
     Adense.row(i) = Aidense.t();
   }
 
-  arma::sp_mat scsparse;
-  if (sdp.HasSparseObjective())
-    math::Svec(sdp.SparseC(), scsparse);
+  typename private_::vectype<typename SDPType::objective_matrix_type>::type sc;
+  math::Svec(sdp.C(), sc);
 
-  arma::vec scdense;
-  if (sdp.HasDenseObjective())
-    math::Svec(sdp.DenseC(), scdense);
-
-  X = X0;
-  ysparse = ysparse0;
-  ydense = ydense0;
-  Z = Z0;
+  X = initialX;
+  ysparse = initialYsparse;
+  ydense = initialYdense;
+  Z = initialZ;
 
   arma::vec sx, sz, dysparse, dydense, dsx, dsz;
   arma::mat dX, dZ;
@@ -240,11 +250,7 @@ PrimalDualSolver::Optimize(arma::mat& X,
       rp(arma::span(sdp.NumSparseConstraints(), sdp.NumConstraints() - 1)) =
           sdp.DenseB() - Adense * sx;
 
-    rd = - sz - Asparse.t() * ysparse - Adense.t() * ydense;
-    if (sdp.HasSparseObjective())
-      rd += scsparse.col(0);
-    if (sdp.HasDenseObjective())
-      rd += scdense;
+    rd = sc - sz - Asparse.t() * ysparse - Adense.t() * ydense;
 
     math::SymKronId(X, F);
 
@@ -336,11 +342,7 @@ PrimalDualSolver::Optimize(arma::mat& X,
         sparse_primal_infeas * sparse_primal_infeas +
         dense_primal_infeas * dense_primal_infeas);
 
-    primal_obj = 0.;
-    if (sdp.HasSparseObjective())
-      primal_obj += arma::dot(sdp.SparseC(), X);
-    if (sdp.HasDenseObjective())
-      primal_obj += arma::dot(sdp.DenseC(), X);
+    primal_obj = arma::dot(sdp.C(), X);
 
     const double dual_obj =
       arma::dot(sdp.SparseB(), ysparse) +
@@ -350,11 +352,7 @@ PrimalDualSolver::Optimize(arma::mat& X,
 
     // TODO(stephentu): this dual check is quite expensive,
     // maybe make it optional?
-    DualCheck = Z;
-    if (sdp.HasSparseObjective())
-      DualCheck -= sdp.SparseC();
-    if (sdp.HasDenseObjective())
-      DualCheck -= sdp.DenseC();
+    DualCheck = Z - sdp.C();
     for (size_t i = 0; i < sdp.NumSparseConstraints(); i++)
       DualCheck += ysparse(i) * sdp.SparseA()[i];
     for (size_t i = 0; i < sdp.NumDenseConstraints(); i++)
@@ -384,3 +382,5 @@ PrimalDualSolver::Optimize(arma::mat& X,
 
 } // namespace optimization
 } // namespace mlpack
+
+#endif

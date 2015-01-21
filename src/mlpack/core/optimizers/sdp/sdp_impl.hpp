@@ -1,31 +1,31 @@
 /**
- * @file sdp.cpp
+ * @file sdp_impl.hpp
  * @author Stephen Tu
  *
  */
+#ifndef __MLPACK_CORE_OPTIMIZERS_SDP_SDP_IMPL_HPP
+#define __MLPACK_CORE_OPTIMIZERS_SDP_SDP_IMPL_HPP
 
 #include "sdp.hpp"
 
 namespace mlpack {
 namespace optimization {
 
-SDP::SDP(const size_t n,
-         const size_t numSparseConstraints,
-         const size_t numDenseConstraints) :
+template <typename ObjectiveMatrixType>
+SDP<ObjectiveMatrixType>::SDP(const size_t n,
+                              const size_t numSparseConstraints,
+                              const size_t numDenseConstraints) :
     n(n),
-    sparseC(n, n),
-    denseC(n, n),
-    hasModifiedSparseObjective(false),
-    hasModifiedDenseObjective(false),
+    c(n, n),
     sparseA(numSparseConstraints),
     sparseB(numSparseConstraints),
     denseA(numDenseConstraints),
     denseB(numDenseConstraints)
 {
-  denseC.zeros();
 }
 
-bool SDP::HasLinearlyIndependentConstraints() const
+template <typename ObjectiveMatrixType>
+bool SDP<ObjectiveMatrixType>::HasLinearlyIndependentConstraints() const
 {
   // Very inefficient, should only be used for testing/debugging
 
@@ -53,3 +53,5 @@ bool SDP::HasLinearlyIndependentConstraints() const
 
 } // namespace optimization
 } // namespace mlpack
+
+#endif

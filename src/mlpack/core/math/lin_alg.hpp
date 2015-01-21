@@ -87,14 +87,7 @@ void RemoveRows(const arma::mat& input,
  */
 void Svec(const arma::mat& input, arma::vec& output);
 
-/**
- * Svec for sparse matrices.
- * NOTE: armadillo doesn't have an sp_vec type, so the output type is sp_mat.
- *
- * @param input sparse A symmetric matrix
- * @param output
- */
-void Svec(const arma::sp_mat& input, arma::sp_mat& output);
+void Svec(const arma::sp_mat& input, arma::sp_vec& output);
 
 /**
  * The inverse of Svec. That is, Smat(Svec(A)) == A.
@@ -112,7 +105,7 @@ void Smat(const arma::vec& input, arma::mat& output);
  * @param j
  * @param n
  */
-size_t SvecIndex(size_t i, size_t j, size_t n);
+inline size_t SvecIndex(size_t i, size_t j, size_t n);
 
 /**
  * If A is a symmetric matrix, then SymKronId returns an operator Op such that
@@ -128,5 +121,8 @@ void SymKronId(const arma::mat& A, arma::mat& op);
 
 }; // namespace math
 }; // namespace mlpack
+
+// Partially include implementation
+#include "lin_alg_impl.hpp"
 
 #endif // __MLPACK_CORE_MATH_LIN_ALG_HPP
