@@ -493,6 +493,8 @@ BOOST_AUTO_TEST_CASE(GMMLoadSaveTest)
     arma::mat covariance = arma::randu<arma::mat>(
         gmm.Component(i).Covariance().n_rows,
         gmm.Component(i).Covariance().n_cols);
+    covariance *= covariance.t();
+    covariance += arma::eye<arma::mat>(covariance.n_rows, covariance.n_cols);
     gmm.Component(i).Covariance(std::move(covariance));
   }
 
