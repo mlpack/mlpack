@@ -353,8 +353,9 @@ class FFNN
     typename std::enable_if<I < sizeof...(Tp), void>::type
     Gradients(std::tuple<Tp...>& t)
     {
-      gradients[gradientNum++] += std::get<I>(t).OutputLayer().Delta() *
-          std::get<I>(t).InputLayer().InputActivation().t();
+      MatType gradient;
+      std::get<I>(t).Gradient(gradient);
+      gradients[gradientNum++] += gradient;
 
       Gradients<I + 1, Tp...>(t);
     }
