@@ -28,8 +28,7 @@ PrimalDualSolver::PrimalDualSolver(const SDP& sdp)
     ysparse0(arma::ones<arma::vec>(sdp.NumSparseConstraints())),
     ydense0(arma::ones<arma::vec>(sdp.NumDenseConstraints())),
     Z0(arma::eye<arma::mat>(sdp.N(), sdp.N())),
-    sigma(0.5),
-    tau(0.5),
+    tau(0.99),
     normXzTol(1e-7),
     primalInfeasTol(1e-7),
     dualInfeasTol(1e-7),
@@ -48,8 +47,7 @@ PrimalDualSolver::PrimalDualSolver(const SDP& sdp,
     ysparse0(ysparse0),
     ydense0(ydense0),
     Z0(Z0),
-    sigma(0.5),
-    tau(0.5),
+    tau(0.99),
     normXzTol(1e-7),
     primalInfeasTol(1e-7),
     dualInfeasTol(1e-7),
@@ -191,7 +189,7 @@ PrimalDualSolver::Optimize(arma::mat& X,
   for (size_t iteration = 0; iteration < maxIterations; iteration++)
   {
 
-    const double mu = sigma * arma::dot(sx, sz) / n;
+
 
     if (sdp.NumSparseConstraints())
       rp(arma::span(0, sdp.NumSparseConstraints() - 1)) =
@@ -206,8 +204,7 @@ PrimalDualSolver::Optimize(arma::mat& X,
     if (sdp.HasDenseObjective())
       rd += scdense;
 
-    Rc = mu*arma::eye<arma::mat>(n, n) - 0.5*(X*Z + Z*X);
-    math::Svec(Rc, rc);
+
 
     math::SymKronId(Z, E);
     math::SymKronId(X, F);
@@ -259,6 +256,63 @@ PrimalDualSolver::Optimize(arma::mat& X,
         Adense * Einv_F_AdenseT;
     }
 
+    const double sxdotsz = arma::dot(sx, sz);
+    double sigma = 0.;
+    {
+      Rc = -0.5*(X*Z + Z*X);
+      math::Svec(Rc, rc);
+      math::Smat(F * rd - rc, Frd_rc_Mat);
+      SolveLyapunov(Einv_Frd_rc_Mat, Z, 2. * Frd_rc_Mat);
+      math::Svec(Einv_Frd_rc_Mat, Einv_Frd_rc);
+
+      rhs = rp;
+      if (sdp.NumSparseConstraints())
+        rhs(arma::span(0, sdp.NumSparseConstraints() - 1)) += Asparse * Einv_Frd_rc;
+      if (sdp.NumDenseConstraints())
+        rhs(arma::span(sdp.NumSparseConstraints(), sdp.NumConstraints() - 1)) += Adense * Einv_Frd_rc;
+
+      // TODO(stephentu): use a more efficient method (e.g. LU decomposition)
+      if (!arma::solve(dy, M, rhs))
+        Log::Fatal << "PrimalDualSolver::Optimize(): Could not solve KKT system" << std::endl;
+
+      if (sdp.NumSparseConstraints())
+        dysparse = dy(arma::span(0, sdp.NumSparseConstraints() - 1));
+      if (sdp.NumDenseConstraints())
+        dydense = dy(arma::span(sdp.NumSparseConstraints(), sdp.NumConstraints() - 1));
+
+      math::Smat(F * (rd - Asparse.t() * dysparse - Adense.t() * dydense) - rc, Frd_ATdy_rc_Mat);
+      SolveLyapunov(Einv_Frd_ATdy_rc_Mat, Z, 2. * Frd_ATdy_rc_Mat);
+      math::Svec(Einv_Frd_ATdy_rc_Mat, Einv_Frd_ATdy_rc);
+      dsx = -Einv_Frd_ATdy_rc;
+      dsz = rd - Asparse.t() * dysparse - Adense.t() * dydense;
+
+      math::Smat(dsx, dX);
+      math::Smat(dsz, dZ);
+
+      // TODO(stephentu): computing these alphahats should take advantage of
+      // the cholesky decomposition of X and Z which we should have available
+      // when we use more efficient methods above.
+
+      double alphahatX = AlphaHat(X, dX);
+      if (alphahatX < 0.)
+        // dX is PSD
+        alphahatX = 1.;
+
+      double alphahatZ = AlphaHat(Z, dZ);
+      if (alphahatZ < 0.)
+        // dZ is PSD
+        alphahatZ = 1.;
+
+      const double alpha = std::min(1., tau * alphahatX);
+      const double beta = std::min(1., tau * alphahatZ);
+
+      sigma = std::pow(arma::dot(X + alpha * dX, Z + beta * dZ) / sxdotsz, 3);
+    }
+
+    const double mu = sigma * sxdotsz / n;
+
+    Rc = mu*arma::eye<arma::mat>(n, n) - 0.5*(X*Z + Z*X + dX*dZ + dZ*dX);
+    math::Svec(Rc, rc);
     math::Smat(F * rd - rc, Frd_rc_Mat);
     SolveLyapunov(Einv_Frd_rc_Mat, Z, 2. * Frd_rc_Mat);
     math::Svec(Einv_Frd_rc_Mat, Einv_Frd_rc);
@@ -303,11 +357,6 @@ PrimalDualSolver::Optimize(arma::mat& X,
 
     const double alpha = std::min(1., tau * alphahatX);
     const double beta = std::min(1., tau * alphahatZ);
-
-    // TODO(stephentu): Implement the Mehrotra's predictor-corrector rule.  See
-    // Section 7 of [AHO98]. This will require making the above KKT system
-    // solver more modular (since we'll have to solve another similar KKT
-    // system).
 
     X += alpha * dX;
     math::Svec(X, sx);
