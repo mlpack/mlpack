@@ -190,9 +190,8 @@ BOOST_AUTO_TEST_CASE(GaussianUnivariateProbabilityTest)
 
   // A few more cases...
   arma::mat covariance;
-  covariance.set_size(g.Covariance().n_rows, g.Covariance().n_cols);
 
-  covariance.fill(2.0);
+  covariance = 2.0;
   g.Covariance(std::move(covariance));
   BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("0.0")), 0.282094791773878, 1e-5);
   BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("1.0")), 0.219695644733861, 1e-5);
@@ -200,11 +199,11 @@ BOOST_AUTO_TEST_CASE(GaussianUnivariateProbabilityTest)
       1e-5);
 
   g.Mean().fill(1.0);
-  covariance.fill(1.0);
+  covariance = 1.0;
   g.Covariance(std::move(covariance));
   BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("1.0")), 0.398942280401433, 1e-5);
 
-  covariance.fill(2.0);
+  covariance = 2.0;
   g.Covariance(std::move(covariance));
   BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("-1.0")), 0.103776874355149,
       1e-5);
@@ -282,7 +281,11 @@ BOOST_AUTO_TEST_CASE(GaussianMultipointMultivariateProbabilityTest)
 {
   // Same case as before.
   arma::vec mean = "5 6 3 3 2";
-  arma::mat cov = "6 1 1 0 2; 0 7 1 0 1; 1 1 4 1 1; 1 0 1 7 0; 2 0 1 1 6";
+  arma::mat cov("6 1 1 1 2;"
+                "1 7 1 0 0;"
+                "1 1 4 1 1;"
+                "1 0 1 7 0;"
+                "2 0 1 0 6");
 
   arma::mat points = "0 3 2 2 3 4;"
                      "1 2 2 1 0 0;"
@@ -292,16 +295,16 @@ BOOST_AUTO_TEST_CASE(GaussianMultipointMultivariateProbabilityTest)
 
   arma::vec phis;
   GaussianDistribution g(mean, cov);
-  g.Probability(points, phis);
+  g.LogProbability(points, phis);
 
   BOOST_REQUIRE_EQUAL(phis.n_elem, 6);
 
-  BOOST_REQUIRE_CLOSE(phis(0), 1.02531207499358e-6, 1e-5);
-  BOOST_REQUIRE_CLOSE(phis(1), 1.82353695848039e-7, 1e-5);
-  BOOST_REQUIRE_CLOSE(phis(2), 1.29759261892949e-6, 1e-5);
-  BOOST_REQUIRE_CLOSE(phis(3), 1.33218060268258e-6, 1e-5);
-  BOOST_REQUIRE_CLOSE(phis(4), 1.12120427975708e-6, 1e-5);
-  BOOST_REQUIRE_CLOSE(phis(5), 4.57951032485297e-7, 1e-5);
+  BOOST_REQUIRE_CLOSE(phis(0), -13.432076798791542, 1e-5);
+  BOOST_REQUIRE_CLOSE(phis(1), -15.814880322345738, 1e-5);
+  BOOST_REQUIRE_CLOSE(phis(2), -13.754462857772776, 1e-5);
+  BOOST_REQUIRE_CLOSE(phis(3), -13.283283233107898, 1e-5);
+  BOOST_REQUIRE_CLOSE(phis(4), -13.800326511545279, 1e-5);
+  BOOST_REQUIRE_CLOSE(phis(5), -14.900192463287908, 1e-5);
 }
 
 /**
