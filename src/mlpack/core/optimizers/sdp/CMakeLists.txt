@@ -1,8 +1,8 @@
 set(SOURCES
-  sdp.hpp
-  sdp.cpp
   primal_dual.hpp
-  primal_dual.cpp
+  primal_dual_impl.hpp
+  sdp.hpp
+  sdp_impl.hpp
 )
 
 set(DIR_SRCS)

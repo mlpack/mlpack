@@ -229,7 +229,7 @@ void mlpack::math::Svec(const arma::mat& input, arma::vec& output)
   }
 }
 
-void mlpack::math::Svec(const arma::sp_mat& input, arma::sp_mat& output)
+void mlpack::math::Svec(const arma::sp_mat& input, arma::sp_vec& output)
 {
   const size_t n = input.n_rows;
   const size_t n2bar = n * (n + 1) / 2;
@@ -269,14 +269,6 @@ void mlpack::math::Smat(const arma::vec& input, arma::mat& output)
     }
   }
 }
-
-size_t mlpack::math::SvecIndex(size_t i, size_t j, size_t n)
-{
-  if (i > j)
-    std::swap(i, j);
-  return (j-i) + (n*(n+1) - (n-i)*(n-i+1))/2;
-}
-
 
 void mlpack::math::SymKronId(const arma::mat& A, arma::mat& op)
 {

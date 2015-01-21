@@ -194,12 +194,11 @@ BOOST_AUTO_TEST_CASE(TestSvecSmat)
 
   arma::vec sx;
   Svec(X, sx);
-  const double sq2 = sqrt(2.);
   BOOST_REQUIRE_CLOSE(sx(0), 0, 1e-7);
-  BOOST_REQUIRE_CLOSE(sx(1), sq2 * 1., 1e-7);
-  BOOST_REQUIRE_CLOSE(sx(2), sq2 * 2., 1e-7);
+  BOOST_REQUIRE_CLOSE(sx(1), M_SQRT2 * 1., 1e-7);
+  BOOST_REQUIRE_CLOSE(sx(2), M_SQRT2 * 2., 1e-7);
   BOOST_REQUIRE_CLOSE(sx(3), 3., 1e-7);
-  BOOST_REQUIRE_CLOSE(sx(4), sq2 * 4., 1e-7);
+  BOOST_REQUIRE_CLOSE(sx(4), M_SQRT2 * 4., 1e-7);
   BOOST_REQUIRE_CLOSE(sx(5), 5., 1e-7);
 
   arma::mat Xtest;
@@ -217,19 +216,18 @@ BOOST_AUTO_TEST_CASE(TestSparseSvec)
   X.zeros(3, 3);
   X(1, 0) = X(0, 1) = 1;
 
-  arma::sp_mat sx;
+  arma::sp_vec sx;
   Svec(X, sx);
 
-  const double sq2 = sqrt(2.);
-  const double v0 = sx(0, 0);
-  const double v1 = sx(1, 0);
-  const double v2 = sx(2, 0);
-  const double v3 = sx(3, 0);
-  const double v4 = sx(4, 0);
-  const double v5 = sx(5, 0);
+  const double v0 = sx(0);
+  const double v1 = sx(1);
+  const double v2 = sx(2);
+  const double v3 = sx(3);
+  const double v4 = sx(4);
+  const double v5 = sx(5);
 
   BOOST_REQUIRE_CLOSE(v0, 0, 1e-7);
-  BOOST_REQUIRE_CLOSE(v1, sq2 * 1., 1e-7);
+  BOOST_REQUIRE_CLOSE(v1, M_SQRT2 * 1., 1e-7);
   BOOST_REQUIRE_CLOSE(v2, 0, 1e-7);
   BOOST_REQUIRE_CLOSE(v3, 0, 1e-7);
   BOOST_REQUIRE_CLOSE(v4, 0, 1e-7);

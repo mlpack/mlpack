@@ -12,16 +12,17 @@
 namespace mlpack {
 namespace optimization {
 
+template <typename SDPType>
 class PrimalDualSolver {
  public:
 
-  PrimalDualSolver(const SDP& sdp);
+  PrimalDualSolver(const SDPType& sdp);
 
-  PrimalDualSolver(const SDP& sdp,
-                   const arma::mat& X0,
-                   const arma::vec& ysparse0,
-                   const arma::vec& ydense0,
-                   const arma::mat& Z0);
+  PrimalDualSolver(const SDPType& sdp,
+                   const arma::mat& initialX,
+                   const arma::vec& initialYsparse,
+                   const arma::vec& initialYdense,
+                   const arma::mat& initialZ);
 
   std::pair<bool, double>
   Optimize(arma::mat& X,
@@ -37,19 +38,25 @@ class PrimalDualSolver {
     return Optimize(X, ysparse, ydense, Z);
   }
 
+  const SDPType& Sdp() const { return sdp; }
+
   double& Tau() { return tau; }
+
   double& NormXzTol() { return normXzTol; }
+
   double& PrimalInfeasTol() { return primalInfeasTol; }
+
   double& DualInfeasTol() { return dualInfeasTol; }
+
   size_t& MaxIterations() { return maxIterations; }
 
  private:
-  SDP sdp;
+  SDPType sdp;
 
-  arma::mat X0;
-  arma::vec ysparse0;
-  arma::vec ydense0;
-  arma::mat Z0;
+  arma::mat initialX;
+  arma::vec initialYsparse;
+  arma::vec initialYdense;
+  arma::mat initialZ;
 
   double tau;
   double normXzTol;
@@ -62,5 +69,8 @@ class PrimalDualSolver {
 
 } // namespace optimization
 } // namespace mlpack
+
+// Include implementation.
+#include "primal_dual_impl.hpp"
 
 #endif

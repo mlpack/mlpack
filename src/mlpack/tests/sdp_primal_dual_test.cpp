@@ -116,12 +116,12 @@ class UndirectedGraph
   size_t numVertices;
 };
 
-static inline SDP
+static inline SDP<arma::sp_mat>
 ConstructMaxCutSDPFromGraph(const UndirectedGraph& g)
 {
-  SDP sdp(g.NumVertices(), g.NumVertices(), 0);
-  g.Laplacian(sdp.SparseC());
-  sdp.SparseC() *= -1;
+  SDP<arma::sp_mat> sdp(g.NumVertices(), g.NumVertices(), 0);
+  g.Laplacian(sdp.C());
+  sdp.C() *= -1;
   for (size_t i = 0; i < g.NumVertices(); i++)
   {
     sdp.SparseA()[i].zeros(g.NumVertices(), g.NumVertices());
@@ -131,12 +131,12 @@ ConstructMaxCutSDPFromGraph(const UndirectedGraph& g)
   return sdp;
 }
 
-static inline SDP
+static inline SDP<arma::mat>
 ConstructLovaszThetaSDPFromGraph(const UndirectedGraph& g)
 {
-  SDP sdp(g.NumVertices(), g.NumEdges() + 1, 0);
-  sdp.DenseC().ones();
-  sdp.DenseC() *= -1.;
+  SDP<arma::mat> sdp(g.NumVertices(), g.NumEdges() + 1, 0);
+  sdp.C().ones();
+  sdp.C() *= -1.;
   sdp.SparseA()[0].eye(g.NumVertices(), g.NumVertices());
   for (size_t i = 0; i < g.NumEdges(); i++)
   {
@@ -149,7 +149,7 @@ ConstructLovaszThetaSDPFromGraph(const UndirectedGraph& g)
   return sdp;
 }
 
-// TODO: does arma have a builtin way to do this?
+// TODO(stephentu): does arma have a builtin way to do this?
 static inline arma::mat
 Diag(const arma::vec& diag)
 {
@@ -162,15 +162,15 @@ Diag(const arma::vec& diag)
   return ret;
 }
 
-static inline SDP
+static inline SDP<arma::sp_mat>
 ConstructMaxCutSDPFromLaplacian(const std::string& laplacianFilename)
 {
   arma::mat laplacian;
   data::Load(laplacianFilename, laplacian, true, false);
   if (laplacian.n_rows != laplacian.n_cols)
     Log::Fatal << "laplacian not square" << std::endl;
-  SDP sdp(laplacian.n_rows, laplacian.n_rows, 0);
-  sdp.SparseC() = -arma::sp_mat(laplacian);
+  SDP<arma::sp_mat> sdp(laplacian.n_rows, laplacian.n_rows, 0);
+  sdp.C() = -arma::sp_mat(laplacian);
   for (size_t i = 0; i < laplacian.n_rows; i++)
   {
     sdp.SparseA()[i].zeros(laplacian.n_rows, laplacian.n_rows);
@@ -183,7 +183,7 @@ ConstructMaxCutSDPFromLaplacian(const std::string& laplacianFilename)
 
 BOOST_AUTO_TEST_SUITE(SdpPrimalDualTest);
 
-static void SolveMaxCutFeasibleSDP(const SDP& sdp)
+static void SolveMaxCutFeasibleSDP(const SDP<arma::sp_mat>& sdp)
 {
   arma::mat X0, Z0;
   arma::vec ysparse0, ydense0;
@@ -191,10 +191,10 @@ static void SolveMaxCutFeasibleSDP(const SDP& sdp)
 
   // strictly feasible starting point
   X0.eye(sdp.N(), sdp.N());
-  ysparse0 = -1.1 * arma::vec(arma::sum(arma::abs(sdp.SparseC()), 0).t());
-  Z0 = -Diag(ysparse0) + sdp.SparseC();
+  ysparse0 = -1.1 * arma::vec(arma::sum(arma::abs(sdp.C()), 0).t());
+  Z0 = -Diag(ysparse0) + sdp.C();
 
-  PrimalDualSolver solver(sdp, X0, ysparse0, ydense0, Z0);
+  PrimalDualSolver<SDP<arma::sp_mat>> solver(sdp, X0, ysparse0, ydense0, Z0);
 
   arma::mat X, Z;
   arma::vec ysparse, ydense;
@@ -202,7 +202,7 @@ static void SolveMaxCutFeasibleSDP(const SDP& sdp)
   BOOST_REQUIRE(p.first);
 }
 
-static void SolveMaxCutPositiveSDP(const SDP& sdp)
+static void SolveMaxCutPositiveSDP(const SDP<arma::sp_mat>& sdp)
 {
   arma::mat X0, Z0;
   arma::vec ysparse0, ydense0;
@@ -216,7 +216,7 @@ static void SolveMaxCutPositiveSDP(const SDP& sdp)
   ysparse0 = arma::randu<arma::vec>(sdp.NumSparseConstraints());
   Z0.eye(sdp.N(), sdp.N());
 
-  PrimalDualSolver solver(sdp, X0, ysparse0, ydense0, Z0);
+  PrimalDualSolver<SDP<arma::sp_mat>> solver(sdp, X0, ysparse0, ydense0, Z0);
 
   arma::mat X, Z;
   arma::vec ysparse, ydense;
@@ -226,7 +226,7 @@ static void SolveMaxCutPositiveSDP(const SDP& sdp)
 
 BOOST_AUTO_TEST_CASE(SmallMaxCutSdp)
 {
-  SDP sdp = ConstructMaxCutSDPFromLaplacian("r10.txt");
+  auto sdp = ConstructMaxCutSDPFromLaplacian("r10.txt");
   SolveMaxCutFeasibleSDP(sdp);
   SolveMaxCutPositiveSDP(sdp);
 
@@ -241,9 +241,9 @@ BOOST_AUTO_TEST_CASE(SmallLovaszThetaSdp)
 {
   UndirectedGraph g;
   UndirectedGraph::LoadFromEdges(g, "johnson8-4-4.csv", true);
-  SDP sdp = ConstructLovaszThetaSDPFromGraph(g);
+  auto sdp = ConstructLovaszThetaSDPFromGraph(g);
 
-  PrimalDualSolver solver(sdp);
+  PrimalDualSolver<SDP<arma::mat>> solver(sdp);
 
   arma::mat X, Z;
   arma::vec ysparse, ydense;
@@ -277,7 +277,7 @@ BlockDiag(const std::vector<arma::sp_mat>& blocks)
   return ret;
 }
 
-static inline SDP
+static inline SDP<arma::sp_mat>
 ConstructLogChebychevApproxSdp(const arma::mat& A, const arma::vec& b)
 {
   if (A.n_rows != b.n_elem)
@@ -292,8 +292,8 @@ ConstructLogChebychevApproxSdp(const arma::mat& A, const arma::vec& b)
   cblock(1, 2) = cblock(2, 1) = 1.;
   const arma::sp_mat C = RepeatBlockDiag(cblock, p);
 
-  SDP sdp(C.n_rows, k + 1, 0);
-  sdp.SparseC() = C;
+  SDP<arma::sp_mat> sdp(C.n_rows, k + 1, 0);
+  sdp.C() = C;
   sdp.SparseB().zeros();
   sdp.SparseB()[0] = -1;
 
@@ -372,8 +372,8 @@ BOOST_AUTO_TEST_CASE(LogChebychevApproxSdp)
   const size_t k0 = 10;
   const arma::mat A0 = RandomFullRowRankMatrix(p0, k0);
   const arma::vec b0 = arma::randu<arma::vec>(p0);
-  const SDP sdp0 = ConstructLogChebychevApproxSdp(A0, b0);
-  PrimalDualSolver solver0(sdp0);
+  const auto sdp0 = ConstructLogChebychevApproxSdp(A0, b0);
+  PrimalDualSolver<SDP<arma::sp_mat>> solver0(sdp0);
   arma::mat X0, Z0;
   arma::vec ysparse0, ydense0;
   const auto stat0 = solver0.Optimize(X0, ysparse0, ydense0, Z0);
@@ -383,8 +383,8 @@ BOOST_AUTO_TEST_CASE(LogChebychevApproxSdp)
   const size_t k1 = 5;
   const arma::mat A1 = RandomFullRowRankMatrix(p1, k1);
   const arma::vec b1 = arma::randu<arma::vec>(p1);
-  const SDP sdp1 = ConstructLogChebychevApproxSdp(A1, b1);
-  PrimalDualSolver solver1(sdp1);
+  const auto sdp1 = ConstructLogChebychevApproxSdp(A1, b1);
+  PrimalDualSolver<SDP<arma::sp_mat>> solver1(sdp1);
   arma::mat X1, Z1;
   arma::vec ysparse1, ydense1;
   const auto stat1 = solver1.Optimize(X1, ysparse1, ydense1, Z1);
@@ -445,7 +445,7 @@ BOOST_AUTO_TEST_CASE(CorrelationCoeffToySdp)
 
   std::vector<arma::sp_mat> ais({A0, A1, A2, A3, A4, A5, A6});
 
-  SDP sdp(7, 7 + 4 + 4 + 4 + 3 + 2 + 1, 0);
+  SDP<arma::sp_mat> sdp(7, 7 + 4 + 4 + 4 + 3 + 2 + 1, 0);
 
   for (size_t j = 0; j < 3; j++)
   {
@@ -489,10 +489,10 @@ BOOST_AUTO_TEST_CASE(CorrelationCoeffToySdp)
 
   sdp.SparseB()[5] = 1.; sdp.SparseB()[6] = 0.8;
 
-  sdp.SparseC().zeros();
-  sdp.SparseC()(0, 2) = sdp.SparseC()(2, 0) = 1.;
+  sdp.C().zeros();
+  sdp.C()(0, 2) = sdp.C()(2, 0) = 1.;
 
-  PrimalDualSolver solver(sdp);
+  PrimalDualSolver<SDP<arma::sp_mat>> solver(sdp);
   arma::mat X, Z;
   arma::vec ysparse, ydense;
   const auto p = solver.Optimize(X, ysparse, ydense, Z);
@@ -511,8 +511,8 @@ BOOST_AUTO_TEST_CASE(CorrelationCoeffToySdp)
 // * @param origData origDim x numPoints
 // * @param numNeighbors
 // */
-//static inline SDP ConstructMvuSDP(const arma::mat& origData,
-//                                  size_t numNeighbors)
+//static inline SDP<arma::sp_mat> ConstructMvuSDP(const arma::mat& origData,
+//                                                size_t numNeighbors)
 //{
 //  const size_t numPoints = origData.n_cols;
 //
@@ -523,9 +523,9 @@ BOOST_AUTO_TEST_CASE(CorrelationCoeffToySdp)
 //  AllkNN allknn(origData);
 //  allknn.Search(numNeighbors, neighbors, distances);
 //
-//  SDP sdp(numPoints, numNeighbors * numPoints, 1);
-//  sdp.SparseC().eye(numPoints, numPoints);
-//  sdp.SparseC() *= -1;
+//  SDP<arma::sp_mat> sdp(numPoints, numNeighbors * numPoints, 1);
+//  sdp.C().eye(numPoints, numPoints);
+//  sdp.C() *= -1;
 //  sdp.DenseA()[0].ones(numPoints, numPoints);
 //  sdp.DenseB()[0] = 0;
 //
@@ -579,9 +579,9 @@ BOOST_AUTO_TEST_CASE(CorrelationCoeffToySdp)
 //    origData.col(i) = arma::normalise(gauss.Random());
 //  }
 //
-//  SDP sdp = ConstructMvuSDP(origData, 5);
+//  auto sdp = ConstructMvuSDP(origData, 5);
 //
-//  PrimalDualSolver solver(sdp);
+//  PrimalDualSolver<SDP<arma::sp_mat>> solver(sdp);
 //  arma::mat X, Z;
 //  arma::vec ysparse, ydense;
 //  const auto p = solver.Optimize(X, ysparse, ydense, Z);
