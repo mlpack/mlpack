@@ -5,8 +5,8 @@
  * An implementation of Monteiro and Burer's formulation of low-rank
  * semidefinite programs (LR-SDP).
  */
-#ifndef __MLPACK_CORE_OPTIMIZERS_LRSDP_LRSDP_HPP
-#define __MLPACK_CORE_OPTIMIZERS_LRSDP_LRSDP_HPP
+#ifndef __MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_HPP
+#define __MLPACK_CORE_OPTIMIZERS_SDP_LRSDP_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
@@ -21,6 +21,7 @@ namespace optimization {
  * semidefinite programs (LR-SDP).  This solver uses the augmented Lagrangian
  * optimizer to solve low-rank semidefinite programs.
  */
+template <typename SDPType>
 class LRSDP
 {
  public:
@@ -44,17 +45,11 @@ class LRSDP
    */
   double Optimize(arma::mat& coordinates);
 
-  //! Return the sparse objective function matrix (sparseC).
-  const arma::sp_mat& SparseC() const { return function.SparseC(); }
+  //! Return the objective function matrix (c).
+  const typename SDPType::objective_matrix_type& C() const { return function.C(); }
 
-  //! Modify the sparse objective function matrix (sparseC).
-  arma::sp_mat& SparseC() { return function.SparseC(); }
-
-  //! Return the dense objective function matrix (denseC).
-  const arma::mat& DenseC() const { return function.DenseC(); }
-
-  //! Modify the dense objective function matrix (denseC).
-  arma::mat& DenseC() { return function.DenseC(); }
+  //! Modify the objective function matrix (c).
+  typename SDPType::objective_matrix_type& C() { return function.C(); }
 
   //! Return the vector of sparse A matrices (which correspond to the sparse
   // constraints).
@@ -83,27 +78,30 @@ class LRSDP
   arma::vec& DenseB() { return function.DenseB(); }
 
   //! Return the function to be optimized.
-  const LRSDPFunction& Function() const { return function; }
+  const LRSDPFunction<SDPType>& Function() const { return function; }
   //! Modify the function to be optimized.
-  LRSDPFunction& Function() { return function; }
+  LRSDPFunction<SDPType>& Function() { return function; }
 
   //! Return the augmented Lagrangian object.
-  const AugLagrangian<LRSDPFunction>& AugLag() const { return augLag; }
+  const AugLagrangian<LRSDPFunction<SDPType>>& AugLag() const { return augLag; }
   //! Modify the augmented Lagrangian object.
-  AugLagrangian<LRSDPFunction>& AugLag() { return augLag; }
+  AugLagrangian<LRSDPFunction<SDPType>>& AugLag() { return augLag; }
 
   //! Return a string representation of the object.
   std::string ToString() const;
 
  private:
   //! Function to optimize, which the AugLagrangian object holds.
-  LRSDPFunction function;
+  LRSDPFunction<SDPType> function;
 
   //! The AugLagrangian object which will be used for optimization.
-  AugLagrangian<LRSDPFunction> augLag;
+  AugLagrangian<LRSDPFunction<SDPType>> augLag;
 };
 
 }; // namespace optimization
 }; // namespace mlpack
+
+// Include implementation
+#include "lrsdp_impl.hpp"
 
 #endif

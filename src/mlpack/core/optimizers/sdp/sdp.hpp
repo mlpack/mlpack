@@ -26,13 +26,25 @@ class SDP
 
   typedef ObjectiveMatrixType objective_matrix_type;
 
+  /**
+   * Initialize this SDP to an empty state.
+   */
+  SDP();
+
+  /**
+   * Initialize this SDP to one which structurally has size n.
+   *
+   * @param n
+   * @param numSparseConstraints
+   * @param numDenseConstraints
+   */
   SDP(const size_t n,
       const size_t numSparseConstraints,
       const size_t numDenseConstraints);
 
-  size_t N() const { return n; }
+  size_t N() const { return c.n_rows; }
 
-  size_t N2bar() const { return n * (n + 1) / 2; }
+  size_t N2bar() const { return N() * (N() + 1) / 2; }
 
   size_t NumSparseConstraints() const { return sparseB.n_elem; }
 
@@ -80,9 +92,6 @@ class SDP
   bool HasLinearlyIndependentConstraints() const;
 
  private:
-
-  //! Dimension of the objective variable.
-  size_t n;
 
   //! Objective function matrix c.
   ObjectiveMatrixType c;
