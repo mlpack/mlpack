@@ -180,6 +180,50 @@ ConstructMaxCutSDPFromLaplacian(const std::string& laplacianFilename)
   return sdp;
 }
 
+static void CheckPositiveSemiDefinite(const arma::mat& X)
+{
+  const auto evals = arma::eig_sym(X);
+  BOOST_REQUIRE_GE(evals(0), 1e-20);
+}
+
+template <typename SDPType>
+static void CheckKKT(const SDPType& sdp,
+                     const arma::mat& X,
+                     const arma::vec& ysparse,
+                     const arma::vec& ydense,
+                     const arma::mat& Z)
+{
+  // require that the KKT optimality conditions for sdp are satisfied
+  // by the primal-dual pair (X, y, Z)
+
+  CheckPositiveSemiDefinite(X);
+  CheckPositiveSemiDefinite(Z);
+
+  const double normXz = arma::norm(X * Z, "fro");
+  BOOST_REQUIRE_SMALL(normXz, 1e-5);
+
+  for (size_t i = 0; i < sdp.NumSparseConstraints(); i++)
+  {
+    BOOST_REQUIRE_SMALL(
+      fabs(arma::dot(sdp.SparseA()[i], X) - sdp.SparseB()[i]),
+      1e-5);
+  }
+
+  for (size_t i = 0; i < sdp.NumDenseConstraints(); i++)
+  {
+    BOOST_REQUIRE_SMALL(
+      fabs(arma::dot(sdp.DenseA()[i], X) - sdp.DenseB()[i]),
+      1e-5);
+  }
+
+  arma::mat dualCheck = Z - sdp.C();
+  for (size_t i = 0; i < sdp.NumSparseConstraints(); i++)
+    dualCheck += ysparse(i) * sdp.SparseA()[i];
+  for (size_t i = 0; i < sdp.NumDenseConstraints(); i++)
+    dualCheck += ydense(i) * sdp.DenseA()[i];
+  const double dualInfeas = arma::norm(dualCheck, "fro");
+  BOOST_REQUIRE_SMALL(dualInfeas, 1e-5);
+}
 
 BOOST_AUTO_TEST_SUITE(SdpPrimalDualTest);
 
@@ -198,8 +242,8 @@ static void SolveMaxCutFeasibleSDP(const SDP<arma::sp_mat>& sdp)
 
   arma::mat X, Z;
   arma::vec ysparse, ydense;
-  const auto p = solver.Optimize(X, ysparse, ydense, Z);
-  BOOST_REQUIRE(p.first);
+  solver.Optimize(X, ysparse, ydense, Z);
+  CheckKKT(sdp, X, ysparse, ydense, Z);
 }
 
 static void SolveMaxCutPositiveSDP(const SDP<arma::sp_mat>& sdp)
@@ -220,8 +264,8 @@ static void SolveMaxCutPositiveSDP(const SDP<arma::sp_mat>& sdp)
 
   arma::mat X, Z;
   arma::vec ysparse, ydense;
-  const auto p = solver.Optimize(X, ysparse, ydense, Z);
-  BOOST_REQUIRE(p.first);
+  solver.Optimize(X, ysparse, ydense, Z);
+  CheckKKT(sdp, X, ysparse, ydense, Z);
 }
 
 BOOST_AUTO_TEST_CASE(SmallMaxCutSdp)
@@ -247,8 +291,8 @@ BOOST_AUTO_TEST_CASE(SmallLovaszThetaSdp)
 
   arma::mat X, Z;
   arma::vec ysparse, ydense;
-  const auto p = solver.Optimize(X, ysparse, ydense, Z);
-  BOOST_REQUIRE(p.first);
+  solver.Optimize(X, ysparse, ydense, Z);
+  CheckKKT(sdp, X, ysparse, ydense, Z);
 }
 
 static inline arma::sp_mat
@@ -376,8 +420,8 @@ BOOST_AUTO_TEST_CASE(LogChebychevApproxSdp)
   PrimalDualSolver<SDP<arma::sp_mat>> solver0(sdp0);
   arma::mat X0, Z0;
   arma::vec ysparse0, ydense0;
-  const auto stat0 = solver0.Optimize(X0, ysparse0, ydense0, Z0);
-  BOOST_REQUIRE(stat0.first);
+  solver0.Optimize(X0, ysparse0, ydense0, Z0);
+  CheckKKT(sdp0, X0, ysparse0, ydense0, Z0);
 
   const size_t p1 = 10;
   const size_t k1 = 5;
@@ -387,8 +431,8 @@ BOOST_AUTO_TEST_CASE(LogChebychevApproxSdp)
   PrimalDualSolver<SDP<arma::sp_mat>> solver1(sdp1);
   arma::mat X1, Z1;
   arma::vec ysparse1, ydense1;
-  const auto stat1 = solver1.Optimize(X1, ysparse1, ydense1, Z1);
-  BOOST_REQUIRE(stat1.first);
+  solver1.Optimize(X1, ysparse1, ydense1, Z1);
+  CheckKKT(sdp1, X1, ysparse1, ydense1, Z1);
 }
 
 /**
@@ -495,9 +539,9 @@ BOOST_AUTO_TEST_CASE(CorrelationCoeffToySdp)
   PrimalDualSolver<SDP<arma::sp_mat>> solver(sdp);
   arma::mat X, Z;
   arma::vec ysparse, ydense;
-  const auto p = solver.Optimize(X, ysparse, ydense, Z);
-  BOOST_REQUIRE(p.first);
-  BOOST_REQUIRE_CLOSE(p.second, 2 * (-0.978), 1e-3);
+  const double obj = solver.Optimize(X, ysparse, ydense, Z);
+  CheckKKT(sdp, X, ysparse, ydense, Z);
+  BOOST_REQUIRE_CLOSE(obj, 2 * (-0.978), 1e-3);
 }
 
 ///**
