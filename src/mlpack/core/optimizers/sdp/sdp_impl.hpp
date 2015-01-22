@@ -12,16 +12,30 @@ namespace mlpack {
 namespace optimization {
 
 template <typename ObjectiveMatrixType>
+SDP<ObjectiveMatrixType>::SDP() :
+    c(),
+    sparseA(),
+    sparseB(),
+    denseA(),
+    denseB()
+{
+
+}
+
+template <typename ObjectiveMatrixType>
 SDP<ObjectiveMatrixType>::SDP(const size_t n,
                               const size_t numSparseConstraints,
                               const size_t numDenseConstraints) :
-    n(n),
     c(n, n),
     sparseA(numSparseConstraints),
     sparseB(numSparseConstraints),
     denseA(numDenseConstraints),
     denseB(numDenseConstraints)
 {
+  for (size_t i = 0; i < numSparseConstraints; i++)
+    sparseA[i].zeros(n, n);
+  for (size_t i = 0; i < numDenseConstraints; i++)
+    denseA[i].zeros(n, n);
 }
 
 template <typename ObjectiveMatrixType>

@@ -8,7 +8,8 @@
 #ifndef __MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_HPP
 #define __MLPACK_METHODS_MATRIX_COMPLETION_MATRIX_COMPLETION_HPP
 
-#include <mlpack/core/optimizers/lrsdp/lrsdp.hpp>
+#include <mlpack/core/optimizers/sdp/sdp.hpp>
+#include <mlpack/core/optimizers/sdp/lrsdp.hpp>
 
 namespace mlpack {
 namespace matrix_completion {
@@ -106,9 +107,9 @@ class MatrixCompletion
   void Recover(arma::mat& recovered);
 
   //! Return the underlying SDP.
-  const optimization::LRSDP& Sdp() const { return sdp; }
+  const optimization::LRSDP<optimization::SDP<arma::sp_mat>>& Sdp() const { return sdp; }
   //! Modify the underlying SDP.
-  optimization::LRSDP& Sdp() { return sdp; }
+  optimization::LRSDP<optimization::SDP<arma::sp_mat>>& Sdp() { return sdp; }
 
  private:
   //! Number of rows in original matrix.
@@ -121,7 +122,7 @@ class MatrixCompletion
   arma::mat values;
 
   //! The underlying SDP to be solved.
-  optimization::LRSDP sdp;
+  optimization::LRSDP<optimization::SDP<arma::sp_mat>> sdp;
 
   //! Validate the input matrices.
   void CheckValues();

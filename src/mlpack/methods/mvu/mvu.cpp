@@ -9,7 +9,7 @@
 #include "mvu.hpp"
 
 //#include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
-#include <mlpack/core/optimizers/lrsdp/lrsdp.hpp>
+#include <mlpack/core/optimizers/sdp/lrsdp.hpp>
 
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
@@ -33,7 +33,7 @@ void MVU::Unfold(const size_t newDim,
   outputData.randu(data.n_cols, newDim);
 
   // The number of constraints is the number of nearest neighbors plus one.
-  LRSDP mvuSolver(numNeighbors * data.n_cols + 1, outputData);
+  LRSDP<arma::sp_mat> mvuSolver(numNeighbors * data.n_cols + 1, outputData);
 
   // Set up the objective.  Because we are maximizing the trace of (R R^T),
   // we'll instead state it as min(-I_n * (R R^T)), meaning C() is -I_n.

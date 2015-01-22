@@ -1,4 +1,8 @@
 set(SOURCES
+  lrsdp.hpp
+  lrsdp_impl.hpp
+  lrsdp_function.hpp
+  lrsdp_function_impl.hpp
   primal_dual.hpp
   primal_dual_impl.hpp
   sdp.hpp
