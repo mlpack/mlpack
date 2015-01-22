@@ -60,9 +60,9 @@ double LRSDPFunction<SDPType>::EvaluateConstraint(const size_t index,
 {
   const arma::mat rrt = coordinates * trans(coordinates);
   if (index < NumSparseConstraints())
-    return trace(SparseA()[index] * rrt) - SparseB()[index];
+    return accu(SparseA()[index] % rrt) - SparseB()[index];
   const size_t index1 = index - NumSparseConstraints();
-  return trace(DenseA()[index1] * rrt) - DenseB()[index1];
+  return accu(DenseA()[index1] % rrt) - DenseB()[index1];
 }
 
 template <typename SDPType>
@@ -103,7 +103,7 @@ UpdateObjective(double& objective,
   for (size_t i = 0; i < ais.size(); ++i)
   {
     // Take the trace subtracted by the b_i.
-    const double constraint = trace(ais[i] * rrt) - bis[i];
+    const double constraint = accu(ais[i] % rrt) - bis[i];
     objective -= (lambda[lambdaOffset + i] * constraint);
     objective += (sigma / 2.) * constraint * constraint;
   }
@@ -123,7 +123,7 @@ UpdateGradient(arma::mat& s,
 {
   for (size_t i = 0; i < ais.size(); ++i)
   {
-    const double constraint = trace(ais[i] * rrt) - bis[i];
+    const double constraint = accu(ais[i] % rrt) - bis[i];
     const double y = lambda[lambdaOffset + i] - sigma * constraint;
     s -= y * ais[i];
   }
@@ -150,7 +150,7 @@ EvaluateImpl(const LRSDPFunction<SDPType>& function,
   //
   // Similarly for the constraints, taking A*R first should be more efficient
   const arma::mat rrt = coordinates * trans(coordinates);
-  double objective = trace(function.C() * rrt);
+  double objective = accu(function.C() % rrt);
 
   // Now each constraint.
   UpdateObjective(objective, rrt, function.SparseA(), function.SparseB(),

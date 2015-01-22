@@ -1,12 +1,12 @@
 /**
- * @file multiclass_classification_layer.hpp
+ * @file binary_classification_layer.hpp
  * @author Marcus Edel
  *
- * Definition of the MulticlassClassificationLayer class, which implements a
- * multiclass classification layer that can be used as output layer.
+ * Definition of the BinaryClassificationLayer class, which implements a
+ * binary class classification layer that can be used as output layer.
  */
-#ifndef __MLPACK_METHOS_ANN_LAYER_MULTICLASS_CLASSIFICATION_LAYER_HPP
-#define __MLPACK_METHOS_ANN_LAYER_MULTICLASS_CLASSIFICATION_LAYER_HPP
+#ifndef __MLPACK_METHOS_ANN_LAYER_BINARY_CLASSIFICATION_LAYER_HPP
+#define __MLPACK_METHOS_ANN_LAYER_BINARY_CLASSIFICATION_LAYER_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
@@ -15,12 +15,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * An implementation of a multiclass classification layer that can be used as
+ * An implementation of a binary classification layer that can be used as
  * output layer.
- *
- * A convenience typedef is given:
- *
- *  - ClassificationLayer
  *
  * @tparam MatType Type of data (arma::mat or arma::sp_mat).
  * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
@@ -29,13 +25,13 @@ template <
     typename MatType = arma::mat,
     typename VecType = arma::colvec
 >
-class MulticlassClassificationLayer
+class BinaryClassificationLayer
 {
  public:
   /**
-   * Create the MulticlassClassificationLayer object.
+   * Create the BinaryClassificationLayer object.
    */
-  MulticlassClassificationLayer()
+  BinaryClassificationLayer()
   {
     // Nothing to do here.
   }
@@ -65,31 +61,22 @@ class MulticlassClassificationLayer
   void outputClass(const VecType& inputActivations, VecType& output)
   {
     output = inputActivations;
+    output.transform( [](double value) { return (value > 0.5 ? 1 : 0); } );
   }
-}; // class MulticlassClassificationLayer
+}; // class BinaryClassificationLayer
 
-//! Layer traits for the multiclass classification layer.
+//! Layer traits for the binary class classification layer.
 template <
     typename MatType,
     typename VecType
 >
-class LayerTraits<MulticlassClassificationLayer<MatType, VecType> >
+class LayerTraits<BinaryClassificationLayer<MatType, VecType> >
 {
  public:
-  static const bool IsBinary = false;
+  static const bool IsBinary = true;
   static const bool IsOutputLayer = true;
   static const bool IsBiasLayer = false;
 };
-
-/***
- * Standard Input-Layer using the tanh activation function and the
- * Nguyen-Widrow method to initialize the weights.
- */
-template <
-    typename MatType = arma::mat,
-    typename VecType = arma::colvec
->
-using ClassificationLayer = MulticlassClassificationLayer<MatType, VecType>;
 
 }; // namespace ann
 }; // namespace mlpack

@@ -5,8 +5,8 @@
  *
  * Implementation of the Gaussian distribution.
  */
-#ifndef __MLPACK_METHODS_HMM_DISTRIBUTIONS_GAUSSIAN_DISTRIBUTION_HPP
-#define __MLPACK_METHODS_HMM_DISTRIBUTIONS_GAUSSIAN_DISTRIBUTION_HPP
+#ifndef __MLPACK_CORE_DISTRIBUTIONS_GAUSSIAN_DISTRIBUTION_HPP
+#define __MLPACK_CORE_DISTRIBUTIONS_GAUSSIAN_DISTRIBUTION_HPP
 
 #include <mlpack/core.hpp>
 
@@ -23,6 +23,9 @@ class GaussianDistribution
   arma::vec mean;
   //! Covariance of the distribution.
   arma::mat covariance;
+
+  //! log(2pi)
+  static const constexpr double log2pi = 1.83787706640934533908193770912475883;
 
  public:
   /**
@@ -51,8 +54,16 @@ class GaussianDistribution
   /**
    * Return the probability of the given observation.
    */
-  double Probability(const arma::vec& observation) const;
-  
+  double Probability(const arma::vec& observation) const
+  {
+    return exp(LogProbability(observation));
+  }
+
+  /**
+   * Return the log probability of the given observation.
+   */
+  double LogProbability(const arma::vec& observation) const;
+
   /**
    * Calculates the multivariate Gaussian probability density function for each
    * data point (column) in the given matrix
@@ -60,8 +71,15 @@ class GaussianDistribution
    * @param x List of observations.
    * @param probabilities Output probabilities for each input observation.
    */
-  void Probability(const arma::mat& x, arma::vec& probabilities) const;
-  
+  void Probability(const arma::mat& x, arma::vec& probabilities) const
+  {
+    arma::vec logProbabilities;
+    LogProbability(x, logProbabilities);
+    probabilities = arma::exp(logProbabilities);
+  }
+
+  void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const;
+
   /**
    * Return a randomly generated observation according to the probability
    * distribution defined by this object.
@@ -109,44 +127,48 @@ class GaussianDistribution
    * Returns a string representation of this object.
    */
   std::string ToString() const;
-    
+
   /*
    * Save to or Load from SaveRestoreUtility
    */
   void Save(util::SaveRestoreUtility& n) const;
   void Load(const util::SaveRestoreUtility& n);
   static std::string const Type() { return "GaussianDistribution"; }
-  
-  
-    
+
+
+
 };
 
 /**
-* Calculates the multivariate Gaussian probability density function for each
+* Calculates the multivariate Gaussian log probability density function for each
 * data point (column) in the given matrix
 *
 * @param x List of observations.
-* @param probabilities Output probabilities for each input observation.
+* @param probabilities Output log probabilities for each input observation.
 */
-inline void GaussianDistribution::Probability(const arma::mat& x,
-                                              arma::vec& probabilities) const
+inline void GaussianDistribution::LogProbability(const arma::mat& x,
+                                                 arma::vec& logProbabilities) const
 {
   // Column i of 'diffs' is the difference between x.col(i) and the mean.
   arma::mat diffs = x - (mean * arma::ones<arma::rowvec>(x.n_cols));
-  
+
   // Now, we only want to calculate the diagonal elements of (diffs' * cov^-1 *
   // diffs).  We just don't need any of the other elements.  We can calculate
   // the right hand part of the equation (instead of the left side) so that
   // later we are referencing columns, not rows -- that is faster.
   arma::mat rhs = -0.5 * inv(covariance) * diffs;
-  arma::vec exponents(diffs.n_cols); // We will now fill this.
+  arma::vec logExponents(diffs.n_cols); // We will now fill this.
   for (size_t i = 0; i < diffs.n_cols; i++)
-    exponents(i) = exp(accu(diffs.unsafe_col(i) % rhs.unsafe_col(i)));
-  
-  probabilities = pow(2 * M_PI, (double) mean.n_elem / -2.0) *
-  pow(arma::det(covariance), -0.5) * exponents;
+    logExponents(i) = accu(diffs.unsafe_col(i) % rhs.unsafe_col(i));
+
+  double logdetsigma = 0;
+  double sign = 0.;
+  arma::log_det(logdetsigma, sign, covariance);
+  const size_t k = x.n_rows;
+
+  logProbabilities = -0.5 * k * log2pi - 0.5 * logdetsigma + logExponents;
 }
-  
+
 
 }; // namespace distribution
 }; // namespace mlpack
