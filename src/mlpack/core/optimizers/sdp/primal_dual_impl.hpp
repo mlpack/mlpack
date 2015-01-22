@@ -91,6 +91,9 @@ PrimalDualSolver<SDPType>::PrimalDualSolver(const SDPType& sdp,
       << std::endl;
 }
 
+/**
+ * alphahat = sup{ alphahat : A + dA is psd }
+ */
 static inline double
 AlphaHat(const arma::mat& A, const arma::mat& dA)
 {
@@ -103,6 +106,9 @@ AlphaHat(const arma::mat& A, const arma::mat& dA)
   return 1. / alphahatinv;
 }
 
+/**
+ * alpha = min(1, tau * alphahat(A, dA))
+ */
 static inline double
 Alpha(const arma::mat& A, const arma::mat& dA, double tau)
 {
@@ -162,7 +168,7 @@ SolveKKTSystem(const arma::sp_mat& Asparse,
 
   // TODO(stephentu): use a more efficient method (e.g. LU decomposition)
   if (!arma::solve(dy, M, rhs))
-    Log::Fatal << "PrimalDualSolver::Optimize(): Could not solve KKT system" << std::endl;
+    Log::Fatal << "PrimalDualSolver::SolveKKTSystem(): Could not solve KKT system" << std::endl;
 
   if (Asparse.n_rows)
     dysparse = dy(arma::span(0, Asparse.n_rows - 1));
@@ -186,7 +192,7 @@ template <typename eT> struct vectype<arma::SpMat<eT>> { typedef arma::SpCol<eT>
 } // namespace private_
 
 template <typename SDPType>
-std::pair<bool, double>
+double
 PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
                                     arma::vec& ysparse,
                                     arma::vec& ydense,
@@ -240,7 +246,7 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
   Einv_F_AdenseT.set_size(n2bar, sdp.NumDenseConstraints());
   M.set_size(sdp.NumConstraints(), sdp.NumConstraints());
 
-  double primal_obj = 0., alpha, beta;
+  double primalObj = 0., alpha, beta;
   for (size_t iteration = 0; iteration != maxIterations; iteration++)
   {
     if (sdp.NumSparseConstraints())
@@ -334,21 +340,17 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
     Z += beta * dZ;
     math::Svec(Z, sz);
 
-    const double norm_XZ = arma::norm(X * Z, "fro");
+    const double normXZ = arma::norm(X * Z, "fro");
 
-    const double sparse_primal_infeas = arma::norm(sdp.SparseB() - Asparse * sx, 2);
-    const double dense_primal_infeas = arma::norm(sdp.DenseB() - Adense * sx, 2);
-    const double primal_infeas = sqrt(
-        sparse_primal_infeas * sparse_primal_infeas +
-        dense_primal_infeas * dense_primal_infeas);
+    const double sparsePrimalInfeas = arma::norm(sdp.SparseB() - Asparse * sx, 2);
+    const double densePrimalInfeas = arma::norm(sdp.DenseB() - Adense * sx, 2);
+    const double primalInfeas = sqrt(sparsePrimalInfeas * sparsePrimalInfeas +
+        densePrimalInfeas * densePrimalInfeas);
 
-    primal_obj = arma::dot(sdp.C(), X);
+    primalObj = arma::dot(sdp.C(), X);
 
-    const double dual_obj =
-      arma::dot(sdp.SparseB(), ysparse) +
-      arma::dot(sdp.DenseB(), ydense);
-
-    const double duality_gap = primal_obj - dual_obj;
+    const double dualObj = arma::dot(sdp.SparseB(), ysparse) + arma::dot(sdp.DenseB(), ydense);
+    const double dualityGap = primalObj - dualObj;
 
     // TODO(stephentu): this dual check is quite expensive,
     // maybe make it optional?
@@ -357,27 +359,25 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
       DualCheck += ysparse(i) * sdp.SparseA()[i];
     for (size_t i = 0; i < sdp.NumDenseConstraints(); i++)
       DualCheck += ydense(i) * sdp.DenseA()[i];
-    const double dual_infeas = arma::norm(DualCheck, "fro");
+    const double dualInfeas = arma::norm(DualCheck, "fro");
 
     Log::Debug
       << "iter=" << iteration + 1 << ", "
-      << "primal=" << primal_obj << ", "
-      << "dual=" << dual_obj << ", "
-      << "gap=" << duality_gap << ", "
-      << "||XZ||=" << norm_XZ << ", "
-      << "primal_infeas=" << primal_infeas << ", "
-      << "dual_infeas=" << dual_infeas << ", "
+      << "primal=" << primalObj << ", "
+      << "dual=" << dualObj << ", "
+      << "gap=" << dualityGap << ", "
+      << "||XZ||=" << normXZ << ", "
+      << "primalInfeas=" << primalInfeas << ", "
+      << "dualInfeas=" << dualInfeas << ", "
       << "mu=" << mu
       << std::endl;
 
-    if (norm_XZ <= normXzTol &&
-        primal_infeas <= primalInfeasTol &&
-        dual_infeas <= dualInfeasTol)
-      return std::make_pair(true, primal_obj);
+    if (normXZ <= normXzTol && primalInfeas <= primalInfeasTol && dualInfeas <= dualInfeasTol)
+      return primalObj;
   }
 
-  Log::Warn << "Did not converge!" << std::endl;
-  return std::make_pair(false, primal_obj);
+  Log::Warn << "Did not converge after " << maxIterations << " iterations!" << std::endl;
+  return primalObj;
 }
 
 } // namespace optimization
