@@ -31,7 +31,7 @@ documentation. The website should be consulted for further information:
 
   - [mlpack homepage](http://www.mlpack.org/)
   - [Tutorials](http://www.mlpack.org/tutorial.html)
-  - [Development Site (Trac)](http://www.mlpack.org/trac/)
+  - [Development Site (Github)](http://www.github.com/mlpack/mlpack/)
   - [API documentation](http://www.mlpack.org/doxygen.php)
 
 2. Citation details
@@ -125,11 +125,10 @@ want to build everything in the library:
 
     $ make pca allknn allkfn
 
-If the build fails and you cannot figure out why, register an account on Trac
-and submit a ticket and the mlpack developers will quickly help you figure it
-out:
+If the build fails and you cannot figure out why, register an account on Github
+and submit an issue; the mlpack developers will quickly help you figure it out:
 
-[mlpack Trac](http://mlpack.org/trac/)
+[mlpack on Github](https://www.github.com/mlpack/mlpack/)
 
 Alternately, mlpack help can be found in IRC at #mlpack on irc.freenode.net.
 
@@ -141,7 +140,7 @@ permissions to those two directories), and simply type
 
 You can now run the executables by name; you can link against mlpack with
     -lmlpack
-and the mlpack headers are found in 
+and the mlpack headers are found in
     /usr/include/mlpack/.
 
 
@@ -187,7 +186,7 @@ older versions of mlpack:
 
   - [mlpack homepage](http://www.mlpack.org/)
   - [Tutorials](http://www.mlpack.org/tutorial.html)
-  - [Development Site (Trac)](http://www.mlpack.org/trac/)
+  - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
   - [API documentation](http://www.mlpack.org/doxygen.php)
 
 7. Bug reporting
@@ -197,7 +196,8 @@ older versions of mlpack:
 If you find a bug in mlpack or have any problems, numerous routes are available
 for help.
 
-Trac is used for bug tracking, and can be found at http://www.mlpack.org/trac/.
+Github is used for bug tracking, and can be found at
+https://github.com/mlpack/mlpack/.
 It is easy to register an account and file a bug there, and the mlpack
 development team will try to quickly resolve your issue.
 
