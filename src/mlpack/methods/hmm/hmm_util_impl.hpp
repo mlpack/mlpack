@@ -115,8 +115,10 @@ void ConvertHMM(HMM<distribution::GaussianDistribution>& hmm,
     sr.LoadParameter(hmm.Emission()[i].Mean(), s.str());
 
     s.str("");
+    arma::mat covariance;
     s << "hmm_emission_covariance_" << i;
-    sr.LoadParameter(hmm.Emission()[i].Covariance(), s.str());
+    sr.LoadParameter(covariance, s.str());
+    hmm.Emission()[i].Covariance(std::move(covariance));
   }
 
   hmm.Dimensionality() = hmm.Emission()[0].Mean().n_elem;
@@ -168,7 +170,9 @@ void ConvertHMM(HMM<gmm::GMM<> >& hmm, const util::SaveRestoreUtility& sr)
 
       s.str("");
       s << "hmm_emission_" << i << "_gaussian_" << g << "_covariance";
-      sr.LoadParameter(hmm.Emission()[i].Component(g).Covariance(), s.str());
+      arma::mat covariance;
+      sr.LoadParameter(covariance, s.str());
+      hmm.Emission()[i].Component(g).Covariance(std::move(covariance));
     }
 
     s.str("");

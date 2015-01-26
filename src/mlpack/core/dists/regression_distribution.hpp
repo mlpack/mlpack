@@ -48,7 +48,9 @@ class RegressionDistribution
       rf(regression::LinearRegression(predictors, responses))
   {
     err = GaussianDistribution(1);
-    err.Covariance() = rf.ComputeError(predictors, responses);
+    arma::mat cov(1, 1);
+    cov(0, 0) = rf.ComputeError(predictors, responses);
+    err.Covariance(std::move(cov));
   }
 
   /**

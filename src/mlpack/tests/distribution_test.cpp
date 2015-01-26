@@ -140,6 +140,8 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionDistributionConstructor)
 
   mean.randu();
   covariance.randu();
+  covariance *= covariance.t();
+  covariance += arma::eye<arma::mat>(3, 3);
 
   GaussianDistribution d(mean, covariance);
 
@@ -157,20 +159,20 @@ BOOST_AUTO_TEST_CASE(GaussianDistributionDistributionConstructor)
 BOOST_AUTO_TEST_CASE(GaussianDistributionProbabilityTest)
 {
   arma::vec mean("5 6 3 3 2");
-  arma::mat cov("6 1 1 0 2;"
-                "0 7 1 0 1;"
+  arma::mat cov("6 1 1 1 2;"
+                "1 7 1 0 0;"
                 "1 1 4 1 1;"
                 "1 0 1 7 0;"
-                "2 0 1 1 6");
+                "2 0 1 0 6");
 
   GaussianDistribution d(mean, cov);
 
-  BOOST_REQUIRE_CLOSE(d.Probability("0 1 2 3 4"), 1.02531207499358e-6, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Probability("3 2 3 7 8"), 1.82353695848039e-7, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Probability("2 2 0 8 1"), 1.29759261892949e-6, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Probability("2 1 5 0 1"), 1.33218060268258e-6, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Probability("3 0 5 1 0"), 1.12120427975708e-6, 1e-5);
-  BOOST_REQUIRE_CLOSE(d.Probability("4 0 6 1 0"), 4.57951032485297e-7, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.LogProbability("0 1 2 3 4"), -13.432076798791542, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.LogProbability("3 2 3 7 8"), -15.814880322345738, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.LogProbability("2 2 0 8 1"), -13.754462857772776, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.LogProbability("2 1 5 0 1"), -13.283283233107898, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.LogProbability("3 0 5 1 0"), -13.800326511545279, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.LogProbability("4 0 6 1 0"), -14.900192463287908, 1e-5);
 }
 
 /**
@@ -187,16 +189,22 @@ BOOST_AUTO_TEST_CASE(GaussianUnivariateProbabilityTest)
       1e-5);
 
   // A few more cases...
-  g.Covariance().fill(2.0);
+  arma::mat covariance;
+
+  covariance = 2.0;
+  g.Covariance(std::move(covariance));
   BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("0.0")), 0.282094791773878, 1e-5);
   BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("1.0")), 0.219695644733861, 1e-5);
   BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("-1.0")), 0.219695644733861,
       1e-5);
 
   g.Mean().fill(1.0);
-  g.Covariance().fill(1.0);
+  covariance = 1.0;
+  g.Covariance(std::move(covariance));
   BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("1.0")), 0.398942280401433, 1e-5);
-  g.Covariance().fill(2.0);
+
+  covariance = 2.0;
+  g.Covariance(std::move(covariance));
   BOOST_REQUIRE_CLOSE(g.Probability(arma::vec("-1.0")), 0.103776874355149,
       1e-5);
 }
@@ -215,7 +223,9 @@ BOOST_AUTO_TEST_CASE(GaussianMultivariateProbabilityTest)
 
   BOOST_REQUIRE_CLOSE(g.Probability(x), 0.159154943091895, 1e-5);
 
-  g.Covariance() = "2 0; 0 2";
+  arma::mat covariance;
+  covariance = "2 0; 0 2";
+  g.Covariance(std::move(covariance));
 
   BOOST_REQUIRE_CLOSE(g.Probability(x), 0.0795774715459477, 1e-5);
 
@@ -230,33 +240,36 @@ BOOST_AUTO_TEST_CASE(GaussianMultivariateProbabilityTest)
   BOOST_REQUIRE_CLOSE(g.Probability(-x), 0.0795774715459477, 1e-5);
 
   g.Mean() = "1 1";
-  g.Covariance() = "2 1.5; 1 4";
+  covariance = "2 1.5; 1 4";
+  g.Covariance(std::move(covariance));
 
-  BOOST_REQUIRE_CLOSE(g.Probability(x), 0.0624257046546403, 1e-5);
+  BOOST_REQUIRE_CLOSE(g.Probability(x), 0.060154914192541771, 1e-5);
   g.Mean() *= -1;
-  BOOST_REQUIRE_CLOSE(g.Probability(-x), 0.0624257046546403, 1e-5);
+  BOOST_REQUIRE_CLOSE(g.Probability(-x), 0.060154914192541771, 1e-5);
 
   g.Mean() = "1 1";
   x = "-1 4";
 
-  BOOST_REQUIRE_CLOSE(g.Probability(x), 0.00144014867515135, 1e-5);
-  BOOST_REQUIRE_CLOSE(g.Probability(-x), 0.00133352162064845, 1e-5);
+  BOOST_REQUIRE_CLOSE(g.Probability(x), 0.0022506270186086271, 1e-5);
+  BOOST_REQUIRE_CLOSE(g.Probability(-x), 0.0016912950996661141, 1e-5);
 
   // Higher-dimensional case.
   x = "0 1 2 3 4";
   g.Mean() = "5 6 3 3 2";
-  g.Covariance() = "6 1 1 0 2;"
-                   "0 7 1 0 1;"
-                   "1 1 4 1 1;"
-                   "1 0 1 7 0;"
-                   "2 0 1 1 6";
 
-  BOOST_REQUIRE_CLOSE(g.Probability(x), 1.02531207499358e-6, 1e-5);
-  BOOST_REQUIRE_CLOSE(g.Probability(-x), 1.06784794079363e-8, 1e-5);
+  covariance = "6 1 1 1 2;"
+               "1 7 1 0 0;"
+               "1 1 4 1 1;"
+               "1 0 1 7 0;"
+               "2 0 1 0 6";
+  g.Covariance(std::move(covariance));
+
+  BOOST_REQUIRE_CLOSE(g.Probability(x), 1.4673143531128877e-06, 1e-5);
+  BOOST_REQUIRE_CLOSE(g.Probability(-x), 7.7404143494891786e-09, 1e-8);
 
   g.Mean() *= -1;
-  BOOST_REQUIRE_CLOSE(g.Probability(-x), 1.02531207499358e-6, 1e-5);
-  BOOST_REQUIRE_CLOSE(g.Probability(x), 1.06784794079363e-8, 1e-5);
+  BOOST_REQUIRE_CLOSE(g.Probability(-x), 1.4673143531128877e-06, 1e-5);
+  BOOST_REQUIRE_CLOSE(g.Probability(x), 7.7404143494891786e-09, 1e-8);
 
 }
 
@@ -268,7 +281,11 @@ BOOST_AUTO_TEST_CASE(GaussianMultipointMultivariateProbabilityTest)
 {
   // Same case as before.
   arma::vec mean = "5 6 3 3 2";
-  arma::mat cov = "6 1 1 0 2; 0 7 1 0 1; 1 1 4 1 1; 1 0 1 7 0; 2 0 1 1 6";
+  arma::mat cov("6 1 1 1 2;"
+                "1 7 1 0 0;"
+                "1 1 4 1 1;"
+                "1 0 1 7 0;"
+                "2 0 1 0 6");
 
   arma::mat points = "0 3 2 2 3 4;"
                      "1 2 2 1 0 0;"
@@ -278,16 +295,16 @@ BOOST_AUTO_TEST_CASE(GaussianMultipointMultivariateProbabilityTest)
 
   arma::vec phis;
   GaussianDistribution g(mean, cov);
-  g.Probability(points, phis);
+  g.LogProbability(points, phis);
 
   BOOST_REQUIRE_EQUAL(phis.n_elem, 6);
 
-  BOOST_REQUIRE_CLOSE(phis(0), 1.02531207499358e-6, 1e-5);
-  BOOST_REQUIRE_CLOSE(phis(1), 1.82353695848039e-7, 1e-5);
-  BOOST_REQUIRE_CLOSE(phis(2), 1.29759261892949e-6, 1e-5);
-  BOOST_REQUIRE_CLOSE(phis(3), 1.33218060268258e-6, 1e-5);
-  BOOST_REQUIRE_CLOSE(phis(4), 1.12120427975708e-6, 1e-5);
-  BOOST_REQUIRE_CLOSE(phis(5), 4.57951032485297e-7, 1e-5);
+  BOOST_REQUIRE_CLOSE(phis(0), -13.432076798791542, 1e-5);
+  BOOST_REQUIRE_CLOSE(phis(1), -15.814880322345738, 1e-5);
+  BOOST_REQUIRE_CLOSE(phis(2), -13.754462857772776, 1e-5);
+  BOOST_REQUIRE_CLOSE(phis(3), -13.283283233107898, 1e-5);
+  BOOST_REQUIRE_CLOSE(phis(4), -13.800326511545279, 1e-5);
+  BOOST_REQUIRE_CLOSE(phis(5), -14.900192463287908, 1e-5);
 }
 
 /**
