@@ -93,11 +93,12 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
           trans(condProb.col(i)));
 
       // Don't update if there's no probability of the Gaussian having points.
-      if (probRowSums[i] != 0.0)
-        dists[i].Covariance() = (tmp * trans(tmpB)) / probRowSums[i];
-
-      // Apply covariance constraint.
-      constraint.ApplyConstraint(dists[i].Covariance());
+      if (probRowSums[i] != 0.0) {
+        arma::mat covariance = (tmp * trans(tmpB)) / probRowSums[i];
+        // Apply covariance constraint.
+        constraint.ApplyConstraint(covariance);
+        dists[i].Covariance(std::move(covariance));
+      }
     }
 
     // Calculate the new values for omega using the updated conditional
@@ -180,10 +181,12 @@ void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Estimate(
       arma::mat tmpB = tmp % (arma::ones<arma::vec>(observations.n_rows) *
           trans(condProb.col(i) % probabilities));
 
-      dists[i].Covariance() = (tmp * trans(tmpB)) / probRowSums[i];
+      arma::mat cov = (tmp * trans(tmpB)) / probRowSums[i];
 
       // Apply covariance constraint.
-      constraint.ApplyConstraint(dists[i].Covariance());
+      constraint.ApplyConstraint(cov);
+
+      dists[i].Covariance(std::move(cov));
     }
 
     // Calculate the new values for omega using the updated conditional
@@ -210,12 +213,16 @@ InitialClustering(const arma::mat& observations,
   // Run clustering algorithm.
   clusterer.Cluster(observations, dists.size(), assignments);
 
+  std::vector<arma::vec> means(dists.size());
+  std::vector<arma::mat> covs(dists.size());
+
   // Now calculate the means, covariances, and weights.
   weights.zeros();
   for (size_t i = 0; i < dists.size(); ++i)
   {
-    dists[i].Mean().zeros();
-    dists[i].Covariance().zeros();
+    means[i].zeros(dists[i].Mean().n_elem);
+    covs[i].zeros(dists[i].Covariance().n_rows,
+                  dists[i].Covariance().n_cols);
   }
 
   // From the assignments, generate our means, covariances, and weights.
@@ -224,11 +231,10 @@ InitialClustering(const arma::mat& observations,
     const size_t cluster = assignments[i];
 
     // Add this to the relevant mean.
-    dists[cluster].Mean() += observations.col(i);
+    means[cluster] += observations.col(i);
 
     // Add this to the relevant covariance.
-    dists[cluster].Covariance() += observations.col(i) *
-        trans(observations.col(i));
+    covs[cluster] += observations.col(i) * trans(observations.col(i));
 
     // Now add one to the weights (we will normalize).
     weights[cluster]++;
@@ -237,22 +243,25 @@ InitialClustering(const arma::mat& observations,
   // Now normalize the mean and covariance.
   for (size_t i = 0; i < dists.size(); ++i)
   {
-    dists[i].Mean() /= (weights[i] > 1) ? weights[i] : 1;
+    means[i] /= (weights[i] > 1) ? weights[i] : 1;
   }
 
   for (size_t i = 0; i < observations.n_cols; ++i)
   {
     const size_t cluster = assignments[i];
-    const arma::vec normObs = observations.col(i) - dists[cluster].Mean();
-    dists[cluster].Covariance() += normObs * normObs.t();
+    const arma::vec normObs = observations.col(i) - means[cluster];
+    covs[cluster] += normObs * normObs.t();
   }
 
   for (size_t i = 0; i < dists.size(); ++i)
   {
-    dists[i].Covariance() /= (weights[i] > 1) ? weights[i] : 1;
+    covs[i] /= (weights[i] > 1) ? weights[i] : 1;
 
     // Apply constraints to covariance matrix.
-    constraint.ApplyConstraint(dists[i].Covariance());
+    constraint.ApplyConstraint(covs[i]);
+
+    std::swap(dists[i].Mean(), means[i]);
+    dists[i].Covariance(std::move(covs[i]));
   }
 
   // Finally, normalize weights.
@@ -269,7 +278,7 @@ double EMFit<InitialClusteringType, CovarianceConstraintPolicy>::LogLikelihood(
 
   arma::vec phis;
   arma::mat likelihoods(dists.size(), observations.n_cols);
-  
+
   for (size_t i = 0; i < dists.size(); ++i)
   {
     dists[i].Probability(observations, phis);
@@ -283,7 +292,7 @@ double EMFit<InitialClusteringType, CovarianceConstraintPolicy>::LogLikelihood(
           << "outlier." << std::endl;
     logLikelihood += log(accu(likelihoods.col(j)));
   }
-  
+
   return logLikelihood;
 }
 

@@ -21,8 +21,14 @@ class GaussianDistribution
  private:
   //! Mean of the distribution.
   arma::vec mean;
-  //! Covariance of the distribution.
+  //! Positive definite covariance of the distribution.
   arma::mat covariance;
+  //! Lower triangular factor of cov (e.g. cov = LL^T).
+  arma::mat covLower;
+  //! Cached inverse of covariance.
+  arma::mat invCov;
+  //! Cached logdet(cov).
+  double logDetCov;
 
   //! log(2pi)
   static const constexpr double log2pi = 1.83787706640934533908193770912475883;
@@ -39,14 +45,20 @@ class GaussianDistribution
    */
   GaussianDistribution(const size_t dimension) :
       mean(arma::zeros<arma::vec>(dimension)),
-      covariance(arma::eye<arma::mat>(dimension, dimension))
+      covariance(arma::eye<arma::mat>(dimension, dimension)),
+      covLower(arma::eye<arma::mat>(dimension, dimension)),
+      invCov(arma::eye<arma::mat>(dimension, dimension)),
+      logDetCov(0)
   { /* Nothing to do. */ }
 
   /**
    * Create a Gaussian distribution with the given mean and covariance.
+   *
+   * covariance is expected to be positive definite.
    */
-  GaussianDistribution(const arma::vec& mean, const arma::mat& covariance) :
-      mean(mean), covariance(covariance) { /* Nothing to do. */ }
+  GaussianDistribution(const arma::vec& mean, const arma::mat& covariance);
+
+  // TODO(stephentu): do we want a (arma::vec&&, arma::mat&&) ctor?
 
   //! Return the dimensionality of this distribution.
   size_t Dimensionality() const { return mean.n_elem; }
@@ -119,9 +131,11 @@ class GaussianDistribution
   const arma::mat& Covariance() const { return covariance; }
 
   /**
-   * Return a modifiable copy of the covariance.
+   * Set the covariance.
    */
-  arma::mat& Covariance() { return covariance; }
+  void Covariance(const arma::mat& covariance);
+
+  void Covariance(arma::mat&& covariance);
 
   /**
    * Returns a string representation of this object.
@@ -135,7 +149,8 @@ class GaussianDistribution
   void Load(const util::SaveRestoreUtility& n);
   static std::string const Type() { return "GaussianDistribution"; }
 
-
+ private:
+  void FactorCovariance();
 
 };
 
@@ -156,17 +171,14 @@ inline void GaussianDistribution::LogProbability(const arma::mat& x,
   // diffs).  We just don't need any of the other elements.  We can calculate
   // the right hand part of the equation (instead of the left side) so that
   // later we are referencing columns, not rows -- that is faster.
-  arma::mat rhs = -0.5 * inv(covariance) * diffs;
+  const arma::mat rhs = -0.5 * invCov * diffs;
   arma::vec logExponents(diffs.n_cols); // We will now fill this.
   for (size_t i = 0; i < diffs.n_cols; i++)
     logExponents(i) = accu(diffs.unsafe_col(i) % rhs.unsafe_col(i));
 
-  double logdetsigma = 0;
-  double sign = 0.;
-  arma::log_det(logdetsigma, sign, covariance);
   const size_t k = x.n_rows;
 
-  logProbabilities = -0.5 * k * log2pi - 0.5 * logdetsigma + logExponents;
+  logProbabilities = -0.5 * k * log2pi - 0.5 * logDetCov + logExponents;
 }
 
 

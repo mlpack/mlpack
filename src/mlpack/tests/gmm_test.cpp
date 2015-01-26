@@ -490,7 +490,12 @@ BOOST_AUTO_TEST_CASE(GMMLoadSaveTest)
   for (size_t i = 0; i < gmm.Gaussians(); ++i)
   {
     gmm.Component(i).Mean().randu();
-    gmm.Component(i).Covariance().randu();
+    arma::mat covariance = arma::randu<arma::mat>(
+        gmm.Component(i).Covariance().n_rows,
+        gmm.Component(i).Covariance().n_cols);
+    covariance *= covariance.t();
+    covariance += arma::eye<arma::mat>(covariance.n_rows, covariance.n_cols);
+    gmm.Component(i).Covariance(std::move(covariance));
   }
 
   gmm.Save("test-gmm-save.xml");
