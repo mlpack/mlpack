@@ -220,12 +220,14 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
     // Re-set second closest bound if necessary.
     if (node->Stat().SecondClosestBound() == DBL_MAX)
     {
+      if (node->Begin() == 34654)
+        Log::Warn << "r34654c" << node->Begin() << " scb is DBL_MAX!\n";
+
       if (node->Parent() == NULL)
         node->Stat().SecondClosestBound() = 0.0; // Don't prune the root.
+    }
 
-      else
-      {
-        if (node->Parent()->Stat().SecondClosestBound() != DBL_MAX &&
+    if (node->Parent()->Stat().SecondClosestBound() != DBL_MAX &&
 node->Stat().LastSecondClosestBound() != DBL_MAX)
           node->Stat().SecondClosestBound() =
 std::max(node->Parent()->Stat().SecondClosestBound(),
@@ -234,14 +236,12 @@ node->Stat().LastSecondClosestBound());
           node->Stat().SecondClosestBound() =
 std::min(node->Parent()->Stat().SecondClosestBound(),
 node->Stat().LastSecondClosestBound());
-      }
 //      if (node->Begin() == 35871)
 //        Log::Warn << "Update second closest bound for r35871c" <<
 //node->Count() << " to " << node->Stat().SecondClosestBound() << ", which could "
 //      << "have been parent's (" << node->Parent()->Stat().SecondClosestBound()
 //<< ") or adjusted last iteration's (" << node->Stat().LastSecondClosestBound()
 //<< ").\n";
-    }
 
 //    if (node->Begin() == 35871)
 //      Log::Warn << "r35871c" << node->Count() << " has second bound " <<
@@ -266,6 +266,15 @@ node->Parent()->Stat().SecondClosestBound() < node->Stat().SecondClosestBound())
 //<< " (was " << node->Stat().SecondClosestBound() << ").\n";
           node->Stat().SecondClosestBound() =
 node->Parent()->Stat().SecondClosestBound();
+    }
+
+    if (node->Begin() == 34654)
+    {
+      Log::Warn << "Attempt Hamerly prune on r34654c" << node->Count() <<
+          " with MQND " << node->Stat().MaxQueryNodeDistance() << ", scb "
+          << node->Stat().SecondClosestBound() << ", owner " <<
+node->Stat().Owner() << ", and clusterDistances " << clusterDistances[clusters]
+<< ".\n";
     }
 
     if (node->Stat().MaxQueryNodeDistance() < node->Stat().SecondClosestBound()
