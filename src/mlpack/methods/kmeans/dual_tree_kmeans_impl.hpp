@@ -218,14 +218,13 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
     // already been adjusted for cluster movement.
 
     // Re-set second closest bound if necessary.
-    if (node->Stat().SecondClosestBound() == DBL_MAX)
-    {
-      if (node->Begin() == 34654)
-        Log::Warn << "r34654c" << node->Begin() << " scb is DBL_MAX!\n";
+    if (node->Stat().SecondClosestBound() == DBL_MAX && node->Parent() == NULL)
+      node->Stat().SecondClosestBound() = 0.0; // Don't prune the root.
 
-      if (node->Parent() == NULL)
-        node->Stat().SecondClosestBound() = 0.0; // Don't prune the root.
-    }
+    if (node->Begin() == 34654)
+      Log::Warn << "r34654c" << node->Count() << " scb " <<
+node->Stat().SecondClosestBound() << " and lscb " <<
+node->Stat().LastSecondClosestBound() << ".\n";
 
     if (node->Parent()->Stat().SecondClosestBound() != DBL_MAX &&
 node->Stat().LastSecondClosestBound() != DBL_MAX)
@@ -252,7 +251,7 @@ node->Stat().LastSecondClosestBound());
 //          << ((TreeType*)
 //node->Parent()->Stat().SecondClosestQueryNode())->Begin() << "c" << ((TreeType*)
 //node->Parent()->Stat().SecondClosestQueryNode())->Count() << ").\n";
-
+/*
     if (node->Parent() != NULL &&
 node->Parent()->Stat().SecondClosestQueryNode() != NULL &&
 node->Stat().SecondClosestQueryNode() != NULL && !IsDescendantOf(*((TreeType*)
@@ -266,7 +265,7 @@ node->Parent()->Stat().SecondClosestBound() < node->Stat().SecondClosestBound())
 //<< " (was " << node->Stat().SecondClosestBound() << ").\n";
           node->Stat().SecondClosestBound() =
 node->Parent()->Stat().SecondClosestBound();
-    }
+    }*/
 
     if (node->Begin() == 34654)
     {
