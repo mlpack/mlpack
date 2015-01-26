@@ -32,7 +32,13 @@ void GaussianDistribution::Covariance(arma::mat&& covariance)
 
 void GaussianDistribution::FactorCovariance()
 {
-  covLower = arma::chol(covariance, "lower");
+  // On Armadillo < 4.500, the "lower" option isn't available.
+  #if (ARMA_VERSION_MAJOR < 4) || \
+      ((ARMA_VERSION_MAJOR == 4) && (ARMA_VERSION_MINOR < 500))
+    covLower = arma::chol(covariance).t(); // This is less efficient.
+  #else
+    covLower = arma::chol(covariance, "lower");
+  #endif
 
   // Comment from rcurtin:
   //
