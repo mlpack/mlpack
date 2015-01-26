@@ -21,6 +21,8 @@ class DualTreeKMeansStatistic
       minQueryNodeDistance(DBL_MAX),
       maxQueryNodeDistance(DBL_MAX),
       secondClosestBound(DBL_MAX),
+      secondClosestQueryNode(NULL),
+      lastSecondClosestBound(DBL_MAX),
       hamerlyPruned(false),
       clustersPruned(size_t(-1)),
       iteration(size_t() - 1),
@@ -67,6 +69,16 @@ class DualTreeKMeansStatistic
   double SecondClosestBound() const { return secondClosestBound; }
   //! Modify the lower bound on the second closest cluster distance.
   double& SecondClosestBound() { return secondClosestBound; }
+
+  //! Get the second closest query node.
+  void* SecondClosestQueryNode() const { return secondClosestQueryNode; }
+  //! Modify the second closest query node.
+  void*& SecondClosestQueryNode() { return secondClosestQueryNode; }
+
+  //! Get last iteration's second closest bound.
+  double LastSecondClosestBound() const { return lastSecondClosestBound; }
+  //! Modify last iteration's second closest bound.
+  double& LastSecondClosestBound() { return lastSecondClosestBound; }
 
   //! Get whether or not this node is Hamerly pruned this iteration.
   bool HamerlyPruned() const { return hamerlyPruned; }
@@ -123,6 +135,10 @@ class DualTreeKMeansStatistic
   double maxQueryNodeDistance;
   //! A lower bound on the distance to the second closest cluster.
   double secondClosestBound;
+  //! The second closest query node.
+  void* secondClosestQueryNode;
+  //! The second closest lower bound, on the previous iteration.
+  double lastSecondClosestBound;
   //! Whether or not this node is pruned for the next iteration.
   bool hamerlyPruned;
 

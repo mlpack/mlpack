@@ -70,6 +70,9 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   std::vector<size_t> oldFromNewCentroids;
   TreeType* centroidTree = BuildTree<TreeType>(
       const_cast<typename TreeType::Mat&>(centroids), oldFromNewCentroids);
+  for (size_t i = 0; i < oldFromNewCentroids.size(); ++i)
+    Log::Warn << oldFromNewCentroids[i] << " ";
+  Log::Warn << "\n";
 
   // Now calculate distances between centroids.
   neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType, TreeType>
@@ -154,6 +157,19 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::ClusterTreeUpdate(
   node->Stat().FirstBound() = firstBound;
 }
 
+template<typename TreeType>
+bool IsDescendantOf(
+    const TreeType& potentialParent,
+    const TreeType& potentialChild)
+{
+  if (potentialChild.Parent() == &potentialParent)
+    return true;
+  else if (potentialChild.Parent() == NULL)
+    return false;
+  else
+    return IsDescendantOf(potentialParent, *potentialChild.Parent());
+}
+
 template<typename MetricType, typename MatType, typename TreeType>
 void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
     TreeType* node,
@@ -201,12 +217,64 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
     // same owner in the next iteration.  Note that MaxQueryNodeDistance() has
     // already been adjusted for cluster movement.
 
+    // Re-set second closest bound if necessary.
+    if (node->Stat().SecondClosestBound() == DBL_MAX)
+    {
+      if (node->Parent() == NULL)
+        node->Stat().SecondClosestBound() = 0.0; // Don't prune the root.
+
+      else
+      {
+        if (node->Parent()->Stat().SecondClosestBound() != DBL_MAX &&
+node->Stat().LastSecondClosestBound() != DBL_MAX)
+          node->Stat().SecondClosestBound() =
+std::max(node->Parent()->Stat().SecondClosestBound(),
+node->Stat().LastSecondClosestBound());
+        else
+          node->Stat().SecondClosestBound() =
+std::min(node->Parent()->Stat().SecondClosestBound(),
+node->Stat().LastSecondClosestBound());
+      }
+//      if (node->Begin() == 35871)
+//        Log::Warn << "Update second closest bound for r35871c" <<
+//node->Count() << " to " << node->Stat().SecondClosestBound() << ", which could "
+//      << "have been parent's (" << node->Parent()->Stat().SecondClosestBound()
+//<< ") or adjusted last iteration's (" << node->Stat().LastSecondClosestBound()
+//<< ").\n";
+    }
+
+//    if (node->Begin() == 35871)
+//      Log::Warn << "r35871c" << node->Count() << " has second bound " <<
+//node->Stat().SecondClosestBound() << " (q" << ((TreeType*)
+//node->Stat().SecondClosestQueryNode())->Begin() << "c" << ((TreeType*)
+//node->Stat().SecondClosestQueryNode())->Count() << ") and parent has second "
+//          << "bound " << node->Parent()->Stat().SecondClosestBound() << " (q"
+//          << ((TreeType*)
+//node->Parent()->Stat().SecondClosestQueryNode())->Begin() << "c" << ((TreeType*)
+//node->Parent()->Stat().SecondClosestQueryNode())->Count() << ").\n";
+
+    if (node->Parent() != NULL &&
+node->Parent()->Stat().SecondClosestQueryNode() != NULL &&
+node->Stat().SecondClosestQueryNode() != NULL && !IsDescendantOf(*((TreeType*)
+node->Stat().SecondClosestQueryNode()), *((TreeType*)
+node->Parent()->Stat().SecondClosestQueryNode())) &&
+node->Parent()->Stat().SecondClosestBound() < node->Stat().SecondClosestBound())
+    {
+//      if (node->Begin() == 35871)
+//        Log::Warn << "Take second closest bound for r35871c" <<
+//node->Count() << " from parent: " << node->Parent()->Stat().SecondClosestBound()
+//<< " (was " << node->Stat().SecondClosestBound() << ").\n";
+          node->Stat().SecondClosestBound() =
+node->Parent()->Stat().SecondClosestBound();
+    }
+
     if (node->Stat().MaxQueryNodeDistance() < node->Stat().SecondClosestBound()
         - clusterDistances[clusters])
     {
       node->Stat().HamerlyPruned() = true;
-      Log::Warn << "Mark r" << node->Begin() << "c" << node->Count() << " as "
-          << "Hamerly pruned.\n";
+//      if (node->Begin() == 35871)
+        Log::Warn << "Mark r" << node->Begin() << "c" << node->Count() << " as "
+            << "Hamerly pruned.\n";
 
       // Check the second bound.  (This is time-consuming...)
       for (size_t j = 0; j < node->NumDescendants(); ++j)
@@ -223,13 +291,6 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
           distances(i) = distance;
         }
 
-        // Re-set second closest bound if necessary.
-        if (node->Stat().ClustersPruned() == size_t(-1))
-        {
-//          Log::Warn << "Update second closest bound!\n";
-          node->Stat().SecondClosestBound() = node->Parent()->Stat().SecondClosestBound();
-        }
-
         if (secondClosestDist < node->Stat().SecondClosestBound() - 1e-15)
         {
           Log::Warn << "Owner " << node->Stat().Owner() << ", mqnd " <<
@@ -240,9 +301,10 @@ node->Stat().MinQueryNodeDistance() << ".\n";
 node->Stat().SecondClosestBound() << " is too loose! -- " << secondClosestDist
               << "! (" << node->Stat().SecondClosestBound() - secondClosestDist
 << ")\n";
+
         }
-//        if (node->Begin() == 37591)
-//          Log::Warn << "r37591c" << node->Count() << ": " << distances.t();
+//        if (node->Begin() == 35871)
+//          Log::Warn << "r35871c" << node->Count() << ": " << distances.t();
       }
     }
 //    else
@@ -280,16 +342,21 @@ node->Stat().SecondClosestBound() << " is too loose! -- " << secondClosestDist
   // be rebuilt.
   node->Stat().ClosestQueryNode() = NULL;
 
-//  if (node->Begin() == 37591)
-//    Log::Warn << "scb for r37591c" << node->Count() << " updated to " <<
+//  if (node->Begin() == 35871)
+//    Log::Warn << "scb for r35871c" << node->Count() << " updated to " <<
 //node->Stat().SecondClosestBound() << ".\n";
 
-//  if (!node->Stat().HamerlyPruned())
+  if (!node->Stat().HamerlyPruned())
     for (size_t i = 0; i < node->NumChildren(); ++i)
       TreeUpdate(&node->Child(i), clusters, clusterDistances, assignments,
           centroids, dataset);
-}
 
+  node->Stat().LastSecondClosestBound() = node->Stat().SecondClosestBound() -
+      clusterDistances[clusters];
+  // This should change later, but I'm not yet sure how to do it.
+  node->Stat().SecondClosestBound() = DBL_MAX;
+  node->Stat().SecondClosestQueryNode() = NULL;
+}
 
 } // namespace kmeans
 } // namespace mlpack
