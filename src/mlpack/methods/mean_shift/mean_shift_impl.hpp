@@ -7,6 +7,11 @@
 
 #include "mean_shift.hpp"
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
+#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+#include <mlpack/methods/neighbor_search/neighbor_search_stat.hpp>
+
+
 
 namespace mlpack {
 namespace meanshift {
@@ -30,8 +35,42 @@ MeanShift(const double duplicateThresh,
 {
   // Nothing to do.
 }
+  
+  
+// Estimate duplicate thresh based on given dataset.
+template<typename KernelType,
+         typename MatType>
+double MeanShift<
+  KernelType,
+  MatType>::
+estimateDuplicateThresh(const MatType &data) {
+  
+  neighbor::NeighborSearch<
+    neighbor::NearestNeighborSort,
+    metric::EuclideanDistance,
+    tree::BinarySpaceTree<bound::HRectBound<2>,
+          neighbor::NeighborSearchStat<neighbor::NearestNeighborSort> >
+    > neighborSearch(data);
+  
+  /** 
+   * For each point in dataset, 
+   * select nNeighbors nearest points and get nNeighbors distances. 
+   * Use the maximum distance to estimate the duplicate thresh.
+   */
+  size_t nNeighbors = (int)(data.n_cols * 0.3);
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+  neighborSearch.Search(nNeighbors, neighbors, distances);
+  
+  // Get max distance for each point.
+  arma::rowvec maxDistances = max(distances);
+  
+  // Calc and return the duplicate thresh.
+  return sum(maxDistances) / (double)data.n_cols;
+  
+}
 
-/**
+ /**
   * Perform Mean Shift clustering on the data, returning a list of cluster
   * assignments and centroids.
   */
@@ -44,6 +83,12 @@ Cluster(const MatType& data,
         arma::Col<size_t>& assignments,
         arma::mat& centroids) {
   
+  if (duplicateThresh < 0) {
+    // An invalid duplicate thresh is given, an estimation is needed.
+    duplicateThresh = estimateDuplicateThresh(data);
+  }
+  
+  
   // all centroids before remove duplicate ones.
   arma::mat allCentroids(data.n_rows, data.n_cols);
   assignments.set_size(data.n_cols);
@@ -51,12 +96,11 @@ Cluster(const MatType& data,
   // for each point in dataset, perform mean shift algorithm.
   for (size_t i = 0; i < data.n_cols; ++i) {
     
-    size_t completedIterations = 0;
-    
     //initial centroid is the point itself.
     allCentroids.col(i) = data.col(i);
     
-    while (true) {
+    for (size_t completedIterations = 0; completedIterations < maxIterations;
+         completedIterations++) {
       
       // new centroid
       arma::Col<double> newCentroid = arma::zeros(data.n_rows, 1);
@@ -83,8 +127,7 @@ Cluster(const MatType& data,
       // update the centroid.
       allCentroids.col(i) = newCentroid;
       
-      if (arma::norm(mhVector, 2) < stopThresh ||
-          completedIterations > maxIterations) {
+      if (arma::norm(mhVector, 2) < stopThresh) {
         break;
       }
       
