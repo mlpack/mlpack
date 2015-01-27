@@ -372,42 +372,6 @@ node->Stat().SecondClosestQueryNode())))
     }
 
 //    if (node->Begin() == 16954)
-//      Log::Warn << "r16954c" << node->Count() << " now scb " <<
-//node->Stat().SecondClosestBound() << " and lscb " <<
-//node->Stat().LastSecondClosestBound() << ".\n";
-//      if (node->Begin() == 16954)
-//        Log::Warn << "Update second closest bound for r16954c" <<
-//node->Count() << " to " << node->Stat().SecondClosestBound() << ", which could "
-//      << "have been parent's (" << node->Parent()->Stat().SecondClosestBound()
-//<< ") or adjusted last iteration's (" << node->Stat().LastSecondClosestBound()
-//<< ").\n";
-
-//    if (node->Begin() == 16954)
-//      Log::Warn << "r16954c" << node->Count() << " has second bound " <<
-//node->Stat().SecondClosestBound() << " (q" << ((TreeType*)
-//node->Stat().SecondClosestQueryNode())->Begin() << "c" << ((TreeType*)
-//node->Stat().SecondClosestQueryNode())->Count() << ") and parent has second "
-//          << "bound " << node->Parent()->Stat().SecondClosestBound() << " (q"
-//          << ((TreeType*)
-//node->Parent()->Stat().SecondClosestQueryNode())->Begin() << "c" << ((TreeType*)
-//node->Parent()->Stat().SecondClosestQueryNode())->Count() << ").\n";
-/*
-    if (node->Parent() != NULL &&
-node->Parent()->Stat().SecondClosestQueryNode() != NULL &&
-node->Stat().SecondClosestQueryNode() != NULL && !IsDescendantOf(*((TreeType*)
-node->Stat().SecondClosestQueryNode()), *((TreeType*)
-node->Parent()->Stat().SecondClosestQueryNode())) &&
-node->Parent()->Stat().SecondClosestBound() < node->Stat().SecondClosestBound())
-    {
-//      if (node->Begin() == 16954)
-//        Log::Warn << "Take second closest bound for r16954c" <<
-//node->Count() << " from parent: " << node->Parent()->Stat().SecondClosestBound()
-//<< " (was " << node->Stat().SecondClosestBound() << ").\n";
-          node->Stat().SecondClosestBound() =
-node->Parent()->Stat().SecondClosestBound();
-    }*/
-
-//    if (node->Begin() == 16954)
 //    {
 //      Log::Warn << "Attempt Hamerly prune on r16954c" << node->Count() <<
 //          " with MQND " << node->Stat().MaxQueryNodeDistance() << ", scb "
@@ -464,19 +428,6 @@ node->Stat().SecondClosestBound() << " is too loose! -- " << secondClosestDist
       // No Hamerly prune, so we don't have a known owner.
       node->Stat().Owner() = clusters;
     }
-//    else
-//    {
-//      Log::Warn << "Failed Hamerly prune for r" << node->Begin() << "c" <<
-//          node->Count() << "; mqnd " << node->Stat().MaxQueryNodeDistance() <<
-//          ", scb " << node->Stat().SecondClosestBound() << ".\n";
-//    }
-
-//    if (node->Stat().SecondClosestBound() == DBL_MAX)
-//   {
-//      Log::Warn << "r" << node->Begin() << "c" << node->Count() << " never had "
-//          << "the second bound updated.\n";
-//    }
-
   }
   else
   {
@@ -500,14 +451,9 @@ node->Stat().SecondClosestBound() << " is too loose! -- " << secondClosestDist
   // be rebuilt.
   node->Stat().ClosestQueryNode() = NULL;
 
-//  if (node->Begin() == 16954)
-//    Log::Warn << "scb for r16954c" << node->Count() << " updated to " <<
-//node->Stat().SecondClosestBound() << ".\n";
-
-//  if (!node->Stat().HamerlyPruned())
-    for (size_t i = 0; i < node->NumChildren(); ++i)
-      TreeUpdate(&node->Child(i), clusters, clusterDistances, assignments,
-          centroids, dataset, oldFromNew, hamerlyPruned);
+  for (size_t i = 0; i < node->NumChildren(); ++i)
+    TreeUpdate(&node->Child(i), clusters, clusterDistances, assignments,
+        centroids, dataset, oldFromNew, hamerlyPruned);
 
   node->Stat().LastSecondClosestBound() = node->Stat().SecondClosestBound() -
       clusterDistances[clusters];
