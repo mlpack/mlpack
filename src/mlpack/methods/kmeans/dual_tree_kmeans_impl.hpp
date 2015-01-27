@@ -207,8 +207,6 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
 
   if (allSame)
     node->Stat().Owner() = cluster;
-  else
-    node->Stat().Owner() = clusters; // No owner.
 
   const bool prunedLastIteration = node->Stat().HamerlyPruned();
   node->Stat().HamerlyPruned() = false;
@@ -460,6 +458,11 @@ node->Stat().SecondClosestBound() << " is too loose! -- " << secondClosestDist
 //            << "Hamerly pruned.\n";
         hamerlyPruned += node->NumDescendants();
       }
+    }
+    else
+    {
+      // No Hamerly prune, so we don't have a known owner.
+      node->Stat().Owner() = clusters;
     }
 //    else
 //    {
