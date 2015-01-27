@@ -187,15 +187,15 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
     node->Stat().Owner() = node->Parent()->Stat().Owner();
 
   const size_t cluster = assignments[node->Descendant(0)];
-  if (node->Begin() == 16954)
-    Log::Info << "r16954c" << node->Count() << ", descendant 0 has cluster "
-        << cluster << ".\n";
+//  if (node->Begin() == 16954)
+//    Log::Info << "r16954c" << node->Count() << ", descendant 0 has cluster "
+//        << cluster << ".\n";
   bool allSame = true;
   for (size_t i = 1; i < node->NumDescendants(); ++i)
   {
-    if (node->Begin() == 16954)
-      Log::Info << "Descendant " << i << " has cluster " <<
-          assignments[node->Descendant(i)] << ".\n";
+//    if (node->Begin() == 16954)
+//      Log::Info << "Descendant " << i << " has cluster " <<
+//          assignments[node->Descendant(i)] << ".\n";
     if (assignments[node->Descendant(i)] != cluster)
     {
       allSame = false;
@@ -231,10 +231,10 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
     if (node->Stat().SecondClosestBound() == DBL_MAX && node->Parent() == NULL)
       node->Stat().SecondClosestBound() = 0.0; // Don't prune the root.
 
-    if (node->Begin() == 16954)
-      Log::Warn << "r16954c" << node->Count() << " scb " <<
-node->Stat().SecondClosestBound() << " and lscb " <<
-node->Stat().LastSecondClosestBound() << ".\n";
+//    if (node->Begin() == 16954)
+//      Log::Warn << "r16954c" << node->Count() << " scb " <<
+//node->Stat().SecondClosestBound() << " and lscb " <<
+//node->Stat().LastSecondClosestBound() << ".\n";
 
     // If both the second closest bound and last second closest bound are valid,
     // we have the option of taking the better of the two bounds.  But if only
@@ -266,26 +266,26 @@ node->Stat().LastSecondClosestBound() << ".\n";
       // pruned by the parent, and was thus never visited with this node.  This
       // situation occurs if the second closest query node is not a descendant
       // of the second closest query node of the parent.
-      if (node->Stat().SecondClosestQueryNode() != NULL)
-      {
-        if (node->Begin() == 16954)
-        {
-          Log::Warn << "Second closest query node is q" << ((TreeType*)
-node->Stat().SecondClosestQueryNode())->Begin() << "c" << ((TreeType*)
-node->Stat().SecondClosestQueryNode())->Count() << ", with scb " <<
-node->Stat().SecondClosestBound() << ".\n";
-          Log::Warn << "True SCB to this node should be " <<
-node->MinDistance((TreeType*) node->Stat().SecondClosestQueryNode()) << ".\n";
-        }
-      }
+//      if (node->Stat().SecondClosestQueryNode() != NULL)
+//      {
+//        if (node->Begin() == 16954)
+//        {
+//          Log::Warn << "Second closest query node is q" << ((TreeType*)
+//node->Stat().SecondClosestQueryNode())->Begin() << "c" << ((TreeType*)
+//node->Stat().SecondClosestQueryNode())->Count() << ", with scb " <<
+//node->Stat().SecondClosestBound() << ".\n";
+//          Log::Warn << "True SCB to this node should be " <<
+//node->MinDistance((TreeType*) node->Stat().SecondClosestQueryNode()) << ".\n";
+//        }
+//      }
 
-      if (node->Stat().ClosestQueryNode() != NULL)
-        if (node->Begin() == 16954)
-          Log::Warn << "Closest query node: q" << ((TreeType*)
-node->Stat().ClosestQueryNode())->Begin() << "c" << ((TreeType*)
-node->Stat().ClosestQueryNode())->Count() << ", with MQND " <<
-node->Stat().MaxQueryNodeDistance() << " and mQND " <<
-node->Stat().MinQueryNodeDistance() << ".\n";
+//      if (node->Stat().ClosestQueryNode() != NULL)
+//        if (node->Begin() == 16954)
+//          Log::Warn << "Closest query node: q" << ((TreeType*)
+//node->Stat().ClosestQueryNode())->Begin() << "c" << ((TreeType*)
+//node->Stat().ClosestQueryNode())->Count() << ", with MQND " <<
+//node->Stat().MaxQueryNodeDistance() << " and mQND " <<
+//node->Stat().MinQueryNodeDistance() << ".\n";
 
       // If the closest query node contains more than one descendant, we have to
       // find the closest...
@@ -327,21 +327,21 @@ node->Stat().MinQueryNodeDistance() << ".\n";
         if (secondClosestDistance < node->Stat().SecondClosestBound())
           node->Stat().SecondClosestBound() = secondClosestDistance;
 
-      if (node->Begin() == 16954)
-        Log::Warn << "After recalculation, closest for r" << node->Begin() << "c" << node->Count()
-<< " is " << closest << ", with mQND " << node->Stat().MinQueryNodeDistance() <<
-", MQND" << node->Stat().MaxQueryNodeDistance() << ", and scb " <<
-node->Stat().SecondClosestBound() << ", " << secondClosest << ".\n";
+//      if (node->Begin() == 16954)
+//        Log::Warn << "After recalculation, closest for r" << node->Begin() << "c" << node->Count()
+//<< " is " << closest << ", with mQND " << node->Stat().MinQueryNodeDistance() <<
+//", MQND" << node->Stat().MaxQueryNodeDistance() << ", and scb " <<
+//node->Stat().SecondClosestBound() << ", " << secondClosest << ".\n";
       }
 
       if (node->Parent() != NULL &&
 node->Parent()->Stat().SecondClosestQueryNode() != NULL)
-        if (node->Begin() == 16954)
-          Log::Warn << "Parent's (r" << node->Parent()->Begin() << "c"
-<< node->Parent()->Count() << ") second closest query node is q" << ((TreeType*)
-node->Parent()->Stat().SecondClosestQueryNode())->Begin() << "c" << ((TreeType*)
-node->Parent()->Stat().SecondClosestQueryNode())->Count() << ", with scb " <<
-node->Parent()->Stat().SecondClosestBound() << ".\n";
+//        if (node->Begin() == 16954)
+//          Log::Warn << "Parent's (r" << node->Parent()->Begin() << "c"
+//<< node->Parent()->Count() << ") second closest query node is q" << ((TreeType*)
+//node->Parent()->Stat().SecondClosestQueryNode())->Begin() << "c" << ((TreeType*)
+//node->Parent()->Stat().SecondClosestQueryNode())->Count() << ", with scb " <<
+//node->Parent()->Stat().SecondClosestBound() << ".\n";
 
       if (node->Parent() != NULL && 
           node->Stat().SecondClosestQueryNode() != NULL &&
@@ -352,11 +352,11 @@ node->Stat().SecondClosestQueryNode())))
         // Does this even work?
         const double minDistance = node->MinDistance((TreeType*)
             node->Parent()->Stat().SecondClosestQueryNode());
-        if (node->Begin() == 16954)
-          Log::Warn << "r16954c" << node->Count() << " has min distance " <<
-minDistance << " to SCQN of parent (q" << ((TreeType*)
-node->Parent()->Stat().SecondClosestQueryNode())->Begin() << "c" << ((TreeType*)
-node->Parent()->Stat().SecondClosestQueryNode())->Count() << ")\n";
+//        if (node->Begin() == 16954)
+//          Log::Warn << "r16954c" << node->Count() << " has min distance " <<
+//minDistance << " to SCQN of parent (q" << ((TreeType*)
+//node->Parent()->Stat().SecondClosestQueryNode())->Begin() << "c" << ((TreeType*)
+//node->Parent()->Stat().SecondClosestQueryNode())->Count() << ")\n";
 
         if (minDistance < node->Stat().SecondClosestBound())
         {
@@ -364,17 +364,17 @@ node->Parent()->Stat().SecondClosestQueryNode())->Count() << ")\n";
               node->Parent()->Stat().SecondClosestBound();
           node->Stat().SecondClosestQueryNode() =
               node->Parent()->Stat().SecondClosestQueryNode();
-          if (node->Begin() == 16954)
-            Log::Warn << "r16954c" << node->Count() << " has recalculated scb "
-                << node->Stat().SecondClosestBound() << ".\n";
+//          if (node->Begin() == 16954)
+//            Log::Warn << "r16954c" << node->Count() << " has recalculated scb "
+//                << node->Stat().SecondClosestBound() << ".\n";
         }
       }
     }
 
-    if (node->Begin() == 16954)
-      Log::Warn << "r16954c" << node->Count() << " now scb " <<
-node->Stat().SecondClosestBound() << " and lscb " <<
-node->Stat().LastSecondClosestBound() << ".\n";
+//    if (node->Begin() == 16954)
+//      Log::Warn << "r16954c" << node->Count() << " now scb " <<
+//node->Stat().SecondClosestBound() << " and lscb " <<
+//node->Stat().LastSecondClosestBound() << ".\n";
 //      if (node->Begin() == 16954)
 //        Log::Warn << "Update second closest bound for r16954c" <<
 //node->Count() << " to " << node->Stat().SecondClosestBound() << ", which could "
@@ -407,14 +407,14 @@ node->Parent()->Stat().SecondClosestBound() < node->Stat().SecondClosestBound())
 node->Parent()->Stat().SecondClosestBound();
     }*/
 
-    if (node->Begin() == 16954)
-    {
-      Log::Warn << "Attempt Hamerly prune on r16954c" << node->Count() <<
-          " with MQND " << node->Stat().MaxQueryNodeDistance() << ", scb "
-          << node->Stat().SecondClosestBound() << ", owner " <<
-node->Stat().Owner() << ", and clusterDistances " << clusterDistances[clusters]
-<< ".\n";
-    }
+//    if (node->Begin() == 16954)
+//    {
+//      Log::Warn << "Attempt Hamerly prune on r16954c" << node->Count() <<
+//          " with MQND " << node->Stat().MaxQueryNodeDistance() << ", scb "
+//          << node->Stat().SecondClosestBound() << ", owner " <<
+//node->Stat().Owner() << ", and clusterDistances " << clusterDistances[clusters]
+//<< ".\n";
+//    }
 
     // Check the second bound.  (This is time-consuming...)
     for (size_t j = 0; j < node->NumDescendants(); ++j)
@@ -431,8 +431,8 @@ node->Stat().Owner() << ", and clusterDistances " << clusterDistances[clusters]
         distances(i) = distance;
       }
 
-        if (node->Begin() == 16954)
-          Log::Warn << "r16954c" << node->Count() << ": " << distances.t();
+//        if (node->Begin() == 16954)
+//          Log::Warn << "r16954c" << node->Count() << ": " << distances.t();
       if (secondClosestDist < node->Stat().SecondClosestBound() - 1e-15)
       {
         Log::Warn << "r" << node->Begin() << "c" << node->Count() << ":\n";
@@ -451,7 +451,8 @@ node->Stat().SecondClosestBound() << " is too loose! -- " << secondClosestDist
         - clusterDistances[clusters])
     {
       node->Stat().HamerlyPruned() = true;
-      if (node->Begin() == 16954)
+//      if (node->Begin() == 16954)
+      if (!node->Parent()->Stat().HamerlyPruned())
         Log::Warn << "Mark r" << node->Begin() << "c" << node->Count() << " as "
             << "Hamerly pruned.\n";
     }
