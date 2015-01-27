@@ -296,7 +296,7 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
       {
         size_t closest = centroids.n_cols;
         double closestDistance = DBL_MAX;
-        size_t secondClosest = centroids.n_cols;
+//        size_t secondClosest = centroids.n_cols;
         double secondClosestDistance = DBL_MAX;
         for (size_t i = 0; i < cqn->NumDescendants(); ++i)
         {
@@ -308,14 +308,14 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
           ++distanceCalculations;
           if (distance < closestDistance)
           {
-            secondClosest = closest;
+//            secondClosest = closest;
             secondClosestDistance = closestDistance;
             closest = index;
             closestDistance = distance;
           }
           else if (distance < secondClosestDistance)
           {
-            secondClosest = index;
+//            secondClosest = index;
             secondClosestDistance = distance;
           }
         }

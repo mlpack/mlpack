@@ -389,7 +389,7 @@ double DualTreeKMeansRules<MetricType, TreeType>::ElkanTypeScore(
 
 template<typename MetricType, typename TreeType>
 double DualTreeKMeansRules<MetricType, TreeType>::PellegMooreScore(
-    TreeType& queryNode,
+    TreeType& /* queryNode */,
     TreeType& referenceNode,
     const double minDistance) const
 {
