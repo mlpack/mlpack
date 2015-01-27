@@ -43,17 +43,23 @@ class MeanShift
    * Create a Mean Shift object and set the parameters which Mean Shift
    * will be run with.
    *
-   * @param duplicateThresh If distance of two centroids is less than it, one will be removed.
+   * @param duplicateThresh If distance of two centroids is less than it, one will be removed. If this value is negative, an estimation will be given when clustering.
    * @param maxIterations Maximum number of iterations allowed before giving up
    * @param stopThresh If the 2-norm of the mean shift vector is less than stopThresh, 
    *        iterations will terminate.
    * @param kernel Optional KernelType object.
    */
-  MeanShift(const double duplicateThresh = 1.0,
+  MeanShift(const double duplicateThresh = -1,
             const size_t maxIterations = 1000,
             const double stopThresh = 1e-3,
             const KernelType kernel = KernelType());
   
+  
+  /**
+   * Give an estimation of duplicate thresh based on given dataset.
+   * @param data Dataset for estimation.
+   */
+  double estimateDuplicateThresh(const MatType& data);
   
   /**
    * Perform Mean Shift clustering on the data, returning a list of cluster

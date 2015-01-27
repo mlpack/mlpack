@@ -39,7 +39,8 @@ PARAM_DOUBLE("stopThresh", "If the 2-norm of the mean shift vector "
              "is less than stopThresh, iterations will terminate. ", "s", 1e-3);
 PARAM_DOUBLE("bandwidth", "bandwidth of Gaussian kernel ", "b", 1.0);
 PARAM_DOUBLE("duplicateThresh", "If distance of two centroids is less than duplicate thresh "
-             "one will be removed. ", "d", 1.0);
+             "one will be removed. "
+             "If it's negative, an estimation will be given. ", "d", -1.0);
 
 
 int main(int argc, char** argv) {
