@@ -20,18 +20,22 @@ namespace meanshift {
   * Construct the Mean Shift object.
   */
 template<typename KernelType,
+         typename MetricType,
          typename MatType>
 MeanShift<
   KernelType,
+  MetricType,
   MatType>::
 MeanShift(const double duplicateThresh,
           const size_t maxIterations,
           const double stopThresh,
-          const KernelType kernel) :
+          const KernelType kernel,
+          const MetricType metric) :
     duplicateThresh(duplicateThresh),
     maxIterations(maxIterations),
     stopThresh(stopThresh),
-    kernel(kernel)
+    kernel(kernel),
+    metric(metric)
 {
   // Nothing to do.
 }
@@ -39,15 +43,17 @@ MeanShift(const double duplicateThresh,
   
 // Estimate duplicate thresh based on given dataset.
 template<typename KernelType,
+         typename MetricType,
          typename MatType>
 double MeanShift<
   KernelType,
+  MetricType,
   MatType>::
 estimateDuplicateThresh(const MatType &data) {
   
   neighbor::NeighborSearch<
     neighbor::NearestNeighborSort,
-    metric::EuclideanDistance,
+    MetricType,
     tree::BinarySpaceTree<bound::HRectBound<2>,
           neighbor::NeighborSearchStat<neighbor::NearestNeighborSort> >
     > neighborSearch(data);
@@ -75,9 +81,11 @@ estimateDuplicateThresh(const MatType &data) {
   * assignments and centroids.
   */
 template<typename KernelType,
+         typename MetricType,
          typename MatType>
 inline void MeanShift<
     KernelType,
+    MetricType,
     MatType>::
 Cluster(const MatType& data,
         arma::Col<size_t>& assignments,
@@ -109,7 +117,8 @@ Cluster(const MatType& data,
       for (size_t j = 0; j < data.n_cols; ++j) {
         
         // calc weight for each point
-        double weight = kernel.Evaluate(allCentroids.col(i), data.col(j));
+        double weight = kernel.Evaluate(metric.Evaluate(allCentroids.col(i),
+                                                       data.col(j)));
         sumWeight += weight;
         
         // update new centroid.

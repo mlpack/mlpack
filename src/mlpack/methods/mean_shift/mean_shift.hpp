@@ -10,6 +10,7 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
+#include <mlpack/core/metrics/lmetric.hpp>
 
 namespace mlpack {
 namespace meanshift /** Mean Shift clustering. */ {
@@ -35,6 +36,7 @@ namespace meanshift /** Mean Shift clustering. */ {
  */
   
 template<typename KernelType = kernel::GaussianKernel,
+         typename MetricType = metric::EuclideanDistance,
          typename MatType = arma::mat>
 class MeanShift
 {
@@ -48,11 +50,13 @@ class MeanShift
    * @param stopThresh If the 2-norm of the mean shift vector is less than stopThresh, 
    *        iterations will terminate.
    * @param kernel Optional KernelType object.
+   * @param metric Optional the metric to calculate distance.
    */
   MeanShift(const double duplicateThresh = -1,
             const size_t maxIterations = 1000,
             const double stopThresh = 1e-3,
-            const KernelType kernel = KernelType());
+            const KernelType kernel = KernelType(),
+            const MetricType metric = MetricType());
   
   
   /**
@@ -89,6 +93,11 @@ class MeanShift
   //! Modify the kernel.
   KernelType& Kernel() { return kernel; }
   
+  //! Get the metric.
+  const MetricType& Metric() const { return metric; }
+  //! Modify the metric.
+  MetricType& Metric() { return metric; }
+  
   //! Get the duplicate thresh.
   double DuplicateThresh() const { return duplicateThresh; }
   //! Set the duplicate thresh.
@@ -110,6 +119,9 @@ class MeanShift
   
   //! Instantiated kernel.
   KernelType kernel;
+  
+  //! Instantiated metric.
+  MetricType metric;
   
 };
 
