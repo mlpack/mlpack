@@ -66,7 +66,8 @@ class DualTreeKMeans
                   const arma::vec& clusterDistances,
                   const arma::Col<size_t>& assignments,
                   const arma::mat& oldCentroids,
-                  const arma::mat& dataset);
+                  const arma::mat& dataset,
+                  const std::vector<size_t>& oldFromNew);
 };
 
 template<typename MetricType, typename MatType>
