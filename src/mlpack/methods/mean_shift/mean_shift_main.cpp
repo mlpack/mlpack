@@ -70,8 +70,7 @@ int main(int argc, char** argv) {
   arma::mat centroids;
   arma::Col<size_t> assignments;
   
-  kernel::GaussianKernel kernel;
-  kernel.Bandwidth(bandwidth);
+  kernel::GaussianKernel kernel(bandwidth);
   
   MeanShift<> meanShift(duplicateThresh,
                                                          maxIterations, stopThresh, kernel);

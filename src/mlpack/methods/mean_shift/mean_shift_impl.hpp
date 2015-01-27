@@ -119,8 +119,6 @@ Cluster(const MatType& data,
       
       newCentroid /= sumWeight;
       
-      completedIterations ++;
-      
       // calc the mean shift vector.
       arma::Col<double> mhVector = newCentroid - allCentroids.col(i);
       
@@ -128,42 +126,35 @@ Cluster(const MatType& data,
       allCentroids.col(i) = newCentroid;
       
       if (arma::norm(mhVector, 2) < stopThresh) {
+        
+        // Determine if the new centroid is duplicate with old ones.
+        bool isDuplicated = false;
+        for (size_t k = 0; k < centroids.n_cols; ++k) {
+          arma::Col<double> delta = allCentroids.col(i) - centroids.col(k);
+          if (norm(delta, 2) < duplicateThresh) {
+            isDuplicated = true;
+            assignments(i) = k;
+            break;
+          }
+        }
+        
+        if (!isDuplicated) {
+          // this centroid is a new centroid.
+          if (centroids.n_cols == 0) {
+            centroids.insert_cols(0, allCentroids.col(i));
+            assignments(i) = 0;
+          } else {
+            centroids.insert_cols(centroids.n_cols, allCentroids.col(i));
+            assignments(i) = centroids.n_cols - 1;
+          }
+        }
+        
+        // Get out of the loop.
         break;
       }
       
     }
     
-  }
-  
-  // remove duplicate centroids.
-  for (size_t i = 0; i < allCentroids.n_cols; ++i) {
-    
-    bool isDuplicated = false;
-    
-    /** 
-     * if a centroid is a neighbouring point of existing points,
-     * remove it and update corresponding assignments.
-     */
-    for (size_t j = 0; j < centroids.n_cols; ++j) {
-      arma::Col<double> delta = allCentroids.col(i) - centroids.col(j);
-      if (norm(delta, 2) < duplicateThresh) {
-        isDuplicated = true;
-        assignments(i) = j;
-        break;
-      }
-    }
-    
-    if (!isDuplicated) {
-      
-      // this centroid is a new centroid.
-      if (centroids.n_cols == 0) {
-        centroids.insert_cols(0, allCentroids.col(i));
-        assignments(i) = 0;
-      } else {
-        centroids.insert_cols(centroids.n_cols, allCentroids.col(i));
-        assignments(i) = centroids.n_cols - 1;
-      }
-    }
   }
   
 }
