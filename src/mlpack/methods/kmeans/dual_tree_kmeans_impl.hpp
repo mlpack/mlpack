@@ -126,8 +126,9 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   }
 
   // Update the tree with the centroid movement information.
+  size_t hamerlyPruned = 0;
   TreeUpdate(tree, centroids.n_cols, clusterDistances, assignments,
-      oldCentroids, dataset, oldFromNewCentroids);
+      oldCentroids, dataset, oldFromNewCentroids, hamerlyPruned);
 
   delete centroidTree;
 
@@ -178,7 +179,8 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
     const arma::Col<size_t>& assignments,
     const arma::mat& centroids,
     const arma::mat& dataset,
-    const std::vector<size_t>& oldFromNew)
+    const std::vector<size_t>& oldFromNew,
+    size_t& hamerlyPruned)
 {
   // This is basically IterationUpdate(), but pulled out to be separate from the
   // actual dual-tree algorithm.
@@ -453,8 +455,11 @@ node->Stat().SecondClosestBound() << " is too loose! -- " << secondClosestDist
       node->Stat().HamerlyPruned() = true;
 //      if (node->Begin() == 16954)
       if (!node->Parent()->Stat().HamerlyPruned())
-        Log::Warn << "Mark r" << node->Begin() << "c" << node->Count() << " as "
-            << "Hamerly pruned.\n";
+      {
+//        Log::Warn << "Mark r" << node->Begin() << "c" << node->Count() << " as "
+//            << "Hamerly pruned.\n";
+        hamerlyPruned += node->NumDescendants();
+      }
     }
 //    else
 //    {
@@ -499,13 +504,16 @@ node->Stat().SecondClosestBound() << " is too loose! -- " << secondClosestDist
 //  if (!node->Stat().HamerlyPruned())
     for (size_t i = 0; i < node->NumChildren(); ++i)
       TreeUpdate(&node->Child(i), clusters, clusterDistances, assignments,
-          centroids, dataset, oldFromNew);
+          centroids, dataset, oldFromNew, hamerlyPruned);
 
   node->Stat().LastSecondClosestBound() = node->Stat().SecondClosestBound() -
       clusterDistances[clusters];
   // This should change later, but I'm not yet sure how to do it.
   node->Stat().SecondClosestBound() = DBL_MAX;
   node->Stat().SecondClosestQueryNode() = NULL;
+
+  if (node->Parent() == NULL)
+    Log::Info << "Total Hamerly pruned points: " << hamerlyPruned << ".\n";
 }
 
 } // namespace kmeans
