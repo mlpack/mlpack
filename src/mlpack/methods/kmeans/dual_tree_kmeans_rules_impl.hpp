@@ -113,8 +113,8 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
 
   traversalInfo.LastReferenceNode() = &referenceNode;
 
-  if (referenceNode.Begin() == 37408)
-    Log::Warn << "Visit r37408c" << referenceNode.Count() << ", q" <<
+  if (referenceNode.Begin() == 23058)
+    Log::Warn << "Visit r23058c" << referenceNode.Count() << ", q" <<
 queryNode.Begin() << "c" << queryNode.Count() << ".\n";
 
   // If there's no closest query node assigned, but the parent has one, take
@@ -123,8 +123,8 @@ queryNode.Begin() << "c" << queryNode.Count() << ".\n";
       referenceNode.Parent() != NULL &&
       referenceNode.Parent()->Stat().ClosestQueryNode() != NULL)
   {
-    if (referenceNode.Begin() == 37408)
-      Log::Warn << "Update closest query node for r37408c" <<
+    if (referenceNode.Begin() == 23058)
+      Log::Warn << "Update closest query node for r23058c" <<
 referenceNode.Count() << " to parent's, which is "
           << ((TreeType*)
 referenceNode.Parent()->Stat().ClosestQueryNode())->Begin() << "c" <<
@@ -139,8 +139,8 @@ referenceNode.Parent()->Stat().ClosestQueryNode())->Begin() << "c" <<
 //    referenceNode.Stat().SecondClosestBound() = std::min(
 //        referenceNode.Parent()->Stat().SecondClosestBound(),
 //        referenceNode.Stat().SecondClosestBound());
-//    if (referenceNode.Begin() == 37408)
-//      Log::Warn << "Update second closest bound for r37408c" <<
+//    if (referenceNode.Begin() == 23058)
+//      Log::Warn << "Update second closest bound for r23058c" <<
 //referenceNode.Count() << " to parent's, which "
 //          << "is " << referenceNode.Stat().SecondClosestBound() << ".\n";
   }
@@ -148,8 +148,8 @@ referenceNode.Parent()->Stat().ClosestQueryNode())->Begin() << "c" <<
   double score = HamerlyTypeScore(referenceNode);
   if (score == DBL_MAX)
   {
-    if (referenceNode.Begin() == 37408)
-      Log::Warn << "Hamerly prune for r37408c" << referenceNode.Count() << ", q" << queryNode.Begin() << "c" <<
+    if (referenceNode.Begin() == 23058)
+      Log::Warn << "Hamerly prune for r23058c" << referenceNode.Count() << ", q" << queryNode.Begin() << "c" <<
 queryNode.Count() << ".\n";
     if (origPruned == size_t(-1))
     {
@@ -175,8 +175,8 @@ queryNode.Count() << ".\n";
       const double minDistance = referenceNode.MinDistance(&queryNode);
       ++distanceCalculations;
       score = PellegMooreScore(queryNode, referenceNode, minDistance);
-      if (referenceNode.Begin() == 37408)
-        Log::Warn << "mQND for r37408c" << referenceNode.Count() << " is "
+      if (referenceNode.Begin() == 23058)
+        Log::Warn << "mQND for r23058c" << referenceNode.Count() << " is "
             << referenceNode.Stat().MinQueryNodeDistance() << "; minDistance "
             << minDistance << ", scb " <<
 referenceNode.Stat().SecondClosestBound() << ".\n";
@@ -195,8 +195,8 @@ referenceNode.Stat().SecondClosestBound() << ".\n";
               referenceNode.Stat().MinQueryNodeDistance();
           referenceNode.Stat().SecondClosestQueryNode() =
               referenceNode.Stat().ClosestQueryNode();
-          if (referenceNode.Begin() == 37408)
-            Log::Warn << "scb for r37408c" << referenceNode.Count() << " taken "
+          if (referenceNode.Begin() == 23058)
+            Log::Warn << "scb for r23058c" << referenceNode.Count() << " taken "
                 << "from minDistance, which is " <<
 referenceNode.Stat().MinQueryNodeDistance() << ".\n";
         }
@@ -207,8 +207,8 @@ referenceNode.Stat().MinQueryNodeDistance() << ".\n";
         {
           referenceNode.Stat().SecondClosestBound() = minDistance;
           referenceNode.Stat().SecondClosestQueryNode() = &queryNode;
-          if (referenceNode.Begin() == 37408)
-            Log::Warn << "scb for r37408c" << referenceNode.Count() << " taken "
+          if (referenceNode.Begin() == 23058)
+            Log::Warn << "scb for r23058c" << referenceNode.Count() << " taken "
                 << "from minDistance for pruned query node, which is " <<
 minDistance << ".\n";
         }
@@ -220,8 +220,8 @@ minDistance << ".\n";
           referenceNode.Stat().MinQueryNodeDistance() = minDistance;
           referenceNode.Stat().MaxQueryNodeDistance() = maxDistance;
 
-          if (referenceNode.Begin() == 37408)
-            Log::Warn << "mQND for r37408c" << referenceNode.Count() << " updated to " << minDistance << " and "
+          if (referenceNode.Begin() == 23058)
+            Log::Warn << "mQND for r23058c" << referenceNode.Count() << " updated to " << minDistance << " and "
               << "MQND to " << maxDistance << " with furthest query node " <<
               queryNode.Begin() << "c" << queryNode.Count() << ".\n";
         }
@@ -229,8 +229,8 @@ minDistance << ".\n";
       else if (IsDescendantOf(*((TreeType*)
           referenceNode.Stat().ClosestQueryNode()), queryNode))
       {
-        if (referenceNode.Begin() == 37408)
-          Log::Warn << "Old closest for r37408c" << referenceNode.Count() <<
+        if (referenceNode.Begin() == 23058)
+          Log::Warn << "Old closest for r23058c" << referenceNode.Count() <<
               " is q" << ((TreeType*)
 referenceNode.Stat().ClosestQueryNode())->Begin() << "c" << ((TreeType*)
 referenceNode.Stat().ClosestQueryNode())->Count() << " with mQND " <<
@@ -242,8 +242,8 @@ referenceNode.Stat().MaxQueryNodeDistance() << ".\n";
         referenceNode.Stat().MinQueryNodeDistance() = minDistance;
         referenceNode.Stat().MaxQueryNodeDistance() = maxDistance;
 
-        if (referenceNode.Begin() == 37408)
-          Log::Warn << "mQND for r37408c" << referenceNode.Count() << " updated to " << minDistance << " and "
+        if (referenceNode.Begin() == 23058)
+          Log::Warn << "mQND for r23058c" << referenceNode.Count() << " updated to " << minDistance << " and "
               << "MQND to " << maxDistance << " via descendant with fqn " <<
               queryNode.Begin() << "c" << queryNode.Count() << ".\n";
       }
@@ -251,8 +251,8 @@ referenceNode.Stat().MaxQueryNodeDistance() << ".\n";
       {
         referenceNode.Stat().SecondClosestBound() = minDistance;
         referenceNode.Stat().SecondClosestQueryNode() = &queryNode;
-        if (referenceNode.Begin() == 37408)
-          Log::Warn << "scb for r37408c" << referenceNode.Count() << " updated to " << minDistance << " via "
+        if (referenceNode.Begin() == 23058)
+          Log::Warn << "scb for r23058c" << referenceNode.Count() << " updated to " << minDistance << " via "
               << queryNode.Begin() << "c" << queryNode.Count() << ".\n";
       }
     }
@@ -264,7 +264,7 @@ referenceNode.Stat().MaxQueryNodeDistance() << ".\n";
       ++distanceCalculations;
       if (minDistance < referenceNode.Stat().SecondClosestBound())
       {
-        if (referenceNode.Begin() == 37408)
+        if (referenceNode.Begin() == 23058)
           Log::Warn << "After Elkan prune, update scb to " << minDistance <<
 ".\n";
 
@@ -285,8 +285,8 @@ referenceNode.Stat().MaxQueryNodeDistance() << ".\n";
   if (score == DBL_MAX)
   {
     referenceNode.Stat().ClustersPruned() += queryNode.NumDescendants();
-    if (referenceNode.Begin() == 37408)
-      Log::Warn << "For r37408c" << referenceNode.Count() << ", q" <<
+    if (referenceNode.Begin() == 23058)
+      Log::Warn << "For r23058c" << referenceNode.Count() << ", q" <<
 queryNode.Begin() << "c" << queryNode.Count() << " is pruned.  Min distance is"
     << " " << queryNode.MinDistance(&referenceNode) << " and scb is " <<
 referenceNode.Stat().SecondClosestBound() << ".\n";
@@ -344,7 +344,7 @@ double DualTreeKMeansRules<MetricType, TreeType>::HamerlyTypeScore(
 {
   if (referenceNode.Stat().HamerlyPruned())
   {
-//    if (referenceNode.Begin() == 37408)
+//    if (referenceNode.Begin() == 23058)
 //      Log::Warn << "Hamerly prune! r" << referenceNode.Begin() << "c" <<
 //referenceNode.Count() << ".\n";
     return DBL_MAX;
@@ -392,8 +392,8 @@ double DualTreeKMeansRules<MetricType, TreeType>::ElkanTypeScore(
           queryNode)) &&
       (&queryNode != (TreeType*) referenceNode.Stat().ClosestQueryNode()))
   {
-    if (referenceNode.Begin() == 37408)
-      Log::Warn << "Elkan prune r37408c" << referenceNode.Count() << ", q" <<
+    if (referenceNode.Begin() == 23058)
+      Log::Warn << "Elkan prune r23058c" << referenceNode.Count() << ", q" <<
 queryNode.Begin() << "c" << queryNode.Count() << "!\n";
     // Then we can conclude d_max(best(N_r), N_r) <= d_min(N_q, N_r) which
     // means that N_q cannot possibly hold any clusters that own any points in
@@ -413,14 +413,14 @@ double DualTreeKMeansRules<MetricType, TreeType>::PellegMooreScore(
   // If the minimum distance to the node is greater than the bound, then every
   // cluster in the query node cannot possibly be the nearest neighbor of any of
   // the points in the reference node.
-//  if (referenceNode.Begin() == 37408)
-//      Log::Warn << "Pelleg-Moore prune attempt r37408c" << referenceNode.Count() << ", "
+//  if (referenceNode.Begin() == 23058)
+//      Log::Warn << "Pelleg-Moore prune attempt r23058c" << referenceNode.Count() << ", "
 //          << "q" << queryNode.Begin() << "c" << queryNode.Count() << "; "
 //          << "minDistance " << minDistance << ", MQND " <<
 //referenceNode.Stat().MaxQueryNodeDistance() << ".\n";
   if (minDistance > referenceNode.Stat().MaxQueryNodeDistance())
   {
-//    if (referenceNode.Begin() == 37408)
+//    if (referenceNode.Begin() == 23058)
 //      Log::Warn << "Attempt successful!\n";
     return DBL_MAX;
   }

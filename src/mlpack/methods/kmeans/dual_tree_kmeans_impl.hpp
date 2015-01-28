@@ -165,6 +165,8 @@ bool IsDescendantOf(
 {
   if (potentialChild.Parent() == &potentialParent)
     return true;
+  else if (&potentialChild == &potentialParent)
+    return true;
   else if (potentialChild.Parent() == NULL)
     return false;
   else
@@ -205,8 +207,8 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
   const bool prunedLastIteration = node->Stat().HamerlyPruned();
   node->Stat().HamerlyPruned() = false;
 
-  if (node->Begin() == 37408)
-    Log::Warn << "r37408c" << node->Count() << " has owner " <<
+  if (node->Begin() == 23058)
+    Log::Warn << "r23058c" << node->Count() << " has owner " <<
 node->Stat().Owner() << ".\n";
 
   // The easy case: this node had an owner.
@@ -229,8 +231,8 @@ node->Stat().Owner() << ".\n";
     if (node->Stat().SecondClosestBound() == DBL_MAX && node->Parent() == NULL)
       node->Stat().SecondClosestBound() = 0.0; // Don't prune the root.
 
-    if (node->Begin() == 37408)
-      Log::Warn << "r37408c" << node->Count() << " scb " <<
+    if (node->Begin() == 23058)
+      Log::Warn << "r23058c" << node->Count() << " scb " <<
 node->Stat().SecondClosestBound() << " and lscb " <<
 node->Stat().LastSecondClosestBound() << ".\n";
 
@@ -266,7 +268,7 @@ node->Stat().LastSecondClosestBound() << ".\n";
       // of the second closest query node of the parent.
       if (node->Stat().SecondClosestQueryNode() != NULL)
       {
-        if (node->Begin() == 37408)
+        if (node->Begin() == 23058)
         {
           Log::Warn << "Second closest query node is q" << ((TreeType*)
 node->Stat().SecondClosestQueryNode())->Begin() << "c" << ((TreeType*)
@@ -278,7 +280,7 @@ node->MinDistance((TreeType*) node->Stat().SecondClosestQueryNode()) << ".\n";
       }
 
       if (node->Stat().ClosestQueryNode() != NULL)
-        if (node->Begin() == 37408)
+        if (node->Begin() == 23058)
           Log::Warn << "Closest query node: q" << ((TreeType*)
 node->Stat().ClosestQueryNode())->Begin() << "c" << ((TreeType*)
 node->Stat().ClosestQueryNode())->Count() << ", with MQND " <<
@@ -325,7 +327,7 @@ node->Stat().MinQueryNodeDistance() << ".\n";
         if (secondClosestDistance < node->Stat().SecondClosestBound())
           node->Stat().SecondClosestBound() = secondClosestDistance;
 
-      if (node->Begin() == 37408)
+      if (node->Begin() == 23058)
         Log::Warn << "After recalculation, closest for r" << node->Begin() << "c" << node->Count()
 << " is " << closest << ", with mQND " << node->Stat().MinQueryNodeDistance() <<
 ", MQND" << node->Stat().MaxQueryNodeDistance() << ", and scb " <<
@@ -334,7 +336,7 @@ node->Stat().SecondClosestBound() << ", " << secondClosest << ".\n";
 
 //      if (node->Parent() != NULL &&
 //node->Parent()->Stat().SecondClosestQueryNode() != NULL)
-//        if (node->Begin() == 37408)
+//        if (node->Begin() == 23058)
 //          Log::Warn << "Parent's (r" << node->Parent()->Begin() << "c"
 //<< node->Parent()->Count() << ") second closest query node is q" << ((TreeType*)
 //node->Parent()->Stat().SecondClosestQueryNode())->Begin() << "c" << ((TreeType*)
@@ -353,20 +355,30 @@ node->Stat().SecondClosestBound() << ", " << secondClosest << ".\n";
           (TreeType*) parent->Stat().SecondClosestQueryNode();
       TreeType* parentCqn = (parent == NULL) ? NULL :
           (TreeType*) parent->Stat().ClosestQueryNode();
+      if (parentScqn != NULL && node->Begin() == 23058)
+        Log::Warn << "Parent (" << parent->Begin() << "c" << parent->Count() <<
+") SCB is " << parent->Stat().SecondClosestBound() << ", "
+            << "with q" << parentScqn->Begin() << "c" << parentScqn->Count() <<
+".\n";
       if (scqn != NULL && parentScqn != NULL &&
           !IsDescendantOf(*parentScqn, *scqn) &&
           !IsDescendantOf(*parentCqn, *scqn) &&
           (parent->Stat().SecondClosestBound() <
               node->Stat().SecondClosestBound()))
       {
+        if (node->Begin() == 23058)
+          Log::Warn << "Take parent's SCB of " <<
+parent->Stat().SecondClosestBound() << "; parent SCQN is " <<
+parentScqn->Begin() << "c" << parentScqn->Count() << ", parent CQN is " <<
+parentCqn->Begin() << "c" << parentCqn->Count() << ".\n";
         node->Stat().SecondClosestBound() = parent->Stat().SecondClosestBound();
         node->Stat().SecondClosestQueryNode() = parentScqn;
       }
     }
 
-    if (node->Begin() == 37408)
+    if (node->Begin() == 23058)
     {
-      Log::Warn << "Attempt Hamerly prune on r37408c" << node->Count() <<
+      Log::Warn << "Attempt Hamerly prune on r23058c" << node->Count() <<
           " with MQND " << node->Stat().MaxQueryNodeDistance() << ", scb "
           << node->Stat().SecondClosestBound() << ", owner " <<
 node->Stat().Owner() << ", and clusterDistances " << clusterDistances[clusters]
@@ -374,7 +386,7 @@ node->Stat().Owner() << ", and clusterDistances " << clusterDistances[clusters]
     }
 
     // Check the second bound.  (This is time-consuming...)
-/*    arma::vec minDistances(centroids.n_cols);
+    arma::vec minDistances(centroids.n_cols);
     for (size_t j = 0; j < node->NumDescendants(); ++j)
     {
       arma::vec distances(centroids.n_cols);
@@ -393,8 +405,8 @@ node->Stat().Owner() << ", and clusterDistances " << clusterDistances[clusters]
       }
 
       if (j == 0)
-        if (node->Begin() == 37408)
-          Log::Warn << "r37408c" << node->Count() << ": " << minDistances.t();
+        if (node->Begin() == 23058)
+          Log::Warn << "r23058c" << node->Count() << ": " << minDistances.t();
       if (secondClosestDist < node->Stat().SecondClosestBound() - 1e-15)
       {
         Log::Warn << "r" << node->Begin() << "c" << node->Count() << ":\n";
@@ -407,7 +419,7 @@ node->Stat().SecondClosestBound() << " is too loose! -- " << secondClosestDist
             << "! (" << node->Stat().SecondClosestBound() - secondClosestDist
 << ")\n";
       }
-    }*/
+    }
 
 
     if (node->Stat().MaxQueryNodeDistance() < node->Stat().SecondClosestBound()
@@ -416,7 +428,7 @@ node->Stat().SecondClosestBound() << " is too loose! -- " << secondClosestDist
       node->Stat().HamerlyPruned() = true;
       if (!node->Parent()->Stat().HamerlyPruned())
       {
-        if (node->Begin() == 37408)
+        if (node->Begin() == 23058)
           Log::Warn << "Mark r" << node->Begin() << "c" << node->Count() << " as "
             << "Hamerly pruned.\n";
         hamerlyPruned += node->NumDescendants();
