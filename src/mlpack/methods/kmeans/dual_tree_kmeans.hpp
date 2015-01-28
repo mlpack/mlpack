@@ -61,6 +61,10 @@ class DualTreeKMeans
   void ClusterTreeUpdate(TreeType* node,
                          const arma::mat& distances);
 
+  void UpdateOwner(TreeType* node,
+                   const size_t clusters,
+                   const arma::Col<size_t>& assignments) const;
+
   void TreeUpdate(TreeType* node,
                   const size_t clusters,
                   const arma::vec& clusterDistances,
