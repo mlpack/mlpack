@@ -28,6 +28,8 @@ double HamerlyKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
                                                    arma::mat& newCentroids,
                                                    arma::Col<size_t>& counts)
 {
+  size_t hamerlyPruned = 0;
+
   // If this is the first iteration, we need to set all the bounds.
   if (minClusterDistances.n_elem != centroids.n_cols)
   {
@@ -68,6 +70,7 @@ double HamerlyKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
     // First bound test.
     if (upperBounds(i) <= m)
     {
+      ++hamerlyPruned;
       newCentroids.col(assignments[i]) += dataset.col(i);
       ++counts(assignments[i]);
       continue;
@@ -160,6 +163,8 @@ double HamerlyKMeans<MetricType, MatType>::Iterate(const arma::mat& centroids,
     else
       lowerBounds(i) -= furthestMovement;
   }
+
+  Log::Info << "Hamerly prunes: " << hamerlyPruned << ".\n";
 
   return std::sqrt(centroidMovement);
 }

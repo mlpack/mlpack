@@ -39,7 +39,7 @@ DualTreeKMeans<MetricType, MatType, TreeType>::DualTreeKMeans(
     datasetCopy = datasetOrig;
 
   // Now build the tree.  We don't need any mappings.
-  tree = new TreeType(const_cast<typename TreeType::Mat&>(this->dataset));
+  tree = new TreeType(const_cast<typename TreeType::Mat&>(this->dataset), 1);
 
   Timer::Stop("tree_building");
 }
@@ -186,9 +186,14 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
 {
   // This is basically IterationUpdate(), but pulled out to be separate from the
   // actual dual-tree algorithm.
-
+  if (node->Begin() == 26038)
+    Log::Warn << "r26038c" << node->Count() << " has owner " <<
+node->Stat().Owner() << ".\n";
   if (node->Parent() != NULL && node->Parent()->Stat().Owner() < clusters)
     node->Stat().Owner() = node->Parent()->Stat().Owner();
+  if (node->Begin() == 26038)
+    Log::Warn << "r26038c" << node->Count() << " has owner " <<
+node->Stat().Owner() << " after parent check.\n";
 
   const size_t cluster = assignments[node->Descendant(0)];
   bool allSame = true;
@@ -203,17 +208,50 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
 
   if (allSame)
     node->Stat().Owner() = cluster;
+  else
+    node->Stat().Owner() = centroids.n_cols;
+  if (node->Begin() == 26038)
+    Log::Warn << "r26038c" << node->Count() << " has manually set owner " <<
+node->Stat().Owner() << ".\n";
 
   const bool prunedLastIteration = node->Stat().HamerlyPruned();
   node->Stat().HamerlyPruned() = false;
 
-  if (node->Begin() == 23058)
-    Log::Warn << "r23058c" << node->Count() << " has owner " <<
+  if (node->Begin() == 26038)
+    Log::Warn << "r26038c" << node->Count() << " has owner " <<
 node->Stat().Owner() << ".\n";
 
   // The easy case: this node had an owner.
   if (node->Stat().Owner() < clusters)
   {
+    // Verify correctness...
+    for (size_t i = 0; i < node->NumDescendants(); ++i)
+    {
+      size_t closest = clusters;
+      double closestDistance = DBL_MAX;
+      arma::vec distances(centroids.n_cols);
+      for (size_t j = 0; j < centroids.n_cols; ++j)
+      {
+        const double distance = metric.Evaluate(centroids.col(j),
+            dataset.col(node->Descendant(i)));
+        if (distance < closestDistance)
+        {
+          closest = j;
+          closestDistance = distance;
+        }
+        distances(j) = distance;
+      }
+
+      if (closest != node->Stat().Owner())
+      {
+        Log::Warn << distances.t();
+        Log::Fatal << "Point " << node->Descendant(i) << " mistakenly assigned "
+            << "to cluster " << node->Stat().Owner() << ", but should be " <<
+closest << "!  It's part of node r" << node->Begin() << "c" << node->Count() <<
+".\n";
+      }
+    }
+
     // During the last iteration, this node was pruned.
     const size_t owner = node->Stat().Owner();
     if (node->Stat().MaxQueryNodeDistance() != DBL_MAX)
@@ -221,223 +259,50 @@ node->Stat().Owner() << ".\n";
     if (node->Stat().MinQueryNodeDistance() != DBL_MAX)
       node->Stat().MinQueryNodeDistance() += clusterDistances[owner];
 
-    // Check if we can perform a Hamerly prune: if the node has an owner, and
-    // the second closest cluster could not have moved close enough that any
-    // points could have changed assignment, then this node *must* belong to the
-    // same owner in the next iteration.  Note that MaxQueryNodeDistance() has
-    // already been adjusted for cluster movement.
-
-    // Re-set second closest bound if necessary.
-    if (node->Stat().SecondClosestBound() == DBL_MAX && node->Parent() == NULL)
-      node->Stat().SecondClosestBound() = 0.0; // Don't prune the root.
-
-    if (node->Begin() == 23058)
-      Log::Warn << "r23058c" << node->Count() << " scb " <<
-node->Stat().SecondClosestBound() << " and lscb " <<
-node->Stat().LastSecondClosestBound() << ".\n";
-
-    // If both the second closest bound and last second closest bound are valid,
-    // we have the option of taking the better of the two bounds.  But if only
-    // one is valid, take the minimum of the two (which will be the valid one).
-    // If neither is valid, then we end up with a second closest bound of
-    // DBL_MAX.
-    const double scb = node->Stat().SecondClosestBound();
-    const double lscb = node->Stat().LastSecondClosestBound();
-    if (scb != DBL_MAX && lscb != DBL_MAX)
-      node->Stat().SecondClosestBound() = std::max(scb, lscb);
-    else
-      node->Stat().SecondClosestBound() = std::min(scb, lscb);
-
-    // But if we were Hamerly pruned last time, we can't trust the second
-    // closest bound and thus have to take last iteration's.
     if (prunedLastIteration)
-      node->Stat().SecondClosestBound() = lscb;
-    else
     {
-      // Now, we must ensure that we don't need to take the parent's second
-      // closest bound.  We surely do if the current bound is DBL_MAX.  We
-      // already took care of the root node earlier so we don't need to check if
-      // Parent() is NULL.
-      if (node->Stat().SecondClosestBound() == DBL_MAX)
-        node->Stat().SecondClosestBound() =
-            node->Parent()->Stat().SecondClosestBound();
-
-      // There may exist a case where the true second closest query node got
-      // pruned by the parent, and was thus never visited with this node.  This
-      // situation occurs if the second closest query node is not a descendant
-      // of the second closest query node of the parent.
-      if (node->Stat().SecondClosestQueryNode() != NULL)
+      // Can we continue being Hamerly pruned?  If not, we'll have to update the
+      // bound next iteration.
+      if (node->Begin() == 26038)
+        Log::Warn << "r26038c" << node->Count() << ": check sustained Hamerly "
+            << "prune with MQND " << node->Stat().MaxQueryNodeDistance() << ", "
+            << "lscb " << node->Stat().LastSecondClosestBound() << ", cd "
+            << clusterDistances[clusters] << ".\n";
+      if (node->Stat().MaxQueryNodeDistance() <
+          node->Stat().LastSecondClosestBound() - clusterDistances[clusters])
       {
-        if (node->Begin() == 23058)
-        {
-          Log::Warn << "Second closest query node is q" << ((TreeType*)
-node->Stat().SecondClosestQueryNode())->Begin() << "c" << ((TreeType*)
-node->Stat().SecondClosestQueryNode())->Count() << ", with scb " <<
-node->Stat().SecondClosestBound() << ".\n";
-          Log::Warn << "True SCB to this node should be " <<
-node->MinDistance((TreeType*) node->Stat().SecondClosestQueryNode()) << ".\n";
-        }
-      }
-
-      if (node->Stat().ClosestQueryNode() != NULL)
-        if (node->Begin() == 23058)
-          Log::Warn << "Closest query node: q" << ((TreeType*)
-node->Stat().ClosestQueryNode())->Begin() << "c" << ((TreeType*)
-node->Stat().ClosestQueryNode())->Count() << ", with MQND " <<
-node->Stat().MaxQueryNodeDistance() << " and mQND " <<
-node->Stat().MinQueryNodeDistance() << ".\n";
-
-      // If the closest query node contains more than one descendant, we have to
-      // find the closest...
-      TreeType* cqn = (TreeType*) node->Stat().ClosestQueryNode();
-      if (cqn != NULL && cqn->NumDescendants() > 1)
-      {
-        size_t closest = centroids.n_cols;
-        double closestDistance = DBL_MAX;
-        size_t secondClosest = centroids.n_cols;
-        double secondClosestDistance = DBL_MAX;
-        for (size_t i = 0; i < cqn->NumDescendants(); ++i)
-        {
-          const size_t index = cqn->Descendant(i);
-          const double distance =
-              node->MinDistance(centroids.col(oldFromNew[index]));
-//        Log::Info << "Index " << index << ", distance " << distance << " (i "
-//            << i + cqn->Begin() << ").\n";
-          ++distanceCalculations;
-          if (distance < closestDistance)
-          {
-            secondClosest = closest;
-            secondClosestDistance = closestDistance;
-            closest = index;
-            closestDistance = distance;
-          }
-          else if (distance < secondClosestDistance)
-          {
-            secondClosest = index;
-            secondClosestDistance = distance;
-          }
-        }
-  
-        // Recalculate maximum distance.
-        const double maxDistance = node->MaxDistance(centroids.col(closest));
-        ++distanceCalculations;
-
-        node->Stat().MinQueryNodeDistance() = closestDistance;
-        node->Stat().MaxQueryNodeDistance() = maxDistance;
-        if (secondClosestDistance < node->Stat().SecondClosestBound())
-          node->Stat().SecondClosestBound() = secondClosestDistance;
-
-      if (node->Begin() == 23058)
-        Log::Warn << "After recalculation, closest for r" << node->Begin() << "c" << node->Count()
-<< " is " << closest << ", with mQND " << node->Stat().MinQueryNodeDistance() <<
-", MQND" << node->Stat().MaxQueryNodeDistance() << ", and scb " <<
-node->Stat().SecondClosestBound() << ", " << secondClosest << ".\n";
-      }
-
-//      if (node->Parent() != NULL &&
-//node->Parent()->Stat().SecondClosestQueryNode() != NULL)
-//        if (node->Begin() == 23058)
-//          Log::Warn << "Parent's (r" << node->Parent()->Begin() << "c"
-//<< node->Parent()->Count() << ") second closest query node is q" << ((TreeType*)
-//node->Parent()->Stat().SecondClosestQueryNode())->Begin() << "c" << ((TreeType*)
-//node->Parent()->Stat().SecondClosestQueryNode())->Count() << ", with scb " <<
-//node->Parent()->Stat().SecondClosestBound() << ".\n";
-
-      // Suppose that the true second closest query node was pruned by the
-      // parent, and thus was never seen by this node.  To ensure the
-      // correctness of the second bound in this situation, we'll take the
-      // parent's second closest bound only if the parent's second closest query
-      // node is on a separate subtree than the node's second closest query node
-      // _and_ the node's closest query node.
-      TreeType* parent = (TreeType*) node->Parent();
-      TreeType* scqn = (TreeType*) node->Stat().SecondClosestQueryNode();
-      TreeType* parentScqn = (parent == NULL) ? NULL :
-          (TreeType*) parent->Stat().SecondClosestQueryNode();
-      TreeType* parentCqn = (parent == NULL) ? NULL :
-          (TreeType*) parent->Stat().ClosestQueryNode();
-      if (parentScqn != NULL && node->Begin() == 23058)
-        Log::Warn << "Parent (" << parent->Begin() << "c" << parent->Count() <<
-") SCB is " << parent->Stat().SecondClosestBound() << ", "
-            << "with q" << parentScqn->Begin() << "c" << parentScqn->Count() <<
-".\n";
-      if (scqn != NULL && parentScqn != NULL &&
-          !IsDescendantOf(*parentScqn, *scqn) &&
-          !IsDescendantOf(*parentCqn, *scqn) &&
-          (parent->Stat().SecondClosestBound() <
-              node->Stat().SecondClosestBound()))
-      {
-        if (node->Begin() == 23058)
-          Log::Warn << "Take parent's SCB of " <<
-parent->Stat().SecondClosestBound() << "; parent SCQN is " <<
-parentScqn->Begin() << "c" << parentScqn->Count() << ", parent CQN is " <<
-parentCqn->Begin() << "c" << parentCqn->Count() << ".\n";
-        node->Stat().SecondClosestBound() = parent->Stat().SecondClosestBound();
-        node->Stat().SecondClosestQueryNode() = parentScqn;
-      }
-    }
-
-    if (node->Begin() == 23058)
-    {
-      Log::Warn << "Attempt Hamerly prune on r23058c" << node->Count() <<
-          " with MQND " << node->Stat().MaxQueryNodeDistance() << ", scb "
-          << node->Stat().SecondClosestBound() << ", owner " <<
-node->Stat().Owner() << ", and clusterDistances " << clusterDistances[clusters]
-<< ".\n";
-    }
-
-    // Check the second bound.  (This is time-consuming...)
-    arma::vec minDistances(centroids.n_cols);
-    for (size_t j = 0; j < node->NumDescendants(); ++j)
-    {
-      arma::vec distances(centroids.n_cols);
-      double secondClosestDist = DBL_MAX;
-      for (size_t i = 0; i < centroids.n_cols; ++i)
-      {
-        if (j == 0)
-          minDistances[i] = node->MinDistance(centroids.col(i));
-
-        const double distance = MetricType::Evaluate(centroids.col(i),
-            dataset.col(node->Descendant(j)));
-        if (distance < secondClosestDist && i != node->Stat().Owner())
-          secondClosestDist = distance;
-
-        distances(i) = distance;
-      }
-
-      if (j == 0)
-        if (node->Begin() == 23058)
-          Log::Warn << "r23058c" << node->Count() << ": " << minDistances.t();
-      if (secondClosestDist < node->Stat().SecondClosestBound() - 1e-15)
-      {
-        Log::Warn << "r" << node->Begin() << "c" << node->Count() << ":\n";
-        Log::Warn << "Owner " << node->Stat().Owner() << ", mqnd " <<
-node->Stat().MaxQueryNodeDistance() << ", mnqnd " <<
-node->Stat().MinQueryNodeDistance() << ".\n";
-        Log::Warn << distances.t();
-        Log::Fatal << "Second closest bound " <<
-node->Stat().SecondClosestBound() << " is too loose! -- " << secondClosestDist
-            << "! (" << node->Stat().SecondClosestBound() - secondClosestDist
-<< ")\n";
-      }
-    }
-
-
-    if (node->Stat().MaxQueryNodeDistance() < node->Stat().SecondClosestBound()
-        - clusterDistances[clusters])
-    {
-      node->Stat().HamerlyPruned() = true;
-      if (!node->Parent()->Stat().HamerlyPruned())
-      {
-        if (node->Begin() == 23058)
-          Log::Warn << "Mark r" << node->Begin() << "c" << node->Count() << " as "
-            << "Hamerly pruned.\n";
-        hamerlyPruned += node->NumDescendants();
+        node->Stat().HamerlyPruned() = true;
+        if (!node->Parent()->Stat().HamerlyPruned())
+          hamerlyPruned += node->NumDescendants();
       }
     }
     else
     {
-      // No Hamerly prune, so we don't have a known owner.
-      node->Stat().Owner() = clusters;
+      if (node->Begin() == 26038)
+      {
+        if (node->Stat().ClosestQueryNode() != NULL)
+          Log::Warn << "r26038c" << node->Count() << " CQN: " << ((TreeType*)
+  node->Stat().ClosestQueryNode())->Begin() << "c" << ((TreeType*)
+  node->Stat().ClosestQueryNode())->Count() << ".\n";
+        if (node->Stat().SecondClosestQueryNode() != NULL)
+          Log::Warn << "r26038c" << node->Count() << " SCQN: " << ((TreeType*)
+  node->Stat().SecondClosestQueryNode())->Begin() << "c" << ((TreeType*)
+  node->Stat().SecondClosestQueryNode())->Count() << ".\n";
+        Log::Warn << "Attempt hamerly prune r26038c" << node->Count() << " with "
+            << "MQND " << node->Stat().MaxQueryNodeDistance() << " and smqnd "
+            << node->Stat().SecondMinQueryNodeDistance() << " and cluster d "
+            << clusterDistances[clusters] << ".\n";
+      }
+
+      // Now we check for a Hamerly prune.  We know that we have an accurate
+      // second bound since nothing can be pruned.
+      if (node->Stat().MaxQueryNodeDistance() /* already adjusted */ <
+          node->Stat().SecondMinQueryNodeDistance() - clusterDistances[clusters])
+      {
+        node->Stat().HamerlyPruned() = true;
+        if (!node->Parent()->Stat().HamerlyPruned())
+          hamerlyPruned += node->NumDescendants();
+      }
     }
   }
   else
@@ -456,9 +321,34 @@ node->Stat().SecondClosestBound() << " is too loose! -- " << secondClosestDist
     node->Stat().Owner() = centroids.n_cols;
   }
 
+  bool allPruned = true;
+  size_t owner = clusters;
   for (size_t i = 0; i < node->NumChildren(); ++i)
+  {
     TreeUpdate(&node->Child(i), clusters, clusterDistances, assignments,
         centroids, dataset, oldFromNew, hamerlyPruned);
+    if (!node->Child(i).Stat().HamerlyPruned())
+      allPruned = false;
+    else if (owner == clusters)
+      owner = node->Child(i).Stat().Owner();
+    else if (owner < clusters && owner != node->Child(i).Stat().Owner())
+      owner = clusters + 1;
+  }
+
+  if (node->NumChildren() == 0 && !node->Stat().HamerlyPruned())
+    allPruned = false;
+
+  if (allPruned && owner < clusters && !node->Stat().HamerlyPruned())
+  {
+    if (node->Begin() == 26038)
+      Log::Warn << "Set r" << node->Begin() << "c" << node->Count() << " to be "
+          << "Hamerly pruned.\n";
+    node->Stat().HamerlyPruned() = true;
+  }
+
+  if (node->Begin() == 26038 && node->Stat().HamerlyPruned())
+    Log::Warn << "r" << node->Begin() << "c" << node->Count() << " is Hamerly "
+        << "pruned.\n";
 
   node->Stat().Iteration() = iteration;
   node->Stat().ClustersPruned() = (node->Parent() == NULL) ? 0 : -1;
@@ -466,11 +356,19 @@ node->Stat().SecondClosestBound() << " is too loose! -- " << secondClosestDist
   // be rebuilt.
   node->Stat().ClosestQueryNode() = NULL;
 
-  node->Stat().LastSecondClosestBound() = node->Stat().SecondClosestBound() -
-      clusterDistances[clusters];
+  if (prunedLastIteration)
+    node->Stat().LastSecondClosestBound() -= clusterDistances[clusters];
+  else
+    node->Stat().LastSecondClosestBound() =
+        node->Stat().SecondMinQueryNodeDistance() - clusterDistances[clusters];
+  node->Stat().MinQueryNodeDistance() = DBL_MAX;
+  if (prunedLastIteration && !node->Stat().HamerlyPruned())
+    node->Stat().MaxQueryNodeDistance() = DBL_MAX;
+  node->Stat().SecondMinQueryNodeDistance() = DBL_MAX;
+  node->Stat().SecondMaxQueryNodeDistance() = DBL_MAX;
   // This should change later, but I'm not yet sure how to do it.
-  node->Stat().SecondClosestBound() = DBL_MAX;
-  node->Stat().SecondClosestQueryNode() = NULL;
+//  node->Stat().SecondClosestBound() = DBL_MAX;
+//  node->Stat().SecondClosestQueryNode() = NULL;
 
   if (node->Parent() == NULL)
     Log::Info << "Total Hamerly pruned points: " << hamerlyPruned << ".\n";

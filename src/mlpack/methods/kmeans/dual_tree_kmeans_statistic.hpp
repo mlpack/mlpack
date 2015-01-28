@@ -18,10 +18,11 @@ class DualTreeKMeansStatistic
   template<typename TreeType>
   DualTreeKMeansStatistic(TreeType& node) :
       closestQueryNode(NULL),
+      secondClosestQueryNode(NULL),
       minQueryNodeDistance(DBL_MAX),
       maxQueryNodeDistance(DBL_MAX),
-      secondClosestBound(DBL_MAX),
-      secondClosestQueryNode(NULL),
+      secondMinQueryNodeDistance(DBL_MAX),
+      secondMaxQueryNodeDistance(DBL_MAX),
       lastSecondClosestBound(DBL_MAX),
       hamerlyPruned(false),
       clustersPruned(size_t(-1)),
@@ -55,6 +56,11 @@ class DualTreeKMeansStatistic
   //! Modify the current closest query node.
   void*& ClosestQueryNode() { return closestQueryNode; }
 
+  //! Get the second closest query node.
+  void* SecondClosestQueryNode() const { return secondClosestQueryNode; }
+  //! Modify the second closest query node.
+  void*& SecondClosestQueryNode() { return secondClosestQueryNode; }
+
   //! Get the minimum distance to the closest query node.
   double MinQueryNodeDistance() const { return minQueryNodeDistance; }
   //! Modify the minimum distance to the closest query node.
@@ -65,15 +71,17 @@ class DualTreeKMeansStatistic
   //! Modify the maximum distance to the closest query node.
   double& MaxQueryNodeDistance() { return maxQueryNodeDistance; }
 
-  //! Get a lower bound on the second closest cluster distance.
-  double SecondClosestBound() const { return secondClosestBound; }
-  //! Modify the lower bound on the second closest cluster distance.
-  double& SecondClosestBound() { return secondClosestBound; }
+  //! Get the minimum distance to the second closest query node.
+  double SecondMinQueryNodeDistance() const
+  { return secondMinQueryNodeDistance; }
+  //! Modify the minimum distance to the second closest query node.
+  double& SecondMinQueryNodeDistance() { return secondMinQueryNodeDistance; }
 
-  //! Get the second closest query node.
-  void* SecondClosestQueryNode() const { return secondClosestQueryNode; }
-  //! Modify the second closest query node.
-  void*& SecondClosestQueryNode() { return secondClosestQueryNode; }
+  //! Get the maximum distance to the second closest query node.
+  double SecondMaxQueryNodeDistance() const
+  { return secondMaxQueryNodeDistance; }
+  //! Modify the maximum distance to the second closest query node.
+  double& SecondMaxQueryNodeDistance() { return secondMaxQueryNodeDistance; }
 
   //! Get last iteration's second closest bound.
   double LastSecondClosestBound() const { return lastSecondClosestBound; }
@@ -129,14 +137,17 @@ class DualTreeKMeansStatistic
 
   //! The current closest query node to this reference node.
   void* closestQueryNode;
+  //! The second closest query node.
+  void* secondClosestQueryNode;
   //! The minimum distance to the closest query node.
   double minQueryNodeDistance;
   //! The maximum distance to the closest query node.
   double maxQueryNodeDistance;
-  //! A lower bound on the distance to the second closest cluster.
-  double secondClosestBound;
-  //! The second closest query node.
-  void* secondClosestQueryNode;
+  //! The minimum distance to the second closest query node.
+  double secondMinQueryNodeDistance;
+  //! The maximum distance to the second closest query node.
+  double secondMaxQueryNodeDistance;
+
   //! The second closest lower bound, on the previous iteration.
   double lastSecondClosestBound;
   //! Whether or not this node is pruned for the next iteration.
