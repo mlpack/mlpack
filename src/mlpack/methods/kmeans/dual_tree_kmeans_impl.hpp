@@ -334,8 +334,8 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
 //node->Stat().SecondClosestBound() << ", " << secondClosest << ".\n";
       }
 
-      if (node->Parent() != NULL &&
-node->Parent()->Stat().SecondClosestQueryNode() != NULL)
+//      if (node->Parent() != NULL &&
+//node->Parent()->Stat().SecondClosestQueryNode() != NULL)
 //        if (node->Begin() == 16954)
 //          Log::Warn << "Parent's (r" << node->Parent()->Begin() << "c"
 //<< node->Parent()->Count() << ") second closest query node is q" << ((TreeType*)
@@ -343,31 +343,26 @@ node->Parent()->Stat().SecondClosestQueryNode() != NULL)
 //node->Parent()->Stat().SecondClosestQueryNode())->Count() << ", with scb " <<
 //node->Parent()->Stat().SecondClosestBound() << ".\n";
 
-      if (node->Parent() != NULL && 
-          node->Stat().SecondClosestQueryNode() != NULL &&
-          node->Parent()->Stat().SecondClosestQueryNode() != NULL && !IsDescendantOf((*(TreeType*)
-node->Parent()->Stat().SecondClosestQueryNode()), (*(TreeType*)
-node->Stat().SecondClosestQueryNode())))
+      // Suppose that the true second closest query node was pruned by the
+      // parent, and thus was never seen by this node.  To ensure the
+      // correctness of the second bound in this situation, we'll take the
+      // parent's second closest bound only if the parent's second closest query
+      // node is on a separate subtree than the node's second closest query node
+      // _and_ the node's closest query node.
+      TreeType* parent = (TreeType*) node->Parent();
+      TreeType* scqn = (TreeType*) node->Stat().SecondClosestQueryNode();
+      TreeType* parentScqn = (parent == NULL) ? NULL :
+          (TreeType*) parent->Stat().SecondClosestQueryNode();
+      TreeType* parentCqn = (parent == NULL) ? NULL :
+          (TreeType*) parent->Stat().ClosestQueryNode();
+      if (scqn != NULL && parentScqn != NULL &&
+          !IsDescendantOf(*parentScqn, *scqn) &&
+          !IsDescendantOf(*parentCqn, *scqn) &&
+          (parent->Stat().SecondClosestBound() <
+              node->Stat().SecondClosestBound()))
       {
-        // Does this even work?
-        const double minDistance = node->MinDistance((TreeType*)
-            node->Parent()->Stat().SecondClosestQueryNode());
-//        if (node->Begin() == 16954)
-//          Log::Warn << "r16954c" << node->Count() << " has min distance " <<
-//minDistance << " to SCQN of parent (q" << ((TreeType*)
-//node->Parent()->Stat().SecondClosestQueryNode())->Begin() << "c" << ((TreeType*)
-//node->Parent()->Stat().SecondClosestQueryNode())->Count() << ")\n";
-
-        if (minDistance < node->Stat().SecondClosestBound())
-        {
-          node->Stat().SecondClosestBound() =
-              node->Parent()->Stat().SecondClosestBound();
-          node->Stat().SecondClosestQueryNode() =
-              node->Parent()->Stat().SecondClosestQueryNode();
-//          if (node->Begin() == 16954)
-//            Log::Warn << "r16954c" << node->Count() << " has recalculated scb "
-//                << node->Stat().SecondClosestBound() << ".\n";
-        }
+        node->Stat().SecondClosestBound() = parent->Stat().SecondClosestBound();
+        node->Stat().SecondClosestQueryNode() = parentScqn;
       }
     }
 
@@ -411,6 +406,7 @@ node->Stat().SecondClosestBound() << " is too loose! -- " << secondClosestDist
       }
     }
 
+
     if (node->Stat().MaxQueryNodeDistance() < node->Stat().SecondClosestBound()
         - clusterDistances[clusters])
     {
@@ -445,15 +441,15 @@ node->Stat().SecondClosestBound() << " is too loose! -- " << secondClosestDist
     node->Stat().Owner() = centroids.n_cols;
   }
 
+  for (size_t i = 0; i < node->NumChildren(); ++i)
+    TreeUpdate(&node->Child(i), clusters, clusterDistances, assignments,
+        centroids, dataset, oldFromNew, hamerlyPruned);
+
   node->Stat().Iteration() = iteration;
   node->Stat().ClustersPruned() = (node->Parent() == NULL) ? 0 : -1;
   // We have to set the closest query node to NULL because the cluster tree will
   // be rebuilt.
   node->Stat().ClosestQueryNode() = NULL;
-
-  for (size_t i = 0; i < node->NumChildren(); ++i)
-    TreeUpdate(&node->Child(i), clusters, clusterDistances, assignments,
-        centroids, dataset, oldFromNew, hamerlyPruned);
 
   node->Stat().LastSecondClosestBound() = node->Stat().SecondClosestBound() -
       clusterDistances[clusters];
