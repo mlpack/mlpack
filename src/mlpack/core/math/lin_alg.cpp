@@ -236,8 +236,6 @@ void mlpack::math::Svec(const arma::sp_mat& input, arma::sp_vec& output)
 
   output.zeros(n2bar, 1);
 
-  size_t idx = 0;
-
   for (auto it = input.begin(); it != input.end(); ++it)
   {
     const size_t i = it.row();
