@@ -92,27 +92,32 @@ PrimalDualSolver<SDPType>::PrimalDualSolver(const SDPType& sdp,
 }
 
 /**
- * alphahat = sup{ alphahat : A + dA is psd }
- */
-static inline double
-AlphaHat(const arma::mat& A, const arma::mat& dA)
-{
-  // note: arma::chol(A) returns an upper triangular matrix (instead of the
-  // usual lower triangular)
-  const arma::mat L = arma::chol(A).t();
-  const arma::mat Linv = arma::inv(arma::trimatl(L));
-  const arma::vec evals = arma::eig_sym(-Linv * dA * Linv.t());
-  const double alphahatinv = evals(evals.n_elem - 1);
-  return 1. / alphahatinv;
-}
-
-/**
- * alpha = min(1, tau * alphahat(A, dA))
+ * Compute
+ *
+ *     alpha = min(1, tau * alphahat(A, dA))
+ *
+ * where
+ *
+ *     alphahat = sup{ alphahat : A + dA is psd }
+ *
+ * See (2.18) of [AHO98] for more details.
  */
 static inline double
 Alpha(const arma::mat& A, const arma::mat& dA, double tau)
 {
-  double alphahat = AlphaHat(A, dA);
+  // On Armadillo < 4.500, the "lower" option isn't available.
+#if (ARMA_VERSION_MAJOR < 4) || \
+    ((ARMA_VERSION_MAJOR == 4) && (ARMA_VERSION_MINOR < 500))
+  const arma::mat L = arma::chol(A).t(); // This is less efficient.
+#else
+  const arma::mat L = arma::chol(A, "lower");
+#endif
+  const arma::mat Linv = arma::inv(arma::trimatl(L));
+  // TODO(stephentu): We only want the top eigenvalue, we should
+  // be able to do better than full eigen-decomposition.
+  const arma::vec evals = arma::eig_sym(-Linv * dA * Linv.t());
+  const double alphahatinv = evals(evals.n_elem - 1);
+  double alphahat = 1. / alphahatinv;
   if (alphahat < 0.)
     // dA is PSD already
     alphahat = 1.;
