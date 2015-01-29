@@ -50,6 +50,7 @@ class DualTreeKMeans
   arma::vec clusterDistances;
   arma::Col<size_t> assignments;
   arma::vec distances;
+  arma::Col<size_t> visited;
   arma::Col<size_t> distanceIteration;
 
   //! The current iteration.

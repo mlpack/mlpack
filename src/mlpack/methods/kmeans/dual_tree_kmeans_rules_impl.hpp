@@ -24,6 +24,7 @@ DualTreeKMeansRules<MetricType, TreeType>::DualTreeKMeansRules(
     const arma::vec& clusterDistances,
     arma::vec& distances,
     arma::Col<size_t>& assignments,
+    arma::Col<size_t>& visited,
     arma::Col<size_t>& distanceIteration,
     const arma::mat& interclusterDistances,
     MetricType& metric) :
@@ -36,14 +37,12 @@ DualTreeKMeansRules<MetricType, TreeType>::DualTreeKMeansRules(
     clusterDistances(clusterDistances),
     distances(distances),
     assignments(assignments),
+    visited(visited),
     distanceIteration(distanceIteration),
     interclusterDistances(interclusterDistances),
     metric(metric),
     distanceCalculations(0)
-{
-  // Nothing has been visited yet.
-  visited.zeros(dataset.n_cols);
-}
+{ }
 
 template<typename MetricType, typename TreeType>
 inline force_inline double DualTreeKMeansRules<MetricType, TreeType>::BaseCase(
@@ -57,6 +56,10 @@ inline force_inline double DualTreeKMeansRules<MetricType, TreeType>::BaseCase(
 
   // It's possible that the reference node has been pruned before we got to the
   // base case.  In that case, don't do the base case, and just return.
+//  if (referenceIndex == 37447)
+//    Log::Warn << "Visit " << referenceIndex << ", q" << queryIndex << ".  " <<
+//traversalInfo.LastReferenceNode()->Stat().ClustersPruned() +
+//visited[referenceIndex] << ".\n";
   if (traversalInfo.LastReferenceNode()->Stat().ClustersPruned() +
       visited[referenceIndex] == centroids.n_cols)
     return 0.0;
@@ -86,6 +89,7 @@ inline force_inline double DualTreeKMeansRules<MetricType, TreeType>::BaseCase(
     newCentroids.col(assignments[referenceIndex]) +=
         dataset.col(referenceIndex);
     ++counts(assignments[referenceIndex]);
+//    Log::Warn << "Commit base case " << referenceIndex << ".\n";
   }
 
   return distance;
@@ -105,6 +109,12 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
     TreeType& queryNode,
     TreeType& referenceNode)
 {
+//  if (referenceNode.Begin() == 33313 || referenceNode.Begin() == 37121 ||
+//  if (referenceNode.Begin() == 37447)
+//    Log::Warn << "Visit r" << referenceNode.Begin() << "c" <<
+//referenceNode.Count() << ", q" << queryNode.Begin() << "c" << queryNode.Count()
+//<< ":\n" << referenceNode.Stat();
+
   // This won't happen with the root since it is explicitly set to 0.
   if (referenceNode.Stat().ClustersPruned() == size_t(-1))
     referenceNode.Stat().ClustersPruned() =
@@ -150,7 +160,25 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
   }
   else if (distances.Lo() > referenceNode.Stat().SecondMaxQueryNodeDistance())
   {
+//    if (referenceNode.Begin() == 37447)
+//      Log::Warn << "Pelleg-Moore pruned.\n";
     referenceNode.Stat().ClustersPruned() += queryNode.NumDescendants();
+
+    // Is everything pruned?  Then commit the points.
+    if (referenceNode.Stat().ClustersPruned() +
+        visited[referenceNode.Descendant(0)] == centroids.n_cols)
+    {
+//      Log::Warn << "Commit points in r" << referenceNode.Begin() << "c" <<
+//referenceNode.Count() << ".\n";
+      for (size_t i = 0; i < referenceNode.NumDescendants(); ++i)
+      {
+        const size_t index = referenceNode.Descendant(i);
+        const size_t cluster = assignments[index];
+        referenceNode.Stat().Owner() = cluster;
+        newCentroids.col(cluster) += dataset.col(index);
+        ++counts(cluster);
+      }
+    }
     return DBL_MAX;
   }
 

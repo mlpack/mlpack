@@ -30,6 +30,7 @@ DualTreeKMeans<MetricType, MatType, TreeType>::DualTreeKMeans(
   distances.set_size(dataset.n_cols);
   distances.fill(DBL_MAX);
   assignments.zeros(dataset.n_cols);
+  visited.zeros(dataset.n_cols);
   distanceIteration.zeros(dataset.n_cols);
 
   Timer::Start("tree_building");
@@ -89,9 +90,10 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
 
   // Now run the dual-tree algorithm.
   typedef DualTreeKMeansRules<MetricType, TreeType> RulesType;
+  visited.zeros(dataset.n_cols);
   RulesType rules(dataset, centroids, newCentroids, counts, oldFromNewCentroids,
-      iteration, clusterDistances, distances, assignments, distanceIteration,
-      interclusterDistances, metric);
+      iteration, clusterDistances, distances, assignments, visited,
+      distanceIteration, interclusterDistances, metric);
 
   // Use the dual-tree traverser.
 //typename TreeType::template DualTreeTraverser<RulesType> traverser(rules);
@@ -99,9 +101,7 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
       traverser(rules);
 
   tree->Stat().ClustersPruned() = 0; // The constructor sets this to -1.
-  Log::Info << "Traversal begins.\n";
   traverser.Traverse(*centroidTree, *tree);
-  Log::Info << "Traversal done.\n";
 
   distanceCalculations += rules.DistanceCalculations();
 
@@ -131,12 +131,10 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   size_t hamerlyPruned = 0;
   size_t hamerlyPrunedNodes = 0;
   size_t totalNodes = 0;
-  Log::Info << "Update tree.\n";
   UpdateOwner(tree, centroids.n_cols, assignments);
   TreeUpdate(tree, centroids.n_cols, clusterDistances, assignments,
       oldCentroids, dataset, oldFromNewCentroids, hamerlyPruned,
       hamerlyPrunedNodes, totalNodes);
-  Log::Info << "Update tree done.\n";
 
   delete centroidTree;
 
@@ -241,19 +239,30 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
   node->Stat().HamerlyPruned() = false;
   ++totalNodes;
 
+/*
+  for (size_t i = 0; i < node->NumPoints(); ++i)
+  {
+    if (!prunedLastIteration &&
+        distanceIteration[node->Point(i)] < iteration)
+      Log::Warn << "Point " << node->Point(i) << " was never visited!"
+<< " (" << distanceIteration[node->Point(i)] << ", " << prunedLastIteration
+<< ")\n";
+    if (!prunedLastIteration &&
+        node->Stat().ClustersPruned() + visited[node->Point(i)] < clusters)
+      Log::Fatal << "Point " << node->Point(i) << " was only visited " <<
+node->Stat().ClustersPruned() << " + " << visited[node->Point(i)] << 
+" times!\n";
+  }
+*/
+
   // The easy case: this node had an owner.
   if (node->Stat().Owner() < clusters)
   {
 /*
+    if (prunedLastIteration && node->Stat().MaxQueryNodeDistance() == DBL_MAX)
+      Log::Fatal << "r" << node->Begin() << "c" << node->Count() << " was "
+          << "Hamerly pruned but was not visited!\n";
     // Verify correctness...
-    for (size_t i = 0; i < node->NumPoints(); ++i)
-    {
-      if (!prunedLastIteration &&
-          distanceIteration[node->Descendant(i)] < iteration)
-        Log::Fatal << "Point " << node->Descendant(i) << " was never visited!"
-<< " (" << distanceIteration[node->Descendant(i)] << ", " << prunedLastIteration
-<< ")\n";
-    }
     for (size_t i = 0; i < node->NumDescendants(); ++i)
     {
       size_t closest = clusters;
@@ -319,6 +328,11 @@ closest << "!  It's part of node r" << node->Begin() << "c" << node->Count() <<
     {
       if (node->Parent() != NULL && node->Parent()->Stat().HamerlyPruned())
       {
+//        Log::Warn << "Extra prune via parent: r" << node->Begin() << "c" <<
+//node->Count() << ".\n";
+        if (node->Stat().Owner() != node->Parent()->Stat().Owner())
+          Log::Fatal << "Holy shit!\n";
+
         node->Stat().HamerlyPruned() = true;
         node->Stat().MinQueryNodeDistance() = DBL_MAX;
       }

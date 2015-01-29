@@ -23,6 +23,7 @@ class DualTreeKMeansRules
                       const arma::vec& clusterDistances,
                       arma::vec& distances,
                       arma::Col<size_t>& assignments,
+                      arma::Col<size_t>& visited,
                       arma::Col<size_t>& distanceIteration,
                       const arma::mat& interclusterDistances,
                       MetricType& metric);
@@ -59,7 +60,7 @@ class DualTreeKMeansRules
   const arma::vec& clusterDistances;
   arma::vec& distances;
   arma::Col<size_t>& assignments;
-  arma::Col<size_t> visited;
+  arma::Col<size_t>& visited;
   arma::Col<size_t>& distanceIteration;
   const arma::mat& interclusterDistances;
   MetricType& metric;
