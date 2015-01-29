@@ -26,6 +26,7 @@ DualTreeKMeansRules<MetricType, TreeType>::DualTreeKMeansRules(
     arma::Col<size_t>& assignments,
     arma::Col<size_t>& visited,
     arma::Col<size_t>& distanceIteration,
+    arma::vec& hamerlyBounds,
     const arma::mat& interclusterDistances,
     MetricType& metric) :
     dataset(dataset),
@@ -39,6 +40,7 @@ DualTreeKMeansRules<MetricType, TreeType>::DualTreeKMeansRules(
     assignments(assignments),
     visited(visited),
     distanceIteration(distanceIteration),
+    hamerlyBounds(hamerlyBounds),
     interclusterDistances(interclusterDistances),
     metric(metric),
     distanceCalculations(0)
@@ -56,10 +58,6 @@ inline force_inline double DualTreeKMeansRules<MetricType, TreeType>::BaseCase(
 
   // It's possible that the reference node has been pruned before we got to the
   // base case.  In that case, don't do the base case, and just return.
-//  if (referenceIndex == 37447)
-//    Log::Warn << "Visit " << referenceIndex << ", q" << queryIndex << ".  " <<
-//traversalInfo.LastReferenceNode()->Stat().ClustersPruned() +
-//visited[referenceIndex] << ".\n";
   if (traversalInfo.LastReferenceNode()->Stat().ClustersPruned() +
       visited[referenceIndex] == centroids.n_cols)
     return 0.0;
@@ -75,11 +73,16 @@ inline force_inline double DualTreeKMeansRules<MetricType, TreeType>::BaseCase(
     distanceIteration[referenceIndex] = iteration;
     distances[referenceIndex] = distance;
     assignments[referenceIndex] = mappings[queryIndex];
+    hamerlyBounds[referenceIndex] = DBL_MAX; // Not sure about this one.
   }
   else if (distance < distances[referenceIndex])
   {
     distances[referenceIndex] = distance;
     assignments[referenceIndex] = mappings[queryIndex];
+  }
+  else if (distance < hamerlyBounds[referenceIndex])
+  {
+    hamerlyBounds[referenceIndex] = distance; // Not yet done.
   }
 
   ++visited[referenceIndex];

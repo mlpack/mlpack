@@ -32,6 +32,8 @@ DualTreeKMeans<MetricType, MatType, TreeType>::DualTreeKMeans(
   assignments.zeros(dataset.n_cols);
   visited.zeros(dataset.n_cols);
   distanceIteration.zeros(dataset.n_cols);
+  hamerlyBounds.set_size(dataset.n_cols);
+  hamerlyBounds.fill(DBL_MAX);
 
   Timer::Start("tree_building");
 

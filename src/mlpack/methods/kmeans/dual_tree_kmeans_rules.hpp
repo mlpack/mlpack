@@ -25,6 +25,7 @@ class DualTreeKMeansRules
                       arma::Col<size_t>& assignments,
                       arma::Col<size_t>& visited,
                       arma::Col<size_t>& distanceIteration,
+                      arma::vec& hamerlyBounds,
                       const arma::mat& interclusterDistances,
                       MetricType& metric);
 
@@ -62,6 +63,7 @@ class DualTreeKMeansRules
   arma::Col<size_t>& assignments;
   arma::Col<size_t>& visited;
   arma::Col<size_t>& distanceIteration;
+  arma::vec& hamerlyBounds;
   const arma::mat& interclusterDistances;
   MetricType& metric;
 

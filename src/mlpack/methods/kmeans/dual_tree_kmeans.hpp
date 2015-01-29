@@ -52,6 +52,7 @@ class DualTreeKMeans
   arma::vec distances;
   arma::Col<size_t> visited;
   arma::Col<size_t> distanceIteration;
+  arma::vec hamerlyBounds;
 
   //! The current iteration.
   size_t iteration;
