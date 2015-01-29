@@ -149,19 +149,6 @@ ConstructLovaszThetaSDPFromGraph(const UndirectedGraph& g)
   return sdp;
 }
 
-// TODO(stephentu): does arma have a builtin way to do this?
-static inline arma::mat
-Diag(const arma::vec& diag)
-{
-  arma::mat ret;
-  ret.zeros(diag.n_elem, diag.n_elem);
-  for (size_t i = 0; i < diag.n_elem; i++)
-  {
-    ret(i, i) = diag(i);
-  }
-  return ret;
-}
-
 static inline SDP<arma::sp_mat>
 ConstructMaxCutSDPFromLaplacian(const std::string& laplacianFilename)
 {
@@ -236,7 +223,7 @@ static void SolveMaxCutFeasibleSDP(const SDP<arma::sp_mat>& sdp)
   // strictly feasible starting point
   X0.eye(sdp.N(), sdp.N());
   ysparse0 = -1.1 * arma::vec(arma::sum(arma::abs(sdp.C()), 0).t());
-  Z0 = -Diag(ysparse0) + sdp.C();
+  Z0 = -arma::diagmat(ysparse0) + sdp.C();
 
   PrimalDualSolver<SDP<arma::sp_mat>> solver(sdp, X0, ysparse0, ydense0, Z0);
 
