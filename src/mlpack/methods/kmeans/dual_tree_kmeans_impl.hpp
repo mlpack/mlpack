@@ -71,9 +71,6 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   std::vector<size_t> oldFromNewCentroids;
   TreeType* centroidTree = BuildTree<TreeType>(
       const_cast<typename TreeType::Mat&>(centroids), oldFromNewCentroids);
-  for (size_t i = 0; i < oldFromNewCentroids.size(); ++i)
-    Log::Warn << oldFromNewCentroids[i] << " ";
-  Log::Warn << "\n";
 
   // Now calculate distances between centroids.
   neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType, TreeType>
@@ -328,11 +325,6 @@ closest << "!  It's part of node r" << node->Begin() << "c" << node->Count() <<
     {
       if (node->Parent() != NULL && node->Parent()->Stat().HamerlyPruned())
       {
-//        Log::Warn << "Extra prune via parent: r" << node->Begin() << "c" <<
-//node->Count() << ".\n";
-        if (node->Stat().Owner() != node->Parent()->Stat().Owner())
-          Log::Fatal << "Holy shit!\n";
-
         node->Stat().HamerlyPruned() = true;
         node->Stat().MinQueryNodeDistance() = DBL_MAX;
       }
