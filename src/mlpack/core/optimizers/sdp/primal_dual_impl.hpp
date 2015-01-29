@@ -16,6 +16,10 @@
  *
  * Note there are many optimizations that still need to be implemented. See the
  * code comments for more details.
+ *
+ * Also note the current implementation assumes the SDP problem has a strictly
+ * feasible primal/dual point (and therefore the duality gap is zero), and
+ * that the constraint matrices are linearly independent.
  */
 #ifndef __MLPACK_CORE_OPTIMIZERS_SDP_PRIMAL_DUAL_IMPL_HPP
 #define __MLPACK_CORE_OPTIMIZERS_SDP_PRIMAL_DUAL_IMPL_HPP
@@ -59,6 +63,9 @@ PrimalDualSolver<SDPType>::PrimalDualSolver(const SDPType& sdp,
     maxIterations(1000)
 {
   arma::mat tmp;
+
+  // Note that the algorithm we implement requires primal iterate X and
+  // dual multiplier Z to be positive definite (but not feasible).
 
   if (initialX.n_rows != sdp.N() || initialX.n_cols != sdp.N())
     Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
@@ -142,6 +149,23 @@ SolveLyapunov(arma::mat& X, const arma::mat& A, const arma::mat& H)
   arma::syl(X, A, A, -H);
 }
 
+/**
+ * Solve the following KKT system (2.10) of [AHO98]:
+ *
+ *     [ 0  A^T  I ] [ dsx ] = [ rd ]
+ *     [ A   0   0 ] [  dy ] = [ rp ]
+ *     [ E   0   F ] [ dsz ] = [ rc ]
+ *     \---- M ----/
+ *
+ * where
+ *
+ *     A  = [ Asparse ]
+ *          [ Adense  ]
+ *     dy = [ dysparse  dydense ]
+ *     E  = Z sym I
+ *     F  = X sym I
+ *
+ */
 static inline void
 SolveKKTSystem(const arma::sp_mat& Asparse,
                const arma::mat& Adense,
@@ -160,6 +184,10 @@ SolveKKTSystem(const arma::sp_mat& Asparse,
             Einv_Frd_ATdy_rc_Mat, Frd_ATdy_rc_Mat;
   arma::vec Einv_Frd_rc, Einv_Frd_ATdy_rc, dy;
 
+  // Note: Whenever a formula calls for E^(-1) v for some v, we solve Lyapunov
+  // equations instead of forming an explicit inverse.
+
+  // Compute the RHS of (2.12)
   math::Smat(F * rd - rc, Frd_rc_Mat);
   SolveLyapunov(Einv_Frd_rc_Mat, Z, 2. * Frd_rc_Mat);
   math::Svec(Einv_Frd_rc_Mat, Einv_Frd_rc);
@@ -180,16 +208,19 @@ SolveKKTSystem(const arma::sp_mat& Asparse,
   if (Adense.n_rows)
     dydense = dy(arma::span(Asparse.n_rows, numConstraints - 1));
 
+  // Compute dx from (2.13)
   math::Smat(F * (rd - Asparse.t() * dysparse - Adense.t() * dydense) - rc, Frd_ATdy_rc_Mat);
   SolveLyapunov(Einv_Frd_ATdy_rc_Mat, Z, 2. * Frd_ATdy_rc_Mat);
   math::Svec(Einv_Frd_ATdy_rc_Mat, Einv_Frd_ATdy_rc);
   dsx = -Einv_Frd_ATdy_rc;
+
+  // Compute dz from (2.14)
   dsz = rd - Asparse.t() * dysparse - Adense.t() * dydense;
 }
 
 namespace private_ {
 
-// TODO(stephentu): should we move this somewhere more general
+// TODO(stephentu): should we move this somewhere more general?
 template <typename T> struct vectype { };
 template <typename eT> struct vectype<arma::Mat<eT>> { typedef arma::Col<eT> type; };
 template <typename eT> struct vectype<arma::SpMat<eT>> { typedef arma::SpCol<eT> type; };
@@ -208,6 +239,9 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
 
   const size_t n = sdp.N();
   const size_t n2bar = sdp.N2bar();
+
+  // Form the A matrix in (2.7). Note we explicitly handle
+  // sparse and dense constraints separately.
 
   arma::sp_mat Asparse(sdp.NumSparseConstraints(), n2bar);
   arma::sp_vec Aisparse;
@@ -254,6 +288,13 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
   double primalObj = 0., alpha, beta;
   for (size_t iteration = 1; iteration != maxIterations; iteration++)
   {
+    // Note: The Mehrotra PC algorithm works like this at a high level.
+    // We first solve a KKT system with mu=0. Then, we use the results
+    // of this KKT system to get a better estimate of mu and solve
+    // the KKT system again. Empirically, this PC step has been shown to
+    // significantly reduce the number of required iterations (and is used
+    // by most practical solver implementations).
+
     if (sdp.NumSparseConstraints())
       rp(arma::span(0, sdp.NumSparseConstraints() - 1)) =
         sdp.SparseB() - Asparse * sx;
@@ -261,10 +302,13 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
       rp(arma::span(sdp.NumSparseConstraints(), sdp.NumConstraints() - 1)) =
           sdp.DenseB() - Adense * sx;
 
+    // Rd = C - Z - smat A^T y
     rd = sc - sz - Asparse.t() * ysparse - Adense.t() * ydense;
 
     math::SymKronId(X, F);
 
+    // We compute E^(-1) F A^T by solving Lyapunov equations.
+    // See (2.16).
     for (size_t i = 0; i < sdp.NumSparseConstraints(); i++)
     {
       SolveLyapunov(Gk, Z, X * sdp.SparseA()[i] + sdp.SparseA()[i] * X);
@@ -279,6 +323,10 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
       Einv_F_AdenseT.col(i) = gk;
     }
 
+    // Form the M = A E^(-1) F A^T matrix (2.15)
+    //
+    // Since we split A up into its sparse and dense components,
+    // we have to handle each block separately.
     if (sdp.NumSparseConstraints())
     {
       M.submat(arma::span(0,
@@ -318,18 +366,23 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
     // the cholesky decomposition of X and Z which we should have available
     // when we use more efficient methods above.
 
+    // This solves step (1) of Section 7, the "predictor" step.
     Rc = -0.5*(X*Z + Z*X);
     math::Svec(Rc, rc);
     SolveKKTSystem(Asparse, Adense, Z, M, F, rp, rd, rc, dsx, dysparse, dydense, dsz);
     math::Smat(dsx, dX);
     math::Smat(dsz, dZ);
+
+    // Step (2), determine step size lengths (alpha, beta)
     alpha = Alpha(X, dX, tau);
     beta = Alpha(Z, dZ, tau);
 
+    // See (7.1)
     const double sigma =
       std::pow(arma::dot(X + alpha * dX, Z + beta * dZ) / sxdotsz, 3);
     const double mu = sigma * sxdotsz / n;
 
+    // Step (3), the "corrector" step.
     Rc = mu*arma::eye<arma::mat>(n, n) - 0.5*(X*Z + Z*X + dX*dZ + dZ*dX);
     math::Svec(Rc, rc);
     SolveKKTSystem(Asparse, Adense, Z, M, F, rp, rd, rc, dsx, dysparse, dydense, dsz);
@@ -338,12 +391,23 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
     alpha = Alpha(X, dX, tau);
     beta = Alpha(Z, dZ, tau);
 
+    // Iterate update
     X += alpha * dX;
     math::Svec(X, sx);
     ysparse += beta * dysparse;
     ydense += beta * dydense;
     Z += beta * dZ;
     math::Svec(Z, sz);
+
+    // Below, we check the KKT conditions. Recall the KKT conditions are
+    //
+    // (1) Primal feasibility
+    // (2) Dual feasibility
+    // (3) XZ = 0 (slackness condition)
+    //
+    // If the KKT conditions are satisfied to a certain degree of precision,
+    // then we consider this a valid certificate of optimality and terminate.
+    // Otherwise, we proceed onwards.
 
     const double normXZ = arma::norm(X * Z, "fro");
 
