@@ -92,7 +92,7 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   visited.zeros(dataset.n_cols);
   RulesType rules(dataset, centroids, newCentroids, counts, oldFromNewCentroids,
       iteration, clusterDistances, distances, assignments, visited,
-      distanceIteration, interclusterDistances, metric);
+      distanceIteration, hamerlyBounds, interclusterDistances, metric);
 
   // Use the dual-tree traverser.
 //typename TreeType::template DualTreeTraverser<RulesType> traverser(rules);
@@ -133,7 +133,7 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   UpdateOwner(tree, centroids.n_cols, assignments);
   TreeUpdate(tree, centroids.n_cols, clusterDistances, assignments,
       oldCentroids, dataset, oldFromNewCentroids, hamerlyPruned,
-      hamerlyPrunedNodes, totalNodes);
+      hamerlyPrunedNodes, totalNodes, interclusterDistances);
 
   delete centroidTree;
 
@@ -230,7 +230,8 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
     const std::vector<size_t>& oldFromNew,
     size_t& hamerlyPruned,
     size_t& hamerlyPrunedNodes,
-    size_t& totalNodes)
+    size_t& totalNodes,
+    const arma::mat& interclusterDistances)
 {
   // This is basically IterationUpdate(), but pulled out to be separate from the
   // actual dual-tree algorithm.
@@ -308,6 +309,15 @@ closest << "!  It's part of node r" << node->Begin() << "c" << node->Count() <<
         if (!node->Parent()->Stat().HamerlyPruned())
           hamerlyPruned += node->NumDescendants();
       }
+      else if (node->Stat().MaxQueryNodeDistance() < 0.5 *
+          interclusterDistances(0, owner))
+      {
+        Log::Warn << "Secondary Elkan prune! r" << node->Begin() << "c" <<
+node->Count() << ".\n";
+        node->Stat().HamerlyPruned() = true;
+        if (!node->Parent()->Stat().HamerlyPruned())
+          hamerlyPruned += node->NumDescendants();
+      }
     }
     else
     {
@@ -367,7 +377,7 @@ closest << "!  It's part of node r" << node->Begin() << "c" << node->Count() <<
   {
     TreeUpdate(&node->Child(i), clusters, clusterDistances, assignments,
         centroids, dataset, oldFromNew, hamerlyPruned, hamerlyPrunedNodes,
-        totalNodes);
+        totalNodes, interclusterDistances);
     if (!node->Child(i).Stat().HamerlyPruned())
       allPruned = false;
     else if (owner == clusters)

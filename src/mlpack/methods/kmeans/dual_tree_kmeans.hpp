@@ -76,7 +76,8 @@ class DualTreeKMeans
                   const std::vector<size_t>& oldFromNew,
                   size_t& hamerlyPruned,
                   size_t& hamerlyPrunedNodes,
-                  size_t& totalNodes);
+                  size_t& totalNodes,
+                  const arma::mat& interclusterDistances);
 };
 
 template<typename MetricType, typename MatType>
