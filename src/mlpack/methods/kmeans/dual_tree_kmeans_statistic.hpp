@@ -131,6 +131,20 @@ class DualTreeKMeansStatistic
   //! Modify the last distance calculation.
   double& LastDistance() { return lastDistance; }
 
+  std::string ToString() const
+  {
+    std::ostringstream convert;
+    convert << "DualTreeKMeansStatistic [" << this << "]" << std::endl;
+    convert << "  minQueryNodeDistance: " << minQueryNodeDistance << ".\n";
+    convert << "  maxQueryNodeDistance: " << maxQueryNodeDistance << ".\n";
+    convert << "  secondMinQueryNodeDistance: " << secondMinQueryNodeDistance << ".\n";
+    convert << "  secondMaxQueryNodeDistance: " << secondMaxQueryNodeDistance << ".\n";
+    convert << "  hamerlyPruned: " << hamerlyPruned << ".\n";
+    convert << "  lastSecondClosestBound: " << lastSecondClosestBound << ".\n";
+    convert << "  clustersPruned: " << clustersPruned << ".\n";
+    return convert.str();
+  }
+
  private:
   //! The empirically calculated centroid of the node.
   arma::vec centroid;
