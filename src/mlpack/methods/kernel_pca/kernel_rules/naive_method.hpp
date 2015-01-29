@@ -18,7 +18,7 @@ class NaiveKernelRule
 {
   public:
     /**
-     * Construct the kernel matrix approximation using the all pairs method.
+     * Construct the exact kernel matrix.
      *
      * @param data Input data points.
      * @param transformedData Matrix to output results into.
