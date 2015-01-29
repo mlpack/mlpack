@@ -252,7 +252,7 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
   M.set_size(sdp.NumConstraints(), sdp.NumConstraints());
 
   double primalObj = 0., alpha, beta;
-  for (size_t iteration = 0; iteration != maxIterations; iteration++)
+  for (size_t iteration = 1; iteration != maxIterations; iteration++)
   {
     if (sdp.NumSparseConstraints())
       rp(arma::span(0, sdp.NumSparseConstraints() - 1)) =
