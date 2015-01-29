@@ -43,7 +43,7 @@ template <typename SDPType>
 double LRSDPFunction<SDPType>::Evaluate(const arma::mat& coordinates) const
 {
   const arma::mat rrt = coordinates * trans(coordinates);
-  return accu(C() % rrt);
+  return accu(SDP().C() % rrt);
 }
 
 template <typename SDPType>
@@ -59,10 +59,10 @@ double LRSDPFunction<SDPType>::EvaluateConstraint(const size_t index,
                                                   const arma::mat& coordinates) const
 {
   const arma::mat rrt = coordinates * trans(coordinates);
-  if (index < NumSparseConstraints())
-    return accu(SparseA()[index] % rrt) - SparseB()[index];
-  const size_t index1 = index - NumSparseConstraints();
-  return accu(DenseA()[index1] % rrt) - DenseB()[index1];
+  if (index < SDP().NumSparseConstraints())
+    return accu(SDP().SparseA()[index] % rrt) - SDP().SparseB()[index];
+  const size_t index1 = index - SDP().NumSparseConstraints();
+  return accu(SDP().DenseA()[index1] % rrt) - SDP().DenseB()[index1];
 }
 
 template <typename SDPType>
@@ -80,11 +80,11 @@ std::string LRSDPFunction<SDPType>::ToString() const
 {
   std::ostringstream convert;
   convert << "LRSDPFunction [" << this << "]" << std::endl;
-  convert << "  Number of constraints: " << NumConstraints() << std::endl;
-  convert << "  Problem size: n=" << GetInitialPoint().n_rows << ", r="
+  convert << "  Number of constraints: " << SDP().NumConstraints() << std::endl;
+  convert << "  Problem size: n=" << initialPoint.n_rows << ", r="
       << initialPoint.n_cols << std::endl;
-  convert << "  Sparse Constraint b_i values: " << SparseB().t();
-  convert << "  Dense Constraint b_i values: " << DenseB().t();
+  convert << "  Sparse Constraint b_i values: " << SDP().SparseB().t();
+  convert << "  Dense Constraint b_i values: " << SDP().DenseB().t();
   return convert.str();
 }
 
@@ -150,13 +150,13 @@ EvaluateImpl(const LRSDPFunction<SDPType>& function,
   //
   // Similarly for the constraints, taking A*R first should be more efficient
   const arma::mat rrt = coordinates * trans(coordinates);
-  double objective = accu(function.C() % rrt);
+  double objective = accu(function.SDP().C() % rrt);
 
   // Now each constraint.
-  UpdateObjective(objective, rrt, function.SparseA(), function.SparseB(),
+  UpdateObjective(objective, rrt, function.SDP().SparseA(), function.SDP().SparseB(),
       lambda, 0, sigma);
-  UpdateObjective(objective, rrt, function.DenseA(), function.DenseB(), lambda,
-      function.NumSparseConstraints(), sigma);
+  UpdateObjective(objective, rrt, function.SDP().DenseA(), function.SDP().DenseB(), lambda,
+      function.SDP().NumSparseConstraints(), sigma);
 
   return objective;
 }
@@ -175,14 +175,14 @@ GradientImpl(const LRSDPFunction<SDPType>& function,
   // S' = C - sum_{i = 1}^{m} y'_i A_i
   // y'_i = y_i - sigma * (Trace(A_i * (R R^T)) - b_i)
   const arma::mat rrt = coordinates * trans(coordinates);
-  arma::mat s(function.C());
+  arma::mat s(function.SDP().C());
 
   UpdateGradient(
-      s, rrt, function.SparseA(), function.SparseB(),
+      s, rrt, function.SDP().SparseA(), function.SDP().SparseB(),
       lambda, 0, sigma);
   UpdateGradient(
-      s, rrt, function.DenseA(), function.DenseB(),
-      lambda, function.NumSparseConstraints(), sigma);
+      s, rrt, function.SDP().DenseA(), function.SDP().DenseB(),
+      lambda, function.SDP().NumSparseConstraints(), sigma);
 
   gradient = 2 * s * coordinates;
 }

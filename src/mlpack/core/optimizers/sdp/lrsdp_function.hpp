@@ -72,51 +72,17 @@ class LRSDPFunction
                           const arma::mat& coordinates,
                           arma::mat& gradient) const;
 
-  //! Get the number of sparse constraints in the LRSDP.
-  size_t NumSparseConstraints() const { return sdp.NumSparseConstraints(); }
-
-  //! Get the number of dense constraints in the LRSDP.
-  size_t NumDenseConstraints() const { return sdp.NumDenseConstraints(); }
-
   //! Get the total number of constraints in the LRSDP.
   size_t NumConstraints() const { return sdp.NumConstraints(); }
 
   //! Get the initial point of the LRSDP.
   const arma::mat& GetInitialPoint() const { return initialPoint; }
 
-  size_t N() const { return sdp.N(); }
+  //! Return the SDP object representing the problem.
+  const SDPType& SDP() const { return sdp; }
 
-  //! Return the objective function matrix (C).
-  const typename SDPType::objective_matrix_type& C() const { return sdp.C(); }
-
-  //! Modify the objective function matrix (C).
-  typename SDPType::objective_matrix_type& C() { return sdp.C(); }
-
-  //! Return the vector of sparse A matrices (which correspond to the sparse
-  // constraints).
-  const std::vector<arma::sp_mat>& SparseA() const { return sdp.SparseA(); }
-
-  //! Modify the veector of sparse A matrices (which correspond to the sparse
-  // constraints).
-  std::vector<arma::sp_mat>& SparseA() { return sdp.SparseA(); }
-
-  //! Return the vector of dense A matrices (which correspond to the dense
-  // constraints).
-  const std::vector<arma::mat>& DenseA() const { return sdp.DenseA(); }
-
-  //! Modify the veector of dense A matrices (which correspond to the dense
-  // constraints).
-  std::vector<arma::mat>& DenseA() { return sdp.DenseA(); }
-
-  //! Return the vector of sparse B values.
-  const arma::vec& SparseB() const { return sdp.SparseB(); }
-  //! Modify the vector of sparse B values.
-  arma::vec& SparseB() { return sdp.SparseB(); }
-
-  //! Return the vector of dense B values.
-  const arma::vec& DenseB() const { return sdp.DenseB(); }
-  //! Modify the vector of dense B values.
-  arma::vec& DenseB() { return sdp.DenseB(); }
+  //! Modify the SDP object representing the problem.
+  SDPType& SDP() { return sdp; }
 
   //! Return string representation of object.
   std::string ToString() const;

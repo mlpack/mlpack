@@ -46,36 +46,36 @@ class LRSDP
   double Optimize(arma::mat& coordinates);
 
   //! Return the objective function matrix (c).
-  const typename SDPType::objective_matrix_type& C() const { return function.C(); }
+  const typename SDPType::objective_matrix_type& C() const { return function.SDP().C(); }
 
   //! Modify the objective function matrix (c).
-  typename SDPType::objective_matrix_type& C() { return function.C(); }
+  typename SDPType::objective_matrix_type& C() { return function.SDP().C(); }
 
   //! Return the vector of sparse A matrices (which correspond to the sparse
   // constraints).
-  const std::vector<arma::sp_mat>& SparseA() const { return function.SparseA(); }
+  const std::vector<arma::sp_mat>& SparseA() const { return function.SDP().SparseA(); }
 
   //! Modify the veector of sparse A matrices (which correspond to the sparse
   // constraints).
-  std::vector<arma::sp_mat>& SparseA() { return function.SparseA(); }
+  std::vector<arma::sp_mat>& SparseA() { return function.SDP().SparseA(); }
 
   //! Return the vector of dense A matrices (which correspond to the dense
   // constraints).
-  const std::vector<arma::mat>& DenseA() const { return function.DenseA(); }
+  const std::vector<arma::mat>& DenseA() const { return function.SDP().DenseA(); }
 
   //! Modify the veector of dense A matrices (which correspond to the dense
   // constraints).
-  std::vector<arma::mat>& DenseA() { return function.DenseA(); }
+  std::vector<arma::mat>& DenseA() { return function.SDP().DenseA(); }
 
   //! Return the vector of sparse B values.
-  const arma::vec& SparseB() const { return function.SparseB(); }
+  const arma::vec& SparseB() const { return function.SDP().SparseB(); }
   //! Modify the vector of sparse B values.
-  arma::vec& SparseB() { return function.SparseB(); }
+  arma::vec& SparseB() { return function.SDP().SparseB(); }
 
   //! Return the vector of dense B values.
-  const arma::vec& DenseB() const { return function.DenseB(); }
+  const arma::vec& DenseB() const { return function.SDP().DenseB(); }
   //! Modify the vector of dense B values.
-  arma::vec& DenseB() { return function.DenseB(); }
+  arma::vec& DenseB() { return function.SDP().DenseB(); }
 
   //! Return the function to be optimized.
   const LRSDPFunction<SDPType>& Function() const { return function; }
