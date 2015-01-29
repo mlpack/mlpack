@@ -99,7 +99,9 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
       traverser(rules);
 
   tree->Stat().ClustersPruned() = 0; // The constructor sets this to -1.
+  Log::Info << "Traversal begins.\n";
   traverser.Traverse(*centroidTree, *tree);
+  Log::Info << "Traversal done.\n";
 
   distanceCalculations += rules.DistanceCalculations();
 
@@ -127,9 +129,14 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
 
   // Update the tree with the centroid movement information.
   size_t hamerlyPruned = 0;
+  size_t hamerlyPrunedNodes = 0;
+  size_t totalNodes = 0;
+  Log::Info << "Update tree.\n";
   UpdateOwner(tree, centroids.n_cols, assignments);
   TreeUpdate(tree, centroids.n_cols, clusterDistances, assignments,
-      oldCentroids, dataset, oldFromNewCentroids, hamerlyPruned);
+      oldCentroids, dataset, oldFromNewCentroids, hamerlyPruned,
+      hamerlyPrunedNodes, totalNodes);
+  Log::Info << "Update tree done.\n";
 
   delete centroidTree;
 
@@ -224,18 +231,29 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
     const arma::mat& centroids,
     const arma::mat& dataset,
     const std::vector<size_t>& oldFromNew,
-    size_t& hamerlyPruned)
+    size_t& hamerlyPruned,
+    size_t& hamerlyPrunedNodes,
+    size_t& totalNodes)
 {
   // This is basically IterationUpdate(), but pulled out to be separate from the
   // actual dual-tree algorithm.
   const bool prunedLastIteration = node->Stat().HamerlyPruned();
   node->Stat().HamerlyPruned() = false;
+  ++totalNodes;
 
   // The easy case: this node had an owner.
   if (node->Stat().Owner() < clusters)
   {
+/*
     // Verify correctness...
-    /*
+    for (size_t i = 0; i < node->NumPoints(); ++i)
+    {
+      if (!prunedLastIteration &&
+          distanceIteration[node->Descendant(i)] < iteration)
+        Log::Fatal << "Point " << node->Descendant(i) << " was never visited!"
+<< " (" << distanceIteration[node->Descendant(i)] << ", " << prunedLastIteration
+<< ")\n";
+    }
     for (size_t i = 0; i < node->NumDescendants(); ++i)
     {
       size_t closest = clusters;
@@ -262,7 +280,7 @@ closest << "!  It's part of node r" << node->Begin() << "c" << node->Count() <<
 ".\n";
       }
     }
-    */
+*/
 
     // During the last iteration, this node was pruned.
     const size_t owner = node->Stat().Owner();
@@ -293,8 +311,27 @@ closest << "!  It's part of node r" << node->Begin() << "c" << node->Count() <<
         node->Stat().HamerlyPruned() = true;
         if (!node->Parent()->Stat().HamerlyPruned())
           hamerlyPruned += node->NumDescendants();
+        ++hamerlyPrunedNodes;
       }
     }
+
+    if (!node->Stat().HamerlyPruned())
+    {
+      if (node->Parent() != NULL && node->Parent()->Stat().HamerlyPruned())
+      {
+        node->Stat().HamerlyPruned() = true;
+        node->Stat().MinQueryNodeDistance() = DBL_MAX;
+      }
+      else
+      {
+        if (node->Stat().SecondMaxQueryNodeDistance() != DBL_MAX)
+          node->Stat().SecondMaxQueryNodeDistance() += clusterDistances[clusters];
+        if (node->Stat().SecondMinQueryNodeDistance() != DBL_MAX)
+          node->Stat().SecondMinQueryNodeDistance() += clusterDistances[clusters];
+      }
+    }
+    else
+      node->Stat().MinQueryNodeDistance() = DBL_MAX;
   }
   else
   {
@@ -306,6 +343,10 @@ closest << "!  It's part of node r" << node->Begin() << "c" << node->Count() <<
       node->Stat().MaxQueryNodeDistance() += clusterDistances[clusters];
     if (node->Stat().MinQueryNodeDistance() != DBL_MAX)
       node->Stat().MinQueryNodeDistance() += clusterDistances[clusters];
+    if (node->Stat().SecondMaxQueryNodeDistance() != DBL_MAX)
+      node->Stat().SecondMaxQueryNodeDistance() += clusterDistances[clusters];
+    if (node->Stat().SecondMinQueryNodeDistance() != DBL_MAX)
+      node->Stat().SecondMinQueryNodeDistance() += clusterDistances[clusters];
 
     // Since the node didn't have an owner, it can't be Hamerly pruned.
     node->Stat().HamerlyPruned() = false;
@@ -317,7 +358,8 @@ closest << "!  It's part of node r" << node->Begin() << "c" << node->Count() <<
   for (size_t i = 0; i < node->NumChildren(); ++i)
   {
     TreeUpdate(&node->Child(i), clusters, clusterDistances, assignments,
-        centroids, dataset, oldFromNew, hamerlyPruned);
+        centroids, dataset, oldFromNew, hamerlyPruned, hamerlyPrunedNodes,
+        totalNodes);
     if (!node->Child(i).Stat().HamerlyPruned())
       allPruned = false;
     else if (owner == clusters)
@@ -330,30 +372,41 @@ closest << "!  It's part of node r" << node->Begin() << "c" << node->Count() <<
     allPruned = false;
 
   if (allPruned && owner < clusters && !node->Stat().HamerlyPruned())
+  {
+    node->Stat().MinQueryNodeDistance() = DBL_MAX;
     node->Stat().HamerlyPruned() = true;
+    hamerlyPrunedNodes++;
+  }
 
   node->Stat().Iteration() = iteration;
   node->Stat().ClustersPruned() = (node->Parent() == NULL) ? 0 : -1;
   // We have to set the closest query node to NULL because the cluster tree will
   // be rebuilt.
-  node->Stat().ClosestQueryNode() = NULL;
+//  node->Stat().ClosestQueryNode() = NULL;
 
   if (prunedLastIteration)
     node->Stat().LastSecondClosestBound() -= clusterDistances[clusters];
   else
     node->Stat().LastSecondClosestBound() =
         node->Stat().SecondMinQueryNodeDistance() - clusterDistances[clusters];
+//  node->Stat().MinQueryNodeDistance() = DBL_MAX;
   node->Stat().MinQueryNodeDistance() = DBL_MAX;
-  if (prunedLastIteration && !node->Stat().HamerlyPruned())
-    node->Stat().MaxQueryNodeDistance() = DBL_MAX;
   node->Stat().SecondMinQueryNodeDistance() = DBL_MAX;
-  node->Stat().SecondMaxQueryNodeDistance() = DBL_MAX;
+  if (prunedLastIteration && !node->Stat().HamerlyPruned())
+  {
+    node->Stat().MaxQueryNodeDistance() = DBL_MAX;
+    node->Stat().SecondMaxQueryNodeDistance() = DBL_MAX;
+  }
   // This should change later, but I'm not yet sure how to do it.
 //  node->Stat().SecondClosestBound() = DBL_MAX;
 //  node->Stat().SecondClosestQueryNode() = NULL;
 
   if (node->Parent() == NULL)
+  {
     Log::Info << "Total Hamerly pruned points: " << hamerlyPruned << ".\n";
+    Log::Info << "Total pruned Hamerly nodes: " << hamerlyPrunedNodes << ".\n";
+    Log::Info << "Total nodes in tree: " << totalNodes << ".\n";
+  }
 }
 
 } // namespace kmeans

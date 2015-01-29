@@ -128,46 +128,33 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
   // Calculate distance to node.
   // This costs about the same (in terms of runtime) as a single MinDistance()
   // call, so there only need to add one distance computation.
-  math::Range distances = referenceNode.RangeDistance(&queryNode);
+  const math::Range distances = referenceNode.RangeDistance(&queryNode);
   ++distanceCalculations;
 
   // Is this closer than the current best query node?
   if (distances.Lo() < referenceNode.Stat().MinQueryNodeDistance())
   {
     // This is the new closest node.
-    referenceNode.Stat().SecondClosestQueryNode() =
-        referenceNode.Stat().ClosestQueryNode();
     referenceNode.Stat().SecondMinQueryNodeDistance() =
         referenceNode.Stat().MinQueryNodeDistance();
     referenceNode.Stat().SecondMaxQueryNodeDistance() =
         referenceNode.Stat().MaxQueryNodeDistance();
-    referenceNode.Stat().ClosestQueryNode() = (void*) &queryNode;
     referenceNode.Stat().MinQueryNodeDistance() = distances.Lo();
     referenceNode.Stat().MaxQueryNodeDistance() = distances.Hi();
   }
   else if (distances.Lo() < referenceNode.Stat().SecondMinQueryNodeDistance())
   {
     // This is the new second closest node.
-    referenceNode.Stat().SecondClosestQueryNode() = (void*) &queryNode;
     referenceNode.Stat().SecondMinQueryNodeDistance() = distances.Lo();
     referenceNode.Stat().SecondMaxQueryNodeDistance() = distances.Hi();
   }
   else if (distances.Lo() > referenceNode.Stat().SecondMaxQueryNodeDistance())
   {
-    // This is a Pelleg-Moore type prune.
-//    Log::Warn << "Pelleg-Moore prune: " << distances.Lo() << "/" <<
-//distances.Hi() << ", r" << referenceNode.Begin() << "c" << referenceNode.Count()
-//<< ", q" << queryNode.Begin() << "c" << queryNode.Count() << "; mQND " <<
-//referenceNode.Stat().MinQueryNodeDistance() << ", MQND " <<
-//referenceNode.Stat().MaxQueryNodeDistance() << ", smQND " <<
-//referenceNode.Stat().SecondMinQueryNodeDistance() << ", sMQND " <<
-//referenceNode.Stat().SecondMaxQueryNodeDistance() << ".\n";
-
     referenceNode.Stat().ClustersPruned() += queryNode.NumDescendants();
     return DBL_MAX;
   }
 
-  return 0.0; // No pruning allowed at this time.
+  return distances.Lo(); // No pruning allowed at this time.
 }
 
 template<typename MetricType, typename TreeType>

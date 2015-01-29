@@ -72,7 +72,9 @@ class DualTreeKMeans
                   const arma::mat& oldCentroids,
                   const arma::mat& dataset,
                   const std::vector<size_t>& oldFromNew,
-                  size_t& hamerlyPruned);
+                  size_t& hamerlyPruned,
+                  size_t& hamerlyPrunedNodes,
+                  size_t& totalNodes);
 };
 
 template<typename MetricType, typename MatType>

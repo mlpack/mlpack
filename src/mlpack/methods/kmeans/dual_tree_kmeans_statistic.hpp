@@ -17,8 +17,8 @@ class DualTreeKMeansStatistic
 
   template<typename TreeType>
   DualTreeKMeansStatistic(TreeType& node) :
-      closestQueryNode(NULL),
-      secondClosestQueryNode(NULL),
+//      closestQueryNode(NULL),
+//      secondClosestQueryNode(NULL),
       minQueryNodeDistance(DBL_MAX),
       maxQueryNodeDistance(DBL_MAX),
       secondMinQueryNodeDistance(DBL_MAX),
@@ -52,14 +52,14 @@ class DualTreeKMeansStatistic
   arma::vec& Centroid() { return centroid; }
 
   //! Get the current closest query node.
-  void* ClosestQueryNode() const { return closestQueryNode; }
+//  void* ClosestQueryNode() const { return closestQueryNode; }
   //! Modify the current closest query node.
-  void*& ClosestQueryNode() { return closestQueryNode; }
+//  void*& ClosestQueryNode() { return closestQueryNode; }
 
   //! Get the second closest query node.
-  void* SecondClosestQueryNode() const { return secondClosestQueryNode; }
+//  void* SecondClosestQueryNode() const { return secondClosestQueryNode; }
   //! Modify the second closest query node.
-  void*& SecondClosestQueryNode() { return secondClosestQueryNode; }
+//  void*& SecondClosestQueryNode() { return secondClosestQueryNode; }
 
   //! Get the minimum distance to the closest query node.
   double MinQueryNodeDistance() const { return minQueryNodeDistance; }
@@ -136,9 +136,9 @@ class DualTreeKMeansStatistic
   arma::vec centroid;
 
   //! The current closest query node to this reference node.
-  void* closestQueryNode;
+//  void* closestQueryNode;
   //! The second closest query node.
-  void* secondClosestQueryNode;
+//  void* secondClosestQueryNode;
   //! The minimum distance to the closest query node.
   double minQueryNodeDistance;
   //! The maximum distance to the closest query node.
