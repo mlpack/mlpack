@@ -13,6 +13,8 @@
 // In case it hasn't been included yet.
 #include "dtnn_kmeans.hpp"
 
+#include "dtnn_rules.hpp"
+
 namespace mlpack {
 namespace kmeans {
 
@@ -85,28 +87,35 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   TreeType* centroidTree = BuildTree<TreeType>(
       const_cast<typename TreeType::Mat&>(centroids), oldFromNewCentroids);
 
-  typedef neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType,
-      TreeType> AllkNNType;
-  AllkNNType allknn(centroidTree, tree, centroids, dataset, false, metric);
-
+  // We won't use the AllkNN class here because we have our own set of rules.
   // This is a lot of overhead.  We don't need the distances.
-  arma::mat distances;
-  arma::Mat<size_t> assignments;
-  allknn.Search(1, assignments, distances);
-  distanceCalculations += allknn.BaseCases() + allknn.Scores();
+  arma::mat distances(5, dataset.n_cols);
+  arma::Mat<size_t> assignments(5, dataset.n_cols);
+  distances.fill(DBL_MAX);
+  assignments.fill(size_t(-1));
+  typedef DTNNKMeansRules<MetricType, TreeType> RuleType;
+  RuleType rules(centroids, dataset, assignments, distances, metric);
+
+  // Now construct the traverser ourselves.
+  typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
+
+  traverser.Traverse(*tree, *centroidTree);
+
+  distanceCalculations += rules.BaseCases() + rules.Scores();
 
   // From the assignments, calculate the new centroids and counts.
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     if (tree::TreeTraits<TreeType>::RearrangesDataset)
     {
-      newCentroids.col(oldFromNewCentroids[assignments[i]]) += dataset.col(i);
-      ++counts(oldFromNewCentroids[assignments[i]]);
+      newCentroids.col(oldFromNewCentroids[assignments(0, i)]) +=
+          dataset.col(i);
+      ++counts(oldFromNewCentroids[assignments(0, i)]);
     }
     else
     {
-      newCentroids.col(assignments[i]) += dataset.col(i);
-      ++counts(assignments[i]);
+      newCentroids.col(assignments(0, i)) += dataset.col(i);
+      ++counts(assignments(0, i));
     }
   }
 
