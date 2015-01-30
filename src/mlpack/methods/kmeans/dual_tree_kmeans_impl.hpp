@@ -42,7 +42,7 @@ DualTreeKMeans<MetricType, MatType, TreeType>::DualTreeKMeans(
     datasetCopy = datasetOrig;
 
   // Now build the tree.  We don't need any mappings.
-  tree = new TreeType(const_cast<typename TreeType::Mat&>(this->dataset), 10);
+  tree = new TreeType(const_cast<typename TreeType::Mat&>(this->dataset), 1);
 
   Timer::Stop("tree_building");
 }
