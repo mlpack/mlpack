@@ -42,7 +42,7 @@ DualTreeKMeans<MetricType, MatType, TreeType>::DualTreeKMeans(
     datasetCopy = datasetOrig;
 
   // Now build the tree.  We don't need any mappings.
-  tree = new TreeType(const_cast<typename TreeType::Mat&>(this->dataset), 1);
+  tree = new TreeType(const_cast<typename TreeType::Mat&>(this->dataset), 10);
 
   Timer::Stop("tree_building");
 }
@@ -312,8 +312,8 @@ closest << "!  It's part of node r" << node->Begin() << "c" << node->Count() <<
       else if (node->Stat().MaxQueryNodeDistance() < 0.5 *
           interclusterDistances(0, owner))
       {
-        Log::Warn << "Secondary Elkan prune! r" << node->Begin() << "c" <<
-node->Count() << ".\n";
+//        Log::Warn << "Secondary Elkan prune! r" << node->Begin() << "c" <<
+//node->Count() << ".\n";
         node->Stat().HamerlyPruned() = true;
         if (!node->Parent()->Stat().HamerlyPruned())
           hamerlyPruned += node->NumDescendants();

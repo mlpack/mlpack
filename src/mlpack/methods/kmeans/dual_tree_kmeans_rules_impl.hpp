@@ -148,10 +148,18 @@ double DualTreeKMeansRules<MetricType, TreeType>::Score(
   if (distances.Lo() < referenceNode.Stat().MinQueryNodeDistance())
   {
     // This is the new closest node.
-    referenceNode.Stat().SecondMinQueryNodeDistance() =
-        referenceNode.Stat().MinQueryNodeDistance();
-    referenceNode.Stat().SecondMaxQueryNodeDistance() =
-        referenceNode.Stat().MaxQueryNodeDistance();
+    if (queryNode.NumDescendants() >= 2)
+    {
+      referenceNode.Stat().SecondMinQueryNodeDistance() = distances.Lo();
+      referenceNode.Stat().SecondMaxQueryNodeDistance() = distances.Hi();
+    }
+    else
+    {
+      referenceNode.Stat().SecondMinQueryNodeDistance() =
+          referenceNode.Stat().MinQueryNodeDistance();
+      referenceNode.Stat().SecondMaxQueryNodeDistance() =
+          referenceNode.Stat().MaxQueryNodeDistance();
+    }
     referenceNode.Stat().MinQueryNodeDistance() = distances.Lo();
     referenceNode.Stat().MaxQueryNodeDistance() = distances.Hi();
   }
