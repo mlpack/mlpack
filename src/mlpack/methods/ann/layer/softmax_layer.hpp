@@ -48,7 +48,7 @@ class SoftmaxLayer
   void FeedForward(const VecType& inputActivation, VecType& outputActivation)
   {
     outputActivation = arma::trunc_exp(inputActivation);
-    outputActivation /= arma::accu(inputActivation);
+    outputActivation /= arma::accu(outputActivation);
   }
 
   /**
