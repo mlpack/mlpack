@@ -14,6 +14,8 @@
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 
+#include "dtnn_statistic.hpp"
+
 namespace mlpack {
 namespace kmeans {
 
@@ -28,7 +30,7 @@ template<
     typename MetricType,
     typename MatType,
     typename TreeType = tree::BinarySpaceTree<bound::HRectBound<2>,
-        neighbor::NeighborSearchStat<neighbor::NearestNeighborSort> > >
+        DTNNStatistic> >
 class DTNNKMeans
 {
  public:
@@ -74,9 +76,24 @@ class DTNNKMeans
 
   //! Track distance calculations.
   size_t distanceCalculations;
+  //! Track iteration number.
+  size_t iteration;
+
+  //! Centroids from pruning.  Not normalized.
+  arma::mat prunedCentroids;
+  //! Counts from pruning.  Not normalized.
+  arma::Col<size_t> prunedCounts;
 
   //! Update the bounds in the tree before the next iteration.
-  void UpdateTree(TreeType& node, const double tolerance);
+  void UpdateTree(TreeType& node,
+                  const double tolerance,
+                  const arma::mat& centroids,
+                  const arma::Mat<size_t>& assignments,
+                  const arma::mat& distances,
+                  const arma::mat& clusterDistances,
+                  const std::vector<size_t>& oldFromNewCentroids);
+
+  void PrecalculateCentroids(TreeType& node);
 };
 
 //! A template typedef for the DTNNKMeans algorithm with the default tree type
@@ -88,7 +105,7 @@ using DefaultDTNNKMeans = DTNNKMeans<MetricType, MatType>;
 template<typename MetricType, typename MatType>
 using CoverTreeDTNNKMeans = DTNNKMeans<MetricType, MatType,
     tree::CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
-    neighbor::NeighborSearchStat<neighbor::NearestNeighborSort> > >;
+    DTNNStatistic> >;
 
 } // namespace kmeans
 } // namespace mlpack

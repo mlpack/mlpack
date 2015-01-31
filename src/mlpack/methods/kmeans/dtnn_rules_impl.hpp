@@ -48,6 +48,9 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
     TreeType& queryNode,
     TreeType& referenceNode)
 {
+  if (queryNode.Stat().Pruned())
+    return DBL_MAX;
+
   // Check if the query node is Hamerly pruned, and if not, then don't continue.
   return rules.Score(queryNode, referenceNode);
 }
