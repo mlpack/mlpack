@@ -35,23 +35,22 @@ PARAM_STRING("centroid_file", "If specified, the centroids of each cluster will"
 // Mean Shift configuration options.
 PARAM_INT("max_iterations", "Maximum number of iterations before Mean Shift "
           "terminates.", "m", 1000);
-PARAM_DOUBLE("stopThresh", "If the 2-norm of the mean shift vector "
-             "is less than stopThresh, iterations will terminate. ", "s", 1e-3);
-PARAM_DOUBLE("bandwidth", "bandwidth of Gaussian kernel ", "b", 1.0);
-PARAM_DOUBLE("duplicateThresh", "If distance of two centroids is less than duplicate thresh "
-             "one will be removed. "
-             "If it's negative, an estimation will be given. ", "d", -1.0);
 
+PARAM_DOUBLE("bandwidth", "bandwidth of Gaussian kernel ", "b", 1.0);
+PARAM_DOUBLE("radius", "If distance of two centroids is less than radius "
+             "one will be removed. "
+             "If it isn't positive, an estimation will be given. "
+             "Points with distance to current centroid less than radius "
+             "will be used to calculate new centroid. ", "r", 0);
 
 int main(int argc, char** argv) {
   
   CLI::ParseCommandLine(argc, argv);
   
   const string inputFile = CLI::GetParam<string>("inputFile");
-  const double stopThresh = CLI::GetParam<double>("stopThresh");
+  const double radius = CLI::GetParam<double>("radius");
   const double bandwidth = CLI::GetParam<double>("bandwidth");
   const int maxIterations = CLI::GetParam<int>("max_iterations");
-  const double duplicateThresh = CLI::GetParam<double>("duplicateThresh");
   
   if (maxIterations < 0) {
     Log::Fatal << "Invalid value for maximum iterations (" << maxIterations <<
@@ -72,8 +71,7 @@ int main(int argc, char** argv) {
   
   kernel::GaussianKernel kernel(bandwidth);
   
-  MeanShift<> meanShift(duplicateThresh,
-                                                         maxIterations, stopThresh, kernel);
+  MeanShift<> meanShift(radius, maxIterations, kernel);
   Timer::Start("clustering");
   meanShift.Cluster(dataset, assignments, centroids);
   Timer::Stop("clustering");

@@ -85,23 +85,4 @@ BOOST_AUTO_TEST_CASE(MeanShiftSimpleTest) {
   
 }
 
-/**
- * When duplicate thresh is set to 0, any centroids shouldn't removed.
- */
-BOOST_AUTO_TEST_CASE(ZeroDuplicateThreshTest) {
-    
-    // Set the duplicate thresh to 0
-    MeanShift<> meanShift(0);
-    
-    arma::Col<size_t> assignments;
-    arma::mat centroids;
-    meanShift.Cluster((arma::mat) trans(meanShiftData), assignments, centroids);
-    
-    /**
-     * Make sure the number of centroids is equal to 
-     * the number of vectors in dataset.
-     */
-    BOOST_REQUIRE_EQUAL(centroids.n_cols, meanShiftData.n_rows);
-}
-
 BOOST_AUTO_TEST_SUITE_END();
