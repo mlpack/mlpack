@@ -28,7 +28,7 @@ namespace meanshift /** Mean Shift clustering. */ {
  * arma::Col<size_t> assignments; // Cluster assignments.
  * arma::mat centroids; // Cluster centroids.
  *
- * MeanShift<arma::mat, kernel::GaussianKernel> meanShift();
+ * MeanShift<> meanShift();
  * meanShift.Cluster(dataset, assignments, centroids);
  * @endcode
  *
@@ -36,7 +36,6 @@ namespace meanshift /** Mean Shift clustering. */ {
  */
   
 template<typename KernelType = kernel::GaussianKernel,
-         typename MetricType = metric::EuclideanDistance,
          typename MatType = arma::mat>
 class MeanShift
 {
@@ -45,25 +44,21 @@ class MeanShift
    * Create a Mean Shift object and set the parameters which Mean Shift
    * will be run with.
    *
-   * @param duplicateThresh If distance of two centroids is less than it, one will be removed. If this value is negative, an estimation will be given when clustering.
+   * @param radius If distance of two centroids is less than it, one will be removed. If this value isn't positive, an estimation will be given when clustering.
    * @param maxIterations Maximum number of iterations allowed before giving up
-   * @param stopThresh If the 2-norm of the mean shift vector is less than stopThresh, 
    *        iterations will terminate.
    * @param kernel Optional KernelType object.
-   * @param metric Optional the metric to calculate distance.
    */
-  MeanShift(const double duplicateThresh = -1,
+  MeanShift(const double radius = 0,
             const size_t maxIterations = 1000,
-            const double stopThresh = 1e-3,
-            const KernelType kernel = KernelType(),
-            const MetricType metric = MetricType());
+            const KernelType kernel = KernelType());
   
   
   /**
-   * Give an estimation of duplicate thresh based on given dataset.
+   * Give an estimation of radius based on given dataset.
    * @param data Dataset for estimation.
    */
-  double estimateDuplicateThresh(const MatType& data);
+  double estimateRadius(const MatType& data);
   
   /**
    * Perform Mean Shift clustering on the data, returning a list of cluster
@@ -83,45 +78,33 @@ class MeanShift
   //! Set the maximum number of iterations.
   size_t& MaxIterations() { return maxIterations; }
   
-  //! Get the stop thresh.
-  double StopThresh() const { return stopThresh; }
-  //! Set the stop thresh.
-  double& StopThresh() { return stopThresh; }
+  //! Get the radius.
+  double Radius() const { return radius; }
+  //! Set the radius.
+  void Radius(double radius);
   
   //! Get the kernel.
   const KernelType& Kernel() const { return kernel; }
   //! Modify the kernel.
   KernelType& Kernel() { return kernel; }
   
-  //! Get the metric.
-  const MetricType& Metric() const { return metric; }
-  //! Modify the metric.
-  MetricType& Metric() { return metric; }
-  
-  //! Get the duplicate thresh.
-  double DuplicateThresh() const { return duplicateThresh; }
-  //! Set the duplicate thresh.
-  double& DuplicateThresh() { return duplicateThresh; }
-  
  private:
   
-  // If distance of two centroids is less than duplicateThresh, one will be removed.
-  double duplicateThresh;
+  /**
+   * If distance of two centroids is less than radius, one will be removed.
+   * Points with distance to current centroid less than radius will be used
+   * to calculate new centroid.
+   */
+  double radius;
+  
+  // By storing radius * radius, we can speed up a little.
+  double squaredRadius;
   
   //! Maximum number of iterations before giving up.
   size_t maxIterations;
   
-  /** 
-   * If the 2-norm of the mean shift vector is less than stopThresh,
-   *  iterations will terminate.
-   */
-  double stopThresh;
-  
   //! Instantiated kernel.
   KernelType kernel;
-  
-  //! Instantiated metric.
-  MetricType metric;
   
 };
 

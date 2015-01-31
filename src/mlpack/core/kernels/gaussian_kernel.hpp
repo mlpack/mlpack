@@ -74,6 +74,10 @@ class GaussianKernel
     // The precalculation of gamma saves us a little computation time.
     return exp(gamma * std::pow(t, 2.0));
   }
+  
+  double Gradient(const double t) const {
+    return gamma * exp(gamma * std::pow(t, 2.0));
+  }
 
   /**
    * Obtain the normalization constant of the Gaussian kernel.
