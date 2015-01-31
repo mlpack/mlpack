@@ -21,7 +21,6 @@ add_executable(mlpack_test
   kernel_pca_test.cpp
   kernel_traits_test.cpp
   kmeans_test.cpp
-  mean_shift_test.cpp
   lars_test.cpp
   lbfgs_test.cpp
   lin_alg_test.cpp
@@ -32,6 +31,7 @@ add_executable(mlpack_test
   lrsdp_test.cpp
   lsh_test.cpp
   math_test.cpp
+  mean_shift_test.cpp
   metric_test.cpp
   nbc_test.cpp
   nca_test.cpp
