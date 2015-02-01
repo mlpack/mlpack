@@ -31,7 +31,8 @@ inline force_inline double DTNNKMeansRules<MetricType, TreeType>::BaseCase(
 {
   // We'll check if the query point has been Hamerly pruned.  If so, don't
   // continue.
-
+//  if (queryIndex == 27040)
+//    Log::Warn << "Visit point 27040 with cluster " << referenceIndex << ".\n";
   return rules.BaseCase(queryIndex, referenceIndex);
 }
 
@@ -48,6 +49,11 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
     TreeType& queryNode,
     TreeType& referenceNode)
 {
+//  if (queryNode.Point(0) == 27040)
+//    Log::Warn << "Visit q27040c1 r" << referenceNode.Point(0) << "c" <<
+//referenceNode.NumDescendants() << ", " << queryNode.Stat().Pruned() << ", " <<
+//queryNode.Stat() << ", " << queryNode.Stat().FirstBound() << "," <<
+//queryNode.Stat().SecondBound() << ", " << queryNode.Stat().Bound() << ".\n";
   if (queryNode.Stat().Pruned())
     return DBL_MAX;
 

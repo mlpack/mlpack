@@ -20,7 +20,7 @@ class DTNNStatistic : public
       neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>(),
       pruned(false),
       iteration(0),
-      maxClusterDistance(0.0),
+      maxClusterDistance(DBL_MAX),
       secondClusterBound(0.0),
       owner(size_t(-1)),
       centroid()
@@ -33,7 +33,7 @@ class DTNNStatistic : public
       neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>(),
       pruned(false),
       iteration(0),
-      maxClusterDistance(0.0),
+      maxClusterDistance(DBL_MAX),
       secondClusterBound(0.0),
       owner(size_t(-1))
   {
