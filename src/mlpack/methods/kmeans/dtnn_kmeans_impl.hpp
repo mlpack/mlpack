@@ -94,6 +94,14 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   std::vector<size_t> oldFromNewCentroids;
   TreeType* centroidTree = BuildTree<TreeType>(
       const_cast<typename TreeType::Mat&>(centroids), oldFromNewCentroids);
+  // Calculate new from old mappings.
+  std::vector<size_t> newFromOldCentroids;
+  if (tree::TreeTraits<TreeType>::RearrangesDataset)
+  {
+    newFromOldCentroids.resize(centroids.n_cols);
+    for (size_t i = 0; i < centroids.n_cols; ++i)
+      newFromOldCentroids[oldFromNewCentroids[i]] = i;
+  }
 
   // Find the nearest neighbors of each of the clusters.
   neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType, TreeType>
@@ -173,7 +181,8 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   distanceCalculations += centroids.n_cols;
 
   UpdateTree(*tree, maxMovement, oldCentroids, assignments, distances,
-      clusterDistances, oldFromNewCentroids, interclusterDistances);
+      clusterDistances, oldFromNewCentroids, interclusterDistances,
+      newFromOldCentroids);
 
   // Reset centroids and counts for things we will collect during pruning.
   prunedCentroids.zeros(centroids.n_rows, centroids.n_cols);
@@ -196,7 +205,8 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
     const arma::mat& distances,
     const arma::mat& clusterDistances,
     const std::vector<size_t>& oldFromNewCentroids,
-    const arma::mat& interclusterDistances)
+    const arma::mat& interclusterDistances,
+    const std::vector<size_t>& newFromOldCentroids)
 {
   // Update iteration.
 //  node.Stat().Iteration() = iteration;
@@ -209,7 +219,8 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
   for (size_t i = 0; i < node.NumChildren(); ++i)
   {
     UpdateTree(node.Child(i), tolerance, centroids, assignments, distances,
-        clusterDistances, oldFromNewCentroids, interclusterDistances);
+        clusterDistances, oldFromNewCentroids, interclusterDistances,
+        newFromOldCentroids);
     if (!node.Child(i).Stat().Pruned())
       childrenPruned = false; // Not all children are pruned.
   }
@@ -310,12 +321,8 @@ oldFromNewCentroids[assignments(0, node.Point(i - 1))] << ".\n";
       else
       {
         // Also do between-cluster prune.
-        size_t newCluster = centroids.n_cols;
-        for (size_t i = 0; i < centroids.n_cols; ++i)
-          if (oldFromNewCentroids[i] == owner)
-            newCluster = i;
         if (node.Stat().MaxClusterDistance() < 0.5 *
-            interclusterDistances[newCluster])
+            interclusterDistances[newFromOldCentroids[owner]])
           node.Stat().Pruned() = true;
       }
 
@@ -380,12 +387,8 @@ oldFromNewCentroids[assignments(0, node.Point(i - 1))] << ".\n";
     else
     {
       // Attempt other prune.
-      size_t newCluster = centroids.n_cols;
-      for (size_t i = 0; i < centroids.n_cols; ++i)
-        if (oldFromNewCentroids[i] == owner)
-          newCluster = i;
       if (node.Stat().MaxClusterDistance() < 0.5 *
-          interclusterDistances[newCluster])
+          interclusterDistances[newFromOldCentroids[node.Stat().Owner()]])
       {
         // The node remains pruned.  Adjust the bounds for next iteration.
         node.Stat().MaxClusterDistance() += clusterDistances[node.Stat().Owner()];

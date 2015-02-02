@@ -92,7 +92,8 @@ class DTNNKMeans
                   const arma::mat& distances,
                   const arma::mat& clusterDistances,
                   const std::vector<size_t>& oldFromNewCentroids,
-                  const arma::mat& interclusterDistances);
+                  const arma::mat& interclusterDistances,
+                  const std::vector<size_t>& newFromOldCentroids);
 
   void PrecalculateCentroids(TreeType& node);
 };
