@@ -138,6 +138,18 @@ permissions to those two directories), and simply type
 
     $ make install
 
+As an example to check if install is working fine,type
+
+    $ allknn --h
+
+to get the help for the k nearest neigbours implementation of mlpack.
+
+If instead you get an error about problem of loading the .so files then add line 
+
+   export LD_LIBRARY_PATH=/usr/local/lib 
+
+to .bashrc file.
+
 You can now run the executables by name; you can link against mlpack with
     -lmlpack
 and the mlpack headers are found in
