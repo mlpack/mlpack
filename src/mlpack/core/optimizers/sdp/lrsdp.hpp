@@ -28,13 +28,25 @@ class LRSDP
   /**
    * Create an LRSDP to be optimized.  The solution will end up being a matrix
    * of size (rows) x (rank).  To construct each constraint and the objective
-   * function, use the functions A(), B(), and C() to set them correctly.
+   * function, use the function SDP() in order to access the SDPType object
+   * associated with this optimizer.
    *
    * @param numConstraints Number of constraints in the problem.
    * @param initialPoint Initial point of the optimization.
    */
   LRSDP(const size_t numSparseConstraints,
         const size_t numDenseConstraints,
+        const arma::mat& initialPoint);
+
+  /**
+   * Create an LRSDP object with the given SDP problem to be solved, and the
+   * given initial point.  Note that the SDP may be modified later by calling
+   * SDP() to access the object.
+   *
+   * @param sdp SDP to be solved.
+   * @param initialPoint Initial point of the optimization.
+   */
+  LRSDP(const SDPType& sdp,
         const arma::mat& initialPoint);
 
   /**
@@ -45,37 +57,10 @@ class LRSDP
    */
   double Optimize(arma::mat& coordinates);
 
-  //! Return the objective function matrix (c).
-  const typename SDPType::objective_matrix_type& C() const { return function.SDP().C(); }
-
-  //! Modify the objective function matrix (c).
-  typename SDPType::objective_matrix_type& C() { return function.SDP().C(); }
-
-  //! Return the vector of sparse A matrices (which correspond to the sparse
-  // constraints).
-  const std::vector<arma::sp_mat>& SparseA() const { return function.SDP().SparseA(); }
-
-  //! Modify the veector of sparse A matrices (which correspond to the sparse
-  // constraints).
-  std::vector<arma::sp_mat>& SparseA() { return function.SDP().SparseA(); }
-
-  //! Return the vector of dense A matrices (which correspond to the dense
-  // constraints).
-  const std::vector<arma::mat>& DenseA() const { return function.SDP().DenseA(); }
-
-  //! Modify the veector of dense A matrices (which correspond to the dense
-  // constraints).
-  std::vector<arma::mat>& DenseA() { return function.SDP().DenseA(); }
-
-  //! Return the vector of sparse B values.
-  const arma::vec& SparseB() const { return function.SDP().SparseB(); }
-  //! Modify the vector of sparse B values.
-  arma::vec& SparseB() { return function.SDP().SparseB(); }
-
-  //! Return the vector of dense B values.
-  const arma::vec& DenseB() const { return function.SDP().DenseB(); }
-  //! Modify the vector of dense B values.
-  arma::vec& DenseB() { return function.SDP().DenseB(); }
+  //! Return the SDP that will be solved.
+  const SDPType& SDP() const { return function.SDP(); }
+  //! Modify the SDP that will be solved.
+  SDPType& SDP() { return function.SDP(); }
 
   //! Return the function to be optimized.
   const LRSDPFunction<SDPType>& Function() const { return function; }

@@ -68,14 +68,14 @@ void MatrixCompletion::CheckValues()
 
 void MatrixCompletion::InitSDP()
 {
-  sdp.C().eye(m + n, m + n);
-  sdp.SparseB() = 2. * values;
+  sdp.SDP().C().eye(m + n, m + n);
+  sdp.SDP().SparseB() = 2. * values;
   const size_t p = indices.n_cols;
   for (size_t i = 0; i < p; i++)
   {
-    sdp.SparseA()[i].zeros(m + n, m + n);
-    sdp.SparseA()[i](indices(0, i), m + indices(1, i)) = 1.;
-    sdp.SparseA()[i](m + indices(1, i), indices(0, i)) = 1.;
+    sdp.SDP().SparseA()[i].zeros(m + n, m + n);
+    sdp.SDP().SparseA()[i](indices(0, i), m + indices(1, i)) = 1.;
+    sdp.SDP().SparseA()[i](m + indices(1, i), indices(0, i)) = 1.;
   }
 }
 

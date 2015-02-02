@@ -58,22 +58,22 @@ void SetupLovaszTheta(const arma::mat& edges,
   const size_t vertices = max(max(edges)) + 1;
 
   // C = -(e e^T) = -ones().
-  lovasz.C().ones(vertices, vertices);
-  lovasz.C() *= -1;
+  lovasz.SDP().C().ones(vertices, vertices);
+  lovasz.SDP().C() *= -1;
 
   // b_0 = 1; else = 0.
-  lovasz.SparseB().zeros(edges.n_cols + 1);
-  lovasz.SparseB()[0] = 1;
+  lovasz.SDP().SparseB().zeros(edges.n_cols + 1);
+  lovasz.SDP().SparseB()[0] = 1;
 
   // A_0 = I_n.
-  lovasz.SparseA()[0].eye(vertices, vertices);
+  lovasz.SDP().SparseA()[0].eye(vertices, vertices);
 
   // A_ij only has ones at (i, j) and (j, i) and 0 elsewhere.
   for (size_t i = 0; i < edges.n_cols; ++i)
   {
-    lovasz.SparseA()[i + 1].zeros(vertices, vertices);
-    lovasz.SparseA()[i + 1](edges(0, i), edges(1, i)) = 1.;
-    lovasz.SparseA()[i + 1](edges(1, i), edges(0, i)) = 1.;
+    lovasz.SDP().SparseA()[i + 1].zeros(vertices, vertices);
+    lovasz.SDP().SparseA()[i + 1](edges(0, i), edges(1, i)) = 1.;
+    lovasz.SDP().SparseA()[i + 1](edges(1, i), edges(0, i)) = 1.;
   }
 
   // Set the Lagrange multipliers right.
@@ -163,13 +163,13 @@ BOOST_AUTO_TEST_CASE(ErdosRenyiRandomGraphMaxCutSDP)
   }
 
   LRSDP<SDP<arma::sp_mat>> maxcut(laplacian.n_rows, 0, coordinates);
-  maxcut.C() = laplacian;
-  maxcut.C() *= -1.; // need to minimize the negative
-  maxcut.SparseB().ones(laplacian.n_rows);
+  maxcut.SDP().C() = laplacian;
+  maxcut.SDP().C() *= -1.; // need to minimize the negative
+  maxcut.SDP().SparseB().ones(laplacian.n_rows);
   for (size_t i = 0; i < laplacian.n_rows; ++i)
   {
-    maxcut.SparseA()[i].zeros(laplacian.n_rows, laplacian.n_rows);
-    maxcut.SparseA()[i](i, i) = 1.;
+    maxcut.SDP().SparseA()[i].zeros(laplacian.n_rows, laplacian.n_rows);
+    maxcut.SDP().SparseA()[i](i, i) = 1.;
   }
 
   const double finalValue = maxcut.Optimize(coordinates);
@@ -192,15 +192,16 @@ BOOST_AUTO_TEST_CASE(ErdosRenyiRandomGraphMaxCutSDP)
  *
  *    b_i = dot(A_i, X)
  *
- * where the A_i's have iid entries from Normal(0, 1/p). We do this by solving the
- * the following semi-definite program
+ * where the A_i's have iid entries from Normal(0, 1/p). We do this by solving
+ * the the following semi-definite program
  *
  *    min ||X||_* subj to dot(A_i, X) = b_i, i=1,...,p
  *
- * where ||X||_* denotes the nuclear norm (sum of singular values) of X. The equivalent
- * SDP is
+ * where ||X||_* denotes the nuclear norm (sum of singular values) of X. The
+ * equivalent SDP is
  *
- *    min tr(W1) + tr(W2) : [ W1, X ; X', W2 ] is PSD, dot(A_i, X) = b_i, i=1,...,p
+ *    min tr(W1) + tr(W2) : [ W1, X ; X', W2 ] is PSD,
+ *                          dot(A_i, X) = b_i, i = 1, ..., p
  *
  * For more details on matrix sensing and nuclear norm minimization, see
  *
@@ -238,8 +239,8 @@ BOOST_AUTO_TEST_CASE(GaussianMatrixSensingSDP)
   coordinates.eye(m + n, ceil(r));
 
   LRSDP<SDP<arma::sp_mat>> sensing(0, p, coordinates);
-  sensing.C().eye(m + n, m + n);
-  sensing.DenseB() = 2. * b;
+  sensing.SDP().C().eye(m + n, m + n);
+  sensing.SDP().DenseB() = 2. * b;
 
   const auto block_rows = arma::span(0, m - 1);
   const auto block_cols = arma::span(m, m + n - 1);
@@ -247,9 +248,9 @@ BOOST_AUTO_TEST_CASE(GaussianMatrixSensingSDP)
   for (size_t i = 0; i < p; ++i)
   {
     const arma::mat Ai = arma::reshape(A.row(i), n, m);
-    sensing.DenseA()[i].zeros(m + n, m + n);
-    sensing.DenseA()[i](block_rows, block_cols) = trans(Ai);
-    sensing.DenseA()[i](block_cols, block_rows) = Ai;
+    sensing.SDP().DenseA()[i].zeros(m + n, m + n);
+    sensing.SDP().DenseA()[i](block_rows, block_cols) = trans(Ai);
+    sensing.SDP().DenseA()[i](block_cols, block_rows) = Ai;
   }
 
   double finalValue = sensing.Optimize(coordinates);
