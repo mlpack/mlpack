@@ -95,6 +95,14 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   TreeType* centroidTree = BuildTree<TreeType>(
       const_cast<typename TreeType::Mat&>(centroids), oldFromNewCentroids);
 
+  // Find the nearest neighbors of each of the clusters.
+  neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType, TreeType>
+      nns(centroidTree, centroids);
+  arma::mat interclusterDistances;
+  arma::Mat<size_t> closestClusters; // We don't actually care about these.
+  nns.Search(1, closestClusters, interclusterDistances);
+  distanceCalculations += nns.BaseCases() + nns.Scores();
+
   // We won't use the AllkNN class here because we have our own set of rules.
   // This is a lot of overhead.  We don't need the distances.
   arma::mat distances(2, dataset.n_cols);
