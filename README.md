@@ -137,7 +137,12 @@ If you wish to install mlpack to /usr/include/mlpack/ and /usr/lib/ and
 permissions to those two directories), and simply type
 
     $ make install
-
+Run allknn program to check if everything is fine.
+    $ allknn --h
+If there is a problem loading the .so files then
+add line 
+  export LD_LIBRARY_PATH=/usr/local/lib 
+to .bashrc file.
 You can now run the executables by name; you can link against mlpack with
     -lmlpack
 and the mlpack headers are found in
