@@ -41,7 +41,7 @@ TreeType* BuildTree(
         tree::TreeTraits<TreeType>::RearrangesDataset == false, TreeType*
     >::type = 0)
 {
-  return new TreeType(dataset, 1);
+  return new TreeType(dataset);
 }
 
 template<typename MetricType, typename MatType, typename TreeType>
@@ -216,11 +216,12 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
     for (size_t i = 0; i < node.NumPoints(); ++i)
     {
       // Don't forget to map back from the new cluster index.
+      const size_t c = (tree::TreeTraits<TreeType>::RearrangesDataset) ?
+          oldFromNewCentroids[assignments(0, node.Point(i))] :
+          assignments(0, node.Point(i));
       if (owner == centroids.n_cols + 1)
-        owner = (tree::TreeTraits<TreeType>::RearrangesDataset) ?
-            oldFromNewCentroids[assignments(0, node.Point(i))] :
-            oldFromNewCentroids[assignments(0, node.Point(i))];
-      else if (owner != oldFromNewCentroids[assignments(0, node.Point(i))])
+        owner = c;
+      else if (owner != c)
         singleOwner = false;
 
       // Update maximum cluster distance and second cluster bound.
@@ -291,6 +292,7 @@ oldFromNewCentroids[assignments(0, node.Point(i - 1))] << ".\n";
       }
 */
 
+
       // What is the maximum distance to the closest cluster in the node?
       if (node.Stat().MaxClusterDistance() +
           clusterDistances[node.Stat().Owner()] <
@@ -298,7 +300,7 @@ oldFromNewCentroids[assignments(0, node.Point(i - 1))] << ".\n";
       {
         node.Stat().Pruned() = true;
       }
-        
+
       // Adjust for next iteration.
       node.Stat().MaxClusterDistance() +=
           clusterDistances[node.Stat().Owner()];
@@ -318,7 +320,7 @@ oldFromNewCentroids[assignments(0, node.Point(i - 1))] << ".\n";
   {
     // The node was pruned last iteration.  See if the node can remain pruned.
     singleOwner = false;
-  
+
 /*
       for (size_t i = 0; i < node.NumPoints(); ++i)
       {
