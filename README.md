@@ -138,22 +138,24 @@ permissions to those two directories), and simply type
 
     $ make install
 
-As an example to check if install is working fine,type
-
-    $ allknn --h
-
-to get the help for the k nearest neigbours implementation of mlpack.
-
-If instead you get an error about problem of loading the .so files then add line 
-
-   export LD_LIBRARY_PATH=/usr/local/lib 
-
-to .bashrc file.
-
 You can now run the executables by name; you can link against mlpack with
     -lmlpack
 and the mlpack headers are found in
     /usr/include/mlpack/.
+
+If running the programs (i.e. `$ allknn -h`) gives an error of the form
+
+    error while loading shared libraries: libmlpack.so.1: cannot open shared object file: No such file or directory
+
+then be sure that the runtime linker is searching the directory where
+`libmlpack.so` was installed (probably `/usr/local/lib/` unless you set it
+manually).  One way to do this, on Linux, is to ensure that the
+`LD_LIBRARY_PATH` environment variable has the directory that contains
+`libmlpack.so`.  Using bash, this can be set easily:
+
+    export LD_LIBRARY_PATH=/usr/local/lib/
+
+(or whatever directory `libmlpack.so` is installed in.)
 
 
 5. Running mlpack programs
