@@ -54,6 +54,12 @@ DTNNKMeans<MetricType, MatType, TreeType>::DTNNKMeans(const MatType& dataset,
     distanceCalculations(0),
     iteration(0)
 {
+  prunedPoints.resize(dataset.n_cols, false); // Fill with false.
+  upperBounds.set_size(dataset.n_cols);
+  upperBounds.fill(DBL_MAX);
+  lowerSecondBounds.zeros(dataset.n_cols);
+  lastOwners.zeros(dataset.n_cols);
+
   Timer::Start("tree_building");
 
   // Copy the dataset, if necessary.
@@ -118,7 +124,8 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   distances.fill(DBL_MAX);
   assignments.fill(size_t(-1));
   typedef DTNNKMeansRules<MetricType, TreeType> RuleType;
-  RuleType rules(centroids, dataset, assignments, distances, metric);
+  RuleType rules(centroids, dataset, assignments, distances, metric,
+      prunedPoints);
 
   // Now construct the traverser ourselves.
   typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
@@ -180,13 +187,13 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   clusterDistances[centroids.n_cols] = maxMovement;
   distanceCalculations += centroids.n_cols;
 
+  // Reset centroids and counts for things we will collect during pruning.
+  prunedCentroids.zeros(centroids.n_rows, centroids.n_cols);
+  prunedCounts.zeros(centroids.n_cols);
   UpdateTree(*tree, maxMovement, oldCentroids, assignments, distances,
       clusterDistances, oldFromNewCentroids, interclusterDistances,
       newFromOldCentroids);
 
-  // Reset centroids and counts for things we will collect during pruning.
-  prunedCentroids.zeros(centroids.n_rows, centroids.n_cols);
-  prunedCounts.zeros(centroids.n_cols);
   PrecalculateCentroids(*tree);
 
   delete centroidTree;
@@ -225,6 +232,8 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
       childrenPruned = false; // Not all children are pruned.
   }
 
+  const bool prunedLastIteration = node.Stat().Pruned();
+
   // Does the node have a single owner?
   // It would be nice if we could do this during the traversal.
   bool singleOwner = true;
@@ -236,19 +245,35 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
     for (size_t i = 0; i < node.NumPoints(); ++i)
     {
       // Don't forget to map back from the new cluster index.
-      const size_t c = (tree::TreeTraits<TreeType>::RearrangesDataset) ?
-          oldFromNewCentroids[assignments(0, node.Point(i))] :
-          assignments(0, node.Point(i));
+      size_t c;
+      if (!prunedPoints[node.Point(i)])
+        c = (tree::TreeTraits<TreeType>::RearrangesDataset) ?
+            oldFromNewCentroids[assignments(0, node.Point(i))] :
+            assignments(0, node.Point(i));
+      else
+        c = lastOwners[node.Point(i)];
+
       if (owner == centroids.n_cols + 1)
         owner = c;
       else if (owner != c)
         singleOwner = false;
 
       // Update maximum cluster distance and second cluster bound.
-      if (distances(0, node.Point(i)) > newMaxClusterDistance)
-        newMaxClusterDistance = distances(0, node.Point(i));
-      if (distances(1, node.Point(i)) < newSecondClusterBound)
-        newSecondClusterBound = distances(1, node.Point(i));
+      if (!prunedPoints[node.Point(i)])
+      {
+        if (distances(0, node.Point(i)) > newMaxClusterDistance)
+          newMaxClusterDistance = distances(0, node.Point(i));
+        if (distances(1, node.Point(i)) < newSecondClusterBound)
+          newSecondClusterBound = distances(1, node.Point(i));
+      }
+      else
+      {
+        // Use the cached bounds.
+        if (upperBounds[node.Point(i)] > newMaxClusterDistance)
+          newMaxClusterDistance = upperBounds[node.Point(i)];
+        if (lowerSecondBounds[node.Point(i)] < newSecondClusterBound)
+          newSecondClusterBound = lowerSecondBounds[node.Point(i)];
+      }
     }
 
     for (size_t i = 0; i < node.NumChildren(); ++i)
@@ -309,7 +334,8 @@ oldFromNewCentroids[assignments(0, node.Point(i))] << " " <<
 oldFromNewCentroids[assignments(0, node.Point(i - 1))] << ".\n";
           }
         }
-      }*/
+      }
+*/
 
       // What is the maximum distance to the closest cluster in the node?
       if (node.Stat().MaxClusterDistance() +
@@ -323,7 +349,9 @@ oldFromNewCentroids[assignments(0, node.Point(i - 1))] << ".\n";
         // Also do between-cluster prune.
         if (node.Stat().MaxClusterDistance() < 0.5 *
             interclusterDistances[newFromOldCentroids[owner]])
+        {
           node.Stat().Pruned() = true;
+        }
       }
 
       // Adjust for next iteration.
@@ -372,8 +400,7 @@ oldFromNewCentroids[assignments(0, node.Point(i - 1))] << ".\n";
                 << node.Stat().Owner() << " but has true owner " << trueOwner <<
 "!\n";
         }
-      }
-*/
+      }*/
 
     // Will our bounds still work?
     if (node.Stat().MaxClusterDistance() +
@@ -417,6 +444,86 @@ oldFromNewCentroids[assignments(0, node.Point(i - 1))] << ".\n";
       node.Stat().SecondClusterBound() = std::max(0.0,
           node.Stat().SecondClusterBound() -
           clusterDistances[centroids.n_cols]);
+  }
+
+  // If the node wasn't pruned, try to prune individual points.
+  if (!node.Stat().Pruned())
+  {
+    for (size_t i = 0; i < node.NumPoints(); ++i)
+    {
+      const size_t index = node.Point(i);
+      size_t owner;
+      if (!prunedLastIteration && !prunedPoints[index])
+      {
+        owner = (tree::TreeTraits<TreeType>::RearrangesDataset) ?
+            oldFromNewCentroids[assignments(0, index)] : assignments(0, index);
+        // Establish bounds, since these points were searched this iteration.
+        upperBounds[index] = distances(0, index);
+        lowerSecondBounds[index] = distances(1, index);
+      }
+      else if (prunedLastIteration)
+      {
+        owner = node.Stat().Owner();
+      }
+      else
+      {
+        owner = lastOwners[index];
+      }
+
+      if (upperBounds[index] + clusterDistances[owner] <
+          lowerSecondBounds[index] - clusterDistances[centroids.n_cols])
+      {
+/*
+        // Sanity check.
+        size_t trueOwner;
+        double trueDist = DBL_MAX;
+        arma::vec distances(centroids.n_cols);
+        for (size_t j = 0; j < centroids.n_cols; ++j)
+        {
+          const double dist = metric.Evaluate(centroids.col(j),
+                                              dataset.col(index));
+          distances(j) = dist;
+          if (dist < trueDist)
+          {
+            trueOwner = j;
+            trueDist = dist;
+          }
+        }
+
+        if (trueOwner != owner)
+        {
+          Log::Warn << "Point " << index << ", ub " << upperBounds[index] << ","
+              << " lb " << lowerSecondBounds[index] << ", pruned " <<
+prunedPoints[index] << ", lastOwner " << lastOwners[index] << ": invalid "
+"owner!\n";
+          Log::Warn << distances.t();
+          Log::Fatal << "Assigned owner " << owner << " but true owner is "
+              << trueOwner << "!\n";
+        }*/
+
+        prunedPoints[index] = true;
+        upperBounds[index] += clusterDistances[owner];
+        lastOwners[index] = owner;
+        lowerSecondBounds[index] -= clusterDistances[centroids.n_cols];
+        prunedCentroids.col(owner) += dataset.col(index);
+        prunedCounts(owner)++;
+      }
+      else
+      {
+        prunedPoints[index] = false;
+      }
+    }
+  }
+
+  if (node.Stat().Pruned())
+  {
+    // Update bounds.
+    for (size_t i = 0; i < node.NumPoints(); ++i)
+    {
+      const size_t index = node.Point(i);
+      upperBounds[index] += clusterDistances[node.Stat().Owner()];
+      lowerSecondBounds[index] -= clusterDistances[node.Stat().Owner()];
+    }
   }
 
   if (node.Stat().FirstBound() != DBL_MAX)

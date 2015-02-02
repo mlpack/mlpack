@@ -84,6 +84,15 @@ class DTNNKMeans
   //! Counts from pruning.  Not normalized.
   arma::Col<size_t> prunedCounts;
 
+  //! Upper bounds on cluster distances for each point.
+  arma::vec upperBounds;
+  //! Lower bounds on second closest cluster distance for each point.
+  arma::vec lowerSecondBounds;
+  //! Indicator of whether or not the point is pruned.
+  std::vector<bool> prunedPoints;
+  //! The last cluster each point was assigned to.
+  arma::Col<size_t> lastOwners;
+
   //! Update the bounds in the tree before the next iteration.
   void UpdateTree(TreeType& node,
                   const double tolerance,

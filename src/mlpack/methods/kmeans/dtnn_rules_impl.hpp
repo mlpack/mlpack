@@ -18,8 +18,10 @@ DTNNKMeansRules<MetricType, TreeType>::DTNNKMeansRules(
     const arma::mat& dataset,
     arma::Mat<size_t>& neighbors,
     arma::mat& distances,
-    MetricType& metric) :
-    rules(centroids, dataset, neighbors, distances, metric)
+    MetricType& metric,
+    const std::vector<bool>& prunedPoints) :
+    rules(centroids, dataset, neighbors, distances, metric),
+    prunedPoints(prunedPoints)
 {
   // Nothing to do.
 }
@@ -29,10 +31,10 @@ inline force_inline double DTNNKMeansRules<MetricType, TreeType>::BaseCase(
     const size_t queryIndex,
     const size_t referenceIndex)
 {
-  // We'll check if the query point has been Hamerly pruned.  If so, don't
-  // continue.
-//  if (queryIndex == 27040)
-//    Log::Warn << "Visit point 27040 with cluster " << referenceIndex << ".\n";
+  // We'll check if the query point has been pruned.  If so, don't continue.
+  if (prunedPoints[queryIndex])
+    return 0.0; // Returning 0 shouldn't be a problem.
+
   return rules.BaseCase(queryIndex, referenceIndex);
 }
 
@@ -41,6 +43,10 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
     const size_t queryIndex,
     TreeType& referenceNode)
 {
+  // If the query point has already been pruned, then don't recurse further.
+  if (prunedPoints[queryIndex])
+    return DBL_MAX;
+
   return rules.Score(queryIndex, referenceNode);
 }
 
@@ -49,11 +55,6 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
     TreeType& queryNode,
     TreeType& referenceNode)
 {
-//  if (queryNode.Point(0) == 27040)
-//    Log::Warn << "Visit q27040c1 r" << referenceNode.Point(0) << "c" <<
-//referenceNode.NumDescendants() << ", " << queryNode.Stat().Pruned() << ", " <<
-//queryNode.Stat() << ", " << queryNode.Stat().FirstBound() << "," <<
-//queryNode.Stat().SecondBound() << ", " << queryNode.Stat().Bound() << ".\n";
   if (queryNode.Stat().Pruned())
     return DBL_MAX;
 

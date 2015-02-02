@@ -22,7 +22,8 @@ class DTNNKMeansRules
                       const arma::mat& dataset,
                       arma::Mat<size_t>& neighbors,
                       arma::mat& distances,
-                      MetricType& metric);
+                      MetricType& metric,
+                      const std::vector<bool>& prunedPoints);
 
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
@@ -50,6 +51,8 @@ class DTNNKMeansRules
 
   typename neighbor::NeighborSearchRules<neighbor::NearestNeighborSort,
       MetricType, TreeType> rules;
+
+  const std::vector<bool>& prunedPoints;
 };
 
 } // namespace kmeans
