@@ -25,7 +25,7 @@ class PrimalDualSolver
    * Construct a new solver instance from a given SDP instance.
    * Uses a random, positive initialization point.
    *
-   * @param sdp
+   * @param sdp Initialized SDP to be solved.
    */
   PrimalDualSolver(const SDPType& sdp);
 
@@ -34,30 +34,30 @@ class PrimalDualSolver
    * positive initialization point. Both initialX and initialZ need to be
    * positive definite matrices.
    *
-   * @param sdp
+   * @param sdp Initialized SDP to be solved.
    * @param initialX
-   * @param initialYsparse
-   * @param initialYdense
+   * @param initialYSparse
+   * @param initialYDense
    * @param initialZ
    */
   PrimalDualSolver(const SDPType& sdp,
                    const arma::mat& initialX,
-                   const arma::vec& initialYsparse,
-                   const arma::vec& initialYdense,
+                   const arma::vec& initialYSparse,
+                   const arma::vec& initialYDense,
                    const arma::mat& initialZ);
 
   /**
-   * Invoke the optimization procedure, returning the converged values
-   * for the primal and dual variables.
+   * Invoke the optimization procedure, returning the converged values for the
+   * primal and dual variables.
    *
    * @param X
-   * @param ysparse
-   * @param ydense
+   * @param ySparse
+   * @param yDense
    * @param Z
    */
   double Optimize(arma::mat& X,
-                  arma::vec& ysparse,
-                  arma::vec& ydense,
+                  arma::vec& ySparse,
+                  arma::vec& yDense,
                   arma::mat& Z);
 
   /**
