@@ -21,7 +21,7 @@
 
 #include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian.hpp>
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
-#include <mlpack/core/optimizers/lrsdp/lrsdp.hpp>
+#include <mlpack/core/optimizers/sdp/lrsdp.hpp>
 #include <mlpack/core/optimizers/sgd/sgd.hpp>
 #include <mlpack/methods/nca/nca_softmax_error_function.hpp>
 #include <mlpack/core/optimizers/aug_lagrangian/aug_lagrangian_test_functions.hpp>
@@ -255,7 +255,7 @@ BOOST_AUTO_TEST_CASE(LRSDPString)
   arma::mat c(40, 40);
   c.randn();
   const size_t b=3;
-  mlpack::optimization::LRSDP d(b,b,c);
+  mlpack::optimization::LRSDP<mlpack::optimization::SDP<arma::sp_mat>> d(b,b,c);
   Log::Debug << d;
   testOstream << d;
   std::string s = d.ToString();
