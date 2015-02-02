@@ -138,12 +138,16 @@ permissions to those two directories), and simply type
 
     $ make install
 
-Run allknn program to check if everything is fine.
-    $ allknn --h
-If there is a problem loading the .so files then
+As an example to check if install is working fine,type
 
-add line 
-  export LD_LIBRARY_PATH=/usr/local/lib 
+    $ allknn --h
+
+to get the help for the k nearest neigbours implementation of mlpack.
+
+If instead you get an error about problem of loading the .so files then add line 
+
+   export LD_LIBRARY_PATH=/usr/local/lib 
+
 to .bashrc file.
 
 You can now run the executables by name; you can link against mlpack with
