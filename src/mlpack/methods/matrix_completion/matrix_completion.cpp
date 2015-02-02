@@ -68,7 +68,7 @@ void MatrixCompletion::CheckValues()
 
 void MatrixCompletion::InitSDP()
 {
-  sdp.SparseC().eye(m + n, m + n);
+  sdp.C().eye(m + n, m + n);
   sdp.SparseB() = 2. * values;
   const size_t p = indices.n_cols;
   for (size_t i = 0; i < p; i++)

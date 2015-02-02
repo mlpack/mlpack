@@ -2,10 +2,10 @@
  * @file lrsdp_test.cpp
  * @author Ryan Curtin
  *
- * Tests for LR-SDP (core/optimizers/lrsdp/).
+ * Tests for LR-SDP (core/optimizers/sdp/).
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/optimizers/lrsdp/lrsdp.hpp>
+#include <mlpack/core/optimizers/sdp/lrsdp.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -52,14 +52,14 @@ void CreateLovaszThetaInitialPoint(const arma::mat& edges,
  * initial point coordinates should be given also.
  */
 void SetupLovaszTheta(const arma::mat& edges,
-                      LRSDP& lovasz)
+                      LRSDP<SDP<arma::mat>>& lovasz)
 {
   // Get the number of vertices in the problem.
   const size_t vertices = max(max(edges)) + 1;
 
   // C = -(e e^T) = -ones().
-  lovasz.DenseC().ones(vertices, vertices);
-  lovasz.DenseC() *= -1;
+  lovasz.C().ones(vertices, vertices);
+  lovasz.C() *= -1;
 
   // b_0 = 1; else = 0.
   lovasz.SparseB().zeros(edges.n_cols + 1);
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(Johnson844LovaszThetaSDP)
 
   CreateLovaszThetaInitialPoint(edges, coordinates);
 
-  LRSDP lovasz(edges.n_cols + 1, 0, coordinates);
+  LRSDP<SDP<arma::mat>> lovasz(edges.n_cols + 1, 0, coordinates);
 
   SetupLovaszTheta(edges, lovasz);
 
@@ -162,9 +162,9 @@ BOOST_AUTO_TEST_CASE(ErdosRenyiRandomGraphMaxCutSDP)
     coordinates(i, i % coordinates.n_cols) = 1.;
   }
 
-  LRSDP maxcut(laplacian.n_rows, 0, coordinates);
-  maxcut.SparseC() = laplacian;
-  maxcut.SparseC() *= -1.; // need to minimize the negative
+  LRSDP<SDP<arma::sp_mat>> maxcut(laplacian.n_rows, 0, coordinates);
+  maxcut.C() = laplacian;
+  maxcut.C() *= -1.; // need to minimize the negative
   maxcut.SparseB().ones(laplacian.n_rows);
   for (size_t i = 0; i < laplacian.n_rows; ++i)
   {
@@ -237,8 +237,8 @@ BOOST_AUTO_TEST_CASE(GaussianMatrixSensingSDP)
   arma::mat coordinates;
   coordinates.eye(m + n, ceil(r));
 
-  LRSDP sensing(0, p, coordinates);
-  sensing.SparseC().eye(m + n, m + n);
+  LRSDP<SDP<arma::sp_mat>> sensing(0, p, coordinates);
+  sensing.C().eye(m + n, m + n);
   sensing.DenseB() = 2. * b;
 
   const auto block_rows = arma::span(0, m - 1);
@@ -286,7 +286,7 @@ BOOST_AUTO_TEST_CASE(Keller4LovaszThetaSDP)
 
   CreateLovaszThetaInitialPoint(edges, coordinates);
 
-  LRSDP lovasz(edges.n_cols, coordinates);
+  LRSDP<SDP<arma::mat>> lovasz(edges.n_cols, coordinates);
 
   SetupLovaszTheta(edges, lovasz);
 

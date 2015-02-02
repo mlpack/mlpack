@@ -76,7 +76,53 @@ void RemoveRows(const arma::mat& input,
                 const std::vector<size_t>& rowsToRemove,
                 arma::mat& output);
 
+/**
+ * Upper triangular representation of a symmetric matrix, scaled such that,
+ * dot(Svec(A), Svec(B)) == dot(A, B) for symmetric A, B. Specifically,
+ *
+ * Svec(K) = [ K_11, sqrt(2) K_12, ..., sqrt(2) K_1n, K_22, ..., sqrt(2) K_2n, ..., K_nn ]^T
+ *
+ * @param input A symmetric matrix
+ * @param output
+ */
+void Svec(const arma::mat& input, arma::vec& output);
+
+void Svec(const arma::sp_mat& input, arma::sp_vec& output);
+
+/**
+ * The inverse of Svec. That is, Smat(Svec(A)) == A.
+ *
+ * @param input
+ * @param output A symmetric matrix
+ */
+void Smat(const arma::vec& input, arma::mat& output);
+
+/**
+ * Return the index such that A[i,j] == factr(i, j) * svec(A)[pos(i, j)],
+ * where factr(i, j) = sqrt(2) if i != j and 1 otherwise.
+ *
+ * @param i
+ * @param j
+ * @param n
+ */
+inline size_t SvecIndex(size_t i, size_t j, size_t n);
+
+/**
+ * If A is a symmetric matrix, then SymKronId returns an operator Op such that
+ *
+ *    Op * svec(X) == svec(0.5 * (AX + XA))
+ *
+ * for every symmetric matrix X
+ *
+ * @param A
+ * @param op
+ */
+void SymKronId(const arma::mat& A, arma::mat& op);
+
 }; // namespace math
 }; // namespace mlpack
+
+// Partially include implementation
+#include "lin_alg_impl.hpp"
 
 #endif // __MLPACK_CORE_MATH_LIN_ALG_HPP
