@@ -418,15 +418,13 @@ oldFromNewCentroids[assignments(0, node.Point(i - 1))] << ".\n";
           interclusterDistances[newFromOldCentroids[node.Stat().Owner()]])
       {
         // The node remains pruned.  Adjust the bounds for next iteration.
-        node.Stat().MaxClusterDistance() += clusterDistances[node.Stat().Owner()];
+        node.Stat().MaxClusterDistance() +=
+            clusterDistances[node.Stat().Owner()];
         node.Stat().SecondClusterBound() -= clusterDistances[centroids.n_cols];
       }
       else
       {
         node.Stat().Pruned() = false;
-        node.Stat().FirstBound() = DBL_MAX;
-        node.Stat().SecondBound() = DBL_MAX;
-        node.Stat().Bound() = DBL_MAX;
         node.Stat().MaxClusterDistance() = DBL_MAX;
         node.Stat().SecondClusterBound() = 0.0;
       }
