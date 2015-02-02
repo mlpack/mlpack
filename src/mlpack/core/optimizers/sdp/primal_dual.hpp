@@ -18,9 +18,9 @@ namespace optimization {
  * @tparam SDPType
  */
 template <typename SDPType>
-class PrimalDualSolver {
+class PrimalDualSolver
+{
  public:
-
   /**
    * Construct a new solver instance from a given SDP instance.
    * Uses a random, positive initialization point.
@@ -58,7 +58,7 @@ class PrimalDualSolver {
   double Optimize(arma::mat& X,
                   arma::vec& ysparse,
                   arma::vec& ydense,
-                  arma::mat &Z);
+                  arma::mat& Z);
 
   /**
    * Invoke the optimization procedure, and only return the primal variable.
@@ -73,7 +73,7 @@ class PrimalDualSolver {
   }
 
   //! Return the underlying SDP instance.
-  const SDPType& Sdp() const { return sdp; }
+  const SDPType& SDP() const { return sdp; }
 
   //! Modify tau. Typical values are 0.99.
   double& Tau() { return tau; }
@@ -91,8 +91,7 @@ class PrimalDualSolver {
   size_t& MaxIterations() { return maxIterations; }
 
  private:
-
-  //! The SDP problem instance to optimize
+  //! The SDP problem instance to optimize.
   SDPType sdp;
 
   //! Starting point for X. Needs to be positive definite.
@@ -114,7 +113,8 @@ class PrimalDualSolver {
   //! The tolerance on the norm of XZ required before terminating.
   double normXzTol;
 
-  //! The tolerance required on the primal constraints required before terminating.
+  //! The tolerance required on the primal constraints required before
+  //! terminating.
   double primalInfeasTol;
 
   //! The tolerance required on the dual constraint required before terminating.
