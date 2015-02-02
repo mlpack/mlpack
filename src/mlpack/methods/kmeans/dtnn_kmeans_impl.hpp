@@ -508,6 +508,16 @@ prunedPoints[index] << ", lastOwner " << lastOwners[index] << ": invalid "
         prunedCentroids.col(owner) += dataset.col(index);
         prunedCounts(owner)++;
       }
+      else if (upperBounds[index] + clusterDistances[owner] < 0.5 *
+               interclusterDistances[newFromOldCentroids[owner]])
+      {
+        prunedPoints[index] = true;
+        upperBounds[index] += clusterDistances[owner];
+        lastOwners[index] = owner;
+        lowerSecondBounds[index] -= clusterDistances[centroids.n_cols];
+        prunedCentroids.col(owner) += dataset.col(index);
+        prunedCounts(owner)++;
+      }
       else
       {
         prunedPoints[index] = false;
