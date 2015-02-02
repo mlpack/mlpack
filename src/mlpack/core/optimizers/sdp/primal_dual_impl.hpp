@@ -69,33 +69,29 @@ PrimalDualSolver<SDPType>::PrimalDualSolver(const SDPType& sdp,
 
   if (initialX.n_rows != sdp.N() || initialX.n_cols != sdp.N())
     Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
-      << "initialX needs to be square n x n matrix"
-      << std::endl;
+      << "initialX needs to be square n x n matrix." << std::endl;
 
   if (!arma::chol(tmp, initialX))
     Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
-      << "initialX needs to be symmetric positive definite"
-      << std::endl;
+      << "initialX needs to be symmetric positive definite." << std::endl;
 
   if (initialYsparse.n_elem != sdp.NumSparseConstraints())
     Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
-      << "initialYsparse needs to have the same length as the number of sparse constraints"
-      << std::endl;
+      << "initialYsparse needs to have the same length as the number of sparse "
+      << "constraints." << std::endl;
 
   if (initialYdense.n_elem != sdp.NumDenseConstraints())
     Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
-      << "initialYdense needs to have the same length as the number of dense constraints"
-      << std::endl;
+      << "initialYdense needs to have the same length as the number of dense "
+      << "constraints." << std::endl;
 
   if (initialZ.n_rows != sdp.N() || initialZ.n_cols != sdp.N())
     Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
-      << "initialZ needs to be square n x n matrix"
-      << std::endl;
+      << "initialZ needs to be square n x n matrix."  << std::endl;
 
   if (!arma::chol(tmp, initialZ))
     Log::Fatal << "PrimalDualSolver::PrimalDualSolver(): "
-      << "initialZ needs to be symmetric positive definite"
-      << std::endl;
+      << "initialZ needs to be symmetric positive definite." << std::endl;
 }
 
 /**
@@ -201,7 +197,8 @@ SolveKKTSystem(const arma::sp_mat& Asparse,
 
   // TODO(stephentu): use a more efficient method (e.g. LU decomposition)
   if (!arma::solve(dy, M, rhs))
-    Log::Fatal << "PrimalDualSolver::SolveKKTSystem(): Could not solve KKT system" << std::endl;
+    Log::Fatal << "PrimalDualSolver::SolveKKTSystem(): Could not solve KKT "
+        << "system." << std::endl;
 
   if (Asparse.n_rows)
     dysparse = dy(arma::span(0, Asparse.n_rows - 1));
@@ -209,7 +206,8 @@ SolveKKTSystem(const arma::sp_mat& Asparse,
     dydense = dy(arma::span(Asparse.n_rows, numConstraints - 1));
 
   // Compute dx from (2.13)
-  math::Smat(F * (rd - Asparse.t() * dysparse - Adense.t() * dydense) - rc, Frd_ATdy_rc_Mat);
+  math::Smat(F * (rd - Asparse.t() * dysparse - Adense.t() * dydense) - rc,
+      Frd_ATdy_rc_Mat);
   SolveLyapunov(Einv_Frd_ATdy_rc_Mat, Z, 2. * Frd_ATdy_rc_Mat);
   math::Svec(Einv_Frd_ATdy_rc_Mat, Einv_Frd_ATdy_rc);
   dsx = -Einv_Frd_ATdy_rc;
@@ -222,8 +220,10 @@ namespace private_ {
 
 // TODO(stephentu): should we move this somewhere more general?
 template <typename T> struct vectype { };
-template <typename eT> struct vectype<arma::Mat<eT>> { typedef arma::Col<eT> type; };
-template <typename eT> struct vectype<arma::SpMat<eT>> { typedef arma::SpCol<eT> type; };
+template <typename eT> struct vectype<arma::Mat<eT>>
+{ typedef arma::Col<eT> type; };
+template <typename eT> struct vectype<arma::SpMat<eT>>
+{ typedef arma::SpCol<eT> type; };
 
 } // namespace private_
 
@@ -329,18 +329,15 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
     // we have to handle each block separately.
     if (sdp.NumSparseConstraints())
     {
-      M.submat(arma::span(0,
-                          sdp.NumSparseConstraints() - 1),
-               arma::span(0,
-                          sdp.NumSparseConstraints() - 1)) =
-        Asparse * Einv_F_AsparseT;
+      M.submat(arma::span(0, sdp.NumSparseConstraints() - 1),
+               arma::span(0, sdp.NumSparseConstraints() - 1)) =
+          Asparse * Einv_F_AsparseT;
       if (sdp.NumDenseConstraints())
       {
-        M.submat(arma::span(0,
-                            sdp.NumSparseConstraints() - 1),
+        M.submat(arma::span(0, sdp.NumSparseConstraints() - 1),
                  arma::span(sdp.NumSparseConstraints(),
                             sdp.NumConstraints() - 1)) =
-          Asparse * Einv_F_AdenseT;
+            Asparse * Einv_F_AdenseT;
       }
     }
     if (sdp.NumDenseConstraints())
@@ -351,13 +348,13 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
                             sdp.NumConstraints() - 1),
                  arma::span(0,
                             sdp.NumSparseConstraints() - 1)) =
-          Adense * Einv_F_AsparseT;
+            Adense * Einv_F_AsparseT;
       }
       M.submat(arma::span(sdp.NumSparseConstraints(),
                           sdp.NumConstraints() - 1),
                arma::span(sdp.NumSparseConstraints(),
                           sdp.NumConstraints() - 1)) =
-        Adense * Einv_F_AdenseT;
+          Adense * Einv_F_AdenseT;
     }
 
     const double sxdotsz = arma::dot(sx, sz);
@@ -369,7 +366,8 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
     // This solves step (1) of Section 7, the "predictor" step.
     Rc = -0.5*(X*Z + Z*X);
     math::Svec(Rc, rc);
-    SolveKKTSystem(Asparse, Adense, Z, M, F, rp, rd, rc, dsx, dysparse, dydense, dsz);
+    SolveKKTSystem(Asparse, Adense, Z, M, F, rp, rd, rc, dsx, dysparse, dydense,
+        dsz);
     math::Smat(dsx, dX);
     math::Smat(dsz, dZ);
 
@@ -385,7 +383,8 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
     // Step (3), the "corrector" step.
     Rc = mu*arma::eye<arma::mat>(n, n) - 0.5*(X*Z + Z*X + dX*dZ + dZ*dX);
     math::Svec(Rc, rc);
-    SolveKKTSystem(Asparse, Adense, Z, M, F, rp, rd, rc, dsx, dysparse, dydense, dsz);
+    SolveKKTSystem(Asparse, Adense, Z, M, F, rp, rd, rc, dsx, dysparse, dydense,
+        dsz);
     math::Smat(dsx, dX);
     math::Smat(dsz, dZ);
     alpha = Alpha(X, dX, tau);
@@ -411,14 +410,16 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
 
     const double normXZ = arma::norm(X * Z, "fro");
 
-    const double sparsePrimalInfeas = arma::norm(sdp.SparseB() - Asparse * sx, 2);
+    const double sparsePrimalInfeas = arma::norm(sdp.SparseB() - Asparse * sx,
+        2);
     const double densePrimalInfeas = arma::norm(sdp.DenseB() - Adense * sx, 2);
     const double primalInfeas = sqrt(sparsePrimalInfeas * sparsePrimalInfeas +
         densePrimalInfeas * densePrimalInfeas);
 
     primalObj = arma::dot(sdp.C(), X);
 
-    const double dualObj = arma::dot(sdp.SparseB(), ysparse) + arma::dot(sdp.DenseB(), ydense);
+    const double dualObj = arma::dot(sdp.SparseB(), ysparse) +
+        arma::dot(sdp.DenseB(), ydense);
     const double dualityGap = primalObj - dualObj;
 
     // TODO(stephentu): this dual check is quite expensive,
@@ -431,21 +432,23 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
     const double dualInfeas = arma::norm(DualCheck, "fro");
 
     Log::Debug
-      << "iter=" << iteration + 1 << ", "
-      << "primal=" << primalObj << ", "
-      << "dual=" << dualObj << ", "
-      << "gap=" << dualityGap << ", "
-      << "||XZ||=" << normXZ << ", "
-      << "primalInfeas=" << primalInfeas << ", "
-      << "dualInfeas=" << dualInfeas << ", "
-      << "mu=" << mu
-      << std::endl;
+        << "iter=" << iteration + 1 << ", "
+        << "primal=" << primalObj << ", "
+        << "dual=" << dualObj << ", "
+        << "gap=" << dualityGap << ", "
+        << "||XZ||=" << normXZ << ", "
+        << "primalInfeas=" << primalInfeas << ", "
+        << "dualInfeas=" << dualInfeas << ", "
+        << "mu=" << mu
+        << std::endl;
 
-    if (normXZ <= normXzTol && primalInfeas <= primalInfeasTol && dualInfeas <= dualInfeasTol)
+    if (normXZ <= normXzTol && primalInfeas <= primalInfeasTol &&
+        dualInfeas <= dualInfeasTol)
       return primalObj;
   }
 
-  Log::Warn << "Did not converge after " << maxIterations << " iterations!" << std::endl;
+  Log::Warn << "PrimalDualSolver::Optimizer(): Did not converge after "
+      << maxIterations << " iterations!" << std::endl;
   return primalObj;
 }
 
