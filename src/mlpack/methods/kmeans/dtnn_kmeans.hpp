@@ -84,6 +84,9 @@ class DTNNKMeans
   //! Counts from pruning.  Not normalized.
   arma::Col<size_t> prunedCounts;
 
+  //! Distances that the clusters moved last iteration.
+  arma::vec clusterDistances;
+
   //! Upper bounds on cluster distances for each point.
   arma::vec upperBounds;
   //! Lower bounds on second closest cluster distance for each point.
@@ -93,14 +96,14 @@ class DTNNKMeans
   //! The last cluster each point was assigned to.
   arma::Col<size_t> lastOwners;
 
+  arma::mat distances;
+  arma::Mat<size_t> assignments;
+
+  std::vector<size_t> lastOldFromNewCentroids;
+
   //! Update the bounds in the tree before the next iteration.
   void UpdateTree(TreeType& node,
-                  const double tolerance,
                   const arma::mat& centroids,
-                  const arma::Mat<size_t>& assignments,
-                  const arma::mat& distances,
-                  const arma::mat& clusterDistances,
-                  const std::vector<size_t>& oldFromNewCentroids,
                   const arma::mat& interclusterDistances,
                   const std::vector<size_t>& newFromOldCentroids);
 

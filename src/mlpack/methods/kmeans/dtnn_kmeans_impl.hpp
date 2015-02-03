@@ -52,7 +52,9 @@ DTNNKMeans<MetricType, MatType, TreeType>::DTNNKMeans(const MatType& dataset,
         datasetOrig),
     metric(metric),
     distanceCalculations(0),
-    iteration(0)
+    iteration(0),
+    distances(2, dataset.n_cols),
+    assignments(2, dataset.n_cols)
 {
   prunedPoints.resize(dataset.n_cols, false); // Fill with false.
   upperBounds.set_size(dataset.n_cols);
@@ -90,6 +92,8 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   {
     prunedCentroids.zeros(centroids.n_rows, centroids.n_cols);
     prunedCounts.zeros(centroids.n_cols);
+    // The last element stores the maximum.
+    clusterDistances.zeros(centroids.n_cols + 1);
   }
 
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);
@@ -117,10 +121,21 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   nns.Search(1, closestClusters, interclusterDistances);
   distanceCalculations += nns.BaseCases() + nns.Scores();
 
+  if (iteration != 0)
+  {
+    // Do the tree update for the previous iteration.
+    Log::Warn << "Performing tree update.\n";
+
+    // Reset centroids and counts for things we will collect during pruning.
+    prunedCentroids.zeros(centroids.n_rows, centroids.n_cols);
+    prunedCounts.zeros(centroids.n_cols);
+    UpdateTree(*tree, oldCentroids, interclusterDistances, newFromOldCentroids);
+
+    PrecalculateCentroids(*tree);
+  }
+
   // We won't use the AllkNN class here because we have our own set of rules.
   // This is a lot of overhead.  We don't need the distances.
-  arma::mat distances(2, dataset.n_cols);
-  arma::Mat<size_t> assignments(2, dataset.n_cols);
   distances.fill(DBL_MAX);
   assignments.fill(size_t(-1));
   typedef DTNNKMeansRules<MetricType, TreeType> RuleType;
@@ -161,7 +176,6 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   // Now, calculate how far the clusters moved, after normalizing them.
   double residual = 0.0;
   double maxMovement = 0.0;
-  arma::vec clusterDistances(centroids.n_cols + 1);
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
     // Get the mapping to the old cluster, if necessary.
@@ -187,14 +201,7 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   clusterDistances[centroids.n_cols] = maxMovement;
   distanceCalculations += centroids.n_cols;
 
-  // Reset centroids and counts for things we will collect during pruning.
-  prunedCentroids.zeros(centroids.n_rows, centroids.n_cols);
-  prunedCounts.zeros(centroids.n_cols);
-  UpdateTree(*tree, maxMovement, oldCentroids, assignments, distances,
-      clusterDistances, oldFromNewCentroids, interclusterDistances,
-      newFromOldCentroids);
-
-  PrecalculateCentroids(*tree);
+  lastOldFromNewCentroids = oldFromNewCentroids;
 
   delete centroidTree;
 
@@ -206,12 +213,7 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
 template<typename MetricType, typename MatType, typename TreeType>
 void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
     TreeType& node,
-    const double tolerance,
     const arma::mat& centroids,
-    const arma::Mat<size_t>& assignments,
-    const arma::mat& distances,
-    const arma::mat& clusterDistances,
-    const std::vector<size_t>& oldFromNewCentroids,
     const arma::mat& interclusterDistances,
     const std::vector<size_t>& newFromOldCentroids)
 {
@@ -225,8 +227,7 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
   bool childrenPruned = true;
   for (size_t i = 0; i < node.NumChildren(); ++i)
   {
-    UpdateTree(node.Child(i), tolerance, centroids, assignments, distances,
-        clusterDistances, oldFromNewCentroids, interclusterDistances,
+    UpdateTree(node.Child(i), centroids, interclusterDistances,
         newFromOldCentroids);
     if (!node.Child(i).Stat().Pruned())
       childrenPruned = false; // Not all children are pruned.
@@ -249,7 +250,7 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
       size_t c;
       if (!prunedPoints[node.Point(i)])
         c = (tree::TreeTraits<TreeType>::RearrangesDataset) ?
-            oldFromNewCentroids[assignments(0, node.Point(i))] :
+            lastOldFromNewCentroids[assignments(0, node.Point(i))] :
             assignments(0, node.Point(i));
       else
         c = lastOwners[node.Point(i)];
@@ -292,10 +293,6 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
       if (node.Child(i).Stat().SecondClusterBound() < newSecondClusterBound)
         newSecondClusterBound = node.Child(i).Stat().SecondClusterBound();
     }
-
-//    if (node.NumChildren() > 0)
-//      Log::Warn << "Node:\n" << node << "single owner: " << singleOwner <<
-//".l\n" << node.Child(0) << ".r\n" << node.Child(1) << ".\n";
 
     // What do we do with the new cluster bounds?
     if (newMaxClusterDistance > 0.0 && newMaxClusterDistance <
@@ -483,7 +480,8 @@ node.Child(0) << ", r\n" << node.Child(1) << ".\n";
       if (!prunedLastIteration && !prunedPoints[index])
       {
         owner = (tree::TreeTraits<TreeType>::RearrangesDataset) ?
-            oldFromNewCentroids[assignments(0, index)] : assignments(0, index);
+            lastOldFromNewCentroids[assignments(0, index)] :
+            assignments(0, index);
         // Establish bounds, since these points were searched this iteration.
         upperBounds[index] = distances(0, index);
         lowerSecondBounds[index] = distances(1, index);
@@ -564,11 +562,11 @@ prunedPoints[index] << ", lastOwner " << lastOwners[index] << ": invalid "
   }
 
   if (node.Stat().FirstBound() != DBL_MAX)
-    node.Stat().FirstBound() += tolerance;
+    node.Stat().FirstBound() += clusterDistances[centroids.n_cols];
   if (node.Stat().SecondBound() != DBL_MAX)
-    node.Stat().SecondBound() += tolerance;
+    node.Stat().SecondBound() += clusterDistances[centroids.n_cols];
   if (node.Stat().Bound() != DBL_MAX)
-    node.Stat().Bound() += tolerance;
+    node.Stat().Bound() += clusterDistances[centroids.n_cols];
 }
 
 template<typename MetricType, typename MatType, typename TreeType>
