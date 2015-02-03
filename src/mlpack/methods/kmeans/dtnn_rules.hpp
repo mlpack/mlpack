@@ -25,7 +25,8 @@ class DTNNKMeansRules : public neighbor::NeighborSearchRules<
                   arma::mat& distances,
                   MetricType& metric,
                   const std::vector<bool>& prunedPoints,
-                  const std::vector<size_t>& oldFromNewCentroids);
+                  const std::vector<size_t>& oldFromNewCentroids,
+                  std::vector<bool>& visited);
 
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
@@ -43,6 +44,8 @@ class DTNNKMeansRules : public neighbor::NeighborSearchRules<
   const std::vector<bool>& prunedPoints;
 
   const std::vector<size_t>& oldFromNewCentroids;
+
+  std::vector<bool>& visited;
 };
 
 } // namespace kmeans

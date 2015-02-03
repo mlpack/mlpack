@@ -20,11 +20,13 @@ DTNNKMeansRules<MetricType, TreeType>::DTNNKMeansRules(
     arma::mat& distances,
     MetricType& metric,
     const std::vector<bool>& prunedPoints,
-    const std::vector<size_t>& oldFromNewCentroids) :
+    const std::vector<size_t>& oldFromNewCentroids,
+    std::vector<bool>& visited) :
     neighbor::NeighborSearchRules<neighbor::NearestNeighborSort, MetricType,
         TreeType>(centroids, dataset, neighbors, distances, metric),
     prunedPoints(prunedPoints),
-    oldFromNewCentroids(oldFromNewCentroids)
+    oldFromNewCentroids(oldFromNewCentroids),
+    visited(visited)
 {
   // Nothing to do.
 }
@@ -37,6 +39,9 @@ inline force_inline double DTNNKMeansRules<MetricType, TreeType>::BaseCase(
   // We'll check if the query point has been pruned.  If so, don't continue.
   if (prunedPoints[queryIndex])
     return 0.0; // Returning 0 shouldn't be a problem.
+
+  // Any base cases imply that we will get a result.
+  visited[queryIndex] = true;
 
   // This is basically an inlined NeighborSearchRules::BaseCase(), but it
   // differs in that it applies the mappings to the results automatically.

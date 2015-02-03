@@ -99,6 +99,8 @@ class DTNNKMeans
   arma::mat distances;
   arma::Mat<size_t> assignments;
 
+  std::vector<bool> visited; // Was the point visited this iteration?
+
   arma::mat lastIterationCentroids; // For sanity checks.
 
   //! Update the bounds in the tree before the next iteration.
