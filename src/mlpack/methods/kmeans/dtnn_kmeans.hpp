@@ -87,8 +87,6 @@ class DTNNKMeans
   //! Distances that the clusters moved last iteration.
   arma::vec clusterDistances;
 
-  //! Upper bounds on cluster distances for each point.
-  arma::vec upperBounds;
   //! Lower bounds on second closest cluster distance for each point.
   arma::vec lowerSecondBounds;
   //! Indicator of whether or not the point is pruned.

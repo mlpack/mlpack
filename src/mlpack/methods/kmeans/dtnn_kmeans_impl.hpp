@@ -57,8 +57,6 @@ DTNNKMeans<MetricType, MatType, TreeType>::DTNNKMeans(const MatType& dataset,
     assignments(2, dataset.n_cols)
 {
   prunedPoints.resize(dataset.n_cols, false); // Fill with false.
-  upperBounds.set_size(dataset.n_cols);
-  upperBounds.fill(DBL_MAX);
   lowerSecondBounds.zeros(dataset.n_cols);
   lastOwners.zeros(dataset.n_cols);
 
@@ -266,8 +264,8 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
       else
       {
         // Use the cached bounds.
-        if (upperBounds[node.Point(i)] > newMaxClusterDistance)
-          newMaxClusterDistance = upperBounds[node.Point(i)];
+        if (distances(0, node.Point(i)) > newMaxClusterDistance)
+          newMaxClusterDistance = distances(0, node.Point(i));
         if (lowerSecondBounds[node.Point(i)] < newSecondClusterBound)
           newSecondClusterBound = lowerSecondBounds[node.Point(i)];
       }
@@ -503,7 +501,6 @@ assignments(0, node.Point(i - 1)) << ".\n";
       {
         owner = assignments(0, index);
         // Establish bounds, since these points were searched this iteration.
-        upperBounds[index] = distances(0, index);
         lowerSecondBounds[index] = distances(1, index);
       }
       else if (prunedLastIteration && node.Stat().Owner() < centroids.n_cols)
@@ -515,7 +512,7 @@ assignments(0, node.Point(i - 1)) << ".\n";
         owner = lastOwners[index];
       }
 
-      if (upperBounds[index] + clusterDistances[owner] <
+      if (distances(0, index) + clusterDistances[owner] <
           lowerSecondBounds[index] - clusterDistances[centroids.n_cols])
       {
 /*
@@ -537,7 +534,7 @@ assignments(0, node.Point(i - 1)) << ".\n";
 
         if (trueOwner != owner)
         {
-          Log::Warn << "Point " << index << ", ub " << upperBounds[index] << ","
+          Log::Warn << "Point " << index << ", ub " << distances(0, index) << ","
               << " lb " << lowerSecondBounds[index] << ", pruned " <<
 prunedPoints[index] << ", lastOwner " << lastOwners[index] << ": invalid "
 "owner!\n";
@@ -547,7 +544,6 @@ prunedPoints[index] << ", lastOwner " << lastOwners[index] << ": invalid "
         }
 */
         prunedPoints[index] = true;
-        upperBounds[index] += clusterDistances[owner];
         distances(0, index) += clusterDistances[owner];
         lastOwners[index] = owner;
         distances(1, index) += clusterDistances[centroids.n_cols];
@@ -555,11 +551,10 @@ prunedPoints[index] << ", lastOwner " << lastOwners[index] << ": invalid "
         prunedCentroids.col(owner) += dataset.col(index);
         prunedCounts(owner)++;
       }
-      else if (upperBounds[index] + clusterDistances[owner] < 0.5 *
+      else if (distances(0, index) + clusterDistances[owner] < 0.5 *
                interclusterDistances[newFromOldCentroids[owner]])
       {
         prunedPoints[index] = true;
-        upperBounds[index] += clusterDistances[owner];
         distances(0, index) += clusterDistances[owner];
         lastOwners[index] = owner;
         distances(1, index) += clusterDistances[centroids.n_cols];
@@ -572,25 +567,22 @@ prunedPoints[index] << ", lastOwner " << lastOwners[index] << ": invalid "
         // Attempt to tighten the lower bound.
         distances(0, index) = metric.Evaluate(centroids.col(owner),
                                              dataset.col(index));
-        upperBounds[index] = distances(0, index);
         ++distanceCalculations;
-        if (upperBounds[index] < lowerSecondBounds[index] -
+        if (distances(0, index) < lowerSecondBounds[index] -
             clusterDistances[centroids.n_cols])
         {
           prunedPoints[index] = true;
           lastOwners[index] = owner;
-          upperBounds[index] += clusterDistances[owner];
           lowerSecondBounds[index] -= clusterDistances[centroids.n_cols];
           distances(1, index) += clusterDistances[centroids.n_cols];
           prunedCentroids.col(owner) += dataset.col(index);
           prunedCounts(owner)++;
         }
-        else if (upperBounds[index] < 0.5 *
+        else if (distances(0, index) < 0.5 *
                  interclusterDistances[newFromOldCentroids[owner]])
         {
           prunedPoints[index] = true;
           lastOwners[index] = owner;
-          upperBounds[index] += clusterDistances[owner];
           lowerSecondBounds[index] -= clusterDistances[centroids.n_cols];
           distances(1, index) += clusterDistances[centroids.n_cols];
           prunedCentroids.col(owner) += dataset.col(index);
@@ -621,7 +613,6 @@ prunedPoints[index] << ", lastOwner " << lastOwners[index] << ": invalid "
     for (size_t i = 0; i < node.NumPoints(); ++i)
     {
       const size_t index = node.Point(i);
-      upperBounds[index] += clusterDistances[node.Stat().Owner()];
       lowerSecondBounds[index] -= clusterDistances[node.Stat().Owner()];
     }
   }
