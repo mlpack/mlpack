@@ -132,16 +132,16 @@ and submit an issue; the mlpack developers will quickly help you figure it out:
 
 Alternately, mlpack help can be found in IRC at #mlpack on irc.freenode.net.
 
-If you wish to install mlpack to /usr/include/mlpack/ and /usr/lib/ and
-/usr/bin/, once it has built, make sure you have root privileges (or write
-permissions to those two directories), and simply type
+If you wish to install mlpack to /usr/local/include/mlpack/ and /usr/local/lib/
+and /usr/local/bin/, once it has built, make sure you have root privileges (or
+write permissions to those three directories), and simply type
 
     $ make install
 
 You can now run the executables by name; you can link against mlpack with
     -lmlpack
 and the mlpack headers are found in
-    /usr/include/mlpack/.
+    /usr/local/include/mlpack/.
 
 If running the programs (i.e. `$ allknn -h`) gives an error of the form
 
@@ -156,7 +156,6 @@ manually).  One way to do this, on Linux, is to ensure that the
     export LD_LIBRARY_PATH=/usr/local/lib/
 
 (or whatever directory `libmlpack.so` is installed in.)
-
 
 5. Running mlpack programs
 --------------------------
