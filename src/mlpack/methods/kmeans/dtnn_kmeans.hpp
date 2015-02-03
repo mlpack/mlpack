@@ -99,7 +99,7 @@ class DTNNKMeans
   arma::mat distances;
   arma::Mat<size_t> assignments;
 
-  std::vector<size_t> lastOldFromNewCentroids;
+  arma::mat lastIterationCentroids; // For sanity checks.
 
   //! Update the bounds in the tree before the next iteration.
   void UpdateTree(TreeType& node,

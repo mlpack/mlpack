@@ -15,15 +15,17 @@ namespace mlpack {
 namespace kmeans {
 
 template<typename MetricType, typename TreeType>
-class DTNNKMeansRules
+class DTNNKMeansRules : public neighbor::NeighborSearchRules<
+    neighbor::NearestNeighborSort, MetricType, TreeType>
 {
  public:
   DTNNKMeansRules(const arma::mat& centroids,
-                      const arma::mat& dataset,
-                      arma::Mat<size_t>& neighbors,
-                      arma::mat& distances,
-                      MetricType& metric,
-                      const std::vector<bool>& prunedPoints);
+                  const arma::mat& dataset,
+                  arma::Mat<size_t>& neighbors,
+                  arma::mat& distances,
+                  MetricType& metric,
+                  const std::vector<bool>& prunedPoints,
+                  const std::vector<size_t>& oldFromNewCentroids);
 
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
@@ -36,23 +38,11 @@ class DTNNKMeansRules
                  TreeType& referenceNode,
                  const double oldScore);
 
-  typedef neighbor::NeighborSearchTraversalInfo<TreeType> TraversalInfoType;
-
-  size_t Scores() const { return rules.Scores(); }
-  size_t& Scores() { return rules.Scores(); }
-  size_t BaseCases() const { return rules.BaseCases(); }
-  size_t& BaseCases() { return rules.BaseCases(); }
-
-  const TraversalInfoType& TraversalInfo() const
-  { return rules.TraversalInfo(); }
-  TraversalInfoType& TraversalInfo() { return rules.TraversalInfo(); }
-
  private:
 
-  typename neighbor::NeighborSearchRules<neighbor::NearestNeighborSort,
-      MetricType, TreeType> rules;
-
   const std::vector<bool>& prunedPoints;
+
+  const std::vector<size_t>& oldFromNewCentroids;
 };
 
 } // namespace kmeans

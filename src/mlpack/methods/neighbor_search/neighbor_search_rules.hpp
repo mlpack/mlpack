@@ -100,7 +100,7 @@ class NeighborSearchRules
   //! Modify the traversal info.
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
 
- private:
+ protected:
   //! The reference set.
   const typename TreeType::Mat& referenceSet;
 

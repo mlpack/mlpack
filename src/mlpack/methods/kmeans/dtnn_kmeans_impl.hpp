@@ -139,7 +139,7 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   assignments.fill(size_t(-1));
   typedef DTNNKMeansRules<MetricType, TreeType> RuleType;
   RuleType rules(centroids, dataset, assignments, distances, metric,
-      prunedPoints);
+      prunedPoints, oldFromNewCentroids);
 
   // Now construct the traverser ourselves.
   typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
@@ -155,17 +155,8 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   {
     if (assignments(0, i) != size_t(-1))
     {
-      if (tree::TreeTraits<TreeType>::RearrangesDataset)
-      {
-        newCentroids.col(oldFromNewCentroids[assignments(0, i)]) +=
-            dataset.col(i);
-        ++counts(oldFromNewCentroids[assignments(0, i)]);
-      }
-      else
-      {
-        newCentroids.col(assignments(0, i)) += dataset.col(i);
-        ++counts(assignments(0, i));
-      }
+      newCentroids.col(assignments(0, i)) += dataset.col(i);
+      ++counts(assignments(0, i));
     }
   }
 
@@ -200,7 +191,7 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   clusterDistances[centroids.n_cols] = maxMovement;
   distanceCalculations += centroids.n_cols;
 
-  lastOldFromNewCentroids = oldFromNewCentroids;
+//  lastIterationCentroids = oldCentroids;
 
   delete centroidTree;
 
@@ -248,9 +239,7 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
       // Don't forget to map back from the new cluster index.
       size_t c;
       if (!prunedPoints[node.Point(i)])
-        c = (tree::TreeTraits<TreeType>::RearrangesDataset) ?
-            lastOldFromNewCentroids[assignments(0, node.Point(i))] :
-            assignments(0, node.Point(i));
+        c = assignments(0, node.Point(i));
       else
         c = lastOwners[node.Point(i)];
 
@@ -310,30 +299,42 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
 /*
       for (size_t i = 0; i < node.NumPoints(); ++i)
       {
-        const double ownerDist = metric.Evaluate(dataset.col(node.Point(i)),
-            centroids.col(owner));
+        arma::vec dists(centroids.n_cols);
+        size_t trueOwner = centroids.n_cols;
+        double trueDist = DBL_MAX;
         for (size_t j = 0; j < centroids.n_cols; ++j)
         {
           const double dist = metric.Evaluate(dataset.col(node.Point(i)),
-              centroids.col(j));
-          if (dist < ownerDist)
+              lastIterationCentroids.col(j));
+          dists(j) = dist;
+          if (dist < trueDist)
           {
-            Log::Warn << node << "...\n" << *node.Parent();
+            trueDist = dist;
+            trueOwner = j;
+          }
+        }
+
+        if (trueOwner != owner)
+        {
+          Log::Warn << node << "...\n" << *node.Parent();
+          Log::Warn << dists.t();
+          Log::Warn << "Assignment: " << assignments(0, node.Point(i)) << ".\n";
+          Log::Warn << "Dists: " << distances(0, node.Point(i)) << ", " <<
+distances(1, node.Point(i)) << ".\n";
 //            TreeType* n = node.Parent()->Parent();
 //            while (n != NULL)
 //            {
 //              Log::Warn << "...\n" << *n;
 //              n = n->Parent();
 //            }
-            Log::Fatal << "Point " << node.Point(i) << " was assigned to owner "
-                << owner << " but has true owner " << j << "! [" <<
-oldFromNewCentroids[assignments(0, node.Point(i))] << " -- " <<
+          Log::Fatal << "Point " << node.Point(i) << " was assigned to owner "
+                << owner << " but has true owner " << trueOwner << "! [" <<
+assignments(0, node.Point(i)) << " -- " <<
 metric.Evaluate(dataset.col(node.Point(i)),
-centroids.col(oldFromNewCentroids[assignments(0, node.Point(i))])) << "] " <<
+centroids.col(assignments(0, node.Point(i)))) << "] " <<
 distances(0, node.Point(i)) << " " <<
-oldFromNewCentroids[assignments(0, node.Point(i))] << " " <<
-oldFromNewCentroids[assignments(0, node.Point(i - 1))] << ".\n";
-          }
+assignments(0, node.Point(i)) << " " <<
+assignments(0, node.Point(i - 1)) << ".\n";
         }
       }
 */
@@ -400,34 +401,6 @@ oldFromNewCentroids[assignments(0, node.Point(i - 1))] << ".\n";
     // The node was pruned last iteration.  See if the node can remain pruned.
     singleOwner = false;
 
-/*
-      for (size_t i = 0; i < node.NumPoints(); ++i)
-      {
-        size_t trueOwner = 0;
-        double ownerDist = DBL_MAX;
-        arma::vec distances(centroids.n_cols);
-        for (size_t j = 0; j < centroids.n_cols; ++j)
-        {
-          const double dist = metric.Evaluate(dataset.col(node.Point(i)),
-              centroids.col(j));
-          distances(j) = dist;
-          if (dist < ownerDist)
-          {
-            trueOwner = j;
-            ownerDist = dist;
-          }
-        }
-
-        if (trueOwner != node.Stat().Owner())
-        {
-            Log::Warn << node << "...\n" << *node.Parent();
-            Log::Warn << distances.t();
-            Log::Fatal << "Point " << node.Point(i) << " was assigned to owner "
-                << node.Stat().Owner() << " but has true owner " << trueOwner <<
-"!\n";
-        }
-      }*/
-
     // If it was pruned because all points were pruned, we need to check
     // individually.
     if (node.Stat().Owner() == centroids.n_cols)
@@ -465,6 +438,37 @@ oldFromNewCentroids[assignments(0, node.Point(i - 1))] << ".\n";
         }
       }
     }
+/*
+    if (node.Stat().Pruned() && node.Stat().Owner() != centroids.n_cols)
+    {
+      for (size_t i = 0; i < node.NumPoints(); ++i)
+      {
+        size_t trueOwner = 0;
+        double ownerDist = DBL_MAX;
+        arma::vec distances(centroids.n_cols);
+        for (size_t j = 0; j < centroids.n_cols; ++j)
+        {
+          const double dist = metric.Evaluate(dataset.col(node.Point(i)),
+              lastIterationCentroids.col(j));
+          distances(j) = dist;
+          if (dist < ownerDist)
+          {
+            trueOwner = j;
+            ownerDist = dist;
+          }
+        }
+
+        if (trueOwner != node.Stat().Owner())
+        {
+            Log::Warn << node << "...\n" << *node.Parent();
+            Log::Warn << distances.t();
+            Log::Fatal << "Point " << node.Point(i) << " was assigned to owner "
+                << node.Stat().Owner() << " but has true owner " << trueOwner <<
+"!\n";
+        }
+      }
+    }
+*/
   }
   else
   {
@@ -490,9 +494,7 @@ oldFromNewCentroids[assignments(0, node.Point(i - 1))] << ".\n";
       size_t owner;
       if (!prunedLastIteration && !prunedPoints[index])
       {
-        owner = (tree::TreeTraits<TreeType>::RearrangesDataset) ?
-            lastOldFromNewCentroids[assignments(0, index)] :
-            assignments(0, index);
+        owner = assignments(0, index);
         // Establish bounds, since these points were searched this iteration.
         upperBounds[index] = distances(0, index);
         lowerSecondBounds[index] = distances(1, index);
@@ -516,7 +518,7 @@ oldFromNewCentroids[assignments(0, node.Point(i - 1))] << ".\n";
         arma::vec distances(centroids.n_cols);
         for (size_t j = 0; j < centroids.n_cols; ++j)
         {
-          const double dist = metric.Evaluate(centroids.col(j),
+          const double dist = metric.Evaluate(lastIterationCentroids.col(j),
                                               dataset.col(index));
           distances(j) = dist;
           if (dist < trueDist)
@@ -535,8 +537,8 @@ prunedPoints[index] << ", lastOwner " << lastOwners[index] << ": invalid "
           Log::Warn << distances.t();
           Log::Fatal << "Assigned owner " << owner << " but true owner is "
               << trueOwner << "!\n";
-        }*/
-
+        }
+*/
         prunedPoints[index] = true;
         upperBounds[index] += clusterDistances[owner];
         lastOwners[index] = owner;
