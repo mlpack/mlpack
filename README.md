@@ -153,7 +153,7 @@ to .bashrc file.
 You can now run the executables by name; you can link against mlpack with
     -lmlpack
 and the mlpack headers are found in
-    /usr/include/mlpack/.
+    /usr/local/include/mlpack/.
 
 
 5. Running mlpack programs
