@@ -170,7 +170,7 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
 
   // Now, calculate how far the clusters moved, after normalizing them.
   double residual = 0.0;
-  double maxMovement = 0.0;
+  clusterDistances[centroids.n_cols] = 0.0;
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
     // Get the mapping to the old cluster, if necessary.
@@ -189,11 +189,10 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
       clusterDistances[old] = movement;
       residual += std::pow(movement, 2.0);
 
-      if (movement > maxMovement)
-        maxMovement = movement;
+      if (movement > clusterDistances[centroids.n_cols])
+        clusterDistances[centroids.n_cols] = movement;
     }
   }
-  clusterDistances[centroids.n_cols] = maxMovement;
   distanceCalculations += centroids.n_cols;
 
 //  lastIterationCentroids = oldCentroids;
