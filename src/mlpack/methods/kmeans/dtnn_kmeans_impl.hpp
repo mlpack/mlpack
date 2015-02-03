@@ -629,8 +629,9 @@ prunedPoints[index] << ", lastOwner " << lastOwners[index] << ": invalid "
   // Make sure all the point bounds are updated.
   for (size_t i = 0; i < node.NumPoints(); ++i)
   {
-    distances(0, node.Point(i)) += clusterDistances[centroids.n_cols];
-    distances(1, node.Point(i)) += clusterDistances[centroids.n_cols];
+    const size_t index = node.Point(i);
+    distances(0, index) += clusterDistances[assignments(0, index)];
+    distances(1, index) += clusterDistances[assignments(1, index)];
   }
 
   if (node.Stat().FirstBound() != DBL_MAX)
