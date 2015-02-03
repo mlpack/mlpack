@@ -369,23 +369,23 @@ oldFromNewCentroids[assignments(0, node.Point(i - 1))] << ".\n";
     {
       // The node isn't owned by a single cluster.  But if it has no points and
       // its children are all pruned, we may prune it too.
-      if (childrenPruned && node.NumChildren() > 0)
-      {
-        Log::Warn << "Prune parent node " << node.Point(0) << "c" <<
-node.NumDescendants() << ".\n";
-        node.Stat().Pruned() = true;
-      }
-      if (node.NumChildren() > 0)
-        if (node.Child(0).Stat().Pruned() && !node.Child(1).Stat().Pruned())
-          Log::Warn << "Node left child pruned but right child not:\n" <<
-node.Child(0) << ", r\n" << node.Child(1) << ", this:\n" << node;
-      if (node.NumChildren() > 0)
-        if (node.Child(1).Stat().Pruned() && !node.Child(0).Stat().Pruned())
-          Log::Warn << "Node right child pruned but left child not:\n" <<
-node.Child(0) << ", r\n" << node.Child(1) << ", this:\n" << node;
-      if (node.NumChildren() > 0)
-        Log::Warn << "Node has more than 0 children: " << node << ".l\n" <<
-node.Child(0) << ", r\n" << node.Child(1) << ".\n";
+//      if (childrenPruned && node.NumChildren() > 0)
+//      {
+//        Log::Warn << "Prune parent node " << node.Point(0) << "c" <<
+//node.NumDescendants() << ".\n";
+//        node.Stat().Pruned() = true;
+//      }
+//      if (node.NumChildren() > 0)
+//        if (node.Child(0).Stat().Pruned() && !node.Child(1).Stat().Pruned())
+//          Log::Warn << "Node left child pruned but right child not:\n" <<
+//node.Child(0) << ", r\n" << node.Child(1) << ", this:\n" << node;
+//      if (node.NumChildren() > 0)
+//        if (node.Child(1).Stat().Pruned() && !node.Child(0).Stat().Pruned())
+//          Log::Warn << "Node right child pruned but left child not:\n" <<
+//node.Child(0) << ", r\n" << node.Child(1) << ", this:\n" << node;
+//      if (node.NumChildren() > 0)
+//        Log::Warn << "Node has more than 0 children: " << node << ".l\n" <<
+//node.Child(0) << ", r\n" << node.Child(1) << ".\n";
 
       // Adjust the bounds for next iteration.
       node.Stat().MaxClusterDistance() += clusterDistances[centroids.n_cols];
@@ -427,20 +427,18 @@ node.Child(0) << ", r\n" << node.Child(1) << ".\n";
         }
       }*/
 
-    // Will our bounds still work?
-    if (node.Stat().MaxClusterDistance() +
-        clusterDistances[node.Stat().Owner()] <
-        node.Stat().SecondClusterBound() - clusterDistances[centroids.n_cols])
+    // If it was pruned because all points were pruned, we need to check
+    // individually.
+    if (node.Stat().Owner() == centroids.n_cols)
     {
-      // The node remains pruned.  Adjust the bounds for next iteration.
-      node.Stat().MaxClusterDistance() += clusterDistances[node.Stat().Owner()];
-      node.Stat().SecondClusterBound() -= clusterDistances[centroids.n_cols];
+      node.Stat().Pruned() = false;
     }
     else
-    {
-      // Attempt other prune.
-      if (node.Stat().MaxClusterDistance() < 0.5 *
-          interclusterDistances[newFromOldCentroids[node.Stat().Owner()]])
+    { 
+      // Will our bounds still work?
+      if (node.Stat().MaxClusterDistance() +
+          clusterDistances[node.Stat().Owner()] <
+          node.Stat().SecondClusterBound() - clusterDistances[centroids.n_cols])
       {
         // The node remains pruned.  Adjust the bounds for next iteration.
         node.Stat().MaxClusterDistance() +=
@@ -449,9 +447,21 @@ node.Child(0) << ", r\n" << node.Child(1) << ".\n";
       }
       else
       {
-        node.Stat().Pruned() = false;
-        node.Stat().MaxClusterDistance() = DBL_MAX;
-        node.Stat().SecondClusterBound() = 0.0;
+        // Attempt other prune.
+        if (node.Stat().MaxClusterDistance() < 0.5 *
+            interclusterDistances[newFromOldCentroids[node.Stat().Owner()]])
+        {
+          // The node remains pruned.  Adjust the bounds for next iteration.
+          node.Stat().MaxClusterDistance() +=
+              clusterDistances[node.Stat().Owner()];
+          node.Stat().SecondClusterBound() -= clusterDistances[centroids.n_cols];
+        }
+        else
+        {
+          node.Stat().Pruned() = false;
+          node.Stat().MaxClusterDistance() = DBL_MAX;
+          node.Stat().SecondClusterBound() = 0.0;
+        }
       }
     }
   }
@@ -472,6 +482,7 @@ node.Child(0) << ", r\n" << node.Child(1) << ".\n";
   // If the node wasn't pruned, try to prune individual points.
   if (!node.Stat().Pruned())
   {
+    bool allPruned = true;
     for (size_t i = 0; i < node.NumPoints(); ++i)
     {
       const size_t index = node.Point(i);
@@ -485,7 +496,7 @@ node.Child(0) << ", r\n" << node.Child(1) << ".\n";
         upperBounds[index] = distances(0, index);
         lowerSecondBounds[index] = distances(1, index);
       }
-      else if (prunedLastIteration)
+      else if (prunedLastIteration && node.Stat().Owner() < centroids.n_cols)
       {
         owner = node.Stat().Owner();
       }
@@ -547,6 +558,7 @@ prunedPoints[index] << ", lastOwner " << lastOwners[index] << ": invalid "
         // Attempt to tighten the lower bound.
         upperBounds[index] = metric.Evaluate(centroids.col(owner),
                                              dataset.col(index));
+        ++distanceCalculations;
         if (upperBounds[index] < lowerSecondBounds[index] -
             clusterDistances[centroids.n_cols])
         {
@@ -568,8 +580,16 @@ prunedPoints[index] << ", lastOwner " << lastOwners[index] << ": invalid "
         else
         {
           prunedPoints[index] = false;
+          allPruned = false;
         }
       }
+    }
+
+    if (allPruned && node.NumPoints() > 0)
+    {
+      // Prune the entire node.
+      node.Stat().Pruned() = true;
+      node.Stat().Owner() = centroids.n_cols;
     }
   }
 
