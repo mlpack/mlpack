@@ -124,7 +124,6 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   if (iteration != 0)
   {
     // Do the tree update for the previous iteration.
-    Log::Warn << "Performing tree update.\n";
 
     // Reset centroids and counts for things we will collect during pruning.
     prunedCentroids.zeros(centroids.n_rows, centroids.n_cols);
@@ -545,7 +544,31 @@ prunedPoints[index] << ", lastOwner " << lastOwners[index] << ": invalid "
       }
       else
       {
-        prunedPoints[index] = false;
+        // Attempt to tighten the lower bound.
+        upperBounds[index] = metric.Evaluate(centroids.col(owner),
+                                             dataset.col(index));
+        if (upperBounds[index] < lowerSecondBounds[index] -
+            clusterDistances[centroids.n_cols])
+        {
+          prunedPoints[index] = true;
+          lastOwners[index] = owner;
+          lowerSecondBounds[index] -= clusterDistances[centroids.n_cols];
+          prunedCentroids.col(owner) += dataset.col(index);
+          prunedCounts(owner)++;
+        }
+        else if (upperBounds[index] < 0.5 *
+                  interclusterDistances[newFromOldCentroids[owner]])
+        {
+          prunedPoints[index] = true;
+          lastOwners[index] = owner;
+          lowerSecondBounds[index] -= clusterDistances[centroids.n_cols];
+          prunedCentroids.col(owner) += dataset.col(index);
+          prunedCounts(owner)++;
+        }
+        else
+        {
+          prunedPoints[index] = false;
+        }
       }
     }
   }
