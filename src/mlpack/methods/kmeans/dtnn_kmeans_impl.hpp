@@ -369,12 +369,13 @@ oldFromNewCentroids[assignments(0, node.Point(i - 1))] << ".\n";
     {
       // The node isn't owned by a single cluster.  But if it has no points and
       // its children are all pruned, we may prune it too.
-//      if (childrenPruned && node.NumChildren() > 0)
-//      {
+      if (childrenPruned && node.NumChildren() > 0)
+      {
 //        Log::Warn << "Prune parent node " << node.Point(0) << "c" <<
 //node.NumDescendants() << ".\n";
-//        node.Stat().Pruned() = true;
-//      }
+        node.Stat().Pruned() = true;
+        node.Stat().Owner() = centroids.n_cols;
+      }
 //      if (node.NumChildren() > 0)
 //        if (node.Child(0).Stat().Pruned() && !node.Child(1).Stat().Pruned())
 //          Log::Warn << "Node left child pruned but right child not:\n" <<
