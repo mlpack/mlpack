@@ -240,6 +240,7 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
   size_t owner = centroids.n_cols + 1;
   if (!node.Stat().Pruned() && childrenPruned)
   {
+    // Determine the bounds for the points.
     double newMaxClusterDistance = 0.0;
     double newSecondClusterBound = DBL_MAX;
     for (size_t i = 0; i < node.NumPoints(); ++i)
@@ -292,6 +293,10 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
         newSecondClusterBound = node.Child(i).Stat().SecondClusterBound();
     }
 
+//    if (node.NumChildren() > 0)
+//      Log::Warn << "Node:\n" << node << "single owner: " << singleOwner <<
+//".l\n" << node.Child(0) << ".r\n" << node.Child(1) << ".\n";
+
     // What do we do with the new cluster bounds?
     if (newMaxClusterDistance > 0.0 && newMaxClusterDistance <
         node.Stat().MaxClusterDistance())
@@ -337,8 +342,13 @@ oldFromNewCentroids[assignments(0, node.Point(i - 1))] << ".\n";
       }
 */
 
+      if (node.NumPoints() == 0 && childrenPruned)
+      {
+        // Pruned because its children are all pruned.
+        node.Stat().Pruned() = true;
+      }
       // What is the maximum distance to the closest cluster in the node?
-      if (node.Stat().MaxClusterDistance() +
+      else if (node.Stat().MaxClusterDistance() +
           clusterDistances[node.Stat().Owner()] <
           node.Stat().SecondClusterBound() - clusterDistances[centroids.n_cols])
       {
@@ -361,7 +371,26 @@ oldFromNewCentroids[assignments(0, node.Point(i - 1))] << ".\n";
     }
     else
     {
-      // The node isn't owned by a single cluster.
+      // The node isn't owned by a single cluster.  But if it has no points and
+      // its children are all pruned, we may prune it too.
+      if (childrenPruned && node.NumChildren() > 0)
+      {
+        Log::Warn << "Prune parent node " << node.Point(0) << "c" <<
+node.NumDescendants() << ".\n";
+        node.Stat().Pruned() = true;
+      }
+      if (node.NumChildren() > 0)
+        if (node.Child(0).Stat().Pruned() && !node.Child(1).Stat().Pruned())
+          Log::Warn << "Node left child pruned but right child not:\n" <<
+node.Child(0) << ", r\n" << node.Child(1) << ", this:\n" << node;
+      if (node.NumChildren() > 0)
+        if (node.Child(1).Stat().Pruned() && !node.Child(0).Stat().Pruned())
+          Log::Warn << "Node right child pruned but left child not:\n" <<
+node.Child(0) << ", r\n" << node.Child(1) << ", this:\n" << node;
+      if (node.NumChildren() > 0)
+        Log::Warn << "Node has more than 0 children: " << node << ".l\n" <<
+node.Child(0) << ", r\n" << node.Child(1) << ".\n";
+
       // Adjust the bounds for next iteration.
       node.Stat().MaxClusterDistance() += clusterDistances[centroids.n_cols];
       node.Stat().SecondClusterBound() = std::max(0.0,
