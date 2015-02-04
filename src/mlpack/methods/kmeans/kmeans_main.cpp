@@ -44,7 +44,7 @@ PROGRAM_INFO("K-Means Clustering", "This program performs K-Means clustering "
     "\n\n"
     "As of October 2014, the --overclustering option has been removed.  If you "
     "want this support back, let us know -- file a bug at "
-    "http://www.mlpack.org/trac/ or get in touch through another means.");
+    "https://github.com/mlpack/mlpack/ or get in touch through another means.");
 
 // Required options.
 PARAM_STRING_REQ("inputFile", "Input dataset to perform clustering on.", "i");
