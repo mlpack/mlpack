@@ -240,18 +240,18 @@ BOOST_AUTO_TEST_CASE(GaussianMultivariateProbabilityTest)
   BOOST_REQUIRE_CLOSE(g.Probability(-x), 0.0795774715459477, 1e-5);
 
   g.Mean() = "1 1";
-  covariance = "2 1.5; 1 4";
+  covariance = "2 1.5; 1.5 4";
   g.Covariance(std::move(covariance));
 
-  BOOST_REQUIRE_CLOSE(g.Probability(x), 0.060154914192541771, 1e-5);
+  BOOST_REQUIRE_CLOSE(g.Probability(x), 0.066372199406187285, 1e-5);
   g.Mean() *= -1;
-  BOOST_REQUIRE_CLOSE(g.Probability(-x), 0.060154914192541771, 1e-5);
+  BOOST_REQUIRE_CLOSE(g.Probability(-x), 0.066372199406187285, 1e-5);
 
   g.Mean() = "1 1";
   x = "-1 4";
 
-  BOOST_REQUIRE_CLOSE(g.Probability(x), 0.0022506270186086271, 1e-5);
-  BOOST_REQUIRE_CLOSE(g.Probability(-x), 0.0016912950996661141, 1e-5);
+  BOOST_REQUIRE_CLOSE(g.Probability(x), 0.00072147262356379415, 1e-5);
+  BOOST_REQUIRE_CLOSE(g.Probability(-x), 0.00085851785428674523, 1e-5);
 
   // Higher-dimensional case.
   x = "0 1 2 3 4";
