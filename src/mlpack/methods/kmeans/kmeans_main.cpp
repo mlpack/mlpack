@@ -48,7 +48,8 @@ PROGRAM_INFO("K-Means Clustering", "This program performs K-Means clustering "
 
 // Required options.
 PARAM_STRING_REQ("inputFile", "Input dataset to perform clustering on.", "i");
-PARAM_INT_REQ("clusters", "Number of clusters to find.", "c");
+PARAM_INT_REQ("clusters", "Number of clusters to find (0 autodetects from "
+    "initial centroids).", "c");
 
 // Output options.
 PARAM_FLAG("in_place", "If specified, a column containing the learned cluster "
@@ -176,11 +177,21 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
 {
   // Now, do validation of input options.
   const string inputFile = CLI::GetParam<string>("inputFile");
-  const int clusters = CLI::GetParam<int>("clusters");
-  if (clusters < 1)
+  int clusters = CLI::GetParam<int>("clusters");
+  if (clusters < 0)
   {
     Log::Fatal << "Invalid number of clusters requested (" << clusters << ")! "
-        << "Must be greater than or equal to 1." << endl;
+        << "Must be greater than or equal to 0." << endl;
+  }
+  else if (clusters == 0 && CLI::HasParam("initial_centroids"))
+  {
+    Log::Info << "Detecting number of clusters automatically from input "
+        << "centroids." << endl;
+  }
+  else if (clusters == 0)
+  {
+    Log::Fatal << "Number of clusters requested is 0, and no initial centroids "
+        << "provided!" << endl;
   }
 
   const int maxIterations = CLI::GetParam<int>("max_iterations");
@@ -210,6 +221,8 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
   {
     string initialCentroidsFile = CLI::GetParam<string>("initial_centroids");
     data::Load(initialCentroidsFile, centroids, true);
+    if (clusters == 0)
+      clusters = centroids.n_cols;
 
     if (CLI::HasParam("refined_start"))
       Log::Warn << "Initial centroids are specified, but will be ignored "
