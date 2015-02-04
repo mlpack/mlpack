@@ -108,6 +108,9 @@ class DTNNKMeans
                   const std::vector<size_t>& newFromOldCentroids);
 
   void PrecalculateCentroids(TreeType& node);
+
+  void CoalesceTree(TreeType& node, const size_t child = 0);
+  void DecoalesceTree(TreeType& node);
 };
 
 //! A template typedef for the DTNNKMeans algorithm with the default tree type

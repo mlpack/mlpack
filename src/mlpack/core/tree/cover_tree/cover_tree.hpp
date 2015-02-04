@@ -224,6 +224,8 @@ class CoverTree
   //! Modify a particular child node.
   CoverTree& Child(const size_t index) { return *children[index]; }
 
+  CoverTree*& ChildPtr(const size_t index) { return children[index]; }
+
   //! Get the number of children.
   size_t NumChildren() const { return children.size(); }
 

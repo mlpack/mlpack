@@ -23,7 +23,10 @@ class DTNNStatistic : public
       maxClusterDistance(DBL_MAX),
       secondClusterBound(0.0),
       owner(size_t(-1)),
-      centroid()
+      centroid(),
+      trueLeft(NULL),
+      trueRight(NULL),
+      trueParent(NULL)
   {
     // Nothing to do.
   }
@@ -35,7 +38,10 @@ class DTNNStatistic : public
       iteration(0),
       maxClusterDistance(DBL_MAX),
       secondClusterBound(0.0),
-      owner(size_t(-1))
+      owner(size_t(-1)),
+      trueLeft((void*) &node.Child(0)),
+      trueRight((void*) &node.Child(1)),
+      trueParent((void*) node.Parent())
   {
     // Empirically calculate the centroid.
     centroid.zeros(node.Dataset().n_rows);
@@ -67,6 +73,15 @@ class DTNNStatistic : public
   const arma::vec& Centroid() const { return centroid; }
   arma::vec& Centroid() { return centroid; }
 
+  const void* TrueLeft() const { return trueLeft; }
+  void*& TrueLeft() { return trueLeft; }
+
+  const void* TrueRight() const { return trueRight; }
+  void*& TrueRight() { return trueRight; }
+
+  const void* TrueParent() const { return trueParent; }
+  void*& TrueParent() { return trueParent; }
+
   std::string ToString() const
   {
     std::ostringstream o;
@@ -86,6 +101,9 @@ class DTNNStatistic : public
   double secondClusterBound;
   size_t owner;
   arma::vec centroid;
+  void* trueLeft;
+  void* trueRight;
+  void* trueParent;
 };
 
 } // namespace kmeans

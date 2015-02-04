@@ -332,6 +332,9 @@ class BinarySpaceTree
    */
   BinarySpaceTree& Child(const size_t child) const;
 
+  BinarySpaceTree*& ChildPtr(const size_t child)
+  { return (child == 0) ? left : right; }
+
   //! Return the number of points in this node (0 if not a leaf).
   size_t NumPoints() const;
 

@@ -118,6 +118,7 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
       newFromOldCentroids[oldFromNewCentroids[i]] = i;
   }
 
+  Timer::Start("knn");
   // Find the nearest neighbors of each of the clusters.
   neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType, TreeType>
       nns(centroidTree, centroids);
@@ -125,21 +126,29 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   arma::Mat<size_t> closestClusters; // We don't actually care about these.
   nns.Search(1, closestClusters, interclusterDistances);
   distanceCalculations += nns.BaseCases() + nns.Scores();
+  Timer::Stop("knn");
 
   if (iteration != 0)
   {
     // Do the tree update for the previous iteration.
 
     // Reset centroids and counts for things we will collect during pruning.
+    Timer::Start("it_update");
     prunedCentroids.zeros(centroids.n_rows, centroids.n_cols);
     prunedCounts.zeros(centroids.n_cols);
     UpdateTree(*tree, oldCentroids, interclusterDistances, newFromOldCentroids);
 
     PrecalculateCentroids(*tree);
+    Timer::Stop("it_update");
   }
+
+  Timer::Start("tree_mod");
+  CoalesceTree(*tree);
+  Timer::Stop("tree_mod");
 
   // We won't use the AllkNN class here because we have our own set of rules.
   // This is a lot of overhead.  We don't need the distances.
+  Timer::Start("knn");
   typedef DTNNKMeansRules<MetricType, TreeType> RuleType;
   RuleType rules(centroids, dataset, assignments, distances, metric,
       prunedPoints, oldFromNewCentroids, visited);
@@ -148,6 +157,11 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
 
   traverser.Traverse(*tree, *centroidTree);
+  Timer::Stop("knn");
+
+  Timer::Start("tree_mod");
+  DecoalesceTree(*tree);
+  Timer::Stop("tree_mod");
 
   Log::Info << "This iteration: " << rules.BaseCases() << " base cases, " <<
       rules.Scores() << " scores.\n";
@@ -479,6 +493,64 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
     node.Stat().SecondBound() += clusterDistances[centroids.n_cols];
   if (node.Stat().Bound() != DBL_MAX)
     node.Stat().Bound() += clusterDistances[centroids.n_cols];
+}
+
+template<typename MetricType, typename MatType, typename TreeType>
+void DTNNKMeans<MetricType, MatType, TreeType>::CoalesceTree(
+    TreeType& node,
+    const size_t child /* Which child are we? */)
+{
+  // If one of the two children is pruned, we hide this node.
+  // This assumes the BinarySpaceTree.  (bad Ryan! bad!)
+  if (node.NumChildren() == 0)
+    return; // We can't do anything.
+
+  // If this is the root node, we can't coalesce.
+  if (node.Parent() != NULL)
+  {
+    if (node.Child(0).Stat().Pruned() && !node.Child(1).Stat().Pruned())
+    {
+      CoalesceTree(node.Child(1), 1);
+
+      // Link the right child to the parent.
+      node.Child(1).Parent() = node.Parent();
+      node.Parent()->ChildPtr(child) = node.ChildPtr(1);
+    }
+    else if (!node.Child(0).Stat().Pruned() && node.Child(1).Stat().Pruned())
+    {
+      CoalesceTree(node.Child(0), 0);
+
+      // Link the left child to the parent.
+      node.Child(0).Parent() = node.Parent();
+      node.Parent()->ChildPtr(child) = node.ChildPtr(0);
+
+    }
+    else if (!node.Child(0).Stat().Pruned() && !node.Child(1).Stat().Pruned())
+    {
+      // The conditional is probably not necessary.
+      CoalesceTree(node.Child(0), 0);
+      CoalesceTree(node.Child(1), 1);
+    }
+  }
+  else
+  {
+    CoalesceTree(node.Child(0), 0);
+    CoalesceTree(node.Child(1), 1);
+  }
+}
+
+template<typename MetricType, typename MatType, typename TreeType>
+void DTNNKMeans<MetricType, MatType, TreeType>::DecoalesceTree(TreeType& node)
+{
+  node.Parent() = (TreeType*) node.Stat().TrueParent();
+  node.ChildPtr(0) = (TreeType*) node.Stat().TrueLeft();
+  node.ChildPtr(1) = (TreeType*) node.Stat().TrueRight();
+
+  if (node.NumChildren() > 0)
+  {
+    DecoalesceTree(node.Child(0));
+    DecoalesceTree(node.Child(1));
+  }
 }
 
 template<typename MetricType, typename MatType, typename TreeType>

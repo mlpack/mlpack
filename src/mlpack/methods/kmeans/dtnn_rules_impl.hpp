@@ -37,8 +37,11 @@ inline force_inline double DTNNKMeansRules<MetricType, TreeType>::BaseCase(
     const size_t referenceIndex)
 {
   // We'll check if the query point has been pruned.  If so, don't continue.
+//  Log::Debug << "Base case " << queryIndex << ", " << referenceIndex <<
+//".\n";
   if (prunedPoints[queryIndex])
     return 0.0; // Returning 0 shouldn't be a problem.
+//  Log::Debug << "(not pruned.)\n";
 
   // Any base cases imply that we will get a result.
   visited[queryIndex] = true;
@@ -107,8 +110,11 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
     TreeType& referenceNode)
 {
   // If the query point has already been pruned, then don't recurse further.
+//  Log::Debug << "Score " << queryIndex << ", r" << referenceNode.Point(0) << "c"
+//      << referenceNode.NumDescendants() << ".\n";
   if (prunedPoints[queryIndex])
     return DBL_MAX;
+//  Log::Debug << "(not pruned)\n";
 
   return neighbor::NeighborSearchRules<neighbor::NearestNeighborSort,
       MetricType, TreeType>::Score(queryIndex, referenceNode);
@@ -119,8 +125,12 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
     TreeType& queryNode,
     TreeType& referenceNode)
 {
+//  Log::Debug << "Score q" << queryNode.Point(0) << "c" <<
+//queryNode.NumDescendants() << ", r" << referenceNode.Point(0) << "c" <<
+//referenceNode.NumDescendants() << ".\n";
   if (queryNode.Stat().Pruned())
     return DBL_MAX;
+//  Log::Debug << "(not pruned.)\n";
 
   // Check if the query node is Hamerly pruned, and if not, then don't continue.
   return neighbor::NeighborSearchRules<neighbor::NearestNeighborSort,
