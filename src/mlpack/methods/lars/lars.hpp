@@ -129,7 +129,7 @@ class LARS
    *     true).
    * @param responses A vector of targets.
    * @param beta Vector to store the solution (the coefficients) in.
-   * @param rowMajor Set to false if the data is row-major.
+   * @param transposeData Set to false if the data is row-major.
    */
   void Regress(const arma::mat& data,
                const arma::vec& responses,
