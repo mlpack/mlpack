@@ -219,6 +219,7 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
           initialCentroidsFile << "'." << endl;
   }
 
+  Timer::Start("clustering");
   KMeans<metric::EuclideanDistance,
          InitialPartitionPolicy,
          EmptyClusterPolicy,
@@ -228,7 +229,6 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
   {
     // We need to get the assignments.
     arma::Col<size_t> assignments;
-    Timer::Start("clustering");
     kmeans.Cluster(dataset, clusters, assignments, centroids,
         false, initialCentroidGuess);
     Timer::Stop("clustering");
@@ -274,7 +274,6 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
   else
   {
     // Just save the centroids.
-    Timer::Start("clustering");
     kmeans.Cluster(dataset, clusters, centroids, initialCentroidGuess);
     Timer::Stop("clustering");
   }
