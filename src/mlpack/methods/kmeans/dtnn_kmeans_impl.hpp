@@ -330,10 +330,27 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
           (mcd < 0.5 * closestClusterDistance))
         node.Stat().Pruned() = true;
 
-      // Adjust bounds for next iteration, regardless of whether or not the node
-      // was pruned.  (Does this adjustment need to happen if there is no prune?
-      node.Stat().MaxClusterDistance() += ownerMovement;
-      node.Stat().SecondClusterBound() -= maxMovement;
+      if (!node.Stat().Pruned() && (mcd - ownerMovement) < (scb - maxMovement))
+      {
+        // Calculate the next MCD by hand.
+        const double newDist = node.MaxDistance(centroids.col(owner));
+        ++distanceCalculations;
+        node.Stat().MaxClusterDistance() = newDist;
+
+        if ((newDist < scb - maxMovement) ||
+            (newDist < 0.5 * closestClusterDistance))
+          node.Stat().Pruned() = true;
+        else
+          node.Stat().SecondClusterBound() -= maxMovement;
+      }
+      else
+      {
+        // Adjust bounds for next iteration, regardless of whether or not the
+        // node was pruned.  (Does this adjustment need to happen if there is no
+        // prune?
+        node.Stat().MaxClusterDistance() += ownerMovement;
+        node.Stat().SecondClusterBound() -= maxMovement;
+      }
     }
     else if (childrenPruned && node.NumChildren() > 0 && node.NumPoints() == 0)
     {
