@@ -394,6 +394,12 @@ inline double NeighborSearchRules<SortPolicy, MetricType, TreeType>::
       bestDistance = queryNode.Parent()->Stat().SecondBound();
   }
 
+  // Could the existing bounds be better?
+  if (SortPolicy::IsBetter(queryNode.Stat().FirstBound(), worstDistance))
+    worstDistance = queryNode.Stat().FirstBound();
+  if (SortPolicy::IsBetter(queryNode.Stat().SecondBound(), bestDistance))
+    bestDistance = queryNode.Stat().SecondBound();
+
   // Cache bounds for later.
   queryNode.Stat().FirstBound() = worstDistance;
   queryNode.Stat().SecondBound() = bestDistance;
