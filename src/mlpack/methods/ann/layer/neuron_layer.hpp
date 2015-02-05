@@ -1,6 +1,7 @@
 /**
  * @file neuron_layer.hpp
  * @author Marcus Edel
+ * @author Shangtong Zhang
  *
  * Definition of the NeuronLayer class, which implements a standard network
  * layer.
@@ -46,11 +47,42 @@ class NeuronLayer
    * @param layerSize The number of neurons.
    */
   NeuronLayer(const size_t layerSize) :
-      inputActivations(arma::zeros<VecType>(layerSize)),
-      delta(arma::zeros<VecType>(layerSize)),
-      layerSize(layerSize)
+      layerSize(layerSize),
+      localInputActivations(arma::zeros<VecType>(layerSize)),
+      inputActivations(localInputActivations),
+      localDelta(arma::zeros<VecType>(layerSize)),
+      delta(localDelta)
   {
     // Nothing to do here.
+  }
+  
+  /**
+   * Create the NeuronLayer object using the specified inputActivations and delta.
+   * This allow shared memory among layers,
+   * which make it easier to combine layers together in some special condition.
+   *
+   * @param inputActivations Outside storage for storing input activations.
+   * @param delta Outside storage for storing delta,
+   *        the passed error in backward propagation.
+   */
+  NeuronLayer(VecType& inputActivations, VecType& delta) :
+    layerSize(inputActivations.n_elem),
+    inputActivations(inputActivations),
+    delta(delta) {
+    
+  }
+  
+  /**
+   * Copy Constructor
+   */
+  NeuronLayer(const NeuronLayer& l) :
+  layerSize(l.layerSize),
+  localInputActivations(l.localInputActivations),
+  inputActivations(l.localInputActivations.elem == 0 ?
+                   l.inputActivations : localInputActivations),
+  localDelta(l.localDelta),
+  delta(l.localDelta.elem == 0 ? l.delta : localDelta) {
+    
   }
 
   /**
@@ -63,7 +95,10 @@ class NeuronLayer
    */
   void FeedForward(const VecType& inputActivation, VecType& outputActivation)
   {
+    Log::Debug << "NeuronLayer::FeedForward" << std::endl;
+    Log::Debug << "Input:\n" << inputActivation << std::endl;
     ActivationFunction::fn(inputActivation, outputActivation);
+    Log::Debug << "Output:\n" << outputActivation << std::endl;
   }
 
   /**
@@ -80,25 +115,29 @@ class NeuronLayer
                     const VecType& error,
                     VecType& delta)
   {
+    Log::Debug << "NeuronLayer::FeedBackward" << std::endl;
+    Log::Debug << "Activation:\n" << inputActivation << std::endl;
+    Log::Debug << "Error:\n" << error << std::endl;
     VecType derivative;
     ActivationFunction::deriv(inputActivation, derivative);
 
     delta = error % derivative;
+    Log::Debug << "Output:\n" << delta << std::endl;
   }
 
   //! Get the input activations.
   VecType& InputActivation() const { return inputActivations; }
-  //  //! Modify the input activations.
+  //! Modify the input activations.
   VecType& InputActivation() { return inputActivations; }
 
   //! Get the detla.
   VecType& Delta() const { return delta; }
- //  //! Modify the delta.
+  //! Modify the delta.
   VecType& Delta() { return delta; }
 
   //! Get input size.
   size_t InputSize() const { return layerSize; }
-  //  //! Modify the delta.
+  //! Modify the input size.
   size_t& InputSize() { return layerSize; }
 
   //! Get output size.
@@ -107,14 +146,23 @@ class NeuronLayer
   size_t& OutputSize() { return layerSize; }
 
  private:
-  //! Locally-stored input activation object.
-  VecType inputActivations;
-
-  //! Locally-stored delta object.
-  VecType delta;
-
   //! Locally-stored number of neurons.
   size_t layerSize;
+  
+  //! Locally-stored input activation object.
+  VecType localInputActivations;
+  
+  //! Reference to locall-stored or outside input activation object.
+  VecType& inputActivations;
+
+  //! Locally-stored delta object.
+  VecType localDelta;
+  
+  //! Reference to locally-stored or outside delta object.
+  VecType& delta;
+
+
+  
 }; // class NeuronLayer
 
 // Convenience typedefs.

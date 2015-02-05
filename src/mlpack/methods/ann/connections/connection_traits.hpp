@@ -1,6 +1,7 @@
 /**
  * @file connection_traits.hpp
  * @author Marcus Edel
+ * @author Shangtong Zhang
  *
  * ConnectionTraits class, a template class to get information about various
  * layers.
@@ -31,6 +32,11 @@ class ConnectionTraits
    * This is true if the connection is a fullself connection.
    */
   static const bool IsFullselfConnection = false;
+  
+  /**
+   * This is true if the connection calculate the delta of weights itself.
+   */
+  static const bool hasWeightsDelta = false;
 };
 
 }; // namespace ann

@@ -10,11 +10,13 @@ add_executable(mlpack_test
   cf_test.cpp
   cli_test.cpp
   cosine_tree_test.cpp
+  convolutional_network_test.cpp
   decision_stump_test.cpp
   det_test.cpp
   distribution_test.cpp
   emst_test.cpp
   fastmks_test.cpp
+  feedforward_network_test.cpp
   gmm_test.cpp
   hmm_test.cpp
   kernel_test.cpp

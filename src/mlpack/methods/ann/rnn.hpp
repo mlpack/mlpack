@@ -593,6 +593,7 @@ class NetworkTraits<RNN<ConnectionTypes, OutputLayerType, PerformanceFunction> >
  public:
   static const bool IsFNN = false;
   static const bool IsRNN = true;
+  static const bool IsCNN = false;
 };
 
 }; // namespace ann
