@@ -67,7 +67,9 @@ DualTreeTraverser<RuleType>::Traverse(
       numBaseCases += referenceNode.Count();
     }
   }
-  else if ((!queryNode.IsLeaf()) && referenceNode.IsLeaf())
+  else if (((!queryNode.IsLeaf()) && referenceNode.IsLeaf()) ||
+           (queryNode.NumDescendants() > 3 * referenceNode.NumDescendants() &&
+            !queryNode.IsLeaf() && !referenceNode.IsLeaf()))
   {
     // We have to recurse down the query node.  In this case the recursion order
     // does not matter.
