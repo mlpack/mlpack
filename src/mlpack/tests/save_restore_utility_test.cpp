@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE(SaveArmaMat)
 
   for (size_t row = 0; row < matrix.n_rows; ++row)
     for (size_t column = 0; column < matrix.n_cols; ++column)
-      BOOST_REQUIRE_CLOSE(matrix(row,column), matrix2(row,column), 1e-5);
+      BOOST_REQUIRE_CLOSE(matrix(row, column), matrix2(row, column), 1e-5);
 
   delete sRM;
 }
