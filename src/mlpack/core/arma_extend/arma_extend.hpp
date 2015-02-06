@@ -44,6 +44,9 @@ namespace arma {
 
   // inplace_reshape()
   #include "fn_inplace_reshape.hpp"
+
+  // unary minus for sparse matrices
+  #include "operator_minus.hpp"
 };
 
 #endif
