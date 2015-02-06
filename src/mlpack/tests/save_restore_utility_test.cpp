@@ -47,7 +47,7 @@ class SaveRestoreTest
   }
 
   size_t AnInt() { return anInt; }
-  void AnInt(size_t s) { this->anInt = s; }
+  void AnInt(size_t s) { anInt = s; }
 };
 
 /**
@@ -65,30 +65,30 @@ BOOST_AUTO_TEST_CASE(SaveBasicTypes)
   double d = 3.14159;
   std::string cc = "Hello world!";
 
-  SaveRestoreUtility* sRM = new SaveRestoreUtility();
+  SaveRestoreUtility sr;
 
-  sRM->SaveParameter(ARGSTR(b));
-  sRM->SaveParameter(ARGSTR(c));
-  sRM->SaveParameter(ARGSTR(u));
-  sRM->SaveParameter(ARGSTR(s));
-  sRM->SaveParameter(ARGSTR(sh));
-  sRM->SaveParameter(ARGSTR(i));
-  sRM->SaveParameter(ARGSTR(f));
-  sRM->SaveParameter(ARGSTR(d));
-  sRM->SaveParameter(ARGSTR(cc));
-  sRM->WriteFile("test_basic_types.xml");
+  sr.SaveParameter(ARGSTR(b));
+  sr.SaveParameter(ARGSTR(c));
+  sr.SaveParameter(ARGSTR(u));
+  sr.SaveParameter(ARGSTR(s));
+  sr.SaveParameter(ARGSTR(sh));
+  sr.SaveParameter(ARGSTR(i));
+  sr.SaveParameter(ARGSTR(f));
+  sr.SaveParameter(ARGSTR(d));
+  sr.SaveParameter(ARGSTR(cc));
+  sr.WriteFile("test_basic_types.xml");
 
-  sRM->ReadFile("test_basic_types.xml");
+  sr.ReadFile("test_basic_types.xml");
 
-  bool b2 =         sRM->LoadParameter(ARGSTR(b));
-  char c2 =         sRM->LoadParameter(ARGSTR(c));
-  unsigned u2 =     sRM->LoadParameter(ARGSTR(u));
-  size_t s2 =       sRM->LoadParameter(ARGSTR(s));
-  short sh2 =       sRM->LoadParameter(ARGSTR(sh));
-  int i2 =          sRM->LoadParameter(ARGSTR(i));
-  float f2 =        sRM->LoadParameter(ARGSTR(f));
-  double d2 =       sRM->LoadParameter(ARGSTR(d));
-  std::string cc2 = sRM->LoadParameter(ARGSTR(cc));
+  bool b2 =         sr.LoadParameter(ARGSTR(b));
+  char c2 =         sr.LoadParameter(ARGSTR(c));
+  unsigned u2 =     sr.LoadParameter(ARGSTR(u));
+  size_t s2 =       sr.LoadParameter(ARGSTR(s));
+  short sh2 =       sr.LoadParameter(ARGSTR(sh));
+  int i2 =          sr.LoadParameter(ARGSTR(i));
+  float f2 =        sr.LoadParameter(ARGSTR(f));
+  double d2 =       sr.LoadParameter(ARGSTR(d));
+  std::string cc2 = sr.LoadParameter(ARGSTR(cc));
 
   BOOST_REQUIRE(b == b2);
   BOOST_REQUIRE(c == c2);
@@ -99,24 +99,22 @@ BOOST_AUTO_TEST_CASE(SaveBasicTypes)
   BOOST_REQUIRE(cc == cc2);
   BOOST_REQUIRE_CLOSE(f, f2, 1e-5);
   BOOST_REQUIRE_CLOSE(d, d2, 1e-5);
-
-  delete sRM;
 }
 
 BOOST_AUTO_TEST_CASE(SaveRestoreStdVector)
 {
-  size_t numbers[] = {0,3,6,2,6};
+  size_t numbers[] = {0, 3, 6, 2, 6};
   std::vector<size_t> vec (numbers,
                            numbers + sizeof (numbers) / sizeof (size_t));
-  SaveRestoreUtility* sRM = new SaveRestoreUtility();
+  SaveRestoreUtility sr;
 
-  sRM->SaveParameter(ARGSTR(vec));
+  sr.SaveParameter(ARGSTR(vec));
 
-  sRM->WriteFile("test_std_vector_type.xml");
+  sr.WriteFile("test_std_vector_type.xml");
 
-  sRM->ReadFile("test_std_vector_type.xml");
+  sr.ReadFile("test_std_vector_type.xml");
 
-  std::vector<size_t> loadee = sRM->LoadParameter(ARGSTR(vec));
+  std::vector<size_t> loadee = sr.LoadParameter(ARGSTR(vec));
 
   for (size_t index = 0; index < loadee.size(); ++index)
     BOOST_REQUIRE_EQUAL(numbers[index], loadee[index]);
@@ -132,21 +130,19 @@ BOOST_AUTO_TEST_CASE(SaveArmaMat)
          <<  3.5 << 2.4 << -1.2 << arma::endr
          << -0.1 << 3.4 << -7.8 << arma::endr;
 
-  SaveRestoreUtility* sRM = new SaveRestoreUtility();
+  SaveRestoreUtility sr;
 
-  sRM->SaveParameter(ARGSTR(matrix));
+  sr.SaveParameter(ARGSTR(matrix));
 
-  sRM->WriteFile("test_arma_mat_type.xml");
+  sr.WriteFile("test_arma_mat_type.xml");
 
-  sRM->ReadFile("test_arma_mat_type.xml");
+  sr.ReadFile("test_arma_mat_type.xml");
 
-  arma::mat matrix2 = sRM->LoadParameter(ARGSTR(matrix));
+  arma::mat matrix2 = sr.LoadParameter(ARGSTR(matrix));
 
   for (size_t row = 0; row < matrix.n_rows; ++row)
     for (size_t column = 0; column < matrix.n_cols; ++column)
       BOOST_REQUIRE_CLOSE(matrix(row, column), matrix2(row, column), 1e-5);
-
-  delete sRM;
 }
 
 /**
@@ -155,20 +151,17 @@ BOOST_AUTO_TEST_CASE(SaveArmaMat)
  */
 BOOST_AUTO_TEST_CASE(SaveRestoreModelChildClassUsage)
 {
-  SaveRestoreTest* saver = new SaveRestoreTest();
-  SaveRestoreTest* loader = new SaveRestoreTest();
+  SaveRestoreTest saver;
+  SaveRestoreTest loader;
   size_t s = 1200;
   const char* filename = "anInt.xml";
 
-  saver->AnInt(s);
-  saver->SaveModel(filename);
-  delete saver;
+  saver.AnInt(s);
+  saver.SaveModel(filename);
 
-  loader->LoadModel(filename);
+  loader.LoadModel(filename);
 
-  BOOST_REQUIRE(loader->AnInt() == s);
-
-  delete loader;
+  BOOST_REQUIRE(loader.AnInt() == s);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
