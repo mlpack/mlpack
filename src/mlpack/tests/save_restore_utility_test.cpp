@@ -13,7 +13,7 @@
 using namespace mlpack;
 using namespace mlpack::util;
 
-BOOST_AUTO_TEST_SUITE(SaveRestoreUtilityTests);
+BOOST_AUTO_TEST_SUITE(SaveRestoreUtilityTest);
 
 /*
  * Exhibit proper save restore utility usage of child class proper usage.
