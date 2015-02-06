@@ -65,7 +65,7 @@ bool SaveRestoreUtility::WriteFile(const std::string& filename)
 void SaveRestoreUtility::WriteFile(xmlNode* n)
 {
   for (std::map<std::string, std::string>::reverse_iterator it =
-	    parameters.rbegin(); it != parameters.rend(); ++it)
+       parameters.rbegin(); it != parameters.rend(); ++it)
   {
     xmlNewChild(n, NULL, BAD_CAST(*it).first.c_str(),
         BAD_CAST(*it).second.c_str());
@@ -214,13 +214,13 @@ void SaveRestoreUtility::SaveParameter(const arma::vec& t,
 {
   SaveParameter((const arma::mat&) t, name);
 }
-    
+
 void SaveRestoreUtility::AddChild(SaveRestoreUtility& mn, const std::string&
     name)
 {
   children[name] = mn;
 }
 
-  
+
 }; // namespace util
 }; // namespace mlpack
