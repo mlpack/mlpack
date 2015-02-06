@@ -157,9 +157,7 @@ ConstructMaxCutSDPFromLaplacian(const std::string& laplacianFilename)
   if (laplacian.n_rows != laplacian.n_cols)
     Log::Fatal << "laplacian not square" << std::endl;
   SDP<arma::sp_mat> sdp(laplacian.n_rows, laplacian.n_rows, 0);
-  // operator- not supported on older versions of arma
-  sdp.C() = arma::sp_mat(laplacian);
-  sdp.C() *= -1.;
+  sdp.C() = -arma::sp_mat(laplacian);
   for (size_t i = 0; i < laplacian.n_rows; i++)
   {
     sdp.SparseA()[i].zeros(laplacian.n_rows, laplacian.n_rows);
