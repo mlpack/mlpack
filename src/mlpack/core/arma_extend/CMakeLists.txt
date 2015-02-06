@@ -8,6 +8,7 @@ set(SOURCES
   hdf5_misc.hpp
   op_ccov_meat.hpp
   op_ccov_proto.hpp
+  operator_minus.hpp
   promote_type.hpp
   restrictors.hpp
   traits.hpp
