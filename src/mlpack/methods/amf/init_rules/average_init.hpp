@@ -28,7 +28,7 @@ class AverageInitialization
   /**
    * Initialize the matrices W and H to the average value of V with uniform
    * random noise added.
-   */
+   *
    * @param V Input matrix.
    * @param r Rank of matrix.
    * @param W W matrix, to be initialized.
