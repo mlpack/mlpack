@@ -59,7 +59,7 @@ class AverageInitialization
         min = *it;
     }
 
-    V_avg = sqrt(((avgV / (n * m)) - min) / r);
+    avgV = sqrt(((avgV / (n * m)) - min) / r);
 
     // Intialize to random values.
     W.randu(n, r);
