@@ -47,7 +47,7 @@ class RandomInitialization
   }
 };
 
-}; // namespace amf
-}; // namespace mlpack
+} // namespace amf
+} // namespace mlpack
 
 #endif
