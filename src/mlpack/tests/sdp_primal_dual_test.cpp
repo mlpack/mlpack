@@ -240,10 +240,7 @@ static void SolveMaxCutPositiveSDP(const SDP<arma::sp_mat>& sdp)
   ydense0.set_size(0);
 
   // infeasible, but positive starting point
-  X0.randu(sdp.N(), sdp.N());
-  X0 *= X0.t();
-  X0 += 0.01 * arma::eye<arma::mat>(sdp.N(), sdp.N());
-
+  X0 = arma::eye<arma::mat>(sdp.N(), sdp.N());
   ysparse0 = arma::randu<arma::vec>(sdp.NumSparseConstraints());
   Z0.eye(sdp.N(), sdp.N());
 
@@ -264,11 +261,12 @@ BOOST_AUTO_TEST_CASE(SmallMaxCutSdp)
   UndirectedGraph g;
   UndirectedGraph::ErdosRenyiRandomGraph(g, 10, 0.3, true);
   sdp = ConstructMaxCutSDPFromGraph(g);
-  SolveMaxCutFeasibleSDP(sdp);
 
   // the following was resulting in non-positive Z0 matrices on some
   // random instances.
-  //SolveMaxCutPositiveSDP(sdp);
+  //SolveMaxCutFeasibleSDP(sdp);
+
+  SolveMaxCutPositiveSDP(sdp);
 }
 
 BOOST_AUTO_TEST_CASE(SmallLovaszThetaSdp)
