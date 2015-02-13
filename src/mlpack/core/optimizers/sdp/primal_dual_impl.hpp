@@ -432,7 +432,7 @@ PrimalDualSolver<SDPType>::Optimize(arma::mat& X,
     const double dualInfeas = arma::norm(DualCheck, "fro");
 
     Log::Debug
-        << "iter=" << iteration + 1 << ", "
+        << "iter=" << iteration << ", "
         << "primal=" << primalObj << ", "
         << "dual=" << dualObj << ", "
         << "gap=" << dualityGap << ", "
