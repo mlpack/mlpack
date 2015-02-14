@@ -7,6 +7,7 @@
 
 #include "mean_shift.hpp"
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
+#include <mlpack/core/kernels/kernel_traits.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search_stat.hpp>
@@ -49,7 +50,7 @@ template<typename KernelType,
 double MeanShift<
   KernelType,
   MatType>::
-estimateRadius(const MatType &data) {
+EstimateRadius(const MatType &data) {
   
   neighbor::NeighborSearch<
     neighbor::NearestNeighborSort,
@@ -71,9 +72,52 @@ estimateRadius(const MatType &data) {
   // Get max distance for each point.
   arma::rowvec maxDistances = max(distances);
   
-  // Calc and return the duplicate thresh.
+  // Calculate and return the radius.
   return sum(maxDistances) / (double)data.n_cols;
   
+}
+
+// General way to calculate the weight of a data point.
+template <typename KernelType,
+          typename MatType>
+template <typename Kernel>
+typename std::enable_if<!kernel::KernelTraits<Kernel>::
+  UsesSquaredDistance, bool>::type
+MeanShift<
+  KernelType,
+  MatType>::
+CalcWeight(const arma::colvec& centroid, const arma::colvec& point,
+           double& weight) {
+  
+  double distance = metric.Evaluate(centroid, point);
+  if (distance >= radius || distance == 0) {
+    return false;
+  }
+  distance /= radius;
+  weight = kernel.Gradient(distance) / distance;
+  return true;
+
+}
+
+// Faster way to calculate the weight of a data point.
+template <typename KernelType,
+          typename MatType>
+template <typename Kernel>
+typename std::enable_if<kernel::KernelTraits<Kernel>::
+  UsesSquaredDistance, bool>::type
+MeanShift<
+  KernelType,
+  MatType>::
+CalcWeight(const arma::colvec& centroid, const arma::colvec& point,
+           double& weight) {
+  
+  double squaredDist = std::pow(metric.Evaluate(centroid, point), 2);
+  if (squaredDist >= squaredRadius || squaredDist == 0) {
+    return false;
+  }
+  squaredDist /= squaredRadius;
+  weight = kernel.GradientForSquaredDistance(squaredDist);
+  return true;
 }
 
 /**
@@ -91,7 +135,7 @@ Cluster(const MatType& data,
   
   if (radius <= 0) {
     // An invalid radius is given, an estimation is needed.
-    Radius(estimateRadius(data));
+    Radius(EstimateRadius(data));
   }
   
   // all centroids before remove duplicate ones.
@@ -115,21 +159,10 @@ Cluster(const MatType& data,
       // Go through all the points
       for (size_t j = 0; j < data.n_cols; ++j) {
         
-        // Calculate the distance between old centroid and current point.
-        double squaredDist = metric::SquaredEuclideanDistance::
-                            Evaluate(allCentroids.col(i), data.col(j));
-        
-        // If current point is near the old centroid
-        if (squaredDist < squaredRadius) {
-          
-          // calculate weight for current point
-          double weight = kernel.Gradient(squaredDist / squaredRadius);
-          
+        double weight = 0;
+        if (CalcWeight<KernelType>(allCentroids.col(i), data.col(j), weight)) {
           sumWeight += weight;
-          
-          // update new centroid.
           newCentroid += weight * data.col(j);
-          
         }
         
       }
@@ -139,11 +172,8 @@ Cluster(const MatType& data,
       // calc the mean shift vector.
       arma::Col<double> mhVector = newCentroid - allCentroids.col(i);
       
-      // update the centroid.
-      allCentroids.col(i) = newCentroid;
-      
-      // If the 2-norm of mean shift vector is small enough, it has converged.
-      if (arma::norm(mhVector, 2) < 1e-3 * radius) {
+      // If the mean shift vector is small enough, it has converged.
+      if (metric.Evaluate(newCentroid, allCentroids.col(i)) < 1e-3 * radius) {
         
         // Determine if the new centroid is duplicate with old ones.
         bool isDuplicated = false;
@@ -170,6 +200,10 @@ Cluster(const MatType& data,
         // Get out of the loop.
         break;
       }
+      
+      
+      // update the centroid.
+      allCentroids.col(i) = newCentroid;
       
     }
     
