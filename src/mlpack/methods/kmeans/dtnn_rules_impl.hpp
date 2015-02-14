@@ -16,17 +16,24 @@ template<typename MetricType, typename TreeType>
 DTNNKMeansRules<MetricType, TreeType>::DTNNKMeansRules(
     const arma::mat& centroids,
     const arma::mat& dataset,
-    arma::Mat<size_t>& neighbors,
-    arma::mat& distances,
+    arma::Col<size_t>& assignments,
+    arma::vec& upperBounds,
+    arma::vec& lowerBounds,
     MetricType& metric,
     const std::vector<bool>& prunedPoints,
     const std::vector<size_t>& oldFromNewCentroids,
     std::vector<bool>& visited) :
-    neighbor::NeighborSearchRules<neighbor::NearestNeighborSort, MetricType,
-        TreeType>(centroids, dataset, neighbors, distances, metric),
+    centroids(centroids),
+    dataset(dataset),
+    assignments(assignments),
+    upperBounds(upperBounds),
+    lowerBounds(lowerBounds),
+    metric(metric),
     prunedPoints(prunedPoints),
     oldFromNewCentroids(oldFromNewCentroids),
-    visited(visited)
+    visited(visited),
+    baseCases(0),
+    scores(0)
 {
   // Nothing to do.
 }
@@ -36,70 +43,27 @@ inline force_inline double DTNNKMeansRules<MetricType, TreeType>::BaseCase(
     const size_t queryIndex,
     const size_t referenceIndex)
 {
-  // We'll check if the query point has been pruned.  If so, don't continue.
-//  Log::Debug << "Base case " << queryIndex << ", " << referenceIndex <<
-//".\n";
   if (prunedPoints[queryIndex])
     return 0.0; // Returning 0 shouldn't be a problem.
-//  Log::Debug << "(not pruned.)\n";
 
   // Any base cases imply that we will get a result.
   visited[queryIndex] = true;
 
-  // This is basically an inlined NeighborSearchRules::BaseCase(), but it
-  // differs in that it applies the mappings to the results automatically.
-  // We can also skip a check or two.
+  // Calculate the distance.
+  ++baseCases;
+  const double distance = metric.Evaluate(dataset.col(queryIndex),
+                                          centroids.col(referenceIndex));
 
-  // By the way, all of the this-> is necessary because the parent class is a
-  // dependent name, so all of the members of that parent aren't resolvable
-  // before type substitution.  The 'this->' turns that member into a dependent
-  // name too (since the type of 'this' is dependent), and thus the compiler
-  // resolves the name later and we get no error.  Hooray C++!
-  //
-  // See also:
-  // http://stackoverflow.com/questions/10639053/name-lookups-in-c-templates
-
-  // If we have already performed this base case, do not perform it again.
-  if ((this->lastQueryIndex == queryIndex) &&
-      (this->lastReferenceIndex == referenceIndex))
-    return this->lastBaseCase;
-
-  double distance = this->metric.Evaluate(this->querySet.col(queryIndex),
-      this->referenceSet.col(referenceIndex));
-  ++this->baseCases;
-
-  const size_t cluster = oldFromNewCentroids[referenceIndex];
-
-  // Is this better than either existing candidate?
-  if (distance < this->distances(0, queryIndex))
+  if (distance < upperBounds[queryIndex])
   {
-    // Do we need to replace the assignment, or is it an old assignment from a
-    // previous iteration?
-    if (this->neighbors(0, queryIndex) != cluster &&
-        this->neighbors(0, queryIndex) < this->referenceSet.n_cols)
-    {
-      // We must push the old closest assignment down the stack.
-      this->neighbors(1, queryIndex) = this->neighbors(0, queryIndex);
-      this->distances(1, queryIndex) = this->distances(0, queryIndex);
-      this->neighbors(0, queryIndex) = cluster;
-    }
-    else if (this->neighbors(0, queryIndex) >= this->referenceSet.n_cols)
-    {
-      this->neighbors(0, queryIndex) = cluster;
-    }
-
-    this->distances(0, queryIndex) = distance;
+    lowerBounds[queryIndex] = upperBounds[queryIndex];
+    upperBounds[queryIndex] = distance;
+    assignments[queryIndex] = referenceIndex;
   }
-  else if (distance < this->distances(1, queryIndex))
+  else if (distance < lowerBounds[queryIndex])
   {
-    // Here it doesn't actually matter if the assignment is the same.
-    this->neighbors(1, queryIndex) = cluster;
-    this->distances(1, queryIndex) = distance;
+    lowerBounds[queryIndex] = distance;
   }
-
-  this->lastQueryIndex = queryIndex;
-  this->lastReferenceIndex = referenceIndex;
-  this->lastBaseCase = distance;
 
   return distance;
 }
@@ -107,17 +71,14 @@ inline force_inline double DTNNKMeansRules<MetricType, TreeType>::BaseCase(
 template<typename MetricType, typename TreeType>
 inline double DTNNKMeansRules<MetricType, TreeType>::Score(
     const size_t queryIndex,
-    TreeType& referenceNode)
+    TreeType& /* referenceNode */)
 {
   // If the query point has already been pruned, then don't recurse further.
-//  Log::Debug << "Score " << queryIndex << ", r" << referenceNode.Point(0) << "c"
-//      << referenceNode.NumDescendants() << ".\n";
   if (prunedPoints[queryIndex])
     return DBL_MAX;
-//  Log::Debug << "(not pruned)\n";
 
-  return neighbor::NeighborSearchRules<neighbor::NearestNeighborSort,
-      MetricType, TreeType>::Score(queryIndex, referenceNode);
+  // No pruning at this level (for now).
+  return 0;
 }
 
 template<typename MetricType, typename TreeType>
@@ -125,38 +86,70 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
     TreeType& queryNode,
     TreeType& referenceNode)
 {
-//  Log::Debug << "Score q" << queryNode.Point(0) << "c" <<
-//queryNode.NumDescendants() << ", r" << referenceNode.Point(0) << "c" <<
-//referenceNode.NumDescendants() << ".\n";
-  if (queryNode.Stat().Pruned())
+  // Pruned() for the root node must never be set to size_t(-1).
+  if (queryNode.Stat().Pruned() == size_t(-1))
+  {
+    queryNode.Stat().Pruned() = queryNode.Parent()->Stat().Pruned();
+    queryNode.Stat().LowerBound() = queryNode.Parent()->Stat().LowerBound();
+  }
+
+  if (queryNode.Stat().Pruned() == centroids.n_cols)
+  {
     return DBL_MAX;
-//  Log::Debug << "(not pruned.)\n";
+  }
 
-  // Check if the query node is Hamerly pruned, and if not, then don't continue.
-  return neighbor::NeighborSearchRules<neighbor::NearestNeighborSort,
-      MetricType, TreeType>::Score(queryNode, referenceNode);
+  // Get minimum and maximum distances.
+  math::Range distances = queryNode.RangeDistance(&referenceNode);
+  double score = distances.Lo();
+  ++scores;
+  if (distances.Lo() > queryNode.Stat().UpperBound())
+  {
+    // The reference node can own no points in this query node.  We may improve
+    // the lower bound on pruned nodes, though.
+    if (distances.Lo() < queryNode.Stat().LowerBound())
+      queryNode.Stat().LowerBound() = distances.Lo();
+
+    // This assumes that reference clusters don't appear elsewhere in the tree.
+    queryNode.Stat().Pruned() += referenceNode.NumDescendants();
+    score = DBL_MAX;
+  }
+  else if (distances.Hi() < queryNode.Stat().UpperBound())
+  {
+    // We can improve the best estimate.
+    queryNode.Stat().UpperBound() = distances.Hi();
+    // If this node has only one descendant, then it may be the owner.
+    if (referenceNode.NumDescendants() == 1)
+      queryNode.Stat().Owner() = referenceNode.Descendant(0);
+  }
+
+  // Is everything pruned?
+  if (queryNode.Stat().Pruned() == centroids.n_cols - 1)
+  {
+    queryNode.Stat().Pruned() = centroids.n_cols; // Owner() is already set.
+    return DBL_MAX;
+  }
+
+  return score;
 }
 
 template<typename MetricType, typename TreeType>
 inline double DTNNKMeansRules<MetricType, TreeType>::Rescore(
-    const size_t queryIndex,
-    TreeType& referenceNode,
+    const size_t /* queryIndex */,
+    TreeType& /* referenceNode */,
     const double oldScore)
 {
-  return neighbor::NeighborSearchRules<neighbor::NearestNeighborSort,
-      MetricType, TreeType>::Rescore(queryIndex, referenceNode, oldScore);
+  // No rescoring (for now).
+  return oldScore;
 }
 
 template<typename MetricType, typename TreeType>
 inline double DTNNKMeansRules<MetricType, TreeType>::Rescore(
-    TreeType& queryNode,
-    TreeType& referenceNode,
+    TreeType& /* queryNode */,
+    TreeType& /* referenceNode */,
     const double oldScore)
 {
-  // No need to check for a Hamerly prune.  Because we've already done that in
-  // Score().
-  return neighbor::NeighborSearchRules<neighbor::NearestNeighborSort,
-      MetricType, TreeType>::Rescore(queryNode, referenceNode, oldScore);
+  // No rescoring (for now).
+  return oldScore;
 }
 
 } // namespace kmeans

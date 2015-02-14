@@ -18,11 +18,10 @@ class DTNNStatistic : public
  public:
   DTNNStatistic() :
       neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>(),
-      pruned(false),
-      iteration(0),
-      maxClusterDistance(DBL_MAX),
-      secondClusterBound(0.0),
+      upperBound(DBL_MAX),
+      lowerBound(DBL_MAX),
       owner(size_t(-1)),
+      pruned(size_t(-1)),
       centroid(),
       trueLeft(NULL),
       trueRight(NULL),
@@ -34,11 +33,10 @@ class DTNNStatistic : public
   template<typename TreeType>
   DTNNStatistic(TreeType& node) :
       neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>(),
-      pruned(false),
-      iteration(0),
-      maxClusterDistance(DBL_MAX),
-      secondClusterBound(0.0),
+      upperBound(DBL_MAX),
+      lowerBound(DBL_MAX),
       owner(size_t(-1)),
+      pruned(size_t(-1)),
       trueLeft((void*) &node.Child(0)),
       trueRight((void*) &node.Child(1)),
       trueParent((void*) node.Parent())
@@ -55,23 +53,20 @@ class DTNNStatistic : public
     centroid /= node.NumDescendants();
   }
 
-  bool Pruned() const { return pruned; }
-  bool& Pruned() { return pruned; }
+  double UpperBound() const { return upperBound; }
+  double& UpperBound() { return upperBound; }
 
-  size_t Iteration() const { return iteration; }
-  size_t& Iteration() { return iteration; }
-
-  double MaxClusterDistance() const { return maxClusterDistance; }
-  double& MaxClusterDistance() { return maxClusterDistance; }
-
-  double SecondClusterBound() const { return secondClusterBound; }
-  double& SecondClusterBound() { return secondClusterBound; }
-
-  size_t Owner() const { return owner; }
-  size_t& Owner() { return owner; }
+  double LowerBound() const { return lowerBound; }
+  double& LowerBound() { return lowerBound; }
 
   const arma::vec& Centroid() const { return centroid; }
   arma::vec& Centroid() { return centroid; }
+
+  size_t Pruned() const { return pruned; }
+  size_t& Pruned() { return pruned; }
+
+  size_t Owner() const { return owner; }
+  size_t& Owner() { return owner; }
 
   const void* TrueLeft() const { return trueLeft; }
   void*& TrueLeft() { return trueLeft; }
@@ -86,20 +81,18 @@ class DTNNStatistic : public
   {
     std::ostringstream o;
     o << "DTNNStatistic [" << this << "]:\n";
+    o << "  Upper bound: " << upperBound << ".\n";
+    o << "  Lower bound: " << lowerBound << ".\n";
     o << "  Pruned: " << pruned << ".\n";
-    o << "  Iteration: " << iteration << ".\n";
-    o << "  MaxClusterDistance: " << maxClusterDistance << ".\n";
-    o << "  SecondClusterBound: " << secondClusterBound << ".\n";
     o << "  Owner: " << owner << ".\n";
     return o.str();
   }
 
  private:
-  bool pruned;
-  size_t iteration;
-  double maxClusterDistance;
-  double secondClusterBound;
+  double upperBound;
+  double lowerBound;
   size_t owner;
+  size_t pruned;
   arma::vec centroid;
   void* trueLeft;
   void* trueRight;

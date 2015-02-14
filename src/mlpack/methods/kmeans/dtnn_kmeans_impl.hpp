@@ -148,24 +148,14 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
 
   // We won't use the AllkNN class here because we have our own set of rules.
   // This is a lot of overhead.  We don't need the distances.
-  Timer::Start("knn");
-  typedef DTNNKMeansRules<MetricType, TreeType> RuleType;
-  RuleType rules(centroids, dataset, assignments, distances, metric,
-      prunedPoints, oldFromNewCentroids, visited);
-
-  // Now construct the traverser ourselves.
-  typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
-
-  traverser.Traverse(*tree, *centroidTree);
-  Timer::Stop("knn");
 
   Timer::Start("tree_mod");
   DecoalesceTree(*tree);
   Timer::Stop("tree_mod");
 
-  Log::Info << "This iteration: " << rules.BaseCases() << " base cases, " <<
-      rules.Scores() << " scores.\n";
-  distanceCalculations += rules.BaseCases() + rules.Scores();
+//  Log::Info << "This iteration: " << rules.BaseCases() << " base cases, " <<
+//      rules.Scores() << " scores.\n";
+//  distanceCalculations += rules.BaseCases() + rules.Scores();
 
   // From the assignments, calculate the new centroids and counts.
   for (size_t i = 0; i < dataset.n_cols; ++i)
@@ -225,6 +215,7 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
     const arma::mat& interclusterDistances,
     const std::vector<size_t>& newFromOldCentroids)
 {
+/*
   // Update iteration.
 //  node.Stat().Iteration() = iteration;
 
@@ -510,6 +501,7 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
     node.Stat().SecondBound() += clusterDistances[centroids.n_cols];
   if (node.Stat().Bound() != DBL_MAX)
     node.Stat().Bound() += clusterDistances[centroids.n_cols];
+*/
 }
 
 template<typename MetricType, typename MatType, typename TreeType>
@@ -517,6 +509,7 @@ void DTNNKMeans<MetricType, MatType, TreeType>::CoalesceTree(
     TreeType& node,
     const size_t child /* Which child are we? */)
 {
+/*
   // If one of the two children is pruned, we hide this node.
   // This assumes the BinarySpaceTree.  (bad Ryan! bad!)
   if (node.NumChildren() == 0)
@@ -554,11 +547,13 @@ void DTNNKMeans<MetricType, MatType, TreeType>::CoalesceTree(
     CoalesceTree(node.Child(0), 0);
     CoalesceTree(node.Child(1), 1);
   }
+*/
 }
 
 template<typename MetricType, typename MatType, typename TreeType>
 void DTNNKMeans<MetricType, MatType, TreeType>::DecoalesceTree(TreeType& node)
 {
+/*
   node.Parent() = (TreeType*) node.Stat().TrueParent();
   node.ChildPtr(0) = (TreeType*) node.Stat().TrueLeft();
   node.ChildPtr(1) = (TreeType*) node.Stat().TrueRight();
@@ -568,6 +563,7 @@ void DTNNKMeans<MetricType, MatType, TreeType>::DecoalesceTree(TreeType& node)
     DecoalesceTree(node.Child(0));
     DecoalesceTree(node.Child(1));
   }
+*/
 }
 
 template<typename MetricType, typename MatType, typename TreeType>

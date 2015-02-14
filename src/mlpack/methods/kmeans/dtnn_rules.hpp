@@ -15,14 +15,14 @@ namespace mlpack {
 namespace kmeans {
 
 template<typename MetricType, typename TreeType>
-class DTNNKMeansRules : public neighbor::NeighborSearchRules<
-    neighbor::NearestNeighborSort, MetricType, TreeType>
+class DTNNKMeansRules
 {
  public:
   DTNNKMeansRules(const arma::mat& centroids,
                   const arma::mat& dataset,
-                  arma::Mat<size_t>& neighbors,
-                  arma::mat& distances,
+                  arma::Col<size_t>& assignments,
+                  arma::vec& upperBounds,
+                  arma::vec& lowerBounds,
                   MetricType& metric,
                   const std::vector<bool>& prunedPoints,
                   const std::vector<size_t>& oldFromNewCentroids,
@@ -39,13 +39,29 @@ class DTNNKMeansRules : public neighbor::NeighborSearchRules<
                  TreeType& referenceNode,
                  const double oldScore);
 
+  typedef int TraversalInfoType;
+
+  TraversalInfoType& TraversalInfo() { return traversalInfo; }
+  const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
+
  private:
+  const arma::mat& centroids;
+  const arma::mat& dataset;
+  arma::Col<size_t>& assignments;
+  arma::vec& upperBounds;
+  arma::vec& lowerBounds;
+  MetricType& metric;
 
   const std::vector<bool>& prunedPoints;
 
   const std::vector<size_t>& oldFromNewCentroids;
 
   std::vector<bool>& visited;
+
+  size_t baseCases;
+  size_t scores;
+
+  int traversalInfo;
 };
 
 } // namespace kmeans
