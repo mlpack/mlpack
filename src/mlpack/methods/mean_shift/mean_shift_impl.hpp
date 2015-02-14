@@ -111,7 +111,8 @@ MeanShift<
 CalcWeight(const arma::colvec& centroid, const arma::colvec& point,
            double& weight) {
   
-  double squaredDist = std::pow(metric.Evaluate(centroid, point), 2);
+  double squaredDist = metric::SquaredEuclideanDistance::
+                       Evaluate(centroid, point);
   if (squaredDist >= squaredRadius || squaredDist == 0) {
     return false;
   }
