@@ -57,6 +57,23 @@ class TriangularKernel
   {
     return std::max(0.0, (1 - distance) / bandwidth);
   }
+  
+  /**
+   * Evaluate the gradient of triangular kernel 
+   * given that the distance between the two
+   * points is known.
+   *
+   * @param distance The distance between the two points.
+   */
+  double Gradient(const double distance) const {
+    if (distance < 1) {
+      return -1.0 / bandwidth;
+    } else if (distance > 1) {
+      return 0;
+    } else {
+      return arma::datum::nan;
+    }
+  }
 
   //! Get the bandwidth of the kernel.
   double Bandwidth() const { return bandwidth; }
@@ -84,6 +101,8 @@ class KernelTraits<TriangularKernel>
  public:
   //! The triangular kernel is normalized: K(x, x) = 1 for all x.
   static const bool IsNormalized = true;
+  //! The triangular kernel doesn't include a squared distance.
+  static const bool UsesSquaredDistance = false;
 };
 
 }; // namespace kernel

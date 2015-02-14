@@ -10,7 +10,9 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
+#include <mlpack/core/kernels/kernel_traits.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
+#include <boost/utility.hpp>
 
 namespace mlpack {
 namespace meanshift /** Mean Shift clustering. */ {
@@ -58,13 +60,13 @@ class MeanShift
    * Give an estimation of radius based on given dataset.
    * @param data Dataset for estimation.
    */
-  double estimateRadius(const MatType& data);
+  double EstimateRadius(const MatType& data);
   
   /**
    * Perform Mean Shift clustering on the data, returning a list of cluster
    * assignments and centroids.
    * 
-   * @tparam MatType Type of matrix (arma::mat or arma::sp_mat).
+   * @tparam MatType Type of matrix.
    * @param data Dataset to cluster.
    * @param assignments Vector to store cluster assignments in.
    * @param centroids Matrix in which centroids are stored.
@@ -91,6 +93,34 @@ class MeanShift
  private:
   
   /**
+   * If the kernel doesn't include a squared distance,
+   * general way will be applied to calculate the weight of a data point.
+   *
+   * @param centroid The centroid to calculate the weight
+   * @param point Calculate its weight
+   * @param weight Store the weight
+   * @return If true, the @point is near enough to the @centroid and @weight is valid,
+   *         If false, the @point is far from the @centroid and @weight is invalid.
+   */
+  template <typename Kernel = KernelType>
+  typename std::enable_if<!kernel::KernelTraits<Kernel>::UsesSquaredDistance, bool>::type
+  CalcWeight(const arma::colvec& centroid, const arma::colvec& point, double& weight);
+  
+  /**
+   * If the kernel includes a squared distance,
+   * the weight of a data point can be calculated faster.
+   *
+   * @param centroid The centroid to calculate the weight
+   * @param point Calculate its weight
+   * @param weight Store the weight
+   * @return If true, the @point is near enough to the @centroid and @weight is valid,
+   *         If false, the @point is far from the @centroid and @weight is invalid.
+   */
+  template <typename Kernel = KernelType>
+  typename std::enable_if<kernel::KernelTraits<Kernel>::UsesSquaredDistance, bool>::type
+  CalcWeight(const arma::colvec& centroid, const arma::colvec& point, double& weight);
+  
+  /**
    * If distance of two centroids is less than radius, one will be removed.
    * Points with distance to current centroid less than radius will be used
    * to calculate new centroid.
@@ -105,6 +135,9 @@ class MeanShift
   
   //! Instantiated kernel.
   KernelType kernel;
+  
+  metric::EuclideanDistance metric;
+  
   
 };
 

@@ -72,6 +72,19 @@ class LaplacianKernel
     // The precalculation of gamma saves us a little computation time.
     return exp(-t / bandwidth);
   }
+  
+  /**
+   * Evaluation of the gradient of the Laplacian kernel
+   * given the distance between two points.
+   *
+   * @param t The distance between the two points the kernel should be evaluated
+   *     on.
+   * @return K(t) using the bandwidth (@f$\mu@f$) specified in the
+   *     constructor.
+   */
+  double Gradient(const double t) const  {
+    return exp(-t / bandwidth) / -bandwidth;
+  }
 
   //! Get the bandwidth.
   double Bandwidth() const { return bandwidth; }
@@ -99,6 +112,8 @@ class KernelTraits<LaplacianKernel>
  public:
   //! The Laplacian kernel is normalized: K(x, x) = 1 for all x.
   static const bool IsNormalized = true;
+  //! The Laplacian kernel doesn't include a squared distance.
+  static const bool UsesSquaredDistance = false;
 };
 
 }; // namespace kernel
