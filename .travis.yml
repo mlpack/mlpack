@@ -8,5 +8,6 @@ before_install:
   - export CC=gcc-4.8
   - export CXX=g++-4.8
   - printenv
+  - cat /usr/include/armadillo_bits/arma_config.hpp
 install:
   - mkdir build && cd build && cmake .. && make -j4 
