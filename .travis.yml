@@ -11,3 +11,5 @@ before_install:
   - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
 install:
   - mkdir build && cd build && cmake .. && make -j4 
+script:
+  - cd build && make test
