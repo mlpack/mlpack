@@ -12,4 +12,4 @@ before_install:
 install:
   - mkdir build && cd build && cmake .. && make -j4 
 script:
-  - travis_wait ./bin/mlpack_test -p
+  - ./bin/mlpack_test -p
