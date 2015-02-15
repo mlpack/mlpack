@@ -8,7 +8,7 @@ before_install:
   - export CC=gcc-4.8
   - export CXX=g++-4.8
   - printenv
-  - diff -u /usr/include/armadillo_bits/config.hpp .travis/config.hpp
+  - diff -u /usr/include/armadillo_bits/config.hpp .travis/config.hpp || exit 0
   - sudo cp .travis/config.hpp /usr/include/armadillo_bits/config.hpp
 install:
   - mkdir build && cd build && cmake .. && make -j4 
