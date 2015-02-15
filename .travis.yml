@@ -4,7 +4,7 @@ before_install:
   - sudo apt-add-repository -y ppa:comp-phys/stable
   - sudo add-apt-repository -y ppa:boost-latest/ppa
   - sudo apt-get update -qq
-  - sudo apt-get install -qq g++-4.8 libarmadillo-dev libboost1.54-dev
+  - sudo apt-get install -qq g++-4.8 libarmadillo-dev libboost1.54-all-dev
   - export CC=gcc-4.8
   - export CXX=g++-4.8
   - printenv
