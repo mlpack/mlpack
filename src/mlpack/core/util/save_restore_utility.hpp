@@ -59,10 +59,16 @@ class SaveRestoreUtility
   bool WriteFile(const std::string& filename);
 
   /**
-   * LoadParameter loads a parameter from the parameters map.
+   * LoadParameter loads a parameter from the parameters map.  This overload is
+   * not called for Armadillo objects (via the enable_if).
    */
   template<typename T>
-  T& LoadParameter(T& t, const std::string& name) const;
+  T& LoadParameter(T& t,
+                   const std::string& name,
+                   const typename boost::enable_if_c<
+                       (!arma::is_arma_type<T>::value &&
+                        !arma::is_arma_sparse_type<T>::value)
+                       >::type* junk = 0) const;
 
   /**
    * LoadParameter loads a parameter from the parameters map.
@@ -82,15 +88,42 @@ class SaveRestoreUtility
   std::string LoadParameter(std::string& str, const std::string& name) const;
 
   /**
-   * LoadParameter loads an arma::mat from the parameters map.
+   * LoadParameter loads an Armadillo matrix from the parameters map.
    */
-  arma::mat& LoadParameter(arma::mat& matrix, const std::string& name) const;
+  template<typename eT>
+  arma::Mat<eT>& LoadParameter(arma::Mat<eT>& matrix, const std::string& name)
+      const;
 
   /**
-   * SaveParameter saves a parameter to the parameters map.
+   * LoadParameter loads an Armadillo sparse matrix from the parameters map.
+   */
+  template<typename eT>
+  arma::SpMat<eT>& LoadParameter(arma::SpMat<eT>& matrix,
+                                 const std::string& name) const;
+
+  /**
+   * SaveParameter saves a dense Armadillo object to the parameters map.
+   */
+  template<typename eT, typename T1>
+  void SaveParameter(const arma::Base<eT, T1>& t, const std::string& name);
+
+  /**
+   * SaveParameter saves a sparse Armadillo object to the parameters map.
+   */
+  template<typename eT, typename T1>
+  void SaveParameter(const arma::SpBase<eT, T1>& t, const std::string& name);
+
+  /**
+   * SaveParameter saves a parameter to the parameters map.  This is not called
+   * for Armadillo objects, via the enable_if.
    */
   template<typename T>
-  void SaveParameter(const T& t, const std::string& name);
+  void SaveParameter(const T& t,
+                     const std::string& name,
+                     const typename boost::enable_if_c<
+                         (!arma::is_arma_type<T>::value &&
+                          !arma::is_arma_sparse_type<T>::value)
+                         >::type* junk = 0);
 
   /**
    * SaveParameter saves a parameter to the parameters map.
@@ -131,14 +164,8 @@ class SaveRestoreUtility
   void ReadFile(xmlNode* n);
 };
 
-//! Specialization for arma::vec.
-template<>
-arma::vec& SaveRestoreUtility::LoadParameter(arma::vec& t,
-                                             const std::string& name) const;
-
-
-}; /* namespace util */
-}; /* namespace mlpack */
+} /* namespace util */
+} /* namespace mlpack */
 
 // Include implementation.
 #include "save_restore_utility_impl.hpp"

@@ -79,22 +79,6 @@ void SaveRestoreUtility::WriteFile(xmlNode* n)
   }
 }
 
-arma::mat& SaveRestoreUtility::LoadParameter(arma::mat& matrix,
-                                             const std::string& name) const
-{
-  std::map<std::string, std::string>::const_iterator it = parameters.find(name);
-  if (it != parameters.end())
-  {
-    std::istringstream input((*it).second);
-    matrix.load(input);
-  }
-  else
-  {
-    Log::Fatal << "LoadParameter(): node '" << name << "' not found.\n";
-  }
-  return matrix;
-}
-
 std::string SaveRestoreUtility::LoadParameter(std::string& str,
                                               const std::string& name) const
 {
@@ -136,24 +120,8 @@ void SaveRestoreUtility::SaveParameter(const char c, const std::string& name)
   parameters[name] = output.str();
 }
 
-// Special template specializations for vectors.
-
-namespace mlpack {
-namespace util {
-
-template<>
-arma::vec& SaveRestoreUtility::LoadParameter(arma::vec& t,
-                                             const std::string& name) const
-{
-  return (arma::vec&) LoadParameter((arma::mat&) t, name);
-}
-
 void SaveRestoreUtility::AddChild(SaveRestoreUtility& mn, const std::string&
     name)
 {
   children[name] = mn;
 }
-
-
-}; // namespace util
-}; // namespace mlpack
