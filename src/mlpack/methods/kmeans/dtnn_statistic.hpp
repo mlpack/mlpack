@@ -37,8 +37,6 @@ class DTNNStatistic : public
       lowerBound(DBL_MAX),
       owner(size_t(-1)),
       pruned(size_t(-1)),
-      trueLeft((void*) &node.Child(0)),
-      trueRight((void*) &node.Child(1)),
       trueParent((void*) node.Parent())
   {
     // Empirically calculate the centroid.
@@ -51,6 +49,18 @@ class DTNNStatistic : public
           node.Child(i).Stat().Centroid();
 
     centroid /= node.NumDescendants();
+
+    // Do we have children?
+    if (node.NumChildren() >= 2)
+    {
+      trueLeft = &node.Child(0);
+      trueRight = &node.Child(1);
+    }
+    else
+    {
+      trueLeft = NULL;
+      trueRight = NULL;
+    }
   }
 
   double UpperBound() const { return upperBound; }
