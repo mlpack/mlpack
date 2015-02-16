@@ -758,7 +758,7 @@ BOOST_AUTO_TEST_CASE(DualTreeKMeansScoreKDTreeOneLeafTest)
 
   // Create the trees.
   typedef BinarySpaceTree<HRectBound<2>, DTNNStatistic> TreeType;
-  TreeType pointTree(dataset,  1);
+  TreeType pointTree(dataset, 1);
   TreeType centroidTree(centroids, 1);
 
   // Create the Rules object.
@@ -843,6 +843,222 @@ BOOST_AUTO_TEST_CASE(DualTreeKMeansScoreKDTreeOneLeafTest)
         BOOST_REQUIRE_LE(bestLower * 0.99999, trueDistances(1, node->Point(i)));
       }
 
+      // Recurse.
+      for (size_t i = 0; i < node->NumChildren(); ++i)
+        nodeQueue.push(&node->Child(i));
+    }
+  }
+}
+
+BOOST_AUTO_TEST_CASE(DualTreeKMeansScoreKDTreeTest)
+{
+  // If we run a dual-tree algorithm, do we get valid results for each point
+  // and/or node when we use the kd-tree with the default leaf size?
+  const size_t points = 5000;
+  const size_t clusters = 100;
+  arma::mat dataset(5, points);
+  dataset.randu();
+  arma::mat centroids(5, clusters);
+  centroids.randu();
+
+  arma::mat datasetCopy(dataset);
+  arma::mat centroidsCopy(centroids);
+
+  // Create the trees.
+  typedef BinarySpaceTree<HRectBound<2>, DTNNStatistic> TreeType;
+  TreeType pointTree(dataset);
+  TreeType centroidTree(centroids);
+
+  // Create the Rules object.
+  arma::Col<size_t> assignments(points);
+  arma::vec upperBounds(points);
+  arma::vec lowerBounds(points);
+  upperBounds.fill(DBL_MAX);
+  lowerBounds.fill(DBL_MAX);
+  std::vector<bool> visited(points, false); // Fill with false.
+  std::vector<size_t> oldFromNewCentroids; // Not used.
+  std::vector<bool> prunedPoints(points, false); // Fill with false.
+
+  EuclideanDistance e;
+  typedef DTNNKMeansRules<EuclideanDistance, TreeType> RuleType;
+  RuleType rules(centroids, dataset, assignments, upperBounds, lowerBounds, e,
+      prunedPoints, oldFromNewCentroids, visited);
+
+  // Now create the traverser.
+  typename TreeType::template BreadthFirstDualTreeTraverser<RuleType>
+      traverser(rules);
+
+  pointTree.Stat().Pruned() = 0;
+  traverser.Traverse(pointTree, centroidTree);
+
+  // Get true bounds.
+  AllkNN allknn(centroids, dataset);
+
+  arma::Mat<size_t> trueAssignments;
+  arma::mat trueDistances;
+  allknn.Search(2, trueAssignments, trueDistances);
+
+  // Check the points first.  Lots of weird mappings have to go on in this stage
+  // because the tree building procedure changed all the points around.
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+  {
+    if (visited[i])
+    {
+      BOOST_REQUIRE_GE(upperBounds[i], trueDistances(0, i));
+      BOOST_REQUIRE_EQUAL(assignments[i], trueAssignments(0, i));
+    }
+  }
+
+  // Now traverse the tree to see if it is correct.
+  std::queue<TreeType*> nodeQueue;
+  nodeQueue.push(&pointTree);
+  while (!nodeQueue.empty())
+  {
+    // This is an expensive operation.  We must ensure that the upper bound is
+    // valid and that the lower bound is valid.  Both can be needlessly loose,
+    // but that will simply affect the pruning of the method, not the
+    // correctness.  Here we care about correctness.
+    TreeType* node = nodeQueue.front();
+    nodeQueue.pop();
+
+    // We must make sure the upper bound and lower bound are both valid for all
+    // descendant points.  The lower bound only matters if the node was pruned.
+    // So, we must calculate the upper and lower bounds manually for the
+    // descendants.
+    double exactUpperBound = 0.0;
+    double exactLowerBound = DBL_MAX;
+    for (size_t i = 0; i < node->NumDescendants(); ++i)
+    {
+      if (trueDistances(0, node->Descendant(i)) > exactUpperBound)
+        exactUpperBound = trueDistances(0, node->Descendant(i));
+      if (trueDistances(1, node->Descendant(i)) < exactLowerBound)
+        exactLowerBound = trueDistances(1, node->Descendant(i));
+    }
+
+    // Multiplication is to add some tolerance for floating point discrepancies.
+    BOOST_REQUIRE_GE(node->Stat().UpperBound() * 1.000001, exactUpperBound);
+
+    if (node->Stat().Pruned() == centroids.n_cols)
+    {
+      BOOST_REQUIRE_LE(node->Stat().LowerBound() * 0.99999, exactLowerBound);
+    }
+    else
+    {
+      for (size_t i = 0; i < node->NumPoints(); ++i)
+      {
+        const double bestLower = std::min(node->Stat().LowerBound(),
+            lowerBounds[node->Point(i)]);
+        BOOST_REQUIRE_LE(bestLower * 0.99999, trueDistances(1, node->Point(i)));
+      }
+
+      // Recurse.
+      for (size_t i = 0; i < node->NumChildren(); ++i)
+        nodeQueue.push(&node->Child(i));
+    }
+  }
+}
+
+BOOST_AUTO_TEST_CASE(DualTreeKMeansScoreCoverTreeTest)
+{
+  // If we run a dual-tree algorithm, do we get valid results for each point
+  // and/or node when we use the kd-tree with the default leaf size?
+  const size_t points = 5000;
+  const size_t clusters = 100;
+  arma::mat dataset(5, points);
+  dataset.randu();
+  arma::mat centroids(5, clusters);
+  centroids.randu();
+
+  arma::mat datasetCopy(dataset);
+  arma::mat centroidsCopy(centroids);
+
+  // Create the trees.
+  typedef CoverTree<EuclideanDistance, FirstPointIsRoot, DTNNStatistic>
+      TreeType;
+  TreeType pointTree(dataset);
+  TreeType centroidTree(centroids);
+
+  // Create the Rules object.
+  arma::Col<size_t> assignments(points);
+  arma::vec upperBounds(points);
+  arma::vec lowerBounds(points);
+  upperBounds.fill(DBL_MAX);
+  lowerBounds.fill(DBL_MAX);
+  std::vector<bool> visited(points, false); // Fill with false.
+  std::vector<size_t> oldFromNewCentroids; // Not used.
+  std::vector<bool> prunedPoints(points, false); // Fill with false.
+
+  EuclideanDistance e;
+  typedef DTNNKMeansRules<EuclideanDistance, TreeType> RuleType;
+  RuleType rules(centroids, dataset, assignments, upperBounds, lowerBounds, e,
+      prunedPoints, oldFromNewCentroids, visited);
+
+  // Now create the traverser.
+  typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
+
+  pointTree.Stat().Pruned() = 0;
+  traverser.Traverse(pointTree, centroidTree);
+
+  // Get true bounds.
+  AllkNN allknn(centroids, dataset);
+
+  arma::Mat<size_t> trueAssignments;
+  arma::mat trueDistances;
+  allknn.Search(2, trueAssignments, trueDistances);
+
+  // Check the points first.  Lots of weird mappings have to go on in this stage
+  // because the tree building procedure changed all the points around.
+  for (size_t i = 0; i < dataset.n_cols; ++i)
+  {
+    if (visited[i])
+    {
+      BOOST_REQUIRE_GE(upperBounds[i], trueDistances(0, i));
+      BOOST_REQUIRE_EQUAL(assignments[i], trueAssignments(0, i));
+    }
+  }
+
+  // Now traverse the tree to see if it is correct.
+  std::queue<TreeType*> nodeQueue;
+  nodeQueue.push(&pointTree);
+  while (!nodeQueue.empty())
+  {
+    // This is an expensive operation.  We must ensure that the upper bound is
+    // valid and that the lower bound is valid.  Both can be needlessly loose,
+    // but that will simply affect the pruning of the method, not the
+    // correctness.  Here we care about correctness.
+    TreeType* node = nodeQueue.front();
+    nodeQueue.pop();
+
+    // We must make sure the upper bound and lower bound are both valid for all
+    // descendant points.  The lower bound only matters if the node was pruned.
+    // So, we must calculate the upper and lower bounds manually for the
+    // descendants.
+    double exactUpperBound = 0.0;
+    double exactLowerBound = DBL_MAX;
+    for (size_t i = 0; i < node->NumDescendants(); ++i)
+    {
+      if (trueDistances(0, node->Descendant(i)) > exactUpperBound)
+        exactUpperBound = trueDistances(0, node->Descendant(i));
+      if (trueDistances(1, node->Descendant(i)) < exactLowerBound)
+        exactLowerBound = trueDistances(1, node->Descendant(i));
+    }
+
+    // Multiplication is to add some tolerance for floating point discrepancies.
+    BOOST_REQUIRE_GE(node->Stat().UpperBound() * 1.000001, exactUpperBound);
+
+    if (node->Stat().Pruned() == centroids.n_cols)
+    {
+      BOOST_REQUIRE_LE(node->Stat().LowerBound() * 0.99999, exactLowerBound);
+    }
+    else if (node->NumChildren() == 0)
+    {
+      // The node has one point.
+      const double bestLower = std::min(node->Stat().LowerBound(),
+          lowerBounds[node->Point(0)]);
+      BOOST_REQUIRE_LE(bestLower * 0.99999, trueDistances(1, node->Point(0)));
+    }
+    else
+    {
       // Recurse.
       for (size_t i = 0; i < node->NumChildren(); ++i)
         nodeQueue.push(&node->Child(i));
