@@ -992,12 +992,7 @@ BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
     for (size_t i = 0; i < hmm.Emission()[j].Gaussians(); ++i)
     {
       hmm.Emission()[j].Component(i).Mean().randu();
-      arma::mat covariance = arma::randu<arma::mat>(
-          hmm.Emission()[j].Component(i).Covariance().n_rows,
-          hmm.Emission()[j].Component(i).Covariance().n_cols);
-      covariance *= covariance.t();
-      covariance += arma::eye<arma::mat>(covariance.n_rows, covariance.n_cols);
-      hmm.Emission()[j].Component(i).Covariance(std::move(covariance));
+      hmm.Emission()[j].Component(i).Covariance().randu();
     }
   }
 
@@ -1053,12 +1048,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
   for(size_t j = 0; j < hmm.Emission().size(); ++j)
   {
     hmm.Emission()[j].Mean().randu();
-    arma::mat covariance = arma::randu<arma::mat>(
-        hmm.Emission()[j].Covariance().n_rows,
-        hmm.Emission()[j].Covariance().n_cols);
-    covariance *= covariance.t();
-    covariance += arma::eye<arma::mat>(covariance.n_rows, covariance.n_cols);
-    hmm.Emission()[j].Covariance(std::move(covariance));
+    hmm.Emission()[j].Covariance().randu();
   }
 
   util::SaveRestoreUtility sr;

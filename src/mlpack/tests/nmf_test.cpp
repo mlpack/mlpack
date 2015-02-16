@@ -27,6 +27,7 @@ using namespace mlpack::amf;
  */
 BOOST_AUTO_TEST_CASE(NMFDefaultTest)
 {
+  mlpack::math::RandomSeed(std::time(NULL));
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);
   mat v = w * h;
@@ -37,9 +38,9 @@ BOOST_AUTO_TEST_CASE(NMFDefaultTest)
 
   mat wh = w * h;
 
-  // Make sure reconstruction error is not too high.  5.0% tolerance.
+  // Make sure reconstruction error is not too high.  1.5% tolerance.
   BOOST_REQUIRE_SMALL(arma::norm(v - wh, "fro") / arma::norm(v, "fro"),
-      0.05);
+      0.015);
 }
 
 /**
@@ -48,6 +49,7 @@ BOOST_AUTO_TEST_CASE(NMFDefaultTest)
  */
 BOOST_AUTO_TEST_CASE(NMFAcolDistTest)
 {
+  mlpack::math::RandomSeed(std::time(NULL));
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);
   mat v = w * h;
@@ -70,16 +72,15 @@ BOOST_AUTO_TEST_CASE(NMFAcolDistTest)
  */
 BOOST_AUTO_TEST_CASE(NMFRandomDivTest)
 {
+  mlpack::math::RandomSeed(std::time(NULL));
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);
   mat v = w * h;
   size_t r = 12;
 
-  // Custom tighter tolerance.
-  SimpleResidueTermination srt(1e-8, 10000);
   AMF<SimpleResidueTermination,
       RandomInitialization,
-      NMFMultiplicativeDivergenceUpdate> nmf(srt);
+      NMFMultiplicativeDivergenceUpdate> nmf;
   nmf.Apply(v, r, w, h);
 
   mat wh = w * h;
@@ -96,6 +97,7 @@ BOOST_AUTO_TEST_CASE(NMFRandomDivTest)
  */
 BOOST_AUTO_TEST_CASE(NMFALSTest)
 {
+  mlpack::math::RandomSeed(std::time(NULL));
   mat w = randu<mat>(20, 12);
   mat h = randu<mat>(12, 20);
   mat v = w * h;

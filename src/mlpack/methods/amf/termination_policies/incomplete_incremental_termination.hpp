@@ -4,8 +4,8 @@
  *
  * Termination policy used in AMF (Alternating Matrix Factorization).
  */
-#ifndef _MLPACK_METHODS_AMF_INCOMPLETE_INCREMENTAL_TERMINATION_HPP
-#define _MLPACK_METHODS_AMF_INCOMPLETE_INCREMENTAL_TERMINATION_HPP
+#ifndef _MLPACK_METHODS_AMF_INCOMPLETEINCREMENTALTERMINATION_HPP_INCLUDED
+#define _MLPACK_METHODS_AMF_INCOMPLETEINCREMENTALTERMINATION_HPP_INCLUDED
 
 #include <mlpack/core.hpp>
 
@@ -13,9 +13,9 @@ namespace mlpack {
 namespace amf {
 
 /**
- * This class acts as a wrapper for basic termination policies to be used by
+ * This class acts as a wrapper for basic termination policies to be used by 
  * SVDIncompleteIncrementalLearning. This class calls the wrapped class functions
- * after every n calls to main class functions where n is the number of rows.
+ * after every n calls to main class functions where n is the number of rows. 
  *
  * @see AMF, SVDIncompleteIncrementalLearning
  */
@@ -26,23 +26,22 @@ class IncompleteIncrementalTermination
   /**
    * Empty constructor
    *
-   * @param tPolicy object of wrapped class.
+   * @param t_policy object of wrapped class.
    */
-  IncompleteIncrementalTermination(
-      TerminationPolicy tPolicy = TerminationPolicy()) :
-      tPolicy(tPolicy) { }
+  IncompleteIncrementalTermination(TerminationPolicy t_policy = TerminationPolicy())
+            : t_policy(t_policy) {}
 
   /**
    * Initializes the termination policy before stating the factorization.
    *
    * @param V Input matrix to be factorized.
    */
-  template<class MatType>
+  template <class MatType>
   void Initialize(const MatType& V)
   {
-    tPolicy.Initialize(V);
-
-    // Initialize incremental index to number of rows.
+    t_policy.Initialize(V);
+    
+    // initialize incremental index to number of rows
     incrementalIndex = V.n_rows;
     iteration = 0;
   }
@@ -57,42 +56,41 @@ class IncompleteIncrementalTermination
   {
     // increment iteration count
     iteration++;
-
-    // If the iteration count is a multiple of incremental index, return the
-    // wrapped termination policy result.
-    if (iteration % incrementalIndex == 0)
-      return tPolicy.IsConverged(W, H);
-    else
-      return false;
+    
+    // if iteration count is multiple of incremental index,
+    // return wrapped class function
+    if(iteration % incrementalIndex == 0)  
+      return t_policy.IsConverged(W, H);
+    // else just return false
+    else return false;
   }
 
-  //! Get current value of residue.
-  const double& Index() const { return tPolicy.Index(); }
+  //! Get current value of residue
+  const double& Index() const { return t_policy.Index(); }
 
-  //! Get current iteration count.
+  //! Get current iteration count  
   const size_t& Iteration() const { return iteration; }
-
-  //! Access maximum number of iterations.
-  size_t MaxIterations() const { return tPolicy.MaxIterations(); }
-  //! Modify maximum number of iterations.
-  size_t& MaxIterations() { return tPolicy.MaxIterations(); }
-
-  //! Access the wrapped termination policy.
-  const TerminationPolicy& TPolicy() const { return tPolicy; }
-  //! Modify the wrapped termination policy.
-  TerminationPolicy& TPolicy() { return tPolicy; }
-
+  
+  //! Access upper limit of iteration count
+  const size_t& MaxIterations() const { return t_policy.MaxIterations(); }
+  size_t& MaxIterations() { return t_policy.MaxIterations(); }
+  
+  //! Access the wrapped class object
+  const TerminationPolicy& TPolicy() const { return t_policy; }
+  TerminationPolicy& TPolicy() { return t_policy; }
+  
  private:
-  //! Wrapped termination policy.
-  TerminationPolicy tPolicy;
+  //! wrapped class object
+  TerminationPolicy t_policy;
 
-  //! Number of iterations after which wrapped class object will be called.
+  //! number of iterations after which wrapped class object will be called
   size_t incrementalIndex;
-  //! Current iteration count.
+  //! current iteration count
   size_t iteration;
 }; // class IncompleteIncrementalTermination
 
-} // namespace amf
-} // namespace mlpack
+}; // namespace amf
+}; // namespace mlpack
 
-#endif
+#endif // _MLPACK_METHODS_AMF_INCOMPLETEINCREMENTALTERMINATION_HPP_INCLUDED
+

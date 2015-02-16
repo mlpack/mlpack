@@ -6,7 +6,7 @@ a machine learning analog to LAPACK. It aims to implement a wide array of
 machine learning methods and functions as a "swiss army knife" for machine
 learning researchers.
 
-**Download [current stable version (1.0.12)](http://www.mlpack.org/files/mlpack-1.0.12.tar.gz).**
+**Download [current stable version (1.0.11)](http://www.mlpack.org/files/mlpack-1.0.11.tar.gz).**
 
 [![Build Status](http://big.cc.gt.atl.ga.us/job/mlpack%20-%20git%20commit%20test/badge/icon)](http://big.cc.gt.atl.ga.us/job/mlpack%20-%20git%20commit%20test/)
 
@@ -31,7 +31,7 @@ documentation. The website should be consulted for further information:
 
   - [mlpack homepage](http://www.mlpack.org/)
   - [Tutorials](http://www.mlpack.org/tutorial.html)
-  - [Development Site (Github)](http://www.github.com/mlpack/mlpack/)
+  - [Development Site (Trac)](http://www.mlpack.org/trac/)
   - [API documentation](http://www.mlpack.org/doxygen.php)
 
 2. Citation details
@@ -125,37 +125,25 @@ want to build everything in the library:
 
     $ make pca allknn allkfn
 
-If the build fails and you cannot figure out why, register an account on Github
-and submit an issue; the mlpack developers will quickly help you figure it out:
+If the build fails and you cannot figure out why, register an account on Trac
+and submit a ticket and the mlpack developers will quickly help you figure it
+out:
 
-[mlpack on Github](https://www.github.com/mlpack/mlpack/)
+[mlpack Trac](http://mlpack.org/trac/)
 
 Alternately, mlpack help can be found in IRC at #mlpack on irc.freenode.net.
 
-If you wish to install mlpack to /usr/local/include/mlpack/ and /usr/local/lib/
-and /usr/local/bin/, once it has built, make sure you have root privileges (or
-write permissions to those three directories), and simply type
+If you wish to install mlpack to /usr/include/mlpack/ and /usr/lib/ and
+/usr/bin/, once it has built, make sure you have root privileges (or write
+permissions to those two directories), and simply type
 
     $ make install
 
 You can now run the executables by name; you can link against mlpack with
     -lmlpack
-and the mlpack headers are found in
-    /usr/local/include/mlpack/.
+and the mlpack headers are found in 
+    /usr/include/mlpack/.
 
-If running the programs (i.e. `$ allknn -h`) gives an error of the form
-
-    error while loading shared libraries: libmlpack.so.1: cannot open shared object file: No such file or directory
-
-then be sure that the runtime linker is searching the directory where
-`libmlpack.so` was installed (probably `/usr/local/lib/` unless you set it
-manually).  One way to do this, on Linux, is to ensure that the
-`LD_LIBRARY_PATH` environment variable has the directory that contains
-`libmlpack.so`.  Using bash, this can be set easily:
-
-    export LD_LIBRARY_PATH=/usr/local/lib/
-
-(or whatever directory `libmlpack.so` is installed in.)
 
 5. Running mlpack programs
 --------------------------
@@ -199,7 +187,7 @@ older versions of mlpack:
 
   - [mlpack homepage](http://www.mlpack.org/)
   - [Tutorials](http://www.mlpack.org/tutorial.html)
-  - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
+  - [Development Site (Trac)](http://www.mlpack.org/trac/)
   - [API documentation](http://www.mlpack.org/doxygen.php)
 
 7. Bug reporting
@@ -209,8 +197,7 @@ older versions of mlpack:
 If you find a bug in mlpack or have any problems, numerous routes are available
 for help.
 
-Github is used for bug tracking, and can be found at
-https://github.com/mlpack/mlpack/.
+Trac is used for bug tracking, and can be found at http://www.mlpack.org/trac/.
 It is easy to register an account and file a bug there, and the mlpack
 development team will try to quickly resolve your issue.
 

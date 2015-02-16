@@ -21,7 +21,7 @@ namespace hmm {
  *
  * @tparam Distribution Distribution type of HMM.
  * @param sr SaveRestoreUtility to use.
- */
+ */    
 template<typename Distribution>
 void SaveHMM(const HMM<Distribution>& hmm, util::SaveRestoreUtility& sr)
 {
@@ -49,8 +49,7 @@ void LoadHMM(HMM<Distribution>& hmm, util::SaveRestoreUtility& sr)
  * @param sr SaveRestoreUtility to use.
  */
 template<typename Distribution>
-void ConvertHMM(HMM<Distribution>& /* hmm */,
-                const util::SaveRestoreUtility& /* sr */)
+void ConvertHMM(HMM<Distribution>& hmm, const util::SaveRestoreUtility& sr)
 {
   Log::Fatal << "HMM conversion not implemented for arbitrary distributions."
       << std::endl;
@@ -58,7 +57,7 @@ void ConvertHMM(HMM<Distribution>& /* hmm */,
 
 template<>
 void ConvertHMM(HMM<distribution::DiscreteDistribution>& hmm,
-                const util::SaveRestoreUtility& sr)
+             const util::SaveRestoreUtility& sr)
 {
   std::string type;
   size_t states;
@@ -115,10 +114,8 @@ void ConvertHMM(HMM<distribution::GaussianDistribution>& hmm,
     sr.LoadParameter(hmm.Emission()[i].Mean(), s.str());
 
     s.str("");
-    arma::mat covariance;
     s << "hmm_emission_covariance_" << i;
-    sr.LoadParameter(covariance, s.str());
-    hmm.Emission()[i].Covariance(std::move(covariance));
+    sr.LoadParameter(hmm.Emission()[i].Covariance(), s.str());
   }
 
   hmm.Dimensionality() = hmm.Emission()[0].Mean().n_elem;
@@ -170,9 +167,7 @@ void ConvertHMM(HMM<gmm::GMM<> >& hmm, const util::SaveRestoreUtility& sr)
 
       s.str("");
       s << "hmm_emission_" << i << "_gaussian_" << g << "_covariance";
-      arma::mat covariance;
-      sr.LoadParameter(covariance, s.str());
-      hmm.Emission()[i].Component(g).Covariance(std::move(covariance));
+      sr.LoadParameter(hmm.Emission()[i].Component(g).Covariance(), s.str());
     }
 
     s.str("");

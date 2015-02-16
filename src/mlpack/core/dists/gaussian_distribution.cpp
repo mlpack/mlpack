@@ -10,71 +10,34 @@
 using namespace mlpack;
 using namespace mlpack::distribution;
 
+/**
+ * Calculates the multivariate Gaussian probability density function for each
+ * data point (column) in the given matrix, with respect to the given mean and
+ * variance.
+ *
+ * @param x List of observations.
+ * @param mean Mean of multivariate Gaussian.
+ * @param cov Covariance of multivariate Gaussian.
+ * @param probabilities Output probabilities for each input observation.
+ */
 
-GaussianDistribution::GaussianDistribution(const arma::vec& mean,
-                                           const arma::mat& covariance)
-  : mean(mean)
+double GaussianDistribution::Probability(const arma::vec& observation) const
 {
-  Covariance(covariance);
+  arma::vec diff = mean - observation;
+
+  arma::vec exponent = -0.5 * (trans(diff) * inv(covariance) * diff);
+
+  // TODO: What if det(cov) < 0?
+  return pow(2 * M_PI, (double) observation.n_elem / -2.0) *
+      pow(det(covariance), -0.5) * exp(exponent[0]);
 }
 
-void GaussianDistribution::Covariance(const arma::mat& covariance)
-{
-  this->covariance = covariance;
-  FactorCovariance();
-}
 
-void GaussianDistribution::Covariance(arma::mat&& covariance)
-{
-  this->covariance = std::move(covariance);
-  FactorCovariance();
-}
-
-void GaussianDistribution::FactorCovariance()
-{
-  // On Armadillo < 4.500, the "lower" option isn't available.
-  #if (ARMA_VERSION_MAJOR < 4) || \
-      ((ARMA_VERSION_MAJOR == 4) && (ARMA_VERSION_MINOR < 500))
-    covLower = arma::chol(covariance).t(); // This is less efficient.
-  #else
-    covLower = arma::chol(covariance, "lower");
-  #endif
-
-  // Comment from rcurtin:
-  //
-  // I think the use of the word "interpret" in the Armadillo documentation
-  // about trimatl and trimatu is somewhat misleading. What the function will
-  // actually do, when used in that context, is loop over the upper triangular
-  // part of the matrix and set it all to 0, so this ends up actually just
-  // burning cycles---also because the operator=() evaluates the expression and
-  // strips the knowledge that it's a lower triangular matrix. So then the call
-  // to .i() doesn't actually do anything smarter.
-  //
-  // But perusing fn_inv.hpp more closely, there is a specialization that will
-  // work when called like this: inv(trimatl(covLower)), and will use LAPACK's
-  // ?trtri functions. However, it will still set the upper triangular part to
-  // 0 after the method. That last part is unnecessary, but baked into
-  // Armadillo, so there's not really much that can be done about that without
-  // discussion with the Armadillo maintainer.
-  const arma::mat invCovLower = arma::inv(arma::trimatl(covLower));
-
-  invCov = invCovLower.t() * invCovLower;
-  double sign = 0.;
-  arma::log_det(logDetCov, sign, covLower);
-  logDetCov *= 2;
-}
-
-double GaussianDistribution::LogProbability(const arma::vec& observation) const
-{
-  const size_t k = observation.n_elem;
-  const arma::vec diff = mean - observation;
-  const arma::vec v = (diff.t() * invCov * diff);
-  return -0.5 * k * log2pi - 0.5 * logDetCov - 0.5 * v(0);
-}
 
 arma::vec GaussianDistribution::Random() const
 {
-  return covLower * arma::randn<arma::vec>(mean.n_elem) + mean;
+  // Should we store chol(covariance) for easier calculation later?
+  return trans(chol(covariance)) * arma::randn<arma::vec>(mean.n_elem) + mean;
 }
 
 /**
@@ -91,7 +54,6 @@ void GaussianDistribution::Estimate(const arma::mat& observations)
   }
   else // This will end up just being empty.
   {
-    // TODO(stephentu): why do we allow this case? why not throw an error?
     mean.zeros(0);
     covariance.zeros(0);
     return;
@@ -128,8 +90,6 @@ void GaussianDistribution::Estimate(const arma::mat& observations)
       perturbation *= 10; // Slow, but we don't want to add too much.
     }
   }
-
-  FactorCovariance();
 }
 
 /**
@@ -147,7 +107,6 @@ void GaussianDistribution::Estimate(const arma::mat& observations,
   }
   else // This will end up just being empty.
   {
-    // TODO(stephentu): same as above
     mean.zeros(0);
     covariance.zeros(0);
     return;
@@ -168,7 +127,6 @@ void GaussianDistribution::Estimate(const arma::mat& observations,
     // Nothing in this Gaussian!  At least set the covariance so that it's
     // invertible.
     covariance.diag() += 1e-50;
-    FactorCovariance();
     return;
   }
 
@@ -198,8 +156,6 @@ void GaussianDistribution::Estimate(const arma::mat& observations,
       perturbation *= 10; // Slow, but we don't want to add too much.
     }
   }
-
-  FactorCovariance();
 }
 
 /**
@@ -237,5 +193,4 @@ void GaussianDistribution::Load(const util::SaveRestoreUtility& sr)
 {
   sr.LoadParameter(mean, "mean");
   sr.LoadParameter(covariance, "covariance");
-  FactorCovariance();
 }

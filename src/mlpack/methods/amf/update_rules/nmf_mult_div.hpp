@@ -2,7 +2,7 @@
  * @file mult_div_update_rules.hpp
  * @author Mohan Rajendran
  *
- * Update rules for the Non-negative Matrix Factorization.
+ * Update rules for the Non-negative Matrix Factorization. 
  */
 #ifndef __MLPACK_METHODS_LMF_UPDATE_RULES_NMF_MULT_DIV_HPP
 #define __MLPACK_METHODS_LMF_UPDATE_RULES_NMF_MULT_DIV_HPP
@@ -13,26 +13,10 @@ namespace mlpack {
 namespace amf {
 
 /**
- * This follows a method described in the paper 'Algorithms for Non-negative
- *
- * @code
- * @inproceedings{lee2001algorithms,
- *   title={Algorithms for non-negative matrix factorization},
- *   author={Lee, D.D. and Seung, H.S.},
- *   booktitle={Advances in Neural Information Processing Systems 13
- *       (NIPS 2000)},
- *   pages={556--562},
- *   year={2001}
- * }
- * @endcode
- *
- * This is a multiplicative rule that ensures that the Kullback–Leibler
- * divergence
- *
- * \f[
- * \sum_i \sum_j (V_{ij} \log\frac{V_{ij}}{(W H)_{ij}} - V_{ij} + (W H)_{ij})
- * \f]
- *
+ * This follows a method described in the paper 'Algorithms for Non-negative 
+ * Matrix Factorization' by D. D. Lee and H. S. Seung. This is a multiplicative 
+ * rule that ensures that the Kullback–Leibler divergence
+ * \f$ \sum_i \sum_j (V_{ij} log\frac{V_{ij}}{(WH)_{ij}}-V_{ij}+(WH)_{ij}) \f$
  * is non-increasing between subsequent iterations. Both of the update rules
  * for W and H are defined in this file.
  *
@@ -46,26 +30,21 @@ class NMFMultiplicativeDivergenceUpdate
   // Empty constructor required for the WUpdateRule template.
   NMFMultiplicativeDivergenceUpdate() { }
 
-  /**
-   * Initialize the factorization.  These rules don't store any state, so the
-   * input values are ignore.
-   */
   template<typename MatType>
-  void Initialize(const MatType& /* dataset */, const size_t /* rank */)
+  void Initialize(const MatType& dataset, const size_t rank)
   {
-    // Nothing to do.
+    (void)dataset;
+    (void)rank;
   }
 
   /**
    * The update rule for the basis matrix W. The formula used is
-   *
    * \f[
-   * W_{ia} \leftarrow W_{ia} \frac{\sum_{\mu} H_{a\mu} V_{i\mu} / (W H)_{i\mu}}
+   * W_{ia} \leftarrow W_{ia} \frac{\sum_{\mu} H_{a\mu} V_{i\mu}/(WH)_{i\mu}}
    * {\sum_{\nu} H_{a\nu}}
    * \f]
-   *
-   * The function takes in all the matrices and only changes the value of the W
-   * matrix.
+   * The function takes in all the matrices and only changes the
+   * value of the W matrix.
    *
    * @param V Input matrix to be factorized.
    * @param W Basis matrix to be updated.
@@ -73,8 +52,8 @@ class NMFMultiplicativeDivergenceUpdate
    */
   template<typename MatType>
   inline static void WUpdate(const MatType& V,
-                             arma::mat& W,
-                             const arma::mat& H)
+                            arma::mat& W,
+                            const arma::mat& H)
   {
     // Simple implementation left in the header file.
     arma::mat t1;
@@ -102,14 +81,12 @@ class NMFMultiplicativeDivergenceUpdate
 
   /**
    * The update rule for the encoding matrix H. The formula used is
-   *
    * \f[
    * H_{a\mu} \leftarrow H_{a\mu} \frac{\sum_{i} W_{ia} V_{i\mu}/(WH)_{i\mu}}
    * {\sum_{k} H_{ka}}
    * \f]
-   *
-   * The function takes in all the matrices and only changes the value of the H
-   * matrix.
+   * The function takes in all the matrices and only changes the value
+   * of the H matrix.
    *
    * @param V Input matrix to be factorized.
    * @param W Basis matrix.
@@ -145,7 +122,7 @@ class NMFMultiplicativeDivergenceUpdate
   }
 };
 
-} // namespace amf
-} // namespace mlpack
+}; // namespace amf
+}; // namespace mlpack
 
 #endif

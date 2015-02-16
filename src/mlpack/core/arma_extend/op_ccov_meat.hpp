@@ -1,3 +1,21 @@
+// Copyright (C) 2010 NICTA and the authors listed below
+// http://nicta.com.au
+// 
+// Authors:
+// - Conrad Sanderson (conradsand at ieee dot org)
+// - Dimitrios Bouzas (dimitris dot mpouzas at gmail dot com)
+// 
+// This file is part of the Armadillo C++ library.
+// It is provided without any warranty of fitness
+// for any purpose. You can redistribute this file
+// and/or modify it under the terms of the GNU
+// Lesser General Public License (LGPL) as published
+// by the Free Software Foundation, either version 3
+// of the License or (at your option) any later version.
+// (see http://www.opensource.org/licenses for more info)
+
+
+
 //! \addtogroup op_cov
 //! @{
 
@@ -9,12 +27,12 @@ void
 op_ccov::direct_ccov(Mat<eT>& out, const Mat<eT>& A, const uword norm_type)
   {
   arma_extra_debug_sigprint();
-
+  
   if(A.is_vec())
     {
     if(A.n_rows == 1)
       {
-      out = var(trans(A), norm_type);
+      out = var(trans(A), norm_type);      
       }
     else
       {
@@ -42,9 +60,9 @@ void
 op_ccov::direct_ccov(Mat< std::complex<T> >& out, const Mat< std::complex<T> >& A, const uword norm_type)
   {
   arma_extra_debug_sigprint();
-
+  
   typedef typename std::complex<T> eT;
-
+  
   if(A.is_vec())
     {
     if(A.n_rows == 1)
@@ -81,14 +99,14 @@ void
 op_ccov::apply(Mat<typename T1::elem_type>& out, const Op<T1,op_ccov>& in)
   {
   arma_extra_debug_sigprint();
-
+  
   typedef typename T1::elem_type eT;
-
+  
   const unwrap_check<T1> tmp(in.m, out);
   const Mat<eT>& A     = tmp.M;
-
+  
   const uword norm_type = in.aux_uword_a;
-
+  
   op_ccov::direct_ccov(out, A, norm_type);
   }
 

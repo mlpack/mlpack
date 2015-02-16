@@ -202,15 +202,14 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
 {
   arma::mat inputData;
 
-  if (!data::Load("train_nonlinsep.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset train_nonlinsep.txt!");
+  if (!data::Load("nonlinsepdata.txt", inputData))
+    BOOST_FAIL("Cannot load test dataset nonlinsepdata.txt!");
 
   arma::Mat<size_t> labels;
 
+  if (!data::Load("nonlinsepdata_labels.txt", labels))
+    BOOST_FAIL("Cannot load labels for nonlinsepdata_labels.txt");
 
-  if (!data::Load("train_labels_nonlinsep.txt",labels))
-    BOOST_FAIL("Cannot load labels for train_labels_nonlinsep.txt");
-  
   // no need to map the labels here
 
   // Define your own weak learner, perceptron in this case.
@@ -244,14 +243,14 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
 {
   arma::mat inputData;
 
-  if (!data::Load("train_nonlinsep.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset train_nonlinsep.txt!");
+  if (!data::Load("nonlinsepdata.txt", inputData))
+    BOOST_FAIL("Cannot load test dataset nonlinsepdata.txt!");
 
   arma::Mat<size_t> labels;
 
-  if (!data::Load("train_labels_nonlinsep.txt",labels))
-    BOOST_FAIL("Cannot load labels for train_labels_nonlinsep.txt");
-  
+  if (!data::Load("nonlinsepdata_labels.txt",labels))
+    BOOST_FAIL("Cannot load labels for nonlinsepdata_labels.txt");
+
   // no need to map the labels here
 
   // Define your own weak learner, perceptron in this case.
@@ -485,14 +484,13 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
 {
   arma::mat inputData;
 
-  if (!data::Load("train_nonlinsep.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset train_nonlinsep.txt!");
+  if (!data::Load("nonlinsepdata.txt", inputData))
+    BOOST_FAIL("Cannot load test dataset nonlinsepdata.txt!");
 
   arma::Mat<size_t> labels;
 
-  if (!data::Load("train_labels_nonlinsep.txt",labels))
-    BOOST_FAIL("Cannot load labels for train_labels_nonlinsep.txt");
-  
+  if (!data::Load("nonlinsepdata_labels.txt",labels))
+    BOOST_FAIL("Cannot load labels for nonlinsepdata_labels.txt");
 
   // no need to map the labels here
 
@@ -532,14 +530,14 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
 {
   arma::mat inputData;
 
-  if (!data::Load("train_nonlinsep.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset train_nonlinsep.txt!");
+  if (!data::Load("nonlinsepdata.txt", inputData))
+    BOOST_FAIL("Cannot load test dataset nonlinsepdata.txt!");
 
   arma::Mat<size_t> labels;
 
-  if (!data::Load("train_labels_nonlinsep.txt",labels))
-    BOOST_FAIL("Cannot load labels for train_labels_nonlinsep.txt");
-  
+  if (!data::Load("nonlinsepdata_labels.txt",labels))
+    BOOST_FAIL("Cannot load labels for nonlinsepdata_labels.txt");
+
   // no need to map the labels here
 
   // Define your own weak learner, Decision Stump in this case.
@@ -595,42 +593,28 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
 
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptron_iter iterations.
-
-  int perceptron_iter = 1000;
-  
-  arma::mat testData;
-
-  if (!data::Load("vc2_test.txt", testData))
-    BOOST_FAIL("Cannot load test dataset vc2_test.txt!");
-  
-  arma::Mat<size_t> trueTestLabels;
-
-  if (!data::Load("vc2_test_labels.txt",trueTestLabels))
-    BOOST_FAIL("Cannot load labels for vc2_test_labels.txt");
+  int perceptron_iter = 5000;
 
   arma::Row<size_t> perceptronPrediction(labels.n_cols);
   perceptron::Perceptron<> p(inputData, labels.row(0), perceptron_iter);
   p.Classify(inputData, perceptronPrediction);
 
   // Define parameters for the adaboost
-
-  int iterations = 100;
+  int iterations = 250;
   double tolerance = 1e-10;
   AdaBoost<> a(inputData, labels.row(0), iterations, tolerance, p);
-  
-  arma::Row<size_t> predictedLabels(testData.n_cols);
-  a.Classify(testData, predictedLabels);
+
+  arma::Row<size_t> predictedLabels(inputData.n_cols);
+  a.Classify(inputData, predictedLabels);
 
   int localError = 0;
-  
-  for (size_t i = 0; i < trueTestLabels.n_cols; i++)
-    if(trueTestLabels(i) != predictedLabels(i))
-      localError++;
-  
-  double lError = (double) localError / trueTestLabels.n_cols;
-  
-  BOOST_REQUIRE(lError <= 0.30);
 
+  for (size_t i = 0; i < labels.n_cols; i++)
+    if(labels(i) != predictedLabels(i))
+      localError++;
+  double lError = (double) localError / labels.n_cols;
+
+  BOOST_REQUIRE_LT(lError, 0.30);
 }
 
 /**
@@ -642,14 +626,14 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
 {
   arma::mat inputData;
 
-  if (!data::Load("train_nonlinsep.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset train_nonlinsep.txt!");
+  if (!data::Load("nonlinsepdata.txt", inputData))
+    BOOST_FAIL("Cannot load test dataset nonlinsepdata.txt!");
 
   arma::Mat<size_t> labels;
 
-  if (!data::Load("train_labels_nonlinsep.txt",labels))
-    BOOST_FAIL("Cannot load labels for train_labels_nonlinsep.txt");
-  
+  if (!data::Load("nonlinsepdata_labels.txt",labels))
+    BOOST_FAIL("Cannot load labels for nonlinsepdata_labels.txt");
+
   // no need to map the labels here
 
   // Define your own weak learner, perceptron in this case.
@@ -657,16 +641,6 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
 
   const size_t numClasses = 2;
   const size_t inpBucketSize = 3;
-
-  arma::mat testData;
-
-  if (!data::Load("test_nonlinsep.txt", testData))
-    BOOST_FAIL("Cannot load test dataset test_nonlinsep.txt!");
-  
-  arma::Mat<size_t> trueTestLabels;
-
-  if (!data::Load("test_labels_nonlinsep.txt",trueTestLabels))
-    BOOST_FAIL("Cannot load labels for test_labels_nonlinsep.txt");
 
   arma::Row<size_t> dsPrediction(labels.n_cols);
 
@@ -679,16 +653,15 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
   AdaBoost<arma::mat, mlpack::decision_stump::DecisionStump<> > a(
            inputData, labels.row(0), iterations, tolerance, ds);
 
-  arma::Row<size_t> predictedLabels(testData.n_cols);
-  a.Classify(testData, predictedLabels);
+  arma::Row<size_t> predictedLabels(inputData.n_cols);
+  a.Classify(inputData, predictedLabels);
 
   int localError = 0;
-  for (size_t i = 0; i < trueTestLabels.n_cols; i++)
-    if(trueTestLabels(i) != predictedLabels(i))
+  for (size_t i = 0; i < labels.n_cols; i++)
+    if(labels(i) != predictedLabels(i))
       localError++;
+  double lError = (double) localError / labels.n_cols;
 
-  double lError = (double) localError / trueTestLabels.n_cols;
-  
   BOOST_REQUIRE(lError <= 0.30);
 }
 

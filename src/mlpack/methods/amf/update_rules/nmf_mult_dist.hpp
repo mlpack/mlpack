@@ -13,49 +13,33 @@ namespace mlpack {
 namespace amf {
 
 /**
- * The multiplicative distance update rules for matrices W and H. This follows
- * a method described in the following paper:
- *
- * @code
- * @inproceedings{lee2001algorithms,
- *   title={Algorithms for non-negative matrix factorization},
- *   author={Lee, D.D. and Seung, H.S.},
- *   booktitle={Advances in Neural Information Processing Systems 13
- *       (NIPS 2000)},
- *   pages={556--562},
- *   year={2001}
- * }
- * @endcode
- *
- * This is a multiplicative rule that ensures that the Frobenius norm
- * \f$ \sqrt{\sum_i \sum_j(V-WH)^2} \f$ is non-increasing between subsequent
- * iterations. Both of the update rules for W and H are defined in this file.
+ * The multiplicative distance update rules for matrices W and H. This follows 
+ * a method described in the paper 'Algorithms for Non-negative Matrix Factorization'
+ * by D. D. Lee and H. S. Seung. This is a multiplicative rule that ensures
+ * that the Frobenius norm \f$ \sqrt{\sum_i \sum_j(V-WH)^2} \f$ is
+ * non-increasing between subsequent iterations. Both of the update rules
+ * for W and H are defined in this file.
  */
 class NMFMultiplicativeDistanceUpdate
 {
  public:
-  // Empty constructor required for the UpdateRule template.
+  // Empty constructor required for the UpdateRule template. 
   NMFMultiplicativeDistanceUpdate() { }
 
-  /**
-   * Initialize the factorization.  These update rules hold no information, so
-   * the input parameters are ignored.
-   */
   template<typename MatType>
-  void Initialize(const MatType& /* dataset */, const size_t /* rank */)
+  void Initialize(const MatType& dataset, const size_t rank)
   {
-    // Nothing to do.
+        (void)dataset;
+        (void)rank;
   }
 
   /**
-   * The update rule for the basis matrix W. The formula used isa
-   *
+   * The update rule for the basis matrix W. The formula used is
    * \f[
    * W_{ia} \leftarrow W_{ia} \frac{(VH^T)_{ia}}{(WHH^T)_{ia}}
    * \f]
-   *
-   * The function takes in all the matrices and only changes the value of the W
-   * matrix.
+   * The function takes in all the matrices and only changes the
+   * value of the W matrix.
    *
    * @param V Input matrix to be factorized.
    * @param W Basis matrix to be updated.
@@ -71,13 +55,11 @@ class NMFMultiplicativeDistanceUpdate
 
   /**
    * The update rule for the encoding matrix H. The formula used is
-   *
    * \f[
    * H_{a\mu} \leftarrow H_{a\mu} \frac{(W^T V)_{a\mu}}{(W^T WH)_{a\mu}}
    * \f]
-   *
-   * The function takes in all the matrices and only changes the value of the H
-   * matrix.
+   * The function takes in all the matrices and only changes the
+   * value of the H matrix.
    *
    * @param V Input matrix to be factorized.
    * @param W Basis matrix.
@@ -92,7 +74,7 @@ class NMFMultiplicativeDistanceUpdate
   }
 };
 
-} // namespace amf
-} // namespace mlpack
+}; // namespace amf
+}; // namespace mlpack
 
 #endif

@@ -18,7 +18,7 @@ class NaiveKernelRule
 {
   public:
     /**
-     * Construct the exact kernel matrix.
+     * Construct the kernel matrix approximation using the nystroem method.
      *
      * @param data Input data points.
      * @param transformedData Matrix to output results into.

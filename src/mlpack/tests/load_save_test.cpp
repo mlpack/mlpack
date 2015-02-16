@@ -21,9 +21,7 @@ BOOST_AUTO_TEST_SUITE(LoadSaveTest);
 BOOST_AUTO_TEST_CASE(NoExtensionLoad)
 {
   arma::mat out;
-  Log::Warn.ignoreInput = true;
   BOOST_REQUIRE(data::Load("noextension", out) == false);
-  Log::Warn.ignoreInput = false;
 }
 
 /**
@@ -32,9 +30,7 @@ BOOST_AUTO_TEST_CASE(NoExtensionLoad)
 BOOST_AUTO_TEST_CASE(NoExtensionSave)
 {
   arma::mat out;
-  Log::Warn.ignoreInput = true;
   BOOST_REQUIRE(data::Save("noextension", out) == false);
-  Log::Warn.ignoreInput = false;
 }
 
 /**
@@ -43,9 +39,7 @@ BOOST_AUTO_TEST_CASE(NoExtensionSave)
 BOOST_AUTO_TEST_CASE(NotExistLoad)
 {
   arma::mat out;
-  Log::Warn.ignoreInput = true;
   BOOST_REQUIRE(data::Load("nonexistentfile_______________.csv", out) == false);
-  Log::Warn.ignoreInput = false;
 }
 
 /**
@@ -320,9 +314,7 @@ BOOST_AUTO_TEST_CASE(LoadRawBinaryTest)
       == true);
 
   // Now reload through our interface.
-  Log::Warn.ignoreInput = true;
   BOOST_REQUIRE(data::Load("test_file.bin", test) == true);
-  Log::Warn.ignoreInput = false;
 
   BOOST_REQUIRE_EQUAL(test.n_rows, 1);
   BOOST_REQUIRE_EQUAL(test.n_cols, 8);
@@ -510,13 +502,10 @@ BOOST_AUTO_TEST_CASE(NoHDF5Test)
   arma::mat test;
   test.randu(5, 5);
 
-  // Stop warnings.
-  Log::Warn.ignoreInput = true;
   BOOST_REQUIRE(data::Save("test_file.h5", test) == false);
   BOOST_REQUIRE(data::Save("test_file.hdf5", test) == false);
   BOOST_REQUIRE(data::Save("test_file.hdf", test) == false);
   BOOST_REQUIRE(data::Save("test_file.he5", test) == false);
-  Log::Warn.ignoreInput = false;
 }
 #endif
 

@@ -34,7 +34,7 @@ class SimpleResidueTermination
    * @param minResidue Minimum residue for termination.
    * @param maxIterations Maximum number of iterations.
    */
-  SimpleResidueTermination(const double minResidue = 1e-5,
+  SimpleResidueTermination(const double minResidue = 1e-10,
                            const size_t maxIterations = 10000)
       : minResidue(minResidue), maxIterations(maxIterations) { }
 

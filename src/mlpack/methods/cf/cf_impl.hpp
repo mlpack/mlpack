@@ -1,5 +1,5 @@
 /**
- * @file cf_impl.hpp
+ * @file cf.cpp
  * @author Mudit Raj Gupta
  * @author Sumedh Ghaisas
  *
@@ -8,11 +8,6 @@
  * Implementation of CF class to perform Collaborative Filtering on the
  * specified data set.
  */
-#ifndef __MLPACK_METHODS_CF_CF_IMPL_HPP
-#define __MLPACK_METHODS_CF_CF_IMPL_HPP
-
-// In case it hasn't been included yet.
-#include "cf.hpp"
 
 namespace mlpack {
 namespace cf {
@@ -24,7 +19,7 @@ namespace cf {
  * list.
  */
 template<typename FactorizerType>
-void ApplyFactorizer(arma::mat& /* data */,
+void ApplyFactorizer(arma::mat& data,
     arma::sp_mat& cleanedData,
     FactorizerType& factorizer,
     const size_t rank,
@@ -34,6 +29,7 @@ void ApplyFactorizer(arma::mat& /* data */,
         FactorizerTraits<FactorizerType>::UsesCoordinateList == false,
         int*>::type = 0)
 {
+  (void)data;
   factorizer.Apply(cleanedData, rank, w, h);
 }
 
@@ -44,7 +40,7 @@ void ApplyFactorizer(arma::mat& /* data */,
  */
 template<typename FactorizerType>
 void ApplyFactorizer(arma::mat& data,
-    arma::sp_mat& /* cleanedData */,
+    arma::sp_mat& cleanedData,
     FactorizerType& factorizer,
     const size_t rank,
     arma::mat& w,
@@ -53,6 +49,7 @@ void ApplyFactorizer(arma::mat& data,
         FactorizerTraits<FactorizerType>::UsesCoordinateList == true,
         int*>::type = 0)
 {
+  (void)cleanedData;
   factorizer.Apply(data, rank, w, h);
 }
 
@@ -69,7 +66,7 @@ CF<FactorizerType>::CF(arma::mat& data,
     factorizer(factorizer)
 {
   // Validate neighbourhood size.
-  if (numUsersForSimilarity < 1)
+  if(numUsersForSimilarity < 1)
   {
     Log::Warn << "CF::CF(): neighbourhood size should be > 0("
         << numUsersForSimilarity << " given). Setting value to 5.\n";
@@ -80,7 +77,7 @@ CF<FactorizerType>::CF(arma::mat& data,
   CleanData(data);
 
   // Check if the user wanted us to choose a rank for them.
-  if (rank == 0)
+  if(rank == 0)
   {
     // This is a simple heuristic that picks a rank based on the density of the
     // dataset between 5 and 105.
@@ -193,8 +190,7 @@ void CF<FactorizerType>::GetRecommendations(const size_t numRecs,
     // warning.
     if (recommendations(values.n_rows - 1, i) == cleanedData.n_rows + 1)
       Log::Warn << "Could not provide " << values.n_rows << " recommendations "
-          << "for user " << users(i) << " (not enough un-rated items)!"
-          << std::endl;
+          << "for user " << users(i) << " (not enough un-rated items)!" << std::endl;
   }
 }
 
@@ -211,9 +207,6 @@ void CF<FactorizerType>::CleanData(const arma::mat& data)
     locations(1, i) = ((arma::uword) data(0, i));
     locations(0, i) = ((arma::uword) data(1, i));
     values(i) = data(2, i);
-    if (values(i) == 0)
-      Log::Warn << "User rating of 0 ignored for user " << locations(1, i)
-          << ", item " << locations(0, i) << "." << std::endl;
   }
 
   // Find maximum user and item IDs.
@@ -272,5 +265,3 @@ std::string CF<FactorizerType>::ToString() const
 
 }; // namespace mlpack
 }; // namespace cf
-
-#endif

@@ -1,5 +1,5 @@
 ### mlpack 1.1.0
-###### ????-??-??
+###### ????-??-?? 
   * Removed overclustering support from k-means because it is not well-tested,
     may be buggy, and is (I think) unused.  If this was support you were using,
     open a bug or get in touch with us; it would not be hard for us to
@@ -11,13 +11,7 @@
     Pelleg-Moore's algorithm, and the DTNN (dual-tree nearest neighbor)
     algorithm.
 
-  * Significant acceleration of LRSDP via the use of accu(a % b) instead of
-    trace(a * b).
-
-  * Added MatrixCompletion class (matrix_completion), which performs nuclear
-    norm minimization to fill unknown values of an input matrix.
-
-### mlpack 1.0.11
+### mlpack 1.0.11 
 ###### 2014-12-11
   * Proper handling of dimension calculation in PCA.
 
@@ -44,7 +38,7 @@
     (#376)
 
 ### mlpack 1.0.10
-###### 2014-08-29
+###### 2014-08-29    
   * Bugfix for NeighborSearch regression which caused very slow allknn/allkfn.
     Speeds are now restored to approximately 1.0.8 speeds, with significant
     improvement for the cover tree.
@@ -108,7 +102,7 @@
   * Sparse autoencoder added by Siddharth Agrawal.
 
 ### mlpack 1.0.8
-###### 2014-01-06
+###### 2014-01-06    
   * Memory leak in NeighborSearch index-mapping code fixed (#310).
 
   * GMMs can be trained using the existing model as a starting point by
@@ -126,7 +120,7 @@
   * Fix typos in allkfn and allkrann output.
 
 ### mlpack 1.0.7
-###### 2013-10-04
+###### 2013-10-04    
   * Cover tree support for range search (range_search), rank-approximate nearest
     neighbors (allkrann), minimum spanning tree calculation (emst), and FastMKS
     (fastmks).
@@ -157,11 +151,11 @@
   * Minor updates and fixes for kernels (in mlpack::kernel).
 
 ### mlpack 1.0.6
-###### 2013-06-13
+###### 2013-06-13    
   * Minor bugfix so that FastMKS gets built.
 
 ### mlpack 1.0.5
-###### 2013-05-01
+###### 2013-05-01   
   * Speedups of cover tree traversers (#243).
 
   * Addition of rank-approximate nearest neighbors (RANN), found in
@@ -185,7 +179,7 @@
   * Fix for k-furthest-neighbor-search.
 
 ### mlpack 1.0.4
-###### 2013-02-08
+###### 2013-02-08    
   * Force minimum Armadillo version to 2.4.2.
 
   * Better output of class types to streams; a class with a ToString() method
@@ -203,7 +197,7 @@
     components analysis).
 
 ### mlpack 1.0.3
-###### 2012-09-16
+###### 2012-09-16    
 
   * Remove internal sparse matrix support because Armadillo 3.4.0 now includes
     it.  When using Armadillo versions older than 3.4.0, sparse matrix support
@@ -213,7 +207,7 @@
     (#254), including stochastic gradient descent (#258).
 
 ### mlpack 1.0.2
-###### 2012-08-15
+###### 2012-08-15    
   * Added density estimation trees, found in src/mlpack/methods/det/.
 
   * Added non-negative matrix factorization, found in src/mlpack/methods/nmf/.
@@ -230,7 +224,7 @@
   * Sparse coding dictionary initialization is now a template parameter (#226).
 
 ### mlpack 1.0.1
-###### 2012-03-03
+###### 2012-03-03    
   * Added kernel principal components analysis (kernel PCA), found in
     src/mlpack/methods/kernel_pca/ (#47).
 
@@ -248,7 +242,7 @@
   * Support seeds for random numbers (#182).
 
 ### mlpack 1.0.0
-###### 2011-12-17
+###### 2011-12-17    
   * Initial release.  See any resolved tickets numbered less than #196 or
     execute this query:
     http://www.mlpack.org/trac/query?status=closed&milestone=mlpack+1.0.0

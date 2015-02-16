@@ -104,6 +104,11 @@ class SaveRestoreUtility
   void SaveParameter(const char c, const std::string& name);
 
   /**
+   * SaveParameter saves an arma::mat to the parameters map.
+   */
+  void SaveParameter(const arma::mat& mat, const std::string& name);
+
+  /**
    * SaveSubModel saves a SaveRestoreUtility to the children map.
    */
   void AddChild(SaveRestoreUtility& mn, const std::string& name);
@@ -135,6 +140,12 @@ class SaveRestoreUtility
 template<>
 arma::vec& SaveRestoreUtility::LoadParameter(arma::vec& t,
                                              const std::string& name) const;
+
+//! Specialization for arma::vec.
+template<>
+void SaveRestoreUtility::SaveParameter(const arma::vec& t,
+                                       const std::string& name);
+
 
 
 }; /* namespace util */

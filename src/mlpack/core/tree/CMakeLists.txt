@@ -28,6 +28,9 @@ set(SOURCES
   example_tree.hpp
   hrectbound.hpp
   hrectbound_impl.hpp
+  mrkd_statistic.hpp
+  mrkd_statistic_impl.hpp
+  mrkd_statistic.cpp
   rectangle_tree.hpp
   rectangle_tree/rectangle_tree.hpp
   rectangle_tree/rectangle_tree_impl.hpp

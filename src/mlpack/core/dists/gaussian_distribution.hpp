@@ -5,8 +5,8 @@
  *
  * Implementation of the Gaussian distribution.
  */
-#ifndef __MLPACK_CORE_DISTRIBUTIONS_GAUSSIAN_DISTRIBUTION_HPP
-#define __MLPACK_CORE_DISTRIBUTIONS_GAUSSIAN_DISTRIBUTION_HPP
+#ifndef __MLPACK_METHODS_HMM_DISTRIBUTIONS_GAUSSIAN_DISTRIBUTION_HPP
+#define __MLPACK_METHODS_HMM_DISTRIBUTIONS_GAUSSIAN_DISTRIBUTION_HPP
 
 #include <mlpack/core.hpp>
 
@@ -21,17 +21,8 @@ class GaussianDistribution
  private:
   //! Mean of the distribution.
   arma::vec mean;
-  //! Positive definite covariance of the distribution.
+  //! Covariance of the distribution.
   arma::mat covariance;
-  //! Lower triangular factor of cov (e.g. cov = LL^T).
-  arma::mat covLower;
-  //! Cached inverse of covariance.
-  arma::mat invCov;
-  //! Cached logdet(cov).
-  double logDetCov;
-
-  //! log(2pi)
-  static const constexpr double log2pi = 1.83787706640934533908193770912475883;
 
  public:
   /**
@@ -45,20 +36,14 @@ class GaussianDistribution
    */
   GaussianDistribution(const size_t dimension) :
       mean(arma::zeros<arma::vec>(dimension)),
-      covariance(arma::eye<arma::mat>(dimension, dimension)),
-      covLower(arma::eye<arma::mat>(dimension, dimension)),
-      invCov(arma::eye<arma::mat>(dimension, dimension)),
-      logDetCov(0)
+      covariance(arma::eye<arma::mat>(dimension, dimension))
   { /* Nothing to do. */ }
 
   /**
    * Create a Gaussian distribution with the given mean and covariance.
-   *
-   * covariance is expected to be positive definite.
    */
-  GaussianDistribution(const arma::vec& mean, const arma::mat& covariance);
-
-  // TODO(stephentu): do we want a (arma::vec&&, arma::mat&&) ctor?
+  GaussianDistribution(const arma::vec& mean, const arma::mat& covariance) :
+      mean(mean), covariance(covariance) { /* Nothing to do. */ }
 
   //! Return the dimensionality of this distribution.
   size_t Dimensionality() const { return mean.n_elem; }
@@ -66,16 +51,8 @@ class GaussianDistribution
   /**
    * Return the probability of the given observation.
    */
-  double Probability(const arma::vec& observation) const
-  {
-    return exp(LogProbability(observation));
-  }
-
-  /**
-   * Return the log probability of the given observation.
-   */
-  double LogProbability(const arma::vec& observation) const;
-
+  double Probability(const arma::vec& observation) const;
+  
   /**
    * Calculates the multivariate Gaussian probability density function for each
    * data point (column) in the given matrix
@@ -83,15 +60,8 @@ class GaussianDistribution
    * @param x List of observations.
    * @param probabilities Output probabilities for each input observation.
    */
-  void Probability(const arma::mat& x, arma::vec& probabilities) const
-  {
-    arma::vec logProbabilities;
-    LogProbability(x, logProbabilities);
-    probabilities = arma::exp(logProbabilities);
-  }
-
-  void LogProbability(const arma::mat& x, arma::vec& logProbabilities) const;
-
+  void Probability(const arma::mat& x, arma::vec& probabilities) const;
+  
   /**
    * Return a randomly generated observation according to the probability
    * distribution defined by this object.
@@ -131,56 +101,52 @@ class GaussianDistribution
   const arma::mat& Covariance() const { return covariance; }
 
   /**
-   * Set the covariance.
+   * Return a modifiable copy of the covariance.
    */
-  void Covariance(const arma::mat& covariance);
-
-  void Covariance(arma::mat&& covariance);
+  arma::mat& Covariance() { return covariance; }
 
   /**
    * Returns a string representation of this object.
    */
   std::string ToString() const;
-
+    
   /*
    * Save to or Load from SaveRestoreUtility
    */
   void Save(util::SaveRestoreUtility& n) const;
   void Load(const util::SaveRestoreUtility& n);
   static std::string const Type() { return "GaussianDistribution"; }
-
- private:
-  void FactorCovariance();
-
+  
+  
+    
 };
 
 /**
-* Calculates the multivariate Gaussian log probability density function for each
+* Calculates the multivariate Gaussian probability density function for each
 * data point (column) in the given matrix
 *
 * @param x List of observations.
-* @param probabilities Output log probabilities for each input observation.
+* @param probabilities Output probabilities for each input observation.
 */
-inline void GaussianDistribution::LogProbability(const arma::mat& x,
-                                                 arma::vec& logProbabilities) const
+inline void GaussianDistribution::Probability(const arma::mat& x,
+                                              arma::vec& probabilities) const
 {
   // Column i of 'diffs' is the difference between x.col(i) and the mean.
   arma::mat diffs = x - (mean * arma::ones<arma::rowvec>(x.n_cols));
-
+  
   // Now, we only want to calculate the diagonal elements of (diffs' * cov^-1 *
   // diffs).  We just don't need any of the other elements.  We can calculate
   // the right hand part of the equation (instead of the left side) so that
   // later we are referencing columns, not rows -- that is faster.
-  const arma::mat rhs = -0.5 * invCov * diffs;
-  arma::vec logExponents(diffs.n_cols); // We will now fill this.
+  arma::mat rhs = -0.5 * inv(covariance) * diffs;
+  arma::vec exponents(diffs.n_cols); // We will now fill this.
   for (size_t i = 0; i < diffs.n_cols; i++)
-    logExponents(i) = accu(diffs.unsafe_col(i) % rhs.unsafe_col(i));
-
-  const size_t k = x.n_rows;
-
-  logProbabilities = -0.5 * k * log2pi - 0.5 * logDetCov + logExponents;
+    exponents(i) = exp(accu(diffs.unsafe_col(i) % rhs.unsafe_col(i)));
+  
+  probabilities = pow(2 * M_PI, (double) mean.n_elem / -2.0) *
+  pow(arma::det(covariance), -0.5) * exponents;
 }
-
+  
 
 }; // namespace distribution
 }; // namespace mlpack

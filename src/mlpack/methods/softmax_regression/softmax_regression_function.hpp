@@ -31,18 +31,18 @@ class SoftmaxRegressionFunction
                             const size_t inputSize,
                             const size_t numClasses,
                             const double lambda = 0.0001);
-
+                            
   //! Initializes the parameters of the model to suitable values.
   const arma::mat InitializeWeights();
-
+  
   /**
    * Constructs the ground truth label matrix with the passed labels.
    *
    * @param labels Labels associated with the training data.
    * @param groundTruth Pointer to arma::mat which stores the computed matrix.
-   */
+   */                          
   void GetGroundTruthMatrix(const arma::vec& labels, arma::sp_mat& groundTruth);
-
+  
   /**
    * Evaluates the objective function of the softmax regression model using the
    * given parameters. The cost function has terms for the log likelihood error
@@ -53,7 +53,7 @@ class SoftmaxRegressionFunction
    * @param parameters Current values of the model parameters.
    */
   double Evaluate(const arma::mat& parameters) const;
-
+  
   /**
    * Evaluates the gradient values of the objective function given the current
    * set of parameters. The function calculates the probabilities for each class
@@ -64,49 +64,51 @@ class SoftmaxRegressionFunction
    * @param gradient Matrix where gradient values will be stored.
    */
   void Gradient(const arma::mat& parameters, arma::mat& gradient) const;
-
+  
   //! Return the initial point for the optimization.
   const arma::mat& GetInitialPoint() const { return initialPoint; }
-
+  
   //! Sets the size of the input vector.
   void InputSize(const size_t input)
   {
     this->inputSize = input;
   }
-
+  
   //! Gets the size of the input vector.
   size_t InputSize() const
   {
     return inputSize;
   }
-
+  
   //! Sets the number of classes.
   void NumClasses(const size_t classes)
   {
     this->numClasses = classes;
   }
-
+  
   //! Gets the number of classes.
   size_t NumClasses() const
   {
     return numClasses;
   }
-
+  
   //! Sets the regularization parameter.
   void Lambda(const double l)
   {
     this->lambda = l;
   }
-
+  
   //! Gets the regularization parameter.
   double Lambda() const
   {
     return lambda;
   }
-
+                            
  private:
   //! Training data matrix.
   const arma::mat& data;
+  //! Labels associated with the training data.
+  const arma::vec& labels;
   //! Label matrix for the provided data.
   arma::sp_mat groundTruth;
   //! Initial parameter point.

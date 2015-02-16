@@ -31,7 +31,7 @@ add_executable(mlpack_test
   lrsdp_test.cpp
   lsh_test.cpp
   math_test.cpp
-  matrix_completion_test.cpp
+  mean_shift_test.cpp
   metric_test.cpp
   nbc_test.cpp
   nca_test.cpp
@@ -45,7 +45,6 @@ add_executable(mlpack_test
   regularized_svd_test.cpp
   sa_test.cpp
   save_restore_utility_test.cpp
-  sdp_primal_dual_test.cpp
   sgd_test.cpp
   softmax_regression_test.cpp
   sort_policy_test.cpp

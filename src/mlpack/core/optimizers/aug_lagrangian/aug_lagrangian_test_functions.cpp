@@ -219,7 +219,7 @@ void LovaszThetaSDP::Gradient(const arma::mat& coordinates,
     {
       // A_0 = I_n.  Hooray!  That's easy!  b_0 = 1.
       double inner = -1 * double(n) - 0.5 *
-          (accu(trans(coordinates) % coordinates) - 1);
+          (trace(trans(coordinates) * coordinates) - 1);
 
       arma::mat zz = (inner * arma::eye<arma::mat>(n, n));
 
@@ -241,7 +241,7 @@ void LovaszThetaSDP::Gradient(const arma::mat& coordinates,
       a(edge[1], edge[0]) = 1;
 
       double inner = (-1) - 0.5 *
-          (accu(a % (trans(coordinates) * coordinates)));
+          (trace(a * (trans(coordinates) * coordinates)));
 
       arma::mat zz = (inner * a);
 

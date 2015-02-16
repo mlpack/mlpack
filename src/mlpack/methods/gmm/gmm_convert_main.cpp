@@ -47,14 +47,12 @@ int main(int argc, char* argv[])
   for (size_t i = 0; i < gaussians; ++i)
   {
     stringstream o;
-    arma::mat covariance;
     o << i;
     string meanName = "mean" + o.str();
     string covName = "covariance" + o.str();
 
     load.LoadParameter(gmm.Component(i).Mean(), meanName);
-    load.LoadParameter(covariance, covName);
-    gmm.Component(i).Covariance(std::move(covariance));
+    load.LoadParameter(gmm.Component(i).Covariance(), covName);
   }
 
   gmm.Save(CLI::GetParam<string>("output_file"));

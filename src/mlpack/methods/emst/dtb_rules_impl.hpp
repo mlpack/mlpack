@@ -119,7 +119,7 @@ double DTBRules<MetricType, TreeType>::Score(const size_t queryIndex,
 
 template<typename MetricType, typename TreeType>
 double DTBRules<MetricType, TreeType>::Rescore(const size_t queryIndex,
-                                               TreeType& /* referenceNode */,
+                                               TreeType& referenceNode,
                                                const double oldScore)
 {
   // We don't need to check component membership again, because it can't

@@ -20,7 +20,7 @@ namespace amf {
  *
  * @see AMF, SVDCompleteIncrementalLearning
  */
-template<class TerminationPolicy>
+template <class TerminationPolicy>
 class CompleteIncrementalTermination
 {
  public:
@@ -29,16 +29,15 @@ class CompleteIncrementalTermination
    *
    * @param tPolicy object of wrapped class.
    */
-  CompleteIncrementalTermination(
-      TerminationPolicy tPolicy = TerminationPolicy()) :
-      tPolicy(tPolicy) { }
+  CompleteIncrementalTermination(TerminationPolicy tPolicy = TerminationPolicy())
+      : tPolicy(tPolicy) { }
 
   /**
    * Initializes the termination policy before stating the factorization.
    *
    * @param V Input matrix to be factorized.
    */
-  template<class MatType>
+  template <class MatType>
   void Initialize(const MatType& V)
   {
     tPolicy.Initialize(V);

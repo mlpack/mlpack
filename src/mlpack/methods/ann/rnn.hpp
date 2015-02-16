@@ -11,7 +11,6 @@
 
 #include <boost/ptr_container/ptr_vector.hpp>
 
-#include <mlpack/methods/ann/network_traits.hpp>
 #include <mlpack/methods/ann/performance_functions/cee_function.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
 #include <mlpack/methods/ann/connections/connection_traits.hpp>
@@ -75,7 +74,6 @@ class RNN
 
       // Reset the overall error.
       err = 0;
-      error = MatType(target.n_elem, input.n_rows);
 
       // Iterate through the input sequence and perform the feed forward pass.
       for (seqNum = 0; seqNum < input.n_rows; seqNum++)
@@ -130,17 +128,17 @@ class RNN
     }
 
     /**
-     * Updating the weights using the specified optimizer.
+     * Updating the weights using the specified optimizer and the given input.
      *
+     * @param input Input data used for evaluating the network.
+     * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
      */
-    void ApplyGradients()
+    template <typename VecType>
+    void ApplyGradients(const VecType& input)
     {
       gradientNum = 0;
-      ApplyGradients(network);
+      ApplyGradients(network, input);
     }
-
-    //! Get the error of the network.
-    double Error() const { return err; }
 
   private:
     /**
@@ -335,7 +333,7 @@ class RNN
     }
 
     /**
-     * Sum up all gradients and store the results in the gradients storage.
+     * Sum up all gradients and store the  results in the gradients storage.
      *
      * enable_if (SFINAE) is used to iterate through the network connections.
      * The general case peels off the first type and recurses, as usual with
@@ -364,16 +362,17 @@ class RNN
      * connections, and one for the general case which peels off the first type
      * and recurses, as usual with variadic function templates.
      */
-    template<size_t I = 0, typename... Tp>
+    template<size_t I = 0, typename VecType, typename... Tp>
     typename std::enable_if<I == sizeof...(Tp) - 1, void>::type
-    ApplyGradients(std::tuple<Tp...>& /* unused */) { }
+    ApplyGradients(std::tuple<Tp...>& /* unused */,
+                   const VecType& /* unused */) { }
 
-    template<size_t I = 0, typename... Tp>
+    template<size_t I = 0, typename VecType, typename... Tp>
     typename std::enable_if<I < sizeof...(Tp) - 1, void>::type
-    ApplyGradients(std::tuple<Tp...>& t)
+    ApplyGradients(std::tuple<Tp...>& t, const VecType& input)
     {
       Gradients(std::get<I>(t));
-      ApplyGradients<I + 1, Tp...>(t);
+      ApplyGradients<I + 1, VecType, Tp...>(t, input);
     }
 
     /**
@@ -582,21 +581,7 @@ class RNN
     OutputLayerType& outputLayer;
 }; // class RNN
 
-//! Network traits for the FFNN network.
-template <
-  typename ConnectionTypes,
-  typename OutputLayerType,
-  class PerformanceFunction
->
-class NetworkTraits<RNN<ConnectionTypes, OutputLayerType, PerformanceFunction> >
-{
- public:
-  static const bool IsFNN = false;
-  static const bool IsRNN = true;
-};
-
 }; // namespace ann
 }; // namespace mlpack
 
 #endif
-

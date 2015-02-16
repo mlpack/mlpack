@@ -4,8 +4,8 @@
  *
  * SVD factorizer used in AMF (Alternating Matrix Factorization).
  */
-#ifndef __MLPACK_METHODS_AMF_SVD_COMPLETE_INCREMENTAL_LEARNING_HPP
-#define __MLPACK_METHODS_AMF_SVD_COMPLETE_INCREMENTAL_LEARNING_HPP
+#ifndef _MLPACK_METHODS_AMF_SVDCOMPLETEINCREMENTALLEARNING_HPP_INCLUDED
+#define _MLPACK_METHODS_AMF_SVDCOMPLETEINCREMENTALLEARNING_HPP_INCLUDED
 
 #include <mlpack/core.hpp>
 
@@ -15,24 +15,13 @@ namespace amf
 {
 
 /**
- * This class computes SVD using complete incremental batch learning, as
- * described in the following paper:
- *
- * @code
- * @techreport{ma2008guide,
- *   title={A Guide to Singular Value Decomposition for Collaborative
- *       Filtering},
- *   author={Ma, Chih-Chao},
- *   year={2008},
- *   institution={Department of Computer Science, National Taiwan University}
- * }
- * @endcode
- *
- * This class implements 'Algorithm 3' given in the paper.  Complete incremental
- * learning is an extreme case of incremental learning, where feature vectors
- * are updated after looking at each single element in the input matrix (V).
- * This approach differs from incomplete incremental learning where feature
- * vectors are updated after seeing columns of elements in the input matrix.
+ * This class computes SVD by method complete incremental batch learning. 
+ * This procedure is described in the paper 'A Guide to singular Value Decomposition' 
+ * by Chih-Chao Ma. Class implements 'Algorithm 3' given in the paper. Complete
+ * incremental learning is an extreme extreme case of incremental learning where 
+ * feature vectors are updated after looking at each single score. This approach
+ * differs from incomplete incremental learning where feature vectors are updated 
+ * after seeing scores of individual users.
  *
  * @see SVDIncompleteIncrementalLearning
  */
@@ -41,39 +30,40 @@ class SVDCompleteIncrementalLearning
 {
  public:
   /**
-   * Initialize the SVDCompleteIncrementalLearning class with the given
-   * parameters.
+   * Empty constructor
    *
-   * @param u Step value used in batch learning.
-   * @param kw Regularization constant for W matrix.
-   * @param kh Regularization constant for H matrix.
+   * @param u step value used in batch learning
+   * @param kw regularization constant for W matrix
+   * @param kh regularization constant for H matrix
    */
   SVDCompleteIncrementalLearning(double u = 0.0001,
                                  double kw = 0,
                                  double kh = 0)
             : u(u), kw(kw), kh(kh)
-  {
-    // Nothing to do.
-  }
-
+    {}
+  
   /**
-   * Initialize parameters before factorization.  This function must be called
-   * before a new factorization.  For this initialization, the input parameters
-   * are unnecessary; we are only setting the current element index to 0.
+   * Initialize parameters before factorization.
+   * This function must be called before a new factorization.
    *
    * @param dataset Input matrix to be factorized.
    * @param rank rank of factorization
    */
-  void Initialize(const MatType& /* dataset */, const size_t /* rank */)
+  void Initialize(const MatType& dataset, const size_t rank)
   {
-    // Initialize the current score counters.
+    (void)rank;
+    n = dataset.n_rows;
+    m = dataset.n_cols;
+
+    // initialize the current score counters
     currentUserIndex = 0;
     currentItemIndex = 0;
   }
 
   /**
-   * The update rule for the basis matrix W.  The function takes in all the
-   * matrices and only changes the value of the W matrix.
+   * The update rule for the basis matrix W.
+   * The function takes in all the matrices and only changes the
+   * value of the W matrix.
    *
    * @param V Input matrix to be factorized.
    * @param W Basis matrix to be updated.
@@ -83,27 +73,25 @@ class SVDCompleteIncrementalLearning
                       arma::mat& W,
                       const arma::mat& H)
   {
-    arma::mat deltaW;
-    deltaW.zeros(1, W.n_cols);
-
-    // Loop until a non-zero entry is found.
+    arma::mat deltaW(1, W.n_cols);
+    deltaW.zeros();
+    
+    // loop till a non-zero entry is found 
     while(true)
     {
-      const double val = V(currentItemIndex, currentUserIndex);
-      // Update feature vector if current entry is non-zero and break the loop.
-      if (val != 0)
+      double val;
+      // update feature vector if current entry is non-zero and break the loop
+      if((val = V(currentItemIndex, currentUserIndex)) != 0)
       {
-        deltaW += (val - arma::dot(W.row(currentItemIndex),
-            H.col(currentUserIndex))) * H.col(currentUserIndex).t();
-
-        // Add regularization.
-        if (kw != 0)
-          deltaW -= kw * W.row(currentItemIndex);
+        deltaW += (val - arma::dot(W.row(currentItemIndex), H.col(currentUserIndex))) 
+                                        * arma::trans(H.col(currentUserIndex));
+        // add regularization                               
+        if(kw != 0) deltaW -= kw * W.row(currentItemIndex);
         break;
       }
     }
 
-    W.row(currentItemIndex) += u * deltaW;
+    W.row(currentItemIndex) += u*deltaW;
   }
 
   /**
@@ -119,44 +107,48 @@ class SVDCompleteIncrementalLearning
                       const arma::mat& W,
                       arma::mat& H)
   {
-    arma::mat deltaH;
-    deltaH.zeros(H.n_rows, 1);
+    arma::mat deltaH(H.n_rows, 1);
+    deltaH.zeros();
+    
+    const double& val = V(currentItemIndex, currentUserIndex);
+    
+    // update H matrix based on the non-zero enrty found in WUpdate function
+    deltaH += (val - arma::dot(W.row(currentItemIndex), H.col(currentUserIndex))) 
+                                      * arma::trans(W.row(currentItemIndex));
+    // add regularization
+    if(kh != 0) deltaH -= kh * H.col(currentUserIndex);
 
-    const double val = V(currentItemIndex, currentUserIndex);
-
-    // Update H matrix based on the non-zero entry found in WUpdate function.
-    deltaH += (val - arma::dot(W.row(currentItemIndex),
-        H.col(currentUserIndex))) * W.row(currentItemIndex).t();
-    // Add regularization.
-    if (kh != 0)
-      deltaH -= kh * H.col(currentUserIndex);
-
-    // Move on to the next entry.
+    // move on to the next entry
     currentUserIndex = currentUserIndex + 1;
-    if (currentUserIndex == V.n_rows)
+    if(currentUserIndex == n)
     {
       currentUserIndex = 0;
-      currentItemIndex = (currentItemIndex + 1) % V.n_cols;
+      currentItemIndex = (currentItemIndex + 1) % m;
     }
 
     H.col(currentUserIndex++) += u * deltaH;
   }
 
  private:
-  //! Step count of batch learning.
+  //! step count of batch learning
   double u;
-  //! Regularization parameter for matrix W.
+  //! regularization parameter for matrix w
   double kw;
-  //! Regularization parameter for matrix H.
+  //! regualrization matrix for matrix H
   double kh;
 
-  //! User of index of current entry.
+  //! number of items
+  size_t n;
+  //! number of users
+  size_t m;
+  
+  //! user of index of current entry
   size_t currentUserIndex;
-  //! Item index of current entry.
+  //! item index of current entry
   size_t currentItemIndex;
 };
 
-//! TODO : Merge this template specialized function for sparse matrix using
+//! TODO : Merge this template specialized function for sparse matrix using 
 //!        common row_col_iterator
 
 //! template specialiazed functions for sparse matrices
@@ -213,7 +205,7 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
     arma::mat deltaW(1, W.n_cols);
     deltaW.zeros();
 
-    deltaW += (**it - arma::dot(W.row(currentItemIndex), H.col(currentUserIndex)))
+    deltaW += (**it - arma::dot(W.row(currentItemIndex), H.col(currentUserIndex))) 
                                       * arma::trans(H.col(currentUserIndex));
     if(kw != 0) deltaW -= kw * W.row(currentItemIndex);
 
@@ -234,14 +226,14 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
                       arma::mat& H)
   {
     (void)V;
-
+  
     arma::mat deltaH(H.n_rows, 1);
     deltaH.zeros();
 
     size_t currentUserIndex = it->col();
     size_t currentItemIndex = it->row();
 
-    deltaH += (**it - arma::dot(W.row(currentItemIndex), H.col(currentUserIndex)))
+    deltaH += (**it - arma::dot(W.row(currentItemIndex), H.col(currentUserIndex))) 
                                         * arma::trans(W.row(currentItemIndex));
     if(kh != 0) deltaH -= kh * H.col(currentUserIndex);
 
@@ -262,8 +254,9 @@ class SVDCompleteIncrementalLearning<arma::sp_mat>
   bool isStart;
 }; // class SVDCompleteIncrementalLearning
 
-} // namespace amf
-} // namespace mlpack
+}; // namespace amf
+}; // namespace mlpack
 
-#endif
+
+#endif // _MLPACK_METHODS_AMF_SVDCOMPLETEINCREMENTALLEARNING_HPP_INCLUDED
 

@@ -65,7 +65,7 @@ bool SaveRestoreUtility::WriteFile(const std::string& filename)
 void SaveRestoreUtility::WriteFile(xmlNode* n)
 {
   for (std::map<std::string, std::string>::reverse_iterator it =
-       parameters.rbegin(); it != parameters.rend(); ++it)
+	    parameters.rbegin(); it != parameters.rend(); ++it)
   {
     xmlNewChild(n, NULL, BAD_CAST(*it).first.c_str(),
         BAD_CAST(*it).second.c_str());
@@ -85,8 +85,51 @@ arma::mat& SaveRestoreUtility::LoadParameter(arma::mat& matrix,
   std::map<std::string, std::string>::const_iterator it = parameters.find(name);
   if (it != parameters.end())
   {
-    std::istringstream input((*it).second);
-    matrix.load(input);
+    std::string value = (*it).second;
+    boost::char_separator<char> sep ("\n");
+    boost::tokenizer<boost::char_separator<char> > tok (value, sep);
+    std::list<std::list<double> > rows;
+    for (boost::tokenizer<boost::char_separator<char> >::iterator
+           tokIt = tok.begin();
+         tokIt != tok.end();
+         ++tokIt)
+    {
+      std::string row = *tokIt;
+      boost::char_separator<char> sepComma (",");
+      boost::tokenizer<boost::char_separator<char> >
+        tokInner (row, sepComma);
+      std::list<double> rowList;
+      for (boost::tokenizer<boost::char_separator<char> >::iterator
+             tokInnerIt = tokInner.begin();
+             tokInnerIt != tokInner.end();
+             ++tokInnerIt)
+      {
+        double element;
+        std::istringstream iss (*tokInnerIt);
+        iss >> element;
+        rowList.push_back(element);
+      }
+      rows.push_back(rowList);
+    }
+    matrix.zeros(rows.size(), (*(rows.begin())).size());
+    size_t rowCounter = 0;
+    size_t columnCounter = 0;
+    for (std::list<std::list<double> >::iterator rowIt = rows.begin();
+         rowIt != rows.end();
+         ++rowIt)
+    {
+      std::list<double> row = *rowIt;
+      columnCounter = 0;
+      for (std::list<double>::iterator elementIt = row.begin();
+           elementIt != row.end();
+           ++elementIt)
+      {
+        matrix(rowCounter, columnCounter) = *elementIt;
+        columnCounter++;
+      }
+      rowCounter++;
+    }
+    return matrix;
   }
   else
   {
@@ -136,6 +179,23 @@ void SaveRestoreUtility::SaveParameter(const char c, const std::string& name)
   parameters[name] = output.str();
 }
 
+void SaveRestoreUtility::SaveParameter(const arma::mat& mat,
+                                       const std::string& name)
+{
+  std::ostringstream output;
+  size_t columns = mat.n_cols;
+  size_t rows = mat.n_rows;
+  for (size_t r = 0; r < rows; ++r)
+  {
+    for (size_t c = 0; c < columns - 1; ++c)
+    {
+      output << std::setprecision(15) << mat(r, c) << ",";
+    }
+    output << std::setprecision(15) << mat(r, columns - 1) << std::endl;
+  }
+  parameters[name] = output.str();
+}
+
 // Special template specializations for vectors.
 
 namespace mlpack {
@@ -148,12 +208,19 @@ arma::vec& SaveRestoreUtility::LoadParameter(arma::vec& t,
   return (arma::vec&) LoadParameter((arma::mat&) t, name);
 }
 
+template<>
+void SaveRestoreUtility::SaveParameter(const arma::vec& t,
+                                       const std::string& name)
+{
+  SaveParameter((const arma::mat&) t, name);
+}
+    
 void SaveRestoreUtility::AddChild(SaveRestoreUtility& mn, const std::string&
     name)
 {
   children[name] = mn;
 }
 
-
+  
 }; // namespace util
 }; // namespace mlpack

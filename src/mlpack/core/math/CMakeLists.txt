@@ -3,7 +3,6 @@
 set(SOURCES
   clamp.hpp
   lin_alg.hpp
-  lin_alg_impl.hpp
   lin_alg.cpp
   random.hpp
   random.cpp
