@@ -22,10 +22,7 @@ class DTNNStatistic : public
       lowerBound(DBL_MAX),
       owner(size_t(-1)),
       pruned(size_t(-1)),
-      centroid(),
-      trueLeft(NULL),
-      trueRight(NULL),
-      trueParent(NULL)
+      centroid()
   {
     // Nothing to do.
   }
@@ -36,8 +33,7 @@ class DTNNStatistic : public
       upperBound(DBL_MAX),
       lowerBound(DBL_MAX),
       owner(size_t(-1)),
-      pruned(size_t(-1)),
-      trueParent((void*) node.Parent())
+      pruned(size_t(-1))
   {
     // Empirically calculate the centroid.
     centroid.zeros(node.Dataset().n_rows);
@@ -49,18 +45,6 @@ class DTNNStatistic : public
           node.Child(i).Stat().Centroid();
 
     centroid /= node.NumDescendants();
-
-    // Do we have children?
-    if (node.NumChildren() >= 2)
-    {
-      trueLeft = &node.Child(0);
-      trueRight = &node.Child(1);
-    }
-    else
-    {
-      trueLeft = NULL;
-      trueRight = NULL;
-    }
   }
 
   double UpperBound() const { return upperBound; }
@@ -72,20 +56,11 @@ class DTNNStatistic : public
   const arma::vec& Centroid() const { return centroid; }
   arma::vec& Centroid() { return centroid; }
 
-  size_t Pruned() const { return pruned; }
-  size_t& Pruned() { return pruned; }
-
   size_t Owner() const { return owner; }
   size_t& Owner() { return owner; }
 
-  const void* TrueLeft() const { return trueLeft; }
-  void*& TrueLeft() { return trueLeft; }
-
-  const void* TrueRight() const { return trueRight; }
-  void*& TrueRight() { return trueRight; }
-
-  const void* TrueParent() const { return trueParent; }
-  void*& TrueParent() { return trueParent; }
+  size_t Pruned() const { return pruned; }
+  size_t& Pruned() { return pruned; }
 
   std::string ToString() const
   {
@@ -104,9 +79,6 @@ class DTNNStatistic : public
   size_t owner;
   size_t pruned;
   arma::vec centroid;
-  void* trueLeft;
-  void* trueRight;
-  void* trueParent;
 };
 
 } // namespace kmeans

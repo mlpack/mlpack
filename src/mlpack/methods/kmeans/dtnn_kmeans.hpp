@@ -79,38 +79,26 @@ class DTNNKMeans
   //! Track iteration number.
   size_t iteration;
 
-  //! Centroids from pruning.  Not normalized.
-  arma::mat prunedCentroids;
-  //! Counts from pruning.  Not normalized.
-  arma::Col<size_t> prunedCounts;
-
-  //! Distances that the clusters moved last iteration.
-  arma::vec clusterDistances;
-
+  //! Upper bounds on nearest centroid.
+  arma::vec upperBounds;
   //! Lower bounds on second closest cluster distance for each point.
-  arma::vec lowerSecondBounds;
+  arma::vec lowerBounds;
   //! Indicator of whether or not the point is pruned.
   std::vector<bool> prunedPoints;
-  //! The last cluster each point was assigned to.
-  arma::Col<size_t> lastOwners;
 
-  arma::mat distances;
-  arma::Mat<size_t> assignments;
+  arma::Col<size_t> assignments;
 
   std::vector<bool> visited; // Was the point visited this iteration?
 
   arma::mat lastIterationCentroids; // For sanity checks.
 
   //! Update the bounds in the tree before the next iteration.
-  void UpdateTree(TreeType& node,
-                  const arma::mat& centroids,
-                  const arma::mat& interclusterDistances,
-                  const std::vector<size_t>& newFromOldCentroids);
+  void UpdateTree(TreeType& node);
 
-  void PrecalculateCentroids(TreeType& node);
-
-  void CoalesceTree(TreeType& node, const size_t child = 0);
-  void DecoalesceTree(TreeType& node);
+  //! Extract the centroids of the clusters.
+  void ExtractCentroids(TreeType& node,
+                        arma::mat& newCentroids,
+                        arma::Col<size_t>& newCounts);
 };
 
 //! A template typedef for the DTNNKMeans algorithm with the default tree type
