@@ -176,6 +176,7 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
     std::vector<size_t>& oldFromNewCentroids,
     arma::mat& newCentroids)
 {
+  const bool prunedLastIteration = node.Stat().StaticPruned();
   node.Stat().StaticPruned() = false;
 
   // Grab information from the parent, if we can.
@@ -225,6 +226,14 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
         continue; // We didn't visit it and we don't have valid bounds -- so we
                   // can't prune it.
 
+      if (prunedLastIteration)
+      {
+        // It was pruned last iteration but not this iteration.
+        // Set the bounds correctly.
+        upperBounds[index] += node.Stat().StaticUpperBoundMovement();
+        lowerBounds[index] -= node.Stat().StaticLowerBoundMovement();
+      }
+
       prunedPoints[index] = false;
       const size_t owner = assignments[node.Point(i)];
       const double lowerBound = std::min(lowerBounds[index] -
@@ -257,12 +266,18 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
   }
   else
   {
-    // Adjust bounds for individual points.
-    for (size_t i = 0; i < node.NumDescendants(); ++i)
+    if (prunedLastIteration)
     {
-      upperBounds[node.Descendant(i)] += clusterDistances[node.Stat().Owner()];
-      lowerBounds[node.Descendant(i)] -=
-          clusterDistances[newCentroids.n_cols - 1];
+      // Track total movement while pruned.
+      node.Stat().StaticUpperBoundMovement() +=
+          clusterDistances[node.Stat().Owner()];
+      node.Stat().StaticLowerBoundMovement() +=
+          clusterDistances[newCentroids.n_cols];
+    }
+    else
+    {
+      node.Stat().StaticUpperBoundMovement() = 0.0;
+      node.Stat().StaticLowerBoundMovement() = 0.0;
     }
   }
 

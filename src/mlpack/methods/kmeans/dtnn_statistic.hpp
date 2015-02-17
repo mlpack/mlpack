@@ -23,6 +23,8 @@ class DTNNStatistic : public
       owner(size_t(-1)),
       pruned(size_t(-1)),
       staticPruned(false),
+      staticUpperBoundMovement(0.0),
+      staticLowerBoundMovement(0.0),
       centroid()
   {
     // Nothing to do.
@@ -35,7 +37,9 @@ class DTNNStatistic : public
       lowerBound(DBL_MAX),
       owner(size_t(-1)),
       pruned(size_t(-1)),
-      staticPruned(false)
+      staticPruned(false),
+      staticUpperBoundMovement(0.0),
+      staticLowerBoundMovement(0.0)
   {
     // Empirically calculate the centroid.
     centroid.zeros(node.Dataset().n_rows);
@@ -67,6 +71,12 @@ class DTNNStatistic : public
   bool StaticPruned() const { return staticPruned; }
   bool& StaticPruned() { return staticPruned; }
 
+  double StaticUpperBoundMovement() const { return staticUpperBoundMovement; }
+  double& StaticUpperBoundMovement() { return staticUpperBoundMovement; }
+
+  double StaticLowerBoundMovement() const { return staticLowerBoundMovement; }
+  double& StaticLowerBoundMovement() { return staticLowerBoundMovement; }
+
   std::string ToString() const
   {
     std::ostringstream o;
@@ -85,6 +95,8 @@ class DTNNStatistic : public
   size_t owner;
   size_t pruned;
   bool staticPruned;
+  double staticUpperBoundMovement;
+  double staticLowerBoundMovement;
   arma::vec centroid;
 };
 
