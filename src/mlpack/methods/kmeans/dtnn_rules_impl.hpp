@@ -58,7 +58,8 @@ inline force_inline double DTNNKMeansRules<MetricType, TreeType>::BaseCase(
   {
     lowerBounds[queryIndex] = upperBounds[queryIndex];
     upperBounds[queryIndex] = distance;
-    assignments[queryIndex] = referenceIndex;
+    assignments[queryIndex] = (tree::TreeTraits<TreeType>::RearrangesDataset) ?
+        oldFromNewCentroids[referenceIndex] : referenceIndex;
   }
   else if (distance < lowerBounds[queryIndex])
   {
@@ -121,7 +122,9 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
     queryNode.Stat().UpperBound() = distances.Hi();
     // If this node has only one descendant, then it may be the owner.
     if (referenceNode.NumDescendants() == 1)
-      queryNode.Stat().Owner() = referenceNode.Descendant(0);
+      queryNode.Stat().Owner() = (tree::TreeTraits<TreeType>::RearrangesDataset)
+          ? oldFromNewCentroids[referenceNode.Descendant(0)]
+          : referenceNode.Descendant(0);
   }
 
   // Is everything pruned?
