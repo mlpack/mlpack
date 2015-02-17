@@ -181,7 +181,9 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
   if ((node.Stat().Pruned() == clusterDistances.n_elem - 1) &&
       (node.Stat().Owner() < clusterDistances.n_elem - 1))
   {
-    const size_t owner = oldFromNewCentroids[node.Stat().Owner()];
+    const size_t owner = (tree::TreeTraits<TreeType>::RearrangesDataset) ?
+        oldFromNewCentroids[node.Stat().Owner()] :
+        node.Stat().Owner();
 
     node.Stat().LastUpperBound() = node.Stat().UpperBound() +
         clusterDistances[owner];
@@ -225,18 +227,26 @@ void DTNNKMeans<MetricType, MatType, TreeType>::ExtractCentroids(
   // Does this node own points?
   if (node.Stat().Pruned() == newCentroids.n_cols)
   {
-    const size_t owner = oldFromNewCentroids[node.Stat().Owner()];
+    const size_t owner = (tree::TreeTraits<TreeType>::RearrangesDataset) ?
+        oldFromNewCentroids[node.Stat().Owner()] :
+        node.Stat().Owner();
     newCentroids.col(owner) += node.Stat().Centroid() * node.NumDescendants();
     newCounts[owner] += node.NumDescendants();
   }
   else
   {
     // Check each point held in the node.
-    for (size_t i = 0; i < node.NumPoints(); ++i)
+    // Only check at leaves.
+    if (node.NumChildren() == 0)
     {
-      const size_t owner = oldFromNewCentroids[assignments[node.Point(i)]];
-      newCentroids.col(owner) += dataset.col(node.Point(i));
-      ++newCounts[owner];
+      for (size_t i = 0; i < node.NumPoints(); ++i)
+      {
+        const size_t owner = (tree::TreeTraits<TreeType>::RearrangesDataset) ?
+            oldFromNewCentroids[assignments[node.Point(i)]] :
+            assignments[node.Point(i)];
+        newCentroids.col(owner) += dataset.col(node.Point(i));
+        ++newCounts[owner];
+      }
     }
 
     // The node is not entirely owned by a cluster.  Recurse.
