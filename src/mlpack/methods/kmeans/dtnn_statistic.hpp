@@ -23,6 +23,7 @@ class DTNNStatistic : public
       lastUpperBound(DBL_MAX),
       owner(size_t(-1)),
       pruned(size_t(-1)),
+      staticPruned(false),
       centroid()
   {
     // Nothing to do.
@@ -35,7 +36,8 @@ class DTNNStatistic : public
       lowerBound(DBL_MAX),
       lastUpperBound(DBL_MAX),
       owner(size_t(-1)),
-      pruned(size_t(-1))
+      pruned(size_t(-1)),
+      staticPruned(false)
   {
     // Empirically calculate the centroid.
     centroid.zeros(node.Dataset().n_rows);
@@ -67,6 +69,9 @@ class DTNNStatistic : public
   size_t Pruned() const { return pruned; }
   size_t& Pruned() { return pruned; }
 
+  bool StaticPruned() const { return staticPruned; }
+  bool& StaticPruned() { return staticPruned; }
+
   std::string ToString() const
   {
     std::ostringstream o;
@@ -75,6 +80,7 @@ class DTNNStatistic : public
     o << "  Lower bound: " << lowerBound << ".\n";
     o << "  Last upper bound: " << lastUpperBound << ".\n";
     o << "  Pruned: " << pruned << ".\n";
+    o << "  Static pruned: " << staticPruned << ".\n";
     o << "  Owner: " << owner << ".\n";
     return o.str();
   }
@@ -85,6 +91,7 @@ class DTNNStatistic : public
   double lastUpperBound;
   size_t owner;
   size_t pruned;
+  bool staticPruned;
   arma::vec centroid;
 };
 

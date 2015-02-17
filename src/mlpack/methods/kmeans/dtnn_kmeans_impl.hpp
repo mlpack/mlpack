@@ -128,9 +128,8 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   // Now we need to extract the clusters.
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);
   counts.zeros(centroids.n_cols);
-  ExtractCentroids(*tree, newCentroids, counts, oldFromNewCentroids);
-  Log::Warn << "New counts: " << counts.t();
-  Log::Warn << accu(counts) << ".\n";
+  ExtractCentroids(*tree, newCentroids, counts, oldFromNewCentroids,
+      oldCentroids);
 
   // Now, calculate how far the clusters moved, after normalizing them.
   double residual = 0.0;
@@ -160,7 +159,7 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   }
   distanceCalculations += centroids.n_cols;
 
-  UpdateTree(*tree, clusterDistances, oldFromNewCentroids);
+  UpdateTree(*tree, clusterDistances, oldFromNewCentroids, newCentroids);
 
   delete centroidTree;
 
@@ -173,45 +172,46 @@ template<typename MetricType, typename MatType, typename TreeType>
 void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
     TreeType& node,
     arma::vec& clusterDistances,
-    std::vector<size_t>& oldFromNewCentroids)
+    std::vector<size_t>& oldFromNewCentroids,
+    arma::mat& newCentroids)
 {
-  // Simply reset the bounds.
-  node.Stat().UpperBound() = DBL_MAX;
-  node.Stat().LowerBound() = DBL_MAX;
+  node.Stat().StaticPruned() = false;
+
   if ((node.Stat().Pruned() == clusterDistances.n_elem - 1) &&
       (node.Stat().Owner() < clusterDistances.n_elem - 1))
   {
-    const size_t owner = node.Stat().Owner();
-
-    node.Stat().LastUpperBound() = node.Stat().UpperBound() +
-        clusterDistances[owner];
-
-    // Update child bounds, at least a little.
-    for (size_t i = 0; i < node.NumChildren(); ++i)
+    // Adjust bounds.
+    node.Stat().UpperBound() += clusterDistances[node.Stat().Owner()];
+    node.Stat().LowerBound() -= clusterDistances[clusterDistances.n_elem - 1];
+    if (node.Stat().UpperBound() < node.Stat().LowerBound())
     {
-      node.Child(i).Stat().UpperBound() = node.Stat().UpperBound();
-      node.Child(i).Stat().LowerBound() = node.Stat().LowerBound();
-      node.Child(i).Stat().Owner() = node.Stat().Owner();
-      node.Child(i).Stat().Pruned() = node.Stat().Pruned();
+      node.Stat().StaticPruned() = true;
+    }
+    else
+    {
+      // Tighten bound.
+      node.Stat().UpperBound() =
+          node.MaxDistance(newCentroids.col(node.Stat().Owner()));
+      ++distanceCalculations;
+      if (node.Stat().UpperBound() < node.Stat().LowerBound())
+      {
+        node.Stat().StaticPruned() = true;
+      }
     }
   }
-  else if ((node.Stat().Pruned() == clusterDistances.n_elem - 1) &&
-           (node.Stat().Owner() >= clusterDistances.n_elem - 1))
+
+  if (!node.Stat().StaticPruned())
   {
-    Log::Warn << clusterDistances.n_cols - 1 << ".\n";
-    Log::Warn << node;
-    Log::Fatal << "Node is pruned, but has no owner!\n";
+    node.Stat().UpperBound() = DBL_MAX;
+    node.Stat().LowerBound() = DBL_MAX;
+    node.Stat().Pruned() = 0;
+    node.Stat().Owner() = clusterDistances.n_elem - 1;
+    node.Stat().StaticPruned() = false;
   }
-  else
-  {
-    node.Stat().LastUpperBound() = node.Stat().UpperBound() +
-        clusterDistances[clusterDistances.n_elem - 1];
-  }
-  node.Stat().Pruned() = size_t(-1);
-  node.Stat().Owner() = size_t(-1);
 
   for (size_t i = 0; i < node.NumChildren(); ++i)
-    UpdateTree(node.Child(i), clusterDistances, oldFromNewCentroids);
+    UpdateTree(node.Child(i), clusterDistances, oldFromNewCentroids,
+        newCentroids);
 }
 
 template<typename MetricType, typename MatType, typename TreeType>
@@ -219,14 +219,42 @@ void DTNNKMeans<MetricType, MatType, TreeType>::ExtractCentroids(
     TreeType& node,
     arma::mat& newCentroids,
     arma::Col<size_t>& newCounts,
-    std::vector<size_t>& oldFromNewCentroids)
+    std::vector<size_t>& oldFromNewCentroids,
+    arma::mat& centroids)
 {
   // Does this node own points?
-  if (node.Stat().Pruned() == newCentroids.n_cols)
+  if ((node.Stat().Pruned() == newCentroids.n_cols) ||
+      (node.Stat().StaticPruned() && node.Stat().Owner() < newCentroids.n_cols))
   {
     const size_t owner = node.Stat().Owner();
     newCentroids.col(owner) += node.Stat().Centroid() * node.NumDescendants();
     newCounts[owner] += node.NumDescendants();
+
+    // Perform the sanity check here.
+/*
+    for (size_t i = 0; i < node.NumDescendants(); ++i)
+    {
+      const size_t index = node.Descendant(i);
+      arma::vec trueDistances(centroids.n_cols);
+      for (size_t j = 0; j < centroids.n_cols; ++j)
+      {
+        const double dist = metric.Evaluate(dataset.col(index),
+                                            centroids.col(j));
+        trueDistances[j] = dist;
+      }
+
+      arma::uword minIndex;
+      const double minDist = trueDistances.min(minIndex);
+      if (size_t(minIndex) != owner)
+      {
+        Log::Warn << trueDistances.t();
+        Log::Fatal << "Point " << index << " of node " << node.Point(0) << "c"
+<< node.NumDescendants() << " has true minimum cluster " << minIndex << " with "
+      << "distance " << minDist << " but node is pruned with upper bound " <<
+node.Stat().UpperBound() << " and owner " << node.Stat().Owner() << ".\n";
+      }
+    }
+*/
   }
   else
   {
@@ -245,7 +273,7 @@ void DTNNKMeans<MetricType, MatType, TreeType>::ExtractCentroids(
     // The node is not entirely owned by a cluster.  Recurse.
     for (size_t i = 0; i < node.NumChildren(); ++i)
       ExtractCentroids(node.Child(i), newCentroids, newCounts,
-          oldFromNewCentroids);
+          oldFromNewCentroids, centroids);
   }
 }
 

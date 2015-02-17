@@ -87,6 +87,9 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
     TreeType& queryNode,
     TreeType& referenceNode)
 {
+  if (queryNode.Stat().StaticPruned() == true)
+    return DBL_MAX;
+
   // Pruned() for the root node must never be set to size_t(-1).
   if (queryNode.Stat().Pruned() == size_t(-1))
   {
