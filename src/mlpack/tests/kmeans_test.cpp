@@ -711,7 +711,9 @@ BOOST_AUTO_TEST_CASE(DualTreeKMeansBaseCaseTest)
   upperBounds.fill(DBL_MAX);
   lowerBounds.fill(DBL_MAX);
   std::vector<bool> visited(points, false); // Fill with false.
-  std::vector<size_t> oldFromNewCentroids; // Not used.
+  std::vector<size_t> oldFromNewCentroids(clusters);
+  for (size_t i = 0; i < clusters; ++i)
+    oldFromNewCentroids[i] = i;
   std::vector<bool> prunedPoints(points, false); // Fill with false.
 
   EuclideanDistance e;
@@ -768,7 +770,9 @@ BOOST_AUTO_TEST_CASE(DualTreeKMeansScoreKDTreeOneLeafTest)
   upperBounds.fill(DBL_MAX);
   lowerBounds.fill(DBL_MAX);
   std::vector<bool> visited(points, false); // Fill with false.
-  std::vector<size_t> oldFromNewCentroids; // Not used.
+  std::vector<size_t> oldFromNewCentroids(clusters);
+  for (size_t i = 0; i < clusters; ++i)
+    oldFromNewCentroids[i] = i;
   std::vector<bool> prunedPoints(points, false); // Fill with false.
 
   EuclideanDistance e;
@@ -876,7 +880,9 @@ BOOST_AUTO_TEST_CASE(DualTreeKMeansScoreKDTreeTest)
   upperBounds.fill(DBL_MAX);
   lowerBounds.fill(DBL_MAX);
   std::vector<bool> visited(points, false); // Fill with false.
-  std::vector<size_t> oldFromNewCentroids; // Not used.
+  std::vector<size_t> oldFromNewCentroids(clusters);
+  for (size_t i = 0; i < clusters; ++i)
+    oldFromNewCentroids[i] = i;
   std::vector<bool> prunedPoints(points, false); // Fill with false.
 
   EuclideanDistance e;
