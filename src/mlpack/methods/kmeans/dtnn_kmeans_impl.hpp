@@ -204,7 +204,7 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
   {
     node.Stat().UpperBound() = DBL_MAX;
     node.Stat().LowerBound() = DBL_MAX;
-    node.Stat().Pruned() = 0;
+    node.Stat().Pruned() = size_t(-1);
     node.Stat().Owner() = clusterDistances.n_elem - 1;
     node.Stat().StaticPruned() = false;
   }

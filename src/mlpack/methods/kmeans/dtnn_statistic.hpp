@@ -20,7 +20,6 @@ class DTNNStatistic : public
       neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>(),
       upperBound(DBL_MAX),
       lowerBound(DBL_MAX),
-      lastUpperBound(DBL_MAX),
       owner(size_t(-1)),
       pruned(size_t(-1)),
       staticPruned(false),
@@ -34,7 +33,6 @@ class DTNNStatistic : public
       neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>(),
       upperBound(DBL_MAX),
       lowerBound(DBL_MAX),
-      lastUpperBound(DBL_MAX),
       owner(size_t(-1)),
       pruned(size_t(-1)),
       staticPruned(false)
@@ -57,9 +55,6 @@ class DTNNStatistic : public
   double LowerBound() const { return lowerBound; }
   double& LowerBound() { return lowerBound; }
 
-  double LastUpperBound() const { return lastUpperBound; }
-  double& LastUpperBound() { return lastUpperBound; }
-
   const arma::vec& Centroid() const { return centroid; }
   arma::vec& Centroid() { return centroid; }
 
@@ -78,7 +73,6 @@ class DTNNStatistic : public
     o << "DTNNStatistic [" << this << "]:\n";
     o << "  Upper bound: " << upperBound << ".\n";
     o << "  Lower bound: " << lowerBound << ".\n";
-    o << "  Last upper bound: " << lastUpperBound << ".\n";
     o << "  Pruned: " << pruned << ".\n";
     o << "  Static pruned: " << staticPruned << ".\n";
     o << "  Owner: " << owner << ".\n";
@@ -88,7 +82,6 @@ class DTNNStatistic : public
  private:
   double upperBound;
   double lowerBound;
-  double lastUpperBound;
   size_t owner;
   size_t pruned;
   bool staticPruned;
