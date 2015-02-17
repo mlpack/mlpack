@@ -208,6 +208,9 @@ class CoverTree
   template<typename RuleType>
   class DualTreeTraverser;
 
+  template<typename RuleType>
+  using BreadthFirstDualTreeTraverser = DualTreeTraverser<RuleType>;
+
   //! Get a reference to the dataset.
   const arma::mat& Dataset() const { return dataset; }
 

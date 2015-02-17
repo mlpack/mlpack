@@ -29,7 +29,7 @@ TreeType* BuildTree(
 {
   // This is a hack.  I know this will be BinarySpaceTree, so force a leaf size
   // of two.
-  return new TreeType(dataset, oldFromNew);
+  return new TreeType(dataset, oldFromNew, 2);
 }
 
 //! Call the tree constructor that does not do mapping.
@@ -99,14 +99,6 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   std::vector<size_t> oldFromNewCentroids;
   TreeType* centroidTree = BuildTree<TreeType>(
       const_cast<typename TreeType::Mat&>(centroids), oldFromNewCentroids);
-  // Calculate new from old mappings.
-  std::vector<size_t> newFromOldCentroids;
-  if (tree::TreeTraits<TreeType>::RearrangesDataset)
-  {
-    newFromOldCentroids.resize(centroids.n_cols);
-    for (size_t i = 0; i < centroids.n_cols; ++i)
-      newFromOldCentroids[oldFromNewCentroids[i]] = i;
-  }
 
 /*
   Timer::Start("knn");
@@ -121,7 +113,7 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
 */
 
   // We won't use the AllkNN class here because we have our own set of rules.
-  typedef typename DTNNKMeansRules<MetricType, TreeType> RuleType;
+  typedef DTNNKMeansRules<MetricType, TreeType> RuleType;
   RuleType rules(centroids, dataset, assignments, upperBounds, lowerBounds,
       metric, prunedPoints, oldFromNewCentroids, visited);
 
@@ -131,14 +123,18 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   // Set the number of pruned centroids in the root to 0.
   tree->Stat().Pruned() = 0;
   traverser.Traverse(*tree, *centroidTree);
+  distanceCalculations += rules.BaseCases() + rules.Scores();
 
   // Now we need to extract the clusters.
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);
   counts.zeros(centroids.n_cols);
-  ExtractCentroids(*tree, newCentroids, counts);
+  ExtractCentroids(*tree, newCentroids, counts, oldFromNewCentroids);
+  Log::Warn << "New counts: " << counts.t();
+  Log::Warn << accu(counts) << ".\n";
 
   // Now, calculate how far the clusters moved, after normalizing them.
   double residual = 0.0;
+  arma::vec clusterDistances(centroids.n_cols + 1);
   clusterDistances[centroids.n_cols] = 0.0;
   for (size_t c = 0; c < centroids.n_cols; ++c)
   {
@@ -164,6 +160,8 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   }
   distanceCalculations += centroids.n_cols;
 
+  UpdateTree(*tree, clusterDistances, oldFromNewCentroids);
+
   delete centroidTree;
 
   ++iteration;
@@ -173,28 +171,61 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
 
 template<typename MetricType, typename MatType, typename TreeType>
 void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
-    TreeType& node)
+    TreeType& node,
+    arma::vec& clusterDistances,
+    std::vector<size_t>& oldFromNewCentroids)
 {
   // Simply reset the bounds.
   node.Stat().UpperBound() = DBL_MAX;
   node.Stat().LowerBound() = DBL_MAX;
+  if ((node.Stat().Pruned() == clusterDistances.n_elem - 1) &&
+      (node.Stat().Owner() < clusterDistances.n_elem - 1))
+  {
+    const size_t owner = oldFromNewCentroids[node.Stat().Owner()];
+
+    node.Stat().LastUpperBound() = node.Stat().UpperBound() +
+        clusterDistances[owner];
+
+    // Update child bounds, at least a little.
+    for (size_t i = 0; i < node.NumChildren(); ++i)
+    {
+      node.Child(i).Stat().UpperBound() = node.Stat().UpperBound();
+      node.Child(i).Stat().LowerBound() = node.Stat().LowerBound();
+      node.Child(i).Stat().Owner() = node.Stat().Owner();
+      node.Child(i).Stat().Pruned() = node.Stat().Pruned();
+    }
+  }
+  else if ((node.Stat().Pruned() == clusterDistances.n_elem - 1) &&
+           (node.Stat().Owner() >= clusterDistances.n_elem - 1))
+  {
+    Log::Warn << clusterDistances.n_cols - 1 << ".\n";
+    Log::Warn << node;
+    Log::Fatal << "Node is pruned, but has no owner!\n";
+  }
+  else
+  {
+    node.Stat().LastUpperBound() = node.Stat().UpperBound() +
+        clusterDistances[clusterDistances.n_elem - 1];
+  }
   node.Stat().Pruned() = size_t(-1);
   node.Stat().Owner() = size_t(-1);
+  node.Stat().LowerBound() = DBL_MAX;
 
   for (size_t i = 0; i < node.NumChildren(); ++i)
-    UpdateTree(node.Child(i));
+    UpdateTree(node.Child(i), clusterDistances, oldFromNewCentroids);
 }
 
 template<typename MetricType, typename MatType, typename TreeType>
 void DTNNKMeans<MetricType, MatType, TreeType>::ExtractCentroids(
     TreeType& node,
     arma::mat& newCentroids,
-    arma::Col<size_t>& newCounts)
+    arma::Col<size_t>& newCounts,
+    std::vector<size_t>& oldFromNewCentroids)
 {
   // Does this node own points?
-  if (node.Stat().Owner() < newCentroids.n_cols)
+  if (node.Stat().Pruned() == newCentroids.n_cols)
   {
-    const size_t owner = node.Stat().Owner();
+    const size_t owner = oldFromNewCentroids[node.Stat().Owner()];
     newCentroids.col(owner) += node.Stat().Centroid() * node.NumDescendants();
     newCounts[owner] += node.NumDescendants();
   }
@@ -203,14 +234,15 @@ void DTNNKMeans<MetricType, MatType, TreeType>::ExtractCentroids(
     // Check each point held in the node.
     for (size_t i = 0; i < node.NumPoints(); ++i)
     {
-      const size_t owner = assignments[node.Point(i)];
+      const size_t owner = oldFromNewCentroids[assignments[node.Point(i)]];
       newCentroids.col(owner) += dataset.col(node.Point(i));
       ++newCounts[owner];
     }
 
     // The node is not entirely owned by a cluster.  Recurse.
     for (size_t i = 0; i < node.NumChildren(); ++i)
-      ExtractCentroids(node.Child(i), newCentroids, newCounts);
+      ExtractCentroids(node.Child(i), newCentroids, newCounts,
+          oldFromNewCentroids);
   }
 }
 

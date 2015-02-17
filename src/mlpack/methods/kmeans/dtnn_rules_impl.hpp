@@ -91,6 +91,7 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
   {
     queryNode.Stat().Pruned() = queryNode.Parent()->Stat().Pruned();
     queryNode.Stat().LowerBound() = queryNode.Parent()->Stat().LowerBound();
+    queryNode.Stat().Owner() = queryNode.Parent()->Stat().Owner();
   }
 
   if (queryNode.Stat().Pruned() == centroids.n_cols)
@@ -102,7 +103,8 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
   math::Range distances = queryNode.RangeDistance(&referenceNode);
   double score = distances.Lo();
   ++scores;
-  if (distances.Lo() > queryNode.Stat().UpperBound())
+  if (distances.Lo() > queryNode.Stat().UpperBound() ||
+      distances.Lo() > queryNode.Stat().LastUpperBound())
   {
     // The reference node can own no points in this query node.  We may improve
     // the lower bound on pruned nodes, though.

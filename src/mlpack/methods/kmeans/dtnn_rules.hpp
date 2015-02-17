@@ -44,6 +44,12 @@ class DTNNKMeansRules
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
 
+  size_t BaseCases() const { return baseCases; }
+  size_t& BaseCases() { return baseCases; }
+
+  size_t Scores() const { return scores; }
+  size_t& Scores() { return scores; }
+
  private:
   const arma::mat& centroids;
   const arma::mat& dataset;

@@ -93,12 +93,15 @@ class DTNNKMeans
   arma::mat lastIterationCentroids; // For sanity checks.
 
   //! Update the bounds in the tree before the next iteration.
-  void UpdateTree(TreeType& node);
+  void UpdateTree(TreeType& node,
+                  arma::vec& clusterDistances,
+                  std::vector<size_t>& oldFromNewCentroids);
 
   //! Extract the centroids of the clusters.
   void ExtractCentroids(TreeType& node,
                         arma::mat& newCentroids,
-                        arma::Col<size_t>& newCounts);
+                        arma::Col<size_t>& newCounts,
+                        std::vector<size_t>& oldFromNewCentroids);
 };
 
 //! A template typedef for the DTNNKMeans algorithm with the default tree type
