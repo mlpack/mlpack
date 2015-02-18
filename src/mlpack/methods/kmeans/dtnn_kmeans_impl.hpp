@@ -94,10 +94,26 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
     arma::mat& newCentroids,
     arma::Col<size_t>& counts)
 {
-  // Reset information, if we need to.
+  // Build a tree on the centroids.
+  arma::mat oldCentroids(centroids); // Slow. :(
+  std::vector<size_t> oldFromNewCentroids;
+  TreeType* centroidTree = BuildTree<TreeType>(
+      const_cast<typename TreeType::Mat&>(centroids), oldFromNewCentroids);
+
+  Timer::Start("knn");
+  // Find the nearest neighbors of each of the clusters.
+  neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType, TreeType>
+      nns(centroidTree, centroids);
+  arma::mat interclusterDistances;
+  arma::Mat<size_t> closestClusters; // We don't actually care about these.
+  nns.Search(1, closestClusters, interclusterDistances);
+//  distanceCalculations += nns.BaseCases() + nns.Scores();
+  Timer::Stop("knn");
+
+  // Reset information in the tree, if we need to.
   if (iteration > 0)
   {
-    UpdateTree(*tree, centroids);
+    UpdateTree(*tree, oldCentroids, interclusterDistances);
 
     for (size_t i = 0; i < dataset.n_cols; ++i)
       visited[i] = false;
@@ -108,22 +124,6 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
     clusterDistances.set_size(centroids.n_cols + 1);
   }
 
-  // Build a tree on the centroids.
-  arma::mat oldCentroids(centroids); // Slow. :(
-  std::vector<size_t> oldFromNewCentroids;
-  TreeType* centroidTree = BuildTree<TreeType>(
-      const_cast<typename TreeType::Mat&>(centroids), oldFromNewCentroids);
-/*
-  Timer::Start("knn");
-  // Find the nearest neighbors of each of the clusters.
-  neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType, TreeType>
-      nns(centroidTree, centroids);
-  arma::mat interclusterDistances;
-  arma::Mat<size_t> closestClusters; // We don't actually care about these.
-  nns.Search(1, closestClusters, interclusterDistances);
-  distanceCalculations += nns.BaseCases() + nns.Scores();
-  Timer::Stop("knn");
-*/
   // We won't use the AllkNN class here because we have our own set of rules.
   typedef DTNNKMeansRules<MetricType, TreeType> RuleType;
   RuleType rules(centroids, dataset, assignments, upperBounds, lowerBounds,
@@ -187,7 +187,8 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
 template<typename MetricType, typename MatType, typename TreeType>
 void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
     TreeType& node,
-    const arma::mat& centroids)
+    const arma::mat& centroids,
+    const arma::mat& interclusterDistances)
 {
   const bool prunedLastIteration = node.Stat().StaticPruned();
   node.Stat().StaticPruned() = false;
@@ -208,7 +209,9 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
     // Adjust bounds.
     node.Stat().UpperBound() += clusterDistances[node.Stat().Owner()];
     node.Stat().LowerBound() -= clusterDistances[centroids.n_cols];
-    if (node.Stat().UpperBound() < node.Stat().LowerBound())
+    const double lowerBound = std::max(node.Stat().LowerBound(),
+        interclusterDistances[node.Stat().Owner()] / 2.0);
+    if (node.Stat().UpperBound() < lowerBound)
     {
       node.Stat().StaticPruned() = true;
     }
@@ -218,7 +221,7 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
       node.Stat().UpperBound() =
           node.MaxDistance(centroids.col(node.Stat().Owner()));
       ++distanceCalculations;
-      if (node.Stat().UpperBound() < node.Stat().LowerBound())
+      if (node.Stat().UpperBound() < lowerBound)
       {
         node.Stat().StaticPruned() = true;
       }
@@ -251,6 +254,8 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
       const size_t owner = assignments[node.Point(i)];
       const double lowerBound = std::min(lowerBounds[index] -
           clusterDistances[centroids.n_cols], node.Stat().LowerBound());
+//      const double pruningLowerBound = std::max(lowerBound,
+//          interclusterDistances[owner] / 2.0);
       if (upperBounds[index] + clusterDistances[owner] < lowerBound)
       {
         prunedPoints[index] = true;
@@ -295,7 +300,7 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
   }
 
   for (size_t i = 0; i < node.NumChildren(); ++i)
-    UpdateTree(node.Child(i), centroids);
+    UpdateTree(node.Child(i), centroids, interclusterDistances);
 
   if (!node.Stat().StaticPruned())
   {

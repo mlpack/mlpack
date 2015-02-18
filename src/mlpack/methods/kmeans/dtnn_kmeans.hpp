@@ -97,7 +97,8 @@ class DTNNKMeans
   //! Update the bounds in the tree before the next iteration.
   //! centroids is the current (not yet searched) centroids.
   void UpdateTree(TreeType& node,
-                  const arma::mat& centroids);
+                  const arma::mat& centroids,
+                  const arma::mat& interclusterDistances);
 
   //! Extract the centroids of the clusters.
   void ExtractCentroids(TreeType& node,
