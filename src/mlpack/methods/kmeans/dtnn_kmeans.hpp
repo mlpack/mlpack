@@ -92,17 +92,17 @@ class DTNNKMeans
 
   arma::mat lastIterationCentroids; // For sanity checks.
 
+  arma::vec clusterDistances; // The amount the clusters moved last iteration.
+
   //! Update the bounds in the tree before the next iteration.
+  //! centroids is the current (not yet searched) centroids.
   void UpdateTree(TreeType& node,
-                  arma::vec& clusterDistances,
-                  std::vector<size_t>& oldFromNewCentroids,
-                  arma::mat& newCentroids);
+                  const arma::mat& centroids);
 
   //! Extract the centroids of the clusters.
   void ExtractCentroids(TreeType& node,
                         arma::mat& newCentroids,
                         arma::Col<size_t>& newCounts,
-                        std::vector<size_t>& oldFromNewCentroids,
                         arma::mat& centroids);
 
   void CoalesceTree(TreeType& node, const size_t child = 0);
