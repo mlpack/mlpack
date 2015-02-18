@@ -25,7 +25,10 @@ class DTNNStatistic : public
       staticPruned(false),
       staticUpperBoundMovement(0.0),
       staticLowerBoundMovement(0.0),
-      centroid()
+      centroid(),
+      trueParent(NULL),
+      trueLeft(NULL),
+      trueRight(NULL)
   {
     // Nothing to do.
   }
@@ -39,7 +42,10 @@ class DTNNStatistic : public
       pruned(size_t(-1)),
       staticPruned(false),
       staticUpperBoundMovement(0.0),
-      staticLowerBoundMovement(0.0)
+      staticLowerBoundMovement(0.0),
+      trueParent(node.Parent()),
+      trueLeft((node.NumChildren() == 0) ? NULL : &node.Child(0)),
+      trueRight((node.NumChildren() == 0) ? NULL : &node.Child(1))
   {
     // Empirically calculate the centroid.
     centroid.zeros(node.Dataset().n_rows);
@@ -77,6 +83,15 @@ class DTNNStatistic : public
   double StaticLowerBoundMovement() const { return staticLowerBoundMovement; }
   double& StaticLowerBoundMovement() { return staticLowerBoundMovement; }
 
+  void* TrueParent() const { return trueParent; }
+  void*& TrueParent() { return trueParent; }
+
+  void* TrueLeft() const { return trueLeft; }
+  void*& TrueLeft() { return trueLeft; }
+
+  void* TrueRight() const { return trueRight; }
+  void*& TrueRight() { return trueRight; }
+
   std::string ToString() const
   {
     std::ostringstream o;
@@ -98,6 +113,9 @@ class DTNNStatistic : public
   double staticUpperBoundMovement;
   double staticLowerBoundMovement;
   arma::vec centroid;
+  void* trueParent;
+  void* trueLeft;
+  void* trueRight;
 };
 
 } // namespace kmeans

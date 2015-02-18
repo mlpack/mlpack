@@ -121,10 +121,18 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   typename TreeType::template BreadthFirstDualTreeTraverser<RuleType>
       traverser(rules);
 
+  Timer::Start("tree_mod");
+  CoalesceTree(*tree);
+  Timer::Stop("tree_mod");
+
   // Set the number of pruned centroids in the root to 0.
   tree->Stat().Pruned() = 0;
   traverser.Traverse(*tree, *centroidTree);
   distanceCalculations += rules.BaseCases() + rules.Scores();
+
+  Timer::Start("tree_mod");
+  DecoalesceTree(*tree);
+  Timer::Stop("tree_mod");
 
   // Now we need to extract the clusters.
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);
@@ -380,6 +388,67 @@ assignments[node.Point(0)] << " with ub " << upperBounds[node.Point(0)] <<
     for (size_t i = 0; i < node.NumChildren(); ++i)
       ExtractCentroids(node.Child(i), newCentroids, newCounts,
           oldFromNewCentroids, centroids);
+  }
+}
+
+template<typename MetricType, typename MatType, typename TreeType>
+void DTNNKMeans<MetricType, MatType, TreeType>::CoalesceTree(
+    TreeType& node,
+    const size_t child /* Which child are we? */)
+{
+  // If one of the two children is pruned, we hide this node.
+  // This assumes the BinarySpaceTree.  (bad Ryan! bad!)
+  if (node.NumChildren() == 0)
+    return; // We can't do anything.
+
+  // If this is the root node, we can't coalesce.
+  if (node.Parent() != NULL)
+  {
+    if (node.Child(0).Stat().StaticPruned() &&
+        !node.Child(1).Stat().StaticPruned())
+    {
+      CoalesceTree(node.Child(1), 1);
+
+      // Link the right child to the parent.
+      node.Child(1).Parent() = node.Parent();
+      node.Parent()->ChildPtr(child) = node.ChildPtr(1);
+    }
+    else if (!node.Child(0).Stat().StaticPruned() &&
+             node.Child(1).Stat().StaticPruned())
+    {
+      CoalesceTree(node.Child(0), 0);
+
+      // Link the left child to the parent.
+      node.Child(0).Parent() = node.Parent();
+      node.Parent()->ChildPtr(child) = node.ChildPtr(0);
+
+    }
+    else if (!node.Child(0).Stat().StaticPruned() &&
+             !node.Child(1).Stat().StaticPruned())
+    {
+      // The conditional is probably not necessary.
+      CoalesceTree(node.Child(0), 0);
+      CoalesceTree(node.Child(1), 1);
+    }
+  }
+  else
+  {
+    CoalesceTree(node.Child(0), 0);
+    CoalesceTree(node.Child(1), 1);
+  }
+}
+
+template<typename MetricType, typename MatType, typename TreeType>
+void DTNNKMeans<MetricType, MatType, TreeType>::DecoalesceTree(TreeType& node)
+{
+  node.Parent() = (TreeType*) node.Stat().TrueParent();
+  node.ChildPtr(0) = (TreeType*) node.Stat().TrueLeft();
+  node.ChildPtr(1) = (TreeType*) node.Stat().TrueRight();
+
+  if (node.NumChildren() > 0)
+  {
+    DecoalesceTree(node.Child(0));
+    DecoalesceTree(node.Child(1));
   }
 }
 

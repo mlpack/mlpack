@@ -104,6 +104,9 @@ class DTNNKMeans
                         arma::Col<size_t>& newCounts,
                         std::vector<size_t>& oldFromNewCentroids,
                         arma::mat& centroids);
+
+  void CoalesceTree(TreeType& node, const size_t child = 0);
+  void DecoalesceTree(TreeType& node);
 };
 
 //! A template typedef for the DTNNKMeans algorithm with the default tree type
