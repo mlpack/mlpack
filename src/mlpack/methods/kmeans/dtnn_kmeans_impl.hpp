@@ -241,6 +241,7 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
     node.Stat().LowerBound() -= clusterDistances[centroids.n_cols];
   }
 
+  bool allPointsPruned = true;
   if (!node.Stat().StaticPruned())
   {
     // Try to prune individual points.
@@ -248,8 +249,11 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
     {
       const size_t index = node.Point(i);
       if (!visited[index] && !prunedPoints[index])
+      {
+        allPointsPruned = false;
         continue; // We didn't visit it and we don't have valid bounds -- so we
                   // can't prune it.
+      }
 
       if (prunedLastIteration)
       {
@@ -287,11 +291,40 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
           // Point cannot be pruned.
           upperBounds[index] = DBL_MAX;
           lowerBounds[index] = DBL_MAX;
+          allPointsPruned = false;
         }
       }
     }
   }
-  else
+
+  // Recurse into children, and if all the children (and all the points) are
+  // pruned, then we can mark this as statically pruned.
+  bool allChildrenPruned = true;
+  for (size_t i = 0; i < node.NumChildren(); ++i)
+  {
+    UpdateTree(node.Child(i), centroids, interclusterDistances);
+    if (!node.Child(i).Stat().StaticPruned())
+      allChildrenPruned = false;
+  }
+
+  // If all of the children and points are pruned, we may mark this node as
+  // pruned.
+  if (allChildrenPruned && allPointsPruned && !node.Stat().StaticPruned())
+  {
+    node.Stat().StaticPruned() = true;
+    node.Stat().Owner() = centroids.n_cols; // Invalid owner.
+    node.Stat().Pruned() = size_t(-1);
+  }
+
+  if (!node.Stat().StaticPruned())
+  {
+    node.Stat().UpperBound() = DBL_MAX;
+    node.Stat().LowerBound() = DBL_MAX;
+    node.Stat().Pruned() = size_t(-1);
+    node.Stat().Owner() = centroids.n_cols;
+    node.Stat().StaticPruned() = false;
+  }
+  else // The node is now pruned.
   {
     if (prunedLastIteration)
     {
@@ -306,18 +339,6 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
       node.Stat().StaticUpperBoundMovement() = 0.0;
       node.Stat().StaticLowerBoundMovement() = 0.0;
     }
-  }
-
-  for (size_t i = 0; i < node.NumChildren(); ++i)
-    UpdateTree(node.Child(i), centroids, interclusterDistances);
-
-  if (!node.Stat().StaticPruned())
-  {
-    node.Stat().UpperBound() = DBL_MAX;
-    node.Stat().LowerBound() = DBL_MAX;
-    node.Stat().Pruned() = size_t(-1);
-    node.Stat().Owner() = centroids.n_cols;
-    node.Stat().StaticPruned() = false;
   }
 }
 
