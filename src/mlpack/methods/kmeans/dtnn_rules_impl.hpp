@@ -78,7 +78,8 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
   if (prunedPoints[queryIndex])
     return DBL_MAX;
 
-  // No pruning at this level (for now).
+  // No pruning at this level; we're not likely to encounter a single query
+  // point with a reference node..
   return 0;
 }
 
@@ -99,9 +100,7 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
   }
 
   if (queryNode.Stat().Pruned() == centroids.n_cols)
-  {
     return DBL_MAX;
-  }
 
   // Get minimum and maximum distances.
   math::Range distances = queryNode.RangeDistance(&referenceNode);
@@ -151,11 +150,34 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Rescore(
 
 template<typename MetricType, typename TreeType>
 inline double DTNNKMeansRules<MetricType, TreeType>::Rescore(
-    TreeType& /* queryNode */,
-    TreeType& /* referenceNode */,
+    TreeType& queryNode,
+    TreeType& referenceNode,
     const double oldScore)
 {
-  // No rescoring (for now).
+  if (oldScore == DBL_MAX)
+    return DBL_MAX; // It's already pruned.
+
+  // oldScore contains the minimum distance between queryNode and referenceNode.
+  // In the time since Score() has been called, the upper bound *may* have
+  // tightened.  If it has tightened enough, we may prune this node now.
+  if (oldScore > queryNode.Stat().UpperBound())
+  {
+    // We may still be able to improve the lower bound on pruned nodes.
+    if (oldScore < queryNode.Stat().LowerBound())
+      queryNode.Stat().LowerBound() = oldScore;
+
+    // This assumes that reference clusters don't appear elsewhere in the tree.
+    queryNode.Stat().Pruned() += referenceNode.NumDescendants();
+    return DBL_MAX;
+  }
+
+  // Also, check if everything has been pruned.
+  if (queryNode.Stat().Pruned() == centroids.n_cols - 1)
+  {
+    queryNode.Stat().Pruned() = centroids.n_cols; // Owner() is already set.
+    return DBL_MAX;
+  }
+
   return oldScore;
 }
 
