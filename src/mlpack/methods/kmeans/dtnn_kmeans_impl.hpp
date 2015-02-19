@@ -216,9 +216,11 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
     // Adjust bounds.
     node.Stat().UpperBound() += clusterDistances[node.Stat().Owner()];
     node.Stat().LowerBound() -= clusterDistances[centroids.n_cols];
-    const double lowerBound = std::max(node.Stat().LowerBound(),
-        interclusterDistances[node.Stat().Owner()] / 2.0);
-    if (node.Stat().UpperBound() < lowerBound)
+    const double interclusterBound = interclusterDistances[node.Stat().Owner()]
+        / 2.0;
+    if (interclusterBound > node.Stat().LowerBound())
+      node.Stat().LowerBound() = interclusterBound;
+    if (node.Stat().UpperBound() < node.Stat().LowerBound())
     {
       node.Stat().StaticPruned() = true;
     }
@@ -228,7 +230,7 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
       node.Stat().UpperBound() =
           node.MaxDistance(centroids.col(node.Stat().Owner()));
       ++distanceCalculations;
-      if (node.Stat().UpperBound() < lowerBound)
+      if (node.Stat().UpperBound() < node.Stat().LowerBound())
       {
         node.Stat().StaticPruned() = true;
       }
@@ -267,7 +269,7 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
       {
         prunedPoints[index] = true;
         upperBounds[index] += clusterDistances[owner];
-        lowerBounds[index] = lowerBound;
+        lowerBounds[index] = pruningLowerBound;
       }
       else
       {
@@ -278,7 +280,7 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
         if (upperBounds[index] < pruningLowerBound)
         {
           prunedPoints[index] = true;
-          lowerBounds[index] = lowerBound;
+          lowerBounds[index] = pruningLowerBound;
         }
         else
         {
