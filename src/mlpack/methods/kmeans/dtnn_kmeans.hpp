@@ -94,6 +94,8 @@ class DTNNKMeans
 
   arma::vec clusterDistances; // The amount the clusters moved last iteration.
 
+  arma::vec interclusterDistances; // Static storage for intercluster distances.
+
   //! Update the bounds in the tree before the next iteration.
   //! centroids is the current (not yet searched) centroids.
   void UpdateTree(TreeType& node,

@@ -100,26 +100,25 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   TreeType* centroidTree = BuildTree<TreeType>(
       const_cast<typename TreeType::Mat&>(centroids), oldFromNewCentroids);
 
-  Timer::Start("knn");
-  // Find the nearest neighbors of each of the clusters.
-  neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType, TreeType>
-      nns(centroidTree, centroids);
-  arma::mat interclusterDistancesTemp;
-  arma::Mat<size_t> closestClusters; // We don't actually care about these.
-  nns.Search(1, closestClusters, interclusterDistancesTemp);
-  distanceCalculations += nns.BaseCases() + nns.Scores();
-
-  // We need to do the unmapping ourselves.
-  arma::vec interclusterDistances(centroids.n_cols);
-  for (size_t i = 0; i < interclusterDistances.n_elem; ++i)
-    interclusterDistances[oldFromNewCentroids[i]] =
-        interclusterDistancesTemp[i];
-
-  Timer::Stop("knn");
-
   // Reset information in the tree, if we need to.
   if (iteration > 0)
   {
+    Timer::Start("knn");
+    // Find the nearest neighbors of each of the clusters.
+    neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType,
+        TreeType> nns(centroidTree, centroids);
+    arma::mat interclusterDistancesTemp;
+    arma::Mat<size_t> closestClusters; // We don't actually care about these.
+    nns.Search(1, closestClusters, interclusterDistancesTemp);
+    distanceCalculations += nns.BaseCases() + nns.Scores();
+
+    // We need to do the unmapping ourselves.
+    for (size_t i = 0; i < interclusterDistances.n_elem; ++i)
+      interclusterDistances[oldFromNewCentroids[i]] =
+          interclusterDistancesTemp[i];
+
+    Timer::Stop("knn");
+
     UpdateTree(*tree, oldCentroids, interclusterDistances);
 
     for (size_t i = 0; i < dataset.n_cols; ++i)
@@ -129,6 +128,7 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   {
     // Not initialized yet.
     clusterDistances.set_size(centroids.n_cols + 1);
+    interclusterDistances.set_size(centroids.n_cols);
   }
 
   // We won't use the AllkNN class here because we have our own set of rules.
