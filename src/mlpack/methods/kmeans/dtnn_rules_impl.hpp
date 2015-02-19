@@ -33,9 +33,15 @@ DTNNKMeansRules<MetricType, TreeType>::DTNNKMeansRules(
     oldFromNewCentroids(oldFromNewCentroids),
     visited(visited),
     baseCases(0),
-    scores(0)
+    scores(0),
+    lastQueryIndex(dataset.n_cols),
+    lastReferenceIndex(centroids.n_cols)
 {
-  // Nothing to do.
+  // We must set the traversal info last query and reference node pointers to
+  // something that is both invalid (i.e. not a tree node) and not NULL.  We'll
+  // use the this pointer.
+  traversalInfo.LastQueryNode() = (TreeType*) this;
+  traversalInfo.LastReferenceNode() = (TreeType*) this;
 }
 
 template<typename MetricType, typename TreeType>
@@ -45,6 +51,10 @@ inline force_inline double DTNNKMeansRules<MetricType, TreeType>::BaseCase(
 {
   if (prunedPoints[queryIndex])
     return 0.0; // Returning 0 shouldn't be a problem.
+
+  // If we have already performed this base case, then do not perform it again.
+  if ((lastQueryIndex == queryIndex) && (lastReferenceIndex == referenceIndex))
+    return lastBaseCase;
 
   // Any base cases imply that we will get a result.
   visited[queryIndex] = true;
@@ -65,6 +75,11 @@ inline force_inline double DTNNKMeansRules<MetricType, TreeType>::BaseCase(
   {
     lowerBounds[queryIndex] = distance;
   }
+
+  // Cache this information for the next time BaseCase() is called.
+  lastQueryIndex = queryIndex;
+  lastReferenceIndex = referenceIndex;
+  lastBaseCase = distance;
 
   return distance;
 }
@@ -102,30 +117,144 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
   if (queryNode.Stat().Pruned() == centroids.n_cols)
     return DBL_MAX;
 
-  // Get minimum and maximum distances.
-  math::Range distances = queryNode.RangeDistance(&referenceNode);
-  double score = distances.Lo();
-  ++scores;
-  if (distances.Lo() > queryNode.Stat().UpperBound())
-  {
-    // The reference node can own no points in this query node.  We may improve
-    // the lower bound on pruned nodes, though.
-    if (distances.Lo() < queryNode.Stat().LowerBound())
-      queryNode.Stat().LowerBound() = distances.Lo();
+  // This looks a lot like the hackery used in NeighborSearchRules to avoid
+  // distance computations.  We'll use the traversal info to see if a
+  // parent-child or parent-parent prune is possible.
+  const double queryParentDist = queryNode.ParentDistance();
+  const double queryDescDist = queryNode.FurthestDescendantDistance();
+  const double refParentDist = referenceNode.ParentDistance();
+  const double refDescDist = referenceNode.FurthestDescendantDistance();
+  const double lastScore = traversalInfo.LastScore();
+  double adjustedScore;
+  double score = 0.0;
 
-    // This assumes that reference clusters don't appear elsewhere in the tree.
-    queryNode.Stat().Pruned() += referenceNode.NumDescendants();
-    score = DBL_MAX;
-  }
-  else if (distances.Hi() < queryNode.Stat().UpperBound())
+  // We want to set adjustedScore to be the distance between the centroid of the
+  // last query node and last reference node.  We will do this by adjusting the
+  // last score.  In some cases, we can just use the last base case.
+  if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
   {
-    // We can improve the best estimate.
-    queryNode.Stat().UpperBound() = distances.Hi();
-    // If this node has only one descendant, then it may be the owner.
-    if (referenceNode.NumDescendants() == 1)
-      queryNode.Stat().Owner() = (tree::TreeTraits<TreeType>::RearrangesDataset)
-          ? oldFromNewCentroids[referenceNode.Descendant(0)]
-          : referenceNode.Descendant(0);
+    adjustedScore = traversalInfo.LastBaseCase();
+  }
+  else if (lastScore == 0.0) // Nothing we can do here.
+  {
+    adjustedScore = 0.0;
+  }
+  else
+  {
+    // The last score is equal to the distance between the centroids minus the
+    // radii of the query and reference bounds along the axis of the line
+    // between the two centroids.  In the best case, these radii are the
+    // furthest descendant distances, but that is not always true.  It would
+    // take too long to calculate the exact radii, so we are forced to use
+    // MinimumBoundDistance() as a lower-bound approximation.
+    const double lastQueryDescDist =
+        traversalInfo.LastQueryNode()->MinimumBoundDistance();
+    const double lastRefDescDist =
+        traversalInfo.LastReferenceNode()->MinimumBoundDistance();
+    adjustedScore = lastScore + lastQueryDescDist;
+    adjustedScore = lastScore + lastRefDescDist;
+  }
+
+  // Assemble an adjusted score.  For nearest neighbor search, this adjusted
+  // score is a lower bound on MinDistance(queryNode, referenceNode) that is
+  // assembled without actually calculating MinDistance().  For furthest
+  // neighbor search, it is an upper bound on
+  // MaxDistance(queryNode, referenceNode).  If the traversalInfo isn't usable
+  // then the node should not be pruned by this.
+  if (traversalInfo.LastQueryNode() == queryNode.Parent())
+  {
+    const double queryAdjust = queryParentDist + queryDescDist;
+    adjustedScore -= queryAdjust;
+  }
+  else if (traversalInfo.LastQueryNode() == &queryNode)
+  {
+    adjustedScore -= queryDescDist;
+  }
+  else
+  {
+    // The last query node wasn't this query node or its parent.  So we force
+    // the adjustedScore to be such that this combination can't be pruned here,
+    // because we don't really know anything about it.
+
+    // It would be possible to modify this section to try and make a prune based
+    // on the query descendant distance and the distance between the query node
+    // and last traversal query node, but this case doesn't actually happen for
+    // kd-trees or cover trees.
+    adjustedScore = 0.0;
+  }
+  if (traversalInfo.LastReferenceNode() == referenceNode.Parent())
+  {
+    const double refAdjust = refParentDist + refDescDist;
+    adjustedScore -= refAdjust;
+  }
+  else if (traversalInfo.LastReferenceNode() == &referenceNode)
+  {
+    adjustedScore -= refDescDist;
+  }
+  else
+  {
+    // The last reference node wasn't this reference node or its parent.  So we
+    // force the adjustedScore to be such that this combination can't be pruned
+    // here, because we don't really know anything about it.
+
+    // It would be possible to modify this section to try and make a prune based
+    // on the reference descendant distance and the distance between the
+    // reference node and last traversal reference node, but this case doesn't
+    // actually happen for kd-trees or cover trees.
+    adjustedScore = 0.0;
+  }
+
+  // Now, check if we can prune.
+  //Log::Warn << "adjusted score: " << adjustedScore << ".\n";
+  if (adjustedScore > queryNode.Stat().UpperBound())
+  {
+//    Log::Warn << "Pre-emptive prune!\n";
+    if (!(tree::TreeTraits<TreeType>::FirstPointIsCentroid && score == 0.0))
+    {
+      // There isn't any need to set the traversal information because no
+      // descendant combinations will be visited, and those are the only
+      // combinations that would depend on the traversal information.
+      if (adjustedScore < queryNode.Stat().LowerBound())
+      {
+        // If this might affect the lower bound, make it more exact.
+        queryNode.Stat().LowerBound() = queryNode.MinDistance(&referenceNode);
+        ++scores;
+      }
+
+      queryNode.Stat().Pruned() += referenceNode.NumDescendants();
+      score = DBL_MAX;
+    }
+  }
+
+  if (score != DBL_MAX)
+  {
+    // Get minimum and maximum distances.
+    math::Range distances = queryNode.RangeDistance(&referenceNode);
+    score = distances.Lo();
+    ++scores;
+    if (distances.Lo() > queryNode.Stat().UpperBound())
+    {
+      // The reference node can own no points in this query node.  We may
+      // improve the lower bound on pruned nodes, though.
+      if (distances.Lo() < queryNode.Stat().LowerBound())
+        queryNode.Stat().LowerBound() = distances.Lo();
+
+      // This assumes that reference clusters don't appear elsewhere in the
+      // tree.
+      queryNode.Stat().Pruned() += referenceNode.NumDescendants();
+      score = DBL_MAX;
+    }
+    else if (distances.Hi() < queryNode.Stat().UpperBound())
+    {
+      // We can improve the best estimate.
+      queryNode.Stat().UpperBound() = distances.Hi();
+      // If this node has only one descendant, then it may be the owner.
+      if (referenceNode.NumDescendants() == 1)
+        queryNode.Stat().Owner() =
+            (tree::TreeTraits<TreeType>::RearrangesDataset) ?
+            oldFromNewCentroids[referenceNode.Descendant(0)] :
+            referenceNode.Descendant(0);
+    }
   }
 
   // Is everything pruned?
@@ -134,6 +263,11 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
     queryNode.Stat().Pruned() = centroids.n_cols; // Owner() is already set.
     return DBL_MAX;
   }
+
+  // Set traversal information.
+  traversalInfo.LastQueryNode() = &queryNode;
+  traversalInfo.LastReferenceNode() = &referenceNode;
+  traversalInfo.LastScore() = score;
 
   return score;
 }

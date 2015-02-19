@@ -9,7 +9,7 @@
 #ifndef __MLPACK_METHODS_KMEANS_DTNN_RULES_HPP
 #define __MLPACK_METHODS_KMEANS_DTNN_RULES_HPP
 
-#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+#include <mlpack/methods/neighbor_search/ns_traversal_info.hpp>
 
 namespace mlpack {
 namespace kmeans {
@@ -39,7 +39,7 @@ class DTNNKMeansRules
                  TreeType& referenceNode,
                  const double oldScore);
 
-  typedef int TraversalInfoType;
+  typedef neighbor::NeighborSearchTraversalInfo<TreeType> TraversalInfoType;
 
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
@@ -67,7 +67,11 @@ class DTNNKMeansRules
   size_t baseCases;
   size_t scores;
 
-  int traversalInfo;
+  TraversalInfoType traversalInfo;
+
+  size_t lastQueryIndex;
+  size_t lastReferenceIndex;
+  size_t lastBaseCase;
 };
 
 } // namespace kmeans
