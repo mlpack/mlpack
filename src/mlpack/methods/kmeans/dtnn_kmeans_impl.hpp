@@ -104,10 +104,17 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   // Find the nearest neighbors of each of the clusters.
   neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType, TreeType>
       nns(centroidTree, centroids);
-  arma::mat interclusterDistances;
+  arma::mat interclusterDistancesTemp;
   arma::Mat<size_t> closestClusters; // We don't actually care about these.
-  nns.Search(1, closestClusters, interclusterDistances);
-//  distanceCalculations += nns.BaseCases() + nns.Scores();
+  nns.Search(1, closestClusters, interclusterDistancesTemp);
+  distanceCalculations += nns.BaseCases() + nns.Scores();
+
+  // We need to do the unmapping ourselves.
+  arma::vec interclusterDistances(centroids.n_cols);
+  for (size_t i = 0; i < interclusterDistances.n_elem; ++i)
+    interclusterDistances[oldFromNewCentroids[i]] =
+        interclusterDistancesTemp[i];
+
   Timer::Stop("knn");
 
   // Reset information in the tree, if we need to.
@@ -188,7 +195,7 @@ template<typename MetricType, typename MatType, typename TreeType>
 void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
     TreeType& node,
     const arma::mat& centroids,
-    const arma::mat& interclusterDistances)
+    const arma::vec& interclusterDistances)
 {
   const bool prunedLastIteration = node.Stat().StaticPruned();
   node.Stat().StaticPruned() = false;
@@ -251,12 +258,12 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
       }
 
       prunedPoints[index] = false;
-      const size_t owner = assignments[node.Point(i)];
+      const size_t owner = assignments[index];
       const double lowerBound = std::min(lowerBounds[index] -
           clusterDistances[centroids.n_cols], node.Stat().LowerBound());
-//      const double pruningLowerBound = std::max(lowerBound,
-//          interclusterDistances[owner] / 2.0);
-      if (upperBounds[index] + clusterDistances[owner] < lowerBound)
+      const double pruningLowerBound = std::max(lowerBound,
+          interclusterDistances[owner] / 2.0);
+      if (upperBounds[index] + clusterDistances[owner] < pruningLowerBound)
       {
         prunedPoints[index] = true;
         upperBounds[index] += clusterDistances[owner];
@@ -268,7 +275,7 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
         upperBounds[index] = metric.Evaluate(dataset.col(index),
                                              centroids.col(owner));
         ++distanceCalculations;
-        if (upperBounds[index] < lowerBound)
+        if (upperBounds[index] < pruningLowerBound)
         {
           prunedPoints[index] = true;
           lowerBounds[index] = lowerBound;
@@ -383,9 +390,10 @@ node.Stat().UpperBound() << " and owner " << node.Stat().Owner() << ".\n";
           Log::Fatal << "Point " << index << " of node " << node.Point(0) << "c"
   << node.NumDescendants() << " has true minimum cluster " << minIndex << " with "
         << "distance " << minDist << " but was assigned to cluster " <<
-assignments[node.Point(0)] << " with ub " << upperBounds[node.Point(0)] <<
-" and lb " << lowerBounds[node.Point(0)] << "; pp " <<
-(prunedPoints[node.Point(0)] ? "true" : "false") << ", visited " << (visited[node.Point(0)] ? "true"
+assignments[node.Point(i)] << " with ub " << upperBounds[node.Point(i)] <<
+" and lb " << lowerBounds[node.Point(i)] << "; pp " <<
+(prunedPoints[node.Point(i)] ? "true" : "false") << ", visited " <<
+(visited[node.Point(i)] ? "true"
 : "false") << ".\n";
         }
 */
