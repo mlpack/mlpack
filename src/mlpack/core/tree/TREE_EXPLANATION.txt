@@ -20,7 +20,7 @@ There are also a few miscellanious items for tracking data about the tree and qu
 Below is a more detailed description and the name of the file(s) with the applicable
 functionality.  All names are given relative to .../mlpack/src/mlpack/core/tree/ :
       Bounds. 
-      	      Bounds are used to record the possible location so points in a node.  This is used
+      	      Bounds are used to record the possible location of points in a node.  This is used
 	      to allow more aggressive pruning of the tree while searching.
 	      
 	      See files: ballbound.hpp, ballbound_impl.hpp, bounds.hpp, hrectbound.hpp,
