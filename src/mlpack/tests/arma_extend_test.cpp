@@ -49,6 +49,58 @@ BOOST_AUTO_TEST_CASE(InplaceReshapeMatrixTest)
 }
 
 /**
+ * Make sure we can still transpose correct.
+ */
+BOOST_AUTO_TEST_CASE(InplaceTransposeTest)
+{
+  mat X;
+  X.randu(2, 4);
+
+  mat Y = X;
+
+  BOOST_REQUIRE(arma::inplace_transpose(X) == false);
+  BOOST_REQUIRE_EQUAL(X.n_rows, 4);
+  BOOST_REQUIRE_EQUAL(X.n_cols, 2);
+
+  for (size_t i = 0; i < X.n_rows; ++i)
+    for (size_t j = 0; j < X.n_cols; ++j)
+      BOOST_REQUIRE_CLOSE(X.at(i, j), Y.at(j, i), 1e-5);
+}
+
+/**
+ * Try to transpose using low-mem method.
+ */
+BOOST_AUTO_TEST_CASE(InplaceTransposeLowMemTest)
+{
+  mat X;
+
+  int width = 1000;
+  int height = 50000;
+
+  size_t n_iters = 50;
+
+  for (size_t i = 0; i < n_iters; ++i)
+  {
+    try
+    {
+      X.zeros(height, width);
+      if (inplace_transpose(X))
+      {
+        break;
+      }
+    }
+    catch (std::bad_alloc& exception)
+    {
+      BOOST_FAIL("bad_alloc exception.");
+    }
+    height *= 2;
+  }
+
+  BOOST_REQUIRE_EQUAL(X.n_rows, width);
+  BOOST_REQUIRE_EQUAL(X.n_cols, height);
+}
+
+/**
  * Test const_row_col_iterator for basic functionality.
  */
 BOOST_AUTO_TEST_CASE(ConstRowColIteratorTest)

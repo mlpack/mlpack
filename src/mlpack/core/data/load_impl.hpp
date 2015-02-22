@@ -220,7 +220,9 @@ bool Load(const std::string& filename,
 
   // Now transpose the matrix, if necessary.
   if (transpose)
-    matrix = trans(matrix);
+  {
+    arma::inplace_transpose(matrix);
+  }
 
   Timer::Stop("loading_data");
 

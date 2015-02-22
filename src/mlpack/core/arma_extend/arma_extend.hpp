@@ -47,6 +47,9 @@ namespace arma {
 
   // unary minus for sparse matrices
   #include "operator_minus.hpp"
+
+  // inplace_transpose()
+  #include "fn_inplace_transpose.hpp"
 };
 
 #endif
