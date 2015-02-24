@@ -15,6 +15,7 @@ option(DEBUG "Compile with debugging information" ON)
 option(PROFILE "Compile with profiling information" ON)
 option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
 option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
+option(TEST_VERBOSE "Running test cases with verbose ouput" OFF)
 
 # This is as of yet unused.
 #option(PGO "Use profile-guided optimization if not a debug build" ON)
@@ -54,6 +55,11 @@ if(CMAKE_COMPILER_IS_GNUCC AND PROFILE)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pg")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 endif(CMAKE_COMPILER_IS_GNUCC AND PROFILE)
+
+# If the user asked for running test cases with verbose output, turn that on.
+if(TEST_VERBOSE)
+  add_definitions(-DTEST_VERBOSE)
+endif(TEST_VERBOSE)
 
 # If the user asked for extra Armadillo debugging output, turn that on.
 if(ARMA_EXTRA_DEBUG)
