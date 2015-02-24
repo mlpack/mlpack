@@ -217,7 +217,8 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
       if (adjustedScore < queryNode.Stat().LowerBound())
       {
         // If this might affect the lower bound, make it more exact.
-        queryNode.Stat().LowerBound() = queryNode.MinDistance(&referenceNode);
+        queryNode.Stat().LowerBound() = std::min(queryNode.Stat().LowerBound(),
+            queryNode.MinDistance(&referenceNode));
         ++scores;
       }
 
@@ -229,7 +230,12 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
   if (score != DBL_MAX)
   {
     // Get minimum and maximum distances.
-    math::Range distances = queryNode.RangeDistance(&referenceNode);
+//    math::Range distances = queryNode.RangeDistance(&referenceNode);
+    math::Range distances;
+    distances.Lo() = queryNode.MinDistance(&referenceNode);
+    distances.Hi() =
+        queryNode.MaxDistance(centroids.col(referenceNode.Descendant(0)));
+
     score = distances.Lo();
     ++scores;
     if (distances.Lo() > queryNode.Stat().UpperBound())

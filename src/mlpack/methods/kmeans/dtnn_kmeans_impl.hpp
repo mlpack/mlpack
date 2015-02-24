@@ -132,6 +132,7 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   }
 
   // We won't use the AllkNN class here because we have our own set of rules.
+  //lastIterationCentroids = oldCentroids;
   typedef DTNNKMeansRules<MetricType, TreeType> RuleType;
   RuleType rules(centroids, dataset, assignments, upperBounds, lowerBounds,
       metric, prunedPoints, oldFromNewCentroids, visited);
@@ -205,10 +206,63 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
       node.Parent()->Stat().Pruned() == centroids.n_cols)
   {
     node.Stat().UpperBound() = node.Parent()->Stat().UpperBound();
-    node.Stat().LowerBound() = node.Parent()->Stat().LowerBound();
+    node.Stat().LowerBound() = node.Parent()->Stat().LowerBound() +
+        clusterDistances[centroids.n_cols];
     node.Stat().Pruned() = node.Parent()->Stat().Pruned();
     node.Stat().Owner() = node.Parent()->Stat().Owner();
   }
+
+
+  // Exhaustive lower bound check. Sigh.
+/*  if (!prunedLastIteration)
+  {
+    for (size_t i = 0; i < node.NumDescendants(); ++i)
+    {
+      double closest = DBL_MAX;
+      double secondClosest = DBL_MAX;
+      arma::vec distances(centroids.n_cols);
+      for (size_t j = 0; j < centroids.n_cols; ++j)
+      {
+        const double dist = metric.Evaluate(dataset.col(node.Descendant(i)),
+            lastIterationCentroids.col(j));
+        distances(j) = dist;
+
+        if (dist < closest)
+        {
+          secondClosest = closest;
+          closest = dist;
+        }
+        else if (dist < secondClosest)
+          secondClosest = dist;
+      }
+
+      if (closest - 1e-10 > node.Stat().UpperBound())
+      {
+        Log::Warn << distances.t();
+      Log::Fatal << "Point " << node.Descendant(i) << " in " << node.Point(0) <<
+"c" << node.NumDescendants() << " invalidates upper bound " <<
+node.Stat().UpperBound() << " with closest cluster distance " << closest <<
+".\n";
+      }
+
+    if (node.NumChildren() == 0)
+    {
+      if (secondClosest + 1e-10 < std::min(lowerBounds[node.Descendant(i)],
+  node.Stat().LowerBound()))
+      {
+      Log::Warn << distances.t();
+      Log::Fatal << "Point " << node.Descendant(i) << " in " << node.Point(0) <<
+"c" << node.NumDescendants() << " invalidates lower bound " <<
+std::min(lowerBounds[node.Descendant(i)], node.Stat().LowerBound()) << " (" <<
+lowerBounds[node.Descendant(i)] << ", " << node.Stat().LowerBound() << ") with "
+      << "second closest cluster distance " << secondClosest << ". cd " <<
+closest << "; pruned " << prunedPoints[node.Descendant(i)] << " visited " <<
+visited[node.Descendant(i)] << ".\n";
+      }
+    }
+  }
+  }*/
+
 
   if ((node.Stat().Pruned() == centroids.n_cols) &&
       (node.Stat().Owner() < centroids.n_cols))
@@ -305,6 +359,12 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
     UpdateTree(node.Child(i), centroids, interclusterDistances);
     if (!node.Child(i).Stat().StaticPruned())
       allChildrenPruned = false;
+  }
+
+  if (node.Stat().StaticPruned() && !allChildrenPruned)
+  {
+    Log::Warn << node;
+    Log::Fatal << "Node is statically pruned but not all its children are!\n";
   }
 
   // If all of the children and points are pruned, we may mark this node as
