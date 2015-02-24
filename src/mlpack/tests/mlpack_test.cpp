@@ -24,23 +24,26 @@
  *
  * A global fixture is expected to be implemented as a class where the class
  * constructor serves as a setup method and class destructor serves as teardown
- * method. 
- * 
- * By default, Log::objects should have their output redirected, otherwise
- * the UTF test output would be drown out by Log::Debug and Log::Warn messages.
+ * method.
  *
- * For more detailed test output, set cmake flag TEST_VERBOSE=ON.
+ * By default, Log::objects should have their output redirected, otherwise
+ * the UTF test output would be drowned out by Log::Debug and Log::Warn
+ * messages.
+ *
+ * For more detailed test output, set the CMake flag TEST_VERBOSE=ON.
  */
-struct GlobalFixture {
+struct GlobalFixture
+{
   GlobalFixture()
   {
-#ifndef TEST_VERBOSE
-#ifdef DEBUG
-    mlpack::Log::Debug.ignoreInput = true;
-#endif
-    mlpack::Log::Info.ignoreInput = true;
-    mlpack::Log::Warn.ignoreInput = true;
-#endif
+    #ifndef TEST_VERBOSE
+      #ifdef DEBUG
+        mlpack::Log::Debug.ignoreInput = true;
+      #endif
+
+      mlpack::Log::Info.ignoreInput = true;
+      mlpack::Log::Warn.ignoreInput = true;
+    #endif
   }
 };
 
