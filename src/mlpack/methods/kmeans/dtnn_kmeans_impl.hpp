@@ -29,7 +29,7 @@ TreeType* BuildTree(
 {
   // This is a hack.  I know this will be BinarySpaceTree, so force a leaf size
   // of two.
-  return new TreeType(dataset, oldFromNew, 2);
+  return new TreeType(dataset, oldFromNew, 1);
 }
 
 //! Call the tree constructor that does not do mapping.
