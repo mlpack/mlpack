@@ -57,12 +57,6 @@ class EpanechnikovKernel
   double Gradient(const double distance) const;
   
   /**
-   * Evaluate the Gradient of Epanechnikov kernel
-   * given that the squared distance between the two
-   * input points is known.
-   */
-  double GradientForSquaredDistance(const double distanceSquared) const;
-  /**
    * Obtains the convolution integral [integral of K(||x-a||) K(||b-x||) dx]
    * for the two vectors.
    *
@@ -100,8 +94,6 @@ class KernelTraits<EpanechnikovKernel>
  public:
   //! The Epanechnikov kernel is normalized: K(x, x) = 1 for all x.
   static const bool IsNormalized = true;
-  //! The Epanechnikov kernel includes a squared distance.
-  static const bool UsesSquaredDistance = true;
 };
 
 }; // namespace kernel

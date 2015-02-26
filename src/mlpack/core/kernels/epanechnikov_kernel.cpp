@@ -46,24 +46,6 @@ double EpanechnikovKernel::Gradient(const double distance) const {
   }
 }
 
-/**
- * Evaluate gradient of the kernel not for two points
- * but for a numerical value.
- */
-double EpanechnikovKernel::GradientForSquaredDistance(const double
-                                                  distanceSquared) const {
-  double bandwidthSquared = bandwidth * bandwidth;
-  if (distanceSquared < bandwidthSquared) {
-    return -1 * inverseBandwidthSquared;
-  } else if (distanceSquared > bandwidthSquared &&
-             distanceSquared >= 0) {
-    return  0;
-  } else {
-    // The gradient doesn't exist.
-    return arma::datum::nan;
-  }
-}
-
 // Return string of object.
 std::string EpanechnikovKernel::ToString() const
 {

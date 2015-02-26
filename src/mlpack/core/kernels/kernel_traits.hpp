@@ -26,11 +26,6 @@ class KernelTraits
    * If true, then the kernel is normalized: K(x, x) = K(y, y) = 1 for all x.
    */
   static const bool IsNormalized = false;
-  
-  /**
-   * If true, then the kernel include a squared distance, ||x - y||^2 .
-   */
-  static const bool UsesSquaredDistance = false;
 };
 
 }; // namespace kernel

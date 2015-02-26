@@ -99,8 +99,6 @@ class KernelTraits<TriangularKernel>
  public:
   //! The triangular kernel is normalized: K(x, x) = 1 for all x.
   static const bool IsNormalized = true;
-  //! The triangular kernel doesn't include a squared distance.
-  static const bool UsesSquaredDistance = false;
 };
 
 }; // namespace kernel

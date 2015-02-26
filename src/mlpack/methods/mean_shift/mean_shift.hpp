@@ -93,8 +93,7 @@ class MeanShift
  private:
   
   /**
-   * If the kernel doesn't include a squared distance,
-   * general way will be applied to calculate the weight of a data point.
+   * A general approach to calculate the weight for a point.
    *
    * @param centroid The centroid to calculate the weight
    * @param point Calculate its weight
@@ -102,23 +101,7 @@ class MeanShift
    * @return If true, the @point is near enough to the @centroid and @weight is valid,
    *         If false, the @point is far from the @centroid and @weight is invalid.
    */
-  template <typename Kernel = KernelType>
-  typename std::enable_if<!kernel::KernelTraits<Kernel>::UsesSquaredDistance, bool>::type
-  CalcWeight(const arma::colvec& centroid, const arma::colvec& point, double& weight);
-  
-  /**
-   * If the kernel includes a squared distance,
-   * the weight of a data point can be calculated faster.
-   *
-   * @param centroid The centroid to calculate the weight
-   * @param point Calculate its weight
-   * @param weight Store the weight
-   * @return If true, the @point is near enough to the @centroid and @weight is valid,
-   *         If false, the @point is far from the @centroid and @weight is invalid.
-   */
-  template <typename Kernel = KernelType>
-  typename std::enable_if<kernel::KernelTraits<Kernel>::UsesSquaredDistance, bool>::type
-  CalcWeight(const arma::colvec& centroid, const arma::colvec& point, double& weight);
+  bool CalcWeight(const arma::colvec& centroid, const arma::colvec& point, double& weight);
   
   /**
    * If distance of two centroids is less than radius, one will be removed.
@@ -126,9 +109,6 @@ class MeanShift
    * to calculate new centroid.
    */
   double radius;
-  
-  // By storing radius * radius, we can speed up a little.
-  double squaredRadius;
   
   //! Maximum number of iterations before giving up.
   size_t maxIterations;

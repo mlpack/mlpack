@@ -104,8 +104,6 @@ class KernelTraits<SphericalKernel>
  public:
   //! The spherical kernel is normalized: K(x, x) = 1 for all x.
   static const bool IsNormalized = true;
-  //! The spherical kernel doesn't include a squared distance.
-  static const bool UsesSquaredDistance = false;
 };
 
 }; // namespace kernel

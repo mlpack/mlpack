@@ -86,18 +86,6 @@ class GaussianKernel
   double Gradient(const double t) const {
     return 2 * t * gamma * exp(gamma * std::pow(t, 2.0));
   }
-  
-  /**
-   * Evaluation of the gradient of Gaussian kernel
-   * given the squared distance between two points.
-   *
-   * @param t The squared distance between the two points
-   * @return K(t) using the bandwidth (@f$\mu@f$) specified in the
-   *     constructor.
-   */
-  double GradientForSquaredDistance(const double t) const {
-    return gamma * exp(gamma * t);
-  }
 
   /**
    * Obtain the normalization constant of the Gaussian kernel.
@@ -164,8 +152,6 @@ class KernelTraits<GaussianKernel>
  public:
   //! The Gaussian kernel is normalized: K(x, x) = 1 for all x.
   static const bool IsNormalized = true;
-  //! The Gaussian kernel includes a squared distance.
-  static const bool UsesSquaredDistance = true;
 };
 
 }; // namespace kernel

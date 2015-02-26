@@ -111,8 +111,6 @@ class KernelTraits<LaplacianKernel>
  public:
   //! The Laplacian kernel is normalized: K(x, x) = 1 for all x.
   static const bool IsNormalized = true;
-  //! The Laplacian kernel doesn't include a squared distance.
-  static const bool UsesSquaredDistance = false;
 };
 
 }; // namespace kernel
