@@ -41,7 +41,6 @@ void MeanShift<
   MatType>::
 Radius(double radius) {
   this->radius = radius;
-  squaredRadius = radius * radius;
 }
 
 // Estimate radius based on given dataset.
@@ -80,9 +79,7 @@ EstimateRadius(const MatType &data) {
 // General way to calculate the weight of a data point.
 template <typename KernelType,
           typename MatType>
-template <typename Kernel>
-typename std::enable_if<!kernel::KernelTraits<Kernel>::
-  UsesSquaredDistance, bool>::type
+bool
 MeanShift<
   KernelType,
   MatType>::
@@ -97,28 +94,6 @@ CalcWeight(const arma::colvec& centroid, const arma::colvec& point,
   weight = kernel.Gradient(distance) / distance;
   return true;
 
-}
-
-// Faster way to calculate the weight of a data point.
-template <typename KernelType,
-          typename MatType>
-template <typename Kernel>
-typename std::enable_if<kernel::KernelTraits<Kernel>::
-  UsesSquaredDistance, bool>::type
-MeanShift<
-  KernelType,
-  MatType>::
-CalcWeight(const arma::colvec& centroid, const arma::colvec& point,
-           double& weight) {
-
-  double squaredDist = metric::SquaredEuclideanDistance::
-                       Evaluate(centroid, point);
-  if (squaredDist >= squaredRadius || squaredDist == 0) {
-    return false;
-  }
-  squaredDist /= squaredRadius;
-  weight = kernel.GradientForSquaredDistance(squaredDist);
-  return true;
 }
 
 /**
@@ -161,7 +136,7 @@ Cluster(const MatType& data,
       for (size_t j = 0; j < data.n_cols; ++j) {
 
         double weight = 0;
-        if (CalcWeight<KernelType>(allCentroids.col(i), data.col(j), weight)) {
+        if (CalcWeight(allCentroids.col(i), data.col(j), weight)) {
           sumWeight += weight;
           newCentroid += weight * data.col(j);
         }
