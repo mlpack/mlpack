@@ -85,6 +85,16 @@ class FullselfConnection
     delta = (weights.t() * error);
   }
 
+  /*
+   * Calculate the gradient using the output delta and the input activation.
+   *
+   * @param gradient The calculated gradient.
+   */
+  void Gradient(MatType& gradient)
+  {
+    gradient = outputLayer.Delta() * inputLayer.InputActivation().t();
+  }
+
   //! Get the weights.
   MatType& Weights() const { return weights; }
   //! Modify the weights.

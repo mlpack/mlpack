@@ -81,5 +81,4 @@ class LayerTraits<BinaryClassificationLayer<MatType, VecType> >
 }; // namespace ann
 }; // namespace mlpack
 
-
 #endif

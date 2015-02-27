@@ -36,30 +36,50 @@ using namespace mlpack::ann;
 
 BOOST_AUTO_TEST_SUITE(FeedForwardNetworkTest);
 
-
 /**
  * Train and evaluate a vanilla network with the specified structure.
  */
-template<typename WeightInitRule,
-         typename PerformanceFunction,
-         typename OptimizerType,
-         typename OutputLayerType,
-         typename PerformanceFunctionType,
-         typename MatType = arma::mat,
-         typename VecType = arma::colvec
+template<
+    typename WeightInitRule,
+    typename PerformanceFunction,
+    typename OptimizerType,
+    typename OutputLayerType,
+    typename PerformanceFunctionType,
+    typename MatType = arma::mat,
+    typename VecType = arma::colvec
 >
 void BuildVanillaNetwork(MatType& trainData,
                          MatType& trainLabels,
                          MatType& testData,
                          MatType& testLabels,
-                         size_t hiddenLayerSize,
-                         size_t maxEpochs,
-                         double classificationErrorThreshold,
-                         double ValidationErrorThreshold,
+                         const size_t hiddenLayerSize,
+                         const size_t maxEpochs,
+                         const double classificationErrorThreshold,
+                         const double ValidationErrorThreshold,
                          WeightInitRule weightInitRule = WeightInitRule())
 {
+  /*
+   * Construct a feed forward network with trainData.n_rows input nodes,
+   * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
+   * network structure looks like:
+   *
+   *  Input         Hidden        Output
+   *  Layer         Layer         Layer
+   * +-----+       +-----+       +-----+
+   * |     |       |     |       |     |
+   * |     +------>|     +------>|     |
+   * |     |     +>|     |       |     |
+   * +-----+     | +--+--+       +-----+
+   *             |
+   *  Bias       |
+   *  Layer      |
+   * +-----+     |
+   * |     |     |
+   * |     +-----+
+   * |     |
+   * +-----+
+   */
   BiasLayer<> biasLayer0(1);
-  BiasLayer<> biasLayer1(1);
 
   NeuronLayer<PerformanceFunction> inputLayer(trainData.n_rows);
   NeuronLayer<PerformanceFunction> hiddenLayer0(hiddenLayerSize);
@@ -169,7 +189,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
                       SteepestDescent<>,
                       BinaryClassificationLayer<>,
                       MeanSquaredErrorFunction<> >
-      (dataset, labels, dataset, labels, 100, 450, 0.6, 90, randInitB);
+      (dataset, labels, dataset, labels, 100, 100, 0.6, 10, randInitB);
 
   // Vanilla neural net with tanh activation function.
   BuildVanillaNetwork<RandomInitialization<>,
@@ -177,7 +197,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
                     SteepestDescent<>,
                     BinaryClassificationLayer<>,
                     MeanSquaredErrorFunction<> >
-    (dataset, labels, dataset, labels, 10, 450, 0.6, 90, randInitB);
+    (dataset, labels, dataset, labels, 10, 200, 0.6, 20, randInitB);
 }
 
 /**
@@ -237,13 +257,13 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkConvergenceTest)
  * Train a vanilla network with the specified structure step by step and
  * evaluate the network.
  */
-template<typename WeightInitRule,
-         typename PerformanceFunction,
-         typename OptimizerType,
-         typename OutputLayerType,
-         typename PerformanceFunctionType,
-         typename MatType = arma::mat,
-         typename VecType = arma::colvec
+template<
+    typename WeightInitRule,
+    typename PerformanceFunction,
+    typename OptimizerType,
+    typename OutputLayerType,
+    typename PerformanceFunctionType,
+    typename MatType = arma::mat
 >
 void BuildNetworkOptimzer(MatType& trainData,
                           MatType& trainLabels,
@@ -253,8 +273,28 @@ void BuildNetworkOptimzer(MatType& trainData,
                           size_t epochs,
                           WeightInitRule weightInitRule = WeightInitRule())
 {
+  /*
+   * Construct a feed forward network with trainData.n_rows input nodes,
+   * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
+   * network structure looks like:
+   *
+   *  Input         Hidden        Output
+   *  Layer         Layer         Layer
+   * +-----+       +-----+       +-----+
+   * |     |       |     |       |     |
+   * |     +------>|     +------>|     |
+   * |     |     +>|     |       |     |
+   * +-----+     | +--+--+       +-----+
+   *             |
+   *  Bias       |
+   *  Layer      |
+   * +-----+     |
+   * |     |     |
+   * |     +-----+
+   * |     |
+   * +-----+
+   */
   BiasLayer<> biasLayer0(1);
-  BiasLayer<> biasLayer1(1);
 
   NeuronLayer<PerformanceFunction> inputLayer(trainData.n_rows);
   NeuronLayer<PerformanceFunction> hiddenLayer0(hiddenLayerSize);
