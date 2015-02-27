@@ -44,7 +44,7 @@ class FFNN
      * @param outputLayer The outputlayer used to evaluate the network.
      */
     FFNN(const ConnectionTypes& network, OutputLayerType& outputLayer)
-        : network(network), outputLayer(outputLayer), err(0), seqNum(0)
+        : network(network), outputLayer(outputLayer), trainError(0), seqNum(0)
     {
       // Nothing to do here.
     }
@@ -64,13 +64,8 @@ class FFNN
                      const VecType& target,
                      VecType& error)
     {
-      ResetActivations(network);
       seqNum++;
-
-      std::get<0>(std::get<0>(network)).InputLayer().InputActivation() = input;
-
-      FeedForward(network);
-      OutputError(network, target, error);
+      trainError += Evaluate(input, target, error);
     }
 
     /**
@@ -102,7 +97,7 @@ class FFNN
       ApplyGradients(network);
 
       // Reset the overall error.
-      err = 0;
+      trainError = 0;
       seqNum = 0;
     }
 
@@ -123,6 +118,26 @@ class FFNN
 
       FeedForward(network);
       OutputPrediction(network, output);
+    }
+
+    /**
+     * Evaluate the trained network using the given input and compare the output
+     * with the given target vector.
+     *
+     * @param input Input data used to evaluate the trained network.
+     * @param target Target data used to calculate the network error.
+     * @param error The calulated error of the output layer.
+     * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
+     */
+    template <typename VecType>
+    double Evaluate(const VecType& input, const VecType& target, VecType& error)
+    {
+      ResetActivations(network);
+
+      std::get<0>(std::get<0>(network)).InputLayer().InputActivation() = input;
+
+      FeedForward(network);
+      return OutputError(network, target, error);
     }
 
     //! Get the error of the network.
@@ -218,9 +233,9 @@ class FFNN
      * Calculate the output error and update the overall error.
      */
     template<typename VecType, typename... Tp>
-    void OutputError(std::tuple<Tp...>& t,
-                     const VecType& target,
-                     VecType& error)
+    double OutputError(std::tuple<Tp...>& t,
+                      const VecType& target,
+                      VecType& error)
     {
        // Calculate and store the output error.
       outputLayer.calculateError(std::get<0>(
@@ -229,12 +244,9 @@ class FFNN
 
       // Masures the network's performance with the specified performance
       // function.
-      err += PerformanceFunction::error(std::get<0>(
+      return PerformanceFunction::error(std::get<0>(
           std::get<sizeof...(Tp) - 1>(t)).OutputLayer().InputActivation(),
           target);
-
-      // Update the final training error.
-      trainError = err;
     }
 
     /*
@@ -396,11 +408,12 @@ class FFNN
     typename std::enable_if<I < sizeof...(Tp), void>::type
     Apply(std::tuple<Tp...>& t)
     {
+      // Take a mean gradient step over the number of inputs.
       if (seqNum > 1)
         gradients[gradientNum] /= seqNum;
 
       std::get<I>(t).Optimzer().UpdateWeights(std::get<I>(t).Weights(),
-          gradients[gradientNum], err);
+          gradients[gradientNum], trainError);
 
       // Reset the gradient storage.
       gradients[gradientNum++].zeros();
@@ -456,9 +469,6 @@ class FFNN
 
     //! The outputlayer used to evaluate the network
     OutputLayerType& outputLayer;
-
-    //! The current error of the network.
-    double err;
 
     //! The current training error of the network.
     double trainError;
