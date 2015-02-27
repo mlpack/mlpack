@@ -18,7 +18,7 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * Implementation of the self connection class. The self connection connects
  * every neuron from the input layer with the output layer in a multiplicative
- * way.
+ * way, except the elements on the main diagonal.
  *
  * @tparam InputLayerType Type of the connected input layer.
  * @tparam OutputLayerType Type of the connected output layer.
@@ -39,7 +39,7 @@ class SelfConnection
 {
  public:
   /**
-   * Create the FullConnection object using the specified input layer, output
+   * Create the SelfConnection object using the specified input layer, output
    * layer, optimizer and weight initialize rule.
    *
    * @param InputLayerType The input layer which is connected with the output
@@ -54,20 +54,26 @@ class SelfConnection
                  OutputLayerType& outputLayer,
                  OptimizerType& optimizer,
                  WeightInitRule weightInitRule = WeightInitRule()) :
-      inputLayer(inputLayer), outputLayer(outputLayer), optimizer(optimizer)
+      inputLayer(inputLayer),
+      outputLayer(outputLayer),
+      optimizer(optimizer),
+      connection(1 - arma::eye<MatType>(inputLayer.OutputSize(),
+          inputLayer.OutputSize()))
   {
-    weightInitRule.Initialize(weights, outputLayer.OutputSize(), 1);
+    weightInitRule.Initialize(weights, outputLayer.InputSize(),
+        inputLayer.OutputSize());
   }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *
-   * @param input Input data used for evaluating the specified activity function.
+   * @param input Input data used for evaluating the specified activity
+   * function.
    */
   void FeedForward(const VecType& input)
   {
-    outputLayer.InputActivation() += (weights % input);
+    outputLayer.InputActivation() += (weights % connection) * input;
   }
 
   /**
@@ -79,9 +85,7 @@ class SelfConnection
    */
   void FeedBackward(const VecType& error)
   {
-    // Calculating the delta using the partial derivative of the error with
-    // respect to a weight.
-    delta = (weights.t() * error);
+    delta = (weights % connection).t() * error;
   }
 
   /*
@@ -91,7 +95,7 @@ class SelfConnection
    */
   void Gradient(MatType& gradient)
   {
-    gradient = outputLayer.Delta() % inputLayer.InputActivation();
+    gradient = outputLayer.Delta() * inputLayer.InputActivation().t();
   }
 
   //! Get the weights.
@@ -134,6 +138,9 @@ class SelfConnection
 
   //! Locally-stored detla object that holds the calculated delta.
   VecType delta;
+
+  //! Locally-stored connection multiplication type.
+  MatType connection;
 }; // class SelfConnection
 
 //! Connection traits for the self connection.
