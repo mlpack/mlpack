@@ -47,4 +47,3 @@ BOOST_AUTO_TEST_CASE(SumSquaredErrorTest)
 }
 
 BOOST_AUTO_TEST_SUITE_END();
-
