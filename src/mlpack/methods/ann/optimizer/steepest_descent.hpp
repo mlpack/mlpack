@@ -3,7 +3,7 @@
  * @author Marcus Edel
  *
  * Intialization rule for the neural networks. This simple initialization is
- * performed by assigning a random matrix to the weight matrix. 
+ * performed by assigning a random matrix to the weight matrix.
  */
 #ifndef __MLPACK_METHOS_ANN_OPTIMIZER_STEEPEST_DESCENT_HPP
 #define __MLPACK_METHOS_ANN_OPTIMIZER_STEEPEST_DESCENT_HPP
@@ -31,8 +31,8 @@ class SteepestDescent
    */
   SteepestDescent(const size_t cols,
                   const size_t rows,
-                  const double lr = 1, 
-                  const double mom = 0.1) : 
+                  const double lr = 1,
+                  const double mom = 0.1) :
       lr(lr), mom(mom)
   {
     if (mom > 0)
@@ -69,5 +69,3 @@ class SteepestDescent
 }; // namespace mlpack
 
 #endif
-
-
