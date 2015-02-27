@@ -230,11 +230,7 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
   if (score != DBL_MAX)
   {
     // Get minimum and maximum distances.
-//    math::Range distances = queryNode.RangeDistance(&referenceNode);
-    math::Range distances;
-    distances.Lo() = queryNode.MinDistance(&referenceNode);
-    distances.Hi() =
-        queryNode.MaxDistance(centroids.col(referenceNode.Descendant(0)));
+    const math::Range distances = queryNode.RangeDistance(&referenceNode);
 
     score = distances.Lo();
     ++scores;
@@ -252,14 +248,22 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
     }
     else if (distances.Hi() < queryNode.Stat().UpperBound())
     {
-      // We can improve the best estimate.
-      queryNode.Stat().UpperBound() = distances.Hi();
-      // If this node has only one descendant, then it may be the owner.
-      if (referenceNode.NumDescendants() == 1)
-        queryNode.Stat().Owner() =
-            (tree::TreeTraits<TreeType>::RearrangesDataset) ?
-            oldFromNewCentroids[referenceNode.Descendant(0)] :
-            referenceNode.Descendant(0);
+      // Tighten upper bound.
+      const double tighterBound =
+          queryNode.MaxDistance(centroids.col(referenceNode.Descendant(0)));
+      ++scores; // Count extra distance calculation.
+
+      if (tighterBound <= queryNode.Stat().UpperBound())
+      {
+        // We can improve the best estimate.
+        queryNode.Stat().UpperBound() = tighterBound;
+        // If this node has only one descendant, then it may be the owner.
+        if (referenceNode.NumDescendants() == 1)
+          queryNode.Stat().Owner() =
+              (tree::TreeTraits<TreeType>::RearrangesDataset) ?
+              oldFromNewCentroids[referenceNode.Descendant(0)] :
+              referenceNode.Descendant(0);
+      }
     }
   }
 
