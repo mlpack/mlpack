@@ -17,6 +17,21 @@ namespace mlpack {
 namespace data {
 
 template<typename eT>
+bool inline inplace_transpose(arma::Mat<eT>& X)
+{
+  try
+  {
+    X = arma::trans(X);
+    return false;
+  }
+  catch (std::bad_alloc& exception)
+  {
+    arma::inplace_trans(X, "lowmem");
+    return true;
+  }
+}
+
+template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           bool fatal,
@@ -220,7 +235,9 @@ bool Load(const std::string& filename,
 
   // Now transpose the matrix, if necessary.
   if (transpose)
-    matrix = trans(matrix);
+  {
+    inplace_transpose(matrix);
+  }
 
   Timer::Stop("loading_data");
 

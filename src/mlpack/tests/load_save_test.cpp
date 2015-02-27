@@ -101,6 +101,32 @@ BOOST_AUTO_TEST_CASE(SaveCSVTest)
 }
 
 /**
+ * Make sure CSVs can be loaded in transposed form.
+ */
+BOOST_AUTO_TEST_CASE(LoadTransposedCSVTest)
+{
+  std::fstream f;
+  f.open("test_file.csv", std::fstream::out);
+
+  f << "1, 2, 3, 4" << std::endl;
+  f << "5, 6, 7, 8" << std::endl;
+
+  f.close();
+
+  arma::mat test;
+  BOOST_REQUIRE(data::Load("test_file.csv", test, false, true) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
+
+  for (size_t i = 0; i < 8; ++i)
+    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+
+  // Remove the file.
+  remove("test_file.csv");
+}
+
+/**
  * Make sure CSVs can be loaded in non-transposed form.
  */
 BOOST_AUTO_TEST_CASE(LoadNonTransposedCSVTest)
