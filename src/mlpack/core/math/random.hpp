@@ -7,36 +7,17 @@
 #define __MLPACK_CORE_MATH_RANDOM_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <boost/random.hpp>
+#include <random>
 
 namespace mlpack {
 namespace math /** Miscellaneous math routines. */ {
 
-// Annoying Boost versioning issues.
-#include <boost/version.hpp>
-
-#if BOOST_VERSION >= 104700
-  // Global random object.
-  extern boost::random::mt19937 randGen;
-  // Global uniform distribution.
-  extern boost::random::uniform_01<> randUniformDist;
-  // Global normal distribution.
-  extern boost::random::normal_distribution<> randNormalDist;
-#else
-  // Global random object.
-  extern boost::mt19937 randGen;
-
-  #if BOOST_VERSION >= 103900
-    // Global uniform distribution.
-    extern boost::uniform_01<> randUniformDist;
-  #else
-    // Pre-1.39 Boost.Random did not give default template parameter values.
-    extern boost::uniform_01<boost::mt19937, double> randUniformDist;
-  #endif
-
-  // Global normal distribution.
-  extern boost::normal_distribution<> randNormalDist;
-#endif
+// Global random object.
+extern std::mt19937 randGen;
+// Global uniform distribution.
+extern std::uniform_real_distribution<> randUniformDist;
+// Global normal distribution.
+extern std::normal_distribution<> randNormalDist;
 
 /**
  * Set the random seed used by the random functions (Random() and RandInt()).
@@ -62,13 +43,7 @@ inline void RandomSeed(const size_t seed)
  */
 inline double Random()
 {
-#if BOOST_VERSION >= 103900
   return randUniformDist(randGen);
-#else
-  // Before Boost 1.39, we did not give the random object when we wanted a
-  // random number; that gets given at construction time.
-  return randUniformDist();
-#endif
 }
 
 /**
@@ -76,13 +51,7 @@ inline double Random()
  */
 inline double Random(const double lo, const double hi)
 {
-#if BOOST_VERSION >= 103900
   return lo + (hi - lo) * randUniformDist(randGen);
-#else
-  // Before Boost 1.39, we did not give the random object when we wanted a
-  // random number; that gets given at construction time.
-  return lo + (hi - lo) * randUniformDist();
-#endif
 }
 
 /**
@@ -90,13 +59,7 @@ inline double Random(const double lo, const double hi)
  */
 inline int RandInt(const int hiExclusive)
 {
-#if BOOST_VERSION >= 103900
   return (int) std::floor((double) hiExclusive * randUniformDist(randGen));
-#else
-  // Before Boost 1.39, we did not give the random object when we wanted a
-  // random number; that gets given at construction time.
-  return (int) std::floor((double) hiExclusive * randUniformDist());
-#endif
 }
 
 /**
@@ -104,16 +67,8 @@ inline int RandInt(const int hiExclusive)
  */
 inline int RandInt(const int lo, const int hiExclusive)
 {
-#if BOOST_VERSION >= 103900
   return lo + (int) std::floor((double) (hiExclusive - lo)
                                * randUniformDist(randGen));
-#else
-  // Before Boost 1.39, we did not give the random object when we wanted a
-  // random number; that gets given at construction time.
-  return lo + (int) std::floor((double) (hiExclusive - lo)
-                               * randUniformDist());
-#endif
-
 }
 
 /**
