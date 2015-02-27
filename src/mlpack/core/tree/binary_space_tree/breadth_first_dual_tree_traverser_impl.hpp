@@ -12,8 +12,6 @@
 // In case it hasn't been included yet.
 #include "breadth_first_dual_tree_traverser.hpp"
 
-#include <queue>
-
 namespace mlpack {
 namespace tree {
 
@@ -31,16 +29,6 @@ BreadthFirstDualTreeTraverser<RuleType>::BreadthFirstDualTreeTraverser(
     numScores(0),
     numBaseCases(0)
 { /* Nothing to do. */ }
-
-template<typename TreeType, typename TraversalInfoType>
-struct QueueFrame
-{
-  TreeType* queryNode;
-  TreeType* referenceNode;
-  size_t queryDepth;
-  double score;
-  TraversalInfoType traversalInfo;
-};
 
 template<typename TreeType, typename TraversalInfoType>
 bool operator<(const QueueFrame<TreeType, TraversalInfoType>& a,
@@ -70,16 +58,11 @@ BreadthFirstDualTreeTraverser<RuleType>::Traverse(
   // Store the current traversal info.
   traversalInfo = rule.TraversalInfo();
 
-  typedef BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>
-      TreeType;
-
   // Must score the root combination.
   const double rootScore = rule.Score(queryRoot, referenceRoot);
   if (rootScore == DBL_MAX)
     return; // This probably means something is wrong.
 
-  typedef QueueFrame<TreeType, typename RuleType::TraversalInfoType>
-      QueueFrameType;
   std::priority_queue<QueueFrameType> queue;
 
   QueueFrameType rootFrame;
@@ -91,13 +74,32 @@ BreadthFirstDualTreeTraverser<RuleType>::Traverse(
 
   queue.push(rootFrame);
 
-  while (!queue.empty())
-  {
-    QueueFrameType currentFrame = queue.top();
-    queue.pop();
+  // Start the traversal.
+  Traverse(queryRoot, queue);
+}
 
-    TreeType& queryNode = *currentFrame.queryNode;
-    TreeType& referenceNode = *currentFrame.referenceNode;
+template<typename BoundType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType>
+template<typename RuleType>
+void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
+BreadthFirstDualTreeTraverser<RuleType>::Traverse(
+    BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>& queryNode,
+    std::priority_queue<QueueFrameType>& referenceQueue)
+{
+  // Store queues for the children.  We will recurse into the children once our
+  // queue is empty.
+  std::priority_queue<QueueFrameType> leftChildQueue;
+  std::priority_queue<QueueFrameType> rightChildQueue;
+
+  while (!referenceQueue.empty())
+  {
+    QueueFrameType currentFrame = referenceQueue.top();
+    referenceQueue.pop();
+
+    BinarySpaceTree& queryNode = *currentFrame.queryNode;
+    BinarySpaceTree& referenceNode = *currentFrame.referenceNode;
     typename RuleType::TraversalInfoType ti = currentFrame.traversalInfo;
     rule.TraversalInfo() = ti;
     const size_t queryDepth = currentFrame.queryDepth;
@@ -137,11 +139,11 @@ BreadthFirstDualTreeTraverser<RuleType>::Traverse(
       // We have to recurse down the query node.
       QueueFrameType fl = { queryNode.Left(), &referenceNode, queryDepth + 1,
           score, rule.TraversalInfo() };
-      queue.push(fl);
+      leftChildQueue.push(fl);
 
       QueueFrameType fr = { queryNode.Right(), &referenceNode, queryDepth + 1,
           score, ti };
-      queue.push(fr);
+      rightChildQueue.push(fr);
     }
     else if (queryNode.IsLeaf() && (!referenceNode.IsLeaf()))
     {
@@ -150,11 +152,11 @@ BreadthFirstDualTreeTraverser<RuleType>::Traverse(
       // traversal information correctly.
       QueueFrameType fl = { &queryNode, referenceNode.Left(), queryDepth,
           score, rule.TraversalInfo() };
-      queue.push(fl);
+      referenceQueue.push(fl);
 
       QueueFrameType fr = { &queryNode, referenceNode.Right(), queryDepth,
           score, ti };
-      queue.push(fr);
+      referenceQueue.push(fr);
     }
     else
     {
@@ -164,21 +166,28 @@ BreadthFirstDualTreeTraverser<RuleType>::Traverse(
       // correctly.
       QueueFrameType fll = { queryNode.Left(), referenceNode.Left(),
           queryDepth + 1, score, rule.TraversalInfo() };
-      queue.push(fll);
+      leftChildQueue.push(fll);
 
       QueueFrameType flr = { queryNode.Left(), referenceNode.Right(),
           queryDepth + 1, score, rule.TraversalInfo() };
-      queue.push(flr);
+      leftChildQueue.push(flr);
 
       QueueFrameType frl = { queryNode.Right(), referenceNode.Left(),
           queryDepth + 1, score, rule.TraversalInfo() };
-      queue.push(frl);
+      rightChildQueue.push(frl);
 
       QueueFrameType frr = { queryNode.Right(), referenceNode.Right(),
           queryDepth + 1, score, rule.TraversalInfo() };
-      queue.push(frr);
+      rightChildQueue.push(frr);
     }
   }
+
+  // Now, recurse into the left and right children queues.  The order doesn't
+  // matter.
+  if (leftChildQueue.size() > 0)
+    Traverse(*queryNode.Left(), leftChildQueue);
+  if (rightChildQueue.size() > 0)
+    Traverse(*queryNode.Right(), rightChildQueue);
 }
 
 }; // namespace tree

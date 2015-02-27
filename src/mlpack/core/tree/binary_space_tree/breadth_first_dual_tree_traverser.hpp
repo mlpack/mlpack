@@ -11,11 +11,22 @@
 #define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_BREADTH_FIRST_DUAL_TREE_TRAVERSER_HPP
 
 #include <mlpack/core.hpp>
+#include <queue>
 
 #include "binary_space_tree.hpp"
 
 namespace mlpack {
 namespace tree {
+
+template<typename TreeType, typename TraversalInfoType>
+struct QueueFrame
+{
+  TreeType* queryNode;
+  TreeType* referenceNode;
+  size_t queryDepth;
+  double score;
+  TraversalInfoType traversalInfo;
+};
 
 template<typename BoundType,
          typename StatisticType,
@@ -31,6 +42,9 @@ class BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
    */
   BreadthFirstDualTreeTraverser(RuleType& rule);
 
+  typedef QueueFrame<BinarySpaceTree, typename RuleType::TraversalInfoType>
+      QueueFrameType;
+
   /**
    * Traverse the two trees.  This does not reset the number of prunes.
    *
@@ -40,6 +54,8 @@ class BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
    */
   void Traverse(BinarySpaceTree& queryNode,
                 BinarySpaceTree& referenceNode);
+  void Traverse(BinarySpaceTree& queryNode,
+                std::priority_queue<QueueFrameType>& referenceQueue);
 
   //! Get the number of prunes.
   size_t NumPrunes() const { return numPrunes; }
