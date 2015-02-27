@@ -304,6 +304,8 @@ visited[node.Descendant(i)] << ".\n";
       const size_t index = node.Point(i);
       if (!visited[index] && !prunedPoints[index])
       {
+        upperBounds[index] = DBL_MAX; // Reset the bounds.
+        lowerBounds[index] = DBL_MAX;
         allPointsPruned = false;
         continue; // We didn't visit it and we don't have valid bounds -- so we
                   // can't prune it.
@@ -396,8 +398,10 @@ visited[node.Descendant(i)] << ".\n";
     }
     else
     {
-      node.Stat().StaticUpperBoundMovement() = 0.0;
-      node.Stat().StaticLowerBoundMovement() = 0.0;
+      node.Stat().StaticUpperBoundMovement() =
+          clusterDistances[node.Stat().Owner()];
+      node.Stat().StaticLowerBoundMovement() =
+          clusterDistances[centroids.n_cols];
     }
   }
 }
@@ -434,6 +438,7 @@ void DTNNKMeans<MetricType, MatType, TreeType>::ExtractCentroids(
       const double minDist = trueDistances.min(minIndex);
       if (size_t(minIndex) != owner)
       {
+        Log::Warn << node;
         Log::Warn << trueDistances.t();
         Log::Fatal << "Point " << index << " of node " << node.Point(0) << "c"
 << node.NumDescendants() << " has true minimum cluster " << minIndex << " with "
@@ -469,6 +474,7 @@ node.Stat().UpperBound() << " and owner " << node.Stat().Owner() << ".\n";
         const double minDist = trueDistances.min(minIndex);
         if (size_t(minIndex) != owner)
         {
+          Log::Warn << node;
           Log::Warn << trueDistances.t();
           Log::Fatal << "Point " << index << " of node " << node.Point(0) << "c"
   << node.NumDescendants() << " has true minimum cluster " << minIndex << " with "
