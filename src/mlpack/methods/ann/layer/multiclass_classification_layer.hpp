@@ -94,5 +94,4 @@ using ClassificationLayer = MulticlassClassificationLayer<MatType, VecType>;
 }; // namespace ann
 }; // namespace mlpack
 
-
 #endif
