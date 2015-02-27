@@ -87,8 +87,6 @@ class Trainer
 
       while(true)
       {
-
-        // Randomly shuffle the index sequence if not in batch mode.
         if (shuffle)
           index = arma::shuffle(index);
 
@@ -98,7 +96,7 @@ class Trainer
         if (validationError <= tolerance)
           break;
 
-        if (maxEpochs > 0 && ++epoch > maxEpochs)
+        if (maxEpochs > 0 && ++epoch >= maxEpochs)
           break;
       }
     }
@@ -145,8 +143,8 @@ class Trainer
       {
         net.FeedForward(data.unsafe_col(index(i)),
             target.unsafe_col(index(i)), error);
-        trainingError += net.Error();
 
+        trainingError += net.Error();
         net.FeedBackward(error);
 
         if (((i + 1) % batchSize) == 0)
@@ -172,8 +170,8 @@ class Trainer
 
       for (size_t i = 0; i < data.n_cols; i++)
       {
-        net.FeedForward(data.unsafe_col(i), target.unsafe_col(i), error);
-        validationError += net.Error();
+         validationError += net.Evaluate(data.unsafe_col(i),
+            target.unsafe_col(i), error);
       }
 
       validationError /= data.n_cols;
