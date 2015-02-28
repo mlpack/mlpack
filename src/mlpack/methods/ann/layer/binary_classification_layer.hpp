@@ -45,7 +45,7 @@ class BinaryClassificationLayer
    * @param error The calculated error with respect to the input activation and
    * the given target.
    */
-  void calculateError(const VecType& inputActivations,
+  void CalculateError(const VecType& inputActivations,
                       const VecType& target,
                       VecType& error)
   {
@@ -58,7 +58,7 @@ class BinaryClassificationLayer
    * @param inputActivations Input data used to calculate the output class.
    * @param output Output class of the input activation.
    */
-  void outputClass(const VecType& inputActivations, VecType& output)
+  void OutputClass(const VecType& inputActivations, VecType& output)
   {
     output = inputActivations;
     output.transform( [](double value) { return (value > 0.5 ? 1 : 0); } );

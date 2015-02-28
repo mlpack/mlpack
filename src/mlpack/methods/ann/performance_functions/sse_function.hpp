@@ -29,7 +29,7 @@ class SumSquaredErrorFunction
    * @param target Target data.
    * @return sum of squared errors.
    */
-  static double error(const VecType& input, const VecType& target)
+  static double Error(const VecType& input, const VecType& target)
   {
     return arma::sum(arma::square(target - input));
   }

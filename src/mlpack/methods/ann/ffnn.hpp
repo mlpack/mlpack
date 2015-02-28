@@ -238,13 +238,13 @@ class FFNN
                       VecType& error)
     {
        // Calculate and store the output error.
-      outputLayer.calculateError(std::get<0>(
+      outputLayer.CalculateError(std::get<0>(
           std::get<sizeof...(Tp) - 1>(t)).OutputLayer().InputActivation(),
           target, error);
 
       // Masures the network's performance with the specified performance
       // function.
-      return PerformanceFunction::error(std::get<0>(
+      return PerformanceFunction::Error(std::get<0>(
           std::get<sizeof...(Tp) - 1>(t)).OutputLayer().InputActivation(),
           target);
     }
@@ -256,7 +256,7 @@ class FFNN
     void OutputPrediction(std::tuple<Tp...>& t, VecType& output)
     {
        // Calculate and store the output prediction.
-      outputLayer.outputClass(std::get<0>(
+      outputLayer.OutputClass(std::get<0>(
           std::get<sizeof...(Tp) - 1>(t)).OutputLayer().InputActivation(),
           output);
     }

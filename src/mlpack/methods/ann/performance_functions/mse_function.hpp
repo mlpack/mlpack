@@ -29,7 +29,7 @@ class MeanSquaredErrorFunction
    * @param target Target data.
    * @return mean of squared errors.
    */
-  static double error(const VecType& input, const VecType& target)
+  static double Error(const VecType& input, const VecType& target)
   {
     return arma::mean(arma::square(target - input));
   }
