@@ -39,7 +39,7 @@ class CrossEntropyErrorFunction
    * @param target Target data.
    * @return cross-entropy error.
    */
-  static double error(const VecType& input, const VecType& target)
+  static double Error(const VecType& input, const VecType& target)
   {
     if (LayerTraits<Layer>::IsBinary)
       return -arma::dot(arma::trunc_log(arma::abs(target - input)), target);
