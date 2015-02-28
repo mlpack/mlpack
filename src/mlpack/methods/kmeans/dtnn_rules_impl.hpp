@@ -205,10 +205,8 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
   }
 
   // Now, check if we can prune.
-  //Log::Warn << "adjusted score: " << adjustedScore << ".\n";
   if (adjustedScore > queryNode.Stat().UpperBound())
   {
-//    Log::Warn << "Pre-emptive prune!\n";
     if (!(tree::TreeTraits<TreeType>::FirstPointIsCentroid && score == 0.0))
     {
       // There isn't any need to set the traversal information because no
@@ -257,12 +255,15 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
       {
         // We can improve the best estimate.
         queryNode.Stat().UpperBound() = tighterBound;
-        // If this node has only one descendant, then it may be the owner.
-        if (referenceNode.NumDescendants() == 1)
-          queryNode.Stat().Owner() =
-              (tree::TreeTraits<TreeType>::RearrangesDataset) ?
-              oldFromNewCentroids[referenceNode.Descendant(0)] :
-              referenceNode.Descendant(0);
+
+        // Remember that our upper bound does correspond to a cluster centroid,
+        // so it does correspond to a cluster.  We'll mark the cluster as the
+        // owner, but note that the node is not truly owned unless
+        // Stat().Pruned() is centroids.n_cols.
+        queryNode.Stat().Owner() =
+            (tree::TreeTraits<TreeType>::RearrangesDataset) ?
+            oldFromNewCentroids[referenceNode.Descendant(0)] :
+            referenceNode.Descendant(0);
       }
     }
   }
