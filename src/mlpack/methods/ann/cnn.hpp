@@ -47,7 +47,8 @@ class CNN
      * @param outputLayer The outputlayer used to evaluate the network.
      */
     CNN(const ConnectionTypes& network, OutputLayerType& outputLayer)
-        : network(network), outputLayer(outputLayer), err(0)
+        : network(network), outputLayer(outputLayer), err(0),
+          trainError(0), seqNum(0)
     {
       // Nothing to do here.
     }
