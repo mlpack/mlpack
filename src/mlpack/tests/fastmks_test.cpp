@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(DualTreeVsSingleTree)
 {
   // First create a random dataset.
   arma::mat data;
-  data.randu(20, 15000);
+  data.randu(8, 5000);
   PolynomialKernel pk(5.0, 2.5);
 
   FastMKS<PolynomialKernel> single(data, pk, true);
