@@ -25,14 +25,14 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam InputLayerType Type of the connected input layer.
  * @tparam OutputLayerType Type of the connected output layer.
  * @tparam OptimizerType Type of the optimizer used to update the weights.
- * @tparam PoolingType Type of pooling strategy.
+ * @tparam PoolingRule Type of pooling strategy.
  * @tparam MatType Type of data (arma::mat or arma::sp_mat).
  */
 template<
   typename InputLayerType,
   typename OutputLayerType,
   typename OptimizerType,
-  typename PoolingType = MaxPooling,
+  typename PoolingRule = MaxPooling,
   typename MatType = arma::mat
 >
 class PoolingConnection {
@@ -47,14 +47,14 @@ class PoolingConnection {
    * @param OutputLayerType The output layer which is connected with the input
    * layer.
    * @param OptimizerType The optimizer used to update the weight matrix.
-   * @param PoolingType The strategy of pooling.
+   * @param PoolingRule The strategy of pooling.
    */
   PoolingConnection(InputLayerType& inputLayer,
                  OutputLayerType& outputLayer,
                  OptimizerType& optimizer,
                  double factor = 1.0,
                  double bias = 0,
-                 PoolingType pooling = PoolingType()) :
+                 PoolingRule pooling = PoolingRule()) :
   inputLayer(inputLayer), outputLayer(outputLayer), optimizer(optimizer),
   weights(2), pooling(pooling),
   rawOutput(outputLayer.InputActivation().n_rows,
@@ -154,9 +154,9 @@ class PoolingConnection {
   MatType& WeightsDelta() { return weightsDelta; }
   
   //! Get the pooling strategy.
-  PoolingType& Pooling() const { return pooling; }
+  PoolingRule& Pooling() const { return pooling; }
   //! Modify the pooling strategy.
-  PoolingType& Pooling() { return pooling; }
+  PoolingRule& Pooling() { return pooling; }
   
  private:
   //! Locally-stored input layer.
@@ -175,7 +175,7 @@ class PoolingConnection {
   MatType delta;
   
   //! Locally-stored pooling strategy.
-  PoolingType pooling;
+  PoolingRule pooling;
   
   //! Locally-stored delta of weights.
   MatType weightsDelta;
@@ -192,11 +192,11 @@ template<
   typename InputLayerType,
   typename OutputLayerType,
   typename OptimizerType,
-  typename PoolingType,
+  typename PoolingRule,
   typename MatType >
 class ConnectionTraits<
   PoolingConnection<InputLayerType, OutputLayerType, OptimizerType,
-  PoolingType, MatType> > {
+  PoolingRule, MatType> > {
  public:
   static const bool IsSelfConnection = false;
   static const bool IsFullselfConnection = false;
