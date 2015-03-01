@@ -22,7 +22,6 @@
 #include <mlpack/methods/ann/connections/cnn_pooling_connection.hpp>
 
 #include <mlpack/methods/ann/layer/bias_layer.hpp>
-#include <mlpack/methods/ann/layer/neuron_layer_2d.hpp>
 #include <mlpack/methods/ann/layer/neuron_layer.hpp>
 #include <mlpack/methods/ann/layer/softmax_layer.hpp>
 #include <mlpack/methods/ann/layer/one_hot_layer.hpp>
@@ -184,7 +183,7 @@ auto genLayer1Bias(T1& biasLayer, std::tuple<Tp2...>& P2,
 BOOST_AUTO_TEST_CASE(LeNet1Test) {
   
   // Input layer
-  NeuronLayer2D<IdentityFunction, arma::mat> inputLayer(28, 28);
+  NeuronLayer<IdentityFunction, arma::mat> inputLayer(28, 28);
   auto layer0 = std::tie(inputLayer);
   
   /**
@@ -197,22 +196,22 @@ BOOST_AUTO_TEST_CASE(LeNet1Test) {
   
   // 4 layers in H1
   auto layer1 = genTuple<4>([&](size_t) {
-    return NeuronLayer2D<IdentityFunction, arma::mat>(24, 24);
+    return NeuronLayer<IdentityFunction, arma::mat>(24, 24);
   });
   
   // 4 layers in H2
   auto layer2 = genTuple<4>([&](size_t) {
-    return NeuronLayer2D<LogisticFunction, arma::mat>(12, 12);
+    return NeuronLayer<LogisticFunction, arma::mat>(12, 12);
   });
   
   // 12 layers in H3
   auto layer3 = genTuple<12>([&](size_t) {
-    return NeuronLayer2D<IdentityFunction, arma::mat>(8, 8);
+    return NeuronLayer<IdentityFunction, arma::mat>(8, 8);
   });
   
   // 12 layers in H4
   auto layer4 = genTuple<12>([&](size_t) {
-    return NeuronLayer2D<LogisticFunction, arma::mat>(4, 4);
+    return NeuronLayer<LogisticFunction, arma::mat>(4, 4);
   });
 
   /**
@@ -241,7 +240,7 @@ BOOST_AUTO_TEST_CASE(LeNet1Test) {
   auto layer5 = std::tie(layer5_0);
   
   // Sub-layers for layer 5
-  auto layer5Sub = genTuple<NeuronLayer2D<IdentityFunction, arma::mat> >
+  auto layer5Sub = genTuple<NeuronLayer<IdentityFunction, arma::mat> >
   (layer5InputSub, layer5DeltaSub, std::make_index_sequence<10>());
   
   /**
