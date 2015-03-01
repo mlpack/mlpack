@@ -24,13 +24,8 @@ class MeanPooling {
   template<typename MatType>
   static void unpooling(const MatType& input, const double& value,
                         MatType& output) {
-    double new_value = value / input.n_elem;
-    output = arma::zeros<MatType>(input.n_rows, input.n_cols);
-    for (size_t j = 0; j < output.n_cols; ++j) {
-      for (size_t i = 0; i < output.n_rows; ++i) {
-        output(i,j) = new_value;
-      }
-    }
+    output = MatType(input.n_rows, input.n_cols);
+    output.fill(value / input.n_elem);
   }
   
  private:

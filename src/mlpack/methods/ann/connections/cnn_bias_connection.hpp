@@ -98,7 +98,7 @@ class BiasConnection
   {
     // Calculate the delta of weights to update @weights,
     // which is actually the bias value.
-    weightsDelta = arma::sum(arma::sum(error));;
+    weightsDelta = arma::accu(error);
   }
   
   //! Get the optimzer.
