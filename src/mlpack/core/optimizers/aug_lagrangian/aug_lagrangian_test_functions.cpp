@@ -202,8 +202,6 @@ void LovaszThetaSDP::Gradient(const arma::mat& coordinates,
   // The gradient is equal to (2 S' R^T)^T, with R being coordinates.
   // S' = C - sum_{i = 1}^{m} [ y_i - sigma (Tr(A_i * (R^T R)) - b_i)] * A_i
   // We will calculate it in a not very smart way, but it should work.
- // Log::Warn << "Using stupid specialization for gradient calculation!"
- //    << std::endl;
 
   // Initialize S' piece by piece.  It is of size n x n.
   const size_t n = coordinates.n_cols;
@@ -252,14 +250,7 @@ void LovaszThetaSDP::Gradient(const arma::mat& coordinates,
     }
   }
 
-//  Log::Warn << "Calculated S is: " << std::endl << s << std::endl;
-
   gradient = trans(2 * s * trans(coordinates));
-
-//  Log::Warn << "Calculated gradient is: " << std::endl << gradient << std::endl;
-
-
-//  Log::Debug << "Evaluating gradient. " << std::endl;
 
   // The gradient of -Tr(ones * X) is equal to -2 * ones * R
 //  arma::mat ones;
@@ -358,9 +349,6 @@ const arma::mat& LovaszThetaSDP::GetInitialPoint()
   if (ceil(r) > vertices)
     r = vertices; // An upper bound on the dimension.
 
-  Log::Debug << "Dimension will be " << ceil(r) << " x " << vertices << "."
-      << std::endl;
-
   initialPoint.set_size(ceil(r), vertices);
 
   // Now we set the entries of the initial matrix according to the formula given
@@ -375,13 +363,6 @@ const arma::mat& LovaszThetaSDP::GetInitialPoint()
         initialPoint(i, j) = sqrt(1.0 / (vertices * m));
     }
   }
-
-  Log::Debug << "Initial matrix " << std::endl << initialPoint << std::endl;
-
-  Log::Warn << "X " << std::endl << trans(initialPoint) * initialPoint
-      << std::endl;
-
-  Log::Warn << "accu " << accu(trans(initialPoint) * initialPoint) << std::endl;
 
   return initialPoint;
 }

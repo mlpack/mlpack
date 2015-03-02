@@ -85,15 +85,11 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
   size_t it;
   for (it = 0; it != (maxIterations - 1); it++)
   {
-    Log::Warn << "AugLagrangian on iteration " << it
+    Log::Info << "AugLagrangian on iteration " << it
         << ", starting with objective "  << lastObjective << "." << std::endl;
 
- //   Log::Warn << coordinates << std::endl;
-
-//    Log::Warn << trans(coordinates) * coordinates << std::endl;
-
     if (!lbfgs.Optimize(coordinates))
-      Log::Warn << "L-BFGS reported an error during optimization."
+      Log::Info << "L-BFGS reported an error during optimization."
           << std::endl;
 
     // Check if we are done with the entire optimization (the threshold we are
@@ -117,7 +113,7 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
 //          function.EvaluateConstraint(i, coordinates) << std::endl;
     }
 
-    Log::Warn << "Penalty is " << penalty << " (threshold "
+    Log::Info << "Penalty is " << penalty << " (threshold "
         << penaltyThreshold << ")." << std::endl;
 
     for (size_t i = 0; i < function.NumConstraints(); ++i)
@@ -140,7 +136,7 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
       // penalty.  TODO: this factor should be a parameter (from CLI).  The
       // value of 0.25 is taken from Burer and Monteiro (2002).
       penaltyThreshold = 0.25 * penalty;
-      Log::Warn << "Lagrange multiplier estimates updated." << std::endl;
+      Log::Info << "Lagrange multiplier estimates updated." << std::endl;
     }
     else
     {
@@ -148,7 +144,7 @@ bool AugLagrangian<LagrangianFunction>::Optimize(arma::mat& coordinates,
       // parameter (from CLI).  The value of 10 is taken from Burer and Monteiro
       // (2002).
       augfunc.Sigma() *= 10;
-      Log::Warn << "Updated sigma to " << augfunc.Sigma() << "." << std::endl;
+      Log::Info << "Updated sigma to " << augfunc.Sigma() << "." << std::endl;
     }
   }
 
