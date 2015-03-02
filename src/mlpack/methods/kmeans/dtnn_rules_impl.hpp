@@ -75,7 +75,7 @@ inline force_inline double DTNNKMeansRules<MetricType, TreeType>::BaseCase(
   {
     lowerBounds[queryIndex] = distance;
   }
-
+  
   // Cache this information for the next time BaseCase() is called.
   lastQueryIndex = queryIndex;
   lastReferenceIndex = referenceIndex;
@@ -124,7 +124,7 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
   const double queryDescDist = queryNode.FurthestDescendantDistance();
   const double refParentDist = referenceNode.ParentDistance();
   const double refDescDist = referenceNode.FurthestDescendantDistance();
-  const double lastScore = std::abs(traversalInfo.LastScore());
+  const double lastScore = traversalInfo.LastScore();
   double adjustedScore;
   double score = 0.0;
 
@@ -203,7 +203,7 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
     // actually happen for kd-trees or cover trees.
     adjustedScore = 0.0;
   }
-  
+
   // Now, check if we can prune.
   if (adjustedScore > queryNode.Stat().UpperBound())
   {
@@ -266,12 +266,8 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
             referenceNode.Descendant(0);
       }
     }
-
-    if (distances.Hi() > queryNode.Stat().UpperBound() &&
-        referenceNode.NumDescendants() > 1 && score != DBL_MAX)
-      score = -score; // Invert score for smarter strategy.
   }
-  
+
   // Is everything pruned?
   if (queryNode.Stat().Pruned() == centroids.n_cols - 1)
   {
@@ -306,16 +302,14 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Rescore(
   if (oldScore == DBL_MAX)
     return DBL_MAX; // It's already pruned.
 
-  const double realScore = std::abs(oldScore);
-
   // oldScore contains the minimum distance between queryNode and referenceNode.
   // In the time since Score() has been called, the upper bound *may* have
   // tightened.  If it has tightened enough, we may prune this node now.
-  if (realScore > queryNode.Stat().UpperBound())
+  if (oldScore > queryNode.Stat().UpperBound())
   {
     // We may still be able to improve the lower bound on pruned nodes.
-    if (realScore < queryNode.Stat().LowerBound())
-      queryNode.Stat().LowerBound() = realScore;
+    if (oldScore < queryNode.Stat().LowerBound())
+      queryNode.Stat().LowerBound() = oldScore;
 
     // This assumes that reference clusters don't appear elsewhere in the tree.
     queryNode.Stat().Pruned() += referenceNode.NumDescendants();

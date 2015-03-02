@@ -132,7 +132,7 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
   }
 
   // We won't use the AllkNN class here because we have our own set of rules.
-  lastIterationCentroids = oldCentroids;
+  //lastIterationCentroids = oldCentroids;
   typedef DTNNKMeansRules<MetricType, TreeType> RuleType;
   RuleType rules(centroids, dataset, assignments, upperBounds, lowerBounds,
       metric, prunedPoints, oldFromNewCentroids, visited);
@@ -212,9 +212,9 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
     node.Stat().Owner() = node.Parent()->Stat().Owner();
   }
 
+
   // Exhaustive lower bound check. Sigh.
-/*
-  if (!prunedLastIteration)
+/*  if (!prunedLastIteration)
   {
     for (size_t i = 0; i < node.NumDescendants(); ++i)
     {
@@ -238,14 +238,11 @@ void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
 
       if (closest - 1e-10 > node.Stat().UpperBound())
       {
-        Log::Warn << node;
         Log::Warn << distances.t();
       Log::Fatal << "Point " << node.Descendant(i) << " in " << node.Point(0) <<
 "c" << node.NumDescendants() << " invalidates upper bound " <<
 node.Stat().UpperBound() << " with closest cluster distance " << closest <<
-", lb " << lowerBounds[node.Descendant(i)] << " n " << node.Stat().LowerBound()
-<< " pp " << prunedPoints[node.Descendant(i)] << " visited " <<
-visited[node.Descendant(i)] << ".\n";
+".\n";
       }
 
     if (node.NumChildren() == 0)
@@ -253,7 +250,6 @@ visited[node.Descendant(i)] << ".\n";
       if (secondClosest + 1e-10 < std::min(lowerBounds[node.Descendant(i)],
   node.Stat().LowerBound()))
       {
-      Log::Warn << node;
       Log::Warn << distances.t();
       Log::Fatal << "Point " << node.Descendant(i) << " in " << node.Point(0) <<
 "c" << node.NumDescendants() << " invalidates lower bound " <<
@@ -265,8 +261,8 @@ visited[node.Descendant(i)] << ".\n";
       }
     }
   }
-  }
-*/
+  }*/
+
 
   if ((node.Stat().Pruned() == centroids.n_cols) &&
       (node.Stat().Owner() < centroids.n_cols))

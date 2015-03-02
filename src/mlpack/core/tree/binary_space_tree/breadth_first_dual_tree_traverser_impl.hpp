@@ -160,39 +160,25 @@ BreadthFirstDualTreeTraverser<RuleType>::Traverse(
     }
     else
     {
-      if (score >= 0.0)
-      {
-        // We have to recurse down both query and reference nodes.  Because the
-        // query descent order does not matter, we will go to the left query
-        // child first.  Before recursing, we have to set the traversal
-        // information correctly.
-        QueueFrameType fll = { queryNode.Left(), referenceNode.Left(),
-            queryDepth + 1, score, rule.TraversalInfo() };
-        leftChildQueue.push(fll);
+      // We have to recurse down both query and reference nodes.  Because the
+      // query descent order does not matter, we will go to the left query child
+      // first.  Before recursing, we have to set the traversal information
+      // correctly.
+      QueueFrameType fll = { queryNode.Left(), referenceNode.Left(),
+          queryDepth + 1, score, rule.TraversalInfo() };
+      leftChildQueue.push(fll);
 
-        QueueFrameType flr = { queryNode.Left(), referenceNode.Right(),
-            queryDepth + 1, score, rule.TraversalInfo() };
-        leftChildQueue.push(flr);
+      QueueFrameType flr = { queryNode.Left(), referenceNode.Right(),
+          queryDepth + 1, score, rule.TraversalInfo() };
+      leftChildQueue.push(flr);
 
-        QueueFrameType frl = { queryNode.Right(), referenceNode.Left(),
-            queryDepth + 1, score, rule.TraversalInfo() };
-        rightChildQueue.push(frl);
+      QueueFrameType frl = { queryNode.Right(), referenceNode.Left(),
+          queryDepth + 1, score, rule.TraversalInfo() };
+      rightChildQueue.push(frl);
 
-        QueueFrameType frr = { queryNode.Right(), referenceNode.Right(),
-            queryDepth + 1, score, rule.TraversalInfo() };
-        rightChildQueue.push(frr);
-      }
-      else
-      {
-        // Only recurse down the references.
-        QueueFrameType fl = { &queryNode, referenceNode.Left(), queryDepth,
-            score, rule.TraversalInfo() };
-        referenceQueue.push(fl);
-
-        QueueFrameType fr = { &queryNode, referenceNode.Right(), queryDepth,
-            score, ti };
-        referenceQueue.push(fr);
-      }
+      QueueFrameType frr = { queryNode.Right(), referenceNode.Right(),
+          queryDepth + 1, score, rule.TraversalInfo() };
+      rightChildQueue.push(frr);
     }
   }
 
