@@ -141,6 +141,8 @@
  *   - Udit Saxena <saxena.udit@gmail.com>
  *   - Stephen Tu <tu.stephenl@gmail.com>
  *   - Jaskaran Singh <jaskaranvirdi@gmail.com>
+ *   - Hritik Jain <hritik.jain.cse13@itbhu.ac.in>
+ *   - Vladimir Glazachev <glazachev.vladimir@gmail.com>
  */
 
 // First, include all of the prerequisites.
