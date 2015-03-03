@@ -192,7 +192,6 @@ find_package(Boost 1.49
     COMPONENTS
       program_options
       unit_test_framework
-      random
     REQUIRED
 )
 include_directories(${Boost_INCLUDE_DIRS})

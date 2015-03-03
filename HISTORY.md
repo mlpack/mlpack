@@ -17,6 +17,8 @@
   * Added MatrixCompletion class (matrix_completion), which performs nuclear
     norm minimization to fill unknown values of an input matrix.
 
+  * No more dependence on Boost.Random; now we use C++11 STL random support.
+
 ### mlpack 1.0.11
 ###### 2014-12-11
   * Proper handling of dimension calculation in PCA.
