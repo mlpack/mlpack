@@ -29,13 +29,13 @@ system and have headers present:
 
  - Armadillo >= 3.6.0 (with LAPACK support)
  - LibXML2 >= 2.6.0
- - Boost (math_c99, program_options, unit_test_framework, random, heap) >= 1.49
+ - Boost (math_c99, program_options, unit_test_framework, heap) >= 1.49
 
 In Ubuntu and Debian, you can get all of these dependencies through apt:
 
 @code
 # apt-get install libboost-math-dev libboost-program-options-dev
-  libboost-random-dev libboost-test-dev libxml2-dev libarmadillo-dev
+  libboost-test-dev libxml2-dev libarmadillo-dev
 @endcode
 
 If you are using an Ubuntu version older than 13.10 ("Saucy Salamander") or
@@ -45,8 +45,8 @@ the README.txt distributed with Armadillo for more information.
 On Fedora, Red Hat, or CentOS, these same dependencies can be obtained via yum:
 
 @code
-# yum install boost-devel boost-random boost-test boost-program-options
-  boost-math libxml2-devel armadillo-devel
+# yum install boost-devel boost-test boost-program-options boost-math
+  libxml2-devel armadillo-devel
 @endcode
 
 On Red Hat Enterprise Linux 5 and older (as well as CentOS 5), the Armadillo
