@@ -26,7 +26,8 @@ bool inline inplace_transpose(arma::Mat<eT>& X)
   }
   catch (std::bad_alloc& exception)
   {
-#if ARMA_VERSION_MAJOR >= 4
+#if (ARMA_VERSION_MAJOR >= 4) || \
+    ((ARMA_VERSION_MAJOR == 3) && (ARMA_VERSION_MINOR >= 930))
     arma::inplace_trans(X, "lowmem");
 #else
     Log::Fatal << "inplace_transpose is only available on "
