@@ -31,6 +31,11 @@ class NetworkTraits
    * This is true if the network is a recurrent neural network.
    */
   static const bool IsRNN = false;
+  
+  /**
+   * This is true if the network is a convolutional neural network.
+   */
+  static const bool IsCNN = false;
 };
 
 }; // namespace ann

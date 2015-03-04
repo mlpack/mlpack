@@ -53,6 +53,7 @@ class SteepestDescent
       weights -= lr * gradient;
   }
 
+  double LearnRate() const { return lr; }
 
  private:
   //! The number used as learning rate.

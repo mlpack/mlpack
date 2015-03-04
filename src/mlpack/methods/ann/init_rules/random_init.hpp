@@ -29,8 +29,8 @@ class RandomInitialization
    * @param lowerBound The number used as lower bound.
    * @param upperBound The number used as upper bound.
    */
-  RandomInitialization(const double lowerBound = -0.05,
-                       const double upperBound = 0.05) :
+  RandomInitialization(const double lowerBound = -0.5,
+                       const double upperBound = 0.5) :
       lowerBound(lowerBound), upperBound(upperBound) { }
 
   /**

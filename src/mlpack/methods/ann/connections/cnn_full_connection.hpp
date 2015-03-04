@@ -1,12 +1,12 @@
 /**
- * @file fullself_connection.hpp
- * @author Marcus Edel
+ * @file cnn_full_connection.hpp
+ * @author Shangtong Zhang
  *
- * Implementation of the full self connection class. This is used mainly used as
- * recurrent connection.
+ * Implementation of the full connection between input layer 
+ * and output layer for CNN.
  */
-#ifndef __MLPACK_METHOS_ANN_CONNECTIONS_FULLSELF_CONNECTION_HPP
-#define __MLPACK_METHOS_ANN_CONNECTIONS_FULLSELF_CONNECTION_HPP
+#ifndef __MLPACK_METHOS_ANN_CONNECTIONS_CNN_FULL_CONNECTION_HPP
+#define __MLPACK_METHOS_ANN_CONNECTIONS_CNN_FULL_CONNECTION_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
@@ -15,10 +15,10 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the full self connection class. The full connection
- * connects every neuron from the input layer with the output layer in a matrix
- * multiplicative way. This connection is used as recurrent connection, the
- * input would be automatically updated every time step.
+ * Implementation of the full connection class for CNN. 
+ * The full connection connects
+ * every neuron in the input layer with the output layer in a
+ * convolutional way.
  *
  * @tparam InputLayerType Type of the connected input layer.
  * @tparam OutputLayerType Type of the connected output layer.
@@ -35,7 +35,7 @@ template<
     typename MatType = arma::mat,
     typename VecType = arma::colvec
 >
-class FullselfConnection
+class CNNFullConnection
 {
  public:
   /**
@@ -50,14 +50,15 @@ class FullselfConnection
    * @param WeightInitRule The weight initialize rule used to initialize the
    * weight matrix.
    */
-  FullselfConnection(InputLayerType& inputLayer,
-                  OutputLayerType& outputLayer,
-                  OptimizerType& optimizer,
-                  WeightInitRule weightInitRule = WeightInitRule()) :
+  CNNFullConnection(InputLayerType& inputLayer,
+                 OutputLayerType& outputLayer,
+                 OptimizerType& optimizer,
+                 WeightInitRule weightInitRule = WeightInitRule()) :
       inputLayer(inputLayer), outputLayer(outputLayer), optimizer(optimizer)
   {
     weightInitRule.Initialize(weights, outputLayer.InputSize(),
         inputLayer.OutputSize());
+    weightsDelta = arma::zeros<MatType>(weights.n_rows, weights.n_cols);
   }
 
   /**
@@ -68,31 +69,32 @@ class FullselfConnection
    */
   void FeedForward(const VecType& input)
   {
+    Log::Debug << "CNNFullConnection::FeedForward" << std::endl;
+    Log::Debug << "Input:\n" << input << std::endl;
+    Log::Debug << "Weights:\n" << weights << std::endl;
     outputLayer.InputActivation() += (weights * input);
+    Log::Debug << "OutputLayer's Input:\n"
+               << outputLayer.InputActivation() << std::endl;
   }
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
+   * Calculate the delta of weights to update weights.
    *
    * @param error The backpropagated error.
    */
   void FeedBackward(const VecType& error)
   {
-    // Calculating the delta using the partial derivative of the error with
-    // respect to a weight.
+    Log::Debug << "CNNFullConnection::FeedBackward" << std::endl;
+    Log::Debug << "Input:\n" << error << std::endl;
+    Log::Debug << "Weights:\n" << weights << std::endl;
     delta = (weights.t() * error);
-  }
-
-  /*
-   * Calculate the gradient using the output delta and the input activation.
-   *
-   * @param gradient The calculated gradient.
-   */
-  void Gradient(MatType& gradient)
-  {
-    gradient = outputLayer.Delta() * inputLayer.InputActivation().t();
+    inputLayer.Delta() += delta;
+    weightsDelta = error * inputLayer.InputActivation().t();
+    Log::Debug << "Delta:\n" << delta << std::endl;
+    Log::Debug << "WeightsDelta:\n" << weightsDelta << std::endl;
   }
 
   //! Get the weights.
@@ -100,6 +102,11 @@ class FullselfConnection
   //! Modify the weights.
   MatType& Weights() { return weights; }
 
+  //! Get the delta of weights.
+  MatType& WeightsDelta() const { return weightsDelta; }
+  //! Modify the delta of weights.
+  MatType& WeightsDelta() { return weightsDelta; }
+  
   //! Get the input layer.
   InputLayerType& InputLayer() const { return inputLayer; }
   //! Modify the input layer.
@@ -115,14 +122,17 @@ class FullselfConnection
   //! Modify the optimzer.
   OptimizerType& Optimzer() { return optimizer; }
 
-  //! Get the detla.
+  //! Get the passed error in backward propagation.
   VecType& Delta() const { return delta; }
- //  //! Modify the delta.
+  //! Modify the passed error in backward propagation.
   VecType& Delta() { return delta; }
 
  private:
   //! Locally-stored weight object.
   MatType weights;
+  
+  //! Locally-stored delta of weights.
+  MatType weightsDelta;
 
   //! Locally-stored connected input layer object.
   InputLayerType& inputLayer;
@@ -133,29 +143,9 @@ class FullselfConnection
   //! Locally-stored optimzer object.
   OptimizerType& optimizer;
 
-  //! Locally-stored detla object that holds the calculated delta.
+  //! Locally-stored passed error in backward propagation.
   VecType delta;
-}; // class RandomInitialization
-
-
-//! Connection traits for the full self connection.
-template<
-    typename InputLayerType,
-    typename OutputLayerType,
-    typename OptimizerType,
-    class WeightInitRule,
-    typename MatType,
-    typename VecType
->
-class ConnectionTraits<
-    FullselfConnection<InputLayerType, OutputLayerType, OptimizerType,
-    WeightInitRule, MatType, VecType> >
-{
- public:
-  static const bool IsSelfConnection = false;
-  static const bool IsFullselfConnection = true;
-  static const bool hasWeightsDelta = false;
-};
+}; // class CNNFullConnection
 
 }; // namespace ann
 }; // namespace mlpack

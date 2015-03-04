@@ -66,7 +66,8 @@ class IdentityFunction
   template<typename InputVecType, typename OutputVecType>
   static void deriv(const InputVecType& y, OutputVecType& x)
   {
-    x.ones(y.n_elem);
+    //x.ones(y.n_elem);
+    x.ones(y.n_rows, y.n_cols);
   }
 }; // class IdentityFunction
 

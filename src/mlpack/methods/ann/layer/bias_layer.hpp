@@ -107,6 +107,7 @@ class BiasLayer
 
   //! Locally-stored number of neurons.
   size_t layerSize;
+  
 }; // class BiasLayer
 
 //! Layer traits for the bias layer.
