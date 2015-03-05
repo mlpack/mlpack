@@ -61,7 +61,7 @@ template<
 class SoftmaxRegression
 {
  public:
- 
+
   /**
    * Construct the SoftmaxRegression class with the provided data and labels.
    * This will train the model. Optionally, the parameter 'lambda' can be
@@ -81,7 +81,7 @@ class SoftmaxRegression
                     const size_t numClasses,
                     const double lambda = 0.0001,
                     const bool fitIntercept = false);
-                    
+
   /**
    * Construct the softmax regression model with the given training data. This
    * will train the model. This overload takes an already instantiated optimizer
@@ -92,7 +92,7 @@ class SoftmaxRegression
    * @param optimizer Instantiated optimizer with instantiated error function.
    */
   SoftmaxRegression(OptimizerType<SoftmaxRegressionFunction>& optimizer);
-  
+
   /**
    * Predict the class labels for the provided feature points. The function
    * calculates the probabilities for every class, given a data point. It then
@@ -102,7 +102,7 @@ class SoftmaxRegression
    * @param predictions Vector to store the predictions in.
    */
   void Predict(const arma::mat& testData, arma::vec& predictions);
-  
+
   /**
    * Computes accuracy of the learned model given the feature data and the
    * labels associated with each data point. Predictions are made using the
@@ -112,49 +112,25 @@ class SoftmaxRegression
    * @param labels Vector of labels associated with the data.
    */
   double ComputeAccuracy(const arma::mat& testData, const arma::vec& labels);
-                    
-  //! Sets the size of the input vector.
-  void InputSize(const size_t input)
-  {
-    this->inputSize = input;
-  }
-  
-  //! Gets the size of the input vector.
-  size_t InputSize() const
-  {
-    return inputSize;
-  }
-  
-  //! Sets the number of classes.
-  void NumClasses(const size_t classes)
-  {
-    this->numClasses = classes;
-  }
-  
-  //! Gets the number of classes.
-  size_t NumClasses() const
-  {
-    return numClasses;
-  }
-  
-  //! Sets the regularization parameter.
-  void Lambda(const double l)
-  {
-    this->lambda = l;
-  }
-  
-  //! Gets the regularization parameter.
-  double Lambda() const
-  {
-    return lambda;
-  }
 
-  //! Gets the intercept term flag.
-  bool FitIntercept() const
-  {
-    return fitIntercept;
-  }
-                    
+  //! Sets the size of the input vector.
+  size_t& InputSize() { return inputSize; }
+  //! Gets the size of the input vector.
+  size_t InputSize() const { return inputSize; }
+
+  //! Sets the number of classes.
+  size_t& NumClasses() { return numClasses; }
+  //! Gets the number of classes.
+  size_t NumClasses() const { return numClasses; }
+
+  //! Sets the regularization parameter.
+  double& Lambda() { return lambda; }
+  //! Gets the regularization parameter.
+  double Lambda() const { return lambda; }
+
+  //! Gets the intercept term flag.  We can't change this after training.
+  bool FitIntercept() const { return fitIntercept; }
+
  private:
   //! Parameters after optimization.
   arma::mat parameters;
