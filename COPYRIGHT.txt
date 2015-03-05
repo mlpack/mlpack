@@ -36,6 +36,7 @@ Copyright: Copyright 2014-2015, Stephen Tu <tu.stephenl@gmail.com>
 Copyright: Copyright 2014-2015, Jaskaran Singh <jaskaranvirdi@ymail.com>
 Copyright: Copyright 2015, Hritik Jain <hritik.jain.cse13@itbhu.ac.in>
 Copyright: Copyright 2015, Vladimir Glazachev <glazachev.vladimir@gmail.com>
+Copyright: Copyright 2015, QiaoAn Chen <kazenoyumechen@gmail.com>
 License: BSD-3-clause
   The text of the license is available on Debian systems in the
   /usr/share/common-licenses/BSD file.
