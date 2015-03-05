@@ -215,6 +215,50 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
   BOOST_REQUIRE_CLOSE(testAcc, 100.0, 0.6);
 }
 
+BOOST_AUTO_TEST_CASE(SoftmaxRegressionFitIntercept)
+{
+  // Generate a two-Gaussian dataset,
+  // which can't be seperated without adding the intercept term.
+  GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
+  GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
+
+  arma::mat data(3, 1000);
+  arma::vec responses(1000);
+  for (size_t i = 0; i < 500; ++i)
+  {
+    data.col(i) = g1.Random();
+    responses[i] = 0;
+  }
+  for (size_t i = 501; i < 1000; ++i)
+  {
+    data.col(i) = g2.Random();
+    responses[i] = 1;
+  }
+
+  // Now train a logistic regression object on it.
+  SoftmaxRegression<> lr(data, responses, 3, 2, 0.01, true);
+
+  // Ensure that the error is close to zero.
+  const double acc = lr.ComputeAccuracy(data, responses);
+  BOOST_REQUIRE_CLOSE(acc, 100.0, 2.0);
+
+  // Create a test set.
+  for (size_t i = 0; i < 500; ++i)
+  {
+    data.col(i) = g1.Random();
+    responses[i] = 0;
+  }
+  for (size_t i = 501; i < 1000; ++i)
+  {
+    data.col(i) = g2.Random();
+    responses[i] = 1;
+  }
+
+  // Ensure that the error is close to zero.
+  const double testAcc = lr.ComputeAccuracy(data, responses);
+  BOOST_REQUIRE_CLOSE(testAcc, 100.0, 2.0);
+}
+
 BOOST_AUTO_TEST_CASE(SoftmaxRegressionMultipleClasses)
 {
   const size_t points = 5000;

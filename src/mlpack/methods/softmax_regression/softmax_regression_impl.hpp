@@ -18,13 +18,15 @@ SoftmaxRegression<OptimizerType>::SoftmaxRegression(const arma::mat& data,
                                                     const arma::vec& labels,
                                                     const size_t inputSize,
                                                     const size_t numClasses,
-                                                    const double lambda) :
+                                                    const double lambda,
+                                                    const bool fitIntercept) :
     inputSize(inputSize),
     numClasses(numClasses),
-    lambda(lambda)
+    lambda(lambda),
+    fitIntercept(fitIntercept)
 {
   SoftmaxRegressionFunction regressor(data, labels, inputSize, numClasses,
-                                      lambda);
+                                      lambda, fitIntercept);
   OptimizerType<SoftmaxRegressionFunction> optimizer(regressor);
   
   parameters = regressor.GetInitialPoint();
@@ -61,8 +63,23 @@ void SoftmaxRegression<OptimizerType>::Predict(const arma::mat& testData,
 {
   // Calculate the probabilities for each test input.
   arma::mat hypothesis, probabilities;
+  if (fitIntercept)
+  {
+    // In order to add the intercept term, we should compute following matrix:
+    //     [1; data] = arma::join_cols(ones(1, data.n_cols), data)
+    //     hypothesis = arma::exp(parameters * [1; data]).
+    //
+    // Since the cost of join maybe high due to the copy of original data,
+    // split the hypothesis computation to two components.
+    hypothesis = arma::exp(
+        arma::repmat(parameters.col(0), 1, testData.n_cols) +
+        parameters.cols(1, parameters.n_cols - 1) * testData);
+  }
+  else
+  {
+    hypothesis = arma::exp(parameters * testData);
+  }
   
-  hypothesis = arma::exp(parameters * testData);
   probabilities = hypothesis / arma::repmat(arma::sum(hypothesis, 0),
                                             numClasses, 1);
   
