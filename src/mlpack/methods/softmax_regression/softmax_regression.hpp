@@ -73,12 +73,14 @@ class SoftmaxRegression
    * @param inputSize Size of the input feature vector.
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
+   * @param fitIntercept add intercept term or not.
    */
   SoftmaxRegression(const arma::mat& data,
                     const arma::vec& labels,
                     const size_t inputSize,
                     const size_t numClasses,
-                    const double lambda = 0.0001);
+                    const double lambda = 0.0001,
+                    const bool fitIntercept = false);
                     
   /**
    * Construct the softmax regression model with the given training data. This
@@ -146,6 +148,12 @@ class SoftmaxRegression
   {
     return lambda;
   }
+
+  //! Gets the intercept term flag.
+  bool FitIntercept() const
+  {
+    return fitIntercept;
+  }
                     
  private:
   //! Parameters after optimization.
@@ -156,6 +164,8 @@ class SoftmaxRegression
   size_t numClasses;
   //! L2-regularization constant.
   double lambda;
+  //! Intercept term flag.
+  bool fitIntercept;
 };
 
 }; // namespace regression
