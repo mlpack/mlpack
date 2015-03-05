@@ -218,7 +218,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
 BOOST_AUTO_TEST_CASE(SoftmaxRegressionFitIntercept)
 {
   // Generate a two-Gaussian dataset,
-  // which can't be seperated without adding the intercept term.
+  // which can't be separated without adding the intercept term.
   GaussianDistribution g1(arma::vec("1.0 1.0 1.0"), arma::eye<arma::mat>(3, 3));
   GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
 
