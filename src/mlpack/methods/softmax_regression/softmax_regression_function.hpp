@@ -25,12 +25,14 @@ class SoftmaxRegressionFunction
    * @param inputSize Size of the input feature vector.
    * @param numClasses Number of classes for classification.
    * @param lambda L2-regularization constant.
+   * @param fitIntercept Intercept term flag.
    */
   SoftmaxRegressionFunction(const arma::mat& data,
                             const arma::vec& labels,
                             const size_t inputSize,
                             const size_t numClasses,
-                            const double lambda = 0.0001);
+                            const double lambda = 0.0001,
+                            const bool fitIntercept = false);
 
   //! Initializes the parameters of the model to suitable values.
   const arma::mat InitializeWeights();
@@ -42,6 +44,18 @@ class SoftmaxRegressionFunction
    * @param groundTruth Pointer to arma::mat which stores the computed matrix.
    */
   void GetGroundTruthMatrix(const arma::vec& labels, arma::sp_mat& groundTruth);
+
+  /**
+   * Evaluate the probabilities matrix with the passed parameters.
+   * probabilities(i, j) =
+   *     exp(\theta_i * data_j) / sum_k(exp(\theta_k * data_j)).
+   * It represents the probability of data_j belongs to class i.
+   *
+   * @param parameters Current values of the model parameters.
+   * @param probabilities Pointer to arma::mat which stores the probabilities.
+   */
+  void GetProbabilitiesMatrix(const arma::mat& parameters,
+                              arma::mat& probabilities) const;
 
   /**
    * Evaluates the objective function of the softmax regression model using the
@@ -104,6 +118,12 @@ class SoftmaxRegressionFunction
     return lambda;
   }
 
+  //! Gets the intercept flag.
+  bool FitIntercept() const
+  {
+    return fitIntercept;
+  }
+
  private:
   //! Training data matrix.
   const arma::mat& data;
@@ -117,6 +137,9 @@ class SoftmaxRegressionFunction
   size_t numClasses;
   //! L2-regularization constant.
   double lambda;
+  //! Intercept term flag.
+  bool fitIntercept;
+
 };
 
 }; // namespace regression
