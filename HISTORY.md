@@ -19,6 +19,8 @@
 
   * No more dependence on Boost.Random; now we use C++11 STL random support.
 
+  * Add softmax regression, contributed by Siddharth Agrawal and QiaoAn Chen.
+
 ### mlpack 1.0.11
 ###### 2014-12-11
   * Proper handling of dimension calculation in PCA.
