@@ -13,6 +13,7 @@
 #include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
 
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
+#include <mlpack/methods/ann/layer/lstm_layer.hpp>
 #include <mlpack/methods/ann/init_rules/orthogonal_init.hpp>
 #include <mlpack/methods/ann/init_rules/oivs_init.hpp>
 #include <mlpack/methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp>
@@ -32,7 +33,6 @@
 
 #include <mlpack/methods/ann/ffnn.hpp>
 #include <mlpack/methods/ann/rnn.hpp>
-
 
 #include <mlpack/methods/ann/performance_functions/mse_function.hpp>
 #include <mlpack/methods/ann/performance_functions/sse_function.hpp>
@@ -454,8 +454,9 @@ void ReberReverseTranslation(const arma::colvec& translation, char& symbol)
 /**
  * Given a Reber string, return a Reber string with all reachable next symbols.
  *
- * @param translation The unit vector to be converted.
- * @param symbol The converted unit vector stored as Reber symbol.
+ * @param transitions The Reber transistion matrix.
+ * @param reber The Reber string used to generate all reachable next symbols.
+ * @param nextReber All reachable next symbols.
  */
 void GenerateNextReber(const arma::Mat<char>& transitions,
                        const std::string& reber, std::string& nextReber)
@@ -475,7 +476,40 @@ void GenerateNextReber(const arma::Mat<char>& transitions,
   nextReber += arma::as_scalar(transitions.submat(idx, 1, idx, 1));
 }
 
-BOOST_AUTO_TEST_CASE(ReberGrammarTest)
+/**
+ * Given a embedded Reber string, return a embedded Reber string with all
+ * reachable next symbols.
+ *
+ * @param transitions The Reber transistion matrix.
+ * @param reber The Reber string used to generate all reachable next symbols.
+ * @param nextReber All reachable next symbols.
+ */
+void GenerateNextEmbeddedReber(const arma::Mat<char>& transitions,
+                               const std::string& reber, std::string& nextReber)
+{
+  if (reber.length() <= 2)
+  {
+    nextReber = reber.length() == 1 ? "TP" : "B";
+  }
+  else
+  {
+    size_t pos = reber.find('E');
+    if (pos != std::string::npos)
+    {
+      nextReber = pos == reber.length() - 1 ? std::string(1, reber[1]) : "E";
+    }
+    else
+    {
+      GenerateNextReber(transitions, reber.substr(2), nextReber);
+    }
+  }
+}
+
+/**
+ * Train the specified network and the construct a Reber grammar dataset.
+ */
+template<typename HiddenLayerType>
+void ReberGrammarTestNetwork(const size_t layerSize, bool embedded = false)
 {
   // Reber state transition matrix. (The last two columns are the indices to the
   // next path).
@@ -488,7 +522,7 @@ BOOST_AUTO_TEST_CASE(ReberGrammarTest)
               << 'E' << 'E' << '0' << '0' << arma::endr;
 
   const size_t trainReberGrammarCount = 1000;
-  const size_t testReberGrammarCount = 10;
+  const size_t testReberGrammarCount = 1000;
 
   std::string trainReber, testReber;
   arma::field<arma::mat> trainInput(1, trainReberGrammarCount);
@@ -500,7 +534,10 @@ BOOST_AUTO_TEST_CASE(ReberGrammarTest)
   // Generate the training data.
   for (size_t i = 0; i < trainReberGrammarCount; i++)
   {
-    GenerateReber(transitions, trainReber);
+    if (embedded)
+      GenerateEmbeddedReber(transitions, trainReber);
+    else
+      GenerateReber(transitions, trainReber);
 
     for (size_t j = 0; j < trainReber.length() - 1; j++)
     {
@@ -515,7 +552,10 @@ BOOST_AUTO_TEST_CASE(ReberGrammarTest)
   // Generate the test data.
   for (size_t i = 0; i < testReberGrammarCount; i++)
   {
-    GenerateReber(transitions, testReber);
+    if (embedded)
+      GenerateEmbeddedReber(transitions, testReber);
+    else
+      GenerateReber(transitions, testReber);
 
     for (size_t j = 0; j < testReber.length() - 1; j++)
     {
@@ -532,7 +572,7 @@ BOOST_AUTO_TEST_CASE(ReberGrammarTest)
    * The hidden layer is connected to itself. The network structure looks like:
    *
    *  Input         Hidden        Output
-   * Layer(7)      Layer(5)      Layer(7)
+   * Layer(7)  Layer(layerSize)   Layer(7)
    * +-----+       +-----+       +-----+
    * |     |       |     |       |     |
    * |     +------>|     +------>|     |
@@ -543,17 +583,17 @@ BOOST_AUTO_TEST_CASE(ReberGrammarTest)
    *            .......
    */
   NeuronLayer<LogisticFunction> inputLayer(7);
-  NeuronLayer<LogisticFunction> hiddenLayer0(5);
-  NeuronLayer<LogisticFunction> recurrentLayer0(hiddenLayer0.InputSize());
+  HiddenLayerType hiddenLayer0(layerSize);
+  NeuronLayer<IdentityFunction> recurrentLayer0(hiddenLayer0.OutputSize());
   NeuronLayer<LogisticFunction> hiddenLayer1(7);
   BinaryClassificationLayer<> outputLayer;
 
-  SteepestDescent< > conOptimizer0(inputLayer.InputSize(),
-      hiddenLayer0.InputSize());
-  SteepestDescent< > conOptimizer2(hiddenLayer0.InputSize(),
-      hiddenLayer0.InputSize());
-  SteepestDescent< > conOptimizer3(hiddenLayer0.InputSize(),
-      hiddenLayer1.OutputSize());
+  SteepestDescent< > conOptimizer0(inputLayer.OutputSize(),
+      hiddenLayer0.InputSize(), 0.1);
+  SteepestDescent< > conOptimizer2(recurrentLayer0.OutputSize(),
+      hiddenLayer0.InputSize(), 0.1);
+  SteepestDescent< > conOptimizer3(hiddenLayer0.OutputSize(),
+      hiddenLayer1.InputSize(), 0.1);
 
   NguyenWidrowInitialization<> randInit;
 
@@ -564,12 +604,24 @@ BOOST_AUTO_TEST_CASE(ReberGrammarTest)
       decltype(randInit)>
       layerCon0(inputLayer, hiddenLayer0, conOptimizer0, randInit);
 
+  FullselfConnection<
+    decltype(recurrentLayer0),
+    decltype(hiddenLayer0),
+    decltype(conOptimizer2),
+    decltype(randInit)>
+    layerTypeLSTM(recurrentLayer0, hiddenLayer0, conOptimizer2, randInit);
+
   SelfConnection<
     decltype(recurrentLayer0),
     decltype(hiddenLayer0),
     decltype(conOptimizer2),
     decltype(randInit)>
-    layerCon2(recurrentLayer0, hiddenLayer0, conOptimizer2, randInit);
+    layerTypeBasis(recurrentLayer0, hiddenLayer0, conOptimizer2, randInit);
+
+  typename std::conditional<LayerTraits<HiddenLayerType>::IsLSTMLayer,
+      typename std::remove_reference<decltype(layerTypeLSTM)>::type,
+      typename std::remove_reference<decltype(layerTypeBasis)>::type>::type
+      layerCon2(recurrentLayer0, hiddenLayer0, conOptimizer2, randInit);
 
   FullConnection<
       decltype(hiddenLayer0),
@@ -578,6 +630,7 @@ BOOST_AUTO_TEST_CASE(ReberGrammarTest)
       decltype(randInit)>
       layerCon4(hiddenLayer0, hiddenLayer1, conOptimizer3, randInit);
 
+  // auto module0 = std::tie(layerCon0, layerCon2);
   auto module0 = std::tie(layerCon0, layerCon2);
   auto module1 = std::tie(layerCon4);
   auto modules = std::tie(module0, module1);
@@ -628,7 +681,10 @@ BOOST_AUTO_TEST_CASE(ReberGrammarTest)
           reberGrammerSize - 1), inputSymbol);
       inputReber += inputSymbol;
 
-      GenerateNextReber(transitions, inputReber, reberChoices);
+      if (embedded)
+        GenerateNextEmbeddedReber(transitions, inputReber, reberChoices);
+      else
+        GenerateNextReber(transitions, inputReber, reberChoices);
 
       if (reberChoices.find(predictedSymbol) != std::string::npos)
         reberError++;
@@ -641,6 +697,23 @@ BOOST_AUTO_TEST_CASE(ReberGrammarTest)
   error /= testReberGrammarCount;
 
   BOOST_REQUIRE_LE(error, 0.2);
+}
+
+/**
+ * Train the specified networks on a Reber grammar dataset.
+ */
+BOOST_AUTO_TEST_CASE(ReberGrammarTest)
+{
+  ReberGrammarTestNetwork<LSTMLayer<> >(10);
+  ReberGrammarTestNetwork<NeuronLayer<LogisticFunction> >(5);
+}
+
+/**
+ * Train the specified networks on an embedded Reber grammar dataset.
+ */
+BOOST_AUTO_TEST_CASE(EmbeddedReberGrammarTest)
+{
+  ReberGrammarTestNetwork<LSTMLayer<> >(10, true);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
