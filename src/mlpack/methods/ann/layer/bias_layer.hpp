@@ -110,8 +110,8 @@ class BiasLayer
 }; // class BiasLayer
 
 //! Layer traits for the bias layer.
-template<>
-class LayerTraits<BiasLayer<> >
+template<typename ActivationFunction, typename MatType, typename VecType>
+class LayerTraits<BiasLayer<ActivationFunction, MatType, VecType> >
 {
  public:
   /**
@@ -120,6 +120,7 @@ class LayerTraits<BiasLayer<> >
   static const bool IsBinary = false;
   static const bool IsOutputLayer = false;
   static const bool IsBiasLayer = true;
+  static const bool IsLSTMLayer = false;
 };
 
 }; // namespace ann

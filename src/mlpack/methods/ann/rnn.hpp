@@ -284,6 +284,9 @@ class RNN
     typename std::enable_if<I < sizeof...(Tp), void>::type
     Reset(std::tuple<Tp...>& t)
     {
+      Parameter<I, typename std::remove_reference<
+          decltype(std::get<I>(t).InputLayer())>::type, Tp...>(t);
+
       std::get<I>(t).OutputLayer().InputActivation().zeros(
           std::get<I>(t).OutputLayer().InputSize());
 
@@ -298,6 +301,31 @@ class RNN
       }
 
       Reset<I + 1, Tp...>(t);
+    }
+
+    /**
+     * Update the sequence length for a specific layer.
+     *
+     * enable_if (SFINAE) is used to determine if classes passed contains the
+     * SeqLen function.
+     */
+    template<size_t I, typename LayerType, typename... Tp>
+    typename std::enable_if<
+        LayerTraits<LayerType>::IsLSTMLayer == false, void>::type
+    Parameter(std::tuple<Tp...>& /* unused */) { }
+
+    /**
+     * Update the sequence length for a specific layer.
+     *
+     * enable_if (SFINAE) is used to determine if classes passed contains the
+     * SeqLen function.
+     */
+    template<size_t I, typename LayerType, typename... Tp>
+    typename std::enable_if<
+        LayerTraits<LayerType>::IsLSTMLayer == true, void>::type
+    Parameter(std::tuple<Tp...>& t)
+    {
+      std::get<I>(t).InputLayer().SeqLen() = seqLen;
     }
 
     /**
@@ -448,7 +476,9 @@ class RNN
 
       // Update the recurrent delta.
       if (ConnectionTraits<typename std::remove_reference<decltype(
-          std::get<I>(t))>::type>::IsSelfConnection)
+          std::get<I>(t))>::type>::IsSelfConnection ||
+          ConnectionTraits<typename std::remove_reference<decltype(
+          std::get<I>(t))>::type>::IsFullselfConnection)
       {
         std::get<I>(t).FeedBackward(delta[deltaNum]);
         delta[deltaNum++] = std::get<I>(t).Delta();
@@ -464,7 +494,7 @@ class RNN
       {
         // Sum up the stored delta for recurrent connections.
         if (recurrentLayer[layer])
-          std::get<I>(t).Delta() += delta[deltaNum];
+          std::get<I>(t).Delta() += delta[deltaNum].subvec(0, std::get<I>(t).InputLayer().OutputSize() - 1);
 
         // Perform the backward pass.
         std::get<I>(t).InputLayer().FeedBackward(

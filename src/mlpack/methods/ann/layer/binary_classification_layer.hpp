@@ -66,16 +66,14 @@ class BinaryClassificationLayer
 }; // class BinaryClassificationLayer
 
 //! Layer traits for the binary class classification layer.
-template <
-    typename MatType,
-    typename VecType
->
+template <typename MatType, typename VecType>
 class LayerTraits<BinaryClassificationLayer<MatType, VecType> >
 {
  public:
   static const bool IsBinary = true;
   static const bool IsOutputLayer = true;
   static const bool IsBiasLayer = false;
+  static const bool IsLSTMLayer = false;
 };
 
 }; // namespace ann

@@ -32,7 +32,7 @@ struct IsVector
   const static bool value = false;
 };
 
-// Commenting out the first template per case, because 
+// Commenting out the first template per case, because
 //Visual Studio doesn't like this instantiaion pattern (error C2910).
 //template<>
 template<typename eT>

@@ -55,8 +55,8 @@ class LSTMLayer
    * peephole connection matrix.
    */
   LSTMLayer(const size_t layerSize,
-            const size_t seqLen,
-            const bool peepholes = true,
+            const size_t seqLen = 1,
+            const bool peepholes = false,
             WeightInitRule weightInitRule = WeightInitRule()) :
       inputActivations(arma::zeros<VecType>(layerSize * 4)),
       layerSize(layerSize),
@@ -120,6 +120,22 @@ class LSTMLayer
    */
   void FeedForward(const VecType& inputActivation, VecType& outputActivation)
   {
+    if (inGate.n_cols < seqLen)
+    {
+      inGate = arma::zeros<MatType>(layerSize, seqLen);
+      inGateAct = arma::zeros<MatType>(layerSize, seqLen);
+      inGateError = arma::zeros<MatType>(layerSize, seqLen);
+      outGate = arma::zeros<MatType>(layerSize, seqLen);
+      outGateAct = arma::zeros<MatType>(layerSize, seqLen);
+      outGateError = arma::zeros<MatType>(layerSize, seqLen);
+      forgetGate = arma::zeros<MatType>(layerSize, seqLen);
+      forgetGateAct = arma::zeros<MatType>(layerSize, seqLen);
+      forgetGateError = arma::zeros<MatType>(layerSize, seqLen);
+      state = arma::zeros<MatType>(layerSize, seqLen);
+      stateError = arma::zeros<MatType>(layerSize, seqLen);
+      cellAct = arma::zeros<MatType>(layerSize, seqLen);
+    }
+
     // Split up the inputactivation into the 3 parts (inGate, forgetGate,
     // outGate).
     inGate.col(offset) = inputActivation.subvec(0, layerSize - 1);
@@ -296,6 +312,12 @@ class LSTMLayer
   VecType& Delta() const { return delta; }
  //  //! Modify the delta.
   VecType& Delta() { return delta; }
+
+  //! Get the sequence length.
+  size_t SeqLen() const { return seqLen; }
+  //! Modify the sequence length.
+  size_t& SeqLen() { return seqLen; }
+
  private:
   //! Locally-stored input activation object.
   VecType inputActivations;
@@ -387,6 +409,36 @@ class LSTMLayer
   //! Locally-stored outgate peephole optimzer object.
   std::auto_ptr<OptimizerType> outGatePeepholeOptimizer;
 }; // class LSTMLayer
+
+//! Layer traits for the bias layer.
+template<
+    class GateActivationFunction,
+    class StateActivationFunction,
+    class OutputActivationFunction,
+    class WeightInitRule,
+    typename OptimizerType,
+    typename MatType,
+    typename VecType
+>
+class LayerTraits<
+    LSTMLayer<GateActivationFunction,
+    StateActivationFunction,
+    OutputActivationFunction,
+    WeightInitRule,
+    OptimizerType,
+    MatType,
+    VecType>
+>
+{
+ public:
+  /**
+   * If true, then the layer is binary.
+   */
+  static const bool IsBinary = false;
+  static const bool IsOutputLayer = false;
+  static const bool IsBiasLayer = false;
+  static const bool IsLSTMLayer = true;
+};
 
 }; // namespace ann
 }; // namespace mlpack

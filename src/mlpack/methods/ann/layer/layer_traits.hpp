@@ -36,6 +36,11 @@ class LayerTraits
    * This is true if the layer is a bias layer.
    */
   static const bool IsBiasLayer = false;
+
+  /*
+   * This is true if the layer is a LSTM layer.
+   **/
+  static const bool IsLSTMLayer = false;
 };
 
 }; // namespace ann
