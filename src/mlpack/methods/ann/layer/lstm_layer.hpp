@@ -13,7 +13,7 @@
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 #include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
-#include <mlpack/methods/ann/optimizer/rpropp.hpp>
+#include <mlpack/methods/ann/optimizer/steepest_descent.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -37,7 +37,7 @@ template <
     class StateActivationFunction = TanhFunction,
     class OutputActivationFunction = TanhFunction,
     class WeightInitRule = NguyenWidrowInitialization<>,
-    typename OptimizerType = RPROPp<>,
+    typename OptimizerType = SteepestDescent<>,
     typename MatType = arma::mat,
     typename VecType = arma::colvec
 >
@@ -80,21 +80,18 @@ class LSTMLayer
     {
       weightInitRule.Initialize(inGatePeepholeWeights, layerSize, 1);
       inGatePeepholeDerivatives = arma::zeros<VecType>(layerSize);
-      inGatePeepholeGradient = arma::zeros<MatType>(layerSize, 1);
       inGatePeepholeOptimizer = std::auto_ptr<OptimizerType>(
-          new OptimizerType(1, 2));
+      new OptimizerType(1, layerSize));
 
       weightInitRule.Initialize(forgetGatePeepholeWeights, layerSize, 1);
       forgetGatePeepholeDerivatives = arma::zeros<VecType>(layerSize);
-      forgetGatePeepholeGradient = arma::zeros<MatType>(layerSize, 1);
       forgetGatePeepholeOptimizer = std::auto_ptr<OptimizerType>(
-          new OptimizerType(1, 2));
+      new OptimizerType(1, layerSize));
 
       weightInitRule.Initialize(outGatePeepholeWeights, layerSize, 1);
       outGatePeepholeDerivatives = arma::zeros<VecType>(layerSize);
-      outGatePeepholeGradient = arma::zeros<MatType>(layerSize, 1);
       outGatePeepholeOptimizer = std::auto_ptr<OptimizerType>(
-          new OptimizerType(1, 2));
+      new OptimizerType(1, layerSize));
     }
   }
 
@@ -147,7 +144,8 @@ class LSTMLayer
     if (peepholes && offset > 0)
     {
       inGate.col(offset) += inGatePeepholeWeights % state.col(offset - 1);
-      forgetGate.col(offset) += forgetGatePeepholeWeights % state.col(offset);
+      forgetGate.col(offset) += forgetGatePeepholeWeights %
+          state.col(offset - 1);
     }
 
     VecType inGateActivation = inGateAct.unsafe_col(offset);
@@ -276,18 +274,26 @@ class LSTMLayer
 
     if (peepholes && offset == 0)
     {
+      inGatePeepholeGradient = (inGatePeepholeWeights.t() *
+          (inGateError.col(queryOffset) % inGatePeepholeDerivatives)) *
+          inGate.col(queryOffset).t();
+
+      forgetGatePeepholeGradient = (forgetGatePeepholeWeights.t() *
+          (forgetGateError.col(queryOffset) % forgetGatePeepholeDerivatives)) *
+          forgetGate.col(queryOffset).t();
+
+      outGatePeepholeGradient = (outGatePeepholeWeights.t() *
+          (outGateError.col(queryOffset) % outGatePeepholeDerivatives)) *
+          outGate.col(queryOffset).t();
+
       inGatePeepholeOptimizer->UpdateWeights(inGatePeepholeWeights,
-          inGatePeepholeGradient, 0);
+          inGatePeepholeGradient.t(), 0);
 
       forgetGatePeepholeOptimizer->UpdateWeights(forgetGatePeepholeWeights,
-          forgetGatePeepholeGradient, 0);
+          forgetGatePeepholeGradient.t(), 0);
 
       outGatePeepholeOptimizer->UpdateWeights(outGatePeepholeWeights,
-          outGatePeepholeGradient, 0);
-
-      inGatePeepholeGradient.zeros();
-      forgetGatePeepholeGradient.zeros();
-      outGatePeepholeGradient.zeros();
+          outGatePeepholeGradient.t(), 0);
 
       inGatePeepholeDerivatives.zeros();
       forgetGatePeepholeDerivatives.zeros();
@@ -317,6 +323,22 @@ class LSTMLayer
   size_t SeqLen() const { return seqLen; }
   //! Modify the sequence length.
   size_t& SeqLen() { return seqLen; }
+
+  //! Get the InGate peephole weights..
+  MatType& InGatePeepholeWeights() const { return inGatePeepholeWeights; }
+  //! Modify the InGate peephole weights..
+  MatType& InGatePeepholeWeights() { return inGatePeepholeWeights; }
+
+  //! Get the InGate peephole weights..
+  MatType& ForgetGatePeepholeWeights() const {
+    return forgetGatePeepholeWeights; }
+  //! Modify the InGate peephole weights..
+  MatType& ForgetGatePeepholeWeights() { return forgetGatePeepholeWeights; }
+
+  //! Get the InGate peephole weights..
+  MatType& OutGatePeepholeWeights() const { return outGatePeepholeWeights; }
+  //! Modify the InGate peephole weights..
+  MatType& OutGatePeepholeWeights() { return outGatePeepholeWeights; }
 
  private:
   //! Locally-stored input activation object.

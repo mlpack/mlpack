@@ -494,7 +494,10 @@ class RNN
       {
         // Sum up the stored delta for recurrent connections.
         if (recurrentLayer[layer])
-          std::get<I>(t).Delta() += delta[deltaNum].subvec(0, std::get<I>(t).InputLayer().OutputSize() - 1);
+        {
+          std::get<I>(t).Delta() += delta[deltaNum].subvec(
+              0, std::get<I>(t).InputLayer().OutputSize() - 1);
+        }
 
         // Perform the backward pass.
         std::get<I>(t).InputLayer().FeedBackward(
