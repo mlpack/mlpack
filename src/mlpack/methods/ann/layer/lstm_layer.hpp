@@ -80,17 +80,17 @@ class LSTMLayer
     {
       weightInitRule.Initialize(inGatePeepholeWeights, layerSize, 1);
       inGatePeepholeDerivatives = arma::zeros<VecType>(layerSize);
-      inGatePeepholeOptimizer = std::auto_ptr<OptimizerType>(
+      inGatePeepholeOptimizer = std::unique_ptr<OptimizerType>(
       new OptimizerType(1, layerSize));
 
       weightInitRule.Initialize(forgetGatePeepholeWeights, layerSize, 1);
       forgetGatePeepholeDerivatives = arma::zeros<VecType>(layerSize);
-      forgetGatePeepholeOptimizer = std::auto_ptr<OptimizerType>(
+      forgetGatePeepholeOptimizer = std::unique_ptr<OptimizerType>(
       new OptimizerType(1, layerSize));
 
       weightInitRule.Initialize(outGatePeepholeWeights, layerSize, 1);
       outGatePeepholeDerivatives = arma::zeros<VecType>(layerSize);
-      outGatePeepholeOptimizer = std::auto_ptr<OptimizerType>(
+      outGatePeepholeOptimizer = std::unique_ptr<OptimizerType>(
       new OptimizerType(1, layerSize));
     }
   }
@@ -405,7 +405,7 @@ class LSTMLayer
   MatType inGatePeepholeGradient;
 
   //! Locally-stored ingate peephole optimzer object.
-  std::auto_ptr<OptimizerType> inGatePeepholeOptimizer;
+  std::unique_ptr<OptimizerType> inGatePeepholeOptimizer;
 
   //! Locally-stored peephole forget weights.
   MatType forgetGatePeepholeWeights;
@@ -417,7 +417,7 @@ class LSTMLayer
   MatType forgetGatePeepholeGradient;
 
   //! Locally-stored forget peephole optimzer object.
-  std::auto_ptr<OptimizerType> forgetGatePeepholeOptimizer;
+  std::unique_ptr<OptimizerType> forgetGatePeepholeOptimizer;
 
   //! Locally-stored peephole outgate weights.
   MatType outGatePeepholeWeights;
@@ -429,7 +429,7 @@ class LSTMLayer
   MatType outGatePeepholeGradient;
 
   //! Locally-stored outgate peephole optimzer object.
-  std::auto_ptr<OptimizerType> outGatePeepholeOptimizer;
+  std::unique_ptr<OptimizerType> outGatePeepholeOptimizer;
 }; // class LSTMLayer
 
 //! Layer traits for the bias layer.
