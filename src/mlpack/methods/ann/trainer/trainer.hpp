@@ -1,7 +1,6 @@
 /**
  * @file trainer.hpp
  * @author Marcus Edel
- * @author Shangtong Zhang
  *
  * Definition and implementation of a trainer that trains the parameters of a
  * neural network according to a supervised dataset.
@@ -30,8 +29,7 @@ namespace ann /** Artificial Neural Network. */ {
 template<
   typename NetworkType,
   typename MatType = arma::mat,
-  typename VecType = arma::colvec,
-  typename InputType = arma::mat
+  typename VecType = arma::colvec
 >
 class Trainer
 {
@@ -76,67 +74,27 @@ class Trainer
      * @param validationData Data used to evaluate the network.
      * @tparam validationLabels Labels used to evaluate the network.
      */
-    template <size_t dim = 1>
-    typename std::enable_if<dim == 1, void>::type
-    Train(InputType& trainingData,
-               MatType& trainingLabels,
+    template<typename InputType, typename OutputType>
+    void Train(InputType& trainingData,
+               OutputType& trainingLabels,
                InputType& validationData,
-               MatType& validationLabels)
+               OutputType& validationLabels)
     {
-      // This generates [0 1 2 3 ... (trainingData.n_cols - 1)]. The sequence
-      // will be used to iterate through the training data.
-      index = arma::linspace<arma::Col<size_t> >(0, trainingData.n_cols - 1,
-                                                   trainingData.n_cols);
-
+      Index(trainingData);
       epoch = 0;
 
       while(true)
       {
-
-        // Randomly shuffle the index sequence if not in batch mode.
         if (shuffle)
           index = arma::shuffle(index);
 
-        Train<dim>(trainingData, trainingLabels);
-        Evaluate<dim>(validationData, validationLabels);
+        Train(trainingData, trainingLabels);
+        Evaluate(validationData, validationLabels);
 
         if (validationError <= tolerance)
           break;
 
-        if (maxEpochs > 0 && ++epoch > maxEpochs)
-          break;
-      }
-    }
-  
-    // For 2-dim training data.
-    template <size_t dim = 1>
-    typename std::enable_if<dim == 2, void>::type
-    Train(InputType& trainingData,
-               MatType& trainingLabels,
-               InputType& validationData,
-               MatType& validationLabels)
-    {
-      // This generates [0 1 2 3 ... (trainingData.n_cols - 1)]. The sequence
-      // will be used to iterate through the training data.
-      index = arma::linspace<arma::Col<size_t> >(0, trainingData.n_slices - 1,
-                                                 trainingData.n_slices);
-    
-      epoch = 0;
-    
-      while(true)
-      {
-      
-        // Randomly shuffle the index sequence if not in batch mode.
-        if (shuffle)
-          index = arma::shuffle(index);
-        
-        Train<dim>(trainingData, trainingLabels);
-        Evaluate<dim>(validationData, validationLabels);
-        
-        if (validationError <= tolerance)
-          break;
-        
-        if (maxEpochs > 0 && ++epoch > maxEpochs)
+        if (maxEpochs > 0 && ++epoch >= maxEpochs)
           break;
       }
     }
@@ -168,26 +126,24 @@ class Trainer
     double& Tolerance() { return tolerance; }
 
   private:
-  
     /**
      * Train the network on the given dataset.
      *
      * @param data Data used to train the network.
      * @param target Labels used to train the network.
      */
-    template <size_t dim = 1>
-    typename std::enable_if<dim == 1, void>::type
-    Train(InputType& data, MatType& target)
+    template<typename InputType, typename OutputType>
+    void Train(InputType& data, OutputType& target)
     {
       // Reset the training error.
       trainingError = 0;
 
       for (size_t i = 0; i < data.n_cols; i++)
       {
-        net.FeedForward(data.unsafe_col(index(i)),
-            target.unsafe_col(index(i)), error);
-        trainingError += net.Error();
+        net.FeedForward(Element(data, index(i)),
+            Element(target, index(i)), error);
 
+        trainingError += net.Error();
         net.FeedBackward(error);
 
         if (((i + 1) % batchSize) == 0)
@@ -198,32 +154,6 @@ class Trainer
         net.ApplyGradients();
 
       trainingError /= data.n_cols;
-      
-    }
-  
-    //For 2-dim training data.
-    template <size_t dim = 1>
-    typename std::enable_if<dim == 2, void>::type
-    Train(InputType& data, MatType& target) {
-      // Reset the training error.
-      trainingError = 0;
-      
-      for (size_t i = 0; i < data.n_slices; i++)
-      {
-        net.FeedForward(data.slice(index(i)),
-                        target.unsafe_col(index(i)), error);
-        trainingError += net.Error();
-        
-        net.FeedBackward(error);
-        
-        if (((i + 1) % batchSize) == 0)
-          net.ApplyGradients();
-      }
-      
-      if ((data.n_slices % batchSize) != 0)
-        net.ApplyGradients();
-      
-      trainingError /= data.n_slices;
     }
 
     /**
@@ -232,43 +162,80 @@ class Trainer
      * @param data Data used to train the network.
      * @param target Labels used to train the network.
      */
-    template <size_t dim = 1>
-    typename std::enable_if<dim == 1, void>::type
-    Evaluate(InputType& data, MatType& target)
+    template<typename InputType, typename OutputType>
+    void Evaluate(InputType& data, OutputType& target)
     {
       // Reset the validation error.
       validationError = 0;
 
       for (size_t i = 0; i < data.n_cols; i++)
       {
-        net.FeedForward(data.unsafe_col(i), target.unsafe_col(i), error);
-        validationError += net.Error();
+         validationError += net.Evaluate(Element(data, i),
+            Element(target, i), error);
       }
 
       validationError /= data.n_cols;
     }
-  
-    //For 2-dim training data.
-    template <size_t dim = 1>
-    typename std::enable_if<dim == 2, void>::type
-    Evaluate(InputType& data, MatType& target) {
-      validationError = 0;
-      
-      for (size_t i = 0; i < data.n_slices; i++)
-      {
-        net.FeedForward(data.slice(i), target.unsafe_col(i), error);
-        validationError += net.Error();
-      }
-      
-      validationError /= data.n_slices;
+
+    /*
+     * Generate index sequence to iterate through the data.
+     *
+     * @param input The reference data.
+     */
+    template<typename eT>
+    void Index(const arma::Mat<eT>& input)
+    {
+      // This generates [0 1 2 3 ... (input.n_cols - 1)]. The sequence
+      // will be used to iterate through the training data.
+      index = arma::linspace<arma::Col<size_t> >(0, input.n_cols - 1,
+          input.n_cols);
+    }
+
+    /*
+     * Generate index sequence to iterate through the data.
+     *
+     * @param input The reference data.
+     */
+    template<typename eT>
+    void Index(const arma::Cube<eT>& input)
+    {
+      // This generates [0 1 2 3 ... (input.n_slices - 1)]. The sequence
+      // will be used to iterate through the training data.
+      index = arma::linspace<arma::Col<size_t> >(0, input.n_slices - 1,
+          input.n_slices);
+    }
+
+    /*
+     * Create a Col object which uses memory from an existing matrix object.
+     * (This approach is currently not alias safe)
+     *
+     * @param data The reference data.
+     * @param sliceNum Provide a Col object of the specified index.
+     */
+    template<typename eT>
+    arma::Col<eT> Element(arma::Mat<eT>& input, const size_t colNum)
+    {
+      return arma::Col<eT>(input.colptr(colNum), input.n_rows, false, true);
+    }
+
+    /*
+     * Provide the reference to the matrix representing a single slice.
+     *
+     * @param data The reference data.
+     * @param sliceNum Provide a single slice of the specified index.
+     */
+    template<typename eT>
+    const arma::Mat<eT>& Element(arma::Cube<eT>& input,
+        const size_t sliceNum)
+    {
+      return *(input.mat_ptrs[sliceNum]);
     }
 
     //! The network which should be trained and evaluated.
     NetworkType& net;
 
     //! The current network error of a single input.
-    typename std::conditional<NetworkTraits<NetworkType>::IsFNN ||
-        NetworkTraits<NetworkType>::IsCNN,
+    typename std::conditional<NetworkTraits<NetworkType>::IsFNN,
         VecType, MatType>::type error;
 
     //! The current epoch if maxEpochs is set.
