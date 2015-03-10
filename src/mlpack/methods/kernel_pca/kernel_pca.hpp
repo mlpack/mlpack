@@ -110,8 +110,8 @@ class KernelPCA
   bool CenterTransformedData() const { return centerTransformedData; }
   //! Return whether or not the transformed data is centered.
   bool& CenterTransformedData() { return centerTransformedData; }
-   
-  // Returns a string representation of this object. 
+
+  // Returns a string representation of this object.
   std::string ToString() const;
 
  private:

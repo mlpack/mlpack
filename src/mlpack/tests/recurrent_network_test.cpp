@@ -1,5 +1,5 @@
 /**
- * @file feedforward_network_test.cpp
+ * @file recurrent_network_test.cpp
  * @author Marcus Edel
  *
  * Tests the recurrent network.
@@ -693,7 +693,7 @@ void ReberGrammarTestNetwork(HiddenLayerType& hiddenLayer0,
  */
 BOOST_AUTO_TEST_CASE(ReberGrammarTest)
 {
-  LSTMLayer<>  hiddenLayerLSTM(10);
+  LSTMLayer<> hiddenLayerLSTM(10);
   ReberGrammarTestNetwork(hiddenLayerLSTM);
 
   NeuronLayer<LogisticFunction> hiddenLayerLogistic(5);
@@ -705,10 +705,10 @@ BOOST_AUTO_TEST_CASE(ReberGrammarTest)
  */
 BOOST_AUTO_TEST_CASE(EmbeddedReberGrammarTest)
 {
-  LSTMLayer<>  hiddenLayerLSTM(10);
+  LSTMLayer<> hiddenLayerLSTM(10);
   ReberGrammarTestNetwork(hiddenLayerLSTM, true);
 
-  LSTMLayer<>  hiddenLayerLSTMPeephole(10, 1, true);
+  LSTMLayer<> hiddenLayerLSTMPeephole(10, 1, true);
   ReberGrammarTestNetwork(hiddenLayerLSTMPeephole, true);
 }
 
@@ -908,10 +908,10 @@ void DistractedSequenceRecallTestNetwork(HiddenLayerType& hiddenLayer0)
  */
 BOOST_AUTO_TEST_CASE(DistractedSequenceRecallTest)
 {
-  LSTMLayer<>  hiddenLayerLSTM(10, 10);
+  LSTMLayer<> hiddenLayerLSTM(10, 10);
   DistractedSequenceRecallTestNetwork(hiddenLayerLSTM);
 
-  LSTMLayer<>  hiddenLayerLSTMPeephole(10, 1, true);
+  LSTMLayer<> hiddenLayerLSTMPeephole(10, 1, true);
   DistractedSequenceRecallTestNetwork(hiddenLayerLSTM);
 }
 
