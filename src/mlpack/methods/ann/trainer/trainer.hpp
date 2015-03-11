@@ -80,7 +80,10 @@ class Trainer
                InputType& validationData,
                OutputType& validationLabels)
     {
-      Index(trainingData);
+      // This generates [0 1 2 3 ... (ElementCount(trainingData) - 1)]. The
+      // sequence will be used to iterate through the training data.
+      index = arma::linspace<arma::Col<size_t> >(0,
+          ElementCount(trainingData) - 1, ElementCount(trainingData));
       epoch = 0;
 
       while(true)
@@ -138,7 +141,7 @@ class Trainer
       // Reset the training error.
       trainingError = 0;
 
-      for (size_t i = 0; i < data.n_cols; i++)
+      for (size_t i = 0; i < index.n_elem; i++)
       {
         net.FeedForward(Element(data, index(i)),
             Element(target, index(i)), error);
@@ -150,10 +153,10 @@ class Trainer
           net.ApplyGradients();
       }
 
-      if ((data.n_cols % batchSize) != 0)
+      if ((index.n_elem % batchSize) != 0)
         net.ApplyGradients();
 
-      trainingError /= data.n_cols;
+      trainingError /= index.n_elem;
     }
 
     /**
@@ -168,41 +171,13 @@ class Trainer
       // Reset the validation error.
       validationError = 0;
 
-      for (size_t i = 0; i < data.n_cols; i++)
+      for (size_t i = 0; i < ElementCount(data); i++)
       {
          validationError += net.Evaluate(Element(data, i),
             Element(target, i), error);
       }
 
-      validationError /= data.n_cols;
-    }
-
-    /*
-     * Generate index sequence to iterate through the data.
-     *
-     * @param input The reference data.
-     */
-    template<typename eT>
-    void Index(const arma::Mat<eT>& input)
-    {
-      // This generates [0 1 2 3 ... (input.n_cols - 1)]. The sequence
-      // will be used to iterate through the training data.
-      index = arma::linspace<arma::Col<size_t> >(0, input.n_cols - 1,
-          input.n_cols);
-    }
-
-    /*
-     * Generate index sequence to iterate through the data.
-     *
-     * @param input The reference data.
-     */
-    template<typename eT>
-    void Index(const arma::Cube<eT>& input)
-    {
-      // This generates [0 1 2 3 ... (input.n_slices - 1)]. The sequence
-      // will be used to iterate through the training data.
-      index = arma::linspace<arma::Col<size_t> >(0, input.n_slices - 1,
-          input.n_slices);
+      validationError /= ElementCount(data);
     }
 
     /*
@@ -225,10 +200,31 @@ class Trainer
      * @param sliceNum Provide a single slice of the specified index.
      */
     template<typename eT>
-    const arma::Mat<eT>& Element(arma::Cube<eT>& input,
-        const size_t sliceNum)
+    const arma::Mat<eT>& Element(arma::Cube<eT>& input, const size_t sliceNum)
     {
       return *(input.mat_ptrs[sliceNum]);
+    }
+
+    /*
+     * Get the number of elements.
+     *
+     * @param data The reference data.
+     */
+    template<typename eT>
+    size_t ElementCount(const arma::Mat<eT>& data) const
+    {
+      return data.n_cols;
+    }
+
+    /*
+     * Get the number of elements.
+     *
+     * @param data The reference data.
+     */
+    template<typename eT>
+    size_t ElementCount(const arma::Cube<eT>& data) const
+    {
+      return data.n_slices;
     }
 
     //! The network which should be trained and evaluated.
