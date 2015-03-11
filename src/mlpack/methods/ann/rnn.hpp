@@ -106,7 +106,7 @@ class RNN
             seqNum * inputSize, 0, (seqNum + 1) * inputSize - 1, 0);
 
         // Perform the forward pass and calculate the output error.
-        FeedForward(network);
+        ConnectionForward(network);
         if (seqOutput)
         {
           arma::colvec seqError = error.unsafe_col(seqNum);
@@ -154,7 +154,7 @@ class RNN
 
         // Perform the backward pass and update the gradient storage.
         arma::colvec seqError = error.unsafe_col(seqOutput ? seqNum : 0);
-        FeedBackward(network, seqError);
+        ConnectionBackward(network, seqError);
         UpdateGradients(network);
 
         // Load the network activation for the upcoming backward pass.
@@ -207,7 +207,7 @@ class RNN
             seqNum * inputSize, 0, (seqNum + 1) * inputSize - 1, 0);
 
         // Perform the forward pass and calculate the output error.
-        FeedForward(network);
+        ConnectionForward(network);
         if (seqOutput)
         {
           arma::colvec targetCol;
@@ -340,20 +340,20 @@ class RNN
      */
     template<size_t I = 0, typename... Tp>
     typename std::enable_if<I == sizeof...(Tp), void>::type
-    FeedForward(std::tuple<Tp...>& /* unused */) { }
+    ConnectionForward(std::tuple<Tp...>& /* unused */) { }
 
     template<size_t I = 0, typename... Tp>
     typename std::enable_if<I < sizeof...(Tp), void>::type
-    FeedForward(std::tuple<Tp...>& t)
+    ConnectionForward(std::tuple<Tp...>& t)
     {
-      Forward(std::get<I>(t));
+      LayerForward(std::get<I>(t));
 
       // Use the first connection to perform the feed forward algorithm.
       std::get<0>(std::get<I>(t)).OutputLayer().FeedForward(
           std::get<0>(std::get<I>(t)).OutputLayer().InputActivation(),
           std::get<0>(std::get<I>(t)).OutputLayer().InputActivation());
 
-      FeedForward<I + 1, Tp...>(t);
+      ConnectionForward<I + 1, Tp...>(t);
     }
 
     /**
@@ -365,14 +365,14 @@ class RNN
      */
     template<size_t I = 0, typename... Tp>
     typename std::enable_if<I == sizeof...(Tp), void>::type
-    Forward(std::tuple<Tp...>& /* unused */) { }
+    LayerForward(std::tuple<Tp...>& /* unused */) { }
 
     template<size_t I = 0, typename... Tp>
     typename std::enable_if<I < sizeof...(Tp), void>::type
-    Forward(std::tuple<Tp...>& t)
+    LayerForward(std::tuple<Tp...>& t)
     {
       std::get<I>(t).FeedForward(std::get<I>(t).InputLayer().InputActivation());
-      Forward<I + 1, Tp...>(t);
+      LayerForward<I + 1, Tp...>(t);
     }
 
     /*
@@ -426,11 +426,12 @@ class RNN
      */
     template<size_t I = 0, typename VecType, typename... Tp>
     typename std::enable_if<I == sizeof...(Tp) + 1, void>::type
-    FeedBackward(std::tuple<Tp...>& /* unused */, VecType& /* unused */) { }
+    ConnectionBackward(std::tuple<Tp...>& /* unused */, VecType& /* unused */)
+    { }
 
     template<size_t I = 1, typename VecType, typename... Tp>
     typename std::enable_if<I < sizeof...(Tp) + 1, void>::type
-    FeedBackward(std::tuple<Tp...>& t, VecType& error)
+    ConnectionBackward(std::tuple<Tp...>& t, VecType& error)
     {
       // Distinguish between the output layer and the other layer. In case of
       // the output layer use the specified error vector to store the error and
@@ -444,10 +445,10 @@ class RNN
             std::get<0>(std::get<sizeof...(Tp) - I>(t)).OutputLayer().Delta());
       }
 
-      Backward(std::get<sizeof...(Tp) - I>(t), std::get<0>(std::get<
+      LayerBackward(std::get<sizeof...(Tp) - I>(t), std::get<0>(std::get<
           sizeof...(Tp) - I>(t)).OutputLayer().Delta(), I, sizeof...(Tp));
 
-      FeedBackward<I + 1, VecType, Tp...>(t, error);
+      ConnectionBackward<I + 1, VecType, Tp...>(t, error);
     }
 
     /**
@@ -460,17 +461,17 @@ class RNN
      */
     template<size_t I = 0, typename VecType, typename... Tp>
     typename std::enable_if<I == sizeof...(Tp), void>::type
-    Backward(std::tuple<Tp...>& /* unused */,
-             VecType& /* unused */,
-             const size_t /* unused */,
-             const size_t /* unused */) { }
+    LayerBackward(std::tuple<Tp...>& /* unused */,
+                  VecType& /* unused */,
+                  const size_t /* unused */,
+                  const size_t /* unused */) { }
 
     template<size_t I = 0, typename VecType, typename... Tp>
     typename std::enable_if<I < sizeof...(Tp), void>::type
-    Backward(std::tuple<Tp...>& t,
-             VecType& error,
-             const size_t layer,
-             const size_t layerNum)
+    LayerBackward(std::tuple<Tp...>& t,
+                  VecType& error,
+                  const size_t layer,
+                  const size_t layerNum)
     {
       std::get<I>(t).FeedBackward(error);
 
@@ -509,7 +510,7 @@ class RNN
           delta[deltaNum] = std::get<I>(t).InputLayer().Delta();
       }
 
-      Backward<I + 1, VecType, Tp...>(t, error, layer, layerNum);
+      LayerBackward<I + 1, VecType, Tp...>(t, error, layer, layerNum);
     }
 
     /**

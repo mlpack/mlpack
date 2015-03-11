@@ -83,7 +83,7 @@ class FFNN
         InitLayer(network);
 
       gradientNum = 0;
-      FeedBackward(network, error);
+      ConnectionBackward(network, error);
       UpdateGradients(network);
     }
 
@@ -116,7 +116,7 @@ class FFNN
 
       std::get<0>(std::get<0>(network)).InputLayer().InputActivation() = input;
 
-      FeedForward(network);
+      ConnectionForward(network);
       OutputPrediction(network, output);
     }
 
@@ -136,7 +136,7 @@ class FFNN
 
       std::get<0>(std::get<0>(network)).InputLayer().InputActivation() = input;
 
-      FeedForward(network);
+      ConnectionForward(network);
       return OutputError(network, target, error);
     }
 
@@ -194,20 +194,20 @@ class FFNN
      */
     template<size_t I = 0, typename... Tp>
     typename std::enable_if<I == sizeof...(Tp), void>::type
-    FeedForward(std::tuple<Tp...>& /* unused */) { }
+    ConnectionForward(std::tuple<Tp...>& /* unused */) { }
 
     template<size_t I = 0, typename... Tp>
     typename std::enable_if<I < sizeof...(Tp), void>::type
-    FeedForward(std::tuple<Tp...>& t)
+    ConnectionForward(std::tuple<Tp...>& t)
     {
-      Forward(std::get<I>(t));
+      LayerForward(std::get<I>(t));
 
       // Use the first connection to perform the feed forward algorithm.
       std::get<0>(std::get<I>(t)).OutputLayer().FeedForward(
           std::get<0>(std::get<I>(t)).OutputLayer().InputActivation(),
           std::get<0>(std::get<I>(t)).OutputLayer().InputActivation());
 
-      FeedForward<I + 1, Tp...>(t);
+      ConnectionForward<I + 1, Tp...>(t);
     }
 
     /**
@@ -219,14 +219,14 @@ class FFNN
      */
     template<size_t I = 0, typename... Tp>
     typename std::enable_if<I == sizeof...(Tp), void>::type
-    Forward(std::tuple<Tp...>& /* unused */) { }
+    LayerForward(std::tuple<Tp...>& /* unused */) { }
 
     template<size_t I = 0, typename... Tp>
     typename std::enable_if<I < sizeof...(Tp), void>::type
-    Forward(std::tuple<Tp...>& t)
+    LayerForward(std::tuple<Tp...>& t)
     {
       std::get<I>(t).FeedForward(std::get<I>(t).InputLayer().InputActivation());
-      Forward<I + 1, Tp...>(t);
+      LayerForward<I + 1, Tp...>(t);
     }
 
     /*
@@ -273,11 +273,12 @@ class FFNN
      */
     template<size_t I = 0, typename VecType, typename... Tp>
     typename std::enable_if<I == sizeof...(Tp), void>::type
-    FeedBackward(std::tuple<Tp...>& /* unused */, VecType& /* unused */) { }
+    ConnectionBackward(std::tuple<Tp...>& /* unused */, VecType& /* unused */)
+    { }
 
     template<size_t I = 1, typename VecType, typename... Tp>
     typename std::enable_if<I < sizeof...(Tp), void>::type
-    FeedBackward(std::tuple<Tp...>& t, VecType& error)
+    ConnectionBackward(std::tuple<Tp...>& t, VecType& error)
     {
       // Distinguish between the output layer and the other layer. In case of
       // the output layer use specified error vector to store the error and to
@@ -293,10 +294,10 @@ class FFNN
             std::get<sizeof...(Tp) - I>(t)).OutputLayer().Delta());
       }
 
-      Backward(std::get<sizeof...(Tp) - I>(t), std::get<0>(
+      LayerBackward(std::get<sizeof...(Tp) - I>(t), std::get<0>(
           std::get<sizeof...(Tp) - I>(t)).OutputLayer().Delta());
 
-      FeedBackward<I + 1, VecType, Tp...>(t, error);
+      ConnectionBackward<I + 1, VecType, Tp...>(t, error);
     }
 
     /**
@@ -309,11 +310,11 @@ class FFNN
      */
     template<size_t I = 0, typename VecType, typename... Tp>
     typename std::enable_if<I == sizeof...(Tp), void>::type
-    Backward(std::tuple<Tp...>& /* unused */, VecType& /* unused */) { }
+    LayerBackward(std::tuple<Tp...>& /* unused */, VecType& /* unused */) { }
 
     template<size_t I = 0, typename VecType, typename... Tp>
     typename std::enable_if<I < sizeof...(Tp), void>::type
-    Backward(std::tuple<Tp...>& t, VecType& error)
+    LayerBackward(std::tuple<Tp...>& t, VecType& error)
     {
       std::get<I>(t).FeedBackward(error);
 
@@ -326,7 +327,7 @@ class FFNN
             std::get<I>(t).Delta(), std::get<I>(t).InputLayer().Delta());
       }
 
-      Backward<I + 1, VecType, Tp...>(t, error);
+      LayerBackward<I + 1, VecType, Tp...>(t, error);
     }
 
     /**
