@@ -36,7 +36,6 @@ template <
     typename DataType = arma::colvec
 >
 class NeuronLayer
-
 {
  public:
   /**
@@ -47,12 +46,13 @@ class NeuronLayer
    * @param layerCols The number of columns of neurons.
    */
   NeuronLayer(const size_t layerRows, const size_t layerCols) :
-    layerRows(layerRows), layerCols(layerCols),
-    localInputAcitvations(arma::ones<DataType>(layerRows, layerCols)),
-    inputActivations(localInputAcitvations),
-    localDelta(arma::zeros<DataType>(layerRows, layerCols)),
-    delta(localDelta) {
-    
+      layerRows(layerRows), layerCols(layerCols),
+      localInputAcitvations(arma::ones<DataType>(layerRows, layerCols)),
+      inputActivations(localInputAcitvations),
+      localDelta(arma::zeros<DataType>(layerRows, layerCols)),
+      delta(localDelta)
+  {
+    // Nothing to do.
   }
   
   /**
@@ -65,11 +65,12 @@ class NeuronLayer
    *        the passed error in backward propagation.
    */
   NeuronLayer(DataType& inputActivations, DataType& delta) :
-    layerRows(inputActivations.n_rows),
-    layerCols(inputActivations.n_cols),
-    inputActivations(inputActivations),
-    delta(delta){
-      
+      layerRows(inputActivations.n_rows),
+      layerCols(inputActivations.n_cols),
+      inputActivations(inputActivations),
+      delta(delta)
+  {
+    // Nothing to do.
   }
   
   /**
@@ -79,25 +80,27 @@ class NeuronLayer
    * @param layerSize The number of neurons.
    */
   NeuronLayer(const size_t layerSize) :
-  layerRows(layerSize), layerCols(1),
-  localInputAcitvations(arma::ones<DataType>(layerRows)),
-  inputActivations(localInputAcitvations),
-  localDelta(arma::zeros<DataType>(layerRows)),
-  delta(localDelta) {
-    
+      layerRows(layerSize), layerCols(1),
+      localInputAcitvations(arma::ones<DataType>(layerRows)),
+      inputActivations(localInputAcitvations),
+      localDelta(arma::zeros<DataType>(layerRows)),
+      delta(localDelta)
+  {
+    // Nothing to do.
   }
   
   /**
    * Copy Constructor
    */
   NeuronLayer(const NeuronLayer& l) :
-  layerRows(l.layerRows), layerCols(l.layerCols),
-  localInputAcitvations(l.localInputAcitvations),
-  inputActivations(l.localInputAcitvations.n_elem == 0 ?
-                   l.inputActivations : localInputAcitvations),
-  localDelta(l.localDelta),
-  delta(l.localDelta.n_elem == 0 ? l.delta : localDelta){
-    
+      layerRows(l.layerRows), layerCols(l.layerCols),
+      localInputAcitvations(l.localInputAcitvations),
+      inputActivations(l.localInputAcitvations.n_elem == 0 ?
+                       l.inputActivations : localInputAcitvations),
+      localDelta(l.localDelta),
+      delta(l.localDelta.n_elem == 0 ? l.delta : localDelta)
+  {
+    // Nothing to do.
   }
 
   /**

@@ -30,13 +30,14 @@ namespace ann  /** Artificial Neural Network. */{
  * @tparam MatType Type of data (arma::mat or arma::sp_mat).
  */
 template<
-  typename InputLayerType,
-  typename OutputLayerType,
-  typename OptimizerType,
-  class WeightInitRule = NguyenWidrowInitialization<>,
-  typename MatType = arma::mat
+    typename InputLayerType,
+    typename OutputLayerType,
+    typename OptimizerType,
+    class WeightInitRule = NguyenWidrowInitialization<>,
+    typename MatType = arma::mat
 >
-class ConvConnection {
+class ConvConnection
+{
  public:
   /**
    * Create the ConvConnection object using the specified input layer, output
@@ -58,7 +59,8 @@ class ConvConnection {
                  size_t weightsRows,
                  size_t weightsCols,
                  WeightInitRule weightInitRule = WeightInitRule()) :
-  inputLayer(inputLayer), outputLayer(outputLayer), optimizer(optimizer){
+      inputLayer(inputLayer), outputLayer(outputLayer), optimizer(optimizer)
+  {
     weightInitRule.Initialize(weights, weightsRows, weightsCols);
     weightsDelta = arma::zeros<MatType>(weightsRows, weightsCols);
   }
@@ -68,7 +70,8 @@ class ConvConnection {
    * Apply convolution to every neuron in input layer and
    * put the output in the output layer.
    */
-  void FeedForward(const MatType& input) {
+  void FeedForward(const MatType& input)
+  {
     Log::Debug << "ConvConnection::FeedFowrard" << std::endl;
     Log::Debug << "Input:\n" << input << std::endl;
     Log::Debug << "Weight:\n" << weights << std::endl;
@@ -85,14 +88,17 @@ class ConvConnection {
    * calculate the delta of kernel weights.
    * @param error The backpropagated error.
    */
-  void FeedBackward(const MatType& error) {
+  void FeedBackward(const MatType& error)
+  {
     Log::Debug << "ConvConnection::FeedBackward" << std::endl;
     Log::Debug << "Error:\n" << error << std::endl;
     Log::Debug << "Activation:\n" << inputLayer.InputActivation() << std::endl;
     ValidConvolution::conv(inputLayer.InputActivation(), error, weightsDelta);
     MatType rotatedError(error.n_rows, error.n_cols);
-    for (size_t j = 0; j < error.n_cols; ++j) {
-      for (size_t i = 0; i < error.n_rows; ++i) {
+    for (size_t j = 0; j < error.n_cols; ++j)
+    {
+      for (size_t i = 0; i < error.n_rows; ++i)
+      {
         rotatedError(i, j) = error(error.n_rows - 1 - i, error.n_cols - j - 1);
       }
     }
@@ -155,14 +161,18 @@ class ConvConnection {
 };// class ConvConnection
   
 template<
-  typename InputLayerType,
-  typename OutputLayerType,
-  typename OptimizerType,
-  class KernelInitRule,
-  typename MatType >
+    typename InputLayerType,
+    typename OutputLayerType,
+    typename OptimizerType,
+    class KernelInitRule,
+    typename MatType >
 class ConnectionTraits<
-  ConvConnection<InputLayerType, OutputLayerType, OptimizerType,
-                 KernelInitRule, MatType> > {
+  ConvConnection<InputLayerType,
+                 OutputLayerType,
+                 OptimizerType,
+                 KernelInitRule,
+                 MatType> >
+{
  public:
   static const bool IsSelfConnection = false;
   static const bool IsFullselfConnection = false;

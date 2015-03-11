@@ -55,13 +55,16 @@ class BiasConnection
                  OutputLayerType& outputLayer,
                  OptimizerType& optimizer,
                  WeightInitRule weightInitRule = WeightInitRule()) :
-  inputLayer(inputLayer), outputLayer(outputLayer), optimizer(optimizer) {
+      inputLayer(inputLayer), outputLayer(outputLayer), optimizer(optimizer)
+  {
     if (!LayerTraits<typename std::remove_reference<decltype(
-        inputLayer)>::type>::IsBiasLayer) {
+        inputLayer)>::type>::IsBiasLayer)
+    {
     // Input layer must be bias layer.
       Log::Fatal << "Input layer isn't bias layer!" << std::endl;
     }
-    if (inputLayer.OutputSize() != 1) {
+    if (inputLayer.OutputSize() != 1)
+    {
     /** 
      * A typical bias layer only has one neuron.
      * The value of bias is actually stored in @weights.
@@ -153,15 +156,18 @@ class BiasConnection
 }; // class BiasConnection
   
 template<
-  typename InputLayerType,
-  typename OutputLayerType,
-  typename OptimizerType,
-  class WeightInitRule,
-  typename MatType>
+    typename InputLayerType,
+    typename OutputLayerType,
+    typename OptimizerType,
+    class WeightInitRule,
+    typename MatType>
 class ConnectionTraits<
-  BiasConnection<InputLayerType, OutputLayerType, OptimizerType,
-                 WeightInitRule, MatType> > {
-    
+    BiasConnection<InputLayerType,
+                   OutputLayerType,
+                   OptimizerType,
+                   WeightInitRule,
+                   MatType> >
+{
  public:
   static const bool IsSelfConnection = false;
   static const bool IsFullselfConnection = false;

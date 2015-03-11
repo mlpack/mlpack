@@ -29,13 +29,14 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam MatType Type of data (arma::mat or arma::sp_mat).
  */
 template<
-  typename InputLayerType,
-  typename OutputLayerType,
-  typename OptimizerType,
-  typename PoolingRule = MaxPooling,
-  typename MatType = arma::mat
+    typename InputLayerType,
+    typename OutputLayerType,
+    typename OptimizerType,
+    typename PoolingRule = MaxPooling,
+    typename MatType = arma::mat
 >
-class PoolingConnection {
+class PoolingConnection
+{
  public:
   /**
    * Create the PoolingConnection object using the specified input layer, output
@@ -50,15 +51,16 @@ class PoolingConnection {
    * @param PoolingRule The strategy of pooling.
    */
   PoolingConnection(InputLayerType& inputLayer,
-                 OutputLayerType& outputLayer,
-                 OptimizerType& optimizer,
-                 double factor = 1.0,
-                 double bias = 0,
-                 PoolingRule pooling = PoolingRule()) :
-  inputLayer(inputLayer), outputLayer(outputLayer), optimizer(optimizer),
-  weights(2), pooling(pooling),
-  rawOutput(outputLayer.InputActivation().n_rows,
-            outputLayer.InputActivation().n_cols) {
+                    OutputLayerType& outputLayer,
+                    OptimizerType& optimizer,
+                    double factor = 1.0,
+                    double bias = 0,
+                    PoolingRule pooling = PoolingRule()) :
+      inputLayer(inputLayer), outputLayer(outputLayer), optimizer(optimizer),
+      weights(2), pooling(pooling),
+      rawOutput(outputLayer.InputActivation().n_rows,
+                outputLayer.InputActivation().n_cols)
+  {
     delta = arma::zeros<MatType>(inputLayer.InputActivation().n_rows,
                                  inputLayer.InputActivation().n_cols);
     weightsDelta = arma::zeros<arma::colvec>(2);
@@ -72,17 +74,17 @@ class PoolingConnection {
    *
    * @param input Input data used for pooling.
    */
-  void FeedForward(const MatType& input) {
-    
+  void FeedForward(const MatType& input)
+  {
     Log::Debug << "PoolingConnection::FeedForward" << std::endl;
     Log::Debug << "Input:\n" << input << std::endl;
     Log::Debug << "Weights:\n" << weights << std::endl;
-    size_t r_step = input.n_rows /
-                    outputLayer.InputActivation().n_rows;
-    size_t c_step = input.n_cols /
-                    outputLayer.InputActivation().n_cols;
-    for (size_t j = 0; j < input.n_cols; j += c_step) {
-      for (size_t i = 0; i < input.n_rows; i += r_step) {
+    size_t r_step = input.n_rows / outputLayer.InputActivation().n_rows;
+    size_t c_step = input.n_cols / outputLayer.InputActivation().n_cols;
+    for (size_t j = 0; j < input.n_cols; j += c_step)
+    {
+      for (size_t i = 0; i < input.n_rows; i += r_step)
+      {
         double value = 0;
         pooling.pooling(input(arma::span(i, i + r_step -1),
                               arma::span(j, j + c_step - 1)), value);
@@ -98,7 +100,8 @@ class PoolingConnection {
    * pass the error to input layer.
    * @param error The backpropagated error.
    */
-  void FeedBackward(const MatType& error) {
+  void FeedBackward(const MatType& error)
+  {
     Log::Debug << "PoolingConnection::FeedBackward" << std::endl;
     Log::Debug << "Error:\n" << error << std::endl;
     weightsDelta(1) = arma::sum(arma::sum(error));
@@ -108,11 +111,14 @@ class PoolingConnection {
     size_t c_step = inputLayer.InputActivation().n_cols / error.n_cols;
     const MatType& input = inputLayer.InputActivation();
     MatType newError;
-    for (size_t j = 0; j < input.n_cols; j += c_step) {
-      for (size_t i = 0; i < input.n_rows; i += r_step) {
+    for (size_t j = 0; j < input.n_cols; j += c_step)
+    {
+      for (size_t i = 0; i < input.n_rows; i += r_step)
+      {
         const MatType& inputArea = input(arma::span(i, i + r_step -1),
-                                        arma::span(j, j + c_step - 1));
-        pooling.unpooling(inputArea, weightedError(i / r_step, j / c_step),
+                                         arma::span(j, j + c_step - 1));
+        pooling.unpooling(inputArea,
+                          weightedError(i / r_step, j / c_step),
                           newError);
         delta(arma::span(i, i + r_step -1),
               arma::span(j, j + c_step - 1)) = newError;
@@ -189,14 +195,14 @@ class PoolingConnection {
 };
 
 template<
-  typename InputLayerType,
-  typename OutputLayerType,
-  typename OptimizerType,
-  typename PoolingRule,
-  typename MatType >
+    typename InputLayerType,
+    typename OutputLayerType,
+    typename OptimizerType,
+    typename PoolingRule,
+    typename MatType >
 class ConnectionTraits<
-  PoolingConnection<InputLayerType, OutputLayerType, OptimizerType,
-  PoolingRule, MatType> > {
+    PoolingConnection<InputLayerType, OutputLayerType, OptimizerType,
+    PoolingRule, MatType> > {
  public:
   static const bool IsSelfConnection = false;
   static const bool IsFullselfConnection = false;

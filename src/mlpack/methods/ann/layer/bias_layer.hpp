@@ -29,7 +29,6 @@ template <
     typename VecType = arma::colvec
 >
 class BiasLayer
-
 {
  public:
   /**

@@ -54,20 +54,21 @@ class SoftmaxLayer
       inputActivations(inputActivations),
       delta(delta)
   {
-    
+    // Nothing to do here.
   }
   
   /**
    * Copy Constructor
    */
   SoftmaxLayer(const SoftmaxLayer& l) :
-  layerSize(l.layerSize),
-  localInputActivations(l.localInputActivations),
-  inputActivations(l.localInputActivations.elem == 0 ?
-                   l.inputActivations : localInputActivations),
-  localDelta(l.localDelta),
-  delta(l.localDelta.elem == 0 ? l.delta : localDelta) {
-    
+      layerSize(l.layerSize),
+      localInputActivations(l.localInputActivations),
+      inputActivations(l.localInputActivations.elem == 0 ?
+                       l.inputActivations : localInputActivations),
+      localDelta(l.localDelta),
+      delta(l.localDelta.elem == 0 ? l.delta : localDelta)
+  {
+    // Nothing to do here.
   }
 
   /**

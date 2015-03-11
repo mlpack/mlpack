@@ -13,13 +13,14 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-class FullConvolution {
+class FullConvolution
+{
  public:
   
   template<typename MatType>
   static void conv(const MatType& input, const MatType& kernel,
-                   MatType& output) {
-    
+                   MatType& output)
+  {
     size_t rowPadding = kernel.n_rows - 1;
     size_t colPadding = kernel.n_cols - 1;
     MatType extInput = arma::zeros<MatType> (input.n_rows + 2 * rowPadding,

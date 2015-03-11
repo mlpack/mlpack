@@ -12,23 +12,22 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-class MeanPooling {
-  
+class MeanPooling
+{
  public:
-  
   template<typename MatType>
-  static void pooling(const MatType& input, double& output) {
+  static void pooling(const MatType& input, double& output)
+  {
     output = arma::mean(arma::mean(input));
   }
   
   template<typename MatType>
   static void unpooling(const MatType& input, const double& value,
-                        MatType& output) {
+                        MatType& output)
+  {
     output = MatType(input.n_rows, input.n_cols);
     output.fill(value / input.n_elem);
   }
-  
- private:
 };
 
 }; // namespace ann

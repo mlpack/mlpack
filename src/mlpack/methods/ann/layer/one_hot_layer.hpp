@@ -47,7 +47,8 @@ class OneHotLayer
    */
   void calculateError(const VecType& inputActivations,
                       const VecType& target,
-                      VecType& error) {
+                      VecType& error)
+  {
     error = inputActivations - target;
   }
 
@@ -57,7 +58,8 @@ class OneHotLayer
    * @param inputActivations Input data used to calculate the output class.
    * @param output Output class of the input activation.
    */
-  void outputClass(const VecType& inputActivations, VecType& output) {
+  void outputClass(const VecType& inputActivations, VecType& output)
+  {
     output = arma::zeros<VecType>(inputActivations.n_elem);
     arma::uword maxIndex;
     inputActivations.max(maxIndex);

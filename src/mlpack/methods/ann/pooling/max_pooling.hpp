@@ -12,18 +12,19 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-class MaxPooling {
-  
+class MaxPooling
+{
  public:
-  
   template<typename MatType>
-  static void pooling(const MatType& input, double& output) {
+  static void pooling(const MatType& input, double& output)
+  {
     output = input.max();
   }
   
   template<typename MatType>
   static void unpooling(const MatType& input, const double& value,
-                        MatType& output) {
+                        MatType& output)
+  {
     arma::uword row = 0;
     arma::uword col = 0;
     output = arma::zeros<MatType>(input.n_rows, input.n_cols);

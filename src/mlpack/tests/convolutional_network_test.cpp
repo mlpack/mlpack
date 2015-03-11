@@ -44,7 +44,8 @@ using namespace mlpack::ann;
 BOOST_AUTO_TEST_SUITE(ConvolutionalNetworkTest);
 
 // A simple test for convolution strategies.
-BOOST_AUTO_TEST_CASE(ConvolutionTest) {
+BOOST_AUTO_TEST_CASE(ConvolutionTest)
+{
   
   arma::mat convInput("1 2 3 4;"
                       "4 1 2 3;"
@@ -83,85 +84,149 @@ BOOST_AUTO_TEST_CASE(ConvolutionTest) {
 
 // Helper function to build LeNet1, support for C++14 is required.
 template <typename F, size_t... Is>
-auto genTupleImpl(F func, std::index_sequence<Is...> ) {
+auto genTupleImpl(F func, std::index_sequence<Is...> )
+{
   return std::make_tuple(func(Is)...);
 }
 
 template <size_t N, typename F>
-auto genTuple(F func) {
+auto genTuple(F func)
+{
   return genTupleImpl(func, std::make_index_sequence<N>{} );
 }
 
 template <typename T, size_t I, typename... Tp1, typename... Tp2>
-T genTupleImpl(std::tuple<Tp1...>& P1, std::tuple<Tp2...>& P2) {
+T genTupleImpl(std::tuple<Tp1...>& P1, std::tuple<Tp2...>& P2)
+{
   return T(std::get<I>(P1), std::get<I>(P2));
 }
 
-template <typename T, std::size_t... Indices,
-          typename... Tp1, typename... Tp2>
-auto genTuple(std::tuple<Tp1...>& P1, std::tuple<Tp2...>& P2,
-              std::index_sequence<Indices...>) {
+template<
+    typename T,
+    std::size_t... Indices,
+    typename... Tp1,
+    typename... Tp2>
+auto genTuple(std::tuple<Tp1...>& P1,
+              std::tuple<Tp2...>& P2,
+              std::index_sequence<Indices...>)
+{
   return std::make_tuple(genTupleImpl<T, Indices>(P1, P2)...);
 }
 
-template <typename RT, typename T1 ,size_t I,
-          typename... Tp2, typename... Tp3>
-RT genConn1Impl(T1& inputLayer, std::tuple<Tp2...>& P2,
-                std::tuple<Tp3...>& P3, int i, int j) {
+template<
+    typename RT,
+    typename T1,
+    size_t I,
+    typename... Tp2,
+    typename... Tp3>
+RT genConn1Impl(T1& inputLayer,
+                std::tuple<Tp2...>& P2,
+                std::tuple<Tp3...>& P3,
+                int i,
+                int j)
+{
   return RT(inputLayer, std::get<I>(P2), std::get<I>(P3), i, j);
 }
 
-template <typename RT, typename T1, std::size_t... Indices,
-          typename... Tp2, typename... Tp3>
-auto genConn1(T1& inputLayer, std::tuple<Tp2...>& P2,
-              std::tuple<Tp3...>& P3, int i, int j,
-              std::index_sequence<Indices...>) {
+template<
+    typename RT,
+    typename T1,
+    std::size_t... Indices,
+    typename... Tp2,
+    typename... Tp3>
+auto genConn1(T1& inputLayer,
+              std::tuple<Tp2...>& P2,
+              std::tuple<Tp3...>& P3,
+              int i,
+              int j,
+              std::index_sequence<Indices...>)
+{
   return std::make_tuple(genConn1Impl
                          <RT, T1, Indices>(inputLayer, P2, P3, i, j)...);
 }
 
-template <typename RT, size_t I, typename... Tp1,
-          typename... Tp2, typename... Tp3>
-RT genConn2Impl(std::tuple<Tp1...>& P1, std::tuple<Tp2...>& P2,
-                std::tuple<Tp3...>& P3) {
+template<
+    typename RT,
+    size_t I,
+    typename... Tp1,
+    typename... Tp2,
+    typename... Tp3>
+RT genConn2Impl(std::tuple<Tp1...>& P1,
+                std::tuple<Tp2...>& P2,
+                std::tuple<Tp3...>& P3)
+{
   return RT(std::get<I>(P1), std::get<I>(P2), std::get<I>(P3));
 }
 
-template <typename RT, std::size_t... Indices, typename... Tp1,
-          typename... Tp2, typename... Tp3>
-auto genConn2(std::tuple<Tp1...>& P1, std::tuple<Tp2...>& P2,
-              std::tuple<Tp3...>& P3, std::index_sequence<Indices...>) {
+template<
+    typename RT,
+    std::size_t... Indices,
+    typename... Tp1,
+    typename... Tp2,
+    typename... Tp3>
+auto genConn2(std::tuple<Tp1...>& P1,
+              std::tuple<Tp2...>& P2,
+              std::tuple<Tp3...>& P3,
+              std::index_sequence<Indices...>)
+{
   return std::make_tuple(genConn2Impl<RT, Indices>(P1, P2, P3)...);
 }
 
-template <typename RT, size_t I, typename... Tp1,
-          typename... Tp2, typename... Tp3>
-RT genConn5Impl(std::tuple<Tp1...>& P1, std::tuple<Tp2...>& P2,
-                std::tuple<Tp3...>& P3, int i, int j) {
+template<
+    typename RT, size_t I,
+    typename... Tp1,
+    typename... Tp2,
+    typename... Tp3>
+RT genConn5Impl(std::tuple<Tp1...>& P1,
+                std::tuple<Tp2...>& P2,
+                std::tuple<Tp3...>& P3,
+                int i,
+                int j)
+{
   return RT(std::get<I % 12>(P1), std::get<I / 12>(P2),
             std::get<I>(P3), i, j);
 }
 
-template <typename RT, std::size_t... Indices, typename... Tp1,
-          typename... Tp2, typename... Tp3>
-auto genConn5(std::tuple<Tp1...>& P1, std::tuple<Tp2...>& P2,
-              std::tuple<Tp3...>& P3, int i, int j,
-              std::index_sequence<Indices...>) {
+template<
+    typename RT,
+    std::size_t... Indices,
+    typename... Tp1,
+    typename... Tp2,
+    typename... Tp3>
+auto genConn5(std::tuple<Tp1...>& P1,
+              std::tuple<Tp2...>& P2,
+              std::tuple<Tp3...>& P3,
+              int i,
+              int j,
+              std::index_sequence<Indices...>)
+{
   return std::make_tuple(genConn5Impl<RT, Indices>(P1, P2, P3, i, j)...);
 }
 
-template <typename RT, typename T1 ,size_t I, typename... Tp2,
-          typename... Tp3>
-RT genLayer1BiasImpl(T1& biasLayer, std::tuple<Tp2...>& P2,
-                     std::tuple<Tp3...>& P3) {
+template<
+    typename RT,
+    typename T1,
+    size_t I,
+    typename... Tp2,
+    typename... Tp3>
+RT genLayer1BiasImpl(T1& biasLayer,
+                     std::tuple<Tp2...>& P2,
+                     std::tuple<Tp3...>& P3)
+{
   return RT(biasLayer, std::get<I>(P2), std::get<I>(P3));
 }
 
-template <typename RT, typename T1, std::size_t... Indices,
-          typename... Tp2, typename... Tp3>
-auto genLayer1Bias(T1& biasLayer, std::tuple<Tp2...>& P2,
+template<
+    typename RT,
+    typename T1,
+    std::size_t... Indices,
+    typename... Tp2,
+    typename... Tp3>
+auto genLayer1Bias(T1& biasLayer,
+                   std::tuple<Tp2...>& P2,
                    std::tuple<Tp3...>& P3,
-                   std::index_sequence<Indices...>) {
+                   std::index_sequence<Indices...>)
+{
   return std::make_tuple(genLayer1BiasImpl
                          <RT, T1, Indices>(biasLayer, P2, P3)...);
 }
@@ -180,7 +245,8 @@ auto genLayer1Bias(T1& biasLayer, std::tuple<Tp2...>& P2,
  * http://yann.lecun.com/exdb/publis/pdf/lecun-90c.pdf
  *
  */
-BOOST_AUTO_TEST_CASE(LeNet1Test) {
+BOOST_AUTO_TEST_CASE(LeNet1Test)
+{
   
   // Input layer
   NeuronLayer<IdentityFunction, arma::mat> inputLayer(28, 28);
@@ -195,24 +261,32 @@ BOOST_AUTO_TEST_CASE(LeNet1Test) {
   BiasLayer<> biasLayer(1);
   
   // 4 layers in H1
-  auto layer1 = genTuple<4>([&](size_t) {
-    return NeuronLayer<IdentityFunction, arma::mat>(24, 24);
-  });
+  auto layer1 = genTuple<4>(
+      [&](size_t)
+      {
+        return NeuronLayer<IdentityFunction, arma::mat>(24, 24);
+      });
   
   // 4 layers in H2
-  auto layer2 = genTuple<4>([&](size_t) {
-    return NeuronLayer<LogisticFunction, arma::mat>(12, 12);
-  });
+  auto layer2 = genTuple<4>(
+      [&](size_t)
+      {
+        return NeuronLayer<LogisticFunction, arma::mat>(12, 12);
+      });
   
   // 12 layers in H3
-  auto layer3 = genTuple<12>([&](size_t) {
-    return NeuronLayer<IdentityFunction, arma::mat>(8, 8);
-  });
+  auto layer3 = genTuple<12>(
+      [&](size_t)
+      {
+        return NeuronLayer<IdentityFunction, arma::mat>(8, 8);
+      });
   
   // 12 layers in H4
-  auto layer4 = genTuple<12>([&](size_t) {
-    return NeuronLayer<LogisticFunction, arma::mat>(4, 4);
-  });
+  auto layer4 = genTuple<12>(
+      [&](size_t)
+      {
+        return NeuronLayer<LogisticFunction, arma::mat>(4, 4);
+      });
 
   /**
    * Refer the output layer in the paper above as H5.
@@ -225,23 +299,27 @@ BOOST_AUTO_TEST_CASE(LeNet1Test) {
   
   // Shared input storage.
   arma::colvec layer5Input(10);
-  auto layer5InputSub = genTuple<10>([&](size_t i) {
-    return arma::mat(layer5Input.memptr() + i, 1, 1, false, true);
-  });
+  auto layer5InputSub = genTuple<10>(
+      [&](size_t i)
+      {
+        return arma::mat(layer5Input.memptr() + i, 1, 1, false, true);
+      });
   
   // Shared delta storage.
   arma::colvec layer5Delta(10);
-  auto layer5DeltaSub = genTuple<10>([&](size_t i) {
-    return arma::mat(layer5Delta.memptr() + i, 1, 1, false, true);
-  });
+  auto layer5DeltaSub = genTuple<10>(
+      [&](size_t i)
+      {
+        return arma::mat(layer5Delta.memptr() + i, 1, 1, false, true);
+      });
   
   // Layer 5 is a softmax layer, which is different from the paper.
   SoftmaxLayer<arma::mat, arma::colvec> layer5_0(layer5Input, layer5Delta);
   auto layer5 = std::tie(layer5_0);
   
   // Sub-layers for layer 5
-  auto layer5Sub = genTuple<NeuronLayer<IdentityFunction, arma::mat> >
-  (layer5InputSub, layer5DeltaSub, std::make_index_sequence<10>());
+  auto layer5Sub = genTuple<NeuronLayer<IdentityFunction, arma::mat> >(
+      layer5InputSub, layer5DeltaSub, std::make_index_sequence<10>());
   
   /**
    * Define learning rate and momentum for updating.
@@ -266,34 +344,42 @@ BOOST_AUTO_TEST_CASE(LeNet1Test) {
   double mom5 = mom;
   
   // 4 convolutional connections between input layer and layer1(H1)
-  auto conn1Opt = genTuple<4>([&](size_t) {
-    return SteepestDescent<arma::mat, arma::mat>(5, 5, lr1, mom1);
-  });
+  auto conn1Opt = genTuple<4>(
+    [&](size_t)
+    {
+      return SteepestDescent<arma::mat, arma::mat>(5, 5, lr1, mom1);
+    });
+  
   auto conn1 = genConn1<
-  ConvConnection<
-  decltype(inputLayer),
-  decltype(std::get<0>(layer1)),
-  decltype(std::get<0>(conn1Opt)),
-  NguyenWidrowInitialization<arma::mat> >,
-  decltype(inputLayer)>
-  (inputLayer, layer1, conn1Opt, 5, 5, std::make_index_sequence<4>());
+      ConvConnection<
+      decltype(inputLayer),
+      decltype(std::get<0>(layer1)),
+      decltype(std::get<0>(conn1Opt)),
+      NguyenWidrowInitialization<arma::mat> >,
+      decltype(inputLayer)>(
+      inputLayer, layer1, conn1Opt, 5, 5, std::make_index_sequence<4>());
   
   // 4 pooling connections between layer1(H1) and layer2(H2)
-  auto conn2Opt = genTuple<4>([&](size_t) {
-    return SteepestDescent<arma::mat, arma::mat>(1, 2, lr2, mom2);
-  });
-  auto conn2 = genConn2<
-  PoolingConnection<
-  decltype(std::get<0>(layer1)),
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(conn2Opt)),
-  MeanPooling,
-  arma::mat>
-  >(layer1, layer2, conn2Opt, std::make_index_sequence<4>());
+  auto conn2Opt = genTuple<4>(
+      [&](size_t)
+      {
+        return SteepestDescent<arma::mat, arma::mat>(1, 2, lr2, mom2);
+      });
   
-  auto conn3Opt = genTuple<20>([&](size_t) {
-    return SteepestDescent<arma::mat, arma::mat>(5, 5, lr3, mom3);
-  });
+  auto conn2 = genConn2<
+      PoolingConnection<
+      decltype(std::get<0>(layer1)),
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(conn2Opt)),
+      MeanPooling,
+      arma::mat> >(
+      layer1, layer2, conn2Opt, std::make_index_sequence<4>());
+  
+  auto conn3Opt = genTuple<20>(
+      [&](size_t)
+      {
+        return SteepestDescent<arma::mat, arma::mat>(5, 5, lr3, mom3);
+      });
   
   /**
    * 20 convolutional connctions between layer2(H2) and layer3(H3).
@@ -468,69 +554,83 @@ BOOST_AUTO_TEST_CASE(LeNet1Test) {
                         conn3_18, conn3_19);
   
   // 12 pooling connections between layer3(H3) and layer4(H4)
-  auto conn4Opt = genTuple<12>([&](size_t) {
-    return SteepestDescent<arma::mat, arma::mat>(1, 2, lr4, mom4);
-  });
+  auto conn4Opt = genTuple<12>(
+      [&](size_t)
+      {
+        return SteepestDescent<arma::mat, arma::mat>(1, 2, lr4, mom4);
+      });
+  
   auto conn4 = genConn2<
-  PoolingConnection<
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(layer4)),
-  decltype(std::get<0>(conn4Opt)),
-  MeanPooling,
-  arma::mat>
-  >(layer3, layer4, conn4Opt, std::make_index_sequence<12>());
+      PoolingConnection<
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(layer4)),
+      decltype(std::get<0>(conn4Opt)),
+      MeanPooling,
+      arma::mat> >(
+      layer3, layer4, conn4Opt, std::make_index_sequence<12>());
   
   // 120 full connections between layer4(H4) and 10 sub-layers for layer5
-  auto conn5Opt = genTuple<120>([&](size_t i) {
-    return SteepestDescent<arma::mat, arma::mat>(4, 4, lr5, mom5);
-  });
+  auto conn5Opt = genTuple<120>(
+      [&](size_t i)
+      {
+        return SteepestDescent<arma::mat, arma::mat>(4, 4, lr5, mom5);
+      });
+  
   auto conn5 = genConn5<
-  ConvConnection<
-  decltype(std::get<0>(layer4)),
-  decltype(std::get<0>(layer5Sub)),
-  decltype(std::get<0>(conn5Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>
-  >(layer4, layer5Sub, conn5Opt, 4, 4, std::make_index_sequence<120>());
+      ConvConnection<
+      decltype(std::get<0>(layer4)),
+      decltype(std::get<0>(layer5Sub)),
+      decltype(std::get<0>(conn5Opt)),
+      NguyenWidrowInitialization<arma::mat>,
+      arma::mat> >(
+      layer4, layer5Sub, conn5Opt, 4, 4, std::make_index_sequence<120>());
   
   // Bias for neurons in layer1(H1)
-  auto layer1biasOpt = genTuple<4>([&](size_t) {
-    return SteepestDescent<arma::mat, arma::mat>(1, 1, lr, mom);
-  });
+  auto layer1biasOpt = genTuple<4>(
+      [&](size_t)
+      {
+        return SteepestDescent<arma::mat, arma::mat>(1, 1, lr, mom);
+      });
+  
   auto layer1bias = genLayer1Bias<
-  BiasConnection<
-  decltype(biasLayer),
-  decltype(std::get<0>(layer1)),
-  decltype(std::get<0>(layer1biasOpt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>,
-  decltype(biasLayer)
-  >(biasLayer, layer1, layer1biasOpt, std::make_index_sequence<4>());
+      BiasConnection<
+      decltype(biasLayer),
+      decltype(std::get<0>(layer1)),
+      decltype(std::get<0>(layer1biasOpt)),
+      NguyenWidrowInitialization<arma::mat>,
+      arma::mat>,
+      decltype(biasLayer) >(
+      biasLayer, layer1, layer1biasOpt, std::make_index_sequence<4>());
   
   // Bias for neurons in layer3(H3)
-  auto layer3biasOpt = genTuple<12>([&](size_t) {
-    return SteepestDescent<arma::mat, arma::mat>(1, 1, lr, mom);
-  });
+  auto layer3biasOpt = genTuple<12>(
+      [&](size_t)
+      {
+        return SteepestDescent<arma::mat, arma::mat>(1, 1, lr, mom);
+      });
+  
   auto layer3bias = genLayer1Bias<
-  BiasConnection<
-  decltype(biasLayer),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(layer3biasOpt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>,
-  decltype(biasLayer)
-  >(biasLayer, layer3, layer3biasOpt, std::make_index_sequence<12>());
+      BiasConnection<
+      decltype(biasLayer),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(layer3biasOpt)),
+      NguyenWidrowInitialization<arma::mat>,
+      arma::mat>,
+      decltype(biasLayer) >(
+      biasLayer, layer3, layer3biasOpt, std::make_index_sequence<12>());
   
   // Bias for neurons in layer5(H5)
   SteepestDescent<arma::mat, arma::mat> layer5biasOpt(1, 10, lr, mom);
+  
   CNNFullConnection<
-  decltype(biasLayer),
-  decltype(layer5_0),
-  decltype(layer5biasOpt),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat,
-  arma::colvec
-  >layer5BiasConn(biasLayer, layer5_0, layer5biasOpt);
+      decltype(biasLayer),
+      decltype(layer5_0),
+      decltype(layer5biasOpt),
+      NguyenWidrowInitialization<arma::mat>,
+      arma::mat,
+      arma::colvec>
+      layer5BiasConn(biasLayer, layer5_0, layer5biasOpt);
+  
   auto layer5bias = std::tie(layer5BiasConn);
   
   // network module
@@ -544,10 +644,9 @@ BOOST_AUTO_TEST_CASE(LeNet1Test) {
   // One-Hot layer for output, different from the paper.
   OneHotLayer<> outputLayer;
   
-  CNN<
-  decltype(modules),
-  decltype(outputLayer)>
-  net(modules, outputLayer);
+  CNN<decltype(modules),
+      decltype(outputLayer)>
+      net(modules, outputLayer);
   
   arma::cube trainData;
   arma::cube testData;
@@ -566,20 +665,20 @@ BOOST_AUTO_TEST_CASE(LeNet1Test) {
   // The data is already shuffled.
   bool shuffle = false;
   
-  Trainer<decltype(net), arma::mat, arma::colvec, arma::cube>
-  trainer(net, maxEpochs, batchSize, tolerance, shuffle);
+  Trainer<decltype(net)> trainer(net,
+      maxEpochs, batchSize, tolerance, shuffle);
   
   // Train network
-  trainer.Train<2>(trainData, trainLabels, testData, testLabels);
+  trainer.Train(trainData, trainLabels, testData, testLabels);
   
   // Calculate the accuracy in testing dataset.
   double accuracy = 0;
-  for (size_t i = 0; i < testData.n_slices; ++i) {
+  for (size_t i = 0; i < testData.n_slices; ++i)
+  {
     arma::colvec pred;
     net.Predict(testData.slice(i), pred);
-    if (sum(pred != testLabels.unsafe_col(i)) == 0) {
+    if (sum(pred != testLabels.unsafe_col(i)) == 0)
       accuracy++;
-    }
   }
   accuracy /= testData.n_slices;
   
