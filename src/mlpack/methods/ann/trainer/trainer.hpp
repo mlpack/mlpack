@@ -90,7 +90,7 @@ class Trainer
 
         Train(trainingData, trainingLabels);
         Evaluate(validationData, validationLabels);
-
+        
         if (validationError <= tolerance)
           break;
 
@@ -138,7 +138,7 @@ class Trainer
       // Reset the training error.
       trainingError = 0;
 
-      for (size_t i = 0; i < data.n_cols; i++)
+      for (size_t i = 0; i < Count(data); i++)
       {
         net.FeedForward(Element(data, index(i)),
             Element(target, index(i)), error);
@@ -150,10 +150,10 @@ class Trainer
           net.ApplyGradients();
       }
 
-      if ((data.n_cols % batchSize) != 0)
+      if ((Count(data) % batchSize) != 0)
         net.ApplyGradients();
 
-      trainingError /= data.n_cols;
+      trainingError /= Count(data);
     }
 
     /**
@@ -167,14 +167,14 @@ class Trainer
     {
       // Reset the validation error.
       validationError = 0;
-
-      for (size_t i = 0; i < data.n_cols; i++)
+      
+      for (size_t i = 0; i < Count(data); i++)
       {
          validationError += net.Evaluate(Element(data, i),
             Element(target, i), error);
       }
 
-      validationError /= data.n_cols;
+      validationError /= Count(data);
     }
 
     /*
@@ -230,12 +230,29 @@ class Trainer
     {
       return *(input.mat_ptrs[sliceNum]);
     }
+  
+  
+    // Count the cases in input data
+    template<typename eT>
+    size_t Count(const arma::Cube<eT>& input)
+    {
+      return input.n_slices;
+    }
+  
+    // Count the cases in input data
+    template<typename eT>
+    size_t Count(const arma::Mat<eT>& input)
+    {
+      return input.n_cols;
+    }
+  
 
     //! The network which should be trained and evaluated.
     NetworkType& net;
 
     //! The current network error of a single input.
-    typename std::conditional<NetworkTraits<NetworkType>::IsFNN,
+    typename std::conditional<NetworkTraits<NetworkType>::IsFNN ||
+        NetworkTraits<NetworkType>::IsCNN,
         VecType, MatType>::type error;
 
     //! The current epoch if maxEpochs is set.

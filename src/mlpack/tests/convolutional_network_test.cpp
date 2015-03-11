@@ -660,13 +660,12 @@ BOOST_AUTO_TEST_CASE(LeNet1Test)
   
   size_t maxEpochs = 100;
   size_t batchSize = 1;
-  double tolerance = 5;
+  double tolerance = 0.05;
   
   // The data is already shuffled.
   bool shuffle = false;
   
-  Trainer<decltype(net)> trainer(net,
-      maxEpochs, batchSize, tolerance, shuffle);
+  Trainer<decltype(net)> trainer(net, maxEpochs, batchSize, tolerance, shuffle);
   
   // Train network
   trainer.Train(trainData, trainLabels, testData, testLabels);

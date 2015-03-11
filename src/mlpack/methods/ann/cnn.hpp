@@ -47,8 +47,7 @@ class CNN
    * @param outputLayer The outputlayer used to evaluate the network.
    */
   CNN(const ConnectionTypes& network, OutputLayerType& outputLayer)
-      : network(network), outputLayer(outputLayer), err(0),
-      trainError(0), seqNum(0)
+      : network(network), outputLayer(outputLayer), trainError(0), seqNum(0)
   {
     // Nothing to do here.
   }
@@ -68,13 +67,8 @@ class CNN
                    const VecType& target,
                    VecType& error)
   {
-    Reset();
     seqNum++;
-    
-    std::get<0>(std::get<0>(network)).InputActivation() = input;
-      
-    FeedForward(network);
-    OutputError(network, target, error);
+    trainError += Evaluate(input, target, error);
   }
   
   /**
@@ -113,7 +107,7 @@ class CNN
     ApplyGradients(network);
 
     // Reset the overall error.
-    err = 0;
+    trainError = 0;
     seqNum = 0;
   }
 
@@ -134,6 +128,24 @@ class CNN
 
     FeedForward(network);
     OutputPrediction(network, output);
+  }
+  
+  /**
+   * Evaluate the trained network using the given input and compare the output
+   * with the given target vector.
+   *
+   * @param input Input data used to evaluate the trained network.
+   * @param target Target data used to calculate the network error.
+   * @param error The calulated error of the output layer.
+   * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
+   */
+  template <typename VecType>
+  double Evaluate(const MatType& input, const VecType& target, VecType& error)
+  {
+    Reset();
+    std::get<0>(std::get<0>(network)).InputActivation() = input;
+    FeedForward(network);
+    return OutputError(network, target, error);
   }
 
   //! Get the error of the network.
@@ -278,7 +290,7 @@ class CNN
    * Calculate the output error and update the overall error.
    */
   template<typename VecType, typename... Tp>
-  void OutputError(std::tuple<Tp...>& t,
+  double OutputError(std::tuple<Tp...>& t,
                    const VecType& target,
                    VecType& error)
   {
@@ -289,12 +301,9 @@ class CNN
 
     // Masures the network's performance with the specified performance
     // function.
-    err += PerformanceFunction::error(std::get<0>(
+    return PerformanceFunction::error(std::get<0>(
         std::get<sizeof...(Tp) - 1>(t)).InputActivation(),
         target);
-
-    // Update the final training error.
-    trainError = err;
   }
 
   /**
@@ -458,7 +467,7 @@ class CNN
       gradients[gradientNum] /= seqNum;
     
     std::get<I>(t).Optimzer().UpdateWeights(std::get<I>(t).Weights(),
-                                            gradients[gradientNum], err);
+                                            gradients[gradientNum], trainError);
     
     // Reset the gradient storage.
     gradients[gradientNum++].zeros();
@@ -514,9 +523,6 @@ class CNN
 
   //! The outputlayer used to evaluate the network
   OutputLayerType& outputLayer;
-
-  //! The current error of the network.
-  double err;
 
   //! The current training error of the network.
   double trainError;
