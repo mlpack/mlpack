@@ -632,14 +632,14 @@ BOOST_AUTO_TEST_CASE(DTNNTest)
 
 BOOST_AUTO_TEST_CASE(DTNNCoverTreeTest)
 {
-  const size_t trials = 5;
+//  const size_t trials = 5;
 
-  for (size_t t = 0; t < trials; ++t)
-  {
+//  for (size_t t = 0; t < trials; ++t)
+//  {
     arma::mat dataset(10, 1000);
     dataset.randu();
 
-    const size_t k = 5 * (t + 1);
+    const size_t k = 5;
     arma::mat centroids(10, k);
     centroids.randu();
 
@@ -650,7 +650,7 @@ BOOST_AUTO_TEST_CASE(DTNNCoverTreeTest)
 
     KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
         CoverTreeDTNNKMeans> dtnn;
-    arma::Col<size_t> dtnnAssignments;
+/*    arma::Col<size_t> dtnnAssignments;
     arma::mat dtnnCentroids(centroids);
     dtnn.Cluster(dataset, k, dtnnAssignments, dtnnCentroids, false, true);
 
@@ -660,8 +660,10 @@ BOOST_AUTO_TEST_CASE(DTNNCoverTreeTest)
     for (size_t i = 0; i < centroids.n_elem; ++i)
       BOOST_REQUIRE_CLOSE(naiveCentroids[i], dtnnCentroids[i], 1e-5);
   }
+*/
 }
 
+/*
 BOOST_AUTO_TEST_CASE(DualTreeKMeansTest)
 {
   const size_t trials = 5;
@@ -1071,5 +1073,6 @@ BOOST_AUTO_TEST_CASE(DualTreeKMeansScoreCoverTreeTest)
     }
   }
 }
+*/
 
 BOOST_AUTO_TEST_SUITE_END();
