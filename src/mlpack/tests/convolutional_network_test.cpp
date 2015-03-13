@@ -82,17 +82,88 @@ BOOST_AUTO_TEST_CASE(ConvolutionTest)
   
 }
 
-// Helper function to build LeNet1, support for C++14 is required.
+#ifndef HAS_MOVE_SEMANTICS
+
+template< std::size_t ... i >
+struct index_sequence
+{
+    typedef std::size_t value_type;
+
+    typedef index_sequence<i...> type;
+
+    // gcc-4.4.7 doesn't support `constexpr` and `noexcept`.
+    static /*constexpr*/ std::size_t size() /*noexcept*/
+    {
+        return sizeof ... (i);
+    }
+};
+
+
+// this structure doubles index_sequence elements.
+// s- is number of template arguments in IS.
+template< std::size_t s, typename IS >
+struct doubled_index_sequence;
+
+template< std::size_t s, std::size_t ... i >
+struct doubled_index_sequence< s, index_sequence<i... > >
+{
+    typedef index_sequence<i..., (s + i)... > type;
+};
+
+// this structure incremented by one index_sequence, iff NEED-is true,
+// otherwise returns IS
+template< bool NEED, typename IS >
+struct inc_index_sequence;
+
+template< typename IS >
+struct inc_index_sequence<false,IS>{ typedef IS type; };
+
+template< std::size_t ... i >
+struct inc_index_sequence< true, index_sequence<i...> >
+{
+    typedef index_sequence<i..., sizeof...(i)> type;
+};
+
+
+
+// helper structure for make_index_sequence.
+template< std::size_t N >
+struct make_index_sequence_impl :
+           inc_index_sequence< (N % 2 != 0),
+                typename doubled_index_sequence< N / 2,
+                           typename make_index_sequence_impl< N / 2> ::type
+               >::type
+       >
+{};
+
+ // helper structure needs specialization only with 0 element.
+template<>struct make_index_sequence_impl<0>{ typedef index_sequence<> type; };
+
+
+
+// OUR make_index_sequence,  gcc-4.4.7 doesn't support `using`,
+// so we use struct instead of it.
+template< std::size_t N >
+struct make_index_sequence : make_index_sequence_impl<N>::type {};
+
+//index_sequence_for  any variadic templates
+template< typename ... T >
+struct index_sequence_for : make_index_sequence< sizeof...(T) >{};
+
+#endif
+
+// Helper function to build LeNet1
 template <typename F, size_t... Is>
-auto genTupleImpl(F func, std::index_sequence<Is...> )
+auto genTupleImpl(F func, index_sequence<Is...> )
+    -> decltype(std::make_tuple(func(Is)...))
 {
   return std::make_tuple(func(Is)...);
 }
 
-template <size_t N, typename F>
-auto genTuple(F func)
+template <size_t N, typename F, typename Indices = make_index_sequence<N> >
+auto genTuple(F func) -> decltype(genTupleImpl(func, Indices()))
 {
-  return genTupleImpl(func, std::make_index_sequence<N>{} );
+  return genTupleImpl(func, Indices());
 }
 
 template <typename T, size_t I, typename... Tp1, typename... Tp2>
@@ -101,14 +172,15 @@ T genTupleImpl(std::tuple<Tp1...>& P1, std::tuple<Tp2...>& P2)
   return T(std::get<I>(P1), std::get<I>(P2));
 }
 
-template<
+template <
     typename T,
     std::size_t... Indices,
     typename... Tp1,
     typename... Tp2>
 auto genTuple(std::tuple<Tp1...>& P1,
               std::tuple<Tp2...>& P2,
-              std::index_sequence<Indices...>)
+              index_sequence<Indices...>)
+    -> decltype(std::make_tuple(genTupleImpl<T, Indices>(P1, P2)...))
 {
   return std::make_tuple(genTupleImpl<T, Indices>(P1, P2)...);
 }
@@ -128,7 +200,7 @@ RT genConn1Impl(T1& inputLayer,
   return RT(inputLayer, std::get<I>(P2), std::get<I>(P3), i, j);
 }
 
-template<
+template <
     typename RT,
     typename T1,
     std::size_t... Indices,
@@ -139,10 +211,10 @@ auto genConn1(T1& inputLayer,
               std::tuple<Tp3...>& P3,
               int i,
               int j,
-              std::index_sequence<Indices...>)
+              index_sequence<Indices...>)
+    -> decltype(std::make_tuple(genConn1Impl<RT, T1, Indices>(inputLayer, P2, P3, i, j)...))
 {
-  return std::make_tuple(genConn1Impl
-                         <RT, T1, Indices>(inputLayer, P2, P3, i, j)...);
+  return std::make_tuple(genConn1Impl<RT, T1, Indices>(inputLayer, P2, P3, i, j)...);
 }
 
 template<
@@ -158,7 +230,7 @@ RT genConn2Impl(std::tuple<Tp1...>& P1,
   return RT(std::get<I>(P1), std::get<I>(P2), std::get<I>(P3));
 }
 
-template<
+template <
     typename RT,
     std::size_t... Indices,
     typename... Tp1,
@@ -167,7 +239,8 @@ template<
 auto genConn2(std::tuple<Tp1...>& P1,
               std::tuple<Tp2...>& P2,
               std::tuple<Tp3...>& P3,
-              std::index_sequence<Indices...>)
+              index_sequence<Indices...>)
+    -> decltype(std::make_tuple(genConn2Impl<RT, Indices>(P1, P2, P3)...))
 {
   return std::make_tuple(genConn2Impl<RT, Indices>(P1, P2, P3)...);
 }
@@ -187,7 +260,7 @@ RT genConn5Impl(std::tuple<Tp1...>& P1,
             std::get<I>(P3), i, j);
 }
 
-template<
+template <
     typename RT,
     std::size_t... Indices,
     typename... Tp1,
@@ -198,7 +271,8 @@ auto genConn5(std::tuple<Tp1...>& P1,
               std::tuple<Tp3...>& P3,
               int i,
               int j,
-              std::index_sequence<Indices...>)
+              index_sequence<Indices...>)
+    -> decltype(std::make_tuple(genConn5Impl<RT, Indices>(P1, P2, P3, i, j)...))
 {
   return std::make_tuple(genConn5Impl<RT, Indices>(P1, P2, P3, i, j)...);
 }
@@ -216,7 +290,7 @@ RT genLayer1BiasImpl(T1& biasLayer,
   return RT(biasLayer, std::get<I>(P2), std::get<I>(P3));
 }
 
-template<
+template <
     typename RT,
     typename T1,
     std::size_t... Indices,
@@ -225,10 +299,10 @@ template<
 auto genLayer1Bias(T1& biasLayer,
                    std::tuple<Tp2...>& P2,
                    std::tuple<Tp3...>& P3,
-                   std::index_sequence<Indices...>)
+                   index_sequence<Indices...>)
+    -> decltype(std::make_tuple(genLayer1BiasImpl<RT, T1, Indices>(biasLayer, P2, P3)...))
 {
-  return std::make_tuple(genLayer1BiasImpl
-                         <RT, T1, Indices>(biasLayer, P2, P3)...);
+  return std::make_tuple(genLayer1BiasImpl<RT, T1, Indices>(biasLayer, P2, P3)...);
 }
 
 /**
@@ -319,7 +393,7 @@ BOOST_AUTO_TEST_CASE(LeNet1Test)
   
   // Sub-layers for layer 5
   auto layer5Sub = genTuple<NeuronLayer<IdentityFunction, arma::mat> >(
-      layer5InputSub, layer5DeltaSub, std::make_index_sequence<10>());
+      layer5InputSub, layer5DeltaSub, make_index_sequence<10>());
   
   /**
    * Define learning rate and momentum for updating.
@@ -357,7 +431,7 @@ BOOST_AUTO_TEST_CASE(LeNet1Test)
       decltype(std::get<0>(conn1Opt)),
       NguyenWidrowInitialization<arma::mat> >,
       decltype(inputLayer)>(
-      inputLayer, layer1, conn1Opt, 5, 5, std::make_index_sequence<4>());
+      inputLayer, layer1, conn1Opt, 5, 5, make_index_sequence<4>());
   
   // 4 pooling connections between layer1(H1) and layer2(H2)
   auto conn2Opt = genTuple<4>(
@@ -373,7 +447,7 @@ BOOST_AUTO_TEST_CASE(LeNet1Test)
       decltype(std::get<0>(conn2Opt)),
       MeanPooling,
       arma::mat> >(
-      layer1, layer2, conn2Opt, std::make_index_sequence<4>());
+      layer1, layer2, conn2Opt, make_index_sequence<4>());
   
   auto conn3Opt = genTuple<20>(
       [&](size_t)
@@ -567,7 +641,7 @@ BOOST_AUTO_TEST_CASE(LeNet1Test)
       decltype(std::get<0>(conn4Opt)),
       MeanPooling,
       arma::mat> >(
-      layer3, layer4, conn4Opt, std::make_index_sequence<12>());
+      layer3, layer4, conn4Opt, make_index_sequence<12>());
   
   // 120 full connections between layer4(H4) and 10 sub-layers for layer5
   auto conn5Opt = genTuple<120>(
@@ -583,7 +657,7 @@ BOOST_AUTO_TEST_CASE(LeNet1Test)
       decltype(std::get<0>(conn5Opt)),
       NguyenWidrowInitialization<arma::mat>,
       arma::mat> >(
-      layer4, layer5Sub, conn5Opt, 4, 4, std::make_index_sequence<120>());
+      layer4, layer5Sub, conn5Opt, 4, 4, make_index_sequence<120>());
   
   // Bias for neurons in layer1(H1)
   auto layer1biasOpt = genTuple<4>(
@@ -600,7 +674,7 @@ BOOST_AUTO_TEST_CASE(LeNet1Test)
       NguyenWidrowInitialization<arma::mat>,
       arma::mat>,
       decltype(biasLayer) >(
-      biasLayer, layer1, layer1biasOpt, std::make_index_sequence<4>());
+      biasLayer, layer1, layer1biasOpt, make_index_sequence<4>());
   
   // Bias for neurons in layer3(H3)
   auto layer3biasOpt = genTuple<12>(
@@ -617,7 +691,7 @@ BOOST_AUTO_TEST_CASE(LeNet1Test)
       NguyenWidrowInitialization<arma::mat>,
       arma::mat>,
       decltype(biasLayer) >(
-      biasLayer, layer3, layer3biasOpt, std::make_index_sequence<12>());
+      biasLayer, layer3, layer3biasOpt, make_index_sequence<12>());
   
   // Bias for neurons in layer5(H5)
   SteepestDescent<arma::mat, arma::mat> layer5biasOpt(1, 10, lr, mom);
