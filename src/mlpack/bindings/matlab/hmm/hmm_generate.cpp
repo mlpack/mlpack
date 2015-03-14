@@ -100,12 +100,12 @@ void mexFunction(int nlhs, mxArray *plhs[],
                  int nrhs, const mxArray *prhs[])
 {
   // argument checks
-  if (nrhs != 4) 
+  if (nrhs != 4)
   {
     mexErrMsgTxt("Expecting four arguments.");
   }
 
-  if (nlhs != 1) 
+  if (nlhs != 1)
   {
     mexErrMsgTxt("Output required.");
   }
@@ -148,7 +148,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	{
 		mexErrMsgTxt("'hmm_type' must have type mxCHAR_CLASS.");
 	}
-	
+
 	// getting the model type string
 	int bufLength = mxGetNumberOfElements(mxHmmType) + 1;
 	char * buf;
@@ -178,19 +178,19 @@ void mexFunction(int nlhs, mxArray *plhs[],
 		//checkEmission(hmm, mxEmission);
 
 		vector<DiscreteDistribution> emission(hmm.Transition().n_rows);
-		for (int i=0; i<hmm.Transition().n_rows; ++i) 
+		for (int i=0; i<hmm.Transition().n_rows; ++i)
 		{
 			mxArray * mxProbabilities = mxGetField(mxEmission, i, "probabilities");
 			if (NULL == mxProbabilities)
 			{
 				mexErrMsgTxt("'probabilities' field could not be found in 'emission' struct.");
-			}			
-	
+			}
+
 			arma::vec probabilities(mxGetN(mxProbabilities));
 			double * values = mxGetPr(mxProbabilities);
 			for (int j=0; j<mxGetN(mxProbabilities); ++j)
 				probabilities(j) = values[j];
-	 
+
 			emission[i] = DiscreteDistribution(probabilities);
 		}
 
@@ -234,7 +234,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 		//hmm.Emission() = emission;
 		HMM<GaussianDistribution> hmm(transition, emission);
 		*/
-  
+
 		// Our distribution will have three two-dimensional output Gaussians.
 		cout << "following the test" << endl;
   	HMM<GaussianDistribution> hmm(3, GaussianDistribution(2));
@@ -336,15 +336,15 @@ void mexFunction(int nlhs, mxArray *plhs[],
 		checkEmission(transition, mxEmission);
 
 		vector<GaussianDistribution> emission(transition.n_rows);
-		for (int i=0; i<transition.n_rows; ++i) 
+		for (int i=0; i<transition.n_rows; ++i)
 		{
 			// mean
 			mxArray * mxMean = mxGetField(mxEmission, i, "mean");
 			if (NULL == mxMean)
 			{
 				mexErrMsgTxt("'mean' field could not be found in 'emission' struct.");
-			}			
-	
+			}
+
 			arma::vec mean(mxGetN(mxMean));
 			double * values = mxGetPr(mxMean);
 			for (int j=0; j<mxGetN(mxMean); ++j)
@@ -357,8 +357,8 @@ void mexFunction(int nlhs, mxArray *plhs[],
 			if (NULL == mxCovariance)
 			{
 				mexErrMsgTxt("'covariance' field could not be found in 'emission' struct.");
-			}			
-	
+			}
+
 			const size_t m = (size_t) mxGetM(mxCovariance);
 			const size_t n = (size_t) mxGetN(mxCovariance);
 			mat covariance(m, n);
@@ -367,7 +367,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 				covariance(j) = values[j];
 
 			cout << covariance << endl;
-	 
+
 			emission[i] = GaussianDistribution(mean, covariance);
 		}
 		*/

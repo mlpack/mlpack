@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE(GermanTest)
 
   for (size_t trial = 0; trial < 5; ++trial)
   {
-    // We will repeat each trial 20 times. 
+    // We will repeat each trial 20 times.
     double avgError = 0.0;
     for (size_t z = 0; z < 20; ++z)
     {

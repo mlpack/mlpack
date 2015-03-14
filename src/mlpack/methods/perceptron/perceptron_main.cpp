@@ -102,7 +102,7 @@ int main(int argc, char** argv)
   }
 
   int iterations = CLI::GetParam<int>("iterations");
-  
+
   // Create and train the classifier.
   Timer::Start("Training");
   Perceptron<> p(trainingData, labels.t(), iterations);

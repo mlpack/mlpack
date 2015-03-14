@@ -60,9 +60,9 @@ class AdaBoost
   double tolerance;
 
   /**
-   * Classification Function. 
+   * Classification Function.
    * @param test Testing data.
-   * @param predictedLabels Vector to store the predicted labels of the 
+   * @param predictedLabels Vector to store the predicted labels of the
    *                         test set.
    */
   void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
@@ -81,13 +81,13 @@ private:
   void BuildWeightMatrix(const arma::mat& D, arma::rowvec& weights);
 
   size_t numClasses;
-  
+
   std::vector<WeakLearner> wl;
   std::vector<double> alpha;
 
   // To check for the bound for the hammingLoss.
   double ztProduct;
-  
+
 }; // class AdaBoost
 
 } // namespace adaboost

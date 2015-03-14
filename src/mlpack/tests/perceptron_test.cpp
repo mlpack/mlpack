@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(NonLinearlySeparableDataset)
   Mat<size_t> labels;
   labels << 0 << 0 << 0 << 1 << 0 << 1 << 1 << 1
          << 0 << 0 << 0 << 1 << 0 << 1 << 1 << 1;
-         
+
   Perceptron<> p(trainData, labels.row(0), 1000);
 
   mat testData;
@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE(SecondaryConstructor)
   Mat<size_t> labels;
   labels << 0 << 0 << 0 << 1 << 0 << 1 << 1 << 1
          << 0 << 0 << 0 << 1 << 0 << 1 << 1 << 1;
-         
+
   Perceptron<> p1(trainData, labels.row(0), 1000);
 
   Perceptron<> p2(p1);

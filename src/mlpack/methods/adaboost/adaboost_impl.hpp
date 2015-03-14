@@ -47,7 +47,7 @@ AdaBoost<MatType, WeakLearner>::AdaBoost(
   tolerance = tol;
 
   double rt, crt, alphat = 0.0, zt;
-  
+
   // crt is for stopping the iterations when rt
   // stops changing by less than a tolerant value.
 
@@ -195,9 +195,9 @@ AdaBoost<MatType, WeakLearner>::AdaBoost(
 }
 
 /**
- * Classification Function. 
+ * Classification Function.
  * @param test Testing data.
- * @param predictedLabels Vector to store the predicted labels of the 
+ * @param predictedLabels Vector to store the predicted labels of the
  *                         test set.
  */
 template <typename MatType, typename WeakLearner>
@@ -218,7 +218,7 @@ void AdaBoost<MatType, WeakLearner>::Classify(
     for (size_t j = 0; j < tempPredictedLabels.n_cols; j++)
       cMatrix(tempPredictedLabels(j), j) += (alpha[i] * tempPredictedLabels(j));
   }
-  
+
   arma::colvec cMRow;
   arma::uword max_index;
 

@@ -17,7 +17,7 @@ namespace kpca {
 
 template<
   typename KernelType,
-  typename PointSelectionPolicy = kernel::KMeansSelection<> 
+  typename PointSelectionPolicy = kernel::KMeansSelection<>
 >
 class NystroemKernelRule
 {

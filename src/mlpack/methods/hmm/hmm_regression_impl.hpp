@@ -97,15 +97,15 @@ void HMMRegression::Filter(const arma::mat& predictors,
 {
   // First run the forward algorithm
   arma::mat forwardProb;
-  arma::vec scales; 
+  arma::vec scales;
   Forward(predictors, responses, scales, forwardProb);
-  
+
   // Propagate state, predictors ahead
   if(ahead != 0) {
     forwardProb = pow(transition, ahead)*forwardProb;
     forwardProb = forwardProb.cols(0, forwardProb.n_cols-ahead-1);
-  }  
-  
+  }
+
   // Compute expected emissions.
   filterSeq.resize(responses.n_elem - ahead);
   filterSeq.zeros();
@@ -127,7 +127,7 @@ void HMMRegression::Smooth(const arma::mat& predictors,
   // First run the forward algorithm
   arma::mat stateProb;
   Estimate(predictors, responses, stateProb);
-  
+
   // Compute expected emissions.
   smoothSeq.resize(responses.n_elem);
   smoothSeq.zeros();
@@ -174,7 +174,7 @@ void HMMRegression::StackData(const std::vector<arma::mat>& predictors,
     nextSeq = predictors[i];
     nextSeq.insert_rows(0, responses[i].t());
     dataSeq.push_back(nextSeq);
-  } 
+  }
 }
 
 void HMMRegression::StackData(const arma::mat& predictors,
@@ -184,7 +184,7 @@ void HMMRegression::StackData(const arma::mat& predictors,
   dataSeq = predictors;
   dataSeq.insert_rows(0, responses.t());
 }
-  
+
 }; // namespace hmm
 }; // namespace mlpack
 

@@ -17,7 +17,7 @@ namespace svd {
 class RegularizedSVDFunction
 {
  public:
-  
+
   /**
    * Constructor for RegularizedSVDFunction class. The constructor calculates
    * the number of users and items in the passed data. It also randomly
@@ -30,14 +30,14 @@ class RegularizedSVDFunction
   RegularizedSVDFunction(const arma::mat& data,
                          const size_t rank,
                          const double lambda);
-  
+
   /**
    * Evaluates the cost function over all examples in the data.
    *
    * @param parameters Parameters(user/item matrices) of the decomposition.
    */
   double Evaluate(const arma::mat& parameters) const;
-  
+
   /**
    * Evaluates the cost function for one training example. Useful for the SGD
    * optimizer abstraction which uses one training example at a time.
@@ -47,7 +47,7 @@ class RegularizedSVDFunction
    */
   double Evaluate(const arma::mat& parameters,
                   const size_t i) const;
-  
+
   /**
    * Evaluates the full gradient of the cost function over all the training
    * examples.
@@ -57,28 +57,28 @@ class RegularizedSVDFunction
    */
   void Gradient(const arma::mat& parameters,
                 arma::mat& gradient) const;
-  
+
   //! Return the initial point for the optimization.
   const arma::mat& GetInitialPoint() const { return initialPoint; }
-  
+
   //! Return the dataset passed into the constructor.
   const arma::mat& Dataset() const { return data; }
-  
+
   //! Return the number of training examples. Useful for SGD optimizer.
   size_t NumFunctions() const { return data.n_cols; }
-  
+
   //! Return the number of users in the data.
   size_t NumUsers() const { return numUsers; }
-  
+
   //! Return the number of items in the data.
   size_t NumItems() const { return numItems; }
-  
+
   //! Return the regularization parameters.
   double Lambda() const { return lambda; }
-  
+
   //! Return the rank used for the factorization.
   size_t Rank() const { return rank; }
-                         
+
  private:
   //! Rating data.
   const arma::mat& data;

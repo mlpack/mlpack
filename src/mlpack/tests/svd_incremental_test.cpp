@@ -26,18 +26,18 @@ BOOST_AUTO_TEST_CASE(SVDIncompleteIncrementalConvergenceTest)
   mlpack::math::RandomSeed(10);
   sp_mat data;
   data.sprandn(1000, 1000, 0.2);
-  
+
   SVDIncompleteIncrementalLearning svd(0.01);
   IncompleteIncrementalTermination<SimpleToleranceTermination<sp_mat> > iit;
-  
-  AMF<IncompleteIncrementalTermination<SimpleToleranceTermination<sp_mat> >, 
-      RandomInitialization, 
+
+  AMF<IncompleteIncrementalTermination<SimpleToleranceTermination<sp_mat> >,
+      RandomInitialization,
       SVDIncompleteIncrementalLearning> amf(iit, RandomInitialization(), svd);
-  
+
   mat m1,m2;
   amf.Apply(data, 2, m1, m2);
-  
-  BOOST_REQUIRE_NE(amf.TerminationPolicy().Iteration(), 
+
+  BOOST_REQUIRE_NE(amf.TerminationPolicy().Iteration(),
                     amf.TerminationPolicy().MaxIterations());
 }
 
@@ -49,19 +49,19 @@ BOOST_AUTO_TEST_CASE(SVDCompleteIncrementalConvergenceTest)
   mlpack::math::RandomSeed(10);
   sp_mat data;
   data.sprandn(1000, 1000, 0.2);
-  
+
   SVDCompleteIncrementalLearning<sp_mat> svd(0.01);
   CompleteIncrementalTermination<SimpleToleranceTermination<sp_mat> > iit;
-  
-  AMF<CompleteIncrementalTermination<SimpleToleranceTermination<sp_mat> >, 
-      RandomInitialization, 
-      SVDCompleteIncrementalLearning<sp_mat> > amf(iit, 
-                                                   RandomInitialization(), 
+
+  AMF<CompleteIncrementalTermination<SimpleToleranceTermination<sp_mat> >,
+      RandomInitialization,
+      SVDCompleteIncrementalLearning<sp_mat> > amf(iit,
+                                                   RandomInitialization(),
                                                    svd);
   mat m1,m2;
   amf.Apply(data, 2, m1, m2);
-  
-  BOOST_REQUIRE_NE(amf.TerminationPolicy().Iteration(), 
+
+  BOOST_REQUIRE_NE(amf.TerminationPolicy().Iteration(),
                     amf.TerminationPolicy().MaxIterations());
 }
 
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE(SVDIncompleteIncrementalRegularizationTest)
 
   mat m3, m4;
   double RMSE_2 = amf_2.Apply(cleanedData2, 2, m3, m4);
-  
+
   BOOST_REQUIRE_LT(RMSE_2, RMSE_1);
 }
 

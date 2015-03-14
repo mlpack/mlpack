@@ -90,7 +90,7 @@ void ComputeRecommendations(Factorizer factorizer,
     c.GetRecommendations(numRecs, recommendations);
   }
 }
-                            
+
 #define CR(x) ComputeRecommendations(x, dataset, numRecs, neighborhood, rank, recommendations)
 
 int main(int argc, char** argv)
@@ -113,14 +113,14 @@ int main(int argc, char** argv)
 
   // Perform decomposition to prepare for recommendations.
   Log::Info << "Performing CF matrix decomposition on dataset..." << endl;
-  
+
   const string algo = CLI::GetParam<string>("algorithm");
-  
-  if(algo == "NMF") 
-    CR(NMFALSFactorizer());  
-  else if(algo == "SVDBatch") 
+
+  if(algo == "NMF")
+    CR(NMFALSFactorizer());
+  else if(algo == "SVDBatch")
     CR(SparseSVDBatchFactorizer());
-  else if(algo == "SVDIncompleteIncremental") 
+  else if(algo == "SVDIncompleteIncremental")
     CR(SparseSVDIncompleteIncrementalFactorizer());
   else if(algo == "SVDCompleteIncremental")
     CR(SparseSVDCompleteIncrementalFactorizer());

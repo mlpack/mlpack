@@ -2,7 +2,7 @@
  * @file softsign_function.hpp
  * @author Marcus Edel
  *
- * Definition and implementation of the softsign function as described by 
+ * Definition and implementation of the softsign function as described by
  * X. Glorot and Y. Bengio.
  *
  * For more information, see the following paper.

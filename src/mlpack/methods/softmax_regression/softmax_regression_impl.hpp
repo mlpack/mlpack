@@ -28,7 +28,7 @@ SoftmaxRegression<OptimizerType>::SoftmaxRegression(const arma::mat& data,
   SoftmaxRegressionFunction regressor(data, labels, inputSize, numClasses,
                                       lambda, fitIntercept);
   OptimizerType<SoftmaxRegressionFunction> optimizer(regressor);
-  
+
   parameters = regressor.GetInitialPoint();
 
   // Train the model.
@@ -79,14 +79,14 @@ void SoftmaxRegression<OptimizerType>::Predict(const arma::mat& testData,
   {
     hypothesis = arma::exp(parameters * testData);
   }
-  
+
   probabilities = hypothesis / arma::repmat(arma::sum(hypothesis, 0),
                                             numClasses, 1);
-  
+
   // Prepare necessary data.
   predictions.zeros(testData.n_cols);
   double maxProbability = 0;
-  
+
   // For each test input.
   for(size_t i = 0; i < testData.n_cols; i++)
   {
@@ -100,7 +100,7 @@ void SoftmaxRegression<OptimizerType>::Predict(const arma::mat& testData,
         predictions(i) = j;
       }
     }
-    
+
     // Set maximum probability to zero for the next input.
     maxProbability = 0;
   }
@@ -112,16 +112,16 @@ double SoftmaxRegression<OptimizerType>::ComputeAccuracy(
     const arma::vec& labels)
 {
   arma::vec predictions;
-  
+
   // Get predictions for the provided data.
   Predict(testData, predictions);
-  
+
   // Increment count for every correctly predicted label.
   size_t count = 0;
   for(size_t i = 0; i < predictions.n_elem; i++)
     if(predictions(i) == labels(i))
       count++;
-  
+
   // Return percentage accuracy.
   return (count * 100.0) / predictions.n_elem;
 }

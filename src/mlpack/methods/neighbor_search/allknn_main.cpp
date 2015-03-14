@@ -124,13 +124,13 @@ int main(int argc, char *argv[])
   {
     Log::Warn << "--single_mode ignored because --naive is present." << endl;
   }
- 
+
    // cover_tree overrides r_tree.
   if (CLI::HasParam("cover_tree") && CLI::HasParam("r_tree"))
   {
     Log::Warn << "--cover_tree overrides --r_tree." << endl;
   }
-  
+
   if (naive)
     leafSize = referenceData.n_cols;
 
@@ -265,7 +265,7 @@ int main(int argc, char *argv[])
     } else { // R tree.
       // Make sure to notify the user that they are using an r tree.
       Log::Info << "Using R tree for nearest-neighbor calculation." << endl;
-      
+
       // Because we may construct it differently, we need a pointer.
       NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
       RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
@@ -291,12 +291,12 @@ int main(int argc, char *argv[])
       queryTree = NULL; // Empty for now.
 
       Timer::Stop("tree_building");
-      
+
       if (CLI::GetParam<string>("query_file") != "")
       {
         Log::Info << "Loaded query data from '" << queryFile << "' ("
           << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
-          
+
         // Build trees by hand, so we can save memory: if we pass a tree to
         // NeighborSearch, it does not copy the matrix.
         if (!singleMode)
@@ -310,7 +310,7 @@ int main(int argc, char *argv[])
 
           Timer::Stop("tree_building");
         }
-          
+
 
         allknn = new NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
         RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<NearestNeighborSort>, arma::mat>,
@@ -328,7 +328,7 @@ int main(int argc, char *argv[])
           referenceData, singleMode);
       }
       Log::Info << "Tree built." << endl;
-      
+
       //arma::mat distancesOut;
       //arma::Mat<size_t> neighborsOut;
 

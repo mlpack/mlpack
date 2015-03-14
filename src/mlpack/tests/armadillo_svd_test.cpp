@@ -21,12 +21,12 @@ BOOST_AUTO_TEST_CASE(ArmadilloSVDNormalFactorizationTest)
   SVDWrapper<> svd;
   arma::mat W, H, sigma;
   double result = svd.Apply(test, W, sigma, H);
-  
+
   BOOST_REQUIRE_LT(result, 0.01);
-  
+
   test = randu<mat>(50, 50);
   result = svd.Apply(test, W, sigma, H);
-  
+
   BOOST_REQUIRE_LT(result, 0.01);
 }
 
@@ -37,14 +37,14 @@ BOOST_AUTO_TEST_CASE(ArmadilloSVDLowRankFactorizationTest)
 {
   mat W_t = randu<mat>(30, 3);
   mat H_t = randu<mat>(3, 40);
-  
+
   // create a row-rank matrix
   mat test = W_t * H_t;
 
   SVDWrapper<> svd;
   arma::mat W, H;
   double result = svd.Apply(test, 3, W, H);
-  
+
   BOOST_REQUIRE_LT(result, 0.01);
 }
 

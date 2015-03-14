@@ -93,7 +93,7 @@ class AugLagrangianFunction
   const LagrangianFunction& Function() const { return function; }
   //! Modify the Lagrangian function.
   LagrangianFunction& Function() { return function; }
-  
+
   // convert the obkect into a string
   std::string ToString() const;
 

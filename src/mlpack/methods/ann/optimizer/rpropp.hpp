@@ -3,7 +3,7 @@
  * @author Marcus Edel
  *
  * Intialization rule for the neural networks. This simple initialization is
- * performed by assigning a random matrix to the weight matrix. 
+ * performed by assigning a random matrix to the weight matrix.
  */
 #ifndef __MLPACK_METHOS_ANN_OPTIMIZER_RPROPP_HPP
 #define __MLPACK_METHOS_ANN_OPTIMIZER_RPROPP_HPP

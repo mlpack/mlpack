@@ -54,9 +54,9 @@ class Perceptron
   void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
 
   /**
-   *  Alternate constructor which copies parameters from an already initiated 
+   *  Alternate constructor which copies parameters from an already initiated
    *  perceptron.
-   *  
+   *
    *  @param other The other initiated Perceptron object from which we copy the
    *               values from.
    *  @param data The data on which to train this Perceptron object on.
@@ -80,7 +80,7 @@ private:
 
   /**
    *  Training Function. It trains on trainData using the cost matrix D
-   *  
+   *
    *  @param D Cost matrix. Stores the cost of mispredicting instances
    */
   void Train(const arma::rowvec& D);

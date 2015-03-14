@@ -100,7 +100,7 @@ class PCA
   //! the data when PCA is performed.
   bool& ScaleData() { return scaleData; }
 
-  // Returns a string representation of this object. 
+  // Returns a string representation of this object.
   std::string ToString() const;
 
  private:

@@ -115,8 +115,8 @@ int main(int argc, char** argv)
     Log::Info << "Performing NMF with multiplicative divergence-based update "
         << "rules." << std::endl;
     SimpleResidueTermination srt(minResidue, maxIterations);
-    AMF<SimpleResidueTermination, 
-        RandomInitialization, 
+    AMF<SimpleResidueTermination,
+        RandomInitialization,
         NMFMultiplicativeDivergenceUpdate> amf(srt);
     amf.Apply(V, r, W, H);
   }
@@ -126,7 +126,7 @@ int main(int argc, char** argv)
         << std::endl;
     SimpleResidueTermination srt(minResidue, maxIterations);
     AMF<SimpleResidueTermination,
-        RandomInitialization, 
+        RandomInitialization,
         NMFALSUpdate> amf(srt);
     amf.Apply(V, r, W, H);
   }

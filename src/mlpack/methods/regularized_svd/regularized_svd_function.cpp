@@ -20,7 +20,7 @@ RegularizedSVDFunction::RegularizedSVDFunction(const arma::mat& data,
   // Number of users and items in the data.
   numUsers = max(data.row(0)) + 1;
   numItems = max(data.row(1)) + 1;
-  
+
   // Initialize the parameters.
   initialPoint.randu(rank, numUsers + numItems);
 }
@@ -47,16 +47,16 @@ double RegularizedSVDFunction::Evaluate(const arma::mat& parameters) const
     double ratingError = rating - arma::dot(parameters.col(user),
                                             parameters.col(item));
     double ratingErrorSquared = ratingError * ratingError;
-  
+
     // Calculate the regularization penalty corresponding to the parameters.
     double userVecNorm = arma::norm(parameters.col(user), 2);
     double itemVecNorm = arma::norm(parameters.col(item), 2);
     double regularizationError = lambda * (userVecNorm * userVecNorm +
                                            itemVecNorm * itemVecNorm);
-                                           
+
     cost += (ratingErrorSquared + regularizationError);
   }
-  
+
   return cost;
 }
 
@@ -66,19 +66,19 @@ double RegularizedSVDFunction::Evaluate(const arma::mat& parameters,
   // Indices for accessing the the correct parameter columns.
   const size_t user = data(0, i);
   const size_t item = data(1, i) + numUsers;
-  
+
   // Calculate the squared error in the prediction.
   const double rating = data(2, i);
   double ratingError = rating - arma::dot(parameters.col(user),
                                           parameters.col(item));
   double ratingErrorSquared = ratingError * ratingError;
-  
+
   // Calculate the regularization penalty corresponding to the parameters.
   double userVecNorm = arma::norm(parameters.col(user), 2);
   double itemVecNorm = arma::norm(parameters.col(item), 2);
   double regularizationError = lambda * (userVecNorm * userVecNorm +
                                          itemVecNorm * itemVecNorm);
-                                         
+
   return (ratingErrorSquared + regularizationError);
 }
 
@@ -136,7 +136,7 @@ double SGD<mlpack::svd::RegularizedSVDFunction>::Optimize(arma::mat& parameters)
   // Calculate the first objective function.
   for(size_t i = 0; i < numFunctions; i++)
     overallObjective += function.Evaluate(parameters, i);
-    
+
   const arma::mat data = function.Dataset();
 
   // Now iterate!
@@ -160,7 +160,7 @@ double SGD<mlpack::svd::RegularizedSVDFunction>::Optimize(arma::mat& parameters)
     const double rating = data(2, currentFunction);
     double ratingError = rating - arma::dot(parameters.col(user),
                                             parameters.col(item));
-                                            
+
     double lambda = function.Lambda();
 
     // Gradient is non-zero only for the parameter columns corresponding to the

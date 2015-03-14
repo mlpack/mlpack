@@ -18,7 +18,7 @@ namespace mlpack {
 namespace svd {
 
 /**
- * Regularized SVD is a matrix factorization technique that seeks to reduce the 
+ * Regularized SVD is a matrix factorization technique that seeks to reduce the
  * error on the training set, that is on the examples for which the ratings have
  * been provided by the users. It is a fairly straightforward technique where
  * the user and item matrices are updated with the help of Stochastic Gradient
@@ -56,7 +56,7 @@ template<
 class RegularizedSVD
 {
  public:
- 
+
   /**
    * Constructor for Regularized SVD. Obtains the user and item matrices after
    * training on the passed data. The constructor initiates an object of class
@@ -70,7 +70,7 @@ class RegularizedSVD
   RegularizedSVD(const size_t iterations = 10,
                  const double alpha = 0.01,
                  const double lambda = 0.02);
-  
+
   /**
    * Obtains the user and item matrices using the provided data and rank.
    *
@@ -83,7 +83,7 @@ class RegularizedSVD
              const size_t rank,
              arma::mat& u,
              arma::mat& v);
-                 
+
  private:
   //! Number of optimization iterations.
   size_t iterations;

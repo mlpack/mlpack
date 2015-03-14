@@ -194,11 +194,11 @@ int main(int argc, char *argv[])
       delete queryTree;
 
     delete allkfn;
-    
+
       // Save output.
   data::Save(distancesFile, distancesOut);
   data::Save(neighborsFile, neighborsOut);
-    
+
   } else {  // Use the R tree.
     Log::Info << "Using R tree for furthest-neighbor calculation." << endl;
 
@@ -233,25 +233,25 @@ int main(int argc, char *argv[])
       string queryFile = CLI::GetParam<string>("query_file");
 
       data::Load(queryFile, queryData, true);
-      
+
       Log::Info << "Loaded query data from '" << queryFile << "' ("
       << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
-      
+
       // Build trees by hand, so we can save memory: if we pass a tree to
       // NeighborSearch, it does not copy the matrix.
       if (!singleMode)
       {
         Timer::Start("tree_building");
-        
+
         queryTree = new RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<FurthestNeighborSort>, arma::mat>,
         tree::RStarTreeDescentHeuristic,
         NeighborSearchStat<FurthestNeighborSort>,
         arma::mat>(queryData, leafSize, leafSize * 0.4, 5, 2, 0);
-        
+
         Timer::Stop("tree_building");
       }
-      
-      
+
+
       allkfn = new NeighborSearch<FurthestNeighborSort, metric::LMetric<2, true>,
       RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<FurthestNeighborSort>, arma::mat>,
       tree::RStarTreeDescentHeuristic,
@@ -268,25 +268,25 @@ int main(int argc, char *argv[])
                    referenceData, singleMode);
     }
     Log::Info << "Tree built." << endl;
-    
+
     //arma::mat distancesOut;
     //arma::Mat<size_t> neighborsOut;
-    
+
     Log::Info << "Computing " << k << " nearest neighbors..." << endl;
     allkfn->Search(k, neighbors, distances);
-    
+
     Log::Info << "Neighbors computed." << endl;
-    
-    
+
+
     if(queryTree)
       delete queryTree;
-    
+
     delete allkfn;
-      
+
     // Save output.
     data::Save(distancesFile, distances);
     data::Save(neighborsFile, neighbors);
-    
+
   }
 
 

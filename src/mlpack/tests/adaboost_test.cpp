@@ -210,7 +210,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
 
   if (!data::Load("train_labels_nonlinsep.txt",labels))
     BOOST_FAIL("Cannot load labels for train_labels_nonlinsep.txt");
-  
+
   // no need to map the labels here
 
   // Define your own weak learner, perceptron in this case.
@@ -251,7 +251,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
 
   if (!data::Load("train_labels_nonlinsep.txt",labels))
     BOOST_FAIL("Cannot load labels for train_labels_nonlinsep.txt");
-  
+
   // no need to map the labels here
 
   // Define your own weak learner, perceptron in this case.
@@ -492,7 +492,7 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData_DS)
 
   if (!data::Load("train_labels_nonlinsep.txt",labels))
     BOOST_FAIL("Cannot load labels for train_labels_nonlinsep.txt");
-  
+
 
   // no need to map the labels here
 
@@ -539,7 +539,7 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData_DS)
 
   if (!data::Load("train_labels_nonlinsep.txt",labels))
     BOOST_FAIL("Cannot load labels for train_labels_nonlinsep.txt");
-  
+
   // no need to map the labels here
 
   // Define your own weak learner, Decision Stump in this case.
@@ -597,12 +597,12 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
   // Run the perceptron for perceptron_iter iterations.
 
   int perceptron_iter = 1000;
-  
+
   arma::mat testData;
 
   if (!data::Load("vc2_test.txt", testData))
     BOOST_FAIL("Cannot load test dataset vc2_test.txt!");
-  
+
   arma::Mat<size_t> trueTestLabels;
 
   if (!data::Load("vc2_test_labels.txt",trueTestLabels))
@@ -617,18 +617,18 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
   int iterations = 100;
   double tolerance = 1e-10;
   AdaBoost<> a(inputData, labels.row(0), iterations, tolerance, p);
-  
+
   arma::Row<size_t> predictedLabels(testData.n_cols);
   a.Classify(testData, predictedLabels);
 
   int localError = 0;
-  
+
   for (size_t i = 0; i < trueTestLabels.n_cols; i++)
     if(trueTestLabels(i) != predictedLabels(i))
       localError++;
-  
+
   double lError = (double) localError / trueTestLabels.n_cols;
-  
+
   BOOST_REQUIRE(lError <= 0.30);
 
 }
@@ -649,7 +649,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
 
   if (!data::Load("train_labels_nonlinsep.txt",labels))
     BOOST_FAIL("Cannot load labels for train_labels_nonlinsep.txt");
-  
+
   // no need to map the labels here
 
   // Define your own weak learner, perceptron in this case.
@@ -662,7 +662,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
 
   if (!data::Load("test_nonlinsep.txt", testData))
     BOOST_FAIL("Cannot load test dataset test_nonlinsep.txt!");
-  
+
   arma::Mat<size_t> trueTestLabels;
 
   if (!data::Load("test_labels_nonlinsep.txt",trueTestLabels))
@@ -688,7 +688,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_NONLINSEP)
       localError++;
 
   double lError = (double) localError / trueTestLabels.n_cols;
-  
+
   BOOST_REQUIRE(lError <= 0.30);
 }
 

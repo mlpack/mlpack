@@ -59,7 +59,7 @@ Apply(const MatType& V,
     update.WUpdate(V, W, H);
     update.HUpdate(V, W, H);
   }
-  
+
   // get final residue and iteration count from termination policy
   const double residue = terminationPolicy.Index();
   const size_t iteration = terminationPolicy.Iteration();

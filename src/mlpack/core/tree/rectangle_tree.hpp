@@ -1,7 +1,7 @@
 /**
  * @file rectangle_tree.hpp
  * @author Andrew Wells
- * 
+ *
  * Include all the necessary filse to use the Rectangle Type Trees (RTree, RStarTree, XTree,
  * and HilbertRTree.)
  */
@@ -10,7 +10,7 @@
 
 /* we include bounds.hpp since it gives us the necessary files.
  * However, we will not use the "ballbounds" option.
- */ 
+ */
 #include "bounds.hpp"
 #include "rectangle_tree/rectangle_tree.hpp"
 #include "rectangle_tree/single_tree_traverser.hpp"

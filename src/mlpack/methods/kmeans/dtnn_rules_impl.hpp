@@ -75,7 +75,7 @@ inline force_inline double DTNNKMeansRules<MetricType, TreeType>::BaseCase(
   {
     lowerBounds[queryIndex] = distance;
   }
-  
+
   // Cache this information for the next time BaseCase() is called.
   lastQueryIndex = queryIndex;
   lastReferenceIndex = referenceIndex;

@@ -19,13 +19,13 @@ namespace hmm /** Hidden Markov Models. */ {
  * extension of Hidden Markov Models to regression analysis. The method is
  * described in (Fridman, 1993)
  * https://www.ima.umn.edu/preprints/January1994/1195.pdf
- * An HMMR is a linear regression model whose coefficients are determined by a 
- * finite-state Markov chain. The error terms are conditionally independently 
+ * An HMMR is a linear regression model whose coefficients are determined by a
+ * finite-state Markov chain. The error terms are conditionally independently
  * normally distributed with zero mean and state-dependent variance. Let Q_t be
- * a finite-state Markov chain, X_t a vector of predictors and Y_t a response. 
+ * a finite-state Markov chain, X_t a vector of predictors and Y_t a response.
  * The HMMR is
  * Y_t = X_t \beta_{Q_t} + \sigma_{Q_t} \epsilon_t
- *  
+ *
  * This HMMR class supports training (supervised and unsupervised), prediction
  * of state sequences via the Viterbi algorithm, estimation of state
  * probabilities, filtering and smoothing of responses, and calculation of the
@@ -39,8 +39,8 @@ namespace hmm /** Hidden Markov Models. */ {
  * // Each column is a vector of predictors for a single observation.
  * arma::mat predictors(5, 100, arma::fill::randn);
  * // Responses for each observation
- * arma::vec responses(100, arma::fill::randn); 
- * 
+ * arma::vec responses(100, arma::fill::randn);
+ *
  * // Create an untrained HMMR with 3 hidden states
  * RegressionDistribution rd(predictors, responses);
  * arma::mat transition("0.5 0.5;" "0.5 0.5;");
@@ -48,7 +48,7 @@ namespace hmm /** Hidden Markov Models. */ {
  * HMMRegression hmmr("0.9 0.1", transition, emissions);
  *
  *  // Train the HMM (supply a state sequence to perform supervised training)
- * std::vector<arma::mat> predictorsSeq(1, predictors); 
+ * std::vector<arma::mat> predictorsSeq(1, predictors);
  * std::vector< arma::vec> responsesSeq(1, responses);
  * hmmr.Train(predictorsSeq, responsesSeq);
  * hmm.Train(observations, states);
@@ -89,7 +89,7 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
 
   /**
    * Create the Hidden Markov Model Regression with the given initial
-   * probability vector, the given transition matrix, and the given regression 
+   * probability vector, the given transition matrix, and the given regression
    * emission distributions. The dimensionality of the observations of the HMMR
    * are taken from the given emission distributions. Alternately, the
    * dimensionality can be set with Dimensionality().
@@ -110,7 +110,7 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
    * @param emission Emission distributions.
    * @param tolerance Tolerance for convergence of training algorithm
    *      (Baum-Welch).
-   */      
+   */
   HMMRegression(const arma::vec& initial,
       const arma::mat& transition,
       const std::vector<distribution::RegressionDistribution>& emission,
@@ -118,14 +118,14 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
       HMM<distribution::RegressionDistribution>(initial, transition, emission,
        tolerance)
   { /* nothing to do */ }
- 
 
-  
+
+
   /**
    * Train the model using the Baum-Welch algorithm, with only the given
    * predictors and responses. Instead of giving a guess transition and emission
    * here, do that in the constructor.  Each matrix in the vector of predictors
-   * corresponds to an individual data sequence, and likewise for each vec in 
+   * corresponds to an individual data sequence, and likewise for each vec in
    * the vector of responses. The number of rows in each matrix of predictors
    * plus one should be equal to the dimensionality of the HMM (which is set in
    * the constructor).
@@ -152,7 +152,7 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
    */
   void Train(const std::vector<arma::mat>& predictors,
              const std::vector<arma::vec>& responses);
-  
+
   /**
    * Train the model using the given labeled observations; the transition and
    * regression emissions are directly estimated. Each matrix in the vector of
@@ -175,7 +175,7 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
   void Train(const std::vector<arma::mat>& predictors,
              const std::vector<arma::vec>& responses,
              const std::vector<arma::Col<size_t> >& stateSeq);
- 
+
   /**
    * Estimate the probabilities of each hidden state at each time step for each
    * given data observation, using the Forward-Backward algorithm.  Each matrix
@@ -232,7 +232,7 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
   double Predict(const arma::mat& predictors,
                  const arma::vec& responses,
                  arma::Col<size_t>& stateSeq) const;
-  
+
   /**
    * Compute the log-likelihood of the given predictors and responses.
    *
@@ -248,7 +248,7 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
    * E{ Y[t+k] | Y[0], ..., Y[t] }.
    * The returned matrix has columns equal to the number of observations. Note
    * that the expectation may not be meaningful for discrete emissions.
-   * 
+   *
    * @param predictors Vector of predictor sequences.
    * @param responses Vector of response sequences.
    * @param initial Distribution of initial state.
@@ -267,7 +267,7 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
    * E{ Y[t] | Y[0], ..., Y[T] }.
    * The returned matrix has columns equal to the number of observations. Note
    * that the expectation may not be meaningful for discrete emissions.
-   *  
+   *
    * @param predictors Vector of predictor sequences.
    * @param responses Vector of response sequences..
    * @param initial Distribution of initial state.
@@ -277,19 +277,19 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
   void Smooth(const arma::mat& predictors,
               const arma::vec& responses,
               arma::vec& smoothSeq) const;
-  
+
  private:
   /**
-   * Utility functions to facilitate the use of the HMM class for HMMR. 
-   */   
+   * Utility functions to facilitate the use of the HMM class for HMMR.
+   */
    void StackData(const std::vector<arma::mat>& predictors,
                   const std::vector<arma::vec>& responses,
                   std::vector<arma::mat>& dataSeq) const;
-  
+
    void StackData(const arma::mat& predictors,
                   const arma::vec& responses,
                   arma::mat& dataSeq) const;
-   
+
   /**
    * The Forward algorithm (part of the Forward-Backward algorithm).  Computes
    * forward probabilities for each state for each observation in the given data
@@ -322,7 +322,7 @@ class HMMRegression : public HMM<distribution::RegressionDistribution>
                 const arma::vec& responses,
                 const arma::vec& scales,
                 arma::mat& backwardProb) const;
-  
+
 
 };
 

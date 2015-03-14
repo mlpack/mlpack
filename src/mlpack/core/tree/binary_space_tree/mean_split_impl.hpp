@@ -168,7 +168,7 @@ size_t MeanSplit<BoundType, MatType>::
     // Update the indices for what we changed.
     size_t t = oldFromNew[left];
     oldFromNew[left] = oldFromNew[right];
-    oldFromNew[right] = t;  
+    oldFromNew[right] = t;
 
     // See how many points on the left are correct.  When they are correct,
     // increase the left counter accordingly.  When we encounter one that isn't

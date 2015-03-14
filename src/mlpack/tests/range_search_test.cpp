@@ -588,7 +588,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
 }
 
 /**
- * Ensure that dual tree range search with cover trees works by comparing 
+ * Ensure that dual tree range search with cover trees works by comparing
  * with the kd-tree implementation.
  */
 BOOST_AUTO_TEST_CASE(CoverTreeTest)
@@ -902,7 +902,7 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
 }
 
 /**
- * Ensure that dual tree range search with ball trees works by comparing 
+ * Ensure that dual tree range search with ball trees works by comparing
  * with the kd-tree implementation.
  */
 BOOST_AUTO_TEST_CASE(DualBallTreeTest)

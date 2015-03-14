@@ -28,14 +28,14 @@ BOOST_AUTO_TEST_CASE(QUICSVDReconstructionError)
   // Obtain the SVD using default parameters.
   arma::mat u, v, sigma;
   QUIC_SVD quicsvd(dataset, u, v, sigma);
-  
+
   // Reconstruct the matrix using the SVD.
   arma::mat reconstruct;
   reconstruct = u * sigma * v.t();
-  
+
   // The relative reconstruction error should be small.
   double relativeError = arma::norm(dataset - reconstruct, "frob") /
-                         arma::norm(dataset, "frob");                         
+                         arma::norm(dataset, "frob");
   BOOST_REQUIRE_SMALL(relativeError, 1e-5);
 }
 

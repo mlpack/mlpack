@@ -22,11 +22,11 @@
  *  acmid = {337870},
  *  publisher = {Kluwer Academic Publishers},
  *  address = {Hingham, MA, USA},
- *  keywords = {boosting algorithms, decision trees, multiclass classification, 
+ *  keywords = {boosting algorithms, decision trees, multiclass classification,
  *  output coding
  *  }
  *  @endcode
- * 
+ *
  */
 
 #include <mlpack/core.hpp>
@@ -69,11 +69,11 @@ PARAM_DOUBLE("tolerance","The tolerance for change in values of rt","e",1e-10);
 int main(int argc, char *argv[])
 {
   CLI::ParseCommandLine(argc, argv);
-  
+
   const string trainingDataFilename = CLI::GetParam<string>("train_file");
   mat trainingData;
   data::Load(trainingDataFilename, trainingData, true);
-  
+
   const string labelsFilename = CLI::GetParam<string>("labels_file");
   // Load labels.
   mat labelsIn;
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
     labelsIn = trainingData.row(trainingData.n_rows - 1).t();
     trainingData.shed_row(trainingData.n_rows - 1);
   }
-  
+
   // helpers for normalizing the labels
   Col<size_t> labels;
   vec mappings;
@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
 
   // normalize the labels
   data::NormalizeLabels(labelsIn.unsafe_col(0), labels, mappings);
-  
+
   const string testingDataFilename = CLI::GetParam<string>("test_file");
   mat testingData;
   data::Load(testingDataFilename, testingData, true);
@@ -120,13 +120,13 @@ int main(int argc, char *argv[])
         << "must be the same as training data (" << trainingData.n_rows - 1
         << ")!" << std::endl;
   int iterations = CLI::GetParam<int>("iterations");
-  
+
   // define your own weak learner, perceptron in this case.
   // defining the number of iterations of the perceptron.
   int iter = 400;
-  
+
   perceptron::Perceptron<> p(trainingData, labels.t(), iter);
-  
+
   Timer::Start("Training");
   AdaBoost<> a(trainingData, labels.t(), iterations, tolerance, p);
   Timer::Stop("Training");
