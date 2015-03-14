@@ -15,14 +15,14 @@ namespace amf
 {
 
 /**
- * This class implements validation termination policy based on RMSE index. 
+ * This class implements validation termination policy based on RMSE index.
  * The input data matrix is divided into 2 sets, training set and validation set.
- * Entries of validation set are nullifed in the input matrix. Termination 
- * criterion is met when increase in validation set RMSe value drops below the 
- * given tolerance. To accomodate spikes certain number of successive validation 
- * RMSE drops are accepted. This upper imit on successive drops can be adjusted 
- * with reverseStepCount. Secondary termination criterion terminates algorithm 
- * when iteration count goes above the threshold. 
+ * Entries of validation set are nullifed in the input matrix. Termination
+ * criterion is met when increase in validation set RMSe value drops below the
+ * given tolerance. To accomodate spikes certain number of successive validation
+ * RMSE drops are accepted. This upper imit on successive drops can be adjusted
+ * with reverseStepCount. Secondary termination criterion terminates algorithm
+ * when iteration count goes above the threshold.
  *
  * @note The input matrix is modified by this termination policy.
  *
@@ -33,8 +33,8 @@ class ValidationRMSETermination
 {
  public:
   /**
-   * Create a validation set according to given parameters and nullifies this 
-   * set in data matrix(training set). 
+   * Create a validation set according to given parameters and nullifies this
+   * set in data matrix(training set).
    *
    * @param V Input matrix to be factorized.
    * @param num_test_points number of validation test points
@@ -56,14 +56,14 @@ class ValidationRMSETermination
 
     // initialize validation set matrix
     test_points.zeros(num_test_points, 3);
-    
+
     // fill validation set matrix with random chosen entries
     for(size_t i = 0; i < num_test_points; i++)
     {
       double t_val;
       size_t t_row;
       size_t t_col;
-      
+
       // pick a random non-zero entry
       do
       {
@@ -75,12 +75,12 @@ class ValidationRMSETermination
       test_points(i, 0) = t_row;
       test_points(i, 1) = t_col;
       test_points(i, 2) = t_val;
-      
+
       // nullify the added entry from data matrix (training set)
       V(t_row, t_col) = 0;
     }
   }
-  
+
   /**
    * Initializes the termination policy before stating the factorization.
    *
@@ -132,7 +132,7 @@ class ValidationRMSETermination
 
     // increment iteration count
     iteration++;
-  
+
     // if RMSE tolerance is not satisfied
     if((rmseOld - rmse) / rmseOld < tolerance && iteration > 4)
     {
@@ -177,20 +177,20 @@ class ValidationRMSETermination
     }
     else return false;
   }
-  
+
   //! Get current value of residue
   const double& Index() const { return rmse; }
 
-  //! Get current iteration count  
+  //! Get current iteration count
   const size_t& Iteration() const { return iteration; }
-  
+
   //! Get number of validation points
   const size_t& NumTestPoints() const { return num_test_points; }
-  
+
   //! Access upper limit of iteration count
   const size_t& MaxIterations() const { return maxIterations; }
   size_t& MaxIterations() { return maxIterations; }
-  
+
   //! Access tolerance value
   const double& Tolerance() const { return tolerance; }
   double& Tolerance() { return tolerance; }
@@ -202,7 +202,7 @@ class ValidationRMSETermination
   size_t maxIterations;
   //! number of validation test points
   size_t num_test_points;
-  
+
   //! current iteration count
   size_t iteration;
 
@@ -215,13 +215,13 @@ class ValidationRMSETermination
 
   //! tolerance on successive residue drops
   size_t reverseStepTolerance;
-  //! successive residue drops 
+  //! successive residue drops
   size_t reverseStepCount;
-  
+
   //! indicates whether a copy of information is available which corresponds to
   //! minimum residue point
   bool isCopy;
-  
+
   //! variables to store information of minimum residue point
   arma::mat W;
   arma::mat H;

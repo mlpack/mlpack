@@ -39,7 +39,7 @@ class NaiveKernelRule
     // Resize the kernel matrix to the right size.
     kernelMatrix.set_size(data.n_cols, data.n_cols);
 
-    // Note that we only need to calculate the upper triangular part of the 
+    // Note that we only need to calculate the upper triangular part of the
     // kernel matrix, since it is symmetric. This helps minimize the number of
     // kernel evaluations.
     for (size_t i = 0; i < data.n_cols; ++i)

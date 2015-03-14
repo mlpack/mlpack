@@ -48,7 +48,7 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
   iter = iterations;
   arma::rowvec D(data.n_cols);
   D.fill(1.0);// giving equal weight to all the points.
-  
+
   Train(D);
 }
 
@@ -72,7 +72,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
   for (size_t i = 0; i < test.n_cols; i++)
   {
     tempLabelMat = weightVectors.submat(0, 1, weightVectors.n_rows - 1,
-                                        weightVectors.n_cols - 1) * 
+                                        weightVectors.n_cols - 1) *
                                         test.col(i) + weightVectors.col(0);
     tempLabelMat.max(maxIndexRow, maxIndexCol);
     predictedLabels(0, i) = maxIndexRow;
@@ -81,9 +81,9 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
 }
 
 /**
- *  Alternate constructor which copies parameters from an already initiated 
+ *  Alternate constructor which copies parameters from an already initiated
  *  perceptron.
- *  
+ *
  *  @param other The other initiated Perceptron object from which we copy the
  *               values from.
  *  @param data The data on which to train this Perceptron object on.
@@ -94,7 +94,7 @@ template <typename LearnPolicy, typename WeightInitializationPolicy, typename Ma
 Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
   const Perceptron<>& other, MatType& data, const arma::rowvec& D, const arma::Row<size_t>& labels)
 {
-  
+
   classLabels = labels;
   trainData = data;
   iter = other.iter;
@@ -112,7 +112,7 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
 
 /**
  *  Training Function. It trains on trainData using the cost matrix D
- *  
+ *
  *  @param D Cost matrix. Stores the cost of mispredicting instances
  */
 template<
@@ -146,7 +146,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
       tempLabelMat = weightVectors * trainData.col(j);
 
       tempLabelMat.max(maxIndexRow, maxIndexCol);
-      
+
       // Check whether prediction is correct.
       if (maxIndexRow != classLabels(0, j))
       {

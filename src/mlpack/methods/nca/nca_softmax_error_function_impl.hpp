@@ -271,7 +271,7 @@ template<typename MetricType>
 std::string SoftmaxErrorFunction<MetricType>::ToString() const{
   std::ostringstream convert;
   convert << "Sofmax Error Function [" << this << "]" << std::endl;
-  convert << "  Dataset: " << dataset.n_rows << "x" << dataset.n_cols 
+  convert << "  Dataset: " << dataset.n_rows << "x" << dataset.n_cols
       << std::endl;
   convert << "  Labels: " << labels.n_elem << std::endl;
   //convert << "Metric: " << metric << std::endl;

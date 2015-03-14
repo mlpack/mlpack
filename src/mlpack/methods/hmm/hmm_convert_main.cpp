@@ -72,6 +72,6 @@ int main(int argc, char** argv)
   // Save the converted model.
   const string outputFile = CLI::GetParam<string>("output_file");
   sr2.WriteFile(outputFile);
-  
+
 	return 0;
 }

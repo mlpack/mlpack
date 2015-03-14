@@ -44,7 +44,7 @@ class SimpleWeightUpdate
                      const size_t rowIndex,
                      const arma::rowvec& D)
   {
-    weightVectors.row(rowIndex) = weightVectors.row(rowIndex) - 
+    weightVectors.row(rowIndex) = weightVectors.row(rowIndex) -
                                   D(labelIndex) * trainData.col(labelIndex).t();
 
     weightVectors.row(vectorIndex) = weightVectors.row(vectorIndex) +

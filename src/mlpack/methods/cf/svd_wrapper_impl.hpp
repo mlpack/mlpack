@@ -14,7 +14,7 @@ double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
   arma::vec E;
   factorizer.Apply(W, E, H, V);
 
-  // construct sigma matrix 
+  // construct sigma matrix
   sigma.zeros(V.n_rows, V.n_cols);
 
   for(size_t i = 0;i < sigma.n_rows && i < sigma.n_cols;i++)
@@ -36,7 +36,7 @@ double mlpack::cf::SVDWrapper<DummyClass>::Apply(const arma::mat& V,
   arma::vec E;
   arma::svd(W, E, H, V);
 
-  // construct sigma matrix 
+  // construct sigma matrix
   sigma.zeros(V.n_rows, V.n_cols);
 
   for(size_t i = 0;i < sigma.n_rows && i < sigma.n_cols;i++)
@@ -72,11 +72,11 @@ double mlpack::cf::SVDWrapper<Factorizer>::Apply(const arma::mat& V,
 
   // take only required eigenvalues
   sigma = sigma.subvec(0, r - 1);
-  
+
   // eigenvalue matrix is multiplied to W
   // it can either be multiplied to H matrix
   W = W * arma::diagmat(sigma);
-  
+
   // take transpose of the matrix H as required by CF module
   H = arma::trans(H);
 
@@ -111,11 +111,11 @@ double mlpack::cf::SVDWrapper<DummyClass>::Apply(const arma::mat& V,
 
   // take only required eigenvalues
   sigma = sigma.subvec(0, r - 1);
-  
+
   // eigenvalue matrix is multiplied to W
   // it can either be multiplied to H matrix
   W = W * arma::diagmat(sigma);
-  
+
   // take transpose of the matrix H as required by CF module
   H = arma::trans(H);
 

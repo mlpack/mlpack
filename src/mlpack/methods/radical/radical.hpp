@@ -106,7 +106,7 @@ class Radical
   //! Modify the number of sweeps.
   size_t& Sweeps() { return sweeps; }
 
-  // Returns a string representation of this object. 
+  // Returns a string representation of this object.
   std::string ToString() const;
 
  private:

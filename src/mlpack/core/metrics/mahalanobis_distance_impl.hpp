@@ -57,9 +57,9 @@ std::string MahalanobisDistance<TakeRoot>::ToString() const
     convertb << covariance << std::endl;
     convert << mlpack::util::Indent(convertb.str(),2);
   }
-  else 
+  else
   {
-    convert << "  Covariance matrix: " << covariance.n_rows << "x" ; 
+    convert << "  Covariance matrix: " << covariance.n_rows << "x" ;
     convert << covariance.n_cols << std::endl << " Range: [" ;
     convert << covariance.min() << "," << covariance.max() << "]" << std::endl;
   }

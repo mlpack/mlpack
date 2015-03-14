@@ -250,7 +250,7 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::TreeUpdate(
     if (!prunedLastIteration &&
         node->Stat().ClustersPruned() + visited[node->Point(i)] < clusters)
       Log::Fatal << "Point " << node->Point(i) << " was only visited " <<
-node->Stat().ClustersPruned() << " + " << visited[node->Point(i)] << 
+node->Stat().ClustersPruned() << " + " << visited[node->Point(i)] <<
 " times!\n";
   }
 */

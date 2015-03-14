@@ -123,7 +123,7 @@ class LSHSearch
               arma::mat& distances,
               const size_t numTablesToSearch = 0);
 
-  // Returns a string representation of this object. 
+  // Returns a string representation of this object.
   std::string ToString() const;
 
  private:

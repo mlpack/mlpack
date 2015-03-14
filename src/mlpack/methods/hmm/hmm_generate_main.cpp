@@ -124,6 +124,6 @@ int main(int argc, char** argv)
   const string sequenceFile = CLI::GetParam<string>("state_file");
   if (sequenceFile != "")
     data::Save(sequenceFile, sequence, true);
-  
+
   return 0;
 }

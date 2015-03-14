@@ -15,32 +15,32 @@ namespace cf
 {
 
 /**
- * This class acts as a dummy class for passing as template parameter. Passing 
+ * This class acts as a dummy class for passing as template parameter. Passing
  * this class as a template parameter to class SVDWrapper will force SVDWrapper
  * to use Armadillo's SVD implementation.
  */
-class DummyClass {}; 
+class DummyClass {};
 
 /**
- * This class acts as the wrapper for all SVD factorizers which are incompatible 
- * with CF module. Normally SVD factrorizers implement Apply method which takes 
+ * This class acts as the wrapper for all SVD factorizers which are incompatible
+ * with CF module. Normally SVD factrorizers implement Apply method which takes
  * matrix V and factorizes it into P, sigma and Q where V = P * sigma * trans(Q).
- * But CF module requires factrorization to be V = W * H. This class multiplies 
+ * But CF module requires factrorization to be V = W * H. This class multiplies
  * P and sigma and takes the first 'r' eigenvectors out where 'r' is the rank
- * of factorization. Q matrix is transposed and trimmed to support the rank 
- * of factorization. The Factroizer class should implement Apply which takes 
- * matrices P, sigma, Q and V as their parameter respectively. 
+ * of factorization. Q matrix is transposed and trimmed to support the rank
+ * of factorization. The Factroizer class should implement Apply which takes
+ * matrices P, sigma, Q and V as their parameter respectively.
  */
 template<class Factorizer = DummyClass>
 class SVDWrapper
 {
  public:
   // empty constructor
-  SVDWrapper(const Factorizer& factorizer = Factorizer()) 
+  SVDWrapper(const Factorizer& factorizer = Factorizer())
     : factorizer(factorizer) {};
 
   /**
-   * Factorizer function which takes SVD of the given matrix and returns the 
+   * Factorizer function which takes SVD of the given matrix and returns the
    * frobenius norm of error.
    *
    * @param V input matrix
@@ -55,9 +55,9 @@ class SVDWrapper
                arma::mat& sigma,
                arma::mat& H) const;
   /**
-   * Factorizer function which computes SVD and returns matrices as required by 
+   * Factorizer function which computes SVD and returns matrices as required by
    * CF module.
-   * 
+   *
    * @param V input matrix
    * @param W first unitary matrix
    * @param H second unitary matrix
@@ -68,7 +68,7 @@ class SVDWrapper
                size_t r,
                arma::mat& W,
                arma::mat& H) const;
-               
+
  private:
   //! svd factorizer
   Factorizer factorizer;

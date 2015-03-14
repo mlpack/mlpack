@@ -45,9 +45,9 @@ std::string NCA<MetricType, OptimizerType>::ToString() const
 {
   std::ostringstream convert;
   convert << "NCA  [" << this << "]" << std::endl;
-  convert << "  Dataset: " << dataset.n_rows << "x" << dataset.n_cols 
+  convert << "  Dataset: " << dataset.n_rows << "x" << dataset.n_cols
       << std::endl;
-  convert << "  Metric: " << std::endl << 
+  convert << "  Metric: " << std::endl <<
       mlpack::util::Indent(metric.ToString(),2);
   return convert.str();
 }

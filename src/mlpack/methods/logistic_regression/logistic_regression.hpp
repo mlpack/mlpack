@@ -130,7 +130,7 @@ class LogisticRegression
   double ComputeError(const arma::mat& predictors,
                       const arma::vec& responses) const;
 
-  // Returns a string representation of this object. 
+  // Returns a string representation of this object.
   std::string ToString() const;
 
  private:

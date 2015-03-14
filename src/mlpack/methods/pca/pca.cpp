@@ -177,7 +177,7 @@ std::string PCA::ToString() const
 {
   std::ostringstream convert;
   convert << "Principal Component Analysis  [" << this << "]" << std::endl;
-  if (scaleData)  
+  if (scaleData)
     convert << "  Scaling Data: TRUE" << std::endl;
   return convert.str();
 }

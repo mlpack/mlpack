@@ -3,7 +3,7 @@
  * @author Marcus Edel
  *
  * Intialization rule for the neural networks. This simple initialization is
- * performed by assigning a random matrix to the weight matrix. 
+ * performed by assigning a random matrix to the weight matrix.
  */
 #ifndef __MLPACK_METHOS_ANN_OPTIMIZER_RPROPM_HPP
 #define __MLPACK_METHOS_ANN_OPTIMIZER_RPROPM_HPP
@@ -35,7 +35,7 @@ class RPROPm
          const double etaMin = 0.5,
          const double etaPlus = 1.2,
          const double minDelta = 1e-9,
-         const double maxDelta = 50) : 
+         const double maxDelta = 50) :
       etaMin(etaMin), etaPlus(etaPlus), minDelta(minDelta), maxDelta(maxDelta)
   {
     prevDerivs = arma::zeros<MatType>(rows, cols);
@@ -46,7 +46,7 @@ class RPROPm
                      const MatType& gradient,
                      const double /* unused */)
   {
-    MatType derivs = gradient % prevDerivs; 
+    MatType derivs = gradient % prevDerivs;
 
     for (size_t i(0); i < derivs.n_cols; i++)
     {

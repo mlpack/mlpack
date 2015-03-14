@@ -267,7 +267,7 @@ class HMM
    * E{ Y[t+k] | Y[0], ..., Y[t] }.
    * The returned matrix has columns equal to the number of observations. Note
    * that the expectation may not be meaningful for discrete emissions.
-   * 
+   *
    * @param dataSeq Sequence of observations.
    * @param filterSeq Vector in which the expected emission sequence will be
    *    stored.
@@ -276,21 +276,21 @@ class HMM
   void Filter(const arma::mat& dataSeq,
               arma::mat& filterSeq,
               size_t ahead = 0) const;
-  
+
   /**
    * HMM smoothing. Computes expected emission at each time conditioned on all
    * observations. That is
    * E{ Y[t] | Y[0], ..., Y[T] }.
    * The returned matrix has columns equal to the number of observations. Note
    * that the expectation may not be meaningful for discrete emissions.
-   *  
+   *
    * @param dataSeq Sequence of observations.
    * @param smoothSeq Vector in which the expected emission sequence will be
    *    stored.
    */
   void Smooth(const arma::mat& dataSeq,
               arma::mat& smoothSeq) const;
-  
+
   //! Return the vector of initial state probabilities.
   const arma::vec& Initial() const { return initial; }
   //! Modify the vector of initial state probabilities.
@@ -325,7 +325,7 @@ class HMM
   void Save(util::SaveRestoreUtility& sr) const;
   //! Load from SaveRestoreUtility
   void Load(const util::SaveRestoreUtility& sr);
-  
+
   /**
    * Returns a string indicating the type.
    */
@@ -367,7 +367,7 @@ class HMM
 
   //! Transition probability matrix.
   arma::mat transition;
-  
+
  private:
   //! Initial state probability vector.
   arma::vec initial;

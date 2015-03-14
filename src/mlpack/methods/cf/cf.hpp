@@ -94,10 +94,10 @@ class CF
      FactorizerType factorizer = FactorizerType(),
      const size_t numUsersForSimilarity = 5,
      const size_t rank = 0);
-   
+
   /*void ApplyFactorizer(arma::mat& data, const typename boost::enable_if_c<
       FactorizerTraits<FactorizerType>::IsCleaned == false, int*>::type);
-      
+
   void ApplyFactorizer(arma::mat& data, const typename boost::enable_if_c<
       FactorizerTraits<FactorizerType>::IsCleaned == true, int*>::type);*/
 

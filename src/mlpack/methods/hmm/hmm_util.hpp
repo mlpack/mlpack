@@ -3,7 +3,7 @@
  * @author Ryan Curtin
  * @author Michael Fox
  *
- * Deprecated Save/load utilities for HMMs. See HMM::Save, HMM::Load.  
+ * Deprecated Save/load utilities for HMMs. See HMM::Save, HMM::Load.
  */
 #ifndef __MLPACK_METHODS_HMM_HMM_UTIL_HPP
 #define __MLPACK_METHODS_HMM_HMM_UTIL_HPP

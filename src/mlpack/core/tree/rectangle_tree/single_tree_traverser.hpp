@@ -45,7 +45,7 @@ class RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   size_t& NumPrunes() { return numPrunes; }
 
  private:
-  
+
   // We use this class and this function to make the sorting and scoring easy
   // and efficient:
   class NodeAndScore {

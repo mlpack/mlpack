@@ -181,7 +181,7 @@ class RangeSearch
               std::vector<std::vector<size_t> >& neighbors,
               std::vector<std::vector<double> >& distances);
 
-  // Returns a string representation of this object. 
+  // Returns a string representation of this object.
   std::string ToString() const;
 
  private:

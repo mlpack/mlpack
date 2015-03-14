@@ -32,15 +32,15 @@ void RegularizedSVD<OptimizerType>::Apply(const arma::mat& data,
   RegularizedSVDFunction rSVDFunc(data, rank, lambda);
   mlpack::optimization::SGD<RegularizedSVDFunction> optimizer(rSVDFunc, alpha,
       iterations * data.n_cols);
-  
+
   // Get optimized parameters.
   arma::mat parameters = rSVDFunc.GetInitialPoint();
   optimizer.Optimize(parameters);
-  
+
   // Constants for extracting user and item matrices.
   const size_t numUsers = max(data.row(0)) + 1;
   const size_t numItems = max(data.row(1)) + 1;
-  
+
   // Extract user and item matrices from the optimized parameters.
   u = parameters.submat(0, numUsers, rank - 1, numUsers + numItems - 1).t();
   v = parameters.submat(0, 0, rank - 1, numUsers - 1);
