@@ -18,8 +18,18 @@ class FullConvolution
  public:
   
   template<typename MatType>
-  static void conv(const MatType& input, const MatType& kernel,
-                   MatType& output)
+  static void conv(const MatType& input, const MatType& kernel, MatType& output)
+  {
+    if (input.n_elem > ValidConvolution::inputThreshold &&
+        kernel.n_elem > ValidConvolution::kernelThreshold)
+      convFFT(input, kernel, output);
+    else
+      convSimple(input, kernel, output);
+  }
+  
+  // Simple appraoch to perform convolution
+  template<typename MatType>
+  static void convSimple(const MatType& input, const MatType& kernel, MatType& output)
   {
     size_t rowPadding = kernel.n_rows - 1;
     size_t colPadding = kernel.n_cols - 1;
@@ -29,9 +39,17 @@ class FullConvolution
     extInput(arma::span(rowPadding, rowPadding + input.n_rows - 1),
              arma::span(colPadding, colPadding + input.n_cols - 1)) = input;
     
-    ValidConvolution::conv(extInput, kernel, output);
+    ValidConvolution::convSimple(extInput, kernel, output);
   }
   
+  // Perform full convolution with FFT, which is faster when scale is large enough
+  template<typename MatType>
+  static void convFFT(const MatType& input, const MatType& kernel, MatType& output)
+  {
+    ValidConvolution::convFFTHelper(input, kernel, output);
+    output = output(arma::span(kernel.n_rows - 1, output.n_rows - 1),
+        arma::span(kernel.n_cols - 1, output.n_cols - 1));
+  }
 };
 
 }; // namespace ann

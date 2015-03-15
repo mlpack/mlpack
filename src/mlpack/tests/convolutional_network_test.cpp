@@ -40,7 +40,6 @@
 using namespace mlpack;
 using namespace mlpack::ann;
 
-
 BOOST_AUTO_TEST_SUITE(ConvolutionalNetworkTest);
 
 // A simple test for convolution strategies.
@@ -68,17 +67,65 @@ BOOST_AUTO_TEST_CASE(ConvolutionTest)
   
   arma::mat validConvOutput;
   
-  ValidConvolution::conv(convInput, convKernel, validConvOutput);
+  // Simple valid convolution approach
+  ValidConvolution::convSimple(convInput, convKernel, validConvOutput);
+  BOOST_CHECK(validConvOutput.n_elem == arma::accu(correctValidConvOutput ==
+      validConvOutput));
   
-  BOOST_CHECK(validConvOutput.n_elem ==
-              sum(sum((validConvOutput == correctValidConvOutput))));
+  // Valid convolution with FFT
+  ValidConvolution::convFFT(convInput, convKernel, validConvOutput);
+  BOOST_REQUIRE_GE(1e-5, arma::accu(correctValidConvOutput - validConvOutput));
+  
+  ValidConvolution::convBlock(convInput, convKernel, validConvOutput);
+  BOOST_CHECK(validConvOutput.n_elem == arma::accu(correctValidConvOutput ==
+      validConvOutput));
   
   arma::mat fullConvOutput;
   
-  FullConvolution::conv(convInput, convKernel, fullConvOutput);
+  // Simple full convolution approach
+  FullConvolution::convSimple(convInput, convKernel, fullConvOutput);
+  BOOST_CHECK(fullConvOutput.n_elem == arma::accu(correctFullConvOutput ==
+      fullConvOutput));
   
-  BOOST_CHECK(fullConvOutput.n_elem ==
-              sum(sum(fullConvOutput == correctFullConvOutput)));
+  // Full convolution with FFT
+  FullConvolution::convFFT(convInput, convKernel, fullConvOutput);
+  BOOST_REQUIRE_GE(1e-5, arma::accu(correctFullConvOutput - fullConvOutput));
+  
+  /**
+   * When input size and kernel size is big enough,
+   * convolution with fft performs much better than simple approach.
+   */
+  arma::mat bigInput = arma::randu<arma::mat>(700, 700);
+  arma::mat bigKernel = arma::randu<arma::mat>(200, 200);
+  arma::mat resultSimple;
+  arma::mat resultFFT;
+  arma::mat resultBlock;
+  
+  Timers t;
+  t.StartTimer("simple");
+  ValidConvolution::convSimple(bigInput, bigKernel, resultSimple);
+  t.StopTimer("simple");
+  timeval tSimple = t.GetTimer("simple");
+  Log::Info << "simple convolution:" << std::endl <<
+      tSimple.tv_sec << "." << tSimple.tv_usec << std::endl;
+  
+  t.StartTimer("block");
+  ValidConvolution::convBlock(bigInput, bigKernel, resultBlock);
+  t.StartTimer("block");
+  timeval tBlock = t.GetTimer("block");
+  Log::Info << "convolution with block:" << std::endl <<
+      tBlock.tv_sec << "." << tBlock.tv_usec << std::endl;
+  
+  BOOST_CHECK_EQUAL(0, arma::accu(resultBlock - resultSimple));
+  
+  t.StartTimer("fft");
+  ValidConvolution::convFFT(bigInput, bigKernel, resultFFT);
+  t.StopTimer("fft");
+  timeval tFFT = t.GetTimer("fft");
+  Log::Info << "convolution with fft:" << std::endl <<
+      tFFT.tv_sec << "." << tFFT.tv_usec << std::endl;
+  
+  BOOST_REQUIRE_GE(tSimple.tv_sec, tFFT.tv_sec);
   
 }
 
