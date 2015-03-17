@@ -73,7 +73,7 @@ class BiasConnection
       Log::Fatal << "The size of bias layer must be 1 !" << std::endl;
     }
     weightInitRule.Initialize(weights, 1, 1);
-    weightsDelta = arma::zeros<MatType>(1, 1);
+    gradient = arma::zeros<MatType>(1, 1);
     delta = arma::zeros<MatType>(1, 1);
   }
 
@@ -83,10 +83,7 @@ class BiasConnection
    */
   void FeedForward(const MatType& /* used */)
   {
-    Log::Debug << "BiasConnection::FeedForward" << std::endl;
-    Log::Debug << "Weights:\n" << weights << std::endl;
-    
-    // All neuron share a common bias.
+    // All neurons share a common bias.
     outputLayer.InputActivation() += weights(0, 0);
   }
 
@@ -99,9 +96,19 @@ class BiasConnection
    */
   void FeedBackward(const MatType& error)
   {
-    // Calculate the delta of weights to update @weights,
+    // Calculate the gradient of weights to update @weights,
     // which is actually the bias value.
-    weightsDelta = arma::accu(error);
+    gradient = arma::accu(error);
+  }
+  
+  /**
+   * Calculate the gradient using the output delta and the input activation.
+   *
+   * @param gradient The calculated gradient.
+   */
+  void Gradient(MatType& gradient)
+  {
+    gradient = arma::accu(outputLayer.Delta());
   }
   
   //! Get the optimzer.
@@ -125,9 +132,9 @@ class BiasConnection
   OutputLayerType& OutputLayer() { return outputLayer; }
 
   //! Get the detla of weights.
-  MatType& WeightsDelta() const { return weightsDelta; }
+  MatType& Gradient() const { return gradient; }
   //! Modify the delta of weights.
-  MatType& WeightsDelta() { return weightsDelta; }
+  MatType& Gradient() { return gradient; }
   
   //! Get the passed error.
   MatType& Delta() const { return delta; }
@@ -145,8 +152,8 @@ class BiasConnection
   //! Locally-stored optimizer.
   OptimizerType& optimizer;
   
-  //! Locally-stored delta of weights
-  MatType weightsDelta;
+  //! Locally-stored gradient of weights
+  MatType gradient;
   
   //! Locally-stored weights.
   MatType weights;
@@ -154,26 +161,6 @@ class BiasConnection
   //! Locally-stored passed error in backward propagation.
   MatType delta;
 }; // class BiasConnection
-  
-template<
-    typename InputLayerType,
-    typename OutputLayerType,
-    typename OptimizerType,
-    class WeightInitRule,
-    typename MatType>
-class ConnectionTraits<
-    BiasConnection<InputLayerType,
-                   OutputLayerType,
-                   OptimizerType,
-                   WeightInitRule,
-                   MatType> >
-{
- public:
-  static const bool IsSelfConnection = false;
-  static const bool IsFullselfConnection = false;
-  static const bool hasWeightsDelta = true;
-    
-};
 
 }; // namespace ann
 }; // namespace mlpack

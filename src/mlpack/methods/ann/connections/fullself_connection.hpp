@@ -144,7 +144,6 @@ class ConnectionTraits<
  public:
   static const bool IsSelfConnection = false;
   static const bool IsFullselfConnection = true;
-  static const bool hasWeightsDelta = false;
 };
 
 }; // namespace ann

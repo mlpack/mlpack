@@ -81,11 +81,8 @@ class SoftmaxLayer
    */
   void FeedForward(const VecType& inputActivation, VecType& outputActivation)
   {
-    Log::Debug << "SoftmaxLayer::FeedForward" << std::endl;
-    Log::Debug << "Input:\n" << inputActivation << std::endl;
     outputActivation = arma::trunc_exp(inputActivation);
     outputActivation /= arma::accu(outputActivation);
-    Log::Debug << "Output:\n" << outputActivation << std::endl;
   }
 
   /**
@@ -102,10 +99,7 @@ class SoftmaxLayer
                     const VecType& error,
                     VecType& delta)
   {
-    Log::Debug << "SoftmaxLayer::FeedBackward" << std::endl;
-    Log::Debug << "Input:\n" << error << std::endl;
     delta = error;
-    Log::Debug << "Output:\n" << delta << std::endl;
   }
 
   //! Get the input activations.

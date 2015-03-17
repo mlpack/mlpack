@@ -52,6 +52,26 @@ class FullConvolution
   }
 };
 
+// rotate the kernel and perform full convolution
+class RotatedKernelFullConvolution
+{
+ public:
+  template<typename MatType>
+  static void conv(const MatType& input, const MatType& kernel, MatType& output)
+  {
+    MatType rotatedKernel(kernel.n_rows, kernel.n_cols);
+    for (size_t j = 0; j < kernel.n_cols; ++j)
+    {
+      for (size_t i = 0; i < kernel.n_rows; ++i)
+      {
+        rotatedKernel(i, j) = kernel(kernel.n_rows - 1 - i, kernel.n_cols - j - 1);
+      }
+    }
+    FullConvolution::conv(input, rotatedKernel, output);
+  }
+  
+};
+
 }; // namespace ann
 }; // namespace mlpack
 

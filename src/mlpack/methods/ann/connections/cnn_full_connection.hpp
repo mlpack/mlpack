@@ -58,7 +58,7 @@ class CNNFullConnection
   {
     weightInitRule.Initialize(weights, outputLayer.InputSize(),
         inputLayer.OutputSize());
-    weightsDelta = arma::zeros<MatType>(weights.n_rows, weights.n_cols);
+    gradient = arma::zeros<MatType>(weights.n_rows, weights.n_cols);
   }
 
   /**
@@ -69,12 +69,7 @@ class CNNFullConnection
    */
   void FeedForward(const VecType& input)
   {
-    Log::Debug << "CNNFullConnection::FeedForward" << std::endl;
-    Log::Debug << "Input:\n" << input << std::endl;
-    Log::Debug << "Weights:\n" << weights << std::endl;
     outputLayer.InputActivation() += (weights * input);
-    Log::Debug << "OutputLayer's Input:\n"
-               << outputLayer.InputActivation() << std::endl;
   }
 
   /**
@@ -87,14 +82,9 @@ class CNNFullConnection
    */
   void FeedBackward(const VecType& error)
   {
-    Log::Debug << "CNNFullConnection::FeedBackward" << std::endl;
-    Log::Debug << "Input:\n" << error << std::endl;
-    Log::Debug << "Weights:\n" << weights << std::endl;
     delta = (weights.t() * error);
     inputLayer.Delta() += delta;
-    weightsDelta = error * inputLayer.InputActivation().t();
-    Log::Debug << "Delta:\n" << delta << std::endl;
-    Log::Debug << "WeightsDelta:\n" << weightsDelta << std::endl;
+    gradient = error * inputLayer.InputActivation().t();
   }
 
   //! Get the weights.
@@ -102,10 +92,10 @@ class CNNFullConnection
   //! Modify the weights.
   MatType& Weights() { return weights; }
 
-  //! Get the delta of weights.
-  MatType& WeightsDelta() const { return weightsDelta; }
-  //! Modify the delta of weights.
-  MatType& WeightsDelta() { return weightsDelta; }
+  //! Get the gradient of weights.
+  MatType& Gradient() const { return gradient; }
+  //! Modify the gradient of weights.
+  MatType& Gradient() { return gradient; }
   
   //! Get the input layer.
   InputLayerType& InputLayer() const { return inputLayer; }
@@ -131,8 +121,8 @@ class CNNFullConnection
   //! Locally-stored weight object.
   MatType weights;
   
-  //! Locally-stored delta of weights.
-  MatType weightsDelta;
+  //! Locally-stored gradient of weights.
+  MatType gradient;
 
   //! Locally-stored connected input layer object.
   InputLayerType& inputLayer;

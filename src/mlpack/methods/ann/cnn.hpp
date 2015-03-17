@@ -217,7 +217,7 @@ class CNN
   ResetC(std::tuple<Tp...>& t)
   {
     std::get<I>(t).Delta().zeros();
-    std::get<I>(t).WeightsDelta().zeros();
+    std::get<I>(t).Gradient().zeros();
     ResetC<I + 1, Tp...>(t);
   }
 
@@ -422,8 +422,8 @@ class CNN
   typename std::enable_if<I < sizeof...(Tp), void>::type
   Gradients(std::tuple<Tp...>& t)
   {
-    // A connection module must have WeightsDelta when applied in CNN.
-    gradients[gradientNum++] += std::get<I>(t).WeightsDelta();
+    // A connection module must have locally-stroed gradient when applied in CNN.
+    gradients[gradientNum++] += std::get<I>(t).Gradient();
     Gradients<I + 1, Tp...>(t);
   }
 

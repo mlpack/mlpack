@@ -63,7 +63,7 @@ class PoolingConnection
   {
     delta = arma::zeros<MatType>(inputLayer.InputActivation().n_rows,
                                  inputLayer.InputActivation().n_cols);
-    weightsDelta = arma::zeros<arma::colvec>(2);
+    gradient = arma::zeros<arma::colvec>(2);
     weights(0) = factor;
     weights(1) = bias;
   }
@@ -76,9 +76,6 @@ class PoolingConnection
    */
   void FeedForward(const MatType& input)
   {
-    Log::Debug << "PoolingConnection::FeedForward" << std::endl;
-    Log::Debug << "Input:\n" << input << std::endl;
-    Log::Debug << "Weights:\n" << weights << std::endl;
     size_t r_step = input.n_rows / outputLayer.InputActivation().n_rows;
     size_t c_step = input.n_cols / outputLayer.InputActivation().n_cols;
     for (size_t j = 0; j < input.n_cols; j += c_step)
@@ -102,10 +99,8 @@ class PoolingConnection
    */
   void FeedBackward(const MatType& error)
   {
-    Log::Debug << "PoolingConnection::FeedBackward" << std::endl;
-    Log::Debug << "Error:\n" << error << std::endl;
-    weightsDelta(1) = arma::sum(arma::sum(error));
-    weightsDelta(0) = arma::sum(arma::sum(rawOutput % error));
+    gradient(1) = arma::sum(arma::sum(error));
+    gradient(0) = arma::sum(arma::sum(rawOutput % error));
     MatType weightedError = error * weights(0);
     size_t r_step = inputLayer.InputActivation().n_rows / error.n_rows;
     size_t c_step = inputLayer.InputActivation().n_cols / error.n_cols;
@@ -124,8 +119,6 @@ class PoolingConnection
               arma::span(j, j + c_step - 1)) = newError;
       }
     }
-    Log::Debug << "Delta:\n" << delta << std::endl;
-    Log::Debug << "WeightsDelta:\n" << weightsDelta << std::endl;
     inputLayer.Delta() += delta;
   }
   
@@ -154,10 +147,10 @@ class PoolingConnection
   //! Modify the passed error in backward propagation.
   MatType& Delta() { return delta; }
   
-  //! Get the detla of weights.
-  MatType& WeightsDelta() const { return weightsDelta; }
+  //! Get the gradient of weights.
+  MatType& Gradient() const { return gradient; }
   //! Modify the delta of weights.
-  MatType& WeightsDelta() { return weightsDelta; }
+  MatType& Gradient() { return gradient; }
   
   //! Get the pooling strategy.
   PoolingRule& Pooling() const { return pooling; }
@@ -183,8 +176,8 @@ class PoolingConnection
   //! Locally-stored pooling strategy.
   PoolingRule pooling;
   
-  //! Locally-stored delta of weights.
-  MatType weightsDelta;
+  //! Locally-stored gradient of weights.
+  MatType gradient;
   
   /**
    * Locally-stored raw result of pooling,
@@ -193,21 +186,6 @@ class PoolingConnection
    */
   MatType rawOutput;
 };
-
-template<
-    typename InputLayerType,
-    typename OutputLayerType,
-    typename OptimizerType,
-    typename PoolingRule,
-    typename MatType >
-class ConnectionTraits<
-    PoolingConnection<InputLayerType, OutputLayerType, OptimizerType,
-    PoolingRule, MatType> > {
- public:
-  static const bool IsSelfConnection = false;
-  static const bool IsFullselfConnection = false;
-  static const bool hasWeightsDelta = true;
-};// class PoolingConnections
   
 }; // namespace ann
 }; // namespace mlpack

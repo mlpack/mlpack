@@ -113,10 +113,7 @@ class NeuronLayer
    */
   void FeedForward(const DataType& inputActivation, DataType& outputActivation)
   {
-    Log::Debug << "NeuronLayer::FeedForward" << std::endl;
-    Log::Debug << "Input:\n" << inputActivation << std::endl;
     ActivationFunction::fn(inputActivation, outputActivation);
-    Log::Debug << "Output:\n" << outputActivation << std::endl;
   }
 
   /**
@@ -132,13 +129,9 @@ class NeuronLayer
                     const DataType& error,
                     DataType& delta)
   {
-    Log::Debug << "NeuronLayer::FeedBackward" << std::endl;
-    Log::Debug << "Error:\n" << error << std::endl;
     DataType derivative;
     ActivationFunction::deriv(inputActivation, derivative);
-
     delta = error % derivative;
-    Log::Debug << "Delta:\n" << delta << std::endl;
   }
 
   //! Get the input activations.

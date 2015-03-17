@@ -106,15 +106,10 @@ BOOST_AUTO_TEST_CASE(ConvolutionTest)
   ValidConvolution::convSimple(bigInput, bigKernel, resultSimple);
   t.StopTimer("simple");
   timeval tSimple = t.GetTimer("simple");
-  Log::Info << "simple convolution:" << std::endl <<
-      tSimple.tv_sec << "." << tSimple.tv_usec << std::endl;
   
   t.StartTimer("block");
   ValidConvolution::convBlock(bigInput, bigKernel, resultBlock);
   t.StartTimer("block");
-  timeval tBlock = t.GetTimer("block");
-  Log::Info << "convolution with block:" << std::endl <<
-      tBlock.tv_sec << "." << tBlock.tv_usec << std::endl;
   
   BOOST_CHECK_EQUAL(0, arma::accu(resultBlock - resultSimple));
   
@@ -122,8 +117,6 @@ BOOST_AUTO_TEST_CASE(ConvolutionTest)
   ValidConvolution::convFFT(bigInput, bigKernel, resultFFT);
   t.StopTimer("fft");
   timeval tFFT = t.GetTimer("fft");
-  Log::Info << "convolution with fft:" << std::endl <<
-      tFFT.tv_sec << "." << tFFT.tv_usec << std::endl;
   
   BOOST_REQUIRE_GE(tSimple.tv_sec, tFFT.tv_sec);
   
@@ -509,164 +502,144 @@ BOOST_AUTO_TEST_CASE(LeNet1Test)
    * In fact I use a small JAVA program to generate skeleton for it.
    */
   ConvConnection<
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(conn3Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>conn3_0(std::get<0>(layer2), std::get<0>(layer3),
-                    std::get<0>(conn3Opt), 5, 5);
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(conn3Opt)),
+      NguyenWidrowInitialization<arma::mat>
+  >conn3_0(std::get<0>(layer2), std::get<0>(layer3), std::get<0>(conn3Opt), 5, 5);
   
   ConvConnection<
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(conn3Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>conn3_1(std::get<0>(layer2), std::get<1>(layer3),
-                    std::get<1>(conn3Opt), 5, 5);
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(conn3Opt)),
+      NguyenWidrowInitialization<arma::mat>
+  >conn3_1(std::get<0>(layer2), std::get<1>(layer3), std::get<1>(conn3Opt), 5, 5);
   
   ConvConnection<
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(conn3Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>conn3_2(std::get<0>(layer2), std::get<2>(layer3),
-                    std::get<2>(conn3Opt), 5, 5);
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(conn3Opt)),
+      NguyenWidrowInitialization<arma::mat>
+  >conn3_2(std::get<0>(layer2), std::get<2>(layer3), std::get<2>(conn3Opt), 5, 5);
   
   ConvConnection<
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(conn3Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>conn3_3(std::get<0>(layer2), std::get<4>(layer3),
-                    std::get<3>(conn3Opt), 5, 5);
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(conn3Opt)),
+      NguyenWidrowInitialization<arma::mat>
+  >conn3_3(std::get<0>(layer2), std::get<4>(layer3), std::get<3>(conn3Opt), 5, 5);
   
   ConvConnection<
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(conn3Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>conn3_4(std::get<0>(layer2), std::get<5>(layer3),
-                    std::get<4>(conn3Opt), 5, 5);
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(conn3Opt)),
+      NguyenWidrowInitialization<arma::mat>
+  >conn3_4(std::get<0>(layer2), std::get<5>(layer3), std::get<4>(conn3Opt), 5, 5);
   
   ConvConnection<
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(conn3Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>conn3_5(std::get<1>(layer2), std::get<1>(layer3),
-                    std::get<5>(conn3Opt), 5, 5);
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(conn3Opt)),
+      NguyenWidrowInitialization<arma::mat>
+  >conn3_5(std::get<1>(layer2), std::get<1>(layer3), std::get<5>(conn3Opt), 5, 5);
   
   ConvConnection<
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(conn3Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>conn3_6(std::get<1>(layer2), std::get<2>(layer3),
-                    std::get<6>(conn3Opt), 5, 5);
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(conn3Opt)),
+      NguyenWidrowInitialization<arma::mat>
+  >conn3_6(std::get<1>(layer2), std::get<2>(layer3), std::get<6>(conn3Opt), 5, 5);
   
   ConvConnection<
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(conn3Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>conn3_7(std::get<1>(layer2), std::get<3>(layer3),
-                    std::get<7>(conn3Opt), 5, 5);
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(conn3Opt)),
+      NguyenWidrowInitialization<arma::mat>
+  >conn3_7(std::get<1>(layer2), std::get<3>(layer3), std::get<7>(conn3Opt), 5, 5);
   
   ConvConnection<
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(conn3Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>conn3_8(std::get<1>(layer2), std::get<4>(layer3),
-                    std::get<8>(conn3Opt), 5, 5);
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(conn3Opt)),
+      NguyenWidrowInitialization<arma::mat>
+  >conn3_8(std::get<1>(layer2), std::get<4>(layer3), std::get<8>(conn3Opt), 5, 5);
   
   ConvConnection<
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(conn3Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>conn3_9(std::get<1>(layer2), std::get<5>(layer3),
-                    std::get<9>(conn3Opt), 5, 5);
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(conn3Opt)),
+      NguyenWidrowInitialization<arma::mat>
+  >conn3_9(std::get<1>(layer2), std::get<5>(layer3), std::get<9>(conn3Opt), 5, 5);
   
   ConvConnection<
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(conn3Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>conn3_10(std::get<2>(layer2), std::get<6>(layer3),
-                     std::get<10>(conn3Opt), 5, 5);
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(conn3Opt)),
+      NguyenWidrowInitialization<arma::mat>
+  >conn3_10(std::get<2>(layer2), std::get<6>(layer3), std::get<10>(conn3Opt), 5, 5);
   
   ConvConnection<
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(conn3Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>conn3_11(std::get<2>(layer2), std::get<7>(layer3),
-                     std::get<11>(conn3Opt), 5, 5);
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(conn3Opt)),
+      NguyenWidrowInitialization<arma::mat>
+  >conn3_11(std::get<2>(layer2), std::get<7>(layer3), std::get<11>(conn3Opt), 5, 5);
   
   ConvConnection<
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(conn3Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>conn3_12(std::get<2>(layer2), std::get<8>(layer3),
-                     std::get<12>(conn3Opt), 5, 5);
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(conn3Opt)),
+      NguyenWidrowInitialization<arma::mat>
+  >conn3_12(std::get<2>(layer2), std::get<8>(layer3), std::get<12>(conn3Opt), 5, 5);
   
   ConvConnection<
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(conn3Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>conn3_13(std::get<2>(layer2), std::get<10>(layer3),
-                     std::get<13>(conn3Opt), 5, 5);
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(conn3Opt)),
+      NguyenWidrowInitialization<arma::mat>
+  >conn3_13(std::get<2>(layer2), std::get<10>(layer3), std::get<13>(conn3Opt), 5, 5);
   
   ConvConnection<
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(conn3Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>conn3_14(std::get<2>(layer2), std::get<11>(layer3),
-                     std::get<14>(conn3Opt), 5, 5);
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(conn3Opt)),
+      NguyenWidrowInitialization<arma::mat>
+  >conn3_14(std::get<2>(layer2), std::get<11>(layer3), std::get<14>(conn3Opt), 5, 5);
   
   ConvConnection<
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(conn3Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>conn3_15(std::get<3>(layer2), std::get<7>(layer3),
-                     std::get<15>(conn3Opt), 5, 5);
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(conn3Opt)),
+      NguyenWidrowInitialization<arma::mat>
+  >conn3_15(std::get<3>(layer2), std::get<7>(layer3), std::get<15>(conn3Opt), 5, 5);
   
   ConvConnection<
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(conn3Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>conn3_16(std::get<3>(layer2), std::get<8>(layer3),
-                     std::get<16>(conn3Opt), 5, 5);
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(conn3Opt)),
+      NguyenWidrowInitialization<arma::mat>
+  >conn3_16(std::get<3>(layer2), std::get<8>(layer3), std::get<16>(conn3Opt), 5, 5);
   
   ConvConnection<
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(conn3Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>conn3_17(std::get<3>(layer2), std::get<9>(layer3),
-                     std::get<17>(conn3Opt), 5, 5);
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(conn3Opt)),
+      NguyenWidrowInitialization<arma::mat>
+  >conn3_17(std::get<3>(layer2), std::get<9>(layer3), std::get<17>(conn3Opt), 5, 5);
   
   ConvConnection<
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(conn3Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>conn3_18(std::get<3>(layer2), std::get<10>(layer3),
-                     std::get<18>(conn3Opt), 5, 5);
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(conn3Opt)),
+      NguyenWidrowInitialization<arma::mat>
+  >conn3_18(std::get<3>(layer2), std::get<10>(layer3), std::get<18>(conn3Opt), 5, 5);
   
   ConvConnection<
-  decltype(std::get<0>(layer2)),
-  decltype(std::get<0>(layer3)),
-  decltype(std::get<0>(conn3Opt)),
-  NguyenWidrowInitialization<arma::mat>,
-  arma::mat>conn3_19(std::get<3>(layer2), std::get<11>(layer3),
-                     std::get<19>(conn3Opt), 5, 5);
+      decltype(std::get<0>(layer2)),
+      decltype(std::get<0>(layer3)),
+      decltype(std::get<0>(conn3Opt)),
+      NguyenWidrowInitialization<arma::mat>
+  >conn3_19(std::get<3>(layer2), std::get<11>(layer3), std::get<19>(conn3Opt), 5, 5);
   
   auto conn3 = std::tie(conn3_0, conn3_1, conn3_2, conn3_3, conn3_4,
                         conn3_5, conn3_6, conn3_7, conn3_8, conn3_9,
@@ -692,7 +665,7 @@ BOOST_AUTO_TEST_CASE(LeNet1Test)
   
   // 120 full connections between layer4(H4) and 10 sub-layers for layer5
   auto conn5Opt = genTuple<120>(
-      [&](size_t i)
+      [&](size_t )
       {
         return SteepestDescent<arma::mat, arma::mat>(4, 4, lr5, mom5);
       });
@@ -703,8 +676,10 @@ BOOST_AUTO_TEST_CASE(LeNet1Test)
       decltype(std::get<0>(layer5Sub)),
       decltype(std::get<0>(conn5Opt)),
       NguyenWidrowInitialization<arma::mat>,
-      arma::mat> >(
-      layer4, layer5Sub, conn5Opt, 4, 4, make_index_sequence<120>());
+      ValidConvolution,
+      ValidConvolution,
+      RotatedKernelFullConvolution,
+      arma::mat> >(layer4, layer5Sub, conn5Opt, 4, 4, make_index_sequence<120>());
   
   // Bias for neurons in layer1(H1)
   auto layer1biasOpt = genTuple<4>(
