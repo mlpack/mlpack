@@ -16,6 +16,10 @@
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
 #include <mlpack/methods/ann/connections/connection_traits.hpp>
 
+#include "sstream"
+#include "fstream"
+#include "string"
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -151,6 +155,26 @@ class CNN
   //! Get the error of the network.
   double Error() const { return trainError; }
 
+  // Save weights of all connection modules to specified file.
+  void SaveWeights(std::string file)
+  {
+    std::ofstream outFile(file);
+    std::stringstream ss;
+    SaveWeights(network, ss);
+    outFile << ss.rdbuf();
+    outFile.close();
+  }
+  
+  // Load saved weights for all connection modules from specified file.
+  void LoadWeights(std::string file)
+  {
+    std::ifstream inFile(file);
+    std::stringstream ss;
+    ss << inFile.rdbuf();
+    LoadWeights(network, ss);
+    inFile.close();
+  }
+  
  private:
   /**
    * Helper function to reset all layer module
@@ -474,7 +498,7 @@ class CNN
     Apply<I + 1, Tp...>(t);
   }
 
- /**
+  /**
    * Helper function to iterate through all connection modules and to build
    * gradient storage.
    *
@@ -516,6 +540,68 @@ class CNN
         std::get<I>(t).Weights().n_cols, arma::fill::zeros));
 
     Layer<I + 1, Tp...>(t);
+  }
+  
+  /**
+   * Helper function to save weights of all connection modules.
+   *
+   * enable_if (SFINAE) is used to iterate through the network connections.
+   * The general case peels off the first type and recurses, as usual with
+   * variadic function templates.
+   */
+  template<size_t I = 1, typename... Tp>
+  typename std::enable_if<I >= sizeof...(Tp), void>::type
+  SaveWeights(std::tuple<Tp...>&, std::stringstream& /* unused */) { }
+  
+  template<size_t I = 1, typename... Tp>
+  typename std::enable_if<I < sizeof...(Tp), void>::type
+  SaveWeights(std::tuple<Tp...>& t, std::stringstream& ss)
+  {
+    SaveWeightsConnection(std::get<I>(t), ss);
+    SaveWeights<I + 2, Tp...>(t, ss);
+  }
+  
+  template<size_t I = 0, typename... Tp>
+  typename std::enable_if<I == sizeof...(Tp), void>::type
+  SaveWeightsConnection(std::tuple<Tp...>&, std::stringstream& /* unused */) { }
+  
+  template<size_t I = 0, typename... Tp>
+  typename std::enable_if<I < sizeof...(Tp), void>::type
+  SaveWeightsConnection(std::tuple<Tp...>& t, std::stringstream& ss)
+  {
+    std::get<I>(t).Weights().save(ss);
+    SaveWeightsConnection<I + 1, Tp...>(t, ss);
+  }
+  
+  /**
+   * Helper function to load saved weights for all connection modules.
+   *
+   * enable_if (SFINAE) is used to iterate through the network connections.
+   * The general case peels off the first type and recurses, as usual with
+   * variadic function templates.
+   */
+  template<size_t I = 1, typename... Tp>
+  typename std::enable_if<I >= sizeof...(Tp), void>::type
+  LoadWeights(std::tuple<Tp...>&, std::stringstream& /* unused */) { }
+  
+  template<size_t I = 1, typename... Tp>
+  typename std::enable_if<I < sizeof...(Tp), void>::type
+  LoadWeights(std::tuple<Tp...>& t, std::stringstream& ss)
+  {
+    LoadWeightsConnection(std::get<I>(t), ss);
+    LoadWeights<I + 2, Tp...>(t, ss);
+  }
+  
+  template<size_t I = 0, typename... Tp>
+  typename std::enable_if<I == sizeof...(Tp), void>::type
+  LoadWeightsConnection(std::tuple<Tp...>&, std::stringstream& /* unused */) { }
+  
+  template<size_t I = 0, typename... Tp>
+  typename std::enable_if<I < sizeof...(Tp), void>::type
+  LoadWeightsConnection(std::tuple<Tp...>& t, std::stringstream& ss)
+  {
+    std::get<I>(t).Weights().load(ss);
+    LoadWeightsConnection<I + 1, Tp...>(t, ss);
   }
 
   //! The connection modules used to build the network.
