@@ -24,10 +24,14 @@
   #include <sys/time.h>   // timeval, gettimeofday()
   #include <unistd.h>     // flags like  _POSIX_VERSION
 #elif defined(_WIN32)
-  #include <windows.h>  //GetSystemTimeAsFileTime(),
+  #ifndef NOMINMAX
+    #define NOMINMAX // Don't define min and max macros.
+  #endif
+  #include <windows.h>  // GetSystemTimeAsFileTime(),
                         // QueryPerformanceFrequency(),
                         // QueryPerformanceCounter()
-  #include <winsock.h>  //timeval on windows
+  #include <winsock.h>  // timeval on windows
+  #undef NOMINMAX
 
   // uint64_t isn't defined on every windows.
   #if !defined(HAVE_UINT64_T)
