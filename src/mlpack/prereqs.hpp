@@ -3,6 +3,19 @@
  *
  * The core includes that mlpack expects; standard C++ includes and Armadillo.
  */
+
+// Clean up unfortunate Windows preprocessor definitions, even if this file was
+// already included.  Use std::min and std::max!
+#ifdef _WIN32
+  #ifdef min
+    #undef min
+  #endif
+
+  #ifdef max
+    #undef max
+  #endif
+#endif
+
 #ifndef __MLPACK_PREREQS_HPP
 #define __MLPACK_PREREQS_HPP
 
