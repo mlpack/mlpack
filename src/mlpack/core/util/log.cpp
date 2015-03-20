@@ -55,15 +55,15 @@ void Log::Assert(bool condition, const std::string& message)
   {
 #ifndef _WIN32
     void* array[25];
-    size_t size = backtrace (array, sizeof(array)/sizeof(void*));
+    size_t size = backtrace(array, sizeof(array) / sizeof(void*));
     char** messages = backtrace_symbols(array, size);
 
-    // skip first stack frame (points here)
+    // Skip first stack frame (points here).
     for (size_t i = 1; i < size && messages != NULL; ++i)
     {
       char *mangledName = 0, *offsetBegin = 0, *offsetEnd = 0;
 
-      // find parantheses and +address offset surrounding mangled name
+      // Find parentheses and +address offset surrounding mangled name.
       for (char *p = messages[i]; *p; ++p)
       {
         if (*p == '(')
@@ -81,7 +81,7 @@ void Log::Assert(bool condition, const std::string& message)
         }
       }
 
-      // if the line could be processed, attempt to demangle the symbol
+      // If the line could be processed, attempt to demangle the symbol.
       if (mangledName && offsetBegin && offsetEnd &&
           mangledName < offsetBegin)
       {
@@ -92,7 +92,7 @@ void Log::Assert(bool condition, const std::string& message)
         int status;
         char* realName = abi::__cxa_demangle(mangledName, 0, 0, &status);
 
-        // if demangling is successful, output the demangled function name
+        // If demangling is successful, output the demangled function name.
         if (status == 0)
         {
           Log::Debug << "[bt]: (" << i << ") " << messages[i] << " : "
@@ -100,7 +100,7 @@ void Log::Assert(bool condition, const std::string& message)
                     << std::endl;
 
         }
-        // otherwise, output the mangled function name
+        // Otherwise, output the mangled function name.
         else
         {
           Log::Debug << "[bt]: (" << i << ") " << messages[i] << " : "
@@ -109,7 +109,7 @@ void Log::Assert(bool condition, const std::string& message)
         }
         free(realName);
       }
-      // otherwise, print the whole line
+      // Otherwise, print the whole line.
       else
       {
           Log::Debug << "[bt]: (" << i << ") " << messages[i] << std::endl;
@@ -122,7 +122,6 @@ void Log::Assert(bool condition, const std::string& message)
     free(messages);
 #endif
 
-    //backtrace_symbols_fd (array, size, 2);
     exit(1);
   }
 }
