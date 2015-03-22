@@ -1,0 +1,13 @@
+#ifndef __MLPACK_CORE_UTIL_BACKTRACE_HPP
+#define __MLPACK_CORE_UTIL_BACKTRACE_HPP
+
+namespace mlpack {
+
+#cmakedefine01 Backtrace_FOUND
+#if Backtrace_FOUND
+  #include <@Backtrace_HEADER@>
+#endif
+
+}; //namespace mlpack
+
+#endif

@@ -7,10 +7,10 @@
 #ifndef _WIN32
   #include <cstddef>
   #include <cxxabi.h>
-  #include <execinfo.h>
 #endif
 
 #include "log.hpp"
+#include "backtrace.hpp"
 
 // Color code escape sequences -- but not on Windows.
 #ifndef _WIN32
@@ -53,7 +53,7 @@ void Log::Assert(bool condition, const std::string& message)
 {
   if (!condition)
   {
-#ifndef _WIN32
+#if Backtrace_FOUND
     void* array[25];
     size_t size = backtrace(array, sizeof(array) / sizeof(void*));
     char** messages = backtrace_symbols(array, size);
@@ -118,7 +118,7 @@ void Log::Assert(bool condition, const std::string& message)
 #endif
     Log::Debug << message << std::endl;
 
-#ifndef _WIN32
+#if Backtrace_FOUND
     free(messages);
 #endif
 

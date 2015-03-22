@@ -17,6 +17,9 @@ option(ARMA_EXTRA_DEBUG "Compile with extra Armadillo debugging symbols." OFF)
 option(MATLAB_BINDINGS "Compile MATLAB bindings if MATLAB is found." OFF)
 option(TEST_VERBOSE "Run test cases with verbose output." OFF)
 
+# Include modules in the CMake directory.
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
+
 # This is as of yet unused.
 #option(PGO "Use profile-guided optimization if not a debug build" ON)
 
@@ -56,6 +59,20 @@ if(CMAKE_COMPILER_IS_GNUCC AND PROFILE)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 endif(CMAKE_COMPILER_IS_GNUCC AND PROFILE)
 
+# mlpack uses backtrace() facilities. On some systems (e.g., GNU/Linux), it
+# resides in libc itself and requires <execinfo.h>; on other (e.g., OpenBSD)
+# it's provided by a separate library.
+find_package(Backtrace)
+if(Backtrace_FOUND)
+  include_directories(${Backtrace_INCLUDE_DIRS})
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Backtrace_LIBRARIES}")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${Backtrace_LIBRARIES}")
+endif(Backtrace_FOUND)
+
+# Generate the backtrace header file.
+configure_file(${CMAKE_MODULE_PATH}/backtrace.h.in
+    ${CMAKE_SOURCE_DIR}/src/mlpack/core/util/backtrace.hpp)
+
 # If the user asked for running test cases with verbose output, turn that on.
 if(TEST_VERBOSE)
   add_definitions(-DTEST_VERBOSE)
@@ -77,9 +94,6 @@ endif(ARMA_EXTRA_DEBUG)
 #   BOOST_ROOT - root of Boost installation
 #   BOOST_INCLUDEDIR - include directory for Boost
 #   BOOST_LIBRARYDIR - library directory for Boost
-
-# Include modules in the CMake directory.
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
 find_package(Armadillo 3.6.0 REQUIRED)
 
