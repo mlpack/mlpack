@@ -1,10 +1,12 @@
 /**
- * @file to_string_test.cpp
+ * @file ToStringTest.cpp
  * @author Ryan Birmingham
  *
- * Test of the toString functionality.
+ * Test of the AugmentedLagrangian class using the test functions defined in
+ * aug_lagrangian_test_functions.hpp.
  **/
 
+#include <mlpack/core.hpp>
 #include <mlpack/core.hpp>
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -13,6 +15,7 @@
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/core/metrics/mahalanobis_distance.hpp>
 
+#include <mlpack/core/kernels/pspectrum_string_kernel.hpp>
 #include <mlpack/core/kernels/pspectrum_string_kernel.hpp>
 #include <mlpack/core/kernels/example_kernel.hpp>
 
