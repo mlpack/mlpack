@@ -41,6 +41,12 @@ if(UNIX AND NOT APPLE)
     target_link_libraries(mlpack rt)
 endif(UNIX AND NOT APPLE)
 
+# Log::Assert may require linking against whatever provides backtrace
+# functionality.
+if(Backtrace_FOUND)
+  target_link_libraries(mlpack ${Backtrace_LIBRARIES})
+endif(Backtrace_FOUND)
+
 # Collect all header files in the library.
 file(GLOB_RECURSE INCLUDE_H_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)
 file(GLOB_RECURSE INCLUDE_HPP_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp)

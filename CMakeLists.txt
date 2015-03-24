@@ -65,8 +65,6 @@ endif(CMAKE_COMPILER_IS_GNUCC AND PROFILE)
 find_package(Backtrace)
 if(Backtrace_FOUND)
   include_directories(${Backtrace_INCLUDE_DIRS})
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Backtrace_LIBRARIES}")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${Backtrace_LIBRARIES}")
 endif(Backtrace_FOUND)
 
 # Generate the backtrace header file.
