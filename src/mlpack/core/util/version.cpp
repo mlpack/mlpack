@@ -8,7 +8,7 @@
 
 #include <sstream>
 
-// If we are not an svn revision, just use the macros to assemble the version
+// If we are not a git revision, just use the macros to assemble the version
 // name.
 std::string mlpack::util::GetVersion()
 {

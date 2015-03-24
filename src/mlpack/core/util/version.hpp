@@ -9,8 +9,8 @@
 
 #include <string>
 
-// The version of mlpack.  If this is svn trunk, this will be a version with
-// higher number than the most recent release.
+// The version of mlpack.  If this is a git repository, this will be a version
+// with higher number than the most recent release.
 #define __MLPACK_VERSION_MAJOR 1
 #define __MLPACK_VERSION_MINOR "x"
 #define __MLPACK_VERSION_PATCH "x"
@@ -20,8 +20,8 @@ namespace mlpack {
 namespace util {
 
 /**
- * This will return either "mlpack x.y.z" or "mlpack trunk-rXXXXX" depending on
- * whether or not this is a stable version of mlpack or an svn revision.
+ * This will return either "mlpack x.y.z" or "mlpack master-XXXXXXX" depending on
+ * whether or not this is a stable version of mlpack or a git repository.
  */
 std::string GetVersion();
 
