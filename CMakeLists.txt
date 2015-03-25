@@ -257,9 +257,8 @@ endif (WIN32)
 find_package(Git)
 set (USING_GIT "NO")
 if (GIT_FOUND)
-  # Run svn info to find out if this is a working copy.  If the return code is
-  # not 0, then it isn't.  The following line is taken from
-  # FindSubversion.cmake...
+  # Run 'git rev-parse HEAD' to find out if this is a working copy. If the
+  # return code is not 0, then it isn't.
   execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       OUTPUT_VARIABLE MLPACK_TMP_REV_INFO
@@ -269,13 +268,12 @@ if (GIT_FOUND)
   if (${MLPACK_TMP_REV_INFO_RESULT} EQUAL 0)
     set (USING_GIT "YES")
     add_definitions(-D__MLPACK_GIT_VERSION)
-    include(CMake/CreateGitVersionHeader.cmake)
 
     add_custom_target(mlpack_gitversion ALL
         COMMAND ${CMAKE_COMMAND} -P CMake/CreateGitVersionHeader.cmake
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMENT "Updating gitnversion.hpp (if necessary)")
-  # Add svnversion.hpp to the list of sources.
+  # Add gitversion.hpp to the list of sources.
   set(MLPACK_SRCS ${MLPACK_SRCS}
       "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/gitversion.hpp")
   endif (${MLPACK_TMP_REV_INFO_RESULT} EQUAL 0)

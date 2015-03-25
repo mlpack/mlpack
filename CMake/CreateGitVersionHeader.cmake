@@ -1,6 +1,6 @@
-# Using the CMake subversion tools, create svnversion.hpp, which just contains
+# Using the CMake tools to create the gitversion.hpp, which just contains
 # the implementation of GetVersion() assuming that we are working inside of a
-# subversion repository.
+# git repository.
 find_package(Git)
 
 execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
