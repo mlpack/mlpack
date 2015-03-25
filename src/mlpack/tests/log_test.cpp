@@ -10,8 +10,6 @@
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
 
-#include <mlpack/core/util/backtrace.hpp>
-
 using namespace mlpack;
 
 BOOST_AUTO_TEST_SUITE(LogTest);

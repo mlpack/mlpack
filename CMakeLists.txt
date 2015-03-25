@@ -65,11 +65,9 @@ endif(CMAKE_COMPILER_IS_GNUCC AND PROFILE)
 find_package(Backtrace)
 if(Backtrace_FOUND)
   include_directories(${Backtrace_INCLUDE_DIRS})
+  add_definitions(-DBACKTRACE_FOUND)
+  add_definitions(-DBACKTRACE_HEADER="${Backtrace_HEADER}")
 endif(Backtrace_FOUND)
-
-# Generate the backtrace header file.
-configure_file(${CMAKE_MODULE_PATH}/backtrace.h.in
-    ${CMAKE_SOURCE_DIR}/src/mlpack/core/util/backtrace.hpp)
 
 # If the user asked for running test cases with verbose output, turn that on.
 if(TEST_VERBOSE)
