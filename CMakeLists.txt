@@ -272,7 +272,7 @@ if (GIT_FOUND)
     add_custom_target(mlpack_gitversion ALL
         COMMAND ${CMAKE_COMMAND} -P CMake/CreateGitVersionHeader.cmake
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Updating gitnversion.hpp (if necessary)")
+        COMMENT "Updating gitversion.hpp (if necessary)")
   # Add gitversion.hpp to the list of sources.
   set(MLPACK_SRCS ${MLPACK_SRCS}
       "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/gitversion.hpp")
