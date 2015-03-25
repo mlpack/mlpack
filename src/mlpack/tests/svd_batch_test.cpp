@@ -33,6 +33,29 @@ BOOST_AUTO_TEST_CASE(SVDBatchConvergenceElementTest)
                    amf.TerminationPolicy().MaxIterations());
 }
 
+//! This is used to ensure we start from the same initial point.
+class SpecificRandomInitialization
+{
+ public:
+  SpecificRandomInitialization(const size_t n, const size_t r, const size_t m) :
+      W(arma::randu<arma::mat>(n, r)),
+      H(arma::randu<arma::mat>(r, m)) { }
+
+  template<typename MatType>
+  inline void Initialize(const MatType& /* V */,
+                         const size_t /* r */,
+                         arma::mat& W,
+                         arma::mat& H)
+  {
+    W = this->W;
+    H = this->H;
+  }
+
+ private:
+  arma::mat W;
+  arma::mat H;
+};
+
 /**
  * Make sure the momentum is working okay.
  */
@@ -60,32 +83,24 @@ BOOST_AUTO_TEST_CASE(SVDBatchMomentumTest)
   // Fill sparse matrix.
   sp_mat cleanedData = arma::sp_mat(locations, values, maxUserID, maxItemID);
 
-  // Explicitly setting the random seed forces the random initialization to be
-  // the same.  There may be a better way to do this.
-  mlpack::math::RandomSeed(10);
+  // Create the initial matrices.
+  SpecificRandomInitialization sri(cleanedData.n_rows, 2, cleanedData.n_cols);
+
   ValidationRMSETermination<sp_mat> vrt(cleanedData, 2000);
   AMF<ValidationRMSETermination<sp_mat>,
-      RandomInitialization,
-      SVDBatchLearning> amf_1(vrt,
-                              RandomInitialization(),
-                              SVDBatchLearning(0.0009, 0, 0, 0));
+      SpecificRandomInitialization,
+      SVDBatchLearning> amf1(vrt, sri, SVDBatchLearning(0.0009, 0, 0, 0));
 
-  mat m1,m2;
-  double RMSE_1 = amf_1.Apply(cleanedData, 2, m1, m2);
-  size_t iter_1 = amf_1.TerminationPolicy().Iteration();
+  mat m1, m2;
+  const double regularRMSE = amf1.Apply(cleanedData, 2, m1, m2);
 
-  mlpack::math::RandomSeed(10);
   AMF<ValidationRMSETermination<sp_mat>,
-      RandomInitialization,
-      SVDBatchLearning> amf_2(vrt,
-                              RandomInitialization(),
-                              SVDBatchLearning(0.0009, 0, 0, 0.8));
+      SpecificRandomInitialization,
+      SVDBatchLearning> amf2(vrt, sri, SVDBatchLearning(0.0009, 0, 0, 0.8));
 
-  double RMSE_2 = amf_2.Apply(cleanedData, 2, m1, m2);
-  size_t iter_2 = amf_2.TerminationPolicy().Iteration();
+  const double momentumRMSE = amf2.Apply(cleanedData, 2, m1, m2);
 
-  BOOST_REQUIRE_LE(RMSE_2, RMSE_1);
-  BOOST_REQUIRE_LE(iter_2, iter_1);
+  BOOST_REQUIRE_LE(momentumRMSE, regularRMSE + 0.05);
 }
 
 /**
@@ -115,27 +130,24 @@ BOOST_AUTO_TEST_CASE(SVDBatchRegularizationTest)
   // Fill sparse matrix.
   sp_mat cleanedData = arma::sp_mat(locations, values, maxUserID, maxItemID);
 
-  mlpack::math::RandomSeed(10);
+  // Create the initial matrices.
+  SpecificRandomInitialization sri(cleanedData.n_rows, 2, cleanedData.n_cols);
+
   ValidationRMSETermination<sp_mat> vrt(cleanedData, 2000);
   AMF<ValidationRMSETermination<sp_mat>,
-      RandomInitialization,
-      SVDBatchLearning> amf_1(vrt,
-                              RandomInitialization(),
-                              SVDBatchLearning(0.0009, 0, 0, 0));
+      SpecificRandomInitialization,
+      SVDBatchLearning> amf1(vrt, sri, SVDBatchLearning(0.0009, 0, 0, 0));
 
   mat m1, m2;
-  double RMSE_1 = amf_1.Apply(cleanedData, 2, m1, m2);
+  double regularRMSE = amf1.Apply(cleanedData, 2, m1, m2);
 
-  mlpack::math::RandomSeed(10);
   AMF<ValidationRMSETermination<sp_mat>,
-      RandomInitialization,
-      SVDBatchLearning> amf_2(vrt,
-                              RandomInitialization(),
-                              SVDBatchLearning(0.0009, 0.5, 0.5, 0.8));
+      SpecificRandomInitialization,
+      SVDBatchLearning> amf2(vrt, sri, SVDBatchLearning(0.0009, 0.5, 0.5, 0.8));
 
-  double RMSE_2 = amf_2.Apply(cleanedData, 2, m1, m2);
+  double momentumRMSE = amf2.Apply(cleanedData, 2, m1, m2);
 
-  BOOST_REQUIRE_LE(RMSE_2, RMSE_1);
+  BOOST_REQUIRE_LE(momentumRMSE, regularRMSE + 0.05);
 }
 
 /**
@@ -143,7 +155,6 @@ BOOST_AUTO_TEST_CASE(SVDBatchRegularizationTest)
  */
 BOOST_AUTO_TEST_CASE(SVDBatchNegativeElementTest)
 {
-  mlpack::math::RandomSeed(std::time(NULL));
   // Create two 5x3 matrices that we should be able to recover.
   mat testLeft;
   testLeft.randu(5, 3);

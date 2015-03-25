@@ -23,7 +23,6 @@ using namespace arma;
  */
 BOOST_AUTO_TEST_CASE(SVDIncompleteIncrementalConvergenceTest)
 {
-  mlpack::math::RandomSeed(10);
   sp_mat data;
   data.sprandn(1000, 1000, 0.2);
 
@@ -38,7 +37,7 @@ BOOST_AUTO_TEST_CASE(SVDIncompleteIncrementalConvergenceTest)
   amf.Apply(data, 2, m1, m2);
 
   BOOST_REQUIRE_NE(amf.TerminationPolicy().Iteration(),
-                    amf.TerminationPolicy().MaxIterations());
+                   amf.TerminationPolicy().MaxIterations());
 }
 
 /**
@@ -46,7 +45,6 @@ BOOST_AUTO_TEST_CASE(SVDIncompleteIncrementalConvergenceTest)
  */
 BOOST_AUTO_TEST_CASE(SVDCompleteIncrementalConvergenceTest)
 {
-  mlpack::math::RandomSeed(10);
   sp_mat data;
   data.sprandn(1000, 1000, 0.2);
 
@@ -62,9 +60,31 @@ BOOST_AUTO_TEST_CASE(SVDCompleteIncrementalConvergenceTest)
   amf.Apply(data, 2, m1, m2);
 
   BOOST_REQUIRE_NE(amf.TerminationPolicy().Iteration(),
-                    amf.TerminationPolicy().MaxIterations());
+                   amf.TerminationPolicy().MaxIterations());
 }
 
+//! This is used to ensure we start from the same initial point.
+class SpecificRandomInitialization
+{
+ public:
+  SpecificRandomInitialization(const size_t n, const size_t r, const size_t m) :
+      W(arma::randu<arma::mat>(n, r)),
+      H(arma::randu<arma::mat>(r, m)) { }
+
+  template<typename MatType>
+  inline void Initialize(const MatType& /* V */,
+                         const size_t /* r */,
+                         arma::mat& W,
+                         arma::mat& H)
+  {
+    W = this->W;
+    H = this->H;
+  }
+
+ private:
+  arma::mat W;
+  arma::mat H;
+};
 
 BOOST_AUTO_TEST_CASE(SVDIncompleteIncrementalRegularizationTest)
 {
@@ -91,29 +111,27 @@ BOOST_AUTO_TEST_CASE(SVDIncompleteIncrementalRegularizationTest)
   sp_mat cleanedData = arma::sp_mat(locations, values, maxUserID, maxItemID);
   sp_mat cleanedData2 = cleanedData;
 
-  mlpack::math::RandomSeed(10);
+  SpecificRandomInitialization sri(cleanedData.n_rows, 2, cleanedData.n_cols);
+
   ValidationRMSETermination<sp_mat> vrt(cleanedData, 2000);
   AMF<IncompleteIncrementalTermination<ValidationRMSETermination<sp_mat> >,
-      RandomInitialization,
-      SVDIncompleteIncrementalLearning> amf_1(vrt,
-                              RandomInitialization(),
-                              SVDIncompleteIncrementalLearning(0.001, 0, 0));
+      SpecificRandomInitialization,
+      SVDIncompleteIncrementalLearning> amf1(vrt, sri,
+      SVDIncompleteIncrementalLearning(0.001, 0, 0));
 
-  mat m1,m2;
-  double RMSE_1 = amf_1.Apply(cleanedData, 2, m1, m2);
+  mat m1, m2;
+  double regularRMSE = amf1.Apply(cleanedData, 2, m1, m2);
 
-  mlpack::math::RandomSeed(10);
   ValidationRMSETermination<sp_mat> vrt2(cleanedData2, 2000);
   AMF<IncompleteIncrementalTermination<ValidationRMSETermination<sp_mat> >,
-      RandomInitialization,
-      SVDIncompleteIncrementalLearning> amf_2(vrt2,
-                              RandomInitialization(),
-                              SVDIncompleteIncrementalLearning(0.001, 0.01, 0.01));
+      SpecificRandomInitialization,
+      SVDIncompleteIncrementalLearning> amf2(vrt2, sri,
+      SVDIncompleteIncrementalLearning(0.001, 0.01, 0.01));
 
   mat m3, m4;
-  double RMSE_2 = amf_2.Apply(cleanedData2, 2, m3, m4);
+  double regularizedRMSE = amf2.Apply(cleanedData2, 2, m3, m4);
 
-  BOOST_REQUIRE_LT(RMSE_2, RMSE_1);
+  BOOST_REQUIRE_LT(regularizedRMSE, regularRMSE + 0.075);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
