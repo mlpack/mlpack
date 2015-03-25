@@ -253,42 +253,44 @@ else (WIN32)
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
 endif (WIN32)
 
-# Determine whether or not this is a subversion repository, so that we can set
-# the trunk revision if necessary for --version (#309).
-find_package(Subversion)
-set (USING_SVNVERSION "NO")
-if (Subversion_FOUND)
+# Determine whether or not this is a git repository, so that we can set the
+# version number if necessary.
+
+find_package(Git)
+set (USING_GIT "NO")
+if (GIT_FOUND)
   # Run svn info to find out if this is a working copy.  If the return code is
   # not 0, then it isn't.  The following line is taken from
   # FindSubversion.cmake...
-  execute_process(COMMAND ${Subversion_SVN_EXECUTABLE} info ${CMAKE_SOURCE_DIR}
-      OUTPUT_VARIABLE MLPACK_TMP_WC_INFO
-      ERROR_VARIABLE MLPACK_TMP_WC_INFO_ERROR
-      RESULT_VARIABLE MLPACK_TMP_WC_INFO_RESULT
+  execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      OUTPUT_VARIABLE MLPACK_TMP_REV_INFO
+      ERROR_VARIABLE MLPACK_TMP_REV_INFO_ERROR
+      RESULT_VARIABLE MLPACK_TMP_REV_INFO_RESULT
       OUTPUT_STRIP_TRAILING_WHITESPACE)
-  if (${MLPACK_TMP_WC_INFO_RESULT} EQUAL 0)
-    set (USING_SVNVERSION "YES")
-    add_definitions(-D__MLPACK_SUBVERSION)
-    include(CMake/CreateSVNVersionHeader.cmake)
+  if (${MLPACK_TMP_REV_INFO_RESULT} EQUAL 0)
+    set (USING_GIT "YES")
+    add_definitions(-D__MLPACK_GIT_VERSION)
+    include(CMake/CreateGitVersionHeader.cmake)
 
-    add_custom_target(mlpack_svnversion ALL
-        COMMAND ${CMAKE_COMMAND} -P CMake/CreateSVNVersionHeader.cmake
+    add_custom_target(mlpack_gitversion ALL
+        COMMAND ${CMAKE_COMMAND} -P CMake/CreateGitVersionHeader.cmake
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Updating svnversion.hpp (if necessary)")
+        COMMENT "Updating gitnversion.hpp (if necessary)")
   # Add svnversion.hpp to the list of sources.
   set(MLPACK_SRCS ${MLPACK_SRCS}
-      "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/svnversion.hpp")
-  endif (${MLPACK_TMP_WC_INFO_RESULT} EQUAL 0)
-endif (Subversion_FOUND)
+      "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/gitversion.hpp")
+  endif (${MLPACK_TMP_REV_INFO_RESULT} EQUAL 0)
+endif (GIT_FOUND)
 
 # Recurse into the rest of the project.
 add_subdirectory(src/mlpack)
 
-if (USING_SVNVERSION STREQUAL "YES")
-  add_dependencies(mlpack mlpack_svnversion)
-endif (USING_SVNVERSION STREQUAL "YES")
+if (USING_GIT STREQUAL "YES")
+  add_dependencies(mlpack mlpack_gitversion)
+endif (USING_GIT STREQUAL "YES")
 
-# If we need to keep svnversion.hpp up to date, then make sure the mlpack target
+# If we need to keep gitversion.hpp up to date, then make sure the mlpack target
 # depends on it.
 
 # Make a target to generate the documentation.  If Doxygen isn't installed, then
