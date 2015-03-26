@@ -13,3 +13,8 @@ install:
   - mkdir build && cd build && cmake .. && make -j4 
 script:
   - ./bin/mlpack_test -p
+notifications:
+  email:
+    - mlpack-git@cc.gatech.edu
+  irc:
+    - "chat.freenode.net#mlpack"
