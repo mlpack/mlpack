@@ -141,8 +141,9 @@ inline void MeanShift<KernelType, MatType>::Cluster(
         bool isDuplicated = false;
         for (size_t k = 0; k < centroids.n_cols; ++k)
         {
-          arma::Col<double> delta = allCentroids.col(i) - centroids.col(k);
-          if (norm(delta, 2) < radius)
+          const double distance = metric::EuclideanDistance::Evaluate(
+              allCentroids.col(i), centroids.col(k));
+          if (distance < radius)
           {
             isDuplicated = true;
             assignments(i) = k;
