@@ -26,9 +26,9 @@ template<typename KernelType, typename MatType>
 MeanShift<KernelType, MatType>::MeanShift(const double radius,
                                           const size_t maxIterations,
                                           const KernelType kernel) :
+    radius(radius),
     maxIterations(maxIterations),
-    kernel(kernel),
-    radius(radius)
+    kernel(kernel)
 {
   // Nothing to do.
 }
@@ -43,12 +43,7 @@ void MeanShift<KernelType, MatType>::Radius(double radius)
 template<typename KernelType, typename MatType>
 double MeanShift<KernelType, MatType>::EstimateRadius(const MatType& data)
 {
-  neighbor::NeighborSearch<
-      neighbor::NearestNeighborSort,
-      metric::EuclideanDistance,
-      tree::BinarySpaceTree<bound::HRectBound<2>,
-            neighbor::NeighborSearchStat<neighbor::NearestNeighborSort> >
-  > neighborSearch(data);
+  neighbor::AllkNN neighborSearch(data);
 
   /**
    * For each point in dataset, select nNeighbors nearest points and get
