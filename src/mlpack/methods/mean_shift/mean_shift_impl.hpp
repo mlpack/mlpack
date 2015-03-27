@@ -86,7 +86,7 @@ MeanShift<
 CalcWeight(const arma::colvec& centroid, const arma::colvec& point,
            double& weight) {
   
-  double distance = metric.Evaluate(centroid, point);
+  double distance = EuclideanDistance::Evaluate(centroid, point);
   if (distance >= radius || distance == 0) {
     return false;
   }
@@ -149,7 +149,7 @@ Cluster(const MatType& data,
       arma::Col<double> mhVector = newCentroid - allCentroids.col(i);
       
       // If the mean shift vector is small enough, it has converged.
-      if (metric.Evaluate(newCentroid, allCentroids.col(i)) < 1e-3 * radius) {
+      if (EuclideanDistance::Evaluate(newCentroid, allCentroids.col(i)) < 1e-3 * radius) {
         
         // Determine if the new centroid is duplicate with old ones.
         bool isDuplicated = false;
