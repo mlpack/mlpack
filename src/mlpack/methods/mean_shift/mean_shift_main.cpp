@@ -11,6 +11,7 @@
 
 using namespace mlpack;
 using namespace mlpack::meanshift;
+using namespace mlpack::kernel;
 using namespace std;
 
 // Define parameters for the executable.
@@ -43,69 +44,73 @@ PARAM_DOUBLE("radius", "If distance of two centroids is less than radius "
              "Points with distance to current centroid less than radius "
              "will be used to calculate new centroid. ", "r", 0);
 
-int main(int argc, char** argv) {
-  
+int main(int argc, char** argv)
+{
   CLI::ParseCommandLine(argc, argv);
-  
+
   const string inputFile = CLI::GetParam<string>("inputFile");
   const double radius = CLI::GetParam<double>("radius");
   const double bandwidth = CLI::GetParam<double>("bandwidth");
   const int maxIterations = CLI::GetParam<int>("max_iterations");
-  
-  if (maxIterations < 0) {
+
+  if (maxIterations < 0)
+  {
     Log::Fatal << "Invalid value for maximum iterations (" << maxIterations <<
-    ")! Must be greater than or equal to 0." << endl;
+        ")! Must be greater than or equal to 0." << endl;
   }
-  
+
   // Make sure we have an output file if we're not doing the work in-place.
   if (!CLI::HasParam("in_place") && !CLI::HasParam("output_file") &&
-      !CLI::HasParam("centroid_file")) {
+      !CLI::HasParam("centroid_file"))
+  {
     Log::Warn << "--output_file, --in_place, and --centroid_file are not set; "
-    << "no results will be saved." << std::endl;
+        << "no results will be saved." << endl;
   }
-  
+
   arma::mat dataset;
   data::Load(inputFile, dataset, true); // Fatal upon failure.
   arma::mat centroids;
   arma::Col<size_t> assignments;
-  
-  kernel::GaussianKernel kernel(bandwidth);
-  
+
+  GaussianKernel kernel(bandwidth);
+
   MeanShift<> meanShift(radius, maxIterations, kernel);
+
   Timer::Start("clustering");
+  Log::Info << "Performing mean shift clustering..." << endl;
   meanShift.Cluster(dataset, assignments, centroids);
   Timer::Stop("clustering");
-  
-  if (CLI::HasParam("in_place")) {
-    // Add the column of assignments to the dataset; but we have to convert
-    // them to type double first.
+
+  Log::Info << "Found " << centroids.n_cols << " centroids." << endl;
+
+  if (CLI::HasParam("in_place"))
+  {
+    // Add the column of assignments to the dataset; but we have to convert them
+    // to type double first.
     arma::vec converted(assignments.n_elem);
     for (size_t i = 0; i < assignments.n_elem; i++)
       converted(i) = (double) assignments(i);
-    
+
     dataset.insert_rows(dataset.n_rows, trans(converted));
-    
+
     // Save the dataset.
     data::Save(inputFile, dataset);
-  } else {
-    
+  }
+  else
+  {
     // Convert the assignments to doubles.
     arma::vec converted(assignments.n_elem);
     for (size_t i = 0; i < assignments.n_elem; i++)
       converted(i) = (double) assignments(i);
-    
+
     dataset.insert_rows(dataset.n_rows, trans(converted));
-    
+
     // Now save, in the different file.
     string outputFile = CLI::GetParam<string>("output_file");
     data::Save(outputFile, dataset);
+  }
 
-  }
-  
   // Should we write the centroids to a file?
-  if (CLI::HasParam("centroid_file")) {
+  if (CLI::HasParam("centroid_file"))
     data::Save(CLI::GetParam<std::string>("centroid_file"), centroids);
-  }
-  
-  
 }
