@@ -2,17 +2,19 @@
  * @file mean_shift_impl.hpp
  * @author Shangtong Zhang
  *
- * Mean Shift clustering
+ * Mean shift clustering implementation.
  */
+#ifndef __MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_IMPL_HPP
+#define __MLPACK_METHODS_MEAN_SHIFT_MEAN_SHIFT_IMPL_HPP
 
-#include "mean_shift.hpp"
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
 #include <mlpack/core/kernels/kernel_traits.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search_stat.hpp>
 
-
+// In case it hasn't been included yet.
+#include "mean_shift.hpp"
 
 namespace mlpack {
 namespace meanshift {
@@ -187,6 +189,7 @@ Cluster(const MatType& data,
 
 }
 
-}; // namespace meanshift
-}; // namespace mlpack
+} // namespace meanshift
+} // namespace mlpack
 
+#endif
