@@ -28,9 +28,9 @@ MeanShift<KernelType, MatType>::MeanShift(const double radius,
                                           const KernelType kernel) :
     maxIterations(maxIterations),
     kernel(kernel),
+    radius(radius)
 {
-  // Set the radius; estimate if needed.
-  Radius(radius);
+  // Nothing to do.
 }
 
 template<typename KernelType, typename MatType>
