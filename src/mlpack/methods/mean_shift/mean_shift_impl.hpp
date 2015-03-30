@@ -102,7 +102,7 @@ inline void MeanShift<KernelType, MatType>::Cluster(
   for (size_t i = 0; i < data.n_cols; ++i)
   {
     // Initial centroid is the point itself.
-    allCentroids.col(i) = data.col(i);
+    allCentroids.col(i) = data.unsafe_col(i);
 
     for (size_t completedIterations = 0; completedIterations < maxIterations;
          completedIterations++)
@@ -116,20 +116,20 @@ inline void MeanShift<KernelType, MatType>::Cluster(
       for (size_t j = 0; j < data.n_cols; ++j)
       {
         double weight = 0;
-        if (CalcWeight(allCentroids.col(i), data.col(j), weight))
+        if (CalcWeight(allCentroids.unsafe_col(i), data.unsafe_col(j), weight))
         {
           sumWeight += weight;
-          newCentroid += weight * data.col(j);
+          newCentroid += weight * data.unsafe_col(j);
         }
       }
 
       newCentroid /= sumWeight;
 
       // Calculate the mean shift vector.
-      arma::Col<double> mhVector = newCentroid - allCentroids.col(i);
+      arma::Col<double> mhVector = newCentroid - allCentroids.unsafe_col(i);
 
       // If the mean shift vector is small enough, it has converged.
-      if (metric::EuclideanDistance::Evaluate(newCentroid, allCentroids.col(i))
+      if (metric::EuclideanDistance::Evaluate(newCentroid, allCentroids.unsafe_col(i))
           < 1e-3 * radius)
       {
         // Determine if the new centroid is duplicate with old ones.
@@ -137,7 +137,7 @@ inline void MeanShift<KernelType, MatType>::Cluster(
         for (size_t k = 0; k < centroids.n_cols; ++k)
         {
           const double distance = metric::EuclideanDistance::Evaluate(
-              allCentroids.col(i), centroids.col(k));
+              allCentroids.unsafe_col(i), centroids.unsafe_col(k));
           if (distance < radius)
           {
             isDuplicated = true;
@@ -151,12 +151,12 @@ inline void MeanShift<KernelType, MatType>::Cluster(
           // This centroid is a new centroid.
           if (centroids.n_cols == 0)
           {
-            centroids.insert_cols(0, allCentroids.col(i));
+            centroids.insert_cols(0, allCentroids.unsafe_col(i));
             assignments(i) = 0;
           }
           else
           {
-            centroids.insert_cols(centroids.n_cols, allCentroids.col(i));
+            centroids.insert_cols(centroids.n_cols, allCentroids.unsafe_col(i));
             assignments(i) = centroids.n_cols - 1;
           }
         }

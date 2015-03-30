@@ -116,13 +116,10 @@ class MeanShift
   //! Instantiated kernel.
   KernelType kernel;
   
-  metric::EuclideanDistance metric;
-  
-  
 };
 
-}; // namespace meanshift
-}; // namespace mlpack
+} // namespace meanshift
+} // namespace mlpack
 
 // Include implementation.
 #include "mean_shift_impl.hpp"
