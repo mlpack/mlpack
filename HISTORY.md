@@ -44,61 +44,62 @@
   * Handle Newton method convergence better for
     SparseCoding::OptimizeDictionary() and make maximum iterations a parameter.
 
-  * Known bug: CosineTree construction may fail in some cases on i386 systems.
-    (#376)
+  * Known bug: CosineTree construction may fail in some cases on i386 systems
+    (#358).
 
 ### mlpack 1.0.10
 ###### 2014-08-29
   * Bugfix for NeighborSearch regression which caused very slow allknn/allkfn.
     Speeds are now restored to approximately 1.0.8 speeds, with significant
-    improvement for the cover tree.
+    improvement for the cover tree (#347).
 
   * Detect dependencies correctly when ARMA_USE_WRAPPER is not being defined
     (i.e., libarmadillo.so does not exist).
 
-  * Bugfix for compilation under Visual Studio.
+  * Bugfix for compilation under Visual Studio (#348).
 
 ### mlpack 1.0.9
 ###### 2014-07-28
   * GMM initialization is now safer and provides a working GMM when constructed
-    with only the dimensionality and number of Gaussians (#314).
+    with only the dimensionality and number of Gaussians (#301).
 
-  * Check for division by 0 in Forward-Backward Algorithm in HMMs (#314).
+  * Check for division by 0 in Forward-Backward Algorithm in HMMs (#301).
 
   * Fix MaxVarianceNewCluster (used when re-initializing clusters for k-means)
-    (#314).
+    (#301).
 
-  * Fixed implementation of Viterbi algorithm in HMM::Predict() (#316).
+  * Fixed implementation of Viterbi algorithm in HMM::Predict() (#303).
 
-  * Significant speedups for dual-tree algorithms using the cover tree (#243, #329) including a faster implementation of FastMKS.
+  * Significant speedups for dual-tree algorithms using the cover tree (#235,
+    #314) including a faster implementation of FastMKS.
 
-  * Fix for LRSDP optimizer so that it compiles and can be used (#325).
+  * Fix for LRSDP optimizer so that it compiles and can be used (#312).
 
   * CF (collaborative filtering) now expects users and items to be zero-indexed,
-    not one-indexed (#324).
+    not one-indexed (#311).
 
   * CF::GetRecommendations() API change: now requires the number of
     recommendations as the first parameter.  The number of users in the local
     neighborhood should be specified with CF::NumUsersForSimilarity().
 
-  * Removed incorrect PeriodicHRectBound (#30).
+  * Removed incorrect PeriodicHRectBound (#58).
 
   * Refactor LRSDP into LRSDP class and standalone function to be optimized
-    (#318).
+    (#305).
 
-  * Fix for centering in kernel PCA (#355).
+  * Fix for centering in kernel PCA (#337).
 
   * Added simulated annealing (SA) optimizer, contributed by Zhihao Lou.
 
   * HMMs now support initial state probabilities; these can be set in the
-    constructor, trained, or set manually with HMM::Initial() (#315).
+    constructor, trained, or set manually with HMM::Initial() (#302).
 
   * Added Nyström method for kernel matrix approximation by Marcus Edel.
 
   * Kernel PCA now supports using Nyström method for approximation.
 
   * Ball trees now work with dual-tree algorithms, via the BallBound<> bound
-    structure (#320); fixed by Yash Vadalia.
+    structure (#307); fixed by Yash Vadalia.
 
   * The NMF class is now AMF<>, and supports far more types of factorizations,
     by Sumedh Ghaisas.
@@ -113,19 +114,19 @@
 
 ### mlpack 1.0.8
 ###### 2014-01-06
-  * Memory leak in NeighborSearch index-mapping code fixed (#310).
+  * Memory leak in NeighborSearch index-mapping code fixed (#298).
 
   * GMMs can be trained using the existing model as a starting point by
-    specifying an additional boolean parameter to GMM::Estimate() (#308).
+    specifying an additional boolean parameter to GMM::Estimate() (#296).
 
   * Logistic regression implementation added in methods/logistic_regression (see
-    also #305).
+    also #293).
 
   * L-BFGS optimizer now returns its function via Function().
 
   * Version information is now obtainable via mlpack::util::GetVersion() or the
     __MLPACK_VERSION_MAJOR, __MLPACK_VERSION_MINOR, and  __MLPACK_VERSION_PATCH
-    macros (#309).
+    macros (#297).
 
   * Fix typos in allkfn and allkrann output.
 
@@ -140,23 +141,23 @@
   * Added collaborative filtering package (cf) that can provide recommendations
     when given users and items.
 
-  * Fix for correctness of Kernel PCA (kernel_pca) (#280).
+  * Fix for correctness of Kernel PCA (kernel_pca) (#270).
 
-  * Speedups for PCA and Kernel PCA (#204).
+  * Speedups for PCA and Kernel PCA (#198).
 
-  * Fix for correctness of Neighborhood Components Analysis (NCA) (#289).
+  * Fix for correctness of Neighborhood Components Analysis (NCA) (#279).
 
   * Minor speedups for dual-tree algorithms.
 
-  * Fix for Naive Bayes Classifier (nbc) (#279).
+  * Fix for Naive Bayes Classifier (nbc) (#269).
 
   * Added a ridge regression option to LinearRegression (linear_regression)
-    (#298).
+    (#286).
 
   * Gaussian Mixture Models (gmm::GMM<>) now support arbitrary covariance matrix
-    constraints (#294).
+    constraints (#283).
 
-  * MVU (mvu) removed because it is known to not work (#189).
+  * MVU (mvu) removed because it is known to not work (#183).
 
   * Minor updates and fixes for kernels (in mlpack::kernel).
 
@@ -166,7 +167,7 @@
 
 ### mlpack 1.0.5
 ###### 2013-05-01
-  * Speedups of cover tree traversers (#243).
+  * Speedups of cover tree traversers (#235).
 
   * Addition of rank-approximate nearest neighbors (RANN), found in
     src/mlpack/methods/rann/.
@@ -193,13 +194,13 @@
   * Force minimum Armadillo version to 2.4.2.
 
   * Better output of class types to streams; a class with a ToString() method
-    implemented can be sent to a stream with operator<<.  See #164.
+    implemented can be sent to a stream with operator<<.
 
-  * Change return type of GMM::Estimate() to double (#266).
+  * Change return type of GMM::Estimate() to double (#257).
 
   * Style fixes for k-means and RADICAL.
 
-  * Handle size_t support correctly with Armadillo 3.6.2 (#267).
+  * Handle size_t support correctly with Armadillo 3.6.2 (#258).
 
   * Add locality-sensitive hashing (LSH), found in src/mlpack/methods/lsh/.
 
@@ -214,7 +215,7 @@
     is not available.
 
   * NCA (neighborhood components analysis) now support an arbitrary optimizer
-    (#254), including stochastic gradient descent (#258).
+    (#245), including stochastic gradient descent (#249).
 
 ### mlpack 1.0.2
 ###### 2012-08-15
@@ -223,33 +224,33 @@
   * Added non-negative matrix factorization, found in src/mlpack/methods/nmf/.
 
   * Added experimental cover tree implementation, found in
-    src/mlpack/core/tree/cover_tree/ (#156).
+    src/mlpack/core/tree/cover_tree/ (#157).
 
-  * Better reporting of boost::program_options errors (#231).
+  * Better reporting of boost::program_options errors (#225).
 
-  * Fix for timers on Windows (#218, #217).
+  * Fix for timers on Windows (#212, #211).
 
-  * Fix for allknn and allkfn output (#210).
+  * Fix for allknn and allkfn output (#204).
 
-  * Sparse coding dictionary initialization is now a template parameter (#226).
+  * Sparse coding dictionary initialization is now a template parameter (#220).
 
 ### mlpack 1.0.1
 ###### 2012-03-03
   * Added kernel principal components analysis (kernel PCA), found in
-    src/mlpack/methods/kernel_pca/ (#47).
+    src/mlpack/methods/kernel_pca/ (#74).
 
-  * Fix for Lovasz-Theta AugLagrangian tests (#188).
+  * Fix for Lovasz-Theta AugLagrangian tests (#182).
 
-  * Fixes for allknn output (#191, #192).
+  * Fixes for allknn output (#185, #186).
 
-  * Added range search executable (#198).
+  * Added range search executable (#192).
 
   * Adapted citations in documentation to BiBTeX; no citations in -h output
-    (#201).
+    (#195).
 
-  * Stop use of 'const char*' and prefer 'std::string' (#183).
+  * Stop use of 'const char*' and prefer 'std::string' (#176).
 
-  * Support seeds for random numbers (#182).
+  * Support seeds for random numbers (#177).
 
 ### mlpack 1.0.0
 ###### 2011-12-17
