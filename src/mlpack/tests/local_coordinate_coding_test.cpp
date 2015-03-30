@@ -116,12 +116,4 @@ BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestDictionaryStep)
 
 }
 
-/*
-BOOST_AUTO_TEST_CASE(LocalCoordinateCodingTestWhole)
-{
-
-}
-*/
-
-
 BOOST_AUTO_TEST_SUITE_END();
