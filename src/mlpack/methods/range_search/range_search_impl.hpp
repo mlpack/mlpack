@@ -50,6 +50,8 @@ RangeSearch<MetricType, TreeType>::RangeSearch(
         : referenceSetIn),
     querySet(tree::TreeTraits<TreeType>::RearrangesDataset ? queryCopy
         : querySetIn),
+    referenceTree(NULL),
+    queryTree(NULL),
     treeOwner(!naive), // If in naive mode, we are not building any trees.
     hasQuerySet(true),
     naive(naive),
@@ -95,6 +97,7 @@ RangeSearch<MetricType, TreeType>::RangeSearch(
         : referenceSetIn),
     querySet(tree::TreeTraits<TreeType>::RearrangesDataset ? referenceCopy
         : referenceSetIn),
+    referenceTree(NULL),
     queryTree(NULL),
     treeOwner(!naive), // If in naive mode, we are not building any trees.
     hasQuerySet(false),
