@@ -17,11 +17,16 @@ namespace mlpack {
 namespace tree {
 
 //! This is the structure the cover tree map will use for traversal.
-template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+template<
+    typename MetricType,
+    typename RootPointPolicy,
+    typename StatisticType,
+    typename MatType
+>
 struct CoverTreeMapEntry
 {
   //! The node this entry refers to.
-  CoverTree<MetricType, RootPointPolicy, StatisticType>* node;
+  CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>* node;
   //! The score of the node.
   double score;
   //! The index of the parent node.
@@ -36,24 +41,34 @@ struct CoverTreeMapEntry
   }
 };
 
-template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+template<
+    typename MetricType,
+    typename RootPointPolicy,
+    typename StatisticType,
+    typename MatType
+>
 template<typename RuleType>
-CoverTree<MetricType, RootPointPolicy, StatisticType>::
+CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
 SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0)
 { /* Nothing to do. */ }
 
-template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+template<
+    typename MetricType,
+    typename RootPointPolicy,
+    typename StatisticType,
+    typename MatType
+>
 template<typename RuleType>
-void CoverTree<MetricType, RootPointPolicy, StatisticType>::
+void CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
 SingleTreeTraverser<RuleType>::Traverse(
     const size_t queryIndex,
-    CoverTree<MetricType, RootPointPolicy, StatisticType>& referenceNode)
+    CoverTree& referenceNode)
 {
   // This is a non-recursive implementation (which should be faster than a
   // recursive implementation).
-  typedef CoverTreeMapEntry<MetricType, RootPointPolicy, StatisticType>
+  typedef CoverTreeMapEntry<MetricType, RootPointPolicy, StatisticType, MatType>
       MapEntryType;
 
   // We will use this map as a priority queue.  Each key represents the scale,

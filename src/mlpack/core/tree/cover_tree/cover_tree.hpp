@@ -81,14 +81,17 @@ namespace tree {
  * @tparam MetricType Metric type to use during tree construction.
  * @tparam RootPointPolicy Determines which point to use as the root node.
  * @tparam StatisticType Statistic to be used during tree creation.
+ * @tparam MatType Type of matrix to build the tree on (generally mat or
+ *      sp_mat).
  */
 template<typename MetricType = metric::LMetric<2, true>,
          typename RootPointPolicy = FirstPointIsRoot,
-         typename StatisticType = EmptyStatistic>
+         typename StatisticType = EmptyStatistic,
+         typename MatType = arma::mat>
 class CoverTree
 {
  public:
-  typedef arma::mat Mat;
+  typedef MatType Mat;
 
   /**
    * Create the cover tree with the given dataset and given base.
@@ -100,7 +103,7 @@ class CoverTree
    * @param dataset Reference to the dataset to build a tree on.
    * @param base Base to use during tree building (default 2.0).
    */
-  CoverTree(const arma::mat& dataset,
+  CoverTree(const MatType& dataset,
             const double base = 2.0,
             MetricType* metric = NULL);
 
@@ -113,7 +116,7 @@ class CoverTree
    * @param metric Instantiated metric to use during tree building.
    * @param base Base to use during tree building (default 2.0).
    */
-  CoverTree(const arma::mat& dataset,
+  CoverTree(const MatType& dataset,
             MetricType& metric,
             const double base = 2.0);
 
@@ -148,7 +151,7 @@ class CoverTree
    *     any points in the far set).
    * @param usedSetSize The number of points used will be added to this number.
    */
-  CoverTree(const arma::mat& dataset,
+  CoverTree(const MatType& dataset,
             const double base,
             const size_t pointIndex,
             const int scale,
@@ -177,7 +180,7 @@ class CoverTree
    * @param furthestDescendantDistance Distance to furthest descendant point.
    * @param metric Instantiated metric (optional).
    */
-  CoverTree(const arma::mat& dataset,
+  CoverTree(const MatType& dataset,
             const double base,
             const size_t pointIndex,
             const int scale,
@@ -212,7 +215,7 @@ class CoverTree
   using BreadthFirstDualTreeTraverser = DualTreeTraverser<RuleType>;
 
   //! Get a reference to the dataset.
-  const arma::mat& Dataset() const { return dataset; }
+  const MatType& Dataset() const { return dataset; }
 
   //! Get the index of the point which this node represents.
   size_t Point() const { return point; }
@@ -337,7 +340,7 @@ class CoverTree
 
  private:
   //! Reference to the matrix which this tree is built on.
-  const arma::mat& dataset;
+  const MatType& dataset;
 
   //! Index of the point in the matrix which this node represents.
   size_t point;

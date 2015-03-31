@@ -1573,7 +1573,7 @@ void CheckCovering(const TreeType& node)
   if (node.NumChildren() == 0)
     return;
 
-  const arma::mat& dataset = node.Dataset();
+  const typename TreeType::Mat& dataset = node.Dataset();
   const size_t nodePoint = node.Point();
 
   // To ensure that this node satisfies the covering principle, we must ensure
@@ -1620,7 +1620,7 @@ void CheckIndividualSeparation(const TreeType& constantNode,
     return;
 
   // Now we know we are at the same scale, so make the comparison.
-  const arma::mat& dataset = constantNode.Dataset();
+  const typename TreeType::Mat& dataset = constantNode.Dataset();
   const size_t constantPoint = constantNode.Point();
   const size_t nodePoint = node.Point();
 
@@ -1732,6 +1732,38 @@ BOOST_AUTO_TEST_CASE(CoverTreeConstructionTest)
 
   // Each node's children must be separated by at least a certain value.
   CheckSeparation<CoverTree<>, LMetric<2, true> >(tree, tree);
+}
+
+/**
+ * Create a cover tree on sparse data and make sure it's accurate.
+ */
+BOOST_AUTO_TEST_CASE(SparseCoverTreeConstructionTest)
+{
+  arma::sp_mat dataset;
+  // 50-dimensional, 1000 point.
+  dataset.sprandu(50, 1000, 0.3);
+
+  typedef CoverTree<EuclideanDistance, FirstPointIsRoot, EmptyStatistic,
+      arma::sp_mat> TreeType;
+  TreeType tree(dataset);
+
+  // Ensure each leaf is only created once.
+  arma::vec counts;
+  counts.zeros(1000);
+  RecurseTreeCountLeaves(tree, counts);
+
+  for (size_t i = 0; i < 1000; ++i)
+    BOOST_REQUIRE_EQUAL(counts[i], 1);
+
+  // Each non-leaf should have a self-child.
+  CheckSelfChild<TreeType>(tree);
+
+  // Each node must satisfy the covering principle (its children must be less
+  // than or equal to a certain distance apart).
+  CheckCovering<TreeType, LMetric<2, true> >(tree);
+
+  // Each node's children must be separated by at least a certain value.
+  CheckSeparation<TreeType, LMetric<2, true> >(tree, tree);
 }
 
 /**

@@ -16,9 +16,15 @@
 namespace mlpack {
 namespace tree {
 
-template<typename MetricType, typename RootPointPolicy, typename StatisticType>
+template<
+    typename MetricType,
+    typename RootPointPolicy,
+    typename StatisticType,
+    typename MatType
+>
 template<typename RuleType>
-class CoverTree<MetricType, RootPointPolicy, StatisticType>::SingleTreeTraverser
+class CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+    SingleTreeTraverser
 {
  public:
   /**
