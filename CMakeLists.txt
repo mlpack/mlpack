@@ -292,12 +292,11 @@ endif (GIT_FOUND)
 # Recurse into the rest of the project.
 add_subdirectory(src/mlpack)
 
+# If we need to keep gitversion.hpp up to date, then make sure the mlpack target
+# depends on it.
 if (USING_GIT STREQUAL "YES")
   add_dependencies(mlpack mlpack_gitversion)
 endif (USING_GIT STREQUAL "YES")
-
-# If we need to keep gitversion.hpp up to date, then make sure the mlpack target
-# depends on it.
 
 # Make a target to generate the documentation.  If Doxygen isn't installed, then
 # I guess this option will just be unavailable.
