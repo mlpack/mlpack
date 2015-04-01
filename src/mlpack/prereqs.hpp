@@ -48,6 +48,10 @@
 // Now include Armadillo through the special mlpack extensions.
 #include <mlpack/core/arma_extend/arma_extend.hpp>
 
+// Ensure that the user isn't doing something stupid with their Armadillo
+// defines.
+#include <mlpack/core/util/arma_config_check.hpp>
+
 // On Visual Studio, disable C4519 (default arguments for function templates)
 // since it's by default an error, which doesn't even make any sense because
 // it's part of the C++11 standard.
