@@ -262,7 +262,6 @@ endif (WIN32)
 
 # Determine whether or not this is a git repository, so that we can set the
 # version number if necessary.
-
 find_package(Git)
 set (USING_GIT "NO")
 if (GIT_FOUND)
@@ -297,6 +296,20 @@ add_subdirectory(src/mlpack)
 if (USING_GIT STREQUAL "YES")
   add_dependencies(mlpack mlpack_gitversion)
 endif (USING_GIT STREQUAL "YES")
+
+# Create a target to generate arma_config.hpp, which is used to warn the user
+# when they are doing something stupid when linking something against mlpack.
+include(CMake/CreateArmaConfigInfo.cmake)
+
+add_custom_target(mlpack_arma_config ALL
+    COMMAND ${CMAKE_COMMAND}
+        -D ARMADILLO_INCLUDE_DIR="${ARMADILLO_INCLUDE_DIR}"
+        -P CMake/CreateArmaConfigInfo.cmake
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT "Updating arma_config.hpp (if necessary)")
+set(MLPACK_SRCS ${MLPACK_SRCS}
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
+add_dependencies(mlpack mlpack_arma_config)
 
 # Make a target to generate the documentation.  If Doxygen isn't installed, then
 # I guess this option will just be unavailable.
