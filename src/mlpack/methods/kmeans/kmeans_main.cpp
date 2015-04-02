@@ -13,7 +13,6 @@
 #include "hamerly_kmeans.hpp"
 #include "pelleg_moore_kmeans.hpp"
 #include "dtnn_kmeans.hpp"
-#include "dual_tree_kmeans.hpp"
 
 using namespace mlpack;
 using namespace mlpack::kmeans;
@@ -153,15 +152,12 @@ void FindLloydStepType(const InitialPartitionPolicy& ipp)
   else if (algorithm == "pelleg-moore")
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy,
         PellegMooreKMeans>(ipp);
-  else if (algorithm == "dtnn")
-    RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy,
-        DefaultDTNNKMeans>(ipp);
-  else if (algorithm == "dtnn-covertree")
-    RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy,
-        CoverTreeDTNNKMeans>(ipp);
   else if (algorithm == "dualtree")
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy,
-        DefaultDualTreeKMeans>(ipp);
+        DefaultDTNNKMeans>(ipp);
+  else if (algorithm == "dualtree-covertree")
+    RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy,
+        CoverTreeDTNNKMeans>(ipp);
   else if (algorithm == "naive")
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy, NaiveKMeans>(ipp);
   else
