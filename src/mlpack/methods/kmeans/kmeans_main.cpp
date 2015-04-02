@@ -154,10 +154,10 @@ void FindLloydStepType(const InitialPartitionPolicy& ipp)
         PellegMooreKMeans>(ipp);
   else if (algorithm == "dualtree")
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy,
-        DefaultDTNNKMeans>(ipp);
+        DefaultDualTreeKMeans>(ipp);
   else if (algorithm == "dualtree-covertree")
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy,
-        CoverTreeDTNNKMeans>(ipp);
+        CoverTreeDualTreeKMeans>(ipp);
   else if (algorithm == "naive")
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy, NaiveKMeans>(ipp);
   else
