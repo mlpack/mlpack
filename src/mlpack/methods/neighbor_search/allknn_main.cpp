@@ -190,11 +190,11 @@ int main(int argc, char *argv[])
       Timer::Start("tree_building");
 
       BinarySpaceTree<bound::HRectBound<2>,
-	  NeighborSearchStat<NearestNeighborSort> >
-	  refTree(referenceData, oldFromNewRefs, leafSize);
+          NeighborSearchStat<NearestNeighborSort> >
+          refTree(referenceData, oldFromNewRefs, leafSize);
       BinarySpaceTree<bound::HRectBound<2>,
-	  NeighborSearchStat<NearestNeighborSort> >*
-	  queryTree = NULL; // Empty for now.
+          NeighborSearchStat<NearestNeighborSort> >*
+          queryTree = NULL; // Empty for now.
 
       Timer::Stop("tree_building");
 
@@ -202,37 +202,37 @@ int main(int argc, char *argv[])
 
       if (CLI::GetParam<string>("query_file") != "")
       {
-	if (naive && leafSize < queryData.n_cols)
-	  leafSize = queryData.n_cols;
+        if (naive && leafSize < queryData.n_cols)
+          leafSize = queryData.n_cols;
 
-	Log::Info << "Loaded query data from '" << queryFile << "' ("
-	    << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
+        Log::Info << "Loaded query data from '" << queryFile << "' ("
+            << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
 
-	Log::Info << "Building query tree..." << endl;
+        Log::Info << "Building query tree..." << endl;
 
-	// Build trees by hand, so we can save memory: if we pass a tree to
-	// NeighborSearch, it does not copy the matrix.
-	if (!singleMode)
-	{
-	  Timer::Start("tree_building");
+        // Build trees by hand, so we can save memory: if we pass a tree to
+        // NeighborSearch, it does not copy the matrix.
+        if (!singleMode)
+        {
+          Timer::Start("tree_building");
 
-	  queryTree = new BinarySpaceTree<bound::HRectBound<2>,
-	      NeighborSearchStat<NearestNeighborSort> >(queryData,
-	      oldFromNewQueries, leafSize);
+          queryTree = new BinarySpaceTree<bound::HRectBound<2>,
+              NeighborSearchStat<NearestNeighborSort> >(queryData,
+              oldFromNewQueries, leafSize);
 
-	  Timer::Stop("tree_building");
-	}
+          Timer::Stop("tree_building");
+        }
 
-	allknn = new AllkNN(&refTree, queryTree, referenceData, queryData,
-	    singleMode);
+        allknn = new AllkNN(&refTree, queryTree, referenceData, queryData,
+            singleMode);
 
-	Log::Info << "Tree built." << endl;
+        Log::Info << "Tree built." << endl;
       }
       else
       {
-	allknn = new AllkNN(&refTree, referenceData, singleMode);
+        allknn = new AllkNN(&refTree, referenceData, singleMode);
 
-	Log::Info << "Trees built." << endl;
+        Log::Info << "Trees built." << endl;
       }
 
       arma::mat distancesOut;
@@ -249,17 +249,17 @@ int main(int argc, char *argv[])
 
       // Map the results back to the correct places.
       if ((CLI::GetParam<string>("query_file") != "") && !singleMode)
-	Unmap(neighborsOut, distancesOut, oldFromNewRefs, oldFromNewQueries,
-	    neighbors, distances);
+        Unmap(neighborsOut, distancesOut, oldFromNewRefs, oldFromNewQueries,
+            neighbors, distances);
       else if ((CLI::GetParam<string>("query_file") != "") && singleMode)
-	Unmap(neighborsOut, distancesOut, oldFromNewRefs, neighbors, distances);
+        Unmap(neighborsOut, distancesOut, oldFromNewRefs, neighbors, distances);
       else
-	Unmap(neighborsOut, distancesOut, oldFromNewRefs, oldFromNewRefs,
-	    neighbors, distances);
+        Unmap(neighborsOut, distancesOut, oldFromNewRefs, oldFromNewRefs,
+            neighbors, distances);
 
       // Clean up.
       if (queryTree)
-	delete queryTree;
+        delete queryTree;
 
       delete allknn;
     } else { // R tree.
