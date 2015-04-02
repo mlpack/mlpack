@@ -12,7 +12,7 @@
 #include "elkan_kmeans.hpp"
 #include "hamerly_kmeans.hpp"
 #include "pelleg_moore_kmeans.hpp"
-#include "dtnn_kmeans.hpp"
+#include "dual_tree_kmeans.hpp"
 
 using namespace mlpack;
 using namespace mlpack::kmeans;

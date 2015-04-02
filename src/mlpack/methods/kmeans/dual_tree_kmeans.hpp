@@ -7,14 +7,14 @@
  * probably limited to the case where k is close to the number of points in the
  * dataset, and the number of iterations of the k-means algorithm will be few.
  */
-#ifndef __MLPACK_METHODS_KMEANS_DTNN_KMEANS_HPP
-#define __MLPACK_METHODS_KMEANS_DTNN_KMEANS_HPP
+#ifndef __MLPACK_METHODS_KMEANS_DUAL_TREE_KMEANS_HPP
+#define __MLPACK_METHODS_KMEANS_DUAL_TREE_KMEANS_HPP
 
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 
-#include "dtnn_statistic.hpp"
+#include "dual_tree_kmeans_statistic.hpp"
 
 namespace mlpack {
 namespace kmeans {
@@ -30,19 +30,19 @@ template<
     typename MetricType,
     typename MatType,
     typename TreeType = tree::BinarySpaceTree<bound::HRectBound<2>,
-        DTNNStatistic> >
-class DTNNKMeans
+        DualTreeKMeansStatistic> >
+class DualTreeKMeans
 {
  public:
   /**
-   * Construct the DTNNKMeans object, which will construct a tree on the points.
+   * Construct the DualTreeKMeans object, which will construct a tree on the points.
    */
-  DTNNKMeans(const MatType& dataset, MetricType& metric);
+  DualTreeKMeans(const MatType& dataset, MetricType& metric);
 
   /**
-   * Delete the tree constructed by the DTNNKMeans object.
+   * Delete the tree constructed by the DualTreeKMeans object.
    */
-  ~DTNNKMeans();
+  ~DualTreeKMeans();
 
   /**
    * Run a single iteration of the dual-tree nearest neighbor algorithm for
@@ -112,20 +112,20 @@ class DTNNKMeans
   void DecoalesceTree(TreeType& node);
 };
 
-//! A template typedef for the DTNNKMeans algorithm with the default tree type
+//! A template typedef for the DualTreeKMeans algorithm with the default tree type
 //! (a kd-tree).
 template<typename MetricType, typename MatType>
-using DefaultDTNNKMeans = DTNNKMeans<MetricType, MatType>;
+using DefaultDualTreeKMeans = DualTreeKMeans<MetricType, MatType>;
 
-//! A template typedef for the DTNNKMeans algorithm with the cover tree type.
+//! A template typedef for the DualTreeKMeans algorithm with the cover tree type.
 template<typename MetricType, typename MatType>
-using CoverTreeDTNNKMeans = DTNNKMeans<MetricType, MatType,
+using CoverTreeDualTreeKMeans = DualTreeKMeans<MetricType, MatType,
     tree::CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
-    DTNNStatistic> >;
+    DualTreeKMeansStatistic> >;
 
 } // namespace kmeans
 } // namespace mlpack
 
-#include "dtnn_kmeans_impl.hpp"
+#include "dual_tree_kmeans_impl.hpp"
 
 #endif

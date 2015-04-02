@@ -6,8 +6,8 @@
  * nearest neighbor search.  For the most part we'll call out to
  * NeighborSearchRules when we can.
  */
-#ifndef __MLPACK_METHODS_KMEANS_DTNN_RULES_HPP
-#define __MLPACK_METHODS_KMEANS_DTNN_RULES_HPP
+#ifndef __MLPACK_METHODS_KMEANS_DUAL_TREE_KMEANS_RULES_HPP
+#define __MLPACK_METHODS_KMEANS_DUAL_TREE_KMEANS_RULES_HPP
 
 #include <mlpack/methods/neighbor_search/ns_traversal_info.hpp>
 
@@ -15,18 +15,18 @@ namespace mlpack {
 namespace kmeans {
 
 template<typename MetricType, typename TreeType>
-class DTNNKMeansRules
+class DualTreeKMeansRules
 {
  public:
-  DTNNKMeansRules(const arma::mat& centroids,
-                  const arma::mat& dataset,
-                  arma::Col<size_t>& assignments,
-                  arma::vec& upperBounds,
-                  arma::vec& lowerBounds,
-                  MetricType& metric,
-                  const std::vector<bool>& prunedPoints,
-                  const std::vector<size_t>& oldFromNewCentroids,
-                  std::vector<bool>& visited);
+  DualTreeKMeansRules(const arma::mat& centroids,
+                      const arma::mat& dataset,
+                      arma::Col<size_t>& assignments,
+                      arma::vec& upperBounds,
+                      arma::vec& lowerBounds,
+                      MetricType& metric,
+                      const std::vector<bool>& prunedPoints,
+                      const std::vector<size_t>& oldFromNewCentroids,
+                      std::vector<bool>& visited);
 
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
@@ -77,6 +77,6 @@ class DTNNKMeansRules
 } // namespace kmeans
 } // namespace mlpack
 
-#include "dtnn_rules_impl.hpp"
+#include "dual_tree_kmeans_rules_impl.hpp"
 
 #endif

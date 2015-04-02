@@ -10,7 +10,6 @@
 #include <mlpack/methods/kmeans/elkan_kmeans.hpp>
 #include <mlpack/methods/kmeans/hamerly_kmeans.hpp>
 #include <mlpack/methods/kmeans/pelleg_moore_kmeans.hpp>
-#include <mlpack/methods/kmeans/dtnn_kmeans.hpp>
 #include <mlpack/methods/kmeans/dual_tree_kmeans.hpp>
 
 #include <mlpack/core/tree/cover_tree/cover_tree.hpp>
@@ -617,7 +616,7 @@ BOOST_AUTO_TEST_CASE(DTNNTest)
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
     KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-        DefaultDTNNKMeans> dtnn;
+        DefaultDualTreeKMeans> dtnn;
     arma::Col<size_t> dtnnAssignments;
     arma::mat dtnnCentroids(centroids);
     dtnn.Cluster(dataset, k, dtnnAssignments, dtnnCentroids, false, true);
@@ -649,7 +648,7 @@ BOOST_AUTO_TEST_CASE(DTNNCoverTreeTest)
     km.Cluster(dataset, k, assignments, naiveCentroids, false, true);
 
     KMeans<metric::EuclideanDistance, RandomPartition, MaxVarianceNewCluster,
-        CoverTreeDTNNKMeans> dtnn;
+        CoverTreeDualTreeKMeans> dtnn;
 /*    arma::Col<size_t> dtnnAssignments;
     arma::mat dtnnCentroids(centroids);
     dtnn.Cluster(dataset, k, dtnnAssignments, dtnnCentroids, false, true);

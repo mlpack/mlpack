@@ -4,16 +4,16 @@
  *
  * Implementation of DualTreeKMeansRules.
  */
-#ifndef __MLPACK_METHODS_KMEANS_DTNN_RULES_IMPL_HPP
-#define __MLPACK_METHODS_KMEANS_DTNN_RULES_IMPL_HPP
+#ifndef __MLPACK_METHODS_KMEANS_DUAL_TREE_KMEANS_RULES_IMPL_HPP
+#define __MLPACK_METHODS_KMEANS_DUAL_TREE_KMEANS_RULES_IMPL_HPP
 
-#include "dtnn_rules.hpp"
+#include "dual_tree_kmeans_rules.hpp"
 
 namespace mlpack {
 namespace kmeans {
 
 template<typename MetricType, typename TreeType>
-DTNNKMeansRules<MetricType, TreeType>::DTNNKMeansRules(
+DualTreeKMeansRules<MetricType, TreeType>::DualTreeKMeansRules(
     const arma::mat& centroids,
     const arma::mat& dataset,
     arma::Col<size_t>& assignments,
@@ -45,7 +45,7 @@ DTNNKMeansRules<MetricType, TreeType>::DTNNKMeansRules(
 }
 
 template<typename MetricType, typename TreeType>
-inline force_inline double DTNNKMeansRules<MetricType, TreeType>::BaseCase(
+inline force_inline double DualTreeKMeansRules<MetricType, TreeType>::BaseCase(
     const size_t queryIndex,
     const size_t referenceIndex)
 {
@@ -85,7 +85,7 @@ inline force_inline double DTNNKMeansRules<MetricType, TreeType>::BaseCase(
 }
 
 template<typename MetricType, typename TreeType>
-inline double DTNNKMeansRules<MetricType, TreeType>::Score(
+inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
     const size_t queryIndex,
     TreeType& /* referenceNode */)
 {
@@ -99,7 +99,7 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
 }
 
 template<typename MetricType, typename TreeType>
-inline double DTNNKMeansRules<MetricType, TreeType>::Score(
+inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
     TreeType& queryNode,
     TreeType& referenceNode)
 {
@@ -284,7 +284,7 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Score(
 }
 
 template<typename MetricType, typename TreeType>
-inline double DTNNKMeansRules<MetricType, TreeType>::Rescore(
+inline double DualTreeKMeansRules<MetricType, TreeType>::Rescore(
     const size_t /* queryIndex */,
     TreeType& /* referenceNode */,
     const double oldScore)
@@ -294,7 +294,7 @@ inline double DTNNKMeansRules<MetricType, TreeType>::Rescore(
 }
 
 template<typename MetricType, typename TreeType>
-inline double DTNNKMeansRules<MetricType, TreeType>::Rescore(
+inline double DualTreeKMeansRules<MetricType, TreeType>::Rescore(
     TreeType& queryNode,
     TreeType& referenceNode,
     const double oldScore)

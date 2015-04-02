@@ -11,9 +11,9 @@
 #define __MLPACK_METHODS_KMEANS_DTNN_KMEANS_IMPL_HPP
 
 // In case it hasn't been included yet.
-#include "dtnn_kmeans.hpp"
+#include "dual_tree_kmeans.hpp"
 
-#include "dtnn_rules.hpp"
+#include "dual_tree_kmeans_rules.hpp"
 
 namespace mlpack {
 namespace kmeans {
@@ -45,8 +45,9 @@ TreeType* BuildTree(
 }
 
 template<typename MetricType, typename MatType, typename TreeType>
-DTNNKMeans<MetricType, MatType, TreeType>::DTNNKMeans(const MatType& dataset,
-                                                      MetricType& metric) :
+DualTreeKMeans<MetricType, MatType, TreeType>::DualTreeKMeans(
+    const MatType& dataset,
+    MetricType& metric) :
     datasetOrig(dataset),
     dataset(tree::TreeTraits<TreeType>::RearrangesDataset ? datasetCopy :
         datasetOrig),
@@ -81,7 +82,7 @@ DTNNKMeans<MetricType, MatType, TreeType>::DTNNKMeans(const MatType& dataset,
 }
 
 template<typename MetricType, typename MatType, typename TreeType>
-DTNNKMeans<MetricType, MatType, TreeType>::~DTNNKMeans()
+DualTreeKMeans<MetricType, MatType, TreeType>::~DualTreeKMeans()
 {
   if (tree)
     delete tree;
@@ -89,7 +90,7 @@ DTNNKMeans<MetricType, MatType, TreeType>::~DTNNKMeans()
 
 // Run a single iteration.
 template<typename MetricType, typename MatType, typename TreeType>
-double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
+double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
     const arma::mat& centroids,
     arma::mat& newCentroids,
     arma::Col<size_t>& counts)
@@ -133,7 +134,7 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
 
   // We won't use the AllkNN class here because we have our own set of rules.
   //lastIterationCentroids = oldCentroids;
-  typedef DTNNKMeansRules<MetricType, TreeType> RuleType;
+  typedef DualTreeKMeansRules<MetricType, TreeType> RuleType;
   RuleType rules(centroids, dataset, assignments, upperBounds, lowerBounds,
       metric, prunedPoints, oldFromNewCentroids, visited);
 
@@ -193,7 +194,7 @@ double DTNNKMeans<MetricType, MatType, TreeType>::Iterate(
 }
 
 template<typename MetricType, typename MatType, typename TreeType>
-void DTNNKMeans<MetricType, MatType, TreeType>::UpdateTree(
+void DualTreeKMeans<MetricType, MatType, TreeType>::UpdateTree(
     TreeType& node,
     const arma::mat& centroids,
     const arma::vec& interclusterDistances)
@@ -407,7 +408,7 @@ visited[node.Descendant(i)] << ".\n";
 }
 
 template<typename MetricType, typename MatType, typename TreeType>
-void DTNNKMeans<MetricType, MatType, TreeType>::ExtractCentroids(
+void DualTreeKMeans<MetricType, MatType, TreeType>::ExtractCentroids(
     TreeType& node,
     arma::mat& newCentroids,
     arma::Col<size_t>& newCounts,
@@ -496,7 +497,7 @@ assignments[node.Point(i)] << " with ub " << upperBounds[node.Point(i)] <<
 }
 
 template<typename MetricType, typename MatType, typename TreeType>
-void DTNNKMeans<MetricType, MatType, TreeType>::CoalesceTree(
+void DualTreeKMeans<MetricType, MatType, TreeType>::CoalesceTree(
     TreeType& node,
     const size_t child /* Which child are we? */)
 {
@@ -543,7 +544,8 @@ void DTNNKMeans<MetricType, MatType, TreeType>::CoalesceTree(
 }
 
 template<typename MetricType, typename MatType, typename TreeType>
-void DTNNKMeans<MetricType, MatType, TreeType>::DecoalesceTree(TreeType& node)
+void DualTreeKMeans<MetricType, MatType, TreeType>::DecoalesceTree(
+    TreeType& node)
 {
   node.Parent() = (TreeType*) node.Stat().TrueParent();
   node.ChildPtr(0) = (TreeType*) node.Stat().TrueLeft();

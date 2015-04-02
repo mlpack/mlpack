@@ -12,11 +12,11 @@
 namespace mlpack {
 namespace kmeans {
 
-class DTNNStatistic : public
+class DualTreeKMeansStatistic : public
     neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>
 {
  public:
-  DTNNStatistic() :
+  DualTreeKMeansStatistic() :
       neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>(),
       upperBound(DBL_MAX),
       lowerBound(DBL_MAX),
@@ -34,7 +34,7 @@ class DTNNStatistic : public
   }
 
   template<typename TreeType>
-  DTNNStatistic(TreeType& node) :
+  DualTreeKMeansStatistic(TreeType& node) :
       neighbor::NeighborSearchStat<neighbor::NearestNeighborSort>(),
       upperBound(DBL_MAX),
       lowerBound(DBL_MAX),
@@ -95,7 +95,7 @@ class DTNNStatistic : public
   std::string ToString() const
   {
     std::ostringstream o;
-    o << "DTNNStatistic [" << this << "]:\n";
+    o << "DualTreeKMeansStatistic [" << this << "]:\n";
     o << "  Upper bound: " << upperBound << ".\n";
     o << "  Lower bound: " << lowerBound << ".\n";
     o << "  Pruned: " << pruned << ".\n";
