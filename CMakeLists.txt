@@ -36,17 +36,19 @@ endif(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 # math.h functions, making -lm unnecessary with gcc, but it may still be
 # necessary with clang.
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  # Linking against libc++ instead of the GNU libstdc++ on OSX.
-  if(APPLE)
+  include(CheckCXXCompilerFlag)
+  CHECK_CXX_COMPILER_FLAG("-std=c++11 -stdlib=libc++" HAS_LIBCXX11)
+  # Linking against libc++ instead of the GNU libstdc++.
+  if (HAS_LIBCXX11)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lm")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++ -lm")
     set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -stdlib=libc++ -lm")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-  else(APPLE)
+  else(HAS_LIBCXX11)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lstdc++ -lm")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lstdc++ -lm")
     set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -lstdc++ -lm")
-  endif(APPLE)
+  endif(HAS_LIBCXX11)
 endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
