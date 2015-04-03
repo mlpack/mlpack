@@ -59,16 +59,25 @@ class LMetric
 {
  public:
   /***
-   * Default constructor does nothing, but is required to satisfy the Kernel
+   * Default constructor does nothing, but is required to satisfy the Metric
    * policy.
    */
   LMetric() { }
 
   /**
    * Computes the distance between two points.
+   *
+   * @tparam VecTypeA Type of first vector (generally arma::vec or
+   *      arma::sp_vec).
+   * @tparam VecTypeB Type of second vector.
+   * @param a First vector.
+   * @param b Second vector.
+   * @return Distance between vectors a and b.
    */
-  template<typename VecType1, typename VecType2>
-  static double Evaluate(const VecType1& a, const VecType2& b);
+  template<typename VecTypeA, typename VecTypeB>
+  static double Evaluate(const VecTypeA& a, const VecTypeB& b);
+
+  //! Return a string representation of the object.
   std::string ToString() const;
 };
 

@@ -55,8 +55,8 @@ class GaussianKernel
    * @return K(a, b) using the bandwidth (@f$\mu@f$) specified in the
    *   constructor.
    */
-  template<typename VecType>
-  double Evaluate(const VecType& a, const VecType& b) const
+  template<typename VecTypeA, typename VecTypeB>
+  double Evaluate(const VecTypeA& a, const VecTypeB& b) const
   {
     // The precalculation of gamma saves us a little computation time.
     return exp(gamma * metric::SquaredEuclideanDistance::Evaluate(a, b));
@@ -89,15 +89,15 @@ class GaussianKernel
   /**
    * Obtain a convolution integral of the Gaussian kernel.
    *
-   * @param a, first vector
-   * @param b, second vector
-   * @return the convolution integral
+   * @param a First vector.
+   * @param b Second vector.
+   * @return The convolution integral.
    */
-  template<typename VecType>
-  double ConvolutionIntegral(const VecType& a, const VecType& b)
+  template<typename VecTypeA, typename VecTypeB>
+  double ConvolutionIntegral(const VecTypeA& a, const VecTypeB& b)
   {
     return Evaluate(sqrt(metric::SquaredEuclideanDistance::Evaluate(a, b) / 2.0)) /
-      (Normalizer(a.n_rows) * pow(2.0, (double) a.n_rows / 2.0));
+        (Normalizer(a.n_rows) * pow(2.0, (double) a.n_rows / 2.0));
   }
 
 

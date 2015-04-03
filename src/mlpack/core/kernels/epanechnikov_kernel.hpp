@@ -37,11 +37,13 @@ class EpanechnikovKernel
   /**
    * Evaluate the Epanechnikov kernel on the given two inputs.
    *
+   * @tparam VecTypeA Type of first vector.
+   * @tparam VecTypeB Type of second vector.
    * @param a One input vector.
    * @param b The other input vector.
    */
-  template<typename Vec1Type, typename Vec2Type>
-  double Evaluate(const Vec1Type& a, const Vec2Type& b) const;
+  template<typename VecTypeA, typename VecTypeB>
+  double Evaluate(const VecTypeA& a, const VecTypeB& b) const;
 
   /**
    * Evaluate the Epanechnikov kernel given that the distance between the two
@@ -58,9 +60,8 @@ class EpanechnikovKernel
    * @param b Second vector.
    * @return the convolution integral value.
    */
-
-  template<typename VecType>
-  double ConvolutionIntegral(const VecType& a, const VecType& b);
+  template<typename VecTypeA, typename VecTypeB>
+  double ConvolutionIntegral(const VecTypeA& a, const VecTypeB& b);
 
   /**
    * Compute the normalizer of this Epanechnikov kernel for the given dimension.
@@ -69,7 +70,7 @@ class EpanechnikovKernel
    */
   double Normalizer(const size_t dimension);
 
-  // Returns String of O bject
+  //! Returns string representation of object.
   std::string ToString() const;
 
  private:

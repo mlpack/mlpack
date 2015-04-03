@@ -15,28 +15,28 @@
 namespace mlpack {
 namespace kernel {
 
-template<typename Vec1Type, typename Vec2Type>
-inline double EpanechnikovKernel::Evaluate(const Vec1Type& a, const Vec2Type& b)
+template<typename VecTypeA, typename VecTypeB>
+inline double EpanechnikovKernel::Evaluate(const VecTypeA& a, const VecTypeB& b)
     const
 {
   return std::max(0.0, 1.0 - metric::SquaredEuclideanDistance::Evaluate(a, b)
       * inverseBandwidthSquared);
 }
 
-
-
 /**
  * Obtains the convolution integral [integral of K(||x-a||) K(||b-x||) dx]
  * for the two vectors.
  *
- * @tparam VecType Type of vector (arma::vec, arma::spvec should be expected).
+ * @tparam VecTypeA Type of first vector (arma::vec, arma::sp_vec should be
+ *      expected).
+ * @tparam VecTypeB Type of second vector (arma::vec, arma::sp_vec).
  * @param a First vector.
  * @param b Second vector.
  * @return the convolution integral value.
  */
-template<typename VecType>
-double EpanechnikovKernel::ConvolutionIntegral(const VecType& a,
-                                               const VecType& b)
+template<typename VecTypeA, typename VecTypeB>
+double EpanechnikovKernel::ConvolutionIntegral(const VecTypeA& a,
+                                               const VecTypeB& b)
 {
   double distance = sqrt(metric::SquaredEuclideanDistance::Evaluate(a, b));
   if (distance >= 2.0 * bandwidth)

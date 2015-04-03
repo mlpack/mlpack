@@ -93,13 +93,15 @@ class ExampleKernel
    * function static.  For a more complex example which cannot be declared
    * static, see the GaussianKernel, which stores an internal parameter.
    *
-   * @tparam VecType Type of vector (arma::vec, arma::spvec should be expected).
+   * @tparam VecTypeA Type of first vector (arma::vec, arma::sp_vec should be
+   *      expected).
+   * @tparam VecTypeB Type of second vector (arma::vec, arma::sp_vec).
    * @param a First vector.
    * @param b Second vector.
    * @return K(a, b).
    */
-  template<typename VecType>
-  static double Evaluate(const VecType& /* a */, const VecType& /* b */)
+  template<typename VecTypeA, typename VecTypeB>
+  static double Evaluate(const VecTypeA& /* a */, const VecTypeB& /* b */)
   { return 0; }
 
   /**
@@ -121,14 +123,16 @@ class ExampleKernel
    * function static.  For a more complex example which cannot be declared
    * static, see the GaussianKernel, which stores an internal parameter.
    *
-   * @tparam VecType Type of vector (arma::vec, arma::spvec should be expected).
+   * @tparam VecTypeA Type of first vector (arma::vec, arma::sp_vec should be
+   *      expected).
+   * @tparam VecTypeB Type of second vector (arma::vec, arma::sp_vec).
    * @param a First vector.
    * @param b Second vector.
    * @return the convolution integral value.
    */
-  template<typename VecType>
-  static double ConvolutionIntegral(const VecType& /* a */,
-                                    const VecType& /* b */) { return 0; }
+  template<typename VecTypeA, typename VecTypeB>
+  static double ConvolutionIntegral(const VecTypeA& /* a */,
+                                    const VecTypeB& /* b */) { return 0; }
 
   /**
    * Obtains the normalizing volume for the kernel with dimension $dimension$.

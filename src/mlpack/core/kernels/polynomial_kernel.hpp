@@ -39,13 +39,15 @@ class PolynomialKernel
    * Simple evaluation of the dot product.  This evaluation uses Armadillo's
    * dot() function.
    *
-   * @tparam VecType Type of vector (should be arma::vec or arma::spvec).
+   * @tparam VecTypeA Type of first vector (should be arma::vec or
+   *      arma::sp_vec).
+   * @tparam VecTypeB Type of second vector (arma::vec / arma::sp_vec).
    * @param a First vector.
    * @param b Second vector.
    * @return K(a, b).
    */
-  template<typename VecType>
-  double Evaluate(const VecType& a, const VecType& b) const
+  template<typename VecTypeA, typename VecTypeB>
+  double Evaluate(const VecTypeA& a, const VecTypeB& b) const
   {
     return pow((arma::dot(a, b) + offset), degree);
   }

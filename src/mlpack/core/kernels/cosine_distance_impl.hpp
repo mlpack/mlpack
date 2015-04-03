@@ -12,8 +12,8 @@
 namespace mlpack {
 namespace kernel {
 
-template<typename VecType>
-double CosineDistance::Evaluate(const VecType& a, const VecType& b)
+template<typename VecTypeA, typename VecTypeB>
+double CosineDistance::Evaluate(const VecTypeA& a, const VecTypeB& b)
 {
   // Since we are using the L2 inner product, this is easy.  But we have to make
   // sure we aren't dividing by zero (if we are, then the cosine similarity is

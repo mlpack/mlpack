@@ -80,11 +80,8 @@ class MahalanobisDistance
    * @param a First vector.
    * @param b Second vector.
    */
-
-  // Return String of Object
-  std::string ToString() const;
-  template<typename VecType1, typename VecType2>
-  double Evaluate(const VecType1& a, const VecType2& b);
+  template<typename VecTypeA, typename VecTypeB>
+  double Evaluate(const VecTypeA& a, const VecTypeB& b);
 
   /**
    * Access the covariance matrix.
@@ -99,6 +96,9 @@ class MahalanobisDistance
    * @return Reference to the covariance matrix.
    */
   arma::mat& Covariance() { return covariance; }
+
+  //! Return string representation of object.
+  std::string ToString() const;
  private:
   //! The covariance matrix associated with this distance.
   arma::mat covariance;

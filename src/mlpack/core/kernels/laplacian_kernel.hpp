@@ -45,14 +45,15 @@ class LaplacianKernel
    * distance metric, not the Euclidean distance, but for now, the Euclidean
    * distance is used.
    *
-   * @tparam VecType Type of vector (likely arma::vec or arma::spvec).
+   * @tparam VecTypeA Type of first vector (likely arma::vec or arma::sp_vec).
+   * @tparam VecTypeB Type of second vector (arma::vec / arma::sp_vec).
    * @param a First vector.
    * @param b Second vector.
    * @return K(a, b) using the bandwidth (@f$\mu@f$) specified in the
-   *   constructor.
+   *      constructor.
    */
-  template<typename VecType>
-  double Evaluate(const VecType& a, const VecType& b) const
+  template<typename VecTypeA, typename VecTypeB>
+  double Evaluate(const VecTypeA& a, const VecTypeB& b) const
   {
     // The precalculation of gamma saves us a little computation time.
     return exp(-metric::EuclideanDistance::Evaluate(a, b) / bandwidth);

@@ -35,11 +35,13 @@ class TriangularKernel
   /**
    * Evaluate the triangular kernel for the two given vectors.
    *
+   * @tparam VecTypeA Type of first vector.
+   * @tparam VecTypeB Type of second vector.
    * @param a First vector.
    * @param b Second vector.
    */
-  template<typename Vec1Type, typename Vec2Type>
-  double Evaluate(const Vec1Type& a, const Vec2Type& b) const
+  template<typename VecTypeA, typename VecTypeB>
+  double Evaluate(const VecTypeA& a, const VecTypeB& b) const
   {
     return std::max(0.0, (1 - metric::EuclideanDistance::Evaluate(a, b) /
         bandwidth));

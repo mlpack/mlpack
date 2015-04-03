@@ -32,8 +32,8 @@ class CosineDistance
    * @param b Second vector.
    * @return d(a, b).
    */
-  template<typename VecType>
-  static double Evaluate(const VecType& a, const VecType& b);
+  template<typename VecTypeA, typename VecTypeB>
+  static double Evaluate(const VecTypeA& a, const VecTypeB& b);
 
   /**
    * Returns a string representation of this object.
