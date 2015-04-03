@@ -31,24 +31,34 @@ if(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 endif(CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 
-# If using clang, we have to link against libstdc++ or libc++ depending on the
+# If using clang, we have to link against libc++ depending on the
 # OS (at least on some systems). Further, gcc sometimes optimizes calls to
 # math.h functions, making -lm unnecessary with gcc, but it may still be
 # necessary with clang.
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  include(CheckCXXCompilerFlag)
-  CHECK_CXX_COMPILER_FLAG("-std=c++11 -stdlib=libc++" HAS_LIBCXX11)
-  # Linking against libc++ instead of the GNU libstdc++.
-  if (HAS_LIBCXX11)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lm")
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++ -lm")
-    set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -stdlib=libc++ -lm")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-  else(HAS_LIBCXX11)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lstdc++ -lm")
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lstdc++ -lm")
-    set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -lstdc++ -lm")
-  endif(HAS_LIBCXX11)
+  IF (APPLE)
+    # detect OS X version. Use '/usr/bin/sw_vers -productVersion' to
+    # extract V from '10.V.x'.)
+    EXEC_PROGRAM(/usr/bin/sw_vers ARGS
+        -productVersion OUTPUT_VARIABLE MACOSX_VERSION_RAW)
+    string(REGEX REPLACE
+        "10\\.([0-9]+).*" "\\1"
+        MACOSX_VERSION
+        "${MACOSX_VERSION_RAW}")
+
+     # OSX Lion (10.7) and OS X Mountain Lion (10.8) doesn't automatically
+     # select the right stdlib.
+    if(${MACOSX_VERSION} LESS 9)
+      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
+      set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
+      set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -stdlib=libc++")
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+     endif(${MACOSX_VERSION} LESS 9)
+  endif(APPLE)
+
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lm")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lm")
+  set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -lm")
 endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 
 # Debugging CFLAGS.  Turn optimizations off; turn debugging symbols on.
