@@ -114,8 +114,7 @@ DualTreeTraverser<RuleType>::Traverse(
     // Get a reference to the frame.
     const DualCoverTreeMapEntry& frame = pointVector[i];
 
-    CoverTree<MetricType, RootPointPolicy, StatisticType>* refNode =
-        frame.referenceNode;
+    CoverTree* refNode = frame.referenceNode;
 
     // If the point is the same as both parents, then we have already done this
     // base case.
@@ -178,8 +177,7 @@ DualTreeTraverser<RuleType>::PruneMap(
       const DualCoverTreeMapEntry& frame = scaleVector[j];
 
       // First evaluate if we can prune without performing the base case.
-      CoverTree<MetricType, RootPointPolicy, StatisticType>* refNode =
-          frame.referenceNode;
+      CoverTree* refNode = frame.referenceNode;
 
       // Perform the actual scoring, after restoring the traversal info.
       rule.TraversalInfo() = frame.traversalInfo;
@@ -232,8 +230,7 @@ DualTreeTraverser<RuleType>::PruneMap(
       const DualCoverTreeMapEntry& frame = scaleVector[j];
 
       // First evaluate if we can prune without performing the base case.
-      CoverTree<MetricType, RootPointPolicy, StatisticType>* refNode =
-          frame.referenceNode;
+      CoverTree* refNode = frame.referenceNode;
 
       // Perform the actual scoring, after restoring the traversal info.
       rule.TraversalInfo() = frame.traversalInfo;
@@ -306,8 +303,7 @@ DualTreeTraverser<RuleType>::ReferenceRecursion(
       // Get a reference to the current element.
       const DualCoverTreeMapEntry& frame = scaleVector.at(i);
 
-      CoverTree<MetricType, RootPointPolicy, StatisticType>* refNode =
-          frame.referenceNode;
+      CoverTree* refNode = frame.referenceNode;
 
       // Create the score for the children.
       double score = rule.Rescore(queryNode, *refNode, frame.score);
