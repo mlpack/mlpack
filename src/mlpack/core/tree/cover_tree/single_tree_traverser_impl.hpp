@@ -136,7 +136,7 @@ SingleTreeTraverser<RuleType>::Traverse(
       // Get a reference to the current element.
       const MapEntryType& frame = scaleVector.at(i);
 
-      CoverTree<MetricType, RootPointPolicy, StatisticType>* node = frame.node;
+      CoverTree* node = frame.node;
       const double score = frame.score;
       const size_t parent = frame.parent;
       const size_t point = node->Point();
@@ -196,7 +196,7 @@ SingleTreeTraverser<RuleType>::Traverse(
   {
     const MapEntryType& frame = mapQueue[INT_MIN].at(i);
 
-    CoverTree<MetricType, RootPointPolicy, StatisticType>* node = frame.node;
+    CoverTree* node = frame.node;
     const double score = frame.score;
     const size_t point = node->Point();
 
