@@ -1,6 +1,16 @@
 # Using the CMake tools to create the file arma_config.hpp, which contains
-# information on the Armadillo configuration when mlpack was compiled.  We'll
-# need to open the config.hpp we are using.
+# information on the Armadillo configuration when mlpack was compiled.  This
+# assumes ${ARMADILLO_INCLUDE_DIR} is set.  In addition, we must be careful to
+# avoid overwriting arma_config.hpp with the exact same information, because
+# this may trigger a new complete rebuild, which is undesired.
+if(EXISTS "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
+  file(READ "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp"
+      OLD_FILE_CONTENTS)
+else(EXISTS "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
+  set(OLD_FILE_CONTENTS "")
+endif(EXISTS "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
+
+# We'll need to open the config.hpp we are using.
 if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
   file(READ "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp"
       ARMA_CONFIG)
@@ -13,8 +23,13 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
 
   string(LENGTH "${ARMA_HAS_64BIT_WORD_PRE}" ARMA_HAS_64BIT_WORD)
 
-  file(REMOVE ${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp)
-  file(WRITE ${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp
+  if(ARMA_HAS_64BIT_WORD EQUAL 0)
+    set(ARMA_64BIT_WORD_DEFINE "#define MLPACK_ARMA_NO64BIT_WORD")
+  else(ARMA_HAS_64BIT_WORD EQUAL 0)
+    set(ARMA_64BIT_WORD_DEFINE "#define MLPACK_ARMA_64BIT_WORD")
+  endif(ARMA_HAS_64BIT_WORD EQUAL 0)
+
+  set(NEW_FILE_CONTENTS
 "/**
  * @file arma_config.hpp
  *
@@ -32,17 +47,19 @@ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
 #ifndef __MLPACK_CORE_UTIL_ARMA_CONFIG_HPP
 #define __MLPACK_CORE_UTIL_ARMA_CONFIG_HPP
 
-")
-  if(ARMA_HAS_64BIT_WORD EQUAL 0)
-    file(APPEND ${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp
-        "#define MLPACK_ARMA_NO_64BIT_WORD")
-  else(ARMA_HAS_64BIT_WORD EQUAL 0)
-    file(APPEND ${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp
-        "#define MLPACK_ARMA_64BIT_WORD")
-  endif(ARMA_HAS_64BIT_WORD EQUAL 0)
+${ARMA_64BIT_WORD_DEFINE}
 
-  file(APPEND ${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp
-      "\n\n#endif\n")
+#endif
+")
+
+  # Did the contents of the file change at all?  If not, don't write it.
+  if(NOT "${OLD_FILE_CONTENTS}" STREQUAL "${NEW_FILE_CONTENTS}")
+    # We have a reason to write the new file.
+    message(STATUS "Regenerating arma_config.hpp.")
+    file(REMOVE "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
+    file(WRITE "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp"
+        "${NEW_FILE_CONTENTS}")
+  endif(NOT "${OLD_FILE_CONTENTS}" STREQUAL "${NEW_FILE_CONTENTS}")
 
 else(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
   message(WARNING "Armadillo configuration file
