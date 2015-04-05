@@ -21,8 +21,9 @@ namespace tree {
  */
 template<typename MetricType,
          typename RootPointPolicy,
-         typename StatisticType>
-class TreeTraits<CoverTree<MetricType, RootPointPolicy, StatisticType> >
+         typename StatisticType,
+         typename MatType>
+class TreeTraits<CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>>
 {
  public:
   /**
