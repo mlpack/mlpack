@@ -30,7 +30,7 @@ mlpack is, how to install it, how to run it, and where to find more
 documentation. The website should be consulted for further information:
 
   - [mlpack homepage](http://www.mlpack.org/)
-  - [Tutorials](http://www.mlpack.org/tutorial.html)
+  - [Tutorials](http://www.mlpack.org/tutorials.html)
   - [Development Site (Github)](http://www.github.com/mlpack/mlpack/)
   - [API documentation](http://www.mlpack.org/doxygen.php)
 
@@ -130,18 +130,18 @@ and submit an issue; the mlpack developers will quickly help you figure it out:
 
 [mlpack on Github](https://www.github.com/mlpack/mlpack/)
 
-Alternately, mlpack help can be found in IRC at #mlpack on irc.freenode.net.
+Alternately, mlpack help can be found in IRC at `#mlpack` on irc.freenode.net.
 
-If you wish to install mlpack to /usr/local/include/mlpack/ and /usr/local/lib/
-and /usr/local/bin/, once it has built, make sure you have root privileges (or
+If you wish to install mlpack to `/usr/local/include/mlpack/` and `/usr/local/lib/`
+and `/usr/local/bin/`, once it has built, make sure you have root privileges (or
 write permissions to those three directories), and simply type
 
     $ make install
 
 You can now run the executables by name; you can link against mlpack with
-    -lmlpack
+    `-lmlpack`
 and the mlpack headers are found in
-    /usr/local/include/mlpack/.
+    `/usr/local/include/mlpack/.
 
 If running the programs (i.e. `$ allknn -h`) gives an error of the form
 
@@ -160,7 +160,7 @@ manually).  One way to do this, on Linux, is to ensure that the
 5. Running mlpack programs
 --------------------------
 
-After building mlpack, the executables will reside in build/bin/.  You can call
+After building mlpack, the executables will reside in `build/bin/.  You can call
 them from there, or you can install the library and (depending on system
 settings) they should be added to your PATH and you can call them directly.  The
 documentation below assumes the executables are in your PATH.
@@ -198,7 +198,7 @@ documentation locally.  Alternately, up-to-date documentation is available for
 older versions of mlpack:
 
   - [mlpack homepage](http://www.mlpack.org/)
-  - [Tutorials](http://www.mlpack.org/tutorial.html)
+  - [Tutorials](http://www.mlpack.org/tutorials.html)
   - [Development Site (Github)](https://www.github.com/mlpack/mlpack/)
   - [API documentation](http://www.mlpack.org/doxygen.php)
 
@@ -219,8 +219,8 @@ available at
 
   [mlpack discussion list](https://lists.cc.gatech.edu/mailman/listinfo/mlpack)
 
-and the subversion commit list is available at
+and the git commit list is available at
 
-  [commit list](https://lists.cc.gatech.edu/mailman/listinfo/mlpack-svn)
+  [commit list](https://lists.cc.gatech.edu/mailman/listinfo/mlpack-git)
 
 Lastly, the IRC channel ```#mlpack``` on Freenode can be used to get help.
