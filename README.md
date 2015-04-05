@@ -141,7 +141,7 @@ write permissions to those three directories), and simply type
 You can now run the executables by name; you can link against mlpack with
     `-lmlpack`
 and the mlpack headers are found in
-    `/usr/local/include/mlpack/.
+    `/usr/local/include/mlpack/`.
 
 If running the programs (i.e. `$ allknn -h`) gives an error of the form
 
@@ -160,7 +160,7 @@ manually).  One way to do this, on Linux, is to ensure that the
 5. Running mlpack programs
 --------------------------
 
-After building mlpack, the executables will reside in `build/bin/.  You can call
+After building mlpack, the executables will reside in `build/bin/`.  You can call
 them from there, or you can install the library and (depending on system
 settings) they should be added to your PATH and you can call them directly.  The
 documentation below assumes the executables are in your PATH.
@@ -185,7 +185,7 @@ same) and finding the 5 nearest neighbors is very simple:
 
     $ allknn -r dataset.csv -n neighbors_out.csv -d distances_out.csv -k 5 -v
 
-The -v (--verbose) flag is optional; it gives informational output.  It is not
+The `-v (--verbose)` flag is optional; it gives informational output.  It is not
 unique to allknn but is available in all mlpack programs.  Verbose output also
 gives timing output at the end of the program, which can be very useful.
 
@@ -193,7 +193,7 @@ gives timing output at the end of the program, which can be very useful.
 ------------------------
 
 The documentation given here is only a fraction of the available documentation
-for mlpack.  If doxygen is installed, you can type 'make doc' to build the
+for mlpack.  If doxygen is installed, you can type `make doc` to build the
 documentation locally.  Alternately, up-to-date documentation is available for
 older versions of mlpack:
 
