@@ -16,6 +16,7 @@ using namespace mlpack;
 using namespace mlpack::tree;
 using namespace mlpack::fastmks;
 using namespace mlpack::kernel;
+using namespace mlpack::metric;
 
 BOOST_AUTO_TEST_SUITE(FastMKSTest);
 
@@ -119,6 +120,92 @@ BOOST_AUTO_TEST_CASE(DualTreeVsSingleTree)
       BOOST_REQUIRE_CLOSE(treeProducts(r, q), singleProducts(r, q), 1e-5);
     }
   }
+}
+
+/**
+ * Test sparse FastMKS (how useful is this, I'm not sure).
+ */
+BOOST_AUTO_TEST_CASE(SparseFastMKSTest)
+{
+  // First create a random sparse dataset.
+  arma::sp_mat dataset;
+  dataset.sprandu(10, 100, 0.3);
+
+  typedef CoverTree<IPMetric<LinearKernel>, FirstPointIsRoot, FastMKSStat,
+      arma::sp_mat> SparseCoverTreeType;
+
+  FastMKS<LinearKernel, SparseCoverTreeType> sparsemks(dataset);
+
+  arma::mat denseset(dataset);
+  FastMKS<LinearKernel> densemks(denseset);
+
+  // Store the results in these.
+  arma::Mat<size_t> sparseIndices, denseIndices;
+  arma::mat sparseKernels, denseKernels; 
+
+  // Do the searches.
+  sparsemks.Search(3, sparseIndices, sparseKernels);
+  densemks.Search(3, denseIndices, denseKernels);
+
+  // Make sure the results are the same.
+  for (size_t i = 0; i < sparseIndices.n_cols; ++i)
+  {
+    for (size_t j = 0; j < sparseIndices.n_rows; ++j)
+    {
+      if (std::abs(sparseKernels(j, i)) > 1e-15)
+        BOOST_REQUIRE_CLOSE(sparseKernels(j, i), denseKernels(j, i), 1e-5);
+      else
+        BOOST_REQUIRE_SMALL(denseKernels(j, i), 1e-15);
+      BOOST_REQUIRE_EQUAL(sparseIndices(j, i), denseIndices(j, i));
+    }
+  }
+}
+
+BOOST_AUTO_TEST_CASE(SparsePolynomialFastMKSTest)
+{
+  // Do it again with the polynomial kernel, just to be sure.
+  arma::sp_mat dataset;
+  dataset.sprandu(10, 100, 0.3);
+  arma::mat denseset(dataset);
+
+  typedef CoverTree<IPMetric<PolynomialKernel>, FirstPointIsRoot, FastMKSStat,
+      arma::sp_mat> SparseCoverTreeType;
+
+  PolynomialKernel pk(3);
+
+  for (size_t i = 0; i < 100; ++i)
+    for (size_t j = 0; j < 100; ++j)
+      if (std::abs(pk.Evaluate(dataset.col(i), dataset.col(j))) < 1e-10)
+        BOOST_REQUIRE_SMALL(pk.Evaluate(denseset.col(i), denseset.col(j)), 1e-10);
+      else
+        BOOST_REQUIRE_CLOSE(pk.Evaluate(dataset.col(i), dataset.col(j)),
+                            pk.Evaluate(denseset.col(i), denseset.col(j)),
+                            1e-5);
+
+  FastMKS<PolynomialKernel, SparseCoverTreeType> sparsepoly(dataset);
+  FastMKS<PolynomialKernel> densepoly(denseset);
+
+  // Store the results in these.
+  arma::Mat<size_t> sparseIndices, denseIndices;
+  arma::mat sparseKernels, denseKernels; 
+
+  // Do the searches.
+  sparsepoly.Search(3, sparseIndices, sparseKernels);
+  densepoly.Search(3, denseIndices, denseKernels);
+
+  // Make sure the results are the same.
+  for (size_t i = 0; i < sparseIndices.n_cols; ++i)
+  {
+    for (size_t j = 0; j < sparseIndices.n_rows; ++j)
+    {
+      if (std::abs(sparseKernels(j, i)) > 1e-15)
+        BOOST_REQUIRE_CLOSE(sparseKernels(j, i), denseKernels(j, i), 1e-5);
+      else
+        BOOST_REQUIRE_SMALL(denseKernels(j, i), 1e-15);
+      BOOST_REQUIRE_EQUAL(sparseIndices(j, i), denseIndices(j, i));
+    }
+  }
+
 }
 
 BOOST_AUTO_TEST_SUITE_END();
