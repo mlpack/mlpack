@@ -333,7 +333,10 @@ class CoverTree
   double MinimumBoundDistance() const { return furthestDescendantDistance; }
 
   //! Get the centroid of the node and store it in the given vector.
-  void Centroid(arma::vec& centroid) const { centroid = dataset.col(point); }
+  void Centroid(arma::vec& centroid) const
+  {
+    centroid = arma::vec(dataset.col(point));
+  }
 
   //! Get the instantiated metric.
   MetricType& Metric() const { return *metric; }
