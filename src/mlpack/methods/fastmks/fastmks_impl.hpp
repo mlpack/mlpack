@@ -20,7 +20,7 @@ namespace fastmks {
 
 // Single dataset, no instantiated kernel.
 template<typename KernelType, typename TreeType>
-FastMKS<KernelType, TreeType>::FastMKS(const arma::mat& referenceSet,
+FastMKS<KernelType, TreeType>::FastMKS(const typename TreeType::Mat& referenceSet,
                                        const bool single,
                                        const bool naive) :
     referenceSet(referenceSet),
@@ -44,8 +44,8 @@ FastMKS<KernelType, TreeType>::FastMKS(const arma::mat& referenceSet,
 
 // Two datasets, no instantiated kernel.
 template<typename KernelType, typename TreeType>
-FastMKS<KernelType, TreeType>::FastMKS(const arma::mat& referenceSet,
-                                       const arma::mat& querySet,
+FastMKS<KernelType, TreeType>::FastMKS(const typename TreeType::Mat& referenceSet,
+                                       const typename TreeType::Mat& querySet,
                                        const bool single,
                                        const bool naive) :
     referenceSet(referenceSet),
@@ -70,7 +70,7 @@ FastMKS<KernelType, TreeType>::FastMKS(const arma::mat& referenceSet,
 
 // One dataset, instantiated kernel.
 template<typename KernelType, typename TreeType>
-FastMKS<KernelType, TreeType>::FastMKS(const arma::mat& referenceSet,
+FastMKS<KernelType, TreeType>::FastMKS(const typename TreeType::Mat& referenceSet,
                                        KernelType& kernel,
                                        const bool single,
                                        const bool naive) :
@@ -97,8 +97,8 @@ FastMKS<KernelType, TreeType>::FastMKS(const arma::mat& referenceSet,
 
 // Two datasets, instantiated kernel.
 template<typename KernelType, typename TreeType>
-FastMKS<KernelType, TreeType>::FastMKS(const arma::mat& referenceSet,
-                                       const arma::mat& querySet,
+FastMKS<KernelType, TreeType>::FastMKS(const typename TreeType::Mat& referenceSet,
+                                       const typename TreeType::Mat& querySet,
                                        KernelType& kernel,
                                        const bool single,
                                        const bool naive) :
@@ -125,10 +125,11 @@ FastMKS<KernelType, TreeType>::FastMKS(const arma::mat& referenceSet,
 
 // One dataset, pre-built tree.
 template<typename KernelType, typename TreeType>
-FastMKS<KernelType, TreeType>::FastMKS(const arma::mat& referenceSet,
-                                       TreeType* referenceTree,
-                                       const bool single,
-                                       const bool naive) :
+FastMKS<KernelType, TreeType>::FastMKS(
+    const typename TreeType::Mat& referenceSet,
+    TreeType* referenceTree,
+    const bool single,
+    const bool naive) :
     referenceSet(referenceSet),
     querySet(referenceSet),
     referenceTree(referenceTree),
@@ -145,12 +146,13 @@ FastMKS<KernelType, TreeType>::FastMKS(const arma::mat& referenceSet,
 
 // Two datasets, pre-built trees.
 template<typename KernelType, typename TreeType>
-FastMKS<KernelType, TreeType>::FastMKS(const arma::mat& referenceSet,
-                                       TreeType* referenceTree,
-                                       const arma::mat& querySet,
-                                       TreeType* queryTree,
-                                       const bool single,
-                                       const bool naive) :
+FastMKS<KernelType, TreeType>::FastMKS(
+    const typename TreeType::Mat& referenceSet,
+    TreeType* referenceTree,
+    const typename TreeType::Mat& querySet,
+    TreeType* queryTree,
+    const bool single,
+    const bool naive) :
     referenceSet(referenceSet),
     querySet(querySet),
     referenceTree(referenceTree),
@@ -205,8 +207,8 @@ void FastMKS<KernelType, TreeType>::Search(const size_t k,
         if ((&querySet == &referenceSet) && (q == r))
           continue;
 
-        const double eval = metric.Kernel().Evaluate(querySet.unsafe_col(q),
-            referenceSet.unsafe_col(r));
+        const double eval = metric.Kernel().Evaluate(querySet.col(q),
+                                                     referenceSet.col(r));
 
         size_t insertPosition;
         for (insertPosition = 0; insertPosition < indices.n_rows;

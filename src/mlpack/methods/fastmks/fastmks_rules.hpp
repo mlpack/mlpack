@@ -22,8 +22,8 @@ template<typename KernelType, typename TreeType>
 class FastMKSRules
 {
  public:
-  FastMKSRules(const arma::mat& referenceSet,
-               const arma::mat& querySet,
+  FastMKSRules(const typename TreeType::Mat& referenceSet,
+               const typename TreeType::Mat& querySet,
                arma::Mat<size_t>& indices,
                arma::mat& products,
                KernelType& kernel);
@@ -98,9 +98,9 @@ class FastMKSRules
 
  private:
   //! The reference dataset.
-  const arma::mat& referenceSet;
+  const typename TreeType::Mat& referenceSet;
   //! The query dataset.
-  const arma::mat& querySet;
+  const typename TreeType::Mat& querySet;
 
   //! The indices of the maximum kernel results.
   arma::Mat<size_t>& indices;

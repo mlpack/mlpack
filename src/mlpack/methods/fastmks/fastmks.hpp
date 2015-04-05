@@ -63,7 +63,7 @@ class FastMKS
    * @param single Whether or not to run single-tree search.
    * @param naive Whether or not to run brute-force (naive) search.
    */
-  FastMKS(const arma::mat& referenceSet,
+  FastMKS(const typename TreeType::Mat& referenceSet,
           const bool single = false,
           const bool naive = false);
 
@@ -77,8 +77,8 @@ class FastMKS
    * @param single Whether or not to run single-tree search.
    * @param naive Whether or not to run brute-force (naive) search.
    */
-  FastMKS(const arma::mat& referenceSet,
-          const arma::mat& querySet,
+  FastMKS(const typename TreeType::Mat& referenceSet,
+          const typename TreeType::Mat& querySet,
           const bool single = false,
           const bool naive = false);
 
@@ -93,7 +93,7 @@ class FastMKS
    * @param single Whether or not to run single-tree search.
    * @param naive Whether or not to run brute-force (naive) search.
    */
-  FastMKS(const arma::mat& referenceSet,
+  FastMKS(const typename TreeType::Mat& referenceSet,
           KernelType& kernel,
           const bool single = false,
           const bool naive = false);
@@ -110,8 +110,8 @@ class FastMKS
    * @param single Whether or not to run single-tree search.
    * @param naive Whether or not to run brute-force (naive) search.
    */
-  FastMKS(const arma::mat& referenceSet,
-          const arma::mat& querySet,
+  FastMKS(const typename TreeType::Mat& referenceSet,
+          const typename TreeType::Mat& querySet,
           KernelType& kernel,
           const bool single = false,
           const bool naive = false);
@@ -128,7 +128,7 @@ class FastMKS
    * @param single Whether or not to run single-tree search.
    * @param naive Whether or not to run brute-force (naive) search.
    */
-  FastMKS(const arma::mat& referenceSet,
+  FastMKS(const typename TreeType::Mat& referenceSet,
           TreeType* referenceTree,
           const bool single = false,
           const bool naive = false);
@@ -146,9 +146,9 @@ class FastMKS
    * @param single Whether or not to use single-tree search.
    * @param naive Whether or not to use naive (brute-force) search.
    */
-  FastMKS(const arma::mat& referenceSet,
+  FastMKS(const typename TreeType::Mat& referenceSet,
           TreeType* referenceTree,
-          const arma::mat& querySet,
+          const typename TreeType::Mat& querySet,
           TreeType* queryTree,
           const bool single = false,
           const bool naive = false);
@@ -186,9 +186,9 @@ class FastMKS
 
  private:
   //! The reference dataset.
-  const arma::mat& referenceSet;
+  const typename TreeType::Mat& referenceSet;
   //! The query dataset.
-  const arma::mat& querySet;
+  const typename TreeType::Mat& querySet;
 
   //! The tree built on the reference dataset.
   TreeType* referenceTree;

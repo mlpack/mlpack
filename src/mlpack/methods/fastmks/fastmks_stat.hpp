@@ -58,8 +58,8 @@ class FastMKSStat
       else
       {
         selfKernel = sqrt(node.Metric().Kernel().Evaluate(
-            node.Dataset().unsafe_col(node.Point(0)),
-            node.Dataset().unsafe_col(node.Point(0))));
+            node.Dataset().col(node.Point(0)),
+            node.Dataset().col(node.Point(0))));
       }
     }
     else

@@ -14,11 +14,12 @@ namespace mlpack {
 namespace fastmks {
 
 template<typename KernelType, typename TreeType>
-FastMKSRules<KernelType, TreeType>::FastMKSRules(const arma::mat& referenceSet,
-                                                 const arma::mat& querySet,
-                                                 arma::Mat<size_t>& indices,
-                                                 arma::mat& products,
-                                                 KernelType& kernel) :
+FastMKSRules<KernelType, TreeType>::FastMKSRules(
+    const typename TreeType::Mat& referenceSet,
+    const typename TreeType::Mat& querySet,
+    arma::Mat<size_t>& indices,
+    arma::mat& products,
+    KernelType& kernel) :
     referenceSet(referenceSet),
     querySet(querySet),
     indices(indices),
@@ -33,13 +34,13 @@ FastMKSRules<KernelType, TreeType>::FastMKSRules(const arma::mat& referenceSet,
   // Precompute each self-kernel.
   queryKernels.set_size(querySet.n_cols);
   for (size_t i = 0; i < querySet.n_cols; ++i)
-    queryKernels[i] = sqrt(kernel.Evaluate(querySet.unsafe_col(i),
-                                           querySet.unsafe_col(i)));
+    queryKernels[i] = sqrt(kernel.Evaluate(querySet.col(i),
+                                           querySet.col(i)));
 
   referenceKernels.set_size(referenceSet.n_cols);
   for (size_t i = 0; i < referenceSet.n_cols; ++i)
-    referenceKernels[i] = sqrt(kernel.Evaluate(referenceSet.unsafe_col(i),
-                                               referenceSet.unsafe_col(i)));
+    referenceKernels[i] = sqrt(kernel.Evaluate(referenceSet.col(i),
+                                               referenceSet.col(i)));
 
   // Set to invalid memory, so that the first node combination does not try to
   // dereference null pointers.
@@ -69,8 +70,8 @@ double FastMKSRules<KernelType, TreeType>::BaseCase(
   }
 
   ++baseCases;
-  double kernelEval = kernel.Evaluate(querySet.unsafe_col(queryIndex),
-                                      referenceSet.unsafe_col(referenceIndex));
+  double kernelEval = kernel.Evaluate(querySet.col(queryIndex),
+                                      referenceSet.col(referenceIndex));
 
   // Update the last kernel value, if we need to.
   if (tree::TreeTraits<TreeType>::FirstPointIsCentroid)
@@ -156,11 +157,10 @@ double FastMKSRules<KernelType, TreeType>::Score(const size_t queryIndex,
   }
   else
   {
-    const arma::vec queryPoint = querySet.unsafe_col(queryIndex);
     arma::vec refCentroid;
     referenceNode.Centroid(refCentroid);
 
-    kernelEval = kernel.Evaluate(queryPoint, refCentroid);
+    kernelEval = kernel.Evaluate(querySet.col(queryIndex), refCentroid);
   }
 
   referenceNode.Stat().LastKernel() = kernelEval;
