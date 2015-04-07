@@ -23,6 +23,7 @@ set(DIRS
   neighbor_search
   nmf
 #  lmf
+  manifold
   pca
   perceptron
   quic_svd
