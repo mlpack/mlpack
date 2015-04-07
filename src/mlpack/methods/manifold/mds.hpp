@@ -40,9 +40,9 @@ public:
  */
 
 	MDS(const arma::mat& data,
-		size_t dimensionality,
-		std::string dis= "euclidean",
-		std::string type="metric");
+	    size_t dimensionality,
+	    std::string dis= "euclidean",
+	    std::string type="metric");
 
 /**
  * This function calculates the dissimilarity matrix, provided the input dataset. Dissimilarity is the measure of
@@ -67,9 +67,9 @@ public:
  */
 
 	const arma::mat& reduce(const arma::mat& dissimalarity_mat,
-							size_t dimensionality,
-							std::string dis= "euclidean", 
-							std::string type="metric");
+				size_t dimensionality,
+				std::string dis= "euclidean", 
+				std::string type="metric");
 
 	//const arma::mat& reduce(std::string type="metric", size_t dimensionality);
 

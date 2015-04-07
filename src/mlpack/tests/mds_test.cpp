@@ -31,13 +31,13 @@ BOOST_AUTO_TEST_CASE(DimensionalityReductionTestMatlab){
 	
 	//Matlab's reduced dimensions. Have to be put manually.
 	mat matlab("15.1721 17.4301;"
-			   "-24.8743 2.7574;"
-			   "9.7022 -20.1875");
+		   "-24.8743 2.7574;"
+		   "9.7022 -20.1875");
 	
 	//Raw input data, this is not the dissimilarity matrix
 	mat data("20 30 40;"
-			 "1 3 13;"
-			 "5 44 8");
+		 "1 3 13;"
+		 "5 44 8");
 
 	BOOST_REQUIRE_EQUAL(matlab.n_rows,data.n_rows);
 	
@@ -75,12 +75,12 @@ BOOST_AUTO_TEST_CASE(DetermineKruskalStress){
 	double num, den,k_stress;
 	arma::mat B,dis1,dis2;
 	mat matlab("15.1721 17.4301;"
-			   "-24.8743 2.7574;"
-			   "9.7022 -20.1875");
+	           "-24.8743 2.7574;"
+		   "9.7022 -20.1875");
 	
 	mat data("20 30 40;"
-			 "1 3 13;"
-			 "5 44 8");
+	         "1 3 13;"
+		 "5 44 8");
 	//Dissimilarity of the input data
 	B=m.dissimilarity(data);
 	dis1=B;

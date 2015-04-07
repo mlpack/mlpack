@@ -17,9 +17,9 @@ using namespace arma;
 
 //create MDS object and compute MDS by calling dissimilarity() and reduce()
 MDS::MDS(const arma::mat& data,
-		 size_t dimensionality,
-		 std::string dis/*= "euclidean"*/,
-		 std::string type/*="metric"*/){
+	 size_t dimensionality,
+	 std::string dis/*= "euclidean"*/,
+	 std::string type/*="metric"*/){
 	
 	arma::mat d;
 	if(!dis.compare("euclidean")){
@@ -36,9 +36,9 @@ MDS::MDS(const arma::mat& data,
  * https://homepages.uni-tuebingen.de/florian.wickelmaier/pubs/Wickelmaier2003SQRU.pdf
  */
 const arma::mat& MDS::reduce(const arma::mat& dissimalarity_mat,
-							 size_t dimensionality,
-							 std::string dis/*= "euclidean"*/,
-							 std::string type/*="metric"*/){
+			     size_t dimensionality,
+       			     std::string dis/*= "euclidean"*/,
+			     std::string type/*="metric"*/){
 	
 
 	arma::mat XX,H,I,one,eigvec;
