@@ -68,6 +68,13 @@ int main(int argc, char *argv[])
   // Give CLI the command line parameters the user passed in.
   CLI::ParseCommandLine(argc, argv);
 
+      Log::Info << "sizeof(BinarySpaceTree<>): " << sizeof(BinarySpaceTree<bound::HRectBound<2>>) << ".\n";
+      Log::Info << "sizeof(HRectBound<2>): " << sizeof(bound::HRectBound<2>) << ".\n";
+      Log::Info << "sizeof(NeighborSearchStat): " << sizeof(NeighborSearchStat<NearestNeighborSort>) << ".\n";
+      Log::Info << "sizeof(TreeType): " <<
+sizeof(BinarySpaceTree<bound::HRectBound<2>,
+NeighborSearchStat<NearestNeighborSort>>) << ".\n";
+
   if (CLI::GetParam<int>("seed") != 0)
     math::RandomSeed((size_t) CLI::GetParam<int>("seed"));
   else

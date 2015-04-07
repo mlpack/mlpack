@@ -41,7 +41,6 @@ class MeanSplit
                         MatType& data,
                         const size_t begin,
                         const size_t count,
-                        size_t& splitDimension,
                         size_t& splitCol);
 
   /**
@@ -64,7 +63,6 @@ class MeanSplit
                         MatType& data,
                         const size_t begin,
                         const size_t count,
-                        size_t& splitDimension,
                         size_t& splitCol,
                         std::vector<size_t>& oldFromNew);
 

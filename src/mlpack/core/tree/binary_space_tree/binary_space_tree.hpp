@@ -56,14 +56,10 @@ class BinarySpaceTree
   //! The number of points of the dataset contained in this node (and its
   //! children).
   size_t count;
-  //! The max leaf size.
-  size_t maxLeafSize;
   //! The bound object for this node.
   BoundType bound;
   //! Any extra data contained in the node.
   StatisticType stat;
-  //! The dimension this node split on if it is a parent.
-  size_t splitDimension;
   //! The distance from the centroid of this node to the centroid of the parent.
   double parentDistance;
   //! The worst possible distance to the furthest descendant, cached to speed
@@ -257,14 +253,6 @@ class BinarySpaceTree
   //! Return whether or not this node is a leaf (true if it has no children).
   bool IsLeaf() const;
 
-  //! Return the max leaf size.
-  size_t MaxLeafSize() const { return maxLeafSize; }
-  //! Modify the max leaf size.
-  size_t& MaxLeafSize() { return maxLeafSize; }
-
-  //! Fills the tree to the specified level.
-  size_t ExtendTree(const size_t level);
-
   //! Gets the left child of this node.
   BinarySpaceTree* Left() const { return left; }
   //! Modify the left child of this node.
@@ -279,11 +267,6 @@ class BinarySpaceTree
   BinarySpaceTree* Parent() const { return parent; }
   //! Modify the parent of this node.
   BinarySpaceTree*& Parent() { return parent; }
-
-  //! Get the split dimension for this node.
-  size_t SplitDimension() const { return splitDimension; }
-  //! Modify the split dimension for this node.
-  size_t& SplitDimension() { return splitDimension; }
 
   //! Get the dataset which the tree is built on.
   const MatType& Dataset() const { return dataset; }
@@ -410,11 +393,6 @@ class BinarySpaceTree
   }
 
   /**
-  * Returns the dimension this parent's children are split on.
-  */
-  size_t GetSplitDimension() const;
-
-  /**
    * Obtains the number of nodes in the tree, starting with this.
    */
   size_t TreeSize() const;
@@ -445,33 +423,13 @@ class BinarySpaceTree
 
  private:
   /**
-   * Private copy constructor, available only to fill (pad) the tree to a
-   * specified level.
-   */
-  BinarySpaceTree(const size_t begin,
-                  const size_t count,
-                  BoundType bound,
-                  StatisticType stat,
-                  const int maxLeafSize = 20) :
-      left(NULL),
-      right(NULL),
-      begin(begin),
-      count(count),
-      bound(bound),
-      stat(stat),
-      maxLeafSize(maxLeafSize) { }
-
-  BinarySpaceTree* CopyMe()
-  {
-    return new BinarySpaceTree(begin, count, bound, stat, maxLeafSize);
-  }
-
-  /**
    * Splits the current node, assigning its left and right children recursively.
    *
    * @param data Dataset which we are using.
+   * @param maxLeafSize Maximum number of points held in a leaf.
    */
-  void SplitNode(MatType& data);
+  void SplitNode(MatType& data,
+                 const size_t maxLeafSize);
 
   /**
    * Splits the current node, assigning its left and right children recursively.
@@ -479,8 +437,11 @@ class BinarySpaceTree
    *
    * @param data Dataset which we are using.
    * @param oldFromNew Vector holding permuted indices.
+   * @param maxLeafSize Maximum number of points held in a leaf.
    */
-  void SplitNode(MatType& data, std::vector<size_t>& oldFromNew);
+  void SplitNode(MatType& data,
+                 std::vector<size_t>& oldFromNew,
+                 const size_t maxLeafSize);
 
  public:
   /**

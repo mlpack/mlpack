@@ -18,10 +18,9 @@ bool MeanSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
                                               MatType& data,
                                               const size_t begin,
                                               const size_t count,
-                                              size_t& splitDimension,
                                               size_t& splitCol)
 {
-  splitDimension = data.n_rows; // Indicate invalid.
+  size_t splitDimension = data.n_rows; // Indicate invalid.
   double maxWidth = -1;
 
   // Find the split dimension.
@@ -56,11 +55,10 @@ bool MeanSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
                                               MatType& data,
                                               const size_t begin,
                                               const size_t count,
-                                              size_t& splitDimension,
                                               size_t& splitCol,
                                               std::vector<size_t>& oldFromNew)
 {
-  splitDimension = data.n_rows; // Indicate invalid.
+  size_t splitDimension = data.n_rows; // Indicate invalid.
   double maxWidth = -1;
 
   // Find the split dimension.
