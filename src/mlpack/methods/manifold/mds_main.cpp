@@ -1,3 +1,9 @@
+/**
+ * @file mds_main.cpp
+ * @author Dhawal Arora
+ * This will form the executable for Multi-Dimensional Scaling
+ * 
+ */
 #include <mlpack/core.hpp>
 #include "mds.hpp"
 using namespace std;

@@ -1,6 +1,6 @@
 /**
  * @file mds.hpp
- *
+ * @author Dhawal Arora
  * Defines the MDS class to perform Multi-Dimensional Scaling on the
  * specified data set.
  */

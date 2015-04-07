@@ -1,3 +1,10 @@
+/**
+ * @file mds.cpp
+ * @author Dhawal Arora
+ * Defines the functions for the MDS class to perform Multi-Dimensional Scaling on the
+ * specified data set.
+ */
+
 #include "mds.hpp"
 
 using namespace std;
