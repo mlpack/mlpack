@@ -637,7 +637,7 @@ std::string BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
   convert << "  Bound: " << std::endl;
   convert << mlpack::util::Indent(bound.ToString(), 2);
   convert << "  Statistic: " << std::endl;
-  convert << mlpack::util::Indent(stat->ToString(), 2);
+  convert << mlpack::util::Indent(stat.ToString(), 2);
 
   // How many levels should we print?  This will print the top two tree levels.
   if (left != NULL && parent == NULL)
