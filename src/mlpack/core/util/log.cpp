@@ -125,7 +125,7 @@ void Log::Assert(bool condition, const std::string& message)
     free(messages);
 #endif
 
-    exit(1);
+    throw std::runtime_error("Log::Assert() failed:" + message);
   }
 }
 #else
