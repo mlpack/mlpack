@@ -22,6 +22,7 @@
 #include <float.h>
 #include <stdint.h>
 #include <iostream>
+#include <stdexcept>
 
 // Defining _USE_MATH_DEFINES should set M_PI.
 #define _USE_MATH_DEFINES

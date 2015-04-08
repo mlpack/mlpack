@@ -73,7 +73,7 @@ void PrefixedOutStream::BaseLogic(const T& val)
   std::ostringstream convert;
   convert << val;
 
-  if(convert.fail())
+  if (convert.fail())
   {
     PrefixIfNeeded();
     if (!ignoreInput)
@@ -130,7 +130,7 @@ void PrefixedOutStream::BaseLogic(const T& val)
 
   // If we displayed a newline and we need to terminate afterwards, do that.
   if (fatal && newlined)
-    exit(1);
+    throw std::runtime_error("fatal error; see Log::Fatal output");
 }
 
 // This is an inline function (that is why it is here and not in .cc).
