@@ -21,9 +21,9 @@ BOOST_AUTO_TEST_SUITE(RangeSearchTest);
 
 // Get our results into a sorted format, so we can actually then test for
 // correctness.
-void SortResults(const vector<vector<size_t> >& neighbors,
-                 const vector<vector<double> >& distances,
-                 vector<vector<pair<double, size_t> > >& output)
+void SortResults(const vector<vector<size_t>>& neighbors,
+                 const vector<vector<double>>& distances,
+                 vector<vector<pair<double, size_t>>>& output)
 {
   output.resize(neighbors.size());
   for (size_t i = 0; i < neighbors.size(); i++)
@@ -90,20 +90,20 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
         rs = new RangeSearch<>(dataMutable, true);
         break;
       case 1: // Use the single-tree method.
-        rs = new RangeSearch<>(tree, dataMutable, true);
+        rs = new RangeSearch<>(tree, true);
         break;
       case 2: // Use the dual-tree method.
-        rs = new RangeSearch<>(tree, dataMutable);
+        rs = new RangeSearch<>(tree);
         break;
     }
 
     // Now perform the first calculation.  Points within 0.50.
-    vector<vector<size_t> > neighbors;
-    vector<vector<double> > distances;
+    vector<vector<size_t>> neighbors;
+    vector<vector<double>> distances;
     rs->Search(Range(0.0, sqrt(0.5)), neighbors, distances);
 
     // Now the exhaustive check for correctness.  This will be long.
-    vector<vector<pair<double, size_t> > > sortedOutput;
+    vector<vector<pair<double, size_t>>> sortedOutput;
     SortResults(neighbors, distances, sortedOutput);
 
     BOOST_REQUIRE(sortedOutput[newFromOld[0]].size() == 4);
@@ -460,20 +460,20 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive1)
   arma::mat naiveQuery(dataForTree);
   arma::mat naiveReferences(dataForTree);
 
-  RangeSearch<> rs(dualQuery, dualReferences);
+  RangeSearch<> rs(dualReferences);
 
-  RangeSearch<> naive(naiveQuery, naiveReferences, true);
+  RangeSearch<> naive(naiveReferences, true);
 
-  vector<vector<size_t> > neighborsTree;
-  vector<vector<double> > distancesTree;
-  rs.Search(Range(0.25, 1.05), neighborsTree, distancesTree);
-  vector<vector<pair<double, size_t> > > sortedTree;
+  vector<vector<size_t>> neighborsTree;
+  vector<vector<double>> distancesTree;
+  rs.Search(dualQuery, Range(0.25, 1.05), neighborsTree, distancesTree);
+  vector<vector<pair<double, size_t>>> sortedTree;
   SortResults(neighborsTree, distancesTree, sortedTree);
 
-  vector<vector<size_t> > neighborsNaive;
-  vector<vector<double> > distancesNaive;
-  naive.Search(Range(0.25, 1.05), neighborsNaive, distancesNaive);
-  vector<vector<pair<double, size_t> > > sortedNaive;
+  vector<vector<size_t>> neighborsNaive;
+  vector<vector<double>> distancesNaive;
+  naive.Search(naiveQuery, Range(0.25, 1.05), neighborsNaive, distancesNaive);
+  vector<vector<pair<double, size_t>>> sortedNaive;
   SortResults(neighborsNaive, distancesNaive, sortedNaive);
 
   for (size_t i = 0; i < sortedTree.size(); i++)
@@ -513,16 +513,16 @@ BOOST_AUTO_TEST_CASE(DualTreeVsNaive2)
   // Set naive mode.
   RangeSearch<> naive(naiveQuery, true);
 
-  vector<vector<size_t> > neighborsTree;
-  vector<vector<double> > distancesTree;
+  vector<vector<size_t>> neighborsTree;
+  vector<vector<double>> distancesTree;
   rs.Search(Range(0.25, 1.05), neighborsTree, distancesTree);
-  vector<vector<pair<double, size_t> > > sortedTree;
+  vector<vector<pair<double, size_t>>> sortedTree;
   SortResults(neighborsTree, distancesTree, sortedTree);
 
-  vector<vector<size_t> > neighborsNaive;
-  vector<vector<double> > distancesNaive;
+  vector<vector<size_t>> neighborsNaive;
+  vector<vector<double>> distancesNaive;
   naive.Search(Range(0.25, 1.05), neighborsNaive, distancesNaive);
-  vector<vector<pair<double, size_t> > > sortedNaive;
+  vector<vector<pair<double, size_t>>> sortedNaive;
   SortResults(neighborsNaive, distancesNaive, sortedNaive);
 
   for (size_t i = 0; i < sortedTree.size(); i++)
@@ -562,16 +562,16 @@ BOOST_AUTO_TEST_CASE(SingleTreeVsNaive)
   // Set up computation for naive mode.
   RangeSearch<> naive(naiveQuery, true);
 
-  vector<vector<size_t> > neighborsSingle;
-  vector<vector<double> > distancesSingle;
+  vector<vector<size_t>> neighborsSingle;
+  vector<vector<double>> distancesSingle;
   single.Search(Range(0.25, 1.05), neighborsSingle, distancesSingle);
-  vector<vector<pair<double, size_t> > > sortedTree;
+  vector<vector<pair<double, size_t>>> sortedTree;
   SortResults(neighborsSingle, distancesSingle, sortedTree);
 
-  vector<vector<size_t> > neighborsNaive;
-  vector<vector<double> > distancesNaive;
+  vector<vector<size_t>> neighborsNaive;
+  vector<vector<double>> distancesNaive;
   naive.Search(Range(0.25, 1.05), neighborsNaive, distancesNaive);
-  vector<vector<pair<double, size_t> > > sortedNaive;
+  vector<vector<pair<double, size_t>>> sortedNaive;
   SortResults(neighborsNaive, distancesNaive, sortedNaive);
 
   for (size_t i = 0; i < sortedTree.size(); i++)
@@ -600,8 +600,7 @@ BOOST_AUTO_TEST_CASE(CoverTreeTest)
   typedef tree::CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
       RangeSearchStat> CoverTreeType;
   CoverTreeType tree(data);
-  RangeSearch<metric::EuclideanDistance, CoverTreeType> coversearch(&tree,
-      data);
+  RangeSearch<metric::EuclideanDistance, CoverTreeType> coversearch(&tree);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
@@ -631,12 +630,12 @@ BOOST_AUTO_TEST_CASE(CoverTreeTest)
     }
 
     // Results for kd-tree search.
-    vector<vector<size_t> > kdNeighbors;
-    vector<vector<double> > kdDistances;
+    vector<vector<size_t>> kdNeighbors;
+    vector<vector<double>> kdDistances;
 
     // Results for cover tree search.
-    vector<vector<size_t> > coverNeighbors;
-    vector<vector<double> > coverDistances;
+    vector<vector<size_t>> coverNeighbors;
+    vector<vector<double>> coverDistances;
 
     // Clean the tree statistics.
     CleanTree(tree);
@@ -646,8 +645,8 @@ BOOST_AUTO_TEST_CASE(CoverTreeTest)
     coversearch.Search(range, coverNeighbors, coverDistances);
 
     // Sort before comparison.
-    vector<vector<pair<double, size_t> > > kdSorted;
-    vector<vector<pair<double, size_t> > > coverSorted;
+    vector<vector<pair<double, size_t>>> kdSorted;
+    vector<vector<pair<double, size_t>>> coverSorted;
     SortResults(kdNeighbors, kdDistances, kdSorted);
     SortResults(coverNeighbors, coverDistances, coverSorted);
 
@@ -680,16 +679,16 @@ BOOST_AUTO_TEST_CASE(CoverTreeTwoDatasetsTest)
   typedef tree::CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
       RangeSearchStat> CoverTreeType;
   CoverTreeType tree(data);
-  CoverTreeType queryTree(queries);
+  CoverTreeType* queryTree = new CoverTreeType(queries);
   RangeSearch<metric::EuclideanDistance, CoverTreeType>
-      coversearch(&tree, &queryTree, data, queries);
+      coversearch(&tree);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
   {
     // Set up kd-tree range search.  We don't have an easy way to rebuild the
     // tree, so we'll just reinstantiate it here each loop time.
-    RangeSearch<> kdsearch(data, queries);
+    RangeSearch<> kdsearch(data);
 
     Range range;
     switch (r)
@@ -713,24 +712,25 @@ BOOST_AUTO_TEST_CASE(CoverTreeTwoDatasetsTest)
     }
 
     // Results for kd-tree search.
-    vector<vector<size_t> > kdNeighbors;
-    vector<vector<double> > kdDistances;
+    vector<vector<size_t>> kdNeighbors;
+    vector<vector<double>> kdDistances;
 
     // Results for cover tree search.
-    vector<vector<size_t> > coverNeighbors;
-    vector<vector<double> > coverDistances;
+    vector<vector<size_t>> coverNeighbors;
+    vector<vector<double>> coverDistances;
 
     // Clean the trees.
     CleanTree(tree);
-    CleanTree(queryTree);
+    delete queryTree;
+    queryTree = new CoverTreeType(queries);
 
     // Run the searches.
-    coversearch.Search(range, coverNeighbors, coverDistances);
-    kdsearch.Search(range, kdNeighbors, kdDistances);
+    coversearch.Search(queryTree, range, coverNeighbors, coverDistances);
+    kdsearch.Search(queries, range, kdNeighbors, kdDistances);
 
     // Sort before comparison.
-    vector<vector<pair<double, size_t> > > kdSorted;
-    vector<vector<pair<double, size_t> > > coverSorted;
+    vector<vector<pair<double, size_t>>> kdSorted;
+    vector<vector<pair<double, size_t>>> coverSorted;
     SortResults(kdNeighbors, kdDistances, kdSorted);
     SortResults(coverNeighbors, coverDistances, coverSorted);
 
@@ -746,6 +746,8 @@ BOOST_AUTO_TEST_CASE(CoverTreeTwoDatasetsTest)
       BOOST_REQUIRE_EQUAL(kdSorted[i].size(), coverSorted[i].size());
     }
   }
+
+  delete queryTree;
 }
 
 /**
@@ -760,8 +762,8 @@ BOOST_AUTO_TEST_CASE(CoverTreeSingleTreeTest)
   typedef tree::CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
       RangeSearchStat> CoverTreeType;
   CoverTreeType tree(data);
-  RangeSearch<metric::EuclideanDistance, CoverTreeType>
-      coversearch(&tree, data, true);
+  RangeSearch<metric::EuclideanDistance, CoverTreeType> coversearch(&tree,
+      true);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
@@ -791,12 +793,12 @@ BOOST_AUTO_TEST_CASE(CoverTreeSingleTreeTest)
     }
 
     // Results for kd-tree search.
-    vector<vector<size_t> > kdNeighbors;
-    vector<vector<double> > kdDistances;
+    vector<vector<size_t>> kdNeighbors;
+    vector<vector<double>> kdDistances;
 
     // Results for cover tree search.
-    vector<vector<size_t> > coverNeighbors;
-    vector<vector<double> > coverDistances;
+    vector<vector<size_t>> coverNeighbors;
+    vector<vector<double>> coverDistances;
 
     // Clean the tree statistics.
     CleanTree(tree);
@@ -806,8 +808,8 @@ BOOST_AUTO_TEST_CASE(CoverTreeSingleTreeTest)
     coversearch.Search(range, coverNeighbors, coverDistances);
 
     // Sort before comparison.
-    vector<vector<pair<double, size_t> > > kdSorted;
-    vector<vector<pair<double, size_t> > > coverSorted;
+    vector<vector<pair<double, size_t>>> kdSorted;
+    vector<vector<pair<double, size_t>>> coverSorted;
     SortResults(kdNeighbors, kdDistances, kdSorted);
     SortResults(coverNeighbors, coverDistances, coverSorted);
 
@@ -837,7 +839,7 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
   typedef BinarySpaceTree<BallBound<>, RangeSearchStat> TreeType;
   TreeType tree(data);
   RangeSearch<metric::EuclideanDistance, TreeType>
-      ballsearch(&tree, data, true);
+      ballsearch(&tree, true);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
@@ -867,12 +869,12 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
     }
 
     // Results for kd-tree search.
-    vector<vector<size_t> > kdNeighbors;
-    vector<vector<double> > kdDistances;
+    vector<vector<size_t>> kdNeighbors;
+    vector<vector<double>> kdDistances;
 
     // Results for ball tree search.
-    vector<vector<size_t> > ballNeighbors;
-    vector<vector<double> > ballDistances;
+    vector<vector<size_t>> ballNeighbors;
+    vector<vector<double>> ballDistances;
 
     // Clean the tree statistics.
     CleanTree(tree);
@@ -882,8 +884,8 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
     ballsearch.Search(range, ballNeighbors, ballDistances);
 
     // Sort before comparison.
-    vector<vector<pair<double, size_t> > > kdSorted;
-    vector<vector<pair<double, size_t> > > ballSorted;
+    vector<vector<pair<double, size_t>>> kdSorted;
+    vector<vector<pair<double, size_t>>> ballSorted;
     SortResults(kdNeighbors, kdDistances, kdSorted);
     SortResults(ballNeighbors, ballDistances, ballSorted);
 
@@ -913,7 +915,7 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
   // Set up ball tree range search.
   typedef BinarySpaceTree<BallBound<>, RangeSearchStat> TreeType;
   TreeType tree(data);
-  RangeSearch<metric::EuclideanDistance, TreeType> ballsearch(&tree, data);
+  RangeSearch<metric::EuclideanDistance, TreeType> ballsearch(&tree);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
@@ -943,12 +945,12 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
     }
 
     // Results for kd-tree search.
-    vector<vector<size_t> > kdNeighbors;
-    vector<vector<double> > kdDistances;
+    vector<vector<size_t>> kdNeighbors;
+    vector<vector<double>> kdDistances;
 
     // Results for ball tree search.
-    vector<vector<size_t> > ballNeighbors;
-    vector<vector<double> > ballDistances;
+    vector<vector<size_t>> ballNeighbors;
+    vector<vector<double>> ballDistances;
 
     // Clean the tree statistics.
     CleanTree(tree);
@@ -958,8 +960,8 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
     ballsearch.Search(range, ballNeighbors, ballDistances);
 
     // Sort before comparison.
-    vector<vector<pair<double, size_t> > > kdSorted;
-    vector<vector<pair<double, size_t> > > ballSorted;
+    vector<vector<pair<double, size_t>>> kdSorted;
+    vector<vector<pair<double, size_t>>> ballSorted;
     SortResults(kdNeighbors, kdDistances, kdSorted);
     SortResults(ballNeighbors, ballDistances, ballSorted);
 
@@ -993,15 +995,14 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest2)
   typedef BinarySpaceTree<BallBound<>, RangeSearchStat> TreeType;
   TreeType tree(data);
   TreeType queryTree(queries);
-  RangeSearch<metric::EuclideanDistance, TreeType>
-      ballsearch(&tree, &queryTree, data, queries);
+  RangeSearch<metric::EuclideanDistance, TreeType> ballsearch(&tree);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
   {
     // Set up kd-tree range search.  We don't have an easy way to rebuild the
     // tree, so we'll just reinstantiate it here each loop time.
-    RangeSearch<> kdsearch(data, queries);
+    RangeSearch<> kdsearch(data);
 
     Range range;
     switch (r)
@@ -1025,24 +1026,24 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest2)
     }
 
     // Results for kd-tree search.
-    vector<vector<size_t> > kdNeighbors;
-    vector<vector<double> > kdDistances;
+    vector<vector<size_t>> kdNeighbors;
+    vector<vector<double>> kdDistances;
 
     // Results for ball tree search.
-    vector<vector<size_t> > ballNeighbors;
-    vector<vector<double> > ballDistances;
+    vector<vector<size_t>> ballNeighbors;
+    vector<vector<double>> ballDistances;
 
     // Clean the trees.
     CleanTree(tree);
     CleanTree(queryTree);
 
     // Run the searches.
-    ballsearch.Search(range, ballNeighbors, ballDistances);
-    kdsearch.Search(range, kdNeighbors, kdDistances);
+    ballsearch.Search(&queryTree, range, ballNeighbors, ballDistances);
+    kdsearch.Search(queries, range, kdNeighbors, kdDistances);
 
     // Sort before comparison.
-    vector<vector<pair<double, size_t> > > kdSorted;
-    vector<vector<pair<double, size_t> > > ballSorted;
+    vector<vector<pair<double, size_t>>> kdSorted;
+    vector<vector<pair<double, size_t>>> ballSorted;
     SortResults(kdNeighbors, kdDistances, kdSorted);
     SortResults(ballNeighbors, ballDistances, ballSorted);
 
