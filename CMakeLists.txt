@@ -116,30 +116,37 @@ find_package(Armadillo 3.6.0 REQUIRED)
 
 # If Armadillo was compiled without ARMA_64BIT_WORD and we are on a 64-bit
 # system (where size_t will be 64 bits), suggest to the user that they should
-# compile Armadillo with 64-bit words.
+# compile Armadillo with 64-bit words.  Note that with Armadillo 5.000.0 and
+# newer, ARMA_64BIT_WORD is enabled by default.
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-  # Can we open the configuration file?  If not, issue a warning.
-  if(NOT EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
-    message(WARNING "Armadillo configuration file "
-        "(${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp) does not exist!")
-  else(NOT EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
-    # We are on a 64-bit system.  Does Armadillo have ARMA_64BIT_WORD enabled?
-    file(READ "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp" ARMA_CONFIG)
-    string(REGEX MATCH
-        "[\r\n][ ]*#define ARMA_64BIT_WORD"
-        ARMA_HAS_64BIT_WORD_PRE
-        "${ARMA_CONFIG}")
+  # Check the version, to see if ARMA_64BIT_WORD is enabled by default.
+  set(ARMA_HAS_64BIT_WORD 0)
+  if(NOT (${ARMADILLO_VERSION_MAJOR} LESS 5))
+    set(ARMA_HAS_64BIT_WORD 1)
+  else(NOT (${ARMADILLO_VERSION_MAJOR} LESS 5))
+    # Can we open the configuration file?  If not, issue a warning.
+    if(NOT EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
+      message(WARNING "Armadillo configuration file "
+          "(${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp) does not exist!")
+    else(NOT EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
+      # We are on a 64-bit system.  Does Armadillo have ARMA_64BIT_WORD enabled?
+      file(READ "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp" ARMA_CONFIG)
+      string(REGEX MATCH
+          "[\r\n][ ]*#define ARMA_64BIT_WORD"
+          ARMA_HAS_64BIT_WORD_PRE
+          "${ARMA_CONFIG}")
 
-    string(LENGTH "${ARMA_HAS_64BIT_WORD_PRE}" ARMA_HAS_64BIT_WORD)
+      string(LENGTH "${ARMA_HAS_64BIT_WORD_PRE}" ARMA_HAS_64BIT_WORD)
+    endif(NOT EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
+  endif(NOT (${ARMADILLO_VERSION_MAJOR} LESS 5))
 
-    if(ARMA_HAS_64BIT_WORD EQUAL 0)
-      message(WARNING "This is a 64-bit system, but Armadillo was compiled "
-          "without 64-bit index support.  Consider recompiling Armadillo with "
-          "ARMA_64BIT_WORD to enable 64-bit indices (large matrix support). "
-          "MLPACK will still work without ARMA_64BIT_WORD defined, but will not "
-          "scale to matrices with more than 4 billion elements.")
-    endif(ARMA_HAS_64BIT_WORD EQUAL 0)
-  endif(NOT EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
+  if(ARMA_HAS_64BIT_WORD EQUAL 0)
+    message(WARNING "This is a 64-bit system, but Armadillo was compiled "
+        "without 64-bit index support.  Consider recompiling Armadillo with "
+        "ARMA_64BIT_WORD to enable 64-bit indices (large matrix support). "
+        "MLPACK will still work without ARMA_64BIT_WORD defined, but will not "
+        "scale to matrices with more than 4 billion elements.")
+  endif(ARMA_HAS_64BIT_WORD EQUAL 0)
 endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
 # On Windows, Armadillo should be using LAPACK and BLAS but we still need to
@@ -168,7 +175,7 @@ if (WIN32)
 
   # Piggyback LAPACK and BLAS linking into Armadillo link.
   set(ARMADILLO_LIBRARIES
-      "${ARMADILLO_LIBRARIES};${BLAS_LIBRARY};${LAPACK_LIBRARY}")
+       ${ARMADILLO_LIBRARIES} ${BLAS_LIBRARY} ${LAPACK_LIBRARY})
 endif (WIN32)
 
 find_package(LibXml2 2.6.0 REQUIRED)
