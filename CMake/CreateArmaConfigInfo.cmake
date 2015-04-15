@@ -10,26 +10,39 @@ else(EXISTS "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
   set(OLD_FILE_CONTENTS "")
 endif(EXISTS "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
 
-# We'll need to open the config.hpp we are using.
-if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
-  file(READ "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp"
-      ARMA_CONFIG)
+# If we are using Armadillo 5+, ARMA_64BIT_WORD is implicitly enabled.
+set(ARMA_HAS_64BIT_WORD 0) # This may be unnecessary.
+if(NOT (${ARMADILLO_VERSION_MAJOR} LESS 5))
+  set(ARMA_HAS_64BIT_WORD 1)
+else(NOT (${ARMADILLO_VERSION_MAJOR} LESS 5))
+  # Otherwise, we'll need to open the config.hpp we are using and inspect the
+  # setting of ARMA_64BIT_WORD.
+  if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
+    file(READ "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp"
+        ARMA_CONFIG)
 
-  # Extract ARMA_64BIT_WORD.
-  string(REGEX MATCH
-      "[\r\n][ ]*#define ARMA_64BIT_WORD"
-      ARMA_HAS_64BIT_WORD_PRE
-      "${ARMA_CONFIG}")
+    # Extract ARMA_64BIT_WORD.
+    string(REGEX MATCH
+        "[\r\n][ ]*#define ARMA_64BIT_WORD"
+        ARMA_HAS_64BIT_WORD_PRE
+        "${ARMA_CONFIG}")
 
-  string(LENGTH "${ARMA_HAS_64BIT_WORD_PRE}" ARMA_HAS_64BIT_WORD)
+    string(LENGTH "${ARMA_HAS_64BIT_WORD_PRE}" ARMA_HAS_64BIT_WORD)
+  else(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
+    # Assumes ARMA_64BIT_WORD is not set.
+    message(WARNING "Armadillo configuration file
+        (${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp) does not exist!")
+  endif(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
+endif(NOT (${ARMADILLO_VERSION_MAJOR} LESS 5))
 
-  if(ARMA_HAS_64BIT_WORD EQUAL 0)
-    set(ARMA_64BIT_WORD_DEFINE "#define MLPACK_ARMA_NO64BIT_WORD")
-  else(ARMA_HAS_64BIT_WORD EQUAL 0)
-    set(ARMA_64BIT_WORD_DEFINE "#define MLPACK_ARMA_64BIT_WORD")
-  endif(ARMA_HAS_64BIT_WORD EQUAL 0)
+# Now use the value we gathered to generate the new file contents.
+if(ARMA_HAS_64BIT_WORD EQUAL 0)
+  set(ARMA_64BIT_WORD_DEFINE "#define MLPACK_ARMA_NO64BIT_WORD")
+else(ARMA_HAS_64BIT_WORD EQUAL 0)
+  set(ARMA_64BIT_WORD_DEFINE "#define MLPACK_ARMA_64BIT_WORD")
+endif(ARMA_HAS_64BIT_WORD EQUAL 0)
 
-  set(NEW_FILE_CONTENTS
+set(NEW_FILE_CONTENTS
 "/**
  * @file arma_config.hpp
  *
@@ -52,16 +65,14 @@ ${ARMA_64BIT_WORD_DEFINE}
 #endif
 ")
 
-  # Did the contents of the file change at all?  If not, don't write it.
-  if(NOT "${OLD_FILE_CONTENTS}" STREQUAL "${NEW_FILE_CONTENTS}")
-    # We have a reason to write the new file.
-    message(STATUS "Regenerating arma_config.hpp.")
-    file(REMOVE "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
-    file(WRITE "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp"
-        "${NEW_FILE_CONTENTS}")
-  endif(NOT "${OLD_FILE_CONTENTS}" STREQUAL "${NEW_FILE_CONTENTS}")
+# Did the contents of the file change at all?  If not, don't write it.
+if(NOT "${OLD_FILE_CONTENTS}" STREQUAL "${NEW_FILE_CONTENTS}")
+  # We have a reason to write the new file.
+  message(STATUS "Regenerating arma_config.hpp.")
+  file(REMOVE "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
+  file(WRITE "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp"
+      "${NEW_FILE_CONTENTS}")
+endif(NOT "${OLD_FILE_CONTENTS}" STREQUAL "${NEW_FILE_CONTENTS}")
 
-else(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
-  message(WARNING "Armadillo configuration file
-      (${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp) does not exist!")
-endif(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
+
+
