@@ -9,6 +9,7 @@ set(SOURCES
   normalize_labels_impl.hpp
   save.hpp
   save_impl.hpp
+  serialization_shim.hpp
 )
 
 # add directory name to sources
