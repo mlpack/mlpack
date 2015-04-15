@@ -223,6 +223,7 @@ find_package(Boost 1.49
     COMPONENTS
       program_options
       unit_test_framework
+      serialization
     REQUIRED
 )
 include_directories(${Boost_INCLUDE_DIRS})
