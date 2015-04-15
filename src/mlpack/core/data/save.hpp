@@ -48,11 +48,43 @@ namespace data /** Functions to load and save matrices. */ {
 template<typename eT>
 bool Save(const std::string& filename,
           const arma::Mat<eT>& matrix,
-          bool fatal = false,
+          const bool fatal = false,
           bool transpose = true);
 
-}; // namespace data
-}; // namespace mlpack
+/**
+ * Saves a model to file, guessing the filetype from the extension, or,
+ * optionally, saving the specified format.  If automatic extension detection is
+ * used and the filetype cannot be determined, and error will be given.
+ *
+ * The supported types of files are the same as what is supported by the
+ * boost::serialization library:
+ *
+ *  - text, denoted by .txt
+ *  - xml, denoted by .xml
+ *  - binary, denoted by .bin
+ *
+ * The format parameter can take any of the values in the 'format' enum:
+ * 'format::autodetect', 'format::text', 'format::xml', and 'format::binary'.
+ * The autodetect functionality operates on the file extension (so, "file.txt"
+ * would be autodetected as text).
+ *
+ * The name parameter should be specified to indicate the name of the structure
+ * to be saved.  If Load() is later called on the generated file, the name used
+ * to load should be the same as the name used for this call to Save().
+ *
+ * If the parameter 'fatal' is set to true, then an exception will be thrown in
+ * the event of a save failure.  Otherwise, the method will return false and the
+ * relevant error information will be printed to Log::Warn.
+ */
+template<typename T>
+bool Save(const std::string& filename,
+          T& t,
+          const std::string& name,
+          const bool fatal = false,
+          format f = format::autodetect);
+
+} // namespace data
+} // namespace mlpack
 
 // Include implementation.
 #include "save_impl.hpp"

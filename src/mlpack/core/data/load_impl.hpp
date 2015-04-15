@@ -9,6 +9,7 @@
 
 // In case it hasn't already been included.
 #include "load.hpp"
+#include "extension.hpp"
 
 #include <algorithm>
 #include <mlpack/core/util/timers.hpp>
@@ -42,30 +43,13 @@ bool inline inplace_transpose(arma::Mat<eT>& X)
 template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
-          bool fatal,
+          const bool fatal,
           bool transpose)
 {
   Timer::Start("loading_data");
 
-  // First we will try to discriminate by file extension.
-  size_t ext = filename.rfind('.');
-  if (ext == std::string::npos)
-  {
-    Timer::Stop("loading_data");
-    if (fatal)
-      Log::Fatal << "Cannot determine type of file '" << filename << "'; "
-          << "no extension is present." << std::endl;
-    else
-      Log::Warn << "Cannot determine type of file '" << filename << "'; "
-          << "no extension is present.  Load failed." << std::endl;
-
-    return false;
-  }
-
-  // Get the extension and force it to lowercase.
-  std::string extension = filename.substr(ext + 1);
-  std::transform(extension.begin(), extension.end(), extension.begin(),
-      ::tolower);
+  // Get the extension.
+  std::string extension = Extension(filename);
 
   // Catch nonexistent files by opening the stream ourselves.
   std::fstream stream;
@@ -253,7 +237,81 @@ bool Load(const std::string& filename,
   return success;
 }
 
-}; // namespace data
-}; // namespace mlpack
+// Load a model from file.
+template<typename T>
+bool Load(const std::string& filename,
+          T& t,
+          const std::string& name,
+          const bool fatal,
+          format f)
+{
+  if (f == format::autodetect)
+  {
+    std::string extension = Extension(filename);
+
+    if (extension == "xml")
+      f = format::xml;
+    else if (extension == "bin")
+      f = format::binary;
+    else if (extension == "txt")
+      f = format::text;
+    else
+    {
+      if (fatal)
+        Log::Fatal << "Unable to detect type of '" << filename << "'; incorrect"
+            << " extension?" << std::endl;
+      else
+        Log::Warn << "Unable to detect type of '" << filename << "'; load "
+            << "failed.  Incorrect extension?" << std::endl;
+
+      return false;
+    }
+  }
+
+  // Now load the given format.
+  std::ifstream ifs(filename);
+  if (!ifs.is_open())
+  {
+    if (fatal)
+      Log::Fatal << "Unable to open file '" << filename << "'." << std::endl;
+    else
+      Log::Warn << "Unable to open file '" << filename << "'." << std::endl;
+
+    return false;
+  }
+
+  try
+  {
+    if (f == format::xml)
+    {
+      boost::archive::xml_iarchive ar(ifs);
+      ar >> util::CreateNVP(t, name);
+    }
+    else if (f == format::text)
+    {
+      boost::archive::text_iarchive ar(ifs);
+      ar >> util::CreateNVP(t, name);
+    }
+    else if (f == format::binary)
+    {
+      boost::archive::binary_iarchive ar(ifs);
+      ar >> util::CreateNVP(t, name);
+    }
+
+    return true;
+  }
+  catch (boost::serialization::archive_exception& e)
+  {
+    if (fatal)
+      Log::Fatal << e.what() << std::endl;
+    else
+      Log::Warn << e.what() << std::endl;
+
+    return false;
+  }
+}
+
+} // namespace data
+} // namespace mlpack
 
 #endif
