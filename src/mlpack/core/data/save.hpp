@@ -13,6 +13,8 @@
 #include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.
 #include <string>
 
+#include "format.hpp"
+
 namespace mlpack {
 namespace data /** Functions to load and save matrices. */ {
 
@@ -78,8 +80,8 @@ bool Save(const std::string& filename,
  */
 template<typename T>
 bool Save(const std::string& filename,
-          T& t,
           const std::string& name,
+          T& t,
           const bool fatal = false,
           format f = format::autodetect);
 

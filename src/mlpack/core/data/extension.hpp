@@ -13,7 +13,7 @@
 namespace mlpack {
 namespace data {
 
-std::string Extension(const std::string& filename)
+inline std::string Extension(const std::string& filename)
 {
   const size_t ext = filename.rfind('.');
   std::string extension;

@@ -9,6 +9,14 @@
 
 // In case it hasn't already been included.
 #include "save.hpp"
+#include "extension.hpp"
+
+#include <boost/serialization/serialization.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+
+#include "serialization_shim.hpp"
 
 namespace mlpack {
 namespace data {
@@ -161,8 +169,8 @@ bool Save(const std::string& filename,
 //! Save a model to file.
 template<typename T>
 bool Save(const std::string& filename,
-          T& t,
           const std::string& name,
+          T& t,
           const bool fatal,
           format f)
 {
@@ -206,20 +214,22 @@ bool Save(const std::string& filename,
     if (f == format::xml)
     {
       boost::archive::xml_oarchive ar(ofs);
-      ar << util::CreateNVP(t, name);
+      ar << CreateNVP(t, name);
     }
     else if (f == format::text)
     {
       boost::archive::text_oarchive ar(ofs);
-      ar << util::CreateNVP(t, name);
+      ar << CreateNVP(t, name);
     }
     else if (f == format::binary)
     {
       boost::archive::binary_oarchive ar(ofs);
-      ar << util::CreateNVP(t, name);
+      ar << CreateNVP(t, name);
     }
+
+    return true;
   }
-  catch (boost::serialization::archive_exception& e)
+  catch (boost::archive::archive_exception& e)
   {
     if (fatal)
       Log::Fatal << e.what() << std::endl;

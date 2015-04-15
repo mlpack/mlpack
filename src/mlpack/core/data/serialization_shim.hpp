@@ -13,10 +13,11 @@
 
 #include <mlpack/prereqs.hpp>
 #include <boost/serialization/serialization.hpp>
-#include "sfinae_utility.hpp"
+#include <boost/archive/xml_oarchive.hpp>
+#include <mlpack/core/util/sfinae_utility.hpp>
 
 namespace mlpack {
-namespace util {
+namespace data {
 
 // This gives us a HasSerialize<T, U> type (where U is a function pointer) we
 // can use with SFINAE to catch when a type has a Serialize() function.
@@ -52,10 +53,10 @@ template<typename T> class SecondShim;
 template<typename T>
 inline FirstShim<T> CreateNVP(
     T& t,
-    const char* name,
+    const std::string& name,
     typename boost::enable_if<boost::is_class<T>>::type* = 0,
     typename boost::enable_if<HasSerialize<T,
-        void(T::*)(boost::archive::xml_oarchive& const unsigned int)>>::
+        void(T::*)(boost::archive::xml_oarchive&, const unsigned int)>>::
         type* = 0)
 {
   return FirstShim<T>(t, name);
@@ -89,12 +90,13 @@ const // Imitate the boost::serialization make_nvp() function.
 #endif
 boost::serialization::nvp<T> CreateNVP(
     T& t,
-    const char* name,
+    const std::string& name,
     typename boost::enable_if<boost::is_class<T>>::type* = 0,
     typename boost::disable_if<HasSerialize<T,
-void(T::*)(boost::archive::xml_oarchive&, const unsigned int)>>::type* = 0)
+        void(T::*)(boost::archive::xml_oarchive&, const unsigned int)>>::
+        type* = 0)
 {
-  return boost::serialization::make_nvp(name, t);
+  return boost::serialization::make_nvp(name.c_str(), t);
 }
 
 /**
@@ -124,10 +126,10 @@ const // Imitate the boost::serialization make_nvp() function.
 #endif
 boost::serialization::nvp<T> CreateNVP(
     T& t,
-    const char* name,
+    const std::string& name,
     typename boost::disable_if<boost::is_class<T>>::type* = 0)
 {
-  return boost::serialization::make_nvp(name, t);
+  return boost::serialization::make_nvp(name.c_str(), t);
 }
 
 /**
@@ -139,10 +141,10 @@ template<typename T>
 struct FirstShim
 {
   //! Construct the first shim with the given object and name.
-  FirstShim(T& t, const char* name) : t(t), name(name) { }
+  FirstShim(T& t, const std::string& name) : t(t), name(name) { }
 
   T& t;
-  const char* name;
+  const std::string& name;
 };
 
 /**
@@ -162,6 +164,8 @@ struct SecondShim
   {
     t.Serialize(ar, version);
   }
+
+  T& t;
 };
 
 /**
@@ -175,7 +179,7 @@ template<typename Archive, typename T>
 Archive& operator<<(Archive& ar, FirstShim<T> t)
 {
   SecondShim<T> sh(t.t);
-  return (ar << boost::serialization::make_nvp(t.name, sh));
+  return (ar << boost::serialization::make_nvp(t.name.c_str(), sh));
 }
 
 /**
@@ -189,7 +193,7 @@ template<typename Archive, typename T>
 Archive& operator&(Archive& ar, FirstShim<T> t)
 {
   SecondShim<T> sh(t.t);
-  return (ar & boost::serialization::make_nvp(t.name, sh));
+  return (ar & boost::serialization::make_nvp(t.name.c_str(), sh));
 }
 
 /**
@@ -203,10 +207,10 @@ template<typename Archive, typename T>
 Archive& operator>>(Archive& ar, FirstShim<T> t)
 {
   SecondShim<T> sh(t.t);
-  return (ar >> boost::serialization::make_nvp(t.name, sh));
+  return (ar >> boost::serialization::make_nvp(t.name.c_str(), sh));
 }
 
-} // namespace util
+} // namespace data 
 } // namespace mlpack
 
 #endif
