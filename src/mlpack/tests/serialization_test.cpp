@@ -71,34 +71,29 @@ void TestArmadilloSerialization(MatType& x)
 
   for (size_t i = 0; i < x.n_cols; ++i)
     for (size_t j = 0; j < x.n_rows; ++j)
-      if (orig(j, i) == 0.0)
-        BOOST_REQUIRE_SMALL(x(j, i), 1e-8);
+      if (double(orig(j, i)) == 0.0)
+        BOOST_REQUIRE_SMALL(double(x(j, i)), 1e-8);
       else
-        BOOST_REQUIRE_CLOSE(orig(j, i), x(j, i), 1e-8);
+        BOOST_REQUIRE_CLOSE(double(orig(j, i)), double(x(j, i)), 1e-8);
+}
+
+// Test all serialization strategies.
+template<typename MatType>
+void TestAllArmadilloSerialization(MatType& x)
+{
+  TestArmadilloSerialization<MatType, xml_iarchive, xml_oarchive>(x);
+  TestArmadilloSerialization<MatType, text_iarchive, text_oarchive>(x);
+  TestArmadilloSerialization<MatType, binary_iarchive, binary_oarchive>(x);
 }
 
 /**
- * Can we load and save an Armadillo matrix from XML?
+ * Can we load and save an Armadillo matrix?
  */
 BOOST_AUTO_TEST_CASE(MatrixSerializeXMLTest)
 {
   arma::mat m;
   m.randu(50, 50);
-  TestArmadilloSerialization<arma::mat, xml_iarchive, xml_oarchive>(m);
-}
-
-BOOST_AUTO_TEST_CASE(MatrixSerializeTextTest)
-{
-  arma::mat m;
-  m.randu(50, 50);
-  TestArmadilloSerialization<arma::mat, text_iarchive, text_oarchive>(m);
-}
-
-BOOST_AUTO_TEST_CASE(MatrixSerializeBinaryTest)
-{
-  arma::mat m;
-  m.randu(50, 50);
-  TestArmadilloSerialization<arma::mat, binary_iarchive, binary_oarchive>(m);
+  TestAllArmadilloSerialization(m);
 }
 
 /**
@@ -108,21 +103,7 @@ BOOST_AUTO_TEST_CASE(ColSerializeXMLTest)
 {
   arma::vec m;
   m.randu(50, 1);
-  TestArmadilloSerialization<arma::vec, xml_iarchive, xml_oarchive>(m);
-}
-
-BOOST_AUTO_TEST_CASE(ColSerializeTextTest)
-{
-  arma::vec m;
-  m.randu(50, 1);
-  TestArmadilloSerialization<arma::vec, text_iarchive, text_oarchive>(m);
-}
-
-BOOST_AUTO_TEST_CASE(ColSerializeBinaryTest)
-{
-  arma::vec m;
-  m.randu(50, 1);
-  TestArmadilloSerialization<arma::vec, binary_iarchive, binary_oarchive>(m);
+  TestAllArmadilloSerialization(m);
 }
 
 /**
@@ -132,28 +113,51 @@ BOOST_AUTO_TEST_CASE(RowSerializeXMLTest)
 {
   arma::rowvec m;
   m.randu(1, 50);
-  TestArmadilloSerialization<arma::rowvec, xml_iarchive, xml_oarchive>(m);
-}
-
-BOOST_AUTO_TEST_CASE(RowSerializeTextTest)
-{
-  arma::rowvec m;
-  m.randu(1, 50);
-  TestArmadilloSerialization<arma::rowvec, text_iarchive, text_oarchive>(m);
-}
-
-BOOST_AUTO_TEST_CASE(RowSerializeBinaryTest)
-{
-  arma::rowvec m;
-  m.randu(1, 50);
-  TestArmadilloSerialization<arma::rowvec, binary_iarchive, binary_oarchive>(m);
+  TestAllArmadilloSerialization(m);
 }
 
 // A quick test with an empty matrix.
 BOOST_AUTO_TEST_CASE(EmptyMatrixSerializeTest)
 {
   arma::mat m;
-  TestArmadilloSerialization<arma::mat, xml_iarchive, xml_oarchive>(m);
+  TestAllArmadilloSerialization(m);
+}
+
+/**
+ * Can we load and save a sparse Armadillo matrix?
+ */
+BOOST_AUTO_TEST_CASE(SparseMatrixSerializeXMLTest)
+{
+  arma::sp_mat m;
+  m.sprandu(50, 50, 0.3);
+  TestAllArmadilloSerialization(m);
+}
+
+/**
+ * How about columns?
+ */
+BOOST_AUTO_TEST_CASE(SparseColSerializeXMLTest)
+{
+  arma::sp_vec m;
+  m.sprandu(50, 1, 0.3);
+  TestAllArmadilloSerialization(m);
+}
+
+/**
+ * How about rows?
+ */
+BOOST_AUTO_TEST_CASE(SparseRowSerializeXMLTest)
+{
+  arma::sp_rowvec m;
+  m.sprandu(1, 50, 0.3);
+  TestAllArmadilloSerialization(m);
+}
+
+// A quick test with an empty matrix.
+BOOST_AUTO_TEST_CASE(EmptySparseMatrixSerializeTest)
+{
+  arma::sp_mat m;
+  TestAllArmadilloSerialization(m);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
