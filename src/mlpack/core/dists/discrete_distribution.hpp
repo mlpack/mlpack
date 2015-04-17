@@ -153,11 +153,20 @@ class DiscreteDistribution
   //! Modify the vector of probabilities.
   arma::vec& Probabilities() { return probabilities; }
 
+  /**
+   * Serialize the distribution.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    // We only need to save the probabilities, since that's all we hold.
+    ar & data::CreateNVP(probabilities, "probabilities");
+  }
+
   /*
    * Returns a string representation of this object.
    */
   std::string ToString() const;
-
 
   /** Save to or Load from SaveRestoreUtility
    */
