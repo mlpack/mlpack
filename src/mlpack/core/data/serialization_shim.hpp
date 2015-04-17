@@ -11,10 +11,9 @@
 #ifndef __MLPACK_CORE_UTIL_SERIALIZATION_SHIM_HPP
 #define __MLPACK_CORE_UTIL_SERIALIZATION_SHIM_HPP
 
-#include <mlpack/prereqs.hpp>
+#include <mlpack/core/util/sfinae_utility.hpp>
 #include <boost/serialization/serialization.hpp>
 #include <boost/archive/xml_oarchive.hpp>
-#include <mlpack/core/util/sfinae_utility.hpp>
 
 namespace mlpack {
 namespace data {

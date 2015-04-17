@@ -45,6 +45,11 @@
   #define force_inline __forceinline
 #endif
 
+// We'll need the necessary boost::serialization features, as well as what we
+// use with mlpack.
+#include <boost/serialization/serialization.hpp>
+#include <mlpack/core/data/serialization_shim.hpp>
+
 // Now include Armadillo through the special mlpack extensions.
 #include <mlpack/core/arma_extend/arma_extend.hpp>
 
