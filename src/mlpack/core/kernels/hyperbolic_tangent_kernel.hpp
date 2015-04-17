@@ -67,6 +67,14 @@ class HyperbolicTangentKernel
   //! Modify offset for the kernel.
   double& Offset() { return offset; }
 
+  //! Serialize the kernel.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(scale, "scale");
+    ar & data::CreateNVP(offset, "offset");
+  }
+
   //! Convert object to string.
   std::string ToString() const
   {

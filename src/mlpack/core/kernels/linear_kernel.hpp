@@ -50,6 +50,10 @@ class LinearKernel
     return arma::dot(a, b);
   }
 
+  //! Serialize the kernel (it has no members... do nothing).
+  template<typename Archive>
+  void Serialize(Archive& /* ar */, const unsigned int /* version */) const { }
+
   //! Return a string representation of the kernel.
   std::string ToString() const
   {

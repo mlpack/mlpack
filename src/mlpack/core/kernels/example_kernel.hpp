@@ -105,6 +105,13 @@ class ExampleKernel
   { return 0; }
 
   /**
+   * Serializes the kernel.  In this case, the kernel has no members, so we do
+   * not need to do anything at all.
+   */
+  template<typename Archive>
+  void Serialize(Archive& /* ar */, const unsigned int /* version */) const { }
+
+  /**
    * Returns a string for the kernel object; in this case, with only the memory
    * address for the kernel. If your kernel has any members, your ToString()
    * method should include those as neccessary as well.

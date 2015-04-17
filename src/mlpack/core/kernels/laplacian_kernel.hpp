@@ -78,6 +78,13 @@ class LaplacianKernel
   //! Modify the bandwidth.
   double& Bandwidth() { return bandwidth; }
 
+  //! Serialize the kernel.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(bandwidth, "bandwidth");
+  }
+
   //! Return a string representation of the kernel.
   std::string ToString() const
   {

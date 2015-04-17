@@ -115,6 +115,14 @@ class GaussianKernel
   //! Get the precalculated constant.
   double Gamma() const { return gamma; }
 
+  //! Serialize the kernel.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(bandwidth, "bandwidth");
+    ar & data::CreateNVP(gamma, "gamma");
+  }
+
   //! Convert object to string.
   std::string ToString() const
   {

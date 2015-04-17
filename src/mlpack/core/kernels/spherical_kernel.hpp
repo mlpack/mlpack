@@ -96,6 +96,14 @@ class SphericalKernel
     return (t <= bandwidth) ? 1.0 : 0.0;
   }
 
+  //! Serialize the object.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(bandwidth, "bandwidth");
+    ar & data::CreateNVP(bandwidthSquared, "bandwidthSquared");
+  }
+
   //! Return a string representation of the kernel.
   std::string ToString() const
   {
