@@ -42,6 +42,15 @@ double MahalanobisDistance<true>::Evaluate(const VecTypeA& a,
   return sqrt(out[0]);
 }
 
+// Serialize the Mahalanobis distance.
+template<typename TakeRoot>
+template<typename Archive>
+void MahalanobisDistance<TakeRoot>::Serialize(Archive& ar,
+                                              const unsigned int /* version */)
+{
+  ar & data::CreateNVP(covariance, "covariance");
+}
+
 // Convert object into string.
 template<bool TakeRoot>
 std::string MahalanobisDistance<TakeRoot>::ToString() const
