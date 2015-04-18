@@ -28,17 +28,14 @@ class BallBound
 {
  public:
   typedef VecType Vec;
-  //! Need this for Binary Space Partion Tree
+  //! Needed for BinarySpaceTree.
   typedef TMetricType MetricType;
 
  private:
-
   //! The radius of the ball bound.
   double radius;
-
   //! The center of the ball bound.
   VecType center;
-
   //! The metric used in this bound.
   TMetricType* metric;
 
@@ -175,16 +172,15 @@ class BallBound
    */
   double Diameter() const { return 2 * radius; }
 
-  /**
-   * Returns the distance metric used in this bound.
-   */
-  TMetricType Metric() const { return *metric; }
+  //! Returns the distance metric used in this bound.
+  const TMetricType& Metric() const { return *metric; }
+  //! Modify the distance metric used in this bound.
+  TMetricType& Metric() { return *metric; }
 
   /**
    * Returns a string representation of this object.
    */
   std::string ToString() const;
-
 };
 
 }; // namespace bound
