@@ -19,8 +19,8 @@ namespace metric {
 // Constructor with no instantiated kernel.
 template<typename KernelType>
 IPMetric<KernelType>::IPMetric() :
-    localKernel(new KernelType()),
-    kernel(*localKernel)
+    kernel(new KernelType()),
+    kernelOwner(true)
 {
   // Nothing to do.
 }
@@ -28,8 +28,8 @@ IPMetric<KernelType>::IPMetric() :
 // Constructor with instantiated kernel.
 template<typename KernelType>
 IPMetric<KernelType>::IPMetric(KernelType& kernel) :
-    localKernel(NULL),
-    kernel(kernel)
+    kernel(&kernel),
+    kernelOwner(false)
 {
   // Nothing to do.
 }
@@ -38,8 +38,8 @@ IPMetric<KernelType>::IPMetric(KernelType& kernel) :
 template<typename KernelType>
 IPMetric<KernelType>::~IPMetric()
 {
-  if (localKernel != NULL)
-    delete localKernel;
+  if (kernelOwner)
+    delete kernel;
 }
 
 template<typename KernelType>
@@ -49,8 +49,23 @@ inline double IPMetric<KernelType>::Evaluate(const Vec1Type& a,
 {
   // This is the metric induced by the kernel function.
   // Maybe we can do better by caching some of this?
-  return sqrt(kernel.Evaluate(a, a) + kernel.Evaluate(b, b) -
-      2 * kernel.Evaluate(a, b));
+  return sqrt(kernel->Evaluate(a, a) + kernel->Evaluate(b, b) -
+      2 * kernel->Evaluate(a, b));
+}
+
+// Serialize the kernel.
+template<typename KernelType>
+template<typename Archive>
+void IPMetric<KernelType>::Serialize(Archive& ar,
+                                     const unsigned int /* version */)
+{
+  // If we're loading, we need to allocate space for the kernel, and we will own
+  // the kernel.
+  if (Archive::is_loading::value)
+    kernel = new KernelType();
+  kernelOwner = true;
+
+  ar & data::CreateNVP(kernel, "kernel");
 }
 
 // Convert object to string.
@@ -60,7 +75,7 @@ std::string IPMetric<KernelType>::ToString() const
   std::ostringstream convert;
   convert << "IPMetric [" << this << "]" << std::endl;
   convert << "  Kernel: " << std::endl;
-  convert << util::Indent(kernel.ToString(), 2);
+  convert << util::Indent(kernel->ToString(), 2);
   return convert.str();
 }
 
