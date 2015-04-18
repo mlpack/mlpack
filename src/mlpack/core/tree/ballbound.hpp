@@ -177,6 +177,10 @@ class BallBound
   //! Modify the distance metric used in this bound.
   TMetricType& Metric() { return *metric; }
 
+  //! Serialize the bound.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int version);
+
   /**
    * Returns a string representation of this object.
    */
