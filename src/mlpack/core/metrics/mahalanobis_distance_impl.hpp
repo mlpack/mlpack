@@ -43,7 +43,7 @@ double MahalanobisDistance<true>::Evaluate(const VecTypeA& a,
 }
 
 // Serialize the Mahalanobis distance.
-template<typename TakeRoot>
+template<bool TakeRoot>
 template<typename Archive>
 void MahalanobisDistance<TakeRoot>::Serialize(Archive& ar,
                                               const unsigned int /* version */)
