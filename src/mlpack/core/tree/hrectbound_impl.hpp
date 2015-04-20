@@ -420,6 +420,21 @@ inline double HRectBound<Power, TakeRoot>::Diameter() const
     return d;
 }
 
+//! Serialize the bound object.
+template<int Power, bool TakeRoot>
+template<typename Archive>
+void HRectBound<Power, TakeRoot>::Serialize(Archive& ar,
+                                            const unsigned int /* version */)
+{
+  ar & data::CreateNVP(dim, "dim");
+
+  // Allocate memory for the bounds, if necessary.
+  if (Archive::is_loading::value)
+    bounds = new math::Range[dim];
+
+  ar & data::CreateArrayNVP(bounds, "bounds");
+}
+
 /**
  * Returns a string representation of this object.
  */

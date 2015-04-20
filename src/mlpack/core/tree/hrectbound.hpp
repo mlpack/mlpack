@@ -163,6 +163,12 @@ class HRectBound
   double Diameter() const;
 
   /**
+   * Serialize the bound object.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int version);
+
+  /**
    * Returns a string representation of this object.
    */
   std::string ToString() const;
