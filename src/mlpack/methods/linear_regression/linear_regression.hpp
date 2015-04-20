@@ -34,8 +34,7 @@ class LinearRegression
                    const arma::vec& responses,
                    const double lambda = 0,
                    const bool intercept = true,
-                   const arma::vec& weights = arma::vec()
-                   );
+                   const arma::vec& weights = arma::vec());
 
   /**
    * Initialize the model from a file.
@@ -94,6 +93,17 @@ class LinearRegression
   //! Modify the Tikhonov regularization parameter for ridge regression.
   double& Lambda() { return lambda; }
 
+  /**
+   * Serialize the model.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(parameters, "parameters");
+    ar & data::CreateNVP(lambda, "lambda");
+    ar & data::CreateNVP(intercept, "intercept");
+  }
+
   // Returns a string representation of this object.
   std::string ToString() const;
 
@@ -103,16 +113,18 @@ class LinearRegression
    * Initialized and filled by constructor to hold the least squares solution.
    */
   arma::vec parameters;
+
   /**
    * The Tikhonov regularization parameter for ridge regression (0 for linear
    * regression).
    */
   double lambda;
+
   //! Indicates whether first parameter is intercept.
   bool intercept;
 };
 
-}; // namespace linear_regression
-}; // namespace mlpack
+} // namespace linear_regression
+} // namespace mlpack
 
-#endif // __MLPACK_METHODS_LINEAR_REGRESSCLIN_HPP
+#endif // __MLPACK_METHODS_LINEAR_REGRESSION_HPP
