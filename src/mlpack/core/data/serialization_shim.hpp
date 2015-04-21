@@ -29,6 +29,7 @@ template<typename T> class FirstNormalArrayShim;
 template<typename T> class SecondShim;
 template<typename T> class SecondArrayShim;
 template<typename T> class SecondNormalArrayShim;
+template<typename T> class PointerShim;
 
 /**
  * Call this function to produce a name-value pair; this is similar to
@@ -117,7 +118,7 @@ boost::serialization::nvp<T> CreateNVP(
  *
  * Note that the second parameter, 'name', must be a valid XML identifier.
  *
- * This particular overload is used by primitive types.
+ * This particular overload is used by primitive types that aren't pointers.
  *
  * @param t Object to create NVP (name-value pair) with.
  * @param name Name of object (must be a valid XML identifier).
@@ -129,6 +130,115 @@ const // Imitate the boost::serialization make_nvp() function.
 #endif
 boost::serialization::nvp<T> CreateNVP(
     T& t,
+    const std::string& name,
+    typename boost::disable_if<boost::is_class<T>>::type* = 0,
+    typename boost::disable_if<boost::is_pointer<T>>::type* = 0)
+{
+  return boost::serialization::make_nvp(name.c_str(), t);
+}
+
+/**
+ * Call this function to produce a name-value pair; this is similar to
+ * BOOST_SERIALIZATION_NVP(), but should be used for types that have a
+ * Serialize() function (or contain a type that has a Serialize() function)
+ * instead of a serialize() function.  The template type should be automatically
+ * deduced, and the two boost::enable_if<> parameters are automatically deduced
+ * too.  So usage looks like
+ *
+ * @code
+ * MyType t;
+ * CreateNVP(t, "my_name_for_t");
+ * @endcode
+ *
+ * Note that the second parameter, 'name', must be a valid XML identifier.
+ *
+ * This particular overload is used by pointers to classes that have a
+ * Serialize() function.
+ *
+ * @param t Object to create NVP (name-value pair) with.
+ * @param name Name of object (must be a valid XML identifier).
+ */
+template<typename T>
+inline
+#ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+const
+#endif
+boost::serialization::nvp<PointerShim<T>*> CreateNVP(
+    T*& t,
+    const std::string& name,
+    typename boost::enable_if<boost::is_class<T>>::type* = 0,
+    typename boost::enable_if<HasSerialize<T,
+        void(T::*)(boost::archive::xml_oarchive&, const unsigned int)>>::
+        type* = 0)
+{
+  return boost::serialization::make_nvp(name.c_str(),
+      reinterpret_cast<PointerShim<T>*&>(t));
+}
+
+/**
+ * Call this function to produce a name-value pair; this is similar to
+ * BOOST_SERIALIZATION_NVP(), but should be used for types that have a
+ * Serialize() function (or contain a type that has a Serialize() function)
+ * instead of a serialize() function.  The template type should be automatically
+ * deduced, and the two boost::enable_if<> parameters are automatically deduced
+ * too.  So usage looks like
+ *
+ * @code
+ * MyType t;
+ * CreateNVP(t, "my_name_for_t");
+ * @endcode
+ *
+ * Note that the second parameter, 'name', must be a valid XML identifier.
+ *
+ * This particular overload is used by pointers to classes that do not have a
+ * Serialize() function.
+ *
+ * @param t Object to create NVP (name-value pair) with.
+ * @param name Name of object (must be a valid XML identifier).
+ */
+template<typename T>
+inline
+#ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+const
+#endif
+boost::serialization::nvp<T*> CreateNVP(
+    T*& t,
+    const std::string& name,
+    typename boost::enable_if<boost::is_class<T>>::type* = 0,
+    typename boost::disable_if<HasSerialize<T,
+        void(T::*)(boost::archive::xml_oarchive&, const unsigned int)>>::
+        type* = 0)
+{
+  return boost::serialization::make_nvp(name.c_str(), t);
+}
+
+/**
+ * Call this function to produce a name-value pair; this is similar to
+ * BOOST_SERIALIZATION_NVP(), but should be used for types that have a
+ * Serialize() function (or contain a type that has a Serialize() function)
+ * instead of a serialize() function.  The template type should be automatically
+ * deduced, and the two boost::enable_if<> parameters are automatically deduced
+ * too.  So usage looks like
+ *
+ * @code
+ * MyType t;
+ * CreateNVP(t, "my_name_for_t");
+ * @endcode
+ *
+ * Note that the second parameter, 'name', must be a valid XML identifier.
+ *
+ * This particular overload is used by pointers to non-classes.
+ *
+ * @param t Object to create NVP (name-value pair) with.
+ * @param name Name of object (must be a valid XML identifier).
+ */
+template<typename T>
+inline
+#ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+const
+#endif
+boost::serialization::nvp<T*> CreateNVP(
+    T*& t,
     const std::string& name,
     typename boost::disable_if<boost::is_class<T>>::type* = 0)
 {
@@ -307,6 +417,14 @@ struct SecondNormalArrayShim
 };
 
 /**
+ * A shim for pointers.  Only the type of this shim is used, so it is created
+ * with a static_cast<>, and then later static_cast<>ed back to the original
+ * type.
+ */
+template<typename T>
+struct PointerShim : public T { };
+
+/**
  * Catch when we call operator<< with a FirstShim object.  In this case, we make
  * the second-level shim and use it.  Note that this second-level shim can be
  * used as an lvalue, which is what's necessary for this whole thing to work.
@@ -434,5 +552,21 @@ Archive& operator>>(Archive& ar, FirstNormalArrayShim<T> t)
 
 } // namespace data 
 } // namespace mlpack
+
+namespace boost {
+namespace serialization {
+
+// Overload final serialize() call for PointerShims.
+template<typename Archive, typename T>
+inline void serialize(Archive& ar,
+                      mlpack::data::PointerShim<T>& t,
+                      const BOOST_PFTO unsigned int version)
+{
+  T* tptr = reinterpret_cast<T*>(&t);
+  tptr->Serialize(ar, version);
+}
+
+} // namespace serialization
+} // namespace boost
 
 #endif
