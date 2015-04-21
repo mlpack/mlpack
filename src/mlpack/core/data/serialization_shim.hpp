@@ -274,7 +274,7 @@ struct SecondArrayShim
 
   //! A wrapper for Serialize() for each element.
   template<typename Archive>
-  void serialize(Archive& ar, const unsigned int version)
+  void serialize(Archive& ar, const unsigned int /* version */)
   {
     // Serialize each element, using the shims we already have.
     for (size_t i = 0; i < len; ++i)
