@@ -6,6 +6,8 @@ void Mat<eT>::serialize(Archive& ar, const unsigned int /* version */)
   using boost::serialization::make_nvp;
   using boost::serialization::make_array;
 
+  const uword old_n_elem = n_elem;
+
   // This is accurate from Armadillo 3.6.0 onwards.
   // We can't use BOOST_SERIALIZATION_NVP() because of the access::rw() call.
   ar & make_nvp("n_rows", access::rw(n_rows));
@@ -16,6 +18,9 @@ void Mat<eT>::serialize(Archive& ar, const unsigned int /* version */)
   // mem_state will always be 0 on load, so we don't need to save it.
   if (Archive::is_loading::value)
   {
+    if (mem_state == 0 && mem != NULL && old_n_elem > 0)
+      memory::release(access::rw(mem));
+
     access::rw(mem_state) = 0;
 
     // We also need to allocate the memory we're using.
