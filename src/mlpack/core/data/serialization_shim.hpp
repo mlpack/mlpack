@@ -556,7 +556,10 @@ Archive& operator>>(Archive& ar, FirstNormalArrayShim<T> t)
 namespace boost {
 namespace serialization {
 
-// Overload final serialize() call for PointerShims.
+/**
+ * Catch a call to serialize() with a PointerShim, and call the Serialize()
+ * function directly.
+ */
 template<typename Archive, typename T>
 inline void serialize(Archive& ar,
                       mlpack::data::PointerShim<T>& t,
