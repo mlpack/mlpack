@@ -17,10 +17,15 @@
 #include "old_boost_test_definitions.hpp"
 
 #include <mlpack/core/dists/regression_distribution.hpp>
+#include <mlpack/core/tree/ballbound.hpp>
+#include <mlpack/core/tree/hrectbound.hpp>
+#include <mlpack/core/metrics/mahalanobis_distance.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
 using namespace mlpack::regression;
+using namespace mlpack::bound;
+using namespace mlpack::metric;
 using namespace arma;
 using namespace boost;
 using namespace boost::archive;
@@ -353,6 +358,22 @@ BOOST_AUTO_TEST_CASE(LaplaceDistributionTest)
   CheckMatrices(l.Mean(), xmlL.Mean(), textL.Mean(), binaryL.Mean());
 }
 
+BOOST_AUTO_TEST_CASE(MahalanobisDistanceTest)
+{
+  MahalanobisDistance<> d;
+  d.Covariance().randu(50, 50);
+
+  MahalanobisDistance<> xmlD, textD, binaryD;
+
+  SerializeObjectAll(d, xmlD, textD, binaryD);
+
+  // Check the covariance matrices.
+  CheckMatrices(d.Covariance(),
+                xmlD.Covariance(),
+                textD.Covariance(),
+                binaryD.Covariance());
+}
+
 BOOST_AUTO_TEST_CASE(LinearRegressionTest)
 {
   // Generate some random data.
@@ -416,6 +437,88 @@ BOOST_AUTO_TEST_CASE(RegressionDistributionTest)
                 xmlRd.Rf().Parameters(),
                 textRd.Rf().Parameters(),
                 binaryRd.Rf().Parameters());
+}
+
+BOOST_AUTO_TEST_CASE(BallBoundTest)
+{
+  BallBound<> b(100);
+  b.Center().randu();
+  b.Radius() = 14.0;
+
+  BallBound<> xmlB, textB, binaryB;
+
+  SerializeObjectAll(b, xmlB, textB, binaryB);
+
+  // Check the dimensionality.
+  BOOST_REQUIRE_EQUAL(b.Dim(), xmlB.Dim());
+  BOOST_REQUIRE_EQUAL(b.Dim(), textB.Dim());
+  BOOST_REQUIRE_EQUAL(b.Dim(), binaryB.Dim());
+
+  // Check the radius.
+  BOOST_REQUIRE_CLOSE(b.Radius(), xmlB.Radius(), 1e-8);
+  BOOST_REQUIRE_CLOSE(b.Radius(), textB.Radius(), 1e-8);
+  BOOST_REQUIRE_CLOSE(b.Radius(), binaryB.Radius(), 1e-8);
+
+  // Now check the vectors.
+  CheckMatrices(b.Center(), xmlB.Center(), textB.Center(), binaryB.Center());
+}
+
+BOOST_AUTO_TEST_CASE(MahalanobisBallBoundTest)
+{
+  BallBound<arma::vec, MahalanobisDistance<>> b(100);
+  b.Center().randu();
+  b.Radius() = 14.0;
+  b.Metric().Covariance().randu(100, 100);
+
+  BallBound<arma::vec, MahalanobisDistance<>> xmlB, textB, binaryB;
+
+  SerializeObjectAll(b, xmlB, textB, binaryB);
+
+  // Check the radius.
+  BOOST_REQUIRE_CLOSE(b.Radius(), xmlB.Radius(), 1e-8);
+  BOOST_REQUIRE_CLOSE(b.Radius(), textB.Radius(), 1e-8);
+  BOOST_REQUIRE_CLOSE(b.Radius(), binaryB.Radius(), 1e-8);
+
+  // Check the vectors.
+  CheckMatrices(b.Center(), xmlB.Center(), textB.Center(), binaryB.Center());
+  CheckMatrices(b.Metric().Covariance(),
+                xmlB.Metric().Covariance(),
+                textB.Metric().Covariance(),
+                binaryB.Metric().Covariance());
+}
+
+BOOST_AUTO_TEST_CASE(HRectBoundTest)
+{
+  HRectBound<2> b(2);
+
+  arma::mat points("0.0, 1.1; 5.0, 2.2");
+  points = points.t();
+  b |= points; // [0.0, 5.0]; [1.1, 2.2];
+  
+  HRectBound<2> xmlB, textB, binaryB;
+
+  SerializeObjectAll(b, xmlB, textB, binaryB);
+
+  // Check the dimensionality.
+  BOOST_REQUIRE_EQUAL(b.Dim(), xmlB.Dim());
+  BOOST_REQUIRE_EQUAL(b.Dim(), textB.Dim());
+  BOOST_REQUIRE_EQUAL(b.Dim(), binaryB.Dim());
+
+  // Check the bounds.
+  for (size_t i = 0; i < b.Dim(); ++i)
+  {
+    BOOST_REQUIRE_CLOSE(b[i].Lo(), xmlB[i].Lo(), 1e-8);
+    BOOST_REQUIRE_CLOSE(b[i].Hi(), xmlB[i].Hi(), 1e-8);
+    BOOST_REQUIRE_CLOSE(b[i].Lo(), textB[i].Lo(), 1e-8);
+    BOOST_REQUIRE_CLOSE(b[i].Hi(), textB[i].Hi(), 1e-8);
+    BOOST_REQUIRE_CLOSE(b[i].Lo(), binaryB[i].Lo(), 1e-8);
+    BOOST_REQUIRE_CLOSE(b[i].Hi(), binaryB[i].Hi(), 1e-8);
+  }
+
+  // Check the minimum width.
+  BOOST_REQUIRE_CLOSE(b.MinWidth(), xmlB.MinWidth(), 1e-8);
+  BOOST_REQUIRE_CLOSE(b.MinWidth(), textB.MinWidth(), 1e-8);
+  BOOST_REQUIRE_CLOSE(b.MinWidth(), binaryB.MinWidth(), 1e-8);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
