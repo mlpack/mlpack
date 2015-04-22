@@ -20,13 +20,15 @@ RangeSearchRules<MetricType, TreeType>::RangeSearchRules(
     const math::Range& range,
     std::vector<std::vector<size_t> >& neighbors,
     std::vector<std::vector<double> >& distances,
-    MetricType& metric) :
+    MetricType& metric,
+    const bool sameSet) :
     referenceSet(referenceSet),
     querySet(querySet),
     range(range),
     neighbors(neighbors),
     distances(distances),
     metric(metric),
+    sameSet(sameSet),
     lastQueryIndex(querySet.n_cols),
     lastReferenceIndex(referenceSet.n_cols)
 {
@@ -42,7 +44,7 @@ double RangeSearchRules<MetricType, TreeType>::BaseCase(
     const size_t referenceIndex)
 {
   // If the datasets are the same, don't return the point as in its own range.
-  if ((&referenceSet == &querySet) && (queryIndex == referenceIndex))
+  if (sameSet && (queryIndex == referenceIndex))
     return 0.0;
 
   // If we have just performed this base case, don't do it again.

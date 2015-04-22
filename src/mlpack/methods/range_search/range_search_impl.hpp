@@ -343,7 +343,7 @@ void RangeSearch<MetricType, TreeType>::Search(
   // Create the helper object for the traversal.
   typedef RangeSearchRules<MetricType, TreeType> RuleType;
   RuleType rules(referenceSet, referenceSet, range, *neighborPtr, *distancePtr,
-      metric);
+      metric, true /* don't return the query point in the results */);
 
   if (naive)
   {
