@@ -23,7 +23,7 @@ template<typename BoundType,
          typename MatType,
          typename SplitType>
 BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
-    MatType& data,
+    const MatType& data,
     const size_t maxLeafSize) :
     left(NULL),
     right(NULL),
@@ -32,10 +32,10 @@ BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
     count(data.n_cols), /* and spans all of the dataset. */
     bound(data.n_rows),
     parentDistance(0), // Parent distance for the root is 0: it has no parent.
-    dataset(data)
+    dataset(new MatType(data)) // Copies the dataset.
 {
   // Do the actual splitting of this node.
-  SplitNode(data, maxLeafSize);
+  SplitNode(maxLeafSize);
 
   // Create the statistic depending on if we are a leaf or not.
   stat = StatisticType(*this);
@@ -46,7 +46,7 @@ template<typename BoundType,
          typename MatType,
          typename SplitType>
 BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
-    MatType& data,
+    const MatType& data,
     std::vector<size_t>& oldFromNew,
     const size_t maxLeafSize) :
     left(NULL),
@@ -56,7 +56,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
     count(data.n_cols),
     bound(data.n_rows),
     parentDistance(0), // Parent distance for the root is 0: it has no parent.
-    dataset(data)
+    dataset(new MatType(data)) // Copies the dataset.
 {
   // Initialize oldFromNew correctly.
   oldFromNew.resize(data.n_cols);
@@ -64,7 +64,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
     oldFromNew[i] = i; // Fill with unharmed indices.
 
   // Now do the actual splitting.
-  SplitNode(data, oldFromNew, maxLeafSize);
+  SplitNode(oldFromNew, maxLeafSize);
 
   // Create the statistic depending on if we are a leaf or not.
   stat = StatisticType(*this);
@@ -75,7 +75,7 @@ template<typename BoundType,
          typename MatType,
          typename SplitType>
 BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
-    MatType& data,
+    const MatType& data,
     std::vector<size_t>& oldFromNew,
     std::vector<size_t>& newFromOld,
     const size_t maxLeafSize) :
@@ -86,7 +86,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
     count(data.n_cols),
     bound(data.n_rows),
     parentDistance(0), // Parent distance for the root is 0: it has no parent.
-    dataset(data)
+    dataset(new MatType(data)) // Copies the dataset.
 {
   // Initialize the oldFromNew vector correctly.
   oldFromNew.resize(data.n_cols);
@@ -94,7 +94,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
     oldFromNew[i] = i; // Fill with unharmed indices.
 
   // Now do the actual splitting.
-  SplitNode(data, oldFromNew, maxLeafSize);
+  SplitNode(oldFromNew, maxLeafSize);
 
   // Create the statistic depending on if we are a leaf or not.
   stat = StatisticType(*this);
@@ -110,21 +110,20 @@ template<typename BoundType,
          typename MatType,
          typename SplitType>
 BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
-    MatType& data,
+    BinarySpaceTree* parent,
     const size_t begin,
     const size_t count,
-    BinarySpaceTree* parent,
     const size_t maxLeafSize) :
     left(NULL),
     right(NULL),
     parent(parent),
     begin(begin),
     count(count),
-    bound(data.n_rows),
-    dataset(data)
+    bound(parent->Dataset().n_rows),
+    dataset(&parent->Dataset()) // Point to the parent's dataset.
 {
   // Perform the actual splitting.
-  SplitNode(data, maxLeafSize);
+  SplitNode(maxLeafSize);
 
   // Create the statistic depending on if we are a leaf or not.
   stat = StatisticType(*this);
@@ -135,26 +134,25 @@ template<typename BoundType,
          typename MatType,
          typename SplitType>
 BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
-    MatType& data,
+    BinarySpaceTree* parent,
     const size_t begin,
     const size_t count,
     std::vector<size_t>& oldFromNew,
-    BinarySpaceTree* parent,
     const size_t maxLeafSize) :
     left(NULL),
     right(NULL),
     parent(parent),
     begin(begin),
     count(count),
-    bound(data.n_rows),
-    dataset(data)
+    bound(parent->Dataset().n_rows),
+    dataset(&parent->Dataset())
 {
   // Hopefully the vector is initialized correctly!  We can't check that
   // entirely but we can do a minor sanity check.
-  assert(oldFromNew.size() == data.n_cols);
+  assert(oldFromNew.size() == dataset->n_cols);
 
   // Perform the actual splitting.
-  SplitNode(data, oldFromNew, maxLeafSize);
+  SplitNode(oldFromNew, maxLeafSize);
 
   // Create the statistic depending on if we are a leaf or not.
   stat = StatisticType(*this);
@@ -165,34 +163,33 @@ template<typename BoundType,
          typename MatType,
          typename SplitType>
 BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
-    MatType& data,
+    BinarySpaceTree* parent,
     const size_t begin,
     const size_t count,
     std::vector<size_t>& oldFromNew,
     std::vector<size_t>& newFromOld,
-    BinarySpaceTree* parent,
     const size_t maxLeafSize) :
     left(NULL),
     right(NULL),
     parent(parent),
     begin(begin),
     count(count),
-    bound(data.n_rows),
-    dataset(data)
+    bound(parent->Dataset()->n_rows),
+    dataset(&parent->Dataset())
 {
   // Hopefully the vector is initialized correctly!  We can't check that
   // entirely but we can do a minor sanity check.
-  Log::Assert(oldFromNew.size() == data.n_cols);
+  Log::Assert(oldFromNew.size() == dataset->n_cols);
 
   // Perform the actual splitting.
-  SplitNode(data, oldFromNew, maxLeafSize);
+  SplitNode(oldFromNew, maxLeafSize);
 
   // Create the statistic depending on if we are a leaf or not.
   stat = StatisticType(*this);
 
   // Map the newFromOld indices correctly.
-  newFromOld.resize(data.n_cols);
-  for (size_t i = 0; i < data.n_cols; i++)
+  newFromOld.resize(dataset->n_cols);
+  for (size_t i = 0; i < dataset->n_cols; i++)
     newFromOld[oldFromNew[i]] = i;
 }
 
@@ -215,7 +212,7 @@ BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
     stat(other.stat),
     parentDistance(other.parentDistance),
     furthestDescendantDistance(other.furthestDescendantDistance),
-    dataset(other.dataset)
+    dataset(new MatType(*other.dataset)) // Copy matrix.
 {
   // Create left and right children (if any).
   if (other.Left())
@@ -247,6 +244,10 @@ BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
     delete left;
   if (right)
     delete right;
+
+  // If we're the root, delete the matrix.
+  if (!parent)
+    delete dataset;
 }
 
 /**
@@ -514,11 +515,10 @@ template<typename BoundType,
          typename MatType,
          typename SplitType>
 void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::SplitNode(
-    MatType& data,
     const size_t maxLeafSize)
 {
   // We need to expand the bounds of this node properly.
-  bound |= data.cols(begin, begin + count - 1);
+  bound |= dataset->cols(begin, begin + count - 1);
 
   // Calculate the furthest descendant distance.
   furthestDescendantDistance = 0.5 * bound.Diameter();
@@ -534,7 +534,8 @@ void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::SplitNode(
 
   // Split the node. The elements of 'data' are reordered by the splitting
   // algorithm. This function call updates splitCol.
-  const bool split = SplitType::SplitNode(bound, data, begin, count, splitCol);
+  const bool split = SplitType::SplitNode(bound, *dataset, begin, count,
+      splitCol);
 
   // The node may not be always split. For instance, if all the points are the
   // same, we can't split them.
@@ -543,10 +544,10 @@ void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::SplitNode(
 
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
-  left = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, begin,
-      splitCol - begin, this, maxLeafSize);
-  right = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, splitCol,
-      begin + count - splitCol, this, maxLeafSize);
+  left = new BinarySpaceTree<BoundType, StatisticType, MatType>(this, begin,
+      splitCol - begin, maxLeafSize);
+  right = new BinarySpaceTree<BoundType, StatisticType, MatType>(this, splitCol,
+      begin + count - splitCol, maxLeafSize);
 
   // Calculate parent distances for those two nodes.
   arma::vec centroid, leftCentroid, rightCentroid;
@@ -568,13 +569,12 @@ template<typename BoundType,
          typename MatType,
          typename SplitType>
 void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::SplitNode(
-    MatType& data,
     std::vector<size_t>& oldFromNew,
     const size_t maxLeafSize)
 {
   // This should be a single function for Bound.
   // We need to expand the bounds of this node properly.
-  bound |= data.cols(begin, begin + count - 1);
+  bound |= dataset->cols(begin, begin + count - 1);
 
   // Calculate the furthest descendant distance.
   furthestDescendantDistance = 0.5 * bound.Diameter();
@@ -590,8 +590,8 @@ void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::SplitNode(
 
   // Split the node. The elements of 'data' are reordered by the splitting
   // algorithm. This function call updates splitCol and oldFromNew.
-  const bool split = SplitType::SplitNode(bound, data, begin, count, splitCol,
-      oldFromNew);
+  const bool split = SplitType::SplitNode(bound, *dataset, begin, count,
+      splitCol, oldFromNew);
 
   // The node may not be always split. For instance, if all the points are the
   // same, we can't split them.
@@ -600,10 +600,10 @@ void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::SplitNode(
 
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
-  left = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, begin,
-      splitCol - begin, oldFromNew, this, maxLeafSize);
-  right = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, splitCol,
-      begin + count - splitCol, oldFromNew, this, maxLeafSize);
+  left = new BinarySpaceTree<BoundType, StatisticType, MatType>(this, begin,
+      splitCol - begin, oldFromNew, maxLeafSize);
+  right = new BinarySpaceTree<BoundType, StatisticType, MatType>(this, splitCol,
+      begin + count - splitCol, oldFromNew, maxLeafSize);
 
   // Calculate parent distances for those two nodes.
   arma::vec centroid, leftCentroid, rightCentroid;
