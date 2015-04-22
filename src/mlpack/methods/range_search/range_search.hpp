@@ -29,22 +29,19 @@ class RangeSearch
 {
  public:
   /**
-   * Initialize the RangeSearch object with a different reference set and a
-   * query set.  Optionally, perform the computation in naive mode or
-   * single-tree mode, and set the leaf size used for tree-building.
-   * Additionally, an instantiated metric can be given, for cases where the
-   * distance metric holds data.
+   * Initialize the RangeSearch object with a given reference dataset (this is
+   * the dataset which is searched).  Optionally, perform the computation in
+   * naive mode or single-tree mode. Additionally, an instantiated metric can be
+   * given, for cases where the distance metric holds data.
    *
    * This method will copy the matrices to internal copies, which are rearranged
    * during tree-building.  You can avoid this extra copy by pre-constructing
    * the trees and passing them using a different constructor.
    *
    * @param referenceSet Reference dataset.
-   * @param querySet Query dataset.
    * @param naive Whether the computation should be done in O(n^2) naive mode.
    * @param singleMode Whether single-tree computation should be used (as
    *      opposed to dual-tree computation).
-   * @param leafSize The leaf size to be used during tree construction.
    * @param metric Instantiated distance metric.
    */
   RangeSearch(const typename TreeType::Mat& referenceSet,
@@ -53,14 +50,13 @@ class RangeSearch
               const MetricType metric = MetricType());
 
   /**
-   * Initialize the RangeSearch object with the given datasets and
-   * pre-constructed trees.  It is assumed that the points in referenceSet and
-   * querySet correspond to the points in referenceTree and queryTree,
-   * respectively.  Optionally, choose to use single-tree mode.  Naive
-   * mode is not available as an option for this constructor; instead, to run
-   * naive computation, construct a tree with all the points in one leaf (i.e.
-   * leafSize = number of points).  Additionally, an instantiated distance
-   * metric can be given, for cases where the distance metric holds data.
+   * Initialize the RangeSearch object with the given reference dataset and
+   * pre-constructed tree (the reference set is the set that is searched).  It
+   * is assumed that the points in referenceSet correspond to the points in
+   * referenceTree.  Optionally, choose to use single-tree mode, which will not
+   * build a tree on query points.  Naive mode is not available as an option for
+   * this constructor.  Additionally, an instantiated distance metric can be
+   * given, for cases where the distance metric holds data.
    *
    * There is no copying of the data matrices in this constructor (because
    * tree-building is not necessary), so this is the constructor to use when
@@ -74,9 +70,7 @@ class RangeSearch
    * @endnote
    *
    * @param referenceTree Pre-built tree for reference points.
-   * @param queryTree Pre-built tree for query points.
    * @param referenceSet Set of reference points corresponding to referenceTree.
-   * @param querySet Set of query points corresponding to queryTree.
    * @param singleMode Whether single-tree computation should be used (as
    *      opposed to dual-tree computation).
    * @param metric Instantiated distance metric.
