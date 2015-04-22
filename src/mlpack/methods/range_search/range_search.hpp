@@ -50,10 +50,9 @@ class RangeSearch
               const MetricType metric = MetricType());
 
   /**
-   * Initialize the RangeSearch object with the given reference dataset and
-   * pre-constructed tree (the reference set is the set that is searched).  It
-   * is assumed that the points in referenceSet correspond to the points in
-   * referenceTree.  Optionally, choose to use single-tree mode, which will not
+   * Initialize the RangeSearch object with the given pre-constructed reference
+   * tree (this is the tree built on the reference set, which is the set that is
+   * searched).  Optionally, choose to use single-tree mode, which will not
    * build a tree on query points.  Naive mode is not available as an option for
    * this constructor.  Additionally, an instantiated distance metric can be
    * given, for cases where the distance metric holds data.
@@ -64,9 +63,8 @@ class RangeSearch
    *
    * @note
    * Because tree-building (at least with BinarySpaceTree) modifies the ordering
-   * of a matrix, be sure you pass the modified matrix to this object!  In
-   * addition, mapping the points of the matrix back to their original indices
-   * is not done when this constructor is used.
+   * of a matrix, be aware that mapping of the points back to their original
+   * indices is not done when this constructor is used.
    * @endnote
    *
    * @param referenceTree Pre-built tree for reference points.
