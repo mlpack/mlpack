@@ -53,7 +53,7 @@ RangeSearch<MetricType, TreeType>::RangeSearch(
     singleMode(!naive && singleMode), // Naive overrides single mode.
     metric(metric)
 {
-  // Build the trees.
+  // Build the tree.
   Timer::Start("range_search/tree_building");
 
   // If in naive mode, then we do not need to build trees.
@@ -108,6 +108,17 @@ void RangeSearch<MetricType, TreeType>::Search(
   // This will hold mappings for query points, if necessary.
   std::vector<size_t> oldFromNewQueries;
 
+  // If we will be building a tree and it will modify the query set, make a copy
+  // of the dataset.
+  typename TreeType::Mat queryCopy;
+  const bool needsCopy = (!naive && !singleMode &&
+      tree::TreeTraits<TreeType>::RearrangesDataset);
+  if (needsCopy)
+    queryCopy = querySet;
+
+  const typename TreeType::Mat& querySetRef = (needsCopy) ? queryCopy :
+      querySet;
+
   // If we have built the trees ourselves, then we will have to map all the
   // indices back to their original indices when this computation is finished.
   // To avoid extra copies, we will store the unmapped neighbors and distances
@@ -137,7 +148,7 @@ void RangeSearch<MetricType, TreeType>::Search(
 
   // Create the helper object for the traversal.
   typedef RangeSearchRules<MetricType, TreeType> RuleType;
-  RuleType rules(referenceSet, querySet, range, *neighborPtr, *distancePtr,
+  RuleType rules(referenceSet, querySetRef, range, *neighborPtr, *distancePtr,
       metric);
 
   if (naive)
@@ -161,12 +172,6 @@ void RangeSearch<MetricType, TreeType>::Search(
     // Build the query tree.
     Timer::Stop("range_search/computing_neighbors");
     Timer::Start("range_search/tree_building");
-    typename TreeType::Mat queryCopy;
-    if (tree::TreeTraits<TreeType>::RearrangesDataset)
-      queryCopy = querySet;
-
-    const typename TreeType::Mat& querySetRef =
-        (tree::TreeTraits<TreeType>::RearrangesDataset) ? querySet : queryCopy;
     TreeType* queryTree = BuildTree<TreeType>(
         const_cast<typename TreeType::Mat&>(querySetRef), oldFromNewQueries);
     Timer::Stop("range_search/tree_building");
@@ -377,7 +382,7 @@ void RangeSearch<MetricType, TreeType>::Search(
     for (size_t i = 0; i < distances.size(); i++)
     {
       // Map distances (copy a column).
-      size_t refMapping = oldFromNewReferences[i];
+      const size_t refMapping = oldFromNewReferences[i];
       distances[refMapping] = (*distancePtr)[i];
 
       // Copy each neighbor individually, because we need to map it.
