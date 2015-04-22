@@ -18,7 +18,7 @@ namespace neighbor {
 //! Call the tree constructor that does mapping.
 template<typename TreeType>
 TreeType* BuildTree(
-    typename TreeType::Mat& dataset,
+    const typename TreeType::Mat& dataset,
     std::vector<size_t>& oldFromNew,
     typename boost::enable_if_c<
         tree::TreeTraits<TreeType>::RearrangesDataset == true, TreeType*
@@ -46,9 +46,9 @@ NeighborSearch(const typename TreeType::Mat& referenceSetIn,
                const bool naive,
                const bool singleMode,
                const MetricType metric) :
-    referenceSet((tree::TreeTraits<TreeType>::RearrangesDataset && !naive)
-        ? referenceCopy : referenceSetIn),
-    referenceTree(NULL),
+    referenceTree(naive ? NULL :
+        BuildTree<TreeType>(referenceSetIn, oldFromNewReferences)),
+    referenceSet(naive ? referenceSetIn : referenceTree->Dataset()),
     treeOwner(!naive), // False if a tree was passed.  If naive, then no trees.
     naive(naive),
     singleMode(!naive && singleMode), // No single mode if naive.
@@ -56,25 +56,7 @@ NeighborSearch(const typename TreeType::Mat& referenceSetIn,
     baseCases(0),
     scores(0)
 {
-  // Build the tree.
-  Timer::Start("tree_building");
-
-  if (!naive)
-  {
-    // Copy the dataset, if it will be modified during tree building.
-    if (tree::TreeTraits<TreeType>::RearrangesDataset)
-      referenceCopy = referenceSetIn;
-
-    // The const_cast is safe; if RearrangesDataset == false, then it'll be
-    // casted back to const anyway, and if not, referenceSet points to
-    // referenceCopy, which isn't const.
-    referenceTree = BuildTree<TreeType>(
-        const_cast<typename TreeType::Mat&>(referenceSet),
-        oldFromNewReferences);
-  }
-
-  // Stop the timer we started above.
-  Timer::Stop("tree_building");
+  // Nothing to do.
 }
 
 // Construct the object.
@@ -83,8 +65,8 @@ NeighborSearch<SortPolicy, MetricType, TreeType>::NeighborSearch(
     TreeType* referenceTree,
     const bool singleMode,
     const MetricType metric) :
-    referenceSet(referenceTree->Dataset()),
     referenceTree(referenceTree),
+    referenceSet(referenceTree->Dataset()),
     treeOwner(false),
     naive(false),
     singleMode(singleMode),
@@ -142,23 +124,13 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
   distancePtr->set_size(k, querySet.n_cols);
   distancePtr->fill(SortPolicy::WorstDistance());
 
-  // If we will be building a tree and it will modify the query set, make a copy
-  // of the dataset.
-  typename TreeType::Mat queryCopy;
-  const bool needsCopy = (!naive && !singleMode &&
-      tree::TreeTraits<TreeType>::RearrangesDataset);
-  if (needsCopy)
-    queryCopy = querySet;
-
-  const typename TreeType::Mat& querySetRef = (needsCopy) ? queryCopy :
-      querySet;
-
-  // Create the helper object for the tree traversal.
   typedef NeighborSearchRules<SortPolicy, MetricType, TreeType> RuleType;
-  RuleType rules(referenceSet, querySetRef, *neighborPtr, *distancePtr, metric);
 
   if (naive)
   {
+    // Create the helper object for the tree traversal.
+    RuleType rules(referenceSet, querySet, *neighborPtr, *distancePtr, metric);
+
     // The naive brute-force traversal.
     for (size_t i = 0; i < querySet.n_cols; ++i)
       for (size_t j = 0; j < referenceSet.n_cols; ++j)
@@ -168,6 +140,9 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
   }
   else if (singleMode)
   {
+    // Create the helper object for the tree traversal.
+    RuleType rules(referenceSet, querySet, *neighborPtr, *distancePtr, metric);
+
     // Create the traverser.
     typename TreeType::template SingleTreeTraverser<RuleType> traverser(rules);
 
@@ -186,10 +161,13 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
     // Build the query tree.
     Timer::Stop("computing_neighbors");
     Timer::Start("tree_building");
-    TreeType* queryTree = BuildTree<TreeType>(
-        const_cast<typename TreeType::Mat&>(querySetRef), oldFromNewQueries);
+    TreeType* queryTree = BuildTree<TreeType>(querySet, oldFromNewQueries);
     Timer::Stop("tree_building");
     Timer::Start("computing_neighbors");
+
+    // Create the helper object for the tree traversal.
+    RuleType rules(referenceSet, queryTree->Dataset(), *neighborPtr,
+        *distancePtr, metric);
 
     // Create the traverser.
     typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
