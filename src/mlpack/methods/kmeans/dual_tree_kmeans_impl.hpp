@@ -107,7 +107,7 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
     Timer::Start("knn");
     // Find the nearest neighbors of each of the clusters.
     neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType,
-        TreeType> nns(centroidTree, centroids);
+        TreeType> nns(centroidTree);
     arma::mat interclusterDistancesTemp;
     arma::Mat<size_t> closestClusters; // We don't actually care about these.
     nns.Search(1, closestClusters, interclusterDistancesTemp);
