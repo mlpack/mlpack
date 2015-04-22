@@ -38,8 +38,8 @@ class SVDConvolution
    * decomposition. By using singular value decomposition of the filter matrix
    * the convolution can be expressed as a sum of outer products. Each product
    * can be computed efficiently as convolution with a row and a column vector.
-   * The individual convolutions are computed with the naive implementation wich
-   * is fast if the filter is low-dimensional.
+   * The individual convolutions are computed with the naive implementation
+   * which is fast if the filter is low-dimensional.
    *
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
@@ -99,6 +99,34 @@ class SVDConvolution
       {
         FFTConvolution<BorderMode>::Convolution(input, filter, output);
       }
+    }
+  }
+
+  /*
+   * Perform a convolution using 3rd order tensors.
+   *
+   * @param input Input used to perform the convolution.
+   * @param filter Filter used to perform the conolution.
+   * @param output Output data that contains the results of the convolution.
+   */
+  template<typename eT>
+  static void Convolution(const arma::Cube<eT>& input,
+                          const arma::Cube<eT>& filter,
+                          arma::Cube<eT>& output)
+  {
+    arma::Mat<eT> convOutput;
+    SVDConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
+        convOutput);
+
+    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
+        input.n_slices);
+    output.slice(0) = convOutput;
+
+    for (size_t i = 1; i < input.n_slices; i++)
+    {
+      SVDConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
+          convOutput);
+      output.slice(i) = convOutput;
     }
   }
 };  // class SVDConvolution

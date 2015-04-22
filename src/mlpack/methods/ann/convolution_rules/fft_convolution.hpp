@@ -34,10 +34,10 @@ class FFTConvolution
  public:
   /*
    * Perform a convolution through fft (valid mode). This method only supports
-   * input which is even on the last dimension. In case of an odd input with, a
+   * input which is even on the last dimension. In case of an odd input width, a
    * user can manually pad the imput or specify the padLastDim parameter which
-   * takes care of padding. The filter instead can have any size. When using the
-   * valid mode the filters has to be smaller than the input.
+   * takes care of the padding. The filter instead can have any size. When using
+   * the valid mode the filters has to be smaller than the input.
    *
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
@@ -70,9 +70,9 @@ class FFTConvolution
 
   /*
    * Perform a convolution through fft (full mode). This method only supports
-   * input which is even on the last dimension. In case of an odd input with, a
+   * input which is even on the last dimension. In case of an odd input width, a
    * user can manually pad the imput or specify the padLastDim parameter which
-   * takes care of padding. The filter instead can have any size.
+   * takes care of the padding. The filter instead can have any size.
    *
    * @param input Input used to perform the convolution.
    * @param filter Filter used to perform the conolution.
@@ -113,6 +113,38 @@ class FFTConvolution
     output = output.submat(filter.n_rows - 1, filter.n_cols - 1,
         2 * (filter.n_rows - 1) + input.n_rows - 1,
         2 * (filter.n_cols - 1) + input.n_cols - 1);
+  }
+
+  /*
+   * Perform a convolution through using fft 3rd order tensors. This method only
+   * supports input which is even on the last dimension. In case of an odd input
+   * width, a user can manually pad the imput or specify the padLastDim
+   * parameter which takes care of the padding. The filter instead can have any
+   * size.
+   *
+   * @param input Input used to perform the convolution.
+   * @param filter Filter used to perform the conolution.
+   * @param output Output data that contains the results of the convolution.
+   */
+  template<typename eT>
+  static void Convolution(const arma::Cube<eT>& input,
+                          const arma::Cube<eT>& filter,
+                          arma::Cube<eT>& output)
+  {
+    arma::Mat<eT> convOutput;
+    FFTConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
+        convOutput);
+
+    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
+        input.n_slices);
+    output.slice(0) = convOutput;
+
+    for (size_t i = 1; i < input.n_slices; i++)
+    {
+      FFTConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
+          convOutput);
+      output.slice(i) = convOutput;
+    }
   }
 };  // class FFTConvolution
 

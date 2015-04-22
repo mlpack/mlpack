@@ -93,6 +93,33 @@ class NaiveConvolution
     NaiveConvolution<ValidConvolution>::Convolution(inputPadded, filter,
         output);
   }
+
+  /*
+   * Perform a convolution using 3rd order tensors.
+   *
+   * @param input Input used to perform the convolution.
+   * @param filter Filter used to perform the conolution.
+   * @param output Output data that contains the results of the convolution.
+   */
+  template<typename eT>
+  static void Convolution(const arma::Cube<eT>& input,
+                          const arma::Cube<eT>& filter,
+                          arma::Cube<eT>& output)
+  {
+    arma::Mat<eT> convOutput;
+    NaiveConvolution<BorderMode>::Convolution(input.slice(0), filter.slice(0),
+        convOutput);
+
+    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
+        input.n_slices);
+    output.slice(0) = convOutput;
+
+    for (size_t i = 1; i < input.n_slices; i++)
+    {
+      NaiveConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
+          output.slice(i));
+    }
+  }
 };  // class NaiveConvolution
 
 }; // namespace ann
