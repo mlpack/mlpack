@@ -205,9 +205,6 @@ class RangeSearch
 
   //! If true, this object is responsible for deleting the trees.
   bool treeOwner;
-  //! If true, a query set was passed; if false, the query set is the reference
-  //! set.
-  bool hasQuerySet;
 
   //! If true, O(n^2) naive computation is used.
   bool naive;
