@@ -34,10 +34,13 @@ namespace meanshift /** Mean Shift clustering. */ {
  * meanShift.Cluster(dataset, assignments, centroids);
  * @endcode
  *
+ * @tparam UseKernel Use kernel or mean to calculate new centroid
+ *         If false, KernelType will be ignored.
  * @tparam KernelType the kernel to use.
  */
   
-template<typename KernelType = kernel::GaussianKernel,
+template<bool UseKernel = false,
+         typename KernelType = kernel::GaussianKernel,
          typename MatType = arma::mat>
 class MeanShift
 {
@@ -103,7 +106,37 @@ class MeanShift
    * @param minFreq Usually 1 is enough
    * @param seed Store generated sedds
    */
-  void genSeeds(const MatType& data, double binSize, int minFreq, MatType& seeds);
+  void GenSeeds(const MatType& data, double binSize, int minFreq, MatType& seeds);
+  
+  /**
+   * Use kernel to calculate new centroid given dataset and valid neighbors.
+   *
+   * @param data The whole dataset
+   * @param neighbors Valid neighbors
+   * @param distances Distances to neighbors
+   # @param centroid Store calculated centroid
+   */
+  template<bool ApplyKernel = UseKernel>
+  typename std::enable_if<ApplyKernel, bool>::type
+  CalculateCentroid(const MatType& data,
+                    const std::vector<size_t>& neighbors,
+                    const std::vector<double>& distances,
+                    arma::colvec& centroid);
+  
+  /**
+   * Use mean to calculate new centroid given dataset and valid neighbors.
+   *
+   * @param data The whole dataset
+   * @param neighbors Valid neighbors
+   * @param distances Distances to neighbors
+   # @param centroid Store calculated centroid
+   */
+  template<bool ApplyKernel = UseKernel>
+  typename std::enable_if<!ApplyKernel, bool>::type
+  CalculateCentroid(const MatType& data,
+                    const std::vector<size_t>& neighbors,
+                    const std::vector<double>&, /*unused*/
+                    arma::colvec& centroid);
   
   /**
    * If distance of two centroids is less than radius, one will be removed.

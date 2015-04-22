@@ -37,7 +37,6 @@ PARAM_STRING("centroid_file", "If specified, the centroids of each cluster will"
 PARAM_INT("max_iterations", "Maximum number of iterations before Mean Shift "
           "terminates.", "m", 1000);
 
-PARAM_DOUBLE("bandwidth", "bandwidth of Gaussian kernel ", "b", 1.0);
 PARAM_DOUBLE("radius", "If distance of two centroids is less than radius "
              "one will be removed. "
              "If it isn't positive, an estimation will be given. "
@@ -72,9 +71,7 @@ int main(int argc, char** argv)
   arma::mat centroids;
   arma::Col<size_t> assignments;
 
-  GaussianKernel kernel(bandwidth);
-
-  MeanShift<> meanShift(radius, maxIterations, kernel);
+  MeanShift<> meanShift(radius, maxIterations);
 
   Timer::Start("clustering");
   Log::Info << "Performing mean shift clustering..." << endl;
