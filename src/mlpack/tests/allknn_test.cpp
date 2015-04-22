@@ -189,10 +189,9 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
 
   // We will loop through three times, one for each method of performing the
   // calculation.
-  arma::mat dataMutable = data;
   std::vector<size_t> oldFromNew;
   std::vector<size_t> newFromOld;
-  TreeType* tree = new TreeType(dataMutable, oldFromNew, newFromOld, 1);
+  TreeType* tree = new TreeType(data, oldFromNew, newFromOld, 1);
   for (int i = 0; i < 3; i++)
   {
     AllkNN* allknn;
@@ -206,7 +205,7 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
         allknn = new AllkNN(tree, true);
         break;
       case 2: // Use the naive method.
-        allknn = new AllkNN(dataMutable, true);
+        allknn = new AllkNN(tree->Dataset(), true);
         break;
     }
 
@@ -667,7 +666,7 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
   NeighborSearch<NearestNeighborSort, LMetric<2>, TreeType>
       ballTreeSearch(&tree, true);
 
-  AllkNN naive(data, true);
+  AllkNN naive(tree.Dataset(), true);
 
   arma::Mat<size_t> ballTreeNeighbors;
   arma::mat ballTreeDistances;
