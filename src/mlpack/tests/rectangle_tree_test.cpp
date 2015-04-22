@@ -471,11 +471,11 @@ BOOST_AUTO_TEST_CASE(PointDeletion)
 
   // Single-tree search.
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, TreeType>
-      allknn1(&tree, NULL, dataset, querySet, true);
+      allknn1(&tree, true);
 
   arma::Mat<size_t> neighbors1;
   arma::mat distances1;
-  allknn1.Search(5, neighbors1, distances1);
+  allknn1.Search(querySet, 5, neighbors1, distances1);
 
   arma::mat newDataset;
   newDataset = dataset;
@@ -485,9 +485,9 @@ BOOST_AUTO_TEST_CASE(PointDeletion)
   arma::mat distances2;
 
   // Nearest neighbor search the naive way.
-  AllkNN allknn2(newDataset, querySet, true, true);
+  AllkNN allknn2(newDataset, true, true);
 
-  allknn2.Search(5, neighbors2, distances2);
+  allknn2.Search(querySet, 5, neighbors2, distances2);
 
   for (size_t i = 0; i < neighbors1.size(); i++)
   {
@@ -562,7 +562,7 @@ BOOST_AUTO_TEST_CASE(PointDynamicAdd)
 
   // Nearest neighbor search with the R tree.
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, TreeType>
-      allknn1(&tree, dataset, true);
+      allknn1(&tree, true);
 
   allknn1.Search(5, neighbors1, distances1);
 
@@ -600,7 +600,7 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
 
   // Nearest neighbor search with the R tree.
   NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, TreeType>
-      allknn1(&rTree, dataset, true);
+      allknn1(&rTree, true);
 
   BOOST_REQUIRE_EQUAL(rTree.NumDescendants(), 1000);
 
