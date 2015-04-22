@@ -89,6 +89,12 @@ int main(int argc, char *argv[])
     Log::Fatal << referenceData.n_cols << ")." << endl;
   }
 
+  if (CLI::GetParam<string>("query_file") != "")
+  {
+    string queryFile = CLI::GetParam<string>("query_file");
+    data::Load(queryFile, queryData, true);
+  }
+
   // Sanity check on leaf size.
   if (lsInt < 0)
   {
@@ -103,72 +109,66 @@ int main(int argc, char *argv[])
     Log::Warn << "--single_mode ignored because --naive is present." << endl;
   }
 
-  if (naive)
-    leafSize = referenceData.n_cols;
-
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  if(!CLI::HasParam("r_tree"))
+  if (naive)
   {
-    AllkFN* allkfn = NULL;
+    AllkFN allkfn(referenceData, false, naive);
 
+    if (CLI::HasParam("query_file"))
+      allkfn.Search(queryData, k, neighbors, distances);
+    else
+      allkfn.Search(k, neighbors, distances);
+  }
+  if (!CLI::HasParam("r_tree"))
+  {
+    // Use default kd-tree.
     std::vector<size_t> oldFromNewRefs;
+
+    typedef BinarySpaceTree<bound::HRectBound<2>,
+        NeighborSearchStat<FurthestNeighborSort>> TreeType;
 
     // Build trees by hand, so we can save memory: if we pass a tree to
     // NeighborSearch, it does not copy the matrix.
     Log::Info << "Building reference tree..." << endl;
     Timer::Start("reference_tree_building");
-
-    BinarySpaceTree<bound::HRectBound<2>,
-        NeighborSearchStat<FurthestNeighborSort> >
-        refTree(referenceData, oldFromNewRefs, leafSize);
-    BinarySpaceTree<bound::HRectBound<2>,
-        NeighborSearchStat<FurthestNeighborSort> >*
-        queryTree = NULL; // Empty for now.
-
+    TreeType refTree(referenceData, oldFromNewRefs, leafSize);
     Timer::Stop("reference_tree_building");
 
     std::vector<size_t> oldFromNewQueries;
 
-    if (CLI::GetParam<string>("query_file") != "")
+    AllkFN allkfn(&refTree, singleMode);
+
+    arma::mat distancesOut(distances.n_rows, distances.n_cols);
+    arma::Mat<size_t> neighborsOut(neighbors.n_rows, neighbors.n_cols);
+
+    if (CLI::HasParam("query_file"))
     {
-      string queryFile = CLI::GetParam<string>("query_file");
+      if (!singleMode)
+      {
+        // Build trees by hand, so we can save memory: if we pass a tree to
+        // NeighborSearch, it does not copy the matrix.
+        Log::Info << "Building query tree..." << endl;
+        Timer::Start("tree_building");
+        TreeType queryTree(queryData, oldFromNewQueries, leafSize);
+        Timer::Stop("tree_building");
+        Log::Info << "Tree built." << endl;
 
-      data::Load(queryFile, queryData, true);
-
-      Log::Info << "Loaded query data from '" << queryFile << "' ("
-          << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
-
-      Log::Info << "Building query tree..." << endl;
-
-      if (naive && leafSize < queryData.n_cols)
-        leafSize = queryData.n_cols;
-
-      // Build trees by hand, so we can save memory: if we pass a tree to
-      // NeighborSearch, it does not copy the matrix.
-      Timer::Start("query_tree_building");
-
-      queryTree = new BinarySpaceTree<bound::HRectBound<2>,
-          NeighborSearchStat<FurthestNeighborSort> >(queryData, oldFromNewQueries,
-          leafSize);
-
-      Timer::Stop("query_tree_building");
-
-      allkfn = new AllkFN(&refTree, queryTree, referenceData, queryData,
-          singleMode);
-
-      Log::Info << "Tree built." << endl;
+        Log::Info << "Computing " << k << " furthest neighbors..." << endl;
+        allkfn.Search(&queryTree, k, neighborsOut, distancesOut);
+      }
+      else
+      {
+        Log::Info << "Computing " << k << " furthest neighbors..." << endl;
+        allkfn.Search(queryData, k, neighborsOut, distancesOut);
+      }
     }
     else
     {
-      allkfn = new AllkFN(&refTree, referenceData, singleMode);
-
-      Log::Info << "Trees built." << endl;
+      Log::Info << "Computing " << k << " furthest neighbors..." << endl;
+      allkfn.Search(k, neighborsOut, distancesOut);
     }
-
-    Log::Info << "Computing " << k << " furthest neighbors..." << endl;
-    allkfn->Search(k, neighbors, distances);
 
     Log::Info << "Neighbors computed." << endl;
 
@@ -176,119 +176,67 @@ int main(int argc, char *argv[])
     // construction.
     Log::Info << "Re-mapping indices..." << endl;
 
-    arma::mat distancesOut(distances.n_rows, distances.n_cols);
-    arma::Mat<size_t> neighborsOut(neighbors.n_rows, neighbors.n_cols);
-
     // Map the points back to their original locations.
     if ((CLI::GetParam<string>("query_file") != "") && !singleMode)
-      Unmap(neighbors, distances, oldFromNewRefs, oldFromNewQueries, neighborsOut,
-          distancesOut);
+      Unmap(neighborsOut, distancesOut, oldFromNewRefs, oldFromNewQueries, neighbors,
+          distances);
     else if ((CLI::GetParam<string>("query_file") != "") && singleMode)
-      Unmap(neighbors, distances, oldFromNewRefs, neighborsOut, distancesOut);
+      Unmap(neighborsOut, distancesOut, oldFromNewRefs, neighbors, distances);
     else
-      Unmap(neighbors, distances, oldFromNewRefs, oldFromNewRefs, neighborsOut,
-          distancesOut);
-
-    // Clean up.
-    if (queryTree)
-      delete queryTree;
-
-    delete allkfn;
-
-      // Save output.
-  data::Save(distancesFile, distancesOut);
-  data::Save(neighborsFile, neighborsOut);
-
-  } else {  // Use the R tree.
+      Unmap(neighborsOut, distancesOut, oldFromNewRefs, oldFromNewRefs, neighbors,
+          distances);
+  }
+  else
+  {
+    // Use the R tree.
     Log::Info << "Using R tree for furthest-neighbor calculation." << endl;
 
-    // Because we may construct it differently, we need a pointer.
-    NeighborSearch<FurthestNeighborSort, metric::LMetric<2, true>,
-    RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<FurthestNeighborSort>, arma::mat>,
-       tree::RStarTreeDescentHeuristic,
-       NeighborSearchStat<FurthestNeighborSort>,
-       arma::mat> >* allkfn = NULL;
-
+    // Convenience typedef.
+    typedef RectangleTree<
+        tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic,
+            NeighborSearchStat<FurthestNeighborSort>, arma::mat>,
+        tree::RStarTreeDescentHeuristic,
+        NeighborSearchStat<FurthestNeighborSort>,
+        arma::mat> TreeType;
 
     // Build trees by hand, so we can save memory: if we pass a tree to
     // NeighborSearch, it does not copy the matrix.
     Log::Info << "Building reference tree..." << endl;
     Timer::Start("tree_building");
-
-    RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<FurthestNeighborSort>, arma::mat>,
-       tree::RStarTreeDescentHeuristic,
-       NeighborSearchStat<FurthestNeighborSort>,
-       arma::mat>
-    refTree(referenceData, leafSize, leafSize * 0.4, 5, 2, 0);
-
-    RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<FurthestNeighborSort>, arma::mat>,
-       tree::RStarTreeDescentHeuristic,
-       NeighborSearchStat<FurthestNeighborSort>,
-       arma::mat>*
-    queryTree = NULL; // Empty for now.
-
+    TreeType refTree(referenceData, leafSize, leafSize * 0.4, 5, 2, 0);
     Timer::Stop("tree_building");
+    Log::Info << "Tree built." << endl;
+
+    typedef NeighborSearch<FurthestNeighborSort, metric::LMetric<2, true>,
+        TreeType> AllkFNType;
+    AllkFNType allkfn(&refTree, singleMode);
+
     if (CLI::GetParam<string>("query_file") != "")
     {
-      string queryFile = CLI::GetParam<string>("query_file");
-
-      data::Load(queryFile, queryData, true);
-
-      Log::Info << "Loaded query data from '" << queryFile << "' ("
-      << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
-
-      // Build trees by hand, so we can save memory: if we pass a tree to
-      // NeighborSearch, it does not copy the matrix.
       if (!singleMode)
       {
         Timer::Start("tree_building");
-
-        queryTree = new RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<FurthestNeighborSort>, arma::mat>,
-        tree::RStarTreeDescentHeuristic,
-        NeighborSearchStat<FurthestNeighborSort>,
-        arma::mat>(queryData, leafSize, leafSize * 0.4, 5, 2, 0);
-
+        TreeType queryTree(queryData, leafSize, leafSize * 0.4, 5, 2, 0);
         Timer::Stop("tree_building");
+
+        Log::Info << "Computing " << k << " nearest neighbors..." << endl;
+        allkfn.Search(&queryTree, k, neighbors, distances);
       }
-
-
-      allkfn = new NeighborSearch<FurthestNeighborSort, metric::LMetric<2, true>,
-      RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<FurthestNeighborSort>, arma::mat>,
-      tree::RStarTreeDescentHeuristic,
-      NeighborSearchStat<FurthestNeighborSort>,
-      arma::mat> >(&refTree, queryTree,
-                   referenceData, queryData, singleMode);
-    } else
-    {
-      allkfn = new NeighborSearch<FurthestNeighborSort, metric::LMetric<2, true>,
-      RectangleTree<tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic, NeighborSearchStat<FurthestNeighborSort>, arma::mat>,
-      tree::RStarTreeDescentHeuristic,
-      NeighborSearchStat<FurthestNeighborSort>,
-      arma::mat> >(&refTree,
-                   referenceData, singleMode);
+      else
+      {
+        Log::Info << "Computing " << k << " nearest neighbors..." << endl;
+        allkfn.Search(queryData, k, neighbors, distances);
+      }
     }
-    Log::Info << "Tree built." << endl;
-
-    //arma::mat distancesOut;
-    //arma::Mat<size_t> neighborsOut;
-
-    Log::Info << "Computing " << k << " nearest neighbors..." << endl;
-    allkfn->Search(k, neighbors, distances);
-
+    else
+    {
+      Log::Info << "Computing " << k << " nearest neighbors..." << endl;
+      allkfn.Search(k, neighbors, distances);
+    }
     Log::Info << "Neighbors computed." << endl;
-
-
-    if(queryTree)
-      delete queryTree;
-
-    delete allkfn;
-
-    // Save output.
-    data::Save(distancesFile, distances);
-    data::Save(neighborsFile, neighbors);
-
   }
 
-
-
+  // Save output.
+  data::Save(distancesFile, distances);
+  data::Save(neighborsFile, neighbors);
 }
