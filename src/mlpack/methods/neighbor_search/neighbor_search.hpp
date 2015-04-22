@@ -113,6 +113,11 @@ class NeighborSearch
    * n columns by k rows, where n is the number of points in the query dataset
    * and k is the number of neighbors being searched for.
    *
+   * If querySet contains only a few query points, the extra cost of building a
+   * tree on the points for dual-tree search may not be warranted, and it may be
+   * worthwhile to set singleMode = false (either in the constructor or with
+   * SingleMode()).
+   *
    * @param querySet Set of query points (can be just one point).
    * @param k Number of neighbors to search for.
    * @param neighbors Matrix storing lists of neighbors for each query point.
@@ -172,6 +177,11 @@ class NeighborSearch
   size_t Scores() const { return scores; }
   //! Modify the number of node combination scores.
   size_t& Scores() { return scores; }
+
+  //! Access whether or not search is done in single-tree mode.
+  bool SingleMode() const { return singleMode; }
+  //! Modify whether or not search is done in single-tree mode.
+  bool& SingleMode() { return singleMode; }
 
  private:
   //! Copy of reference dataset (if we need it, because tree building modifies
