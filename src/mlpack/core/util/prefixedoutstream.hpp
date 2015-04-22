@@ -56,8 +56,9 @@ class PrefixedOutStream
    *
    * @param destination ostream which receives output from this object.
    * @param prefix The prefix to prepend to each line.
-   * @param ignoreInput if true the stream will not be printed
-   * @param fatal is true program will exit after printing a line
+   * @param ignoreInput If true, the stream will not be printed.
+   * @param fatal If true, a std::runtime_error exception is thrown after
+   *     printing a newline.
    */
   PrefixedOutStream(std::ostream& destination,
                     const char* prefix,
@@ -120,14 +121,14 @@ class PrefixedOutStream
  private:
   HAS_MEM_FUNC(ToString, HasToString)
 
-  //! This handles forwarding all primitive types transparently
+  //! This handles forwarding all primitive types transparently.
   template<typename T>
   void CallBaseLogic(const T& s,
       typename boost::disable_if<
           boost::is_class<T>
       >::type* = 0);
 
-  //! Forward all objects that do not implement a ToString() method
+  //! Forward all objects that do not implement a ToString() method.
   template<typename T>
   void CallBaseLogic(const T& s,
       typename boost::enable_if<
@@ -137,7 +138,8 @@ class PrefixedOutStream
           HasToString<T, std::string(T::*)() const>
       >::type* = 0);
 
-  //! Call ToString() on all objects that implement ToString() before forwarding
+  //! Call ToString() on all objects that implement ToString() before
+  //! forwarding.
   template<typename T>
   void CallBaseLogic(const T& s,
       typename boost::enable_if<
@@ -148,8 +150,8 @@ class PrefixedOutStream
       >::type* = 0);
 
   /**
-   * @brief Conducts the base logic required in all the operator << overloads.
-   *   Mostly just a good idea to reduce copy-pasta.
+   * Conducts the base logic required in all the operator << overloads.  Mostly
+   * just a good idea to reduce copy-pasta.
    *
    * @tparam T The type of the data to output.
    * @param val The The data to be output.
@@ -169,7 +171,7 @@ class PrefixedOutStream
   //! will be necessary.
   bool carriageReturned;
 
-  //! If true, the application will terminate with an error code when a CR is
+  //! If true, a std::runtime_error exception will be thrown when a CR is
   //! encountered.
   bool fatal;
 };

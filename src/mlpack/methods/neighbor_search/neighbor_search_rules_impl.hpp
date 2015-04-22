@@ -19,12 +19,14 @@ NeighborSearchRules<SortPolicy, MetricType, TreeType>::NeighborSearchRules(
     const typename TreeType::Mat& querySet,
     arma::Mat<size_t>& neighbors,
     arma::mat& distances,
-    MetricType& metric) :
+    MetricType& metric,
+    const bool sameSet) :
     referenceSet(referenceSet),
     querySet(querySet),
     neighbors(neighbors),
     distances(distances),
     metric(metric),
+    sameSet(sameSet),
     lastQueryIndex(querySet.n_cols),
     lastReferenceIndex(referenceSet.n_cols),
     baseCases(0),
@@ -44,7 +46,7 @@ BaseCase(const size_t queryIndex, const size_t referenceIndex)
 {
   // If the datasets are the same, then this search is only using one dataset
   // and we should not return identical points.
-  if ((&querySet == &referenceSet) && (queryIndex == referenceIndex))
+  if (sameSet && (queryIndex == referenceIndex))
     return 0.0;
 
   // If we have already performed this base case, then do not perform it again.

@@ -445,7 +445,7 @@ BOOST_AUTO_TEST_CASE(NeighborString)
 {
   arma::mat c(40, 40);
   c.randn();
-  mlpack::neighbor::NeighborSearch<> d(c, c);
+  mlpack::neighbor::NeighborSearch<> d(c);
   Log::Debug << d;
   testOstream << d;
   std::string s = d.ToString();

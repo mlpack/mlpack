@@ -22,7 +22,7 @@ PrefixedOutStream& PrefixedOutStream::operator<<(const T& s)
   return *this;
 }
 
-//! This handles forwarding all primitive types transparently
+//! This handles forwarding all primitive types transparently.
 template<typename T>
 void PrefixedOutStream::CallBaseLogic(const T& s,
     typename boost::disable_if<
@@ -32,7 +32,7 @@ void PrefixedOutStream::CallBaseLogic(const T& s,
   BaseLogic<T>(s);
 }
 
-// Forward all objects that do not implement a ToString() method transparently
+// Forward all objects that do not implement a ToString() method transparently.
 template<typename T>
 void PrefixedOutStream::CallBaseLogic(const T& s,
     typename boost::enable_if<
@@ -45,7 +45,7 @@ void PrefixedOutStream::CallBaseLogic(const T& s,
   BaseLogic<T>(s);
 }
 
-// Call ToString() on all objects that implement ToString() before forwarding
+// Call ToString() on all objects that implement ToString() before forwarding.
 template<typename T>
 void PrefixedOutStream::CallBaseLogic(const T& s,
     typename boost::enable_if<
@@ -73,7 +73,7 @@ void PrefixedOutStream::BaseLogic(const T& val)
   std::ostringstream convert;
   convert << val;
 
-  if(convert.fail())
+  if (convert.fail())
   {
     PrefixIfNeeded();
     if (!ignoreInput)
@@ -128,9 +128,9 @@ void PrefixedOutStream::BaseLogic(const T& val)
     }
   }
 
-  // If we displayed a newline and we need to terminate afterwards, do that.
+  // If we displayed a newline and we need to throw afterwards, do that.
   if (fatal && newlined)
-    exit(1);
+    throw std::runtime_error("fatal error; see Log::Fatal output");
 }
 
 // This is an inline function (that is why it is here and not in .cc).

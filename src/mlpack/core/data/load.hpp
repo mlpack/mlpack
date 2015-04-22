@@ -38,11 +38,12 @@ namespace data /** Functions to load and save matrices and models. */ {
  * This is preferable to Armadillo's default behavior of loading an unknown
  * filetype as raw_binary, which can have very confusing effects.
  *
- * If the parameter 'fatal' is set to true, the program will exit with an error
- * if the matrix does not load successfully.  The parameter 'transpose' controls
- * whether or not the matrix is transposed after loading.  In most cases,
- * because data is generally stored in a row-major format and MLPACK requires
- * column-major matrices, this should be left at its default value of 'true'.
+ * If the parameter 'fatal' is set to true, a std::runtime_error exception will
+ * be thrown if the matrix does not load successfully.  The parameter
+ * 'transpose' controls whether or not the matrix is transposed after loading.
+ * In most cases, because data is generally stored in a row-major format and
+ * mlpack requires column-major matrices, this should be left at its default
+ * value of 'true'.
  *
  * @param filename Name of file to load.
  * @param matrix Matrix to load contents of file into.

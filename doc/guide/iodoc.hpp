@@ -22,7 +22,8 @@ MLPACK has four logging levels:
 Output to Log::Debug does not show (and has no performance penalty) when MLPACK
 is compiled without debugging symbols.  Output to Log::Info is only shown when
 the program is run with the --verbose (or -v) flag.  Log::Warn is always shown,
-and Log::Fatal will halt the program, when a newline is sent to it.
+and Log::Fatal will throw a std::runtime_error exception, when a newline is sent
+to it.
 
 Here is a simple example, and its output:
 
@@ -55,6 +56,9 @@ $ ./main --verbose
 [INFO ] Some test informational output.
 [WARN ] A warning!
 [FATAL] Program has crashed.
+terminate called after throwing an instance of 'std::runtime_error'
+  what():  fatal error; see Log::Fatal output
+Aborted
 @endcode
 
 The last warning is not reached, because Log::Fatal terminates the program.
@@ -65,6 +69,9 @@ Without debugging symbols and without --verbose, the following is shown:
 $ ./main
 [WARN ] A warning!
 [FATAL] Program has crashed.
+terminate called after throwing an instance of 'std::runtime_error'
+  what():  fatal error; see Log::Fatal output
+Aborted
 @endcode
 
 These four outputs can be very useful for both providing informational output

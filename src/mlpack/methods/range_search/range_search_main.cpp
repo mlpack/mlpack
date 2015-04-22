@@ -103,6 +103,7 @@ int main(int argc, char *argv[])
     Log::Fatal << "Invalid range: maximum (" << max << ") must be greater than "
         << "minimum (" << min << ")." << endl;
   }
+  const math::Range r(min, max);
 
   // Sanity check on leaf size.
   if (lsInt < 0)
@@ -110,16 +111,13 @@ int main(int argc, char *argv[])
     Log::Fatal << "Invalid leaf size: " << lsInt << ".  Must be greater "
         "than or equal to 0." << endl;
   }
-  size_t leafSize = lsInt;
+  const size_t leafSize = lsInt;
 
   // Naive mode overrides single mode.
   if (singleMode && naive)
   {
     Log::Warn << "--single_mode ignored because --naive is present." << endl;
   }
-
-  if (naive)
-    leafSize = referenceData.n_cols;
 
   if (coverTree && naive)
   {
@@ -131,105 +129,91 @@ int main(int argc, char *argv[])
   vector<vector<double> > distances;
 
   // The cover tree implies different types, so we must split this section.
-  if (coverTree)
+  if (naive)
+  {
+    Log::Info << "Performing naive search (no trees)." << endl;
+
+    // Trees don't matter.
+    RangeSearch<> rangeSearch(referenceData, singleMode, naive);
+    rangeSearch.Search(queryData, r, neighbors, distances);
+  }
+  else if (coverTree)
   {
     Log::Info << "Using cover trees." << endl;
 
     // This is significantly simpler than kd-tree construction because the data
     // matrix is not modified.
-    RSCoverType* rangeSearch = NULL;
-    CoverTreeType referenceTree(referenceData);
-    CoverTreeType* queryTree = NULL;
+    RSCoverType rangeSearch(referenceData, singleMode);
 
     if (CLI::GetParam<string>("query_file") == "")
     {
       // Single dataset.
-      rangeSearch = new RSCoverType(&referenceTree, referenceData, singleMode);
+      rangeSearch.Search(r, neighbors, distances);
     }
     else
     {
       // Two datasets.
       const string queryFile = CLI::GetParam<string>("query_file");
       data::Load(queryFile, queryData, true);
-      queryTree = new CoverTreeType(queryData);
 
-      rangeSearch = new RSCoverType(&referenceTree, queryTree, referenceData,
-          queryData, singleMode);
+      // Query tree is automatically built if needed.
+      rangeSearch.Search(queryData, r, neighbors, distances);
     }
-
-    Log::Info << "Trees built." << endl;
-
-    const math::Range r(min, max);
-    rangeSearch->Search(r, neighbors, distances);
-
-    if (queryTree)
-      delete queryTree;
-    delete rangeSearch;
   }
   else
   {
-    // Because we may construct it differently, we need a pointer.
-    RSType* rangeSearch = NULL;
+    typedef BinarySpaceTree<bound::HRectBound<2>, RangeSearchStat> TreeType;
 
-    // Mappings for when we build the tree.
-    vector<size_t> oldFromNewRefs;
-
-    // Build trees by hand, so we can save memory: if we pass a tree to
-    // NeighborSearch, it does not copy the matrix.
+    // Track mappings.
     Log::Info << "Building reference tree..." << endl;
     Timer::Start("tree_building");
-
-    BinarySpaceTree<bound::HRectBound<2>, RangeSearchStat>
-        refTree(referenceData, oldFromNewRefs, leafSize);
-    BinarySpaceTree<bound::HRectBound<2>, RangeSearchStat>*
-        queryTree = NULL; // Empty for now.
-
+    vector<size_t> oldFromNewRefs;
+    vector<size_t> oldFromNewQueries; // Not used yet.
+    TreeType refTree(referenceData, oldFromNewRefs, leafSize);
     Timer::Stop("tree_building");
 
-    vector<size_t> oldFromNewQueries;
+    // Collect the results in these vectors before remapping.
+    vector<vector<double> > distancesOut;
+    vector<vector<size_t> > neighborsOut;
+
+    RSType rangeSearch(&refTree, singleMode);
 
     if (CLI::GetParam<string>("query_file") != "")
     {
       const string queryFile = CLI::GetParam<string>("query_file");
       data::Load(queryFile, queryData, true);
 
-      if (naive && leafSize < queryData.n_cols)
-        leafSize = queryData.n_cols;
-
       Log::Info << "Loaded query data from '" << queryFile << "'." << endl;
 
-      Log::Info << "Building query tree..." << endl;
+      if (singleMode)
+      {
+        Log::Info << "Computing neighbors within range [" << min << ", " << max
+            << "]." << endl;
+        rangeSearch.Search(queryData, r, neighborsOut, distancesOut);
+      }
+      else
+      {
+        Log::Info << "Building query tree..." << endl;
 
-      // Build trees by hand, so we can save memory: if we pass a tree to
-      // NeighborSearch, it does not copy the matrix.
-      Timer::Start("tree_building");
+        // Build trees by hand, so we can save memory: if we pass a tree to
+        // NeighborSearch, it does not copy the matrix.
+        Timer::Start("tree_building");
+        TreeType queryTree(queryData, oldFromNewQueries, leafSize);
+        Timer::Stop("tree_building");
 
-      queryTree = new BinarySpaceTree<bound::HRectBound<2>,
-          RangeSearchStat>(queryData, oldFromNewQueries, leafSize);
+        Log::Info << "Tree built." << endl;
 
-      Timer::Stop("tree_building");
-
-      rangeSearch = new RSType(&refTree, queryTree, referenceData, queryData,
-          singleMode);
-
-      Log::Info << "Tree built." << endl;
+        Log::Info << "Computing neighbors within range [" << min << ", " << max
+            << "]." << endl;
+        rangeSearch.Search(&queryTree, r, neighborsOut, distancesOut);
+      }
     }
     else
     {
-      rangeSearch = new RSType(&refTree, referenceData, singleMode);
-
-      Log::Info << "Trees built." << endl;
+      Log::Info << "Computing neighbors within range [" << min << ", " << max
+          << "]." << endl;
+      rangeSearch.Search(r, neighborsOut, distancesOut);
     }
-
-    Log::Info << "Computing neighbors within range [" << min << ", " << max
-        << "]." << endl;
-
-    // Collect the results in these vectors before remapping.
-    vector<vector<double> > distancesOut;
-    vector<vector<size_t> > neighborsOut;
-
-    const math::Range r(min, max);
-    rangeSearch->Search(r, neighborsOut, distancesOut);
 
     Log::Info << "Neighbors computed." << endl;
 
@@ -272,11 +256,6 @@ int main(int argc, char *argv[])
         }
       }
     }
-
-    // Clean up.
-    if (queryTree)
-      delete queryTree;
-    delete rangeSearch;
   }
 
   // Save output.  We have to do this by hand.

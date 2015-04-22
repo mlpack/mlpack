@@ -22,7 +22,7 @@ template<typename SplitType,
          typename StatisticType,
          typename MatType>
 RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
-    MatType& data,
+    const MatType& data,
     const size_t maxLeafSize,
     const size_t minLeafSize,
     const size_t maxNumChildren,

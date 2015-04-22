@@ -35,11 +35,11 @@ namespace data /** Functions to load and save matrices. */ {
  *  - HDF5 (hdf5_binary), denoted by .hdf5, .hdf, .h5, or .he5
  *
  * If the file extension is not one of those types, an error will be given.  If
- * the 'fatal' parameter is set to true, an error will cause the program to
- * exit.  If the 'transpose' parameter is set to true, the matrix will be
- * transposed before saving.  Generally, because MLPACK stores matrices in a
- * column-major format and most datasets are stored on disk as row-major, this
- * parameter should be left at its default value of 'true'.
+ * the 'fatal' parameter is set to true, a std::runtime_error exception will be
+ * thrown upon failure.  If the 'transpose' parameter is set to true, the matrix
+ * will be transposed before saving.  Generally, because mlpack stores matrices
+ * in a column-major format and most datasets are stored on disk as row-major,
+ * this parameter should be left at its default value of 'true'.
  *
  * @param filename Name of file to save to.
  * @param matrix Matrix to save into file.

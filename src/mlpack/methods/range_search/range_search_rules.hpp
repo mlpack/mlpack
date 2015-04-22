@@ -27,13 +27,16 @@ class RangeSearchRules
    * @param neighbors Vector to store resulting neighbors in.
    * @param distances Vector to store resulting distances in.
    * @param metric Instantiated metric.
+   * @param sameSet If true, the query and reference set are taken to be the
+   *      same, and a query point will not return itself in the results.
    */
   RangeSearchRules(const arma::mat& referenceSet,
                    const arma::mat& querySet,
                    const math::Range& range,
                    std::vector<std::vector<size_t> >& neighbors,
                    std::vector<std::vector<double> >& distances,
-                   MetricType& metric);
+                   MetricType& metric,
+                   const bool sameSet = false);
 
   /**
    * Compute the base case between the given query point and reference point.
@@ -116,6 +119,9 @@ class RangeSearchRules
 
   //! The instantiated metric.
   MetricType& metric;
+
+  //! If true, the query and reference set are taken to be the same.
+  bool sameSet;
 
   //! The last query index.
   size_t lastQueryIndex;

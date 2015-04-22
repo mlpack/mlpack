@@ -137,9 +137,9 @@ void CF<FactorizerType>::GetRecommendations(const size_t numRecs,
 
   // Calculate the neighborhood of the queried users.
   // This should be a templatized option.
-  neighbor::AllkNN a(rating, query);
+  neighbor::AllkNN a(rating);
   arma::mat resultingDistances; // Temporary storage.
-  a.Search(numUsersForSimilarity, neighborhood, resultingDistances);
+  a.Search(query, numUsersForSimilarity, neighborhood, resultingDistances);
 
   // Temporary storage for storing the average rating for each user in their
   // neighborhood.

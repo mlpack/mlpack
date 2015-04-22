@@ -92,7 +92,7 @@ class RectangleTree
   //! The discance to the furthest descendant, cached to speed things up.
   double furthestDescendantDistance;
   //! The dataset.
-  MatType& dataset;
+  const MatType& dataset;
   //! The mapping to the dataset
   std::vector<size_t> points;
   //! The local dataset
@@ -124,7 +124,7 @@ class RectangleTree
    * @param firstDataIndex The index of the first data point.  UNUSED UNLESS WE
    *      ADD SUPPORT FOR HAVING A "CENTERAL" DATA MATRIX.
    */
-  RectangleTree(MatType& data,
+  RectangleTree(const MatType& data,
                 const size_t maxLeafSize = 20,
                 const size_t minLeafSize = 8,
                 const size_t maxNumChildren = 5,
@@ -305,7 +305,7 @@ class RectangleTree
   //! Get the dataset which the tree is built on.
   const arma::mat& Dataset() const { return dataset; }
   //! Modify the dataset which the tree is built on.  Be careful!
-  arma::mat& Dataset() { return dataset; }
+  arma::mat& Dataset() { return const_cast<arma::mat&>(dataset); }
 
   //! Get the points vector for this node.
   const std::vector<size_t>& Points() const { return points; }

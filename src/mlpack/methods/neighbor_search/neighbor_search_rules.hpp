@@ -21,7 +21,8 @@ class NeighborSearchRules
                       const typename TreeType::Mat& querySet,
                       arma::Mat<size_t>& neighbors,
                       arma::mat& distances,
-                      MetricType& metric);
+                      MetricType& metric,
+                      const bool sameSet = false);
   /**
    * Get the distance from the query point to the reference point.
    * This will update the "neighbor" matrix with the new point if appropriate
@@ -115,6 +116,9 @@ class NeighborSearchRules
 
   //! The instantiated metric.
   MetricType& metric;
+
+  //! Denotes whether or not the reference and query sets are the same.
+  bool sameSet;
 
   //! The last query point BaseCase() was called with.
   size_t lastQueryIndex;
