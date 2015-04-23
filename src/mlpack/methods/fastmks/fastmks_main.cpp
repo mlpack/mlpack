@@ -28,12 +28,12 @@ PROGRAM_INFO("FastMKS (Fast Max-Kernel Search)",
     "'kernels.csv' and the indices are stored in 'indices.csv'."
     "\n\n"
     "$ fastmks --k 5 --reference_file reference.csv --query_file query.csv\n"
-    "  --indices_file indices.csv --products_file kernels.csv --kernel linear"
+    "  --indices_file indices.csv --kernels_file kernels.csv --kernel linear"
     "\n\n"
     "The output files are organized such that row i and column j in the indices"
     " output file corresponds to the index of the point in the reference set "
     "that has i'th largest kernel evaluation with the point in the query set "
-    "with index j.  Row i and column j in the products output file corresponds "
+    "with index j.  Row i and column j in the kernels output file corresponds "
     "to the kernel evaluation between those two points."
     "\n\n"
     "This executable performs FastMKS using a cover tree.  The base used to "
@@ -44,10 +44,10 @@ PARAM_STRING_REQ("reference_file", "File containing the reference dataset.",
     "r");
 PARAM_STRING("query_file", "File containing the query dataset.", "q", "");
 
-PARAM_INT_REQ("k", "Number of maximum inner products to find.", "k");
+PARAM_INT_REQ("k", "Number of maximum kernels to find.", "k");
 
-PARAM_STRING("products_file", "File to save inner products into.", "p", "");
-PARAM_STRING("indices_file", "File to save indices of inner products into.",
+PARAM_STRING("kernels_file", "File to save kernels into.", "p", "");
+PARAM_STRING("indices_file", "File to save indices of kernels into.",
     "i", "");
 
 PARAM_STRING("kernel", "Kernel type to use: 'linear', 'polynomial', 'cosine', "
@@ -76,20 +76,29 @@ void RunFastMKS(const arma::mat& referenceData,
                 const double base,
                 const size_t k,
                 arma::Mat<size_t>& indices,
-                arma::mat& products,
+                arma::mat& kernels,
                 KernelType& kernel)
 {
-  // Create the tree with the specified base.
-  typedef CoverTree<IPMetric<KernelType>, FirstPointIsRoot, FastMKSStat>
-      TreeType;
-  IPMetric<KernelType> metric(kernel);
-  TreeType tree(referenceData, metric, base);
+  if (naive)
+  {
+    // No need for trees.
+    FastMKS<KernelType> fastmks(referenceData, kernel, false, naive);
+    fastmks.Search(k, indices, kernels);
+  }
+  else
+  {
+    // Create the tree with the specified base.
+    typedef CoverTree<IPMetric<KernelType>, FirstPointIsRoot, FastMKSStat>
+        TreeType;
+    IPMetric<KernelType> metric(kernel);
+    TreeType tree(referenceData, metric, base);
 
-  // Create FastMKS object.
-  FastMKS<KernelType> fastmks(referenceData, &tree, (single && !naive), naive);
+    // Create FastMKS object.
+    FastMKS<KernelType> fastmks(&tree, single);
 
-  // Now search with it.
-  fastmks.Search(k, indices, products);
+    // Now search with it.
+    fastmks.Search(k, indices, kernels);
+  }
 }
 
 //! Run FastMKS for a given query and reference set using the given kernel type.
@@ -101,22 +110,30 @@ void RunFastMKS(const arma::mat& referenceData,
                 const double base,
                 const size_t k,
                 arma::Mat<size_t>& indices,
-                arma::mat& products,
+                arma::mat& kernels,
                 KernelType& kernel)
 {
-  // Create the tree with the specified base.
-  typedef CoverTree<IPMetric<KernelType>, FirstPointIsRoot, FastMKSStat>
-      TreeType;
-  IPMetric<KernelType> metric(kernel);
-  TreeType referenceTree(referenceData, metric, base);
-  TreeType queryTree(queryData, metric, base);
+  if (naive)
+  {
+    // No need for trees.
+    FastMKS<KernelType> fastmks(referenceData, kernel, false, naive);
+    fastmks.Search(queryData, k, indices, kernels);
+  }
+  else
+  {
+    // Create the tree with the specified base.
+    typedef CoverTree<IPMetric<KernelType>, FirstPointIsRoot, FastMKSStat>
+        TreeType;
+    IPMetric<KernelType> metric(kernel);
+    TreeType referenceTree(referenceData, metric, base);
+    TreeType queryTree(queryData, metric, base);
 
-  // Create FastMKS object.
-  FastMKS<KernelType> fastmks(referenceData, &referenceTree, queryData,
-      &queryTree, (single && !naive), naive);
+    // Create FastMKS object.
+    FastMKS<KernelType> fastmks(&referenceTree, single);
 
-  // Now search with it.
-  fastmks.Search(k, indices, products);
+    // Now search with it.
+    fastmks.Search(&queryTree, k, indices, kernels);
+  }
 }
 
 int main(int argc, char** argv)
@@ -194,7 +211,7 @@ int main(int argc, char** argv)
 
   // Matrices for output storage.
   arma::Mat<size_t> indices;
-  arma::mat products;
+  arma::mat kernels;
 
   // Construct FastMKS object.
   if (queryData.n_elem == 0)
@@ -203,44 +220,44 @@ int main(int argc, char** argv)
     {
       LinearKernel lk;
       RunFastMKS<LinearKernel>(referenceData, single, naive, base, k, indices,
-          products, lk);
+          kernels, lk);
     }
     else if (kernelType == "polynomial")
     {
 
       PolynomialKernel pk(degree, offset);
       RunFastMKS<PolynomialKernel>(referenceData, single, naive, base, k,
-          indices, products, pk);
+          indices, kernels, pk);
     }
     else if (kernelType == "cosine")
     {
       CosineDistance cd;
       RunFastMKS<CosineDistance>(referenceData, single, naive, base, k, indices,
-          products, cd);
+          kernels, cd);
     }
     else if (kernelType == "gaussian")
     {
       GaussianKernel gk(bandwidth);
       RunFastMKS<GaussianKernel>(referenceData, single, naive, base, k, indices,
-          products, gk);
+          kernels, gk);
     }
     else if (kernelType == "epanechnikov")
     {
       EpanechnikovKernel ek(bandwidth);
       RunFastMKS<EpanechnikovKernel>(referenceData, single, naive, base, k,
-          indices, products, ek);
+          indices, kernels, ek);
     }
     else if (kernelType == "triangular")
     {
       TriangularKernel tk(bandwidth);
       RunFastMKS<TriangularKernel>(referenceData, single, naive, base, k,
-          indices, products, tk);
+          indices, kernels, tk);
     }
     else if (kernelType == "hyptan")
     {
       HyperbolicTangentKernel htk(scale, offset);
       RunFastMKS<HyperbolicTangentKernel>(referenceData, single, naive, base, k,
-          indices, products, htk);
+          indices, kernels, htk);
     }
   }
   else
@@ -249,51 +266,51 @@ int main(int argc, char** argv)
     {
       LinearKernel lk;
       RunFastMKS<LinearKernel>(referenceData, queryData, single, naive, base, k,
-          indices, products, lk);
+          indices, kernels, lk);
     }
     else if (kernelType == "polynomial")
     {
       PolynomialKernel pk(degree, offset);
       RunFastMKS<PolynomialKernel>(referenceData, queryData, single, naive,
-          base, k, indices, products, pk);
+          base, k, indices, kernels, pk);
     }
     else if (kernelType == "cosine")
     {
       CosineDistance cd;
       RunFastMKS<CosineDistance>(referenceData, queryData, single, naive, base,
-          k, indices, products, cd);
+          k, indices, kernels, cd);
     }
     else if (kernelType == "gaussian")
     {
       GaussianKernel gk(bandwidth);
       RunFastMKS<GaussianKernel>(referenceData, queryData, single, naive, base,
-          k, indices, products, gk);
+          k, indices, kernels, gk);
     }
     else if (kernelType == "epanechnikov")
     {
       EpanechnikovKernel ek(bandwidth);
       RunFastMKS<EpanechnikovKernel>(referenceData, queryData, single, naive,
-          base, k, indices, products, ek);
+          base, k, indices, kernels, ek);
     }
     else if (kernelType == "triangular")
     {
       TriangularKernel tk(bandwidth);
       RunFastMKS<TriangularKernel>(referenceData, queryData, single, naive,
-          base, k, indices, products, tk);
+          base, k, indices, kernels, tk);
     }
     else if (kernelType == "hyptan")
     {
       HyperbolicTangentKernel htk(scale, offset);
       RunFastMKS<HyperbolicTangentKernel>(referenceData, queryData, single,
-          naive, base, k, indices, products, htk);
+          naive, base, k, indices, kernels, htk);
     }
   }
 
   // Save output, if we were asked to.
-  if (CLI::HasParam("products_file"))
+  if (CLI::HasParam("kernels_file"))
   {
-    const string productsFile = CLI::GetParam<string>("products_file");
-    data::Save(productsFile, products, false);
+    const string kernelsFile = CLI::GetParam<string>("kernels_file");
+    data::Save(kernelsFile, kernels, false);
   }
 
   if (CLI::HasParam("indices_file"))
