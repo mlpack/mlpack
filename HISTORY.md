@@ -21,8 +21,9 @@
 
   * Add softmax regression, contributed by Siddharth Agrawal and QiaoAn Chen.
 
-  * Changed NeighborSearch and RangeSearch API; these classes now take the query
-    sets in the Search() method, instead of in the constructor.
+  * Changed NeighborSearch, RangeSearch, FastMKS, and RASearch API; these
+    classes now take the query sets in the Search() method, instead of in the
+    constructor.
 
 ### mlpack 1.0.11
 ###### 2014-12-11
