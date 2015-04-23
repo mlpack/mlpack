@@ -25,15 +25,17 @@ RASearchRules(const arma::mat& referenceSet,
               const bool naive,
               const bool sampleAtLeaves,
               const bool firstLeafExact,
-              const size_t singleSampleLimit) :
-  referenceSet(referenceSet),
-  querySet(querySet),
-  neighbors(neighbors),
-  distances(distances),
-  metric(metric),
-  sampleAtLeaves(sampleAtLeaves),
-  firstLeafExact(firstLeafExact),
-  singleSampleLimit(singleSampleLimit)
+              const size_t singleSampleLimit,
+              const bool sameSet) :
+    referenceSet(referenceSet),
+    querySet(querySet),
+    neighbors(neighbors),
+    distances(distances),
+    metric(metric),
+    sampleAtLeaves(sampleAtLeaves),
+    firstLeafExact(firstLeafExact),
+    singleSampleLimit(singleSampleLimit),
+    sameSet(sameSet)
 {
   // Validate tau to make sure that the rank approximation is greater than the
   // number of neighbors requested.
@@ -268,7 +270,7 @@ double RASearchRules<SortPolicy, MetricType, TreeType>::BaseCase(
 {
   // If the datasets are the same, then this search is only using one dataset
   // and we should not return identical points.
-  if ((&querySet == &referenceSet) && (queryIndex == referenceIndex))
+  if (sameSet && (queryIndex == referenceIndex))
     return 0.0;
 
   double distance = metric.Evaluate(querySet.unsafe_col(queryIndex),
