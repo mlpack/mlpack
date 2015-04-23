@@ -30,7 +30,7 @@
 /**
  * The RASearch class: This class provides a generic manner to perform
  * rank-approximate search via random-sampling. If the 'naive' option is chosen,
- * this rank-approximate search will be done by randomly sampled from the whole
+ * this rank-approximate search will be done by randomly sampling from the whole
  * set. If the 'naive' option is not chosen, the sampling is done in a
  * stratified manner in the tree as mentioned in the algorithms in Figure 2 of
  * the following paper:
