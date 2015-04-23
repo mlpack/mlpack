@@ -8,13 +8,13 @@
 #include <time.h>
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/tree/cover_tree.hpp>
 
 #include <string>
 #include <fstream>
 #include <iostream>
 
 #include "ra_search.hpp"
+#include <mlpack/methods/neighbor_search/unmap.hpp>
 
 using namespace std;
 using namespace mlpack;
@@ -68,8 +68,6 @@ PARAM_FLAG("naive", "If true, sampling will be done without using a tree.",
            "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
            "dual-tree search.", "s");
-PARAM_FLAG("cover_tree", "If true, use cover trees to perform the search.",
-           "c");
 
 PARAM_FLAG("sample_at_leaves", "The flag to trigger sampling at leaves.", "L");
 PARAM_FLAG("first_leaf_exact", "The flag to trigger sampling only after "
@@ -117,6 +115,15 @@ int main(int argc, char *argv[])
     Log::Fatal << referenceData.n_cols << ")." << endl;
   }
 
+  // Load query data, if necessary.
+  if (CLI::HasParam("query_file"))
+  {
+    const string queryFile = CLI::GetParam<string>("query_file");
+    data::Load(queryFile, queryData, true);
+    Log::Info << "Loaded query data from '" << queryFile << "' ("
+        << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
+  }
+
   // Sanity check on the value of 'tau' with respect to 'k' so that
   // 'k' neighbors are not requested from the top-'rank_error' neighbors
   // where 'rank_error' <= 'k'.
@@ -142,152 +149,82 @@ int main(int argc, char *argv[])
 
   if (naive)
   {
-    AllkRANN* allkrann;
+    AllkRANN allkrann(referenceData, naive, false, tau, alpha);
+
+    Log::Info << "Computing " << k << " nearest neighbors " << "with "
+        << tau << "% rank approximation..." << endl;
+
     if (CLI::GetParam<string>("query_file") != "")
-    {
-      string queryFile = CLI::GetParam<string>("query_file");
-
-      data::Load(queryFile, queryData, true);
-
-      Log::Info << "Loaded query data from '" << queryFile << "' (" <<
-        queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
-
-      allkrann = new AllkRANN(referenceData, queryData, naive);
-    }
+      allkrann.Search(queryData, k, neighbors, distances);
     else
-      allkrann = new AllkRANN(referenceData, naive);
-
-    Log::Info << "Computing " << k << " nearest neighbors " << "with " <<
-      tau << "% rank approximation..." << endl;
-
-    allkrann->Search(k, neighbors, distances, tau, alpha);
+      allkrann.Search(k, neighbors, distances);
 
     Log::Info << "Neighbors computed." << endl;
-
-    delete allkrann;
   }
   else
   {
-    // The results output by the AllkRANN class
-    // shuffled because the tree construction shuffles the point sets.
+    // The results output by the AllkRANN class are
+    // shuffled if the tree construction shuffles the point sets.
     arma::Mat<size_t> neighborsOut;
     arma::mat distancesOut;
 
-    if (!CLI::HasParam("cover_tree"))
+    // Mappings for when we build the tree.
+    std::vector<size_t> oldFromNewRefs;
+    std::vector<size_t> oldFromNewQueries;
+
+    // Build trees by hand, so we can save memory: if we pass a tree to
+    // NeighborSearch, it does not copy the matrix.
+    Log::Info << "Building reference tree..." << endl;
+    Timer::Start("tree_building");
+    typedef BinarySpaceTree<bound::HRectBound<2, false>,
+        RAQueryStat<NearestNeighborSort> > TreeType;
+    TreeType refTree(referenceData, oldFromNewRefs, leafSize);
+    Timer::Stop("tree_building");
+
+    // Because we may construct it differently, we need a pointer.
+    AllkRANN allkrann(&refTree, singleMode, tau, alpha, sampleAtLeaves,
+        firstLeafExact, singleSampleLimit);
+
+    if (CLI::HasParam("query_file") && !singleMode)
     {
-      // Because we may construct it differently, we need a pointer.
-      AllkRANN* allkrann = NULL;
-
-      // Mappings for when we build the tree.
-      std::vector<size_t> oldFromNewRefs;
-
-      // Build trees by hand, so we can save memory: if we pass a tree to
-      // NeighborSearch, it does not copy the matrix.
-      Log::Info << "Building reference tree..." << endl;
+      Log::Info << "Building query tree..." << endl;
       Timer::Start("tree_building");
-
-      BinarySpaceTree<bound::HRectBound<2, false>,
-          RAQueryStat<NearestNeighborSort> >
-          refTree(referenceData, oldFromNewRefs, leafSize);
-      BinarySpaceTree<bound::HRectBound<2, false>,
-          RAQueryStat<NearestNeighborSort> >*
-          queryTree = NULL; // Empty for now.
-
+      TreeType queryTree(queryData, oldFromNewQueries, leafSize);
       Timer::Stop("tree_building");
-
-      std::vector<size_t> oldFromNewQueries;
-
-      if (CLI::GetParam<string>("query_file") != "")
-      {
-        string queryFile = CLI::GetParam<string>("query_file");
-
-        data::Load(queryFile, queryData, true);
-
-        if (naive && leafSize < queryData.n_cols)
-          leafSize = queryData.n_cols;
-
-        Log::Info << "Loaded query data from '" << queryFile << "' (" <<
-          queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
-
-        Log::Info << "Building query tree..." << endl;
-
-        // Build trees by hand, so we can save memory: if we pass a tree to
-        // NeighborSearch, it does not copy the matrix.
-        Timer::Start("tree_building");
-
-        queryTree = new BinarySpaceTree<bound::HRectBound<2, false>,
-            RAQueryStat<NearestNeighborSort> >
-            (queryData, oldFromNewQueries, leafSize);
-        Timer::Stop("tree_building");
-
-        allkrann = new AllkRANN(&refTree, queryTree, referenceData, queryData,
-                                singleMode);
-
-        Log::Info << "Tree built." << endl;
-      }
-      else
-      {
-        allkrann = new AllkRANN(&refTree, referenceData, singleMode);
-        Log::Info << "Trees built." << endl;
-      }
+      Log::Info << "Tree built." << endl;
 
       Log::Info << "Computing " << k << " nearest neighbors " << "with " <<
-        tau << "% rank approximation..." << endl;
-      allkrann->Search(k, neighborsOut, distancesOut,
-                       tau, alpha, sampleAtLeaves,
-                       firstLeafExact, singleSampleLimit);
-
-      Log::Info << "Neighbors computed." << endl;
-
-      // We have to map back to the original indices from before the tree
-      // construction.
-      Log::Info << "Re-mapping indices..." << endl;
-
-      neighbors.set_size(neighborsOut.n_rows, neighborsOut.n_cols);
-      distances.set_size(distancesOut.n_rows, distancesOut.n_cols);
-
-      // Do the actual remapping.
-      if (CLI::GetParam<string>("query_file") != "")
-      {
-        for (size_t i = 0; i < distancesOut.n_cols; ++i)
-        {
-          // Map distances (copy a column).
-          distances.col(oldFromNewQueries[i]) = distancesOut.col(i);
-
-          // Map indices of neighbors.
-          for (size_t j = 0; j < distancesOut.n_rows; ++j)
-          {
-            neighbors(j, oldFromNewQueries[i])
-              = oldFromNewRefs[neighborsOut(j, i)];
-          }
-        }
-      }
-      else
-      {
-        for (size_t i = 0; i < distancesOut.n_cols; ++i)
-        {
-          // Map distances (copy a column).
-          distances.col(oldFromNewRefs[i]) = distancesOut.col(i);
-
-          // Map indices of neighbors.
-          for (size_t j = 0; j < distancesOut.n_rows; ++j)
-          {
-            neighbors(j, oldFromNewRefs[i])
-              = oldFromNewRefs[neighborsOut(j, i)];
-          }
-        }
-      }
-
-      // Clean up.
-      if (queryTree)
-        delete queryTree;
-
-      delete allkrann;
+          tau << "% rank approximation..." << endl;
+      allkrann.Search(&queryTree, k, neighborsOut, distancesOut);
     }
-    else // Cover trees.
+    else if (CLI::HasParam("query_file") && singleMode)
     {
-      Log::Fatal << "Cover tree case not implemented yet..." << endl;
+      Log::Info << "Computing " << k << " nearest neighbors " << "with " <<
+          tau << "% rank approximation..." << endl;
+      allkrann.Search(queryData, k, neighborsOut, distancesOut);
     }
+    else
+    {
+      Log::Info << "Computing " << k << " nearest neighbors " << "with " <<
+          tau << "% rank approximation..." << endl;
+      allkrann.Search(k, neighborsOut, distancesOut);
+    }
+
+    Log::Info << "Neighbors computed." << endl;
+
+    // We have to map back to the original indices from before the tree
+    // construction.
+    Log::Info << "Re-mapping indices..." << endl;
+
+    // Map the results back to the correct places.
+    if ((CLI::GetParam<string>("query_file") != "") && !singleMode)
+      Unmap(neighborsOut, distancesOut, oldFromNewRefs, oldFromNewQueries,
+          neighbors, distances);
+    else if ((CLI::GetParam<string>("query_file") != "") && singleMode)
+      Unmap(neighborsOut, distancesOut, oldFromNewRefs, neighbors, distances);
+    else
+      Unmap(neighborsOut, distancesOut, oldFromNewRefs, oldFromNewRefs,
+          neighbors, distances);
   }
 
   // Save output.

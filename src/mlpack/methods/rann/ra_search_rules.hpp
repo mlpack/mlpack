@@ -29,9 +29,8 @@ class RASearchRules
                 const bool naive = false,
                 const bool sampleAtLeaves = false,
                 const bool firstLeafExact = false,
-                const size_t singleSampleLimit = 20);
-
-
+                const size_t singleSampleLimit = 20,
+                const bool sameSet = false);
 
   double BaseCase(const size_t queryIndex, const size_t referenceIndex);
 
@@ -228,6 +227,9 @@ class RASearchRules
 
   // TO REMOVE: just for testing
   size_t numDistComputations;
+
+  //! If the query and reference set are identical, this is true.
+  bool sameSet;
 
   TraversalInfoType traversalInfo;
 
