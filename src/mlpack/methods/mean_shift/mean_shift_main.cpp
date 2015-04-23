@@ -50,7 +50,6 @@ int main(int argc, char** argv)
 
   const string inputFile = CLI::GetParam<string>("inputFile");
   const double radius = CLI::GetParam<double>("radius");
-  const double bandwidth = CLI::GetParam<double>("bandwidth");
   const int maxIterations = CLI::GetParam<int>("max_iterations");
 
   if (maxIterations < 0)
