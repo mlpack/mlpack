@@ -303,9 +303,9 @@ class RectangleTree
   RectangleTree*& Parent() { return parent; }
 
   //! Get the dataset which the tree is built on.
-  const arma::mat& Dataset() const { return dataset; }
+  const MatType& Dataset() const { return dataset; }
   //! Modify the dataset which the tree is built on.  Be careful!
-  arma::mat& Dataset() { return const_cast<arma::mat&>(dataset); }
+  MatType& Dataset() { return const_cast<MatType&>(dataset); }
 
   //! Get the points vector for this node.
   const std::vector<size_t>& Points() const { return points; }
@@ -313,9 +313,9 @@ class RectangleTree
   std::vector<size_t>& Points() { return points; }
 
   //! Get the local dataset of this node.
-  const arma::mat& LocalDataset() const { return *localDataset; }
+  const MatType& LocalDataset() const { return *localDataset; }
   //! Modify the local dataset of this node.
-  arma::mat& LocalDataset() { return *localDataset; }
+  MatType& LocalDataset() { return *localDataset; }
 
   //! Get the metric which the tree uses.
   typename HRectBound<>::MetricType Metric() const { return bound.Metric(); }
