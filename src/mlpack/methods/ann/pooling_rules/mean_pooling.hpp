@@ -4,26 +4,41 @@
  *
  * Definition of the MeanPooling class, which implements mean pooling.
  */
-#ifndef __MLPACK_METHODS_ANN_POOLING_MEAN_POOLING_HPP
-#define __MLPACK_METHODS_ANN_POOLING_MEAN_POOLING_HPP
+#ifndef __MLPACK_METHODS_ANN_POOLING_RULES_MEAN_POOLING_HPP
+#define __MLPACK_METHODS_ANN_POOLING_RULES_MEAN_POOLING_HPP
 
 #include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
+/*
+ * The mean pooling rule for convolution neural networks. Average all values
+ * within the receptive block.
+ */
 class MeanPooling
 {
  public:
+  /*
+   * Return the average value within the receptive block.
+   *
+   * @param input Input used to perform the pooling operation.
+   */
   template<typename MatType>
-  static void pooling(const MatType& input, double& output)
+  double Pooling(const MatType& input)
   {
-    output = arma::mean(arma::mean(input));
+    return arma::mean(arma::mean(input));
   }
-  
+
+  /*
+   * Set the average value within the receptive block.
+   *
+   * @param input Input used to perform the pooling operation.
+   * @param value The unpooled value.
+   * @param output The unpooled output data.
+   */
   template<typename MatType>
-  static void unpooling(const MatType& input, const double& value,
-                        MatType& output)
+  void Unpooling(const MatType& input, const double value, MatType& output)
   {
     output = MatType(input.n_rows, input.n_cols);
     output.fill(value / input.n_elem);

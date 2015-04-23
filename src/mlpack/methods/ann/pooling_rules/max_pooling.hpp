@@ -4,34 +4,47 @@
  *
  * Definition of the MaxPooling class, which implements max pooling.
  */
-#ifndef __MLPACK_METHODS_ANN_POOLING_MAX_POOLING_HPP
-#define __MLPACK_METHODS_ANN_POOLING_MAX_POOLING_HPP
+#ifndef __MLPACK_METHODS_ANN_POOLING_RULES_MAX_POOLING_HPP
+#define __MLPACK_METHODS_ANN_POOLING_RULES_MAX_POOLING_HPP
 
 #include <mlpack/core.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
+/*
+ * The max pooling rule for convolution neural networks. Take the maximum value
+ * within the receptive block.
+ */
 class MaxPooling
 {
  public:
+  /*
+   * Return the maximum value within the receptive block.
+   *
+   * @param input Input used to perform the pooling operation.
+   */
   template<typename MatType>
-  static void pooling(const MatType& input, double& output)
+  double Pooling(const MatType& input)
   {
-    output = input.max();
+    return input.max();
   }
-  
+
+  /*
+   * Set the maximum value within the receptive block.
+   *
+   * @param input Input used to perform the pooling operation.
+   * @param value The unpooled value.
+   * @param output The unpooled output data.
+   */
   template<typename MatType>
-  static void unpooling(const MatType& input, const double& value,
-                        MatType& output)
+  void Unpooling(const MatType& input, const double value, MatType& output)
   {
-    arma::uword row = 0;
-    arma::uword col = 0;
+    arma::uword row, col;
     output = arma::zeros<MatType>(input.n_rows, input.n_cols);
     input.max(row, col);
     output(row, col) = value;
   }
-  
 };
 
 }; // namespace ann
