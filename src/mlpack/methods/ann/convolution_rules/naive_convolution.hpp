@@ -120,6 +120,34 @@ class NaiveConvolution
           output.slice(i));
     }
   }
+
+  /*
+   * Perform a convolution using dense matrix as input and a 3rd order tensors
+   * as filter and output.
+   *
+   * @param input Input used to perform the convolution.
+   * @param filter Filter used to perform the conolution.
+   * @param output Output data that contains the results of the convolution.
+   */
+  template<typename eT>
+  static void Convolution(const arma::Mat<eT>& input,
+                          const arma::Cube<eT>& filter,
+                          arma::Cube<eT>& output)
+  {
+    arma::Mat<eT> convOutput;
+    NaiveConvolution<BorderMode>::Convolution(input, filter.slice(0),
+        convOutput);
+
+    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
+        filter.n_slices);
+    output.slice(0) = convOutput;
+
+    for (size_t i = 1; i < filter.n_slices; i++)
+    {
+      NaiveConvolution<BorderMode>::Convolution(input, filter.slice(i),
+          output.slice(i));
+    }
+  }
 };  // class NaiveConvolution
 
 }; // namespace ann

@@ -116,7 +116,7 @@ class FFTConvolution
   }
 
   /*
-   * Perform a convolution through using fft 3rd order tensors. This method only
+   * Perform a convolution through fft using 3rd order tensors. This method only
    * supports input which is even on the last dimension. In case of an odd input
    * width, a user can manually pad the imput or specify the padLastDim
    * parameter which takes care of the padding. The filter instead can have any
@@ -142,6 +142,38 @@ class FFTConvolution
     for (size_t i = 1; i < input.n_slices; i++)
     {
       FFTConvolution<BorderMode>::Convolution(input.slice(i), filter.slice(i),
+          convOutput);
+      output.slice(i) = convOutput;
+    }
+  }
+
+  /*
+   * Perform a convolution through fft using dense matrix as input and a 3rd
+   * order tensors as filter and output. This method only supports input which
+   * is even on the last dimension. In case of an odd input width, a user can
+   * manually pad the imput or specify the padLastDim parameter which takes care
+   * of the padding. The filter instead can have any size.
+   *
+   * @param input Input used to perform the convolution.
+   * @param filter Filter used to perform the conolution.
+   * @param output Output data that contains the results of the convolution.
+   */
+  template<typename eT>
+  static void Convolution(const arma::Mat<eT>& input,
+                          const arma::Cube<eT>& filter,
+                          arma::Cube<eT>& output)
+  {
+    arma::Mat<eT> convOutput;
+    FFTConvolution<BorderMode>::Convolution(input, filter.slice(0),
+        convOutput);
+
+    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
+        filter.n_slices);
+    output.slice(0) = convOutput;
+
+    for (size_t i = 1; i < filter.n_slices; i++)
+    {
+      FFTConvolution<BorderMode>::Convolution(input, filter.slice(i),
           convOutput);
       output.slice(i) = convOutput;
     }
