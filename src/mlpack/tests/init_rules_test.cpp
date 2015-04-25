@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_SUITE(InitRulesTest);
 BOOST_AUTO_TEST_CASE(ConstantInitTest)
 {
   arma::mat weights;
-  RandomInitialization<> constantInit(1, 1);
+  RandomInitialization constantInit(1, 1);
   constantInit.Initialize(weights, 100, 100);
 
   bool b = arma::all(arma::vectorise(weights) == 1);
@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(ConstantInitTest)
 BOOST_AUTO_TEST_CASE(OrthogonalInitTest)
 {
   arma::mat weights;
-  OrthogonalInitialization<> orthogonalInit;
+  OrthogonalInitialization orthogonalInit;
   orthogonalInit.Initialize(weights, 100, 200);
 
   arma::mat orthogonalWeights = arma::eye<arma::mat>(100, 100);
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(OrthogonalInitGainTest)
   arma::mat weights;
 
   const double gain = 2;
-  OrthogonalInitialization<> orthogonalInit(gain);
+  OrthogonalInitialization orthogonalInit(gain);
   orthogonalInit.Initialize(weights, 100, 200);
 
   arma::mat orthogonalWeights = arma::eye<arma::mat>(100, 100);

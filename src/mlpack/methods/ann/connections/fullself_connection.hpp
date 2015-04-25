@@ -31,7 +31,7 @@ template<
     typename InputLayerType,
     typename OutputLayerType,
     typename OptimizerType,
-    class WeightInitRule = NguyenWidrowInitialization<>,
+    class WeightInitRule = NguyenWidrowInitialization,
     typename MatType = arma::mat,
     typename VecType = arma::colvec
 >

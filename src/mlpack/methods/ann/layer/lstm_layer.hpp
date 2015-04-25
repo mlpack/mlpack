@@ -36,7 +36,7 @@ template <
     class GateActivationFunction = LogisticFunction,
     class StateActivationFunction = TanhFunction,
     class OutputActivationFunction = TanhFunction,
-    class WeightInitRule = NguyenWidrowInitialization<>,
+    class WeightInitRule = NguyenWidrowInitialization,
     typename OptimizerType = SteepestDescent<>,
     typename MatType = arma::mat,
     typename VecType = arma::colvec

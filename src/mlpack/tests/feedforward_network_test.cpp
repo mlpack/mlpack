@@ -159,12 +159,12 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   arma::mat testLabels = dataset.submat(dataset.n_rows - 3, 0,
       dataset.n_rows - 1, dataset.n_cols - 1);
 
-  RandomInitialization<> randInitA(1, 2);
+  RandomInitialization randInitA(1, 2);
 
   // Vanilla neural net with logistic activation function.
   // Because 92 percent of the patients are not hyperthyroid a the neural
   // network mst be significant better than 92%.
-  BuildVanillaNetwork<RandomInitialization<>,
+  BuildVanillaNetwork<RandomInitialization,
                       LogisticFunction,
                       SteepestDescent<>,
                       BinaryClassificationLayer<>,
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 
   dataset.load("mnist_first250_training_4s_and_9s.arm");
 
-  RandomInitialization<> randInitB(-0.5, 0.5);
+  RandomInitialization randInitB(-0.5, 0.5);
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
@@ -184,7 +184,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1).fill(1);
 
   // Vanilla neural net with logistic activation function.
-  BuildVanillaNetwork<RandomInitialization<>,
+  BuildVanillaNetwork<RandomInitialization,
                       LogisticFunction,
                       SteepestDescent<>,
                       BinaryClassificationLayer<>,
@@ -192,7 +192,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
       (dataset, labels, dataset, labels, 100, 100, 0.6, 10, randInitB);
 
   // Vanilla neural net with tanh activation function.
-  BuildVanillaNetwork<RandomInitialization<>,
+  BuildVanillaNetwork<RandomInitialization,
                     TanhFunction,
                     SteepestDescent<>,
                     BinaryClassificationLayer<>,
@@ -208,7 +208,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkConvergenceTest)
   arma::mat input;
   arma::mat labels;
 
-  RandomInitialization<> randInit(0.5, 1);
+  RandomInitialization randInit(0.5, 1);
 
   // Test on a non-linearly separable dataset (XOR).
   input << 0 << 1 << 1 << 0 << arma::endr
@@ -216,7 +216,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkConvergenceTest)
   labels << 0 << 0 << 1 << 1;
 
   // Vanilla neural net with logistic activation function.
-  BuildVanillaNetwork<RandomInitialization<>,
+  BuildVanillaNetwork<RandomInitialization,
                       LogisticFunction,
                       SteepestDescent<>,
                       BinaryClassificationLayer<>,
@@ -224,7 +224,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkConvergenceTest)
       (input, labels, input, labels, 4, 0, 0, 0.01, randInit);
 
   // Vanilla neural net with tanh activation function.
-  BuildVanillaNetwork<RandomInitialization<>,
+  BuildVanillaNetwork<RandomInitialization,
                       TanhFunction,
                       SteepestDescent<>,
                       BinaryClassificationLayer<>,
@@ -237,7 +237,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkConvergenceTest)
   labels << 0 << 0 << 1 << 0;
 
   // vanilla neural net with sigmoid activation function.
-  BuildVanillaNetwork<RandomInitialization<>,
+  BuildVanillaNetwork<RandomInitialization,
                     LogisticFunction,
                     SteepestDescent<>,
                     BinaryClassificationLayer<>,
@@ -245,7 +245,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkConvergenceTest)
     (input, labels, input, labels, 4, 0, 0, 0.01, randInit);
 
   // Vanilla neural net with tanh activation function.
-  BuildVanillaNetwork<RandomInitialization<>,
+  BuildVanillaNetwork<RandomInitialization,
                       TanhFunction,
                       SteepestDescent<>,
                       BinaryClassificationLayer<>,
@@ -358,7 +358,7 @@ BOOST_AUTO_TEST_CASE(NetworkDecreasingErrorTest)
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
 
-  RandomInitialization<> randInitB(-0.5, 0.5);
+  RandomInitialization randInitB(-0.5, 0.5);
 
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
@@ -368,7 +368,7 @@ BOOST_AUTO_TEST_CASE(NetworkDecreasingErrorTest)
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1) += 1;
 
   // Vanilla neural net with logistic activation function.
-  BuildNetworkOptimzer<RandomInitialization<>,
+  BuildNetworkOptimzer<RandomInitialization,
                        LogisticFunction,
                        SteepestDescent<>,
                        BinaryClassificationLayer<>,

@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
   SteepestDescent< > conOptimizer3(hiddenLayer0.InputSize(),
       hiddenLayer1.OutputSize(), 1, 0);
 
-  NguyenWidrowInitialization<> randInit;
+  NguyenWidrowInitialization randInit;
 
   FullConnection<
       decltype(inputLayer),
@@ -316,7 +316,7 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
   arma::mat input;
   arma::mat labels;
 
-  RandomInitialization<> randInit(1, 1);
+  RandomInitialization randInit(1, 1);
 
   // Test on a non-linearly separable dataset (XOR).
   input << 0 << 1 << 1 << 0 << arma::endr
@@ -324,7 +324,7 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
   labels << 0 << 0 << 1 << 1;
 
   // Vanilla neural net with logistic activation function.
-  CompareVanillaNetworks<RandomInitialization<>,
+  CompareVanillaNetworks<RandomInitialization,
                       LogisticFunction,
                       SteepestDescent<>,
                       BinaryClassificationLayer<>,
@@ -332,7 +332,7 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
       (input, labels, input, labels, 10, 10, randInit);
 
   // Vanilla neural net with identity activation function.
-  CompareVanillaNetworks<RandomInitialization<>,
+  CompareVanillaNetworks<RandomInitialization,
                       IdentityFunction,
                       SteepestDescent<>,
                       BinaryClassificationLayer<>,
@@ -340,7 +340,7 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
       (input, labels, input, labels, 1, 1, randInit);
 
   // Vanilla neural net with rectifier activation function.
-  CompareVanillaNetworks<RandomInitialization<>,
+  CompareVanillaNetworks<RandomInitialization,
                     RectifierFunction,
                     SteepestDescent<>,
                     BinaryClassificationLayer<>,
@@ -348,7 +348,7 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
     (input, labels, input, labels, 10, 10, randInit);
 
   // Vanilla neural net with softsign activation function.
-  CompareVanillaNetworks<RandomInitialization<>,
+  CompareVanillaNetworks<RandomInitialization,
                     SoftsignFunction,
                     SteepestDescent<>,
                     BinaryClassificationLayer<>,
@@ -356,7 +356,7 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
     (input, labels, input, labels, 10, 10, randInit);
 
   // Vanilla neural net with tanh activation function.
-  CompareVanillaNetworks<RandomInitialization<>,
+  CompareVanillaNetworks<RandomInitialization,
                     TanhFunction,
                     SteepestDescent<>,
                     BinaryClassificationLayer<>,
@@ -585,7 +585,7 @@ void ReberGrammarTestNetwork(HiddenLayerType& hiddenLayer0,
   SteepestDescent< > conOptimizer3(hiddenLayer0.OutputSize(),
       hiddenLayer1.InputSize(), 0.1);
 
-  NguyenWidrowInitialization<> randInit;
+  NguyenWidrowInitialization randInit;
 
   FullConnection<
       decltype(inputLayer),
@@ -820,7 +820,7 @@ void DistractedSequenceRecallTestNetwork(HiddenLayerType& hiddenLayer0)
   SteepestDescent< > conOptimizer3(hiddenLayer0.OutputSize(),
       hiddenLayer1.InputSize(), 0.1);
 
-  NguyenWidrowInitialization<> randInit;
+  NguyenWidrowInitialization randInit;
 
   FullConnection<
       decltype(inputLayer),
