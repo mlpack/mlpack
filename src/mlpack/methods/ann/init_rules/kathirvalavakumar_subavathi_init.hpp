@@ -46,10 +46,7 @@ namespace ann /** Artificial Neural Network. */ {
  * considered in training, f is the transfer function and \={s} is the active
  * region in which the derivative of the activation function is greater than 4%
  * of the maximum derivatives.
- *
- * @tparam MatType Type of matrix (should be arma::mat or arma::spmat).
  */
-template<typename MatType = arma::mat>
 class KathirvalavakumarSubavathiInitialization
 {
  public:
@@ -59,29 +56,54 @@ class KathirvalavakumarSubavathiInitialization
    * @param data The input patterns.
    * @param s Parameter that defines the active region.
    */
-  KathirvalavakumarSubavathiInitialization(const MatType& data, const double s)
-      : data(data), s(s) { }
+  template<typename eT>
+  KathirvalavakumarSubavathiInitialization(const arma::Mat<eT>& data,
+                                           const double s) : s(s)
+  {
+    dataSum = arma::sum(data + data);
+  }
 
   /**
    * Initialize the elements of the specified weight matrix with the
    * Kathirvalavakumar-Subavathi method.
    *
    * @param W Weight matrix to initialize.
-   * @param n_rows Number of rows.
-   * @return n_cols Number of columns.
+   * @param rows Number of rows.
+   * @param cols Number of columns.
    */
-  void Initialize(MatType& W, const size_t n_rows, const size_t n_cols)
+  template<typename eT>
+  void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
   {
-    arma::rowvec b = s * arma::sqrt(3 / (n_rows * sum(data + data)));
-    double theta = b.min();
+    arma::Row<eT> b = s * arma::sqrt(3 / (rows * dataSum));
+    const double theta = b.min();
 
-    RandomInitialization<MatType> randomInit(-theta, theta);
-    randomInit.Initialize(W, n_rows, n_cols);
+    RandomInitialization randomInit(-theta, theta);
+    randomInit.Initialize(W, rows, cols);
+  }
+
+  /**
+   * Initialize the elements of the specified weight 3rd order tensor with the
+   * Kathirvalavakumar-Subavathi method.
+   *
+   * @param W Weight matrix to initialize.
+   * @param rows Number of rows.
+   * @param cols Number of columns.
+   */
+  template<typename eT>
+  void Initialize(arma::Cube<eT>& W,
+                  const size_t rows,
+                  const size_t cols,
+                  const size_t slices)
+  {
+    W = arma::Cube<eT>(rows, cols, slices);
+
+    for (size_t i = 0; i < slices; i++)
+      Initialize(W.slice(i), rows, cols);
   }
 
  private:
-  //! The input patterns.
-  MatType data;
+  //! Parameter that defines the sum of elements in each column.
+  arma::colvec dataSum;
 
   //! Parameter that defines the active region.
   const double s;

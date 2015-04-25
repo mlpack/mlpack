@@ -43,10 +43,7 @@ namespace ann /** Artificial Neural Network. */ {
  * number of neurons in the ingoing layer and gamma defines the random interval
  * that is used to initialize the weights with a random value in a specific
  * range.
- *
- * @tparam MatType Type of matrix (should be arma::mat or arma::spmat).
  */
-template<typename MatType = arma::mat>
 class NguyenWidrowInitialization
 {
  public:
@@ -66,16 +63,38 @@ class NguyenWidrowInitialization
    * Nguyen-Widrow method.
    *
    * @param W Weight matrix to initialize.
-   * @param n_rows Number of rows.
-   * @return n_cols Number of columns.
+   * @param rows Number of rows.
+   * @param cols Number of columns.
    */
-  void Initialize(MatType& W, const size_t n_rows, const size_t n_cols)
+  template<typename eT>
+  void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
   {
-    RandomInitialization<MatType> randomInit(lowerBound, upperBound);
-    randomInit.Initialize(W, n_rows, n_cols);
+    RandomInitialization randomInit(lowerBound, upperBound);
+    randomInit.Initialize(W, rows, cols);
 
-    double beta = 0.7 * std::pow(n_cols, 1 / n_rows);
+    double beta = 0.7 * std::pow(cols, 1 / rows);
     W *= (beta / arma::norm(W));
+  }
+
+  /**
+   * Initialize the elements of the specified weight 3rd order tensor with the
+   * Nguyen-Widrow method.
+   *
+   * @param W Weight matrix to initialize.
+   * @param rows Number of rows.
+   * @param cols Number of columns.
+   * @param slices Number of slices.
+   */
+  template<typename eT>
+  void Initialize(arma::Cube<eT>& W,
+                  const size_t rows,
+                  const size_t cols,
+                  const size_t slices)
+  {
+    W = arma::Cube<eT>(rows, cols, slices);
+
+    for (size_t i = 0; i < slices; i++)
+      Initialize(W.slice(i), rows, cols);
   }
 
  private:

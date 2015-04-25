@@ -15,10 +15,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 /**
  * This class is used to initialize randomly the weight matrix.
- *
- * @tparam MatType Type of matrix (should be arma::mat or arma::spmat).
  */
-template<typename MatType = arma::mat>
 class RandomInitialization
 {
  public:
@@ -47,13 +44,33 @@ class RandomInitialization
    * Initialize randomly the elements of the specified weight matrix.
    *
    * @param W Weight matrix to initialize.
-   * @param n_rows Number of rows.
-   * @param n_cols Number of columns.
+   * @param rows Number of rows.
+   * @param cols Number of columns.
    */
-  void Initialize(MatType& W, const size_t n_rows, const size_t n_cols)
+  template<typename eT>
+  void Initialize(arma::Mat<eT>& W, const size_t rows, const size_t cols)
   {
-    W = lowerBound + arma::randu<MatType>(n_rows, n_cols) *
+    W = lowerBound + arma::randu<arma::Mat<eT>>(rows, cols) *
         (upperBound - lowerBound);
+  }
+
+  /**
+   * Initialize randomly the elements of the specified weight 3rd order tensor.
+   *
+   * @param W Weight matrix to initialize.
+   * @param rows Number of rows.
+   * @param cols Number of columns.
+   */
+  template<typename eT>
+  void Initialize(arma::Cube<eT>& W,
+                  const size_t rows,
+                  const size_t cols,
+                  const size_t slices)
+  {
+    W = arma::Cube<eT>(rows, cols, slices);
+
+    for (size_t i = 0; i < slices; i++)
+      Initialize(W.slice(i), rows, cols);
   }
 
  private:
