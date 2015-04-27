@@ -4,7 +4,7 @@
 @author Ryan Curtin
 @brief Tutorial for how to use the CF class and program.
 
-@page cftutorial Collaborative filtering tutorial.
+@page cftutorial Collaborative filtering tutorial
 
 @section intro_cftut Introduction
 
