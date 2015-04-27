@@ -1,6 +1,7 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
+  arma_config.hpp
   arma_config_check.hpp
   cli.hpp
   cli.cpp
