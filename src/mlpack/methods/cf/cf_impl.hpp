@@ -96,7 +96,8 @@ CF<FactorizerType>::CF(arma::mat& data,
 
   // Operations independent of the query:
   // Decompose the sparse data matrix to user and data matrices.
-  ApplyFactorizer<FactorizerType>(data, cleanedData, factorizer, this->rank, w, h);
+  ApplyFactorizer<FactorizerType>(data, cleanedData, factorizer, this->rank, w,
+      h);
 }
 
 template<typename FactorizerType>
@@ -197,6 +198,48 @@ void CF<FactorizerType>::GetRecommendations(const size_t numRecs,
           << "for user " << users(i) << " (not enough un-rated items)!"
           << std::endl;
   }
+}
+
+// Predict the rating for a single user/item combination.
+template<typename FactorizerType>
+double CF<FactorizerType>::Predict(const size_t user, const size_t item) const
+{
+  // First, we need to find the nearest neighbors of the given user.
+  // We'll use the same technique as for GetRecommendations().
+
+  // We want to avoid calculating the full rating matrix, so we will do nearest
+  // neighbor search only on the H matrix, using the observation that if the
+  // rating matrix X = W*H, then d(X.col(i), X.col(j)) = d(W H.col(i), W
+  // H.col(j)).  This can be seen as nearest neighbor search on the H matrix
+  // with the Mahalanobis distance where M^{-1} = W^T W.  So, we'll decompose
+  // M^{-1} = L L^T (the Cholesky decomposition), and then multiply H by L^T.
+  // Then we can perform nearest neighbor search.
+  arma::mat l = arma::chol(w.t() * w);
+  arma::mat stretchedH = l * h; // Due to the Armadillo API, l is L^T.
+
+  // Now, we will use the decomposed w and h matrices to estimate what the user
+  // would have rated items as, and then pick the best items.
+
+  // Temporarily store feature vector of queried users.
+  arma::mat query = stretchedH.col(user);
+
+  // Temporary storage for neighborhood of the queried users.
+  arma::Mat<size_t> neighborhood;
+
+  // Calculate the neighborhood of the queried users.
+  // This should be a templatized option.
+  neighbor::AllkNN a(stretchedH, false, true /* single-tree mode */);
+  arma::mat resultingDistances; // Temporary storage.
+
+  a.Search(query, numUsersForSimilarity, neighborhood, resultingDistances);
+
+  double rating = 0; // We'll take the average of neighborhood values.
+
+  for (size_t j = 0; j < neighborhood.n_rows; ++j)
+    rating += arma::as_scalar(w.row(item) * h.col(neighborhood(j, 0)));
+  rating /= neighborhood.n_rows;
+
+  return rating;
 }
 
 template<typename FactorizerType>

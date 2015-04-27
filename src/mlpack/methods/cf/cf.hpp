@@ -167,6 +167,14 @@ class CF
                           arma::Col<size_t>& users);
 
   /**
+   * Predict the rating of an item by a particular user.
+   *
+   * @param user User to predict for.
+   * @param item Item to predict for.
+   */
+  double Predict(const size_t user, const size_t item) const;
+
+  /**
    * Returns a string representation of this object.
    */
   std::string ToString() const;
