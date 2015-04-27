@@ -238,6 +238,8 @@ Search(const typename TreeType::Mat& querySet,
     Log::Info << "Dual-tree traversal complete." << std::endl;
     Log::Info << "Average number of distance calculations per query point: "
         << (rules.NumDistComputations() / querySet.n_cols) << "." << std::endl;
+
+    delete queryTree;
   }
 
   Timer::Stop("computing_neighbors");

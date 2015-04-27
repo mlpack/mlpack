@@ -201,6 +201,8 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
 
     Log::Info << rules.Scores() << " node combinations were scored.\n";
     Log::Info << rules.BaseCases() << " base cases were calculated.\n";
+
+    delete queryTree;
   }
 
   Timer::Stop("computing_neighbors");
