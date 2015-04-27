@@ -83,7 +83,7 @@ class CF
    * reference to the data that we will be using. There are parameters that can
    * be set; default values are provided for each of them. If the rank is left
    * unset (or is set to 0), a simple density-based heuristic will be used to
-   * choose a rank.
+   * choose a rank. 
    *
    * @param data Initial (user, item, rating) matrix.
    * @param factorizer Instantiated factorizer object.
@@ -94,10 +94,29 @@ class CF
      FactorizerType factorizer = FactorizerType(),
      const size_t numUsersForSimilarity = 5,
      const size_t rank = 0);
-
+     
+  /**
+   * Initialize the CF object using an instantiated factorizer. Store a
+   * reference to the data that we will be using. There are parameters that can
+   * be set; default values are provided for each of them. If the rank is left
+   * unset (or is set to 0), a simple density-based heuristic will be used to
+   * choose a rank. Data will be considered in the format of items vs. users and 
+   * will be passed directly to the factorizer without cleaning.
+   *
+   * @param data Initial (user, item, rating) matrix.
+   * @param factorizer Instantiated factorizer object.
+   * @param numUsersForSimilarity Size of the neighborhood.
+   * @param rank Rank parameter for matrix factorization.
+   * @param isCleaned If the data passed is cleaned for CF
+   */
+  CF(arma::sp_mat& data,
+     FactorizerType factorizer = FactorizerType(),
+     const size_t numUsersForSimilarity = 5,
+     const size_t rank = 0);
+   
   /*void ApplyFactorizer(arma::mat& data, const typename boost::enable_if_c<
       FactorizerTraits<FactorizerType>::IsCleaned == false, int*>::type);
-
+      
   void ApplyFactorizer(arma::mat& data, const typename boost::enable_if_c<
       FactorizerTraits<FactorizerType>::IsCleaned == true, int*>::type);*/
 
@@ -165,6 +184,9 @@ class CF
   void GetRecommendations(const size_t numRecs,
                           arma::Mat<size_t>& recommendations,
                           arma::Col<size_t>& users);
+                          
+  //! Converts the User, Item, Value Matrix to User-Item Table
+  static void CleanData(const arma::mat& data, arma::sp_mat& cleanedData);
 
   /**
    * Returns a string representation of this object.
@@ -186,8 +208,6 @@ class CF
   arma::mat rating;
   //! Cleaned data matrix.
   arma::sp_mat cleanedData;
-  //! Converts the User, Item, Value Matrix to User-Item Table
-  void CleanData(const arma::mat& data);
 
   /**
    * Helper function to insert a point into the recommendation matrices.
