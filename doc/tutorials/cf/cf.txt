@@ -1,0 +1,438 @@
+/*!
+
+@file amf.txt
+@author Ryan Curtin
+@brief Tutorial for how to use the CF class and program.
+
+@page cftutorial Collaborative filtering tutorial.
+
+@section intro_cftut Introduction
+
+Collaborative filtering is an increasingly popular approach for recommender
+systems.  A typical formulation of the problem is as follows: there are \f$n\f$
+users and \f$m\f$ items, and each user has rated some of the items.  We want to
+provide each user with a recommendation for an item they have not rated yet,
+which they are likely to rate highly.  In another formulation, we may want to
+predict a user's rating of an item.  This type of problem has been considered
+extensively, especially in the context of the Netflix prize.  The winning
+approach for the Netflix prize was a collaborative filtering approach which
+utilized matrix decomposition.  More information on their approach can be found
+in the following paper:
+
+@code
+@article{koren2009matrix,
+  title={Matrix factorization techniques for recommender systems},
+  author={Koren, Yehuda and Bell, Robert and Volinsky, Chris},
+  journal={Computer},
+  number={8},
+  pages={30--37},
+  year={2009},
+  publisher={IEEE}
+}
+@endcode
+
+The key to this approach is that the data is represented as an incomplete matrix
+\f$V \in \Re^{n \times m}\f$, where \f$V_{ij}\f$ represents user \f$i\f$'s
+rating of item \f$j\f$, if that rating exists.  The task, then, is to complete
+the entries of the matrix.
+
+In the matrix factorization framework, the matrix \f$V\f$ is assumed to be
+low-rank and decomposed into components as \f$V \approx WH\f$ according to some
+heuristic.
+
+In order to solve problems of this form, \b mlpack provides:
+
+ - a \ref cli_cftut "simple command-line interface" to perform collaborative filtering
+ - a \ref cf_cftut "simple C++ interface" to perform collaborative filtering
+ - an \ref cpp_cftut "extensible C++ interface" for implementing new collaborative filtering techniques
+
+@section toc_cftut Table of Contents
+
+ - \ref intro_cftut
+ - \ref toc_cftut
+ - \ref cli_cftut
+   - \ref cli_input_format
+   - \ref ex1_cf_cli
+   - \ref ex2_cf_cli
+   - \ref ex3_cf_cli
+   - \ref ex4_cf_cli
+   - \ref ex5_cf_cli
+ - \ref cf_cftut
+   - \ref ex1_cf_cpp
+   - \ref ex2_cf_cpp
+   - \ref ex3_cf_cpp
+   - \ref ex4_cf_cpp
+ - \ref cpp_cftut
+ - \ref further_doc_cftut
+
+@section cli_cftut The 'cf' program
+
+\b mlpack provides a command-line program, \c cf, which is used to perform
+collaborative filtering on a given dataset.  It can provide neighborhood-based
+recommendations for users.  The algorithm used for matrix factorization is
+configurable, and the parameters of each algorithm are also configurable.
+
+The following examples detail usage of the \c cf program.  Note that you can get
+documentation on all the possible parameters by typing:
+
+@code
+$ cf --help
+@endcode
+
+@subsection cli_input_format Input format for cf
+
+The input file for the \c cf program is specified with the \c --input_file or
+\c -i option.  This file is a coordinate-format sparse matrix, similar to the
+Matrix Market (MM) format.  The first coordinate is the user id; the second
+coordinate is the item id; and the third coordinate is the rating.  So, for
+instance, a dataset with 3 users and 2 items, and ratings between 1 and 5, might
+look like the following:
+
+@code
+$ cat dataset.csv
+0, 1, 4
+1, 0, 5
+1, 1, 1
+2, 0, 2
+@endcode
+
+This dataset has four ratings: user 0 has rated item 1 with a rating of 4; user
+1 has rated item 0 with a rating of 5; user 1 has rated item 1 with a rating of
+1; and user 2 has rated item 0 with a rating of 2.  Note that the user and item
+indices start from 0, and the identifiers must be numeric indices, and not
+names.
+
+The type does not necessarily need to be a csv; it can be any supported storage
+format, assuming that it is a coordinate-format file in the format specified
+above.  For more information on mlpack file formats, see the documentation for
+mlpack::data::Load().
+
+@subsection ex1_cf_cli cf with default parameters
+
+In this example, we have a dataset from MovieLens, and we want to use \c cf with
+the default parameters, which will provide 5 recommendations for each user in
+the file \c recommendations.csv.  Assuming that our dataset is in the file
+\c MovieLens-100k.csv and it is in the correct format, we may use the \c cf
+executable as below:
+
+@code
+$ cf -i MovieLens-100k.csv -v
+@endcode
+
+The \c -v option provides verbose output, and may be omitted if desired.  Now,
+for each user, we have recommendations in \c recommendations.csv:
+
+@code
+$ head recommendations.csv
+317,422,482,356,495
+116,120,180,6,327
+312,49,116,99,236
+312,116,99,236,285
+55,190,317,194,63
+171,209,180,175,95
+208,0,94,87,57
+99,97,0,203,172
+257,99,180,287,0
+171,203,172,209,88
+@endcode
+
+So, for user 0, the top 5 recommended items that user 0 has not rated are items
+317, 422, 482, 356, and 495.  For user 5, the recommendations are on the sixth
+line: 171, 209, 180, 175, 95.
+
+The \c cf program can be built into a larger recommendation framework, with a
+preprocessing step that can turn user information and item information into
+numeric IDs, and a postprocessing step that can map these numeric IDs back to
+the original information.
+
+@subsection ex2_cf_cli Specifying rank of cf decomposition
+
+By default, the matrix factorizations in the \c cf program decompose the data
+matrix into two matrices \f$W\f$ and \f$H\f$ with rank two.  Often, this default
+parameter is not correct, and it makes sense to use a higher-rank decomposition.
+The rank can be specified with the \c --rank or \c -R parameter:
+
+@code
+$ cf -i MovieLens-100k.csv -R 10 -v
+@endcode
+
+In the example above, the data matrix will be decomposed into two matrices of
+rank 10.  In general, higher-rank decompositions will take longer, but will give
+more accurate predictions.
+
+@subsection ex3_cf_cli cf with single-user recommendation
+
+In the previous two examples, the output file \c recommendations.csv contains
+one line for each user in the input dataset.  But often, recommendations may
+only be desired for a few users.  In that case, we can assemble a file of query
+users, with one user per line:
+
+@code
+$ cat query.csv
+0
+17
+31
+@endcode
+
+Now, if we run the \c cf executable with this query file, we will obtain
+recommendations for users 0, 17, and 31:
+
+@code
+$ cf -i MovieLens-100k.csv -R 10 -q query.csv
+$ cat recommendations.csv
+474,356,317,432,473
+510,172,204,483,182
+0,120,236,257,126
+@endcode
+
+@subsection ex4_cf_cli cf with non-default factorizer
+
+The \c --algorithm (or \c -a ) parameter controls the factorizer that is used.
+Several options are available:
+
+ - \c 'NMF': non-negative matrix factorization; see mlpack::amf::AMF<>
+ - \c 'SVDBatch': SVD batch factorization
+ - \c 'SVDIncompleteIncremental': incomplete incremental SVD
+ - \c 'SVDCompleteIncremental': complete incremental SVD
+ - \c 'RegSVD': regularized SVD; see mlpack::svd::RegularizedSVD
+
+The default factorizer is \c 'NMF'.  The example below uses the 'RegSVD'
+factorizer:
+
+@code
+$ cf -i MovieLens-100k.csv -R 10 -q query.csv -a RegSVD
+@endcode
+
+@subsection ex5_cf_cli cf with non-default neighborhood size
+
+The \c cf program produces recommendations using a neighborhood: similar users
+in the query user's neighborhood will be averaged to produce predictions.  The
+size of this neighborhood is controlled with the \c --neighborhood (or \c -n )
+option.  An example using a neighborhood with 10 similar users is below:
+
+@code
+$ cf -i MovieLens-100k.csv -R 10 -q query.csv -a RegSVD -n 10
+@endcode
+
+@section cf_cftut The 'CF' class
+
+The \c CF<> class in \b mlpack offers a simple, flexible API for performing
+collaborative filtering for recommender systems within C++ applications.  In the
+constructor, the \c CF class takes a coordinate-list dataset and decomposes the
+matrix according to the specified \c FactorizerType template parameter.
+
+Then, the \c GetRecommendations() function may be called to obtain
+recommendations for certain users (or all users), and the \c W() and \c H()
+matrices may be accessed to perform other computations.
+
+The data which the \c CF constructor takes should be an Armadillo matrix (\c
+arma::mat ) with three rows.  The first row corresponds to users; the second
+row corresponds to items; the third column corresponds to the rating.  This is a
+coordinate list format, like the format the \c cf executable takes.  The
+data::Load() function can be used to load data.
+
+The following examples detail a few ways that the \c CF<> class can be used.
+
+@subsection ex1_cf_cpp CF<> with default parameters
+
+This example constructs the \c CF object with default parameters and obtains
+recommendations for each user, storing the output in the \c recommendations
+matrix.
+
+@code
+#include <mlpack/methods/cf/cf.hpp>
+
+using namespace mlpack::cf;
+
+// The coordinate list of ratings that we have.
+extern arma::mat data;
+// The size of the neighborhood to use to get recommendations.
+extern size_t neighborhood;
+// The rank of the decomposition.
+extern size_t rank;
+
+// Build the CF object and perform the decomposition.
+// The constructor takes a default-constructed factorizer, which, by default,
+// is of type amf::NMFALSFactorizer.
+CF<> cf(data, amf::NMFALSFactorizer(), neighborhood, rank);
+
+// Store the results in this object.
+arma::Mat<size_t> recommendations;
+
+// Get 5 recommendations for all users.
+cf.GetRecommendations(5, recommendations);
+@endcode
+
+@subsection ex2_cf_cpp CF<> with other factorizers
+
+\b mlpack provides a number of existing factorizers which can be used in place
+of the default mlpack::amf::NMFALSFactorizer (which is non-negative matrix
+factorization with alternating least squares update rules).  These include:
+
+ - mlpack::amf::SVDBatchFactorizer
+ - mlpack::amf::SVDCompleteIncrementalFactorizer
+ - mlpack::amf::SVDIncompleteIncrementalFactorizer
+ - mlpack::amf::NMFALSFactorizer
+ - mlpack::svd::RegularizedSVD
+ - mlpack::svd::QUIC_SVD
+
+The amf::AMF<> class has many other possibilities than those listed here; it is
+a framework for alternating matrix factorization techniques.  See the
+\ref amf::AMF<> "class documentation" or \ref amftutorial "tutorial on AMF" for
+more information.
+
+The use of another factorizer is straightforward; the example from the previous
+section is adapted below to use svd::RegularizedSVD:
+
+@code
+#include <mlpack/methods/cf/cf.hpp>
+#include <mlpack/methods/regularized_svd/regularized_svd.hpp>
+
+using namespace mlpack::cf;
+
+// The coordinate list of ratings that we have.
+extern arma::mat data;
+// The size of the neighborhood to use to get recommendations.
+extern size_t neighborhood;
+// The rank of the decomposition.
+extern size_t rank;
+
+// Build the CF object and perform the decomposition.
+CF<svd::RegularizedSVD> cf(data, svd::RegularizedSVD(), neighborhood, rank);
+
+// Store the results in this object.
+arma::Mat<size_t> recommendations;
+
+// Get 5 recommendations for all users.
+cf.GetRecommendations(5, recommendations);
+@endcode
+
+@subsection ex3_cf_cpp Predicting individual user/item ratings
+
+The \c Predict() method can be used to predict the rating of an item by a
+certain user, using the same neighborhood-based approach as the
+\c GetRecommendations() function or the \c cf executable.  Below is an example
+of the use of that function.
+
+The example below will obtain the predicted rating for item 50 by user 12.
+
+@code
+#include <mlpack/methods/cf/cf.hpp>
+
+using namespace mlpack::cf;
+
+// The coordinate list of ratings that we have.
+extern arma::mat data;
+// The size of the neighborhood to use to get recommendations.
+extern size_t neighborhood;
+// The rank of the decomposition.
+extern size_t rank;
+
+// Build the CF object and perform the decomposition.
+// The constructor takes a default-constructed factorizer, which, by default,
+// is of type amf::NMFALSFactorizer.
+CF<> cf(data, amf::NMFALSFactorizer(), neighborhood, rank);
+
+const double prediction = cf.Predict(12, 50); // User 12, item 50.
+@endcode
+
+@subsection ex4_cf_cpp Other operations with the W and H matrices
+
+Sometimes, the raw decomposed W and H matrices can be useful.  The example below
+obtains these matrices, and multiplies them against each other to obtain a
+reconstructed data matrix with no missing values.
+
+@code
+#include <mlpack/methods/cf/cf.hpp>
+
+using namespace mlpack::cf;
+
+// The coordinate list of ratings that we have.
+extern arma::mat data;
+// The size of the neighborhood to use to get recommendations.
+extern size_t neighborhood;
+// The rank of the decomposition.
+extern size_t rank;
+
+// Build the CF object and perform the decomposition.
+// The constructor takes a default-constructed factorizer, which, by default,
+// is of type amf::NMFALSFactorizer.
+CF<> cf(data, amf::NMFALSFactorizer(), neighborhood, rank);
+
+// References to W and H matrices.
+const arma::mat& W = cf.W();
+const arma::mat& H = cf.H();
+
+// Multiply the matrices together.
+arma::mat reconstructed = W * H;
+@endcode
+
+@section cpp_cftut Template parameters for the 'CF' class
+
+The \c CF<> class takes the \c FactorizerType as a template parameter.  The
+\c FactorizerType class defines the algorithm used for matrix factorization.
+There are a number of existing factorizers that can be used in \b mlpack; these
+were detailed in the \ref ex2_cf_cpp "'other factorizers' example" of the
+previous section.
+
+The \c FactorizerType class must implement one of the two following methods:
+
+ - \c "Apply(arma::mat& data, const size_t rank, arma::mat& W, arma::mat& H);"
+ - \c "Apply(arma::sp_mat& data, const size_t rank, arma::mat& W, arma::mat& H);"
+
+The difference between these two methods is whether \c arma::mat or \c
+arma::sp_mat is used as input.  If \c arma::mat is used, then the data matrix is
+a coordinate list with three columns, as in the constructor to the \c CF class.
+If \c arma::sp_mat is used, then a sparse matrix is passed with the number of
+rows equal to the number of items and the number of columns equal to the number
+of users, and each nonzero element in the matrix corresponds to a non-missing
+rating.
+
+The method that the factorizer implements is specified via the \c
+FactorizerTraits class, which is a template metaprogramming traits class:
+
+@code
+template<typename FactorizerType>
+struct FactorizerTraits
+{
+  /**
+   * If true, then the passed data matrix is used for factorizer.Apply().
+   * Otherwise, it is modified into a form suitable for factorization.
+   */
+  static const bool UsesCoordinateList = false;
+};
+@endcode
+
+If \c FactorizerTraits<MyFactorizer>::UsesCoordinateList is \c true, then \c CF
+will try to call \c Apply() with an \c arma::mat object.  Otherwise, \c CF will
+try to call \c Apply() with an \c arma::sp_mat object.  Specifying the value of
+\c UsesCoordinateList is straightforward; provide this specialization of the
+\c FactorizerTraits class:
+
+@code
+template<>
+struct FactorizerTraits<MyFactorizer>
+{
+  static const bool UsesCoordinateList = true; // Set your value here.
+};
+@endcode
+
+The \c Apply() function also takes a reference to the matrices \c W and \c H.
+When the \c Apply() function returns, the input data matrix should be decomposed
+into these two matrices.  \c W should have number of rows equal to the number of
+items and number of columns equal to the \c rank parameter, and \c H should have
+number of rows equal to the \c rank parameter, and number of columns equal to
+the number of users.
+
+The \ref mlpack::amf::AMF "amf::AMF<> class" can be used as a base for
+factorizers that alternate between updating \c W and updating \c H.  A useful
+reference is the \ref amftutorial "AMF tutorial".
+
+@section further_doc_cftut Further documentation
+
+Further documentation for the \c CF class may be found in the \ref
+mlpack::cf::CF "complete API documentation".  In addition, more information on
+the \c AMF class of factorizers may be found in its \ref mlpack::amf::AMF
+"complete API documentation".
+
+*/
