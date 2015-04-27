@@ -31,9 +31,8 @@ namespace cf /** Collaborative filtering. */ {
  * Regularized SVD.
  */
 template<typename FactorizerType>
-class FactorizerTraits
+struct FactorizerTraits
 {
- public:
   /**
    * If true, then the passed data matrix is used for factorizer.Apply().
    * Otherwise, it is modified into a form suitable for factorization.
