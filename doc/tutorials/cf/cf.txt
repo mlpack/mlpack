@@ -1,6 +1,6 @@
 /*!
 
-@file amf.txt
+@file cf.txt
 @author Ryan Curtin
 @brief Tutorial for how to use the CF class and program.
 
