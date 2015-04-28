@@ -174,6 +174,21 @@ class CF
   double Predict(const size_t user, const size_t item) const;
 
   /**
+   * Predict ratings for each user-item combination in the given coordinate list
+   * matrix.  The matrix 'combinations' should have two rows and number of
+   * columns equal to the number of desired predictions.  The first element of
+   * each column corresponds to the user index, and the second element of each
+   * column corresponds to the item index.  The output vector 'predictions' will
+   * have length equal to combinations.n_cols, and predictions[i] will be equal
+   * to the prediction for the user/item combination in combinations.col(i).
+   *
+   * @param combinations User/item combinations to predict.
+   * @param predictions Predicted ratings for each user/item combination.
+   */
+  void Predict(const arma::Mat<size_t>& combinations,
+               arma::vec& predictions) const;
+
+  /**
    * Returns a string representation of this object.
    */
   std::string ToString() const;

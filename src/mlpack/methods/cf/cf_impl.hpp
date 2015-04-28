@@ -242,6 +242,61 @@ double CF<FactorizerType>::Predict(const size_t user, const size_t item) const
   return rating;
 }
 
+// Predict the rating for a group of user/item combinations.
+template<typename FactorizerType>
+void CF<FactorizerType>::Predict(const arma::Mat<size_t>& combinations,
+                                 arma::vec& predictions) const
+{
+  // First, for nearest neighbor search, stretch the H matrix.
+  arma::mat l = arma::chol(w.t() * w);
+  arma::mat stretchedH = l * h; // Due to the Armadillo API, l is L^T.
+
+  // Now, we must determine those query indices we need to find the nearest
+  // neighbors for.  This is easiest if we just sort the combinations matrix.
+  arma::Mat<size_t> sortedCombinations(combinations.n_rows,
+                                       combinations.n_cols);
+  arma::uvec ordering = arma::sort_index(combinations.row(0).t());
+  for (size_t i = 0; i < ordering.n_elem; ++i)
+    sortedCombinations.col(i) = combinations.col(ordering[i]);
+
+  // Now, we have to get the list of unique users we will be searching for.
+  arma::Col<size_t> users = arma::unique(combinations.row(0).t());
+
+  // Assemble our query matrix from the stretchedH matrix.
+  arma::mat queries(stretchedH.n_rows, users.n_elem);
+  for (size_t i = 0; i < queries.n_cols; ++i)
+    queries.col(i) = stretchedH.col(users[i]);
+
+  // Now calculate the neighborhood of these users.
+  neighbor::AllkNN a(stretchedH);
+  arma::mat distances;
+  arma::Mat<size_t> neighborhood;
+
+  a.Search(queries, numUsersForSimilarity, neighborhood, distances);
+
+  // Now that we have the neighborhoods we need, calculate the predictions.
+  predictions.set_size(combinations.n_cols);
+
+  size_t user = 0; // Cumulative user count, because we are doing it in order.
+  for (size_t i = 0; i < sortedCombinations.n_cols; ++i)
+  {
+    // Could this be made faster by calculating dot products for multiple items
+    // at once?
+    double rating = 0.0;
+
+    // Map the combination's user to the user ID used for kNN.
+    while (users[user] < sortedCombinations(0, i))
+      ++user;
+
+    for (size_t j = 0; j < neighborhood.n_rows; ++j)
+      rating += arma::as_scalar(w.row(sortedCombinations(1, i)) *
+          h.col(neighborhood(j, user)));
+    rating /= neighborhood.n_rows;
+
+    predictions(ordering[i]) = rating;
+  }
+}
+
 template<typename FactorizerType>
 void CF<FactorizerType>::CleanData(const arma::mat& data)
 {
