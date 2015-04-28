@@ -20,12 +20,14 @@
 #include <mlpack/core/tree/ballbound.hpp>
 #include <mlpack/core/tree/hrectbound.hpp>
 #include <mlpack/core/metrics/mahalanobis_distance.hpp>
+#include <mlpack/core/tree/binary_space_tree.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
 using namespace mlpack::regression;
 using namespace mlpack::bound;
 using namespace mlpack::metric;
+using namespace mlpack::tree;
 using namespace arma;
 using namespace boost;
 using namespace boost::archive;
@@ -212,9 +214,53 @@ void SerializeObject(T& t, T& newT)
 template<typename T>
 void SerializeObjectAll(T& t, T& xmlT, T& textT, T& binaryT)
 {
-  SerializeObject<T, xml_iarchive, xml_oarchive>(t, xmlT);
   SerializeObject<T, text_iarchive, text_oarchive>(t, textT);
   SerializeObject<T, binary_iarchive, binary_oarchive>(t, binaryT);
+  SerializeObject<T, xml_iarchive, xml_oarchive>(t, xmlT);
+}
+
+// Save and load a non-default-constructible mlpack object.
+template<typename T, typename IArchiveType, typename OArchiveType>
+void SerializePointerObject(T* t, T*& newT)
+{
+  ofstream ofs("test");
+  OArchiveType o(ofs);
+
+  bool success = true;
+  try
+  {
+    o << data::CreateNVP(*t, "t");
+  }
+  catch (archive_exception& e)
+  {
+    success = false;
+  }
+  ofs.close();
+
+  BOOST_REQUIRE_EQUAL(success, true);
+
+  ifstream ifs("test");
+  IArchiveType i(ifs);
+
+  try
+  {
+    newT = new T(i);
+  }
+  catch (std::exception& e)
+  {
+    success = false;
+  }
+  ifs.close();
+
+  BOOST_REQUIRE_EQUAL(success, true);
+}
+
+template<typename T>
+void SerializePointerObjectAll(T* t, T*& xmlT, T*& textT, T*& binaryT)
+{
+  SerializePointerObject<T, text_iarchive, text_oarchive>(t, textT);
+  SerializePointerObject<T, binary_iarchive, binary_oarchive>(t, binaryT);
+  SerializePointerObject<T, xml_iarchive, xml_oarchive>(t, xmlT);
 }
 
 // Utility function to check the equality of two Armadillo matrices.
@@ -519,6 +565,124 @@ BOOST_AUTO_TEST_CASE(HRectBoundTest)
   BOOST_REQUIRE_CLOSE(b.MinWidth(), xmlB.MinWidth(), 1e-8);
   BOOST_REQUIRE_CLOSE(b.MinWidth(), textB.MinWidth(), 1e-8);
   BOOST_REQUIRE_CLOSE(b.MinWidth(), binaryB.MinWidth(), 1e-8);
+}
+
+template<typename TreeType>
+void CheckTrees(TreeType& tree,
+                TreeType& xmlTree,
+                TreeType& textTree,
+                TreeType& binaryTree)
+{
+  const typename TreeType::Mat* dataset = &tree.Dataset();
+
+  // Make sure that the data matrices are the same.
+  if (tree.Parent() == NULL)
+  {
+    CheckMatrices(*dataset,
+                  xmlTree.Dataset(),
+                  textTree.Dataset(),
+                  binaryTree.Dataset());
+
+    // Also ensure that the other parents are null too.
+    BOOST_REQUIRE_EQUAL(xmlTree.Parent(), (TreeType*) NULL);
+    BOOST_REQUIRE_EQUAL(textTree.Parent(), (TreeType*) NULL);
+    BOOST_REQUIRE_EQUAL(binaryTree.Parent(), (TreeType*) NULL);
+  }
+
+  // Make sure the number of children is the same.
+  BOOST_REQUIRE_EQUAL(tree.NumChildren(), xmlTree.NumChildren());
+  BOOST_REQUIRE_EQUAL(tree.NumChildren(), textTree.NumChildren());
+  BOOST_REQUIRE_EQUAL(tree.NumChildren(), binaryTree.NumChildren());
+
+  // Make sure the number of descendants is the same.
+  BOOST_REQUIRE_EQUAL(tree.NumDescendants(), xmlTree.NumDescendants());
+  BOOST_REQUIRE_EQUAL(tree.NumDescendants(), textTree.NumDescendants());
+  BOOST_REQUIRE_EQUAL(tree.NumDescendants(), binaryTree.NumDescendants());
+
+  // Make sure the number of points is the same.
+  BOOST_REQUIRE_EQUAL(tree.NumPoints(), xmlTree.NumPoints());
+  BOOST_REQUIRE_EQUAL(tree.NumPoints(), textTree.NumPoints());
+  BOOST_REQUIRE_EQUAL(tree.NumPoints(), binaryTree.NumPoints());
+
+  // Check that each point is the same.
+  for (size_t i = 0; i < tree.NumPoints(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(tree.Point(i), xmlTree.Point(i));
+    BOOST_REQUIRE_EQUAL(tree.Point(i), textTree.Point(i));
+    BOOST_REQUIRE_EQUAL(tree.Point(i), binaryTree.Point(i));
+  }
+
+  // Check that the parent distance is the same.
+  BOOST_REQUIRE_CLOSE(tree.ParentDistance(), xmlTree.ParentDistance(), 1e-8);
+  BOOST_REQUIRE_CLOSE(tree.ParentDistance(), textTree.ParentDistance(), 1e-8);
+  BOOST_REQUIRE_CLOSE(tree.ParentDistance(), binaryTree.ParentDistance(), 1e-8);
+
+  // Check that the furthest descendant distance is the same.
+  BOOST_REQUIRE_CLOSE(tree.FurthestDescendantDistance(),
+      xmlTree.FurthestDescendantDistance(), 1e-8);
+  BOOST_REQUIRE_CLOSE(tree.FurthestDescendantDistance(),
+      textTree.FurthestDescendantDistance(), 1e-8);
+  BOOST_REQUIRE_CLOSE(tree.FurthestDescendantDistance(),
+      binaryTree.FurthestDescendantDistance(), 1e-8);
+
+  // Check that the minimum bound distance is the same.
+  BOOST_REQUIRE_CLOSE(tree.MinimumBoundDistance(),
+      xmlTree.MinimumBoundDistance(), 1e-8);
+  BOOST_REQUIRE_CLOSE(tree.MinimumBoundDistance(),
+      textTree.MinimumBoundDistance(), 1e-8);
+  BOOST_REQUIRE_CLOSE(tree.MinimumBoundDistance(),
+      binaryTree.MinimumBoundDistance(), 1e-8);
+
+  // Recurse into the children.
+  for (size_t i = 0; i < tree.NumChildren(); ++i)
+  {
+    // Check that the child dataset is the same.
+    BOOST_REQUIRE_EQUAL(&xmlTree.Dataset(), &xmlTree.Child(i).Dataset());
+    BOOST_REQUIRE_EQUAL(&textTree.Dataset(), &textTree.Child(i).Dataset());
+    BOOST_REQUIRE_EQUAL(&binaryTree.Dataset(), &binaryTree.Child(i).Dataset());
+
+    // Make sure the parent link is right.
+    BOOST_REQUIRE_EQUAL(xmlTree.Child(i).Parent(), &xmlTree);
+    BOOST_REQUIRE_EQUAL(textTree.Child(i).Parent(), &textTree);
+    BOOST_REQUIRE_EQUAL(binaryTree.Child(i).Parent(), &binaryTree);
+
+    CheckTrees(tree.Child(i), xmlTree.Child(i), textTree.Child(i),
+        binaryTree.Child(i));
+  }
+}
+
+BOOST_AUTO_TEST_CASE(BinarySpaceTreeTest)
+{
+  arma::mat data;
+  data.randu(3, 100);
+  BinarySpaceTree<HRectBound<2>> tree(data);
+
+  BinarySpaceTree<HRectBound<2>>* xmlTree;
+  BinarySpaceTree<HRectBound<2>>* textTree;
+  BinarySpaceTree<HRectBound<2>>* binaryTree;
+
+  SerializePointerObjectAll(&tree, xmlTree, textTree, binaryTree);
+
+  CheckTrees(tree, *xmlTree, *textTree, *binaryTree);
+
+  delete xmlTree;
+  delete textTree;
+  delete binaryTree;
+}
+
+BOOST_AUTO_TEST_CASE(BinarySpaceTreeOverwriteTest)
+{
+  arma::mat data;
+  data.randu(3, 100);
+  BinarySpaceTree<HRectBound<2>> tree(data);
+
+  BinarySpaceTree<HRectBound<2>> xmlTree(tree);
+  BinarySpaceTree<HRectBound<2>> textTree(tree);
+  BinarySpaceTree<HRectBound<2>> binaryTree(tree);
+
+  SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
+
+  CheckTrees(tree, xmlTree, textTree, binaryTree);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

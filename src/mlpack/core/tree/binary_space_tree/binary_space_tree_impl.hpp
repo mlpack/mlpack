@@ -12,6 +12,7 @@
 #include <mlpack/core/util/cli.hpp>
 #include <mlpack/core/util/log.hpp>
 #include <mlpack/core/util/string_util.hpp>
+#include <queue>
 
 namespace mlpack {
 namespace tree {
@@ -212,7 +213,8 @@ BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
     stat(other.stat),
     parentDistance(other.parentDistance),
     furthestDescendantDistance(other.furthestDescendantDistance),
-    dataset(new MatType(*other.dataset)) // Copy matrix.
+    // Copy matrix, but only if we are the root.
+    dataset((other.parent == NULL) ? new MatType(*other.dataset) : NULL)
 {
   // Create left and right children (if any).
   if (other.Left())
@@ -226,6 +228,50 @@ BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::BinarySpaceTree(
     right = new BinarySpaceTree(*other.Right());
     right->Parent() = this; // Set parent to this, not other tree.
   }
+
+  // Propagate matrix, but only if we are the root.
+  if (parent == NULL)
+  {
+    std::queue<BinarySpaceTree*> queue;
+    if (left)
+      queue.push(left);
+    if (right)
+      queue.push(right);
+    while (!queue.empty())
+    {
+      BinarySpaceTree* node = queue.front();
+      queue.pop();
+
+      node->dataset = dataset;
+      if (node->left)
+        queue.push(node->left);
+      if (node->right)
+        queue.push(node->right);
+    }
+  }
+}
+
+/**
+ * Initialize the tree from an archive.
+ */
+template<typename BoundType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType>
+template<typename Archive>
+BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
+    BinarySpaceTree(Archive& ar,
+      const typename boost::enable_if<typename Archive::is_loading>::type*) : BinarySpaceTree()
+{
+  if (!Archive::is_loading::value)
+  {
+    throw std::invalid_argument("Archive::is_loading is false; use an iarchive,"
+        " not an oarchive!");
+  }
+
+  // We've delegated to the constructor which gives us an empty tree, and now we
+  // can serialize from it.
+  ar >> data::CreateNVP(*this, "tree");
 }
 
 /**
@@ -618,6 +664,105 @@ void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::SplitNode(
 
   left->ParentDistance() = leftParentDistance;
   right->ParentDistance() = rightParentDistance;
+}
+
+// Default constructor (private), for boost::serialization.
+template<typename BoundType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType>
+BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
+    BinarySpaceTree() :
+    left(NULL),
+    right(NULL),
+    parent(NULL),
+    begin(0),
+    count(0),
+    stat(*this),
+    parentDistance(0),
+    furthestDescendantDistance(0),
+    dataset(NULL)
+{
+  // Nothing to do.
+}
+
+/**
+ * Serialize the tree.
+ */
+template<typename BoundType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType>
+template<typename Archive>
+void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::Serialize(
+    Archive& ar,
+    const unsigned int /* version */)
+{
+  using data::CreateNVP;
+
+  // If we're loading, and we have children, they need to be deleted.
+  if (Archive::is_loading::value)
+  {
+    if (left)
+      delete left;
+    if (right)
+      delete right;
+    if (!parent)
+      delete dataset;
+  }
+
+  ar & CreateNVP(parent, "parent");
+  ar & CreateNVP(begin, "begin");
+  ar & CreateNVP(count, "count");
+  ar & CreateNVP(bound, "bound");
+  ar & CreateNVP(stat, "statistic");
+  ar & CreateNVP(parentDistance, "parentDistance");
+  ar & CreateNVP(furthestDescendantDistance, "furthestDescendantDistance");
+  ar & CreateNVP(dataset, "dataset");
+
+  // Save children last; otherwise boost::serialization gets confused.
+  ar & CreateNVP(left, "left");
+  ar & CreateNVP(right, "right");
+
+  // Due to quirks of boost::serialization, if a tree is saved as an object and
+  // not a pointer, the first level of the tree will be duplicated on load.
+  // Therefore, if we are the root of the tree, then we need to make sure our
+  // children's parent links are correct, and delete the duplicated node if
+  // necessary.
+  if (Archive::is_loading::value)
+  {
+    // Get parents of left and right children, or, NULL, if they don't exist.
+    BinarySpaceTree* leftParent = left ? left->Parent() : NULL;
+    BinarySpaceTree* rightParent = right ? right->Parent() : NULL;
+
+    // Reassign parent links if necessary.
+    if (left && left->Parent() != this)
+      left->Parent() = this;
+    if (right && right->Parent() != this)
+      right->Parent() = this;
+
+    // Do we need to delete the left parent?
+    if (leftParent != NULL && leftParent != this)
+    {
+      // Sever the duplicate parent's children.  Ensure we don't delete the
+      // dataset, by faking the duplicated parent's parent (that is, we need to
+      // set the parent to something non-NULL; 'this' works).
+      leftParent->Parent() = this;
+      leftParent->Left() = NULL;
+      leftParent->Right() = NULL;
+      delete leftParent;
+    }
+
+    // Do we need to delete the right parent?
+    if (rightParent != NULL && rightParent != this && rightParent != leftParent)
+    {
+      // Sever the duplicate parent's children, in the same way as above.
+      rightParent->Parent() = this;
+      rightParent->Left() = NULL;
+      rightParent->Right() = NULL;
+      delete rightParent;
+    }
+  }
 }
 
 /**
