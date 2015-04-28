@@ -430,7 +430,11 @@ void HRectBound<Power, TakeRoot>::Serialize(Archive& ar,
 
   // Allocate memory for the bounds, if necessary.
   if (Archive::is_loading::value)
+  {
+    if (bounds)
+      delete[] bounds;
     bounds = new math::Range[dim];
+  }
 
   ar & data::CreateArrayNVP(bounds, dim, "bounds");
   ar & data::CreateNVP(minWidth, "minWidth");
