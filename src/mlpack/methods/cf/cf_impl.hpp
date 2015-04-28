@@ -63,8 +63,7 @@ template<typename FactorizerType>
 CF<FactorizerType>::CF(arma::mat& data,
                        FactorizerType factorizer,
                        const size_t numUsersForSimilarity,
-                       const size_t rank,
-                       bool isCleaned) :
+                       const size_t rank) :
     numUsersForSimilarity(numUsersForSimilarity),
     rank(rank),
     factorizer(factorizer)
@@ -104,10 +103,11 @@ CF<FactorizerType>::CF(arma::mat& data,
  * Construct the CF object using an instantiated factorizer.
  */
 template<typename FactorizerType>
-CF<FactorizerType>::CF(arma::mat& data,
-                       FactorizerType factorizer,
-                       const size_t numUsersForSimilarity,
-                       const size_t rank) :
+template<typename U, class>
+CF<FactorizerType>::CF(const arma::sp_mat& data,
+            FactorizerType factorizer,
+            const size_t numUsersForSimilarity,
+            const size_t rank) :
     numUsersForSimilarity(numUsersForSimilarity),
     rank(rank),
     factorizer(factorizer)
@@ -121,7 +121,7 @@ CF<FactorizerType>::CF(arma::mat& data,
     this->numUsersForSimilarity = 5;
   }
 
-  CleanData(data, cleanedData);
+  cleanedData = data;
 
   // Check if the user wanted us to choose a rank for them.
   if (rank == 0)
@@ -138,9 +138,7 @@ CF<FactorizerType>::CF(arma::mat& data,
     this->rank = rankEstimate;
   }
 
-  // Operations independent of the query:
-  // Decompose the sparse data matrix to user and data matrices.
-  ApplyFactorizer<FactorizerType>(data, cleanedData, factorizer, this->rank, w, h);
+  factorizer.Apply(cleanedData, rank, w, h);
 }
 
 template<typename FactorizerType>

@@ -101,7 +101,9 @@ class CF
    * be set; default values are provided for each of them. If the rank is left
    * unset (or is set to 0), a simple density-based heuristic will be used to
    * choose a rank. Data will be considered in the format of items vs. users and 
-   * will be passed directly to the factorizer without cleaning.
+   * will be passed directly to the factorizer without cleaning. This overload 
+   * of constructor will only be available if the factorizer does not require
+   * coordinate list.
    *
    * @param data Initial (user, item, rating) matrix.
    * @param factorizer Instantiated factorizer object.
@@ -109,7 +111,11 @@ class CF
    * @param rank Rank parameter for matrix factorization.
    * @param isCleaned If the data passed is cleaned for CF
    */
-  CF(arma::sp_mat& data,
+  template<typename U = FactorizerType, 
+           class = typename boost::enable_if_c<
+                   !FactorizerTraits<U>::UsesCoordinateList,
+                   int*>::type>
+  CF(const arma::sp_mat& data,
      FactorizerType factorizer = FactorizerType(),
      const size_t numUsersForSimilarity = 5,
      const size_t rank = 0);
