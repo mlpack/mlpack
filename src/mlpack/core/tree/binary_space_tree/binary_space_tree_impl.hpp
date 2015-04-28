@@ -260,15 +260,11 @@ template<typename BoundType,
          typename SplitType>
 template<typename Archive>
 BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
-    BinarySpaceTree(Archive& ar,
-      const typename boost::enable_if<typename Archive::is_loading>::type*) : BinarySpaceTree()
+BinarySpaceTree(
+    Archive& ar,
+    const typename boost::enable_if<typename Archive::is_loading>::type*) :
+    BinarySpaceTree() // Create an empty BinarySpaceTree.
 {
-  if (!Archive::is_loading::value)
-  {
-    throw std::invalid_argument("Archive::is_loading is false; use an iarchive,"
-        " not an oarchive!");
-  }
-
   // We've delegated to the constructor which gives us an empty tree, and now we
   // can serialize from it.
   ar >> data::CreateNVP(*this, "tree");

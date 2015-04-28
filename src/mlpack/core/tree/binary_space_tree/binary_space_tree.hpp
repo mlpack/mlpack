@@ -213,9 +213,9 @@ class BinarySpaceTree
    * @param ar Archive to load tree from.  Must be an iarchive, not an oarchive!
    */
   template<typename Archive>
-  BinarySpaceTree(Archive& ar,
-                  const typename boost::enable_if<typename Archive::is_loading>::type* =
-0);
+  BinarySpaceTree(
+      Archive& ar,
+      const typename boost::enable_if<typename Archive::is_loading>::type* = 0);
 
   /**
    * Deletes this node, deallocating the memory for the children and calling
