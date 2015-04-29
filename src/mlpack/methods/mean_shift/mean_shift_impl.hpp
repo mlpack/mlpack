@@ -246,10 +246,10 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
   }
   
   // Assign centroids to each point
-  neighbor::AllkNN neighborSearcher(centroids, data);
+  neighbor::AllkNN neighborSearcher(centroids);
   arma::mat neighborDistances;
   arma::Mat<size_t> resultingNeighbors;
-  neighborSearcher.Search(1, resultingNeighbors, neighborDistances);
+  neighborSearcher.Search(data, 1, resultingNeighbors, neighborDistances);
   assignments = resultingNeighbors.t();
 }
 
