@@ -174,7 +174,7 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
 {
   if (radius <= 0)
   {
-    // An invalid radius is given, an estimation is needed.
+    // An invalid radius is given; an estimation is needed.
     Radius(EstimateRadius(data));
   }
 
@@ -190,7 +190,7 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
   arma::mat allCentroids(pSeeds->n_rows, pSeeds->n_cols);
   
   assignments.set_size(data.n_cols);
-
+  
   range::RangeSearch<> rangeSearcher(data);
   math::Range validRadius(0, radius);
   std::vector<std::vector<size_t> > neighbors;
@@ -199,7 +199,7 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
   // For each seed, perform mean shift algorithm.
   for (size_t i = 0; i < pSeeds->n_cols; ++i)
   {
-    // Initial centroid is the point itself.
+    // Initial centroid is the seed itself.
     allCentroids.col(i) = pSeeds->unsafe_col(i);
     for (size_t completedIterations = 0; completedIterations < maxIterations;
          completedIterations++)
@@ -209,6 +209,9 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
       
       rangeSearcher.Search(allCentroids.unsafe_col(i), validRadius,
           neighbors, distances);
+      if (neighbors[0].size() <= 1)
+        break;
+      
       // Calculate new centroid.
       if (!CalculateCentroid(data, neighbors[0], distances[0], newCentroid))
         newCentroid = allCentroids.unsafe_col(i);
@@ -222,7 +225,7 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
         for (size_t k = 0; k < centroids.n_cols; ++k)
         {
           const double distance = metric::EuclideanDistance::Evaluate(
-              allCentroids.col(i), centroids.col(k));
+              allCentroids.unsafe_col(i), centroids.unsafe_col(k));
           if (distance < radius)
           {
             isDuplicated = true;

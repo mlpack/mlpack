@@ -34,10 +34,13 @@ namespace meanshift /** Mean Shift clustering. */ {
  * meanShift.Cluster(dataset, assignments, centroids);
  * @endcode
  *
+ * @tparam UseKernel Use kernel or mean to calculate new centroid
+ *         If false, KernelType will be ignored.
  * @tparam KernelType the kernel to use.
  */
   
-template<typename KernelType = kernel::GaussianKernel,
+template<bool UseKernel = false,
+         typename KernelType = kernel::GaussianKernel,
          typename MatType = arma::mat>
 class MeanShift
 {
@@ -59,8 +62,9 @@ class MeanShift
   /**
    * Give an estimation of radius based on given dataset.
    * @param data Dataset for estimation.
+   * @param ratio How many neighbors to use
    */
-  double EstimateRadius(const MatType& data);
+  double EstimateRadius(const MatType& data, double ratio = 0.2);
   
   /**
    * Perform Mean Shift clustering on the data, returning a list of cluster
@@ -73,7 +77,8 @@ class MeanShift
    */
   void Cluster(const MatType& data,
                arma::Col<size_t>& assignments,
-               arma::mat& centroids);
+               arma::mat& centroids,
+               bool useSeeds = true);
   
   //! Get the maximum number of iterations.
   size_t MaxIterations() const { return maxIterations; }
@@ -89,19 +94,49 @@ class MeanShift
   const KernelType& Kernel() const { return kernel; }
   //! Modify the kernel.
   KernelType& Kernel() { return kernel; }
-  
+
  private:
   
   /**
-   * A general approach to calculate the weight for a point.
+   * To speed up, we can generate some seeds from data set and use
+   * them as initial centroids rather than all the points in the data set.
    *
-   * @param centroid The centroid to calculate the weight
-   * @param point Calculate its weight
-   * @param weight Store the weight
-   * @return If true, the @point is near enough to the @centroid and @weight is valid,
-   *         If false, the @point is far from the @centroid and @weight is invalid.
+   * @param data The reference data set
+   * @param binSize It can be set equal to the estimated radius
+   * @param minFreq Usually 1 is enough
+   * @param seed Store generated sedds
    */
-  bool CalcWeight(const arma::colvec& centroid, const arma::colvec& point, double& weight);
+  void GenSeeds(const MatType& data, double binSize, int minFreq, MatType& seeds);
+  
+  /**
+   * Use kernel to calculate new centroid given dataset and valid neighbors.
+   *
+   * @param data The whole dataset
+   * @param neighbors Valid neighbors
+   * @param distances Distances to neighbors
+   # @param centroid Store calculated centroid
+   */
+  template<bool ApplyKernel = UseKernel>
+  typename std::enable_if<ApplyKernel, bool>::type
+  CalculateCentroid(const MatType& data,
+                    const std::vector<size_t>& neighbors,
+                    const std::vector<double>& distances,
+                    arma::colvec& centroid);
+  
+  /**
+   * Use mean to calculate new centroid given dataset and valid neighbors.
+   *
+   * @param data The whole dataset
+   * @param neighbors Valid neighbors
+   * @param distances Distances to neighbors
+   # @param centroid Store calculated centroid
+   */
+  template<bool ApplyKernel = UseKernel>
+  typename std::enable_if<!ApplyKernel, bool>::type
+  CalculateCentroid(const MatType& data,
+                    const std::vector<size_t>& neighbors,
+                    const std::vector<double>&, /*unused*/
+                    arma::colvec& centroid);
   
   /**
    * If distance of two centroids is less than radius, one will be removed.
