@@ -17,7 +17,7 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * @f[
  * f(x) &=& \frac{e^x - e^{-x}{e^x + e^{-x}}} \\
- * f'(x) &=& 1 - tanh^2(x)
+ * f'(x) &=& 1 - tanh^2(x) \\
  * f^{-1}(x) &=& atan(x)
  * @f]
  */

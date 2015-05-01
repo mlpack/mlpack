@@ -17,7 +17,7 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * @f[
  * f(x) &=& \frac{1}{1 + e^{-x}} \\
- * f'(x) &=& f(x) * (1 - f(x))
+ * f'(x) &=& f(x) * (1 - f(x)) \\
  * f^{-1}(y) &=& ln(\frac{y}{1-y})
  * @f]
  */
