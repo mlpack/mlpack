@@ -24,6 +24,13 @@ class MeanSplit
 {
  public:
   /**
+   * Instantiate a MeanSplit object.  This will initialize the nextDimension
+   * object, which will determine which dimension to use next, in the instance
+   * of a tie.
+   */
+  MeanSplit() : nextDimension(0) { /* Nothing to do. */ }
+
+  /**
    * Split the node according to the mean value in the dimension with maximum
    * width.
    *
@@ -37,11 +44,11 @@ class MeanSplit
    * @param splitCol The index at which the dataset is divided into two parts
    *    after the rearrangement.
    */
-  static bool SplitNode(const BoundType& bound,
-                        MatType& data,
-                        const size_t begin,
-                        const size_t count,
-                        size_t& splitCol);
+  bool SplitNode(const BoundType& bound,
+                 MatType& data,
+                 const size_t begin,
+                 const size_t count,
+                 size_t& splitCol);
 
   /**
    * Split the node according to the mean value in the dimension with maximum
@@ -59,12 +66,12 @@ class MeanSplit
    * @param oldFromNew Vector which will be filled with the old positions for
    *    each new point.
    */
-  static bool SplitNode(const BoundType& bound,
-                        MatType& data,
-                        const size_t begin,
-                        const size_t count,
-                        size_t& splitCol,
-                        std::vector<size_t>& oldFromNew);
+  bool SplitNode(const BoundType& bound,
+                 MatType& data,
+                 const size_t begin,
+                 const size_t count,
+                 size_t& splitCol,
+                 std::vector<size_t>& oldFromNew);
 
  private:
   /**
@@ -79,11 +86,11 @@ class MeanSplit
    * @param splitVal The split in dimension splitDimension is based on this
    *    value.
    */
-  static size_t PerformSplit(MatType& data,
-                             const size_t begin,
-                             const size_t count,
-                             const size_t splitDimension,
-                             const double splitVal);
+  size_t PerformSplit(MatType& data,
+                      const size_t begin,
+                      const size_t count,
+                      const size_t splitDimension,
+                      const double splitVal);
 
   /**
    * Reorder the dataset into two parts such that they lie on either side of
@@ -99,12 +106,15 @@ class MeanSplit
    * @param oldFromNew Vector which will be filled with the old positions for
    *    each new point.
    */
-  static size_t PerformSplit(MatType& data,
-                             const size_t begin,
-                             const size_t count,
-                             const size_t splitDimension,
-                             const double splitVal,
-                             std::vector<size_t>& oldFromNew);
+  size_t PerformSplit(MatType& data,
+                      const size_t begin,
+                      const size_t count,
+                      const size_t splitDimension,
+                      const double splitVal,
+                      std::vector<size_t>& oldFromNew);
+
+  //! Tracks the next dimension to use in case of a tie.
+  size_t nextDimension;
 };
 
 }; // namespace tree

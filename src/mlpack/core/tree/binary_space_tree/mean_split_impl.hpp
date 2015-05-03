@@ -24,6 +24,7 @@ bool MeanSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
   double maxWidth = -1;
 
   // Find the split dimension.
+  size_t ties = 0;
   for (size_t d = 0; d < data.n_rows; d++)
   {
     double width = bound[d].Width();
@@ -32,6 +33,31 @@ bool MeanSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
     {
       maxWidth = width;
       splitDimension = d;
+    }
+    if (width == maxWidth)
+    {
+      // There's a tie.  Record that.
+      ++ties;
+    }
+  }
+
+  if (ties > 0)
+  {
+    // Look through a second time, and determine the correct dimension.
+    size_t tieIndex = 0;
+    for (size_t d = 0; d < data.n_rows; ++d)
+    {
+      const double width = bound[d].Width();
+
+      if (width == maxWidth)
+      {
+        if (tieIndex == (nextDimension % ties))
+        {
+          splitDimension = d;
+          break;
+        }
+        ++tieIndex;
+      }
     }
   }
 
@@ -131,6 +157,9 @@ size_t MeanSplit<BoundType, MatType>::
   }
 
   Log::Assert(left == right + 1);
+
+  if (left >= begin + count)
+    Log::Fatal << "Left is count. Bad.\n";
 
   return left;
 }
