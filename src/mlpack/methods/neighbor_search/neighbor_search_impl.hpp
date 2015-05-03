@@ -40,8 +40,11 @@ TreeType* BuildTree(
 }
 
 // Construct the object.
-template<typename SortPolicy, typename MetricType, typename TreeType>
-NeighborSearch<SortPolicy, MetricType, TreeType>::
+template<typename SortPolicy,
+         typename MetricType,
+         typename TreeType,
+         template<typename> class TraversalType>
+NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::
 NeighborSearch(const typename TreeType::Mat& referenceSetIn,
                const bool naive,
                const bool singleMode,
@@ -78,11 +81,14 @@ NeighborSearch(const typename TreeType::Mat& referenceSetIn,
 }
 
 // Construct the object.
-template<typename SortPolicy, typename MetricType, typename TreeType>
-NeighborSearch<SortPolicy, MetricType, TreeType>::NeighborSearch(
-    TreeType* referenceTree,
-    const bool singleMode,
-    const MetricType metric) :
+template<typename SortPolicy,
+         typename MetricType,
+         typename TreeType,
+         template<typename> class TraversalType>
+NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::
+NeighborSearch(TreeType* referenceTree,
+               const bool singleMode,
+               const MetricType metric) :
     referenceSet(referenceTree->Dataset()),
     referenceTree(referenceTree),
     treeOwner(false),
@@ -96,8 +102,12 @@ NeighborSearch<SortPolicy, MetricType, TreeType>::NeighborSearch(
 }
 
 // Clean memory.
-template<typename SortPolicy, typename MetricType, typename TreeType>
-NeighborSearch<SortPolicy, MetricType, TreeType>::~NeighborSearch()
+template<typename SortPolicy,
+         typename MetricType,
+         typename TreeType,
+         template<typename> class TraversalType>
+NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::
+    ~NeighborSearch()
 {
   if (treeOwner && referenceTree)
     delete referenceTree;
@@ -107,8 +117,11 @@ NeighborSearch<SortPolicy, MetricType, TreeType>::~NeighborSearch()
  * Computes the best neighbors and stores them in resultingNeighbors and
  * distances.
  */
-template<typename SortPolicy, typename MetricType, typename TreeType>
-void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
+template<typename SortPolicy,
+         typename MetricType,
+         typename TreeType,
+         template<typename> class TraversalType>
+void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
     const typename TreeType::Mat& querySet,
     const size_t k,
     arma::Mat<size_t>& neighbors,
@@ -192,7 +205,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
     Timer::Start("computing_neighbors");
 
     // Create the traverser.
-    typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
+    TraversalType<RuleType> traverser(rules);
 
     traverser.Traverse(*queryTree, *referenceTree);
 
@@ -267,8 +280,11 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
   }
 } // Search()
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
-void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
+template<typename SortPolicy,
+         typename MetricType,
+         typename TreeType,
+         template<typename> class TraversalType>
+void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
     TreeType* queryTree,
     const size_t k,
     arma::Mat<size_t>& neighbors,
@@ -300,7 +316,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
   RuleType rules(referenceSet, querySet, *neighborPtr, distances, metric);
 
   // Create the traverser.
-  typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
+  TraversalType<RuleType> traverser(rules);
   traverser.Traverse(*queryTree, *referenceTree);
 
   Timer::Stop("computing_neighbors");
@@ -321,8 +337,11 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
   }
 }
 
-template<typename SortPolicy, typename MetricType, typename TreeType>
-void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
+template<typename SortPolicy,
+         typename MetricType,
+         typename TreeType,
+         template<typename> class TraversalType>
+void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
     const size_t k,
     arma::Mat<size_t>& neighbors,
     arma::mat& distances)
@@ -374,7 +393,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
   else
   {
     // Create the traverser.
-    typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
+    TraversalType<RuleType> traverser(rules);
 
     traverser.Traverse(*referenceTree, *referenceTree);
 
@@ -408,8 +427,12 @@ void NeighborSearch<SortPolicy, MetricType, TreeType>::Search(
 }
 
 // Return a String of the Object.
-template<typename SortPolicy, typename MetricType, typename TreeType>
-std::string NeighborSearch<SortPolicy, MetricType, TreeType>::ToString() const
+template<typename SortPolicy,
+         typename MetricType,
+         typename TreeType,
+         template<typename> class TraversalType>
+std::string NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::
+    ToString() const
 {
   std::ostringstream convert;
   convert << "NeighborSearch [" << this << "]" << std::endl;

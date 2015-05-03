@@ -14,10 +14,12 @@
 
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/rectangle_tree.hpp>
+#include <mlpack/core/tree/binary_space_tree/binary_space_tree.hpp>
 
 #include <mlpack/core/metrics/lmetric.hpp>
 #include "neighbor_search_stat.hpp"
 #include "sort_policies/nearest_neighbor_sort.hpp"
+#include "neighbor_search_rules.hpp"
 
 namespace mlpack {
 namespace neighbor /** Neighbor-search routines.  These include
@@ -45,7 +47,9 @@ namespace neighbor /** Neighbor-search routines.  These include
 template<typename SortPolicy = NearestNeighborSort,
          typename MetricType = mlpack::metric::SquaredEuclideanDistance,
          typename TreeType = tree::BinarySpaceTree<bound::HRectBound<2>,
-             NeighborSearchStat<SortPolicy> > >
+             NeighborSearchStat<SortPolicy>>,
+         template<typename RuleType> class TraversalType =
+             TreeType::template DualTreeTraverser>
 class NeighborSearch
 {
  public:
