@@ -65,8 +65,8 @@ class SteepestDescent
   SteepestDescent(const size_t cols,
                   const size_t rows,
                   const size_t slices,
-                  const double lr = 1,
-                  const double mom = 0.1) :
+                  const double lr,
+                  const double mom) :
       lr(lr), mom(mom)
   {
     if (mom > 0)
