@@ -141,6 +141,7 @@ class BinarySpaceTree
   BinarySpaceTree(MatType& data,
                   const size_t begin,
                   const size_t count,
+                  SplitType& splitter,
                   BinarySpaceTree* parent = NULL,
                   const size_t maxLeafSize = 20);
 
@@ -166,6 +167,7 @@ class BinarySpaceTree
                   const size_t begin,
                   const size_t count,
                   std::vector<size_t>& oldFromNew,
+                  SplitType& splitter,
                   BinarySpaceTree* parent = NULL,
                   const size_t maxLeafSize = 20);
 
@@ -195,6 +197,7 @@ class BinarySpaceTree
                   const size_t count,
                   std::vector<size_t>& oldFromNew,
                   std::vector<size_t>& newFromOld,
+                  SplitType& splitter,
                   BinarySpaceTree* parent = NULL,
                   const size_t maxLeafSize = 20);
 
@@ -429,7 +432,8 @@ class BinarySpaceTree
    * @param maxLeafSize Maximum number of points held in a leaf.
    */
   void SplitNode(MatType& data,
-                 const size_t maxLeafSize);
+                 const size_t maxLeafSize,
+                 SplitType& splitter);
 
   /**
    * Splits the current node, assigning its left and right children recursively.
@@ -441,7 +445,8 @@ class BinarySpaceTree
    */
   void SplitNode(MatType& data,
                  std::vector<size_t>& oldFromNew,
-                 const size_t maxLeafSize);
+                 const size_t maxLeafSize,
+                 SplitType& splitter);
 
  public:
   /**
