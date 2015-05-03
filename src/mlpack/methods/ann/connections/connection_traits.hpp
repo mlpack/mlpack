@@ -31,6 +31,11 @@ class ConnectionTraits
    * This is true if the connection is a fullself connection.
    */
   static const bool IsFullselfConnection = false;
+
+  /**
+   * This is true if the connection is a pooling connection.
+   */
+  static const bool IsPoolingConnection = false;
 };
 
 }; // namespace ann

@@ -159,6 +159,7 @@ class ConnectionTraits<
  public:
   static const bool IsSelfConnection = true;
   static const bool IsFullselfConnection = false;
+  static const bool IsPoolingConnection = false;
 };
 
 }; // namespace ann
