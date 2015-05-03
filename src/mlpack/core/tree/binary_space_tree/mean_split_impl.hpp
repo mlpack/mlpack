@@ -27,7 +27,7 @@ bool MeanSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
   size_t ties = 0;
   for (size_t d = 0; d < data.n_rows; d++)
   {
-    double width = bound[d].Width();
+    const double width = bound[d].Width();
 
     if (width > maxWidth)
     {
@@ -64,8 +64,11 @@ bool MeanSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
   if (maxWidth == 0) // All these points are the same.  We can't split.
     return false;
 
-  // Split in the middle of that dimension.
-  double splitVal = bound[splitDimension].Mid();
+  // Split in the mean of that dimension.
+  double splitVal = 0.0;
+  for (size_t i = begin; i < begin + count; ++i)
+    splitVal += data(splitDimension, i);
+  splitVal /= count;
 
   // Perform the actual splitting.  This will order the dataset such that points
   // with value in dimension splitDimension less than or equal to splitVal are
