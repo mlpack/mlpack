@@ -58,14 +58,15 @@ bool MeanSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
     // Now, which is the widest?
     for (size_t d = 0; d < data.n_rows; d++)
     {
-      const double width = bound[d].Width();
-
+      const double width = ranges[d].Width();
       if (width > maxWidth)
       {
         maxWidth = width;
         splitDimension = d;
       }
     }
+
+    delete[] ranges;
   }
 
   if (maxWidth == 0) // All these points are the same.  We can't split.
