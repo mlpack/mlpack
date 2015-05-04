@@ -4,7 +4,7 @@
  * @author Shangtong Zhang
  *
  * Definition of the NeuronLayer class, which implements a standard network
- * layer for 1-dimensional or 2-dimensional data.
+ * layer.
  */
 #ifndef __MLPACK_METHOS_ANN_LAYER_NEURON_LAYER_HPP
 #define __MLPACK_METHOS_ANN_LAYER_NEURON_LAYER_HPP
@@ -29,78 +29,51 @@ namespace ann /** Artificial Neural Network. */ {
  *  - ReluLayer
  *
  * @tparam ActivationFunction Activation function used for the embedding layer.
- * @tparam DataType Type of data (arma::mat or arma::colvec).
+ * @tparam DataType Type of data (arma::colvec, arma::mat or arma::sp_mat,
+ * arma::cube).
  */
 template <
     class ActivationFunction = LogisticFunction,
     typename DataType = arma::colvec
 >
 class NeuronLayer
+
 {
  public:
   /**
-   * Create 2-dimensional NeuronLayer object using the specified rows and columns.
-   * In this case, DataType must be aram::mat or other matrix type.
-   *
-   * @param layerRows The number of rows of neurons.
-   * @param layerCols The number of columns of neurons.
-   */
-  NeuronLayer(const size_t layerRows, const size_t layerCols) :
-      layerRows(layerRows), layerCols(layerCols),
-      localInputAcitvations(arma::ones<DataType>(layerRows, layerCols)),
-      inputActivations(localInputAcitvations),
-      localDelta(arma::zeros<DataType>(layerRows, layerCols)),
-      delta(localDelta)
-  {
-    // Nothing to do.
-  }
-  
-  /**
-   * Create 2-dimensional NeuronLayer object using the specified inputActivations and delta.
-   * This allow shared memory among layers, 
-   * which make it easier to combine layers together in some special condition.
-   *
-   * @param inputActivations Outside storage for storing input activations.
-   * @param delta Outside storage for storing delta, 
-   *        the passed error in backward propagation.
-   */
-  NeuronLayer(DataType& inputActivations, DataType& delta) :
-      layerRows(inputActivations.n_rows),
-      layerCols(inputActivations.n_cols),
-      inputActivations(inputActivations),
-      delta(delta)
-  {
-    // Nothing to do.
-  }
-  
-  /**
-   * Create 1-dimensional NeuronLayer object using the specified layer size.
-   * In this case, DataType must be aram::colvec or other vector type.
+   * Create the NeuronLayer object using the specified number of neurons.
    *
    * @param layerSize The number of neurons.
    */
   NeuronLayer(const size_t layerSize) :
-      layerRows(layerSize), layerCols(1),
-      localInputAcitvations(arma::ones<DataType>(layerRows)),
-      inputActivations(localInputAcitvations),
-      localDelta(arma::zeros<DataType>(layerRows)),
-      delta(localDelta)
+      inputActivations(arma::zeros<DataType>(layerSize)),
+      delta(arma::zeros<DataType>(layerSize)),
+      layerRows(layerSize),
+      layerSlices(1)
   {
-    // Nothing to do.
+    // Nothing to do here.
   }
-  
-  /**
-   * Copy Constructor
-   */
-  NeuronLayer(const NeuronLayer& l) :
-      layerRows(l.layerRows), layerCols(l.layerCols),
-      localInputAcitvations(l.localInputAcitvations),
-      inputActivations(l.localInputAcitvations.n_elem == 0 ?
-                       l.inputActivations : localInputAcitvations),
-      localDelta(l.localDelta),
-      delta(l.localDelta.n_elem == 0 ? l.delta : localDelta)
+
+  NeuronLayer(const size_t layerRows, const size_t layerCols) :
+      inputActivations(arma::zeros<DataType>(layerRows, layerCols)),
+      delta(arma::zeros<DataType>(layerRows, layerCols)),
+      layerRows(layerRows),
+      layerCols(layerCols),
+      layerSlices(1)
   {
-    // Nothing to do.
+    // Nothing to do here.
+  }
+
+  NeuronLayer(const size_t layerRows,
+              const size_t layerCols,
+              const size_t layerSlices) :
+      inputActivations(arma::zeros<DataType>(layerRows, layerCols, layerSlices)),
+      delta(arma::zeros<DataType>(layerRows, layerCols, layerSlices)),
+      layerRows(layerRows),
+      layerCols(layerCols),
+      layerSlices(layerSlices)
+  {
+    // Nothing to do here.
   }
 
   /**
@@ -111,7 +84,8 @@ class NeuronLayer
    * activity function.
    * @param outputActivation Data to store the resulting output activation.
    */
-  void FeedForward(const DataType& inputActivation, DataType& outputActivation)
+  void FeedForward(const DataType& inputActivation,
+                   DataType& outputActivation)
   {
     ActivationFunction::fn(inputActivation, outputActivation);
   }
@@ -123,7 +97,8 @@ class NeuronLayer
    *
    * @param inputActivation Input data used for calculating the function f(x).
    * @param error The backpropagated error.
-   * @param delta The passed error in backward propagation.
+   * @param delta The calculating delta using the partial derivative of the
+   * error with respect to a weight.
    */
   void FeedBackward(const DataType& inputActivation,
                     const DataType& error,
@@ -134,54 +109,76 @@ class NeuronLayer
     delta = error % derivative;
   }
 
+  /**
+   * Ordinary feed backward pass of a neural network, calculating the function
+   * f(x) by propagating x backwards trough f. Using the results from the feed
+   * forward pass.
+   *
+   * @param inputActivation Input data used for calculating the function f(x).
+   * @param error The backpropagated error.
+   * @param delta The calculating delta using the partial derivative of the
+   * error with respect to a weight.
+   */
+  template<typename eT>
+  void FeedBackward(const arma::Cube<eT>& inputActivation,
+                    const arma::Mat<eT>& error,
+                    arma::Cube<eT>& delta)
+  {
+    DataType derivative;
+    ActivationFunction::deriv(inputActivation, derivative);
+    delta = arma::cube(error.memptr(), inputActivation.n_rows,
+        inputActivation.n_cols, inputActivation.n_slices) % derivative;
+  }
+
+
   //! Get the input activations.
   DataType& InputActivation() const { return inputActivations; }
-  //! Modify the input activations.
+  //  //! Modify the input activations.
   DataType& InputActivation() { return inputActivations; }
 
-  //! Get the error passed in backward propagation.
+  //! Get the detla.
   DataType& Delta() const { return delta; }
-  //! Modify the error passed in backward propagation.
+  //! Modify the delta.
   DataType& Delta() { return delta; }
+
+  //! Get input size.
+  size_t InputSize() const { return layerRows; }
+  //! Modify the delta.
+  size_t& InputSize() { return layerRows; }
+
+  //! Get output size.
+  size_t OutputSize() const { return layerRows; }
+  //! Modify the output size.
+  size_t& OutputSize() { return layerRows; }
 
   //! Get the number of layer rows.
   size_t LayerRows() const { return layerRows; }
+  //! Modify the number of layer rows.
+  size_t& LayerRows() { return layerRows; }
 
-  //! Get the number of layer colums.
+  //! Get the number of layer columns.
   size_t LayerCols() const { return layerCols; }
-  
-  /**
-   * Get the number of layer size.
-   * Only for 1-dimsenional type.
-   */
-  size_t InputSize() const { return layerRows; }
-  
-  /**
-   * Get the number of lyaer size.
-   * Only for 1-dimsenional type.
-   */
-  size_t OutputSize() const { return layerRows; }
+  //! Modify the number of layer columns.
+  size_t& LayerCols() { return layerCols; }
+
+  //! Get the number of layer slices.
+  size_t LayerSlices() const { return layerSlices; }
 
  private:
+  //! Locally-stored input activation object.
+  DataType inputActivations;
+
+  //! Locally-stored delta object.
+  DataType delta;
+
   //! Locally-stored number of layer rows.
   size_t layerRows;
-  
+
   //! Locally-stored number of layer cols.
   size_t layerCols;
-  
-  //! Locally-stored input activation object.
-  DataType localInputAcitvations;
-  
-  //! Reference to locally-stored or outside input activation object.
-  DataType& inputActivations;
-  
-  //! Locally-stored delta object.
-  DataType localDelta;
-  
-  //! Reference to locally-stored or outside delta object.
-  DataType& delta;
-  
 
+  //! Locally-stored number of layer slices.
+  size_t layerSlices;
 }; // class NeuronLayer
 
 // Convenience typedefs.
