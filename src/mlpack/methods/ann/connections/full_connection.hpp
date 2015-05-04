@@ -39,15 +39,15 @@ class FullConnection
  public:
   /**
    * Create the FullConnection object using the specified input layer, output
-   * layer, optimizer and weight initialize rule.
+   * layer, optimizer and weight initialization rule.
    *
    * @param InputLayerType The input layer which is connected with the output
    * layer.
    * @param OutputLayerType The output layer which is connected with the input
    * layer.
    * @param OptimizerType The optimizer used to update the weight matrix.
-   * @param WeightInitRule The weight initialize rule used to initialize the
-   * weight matrix.
+   * @param WeightInitRule The weights initialization rule used to initialize the
+   * weights matrix.
    */
   FullConnection(InputLayerType& inputLayer,
                  OutputLayerType& outputLayer,
@@ -62,6 +62,17 @@ class FullConnection
         inputLayer.OutputSize() * inputLayer.LayerSlices());
   }
 
+  /**
+   * Create the FullConnection object using the specified input layer, output
+   * layer and weight initialization rule.
+   *
+   * @param InputLayerType The input layer which is connected with the output
+   * layer.
+   * @param OutputLayerType The output layer which is connected with the input
+   * layer.
+   * @param WeightInitRule The weights initialization rule used to initialize the
+   * weights matrix.
+   */
   FullConnection(InputLayerType& inputLayer,
                OutputLayerType& outputLayer,
                WeightInitRule weightInitRule = WeightInitRule()) :
