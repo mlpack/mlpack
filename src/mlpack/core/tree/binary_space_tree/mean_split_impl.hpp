@@ -23,40 +23,47 @@ bool MeanSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
   size_t splitDimension = data.n_rows; // Indicate invalid.
   double maxWidth = -1;
 
-  // Find the split dimension.
-  size_t ties = 0;
-  for (size_t d = 0; d < data.n_rows; d++)
+  // Find the split dimension.  If the bound is tight, we only need to consult
+  // the bound's width.
+  if (bound::BoundTraits<BoundType>::HasTightBounds)
   {
-    const double width = bound[d].Width();
-
-    if (width > maxWidth)
+    for (size_t d = 0; d < data.n_rows; d++)
     {
-      maxWidth = width;
-      splitDimension = d;
-    }
-    if (width == maxWidth)
-    {
-      // There's a tie.  Record that.
-      ++ties;
+      const double width = bound[d].Width();
+  
+      if (width > maxWidth)
+      {
+        maxWidth = width;
+        splitDimension = d;
+      }
     }
   }
-
-  if (ties > 0)
+  else
   {
-    // Look through a second time, and determine the correct dimension.
-    size_t tieIndex = 0;
-    for (size_t d = 0; d < data.n_rows; ++d)
+    // We must individually calculate bounding boxes.
+    math::Range* ranges = new math::Range[data.n_rows];
+    for (size_t i = begin; i < begin + count; ++i)
+    {
+      // Expand each dimension as necessary.
+      for (size_t d = 0; d < data.n_rows; ++d)
+      {
+        const double val = data(d, i);
+        if (val < ranges[d].Lo())
+          ranges[d].Lo() = val;
+        if (val > ranges[d].Hi())
+          ranges[d].Hi() = val;
+      }
+    }
+
+    // Now, which is the widest?
+    for (size_t d = 0; d < data.n_rows; d++)
     {
       const double width = bound[d].Width();
 
-      if (width == maxWidth)
+      if (width > maxWidth)
       {
-        if (tieIndex == (nextDimension % ties))
-        {
-          splitDimension = d;
-          break;
-        }
-        ++tieIndex;
+        maxWidth = width;
+        splitDimension = d;
       }
     }
   }
@@ -79,9 +86,6 @@ bool MeanSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
   // greater than splitVal are on the right side of splitCol.
   splitCol = PerformSplit(data, begin, count, splitDimension, splitVal);
 
-  // Increment the tie-breaker counter.
-  ++nextDimension;
-
   return true;
 }
 
@@ -96,40 +100,47 @@ bool MeanSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
   size_t splitDimension = data.n_rows; // Indicate invalid.
   double maxWidth = -1;
 
-  // Find the split dimension.
-  size_t ties = 0;
-  for (size_t d = 0; d < data.n_rows; d++)
+  // Find the split dimension.  If the bound is tight, we only need to consult
+  // the bound's width.
+  if (bound::BoundTraits<BoundType>::HasTightBounds)
   {
-    const double width = bound[d].Width();
-
-    if (width > maxWidth)
-    {
-      maxWidth = width;
-      splitDimension = d;
-    }
-    if (width == maxWidth)
-    {
-      // There's a tie.  Record that.
-      ++ties;
-    }
-  }
-
-  if (ties > 0)
-  {
-    // Look through a second time, and determine the correct dimension.
-    size_t tieIndex = 0;
-    for (size_t d = 0; d < data.n_rows; ++d)
+    for (size_t d = 0; d < data.n_rows; d++)
     {
       const double width = bound[d].Width();
 
-      if (width == maxWidth)
+      if (width > maxWidth)
       {
-        if (tieIndex == (nextDimension % ties))
-        {
-          splitDimension = d;
-          break;
-        }
-        ++tieIndex;
+        maxWidth = width;
+        splitDimension = d;
+      }
+    }
+  }
+  else
+  {
+    // We must individually calculate bounding boxes.
+    math::Range* ranges = new math::Range[data.n_rows];
+    for (size_t i = begin; i < begin + count; ++i)
+    {
+      // Expand each dimension as necessary.
+      for (size_t d = 0; d < data.n_rows; ++d)
+      {
+        const double val = data(d, i);
+        if (val < ranges[d].Lo())
+          ranges[d].Lo() = val;
+        if (val > ranges[d].Hi())
+          ranges[d].Hi() = val;
+      }
+    }
+
+    // Now, which is the widest?
+    for (size_t d = 0; d < data.n_rows; d++)
+    {
+      const double width = bound[d].Width();
+
+      if (width > maxWidth)
+      {
+        maxWidth = width;
+        splitDimension = d;
       }
     }
   }
@@ -153,9 +164,6 @@ bool MeanSplit<BoundType, MatType>::SplitNode(const BoundType& bound,
   splitCol = PerformSplit(data, begin, count, splitDimension, splitVal,
       oldFromNew);
 
-  // Increment the tie-breaker counter.
-  ++nextDimension;
-
   return true;
 }
 
@@ -178,7 +186,7 @@ size_t MeanSplit<BoundType, MatType>::
   // condition is in the middle.
   while ((data(splitDimension, left) < splitVal) && (left <= right))
     left++;
-  while ((data(splitDimension, right) >= splitVal) && (left <= right))
+  while ((data(splitDimension, right) >= splitVal) && (left <= right) && (right > 0))
     right--;
 
   while (left <= right)
@@ -201,9 +209,6 @@ size_t MeanSplit<BoundType, MatType>::
   }
 
   Log::Assert(left == right + 1);
-
-  Log::Assert(left > begin);
-  Log::Assert(left < begin + count - 1);
 
   return left;
 }
@@ -228,7 +233,7 @@ size_t MeanSplit<BoundType, MatType>::
   // condition is in the middle.
   while ((data(splitDimension, left) < splitVal) && (left <= right))
     left++;
-  while ((data(splitDimension, right) >= splitVal) && (left <= right))
+  while ((data(splitDimension, right) >= splitVal) && (left <= right) && (right > 0))
     right--;
 
   while (left <= right)
@@ -256,9 +261,6 @@ size_t MeanSplit<BoundType, MatType>::
   }
 
   Log::Assert(left == right + 1);
-
-  Log::Assert(left > begin);
-  Log::Assert(left < begin + count - 1);
 
   return left;
 }
