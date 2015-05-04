@@ -314,6 +314,9 @@ class LSTMLayer
   //! Modify the output size.
   size_t& OutputSize() { return layerSize; }
 
+  //! Get the number of layer slices.
+  size_t LayerSlices() const { return 1; }
+
   //! Get the detla.
   VecType& Delta() const { return delta; }
  //  //! Modify the delta.

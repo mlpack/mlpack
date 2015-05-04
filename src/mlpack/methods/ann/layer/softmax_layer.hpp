@@ -88,6 +88,9 @@ class SoftmaxLayer
   //! Modify the output size.
   size_t& OutputSize() { return layerSize; }
 
+    //! Get the number of layer slices.
+  size_t LayerSlices() const { return 1; }
+
  private:
   //! Locally-stored input activation object.
   VecType inputActivations;
