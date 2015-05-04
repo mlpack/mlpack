@@ -319,6 +319,9 @@ void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
   TraversalType<RuleType> traverser(rules);
   traverser.Traverse(*queryTree, *referenceTree);
 
+  scores += rules.Scores();
+  baseCases += rules.BaseCases();
+
   Timer::Stop("computing_neighbors");
 
   // Do we need to map indices?
@@ -387,6 +390,9 @@ void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
     for (size_t i = 0; i < referenceSet.n_cols; ++i)
       traverser.Traverse(i, *referenceTree);
 
+    scores += rules.Scores();
+    baseCases += rules.BaseCases();
+
     Log::Info << rules.Scores() << " node combinations were scored.\n";
     Log::Info << rules.BaseCases() << " base cases were calculated.\n";
   }
@@ -396,6 +402,9 @@ void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
     TraversalType<RuleType> traverser(rules);
 
     traverser.Traverse(*referenceTree, *referenceTree);
+
+    scores += rules.Scores();
+    baseCases += rules.BaseCases();
 
     Log::Info << rules.Scores() << " node combinations were scored.\n";
     Log::Info << rules.BaseCases() << " base cases were calculated.\n";
