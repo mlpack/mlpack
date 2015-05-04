@@ -12,6 +12,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/core/math/range.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
+#include "bound_traits.hpp"
 
 namespace mlpack {
 namespace bound {
@@ -183,8 +184,16 @@ class HRectBound
   double minWidth;
 };
 
-}; // namespace bound
-}; // namespace mlpack
+// A specialization of BoundTraits for this class.
+template<int Power, bool TakeRoot>
+struct BoundTraits<HRectBound<Power, TakeRoot>>
+{
+  //! These bounds are always tight for each dimension.
+  const static bool HasTightBounds = true;
+};
+
+} // namespace bound
+} // namespace mlpack
 
 #include "hrectbound_impl.hpp"
 

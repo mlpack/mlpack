@@ -10,6 +10,7 @@
 #include <mlpack/core/math/range.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 
+#include "bound_traits.hpp"
 #include "hrectbound.hpp"
 #include "ballbound.hpp"
 

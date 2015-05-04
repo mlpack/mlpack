@@ -15,6 +15,7 @@ set(SOURCES
   binary_space_tree/single_tree_traverser_impl.hpp
   binary_space_tree/traits.hpp
   bounds.hpp
+  bound_traits.hpp
   cosine_tree/cosine_tree.hpp
   cosine_tree/cosine_tree.cpp
   cover_tree/cover_tree.hpp
