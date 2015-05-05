@@ -39,8 +39,8 @@ LSHSearch(const arma::mat& referenceSet,
       size_t p1 = (size_t) math::RandInt(referenceSet.n_cols);
       size_t p2 = (size_t) math::RandInt(referenceSet.n_cols);
 
-      hashWidth += std::sqrt(metric.Evaluate(referenceSet.unsafe_col(p1),
-                                             referenceSet.unsafe_col(p2)));
+      hashWidth += std::sqrt(metric::EuclideanDistance::Evaluate(
+          referenceSet.unsafe_col(p1), referenceSet.unsafe_col(p2)));
     }
 
     hashWidth /= 25;
@@ -76,8 +76,8 @@ LSHSearch(const arma::mat& referenceSet,
       size_t p1 = (size_t) math::RandInt(referenceSet.n_cols);
       size_t p2 = (size_t) math::RandInt(referenceSet.n_cols);
 
-      hashWidth += std::sqrt(metric.Evaluate(referenceSet.unsafe_col(p1),
-                                             referenceSet.unsafe_col(p2)));
+      hashWidth += std::sqrt(metric::EuclideanDistance::Evaluate(
+          referenceSet.unsafe_col(p1), referenceSet.unsafe_col(p2)));
     }
 
     hashWidth /= 25;
@@ -89,53 +89,56 @@ LSHSearch(const arma::mat& referenceSet,
 }
 
 template<typename SortPolicy>
-void LSHSearch<SortPolicy>::
-InsertNeighbor(const size_t queryIndex,
-               const size_t pos,
-               const size_t neighbor,
-               const double distance)
+void LSHSearch<SortPolicy>::InsertNeighbor(arma::mat& distances,
+                                           arma::Mat<size_t>& neighbors,
+                                           const size_t queryIndex,
+                                           const size_t pos,
+                                           const size_t neighbor,
+                                           const double distance)
 {
   // We only memmove() if there is actually a need to shift something.
-  if (pos < (distancePtr->n_rows - 1))
+  if (pos < (distances.n_rows - 1))
   {
-    int len = (distancePtr->n_rows - 1) - pos;
-    memmove(distancePtr->colptr(queryIndex) + (pos + 1),
-        distancePtr->colptr(queryIndex) + pos,
+    const size_t len = (distances.n_rows - 1) - pos;
+    memmove(distances.colptr(queryIndex) + (pos + 1),
+        distances.colptr(queryIndex) + pos,
         sizeof(double) * len);
-    memmove(neighborPtr->colptr(queryIndex) + (pos + 1),
-        neighborPtr->colptr(queryIndex) + pos,
+    memmove(neighbors.colptr(queryIndex) + (pos + 1),
+        neighbors.colptr(queryIndex) + pos,
         sizeof(size_t) * len);
   }
 
   // Now put the new information in the right index.
-  (*distancePtr)(pos, queryIndex) = distance;
-  (*neighborPtr)(pos, queryIndex) = neighbor;
+  distances(pos, queryIndex) = distance;
+  neighbors(pos, queryIndex) = neighbor;
 }
 
 template<typename SortPolicy>
 inline force_inline
-double LSHSearch<SortPolicy>::
-BaseCase(const size_t queryIndex, const size_t referenceIndex)
+double LSHSearch<SortPolicy>::BaseCase(arma::mat& distances,
+                                       arma::Mat<size_t>& neighbors,
+                                       const size_t queryIndex,
+                                       const size_t referenceIndex)
 {
   // If the datasets are the same, then this search is only using one dataset
   // and we should not return identical points.
   if ((&querySet == &referenceSet) && (queryIndex == referenceIndex))
     return 0.0;
 
-  double distance = metric.Evaluate(querySet.unsafe_col(queryIndex),
-                                    referenceSet.unsafe_col(referenceIndex));
-  ++distanceEvaluations;
+  const double distance = metric::EuclideanDistance::Evaluate(
+      querySet.unsafe_col(queryIndex), referenceSet.unsafe_col(referenceIndex));
 
   // If this distance is better than any of the current candidates, the
   // SortDistance() function will give us the position to insert it into.
-  arma::vec queryDist = distancePtr->unsafe_col(queryIndex);
-  arma::Col<size_t> queryIndices = neighborPtr->unsafe_col(queryIndex);
+  arma::vec queryDist = distances.unsafe_col(queryIndex);
+  arma::Col<size_t> queryIndices = neighbors.unsafe_col(queryIndex);
   size_t insertPosition = SortPolicy::SortDistance(queryDist, queryIndices,
       distance);
 
   // SortDistance() returns (size_t() - 1) if we shouldn't add it.
   if (insertPosition != (size_t() - 1))
-    InsertNeighbor(queryIndex, insertPosition, referenceIndex, distance);
+    InsertNeighbor(distances, neighbors, queryIndex, insertPosition,
+        referenceIndex, distance);
 
   return distance;
 }
@@ -211,14 +214,11 @@ Search(const size_t k,
        arma::mat& distances,
        const size_t numTablesToSearch)
 {
-  neighborPtr = &resultingNeighbors;
-  distancePtr = &distances;
-
   // Set the size of the neighbor and distance matrices.
-  neighborPtr->set_size(k, querySet.n_cols);
-  distancePtr->set_size(k, querySet.n_cols);
-  distancePtr->fill(SortPolicy::WorstDistance());
-  neighborPtr->fill(referenceSet.n_cols);
+  resultingNeighbors.set_size(k, querySet.n_cols);
+  distances.set_size(k, querySet.n_cols);
+  distances.fill(SortPolicy::WorstDistance());
+  resultingNeighbors.fill(referenceSet.n_cols);
 
   size_t avgIndicesReturned = 0;
 
@@ -239,11 +239,12 @@ Search(const size_t k,
     // Sequentially go through all the candidates and save the best 'k'
     // candidates.
     for (size_t j = 0; j < refIndices.n_elem; j++)
-      BaseCase(i, (size_t) refIndices[j]);
+      BaseCase(distances, resultingNeighbors, i, (size_t) refIndices[j]);
   }
 
   Timer::Stop("computing_neighbors");
 
+  distanceEvaluations += avgIndicesReturned;
   avgIndicesReturned /= querySet.n_cols;
   Log::Info << avgIndicesReturned << " distinct indices returned on average." <<
       std::endl;
@@ -405,8 +406,6 @@ std::string LSHSearch<SortPolicy>::ToString() const
   convert << "  Number of Projections: " << numProj << std::endl;
   convert << "  Number of Tables: " << numTables << std::endl;
   convert << "  Hash Width: " << hashWidth << std::endl;
-  convert << "  Metric: " << std::endl;
-  convert << mlpack::util::Indent(metric.ToString(),2);
   return convert.str();
 }
 

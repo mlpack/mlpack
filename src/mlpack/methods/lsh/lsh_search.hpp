@@ -166,16 +166,23 @@ class LSHSearch
    * This is a helper function that computes the distance of the query to the
    * neighbor candidates and appropriately stores the best 'k' candidates
    *
+   * @param distances Matrix holding output distances.
+   * @param neighbors Matrix holding output neighbors.
    * @param queryIndex The index of the query in question
    * @param referenceIndex The index of the neighbor candidate in question
    */
-  double BaseCase(const size_t queryIndex, const size_t referenceIndex);
+  double BaseCase(arma::mat& distances,
+                  arma::Mat<size_t>& neighbors,
+                  const size_t queryIndex,
+                  const size_t referenceIndex);
 
   /**
    * This is a helper function that efficiently inserts better neighbor
    * candidates into an existing set of neighbor candidates. This function is
    * only called by the 'BaseCase' function.
    *
+   * @param distances Matrix holding output distances.
+   * @param neighbors Matrix holding output neighbors.
    * @param queryIndex This is the index of the query being processed currently
    * @param pos The position of the neighbor candidate in the current list of
    *    neighbor candidates.
@@ -183,41 +190,40 @@ class LSHSearch
    *    of the best 'k' candidates for the query in question.
    * @param distance The distance of the query to the neighbor candidate.
    */
-  void InsertNeighbor(const size_t queryIndex, const size_t pos,
-                      const size_t neighbor, const double distance);
+  void InsertNeighbor(arma::mat& distances,
+                      arma::Mat<size_t>& neighbors,
+                      const size_t queryIndex,
+                      const size_t pos,
+                      const size_t neighbor,
+                      const double distance);
 
   //! Reference dataset.
   const arma::mat& referenceSet;
-
   //! Query dataset (may not be given).
   const arma::mat& querySet;
 
-  //! The number of projections
+  //! The number of projections.
   const size_t numProj;
-
-  //! The number of hash tables
+  //! The number of hash tables.
   const size_t numTables;
 
-  //! The std::vector containing the projection matrix of each table
+  //! The std::vector containing the projection matrix of each table.
   std::vector<arma::mat> projections; // should be [numProj x dims] x numTables
 
-  //! The list of the offset 'b' for each of the projection for each table
+  //! The list of the offsets 'b' for each of the projection for each table.
   arma::mat offsets; // should be numProj x numTables
 
-  //! The hash width
+  //! The hash width.
   double hashWidth;
 
-  //! The big prime representing the size of the second hash
+  //! The big prime representing the size of the second hash.
   const size_t secondHashSize;
 
-  //! The weights of the second hash
+  //! The weights of the second hash.
   arma::vec secondHashWeights;
 
-  //! The bucket size of the second hash
+  //! The bucket size of the second hash.
   const size_t bucketSize;
-
-  //! Instantiation of the metric.
-  metric::SquaredEuclideanDistance metric;
 
   //! The final hash table; should be (< secondHashSize) x bucketSize.
   arma::Mat<size_t> secondHashTable;
@@ -229,12 +235,6 @@ class LSHSearch
   //! For a particular hash value, points to the row in secondHashTable
   //! corresponding to this value.  Should be secondHashSize.
   arma::Col<size_t> bucketRowInHashTable;
-
-  //! The pointer to the nearest neighbor distances.
-  arma::mat* distancePtr;
-
-  //! The pointer to the nearest neighbor indices.
-  arma::Mat<size_t>* neighborPtr;
 
   //! The number of distance evaluations.
   size_t distanceEvaluations;
