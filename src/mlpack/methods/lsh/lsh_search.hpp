@@ -123,8 +123,13 @@ class LSHSearch
               arma::mat& distances,
               const size_t numTablesToSearch = 0);
 
-  // Returns a string representation of this object.
+  //! Returns a string representation of this object.
   std::string ToString() const;
+
+  //! Return the number of distance evaluations performed.
+  size_t DistanceEvaluations() const { return distanceEvaluations; }
+  //! Modify the number of distance evaluations performed.
+  size_t& DistanceEvaluations() { return distanceEvaluations; }
 
  private:
   /**
@@ -230,6 +235,9 @@ class LSHSearch
 
   //! The pointer to the nearest neighbor indices.
   arma::Mat<size_t>* neighborPtr;
+
+  //! The number of distance evaluations.
+  size_t distanceEvaluations;
 }; // class LSHSearch
 
 }; // namespace neighbor

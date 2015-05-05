@@ -28,7 +28,8 @@ LSHSearch(const arma::mat& referenceSet,
   numTables(numTables),
   hashWidth(hashWidthIn),
   secondHashSize(secondHashSize),
-  bucketSize(bucketSize)
+  bucketSize(bucketSize),
+  distanceEvaluations(0)
 {
   if (hashWidth == 0.0) // The user has not provided any value.
   {
@@ -64,7 +65,8 @@ LSHSearch(const arma::mat& referenceSet,
   numTables(numTables),
   hashWidth(hashWidthIn),
   secondHashSize(secondHashSize),
-  bucketSize(bucketSize)
+  bucketSize(bucketSize),
+  distanceEvaluations(0)
 {
   if (hashWidth == 0.0) // The user has not provided any value.
   {
@@ -122,6 +124,7 @@ BaseCase(const size_t queryIndex, const size_t referenceIndex)
 
   double distance = metric.Evaluate(querySet.unsafe_col(queryIndex),
                                     referenceSet.unsafe_col(referenceIndex));
+  ++distanceEvaluations;
 
   // If this distance is better than any of the current candidates, the
   // SortDistance() function will give us the position to insert it into.
@@ -247,8 +250,7 @@ Search(const size_t k,
 }
 
 template<typename SortPolicy>
-void LSHSearch<SortPolicy>::
-BuildHash()
+void LSHSearch<SortPolicy>::BuildHash()
 {
   // The first level hash for a single table outputs a 'numProj'-dimensional
   // integer key for each point in the set -- (key, pointID)
