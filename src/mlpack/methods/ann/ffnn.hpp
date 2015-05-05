@@ -40,7 +40,7 @@ class FFNN
      * Construct the FFNN object, which will construct a feed forward neural
      * network with the specified layers.
      *
-     * @param network The network modules used to construct net network.
+     * @param network The network modules used to construct the network.
      * @param outputLayer The outputlayer used to evaluate the network.
      */
     FFNN(const ConnectionTypes& network, OutputLayerType& outputLayer)
@@ -497,6 +497,7 @@ class NetworkTraits<
  public:
   static const bool IsFNN = true;
   static const bool IsRNN = false;
+  static const bool IsCNN = false;
 };
 
 }; // namespace ann

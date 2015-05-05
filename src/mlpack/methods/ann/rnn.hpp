@@ -41,10 +41,10 @@ class RNN
 {
   public:
     /**
-     * Construct the RNN object, which will construct a frecurrent neural
+     * Construct the RNN object, which will construct a recurrent neural
      * network with the specified layers.
      *
-     * @param network The network modules used to construct net network.
+     * @param network The network modules used to construct the network.
      * @param outputLayer The outputlayer used to evaluate the network.
      */
     RNN(const ConnectionTypes& network, OutputLayerType& outputLayer) :
@@ -836,6 +836,7 @@ class NetworkTraits<RNN<ConnectionTypes, OutputLayerType, PerformanceFunction> >
  public:
   static const bool IsFNN = false;
   static const bool IsRNN = true;
+  static const bool IsCNN = false;
 };
 
 }; // namespace ann

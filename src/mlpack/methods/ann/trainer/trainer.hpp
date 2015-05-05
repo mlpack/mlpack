@@ -231,7 +231,8 @@ class Trainer
     NetworkType& net;
 
     //! The current network error of a single input.
-    typename std::conditional<NetworkTraits<NetworkType>::IsFNN,
+    typename std::conditional<NetworkTraits<NetworkType>::IsFNN ||
+                              NetworkTraits<NetworkType>::IsCNN,
         VecType, MatType>::type error;
 
     //! The current epoch if maxEpochs is set.
