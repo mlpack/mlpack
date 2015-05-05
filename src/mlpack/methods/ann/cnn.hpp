@@ -1,6 +1,7 @@
 /**
  * @file cnn.hpp
  * @author Shangtong Zhang
+ * @author Marcus Edel
  *
  * Definition of the CNN class, which implements convolutional neural networks.
  */
@@ -14,11 +15,6 @@
 #include <mlpack/methods/ann/network_traits.hpp>
 #include <mlpack/methods/ann/performance_functions/cee_function.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/connections/connection_traits.hpp>
-
-#include "sstream"
-#include "fstream"
-#include "string"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -26,612 +22,493 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * An implementation of a standard convolutional network.
  *
- * @tparam ConnectionTypes Tuple that contains all layer module and 
- * connection module which will be used to construct the network.
- * These tuples should be organized as 
- * <layer, connection, layer, ....., connection, layer>
+ * @tparam ConnectionTypes Tuple that contains all connection module which will
+ * be used to construct the network.
  * @tparam OutputLayerType The outputlayer type used to evaluate the network.
  * @tparam PerformanceFunction Performance strategy used to claculate the error.
- * @tparam MaType Type of the gradients. (arma::mat or arma::sp_mat).
+ * @tparam MaType Type of the gradients. (arma::cube).
  */
 template <
-    typename ConnectionTypes,
-    typename OutputLayerType,
-    class PerformanceFunction = CrossEntropyErrorFunction<>,
-    typename MatType = arma::mat
+  typename ConnectionTypes,
+  typename OutputLayerType,
+  class PerformanceFunction = CrossEntropyErrorFunction<>,
+  typename DataType = arma::cube
 >
 class CNN
 {
- public:
-  /**
-   * Construct the CNN object, which will construct a convolutional neural
-   * network with the specified layers.
-   *
-   * @param network The network modules used to construct net network.
-   * @param outputLayer The outputlayer used to evaluate the network.
-   */
-  CNN(const ConnectionTypes& network, OutputLayerType& outputLayer)
-      : network(network), outputLayer(outputLayer), trainError(0), seqNum(0)
-  {
-    // Nothing to do here.
-  }
+  public:
+    /**
+     * Construct the CNN object, which will construct a convolutional neural
+     * network with the specified layers.
+     *
+     * @param network The network modules used to construct the network.
+     * @param outputLayer The outputlayer used to evaluate the network.
+     */
+    CNN(const ConnectionTypes& network, OutputLayerType& outputLayer)
+        : network(network), outputLayer(outputLayer), trainError(0), seqNum(0)
+    {
+      // Nothing to do here.
+    }
 
-  /**
-   * Run a single iteration of the feed forward algorithm, using the given
-   * input and target vector, updating the resulting error into the error
-   * vector.
-   *
-   * @param input Input data used to evaluate the network.
-   * @param target Target data used to calculate the network error.
-   * @param error The calulated error of the output layer.
-   * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
-   */
-  template <typename VecType>
-  void FeedForward(const MatType& input,
-                   const VecType& target,
-                   VecType& error)
-  {
-    seqNum++;
-    trainError += Evaluate(input, target, error);
-  }
-  
-  /**
-   * Reset all connection module and layer module in the network.
-   */
-  void Reset() {
-    ResetLayer(network);
-    ResetConnection(network);
-  }
+    /**
+     * Run a single iteration of the feed forward algorithm, using the given
+     * input and target vector, updating the resulting error into the error
+     * vector.
+     *
+     * @param input Input data used to evaluate the network.
+     * @param target Target data used to calculate the network error.
+     * @param error The calulated error of the output layer.
+     * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
+     */
+    template <typename InputType, typename OutputType, typename ErrorType>
+    void FeedForward(const InputType& input,
+                     const OutputType& target,
+                     ErrorType& error)
+    {
+      seqNum++;
+      trainError += Evaluate(input, target, error);
+    }
 
-  /**
-   * Run a single iteration of the feed backward algorithm, using the given
-   * error of the output layer.
-   *
-   * @param error The calulated error of the output layer.
-   * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
-   */
-  template <typename VecType>
-  void FeedBackward(const VecType& error)
-  {
-    // Initialize the gradient storage only once.
-    if (!gradients.size())
-      InitLayer(network);
-    
-    gradientNum = 0;
-    FeedBackward(network, error);
-    UpdateGradients(network);
-  }
+    /**
+     * Run a single iteration of the feed backward algorithm, using the given
+     * error of the output layer.
+     *
+     * @param error The calulated error of the output layer.
+     */
+    template <typename ErrorType>
+    void FeedBackward(const ErrorType& error)
+    {
+      // Initialize the gradient storage only once.
+      if (!gradients.size())
+        InitLayer(network);
 
-  /**
-   * Updating the weights using the specified optimizer.
-   */
-  void ApplyGradients()
-  {
-    gradientNum = 0;
-    ApplyGradients(network);
+      gradientNum = 0;
+      LayerBackward(network, error);
+      UpdateGradients(network);
+    }
 
-    // Reset the overall error.
-    trainError = 0;
-    seqNum = 0;
-  }
+    /**
+     * Updating the weights using the specified optimizer.
+     *
+     */
+    void ApplyGradients()
+    {
+      gradientNum = 0;
+      ApplyGradients(network);
 
-  /**
-   * Evaluate the network using the given input. The output activation is
-   * stored into the output parameter.
-   *
-   * @param input Input data used to evaluate the network.
-   * @param output Output data used to store the output activation
-   * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
-   */
-  template <typename VecType>
-  void Predict(const MatType& input, VecType& output)
-  {
-    Reset();
+      // Reset the overall error.
+      trainError = 0;
+      seqNum = 0;
+    }
 
-    std::get<0>(std::get<0>(network)).InputActivation() = input;
+    /**
+     * Evaluate the network using the given input. The output activation is
+     * stored into the output parameter.
+     *
+     * @param input Input data used to evaluate the network.
+     * @param output Output data used to store the output activation
+     * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
+     */
+    template <typename VecType>
+    void Predict(const VecType& input, VecType& output)
+    {
+      ResetActivations(network);
 
-    FeedForward(network);
-    OutputPrediction(network, output);
-  }
-  
-  /**
-   * Evaluate the trained network using the given input and compare the output
-   * with the given target vector.
-   *
-   * @param input Input data used to evaluate the trained network.
-   * @param target Target data used to calculate the network error.
-   * @param error The calulated error of the output layer.
-   * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
-   */
-  template <typename VecType>
-  double Evaluate(const MatType& input, const VecType& target, VecType& error)
-  {
-    Reset();
-    std::get<0>(std::get<0>(network)).InputActivation() = input;
-    FeedForward(network);
-    return OutputError(network, target, error);
-  }
+      std::get<0>(std::get<0>(network)).InputLayer().InputActivation() = input;
 
-  //! Get the error of the network.
-  double Error() const { return trainError; }
+      LayerForward(network);
+      OutputPrediction(network, output);
+    }
 
-  // Save weights of all connection modules to specified file.
-  void SaveWeights(std::string file)
-  {
-    std::ofstream outFile(file);
-    std::stringstream ss;
-    SaveWeights(network, ss);
-    outFile << ss.rdbuf();
-    outFile.close();
-  }
-  
-  // Load saved weights for all connection modules from specified file.
-  void LoadWeights(std::string file)
-  {
-    std::ifstream inFile(file);
-    std::stringstream ss;
-    ss << inFile.rdbuf();
-    LoadWeights(network, ss);
-    inFile.close();
-  }
-  
- private:
-  /**
-   * Helper function to reset all layer module
-   * by zeroing the layer activations
-   * and delta which store the passed error in backward propagation.
-   *
-   * enable_if (SFINAE) is used to iterate through the network layer
-   * modules. The general case peels off the first type and recurses, as usual
-   * with variadic function templates.
-   */
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I >= sizeof...(Tp), void>::type
-  ResetLayer(std::tuple<Tp...>& /* unused */) { }
+    /**
+     * Evaluate the trained network using the given input and compare the output
+     * with the given target vector.
+     *
+     * @param input Input data used to evaluate the trained network.
+     * @param target Target data used to calculate the network error.
+     * @param error The calulated error of the output layer.
+     * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
+     */
+    template <typename InputType, typename OutputType, typename ErrorType>
+    double Evaluate(const InputType& input,
+                    const OutputType& target,
+                    ErrorType& error)
+    {
+      ResetActivations(network);
 
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  ResetLayer(std::tuple<Tp...>& t)
-  {
-    ResetL(std::get<I>(t));
-    ResetLayer<I + 2, Tp...>(t);
-  }
-  
-  
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I == sizeof...(Tp), void>::type
-  ResetL(std::tuple<Tp...>& /* unused */) { }
-  
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  ResetL(std::tuple<Tp...>& t)
-  {
-    std::get<I>(t).InputActivation().zeros();
-    std::get<I>(t).Delta().zeros();
-    ResetL<I + 1, Tp...>(t);
-  }
-  
-  /**
-   * Helper function to reset all connection module
-   * by zeroing the connection weight delta
-   * and delta which store the passed error in backward propagation.
-   *
-   * enable_if (SFINAE) is used to iterate through the network connections.
-   * The general case peels off the first type and recurses, as usual with
-   * variadic function templates.
-   */
-  template<size_t I = 1, typename... Tp>
-  typename std::enable_if<I >= sizeof...(Tp), void>::type
-  ResetConnection(std::tuple<Tp...>& /* unused */) { }
+      std::get<0>(std::get<0>(network)).InputLayer().InputActivation() = input;
 
-  template<size_t I = 1, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  ResetConnection(std::tuple<Tp...>& t)
-  {
-    ResetC(std::get<I>(t));
-    ResetConnection<I + 2, Tp...>(t);
-  }
-  
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I == sizeof...(Tp), void>::type
-  ResetC(std::tuple<Tp...>& /* unused */) { }
+      LayerForward(network);
+      return OutputError(network, target, error);
+    }
 
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  ResetC(std::tuple<Tp...>& t)
-  {
-    std::get<I>(t).Delta().zeros();
-    std::get<I>(t).Gradient().zeros();
-    ResetC<I + 1, Tp...>(t);
-  }
+    //! Get the error of the network.
+    double Error() const { return trainError; }
 
-  /**
-   * Run a single iteration of the feed forward algorithm, using the given
-   * input and target vector, updating the resulting error into the error
-   * vector.
-   *
-   * enable_if (SFINAE) is used to select between two template overloads of
-   * the get function - one for when I is equal the size of the tuple of
-   * connections, and one for the general case which peels off the first type
-   * and recurses, as usual with variadic function templates.
-   */
-  template<size_t I = 1, typename... Tp>
-  typename std::enable_if<I >= sizeof...(Tp), void>::type
-  FeedForward(std::tuple<Tp...>& /* unused */) { }
-  
-  template<size_t I = 1, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  FeedForward(std::tuple<Tp...>& t)
-  {
-    ConnectionForward(std::get<I>(t));
-    
-    LayerForward(std::get<I + 1>(t));
+  private:
+    /**
+     * Helper function to reset the network by zeroing the layer activations.
+     *
+     * enable_if (SFINAE) is used to iterate through the network connection
+     * modules. The general case peels off the first type and recurses, as usual
+     * with variadic function templates.
+     */
+    template<size_t I = 0, typename... Tp>
+    typename std::enable_if<I == sizeof...(Tp), void>::type
+    ResetActivations(std::tuple<Tp...>& /* unused */) { }
 
-    FeedForward<I + 2, Tp...>(t);
-  }
+    template<size_t I = 0, typename... Tp>
+    typename std::enable_if<I < sizeof...(Tp), void>::type
+    ResetActivations(std::tuple<Tp...>& t)
+    {
+      Reset(std::get<I>(t));
+      ResetActivations<I + 1, Tp...>(t);
+    }
 
-  /**
-   * Sum up all connection activations by evaluating all connections.
-   *
-   * enable_if (SFINAE) is used to iterate through the network connections.
-   * The general case peels off the first type and recurses, as usual with
-   * variadic function templates.
-   */
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I == sizeof...(Tp), void>::type
-  ConnectionForward(std::tuple<Tp...>& /* unused */) { }
+    /**
+     * Reset the network by zeroing the layer activations.
+     *
+     * enable_if (SFINAE) is used to iterate through the network connections.
+     * The general case peels off the first type and recurses, as usual with
+     * variadic function templates.
+     */
+    template<size_t I = 0, typename... Tp>
+    typename std::enable_if<I == sizeof...(Tp), void>::type
+    Reset(std::tuple<Tp...>& /* unused */) { }
 
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  ConnectionForward(std::tuple<Tp...>& t)
-  {
-    std::get<I>(t).FeedForward(std::get<I>(t).InputLayer().InputActivation());
-    ConnectionForward<I + 1, Tp...>(t);
-  }
-  
-  /**
-   * Sum up all layer activations by evaluating all layers.
-   *
-   * enable_if (SFINAE) is used to iterate through the network layers.
-   * The general case peels off the first type and recurses, as usual with
-   * variadic function templates.
-   */
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I == sizeof...(Tp), void>::type
-  LayerForward(std::tuple<Tp...>& /* unused */) { }
+    template<size_t I = 0, typename... Tp>
+    typename std::enable_if<I < sizeof...(Tp), void>::type
+    Reset(std::tuple<Tp...>& t)
+    {
+      std::get<I>(t).OutputLayer().InputActivation().zeros();
+      Reset<I + 1, Tp...>(t);
+    }
 
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  LayerForward(std::tuple<Tp...>& t)
-  {
-    std::get<I>(t).FeedForward(
-        std::get<I>(t).InputActivation(),
-        std::get<I>(t).InputActivation());
-    LayerForward<I + 1, Tp...>(t);
-  }
+    /**
+     * Run a single iteration of the feed forward algorithm, using the given
+     * input and target vector, updating the resulting error into the error
+     * vector.
+     *
+     * enable_if (SFINAE) is used to select between two template overloads of
+     * the get function - one for when I is equal the size of the tuple of
+     * connections, and one for the general case which peels off the first type
+     * and recurses, as usual with variadic function templates.
+     */
+    template<size_t I = 0, typename... Tp>
+    typename std::enable_if<I == sizeof...(Tp), void>::type
+    LayerForward(std::tuple<Tp...>& /* unused */) { }
 
-  /*
-   * Calculate the output error and update the overall error.
-   */
-  template<typename VecType, typename... Tp>
-  double OutputError(std::tuple<Tp...>& t,
-                   const VecType& target,
-                   VecType& error)
-  {
-    // Calculate and store the output error.
-    outputLayer.calculateError(std::get<0>(
-        std::get<sizeof...(Tp) - 1>(t)).InputActivation(),
-        target, error);
+    template<size_t I = 0, typename... Tp>
+    typename std::enable_if<I < sizeof...(Tp), void>::type
+    LayerForward(std::tuple<Tp...>& t)
+    {
+      ConnectionForward(std::get<I>(t));
 
-    // Masures the network's performance with the specified performance
-    // function.
-    return PerformanceFunction::error(std::get<0>(
-        std::get<sizeof...(Tp) - 1>(t)).InputActivation(),
-        target);
-  }
+      // Use the first connection to perform the feed forward algorithm.
+      std::get<0>(std::get<I>(t)).OutputLayer().FeedForward(
+          std::get<0>(std::get<I>(t)).OutputLayer().InputActivation(),
+          std::get<0>(std::get<I>(t)).OutputLayer().InputActivation());
 
-  /**
-   * Calculate and store the output activation.
-   */
-  template<typename VecType, typename... Tp>
-  void OutputPrediction(std::tuple<Tp...>& t, VecType& output)
-  {
-    // Calculate and store the output prediction.
-    outputLayer.outputClass(std::get<0>(
-        std::get<sizeof...(Tp) - 1>(t)).InputActivation(),
-        output);
-  }
+      LayerForward<I + 1, Tp...>(t);
+    }
 
-  /**
-   * Run a single iteration of the feed backward algorithm, using the given
-   * error of the output layer.
-   *
-   * enable_if (SFINAE) is used to select between two template overloads of
-   * the get function - one for when I is equal the size of the tuple of
-   * connections, and one for the general case which peels off the first type
-   * and recurses, as usual with variadic function templates.
-   */
-  template<size_t I = 0, typename VecType, typename... Tp>
-  typename std::enable_if<I == sizeof...(Tp), void>::type
-  FeedBackward(std::tuple<Tp...>& /* unused */, VecType& /* unused */) { }
+    /**
+     * Sum up all layer activations by evaluating all connections.
+     *
+     * enable_if (SFINAE) is used to iterate through the network connections.
+     * The general case peels off the first type and recurses, as usual with
+     * variadic function templates.
+     */
+    template<size_t I = 0, typename... Tp>
+    typename std::enable_if<I == sizeof...(Tp), void>::type
+    ConnectionForward(std::tuple<Tp...>& /* unused */) { }
 
-  template<size_t I = 1, typename VecType, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  FeedBackward(std::tuple<Tp...>& t, VecType& error)
-  {
-    // Pass initial error to the last layer.
-    if (I == 1)
-      std::get<0>(std::get<sizeof...(Tp) - I>(t)).Delta() = error;
-    
-    LayerBackward(std::get<sizeof...(Tp) - I>(t));
-    ConnectionBackward(std::get<sizeof...(Tp) - I -1>(t));
+    template<size_t I = 0, typename... Tp>
+    typename std::enable_if<I < sizeof...(Tp), void>::type
+    ConnectionForward(std::tuple<Tp...>& t)
+    {
+      std::get<I>(t).FeedForward(std::get<I>(t).InputLayer().InputActivation());
+      ConnectionForward<I + 1, Tp...>(t);
+    }
 
-    FeedBackward<I + 2, VecType, Tp...>(t, error);
-  }
+    /*
+     * Calculate the output error and update the overall error.
+     */
+    template<typename OutputType, typename ErrorType, typename... Tp>
+    double OutputError(std::tuple<Tp...>& t,
+                      const OutputType& target,
+                      ErrorType& error)
+    {
+       // Calculate and store the output error.
+      outputLayer.CalculateError(std::get<0>(
+          std::get<sizeof...(Tp) - 1>(t)).OutputLayer().InputActivation(),
+          target, error);
 
-  /**
-   * Back propagate the given error through layers.
-   *
-   * enable_if (SFINAE) is used to iterate through the network layers.
-   * The general case peels off the first type and recurses, as usual with
-   * variadic function templates.
-   */
-  
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I == sizeof...(Tp), void>::type
-  LayerBackward(std::tuple<Tp...>& /* unused */) { }
-  
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  LayerBackward(std::tuple<Tp...>& t)
-  {
-    std::get<I>(t).FeedBackward(std::get<I>(t).InputActivation(),
-                                std::get<I>(t).Delta(),
-                                std::get<I>(t).Delta());
-    LayerBackward<I + 1, Tp...>(t);
-  }
-  
-  /**
-   * Back propagate the given error through connections.
-   *
-   * enable_if (SFINAE) is used to iterate through the network connections.
-   * The general case peels off the first type and recurses, as usual with
-   * variadic function templates.
-   */
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I == sizeof...(Tp), void>::type
-  ConnectionBackward(std::tuple<Tp...>& /* unused */) { }
+      // Masures the network's performance with the specified performance
+      // function.
+      return PerformanceFunction::Error(std::get<0>(
+          std::get<sizeof...(Tp) - 1>(t)).OutputLayer().InputActivation(),
+          target);
+    }
 
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  ConnectionBackward(std::tuple<Tp...>& t)
-  {
-    std::get<I>(t).FeedBackward(std::get<I>(t).OutputLayer().Delta());
-    ConnectionBackward<I + 1, Tp...>(t);
-  }
+    /*
+     * Calculate and store the output activation.
+     */
+    template<typename VecType, typename... Tp>
+    void OutputPrediction(std::tuple<Tp...>& t, VecType& output)
+    {
+       // Calculate and store the output prediction.
+      outputLayer.OutputClass(std::get<0>(
+          std::get<sizeof...(Tp) - 1>(t)).OutputLayer().InputActivation(),
+          output);
+    }
 
-  /**
-   * Helper function to iterate through all connection modules and to update
-   * the gradient storage.
-   *
-   * enable_if (SFINAE) is used to select between two template overloads of
-   * the get function - one for when I is equal the size of the tuple of
-   * connections, and one for the general case which peels off the first type
-   * and recurses, as usual with variadic function templates.
-   */
-  template<size_t I = 1, typename... Tp>
-  typename std::enable_if<I >= sizeof...(Tp), void>::type
-  UpdateGradients(std::tuple<Tp...>& /* unused */) { }
+    /**
+     * Run a single iteration of the feed backward algorithm, using the given
+     * error of the output layer. Note that we iterate backward through the
+     * connection modules.
+     *
+     * enable_if (SFINAE) is used to select between two template overloads of
+     * the get function - one for when I is equal the size of the tuple of
+     * connections, and one for the general case which peels off the first type
+     * and recurses, as usual with variadic function templates.
+     */
+    template<size_t I = 0, typename VecType, typename... Tp>
+    typename std::enable_if<I == sizeof...(Tp), void>::type
+    LayerBackward(std::tuple<Tp...>& /* unused */, VecType& /* unused */)
+    { }
 
-  template<size_t I = 1, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  UpdateGradients(std::tuple<Tp...>& t)
-  {
-    Gradients(std::get<I>(t));
-    UpdateGradients<I + 2, Tp...>(t);
-  }
+    template<size_t I = 1, typename VecType, typename... Tp>
+    typename std::enable_if<I < sizeof...(Tp), void>::type
+    LayerBackward(std::tuple<Tp...>& t, VecType& error)
+    {
+      // Distinguish between the output layer and the other layer. In case of
+      // the output layer use specified error vector to store the error and to
+      // perform the feed backward pass.
+      if (I == 1)
+      {
+        // Use the first connection from the last connection module to
+        // calculate the error.
+        std::get<0>(std::get<sizeof...(Tp) - I>(t)).OutputLayer().FeedBackward(
+            std::get<0>(
+            std::get<sizeof...(Tp) - I>(t)).OutputLayer().InputActivation(),
+            error, std::get<0>(
+            std::get<sizeof...(Tp) - I>(t)).OutputLayer().Delta());
+      }
 
-  /**
-   * Sum up all gradients and store the results in the gradients storage.
-   *
-   * enable_if (SFINAE) is used to iterate through the network connections.
-   * The general case peels off the first type and recurses, as usual with
-   * variadic function templates.
-   */
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I == sizeof...(Tp), void>::type
-  Gradients(std::tuple<Tp...>& /* unused */) { }
+      ConnectionBackward(std::get<sizeof...(Tp) - I>(t), std::get<0>(
+          std::get<sizeof...(Tp) - I>(t)).OutputLayer().Delta());
 
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  Gradients(std::tuple<Tp...>& t)
-  {
-    // A connection module must have locally-stroed gradient when applied in CNN.
-    gradients[gradientNum++] += std::get<I>(t).Gradient();
-    Gradients<I + 1, Tp...>(t);
-  }
+      LayerBackward<I + 1, VecType, Tp...>(t, error);
+    }
 
-  /**
-   * Helper function to update the weights using the specified optimizer and
-   * the given input.
-   *
-   * enable_if (SFINAE) is used to select between two template overloads of
-   * the get function - one for when I is equal the size of the tuple of
-   * connections, and one for the general case which peels off the first type
-   * and recurses, as usual with variadic function templates.
-   */
-  template<size_t I = 1, typename... Tp>
-  typename std::enable_if<I >= sizeof...(Tp), void>::type
-  ApplyGradients(std::tuple<Tp...>& /* unused */) { }
+    /**
+     * Back propagate the given error and store the delta in the connection
+     * between the corresponding layer.
+     *
+     * enable_if (SFINAE) is used to iterate through the network connections.
+     * The general case peels off the first type and recurses, as usual with
+     * variadic function templates.
+     */
+    template<size_t I = 0, typename VecType, typename... Tp>
+    typename std::enable_if<I == sizeof...(Tp), void>::type
+    ConnectionBackward(std::tuple<Tp...>& /* unused */, VecType& /* unused */) { }
 
-  template<size_t I = 1, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  ApplyGradients(std::tuple<Tp...>& t)
-  {
-    Apply(std::get<I>(t));
-    ApplyGradients<I + 2, Tp...>(t);
-  }
+    template<size_t I = 0, typename VecType, typename... Tp>
+    typename std::enable_if<I < sizeof...(Tp), void>::type
+    ConnectionBackward(std::tuple<Tp...>& t, VecType& error)
+    {
+      std::get<I>(t).FeedBackward(error);
 
-  /**
-   * Update the weights using the gradients from the gradient store.
-   *
-   * enable_if (SFINAE) is used to iterate through the network connections.
-   * The general case peels off the first type and recurses, as usual with
-   * variadic function templates.
-   */
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I == sizeof...(Tp), void>::type
-  Apply(std::tuple<Tp...>& /* unused */) { }
+      // We calculate the delta only for non bias layer.
+      if (!LayerTraits<typename std::remove_reference<decltype(
+          std::get<I>(t).InputLayer())>::type>::IsBiasLayer)
+      {
+        std::get<I>(t).InputLayer().FeedBackward(
+            std::get<I>(t).InputLayer().InputActivation(),
+            std::get<I>(t).Delta(), std::get<I>(t).InputLayer().Delta());
+      }
 
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  Apply(std::tuple<Tp...>& t)
-  {
-    if (seqNum > 1)
-      gradients[gradientNum] /= seqNum;
-    
-    std::get<I>(t).Optimzer().UpdateWeights(std::get<I>(t).Weights(),
-                                            gradients[gradientNum], trainError);
-    
-    // Reset the gradient storage.
-    gradients[gradientNum++].zeros();
-    Apply<I + 1, Tp...>(t);
-  }
+      ConnectionBackward<I + 1, VecType, Tp...>(t, error);
+    }
 
-  /**
-   * Helper function to iterate through all connection modules and to build
-   * gradient storage.
-   *
-   * enable_if (SFINAE) is used to select between two template overloads of
-   * the get function - one for when I is equal the size of the tuple of
-   * connections, and one for the general case which peels off the first type
-   * and recurses, as usual with variadic function templates.
-   */
-  template<size_t I = 1, typename... Tp>
-  typename std::enable_if<I >= sizeof...(Tp), void>::type
-  InitLayer(std::tuple<Tp...>& /* unused */) { }
+    /**
+     * Helper function to iterate through all connection modules and to update
+     * the gradient storage.
+     *
+     * enable_if (SFINAE) is used to select between two template overloads of
+     * the get function - one for when I is equal the size of the tuple of
+     * connections, and one for the general case which peels off the first type
+     * and recurses, as usual with variadic function templates.
+     */
+    template<size_t I = 0, typename... Tp>
+    typename std::enable_if<I == sizeof...(Tp), void>::type
+    UpdateGradients(std::tuple<Tp...>& /* unused */) { }
 
-  template<size_t I = 1, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  InitLayer(std::tuple<Tp...>& t)
-  {
-    Layer(std::get<I>(t));
-    InitLayer<I + 2, Tp...>(t);
-  }
+    template<size_t I = 0, typename... Tp>
+    typename std::enable_if<I < sizeof...(Tp), void>::type
+    UpdateGradients(std::tuple<Tp...>& t)
+    {
+      Gradients(std::get<I>(t));
+      UpdateGradients<I + 1, Tp...>(t);
+    }
 
-  /**
-   * Iterate through all connections and build the the gradient storage.
-   *
-   * enable_if (SFINAE) is used to select between two template overloads of
-   * the get function - one for when I is equal the size of the tuple of
-   * connections, and one for the general case which peels off the first type
-   * and recurses, as usual with variadic function templates.
-   */
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I == sizeof...(Tp), void>::type
-  Layer(std::tuple<Tp...>& /* unused */) { }
+    /**
+     * Sum up all gradients and store the results in the gradients storage.
+     *
+     * enable_if (SFINAE) is used to iterate through the network connections.
+     * The general case peels off the first type and recurses, as usual with
+     * variadic function templates.
+     */
+    template<size_t I = 0, typename... Tp>
+    typename std::enable_if<I == sizeof...(Tp), void>::type
+    Gradients(std::tuple<Tp...>& /* unused */) { }
 
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  Layer(std::tuple<Tp...>& t)
-  {
-    gradients.push_back(
-        new MatType(std::get<I>(t).Weights().n_rows,
-        std::get<I>(t).Weights().n_cols, arma::fill::zeros));
+    template<size_t I = 0, typename... Tp>
+    typename std::enable_if<I < sizeof...(Tp), void>::type
+    Gradients(std::tuple<Tp...>& t)
+    {
+      if (!ConnectionTraits<typename std::remove_reference<decltype(
+          std::get<I>(t))>::type>::IsPoolingConnection)
+      {
+        DataType gradient;
+        std::get<I>(t).Gradient(gradient);
 
-    Layer<I + 1, Tp...>(t);
-  }
-  
-  /**
-   * Helper function to save weights of all connection modules.
-   *
-   * enable_if (SFINAE) is used to iterate through the network connections.
-   * The general case peels off the first type and recurses, as usual with
-   * variadic function templates.
-   */
-  template<size_t I = 1, typename... Tp>
-  typename std::enable_if<I >= sizeof...(Tp), void>::type
-  SaveWeights(std::tuple<Tp...>&, std::stringstream& /* unused */) { }
-  
-  template<size_t I = 1, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  SaveWeights(std::tuple<Tp...>& t, std::stringstream& ss)
-  {
-    SaveWeightsConnection(std::get<I>(t), ss);
-    SaveWeights<I + 2, Tp...>(t, ss);
-  }
-  
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I == sizeof...(Tp), void>::type
-  SaveWeightsConnection(std::tuple<Tp...>&, std::stringstream& /* unused */) { }
-  
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  SaveWeightsConnection(std::tuple<Tp...>& t, std::stringstream& ss)
-  {
-    std::get<I>(t).Weights().save(ss);
-    SaveWeightsConnection<I + 1, Tp...>(t, ss);
-  }
-  
-  /**
-   * Helper function to load saved weights for all connection modules.
-   *
-   * enable_if (SFINAE) is used to iterate through the network connections.
-   * The general case peels off the first type and recurses, as usual with
-   * variadic function templates.
-   */
-  template<size_t I = 1, typename... Tp>
-  typename std::enable_if<I >= sizeof...(Tp), void>::type
-  LoadWeights(std::tuple<Tp...>&, std::stringstream& /* unused */) { }
-  
-  template<size_t I = 1, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  LoadWeights(std::tuple<Tp...>& t, std::stringstream& ss)
-  {
-    LoadWeightsConnection(std::get<I>(t), ss);
-    LoadWeights<I + 2, Tp...>(t, ss);
-  }
-  
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I == sizeof...(Tp), void>::type
-  LoadWeightsConnection(std::tuple<Tp...>&, std::stringstream& /* unused */) { }
-  
-  template<size_t I = 0, typename... Tp>
-  typename std::enable_if<I < sizeof...(Tp), void>::type
-  LoadWeightsConnection(std::tuple<Tp...>& t, std::stringstream& ss)
-  {
-    std::get<I>(t).Weights().load(ss);
-    LoadWeightsConnection<I + 1, Tp...>(t, ss);
-  }
+        gradients[gradientNum++] += gradient;
+      }
 
-  //! The connection modules used to build the network.
-  ConnectionTypes network;
+      Gradients<I + 1, Tp...>(t);
+    }
 
-  //! The outputlayer used to evaluate the network
-  OutputLayerType& outputLayer;
+    /**
+     * Helper function to update the weights using the specified optimizer and
+     * the given input.
+     *
+     * enable_if (SFINAE) is used to select between two template overloads of
+     * the get function - one for when I is equal the size of the tuple of
+     * connections, and one for the general case which peels off the first type
+     * and recurses, as usual with variadic function templates.
+     */
+    template<size_t I = 0, typename... Tp>
+    typename std::enable_if<I == sizeof...(Tp), void>::type
+    ApplyGradients(std::tuple<Tp...>& /* unused */) { }
 
-  //! The current training error of the network.
-  double trainError;
+    template<size_t I = 0, typename... Tp>
+    typename std::enable_if<I < sizeof...(Tp), void>::type
+    ApplyGradients(std::tuple<Tp...>& t)
+    {
+      Apply(std::get<I>(t));
+      ApplyGradients<I + 1, Tp...>(t);
+    }
 
-  //! The gradient storage we are using to perform the feed backward pass.
-  boost::ptr_vector<MatType> gradients;
+    /**
+     * Update the weights using the gradients from the gradient store.
+     *
+     * enable_if (SFINAE) is used to iterate through the network connections.
+     * The general case peels off the first type and recurses, as usual with
+     * variadic function templates.
+     */
+    template<size_t I = 0, typename... Tp>
+    typename std::enable_if<I == sizeof...(Tp), void>::type
+    Apply(std::tuple<Tp...>& /* unused */) { }
 
-  //! The index of the currently activate gradient.
-  size_t gradientNum;
+    template<size_t I = 0, typename... Tp>
+    typename std::enable_if<I < sizeof...(Tp), void>::type
+    Apply(std::tuple<Tp...>& t)
+    {
+      // Take a mean gradient step over the number of inputs.
+      if (seqNum > 1)
+        gradients[gradientNum] /= seqNum;
 
-  //! The number of the current input sequence.
-  size_t seqNum;
+      if (!ConnectionTraits<typename std::remove_reference<decltype(
+          std::get<I>(t))>::type>::IsPoolingConnection)
+      {
+        std::get<I>(t).Optimzer().UpdateWeights(std::get<I>(t).Weights(),
+            gradients[gradientNum], trainError);
+
+        // Reset the gradient storage.
+        gradients[gradientNum++].zeros();
+      }
+
+      Apply<I + 1, Tp...>(t);
+    }
+
+    /**
+     * Helper function to iterate through all connection modules and to build
+     * gradient storage.
+     *
+     * enable_if (SFINAE) is used to select between two template overloads of
+     * the get function - one for when I is equal the size of the tuple of
+     * connections, and one for the general case which peels off the first type
+     * and recurses, as usual with variadic function templates.
+     */
+    template<size_t I = 0, typename... Tp>
+    typename std::enable_if<I == sizeof...(Tp), void>::type
+    InitLayer(std::tuple<Tp...>& /* unused */) { }
+
+    template<size_t I = 0, typename... Tp>
+    typename std::enable_if<I < sizeof...(Tp), void>::type
+    InitLayer(std::tuple<Tp...>& t)
+    {
+      Layer(std::get<I>(t));
+      InitLayer<I + 1, Tp...>(t);
+    }
+
+    /**
+     * Iterate through all connections and build the the gradient storage.
+     *
+     * enable_if (SFINAE) is used to select between two template overloads of
+     * the get function - one for when I is equal the size of the tuple of
+     * connections, and one for the general case which peels off the first type
+     * and recurses, as usual with variadic function templates.
+     */
+    template<size_t I = 0, typename... Tp>
+    typename std::enable_if<I == sizeof...(Tp), void>::type
+    Layer(std::tuple<Tp...>& /* unused */) { }
+
+    template<size_t I = 0, typename... Tp>
+    typename std::enable_if<I < sizeof...(Tp), void>::type
+    Layer(std::tuple<Tp...>& t)
+    {
+      if (!ConnectionTraits<typename std::remove_reference<decltype(
+          std::get<I>(t))>::type>::IsPoolingConnection)
+      {
+        gradients.push_back(new DataType(std::get<I>(t).Weights().n_rows,
+            std::get<I>(t).Weights().n_cols,
+            std::get<I>(t).OutputLayer().LayerSlices(), arma::fill::zeros));
+      }
+
+      Layer<I + 1, Tp...>(t);
+    }
+
+    //! The connection modules used to build the network.
+    ConnectionTypes network;
+
+    //! The outputlayer used to evaluate the network
+    OutputLayerType& outputLayer;
+
+    //! The current training error of the network.
+    double trainError;
+
+    //! The gradient storage we are using to perform the feed backward pass.
+    boost::ptr_vector<DataType> gradients;
+
+    //! The index of the currently activate gradient.
+    size_t gradientNum;
+
+    //! The number of the current input sequence.
+    size_t seqNum;
 }; // class CNN
 
 
 //! Network traits for the CNN network.
 template <
-    typename ConnectionTypes,
-    typename OutputLayerType,
-    class PerformanceFunction
+  typename ConnectionTypes,
+  typename OutputLayerType,
+  class PerformanceFunction
 >
 class NetworkTraits<
-  CNN<ConnectionTypes, OutputLayerType, PerformanceFunction> >
+    CNN<ConnectionTypes, OutputLayerType, PerformanceFunction> >
 {
  public:
   static const bool IsFNN = false;
