@@ -27,6 +27,8 @@ namespace ann /** Artificial Neural Network. */ {
  *  - InputLayer
  *  - HiddenLayer
  *  - ReluLayer
+ *  - ConvLayer
+ *  - PoolingLayer
  *
  * @tparam ActivationFunction Activation function used for the embedding layer.
  * @tparam DataType Type of data (arma::colvec, arma::mat or arma::sp_mat,
@@ -210,6 +212,24 @@ template <
     typename DataType = arma::colvec
 >
 using ReluLayer = NeuronLayer<ActivationFunction, DataType>;
+
+/**
+ * Convolution layer using the logistic activation function.
+ */
+template <
+    class ActivationFunction = LogisticFunction,
+    typename DataType = arma::cube
+>
+using ConvLayer = NeuronLayer<ActivationFunction, DataType>;
+
+/**
+ * Pooling layer using the logistic activation function.
+ */
+template <
+    class ActivationFunction = LogisticFunction,
+    typename DataType = arma::cube
+>
+using PoolingLayer = NeuronLayer<ActivationFunction, DataType>;
 
 
 }; // namespace ann
