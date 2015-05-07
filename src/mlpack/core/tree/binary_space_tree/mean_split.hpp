@@ -107,8 +107,8 @@ class MeanSplit
                              std::vector<size_t>& oldFromNew);
 };
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 // Include implementation.
 #include "mean_split_impl.hpp"

@@ -266,7 +266,7 @@ size_t MeanSplit<BoundType, MatType>::
   return left;
 }
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 #endif
