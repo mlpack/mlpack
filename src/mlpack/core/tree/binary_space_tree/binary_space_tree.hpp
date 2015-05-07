@@ -7,7 +7,7 @@
 #define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_BINARY_SPACE_TREE_HPP
 
 #include <mlpack/core.hpp>
-#include "mean_split.hpp"
+#include "midpoint_split.hpp"
 
 #include "../statistic.hpp"
 
@@ -40,7 +40,7 @@ namespace tree /** Trees and tree-building procedures. */ {
 template<typename BoundType,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
-         typename SplitType = MeanSplit<BoundType, MatType> >
+         typename SplitType = MidpointSplit<BoundType, MatType>>
 class BinarySpaceTree
 {
  private:
