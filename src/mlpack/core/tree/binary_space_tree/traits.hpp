@@ -20,8 +20,9 @@ namespace tree {
  */
 template<typename BoundType,
          typename StatisticType,
-         typename MatType>
-class TreeTraits<BinarySpaceTree<BoundType, StatisticType, MatType> >
+         typename MatType,
+         typename SplitType>
+class TreeTraits<BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>>
 {
  public:
   /**
@@ -47,7 +48,7 @@ class TreeTraits<BinarySpaceTree<BoundType, StatisticType, MatType> >
   static const bool RearrangesDataset = true;
 };
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 #endif
