@@ -501,8 +501,7 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::CoalesceTree(
     TreeType& node,
     const size_t child /* Which child are we? */)
 {
-  // If one of the two children is pruned, we hide this node.
-  // This assumes the BinarySpaceTree.  (bad Ryan! bad!)
+  // If all children except one are pruned, we can hide this node.
   if (node.NumChildren() == 0)
     return; // We can't do anything.
 
