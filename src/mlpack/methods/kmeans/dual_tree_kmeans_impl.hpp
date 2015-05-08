@@ -509,37 +509,38 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::CoalesceTree(
   // If this is the root node, we can't coalesce.
   if (node.Parent() != NULL)
   {
-    if (node.Child(0).Stat().StaticPruned() &&
-        !node.Child(1).Stat().StaticPruned())
+    // First, we should coalesce those nodes that aren't statically pruned.
+    size_t numStaticallyPruned = 0;
+    size_t notPrunedIndex = 0;
+    for (size_t i = 0; i < node.NumChildren(); ++i)
     {
-      CoalesceTree(node.Child(1), 1);
-
-      // Link the right child to the parent.
-      node.Child(1).Parent() = node.Parent();
-      node.Parent()->ChildPtr(child) = node.ChildPtr(1);
+      if (node.Child(i).Stat().StaticPruned())
+      {
+        ++numStaticallyPruned;
+      }
+      else
+      {
+        CoalesceTree(node.Child(i), i);
+        notPrunedIndex = i;
+      }
     }
-    else if (!node.Child(0).Stat().StaticPruned() &&
-             node.Child(1).Stat().StaticPruned())
-    {
-      CoalesceTree(node.Child(0), 0);
 
-      // Link the left child to the parent.
-      node.Child(0).Parent() = node.Parent();
-      node.Parent()->ChildPtr(child) = node.ChildPtr(0);
-
-    }
-    else if (!node.Child(0).Stat().StaticPruned() &&
-             !node.Child(1).Stat().StaticPruned())
+    // If we've pruned all but one child, then notPrunedIndex will contain the
+    // index of that child, and we can coalesce this node entirely.  Note that
+    // the case where all children are statically pruned should not happen,
+    // because then this node should itself be statically pruned.
+    if (numStaticallyPruned == node.NumChildren() - 1)
     {
-      // The conditional is probably not necessary.
-      CoalesceTree(node.Child(0), 0);
-      CoalesceTree(node.Child(1), 1);
+      node.Child(notPrunedIndex).Parent() = node.Parent();
+      node.Parent()->ChildPtr(child) = node.ChildPtr(notPrunedIndex);
     }
   }
   else
   {
-    CoalesceTree(node.Child(0), 0);
-    CoalesceTree(node.Child(1), 1);
+    // We can't coalesce the root, so call the children individually and
+    // coalesce them.
+    for (size_t i = 0; i < node.NumChildren(); ++i)
+      CoalesceTree(node.Child(i), i);
   }
 }
 
@@ -548,8 +549,8 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::DecoalesceTree(
     TreeType& node)
 {
   node.Parent() = (TreeType*) node.Stat().TrueParent();
-  node.ChildPtr(0) = (TreeType*) node.Stat().TrueLeft();
-  node.ChildPtr(1) = (TreeType*) node.Stat().TrueRight();
+  for (size_t i = 0; i < node.NumChildren(); ++i)
+    node.ChildPtr(i) = (TreeType*) node.Stat().TrueChild(i);
 
   if (node.NumChildren() > 0)
   {

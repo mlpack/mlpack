@@ -26,9 +26,7 @@ class DualTreeKMeansStatistic : public
       staticUpperBoundMovement(0.0),
       staticLowerBoundMovement(0.0),
       centroid(),
-      trueParent(NULL),
-      trueLeft(NULL),
-      trueRight(NULL)
+      trueParent(NULL)
   {
     // Nothing to do.
   }
@@ -43,9 +41,7 @@ class DualTreeKMeansStatistic : public
       staticPruned(false),
       staticUpperBoundMovement(0.0),
       staticLowerBoundMovement(0.0),
-      trueParent(node.Parent()),
-      trueLeft((node.NumChildren() == 0) ? NULL : &node.Child(0)),
-      trueRight((node.NumChildren() == 0) ? NULL : &node.Child(1))
+      trueParent(node.Parent())
   {
     // Empirically calculate the centroid.
     centroid.zeros(node.Dataset().n_rows);
@@ -57,6 +53,11 @@ class DualTreeKMeansStatistic : public
           node.Child(i).Stat().Centroid();
 
     centroid /= node.NumDescendants();
+
+    // Set the true children correctly.
+    trueChildren.resize(node.NumChildren());
+    for (size_t i = 0; i < node.NumChildren(); ++i)
+      trueChildren[i] = &node.Child(i);
   }
 
   double UpperBound() const { return upperBound; }
@@ -86,11 +87,8 @@ class DualTreeKMeansStatistic : public
   void* TrueParent() const { return trueParent; }
   void*& TrueParent() { return trueParent; }
 
-  void* TrueLeft() const { return trueLeft; }
-  void*& TrueLeft() { return trueLeft; }
-
-  void* TrueRight() const { return trueRight; }
-  void*& TrueRight() { return trueRight; }
+  void* TrueChild(const size_t i) const { return trueChildren[i]; }
+  void*& TrueChild(const size_t i) { return trueChildren[i]; }
 
   std::string ToString() const
   {
@@ -114,8 +112,7 @@ class DualTreeKMeansStatistic : public
   double staticLowerBoundMovement;
   arma::vec centroid;
   void* trueParent;
-  void* trueLeft;
-  void* trueRight;
+  std::vector<void*> trueChildren;
 };
 
 } // namespace kmeans
