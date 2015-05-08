@@ -7,8 +7,8 @@
  * tree node into two parts using the midpoint of the values in a certain
  * dimension.  The dimension to split on is the dimension with maximum variance.
  */
-#ifndef __MLPACK_CORE_TREE_BINARY_SPACE_TREE_MEAN_SPLIT_HPP
-#define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_MEAN_SPLIT_HPP
+#ifndef __MLPACK_CORE_TREE_BINARY_SPACE_TREE_MIDPOINT_SPLIT_HPP
+#define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_MIDPOINT_SPLIT_HPP
 
 #include <mlpack/core.hpp>
 
