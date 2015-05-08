@@ -550,10 +550,10 @@ void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::SplitNode(
 
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
-  left = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, begin,
-      splitCol - begin, splitter, this, maxLeafSize);
-  right = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, splitCol,
-      begin + count - splitCol, splitter, this, maxLeafSize);
+  left = new BinarySpaceTree(data, begin, splitCol - begin, splitter, this,
+      maxLeafSize);
+  right = new BinarySpaceTree(data, splitCol, begin + count - splitCol,
+      splitter, this, maxLeafSize);
 
   // Calculate parent distances for those two nodes.
   arma::vec centroid, leftCentroid, rightCentroid;
@@ -608,10 +608,10 @@ void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::SplitNode(
 
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
-  left = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, begin,
-      splitCol - begin, oldFromNew, splitter, this, maxLeafSize);
-  right = new BinarySpaceTree<BoundType, StatisticType, MatType>(data, splitCol,
-      begin + count - splitCol, oldFromNew, splitter, this, maxLeafSize);
+  left = new BinarySpaceTree(data, begin, splitCol - begin, oldFromNew,
+      splitter, this, maxLeafSize);
+  right = new BinarySpaceTree(data, splitCol, begin + count - splitCol,
+      oldFromNew, splitter, this, maxLeafSize);
 
   // Calculate parent distances for those two nodes.
   arma::vec centroid, leftCentroid, rightCentroid;
