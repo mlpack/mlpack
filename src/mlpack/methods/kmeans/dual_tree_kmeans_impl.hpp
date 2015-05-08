@@ -113,10 +113,13 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
     nns.Search(1, closestClusters, interclusterDistancesTemp);
     distanceCalculations += nns.BaseCases() + nns.Scores();
 
-    // We need to do the unmapping ourselves.
-    for (size_t i = 0; i < interclusterDistances.n_elem; ++i)
-      interclusterDistances[oldFromNewCentroids[i]] =
-          interclusterDistancesTemp[i];
+    // We need to do the unmapping ourselves, if the tree does mapping.
+    if (tree::TreeTraits<TreeType>::RearrangesDataset)
+    {
+      for (size_t i = 0; i < interclusterDistances.n_elem; ++i)
+        interclusterDistances[oldFromNewCentroids[i]] =
+            interclusterDistancesTemp[i];
+    }
 
     Timer::Stop("knn");
 
