@@ -68,6 +68,21 @@ class IdentityFunction
   {
     x.ones(y.n_elem);
   }
+
+  /**
+   * Computes the first derivatives of the identity function using a 3rd order
+   * tensor as input.
+   *
+   * @param y Input activations.
+   * @param x The resulting derivatives.
+   */
+  template<typename eT>
+  static void deriv(const arma::Cube<eT>& y, arma::Cube<eT>& x)
+  {
+    x.ones(y.n_rows, y.n_cols, y.n_slices);
+  }
+
+
 }; // class IdentityFunction
 
 }; // namespace ann
