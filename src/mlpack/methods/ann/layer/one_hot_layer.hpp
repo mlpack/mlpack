@@ -5,8 +5,8 @@
  * Definition of the OneHotLayer class, which implements a standard network
  * layer.
  */
-#ifndef __MLPACK_METHOS_ANN_LAYER_ONE_HOT_LAYER_HPP
-#define __MLPACK_METHOS_ANN_LAYER_ONE_HOT_LAYER_HPP
+#ifndef __MLPACK_METHODS_ANN_LAYER_ONE_HOT_LAYER_HPP
+#define __MLPACK_METHODS_ANN_LAYER_ONE_HOT_LAYER_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>

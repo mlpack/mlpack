@@ -4,8 +4,8 @@
  *
  * Definition and implementation of the orthogonal matrix initialization method.
  */
-#ifndef __MLPACK_METHOS_ANN_INIT_RULES_ORTHOGONAL_INIT_HPP
-#define __MLPACK_METHOS_ANN_INIT_RULES_ORTHOGONAL_INIT_HPP
+#ifndef __MLPACK_METHODS_ANN_INIT_RULES_ORTHOGONAL_INIT_HPP
+#define __MLPACK_METHODS_ANN_INIT_RULES_ORTHOGONAL_INIT_HPP
 
 #include <mlpack/core.hpp>
 

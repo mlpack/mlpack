@@ -5,8 +5,8 @@
  * Intialization rule for the neural networks. This simple initialization is
  * performed by assigning a random matrix to the weight matrix.
  */
-#ifndef __MLPACK_METHOS_ANN_OPTIMIZER_IRPROPP_HPP
-#define __MLPACK_METHOS_ANN_OPTIMIZER_IRPROPP_HPP
+#ifndef __MLPACK_METHODS_ANN_OPTIMIZER_IRPROPP_HPP
+#define __MLPACK_METHODS_ANN_OPTIMIZER_IRPROPP_HPP
 
 #include <mlpack/core.hpp>
 #include <boost/math/special_functions/sign.hpp>

@@ -5,8 +5,8 @@
  * Implementation of the self connection class. This connection is mainly used
  * as recurrent connection.
  */
-#ifndef __MLPACK_METHOS_ANN_CONNECTIONS_SELF_CONNECTION_HPP
-#define __MLPACK_METHOS_ANN_CONNECTIONS_SELF_CONNECTION_HPP
+#ifndef __MLPACK_METHODS_ANN_CONNECTIONS_SELF_CONNECTION_HPP
+#define __MLPACK_METHODS_ANN_CONNECTIONS_SELF_CONNECTION_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>

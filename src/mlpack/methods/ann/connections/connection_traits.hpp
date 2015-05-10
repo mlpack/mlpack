@@ -5,8 +5,8 @@
  * ConnectionTraits class, a template class to get information about various
  * layers.
  */
-#ifndef __MLPACK_METHOS_ANN_CONNECTIONS_CONNECTION_TRAITS_HPP
-#define __MLPACK_METHOS_ANN_CONNECTIONS_CONNECTION_TRAITS_HPP
+#ifndef __MLPACK_METHODS_ANN_CONNECTIONS_CONNECTION_TRAITS_HPP
+#define __MLPACK_METHODS_ANN_CONNECTIONS_CONNECTION_TRAITS_HPP
 
 namespace mlpack {
 namespace ann {
