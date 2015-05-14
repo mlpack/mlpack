@@ -46,7 +46,14 @@ class DualTreeKMeansStatistic : public
     // Empirically calculate the centroid.
     centroid.zeros(node.Dataset().n_rows);
     for (size_t i = 0; i < node.NumPoints(); ++i)
+    {
+      // Correct handling of cover tree: don't double-count the point which
+      // appears in the children.
+      if (tree::TreeTraits<TreeType>::HasSelfChildren && i == 0 &&
+          node.NumChildren() > 0)
+        continue;
       centroid += node.Dataset().col(node.Point(i));
+    }
 
     for (size_t i = 0; i < node.NumChildren(); ++i)
       centroid += node.Child(i).NumDescendants() *
