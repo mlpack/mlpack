@@ -8,9 +8,9 @@
 #define __MLPACK_CORE_TREE_COVER_TREE_COVER_TREE_HPP
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/metrics/lmetric.hpp>
-#include "first_point_is_root.hpp"
+
 #include "../statistic.hpp"
+#include "../cover_tree.hpp"
 
 namespace mlpack {
 namespace tree {

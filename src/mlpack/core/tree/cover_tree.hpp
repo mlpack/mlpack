@@ -7,7 +7,8 @@
 #ifndef __MLPACK_CORE_TREE_COVER_TREE_HPP
 #define __MLPACK_CORE_TREE_COVER_TREE_HPP
 
-#include "bounds.hpp"
+#include <mlpack/core.hpp>
+#include "cover_tree/first_point_is_root.hpp"
 #include "cover_tree/cover_tree.hpp"
 #include "cover_tree/single_tree_traverser.hpp"
 #include "cover_tree/single_tree_traverser_impl.hpp"

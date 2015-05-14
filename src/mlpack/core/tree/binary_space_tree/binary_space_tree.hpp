@@ -7,9 +7,9 @@
 #define __MLPACK_CORE_TREE_BINARY_SPACE_TREE_BINARY_SPACE_TREE_HPP
 
 #include <mlpack/core.hpp>
-#include "midpoint_split.hpp"
 
 #include "../statistic.hpp"
+#include "../binary_space_tree.hpp"
 
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {

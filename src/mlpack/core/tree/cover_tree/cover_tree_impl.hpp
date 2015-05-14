@@ -1121,24 +1121,24 @@ std::string CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
 {
   std::ostringstream convert;
   convert << "CoverTree [" << this << "]" << std::endl;
-  convert << "dataset: " << &dataset << std::endl;
-  convert << "point: " << point << std::endl;
-  convert << "scale: " << scale << std::endl;
-  convert << "base: " << base << std::endl;
-//  convert << "StatisticType: " << stat << std::endl;
-  convert << "parent distance : " << parentDistance << std::endl;
-  convert << "furthest child distance: " << furthestDescendantDistance;
+  convert << "  dataset: " << &dataset << std::endl;
+  convert << "  point: " << point << std::endl;
+  convert << "  scale: " << scale << std::endl;
+  convert << "  base: " << base << std::endl;
+  convert << "  parent distance : " << parentDistance << std::endl;
+  convert << "  furthest child distance: " << furthestDescendantDistance;
   convert << std::endl;
-  convert << "children:";
+  convert << "  children:";
 
   // How many levels should we print?  This will print the top two tree levels.
   if (IsLeaf() == false && parent == NULL)
-  {
     for (size_t i = 0; i < children.size(); i++)
-    {
       convert << std::endl << mlpack::util::Indent(children.at(i)->ToString());
-    }
-  }
+  convert << std::endl;
+  convert << "  descendants: " << NumDescendants() << std::endl;
+
+  convert << "StatisticType: " << stat << std::endl;
+
   return convert.str();
 }
 
