@@ -177,6 +177,9 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
   regularizationConstants.resize(prunedSequence.size(), 0);
 
   // Go through each fold.
+  #pragma omp parallel for default(none) \
+    shared(testSize,cvData,prunedSequence,regularizationConstants,dataset) \
+    private(alpha,oldAlpha)
   for (size_t fold = 0; fold < folds; fold++)
   {
     // Break up data into train and test sets.
@@ -228,6 +231,7 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
       }
 
       // Update the cv regularization constant.
+      #pragma omp atomic
       regularizationConstants[i] += 2.0 * cvVal / (double) dataset.n_cols;
 
       // Determine the new alpha value and prune accordingly.
@@ -245,6 +249,7 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
     }
 
     if (prunedSequence.size() > 2)
+      #pragma omp atomic
       regularizationConstants[prunedSequence.size() - 2] += 2.0 * cvVal /
           (double) dataset.n_cols;
 
