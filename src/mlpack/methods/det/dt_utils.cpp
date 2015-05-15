@@ -171,7 +171,8 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
   arma::mat cvData(dataset);
   size_t testSize = dataset.n_cols / folds;
 
-  double regularizationConstants[prunedSequence.size()] = {0};
+  arma::vec regularizationConstants(prunedSequence.size());
+  regularizationConstants.fill(0.0);
 
   Timer::Start("cross_validation");
   // Go through each fold.
@@ -215,6 +216,8 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
     // Sequentially prune with all the values of available alphas and adding
     // values for test values.  Don't enter this loop if there are less than two
     // trees in the pruned sequence.
+    arma::vec cvRegularizationConstants(prunedSequence.size());
+    cvRegularizationConstants.fill(0.0);
     for (size_t i = 0;
          i < ((prunedSequence.size() < 2) ? 0 : prunedSequence.size() - 2); ++i)
     {
@@ -227,8 +230,7 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
       }
 
       // Update the cv regularization constant.
-      #pragma omp atomic
-      regularizationConstants[i] += 2.0 * cvVal / (double) dataset.n_cols;
+      cvRegularizationConstants[i] += 2.0 * cvVal / (double) dataset.n_cols;
 
       // Determine the new alpha value and prune accordingly.
       double cvOldAlpha = 0.5 * (prunedSequence[i + 1].first +
@@ -245,9 +247,11 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
     }
 
     if (prunedSequence.size() > 2)
-      #pragma omp atomic
-      regularizationConstants[prunedSequence.size() - 2] += 2.0 * cvVal /
+      cvRegularizationConstants[prunedSequence.size() - 2] += 2.0 * cvVal /
           (double) dataset.n_cols;
+
+    #pragma omp critical
+    regularizationConstants += cvRegularizationConstants;
   }
   Timer::Stop("cross_validation");
 
