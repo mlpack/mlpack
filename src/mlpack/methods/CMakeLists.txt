@@ -11,13 +11,13 @@ set(DIRS
   hmm
   kernel_pca
   kmeans
-  mean_shift
   lars
   linear_regression
   local_coordinate_coding
   logistic_regression
   lsh
 #  mvu
+  mean_shift
   matrix_completion
   naive_bayes
   nca
