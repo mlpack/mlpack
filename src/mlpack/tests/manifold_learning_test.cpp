@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(SimilarityRuleTest)
       dist(j) = metric::EuclideanDistance::Evaluate(
           data.unsafe_col(i), data.unsafe_col(j));
     }
-    arma::uvec ind = arma::sort_index(dist, "ascend");
+    arma::uvec ind = arma::sort_index(dist);
     for (size_t j = 1; j < nNeighbors + 1; ++j)
         kAnswer(i, ind(j)) = dist(ind(j));
   }

@@ -50,7 +50,7 @@ class StandardEigenmap
     SolverType::Solve(M, eigvec, eigval);
     
     // Sort eigen values in descending order
-    arma::uvec ind = arma::sort_index(eigval, "descend");
+    arma::uvec ind = arma::sort_index(eigval, 1);
     
     orderedEigvec.set_size(M.n_cols, dim);
     orderedEigval.set_size(dim, 1);
