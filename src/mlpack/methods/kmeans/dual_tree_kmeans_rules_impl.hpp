@@ -269,11 +269,13 @@ inline double DualTreeKMeansRules<MetricType, TreeType>::Score(
   }
 
   // Is everything pruned?
+
   if (queryNode.Stat().Pruned() == centroids.n_cols - 1)
   {
     queryNode.Stat().Pruned() = centroids.n_cols; // Owner() is already set.
     return DBL_MAX;
   }
+
 
   // Set traversal information.
   traversalInfo.LastQueryNode() = &queryNode;
