@@ -1126,7 +1126,7 @@ std::string CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
   convert << "  scale: " << scale << std::endl;
   convert << "  base: " << base << std::endl;
   convert << "  parent distance : " << parentDistance << std::endl;
-  convert << "  furthest child distance: " << furthestDescendantDistance;
+  convert << "  furthest descendant distance: " << furthestDescendantDistance;
   convert << std::endl;
   convert << "  children:";
 
