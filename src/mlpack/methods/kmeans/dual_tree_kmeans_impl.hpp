@@ -105,12 +105,18 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   if (iteration > 0)
   {
     Timer::Start("knn");
+
     // Find the nearest neighbors of each of the clusters.
     neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType,
         TreeType> nns(centroidTree);
-    arma::mat interclusterDistancesTemp;
+
+    // If the tree maps points, we need an intermediate result matrix.
+    arma::mat* interclusterDistancesTemp =
+        (tree::TreeTraits<TreeType>::RearrangesDataset) ? new arma::mat :
+        &interclusterDistances;
+
     arma::Mat<size_t> closestClusters; // We don't actually care about these.
-    nns.Search(1, closestClusters, interclusterDistancesTemp);
+    nns.Search(1, closestClusters, *interclusterDistancesTemp);
     distanceCalculations += nns.BaseCases() + nns.Scores();
 
     // We need to do the unmapping ourselves, if the tree does mapping.
@@ -118,12 +124,9 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
     {
       for (size_t i = 0; i < interclusterDistances.n_elem; ++i)
         interclusterDistances[oldFromNewCentroids[i]] =
-            interclusterDistancesTemp[i];
-    }
-    else
-    {
-      // TODO: avoid copy.
-      interclusterDistances = interclusterDistancesTemp;
+            (*interclusterDistancesTemp)[i];
+
+      delete interclusterDistancesTemp;
     }
 
     Timer::Stop("knn");
