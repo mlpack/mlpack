@@ -100,7 +100,11 @@ class DualTreeKMeans
   //! centroids is the current (not yet searched) centroids.
   void UpdateTree(TreeType& node,
                   const arma::mat& centroids,
-                  const arma::vec& interclusterDistances);
+                  const arma::vec& interclusterDistances,
+                  const double parentUpperBound = 0.0,
+                  const double adjustedParentUpperBound = DBL_MAX,
+                  const double parentLowerBound = DBL_MAX,
+                  const double adjustedParentLowerBound = 0.0);
 
   //! Extract the centroids of the clusters.
   void ExtractCentroids(TreeType& node,
