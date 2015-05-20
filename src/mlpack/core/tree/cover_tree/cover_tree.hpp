@@ -10,7 +10,7 @@
 #include <mlpack/core.hpp>
 
 #include "../statistic.hpp"
-#include "../cover_tree.hpp"
+#include "first_point_is_root.hpp"
 
 namespace mlpack {
 namespace tree {
@@ -484,5 +484,8 @@ class CoverTree
 
 // Include implementation.
 #include "cover_tree_impl.hpp"
+
+// Include the rest of the pieces, if necessary.
+#include "../cover_tree.hpp"
 
 #endif
