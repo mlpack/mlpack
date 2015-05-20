@@ -25,6 +25,9 @@
     classes now take the query sets in the Search() method, instead of in the
     constructor.
 
+  * Use OpenMP, if available.  For now OpenMP support is only available in the
+    DET training code.
+
 ### mlpack 1.0.11
 ###### 2014-12-11
   * Proper handling of dimension calculation in PCA.
