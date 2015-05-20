@@ -112,8 +112,8 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
 
     // If the tree maps points, we need an intermediate result matrix.
     arma::mat* interclusterDistancesTemp =
-        (tree::TreeTraits<TreeType>::RearrangesDataset) ? new arma::mat :
-        &interclusterDistances;
+        (tree::TreeTraits<TreeType>::RearrangesDataset) ?
+        new arma::mat(1, centroids.n_elem) : &interclusterDistances;
 
     arma::Mat<size_t> closestClusters; // We don't actually care about these.
     nns.Search(1, closestClusters, *interclusterDistancesTemp);
@@ -131,7 +131,7 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
 
     Timer::Stop("knn");
 
-    UpdateTree(*tree, oldCentroids, interclusterDistances);
+    UpdateTree(*tree, oldCentroids);
 
     for (size_t i = 0; i < dataset.n_cols; ++i)
       visited[i] = false;
@@ -140,7 +140,7 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   {
     // Not initialized yet.
     clusterDistances.set_size(centroids.n_cols + 1);
-    interclusterDistances.set_size(centroids.n_cols);
+    interclusterDistances.set_size(1, centroids.n_cols);
   }
 
   // We won't use the AllkNN class here because we have our own set of rules.
@@ -210,7 +210,6 @@ template<typename MetricType, typename MatType, typename TreeType>
 void DualTreeKMeans<MetricType, MatType, TreeType>::UpdateTree(
     TreeType& node,
     const arma::mat& centroids,
-    const arma::vec& interclusterDistances,
     const double parentUpperBound,
     const double adjustedParentUpperBound,
     const double parentLowerBound,
@@ -408,9 +407,8 @@ visited[node.Descendant(i)] << ".\n";
   bool allChildrenPruned = true;
   for (size_t i = 0; i < node.NumChildren(); ++i)
   {
-    UpdateTree(node.Child(i), centroids, interclusterDistances,
-        unadjustedUpperBound, adjustedUpperBound, unadjustedLowerBound,
-        adjustedLowerBound);
+    UpdateTree(node.Child(i), centroids, unadjustedUpperBound,
+        adjustedUpperBound, unadjustedLowerBound, adjustedLowerBound);
     if (!node.Child(i).Stat().StaticPruned())
       allChildrenPruned = false;
   }

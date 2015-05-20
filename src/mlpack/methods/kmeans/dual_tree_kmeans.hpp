@@ -94,13 +94,12 @@ class DualTreeKMeans
 
   arma::vec clusterDistances; // The amount the clusters moved last iteration.
 
-  arma::vec interclusterDistances; // Static storage for intercluster distances.
+  arma::mat interclusterDistances; // Static storage for intercluster distances.
 
   //! Update the bounds in the tree before the next iteration.
   //! centroids is the current (not yet searched) centroids.
   void UpdateTree(TreeType& node,
                   const arma::mat& centroids,
-                  const arma::vec& interclusterDistances,
                   const double parentUpperBound = 0.0,
                   const double adjustedParentUpperBound = DBL_MAX,
                   const double parentLowerBound = DBL_MAX,
