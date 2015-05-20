@@ -104,7 +104,7 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
                             const std::string unprunedTreeOutput)
 {
   // Initialize the tree.
-  DTree* dtree = new DTree(dataset);
+  DTree dtree(dataset);
 
   // Prepare to grow the tree...
   arma::Col<size_t> oldFromNew(dataset.n_cols);
@@ -116,10 +116,10 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
 
   // Growing the tree
   double oldAlpha = 0.0;
-  double alpha = dtree->Grow(newDataset, oldFromNew, useVolumeReg, maxLeafSize,
+  double alpha = dtree.Grow(newDataset, oldFromNew, useVolumeReg, maxLeafSize,
       minLeafSize);
 
-  Log::Info << dtree->SubtreeLeaves() << " leaf nodes in the tree using full "
+  Log::Info << dtree.SubtreeLeaves() << " leaf nodes in the tree using full "
       << "dataset; minimum alpha: " << alpha << "." << std::endl;
 
   // Compute densities for the training points in the full tree, if we were
@@ -132,7 +132,7 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
       for (size_t i = 0; i < dataset.n_cols; ++i)
       {
         arma::vec testPoint = dataset.unsafe_col(i);
-        outfile << dtree->ComputeValue(testPoint) << std::endl;
+        outfile << dtree.ComputeValue(testPoint) << std::endl;
       }
     }
     else
@@ -146,37 +146,38 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
 
   // Sequentially prune and save the alpha values and the values of c_t^2 * r_t.
   std::vector<std::pair<double, double> > prunedSequence;
-  while (dtree->SubtreeLeaves() > 1)
+  while (dtree.SubtreeLeaves() > 1)
   {
     std::pair<double, double> treeSeq(oldAlpha,
-        dtree->SubtreeLeavesLogNegError());
+        dtree.SubtreeLeavesLogNegError());
     prunedSequence.push_back(treeSeq);
     oldAlpha = alpha;
-    alpha = dtree->PruneAndUpdate(oldAlpha, dataset.n_cols, useVolumeReg);
+    alpha = dtree.PruneAndUpdate(oldAlpha, dataset.n_cols, useVolumeReg);
 
     // Some sanity checks.
     Log::Assert((alpha < std::numeric_limits<double>::max()) ||
-        (dtree->SubtreeLeaves() == 1));
+        (dtree.SubtreeLeaves() == 1));
     Log::Assert(alpha > oldAlpha);
-    Log::Assert(dtree->SubtreeLeavesLogNegError() < treeSeq.second);
+    Log::Assert(dtree.SubtreeLeavesLogNegError() < treeSeq.second);
   }
 
   std::pair<double, double> treeSeq(oldAlpha,
-      dtree->SubtreeLeavesLogNegError());
+      dtree.SubtreeLeavesLogNegError());
   prunedSequence.push_back(treeSeq);
 
   Log::Info << prunedSequence.size() << " trees in the sequence; maximum alpha:"
       << " " << oldAlpha << "." << std::endl;
 
-  delete dtree;
-
   arma::mat cvData(dataset);
   size_t testSize = dataset.n_cols / folds;
 
-  std::vector<double> regularizationConstants;
-  regularizationConstants.resize(prunedSequence.size(), 0);
+  arma::vec regularizationConstants(prunedSequence.size());
+  regularizationConstants.fill(0.0);
 
+  Timer::Start("cross_validation");
   // Go through each fold.
+  #pragma omp parallel for default(none) \
+    shared(testSize,cvData,prunedSequence,regularizationConstants,dataset)
   for (size_t fold = 0; fold < folds; fold++)
   {
     // Break up data into train and test sets.
@@ -201,7 +202,7 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
     }
 
     // Initialize the tree.
-    DTree* cvDTree = new DTree(train);
+    DTree cvDTree(train);
 
     // Getting ready to grow the tree...
     arma::Col<size_t> cvOldFromNew(train.n_cols);
@@ -209,13 +210,14 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
       cvOldFromNew[i] = i;
 
     // Grow the tree.
-    oldAlpha = 0.0;
-    alpha = cvDTree->Grow(train, cvOldFromNew, useVolumeReg, maxLeafSize,
+    cvDTree.Grow(train, cvOldFromNew, useVolumeReg, maxLeafSize,
         minLeafSize);
 
     // Sequentially prune with all the values of available alphas and adding
     // values for test values.  Don't enter this loop if there are less than two
     // trees in the pruned sequence.
+    arma::vec cvRegularizationConstants(prunedSequence.size());
+    cvRegularizationConstants.fill(0.0);
     for (size_t i = 0;
          i < ((prunedSequence.size() < 2) ? 0 : prunedSequence.size() - 2); ++i)
     {
@@ -224,16 +226,16 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
       for (size_t j = 0; j < test.n_cols; j++)
       {
         arma::vec testPoint = test.unsafe_col(j);
-        cvVal += cvDTree->ComputeValue(testPoint);
+        cvVal += cvDTree.ComputeValue(testPoint);
       }
 
       // Update the cv regularization constant.
-      regularizationConstants[i] += 2.0 * cvVal / (double) dataset.n_cols;
+      cvRegularizationConstants[i] += 2.0 * cvVal / (double) dataset.n_cols;
 
       // Determine the new alpha value and prune accordingly.
-      oldAlpha = 0.5 * (prunedSequence[i + 1].first +
+      double cvOldAlpha = 0.5 * (prunedSequence[i + 1].first +
           prunedSequence[i + 2].first);
-      alpha = cvDTree->PruneAndUpdate(oldAlpha, train.n_cols, useVolumeReg);
+      cvDTree.PruneAndUpdate(cvOldAlpha, train.n_cols, useVolumeReg);
     }
 
     // Compute test values for this state of the tree.
@@ -241,16 +243,17 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
     for (size_t i = 0; i < test.n_cols; ++i)
     {
       arma::vec testPoint = test.unsafe_col(i);
-      cvVal += cvDTree->ComputeValue(testPoint);
+      cvVal += cvDTree.ComputeValue(testPoint);
     }
 
     if (prunedSequence.size() > 2)
-      regularizationConstants[prunedSequence.size() - 2] += 2.0 * cvVal /
+      cvRegularizationConstants[prunedSequence.size() - 2] += 2.0 * cvVal /
           (double) dataset.n_cols;
 
-    test.reset();
-    delete cvDTree;
+    #pragma omp critical
+    regularizationConstants += cvRegularizationConstants;
   }
+  Timer::Stop("cross_validation");
 
   double optimalAlpha = -1.0;
   long double cvBestError = -std::numeric_limits<long double>::max();
