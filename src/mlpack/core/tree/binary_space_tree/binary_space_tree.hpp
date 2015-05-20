@@ -9,7 +9,7 @@
 #include <mlpack/core.hpp>
 
 #include "../statistic.hpp"
-#include "../binary_space_tree.hpp"
+#include "midpoint_split.hpp"
 
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
@@ -456,10 +456,13 @@ class BinarySpaceTree
 
 };
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 // Include implementation.
 #include "binary_space_tree_impl.hpp"
+
+// Include everything else, if necessary.
+#include "../binary_space_tree.hpp"
 
 #endif

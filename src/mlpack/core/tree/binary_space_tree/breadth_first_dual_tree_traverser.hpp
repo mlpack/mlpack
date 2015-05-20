@@ -13,7 +13,7 @@
 #include <mlpack/core.hpp>
 #include <queue>
 
-#include "binary_space_tree.hpp"
+#include "../binary_space_tree.hpp"
 
 namespace mlpack {
 namespace tree {
