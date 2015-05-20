@@ -46,6 +46,11 @@ class TreeTraits<BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>>
    * Points are rearranged during building of the tree.
    */
   static const bool RearrangesDataset = true;
+
+  /**
+   * This is always a binary tree.
+   */
+  static const bool BinaryTree = true;
 };
 
 } // namespace tree

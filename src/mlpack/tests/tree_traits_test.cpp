@@ -36,31 +36,60 @@ BOOST_AUTO_TEST_CASE(DefaultsTraitsTest)
   BOOST_REQUIRE_EQUAL(b, true);
   b = TreeTraits<int>::HasSelfChildren;
   BOOST_REQUIRE_EQUAL(b, false);
+  b = TreeTraits<int>::FirstPointIsCentroid;
+  BOOST_REQUIRE_EQUAL(b, false);
+  b = TreeTraits<int>::RearrangesDataset;
+  BOOST_REQUIRE_EQUAL(b, false);
+  b = TreeTraits<int>::BinaryTree;
+  BOOST_REQUIRE_EQUAL(b, false);
 }
 
 // Test the binary space tree traits.
 BOOST_AUTO_TEST_CASE(BinarySpaceTreeTraitsTest)
 {
+  typedef BinarySpaceTree<LMetric<2, false>> TreeType;
+
   // Children are non-overlapping.
-  bool b =
-      TreeTraits<BinarySpaceTree<LMetric<2, false> > >::HasOverlappingChildren;
+  bool b = TreeTraits<TreeType>::HasOverlappingChildren;
   BOOST_REQUIRE_EQUAL(b, false);
 
   // Points are not contained at multiple levels.
-  b = TreeTraits<BinarySpaceTree<LMetric<2, false> > >::HasSelfChildren;
+  b = TreeTraits<TreeType>::HasSelfChildren;
   BOOST_REQUIRE_EQUAL(b, false);
+
+  // The first point is not the centroid.
+  b = TreeTraits<TreeType>::FirstPointIsCentroid;
+  BOOST_REQUIRE_EQUAL(b, false);
+
+  // The dataset gets rearranged at build time.
+  b = TreeTraits<TreeType>::RearrangesDataset;
+  BOOST_REQUIRE_EQUAL(b, true);
+
+  // It is a binary tree.
+  b = TreeTraits<TreeType>::BinaryTree;
+  BOOST_REQUIRE_EQUAL(b, true);
 }
 
 // Test the cover tree traits.
 BOOST_AUTO_TEST_CASE(CoverTreeTraitsTest)
 {
   // Children may be overlapping.
-  bool b = TreeTraits<CoverTree<> >::HasOverlappingChildren;
+  bool b = TreeTraits<CoverTree<>>::HasOverlappingChildren;
   BOOST_REQUIRE_EQUAL(b, true);
 
   // The cover tree has self-children.
-  b = TreeTraits<CoverTree<> >::HasSelfChildren;
+  b = TreeTraits<CoverTree<>>::HasSelfChildren;
   BOOST_REQUIRE_EQUAL(b, true);
+
+  // The first point is the center of the node.
+  b = TreeTraits<CoverTree<>>::FirstPointIsCentroid;
+  BOOST_REQUIRE_EQUAL(b, true);
+
+  b = TreeTraits<CoverTree<>>::RearrangesDataset;
+  BOOST_REQUIRE_EQUAL(b, false);
+
+  b = TreeTraits<CoverTree<>>::BinaryTree;
+  BOOST_REQUIRE_EQUAL(b, false); // Not necessarily binary.
 }
 
 BOOST_AUTO_TEST_SUITE_END();

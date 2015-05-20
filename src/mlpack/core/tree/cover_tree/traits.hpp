@@ -47,6 +47,11 @@ class TreeTraits<CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>>
    * Points are not rearranged when the tree is built.
    */
   static const bool RearrangesDataset = false;
+
+  /**
+   * The cover tree is not necessarily a binary tree.
+   */
+  static const bool BinaryTree = false;
 };
 
 }; // namespace tree

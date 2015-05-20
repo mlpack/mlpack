@@ -46,6 +46,11 @@ class TreeTraits<RectangleTree<SplitType, DescentType, StatisticType, MatType> >
    * AND REARRANGE THE MATRIX
    */
   static const bool RearrangesDataset = false;
+
+  /**
+   * This tree is not necessarily a binary tree.
+   */
+  static const bool BinaryTree = false;
 };
 
 }; // namespace tree

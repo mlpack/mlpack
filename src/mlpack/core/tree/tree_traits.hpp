@@ -94,6 +94,11 @@ class TreeTraits
    * This is true if the tree rearranges points in the dataset when it is built.
    */
   static const bool RearrangesDataset = false;
+
+  /**
+   * This is true if the tree always has only two children.
+   */
+  static const bool BinaryTree = false;
 };
 
 }; // namespace tree
