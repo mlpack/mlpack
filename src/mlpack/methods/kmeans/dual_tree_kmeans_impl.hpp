@@ -562,29 +562,27 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::CoalesceTree(
   if (node.Parent() != NULL)
   {
     // First, we should coalesce those nodes that aren't statically pruned.
-    size_t numStaticallyPruned = 0;
-    size_t notPrunedIndex = 0;
-    for (size_t i = 0; i < node.NumChildren(); ++i)
+    for (size_t i = node.NumChildren() - 1; i > 0; --i)
     {
       if (node.Child(i).Stat().StaticPruned())
-      {
-        ++numStaticallyPruned;
-      }
+        HideChild(node, i);
       else
-      {
         CoalesceTree(node.Child(i), i);
-        notPrunedIndex = i;
-      }
     }
+
+    if (node.Child(0).Stat().StaticPruned())
+      HideChild(node, 0);
+    else
+      CoalesceTree(node.Child(0), 0);
 
     // If we've pruned all but one child, then notPrunedIndex will contain the
     // index of that child, and we can coalesce this node entirely.  Note that
     // the case where all children are statically pruned should not happen,
     // because then this node should itself be statically pruned.
-    if (numStaticallyPruned == node.NumChildren() - 1)
+    if (node.NumChildren() == 1)
     {
-      node.Child(notPrunedIndex).Parent() = node.Parent();
-      node.Parent()->ChildPtr(child) = node.ChildPtr(notPrunedIndex);
+      node.Child(0).Parent() = node.Parent();
+      node.Parent()->ChildPtr(child) = node.ChildPtr(0);
     }
   }
   else
@@ -601,11 +599,67 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::DecoalesceTree(
     TreeType& node)
 {
   node.Parent() = (TreeType*) node.Stat().TrueParent();
-  for (size_t i = 0; i < node.NumChildren(); ++i)
-    node.ChildPtr(i) = (TreeType*) node.Stat().TrueChild(i);
+  RestoreChildren(node);
 
   for (size_t i = 0; i < node.NumChildren(); ++i)
     DecoalesceTree(node.Child(i));
+}
+
+//! Utility function for hiding children in a non-binary tree.
+template<typename TreeType>
+void HideChild(TreeType& node,
+               const size_t child,
+               const typename boost::disable_if_c<
+                   tree::TreeTraits<TreeType>::BinaryTree>::type*)
+{
+  // We're going to assume we have a Children() function open to us.  If we
+  // don't, then this won't work, I guess...
+  node.Children().erase(node.Children().begin() + child);
+}
+
+//! Utility function for hiding children in a binary tree.
+template<typename TreeType>
+void HideChild(TreeType& node,
+               const size_t child,
+               const typename boost::enable_if_c<
+                   tree::TreeTraits<TreeType>::BinaryTree>::type*)
+{
+  // If we're hiding the left child, then take the right child as the new left
+  // child.
+  if (child == 0)
+  {
+    node.ChildPtr(0) = node.ChildPtr(1);
+    node.ChildPtr(1) = NULL;
+  }
+  else
+  {
+    node.ChildPtr(1) = NULL;
+  }
+}
+
+//! Utility function for restoring children in a non-binary tree.
+template<typename TreeType>
+void RestoreChildren(TreeType& node,
+                     const typename boost::disable_if_c<
+                         tree::TreeTraits<TreeType>::BinaryTree>::type*)
+{
+  node.Children().clear();
+  node.Children().resize(node.Stat().NumTrueChildren());
+  for (size_t i = 0; i < node.Stat().NumTrueChildren(); ++i)
+    node.Children()[i] = (TreeType*) node.Stat().TrueChild(i);
+}
+
+//! Utility function for restoring children in a binary tree.
+template<typename TreeType>
+void RestoreChildren(TreeType& node,
+                     const typename boost::enable_if_c<
+                         tree::TreeTraits<TreeType>::BinaryTree>::type*)
+{
+  if (node.Stat().NumTrueChildren() > 0)
+  {
+    node.ChildPtr(0) = (TreeType*) node.Stat().TrueChild(0);
+    node.ChildPtr(1) = (TreeType*) node.Stat().TrueChild(1);
+  }
 }
 
 } // namespace kmeans

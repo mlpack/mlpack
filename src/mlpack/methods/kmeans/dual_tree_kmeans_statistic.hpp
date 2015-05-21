@@ -97,6 +97,8 @@ class DualTreeKMeansStatistic : public
   void* TrueChild(const size_t i) const { return trueChildren[i]; }
   void*& TrueChild(const size_t i) { return trueChildren[i]; }
 
+  size_t NumTrueChildren() const { return trueChildren.size(); }
+
   std::string ToString() const
   {
     std::ostringstream o;

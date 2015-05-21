@@ -115,12 +115,42 @@ class DualTreeKMeans
   void DecoalesceTree(TreeType& node);
 };
 
-//! A template typedef for the DualTreeKMeans algorithm with the default tree type
-//! (a kd-tree).
+//! Utility function for hiding children.  This actually does something, and is
+//! called if the tree is not a binary tree.
+template<typename TreeType>
+void HideChild(TreeType& node,
+               const size_t child,
+               const typename boost::disable_if_c<
+                   tree::TreeTraits<TreeType>::BinaryTree>::type* junk = 0);
+
+//! Utility function for hiding children.  This is called when the tree is a
+//! binary tree, and does nothing, because we don't hide binary children in this
+//! way.
+template<typename TreeType>
+void HideChild(TreeType& node,
+               const size_t child,
+               const typename boost::enable_if_c<
+                   tree::TreeTraits<TreeType>::BinaryTree>::type* junk = 0);
+
+//! Utility function for restoring children to a non-binary tree.
+template<typename TreeType>
+void RestoreChildren(TreeType& node,
+                     const typename boost::disable_if_c<tree::TreeTraits<
+                         TreeType>::BinaryTree>::type* junk = 0);
+
+//! Utility function for restoring children to a binary tree.
+template<typename TreeType>
+void RestoreChildren(TreeType& node,
+                     const typename boost::enable_if_c<tree::TreeTraits<
+                         TreeType>::BinaryTree>::type* junk = 0);
+
+//! A template typedef for the DualTreeKMeans algorithm with the default tree
+//! type (a kd-tree).
 template<typename MetricType, typename MatType>
 using DefaultDualTreeKMeans = DualTreeKMeans<MetricType, MatType>;
 
-//! A template typedef for the DualTreeKMeans algorithm with the cover tree type.
+//! A template typedef for the DualTreeKMeans algorithm with the cover tree
+//! type.
 template<typename MetricType, typename MatType>
 using CoverTreeDualTreeKMeans = DualTreeKMeans<MetricType, MatType,
     tree::CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
