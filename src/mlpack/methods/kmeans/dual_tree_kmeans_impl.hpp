@@ -200,8 +200,6 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   delete centroidTree;
 
   ++iteration;
-  Log::Debug << counts.t();
-  Log::Debug << arma::accu(counts) << "!\n";
 
   return std::sqrt(residual);
 }
@@ -296,8 +294,6 @@ visited[node.Descendant(i)] << ".\n";
     // Adjust bounds.
     node.Stat().UpperBound() += clusterDistances[node.Stat().Owner()];
     node.Stat().LowerBound() -= clusterDistances[centroids.n_cols];
-    if (node.Point(0) == 10475 || node.Point(0) == 12756)
-      Log::Debug << node;
 
     if (adjustedParentUpperBound < node.Stat().UpperBound())
       node.Stat().UpperBound() = adjustedParentUpperBound;
