@@ -17,12 +17,39 @@
 namespace mlpack {
 namespace cf {
 
+// Apply the factorizer when a coordinate list is used.
+template<typename FactorizerType>
+void ApplyFactorizer(FactorizerType& factorizer,
+                     const arma::mat& data,
+                     const arma::sp_mat& /* cleanedData */,
+                     const size_t rank,
+                     arma::mat& w,
+                     arma::mat& h,
+                     const typename boost::enable_if_c<FactorizerTraits<
+                         FactorizerType>::UsesCoordinateList>::type* = 0)
+{
+  factorizer.Apply(data, rank, w, h);
+}
+
+// Apply the factorizer when coordinate lists are not used.
+template<typename FactorizerType>
+void ApplyFactorizer(FactorizerType& factorizer,
+                     const arma::mat& /* data */,
+                     const arma::sp_mat& cleanedData,
+                     const size_t rank,
+                     arma::mat& w,
+                     arma::mat& h,
+                     const typename boost::disable_if_c<FactorizerTraits<
+                         FactorizerType>::UsesCoordinateList>::type* = 0)
+{
+  factorizer.Apply(cleanedData, rank, w, h);
+}
+
 /**
  * Construct the CF object using an instantiated factorizer.
  */
 template<typename FactorizerType>
-template<typename U, typename T>
-CF<FactorizerType>::CF(arma::mat& data,
+CF<FactorizerType>::CF(const arma::mat& data,
                        FactorizerType factorizer,
                        const size_t numUsersForSimilarity,
                        const size_t rank) :
@@ -58,15 +85,15 @@ CF<FactorizerType>::CF(arma::mat& data,
 
   // Decompose the data matrix (which is in coordinate list form) to user and
   // data matrices.
-  factorizer.Apply(data, this->rank, w, h);
+  ApplyFactorizer(factorizer, data, cleanedData, this->rank, w, h);
 }
 
 /**
  * Construct the CF object using an instantiated factorizer.
  */
 template<typename FactorizerType>
-template<typename MatType, typename U, typename T>
-CF<FactorizerType>::CF(const MatType& data,
+template<typename U, typename T>
+CF<FactorizerType>::CF(const arma::sp_mat& data,
                        FactorizerType factorizer,
                        const size_t numUsersForSimilarity,
                        const size_t rank) :

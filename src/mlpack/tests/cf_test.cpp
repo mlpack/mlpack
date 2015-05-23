@@ -36,8 +36,12 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsAllUsersTest)
   arma::mat dataset;
   data::Load("GroupLens100k.csv", dataset);
 
-  // Creat a CF object
-  CF<> c(dataset);
+  // Make data into sparse matrix.
+  arma::sp_mat cleanedData;
+  CF<>::CleanData(dataset, cleanedData);
+
+  // Create a CF object.
+  CF<> c(cleanedData);
 
   // Generate recommendations when query set is not specified.
   c.GetRecommendations(numRecs, recommendations);
@@ -72,7 +76,11 @@ BOOST_AUTO_TEST_CASE(CFGetRecommendationsQueriedUserTest)
   arma::mat dataset;
   data::Load("GroupLens100k.csv", dataset);
 
-  CF<> c(dataset);
+  // Make data into sparse matrix.
+  arma::sp_mat cleanedData;
+  CF<>::CleanData(dataset, cleanedData);
+
+  CF<> c(cleanedData);
 
   // Generate recommendations when query set is specified.
   c.GetRecommendations(numRecsDefault, recommendations, users);
@@ -126,8 +134,12 @@ BOOST_AUTO_TEST_CASE(RecommendationAccuracyTest)
     }
   }
 
+  // Make data into sparse matrix.
+  arma::sp_mat cleanedData;
+  CF<>::CleanData(dataset, cleanedData);
+
   // Now create the CF object.
-  CF<> c(dataset);
+  CF<> c(cleanedData);
 
   // Obtain 150 recommendations for the users in savedCols, and make sure the
   // missing item shows up in most of them.  First, create the list of users,
@@ -215,8 +227,12 @@ BOOST_AUTO_TEST_CASE(CFPredictTest)
     }
   }
 
+  // Make data into sparse matrix.
+  arma::sp_mat cleanedData;
+  CF<>::CleanData(dataset, cleanedData);
+
   // Now create the CF object.
-  CF<> c(dataset);
+  CF<> c(cleanedData);
 
   // Now, for each removed rating, make sure the prediction is... reasonably
   // accurate.
@@ -277,8 +293,12 @@ BOOST_AUTO_TEST_CASE(CFBatchPredictTest)
     }
   }
 
+  // Make data into sparse matrix.
+  arma::sp_mat cleanedData;
+  CF<>::CleanData(dataset, cleanedData);
+
   // Now create the CF object.
-  CF<> c(dataset);
+  CF<> c(cleanedData);
 
   // Get predictions for all user/item pairs we held back.
   arma::Mat<size_t> combinations(2, savedCols.n_cols);

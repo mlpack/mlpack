@@ -82,22 +82,18 @@ class CF
    * reference to the data that we will be using. There are parameters that can
    * be set; default values are provided for each of them. If the rank is left
    * unset (or is set to 0), a simple density-based heuristic will be used to
-   * choose a rank.  This overload of the constructor will only be available if
-   * the factorizer does not use a corodinate list (i.e. if UsesCoordinateList
-   * is false).
+   * choose a rank.
    *
-   * The U and T template parameters are for SFINAE, so that this overload is
-   * only available when the FactorizerType does not use a coordinate list.
+   * The provided dataset should be a coordinate list; that is, a 3-row matrix
+   * where each column corresponds to a (user, item, rating) entry in the
+   * matrix.
    *
-   * @param data Initial (user, item, rating) matrix.
+   * @param data Data matrix: coordinate list or dense matrix.
    * @param factorizer Instantiated factorizer object.
    * @param numUsersForSimilarity Size of the neighborhood.
    * @param rank Rank parameter for matrix factorization.
    */
-  template<typename U = FactorizerType,
-           typename T = typename boost::enable_if_c<
-               FactorizerTraits<U>::UsesCoordinateList>::type*>
-  CF(arma::mat& data,
+  CF(const arma::mat& data,
      FactorizerType factorizer = FactorizerType(),
      const size_t numUsersForSimilarity = 5,
      const size_t rank = 0);
@@ -115,17 +111,15 @@ class CF
    * The U and T template parameters are for SFINAE, so that this overload is
    * only available when the FactorizerType uses a coordinate list.
    *
-   * @param data Initial (user, item, rating) matrix.
+   * @param data Sparse matrix data.
    * @param factorizer Instantiated factorizer object.
    * @param numUsersForSimilarity Size of the neighborhood.
    * @param rank Rank parameter for matrix factorization.
-   * @param isCleaned If the data passed is cleaned for CF
    */
-  template<typename MatType,
-           typename U = FactorizerType,
+  template<typename U = FactorizerType,
            typename T = typename boost::disable_if_c<
                FactorizerTraits<U>::UsesCoordinateList>::type*>
-  CF(const MatType& data,
+  CF(const arma::sp_mat& data,
      FactorizerType factorizer = FactorizerType(),
      const size_t numUsersForSimilarity = 5,
      const size_t rank = 0);
