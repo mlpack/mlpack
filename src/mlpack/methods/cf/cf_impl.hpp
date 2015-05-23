@@ -18,48 +18,10 @@ namespace mlpack {
 namespace cf {
 
 /**
- * This function is used to factorize the rating matrix into the user and item
- * matrices, when UsesCoordinateList of property of the factorizer is set to
- * false. It uses the cleaned rating matrix instead of a (user, item, rating)
- * list.
- */
-template<typename FactorizerType>
-void ApplyFactorizer(arma::mat& /* data */,
-    arma::sp_mat& cleanedData,
-    FactorizerType& factorizer,
-    const size_t rank,
-    arma::mat& w,
-    arma::mat& h,
-    const typename boost::enable_if_c<
-        FactorizerTraits<FactorizerType>::UsesCoordinateList == false,
-        int*>::type = 0)
-{
-  factorizer.Apply(cleanedData, rank, w, h);
-}
-
-/**
- * This function is used to factorize the rating matrix into the user and item
- * matrices, when UsesCoordinateList of property of the factorizer is set to
- * true. It uses the (user, item, rating) list for factorization.
- */
-template<typename FactorizerType>
-void ApplyFactorizer(arma::mat& data,
-    arma::sp_mat& /* cleanedData */,
-    FactorizerType& factorizer,
-    const size_t rank,
-    arma::mat& w,
-    arma::mat& h,
-    const typename boost::enable_if_c<
-        FactorizerTraits<FactorizerType>::UsesCoordinateList == true,
-        int*>::type = 0)
-{
-  factorizer.Apply(data, rank, w, h);
-}
-
-/**
  * Construct the CF object using an instantiated factorizer.
  */
 template<typename FactorizerType>
+template<typename U, typename T>
 CF<FactorizerType>::CF(arma::mat& data,
                        FactorizerType factorizer,
                        const size_t numUsersForSimilarity,
@@ -73,7 +35,7 @@ CF<FactorizerType>::CF(arma::mat& data,
   {
     Log::Warn << "CF::CF(): neighbourhood size should be > 0("
         << numUsersForSimilarity << " given). Setting value to 5.\n";
-    //Setting Default Value of 5
+    // Set default value of 5.
     this->numUsersForSimilarity = 5;
   }
 
@@ -94,21 +56,20 @@ CF<FactorizerType>::CF(arma::mat& data,
     this->rank = rankEstimate;
   }
 
-  // Operations independent of the query:
-  // Decompose the sparse data matrix to user and data matrices.
-  ApplyFactorizer<FactorizerType>(data, cleanedData, factorizer, this->rank, w,
-      h);
+  // Decompose the data matrix (which is in coordinate list form) to user and
+  // data matrices.
+  factorizer.Apply(data, this->rank, w, h);
 }
 
 /**
  * Construct the CF object using an instantiated factorizer.
  */
 template<typename FactorizerType>
-template<typename U, class>
-CF<FactorizerType>::CF(const arma::sp_mat& data,
-            FactorizerType factorizer,
-            const size_t numUsersForSimilarity,
-            const size_t rank) :
+template<typename MatType, typename U, typename T>
+CF<FactorizerType>::CF(const MatType& data,
+                       FactorizerType factorizer,
+                       const size_t numUsersForSimilarity,
+                       const size_t rank) :
     numUsersForSimilarity(numUsersForSimilarity),
     rank(rank),
     factorizer(factorizer)

@@ -82,27 +82,38 @@ class CF
    * reference to the data that we will be using. There are parameters that can
    * be set; default values are provided for each of them. If the rank is left
    * unset (or is set to 0), a simple density-based heuristic will be used to
-   * choose a rank. 
+   * choose a rank.  This overload of the constructor will only be available if
+   * the factorizer does not use a corodinate list (i.e. if UsesCoordinateList
+   * is false).
+   *
+   * The U and T template parameters are for SFINAE, so that this overload is
+   * only available when the FactorizerType does not use a coordinate list.
    *
    * @param data Initial (user, item, rating) matrix.
    * @param factorizer Instantiated factorizer object.
    * @param numUsersForSimilarity Size of the neighborhood.
    * @param rank Rank parameter for matrix factorization.
    */
+  template<typename U = FactorizerType,
+           typename T = typename boost::enable_if_c<
+               FactorizerTraits<U>::UsesCoordinateList>::type*>
   CF(arma::mat& data,
      FactorizerType factorizer = FactorizerType(),
      const size_t numUsersForSimilarity = 5,
      const size_t rank = 0);
-     
+
   /**
    * Initialize the CF object using an instantiated factorizer. Store a
    * reference to the data that we will be using. There are parameters that can
    * be set; default values are provided for each of them. If the rank is left
    * unset (or is set to 0), a simple density-based heuristic will be used to
-   * choose a rank. Data will be considered in the format of items vs. users and 
-   * will be passed directly to the factorizer without cleaning. This overload 
-   * of constructor will only be available if the factorizer does not require
-   * coordinate list.
+   * choose a rank. Data will be considered in the format of items vs. users and
+   * will be passed directly to the factorizer without cleaning.  This overload
+   * of the constructor will only be available if the factorizer does not use a
+   * coordinate list (i.e. if UsesCoordinateList is false).
+   *
+   * The U and T template parameters are for SFINAE, so that this overload is
+   * only available when the FactorizerType uses a coordinate list.
    *
    * @param data Initial (user, item, rating) matrix.
    * @param factorizer Instantiated factorizer object.
@@ -110,20 +121,14 @@ class CF
    * @param rank Rank parameter for matrix factorization.
    * @param isCleaned If the data passed is cleaned for CF
    */
-  template<typename U = FactorizerType, 
-           class = typename boost::enable_if_c<
-                   !FactorizerTraits<U>::UsesCoordinateList,
-                   int*>::type>
-  CF(const arma::sp_mat& data,
+  template<typename MatType,
+           typename U = FactorizerType,
+           typename T = typename boost::disable_if_c<
+               FactorizerTraits<U>::UsesCoordinateList>::type*>
+  CF(const MatType& data,
      FactorizerType factorizer = FactorizerType(),
      const size_t numUsersForSimilarity = 5,
      const size_t rank = 0);
-   
-  /*void ApplyFactorizer(arma::mat& data, const typename boost::enable_if_c<
-      FactorizerTraits<FactorizerType>::IsCleaned == false, int*>::type);
-      
-  void ApplyFactorizer(arma::mat& data, const typename boost::enable_if_c<
-      FactorizerTraits<FactorizerType>::IsCleaned == true, int*>::type);*/
 
   //! Sets number of users for calculating similarity.
   void NumUsersForSimilarity(const size_t num)
@@ -189,7 +194,7 @@ class CF
   void GetRecommendations(const size_t numRecs,
                           arma::Mat<size_t>& recommendations,
                           arma::Col<size_t>& users);
-                          
+
   //! Converts the User, Item, Value Matrix to User-Item Table
   static void CleanData(const arma::mat& data, arma::sp_mat& cleanedData);
 
