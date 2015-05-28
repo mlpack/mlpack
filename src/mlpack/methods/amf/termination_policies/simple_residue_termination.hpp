@@ -62,8 +62,11 @@ class SimpleResidueTermination
    */
   bool IsConverged(arma::mat& W, arma::mat& H)
   {
-    // Calculate the norm and compute the residue
-    const double norm = arma::norm(W * H, "fro");
+    // Calculate the norm and compute the residue, but do it by hand, so as to
+    // avoid calculating (W*H), which may be very large.
+    double norm = 0.0;
+    for (size_t j = 0; j < H.n_cols; ++j)
+      norm += arma::norm(W * H.col(j), "fro");
     residue = fabs(normOld - norm) / normOld;
 
     // Store the norm.
@@ -71,6 +74,7 @@ class SimpleResidueTermination
 
     // Increment iteration count
     iteration++;
+    Log::Info << "Iteration " << iteration << "; residue " << residue << ".\n";
 
     // Check if termination criterion is met.
     return (residue < minResidue || iteration > maxIterations);
