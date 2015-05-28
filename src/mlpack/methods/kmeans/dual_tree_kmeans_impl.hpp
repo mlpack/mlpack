@@ -332,6 +332,17 @@ visited[node.Descendant(i)] << ".\n";
     node.Stat().LowerBound() -= clusterDistances[centroids.n_cols];
   }
 
+  // Recurse into children, and if all the children (and all the points) are
+  // pruned, then we can mark this as statically pruned.
+  bool allChildrenPruned = true;
+  for (size_t i = 0; i < node.NumChildren(); ++i)
+  {
+    UpdateTree(node.Child(i), centroids, unadjustedUpperBound,
+        adjustedUpperBound, unadjustedLowerBound, adjustedLowerBound);
+    if (!node.Child(i).Stat().StaticPruned())
+      allChildrenPruned = false;
+  }
+
   bool allPointsPruned = true;
   if (tree::TreeTraits<TreeType>::HasSelfChildren && node.NumChildren() > 0)
   {
@@ -405,17 +416,6 @@ visited[node.Descendant(i)] << ".\n";
         }
       }
     }
-  }
-
-  // Recurse into children, and if all the children (and all the points) are
-  // pruned, then we can mark this as statically pruned.
-  bool allChildrenPruned = true;
-  for (size_t i = 0; i < node.NumChildren(); ++i)
-  {
-    UpdateTree(node.Child(i), centroids, unadjustedUpperBound,
-        adjustedUpperBound, unadjustedLowerBound, adjustedLowerBound);
-    if (!node.Child(i).Stat().StaticPruned())
-      allChildrenPruned = false;
   }
 
 /*
