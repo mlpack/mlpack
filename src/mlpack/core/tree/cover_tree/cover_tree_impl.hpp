@@ -78,8 +78,9 @@ CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::CoverTree(
     {
       children.push_back(&(old->Child(i)));
 
-      // Set its parent correctly.
+      // Set its parent correctly, and rebuild the statistic.
       old->Child(i).Parent() = this;
+      old->Child(i).Stat() = StatisticType(old->Child(i));
     }
 
     // Remove all the children so they don't get erased.
@@ -162,6 +163,8 @@ CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::CoverTree(
 
       // Set its parent correctly.
       old->Child(i).Parent() = this;
+      // Rebuild the statistic.
+      old->Child(i).Stat() = StatisticType(old->Child(i));
     }
 
     // Remove all the children so they don't get erased.
@@ -1094,10 +1097,11 @@ inline void CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
     // Now take its child.
     children.push_back(&(old->Child(0)));
 
-    // Set its parent correctly.
+    // Set its parent and parameters correctly, and rebuild the statistic.
     old->Child(0).Parent() = this;
     old->Child(0).ParentDistance() = old->ParentDistance();
     old->Child(0).DistanceComps() = old->DistanceComps();
+    old->Child(0).Stat() = StatisticType(old->Child(0));
 
     // Remove its child (so it doesn't delete it).
     old->Children().erase(old->Children().begin() + old->Children().size() - 1);
