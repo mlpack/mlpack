@@ -127,7 +127,7 @@ CF<FactorizerType>::CF(const arma::sp_mat& data,
     this->rank = rankEstimate;
   }
 
-  factorizer.Apply(cleanedData, rank, w, h);
+  factorizer.Apply(cleanedData, this->rank, w, h);
 }
 
 template<typename FactorizerType>
