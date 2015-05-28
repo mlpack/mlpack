@@ -287,7 +287,6 @@ visited[node.Descendant(i)] << ".\n";
   }
 */
 
-
   if ((node.Stat().Pruned() == centroids.n_cols) &&
       (node.Stat().Owner() < centroids.n_cols))
   {
@@ -334,7 +333,17 @@ visited[node.Descendant(i)] << ".\n";
   }
 
   bool allPointsPruned = true;
-  if (!node.Stat().StaticPruned())
+  if (tree::TreeTraits<TreeType>::HasSelfChildren && node.NumChildren() > 0)
+  {
+    // If this tree type has self-children, then we have already adjusted the
+    // point bounds at a lower level, and we can determine if all of our points
+    // are pruned simply by seeing if all of the children's points are pruned.
+    // This particular line below additionally assumes that each node's points
+    // are all contained in its first child.  This is valid for the cover tree,
+    // but maybe not others.
+    allPointsPruned = node.Child(0).Stat().StaticPruned();
+  }
+  else if (!node.Stat().StaticPruned())
   {
     // Try to prune individual points.
     for (size_t i = 0; i < node.NumPoints(); ++i)
