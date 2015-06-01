@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(AllowEmptyClusterTest)
   // Make sure the method doesn't modify any points.
   metric::LMetric<2, true> metric;
   BOOST_REQUIRE_EQUAL(AllowEmptyClusters::EmptyCluster(kMeansData, 2, centroids,
-      counts, metric), 0);
+      counts, metric, 0), 0);
 
   // Make sure no assignments were changed.
   for (size_t i = 0; i < assignments.n_elem; i++)
@@ -148,8 +148,9 @@ BOOST_AUTO_TEST_CASE(MaxVarianceNewClusterTest)
   metric::LMetric<2, true> metric;
 
   // This should only change one point.
-  BOOST_REQUIRE_EQUAL(MaxVarianceNewCluster::EmptyCluster(data, 2, centroids,
-      counts, metric), 1);
+  MaxVarianceNewCluster mvnc;
+  BOOST_REQUIRE_EQUAL(mvnc.EmptyCluster(data, 2, centroids, counts, metric, 0),
+      1);
 
   // Add the variance of each point's distance away from the cluster.  I think
   // this is the sensible thing to do.
