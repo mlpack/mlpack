@@ -16,7 +16,7 @@
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 
 #include <mlpack/methods/ann/layer/neuron_layer.hpp>
- #include <mlpack/methods/ann/layer/lstm_layer.hpp>
+#include <mlpack/methods/ann/layer/lstm_layer.hpp>
 #include <mlpack/methods/ann/layer/bias_layer.hpp>
 #include <mlpack/methods/ann/layer/binary_classification_layer.hpp>
 #include <mlpack/methods/ann/layer/multiclass_classification_layer.hpp>
@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
   SteepestDescent< > conOptimizer3(hiddenLayer0.InputSize(),
       hiddenLayer1.OutputSize(), 1, 0);
 
-  NguyenWidrowInitialization randInit;
+  RandomInitialization randInit(-0.5, 0.5);
 
   FullConnection<
       decltype(inputLayer),
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
 
   RNN<decltype(modules),
       decltype(outputLayer),
-      MeanSquaredErrorFunction<> > net(modules, outputLayer);
+      MeanSquaredErrorFunction> net(modules, outputLayer);
 
   // Train the network for 1000 epochs.
   Trainer<decltype(net)> trainer(net, 1000);
@@ -328,7 +328,7 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
                       LogisticFunction,
                       SteepestDescent<>,
                       BinaryClassificationLayer<>,
-                      MeanSquaredErrorFunction<> >
+                      MeanSquaredErrorFunction>
       (input, labels, input, labels, 10, 10, randInit);
 
   // Vanilla neural net with identity activation function.
@@ -336,7 +336,7 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
                       IdentityFunction,
                       SteepestDescent<>,
                       BinaryClassificationLayer<>,
-                      MeanSquaredErrorFunction<> >
+                      MeanSquaredErrorFunction>
       (input, labels, input, labels, 1, 1, randInit);
 
   // Vanilla neural net with rectifier activation function.
@@ -344,7 +344,7 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
                     RectifierFunction,
                     SteepestDescent<>,
                     BinaryClassificationLayer<>,
-                    MeanSquaredErrorFunction<> >
+                    MeanSquaredErrorFunction>
     (input, labels, input, labels, 10, 10, randInit);
 
   // Vanilla neural net with softsign activation function.
@@ -352,7 +352,7 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
                     SoftsignFunction,
                     SteepestDescent<>,
                     BinaryClassificationLayer<>,
-                    MeanSquaredErrorFunction<> >
+                    MeanSquaredErrorFunction>
     (input, labels, input, labels, 10, 10, randInit);
 
   // Vanilla neural net with tanh activation function.
@@ -360,7 +360,7 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
                     TanhFunction,
                     SteepestDescent<>,
                     BinaryClassificationLayer<>,
-                    MeanSquaredErrorFunction<> >
+                    MeanSquaredErrorFunction>
     (input, labels, input, labels, 10, 10, randInit);
 }
 
@@ -626,7 +626,7 @@ void ReberGrammarTestNetwork(HiddenLayerType& hiddenLayer0,
 
   RNN<decltype(modules),
       decltype(outputLayer),
-      MeanSquaredErrorFunction<> > net(modules, outputLayer);
+      MeanSquaredErrorFunction> net(modules, outputLayer);
 
   // Train the network for (500 * trainReberGrammarCount) epochs.
   Trainer<decltype(net)> trainer(net, 1, 1, 0, false);
@@ -861,7 +861,7 @@ void DistractedSequenceRecallTestNetwork(HiddenLayerType& hiddenLayer0)
 
   RNN<decltype(modules),
       decltype(outputLayer),
-      MeanSquaredErrorFunction<> > net(modules, outputLayer);
+      MeanSquaredErrorFunction> net(modules, outputLayer);
 
   // Train the network for (500 * trainDistractedSequenceCount) epochs.
   Trainer<decltype(net)> trainer(net, 1, 1, 0, false);

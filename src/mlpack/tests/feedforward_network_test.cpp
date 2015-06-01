@@ -162,15 +162,15 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   RandomInitialization randInitA(1, 2);
 
   // Vanilla neural net with logistic activation function.
-  // Because 92 percent of the patients are not hyperthyroid a the neural
-  // network mst be significant better than 92%.
+  // Because 92 percent of the patients are not hyperthyroid the neural
+  // network must be significant better than 92%.
   BuildVanillaNetwork<RandomInitialization,
                       LogisticFunction,
                       SteepestDescent<>,
                       BinaryClassificationLayer<>,
-                      MeanSquaredErrorFunction<> >
+                      MeanSquaredErrorFunction>
       (trainData, trainLabels, testData, testLabels, 4, 500,
-          0.3, 60, randInitA);
+          0.1, 60, randInitA);
 
   dataset.load("mnist_first250_training_4s_and_9s.arm");
 
@@ -188,7 +188,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
                       LogisticFunction,
                       SteepestDescent<>,
                       BinaryClassificationLayer<>,
-                      MeanSquaredErrorFunction<> >
+                      MeanSquaredErrorFunction>
       (dataset, labels, dataset, labels, 100, 100, 0.6, 10, randInitB);
 
   // Vanilla neural net with tanh activation function.
@@ -196,7 +196,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
                     TanhFunction,
                     SteepestDescent<>,
                     BinaryClassificationLayer<>,
-                    MeanSquaredErrorFunction<> >
+                    MeanSquaredErrorFunction>
     (dataset, labels, dataset, labels, 10, 200, 0.6, 20, randInitB);
 }
 
@@ -220,7 +220,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkConvergenceTest)
                       LogisticFunction,
                       SteepestDescent<>,
                       BinaryClassificationLayer<>,
-                      MeanSquaredErrorFunction<> >
+                      MeanSquaredErrorFunction>
       (input, labels, input, labels, 4, 0, 0, 0.01, randInit);
 
   // Vanilla neural net with tanh activation function.
@@ -228,7 +228,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkConvergenceTest)
                       TanhFunction,
                       SteepestDescent<>,
                       BinaryClassificationLayer<>,
-                      MeanSquaredErrorFunction<> >
+                      MeanSquaredErrorFunction>
       (input, labels, input, labels, 4, 0, 0, 0.01, randInit);
 
   // Test on a linearly separable dataset (AND).
@@ -241,7 +241,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkConvergenceTest)
                     LogisticFunction,
                     SteepestDescent<>,
                     BinaryClassificationLayer<>,
-                    MeanSquaredErrorFunction<> >
+                    MeanSquaredErrorFunction>
     (input, labels, input, labels, 4, 0, 0, 0.01, randInit);
 
   // Vanilla neural net with tanh activation function.
@@ -249,7 +249,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkConvergenceTest)
                       TanhFunction,
                       SteepestDescent<>,
                       BinaryClassificationLayer<>,
-                      MeanSquaredErrorFunction<> >
+                      MeanSquaredErrorFunction>
       (input, labels, input, labels, 4, 0, 0, 0.01, randInit);
 }
 
@@ -372,7 +372,7 @@ BOOST_AUTO_TEST_CASE(NetworkDecreasingErrorTest)
                        LogisticFunction,
                        SteepestDescent<>,
                        BinaryClassificationLayer<>,
-                       MeanSquaredErrorFunction<> >
+                       MeanSquaredErrorFunction>
       (dataset, labels, dataset, labels, 100, 50, randInitB);
 }
 
