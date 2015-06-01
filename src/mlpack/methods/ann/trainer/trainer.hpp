@@ -188,9 +188,26 @@ class Trainer
      * @param sliceNum Provide a Col object of the specified index.
      */
     template<typename eT>
-    arma::Col<eT> Element(arma::Mat<eT>& input, const size_t colNum)
+    typename std::enable_if<!NetworkTraits<NetworkType>::IsCNN,
+        arma::Col<eT> >::type
+    Element(arma::Mat<eT>& input, const size_t colNum)
     {
       return arma::Col<eT>(input.colptr(colNum), input.n_rows, false, true);
+    }
+
+    /*
+     * Create a Mat object which uses memory from an existing matrix object.
+     * (This approach is currently not alias safe)
+     *
+     * @param data The reference data.
+     * @param sliceNum Provide a Mat object of the specified index.
+     */
+    template<typename eT>
+    typename std::enable_if<NetworkTraits<NetworkType>::IsCNN,
+        arma::Mat<eT> >::type
+    Element(arma::Mat<eT>& input, const size_t colNum)
+    {
+      return arma::Mat<eT>(input.colptr(colNum), input.n_rows, 1, false, true);
     }
 
     /*
@@ -200,9 +217,9 @@ class Trainer
      * @param sliceNum Provide a single slice of the specified index.
      */
     template<typename eT>
-    const arma::Mat<eT>& Element(arma::Cube<eT>& input, const size_t sliceNum)
+    const arma::Cube<eT> Element(arma::Cube<eT>& input, const size_t sliceNum)
     {
-      return *(input.mat_ptrs[sliceNum]);
+      return input.slices(sliceNum, sliceNum);
     }
 
     /*
@@ -231,8 +248,7 @@ class Trainer
     NetworkType& net;
 
     //! The current network error of a single input.
-    typename std::conditional<NetworkTraits<NetworkType>::IsFNN ||
-                              NetworkTraits<NetworkType>::IsCNN,
+    typename std::conditional<NetworkTraits<NetworkType>::IsFNN,
         VecType, MatType>::type error;
 
     //! The current epoch if maxEpochs is set.
