@@ -23,11 +23,9 @@ namespace ann /** Artificial Neural Network. */ {
  * granular way to calculate the error.
  *
  * @tparam Layer The layer that is connected with the output layer.
- * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
  */
 template<
-    class Layer = NeuronLayer< >,
-    typename VecType = arma::colvec
+    class Layer = NeuronLayer< >
 >
 class CrossEntropyErrorFunction
 {
@@ -39,7 +37,8 @@ class CrossEntropyErrorFunction
    * @param target Target data.
    * @return cross-entropy error.
    */
-  static double Error(const VecType& input, const VecType& target)
+  template<typename DataType>
+  static double Error(const DataType& input, const DataType& target)
   {
     if (LayerTraits<Layer>::IsBinary)
       return -arma::dot(arma::trunc_log(arma::abs(target - input)), target);

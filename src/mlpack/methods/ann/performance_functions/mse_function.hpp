@@ -15,10 +15,7 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * The mean squared error performance function measures the network's
  * performance according to the mean of squared errors.
- *
- * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
  */
-template<typename VecType = arma::colvec>
 class MeanSquaredErrorFunction
 {
   public:
@@ -29,9 +26,10 @@ class MeanSquaredErrorFunction
    * @param target Target data.
    * @return mean of squared errors.
    */
-  static double Error(const VecType& input, const VecType& target)
+  template<typename DataType>
+  static double Error(const DataType& input, const DataType& target)
   {
-    return arma::mean(arma::square(target - input));
+    return arma::mean(arma::mean(arma::square(target - input)));
   }
 
 }; // class MeanSquaredErrorFunction

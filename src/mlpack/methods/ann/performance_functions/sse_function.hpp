@@ -15,10 +15,7 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * The sum squared error performance function measures the network's performance
  * according to the sum of squared errors.
- *
- * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
  */
-template<typename VecType = arma::colvec>
 class SumSquaredErrorFunction
 {
   public:
@@ -29,7 +26,8 @@ class SumSquaredErrorFunction
    * @param target Target data.
    * @return sum of squared errors.
    */
-  static double Error(const VecType& input, const VecType& target)
+  template<typename DataType>
+  static double Error(const DataType& input, const DataType& target)
   {
     return arma::sum(arma::square(target - input));
   }
