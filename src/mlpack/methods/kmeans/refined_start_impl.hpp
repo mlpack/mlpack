@@ -33,7 +33,6 @@ void RefinedStart::Cluster(const MatType& data,
   // We will use these objects repeatedly for clustering.
   arma::Col<size_t> sampledAssignments;
   arma::mat centroids;
-  KMeans<> kmeans;
 
   for (size_t i = 0; i < samplings; ++i)
   {
@@ -57,6 +56,7 @@ void RefinedStart::Cluster(const MatType& data,
     // cluster, we re-initialize that cluster as the point furthest away from
     // the cluster with maximum variance.  This is not *exactly* what the paper
     // implements, but it is quite similar, and we'll call it "good enough".
+    KMeans<> kmeans;
     kmeans.Cluster(sampledData, clusters, sampledAssignments, centroids);
 
     // Store the sampled centroids.
@@ -66,6 +66,7 @@ void RefinedStart::Cluster(const MatType& data,
   }
 
   // Now, we run k-means on the sampled centroids to get our final clusters.
+  KMeans<> kmeans;
   kmeans.Cluster(sampledCentroids, clusters, sampledAssignments, centroids);
 
   // Turn the final centroids into assignments.
