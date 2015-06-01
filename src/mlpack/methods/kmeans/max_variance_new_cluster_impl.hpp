@@ -109,13 +109,14 @@ void MaxVarianceNewCluster::Precalculate(const MatType& data,
         centroids.col(closestCluster)), 2.0);
   }
 
-  // Divide by the number of points in the cluster to produce the variance.
-  // Although a -nan will occur here for the empty cluster(s), this doesn't
-  // matter because variances.max() won't pick it up.  If the number of points
-  // in the cluster is 1, we ensure that cluster is not selected by forcing the
-  // variance to 0.
+  // Divide by the number of points in the cluster to produce the variance,
+  // unless the cluster is empty or contains only one point, in which case we
+  // set the variance to 0.
   for (size_t i = 0; i < clusterCounts.n_elem; ++i)
-    variances[i] /= (clusterCounts[i] == 1) ? DBL_MAX : clusterCounts[i];
+    if (clusterCounts[i] <= 1)
+      variances[i] = 0;
+    else
+      variances[i] /= clusterCounts[i];
 }
 
 }; // namespace kmeans
