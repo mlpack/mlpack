@@ -168,6 +168,8 @@ Cluster(const MatType& data,
     iteration++;
     Log::Info << "KMeans::Cluster(): iteration " << iteration << ", residual "
         << cNorm << ".\n";
+    if (isnan(cNorm) || isinf(cNorm)
+      cNorm = 1e-4; // Keep iterating.
 
   } while (cNorm > 1e-5 && iteration != maxIterations);
 
