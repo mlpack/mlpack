@@ -33,6 +33,7 @@ class AllowEmptyClusters
    * @param centroids Centroids of each cluster (one per column).
    * @param clusterCounts Number of points in each cluster.
    * @param assignments Cluster assignments of each point.
+   * @param iteration Number of iteration.
    *
    * @return Number of points changed (0).
    */
@@ -42,14 +43,15 @@ class AllowEmptyClusters
       const size_t /* emptyCluster */,
       const arma::mat& /* centroids */,
       arma::Col<size_t>& /* clusterCounts */,
-      MetricType& /* metric */)
+      MetricType& /* metric */,
+      const size_t /* iteration */)
   {
     // Empty clusters are okay!  Do nothing.
     return 0;
   }
 };
 
-}; // namespace kmeans
-}; // namespace mlpack
+} // namespace kmeans
+} // namespace mlpack
 
 #endif

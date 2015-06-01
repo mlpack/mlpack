@@ -22,7 +22,7 @@ class MaxVarianceNewCluster
 {
  public:
   //! Default constructor required by EmptyClusterPolicy.
-  MaxVarianceNewCluster() { }
+  MaxVarianceNewCluster() : iteration(size_t(-1)) { }
 
   /**
    * Take the point furthest from the centroid of the cluster with maximum
@@ -38,15 +38,31 @@ class MaxVarianceNewCluster
    * @return Number of points changed.
    */
   template<typename MetricType, typename MatType>
-  static size_t EmptyCluster(const MatType& data,
-                             const size_t emptyCluster,
-                             arma::mat& centroids,
-                             arma::Col<size_t>& clusterCounts,
-                             MetricType& metric);
+  size_t EmptyCluster(const MatType& data,
+                      const size_t emptyCluster,
+                      arma::mat& centroids,
+                      arma::Col<size_t>& clusterCounts,
+                      MetricType& metric,
+                      const size_t iteration);
+
+ private:
+  //! Index of iteration for which variance is cached.
+  size_t iteration;
+  //! Cached variances for each cluster.
+  arma::vec variances;
+  //! Cached assignments for each point.
+  arma::Col<size_t> assignments;
+
+  //! Called when we are on a new iteration.
+  template<typename MetricType, typename MatType>
+  void Precalculate(const MatType& data,
+                    arma::mat& centroids,
+                    arma::Col<size_t>& clusterCounts,
+                    MetricType& metric);
 };
 
-}; // namespace kmeans
-}; // namespace mlpack
+} // namespace kmeans
+} // namespace mlpack
 
 // Include implementation.
 #include "max_variance_new_cluster_impl.hpp"

@@ -158,9 +158,10 @@ Cluster(const MatType& data,
         Log::Info << "Cluster " << i << " is empty.\n";
         if (iteration % 2 == 0)
           emptyClusterAction.EmptyCluster(data, i, centroidsOther, counts,
-              metric);
+              metric, iteration);
         else
-          emptyClusterAction.EmptyCluster(data, i, centroids, counts, metric);
+          emptyClusterAction.EmptyCluster(data, i, centroids, counts, metric,
+              iteration);
       }
     }
 
