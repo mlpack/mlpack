@@ -215,7 +215,7 @@ void CheckGradientNumericallyCorrect(const arma::colvec input,
                                      const double threshold)
 {
   // Specify the structure of the feed forward neural network.
-  RandomInitialization<> randInit(-0.5, 0.5);
+  RandomInitialization randInit(-0.5, 0.5);
   arma::colvec error;
 
   NeuronLayer<ActivationFunction> inputLayer(input.n_elem);
