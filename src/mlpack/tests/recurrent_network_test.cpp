@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
   NeuronLayer<LogisticFunction> hiddenLayer0(4);
   NeuronLayer<LogisticFunction> recurrentLayer0(hiddenLayer0.InputSize());
   NeuronLayer<LogisticFunction> hiddenLayer1(2);
-  BinaryClassificationLayer<> outputLayer;
+  BinaryClassificationLayer outputLayer;
 
   SteepestDescent< > conOptimizer0(inputLayer.InputSize(),
       hiddenLayer0.InputSize(), 1, 0);
@@ -327,7 +327,7 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
   CompareVanillaNetworks<RandomInitialization,
                       LogisticFunction,
                       SteepestDescent<>,
-                      BinaryClassificationLayer<>,
+                      BinaryClassificationLayer,
                       MeanSquaredErrorFunction>
       (input, labels, input, labels, 10, 10, randInit);
 
@@ -335,7 +335,7 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
   CompareVanillaNetworks<RandomInitialization,
                       IdentityFunction,
                       SteepestDescent<>,
-                      BinaryClassificationLayer<>,
+                      BinaryClassificationLayer,
                       MeanSquaredErrorFunction>
       (input, labels, input, labels, 1, 1, randInit);
 
@@ -343,7 +343,7 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
   CompareVanillaNetworks<RandomInitialization,
                     RectifierFunction,
                     SteepestDescent<>,
-                    BinaryClassificationLayer<>,
+                    BinaryClassificationLayer,
                     MeanSquaredErrorFunction>
     (input, labels, input, labels, 10, 10, randInit);
 
@@ -351,7 +351,7 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
   CompareVanillaNetworks<RandomInitialization,
                     SoftsignFunction,
                     SteepestDescent<>,
-                    BinaryClassificationLayer<>,
+                    BinaryClassificationLayer,
                     MeanSquaredErrorFunction>
     (input, labels, input, labels, 10, 10, randInit);
 
@@ -359,7 +359,7 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
   CompareVanillaNetworks<RandomInitialization,
                     TanhFunction,
                     SteepestDescent<>,
-                    BinaryClassificationLayer<>,
+                    BinaryClassificationLayer,
                     MeanSquaredErrorFunction>
     (input, labels, input, labels, 10, 10, randInit);
 }
@@ -576,7 +576,7 @@ void ReberGrammarTestNetwork(HiddenLayerType& hiddenLayer0,
   NeuronLayer<LogisticFunction> inputLayer(7);
   NeuronLayer<IdentityFunction> recurrentLayer0(hiddenLayer0.OutputSize());
   NeuronLayer<LogisticFunction> hiddenLayer1(7);
-  BinaryClassificationLayer<> outputLayer;
+  BinaryClassificationLayer outputLayer;
 
   SteepestDescent< > conOptimizer0(inputLayer.OutputSize(),
       hiddenLayer0.InputSize(), 0.1);
@@ -811,7 +811,7 @@ void DistractedSequenceRecallTestNetwork(HiddenLayerType& hiddenLayer0)
   NeuronLayer<LogisticFunction> inputLayer(10);
   NeuronLayer<IdentityFunction> recurrentLayer0(hiddenLayer0.OutputSize());
   NeuronLayer<LogisticFunction> hiddenLayer1(3);
-  BinaryClassificationLayer<> outputLayer;
+  BinaryClassificationLayer outputLayer;
 
   SteepestDescent< > conOptimizer0(inputLayer.OutputSize(),
       hiddenLayer0.InputSize(), 0.1);

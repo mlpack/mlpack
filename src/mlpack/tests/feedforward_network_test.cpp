@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   BuildVanillaNetwork<RandomInitialization,
                       LogisticFunction,
                       SteepestDescent<>,
-                      BinaryClassificationLayer<>,
+                      BinaryClassificationLayer,
                       MeanSquaredErrorFunction>
       (trainData, trainLabels, testData, testLabels, 4, 500,
           0.1, 60, randInitA);
@@ -187,7 +187,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   BuildVanillaNetwork<RandomInitialization,
                       LogisticFunction,
                       SteepestDescent<>,
-                      BinaryClassificationLayer<>,
+                      BinaryClassificationLayer,
                       MeanSquaredErrorFunction>
       (dataset, labels, dataset, labels, 100, 100, 0.6, 10, randInitB);
 
@@ -195,7 +195,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   BuildVanillaNetwork<RandomInitialization,
                     TanhFunction,
                     SteepestDescent<>,
-                    BinaryClassificationLayer<>,
+                    BinaryClassificationLayer,
                     MeanSquaredErrorFunction>
     (dataset, labels, dataset, labels, 10, 200, 0.6, 20, randInitB);
 }
@@ -219,7 +219,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkConvergenceTest)
   BuildVanillaNetwork<RandomInitialization,
                       LogisticFunction,
                       SteepestDescent<>,
-                      BinaryClassificationLayer<>,
+                      BinaryClassificationLayer,
                       MeanSquaredErrorFunction>
       (input, labels, input, labels, 4, 0, 0, 0.01, randInit);
 
@@ -227,7 +227,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkConvergenceTest)
   BuildVanillaNetwork<RandomInitialization,
                       TanhFunction,
                       SteepestDescent<>,
-                      BinaryClassificationLayer<>,
+                      BinaryClassificationLayer,
                       MeanSquaredErrorFunction>
       (input, labels, input, labels, 4, 0, 0, 0.01, randInit);
 
@@ -240,7 +240,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkConvergenceTest)
   BuildVanillaNetwork<RandomInitialization,
                     LogisticFunction,
                     SteepestDescent<>,
-                    BinaryClassificationLayer<>,
+                    BinaryClassificationLayer,
                     MeanSquaredErrorFunction>
     (input, labels, input, labels, 4, 0, 0, 0.01, randInit);
 
@@ -248,7 +248,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkConvergenceTest)
   BuildVanillaNetwork<RandomInitialization,
                       TanhFunction,
                       SteepestDescent<>,
-                      BinaryClassificationLayer<>,
+                      BinaryClassificationLayer,
                       MeanSquaredErrorFunction>
       (input, labels, input, labels, 4, 0, 0, 0.01, randInit);
 }
@@ -371,7 +371,7 @@ BOOST_AUTO_TEST_CASE(NetworkDecreasingErrorTest)
   BuildNetworkOptimzer<RandomInitialization,
                        LogisticFunction,
                        SteepestDescent<>,
-                       BinaryClassificationLayer<>,
+                       BinaryClassificationLayer,
                        MeanSquaredErrorFunction>
       (dataset, labels, dataset, labels, 100, 50, randInitB);
 }
