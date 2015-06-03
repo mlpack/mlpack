@@ -40,10 +40,8 @@ class MaxPooling
   template<typename MatType>
   void Unpooling(const MatType& input, const double value, MatType& output)
   {
-    arma::uword row, col;
-    output = arma::zeros<MatType>(input.n_rows, input.n_cols);
-    input.max(row, col);
-    output(row, col) = value;
+    output = MatType(input.n_rows, input.n_cols);
+    output.fill(value / input.n_elem);
   }
 };
 
