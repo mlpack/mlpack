@@ -5,8 +5,8 @@
  * Definition of the BiasLayer class, which implements a standard bias
  * layer.
  */
-#ifndef __MLPACK_METHOS_ANN_LAYER_BIAS_LAYER_HPP
-#define __MLPACK_METHOS_ANN_LAYER_BIAS_LAYER_HPP
+#ifndef __MLPACK_METHODS_ANN_LAYER_BIAS_LAYER_HPP
+#define __MLPACK_METHODS_ANN_LAYER_BIAS_LAYER_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
@@ -20,13 +20,11 @@ namespace ann /** Artificial Neural Network. */ {
  *
  * @tparam ActivationFunction Activation function used for the bias layer
  * (Default IdentityFunction).
- * @tparam MatType Type of data (arma::mat or arma::sp_mat).
- * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
+ * @tparam DataType Type of data (arma::colvec, arma::mat or arma::sp_mat).
  */
 template <
     class ActivationFunction = IdentityFunction,
-    typename MatType = arma::mat,
-    typename VecType = arma::colvec
+    typename DataType = arma::colvec
 >
 class BiasLayer
 
@@ -38,9 +36,12 @@ class BiasLayer
    * @param layerSize The number of neurons.
    */
   BiasLayer(const size_t layerSize) :
-      inputActivations(arma::ones<VecType>(layerSize)),
-      delta(arma::zeros<VecType>(layerSize)),
-      layerSize(layerSize)
+      inputActivations(arma::ones<DataType>(layerSize)),
+      delta(arma::zeros<DataType>(layerSize)),
+      layerRows(layerSize),
+      layerCols(1),
+      layerSlices(1),
+      outputMaps(1)
   {
     // Nothing to do here.
   }
@@ -53,7 +54,7 @@ class BiasLayer
    * activity function.
    * @param outputActivation Data to store the resulting output activation.
    */
-  void FeedForward(const VecType& inputActivation, VecType& outputActivation)
+  void FeedForward(const DataType& inputActivation, DataType& outputActivation)
   {
     ActivationFunction::fn(inputActivation, outputActivation);
   }
@@ -68,58 +69,77 @@ class BiasLayer
    * @param delta The calculating delta using the partial derivative of the
    * error with respect to a weight.
    */
-  void FeedBackward(const VecType& inputActivation,
-                    const VecType& error,
-                    VecType& delta)
+  void FeedBackward(const DataType& inputActivation,
+                    const DataType& error,
+                    DataType& delta)
   {
-    VecType derivative;
+    DataType derivative;
     ActivationFunction::deriv(inputActivation, derivative);
 
     delta = error % derivative;
   }
 
   //! Get the input activations.
-  const VecType& InputActivation() const { return inputActivations; }
-  //  //! Modify the input activations.
-  VecType& InputActivation() { return inputActivations; }
+  const DataType& InputActivation() const { return inputActivations; }
+  //! Modify the input activations.
+  DataType& InputActivation() { return inputActivations; }
 
   //! Get the detla.
-  VecType& Delta() const { return delta; }
- //  //! Modify the delta.
-  VecType& Delta() { return delta; }
+  DataType& Delta() const { return delta; }
+  //! Modify the delta.
+  DataType& Delta() { return delta; }
 
   //! Get input size.
-  size_t InputSize() const { return layerSize; }
-  //  //! Modify the delta.
-  size_t& InputSize() { return layerSize; }
+  size_t InputSize() const { return layerRows; }
+  //! Modify the delta.
+  size_t& InputSize() { return layerRows; }
 
   //! Get output size.
-  size_t OutputSize() const { return layerSize; }
+  size_t OutputSize() const { return layerRows; }
   //! Modify the output size.
-  size_t& OutputSize() { return layerSize; }
+  size_t& OutputSize() { return layerRows; }
+
+  //! Get the number of layer rows.
+  size_t LayerRows() const { return layerRows; }
+  //! Modify the number of layer rows.
+  size_t& LayerRows() { return layerRows; }
+
+  //! Get the number of layer columns.
+  size_t LayerCols() const { return layerCols; }
+  //! Modify the number of layer columns.
+  size_t& LayerCols() { return layerCols; }
 
   //! Get the number of layer slices.
-  size_t LayerSlices() const { return 1; }
+  size_t LayerSlices() const { return layerSlices; }
+
+  //! Get the number of output maps.
+  size_t OutputMaps() const { return outputMaps; }
 
  private:
   //! Locally-stored input activation object.
-  VecType inputActivations;
+  DataType inputActivations;
 
   //! Locally-stored delta object.
-  VecType delta;
+  DataType delta;
 
-  //! Locally-stored number of neurons.
-  size_t layerSize;
+  //! Locally-stored number of layer rows.
+  size_t layerRows;
+
+  //! Locally-stored number of layer cols.
+  size_t layerCols;
+
+  //! Locally-stored number of layer slices.
+  size_t layerSlices;
+
+  //! Locally-stored number of output maps.
+  size_t outputMaps;
 }; // class BiasLayer
 
 //! Layer traits for the bias layer.
-template<typename ActivationFunction, typename MatType, typename VecType>
-class LayerTraits<BiasLayer<ActivationFunction, MatType, VecType> >
+template<typename ActivationFunction, typename DataType>
+class LayerTraits<BiasLayer<ActivationFunction, DataType> >
 {
  public:
-  /**
-   * If true, then the layer is binary.
-   */
   static const bool IsBinary = false;
   static const bool IsOutputLayer = false;
   static const bool IsBiasLayer = true;

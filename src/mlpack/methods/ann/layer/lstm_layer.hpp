@@ -5,8 +5,8 @@
  * Definition of the LSTMLayer class, which implements a lstm network
  * layer.
  */
-#ifndef __MLPACK_METHOS_ANN_LAYER_LSTM_LAYER_HPP
-#define __MLPACK_METHOS_ANN_LAYER_LSTM_LAYER_HPP
+#ifndef __MLPACK_METHODS_ANN_LAYER_LSTM_LAYER_HPP
+#define __MLPACK_METHODS_ANN_LAYER_LSTM_LAYER_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
@@ -303,7 +303,7 @@ class LSTMLayer
 
   //! Get the input activations.
   const VecType& InputActivation() const { return inputActivations; }
- //  //! Modify the input activations.
+  //! Modify the input activations.
   VecType& InputActivation() { return inputActivations; }
 
   //! Get input size.
@@ -314,12 +314,21 @@ class LSTMLayer
   //! Modify the output size.
   size_t& OutputSize() { return layerSize; }
 
+  //! Get the number of output maps.
+  size_t OutputMaps() const { return 1; }
+
   //! Get the number of layer slices.
   size_t LayerSlices() const { return 1; }
 
+  //! Get the number of layer rows.
+  size_t LayerRows() const { return layerSize; }
+
+  //! Get the number of layer columns.
+  size_t LayerCols() const { return 1; }
+
   //! Get the detla.
   VecType& Delta() const { return delta; }
- //  //! Modify the delta.
+  //! Modify the delta.
   VecType& Delta() { return delta; }
 
   //! Get the sequence length.
@@ -456,9 +465,6 @@ class LayerTraits<
 >
 {
  public:
-  /**
-   * If true, then the layer is binary.
-   */
   static const bool IsBinary = false;
   static const bool IsOutputLayer = false;
   static const bool IsBiasLayer = false;

@@ -2,11 +2,11 @@
  * @file softmax_layer.hpp
  * @author Marcus Edel
  *
- * Definition of the SoftmaxLayer class, which implements a standard network
- * layer.
+ * Definition of the SoftmaxLayer class, which implements a standard softmax
+ * network layer.
  */
-#ifndef __MLPACK_METHOS_ANN_LAYER_SOFTMAX_LAYER_HPP
-#define __MLPACK_METHOS_ANN_LAYER_SOFTMAX_LAYER_HPP
+#ifndef __MLPACK_METHODS_ANN_LAYER_SOFTMAX_LAYER_HPP
+#define __MLPACK_METHODS_ANN_LAYER_SOFTMAX_LAYER_HPP
 
 #include <mlpack/core.hpp>
 
@@ -70,17 +70,17 @@ class SoftmaxLayer
 
   //! Get the input activations.
   VecType& InputActivation() const { return inputActivations; }
-  //  //! Modify the input activations.
+  //! Modify the input activations.
   VecType& InputActivation() { return inputActivations; }
 
   //! Get the detla.
   VecType& Delta() const { return delta; }
- //  //! Modify the delta.
+  //! Modify the delta.
   VecType& Delta() { return delta; }
 
   //! Get input size.
   size_t InputSize() const { return layerSize; }
-  //  //! Modify the delta.
+  //! Modify the delta.
   size_t& InputSize() { return layerSize; }
 
   //! Get output size.
@@ -88,8 +88,11 @@ class SoftmaxLayer
   //! Modify the output size.
   size_t& OutputSize() { return layerSize; }
 
-    //! Get the number of layer slices.
+  //! Get the number of layer slices.
   size_t LayerSlices() const { return 1; }
+
+  //! Get the number of output maps.
+  size_t OutputMaps() const { return 1; }
 
  private:
   //! Locally-stored input activation object.
