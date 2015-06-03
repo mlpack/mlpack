@@ -178,6 +178,36 @@ class FFTConvolution
       output.slice(i) = convOutput;
     }
   }
+
+  /*
+   * Perform a convolution using a 3rd order tensors as input and output and a
+   * dense matrix as filter.
+   *
+   * @param input Input used to perform the convolution.
+   * @param filter Filter used to perform the conolution.
+   * @param output Output data that contains the results of the convolution.
+   */
+  template<typename eT>
+  static void Convolution(const arma::Cube<eT>& input,
+                          const arma::Mat<eT>& filter,
+                          arma::Cube<eT>& output)
+  {
+    arma::Mat<eT> convOutput;
+    FFTConvolution<BorderMode>::Convolution(input.slice(0), filter,
+        convOutput);
+
+    output = arma::Cube<eT>(convOutput.n_rows, convOutput.n_cols,
+        input.n_slices);
+    output.slice(0) = convOutput;
+
+    for (size_t i = 1; i < input.n_slices; i++)
+    {
+      FFTConvolution<BorderMode>::Convolution(input.slice(i), filter,
+          convOutput);
+      output.slice(i) = convOutput;
+    }
+  }
+
 };  // class FFTConvolution
 
 }; // namespace ann
