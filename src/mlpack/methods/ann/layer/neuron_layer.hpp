@@ -6,12 +6,13 @@
  * Definition of the NeuronLayer class, which implements a standard network
  * layer.
  */
-#ifndef __MLPACK_METHOS_ANN_LAYER_NEURON_LAYER_HPP
-#define __MLPACK_METHOS_ANN_LAYER_NEURON_LAYER_HPP
+#ifndef __MLPACK_METHODS_ANN_LAYER_NEURON_LAYER_HPP
+#define __MLPACK_METHODS_ANN_LAYER_NEURON_LAYER_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
+#include <mlpack/methods/ann/activation_functions/identity_function.hpp>
 #include <mlpack/methods/ann/activation_functions/rectifier_function.hpp>
 
 namespace mlpack {
@@ -31,7 +32,7 @@ namespace ann /** Artificial Neural Network. */ {
  *  - PoolingLayer
  *
  * @tparam ActivationFunction Activation function used for the embedding layer.
- * @tparam DataType Type of data (arma::colvec, arma::mat or arma::sp_mat,
+ * @tparam DataType Type of data (arma::colvec, arma::mat arma::sp_mat or
  * arma::cube).
  */
 template <
@@ -51,29 +52,52 @@ class NeuronLayer
       inputActivations(arma::zeros<DataType>(layerSize)),
       delta(arma::zeros<DataType>(layerSize)),
       layerRows(layerSize),
-      layerSlices(1)
+      layerCols(1),
+      layerSlices(1),
+      outputMaps(1)
   {
     // Nothing to do here.
   }
 
+  /**
+   * Create 2-dimensional NeuronLayer object using the specified rows and
+   * columns. In this case, DataType must be arma::mat or arma::sp_mat.
+   *
+   * @param layerRows The number of rows of neurons.
+   * @param layerCols The number of columns of neurons.
+   */
   NeuronLayer(const size_t layerRows, const size_t layerCols) :
       inputActivations(arma::zeros<DataType>(layerRows, layerCols)),
       delta(arma::zeros<DataType>(layerRows, layerCols)),
       layerRows(layerRows),
       layerCols(layerCols),
-      layerSlices(1)
+      layerSlices(1),
+      outputMaps(1)
   {
     // Nothing to do here.
   }
 
+  /**
+   * Create n-dimensional NeuronLayer object using the specified rows and
+   * columns and number of slices. In this case, DataType must be arma::cube.
+   *
+   * @param layerRows The number of rows of neurons.
+   * @param layerCols The number of columns of neurons.
+   * @param layerCols The number of slices of neurons.
+   * @param layerCols The number of output maps.
+   */
   NeuronLayer(const size_t layerRows,
               const size_t layerCols,
-              const size_t layerSlices) :
-      inputActivations(arma::zeros<DataType>(layerRows, layerCols, layerSlices)),
-      delta(arma::zeros<DataType>(layerRows, layerCols, layerSlices)),
+              const size_t layerSlices,
+              const size_t outputMaps = 1) :
+      inputActivations(arma::zeros<DataType>(layerRows, layerCols,
+          layerSlices * outputMaps)),
+      delta(arma::zeros<DataType>(layerRows, layerCols,
+          layerSlices  * outputMaps)),
       layerRows(layerRows),
       layerCols(layerCols),
-      layerSlices(layerSlices)
+      layerSlices(layerSlices),
+      outputMaps(outputMaps)
   {
     // Nothing to do here.
   }
@@ -111,10 +135,11 @@ class NeuronLayer
     delta = error % derivative;
   }
 
+
   /**
-   * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards trough f. Using the results from the feed
-   * forward pass.
+   * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
+   * input, calculating the function f(x) by propagating x backwards trough f.
+   * Using the results from the feed forward pass.
    *
    * @param inputActivation Input data used for calculating the function f(x).
    * @param error The backpropagated error.
@@ -126,16 +151,31 @@ class NeuronLayer
                     const arma::Mat<eT>& error,
                     arma::Cube<eT>& delta)
   {
-    DataType derivative;
-    ActivationFunction::deriv(inputActivation, derivative);
-    delta = arma::cube(error.memptr(), inputActivation.n_rows,
-        inputActivation.n_cols, inputActivation.n_slices) % derivative;
-  }
+    // Generate a cube from the error matrix.
+    arma::Cube<eT> mappedError = arma::zeros<arma::cube>(inputActivation.n_rows,
+        inputActivation.n_cols, inputActivation.n_slices);
 
+    for (size_t s = 0, j = 0; s < mappedError.n_slices; s+= error.n_cols, j++)
+    {
+      for (size_t i = 0; i < error.n_cols; i++)
+      {
+        arma::Col<eT> temp = error.col(i).subvec(
+            j * inputActivation.n_rows * inputActivation.n_cols,
+            (j + 1) * inputActivation.n_rows * inputActivation.n_cols - 1);
+
+        mappedError.slice(s + i) = arma::Mat<eT>(temp.memptr(),
+            inputActivation.n_rows, inputActivation.n_cols);
+      }
+    }
+
+    arma::Cube<eT> derivative;
+    ActivationFunction::deriv(inputActivation, derivative);
+    delta = mappedError % derivative;
+  }
 
   //! Get the input activations.
   DataType& InputActivation() const { return inputActivations; }
-  //  //! Modify the input activations.
+  //! Modify the input activations.
   DataType& InputActivation() { return inputActivations; }
 
   //! Get the detla.
@@ -166,6 +206,9 @@ class NeuronLayer
   //! Get the number of layer slices.
   size_t LayerSlices() const { return layerSlices; }
 
+  //! Get the number of output maps.
+  size_t OutputMaps() const { return outputMaps; }
+
  private:
   //! Locally-stored input activation object.
   DataType inputActivations;
@@ -181,6 +224,9 @@ class NeuronLayer
 
   //! Locally-stored number of layer slices.
   size_t layerSlices;
+
+  //! Locally-stored number of output maps.
+  size_t outputMaps;
 }; // class NeuronLayer
 
 // Convenience typedefs.
@@ -226,7 +272,7 @@ using ConvLayer = NeuronLayer<ActivationFunction, DataType>;
  * Pooling layer using the logistic activation function.
  */
 template <
-    class ActivationFunction = LogisticFunction,
+    class ActivationFunction = IdentityFunction,
     typename DataType = arma::cube
 >
 using PoolingLayer = NeuronLayer<ActivationFunction, DataType>;
