@@ -42,13 +42,11 @@ class PoolingConnection
   /**
    * Create the PoolingConnection object using the specified input layer, output
    * layer, optimizer and pooling strategy.
-   * The factor and bias is stored in @weights.
    *
    * @param InputLayerType The input layer which is connected with the output
    * layer.
    * @param OutputLayerType The output layer which is connected with the input
    * layer.
-   * @param OptimizerType The optimizer used to update the weight matrix.
    * @param PoolingRule The strategy of pooling.
    */
   PoolingConnection(InputLayerType& inputLayer,
@@ -59,8 +57,8 @@ class PoolingConnection
       optimizer(0),
       weights(0),
       pooling(pooling),
-      delta(inputLayer.Delta().n_rows, inputLayer.Delta().n_cols,
-            inputLayer.Delta().n_slices)
+      delta(arma::zeros<DataType>(inputLayer.Delta().n_rows,
+          inputLayer.Delta().n_cols, inputLayer.Delta().n_slices))
   {
     // Nothing to do here.
   }
@@ -99,6 +97,7 @@ class PoolingConnection
   template<typename eT>
   void FeedBackward(const arma::Mat<eT>& error)
   {
+    delta.zeros();
     Unpooling(inputLayer.InputActivation(), error, inputLayer.Delta());
   }
 
@@ -111,6 +110,7 @@ class PoolingConnection
   template<typename eT>
   void FeedBackward(const arma::Cube<eT>& error)
   {
+    delta.zeros();
     for (size_t s = 0; s < error.n_slices; s++)
     {
       Unpooling(inputLayer.InputActivation().slice(s), error.slice(s),
@@ -201,7 +201,7 @@ class PoolingConnection
     {
       for (size_t i = 0; i < input.n_rows; i += rStep)
       {
-        const arma::Mat<eT>& inputArea = input(arma::span(i, i + rStep -1),
+        const arma::Mat<eT>& inputArea = input(arma::span(i, i + rStep - 1),
                                                arma::span(j, j + cStep - 1));
 
         pooling.Unpooling(inputArea, error(i / rStep, j / cStep),
