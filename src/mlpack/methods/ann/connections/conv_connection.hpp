@@ -14,6 +14,7 @@
 #include <mlpack/methods/ann/optimizer/steepest_descent.hpp>
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
+#include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
 
 namespace mlpack{
 namespace ann  /** Artificial Neural Network. */{
@@ -46,8 +47,8 @@ template<
     typename OptimizerType = SteepestDescent<>,
     class WeightInitRule = RandomInitialization,
     typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>,
-    typename BackwardConvolutionRule = NaiveConvolution<FullConvolution>,
-    typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>,
+    typename BackwardConvolutionRule = FFTConvolution<FullConvolution>,
+    typename GradientConvolutionRule = FFTConvolution<ValidConvolution>,
     typename DataType = arma::cube
 >
 class ConvConnection
@@ -55,22 +56,20 @@ class ConvConnection
  public:
   /**
    * Create the ConvConnection object using the specified input layer, output
-   * layer, optimizer and weight initialization rule.
+   * layer, filter size, optimizer and weight initialization rule.
    *
    * @param InputLayerType The input layer which is connected with the output
    * layer.
    * @param OutputLayerType The output layer which is connected with the input
    * layer.
-   * @param filterRows The number of rows of the convolutional kernel.
-   * @param filterCols The number of cols of the convolutional kernel.
+   * @param filterSize the size of the filter.
    * @param OptimizerType The optimizer used to update the weight matrix.
    * @param WeightInitRule The weights initialization rule used to initialize
    * the weights matrix.
    */
   ConvConnection(InputLayerType& inputLayer,
                  OutputLayerType& outputLayer,
-                 const size_t filterRows,
-                 const size_t filterCols,
+                 const size_t filterSize,
                  OptimizerType& optimizer,
                  WeightInitRule weightInitRule = WeightInitRule()) :
       inputLayer(inputLayer),
@@ -78,35 +77,33 @@ class ConvConnection
       optimizer(&optimizer),
       ownsOptimizer(false)
   {
-    weightInitRule.Initialize(weights, filterRows, filterCols,
+    weightInitRule.Initialize(weights, filterSize, filterSize,
         outputLayer.LayerSlices());
   }
 
   /**
    * Create the ConvConnection object using the specified input layer, output
-   * layer, optimizer and weight initialization rule.
+   * layer, filter size and weight initialization rule.
    *
    * @param InputLayerType The input layer which is connected with the output
    * layer.
    * @param OutputLayerType The output layer which is connected with the input
    * layer.
-   * @param filterRows The number of rows of the convolutional kernel.
-   * @param filterCols The number of cols of the convolutional kernel.
+   * @param filterSize the size of the filter.
    * @param WeightInitRule The weights initialization rule used to initialize
    * the weights matrix.
    */
   ConvConnection(InputLayerType& inputLayer,
                  OutputLayerType& outputLayer,
-                 const size_t filterRows,
-                 const size_t filterCols,
+                 const size_t filterSize,
                  WeightInitRule weightInitRule = WeightInitRule()) :
       inputLayer(inputLayer),
       outputLayer(outputLayer),
       optimizer(new OptimizerType()),
       ownsOptimizer(true)
   {
-    weightInitRule.Initialize(weights, filterRows, filterCols,
-        outputLayer.LayerSlices());
+    weightInitRule.Initialize(weights, filterSize, filterSize,
+        inputLayer.OutputMaps() * outputLayer.OutputMaps());
   }
 
   /**
@@ -121,13 +118,32 @@ class ConvConnection
   /**
    * Ordinary feed forward pass of a neural network. Apply convolution to every
    * neuron in input layer and put the output in the output layer.
+   *
+   * @param input The input activation.
    */
   template<typename InputType>
   void FeedForward(const InputType& input)
   {
-    DataType output;
-    ForwardConvolutionRule::Convolution(input, weights, output);
-    outputLayer.InputActivation() += output;
+    for (size_t outputmap = 0; outputmap < outputLayer.OutputMaps(); outputmap++)
+    {
+      for (size_t inputmap = 0; inputmap < inputLayer.OutputMaps(); inputmap++)
+      {
+        InputType inputSlices = input.slices(
+            inputmap * inputLayer.LayerSlices(),
+            (inputmap * inputLayer.LayerSlices()) +
+            inputLayer.LayerSlices() - 1);
+
+        InputType output;
+        ForwardConvolutionRule::Convolution(inputSlices,
+            weights.slice(inputmap * outputLayer.OutputMaps() +
+            outputmap), output);
+
+        outputLayer.InputActivation().slices(
+            (outputmap * inputLayer.LayerSlices()),
+            (outputmap * inputLayer.LayerSlices()) +
+            inputLayer.LayerSlices() - 1) += output;
+      }
+    }
   }
 
   /**
@@ -136,9 +152,33 @@ class ConvConnection
    *
    * @param error The backpropagated error.
    */
-  void FeedBackward(const DataType& error)
+  template<typename eT>
+  void FeedBackward(const arma::Cube<eT>& error)
   {
-    BackwardConvolutionRule::conv(weights, error, delta);
+    delta = arma::zeros<arma::Cube<eT>>(inputLayer.InputActivation().n_rows,
+                                        inputLayer.InputActivation().n_cols,
+                                        inputLayer.InputActivation().n_slices);
+
+    for (size_t outputmap = 0; outputmap < inputLayer.OutputMaps(); outputmap++)
+    {
+      for (size_t inputmap = 0; inputmap < outputLayer.OutputMaps(); inputmap++)
+      {
+        arma::Cube<eT> errorSlices = error.slices(inputmap *
+            inputLayer.LayerSlices(), (inputmap * inputLayer.LayerSlices()) +
+            inputLayer.LayerSlices() - 1);
+
+        arma::Mat<eT> rotatedFilter;
+        Rotate180(weights.slice(
+            outputmap * outputLayer.OutputMaps() + inputmap), rotatedFilter);
+
+        arma::Cube<eT> output;
+        BackwardConvolutionRule::Convolution(errorSlices, rotatedFilter, output);
+
+        delta.slices((outputmap * inputLayer.LayerSlices()),
+            (outputmap * inputLayer.LayerSlices()) +
+            inputLayer.LayerSlices() - 1) += output;
+      }
+    }
   }
 
   /*
@@ -146,10 +186,33 @@ class ConvConnection
    *
    * @param gradient The calculated gradient.
    */
-  void Gradient(DataType& gradient)
+  template<typename eT>
+  void Gradient(arma::Cube<eT>& gradient)
   {
-    GradientConvolutionRule::Convolution(inputLayer.InputActivation(),
-        outputLayer.Delta(), gradient);
+    gradient = arma::zeros<arma::Cube<eT> >(weights.n_rows, weights.n_cols,
+        weights.n_slices);
+
+    for (size_t outputmap = 0, s = 0; outputmap < outputLayer.OutputMaps(); outputmap++)
+    {
+      for (size_t inputmap = 0; inputmap < inputLayer.OutputMaps(); inputmap++, s++)
+      {
+        arma::Cube<eT> inputSlices = inputLayer.InputActivation().slices(
+            inputmap * inputLayer.LayerSlices(), (inputmap + 1) *
+            inputLayer.LayerSlices() - 1);
+
+        arma::Cube<eT> deltaSlices = outputLayer.Delta().slices(
+            outputmap * inputLayer.LayerSlices(),
+            (outputmap + 1) * inputLayer.LayerSlices() - 1);
+
+        arma::Cube<eT> output;
+        GradientConvolutionRule::Convolution(inputSlices, deltaSlices, output);
+
+        for (size_t i = 0; i < output.n_slices; i++)
+          gradient.slice(s) += output.slice(i);
+
+        gradient.slice(s) /= inputLayer.LayerSlices();
+      }
+    }
   }
 
   //! Get the convolution kernel.
@@ -178,6 +241,35 @@ class ConvConnection
   DataType& Delta() { return delta; }
 
  private:
+  /*
+   * Rotates a 3rd-order tesor counterclockwise by 180 degrees.
+   *
+   * @param input The input data to be rotated.
+   * @param output The rotated output.
+   */
+  template<typename eT>
+  void Rotate180(const arma::Cube<eT>& input, arma::Cube<eT>& output)
+  {
+    output = arma::Cube<eT>(input.n_rows, input.n_cols, input.n_slices);
+
+    // * left-right flip, up-down flip */
+    for (size_t s = 0; s < output.n_slices; s++)
+      output.slice(s) = arma::fliplr(arma::flipud(input.slice(s)));
+  }
+
+  /*
+   * Rotates a dense matrix counterclockwise by 180 degrees.
+   *
+   * @param input The input data to be rotated.
+   * @param output The rotated output.
+   */
+  template<typename eT>
+  void Rotate180(const arma::Mat<eT>& input, arma::Mat<eT>& output)
+  {
+    // * left-right flip, up-down flip */
+    output = arma::fliplr(arma::flipud(input));
+  }
+
   //! Locally-stored kernel weights.
   DataType weights;
 
