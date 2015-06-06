@@ -99,7 +99,7 @@ class ConvConnection
                  WeightInitRule weightInitRule = WeightInitRule()) :
       inputLayer(inputLayer),
       outputLayer(outputLayer),
-      optimizer(new OptimizerType()),
+      optimizer(new OptimizerType(filterSize, filterSize)),
       ownsOptimizer(true)
   {
     weightInitRule.Initialize(weights, filterSize, filterSize,

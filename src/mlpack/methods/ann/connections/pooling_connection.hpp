@@ -33,7 +33,7 @@ template<
     typename InputLayerType,
     typename OutputLayerType,
     typename PoolingRule = MaxPooling,
-    template<typename> class OptimizerType = SteepestDescent,
+    typename OptimizerType = SteepestDescent<>,
     typename DataType = arma::cube
 >
 class PoolingConnection
@@ -145,9 +145,9 @@ class PoolingConnection
   OutputLayerType& OutputLayer() { return outputLayer; }
 
   //! Get the optimizer.
-  OptimizerType<DataType>& Optimzer() const { return *optimizer; }
+  OptimizerType& Optimzer() const { return *optimizer; }
   //! Modify the optimzer.
-  OptimizerType<DataType>& Optimzer() { return *optimizer; }
+  OptimizerType& Optimzer() { return *optimizer; }
 
   //! Get the passed error in backward propagation.
   DataType& Delta() const { return delta; }
@@ -220,7 +220,7 @@ class PoolingConnection
   OutputLayerType& outputLayer;
 
   //! Locally-stored optimizer.
-  OptimizerType<DataType>* optimizer;
+  OptimizerType* optimizer;
 
   //! Locally-stored weight object.
   DataType* weights;
@@ -237,7 +237,7 @@ template<
     typename InputLayerType,
     typename OutputLayerType,
     typename PoolingRule,
-    template<typename> class OptimizerType,
+    typename OptimizerType,
     typename DataType
 >
 class ConnectionTraits<

@@ -78,7 +78,9 @@ class FullConnection
                WeightInitRule weightInitRule = WeightInitRule()) :
     inputLayer(inputLayer),
     outputLayer(outputLayer),
-    optimizer(new OptimizerType()),
+    optimizer(new OptimizerType(outputLayer.InputSize(), inputLayer.LayerRows()
+        * inputLayer.LayerCols() * inputLayer.LayerSlices() *
+        inputLayer.OutputMaps() / outputLayer.LayerCols())),
     ownsOptimizer(true)
   {
     weightInitRule.Initialize(weights, outputLayer.InputSize(),
