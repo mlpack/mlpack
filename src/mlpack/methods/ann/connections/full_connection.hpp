@@ -206,7 +206,7 @@ class FullConnection
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void GradientDelta(arma::Mat<eT>& delta, arma::Cube<eT>& gradient)
+  void GradientDelta(arma::Mat<eT>& /* unused */, arma::Cube<eT>& gradient)
   {
     gradient = arma::Cube<eT>(weights.n_rows, weights.n_cols, 1);
     arma::Mat<eT> data = arma::Mat<eT>(outputLayer.Delta().n_cols,
@@ -235,7 +235,7 @@ class FullConnection
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void GradientDelta(arma::Cube<eT>& delta, arma::Cube<eT>& gradient)
+  void GradientDelta(arma::Cube<eT>& /* unused */, arma::Cube<eT>& gradient)
   {
     gradient = arma::Cube<eT>(weights.n_rows, weights.n_cols, 1);
   }
