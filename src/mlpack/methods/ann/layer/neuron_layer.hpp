@@ -93,7 +93,7 @@ class NeuronLayer
       inputActivations(arma::zeros<DataType>(layerRows, layerCols,
           layerSlices * outputMaps)),
       delta(arma::zeros<DataType>(layerRows, layerCols,
-          layerSlices  * outputMaps)),
+          layerSlices * outputMaps)),
       layerRows(layerRows),
       layerCols(layerCols),
       layerSlices(layerSlices),

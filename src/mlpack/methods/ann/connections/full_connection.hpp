@@ -150,8 +150,8 @@ class FullConnection
   }
 
   /*
-   * Calculate the gradient using the output delta (dense matrix) and the input
-   * activation (dense matrix).
+   * Calculate the gradient (dense matrix) using the output delta (dense matrix)
+   * and the input activation (dense matrix).
    *
    * @param gradient The calculated gradient.
    */
@@ -162,15 +162,15 @@ class FullConnection
   }
 
   /*
-   * Calculate the gradient using the output delta (3rd oder tensor) and the
-   * input activation (3rd oder tensor).
+   * Calculate the gradient (3rd order tensor) using the output delta
+   * (3rd order tensor) and the input activation (3rd order tensor).
    *
    * @param gradient The calculated gradient.
    */
   template<typename eT>
   void Gradient(arma::Cube<eT>& gradient)
   {
-     GradientDelta(outputLayer.Delta(), gradient);
+     GradientDelta(inputLayer.InputActivation(), gradient);
   }
 
   //! Get the weights.
@@ -200,13 +200,13 @@ class FullConnection
 
  private:
    /*
-   * Calculate the gradient using the output delta (3rd oder tensor) and the
-   * input activation (3rd oder tensor).
+   * Calculate the gradient using the output delta (3rd order tensor) and the
+   * input activation (3rd order tensor).
    *
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void GradientDelta(arma::Mat<eT>& /* unused */, arma::Cube<eT>& gradient)
+  void GradientDelta(arma::Cube<eT>& /* unused */, arma::Cube<eT>& gradient)
   {
     gradient = arma::Cube<eT>(weights.n_rows, weights.n_cols, 1);
     arma::Mat<eT> data = arma::Mat<eT>(outputLayer.Delta().n_cols,
@@ -229,15 +229,16 @@ class FullConnection
   }
 
   /*
-   * Calculate the gradient using the output delta (3rd oder tensor) and the
-   * input activation (3rd oder tensor).
+   * Calculate the gradient (3rd order tensor) using the output delta
+   * (dense matrix) and the input activation (dense matrix).
    *
    * @param gradient The calculated gradient.
    */
   template<typename eT>
-  void GradientDelta(arma::Cube<eT>& /* unused */, arma::Cube<eT>& gradient)
+  void GradientDelta(arma::Mat<eT>& /* unused */, arma::Cube<eT>& gradient)
   {
     gradient = arma::Cube<eT>(weights.n_rows, weights.n_cols, 1);
+    Gradient(gradient.slice(0));
   }
 
   //! Locally-stored weight object.
