@@ -9,10 +9,12 @@
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 
 #include <mlpack/methods/ann/connections/full_connection.hpp>
+#include <mlpack/methods/ann/connections/bias_connection.hpp>
 #include <mlpack/methods/ann/connections/conv_connection.hpp>
 #include <mlpack/methods/ann/connections/pooling_connection.hpp>
 
 #include <mlpack/methods/ann/layer/neuron_layer.hpp>
+#include <mlpack/methods/ann/layer/bias_layer.hpp>
 #include <mlpack/methods/ann/layer/binary_classification_layer.hpp>
 
 #include <mlpack/methods/ann/cnn.hpp>
@@ -75,13 +77,17 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
    * +---+        +---+        +---+        +---+        +---+    +---+
    */
 
-
   NeuronLayer<LogisticFunction, arma::cube> inputLayer(28, 28, 1);
 
   ConvLayer<LogisticFunction> convLayer0(24, 24, inputLayer.LayerSlices(), 6);
   ConvConnection<decltype(inputLayer),
                  decltype(convLayer0)>
       con1(inputLayer, convLayer0, 5);
+
+  BiasLayer<> biasLayer0(6);
+  BiasConnection<decltype(biasLayer0),
+                 decltype(convLayer0)>
+  con1Bias(biasLayer0, convLayer0);
 
   con1.Weights().slice(0) = arma::mat(
       "-0.0307   -0.1510   -0.0299    0.0631    0.1114;"
@@ -136,6 +142,11 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
                  decltype(convLayer1)>
       con3(poolingLayer0, convLayer1, 5);
 
+  BiasLayer<> biasLayer3(12);
+  BiasConnection<decltype(biasLayer3),
+                 decltype(convLayer1)>
+  con3Bias(biasLayer3, convLayer1);
+
   PoolingLayer<> poolingLayer1(4, 4, inputLayer.LayerSlices(), 12);
   PoolingConnection<decltype(convLayer1),
                     decltype(poolingLayer1)>
@@ -147,13 +158,19 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
                  decltype(outputLayer)>
     con5(poolingLayer1, outputLayer);
 
+  BiasLayer<> biasLayer1(1);
+  FullConnection<decltype(biasLayer1),
+                 decltype(outputLayer)>
+    con5Bias(biasLayer1, outputLayer);
+
+
   BinaryClassificationLayer finalOutputLayer;
 
-  auto module0 = std::tie(con1);
+  auto module0 = std::tie(con1, con1Bias);
   auto module1 = std::tie(con2);
-  auto module2 = std::tie(con3);
+  auto module2 = std::tie(con3, con3Bias);
   auto module3 = std::tie(con4);
-  auto module4 = std::tie(con5);
+  auto module4 = std::tie(con5, con5Bias);
   auto modules = std::tie(module0, module1, module2, module3, module4);
 
   CNN<decltype(modules), decltype(finalOutputLayer),
@@ -161,7 +178,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 
   Trainer<decltype(net)> trainer(net, 1);
 
-  for (size_t j = 0; j < 300; ++j)
+  for (size_t j = 0; j < 40; ++j)
   {
     arma::Col<size_t> index = arma::linspace<arma::Col<size_t> >(200,
         299, 300);
@@ -188,7 +205,6 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 
     arma::mat prediction;
     net.Predict(input, prediction);
-
 
     bool b = arma::all(arma::abs(
         arma::vectorise(prediction) - arma::vectorise(labels)) < 0.1);
