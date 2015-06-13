@@ -115,4 +115,4 @@ class LinearRegression
 }; // namespace linear_regression
 }; // namespace mlpack
 
-#endif // __MLPACK_METHODS_LINEAR_REGRESSCLIN_HPP
+#endif // __MLPACK_METHODS_LINEAR_REGRESSION_HPP
