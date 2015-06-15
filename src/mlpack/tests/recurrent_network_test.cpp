@@ -32,7 +32,7 @@
 #include <mlpack/methods/ann/rnn.hpp>
 
 #include <mlpack/methods/ann/performance_functions/mse_function.hpp>
-#include <mlpack/methods/ann/optimizer/steepest_descent.hpp>
+#include <mlpack/methods/ann/optimizer/rmsprop.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -112,35 +112,28 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
   NeuronLayer<LogisticFunction> hiddenLayer1(2);
   BinaryClassificationLayer outputLayer;
 
-  SteepestDescent< > conOptimizer0(inputLayer.InputSize(),
-      hiddenLayer0.InputSize(), 1, 0);
-  SteepestDescent< > conOptimizer2(hiddenLayer0.InputSize(),
-      hiddenLayer0.InputSize(), 1, 0);
-  SteepestDescent< > conOptimizer3(hiddenLayer0.InputSize(),
-      hiddenLayer1.OutputSize(), 1, 0);
-
   RandomInitialization randInit(-0.5, 0.5);
 
   FullConnection<
       decltype(inputLayer),
       decltype(hiddenLayer0),
-      decltype(conOptimizer0),
+      mlpack::ann::RMSPROP,
       decltype(randInit)>
-      layerCon0(inputLayer, hiddenLayer0, conOptimizer0, randInit);
+      layerCon0(inputLayer, hiddenLayer0, randInit);
 
   SelfConnection<
     decltype(recurrentLayer0),
     decltype(hiddenLayer0),
-    decltype(conOptimizer2),
+    mlpack::ann::RMSPROP,
     decltype(randInit)>
-    layerCon2(recurrentLayer0, hiddenLayer0, conOptimizer2, randInit);
+    layerCon2(recurrentLayer0, hiddenLayer0, randInit);
 
   FullConnection<
       decltype(hiddenLayer0),
       decltype(hiddenLayer1),
-      decltype(conOptimizer3),
+      mlpack::ann::RMSPROP,
       decltype(randInit)>
-      layerCon4(hiddenLayer0, hiddenLayer1, conOptimizer3, randInit);
+      layerCon4(hiddenLayer0, hiddenLayer1, randInit);
 
   auto module0 = std::tie(layerCon0, layerCon2);
   auto module1 = std::tie(layerCon4);
@@ -173,7 +166,6 @@ BOOST_AUTO_TEST_CASE(SequenceClassificationTest)
 template<
     typename WeightInitRule,
     typename PerformanceFunction,
-    typename OptimizerType,
     typename OutputLayerType,
     typename PerformanceFunctionType,
     typename MatType = arma::mat
@@ -194,55 +186,47 @@ void CompareVanillaNetworks(MatType& trainData,
 
   OutputLayerType outputLayer;
 
-  OptimizerType ffnConOptimizer0(trainData.n_rows, hiddenLayerSize);
-  OptimizerType ffnConOptimizer1(1, hiddenLayerSize);
-  OptimizerType ffnConOptimizer2(hiddenLayerSize, trainLabels.n_rows);
-
-  OptimizerType rnnConOptimizer0(trainData.n_rows, hiddenLayerSize);
-  OptimizerType rnnConOptimizer1(1, hiddenLayerSize);
-  OptimizerType rnnConOptimizer2(hiddenLayerSize, trainLabels.n_rows);
+  FullConnection<
+    decltype(inputLayer),
+    decltype(hiddenLayer0),
+    mlpack::ann::RMSPROP,
+    decltype(weightInitRule)>
+    ffnLayerCon0(inputLayer, hiddenLayer0, weightInitRule);
 
   FullConnection<
     decltype(inputLayer),
     decltype(hiddenLayer0),
-    decltype(ffnConOptimizer0),
+    mlpack::ann::RMSPROP,
     decltype(weightInitRule)>
-    ffnLayerCon0(inputLayer, hiddenLayer0, ffnConOptimizer0, weightInitRule);
-
-  FullConnection<
-    decltype(inputLayer),
-    decltype(hiddenLayer0),
-    decltype(rnnConOptimizer0),
-    decltype(weightInitRule)>
-    rnnLayerCon0(inputLayer, hiddenLayer0, rnnConOptimizer0, weightInitRule);
+    rnnLayerCon0(inputLayer, hiddenLayer0, weightInitRule);
 
   FullConnection<
     decltype(biasLayer0),
     decltype(hiddenLayer0),
-    decltype(ffnConOptimizer1),
+    mlpack::ann::RMSPROP,
     decltype(weightInitRule)>
-    ffnLayerCon1(biasLayer0, hiddenLayer0, ffnConOptimizer1, weightInitRule);
+    ffnLayerCon1(biasLayer0, hiddenLayer0, weightInitRule);
 
   FullConnection<
     decltype(biasLayer0),
     decltype(hiddenLayer0),
-    decltype(rnnConOptimizer1),
+    mlpack::ann::RMSPROP,
     decltype(weightInitRule)>
-    rnnLayerCon1(biasLayer0, hiddenLayer0, rnnConOptimizer1, weightInitRule);
+    rnnLayerCon1(biasLayer0, hiddenLayer0, weightInitRule);
 
   FullConnection<
       decltype(hiddenLayer0),
       decltype(hiddenLayer1),
-      decltype(ffnConOptimizer2),
+      mlpack::ann::RMSPROP,
       decltype(weightInitRule)>
-      ffnLayerCon2(hiddenLayer0, hiddenLayer1, ffnConOptimizer2, weightInitRule);
+      ffnLayerCon2(hiddenLayer0, hiddenLayer1, weightInitRule);
 
   FullConnection<
       decltype(hiddenLayer0),
       decltype(hiddenLayer1),
-      decltype(rnnConOptimizer2),
+      mlpack::ann::RMSPROP,
       decltype(weightInitRule)>
-      rnnLayerCon2(hiddenLayer0, hiddenLayer1, rnnConOptimizer2, weightInitRule);
+      rnnLayerCon2(hiddenLayer0, hiddenLayer1, weightInitRule);
 
   auto ffnModule0 = std::tie(ffnLayerCon0, ffnLayerCon1);
   auto ffnModule1 = std::tie(ffnLayerCon2);
@@ -326,7 +310,6 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
   // Vanilla neural net with logistic activation function.
   CompareVanillaNetworks<RandomInitialization,
                       LogisticFunction,
-                      SteepestDescent<>,
                       BinaryClassificationLayer,
                       MeanSquaredErrorFunction>
       (input, labels, input, labels, 10, 10, randInit);
@@ -334,7 +317,6 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
   // Vanilla neural net with identity activation function.
   CompareVanillaNetworks<RandomInitialization,
                       IdentityFunction,
-                      SteepestDescent<>,
                       BinaryClassificationLayer,
                       MeanSquaredErrorFunction>
       (input, labels, input, labels, 1, 1, randInit);
@@ -342,7 +324,6 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
   // Vanilla neural net with rectifier activation function.
   CompareVanillaNetworks<RandomInitialization,
                     RectifierFunction,
-                    SteepestDescent<>,
                     BinaryClassificationLayer,
                     MeanSquaredErrorFunction>
     (input, labels, input, labels, 10, 10, randInit);
@@ -350,7 +331,6 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
   // Vanilla neural net with softsign activation function.
   CompareVanillaNetworks<RandomInitialization,
                     SoftsignFunction,
-                    SteepestDescent<>,
                     BinaryClassificationLayer,
                     MeanSquaredErrorFunction>
     (input, labels, input, labels, 10, 10, randInit);
@@ -358,7 +338,6 @@ BOOST_AUTO_TEST_CASE(FeedForwardRecurrentNetworkTest)
   // Vanilla neural net with tanh activation function.
   CompareVanillaNetworks<RandomInitialization,
                     TanhFunction,
-                    SteepestDescent<>,
                     BinaryClassificationLayer,
                     MeanSquaredErrorFunction>
     (input, labels, input, labels, 10, 10, randInit);
@@ -578,47 +557,40 @@ void ReberGrammarTestNetwork(HiddenLayerType& hiddenLayer0,
   NeuronLayer<LogisticFunction> hiddenLayer1(7);
   BinaryClassificationLayer outputLayer;
 
-  SteepestDescent< > conOptimizer0(inputLayer.OutputSize(),
-      hiddenLayer0.InputSize(), 0.1);
-  SteepestDescent< > conOptimizer2(recurrentLayer0.OutputSize(),
-      hiddenLayer0.InputSize(), 0.1);
-  SteepestDescent< > conOptimizer3(hiddenLayer0.OutputSize(),
-      hiddenLayer1.InputSize(), 0.1);
-
   NguyenWidrowInitialization randInit;
 
   FullConnection<
       decltype(inputLayer),
       decltype(hiddenLayer0),
-      decltype(conOptimizer0),
+      mlpack::ann::RMSPROP,
       decltype(randInit)>
-      layerCon0(inputLayer, hiddenLayer0, conOptimizer0, randInit);
+      layerCon0(inputLayer, hiddenLayer0, randInit);
 
   FullselfConnection<
     decltype(recurrentLayer0),
     decltype(hiddenLayer0),
-    decltype(conOptimizer2),
+    mlpack::ann::RMSPROP,
     decltype(randInit)>
-    layerTypeLSTM(recurrentLayer0, hiddenLayer0, conOptimizer2, randInit);
+    layerTypeLSTM(recurrentLayer0, hiddenLayer0, randInit);
 
   SelfConnection<
     decltype(recurrentLayer0),
     decltype(hiddenLayer0),
-    decltype(conOptimizer2),
+    mlpack::ann::RMSPROP,
     decltype(randInit)>
-    layerTypeBasis(recurrentLayer0, hiddenLayer0, conOptimizer2, randInit);
+    layerTypeBasis(recurrentLayer0, hiddenLayer0, randInit);
 
   typename std::conditional<LayerTraits<HiddenLayerType>::IsLSTMLayer,
       typename std::remove_reference<decltype(layerTypeLSTM)>::type,
       typename std::remove_reference<decltype(layerTypeBasis)>::type>::type
-      layerCon2(recurrentLayer0, hiddenLayer0, conOptimizer2, randInit);
+      layerCon2(recurrentLayer0, hiddenLayer0, randInit);
 
   FullConnection<
       decltype(hiddenLayer0),
       decltype(hiddenLayer1),
-      decltype(conOptimizer3),
+      mlpack::ann::RMSPROP,
       decltype(randInit)>
-      layerCon4(hiddenLayer0, hiddenLayer1, conOptimizer3, randInit);
+      layerCon4(hiddenLayer0, hiddenLayer1, randInit);
 
   auto module0 = std::tie(layerCon0, layerCon2);
   auto module1 = std::tie(layerCon4);
@@ -632,7 +604,7 @@ void ReberGrammarTestNetwork(HiddenLayerType& hiddenLayer0,
   Trainer<decltype(net)> trainer(net, 1, 1, 0, false);
 
   arma::mat inputTemp, labelsTemp;
-  for (size_t i = 0; i < 500; i++)
+  for (size_t i = 0; i < 100; i++)
   {
     for (size_t j = 0; j < trainReberGrammarCount; j++)
     {
@@ -813,47 +785,40 @@ void DistractedSequenceRecallTestNetwork(HiddenLayerType& hiddenLayer0)
   NeuronLayer<LogisticFunction> hiddenLayer1(3);
   BinaryClassificationLayer outputLayer;
 
-  SteepestDescent< > conOptimizer0(inputLayer.OutputSize(),
-      hiddenLayer0.InputSize(), 0.1);
-  SteepestDescent< > conOptimizer2(recurrentLayer0.OutputSize(),
-      hiddenLayer0.InputSize(), 0.1);
-  SteepestDescent< > conOptimizer3(hiddenLayer0.OutputSize(),
-      hiddenLayer1.InputSize(), 0.1);
-
   NguyenWidrowInitialization randInit;
 
   FullConnection<
       decltype(inputLayer),
       decltype(hiddenLayer0),
-      decltype(conOptimizer0),
+      mlpack::ann::RMSPROP,
       decltype(randInit)>
-      layerCon0(inputLayer, hiddenLayer0, conOptimizer0, randInit);
+      layerCon0(inputLayer, hiddenLayer0, randInit);
 
   FullselfConnection<
     decltype(recurrentLayer0),
     decltype(hiddenLayer0),
-    decltype(conOptimizer2),
+    mlpack::ann::RMSPROP,
     decltype(randInit)>
-    layerTypeLSTM(recurrentLayer0, hiddenLayer0, conOptimizer2, randInit);
+    layerTypeLSTM(recurrentLayer0, hiddenLayer0, randInit);
 
   SelfConnection<
     decltype(recurrentLayer0),
     decltype(hiddenLayer0),
-    decltype(conOptimizer2),
+    mlpack::ann::RMSPROP,
     decltype(randInit)>
-    layerTypeBasis(recurrentLayer0, hiddenLayer0, conOptimizer2, randInit);
+    layerTypeBasis(recurrentLayer0, hiddenLayer0, randInit);
 
   typename std::conditional<LayerTraits<HiddenLayerType>::IsLSTMLayer,
       typename std::remove_reference<decltype(layerTypeLSTM)>::type,
       typename std::remove_reference<decltype(layerTypeBasis)>::type>::type
-      layerCon2(recurrentLayer0, hiddenLayer0, conOptimizer2, randInit);
+      layerCon2(recurrentLayer0, hiddenLayer0, randInit);
 
   FullConnection<
       decltype(hiddenLayer0),
       decltype(hiddenLayer1),
-      decltype(conOptimizer3),
+      mlpack::ann::RMSPROP,
       decltype(randInit)>
-      layerCon4(hiddenLayer0, hiddenLayer1, conOptimizer3, randInit);
+      layerCon4(hiddenLayer0, hiddenLayer1, randInit);
 
   auto module0 = std::tie(layerCon0, layerCon2);
   auto module1 = std::tie(layerCon4);
@@ -867,7 +832,7 @@ void DistractedSequenceRecallTestNetwork(HiddenLayerType& hiddenLayer0)
   Trainer<decltype(net)> trainer(net, 1, 1, 0, false);
 
   arma::mat inputTemp, labelsTemp;
-  for (size_t i = 0; i < 500; i++)
+  for (size_t i = 0; i < 100; i++)
   {
     for (size_t j = 0; j < trainDistractedSequenceCount; j++)
     {
