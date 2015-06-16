@@ -78,11 +78,6 @@ class FFNN
     template <typename VecType>
     void FeedBackward(const VecType& error)
     {
-      // Initialize the gradient storage only once.
-      if (!gradients.size())
-        InitLayer(network);
-
-      gradientNum = 0;
       LayerBackward(network, error);
       UpdateGradients(network);
     }
@@ -93,7 +88,6 @@ class FFNN
      */
     void ApplyGradients()
     {
-      gradientNum = 0;
       ApplyGradients(network);
 
       // Reset the overall error.
@@ -366,10 +360,7 @@ class FFNN
     typename std::enable_if<I < sizeof...(Tp), void>::type
     Gradients(std::tuple<Tp...>& t)
     {
-      MatType gradient;
-      std::get<I>(t).Gradient(gradient);
-      gradients[gradientNum++] += gradient;
-
+      std::get<I>(t).Optimzer().Update();
       Gradients<I + 1, Tp...>(t);
     }
 
@@ -409,60 +400,10 @@ class FFNN
     typename std::enable_if<I < sizeof...(Tp), void>::type
     Apply(std::tuple<Tp...>& t)
     {
-      // Take a mean gradient step over the number of inputs.
-      if (seqNum > 1)
-        gradients[gradientNum] /= seqNum;
-
-      std::get<I>(t).Optimzer().UpdateWeights(std::get<I>(t).Weights(),
-          gradients[gradientNum], trainError);
-
-      // Reset the gradient storage.
-      gradients[gradientNum++].zeros();
+      std::get<I>(t).Optimzer().Optimize();
+      std::get<I>(t).Optimzer().Reset();
 
       Apply<I + 1, Tp...>(t);
-    }
-
-    /**
-     * Helper function to iterate through all connection modules and to build
-     * gradient storage.
-     *
-     * enable_if (SFINAE) is used to select between two template overloads of
-     * the get function - one for when I is equal the size of the tuple of
-     * connections, and one for the general case which peels off the first type
-     * and recurses, as usual with variadic function templates.
-     */
-    template<size_t I = 0, typename... Tp>
-    typename std::enable_if<I == sizeof...(Tp), void>::type
-    InitLayer(std::tuple<Tp...>& /* unused */) { }
-
-    template<size_t I = 0, typename... Tp>
-    typename std::enable_if<I < sizeof...(Tp), void>::type
-    InitLayer(std::tuple<Tp...>& t)
-    {
-      Layer(std::get<I>(t));
-      InitLayer<I + 1, Tp...>(t);
-    }
-
-    /**
-     * Iterate through all connections and build the the gradient storage.
-     *
-     * enable_if (SFINAE) is used to select between two template overloads of
-     * the get function - one for when I is equal the size of the tuple of
-     * connections, and one for the general case which peels off the first type
-     * and recurses, as usual with variadic function templates.
-     */
-    template<size_t I = 0, typename... Tp>
-    typename std::enable_if<I == sizeof...(Tp), void>::type
-    Layer(std::tuple<Tp...>& /* unused */) { }
-
-    template<size_t I = 0, typename... Tp>
-    typename std::enable_if<I < sizeof...(Tp), void>::type
-    Layer(std::tuple<Tp...>& t)
-    {
-      gradients.push_back(new MatType(std::get<I>(t).Weights().n_rows,
-          std::get<I>(t).Weights().n_cols, arma::fill::zeros));
-
-      Layer<I + 1, Tp...>(t);
     }
 
     //! The connection modules used to build the network.
@@ -473,12 +414,6 @@ class FFNN
 
     //! The current training error of the network.
     double trainError;
-
-    //! The gradient storage we are using to perform the feed backward pass.
-    boost::ptr_vector<MatType> gradients;
-
-    //! The index of the currently activate gradient.
-    size_t gradientNum;
 
     //! The number of the current input sequence.
     size_t seqNum;

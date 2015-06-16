@@ -149,7 +149,6 @@ class RNN
       // Iterate through the input sequence and perform the feed backward pass.
       for (seqNum = seqLen - 1; seqNum >= 0; seqNum--)
       {
-        gradientNum = 0;
         deltaNum = 0;
 
         // Perform the backward pass and update the gradient storage.
@@ -173,7 +172,6 @@ class RNN
      */
     void ApplyGradients()
     {
-      gradientNum = 0;
       ApplyGradients(network);
 
       // Reset the overall error.
@@ -548,10 +546,7 @@ class RNN
     typename std::enable_if<I < sizeof...(Tp), void>::type
     Gradients(std::tuple<Tp...>& t)
     {
-      MatType gradient;
-      std::get<I>(t).Gradient(gradient);
-      gradients[gradientNum++] += gradient;
-
+      std::get<I>(t).Optimzer().Update();
       Gradients<I + 1, Tp...>(t);
     }
 
@@ -593,11 +588,8 @@ class RNN
     typename std::enable_if<I < sizeof...(Tp), void>::type
     Apply(std::tuple<Tp...>& t)
     {
-      std::get<I>(t).Optimzer().UpdateWeights(std::get<I>(t).Weights(),
-          gradients[gradientNum], trainError);
-
-      // // Reset the gradient storage.
-      gradients[gradientNum++].zeros();
+      std::get<I>(t).Optimzer().Optimize();
+      std::get<I>(t).Optimzer().Reset();
 
       Apply<I + 1, Tp...>(t);
     }
@@ -677,9 +669,6 @@ class RNN
     {
       activations.push_back(new MatType(
         std::get<I>(t).InputLayer().OutputSize(), input.n_elem));
-
-      gradients.push_back(new MatType(std::get<I>(t).Weights().n_rows,
-          std::get<I>(t).Weights().n_cols, arma::fill::zeros));
 
       Layer<I + 1, VecType, Tp...>(t, input, layer);
     }
@@ -788,17 +777,11 @@ class RNN
     //! The activation storage we are using to perform the feed backward pass.
     boost::ptr_vector<MatType> activations;
 
-    //! The gradient storage we are using to perform the feed backward pass.
-    boost::ptr_vector<MatType> gradients;
-
     //! The index of the current sequence number.
     size_t seqNum;
 
     //! The index of the currently activate layer.
     size_t layerNum;
-
-    //! The index of the currently activate gradient.
-    size_t gradientNum;
 
     //! The index of the currently activate delta.
     size_t deltaNum;

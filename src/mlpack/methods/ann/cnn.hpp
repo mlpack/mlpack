@@ -78,11 +78,6 @@ class CNN
     template <typename ErrorType>
     void FeedBackward(const ErrorType& error)
     {
-      // Initialize the gradient storage only once.
-      if (!gradients.size())
-        InitLayer(network);
-
-      gradientNum = 0;
       LayerBackward(network, error);
       UpdateGradients(network);
     }
@@ -93,7 +88,6 @@ class CNN
      */
     void ApplyGradients()
     {
-      gradientNum = 0;
       ApplyGradients(network);
 
       // Reset the overall error.
@@ -373,10 +367,7 @@ class CNN
       if (!ConnectionTraits<typename std::remove_reference<decltype(
           std::get<I>(t))>::type>::IsPoolingConnection)
       {
-        DataType gradient;
-        std::get<I>(t).Gradient(gradient);
-
-        gradients[gradientNum++] += gradient;
+        std::get<I>(t).Optimzer().Update();
       }
 
       Gradients<I + 1, Tp...>(t);
@@ -404,48 +395,6 @@ class CNN
     }
 
     /**
-     * Helper function to update the weights using the gradients from the
-     * gradient store.
-     *
-     * enable_if (SFINAE) is used to select between two template overloads of
-     * the get function - one for when I is equal the size of the tuple of
-     * connections, and one for the general case which peels off the first type
-     * and recurses, as usual with variadic function templates.
-     */
-    template<size_t I = 0, typename eT, typename... Tp>
-    void UpdateWeights(arma::Mat<eT>& weights, std::tuple<Tp...>& t)
-    {
-      std::get<I>(t).Optimzer().UpdateWeights(weights,
-          gradients[gradientNum].slice(0), trainError);
-    }
-
-    template<size_t I = 0, typename eT, typename... Tp>
-    void UpdateWeights(arma::Cube<eT>& weights, std::tuple<Tp...>& t)
-    {
-      if (gradientNum == std::get<I>(t).InputLayer().OutputMaps() != 1)
-      {
-        for (size_t i = 0, g = 0;
-            i < std::get<I>(t).OutputLayer().OutputMaps(); i++)
-        {
-          for (size_t j = i; j < weights.n_slices;
-              j+= std::get<I>(t).OutputLayer().OutputMaps(), g++)
-          {
-            std::get<I>(t).Optimzer().UpdateWeights(weights.slice(j),
-                gradients[gradientNum].slice(g), trainError);
-          }
-        }
-      }
-      else
-      {
-        for (size_t i = 0; i < weights.n_slices; i++)
-        {
-          std::get<I>(t).Optimzer().UpdateWeights(weights.slice(i),
-              gradients[gradientNum].slice(i), trainError);
-        }
-      }
-    }
-
-    /**
      * Update the weights using the gradients from the gradient store.
      *
      * enable_if (SFINAE) is used to iterate through the network connections.
@@ -460,17 +409,11 @@ class CNN
     typename std::enable_if<I < sizeof...(Tp), void>::type
     Apply(std::tuple<Tp...>& t)
     {
-      // Take a mean gradient step over the number of inputs.
-      if (seqNum > 1)
-        gradients[gradientNum] /= seqNum;
-
       if (!ConnectionTraits<typename std::remove_reference<decltype(
           std::get<I>(t))>::type>::IsPoolingConnection)
       {
-        UpdateWeights<I>(std::get<I>(t).Weights(), t);
-
-        // Reset the gradient storage.
-        gradients[gradientNum++].zeros();
+        std::get<I>(t).Optimzer().Optimize();
+        std::get<I>(t).Optimzer().Reset();
       }
 
       Apply<I + 1, Tp...>(t);
@@ -497,55 +440,6 @@ class CNN
       InitLayer<I + 1, Tp...>(t);
     }
 
-    /**
-     * Iterate through all connections and build the the gradient storage.
-     *
-     * enable_if (SFINAE) is used to select between two template overloads of
-     * the get function - one for when I is equal the size of the tuple of
-     * connections, and one for the general case which peels off the first type
-     * and recurses, as usual with variadic function templates.
-     */
-    template<size_t I = 0, typename... Tp>
-    typename std::enable_if<I == sizeof...(Tp), void>::type
-    Layer(std::tuple<Tp...>& /* unused */) { }
-
-    template<size_t I = 0, typename... Tp>
-    typename std::enable_if<I < sizeof...(Tp), void>::type
-    Layer(std::tuple<Tp...>& t)
-    {
-      if (!ConnectionTraits<typename std::remove_reference<decltype(
-          std::get<I>(t))>::type>::IsPoolingConnection)
-      {
-          gradients.push_back(new DataType(std::get<I>(t).Weights().n_rows,
-              std::get<I>(t).Weights().n_cols,
-              ElementCount(std::get<I>(t).Weights()), arma::fill::zeros));
-      }
-
-      Layer<I + 1, Tp...>(t);
-    }
-
-    /*
-     * Get the number of elements.
-     *
-     * @param data The reference data.
-     */
-    template<typename eT>
-    size_t ElementCount(const arma::Mat<eT>& /* unused */) const
-    {
-      return 1;
-    }
-
-    /*
-     * Get the number of elements.
-     *
-     * @param data The reference data.
-     */
-    template<typename eT>
-    size_t ElementCount(const arma::Cube<eT>& data) const
-    {
-      return data.n_slices;
-    }
-
     //! The connection modules used to build the network.
     ConnectionTypes network;
 
@@ -554,12 +448,6 @@ class CNN
 
     //! The current training error of the network.
     double trainError;
-
-    //! The gradient storage we are using to perform the feed backward pass.
-    boost::ptr_vector<DataType> gradients;
-
-    //! The index of the currently activate gradient.
-    size_t gradientNum;
 
     //! The number of the current input sequence.
     size_t seqNum;
