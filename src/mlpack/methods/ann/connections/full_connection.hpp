@@ -9,7 +9,7 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
-#include <mlpack/methods/ann/optimizer/steepest_descent.hpp>
+#include <mlpack/methods/ann/optimizer/rmsprop.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -28,7 +28,7 @@ namespace ann /** Artificial Neural Network. */ {
 template<
     typename InputLayerType,
     typename OutputLayerType,
-    typename OptimizerType = SteepestDescent<>,
+    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
     class WeightInitRule = NguyenWidrowInitialization,
     typename MatType = arma::mat
 >
@@ -49,7 +49,11 @@ class FullConnection
    */
   FullConnection(InputLayerType& inputLayer,
                  OutputLayerType& outputLayer,
-                 OptimizerType& optimizer,
+                 OptimizerType<FullConnection<InputLayerType,
+                                              OutputLayerType,
+                                              OptimizerType,
+                                              WeightInitRule,
+                                              MatType>, MatType>& optimizer,
                  WeightInitRule weightInitRule = WeightInitRule()) :
       inputLayer(inputLayer),
       outputLayer(outputLayer),
@@ -78,9 +82,11 @@ class FullConnection
                WeightInitRule weightInitRule = WeightInitRule()) :
     inputLayer(inputLayer),
     outputLayer(outputLayer),
-    optimizer(new OptimizerType(outputLayer.InputSize(), inputLayer.LayerRows()
-        * inputLayer.LayerCols() * inputLayer.LayerSlices() *
-        inputLayer.OutputMaps() / outputLayer.LayerCols())),
+    optimizer(new OptimizerType<FullConnection<InputLayerType,
+                                              OutputLayerType,
+                                              OptimizerType,
+                                              WeightInitRule,
+                                              MatType>, MatType>(*this)),
     ownsOptimizer(true)
   {
     weightInitRule.Initialize(weights, outputLayer.InputSize(),
@@ -158,7 +164,7 @@ class FullConnection
   template<typename eT>
   void Gradient(arma::Mat<eT>& gradient)
   {
-    gradient = outputLayer.Delta() * inputLayer.InputActivation().t();
+    GradientDelta(inputLayer.InputActivation(), gradient);
   }
 
   /*
@@ -189,9 +195,23 @@ class FullConnection
   OutputLayerType& OutputLayer() { return outputLayer; }
 
   //! Get the optimzer.
-  OptimizerType& Optimzer() const { return *optimizer; }
+  OptimizerType<FullConnection<InputLayerType,
+                               OutputLayerType,
+                               OptimizerType,
+                               WeightInitRule,
+                               MatType>, MatType>& Optimzer() const
+  {
+    return *optimizer;
+  }
   //! Modify the optimzer.
-  OptimizerType& Optimzer() { return *optimizer; }
+  OptimizerType<FullConnection<InputLayerType,
+                               OutputLayerType,
+                               OptimizerType,
+                               WeightInitRule,
+                               MatType>, MatType>& Optimzer()
+  {
+    return *optimizer;
+  }
 
   //! Get the detla.
   MatType& Delta() const { return delta; }
@@ -241,6 +261,33 @@ class FullConnection
     Gradient(gradient.slice(0));
   }
 
+  /*
+   * Calculate the gradient (dense matrix) using the output delta
+   * (dense matrix) and the input activation (3rd order tensor).
+   *
+   * @param gradient The calculated gradient.
+   */
+  template<typename eT>
+  void GradientDelta(arma::Cube<eT>& /* unused */, arma::Mat<eT>& gradient)
+  {
+    arma::Cube<eT> grad = arma::Cube<eT>(weights.n_rows, weights.n_cols, 1);
+    Gradient(grad);
+    gradient = grad.slice(0);
+
+  }
+
+  /*
+   * Calculate the gradient (dense matrix) using the output delta
+   * (dense matrix) and the input activation (dense matrix).
+   *
+   * @param gradient The calculated gradient.
+   */
+  template<typename eT>
+  void GradientDelta(arma::Mat<eT>& /* unused */, arma::Mat<eT>& gradient)
+  {
+    gradient = outputLayer.Delta() * inputLayer.InputActivation().t();
+  }
+
   //! Locally-stored weight object.
   MatType weights;
 
@@ -251,7 +298,11 @@ class FullConnection
   OutputLayerType& outputLayer;
 
   //! Locally-stored pointer to the optimzer object.
-  OptimizerType* optimizer;
+  OptimizerType<FullConnection<InputLayerType,
+                               OutputLayerType,
+                               OptimizerType,
+                               WeightInitRule,
+                               MatType>, MatType>* optimizer;
 
   //! Parameter that indicates if the class owns a optimizer object.
   bool ownsOptimizer;

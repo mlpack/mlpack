@@ -11,6 +11,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/connections/connection_traits.hpp>
+#include <mlpack/methods/ann/optimizer/rmsprop.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -30,7 +31,7 @@ namespace ann /** Artificial Neural Network. */ {
 template<
     typename InputLayerType,
     typename OutputLayerType,
-    typename OptimizerType,
+    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
     class WeightInitRule = NguyenWidrowInitialization,
     typename MatType = arma::mat,
     typename VecType = arma::colvec
@@ -52,11 +53,48 @@ class SelfConnection
    */
   SelfConnection(InputLayerType& inputLayer,
                  OutputLayerType& outputLayer,
-                 OptimizerType& optimizer,
+                 OptimizerType<SelfConnection<InputLayerType,
+                                              OutputLayerType,
+                                              OptimizerType,
+                                              WeightInitRule,
+                                              MatType,
+                                              VecType>, MatType>& optimizer,
                  WeightInitRule weightInitRule = WeightInitRule()) :
       inputLayer(inputLayer),
       outputLayer(outputLayer),
-      optimizer(optimizer),
+      optimizer(&optimizer),
+      ownsOptimizer(false),
+      connection(1 - arma::eye<MatType>(inputLayer.OutputSize(),
+          inputLayer.OutputSize()))
+  {
+    weightInitRule.Initialize(weights, outputLayer.InputSize(),
+        inputLayer.OutputSize());
+  }
+
+  /**
+   * Create the SelfConnection object using the specified input layer, output
+   * layer, optimizer and weight initialize rule.
+   *
+   * @param InputLayerType The input layer which is connected with the output
+   * layer.
+   * @param OutputLayerType The output layer which is connected with the input
+   * layer.
+   * @param OptimizerType The optimizer used to update the weight matrix.
+   * @param WeightInitRule The weight initialize rule used to initialize the
+   * weight matrix.
+   */
+  SelfConnection(InputLayerType& inputLayer,
+                 OutputLayerType& outputLayer,
+                 WeightInitRule weightInitRule = WeightInitRule()) :
+      inputLayer(inputLayer),
+      outputLayer(outputLayer),
+      optimizer(new OptimizerType<SelfConnection<InputLayerType,
+                                                 OutputLayerType,
+                                                 OptimizerType,
+                                                 WeightInitRule,
+                                                 MatType,
+                                                 VecType>, MatType>(*this)),
+      ownsOptimizer(true),
       connection(1 - arma::eye<MatType>(inputLayer.OutputSize(),
           inputLayer.OutputSize()))
   {
@@ -113,14 +151,30 @@ class SelfConnection
   //! Modify the output layer.
   OutputLayerType& OutputLayer() { return outputLayer; }
 
-  //! Get the optimzer.
-  const OptimizerType& Optimzer() const { return optimizer; }
+    //! Get the optimzer.
+  OptimizerType<SelfConnection<InputLayerType,
+                               OutputLayerType,
+                               OptimizerType,
+                               WeightInitRule,
+                               MatType,
+                               VecType>, MatType>& Optimzer() const
+  {
+    return *optimizer;
+  }
   //! Modify the optimzer.
-  OptimizerType& Optimzer() { return optimizer; }
+  OptimizerType<SelfConnection<InputLayerType,
+                               OutputLayerType,
+                               OptimizerType,
+                               WeightInitRule,
+                               MatType,
+                               VecType>, MatType>& Optimzer()
+  {
+    return *optimizer;
+  }
 
   //! Get the detla.
   const VecType& Delta() const { return delta; }
- //  //! Modify the delta.
+  //! Modify the delta.
   VecType& Delta() { return delta; }
 
  private:
@@ -133,8 +187,16 @@ class SelfConnection
   //! Locally-stored connected output layer object.
   OutputLayerType& outputLayer;
 
-  //! Locally-stored optimzer object.
-  OptimizerType& optimizer;
+  //! Locally-stored pointer to the optimzer object.
+  OptimizerType<SelfConnection<InputLayerType,
+                               OutputLayerType,
+                               OptimizerType,
+                               WeightInitRule,
+                               MatType,
+                               VecType>, MatType>* optimizer;
+
+  //! Parameter that indicates if the class owns a optimizer object.
+  bool ownsOptimizer;
 
   //! Locally-stored detla object that holds the calculated delta.
   VecType delta;
@@ -147,7 +209,7 @@ class SelfConnection
 template<
     typename InputLayerType,
     typename OutputLayerType,
-    typename OptimizerType,
+    template<typename, typename> class OptimizerType,
     class WeightInitRule,
     typename MatType,
     typename VecType

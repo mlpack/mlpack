@@ -44,7 +44,7 @@ namespace ann  /** Artificial Neural Network. */{
 template<
     typename InputLayerType,
     typename OutputLayerType,
-    typename OptimizerType = SteepestDescent<>,
+    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
     class WeightInitRule = RandomInitialization,
     typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>,
     typename BackwardConvolutionRule = FFTConvolution<FullConvolution>,
@@ -70,7 +70,14 @@ class ConvConnection
   ConvConnection(InputLayerType& inputLayer,
                  OutputLayerType& outputLayer,
                  const size_t filterSize,
-                 OptimizerType& optimizer,
+                 OptimizerType<ConvConnection<InputLayerType,
+                                              OutputLayerType,
+                                              OptimizerType,
+                                              WeightInitRule,
+                                              ForwardConvolutionRule,
+                                              BackwardConvolutionRule,
+                                              GradientConvolutionRule,
+                                              DataType>, DataType>& optimizer,
                  WeightInitRule weightInitRule = WeightInitRule()) :
       inputLayer(inputLayer),
       outputLayer(outputLayer),
@@ -99,7 +106,14 @@ class ConvConnection
                  WeightInitRule weightInitRule = WeightInitRule()) :
       inputLayer(inputLayer),
       outputLayer(outputLayer),
-      optimizer(new OptimizerType(filterSize, filterSize)),
+      optimizer(new OptimizerType<ConvConnection<InputLayerType,
+                                                 OutputLayerType,
+                                                 OptimizerType,
+                                                 WeightInitRule,
+                                                 ForwardConvolutionRule,
+                                                 BackwardConvolutionRule,
+                                                 GradientConvolutionRule,
+                                                 DataType>, DataType>(*this)),
       ownsOptimizer(true)
   {
     weightInitRule.Initialize(weights, filterSize, filterSize,
@@ -213,6 +227,22 @@ class ConvConnection
         gradient.slice(s) /= inputLayer.LayerSlices();
       }
     }
+
+    if (InputLayer().OutputMaps() != 1)
+    {
+      arma::Cube<eT> temp = arma::zeros<arma::Cube<eT> >(weights.n_rows, weights.n_cols,
+        weights.n_slices);
+
+      for (size_t i = 0, g = 0; i < OutputLayer().OutputMaps(); i++)
+      {
+        for (size_t j = i; j < weights.n_slices; j+= OutputLayer().OutputMaps(), g++)
+        {
+          temp.slice(j) = gradient.slice(g);
+        }
+      }
+
+      gradient = temp;
+    }
   }
 
   //! Get the convolution kernel.
@@ -231,9 +261,29 @@ class ConvConnection
   OutputLayerType& OutputLayer() { return outputLayer; }
 
   //! Get the optimzer.
-  OptimizerType& Optimzer() const { return *optimizer; }
+  OptimizerType<ConvConnection<InputLayerType,
+                               OutputLayerType,
+                               OptimizerType,
+                               WeightInitRule,
+                               ForwardConvolutionRule,
+                               BackwardConvolutionRule,
+                               GradientConvolutionRule,
+                               DataType>, DataType>& Optimzer() const
+  {
+    return *optimizer;
+  }
   //! Modify the optimzer.
-  OptimizerType& Optimzer() { return *optimizer; }
+  OptimizerType<ConvConnection<InputLayerType,
+                               OutputLayerType,
+                               OptimizerType,
+                               WeightInitRule,
+                               ForwardConvolutionRule,
+                               BackwardConvolutionRule,
+                               GradientConvolutionRule,
+                               DataType>, DataType>& Optimzer()
+  {
+    return *optimizer;
+  }
 
   //! Get the passed error in backward propagation.
   DataType& Delta() const { return delta; }
@@ -280,7 +330,14 @@ class ConvConnection
   OutputLayerType& outputLayer;
 
   //! Locally-stored optimizer.
-  OptimizerType* optimizer;
+  OptimizerType<ConvConnection<InputLayerType,
+                               OutputLayerType,
+                               OptimizerType,
+                               WeightInitRule,
+                               ForwardConvolutionRule,
+                               BackwardConvolutionRule,
+                               GradientConvolutionRule,
+                               DataType>, DataType>* optimizer;
 
   //! Parameter that indicates if the class owns a optimizer object.
   bool ownsOptimizer;

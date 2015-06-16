@@ -10,6 +10,7 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
+#include <mlpack/methods/ann/optimizer/rmsprop.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -30,7 +31,7 @@ namespace ann /** Artificial Neural Network. */ {
 template<
     typename InputLayerType,
     typename OutputLayerType,
-    typename OptimizerType,
+    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
     class WeightInitRule = NguyenWidrowInitialization,
     typename MatType = arma::mat,
     typename VecType = arma::colvec
@@ -39,8 +40,8 @@ class FullselfConnection
 {
  public:
   /**
-   * Create the FullConnection object using the specified input layer, output
-   * layer, optimizer and weight initialize rule.
+   * Create the FullselfConnection object using the specified input layer,
+   * output layer, optimizer and weight initialize rule.
    *
    * @param InputLayerType The input layer which is connected with the output
    * layer.
@@ -51,10 +52,47 @@ class FullselfConnection
    * weight matrix.
    */
   FullselfConnection(InputLayerType& inputLayer,
-                  OutputLayerType& outputLayer,
-                  OptimizerType& optimizer,
-                  WeightInitRule weightInitRule = WeightInitRule()) :
-      inputLayer(inputLayer), outputLayer(outputLayer), optimizer(optimizer)
+                     OutputLayerType& outputLayer,
+                     OptimizerType<FullselfConnection<InputLayerType,
+                                                      OutputLayerType,
+                                                      OptimizerType,
+                                                      WeightInitRule,
+                                                      MatType,
+                                                      VecType>, MatType>& optimizer,
+                     WeightInitRule weightInitRule = WeightInitRule()) :
+      inputLayer(inputLayer),
+      outputLayer(outputLayer),
+      optimizer(&optimizer),
+      ownsOptimizer(false)
+  {
+    weightInitRule.Initialize(weights, outputLayer.InputSize(),
+        inputLayer.OutputSize());
+  }
+
+  /**
+   * Create the FullselfConnection object using the specified input layer,
+   * output layer and weight initialize rule.
+   *
+   * @param InputLayerType The input layer which is connected with the output
+   * layer.
+   * @param OutputLayerType The output layer which is connected with the input
+   * layer.
+   * @param OptimizerType The optimizer used to update the weight matrix.
+   * @param WeightInitRule The weight initialize rule used to initialize the
+   * weight matrix.
+   */
+  FullselfConnection(InputLayerType& inputLayer,
+                     OutputLayerType& outputLayer,
+                     WeightInitRule weightInitRule = WeightInitRule()) :
+      inputLayer(inputLayer),
+      outputLayer(outputLayer),
+      optimizer(new OptimizerType<FullselfConnection<InputLayerType,
+                                                     OutputLayerType,
+                                                     OptimizerType,
+                                                     WeightInitRule,
+                                                     MatType,
+                                                     VecType>, MatType>(*this)),
+      ownsOptimizer(true)
   {
     weightInitRule.Initialize(weights, outputLayer.InputSize(),
         inputLayer.OutputSize());
@@ -111,13 +149,29 @@ class FullselfConnection
   OutputLayerType& OutputLayer() { return outputLayer; }
 
   //! Get the optimzer.
-  OptimizerType& Optimzer() const { return optimizer; }
+  OptimizerType<FullselfConnection<InputLayerType,
+                                   OutputLayerType,
+                                   OptimizerType,
+                                   WeightInitRule,
+                                   MatType,
+                                   VecType>, MatType>& Optimzer() const
+  {
+    return *optimizer;
+  }
   //! Modify the optimzer.
-  OptimizerType& Optimzer() { return optimizer; }
+  OptimizerType<FullselfConnection<InputLayerType,
+                                   OutputLayerType,
+                                   OptimizerType,
+                                   WeightInitRule,
+                                   MatType,
+                                   VecType>, MatType>& Optimzer()
+  {
+    return *optimizer;
+  }
 
   //! Get the detla.
   VecType& Delta() const { return delta; }
- //  //! Modify the delta.
+  //! Modify the delta.
   VecType& Delta() { return delta; }
 
  private:
@@ -131,7 +185,15 @@ class FullselfConnection
   OutputLayerType& outputLayer;
 
   //! Locally-stored optimzer object.
-  OptimizerType& optimizer;
+  OptimizerType<FullselfConnection<InputLayerType,
+                               OutputLayerType,
+                               OptimizerType,
+                               WeightInitRule,
+                               MatType,
+                               VecType>, MatType>* optimizer;
+
+  //! Parameter that indicates if the class owns a optimizer object.
+  bool ownsOptimizer;
 
   //! Locally-stored detla object that holds the calculated delta.
   VecType delta;
@@ -142,7 +204,7 @@ class FullselfConnection
 template<
     typename InputLayerType,
     typename OutputLayerType,
-    typename OptimizerType,
+    template<typename, typename> class OptimizerType,
     class WeightInitRule,
     typename MatType,
     typename VecType

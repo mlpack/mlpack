@@ -12,7 +12,7 @@
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
 #include <mlpack/methods/ann/connections/connection_traits.hpp>
-#include <mlpack/methods/ann/optimizer/steepest_descent.hpp>
+#include <mlpack/methods/ann/optimizer/rmsprop.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -31,7 +31,7 @@ namespace ann /** Artificial Neural Network. */ {
 template<
     typename InputLayerType,
     typename OutputLayerType,
-    typename OptimizerType = SteepestDescent<>,
+    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
     class WeightInitRule = NguyenWidrowInitialization,
     typename MatType = arma::mat
 >
@@ -52,7 +52,11 @@ class BiasConnection
    */
   BiasConnection(InputLayerType& inputLayer,
                  OutputLayerType& outputLayer,
-                 OptimizerType& optimizer,
+                 OptimizerType<BiasConnection<InputLayerType,
+                                               OutputLayerType,
+                                               OptimizerType,
+                                               WeightInitRule,
+                                               MatType>, MatType>& optimizer,
                  WeightInitRule weightInitRule = WeightInitRule()) :
       inputLayer(inputLayer),
       outputLayer(outputLayer),
@@ -74,16 +78,27 @@ class BiasConnection
    * weight matrix.
    */
   BiasConnection(InputLayerType& inputLayer,
-               OutputLayerType& outputLayer,
-               WeightInitRule weightInitRule = WeightInitRule()) :
+                 OutputLayerType& outputLayer,
+                 WeightInitRule weightInitRule = WeightInitRule()) :
     inputLayer(inputLayer),
     outputLayer(outputLayer),
-    optimizer(new OptimizerType(outputLayer.InputSize(), inputLayer.LayerRows()
-        * inputLayer.LayerCols() * inputLayer.LayerSlices() *
-        inputLayer.OutputMaps() / outputLayer.LayerCols())),
+    optimizer(new OptimizerType<BiasConnection<InputLayerType,
+                                               OutputLayerType,
+                                               OptimizerType,
+                                               WeightInitRule,
+                                               MatType>, MatType>(*this)),
     ownsOptimizer(true)
   {
     weightInitRule.Initialize(weights, outputLayer.OutputMaps(), 1);
+  }
+
+  /**
+   * Delete the bias connection object and its optimizer.
+   */
+  ~BiasConnection()
+  {
+    if (ownsOptimizer)
+      delete optimizer;
   }
 
   /**
@@ -131,7 +146,9 @@ class BiasConnection
   template<typename eT>
   void Gradient(arma::Mat<eT>& gradient)
   {
-    gradient = outputLayer.Delta() * inputLayer.InputActivation().t();
+    arma::Cube<eT> grad;
+    Gradient(grad);
+    gradient = grad.slice(0);
   }
 
   /*
@@ -162,9 +179,24 @@ class BiasConnection
   OutputLayerType& OutputLayer() { return outputLayer; }
 
   //! Get the optimzer.
-  OptimizerType& Optimzer() const { return *optimizer; }
+  OptimizerType<BiasConnection<InputLayerType,
+                               OutputLayerType,
+                               OptimizerType,
+                               WeightInitRule,
+                               MatType>, MatType>& Optimzer() const
+  {
+    return *optimizer;
+  }
+
   //! Modify the optimzer.
-  OptimizerType& Optimzer() { return *optimizer; }
+  OptimizerType<BiasConnection<InputLayerType,
+                               OutputLayerType,
+                               OptimizerType,
+                               WeightInitRule,
+                               MatType>, MatType>& Optimzer()
+  {
+    return *optimizer;
+  }
 
   //! Get the detla.
   MatType& Delta() const { return delta; }
@@ -239,7 +271,11 @@ class BiasConnection
   OutputLayerType& outputLayer;
 
   //! Locally-stored pointer to the optimzer object.
-  OptimizerType* optimizer;
+  OptimizerType<BiasConnection<InputLayerType,
+                               OutputLayerType,
+                               OptimizerType,
+                               WeightInitRule,
+                               MatType>, MatType>* optimizer;
 
   //! Parameter that indicates if the class owns a optimizer object.
   bool ownsOptimizer;
