@@ -20,7 +20,7 @@ namespace ann /** Artificial Neural Network. */ {
  * For more information, see the following.
  *
  * @code
- * @misc{[tieleman2012,
+ * @misc{tieleman2012,
  *   title={Lecture 6.5 - rmsprop, COURSERA: Neural Networks for Machine
  *   Learning},
  *   year={2012}
@@ -47,7 +47,7 @@ class RMSPROP
       lr(lr),
       alpha(alpha),
       eps(eps),
-      meanSquareGad(function.Weights())
+      meanSquaredGad(function.Weights())
   {
     // Nothing to do here.
   }
@@ -57,16 +57,38 @@ class RMSPROP
    */
   void Optimize()
   {
-    if (meanSquareGad.n_elem == 0)
+    if (meanSquaredGad.n_elem == 0)
     {
-      meanSquareGad = function.Weights();
-      meanSquareGad.zeros();
+      meanSquaredGad = function.Weights();
+      meanSquaredGad.zeros();
     }
 
-    DataType gradient;
-    function.Gradient(gradient);
+    Optimize(function.Weights(), gradient, meanSquaredGad);
+  }
 
-    Optimize(function.Weights(), gradient, meanSquareGad);
+  /*
+   * Sum up all gradients and store the results in the gradients storage.
+   */
+  void Update()
+  {
+    if (gradient.n_elem != 0)
+    {
+      DataType outputGradient;
+      function.Gradient(outputGradient);
+      gradient += outputGradient;
+    }
+    else
+    {
+      function.Gradient(gradient);
+    }
+  }
+
+  /*
+   * Reset the gradient storage.
+   */
+  void Reset()
+  {
+    gradient.zeros();
   }
 
  private:
@@ -81,10 +103,10 @@ class RMSPROP
   template<typename eT>
   void Optimize(arma::Cube<eT>& weights,
                 arma::Cube<eT>& gradient,
-                arma::Cube<eT>& meanSquareGradient)
+                arma::Cube<eT>& meanSquaredGradient)
   {
     for (size_t s = 0; s < weights.n_slices; s++)
-      Optimize(weights.slice(s), gradient.slice(s), meanSquareGradient.slice(s));
+      Optimize(weights.slice(s), gradient.slice(s), meanSquaredGradient.slice(s));
   }
 
   /**
@@ -98,11 +120,11 @@ class RMSPROP
   template<typename eT>
   void Optimize(arma::Mat<eT>& weights,
                 arma::Mat<eT>& gradient,
-                arma::Mat<eT>& meanSquareGradient)
+                arma::Mat<eT>& meanSquaredGradient)
   {
-    meanSquareGradient *= alpha;
-    meanSquareGradient += (1 - alpha) * (gradient % gradient);
-    weights -= lr * gradient / (arma::sqrt(meanSquareGradient) + eps);
+    meanSquaredGradient *= alpha;
+    meanSquaredGradient += (1 - alpha) * (gradient % gradient);
+    weights -= lr * gradient / (arma::sqrt(meanSquaredGradient) + eps);
   }
 
   //! The instantiated function.
@@ -117,8 +139,11 @@ class RMSPROP
   //! The value used as eps.
   const double eps;
 
-  //! The current mean squared error.
-  DataType meanSquareGad;
+  //! The current mean squared error of the gradients.
+  DataType meanSquaredGad;
+
+  //! The current gradient.
+  DataType gradient;
 }; // class RMSPROP
 
 }; // namespace ann
