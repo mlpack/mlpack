@@ -31,7 +31,10 @@ class MaxVarianceNewCluster
    * @tparam MatType Type of data (arma::mat or arma::sp_mat).
    * @param data Dataset on which clustering is being performed.
    * @param emptyCluster Index of cluster which is empty.
-   * @param centroids Centroids of each cluster (one per column).
+   * @param oldCentroids Centroids of each cluster (one per column), at the
+   *      start of the iteration.
+   * @param newCentroids Centroids of each cluster (one per column), at the end
+   *      of the iteration.  This will be modified!
    * @param clusterCounts Number of points in each cluster.
    * @param assignments Cluster assignments of each point.
    *
@@ -40,7 +43,8 @@ class MaxVarianceNewCluster
   template<typename MetricType, typename MatType>
   size_t EmptyCluster(const MatType& data,
                       const size_t emptyCluster,
-                      arma::mat& centroids,
+                      const arma::mat& oldCentroids,
+                      arma::mat& newCentroids,
                       arma::Col<size_t>& clusterCounts,
                       MetricType& metric,
                       const size_t iteration);
@@ -56,7 +60,7 @@ class MaxVarianceNewCluster
   //! Called when we are on a new iteration.
   template<typename MetricType, typename MatType>
   void Precalculate(const MatType& data,
-                    arma::mat& centroids,
+                    const arma::mat& oldCentroids,
                     arma::Col<size_t>& clusterCounts,
                     MetricType& metric);
 };
