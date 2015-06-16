@@ -88,6 +88,10 @@ namespace sparse_coding {
  * }
  * @endcode
  *
+ * Note that the implementation here does not use the feature-sign search
+ * algorithm from Honglak Lee's paper, but instead the LARS algorithm suggested
+ * in that paper.
+ *
  * Before the method is run, the dictionary is initialized using the
  * DictionaryInitializationPolicy class.  Possible choices include the
  * RandomInitializer, which provides an entirely random dictionary, the
