@@ -49,12 +49,13 @@ double MeanShift<UseKernel, KernelType, MatType>::
 EstimateRadius(const MatType& data, double ratio)
 {
   neighbor::AllkNN neighborSearch(data);
+
   /**
    * For each point in dataset, select nNeighbors nearest points and get
    * nNeighbors distances.  Use the maximum distance to estimate the duplicate
    * threshhold.
    */
-  size_t nNeighbors = size_t(data.n_cols * ratio);
+  const size_t nNeighbors = size_t(data.n_cols * ratio);
   arma::Mat<size_t> neighbors;
   arma::mat distances;
   neighborSearch.Search(nNeighbors, neighbors, distances);
@@ -66,7 +67,7 @@ EstimateRadius(const MatType& data, double ratio)
   return sum(maxDistances) / (double) data.n_cols;
 }
 
-// Class to compare two vector
+// Class to compare two vectors.
 template <typename VecType>
 class less
 {
@@ -83,12 +84,12 @@ class less
   }
 };
 
-// Generate seeds from given data set
+// Generate seeds from given data set.
 template<bool UseKernel, typename KernelType, typename MatType>
 void MeanShift<UseKernel, KernelType, MatType>::GenSeeds(
     const MatType& data,
-    double binSize,
-    int minFreq,
+    const double binSize,
+    const int minFreq,
     MatType& seeds)
 {
   typedef arma::colvec VecType;
@@ -101,15 +102,15 @@ void MeanShift<UseKernel, KernelType, MatType>::GenSeeds(
     else
       allSeeds[binnedPoint]++;
   }
-  
-  // Remove seeds with too few points
+
+  // Remove seeds with too few points.
   std::map<VecType, int, less<VecType> >::iterator it;
   for (it = allSeeds.begin(); it != allSeeds.end(); ++it)
   {
     if (it->second >= minFreq)
       seeds.insert_cols(seeds.n_cols, it->first);
   }
-  
+
   seeds = seeds * binSize;
 }
 
@@ -134,6 +135,7 @@ CalculateCentroid(const MatType& data,
       centroid += weight * data.unsafe_col(neighbors[i]);
     }
   }
+
   if (sumWeight != 0)
   {
     centroid /= sumWeight;
@@ -153,14 +155,12 @@ CalculateCentroid(const MatType& data,
                   arma::colvec& centroid)
 {
   for (size_t i = 0; i < neighbors.size(); ++i)
-  {
     centroid += data.unsafe_col(neighbors[i]);
-  }
+
   centroid /= neighbors.size();
   return true;
 }
-  
-  
+
 /**
  * Perform Mean Shift clustering on the data set, returning a list of cluster
  * assignments and centroids.
@@ -185,12 +185,12 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
     GenSeeds(data, radius, 1, seeds);
     pSeeds = &seeds;
   }
-  
+
   // Holds all centroids before removing duplicate ones.
   arma::mat allCentroids(pSeeds->n_rows, pSeeds->n_cols);
-  
+
   assignments.set_size(data.n_cols);
-  
+
   range::RangeSearch<> rangeSearcher(data);
   math::Range validRadius(0, radius);
   std::vector<std::vector<size_t> > neighbors;
@@ -206,19 +206,19 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
     {
       // Store new centroid in this.
       arma::colvec newCentroid = arma::zeros<arma::colvec>(pSeeds->n_rows);
-      
+
       rangeSearcher.Search(allCentroids.unsafe_col(i), validRadius,
           neighbors, distances);
       if (neighbors[0].size() <= 1)
         break;
-      
+
       // Calculate new centroid.
       if (!CalculateCentroid(data, neighbors[0], distances[0], newCentroid))
         newCentroid = allCentroids.unsafe_col(i);
 
       // If the mean shift vector is small enough, it has converged.
-      if (metric::EuclideanDistance::Evaluate(newCentroid, allCentroids.unsafe_col(i)) <
-          1e-3 * radius)
+      if (metric::EuclideanDistance::Evaluate(newCentroid,
+          allCentroids.unsafe_col(i)) < 1e-3 * radius)
       {
         // Determine if the new centroid is duplicate with old ones.
         bool isDuplicated = false;
@@ -235,7 +235,7 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
 
         if (!isDuplicated)
           centroids.insert_cols(centroids.n_cols, allCentroids.unsafe_col(i));
-        
+
         // Get out of the loop.
         break;
       }
@@ -244,8 +244,8 @@ inline void MeanShift<UseKernel, KernelType, MatType>::Cluster(
       allCentroids.col(i) = newCentroid;
     }
   }
-  
-  // Assign centroids to each point
+
+  // Assign centroids to each point.
   neighbor::AllkNN neighborSearcher(centroids);
   arma::mat neighborDistances;
   arma::Mat<size_t> resultingNeighbors;
