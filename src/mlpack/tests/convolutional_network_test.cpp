@@ -89,49 +89,6 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
                  decltype(convLayer0)>
   con1Bias(biasLayer0, convLayer0);
 
-  con1.Weights().slice(0) = arma::mat(
-      "-0.0307   -0.1510   -0.0299    0.0631    0.1114;"
-      "0.0816   -0.1162    0.0686   -0.0306    0.1734;"
-      "-0.1851   -0.0572   -0.1094    0.0217   -0.0691;"
-      "-0.0732   -0.0382    0.1400   -0.1332    0.0712;"
-      "-0.1308    0.0144   -0.1750   -0.1118    0.1394");
-
-  con1.Weights().slice(1) = arma::mat(
-      "0.1461   -0.1487   -0.0683    0.1810   -0.0193;"
-      "-0.1537   -0.0292    0.0691    0.0919    0.1513;"
-      "-0.1707    0.1696    0.1239   -0.0813   -0.0764;"
-      "-0.1223    0.0123   -0.1784    0.1071   -0.0786;"
-      "0.1400    0.0711    0.0926   -0.1469   -0.1370;");
-
-  con1.Weights().slice(2) = arma::mat(
-      "-0.1780   -0.1654   -0.1473    0.0133    0.1494;"
-      "0.0662    0.0274   -0.0318    0.0607   -0.1343;"
-      "-0.1068   -0.1308    0.0720    0.0055   -0.1336;"
-      "-0.0868    0.0331   -0.0318    0.1646    0.1138;"
-      "-0.0031    0.0740   -0.1667    0.0321   -0.0379;");
-
-  con1.Weights().slice(3) = arma::mat(
-      "-0.1239    0.1419    0.1466   -0.1427   -0.0974;"
-      "0.1583    0.0458   -0.0266    0.1665    0.1494;"
-      "-0.0564    0.0929    0.1721   -0.0185    0.0273;"
-      "0.0929   -0.0560    0.0605    0.0290   -0.1841;"
-      "0.0837   -0.0852    0.0451   -0.0340    0.0434;");
-
-  con1.Weights().slice(4) = arma::mat(
-      "-0.0642    0.0457   -0.1213    0.0946   -0.1778;"
-      "0.0100   -0.1793   -0.1344    0.0940   -0.1755;"
-      "0.1429    0.1590    0.1602    0.1567   -0.1747;"
-      "-0.0529    0.0707    0.0729    0.0783   -0.0940;"
-      "0.1513    0.1842   -0.1607   -0.1391    0.1333;");
-
-  con1.Weights().slice(5) = arma::mat(
-      "0.0144    0.0318   -0.0989    0.0208   -0.1454;"
-      "0.0196    0.1739    0.1137   -0.1346   -0.1016;"
-      "0.1267    0.0226   -0.0415   -0.1630    0.0789;"
-      "-0.1392   -0.1783    0.1346   -0.1402    0.0221;"
-      "-0.0818    0.1113    0.0915   -0.1687   -0.1805;");
-
-
   PoolingLayer<> poolingLayer0(12, 12, inputLayer.LayerSlices(), 6);
   PoolingConnection<decltype(convLayer0),
                     decltype(poolingLayer0)>
@@ -154,6 +111,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 
   NeuronLayer<LogisticFunction, arma::mat> outputLayer(10,
       inputLayer.LayerSlices());
+
   FullConnection<decltype(poolingLayer1),
                  decltype(outputLayer)>
     con5(poolingLayer1, outputLayer);
@@ -163,14 +121,13 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
                  decltype(outputLayer)>
     con5Bias(biasLayer1, outputLayer);
 
-
   BinaryClassificationLayer finalOutputLayer;
 
   auto module0 = std::tie(con1, con1Bias);
   auto module1 = std::tie(con2);
-  auto module2 = std::tie(con3, con3Bias);
+  auto module2 = std::tie(con3);
   auto module3 = std::tie(con4);
-  auto module4 = std::tie(con5, con5Bias);
+  auto module4 = std::tie(con5);
   auto modules = std::tie(module0, module1, module2, module3, module4);
 
   CNN<decltype(modules), decltype(finalOutputLayer),
@@ -180,13 +137,12 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 
   for (size_t j = 0; j < 40; ++j)
   {
-    arma::Col<size_t> index = arma::linspace<arma::Col<size_t> >(200,
-        299, 300);
+    arma::Col<size_t> index = arma::linspace<arma::Col<size_t> >(0,
+        499, 500);
     index = arma::shuffle(index);
 
-    for (size_t i = 200; i < 300; i++)
+    for (size_t i = 0; i < 500; i++)
     {
-
       arma::cube input = arma::cube(28, 28, 1);
       input.slice(0) = arma::mat(X.colptr(index(i)), 28, 28);
 
@@ -198,7 +154,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   }
 
   size_t error = 0;
-  for (size_t i = 200; i < 300; i++)
+  for (size_t i = 0; i < 500; i++)
   {
     arma::cube input = arma::cube(X.colptr(i), 28, 28, 1);
     arma::mat labels = Y.col(i);
@@ -213,7 +169,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
       error++;
   }
 
-  BOOST_REQUIRE_LE(error, 30);
+  BOOST_REQUIRE_LE(error, 90);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
