@@ -103,15 +103,26 @@ void MeanShift<UseKernel, KernelType, MatType>::GenSeeds(
       allSeeds[binnedPoint]++;
   }
 
-  // Remove seeds with too few points.
+  // Remove seeds with too few points.  First we count the number of seeds we
+  // end up with, then we add them.
   std::map<VecType, int, less<VecType> >::iterator it;
+  size_t count = 0;
+  for (it = allSeeds.begin(); it != allSeeds.end(); ++it)
+    if (it->second >= minFreq)
+      ++count;
+
+  seeds.set_size(data.n_rows, count);
+  count = 0;
   for (it = allSeeds.begin(); it != allSeeds.end(); ++it)
   {
     if (it->second >= minFreq)
-      seeds.insert_cols(seeds.n_cols, it->first);
+    {
+      seeds.col(count) = it->first;
+      ++count;
+    }
   }
 
-  seeds = seeds * binSize;
+  seeds *= binSize;
 }
 
 // Calculate new centroid with given kernel.
