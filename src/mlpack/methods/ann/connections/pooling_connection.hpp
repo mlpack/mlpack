@@ -12,7 +12,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/optimizer/steepest_descent.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
-#include <mlpack/methods/ann/pooling_rules/mean_pooling.hpp>
+#include <mlpack/methods/ann/pooling_rules/max_pooling.hpp>
 #include <mlpack/methods/ann/connections/connection_traits.hpp>
 
 namespace mlpack{
@@ -32,7 +32,7 @@ namespace ann /** Artificial Neural Network. */ {
 template<
     typename InputLayerType,
     typename OutputLayerType,
-    typename PoolingRule = MeanPooling,
+    typename PoolingRule = MaxPooling,
     template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
     typename DataType = arma::cube
 >
