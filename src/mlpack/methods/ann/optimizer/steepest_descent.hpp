@@ -21,80 +21,114 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam DataType Type of input data (should be arma::mat,
  * arma::spmat or arma::cube).
  */
-template<typename DataType = arma::mat>
+template<typename DecomposableFunctionType, typename DataType>
 class SteepestDescent
 {
  public:
-  /*
-   * Construct the optimizer object, which will be used to update the weights.
+  /**
+   * Construct the SteepestDescent optimizer with the given function and
+   * parameters.
    *
-   * @param lr The value used as learning rate (Default: 1).
+   * @param function Function to be optimized (minimized).
+   * @param lr The learning rate coefficient.
+   * @param mom The momentum coefficient.
    */
-  SteepestDescent(const double lr = 1) : lr(lr), mom(0)
+  SteepestDescent(DecomposableFunctionType& function,
+                  const double lr = 1,
+                  const double mom = 0) :
+      function(function),
+      lr(lr),
+      mom(mom),
+      momWeights(function.Weights())
+
   {
     // Nothing to do here.
   }
 
   /**
-   * Construct the optimizer object, which will be used to update the weights.
-   *
-   * @param cols The number of cols to initilize the momentum matrix.
-   * @param rows The number of rows to initilize the momentum matrix.
-   * @param lr The value used as learning rate (Default: 1).
-   * @param mom The value used as momentum (Default: 0.1).
+   * Optimize the given function using steepest descent.
    */
-  SteepestDescent(const size_t cols,
-                  const size_t rows,
-                  const double lr = 1,
-                  const double mom = 0.1) :
-      lr(lr), mom(mom)
+  void Optimize()
   {
-    if (mom > 0)
-      momWeights = arma::zeros<DataType>(rows, cols);
-  }
+    if (momWeights.n_elem == 0)
+    {
+      momWeights = function.Weights();
+      momWeights.zeros();
+    }
 
-  /**
-   * Construct the optimizer object, which will be used to update the weights.
-   *
-   * @param cols The number of cols used to initilize the momentum matrix.
-   * @param rows The number of rows used to initilize the momentum matrix.
-   * @param slices The number of slices used to initilize the momentum matrix.
-   * @param lr The value used as learning rate (Default: 1).
-   * @param mom The value used as momentum (Default: 0.1).
-   */
-  SteepestDescent(const size_t cols,
-                  const size_t rows,
-                  const size_t slices,
-                  const double lr,
-                  const double mom) :
-      lr(lr), mom(mom)
-  {
-    if (mom > 0)
-      momWeights = arma::zeros<DataType>(rows, cols, slices);
+    Optimize(function.Weights(), gradient, momWeights);
   }
 
   /*
-   * Update the specified weights using steepest descent.
+   * Sum up all gradients and store the results in the gradients storage.
+   */
+  void Update()
+  {
+    if (gradient.n_elem != 0)
+    {
+      DataType outputGradient;
+      function.Gradient(outputGradient);
+      gradient += outputGradient;
+    }
+    else
+    {
+      function.Gradient(gradient);
+    }
+  }
+
+  /*
+   * Reset the gradient storage.
+   */
+  void Reset()
+  {
+    gradient.zeros();
+  }
+
+ private:
+  /** Optimize the given function using steepest descent.
    *
    * @param weights The weights that should be updated.
    * @param gradient The gradient used to update the weights.
+   * @param gradient The moving average over the root mean squared gradient used
+   *    to update the weights.
    */
-  template<typename WeightType, typename GradientType>
-  void UpdateWeights(WeightType& weights,
-                     const GradientType& gradient,
-                     const double /* unused */)
+  template<typename eT>
+  void Optimize(arma::Cube<eT>& weights,
+                arma::Cube<eT>& gradient,
+                arma::Cube<eT>& momWeights)
+  {
+    for (size_t s = 0; s < weights.n_slices; s++)
+      Optimize(weights.slice(s), gradient.slice(s), momWeights.slice(s));
+  }
+
+  /**
+   * Optimize the given function using steepest descent.
+   *
+   * @param weights The weights that should be updated.
+   * @param gradient The gradient used to update the weights.
+   * @param gradient The moving average over the root mean squared gradient used
+   *    to update the weights.
+   */
+  template<typename eT>
+  void Optimize(arma::Mat<eT>& weights,
+                arma::Mat<eT>& gradient,
+                arma::Mat<eT>& momWeights)
   {
     if (mom > 0)
     {
       momWeights *= mom;
-      momWeights += lr * gradient;
+      momWeights += (lr * gradient);
       weights -= momWeights;
     }
     else
+    {
       weights -= lr * gradient;
+    }
   }
 
- private:
+  //! The instantiated function.
+  DecomposableFunctionType& function;
+
   //! The value used as learning rate.
   const double lr;
 
@@ -103,6 +137,9 @@ class SteepestDescent
 
   //! Momentum matrix.
   DataType momWeights;
+
+  //! The current gradient.
+  DataType gradient;
 }; // class SteepestDescent
 
 }; // namespace ann
