@@ -15,7 +15,14 @@ namespace ann /** Artificial Neural Network. */ {
 
 /**
  * RmsProp is an optimizer that utilizes the magnitude of recent gradients to
- * normalize the gradients.
+ * normalize the gradients. In its basic form, given a step rate \f$ \gamma \f$
+ * and a decay term \f$ \alpha \f$ we perform the following updates:
+ *
+ * \f[
+ * r_t &=& (1 - \gamma) f'(\Delta_t)^2 + \gammar_{t - 1} \\
+ * v_{t + 1} &=& \frac{\alpha}{\sqrt{r_t}}f'(\Delta_t) \\
+ * \Delta_{t + 1} &=& \Delta_t - v_{t + 1}
+ * \f]
  *
  * For more information, see the following.
  *
