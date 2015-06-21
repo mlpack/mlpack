@@ -104,8 +104,8 @@ class RMSPROP
    *
    * @param weights The weights that should be updated.
    * @param gradient The gradient used to update the weights.
-   * @param gradient The moving average over the root mean squared gradient used
-   *    to update the weights.
+   * @param meanSquaredGradient The moving average over the root mean squared
+   *    gradient used to update the weights.
    */
   template<typename eT>
   void Optimize(arma::Cube<eT>& weights,
@@ -121,8 +121,8 @@ class RMSPROP
    *
    * @param weights The weights that should be updated.
    * @param gradient The gradient used to update the weights.
-   * @param gradient The moving average over the root mean squared gradient used
-   *    to update the weights.
+   * @param meanSquaredGradient The moving average over the root mean squared
+   *    gradient used to update the weights.
    */
   template<typename eT>
   void Optimize(arma::Mat<eT>& weights,
