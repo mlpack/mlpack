@@ -52,16 +52,29 @@ class RectifierFunction
   }
 
   /**
-   * Computes the rectifier function.
+   * Computes the rectifier function using a dense matrix as input.
    *
    * @param x Input data.
    * @param y The resulting output activation.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void fn(const InputVecType& x, OutputVecType& y)
+  template<typename eT>
+  static void fn(const arma::Mat<eT>& x, arma::Mat<eT>& y)
+  {
+    y = arma::max(arma::zeros<arma::Mat<eT> >(x.n_rows, x.n_cols), x);
+  }
+
+  /**
+   * Computes the rectifier function using a 3rd-order tensor as input.
+   *
+   * @param x Input data.
+   * @param y The resulting output activation.
+   */
+  template<typename eT>
+  static void fn(const arma::Cube<eT>& x, arma::Cube<eT>& y)
   {
     y = x;
-    y = arma::max(arma::zeros<OutputVecType>(x.n_elem), x);
+    for (size_t s = 0; s < x.n_slices; s++)
+      fn(x.slice(s), y.slice(s));
   }
 
   /**
@@ -72,7 +85,7 @@ class RectifierFunction
    */
   static double deriv(const double y)
   {
-    return y > 0 ? 1 : 0;
+    return y > 0;
   }
 
   /**
@@ -81,8 +94,8 @@ class RectifierFunction
    * @param y Input activations.
    * @param x The resulting derivatives.
    */
-  template<typename InputVecType, typename OutputVecType>
-  static void deriv(const InputVecType& y, OutputVecType& x)
+  template<typename InputType, typename OutputType>
+  static void deriv(const InputType& y, OutputType& x)
   {
     x = y;
     x.transform( [](double y) { return deriv(y); } );
