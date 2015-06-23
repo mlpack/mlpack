@@ -17,14 +17,7 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * An implementation of a one hot classification layer that can be used as
  * output layer.
- *
- * @tparam MatType Type of data (arma::mat or arma::sp_mat).
- * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
  */
-template <
-    typename MatType = arma::mat,
-    typename VecType = arma::colvec
->
 class OneHotLayer
 {
  public:
@@ -45,9 +38,10 @@ class OneHotLayer
    * @param error The calculated error with respect to the input activation and
    * the given target.
    */
-  void calculateError(const VecType& inputActivations,
-                      const VecType& target,
-                      VecType& error)
+  template<typename DataType>
+  void CalculateError(const DataType& inputActivations,
+                      const DataType& target,
+                      DataType& error)
   {
     error = inputActivations - target;
   }
@@ -58,9 +52,12 @@ class OneHotLayer
    * @param inputActivations Input data used to calculate the output class.
    * @param output Output class of the input activation.
    */
-  void outputClass(const VecType& inputActivations, VecType& output)
+  template<typename DataType>
+  void OutputClass(const DataType& inputActivations, DataType& output)
   {
-    output = arma::zeros<VecType>(inputActivations.n_elem);
+    output = inputActivations;
+    output.zeros();
+
     arma::uword maxIndex;
     inputActivations.max(maxIndex);
     output(maxIndex) = 1;
@@ -68,11 +65,8 @@ class OneHotLayer
 }; // class OneHotLayer
 
 //! Layer traits for the one-hot class classification layer.
-template <
-    typename MatType,
-    typename VecType
->
-class LayerTraits<OneHotLayer<MatType, VecType> >
+template <>
+class LayerTraits<OneHotLayer>
 {
  public:
   static const bool IsBinary = true;
