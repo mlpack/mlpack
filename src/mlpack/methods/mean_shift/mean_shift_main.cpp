@@ -15,33 +15,30 @@ using namespace mlpack::kernel;
 using namespace std;
 
 // Define parameters for the executable.
-PROGRAM_INFO("Mean Shift Clustering", "This program performs mean shift clustering "
-             "on the given dataset, storing the learned cluster assignments either as "
-             "a column of labels in the file containing the input dataset or in a "
-             "separate file. "
-             "\n\n");
+PROGRAM_INFO("Mean Shift Clustering", "This program performs mean shift "
+    "clustering on the given dataset, storing the learned cluster assignments "
+    "either as a column of labels in the file containing the input dataset or "
+    "in a separate file.");
 
 // Required options.
 PARAM_STRING_REQ("inputFile", "Input dataset to perform clustering on.", "i");
 
 // Output options.
 PARAM_FLAG("in_place", "If specified, a column containing the learned cluster "
-           "assignments will be added to the input dataset file.  In this case, "
-           "--outputFile is overridden.", "P");
+           "assignments will be added to the input dataset file.  In this case,"
+           " --outputFile is overridden.", "P");
 PARAM_STRING("output_file", "File to write output labels or labeled data to.",
              "o", "");
 PARAM_STRING("centroid_file", "If specified, the centroids of each cluster will"
              " be written to the given file.", "C", "");
 
-// Mean Shift configuration options.
-PARAM_INT("max_iterations", "Maximum number of iterations before Mean Shift "
+// Mean shift configuration options.
+PARAM_INT("max_iterations", "Maximum number of iterations before mean shift "
           "terminates.", "m", 1000);
 
-PARAM_DOUBLE("radius", "If distance of two centroids is less than radius "
-             "one will be removed. "
-             "If it isn't positive, an estimation will be given. "
-             "Points with distance to current centroid less than radius "
-             "will be used to calculate new centroid. ", "r", 0);
+PARAM_DOUBLE("radius", "If distance of two centroids is less than the given "
+    "radius, one will be removed.  A radius of 0 or less means an estimate will"
+    " be calculated and used.", "r", 0);
 
 int main(int argc, char** argv)
 {
@@ -78,6 +75,8 @@ int main(int argc, char** argv)
   Timer::Stop("clustering");
 
   Log::Info << "Found " << centroids.n_cols << " centroids." << endl;
+  if (radius <= 0.0)
+    Log::Info << "Estimated radius was " << meanShift.Radius() << ".\n";
 
   if (CLI::HasParam("in_place"))
   {
