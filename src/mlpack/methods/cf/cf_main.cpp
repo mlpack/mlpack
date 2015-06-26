@@ -127,7 +127,7 @@ void ComputeRMSE(Factorizer&& factorizer,
   // points to get the RMSE.  It turns out this is just the L2-norm divided by
   // the square root of the number of points, if we interpret the predictions
   // and the true values as vectors.
-  const double rmse = arma::norm(predictions - testData.row(2).t()) /
+  const double rmse = arma::norm(predictions - testData.row(2).t(), 2) /
       std::sqrt((double) testData.n_cols);
 
   Log::Info << "RMSE is " << rmse << "." << endl;
