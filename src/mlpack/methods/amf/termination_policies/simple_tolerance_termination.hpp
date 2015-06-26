@@ -92,6 +92,8 @@ class SimpleToleranceTermination
 
     // increment iteration count
     iteration++;
+    Log::Info << "Iteration " << iteration << "; residue "
+        << ((residueOld - residue) / residueOld) << ".\n";
 
     // if residue tolerance is not satisfied
     if ((residueOld - residue) / residueOld < tolerance && iteration > 4)
