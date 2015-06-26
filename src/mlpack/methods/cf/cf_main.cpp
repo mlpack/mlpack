@@ -39,7 +39,12 @@ PROGRAM_INFO("Collaborating Filtering", "This program performs collaborative "
     "The following optimization algorithms can be used with --algorithm (-a) "
     "parameter: "
     "\n"
-    "RegSVD -- Regularized SVD using a SGD optimizer ");
+    "'RegSVD' -- Regularized SVD using a SGD optimizer\n"
+    "'NMF' -- Non-negative matrix factorization with alternating least squares "
+    "update rules\n"
+    "'BatchSVD' -- SVD batch learning\n"
+    "'SVDIncompleteIncremental' -- SVD incomplete incremental learning\n"
+    "'SVDCompleteIncremental' -- SVD complete incremental learning\n");
 
 // Parameters for program.
 PARAM_STRING_REQ("input_file", "Input dataset to perform CF on.", "i");
@@ -126,6 +131,10 @@ int main(int argc, char** argv)
     CR(SparseSVDCompleteIncrementalFactorizer());
   else if(algo == "RegSVD")
     CR(RegularizedSVD<>());
+  else
+    Log::Fatal << "Invalid decomposition algorithm.  Choices are 'NMF', "
+        << "'SVDBatch', 'SVDIncompleteIncremental', 'SVDCompleteIncremental', "
+        << " and 'RegSVD'." << endl;
 
   const string outputFile = CLI::GetParam<string>("output_file");
   data::Save(outputFile, recommendations);
