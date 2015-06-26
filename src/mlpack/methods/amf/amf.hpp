@@ -147,7 +147,7 @@ typedef amf::AMF<amf::SimpleResidueTermination,
  * @see SVDBatchLearning
  */
 template<class MatType>
-using SVDBatchFactorizer = amf::AMF<amf::SimpleToleranceTermination<MatType>,
+using SVDBatchFactorizer = amf::AMF<amf::SimpleResidueTermination,
                                     amf::RandomInitialization,
                                     amf::SVDBatchLearning>;
 
@@ -160,7 +160,7 @@ using SVDBatchFactorizer = amf::AMF<amf::SimpleToleranceTermination<MatType>,
  * @see SVDIncompleteIncrementalLearning
  */
 template<class MatType>
-using SVDIncompleteIncrementalFactorizer = amf::AMF<amf::SimpleToleranceTermination<MatType>,
+using SVDIncompleteIncrementalFactorizer = amf::AMF<amf::SimpleResidueTermination,
                                                     amf::RandomInitialization,
                                                     amf::SVDIncompleteIncrementalLearning>;
 /**
@@ -172,7 +172,7 @@ using SVDIncompleteIncrementalFactorizer = amf::AMF<amf::SimpleToleranceTerminat
  * @see SVDCompleteIncrementalLearning
  */
 template<class MatType>
-using SVDCompleteIncrementalFactorizer = amf::AMF<amf::SimpleToleranceTermination<MatType>,
+using SVDCompleteIncrementalFactorizer = amf::AMF<amf::SimpleResidueTermination,
                                                   amf::RandomInitialization,
                                                   amf::SVDCompleteIncrementalLearning<MatType> >;
 
@@ -185,7 +185,7 @@ using SVDCompleteIncrementalFactorizer = amf::AMF<amf::SimpleToleranceTerminatio
  *
  * @see SVDBatchLearning
  */
-typedef amf::AMF<amf::SimpleToleranceTermination<arma::sp_mat>,
+typedef amf::AMF<amf::SimpleResidueTermination,
                  amf::RandomInitialization,
                  amf::SVDBatchLearning> SparseSVDBatchFactorizer;
 
@@ -196,7 +196,7 @@ typedef amf::AMF<amf::SimpleToleranceTermination<arma::sp_mat>,
  *
  * @see SVDBatchLearning
  */
-typedef amf::AMF<amf::SimpleToleranceTermination<arma::mat>,
+typedef amf::AMF<amf::SimpleResidueTermination,
                  amf::RandomInitialization,
                  amf::SVDBatchLearning> SVDBatchFactorizer;
 /**
@@ -207,7 +207,7 @@ typedef amf::AMF<amf::SimpleToleranceTermination<arma::mat>,
  *
  * @see SVDIncompleteIncrementalLearning
  */
-typedef amf::AMF<amf::SimpleToleranceTermination<arma::sp_mat>,
+typedef amf::AMF<amf::SimpleResidueTermination,
                  amf::RandomInitialization,
                  amf::SVDIncompleteIncrementalLearning>
         SparseSVDIncompleteIncrementalFactorizer;
@@ -220,7 +220,7 @@ typedef amf::AMF<amf::SimpleToleranceTermination<arma::sp_mat>,
  *
  * @see SVDIncompleteIncrementalLearning
  */
-typedef amf::AMF<amf::SimpleToleranceTermination<arma::mat>,
+typedef amf::AMF<amf::SimpleResidueTermination,
                  amf::RandomInitialization,
                  amf::SVDIncompleteIncrementalLearning>
         SVDIncompleteIncrementalFactorizer;
@@ -233,7 +233,7 @@ typedef amf::AMF<amf::SimpleToleranceTermination<arma::mat>,
  *
  * @see SVDCompleteIncrementalLearning
  */
-typedef amf::AMF<amf::SimpleToleranceTermination<arma::sp_mat>,
+typedef amf::AMF<amf::SimpleResidueTermination,
                  amf::RandomInitialization,
                  amf::SVDCompleteIncrementalLearning<arma::sp_mat> >
         SparseSVDCompleteIncrementalFactorizer;
@@ -246,16 +246,15 @@ typedef amf::AMF<amf::SimpleToleranceTermination<arma::sp_mat>,
  *
  * @see SVDCompleteIncrementalLearning
  */
-typedef amf::AMF<amf::SimpleToleranceTermination<arma::mat>,
+typedef amf::AMF<amf::SimpleResidueTermination,
                  amf::RandomInitialization,
                  amf::SVDCompleteIncrementalLearning<arma::mat> >
         SVDCompleteIncrementalFactorizer;
 
 #endif // #ifdef MLPACK_USE_CXX11
 
-
-}; // namespace amf
-}; // namespace mlpack
+} // namespace amf
+} // namespace mlpack
 
 // Include implementation.
 #include "amf_impl.hpp"
