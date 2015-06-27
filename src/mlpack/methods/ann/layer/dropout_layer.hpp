@@ -51,8 +51,11 @@ class DropoutLayer
    *
    * @param layerSize The number of neurons.
    * @param ratio The probability of setting a value to zero.
+   * @param rescale If true the input is rescaled when deterministic is False.
    */
-  DropoutLayer(const size_t layerSize, const double ratio = 0.5) :
+  DropoutLayer(const size_t layerSize,
+               const double ratio = 0.5,
+               const bool rescale = true) :
       inputActivations(arma::zeros<DataType>(layerSize)),
       delta(arma::zeros<DataType>(layerSize)),
       layerRows(layerSize),
@@ -60,7 +63,7 @@ class DropoutLayer
       layerSlices(1),
       outputMaps(1),
       ratio(ratio),
-      scale(1.0 / (1.0 - ratio))
+      rescale(rescale)
   {
     // Nothing to do here.
   }
@@ -72,10 +75,12 @@ class DropoutLayer
    * @param layerRows The number of rows of neurons.
    * @param layerCols The number of columns of neurons.
    * @param ratio The probability of setting a value to zero.
+   * @param rescale If true the input is rescaled when deterministic is False.
    */
   DropoutLayer(const size_t layerRows,
                const size_t layerCols,
-               const double ratio = 0.5) :
+               const double ratio = 0.5,
+               const bool rescale = true) :
       inputActivations(arma::zeros<DataType>(layerRows, layerCols)),
       delta(arma::zeros<DataType>(layerRows, layerCols)),
       layerRows(layerRows),
@@ -83,7 +88,7 @@ class DropoutLayer
       layerSlices(1),
       outputMaps(1),
       ratio(ratio),
-      scale(1.0 / (1.0 - ratio))
+      rescale(rescale)
   {
     // Nothing to do here.
   }
@@ -97,12 +102,14 @@ class DropoutLayer
    * @param layerCols The number of slices of neurons.
    * @param layerCols The number of output maps.
    * @param ratio The probability of setting a value to zero.
+   * @param rescale If true the input is rescaled when deterministic is False.
    */
   DropoutLayer(const size_t layerRows,
                const size_t layerCols,
                const size_t layerSlices,
                const size_t outputMaps = 1,
-               const double ratio = 0.5) :
+               const double ratio = 0.5,
+               const bool rescale = true) :
       inputActivations(arma::zeros<DataType>(layerRows, layerCols,
           layerSlices * outputMaps)),
       delta(arma::zeros<DataType>(layerRows, layerCols,
@@ -112,7 +119,7 @@ class DropoutLayer
       layerSlices(layerSlices),
       outputMaps(outputMaps),
       ratio(ratio),
-      scale(1.0 / (1.0 - ratio))
+      rescale(rescale)
   {
     // Nothing to do here.
   }
@@ -138,6 +145,9 @@ class DropoutLayer
     }
     else
     {
+      // Scale with input / (1 - ratio) and set values to zero with probability
+      // ratio.
+      scale = 1.0 / (1.0 - ratio);
       mask = arma::randu<arma::Mat<eT> >(layerRows, layerCols);
       mask.transform( [&](double val) { return val > ratio; } );
       outputActivation = inputActivation % mask * scale;
@@ -165,6 +175,9 @@ class DropoutLayer
     }
     else
     {
+      // Scale with input / (1 - ratio) and set values to zero with probability
+      // ratio.
+      scale = 1.0 / (1.0 - ratio);
       mask = arma::randu<arma::Cube<eT> >(layerRows, layerCols,
           layerSlices * outputMaps);
       mask.transform( [&](double val) { return (val > ratio); } );
@@ -198,8 +211,8 @@ class DropoutLayer
                     const arma::Mat<eT>& error,
                     arma::Cube<eT>& delta)
   {
-
     delta = delta % mask * scale;
+
     // Generate a cube from the error matrix.
     arma::Cube<eT> mappedError = arma::zeros<arma::cube>(inputActivation.n_rows,
         inputActivation.n_cols, inputActivation.n_slices);
@@ -297,7 +310,7 @@ class DropoutLayer
   double ratio;
 
   //! The scale fraction.
-  const double scale;
+  double scale;
 
   //! If true dropout and scaling is disabled, see notes above.
   bool deterministic;
