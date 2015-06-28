@@ -36,6 +36,11 @@ class ConnectionTraits
    * This is true if the connection is a pooling connection.
    */
   static const bool IsPoolingConnection = false;
+
+  /**
+   * This is true if the connection is a identity connection.
+   */
+  static const bool IsIdentityConnection = false;
 };
 
 }; // namespace ann
