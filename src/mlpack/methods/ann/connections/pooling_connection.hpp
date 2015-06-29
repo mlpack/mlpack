@@ -1,5 +1,5 @@
 /**
- * @file cnn_pooling_connection.hpp
+ * @file pooling_connection.hpp
  * @author Shangtong Zhang
  * @author Marcus Edel
  *
@@ -97,7 +97,6 @@ class PoolingConnection
   template<typename eT>
   void FeedBackward(const arma::Mat<eT>& error)
   {
-    delta.zeros();
     Unpooling(inputLayer.InputActivation(), error, inputLayer.Delta());
   }
 
@@ -110,7 +109,6 @@ class PoolingConnection
   template<typename eT>
   void FeedBackward(const arma::Cube<eT>& error)
   {
-    delta.zeros();
     for (size_t s = 0; s < error.n_slices; s++)
     {
       Unpooling(inputLayer.InputActivation().slice(s), error.slice(s),
@@ -266,6 +264,7 @@ class ConnectionTraits<
   static const bool IsSelfConnection = false;
   static const bool IsFullselfConnection = false;
   static const bool IsPoolingConnection = true;
+  static const bool IsIdentityConnection = false;
 };
 
 }; // namespace ann
