@@ -222,6 +222,7 @@ class ConnectionTraits<
   static const bool IsSelfConnection = true;
   static const bool IsFullselfConnection = false;
   static const bool IsPoolingConnection = false;
+  static const bool IsIdentityConnection = false;
 };
 
 }; // namespace ann
