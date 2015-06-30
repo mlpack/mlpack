@@ -10,7 +10,7 @@
 #define __MLPACK_METHODS_ANN_CONNECTIONS_CONV_CONNECTION_HPP
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
+#include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
 #include <mlpack/methods/ann/optimizer/steepest_descent.hpp>
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
@@ -45,10 +45,10 @@ template<
     typename InputLayerType,
     typename OutputLayerType,
     template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
-    class WeightInitRule = RandomInitialization,
+    class WeightInitRule = NguyenWidrowInitialization,
     typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>,
-    typename BackwardConvolutionRule = FFTConvolution<FullConvolution>,
-    typename GradientConvolutionRule = FFTConvolution<ValidConvolution>,
+    typename BackwardConvolutionRule = NaiveConvolution<FullConvolution>,
+    typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>,
     typename DataType = arma::cube
 >
 class ConvConnection
