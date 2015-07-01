@@ -365,7 +365,9 @@ class CNN
     Gradients(std::tuple<Tp...>& t)
     {
       if (!ConnectionTraits<typename std::remove_reference<decltype(
-          std::get<I>(t))>::type>::IsPoolingConnection)
+          std::get<I>(t))>::type>::IsPoolingConnection &&
+          !ConnectionTraits<typename std::remove_reference<decltype(
+          std::get<I>(t))>::type>::IsIdentityConnection)
       {
         std::get<I>(t).Optimzer().Update();
       }
@@ -410,7 +412,9 @@ class CNN
     Apply(std::tuple<Tp...>& t)
     {
       if (!ConnectionTraits<typename std::remove_reference<decltype(
-          std::get<I>(t))>::type>::IsPoolingConnection)
+          std::get<I>(t))>::type>::IsPoolingConnection &&
+          !ConnectionTraits<typename std::remove_reference<decltype(
+            std::get<I>(t))>::type>::IsIdentityConnection)
       {
         std::get<I>(t).Optimzer().Optimize();
         std::get<I>(t).Optimzer().Reset();
