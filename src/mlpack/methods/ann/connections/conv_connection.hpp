@@ -11,10 +11,9 @@
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
-#include <mlpack/methods/ann/optimizer/steepest_descent.hpp>
+#include <mlpack/methods/ann/optimizer/rmsprop.hpp>
 #include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
-#include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
 
 namespace mlpack{
 namespace ann  /** Artificial Neural Network. */{
@@ -135,19 +134,19 @@ class ConvConnection
    *
    * @param input The input activation.
    */
-  template<typename InputType>
-  void FeedForward(const InputType& input)
+  template<typename eT>
+  void FeedForward(const arma::Cube<eT>& input)
   {
     for (size_t outputmap = 0; outputmap < outputLayer.OutputMaps(); outputmap++)
     {
       for (size_t inputmap = 0; inputmap < inputLayer.OutputMaps(); inputmap++)
       {
-        InputType inputSlices = input.slices(
+        arma::Cube<eT> inputSlices = input.slices(
             inputmap * inputLayer.LayerSlices(),
             (inputmap * inputLayer.LayerSlices()) +
             inputLayer.LayerSlices() - 1);
 
-        InputType output;
+        arma::Cube<eT> output;
         ForwardConvolutionRule::Convolution(inputSlices,
             weights.slice(inputmap * outputLayer.OutputMaps() +
             outputmap), output);
@@ -169,9 +168,9 @@ class ConvConnection
   template<typename eT>
   void FeedBackward(const arma::Cube<eT>& error)
   {
-    delta = arma::zeros<arma::Cube<eT>>(inputLayer.InputActivation().n_rows,
-                                        inputLayer.InputActivation().n_cols,
-                                        inputLayer.InputActivation().n_slices);
+    delta = arma::zeros<arma::Cube<eT> >(inputLayer.InputActivation().n_rows,
+                                         inputLayer.InputActivation().n_cols,
+                                         inputLayer.InputActivation().n_slices);
 
     for (size_t outputmap = 0; outputmap < inputLayer.OutputMaps(); outputmap++)
     {
@@ -206,9 +205,10 @@ class ConvConnection
     gradient = arma::zeros<arma::Cube<eT> >(weights.n_rows, weights.n_cols,
         weights.n_slices);
 
-    for (size_t outputmap = 0, s = 0; outputmap < outputLayer.OutputMaps(); outputmap++)
+    for (size_t outputmap = 0; outputmap < outputLayer.OutputMaps(); outputmap++)
     {
-      for (size_t inputmap = 0; inputmap < inputLayer.OutputMaps(); inputmap++, s++)
+      for (size_t inputmap = 0, s = outputmap; inputmap < inputLayer.OutputMaps();
+        inputmap++, s += OutputLayer().OutputMaps())
       {
         arma::Cube<eT> inputSlices = inputLayer.InputActivation().slices(
             inputmap * inputLayer.LayerSlices(), (inputmap + 1) *
@@ -226,22 +226,6 @@ class ConvConnection
 
         gradient.slice(s) /= inputLayer.LayerSlices();
       }
-    }
-
-    if (InputLayer().OutputMaps() != 1)
-    {
-      arma::Cube<eT> temp = arma::zeros<arma::Cube<eT> >(weights.n_rows, weights.n_cols,
-        weights.n_slices);
-
-      for (size_t i = 0, g = 0; i < OutputLayer().OutputMaps(); i++)
-      {
-        for (size_t j = i; j < weights.n_slices; j+= OutputLayer().OutputMaps(), g++)
-        {
-          temp.slice(j) = gradient.slice(g);
-        }
-      }
-
-      gradient = temp;
     }
   }
 
