@@ -65,6 +65,7 @@ class CNN
                      const OutputType& target,
                      ErrorType& error)
     {
+      deterministic = false;
       seqNum++;
       trainError += Evaluate(input, target, error);
     }
@@ -106,6 +107,7 @@ class CNN
     template <typename InputType, typename OutputType>
     void Predict(const InputType& input, OutputType& output)
     {
+      deterministic = true;
       ResetActivations(network);
 
       std::get<0>(std::get<0>(network)).InputLayer().InputActivation() = input;
@@ -128,6 +130,7 @@ class CNN
                     const OutputType& target,
                     ErrorType& error)
     {
+      deterministic = false;
       ResetActivations(network);
 
       std::get<0>(std::get<0>(network)).InputLayer().InputActivation() = input;
@@ -174,6 +177,7 @@ class CNN
     typename std::enable_if<I < sizeof...(Tp), void>::type
     Reset(std::tuple<Tp...>& t)
     {
+      std::get<I>(t).OutputLayer().Deterministic() = deterministic;
       std::get<I>(t).OutputLayer().InputActivation().zeros();
       std::get<I>(t).Delta().zeros();
       Reset<I + 1, Tp...>(t);
@@ -455,6 +459,9 @@ class CNN
 
     //! The number of the current input sequence.
     size_t seqNum;
+
+    //! The current evaluation mode (training or testing).
+    bool deterministic;
 }; // class CNN
 
 
