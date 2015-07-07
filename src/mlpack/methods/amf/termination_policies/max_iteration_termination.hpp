@@ -47,7 +47,14 @@ class MaxIterationTermination
   bool IsConverged(const arma::mat& /* H */, const arma::mat& /* W */)
   {
     // Return true if we have performed the correct number of iterations.
-    return (++iteration == maxIterations);
+    return (++iteration >= maxIterations);
+  }
+
+  //! Return something similar to the residue, which in this case is just the
+  //! number of iterations left, since we don't have access to anything else.
+  size_t Index()
+  {
+    return (iteration > maxIterations) ? 0 : maxIterations - iteration;
   }
 
   //! Get the current iteration.
