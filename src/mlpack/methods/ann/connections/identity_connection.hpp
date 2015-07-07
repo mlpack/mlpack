@@ -29,7 +29,7 @@ template<
   typename InputLayerType,
   typename OutputLayerType,
   template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
-  typename DataType = arma::cube
+  typename DataType = arma::colvec
 >
 class IdentityConnection
 {
@@ -48,9 +48,7 @@ class IdentityConnection
       inputLayer(inputLayer),
       outputLayer(outputLayer),
       optimizer(0),
-      weights(0),
-      delta(arma::zeros<DataType>(inputLayer.Delta().n_rows,
-          inputLayer.Delta().n_cols, inputLayer.Delta().n_slices))
+      weights(0)
   {
     // Nothing to do here.
   }
