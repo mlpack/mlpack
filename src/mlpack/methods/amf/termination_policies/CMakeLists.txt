@@ -6,6 +6,7 @@ set(SOURCES
   validation_rmse_termination.hpp
   incomplete_incremental_termination.hpp
   complete_incremental_termination.hpp
+  max_iteration_termination.hpp
 )
 
 # Add directory name to sources.
