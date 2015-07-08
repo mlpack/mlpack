@@ -67,7 +67,7 @@ namespace amf /** Alternating Matrix Factorization **/ {
  * @see NMFMultiplicativeDistanceUpdate, SimpleResidueTermination
  */
 template<typename TerminationPolicyType = SimpleResidueTermination,
-         typename InitializationRuleType = RandomInitialization,
+         typename InitializationRuleType = RandomAcolInitialization,
          typename UpdateRuleType = NMFMultiplicativeDistanceUpdate>
 class AMF
 {
@@ -133,7 +133,7 @@ class AMF
 }; // class AMF
 
 typedef amf::AMF<amf::SimpleResidueTermination,
-                 amf::RandomInitialization,
+                 amf::RandomAcolInitialization,
                  amf::NMFALSUpdate> NMFALSFactorizer;
 
 //! Add simple typedefs
@@ -148,7 +148,7 @@ typedef amf::AMF<amf::SimpleResidueTermination,
  */
 template<class MatType>
 using SVDBatchFactorizer = amf::AMF<amf::SimpleResidueTermination,
-                                    amf::RandomInitialization,
+                                    amf::RandomAcolInitialization,
                                     amf::SVDBatchLearning>;
 
 /**
@@ -160,9 +160,10 @@ using SVDBatchFactorizer = amf::AMF<amf::SimpleResidueTermination,
  * @see SVDIncompleteIncrementalLearning
  */
 template<class MatType>
-using SVDIncompleteIncrementalFactorizer = amf::AMF<amf::SimpleResidueTermination,
-                                                    amf::RandomInitialization,
-                                                    amf::SVDIncompleteIncrementalLearning>;
+using SVDIncompleteIncrementalFactorizer = amf::AMF<
+    amf::SimpleResidueTermination,
+    amf::RandomAcolInitialization,
+    amf::SVDIncompleteIncrementalLearning>;
 /**
  * SVDCompleteIncrementalFactorizer factorizes given matrix V into two matrices
  * W and H by complete incremental gradient descent. SVD complete incremental
@@ -172,9 +173,10 @@ using SVDIncompleteIncrementalFactorizer = amf::AMF<amf::SimpleResidueTerminatio
  * @see SVDCompleteIncrementalLearning
  */
 template<class MatType>
-using SVDCompleteIncrementalFactorizer = amf::AMF<amf::SimpleResidueTermination,
-                                                  amf::RandomInitialization,
-                                                  amf::SVDCompleteIncrementalLearning<MatType> >;
+using SVDCompleteIncrementalFactorizer = amf::AMF<
+    amf::SimpleResidueTermination,
+    amf::RandomAcolInitialization,
+    amf::SVDCompleteIncrementalLearning<MatType>>;
 
 #else // #ifdef MLPACK_USE_CXX11
 
@@ -186,7 +188,7 @@ using SVDCompleteIncrementalFactorizer = amf::AMF<amf::SimpleResidueTermination,
  * @see SVDBatchLearning
  */
 typedef amf::AMF<amf::SimpleResidueTermination,
-                 amf::RandomInitialization,
+                 amf::RandomAcolInitialization,
                  amf::SVDBatchLearning> SparseSVDBatchFactorizer;
 
 /**
@@ -197,7 +199,7 @@ typedef amf::AMF<amf::SimpleResidueTermination,
  * @see SVDBatchLearning
  */
 typedef amf::AMF<amf::SimpleResidueTermination,
-                 amf::RandomInitialization,
+                 amf::RandomAcolInitialization,
                  amf::SVDBatchLearning> SVDBatchFactorizer;
 /**
  * SparseSVDIncompleteIncrementalFactorizer factorizes given sparse matrix V
@@ -208,7 +210,7 @@ typedef amf::AMF<amf::SimpleResidueTermination,
  * @see SVDIncompleteIncrementalLearning
  */
 typedef amf::AMF<amf::SimpleResidueTermination,
-                 amf::RandomInitialization,
+                 amf::RandomAcolInitialization,
                  amf::SVDIncompleteIncrementalLearning>
         SparseSVDIncompleteIncrementalFactorizer;
 
@@ -221,7 +223,7 @@ typedef amf::AMF<amf::SimpleResidueTermination,
  * @see SVDIncompleteIncrementalLearning
  */
 typedef amf::AMF<amf::SimpleResidueTermination,
-                 amf::RandomInitialization,
+                 amf::RandomAcolInitialization,
                  amf::SVDIncompleteIncrementalLearning>
         SVDIncompleteIncrementalFactorizer;
 
@@ -234,7 +236,7 @@ typedef amf::AMF<amf::SimpleResidueTermination,
  * @see SVDCompleteIncrementalLearning
  */
 typedef amf::AMF<amf::SimpleResidueTermination,
-                 amf::RandomInitialization,
+                 amf::RandomAcolInitialization,
                  amf::SVDCompleteIncrementalLearning<arma::sp_mat> >
         SparseSVDCompleteIncrementalFactorizer;
 
@@ -247,7 +249,7 @@ typedef amf::AMF<amf::SimpleResidueTermination,
  * @see SVDCompleteIncrementalLearning
  */
 typedef amf::AMF<amf::SimpleResidueTermination,
-                 amf::RandomInitialization,
+                 amf::RandomAcolInitialization,
                  amf::SVDCompleteIncrementalLearning<arma::mat> >
         SVDCompleteIncrementalFactorizer;
 
