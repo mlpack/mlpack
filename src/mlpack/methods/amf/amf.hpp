@@ -22,6 +22,7 @@
 #include <mlpack/methods/amf/update_rules/svd_complete_incremental_learning.hpp>
 
 #include <mlpack/methods/amf/init_rules/random_init.hpp>
+#include <mlpack/methods/amf/init_rules/random_acol_init.hpp>
 
 #include <mlpack/methods/amf/termination_policies/simple_residue_termination.hpp>
 #include <mlpack/methods/amf/termination_policies/simple_tolerance_termination.hpp>
