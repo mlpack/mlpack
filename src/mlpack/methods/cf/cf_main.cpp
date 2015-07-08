@@ -81,6 +81,8 @@ PARAM_FLAG("iteration_only_termination", "Terminate only when the maximum "
 PARAM_DOUBLE("min_residue", "Residue required to terminate the factorization "
     "(lower values generally mean better fits).", "r", 1e-5);
 
+PARAM_INT("seed", "Set the random seed (0 uses std::time(NULL)).", "s", 0);
+
 template<typename Factorizer>
 void ComputeRecommendations(CF<Factorizer>& cf,
                             const size_t numRecs,
@@ -230,6 +232,11 @@ int main(int argc, char** argv)
 {
   // Parse command line options.
   CLI::ParseCommandLine(argc, argv);
+
+  if (CLI::GetParam<int>("seed") == 0)
+    math::RandomSeed(std::time(NULL));
+  else
+    math::RandomSeed(CLI::GetParam<int>("seed"));
 
   // Read from the input file.
   const string inputFile = CLI::GetParam<string>("input_file");
