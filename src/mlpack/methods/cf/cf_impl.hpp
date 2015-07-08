@@ -85,7 +85,9 @@ CF<FactorizerType>::CF(const arma::mat& data,
 
   // Decompose the data matrix (which is in coordinate list form) to user and
   // data matrices.
+  Timer::Start("cf_factorization");
   ApplyFactorizer(factorizer, data, cleanedData, this->rank, w, h);
+  Timer::Stop("cf_factorization");
 }
 
 /**
