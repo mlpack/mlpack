@@ -66,8 +66,13 @@ class CNN
                      ErrorType& error)
     {
       deterministic = false;
+      ResetActivations(network);
       seqNum++;
-      trainError += Evaluate(input, target, error);
+
+      std::get<0>(std::get<0>(network)).InputLayer().InputActivation() = input;
+
+      LayerForward(network);
+      trainError += OutputError(network, target, error);
     }
 
     /**
@@ -130,7 +135,7 @@ class CNN
                     const OutputType& target,
                     ErrorType& error)
     {
-      deterministic = false;
+      deterministic = true;
       ResetActivations(network);
 
       std::get<0>(std::get<0>(network)).InputLayer().InputActivation() = input;
