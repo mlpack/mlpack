@@ -44,6 +44,10 @@ class CosineDistance
     convert << "CosineDistance [" << this << "]" << std::endl;
     return convert.str();
   }
+
+  //! Serialize the class (there's nothing to save).
+  template<typename Archive>
+  void Serialize(Archive& /* ar */, const unsigned int /* version */) const { }
 };
 
 //! Kernel traits for the cosine distance.

@@ -138,6 +138,22 @@ class GaussianDistribution
   void Covariance(arma::mat&& covariance);
 
   /**
+   * Serialize the distribution.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    using data::CreateNVP;
+
+    // We just need to serialize each of the members.
+    ar & CreateNVP(mean, "mean");
+    ar & CreateNVP(covariance, "covariance");
+    ar & CreateNVP(covLower, "covLower");
+    ar & CreateNVP(invCov, "invCov");
+    ar & CreateNVP(logDetCov, "logDetCov");
+  }
+
+  /**
    * Returns a string representation of this object.
    */
   std::string ToString() const;

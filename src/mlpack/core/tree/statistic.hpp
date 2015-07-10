@@ -32,7 +32,13 @@ class EmptyStatistic
     template<typename TreeType>
     EmptyStatistic(TreeType& /* node */) { }
 
-  public:
+    /**
+     * Serialize the statistic (there's nothing to be saved).
+     */
+    template<typename Archive>
+    void Serialize(Archive& /* ar */, const unsigned int /* version */)
+    { }
+
     /**
      * Returns a string representation of this object.
      */

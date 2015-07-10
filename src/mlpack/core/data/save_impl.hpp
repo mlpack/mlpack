@@ -9,6 +9,14 @@
 
 // In case it hasn't already been included.
 #include "save.hpp"
+#include "extension.hpp"
+
+#include <boost/serialization/serialization.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+
+#include "serialization_shim.hpp"
 
 namespace mlpack {
 namespace data {
@@ -16,14 +24,14 @@ namespace data {
 template<typename eT>
 bool Save(const std::string& filename,
           const arma::Mat<eT>& matrix,
-          bool fatal,
+          const bool fatal,
           bool transpose)
 {
   Timer::Start("saving_data");
 
   // First we will try to discriminate by file extension.
-  size_t ext = filename.rfind('.');
-  if (ext == std::string::npos)
+  std::string extension = Extension(filename);
+  if (extension == "")
   {
     Timer::Stop("saving_data");
     if (fatal)
@@ -35,9 +43,6 @@ bool Save(const std::string& filename,
 
     return false;
   }
-
-  // Get the actual extension.
-  std::string extension = filename.substr(ext + 1);
 
   // Catch errors opening the file.
   std::fstream stream;
@@ -161,7 +166,81 @@ bool Save(const std::string& filename,
   return true;
 }
 
-}; // namespace data
-}; // namespace mlpack
+//! Save a model to file.
+template<typename T>
+bool Save(const std::string& filename,
+          const std::string& name,
+          T& t,
+          const bool fatal,
+          format f)
+{
+  if (f == format::autodetect)
+  {
+    std::string extension = Extension(filename);
+
+    if (extension == "xml")
+      f = format::xml;
+    else if (extension == "bin")
+      f = format::binary;
+    else if (extension == "txt")
+      f = format::text;
+    else
+    {
+      if (fatal)
+        Log::Fatal << "Unable to detect type of '" << filename << "'; incorrect"
+            << " extension?" << std::endl;
+      else
+        Log::Warn << "Unable to detect type of '" << filename << "'; load "
+            << "failed.  Incorrect extension?" << std::endl;
+
+      return false;
+    }
+  }
+
+  // Open the file to save to.
+  std::ofstream ofs(filename);
+  if (!ofs.is_open())
+  {
+    if (fatal)
+      Log::Fatal << "Unable to open file '" << filename << "'." << std::endl;
+    else
+      Log::Warn << "Unable to open file '" << filename << "'." << std::endl;
+
+    return false;
+  }
+
+  try
+  {
+    if (f == format::xml)
+    {
+      boost::archive::xml_oarchive ar(ofs);
+      ar << CreateNVP(t, name);
+    }
+    else if (f == format::text)
+    {
+      boost::archive::text_oarchive ar(ofs);
+      ar << CreateNVP(t, name);
+    }
+    else if (f == format::binary)
+    {
+      boost::archive::binary_oarchive ar(ofs);
+      ar << CreateNVP(t, name);
+    }
+
+    return true;
+  }
+  catch (boost::archive::archive_exception& e)
+  {
+    if (fatal)
+      Log::Fatal << e.what() << std::endl;
+    else
+      Log::Warn << e.what() << std::endl;
+
+    return false;
+  }
+}
+
+} // namespace data
+} // namespace mlpack
 
 #endif

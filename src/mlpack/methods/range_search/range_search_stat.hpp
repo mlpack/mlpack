@@ -24,7 +24,7 @@ class RangeSearchStat
   /**
    * Initialize the statistic.
    */
-  RangeSearchStat() : lastDistanceNode(NULL), lastDistance(0.0) { }
+  RangeSearchStat() : lastDistance(0.0) { }
 
   /**
    * Initialize the statistic given a tree node that this statistic belongs to.
@@ -32,21 +32,14 @@ class RangeSearchStat
    */
   template<typename TreeType>
   RangeSearchStat(TreeType& /* node */) :
-      lastDistanceNode(NULL),
       lastDistance(0.0) { }
 
-  //! Get the last distance evaluation node.
-  void* LastDistanceNode() const { return lastDistanceNode; }
-  //! Modify the last distance evaluation node.
-  void*& LastDistanceNode() { return lastDistanceNode; }
   //! Get the last distance evaluation.
   double LastDistance() const { return lastDistance; }
   //! Modify the last distance evaluation.
   double& LastDistance() { return lastDistance; }
 
  private:
-  //! The last distance evaluation node.
-  void* lastDistanceNode;
   //! The last distance evaluation.
   double lastDistance;
 };

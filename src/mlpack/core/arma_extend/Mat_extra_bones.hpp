@@ -1,3 +1,7 @@
+//! Add a serialization operator.
+template<typename Archive>
+void serialize(Archive& ar, const unsigned int version);
+
 /*
  * Add row_col_iterator and row_col_const_iterator to arma::Mat.
  */

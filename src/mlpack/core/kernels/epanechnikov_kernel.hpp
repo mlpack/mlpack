@@ -83,6 +83,12 @@ class EpanechnikovKernel
    */
   double Normalizer(const size_t dimension);
 
+  /**
+   * Serialize the kernel.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int version);
+
   //! Returns string representation of object.
   std::string ToString() const;
 

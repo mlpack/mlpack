@@ -46,7 +46,6 @@ class NeighborSearchStat
       firstBound(SortPolicy::WorstDistance()),
       secondBound(SortPolicy::WorstDistance()),
       bound(SortPolicy::WorstDistance()),
-      lastDistanceNode(NULL),
       lastDistance(0.0) { }
 
   /**
@@ -58,7 +57,6 @@ class NeighborSearchStat
       firstBound(SortPolicy::WorstDistance()),
       secondBound(SortPolicy::WorstDistance()),
       bound(SortPolicy::WorstDistance()),
-      lastDistanceNode(NULL),
       lastDistance(0.0) { }
 
   //! Get the first bound.
@@ -73,14 +71,22 @@ class NeighborSearchStat
   double Bound() const { return bound; }
   //! Modify the overall bound (it should be the better of the two bounds).
   double& Bound() { return bound; }
-  //! Get the last distance evaluation node.
-  void* LastDistanceNode() const { return lastDistanceNode; }
-  //! Modify the last distance evaluation node.
-  void*& LastDistanceNode() { return lastDistanceNode; }
   //! Get the last distance calculation.
   double LastDistance() const { return lastDistance; }
   //! Modify the last distance calculation.
   double& LastDistance() { return lastDistance; }
+
+  //! Serialize the statistic to/from an archive.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    using data::CreateNVP;
+
+    ar & CreateNVP(firstBound, "firstBound");
+    ar & CreateNVP(secondBound, "secondBound");
+    ar & CreateNVP(bound, "bound");
+    ar & CreateNVP(lastDistance, "lastDistance");
+  }
 };
 
 }; // namespace neighbor

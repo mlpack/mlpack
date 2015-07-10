@@ -79,6 +79,10 @@ class LMetric
 
   //! Return a string representation of the object.
   std::string ToString() const;
+
+  //! Serialize the metric (nothing to do).
+  template<typename Archive>
+  void Serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
 // Convenience typedefs.

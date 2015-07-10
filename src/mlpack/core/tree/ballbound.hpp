@@ -4,7 +4,6 @@
  * Bounds that are useful for binary space partitioning trees.
  * Interface to a ball bound that works in arbitrary metric spaces.
  */
-
 #ifndef __MLPACK_CORE_TREE_BALLBOUND_HPP
 #define __MLPACK_CORE_TREE_BALLBOUND_HPP
 
@@ -29,17 +28,14 @@ class BallBound
 {
  public:
   typedef VecType Vec;
-  //! Need this for Binary Space Partion Tree
+  //! Needed for BinarySpaceTree.
   typedef TMetricType MetricType;
 
  private:
-
   //! The radius of the ball bound.
   double radius;
-
   //! The center of the ball bound.
   VecType center;
-
   //! The metric used in this bound.
   TMetricType* metric;
 
@@ -176,10 +172,14 @@ class BallBound
    */
   double Diameter() const { return 2 * radius; }
 
-  /**
-   * Returns the distance metric used in this bound.
-   */
-  TMetricType Metric() const { return *metric; }
+  //! Returns the distance metric used in this bound.
+  const TMetricType& Metric() const { return *metric; }
+  //! Modify the distance metric used in this bound.
+  TMetricType& Metric() { return *metric; }
+
+  //! Serialize the bound.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int version);
 
   /**
    * Returns a string representation of this object.

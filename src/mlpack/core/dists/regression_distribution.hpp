@@ -27,7 +27,7 @@ class RegressionDistribution
  private:
   //! Regression function for representing conditional mean.
   regression::LinearRegression rf;
-  //! Error distribution
+  //! Error distribution.
   GaussianDistribution err;
 
  public:
@@ -54,12 +54,29 @@ class RegressionDistribution
   }
 
   /**
+   * Serialize the distribution.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(rf, "rf");
+    ar & data::CreateNVP(err, "err");
+  }
+
+  /**
    * Returns a string representation of this object.
    */
   std::string ToString() const;
 
-  // Return regression function
-  const regression::LinearRegression& Rf() { return rf; }
+  //! Return regression function.
+  const regression::LinearRegression& Rf() const { return rf; }
+  //! Modify regression function.
+  regression::LinearRegression& Rf() { return rf; }
+
+  //! Return error distribution.
+  const GaussianDistribution& Err() const { return err; }
+  //! Modify error distribution.
+  GaussianDistribution& Err() { return err; }
 
   /**
    * Estimate the Gaussian distribution directly from the given observations.

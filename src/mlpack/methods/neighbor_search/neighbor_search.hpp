@@ -188,15 +188,12 @@ class NeighborSearch
   bool& SingleMode() { return singleMode; }
 
  private:
-  //! Copy of reference dataset (if we need it, because tree building modifies
-  //! it).
-  typename TreeType::Mat referenceCopy;
-  //! Reference dataset.
-  const typename TreeType::Mat& referenceSet;
-  //! Pointer to the root of the reference tree.
-  TreeType* referenceTree;
   //! Permutations of reference points during tree building.
   std::vector<size_t> oldFromNewReferences;
+  //! Pointer to the root of the reference tree.
+  TreeType* referenceTree;
+  //! Reference to reference dataset.
+  const typename TreeType::Mat& referenceSet;
 
   //! If true, this object created the trees and is responsible for them.
   bool treeOwner;

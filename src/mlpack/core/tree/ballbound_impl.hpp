@@ -251,6 +251,27 @@ BallBound<VecType, TMetricType>::operator|=(const MatType& data)
   return *this;
 }
 
+//! Serialize the BallBound.
+template<typename VecType, typename TMetricType>
+template<typename Archive>
+void BallBound<VecType, TMetricType>::Serialize(
+    Archive& ar,
+    const unsigned int /* version */)
+{
+  ar & data::CreateNVP(radius, "radius");
+  ar & data::CreateNVP(center, "center");
+
+  if (Archive::is_loading::value)
+  {
+    // If we're loading, delete the local metric since we'll have a new one.
+    if (ownsMetric)
+      delete metric;
+  }
+
+  ar & data::CreateNVP(metric, "metric");
+  ar & data::CreateNVP(ownsMetric, "ownsMetric");
+}
+
 /**
  * Returns a string representation of this object.
  */

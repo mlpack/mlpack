@@ -174,6 +174,14 @@ inline bool Range::Contains(const Range& r) const
   return lo <= r.hi && hi >= r.lo;
 }
 
+//! Serialize the range.
+template<typename Archive>
+void Range::Serialize(Archive& ar, const unsigned int /* version */)
+{
+  ar & data::CreateNVP(hi, "hi");
+  ar & data::CreateNVP(lo, "lo");
+}
+
 /**
  * Returns a string representation of an object.
  */
