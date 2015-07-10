@@ -154,10 +154,11 @@ class NeighborSearch
   /**
    * Search for the nearest neighbors of every point in the reference set.  This
    * is basically equivalent to calling any other overload of Search() with the
-   * reference set as the query set; so, this lets you do all-k-nearest-neighbors
-   * search.  The results are stored in the given matrices.  The matrices will
-   * be set to the size of n columns by k rows, where n is the number of points
-   * in the query dataset and k is the number of neighbors being searched for.
+   * reference set as the query set; so, this lets you do
+   * all-k-nearest-neighbors search.  The results are stored in the given
+   * matrices.  The matrices will be set to the size of n columns by k rows,
+   * where n is the number of points in the query dataset and k is the number of
+   * neighbors being searched for.
    *
    * @param k Number of neighbors to search for.
    * @param neighbors Matrix storing lists of neighbors for each query point.
