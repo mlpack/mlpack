@@ -40,7 +40,6 @@ template <
     typename DataType = arma::colvec
 >
 class NeuronLayer
-
 {
  public:
   /**
@@ -209,6 +208,11 @@ class NeuronLayer
   //! Get the number of output maps.
   size_t OutputMaps() const { return outputMaps; }
 
+  //! The the value of the deterministic parameter.
+  bool Deterministic() const {return deterministic; }
+  //! Modify the value of the deterministic parameter.
+  bool& Deterministic() {return deterministic; }
+
  private:
   //! Locally-stored input activation object.
   DataType inputActivations;
@@ -227,6 +231,9 @@ class NeuronLayer
 
   //! Locally-stored number of output maps.
   size_t outputMaps;
+
+  //! Locally-stored deterministic parameter.
+  bool deterministic;
 }; // class NeuronLayer
 
 // Convenience typedefs.

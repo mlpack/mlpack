@@ -115,6 +115,11 @@ class BiasLayer
   //! Get the number of output maps.
   size_t OutputMaps() const { return outputMaps; }
 
+  //! The the value of the deterministic parameter.
+  bool Deterministic() const {return deterministic; }
+  //! Modify the value of the deterministic parameter.
+  bool& Deterministic() {return deterministic; }
+
  private:
   //! Locally-stored input activation object.
   DataType inputActivations;
@@ -133,6 +138,9 @@ class BiasLayer
 
   //! Locally-stored number of output maps.
   size_t outputMaps;
+
+  //! Locally-stored deterministic parameter.
+  bool deterministic;
 }; // class BiasLayer
 
 //! Layer traits for the bias layer.

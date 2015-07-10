@@ -13,7 +13,7 @@
 #include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 #include <mlpack/methods/ann/activation_functions/tanh_function.hpp>
 #include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
-#include <mlpack/methods/ann/optimizer/steepest_descent.hpp>
+#include <mlpack/methods/ann/optimizer/irpropp.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -37,7 +37,7 @@ template <
     class StateActivationFunction = TanhFunction,
     class OutputActivationFunction = TanhFunction,
     class WeightInitRule = NguyenWidrowInitialization,
-    typename OptimizerType = SteepestDescent<>,
+    typename OptimizerType = iRPROPp<>,
     typename MatType = arma::mat,
     typename VecType = arma::colvec
 >
@@ -352,6 +352,11 @@ class LSTMLayer
   //! Modify the InGate peephole weights..
   MatType& OutGatePeepholeWeights() { return outGatePeepholeWeights; }
 
+  //! The the value of the deterministic parameter.
+  bool Deterministic() const {return deterministic; }
+  //! Modify the value of the deterministic parameter.
+  bool& Deterministic() {return deterministic; }
+
  private:
   //! Locally-stored input activation object.
   VecType inputActivations;
@@ -442,6 +447,9 @@ class LSTMLayer
 
   //! Locally-stored outgate peephole optimzer object.
   std::unique_ptr<OptimizerType> outGatePeepholeOptimizer;
+
+  //! Locally-stored deterministic parameter.
+  bool deterministic;
 }; // class LSTMLayer
 
 //! Layer traits for the bias layer.
