@@ -157,6 +157,12 @@ class Range
   inline bool Contains(const Range& r) const;
 
   /**
+   * Serialize the range object.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int version);
+
+  /**
    * Returns a string representation of an object.
    */
   inline std::string ToString() const;

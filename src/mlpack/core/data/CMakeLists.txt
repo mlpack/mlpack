@@ -1,12 +1,15 @@
 # Define the files that we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
+  extension.hpp
+  format.hpp
   load.hpp
   load_impl.hpp
   normalize_labels.hpp
   normalize_labels_impl.hpp
   save.hpp
   save_impl.hpp
+  serialization_shim.hpp
 )
 
 # add directory name to sources

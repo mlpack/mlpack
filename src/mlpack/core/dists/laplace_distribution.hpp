@@ -135,6 +135,16 @@ class LaplaceDistribution
   //! Modify the scale parameter.
   double& Scale() { return scale; }
 
+  /**
+   * Serialize the distribution.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(mean, "mean");
+    ar & data::CreateNVP(scale, "scale");
+  }
+
   //! Return a string representation of the object.
   std::string ToString() const;
 

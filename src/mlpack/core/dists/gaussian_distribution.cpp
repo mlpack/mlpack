@@ -219,8 +219,7 @@ std::string GaussianDistribution::ToString() const
   return convert.str();
 }
 
-
-/*&
+/**
  * Save to SaveRestoreUtility.
  */
 void GaussianDistribution::Save(util::SaveRestoreUtility& sr) const

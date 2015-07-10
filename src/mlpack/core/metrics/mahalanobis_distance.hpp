@@ -97,6 +97,10 @@ class MahalanobisDistance
    */
   arma::mat& Covariance() { return covariance; }
 
+  //! Serialize the Mahalanobis distance.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int version);
+
   //! Return string representation of object.
   std::string ToString() const;
  private:

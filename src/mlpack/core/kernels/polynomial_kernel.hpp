@@ -62,6 +62,14 @@ class PolynomialKernel
   //! Modify the offset of the dot product of the arguments.
   double& Offset() { return offset; }
 
+  //! Serialize the kernel.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(degree, "degree");
+    ar & data::CreateNVP(offset, "offset");
+  }
+
   //! Return a string representation of the kernel.
   std::string ToString() const
   {

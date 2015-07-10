@@ -70,6 +70,15 @@ double EpanechnikovKernel::ConvolutionIntegral(const VecTypeA& a,
   }
 }
 
+//! Serialize the kernel.
+template<typename Archive>
+void EpanechnikovKernel::Serialize(Archive& ar,
+                                   const unsigned int /* version */)
+{
+  ar & data::CreateNVP(bandwidth, "bandwidth");
+  ar & data::CreateNVP(inverseBandwidthSquared, "inverseBandwidthSquared");
+}
+
 }; // namespace kernel
 }; // namespace mlpack
 

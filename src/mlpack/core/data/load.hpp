@@ -13,8 +13,10 @@
 #include <mlpack/core/arma_extend/arma_extend.hpp> // Includes Armadillo.
 #include <string>
 
+#include "format.hpp"
+
 namespace mlpack {
-namespace data /** Functions to load and save matrices. */ {
+namespace data /** Functions to load and save matrices and models. */ {
 
 /**
  * Loads a matrix from file, guessing the filetype from the extension.  This
@@ -52,11 +54,43 @@ namespace data /** Functions to load and save matrices. */ {
 template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
-          bool fatal = false,
+          const bool fatal = false,
           bool transpose = true);
 
-}; // namespace data
-}; // namespace mlpack
+/**
+ * Load a model from a file, guessing the filetype from the extension, or,
+ * optionally, loading the specified format.  If automatic extension detection
+ * is used and the filetype cannot be determined, an error will be given.
+ *
+ * The supported types of files are the same as what is supported by the
+ * boost::serialization library:
+ *
+ *  - text, denoted by .txt
+ *  - xml, denoted by .xml
+ *  - binary, denoted by .bin
+ *
+ * The format parameter can take any of the values in the 'format' enum:
+ * 'format::autodetect', 'format::text', 'format::xml', and 'format::binary'.
+ * The autodetect functionality operates on the file extension (so, "file.txt"
+ * would be autodetected as text).
+ *
+ * The name parameter should be specified to indicate the name of the structure
+ * to be loaded.  This should be the same as the name that was used to save the
+ * structure (otherwise, the loading procedure will fail).
+ *
+ * If the parameter 'fatal' is set to true, then an exception will be thrown in
+ * the event of load failure.  Otherwise, the method will return false and the
+ * relevant error information will be printed to Log::Warn.
+ */
+template<typename T>
+bool Load(const std::string& filename,
+          const std::string& name,
+          T& t,
+          const bool fatal = false,
+          format f = format::autodetect);
+
+} // namespace data
+} // namespace mlpack
 
 // Include implementation.
 #include "load_impl.hpp"

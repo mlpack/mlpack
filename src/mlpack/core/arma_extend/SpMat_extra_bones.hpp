@@ -2,8 +2,12 @@
  * @file SpMat_extra_bones.hpp
  * @author Ryan Curtin
  *
- * Add a batch constructor for SpMat, if the version is older than 3.810.0.
+ * Add a batch constructor for SpMat, if the version is older than 3.810.0, and
+ * also a serialize() function for Armadillo.
  */
+template<typename Archive>
+void serialize(Archive& ar, const unsigned int version);
+
 #if ARMA_VERSION_MAJOR == 3 && ARMA_VERSION_MINOR < 810
 template<typename T1, typename T2>
 inline SpMat(

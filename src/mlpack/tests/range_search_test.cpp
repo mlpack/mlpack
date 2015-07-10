@@ -41,7 +41,6 @@ void SortResults(const vector<vector<size_t>>& neighbors,
 template<typename TreeType>
 void CleanTree(TreeType& node)
 {
-  node.Stat().LastDistanceNode() = NULL;
   node.Stat().LastDistance() = 0.0;
 
   for (size_t i = 0; i < node.NumChildren(); ++i)

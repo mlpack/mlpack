@@ -600,4 +600,110 @@ BOOST_AUTO_TEST_CASE(NormalizeLabelTest)
     BOOST_REQUIRE_EQUAL(randLabels[i], revertedLabels[i]);
 }
 
+// Test structures.
+class TestInner
+{
+ public:
+  TestInner(char c, std::string s) : c(c), s(s) { }
+
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(c, "char");
+    ar & data::CreateNVP(s, "string");
+  }
+
+  // Public members for testing.
+  char c;
+  std::string s;
+};
+
+class Test
+{
+ public:
+  Test(int x, int y) : x(x), y(y), ina('a', "hello"), inb('b', "goodbye") { }
+
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(x, "x");
+    ar & data::CreateNVP(y, "y");
+    ar & data::CreateNVP(ina, "ina");
+    ar & data::CreateNVP(inb, "inb");
+  }
+
+  // Public members for testing.
+  int x;
+  int y;
+  TestInner ina;
+  TestInner inb;
+};
+
+/**
+ * Make sure we can load and save.
+ */
+BOOST_AUTO_TEST_CASE(LoadBinaryTest)
+{
+  Test x(10, 12);
+
+  BOOST_REQUIRE_EQUAL(data::Save("test.bin", "x", x, false), true);
+
+  // Now reload.
+  Test y(11, 14);
+
+  BOOST_REQUIRE_EQUAL(data::Load("test.bin", "x", y, false), true);
+
+  BOOST_REQUIRE_EQUAL(y.x, x.x);
+  BOOST_REQUIRE_EQUAL(y.y, x.y);
+  BOOST_REQUIRE_EQUAL(y.ina.c, x.ina.c);
+  BOOST_REQUIRE_EQUAL(y.ina.s, x.ina.s);
+  BOOST_REQUIRE_EQUAL(y.inb.c, x.inb.c);
+  BOOST_REQUIRE_EQUAL(y.inb.s, x.inb.s);
+}
+
+/**
+ * Make sure we can load and save.
+ */
+BOOST_AUTO_TEST_CASE(LoadXMLTest)
+{
+  Test x(10, 12);
+
+  BOOST_REQUIRE_EQUAL(data::Save("test.xml", "x", x, false), true);
+
+  // Now reload.
+  Test y(11, 14);
+
+  BOOST_REQUIRE_EQUAL(data::Load("test.xml", "x", y, false), true);
+
+  BOOST_REQUIRE_EQUAL(y.x, x.x);
+  BOOST_REQUIRE_EQUAL(y.y, x.y);
+  BOOST_REQUIRE_EQUAL(y.ina.c, x.ina.c);
+  BOOST_REQUIRE_EQUAL(y.ina.s, x.ina.s);
+  BOOST_REQUIRE_EQUAL(y.inb.c, x.inb.c);
+  BOOST_REQUIRE_EQUAL(y.inb.s, x.inb.s);
+}
+
+/**
+ * Make sure we can load and save.
+ */
+BOOST_AUTO_TEST_CASE(LoadTextTest)
+{
+  Test x(10, 12);
+
+  BOOST_REQUIRE_EQUAL(data::Save("test.txt", "x", x, false), true);
+
+  // Now reload.
+  Test y(11, 14);
+
+  BOOST_REQUIRE_EQUAL(data::Load("test.txt", "x", y, false), true);
+
+  BOOST_REQUIRE_EQUAL(y.x, x.x);
+  BOOST_REQUIRE_EQUAL(y.y, x.y);
+  BOOST_REQUIRE_EQUAL(y.ina.c, x.ina.c);
+  BOOST_REQUIRE_EQUAL(y.ina.s, x.ina.s);
+  BOOST_REQUIRE_EQUAL(y.inb.c, x.inb.c);
+  BOOST_REQUIRE_EQUAL(y.inb.s, x.inb.s);
+}
+
+
 BOOST_AUTO_TEST_SUITE_END();

@@ -49,18 +49,22 @@ class IPMetric
   double Evaluate(const VecTypeA& a, const VecTypeB& b);
 
   //! Get the kernel.
-  const KernelType& Kernel() const { return kernel; }
+  const KernelType& Kernel() const { return *kernel; }
   //! Modify the kernel.
-  KernelType& Kernel() { return kernel; }
+  KernelType& Kernel() { return *kernel; }
+
+  //! Serialize the metric.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int version);
 
   //! Returns a string representation of this object.
   std::string ToString() const;
 
  private:
-  //! The locally stored kernel, if it is necessary.
-  KernelType* localKernel;
-  //! The reference to the kernel that is being used.
-  KernelType& kernel;
+  //! The kernel we are using.
+  KernelType* kernel;
+  //! If true, we are responsible for deleting the kernel.
+  bool kernelOwner;
 };
 
 }; // namespace metric
