@@ -565,44 +565,25 @@ std::string HMM<Distribution>::ToString() const
   return convert.str();
 }
 
-//! Save to SaveRestoreUtility
+//! Serialize the HMM.
+template<typename Archive>
 template<typename Distribution>
-void HMM<Distribution>::Save(util::SaveRestoreUtility& sr) const
+void HMM<Distribution>::Serialize(Archive& ar, const unsigned int /* version */)
 {
-  //  Save parameters.
-  sr.SaveParameter(Type(), "type");
-  sr.SaveParameter(Emission()[0].Type(), "emission_type");
-  sr.SaveParameter(dimensionality, "dimensionality");
-  sr.SaveParameter(transition.n_rows, "states");
-  sr.SaveParameter(transition, "transition");
+  ar & data::CreateNVP(dimensionality, "dimensionality");
+  ar & data::CreateNVP(transition, "transition");
 
-  // Now the emissions.
-  util::SaveRestoreUtility mn;
-  for (size_t i = 0; i < transition.n_rows; ++i)
+  // Now serialize each emission.  If we are loading, we must resize the vector
+  // of emissions correctly.
+  if (Archive::is_loading::value)
+    emission.resize(transition.n_rows);
+
+  // Load the emissions; generate the correct name for each one.
+  for (size_t i = 0; i < emission.size(); ++i)
   {
-    // Generate name.
-    std::stringstream s;
-    s << "emission_distribution_" << i;
-    Emission()[i].Save(mn);
-    sr.AddChild(mn, s.str());
-  }
-}
-
-//! Load from SaveRestoreUtility
-template<typename Distribution>
-void HMM<Distribution>::Load(const util::SaveRestoreUtility& sr)
-{
-  // Load parameters.
-  sr.LoadParameter(dimensionality, "dimensionality");
-  sr.LoadParameter(transition, "transition");
-
-  // Now each emission distribution.
-  Emission().resize(transition.n_rows);
-  for (size_t i = 0; i < transition.n_rows; ++i)
-  {
-    std::stringstream s;
-    s << "emission_distribution_" << i;
-    Emission()[i].Load(sr.Children().at(s.str()));
+    std::ostringstream oss;
+    oss << "emission" << i;
+    ar & data::CreateNVP(emission[i], oss.str());
   }
 }
 
