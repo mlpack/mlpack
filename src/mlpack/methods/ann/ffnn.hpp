@@ -64,6 +64,7 @@ class FFNN
                      const VecType& target,
                      VecType& error)
     {
+      deterministic = false;
       seqNum++;
       trainError += Evaluate(input, target, error);
     }
@@ -106,6 +107,7 @@ class FFNN
     template <typename VecType>
     void Predict(const VecType& input, VecType& output)
     {
+      deterministic = true;
       ResetActivations(network);
 
       std::get<0>(std::get<0>(network)).InputLayer().InputActivation() = input;
@@ -126,6 +128,7 @@ class FFNN
     template <typename VecType>
     double Evaluate(const VecType& input, const VecType& target, VecType& error)
     {
+      deterministic = false;
       ResetActivations(network);
 
       std::get<0>(std::get<0>(network)).InputLayer().InputActivation() = input;
@@ -172,6 +175,7 @@ class FFNN
     typename std::enable_if<I < sizeof...(Tp), void>::type
     Reset(std::tuple<Tp...>& t)
     {
+      std::get<I>(t).OutputLayer().Deterministic() = deterministic;
       std::get<I>(t).OutputLayer().InputActivation().zeros();
       Reset<I + 1, Tp...>(t);
     }
@@ -360,7 +364,12 @@ class FFNN
     typename std::enable_if<I < sizeof...(Tp), void>::type
     Gradients(std::tuple<Tp...>& t)
     {
-      std::get<I>(t).Optimzer().Update();
+      if (!ConnectionTraits<typename std::remove_reference<decltype(
+          std::get<I>(t))>::type>::IsIdentityConnection)
+      {
+        std::get<I>(t).Optimzer().Update();
+      }
+
       Gradients<I + 1, Tp...>(t);
     }
 
@@ -400,8 +409,12 @@ class FFNN
     typename std::enable_if<I < sizeof...(Tp), void>::type
     Apply(std::tuple<Tp...>& t)
     {
-      std::get<I>(t).Optimzer().Optimize();
-      std::get<I>(t).Optimzer().Reset();
+      if (!ConnectionTraits<typename std::remove_reference<decltype(
+          std::get<I>(t))>::type>::IsIdentityConnection)
+      {
+        std::get<I>(t).Optimzer().Optimize();
+        std::get<I>(t).Optimzer().Reset();
+      }
 
       Apply<I + 1, Tp...>(t);
     }
@@ -417,6 +430,9 @@ class FFNN
 
     //! The number of the current input sequence.
     size_t seqNum;
+
+    //! The current evaluation mode (training or testing).
+    bool deterministic;
 }; // class FFNN
 
 
