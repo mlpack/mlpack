@@ -106,8 +106,6 @@ endif(ARMA_EXTRA_DEBUG)
 #   ARMADILLO_LIBRARY - location of libarmadillo.so / armadillo.lib
 #   ARMADILLO_INCLUDE_DIR - directory containing <armadillo>
 #   ARMADILLO_INCLUDE_DIRS - directories necessary for Armadillo includes
-#   LIBXML2_INCLUDE_DIR - location of LibXml2 includes
-#   LIBXML2_LIBRARIES - locations of libxml2.so or libxml2.lib
 #   BOOST_ROOT - root of Boost installation
 #   BOOST_INCLUDEDIR - include directory for Boost
 #   BOOST_LIBRARYDIR - library directory for Boost
@@ -178,49 +176,8 @@ if (WIN32)
        ${ARMADILLO_LIBRARIES} ${BLAS_LIBRARY} ${LAPACK_LIBRARY})
 endif (WIN32)
 
-find_package(LibXml2 2.6.0 REQUIRED)
-
-# On Windows, LibXml2 has a couple dependencies and we want to make sure they
-# exist.  We don't need the include directory, so we just use a find_library
-# call, looking for .dlls.
-if (WIN32)
-  # Find a .dll, not a .lib, because libxml2 is probably dynamically linked.
-  set(CMAKE_OLD_SUFFIXES "${CMAKE_FIND_LIBRARY_SUFFIXES}")
-  set(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
-
-  find_library(ZLIB_LIBRARY
-      zlib1
-      HINTS "[HKEY_LOCAL_MACHINE\\SOFTWARE\\GnuWin32\\ZLib:InstallPath]/lib"
-  )
-  if (NOT ZLIB_LIBRARY)
-    message(WARNING "zlib1.dll not found!  libxml2.dll may depend on this, and
-      if it is not present MLPACK may not work.")
-  endif (NOT ZLIB_LIBRARY)
-
-  find_library(ICONV_LIBRARY iconv)
-  if (NOT ICONV_LIBRARY)
-    message(WARNING "iconv.dll not found!  libxml2.dll may depend on this, and
-      if it is not present MLPACK may not work.")
-  endif (NOT ICONV_LIBRARY)
-
-  find_file(ICONV_HEADER
-      iconv.h
-      HINTS ${LIBXML2_INCLUDE_DIR})
-  if (NOT ICONV_HEADER)
-    message(FATAL_ERROR "iconv.h not found!  It can be placed in a standard
-        include directory or the LibXml2 include directory.")
-  endif (NOT ICONV_HEADER)
-  # Add the directory containing iconv.h to the include directories.
-  get_filename_component(ICONV_H_DIR ${ICONV_HEADER} PATH)
-  include_directories(${ICONV_H_DIR})
-
-  # Reset suffixes.
-  set(CMAKE_FIND_LIBRARY_SUFFIXES "${CMAKE_OLD_SUFFIXES}")
-endif (WIN32)
-
 # Include directories for the previous dependencies.
 include_directories(${ARMADILLO_INCLUDE_DIRS})
-include_directories(${LIBXML2_INCLUDE_DIR})
 
 # Unfortunately this configuration variable is necessary and will need to be
 # updated as time goes on and new versions are released.
