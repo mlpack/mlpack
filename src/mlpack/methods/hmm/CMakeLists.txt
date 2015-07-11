@@ -3,8 +3,6 @@
 set(SOURCES
   hmm.hpp
   hmm_impl.hpp
-  hmm_util.hpp
-  hmm_util_impl.hpp
   hmm_regression.hpp
   hmm_regression_impl.hpp
 )
