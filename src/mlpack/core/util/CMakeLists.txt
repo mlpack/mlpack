@@ -18,9 +18,6 @@ set(SOURCES
   prefixedoutstream.hpp
   prefixedoutstream.cpp
   prefixedoutstream_impl.hpp
-  save_restore_utility.hpp
-  save_restore_utility.cpp
-  save_restore_utility_impl.hpp
   sfinae_utility.hpp
   string_util.hpp
   string_util.cpp
