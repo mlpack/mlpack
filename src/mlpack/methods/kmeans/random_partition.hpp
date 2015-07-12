@@ -44,9 +44,13 @@ class RandomPartition
     assignments = arma::shuffle(arma::linspace<arma::Col<size_t> >(0,
         (clusters - 1), data.n_cols));
   }
+
+  //! Serialize the partitioner (nothing to do).
+  template<typename Archive>
+  void Serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
-};
-};
+}
+}
 
 #endif

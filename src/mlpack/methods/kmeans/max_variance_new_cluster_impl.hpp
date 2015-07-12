@@ -75,6 +75,21 @@ size_t MaxVarianceNewCluster::EmptyCluster(const MatType& data,
   return 1; // We only changed one point.
 }
 
+//! Serialize the object.
+template<typename Archive>
+void MaxVarianceNewCluster::Serialize(Archive& /* ar */,
+                                      const unsigned int /* version */)
+{
+  // Serialization is useless here, because the only thing we store is
+  // precalculated quantities, and if we're serializing, our precalculations are
+  // likely to be useless when we deserialize (because the user will be running
+  // a different clustering, probably).  So there is no need to store anything,
+  // and if we are loading, we just reset the assignments array so
+  // precalculation will happen next time EmptyCluster() is called.
+  if (Archive::is_loading::value)
+    assignments.set_size(0);
+}
+
 template<typename MetricType, typename MatType>
 void MaxVarianceNewCluster::Precalculate(const MatType& data,
                                          const arma::mat& oldCentroids,

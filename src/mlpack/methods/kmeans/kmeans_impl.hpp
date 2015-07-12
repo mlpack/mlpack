@@ -285,5 +285,23 @@ std::string KMeans<MetricType,
   return convert.str();
 }
 
+template<typename MetricType,
+         typename InitialPartitionPolicy,
+         typename EmptyClusterPolicy,
+         template<class, class> class LloydStepType,
+         typename MatType>
+template<typename Archive>
+void KMeans<MetricType,
+            InitialPartitionPolicy,
+            EmptyClusterPolicy,
+            LloydStepType,
+            MatType>::Serialize(Archive& ar, const unsigned int /* version */)
+{
+  ar & data::CreateNVP(maxIterations, "max_iterations");
+  ar & data::CreateNVP(metric, "metric");
+  ar & data::CreateNVP(partitioner, "partitioner");
+  ar & data::CreateNVP(emptyClusterAction, "emptyClusterAction");
+}
+
 }; // namespace kmeans
 }; // namespace mlpack

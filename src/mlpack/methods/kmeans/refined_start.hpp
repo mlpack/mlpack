@@ -66,6 +66,14 @@ class RefinedStart
   //! Modify the percentage of the data used by each subsampling.
   double& Percentage() { return percentage; }
 
+  //! Serialize the object.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(samplings, "samplings");
+    ar & data::CreateNVP(percentage, "percentage");
+  }
+
  private:
   //! The number of samplings to perform.
   size_t samplings;
@@ -73,8 +81,8 @@ class RefinedStart
   double percentage;
 };
 
-}; // namespace kmeans
-}; // namespace mlpack
+} // namespace kmeans
+} // namespace mlpack
 
 // Include implementation.
 #include "refined_start_impl.hpp"

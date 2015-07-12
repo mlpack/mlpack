@@ -53,6 +53,10 @@ class AllowEmptyClusters
     // Empty clusters are okay!  Do nothing.
     return 0;
   }
+
+  //! Serialize the empty cluster policy (nothing to do).
+  template<typename Archive>
+  void Serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
 } // namespace kmeans

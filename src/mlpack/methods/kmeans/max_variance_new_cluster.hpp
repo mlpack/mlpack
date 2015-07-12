@@ -49,6 +49,10 @@ class MaxVarianceNewCluster
                       MetricType& metric,
                       const size_t iteration);
 
+  //! Serialize the object.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int version);
+
  private:
   //! Index of iteration for which variance is cached.
   size_t iteration;
