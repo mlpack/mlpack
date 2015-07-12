@@ -8,6 +8,7 @@
 
 #include "gmm.hpp"
 #include "no_constraint.hpp"
+#include "gmm_util.hpp"
 
 #include <mlpack/methods/kmeans/refined_start.hpp>
 
@@ -39,8 +40,8 @@ PROGRAM_INFO("Gaussian Mixture Model (GMM) Training",
 PARAM_STRING_REQ("input_file", "File containing the data on which the model "
     "will be fit.", "i");
 PARAM_INT("gaussians", "Number of Gaussians in the GMM.", "g", 1);
-PARAM_STRING("output_file", "The file to write the trained GMM parameters into "
-    "(as XML).", "o", "gmm.xml");
+PARAM_STRING("output_file", "The file to write the trained GMM parameters "
+    "into.", "o", "gmm.xml");
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 PARAM_INT("trials", "Number of trials to perform in training GMM.", "t", 10);
 
@@ -137,7 +138,8 @@ int main(int argc, char* argv[])
       Timer::Stop("em");
 
       // Save results.
-      gmm.Save(CLI::GetParam<string>("output_file"));
+      const string outputFile = CLI::GetParam<string>("output_file");
+      SaveGMM(gmm, outputFile);
     }
     else
     {
@@ -152,7 +154,8 @@ int main(int argc, char* argv[])
       Timer::Stop("em");
 
       // Save results.
-      gmm.Save(CLI::GetParam<string>("output_file"));
+      const string outputFile = CLI::GetParam<string>("output_file");
+      SaveGMM(gmm, outputFile);
     }
   }
   else
@@ -171,7 +174,8 @@ int main(int argc, char* argv[])
       Timer::Stop("em");
 
       // Save results.
-      gmm.Save(CLI::GetParam<string>("output_file"));
+      const string outputFile = CLI::GetParam<string>("output_file");
+      SaveGMM(gmm, outputFile);
     }
     else
     {
@@ -188,7 +192,8 @@ int main(int argc, char* argv[])
       Timer::Stop("em");
 
       // Save results.
-      gmm.Save(CLI::GetParam<string>("output_file"));
+      const string outputFile = CLI::GetParam<string>("output_file");
+      SaveGMM(gmm, outputFile);
     }
   }
 

@@ -9,6 +9,7 @@ set(SOURCES
   positive_definite_constraint.hpp
   diagonal_constraint.hpp
   eigenvalue_ratio_constraint.hpp
+  gmm_util.hpp
 )
 
 # Add directory name to sources.
@@ -26,7 +27,7 @@ add_executable(gmm
 )
 
 # link dependencies of mog_em
-target_link_libraries(gmm 
+target_link_libraries(gmm
   mlpack
 )
 
@@ -34,7 +35,7 @@ target_link_libraries(gmm
 add_executable(gmm_convert
   gmm_convert_main.cpp
 )
-target_link_libraries(gmm_convert 
+target_link_libraries(gmm_convert
   mlpack
 )
 
