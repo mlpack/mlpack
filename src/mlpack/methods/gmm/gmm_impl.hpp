@@ -12,8 +12,6 @@
 // In case it hasn't already been included.
 #include "gmm.hpp"
 
-#include <mlpack/core/util/save_restore_utility.hpp>
-
 namespace mlpack {
 namespace gmm {
 
@@ -30,8 +28,8 @@ GMM<FittingType>::GMM(const size_t gaussians, const size_t dimensionality) :
     dimensionality(dimensionality),
     dists(gaussians, distribution::GaussianDistribution(dimensionality)),
     weights(gaussians),
-    localFitter(FittingType()),
-    fitter(localFitter)
+    fitter(new FittingType()),
+    ownsFitter(true)
 {
   // Set equal weights.  Technically this model is still valid, but only barely.
   weights.fill(1.0 / gaussians);
@@ -55,7 +53,8 @@ GMM<FittingType>::GMM(const size_t gaussians,
     dimensionality(dimensionality),
     dists(gaussians, distribution::GaussianDistribution(dimensionality)),
     weights(gaussians),
-    fitter(fitter)
+    fitter(&fitter),
+    ownsFitter(false)
 {
   // Set equal weights.  Technically this model is still valid, but only barely.
   weights.fill(1.0 / gaussians);
@@ -70,8 +69,8 @@ GMM<FittingType>::GMM(const GMM<OtherFittingType>& other) :
     dimensionality(other.dimensionality),
     dists(other.dists),
     weights(other.weights),
-    localFitter(FittingType()),
-    fitter(localFitter) { /* Nothing to do. */ }
+    fitter(new FittingType()),
+    ownsFitter(true) { /* Nothing to do. */ }
 
 // Copy constructor for when the other GMM uses the same fitting type.
 template<typename FittingType>
@@ -80,8 +79,15 @@ GMM<FittingType>::GMM(const GMM<FittingType>& other) :
     dimensionality(other.dimensionality),
     dists(other.dists),
     weights(other.weights),
-    localFitter(other.fitter),
-    fitter(localFitter) { /* Nothing to do. */ }
+    fitter(new FittingType(*other.fitter)),
+    ownsFitter(true) { /* Nothing to do. */ }
+
+template<typename FittingType>
+GMM<FittingType>::~GMM()
+{
+  if (ownsFitter)
+    delete fitter;
+}
 
 template<typename FittingType>
 template<typename OtherFittingType>
@@ -103,81 +109,13 @@ GMM<FittingType>& GMM<FittingType>::operator=(const GMM<FittingType>& other)
   dimensionality = other.dimensionality;
   dists = other.dists;
   weights = other.weights;
-  localFitter = other.fitter;
+
+  if (fitter && ownsFitter)
+    delete fitter;
+  fitter = new FittingType(other.fitter);
+  ownsFitter = true;
 
   return *this;
-}
-
-// Load a GMM from file.
-template<typename FittingType>
-void GMM<FittingType>::Load(const std::string& filename)
-{
-  util::SaveRestoreUtility load;
-
-  if (!load.ReadFile(filename))
-    Log::Fatal << "GMM::Load(): could not read file '" << filename << "'!\n";
-  Load(load);
-}
-
-// Save a GMM to a file.
-template<typename FittingType>
-void GMM<FittingType>::Save(const std::string& filename) const
-{
-  util::SaveRestoreUtility save;
-  Save(save);
-
-  if (!save.WriteFile(filename))
-    Log::Warn << "GMM::Save(): error saving to '" << filename << "'.\n";
-}
-
-
-// Save a GMM to a SaveRestoreUtility.
-template<typename FittingType>
-void GMM<FittingType>::Save(util::SaveRestoreUtility& sr) const
-{
-  sr.SaveParameter(Type(), "type");
-  sr.SaveParameter(gaussians, "gaussians");
-  sr.SaveParameter(dimensionality, "dimensionality");
-  sr.SaveParameter(weights, "weights");
-
-  util::SaveRestoreUtility child;
-  for (size_t i = 0; i < gaussians; ++i)
-  {
-    // Generate names for the XML nodes.
-    std::stringstream o;
-    o << i;
-    std::string gaussianName = "gaussian" + o.str();
-
-    // Now save them.
-    dists[i].Save(child);
-    sr.AddChild(child, gaussianName);
-  }
-}
-
-// Load a GMM from SaveRestoreUtility.
-template<typename FittingType>
-void GMM<FittingType>::Load(const util::SaveRestoreUtility& sr)
-{
-    sr.LoadParameter(gaussians, "gaussians");
-    sr.LoadParameter(dimensionality, "dimensionality");
-    sr.LoadParameter(weights, "weights");
-
-    // We need to do a little error checking here.
-    if (weights.n_elem != gaussians)
-    {
-      Log::Fatal << "GMM::Load reports " << gaussians
-      << " gaussians but weights vector only contains " << weights.n_elem
-      << " elements!" << std::endl;
-    }
-
-    dists.resize(gaussians);
-
-    for (size_t i = 0; i < gaussians; ++i)
-    {
-      std::stringstream o;
-      o << "gaussian" << i;
-      dists[i].Load(sr.Children().at(o.str()));
-    }
 }
 
 /**
@@ -249,7 +187,7 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
   {
     // Train the model.  The user will have been warned earlier if the GMM was
     // initialized with no parameters (0 gaussians, dimensionality of 0).
-    fitter.Estimate(observations, dists, weights,
+    fitter->Estimate(observations, dists, weights,
         useExistingModel);
     bestLikelihood = LogLikelihood(observations, dists, weights);
   }
@@ -269,7 +207,7 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
 
     // We need to keep temporary copies.  We'll do the first training into the
     // actual model position, so that if it's the best we don't need to copy it.
-    fitter.Estimate(observations, dists, weights,
+    fitter->Estimate(observations, dists, weights,
         useExistingModel);
 
     bestLikelihood = LogLikelihood(observations, dists, weights);
@@ -290,7 +228,8 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
         weightsTrial = weightsOrig;
       }
 
-      fitter.Estimate(observations, distsTrial, weightsTrial, useExistingModel);
+      fitter->Estimate(observations, distsTrial, weightsTrial,
+          useExistingModel);
 
       // Check to see if the log-likelihood of this one is better.
       double newLikelihood = LogLikelihood(observations, distsTrial,
@@ -333,7 +272,7 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
   {
     // Train the model.  The user will have been warned earlier if the GMM was
     // initialized with no parameters (0 gaussians, dimensionality of 0).
-    fitter.Estimate(observations, probabilities, dists, weights,
+    fitter->Estimate(observations, probabilities, dists, weights,
         useExistingModel);
     bestLikelihood = LogLikelihood(observations, dists, weights);
   }
@@ -353,7 +292,7 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
 
     // We need to keep temporary copies.  We'll do the first training into the
     // actual model position, so that if it's the best we don't need to copy it.
-    fitter.Estimate(observations, probabilities, dists, weights,
+    fitter->Estimate(observations, probabilities, dists, weights,
         useExistingModel);
 
     bestLikelihood = LogLikelihood(observations, dists, weights);
@@ -374,7 +313,7 @@ double GMM<FittingType>::Estimate(const arma::mat& observations,
         weightsTrial = weightsOrig;
       }
 
-      fitter.Estimate(observations, distsTrial, weightsTrial,
+      fitter->Estimate(observations, distsTrial, weightsTrial,
           useExistingModel);
 
       // Check to see if the log-likelihood of this one is better.
@@ -484,9 +423,45 @@ std::string GMM<FittingType>::ToString() const
   return convert.str();
 }
 
+/**
+ * Serialize the object.
+ */
+template<typename FittingType>
+template<typename Archive>
+void GMM<FittingType>::Serialize(Archive& ar, const unsigned int /* version */)
+{
+  using data::CreateNVP;
 
-}; // namespace gmm
-}; // namespace mlpack
+  ar & CreateNVP(gaussians, "gaussians");
+  ar & CreateNVP(dimensionality, "dimensionality");
+
+  // Load (or save) the gaussians.  Not going to use the default std::vector
+  // serialize here because it won't call out correctly to Serialize() for each
+  // Gaussian distribution.
+  if (Archive::is_loading::value)
+    dists.resize(gaussians);
+  for (size_t i = 0; i < gaussians; ++i)
+  {
+    std::ostringstream oss;
+    oss << "dist" << i;
+    ar & CreateNVP(dists[i], oss.str());
+  }
+
+  ar & CreateNVP(weights, "weights");
+
+  if (Archive::is_loading::value)
+  {
+    if (fitter && ownsFitter)
+      delete fitter;
+
+    ownsFitter = true;
+  }
+
+  ar & CreateNVP(fitter, "fitter");
+}
+
+} // namespace gmm
+} // namespace mlpack
 
 #endif
 
