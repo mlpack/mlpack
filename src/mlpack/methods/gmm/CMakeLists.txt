@@ -21,14 +21,14 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-# main executable, em
+# main executable, gmm
 add_executable(gmm
   gmm_main.cpp
 )
 
-# link dependencies of mog_em
+# link dependencies of gmm
 target_link_libraries(gmm
   mlpack
 )
 
-install(TARGETS gmm gmm_convert RUNTIME DESTINATION bin)
+install(TARGETS gmm RUNTIME DESTINATION bin)
