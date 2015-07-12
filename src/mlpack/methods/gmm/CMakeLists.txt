@@ -31,12 +31,4 @@ target_link_libraries(gmm
   mlpack
 )
 
-# legacy file converter
-add_executable(gmm_convert
-  gmm_convert_main.cpp
-)
-target_link_libraries(gmm_convert
-  mlpack
-)
-
 install(TARGETS gmm gmm_convert RUNTIME DESTINATION bin)
