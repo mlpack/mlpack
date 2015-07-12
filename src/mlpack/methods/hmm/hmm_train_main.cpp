@@ -43,7 +43,7 @@ PARAM_INT("gaussians", "Number of gaussians in each GMM (necessary when type is"
 PARAM_STRING("model_file", "Pre-existing HMM model (optional).", "m", "");
 PARAM_STRING("labels_file", "Optional file of hidden states, used for "
     "labeled training.", "l", "");
-PARAM_STRING("output_file", "File to save trained HMM to (XML).", "o",
+PARAM_STRING("output_file", "File to save trained HMM to.", "o",
     "output_hmm.xml");
 PARAM_INT("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 PARAM_DOUBLE("tolerance", "Tolerance of the Baum-Welch algorithm.", "T", 1e-5);
@@ -57,6 +57,106 @@ using namespace mlpack::math;
 using namespace arma;
 using namespace std;
 
+// Because we don't know what the type of our HMM is, we need to write a
+// function that can take arbitrary HMM types.
+struct Train
+{
+  template<typename HMMType>
+  static void Apply(HMMType& hmm, vector<mat>* trainSeqPtr)
+  {
+    const bool batch = CLI::HasParam("batch");
+    const double tolerance = CLI::GetParam<double>("tolerance");
+
+    // Do we need to replace the tolerance?
+    if (CLI::HasParam("tolerance"))
+      hmm.Tolerance() = tolerance;
+
+    const string labelsFile = CLI::GetParam<string>("labels_file");
+
+    // Verify that the dimensionality of our observations is the same as the
+    // dimensionality of our HMM's emissions.
+    vector<mat>& trainSeq = *trainSeqPtr;
+    for (size_t i = 0; i < trainSeq.size(); ++i)
+      if (trainSeq[i].n_rows != hmm.Emission()[0].Dimensionality())
+        Log::Fatal << "Dimensionality of training sequence " << i << " ("
+            << trainSeq[i].n_rows << ") is not equal to the dimensionality of "
+            << "the HMM (" << hmm.Emission()[0].Dimensionality() << ")!"
+            << endl;
+
+    vector<arma::Col<size_t> > labelSeq; // May be empty.
+    if (labelsFile != "")
+    {
+      // Do we have multiple label files to load?
+      char lineBuf[1024];
+      if (batch)
+      {
+        fstream f(labelsFile);
+
+        if (!f.is_open())
+          Log::Fatal << "Could not open '" << labelsFile << "' for reading."
+              << endl;
+
+        // Now read each line in.
+        f.getline(lineBuf, 1024, '\n');
+        while (!f.eof())
+        {
+          Log::Info << "Adding training sequence labels from '" << lineBuf
+              << "'." << endl;
+
+          // Now read the matrix.
+          Mat<size_t> label;
+          data::Load(lineBuf, label, true); // Fatal on failure.
+
+          // Ensure that matrix only has one column.
+          if (label.n_rows == 1)
+            label = trans(label);
+
+          if (label.n_cols > 1)
+            Log::Fatal << "Invalid labels; must be one-dimensional." << endl;
+
+          labelSeq.push_back(label.col(0));
+
+          f.getline(lineBuf, 1024, '\n');
+        }
+
+        f.close();
+      }
+      else
+      {
+        Mat<size_t> label;
+        data::Load(labelsFile, label, true);
+
+        // Ensure that matrix only has one column.
+        if (label.n_rows == 1)
+          label = trans(label);
+
+        if (label.n_cols > 1)
+          Log::Fatal << "Invalid labels; must be one-dimensional." << endl;
+
+        // Verify the same number of observations as the data.
+        if (label.n_elem != trainSeq[labelSeq.size()].n_cols)
+          Log::Fatal << "Label sequence " << labelSeq.size() << " does not have"
+              << " the same number of points as observation sequence "
+              << labelSeq.size() << "!" << endl;
+
+        labelSeq.push_back(label.col(0));
+      }
+
+      // Now perform the training with labels.
+      hmm.Train(trainSeq, labelSeq);
+    }
+    else
+    {
+      // Perform unsupervised training.
+      hmm.Train(trainSeq);
+    }
+
+    // Save the model.
+    const string modelFile = CLI::GetParam<string>("model_file");
+    SaveHMM(hmm, modelFile);
+  }
+};
+
 int main(int argc, char** argv)
 {
   // Parse command line options.
@@ -69,31 +169,33 @@ int main(int argc, char** argv)
     RandomSeed((size_t) time(NULL));
 
   // Validate parameters.
-  const string inputFile = CLI::GetParam<string>("input_file");
-  const string labelsFile = CLI::GetParam<string>("labels_file");
   const string modelFile = CLI::GetParam<string>("model_file");
-  const string outputFile = CLI::GetParam<string>("output_file");
+  const string inputFile = CLI::GetParam<string>("input_file");
   const string type = CLI::GetParam<string>("type");
-  const int states = CLI::GetParam<int>("states");
-  const bool batch = CLI::HasParam("batch");
+  const size_t states = CLI::GetParam<int>("states");
   const double tolerance = CLI::GetParam<double>("tolerance");
+  const bool batch = CLI::HasParam("batch");
 
-  // Validate number of states.
-  if (states == 0 && modelFile == "")
+  // Verify that either a model or a type was given.
+  if (modelFile == "" && type == "")
+    Log::Fatal << "No model file specified and no HMM type given!  At least "
+        << "one is required." << endl;
+
+  // If no model is specified, make sure we are training with valid parameters.
+  if (modelFile == "")
   {
-    Log::Fatal << "Must specify number of states if model file is not "
-        << "specified!" << endl;
+    // Validate number of states.
+    if (states == 0)
+      Log::Fatal << "Must specify number of states if model file is not "
+          << "specified!" << endl;
   }
 
-  if (states < 0 && modelFile == "")
-  {
-    Log::Fatal << "Invalid number of states (" << states << "); must be greater"
-        << " than or equal to 1." << endl;
-  }
+  if (modelFile != "" && CLI::HasParam("tolerance"))
+    Log::Info << "Tolerance of existing model in '" << modelFile << "' will be "
+        << "replaced with specified tolerance of " << tolerance << "." << endl;
 
-  // Load the dataset(s) and labels.
+  // Load the input data.
   vector<mat> trainSeq;
-  vector<arma::Col<size_t> > labelSeq; // May be empty.
   if (batch)
   {
     // The input file contains a list of files to read.
@@ -103,30 +205,20 @@ int main(int argc, char** argv)
     fstream f(inputFile.c_str(), ios_base::in);
 
     if (!f.is_open())
-      Log::Fatal << "Could not open '" << inputFile << "' for reading." << endl;
+      Log::Fatal << "Could not open '" << inputFile << "' for reading."
+          << endl;
 
     // Now read each line in.
-    char lineBuf[1024]; // Max 1024 characters... hopefully that is long enough.
+    char lineBuf[1024]; // Max 1024 characters... hopefully long enough.
     f.getline(lineBuf, 1024, '\n');
     while (!f.eof())
     {
-      Log::Info << "Adding training sequence from '" << lineBuf << "'." << endl;
+      Log::Info << "Adding training sequence from '" << lineBuf << "'."
+          << endl;
 
       // Now read the matrix.
       trainSeq.push_back(mat());
-      if (labelsFile == "") // Nonfatal in this case.
-      {
-        if (!data::Load(lineBuf, trainSeq.back(), false))
-        {
-          Log::Warn << "Loading training sequence from '" << lineBuf << "' "
-              << "failed.  Sequence ignored." << endl;
-          trainSeq.pop_back(); // Remove last element which we did not use.
-        }
-      }
-      else
-      {
-        data::Load(lineBuf, trainSeq.back(), true);
-      }
+      data::Load(lineBuf, trainSeq.back(), true); // Fatal on failure.
 
       // See if we need to transpose the data.
       if (type == "discrete")
@@ -139,89 +231,25 @@ int main(int argc, char** argv)
     }
 
     f.close();
-
-    // Now load labels, if we need to.
-    if (labelsFile != "")
-    {
-      f.open(labelsFile.c_str(), ios_base::in);
-
-      if (!f.is_open())
-        Log::Fatal << "Could not open '" << labelsFile << "' for reading."
-            << endl;
-
-      // Now read each line in.
-      f.getline(lineBuf, 1024, '\n');
-      while (!f.eof())
-      {
-        Log::Info << "Adding training sequence labels from '" << lineBuf
-            << "'." << endl;
-
-        // Now read the matrix.
-        Mat<size_t> label;
-        data::Load(lineBuf, label, true); // Fatal on failure.
-
-        // Ensure that matrix only has one column.
-        if (label.n_rows == 1)
-          label = trans(label);
-
-        if (label.n_cols > 1)
-          Log::Fatal << "Invalid labels; must be one-dimensional." << endl;
-
-        labelSeq.push_back(label.col(0));
-
-        f.getline(lineBuf, 1024, '\n');
-      }
-    }
   }
   else
   {
     // Only one input file.
     trainSeq.resize(1);
     data::Load(inputFile, trainSeq[0], true);
-
-    // Do we need to load labels?
-    if (labelsFile != "")
-    {
-      Mat<size_t> label;
-      data::Load(labelsFile, label, true);
-
-      // Ensure that matrix only has one column.
-      if (label.n_rows == 1)
-        label = trans(label);
-
-      if (label.n_cols > 1)
-        Log::Fatal << "Invalid labels; must be one-dimensional." << endl;
-
-      // Verify the same number of observations as the data.
-      if (label.n_elem != trainSeq[labelSeq.size()].n_cols)
-        Log::Fatal << "Label sequence " << labelSeq.size() << " does not have "
-            << "the same number of points as observation sequence "
-            << labelSeq.size() << "!" << endl;
-
-      labelSeq.push_back(label.col(0));
-    }
   }
 
-  // Now, train the HMM, since we have loaded the input data.
-  if (type == "discrete")
+  // If we have a model file, we can autodetect the type.
+  if (modelFile != "")
   {
-    // Verify observations are valid.
-    for (size_t i = 0; i < trainSeq.size(); ++i)
-      if (trainSeq[i].n_rows > 1)
-        Log::Fatal << "Error in training sequence " << i << ": only "
-            << "one-dimensional discrete observations allowed for discrete "
-            << "HMMs!" << endl;
+    LoadHMMAndPerformAction<Train>(modelFile, &trainSeq);
+  }
+  else
+  {
+    // We need to read in the type and build the HMM by hand.
+    const string type = CLI::GetParam<string>("type");
 
-    // Do we have a model to preload?
-    HMM<DiscreteDistribution> hmm(1, DiscreteDistribution(1), tolerance);
-
-    if (modelFile != "")
-    {
-      SaveRestoreUtility loader;
-      loader.ReadFile(modelFile);
-      LoadHMM(hmm, loader);
-    }
-    else // New model.
+    if (type == "discrete")
     {
       // Maximum observation is necessary so we know how to train the discrete
       // distribution.
@@ -238,84 +266,34 @@ int main(int argc, char** argv)
           << endl;
 
       // Create HMM object.
-      hmm = HMM<DiscreteDistribution>(size_t(states),
+      HMM<DiscreteDistribution> hmm(size_t(states),
           DiscreteDistribution(maxEmission), tolerance);
+
+      // Now train it.  Pass the already-loaded training data.
+      Train::Apply(hmm, &trainSeq);
     }
-
-    // Do we have labels?
-    if (labelsFile == "")
-      hmm.Train(trainSeq); // Unsupervised training.
-    else
-      hmm.Train(trainSeq, labelSeq); // Supervised training.
-
-    // Finally, save the model.  This should later be integrated into the HMM
-    // class itself.
-    SaveRestoreUtility sr;
-    SaveHMM(hmm, sr);
-    sr.WriteFile(outputFile);
-  }
-  else if (type == "gaussian")
-  {
-    // Create HMM object.
-    HMM<GaussianDistribution> hmm(1, GaussianDistribution(1), tolerance);
-
-    // Do we have a model to load?
-    size_t dimensionality = 0;
-    if (modelFile != "")
-    {
-      SaveRestoreUtility loader;
-      loader.ReadFile(modelFile);
-      LoadHMM(hmm, loader);
-
-      dimensionality = hmm.Emission()[0].Mean().n_elem;
-    }
-    else
+    else if (type == "gaussian")
     {
       // Find dimension of the data.
-      dimensionality = trainSeq[0].n_rows;
+      const size_t dimensionality = trainSeq[0].n_rows;
 
-      hmm = HMM<GaussianDistribution>(size_t(states),
+      // Verify dimensionality of data.
+      for (size_t i = 0; i < trainSeq.size(); ++i)
+        if (trainSeq[i].n_rows != dimensionality)
+          Log::Fatal << "Observation sequence " << i << " dimensionality ("
+              << trainSeq[i].n_rows << " is incorrect (should be "
+              << dimensionality << ")!" << endl;
+
+      HMM<GaussianDistribution> hmm(size_t(states),
           GaussianDistribution(dimensionality), tolerance);
+
+      // Now train it.
+      Train::Apply(hmm, &trainSeq);
     }
-
-    // Verify dimensionality of data.
-    for (size_t i = 0; i < trainSeq.size(); ++i)
-      if (trainSeq[i].n_rows != dimensionality)
-        Log::Fatal << "Observation sequence " << i << " dimensionality ("
-            << trainSeq[i].n_rows << " is incorrect (should be "
-            << dimensionality << ")!" << endl;
-
-    // Now run the training.
-    if (labelsFile == "")
-      hmm.Train(trainSeq); // Unsupervised training.
-    else
-      hmm.Train(trainSeq, labelSeq); // Supervised training.
-
-    // Finally, save the model.  This should later be integrated into th HMM
-    // class itself.
-    SaveRestoreUtility sr;
-    SaveHMM(hmm, sr);
-    sr.WriteFile(outputFile);
-  }
-  else if (type == "gmm")
-  {
-    // Create HMM object.
-    HMM<GMM<> > hmm(1, GMM<>(1, 1));
-
-    // Do we have a model to load?
-    size_t dimensionality = 0;
-    if (modelFile != "")
-    {
-      SaveRestoreUtility loader;
-      loader.ReadFile(modelFile);
-      LoadHMM(hmm, loader);
-
-      dimensionality = hmm.Emission()[0].Dimensionality();
-    }
-    else
+    else if (type == "gmm")
     {
       // Find dimension of the data.
-      dimensionality = trainSeq[0].n_rows;
+      const size_t dimensionality = trainSeq[0].n_rows;
 
       const int gaussians = CLI::GetParam<int>("gaussians");
 
@@ -327,37 +305,21 @@ int main(int argc, char** argv)
         Log::Fatal << "Invalid number of gaussians (" << gaussians << "); must "
             << "be greater than or equal to 1." << endl;
 
-      hmm = HMM<GMM<> >(size_t(states), GMM<>(size_t(gaussians),
-          dimensionality), tolerance);
-    }
+      // Create HMM object.
+      HMM<GMM<>> hmm(size_t(states), GMM<>(size_t(gaussians), dimensionality),
+          tolerance);
 
-    // Verify dimensionality of data.
-    for (size_t i = 0; i < trainSeq.size(); ++i)
-      if (trainSeq[i].n_rows != dimensionality)
-        Log::Fatal << "Observation sequence " << i << " dimensionality ("
-            << trainSeq[i].n_rows << " is incorrect (should be "
-            << dimensionality << ")!" << endl;
+      // Issue a warning if the user didn't give labels.
+      if (!CLI::HasParam("label_file"))
+        Log::Warn << "Unlabeled training of GMM HMMs is almost certainly not "
+            << "going to produce good results!" << endl;
 
-    // Now run the training.
-    if (labelsFile == "")
-    {
-      Log::Warn << "Unlabeled training of GMM HMMs is almost certainly not "
-          << "going to produce good results!" << endl;
-      hmm.Train(trainSeq);
+      Train::Apply(hmm, &trainSeq);
     }
     else
     {
-      hmm.Train(trainSeq, labelSeq);
+      Log::Fatal << "Unknown HMM type: " << type << "; must be 'discrete', "
+          << "'gaussian', or 'gmm'." << endl;
     }
-
-    // Save model.
-    SaveRestoreUtility sr;
-    SaveHMM(hmm, sr);
-    sr.WriteFile(outputFile);
-  }
-  else
-  {
-    Log::Fatal << "Unknown HMM type: " << type << "; must be 'discrete', "
-        << "'gaussian', or 'gmm'." << endl;
   }
 }
