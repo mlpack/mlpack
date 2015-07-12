@@ -168,12 +168,6 @@ class DiscreteDistribution
    */
   std::string ToString() const;
 
-  /** Save to or Load from SaveRestoreUtility
-   */
-  void Save(util::SaveRestoreUtility& n) const;
-  void Load(const util::SaveRestoreUtility& n) { n.LoadParameter(probabilities, "probabilities"); }
-  static std::string const Type() { return "DiscreteDistribution"; }
-
  private:
   arma::vec probabilities;
 };

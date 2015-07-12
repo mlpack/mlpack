@@ -148,13 +148,6 @@ class LaplaceDistribution
   //! Return a string representation of the object.
   std::string ToString() const;
 
-  /*
-  * Save to or Load from SaveRestoreUtility
-  */
-  void Save(util::SaveRestoreUtility& n) const;
-  void Load(const util::SaveRestoreUtility& n);
-  static std::string const Type() { return "LaplaceDistribution"; }
-
  private:
   //! Mean of the distribution.
   arma::vec mean;

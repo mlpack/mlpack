@@ -89,16 +89,3 @@ std::string LaplaceDistribution::ToString() const
   convert << util::Indent(data.str());
   return convert.str();
 }
-
-/*
- * Save to or Load from SaveRestoreUtility
- */
-void LaplaceDistribution::Save(util::SaveRestoreUtility& sr) const {
-  sr.SaveParameter(Type(), "type");
-  sr.SaveParameter(mean, "mean");
-  sr.SaveParameter(scale, "scale");
-}
-void LaplaceDistribution::Load(const util::SaveRestoreUtility& sr) {
-  sr.LoadParameter(mean, "mean");
-  sr.LoadParameter(scale, "scale");
-}

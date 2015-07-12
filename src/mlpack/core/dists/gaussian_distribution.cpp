@@ -218,23 +218,3 @@ std::string GaussianDistribution::ToString() const
   convert << util::Indent(data.str());
   return convert.str();
 }
-
-/**
- * Save to SaveRestoreUtility.
- */
-void GaussianDistribution::Save(util::SaveRestoreUtility& sr) const
-{
-  sr.SaveParameter(Type(), "type");
-  sr.SaveParameter(mean, "mean");
-  sr.SaveParameter(covariance, "covariance");
-}
-
-/**
- * Load from SaveRestoreUtility.
- */
-void GaussianDistribution::Load(const util::SaveRestoreUtility& sr)
-{
-  sr.LoadParameter(mean, "mean");
-  sr.LoadParameter(covariance, "covariance");
-  FactorCovariance();
-}

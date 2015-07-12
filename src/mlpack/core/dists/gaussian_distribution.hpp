@@ -158,13 +158,6 @@ class GaussianDistribution
    */
   std::string ToString() const;
 
-  /*
-   * Save to or Load from SaveRestoreUtility
-   */
-  void Save(util::SaveRestoreUtility& n) const;
-  void Load(const util::SaveRestoreUtility& n);
-  static std::string const Type() { return "GaussianDistribution"; }
-
  private:
   void FactorCovariance();
 
