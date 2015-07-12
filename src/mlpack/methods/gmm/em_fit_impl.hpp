@@ -296,7 +296,21 @@ double EMFit<InitialClusteringType, CovarianceConstraintPolicy>::LogLikelihood(
   return logLikelihood;
 }
 
-}; // namespace gmm
-}; // namespace mlpack
+template<typename InitialClusteringType, typename CovarianceConstraintPolicy>
+template<typename Archive>
+void EMFit<InitialClusteringType, CovarianceConstraintPolicy>::Serialize(
+    Archive& ar,
+    const unsigned int /* version */)
+{
+  using data::CreateNVP;
+
+  ar & CreateNVP(maxIterations, "maxIterations");
+  ar & CreateNVP(tolerance, "tolerance");
+  ar & CreateNVP(clusterer, "clusterer");
+  ar & CreateNVP(constraint, "constraint");
+}
+
+} // namespace gmm
+} // namespace mlpack
 
 #endif

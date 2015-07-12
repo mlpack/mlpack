@@ -122,6 +122,10 @@ class EMFit
   //! Modify the tolerance for the convergence of the EM algorithm.
   double& Tolerance() { return tolerance; }
 
+  //! Serialize the fitter.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int version);
+
  private:
   /**
    * Run the clusterer, and then turn the cluster assignments into Gaussians.
@@ -162,8 +166,8 @@ class EMFit
   CovarianceConstraintPolicy constraint;
 };
 
-}; // namespace gmm
-}; // namespace mlpack
+} // namespace gmm
+} // namespace mlpack
 
 // Include implementation.
 #include "em_fit_impl.hpp"

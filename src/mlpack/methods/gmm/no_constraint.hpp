@@ -22,9 +22,13 @@ class NoConstraint
  public:
   //! Do nothing, and do not modify the covariance matrix.
   static void ApplyConstraint(const arma::mat& /* covariance */) { }
+
+  //! Serialize the object (nothing to do).
+  template<typename Archive>
+  static void Serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
-}; // namespace gmm
-}; // namespace mlpack
+} // namespace gmm
+} // namespace mlpack
 
 #endif

@@ -16,7 +16,8 @@ namespace gmm {
  * Given a vector of eigenvalue ratios, ensure that the covariance matrix always
  * has those eigenvalue ratios.  When you create this object, make sure that the
  * vector of ratios that you pass does not go out of scope, because this object
- * holds a reference to that vector instead of copying it.
+ * holds a reference to that vector instead of copying it.  (This doesn't apply
+ * if you are deserializing the object from a file.)
  */
 class EigenvalueRatioConstraint
 {
@@ -28,7 +29,7 @@ class EigenvalueRatioConstraint
    * be 1.  In addition, all other elements should be less than or equal to 1.
    */
   EigenvalueRatioConstraint(const arma::vec& ratios) :
-      ratios(ratios)
+      ratios(ratios.memptr(), ratios.n_rows, ratios.n_cols, false) // Alias.
   {
     // Check validity of ratios.
     if (std::abs(ratios[0] - 1.0) > 1e-20)
@@ -69,9 +70,16 @@ class EigenvalueRatioConstraint
     covariance = eigenvectors * arma::diagmat(eigenvalues) * eigenvectors.t();
   }
 
+  //! Serialize the constraint.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(ratios, "ratios");
+  }
+
  private:
   //! Ratios for eigenvalues.
-  const arma::vec& ratios;
+  const arma::vec ratios;
 };
 
 }; // namespace gmm

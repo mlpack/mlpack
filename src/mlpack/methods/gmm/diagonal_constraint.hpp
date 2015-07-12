@@ -25,9 +25,13 @@ class DiagonalConstraint
     arma::vec diagonal = covariance.diag();
     covariance = arma::diagmat(diagonal);
   }
+
+  //! Serialize the constraint (which holds nothing, so, nothing to do).
+  template<typename Archive>
+  static void Serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
-}; // namespace gmm
-}; // namespace mlpack
+} // namespace gmm
+} // namespace mlpack
 
 #endif
