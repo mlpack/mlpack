@@ -96,8 +96,8 @@ class HMM
    * @param tolerance Tolerance for convergence of training algorithm
    *      (Baum-Welch).
    */
-  HMM(const size_t states,
-      const Distribution emissions,
+  HMM(const size_t states = 0,
+      const Distribution emissions = Distribution(),
       const double tolerance = 1e-5);
 
   /**
@@ -320,11 +320,6 @@ class HMM
    * Returns a string representation of this object.
    */
   std::string ToString() const;
-
-  /**
-   * Returns a string indicating the type.
-   */
-  static std::string const Type() { return "HMM"; }
 
   /**
    * Serialize the object.

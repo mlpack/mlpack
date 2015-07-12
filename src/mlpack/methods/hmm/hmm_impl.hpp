@@ -566,8 +566,8 @@ std::string HMM<Distribution>::ToString() const
 }
 
 //! Serialize the HMM.
-template<typename Archive>
 template<typename Distribution>
+template<typename Archive>
 void HMM<Distribution>::Serialize(Archive& ar, const unsigned int /* version */)
 {
   ar & data::CreateNVP(dimensionality, "dimensionality");
