@@ -46,7 +46,6 @@ add_executable(mlpack_test
   rectangle_tree_test.cpp
   regularized_svd_test.cpp
   sa_test.cpp
-  save_restore_utility_test.cpp
   sdp_primal_dual_test.cpp
   sgd_test.cpp
   serialization_test.cpp
