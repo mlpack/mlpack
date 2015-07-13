@@ -112,7 +112,7 @@ GMM<FittingType>& GMM<FittingType>::operator=(const GMM<FittingType>& other)
 
   if (fitter && ownsFitter)
     delete fitter;
-  fitter = new FittingType(other.fitter);
+  fitter = new FittingType(*other.fitter);
   ownsFitter = true;
 
   return *this;
@@ -440,6 +440,7 @@ void GMM<FittingType>::Serialize(Archive& ar, const unsigned int /* version */)
   // Gaussian distribution.
   if (Archive::is_loading::value)
     dists.resize(gaussians);
+
   for (size_t i = 0; i < gaussians; ++i)
   {
     std::ostringstream oss;
