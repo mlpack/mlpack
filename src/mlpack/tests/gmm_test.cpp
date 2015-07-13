@@ -498,13 +498,23 @@ BOOST_AUTO_TEST_CASE(GMMLoadSaveTest)
     gmm.Component(i).Covariance(std::move(covariance));
   }
 
-  gmm.Save("test-gmm-save.xml");
+  // Save the GMM.
+  {
+    std::ofstream ofs("test-gmm-save.xml");
+    boost::archive::xml_oarchive ar(ofs);
+    ar << data::CreateNVP(gmm, "gmm");
+  }
 
+  // Load the GMM.
   GMM<> gmm2;
-  gmm2.Load("test-gmm-save.xml");
+  {
+    std::ifstream ifs("test-gmm-save.xml");
+    boost::archive::xml_iarchive ar(ifs);
+    ar >> data::CreateNVP(gmm2, "gmm");
+  }
 
   // Remove clutter.
-  remove("test-gmm-save.xml");
+  //remove("test-gmm-save.xml");
 
   BOOST_REQUIRE_EQUAL(gmm.Gaussians(), gmm2.Gaussians());
   BOOST_REQUIRE_EQUAL(gmm.Dimensionality(), gmm2.Dimensionality());
