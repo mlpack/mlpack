@@ -18,8 +18,11 @@ void Mat<eT>::serialize(Archive& ar, const unsigned int /* version */)
   // mem_state will always be 0 on load, so we don't need to save it.
   if (Archive::is_loading::value)
   {
-    if (mem_state == 0 && mem != NULL && old_n_elem > 0)
+    // Don't free if local memory is being used.
+    if (mem_state == 0 && mem != NULL && old_n_elem > arma_config::mat_prealloc)
+    {
       memory::release(access::rw(mem));
+    }
 
     access::rw(mem_state) = 0;
 
