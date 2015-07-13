@@ -198,8 +198,6 @@ class NeighborSearch
 
   //! If true, this object created the trees and is responsible for them.
   bool treeOwner;
-  //! Indicates if a separate query set was passed.
-  bool hasQuerySet;
 
   //! Indicates if O(n^2) naive search is being used.
   bool naive;
