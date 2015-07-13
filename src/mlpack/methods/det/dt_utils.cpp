@@ -177,7 +177,7 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
   Timer::Start("cross_validation");
   // Go through each fold.
   #pragma omp parallel for default(none) \
-    shared(testSize,cvData,prunedSequence,regularizationConstants,dataset)
+      shared(testSize, cvData, prunedSequence, regularizationConstants, dataset)
   for (size_t fold = 0; fold < folds; fold++)
   {
     // Break up data into train and test sets.
