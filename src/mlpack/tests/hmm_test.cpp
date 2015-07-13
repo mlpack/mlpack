@@ -1001,19 +1001,25 @@ BOOST_AUTO_TEST_CASE(GMMHMMLoadSaveTest)
     }
   }
 
-  util::SaveRestoreUtility sr;
-  hmm.Save(sr);
-  sr.WriteFile("test-hmm-save.xml");
+  // Save the HMM.
+  {
+    std::ofstream ofs("test-hmm-save.xml");
+    boost::archive::xml_oarchive ar(ofs);
+    ar << data::CreateNVP(hmm, "hmm");
+  }
 
-  util::SaveRestoreUtility sr2;
-  sr2.ReadFile("test-hmm-save.xml");
-  HMM<GMM<> > hmm2(3, GMM<>(4, 3));
-  hmm2.Load(sr2);
+  // Load the HMM.
+  HMM<GMM<>> hmm2(3, GMM<>(4, 3));
+  {
+    std::ifstream ifs("test-hmm-save.xml");
+    boost::archive::xml_iarchive ar(ifs);
+    ar >> data::CreateNVP(hmm2, "hmm");
+  }
 
   // Remove clutter.
   remove("test-hmm-save.xml");
 
-  for(size_t j = 0; j < hmm.Emission().size(); ++j)
+  for (size_t j = 0; j < hmm.Emission().size(); ++j)
   {
     BOOST_REQUIRE_EQUAL(hmm.Emission()[j].Gaussians(),
                         hmm2.Emission()[j].Gaussians());
@@ -1061,19 +1067,25 @@ BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
     hmm.Emission()[j].Covariance(std::move(covariance));
   }
 
-  util::SaveRestoreUtility sr;
-  hmm.Save(sr);
-  sr.WriteFile("test-hmm-save.xml");
+  // Save the HMM.
+  {
+    std::ofstream ofs("test-hmm-save.xml");
+    boost::archive::xml_oarchive ar(ofs);
+    ar << data::CreateNVP(hmm, "hmm");
+  }
 
-  util::SaveRestoreUtility sr2;
-  sr2.ReadFile("test-hmm-save.xml");
+  // Load the HMM.
   HMM<GaussianDistribution> hmm2(3, GaussianDistribution(2));
-  hmm2.Load(sr2);
+  {
+    std::ifstream ifs("test-hmm-save.xml");
+    boost::archive::xml_iarchive ar(ifs);
+    ar >> data::CreateNVP(hmm2, "hmm");
+  }
 
   // Remove clutter.
   remove("test-hmm-save.xml");
 
-  for(size_t j = 0; j < hmm.Emission().size(); ++j)
+  for (size_t j = 0; j < hmm.Emission().size(); ++j)
   {
     BOOST_REQUIRE_EQUAL(hmm.Emission()[j].Dimensionality(),
                         hmm2.Emission()[j].Dimensionality());
@@ -1088,7 +1100,6 @@ BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
             hmm2.Emission()[j].Covariance()(i, k), 1e-3);
       }
     }
-
   }
 }
 
@@ -1098,8 +1109,7 @@ BOOST_AUTO_TEST_CASE(GaussianHMMLoadSaveTest)
 BOOST_AUTO_TEST_CASE(DiscreteHMMLoadSaveTest)
 {
   // Create a Discrete HMM, save it, and load it.
-
-    std::vector<DiscreteDistribution> emission(4);
+  std::vector<DiscreteDistribution> emission(4);
   emission[0].Probabilities() = arma::randu<arma::vec>(6);
   emission[0].Probabilities() /= accu(emission[0].Probabilities());
   emission[1].Probabilities() = arma::randu<arma::vec>(6);
@@ -1120,26 +1130,28 @@ BOOST_AUTO_TEST_CASE(DiscreteHMMLoadSaveTest)
     hmm.Emission()[j].Probabilities() /= accu(emission[j].Probabilities());
   }
 
-  util::SaveRestoreUtility sr;
-  hmm.Save(sr);
-  sr.WriteFile("test-hmm-save.xml");
+  // Save the HMM.
+  {
+    std::ofstream ofs("test-hmm-save.xml");
+    boost::archive::xml_oarchive ar(ofs);
+    ar << data::CreateNVP(hmm, "hmm");
+  }
 
-  util::SaveRestoreUtility sr2;
-  sr2.ReadFile("test-hmm-save.xml");
+  // Load the HMM.
   HMM<DiscreteDistribution> hmm2(3, DiscreteDistribution(3));
-  hmm2.Load(sr2);
+  {
+    std::ifstream ifs("test-hmm-save.xml");
+    boost::archive::xml_iarchive ar(ifs);
+    ar >> data::CreateNVP(hmm2, "hmm");
+  }
 
   // Remove clutter.
   remove("test-hmm-save.xml");
 
-  for(size_t j = 0; j < hmm.Emission().size(); ++j)
-  {
+  for (size_t j = 0; j < hmm.Emission().size(); ++j)
     for (size_t i = 0; i < hmm.Emission()[j].Probabilities().n_elem; ++i)
-    {
       BOOST_REQUIRE_CLOSE(hmm.Emission()[j].Probabilities()[i],
           hmm2.Emission()[j].Probabilities()[i], 1e-3);
-    }
-  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();
