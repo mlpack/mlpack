@@ -29,7 +29,8 @@ class EigenvalueRatioConstraint
    * be 1.  In addition, all other elements should be less than or equal to 1.
    */
   EigenvalueRatioConstraint(const arma::vec& ratios) :
-      ratios(ratios.memptr(), ratios.n_rows, ratios.n_cols, false) // Alias.
+      // Make an alias of the ratios vector.  It will never be modified here.
+      ratios(const_cast<double*>(ratios.memptr()), ratios.n_elem, false)
   {
     // Check validity of ratios.
     if (std::abs(ratios[0] - 1.0) > 1e-20)
@@ -74,7 +75,9 @@ class EigenvalueRatioConstraint
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
   {
-    ar & data::CreateNVP(ratios, "ratios");
+    // Strip the const for the sake of loading/saving.  This is the only time it
+    // is modified (other than the constructor).
+    ar & data::CreateNVP(const_cast<arma::vec&>(ratios), "ratios");
   }
 
  private:
