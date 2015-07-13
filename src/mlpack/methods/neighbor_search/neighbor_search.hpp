@@ -183,6 +183,11 @@ class NeighborSearch
   //! Modify the number of node combination scores.
   size_t& Scores() { return scores; }
 
+  //! Access whether or not search is done in naive linear scan mode.
+  bool Naive() const { return naive; }
+  //! Modify whether or not search is done in naive linear scan mode.
+  bool& Naive() { return naive; }
+
   //! Access whether or not search is done in single-tree mode.
   bool SingleMode() const { return singleMode; }
   //! Modify whether or not search is done in single-tree mode.
