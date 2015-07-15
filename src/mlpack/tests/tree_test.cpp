@@ -1316,10 +1316,6 @@ BOOST_AUTO_TEST_CASE(KdTreeTest)
       dataset(row, col) = row + col;
 
   TreeType root(dataset);
-  // Check the tree size.
-  BOOST_REQUIRE_EQUAL(root.TreeSize(), 127);
-  // Check the tree depth.
-  BOOST_REQUIRE_EQUAL(root.TreeDepth(), 7);
 }
 
 // Recursively checks that each node contains all points that it claims to have.
@@ -1523,10 +1519,6 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSparseKDTreeTest)
       dataset(row, col) = row + col;
 
   TreeType root(dataset);
-  // Check the tree size.
-  BOOST_REQUIRE_EQUAL(root.TreeSize(), 127);
-  // Check the tree depth.
-  BOOST_REQUIRE_EQUAL(root.TreeDepth(), 7);
 }
 
 #endif // Using Armadillo 3.4.

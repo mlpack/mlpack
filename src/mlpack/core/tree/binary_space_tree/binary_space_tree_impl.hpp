@@ -298,107 +298,6 @@ BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
     delete dataset;
 }
 
-/**
- * Find a node in this tree by its begin and count.
- *
- * Every node is uniquely identified by these two numbers.
- * This is useful for communicating position over the network,
- * when pointers would be invalid.
- *
- * @param queryBegin The Begin() of the node to find.
- * @param queryCount The Count() of the node to find.
- * @return The found node, or NULL if nothing is found.
- */
-template<typename BoundType,
-         typename StatisticType,
-         typename MatType,
-         typename SplitType>
-const BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>*
-BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::FindByBeginCount(
-    size_t queryBegin,
-    size_t queryCount) const
-{
-  Log::Assert(queryBegin >= begin);
-  Log::Assert(queryCount <= count);
-
-  if (begin == queryBegin && count == queryCount)
-    return this;
-  else if (IsLeaf())
-    return NULL;
-  else if (queryBegin < right->Begin())
-    return left->FindByBeginCount(queryBegin, queryCount);
-  else
-    return right->FindByBeginCount(queryBegin, queryCount);
-}
-
-/**
- * Find a node in this tree by its begin and count (const).
- *
- * Every node is uniquely identified by these two numbers.
- * This is useful for communicating position over the network,
- * when pointers would be invalid.
- *
- * @param queryBegin the Begin() of the node to find
- * @param queryCount the Count() of the node to find
- * @return the found node, or NULL
- */
-template<typename BoundType,
-         typename StatisticType,
-         typename MatType,
-         typename SplitType>
-BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>*
-BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::FindByBeginCount(
-    const size_t queryBegin,
-    const size_t queryCount)
-{
-  mlpack::Log::Assert(begin >= queryBegin);
-  mlpack::Log::Assert(count <= queryCount);
-
-  if (begin == queryBegin && count == queryCount)
-    return this;
-  else if (IsLeaf())
-    return NULL;
-  else if (queryBegin < left->End())
-    return left->FindByBeginCount(queryBegin, queryCount);
-  else if (right)
-    return right->FindByBeginCount(queryBegin, queryCount);
-  else
-    return NULL;
-}
-
-/* TODO: we can likely calculate this earlier, then store the
- *   result in a private member variable; for now, we can
- *   just calculate as needed...
- *
- *   Also, perhaps we should rewrite these recursive functions
- *     to avoid exceeding the stack limit
- */
-
-template<typename BoundType,
-         typename StatisticType,
-         typename MatType,
-         typename SplitType>
-size_t BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
-    TreeSize() const
-{
-  // Recursively count the nodes on each side of the tree.  The plus one is
-  // because we have to count this node, too.
-  return 1 + (left ? left->TreeSize() : 0) + (right ? right->TreeSize() : 0);
-}
-
-template<typename BoundType,
-         typename StatisticType,
-         typename MatType,
-         typename SplitType>
-size_t BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
-    TreeDepth() const
-{
-  // Recursively count the depth on each side of the tree.  The plus one is
-  // because we have to count this node, too.
-  return 1 + std::max((left ? left->TreeDepth() : 0),
-                      (right ? right->TreeDepth() : 0));
-}
-
 template<typename BoundType,
          typename StatisticType,
          typename MatType,
@@ -543,19 +442,6 @@ inline size_t BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
     Point(const size_t index) const
 {
   return (begin + index);
-}
-
-/**
- * Gets the index one beyond the last index in the series.
- */
-template<typename BoundType,
-         typename StatisticType,
-         typename MatType,
-         typename SplitType>
-inline size_t BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
-    End() const
-{
-  return begin + count;
 }
 
 template<typename BoundType,

@@ -42,7 +42,8 @@ SingleTreeTraverser<RuleType>::Traverse(
   // If we are a leaf, run the base case as necessary.
   if (referenceNode.IsLeaf())
   {
-    for (size_t i = referenceNode.Begin(); i < referenceNode.End(); ++i)
+    const size_t refEnd = referenceNode.Begin() + referenceNode.Count();
+    for (size_t i = referenceNode.Begin(); i < refEnd; ++i)
       rule.BaseCase(queryIndex, i);
   }
   else

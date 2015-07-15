@@ -229,33 +229,6 @@ class BinarySpaceTree
    */
   ~BinarySpaceTree();
 
-  /**
-   * Find a node in this tree by its begin and count (const).
-   *
-   * Every node is uniquely identified by these two numbers.
-   * This is useful for communicating position over the network,
-   * when pointers would be invalid.
-   *
-   * @param begin The begin() of the node to find.
-   * @param count The count() of the node to find.
-   * @return The found node, or NULL if not found.
-   */
-  const BinarySpaceTree* FindByBeginCount(size_t begin,
-                                          size_t count) const;
-
-  /**
-   * Find a node in this tree by its begin and count.
-   *
-   * Every node is uniquely identified by these two numbers.
-   * This is useful for communicating position over the network,
-   * when pointers would be invalid.
-   *
-   * @param begin The begin() of the node to find.
-   * @param count The count() of the node to find.
-   * @return The found node, or NULL if not found.
-   */
-  BinarySpaceTree* FindByBeginCount(size_t begin, size_t count);
-
   //! Return the bound object for this node.
   const BoundType& Bound() const { return bound; }
   //! Return the bound object for this node.
@@ -408,26 +381,10 @@ class BinarySpaceTree
     return bound.RangeDistance(point);
   }
 
-  /**
-   * Obtains the number of nodes in the tree, starting with this.
-   */
-  size_t TreeSize() const;
-
-  /**
-   * Obtains the number of levels below this node in the tree, starting with
-   * this.
-   */
-  size_t TreeDepth() const;
-
   //! Return the index of the beginning point of this subset.
   size_t Begin() const { return begin; }
   //! Modify the index of the beginning point of this subset.
   size_t& Begin() { return begin; }
-
-  /**
-   * Gets the index one beyond the last index in the subset.
-   */
-  size_t End() const;
 
   //! Return the number of points in this subset.
   size_t Count() const { return count; }
