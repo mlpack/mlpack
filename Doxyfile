@@ -85,7 +85,8 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 INPUT                  = ./src/mlpack \
                          ./doc/guide \
-                         ./doc/tutorials
+                         ./doc/tutorials \
+                         ./doc/policies
 FILE_PATTERNS          = *.hpp \
                          *.cpp \
                          *.txt
