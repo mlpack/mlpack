@@ -59,7 +59,7 @@ double SoftmaxErrorFunction<MetricType>::Evaluate(const arma::mat& coordinates,
     double eval = std::exp(-metric.Evaluate(stretchedDataset.unsafe_col(i),
                                             stretchedDataset.unsafe_col(k)));
 
-    // If they are in the same
+    // If they are in the same class, update the numerator.
     if (labels[i] == labels[k])
       numerator += eval;
 
