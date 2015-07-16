@@ -157,10 +157,10 @@ double FastMKSRules<KernelType, TreeType>::Score(const size_t queryIndex,
   }
   else
   {
-    arma::vec refCentroid;
-    referenceNode.Centroid(refCentroid);
+    arma::vec refCenter;
+    referenceNode.Center(refCenter);
 
-    kernelEval = kernel.Evaluate(querySet.col(queryIndex), refCentroid);
+    kernelEval = kernel.Evaluate(querySet.col(queryIndex), refCenter);
   }
 
   referenceNode.Stat().LastKernel() = kernelEval;
@@ -325,12 +325,12 @@ double FastMKSRules<KernelType, TreeType>::Score(TreeType& queryNode,
   else
   {
     // Calculate the maximum possible kernel value.
-    arma::vec queryCentroid;
-    arma::vec refCentroid;
-    queryNode.Centroid(queryCentroid);
-    referenceNode.Centroid(refCentroid);
+    arma::vec queryCenter;
+    arma::vec refCenter;
+    queryNode.Center(queryCenter);
+    referenceNode.Center(refCenter);
 
-    kernelEval = kernel.Evaluate(queryCentroid, refCentroid);
+    kernelEval = kernel.Evaluate(queryCenter, refCenter);
 
     traversalInfo.LastBaseCase() = kernelEval;
   }

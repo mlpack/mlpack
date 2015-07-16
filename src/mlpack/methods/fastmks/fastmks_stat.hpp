@@ -65,10 +65,10 @@ class FastMKSStat
     else
     {
       // Calculate the centroid.
-      arma::vec centroid;
-      node.Centroid(centroid);
+      arma::vec center;
+      node.Center(center);
 
-      selfKernel = sqrt(node.Metric().Kernel().Evaluate(centroid, centroid));
+      selfKernel = sqrt(node.Metric().Kernel().Evaluate(center, center));
     }
   }
 
