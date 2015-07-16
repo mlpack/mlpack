@@ -269,6 +269,9 @@ class ExampleTree
   // Return the index of the i'th descendant point of this node.
   size_t Descendant(const size_t i);
 
+  // Store the center of the bounding region of the node in the given vector.
+  void Center(arma::vec& center);
+
   // ///////////////////////////////////////////////// //
   // // More complex distance-related functionality // //
   // ///////////////////////////////////////////////// //
@@ -594,6 +597,17 @@ one child that holds the points with indices 6 and 7, then \c NumDescendants()
 should return 2, not 3.  The ordering in which the descendants are returned can
 be arbitrary; so, \c Descendant(0) can return 6 \b or 7, and \c Descendant(1)
 should return the other index.
+
+@code
+// Store the center of the bounding region of the node in the given vector.
+void Center(arma::vec& center);
+@endcode
+
+The last function, \c Center(), should calculate the center of the bounding
+shape and store it in the given vector.  So, for instance, if the tree is a ball
+tree, then the center is simply the center of the ball.  Algorithm writers would
+be wise to try and avoid the use of \c Center() if possible, since it will
+necessarily cost a copy of a vector.
 
 @subsection treetype_rigorous_complex Complex tree functionality and bounds
 
