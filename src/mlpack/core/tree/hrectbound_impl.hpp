@@ -105,14 +105,14 @@ inline void HRectBound<Power, TakeRoot>::Clear()
  * @param centroid Vector which the centroid will be written to.
  */
 template<int Power, bool TakeRoot>
-inline void HRectBound<Power, TakeRoot>::Centroid(arma::vec& centroid) const
+inline void HRectBound<Power, TakeRoot>::Center(arma::vec& center) const
 {
   // Set size correctly if necessary.
-  if (!(centroid.n_elem == dim))
-    centroid.set_size(dim);
+  if (!(center.n_elem == dim))
+    center.set_size(dim);
 
   for (size_t i = 0; i < dim; i++)
-    centroid(i) = bounds[i].Mid();
+    center(i) = bounds[i].Mid();
 }
 
 /**

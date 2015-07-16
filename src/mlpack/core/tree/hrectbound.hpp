@@ -73,11 +73,11 @@ class HRectBound
   double& MinWidth() { return minWidth; }
 
   /**
-   * Calculates the centroid of the range, placing it into the given vector.
+   * Calculates the center of the range, placing it into the given vector.
    *
-   * @param centroid Vector which the centroid will be written to.
+   * @param center Vector which the center will be written to.
    */
-  void Centroid(arma::vec& centroid) const;
+  void Center(arma::vec& center) const;
 
   /**
    * Calculate the volume of the hyperrectangle.

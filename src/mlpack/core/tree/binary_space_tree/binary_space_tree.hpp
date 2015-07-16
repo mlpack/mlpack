@@ -262,11 +262,8 @@ class BinarySpaceTree
   //! Modify the dataset which the tree is built on.  Be careful!
   MatType& Dataset() { return *dataset; }
 
-  //! Get the metric which the tree uses.
+  //! Get the metric that the tree uses.
   typename BoundType::MetricType Metric() const { return bound.Metric(); }
-
-  //! Get the centroid of the node and store it in the given vector.
-  void Centroid(arma::vec& centroid) { bound.Centroid(centroid); }
 
   //! Return the number of children in this node.
   size_t NumChildren() const;
@@ -393,6 +390,9 @@ class BinarySpaceTree
 
   //! Returns false: this tree type does not have self children.
   static bool HasSelfChildren() { return false; }
+
+  //! Store the center of the bounding region in the given vector.
+  void Center(arma::vec& center) { bound.Center(center); }
 
  private:
   /**

@@ -59,10 +59,10 @@ void XTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
    }
 
    std::vector<sortStruct> sorted(tree->Count());
-   arma::vec centroid;
-   tree->Bound().Centroid(centroid); // Modifies centroid.
+   arma::vec center;
+   tree->Bound().Center(center); // Modifies centroid.
    for(size_t i = 0; i < sorted.size(); i++) {
-     sorted[i].d = tree->Bound().Metric().Evaluate(centroid, tree->LocalDataset().col(i));
+     sorted[i].d = tree->Bound().Metric().Evaluate(center, tree->LocalDataset().col(i));
      sorted[i].n = i;
    }
 

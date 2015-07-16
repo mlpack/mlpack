@@ -321,7 +321,7 @@ class RectangleTree
   typename HRectBound<>::MetricType Metric() const { return bound.Metric(); }
 
   //! Get the centroid of the node and store it in the given vector.
-  void Centroid(arma::vec& centroid) { bound.Centroid(centroid); }
+  void Center(arma::vec& center) { bound.Center(center); }
 
   //! Return the number of child nodes.  (One level beneath this one only.)
   size_t NumChildren() const { return numChildren; }

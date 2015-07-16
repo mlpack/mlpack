@@ -64,11 +64,11 @@ void RStarTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
     }
 
     std::vector<SortStruct> sorted(tree->Count());
-    arma::vec centroid;
-    tree->Bound().Centroid(centroid); // Modifies centroid.
+    arma::vec center;
+    tree->Bound().Center(center); // Modifies centroid.
     for (size_t i = 0; i < sorted.size(); i++)
     {
-      sorted[i].d = tree->Bound().Metric().Evaluate(centroid,
+      sorted[i].d = tree->Bound().Metric().Evaluate(center,
           tree->LocalDataset().col(i));
       sorted[i].n = i;
     }
@@ -310,10 +310,10 @@ bool RStarTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
 
     std::vector<sortStruct> sorted(tree->NumChildren());
     arma::vec c1;
-    tree->Bound().Centroid(c1); // Modifies c1.
+    tree->Bound().Center(c1); // Modifies c1.
     for(size_t i = 0; i < sorted.size(); i++) {
       arma::vec c2;
-      tree->Children()[i]->Bound().Centroid(c2); // Modifies c2.
+      tree->Children()[i]->Bound().Center(c2); // Modifies c2.
       sorted[i].d = tree->Bound().Metric().Evaluate(c1,c2);
       sorted[i].n = i;
     }

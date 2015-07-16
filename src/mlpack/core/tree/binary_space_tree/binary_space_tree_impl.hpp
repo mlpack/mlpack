@@ -327,7 +327,7 @@ inline size_t BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
 }
 
 /**
- * Return a bound on the furthest point in the node from the centroid.  This
+ * Return a bound on the furthest point in the node from the center.  This
  * returns 0 unless the node is a leaf.
  */
 template<typename BoundType,
@@ -340,13 +340,13 @@ inline double BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
   if (!IsLeaf())
     return 0.0;
 
-  // Otherwise return the distance from the centroid to a corner of the bound.
+  // Otherwise return the distance from the center to a corner of the bound.
   return 0.5 * bound.Diameter();
 }
 
 /**
  * Return the furthest possible descendant distance.  This returns the maximum
- * distance from the centroid to the edge of the bound and not the empirical
+ * distance from the center to the edge of the bound and not the empirical
  * quantity which is the actual furthest descendant distance.  So the actual
  * furthest descendant distance may be less than what this method returns (but
  * it will never be greater than this).
@@ -485,15 +485,14 @@ void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::SplitNode(
       splitter, maxLeafSize);
 
   // Calculate parent distances for those two nodes.
-  arma::vec centroid, leftCentroid, rightCentroid;
-  Centroid(centroid);
-  left->Centroid(leftCentroid);
-  right->Centroid(rightCentroid);
+  arma::vec center, leftCenter, rightCenter;
+  Center(center);
+  left->Center(leftCenter);
+  right->Center(rightCenter);
 
-  const double leftParentDistance = bound.Metric().Evaluate(centroid,
-      leftCentroid);
-  const double rightParentDistance = bound.Metric().Evaluate(centroid,
-      rightCentroid);
+  const double leftParentDistance = bound.Metric().Evaluate(center, leftCenter);
+  const double rightParentDistance = bound.Metric().Evaluate(center,
+      rightCenter);
 
   left->ParentDistance() = leftParentDistance;
   right->ParentDistance() = rightParentDistance;
@@ -542,15 +541,14 @@ void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::SplitNode(
       oldFromNew, splitter, maxLeafSize);
 
   // Calculate parent distances for those two nodes.
-  arma::vec centroid, leftCentroid, rightCentroid;
-  Centroid(centroid);
-  left->Centroid(leftCentroid);
-  right->Centroid(rightCentroid);
+  arma::vec center, leftCenter, rightCenter;
+  Center(center);
+  left->Center(leftCenter);
+  right->Center(rightCenter);
 
-  const double leftParentDistance = bound.Metric().Evaluate(centroid,
-      leftCentroid);
-  const double rightParentDistance = bound.Metric().Evaluate(centroid,
-      rightCentroid);
+  const double leftParentDistance = bound.Metric().Evaluate(center, leftCenter);
+  const double rightParentDistance = bound.Metric().Evaluate(center,
+      rightCenter);
 
   left->ParentDistance() = leftParentDistance;
   right->ParentDistance() = rightParentDistance;

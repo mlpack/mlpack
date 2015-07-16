@@ -104,11 +104,11 @@ class BallBound
   bool Contains(const VecType& point) const;
 
   /**
-   * Place the centroid of BallBound into the given vector.
+   * Place the center of BallBound into the given vector.
    *
-   * @param centroid Vector which the centroid will be written to.
+   * @param center Vector which the centroid will be written to.
    */
-  void Centroid(VecType& centroid) const { centroid = center; }
+  void Center(VecType& center) const { center = this->center; }
 
   /**
    * Calculates minimum bound-to-point squared distance.
