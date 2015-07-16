@@ -121,9 +121,9 @@ BOOST_AUTO_TEST_CASE(HRectBoundClear)
 }
 
 /**
- * Ensure that we get the correct centroid for our bound.
+ * Ensure that we get the correct center for our bound.
  */
-BOOST_AUTO_TEST_CASE(HRectBoundCentroid)
+BOOST_AUTO_TEST_CASE(HRectBoundCenter)
 {
   // Create a simple 3-dimensional bound.
   HRectBound<2> b(3);
@@ -132,14 +132,14 @@ BOOST_AUTO_TEST_CASE(HRectBoundCentroid)
   b[1] = Range(-2.0, -1.0);
   b[2] = Range(-10.0, 50.0);
 
-  arma::vec centroid;
+  arma::vec center;
 
-  b.Centroid(centroid);
+  b.Center(center);
 
-  BOOST_REQUIRE_EQUAL(centroid.n_elem, 3);
-  BOOST_REQUIRE_CLOSE(centroid[0], 2.5, 1e-5);
-  BOOST_REQUIRE_CLOSE(centroid[1], -1.5, 1e-5);
-  BOOST_REQUIRE_CLOSE(centroid[2], 20.0, 1e-5);
+  BOOST_REQUIRE_EQUAL(center.n_elem, 3);
+  BOOST_REQUIRE_CLOSE(center[0], 2.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(center[1], -1.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(center[2], 20.0, 1e-5);
 }
 
 /**
@@ -1113,14 +1113,14 @@ BOOST_AUTO_TEST_CASE(FurthestPointDistanceTest)
       BOOST_REQUIRE_EQUAL(node->FurthestPointDistance(), 0.0);
     else
     {
-      // Get centroid.
-      arma::vec centroid;
-      node->Centroid(centroid);
+      // Get center.
+      arma::vec center;
+      node->Center(center);
 
       double maxDist = 0.0;
       for (size_t i = 0; i < node->NumPoints(); ++i)
       {
-        const double dist = metric::EuclideanDistance::Evaluate(centroid,
+        const double dist = metric::EuclideanDistance::Evaluate(center,
             dataset.col(node->Point(i)));
         if (dist > maxDist)
           maxDist = dist;
@@ -1164,13 +1164,13 @@ BOOST_AUTO_TEST_CASE(ParentDistanceTest)
     if (node->NumChildren() == 0)
       continue;
 
-    arma::vec centroid, leftCentroid, rightCentroid;
-    node->Centroid(centroid);
-    node->Left()->Centroid(leftCentroid);
-    node->Right()->Centroid(rightCentroid);
+    arma::vec center, leftCenter, rightCenter;
+    node->Center(center);
+    node->Left()->Center(leftCenter);
+    node->Right()->Center(rightCenter);
 
-    const double leftDistance = LMetric<2>::Evaluate(centroid, leftCentroid);
-    const double rightDistance = LMetric<2>::Evaluate(centroid, rightCentroid);
+    const double leftDistance = LMetric<2>::Evaluate(center, leftCenter);
+    const double rightDistance = LMetric<2>::Evaluate(center, rightCenter);
 
     BOOST_REQUIRE_CLOSE(leftDistance, node->Left()->ParentDistance(), 1e-5);
     BOOST_REQUIRE_CLOSE(rightDistance, node->Right()->ParentDistance(), 1e-5);
@@ -1207,13 +1207,13 @@ BOOST_AUTO_TEST_CASE(ParentDistanceTestWithMapping)
     if (node->NumChildren() == 0)
       continue;
 
-    arma::vec centroid, leftCentroid, rightCentroid;
-    node->Centroid(centroid);
-    node->Left()->Centroid(leftCentroid);
-    node->Right()->Centroid(rightCentroid);
+    arma::vec center, leftCenter, rightCenter;
+    node->Center(center);
+    node->Left()->Center(leftCenter);
+    node->Right()->Center(rightCenter);
 
-    const double leftDistance = LMetric<2>::Evaluate(centroid, leftCentroid);
-    const double rightDistance = LMetric<2>::Evaluate(centroid, rightCentroid);
+    const double leftDistance = LMetric<2>::Evaluate(center, leftCenter);
+    const double rightDistance = LMetric<2>::Evaluate(center, rightCenter);
 
     BOOST_REQUIRE_CLOSE(leftDistance, node->Left()->ParentDistance(), 1e-5);
     BOOST_REQUIRE_CLOSE(rightDistance, node->Right()->ParentDistance(), 1e-5);
