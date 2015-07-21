@@ -155,7 +155,7 @@ int main()
   NMFALSFactorizer nmf;
   mat W, H;
   mat V = randu<mat>(100, 100);
-  double residue = Apply(V, W, H);
+  double residue = nmf.Apply(V, W, H);
   return 1;
 }
 @endcode
