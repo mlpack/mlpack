@@ -54,7 +54,7 @@ namespace metric {
  *    is returned.  Setting this to false causes the metric to not satisfy the
  *    Triangle Inequality (be careful!).
  */
-template<int Power, bool TakeRoot = true>
+template<int TPower, bool TTakeRoot = true>
 class LMetric
 {
  public:
@@ -83,6 +83,11 @@ class LMetric
   //! Serialize the metric (nothing to do).
   template<typename Archive>
   void Serialize(Archive& /* ar */, const unsigned int /* version */) { }
+
+  //! The power of the metric.
+  static const int Power = TPower;
+  //! Whether or not the root is taken.
+  static const bool TakeRoot = TTakeRoot;
 };
 
 // Convenience typedefs.
