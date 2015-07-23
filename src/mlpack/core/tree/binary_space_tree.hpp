@@ -19,5 +19,6 @@
 #include "binary_space_tree/breadth_first_dual_tree_traverser.hpp"
 #include "binary_space_tree/breadth_first_dual_tree_traverser_impl.hpp"
 #include "binary_space_tree/traits.hpp"
+#include "binary_space_tree/typedef.hpp"
 
 #endif

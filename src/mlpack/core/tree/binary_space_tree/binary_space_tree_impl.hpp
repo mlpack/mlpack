@@ -575,8 +575,8 @@ SplitNode(std::vector<size_t>& oldFromNew,
   left->Center(leftCenter);
   right->Center(rightCenter);
 
-  const double leftParentDistance = bound.Metric().Evaluate(center, leftCenter);
-  const double rightParentDistance = bound.Metric().Evaluate(center,
+  const double leftParentDistance = MetricType::Evaluate(center, leftCenter);
+  const double rightParentDistance = MetricType::Evaluate(center,
       rightCenter);
 
   left->ParentDistance() = leftParentDistance;
