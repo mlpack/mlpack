@@ -260,9 +260,9 @@ class RectangleTree
   RectangleTree* FindByBeginCount(size_t begin, size_t count);
 
   //! Return the bound object for this node.
-  const HRectBound<EuclideanDistance>& Bound() const { return bound; }
+  const HRectBound<metric::EuclideanDistance>& Bound() const { return bound; }
   //! Modify the bound object for this node.
-  HRectBound<EuclideanDistance>& Bound() { return bound; }
+  HRectBound<metric::EuclideanDistance>& Bound() { return bound; }
 
   //! Return the statistic object for this node.
   const StatisticType& Stat() const { return stat; }
@@ -318,7 +318,7 @@ class RectangleTree
   MatType& LocalDataset() { return *localDataset; }
 
   //! Get the metric which the tree uses.
-  EuclideanDistance Metric() const { return EuclideanDistance(); }
+  metric::EuclideanDistance Metric() const { return EuclideanDistance(); }
 
   //! Get the centroid of the node and store it in the given vector.
   void Center(arma::vec& center) { bound.Center(center); }
@@ -488,7 +488,7 @@ class RectangleTree
    */
   RectangleTree(const size_t begin,
                 const size_t count,
-                HRectBound<EuclideanDistance> bound,
+                HRectBound<metric::EuclideanDistance> bound,
                 StatisticType stat,
                 const int maxLeafSize = 20) :
       begin(begin),
@@ -541,7 +541,8 @@ class RectangleTree
    *      shrinking.
    * @return true if the bound needed to be changed, false if it did not.
    */
-  bool ShrinkBoundForBound(const HRectBound<EuclideanDistance>& changedBound);
+  bool ShrinkBoundForBound(const HRectBound<metric::EuclideanDistance>&
+      changedBound);
 
   /**
    * Make an exact copy of this node, pointers and everything.
