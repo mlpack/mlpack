@@ -147,16 +147,16 @@ class PoolingConnection
                                   OutputLayerType,
                                   PoolingRule,
                                   OptimizerType,
-                                  DataType>, DataType>& Optimzer() const
+                                  DataType>, DataType>& Optimizer() const
   {
     return *optimizer;
   }
-  //! Modify the optimzer.
+  //! Modify the optimizer.
   OptimizerType<PoolingConnection<InputLayerType,
                                   OutputLayerType,
                                   PoolingRule,
                                   OptimizerType,
-                                  DataType>, DataType>& Optimzer()
+                                  DataType>, DataType>& Optimizer()
   {
     return *optimizer;
   }

@@ -178,22 +178,22 @@ class BiasConnection
   //! Modify the output layer.
   OutputLayerType& OutputLayer() { return outputLayer; }
 
-  //! Get the optimzer.
+  //! Get the optimizer.
   OptimizerType<BiasConnection<InputLayerType,
                                OutputLayerType,
                                OptimizerType,
                                WeightInitRule,
-                               MatType>, MatType>& Optimzer() const
+                               MatType>, MatType>& Optimizer() const
   {
     return *optimizer;
   }
 
-  //! Modify the optimzer.
+  //! Modify the optimizer.
   OptimizerType<BiasConnection<InputLayerType,
                                OutputLayerType,
                                OptimizerType,
                                WeightInitRule,
-                               MatType>, MatType>& Optimzer()
+                               MatType>, MatType>& Optimizer()
   {
     return *optimizer;
   }

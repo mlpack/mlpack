@@ -105,15 +105,15 @@ class IdentityConnection
   OptimizerType<IdentityConnection<InputLayerType,
                                   OutputLayerType,
                                   OptimizerType,
-                                  DataType>, DataType>& Optimzer() const
+                                  DataType>, DataType>& Optimizer() const
   {
     return *optimizer;
   }
-  //! Modify the optimzer.
+  //! Modify the optimizer.
   OptimizerType<IdentityConnection<InputLayerType,
                                   OutputLayerType,
                                   OptimizerType,
-                                  DataType>, DataType>& Optimzer()
+                                  DataType>, DataType>& Optimizer()
   {
     return *optimizer;
   }

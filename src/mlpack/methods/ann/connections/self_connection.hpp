@@ -151,23 +151,23 @@ class SelfConnection
   //! Modify the output layer.
   OutputLayerType& OutputLayer() { return outputLayer; }
 
-    //! Get the optimzer.
+    //! Get the optimizer.
   OptimizerType<SelfConnection<InputLayerType,
                                OutputLayerType,
                                OptimizerType,
                                WeightInitRule,
                                MatType,
-                               VecType>, MatType>& Optimzer() const
+                               VecType>, MatType>& Optimizer() const
   {
     return *optimizer;
   }
-  //! Modify the optimzer.
+  //! Modify the optimizer.
   OptimizerType<SelfConnection<InputLayerType,
                                OutputLayerType,
                                OptimizerType,
                                WeightInitRule,
                                MatType,
-                               VecType>, MatType>& Optimzer()
+                               VecType>, MatType>& Optimizer()
   {
     return *optimizer;
   }

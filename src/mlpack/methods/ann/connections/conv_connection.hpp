@@ -244,7 +244,7 @@ class ConvConnection
   //! Modify the output layer.
   OutputLayerType& OutputLayer() { return outputLayer; }
 
-  //! Get the optimzer.
+  //! Get the optimizer.
   OptimizerType<ConvConnection<InputLayerType,
                                OutputLayerType,
                                OptimizerType,
@@ -252,11 +252,11 @@ class ConvConnection
                                ForwardConvolutionRule,
                                BackwardConvolutionRule,
                                GradientConvolutionRule,
-                               DataType>, DataType>& Optimzer() const
+                               DataType>, DataType>& Optimizer() const
   {
     return *optimizer;
   }
-  //! Modify the optimzer.
+  //! Modify the optimizer.
   OptimizerType<ConvConnection<InputLayerType,
                                OutputLayerType,
                                OptimizerType,
@@ -264,7 +264,7 @@ class ConvConnection
                                ForwardConvolutionRule,
                                BackwardConvolutionRule,
                                GradientConvolutionRule,
-                               DataType>, DataType>& Optimzer()
+                               DataType>, DataType>& Optimizer()
   {
     return *optimizer;
   }
