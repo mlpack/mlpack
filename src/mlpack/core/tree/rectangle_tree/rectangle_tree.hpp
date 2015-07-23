@@ -82,7 +82,7 @@ class RectangleTree
   //! The minimum leaf size.
   size_t minLeafSize;
   //! The bound object for this node.
-  HRectBound<EuclideanDistance> bound;
+  HRectBound<metric::EuclideanDistance> bound;
   //! Any extra data contained in the node.
   StatisticType stat;
   //! A struct to store the "split history" for X trees.
