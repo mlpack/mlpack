@@ -44,6 +44,7 @@ PARAM_INT("leaf_size", "Leaf size in the kd-tree.  One-element leaves give the "
 using namespace mlpack;
 using namespace mlpack::emst;
 using namespace mlpack::tree;
+using namespace mlpack::metric;
 using namespace std;
 
 int main(int argc, char* argv[])
@@ -86,8 +87,8 @@ int main(int argc, char* argv[])
 
     Timer::Start("tree_building");
     std::vector<size_t> oldFromNew;
-    tree::BinarySpaceTree<bound::HRectBound<2>, DTBStat> tree(dataPoints,
-        oldFromNew, leafSize);
+    KDTree<EuclideanDistance, DTBStat, arma::mat> tree(dataPoints, oldFromNew,
+        leafSize);
     metric::LMetric<2, true> metric;
     Timer::Stop("tree_building");
 

@@ -70,19 +70,25 @@ namespace emst /** Euclidean Minimum Spanning Trees. */ {
  * @tparam TreeType Type of tree to use.  Should use DTBStat as a statistic.
  */
 template<
-  typename MetricType = metric::EuclideanDistance,
-  typename TreeType = tree::BinarySpaceTree<bound::HRectBound<2>, DTBStat>
+    typename MetricType = metric::EuclideanDistance,
+    typename MatType = arma::mat,
+    template<typename MetricType, typename StatisticType, typename MatType>
+        class TreeType = tree::KDTree
 >
 class DualTreeBoruvka
 {
+ public:
+  //! Convenience typedef.
+  typedef TreeType<MetricType, DTBStat, MatType> Tree;
+
  private:
   //! Copy of the data (if necessary).
-  typename TreeType::Mat dataCopy;
+  MatType dataCopy;
   //! Reference to the data (this is what should be used for accessing data).
-  const typename TreeType::Mat& data;
+  const MatType& data;
 
   //! Pointer to the root of the tree.
-  TreeType* tree;
+  Tree* tree;
   //! Indicates whether or not we "own" the tree.
   bool ownTree;
 
@@ -128,7 +134,7 @@ class DualTreeBoruvka
    * @param naive Whether the computation should be done in O(n^2) naive mode.
    * @param leafSize The leaf size to be used during tree construction.
    */
-  DualTreeBoruvka(const typename TreeType::Mat& dataset,
+  DualTreeBoruvka(const MatType& dataset,
                   const bool naive = false,
                   const MetricType metric = MetricType());
 
@@ -149,8 +155,8 @@ class DualTreeBoruvka
    * @param tree Pre-built tree.
    * @param dataset Dataset corresponding to the pre-built tree.
    */
-  DualTreeBoruvka(TreeType* tree,
-                  const typename TreeType::Mat& dataset,
+  DualTreeBoruvka(Tree* tree,
+                  const MatType& dataset,
                   const MetricType metric = MetricType());
 
   /**
@@ -194,7 +200,7 @@ class DualTreeBoruvka
    * This function resets the values in the nodes of the tree nearest neighbor
    * distance, and checks for fully connected nodes.
    */
-  void CleanupHelper(TreeType* tree);
+  void CleanupHelper(Tree* tree);
 
   /**
    * The values stored in the tree must be reset on each iteration.
@@ -203,8 +209,8 @@ class DualTreeBoruvka
 
 }; // class DualTreeBoruvka
 
-}; // namespace emst
-}; // namespace mlpack
+} // namespace emst
+} // namespace mlpack
 
 #include "dtb_impl.hpp"
 
