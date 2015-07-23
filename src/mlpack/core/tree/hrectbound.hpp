@@ -17,6 +17,26 @@
 namespace mlpack {
 namespace bound {
 
+namespace meta /** Metaprogramming utilities. */ {
+
+//! Utility struct where Value is true if and only if the argument is of type
+//! LMetric.
+template<typename MetricType>
+struct IsLMetric
+{
+  static const bool Value = false;
+};
+
+//! Specialization for IsLMetric when the argument is of type LMetric.
+template<>
+template<int Power, bool TakeRoot>
+struct IsLMetric<metric::LMetric<Power, TakeRoot>>
+{
+  static const bool Value = true;
+};
+
+} // namespace util
+
 /**
  * Hyper-rectangle bound for an L-metric.  This should be used in conjunction
  * with the LMetric class.  Be sure to use the same template parameters for
@@ -26,13 +46,14 @@ namespace bound {
  * @tparam TakeRoot Whether or not the root should be taken (see LMetric
  *     documentation).
  */
-template<int Power = 2, bool TakeRoot = true>
+template<typename MetricType = metric::LMetric<2, true>>
 class HRectBound
 {
- public:
-  //! This is the metric type that this bound is using.
-  typedef metric::LMetric<Power, TakeRoot> MetricType;
+  // It is required that HRectBound have an LMetric as the given MetricType.
+  static_assert(meta::IsLMetric<MetricType>::Value == true,
+      "HRectBound can only be used with the LMetric<> metric type.");
 
+ public:
   /**
    * Empty constructor; creates a bound of dimensionality 0.
    */
@@ -174,13 +195,6 @@ class HRectBound
    */
   std::string ToString() const;
 
-  /**
-   * Return the metric associated with this bound.  Because it is an LMetric, it
-   * cannot store state, so we can make it on the fly.  It is also static
-   * because the metric is only dependent on the template arguments.
-   */
-  static MetricType Metric() { return metric::LMetric<Power, TakeRoot>(); }
-
  private:
   //! The dimensionality of the bound.
   size_t dim;
@@ -191,8 +205,8 @@ class HRectBound
 };
 
 // A specialization of BoundTraits for this class.
-template<int Power, bool TakeRoot>
-struct BoundTraits<HRectBound<Power, TakeRoot>>
+template<typename MetricType>
+struct BoundTraits<HRectBound<MetricType>>
 {
   //! These bounds are always tight for each dimension.
   const static bool HasTightBounds = true;
