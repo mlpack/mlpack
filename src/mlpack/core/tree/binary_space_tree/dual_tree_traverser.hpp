@@ -17,13 +17,14 @@
 namespace mlpack {
 namespace tree {
 
-template<typename BoundType,
+template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         typename SplitType>
+         template<typename BoundMetricType> class BoundType,
+         template<typename BoundType, typename MatType> class SplitType>
 template<typename RuleType>
-class BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
-    DualTreeTraverser
+class BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+                      SplitType>::DualTreeTraverser
 {
  public:
   /**
@@ -82,8 +83,8 @@ class BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
   typename RuleType::TraversalInfoType traversalInfo;
 };
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 // Include implementation.
 #include "dual_tree_traverser_impl.hpp"

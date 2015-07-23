@@ -16,13 +16,14 @@
 namespace mlpack {
 namespace tree {
 
-template<typename BoundType,
+template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         typename SplitType>
+         template<typename BoundMetricType> class BoundType,
+         template<typename BoundType, typename MatType> class SplitType>
 template<typename RuleType>
-class BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
-    SingleTreeTraverser
+class BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+                      SplitType>::SingleTreeTraverser
 {
  public:
   /**

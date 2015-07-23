@@ -27,20 +27,24 @@ namespace tree /** Trees and tree-building procedures. */ {
  * This tree does take one runtime parameter in the constructor, which is the
  * max leaf size to be used.
  *
- * @tparam BoundType The bound used for each node.  The valid types of bounds
- *     and the necessary skeleton interface for this class can be found in
- *     bounds/.
+ * @tparam MetricType The metric used for tree-building.  The BoundType may
+ *     place restrictions on the metrics that can be used.
  * @tparam StatisticType Extra data contained in the node.  See statistic.hpp
  *     for the necessary skeleton interface.
  * @tparam MatType The dataset class.
+ * @tparam BoundType The bound used for each node.  HRectBound, the default,
+ *     requires that an LMetric<> is used for MetricType (so, EuclideanDistance,
+ *     ManhattanDistance, etc.).
  * @tparam SplitType The class that partitions the dataset/points at a
  *     particular node into two parts. Its definition decides the way this split
  *     is done.
  */
-template<typename BoundType,
+template<typename MetricType,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
-         typename SplitType = MidpointSplit<BoundType, MatType>>
+         template<typename BoundMetricType> class BoundType = bound::HRectBound,
+         template<typename BoundType, typename MatType> class SplitType =
+             MidpointSplit>
 class BinarySpaceTree
 {
  private:
@@ -57,7 +61,7 @@ class BinarySpaceTree
   //! children).
   size_t count;
   //! The bound object for this node.
-  BoundType bound;
+  BoundType<MetricType> bound;
   //! Any extra data contained in the node.
   StatisticType stat;
   //! The distance from the centroid of this node to the centroid of the parent.
@@ -147,7 +151,7 @@ class BinarySpaceTree
   BinarySpaceTree(BinarySpaceTree* parent,
                   const size_t begin,
                   const size_t count,
-                  SplitType& splitter,
+                  SplitType<BoundType<MetricType>, MatType>& splitter,
                   const size_t maxLeafSize = 20);
 
   /**
@@ -172,7 +176,7 @@ class BinarySpaceTree
                   const size_t begin,
                   const size_t count,
                   std::vector<size_t>& oldFromNew,
-                  SplitType& splitter,
+                  SplitType<BoundType<MetricType>, MatType>& splitter,
                   const size_t maxLeafSize = 20);
 
   /**
@@ -201,7 +205,7 @@ class BinarySpaceTree
                   const size_t count,
                   std::vector<size_t>& oldFromNew,
                   std::vector<size_t>& newFromOld,
-                  SplitType& splitter,
+                  SplitType<BoundType<MetricType>, MatType>& splitter,
                   const size_t maxLeafSize = 20);
 
   /**
@@ -230,9 +234,9 @@ class BinarySpaceTree
   ~BinarySpaceTree();
 
   //! Return the bound object for this node.
-  const BoundType& Bound() const { return bound; }
+  const BoundType<MetricType>& Bound() const { return bound; }
   //! Return the bound object for this node.
-  BoundType& Bound() { return bound; }
+  BoundType<MetricType>& Bound() { return bound; }
 
   //! Return the statistic object for this node.
   const StatisticType& Stat() const { return stat; }
@@ -263,7 +267,7 @@ class BinarySpaceTree
   MatType& Dataset() { return *dataset; }
 
   //! Get the metric that the tree uses.
-  typename BoundType::MetricType Metric() const { return bound.Metric(); }
+  MetricType Metric() const { return MetricType(); }
 
   //! Return the number of children in this node.
   size_t NumChildren() const;
@@ -401,7 +405,8 @@ class BinarySpaceTree
    * @param maxLeafSize Maximum number of points held in a leaf.
    * @param splitter Instantiated SplitType object.
    */
-  void SplitNode(const size_t maxLeafSize, SplitType& splitter);
+  void SplitNode(const size_t maxLeafSize,
+                 SplitType<BoundType<MetricType>, MatType>& splitter);
 
   /**
    * Splits the current node, assigning its left and right children recursively.
@@ -413,7 +418,7 @@ class BinarySpaceTree
    */
   void SplitNode(std::vector<size_t>& oldFromNew,
                  const size_t maxLeafSize,
-                 SplitType& splitter);
+                 SplitType<BoundType<MetricType>, MatType>& splitter);
 
  protected:
   /**

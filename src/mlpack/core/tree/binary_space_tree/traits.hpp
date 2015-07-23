@@ -18,11 +18,13 @@ namespace tree {
  * help write tree-independent (but still optimized) tree-based algorithms.  See
  * mlpack/core/tree/tree_traits.hpp for more information.
  */
-template<typename BoundType,
+template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         typename SplitType>
-class TreeTraits<BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>>
+         template<typename BoundMetricType> class BoundType,
+         template<typename BoundType, typename MatType> class SplitType>
+class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+                                 SplitType>>
 {
  public:
   /**

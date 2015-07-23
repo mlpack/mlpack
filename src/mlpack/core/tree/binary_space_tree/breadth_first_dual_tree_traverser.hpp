@@ -28,13 +28,14 @@ struct QueueFrame
   TraversalInfoType traversalInfo;
 };
 
-template<typename BoundType,
+template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         typename SplitType>
+         template<typename BoundMetricType> class BoundType,
+         template<typename BoundType, typename MatType> class SplitType>
 template<typename RuleType>
-class BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
-    BreadthFirstDualTreeTraverser
+class BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+                      SplitType>::BreadthFirstDualTreeTraverser
 {
  public:
   /**
@@ -98,8 +99,8 @@ class BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
   typename RuleType::TraversalInfoType traversalInfo;
 };
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 // Include implementation.
 #include "breadth_first_dual_tree_traverser_impl.hpp"

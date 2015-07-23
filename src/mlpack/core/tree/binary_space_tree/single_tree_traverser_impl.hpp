@@ -17,26 +17,28 @@
 namespace mlpack {
 namespace tree {
 
-template<typename BoundType,
+template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         typename SplitType>
+         template<typename BoundMetricType> class BoundType,
+         template<typename BoundType, typename MatType> class SplitType>
 template<typename RuleType>
-BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
+BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0)
 { /* Nothing to do. */ }
 
-template<typename BoundType,
+template<typename MetricType,
          typename StatisticType,
          typename MatType,
-         typename SplitType>
+         template<typename BoundMetricType> class BoundType,
+         template<typename BoundType, typename MatType> class SplitType>
 template<typename RuleType>
-void BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>::
+void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 SingleTreeTraverser<RuleType>::Traverse(
     const size_t queryIndex,
-    BinarySpaceTree<BoundType, StatisticType, MatType, SplitType>&
+    BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>&
         referenceNode)
 {
   // If we are a leaf, run the base case as necessary.
