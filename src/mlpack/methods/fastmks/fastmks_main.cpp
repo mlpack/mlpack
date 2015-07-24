@@ -88,13 +88,13 @@ void RunFastMKS(const arma::mat& referenceData,
   else
   {
     // Create the tree with the specified base.
-    typedef CoverTree<IPMetric<KernelType>, FirstPointIsRoot, FastMKSStat>
-        TreeType;
+    typedef CoverTree<IPMetric<KernelType>, FastMKSStat, arma::mat,
+        FirstPointIsRoot> TreeType;
     IPMetric<KernelType> metric(kernel);
     TreeType tree(referenceData, metric, base);
 
     // Create FastMKS object.
-    FastMKS<KernelType> fastmks(&tree, single);
+    FastMKS<KernelType, arma::mat, StandardCoverTree> fastmks(&tree, single);
 
     // Now search with it.
     fastmks.Search(k, indices, kernels);
@@ -122,14 +122,15 @@ void RunFastMKS(const arma::mat& referenceData,
   else
   {
     // Create the tree with the specified base.
-    typedef CoverTree<IPMetric<KernelType>, FirstPointIsRoot, FastMKSStat>
-        TreeType;
+    typedef CoverTree<IPMetric<KernelType>, FastMKSStat, arma::mat,
+        FirstPointIsRoot> TreeType;
     IPMetric<KernelType> metric(kernel);
     TreeType referenceTree(referenceData, metric, base);
     TreeType queryTree(queryData, metric, base);
 
     // Create FastMKS object.
-    FastMKS<KernelType> fastmks(&referenceTree, single);
+    FastMKS<KernelType, arma::mat, StandardCoverTree> fastmks(&referenceTree,
+        single);
 
     // Now search with it.
     fastmks.Search(&queryTree, k, indices, kernels);

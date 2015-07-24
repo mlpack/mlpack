@@ -19,10 +19,14 @@ namespace mlpack {
 namespace fastmks {
 
 // No instantiated kernel.
-template<typename KernelType, typename TreeType>
-FastMKS<KernelType, TreeType>::FastMKS(const typename TreeType::Mat& referenceSet,
-                                       const bool singleMode,
-                                       const bool naive) :
+template<typename KernelType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType>
+FastMKS<KernelType, MatType, TreeType>::FastMKS(
+    const MatType& referenceSet,
+    const bool singleMode,
+    const bool naive) :
     referenceSet(referenceSet),
     referenceTree(NULL),
     treeOwner(true),
@@ -32,17 +36,20 @@ FastMKS<KernelType, TreeType>::FastMKS(const typename TreeType::Mat& referenceSe
   Timer::Start("tree_building");
 
   if (!naive)
-    referenceTree = new TreeType(referenceSet);
+    referenceTree = new Tree(referenceSet);
 
   Timer::Stop("tree_building");
 }
 
 // Instantiated kernel.
-template<typename KernelType, typename TreeType>
-FastMKS<KernelType, TreeType>::FastMKS(const typename TreeType::Mat& referenceSet,
-                                       KernelType& kernel,
-                                       const bool singleMode,
-                                       const bool naive) :
+template<typename KernelType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType>
+FastMKS<KernelType, MatType, TreeType>::FastMKS(const MatType& referenceSet,
+                                                KernelType& kernel,
+                                                const bool singleMode,
+                                                const bool naive) :
     referenceSet(referenceSet),
     referenceTree(NULL),
     treeOwner(true),
@@ -54,15 +61,18 @@ FastMKS<KernelType, TreeType>::FastMKS(const typename TreeType::Mat& referenceSe
 
   // If necessary, the reference tree should be built.  There is no query tree.
   if (!naive)
-    referenceTree = new TreeType(referenceSet, metric);
+    referenceTree = new Tree(referenceSet, metric);
 
   Timer::Stop("tree_building");
 }
 
 // One dataset, pre-built tree.
-template<typename KernelType, typename TreeType>
-FastMKS<KernelType, TreeType>::FastMKS(TreeType* referenceTree,
-                                       const bool singleMode) :
+template<typename KernelType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType>
+FastMKS<KernelType, MatType, TreeType>::FastMKS(Tree* referenceTree,
+                                                const bool singleMode) :
     referenceSet(referenceTree->Dataset()),
     referenceTree(referenceTree),
     treeOwner(false),
@@ -73,17 +83,23 @@ FastMKS<KernelType, TreeType>::FastMKS(TreeType* referenceTree,
   // Nothing to do.
 }
 
-template<typename KernelType, typename TreeType>
-FastMKS<KernelType, TreeType>::~FastMKS()
+template<typename KernelType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType>
+FastMKS<KernelType, MatType, TreeType>::~FastMKS()
 {
   // If we created the trees, we must delete them.
   if (treeOwner && referenceTree)
     delete referenceTree;
 }
 
-template<typename KernelType, typename TreeType>
-void FastMKS<KernelType, TreeType>::Search(
-    const typename TreeType::Mat& querySet,
+template<typename KernelType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType>
+void FastMKS<KernelType, MatType, TreeType>::Search(
+    const MatType& querySet,
     const size_t k,
     arma::Mat<size_t>& indices,
     arma::mat& kernels)
@@ -132,10 +148,10 @@ void FastMKS<KernelType, TreeType>::Search(
 
     // Create rules object (this will store the results).  This constructor
     // precalculates each self-kernel value.
-    typedef FastMKSRules<KernelType, TreeType> RuleType;
+    typedef FastMKSRules<KernelType, Tree> RuleType;
     RuleType rules(referenceSet, querySet, indices, kernels, metric.Kernel());
 
-    typename TreeType::template SingleTreeTraverser<RuleType> traverser(rules);
+    typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
 
     for (size_t i = 0; i < querySet.n_cols; ++i)
       traverser.Traverse(i, *referenceTree);
@@ -151,17 +167,21 @@ void FastMKS<KernelType, TreeType>::Search(
   // assuming it doesn't map anything...
   Timer::Stop("computing_products");
   Timer::Start("tree_building");
-  TreeType queryTree(querySet);
+  Tree queryTree(querySet);
   Timer::Stop("tree_building");
 
   Search(&queryTree, k, indices, kernels);
 }
 
-template<typename KernelType, typename TreeType>
-void FastMKS<KernelType, TreeType>::Search(TreeType* queryTree,
-                                           const size_t k,
-                                           arma::Mat<size_t>& indices,
-                                           arma::mat& kernels)
+template<typename KernelType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType>
+void FastMKS<KernelType, MatType, TreeType>::Search(
+    Tree* queryTree,
+    const size_t k,
+    arma::Mat<size_t>& indices,
+    arma::mat& kernels)
 {
   // If either naive mode or single mode is specified, this must fail.
   if (naive || singleMode)
@@ -176,11 +196,11 @@ void FastMKS<KernelType, TreeType>::Search(TreeType* queryTree,
   kernels.fill(-DBL_MAX);
 
   Timer::Start("computing_products");
-  typedef FastMKSRules<KernelType, TreeType> RuleType;
+  typedef FastMKSRules<KernelType, Tree> RuleType;
   RuleType rules(referenceSet, queryTree->Dataset(), indices, kernels,
       metric.Kernel());
 
-  typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
+  typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
 
   traverser.Traverse(*queryTree, *referenceTree);
 
@@ -190,10 +210,14 @@ void FastMKS<KernelType, TreeType>::Search(TreeType* queryTree,
   Timer::Stop("computing_products");
 }
 
-template<typename KernelType, typename TreeType>
-void FastMKS<KernelType, TreeType>::Search(const size_t k,
-                                           arma::Mat<size_t>& indices,
-                                           arma::mat& kernels)
+template<typename KernelType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType>
+void FastMKS<KernelType, MatType, TreeType>::Search(
+    const size_t k,
+    arma::Mat<size_t>& indices,
+    arma::mat& kernels)
 {
   // No remapping will be necessary because we are using the cover tree.
   Timer::Start("computing_products");
@@ -236,11 +260,11 @@ void FastMKS<KernelType, TreeType>::Search(const size_t k,
   {
     // Create rules object (this will store the results).  This constructor
     // precalculates each self-kernel value.
-    typedef FastMKSRules<KernelType, TreeType> RuleType;
+    typedef FastMKSRules<KernelType, Tree> RuleType;
     RuleType rules(referenceSet, referenceSet, indices, kernels,
         metric.Kernel());
 
-    typename TreeType::template SingleTreeTraverser<RuleType> traverser(rules);
+    typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
 
     for (size_t i = 0; i < referenceSet.n_cols; ++i)
       traverser.Traverse(i, *referenceTree);
@@ -271,13 +295,17 @@ void FastMKS<KernelType, TreeType>::Search(const size_t k,
  * @param neighbor Index of reference point which is being inserted.
  * @param distance Distance from query point to reference point.
  */
-template<typename KernelType, typename TreeType>
-void FastMKS<KernelType, TreeType>::InsertNeighbor(arma::Mat<size_t>& indices,
-                                                   arma::mat& products,
-                                                   const size_t queryIndex,
-                                                   const size_t pos,
-                                                   const size_t neighbor,
-                                                   const double distance)
+template<typename KernelType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType>
+void FastMKS<KernelType, MatType, TreeType>::InsertNeighbor(
+    arma::Mat<size_t>& indices,
+    arma::mat& products,
+    const size_t queryIndex,
+    const size_t pos,
+    const size_t neighbor,
+    const double distance)
 {
   // We only memmove() if there is actually a need to shift something.
   if (pos < (products.n_rows - 1))
@@ -297,8 +325,11 @@ void FastMKS<KernelType, TreeType>::InsertNeighbor(arma::Mat<size_t>& indices,
 }
 
 // Return string of object.
-template<typename KernelType, typename TreeType>
-std::string FastMKS<KernelType, TreeType>::ToString() const
+template<typename KernelType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType>
+std::string FastMKS<KernelType, MatType, TreeType>::ToString() const
 {
   std::ostringstream convert;
   convert << "FastMKS [" << this << "]" << std::endl;

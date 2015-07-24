@@ -48,12 +48,16 @@ namespace fastmks /** Fast max-kernel search. */ {
  */
 template<
     typename KernelType,
-    typename TreeType = tree::CoverTree<metric::IPMetric<KernelType>,
-        tree::FirstPointIsRoot, FastMKSStat>
+    typename MatType,
+    template<typename MetricType, typename StatisticType, typename MatType>
+        class TreeType
 >
 class FastMKS
 {
  public:
+  //! Convenience typedef.
+  typedef TreeType<metric::IPMetric<KernelType>, FastMKSStat, MatType> Tree;
+
   /**
    * Create the FastMKS object with the given reference set (this is the set
    * that is searched).  Optionally, specify whether or not single-tree search
@@ -63,7 +67,7 @@ class FastMKS
    * @param single Whether or not to run single-tree search.
    * @param naive Whether or not to run brute-force (naive) search.
    */
-  FastMKS(const typename TreeType::Mat& referenceSet,
+  FastMKS(const MatType& referenceSet,
           const bool singleMode = false,
           const bool naive = false);
 
@@ -78,7 +82,7 @@ class FastMKS
    * @param single Whether or not to run single-tree search.
    * @param naive Whether or not to run brute-force (naive) search.
    */
-  FastMKS(const typename TreeType::Mat& referenceSet,
+  FastMKS(const MatType& referenceSet,
           KernelType& kernel,
           const bool singleMode = false,
           const bool naive = false);
@@ -94,7 +98,7 @@ class FastMKS
    * @param single Whether or not to run single-tree search.
    * @param naive Whether or not to run brute-force (naive) search.
    */
-  FastMKS(TreeType* referenceTree,
+  FastMKS(Tree* referenceTree,
           const bool singleMode = false);
 
   //! Destructor for the FastMKS object.
@@ -120,7 +124,7 @@ class FastMKS
    * @param indices Matrix to store resulting indices of max-kernel search in.
    * @param kernels Matrix to store resulting max-kernel values in.
    */
-  void Search(const typename TreeType::Mat& querySet,
+  void Search(const MatType& querySet,
               const size_t k,
               arma::Mat<size_t>& indices,
               arma::mat& kernels);
@@ -147,7 +151,7 @@ class FastMKS
    * @param indices Matrix to store resulting indices of max-kernel search in.
    * @param kernels Matrix to store resulting max-kernel values in.
    */
-  void Search(TreeType* querySet,
+  void Search(Tree* querySet,
               const size_t k,
               arma::Mat<size_t>& indices,
               arma::mat& kernels);
@@ -187,9 +191,9 @@ class FastMKS
 
  private:
   //! The reference dataset.
-  const typename TreeType::Mat& referenceSet;
+  const MatType& referenceSet;
   //! The tree built on the reference dataset.
-  TreeType* referenceTree;
+  Tree* referenceTree;
   //! If true, this object created the tree and is responsible for it.
   bool treeOwner;
 
@@ -210,8 +214,8 @@ class FastMKS
                       const double distance);
 };
 
-}; // namespace fastmks
-}; // namespace mlpack
+} // namespace fastmks
+} // namespace mlpack
 
 // Include implementation.
 #include "fastmks_impl.hpp"
