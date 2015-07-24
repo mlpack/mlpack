@@ -518,9 +518,8 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
   left->Center(leftCenter);
   right->Center(rightCenter);
 
-  const double leftParentDistance = bound.Metric().Evaluate(center, leftCenter);
-  const double rightParentDistance = bound.Metric().Evaluate(center,
-      rightCenter);
+  const double leftParentDistance = MetricType::Evaluate(center, leftCenter);
+  const double rightParentDistance = MetricType::Evaluate(center, rightCenter);
 
   left->ParentDistance() = leftParentDistance;
   right->ParentDistance() = rightParentDistance;
@@ -576,8 +575,7 @@ SplitNode(std::vector<size_t>& oldFromNew,
   right->Center(rightCenter);
 
   const double leftParentDistance = MetricType::Evaluate(center, leftCenter);
-  const double rightParentDistance = MetricType::Evaluate(center,
-      rightCenter);
+  const double rightParentDistance = MetricType::Evaluate(center, rightCenter);
 
   left->ParentDistance() = leftParentDistance;
   right->ParentDistance() = rightParentDistance;
