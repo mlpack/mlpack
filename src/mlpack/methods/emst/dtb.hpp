@@ -63,11 +63,10 @@ namespace emst /** Euclidean Minimum Spanning Trees. */ {
  * More advanced usage of the class can use different types of trees, pass in an
  * already-built tree, or compute the MST using the O(n^2) naive algorithm.
  *
- * @tparam MetricType The metric to use.  IMPORTANT: this hasn't really been
- * tested with anything other than the L2 metric, so user beware. Note that the
- * tree type needs to compute bounds using the same metric as the type
- * specified here.
- * @tparam TreeType Type of tree to use.  Should use DTBStat as a statistic.
+ * @tparam MetricType The metric to use.
+ * @tparam MatType The type of data matrix to use.
+ * @tparam TreeType Type of tree to use.  This should follow the TreeType policy
+ *      API.
  */
 template<
     typename MetricType = metric::EuclideanDistance,

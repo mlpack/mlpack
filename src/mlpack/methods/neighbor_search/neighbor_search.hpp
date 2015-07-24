@@ -42,7 +42,10 @@ namespace neighbor /** Neighbor-search routines.  These include
  *
  * @tparam SortPolicy The sort policy for distances; see NearestNeighborSort.
  * @tparam MetricType The metric to use for computation.
- * @tparam TreeType The tree type to use.
+ * @tparam MatType The type of data matrix.
+ * @tparam TreeType The tree type to use; must adhere to the TreeType API.
+ * @tparam TraversalType The type of traversal to use (defaults to the tree's
+ *      default traverser).
  */
 template<typename SortPolicy = NearestNeighborSort,
          typename MetricType = mlpack::metric::EuclideanDistance,
