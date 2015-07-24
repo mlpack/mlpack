@@ -43,8 +43,9 @@ namespace fastmks /** Fast max-kernel search. */ {
  * that).
  *
  * @tparam KernelType Type of kernel to run FastMKS with.
- * @tparam TreeType Type of tree to run FastMKS with; it must have metric
- *     IPMetric<KernelType>.
+ * @tparam MatType Type of data matrix (usually arma::mat).
+ * @tparam TreeType Type of tree to run FastMKS with; it must satisfy the
+ *     TreeType policy API.
  */
 template<
     typename KernelType,
