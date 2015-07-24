@@ -19,11 +19,11 @@ namespace tree {
 // Create the cover tree.
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::CoverTree(
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     const MatType& dataset,
     const double base,
     MetricType* metric) :
@@ -106,11 +106,11 @@ CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::CoverTree(
 
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::CoverTree(
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     const MatType& dataset,
     MetricType& metric,
     const double base) :
@@ -190,11 +190,11 @@ CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::CoverTree(
 
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::CoverTree(
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     const MatType& dataset,
     const double base,
     const size_t pointIndex,
@@ -238,11 +238,11 @@ CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::CoverTree(
 // Manually create a cover tree node.
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::CoverTree(
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     const MatType& dataset,
     const double base,
     const size_t pointIndex,
@@ -273,11 +273,11 @@ CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::CoverTree(
 
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::CoverTree(
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     const CoverTree& other) :
     dataset(other.dataset),
     point(other.point),
@@ -302,11 +302,11 @@ CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::CoverTree(
 
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::~CoverTree()
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::~CoverTree()
 {
   // Delete each child.
   for (size_t i = 0; i < children.size(); ++i)
@@ -320,12 +320,12 @@ CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::~CoverTree()
 //! Return the number of descendant points.
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
 inline size_t
-CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     NumDescendants() const
 {
   return numDescendants;
@@ -334,12 +334,12 @@ CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
 //! Return the index of a particular descendant point.
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
 inline size_t
-CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::Descendant(
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::Descendant(
     const size_t index) const
 {
   // The first descendant is the point contained within this node.
@@ -365,11 +365,11 @@ CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::Descendant(
 
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-double CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+double CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     MinDistance(const CoverTree* other) const
 {
   // Every cover tree node will contain points up to base^(scale + 1) away.
@@ -380,11 +380,11 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
 
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-double CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+double CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     MinDistance(const CoverTree* other, const double distance) const
 {
   // We already have the distance as evaluated by the metric.
@@ -394,11 +394,11 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
 
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-double CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+double CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     MinDistance(const arma::vec& other) const
 {
   return std::max(metric->Evaluate(dataset.col(point), other) -
@@ -407,11 +407,11 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
 
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-double CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+double CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     MinDistance(const arma::vec& /* other */, const double distance) const
 {
   return std::max(distance - furthestDescendantDistance, 0.0);
@@ -419,11 +419,11 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
 
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-double CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+double CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     MaxDistance(const CoverTree* other) const
 {
   return metric->Evaluate(dataset.col(point),
@@ -433,11 +433,11 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
 
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-double CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+double CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     MaxDistance(const CoverTree* other, const double distance) const
 {
   // We already have the distance as evaluated by the metric.
@@ -447,11 +447,11 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
 
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-double CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+double CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     MaxDistance(const arma::vec& other) const
 {
   return metric->Evaluate(dataset.col(point), other) +
@@ -460,11 +460,11 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
 
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-double CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+double CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     MaxDistance(const arma::vec& /* other */, const double distance) const
 {
   return distance + furthestDescendantDistance;
@@ -473,11 +473,11 @@ double CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
 //! Return the minimum and maximum distance to another node.
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-math::Range CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+math::Range CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     RangeDistance(const CoverTree* other) const
 {
   const double distance = metric->Evaluate(dataset.col(point),
@@ -496,11 +496,11 @@ math::Range CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
 //! point-to-point distance has already been calculated.
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-math::Range CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+math::Range CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     RangeDistance(const CoverTree* other,
                   const double distance) const
 {
@@ -516,11 +516,11 @@ math::Range CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
 //! Return the minimum and maximum distance to another point.
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-math::Range CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+math::Range CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     RangeDistance(const arma::vec& other) const
 {
   const double distance = metric->Evaluate(dataset.col(point), other);
@@ -533,11 +533,11 @@ math::Range CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
 //! point-to-point distance has already been calculated.
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-math::Range CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+math::Range CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     RangeDistance(const arma::vec& /* other */,
                   const double distance) const
 {
@@ -548,12 +548,12 @@ math::Range CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
 //! For a newly initialized node, create children using the near and far set.
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
 inline void
-CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::CreateChildren(
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
     arma::Col<size_t>& indices,
     arma::vec& distances,
     size_t nearSetSize,
@@ -743,11 +743,11 @@ CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::CreateChildren(
 
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-size_t CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     SplitNearFar(arma::Col<size_t>& indices,
                  arma::vec& distances,
                  const double bound,
@@ -801,11 +801,11 @@ size_t CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
 // Returns the maximum distance between points.
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-void CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     ComputeDistances(const size_t pointIndex,
                      const arma::Col<size_t>& indices,
                      arma::vec& distances,
@@ -823,11 +823,11 @@ void CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
 
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-size_t CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     SortPointSet(arma::Col<size_t>& indices,
                  arma::vec& distances,
                  const size_t childFarSetSize,
@@ -888,11 +888,11 @@ size_t CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
 
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-void CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     MoveToUsedSet(arma::Col<size_t>& indices,
                   arma::vec& distances,
                   size_t& nearSetSize,
@@ -1034,11 +1034,11 @@ void CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
 
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-size_t CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+size_t CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     PruneFarSet(arma::Col<size_t>& indices,
                 arma::vec& distances,
                 const double bound,
@@ -1080,11 +1080,11 @@ size_t CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
  */
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-inline void CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+inline void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     RemoveNewImplicitNodes()
 {
   // If we created an implicit node, take its self-child instead (this could
@@ -1116,11 +1116,11 @@ inline void CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
  */
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
-std::string CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+std::string CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     ToString() const
 {
   std::ostringstream convert;

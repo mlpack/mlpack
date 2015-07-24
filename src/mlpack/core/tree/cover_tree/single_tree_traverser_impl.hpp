@@ -19,14 +19,14 @@ namespace tree {
 //! This is the structure the cover tree map will use for traversal.
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
 struct CoverTreeMapEntry
 {
   //! The node this entry refers to.
-  CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>* node;
+  CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>* node;
   //! The score of the node.
   double score;
   //! The index of the parent node.
@@ -43,12 +43,12 @@ struct CoverTreeMapEntry
 
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
 template<typename RuleType>
-CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
 SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0)
@@ -56,19 +56,19 @@ SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
 
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
 template<typename RuleType>
-void CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
 SingleTreeTraverser<RuleType>::Traverse(
     const size_t queryIndex,
     CoverTree& referenceNode)
 {
   // This is a non-recursive implementation (which should be faster than a
   // recursive implementation).
-  typedef CoverTreeMapEntry<MetricType, RootPointPolicy, StatisticType, MatType>
+  typedef CoverTreeMapEntry<MetricType, StatisticType, MatType, RootPointPolicy>
       MapEntryType;
 
   // We will use this map as a priority queue.  Each key represents the scale,
@@ -230,7 +230,7 @@ SingleTreeTraverser<RuleType>::Traverse(
   }
 }
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 #endif

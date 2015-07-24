@@ -20,10 +20,10 @@ namespace tree {
  * mlpack/core/tree/tree_traits.hpp for more information.
  */
 template<typename MetricType,
-         typename RootPointPolicy,
          typename StatisticType,
-         typename MatType>
-class TreeTraits<CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>>
+         typename MatType,
+         typename RootPointPolicy>
+class TreeTraits<CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>>
 {
  public:
   /**
@@ -54,7 +54,7 @@ class TreeTraits<CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>>
   static const bool BinaryTree = false;
 };
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 #endif

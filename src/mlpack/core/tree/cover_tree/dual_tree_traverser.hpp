@@ -15,12 +15,12 @@ namespace tree {
 
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
 template<typename RuleType>
-class CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+class CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     DualTreeTraverser
 {
  public:
@@ -59,7 +59,7 @@ class CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
   struct DualCoverTreeMapEntry
   {
     //! The node this entry refers to.
-    CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>*
+    CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>*
         referenceNode;
     //! The score of the node.
     double score;

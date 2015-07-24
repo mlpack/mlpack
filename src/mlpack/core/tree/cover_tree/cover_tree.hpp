@@ -85,9 +85,9 @@ namespace tree {
  *      sp_mat).
  */
 template<typename MetricType = metric::LMetric<2, true>,
-         typename RootPointPolicy = FirstPointIsRoot,
          typename StatisticType = EmptyStatistic,
-         typename MatType = arma::mat>
+         typename MatType = arma::mat,
+         typename RootPointPolicy = FirstPointIsRoot>
 class CoverTree
 {
  public:

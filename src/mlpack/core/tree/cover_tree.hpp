@@ -15,5 +15,6 @@
 #include "cover_tree/dual_tree_traverser.hpp"
 #include "cover_tree/dual_tree_traverser_impl.hpp"
 #include "cover_tree/traits.hpp"
+#include "cover_tree/typedef.hpp"
 
 #endif

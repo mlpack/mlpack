@@ -18,12 +18,12 @@ namespace tree {
 
 template<
     typename MetricType,
-    typename RootPointPolicy,
     typename StatisticType,
-    typename MatType
+    typename MatType,
+    typename RootPointPolicy
 >
 template<typename RuleType>
-class CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
+class CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     SingleTreeTraverser
 {
  public:
@@ -54,8 +54,8 @@ class CoverTree<MetricType, RootPointPolicy, StatisticType, MatType>::
   size_t numPrunes;
 };
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 // Include implementation.
 #include "single_tree_traverser_impl.hpp"
