@@ -16,13 +16,14 @@
 namespace mlpack {
 namespace tree {
 
-template<typename SplitType,
-         typename DescentType,
-	 typename StatisticType,
-         typename MatType>
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
 template<typename RuleType>
-class RectangleTree<SplitType, DescentType, StatisticType, MatType>::
-    DualTreeTraverser
+class RectangleTree<MetricType, StatisticType, MatType, SplitType,
+                    DescentType>::DualTreeTraverser
 {
  public:
   /**
@@ -37,8 +38,7 @@ class RectangleTree<SplitType, DescentType, StatisticType, MatType>::
    * @param referenceNode The reference node to be traversed.
    * @param score The score of the current node combination.
    */
-  void Traverse(RectangleTree<SplitType, DescentType, StatisticType, MatType>& queryNode,
-		RectangleTree<SplitType, DescentType, StatisticType, MatType>& referenceNode);
+  void Traverse(RectangleTree& queryNode, RectangleTree& referenceNode);
 
   //! Get the number of prunes.
   size_t NumPrunes() const { return numPrunes; }
@@ -62,16 +62,17 @@ class RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 
  private:
 
-  //We use this struct and this function to make the sorting and scoring easy and efficient:
-  class NodeAndScore {
-  public:
-    RectangleTree<SplitType, DescentType, StatisticType, MatType>* node;
+  // We use this struct and this function to make the sorting and scoring easy
+  // and efficient:
+  struct NodeAndScore
+  {
+    RectangleTree* node;
     double score;
     typename RuleType::TraversalInfoType travInfo;
   };
 
   static bool nodeComparator(const NodeAndScore& obj1,
-                      const NodeAndScore& obj2)
+                             const NodeAndScore& obj2)
   {
     return obj1.score < obj2.score;
   }
@@ -96,8 +97,8 @@ class RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   typename RuleType::TraversalInfoType traversalInfo;
 };
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 // Include implementation.
 #include "dual_tree_traverser_impl.hpp"

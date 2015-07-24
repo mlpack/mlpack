@@ -18,26 +18,22 @@ namespace tree /** Trees and tree-building procedures. */ {
  * nodes overflow, we split them, moving up the tree and splitting nodes
  * as necessary.
  */
-template<typename DescentType,
-         typename StatisticType,
-         typename MatType>
 class RStarTreeSplit
 {
  public:
-  typedef RectangleTree<RStarTreeSplit, DescentType, StatisticType, MatType>
-      TreeType;
-
   /**
    * Split a leaf node using the algorithm described in "The R*-tree: An
    * Efficient and Robust Access method for Points and Rectangles."  If
    * necessary, this split will propagate upwards through the tree.
    */
+  template<typename TreeType>
   static void SplitLeafNode(TreeType* tree, std::vector<bool>& relevels);
 
   /**
    * Split a non-leaf node using the "default" algorithm.  If this is a root
    * node, the tree increases in depth.
    */
+  template<typename TreeType>
   static bool SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels);
 
  private:
@@ -61,11 +57,12 @@ class RStarTreeSplit
   /**
    * Insert a node into another node.
    */
+  template<typename TreeType>
   static void InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode);
 };
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 // Include implementation
 #include "r_star_tree_split_impl.hpp"

@@ -49,8 +49,8 @@ class RTreeDescentHeuristic
                                   const TreeType* insertedNode);
 };
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 // Include implementation.
 #include "r_tree_descent_heuristic_impl.hpp"

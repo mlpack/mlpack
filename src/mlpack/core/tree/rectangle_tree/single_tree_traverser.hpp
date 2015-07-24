@@ -16,13 +16,14 @@
 namespace mlpack {
 namespace tree {
 
-template<typename SplitType,
-         typename DescentType,
-	 typename StatisticType,
-         typename MatType>
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
 template<typename RuleType>
-class RectangleTree<SplitType, DescentType, StatisticType, MatType>::
-    SingleTreeTraverser
+class RectangleTree<MetricType, StatisticType, MatType, SplitType,
+                    DescentType>::SingleTreeTraverser
 {
  public:
   /**
@@ -48,9 +49,9 @@ class RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 
   // We use this class and this function to make the sorting and scoring easy
   // and efficient:
-  class NodeAndScore {
-   public:
-    RectangleTree<SplitType, DescentType, StatisticType, MatType>* node;
+  struct NodeAndScore
+  {
+    RectangleTree* node;
     double score;
   };
 
@@ -66,8 +67,8 @@ class RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   size_t numPrunes;
 };
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 // Include implementation.
 #include "single_tree_traverser_impl.hpp"

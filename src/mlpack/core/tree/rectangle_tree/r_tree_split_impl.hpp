@@ -20,12 +20,8 @@ namespace tree {
  * points to the two new nodes.  Finally, we delete the old node and insert the
  * new nodes into the tree, spliting the parent if necessary.
  */
-template<typename DescentType,
-typename StatisticType,
-typename MatType>
-void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
-    TreeType* tree,
-    std::vector<bool>& relevels)
+template<typename TreeType>
+void RTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
 {
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
@@ -88,12 +84,8 @@ void RTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
  * recurse up the tree if necessary.  We don't need to worry about the bounds
  * higher up the tree because they were already updated if necessary.
  */
-template<typename DescentType,
-         typename StatisticType,
-         typename MatType>
-bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
-    TreeType* tree,
-    std::vector<bool>& relevels)
+template<typename TreeType>
+bool RTreeSplit::SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels)
 {
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
@@ -164,13 +156,8 @@ bool RTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
  * Get the two points that will be used as seeds for the split of a leaf node.
  * The indices of these points will be stored in iRet and jRet.
  */
-template<typename DescentType,
-         typename StatisticType,
-         typename MatType>
-void RTreeSplit<DescentType, StatisticType, MatType>::GetPointSeeds(
-    const TreeType& tree,
-    int& iRet,
-    int& jRet)
+template<typename TreeType>
+void RTreeSplit::GetPointSeeds(const TreeType& tree, int& iRet, int& jRet)
 {
   // Here we want to find the pair of points that it is worst to place in the
   // same node.  Because we are just using points, we will simply choose the two
@@ -197,13 +184,8 @@ void RTreeSplit<DescentType, StatisticType, MatType>::GetPointSeeds(
  * Get the two bounds that will be used as seeds for the split of the node.  The
  * indices of the bounds will be stored in iRet and jRet.
  */
-template<typename DescentType,
-         typename StatisticType,
-         typename MatType>
-void RTreeSplit<DescentType, StatisticType, MatType>::GetBoundSeeds(
-    const TreeType& tree,
-    int& iRet,
-    int& jRet)
+template<typename TreeType>
+void RTreeSplit::GetBoundSeeds(const TreeType& tree, int& iRet, int& jRet)
 {
   double worstPairScore = -1.0;
   for (size_t i = 0; i < tree.NumChildren(); i++)
@@ -230,15 +212,12 @@ void RTreeSplit<DescentType, StatisticType, MatType>::GetBoundSeeds(
   }
 }
 
-template<typename DescentType,
-         typename StatisticType,
-         typename MatType>
-void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
-    TreeType* oldTree,
-    TreeType* treeOne,
-    TreeType* treeTwo,
-    const int intI,
-    const int intJ)
+template<typename TreeType>
+void RTreeSplit::AssignPointDestNode(TreeType* oldTree,
+                                     TreeType* treeOne,
+                                     TreeType* treeTwo,
+                                     const int intI,
+                                     const int intJ)
 {
   size_t end = oldTree->Count();
 
@@ -371,15 +350,12 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignPointDestNode(
   }
 }
 
-template<typename DescentType,
-         typename StatisticType,
-         typename MatType>
-void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
-    TreeType* oldTree,
-    TreeType* treeOne,
-    TreeType* treeTwo,
-    const int intI,
-    const int intJ)
+template<typename TreeType>
+void RTreeSplit::AssignNodeDestNode(TreeType* oldTree,
+                                    TreeType* treeOne,
+                                    TreeType* treeTwo,
+                                    const int intI,
+                                    const int intJ)
 {
 
   size_t end = oldTree->NumChildren();
@@ -536,18 +512,14 @@ void RTreeSplit<DescentType, StatisticType, MatType>::AssignNodeDestNode(
  * Insert a node into another node.  Expanding the bounds and updating the
  * numberOfChildren.
  */
-template<typename DescentType,
-         typename StatisticType,
-         typename MatType>
-void RTreeSplit<DescentType, StatisticType, MatType>::InsertNodeIntoTree(
-    TreeType* destTree, TreeType* srcNode)
+template<typename TreeType>
+void RTreeSplit::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();
   destTree->Children()[destTree->NumChildren()++] = srcNode;
 }
 
-
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 #endif

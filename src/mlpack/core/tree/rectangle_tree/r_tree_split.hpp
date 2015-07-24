@@ -18,20 +18,14 @@ namespace tree /** Trees and tree-building procedures. */ {
  * nodes overflow, we split them, moving up the tree and splitting nodes
  * as necessary.
  */
-template<typename DescentType,
-         typename StatisticType,
-         typename MatType>
 class RTreeSplit
 {
  public:
-  // Convenience typedef to keep lines from being 1000 characters long.
-  typedef RectangleTree<RTreeSplit, DescentType, StatisticType, MatType>
-      TreeType;
-
   /**
    * Split a leaf node using the "default" algorithm.  If necessary, this split
    * will propagate upwards through the tree.
    */
+  template<typename TreeType>
   static void SplitLeafNode(TreeType* tree,
                             std::vector<bool>& relevels);
 
@@ -39,6 +33,7 @@ class RTreeSplit
    * Split a non-leaf node using the "default" algorithm.  If this is a root
    * node, the tree increases in depth.
    */
+  template<typename TreeType>
   static bool SplitNonLeafNode(TreeType* tree,
                                std::vector<bool>& relevels);
 
@@ -46,16 +41,19 @@ class RTreeSplit
   /**
    * Get the seeds for splitting a leaf node.
    */
+  template<typename TreeType>
   static void GetPointSeeds(const TreeType& tree, int& i, int& j);
 
   /**
    * Get the seeds for splitting a non-leaf node.
    */
+  template<typename TreeType>
   static void GetBoundSeeds(const TreeType& tree, int& i, int& j);
 
   /**
    * Assign points to the two new nodes.
    */
+  template<typename TreeType>
   static void AssignPointDestNode(TreeType* oldTree,
                                   TreeType* treeOne,
                                   TreeType* treeTwo,
@@ -65,6 +63,7 @@ class RTreeSplit
   /**
    * Assign nodes to the two new nodes.
    */
+  template<typename TreeType>
   static void AssignNodeDestNode(TreeType* oldTree,
                                  TreeType* treeOne,
                                  TreeType* treeTwo,
@@ -74,11 +73,12 @@ class RTreeSplit
   /**
    * Insert a node into another node.
    */
+  template<typename TreeType>
   static void InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode);
 };
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 // Include implementation
 #include "r_tree_split_impl.hpp"

@@ -17,17 +17,18 @@
 namespace mlpack {
 namespace tree {
 
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
-    const MatType& data,
-    const size_t maxLeafSize,
-    const size_t minLeafSize,
-    const size_t maxNumChildren,
-    const size_t minNumChildren,
-    const size_t firstDataIndex) :
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+RectangleTree(const MatType& data,
+              const size_t maxLeafSize,
+              const size_t minLeafSize,
+              const size_t maxNumChildren,
+              const size_t minNumChildren,
+              const size_t firstDataIndex) :
     maxNumChildren(maxNumChildren),
     minNumChildren(minNumChildren),
     numChildren(0),
@@ -53,12 +54,15 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
     root->InsertPoint(i);
 }
 
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
-    RectangleTree<SplitType, DescentType, StatisticType, MatType>* parentNode) :
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+RectangleTree(
+    RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>*
+        parentNode) :
     maxNumChildren(parentNode->MaxNumChildren()),
     minNumChildren(parentNode->MinNumChildren()),
     numChildren(0),
@@ -83,11 +87,13 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
  * Create a rectangle tree by copying the other tree.  Be careful!  This can
  * take a long time and use a lot of memory.
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+RectangleTree(
     const RectangleTree& other,
     const bool deepCopy) :
     maxNumChildren(other.MaxNumChildren()),
@@ -133,11 +139,13 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::RectangleTree(
  * their destructors in turn.  This will invalidate any pointers or references
  * to any nodes which are children of this one.
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-RectangleTree<SplitType, DescentType, StatisticType, MatType>::~RectangleTree()
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+~RectangleTree()
 {
   for (size_t i = 0; i < numChildren; i++)
     delete children[i];
@@ -149,11 +157,13 @@ RectangleTree<SplitType, DescentType, StatisticType, MatType>::~RectangleTree()
  * Deletes this node but leaves the children untouched.  Needed for when we
  * split nodes and remove nodes (inserting and deleting points).
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-void RectangleTree<SplitType, DescentType, StatisticType, MatType>::SoftDelete()
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+    SoftDelete()
 {
   parent = NULL;
 
@@ -167,11 +177,12 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::SoftDelete()
 /**
  * Set the local dataset to null.
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
     NullifyData()
 {
   localDataset = NULL;
@@ -181,12 +192,13 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
  * Recurse through the tree and insert the point at the leaf node chosen
  * by the heuristic.
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-void RectangleTree<SplitType, DescentType, StatisticType, MatType>::InsertPoint(
-    const size_t point)
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+    InsertPoint(const size_t point)
 {
   // Expand the bound regardless of whether it is a leaf node.
   bound |= dataset.col(point);
@@ -217,13 +229,13 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::InsertPoint(
  * finally inserted, but we pass by reference since it may be passed many times
  * before it actually reaches a leaf.
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-void RectangleTree<SplitType, DescentType, StatisticType, MatType>::InsertPoint(
-    const size_t point,
-    std::vector<bool>& relevels)
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+    InsertPoint(const size_t point, std::vector<bool>& relevels)
 {
   // Expand the bound regardless of whether it is a leaf node.
   bound |= dataset.col(point);
@@ -252,14 +264,15 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::InsertPoint(
  * @param relevels The levels that have been reinserted to on this top level
  *      insertion.
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-void RectangleTree<SplitType, DescentType, StatisticType, MatType>::InsertNode(
-    RectangleTree* node,
-    const size_t level,
-    std::vector<bool>& relevels)
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+    InsertNode(RectangleTree* node,
+               const size_t level,
+               std::vector<bool>& relevels)
 {
   // Expand the bound regardless of the level.
   bound |= node->Bound();
@@ -280,12 +293,13 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::InsertNode(
  * Recurse through the tree to remove the point.  Once we find the point, we
  * shrink the rectangles if necessary.
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::DeletePoint(
-    const size_t point)
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+    DeletePoint(const size_t point)
 {
   // It is possible that this will cause a reinsertion, so we need to handle the
   // levels properly.
@@ -324,13 +338,13 @@ bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::DeletePoint(
  * Recurse through the tree to remove the point.  Once we find the point, we
  * shrink the rectangles if necessary.
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::DeletePoint(
-    const size_t point,
-    std::vector<bool>& relevels)
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+    DeletePoint(const size_t point, std::vector<bool>& relevels)
 {
   if (numChildren == 0)
   {
@@ -359,13 +373,13 @@ bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::DeletePoint(
  * Recurse through the tree to remove the node.  Once we find the node, we
  * shrink the rectangles if necessary.
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::RemoveNode(
-    const RectangleTree* node,
-    std::vector<bool>& relevels)
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+    RemoveNode(const RectangleTree* node, std::vector<bool>& relevels)
 {
   for (size_t i = 0; i < numChildren; i++)
   {
@@ -388,12 +402,13 @@ bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::RemoveNode(
   return false;
 }
 
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::TreeSize()
-    const
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
+                     DescentType>::TreeSize() const
 {
   int n = 0;
   for (int i = 0; i < numChildren; i++)
@@ -402,16 +417,16 @@ size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::TreeSize()
   return n + 1; // Add one for this node.
 }
 
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
-    TreeDepth() const
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
+                     DescentType>::TreeDepth() const
 {
   int n = 1;
-  RectangleTree<SplitType, DescentType, StatisticType, MatType>* currentNode =
-      const_cast<RectangleTree*> (this);
+  RectangleTree* currentNode = const_cast<RectangleTree*> (this);
 
   while (!currentNode->IsLeaf())
   {
@@ -422,12 +437,13 @@ size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   return n;
 }
 
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-inline bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::
-    IsLeaf() const
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+inline bool RectangleTree<MetricType, StatisticType, MatType, SplitType,
+                          DescentType>::IsLeaf() const
 {
   return (numChildren == 0);
 }
@@ -436,12 +452,13 @@ inline bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::
  * Return a bound on the furthest point in the node form the centroid.
  * This returns 0 unless the node is a leaf.
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-inline double RectangleTree<SplitType, DescentType, StatisticType, MatType>::
-    FurthestPointDistance() const
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+inline double RectangleTree<MetricType, StatisticType, MatType, SplitType,
+                            DescentType>::FurthestPointDistance() const
 {
   if (!IsLeaf())
     return 0.0;
@@ -457,12 +474,13 @@ inline double RectangleTree<SplitType, DescentType, StatisticType, MatType>::
  * furthest descendant distance may be less than what this method returns (but
  * it will never be greater than this).
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-inline double RectangleTree<SplitType, DescentType, StatisticType, MatType>::
-    FurthestDescendantDistance() const
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+inline double RectangleTree<MetricType, StatisticType, MatType, SplitType,
+                            DescentType>::FurthestDescendantDistance() const
 {
   // Return the distance from the centroid to a corner of the bound.
   return 0.5 * bound.Diameter();
@@ -472,12 +490,13 @@ inline double RectangleTree<SplitType, DescentType, StatisticType, MatType>::
  * Return the number of points contained in this node.  Zero if it is a non-leaf
  * node.
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-inline size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
-    NumPoints() const
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
+                            DescentType>::NumPoints() const
 {
   if (numChildren != 0) // This is not a leaf node.
     return 0;
@@ -488,12 +507,13 @@ inline size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 /**
  * Return the number of descendants under or in this node.
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-inline size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
-    NumDescendants() const
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
+                            DescentType>::NumDescendants() const
 {
   if (numChildren == 0)
   {
@@ -512,12 +532,13 @@ inline size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 /**
  * Return the index of a particular descendant contained in this node.
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-inline size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
-    Descendant(const size_t index) const
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
+                            DescentType>::Descendant(const size_t index) const
 {
   return (points[index]);
 }
@@ -525,12 +546,13 @@ inline size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 /**
  * Return the index of a particular point contained in this node.
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-inline size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
-    Point(const size_t index) const
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
+                            DescentType>::Point(const size_t index) const
 {
   return points[index];
 }
@@ -539,12 +561,13 @@ inline size_t RectangleTree<SplitType, DescentType, StatisticType, MatType>::
  * Split the tree.  This calls the SplitType code to split a node.  This method
  * should only be called on a leaf node.
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-void RectangleTree<SplitType, DescentType, StatisticType, MatType>::SplitNode(
-    std::vector<bool>& relevels)
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+    SplitNode(std::vector<bool>& relevels)
 {
   if (numChildren == 0)
   {
@@ -572,11 +595,12 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::SplitNode(
  * Condense the tree.  This shrinks the bounds and moves up the tree if
  * applicable.  If a node goes below minimum fill, this code will deal with it.
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
     CondenseTree(const arma::vec& point,
                  std::vector<bool>& relevels,
                  const bool usePoint)
@@ -595,7 +619,7 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 
         // We find the root and shrink bounds at the same time.
         bool stillShrinking = true;
-        RectangleTree<SplitType, DescentType, StatisticType, MatType>* root =
+        RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>* root =
             parent;
         while (root->Parent() != NULL)
         {
@@ -636,8 +660,7 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 
           // We find the root and shrink bounds at the same time.
           bool stillShrinking = true;
-          RectangleTree<SplitType, DescentType, StatisticType, MatType>* root =
-              parent;
+          RectangleTree* root = parent;
           while (root->Parent() != NULL)
           {
             if (stillShrinking)
@@ -663,8 +686,7 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
     else if (numChildren == 1)
     {
       // If there are multiple children, we can't do anything to the root.
-      RectangleTree<SplitType, DescentType, StatisticType, MatType>* child =
-          children[0];
+      RectangleTree* child = children[0];
       for (size_t i = 0; i < child->NumChildren(); i++) {
         children[i] = child->Children()[i];
         children[i]->Parent() = this;
@@ -696,11 +718,12 @@ void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 /**
  * Shrink the bound so it fits tightly after the removal of this point.
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
     ShrinkBoundForPoint(const arma::vec& point)
 {
   bool shrunk = false;
@@ -791,12 +814,13 @@ bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 /**
  * Shrink the bound so it fits tightly after the removal of another bound.
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::
-    ShrinkBoundForBound(const HRectBound<metric::EuclideanDistance>& /* b */)
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+    ShrinkBoundForBound(const HRectBound<MetricType>& /* b */)
 {
   // Using the sum is safe since none of the dimensions can increase.
   double sum = 0;
@@ -824,12 +848,13 @@ bool RectangleTree<SplitType, DescentType, StatisticType, MatType>::
 /**
  * Returns a string representation of this object.
  */
-template<typename SplitType,
-typename DescentType,
-typename StatisticType,
-typename MatType>
-std::string RectangleTree<SplitType, DescentType, StatisticType, MatType>::
-    ToString() const
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+std::string RectangleTree<MetricType, StatisticType, MatType, SplitType,
+                          DescentType>::ToString() const
 {
   std::ostringstream convert;
   convert << "RectangleTree [" << this << "]" << std::endl;
@@ -855,7 +880,7 @@ std::string RectangleTree<SplitType, DescentType, StatisticType, MatType>::
   return convert.str();
 }
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 #endif

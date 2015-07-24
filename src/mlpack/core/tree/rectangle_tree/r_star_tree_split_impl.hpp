@@ -21,12 +21,8 @@ namespace tree {
  * points to the two new nodes.  Finally, we delete the old node and insert the
  * new nodes into the tree, spliting the parent if necessary.
  */
-template<typename DescentType,
-         typename StatisticType,
-         typename MatType>
-void RStarTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
-    TreeType* tree,
-    std::vector<bool>& relevels)
+template<typename TreeType>
+void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
 {
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
@@ -269,12 +265,9 @@ void RStarTreeSplit<DescentType, StatisticType, MatType>::SplitLeafNode(
  * recurse up the tree if necessary.  We don't need to worry about the bounds
  * higher up the tree because they were already updated if necessary.
  */
-template<typename DescentType,
-         typename StatisticType,
-         typename MatType>
-bool RStarTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
-    TreeType* tree,
-    std::vector<bool>& relevels)
+template<typename TreeType>
+bool RStarTreeSplit::SplitNonLeafNode(TreeType* tree,
+                                      std::vector<bool>& relevels)
 {
   // If we are splitting the root node, we need will do things differently so
   // that the constructor and other methods don't confuse the end user by giving
@@ -299,7 +292,7 @@ bool RStarTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
     relevels[tree->TreeDepth()] = false;
     // We sort the points by decreasing centroid to centroid distance.
     // We then remove the first p entries and reinsert them at the root.
-    RectangleTree<RStarTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* root = tree;
+    RectangleTree<RStarTreeSplit, DescentType, StatisticType, MatType>* root = tree;
     while(root->Parent() != NULL)
       root = root->Parent();
     size_t p = tree->MaxNumChildren() * 0.3; // The paper says this works the best.
@@ -321,7 +314,7 @@ bool RStarTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
 
     //bool startBelowMinFill = tree->NumChildren() < tree->MinNumChildren();
 
-    std::vector<RectangleTree<RStarTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>*> removedNodes(p);
+    std::vector<RectangleTree<RStarTreeSplit, DescentType, StatisticType, MatType>*> removedNodes(p);
     for(size_t i =0; i < p; i++) {
       removedNodes[i] = tree->Children()[sorted[sorted.size()-1-i].n]; // We start from the end of sorted.
       root->RemoveNode(tree->Children()[sorted[sorted.size()-1-i].n], relevels);
@@ -337,7 +330,7 @@ bool RStarTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
 //    std::cout<<"MINFILLERROR "<< p << ", " << tree->NumChildren() << "; " << tree->MaxNumChildren()<<std::endl;
 
 //    if(tree->NumChildren() < tree->MinNumChildren()) {
-//      std::vector<RectangleTree<RStarTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>*> rmNodes(tree->NumChildren());
+//      std::vector<RectangleTree<RStarTreeSplit, DescentType, StatisticType, MatType>*> rmNodes(tree->NumChildren());
 //      for(size_t i = 0; i < rmNodes.size(); i++) {
 //        rmNodes[i] = tree->Children()[i];
 //      }
@@ -673,18 +666,14 @@ bool RStarTreeSplit<DescentType, StatisticType, MatType>::SplitNonLeafNode(
  * Insert a node into another node.  Expanding the bounds and updating the
  * numberOfChildren.
  */
-template<typename DescentType,
-typename StatisticType,
-typename MatType>
-void RStarTreeSplit<DescentType, StatisticType, MatType>::InsertNodeIntoTree(
-    TreeType* destTree,
-    TreeType* srcNode)
+template<typename TreeType>
+void RStarTreeSplit::InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode)
 {
   destTree->Bound() |= srcNode->Bound();
   destTree->Children()[destTree->NumChildren()++] = srcNode;
 }
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 #endif

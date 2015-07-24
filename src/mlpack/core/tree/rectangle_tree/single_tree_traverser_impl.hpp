@@ -17,27 +17,28 @@
 namespace mlpack {
 namespace tree {
 
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
 template<typename RuleType>
-RectangleTree<SplitType, DescentType, StatisticType, MatType>::
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 SingleTreeTraverser<RuleType>::SingleTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0)
 { /* Nothing to do */ }
 
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
 template<typename RuleType>
-void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 SingleTreeTraverser<RuleType>::Traverse(
     const size_t queryIndex,
-    const RectangleTree<SplitType, DescentType, StatisticType, MatType>&
-        referenceNode)
+    const RectangleTree& referenceNode)
 {
 
   // If we reach a leaf node, we need to run the base case.
@@ -77,7 +78,7 @@ SingleTreeTraverser<RuleType>::Traverse(
   }
 }
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 #endif

@@ -17,12 +17,13 @@
 namespace mlpack {
 namespace tree {
 
-template<typename SplitType,
-         typename DescentType,
-	 typename StatisticType,
-         typename MatType>
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
 template<typename RuleType>
-RectangleTree<SplitType, DescentType, StatisticType, MatType>::
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 DualTreeTraverser<RuleType>::DualTreeTraverser(RuleType& rule) :
     rule(rule),
     numPrunes(0),
@@ -31,15 +32,15 @@ DualTreeTraverser<RuleType>::DualTreeTraverser(RuleType& rule) :
     numBaseCases(0)
 { /* Nothing to do */ }
 
-template<typename SplitType,
-         typename DescentType,
-	 typename StatisticType,
-         typename MatType>
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
 template<typename RuleType>
-void RectangleTree<SplitType, DescentType, StatisticType, MatType>::
-DualTreeTraverser<RuleType>::Traverse(
-    RectangleTree<SplitType, DescentType, StatisticType, MatType>& queryNode,
-    RectangleTree<SplitType, DescentType, StatisticType, MatType>& referenceNode)
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+DualTreeTraverser<RuleType>::Traverse(RectangleTree& queryNode,
+                                      RectangleTree& referenceNode)
 {
   // Increment the visit counter.
   ++numVisited;
@@ -54,18 +55,19 @@ DualTreeTraverser<RuleType>::Traverse(
   // 4)  Niether node is a leaf node.
   // We go through those options in that order.
 
-  if(queryNode.IsLeaf() && referenceNode.IsLeaf())
+  if (queryNode.IsLeaf() && referenceNode.IsLeaf())
   {
-    // Evaluate the base case.  Do the query points on the outside so we can possibly
-    // prune the reference node for that particular point.
-    for(size_t query = 0; query < queryNode.Count(); ++query)
+    // Evaluate the base case.  Do the query points on the outside so we can
+    // possibly prune the reference node for that particular point.
+    for (size_t query = 0; query < queryNode.Count(); ++query)
     {
       // Restore the traversal information.
       rule.TraversalInfo() = traversalInfo;
-      const double childScore = rule.Score(queryNode.Points()[query], referenceNode);
+      const double childScore = rule.Score(queryNode.Points()[query],
+          referenceNode);
 
-      if(childScore == DBL_MAX)
-        continue;  // This point doesn't require a search in this reference node.
+      if (childScore == DBL_MAX)
+        continue;  // We don't require a search in this reference node.
 
       for(size_t ref = 0; ref < referenceNode.Count(); ++ref)
         rule.BaseCase(queryNode.Points()[query], referenceNode.Points()[ref]);
@@ -73,23 +75,24 @@ DualTreeTraverser<RuleType>::Traverse(
       numBaseCases += referenceNode.Count();
     }
   }
-  else if(!queryNode.IsLeaf() && referenceNode.IsLeaf())
+  else if (!queryNode.IsLeaf() && referenceNode.IsLeaf())
   {
     // We only need to traverse down the query node.  Order doesn't matter here.
-    for(size_t i = 0; i < queryNode.NumChildren(); ++i)
+    for (size_t i = 0; i < queryNode.NumChildren(); ++i)
     {
       // Before recursing, we have to set the traversal information correctly.
       rule.TraversalInfo() = traversalInfo;
       ++numScores;
-      if(rule.Score(queryNode.Child(i), referenceNode) < DBL_MAX)
+      if (rule.Score(queryNode.Child(i), referenceNode) < DBL_MAX)
         Traverse(queryNode.Child(i), referenceNode);
       else
         numPrunes++;
     }
   }
-  else if(queryNode.IsLeaf() && !referenceNode.IsLeaf())
+  else if (queryNode.IsLeaf() && !referenceNode.IsLeaf())
   {
-    // We only need to traverse down the reference node.  Order does matter here.
+    // We only need to traverse down the reference node.  Order does matter
+    // here.
 
     // We sort the children of the reference node by their scores.
     std::vector<NodeAndScore> nodesAndScores(referenceNode.NumChildren());
@@ -97,7 +100,8 @@ DualTreeTraverser<RuleType>::Traverse(
     {
       rule.TraversalInfo() = traversalInfo;
       nodesAndScores[i].node = referenceNode.Children()[i];
-      nodesAndScores[i].score = rule.Score(queryNode, *(nodesAndScores[i].node));
+      nodesAndScores[i].score = rule.Score(queryNode,
+          *(nodesAndScores[i].node));
       nodesAndScores[i].travInfo = rule.TraversalInfo();
     }
     std::sort(nodesAndScores.begin(), nodesAndScores.end(), nodeComparator);
@@ -106,9 +110,13 @@ DualTreeTraverser<RuleType>::Traverse(
     for (size_t i = 0; i < nodesAndScores.size(); i++)
     {
       rule.TraversalInfo() = nodesAndScores[i].travInfo;
-      if(rule.Rescore(queryNode, *(nodesAndScores[i].node), nodesAndScores[i].score) < DBL_MAX) {
+      if (rule.Rescore(queryNode, *(nodesAndScores[i].node),
+          nodesAndScores[i].score) < DBL_MAX)
+      {
         Traverse(queryNode, *(nodesAndScores[i].node));
-      } else {
+      }
+      else
+      {
         numPrunes += nodesAndScores.size() - i;
         break;
       }
@@ -119,7 +127,6 @@ DualTreeTraverser<RuleType>::Traverse(
     // We need to traverse down both the reference and the query trees.
     // We loop through all of the query nodes, and for each of them, we
     // loop through the reference nodes to see where we need to descend.
-
     for (size_t j = 0; j < queryNode.NumChildren(); j++)
     {
       // We sort the children of the reference node by their scores.
@@ -128,7 +135,8 @@ DualTreeTraverser<RuleType>::Traverse(
       {
         rule.TraversalInfo() = traversalInfo;
         nodesAndScores[i].node = referenceNode.Children()[i];
-        nodesAndScores[i].score = rule.Score(queryNode.Child(j), *nodesAndScores[i].node);
+        nodesAndScores[i].score = rule.Score(queryNode.Child(j),
+            *nodesAndScores[i].node);
         nodesAndScores[i].travInfo = rule.TraversalInfo();
       }
       std::sort(nodesAndScores.begin(), nodesAndScores.end(), nodeComparator);
@@ -137,9 +145,13 @@ DualTreeTraverser<RuleType>::Traverse(
       for (size_t i = 0; i < nodesAndScores.size(); i++)
       {
         rule.TraversalInfo() = nodesAndScores[i].travInfo;
-        if(rule.Rescore(queryNode.Child(j), *(nodesAndScores[i].node), nodesAndScores[i].score) < DBL_MAX) {
+        if (rule.Rescore(queryNode.Child(j), *(nodesAndScores[i].node),
+            nodesAndScores[i].score) < DBL_MAX)
+        {
           Traverse(queryNode.Child(j), *(nodesAndScores[i].node));
-        } else {
+        }
+        else
+        {
           numPrunes += nodesAndScores.size() - i;
           break;
         }
@@ -148,7 +160,7 @@ DualTreeTraverser<RuleType>::Traverse(
   }
 }
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 #endif

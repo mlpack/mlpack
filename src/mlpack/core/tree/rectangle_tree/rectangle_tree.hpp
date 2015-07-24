@@ -12,6 +12,8 @@
 
 #include "../hrectbound.hpp"
 #include "../statistic.hpp"
+#include "r_tree_split.hpp"
+#include "r_tree_descent_heuristic.hpp"
 
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
@@ -27,6 +29,8 @@ using bound::HRectBound;
  * This tree does allow growth, so you can add and delete nodes
  * from it.
  *
+ * @tparam MetricType This *must* be EuclideanDistance, but the template
+ *     parameter is required to satisfy the TreeType API.
  * @tparam StatisticType Extra data contained in the node.  See statistic.hpp
  *     for the necessary skeleton interface.
  * @tparam MatType The dataset class.
@@ -34,13 +38,17 @@ using bound::HRectBound;
  * @tparam DescentType The heuristic to use when descending the tree to insert
  *    points.
  */
-
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType = metric::EuclideanDistance,
          typename StatisticType = EmptyStatistic,
-         typename MatType = arma::mat>
+         typename MatType = arma::mat,
+         typename SplitType = RTreeSplit,
+         typename DescentType = RTreeDescentHeuristic>
 class RectangleTree
 {
+  // The metric *must* be the euclidean distance.
+  static_assert(boost::is_same<MetricType, metric::EuclideanDistance>::value,
+      "RectangleTree: MetricType must be metric::EuclideanDistance.");
+
  public:
   /**
    * The X tree requires that the tree records it's "split history".  To make
@@ -138,9 +146,7 @@ class RectangleTree
    *
    * @param parentNode The parent of the node that is being constructed.
    */
-  explicit RectangleTree(
-      RectangleTree<SplitType, DescentType, StatisticType, MatType>*
-      parentNode);
+  explicit RectangleTree(RectangleTree* parentNode);
 
   /**
    * Create a rectangle tree by copying the other tree.  Be careful!  This can
@@ -260,9 +266,9 @@ class RectangleTree
   RectangleTree* FindByBeginCount(size_t begin, size_t count);
 
   //! Return the bound object for this node.
-  const HRectBound<metric::EuclideanDistance>& Bound() const { return bound; }
+  const HRectBound<MetricType>& Bound() const { return bound; }
   //! Modify the bound object for this node.
-  HRectBound<metric::EuclideanDistance>& Bound() { return bound; }
+  HRectBound<MetricType>& Bound() { return bound; }
 
   //! Return the statistic object for this node.
   const StatisticType& Stat() const { return stat; }
@@ -318,7 +324,7 @@ class RectangleTree
   MatType& LocalDataset() { return *localDataset; }
 
   //! Get the metric which the tree uses.
-  metric::EuclideanDistance Metric() const { return EuclideanDistance(); }
+  MetricType Metric() const { return MetricType(); }
 
   //! Get the centroid of the node and store it in the given vector.
   void Center(arma::vec& center) { bound.Center(center); }
@@ -365,8 +371,7 @@ class RectangleTree
    *
    * @param child Index of child to return.
    */
-  inline RectangleTree<SplitType, DescentType, StatisticType, MatType>& Child(
-      const size_t child) const
+  inline RectangleTree& Child(const size_t child) const
   {
     return *children[child];
   }
@@ -376,8 +381,7 @@ class RectangleTree
    *
    * @param child Index of child to return.
    */
-  inline RectangleTree<SplitType, DescentType, StatisticType, MatType>& Child(
-      const size_t child)
+  inline RectangleTree& Child(const size_t child)
   {
     return *children[child];
   }
@@ -488,7 +492,7 @@ class RectangleTree
    */
   RectangleTree(const size_t begin,
                 const size_t count,
-                HRectBound<metric::EuclideanDistance> bound,
+                HRectBound<MetricType> bound,
                 StatisticType stat,
                 const int maxLeafSize = 20) :
       begin(begin),
@@ -541,8 +545,7 @@ class RectangleTree
    *      shrinking.
    * @return true if the bound needed to be changed, false if it did not.
    */
-  bool ShrinkBoundForBound(const HRectBound<metric::EuclideanDistance>&
-      changedBound);
+  bool ShrinkBoundForBound(const HRectBound<MetricType>& changedBound);
 
   /**
    * Make an exact copy of this node, pointers and everything.
@@ -555,8 +558,8 @@ class RectangleTree
   std::string ToString() const;
 };
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 // Include implementation.
 #include "rectangle_tree_impl.hpp"

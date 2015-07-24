@@ -28,9 +28,6 @@ const double MAX_OVERLAP = 0.2;
  * nodes overflow, we split them, moving up the tree and splitting nodes
  * as necessary.
  */
-template<typename DescentType,
-         typename StatisticType,
-         typename MatType>
 class XTreeSplit
 {
  public:
@@ -39,13 +36,15 @@ class XTreeSplit
    * Efficient and Robust Access method for Points and Rectangles."  If
    * necessary, this split will propagate upwards through the tree.
    */
-  static void SplitLeafNode(RectangleTree<XTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree, std::vector<bool>& relevels);
+  template<typename TreeType>
+  static void SplitLeafNode(TreeType* tree, std::vector<bool>& relevels);
 
   /**
-   * Split a non-leaf node using the "default" algorithm.  If this is a root node, the
-   * tree increases in depth.
+   * Split a non-leaf node using the "default" algorithm.  If this is a root
+   * node, the tree increases in depth.
    */
-  static bool SplitNonLeafNode(RectangleTree<XTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* tree, std::vector<bool>& relevels);
+  template<typename TreeType>
+  static bool SplitNonLeafNode(TreeType* tree, std::vector<bool>& relevels);
 
  private:
   /**
@@ -69,14 +68,12 @@ class XTreeSplit
   /**
    * Insert a node into another node.
    */
-  static void InsertNodeIntoTree(
-      RectangleTree<XTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* destTree,
-      RectangleTree<XTreeSplit<DescentType, StatisticType, MatType>, DescentType, StatisticType, MatType>* srcNode);
-
+  template<typename TreeType>
+  static void InsertNodeIntoTree(TreeType* destTree, TreeType* srcNode);
 };
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 // Include implementation
 #include "x_tree_split_impl.hpp"
