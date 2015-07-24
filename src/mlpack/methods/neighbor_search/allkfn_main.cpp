@@ -18,6 +18,7 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::neighbor;
 using namespace mlpack::tree;
+using namespace mlpack::metric;
 
 // Information about the program itself.
 PROGRAM_INFO("All K-Furthest-Neighbors",
@@ -126,8 +127,8 @@ int main(int argc, char *argv[])
     // Use default kd-tree.
     std::vector<size_t> oldFromNewRefs;
 
-    typedef BinarySpaceTree<bound::HRectBound<2>,
-        NeighborSearchStat<FurthestNeighborSort>> TreeType;
+    typedef KDTree<EuclideanDistance, NeighborSearchStat<FurthestNeighborSort>,
+        arma::mat> TreeType;
 
     // Build trees by hand, so we can save memory: if we pass a tree to
     // NeighborSearch, it does not copy the matrix.
@@ -192,12 +193,8 @@ int main(int argc, char *argv[])
     Log::Info << "Using R tree for furthest-neighbor calculation." << endl;
 
     // Convenience typedef.
-    typedef RectangleTree<
-        tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic,
-            NeighborSearchStat<FurthestNeighborSort>, arma::mat>,
-        tree::RStarTreeDescentHeuristic,
-        NeighborSearchStat<FurthestNeighborSort>,
-        arma::mat> TreeType;
+    typedef RStarTree<EuclideanDistance,
+        NeighborSearchStat<FurthestNeighborSort>, arma::mat> TreeType;
 
     // Build trees by hand, so we can save memory: if we pass a tree to
     // NeighborSearch, it does not copy the matrix.
@@ -207,8 +204,8 @@ int main(int argc, char *argv[])
     Timer::Stop("tree_building");
     Log::Info << "Tree built." << endl;
 
-    typedef NeighborSearch<FurthestNeighborSort, metric::LMetric<2, true>,
-        TreeType> AllkFNType;
+    typedef NeighborSearch<FurthestNeighborSort, EuclideanDistance, arma::mat,
+        RStarTree> AllkFNType;
     AllkFNType allkfn(&refTree, singleMode);
 
     if (CLI::GetParam<string>("query_file") != "")

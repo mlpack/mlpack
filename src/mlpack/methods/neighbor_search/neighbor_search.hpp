@@ -45,14 +45,20 @@ namespace neighbor /** Neighbor-search routines.  These include
  * @tparam TreeType The tree type to use.
  */
 template<typename SortPolicy = NearestNeighborSort,
-         typename MetricType = mlpack::metric::SquaredEuclideanDistance,
-         typename TreeType = tree::BinarySpaceTree<bound::HRectBound<2>,
-             NeighborSearchStat<SortPolicy>>,
+         typename MetricType = mlpack::metric::EuclideanDistance,
+         typename MatType = arma::mat,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType = tree::KDTree,
          template<typename RuleType> class TraversalType =
-             TreeType::template DualTreeTraverser>
+             TreeType<MetricType,
+                      NeighborSearchStat<SortPolicy>,
+                      MatType>::template DualTreeTraverser>
 class NeighborSearch
 {
  public:
+  //! Convenience typedef.
+  typedef TreeType<MetricType, NeighborSearchStat<SortPolicy>, MatType> Tree;
+
   /**
    * Initialize the NeighborSearch object, passing a reference dataset (this is
    * the dataset which is searched).  Optionally, perform the computation in
@@ -71,7 +77,7 @@ class NeighborSearch
    *      dual-tree search).
    * @param metric An optional instance of the MetricType class.
    */
-  NeighborSearch(const typename TreeType::Mat& referenceSet,
+  NeighborSearch(const MatType& referenceSet,
                  const bool naive = false,
                  const bool singleMode = false,
                  const MetricType metric = MetricType());
@@ -101,7 +107,7 @@ class NeighborSearch
    *      opposed to dual-tree computation).
    * @param metric Instantiated distance metric.
    */
-  NeighborSearch(TreeType* referenceTree,
+  NeighborSearch(Tree* referenceTree,
                  const bool singleMode = false,
                  const MetricType metric = MetricType());
 
@@ -128,7 +134,7 @@ class NeighborSearch
    * @param distances Matrix storing distances of neighbors for each query
    *     point.
    */
-  void Search(const typename TreeType::Mat& querySet,
+  void Search(const MatType& querySet,
               const size_t k,
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
@@ -146,7 +152,7 @@ class NeighborSearch
    * @param distances Matrix storing distances of neighbors for each query
    *      point.
    */
-  void Search(TreeType* queryTree,
+  void Search(Tree* queryTree,
               const size_t k,
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
@@ -197,9 +203,9 @@ class NeighborSearch
   //! Permutations of reference points during tree building.
   std::vector<size_t> oldFromNewReferences;
   //! Pointer to the root of the reference tree.
-  TreeType* referenceTree;
+  Tree* referenceTree;
   //! Reference to reference dataset.
-  const typename TreeType::Mat& referenceSet;
+  const MatType& referenceSet;
 
   //! If true, this object created the trees and is responsible for them.
   bool treeOwner;
@@ -219,8 +225,8 @@ class NeighborSearch
 
 }; // class NeighborSearch
 
-}; // namespace neighbor
-}; // namespace mlpack
+} // namespace neighbor
+} // namespace mlpack
 
 // Include implementation.
 #include "neighbor_search_impl.hpp"

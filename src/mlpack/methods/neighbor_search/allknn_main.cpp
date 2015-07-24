@@ -19,6 +19,7 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::neighbor;
 using namespace mlpack::tree;
+using namespace mlpack::metric;
 
 // Information about the program itself.
 PROGRAM_INFO("All K-Nearest-Neighbors",
@@ -57,7 +58,7 @@ PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
     "dual-tree search).", "S");
 PARAM_FLAG("cover_tree", "If true, use cover trees to perform the search "
     "(experimental, may be slow).", "c");
-PARAM_FLAG("r_tree", "If true, use an R-Tree to perform the search "
+PARAM_FLAG("r_tree", "If true, use an R*-Tree to perform the search "
     "(experimental, may be slow.).", "T");
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
     "random orthogonal basis.", "R");
@@ -189,8 +190,8 @@ int main(int argc, char *argv[])
       std::vector<size_t> oldFromNewRefs;
 
       // Convenience typedef.
-      typedef BinarySpaceTree<bound::HRectBound<2>,
-          NeighborSearchStat<NearestNeighborSort>> TreeType;
+      typedef KDTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
+          arma::mat> TreeType;
 
       // Build trees by hand, so we can save memory: if we pass a tree to
       // NeighborSearch, it does not copy the matrix.
@@ -255,12 +256,8 @@ int main(int argc, char *argv[])
       Log::Info << "Using R tree for nearest-neighbor calculation." << endl;
 
       // Convenience typedef.
-      typedef RectangleTree<
-          tree::RStarTreeSplit<tree::RStarTreeDescentHeuristic,
-              NeighborSearchStat<NearestNeighborSort>, arma::mat>,
-          tree::RStarTreeDescentHeuristic,
-          NeighborSearchStat<NearestNeighborSort>,
-          arma::mat> TreeType;
+      typedef RStarTree<EuclideanDistance,
+          NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
 
       // Build tree by hand in order to apply user options.
       Log::Info << "Building reference tree..." << endl;
@@ -269,8 +266,8 @@ int main(int argc, char *argv[])
       Timer::Stop("tree_building");
       Log::Info << "Tree built." << endl;
 
-      typedef NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
-          TreeType> AllkNNType;
+      typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
+          RStarTree> AllkNNType;
       AllkNNType allknn(&refTree, singleMode);
 
       if (CLI::GetParam<string>("query_file") != "")
@@ -307,8 +304,8 @@ int main(int argc, char *argv[])
     Log::Info << "Using cover trees for nearest-neighbor calculation." << endl;
 
     // Convenience typedef.
-    typedef CoverTree<metric::LMetric<2, true>, tree::FirstPointIsRoot,
-        NeighborSearchStat<NearestNeighborSort>> TreeType;
+    typedef StandardCoverTree<metric::EuclideanDistance,
+        NeighborSearchStat<NearestNeighborSort>, arma::mat> TreeType;
 
     // Build our reference tree.
     Log::Info << "Building reference tree..." << endl;
@@ -317,7 +314,7 @@ int main(int argc, char *argv[])
     Timer::Stop("tree_building");
 
     typedef NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>,
-        TreeType> AllkNNType;
+        arma::mat, StandardCoverTree> AllkNNType;
     AllkNNType allknn(&refTree, singleMode);
 
     // See if we have query data.

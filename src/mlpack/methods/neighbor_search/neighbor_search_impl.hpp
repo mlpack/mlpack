@@ -16,9 +16,9 @@ namespace mlpack {
 namespace neighbor {
 
 //! Call the tree constructor that does mapping.
-template<typename TreeType>
+template<typename MatType, typename TreeType>
 TreeType* BuildTree(
-    const typename TreeType::Mat& dataset,
+    const MatType& dataset,
     std::vector<size_t>& oldFromNew,
     typename boost::enable_if_c<
         tree::TreeTraits<TreeType>::RearrangesDataset == true, TreeType*
@@ -28,9 +28,9 @@ TreeType* BuildTree(
 }
 
 //! Call the tree constructor that does not do mapping.
-template<typename TreeType>
+template<typename MatType, typename TreeType>
 TreeType* BuildTree(
-    const typename TreeType::Mat& dataset,
+    const MatType& dataset,
     const std::vector<size_t>& /* oldFromNew */,
     const typename boost::enable_if_c<
         tree::TreeTraits<TreeType>::RearrangesDataset == false, TreeType*
@@ -42,15 +42,17 @@ TreeType* BuildTree(
 // Construct the object.
 template<typename SortPolicy,
          typename MetricType,
-         typename TreeType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType,
          template<typename> class TraversalType>
-NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::
-NeighborSearch(const typename TreeType::Mat& referenceSetIn,
+NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
+NeighborSearch(const MatType& referenceSetIn,
                const bool naive,
                const bool singleMode,
                const MetricType metric) :
     referenceTree(naive ? NULL :
-        BuildTree<TreeType>(referenceSetIn, oldFromNewReferences)),
+        BuildTree<MatType, Tree>(referenceSetIn, oldFromNewReferences)),
     referenceSet(naive ? referenceSetIn : referenceTree->Dataset()),
     treeOwner(!naive), // False if a tree was passed.  If naive, then no trees.
     naive(naive),
@@ -65,10 +67,12 @@ NeighborSearch(const typename TreeType::Mat& referenceSetIn,
 // Construct the object.
 template<typename SortPolicy,
          typename MetricType,
-         typename TreeType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType,
          template<typename> class TraversalType>
-NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::
-NeighborSearch(TreeType* referenceTree,
+NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
+NeighborSearch(Tree* referenceTree,
                const bool singleMode,
                const MetricType metric) :
     referenceTree(referenceTree),
@@ -86,9 +90,11 @@ NeighborSearch(TreeType* referenceTree,
 // Clean memory.
 template<typename SortPolicy,
          typename MetricType,
-         typename TreeType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType,
          template<typename> class TraversalType>
-NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::
+NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
     ~NeighborSearch()
 {
   if (treeOwner && referenceTree)
@@ -101,13 +107,15 @@ NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::
  */
 template<typename SortPolicy,
          typename MetricType,
-         typename TreeType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType,
          template<typename> class TraversalType>
-void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
-    const typename TreeType::Mat& querySet,
-    const size_t k,
-    arma::Mat<size_t>& neighbors,
-    arma::mat& distances)
+void NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
+Search(const MatType& querySet,
+       const size_t k,
+       arma::Mat<size_t>& neighbors,
+       arma::mat& distances)
 {
   Timer::Start("computing_neighbors");
 
@@ -122,7 +130,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
   arma::mat* distancePtr = &distances;
 
   // Mapping is only necessary if the tree rearranges points.
-  if (tree::TreeTraits<TreeType>::RearrangesDataset)
+  if (tree::TreeTraits<Tree>::RearrangesDataset)
   {
     if (!singleMode && !naive)
       distancePtr = new arma::mat; // Query indices need to be mapped.
@@ -137,7 +145,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
   distancePtr->set_size(k, querySet.n_cols);
   distancePtr->fill(SortPolicy::WorstDistance());
 
-  typedef NeighborSearchRules<SortPolicy, MetricType, TreeType> RuleType;
+  typedef NeighborSearchRules<SortPolicy, MetricType, Tree> RuleType;
 
   if (naive)
   {
@@ -157,7 +165,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
     RuleType rules(referenceSet, querySet, *neighborPtr, *distancePtr, metric);
 
     // Create the traverser.
-    typename TreeType::template SingleTreeTraverser<RuleType> traverser(rules);
+    typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
 
     // Now have it traverse for each point.
     for (size_t i = 0; i < querySet.n_cols; ++i)
@@ -174,7 +182,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
     // Build the query tree.
     Timer::Stop("computing_neighbors");
     Timer::Start("tree_building");
-    TreeType* queryTree = BuildTree<TreeType>(querySet, oldFromNewQueries);
+    Tree* queryTree = BuildTree<MatType, Tree>(querySet, oldFromNewQueries);
     Timer::Stop("tree_building");
     Timer::Start("computing_neighbors");
 
@@ -199,7 +207,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
   Timer::Stop("computing_neighbors");
 
   // Map points back to original indices, if necessary.
-  if (tree::TreeTraits<TreeType>::RearrangesDataset)
+  if (tree::TreeTraits<Tree>::RearrangesDataset)
   {
     if (!singleMode && !naive && treeOwner)
     {
@@ -260,18 +268,20 @@ void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
 
 template<typename SortPolicy,
          typename MetricType,
-         typename TreeType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType,
          template<typename> class TraversalType>
-void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
-    TreeType* queryTree,
-    const size_t k,
-    arma::Mat<size_t>& neighbors,
-    arma::mat& distances)
+void NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
+Search(Tree* queryTree,
+       const size_t k,
+       arma::Mat<size_t>& neighbors,
+       arma::mat& distances)
 {
   Timer::Start("computing_neighbors");
 
   // Get a reference to the query set.
-  const typename TreeType::Mat& querySet = queryTree->Dataset();
+  const MatType& querySet = queryTree->Dataset();
 
   // Make sure we are in dual-tree mode.
   if (singleMode || naive)
@@ -281,7 +291,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
   // We won't need to map query indices, but will we need to map distances?
   arma::Mat<size_t>* neighborPtr = &neighbors;
 
-  if (treeOwner && tree::TreeTraits<TreeType>::RearrangesDataset)
+  if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)
     neighborPtr = new arma::Mat<size_t>;
 
   neighborPtr->set_size(k, querySet.n_cols);
@@ -290,7 +300,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
   distances.fill(SortPolicy::WorstDistance());
 
   // Create the helper object for the traversal.
-  typedef NeighborSearchRules<SortPolicy, MetricType, TreeType> RuleType;
+  typedef NeighborSearchRules<SortPolicy, MetricType, Tree> RuleType;
   RuleType rules(referenceSet, querySet, *neighborPtr, distances, metric);
 
   // Create the traverser.
@@ -303,7 +313,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
   Timer::Stop("computing_neighbors");
 
   // Do we need to map indices?
-  if (treeOwner && tree::TreeTraits<TreeType>::RearrangesDataset)
+  if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)
   {
     // We must map reference indices only.
     neighbors.set_size(k, querySet.n_cols);
@@ -320,19 +330,21 @@ void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
 
 template<typename SortPolicy,
          typename MetricType,
-         typename TreeType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType,
          template<typename> class TraversalType>
-void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
-    const size_t k,
-    arma::Mat<size_t>& neighbors,
-    arma::mat& distances)
+void NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
+Search(const size_t k,
+       arma::Mat<size_t>& neighbors,
+       arma::mat& distances)
 {
   Timer::Start("computing_neighbors");
 
   arma::Mat<size_t>* neighborPtr = &neighbors;
   arma::mat* distancePtr = &distances;
 
-  if (tree::TreeTraits<TreeType>::RearrangesDataset && treeOwner)
+  if (tree::TreeTraits<Tree>::RearrangesDataset && treeOwner)
   {
     // We will always need to rearrange in this case.
     distancePtr = new arma::mat;
@@ -346,7 +358,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
   distancePtr->fill(SortPolicy::WorstDistance());
 
   // Create the helper object for the traversal.
-  typedef NeighborSearchRules<SortPolicy, MetricType, TreeType> RuleType;
+  typedef NeighborSearchRules<SortPolicy, MetricType, Tree> RuleType;
   RuleType rules(referenceSet, referenceSet, *neighborPtr, *distancePtr,
       metric, true /* don't return the same point as nearest neighbor */);
 
@@ -362,7 +374,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
   else if (singleMode)
   {
     // Create the traverser.
-    typename TreeType::template SingleTreeTraverser<RuleType> traverser(rules);
+    typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
 
     // Now have it traverse for each point.
     for (size_t i = 0; i < referenceSet.n_cols; ++i)
@@ -391,7 +403,7 @@ void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
   Timer::Stop("computing_neighbors");
 
   // Do we need to map the reference indices?
-  if (treeOwner && tree::TreeTraits<TreeType>::RearrangesDataset)
+  if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)
   {
     neighbors.set_size(k, referenceSet.n_cols);
     distances.set_size(k, referenceSet.n_cols);
@@ -416,10 +428,12 @@ void NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::Search(
 // Return a String of the Object.
 template<typename SortPolicy,
          typename MetricType,
-         typename TreeType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType,
          template<typename> class TraversalType>
-std::string NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::
-    ToString() const
+std::string NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
+                           TraversalType>::ToString() const
 {
   std::ostringstream convert;
   convert << "NeighborSearch [" << this << "]" << std::endl;
@@ -434,7 +448,7 @@ std::string NeighborSearch<SortPolicy, MetricType, TreeType, TraversalType>::
   return convert.str();
 }
 
-}; // namespace neighbor
-}; // namespace mlpack
+} // namespace neighbor
+} // namespace mlpack
 
 #endif
