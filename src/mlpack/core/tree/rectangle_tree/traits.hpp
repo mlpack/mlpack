@@ -18,11 +18,13 @@ namespace tree {
  * help write tree-independent (but still optimized) tree-based algorithms.  See
  * mlpack/core/tree/tree_traits.hpp for more information.
  */
-template<typename SplitType,
-         typename DescentType,
+template<typename MetricType,
          typename StatisticType,
-         typename MatType>
-class TreeTraits<RectangleTree<SplitType, DescentType, StatisticType, MatType> >
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+class TreeTraits<RectangleTree<MetricType, StatisticType, MatType, SplitType,
+                               DescentType>>
 {
  public:
   /**
@@ -53,7 +55,7 @@ class TreeTraits<RectangleTree<SplitType, DescentType, StatisticType, MatType> >
   static const bool BinaryTree = false;
 };
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 #endif

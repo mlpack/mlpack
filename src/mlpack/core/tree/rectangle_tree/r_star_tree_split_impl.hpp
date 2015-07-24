@@ -64,7 +64,7 @@ void RStarTreeSplit::SplitLeafNode(TreeType* tree, std::vector<bool>& relevels)
     tree->Bound().Center(center); // Modifies centroid.
     for (size_t i = 0; i < sorted.size(); i++)
     {
-      sorted[i].d = tree->Bound().Metric().Evaluate(center,
+      sorted[i].d = tree->Metric().Evaluate(center,
           tree->LocalDataset().col(i));
       sorted[i].n = i;
     }
