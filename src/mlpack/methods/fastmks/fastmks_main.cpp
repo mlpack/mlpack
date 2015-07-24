@@ -94,7 +94,7 @@ void RunFastMKS(const arma::mat& referenceData,
     TreeType tree(referenceData, metric, base);
 
     // Create FastMKS object.
-    FastMKS<KernelType, arma::mat, StandardCoverTree> fastmks(&tree, single);
+    FastMKS<KernelType> fastmks(&tree, single);
 
     // Now search with it.
     fastmks.Search(k, indices, kernels);

@@ -48,9 +48,9 @@ namespace fastmks /** Fast max-kernel search. */ {
  */
 template<
     typename KernelType,
-    typename MatType,
+    typename MatType = arma::mat,
     template<typename MetricType, typename StatisticType, typename MatType>
-        class TreeType
+        class TreeType = tree::StandardCoverTree
 >
 class FastMKS
 {
