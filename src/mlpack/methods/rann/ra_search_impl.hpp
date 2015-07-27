@@ -59,9 +59,9 @@ RASearch(const MatType& referenceSetIn,
          const bool firstLeafExact,
          const size_t singleSampleLimit,
          const MetricType metric) :
-    referenceSet((tree::TreeTraits<Tree>::RearrangesDataset && !naive)
-        ? referenceCopy : referenceSetIn),
-    referenceTree(NULL),
+    referenceTree(naive ? NULL : aux::BuildTree<Tree>(
+        const_cast<MatType&>(referenceSetIn), oldFromNewReferences)),
+    referenceSet(naive ? referenceSetIn : referenceTree->Dataset()),
     treeOwner(!naive),
     naive(naive),
     singleMode(!naive && singleMode), // No single mode if naive.
@@ -72,20 +72,7 @@ RASearch(const MatType& referenceSetIn,
     singleSampleLimit(singleSampleLimit),
     metric(metric)
 {
-  // We'll time tree building.
-  Timer::Start("tree_building");
-
-  if (!naive)
-  {
-    if (tree::TreeTraits<Tree>::RearrangesDataset)
-      referenceCopy = referenceSetIn;
-
-    referenceTree = aux::BuildTree<Tree>(const_cast<MatType&>(referenceSet),
-        oldFromNewReferences);
-  }
-
-  // Stop the timer we started above.
-  Timer::Stop("tree_building");
+  // Nothing to do.
 }
 
 // Construct the object.
@@ -103,8 +90,8 @@ RASearch(Tree* referenceTree,
          const bool firstLeafExact,
          const size_t singleSampleLimit,
          const MetricType metric) :
-    referenceSet(referenceTree->Dataset()),
     referenceTree(referenceTree),
+    referenceSet(referenceTree->Dataset()),
     treeOwner(false),
     naive(false),
     singleMode(singleMode),
@@ -176,24 +163,14 @@ Search(const MatType& querySet,
   distancePtr->set_size(k, querySet.n_cols);
   distancePtr->fill(SortPolicy::WorstDistance());
 
-  // If we will be building a tree and it will modify the query set, make a copy
-  // of the dataset.
-  MatType queryCopy;
-  const bool needsCopy = (!naive && !singleMode &&
-      tree::TreeTraits<Tree>::RearrangesDataset);
-  if (needsCopy)
-    queryCopy = querySet;
-
-  const MatType& querySetRef = (needsCopy) ? queryCopy : querySet;
-
-  // Create the helper object for the tree traversal.
   typedef RASearchRules<SortPolicy, MetricType, Tree> RuleType;
-  RuleType rules(referenceSet, querySetRef, *neighborPtr, *distancePtr,
-                 metric, tau, alpha, naive, sampleAtLeaves, firstLeafExact,
-                 singleSampleLimit, false);
 
   if (naive)
   {
+    RuleType rules(referenceSet, querySet, *neighborPtr, *distancePtr, metric,
+                   tau, alpha, naive, sampleAtLeaves, firstLeafExact,
+                   singleSampleLimit, false);
+
     // Find how many samples from the reference set we need and sample uniformly
     // from the reference set without replacement.
     const size_t numSamples = RAUtil::MinimumSamplesReqd(referenceSet.n_cols, k,
@@ -204,12 +181,16 @@ Search(const MatType& querySet,
 
     // Run the base case on each combination of query point and sampled
     // reference point.
-    for (size_t i = 0; i < querySetRef.n_cols; ++i)
+    for (size_t i = 0; i < querySet.n_cols; ++i)
       for (size_t j = 0; j < distinctSamples.n_elem; ++j)
         rules.BaseCase(i, (size_t) distinctSamples[j]);
   }
   else if (singleMode)
   {
+    RuleType rules(referenceSet, querySet, *neighborPtr, *distancePtr, metric,
+                   tau, alpha, naive, sampleAtLeaves, firstLeafExact,
+                   singleSampleLimit, false);
+
     // If the reference root node is a leaf, then the sampling has already been
     // done in the RASearchRules constructor.  This happens when naive = true.
     if (!referenceTree->IsLeaf())
@@ -220,7 +201,7 @@ Search(const MatType& querySet,
       typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
 
       // Now have it traverse for each point.
-      for (size_t i = 0; i < querySetRef.n_cols; ++i)
+      for (size_t i = 0; i < querySet.n_cols; ++i)
         traverser.Traverse(i, *referenceTree);
 
       Log::Info << "Single-tree traversal complete." << std::endl;
@@ -236,11 +217,14 @@ Search(const MatType& querySet,
     // Build the query tree.
     Timer::Stop("computing_neighbors");
     Timer::Start("tree_building");
-    Tree* queryTree = aux::BuildTree<Tree>(const_cast<MatType&>(querySetRef),
+    Tree* queryTree = aux::BuildTree<Tree>(const_cast<MatType&>(querySet),
         oldFromNewQueries);
     Timer::Stop("tree_building");
     Timer::Start("computing_neighbors");
 
+    RuleType rules(referenceSet, queryTree->Dataset(), *neighborPtr,
+                   *distancePtr, metric, tau, alpha, naive, sampleAtLeaves,
+                   firstLeafExact, singleSampleLimit, false);
     typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
 
     Log::Info << "Query statistic pre-search: "

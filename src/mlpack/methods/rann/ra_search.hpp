@@ -290,13 +290,12 @@ class RASearch
   std::string ToString() const;
 
  private:
-  //! Copy of reference dataset (if we need it, because tree building modifies
-  //! it).
-  MatType referenceCopy;
-  //! Reference dataset.
-  const MatType& referenceSet;
+  //! Permutations of reference points during tree building.
+  std::vector<size_t> oldFromNewReferences;
   //! Pointer to the root of the reference tree.
   Tree* referenceTree;
+  //! Reference dataset.
+  const MatType& referenceSet;
 
   //! If true, this object created the trees and is responsible for them.
   bool treeOwner;
@@ -320,10 +319,6 @@ class RASearch
 
   //! Instantiation of kernel.
   MetricType metric;
-
-  //! Permutations of reference points during tree building.
-  std::vector<size_t> oldFromNewReferences;
-
 }; // class RASearch
 
 } // namespace neighbor
