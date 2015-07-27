@@ -21,13 +21,21 @@ namespace range /** Range-search routines. */ {
  * is implemented in the style of a generalized tree-independent dual-tree
  * algorithm; for more details on the actual algorithm, see the RangeSearchRules
  * class.
+ *
+ * @tparam MetricType Metric to use for range search calculations.
+ * @tparam MatType Type of data to use.
+ * @tparam TreeType Type of tree to use; must satisfy the TreeType policy API.
  */
-template<typename MetricType = mlpack::metric::EuclideanDistance,
-         typename TreeType = tree::BinarySpaceTree<bound::HRectBound<2>,
-                                                   RangeSearchStat> >
+template<typename MetricType = metric::EuclideanDistance,
+         typename MatType = arma::mat,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType = tree::KDTree>
 class RangeSearch
 {
  public:
+  //! Convenience typedef.
+  typedef TreeType<MetricType, RangeSearchStat, MatType> Tree;
+
   /**
    * Initialize the RangeSearch object with a given reference dataset (this is
    * the dataset which is searched).  Optionally, perform the computation in
@@ -44,7 +52,7 @@ class RangeSearch
    *      opposed to dual-tree computation).
    * @param metric Instantiated distance metric.
    */
-  RangeSearch(const typename TreeType::Mat& referenceSet,
+  RangeSearch(const MatType& referenceSet,
               const bool naive = false,
               const bool singleMode = false,
               const MetricType metric = MetricType());
@@ -73,7 +81,7 @@ class RangeSearch
    *      opposed to dual-tree computation).
    * @param metric Instantiated distance metric.
    */
-  RangeSearch(TreeType* referenceTree,
+  RangeSearch(Tree* referenceTree,
               const bool singleMode = false,
               const MetricType metric = MetricType());
 
@@ -110,7 +118,7 @@ class RangeSearch
    * @param distances Object which will hold the list of distances for each
    *      point which fell into the given range, for each query point.
    */
-  void Search(const typename TreeType::Mat& querySet,
+  void Search(const MatType& querySet,
               const math::Range& range,
               std::vector<std::vector<size_t>>& neighbors,
               std::vector<std::vector<double>>& distances);
@@ -151,7 +159,7 @@ class RangeSearch
    * @param distances Object which will hold the list of distances for each
    *      point which fell into the given range, for each query point.
    */
-  void Search(TreeType* queryTree,
+  void Search(Tree* queryTree,
               const math::Range& range,
               std::vector<std::vector<size_t>>& neighbors,
               std::vector<std::vector<double>>& distances);
@@ -195,11 +203,11 @@ class RangeSearch
 
  private:
   //! Copy of reference matrix; used when a tree is built internally.
-  typename TreeType::Mat referenceCopy;
+  MatType referenceCopy;
   //! Reference set (data should be accessed using this).
-  const typename TreeType::Mat& referenceSet;
+  const MatType& referenceSet;
   //! Reference tree.
-  TreeType* referenceTree;
+  Tree* referenceTree;
   //! Mappings to old reference indices (used when this object builds trees).
   std::vector<size_t> oldFromNewReferences;
 
@@ -215,8 +223,8 @@ class RangeSearch
   MetricType metric;
 };
 
-}; // namespace range
-}; // namespace mlpack
+} // namespace range
+} // namespace mlpack
 
 // Include implementation.
 #include "range_search_impl.hpp"

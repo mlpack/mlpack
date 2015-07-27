@@ -16,6 +16,7 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::range;
 using namespace mlpack::tree;
+using namespace mlpack::metric;
 
 // Information about the program itself.
 PROGRAM_INFO("Range Search",
@@ -66,9 +67,9 @@ PARAM_FLAG("cover_tree", "If true, use a cover tree for range searching "
     "(instead of a kd-tree).", "c");
 
 typedef RangeSearch<> RSType;
-typedef CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
-    RangeSearchStat> CoverTreeType;
-typedef RangeSearch<metric::EuclideanDistance, CoverTreeType> RSCoverType;
+typedef CoverTree<EuclideanDistance, RangeSearchStat> CoverTreeType;
+typedef RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree>
+    RSCoverType;
 
 int main(int argc, char *argv[])
 {
@@ -162,7 +163,7 @@ int main(int argc, char *argv[])
   }
   else
   {
-    typedef BinarySpaceTree<bound::HRectBound<2>, RangeSearchStat> TreeType;
+    typedef KDTree<EuclideanDistance, RangeSearchStat, arma::mat> TreeType;
 
     // Track mappings.
     Log::Info << "Building reference tree..." << endl;

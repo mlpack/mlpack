@@ -39,13 +39,16 @@ TreeType* BuildTree(
   return new TreeType(dataset);
 }
 
-template<typename MetricType, typename TreeType>
-RangeSearch<MetricType, TreeType>::RangeSearch(
-    const typename TreeType::Mat& referenceSetIn,
+template<typename MetricType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType>
+RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
+    const MatType& referenceSetIn,
     const bool naive,
     const bool singleMode,
     const MetricType metric) :
-    referenceSet((tree::TreeTraits<TreeType>::RearrangesDataset && !naive)
+    referenceSet((tree::TreeTraits<Tree>::RearrangesDataset && !naive)
         ? referenceCopy : referenceSetIn),
     referenceTree(NULL),
     treeOwner(!naive), // If in naive mode, we are not building any trees.
@@ -60,23 +63,25 @@ RangeSearch<MetricType, TreeType>::RangeSearch(
   if (!naive)
   {
     // Copy the dataset, if it will be modified during tree building.
-    if (tree::TreeTraits<TreeType>::RearrangesDataset)
+    if (tree::TreeTraits<Tree>::RearrangesDataset)
       referenceCopy = referenceSetIn;
 
     // The const_cast is safe; if RearrangesDataset == false, then it'll be
     // casted back to const anyway, and if not, referenceSet points to
     // referenceCopy, which isn't const.
-    referenceTree = BuildTree<TreeType>(
-        const_cast<typename TreeType::Mat&>(referenceSet),
+    referenceTree = BuildTree<Tree>(const_cast<MatType&>(referenceSet),
         oldFromNewReferences);
   }
 
   Timer::Stop("range_search/tree_building");
 }
 
-template<typename MetricType, typename TreeType>
-RangeSearch<MetricType, TreeType>::RangeSearch(
-    TreeType* referenceTree,
+template<typename MetricType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType>
+RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
+    Tree* referenceTree,
     const bool singleMode,
     const MetricType metric) :
     referenceSet(referenceTree->Dataset()),
@@ -89,16 +94,22 @@ RangeSearch<MetricType, TreeType>::RangeSearch(
   // Nothing else to initialize.
 }
 
-template<typename MetricType, typename TreeType>
-RangeSearch<MetricType, TreeType>::~RangeSearch()
+template<typename MetricType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType>
+RangeSearch<MetricType, MatType, TreeType>::~RangeSearch()
 {
   if (treeOwner && referenceTree)
     delete referenceTree;
 }
 
-template<typename MetricType, typename TreeType>
-void RangeSearch<MetricType, TreeType>::Search(
-    const typename TreeType::Mat& querySet,
+template<typename MetricType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType>
+void RangeSearch<MetricType, MatType, TreeType>::Search(
+    const MatType& querySet,
     const math::Range& range,
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<double>>& distances)
@@ -110,14 +121,13 @@ void RangeSearch<MetricType, TreeType>::Search(
 
   // If we will be building a tree and it will modify the query set, make a copy
   // of the dataset.
-  typename TreeType::Mat queryCopy;
+  MatType queryCopy;
   const bool needsCopy = (!naive && !singleMode &&
-      tree::TreeTraits<TreeType>::RearrangesDataset);
+      tree::TreeTraits<Tree>::RearrangesDataset);
   if (needsCopy)
     queryCopy = querySet;
 
-  const typename TreeType::Mat& querySetRef = (needsCopy) ? queryCopy :
-      querySet;
+  const MatType& querySetRef = (needsCopy) ? queryCopy : querySet;
 
   // If we have built the trees ourselves, then we will have to map all the
   // indices back to their original indices when this computation is finished.
@@ -127,7 +137,7 @@ void RangeSearch<MetricType, TreeType>::Search(
   std::vector<std::vector<double>>* distancePtr = &distances;
 
   // Mapping is only necessary if the tree rearranges points.
-  if (tree::TreeTraits<TreeType>::RearrangesDataset)
+  if (tree::TreeTraits<Tree>::RearrangesDataset)
   {
     // Query indices only need to be mapped if we are building the query tree
     // ourselves.
@@ -147,7 +157,7 @@ void RangeSearch<MetricType, TreeType>::Search(
   distancePtr->resize(querySet.n_cols);
 
   // Create the helper object for the traversal.
-  typedef RangeSearchRules<MetricType, TreeType> RuleType;
+  typedef RangeSearchRules<MetricType, Tree> RuleType;
   RuleType rules(referenceSet, querySetRef, range, *neighborPtr, *distancePtr,
       metric);
 
@@ -161,7 +171,7 @@ void RangeSearch<MetricType, TreeType>::Search(
   else if (singleMode)
   {
     // Create the traverser.
-    typename TreeType::template SingleTreeTraverser<RuleType> traverser(rules);
+    typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
 
     // Now have it traverse for each point.
     for (size_t i = 0; i < querySet.n_cols; ++i)
@@ -172,13 +182,13 @@ void RangeSearch<MetricType, TreeType>::Search(
     // Build the query tree.
     Timer::Stop("range_search/computing_neighbors");
     Timer::Start("range_search/tree_building");
-    TreeType* queryTree = BuildTree<TreeType>(
-        const_cast<typename TreeType::Mat&>(querySetRef), oldFromNewQueries);
+    Tree* queryTree = BuildTree<Tree>(const_cast<MatType&>(querySetRef),
+        oldFromNewQueries);
     Timer::Stop("range_search/tree_building");
     Timer::Start("range_search/computing_neighbors");
 
     // Create the traverser.
-    typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
+    typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
 
     traverser.Traverse(*queryTree, *referenceTree);
 
@@ -189,7 +199,7 @@ void RangeSearch<MetricType, TreeType>::Search(
   Timer::Stop("range_search/computing_neighbors");
 
   // Map points back to original indices, if necessary.
-  if (tree::TreeTraits<TreeType>::RearrangesDataset)
+  if (tree::TreeTraits<Tree>::RearrangesDataset)
   {
     if (!singleMode && !naive && treeOwner)
     {
@@ -255,9 +265,12 @@ void RangeSearch<MetricType, TreeType>::Search(
   }
 }
 
-template<typename MetricType, typename TreeType>
-void RangeSearch<MetricType, TreeType>::Search(
-    TreeType* queryTree,
+template<typename MetricType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType>
+void RangeSearch<MetricType, MatType, TreeType>::Search(
+    Tree* queryTree,
     const math::Range& range,
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<double>>& distances)
@@ -265,7 +278,7 @@ void RangeSearch<MetricType, TreeType>::Search(
   Timer::Start("range_search/computing_neighbors");
 
   // Get a reference to the query set.
-  const typename TreeType::Mat& querySet = queryTree->Dataset();
+  const MatType& querySet = queryTree->Dataset();
 
   // Make sure we are in dual-tree mode.
   if (singleMode || naive)
@@ -275,7 +288,7 @@ void RangeSearch<MetricType, TreeType>::Search(
   // We won't need to map query indices, but will we need to map distances?
   std::vector<std::vector<size_t>>* neighborPtr = &neighbors;
 
-  if (treeOwner && tree::TreeTraits<TreeType>::RearrangesDataset)
+  if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)
     neighborPtr = new std::vector<std::vector<size_t>>;
 
   // Resize each vector.
@@ -285,19 +298,19 @@ void RangeSearch<MetricType, TreeType>::Search(
   distances.resize(querySet.n_cols);
 
   // Create the helper object for the traversal.
-  typedef RangeSearchRules<MetricType, TreeType> RuleType;
+  typedef RangeSearchRules<MetricType, Tree> RuleType;
   RuleType rules(referenceSet, queryTree->Dataset(), range, *neighborPtr,
       distances, metric);
 
   // Create the traverser.
-  typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
+  typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
 
   traverser.Traverse(*queryTree, *referenceTree);
 
   Timer::Stop("range_search/computing_neighbors");
 
   // Do we need to map indices?
-  if (treeOwner && tree::TreeTraits<TreeType>::RearrangesDataset)
+  if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)
   {
     // We must map reference indices only.
     neighbors.clear();
@@ -315,8 +328,11 @@ void RangeSearch<MetricType, TreeType>::Search(
   }
 }
 
-template<typename MetricType, typename TreeType>
-void RangeSearch<MetricType, TreeType>::Search(
+template<typename MetricType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType>
+void RangeSearch<MetricType, MatType, TreeType>::Search(
     const math::Range& range,
     std::vector<std::vector<size_t>>& neighbors,
     std::vector<std::vector<double>>& distances)
@@ -327,7 +343,7 @@ void RangeSearch<MetricType, TreeType>::Search(
   std::vector<std::vector<size_t>>* neighborPtr = &neighbors;
   std::vector<std::vector<double>>* distancePtr = &distances;
 
-  if (tree::TreeTraits<TreeType>::RearrangesDataset && treeOwner)
+  if (tree::TreeTraits<Tree>::RearrangesDataset && treeOwner)
   {
     // We will always need to rearrange in this case.
     distancePtr = new std::vector<std::vector<double>>;
@@ -341,7 +357,7 @@ void RangeSearch<MetricType, TreeType>::Search(
   distancePtr->resize(referenceSet.n_cols);
 
   // Create the helper object for the traversal.
-  typedef RangeSearchRules<MetricType, TreeType> RuleType;
+  typedef RangeSearchRules<MetricType, Tree> RuleType;
   RuleType rules(referenceSet, referenceSet, range, *neighborPtr, *distancePtr,
       metric, true /* don't return the query point in the results */);
 
@@ -355,7 +371,7 @@ void RangeSearch<MetricType, TreeType>::Search(
   else if (singleMode)
   {
     // Create the traverser.
-    typename TreeType::template SingleTreeTraverser<RuleType> traverser(rules);
+    typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
 
     // Now have it traverse for each point.
     for (size_t i = 0; i < referenceSet.n_cols; ++i)
@@ -364,7 +380,7 @@ void RangeSearch<MetricType, TreeType>::Search(
   else // Dual-tree recursion.
   {
     // Create the traverser.
-    typename TreeType::template DualTreeTraverser<RuleType> traverser(rules);
+    typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
 
     traverser.Traverse(*referenceTree, *referenceTree);
   }
@@ -372,7 +388,7 @@ void RangeSearch<MetricType, TreeType>::Search(
   Timer::Stop("range_search/computing_neighbors");
 
   // Do we need to map the reference indices?
-  if (treeOwner && tree::TreeTraits<TreeType>::RearrangesDataset)
+  if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)
   {
     neighbors.clear();
     neighbors.resize(referenceSet.n_cols);
@@ -399,8 +415,11 @@ void RangeSearch<MetricType, TreeType>::Search(
   }
 }
 
-template<typename MetricType, typename TreeType>
-std::string RangeSearch<MetricType, TreeType>::ToString() const
+template<typename MetricType,
+         typename MatType,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType>
+std::string RangeSearch<MetricType, MatType, TreeType>::ToString() const
 {
   std::ostringstream convert;
   convert << "Range Search  [" << this << "]" << std::endl;
@@ -413,7 +432,7 @@ std::string RangeSearch<MetricType, TreeType>::ToString() const
   return convert.str();
 }
 
-}; // namespace range
-}; // namespace mlpack
+} // namespace range
+} // namespace mlpack
 
 #endif
