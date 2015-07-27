@@ -19,21 +19,12 @@ PellegMooreKMeans<MetricType, MatType>::PellegMooreKMeans(
     const MatType& dataset,
     MetricType& metric) :
     datasetOrig(dataset),
-    dataset(tree::TreeTraits<TreeType>::RearrangesDataset ? datasetCopy :
-        datasetOrig),
+    tree(new TreeType(const_cast<MatType&>(datasetOrig))),
+    dataset(tree->Dataset()),
     metric(metric),
     distanceCalculations(0)
 {
-  Timer::Start("tree_building");
-
-  // Copy the dataset, if necessary.
-  if (tree::TreeTraits<TreeType>::RearrangesDataset)
-    datasetCopy = datasetOrig;
-
-  // Now build the tree.  We don't need any mappings.
-  tree = new TreeType(const_cast<typename TreeType::Mat&>(this->dataset));
-
-  Timer::Stop("tree_building");
+  // Nothing to do.
 }
 
 template<typename MetricType, typename MatType>

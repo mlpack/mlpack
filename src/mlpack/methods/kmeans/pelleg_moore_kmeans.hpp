@@ -71,15 +71,12 @@ class PellegMooreKMeans
  private:
   //! The original dataset reference.
   const MatType& datasetOrig; // Maybe not necessary.
-  //! The dataset we are using.
-  const MatType& dataset;
-  //! A copy of the dataset, if necessary.
-  MatType datasetCopy;
-  //! The metric.
-  MetricType& metric;
-
   //! The tree built on the points.
   TreeType* tree;
+  //! The dataset we are using.
+  const MatType& dataset;
+  //! The metric.
+  MetricType& metric;
 
   //! Track distance calculations.
   size_t distanceCalculations;

@@ -52,8 +52,8 @@ DualTreeKMeans<MetricType, MatType, TreeType>::DualTreeKMeans(
     const MatType& dataset,
     MetricType& metric) :
     datasetOrig(dataset),
-    dataset(tree::TreeTraits<Tree>::RearrangesDataset ? datasetCopy :
-        datasetOrig),
+    tree(new Tree(const_cast<MatType&>(dataset))),
+    dataset(tree->Dataset()),
     metric(metric),
     distanceCalculations(0),
     iteration(0),
@@ -63,17 +63,6 @@ DualTreeKMeans<MetricType, MatType, TreeType>::DualTreeKMeans(
     assignments(dataset.n_cols),
     visited(dataset.n_cols, false) // Fill with false.
 {
-  Timer::Start("tree_building");
-
-  // Copy the dataset, if necessary.
-  if (tree::TreeTraits<Tree>::RearrangesDataset)
-    datasetCopy = datasetOrig;
-
-  // Now build the tree.  We don't need any mappings.
-  tree = new Tree(const_cast<MatType&>(this->dataset));
-
-  Timer::Stop("tree_building");
-
   for (size_t i = 0; i < dataset.n_cols; ++i)
   {
     prunedPoints[i] = false;
@@ -157,8 +146,8 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   // We won't use the AllkNN class here because we have our own set of rules.
   lastIterationCentroids = oldCentroids;
   typedef DualTreeKMeansRules<MetricType, Tree> RuleType;
-  RuleType rules(centroids, dataset, assignments, upperBounds, lowerBounds,
-      metric, prunedPoints, oldFromNewCentroids, visited);
+  RuleType rules(centroidTree->Dataset(), dataset, assignments, upperBounds,
+      lowerBounds, metric, prunedPoints, oldFromNewCentroids, visited);
 
   typename Tree::template BreadthFirstDualTreeTraverser<RuleType>
       traverser(rules);
