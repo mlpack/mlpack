@@ -81,13 +81,12 @@ class DualTreeBoruvka
   typedef TreeType<MetricType, DTBStat, MatType> Tree;
 
  private:
-  //! Copy of the data (if necessary).
-  MatType dataCopy;
-  //! Reference to the data (this is what should be used for accessing data).
-  const MatType& data;
-
+  //! Permutations of points during tree building.
+  std::vector<size_t> oldFromNew;
   //! Pointer to the root of the tree.
   Tree* tree;
+  //! Reference to the data (this is what should be used for accessing data).
+  const MatType& data;
   //! Indicates whether or not we "own" the tree.
   bool ownTree;
 
@@ -100,8 +99,6 @@ class DualTreeBoruvka
   //! Connections.
   UnionFind connections;
 
-  //! Permutations of points during tree building.
-  std::vector<size_t> oldFromNew;
   //! List of edge nodes.
   arma::Col<size_t> neighborsInComponent;
   //! List of edge nodes.
@@ -155,7 +152,6 @@ class DualTreeBoruvka
    * @param dataset Dataset corresponding to the pre-built tree.
    */
   DualTreeBoruvka(Tree* tree,
-                  const MatType& dataset,
                   const MetricType metric = MetricType());
 
   /**

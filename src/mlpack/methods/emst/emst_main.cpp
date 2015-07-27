@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
     metric::LMetric<2, true> metric;
     Timer::Stop("tree_building");
 
-    DualTreeBoruvka<> dtb(&tree, dataPoints, metric);
+    DualTreeBoruvka<> dtb(&tree, metric);
 
     // Run the DTB algorithm.
     Log::Info << "Calculating minimum spanning tree." << endl;

@@ -49,27 +49,15 @@ DualTreeBoruvka<MetricType, MatType, TreeType>::DualTreeBoruvka(
     const MatType& dataset,
     const bool naive,
     const MetricType metric) :
-    data((tree::TreeTraits<Tree>::RearrangesDataset && !naive) ? dataCopy :
-        dataset),
+    tree(naive ? NULL : BuildTree<MatType, Tree>(const_cast<MatType&>(dataset),
+        oldFromNew)),
+    data(naive ? dataset : tree->Dataset()),
     ownTree(!naive),
     naive(naive),
     connections(dataset.n_cols),
     totalDist(0.0),
     metric(metric)
 {
-  Timer::Start("emst/tree_building");
-
-  if (!naive)
-  {
-    // Copy the dataset, if it will be modified during tree construction.
-    if (tree::TreeTraits<Tree>::RearrangesDataset)
-      dataCopy = dataset;
-
-    tree = BuildTree<MatType, Tree>(const_cast<MatType&>(data), oldFromNew);
-  }
-
-  Timer::Stop("emst/tree_building");
-
   edges.reserve(data.n_cols - 1); // Set size.
 
   neighborsInComponent.set_size(data.n_cols);
@@ -85,10 +73,9 @@ template<
         class TreeType>
 DualTreeBoruvka<MetricType, MatType, TreeType>::DualTreeBoruvka(
     Tree* tree,
-    const MatType& dataset,
     const MetricType metric) :
-    data(dataset),
     tree(tree),
+    data(tree->Dataset()),
     ownTree(false),
     naive(false),
     connections(data.n_cols),
