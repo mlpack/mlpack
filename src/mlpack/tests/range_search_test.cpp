@@ -76,10 +76,9 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
 
   // We will loop through three times, one for each method of performing the
   // calculation.
-  arma::mat dataMutable = data;
   std::vector<size_t> oldFromNew;
   std::vector<size_t> newFromOld;
-  TreeType* tree = new TreeType(dataMutable, oldFromNew, newFromOld, 1);
+  TreeType* tree = new TreeType(data, oldFromNew, newFromOld, 1);
   for (int i = 0; i < 3; i++)
   {
     RangeSearch<>* rs;
@@ -87,7 +86,7 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
     switch (i)
     {
       case 0: // Use the naive method.
-        rs = new RangeSearch<>(dataMutable, true);
+        rs = new RangeSearch<>(tree->Dataset(), true);
         break;
       case 1: // Use the single-tree method.
         rs = new RangeSearch<>(tree, true);
@@ -211,6 +210,8 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
     BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[10]][3].first, 0.65, 1e-5);
 
     // Now do it again with a different range: [sqrt(0.5) 1.0].
+    if (rs->ReferenceTree())
+      CleanTree(*rs->ReferenceTree());
     rs->Search(Range(sqrt(0.5), 1.0), neighbors, distances);
     SortResults(neighbors, distances, sortedOutput);
 
@@ -272,6 +273,8 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
     BOOST_REQUIRE_CLOSE(sortedOutput[newFromOld[10]][1].first, 0.95, 1e-5);
 
     // Now do it again with a different range: [1.0 inf].
+    if (rs->ReferenceTree())
+      CleanTree(*rs->ReferenceTree());
     rs->Search(Range(1.0, numeric_limits<double>::infinity()), neighbors,
         distances);
     SortResults(neighbors, distances, sortedOutput);
@@ -597,9 +600,8 @@ BOOST_AUTO_TEST_CASE(CoverTreeTest)
   data.randu(8, 1000); // 1000 points in 8 dimensions.
 
   // Set up cover tree range search.
-  StandardCoverTree<EuclideanDistance, RangeSearchStat, arma::mat> tree(data);
   RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree>
-      coversearch(&tree);
+      coversearch(data);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
@@ -637,7 +639,7 @@ BOOST_AUTO_TEST_CASE(CoverTreeTest)
     vector<vector<double>> coverDistances;
 
     // Clean the tree statistics.
-    CleanTree(tree);
+    CleanTree(*coversearch.ReferenceTree());
 
     // Run the searches.
     kdsearch.Search(range, kdNeighbors, kdDistances);
@@ -675,12 +677,8 @@ BOOST_AUTO_TEST_CASE(CoverTreeTwoDatasetsTest)
   queries.randu(8, 350); // 350 points in 8 dimensions.
 
   // Set up cover tree range search.
-  typedef StandardCoverTree<EuclideanDistance, RangeSearchStat, arma::mat>
-      CoverTreeType;
-  CoverTreeType tree(data);
-  CoverTreeType* queryTree = new CoverTreeType(queries);
   RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree>
-      coversearch(&tree);
+      coversearch(data);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
@@ -719,12 +717,10 @@ BOOST_AUTO_TEST_CASE(CoverTreeTwoDatasetsTest)
     vector<vector<double>> coverDistances;
 
     // Clean the trees.
-    CleanTree(tree);
-    delete queryTree;
-    queryTree = new CoverTreeType(queries);
+    CleanTree(*coversearch.ReferenceTree());
 
     // Run the searches.
-    coversearch.Search(queryTree, range, coverNeighbors, coverDistances);
+    coversearch.Search(queries, range, coverNeighbors, coverDistances);
     kdsearch.Search(queries, range, kdNeighbors, kdDistances);
 
     // Sort before comparison.
@@ -745,8 +741,6 @@ BOOST_AUTO_TEST_CASE(CoverTreeTwoDatasetsTest)
       BOOST_REQUIRE_EQUAL(kdSorted[i].size(), coverSorted[i].size());
     }
   }
-
-  delete queryTree;
 }
 
 /**
@@ -758,17 +752,14 @@ BOOST_AUTO_TEST_CASE(CoverTreeSingleTreeTest)
   data.randu(8, 1000); // 1000 points in 8 dimensions.
 
   // Set up cover tree range search.
-  typedef StandardCoverTree<EuclideanDistance, RangeSearchStat, arma::mat>
-      CoverTreeType;
-  CoverTreeType tree(data);
   RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree>
-      coversearch(&tree, true);
+      coversearch(data, false, true);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
   {
     // Set up kd-tree range search.
-    RangeSearch<> kdsearch(data, true);
+    RangeSearch<> kdsearch(data);
 
     Range range;
     switch (r)
@@ -800,7 +791,7 @@ BOOST_AUTO_TEST_CASE(CoverTreeSingleTreeTest)
     vector<vector<double>> coverDistances;
 
     // Clean the tree statistics.
-    CleanTree(tree);
+    CleanTree(*coversearch.ReferenceTree());
 
     // Run the searches.
     kdsearch.Search(range, kdNeighbors, kdDistances);
@@ -835,85 +826,8 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
   data.randu(8, 1000); // 1000 points in 8 dimensions.
 
   // Set up ball tree range search.
-  typedef BallTree<EuclideanDistance, RangeSearchStat, arma::mat> TreeType;
-  TreeType tree(data);
-  RangeSearch<EuclideanDistance, arma::mat, BallTree> ballsearch(&tree, true);
-
-  // Four trials with different ranges.
-  for (size_t r = 0; r < 4; ++r)
-  {
-    // Set up kd-tree range search.
-    RangeSearch<> kdsearch(data, true);
-
-    Range range;
-    switch (r)
-    {
-      case 0:
-        // Includes zero distance.
-        range = Range(0.0, 0.75);
-        break;
-      case 1:
-        // A bounded range on both sides.
-        range = Range(0.5, 1.5);
-        break;
-      case 2:
-        // A range with no upper bound.
-        range = Range(0.8, DBL_MAX);
-        break;
-      case 3:
-        // A range which should have no results.
-        range = Range(15.6, 15.7);
-        break;
-    }
-
-    // Results for kd-tree search.
-    vector<vector<size_t>> kdNeighbors;
-    vector<vector<double>> kdDistances;
-
-    // Results for ball tree search.
-    vector<vector<size_t>> ballNeighbors;
-    vector<vector<double>> ballDistances;
-
-    // Clean the tree statistics.
-    CleanTree(tree);
-
-    // Run the searches.
-    kdsearch.Search(range, kdNeighbors, kdDistances);
-    ballsearch.Search(range, ballNeighbors, ballDistances);
-
-    // Sort before comparison.
-    vector<vector<pair<double, size_t>>> kdSorted;
-    vector<vector<pair<double, size_t>>> ballSorted;
-    SortResults(kdNeighbors, kdDistances, kdSorted);
-    SortResults(ballNeighbors, ballDistances, ballSorted);
-
-    // Now compare the results.
-    for (size_t i = 0; i < kdSorted.size(); ++i)
-    {
-      for (size_t j = 0; j < kdSorted[i].size(); ++j)
-      {
-        BOOST_REQUIRE_EQUAL(kdSorted[i][j].second, ballSorted[i][j].second);
-        BOOST_REQUIRE_CLOSE(kdSorted[i][j].first, ballSorted[i][j].first,
-            1e-5);
-      }
-      BOOST_REQUIRE_EQUAL(kdSorted[i].size(), ballSorted[i].size());
-    }
-  }
-}
-
-/**
- * Ensure that dual tree range search with ball trees works by comparing
- * with the kd-tree implementation.
- */
-BOOST_AUTO_TEST_CASE(DualBallTreeTest)
-{
-  arma::mat data;
-  data.randu(8, 1000); // 1000 points in 8 dimensions.
-
-  // Set up ball tree range search.
-  typedef BallTree<EuclideanDistance, RangeSearchStat, arma::mat> TreeType;
-  TreeType tree(data);
-  RangeSearch<EuclideanDistance, arma::mat, BallTree> ballsearch(&tree);
+  RangeSearch<EuclideanDistance, arma::mat, BallTree> ballsearch(data, false,
+      true);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
@@ -951,7 +865,81 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
     vector<vector<double>> ballDistances;
 
     // Clean the tree statistics.
-    CleanTree(tree);
+    CleanTree(*ballsearch.ReferenceTree());
+
+    // Run the searches.
+    kdsearch.Search(range, kdNeighbors, kdDistances);
+    ballsearch.Search(range, ballNeighbors, ballDistances);
+
+    // Sort before comparison.
+    vector<vector<pair<double, size_t>>> kdSorted;
+    vector<vector<pair<double, size_t>>> ballSorted;
+    SortResults(kdNeighbors, kdDistances, kdSorted);
+    SortResults(ballNeighbors, ballDistances, ballSorted);
+
+    // Now compare the results.
+    for (size_t i = 0; i < kdSorted.size(); ++i)
+    {
+      for (size_t j = 0; j < kdSorted[i].size(); ++j)
+      {
+        BOOST_REQUIRE_EQUAL(kdSorted[i][j].second, ballSorted[i][j].second);
+        BOOST_REQUIRE_CLOSE(kdSorted[i][j].first, ballSorted[i][j].first,
+            1e-5);
+      }
+      BOOST_REQUIRE_EQUAL(kdSorted[i].size(), ballSorted[i].size());
+    }
+  }
+}
+
+/**
+ * Ensure that dual tree range search with ball trees works by comparing
+ * with the kd-tree implementation.
+ */
+BOOST_AUTO_TEST_CASE(DualBallTreeTest)
+{
+  arma::mat data;
+  data.randu(8, 1000); // 1000 points in 8 dimensions.
+
+  // Set up ball tree range search.
+  RangeSearch<EuclideanDistance, arma::mat, BallTree> ballsearch(data);
+
+  // Four trials with different ranges.
+  for (size_t r = 0; r < 4; ++r)
+  {
+    // Set up kd-tree range search.
+    RangeSearch<> kdsearch(data);
+
+    Range range;
+    switch (r)
+    {
+      case 0:
+        // Includes zero distance.
+        range = Range(0.0, 0.75);
+        break;
+      case 1:
+        // A bounded range on both sides.
+        range = Range(0.5, 1.5);
+        break;
+      case 2:
+        // A range with no upper bound.
+        range = Range(0.8, DBL_MAX);
+        break;
+      case 3:
+        // A range which should have no results.
+        range = Range(15.6, 15.7);
+        break;
+    }
+
+    // Results for kd-tree search.
+    vector<vector<size_t>> kdNeighbors;
+    vector<vector<double>> kdDistances;
+
+    // Results for ball tree search.
+    vector<vector<size_t>> ballNeighbors;
+    vector<vector<double>> ballDistances;
+
+    // Clean the tree statistics.
+    CleanTree(*ballsearch.ReferenceTree());
 
     // Run the searches.
     kdsearch.Search(range, kdNeighbors, kdDistances);
@@ -990,10 +978,7 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest2)
   queries.randu(8, 350); // 350 points in 8 dimensions.
 
   // Set up ball tree range search.
-  typedef BallTree<EuclideanDistance, RangeSearchStat, arma::mat> TreeType;
-  TreeType tree(data);
-  TreeType queryTree(queries);
-  RangeSearch<EuclideanDistance, arma::mat, BallTree> ballsearch(&tree);
+  RangeSearch<EuclideanDistance, arma::mat, BallTree> ballsearch(data);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
@@ -1032,11 +1017,10 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest2)
     vector<vector<double>> ballDistances;
 
     // Clean the trees.
-    CleanTree(tree);
-    CleanTree(queryTree);
+    CleanTree(*ballsearch.ReferenceTree());
 
     // Run the searches.
-    ballsearch.Search(&queryTree, range, ballNeighbors, ballDistances);
+    ballsearch.Search(queries, range, ballNeighbors, ballDistances);
     kdsearch.Search(queries, range, kdNeighbors, kdDistances);
 
     // Sort before comparison.
