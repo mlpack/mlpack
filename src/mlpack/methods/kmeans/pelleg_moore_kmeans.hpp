@@ -65,8 +65,8 @@ class PellegMooreKMeans
   size_t& DistanceCalculations() { return distanceCalculations; }
 
   //! Convenience typedef for the tree.
-  typedef tree::BinarySpaceTree<bound::HRectBound<2, true>,
-      PellegMooreKMeansStatistic, MatType> TreeType;
+  typedef tree::KDTree<MetricType, PellegMooreKMeansStatistic, MatType>
+      TreeType;
 
  private:
   //! The original dataset reference.

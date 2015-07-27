@@ -29,13 +29,20 @@ namespace kmeans {
 template<
     typename MetricType,
     typename MatType,
-    typename TreeType = tree::BinarySpaceTree<bound::HRectBound<2>,
-        DualTreeKMeansStatistic> >
+    template<typename MetricType, typename StatisticType, typename MatType>
+        class TreeType = tree::KDTree>
 class DualTreeKMeans
 {
  public:
+  //! Convenience typedef.
+  typedef TreeType<MetricType, DualTreeKMeansStatistic, MatType> Tree;
+    
+  template<typename TMetricType, typename TStatisticType, typename TMatType>
+  using NNSTreeType = TreeType<TMetricType, DualTreeKMeansStatistic, TMatType>;
+
   /**
-   * Construct the DualTreeKMeans object, which will construct a tree on the points.
+   * Construct the DualTreeKMeans object, which will construct a tree on the
+   * points.
    */
   DualTreeKMeans(const MatType& dataset, MetricType& metric);
 
@@ -72,7 +79,7 @@ class DualTreeKMeans
   MetricType metric;
 
   //! The tree built on the points.
-  TreeType* tree;
+  Tree* tree;
 
   //! Track distance calculations.
   size_t distanceCalculations;
@@ -98,7 +105,7 @@ class DualTreeKMeans
 
   //! Update the bounds in the tree before the next iteration.
   //! centroids is the current (not yet searched) centroids.
-  void UpdateTree(TreeType& node,
+  void UpdateTree(Tree& node,
                   const arma::mat& centroids,
                   const double parentUpperBound = 0.0,
                   const double adjustedParentUpperBound = DBL_MAX,
@@ -106,13 +113,13 @@ class DualTreeKMeans
                   const double adjustedParentLowerBound = 0.0);
 
   //! Extract the centroids of the clusters.
-  void ExtractCentroids(TreeType& node,
+  void ExtractCentroids(Tree& node,
                         arma::mat& newCentroids,
                         arma::Col<size_t>& newCounts,
                         arma::mat& centroids);
 
-  void CoalesceTree(TreeType& node, const size_t child = 0);
-  void DecoalesceTree(TreeType& node);
+  void CoalesceTree(Tree& node, const size_t child = 0);
+  void DecoalesceTree(Tree& node);
 };
 
 //! Utility function for hiding children.  This actually does something, and is
@@ -153,8 +160,7 @@ using DefaultDualTreeKMeans = DualTreeKMeans<MetricType, MatType>;
 //! type.
 template<typename MetricType, typename MatType>
 using CoverTreeDualTreeKMeans = DualTreeKMeans<MetricType, MatType,
-    tree::CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
-    DualTreeKMeansStatistic> >;
+    tree::StandardCoverTree>;
 
 } // namespace kmeans
 } // namespace mlpack
