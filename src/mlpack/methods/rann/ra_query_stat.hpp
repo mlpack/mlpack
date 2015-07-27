@@ -64,4 +64,7 @@ class RAQueryStat
 
 };
 
+} // namespace neighbor
+} // namespace mlpack
+
 #endif

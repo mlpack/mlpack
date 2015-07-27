@@ -20,6 +20,7 @@ using namespace std;
 using namespace mlpack;
 using namespace mlpack::neighbor;
 using namespace mlpack::tree;
+using namespace mlpack::metric;
 
 // Information about the program itself.
 PROGRAM_INFO("All K-Rank-Approximate-Nearest-Neighbors",
@@ -176,8 +177,8 @@ int main(int argc, char *argv[])
     // NeighborSearch, it does not copy the matrix.
     Log::Info << "Building reference tree..." << endl;
     Timer::Start("tree_building");
-    typedef BinarySpaceTree<bound::HRectBound<2, false>,
-        RAQueryStat<NearestNeighborSort> > TreeType;
+    typedef KDTree<EuclideanDistance, RAQueryStat<NearestNeighborSort>,
+        arma::mat> TreeType;
     TreeType refTree(referenceData, oldFromNewRefs, leafSize);
     Timer::Stop("tree_building");
 

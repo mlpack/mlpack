@@ -10,7 +10,6 @@
 #define __MLPACK_METHODS_RANN_RA_SEARCH_RULES_HPP
 
 #include "../neighbor_search/ns_traversal_info.hpp"
-#include "ra_search.hpp" // For friend declaration.
 
 namespace mlpack {
 namespace neighbor {
@@ -248,47 +247,6 @@ class RASearchRules
                       const double distance);
 
   /**
-   * Compute the minimum number of samples required to guarantee
-   * the given rank-approximation and success probability.
-   *
-   * @param n Size of the set to be sampled from.
-   * @param k The number of neighbors required within the rank-approximation.
-   * @param tau The rank-approximation in percentile of the data.
-   * @param alpha The success probability desired.
-   */
-  size_t MinimumSamplesReqd(const size_t n,
-                            const size_t k,
-                            const double tau,
-                            const double alpha) const;
-
-  /**
-   * Compute the success probability of obtaining 'k'-neighbors from a
-   * set of size 'n' within the top 't' neighbors if 'm' samples are made.
-   *
-   * @param n Size of the set being sampled from.
-   * @param k The number of neighbors required within the rank-approximation.
-   * @param m The number of random samples.
-   * @param t The desired rank-approximation.
-   */
-  double SuccessProbability(const size_t n,
-                            const size_t k,
-                            const size_t m,
-                            const size_t t) const;
-
-  /**
-   * Pick up desired number of samples (with replacement) from a given range
-   * of integers so that only the distinct samples are returned from
-   * the range [0 - specified upper bound)
-   *
-   * @param numSamples Number of random samples.
-   * @param rangeUpperBound The upper bound on the range of integers.
-   * @param distinctSamples The list of the distinct samples.
-   */
-  void ObtainDistinctSamples(const size_t numSamples,
-                             const size_t rangeUpperBound,
-                             arma::uvec& distinctSamples) const;
-
-  /**
    * Perform actual scoring for single-tree case.
    */
   double Score(const size_t queryIndex,
@@ -303,15 +261,10 @@ class RASearchRules
                TreeType& referenceNode,
                const double distance,
                const double bestDistance);
-
-  // So that RASearch can access ObtainDistinctSamples() and
-  // MinimumSamplesReqd().  Maybe refactoring is a better solution but this is
-  // okay for now.
-  friend class RASearch<SortPolicy, MetricType, TreeType>;
 }; // class RASearchRules
 
-}; // namespace neighbor
-}; // namespace mlpack
+} // namespace neighbor
+} // namespace mlpack
 
 // Include implementation.
 #include "ra_search_rules_impl.hpp"

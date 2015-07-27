@@ -26,6 +26,10 @@
 #include <mlpack/methods/neighbor_search/sort_policies/nearest_neighbor_sort.hpp>
 
 #include "ra_query_stat.hpp"
+#include "ra_util.hpp"
+
+namespace mlpack {
+namespace neighbor {
 
 /**
  * The RASearch class: This class provides a generic manner to perform
@@ -50,12 +54,16 @@
  * @tparam TreeType The tree type to use.
  */
 template<typename SortPolicy = NearestNeighborSort,
-         typename MetricType = mlpack::metric::SquaredEuclideanDistance,
-         typename TreeType = tree::BinarySpaceTree<bound::HRectBound<2, false>,
-                                                   RAQueryStat<SortPolicy> > >
+         typename MetricType = metric::EuclideanDistance,
+         typename MatType = arma::mat,
+         template<typename MetricType, typename StatisticType, typename MatType>
+             class TreeType = tree::KDTree>
 class RASearch
 {
  public:
+  //! Convenience typedef.
+  typedef TreeType<MetricType, RAQueryStat<SortPolicy>, MatType> Tree;
+
   /**
    * Initialize the RASearch object, passing both a reference dataset (this is
    * the dataset that will be searched).  Optionally, perform the computation in
@@ -100,7 +108,7 @@ class RASearch
    * @param singleSampleLimit The limit on the largest node that can be
    *     approximated by sampling. This defaults to 20.
    */
-  RASearch(const typename TreeType::Mat& referenceSet,
+  RASearch(const MatType& referenceSet,
            const bool naive = false,
            const bool singleMode = false,
            const double tau = 5,
@@ -158,7 +166,7 @@ class RASearch
    * @param singleSampleLimit The limit on the largest node that can be
    *     approximated by sampling. This defaults to 20.
    */
-  RASearch(TreeType* referenceTree,
+  RASearch(Tree* referenceTree,
            const bool singleMode = false,
            const double tau = 5,
            const double alpha = 0.95,
@@ -189,7 +197,7 @@ class RASearch
    * @param distances Matrix storing distances of neighbors for each query
    *     point.
    */
-  void Search(const typename TreeType::Mat& querySet,
+  void Search(const MatType& querySet,
               const size_t k,
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
@@ -217,7 +225,7 @@ class RASearch
    * @param distances Matrix storing distances of neighbors for each query
    *     point.
    */
-  void Search(TreeType* queryTree,
+  void Search(Tree* queryTree,
               const size_t k,
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
@@ -251,7 +259,7 @@ class RASearch
    *
    * @param queryTree Tree whose statistics should be reset.
    */
-  void ResetQueryTree(TreeType* queryTree) const;
+  void ResetQueryTree(Tree* queryTree) const;
 
   //! Get the rank-approximation in percentile of the data.
   double Tau() const { return tau; }
@@ -284,11 +292,11 @@ class RASearch
  private:
   //! Copy of reference dataset (if we need it, because tree building modifies
   //! it).
-  arma::mat referenceCopy;
+  MatType referenceCopy;
   //! Reference dataset.
-  const arma::mat& referenceSet;
+  const MatType& referenceSet;
   //! Pointer to the root of the reference tree.
-  TreeType* referenceTree;
+  Tree* referenceTree;
 
   //! If true, this object created the trees and is responsible for them.
   bool treeOwner;
@@ -318,8 +326,8 @@ class RASearch
 
 }; // class RASearch
 
-}; // namespace neighbor
-}; // namespace mlpack
+} // namespace neighbor
+} // namespace mlpack
 
 // Include implementation.
 #include "ra_search_impl.hpp"
