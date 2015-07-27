@@ -48,32 +48,15 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
     const bool naive,
     const bool singleMode,
     const MetricType metric) :
-    referenceSet((tree::TreeTraits<Tree>::RearrangesDataset && !naive)
-        ? referenceCopy : referenceSetIn),
-    referenceTree(NULL),
+    referenceTree(naive ? NULL : BuildTree<Tree>(
+        const_cast<MatType&>(referenceSetIn), oldFromNewReferences)),
+    referenceSet(naive ? referenceSetIn : referenceTree->Dataset()),
     treeOwner(!naive), // If in naive mode, we are not building any trees.
     naive(naive),
     singleMode(!naive && singleMode), // Naive overrides single mode.
     metric(metric)
 {
-  // Build the tree.
-  Timer::Start("range_search/tree_building");
-
-  // If in naive mode, then we do not need to build trees.
-  if (!naive)
-  {
-    // Copy the dataset, if it will be modified during tree building.
-    if (tree::TreeTraits<Tree>::RearrangesDataset)
-      referenceCopy = referenceSetIn;
-
-    // The const_cast is safe; if RearrangesDataset == false, then it'll be
-    // casted back to const anyway, and if not, referenceSet points to
-    // referenceCopy, which isn't const.
-    referenceTree = BuildTree<Tree>(const_cast<MatType&>(referenceSet),
-        oldFromNewReferences);
-  }
-
-  Timer::Stop("range_search/tree_building");
+  // Nothing to do.
 }
 
 template<typename MetricType,
@@ -84,8 +67,8 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
     Tree* referenceTree,
     const bool singleMode,
     const MetricType metric) :
-    referenceSet(referenceTree->Dataset()),
     referenceTree(referenceTree),
+    referenceSet(referenceTree->Dataset()),
     treeOwner(false),
     naive(false),
     singleMode(singleMode),
@@ -119,16 +102,6 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
   // This will hold mappings for query points, if necessary.
   std::vector<size_t> oldFromNewQueries;
 
-  // If we will be building a tree and it will modify the query set, make a copy
-  // of the dataset.
-  MatType queryCopy;
-  const bool needsCopy = (!naive && !singleMode &&
-      tree::TreeTraits<Tree>::RearrangesDataset);
-  if (needsCopy)
-    queryCopy = querySet;
-
-  const MatType& querySetRef = (needsCopy) ? queryCopy : querySet;
-
   // If we have built the trees ourselves, then we will have to map all the
   // indices back to their original indices when this computation is finished.
   // To avoid extra copies, we will store the unmapped neighbors and distances
@@ -158,11 +131,12 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
 
   // Create the helper object for the traversal.
   typedef RangeSearchRules<MetricType, Tree> RuleType;
-  RuleType rules(referenceSet, querySetRef, range, *neighborPtr, *distancePtr,
-      metric);
 
   if (naive)
   {
+    RuleType rules(referenceSet, querySet, range, *neighborPtr, *distancePtr,
+        metric);
+
     // The naive brute-force solution.
     for (size_t i = 0; i < querySet.n_cols; ++i)
       for (size_t j = 0; j < referenceSet.n_cols; ++j)
@@ -171,6 +145,8 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
   else if (singleMode)
   {
     // Create the traverser.
+    RuleType rules(referenceSet, querySet, range, *neighborPtr, *distancePtr,
+        metric);
     typename Tree::template SingleTreeTraverser<RuleType> traverser(rules);
 
     // Now have it traverse for each point.
@@ -182,12 +158,14 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     // Build the query tree.
     Timer::Stop("range_search/computing_neighbors");
     Timer::Start("range_search/tree_building");
-    Tree* queryTree = BuildTree<Tree>(const_cast<MatType&>(querySetRef),
+    Tree* queryTree = BuildTree<Tree>(const_cast<MatType&>(querySet),
         oldFromNewQueries);
     Timer::Stop("range_search/tree_building");
     Timer::Start("range_search/computing_neighbors");
 
     // Create the traverser.
+    RuleType rules(referenceSet, queryTree->Dataset(), range, *neighborPtr,
+        *distancePtr, metric);
     typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
 
     traverser.Traverse(*queryTree, *referenceTree);

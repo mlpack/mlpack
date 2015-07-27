@@ -198,18 +198,19 @@ class RangeSearch
               std::vector<std::vector<size_t>>& neighbors,
               std::vector<std::vector<double>>& distances);
 
-  // Returns a string representation of this object.
+  //! Returns a string representation of this object.
   std::string ToString() const;
 
+  //! Return the reference tree (or NULL if in naive mode).
+  Tree* ReferenceTree() { return referenceTree; }
+
  private:
-  //! Copy of reference matrix; used when a tree is built internally.
-  MatType referenceCopy;
-  //! Reference set (data should be accessed using this).
-  const MatType& referenceSet;
-  //! Reference tree.
-  Tree* referenceTree;
   //! Mappings to old reference indices (used when this object builds trees).
   std::vector<size_t> oldFromNewReferences;
+  //! Reference tree.
+  Tree* referenceTree;
+  //! Reference set (data should be accessed using this).
+  const MatType& referenceSet;
 
   //! If true, this object is responsible for deleting the trees.
   bool treeOwner;
