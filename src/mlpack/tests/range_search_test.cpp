@@ -15,6 +15,7 @@ using namespace mlpack::range;
 using namespace mlpack::math;
 using namespace mlpack::tree;
 using namespace mlpack::bound;
+using namespace mlpack::metric;
 using namespace std;
 
 BOOST_AUTO_TEST_SUITE(RangeSearchTest);
@@ -71,7 +72,7 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
   data[9] = 0.90;
   data[10] = 1.00;
 
-  typedef BinarySpaceTree<HRectBound<2>, RangeSearchStat> TreeType;
+  typedef KDTree<EuclideanDistance, RangeSearchStat, arma::mat> TreeType;
 
   // We will loop through three times, one for each method of performing the
   // calculation.
@@ -596,10 +597,9 @@ BOOST_AUTO_TEST_CASE(CoverTreeTest)
   data.randu(8, 1000); // 1000 points in 8 dimensions.
 
   // Set up cover tree range search.
-  typedef tree::CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
-      RangeSearchStat> CoverTreeType;
-  CoverTreeType tree(data);
-  RangeSearch<metric::EuclideanDistance, CoverTreeType> coversearch(&tree);
+  StandardCoverTree<EuclideanDistance, RangeSearchStat, arma::mat> tree(data);
+  RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree>
+      coversearch(&tree);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
@@ -675,11 +675,11 @@ BOOST_AUTO_TEST_CASE(CoverTreeTwoDatasetsTest)
   queries.randu(8, 350); // 350 points in 8 dimensions.
 
   // Set up cover tree range search.
-  typedef tree::CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
-      RangeSearchStat> CoverTreeType;
+  typedef StandardCoverTree<EuclideanDistance, RangeSearchStat, arma::mat>
+      CoverTreeType;
   CoverTreeType tree(data);
   CoverTreeType* queryTree = new CoverTreeType(queries);
-  RangeSearch<metric::EuclideanDistance, CoverTreeType>
+  RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree>
       coversearch(&tree);
 
   // Four trials with different ranges.
@@ -758,11 +758,11 @@ BOOST_AUTO_TEST_CASE(CoverTreeSingleTreeTest)
   data.randu(8, 1000); // 1000 points in 8 dimensions.
 
   // Set up cover tree range search.
-  typedef tree::CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
-      RangeSearchStat> CoverTreeType;
+  typedef StandardCoverTree<EuclideanDistance, RangeSearchStat, arma::mat>
+      CoverTreeType;
   CoverTreeType tree(data);
-  RangeSearch<metric::EuclideanDistance, CoverTreeType> coversearch(&tree,
-      true);
+  RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree>
+      coversearch(&tree, true);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
@@ -835,10 +835,9 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
   data.randu(8, 1000); // 1000 points in 8 dimensions.
 
   // Set up ball tree range search.
-  typedef BinarySpaceTree<BallBound<>, RangeSearchStat> TreeType;
+  typedef BallTree<EuclideanDistance, RangeSearchStat, arma::mat> TreeType;
   TreeType tree(data);
-  RangeSearch<metric::EuclideanDistance, TreeType>
-      ballsearch(&tree, true);
+  RangeSearch<EuclideanDistance, arma::mat, BallTree> ballsearch(&tree, true);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
@@ -912,9 +911,9 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
   data.randu(8, 1000); // 1000 points in 8 dimensions.
 
   // Set up ball tree range search.
-  typedef BinarySpaceTree<BallBound<>, RangeSearchStat> TreeType;
+  typedef BallTree<EuclideanDistance, RangeSearchStat, arma::mat> TreeType;
   TreeType tree(data);
-  RangeSearch<metric::EuclideanDistance, TreeType> ballsearch(&tree);
+  RangeSearch<EuclideanDistance, arma::mat, BallTree> ballsearch(&tree);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)
@@ -991,10 +990,10 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest2)
   queries.randu(8, 350); // 350 points in 8 dimensions.
 
   // Set up ball tree range search.
-  typedef BinarySpaceTree<BallBound<>, RangeSearchStat> TreeType;
+  typedef BallTree<EuclideanDistance, RangeSearchStat, arma::mat> TreeType;
   TreeType tree(data);
   TreeType queryTree(queries);
-  RangeSearch<metric::EuclideanDistance, TreeType> ballsearch(&tree);
+  RangeSearch<EuclideanDistance, arma::mat, BallTree> ballsearch(&tree);
 
   // Four trials with different ranges.
   for (size_t r = 0; r < 4; ++r)

@@ -41,8 +41,8 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
   data[9] = 0.90;
   data[10] = 1.00;
 
-  typedef BinarySpaceTree<HRectBound<2>,
-      NeighborSearchStat<FurthestNeighborSort> > TreeType;
+  typedef BinarySpaceTree<EuclideanDistance,
+      NeighborSearchStat<FurthestNeighborSort>, arma::mat> TreeType;
 
   // We will loop through three times, one for each method of performing the
   // calculation.  We'll always use 10 neighbors, so set that parameter.
@@ -439,12 +439,10 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
   data.randu(75, 1000); // 75 dimensional, 1000 points.
 
   // This depends on the cover tree not mapping points.
-  CoverTree<LMetric<2>, FirstPointIsRoot,
-      NeighborSearchStat<FurthestNeighborSort> > tree = CoverTree<LMetric<2>,
-      FirstPointIsRoot, NeighborSearchStat<FurthestNeighborSort> >(data);
+  CoverTree<LMetric<2>, NeighborSearchStat<FurthestNeighborSort>, arma::mat,
+      FirstPointIsRoot> tree(data);
 
-  NeighborSearch<FurthestNeighborSort, LMetric<2>, CoverTree<LMetric<2>,
-      FirstPointIsRoot, NeighborSearchStat<FurthestNeighborSort> > >
+  NeighborSearch<FurthestNeighborSort, LMetric<2>, arma::mat, StandardCoverTree>
       coverTreeSearch(&tree, true);
 
   AllkFN naive(data, true);
@@ -479,13 +477,13 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
   arma::mat kdDistances;
   tree.Search(dataset, 5, kdNeighbors, kdDistances);
 
-  typedef CoverTree<LMetric<2, true>, FirstPointIsRoot,
-      NeighborSearchStat<FurthestNeighborSort> > TreeType;
+  typedef CoverTree<LMetric<2, true>, NeighborSearchStat<FurthestNeighborSort>,
+      arma::mat, FirstPointIsRoot> TreeType;
 
   TreeType referenceTree = TreeType(dataset);
 
-  NeighborSearch<FurthestNeighborSort, LMetric<2, true>,
-      TreeType> coverTreeSearch(&referenceTree);
+  NeighborSearch<FurthestNeighborSort, LMetric<2, true>, arma::mat,
+      StandardCoverTree> coverTreeSearch(&referenceTree);
 
   arma::Mat<size_t> coverNeighbors;
   arma::mat coverDistances;
@@ -509,15 +507,14 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
   arma::mat data;
   data.randu(75, 1000); // 75 dimensional, 1000 points.
 
-  typedef BinarySpaceTree<BallBound<arma::vec, LMetric<2, true> >,
-      NeighborSearchStat<FurthestNeighborSort> > TreeType;
-  TreeType tree = TreeType(data);
+  typedef BallTree<EuclideanDistance, NeighborSearchStat<FurthestNeighborSort>,
+      arma::mat> TreeType;
+  TreeType tree(data);
 
   // BinarySpaceTree modifies data. Use modified data to maintain the
   // correspondence between points in the dataset for both methods. The order of
   // query points in both methods should be same.
-
-  NeighborSearch<FurthestNeighborSort, LMetric<2>, TreeType>
+  NeighborSearch<FurthestNeighborSort, LMetric<2>, arma::mat, BallTree>
       ballTreeSearch(&tree, true);
 
   AllkFN naive(tree.Dataset(), true);
@@ -552,9 +549,7 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
   arma::mat kdDistances;
   tree.Search(5, kdNeighbors, kdDistances);
 
-  NeighborSearch<FurthestNeighborSort, LMetric<2, true>,
-      BinarySpaceTree<BallBound<arma::vec, LMetric<2, true> >,
-      NeighborSearchStat<FurthestNeighborSort> > >
+  NeighborSearch<FurthestNeighborSort, LMetric<2, true>, arma::mat, BallTree>
       ballTreeSearch(dataset);
 
   arma::Mat<size_t> ballNeighbors;

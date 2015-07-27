@@ -535,13 +535,13 @@ BOOST_AUTO_TEST_CASE(MahalanobisBallBoundTest)
 
 BOOST_AUTO_TEST_CASE(HRectBoundTest)
 {
-  HRectBound<2> b(2);
+  HRectBound<> b(2);
 
   arma::mat points("0.0, 1.1; 5.0, 2.2");
   points = points.t();
   b |= points; // [0.0, 5.0]; [1.1, 2.2];
   
-  HRectBound<2> xmlB, textB, binaryB;
+  HRectBound<> xmlB, textB, binaryB;
 
   SerializeObjectAll(b, xmlB, textB, binaryB);
 
@@ -655,11 +655,12 @@ BOOST_AUTO_TEST_CASE(BinarySpaceTreeTest)
 {
   arma::mat data;
   data.randu(3, 100);
-  BinarySpaceTree<HRectBound<2>> tree(data);
+  typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  TreeType tree(data);
 
-  BinarySpaceTree<HRectBound<2>>* xmlTree;
-  BinarySpaceTree<HRectBound<2>>* textTree;
-  BinarySpaceTree<HRectBound<2>>* binaryTree;
+  TreeType* xmlTree;
+  TreeType* textTree;
+  TreeType* binaryTree;
 
   SerializePointerObjectAll(&tree, xmlTree, textTree, binaryTree);
 
@@ -674,11 +675,12 @@ BOOST_AUTO_TEST_CASE(BinarySpaceTreeOverwriteTest)
 {
   arma::mat data;
   data.randu(3, 100);
-  BinarySpaceTree<HRectBound<2>> tree(data);
+  typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  TreeType tree(data);
 
-  BinarySpaceTree<HRectBound<2>> xmlTree(tree);
-  BinarySpaceTree<HRectBound<2>> textTree(tree);
-  BinarySpaceTree<HRectBound<2>> binaryTree(tree);
+  TreeType xmlTree(tree);
+  TreeType textTree(tree);
+  TreeType binaryTree(tree);
 
   SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
 

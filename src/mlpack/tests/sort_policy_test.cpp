@@ -17,6 +17,8 @@
 using namespace mlpack;
 using namespace mlpack::neighbor;
 using namespace mlpack::bound;
+using namespace mlpack::tree;
+using namespace mlpack::metric;
 
 BOOST_AUTO_TEST_SUITE(SortPolicyTest);
 
@@ -99,19 +101,18 @@ BOOST_AUTO_TEST_CASE(NnsNodeToNodeDistance)
   // Well, there's no easy way to make HRectBounds the way we want, so we have
   // to make them and then expand the region to include new points.
   arma::mat dataset("1");
-  tree::BinarySpaceTree<HRectBound<2>, tree::EmptyStatistic, arma::mat>
-      nodeOne(dataset);
+  typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  TreeType nodeOne(dataset);
   arma::vec utility(1);
   utility[0] = 0;
 
-  nodeOne.Bound() = HRectBound<2>(1);
+  nodeOne.Bound() = HRectBound<EuclideanDistance>(1);
   nodeOne.Bound() |= utility;
   utility[0] = 1;
   nodeOne.Bound() |= utility;
 
-  tree::BinarySpaceTree<HRectBound<2>, tree::EmptyStatistic, arma::mat>
-      nodeTwo(dataset);
-  nodeTwo.Bound() = HRectBound<2>(1);
+  TreeType nodeTwo(dataset);
+  nodeTwo.Bound() = HRectBound<EuclideanDistance>(1);
 
   utility[0] = 5;
   nodeTwo.Bound() |= utility;
@@ -156,8 +157,9 @@ BOOST_AUTO_TEST_CASE(NnsPointToNodeDistance)
   utility[0] = 0;
 
   arma::mat dataset("1");
-  tree::BinarySpaceTree<HRectBound<2> > node(dataset);
-  node.Bound() = HRectBound<2>(1);
+  typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  TreeType node(dataset);
+  node.Bound() = HRectBound<EuclideanDistance>(1);
   node.Bound() |= utility;
   utility[0] = 1;
   node.Bound() |= utility;
@@ -264,14 +266,15 @@ BOOST_AUTO_TEST_CASE(FnsNodeToNodeDistance)
   utility[0] = 0;
 
   arma::mat dataset("1");
-  tree::BinarySpaceTree<HRectBound<2> > nodeOne(dataset);
-  nodeOne.Bound() = HRectBound<2>(1);
+  typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  TreeType nodeOne(dataset);
+  nodeOne.Bound() = HRectBound<EuclideanDistance>(1);
   nodeOne.Bound() |= utility;
   utility[0] = 1;
   nodeOne.Bound() |= utility;
 
-  tree::BinarySpaceTree<HRectBound<2> > nodeTwo(dataset);
-  nodeTwo.Bound() = HRectBound<2>(1);
+  TreeType nodeTwo(dataset);
+  nodeTwo.Bound() = HRectBound<EuclideanDistance>(1);
   utility[0] = 5;
   nodeTwo.Bound() |= utility;
   utility[0] = 6;
@@ -315,8 +318,9 @@ BOOST_AUTO_TEST_CASE(FnsPointToNodeDistance)
   utility[0] = 0;
 
   arma::mat dataset("1");
-  tree::BinarySpaceTree<HRectBound<2> > node(dataset);
-  node.Bound() = HRectBound<2>(1);
+  typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  TreeType node(dataset);
+  node.Bound() = HRectBound<EuclideanDistance>(1);
   node.Bound() |= utility;
   utility[0] = 1;
   node.Bound() |= utility;

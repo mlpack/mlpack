@@ -165,8 +165,8 @@ BOOST_AUTO_TEST_CASE(DualTreeSearch)
   size_t expectedRankErrorUB = 10;
 
   // Build query tree by hand.
-  typedef tree::BinarySpaceTree<bound::HRectBound<2, false>,
-      RAQueryStat<NearestNeighborSort>> TreeType;
+  typedef KDTree<EuclideanDistance, RAQueryStat<NearestNeighborSort>,
+      arma::mat> TreeType;
   std::vector<size_t> oldFromNewQueries;
   TreeType queryTree(queryData, oldFromNewQueries);
 
@@ -279,10 +279,8 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  typedef tree::CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
-      RAQueryStat<NearestNeighborSort> > TreeType;
-  typedef RASearch<NearestNeighborSort, metric::EuclideanDistance, TreeType>
-      RACoverTreeSearch;
+  typedef RASearch<NearestNeighborSort, EuclideanDistance, arma::mat,
+      StandardCoverTree> RACoverTreeSearch;
 
   RACoverTreeSearch tssRann(refData, false, true, 1.0, 0.95, false, false, 5);
 
@@ -342,10 +340,10 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  typedef tree::CoverTree<metric::EuclideanDistance, tree::FirstPointIsRoot,
-      RAQueryStat<NearestNeighborSort> > TreeType;
-  typedef RASearch<NearestNeighborSort, metric::EuclideanDistance, TreeType>
-      RACoverTreeSearch;
+  typedef StandardCoverTree<EuclideanDistance, RAQueryStat<NearestNeighborSort>,
+      arma::mat> TreeType;
+  typedef RASearch<NearestNeighborSort, EuclideanDistance, arma::mat,
+      StandardCoverTree> RACoverTreeSearch;
 
   TreeType refTree(refData);
   TreeType queryTree(queryData);

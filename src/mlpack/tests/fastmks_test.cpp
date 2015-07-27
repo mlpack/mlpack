@@ -131,10 +131,7 @@ BOOST_AUTO_TEST_CASE(SparseFastMKSTest)
   arma::sp_mat dataset;
   dataset.sprandu(10, 100, 0.3);
 
-  typedef CoverTree<IPMetric<LinearKernel>, FirstPointIsRoot, FastMKSStat,
-      arma::sp_mat> SparseCoverTreeType;
-
-  FastMKS<LinearKernel, SparseCoverTreeType> sparsemks(dataset);
+  FastMKS<LinearKernel, arma::sp_mat> sparsemks(dataset);
 
   arma::mat denseset(dataset);
   FastMKS<LinearKernel> densemks(denseset);
@@ -168,9 +165,6 @@ BOOST_AUTO_TEST_CASE(SparsePolynomialFastMKSTest)
   dataset.sprandu(10, 100, 0.3);
   arma::mat denseset(dataset);
 
-  typedef CoverTree<IPMetric<PolynomialKernel>, FirstPointIsRoot, FastMKSStat,
-      arma::sp_mat> SparseCoverTreeType;
-
   PolynomialKernel pk(3);
 
   for (size_t i = 0; i < 100; ++i)
@@ -182,7 +176,7 @@ BOOST_AUTO_TEST_CASE(SparsePolynomialFastMKSTest)
                             pk.Evaluate(denseset.col(i), denseset.col(j)),
                             1e-5);
 
-  FastMKS<PolynomialKernel, SparseCoverTreeType> sparsepoly(dataset);
+  FastMKS<PolynomialKernel, arma::sp_mat> sparsepoly(dataset);
   FastMKS<PolynomialKernel> densepoly(denseset);
 
   // Store the results in these.

@@ -272,7 +272,7 @@ BOOST_AUTO_TEST_CASE(BinSpaceString)
 {
   arma::mat q(2, 50);
   q.randu();
-  BinarySpaceTree<HRectBound<1> > d(q);
+  KDTree<ManhattanDistance, EmptyStatistic, arma::mat> d(q);
   Log::Debug << d;
   testOstream << d;
   std::string s = d.ToString();
@@ -283,7 +283,7 @@ BOOST_AUTO_TEST_CASE(CoverTreeString)
 {
   arma::mat q(2, 50);
   q.randu();
-  mlpack::tree::CoverTree<> d(q);
+  StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat> d(q);
   Log::Debug << d;
   testOstream << d;
   std::string s = d.ToString();

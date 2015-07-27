@@ -27,26 +27,16 @@ BOOST_AUTO_TEST_SUITE(RectangleTreeTest);
 
 // Test the traits on RectangleTrees.
 
-BOOST_AUTO_TEST_CASE(RectangeTreeTraitsTest)
+BOOST_AUTO_TEST_CASE(RectangleTreeTraitsTest)
 {
   // Children may be overlapping.
-  bool b = TreeTraits<RectangleTree<
-      RTreeSplit<RTreeDescentHeuristic,
-                 NeighborSearchStat<NearestNeighborSort>,
-                 arma::mat>,
-      tree::RTreeDescentHeuristic,
-      NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> >::HasOverlappingChildren;
+  bool b = TreeTraits<RTree<EuclideanDistance, EmptyStatistic,
+      arma::mat>>::HasOverlappingChildren;
   BOOST_REQUIRE_EQUAL(b, true);
 
   // Points are not contained in multiple levels.
-  b = TreeTraits<RectangleTree<
-          RTreeSplit<RTreeDescentHeuristic,
-                     NeighborSearchStat<NearestNeighborSort>,
-                     arma::mat>,
-          RTreeDescentHeuristic,
-          NeighborSearchStat<NearestNeighborSort>,
-          arma::mat> >::HasSelfChildren;
+  b = TreeTraits<RTree<EuclideanDistance, EmptyStatistic,
+      arma::mat>>::HasSelfChildren;
   BOOST_REQUIRE_EQUAL(b, false);
 }
 
@@ -58,12 +48,7 @@ BOOST_AUTO_TEST_CASE(RectangleTreeConstructionCountTest)
   arma::mat dataset;
   dataset.randu(3, 1000); // 1000 points in 3 dimensions.
 
-  typedef RectangleTree<
-      RTreeSplit<RTreeDescentHeuristic,
-                 NeighborSearchStat<NearestNeighborSort>,
-                 arma::mat>,
-      RTreeDescentHeuristic,
-      NeighborSearchStat<NearestNeighborSort>,
+  typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
       arma::mat> TreeType;
 
   TreeType tree(dataset, 20, 6, 5, 2, 0);
@@ -111,12 +96,7 @@ BOOST_AUTO_TEST_CASE(RectangleTreeConstructionRepeatTest)
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
 
-  typedef RectangleTree<
-      RTreeSplit<RTreeDescentHeuristic,
-                 NeighborSearchStat<NearestNeighborSort>,
-                 arma::mat>,
-      RTreeDescentHeuristic,
-      NeighborSearchStat<NearestNeighborSort>,
+  typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
       arma::mat> TreeType;
 
   TreeType tree(dataset, 20, 6, 5, 2, 0);
@@ -234,12 +214,7 @@ BOOST_AUTO_TEST_CASE(RectangleTreeContainmentTest)
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
 
-  typedef RectangleTree<
-      RTreeSplit<RTreeDescentHeuristic,
-                 NeighborSearchStat<NearestNeighborSort>,
-                 arma::mat>,
-      RTreeDescentHeuristic,
-      NeighborSearchStat<NearestNeighborSort>,
+  typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
       arma::mat> TreeType;
 
   TreeType tree(dataset, 20, 6, 5, 2, 0);
@@ -279,13 +254,8 @@ BOOST_AUTO_TEST_CASE(TreeLocalDatasetInSync)
 {
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
-
-  typedef RectangleTree<
-      RTreeSplit<RTreeDescentHeuristic,
-                 NeighborSearchStat<NearestNeighborSort>,
-                 arma::mat>,
-      RTreeDescentHeuristic,
-      NeighborSearchStat<NearestNeighborSort>,
+  
+  typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
       arma::mat> TreeType;
 
   TreeType tree(dataset, 20, 6, 5, 2, 0);
@@ -329,12 +299,7 @@ BOOST_AUTO_TEST_CASE(CheckMinAndMaxFills)
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
 
-  typedef RectangleTree<
-      RTreeSplit<RTreeDescentHeuristic,
-                 NeighborSearchStat<NearestNeighborSort>,
-                 arma::mat>,
-      RTreeDescentHeuristic,
-      NeighborSearchStat<NearestNeighborSort>,
+  typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
       arma::mat> TreeType;
 
   TreeType tree(dataset, 20, 6, 5, 2, 0);
@@ -402,12 +367,7 @@ BOOST_AUTO_TEST_CASE(TreeBalance)
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
 
-  typedef RectangleTree<
-      RTreeSplit<RTreeDescentHeuristic,
-                 NeighborSearchStat<NearestNeighborSort>,
-                 arma::mat>,
-      RTreeDescentHeuristic,
-      NeighborSearchStat<NearestNeighborSort>,
+  typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
       arma::mat> TreeType;
 
   TreeType tree(dataset, 20, 6, 5, 2, 0);
@@ -430,12 +390,7 @@ BOOST_AUTO_TEST_CASE(PointDeletion)
 
   const int numIter = 50;
 
-  typedef RectangleTree<
-      RTreeSplit<RTreeDescentHeuristic,
-                 NeighborSearchStat<NearestNeighborSort>,
-                 arma::mat>,
-      RTreeDescentHeuristic,
-      NeighborSearchStat<NearestNeighborSort>,
+  typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
       arma::mat> TreeType;
   TreeType tree(dataset, 20, 6, 5, 2, 0);
 
@@ -470,8 +425,8 @@ BOOST_AUTO_TEST_CASE(PointDeletion)
   CheckExactContainment(tree);
 
   // Single-tree search.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, TreeType>
-      allknn1(&tree, true);
+  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
+      RTree> allknn1(&tree, true);
 
   arma::Mat<size_t> neighbors1;
   arma::mat distances1;
@@ -508,12 +463,7 @@ BOOST_AUTO_TEST_CASE(PointDynamicAdd)
   arma::mat dataset;
   dataset.randu(8, 1000); // 1000 points in 8 dimensions.
 
-  typedef RectangleTree<
-      RTreeSplit<RTreeDescentHeuristic,
-                 NeighborSearchStat<NearestNeighborSort>,
-                 arma::mat>,
-      RTreeDescentHeuristic,
-      NeighborSearchStat<NearestNeighborSort>,
+  typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
       arma::mat> TreeType;
   TreeType tree(dataset, 20, 6, 5, 2, 0);
 
@@ -561,8 +511,8 @@ BOOST_AUTO_TEST_CASE(PointDynamicAdd)
   arma::mat distances2;
 
   // Nearest neighbor search with the R tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, TreeType>
-      allknn1(&tree, true);
+  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
+      RTree> allknn1(&tree, true);
 
   allknn1.Search(5, neighbors1, distances1);
 
@@ -589,18 +539,13 @@ BOOST_AUTO_TEST_CASE(SingleTreeTraverserTest)
   arma::Mat<size_t> neighbors2;
   arma::mat distances2;
 
-  typedef RectangleTree<
-      RStarTreeSplit<RStarTreeDescentHeuristic,
-                     NeighborSearchStat<NearestNeighborSort>,
-                     arma::mat>,
-      RStarTreeDescentHeuristic,
-      NeighborSearchStat<NearestNeighborSort>,
+  typedef RStarTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
       arma::mat> TreeType;
   TreeType rTree(dataset, 20, 6, 5, 2, 0);
 
   // Nearest neighbor search with the R tree.
-  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, TreeType>
-      allknn1(&rTree, true);
+  NeighborSearch<NearestNeighborSort, metric::LMetric<2, true>, arma::mat,
+      RStarTree> allknn1(&rTree, true);
 
   BOOST_REQUIRE_EQUAL(rTree.NumDescendants(), 1000);
 
@@ -689,12 +634,7 @@ BOOST_AUTO_TEST_CASE(RTreeSplitTest)
                                          "0.1 0.5;"
                                          "0.3 0.7;"));
 
-  typedef RectangleTree<
-      RTreeSplit<RTreeDescentHeuristic,
-                 NeighborSearchStat<NearestNeighborSort>,
-                 arma::mat>,
-      RTreeDescentHeuristic,
-      NeighborSearchStat<NearestNeighborSort>,
+  typedef RTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
       arma::mat> TreeType;
   TreeType rTree(data, 5, 2, 2, 1, 0);
 
@@ -795,13 +735,8 @@ BOOST_AUTO_TEST_CASE(RStarTreeSplitTest)
                                          "0.1 0.5;"
                                          "0.3 0.7;"));
 
-  typedef RectangleTree<
-      RStarTreeSplit<RStarTreeDescentHeuristic,
-                     NeighborSearchStat<NearestNeighborSort>,
-                     arma::mat>,
-      RStarTreeDescentHeuristic,
-      NeighborSearchStat<NearestNeighborSort>,
-      arma::mat> TreeType;
+  typedef RStarTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
+    arma::mat> TreeType;
 
   TreeType rTree(data, 5, 2, 2, 1, 0);
 

@@ -184,8 +184,8 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSyntheticTest)
   data[9] = 0.90;
   data[10] = 1.00;
 
-  typedef BinarySpaceTree<HRectBound<2>,
-      NeighborSearchStat<NearestNeighborSort> > TreeType;
+  typedef KDTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
+      arma::mat> TreeType;
 
   // We will loop through three times, one for each method of performing the
   // calculation.
@@ -583,12 +583,10 @@ BOOST_AUTO_TEST_CASE(SingleCoverTreeTest)
   arma::mat data;
   data.randu(75, 1000); // 75 dimensional, 1000 points.
 
-  CoverTree<LMetric<2>, FirstPointIsRoot,
-      NeighborSearchStat<NearestNeighborSort> > tree = CoverTree<LMetric<2>,
-      FirstPointIsRoot, NeighborSearchStat<NearestNeighborSort> >(data);
+  StandardCoverTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
+      arma::mat> tree(data);
 
-  NeighborSearch<NearestNeighborSort, LMetric<2>, CoverTree<LMetric<2>,
-      FirstPointIsRoot, NeighborSearchStat<NearestNeighborSort> > >
+  NeighborSearch<NearestNeighborSort, LMetric<2>, arma::mat, StandardCoverTree>
       coverTreeSearch(&tree, true);
 
   AllkNN naive(data, true);
@@ -623,15 +621,11 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
   arma::mat kdDistances;
   tree.Search(dataset, 5, kdNeighbors, kdDistances);
 
-  CoverTree<LMetric<2, true>, FirstPointIsRoot,
-      NeighborSearchStat<NearestNeighborSort> > referenceTree = CoverTree<
-      LMetric<2, true>, FirstPointIsRoot,
-      NeighborSearchStat<NearestNeighborSort> >(dataset);
+  StandardCoverTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
+      arma::mat> referenceTree(dataset);
 
-  NeighborSearch<NearestNeighborSort, LMetric<2, true>,
-      CoverTree<LMetric<2, true>, FirstPointIsRoot,
-      NeighborSearchStat<NearestNeighborSort> > >
-      coverTreeSearch(&referenceTree);
+  NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat,
+      StandardCoverTree> coverTreeSearch(&referenceTree);
 
   arma::Mat<size_t> coverNeighbors;
   arma::mat coverDistances;
@@ -655,15 +649,15 @@ BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
   arma::mat data;
   data.randu(75, 1000); // 75 dimensional, 1000 points.
 
-  typedef BinarySpaceTree<BallBound<arma::vec, LMetric<2, true> >,
-      NeighborSearchStat<NearestNeighborSort> > TreeType;
-  TreeType tree = TreeType(data);
+  typedef BallTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
+      arma::mat> TreeType;
+  TreeType tree(data);
 
   // BinarySpaceTree modifies data. Use modified data to maintain the
   // correspondance between points in the dataset for both methods. The order of
   // query points in both methods should be same.
 
-  NeighborSearch<NearestNeighborSort, LMetric<2>, TreeType>
+  NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat, BallTree>
       ballTreeSearch(&tree, true);
 
   AllkNN naive(tree.Dataset(), true);
@@ -698,9 +692,7 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
   arma::mat kdDistances;
   tree.Search(5, kdNeighbors, kdDistances);
 
-  NeighborSearch<NearestNeighborSort, LMetric<2, true>,
-      BinarySpaceTree<BallBound<arma::vec, LMetric<2, true> >,
-      NeighborSearchStat<NearestNeighborSort> > >
+  NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::mat, BallTree>
       ballTreeSearch(dataset);
 
   arma::Mat<size_t> ballNeighbors;
@@ -717,9 +709,6 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest)
 // Make sure sparse nearest neighbors works with kd trees.
 BOOST_AUTO_TEST_CASE(SparseAllkNNKDTreeTest)
 {
-  typedef BinarySpaceTree<HRectBound<2>,
-      NeighborSearchStat<NearestNeighborSort>, arma::sp_mat> SparseKDTree;
-
   // The dimensionality of these datasets must be high so that the probability
   // of a completely empty point is very low.  In this case, with dimensionality
   // 70, the probability of all 70 dimensions being zero is 0.8^70 = 1.65e-7 in
@@ -731,8 +720,8 @@ BOOST_AUTO_TEST_CASE(SparseAllkNNKDTreeTest)
   arma::mat denseQuery(queryDataset);
   arma::mat denseReference(referenceDataset);
 
-  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, SparseKDTree>
-      SparseAllkNN;
+  typedef NeighborSearch<NearestNeighborSort, EuclideanDistance, arma::sp_mat,
+      KDTree> SparseAllkNN;
 
   SparseAllkNN a(referenceDataset);
   AllkNN naive(denseReference, true);
