@@ -138,6 +138,54 @@ class BinarySpaceTree
                   const size_t maxLeafSize = 20);
 
   /**
+   * Construct this as the root node of a binary space tree using the given
+   * dataset.  This will take ownership of the data matrix; if you don't want
+   * this, consider using the constructor that takes a const reference to a
+   * dataset.
+   *
+   * @param data Dataset to create tree from.
+   * @param maxLeafSize Size of each leaf in the tree.
+   */
+  BinarySpaceTree(MatType&& data,
+                  const size_t maxLeafSize = 20);
+
+  /**
+   * Construct this as the root node of a binary space tree using the given
+   * dataset.  This will take ownership of the data matrix; a mapping of the
+   * old point indices to the new point indices is filled.  If you don't want
+   * the matrix to have its ownership taken, consider using the constructor that
+   * takes a const reference to a dataset.
+   *
+   * @param data Dataset to create tree from.
+   * @param oldFromNew Vector which will be filled with the old positions for
+   *     each new point.
+   * @param maxLeafSize Size of each leaf in the tree.
+   */
+  BinarySpaceTree(MatType&& data,
+                  std::vector<size_t>& oldFromNew,
+                  const size_t maxLeafSize = 20);
+
+  /**
+   * Construct this as the root node of a binary space tree using the given
+   * dataset.  This will take ownership of the data matrix; a mapping of the old
+   * point indices to the new point indices is filled, as well as a mapping of
+   * the new point indices to the old point indices.  If you don't want the
+   * matrix to have its ownership taken, consider using the constructor that
+   * takes a const reference to a dataset.
+   *
+   * @param data Dataset to create tree from.
+   * @param oldFromNew Vector which will be filled with the old positions for
+   *     each new point.
+   * @param newFromOld Vector which will be filled with the new positions for
+   *     each old point.
+   * @param maxLeafSize Size of each leaf in the tree.
+   */
+  BinarySpaceTree(MatType&& data,
+                  std::vector<size_t>& oldFromNew,
+                  std::vector<size_t>& newFromOld,
+                  const size_t maxLeafSize = 20);
+
+  /**
    * Construct this node as a child of the given parent, starting at column
    * begin and using count points.  The ordering of that subset of points in the
    * parent's data matrix will be modified!  This is used for recursive

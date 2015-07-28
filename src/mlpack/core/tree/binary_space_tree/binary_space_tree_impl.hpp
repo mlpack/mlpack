@@ -121,6 +121,88 @@ template<typename MetricType,
          template<typename BoundMetricType> class BoundType,
          template<typename BoundType, typename MatType> class SplitType>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+BinarySpaceTree(MatType&& data, const size_t maxLeafSize) :
+    left(NULL),
+    right(NULL),
+    parent(NULL),
+    begin(0),
+    count(data.n_cols),
+    bound(data.n_rows),
+    parentDistance(0), // Parent distance for the root is 0: it has no parent.
+    dataset(std::move(data))
+{
+  // Do the actual splitting of this node.
+  SplitType<BoundType<MetricType>, MatType> splitter;
+  SplitNode(maxLeafSize, splitter);
+
+  // Create the statistic depending on if we are a leaf or not.
+  stat = StatisticType(*this);
+}
+
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType> class BoundType,
+         template<typename BoundType, typename MatType> class SplitType>
+BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+BinarySpaceTree(
+    MatType&& data,
+    std::vector<size_t>& oldFromNew,
+    const size_t maxLeafSize) :
+    left(NULL),
+    right(NULL),
+    parent(NULL),
+    begin(0),
+    count(data.n_cols),
+    bound(data.n_rows),
+    parentDistance(0), // Parent distance for the root is 0: it has no parent.
+    dataset(std::move(data))
+{
+  // Initialize oldFromNew correctly.
+  oldFromNew.resize(data.n_cols);
+  for (size_t i = 0; i < data.n_cols; i++)
+    oldFromNew[i] = i; // Fill with unharmed indices.
+
+  // Now do the actual splitting.
+  SplitType<BoundType<MetricType>, MatType> splitter;
+  SplitNode(oldFromNew, maxLeafSize, splitter);
+
+  // Create the statistic depending on if we are a leaf or not.
+  stat = StatisticType(*this);
+}
+
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType> class BoundType,
+         template<typename BoundType, typename MatType> class SplitType>
+BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+BinarySpaceTree(
+    MatType&& data,
+    std::vector<size_t>& oldFromNew,
+    std::vector<size_t>& newFromOld,
+    const size_t maxLeafSize) :
+    left(NULL),
+    right(NULL),
+    parent(NULL),
+    begin(0),
+    count(data.n_cols),
+    bound(data.n_rows),
+    parentDistance(0), // Parent distance for the root is 0: it has no parent.
+    dataset(std::move(data))
+{
+  // Map the newFromOld indices correctly.
+  newFromOld.resize(data.n_cols);
+  for (size_t i = 0; i < data.n_cols; i++)
+    newFromOld[oldFromNew[i]] = i;
+}
+
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType> class BoundType,
+         template<typename BoundType, typename MatType> class SplitType>
+BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 BinarySpaceTree(
     BinarySpaceTree* parent,
     const size_t begin,
