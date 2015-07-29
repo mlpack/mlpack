@@ -21,14 +21,7 @@ namespace ann /** Artificial Neural Network. */ {
  * A convenience typedef is given:
  *
  *  - ClassificationLayer
- *
- * @tparam MatType Type of data (arma::mat or arma::sp_mat).
- * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
  */
-template <
-    typename MatType = arma::mat,
-    typename VecType = arma::colvec
->
 class MulticlassClassificationLayer
 {
  public:
@@ -49,9 +42,10 @@ class MulticlassClassificationLayer
    * @param error The calculated error with respect to the input activation and
    * the given target.
    */
-  void CalculateError(const VecType& inputActivations,
-                      const VecType& target,
-                      VecType& error)
+  template<typename DataType>
+  void CalculateError(const DataType& inputActivations,
+                      const DataType& target,
+                      DataType& error)
   {
     error = inputActivations - target;
   }
@@ -62,18 +56,16 @@ class MulticlassClassificationLayer
    * @param inputActivations Input data used to calculate the output class.
    * @param output Output class of the input activation.
    */
-  void OutputClass(const VecType& inputActivations, VecType& output)
+  template<typename DataType>
+  void OutputClass(const DataType& inputActivations, DataType& output)
   {
     output = inputActivations;
   }
 }; // class MulticlassClassificationLayer
 
 //! Layer traits for the multiclass classification layer.
-template <
-    typename MatType,
-    typename VecType
->
-class LayerTraits<MulticlassClassificationLayer<MatType, VecType> >
+template <>
+class LayerTraits<MulticlassClassificationLayer>
 {
  public:
   static const bool IsBinary = false;
@@ -82,14 +74,9 @@ class LayerTraits<MulticlassClassificationLayer<MatType, VecType> >
 };
 
 /***
- * Standard Input-Layer using the tanh activation function and the
- * Nguyen-Widrow method to initialize the weights.
+ * Alias ClassificationLayer.
  */
-template <
-    typename MatType = arma::mat,
-    typename VecType = arma::colvec
->
-using ClassificationLayer = MulticlassClassificationLayer<MatType, VecType>;
+using ClassificationLayer = MulticlassClassificationLayer;
 
 }; // namespace ann
 }; // namespace mlpack
