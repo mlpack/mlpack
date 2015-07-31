@@ -54,7 +54,8 @@ class AdaDelta
           const double eps = 1e-6) :
       function(function),
       rho(rho),
-      eps(eps)
+      eps(eps),
+      iteration(0)
   {
     // Nothing to do here.
   }
@@ -72,6 +73,9 @@ class AdaDelta
       meanSquaredGradientDx = meanSquaredGradient;
     }
 
+    if (iteration > 1)
+      gradient /= iteration;
+
     Optimize(function.Weights(), gradient, meanSquaredGradient,
         meanSquaredGradientDx);
   }
@@ -81,6 +85,8 @@ class AdaDelta
    */
   void Update()
   {
+    iteration++;
+
     if (gradient.n_elem != 0)
     {
       DataType outputGradient;
@@ -98,8 +104,14 @@ class AdaDelta
    */
   void Reset()
   {
+    iteration = 0;
     gradient.zeros();
   }
+
+  //! Get the gradient.
+  DataType& Gradient() const { return gradient; }
+  //! Modify the gradient.
+  DataType& Gradient() { return gradient; }
 
  private:
   /**
@@ -168,6 +180,9 @@ class AdaDelta
 
   //! The current mean squared gradient Dx
   DataType meanSquaredGradientDx;
+
+  //! The locally stored number of iterations.
+  size_t iteration;
 }; // class AdaDelta
 
 }; // namespace ann
