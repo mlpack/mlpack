@@ -805,6 +805,22 @@ handle memory management!
 
 @section treetype_more A list of trees in mlpack and more information
 
+mlpack contains several ready-to-use implementations of trees that satisfy the
+TreeType policy API:
 
+ - mlpack::tree::KDTree
+ - mlpack::tree::MeanSplitKDTree
+ - mlpack::tree::BallTree
+ - mlpack::tree::MeanSplitBallTree
+ - mlpack::tree::RTree
+ - mlpack::tree::RStarTree
+ - mlpack::tree::StandardCoverTree
+
+Often, these are template typedefs of more flexible tree classes:
+
+ - mlpack::tree::BinarySpaceTree -- binary trees, such as the KD-tree and ball
+   tree
+ - mlpack::tree::RectangleTree -- the R tree and variants
+ - mlpack::tree::CoverTree -- the cover tree and variants
 
 */
