@@ -55,13 +55,13 @@ BOOST_AUTO_TEST_CASE(BiasLayerTraitsTest)
 // Test the MulticlassClassificationLayer traits.
 BOOST_AUTO_TEST_CASE(MulticlassClassificationLayerTraitsTest)
 {
-  bool b = LayerTraits<MulticlassClassificationLayer<> >::IsBinary;
+  bool b = LayerTraits<MulticlassClassificationLayer>::IsBinary;
   BOOST_REQUIRE_EQUAL(b, false);
 
-  b = LayerTraits<MulticlassClassificationLayer<> >::IsOutputLayer;
+  b = LayerTraits<MulticlassClassificationLayer>::IsOutputLayer;
   BOOST_REQUIRE_EQUAL(b, true);
 
-  b = LayerTraits<MulticlassClassificationLayer<> >::IsBiasLayer;
+  b = LayerTraits<MulticlassClassificationLayer>::IsBiasLayer;
   BOOST_REQUIRE_EQUAL(b, false);
 }
 
