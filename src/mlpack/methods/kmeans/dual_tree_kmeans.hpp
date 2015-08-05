@@ -29,7 +29,7 @@ namespace kmeans {
 template<
     typename MetricType,
     typename MatType,
-    template<typename MetricType, typename StatisticType, typename MatType>
+    template<typename TMetricType, typename StatisticType, typename TMatType>
         class TreeType = tree::KDTree>
 class DualTreeKMeans
 {

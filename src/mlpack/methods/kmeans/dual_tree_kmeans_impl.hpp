@@ -46,7 +46,7 @@ TreeType* BuildTree(
 
 template<typename MetricType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 DualTreeKMeans<MetricType, MatType, TreeType>::DualTreeKMeans(
     const MatType& dataset,
@@ -75,7 +75,7 @@ DualTreeKMeans<MetricType, MatType, TreeType>::DualTreeKMeans(
 
 template<typename MetricType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 DualTreeKMeans<MetricType, MatType, TreeType>::~DualTreeKMeans()
 {
@@ -86,7 +86,7 @@ DualTreeKMeans<MetricType, MatType, TreeType>::~DualTreeKMeans()
 // Run a single iteration.
 template<typename MetricType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
     const arma::mat& centroids,
@@ -206,7 +206,7 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
 
 template<typename MetricType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 void DualTreeKMeans<MetricType, MatType, TreeType>::UpdateTree(
     Tree& node,
@@ -470,7 +470,7 @@ visited[node.Descendant(i)] << ".\n";
 
 template<typename MetricType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 void DualTreeKMeans<MetricType, MatType, TreeType>::ExtractCentroids(
     Tree& node,
@@ -562,7 +562,7 @@ assignments[node.Point(i)] << " with ub " << upperBounds[node.Point(i)] <<
 
 template<typename MetricType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 void DualTreeKMeans<MetricType, MatType, TreeType>::CoalesceTree(
     Tree& node,
@@ -610,7 +610,7 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::CoalesceTree(
 
 template<typename MetricType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 void DualTreeKMeans<MetricType, MatType, TreeType>::DecoalesceTree(Tree& node)
 {

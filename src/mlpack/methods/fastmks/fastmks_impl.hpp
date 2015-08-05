@@ -21,7 +21,7 @@ namespace fastmks {
 // No instantiated kernel.
 template<typename KernelType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 FastMKS<KernelType, MatType, TreeType>::FastMKS(
     const MatType& referenceSet,
@@ -44,7 +44,7 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(
 // Instantiated kernel.
 template<typename KernelType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 FastMKS<KernelType, MatType, TreeType>::FastMKS(const MatType& referenceSet,
                                                 KernelType& kernel,
@@ -69,7 +69,7 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(const MatType& referenceSet,
 // One dataset, pre-built tree.
 template<typename KernelType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 FastMKS<KernelType, MatType, TreeType>::FastMKS(Tree* referenceTree,
                                                 const bool singleMode) :
@@ -85,7 +85,7 @@ FastMKS<KernelType, MatType, TreeType>::FastMKS(Tree* referenceTree,
 
 template<typename KernelType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 FastMKS<KernelType, MatType, TreeType>::~FastMKS()
 {
@@ -96,7 +96,7 @@ FastMKS<KernelType, MatType, TreeType>::~FastMKS()
 
 template<typename KernelType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 void FastMKS<KernelType, MatType, TreeType>::Search(
     const MatType& querySet,
@@ -175,7 +175,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
 
 template<typename KernelType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 void FastMKS<KernelType, MatType, TreeType>::Search(
     Tree* queryTree,
@@ -212,7 +212,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
 
 template<typename KernelType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 void FastMKS<KernelType, MatType, TreeType>::Search(
     const size_t k,
@@ -297,7 +297,7 @@ void FastMKS<KernelType, MatType, TreeType>::Search(
  */
 template<typename KernelType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 void FastMKS<KernelType, MatType, TreeType>::InsertNeighbor(
     arma::Mat<size_t>& indices,
@@ -327,7 +327,7 @@ void FastMKS<KernelType, MatType, TreeType>::InsertNeighbor(
 // Return string of object.
 template<typename KernelType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 std::string FastMKS<KernelType, MatType, TreeType>::ToString() const
 {
