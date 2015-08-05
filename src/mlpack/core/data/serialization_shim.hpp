@@ -53,13 +53,13 @@ struct HasSerialize
 };
 
 // Declare the shims we need.
-template<typename T> class FirstShim;
-template<typename T> class FirstArrayShim;
-template<typename T> class FirstNormalArrayShim;
-template<typename T> class SecondShim;
-template<typename T> class SecondArrayShim;
-template<typename T> class SecondNormalArrayShim;
-template<typename T> class PointerShim;
+template<typename T> struct FirstShim;
+template<typename T> struct FirstArrayShim;
+template<typename T> struct FirstNormalArrayShim;
+template<typename T> struct SecondShim;
+template<typename T> struct SecondArrayShim;
+template<typename T> struct SecondNormalArrayShim;
+template<typename T> struct PointerShim;
 
 /**
  * Call this function to produce a name-value pair; this is similar to
