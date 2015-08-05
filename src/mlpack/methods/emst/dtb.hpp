@@ -71,7 +71,7 @@ namespace emst /** Euclidean Minimum Spanning Trees. */ {
 template<
     typename MetricType = metric::EuclideanDistance,
     typename MatType = arma::mat,
-    template<typename MetricType, typename StatisticType, typename MatType>
+    template<typename TMetricType, typename StatisticType, typename TMatType>
         class TreeType = tree::KDTree
 >
 class DualTreeBoruvka

@@ -43,7 +43,7 @@ TreeType* BuildTree(
 template<
     typename MetricType,
     typename MatType,
-    template<typename MetricType, typename StatisticType, typename MatType>
+    template<typename TMetricType, typename StatisticType, typename TMatType>
         class TreeType>
 DualTreeBoruvka<MetricType, MatType, TreeType>::DualTreeBoruvka(
     const MatType& dataset,
@@ -69,7 +69,7 @@ DualTreeBoruvka<MetricType, MatType, TreeType>::DualTreeBoruvka(
 template<
     typename MetricType,
     typename MatType,
-    template<typename MetricType, typename StatisticType, typename MatType>
+    template<typename TMetricType, typename StatisticType, typename TMatType>
         class TreeType>
 DualTreeBoruvka<MetricType, MatType, TreeType>::DualTreeBoruvka(
     Tree* tree,
@@ -93,7 +93,7 @@ DualTreeBoruvka<MetricType, MatType, TreeType>::DualTreeBoruvka(
 template<
     typename MetricType,
     typename MatType,
-    template<typename MetricType, typename StatisticType, typename MatType>
+    template<typename TMetricType, typename StatisticType, typename TMatType>
         class TreeType>
 DualTreeBoruvka<MetricType, MatType, TreeType>::~DualTreeBoruvka()
 {
@@ -108,7 +108,7 @@ DualTreeBoruvka<MetricType, MatType, TreeType>::~DualTreeBoruvka()
 template<
     typename MetricType,
     typename MatType,
-    template<typename MetricType, typename StatisticType, typename MatType>
+    template<typename TMetricType, typename StatisticType, typename TMatType>
         class TreeType>
 void DualTreeBoruvka<MetricType, MatType, TreeType>::ComputeMST(
     arma::mat& results)
@@ -161,7 +161,7 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::ComputeMST(
 template<
     typename MetricType,
     typename MatType,
-    template<typename MetricType, typename StatisticType, typename MatType>
+    template<typename TMetricType, typename StatisticType, typename TMatType>
         class TreeType>
 void DualTreeBoruvka<MetricType, MatType, TreeType>::AddEdge(
     const size_t e1,
@@ -183,7 +183,7 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::AddEdge(
 template<
     typename MetricType,
     typename MatType,
-    template<typename MetricType, typename StatisticType, typename MatType>
+    template<typename TMetricType, typename StatisticType, typename TMatType>
         class TreeType>
 void DualTreeBoruvka<MetricType, MatType, TreeType>::AddAllEdges()
 {
@@ -209,7 +209,7 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::AddAllEdges()
 template<
     typename MetricType,
     typename MatType,
-    template<typename MetricType, typename StatisticType, typename MatType>
+    template<typename TMetricType, typename StatisticType, typename TMatType>
         class TreeType>
 void DualTreeBoruvka<MetricType, MatType, TreeType>::EmitResults(
     arma::mat& results)
@@ -264,7 +264,7 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::EmitResults(
 template<
     typename MetricType,
     typename MatType,
-    template<typename MetricType, typename StatisticType, typename MatType>
+    template<typename TMetricType, typename StatisticType, typename TMatType>
         class TreeType>
 void DualTreeBoruvka<MetricType, MatType, TreeType>::CleanupHelper(Tree* tree)
 {
@@ -303,7 +303,7 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::CleanupHelper(Tree* tree)
 template<
     typename MetricType,
     typename MatType,
-    template<typename MetricType, typename StatisticType, typename MatType>
+    template<typename TMetricType, typename StatisticType, typename TMatType>
         class TreeType>
 void DualTreeBoruvka<MetricType, MatType, TreeType>::Cleanup()
 {
@@ -318,7 +318,7 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::Cleanup()
 template<
     typename MetricType,
     typename MatType,
-    template<typename MetricType, typename StatisticType, typename MatType>
+    template<typename TMetricType, typename StatisticType, typename TMatType>
         class TreeType>
 std::string DualTreeBoruvka<MetricType, MatType, TreeType>::ToString() const
 {

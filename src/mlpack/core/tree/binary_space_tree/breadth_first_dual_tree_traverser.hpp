@@ -32,7 +32,7 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType> class BoundType,
-         template<typename BoundType, typename MatType> class SplitType>
+         template<typename TBoundType, typename TMatType> class SplitType>
 template<typename RuleType>
 class BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
                       SplitType>::BreadthFirstDualTreeTraverser

@@ -41,7 +41,7 @@ TreeType* BuildTree(
 
 template<typename MetricType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
     const MatType& referenceSetIn,
@@ -61,7 +61,7 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
 
 template<typename MetricType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
     Tree* referenceTree,
@@ -79,7 +79,7 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
 
 template<typename MetricType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 RangeSearch<MetricType, MatType, TreeType>::~RangeSearch()
 {
@@ -89,7 +89,7 @@ RangeSearch<MetricType, MatType, TreeType>::~RangeSearch()
 
 template<typename MetricType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 void RangeSearch<MetricType, MatType, TreeType>::Search(
     const MatType& querySet,
@@ -245,7 +245,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
 
 template<typename MetricType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 void RangeSearch<MetricType, MatType, TreeType>::Search(
     Tree* queryTree,
@@ -308,7 +308,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
 
 template<typename MetricType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 void RangeSearch<MetricType, MatType, TreeType>::Search(
     const math::Range& range,
@@ -395,7 +395,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
 
 template<typename MetricType,
          typename MatType,
-         template<typename MetricType, typename StatisticType, typename MatType>
+         template<typename TMetricType, typename StatisticType, typename TMatType>
              class TreeType>
 std::string RangeSearch<MetricType, MatType, TreeType>::ToString() const
 {
