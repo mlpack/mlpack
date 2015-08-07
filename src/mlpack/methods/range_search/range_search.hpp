@@ -28,8 +28,9 @@ namespace range /** Range-search routines. */ {
  */
 template<typename MetricType = metric::EuclideanDistance,
          typename MatType = arma::mat,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType = tree::KDTree>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType = tree::KDTree>
 class RangeSearch
 {
  public:

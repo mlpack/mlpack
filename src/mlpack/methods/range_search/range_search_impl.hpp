@@ -41,8 +41,9 @@ TreeType* BuildTree(
 
 template<typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
     const MatType& referenceSetIn,
     const bool naive,
@@ -61,8 +62,9 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
 
 template<typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
     Tree* referenceTree,
     const bool singleMode,
@@ -79,8 +81,9 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
 
 template<typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 RangeSearch<MetricType, MatType, TreeType>::~RangeSearch()
 {
   if (treeOwner && referenceTree)
@@ -89,8 +92,9 @@ RangeSearch<MetricType, MatType, TreeType>::~RangeSearch()
 
 template<typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 void RangeSearch<MetricType, MatType, TreeType>::Search(
     const MatType& querySet,
     const math::Range& range,
@@ -245,8 +249,9 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
 
 template<typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 void RangeSearch<MetricType, MatType, TreeType>::Search(
     Tree* queryTree,
     const math::Range& range,
@@ -308,8 +313,9 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
 
 template<typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 void RangeSearch<MetricType, MatType, TreeType>::Search(
     const math::Range& range,
     std::vector<std::vector<size_t>>& neighbors,
@@ -395,8 +401,9 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
 
 template<typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 std::string RangeSearch<MetricType, MatType, TreeType>::ToString() const
 {
   std::ostringstream convert;

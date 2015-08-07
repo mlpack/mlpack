@@ -56,8 +56,9 @@ namespace neighbor {
 template<typename SortPolicy = NearestNeighborSort,
          typename MetricType = metric::EuclideanDistance,
          typename MatType = arma::mat,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType = tree::KDTree>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType = tree::KDTree>
 class RASearch
 {
  public:

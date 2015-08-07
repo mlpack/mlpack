@@ -47,8 +47,9 @@ TreeType* BuildTree(
 template<typename SortPolicy,
          typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 RASearch<SortPolicy, MetricType, MatType, TreeType>::
 RASearch(const MatType& referenceSetIn,
          const bool naive,
@@ -79,8 +80,9 @@ RASearch(const MatType& referenceSetIn,
 template<typename SortPolicy,
          typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 RASearch<SortPolicy, MetricType, MatType, TreeType>::
 RASearch(Tree* referenceTree,
          const bool singleMode,
@@ -111,8 +113,9 @@ RASearch(Tree* referenceTree,
 template<typename SortPolicy,
          typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 RASearch<SortPolicy, MetricType, MatType, TreeType>::
 ~RASearch()
 {
@@ -127,8 +130,9 @@ RASearch<SortPolicy, MetricType, MatType, TreeType>::
 template<typename SortPolicy,
          typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 void RASearch<SortPolicy, MetricType, MatType, TreeType>::
 Search(const MatType& querySet,
        const size_t k,
@@ -304,8 +308,9 @@ Search(const MatType& querySet,
 template<typename SortPolicy,
          typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
     Tree* queryTree,
     const size_t k,
@@ -364,8 +369,9 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
 template<typename SortPolicy,
          typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
     const size_t k,
     arma::Mat<size_t>& neighbors,
@@ -455,8 +461,9 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::Search(
 template<typename SortPolicy,
          typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 void RASearch<SortPolicy, MetricType, MatType, TreeType>::ResetQueryTree(
     Tree* queryNode) const
 {
@@ -471,8 +478,9 @@ void RASearch<SortPolicy, MetricType, MatType, TreeType>::ResetQueryTree(
 template<typename SortPolicy,
          typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 std::string RASearch<SortPolicy, MetricType, MatType, TreeType>::ToString()
     const
 {

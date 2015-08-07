@@ -19,7 +19,8 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType> class BoundType,
-         template<typename TBoundType, typename TMatType> class SplitType>
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
 template<typename RuleType>
 BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 BreadthFirstDualTreeTraverser<RuleType>::BreadthFirstDualTreeTraverser(
@@ -46,7 +47,8 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType> class BoundType,
-         template<typename TBoundType, typename TMatType> class SplitType>
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
 template<typename RuleType>
 void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 BreadthFirstDualTreeTraverser<RuleType>::Traverse(
@@ -85,7 +87,8 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType> class BoundType,
-         template<typename TBoundType, typename TMatType> class SplitType>
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
 template<typename RuleType>
 void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
 BreadthFirstDualTreeTraverser<RuleType>::Traverse(

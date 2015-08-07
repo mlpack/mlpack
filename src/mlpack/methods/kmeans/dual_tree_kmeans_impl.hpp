@@ -46,8 +46,9 @@ TreeType* BuildTree(
 
 template<typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 DualTreeKMeans<MetricType, MatType, TreeType>::DualTreeKMeans(
     const MatType& dataset,
     MetricType& metric) :
@@ -75,8 +76,9 @@ DualTreeKMeans<MetricType, MatType, TreeType>::DualTreeKMeans(
 
 template<typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 DualTreeKMeans<MetricType, MatType, TreeType>::~DualTreeKMeans()
 {
   if (tree)
@@ -86,8 +88,9 @@ DualTreeKMeans<MetricType, MatType, TreeType>::~DualTreeKMeans()
 // Run a single iteration.
 template<typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
     const arma::mat& centroids,
     arma::mat& newCentroids,
@@ -106,7 +109,7 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
 
     // Find the nearest neighbors of each of the clusters.  We have to make our
     // own TreeType, which is a little bit abuse, but we know for sure the
-    // StatisticType we have will work.
+    // TreeStatType we have will work.
     neighbor::NeighborSearch<neighbor::NearestNeighborSort, MetricType, MatType,
         NNSTreeType> nns(centroidTree);
 
@@ -206,8 +209,9 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
 
 template<typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 void DualTreeKMeans<MetricType, MatType, TreeType>::UpdateTree(
     Tree& node,
     const arma::mat& centroids,
@@ -470,8 +474,9 @@ visited[node.Descendant(i)] << ".\n";
 
 template<typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 void DualTreeKMeans<MetricType, MatType, TreeType>::ExtractCentroids(
     Tree& node,
     arma::mat& newCentroids,
@@ -562,8 +567,9 @@ assignments[node.Point(i)] << " with ub " << upperBounds[node.Point(i)] <<
 
 template<typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 void DualTreeKMeans<MetricType, MatType, TreeType>::CoalesceTree(
     Tree& node,
     const size_t child /* Which child are we? */)
@@ -610,8 +616,9 @@ void DualTreeKMeans<MetricType, MatType, TreeType>::CoalesceTree(
 
 template<typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType>
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 void DualTreeKMeans<MetricType, MatType, TreeType>::DecoalesceTree(Tree& node)
 {
   node.Parent() = (Tree*) node.Stat().TrueParent();

@@ -29,16 +29,21 @@ namespace kmeans {
 template<
     typename MetricType,
     typename MatType,
-    template<typename TMetricType, typename StatisticType, typename TMatType>
+    template<typename TreeMetricType,
+             typename TreeStatType,
+             typename TreeMatType>
         class TreeType = tree::KDTree>
 class DualTreeKMeans
 {
  public:
   //! Convenience typedef.
   typedef TreeType<MetricType, DualTreeKMeansStatistic, MatType> Tree;
-    
-  template<typename TMetricType, typename TStatisticType, typename TMatType>
-  using NNSTreeType = TreeType<TMetricType, DualTreeKMeansStatistic, TMatType>;
+
+  template<typename TreeMetricType,
+           typename IgnoredStatType,
+           typename TreeMatType>
+  using NNSTreeType =
+      TreeType<TreeMetricType, DualTreeKMeansStatistic, TreeMatType>;
 
   /**
    * Construct the DualTreeKMeans object, which will construct a tree on the

@@ -43,8 +43,8 @@ template<typename MetricType,
          typename StatisticType = EmptyStatistic,
          typename MatType = arma::mat,
          template<typename BoundMetricType> class BoundType = bound::HRectBound,
-         template<typename TBoundType, typename TMatType> class SplitType =
-             MidpointSplit>
+         template<typename SplitBoundType, typename SplitMatType>
+            class SplitType = MidpointSplit>
 class BinarySpaceTree
 {
  private:

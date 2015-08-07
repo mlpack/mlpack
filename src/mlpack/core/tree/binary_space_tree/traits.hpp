@@ -22,7 +22,8 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          template<typename BoundMetricType> class BoundType,
-         template<typename TBoundType, typename TMatType> class SplitType>
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
 class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
                                  SplitType>>
 {

@@ -43,8 +43,9 @@ TreeType* BuildTree(
 template<
     typename MetricType,
     typename MatType,
-    template<typename TMetricType, typename StatisticType, typename TMatType>
-        class TreeType>
+    template<typename TreeMetricType,
+             typename TreeStatType,
+             typename TreeMatType> class TreeType>
 DualTreeBoruvka<MetricType, MatType, TreeType>::DualTreeBoruvka(
     const MatType& dataset,
     const bool naive,
@@ -69,8 +70,9 @@ DualTreeBoruvka<MetricType, MatType, TreeType>::DualTreeBoruvka(
 template<
     typename MetricType,
     typename MatType,
-    template<typename TMetricType, typename StatisticType, typename TMatType>
-        class TreeType>
+    template<typename TreeMetricType,
+             typename TreeStatType,
+             typename TreeMatType> class TreeType>
 DualTreeBoruvka<MetricType, MatType, TreeType>::DualTreeBoruvka(
     Tree* tree,
     const MetricType metric) :
@@ -93,8 +95,9 @@ DualTreeBoruvka<MetricType, MatType, TreeType>::DualTreeBoruvka(
 template<
     typename MetricType,
     typename MatType,
-    template<typename TMetricType, typename StatisticType, typename TMatType>
-        class TreeType>
+    template<typename TreeMetricType,
+             typename TreeStatType,
+             typename TreeMatType> class TreeType>
 DualTreeBoruvka<MetricType, MatType, TreeType>::~DualTreeBoruvka()
 {
   if (ownTree)
@@ -108,8 +111,9 @@ DualTreeBoruvka<MetricType, MatType, TreeType>::~DualTreeBoruvka()
 template<
     typename MetricType,
     typename MatType,
-    template<typename TMetricType, typename StatisticType, typename TMatType>
-        class TreeType>
+    template<typename TreeMetricType,
+             typename TreeStatType,
+             typename TreeMatType> class TreeType>
 void DualTreeBoruvka<MetricType, MatType, TreeType>::ComputeMST(
     arma::mat& results)
 {
@@ -161,8 +165,9 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::ComputeMST(
 template<
     typename MetricType,
     typename MatType,
-    template<typename TMetricType, typename StatisticType, typename TMatType>
-        class TreeType>
+    template<typename TreeMetricType,
+             typename TreeStatType,
+             typename TreeMatType> class TreeType>
 void DualTreeBoruvka<MetricType, MatType, TreeType>::AddEdge(
     const size_t e1,
     const size_t e2,
@@ -183,8 +188,9 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::AddEdge(
 template<
     typename MetricType,
     typename MatType,
-    template<typename TMetricType, typename StatisticType, typename TMatType>
-        class TreeType>
+    template<typename TreeMetricType,
+             typename TreeStatType,
+             typename TreeMatType> class TreeType>
 void DualTreeBoruvka<MetricType, MatType, TreeType>::AddAllEdges()
 {
   for (size_t i = 0; i < data.n_cols; i++)
@@ -209,8 +215,9 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::AddAllEdges()
 template<
     typename MetricType,
     typename MatType,
-    template<typename TMetricType, typename StatisticType, typename TMatType>
-        class TreeType>
+    template<typename TreeMetricType,
+             typename TreeStatType,
+             typename TreeMatType> class TreeType>
 void DualTreeBoruvka<MetricType, MatType, TreeType>::EmitResults(
     arma::mat& results)
 {
@@ -264,8 +271,9 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::EmitResults(
 template<
     typename MetricType,
     typename MatType,
-    template<typename TMetricType, typename StatisticType, typename TMatType>
-        class TreeType>
+    template<typename TreeMetricType,
+             typename TreeStatType,
+             typename TreeMatType> class TreeType>
 void DualTreeBoruvka<MetricType, MatType, TreeType>::CleanupHelper(Tree* tree)
 {
   // Reset the statistic information.
@@ -303,8 +311,9 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::CleanupHelper(Tree* tree)
 template<
     typename MetricType,
     typename MatType,
-    template<typename TMetricType, typename StatisticType, typename TMatType>
-        class TreeType>
+    template<typename TreeMetricType,
+             typename TreeStatType,
+             typename TreeMatType> class TreeType>
 void DualTreeBoruvka<MetricType, MatType, TreeType>::Cleanup()
 {
   for (size_t i = 0; i < data.n_cols; i++)
@@ -318,8 +327,9 @@ void DualTreeBoruvka<MetricType, MatType, TreeType>::Cleanup()
 template<
     typename MetricType,
     typename MatType,
-    template<typename TMetricType, typename StatisticType, typename TMatType>
-        class TreeType>
+    template<typename TreeMetricType,
+             typename TreeStatType,
+             typename TreeMatType> class TreeType>
 std::string DualTreeBoruvka<MetricType, MatType, TreeType>::ToString() const
 {
   std::ostringstream convert;

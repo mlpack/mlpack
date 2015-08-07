@@ -43,8 +43,9 @@ TreeType* BuildTree(
 template<typename SortPolicy,
          typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
          template<typename> class TraversalType>
 NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
 NeighborSearch(const MatType& referenceSetIn,
@@ -68,8 +69,9 @@ NeighborSearch(const MatType& referenceSetIn,
 template<typename SortPolicy,
          typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
          template<typename> class TraversalType>
 NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
 NeighborSearch(Tree* referenceTree,
@@ -91,8 +93,9 @@ NeighborSearch(Tree* referenceTree,
 template<typename SortPolicy,
          typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
          template<typename> class TraversalType>
 NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
     ~NeighborSearch()
@@ -108,8 +111,9 @@ NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
 template<typename SortPolicy,
          typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
          template<typename> class TraversalType>
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
 Search(const MatType& querySet,
@@ -269,8 +273,9 @@ Search(const MatType& querySet,
 template<typename SortPolicy,
          typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
          template<typename> class TraversalType>
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
 Search(Tree* queryTree,
@@ -331,8 +336,9 @@ Search(Tree* queryTree,
 template<typename SortPolicy,
          typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
          template<typename> class TraversalType>
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
 Search(const size_t k,
@@ -429,8 +435,9 @@ Search(const size_t k,
 template<typename SortPolicy,
          typename MetricType,
          typename MatType,
-         template<typename TMetricType, typename StatisticType, typename TMatType>
-             class TreeType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
          template<typename> class TraversalType>
 std::string NeighborSearch<SortPolicy, MetricType, MatType, TreeType,
                            TraversalType>::ToString() const
