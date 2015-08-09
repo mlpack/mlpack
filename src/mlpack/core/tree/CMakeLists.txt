@@ -3,6 +3,7 @@
 set(SOURCES
   ballbound.hpp
   ballbound_impl.hpp
+  binary_space_tree.hpp
   binary_space_tree/binary_space_tree.hpp
   binary_space_tree/binary_space_tree_impl.hpp
   binary_space_tree/breadth_first_dual_tree_traverser.hpp
@@ -16,6 +17,7 @@ set(SOURCES
   binary_space_tree/single_tree_traverser.hpp
   binary_space_tree/single_tree_traverser_impl.hpp
   binary_space_tree/traits.hpp
+  binary_space_tree/typedef.hpp
   bounds.hpp
   bound_traits.hpp
   cosine_tree/cosine_tree.hpp
@@ -28,6 +30,7 @@ set(SOURCES
   cover_tree/dual_tree_traverser.hpp
   cover_tree/dual_tree_traverser_impl.hpp
   cover_tree/traits.hpp
+  cover_tree/typedef.hpp
   example_tree.hpp
   hrectbound.hpp
   hrectbound_impl.hpp
