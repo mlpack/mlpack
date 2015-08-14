@@ -12,6 +12,24 @@
 namespace mlpack {
 namespace tree {
 
+/**
+ * The standard cover tree, as detailed in the original cover tree paper:
+ *
+ * @code
+ * @inproceedings{
+ *   author={Beygelzimer, A. and Kakade, S. and Langford, J.},
+ *   title={Cover trees for nearest neighbor},
+ *   booktitle={Proceedings of the 23rd International Conference on Machine
+ *       Learning (ICML 2006)},
+ *   pages={97--104},
+ *   year={2006}
+ * }
+ * @endcode
+ *
+ * This template typedef satisfies the requirements of the TreeType API.
+ *
+ * @see @ref trees, CoverTree
+ */
 template<typename MetricType, typename StatisticType, typename MatType>
 using StandardCoverTree = CoverTree<MetricType,
                                     StatisticType,
