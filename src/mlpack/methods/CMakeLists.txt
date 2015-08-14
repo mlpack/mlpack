@@ -2,6 +2,7 @@
 set(DIRS
   adaboost
   amf
+  ann
   cf
   decision_stump
   det
