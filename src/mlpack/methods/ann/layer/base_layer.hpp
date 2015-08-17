@@ -71,7 +71,9 @@ class BaseLayer
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>& input, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
+  void Backward(const arma::Mat<eT>& input,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g)
   {
     arma::Mat<eT> derivative;
     ActivationFunction::deriv(input, derivative);
