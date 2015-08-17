@@ -35,14 +35,15 @@ namespace ann /** Artificial Neural Network. */ {
  * by T. Kathirvalavakumar and S. Subavathi. The method is based on sensitivity
  * analysis using using cauchy’s inequality. The method is defined by
  *
- * @f[
- * \={s} &=& f^{-1}(\={t})
- * \Theta^{1}_{p} \le \={s} \sqrt{\frac{3}{I\sum_{i=1}^{I}(x_{ip}^2)}}
- * \Theta^1 = min(\Theta_{p}^{1}); p=1,2,..,P
- * -\Theta^{1} \le w_{i}^{1} \le \Theta^{1} \\
- * @f]
+ * @f{eqnarray*}{
+ * \overline{s} &=& f^{-1}(\overline{t}) \\
+ * \Theta^{1}_{p} &\le& \overline{s}
+ *     \sqrt{\frac{3}{I \sum_{i = 1}^{I} (x_{ip}^2)}} \\
+ * \Theta^1 &=& min(\Theta_{p}^{1}); p=1,2,..,P \\
+ * -\Theta^{1} \le w_{i}^{1} &\le& \Theta^{1}
+ * @f}
  *
- * Where I is the number of inputs including the bias, p refers the pattern
+ * where I is the number of inputs including the bias, p refers the pattern
  * considered in training, f is the transfer function and \={s} is the active
  * region in which the derivative of the activation function is greater than 4%
  * of the maximum derivatives.

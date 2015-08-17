@@ -19,13 +19,13 @@ namespace ann /** Artificial Neural Network. */ {
  * \f$ \gamma \f$ and a decay term \f$ \alpha \f$ we perform the following
  * updates:
  *
- * \f[
- *  g_t &=& (1 - \gamma)f'(\Delta_t)^2 + \gammag_{t - 1} \\
- *  \vec{\Delta} \Delta_t = \alpha \frac{\sqrt(s_{t-1} +
+ * \f{eqnarray*}{
+ *  g_t &=& (1 - \gamma)f'(\Delta_t)^2 + \gamma g_{t - 1} \\
+ *  \vec{\Delta} \Delta_t &=& \alpha \frac{\sqrt(s_{t-1} +
  *  \epsilon)}{\sqrt{g_t + \epsilon}} f'(\Delta_t) \\
  *  \Delta_{t + 1} &=& \Delta_t - \vec{\Delta} \Delta_t \\
- *  s_t &=& (1 - \gamma) \vec{\Delta} \Delta_t^2 + \gammas_{t - 1}
- * \f]
+ *  s_t &=& (1 - \gamma) \vec{\Delta} \Delta_t^2 + \gamma s_{t - 1}
+ * \f}
  *
  * For more information, see the following.
  *

@@ -27,15 +27,15 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * The rectifier function, defined by
  *
- * @f[
+ * @f{eqnarray*}{
  * f(x) &=& \max(0, x) \\
  * f'(x) &=& \left\{
  *   \begin{array}{lr}
  *     1 & : x > 0 \\
  *     0 & : x \le 0
  *   \end{array}
- * \right
- * @f]
+ * \right.
+ * @f}
  */
 class RectifierFunction
 {

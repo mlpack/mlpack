@@ -28,16 +28,16 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * The softsign function, defined by
  *
- * @f[
- * f(x) &=& \frac{x}{1 + \abs{x}} \\
- * f'(x) &=& (1 - \abs{x})^2
+ * @f{eqnarray*}{
+ * f(x) &=& \frac{x}{1 + |x|} \\
+ * f'(x) &=& (1 - |x|)^2 \\
  * f(x) &=& \left\{
  *   \begin{array}{lr}
  *     -\frac{y}{y-1} & : x > 0 \\
  *     \frac{x}{1 + x} & : x \le 0
  *   \end{array}
- * \right
- * @f]
+ * \right.
+ * @f}
  */
 class SoftsignFunction
 {

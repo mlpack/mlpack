@@ -15,10 +15,10 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * The identity function, defined by
  *
- * @f[
+ * @f{eqnarray*}{
  * f(x) &=& x \\
  * f'(x) &=& 1
- * @f]
+ * @f}
  */
 class IdentityFunction
 {

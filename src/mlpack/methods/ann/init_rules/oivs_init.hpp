@@ -35,12 +35,12 @@ namespace ann /** Artificial Neural Network. */ {
  * method is based on the equations representing the characteristics of the
  * information transformation mechanism of a node. The method is defined by
  *
- * @f[
- * b = |f^{-1}(1 - \epsilon) - f^{-1}(\epsilon)| \\
- * \^w = \frac{b}{k \cdot n} \\
- * \gamma \le a_i \le \gamma \\
- * w_i = \^w \cdot \sqrt{a_i + 1}
- * @f]
+ * @f{eqnarray*}{
+ * b &=& |F^{-1}(1 - \epsilon) - f^{-1}(\epsilon)| \\
+ * \hat{w} &=& \frac{b}{k \cdot n} \\
+ * \gamma &\le& a_i \le \gamma \\
+ * w_i &=& \hat{w} \cdot \sqrt{a_i + 1}
+ * @f}
  *
  * Where f is the transfer function epsilon, k custom parameters, n the number of
  * neurons in the outgoing layer and gamma a parameter that defines the random

@@ -15,11 +15,11 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * The tanh function, defined by
  *
- * @f[
- * f(x) &=& \frac{e^x - e^{-x}{e^x + e^{-x}}} \\
- * f'(x) &=& 1 - tanh^2(x) \\
- * f^{-1}(x) &=& atan(x)
- * @f]
+ * @f{eqnarray*}{
+ * f(x) &=& \frac{e^x - e^{-x}}{e^x + e^{-x}} \\
+ * f'(x) &=& 1 - \tanh^2(x) \\
+ * f^{-1}(x) &=& \arctan(x)
+ * @f}
  */
 class TanhFunction
 {

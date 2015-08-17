@@ -15,11 +15,11 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * The logistic function, defined by
  *
- * @f[
+ * @f{eqnarray*}{
  * f(x) &=& \frac{1}{1 + e^{-x}} \\
  * f'(x) &=& f(x) * (1 - f(x)) \\
  * f^{-1}(y) &=& ln(\frac{y}{1-y})
- * @f]
+ * @f}
  */
 class LogisticFunction
 {

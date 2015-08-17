@@ -32,12 +32,12 @@ namespace ann /** Artificial Neural Network. */ {
  * This class is used to initialize the weight matrix with the Nguyen-Widrow
  * method. The method is defined by
  *
- * @f[
- * \gamma \le w_i \le \gamma \\
+ * @f{eqnarray*}{
+ * \gamma &\le& w_i \le \gamma \\
  * \beta &=& 0.7H^{\frac{1}{I}} \\
  * n &=& \sqrt{\sum_{i=0}{I}w_{i}^{2}} \\
  * w_i &=& \frac{\beta w_i}{n}
- * @f]
+ * @f}
  *
  * Where H is the number of neurons in the outgoing layer, I represents the
  * number of neurons in the ingoing layer and gamma defines the random interval
