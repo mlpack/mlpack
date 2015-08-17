@@ -53,7 +53,6 @@ International Conference on Machine Learning (ICML '13), pp. 1435--1443, 2013.
 
 The definition is:
 
-@defn
 A \b space \b tree on a dataset \f$ S \in \mathcal{R}^{N \times d} \f$ is an
 undirected, connected, acyclic, rooted simple graph with the following
 properties:
@@ -69,7 +68,6 @@ of the tree.
  - Each node corresponds to some subset of \f$\mathcal{R}^d\f$ that contains
 each point in the node and also the subsets that correspond to each child of the
 node.
-@enddefn
 
 This is really a quite straightforward definition: a tree is hierarchical, and
 each node corresponds to some region of the input space.  Each node may have
