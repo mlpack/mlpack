@@ -11,22 +11,15 @@
 
 #include <mlpack/methods/ann/init_rules/random_init.hpp>
 
-#include <mlpack/methods/ann/layer/neuron_layer.hpp>
 #include <mlpack/methods/ann/layer/bias_layer.hpp>
+#include <mlpack/methods/ann/layer/linear_layer.hpp>
+#include <mlpack/methods/ann/layer/base_layer.hpp>
 #include <mlpack/methods/ann/layer/dropout_layer.hpp>
 #include <mlpack/methods/ann/layer/binary_classification_layer.hpp>
 
-#include <mlpack/methods/ann/connections/full_connection.hpp>
-#include <mlpack/methods/ann/connections/identity_connection.hpp>
-
 #include <mlpack/methods/ann/trainer/trainer.hpp>
-
-#include <mlpack/methods/ann/ffnn.hpp>
-
+#include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/ann/performance_functions/mse_function.hpp>
-#include <mlpack/methods/ann/performance_functions/sse_function.hpp>
-#include <mlpack/methods/ann/performance_functions/cee_function.hpp>
-
 #include <mlpack/methods/ann/optimizer/rmsprop.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -78,35 +71,23 @@ void BuildVanillaNetwork(MatType& trainData,
    * |     |
    * +-----+
    */
-  BiasLayer<> biasLayer0(1);
 
-  NeuronLayer<PerformanceFunction> inputLayer(trainData.n_rows);
-  NeuronLayer<PerformanceFunction> hiddenLayer0(hiddenLayerSize);
-  NeuronLayer<PerformanceFunction> hiddenLayer1(trainLabels.n_rows);
+  LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
+  BiasLayer<> biasLayer(hiddenLayerSize, hiddenLayerSize);
+  BaseLayer<PerformanceFunction> hiddenLayer0(trainData.n_rows,
+      hiddenLayerSize);
 
-  OutputLayerType outputLayer;
+  LinearLayer<> hiddenLayer1(hiddenLayerSize, trainLabels.n_rows);
+  BaseLayer<PerformanceFunction> outputLayer(hiddenLayerSize,
+      trainLabels.n_rows);
 
-  FullConnection<
-    decltype(inputLayer),
-    decltype(hiddenLayer0)>
-    layerCon0(inputLayer, hiddenLayer0);
+  OutputLayerType classOutputLayer;
 
-  FullConnection<
-    decltype(biasLayer0),
-    decltype(hiddenLayer0)>
-    layerCon1(biasLayer0, hiddenLayer0);
+  auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0, hiddenLayer1,
+      outputLayer);
 
-  FullConnection<
-      decltype(hiddenLayer0),
-      decltype(hiddenLayer1)>
-      layerCon2(hiddenLayer0, hiddenLayer1);
-
-  auto module0 = std::tie(layerCon0, layerCon1);
-  auto module1 = std::tie(layerCon2);
-  auto modules = std::tie(module0, module1);
-
-  FFNN<decltype(modules), decltype(outputLayer), PerformanceFunctionType>
-      net(modules, outputLayer);
+  FFN<decltype(modules), decltype(classOutputLayer), PerformanceFunctionType>
+      net(modules, classOutputLayer);
 
   Trainer<decltype(net)> trainer(net, maxEpochs, 1, 0.001);
   trainer.Train(trainData, trainLabels, testData, testLabels);
@@ -117,7 +98,7 @@ void BuildVanillaNetwork(MatType& trainData,
   for (size_t i = 0; i < testData.n_cols; i++)
   {
     net.Predict(testData.unsafe_col(i), prediction);
-    if (arma::sum(prediction - testLabels.unsafe_col(i)) == 0)
+    if (arma::sum(arma::abs(prediction - testLabels.unsafe_col(i))) == 0)
       error++;
   }
 
@@ -218,44 +199,25 @@ void BuildDropoutNetwork(MatType& trainData,
    * |     |
    * +-----+
    */
-  BiasLayer<> biasLayer0(1);
 
-  NeuronLayer<PerformanceFunction> inputLayer(trainData.n_rows);
-  NeuronLayer<PerformanceFunction> hiddenLayer0(hiddenLayerSize);
-  DropoutLayer<> dropoutLayer0(hiddenLayerSize);
-  NeuronLayer<PerformanceFunction> hiddenLayer1(trainLabels.n_rows);
+  LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
+  BiasLayer<> biasLayer(hiddenLayerSize, hiddenLayerSize);
+  BaseLayer<PerformanceFunction> hiddenLayer0(trainData.n_rows,
+      hiddenLayerSize);
 
-  OutputLayerType outputLayer;
+  DropoutLayer<> dropoutLayer0(hiddenLayerSize, hiddenLayerSize);
 
-  FullConnection<
-    decltype(inputLayer),
-    decltype(hiddenLayer0)>
-    layerCon0(inputLayer, hiddenLayer0);
+  LinearLayer<> hiddenLayer1(hiddenLayerSize, trainLabels.n_rows);
+  BaseLayer<PerformanceFunction> outputLayer(hiddenLayerSize,
+      trainLabels.n_rows);
 
-  FullConnection<
-    decltype(biasLayer0),
-    decltype(hiddenLayer0)>
-    layerCon1(biasLayer0, hiddenLayer0);
+  OutputLayerType classOutputLayer;
 
-  IdentityConnection<
-    decltype(hiddenLayer0),
-    decltype(dropoutLayer0),
-    mlpack::ann::RMSPROP,
-    arma::colvec>
-    layerCon1Dropout(hiddenLayer0, dropoutLayer0);
+  auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0, dropoutLayer0,
+      hiddenLayer1, outputLayer);
 
-  FullConnection<
-      decltype(dropoutLayer0),
-      decltype(hiddenLayer1)>
-      layerCon2(dropoutLayer0, hiddenLayer1);
-
-  auto module0 = std::tie(layerCon0, layerCon1);
-  auto module0Dropout = std::tie(layerCon1Dropout);
-  auto module1 = std::tie(layerCon2);
-  auto modules = std::tie(module0, module0Dropout, module1);
-
-  FFNN<decltype(modules), decltype(outputLayer), PerformanceFunctionType>
-      net(modules, outputLayer);
+  FFN<decltype(modules), decltype(classOutputLayer), PerformanceFunctionType>
+      net(modules, classOutputLayer);
 
   Trainer<decltype(net)> trainer(net, maxEpochs, 1, 0.001);
   trainer.Train(trainData, trainLabels, testData, testLabels);
@@ -266,7 +228,7 @@ void BuildDropoutNetwork(MatType& trainData,
   for (size_t i = 0; i < testData.n_cols; i++)
   {
     net.Predict(testData.unsafe_col(i), prediction);
-    if (arma::sum(prediction - testLabels.unsafe_col(i)) == 0)
+    if (arma::sum(arma::abs(prediction - testLabels.unsafe_col(i))) == 0)
       error++;
   }
 
@@ -409,41 +371,27 @@ void BuildNetworkOptimzer(MatType& trainData,
    * |     |
    * +-----+
    */
-  BiasLayer<> biasLayer0(1);
 
-  NeuronLayer<PerformanceFunction> inputLayer(trainData.n_rows);
-  NeuronLayer<PerformanceFunction> hiddenLayer0(hiddenLayerSize);
-  NeuronLayer<PerformanceFunction> hiddenLayer1(trainLabels.n_rows);
+  LinearLayer<mlpack::ann::RMSPROP, WeightInitRule> inputLayer(
+      trainData.n_rows, hiddenLayerSize, weightInitRule);
 
-  OutputLayerType outputLayer;
+  BiasLayer<> biasLayer(hiddenLayerSize, hiddenLayerSize);
+  BaseLayer<PerformanceFunction> hiddenLayer0(trainData.n_rows,
+      hiddenLayerSize);
 
-  FullConnection<
-    decltype(inputLayer),
-    decltype(hiddenLayer0),
-    mlpack::ann::RMSPROP,
-    decltype(weightInitRule)>
-    layerCon0(inputLayer, hiddenLayer0, weightInitRule);
+  LinearLayer<mlpack::ann::RMSPROP, WeightInitRule> hiddenLayer1(
+      hiddenLayerSize, trainLabels.n_rows, weightInitRule);
 
-  FullConnection<
-    decltype(biasLayer0),
-    decltype(hiddenLayer0),
-    mlpack::ann::RMSPROP,
-    decltype(weightInitRule)>
-    layerCon1(biasLayer0, hiddenLayer0, weightInitRule);
+  BaseLayer<PerformanceFunction> outputLayer(hiddenLayerSize,
+      trainLabels.n_rows);
 
-  FullConnection<
-      decltype(hiddenLayer0),
-      decltype(hiddenLayer1),
-      mlpack::ann::RMSPROP,
-      decltype(weightInitRule)>
-      layerCon2(hiddenLayer0, hiddenLayer1, weightInitRule);
+  OutputLayerType classOutputLayer;
 
-  auto module0 = std::tie(layerCon0, layerCon1);
-  auto module1 = std::tie(layerCon2);
-  auto modules = std::tie(module0, module1);
+  auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0, hiddenLayer1,
+      outputLayer);
 
-  FFNN<decltype(modules), decltype(outputLayer), PerformanceFunctionType>
-      net(modules, outputLayer);
+  FFN<decltype(modules), OutputLayerType, PerformanceFunctionType>
+      net(modules, classOutputLayer);
 
   Trainer<decltype(net)> trainer(net, epochs, 1);
 
