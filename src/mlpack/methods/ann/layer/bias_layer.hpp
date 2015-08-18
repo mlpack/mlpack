@@ -2,61 +2,81 @@
  * @file bias_layer.hpp
  * @author Marcus Edel
  *
- * Definition of the BiasLayer class, which implements a standard bias
- * layer.
+ * Definition of the BiasLayer class.
  */
 #ifndef __MLPACK_METHODS_ANN_LAYER_BIAS_LAYER_HPP
 #define __MLPACK_METHODS_ANN_LAYER_BIAS_LAYER_HPP
 
 #include <mlpack/core.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/activation_functions/identity_function.hpp>
+#include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
+#include <mlpack/methods/ann/optimizer/rmsprop.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * An implementation of a standard bias layer with a default value of one.
+ * An implementation of a standard bias layer. The BiasLayer class represents a
+ * single layer of a neural network.
  *
- * @tparam ActivationFunction Activation function used for the bias layer
- * (Default IdentityFunction).
- * @tparam DataType Type of data (arma::colvec, arma::mat or arma::sp_mat).
+ * @tparam OptimizerType Type of the optimizer used to update the weights.
+ * @tparam WeightInitRule Rule used to initialize the weight matrix.
+ * @tparam DataType Type of data (arma::colvec, arma::mat arma::sp_mat or
+ * arma::cube).
  */
 template <
-    class ActivationFunction = IdentityFunction,
-    typename DataType = arma::colvec
+    template<typename, typename> class OptimizerType = mlpack::ann::RMSPROP,
+    class WeightInitRule = NguyenWidrowInitialization,
+    typename DataType = arma::mat
 >
 class BiasLayer
-
 {
  public:
   /**
-   * Create the BiasLayer object using the specified number of bias units.
+   * Create the BiasLayer object using the specified number of units and bias
+   * parameter.
    *
-   * @param layerSize The number of neurons.
+   * @param inSize The number of input units.
+   * @param outSize The number of output units.
+   * @param bias The bias value.
+   * @param WeightInitRule The weight initialization rule used to initialize the
+   *        weight matrix.
    */
-  BiasLayer(const size_t layerSize) :
-      inputActivations(arma::ones<DataType>(layerSize)),
-      delta(arma::zeros<DataType>(layerSize)),
-      layerRows(layerSize),
-      layerCols(1),
-      layerSlices(1),
-      outputMaps(1)
+  BiasLayer(const size_t inSize,
+            const size_t outSize,
+            const double bias = 1,
+            WeightInitRule weightInitRule = WeightInitRule()) :
+      inSize(inSize),
+      outSize(outSize),
+      bias(bias),
+      optimizer(new OptimizerType<BiasLayer<OptimizerType,
+                                              WeightInitRule,
+                                              DataType>, DataType>(*this)),
+      ownsOptimizer(true)
   {
-    // Nothing to do here.
+    weightInitRule.Initialize(weights, outSize, 1);
+  }
+
+  /**
+   * Delete the bias layer object and its optimizer.
+   */
+  ~BiasLayer()
+  {
+    if (ownsOptimizer)
+      delete optimizer;
   }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
    *
-   * @param inputActivation Input data used for evaluating the specified
-   * activity function.
-   * @param outputActivation Data to store the resulting output activation.
+   * @param input Input data used for evaluating the specified function.
+   * @param output Resulting output activation.
    */
-  void FeedForward(const DataType& inputActivation, DataType& outputActivation)
+  template<typename eT>
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
-    ActivationFunction::fn(inputActivation, outputActivation);
+    output = input + (weights * bias);
   }
 
   /**
@@ -64,94 +84,101 @@ class BiasLayer
    * f(x) by propagating x backwards trough f. Using the results from the feed
    * forward pass.
    *
-   * @param inputActivation Input data used for calculating the function f(x).
-   * @param error The backpropagated error.
-   * @param delta The calculating delta using the partial derivative of the
-   * error with respect to a weight.
+   * @param input The propagated input activation.
+   * @param gy The backpropagated error.
+   * @param g The calculated gradient.
    */
-  void FeedBackward(const DataType& inputActivation,
-                    const DataType& error,
-                    DataType& delta)
+  template<typename eT>
+  void Backward(const arma::Mat<eT>& /* unused */,
+                const arma::Mat<eT>& gy,
+                arma::Mat<eT>& g)
   {
-    DataType derivative;
-    ActivationFunction::deriv(inputActivation, derivative);
-
-    delta = error % derivative;
+    g = gy;
   }
 
-  //! Get the input activations.
-  const DataType& InputActivation() const { return inputActivations; }
-  //! Modify the input activations.
-  DataType& InputActivation() { return inputActivations; }
+  /*
+   * Calculate the gradient using the output delta and the bias.
+   *
+   * @param g The calculated gradient.
+   */
+  template<typename eT>
+  void Gradient(arma::Mat<eT>& gradient)
+  {
+    gradient = delta * bias;
+  }
 
-  //! Get the detla.
-  DataType& Delta() const { return delta; }
+  //! Get the optimizer.
+  OptimizerType<BiasLayer<OptimizerType,
+                          WeightInitRule,
+                          DataType>, DataType>& Optimizer() const
+  {
+    return *optimizer;
+  }
+  //! Modify the optimizer.
+  OptimizerType<BiasLayer<OptimizerType,
+                          WeightInitRule,
+                          DataType>, DataType>& Optimizer()
+  {
+    return *optimizer;
+  }
+
+  //! Get the weights.
+  DataType& Weights() const { return weights; }
+  //! Modify the weights.
+  DataType& Weights() { return weights; }
+
+  //! Get the parameter.
+  DataType& Parameter() const {return parameter; }
+  //! Modify the parameter.
+  DataType& Parameter() { return parameter; }
+
+  //! Get the delta.
+  DataType& Delta() const {return delta; }
   //! Modify the delta.
   DataType& Delta() { return delta; }
 
-  //! Get input size.
-  size_t InputSize() const { return layerRows; }
-  //! Modify the delta.
-  size_t& InputSize() { return layerRows; }
-
-  //! Get output size.
-  size_t OutputSize() const { return layerRows; }
-  //! Modify the output size.
-  size_t& OutputSize() { return layerRows; }
-
-  //! Get the number of layer rows.
-  size_t LayerRows() const { return layerRows; }
-  //! Modify the number of layer rows.
-  size_t& LayerRows() { return layerRows; }
-
-  //! Get the number of layer columns.
-  size_t LayerCols() const { return layerCols; }
-  //! Modify the number of layer columns.
-  size_t& LayerCols() { return layerCols; }
-
-  //! Get the number of layer slices.
-  size_t LayerSlices() const { return layerSlices; }
-
-  //! Get the number of output maps.
-  size_t OutputMaps() const { return outputMaps; }
-
-  //! The the value of the deterministic parameter.
-  bool Deterministic() const {return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() {return deterministic; }
-
  private:
-  //! Locally-stored input activation object.
-  DataType inputActivations;
+  //! Locally-stored number of input units.
+  const size_t inSize;
+
+  //! Locally-stored number of output units.
+  const size_t outSize;
+
+  //! Locally-stored bias value.
+  double bias;
+
+  //! Locally-stored weight object.
+  DataType weights;
 
   //! Locally-stored delta object.
   DataType delta;
 
-  //! Locally-stored number of layer rows.
-  size_t layerRows;
+  //! Locally-stored parameter object.
+  DataType parameter;
 
-  //! Locally-stored number of layer cols.
-  size_t layerCols;
+  //! Locally-stored pointer to the optimzer object.
+  OptimizerType<BiasLayer<OptimizerType,
+                          WeightInitRule,
+                          DataType>, DataType>* optimizer;
 
-  //! Locally-stored number of layer slices.
-  size_t layerSlices;
-
-  //! Locally-stored number of output maps.
-  size_t outputMaps;
-
-  //! Locally-stored deterministic parameter.
-  bool deterministic;
+  //! Parameter that indicates if the class owns a optimizer object.
+  bool ownsOptimizer;
 }; // class BiasLayer
 
 //! Layer traits for the bias layer.
-template<typename ActivationFunction, typename DataType>
-class LayerTraits<BiasLayer<ActivationFunction, DataType> >
+template<
+  template<typename, typename> class OptimizerType,
+  typename WeightInitRule,
+  typename DataType
+>
+class LayerTraits<BiasLayer<OptimizerType, WeightInitRule, DataType> >
 {
  public:
   static const bool IsBinary = false;
   static const bool IsOutputLayer = false;
   static const bool IsBiasLayer = true;
   static const bool IsLSTMLayer = false;
+  static const bool IsConnection = true;
 };
 
 }; // namespace ann
