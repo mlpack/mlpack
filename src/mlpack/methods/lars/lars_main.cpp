@@ -37,6 +37,11 @@ PARAM_STRING_REQ("responses_file", "File containing y "
 PARAM_STRING("output_file", "File to save beta (linear estimator) to.", "o",
     "output.csv");
 
+PARAM_STRING("test_file", "File containing points to regress on (test points).",
+    "t", "");
+PARAM_STRING("output_predictions", "If --test_file is specified, this file is "
+    "where the predicted responses will be saved.", "p", "predictions.csv");
+
 PARAM_DOUBLE("lambda1", "Regularization parameter for l1-norm penalty.", "l",
     0);
 PARAM_DOUBLE("lambda2", "Regularization parameter for l2-norm penalty.", "L",
@@ -88,4 +93,23 @@ int main(int argc, char* argv[])
 
   const string betaFilename = CLI::GetParam<string>("output_file");
   beta.save(betaFilename, raw_ascii);
+
+  if (CLI::HasParam("test_file"))
+  {
+    Log::Info << "Regressing on test points." << endl;
+    const string testFile = CLI::GetParam<string>("test_file");
+    const string outputPredictionsFile =
+        CLI::GetParam<string>("output_predictions");
+
+    // Load test points.
+    mat testPoints;
+    data::Load(testFile, testPoints, true, false);
+
+    arma::vec predictions;
+    lars.Predict(testPoints.t(), predictions, false);
+
+    // Save test predictions.  One per line, so, we need a rowvec.
+    arma::rowvec predToSave = predictions.t();
+    data::Save(outputPredictionsFile, predToSave);
+  }
 }
