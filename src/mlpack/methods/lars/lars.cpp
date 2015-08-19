@@ -322,6 +322,12 @@ void LARS::Regress(const arma::mat& matX,
   Timer::Stop("lars_regression");
 }
 
+void LARS::Predict(const arma::mat& points, arma::vec& predictions) const
+{
+  // We really only need to store beta internally...
+  predictions = (betaPath.back().t() * points).t();
+}
+
 // Private functions.
 void LARS::Deactivate(const size_t activeVarInd)
 {

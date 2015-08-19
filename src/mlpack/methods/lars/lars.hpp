@@ -136,6 +136,15 @@ class LARS
                arma::vec& beta,
                const bool transposeData = true);
 
+  /**
+   * Predict y_i for each data point in the given data matrix, using the
+   * currently-trained LARS model (so make sure you run Regress() first).
+   *
+   * @param points The data points to regress on.
+   * @param predictions y, which will contained calculated values on completion.
+   */
+  void Predict(const arma::mat& points, arma::vec& predictions) const;
+
   //! Access the set of active dimensions.
   const std::vector<size_t>& ActiveSet() const { return activeSet; }
 
@@ -147,7 +156,7 @@ class LARS
   //! the last element.
   const std::vector<double>& LambdaPath() const { return lambdaPath; }
 
-  //! Access the upper triangular cholesky factor
+  //! Access the upper triangular cholesky factor.
   const arma::mat& MatUtriCholFactor() const { return matUtriCholFactor; }
 
   // Returns a string representation of this object.
