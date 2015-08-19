@@ -322,10 +322,15 @@ void LARS::Regress(const arma::mat& matX,
   Timer::Stop("lars_regression");
 }
 
-void LARS::Predict(const arma::mat& points, arma::vec& predictions) const
+void LARS::Predict(const arma::mat& points,
+                   arma::vec& predictions,
+                   const bool rowMajor) const
 {
   // We really only need to store beta internally...
-  predictions = (betaPath.back().t() * points).t();
+  if (rowMajor)
+    predictions = points * betaPath.back();
+  else
+    predictions = (betaPath.back().t() * points).t();
 }
 
 // Private functions.

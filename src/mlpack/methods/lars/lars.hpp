@@ -138,12 +138,16 @@ class LARS
 
   /**
    * Predict y_i for each data point in the given data matrix, using the
-   * currently-trained LARS model (so make sure you run Regress() first).
+   * currently-trained LARS model (so make sure you run Regress() first).  If
+   * the data matrix is row-major (as opposed to the usual column-major format
+   * for mlpack matrices), set rowMajor = true to avoid an extra transpose.
    *
    * @param points The data points to regress on.
    * @param predictions y, which will contained calculated values on completion.
    */
-  void Predict(const arma::mat& points, arma::vec& predictions) const;
+  void Predict(const arma::mat& points,
+               arma::vec& predictions,
+               const bool rowMajor = false) const;
 
   //! Access the set of active dimensions.
   const std::vector<size_t>& ActiveSet() const { return activeSet; }

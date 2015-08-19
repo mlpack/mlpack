@@ -183,6 +183,7 @@ BOOST_AUTO_TEST_CASE(PredictTest)
         lars.Predict(X, predictions);
         arma::vec adjPred = X * predictions;
 
+        BOOST_REQUIRE_EQUAL(predictions.n_elem, 1000);
         for (size_t i = 0; i < betaOptPred.n_elem; ++i)
         {
           if (std::abs(betaOptPred[i]) < 1e-5)
@@ -192,6 +193,35 @@ BOOST_AUTO_TEST_CASE(PredictTest)
         }
       }
     }
+  }
+}
+
+BOOST_AUTO_TEST_CASE(PredictRowMajorTest)
+{
+  arma::mat X;
+  arma::vec y;
+  GenerateProblem(X, y, 1000, 100);
+
+  // Set lambdas to 0.
+
+  LARS lars(false, 0, 0);
+  arma::vec betaOpt;
+  lars.Regress(X, y, betaOpt);
+
+  // Get both row-major and column-major predictions.  Make sure they are the
+  // same.
+  arma::vec rowMajorPred, colMajorPred;
+
+  lars.Predict(X, colMajorPred);
+  lars.Predict(X.t(), rowMajorPred, true);
+
+  BOOST_REQUIRE_EQUAL(colMajorPred.n_elem, rowMajorPred.n_elem);
+  for (size_t i = 0; i < colMajorPred.n_elem; ++i)
+  {
+    if (std::abs(colMajorPred[i]) < 1e-5)
+      BOOST_REQUIRE_SMALL(rowMajorPred[i], 1e-5);
+    else
+      BOOST_REQUIRE_CLOSE(colMajorPred[i], rowMajorPred[i], 1e-5);
   }
 }
 
