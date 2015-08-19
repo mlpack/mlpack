@@ -14,8 +14,7 @@ LinearRegression::LinearRegression(const arma::mat& predictors,
                                    const arma::vec& responses,
                                    const double lambda,
                                    const bool intercept,
-                                   const arma::vec& weights
-                                   ) :
+                                   const arma::vec& weights) :
     lambda(lambda),
     intercept(intercept)
 {
