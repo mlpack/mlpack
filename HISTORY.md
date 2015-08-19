@@ -28,6 +28,9 @@
   * Use OpenMP, if available.  For now OpenMP support is only available in the
     DET training code.
 
+  * Add support for predicting new test point values to LARS and the
+    command-line 'lars' program.
+
 ### mlpack 1.0.11
 ###### 2014-12-11
   * Proper handling of dimension calculation in PCA.
