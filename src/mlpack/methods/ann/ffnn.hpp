@@ -14,6 +14,7 @@
 #include <mlpack/methods/ann/network_traits.hpp>
 #include <mlpack/methods/ann/performance_functions/cee_function.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
+#include <mlpack/methods/ann/connections/connection_traits.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
