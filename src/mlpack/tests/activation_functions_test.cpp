@@ -198,188 +198,188 @@ BOOST_AUTO_TEST_CASE(RectifierFunctionTest)
       desiredDerivatives);
 }
 
-/*
- * Implementation of the numerical gradient checking.
- *
- * @param input Input data used for evaluating the network.
- * @param target Target data used to calculate the network error.
- * @param perturbation Constant perturbation value.
- * @param threshold Threshold used as bounding check.
- *
- * @tparam ActivationFunction Activation function used for the gradient check.
- */
-template<class ActivationFunction>
-void CheckGradientNumericallyCorrect(const arma::colvec input,
-                                     const arma::colvec target,
-                                     const double perturbation,
-                                     const double threshold)
-{
-  // Specify the structure of the feed forward neural network.
-  RandomInitialization randInit(-0.5, 0.5);
-  arma::colvec error;
+// /*
+//  * Implementation of the numerical gradient checking.
+//  *
+//  * @param input Input data used for evaluating the network.
+//  * @param target Target data used to calculate the network error.
+//  * @param perturbation Constant perturbation value.
+//  * @param threshold Threshold used as bounding check.
+//  *
+//  * @tparam ActivationFunction Activation function used for the gradient check.
+//  */
+// template<class ActivationFunction>
+// void CheckGradientNumericallyCorrect(const arma::colvec input,
+//                                      const arma::colvec target,
+//                                      const double perturbation,
+//                                      const double threshold)
+// {
+//   // Specify the structure of the feed forward neural network.
+//   RandomInitialization randInit(-0.5, 0.5);
+//   arma::colvec error;
 
-  NeuronLayer<ActivationFunction> inputLayer(input.n_elem);
+//   NeuronLayer<ActivationFunction> inputLayer(input.n_elem);
 
-  BiasLayer<> biasLayer0(1);
-  BiasLayer<> biasLayer1(1);
-  BiasLayer<> biasLayer2(1);
+//   BiasLayer<> biasLayer0(1);
+//   BiasLayer<> biasLayer1(1);
+//   BiasLayer<> biasLayer2(1);
 
-  NeuronLayer<ActivationFunction> hiddenLayer0(4);
-  NeuronLayer<ActivationFunction> hiddenLayer1(2);
-  NeuronLayer<ActivationFunction> hiddenLayer2(target.n_elem);
+//   NeuronLayer<ActivationFunction> hiddenLayer0(4);
+//   NeuronLayer<ActivationFunction> hiddenLayer1(2);
+//   NeuronLayer<ActivationFunction> hiddenLayer2(target.n_elem);
 
-  iRPROPp< > conOptimizer0(input.n_elem, hiddenLayer0.InputSize());
-  iRPROPp< > conOptimizer1(1, 4);
-  iRPROPp< > conOptimizer2(4, 2);
-  iRPROPp< > conOptimizer3(1, 2);
-  iRPROPp< > conOptimizer4(2, target.n_elem);
-  iRPROPp< > conOptimizer5(1, target.n_elem);
+//   iRPROPp< > conOptimizer0(input.n_elem, hiddenLayer0.InputSize());
+//   iRPROPp< > conOptimizer1(1, 4);
+//   iRPROPp< > conOptimizer2(4, 2);
+//   iRPROPp< > conOptimizer3(1, 2);
+//   iRPROPp< > conOptimizer4(2, target.n_elem);
+//   iRPROPp< > conOptimizer5(1, target.n_elem);
 
-  ClassificationLayer<> outputLayer;
+//   ClassificationLayer outputLayer;
 
-  FullConnection<
-      decltype(inputLayer),
-      decltype(hiddenLayer0),
-      decltype(conOptimizer0),
-      decltype(randInit)>
-      layerCon0(inputLayer, hiddenLayer0, conOptimizer0, randInit);
+//   FullConnection<
+//       decltype(inputLayer),
+//       decltype(hiddenLayer0),
+//       decltype(conOptimizer0),
+//       decltype(randInit)>
+//       layerCon0(inputLayer, hiddenLayer0, conOptimizer0, randInit);
 
-  FullConnection<
-    decltype(biasLayer0),
-    decltype(hiddenLayer0),
-    decltype(conOptimizer1),
-    decltype(randInit)>
-    layerCon1(biasLayer0, hiddenLayer0, conOptimizer1, randInit);
+//   FullConnection<
+//     decltype(biasLayer0),
+//     decltype(hiddenLayer0),
+//     decltype(conOptimizer1),
+//     decltype(randInit)>
+//     layerCon1(biasLayer0, hiddenLayer0, conOptimizer1, randInit);
 
-  FullConnection<
-      decltype(hiddenLayer0),
-      decltype(hiddenLayer1),
-      decltype(conOptimizer2),
-      decltype(randInit)>
-      layerCon2(hiddenLayer0, hiddenLayer1, conOptimizer2, randInit);
+//   FullConnection<
+//       decltype(hiddenLayer0),
+//       decltype(hiddenLayer1),
+//       decltype(conOptimizer2),
+//       decltype(randInit)>
+//       layerCon2(hiddenLayer0, hiddenLayer1, conOptimizer2, randInit);
 
-  FullConnection<
-    decltype(biasLayer1),
-    decltype(hiddenLayer1),
-    decltype(conOptimizer3),
-    decltype(randInit)>
-    layerCon3(biasLayer1, hiddenLayer1, conOptimizer3, randInit);
+//   FullConnection<
+//     decltype(biasLayer1),
+//     decltype(hiddenLayer1),
+//     decltype(conOptimizer3),
+//     decltype(randInit)>
+//     layerCon3(biasLayer1, hiddenLayer1, conOptimizer3, randInit);
 
-  FullConnection<
-      decltype(hiddenLayer1),
-      decltype(hiddenLayer2),
-      decltype(conOptimizer4),
-      decltype(randInit)>
-      layerCon4(hiddenLayer1, hiddenLayer2, conOptimizer4, randInit);
+//   FullConnection<
+//       decltype(hiddenLayer1),
+//       decltype(hiddenLayer2),
+//       decltype(conOptimizer4),
+//       decltype(randInit)>
+//       layerCon4(hiddenLayer1, hiddenLayer2, conOptimizer4, randInit);
 
-  FullConnection<
-    decltype(biasLayer2),
-    decltype(hiddenLayer2),
-    decltype(conOptimizer5),
-    decltype(randInit)>
-    layerCon5(biasLayer2, hiddenLayer2, conOptimizer5, randInit);
+//   FullConnection<
+//     decltype(biasLayer2),
+//     decltype(hiddenLayer2),
+//     decltype(conOptimizer5),
+//     decltype(randInit)>
+//     layerCon5(biasLayer2, hiddenLayer2, conOptimizer5, randInit);
 
-  auto module0 = std::tie(layerCon0, layerCon1);
-  auto module1 = std::tie(layerCon2, layerCon3);
-  auto module2 = std::tie(layerCon4, layerCon5);
-  auto modules = std::tie(module0, module1, module2);
+//   auto module0 = std::tie(layerCon0, layerCon1);
+//   auto module1 = std::tie(layerCon2, layerCon3);
+//   auto module2 = std::tie(layerCon4, layerCon5);
+//   auto modules = std::tie(module0, module1, module2);
 
-  FFNN<decltype(modules), decltype(outputLayer)> net(modules, outputLayer);
+//   FFNN<decltype(modules), decltype(outputLayer)> net(modules, outputLayer);
 
-  // Initialize the feed forward neural network.
-  net.FeedForward(input, target, error);
-  net.FeedBackward(error);
+//   // Initialize the feed forward neural network.
+//   net.FeedForward(input, target, error);
+//   net.FeedBackward(error);
 
-  std::vector<std::reference_wrapper<
-      FullConnection<
-      decltype(inputLayer),
-      decltype(hiddenLayer0),
-      decltype(conOptimizer0),
-      decltype(randInit)> > > layer {layerCon0, layerCon2, layerCon4};
+//   std::vector<std::reference_wrapper<
+//       FullConnection<
+//       decltype(inputLayer),
+//       decltype(hiddenLayer0),
+//       decltype(conOptimizer0),
+//       decltype(randInit)> > > layer {layerCon0, layerCon2, layerCon4};
 
-  std::vector<arma::mat> gradient {
-      hiddenLayer0.Delta() * inputLayer.InputActivation().t(),
-      hiddenLayer1.Delta() * hiddenLayer0.InputActivation().t(),
-      hiddenLayer2.Delta() * hiddenLayer1.InputActivation().t() };
+//   std::vector<arma::mat> gradient {
+//       hiddenLayer0.Delta() * inputLayer.InputActivation().t(),
+//       hiddenLayer1.Delta() * hiddenLayer0.InputActivation().t(),
+//       hiddenLayer2.Delta() * hiddenLayer1.InputActivation().t() };
 
-  double weight, mLoss, pLoss, dW, e;
+//   double weight, mLoss, pLoss, dW, e;
 
-  for (size_t l = 0; l < layer.size(); ++l)
-  {
-    for (size_t i = 0; i < layer[l].get().Weights().n_rows; ++i)
-    {
-      for (size_t j = 0; j < layer[l].get().Weights().n_cols; ++j)
-      {
-        // Store original weight.
-        weight = layer[l].get().Weights()(i, j);
+//   for (size_t l = 0; l < layer.size(); ++l)
+//   {
+//     for (size_t i = 0; i < layer[l].get().Weights().n_rows; ++i)
+//     {
+//       for (size_t j = 0; j < layer[l].get().Weights().n_cols; ++j)
+//       {
+//         // Store original weight.
+//         weight = layer[l].get().Weights()(i, j);
 
-        // Add negative perturbation and compute error.
-        layer[l].get().Weights().at(i, j) -= perturbation;
-        net.FeedForward(input, target, error);
-        mLoss = arma::as_scalar(0.5 * arma::sum(arma::pow(error, 2)));
+//         // Add negative perturbation and compute error.
+//         layer[l].get().Weights().at(i, j) -= perturbation;
+//         net.FeedForward(input, target, error);
+//         mLoss = arma::as_scalar(0.5 * arma::sum(arma::pow(error, 2)));
 
-        // Add positive perturbation and compute error.
-        layer[l].get().Weights().at(i, j) += (2 * perturbation);
-        net.FeedForward(input, target, error);
-        pLoss = arma::as_scalar(0.5 * arma::sum(arma::pow(error, 2)));
+//         // Add positive perturbation and compute error.
+//         layer[l].get().Weights().at(i, j) += (2 * perturbation);
+//         net.FeedForward(input, target, error);
+//         pLoss = arma::as_scalar(0.5 * arma::sum(arma::pow(error, 2)));
 
-        // Compute symmetric difference.
-        dW = (pLoss - mLoss) / (2 * perturbation);
-        e = std::abs(dW - gradient[l].at(i, j));
+//         // Compute symmetric difference.
+//         dW = (pLoss - mLoss) / (2 * perturbation);
+//         e = std::abs(dW - gradient[l].at(i, j));
 
-        bool b = e < threshold;
-        BOOST_REQUIRE_EQUAL(b, 1);
+//         bool b = e < threshold;
+//         BOOST_REQUIRE_EQUAL(b, 1);
 
-        // Restore original weight.
-        layer[l].get().Weights().at(i, j) = weight;
-      }
-    }
-  }
-}
+//         // Restore original weight.
+//         layer[l].get().Weights().at(i, j) = weight;
+//       }
+//     }
+//   }
+// }
 
-/**
- * The following test implements numerical gradient checking. It computes the
- * numerical gradient, a numerical approximation of the partial derivative of J
- * with respect to the i-th input argument, evaluated at g. The numerical
- * gradient should be approximately the partial derivative of J with respect to
- * g(i).
- *
- * Given a function g(\theta) that is supposedly computing:
- *
- * @f[
- * \frac{\partial}{\partial \theta} J(\theta)
- * @f]
- *
- * we can now numerically verify its correctness by checking:
- *
- * @f[
- * g(\theta) \approx \frac{J(\theta + eps) - J(\theta - eps)}{2 * eps}
- * @f]
- */
-BOOST_AUTO_TEST_CASE(GradientNumericallyCorrect)
-{
-  // Initialize dataset.
-  const arma::colvec input = arma::randu<arma::colvec>(10);
-  const arma::colvec target("0 1;");
+// /**
+//  * The following test implements numerical gradient checking. It computes the
+//  * numerical gradient, a numerical approximation of the partial derivative of J
+//  * with respect to the i-th input argument, evaluated at g. The numerical
+//  * gradient should be approximately the partial derivative of J with respect to
+//  * g(i).
+//  *
+//  * Given a function g(\theta) that is supposedly computing:
+//  *
+//  * @f[
+//  * \frac{\partial}{\partial \theta} J(\theta)
+//  * @f]
+//  *
+//  * we can now numerically verify its correctness by checking:
+//  *
+//  * @f[
+//  * g(\theta) \approx \frac{J(\theta + eps) - J(\theta - eps)}{2 * eps}
+//  * @f]
+//  */
+// BOOST_AUTO_TEST_CASE(GradientNumericallyCorrect)
+// {
+//   // Initialize dataset.
+//   const arma::colvec input = arma::randu<arma::colvec>(10);
+//   const arma::colvec target("0 1;");
 
-  // Perturbation and threshold constant.
-  const double perturbation = 1e-6;
-  const double threshold = 1e-7;
+//   // Perturbation and threshold constant.
+//   const double perturbation = 1e-6;
+//   const double threshold = 1e-7;
 
-  CheckGradientNumericallyCorrect<LogisticFunction>(input, target,
-      perturbation, threshold);
+//   CheckGradientNumericallyCorrect<LogisticFunction>(input, target,
+//       perturbation, threshold);
 
-  CheckGradientNumericallyCorrect<IdentityFunction>(input, target,
-      perturbation, threshold);
+//   CheckGradientNumericallyCorrect<IdentityFunction>(input, target,
+//       perturbation, threshold);
 
-  CheckGradientNumericallyCorrect<RectifierFunction>(input, target,
-      perturbation, threshold);
+//   CheckGradientNumericallyCorrect<RectifierFunction>(input, target,
+//       perturbation, threshold);
 
-  CheckGradientNumericallyCorrect<SoftsignFunction>(input, target,
-      perturbation, threshold);
+//   CheckGradientNumericallyCorrect<SoftsignFunction>(input, target,
+//       perturbation, threshold);
 
-  CheckGradientNumericallyCorrect<TanhFunction>(input, target,
-      perturbation, threshold);
-}
+//   CheckGradientNumericallyCorrect<TanhFunction>(input, target,
+//       perturbation, threshold);
+// }
 
 BOOST_AUTO_TEST_SUITE_END();
