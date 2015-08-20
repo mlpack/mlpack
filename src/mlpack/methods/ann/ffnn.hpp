@@ -367,7 +367,7 @@ class FFNN
       if (!ConnectionTraits<typename std::remove_reference<decltype(
           std::get<I>(t))>::type>::IsIdentityConnection)
       {
-        std::get<I>(t).Optimzer().Update();
+        std::get<I>(t).Optimizer().Update();
       }
 
       Gradients<I + 1, Tp...>(t);
@@ -412,8 +412,8 @@ class FFNN
       if (!ConnectionTraits<typename std::remove_reference<decltype(
           std::get<I>(t))>::type>::IsIdentityConnection)
       {
-        std::get<I>(t).Optimzer().Optimize();
-        std::get<I>(t).Optimzer().Reset();
+        std::get<I>(t).Optimizer().Optimize();
+        std::get<I>(t).Optimizer().Reset();
       }
 
       Apply<I + 1, Tp...>(t);

@@ -546,7 +546,7 @@ class RNN
     typename std::enable_if<I < sizeof...(Tp), void>::type
     Gradients(std::tuple<Tp...>& t)
     {
-      std::get<I>(t).Optimzer().Update();
+      std::get<I>(t).Optimizer().Update();
       Gradients<I + 1, Tp...>(t);
     }
 
@@ -588,8 +588,8 @@ class RNN
     typename std::enable_if<I < sizeof...(Tp), void>::type
     Apply(std::tuple<Tp...>& t)
     {
-      std::get<I>(t).Optimzer().Optimize();
-      std::get<I>(t).Optimzer().Reset();
+      std::get<I>(t).Optimizer().Optimize();
+      std::get<I>(t).Optimizer().Reset();
 
       Apply<I + 1, Tp...>(t);
     }
