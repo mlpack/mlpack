@@ -12,6 +12,7 @@
 #include <iomanip>
 #include <string>
 #include <streambuf>
+#include <stdexcept>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/utility/enable_if.hpp>
