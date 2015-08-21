@@ -34,7 +34,7 @@
  * the methods contained in the library.
  *
  * To generate this documentation in your own local copy of MLPACK, you can
- * simply use Doxygen, from the root directory (@c /mlpack/trunk/ ):
+ * simply use Doxygen, from the root directory of the project:
  *
  * @code
  * $ doxygen
