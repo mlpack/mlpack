@@ -30,20 +30,16 @@ namespace ann /** Artificial Neural Network. */ {
  */
 template <
     class ActivationFunction = LogisticFunction,
-    typename DataType = arma::colvec
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
 >
 class BaseLayer
 {
  public:
   /**
-   * Create the BaseLayer object using the specified number of units.
-   *
-   * @param inSize The number of input units.
-   * @param outSize The number of output units.
+   * Create the BaseLayer object.
    */
-  BaseLayer(const size_t inSize, const size_t outSize) :
-      inSize(inSize),
-      outSize(outSize)
+  BaseLayer()
   {
     // Nothing to do here.
   }
@@ -55,15 +51,34 @@ class BaseLayer
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output)
+  template<typename InputType, typename OutputType>
+  void Forward(const InputType& input, OutputType& output)
   {
     ActivationFunction::fn(input, output);
   }
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards trough f. Using the results from the feed
+   * f(x) by propagating x backwards through f. Using the results from the feed
+   * forward pass.
+   *
+   * @param input The propagated input activation.
+   * @param gy The backpropagated error.
+   * @param g The calculated gradient.
+   */
+  template<typename DataType>
+  void Backward(const DataType& input,
+                const DataType& gy,
+                DataType& g)
+  {
+    DataType derivative;
+    ActivationFunction::deriv(input, derivative);
+    g = gy % derivative;
+  }
+
+  /**
+   * Ordinary feed backward pass of a neural network, calculating the function
+   * f(x) by propagating x backwards through f. Using the results from the feed
    * forward pass.
    *
    * @param input The propagated input activation.
@@ -71,37 +86,56 @@ class BaseLayer
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Mat<eT>& input,
+  void Backward(const arma::Cube<eT>& input,
                 const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g)
+                arma::Cube<eT>& g)
   {
-    arma::Mat<eT> derivative;
+    // Generate a cube using the backpropagated error matrix.
+    arma::Cube<eT> mappedError = arma::zeros<arma::cube>(input.n_rows,
+        input.n_cols, input.n_slices);
+
+    for (size_t s = 0, j = 0; s < mappedError.n_slices; s+= gy.n_cols, j++)
+    {
+      for (size_t i = 0; i < gy.n_cols; i++)
+      {
+        arma::Col<eT> temp = gy.col(i).subvec(
+            j * input.n_rows * input.n_cols,
+            (j + 1) * input.n_rows * input.n_cols - 1);
+
+        mappedError.slice(s + i) = arma::Mat<eT>(temp.memptr(),
+            input.n_rows, input.n_cols);
+      }
+    }
+
+    arma::Cube<eT> derivative;
     ActivationFunction::deriv(input, derivative);
-    g = gy % derivative;
+    g = mappedError % derivative;
   }
 
-  //! Get the parameter.
-  DataType& Parameter() const {return parameter; }
-  //! Modify the parameter.
-  DataType& Parameter() { return parameter; }
+  //! Get the input parameter.
+  InputDataType& InputParameter() const {return inputParameter; }
+  //! Modify the input parameter.
+  InputDataType& InputParameter() { return inputParameter; }
+
+  //! Get the output parameter.
+  OutputDataType& OutputParameter() const {return outputParameter; }
+  //! Modify the output parameter.
+  OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the delta.
-  DataType& Delta() const {return delta; }
+  OutputDataType& Delta() const {return delta; }
   //! Modify the delta.
-  DataType& Delta() { return delta; }
+  OutputDataType& Delta() { return delta; }
 
  private:
-  //! Locally-stored number of input units.
-  const size_t inSize;
-
-  //! Locally-stored number of output units.
-  const size_t outSize;
-
   //! Locally-stored delta object.
-  DataType delta;
+  OutputDataType delta;
 
-  //! Locally-stored parameter object.
-  DataType parameter;
+  //! Locally-stored input parameter object.
+  InputDataType inputParameter;
+
+  //! Locally-stored output parameter object.
+  OutputDataType outputParameter;
 }; // class BaseLayer
 
 // Convenience typedefs.
@@ -111,18 +145,22 @@ class BaseLayer
  */
 template <
     class ActivationFunction = LogisticFunction,
-    typename DataType = arma::colvec
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
 >
-using SigmoidLayer = BaseLayer<ActivationFunction, DataType>;
+using SigmoidLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
 
 /**
  * Standard Identity-Layer using the identity activation function.
  */
 template <
     class ActivationFunction = IdentityFunction,
-    typename DataType = arma::colvec
+    typename InputDataType = arma::mat,
+    typename OutputDataType = arma::mat
 >
-using IdentityLayer = BaseLayer<ActivationFunction, DataType>;
+using IdentityLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
 
 
 }; // namespace ann
