@@ -8,6 +8,8 @@
 #ifndef __MLPACK_METHODS_ANN_LAYER_LAYER_TRAITS_HPP
 #define __MLPACK_METHODS_ANN_LAYER_LAYER_TRAITS_HPP
 
+#include <mlpack/core/util/sfinae_utility.hpp>
+
 namespace mlpack {
 namespace ann {
 
@@ -41,7 +43,21 @@ class LayerTraits
    * This is true if the layer is a LSTM layer.
    **/
   static const bool IsLSTMLayer = false;
+
+  /*
+   * This is true if the layer is a connection layer.
+   **/
+  static const bool IsConnection = false;
 };
+
+// This gives us a HasGradientCheck<T, U> type (where U is a function pointer)
+// we can use with SFINAE to catch when a type has a Gradient(...) function.
+HAS_MEM_FUNC(Gradient, HasGradientCheck);
+
+// This gives us a HasDeterministicCheck<T, U> type (where U is a function
+// pointer) we can use with SFINAE to catch when a type has a Deterministic()
+// function.
+HAS_MEM_FUNC(Deterministic, HasDeterministicCheck);
 
 }; // namespace ann
 }; // namespace mlpack
