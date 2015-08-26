@@ -69,6 +69,7 @@ class LayerTraits<BinaryClassificationLayer>
   static const bool IsOutputLayer = true;
   static const bool IsBiasLayer = false;
   static const bool IsLSTMLayer = false;
+  static const bool IsConnection = false;
 };
 
 }; // namespace ann
