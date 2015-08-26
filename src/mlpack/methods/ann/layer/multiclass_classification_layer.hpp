@@ -71,6 +71,7 @@ class LayerTraits<MulticlassClassificationLayer>
   static const bool IsBinary = false;
   static const bool IsOutputLayer = true;
   static const bool IsBiasLayer = false;
+  static const bool IsConnection = false;
 };
 
 /***
