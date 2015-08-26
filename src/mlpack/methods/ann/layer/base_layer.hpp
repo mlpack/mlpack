@@ -25,8 +25,10 @@ namespace ann /** Artificial Neural Network. */ {
  *  - IdentityLayer
  *
  * @tparam ActivationFunction Activation function used for the embedding layer.
- * @tparam DataType Type of data (arma::colvec, arma::mat arma::sp_mat or
- * arma::cube).
+ * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
+ * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ *         arma::sp_mat or arma::cube).
  */
 template <
     class ActivationFunction = LogisticFunction,

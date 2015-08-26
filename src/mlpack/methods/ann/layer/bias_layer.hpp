@@ -122,11 +122,11 @@ class BiasLayer
   /*
    * Calculate the gradient using the output delta and the bias.
    *
-   * @param g The calculated gradient.
    * @param d The calculated error.
+   * @param g The calculated gradient.
    */
-  template<typename GradientDataType, typename eT>
-  void Gradient(GradientDataType& g, arma::Cube<eT>& d)
+  template<typename eT, typename GradientDataType>
+  void Gradient(arma::Cube<eT>& d, GradientDataType& g)
   {
     g = arma::Mat<eT>(weights.n_rows, weights.n_cols);
     for (size_t s = 0; s < d.n_slices; s++)
@@ -138,11 +138,11 @@ class BiasLayer
   /*
    * Calculate the gradient using the output delta and the bias.
    *
-   * @param g The calculated gradient.
    * @param d The calculated error.
+   * @param g The calculated gradient.
    */
-  template<typename GradientDataType, typename eT>
-  void Gradient(GradientDataType& g, arma::Mat<eT>& d)
+  template<typename eT, typename GradientDataType>
+  void Gradient(arma::Mat<eT>& d, GradientDataType& g)
   {
     g = d * bias;
   }
@@ -202,7 +202,7 @@ class BiasLayer
   //! Locally-stored delta object.
   OutputDataType delta;
 
-  //! Locally-stored delta object.
+  //! Locally-stored gradient object.
   InputDataType gradient;
 
   //! Locally-stored input parameter object.
