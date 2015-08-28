@@ -38,8 +38,7 @@ template<
     typename PerformanceFunction,
     typename OutputLayerType,
     typename PerformanceFunctionType,
-    typename MatType = arma::mat,
-    typename VecType = arma::colvec
+    typename MatType = arma::mat
 >
 void BuildVanillaNetwork(MatType& trainData,
                          MatType& trainLabels,
@@ -60,31 +59,30 @@ void BuildVanillaNetwork(MatType& trainData,
    * +-----+       +-----+       +-----+
    * |     |       |     |       |     |
    * |     +------>|     +------>|     |
-   * |     |     +>|     |       |     |
-   * +-----+     | +--+--+       +-----+
-   *             |
-   *  Bias       |
-   *  Layer      |
-   * +-----+     |
-   * |     |     |
-   * |     +-----+
-   * |     |
-   * +-----+
+   * |     |     +>|     |     +>|     |
+   * +-----+     | +--+--+     | +-----+
+   *             |             |
+   *  Bias       |  Bias       |
+   *  Layer      |  Layer      |
+   * +-----+     | +-----+     |
+   * |     |     | |     |     |
+   * |     +-----+ |     +-----+
+   * |     |       |     |
+   * +-----+       +-----+
    */
 
   LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
-  BiasLayer<> biasLayer(hiddenLayerSize, hiddenLayerSize);
-  BaseLayer<PerformanceFunction> hiddenLayer0(trainData.n_rows,
-      hiddenLayerSize);
+  BiasLayer<> inputBiasLayer(hiddenLayerSize);
+  BaseLayer<PerformanceFunction> inputBaseLayer;
 
   LinearLayer<> hiddenLayer1(hiddenLayerSize, trainLabels.n_rows);
-  BaseLayer<PerformanceFunction> outputLayer(hiddenLayerSize,
-      trainLabels.n_rows);
+  BiasLayer<> hiddenBiasLayer1(trainLabels.n_rows);
+  BaseLayer<PerformanceFunction> outputLayer;
 
   OutputLayerType classOutputLayer;
 
-  auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0, hiddenLayer1,
-      outputLayer);
+  auto modules = std::tie(inputLayer, inputBiasLayer, inputBaseLayer,
+  						  hiddenLayer1, hiddenBiasLayer1, outputLayer);
 
   FFN<decltype(modules), decltype(classOutputLayer), PerformanceFunctionType>
       net(modules, classOutputLayer);
@@ -92,13 +90,17 @@ void BuildVanillaNetwork(MatType& trainData,
   Trainer<decltype(net)> trainer(net, maxEpochs, 1, 0.001);
   trainer.Train(trainData, trainLabels, testData, testLabels);
 
-  VecType prediction;
+  MatType prediction;
   size_t error = 0;
 
   for (size_t i = 0; i < testData.n_cols; i++)
   {
-    net.Predict(testData.unsafe_col(i), prediction);
-    if (arma::sum(arma::abs(prediction - testLabels.unsafe_col(i))) == 0)
+  	MatType predictionInput = testData.unsafe_col(i);
+  	MatType targetOutput = testLabels.unsafe_col(i);
+
+    net.Predict(predictionInput, prediction);
+
+    if (arma::sum(arma::sum(arma::abs(prediction - targetOutput))) == 0)
       error++;
   }
 
@@ -150,7 +152,7 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
   BuildVanillaNetwork<LogisticFunction,
                       BinaryClassificationLayer,
                       MeanSquaredErrorFunction>
-      (dataset, labels, dataset, labels, 100, 100, 0.6, 10);
+      (dataset, labels, dataset, labels, 30, 100, 0.6, 10);
 
   // Vanilla neural net with tanh activation function.
   BuildVanillaNetwork<TanhFunction,
@@ -166,8 +168,7 @@ template<
     typename PerformanceFunction,
     typename OutputLayerType,
     typename PerformanceFunctionType,
-    typename MatType = arma::mat,
-    typename VecType = arma::colvec
+    typename MatType = arma::mat
 >
 void BuildDropoutNetwork(MatType& trainData,
                          MatType& trainLabels,
@@ -201,20 +202,17 @@ void BuildDropoutNetwork(MatType& trainData,
    */
 
   LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
-  BiasLayer<> biasLayer(hiddenLayerSize, hiddenLayerSize);
-  BaseLayer<PerformanceFunction> hiddenLayer0(trainData.n_rows,
-      hiddenLayerSize);
-
-  DropoutLayer<> dropoutLayer0(hiddenLayerSize, hiddenLayerSize);
+  BiasLayer<> biasLayer(hiddenLayerSize);
+  BaseLayer<PerformanceFunction> hiddenLayer0;
+  DropoutLayer<> dropoutLayer0;
 
   LinearLayer<> hiddenLayer1(hiddenLayerSize, trainLabels.n_rows);
-  BaseLayer<PerformanceFunction> outputLayer(hiddenLayerSize,
-      trainLabels.n_rows);
+  BaseLayer<PerformanceFunction> outputLayer;
 
   OutputLayerType classOutputLayer;
 
   auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0, dropoutLayer0,
-      hiddenLayer1, outputLayer);
+      					  hiddenLayer1, outputLayer);
 
   FFN<decltype(modules), decltype(classOutputLayer), PerformanceFunctionType>
       net(modules, classOutputLayer);
@@ -222,13 +220,15 @@ void BuildDropoutNetwork(MatType& trainData,
   Trainer<decltype(net)> trainer(net, maxEpochs, 1, 0.001);
   trainer.Train(trainData, trainLabels, testData, testLabels);
 
-  VecType prediction;
+  MatType prediction;
   size_t error = 0;
 
   for (size_t i = 0; i < testData.n_cols; i++)
   {
-    net.Predict(testData.unsafe_col(i), prediction);
-    if (arma::sum(arma::abs(prediction - testLabels.unsafe_col(i))) == 0)
+  	MatType input = testData.unsafe_col(i);
+    net.Predict(input, prediction);
+    if (arma::sum(arma::sum(arma::abs(
+    	prediction - testLabels.unsafe_col(i)))) == 0)
       error++;
   }
 
@@ -280,7 +280,7 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
   BuildVanillaNetwork<LogisticFunction,
                       BinaryClassificationLayer,
                       MeanSquaredErrorFunction>
-      (dataset, labels, dataset, labels, 100, 100, 0.6, 10);
+      (dataset, labels, dataset, labels, 30, 100, 0.6, 10);
 
   // Vanilla neural net with tanh activation function.
   BuildVanillaNetwork<TanhFunction,
@@ -348,10 +348,10 @@ void BuildNetworkOptimzer(MatType& trainData,
                           MatType& testData,
                           MatType& testLabels,
                           size_t hiddenLayerSize,
-                          size_t epochs,
-                          WeightInitRule weightInitRule = WeightInitRule())
+                          size_t epochs)
 {
-   /* Construct a feed forward network with trainData.n_rows input nodes,
+  /*
+   * Construct a feed forward network with trainData.n_rows input nodes,
    * hiddenLayerSize hidden nodes and trainLabels.n_rows output nodes. The
    * network structure looks like:
    *
@@ -360,35 +360,30 @@ void BuildNetworkOptimzer(MatType& trainData,
    * +-----+       +-----+       +-----+
    * |     |       |     |       |     |
    * |     +------>|     +------>|     |
-   * |     |     +>|     |       |     |
-   * +-----+     | +--+--+       +-----+
-   *             |
-   *  Bias       |
-   *  Layer      |
-   * +-----+     |
-   * |     |     |
-   * |     +-----+
-   * |     |
-   * +-----+
+   * |     |     +>|     |     +>|     |
+   * +-----+     | +--+--+     | +-----+
+   *             |             |
+   *  Bias       |  Bias       |
+   *  Layer      |  Layer      |
+   * +-----+     | +-----+     |
+   * |     |     | |     |     |
+   * |     +-----+ |     +-----+
+   * |     |       |     |
+   * +-----+       +-----+
    */
 
-  LinearLayer<mlpack::ann::RMSPROP, WeightInitRule> inputLayer(
-      trainData.n_rows, hiddenLayerSize, weightInitRule);
+  LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
+  BiasLayer<> inputBiasLayer(hiddenLayerSize);
+  BaseLayer<PerformanceFunction> inputBaseLayer;
 
-  BiasLayer<> biasLayer(hiddenLayerSize, hiddenLayerSize);
-  BaseLayer<PerformanceFunction> hiddenLayer0(trainData.n_rows,
-      hiddenLayerSize);
-
-  LinearLayer<mlpack::ann::RMSPROP, WeightInitRule> hiddenLayer1(
-      hiddenLayerSize, trainLabels.n_rows, weightInitRule);
-
-  BaseLayer<PerformanceFunction> outputLayer(hiddenLayerSize,
-      trainLabels.n_rows);
+  LinearLayer<> hiddenLayer1(hiddenLayerSize, trainLabels.n_rows);
+  BiasLayer<> hiddenBiasLayer1(trainLabels.n_rows);
+  BaseLayer<PerformanceFunction> outputLayer;
 
   OutputLayerType classOutputLayer;
 
-  auto modules = std::tie(inputLayer, biasLayer, hiddenLayer0, hiddenLayer1,
-      outputLayer);
+  auto modules = std::tie(inputLayer, inputBiasLayer, inputBaseLayer,
+  						  hiddenLayer1, hiddenBiasLayer1, outputLayer);
 
   FFN<decltype(modules), OutputLayerType, PerformanceFunctionType>
       net(modules, classOutputLayer);
@@ -417,8 +412,6 @@ BOOST_AUTO_TEST_CASE(NetworkDecreasingErrorTest)
   arma::mat dataset;
   dataset.load("mnist_first250_training_4s_and_9s.arm");
 
-  RandomInitialization randInitB(-0.5, 0.5);
-
   // Normalize each point since these are images.
   for (size_t i = 0; i < dataset.n_cols; ++i)
     dataset.col(i) /= norm(dataset.col(i), 2);
@@ -431,7 +424,7 @@ BOOST_AUTO_TEST_CASE(NetworkDecreasingErrorTest)
                        LogisticFunction,
                        BinaryClassificationLayer,
                        MeanSquaredErrorFunction>
-      (dataset, labels, dataset, labels, 100, 50, randInitB);
+      (dataset, labels, dataset, labels, 30, 50);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
