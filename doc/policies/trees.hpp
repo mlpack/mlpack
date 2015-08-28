@@ -104,7 +104,8 @@ parameters, and trees are no exception.  In order to ease usage of high-level
 mlpack algorithms, each \c TreeType itself must be a template class taking three
 parameters:
 
- - \c MetricType -- the underlying metric that the tree will be built on
+ - \c MetricType -- the underlying metric that the tree will be built on (see
+\ref metrics "the MetricType policy documentation")
  - \c StatisticType -- holds any auxiliary information that individual
 algorithms may need
  - \c MatType -- the type of the matrix used to represent the data
@@ -398,8 +399,8 @@ This section is divided into five parts:
 \ref treetype_template_param "An earlier section" discussed the three different
 template parameters that are required by the \c TreeType policy.
 
-The \c MetricType policy provides one method that will be useful for tree
-building and other operations:
+The \ref metrics "MetricType policy" provides one method that will be useful for
+tree building and other operations:
 
 @code
 // This function is required by the MetricType policy.
