@@ -92,29 +92,30 @@ class LMetric
 
 // Convenience typedefs.
 
-/***
+/**
  * The Manhattan (L1) distance.
  */
 typedef LMetric<1, false> ManhattanDistance;
 
-/***
- * The squared Euclidean (L2) distance.
+/**
+ * The squared Euclidean (L2) distance.  Note that this is not technically a
+ * metric!  But it can sometimes be used when distances are required.
  */
 typedef LMetric<2, false> SquaredEuclideanDistance;
 
-/***
+/**
  * The Euclidean (L2) distance.
  */
 typedef LMetric<2, true> EuclideanDistance;
 
-/***
- * The L-infinity distance
+/**
+ * The L-infinity distance.
  */
 typedef LMetric<INT_MAX, false> ChebyshevDistance;
 
 
-}; // namespace metric
-}; // namespace mlpack
+} // namespace metric
+} // namespace mlpack
 
 // Include implementation.
 #include "lmetric_impl.hpp"
