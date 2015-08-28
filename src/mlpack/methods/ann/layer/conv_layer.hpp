@@ -170,7 +170,7 @@ class ConvLayer
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Gradient(arma::Cube<eT>& d, arma::Cube<eT>& g)
+  void Gradient(const arma::Cube<eT>& d, arma::Cube<eT>& g)
   {
     g = arma::zeros<arma::Cube<eT> >(weights.n_rows, weights.n_cols,
         weights.n_slices);
