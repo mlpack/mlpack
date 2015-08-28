@@ -54,10 +54,10 @@ class FFN
      * @param error The calulated error of the output layer.
      * @tparam DataType Type of data (arma::colvec, arma::mat or arma::sp_mat).
      */
-    template <typename DataType>
-    void FeedForward(const DataType& input,
-                     const DataType& target,
-                     DataType& error)
+    template <typename InputType, typename TargetType, typename ErrorType>
+    void FeedForward(const InputType& input,
+                     const TargetType& target,
+                     ErrorType& error)
     {
       deterministic = false;
       trainError += Evaluate(input, target, error);
@@ -70,8 +70,8 @@ class FFN
      * @param error The calulated error of the output layer.
      * @tparam DataType Type of data (arma::colvec, arma::mat or arma::sp_mat).
      */
-    template <typename DataType>
-    void FeedBackward(const DataType& error)
+    template <typename InputType, typename ErrorType>
+    void FeedBackward(const InputType& /* unused */, const ErrorType& error)
     {
       Backward(error, network);
       UpdateGradients(network);
@@ -115,10 +115,10 @@ class FFN
      * @param error The calulated error of the output layer.
      * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
      */
-    template <typename DataType>
-    double Evaluate(const DataType& input,
-                    const DataType& target,
-                    DataType& error)
+    template <typename InputType, typename TargetType, typename ErrorType>
+    double Evaluate(const InputType& input,
+                    const TargetType& target,
+                    ErrorType& error)
     {
       deterministic = false;
       ResetParameter(network);
@@ -147,7 +147,6 @@ class FFN
     typename std::enable_if<I < sizeof...(Tp), void>::type
     ResetParameter(std::tuple<Tp...>& t)
     {
-      std::get<I>(t).Parameter().zeros();
       ResetDeterministic(std::get<I>(t));
       ResetParameter<I + 1, Tp...>(t);
     }
@@ -186,26 +185,29 @@ class FFN
     template<size_t I = 0, typename DataType, typename... Tp>
     void Forward(const DataType& input, std::tuple<Tp...>& t)
     {
-      std::get<I>(t).Forward(input, std::get<0>(t).Parameter());
-      ForwardTail<I + 1, DataType, Tp...>(input, t);
+      std::get<I>(t).InputParameter() = input;
+
+      std::get<I>(t).Forward(std::get<I>(t).InputParameter(),
+          std::get<I>(t).OutputParameter());
+
+      ForwardTail<I + 1, Tp...>(t);
     }
 
-    template<size_t I = 1, typename DataType, typename... Tp>
+    template<size_t I = 1, typename... Tp>
     typename std::enable_if<I == sizeof...(Tp), void>::type
-    ForwardTail(const DataType& input, std::tuple<Tp...>& t)
+    ForwardTail(std::tuple<Tp...>& /* unused */)
     {
-      std::get<0>(t).Parameter() = input;
       LinkParameter(network);
     }
 
-    template<size_t I = 1, typename DataType, typename... Tp>
+    template<size_t I = 1, typename... Tp>
     typename std::enable_if<I < sizeof...(Tp), void>::type
-    ForwardTail(const DataType& input, std::tuple<Tp...>& t)
+    ForwardTail(std::tuple<Tp...>& t)
     {
-      std::get<I>(t).Forward(std::get<I - 1>(t).Parameter(),
-          std::get<I>(t).Parameter());
+      std::get<I>(t).Forward(std::get<I - 1>(t).OutputParameter(),
+          std::get<I>(t).OutputParameter());
 
-      ForwardTail<I + 1, DataType, Tp...>(input, t);
+      ForwardTail<I + 1, Tp...>(t);
     }
 
     /**
@@ -223,12 +225,10 @@ class FFN
     typename std::enable_if<I < sizeof...(Tp), void>::type
     LinkParameter(std::tuple<Tp...>& t)
     {
-      if (LayerTraits<typename std::remove_reference<
-          decltype(std::get<I>(t))>::type>::IsConnection &&
-          !LayerTraits<typename std::remove_reference<
+      if (!LayerTraits<typename std::remove_reference<
           decltype(std::get<I>(t))>::type>::IsBiasLayer)
       {
-        std::get<I>(t).Parameter() = std::get<I - 1>(t).Parameter();
+        std::get<I>(t).InputParameter() = std::get<I - 1>(t).OutputParameter();
       }
 
       LinkParameter<I + 1, Tp...>(t);
@@ -237,21 +237,19 @@ class FFN
     /*
      * Calculate the output error and update the overall error.
      */
-    template<typename DataType, typename... Tp>
+    template<typename DataType, typename ErrorType, typename... Tp>
     double OutputError(const DataType& target,
-                       DataType& error,
+                       ErrorType& error,
                        const std::tuple<Tp...>& t)
     {
-      std::get<sizeof...(Tp) - 1>(t).Parameter();
-
       // Calculate and store the output error.
-      outputLayer.CalculateError(std::get<sizeof...(Tp) - 1>(t).Parameter(),
+      outputLayer.CalculateError(std::get<sizeof...(Tp) - 1>(t).OutputParameter(),
           target, error);
 
       // Masures the network's performance with the specified performance
       // function.
       return PerformanceFunction::Error(
-          std::get<sizeof...(Tp) - 1>(t).Parameter(), target);
+          std::get<sizeof...(Tp) - 1>(t).OutputParameter(), target);
     }
 
     /**
@@ -269,10 +267,10 @@ class FFN
     Backward(const DataType& error, std::tuple<Tp...>& t)
     {
       std::get<sizeof...(Tp) - I>(t).Backward(
-          std::get<sizeof...(Tp) - I>(t).Parameter(), error,
-          std::get<sizeof...(Tp) - I - 1>(t).Delta());
+          std::get<sizeof...(Tp) - I>(t).OutputParameter(), error,
+          std::get<sizeof...(Tp) - I>(t).Delta());
 
-       BackwardTail<I + 1, DataType, Tp...>(error, t);
+      BackwardTail<I + 1, DataType, Tp...>(error, t);
     }
 
     template<size_t I = 1, typename DataType, typename... Tp>
@@ -285,9 +283,9 @@ class FFN
     BackwardTail(const DataType& error, std::tuple<Tp...>& t)
     {
       std::get<sizeof...(Tp) - I>(t).Backward(
-          std::get<sizeof...(Tp) - I>(t).Parameter(),
-          std::get<sizeof...(Tp) - I>(t).Delta(),
-          std::get<sizeof...(Tp) - I - 1>(t).Delta());
+          std::get<sizeof...(Tp) - I>(t).OutputParameter(),
+          std::get<sizeof...(Tp) - I + 1>(t).Delta(),
+          std::get<sizeof...(Tp) - I>(t).Delta());
 
       BackwardTail<I + 1, DataType, Tp...>(error, t);
     }
@@ -301,29 +299,35 @@ class FFN
      * variadic function templates.
      */
     template<size_t I = 0, typename... Tp>
-    typename std::enable_if<I == sizeof...(Tp), void>::type
+    typename std::enable_if<I == (sizeof...(Tp) - 1), void>::type
     UpdateGradients(std::tuple<Tp...>& /* unused */) { }
 
     template<size_t I = 0, typename... Tp>
-    typename std::enable_if<I < sizeof...(Tp), void>::type
+    typename std::enable_if<I < (sizeof...(Tp) - 1), void>::type
     UpdateGradients(std::tuple<Tp...>& t)
     {
-      Update(std::get<I>(t), std::get<I>(t).Parameter());
+      Update(std::get<I>(t), std::get<I>(t).OutputParameter(),
+          std::get<I + 1>(t).Delta());
+
       UpdateGradients<I + 1, Tp...>(t);
     }
 
-    template<typename T, typename P>
+    template<typename T, typename P, typename D>
     typename std::enable_if<
-        HasGradientCheck<T, void(T::*)(P&)>::value, void>::type
-    Update(T& t, P& /* unused */)
+        HasGradientCheck<T, void(T::*)(const D&, P&)>::value, void>::type
+    Update(T& t, P& /* unused */, D& delta)
     {
+      t.Gradient(delta, t.Gradient());
       t.Optimizer().Update();
     }
 
-    template<typename T, typename P>
+    template<typename T, typename P, typename D>
     typename std::enable_if<
-        not HasGradientCheck<T, void(T::*)(P&)>::value, void>::type
-    Update(T& /* unused */, P& /* unused */) { /* Nothing to do here */ }
+        not HasGradientCheck<T, void(T::*)(const P&, D&)>::value, void>::type
+    Update(T& /* unused */, P& /* unused */, D& /* unused */)
+    {
+      /* Nothing to do here */
+    }
 
     /**
      * Update the weights using the calulated gradients.
@@ -333,30 +337,38 @@ class FFN
      * variadic function templates.
      */
     template<size_t I = 0, typename... Tp>
-    typename std::enable_if<I == sizeof...(Tp), void>::type
-    ApplyGradients(std::tuple<Tp...>& /* unused */) { /* Nothing to do here */ }
+    typename std::enable_if<I == (sizeof...(Tp) - 1), void>::type
+    ApplyGradients(std::tuple<Tp...>& /* unused */)
+    {
+      /* Nothing to do here */
+    }
 
     template<size_t I = 0, typename... Tp>
-    typename std::enable_if<I < sizeof...(Tp), void>::type
+    typename std::enable_if<I < (sizeof...(Tp) - 1), void>::type
     ApplyGradients(std::tuple<Tp...>& t)
     {
-      Apply(std::get<I>(t), std::get<I>(t).Parameter());
+      Apply(std::get<I>(t), std::get<I>(t).OutputParameter(),
+          std::get<I + 1>(t).Delta());
+
       ApplyGradients<I + 1, Tp...>(t);
     }
 
-    template<typename T, typename P>
+    template<typename T, typename P, typename D>
     typename std::enable_if<
-        HasGradientCheck<T, void(T::*)(P&)>::value, void>::type
-    Apply(T& t, P& /* unused */)
+        HasGradientCheck<T, void(T::*)(const D&, P&)>::value, void>::type
+    Apply(T& t, P& /* unused */, D& /* unused */)
     {
       t.Optimizer().Optimize();
       t.Optimizer().Reset();
     }
 
-    template<typename T, typename P>
+    template<typename T, typename P, typename D>
     typename std::enable_if<
-        not HasGradientCheck<T, void(T::*)(P&)>::value, void>::type
-    Apply(T& /* unused */, P& /* unused */) { /* Nothing to do here */ }
+        not HasGradientCheck<T, void(T::*)(const P&, D&)>::value, void>::type
+    Apply(T& /* unused */, P& /* unused */, D& /* unused */)
+    {
+      /* Nothing to do here */
+    }
 
     /*
      * Calculate and store the output activation.
@@ -365,7 +377,7 @@ class FFN
     void OutputPrediction(DataType& output, std::tuple<Tp...>& t)
     {
        // Calculate and store the output prediction.
-      outputLayer.OutputClass(std::get<sizeof...(Tp) - 1>(t).Parameter(),
+      outputLayer.OutputClass(std::get<sizeof...(Tp) - 1>(t).OutputParameter(),
           output);
     }
 
