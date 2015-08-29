@@ -26,41 +26,34 @@ namespace mlpack {
  *
  * for all square integrable functions @f$ g(x) @f$.
  *
- * The kernels in this namespace all implement the same methods as the
- * ExampleKernel class.  Any additional custom kernels should implement all the
- * methods that class implements; in addition, any method using a kernel should
- * rely on any arbitrary kernel function class having a default constructor and
- * a function
- *
- * @code
- * double Evaluate(arma::vec&, arma::vec&);
- * @endcode
+ * The kernels in this namespace all implement the KernelType policy.  For more
+ * information, see \ref kernels "The KernelType policy documentation".
  */
 namespace kernel {
 
 /**
  * An example kernel function.  This is not a useful kernel, but it implements
  * the two functions necessary to satisfy the Kernel policy (so that a class can
- * be used whenever an MLPACK method calls for a `typename Kernel` template
+ * be used whenever an mlpack method calls for a `typename Kernel` template
  * parameter.
  *
  * All that is necessary is a constructor and an `Evaluate()` function.  More
  * methods could be added; for instance, one useful idea is a constructor which
  * takes parameters for a kernel (for instance, the width of the Gaussian for a
- * Gaussian kernel).  However, MLPACK methods cannot count on these various
+ * Gaussian kernel).  However, mlpack methods cannot count on these various
  * constructors existing, which is why most methods allow passing an
  * already-instantiated kernel object (and by default the method will construct
  * the kernel with the default constructor).  So, for instance,
  *
  * @code
  * GaussianKernel k(5.0);
- * KDE<GaussianKernel> kde(dataset, k);
+ * KernelPCA<GaussianKernel> kpca(dataset, k);
  * @endcode
  *
- * will set up KDE using a Gaussian kernel with a width of 5.0, but
+ * will set up kernel PCA using a Gaussian kernel with a width of 5.0, but
  *
  * @code
- * KDE<GaussianKernel> kde(dataset);
+ * KernelPCA<GaussianKernel> kpca(dataset);
  * @endcode
  *
  * will create the kernel with the default constructor.  It is important (but
@@ -71,7 +64,7 @@ namespace kernel {
  * Not all kernels require state.  For instance, the regular dot product needs
  * no parameters.  In that case, no local variables are necessary and
  * `Evaluate()` can (and should) be declared static.  However, for greater
- * generalization, MLPACK methods expect all kernels to require state and hence
+ * generalization, mlpack methods expect all kernels to require state and hence
  * must store instantiated kernel functions; this is why a default constructor
  * is necessary.
  * @endnote
@@ -155,10 +148,9 @@ class ExampleKernel
 
   // Modified to remove unused variable "dimension"
   //static double Normalizer(size_t dimension=1) { return 0; }
-
 };
 
-}; // namespace kernel
-}; // namespace mlpack
+} // namespace kernel
+} // namespace mlpack
 
 #endif

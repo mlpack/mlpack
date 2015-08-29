@@ -104,6 +104,7 @@ mlpack comes with a number of pre-written kernels that satisfy the \c KernelType
 policy:
 
  - mlpack::kernel::LinearKernel
+ - mlpack::kernel::ExampleKernel -- an example kernel with more documentation
  - mlpack::kernel::GaussianKernel
  - mlpack::kernel::HyperbolicTangentKernel
  - mlpack::kernel::EpanechnikovKernel
