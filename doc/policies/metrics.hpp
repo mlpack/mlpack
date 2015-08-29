@@ -10,8 +10,10 @@ any valid metric.
 
 mlpack algorithms, when possible, allow the use of an arbitrary metric via the
 use of the \c MetricType template parameter.  Any metric passed as a
-\c MetricType template parameter will need to implement an \c Evaluate function
-and a default constructor.
+\c MetricType template parameter will need to have
+
+ - an \c Evaluate function
+ - a default constructor.
 
 The signature of the \c Evaluate function is straightforward:
 
@@ -52,6 +54,50 @@ class ExampleMetric
     return arma::norm(a - b);
   }
 };
+@endcode
+
+Then, this metric can easily be used inside of other mlpack algorithms.  For
+example, the code below runs range search on a random dataset with the
+\c ExampleKernel, by instantiating a \c mlpack::range::RangeSearch object that
+uses the \c ExampleKernel.  Then, the number of results are printed.  The \c
+RangeSearch class takes three template parameters: \c MetricType, \c MatType,
+and \c TreeType.  (All three have defaults, so we will just leave \c MatType and
+\c TreeType to their defaults.)
+
+@code
+#include <mlpack/core.hpp>
+#include <mlpack/methods/range_search/range_search.hpp>
+#include "example_metric.hpp" // A file that contains ExampleKernel.
+
+using namespace mlpack;
+using namespace mlpack::range;
+using namespace std;
+
+int main()
+{
+  // Create a random dataset with 10 dimensions and 5000 points.
+  arma::mat data = arma::randu<arma::mat>(10, 5000);
+
+  // Instantiate the RangeSearch object with the ExampleKernel.
+  RangeSearch<ExampleKernel> rs(data);
+
+  // These vectors will store the results.
+  vector<vector<size_t>> neighbors;
+  vector<vector<double>> distances;
+
+  // Create a random 10-dimensional query point.
+  arma::vec query = arma::randu<arma::vec>(10);
+
+  // Find those points with distance (according to ExampleMetric) between 1 and
+  // 2 from the query point.
+  rs.Search(query, math::Range(1.0, 2.0), neighbors, distances);
+
+  // Now, print the number of points inside the desired range.  We know that
+  // neighbors and distances will have length 1, since there was only one query
+  // point.
+  cout << neighbors[0].size() << " points within the range [1.0, 2.0] of the "
+      << "query point!" << endl;
+}
 @endcode
 
 mlpack comes with a number of pre-written metrics that satisfy the \c MetricType
