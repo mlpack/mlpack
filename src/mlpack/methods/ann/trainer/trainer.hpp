@@ -24,12 +24,10 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam NetworkType The type of network which should be trained and
  * evaluated.
  * @tparam MaType Type of the error type (arma::mat or arma::sp_mat).
- * @tparam VecType Type of error type (arma::colvec, arma::mat or arma::sp_mat).
  */
 template<
   typename NetworkType,
-  typename MatType = arma::mat,
-  typename VecType = arma::colvec
+  typename MatType = arma::mat
 >
 class Trainer
 {
@@ -85,6 +83,8 @@ class Trainer
       index = arma::linspace<arma::Col<size_t> >(0,
           ElementCount(trainingData) - 1, ElementCount(trainingData));
       epoch = 0;
+
+      size_t foo = 0;
 
       while(true)
       {
@@ -147,7 +147,7 @@ class Trainer
             Element(target, index(i)), error);
 
         trainingError += net.Error();
-        net.FeedBackward(error);
+        net.FeedBackward(Element(data, index(i)), error);
 
         if (((i + 1) % batchSize) == 0)
           net.ApplyGradients();
@@ -189,10 +189,10 @@ class Trainer
      */
     template<typename eT>
     typename std::enable_if<!NetworkTraits<NetworkType>::IsCNN,
-        arma::Col<eT> >::type
+        arma::Mat<eT> >::type
     Element(arma::Mat<eT>& input, const size_t colNum)
     {
-      return arma::Col<eT>(input.colptr(colNum), input.n_rows, false, true);
+      return arma::Mat<eT>(input.colptr(colNum), input.n_rows, 1, false, true);
     }
 
     /*
@@ -248,8 +248,7 @@ class Trainer
     NetworkType& net;
 
     //! The current network error of a single input.
-    typename std::conditional<NetworkTraits<NetworkType>::IsFNN,
-        VecType, MatType>::type error;
+    MatType error;
 
     //! The current epoch if maxEpochs is set.
     size_t epoch;

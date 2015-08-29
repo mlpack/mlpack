@@ -52,7 +52,6 @@ class FFN
      * @param input Input data used to evaluate the network.
      * @param target Target data used to calculate the network error.
      * @param error The calulated error of the output layer.
-     * @tparam DataType Type of data (arma::colvec, arma::mat or arma::sp_mat).
      */
     template <typename InputType, typename TargetType, typename ErrorType>
     void FeedForward(const InputType& input,
@@ -68,7 +67,6 @@ class FFN
      * error of the output layer.
      *
      * @param error The calulated error of the output layer.
-     * @tparam DataType Type of data (arma::colvec, arma::mat or arma::sp_mat).
      */
     template <typename InputType, typename ErrorType>
     void FeedBackward(const InputType& /* unused */, const ErrorType& error)
@@ -94,7 +92,6 @@ class FFN
      *
      * @param input Input data used to evaluate the network.
      * @param output Output data used to store the output activation
-     * @tparam DataType Type of data (arma::colvec, arma::mat or arma::sp_mat).
      */
     template <typename DataType>
     void Predict(const DataType& input, DataType& output)
@@ -113,7 +110,6 @@ class FFN
      * @param input Input data used to evaluate the trained network.
      * @param target Target data used to calculate the network error.
      * @param error The calulated error of the output layer.
-     * @tparam VecType Type of data (arma::colvec, arma::mat or arma::sp_mat).
      */
     template <typename InputType, typename TargetType, typename ErrorType>
     double Evaluate(const InputType& input,
@@ -243,8 +239,8 @@ class FFN
                        const std::tuple<Tp...>& t)
     {
       // Calculate and store the output error.
-      outputLayer.CalculateError(std::get<sizeof...(Tp) - 1>(t).OutputParameter(),
-          target, error);
+      outputLayer.CalculateError(
+          std::get<sizeof...(Tp) - 1>(t).OutputParameter(), target, error);
 
       // Masures the network's performance with the specified performance
       // function.
@@ -393,7 +389,6 @@ class FFN
     //! The current evaluation mode (training or testing).
     bool deterministic;
 }; // class FFN
-
 
 //! Network traits for the FFN network.
 template <

@@ -80,13 +80,12 @@ class RMSPROP
   {
     if (gradient.n_elem != 0)
     {
-      DataType outputGradient;
-      function.Gradient(outputGradient);
+      DataType outputGradient = function.Gradient();
       gradient += outputGradient;
     }
     else
     {
-      function.Gradient(gradient);
+      gradient = function.Gradient();
     }
   }
 
@@ -97,6 +96,11 @@ class RMSPROP
   {
     gradient.zeros();
   }
+
+  //! Get the gradient.
+  DataType& Gradient() const { return gradient; }
+  //! Modify the gradient.
+  DataType& Gradient() { return gradient; }
 
  private:
   /**
