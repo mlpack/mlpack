@@ -56,7 +56,9 @@ class BinaryClassificationLayer
   void OutputClass(const DataType& inputActivations, DataType& output)
   {
     output = inputActivations;
-    output.transform( [](double value) { return (value > 0.5 ? 1 : 0); } );
+
+    for (size_t i = 0; i < output.n_elem; i++)
+      output(i) = output(i) > 0.5 ? 1 : 0;
   }
 }; // class BinaryClassificationLayer
 

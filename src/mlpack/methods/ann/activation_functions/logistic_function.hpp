@@ -54,7 +54,9 @@ class LogisticFunction
   static void fn(const InputVecType& x, OutputVecType& y)
   {
     y = x;
-    y.transform( [](double x) { return fn(x); } );
+
+    for (size_t i = 0; i < x.n_elem; i++)
+      y(i) = fn(x(i));
   }
 
   /**
