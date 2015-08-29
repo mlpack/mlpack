@@ -87,7 +87,14 @@ class DropoutLayer
       // ratio.
       scale = 1.0 / (1.0 - ratio);
       mask = arma::randu<arma::Mat<eT> >(input.n_rows, input.n_cols);
-      mask.transform( [&](double val) { return val > ratio; } );
+
+      arma::mat::iterator a = mask.begin();
+      arma::mat::iterator b = mask.end();
+      for(arma::mat::iterator i = a; i != b; ++i)
+      {
+        (*i) = (*i) > ratio;
+      }
+
       output = input % mask * scale;
     }
   }

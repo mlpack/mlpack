@@ -98,7 +98,9 @@ class RectifierFunction
   static void deriv(const InputType& y, OutputType& x)
   {
     x = y;
-    x.transform( [](double y) { return deriv(y); } );
+
+    for (size_t i = 0; i < y.n_elem; i++)
+      x(i) = deriv(y(i));
   }
 }; // class RectifierFunction
 
