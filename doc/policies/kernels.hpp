@@ -1,5 +1,13 @@
 /*! @page kernels The KernelType policy in mlpack
 
+@section kerneltoc Table of Contents
+
+ - \ref kerneltype
+ - \ref kerneltraits
+ - \ref kernellist
+
+@section kerneltype Introduction to the KernelType policy
+
 `Kernel methods' make up a large class of machine learning techniques.  Each of
 these methods is characterized by its dependence on a \b kernel \b function.  In
 rough terms, a kernel function is a general notion of similarity between two
@@ -99,6 +107,39 @@ int main()
   data::Save(dataset, "results.csv");
 }
 @endcode
+
+@section kerneltraits The KernelTraits struct
+
+Some algorithms that use kernels can specialize if the kernel fulfills some
+certain conditions.  An example of a condition might be that the kernel is
+shift-invariant or that the kernel is normalized.  In the case of fast
+max-kernel search (mlpack::fastmks::FastMKS), the computation can be accelerated
+if the kernel is normalized.  For this reason, the \c KernelTraits struct
+exists.  This allows a kernel to specify via a \c const \c static \c bool when
+these types of conditions are satisfied.  **Note that a KernelTraits class
+is not required,** but may be helpful.
+
+The \c KernelTraits struct is a template struct that takes a \c KernelType as a
+parameter, and exposes \c const \c static \c bool values that depend on the
+kernel.  Setting these values is achieved by specialization.  The code below
+provides an example, specializing \c KernelTraits for the \c ExampleKernel from
+earlier:
+
+@code
+template<>
+struct KernelTraits<ExampleKernel>
+{
+  //! The example kernel is normalized (K(x, x) = 1 for all x).
+  const static bool IsNormalized = true;
+};
+@endcode
+
+At this time, there is only one kernel trait that is used in mlpack code:
+
+ - \c IsNormalized (defaults to \c false): if \f$ K(x, x) = 1 \; \forall x \f$,
+   then the kernel is normalized and this should be set to true.
+
+@section kernellist List of kernels and classes that use a \c KernelType
 
 mlpack comes with a number of pre-written kernels that satisfy the \c KernelType
 policy:
