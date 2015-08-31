@@ -108,27 +108,28 @@ int main()
 }
 @endcode
 
-@section kerneltraits The KernelTraits struct
+@section kerneltraits The KernelTraits trait class
 
 Some algorithms that use kernels can specialize if the kernel fulfills some
 certain conditions.  An example of a condition might be that the kernel is
 shift-invariant or that the kernel is normalized.  In the case of fast
 max-kernel search (mlpack::fastmks::FastMKS), the computation can be accelerated
-if the kernel is normalized.  For this reason, the \c KernelTraits struct
+if the kernel is normalized.  For this reason, the \c KernelTraits trait class
 exists.  This allows a kernel to specify via a \c const \c static \c bool when
 these types of conditions are satisfied.  **Note that a KernelTraits class
 is not required,** but may be helpful.
 
-The \c KernelTraits struct is a template struct that takes a \c KernelType as a
-parameter, and exposes \c const \c static \c bool values that depend on the
+The \c KernelTraits trait class is a template class that takes a \c KernelType
+as a parameter, and exposes \c const \c static \c bool values that depend on the
 kernel.  Setting these values is achieved by specialization.  The code below
 provides an example, specializing \c KernelTraits for the \c ExampleKernel from
 earlier:
 
 @code
 template<>
-struct KernelTraits<ExampleKernel>
+class KernelTraits<ExampleKernel>
 {
+ public:
   //! The example kernel is normalized (K(x, x) = 1 for all x).
   const static bool IsNormalized = true;
 };
