@@ -58,12 +58,11 @@ namespace tree {
  * parameter which allows that function to be called when the boolean is true.
  *
  * Each trait must be a static const value and not a function; only const values
- * can be used as template parameters (with the exception of constexprs, which
- * are a C++11 feature; but MLPACK is not using C++11).  By default (the
- * unspecialized implementation of TreeTraits), each parameter is set to make as
- * few assumptions about the tree as possible; so, even if TreeTraits is not
- * specialized for a particular tree type, tree-based algorithms should still
- * work.
+ * can be used as template parameters (or constexprs can be used too).  By
+ * default (the unspecialized implementation of TreeTraits), each parameter is
+ * set to make as few assumptions about the tree as possible; so, even if
+ * TreeTraits is not specialized for a particular tree type, tree-based
+ * algorithms should still work.
  *
  * When you write your own tree, you must specialize the TreeTraits class to
  * your tree type and set the corresponding values appropriately.  See
