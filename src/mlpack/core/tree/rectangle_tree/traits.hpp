@@ -23,9 +23,10 @@ template<typename MetricType,
          typename MatType,
          typename SplitType,
          typename DescentType>
-struct TreeTraits<RectangleTree<MetricType, StatisticType, MatType, SplitType,
-                                DescentType>>
+class TreeTraits<RectangleTree<MetricType, StatisticType, MatType, SplitType,
+                               DescentType>>
 {
+ public:
   /**
    * An R-tree can have overlapping children.
    */

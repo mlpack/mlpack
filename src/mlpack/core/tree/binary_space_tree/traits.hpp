@@ -24,9 +24,10 @@ template<typename MetricType,
          template<typename BoundMetricType> class BoundType,
          template<typename SplitBoundType, typename SplitMatType>
              class SplitType>
-struct TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
-                                  SplitType>>
+class TreeTraits<BinarySpaceTree<MetricType, StatisticType, MatType, BoundType,
+                                 SplitType>>
 {
+ public:
   /**
    * Each binary space tree node has two children which represent
    * non-overlapping subsets of the space which the node represents.  Therefore,

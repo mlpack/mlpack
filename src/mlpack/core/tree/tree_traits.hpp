@@ -69,8 +69,9 @@ namespace tree {
  * mlpack/core/tree/binary_space_tree/traits.hpp for an example.
  */
 template<typename TreeType>
-struct TreeTraits
+class TreeTraits
 {
+ public:
   /**
    * This is true if the subspaces represented by the children of a node can
    * overlap.
@@ -99,7 +100,7 @@ struct TreeTraits
   static const bool BinaryTree = false;
 };
 
-} // namespace tree
-} // namespace mlpack
+}; // namespace tree
+}; // namespace mlpack
 
 #endif
