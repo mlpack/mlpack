@@ -44,7 +44,7 @@ to a collection of points in some space (usually a Euclidean space).  A tree is
 a way of organizing this data matrix in a hierarchical manner---so, points that
 are nearby should lie in similar nodes.
 
-We can rigorously define what a tree is, using the definition of \b "space tree"
+We can rigorously define what a tree is, using the definition of **space tree**
 introduced in the following paper:
 
 @quote
@@ -55,7 +55,7 @@ International Conference on Machine Learning (ICML '13), pp. 1435--1443, 2013.
 
 The definition is:
 
-A \b space \b tree on a dataset \f$ S \in \mathcal{R}^{N \times d} \f$ is an
+A **space tree** on a dataset \f$ S \in \mathcal{R}^{N \times d} \f$ is an
 undirected, connected, acyclic, rooted simple graph with the following
 properties:
 
@@ -74,17 +74,17 @@ node.
 This is really a quite straightforward definition: a tree is hierarchical, and
 each node corresponds to some region of the input space.  Each node may have
 some number of children, and may hold some number of points.  However, there is
-an important terminology distinction to make: the term
-\b "points held by a node" has a different meaning than the term
-\b "descendant points held by a node".  The points held in a node are just
-that---points held only in the node.  The descendant points of a node are the
-combination of the points held in a node with the points held in the node's
-children and the points held in the node's children's children (and so forth).
-For the purposes of clarity in all discussions about trees, care is taken to
-differentiate the terms "descendant point" and "point".
+an important terminology distinction to make: the term **points held by a node**
+has a different meaning than the term **descendant points held by a node**.  The
+points held in a node are just that---points held only in the node.  The
+descendant points of a node are the combination of the points held in a node
+with the points held in the node's children and the points held in the node's
+children's children (and so forth).  For the purposes of clarity in all
+discussions about trees, care is taken to differentiate the terms "descendant
+point" and "point".
 
-Now, it's also important to note that a point does not \e need to hold any
-children, and that a node \e can hold the same points as its children (or its
+Now, it's also important to note that a point does not *need* to hold any
+children, and that a node *can* hold the same points as its children (or its
 parent).  Some types of trees do this.  For instance, each node in the cover
 tree holds only one point, and may have a child that holds the same point.  As
 another example, the \f$kd\f$-tree holds its points only in the leaves (at the
@@ -92,10 +92,10 @@ bottom of the tree).  More information on space trees can be found in either the
 "Tree-independent dual-tree algorithms" paper or any of the related literature.
 
 So there is a huge amount of possible variety in the types of trees that can
-fall into the class of \e "space trees".  Therefore, it's important to treat
-them abstractly, and the \c TreeType policy allows us to do just that.  All we
-need to remember is that a node in a tree can be represented as the combination
-of some points held in the node, some child nodes, and some geometric structure
+fall into the class of *space trees*.  Therefore, it's important to treat them
+abstractly, and the \c TreeType policy allows us to do just that.  All we need
+to remember is that a node in a tree can be represented as the combination of
+some points held in the node, some child nodes, and some geometric structure
 that represents the space that all of the descendant points fall into (this is a
 restatement of the fourth part of the definition).
 
@@ -138,7 +138,7 @@ RangeSearch<ManhattanDistance,
             QuadTree<ManhattanDistance, EmptyStatistic, arma::mat>> rs(...);
 @endcode
 
-Unfortunately, the price to pay for this user convenience is that \e every
+Unfortunately, the price to pay for this user convenience is that *every*
 \c TreeType must have three template parameters, and they must be in exactly
 that order.  Fortunately, there is an additional benefit: we are guaranteed that
 the tree is built using the same metric as the method (that is, a user can't
@@ -159,7 +159,7 @@ node is easily made into a fourth template parameter (the \c BinarySpaceTree
 class calls this the \c BoundType parameter), and the procedure used to split a
 node is easily made into a fifth template parameter (the \c BinarySpaceTree
 class calls this the \c SplitType parameter).  However, the syntax of template
-template parameters \e requires that the class only has the correct number of
+template parameters *requires* that the class only has the correct number of
 template parameters---no more, no less.  Fortunately, C++11 allows template
 typedefs, which can be used to provide partial specialization of template
 classes:
@@ -192,7 +192,7 @@ typedefs to provide simplified \c TreeType interfaces.
 
 @section treetype_api The TreeType API
 
-As a result of the definition of \e "space tree" in the previous section, a
+As a result of the definition of *space tree* in the previous section, a
 simplified API presents itself quite easily.  However, more complex
 functionality is often necessary in mlpack, so this leads to more functions
 being necessary for a class to satisfy the \c TreeType policy.  Combining this
@@ -342,9 +342,9 @@ class ExampleTree
 @endcode
 
 Although this is significantly more complex than the four-item definition of
-\e "space tree" might suggest, it turns out many of these methods are not
+*space tree* might suggest, it turns out many of these methods are not
 difficult to implement for most reasonable tree types.  It is also important to
-realize that this is a \e minimum API; you may implement more complex tree types
+realize that this is a *minimum* API; you may implement more complex tree types
 at your leisure (and you may include more template parameters too, though you
 will have to use template typedefs to provide versions with three parameters;
 see \ref treetype_template_params "the previous section").
@@ -352,12 +352,12 @@ see \ref treetype_template_params "the previous section").
 Before diving into the detailed documentation for each function, let us consider
 a few important points about the implications of this API:
 
- - \b "Trees are not default-constructible" and should not (in general) provide
+ - **Trees are not default-constructible** and should not (in general) provide
 a default constructor.  This helps prevent invalid trees.  In general, any
 instantiated mlpack object should be valid and ready to use---and a tree built
 on no points is not valid or ready to use.
 
- - \b "Trees only need to provide batch constructors."  Although many tree types
+ - **Trees only need to provide batch constructors.**  Although many tree types
 do have algorithms for incremental insertions, in mlpack this is not required
 because the tree-based algorithms that mlpack implements generally assume
 fully-built, non-modifiable trees.  For this purpose, batch construction is
@@ -365,7 +365,7 @@ perfectly sufficient.  (It's also worth pointing out that for some types of
 trees, like kd-trees, the cost of a handful of insertions often outweighs the
 cost of completely rebuilding the tree.)
 
- - \b "Trees must provide a number of distance bounding functions."  The utility
+ - **Trees must provide a number of distance bounding functions.**  The utility
 of trees generally stems from the ability to place quick bounds on
 distance-related quantities.  For instance, if all the descendant points of a
 node are bounded by a ball of radius \f$\lambda\f$ and the center of the node
@@ -375,7 +375,7 @@ descendant point of the node is equal to the distance between \f$p\f$ and
 calculation, and (usually) provides a decent bound on the minimum distance
 between \f$p\f$ and any descendant point of the node.
 
- - \b "Trees need to be able to be serialized."  mlpack uses the
+ - **Trees need to be able to be serialized.**  mlpack uses the
 boost::serialization library for saving and loading objects.  Trees---which can
 be a part of machine learning models---therefore must have the ability to be
 saved and loaded.  Making this all work requires a protected constructor (part
@@ -413,9 +413,9 @@ void Evaluate(VecTypeA& a, VecTypeB& b);
 
 Note that this method is not necessarily static, so a \c MetricType object
 should be held internally and its \c Evaluate() method should be called whenever
-the distance between two points is required.  \b "It is generally a bad idea to
-hardcode any distance calculation in your tree."  This will make the tree unable
-to generalize to arbitrary metrics.  If your tree must depend on certain
+the distance between two points is required.  **It is generally a bad idea to
+hardcode any distance calculation in your tree.**  This will make the tree
+unable to generalize to arbitrary metrics.  If your tree must depend on certain
 assumptions holding about the metric (i.e. the metric is a Euclidean metric),
 then make that clear in the documentation of the tree, so users do not try to
 use the tree with an inappropriate metric.
@@ -450,7 +450,7 @@ will be used, since the vast majority of the time this will be what is used.
 @subsection treetype_rigorous_constructor Constructors and destructors
 
 The \c TreeType API requires at least three constructors.  Technically, it does
-not \e require a destructor, but almost certainly your tree class will be doing
+not *require* a destructor, but almost certainly your tree class will be doing
 some memory management internally and should have one (though not always).
 
 The first two constructors are variations of the same idea:
@@ -468,9 +468,9 @@ ExampleTree(const MatType& data, MetricType& metric);
 All that is required here is that a constructor is available that takes a
 dataset and optionally an instantiated metric.  If no metric is provided, then
 it should be assumed that the \c MetricType class has a default constructor and
-a default-constructed metric should be used.  The constructor \e must return a
-valid, fully-constructed, ready-to-use tree that satisfies the definition of
-\e "space tree" that was \ref whatistree "given earlier".
+a default-constructed metric should be used.  The constructor *must* return a
+valid, fully-constructed, ready-to-use tree that satisfies the definition
+of *space tree* that was \ref whatistree "given earlier".
 
 It is possible to implement both these constructors as one by using \c
 boost::optional.
@@ -489,8 +489,8 @@ ExampleTree(
 @endcode
 
 This has implications on how the tree must be stored.  In this case, the dataset
-is \e "not yet loaded" and therefore the tree \b "may be required to have"
-\b "ownership of the data matrix".  This means that realistically the most
+is *not yet loaded* and therefore the tree **may be required to have
+ownership of the data matrix**.  This means that realistically the most
 reasonable way to represent the data matrix internally in a tree class is not
 with a reference but instead with a pointer.  If this is true, then a destructor
 will be required:
@@ -715,9 +715,9 @@ tight as possible.  In tree-based algorithms, these are used for pruning away
 work, and tighter bounds mean that more pruning is possible.
 
 Of these six functions, there are only really two bounds that are desired here:
-the \e "minimum distance" between a node and an object, and the
-\e "maximum distance" between a node and an object.  The object may be either a
-vector (usually \c arma::vec ) or another tree node.
+the *minimum distance* between a node and an object, and the *maximum distance*
+between a node and an object.  The object may be either a vector (usually \c
+arma::vec ) or another tree node.
 
 Consider the first case, where the object is a vector.  The result of
 \c MinDistance() needs to be less than or equal to the true minimum distance,
