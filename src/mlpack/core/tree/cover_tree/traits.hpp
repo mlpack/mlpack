@@ -23,9 +23,9 @@ template<typename MetricType,
          typename StatisticType,
          typename MatType,
          typename RootPointPolicy>
-class TreeTraits<CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>>
+struct TreeTraits<CoverTree<MetricType, StatisticType, MatType,
+                            RootPointPolicy>>
 {
- public:
   /**
    * The cover tree (or, this implementation of it) does not require that
    * children represent non-overlapping subsets of the parent node.
