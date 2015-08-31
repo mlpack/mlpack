@@ -10,7 +10,8 @@ pruning away large parts of the tree during computation.
 Most mlpack algorithms that use trees are not tied to a specific tree but
 instead allow the user to choose a tree via the \c TreeType template parameter.
 Any tree passed as a \c TreeType template parameter will need to implement a
-certain set of functions.
+certain set of functions.  In addition, a tree may optionally specify some
+traits about itself with the \c TreeTraits trait class.
 
 This document aims to clarify the abstractions underlying mlpack trees, list and
 describe the required functionality of the \c TreeType policy, and point users
@@ -26,6 +27,7 @@ towards existing types of trees.  A table of contents is below:
    - \ref treetype_rigorous_basic
    - \ref treetype_rigorous_complex
    - \ref treetype_rigorous_serialization
+ - \ref treetype_traits
  - \ref treetype_more
 
 Although this document is long, there may still be errors and unclear areas.  If
@@ -801,6 +803,80 @@ the object's lifetime, and references cannot be re-seated.  In general this will
 require the use of pointers, which then require manual memory management.
 Therefore, be careful that \c Serialize() (and the tree's destructor) properly
 handle memory management!
+
+@section treetype_traits The TreeTraits trait class
+
+Some tree-based algorithms can specialize if the tree fulfills certain
+conditions.  For instance, if the regions represented by two sibling nodes
+cannot overlap, an algorithm may be able to perform a simpler computation.
+Based on this reasoning, the \c TreeTraits trait class (much like the
+mlpack::kernel::KernelTraits class) exists in order to allow a tree to specify
+(via a \c const \c static \c bool) when these types of conditions are
+satisfied.  **Note that a TreeTraits class is not required,** but may be
+helpful.
+
+The \c TreeTraits trait class is a template class that takes a \c TreeType as a
+parameter, and exposes \c const \c static \c bool values that depend on the
+tree.  Setting these values is achieved by specialization.  The code below shows
+the default \c TreeTraits values (these are the values that will be used if no
+specialization is provided for a given \c TreeType).
+
+@code
+template<typename TreeType>
+class TreeTraits
+{
+ public:
+  // This is true if the subspaces represented by the children of a node can
+  // overlap.
+  static const bool HasOverlappingChildren = true;
+
+  // This is true if Point(0) is the centroid of the node.
+  static const bool FirstPointIsCentroid = false;
+
+  // This is true if the points contained in the first child of a node
+  // (Child(0)) are also contained in that node.
+  static const bool HasSelfChildren = false;
+
+  // This is true if the tree rearranges points in the dataset when it is built.
+  static const bool RearrangesDataset = false;
+
+  // This is true if the tree always has only two children.
+  static const bool BinaryTree = false;
+};
+@endcode
+
+An example specialization for the \ref mlpack::tree::KDTree class is given
+below.  Note that \ref mlpack::tree::KDTree is itself a template class (like
+every class satisfying the \c TreeType policy), so we are specializing to a
+template parameter.
+
+@code
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType>
+template<>
+class TreeTraits<KDTree<MetricType, StatisticType, MatType>>
+{
+ public:
+  // The regions represented by the two children of a node may not overlap.
+  static const bool HasOverlappingChildren = false;
+
+  // There is no guarantee that the first point of a node is the centroid.
+  static const bool FirstPointIsCentroid = false;
+
+  // Points are not contained at multiple levels (only at the leaves).
+  static const bool HasSelfChildren = false;
+
+  // Points are rearranged during the building of the tree.
+  static const bool RearrangesDataset = true;
+
+  // The tree is always binary.
+  static const bool BinaryTree = true;
+};
+@endcode
+
+Currently, the traits available are each of the five detailed above.  For more
+information, see the \ref mlpack::tree::TreeTraits documentation.
 
 @section treetype_more A list of trees in mlpack and more information
 
