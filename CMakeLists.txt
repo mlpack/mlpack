@@ -298,6 +298,7 @@ if (DOXYGEN_FOUND)
       COMMAND ${CMAKE_COMMAND} -D DESTDIR="${CMAKE_BINARY_DIR}" -P
           "${CMAKE_CURRENT_SOURCE_DIR}/CMake/GenerateDoxyfile.cmake"
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+      DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile"
       COMMENT "Creating Doxyfile to generate Doxygen documentation"
   )
 
