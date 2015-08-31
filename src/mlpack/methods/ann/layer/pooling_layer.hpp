@@ -68,8 +68,8 @@ class PoolingLayer
   template<typename eT>
   void Forward(const arma::Cube<eT>& input, arma::Cube<eT>& output)
   {
-    output = arma::zeros<arma::Cube<eT> >(input.n_rows / ksize,
-                            input.n_cols / ksize, input.n_slices);
+    output = arma::zeros<arma::Cube<eT> >(input.n_rows / kSize,
+                            input.n_cols / kSize, input.n_slices);
 
     for (size_t s = 0; s < input.n_slices; s++)
       Pooling(input.slice(s), output.slice(s));
@@ -175,8 +175,8 @@ class PoolingLayer
   void Pooling(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
 
-    const size_t rStep = ksize;
-    const size_t cStep = ksize;
+    const size_t rStep = kSize;
+    const size_t cStep = kSize;
 
     for (size_t j = 0; j < input.n_cols; j += cStep)
     {
