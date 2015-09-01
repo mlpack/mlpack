@@ -23,6 +23,7 @@ namespace ann /** Artificial Neural Network. */ {
  *
  *  - SigmoidLayer
  *  - IdentityLayer
+ *  - BaseLayer2D
  *
  * @tparam ActivationFunction Activation function used for the embedding layer.
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
@@ -162,6 +163,17 @@ template <
     typename OutputDataType = arma::mat
 >
 using IdentityLayer = BaseLayer<
+    ActivationFunction, InputDataType, OutputDataType>;
+
+/**
+ * Standard Base-Layer2D using the logistic activation function.
+ */
+template <
+    class ActivationFunction = LogisticFunction,
+    typename InputDataType = arma::cube,
+    typename OutputDataType = arma::cube
+>
+using BaseLayer2D = BaseLayer<
     ActivationFunction, InputDataType, OutputDataType>;
 
 
