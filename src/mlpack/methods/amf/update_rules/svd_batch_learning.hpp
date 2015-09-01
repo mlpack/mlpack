@@ -203,8 +203,7 @@ inline void SVDBatchLearning::WUpdate<arma::sp_mat>(const arma::sp_mat& V,
   }
 
   if (kw != 0)
-    for (size_t i = 0; i < n; i++)
-      deltaW -= kw * W;
+    deltaW -= kw * W;
 
   mW += u * deltaW;
   W += mW;
@@ -232,8 +231,7 @@ inline void SVDBatchLearning::HUpdate<arma::sp_mat>(const arma::sp_mat& V,
   }
 
   if (kh != 0)
-    for (size_t j = 0; j < m; j++)
-      deltaH -= kh * H;
+    deltaH -= kh * H;
 
   mH += u * deltaH;
   H += mH;
