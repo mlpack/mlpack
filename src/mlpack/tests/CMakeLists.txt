@@ -1,7 +1,7 @@
 # MLPACK test executable.
 add_executable(mlpack_test
   mlpack_test.cpp
-#  activation_functions_test.cpp
+  activation_functions_test.cpp
   adaboost_test.cpp
   allkfn_test.cpp
   allknn_test.cpp
