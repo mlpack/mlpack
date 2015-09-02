@@ -84,8 +84,6 @@ class Trainer
           ElementCount(trainingData) - 1, ElementCount(trainingData));
       epoch = 0;
 
-      size_t foo = 0;
-
       while(true)
       {
         if (shuffle)

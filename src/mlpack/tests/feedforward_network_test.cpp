@@ -265,7 +265,7 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
   BuildDropoutNetwork<LogisticFunction,
                       BinaryClassificationLayer,
                       MeanSquaredErrorFunction>
-      (trainData, trainLabels, testData, testLabels, 4, 500, 0.1, 60);
+      (trainData, trainLabels, testData, testLabels, 4, 100, 0.1, 60);
 
   dataset.load("mnist_first250_training_4s_and_9s.arm");
 
@@ -280,13 +280,13 @@ BOOST_AUTO_TEST_CASE(DropoutNetworkTest)
   BuildVanillaNetwork<LogisticFunction,
                       BinaryClassificationLayer,
                       MeanSquaredErrorFunction>
-      (dataset, labels, dataset, labels, 30, 100, 0.6, 10);
+      (dataset, labels, dataset, labels, 8, 100, 0.6, 10);
 
   // Vanilla neural net with tanh activation function.
   BuildVanillaNetwork<TanhFunction,
                       BinaryClassificationLayer,
                       MeanSquaredErrorFunction>
-    (dataset, labels, dataset, labels, 10, 200, 0.6, 20);
+    (dataset, labels, dataset, labels, 8, 100, 0.6, 20);
 }
 
 /**
@@ -424,7 +424,7 @@ BOOST_AUTO_TEST_CASE(NetworkDecreasingErrorTest)
                        LogisticFunction,
                        BinaryClassificationLayer,
                        MeanSquaredErrorFunction>
-      (dataset, labels, dataset, labels, 30, 50);
+      (dataset, labels, dataset, labels, 30, 10);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
