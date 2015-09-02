@@ -424,7 +424,7 @@ BOOST_AUTO_TEST_CASE(NetworkDecreasingErrorTest)
                        LogisticFunction,
                        BinaryClassificationLayer,
                        MeanSquaredErrorFunction>
-      (dataset, labels, dataset, labels, 30, 10);
+      (dataset, labels, dataset, labels, 30, 50);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
