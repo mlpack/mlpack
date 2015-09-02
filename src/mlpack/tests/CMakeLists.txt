@@ -16,6 +16,7 @@ add_executable(mlpack_test
   distribution_test.cpp
   emst_test.cpp
   fastmks_test.cpp
+  feedforward_network_test.cpp
   gmm_test.cpp
   hmm_test.cpp
   kernel_test.cpp

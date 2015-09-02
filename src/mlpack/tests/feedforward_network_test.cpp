@@ -87,7 +87,7 @@ void BuildVanillaNetwork(MatType& trainData,
   FFN<decltype(modules), decltype(classOutputLayer), PerformanceFunctionType>
       net(modules, classOutputLayer);
 
-  Trainer<decltype(net)> trainer(net, maxEpochs, 1, 0.001);
+  Trainer<decltype(net)> trainer(net, maxEpochs, 1, 0.01);
   trainer.Train(trainData, trainLabels, testData, testLabels);
 
   MatType prediction;
@@ -306,13 +306,13 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkConvergenceTest)
   BuildVanillaNetwork<LogisticFunction,
                       BinaryClassificationLayer,
                       MeanSquaredErrorFunction>
-      (input, labels, input, labels, 4, 0, 0, 0.01);
+      (input, labels, input, labels, 4, 5000, 0, 0.01);
 
   // Vanilla neural net with tanh activation function.
   BuildVanillaNetwork<TanhFunction,
                       BinaryClassificationLayer,
                       MeanSquaredErrorFunction>
-      (input, labels, input, labels, 4, 0, 0, 0.01);
+      (input, labels, input, labels, 4, 5000, 0, 0.01);
 
   // Test on a linearly separable dataset (AND).
   input << 0 << 1 << 1 << 0 << arma::endr
@@ -323,13 +323,13 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkConvergenceTest)
   BuildVanillaNetwork<LogisticFunction,
                       BinaryClassificationLayer,
                       MeanSquaredErrorFunction>
-    (input, labels, input, labels, 4, 0, 0, 0.01);
+    (input, labels, input, labels, 4, 5000, 0, 0.01);
 
   // Vanilla neural net with tanh activation function.
   BuildVanillaNetwork<TanhFunction,
                       BinaryClassificationLayer,
                       MeanSquaredErrorFunction>
-      (input, labels, input, labels, 4, 0, 0, 0.01);
+      (input, labels, input, labels, 4, 5000, 0, 0.01);
 }
 
 /**
