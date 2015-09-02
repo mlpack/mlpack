@@ -41,7 +41,9 @@ class Perceptron
    * @param iterations Maximum number of iterations for the perceptron learning
    *     algorithm.
    */
-  Perceptron(const MatType& data, const arma::Row<size_t>& labels, int iterations);
+  Perceptron(const MatType& data,
+             const arma::Row<size_t>& labels,
+             int iterations);
 
   /**
    * Classification function. After training, use the weightVectors matrix to
@@ -54,16 +56,25 @@ class Perceptron
   void Classify(const MatType& test, arma::Row<size_t>& predictedLabels);
 
   /**
-   *  Alternate constructor which copies parameters from an already initiated
-   *  perceptron.
+   * Alternate constructor which copies parameters from an already initiated
+   * perceptron.
    *
-   *  @param other The other initiated Perceptron object from which we copy the
-   *               values from.
-   *  @param data The data on which to train this Perceptron object on.
-   *  @param D Weight vector to use while training. For boosting purposes.
-   *  @param labels The labels of data.
+   * @param other The other initiated Perceptron object from which we copy the
+   *       values from.
+   * @param data The data on which to train this Perceptron object on.
+   * @param D Weight vector to use while training. For boosting purposes.
+   * @param labels The labels of data.
    */
-  Perceptron(const Perceptron<>& other, MatType& data, const arma::rowvec& D, const arma::Row<size_t>& labels);
+  Perceptron(const Perceptron<>& other,
+             MatType& data,
+             const arma::rowvec& D,
+             const arma::Row<size_t>& labels);
+
+  /**
+   * Serialize the perceptron.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
 private:
   //! To store the number of iterations

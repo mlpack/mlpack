@@ -110,6 +110,18 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
   Train(D);
 }
 
+//! Serialize the perceptron.
+template<typename LearnPolicy,
+         typename WeightInitializationPolicy,
+         typename MatType>
+template<typename Archive>
+void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Serialize(
+    Archive& ar,
+    const unsigned int /* version */)
+{
+  // For now, do nothing.
+}
+
 /**
  *  Training Function. It trains on trainData using the cost matrix D
  *
