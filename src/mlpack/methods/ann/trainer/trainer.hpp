@@ -12,7 +12,6 @@
 
 #include <mlpack/methods/ann/network_traits.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/layer/neuron_layer.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {

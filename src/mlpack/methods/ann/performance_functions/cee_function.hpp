@@ -9,9 +9,8 @@
 #define __MLPACK_METHODS_ANN_PERFORMANCE_FUNCTIONS_CEE_FUNCTION_HPP
 
 #include <mlpack/core.hpp>
-
+#include <mlpack/methods/ann/layer/linear_layer.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
-#include <mlpack/methods/ann/layer/neuron_layer.hpp>
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -25,7 +24,7 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam Layer The layer that is connected with the output layer.
  */
 template<
-    class Layer = NeuronLayer< >
+    class Layer = LinearLayer< >
 >
 class CrossEntropyErrorFunction
 {
