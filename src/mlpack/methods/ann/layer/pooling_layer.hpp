@@ -9,7 +9,7 @@
 #define __MLPACK_METHODS_ANN_LAYER_POOLING_LAYER_HPP
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/ann/pooling_rules/max_pooling.hpp>
+#include <mlpack/methods/ann/pooling_rules/mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/layer_traits.hpp>
 
 namespace mlpack {
@@ -26,7 +26,7 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename PoolingRule = MaxPooling,
+    typename PoolingRule = MeanPooling,
     typename InputDataType = arma::cube,
     typename OutputDataType = arma::cube
 >
@@ -102,16 +102,16 @@ class PoolingLayer
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Cube<eT>& input,
+  void Backward(const arma::Cube<eT>& /* unused */,
                 const arma::Cube<eT>& gy,
                 arma::Cube<eT>& g)
   {
-    g = arma::zeros<arma::Cube<eT> >(input.n_rows, input.n_cols,
-        input.n_slices);
+    g = arma::zeros<arma::Cube<eT> >(inputParameter.n_rows,
+        inputParameter.n_cols, inputParameter.n_slices);
 
     for (size_t s = 0; s < gy.n_slices; s++)
     {
-      Unpooling(input.slice(s), gy.slice(s), g.slice(s));
+      Unpooling(inputParameter.slice(s), gy.slice(s), g.slice(s));
     }
   }
 
@@ -125,7 +125,7 @@ class PoolingLayer
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Cube<eT>& input,
+  void Backward(const arma::Cube<eT>& /* unused */,
                 const arma::Mat<eT>& gy,
                 arma::Cube<eT>& g)
   {
@@ -146,7 +146,7 @@ class PoolingLayer
       }
     }
 
-    Backward(input, mappedError, g);
+    Backward(inputParameter, mappedError, g);
   }
 
   //! Get the input parameter.
@@ -235,7 +235,7 @@ class PoolingLayer
   PoolingRule pooling;
 }; // class PoolingLayer
 
-//! Layer traits for the linear layer.
+//! Layer traits for the pooling layer.
 template<
     typename PoolingRule,
     typename InputDataType,
