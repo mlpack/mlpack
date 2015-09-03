@@ -87,14 +87,37 @@ class DropoutLayer
       // ratio.
       scale = 1.0 / (1.0 - ratio);
       mask = arma::randu<arma::Mat<eT> >(input.n_rows, input.n_cols);
+      mask.transform( [&](double val) { return (val > ratio); } );
+      output = input % mask * scale;
+    }
+  }
 
-      arma::mat::iterator a = mask.begin();
-      arma::mat::iterator b = mask.end();
-      for(arma::mat::iterator i = a; i != b; ++i)
-      {
-        (*i) = (*i) > ratio;
-      }
+  /**
+   * Ordinary feed forward pass of the dropout layer.
+   *
+   * @param input Input data used for evaluating the specified function.
+   * @param output Resulting output activation.
+   */
+  template<typename eT>
+  void Forward(const arma::Cube<eT>& input, arma::Cube<eT>& output)
+  {
+    // The dropout mask will not be multiplied in the deterministic mode
+    // (during testing).
+    if (deterministic)
+    {
+      output = input;
 
+      if (rescale)
+        output *= scale;
+    }
+    else
+    {
+      // Scale with input / (1 - ratio) and set values to zero with probability
+      // ratio.
+      scale = 1.0 / (1.0 - ratio);
+      mask = arma::randu<arma::Cube<eT> >(input.n_rows, input.n_cols,
+          input.n_slices);
+      mask.transform( [&](double val) { return (val > ratio); } );
       output = input % mask * scale;
     }
   }
@@ -106,10 +129,10 @@ class DropoutLayer
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* unused */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g)
+  template<typename DataType>
+  void Backward(const DataType& /* unused */,
+                const DataType& gy,
+                DataType& g)
   {
     g = gy % mask * scale;
   }
@@ -171,7 +194,7 @@ class DropoutLayer
 }; // class DropoutLayer
 
 //! Layer traits for the bias layer.
-template<
+template <
   typename InputDataType,
   typename OutputDataType
 >
@@ -184,6 +207,15 @@ class LayerTraits<DropoutLayer<InputDataType, OutputDataType> >
   static const bool IsLSTMLayer = false;
   static const bool IsConnection = true;
 };
+
+/**
+ * Standard Dropout-Layer2D.
+ */
+template <
+    typename InputDataType = arma::cube,
+    typename OutputDataType = arma::cube
+>
+using DropoutLayer2D = DropoutLayer<InputDataType, OutputDataType>;
 
 }; // namespace ann
 }; // namespace mlpack
