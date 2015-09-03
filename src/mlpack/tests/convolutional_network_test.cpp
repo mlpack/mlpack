@@ -110,10 +110,10 @@ void BuildVanillaNetwork()
   CNN<decltype(modules), decltype(outputLayer)>
       net(modules, outputLayer);
 
-  Trainer<decltype(net)> trainer(net, 100, 1, 0.3);
+  Trainer<decltype(net)> trainer(net, 100, 1, 0.7);
   trainer.Train(input, Y, input, Y);
 
-  BOOST_REQUIRE_LE(trainer.ValidationError(), 0.3);
+  BOOST_REQUIRE_LE(trainer.ValidationError(), 0.7);
 }
 
 /**
