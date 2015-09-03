@@ -75,23 +75,6 @@ class PoolingLayer
       Pooling(input.slice(s), output.slice(s));
   }
 
-  /*
-   * Ordinary feed backward pass of a neural network, calculating the function
-   * f(x) by propagating x backwards through f. Using the results from the feed
-   * forward pass.
-   *
-   * @param input The propagated input activation.
-   * @param gy The backpropagated error.
-   * @param g The calculated gradient.
-   */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g)
-  {
-    Unpooling(input, gy, g);
-  }
-
   /**
    * Ordinary feed backward pass of a neural network, using 3rd-order tensors as
    * input, calculating the function f(x) by propagating x backwards through f.
