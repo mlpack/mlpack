@@ -110,19 +110,16 @@ class ConvLayer
     const size_t wConv = ConvOutSize(input.n_rows, wfilter, xStride, wPad);
     const size_t hConv = ConvOutSize(input.n_cols, hfilter, yStride, hPad);
 
-    output = arma::Cube<eT>(wConv, hConv, outMaps);
+    output = arma::zeros<arma::Cube<eT> >(wConv, hConv, outMaps);
     for (size_t outMap = 0, outMapIdx = 0; outMap < outMaps; outMap++)
     {
       for (size_t inMap = 0; inMap < inMaps; inMap++, outMapIdx++)
       {
-        arma::Cube<eT> inputSlices = input.slices(inMap, inMap);
+        arma::Mat<eT> convOutput;
+        ForwardConvolutionRule::Convolution(input.slice(inMap),
+            weights.slice(outMap), convOutput);
 
-        arma::Cube<eT> convOutput;
-        ForwardConvolutionRule::Convolution(inputSlices,
-            weights.slice(inMap * outMaps +
-            outMap), convOutput);
-
-        output.slices(outMap, outMap) += convOutput;
+        output.slice(outMap) += convOutput;
       }
     }
   }
@@ -137,28 +134,26 @@ class ConvLayer
    * @param g The calculated gradient.
    */
   template<typename eT>
-  void Backward(const arma::Cube<eT>& input,
+  void Backward(const arma::Cube<eT>& /* unused */,
                 const arma::Cube<eT>& gy,
                 arma::Cube<eT>& g)
   {
-    g = arma::zeros<arma::Cube<eT> >(input.n_rows,
-                                     input.n_cols,
-                                     input.n_slices);
+    g = arma::zeros<arma::Cube<eT> >(inputParameter.n_rows,
+                                     inputParameter.n_cols,
+                                     inputParameter.n_slices);
 
     for (size_t outMap = 0, outMapIdx = 0; outMap < inMaps; outMap++)
     {
       for (size_t inMap = 0; inMap < outMaps; inMap++, outMapIdx++)
       {
-        arma::Cube<eT> errorSlices = gy.slices(inMap, inMap);
-
         arma::Mat<eT> rotatedFilter;
         Rotate180(weights.slice(outMap * outMaps + inMap), rotatedFilter);
 
-        arma::Cube<eT> output;
-        BackwardConvolutionRule::Convolution(errorSlices, rotatedFilter,
+        arma::Mat<eT> output;
+        BackwardConvolutionRule::Convolution(gy.slice(inMap), rotatedFilter,
             output);
 
-        g.slices(outMap, outMap) += output;
+        g.slice(outMap) += output;
       }
     }
   }
