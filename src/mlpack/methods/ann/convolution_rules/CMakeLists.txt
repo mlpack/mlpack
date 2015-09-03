@@ -1,9 +1,10 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
-  ffn.hpp
-  cnn.hpp
-  network_traits.hpp
+  border_modes.hpp
+  naive_convolution.hpp
+  fft_convolution.hpp
+  svd_convolution.hpp
 )
 
 # Add directory name to sources.
@@ -14,12 +15,3 @@ endforeach()
 # Append sources (with directory name) to list of all MLPACK sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-add_subdirectory(activation_functions)
-add_subdirectory(init_rules)
-add_subdirectory(layer)
-add_subdirectory(optimizer)
-add_subdirectory(performance_functions)
-add_subdirectory(trainer)
-add_subdirectory(pooling_rules)
-add_subdirectory(convolution_rules)
