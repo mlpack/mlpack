@@ -21,17 +21,17 @@ class ZeroInitialization
   ZeroInitialization() { }
 
   inline static void Initialize(arma::mat& W,
-                                const size_t row,
-                                const size_t col)
+                                const size_t numFeatures,
+                                const size_t numClasses)
   {
-    arma::mat tempWeights(row, col);
+    arma::mat tempWeights(numFeatures, numClasses);
     tempWeights.fill(0.0);
 
     W = tempWeights;
   }
 }; // class ZeroInitialization
 
-}; // namespace perceptron
-}; // namespace mlpack
+} // namespace perceptron
+} // namespace mlpack
 
 #endif

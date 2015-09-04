@@ -34,7 +34,7 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
     const int iterations)
 {
   WeightInitializationPolicy WIP;
-  WIP.Initialize(weightVectors, arma::max(labels) + 1, data.n_rows + 1);
+  WIP.Initialize(weightVectors, data.n_rows + 1, arma::max(labels) + 1);
 
   // Start training.
   iter = iterations;
@@ -68,9 +68,9 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
   // Could probably be faster if done in batch.
   for (size_t i = 0; i < test.n_cols; i++)
   {
-    tempLabelMat = weightVectors.submat(0, 1, weightVectors.n_rows - 1,
-                                        weightVectors.n_cols - 1) *
-                                        test.col(i) + weightVectors.col(0);
+    tempLabelMat = weightVectors.submat(1, 0, weightVectors.n_rows - 1,
+                                        weightVectors.n_cols - 1).t() *
+                                        test.col(i) + weightVectors.row(0).t();
     tempLabelMat.max(maxIndex);
     predictedLabels(0, i) = maxIndex;
   }
@@ -101,7 +101,7 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
 
   // Insert a row of ones at the top of the training data set.
   WeightInitializationPolicy WIP;
-  WIP.Initialize(weightVectors, arma::max(labels) + 1, data.n_rows + 1);
+  WIP.Initialize(weightVectors, data.n_rows + 1, arma::max(labels) + 1);
 
   Train(data, labels, D);
 }
@@ -153,8 +153,8 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
     {
       // Multiply for each variable and check whether the current weight vector
       // correctly classifies this.
-      tempLabelMat = weightVectors.cols(1, weightVectors.n_cols - 1) *
-          data.col(j) + weightVectors.col(0);
+      tempLabelMat = weightVectors.rows(1, weightVectors.n_rows - 1).t() *
+          data.col(j) + weightVectors.row(0).t();
 
       tempLabelMat.max(maxIndexRow, maxIndexCol);
 
@@ -167,7 +167,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
         // Send maxIndexRow for knowing which weight to update, send j to know
         // the value of the vector to update it with.  Send tempLabel to know
         // the correct class.
-        LP.UpdateWeights(data, weightVectors, j, tempLabel, maxIndexRow, D);
+        LP.UpdateWeights(data, weightVectors, j, tempLabel, maxIndexCol, D);
       }
     }
   }

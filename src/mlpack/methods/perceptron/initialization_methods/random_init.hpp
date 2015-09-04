@@ -22,14 +22,14 @@ class RandomInitialization
   RandomInitialization() { }
 
   inline static void Initialize(arma::mat& W,
-                                const size_t row,
-                                const size_t col)
+                                const size_t numFeatures,
+                                const size_t numClasses)
   {
-    W = arma::randu<arma::mat>(row, col);
+    W = arma::randu<arma::mat>(numFeatures, numClasses);
   }
 }; // class RandomInitialization
 
-}; // namespace perceptron
-}; // namespace mlpack
+} // namespace perceptron
+} // namespace mlpack
 
 #endif

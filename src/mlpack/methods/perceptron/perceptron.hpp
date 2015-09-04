@@ -80,7 +80,11 @@ private:
   //! To store the number of iterations
   size_t iter;
 
-  //! Stores the weight vectors for each of the input class labels.
+  /**
+   * Stores the weight vectors for each of the input class labels.  Each column
+   * corresponds to the weights for one class label, and each row corresponds to
+   * the weights for one dimension of the input data.
+   */
   arma::mat weightVectors;
 
   /**
