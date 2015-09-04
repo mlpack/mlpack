@@ -87,18 +87,18 @@ void BuildVanillaNetwork()
    * +---+        +---+        +---+        +---+        +---+    +---+
    */
 
-  ConvLayer<AdaDelta> convLayer0(1, 8, 5, 5);
-  BiasLayer2D<AdaDelta, ZeroInitialization> biasLayer0(8);
+  ConvLayer<RMSPROP> convLayer0(1, 8, 5, 5);
+  BiasLayer2D<RMSPROP, ZeroInitialization> biasLayer0(8);
   BaseLayer2D<PerformanceFunction> baseLayer0;
   PoolingLayer<> poolingLayer0(2);
 
-  ConvLayer<AdaDelta> convLayer1(8, 12, 5, 5);
-  BiasLayer2D<AdaDelta, ZeroInitialization> biasLayer1(12);
+  ConvLayer<RMSPROP> convLayer1(8, 12, 5, 5);
+  BiasLayer2D<RMSPROP, ZeroInitialization> biasLayer1(12);
   BaseLayer2D<PerformanceFunction> baseLayer1;
   PoolingLayer<> poolingLayer1(2);
 
-  LinearMappingLayer<AdaDelta> linearLayer0(192, 10);
-  BiasLayer<AdaDelta> biasLayer2(10);
+  LinearMappingLayer<RMSPROP> linearLayer0(192, 10);
+  BiasLayer<RMSPROP> biasLayer2(10);
   SoftmaxLayer<> softmaxLayer0;
 
   OneHotLayer outputLayer;
@@ -110,7 +110,7 @@ void BuildVanillaNetwork()
   CNN<decltype(modules), decltype(outputLayer)>
       net(modules, outputLayer);
 
-  Trainer<decltype(net)> trainer(net, 100, 1, 0.7);
+  Trainer<decltype(net)> trainer(net, 50, 1, 0.7);
   trainer.Train(input, Y, input, Y);
 
   BOOST_REQUIRE_LE(trainer.ValidationError(), 0.7);
@@ -121,7 +121,7 @@ void BuildVanillaNetwork()
  */
 BOOST_AUTO_TEST_CASE(VanillaNetworkTest)
 {
-  BuildVanillaNetwork<RectifierFunction>();
+  BuildVanillaNetwork<LogisticFunction>();
 }
 
 /**
@@ -203,7 +203,7 @@ void BuildVanillaDropoutNetwork()
   CNN<decltype(modules), decltype(outputLayer)>
       net(modules, outputLayer);
 
-  Trainer<decltype(net)> trainer(net, 100, 1, 0.7);
+  Trainer<decltype(net)> trainer(net, 50, 1, 0.7);
   trainer.Train(input, Y, input, Y);
 
   BOOST_REQUIRE_LE(trainer.ValidationError(), 0.7);
