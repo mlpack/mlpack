@@ -337,7 +337,6 @@ BOOST_AUTO_TEST_CASE(VanillaNetworkConvergenceTest)
  * evaluate the network.
  */
 template<
-    typename WeightInitRule,
     typename PerformanceFunction,
     typename OutputLayerType,
     typename PerformanceFunctionType,
@@ -372,12 +371,18 @@ void BuildNetworkOptimzer(MatType& trainData,
    * +-----+       +-----+
    */
 
-  LinearLayer<> inputLayer(trainData.n_rows, hiddenLayerSize);
-  BiasLayer<> inputBiasLayer(hiddenLayerSize);
+  RandomInitialization randInit(0.5, 0.5);
+
+  LinearLayer<RMSPROP, RandomInitialization> inputLayer(trainData.n_rows,
+      hiddenLayerSize, randInit);
+  BiasLayer<RMSPROP, RandomInitialization> inputBiasLayer(hiddenLayerSize,
+      1, randInit);
   BaseLayer<PerformanceFunction> inputBaseLayer;
 
-  LinearLayer<> hiddenLayer1(hiddenLayerSize, trainLabels.n_rows);
-  BiasLayer<> hiddenBiasLayer1(trainLabels.n_rows);
+  LinearLayer<RMSPROP, RandomInitialization> hiddenLayer1(hiddenLayerSize,
+      trainLabels.n_rows, randInit);
+  BiasLayer<RMSPROP, RandomInitialization> hiddenBiasLayer1(trainLabels.n_rows,
+      1, randInit);
   BaseLayer<PerformanceFunction> outputLayer;
 
   OutputLayerType classOutputLayer;
@@ -388,7 +393,7 @@ void BuildNetworkOptimzer(MatType& trainData,
   FFN<decltype(modules), OutputLayerType, PerformanceFunctionType>
       net(modules, classOutputLayer);
 
-  Trainer<decltype(net)> trainer(net, epochs, 1);
+  Trainer<decltype(net)> trainer(net, epochs, 1, 0.0001, false);
 
   double error = DBL_MAX;
   for (size_t i = 0; i < 5; i++)
@@ -420,11 +425,10 @@ BOOST_AUTO_TEST_CASE(NetworkDecreasingErrorTest)
   labels.submat(0, labels.n_cols / 2, 0, labels.n_cols - 1) += 1;
 
   // Vanilla neural net with logistic activation function.
-  BuildNetworkOptimzer<RandomInitialization,
-                       LogisticFunction,
+  BuildNetworkOptimzer<LogisticFunction,
                        BinaryClassificationLayer,
                        MeanSquaredErrorFunction>
-      (dataset, labels, dataset, labels, 30, 50);
+      (dataset, labels, dataset, labels, 20, 15);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
