@@ -164,7 +164,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
         // Send maxIndexRow for knowing which weight to update, send j to know
         // the value of the vector to update it with.  Send tempLabel to know
         // the correct class.
-        LP.UpdateWeights(data, weightVectors, biases, j, tempLabel, maxIndexCol,
+        LP.UpdateWeights(data, weightVectors, biases, j, tempLabel, maxIndexRow,
             D);
       }
     }
