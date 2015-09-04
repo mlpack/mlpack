@@ -10,7 +10,7 @@ add_executable(mlpack_test
   aug_lagrangian_test.cpp
   cf_test.cpp
   cli_test.cpp
-#  convolutional_network_test.cpp
+  convolutional_network_test.cpp
   cosine_tree_test.cpp
   decision_stump_test.cpp
   det_test.cpp

@@ -125,8 +125,8 @@ class BiasLayer
    * @param d The calculated error.
    * @param g The calculated gradient.
    */
-  template<typename eT, typename GradientDataType>
-  void Gradient(const arma::Cube<eT>& d, GradientDataType& g)
+  template<typename eT>
+  void Gradient(const arma::Cube<eT>& d, InputDataType& g)
   {
     g = arma::Mat<eT>(weights.n_rows, weights.n_cols);
     for (size_t s = 0; s < d.n_slices; s++)
@@ -141,8 +141,8 @@ class BiasLayer
    * @param d The calculated error.
    * @param g The calculated gradient.
    */
-  template<typename eT, typename GradientDataType>
-  void Gradient(const arma::Mat<eT>& d, GradientDataType& g)
+  template<typename eT>
+  void Gradient(const arma::Mat<eT>& d, InputDataType& g)
   {
     g = d * bias;
   }
