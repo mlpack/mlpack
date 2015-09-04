@@ -98,7 +98,7 @@ private:
    */
   void Train(const MatType& data,
              const arma::Row<size_t>& labels,
-             const arma::rowvec& D);
+             const arma::rowvec& D = arma::rowvec());
 };
 
 } // namespace perceptron

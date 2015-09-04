@@ -37,10 +37,7 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
 
   // Start training.
   iter = iterations;
-  arma::rowvec D(data.n_cols);
-  D.fill(1.0);// giving equal weight to all the points.
-
-  Train(data, labels, D);
+  Train(data, labels);
 }
 
 
@@ -138,6 +135,8 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
 
   LearnPolicy LP;
 
+  const bool hasWeights = (D.n_elem > 0);
+
   while ((i < iter) && (!converged))
   {
     // This outer loop is for each iteration, and we use the 'converged'
@@ -160,11 +159,16 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
         // Due to incorrect prediction, convergence set to false.
         converged = false;
         tempLabel = labels(0, j);
+
         // Send maxIndexRow for knowing which weight to update, send j to know
         // the value of the vector to update it with.  Send tempLabel to know
         // the correct class.
-        LP.UpdateWeights(data.col(j), weights, biases, maxIndexRow, tempLabel,
-            D(j));
+        if (hasWeights)
+          LP.UpdateWeights(data.col(j), weights, biases, maxIndexRow, tempLabel,
+              D(j));
+        else
+          LP.UpdateWeights(data.col(j), weights, biases, maxIndexRow,
+              tempLabel);
       }
     }
   }
