@@ -80,8 +80,23 @@ bool Load(const std::string& filename,
 
   if (extension == "csv")
   {
-    loadType = arma::csv_ascii;
-    stringType = "CSV data";
+    loadType = arma::diskio::guess_file_type(stream);
+    if (loadType == arma::csv_ascii) 
+    {
+      stringType = "CSV data";
+    }
+    else if (loadType == arma::raw_ascii) // .csv file can be tsv
+    {
+      Log::Warn << "'" << filename << "' is not a standard csv file."
+          << std::endl;
+      stringType = "raw ASCII formatted data";
+    }
+    else
+    {
+      unknownType = true;
+      loadType = arma::raw_binary; // Won't be used; prevent a warning.
+      stringType = "";
+    }
   }
   else if (extension == "txt")
   {

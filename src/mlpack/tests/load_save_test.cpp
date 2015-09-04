@@ -75,6 +75,32 @@ BOOST_AUTO_TEST_CASE(LoadCSVTest)
 }
 
 /**
+ * Make sure a TSV is loaded correctly.
+ */
+BOOST_AUTO_TEST_CASE(LoadTSVTest)
+{
+  std::fstream f;
+  f.open("test_file.csv", std::fstream::out);
+
+  f << "1\t2\t3\t4" << std::endl;
+  f << "5\t6\t7\t8" << std::endl;
+
+  f.close();
+
+  arma::mat test;
+  BOOST_REQUIRE(data::Load("test_file.csv", test) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
+  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+
+  for (int i = 0; i < 8; i++)
+    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+
+  // Remove the file.
+  remove("test_file.csv");
+}
+
+/**
  * Make sure a CSV is saved correctly.
  */
 BOOST_AUTO_TEST_CASE(SaveCSVTest)
@@ -110,6 +136,32 @@ BOOST_AUTO_TEST_CASE(LoadTransposedCSVTest)
 
   f << "1, 2, 3, 4" << std::endl;
   f << "5, 6, 7, 8" << std::endl;
+
+  f.close();
+
+  arma::mat test;
+  BOOST_REQUIRE(data::Load("test_file.csv", test, false, true) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
+
+  for (size_t i = 0; i < 8; ++i)
+    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+
+  // Remove the file.
+  remove("test_file.csv");
+}
+
+/**
+ * Make sure TSVs can be loaded in transposed form.
+ */
+BOOST_AUTO_TEST_CASE(LoadTransposedTSVTest)
+{
+  std::fstream f;
+  f.open("test_file.csv", std::fstream::out);
+
+  f << "1\t2\t3\t4" << std::endl;
+  f << "5\t6\t7\t8" << std::endl;
 
   f.close();
 
