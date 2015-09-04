@@ -24,10 +24,7 @@ class ZeroInitialization
                                 const size_t numFeatures,
                                 const size_t numClasses)
   {
-    arma::mat tempWeights(numFeatures, numClasses);
-    tempWeights.fill(0.0);
-
-    W = tempWeights;
+    W = arma::zeros<arma::mat>(numFeatures, numClasses);
   }
 }; // class ZeroInitialization
 
