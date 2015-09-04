@@ -26,9 +26,9 @@ class SimpleWeightUpdate
 {
  public:
   /**
-   * This function is called to update the weightVectors matrix.
-   *  It decreases the weights of the incorrectly classified class while
-   * increasing the weight of the correct class it should have been classified to.
+   * This function is called to update the weightVectors matrix.  It decreases
+   * the weights of the incorrectly classified class while increasing the weight
+   * of the correct class it should have been classified to.
    *
    * @param trainData The training dataset.
    * @param weightVectors Matrix of weight vectors.
@@ -44,15 +44,17 @@ class SimpleWeightUpdate
                      const size_t rowIndex,
                      const arma::rowvec& D)
   {
-    weightVectors.row(rowIndex) = weightVectors.row(rowIndex) -
-                                  D(labelIndex) * trainData.col(labelIndex).t();
+    weightVectors.row(rowIndex).subvec(1, weightVectors.n_cols - 1) -=
+        D(labelIndex) * trainData.col(labelIndex).t();
+    weightVectors(rowIndex, 0) -= D(labelIndex);
 
-    weightVectors.row(vectorIndex) = weightVectors.row(vectorIndex) +
-                                     D(labelIndex) * trainData.col(labelIndex).t();
+    weightVectors.row(vectorIndex).subvec(1, weightVectors.n_cols - 1) +=
+        D(labelIndex) * trainData.col(labelIndex).t();
+    weightVectors(vectorIndex, 0) += D(labelIndex);
   }
 };
 
-}; // namespace perceptron
-}; // namespace mlpack
+} // namespace perceptron
+} // namespace mlpack
 
 #endif

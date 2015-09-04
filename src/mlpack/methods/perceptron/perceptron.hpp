@@ -43,7 +43,7 @@ class Perceptron
    */
   Perceptron(const MatType& data,
              const arma::Row<size_t>& labels,
-             int iterations);
+             const int iterations);
 
   /**
    * Classification function. After training, use the weightVectors matrix to
@@ -66,7 +66,7 @@ class Perceptron
    * @param labels The labels of data.
    */
   Perceptron(const Perceptron<>& other,
-             MatType& data,
+             const MatType& data,
              const arma::rowvec& D,
              const arma::Row<size_t>& labels);
 
@@ -80,21 +80,17 @@ private:
   //! To store the number of iterations
   size_t iter;
 
-  //! Stores the class labels for the input data.
-  arma::Row<size_t> classLabels;
-
   //! Stores the weight vectors for each of the input class labels.
   arma::mat weightVectors;
 
-  //! Stores the training data to be used later on in UpdateWeights.
-  arma::mat trainData;
-
   /**
-   *  Training Function. It trains on trainData using the cost matrix D
+   * Training Function. It trains on trainData using the cost matrix D
    *
-   *  @param D Cost matrix. Stores the cost of mispredicting instances
+   * @param D Cost matrix. Stores the cost of mispredicting instances
    */
-  void Train(const arma::rowvec& D);
+  void Train(const MatType& data,
+             const arma::Row<size_t>& labels,
+             const arma::rowvec& D);
 };
 
 } // namespace perceptron
