@@ -34,7 +34,7 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
     const int iterations)
 {
   WeightInitializationPolicy WIP;
-  WIP.Initialize(weightVectors, data.n_rows + 1, arma::max(labels) + 1);
+  WIP.Initialize(weightVectors, biases, data.n_rows, arma::max(labels) + 1);
 
   // Start training.
   iter = iterations;
@@ -68,9 +68,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
   // Could probably be faster if done in batch.
   for (size_t i = 0; i < test.n_cols; i++)
   {
-    tempLabelMat = weightVectors.submat(1, 0, weightVectors.n_rows - 1,
-                                        weightVectors.n_cols - 1).t() *
-                                        test.col(i) + weightVectors.row(0).t();
+    tempLabelMat = weightVectors.t() * test.col(i) + biases;
     tempLabelMat.max(maxIndex);
     predictedLabels(0, i) = maxIndex;
   }
@@ -101,7 +99,7 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
 
   // Insert a row of ones at the top of the training data set.
   WeightInitializationPolicy WIP;
-  WIP.Initialize(weightVectors, data.n_rows + 1, arma::max(labels) + 1);
+  WIP.Initialize(weightVectors, biases, data.n_rows, arma::max(labels) + 1);
 
   Train(data, labels, D);
 }
@@ -153,8 +151,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
     {
       // Multiply for each variable and check whether the current weight vector
       // correctly classifies this.
-      tempLabelMat = weightVectors.rows(1, weightVectors.n_rows - 1).t() *
-          data.col(j) + weightVectors.row(0).t();
+      tempLabelMat = weightVectors.t() * data.col(j) + biases;
 
       tempLabelMat.max(maxIndexRow, maxIndexCol);
 
@@ -167,7 +164,8 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
         // Send maxIndexRow for knowing which weight to update, send j to know
         // the value of the vector to update it with.  Send tempLabel to know
         // the correct class.
-        LP.UpdateWeights(data, weightVectors, j, tempLabel, maxIndexCol, D);
+        LP.UpdateWeights(data, weightVectors, biases, j, tempLabel, maxIndexCol,
+            D);
       }
     }
   }

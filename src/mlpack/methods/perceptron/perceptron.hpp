@@ -83,9 +83,13 @@ private:
   /**
    * Stores the weight vectors for each of the input class labels.  Each column
    * corresponds to the weights for one class label, and each row corresponds to
-   * the weights for one dimension of the input data.
+   * the weights for one dimension of the input data.  The biases are held in a
+   * separate vector.
    */
   arma::mat weightVectors;
+
+  //! The biases for each class.
+  arma::vec biases;
 
   /**
    * Training Function. It trains on trainData using the cost matrix D

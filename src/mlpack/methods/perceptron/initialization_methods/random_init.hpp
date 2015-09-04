@@ -21,11 +21,13 @@ class RandomInitialization
  public:
   RandomInitialization() { }
 
-  inline static void Initialize(arma::mat& W,
+  inline static void Initialize(arma::mat& weights,
+                                arma::vec& biases,
                                 const size_t numFeatures,
                                 const size_t numClasses)
   {
-    W = arma::randu<arma::mat>(numFeatures, numClasses);
+    weights.randu(numFeatures, numClasses);
+    biases.randu(numClasses);
   }
 }; // class RandomInitialization
 

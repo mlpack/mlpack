@@ -39,18 +39,17 @@ class SimpleWeightUpdate
    */
   void UpdateWeights(const arma::mat& trainData,
                      arma::mat& weightVectors,
+                     arma::vec& biases,
                      const size_t labelIndex,
                      const size_t vectorIndex,
                      const size_t colIndex,
                      const arma::rowvec& D)
   {
-    weightVectors.col(colIndex).subvec(1, weightVectors.n_rows - 1) -=
-        D(labelIndex) * trainData.col(labelIndex);
-    weightVectors(colIndex, 0) -= D(labelIndex);
+    weightVectors.col(colIndex) -= D(labelIndex) * trainData.col(labelIndex);
+    biases(colIndex) -= D(labelIndex);
 
-    weightVectors.col(vectorIndex).subvec(1, weightVectors.n_rows - 1) +=
-        D(labelIndex) * trainData.col(labelIndex);
-    weightVectors(vectorIndex, 0) += D(labelIndex);
+    weightVectors.col(vectorIndex) += D(labelIndex) * trainData.col(labelIndex);
+    biases(vectorIndex) += D(labelIndex);
   }
 };
 

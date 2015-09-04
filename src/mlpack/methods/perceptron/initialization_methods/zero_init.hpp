@@ -20,11 +20,13 @@ class ZeroInitialization
  public:
   ZeroInitialization() { }
 
-  inline static void Initialize(arma::mat& W,
+  inline static void Initialize(arma::mat& weights,
+                                arma::vec& biases,
                                 const size_t numFeatures,
                                 const size_t numClasses)
   {
-    W = arma::zeros<arma::mat>(numFeatures, numClasses);
+    weights.zeros(numFeatures, numClasses);
+    biases.zeros(numClasses);
   }
 }; // class ZeroInitialization
 
