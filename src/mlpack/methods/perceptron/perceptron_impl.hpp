@@ -19,7 +19,7 @@ namespace perceptron {
  *
  * @param data Input, training data.
  * @param labels Labels of dataset.
- * @param iterations Maximum number of iterations for the perceptron learning
+ * @param maxIterations Maximum number of iterations for the perceptron learning
  *      algorithm.
  */
 template<
@@ -30,13 +30,13 @@ template<
 Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
     const MatType& data,
     const arma::Row<size_t>& labels,
-    const int iterations)
+    const int maxIterations) :
+    maxIterations(maxIterations)
 {
   WeightInitializationPolicy WIP;
   WIP.Initialize(weights, biases, data.n_rows, arma::max(labels) + 1);
 
   // Start training.
-  iter = iterations;
   Train(data, labels);
 }
 
@@ -89,10 +89,9 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
     const Perceptron<>& other,
     const MatType& data,
     const arma::rowvec& D,
-    const arma::Row<size_t>& labels)
+    const arma::Row<size_t>& labels) :
+    maxIterations(other.maxIterations)
 {
-  iter = other.iter;
-
   // Insert a row of ones at the top of the training data set.
   WeightInitializationPolicy WIP;
   WIP.Initialize(weights, biases, data.n_rows, arma::max(labels) + 1);
@@ -137,7 +136,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
 
   const bool hasWeights = (D.n_elem > 0);
 
-  while ((i < iter) && (!converged))
+  while ((i < maxIterations) && (!converged))
   {
     // This outer loop is for each iteration, and we use the 'converged'
     // variable for noting whether or not convergence has been reached.

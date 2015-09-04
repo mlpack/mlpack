@@ -43,7 +43,7 @@ class Perceptron
    */
   Perceptron(const MatType& data,
              const arma::Row<size_t>& labels,
-             const int iterations);
+             const int maxIterations);
 
   /**
    * Classification function. After training, use the weights matrix to
@@ -77,8 +77,8 @@ class Perceptron
   void Serialize(Archive& ar, const unsigned int /* version */);
 
 private:
-  //! To store the number of iterations
-  size_t iter;
+  //! The maximum number of iterations during training.
+  size_t maxIterations;
 
   /**
    * Stores the weights for each of the input class labels.  Each column
