@@ -32,7 +32,7 @@ class Perceptron
 {
  public:
   /**
-   * Constructor - constructs the perceptron by building the weightVectors
+   * Constructor - constructs the perceptron by building the weights
    * matrix, which is later used in Classification.  It adds a bias input vector
    * of 1 to the input data to take care of the bias weights.
    *
@@ -46,7 +46,7 @@ class Perceptron
              const int iterations);
 
   /**
-   * Classification function. After training, use the weightVectors matrix to
+   * Classification function. After training, use the weights matrix to
    * classify test, and put the predicted classes in predictedLabels.
    *
    * @param test Testing data or data to classify.
@@ -81,12 +81,12 @@ private:
   size_t iter;
 
   /**
-   * Stores the weight vectors for each of the input class labels.  Each column
+   * Stores the weights for each of the input class labels.  Each column
    * corresponds to the weights for one class label, and each row corresponds to
    * the weights for one dimension of the input data.  The biases are held in a
    * separate vector.
    */
-  arma::mat weightVectors;
+  arma::mat weights;
 
   //! The biases for each class.
   arma::vec biases;

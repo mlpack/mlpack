@@ -13,10 +13,9 @@ namespace mlpack {
 namespace perceptron {
 
 /**
- * Constructor - constructs the perceptron. Or rather, builds the weightVectors
- * matrix, which is later used in Classification.
- * It adds a bias input vector of 1 to the input data to take care of the bias
- * weights.
+ * Constructor - constructs the perceptron. Or rather, builds the weights
+ * matrix, which is later used in classification.  It adds a bias input vector
+ * of 1 to the input data to take care of the bias weights.
  *
  * @param data Input, training data.
  * @param labels Labels of dataset.
@@ -34,7 +33,7 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
     const int iterations)
 {
   WeightInitializationPolicy WIP;
-  WIP.Initialize(weightVectors, biases, data.n_rows, arma::max(labels) + 1);
+  WIP.Initialize(weights, biases, data.n_rows, arma::max(labels) + 1);
 
   // Start training.
   iter = iterations;
@@ -46,8 +45,8 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
 
 
 /**
- * Classification function. After training, use the weightVectors matrix to
- * classify test, and put the predicted classes in predictedLabels.
+ * Classification function. After training, use the weights matrix to classify
+ * test, and put the predicted classes in predictedLabels.
  *
  * @param test testing data or data to classify.
  * @param predictedLabels vector to store the predicted classes after
@@ -68,7 +67,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Classify(
   // Could probably be faster if done in batch.
   for (size_t i = 0; i < test.n_cols; i++)
   {
-    tempLabelMat = weightVectors.t() * test.col(i) + biases;
+    tempLabelMat = weights.t() * test.col(i) + biases;
     tempLabelMat.max(maxIndex);
     predictedLabels(0, i) = maxIndex;
   }
@@ -99,7 +98,7 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
 
   // Insert a row of ones at the top of the training data set.
   WeightInitializationPolicy WIP;
-  WIP.Initialize(weightVectors, biases, data.n_rows, arma::max(labels) + 1);
+  WIP.Initialize(weights, biases, data.n_rows, arma::max(labels) + 1);
 
   Train(data, labels, D);
 }
@@ -151,7 +150,7 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
     {
       // Multiply for each variable and check whether the current weight vector
       // correctly classifies this.
-      tempLabelMat = weightVectors.t() * data.col(j) + biases;
+      tempLabelMat = weights.t() * data.col(j) + biases;
 
       tempLabelMat.max(maxIndexRow, maxIndexCol);
 
@@ -164,8 +163,8 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Train(
         // Send maxIndexRow for knowing which weight to update, send j to know
         // the value of the vector to update it with.  Send tempLabel to know
         // the correct class.
-        LP.UpdateWeights(data, weightVectors, biases, j, tempLabel, maxIndexRow,
-            D);
+        LP.UpdateWeights(data.col(j), weights, biases, maxIndexRow, tempLabel,
+            D(j));
       }
     }
   }

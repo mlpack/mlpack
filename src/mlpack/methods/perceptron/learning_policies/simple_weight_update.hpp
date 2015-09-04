@@ -30,26 +30,30 @@ class SimpleWeightUpdate
    * the weights of the incorrectly classified class while increasing the weight
    * of the correct class it should have been classified to.
    *
-   * @param trainData The training dataset.
-   * @param weightVectors Matrix of weight vectors.
-   * @param colIndex Index of the column which has been incorrectly predicted.
-   * @param labelIndex Index of the vector in trainData.
-   * @param vectorIndex Index of the class which should have been predicted.
-   * @param D Cost of mispredicting the labelIndex instance.
+   * @tparam Type of vector (should be an Armadillo vector like arma::vec or
+   *      arma::sp_vec or something similar).
+   * @param trainingPoint Point that was misclassified.
+   * @param weights Matrix of weights.
+   * @param biases Vector of biases.
+   * @param incorrectClass Index of class that the point was incorrectly
+   *      classified as.
+   * @param correctClass Index of the true class of the point.
+   * @param instanceWeight Weight to be given to this particular point during
+   *      training (this is useful for boosting).
    */
-  void UpdateWeights(const arma::mat& trainData,
-                     arma::mat& weightVectors,
+  template<typename VecType>
+  void UpdateWeights(const VecType& trainingPoint,
+                     arma::mat& weights,
                      arma::vec& biases,
-                     const size_t labelIndex,
-                     const size_t vectorIndex,
-                     const size_t colIndex,
-                     const arma::rowvec& D)
+                     const size_t incorrectClass,
+                     const size_t correctClass,
+                     const double instanceWeight = 1.0)
   {
-    weightVectors.col(colIndex) -= D(labelIndex) * trainData.col(labelIndex);
-    biases(colIndex) -= D(labelIndex);
+    weights.col(incorrectClass) -= instanceWeight * trainingPoint;
+    biases(incorrectClass) -= instanceWeight;
 
-    weightVectors.col(vectorIndex) += D(labelIndex) * trainData.col(labelIndex);
-    biases(vectorIndex) += D(labelIndex);
+    weights.col(correctClass) += instanceWeight * trainingPoint;
+    biases(correctClass) += instanceWeight;
   }
 };
 
