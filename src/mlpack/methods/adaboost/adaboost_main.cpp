@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
   // defining the number of iterations of the perceptron.
   int iter = 400;
 
-  perceptron::Perceptron<> p(trainingData, labels.t(), iter);
+  perceptron::Perceptron<> p(trainingData, labels.t(), max(labels) + 1, iter);
 
   Timer::Start("Training");
   AdaBoost<> a(trainingData, labels.t(), iterations, tolerance, p);
