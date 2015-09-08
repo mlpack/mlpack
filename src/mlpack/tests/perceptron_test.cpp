@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(And)
   Mat<size_t> labels;
   labels << 0 << 0 << 1 << 0;
 
-  Perceptron<> p(trainData, labels.row(0), 1000);
+  Perceptron<> p(trainData, labels.row(0), 2, 1000);
 
   mat testData;
   testData << 0 << 1 << 1 << 0 << endr
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(Or)
   Mat<size_t> labels;
   labels << 1 << 1 << 1 << 0;
 
-  Perceptron<> p(trainData, labels.row(0), 1000);
+  Perceptron<> p(trainData, labels.row(0), 2, 1000);
 
   mat testData;
   testData << 0 << 1 << 1 << 0 << endr
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(Random3)
   Mat<size_t> labels;
   labels << 0 << 0 << 0 << 1 << 1 << 1 << 2 << 2 << 2;
 
-  Perceptron<> p(trainData, labels.row(0), 1000);
+  Perceptron<> p(trainData, labels.row(0), 3, 1000);
 
   mat testData;
   testData << 0 << 1 << 1 << endr
@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(TwoPoints)
   Mat<size_t> labels;
   labels << 0 << 1;
 
-  Perceptron<> p(trainData, labels.row(0), 1000);
+  Perceptron<> p(trainData, labels.row(0), 2, 1000);
 
   mat testData;
   testData << 0 << 1 << endr
@@ -135,7 +135,7 @@ BOOST_AUTO_TEST_CASE(NonLinearlySeparableDataset)
   labels << 0 << 0 << 0 << 1 << 0 << 1 << 1 << 1
          << 0 << 0 << 0 << 1 << 0 << 1 << 1 << 1;
 
-  Perceptron<> p(trainData, labels.row(0), 1000);
+  Perceptron<> p(trainData, labels.row(0), 2, 1000);
 
   mat testData;
   testData << 3 << 4   << 5   << 6   << endr
@@ -161,7 +161,7 @@ BOOST_AUTO_TEST_CASE(SecondaryConstructor)
   labels << 0 << 0 << 0 << 1 << 0 << 1 << 1 << 1
          << 0 << 0 << 0 << 1 << 0 << 1 << 1 << 1;
 
-  Perceptron<> p1(trainData, labels.row(0), 1000);
+  Perceptron<> p1(trainData, labels.row(0), 2, 1000);
 
   Perceptron<> p2(p1);
 }

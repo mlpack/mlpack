@@ -38,9 +38,10 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundIris)
 
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptron_iter iterations.
-  int perceptron_iter = 400;
+  int perceptronIter = 400;
 
-  perceptron::Perceptron<> p(inputData, labels.row(0), perceptron_iter);
+  perceptron::Perceptron<> p(inputData, labels.row(0), max(labels.row(0)) + 1,
+      perceptronIter);
 
   // Define parameters for the adaboost
   int iterations = 100;
@@ -79,10 +80,11 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
 
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptron_iter iterations.
-  int perceptron_iter = 400;
+  int perceptronIter = 400;
 
   arma::Row<size_t> perceptronPrediction(labels.n_cols);
-  perceptron::Perceptron<> p(inputData, labels.row(0), perceptron_iter);
+  perceptron::Perceptron<> p(inputData, labels.row(0), max(labels.row(0)) + 1,
+      perceptronIter);
   p.Classify(inputData, perceptronPrediction);
 
   int countWeakLearnerError = 0;
@@ -126,9 +128,10 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
 
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptron_iter iterations.
-  int perceptron_iter = 800;
+  int perceptronIter = 800;
 
-  perceptron::Perceptron<> p(inputData, labels.row(0), perceptron_iter);
+  perceptron::Perceptron<> p(inputData, labels.row(0), max(labels.row(0)) + 1,
+      perceptronIter);
 
   // Define parameters for the adaboost
   int iterations = 50;
@@ -167,10 +170,11 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
 
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptron_iter iterations.
-  int perceptron_iter = 800;
+  int perceptronIter = 800;
 
   arma::Row<size_t> perceptronPrediction(labels.n_cols);
-  perceptron::Perceptron<> p(inputData, labels.row(0), perceptron_iter);
+  perceptron::Perceptron<> p(inputData, labels.row(0), max(labels.row(0)) + 1,
+      perceptronIter);
   p.Classify(inputData, perceptronPrediction);
 
   int countWeakLearnerError = 0;
@@ -215,9 +219,10 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundNonLinearSepData)
 
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptron_iter iterations.
-  int perceptron_iter = 800;
+  int perceptronIter = 800;
 
-  perceptron::Perceptron<> p(inputData, labels.row(0), perceptron_iter);
+  perceptron::Perceptron<> p(inputData, labels.row(0), max(labels.row(0)) + 1,
+      perceptronIter);
 
   // Define parameters for the adaboost
   int iterations = 50;
@@ -256,10 +261,11 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorNonLinearSepData)
 
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptron_iter iterations.
-  int perceptron_iter = 800;
+  int perceptronIter = 800;
 
   arma::Row<size_t> perceptronPrediction(labels.n_cols);
-  perceptron::Perceptron<> p(inputData, labels.row(0), perceptron_iter);
+  perceptron::Perceptron<> p(inputData, labels.row(0), max(labels.row(0)) + 1,
+      perceptronIter);
   p.Classify(inputData, perceptronPrediction);
 
   int countWeakLearnerError = 0;
@@ -596,7 +602,7 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptron_iter iterations.
 
-  int perceptron_iter = 1000;
+  int perceptronIter = 1000;
 
   arma::mat testData;
 
@@ -609,7 +615,8 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
     BOOST_FAIL("Cannot load labels for vc2_test_labels.txt");
 
   arma::Row<size_t> perceptronPrediction(labels.n_cols);
-  perceptron::Perceptron<> p(inputData, labels.row(0), perceptron_iter);
+  perceptron::Perceptron<> p(inputData, labels.row(0), max(labels.row(0)) + 1,
+      perceptronIter);
   p.Classify(inputData, perceptronPrediction);
 
   // Define parameters for the adaboost
@@ -714,9 +721,10 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_IRIS)
 
   // Define your own weak learner, perceptron in this case.
   // Run the perceptron for perceptron_iter iterations.
-  int perceptron_iter = 800;
+  int perceptronIter = 800;
 
-  perceptron::Perceptron<> p(inputData, labels.row(0), perceptron_iter);
+  perceptron::Perceptron<> p(inputData, labels.row(0), max(labels.row(0)) + 1,
+      perceptronIter);
 
   // Define parameters for the adaboost
   int iterations = 50;

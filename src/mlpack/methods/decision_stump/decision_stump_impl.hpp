@@ -129,12 +129,10 @@ void DecisionStump<MatType>::Classify(const MatType& test,
  * @param isWeight Whether we need to run a weighted Decision Stump.
  */
 template <typename MatType>
-DecisionStump<MatType>::DecisionStump(
-                        const DecisionStump<>& other,
-                        const MatType& data,
-                        const arma::rowvec& weights,
-                        const arma::Row<size_t>& labels
-                        )
+DecisionStump<MatType>::DecisionStump(const DecisionStump<>& other,
+                                      const MatType& data,
+                                      const arma::Row<size_t>& labels,
+                                      const arma::rowvec& weights)
 {
   numClass = other.numClass;
   bucketSize = other.bucketSize;

@@ -67,8 +67,8 @@ class DecisionStump
    */
   DecisionStump(const DecisionStump<>& other,
                 const MatType& data,
-                const arma::rowvec& weights,
-                const arma::Row<size_t>& labels);
+                const arma::Row<size_t>& labels,
+                const arma::rowvec& weights);
 
   //! Access the splitting attribute.
   int SplitAttribute() const { return splitAttribute; }

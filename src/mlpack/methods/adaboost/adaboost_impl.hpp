@@ -93,7 +93,7 @@ AdaBoost<MatType, WeakLearner>::AdaBoost(
     BuildWeightMatrix(D, weights);
 
     // call the other weak learner and train the labels.
-    WeakLearner w(other, tempData, weights, labels);
+    WeakLearner w(other, tempData, labels, weights);
     w.Classify(tempData, predictedLabels);
 
     // Now from predictedLabels, build ht, the weak hypothesis

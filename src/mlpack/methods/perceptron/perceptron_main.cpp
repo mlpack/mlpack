@@ -105,7 +105,7 @@ int main(int argc, char** argv)
 
   // Create and train the classifier.
   Timer::Start("Training");
-  Perceptron<> p(trainingData, labels.t(), iterations);
+  Perceptron<> p(trainingData, labels.t(), max(labels) + 1, iterations);
   Timer::Stop("Training");
 
   // Time the running of the Perceptron Classifier.
