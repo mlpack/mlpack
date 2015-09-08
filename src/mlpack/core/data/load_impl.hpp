@@ -78,17 +78,21 @@ bool Load(const std::string& filename,
   arma::file_type loadType;
   std::string stringType;
 
-  if (extension == "csv")
+  if (extension == "csv" || extension == "tsv")
   {
     loadType = arma::diskio::guess_file_type(stream);
     if (loadType == arma::csv_ascii) 
     {
+      if (extension == "tsv")
+        Log::Warn << "'" << filename << "' is comma-separated, not "
+            "tab-separated!" << std::endl;
       stringType = "CSV data";
     }
-    else if (loadType == arma::raw_ascii) // .csv file can be tsv
+    else if (loadType == arma::raw_ascii) // .csv file can be tsv.
     {
-      Log::Warn << "'" << filename << "' is not a standard csv file."
-          << std::endl;
+      if (extension == "csv")
+        Log::Warn << "'" << filename << "' is not a standard csv file."
+            << std::endl;
       stringType = "raw ASCII formatted data";
     }
     else

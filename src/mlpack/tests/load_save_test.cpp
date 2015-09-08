@@ -101,6 +101,32 @@ BOOST_AUTO_TEST_CASE(LoadTSVTest)
 }
 
 /**
+ * Test TSV loading with .tsv extension.
+ */
+BOOST_AUTO_TEST_CASE(LoadTSVExtensionTest)
+{
+  std::fstream f;
+  f.open("test_file.tsv", std::fstream::out);
+
+  f << "1\t2\t3\t4" << std::endl;
+  f << "5\t6\t7\t8" << std::endl;
+
+  f.close();
+
+  arma::mat test;
+  BOOST_REQUIRE(data::Load("test_file.tsv", test) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
+  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+
+  for (int i = 0; i < 8; i++)
+    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+
+  // Remove the file.
+  remove("test_file.tsv");
+}
+
+/**
  * Make sure a CSV is saved correctly.
  */
 BOOST_AUTO_TEST_CASE(SaveCSVTest)
@@ -176,6 +202,32 @@ BOOST_AUTO_TEST_CASE(LoadTransposedTSVTest)
 
   // Remove the file.
   remove("test_file.csv");
+}
+
+/**
+ * Check TSV loading with .tsv extension.
+ */
+BOOST_AUTO_TEST_CASE(LoadTransposedTSVExtensionTest)
+{
+  std::fstream f;
+  f.open("test_file.tsv", std::fstream::out);
+
+  f << "1\t2\t3\t4" << std::endl;
+  f << "5\t6\t7\t8" << std::endl;
+
+  f.close();
+
+  arma::mat test;
+  BOOST_REQUIRE(data::Load("test_file.tsv", test, false, true) == true);
+
+  BOOST_REQUIRE_EQUAL(test.n_cols, 2);
+  BOOST_REQUIRE_EQUAL(test.n_rows, 4);
+
+  for (size_t i = 0; i < 8; ++i)
+    BOOST_REQUIRE_CLOSE(test[i], (double) (i + 1), 1e-5);
+
+  // Remove the file.
+  remove("test_file.tsv");
 }
 
 /**
