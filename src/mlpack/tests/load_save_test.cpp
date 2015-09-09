@@ -12,6 +12,7 @@
 #include "old_boost_test_definitions.hpp"
 
 using namespace mlpack;
+using namespace mlpack::data;
 
 BOOST_AUTO_TEST_SUITE(LoadSaveTest);
 
@@ -809,5 +810,55 @@ BOOST_AUTO_TEST_CASE(LoadTextTest)
   BOOST_REQUIRE_EQUAL(y.inb.s, x.inb.s);
 }
 
+/**
+ * Test DatasetInfo by making a map for a dimension.
+ */
+BOOST_AUTO_TEST_CASE(DatasetInfoTest)
+{
+  DatasetInfo di;
+
+  // Do all types default to numeric?
+  for (size_t i = 0; i < 100; ++i)
+  {
+    BOOST_REQUIRE_EQUAL((DatasetInfo::Datatype) di.Type(i),
+        DatasetInfo::Datatype::NUMERIC);
+    BOOST_REQUIRE_EQUAL(di.NumMappings(i), 0);
+  }
+
+  // Okay.  Add some mappings for dimension 3.
+  const size_t first = di.MapString("test_mapping_1", 3);
+  const size_t second = di.MapString("test_mapping_2", 3);
+  const size_t third = di.MapString("test_mapping_3", 3);
+
+  BOOST_REQUIRE_EQUAL(first, 0);
+  BOOST_REQUIRE_EQUAL(second, 1);
+  BOOST_REQUIRE_EQUAL(third, 2);
+
+  // Now dimension 3 should be categorical.
+  for (size_t i = 0; i < 100; ++i)
+  {
+    if (i == 3)
+    {
+      BOOST_REQUIRE_EQUAL((DatasetInfo::Datatype) di.Type(i),
+          DatasetInfo::Datatype::CATEGORICAL);
+      BOOST_REQUIRE_EQUAL(di.NumMappings(i), 3);
+    }
+    else
+    {
+      BOOST_REQUIRE_EQUAL((DatasetInfo::Datatype) di.Type(i),
+          DatasetInfo::Datatype::NUMERIC);
+      BOOST_REQUIRE_EQUAL(di.NumMappings(i), 0);
+    }
+  }
+
+  // Get the mappings back.
+  const std::string& strFirst = di.UnmapString(first, 3);
+  const std::string& strSecond = di.UnmapString(second, 3);
+  const std::string& strThird = di.UnmapString(third, 3);
+
+  BOOST_REQUIRE_EQUAL(strFirst, "test_mapping_1");
+  BOOST_REQUIRE_EQUAL(strSecond, "test_mapping_2");
+  BOOST_REQUIRE_EQUAL(strThird, "test_mapping_3");
+}
 
 BOOST_AUTO_TEST_SUITE_END();
