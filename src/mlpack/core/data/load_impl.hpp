@@ -51,7 +51,7 @@ template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           const bool fatal,
-          bool transpose)
+          const bool transpose)
 {
   Timer::Start("loading_data");
 
@@ -261,6 +261,52 @@ bool Load(const std::string& filename,
 
   // Finally, return the success indicator.
   return success;
+}
+
+// Load with mappings.  Unfortunately we have to implement this ourselves.
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          DatasetInfo& info,
+          const bool fatal,
+          const bool transpose)
+{
+  // Get the extension and load as necessary.
+  Timer::Start("loading_data");
+
+  // Get the extension.
+  std::string extension = Extension(filename);
+
+  // Catch nonexistent files by opening the stream ourselves.
+  std::fstream stream;
+  stream.open(filename.c_str(), std::fstream::in);
+
+  if (!stream.is_open())
+  {
+    Timer::Stop("loading_data");
+    if (fatal)
+      Log::Fatal << "Cannot open file '" << filename << "'. " << std::endl;
+    else
+      Log::Warn << "Cannot open file '" << filename << "'; load failed."
+          << std::endl;
+
+    return false;
+  }
+
+  bool unknownType = false;
+  arma::file_type loadType;
+  std::string stringType;
+
+  if (extension == "csv" || extension == "tsv")
+  {
+    
+  }
+  else if (extension == "txt")
+  {
+
+  }
+
+  Timer::Stop("loading_data");
 }
 
 // Load a model from file.

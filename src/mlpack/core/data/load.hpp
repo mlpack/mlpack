@@ -20,8 +20,8 @@ namespace data /** Functions to load and save matrices and models. */ {
 
 /**
  * Loads a matrix from file, guessing the filetype from the extension.  This
- * will transpose the matrix at load time.  If the filetype cannot be
- * determined, an error will be given.
+ * will transpose the matrix at load time (unless the transpose parameter is set
+ * to false).  If the filetype cannot be determined, an error will be given.
  *
  * The supported types of files are the same as found in Armadillo:
  *
@@ -56,7 +56,43 @@ template<typename eT>
 bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           const bool fatal = false,
-          bool transpose = true);
+          const bool transpose = true);
+
+/**
+ * Loads a matrix from a file, guessing the filetype from the extension and
+ * mapping categorical features with a DatasetInfo object.  This will transpose
+ * the matrix (unless the transpose parameter is set to false).  This particular
+ * overload of Load() can only load text-based formats, such as those given
+ * below:
+ *
+ * - CSV (csv_ascii), denoted by .csv, or optionally .txt
+ * - TSV (raw_ascii), denoted by .tsv, .csv, or .txt
+ * - ASCII (raw_ascii), denoted by .txt
+ *
+ * If the file extension is not one of those types, an error will be given.
+ * This is preferable to Armadillo's default behavior of loading an unknown
+ * filetype as raw_binary, which can have very confusing effects.
+ *
+ * If the parameter 'fatal' is set to true, a std::runtime_error exception will
+ * be thrown if the matrix does not load successfully.  The parameter
+ * 'transpose' controls whether or not the matrix is transposed after loading.
+ * In most cases, because data is generally stored in a row-major format and
+ * mlpack requires column-major matrices, this should be left at its default
+ * value of 'true'.
+ *
+ * @param filename Name of file to load.
+ * @param matrix Matrix to load contents of file into.
+ * @param info DatasetInfo object to populate with mappings and data types.
+ * @param fatal If an error should be reported as fatal (default false).
+ * @param transpose If true, transpose the matrix after loading.
+ * @return Boolean value indicating success or failure of load.
+ */
+template<typename eT>
+bool Load(const std::string& filename,
+          arma::Mat<eT>& matrix,
+          DatasetInfo& info,
+          const bool fatal = false,
+          const bool transpose = true);
 
 /**
  * Load a model from a file, guessing the filetype from the extension, or,
