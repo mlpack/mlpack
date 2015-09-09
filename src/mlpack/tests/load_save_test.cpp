@@ -820,8 +820,7 @@ BOOST_AUTO_TEST_CASE(DatasetInfoTest)
   // Do all types default to numeric?
   for (size_t i = 0; i < 100; ++i)
   {
-    BOOST_REQUIRE_EQUAL((DatasetInfo::Datatype) di.Type(i),
-        DatasetInfo::Datatype::NUMERIC);
+    BOOST_REQUIRE_EQUAL((Datatype) di.Type(i), Datatype::numeric);
     BOOST_REQUIRE_EQUAL(di.NumMappings(i), 0);
   }
 
@@ -839,14 +838,12 @@ BOOST_AUTO_TEST_CASE(DatasetInfoTest)
   {
     if (i == 3)
     {
-      BOOST_REQUIRE_EQUAL((DatasetInfo::Datatype) di.Type(i),
-          DatasetInfo::Datatype::CATEGORICAL);
+      BOOST_REQUIRE_EQUAL((Datatype) di.Type(i), Datatype::categorical);
       BOOST_REQUIRE_EQUAL(di.NumMappings(i), 3);
     }
     else
     {
-      BOOST_REQUIRE_EQUAL((DatasetInfo::Datatype) di.Type(i),
-          DatasetInfo::Datatype::NUMERIC);
+      BOOST_REQUIRE_EQUAL((Datatype) di.Type(i), Datatype::numeric);
       BOOST_REQUIRE_EQUAL(di.NumMappings(i), 0);
     }
   }

@@ -59,10 +59,10 @@ inline const std::string& DatasetInfo::UnmapString(
 }
 
 // Get the type of a particular dimension.
-inline DatasetInfo::Datatype DatasetInfo::Type(const size_t dimension) const
+inline Datatype DatasetInfo::Type(const size_t dimension) const
 {
-  return (maps.count(dimension) == 0) ? Datatype::NUMERIC :
-      Datatype::CATEGORICAL;
+  return (maps.count(dimension) == 0) ? Datatype::numeric :
+      Datatype::categorical;
 }
 
 inline size_t DatasetInfo::NumMappings(const size_t dimension)

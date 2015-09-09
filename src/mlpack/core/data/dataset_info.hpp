@@ -17,6 +17,18 @@ namespace mlpack {
 namespace data {
 
 /**
+ * The Datatype enum specifies the types of data mlpack algorithms can use.  The
+ * vast majority of mlpack algorithms can only use numeric data (i.e.
+ * float/double/etc.), but some algorithms can use categorical data, specified
+ * via this Datatype enum and the DatasetInfo class.
+ */
+enum Datatype : bool /* bool is all the precision we need for two types */
+{
+  numeric = 0,
+  categorical = 1
+};
+
+/**
  * Auxiliary information for a dataset, including mappings to/from strings and
  * the datatype of each dimension.  DatasetInfo objects are optionally produced
  * by data::Load(), and store the type of each dimension (Datatype::NUMERIC or
@@ -26,12 +38,6 @@ namespace data {
 class DatasetInfo
 {
  public:
-  enum Datatype
-  {
-    NUMERIC = 0,
-    CATEGORICAL = 1
-  };
-
   DatasetInfo();
 
   /**
