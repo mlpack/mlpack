@@ -22,12 +22,15 @@
 #include <mlpack/core/metrics/mahalanobis_distance.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
 
+#include <mlpack/methods/perceptron/perceptron.hpp>
+
 using namespace mlpack;
 using namespace mlpack::distribution;
 using namespace mlpack::regression;
 using namespace mlpack::bound;
 using namespace mlpack::metric;
 using namespace mlpack::tree;
+using namespace mlpack::perceptron;
 using namespace arma;
 using namespace boost;
 using namespace boost::archive;
@@ -540,7 +543,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundTest)
   arma::mat points("0.0, 1.1; 5.0, 2.2");
   points = points.t();
   b |= points; // [0.0, 5.0]; [1.1, 2.2];
-  
+
   HRectBound<> xmlB, textB, binaryB;
 
   SerializeObjectAll(b, xmlB, textB, binaryB);
@@ -685,6 +688,36 @@ BOOST_AUTO_TEST_CASE(BinarySpaceTreeOverwriteTest)
   SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
 
   CheckTrees(tree, xmlTree, textTree, binaryTree);
+}
+
+BOOST_AUTO_TEST_CASE(PerceptronTest)
+{
+  // Create a perceptron.  Train it randomly.  Then check that it hasn't
+  // changed.
+  arma::mat data;
+  data.randu(3, 100);
+  arma::Row<size_t> labels(100);
+  for (size_t i = 0; i < labels.n_elem; ++i)
+  {
+    if (data(1, i) > 0.5)
+      labels[i] = 0;
+    else
+      labels[i] = 1;
+  }
+
+  Perceptron<> p(data, labels, 2, 15);
+
+  Perceptron<> pXml(2, 3), pText(2, 3), pBinary(2, 3);
+  SerializeObjectAll(p, pXml, pText, pBinary);
+
+  // Now check that things are the same.
+  CheckMatrices(p.Weights(), pXml.Weights(), pText.Weights(),
+      pBinary.Weights());
+  CheckMatrices(p.Biases(), pXml.Biases(), pText.Biases(), pBinary.Biases());
+
+  BOOST_REQUIRE_EQUAL(p.MaxIterations(), pXml.MaxIterations());
+  BOOST_REQUIRE_EQUAL(p.MaxIterations(), pText.MaxIterations());
+  BOOST_REQUIRE_EQUAL(p.MaxIterations(), pBinary.MaxIterations());
 }
 
 BOOST_AUTO_TEST_SUITE_END();

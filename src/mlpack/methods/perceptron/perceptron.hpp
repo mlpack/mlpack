@@ -32,6 +32,20 @@ class Perceptron
 {
  public:
   /**
+   * Constructor: create the perceptron with the given number of classes and
+   * initialize the weight matrix, but do not perform any training.  (Call the
+   * Train() function to perform training.)
+   *
+   * @param numClasses Number of classes in the dataset.
+   * @param dimensionality Dimensionality of the dataset.
+   * @param maxIterations Maximum number of iterations for the perceptron
+   *      learning algorithm.
+   */
+  Perceptron(const size_t numClasses,
+             const size_t dimensionality,
+             const size_t maxIterations = 1000);
+
+  /**
    * Constructor: constructs the perceptron by building the weights matrix,
    * which is later used in classification.  The number of classes should be
    * specified separately, and the labels vector should contain values in the
@@ -41,13 +55,13 @@ class Perceptron
    * @param data Input, training data.
    * @param labels Labels of dataset.
    * @param numClasses Number of classes in the dataset.
-   * @param iterations Maximum number of iterations for the perceptron learning
-   *     algorithm.
+   * @param maxIterations Maximum number of iterations for the perceptron
+   *      learning algorithm.
    */
   Perceptron(const MatType& data,
              const arma::Row<size_t>& labels,
              const size_t numClasses,
-             const size_t maxIterations);
+             const size_t maxIterations = 1000);
 
   /**
    * Alternate constructor which copies parameters from an already initiated
@@ -106,6 +120,16 @@ class Perceptron
 
   //! Get the number of classes this perceptron has been trained for.
   size_t NumClasses() const { return weights.n_cols; }
+
+  //! Get the weight matrix.
+  const arma::mat& Weights() const { return weights; }
+  //! Modify the weight matrix.  You had better know what you are doing!
+  arma::mat& Weights() { return weights; }
+
+  //! Get the biases.
+  const arma::vec& Biases() const { return biases; }
+  //! Modify the biases.  You had better know what you are doing!
+  arma::vec& Biases() { return biases; }
 
 private:
   //! The maximum number of iterations during training.

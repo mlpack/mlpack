@@ -13,6 +13,25 @@ namespace mlpack {
 namespace perceptron {
 
 /**
+ * Construct the perceptron with the given number of classes and maximum number
+ * of iterations.
+ */
+template<
+    typename LearnPolicy,
+    typename WeightInitializationPolicy,
+    typename MatType
+>
+Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
+    const size_t numClasses,
+    const size_t dimensionality,
+    const size_t maxIterations) :
+    maxIterations(maxIterations)
+{
+  WeightInitializationPolicy wip;
+  wip.Initialize(weights, biases, dimensionality, numClasses);
+}
+
+/**
  * Constructor - constructs the perceptron. Or rather, builds the weights
  * matrix, which is later used in classification.  It adds a bias input vector
  * of 1 to the input data to take care of the bias weights.
@@ -34,8 +53,8 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
     const size_t maxIterations) :
     maxIterations(maxIterations)
 {
-  WeightInitializationPolicy WIP;
-  WIP.Initialize(weights, biases, data.n_rows, numClasses);
+  WeightInitializationPolicy wip;
+  wip.Initialize(weights, biases, data.n_rows, numClasses);
 
   // Start training.
   Train(data, labels);
@@ -65,8 +84,8 @@ Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Perceptron(
     maxIterations(other.maxIterations)
 {
   // Insert a row of ones at the top of the training data set.
-  WeightInitializationPolicy WIP;
-  WIP.Initialize(weights, biases, data.n_rows, other.NumClasses());
+  WeightInitializationPolicy wip;
+  wip.Initialize(weights, biases, data.n_rows, other.NumClasses());
 
   Train(data, labels, instanceWeights);
 }
@@ -175,7 +194,11 @@ void Perceptron<LearnPolicy, WeightInitializationPolicy, MatType>::Serialize(
     Archive& ar,
     const unsigned int /* version */)
 {
-  // For now, do nothing.
+  // We just need to serialize the maximum number of iterations, the weights,
+  // and the biases.
+  ar & data::CreateNVP(maxIterations, "maxIterations");
+  ar & data::CreateNVP(weights, "weights");
+  ar & data::CreateNVP(biases, "biases");
 }
 
 } // namespace perceptron
