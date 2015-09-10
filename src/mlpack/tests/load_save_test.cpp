@@ -13,6 +13,7 @@
 
 using namespace mlpack;
 using namespace mlpack::data;
+using namespace std;
 
 BOOST_AUTO_TEST_SUITE(LoadSaveTest);
 
@@ -54,11 +55,11 @@ BOOST_AUTO_TEST_CASE(NotExistLoad)
  */
 BOOST_AUTO_TEST_CASE(LoadCSVTest)
 {
-  std::fstream f;
-  f.open("test_file.csv", std::fstream::out);
+  fstream f;
+  f.open("test_file.csv", fstream::out);
 
-  f << "1, 2, 3, 4" << std::endl;
-  f << "5, 6, 7, 8" << std::endl;
+  f << "1, 2, 3, 4" << endl;
+  f << "5, 6, 7, 8" << endl;
 
   f.close();
 
@@ -80,11 +81,11 @@ BOOST_AUTO_TEST_CASE(LoadCSVTest)
  */
 BOOST_AUTO_TEST_CASE(LoadTSVTest)
 {
-  std::fstream f;
-  f.open("test_file.csv", std::fstream::out);
+  fstream f;
+  f.open("test_file.csv", fstream::out);
 
-  f << "1\t2\t3\t4" << std::endl;
-  f << "5\t6\t7\t8" << std::endl;
+  f << "1\t2\t3\t4" << endl;
+  f << "5\t6\t7\t8" << endl;
 
   f.close();
 
@@ -106,11 +107,11 @@ BOOST_AUTO_TEST_CASE(LoadTSVTest)
  */
 BOOST_AUTO_TEST_CASE(LoadTSVExtensionTest)
 {
-  std::fstream f;
-  f.open("test_file.tsv", std::fstream::out);
+  fstream f;
+  f.open("test_file.tsv", fstream::out);
 
-  f << "1\t2\t3\t4" << std::endl;
-  f << "5\t6\t7\t8" << std::endl;
+  f << "1\t2\t3\t4" << endl;
+  f << "5\t6\t7\t8" << endl;
 
   f.close();
 
@@ -158,11 +159,11 @@ BOOST_AUTO_TEST_CASE(SaveCSVTest)
  */
 BOOST_AUTO_TEST_CASE(LoadTransposedCSVTest)
 {
-  std::fstream f;
-  f.open("test_file.csv", std::fstream::out);
+  fstream f;
+  f.open("test_file.csv", fstream::out);
 
-  f << "1, 2, 3, 4" << std::endl;
-  f << "5, 6, 7, 8" << std::endl;
+  f << "1, 2, 3, 4" << endl;
+  f << "5, 6, 7, 8" << endl;
 
   f.close();
 
@@ -184,11 +185,11 @@ BOOST_AUTO_TEST_CASE(LoadTransposedCSVTest)
  */
 BOOST_AUTO_TEST_CASE(LoadTransposedTSVTest)
 {
-  std::fstream f;
-  f.open("test_file.csv", std::fstream::out);
+  fstream f;
+  f.open("test_file.csv", fstream::out);
 
-  f << "1\t2\t3\t4" << std::endl;
-  f << "5\t6\t7\t8" << std::endl;
+  f << "1\t2\t3\t4" << endl;
+  f << "5\t6\t7\t8" << endl;
 
   f.close();
 
@@ -210,11 +211,11 @@ BOOST_AUTO_TEST_CASE(LoadTransposedTSVTest)
  */
 BOOST_AUTO_TEST_CASE(LoadTransposedTSVExtensionTest)
 {
-  std::fstream f;
-  f.open("test_file.tsv", std::fstream::out);
+  fstream f;
+  f.open("test_file.tsv", fstream::out);
 
-  f << "1\t2\t3\t4" << std::endl;
-  f << "5\t6\t7\t8" << std::endl;
+  f << "1\t2\t3\t4" << endl;
+  f << "5\t6\t7\t8" << endl;
 
   f.close();
 
@@ -236,11 +237,11 @@ BOOST_AUTO_TEST_CASE(LoadTransposedTSVExtensionTest)
  */
 BOOST_AUTO_TEST_CASE(LoadNonTransposedCSVTest)
 {
-  std::fstream f;
-  f.open("test_file.csv", std::fstream::out);
+  fstream f;
+  f.open("test_file.csv", fstream::out);
 
-  f << "1, 3, 5, 7" << std::endl;
-  f << "2, 4, 6, 8" << std::endl;
+  f << "1, 3, 5, 7" << endl;
+  f << "2, 4, 6, 8" << endl;
 
   f.close();
 
@@ -338,11 +339,11 @@ BOOST_AUTO_TEST_CASE(SaveArmaASCIITest)
  */
 BOOST_AUTO_TEST_CASE(LoadRawASCIITest)
 {
-  std::fstream f;
-  f.open("test_file.txt", std::fstream::out);
+  fstream f;
+  f.open("test_file.txt", fstream::out);
 
-  f << "1 2 3 4" << std::endl;
-  f << "5 6 7 8" << std::endl;
+  f << "1 2 3 4" << endl;
+  f << "5 6 7 8" << endl;
 
   f.close();
 
@@ -364,11 +365,11 @@ BOOST_AUTO_TEST_CASE(LoadRawASCIITest)
  */
 BOOST_AUTO_TEST_CASE(LoadCSVTxtTest)
 {
-  std::fstream f;
-  f.open("test_file.txt", std::fstream::out);
+  fstream f;
+  f.open("test_file.txt", fstream::out);
 
-  f << "1, 2, 3, 4" << std::endl;
-  f << "5, 6, 7, 8" << std::endl;
+  f << "1, 2, 3, 4" << endl;
+  f << "5, 6, 7, 8" << endl;
 
   f.close();
 
@@ -709,7 +710,7 @@ BOOST_AUTO_TEST_CASE(NormalizeLabelTest)
 class TestInner
 {
  public:
-  TestInner(char c, std::string s) : c(c), s(s) { }
+  TestInner(char c, string s) : c(c), s(s) { }
 
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
@@ -720,7 +721,7 @@ class TestInner
 
   // Public members for testing.
   char c;
-  std::string s;
+  string s;
 };
 
 class Test
@@ -849,13 +850,154 @@ BOOST_AUTO_TEST_CASE(DatasetInfoTest)
   }
 
   // Get the mappings back.
-  const std::string& strFirst = di.UnmapString(first, 3);
-  const std::string& strSecond = di.UnmapString(second, 3);
-  const std::string& strThird = di.UnmapString(third, 3);
+  const string& strFirst = di.UnmapString(first, 3);
+  const string& strSecond = di.UnmapString(second, 3);
+  const string& strThird = di.UnmapString(third, 3);
 
   BOOST_REQUIRE_EQUAL(strFirst, "test_mapping_1");
   BOOST_REQUIRE_EQUAL(strSecond, "test_mapping_2");
   BOOST_REQUIRE_EQUAL(strThird, "test_mapping_3");
+}
+
+/**
+ * Test loading regular CSV with DatasetInfo.  Everything should be numeric.
+ */
+BOOST_AUTO_TEST_CASE(RegularCSVDatasetInfoLoad)
+{
+  vector<string> testFiles;
+  //testFiles.push_back("fake.csv");
+  //testFiles.push_back("german.csv");
+  testFiles.push_back("iris.txt");
+  testFiles.push_back("vc2.txt");
+  testFiles.push_back("johnson-8-4-4.csv");
+  testFiles.push_back("lars_dependent_y.csv");
+  testFiles.push_back("vc2_test_labels.txt");
+
+  for (size_t i = 0; i < testFiles.size(); ++i)
+  {
+    arma::mat one, two;
+    DatasetInfo info;
+    data::Load(testFiles[i], one);
+    data::Load(testFiles[i], two, info);
+
+    // Check that the matrices contain the same information.
+    BOOST_REQUIRE_EQUAL(one.n_elem, two.n_elem);
+    BOOST_REQUIRE_EQUAL(one.n_rows, two.n_rows);
+    BOOST_REQUIRE_EQUAL(one.n_cols, two.n_cols);
+    for (size_t i = 0; i < one.n_elem; ++i)
+    {
+      std::cout << "i " << i << ": one " << one[i] << " two " << two[i] <<
+".\n";
+      if (std::abs(one[i]) < 1e-8)
+        BOOST_REQUIRE_SMALL(two[i], 1e-8);
+      else
+        BOOST_REQUIRE_CLOSE(one[i], two[i], 1e-8);
+    }
+
+    // Check that all dimensions are numeric.
+    for (size_t i = 0; i < two.n_rows; ++i)
+      BOOST_REQUIRE_EQUAL((Datatype) info.Type(i), Datatype::numeric);
+  }
+}
+
+/**
+ * Test non-transposed loading of regular CSVs with DatasetInfo.  Everything
+ * should be numeric.
+ */
+BOOST_AUTO_TEST_CASE(NontransposedCSVDatasetInfoLoad)
+{
+  vector<string> testFiles;
+  testFiles.push_back("fake.csv");
+  testFiles.push_back("german.csv");
+  testFiles.push_back("iris.txt");
+  testFiles.push_back("vc2.txt");
+  testFiles.push_back("johnson-8-4-4.csv");
+  testFiles.push_back("lars_dependent_y.csv");
+  testFiles.push_back("vc2_test_labels.txt");
+
+  for (size_t i = 0; i < testFiles.size(); ++i)
+  {
+    arma::mat one, two;
+    DatasetInfo info;
+    data::Load(testFiles[i], one, true, false); // No transpose.
+    data::Load(testFiles[i], two, info, true, false);
+
+    // Check that the matrices contain the same information.
+    BOOST_REQUIRE_EQUAL(one.n_elem, two.n_elem);
+    BOOST_REQUIRE_EQUAL(one.n_rows, two.n_rows);
+    BOOST_REQUIRE_EQUAL(one.n_cols, two.n_cols);
+    for (size_t i = 0; i < one.n_elem; ++i)
+    {
+      if (std::abs(one[i]) < 1e-8)
+        BOOST_REQUIRE_SMALL(two[i], 1e-8);
+      else
+        BOOST_REQUIRE_CLOSE(one[i], two[i], 1e-8);
+    }
+
+    // Check that all dimensions are numeric.
+    for (size_t i = 0; i < two.n_rows; ++i)
+      BOOST_REQUIRE_EQUAL((Datatype) info.Type(i), Datatype::numeric);
+  }
+}
+
+/**
+ * Create a file with a categorical string feature, then load it.
+ */
+BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest)
+{
+  fstream f("test.csv");
+  f << "1, 2, hello" << endl;
+  f << "3, 4, goodbye" << endl;
+  f << "5, 6, coffee" << endl;
+  f << "7, 8, confusion" << endl;
+  f << "9, 10, hello" << endl;
+  f << "11, 12, confusion" << endl;
+  f << "13, 14, confusion" << endl;
+  f.close();
+
+  // Load the test CSV.
+  arma::umat matrix;
+  DatasetInfo info;
+  data::Load("test.csv", matrix, info);
+
+  BOOST_REQUIRE_EQUAL(matrix.n_cols, 7);
+  BOOST_REQUIRE_EQUAL(matrix.n_rows, 3);
+
+  BOOST_REQUIRE_EQUAL(matrix(0, 0), 1);
+  BOOST_REQUIRE_EQUAL(matrix(0, 1), 2);
+  BOOST_REQUIRE_EQUAL(matrix(0, 2), 0);
+  BOOST_REQUIRE_EQUAL(matrix(1, 0), 3);
+  BOOST_REQUIRE_EQUAL(matrix(1, 1), 4);
+  BOOST_REQUIRE_EQUAL(matrix(1, 2), 1);
+  BOOST_REQUIRE_EQUAL(matrix(2, 0), 5);
+  BOOST_REQUIRE_EQUAL(matrix(2, 1), 6);
+  BOOST_REQUIRE_EQUAL(matrix(2, 2), 2);
+  BOOST_REQUIRE_EQUAL(matrix(3, 0), 7);
+  BOOST_REQUIRE_EQUAL(matrix(3, 1), 8);
+  BOOST_REQUIRE_EQUAL(matrix(3, 2), 3);
+  BOOST_REQUIRE_EQUAL(matrix(4, 0), 9);
+  BOOST_REQUIRE_EQUAL(matrix(4, 1), 10);
+  BOOST_REQUIRE_EQUAL(matrix(4, 2), 0);
+  BOOST_REQUIRE_EQUAL(matrix(5, 0), 11);
+  BOOST_REQUIRE_EQUAL(matrix(5, 1), 12);
+  BOOST_REQUIRE_EQUAL(matrix(5, 2), 3);
+  BOOST_REQUIRE_EQUAL(matrix(6, 0), 13);
+  BOOST_REQUIRE_EQUAL(matrix(6, 1), 14);
+  BOOST_REQUIRE_EQUAL(matrix(6, 2), 3);
+
+  BOOST_REQUIRE_EQUAL((Datatype) info.Type(0), Datatype::numeric);
+  BOOST_REQUIRE_EQUAL((Datatype) info.Type(1), Datatype::numeric);
+  BOOST_REQUIRE_EQUAL((Datatype) info.Type(2), Datatype::categorical);
+
+  BOOST_REQUIRE_EQUAL(info.MapString("hello", 2), 0);
+  BOOST_REQUIRE_EQUAL(info.MapString("goodbye", 2), 1);
+  BOOST_REQUIRE_EQUAL(info.MapString("coffee", 2), 2);
+  BOOST_REQUIRE_EQUAL(info.MapString("confusion", 2), 3);
+
+  BOOST_REQUIRE_EQUAL(info.UnmapString(0, 2), "hello");
+  BOOST_REQUIRE_EQUAL(info.UnmapString(1, 2), "goodbye");
+  BOOST_REQUIRE_EQUAL(info.UnmapString(2, 2), "coffee");
+  BOOST_REQUIRE_EQUAL(info.UnmapString(3, 2), "confusion");
 }
 
 BOOST_AUTO_TEST_SUITE_END();

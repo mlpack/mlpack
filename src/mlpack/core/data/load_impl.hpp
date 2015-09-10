@@ -18,6 +18,7 @@
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
+#include <boost/tokenizer.hpp>
 
 #include "serialization_shim.hpp"
 
@@ -293,20 +294,168 @@ bool Load(const std::string& filename,
     return false;
   }
 
-  bool unknownType = false;
-  arma::file_type loadType;
-  std::string stringType;
-
-  if (extension == "csv" || extension == "tsv")
+  if (extension == "csv" || extension == "tsv" || extension == "txt")
   {
-    
-  }
-  else if (extension == "txt")
-  {
+    // True if we're looking for commas; if false, we're looking for spaces.
+    bool commas = (extension == "csv");
 
+    std::string type;
+    if (extension == "csv")
+      type = "CSV data";
+    else
+      type = "raw ASCII-formatted data";
+
+    Log::Info << "Loading '" << filename << "' as " << type << ".  "
+        << std::flush;
+    std::string separators;
+    if (commas)
+      separators = ",";
+    else
+      separators = " \t";
+
+    // We'll load this as CSV (or CSV with spaces or tabs) according to
+    // RFC4180.  So the first thing to do is determine the size of the matrix.
+    std::string buffer;
+    size_t cols = 0;
+
+    std::getline(stream, buffer, '\n');
+    // Count commas and whitespace in the line, ignoring anything inside
+    // quotes.
+    typedef boost::tokenizer<boost::escaped_list_separator<char>> Tokenizer;
+    boost::escaped_list_separator<char> sep("\\", separators, "\"");
+    Tokenizer tok(buffer, sep);
+    for (Tokenizer::iterator i = tok.begin(); i != tok.end(); ++i)
+      ++cols;
+
+    // Now count the number of lines in the file.  We've already counted the
+    // first one.
+    size_t rows = 1;
+    stream.unsetf(std::ios_base::skipws);
+    rows += std::count(std::istream_iterator<char>(stream),
+        std::istream_iterator<char>(), '\n');
+
+    // Back up to see if the last character in the file is an empty line.
+    stream.unget();
+    std::cout << "last character is " << int(stream.peek()) << ".\n";
+    while (isspace(stream.peek()))
+    {
+      if (stream.peek() == '\n')
+      {
+        --rows;
+        break;
+      }
+      stream.unget();
+    }
+
+    // Now we have the size.  So resize our matrix.
+    if (transpose)
+      matrix.set_size(cols, rows);
+    else
+      matrix.set_size(rows, cols);
+
+    stream.close();
+    stream.open(filename, std::fstream::in);
+
+    // Extract line by line.
+    std::stringstream token;
+    size_t row = 0;
+    while (!stream.bad() && !stream.fail() && !stream.eof())
+    {
+      std::getline(stream, buffer, '\n');
+
+      // Look at each token.  Unfortunately we have to do this character by
+      // character, because things may be escaped in quotes.
+      Tokenizer lineTok(buffer, sep);
+      size_t col = 0;
+      for (Tokenizer::iterator it = lineTok.begin(); it != lineTok.end(); ++it)
+      {
+        // Attempt to extract as type eT.  If that fails, we'll assume it's a
+        // string and map it (which may involve retroactively mapping everything
+        // we've seen so far).
+        token.clear();
+        token.str(*it);
+
+        eT val = eT(0);
+        token >> val;
+
+        if (token.fail())
+        {
+          std::cout << "conversion failed\n";
+          // Conversion failed; but it may be a NaN or inf.  Armadillo has
+          // convenient functions to check.
+          if (!arma::diskio::convert_naninf(val, token.str()))
+          {
+            // We need to perform a mapping.
+            const size_t dim = (transpose) ? col : row;
+            if (info.Type(dim) == Datatype::numeric)
+            {
+              // We must map everything we have seen up to this point and change
+              // the values in the matrix.
+              if (transpose)
+              {
+                // Whatever we've seen so far has successfully mapped to an eT.
+                // So we need to print it back to a string.  We'll use
+                // Armadillo's functionality for that.
+                for (size_t i = 0; i < row; ++i)
+                {
+                  std::stringstream sstr;
+                  arma::arma_ostream::print_elem(sstr, matrix.at(i, col),
+                      false);
+                  eT newVal = info.MapString(sstr.str(), col);
+                  matrix.at(i, col) = newVal;
+                }
+              }
+              else
+              {
+                for (size_t i = 0; i < col; ++i)
+                {
+                  std::stringstream sstr;
+                  arma::arma_ostream::print_elem(sstr, matrix.at(row, i),
+                      false);
+                  eT newVal = info.MapString(sstr.str(), row);
+                  matrix.at(row, i) = newVal;
+                }
+              }
+            }
+
+            val = info.MapString(token.str(), dim);
+          }
+        }
+
+        if (transpose)
+          matrix(col, row) = val;
+        else
+          matrix(row, col) = val;
+
+        ++col;
+      }
+
+      ++row;
+    }
+
+    if (stream.bad() || stream.fail())
+      Log::Warn << "Failure reading file '" << filename << "'." << std::endl;
   }
+  else
+  {
+    // The type is unknown.
+    Timer::Stop("loading_data");
+    if (fatal)
+      Log::Fatal << "Unable to detect type of '" << filename << "'; "
+          << "incorrect extension?" << std::endl;
+    else
+      Log::Warn << "Unable to detect type of '" << filename << "'; load failed."
+          << " Incorrect extension?" << std::endl;
+
+    return false;
+  }
+
+  Log::Info << "Size is " << (transpose ? matrix.n_cols : matrix.n_rows)
+      << " x " << (transpose ? matrix.n_rows : matrix.n_cols) << ".\n";
 
   Timer::Stop("loading_data");
+
+  return true;
 }
 
 // Load a model from file.

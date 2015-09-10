@@ -14,6 +14,7 @@
 #include <string>
 
 #include "format.hpp"
+#include "dataset_info.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {
