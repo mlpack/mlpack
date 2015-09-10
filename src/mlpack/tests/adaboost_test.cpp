@@ -26,12 +26,12 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundIris)
 {
   arma::mat inputData;
 
-  if (!data::Load("iris.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset iris.txt!");
+  if (!data::Load("iris.csv", inputData))
+    BOOST_FAIL("Cannot load test dataset iris.csv!");
 
   arma::Mat<size_t> labels;
 
-  if (!data::Load("iris_labels.txt",labels))
+  if (!data::Load("iris_labels.txt", labels))
     BOOST_FAIL("Cannot load labels for iris iris_labels.txt");
 
   // no need to map the labels here
@@ -68,8 +68,8 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris)
 {
   arma::mat inputData;
 
-  if (!data::Load("iris.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset iris.txt!");
+  if (!data::Load("iris.csv", inputData))
+    BOOST_FAIL("Cannot load test dataset iris.csv!");
 
   arma::Mat<size_t> labels;
 
@@ -116,8 +116,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn)
 {
   arma::mat inputData;
 
-  if (!data::Load("vc2.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset vc2.txt!");
+  if (!data::Load("vc2.csv", inputData))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Mat<size_t> labels;
 
@@ -158,8 +158,8 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn)
 {
   arma::mat inputData;
 
-  if (!data::Load("vc2.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset vc2.txt!");
+  if (!data::Load("vc2.csv", inputData))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Mat<size_t> labels;
 
@@ -297,8 +297,8 @@ BOOST_AUTO_TEST_CASE(HammingLossIris_DS)
 {
   arma::mat inputData;
 
-  if (!data::Load("iris.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset iris.txt!");
+  if (!data::Load("iris.csv", inputData))
+    BOOST_FAIL("Cannot load test dataset iris.csv!");
 
   arma::Mat<size_t> labels;
 
@@ -342,8 +342,8 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorIris_DS)
 {
   arma::mat inputData;
 
-  if (!data::Load("iris.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset iris.txt!");
+  if (!data::Load("iris.csv", inputData))
+    BOOST_FAIL("Cannot load test dataset iris.csv!");
 
   arma::Mat<size_t> labels;
 
@@ -395,8 +395,8 @@ BOOST_AUTO_TEST_CASE(HammingLossBoundVertebralColumn_DS)
 {
   arma::mat inputData;
 
-  if (!data::Load("vc2.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset vc2.txt!");
+  if (!data::Load("vc2.csv", inputData))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Mat<size_t> labels;
 
@@ -441,8 +441,8 @@ BOOST_AUTO_TEST_CASE(WeakLearnerErrorVertebralColumn_DS)
 {
   arma::mat inputData;
 
-  if (!data::Load("vc2.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset vc2.txt!");
+  if (!data::Load("vc2.csv", inputData))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Mat<size_t> labels;
 
@@ -589,8 +589,8 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
   mlpack::math::RandomSeed(std::time(NULL));
   arma::mat inputData;
 
-  if (!data::Load("vc2.txt", inputData))
-    BOOST_FAIL("Cannot load test dataset vc2.txt!");
+  if (!data::Load("vc2.csv", inputData))
+    BOOST_FAIL("Cannot load test dataset vc2.csv!");
 
   arma::Mat<size_t> labels;
 
@@ -606,8 +606,8 @@ BOOST_AUTO_TEST_CASE(ClassifyTest_VERTEBRALCOL)
 
   arma::mat testData;
 
-  if (!data::Load("vc2_test.txt", testData))
-    BOOST_FAIL("Cannot load test dataset vc2_test.txt!");
+  if (!data::Load("vc2_test.csv", testData))
+    BOOST_FAIL("Cannot load test dataset vc2_test.csv!");
 
   arma::Mat<size_t> trueTestLabels;
 
