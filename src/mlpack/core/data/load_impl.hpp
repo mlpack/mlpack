@@ -19,6 +19,7 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/tokenizer.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include "serialization_shim.hpp"
 
@@ -330,21 +331,11 @@ bool Load(const std::string& filename,
     // Now count the number of lines in the file.  We've already counted the
     // first one.
     size_t rows = 1;
-    stream.unsetf(std::ios_base::skipws);
-    rows += std::count(std::istream_iterator<char>(stream),
-        std::istream_iterator<char>(), '\n');
-
-    // Back up to see if the last character in the file is an empty line.
-    stream.unget();
-    std::cout << "last character is " << int(stream.peek()) << ".\n";
-    while (isspace(stream.peek()))
+    while (!stream.eof() && !stream.bad() && !stream.fail())
     {
-      if (stream.peek() == '\n')
-      {
-        --rows;
-        break;
-      }
-      stream.unget();
+      std::getline(stream, buffer, '\n');
+      if (!stream.fail())
+        ++rows;
     }
 
     // Now we have the size.  So resize our matrix.
@@ -380,7 +371,6 @@ bool Load(const std::string& filename,
 
         if (token.fail())
         {
-          std::cout << "conversion failed\n";
           // Conversion failed; but it may be a NaN or inf.  Armadillo has
           // convenient functions to check.
           if (!arma::diskio::convert_naninf(val, token.str()))
@@ -418,7 +408,10 @@ bool Load(const std::string& filename,
               }
             }
 
-            val = info.MapString(token.str(), dim);
+            // Strip whitespace from either side of the string.
+            std::string trimmedToken(token.str());
+            boost::trim(trimmedToken);
+            val = info.MapString(trimmedToken, dim);
           }
         }
 
@@ -432,9 +425,6 @@ bool Load(const std::string& filename,
 
       ++row;
     }
-
-    if (stream.bad() || stream.fail())
-      Log::Warn << "Failure reading file '" << filename << "'." << std::endl;
   }
   else
   {
