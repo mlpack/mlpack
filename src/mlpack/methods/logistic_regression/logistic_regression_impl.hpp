@@ -93,7 +93,7 @@ void LogisticRegression<OptimizerType>::Predict(const arma::mat& predictors,
       + (1.0 - decisionBoundary));
 }
 
-template <template<typename> class OptimizerType>
+template<template<typename> class OptimizerType>
 double LogisticRegression<OptimizerType>::ComputeError(
     const arma::mat& predictors,
     const arma::vec& responses) const
@@ -105,7 +105,7 @@ double LogisticRegression<OptimizerType>::ComputeError(
   return newErrorFunction.Evaluate(parameters);
 }
 
-template <template<typename> class OptimizerType>
+template<template<typename> class OptimizerType>
 double LogisticRegression<OptimizerType>::ComputeAccuracy(
     const arma::mat& predictors,
     const arma::vec& responses,
@@ -124,7 +124,17 @@ double LogisticRegression<OptimizerType>::ComputeAccuracy(
   return (double) (count * 100) / responses.n_rows;
 }
 
-template <template<typename> class OptimizerType>
+template<template<typename> class OptimizerType>
+template<typename Archive>
+void LogisticRegression<OptimizerType>::Serialize(
+    Archive& ar,
+    const unsigned int /* version */)
+{
+  ar & data::CreateNVP(parameters, "parameters");
+  ar & data::CreateNVP(lambda, "lambda");
+}
+
+template<template<typename> class OptimizerType>
 std::string LogisticRegression<OptimizerType>::ToString() const
 {
   std::ostringstream convert;

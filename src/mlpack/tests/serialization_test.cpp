@@ -23,6 +23,7 @@
 #include <mlpack/core/tree/binary_space_tree.hpp>
 
 #include <mlpack/methods/perceptron/perceptron.hpp>
+#include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
@@ -31,6 +32,7 @@ using namespace mlpack::bound;
 using namespace mlpack::metric;
 using namespace mlpack::tree;
 using namespace mlpack::perceptron;
+using namespace mlpack::regression;
 using namespace arma;
 using namespace boost;
 using namespace boost::archive;
@@ -718,6 +720,29 @@ BOOST_AUTO_TEST_CASE(PerceptronTest)
   BOOST_REQUIRE_EQUAL(p.MaxIterations(), pXml.MaxIterations());
   BOOST_REQUIRE_EQUAL(p.MaxIterations(), pText.MaxIterations());
   BOOST_REQUIRE_EQUAL(p.MaxIterations(), pBinary.MaxIterations());
+}
+
+BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
+{
+  arma::mat data;
+  data.randu(3, 100);
+  arma::vec responses;
+  responses.randu(100);
+
+  LogisticRegression<> lr(data, responses, 0.5);
+
+  LogisticRegression<> lrXml(arma::vec(), 0.3);
+  LogisticRegression<> lrText(data, responses + 1);
+  LogisticRegression<> lrBinary(arma::vec("1 2 3"), 0.0);
+
+  SerializeObjectAll(lr, lrXml, lrText, lrBinary);
+
+  CheckMatrices(lr.Parameters(), lrXml.Parameters(), lrText.Parameters(),
+      lrBinary.Parameters());
+
+  BOOST_REQUIRE_CLOSE(lr.Lambda(), lrXml.Lambda(), 1e-5);
+  BOOST_REQUIRE_CLOSE(lr.Lambda(), lrText.Lambda(), 1e-5);
+  BOOST_REQUIRE_CLOSE(lr.Lambda(), lrBinary.Lambda(), 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
