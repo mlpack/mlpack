@@ -11,6 +11,25 @@
 namespace mlpack {
 namespace tree {
 
+/**
+ * This is the standard Hoeffding-bound categorical feature proposed in the
+ * paper below:
+ *
+ * @code
+ * @inproceedings{domingos2000mining,
+ *   title={{Mining High-Speed Data Streams}},
+ *   author={Domingos, P. and Hulten, G.},
+ *   year={2000},
+ *   booktitle={Proceedings of the Sixth ACM SIGKDD International Conference on
+ *       Knowledge Discovery and Data Mining (KDD '00)},
+ *   pages={71--80}
+ * }
+ * @endcode
+ *
+ * This class will track the sufficient statistics of the training points it has
+ * seen.  The HoeffdingSplit class (and other related classes) can use this
+ * class to track categorical features and split decision tree nodes.
+ */
 template<typename FitnessFunction>
 class HoeffdingCategoricalSplit
 {
