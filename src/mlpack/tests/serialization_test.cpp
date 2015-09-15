@@ -726,7 +726,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
 {
   arma::mat data;
   data.randu(3, 100);
-  arma::vec responses;
+  arma::Row<size_t> responses;
   responses.randu(100);
 
   LogisticRegression<> lr(data, responses, 0.5);

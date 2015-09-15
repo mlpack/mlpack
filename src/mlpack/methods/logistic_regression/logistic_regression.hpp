@@ -33,7 +33,7 @@ class LogisticRegression
    * @param lambda L2-regularization parameter.
    */
   LogisticRegression(const arma::mat& predictors,
-                     const arma::vec& responses,
+                     const arma::Row<size_t>& responses,
                      const double lambda = 0);
 
   /**
@@ -48,8 +48,8 @@ class LogisticRegression
    * @param lambda L2-regularization parameter.
    */
   LogisticRegression(const arma::mat& predictors,
-                     const arma::vec& responses,
-                     const arma::mat& initialPoint,
+                     const arma::Row<size_t>& responses,
+                     const arma::vec& initialPoint,
                      const double lambda = 0);
 
   /**
@@ -63,7 +63,7 @@ class LogisticRegression
    *
    * @param optimizer Instantiated optimizer with instantiated error function.
    */
-  LogisticRegression(OptimizerType<LogisticRegressionFunction>& optimizer);
+  LogisticRegression(OptimizerType<LogisticRegressionFunction<>>& optimizer);
 
   /**
    * Construct a logistic regression model from the given parameters, without
@@ -98,7 +98,7 @@ class LogisticRegression
    * @param decisionBoundary Decision boundary (default 0.5).
    */
   void Predict(const arma::mat& predictors,
-               arma::vec& responses,
+               arma::Row<size_t>& responses,
                const double decisionBoundary = 0.5) const;
 
   /**
@@ -116,7 +116,7 @@ class LogisticRegression
    * @return Percentage of responses that are predicted correctly.
    */
   double ComputeAccuracy(const arma::mat& predictors,
-                         const arma::vec& responses,
+                         const arma::Row<size_t>& responses,
                          const double decisionBoundary = 0.5) const;
 
   /**
@@ -128,7 +128,7 @@ class LogisticRegression
    * @param responses Vector of responses.
    */
   double ComputeError(const arma::mat& predictors,
-                      const arma::vec& responses) const;
+                      const arma::Row<size_t>& responses) const;
 
   //! Serialize the model.
   template<typename Archive>
@@ -144,8 +144,8 @@ class LogisticRegression
   double lambda;
 };
 
-}; // namespace regression
-}; // namespace mlpack
+} // namespace regression
+} // namespace mlpack
 
 // Include implementation.
 #include "logistic_regression_impl.hpp"

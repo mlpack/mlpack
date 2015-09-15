@@ -419,9 +419,9 @@ BOOST_AUTO_TEST_CASE(LCCString)
 BOOST_AUTO_TEST_CASE(LogRegString)
 {
   arma::mat c(40, 40);
-  arma::mat b(40, 1);
+  arma::Row<size_t> b(40);
   c.randn();
-  b.randn();
+  b.randu();
   mlpack::regression::LogisticRegression<> d(c, b);
   Log::Debug << d;
   testOstream << d;

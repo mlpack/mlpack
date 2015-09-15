@@ -141,10 +141,10 @@ int main(int argc, char** argv)
 
   // These are the matrices we might use.
   arma::mat regressors;
-  arma::mat responses;
+  arma::Mat<size_t> responses;
   arma::mat model;
   arma::mat testSet;
-  arma::vec predictions;
+  arma::Row<size_t> predictions;
 
   // Load matrices.
   if (!inputFile.empty())
@@ -163,7 +163,8 @@ int main(int argc, char** argv)
   else
   {
     // The initial predictors for y, Nx1.
-    responses = trans(regressors.row(regressors.n_rows - 1));
+    responses = arma::conv_to<arma::Row<size_t>>::from(
+        regressors.row(regressors.n_rows - 1));
     regressors.shed_row(regressors.n_rows - 1);
   }
 
@@ -187,8 +188,8 @@ int main(int argc, char** argv)
   if (!regressors.empty())
   {
     // We need to train the model.  Prepare the optimizers.
-    arma::vec responsesVec = responses.unsafe_col(0);
-    LogisticRegressionFunction lrf(regressors, responsesVec, lambda);
+    arma::Row<size_t> responsesVec = responses.unsafe_col(0).t();
+    LogisticRegressionFunction<> lrf(regressors, responsesVec, lambda);
     // Set the initial point, if necessary.
     if (!model.empty())
     {
@@ -199,7 +200,7 @@ int main(int argc, char** argv)
 
     if (optimizerType == "lbfgs")
     {
-      L_BFGS<LogisticRegressionFunction> lbfgsOpt(lrf);
+      L_BFGS<LogisticRegressionFunction<>> lbfgsOpt(lrf);
       lbfgsOpt.MaxIterations() = maxIterations;
       lbfgsOpt.MinGradientNorm() = tolerance;
       Log::Info << "Training model with L-BFGS optimizer." << endl;
@@ -211,7 +212,7 @@ int main(int argc, char** argv)
     }
     else if (optimizerType == "sgd")
     {
-      SGD<LogisticRegressionFunction> sgdOpt(lrf);
+      SGD<LogisticRegressionFunction<>> sgdOpt(lrf);
       sgdOpt.MaxIterations() = maxIterations;
       sgdOpt.Tolerance() = tolerance;
       sgdOpt.StepSize() = stepSize;
@@ -234,9 +235,9 @@ int main(int argc, char** argv)
         << endl;
     lr.Predict(testSet, predictions, decisionBoundary);
 
-    // Save the results, if necessary.  Don't transpose.
+    // Save the results, if necessary.
     if (!outputPredictionsFile.empty())
-      data::Save(outputPredictionsFile, predictions, false, false);
+      data::Save(outputPredictionsFile, predictions, false);
   }
 
   if (!outputFile.empty())

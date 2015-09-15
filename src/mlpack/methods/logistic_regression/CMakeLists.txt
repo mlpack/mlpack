@@ -5,7 +5,7 @@ set(SOURCES
   logistic_regression.hpp
   logistic_regression_impl.hpp
   logistic_regression_function.hpp
-  logistic_regression_function.cpp
+  logistic_regression_function_impl.hpp
 )
 
 # add directory name to sources

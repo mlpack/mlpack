@@ -17,13 +17,13 @@ namespace regression {
 template<template<typename> class OptimizerType>
 LogisticRegression<OptimizerType>::LogisticRegression(
     const arma::mat& predictors,
-    const arma::vec& responses,
+    const arma::Row<size_t>& responses,
     const double lambda) :
     parameters(arma::zeros<arma::vec>(predictors.n_rows + 1)),
     lambda(lambda)
 {
-  LogisticRegressionFunction errorFunction(predictors, responses, lambda);
-  OptimizerType<LogisticRegressionFunction> optimizer(errorFunction);
+  LogisticRegressionFunction<> errorFunction(predictors, responses, lambda);
+  OptimizerType<LogisticRegressionFunction<>> optimizer(errorFunction);
 
   // Train the model.
   Timer::Start("logistic_regression_optimization");
@@ -37,15 +37,15 @@ LogisticRegression<OptimizerType>::LogisticRegression(
 template<template<typename> class OptimizerType>
 LogisticRegression<OptimizerType>::LogisticRegression(
     const arma::mat& predictors,
-    const arma::vec& responses,
-    const arma::mat& initialPoint,
+    const arma::Row<size_t>& responses,
+    const arma::vec& initialPoint,
     const double lambda) :
     parameters(arma::zeros<arma::vec>(predictors.n_rows + 1)),
     lambda(lambda)
 {
-  LogisticRegressionFunction errorFunction(predictors, responses, lambda);
+  LogisticRegressionFunction<> errorFunction(predictors, responses, lambda);
   errorFunction.InitialPoint() = initialPoint;
-  OptimizerType<LogisticRegressionFunction> optimizer(errorFunction);
+  OptimizerType<LogisticRegressionFunction<>> optimizer(errorFunction);
 
   // Train the model.
   Timer::Start("logistic_regression_optimization");
@@ -58,7 +58,7 @@ LogisticRegression<OptimizerType>::LogisticRegression(
 
 template<template<typename> class OptimizerType>
 LogisticRegression<OptimizerType>::LogisticRegression(
-    OptimizerType<LogisticRegressionFunction>& optimizer) :
+    OptimizerType<LogisticRegressionFunction<>>& optimizer) :
     parameters(optimizer.Function().GetInitialPoint()),
     lambda(optimizer.Function().Lambda())
 {
@@ -82,24 +82,25 @@ LogisticRegression<OptimizerType>::LogisticRegression(
 
 template<template<typename> class OptimizerType>
 void LogisticRegression<OptimizerType>::Predict(const arma::mat& predictors,
-                                                arma::vec& responses,
+                                                arma::Row<size_t>& responses,
                                                 const double decisionBoundary)
     const
 {
   // Calculate sigmoid function for each point.  The (1.0 - decisionBoundary)
   // term correctly sets an offset so that floor() returns 0 or 1 correctly.
-  responses = arma::floor((1.0 / (1.0 + arma::exp(-parameters(0)
-      - predictors.t() * parameters.subvec(1, parameters.n_elem - 1))))
-      + (1.0 - decisionBoundary));
+  responses = arma::conv_to<arma::Row<size_t>>::from((1.0 /
+      (1.0 + arma::exp(-parameters(0) - predictors.t() *
+      parameters.subvec(1, parameters.n_elem - 1)))) +
+      (1.0 - decisionBoundary));
 }
 
 template<template<typename> class OptimizerType>
 double LogisticRegression<OptimizerType>::ComputeError(
     const arma::mat& predictors,
-    const arma::vec& responses) const
+    const arma::Row<size_t>& responses) const
 {
   // Construct a new error function.
-  LogisticRegressionFunction newErrorFunction(predictors, responses,
+  LogisticRegressionFunction<> newErrorFunction(predictors, responses,
       lambda);
 
   return newErrorFunction.Evaluate(parameters);
@@ -108,20 +109,25 @@ double LogisticRegression<OptimizerType>::ComputeError(
 template<template<typename> class OptimizerType>
 double LogisticRegression<OptimizerType>::ComputeAccuracy(
     const arma::mat& predictors,
-    const arma::vec& responses,
+    const arma::Row<size_t>& responses,
     const double decisionBoundary) const
 {
   // Predict responses using the current model.
-  arma::vec tempResponses;
+  arma::Row<size_t> tempResponses;
   Predict(predictors, tempResponses, decisionBoundary);
 
   // Count the number of responses that were correct.
   size_t count = 0;
   for (size_t i = 0; i < responses.n_elem; i++)
+  {
     if (responses(i) == tempResponses(i))
       count++;
+    else
+      std::cout << "i " << i << ": " << responses[i] << " vs. predicted " <<
+tempResponses(i) << ".\n";
+  }
 
-  return (double) (count * 100) / responses.n_rows;
+  return (double) (count * 100) / responses.n_elem;
 }
 
 template<template<typename> class OptimizerType>
@@ -144,7 +150,7 @@ std::string LogisticRegression<OptimizerType>::ToString() const
   return convert.str();
 }
 
-}; // namespace regression
-}; // namespace mlpack
+} // namespace regression
+} // namespace mlpack
 
 #endif // __MLPACK_METHODS_LOGISTIC_REGRESSION_LOGISTIC_REGRESSION_IMPL_HPP
