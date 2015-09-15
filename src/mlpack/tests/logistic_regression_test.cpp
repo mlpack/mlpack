@@ -577,7 +577,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionLBFGSGaussianTest)
     data.col(i) = g1.Random();
     responses[i] = 0;
   }
-  for (size_t i = 501; i < 1000; ++i)
+  for (size_t i = 500; i < 1000; ++i)
   {
     data.col(i) = g2.Random();
     responses[i] = 1;
