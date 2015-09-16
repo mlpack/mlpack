@@ -23,17 +23,7 @@ LogisticRegression<MatType>::LogisticRegression(
     parameters(arma::zeros<arma::vec>(predictors.n_rows + 1)),
     lambda(lambda)
 {
-  LogisticRegressionFunction<MatType> errorFunction(predictors, responses,
-      lambda);
-  OptimizerType<LogisticRegressionFunction<MatType>> optimizer(errorFunction);
-
-  // Train the model.
-  Timer::Start("logistic_regression_optimization");
-  const double out = optimizer.Optimize(parameters);
-  Timer::Stop("logistic_regression_optimization");
-
-  Log::Info << "LogisticRegression::LogisticRegression(): final objective of "
-      << "trained model is " << out << "." << std::endl;
+  Train<OptimizerType>(predictors, responses);
 }
 
 template<typename MatType>
@@ -43,21 +33,10 @@ LogisticRegression<MatType>::LogisticRegression(
     const arma::Row<size_t>& responses,
     const arma::vec& initialPoint,
     const double lambda) :
-    parameters(arma::zeros<arma::vec>(predictors.n_rows + 1)),
+    parameters(initialPoint),
     lambda(lambda)
 {
-  LogisticRegressionFunction<MatType> errorFunction(predictors, responses,
-      lambda);
-  errorFunction.InitialPoint() = initialPoint;
-  OptimizerType<LogisticRegressionFunction<MatType>> optimizer(errorFunction);
-
-  // Train the model.
-  Timer::Start("logistic_regression_optimization");
-  const double out = optimizer.Optimize(parameters);
-  Timer::Stop("logistic_regression_optimization");
-
-  Log::Info << "LogisticRegression::LogisticRegression(): final objective of "
-      << "trained model is " << out << "." << std::endl;
+  Train<OptimizerType>(predictors, responses);
 }
 
 template<typename MatType>
@@ -78,6 +57,36 @@ LogisticRegression<MatType>::LogisticRegression(
     parameters(optimizer.Function().GetInitialPoint()),
     lambda(optimizer.Function().Lambda())
 {
+  Train(optimizer);
+}
+
+template<typename MatType>
+template<template<typename> class OptimizerType>
+void LogisticRegression<MatType>::Train(const MatType& predictors,
+                                        const arma::Row<size_t>& responses)
+{
+  LogisticRegressionFunction<MatType> errorFunction(predictors, responses,
+      lambda);
+  errorFunction.InitialPoint() = parameters;
+  OptimizerType<LogisticRegressionFunction<MatType>> optimizer(errorFunction);
+
+  // Train the model.
+  Timer::Start("logistic_regression_optimization");
+  const double out = optimizer.Optimize(parameters);
+  Timer::Stop("logistic_regression_optimization");
+
+  Log::Info << "LogisticRegression::LogisticRegression(): final objective of "
+      << "trained model is " << out << "." << std::endl;
+}
+
+template<typename MatType>
+template<template<typename> class OptimizerType>
+void LogisticRegression<MatType>::Train(
+    OptimizerType<LogisticRegressionFunction<MatType>>& optimizer)
+{
+  // Everything is good.  Just train the model.
+  parameters = optimizer.Function().GetInitialPoint();
+
   Timer::Start("logistic_regression_optimization");
   const double out = optimizer.Optimize(parameters);
   Timer::Stop("logistic_regression_optimization");

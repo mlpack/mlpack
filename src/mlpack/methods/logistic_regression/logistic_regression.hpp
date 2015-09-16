@@ -96,13 +96,19 @@ class LogisticRegression
       template<typename> class OptimizerType = mlpack::optimization::L_BFGS
   >
   void Train(const MatType& predictors,
-             const arma::Row<size_t>& responses,
-             const MatType& initialPoint);
+             const arma::Row<size_t>& responses);
 
   /**
    * Train the LogisticRegression model with the given instantiated optimizer.
    * Using this overload allows configuring the instantiated optimizer before
    * training is performed.
+   *
+   * Note that the initial point of the optimizer
+   * (optimizer.Function().GetInitialPoint()) will be used as the initial point
+   * of the optimization, overwriting any existing trained model.  If you don't
+   * want to overwrite the existing model, set
+   * optimizer.Function().GetInitialPoint() to the current parameters vector,
+   * accessible via Parameters().
    *
    * @param optimizer Instantiated optimizer with instantiated error function.
    */
