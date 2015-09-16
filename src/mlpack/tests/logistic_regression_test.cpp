@@ -701,4 +701,108 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionInstantiatedOptimizer)
   BOOST_REQUIRE_SMALL(sigmoids[2], 0.1);
 }
 
+/**
+ * Test the Train() function and make sure it works the same as if we'd called
+ * the constructor by hand, with the L-BFGS optimizer.
+ */
+BOOST_AUTO_TEST_CASE(LogisticRegressionLBFGSTrainTest)
+{
+  // Make a random dataset with random labels.
+  arma::mat dataset(5, 800);
+  dataset.randu();
+  arma::Row<size_t> labels(800);
+  for (size_t i = 0; i < 800; ++i)
+    labels[i] = math::RandInt(0, 2);
+
+  LogisticRegression<> lr(dataset, labels, 0.3);
+  LogisticRegression<> lr2(dataset.n_rows, 0.3);
+  lr2.Train(dataset, labels);
+
+  BOOST_REQUIRE_EQUAL(lr.Parameters().n_elem, lr2.Parameters().n_elem);
+  for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(lr.Parameters()[i], lr2.Parameters()[i], 1e-3);
+}
+
+/**
+ * Test the Train() function and make sure it works the same as if we'd called
+ * the constructor by hand, with the SGD optimizer.
+ */
+BOOST_AUTO_TEST_CASE(LogisticRegressionSGDTrainTest)
+{
+  // Make a random dataset with random labels.
+  arma::mat dataset(5, 800);
+  dataset.randu();
+  arma::Row<size_t> labels(800);
+  for (size_t i = 0; i < 800; ++i)
+    labels[i] = math::RandInt(0, 2);
+
+  LogisticRegressionFunction<> lrf(dataset, labels, 0.3);
+  SGD<LogisticRegressionFunction<>> sgd(lrf);
+  sgd.Shuffle() = false;
+  LogisticRegression<> lr(sgd);
+  LogisticRegression<> lr2(dataset.n_rows, 0.3);
+
+  LogisticRegressionFunction<> lrf2(dataset, labels, 0.3);
+  SGD<LogisticRegressionFunction<>> sgd2(lrf2);
+  sgd2.Shuffle() = false;
+  lr2.Train(sgd2);
+
+  BOOST_REQUIRE_EQUAL(lr.Parameters().n_elem, lr2.Parameters().n_elem);
+  for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(lr.Parameters()[i], lr2.Parameters()[i], 1e-5);
+}
+
+/**
+ * Test sparse and dense logistic regression and make sure they both work the
+ * same using the L-BFGS optimizer.
+ */
+BOOST_AUTO_TEST_CASE(LogisticRegressionSparseLBFGSTest)
+{
+  // Create a random dataset.
+  arma::sp_mat dataset;
+  dataset.sprandu(10, 800, 0.3);
+  arma::mat denseDataset(dataset);
+  arma::Row<size_t> labels(800);
+  for (size_t i = 0; i < 800; ++i)
+    labels[i] = math::RandInt(0, 2);
+
+  LogisticRegression<> lr(denseDataset, labels, 0.3);
+  LogisticRegression<arma::sp_mat> lrSparse(dataset, labels, 0.3);
+
+  BOOST_REQUIRE_EQUAL(lr.Parameters().n_elem, lrSparse.Parameters().n_elem);
+  for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(lr.Parameters()[i], lrSparse.Parameters()[i], 1e-4);
+}
+
+/**
+ * Test sparse and dense logistic regression and make sure they both work the
+ * same using the SGD optimizer.
+ */
+BOOST_AUTO_TEST_CASE(LogisticRegressionSparseSGDTest)
+{
+  // Create a random dataset.
+  arma::sp_mat dataset;
+  dataset.sprandu(10, 800, 0.3);
+  arma::mat denseDataset(dataset);
+  arma::Row<size_t> labels(800);
+  for (size_t i = 0; i < 800; ++i)
+    labels[i] = math::RandInt(0, 2);
+
+  LogisticRegression<> lr(10, 0.3);
+  LogisticRegressionFunction<> lrf(denseDataset, labels, 0.3);
+  SGD<LogisticRegressionFunction<>> sgd(lrf);
+  sgd.Shuffle() = false;
+  lr.Train(sgd);
+
+  LogisticRegression<arma::sp_mat> lrSparse(10, 0.3);
+  LogisticRegressionFunction<arma::sp_mat> lrfSparse(dataset, labels, 0.3);
+  SGD<LogisticRegressionFunction<arma::sp_mat>> sgdSparse(lrfSparse);
+  sgdSparse.Shuffle() = false;
+  lrSparse.Train(sgdSparse);
+
+  BOOST_REQUIRE_EQUAL(lr.Parameters().n_elem, lrSparse.Parameters().n_elem);
+  for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(lr.Parameters()[i], lrSparse.Parameters()[i], 1e-5);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
