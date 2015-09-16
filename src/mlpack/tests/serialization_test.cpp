@@ -731,9 +731,9 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
 
   LogisticRegression<> lr(data, responses, 0.5);
 
-  LogisticRegression<> lrXml(arma::vec(), 0.3);
+  LogisticRegression<> lrXml(data, responses + 3, 0.3);
   LogisticRegression<> lrText(data, responses + 1);
-  LogisticRegression<> lrBinary(arma::vec("1 2 3"), 0.0);
+  LogisticRegression<> lrBinary(3, 0.0);
 
   SerializeObjectAll(lr, lrXml, lrText, lrBinary);
 

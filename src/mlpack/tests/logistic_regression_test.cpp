@@ -504,7 +504,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDSimpleTest)
   // smaller tolerance.
   LogisticRegressionFunction<> lrf(data, responses, 0.001);
   SGD<LogisticRegressionFunction<>> sgd(lrf, 0.005, 500000, 1e-10);
-  LogisticRegression<SGD> lr(sgd);
+  LogisticRegression<> lr(sgd);
 
   // Test sigmoid function.
   arma::vec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
@@ -553,7 +553,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDRegularizationSimpleTest)
   // tolerance.
   LogisticRegressionFunction<> lrf(data, responses, 0.001);
   SGD<LogisticRegressionFunction<>> sgd(lrf, 0.005, 500000, 1e-10);
-  LogisticRegression<SGD> lr(sgd);
+  LogisticRegression<> lr(sgd);
 
   // Test sigmoid function.
   arma::vec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
@@ -635,7 +635,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionSGDGaussianTest)
   }
 
   // Now train a logistic regression object on it.
-  LogisticRegression<SGD> lr(data, responses, 0.5);
+  LogisticRegression<> lr(data, responses, 0.5);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
@@ -674,7 +674,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionInstantiatedOptimizer)
   LogisticRegressionFunction<> lrf(data, responses, 0.0005);
   L_BFGS<LogisticRegressionFunction<>> lbfgsOpt(lrf);
   lbfgsOpt.MinGradientNorm() = 1e-50;
-  LogisticRegression<L_BFGS> lr(lbfgsOpt);
+  LogisticRegression<> lr(lbfgsOpt);
 
   // Test sigmoid function.
   arma::vec sigmoids = 1 / (1 + arma::exp(-lr.Parameters()[0]
@@ -689,7 +689,7 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionInstantiatedOptimizer)
   SGD<LogisticRegressionFunction<>> sgdOpt(lrf);
   sgdOpt.StepSize() = 0.15;
   sgdOpt.Tolerance() = 1e-75;
-  LogisticRegression<SGD> lr2(sgdOpt);
+  LogisticRegression<> lr2(sgdOpt);
 
   // Test sigmoid function.
   sigmoids = 1 / (1 + arma::exp(-lr2.Parameters()[0]
