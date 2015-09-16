@@ -31,6 +31,8 @@
   * Add support for predicting new test point values to LARS and the
     command-line 'lars' program.
 
+  * Add serialization support for Perceptron and LogisticRegression.
+
 ### mlpack 1.0.11
 ###### 2014-12-11
   * Proper handling of dimension calculation in PCA.
