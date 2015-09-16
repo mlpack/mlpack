@@ -41,12 +41,13 @@ PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
     "option.  Available options are 'sgd' (stochastic gradient descent) and "
     "'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the"
     " optimizer; the --max_iterations parameter specifies the maximum number of"
-    " allowed iterations, and the --tolerance parameter specifies the tolerance"
-    " for convergence.  For the SGD optimizer, the --step_size parameter "
-    "controls the step size taken at each iteration by the optimizer.  If the "
-    "objective function for your data is oscillating between Inf and 0, the "
-    "step size is probably too large.  There are more parameters for the SGD "
-    "and L-BFGS optimizers, but the C++ interface must be used to access these."
+    " allowed iterations, and the --tolerance (-e) parameter specifies the "
+    "tolerance for convergence.  For the SGD optimizer, the --step_size "
+    "parameter controls the step size taken at each iteration by the optimizer."
+    "  If the objective function for your data is oscillating between Inf and "
+    "0, the step size is probably too large.  There are more parameters for the"
+    " SGD and L-BFGS optimizers, but the C++ interface must be used to access "
+    "these."
     "\n\n"
     "Optionally, the model can be used to predict the responses for another "
     "matrix of data points, if --test_file is specified.  The --test_file "
@@ -69,7 +70,7 @@ PARAM_STRING("labels_file", "A file containing labels (0 or 1) for the points "
 PARAM_DOUBLE("lambda", "L2-regularization parameter for training.", "L", 0.0);
 PARAM_STRING("optimizer", "Optimizer to use for training ('lbfgs' or 'sgd').",
     "O", "lbfgs");
-PARAM_DOUBLE("tolerance", "Convergence tolerance for optimizer.", "T", 1e-10);
+PARAM_DOUBLE("tolerance", "Convergence tolerance for optimizer.", "e", 1e-10);
 PARAM_INT("max_iterations", "Maximum iterations for optimizer (0 indicates no "
     "limit).", "M", 10000);
 PARAM_DOUBLE("step_size", "Step size for SGD optimizer.", "s", 0.01);
@@ -83,7 +84,7 @@ PARAM_STRING("output_model", "File to save trained logistic regression model "
 // Testing.
 PARAM_STRING("test_file", "File containing test dataset.", "T", "");
 PARAM_STRING("output_file", "If --test_file is specified, this file is "
-    "where the predicted responses will be saved.", "o", "output.csv");
+    "where the predicted responses will be saved.", "o", "");
 PARAM_DOUBLE("decision_boundary", "Decision boundary for prediction; if the "
     "logistic function for a point is less than the boundary, the class is "
     "taken to be 0; otherwise, the class is 1.", "d", 0.5);
@@ -146,7 +147,8 @@ int main(int argc, char** argv)
 
   // These are the matrices we might use.
   arma::mat regressors;
-  arma::Mat<size_t> responses;
+  arma::Mat<size_t> responsesMat;
+  arma::Row<size_t> responses;
   arma::mat testSet;
   arma::Row<size_t> predictions;
 
@@ -170,16 +172,19 @@ int main(int argc, char** argv)
   }
 
   // Check if the responses are in a separate file.
-  if (!labelsFile.empty())
+  if (!trainingFile.empty() && !labelsFile.empty())
   {
-    data::Load(labelsFile, responses, true);
-    if (responses.n_rows == 1)
-      responses = responses.t();
-    if (responses.n_rows != regressors.n_cols)
+    data::Load(labelsFile, responsesMat, true);
+    if (responsesMat.n_cols == 1)
+      responses = responsesMat.col(0).t();
+    else
+      responses = responsesMat.row(0);
+
+    if (responses.n_cols != regressors.n_cols)
       Log::Fatal << "The labels (--labels_file) must have the same number of "
           << "points as the training dataset (--training_file)." << endl;
   }
-  else
+  else if (!trainingFile.empty())
   {
     // The initial predictors for y, Nx1.
     responses = arma::conv_to<arma::Row<size_t>>::from(
@@ -188,7 +193,7 @@ int main(int argc, char** argv)
   }
 
   // Verify the labels.
-  if (max(max(responses)) > 1)
+  if (!trainingFile.empty() && max(responses) > 1)
     Log::Fatal << "The labels must be either 0 or 1, not " << max(responses)
         << "!" << endl;
 
@@ -236,7 +241,7 @@ int main(int argc, char** argv)
 
   if (!outputModelFile.empty())
   {
-    Log::Info << "Saving model to '" << outputFile << "'." << endl;
-    data::Save(outputFile, "logistic_regression_model", model, false);
+    Log::Info << "Saving model to '" << outputModelFile << "'." << endl;
+    data::Save(outputModelFile, "logistic_regression_model", model, false);
   }
 }
