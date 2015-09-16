@@ -17,39 +17,44 @@ using namespace mlpack::optimization;
 PROGRAM_INFO("L2-regularized Logistic Regression and Prediction",
     "An implementation of L2-regularized logistic regression using either the "
     "L-BFGS optimizer or SGD (stochastic gradient descent).  This solves the "
-    "regression problem\n"
-    "\n"
-    "  y = (1 / 1 + e^-(X * b))\n"
-    "\n"
-    "where y takes values 0 or 1.  Training the model is done by giving labeled"
-    " data and iteratively training the parameters vector b.  The matrix of "
-    "predictors (or features) X is specified with the --input_file option, and "
-    "the vector of responses y is either the last column of the matrix given "
-    "with --input_file, or a separate one-column vector given with the "
-    "--input_responses option.  After training, the calculated b is saved to "
-    "the file specified by --output_file.  An initial guess for b can be "
-    "specified when the --model_file parameter is given with --input_file or "
-    "--input_responses.  The tolerance of the optimizer can be set with "
-    "--tolerance; the maximum number of iterations of the optimizer can be set "
-    "with --max_iterations; and the type of the optimizer (SGD / L-BFGS) can be"
-    " set with " "the --optimizer option.  Both the SGD and L-BFGS optimizers "
-    "have more options, but the C++ interface must be used for those.  For the "
-    "SGD optimizer, the --step_size parameter controls the step size taken at "
-    "each iteration by the optimizer.  If the objective function for your data "
-    "is oscillating between Inf and 0, the step size is probably too large.\n"
-    "\n"
-    "This implementation of logistic regression supports L2-regularization, "
-    "which can help the parameter vector b from overfitting.  This parameter "
-    "is specified with the --lambda option; by default, it is 0 (which means "
-    "no regularization is performed).\n"
-    "\n"
-    "Optionally, the calculated value of b is used to predict the responses "
-    "for another matrix of data points, if --test_file is specified.  The "
-    "--test_file option can be specified without --input_file, so long as an "
-    "existing logistic regression model is given with --model_file.  The "
-    "output predictions from the logistic regression model are stored in the "
-    "file given with --output_predictions.\n"
-    "\n"
+    "regression problem"
+    "\n\n"
+    "  y = (1 / 1 + e^-(X * b))"
+    "\n\n"
+    "where y takes values 0 or 1."
+    "\n\n"
+    "This program allows loading a logistic regression model from a file (-i) "
+    "or training a logistic regression model given training data (-t), or both "
+    "those things at once.  In addition, this program allows classification on "
+    "a test dataset (-T) and will save the classification results to the given "
+    "output file (-o).  The logistic regression model itself may be saved with "
+    "a file specified using the -m option."
+    "\n\n"
+    "The training data given with the -t option should have class labels as its"
+    " last dimension (so, if the training data is in CSV format, labels should "
+    "be the last column).  Alternately, the -l (--labels_file) option may be "
+    "used to specify a separate file of labels."
+    "\n\n"
+    "When a model is being trained, there are many options.  L2 regularization "
+    "(to prevent overfitting) can be specified with the -l option, and the "
+    "optimizer used to train the model can be specified with the --optimizer "
+    "option.  Available options are 'sgd' (stochastic gradient descent) and "
+    "'lbfgs' (the L-BFGS optimizer).  There are also various parameters for the"
+    " optimizer; the --max_iterations parameter specifies the maximum number of"
+    " allowed iterations, and the --tolerance parameter specifies the tolerance"
+    " for convergence.  For the SGD optimizer, the --step_size parameter "
+    "controls the step size taken at each iteration by the optimizer.  If the "
+    "objective function for your data is oscillating between Inf and 0, the "
+    "step size is probably too large.  There are more parameters for the SGD "
+    "and L-BFGS optimizers, but the C++ interface must be used to access these."
+    "\n\n"
+    "Optionally, the model can be used to predict the responses for another "
+    "matrix of data points, if --test_file is specified.  The --test_file "
+    "option can be specified without --input_file, so long as an existing "
+    "logistic regression model is given with --model_file.  The output "
+    "predictions from the logistic regression model are stored in the file "
+    "given with --output_predictions."
+    "\n\n"
     "This implementation of logistic regression does not support the general "
     "multi-class case but instead only the two-class case.  Any responses must "
     "be either 0 or 1.");
@@ -103,7 +108,7 @@ int main(int argc, char** argv)
 
   // One of inputFile and modelFile must be specified.
   if (trainingFile.empty() && inputModelFile.empty())
-    Log::Fatal << "One of --model_file or --input_file must be specified."
+    Log::Fatal << "One of --input_model or --training_file must be specified."
         << endl;
 
   // If no output file is given, the user should know that the model will not be
@@ -171,8 +176,8 @@ int main(int argc, char** argv)
     if (responses.n_rows == 1)
       responses = responses.t();
     if (responses.n_rows != regressors.n_cols)
-      Log::Fatal << "The responses (--input_responses) must have the same "
-          << "number of points as the input dataset (--input_file)." << endl;
+      Log::Fatal << "The labels (--labels_file) must have the same number of "
+          << "points as the training dataset (--training_file)." << endl;
   }
   else
   {
@@ -181,6 +186,11 @@ int main(int argc, char** argv)
         regressors.row(regressors.n_rows - 1));
     regressors.shed_row(regressors.n_rows - 1);
   }
+
+  // Verify the labels.
+  if (max(max(responses)) > 1)
+    Log::Fatal << "The labels must be either 0 or 1, not " << max(responses)
+        << "!" << endl;
 
   // Now, do the training.
   if (!trainingFile.empty())
