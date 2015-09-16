@@ -15,7 +15,6 @@ namespace mlpack {
 namespace regression {
 
 template<typename MatType>
-template<template<typename> class OptimizerType>
 LogisticRegression<MatType>::LogisticRegression(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
@@ -23,11 +22,10 @@ LogisticRegression<MatType>::LogisticRegression(
     parameters(arma::zeros<arma::vec>(predictors.n_rows + 1)),
     lambda(lambda)
 {
-  Train<OptimizerType>(predictors, responses);
+  Train(predictors, responses);
 }
 
 template<typename MatType>
-template<template<typename> class OptimizerType>
 LogisticRegression<MatType>::LogisticRegression(
     const MatType& predictors,
     const arma::Row<size_t>& responses,
@@ -36,15 +34,14 @@ LogisticRegression<MatType>::LogisticRegression(
     parameters(initialPoint),
     lambda(lambda)
 {
-  Train<OptimizerType>(predictors, responses);
+  Train(predictors, responses);
 }
 
 template<typename MatType>
-template<template<typename> class OptimizerType>
 LogisticRegression<MatType>::LogisticRegression(
     const size_t dimensionality,
     const double lambda) :
-    parameters(dimensionality),
+    parameters(dimensionality + 1 /* include intercept term */),
     lambda(lambda)
 {
   // No training to do here.

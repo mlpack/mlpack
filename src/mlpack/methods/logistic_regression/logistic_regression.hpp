@@ -16,6 +16,15 @@
 namespace mlpack {
 namespace regression {
 
+/**
+ * The LogisticRegression class implements an L2-regularized logistic regression
+ * model, and supports training with multiple optimizers and classification.
+ * The class supports different observation types via the MatType template
+ * parameter; for instance, logistic regression can be performed on sparse
+ * datasets by specifying arma::sp_mat as the MatType parameter.
+ *
+ * @tparam MatType Type of data matrix.
+ */
 template<typename MatType = arma::mat>
 class LogisticRegression
 {
@@ -26,13 +35,15 @@ class LogisticRegression
    * penalty parameter for L2-regularization.  If not specified, it is set to 0,
    * which results in standard (unregularized) logistic regression.
    *
+   * It is not possible to set a custom optimizer with this constructor.  Either
+   * use a constructor that does not train and call Train() with a custom
+   * optimizer type, or use the constructor that takes an instantiated
+   * optimizer.  (This unfortunate situation is a language restriction of C++.)
+   *
    * @param predictors Input training variables.
    * @param responses Outputs resulting from input training variables.
    * @param lambda L2-regularization parameter.
    */
-  template<
-      template<typename> class OptimizerType = mlpack::optimization::L_BFGS
-  >
   LogisticRegression(const MatType& predictors,
                      const arma::Row<size_t>& responses,
                      const double lambda = 0);
@@ -43,14 +54,16 @@ class LogisticRegression
    * penalty parameter for L2-regularization.  If not specified, it is set to 0,
    * which results in standard (unregularized) logistic regression.
    *
+   * It is not possible to set a custom optimizer with this constructor.  Either
+   * use a constructor that does not train and call Train() with a custom
+   * optimizer type, or use the constructor that takes an instantiated
+   * optimizer.  (This unfortunate situation is a language restriction of C++.)
+   *
    * @param predictors Input training variables.
    * @param responses Outputs results from input training variables.
    * @param initialPoint Initial model to train with.
    * @param lambda L2-regularization parameter.
    */
-  template<
-      template<typename> class OptimizerType = mlpack::optimization::L_BFGS
-  >
   LogisticRegression(const MatType& predictors,
                      const arma::Row<size_t>& responses,
                      const arma::vec& initialPoint,
@@ -66,9 +79,6 @@ class LogisticRegression
    * @param dimensionality Dimensionality of the data.
    * @param lambda L2-regularization parameter.
    */
-  template<
-      template<typename> class OptimizerType = mlpack::optimization::L_BFGS
-  >
   LogisticRegression(const size_t dimensionality,
                      const double lambda = 0);
 
@@ -83,14 +93,22 @@ class LogisticRegression
    *
    * @param optimizer Instantiated optimizer with instantiated error function.
    */
-  template<
-      template<typename> class OptimizerType = mlpack::optimization::L_BFGS
-  >
+  template<template<typename> class OptimizerType>
   LogisticRegression(
       OptimizerType<LogisticRegressionFunction<MatType>>& optimizer);
 
   /**
-   * Train the LogisticRegression model on the given input data.
+   * Train the LogisticRegression model on the given input data.  By default,
+   * the L-BFGS optimization algorithm is used, but others can be specified
+   * (such as mlpack::optimization::SGD).
+   *
+   * This will use the existing model parameters as a starting point for the
+   * optimization.  If this is not what you want, then you should access the
+   * parameters vector directly with Parameters() and modify it as desired.
+   *
+   * @tparam OptimizerType Type of optimizer to use to train the model.
+   * @param predictors Input training variables.
+   * @param responses Outputs results from input training variables.
    */
   template<
       template<typename> class OptimizerType = mlpack::optimization::L_BFGS
@@ -179,7 +197,7 @@ class LogisticRegression
   std::string ToString() const;
 
  private:
-  //! Vector of trained parameters.
+  //! Vector of trained parameters (size: dimensionality plus one).
   arma::vec parameters;
   //! L2-regularization penalty parameter.
   double lambda;
