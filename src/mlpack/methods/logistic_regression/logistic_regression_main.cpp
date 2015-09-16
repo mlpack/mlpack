@@ -159,9 +159,9 @@ int main(int argc, char** argv)
   {
     // Set the size of the parameters vector, if necessary.
     if (labelsFile.empty())
-      model.Parameters() = arma::zeros<arma::vec>(regressors.n_rows);
+      model.Parameters() = arma::zeros<arma::vec>(regressors.n_rows - 1);
     else
-      model.Parameters() = arma::zeros<arma::vec>(regressors.n_rows + 1);
+      model.Parameters() = arma::zeros<arma::vec>(regressors.n_rows);
   }
 
   // Check if the responses are in a separate file.
