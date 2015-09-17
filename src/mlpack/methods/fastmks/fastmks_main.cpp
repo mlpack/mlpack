@@ -126,14 +126,21 @@ void RunFastMKS(const arma::mat& referenceData,
         FirstPointIsRoot> TreeType;
     IPMetric<KernelType> metric(kernel);
     TreeType referenceTree(referenceData, metric, base);
-    TreeType queryTree(queryData, metric, base);
 
     // Create FastMKS object.
     FastMKS<KernelType, arma::mat, StandardCoverTree> fastmks(&referenceTree,
         single);
 
     // Now search with it.
-    fastmks.Search(&queryTree, k, indices, kernels);
+    if (single)
+    {
+      fastmks.Search(queryData, k, indices, kernels);
+    }
+    else
+    {
+      TreeType queryTree(queryData, metric, base);
+      fastmks.Search(&queryTree, k, indices, kernels);
+    }
   }
 }
 
