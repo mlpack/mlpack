@@ -22,8 +22,8 @@ HoeffdingCategoricalSplit<FitnessFunction>::HoeffdingCategoricalSplit(
   sufficientStatistics.zeros();
 }
 
-template<typename eT>
 template<typename FitnessFunction>
+template<typename eT>
 void HoeffdingCategoricalSplit<FitnessFunction>::Train(eT value,
                                                        const size_t label)
 {
@@ -39,24 +39,24 @@ double HoeffdingCategoricalSplit<FitnessFunction>::EvaluateFitnessFunction()
   return FitnessFunction::Evaluate(sufficientStatistics);
 }
 
-template<typename StreamingDecisionTreeType>
 template<typename FitnessFunction>
+template<typename StreamingDecisionTreeType>
 void HoeffdingCategoricalSplit<FitnessFunction>::CreateChildren(
     std::vector<StreamingDecisionTreeType*>& children,
+    data::DatasetInfo& datasetInfo,
     SplitInfo& splitInfo)
 {
   // We'll make one child for each category.
-  children.push_back(StreamingDecisionTree(datasetInfo));
+  children.push_back(StreamingDecisionTreeType(datasetInfo));
   // Create the according SplitInfo object.
   splitInfo = SplitInfo(sufficientStatistics.n_cols);
 }
 
-template<typename StreamingDecisionTreeType>
 template<typename FitnessFunction>
 size_t HoeffdingCategoricalSplit<FitnessFunction>::MajorityClass() const
 {
   // Calculate the class that we have seen the most of.
-  arma::Row<size_t> classCounts = sum(sufficientStatistics);
+  arma::Col<size_t> classCounts = sum(sufficientStatistics, 1);
 
   arma::uword maxIndex;
   classCounts.max(maxIndex);

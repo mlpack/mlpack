@@ -7,6 +7,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/hoeffding_trees/streaming_decision_tree.hpp>
 #include <mlpack/methods/hoeffding_trees/gini_impurity.hpp>
+#include <mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -95,6 +96,61 @@ BOOST_AUTO_TEST_CASE(GiniImpurityZeroTest)
   arma::Mat<size_t> counts = arma::zeros<arma::Mat<size_t>>(10, 10);
 
   BOOST_REQUIRE_SMALL(GiniImpurity::Evaluate(counts), 1e-10);
+}
+
+/**
+ * Feed the HoeffdingCategoricalSplit class many examples, all from the same
+ * class, and verify that the majority class is correct.
+ */
+BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitMajorityClassTest)
+{
+  // Ten categories, three classes.
+  HoeffdingCategoricalSplit<GiniImpurity> split(10, 3);
+
+  for (size_t i = 0; i < 500; ++i)
+  {
+    split.Train(math::RandInt(0, 10), 1);
+    BOOST_REQUIRE_EQUAL(split.MajorityClass(), 1);
+  }
+}
+
+/**
+ * A harder majority class example.
+ */
+BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitHarderMajorityClassTest)
+{
+  // Ten categories, three classes.
+  HoeffdingCategoricalSplit<GiniImpurity> split(10, 3);
+
+  split.Train(math::RandInt(0, 10), 1);
+  for (size_t i = 0; i < 250; ++i)
+  {
+    split.Train(math::RandInt(0, 10), 1);
+    split.Train(math::RandInt(0, 10), 2);
+    BOOST_REQUIRE_EQUAL(split.MajorityClass(), 1);
+  }
+}
+
+/**
+ * Ensure that the fitness function is positive when we pass some data that
+ * would result in an improvement if it was split.
+ */
+BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitEasyFitnessCheck)
+{
+  HoeffdingCategoricalSplit<GiniImpurity> split(5, 3);
+
+  for (size_t i = 0; i < 100; ++i)
+    split.Train(0, 0);
+  for (size_t i = 0; i < 100; ++i)
+    split.Train(1, 1);
+  for (size_t i = 0; i < 100; ++i)
+    split.Train(2, 1);
+  for (size_t i = 0; i < 100; ++i)
+    split.Train(3, 2);
+  for (size_t i = 0; i < 100; ++i)
+    split.Train(4, 2);
+
+  BOOST_REQUIRE_GT(split.EvaluateFitnessFunction(), 0.0);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
