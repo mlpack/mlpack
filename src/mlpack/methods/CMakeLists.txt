@@ -10,6 +10,7 @@ set(DIRS
   fastmks
   gmm
   hmm
+  hoeffding_trees
   kernel_pca
   kmeans
   mean_shift

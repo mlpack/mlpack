@@ -20,6 +20,7 @@ add_executable(mlpack_test
   feedforward_network_test.cpp
   gmm_test.cpp
   hmm_test.cpp
+  hoeffding_tree_test.cpp
   kernel_test.cpp
   kernel_pca_test.cpp
   kernel_traits_test.cpp
