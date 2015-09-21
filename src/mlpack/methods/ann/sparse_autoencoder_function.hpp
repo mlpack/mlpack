@@ -12,7 +12,7 @@ namespace ann /** Artificial Neural Network. */ {
  * conditional random fields (CRFs), and so forth.
  * @code
  * #include <mlpack/methods/ann/sparse_autoencoder_function.hpp>
- * #include <mlpack/methods/ann/activation_functions/fast_logistic_function.hpp>
+ * #include <mlpack/methods/ann/activation_functions/lazy_logistic_function.hpp>
  *
  * #include <mlpack/core.hpp>
  * #include <mlpack/methods/sparse_autoencoder/sparse_autoencoder.hpp>
@@ -25,7 +25,7 @@ namespace ann /** Artificial Neural Network. */ {
  *   using namespace mlpack;
  *   using namespace arma;
  *
- *   using FSigmoidLayer = ann::SigmoidLayer<ann::FastLogisticFunction>;
+ *   using FSigmoidLayer = ann::SigmoidLayer<ann::LazyLogisticFunction>;
  *
  *   using SAEF = ann::SparseAutoencoderFunction<FSigmoidLayer, FSigmoidLayer>;
  *   //If you want to compare the performance with original class, replace
