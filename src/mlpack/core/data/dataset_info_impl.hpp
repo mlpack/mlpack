@@ -65,9 +65,9 @@ inline Datatype DatasetInfo::Type(const size_t dimension) const
       Datatype::categorical;
 }
 
-inline size_t DatasetInfo::NumMappings(const size_t dimension)
+inline size_t DatasetInfo::NumMappings(const size_t dimension) const
 {
-  return (maps.count(dimension) == 0) ? 0 : maps[dimension].second;
+  return (maps.count(dimension) == 0) ? 0 : maps.at(dimension).second;
 }
 
 } // namespace data

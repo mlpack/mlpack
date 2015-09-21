@@ -55,7 +55,7 @@ class DatasetInfo
 
   Datatype Type(const size_t dimension) const;
 
-  size_t NumMappings(const size_t dimension);
+  size_t NumMappings(const size_t dimension) const;
 
  private:
   // Map entries will only exist for dimensions that are categorical.
