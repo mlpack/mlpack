@@ -8,28 +8,41 @@
 #ifndef __MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_SPLIT_HPP
 #define __MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_SPLIT_HPP
 
+#include <mlpack/core.hpp>
+#include "gini_impurity.hpp"
+#include "hoeffding_numeric_split.hpp"
+#include "hoeffding_categorical_split.hpp"
+
 namespace mlpack {
 namespace tree {
 
-template<typename FitnessFunction,
-         typename NumericSplitType,
-         typename CategoricalSplitType>
+template<typename FitnessFunction = GiniImpurity,
+         typename NumericSplitType = HoeffdingNumericSplit,
+         typename CategoricalSplitType = HoeffdingCategoricalSplit>
 class HoeffdingSplit
 {
  public:
   HoeffdingSplit(const size_t dimensionality,
                  const size_t numClasses,
-                 const DatasetInfo& datasetInfo);
+                 const DatasetInfo& datasetInfo,
+                 const double successProbability);
 
   template<typename VecType>
-  void Train(VecType& point, const size_t label);
+  void Train(const VecType& point, const size_t label);
 
   // 0 if split should not happen; number of splits otherwise.
   size_t SplitCheck() const;
 
   // Return index that we should go towards.
   template<typename VecType>
-  size_t CalculateDirection(VecType& point) const;
+  size_t CalculateDirection(const VecType& point) const;
+
+  // Classify the point according to the statistics in this node.
+  template<typename VecType>
+  size_t Classify(const VecType& point) const;
+
+  template<typename StreamingDecisionTreeType>
+  void CreateChildren(std::vector<StreamingDecisionTreeType>& children);
 
  private:
   // We need to keep some information for before we have split.
@@ -37,14 +50,19 @@ class HoeffdingSplit
   std::vector<CategoricalSplitType> categoricalSplits;
 
   const DatasetInfo& datasetInfo;
+  double successProbability;
+  size_t numSamples;
 
   // And we need to keep some information for after we have split.
   size_t splitDimension;
+  size_t majorityClass;
   typename CategoricalSplitType::SplitInfo categoricalSplit; // In case it's categorical.
   typename NumericSplitType::SplitInfo numericSplit; // In case it's numeric.
 };
 
 } // namespace tree
 } // namespace mlpack
+
+#include "hoeffding_split_impl.hpp"
 
 #endif
