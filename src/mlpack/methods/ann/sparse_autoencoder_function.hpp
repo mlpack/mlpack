@@ -32,12 +32,12 @@ namespace ann /** Artificial Neural Network. */ {
  *   //SAEF with following definition
  *   //using SAEF = nn::SparseAutoencoderFunction;
  *
- *   const size_t Features = 16 * 16;
+ *   size_t const Features = 16*16;
  *   arma::mat data = randu<mat>(Features, 10000);
  *
- *   SAEF encoderFunction(data, data.n_rows, numBasis);
- *   const size_t numBasis = 10;
+ *   SAEF encoderFunction(data, Features, Features / 2);
  *   const size_t numIterations = 100; // Maximum number of iterations.
+ *   const size_t numBasis = 10;
  *   optimization::L_BFGS<SAEF> optimizer(encoderFunction, numBasis, numIterations);
  *
  *   arma::mat parameters = encoderFunction.GetInitialPoint();
@@ -47,8 +47,8 @@ namespace ann /** Artificial Neural Network. */ {
  *   const double out = optimizer.Optimize(parameters);
  *   Timer::Stop("sparse_autoencoder_optimization");
  *   std::cout<<"spend time : "<<
- *              Timer::Get("sparse_autoencoder_optimization").tv_sec<<"\n";
-
+ *             Timer::Get("sparse_autoencoder_optimization").tv_sec<<"\n";
+ *
  *   std::cout << "SparseAutoencoder::SparseAutoencoder(): final objective of "
  *             << "trained model is " << out << "." << std::endl;
  *}
