@@ -18,11 +18,11 @@ class CategoricalSplitInfo
   CategoricalSplitInfo(const size_t categories) : categories(categories) { }
 
   template<typename eT>
-  void CalculateDirection(const eT& value)
+  size_t CalculateDirection(const eT& value)
   {
     // We have a child for each categorical value, and value should be in the
     // range [0, categories).
-    return value;
+    return size_t(value);
   }
 
  private:

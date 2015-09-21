@@ -7,6 +7,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/hoeffding_trees/streaming_decision_tree.hpp>
 #include <mlpack/methods/hoeffding_trees/gini_impurity.hpp>
+#include <mlpack/methods/hoeffding_trees/hoeffding_split.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -151,6 +152,48 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitEasyFitnessCheck)
     split.Train(4, 2);
 
   BOOST_REQUIRE_GT(split.EvaluateFitnessFunction(), 0.0);
+}
+
+/**
+ * Ensure that the fitness function returns 0 (no improvement) when a split
+ * would not get us any improvement.
+ */
+BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitNoImprovementFitnessTest)
+{
+  HoeffdingCategoricalSplit<GiniImpurity> split(2, 2);
+
+  // No training has yet happened, so a split would get us nothing.
+  BOOST_REQUIRE_SMALL(split.EvaluateFitnessFunction(), 1e-10);
+
+  split.Train(0, 0);
+  split.Train(1, 0);
+  split.Train(0, 1);
+  split.Train(1, 1);
+
+  // Now, a split still gets us only 50% accuracy in each split bin.
+  BOOST_REQUIRE_SMALL(split.EvaluateFitnessFunction(), 1e-10);
+}
+
+/**
+ * Test that when we do split, we get reasonable split information.
+ */
+BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitSplitTest)
+{
+  HoeffdingCategoricalSplit<GiniImpurity> split(3, 3); // 3 categories.
+
+  // No training is necessary because we can just call CreateChildren().
+  std::vector<StreamingDecisionTree<HoeffdingSplit>> children;
+  data::DatasetInfo info;
+  info.MapString("hello", 0); // Make dimension 0 categorical.
+  HoeffdingCategoricalSplit<GiniImpurity>::SplitInfo splitInfo;
+
+  // Create the children.
+  split.CreateChildren(children, info, splitInfo);
+
+  BOOST_REQUIRE_EQUAL(children.size(), 3);
+  BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(0), 0);
+  BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(1), 1);
+  BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(2), 2);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
