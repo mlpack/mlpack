@@ -21,7 +21,7 @@ namespace ann /** Artificial Neural Network. */ {
  * #include <iostream>
  *
  * int main()
- *  { 
+ *  {
  *   using namespace mlpack;
  *   using namespace arma;
  *
@@ -88,7 +88,7 @@ public:
    *
    * @param parameters Current values of the model parameters.
    */
-    double Evaluate(const arma::mat& parameters) const;
+    double Evaluate(const arma::mat& parameters);
 
     /**
    * Evaluates the gradient values of the objective function given the current
@@ -99,7 +99,7 @@ public:
    * @param parameters Current values of the model parameters.
    * @param gradient Matrix where gradient values will be stored.
    */
-    void Gradient(const arma::mat& parameters, arma::mat& gradient) const;
+    void Gradient(const arma::mat& parameters, arma::mat& gradient);
 
 
 
@@ -193,15 +193,18 @@ private:
     //! Sparsity parameter.
     double rho;
     //!activation of hidden layer
-    mutable arma::mat hiddenLayer;
+    arma::mat hiddenLayer;
     //!activation of output layer
-    mutable arma::mat outputLayer;
+    arma::mat outputLayer;
     //!Average activations of the hidden layer.
-    mutable arma::mat rhoCap;
+    arma::mat rhoCap;
     //!Difference between the reconstructed data and the original data.
-    mutable arma::mat diff;
+    arma::mat diff;
     //!Difference(error) between the output layer and the hidden layer.
-    mutable arma::mat diff2;
+    arma::mat diff2;
+
+    HiddenLayer hiddenLayerFunc;
+    OutputLayer outputLayerFunc;
 };
 
 template<typename HiddenLayer, typename OutputLayer>
@@ -268,7 +271,7 @@ InitializeWeights()
   */
 template<typename HiddenLayer, typename OutputLayer>
 double SparseAutoencoderFunction<HiddenLayer, OutputLayer>::
-Evaluate(const arma::mat& parameters) const
+Evaluate(const arma::mat& parameters)
 {
     // The objective function is the average squared reconstruction error of the
     // network. w1 and b1 are the weights and biases associated with the hidden
@@ -292,13 +295,13 @@ Evaluate(const arma::mat& parameters) const
     // b2 <- parameters.submat(l3, 0, l3, l2-1).t()
 
     // Compute activations of the hidden and output layers.
-    HiddenLayer().Forward(parameters.submat(0, 0, l1 - 1, l2 - 1) * data +
-                          arma::repmat(parameters.submat(0, l2, l1 - 1, l2), 1, data.n_cols),
-                          hiddenLayer);
+    hiddenLayerFunc.Forward(parameters.submat(0, 0, l1 - 1, l2 - 1) * data +
+                            arma::repmat(parameters.submat(0, l2, l1 - 1, l2), 1, data.n_cols),
+                            hiddenLayer);
 
-    OutputLayer().Forward(parameters.submat(l1, 0, l3 - 1, l2 - 1).t() * hiddenLayer +
-                          arma::repmat(parameters.submat(l3, 0, l3, l2 - 1).t(), 1, data.n_cols),
-                          outputLayer);
+    outputLayerFunc.Forward(parameters.submat(l1, 0, l3 - 1, l2 - 1).t() * hiddenLayer +
+                            arma::repmat(parameters.submat(l3, 0, l3, l2 - 1).t(), 1, data.n_cols),
+                            outputLayer);
 
     // Average activations of the hidden layer.
     rhoCap = arma::sum(hiddenLayer, 1) / static_cast<double>(data.n_cols);
@@ -329,7 +332,7 @@ Evaluate(const arma::mat& parameters) const
 template<typename HiddenLayer, typename OutputLayer>
 void SparseAutoencoderFunction<HiddenLayer, OutputLayer>::
 Gradient(const arma::mat& parameters,
-         arma::mat& gradient) const
+         arma::mat& gradient)
 {
     // Performs a feedforward pass of the neural network, and computes the
     // activations of the output layer as in the Evaluate() method. It uses the
@@ -357,14 +360,14 @@ Gradient(const arma::mat& parameters,
     // are given del_n = w_n' * del_(n+1) * f'(z_n). Since our cost function also
     // includes the KL divergence term, we adjust for that in the formula below.
     arma::mat delOut;
-    OutputLayer().Backward(outputLayer, diff, delOut);
+    outputLayerFunc.Backward(outputLayer, diff, delOut);
     arma::mat const klDivGrad = beta * (-(rho / rhoCap) + (1 - rho) / (1 - rhoCap));
     diff2 = parameters.submat(l1, 0, l3 - 1, l2 - 1) * delOut +
             arma::repmat(klDivGrad, 1, data.n_cols);
     arma::mat delHid;
-    HiddenLayer().Backward(hiddenLayer,
-                           diff2,
-                           delHid);
+    hiddenLayerFunc.Backward(hiddenLayer,
+                             diff2,
+                             delHid);
 
     gradient.zeros(2 * hiddenSize + 1, visibleSize + 1);
 
