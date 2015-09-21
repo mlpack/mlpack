@@ -32,10 +32,11 @@ namespace ann /** Artificial Neural Network. */ {
  *   //SAEF with following definition
  *   //using SAEF = nn::SparseAutoencoderFunction;
  *
- *   const size_t numBasis = 100;
- *   arma::mat data = randu<mat>(numBasis * 2, numBasis / 2);
+ *   const size_t Features = 16 * 16;
+ *   arma::mat data = randu<mat>(Features, 10);
  *
  *   SAEF encoderFunction(data, data.n_rows, numBasis);
+ *   const size_t numBasis = 10;
  *   const size_t numIterations = 100; // Maximum number of iterations.
  *   optimization::L_BFGS<SAEF> optimizer(encoderFunction, numBasis, numIterations);
  *
