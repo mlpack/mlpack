@@ -50,9 +50,9 @@ class HoeffdingSplit
   std::vector<NumericSplitType> numericSplits;
   std::vector<CategoricalSplitType> categoricalSplits;
 
-  const data::DatasetInfo& datasetInfo;
-  size_t numClasses;
   size_t numSamples;
+  size_t numClasses;
+  const data::DatasetInfo& datasetInfo;
   double successProbability;
 
   // And we need to keep some information for after we have split.

@@ -25,8 +25,8 @@ HoeffdingSplit<
     numClasses(numClasses),
     datasetInfo(datasetInfo),
     successProbability(successProbability),
-    categoricalSplit(0),
-    splitDimension(size_t(-1))
+    splitDimension(size_t(-1)),
+    categoricalSplit(0)
 {
   for (size_t i = 0; i < dimensionality; ++i)
   {
@@ -96,20 +96,17 @@ size_t HoeffdingSplit<
   double largest = -DBL_MAX;
   size_t largestIndex = 0;
   double secondLargest = -DBL_MAX;
-  size_t secondLargestIndex = 0;
   for (size_t i = 0; i < gains.n_elem; ++i)
   {
     if (gains[i] > largest)
     {
       secondLargest = largest;
-      secondLargestIndex = largestIndex;
       largest = gains[i];
       largestIndex = i;
     }
     else if (gains[i] > secondLargest)
     {
       secondLargest = gains[i];
-      secondLargestIndex = i;
     }
   }
 
