@@ -113,7 +113,14 @@ BOOST_AUTO_TEST_CASE(GiniImpurityZeroTest)
  */
 BOOST_AUTO_TEST_CASE(GiniImpurityRangeTest)
 {
-  BOOST_REQUIRE_CLOSE(GiniImpurity::Range(0), 1, 1e-5);
+  BOOST_REQUIRE_CLOSE(GiniImpurity::Range(1), 0, 1e-5);
+  BOOST_REQUIRE_CLOSE(GiniImpurity::Range(2), 0.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(GiniImpurity::Range(3), 0.66666667, 1e-5);
+  BOOST_REQUIRE_CLOSE(GiniImpurity::Range(4), 0.75, 1e-5);
+  BOOST_REQUIRE_CLOSE(GiniImpurity::Range(5), 0.8, 1e-5);
+  BOOST_REQUIRE_CLOSE(GiniImpurity::Range(10), 0.9, 1e-5);
+  BOOST_REQUIRE_CLOSE(GiniImpurity::Range(100), 0.99, 1e-5);
+  BOOST_REQUIRE_CLOSE(GiniImpurity::Range(1000), 0.999, 1e-5);
 }
 
 /**
