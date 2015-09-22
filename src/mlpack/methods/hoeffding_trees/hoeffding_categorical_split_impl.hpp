@@ -47,7 +47,9 @@ void HoeffdingCategoricalSplit<FitnessFunction>::CreateChildren(
     SplitInfo& splitInfo)
 {
   // We'll make one child for each category.
-  children.push_back(StreamingDecisionTreeType(datasetInfo));
+  for (size_t i = 0; i < sufficientStatistics.n_cols; ++i)
+    children.push_back(StreamingDecisionTreeType(datasetInfo));
+
   // Create the according SplitInfo object.
   splitInfo = SplitInfo(sufficientStatistics.n_cols);
 }
