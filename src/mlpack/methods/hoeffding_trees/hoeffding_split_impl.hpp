@@ -118,7 +118,6 @@ size_t HoeffdingSplit<
     if (datasetInfo.Type(largestIndex) == data::Datatype::categorical)
     {
       // I don't know if this should be here.
-      std::cout << "split: largest index " << largestIndex << ".\n";
       majorityClass = categoricalSplits[largestIndex].MajorityClass();
       return datasetInfo.NumMappings(largestIndex);
     }
