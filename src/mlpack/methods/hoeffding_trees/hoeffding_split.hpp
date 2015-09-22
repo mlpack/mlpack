@@ -32,7 +32,7 @@ class HoeffdingSplit
   void Train(const VecType& point, const size_t label);
 
   // 0 if split should not happen; number of splits otherwise.
-  size_t SplitCheck() const;
+  size_t SplitCheck();
 
   // Return index that we should go towards.
   template<typename VecType>

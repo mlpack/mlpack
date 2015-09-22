@@ -197,4 +197,38 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitSplitTest)
   BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(2), 2);
 }
 
+/**
+ * If we feed the HoeffdingSplit a ton of points of the same class, it should
+ * not suggest that we split.
+ */
+BOOST_AUTO_TEST_CASE(HoeffdingSplitNoSplitTest)
+{
+  // Make all dimensions categorical.
+  data::DatasetInfo info;
+  info.MapString("cat1", 0);
+  info.MapString("cat2", 0);
+  info.MapString("cat3", 0);
+  info.MapString("cat4", 0);
+  info.MapString("cat1", 1);
+  info.MapString("cat2", 1);
+  info.MapString("cat3", 1);
+  info.MapString("cat1", 2);
+  info.MapString("cat2", 2);
+
+  HoeffdingSplit<> split(3, 2, info, 0.95);
+
+  // Feed it samples.
+  for (size_t i = 0; i < 1000; ++i)
+  {
+    // Create the test point.
+    arma::Col<size_t> testPoint(3);
+    testPoint(0) = mlpack::math::RandInt(0, 4);
+    testPoint(1) = mlpack::math::RandInt(0, 3);
+    testPoint(2) = mlpack::math::RandInt(0, 2);
+    split.Train(testPoint, 0); // Always label 0.
+
+    BOOST_REQUIRE_EQUAL(split.SplitCheck(), 0);
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END();

@@ -66,6 +66,19 @@ class GiniImpurity
 
     return impurity;
   }
+
+  /**
+   * Return the range of the Gini impurity for the given number of classes.
+   * (That is, the difference between the maximum possible value and the minimum
+   * possible value.)
+   */
+  static double Range(const size_t numClasses)
+  {
+    // The best possible case is that only one class exists, which gives a Gini
+    // impurity of 0.  The worst possible case is that the classes are evenly
+    // distributed, which gives n * (1/n * (1 - 1/n)) = 1 - 1/n.
+    return 1.0 - (1.0 / double(numClasses));
+  }
 };
 
 } // namespace tree

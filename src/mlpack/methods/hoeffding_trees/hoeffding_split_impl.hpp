@@ -25,7 +25,8 @@ HoeffdingSplit<
     numClasses(numClasses),
     datasetInfo(datasetInfo),
     successProbability(successProbability),
-    categoricalSplit(0)
+    categoricalSplit(0),
+    splitDimension(size_t(-1))
 {
   for (size_t i = 0; i < dimensionality; ++i)
   {
@@ -73,10 +74,10 @@ size_t HoeffdingSplit<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
->::SplitCheck() const
+>::SplitCheck()
 {
   // Do nothing if we've already split.
-  if (splitDimension == size_t(-1))
+  if (splitDimension != size_t(-1))
     return 0;
 
   // Check the fitness of each dimension.  Then we'll use a Hoeffding bound
@@ -117,17 +118,22 @@ size_t HoeffdingSplit<
   {
     // Split!
     splitDimension = largestIndex;
-    if (datasetInfo[largestIndex].Type == data::Datatype::categorical)
+    if (datasetInfo.Type(largestIndex) == data::Datatype::categorical)
     {
       // I don't know if this should be here.
-      majorityClass = categoricalSplit[largestIndex].MajorityClass();
-      return datasetInfo[largestIndex].NumMappings();
+      std::cout << "split: largest index " << largestIndex << ".\n";
+      majorityClass = categoricalSplits[largestIndex].MajorityClass();
+      return datasetInfo.NumMappings(largestIndex);
     }
     else
     {
       majorityClass = 0;
       return 0; // I have no idea what to do yet.
     }
+  }
+  else
+  {
+    return 0; // Don't split.
   }
 }
 
