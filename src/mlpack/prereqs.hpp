@@ -47,8 +47,13 @@
 #endif
 
 // We'll need the necessary boost::serialization features, as well as what we
-// use with mlpack.
+// use with mlpack.  In Boost 1.59 and newer, the BOOST_PFTO code is no longer
+// defined, but we still need to define it (as nothing) so that the mlpack
+// serialization shim compiles.
 #include <boost/serialization/serialization.hpp>
+#ifndef BOOST_PFTO
+  #define BOOST_PFTO
+#endif
 #include <mlpack/core/data/serialization_shim.hpp>
 
 // Now include Armadillo through the special mlpack extensions.
