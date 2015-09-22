@@ -37,13 +37,10 @@ class GiniImpurity
 
     // Calculate the Gini impurity of the un-split node.
     double impurity = 0.0;
-    if (numElem > 0)
+    for (size_t i = 0; i < classCounts.n_elem; ++i)
     {
-      for (size_t i = 0; i < classCounts.n_elem; ++i)
-      {
-        const double f = ((double) classCounts[i] / (double) numElem);
-        impurity += f * (1.0 - f);
-      }
+      const double f = ((double) classCounts[i] / (double) numElem);
+      impurity += f * (1.0 - f);
     }
 
     // Now calculate the impurity of the split nodes and subtract them from the

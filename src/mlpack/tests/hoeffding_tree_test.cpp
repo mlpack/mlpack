@@ -71,25 +71,32 @@ BOOST_AUTO_TEST_CASE(GiniImpurityBadSplitTest)
  */
 BOOST_AUTO_TEST_CASE(GiniImpurityThreeClassTest)
 {
-  arma::Mat<size_t> counts(4, 3);
+  arma::Mat<size_t> counts(3, 4);
 
   counts(0, 0) = 0;
-  counts(0, 1) = 0;
-  counts(0, 2) = 10;
+  counts(1, 0) = 0;
+  counts(2, 0) = 10;
 
-  counts(1, 0) = 5;
+  counts(0, 1) = 5;
   counts(1, 1) = 5;
-  counts(1, 2) = 0;
+  counts(2, 1) = 0;
 
-  counts(2, 0) = 4;
-  counts(2, 1) = 4;
+  counts(0, 2) = 4;
+  counts(1, 2) = 4;
   counts(2, 2) = 4;
 
-  counts(3, 0) = 8;
-  counts(3, 1) = 1;
-  counts(3, 2) = 1;
+  counts(0, 3) = 8;
+  counts(1, 3) = 1;
+  counts(2, 3) = 1;
 
-  // The Gini impurity of the whole thing is ... not yet calculated.
+  // The Gini impurity of the whole thing is:
+  // (overall sum) 0.65193 -
+  // (category 0)  0.40476 * 0       -
+  // (category 1)  0.23810 * 0.5     -
+  // (category 2)  0.28571 * 0.66667 -
+  // (category 2)  0.23810 * 0.34
+  //   = 0.26145
+  BOOST_REQUIRE_CLOSE(GiniImpurity::Evaluate(counts), 0.26145, 1e-3);
 }
 
 BOOST_AUTO_TEST_CASE(GiniImpurityZeroTest)
@@ -98,6 +105,15 @@ BOOST_AUTO_TEST_CASE(GiniImpurityZeroTest)
   arma::Mat<size_t> counts = arma::zeros<arma::Mat<size_t>>(10, 10);
 
   BOOST_REQUIRE_SMALL(GiniImpurity::Evaluate(counts), 1e-10);
+}
+
+/**
+ * Test that the range of Gini impurities is correct for a handful of class
+ * sizes.
+ */
+BOOST_AUTO_TEST_CASE(GiniImpurityRangeTest)
+{
+  BOOST_REQUIRE_CLOSE(GiniImpurity::Range(0), 1, 1e-5);
 }
 
 /**
