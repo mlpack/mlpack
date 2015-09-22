@@ -42,7 +42,7 @@ double HoeffdingCategoricalSplit<FitnessFunction>::EvaluateFitnessFunction()
 template<typename FitnessFunction>
 template<typename StreamingDecisionTreeType>
 void HoeffdingCategoricalSplit<FitnessFunction>::CreateChildren(
-    std::vector<StreamingDecisionTreeType*>& children,
+    std::vector<StreamingDecisionTreeType>& children,
     data::DatasetInfo& datasetInfo,
     SplitInfo& splitInfo)
 {

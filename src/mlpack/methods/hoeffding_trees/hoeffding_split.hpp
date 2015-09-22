@@ -17,14 +17,15 @@ namespace mlpack {
 namespace tree {
 
 template<typename FitnessFunction = GiniImpurity,
-         typename NumericSplitType = HoeffdingNumericSplit,
-         typename CategoricalSplitType = HoeffdingCategoricalSplit>
+         typename NumericSplitType = HoeffdingNumericSplit<GiniImpurity>,
+         typename CategoricalSplitType = HoeffdingCategoricalSplit<GiniImpurity>
+>
 class HoeffdingSplit
 {
  public:
   HoeffdingSplit(const size_t dimensionality,
                  const size_t numClasses,
-                 const DatasetInfo& datasetInfo,
+                 const data::DatasetInfo& datasetInfo,
                  const double successProbability);
 
   template<typename VecType>
@@ -49,9 +50,10 @@ class HoeffdingSplit
   std::vector<NumericSplitType> numericSplits;
   std::vector<CategoricalSplitType> categoricalSplits;
 
-  const DatasetInfo& datasetInfo;
-  double successProbability;
+  const data::DatasetInfo& datasetInfo;
+  size_t numClasses;
   size_t numSamples;
+  double successProbability;
 
   // And we need to keep some information for after we have split.
   size_t splitDimension;

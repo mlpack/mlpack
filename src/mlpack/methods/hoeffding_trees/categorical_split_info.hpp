@@ -15,18 +15,15 @@ namespace tree {
 class CategoricalSplitInfo
 {
  public:
-  CategoricalSplitInfo(const size_t categories) : categories(categories) { }
+  CategoricalSplitInfo(const size_t /* categories */) { }
 
   template<typename eT>
-  size_t CalculateDirection(const eT& value)
+  static size_t CalculateDirection(const eT& value)
   {
     // We have a child for each categorical value, and value should be in the
     // range [0, categories).
     return size_t(value);
   }
-
- private:
-  const size_t categories;
 };
 
 } // namespace tree

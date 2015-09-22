@@ -14,6 +14,8 @@ template<typename FitnessFunction>
 class HoeffdingNumericSplit
 {
  public:
+  typedef size_t SplitInfo;
+
   HoeffdingNumericSplit();
 
   template<typename eT>

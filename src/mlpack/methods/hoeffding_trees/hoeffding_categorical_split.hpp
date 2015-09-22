@@ -48,7 +48,7 @@ class HoeffdingCategoricalSplit
   double EvaluateFitnessFunction() const;
 
   template<typename StreamingDecisionTreeType>
-  void CreateChildren(std::vector<StreamingDecisionTreeType*>& children,
+  void CreateChildren(std::vector<StreamingDecisionTreeType>& children,
                       data::DatasetInfo& datasetInfo,
                       SplitInfo& splitInfo);
 

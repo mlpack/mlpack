@@ -18,7 +18,7 @@ StreamingDecisionTree<SplitType, MatType>::StreamingDecisionTree(
     const MatType& data,
     const data::DatasetInfo& datasetInfo,
     const arma::Row<size_t>& labels) :
-    split(datasetInfo)
+    split(0, 0, datasetInfo, 0)
 {
   Train(data, labels);
 }
@@ -26,20 +26,21 @@ StreamingDecisionTree<SplitType, MatType>::StreamingDecisionTree(
 template<typename SplitType, typename MatType>
 StreamingDecisionTree<SplitType, MatType>::StreamingDecisionTree(
     const data::DatasetInfo& datasetInfo) :
-    split(datasetInfo)
+    split(0, 0, datasetInfo, 0)
 {
   // No training.  Anything else to do...?
 }
 
 template<typename SplitType, typename MatType>
 StreamingDecisionTree<SplitType, MatType>::StreamingDecisionTree(
-    const StreamingDecisionTree& other)
+    const StreamingDecisionTree& other) :
+    split(other.split)
 {
   // Copy the children of the other tree.
 }
 
-template<typename VecType>
 template<typename SplitType, typename MatType>
+template<typename VecType>
 void StreamingDecisionTree<SplitType, MatType>::Train(const VecType& data,
                                                       const size_t label)
 {
@@ -54,7 +55,7 @@ void StreamingDecisionTree<SplitType, MatType>::Train(const VecType& data,
       children.clear();
 
     // The split knows how to add the children.
-    SplitType.CreateChildren(children);
+    split.CreateChildren(children);
   }
 }
 
@@ -68,8 +69,8 @@ void StreamingDecisionTree<SplitType, MatType>::Train(
     Train(data.col(i), labels[i]);
 }
 
-template<typename VecType>
 template<typename SplitType, typename MatType>
+template<typename VecType>
 size_t StreamingDecisionTree<SplitType, MatType>::Classify(const VecType& data)
 {
   // Get the direction we need to go, and continue classification.

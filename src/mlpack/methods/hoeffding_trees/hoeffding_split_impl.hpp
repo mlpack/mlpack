@@ -19,26 +19,32 @@ HoeffdingSplit<
     CategoricalSplitType
 >::HoeffdingSplit(const size_t dimensionality,
                   const size_t numClasses,
-                  const DatasetInfo& datasetInfo)
+                  const data::DatasetInfo& datasetInfo,
+                  const double successProbability) :
+    numSamples(0),
+    numClasses(numClasses),
+    datasetInfo(datasetInfo),
+    successProbability(successProbability),
+    categoricalSplit(0)
 {
   for (size_t i = 0; i < dimensionality; ++i)
   {
-    if (datasetInfo.Type(i) == Datatype.categorical)
+    if (datasetInfo.Type(i) == data::Datatype::categorical)
       categoricalSplits.push_back(
-          CategoricalSplitType(datasetInfo.NumMappings(), numClasses));
+          CategoricalSplitType(datasetInfo.NumMappings(i), numClasses));
     // else, numeric splits (not yet!)
   }
 }
 
-template<typename VecType>
 template<typename FitnessFunction,
          typename NumericSplitType,
          typename CategoricalSplitType>
+template<typename VecType>
 void HoeffdingSplit<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
->::Train(VecType& point, const size_t label)
+>::Train(const VecType& point, const size_t label)
 {
   if (splitDimension == size_t(-1))
   {
@@ -47,9 +53,9 @@ void HoeffdingSplit<
     size_t categoricalIndex = 0;
     for (size_t i = 0; i < point.n_rows; ++i)
     {
-      if (datasetInfo.Type(i) == Datatype.categorical)
+      if (datasetInfo.Type(i) == data::Datatype::categorical)
         categoricalSplits[categoricalIndex++].Train(point[i], label);
-      else if (datasetInfo.Type(i) == Datatype.numeric)
+      else if (datasetInfo.Type(i) == data::Datatype::numeric)
         numericSplits[numericIndex++].Train(point[i], label);
     }
   }
@@ -111,7 +117,7 @@ size_t HoeffdingSplit<
   {
     // Split!
     splitDimension = largestIndex;
-    if (datasetInfo[largestIndex].Type == Datatype.categorical)
+    if (datasetInfo[largestIndex].Type == data::Datatype::categorical)
     {
       // I don't know if this should be here.
       majorityClass = categoricalSplit[largestIndex].MajorityClass();
@@ -125,32 +131,32 @@ size_t HoeffdingSplit<
   }
 }
 
-template<typename VecType>
 template<
     typename FitnessFunction,
     typename NumericSplitType,
     typename CategoricalSplitType
 >
+template<typename VecType>
 size_t HoeffdingSplit<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
->::CalculateDirection(VecType& point) const
+>::CalculateDirection(const VecType& point) const
 {
   // Don't call this before the node is split...
-  if (datasetInfo.Type(splitDimension) == Datatype::numeric)
+  if (datasetInfo.Type(splitDimension) == data::Datatype::numeric)
     return numericSplit.CalculateDirection(point[splitDimension]);
-  else if (datasetInfo.Type(splitDimension) == Datatype::categorical)
+  else if (datasetInfo.Type(splitDimension) == data::Datatype::categorical)
     return categoricalSplit.CalculateDirection(point[splitDimension]);
 }
 
-template<typename VecType>
 template<
     typename FitnessFunction,
     typename NumericSplitType,
     typename CategoricalSplitType
 >
-void HoeffdingSplit<
+template<typename VecType>
+size_t HoeffdingSplit<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
@@ -166,6 +172,7 @@ template<
     typename NumericSplitType,
     typename CategoricalSplitType
 >
+template<typename StreamingDecisionTreeType>
 void HoeffdingSplit<
     FitnessFunction,
     NumericSplitType,
@@ -177,17 +184,17 @@ void HoeffdingSplit<
   size_t categoricalSplitIndex = 0;
   for (size_t i = 0; i < splitDimension; ++i)
   {
-    if (datasetInfo.Type(i) == Datatype::numeric)
+    if (datasetInfo.Type(i) == data::Datatype::numeric)
       ++numericSplitIndex;
-    if (datasetInfo.Type(i) == Datatype::categorical)
+    if (datasetInfo.Type(i) == data::Datatype::categorical)
       ++categoricalSplitIndex;
   }
 
-  if (datasetInfo.Type(splitDimension) == Datatype::numeric)
+  if (datasetInfo.Type(splitDimension) == data::Datatype::numeric)
   {
     numericSplits[numericSplitIndex + 1].CreateChildren(children, numericSplit);
   }
-  else if (datasetInfo.Type(splitDimension) == Datatype::categorical)
+  else if (datasetInfo.Type(splitDimension) == data::Datatype::categorical)
   {
     categoricalSplits[categoricalSplitIndex + 1].CreateChildren(children,
         categoricalSplit);

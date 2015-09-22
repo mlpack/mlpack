@@ -38,9 +38,9 @@ class StreamingDecisionTree
   void Train(const MatType& data, const arma::Row<size_t>& labels);
 
   template<typename VecType>
-  size_t Predict(const VecType& data);
+  size_t Classify(const VecType& data);
 
-  void Predict(const MatType& data, arma::Row<size_t>& predictions);
+  void Classify(const MatType& data, arma::Row<size_t>& predictions);
 
   // How do we encode the actual split itself?
 
@@ -54,5 +54,8 @@ class StreamingDecisionTree
 
 } // namespace tree
 } // namespace mlpack
+
+// Include implementation.
+#include "streaming_decision_tree_impl.hpp"
 
 #endif

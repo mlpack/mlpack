@@ -16,6 +16,7 @@
 using namespace std;
 using namespace arma;
 using namespace mlpack;
+using namespace mlpack::math;
 using namespace mlpack::data;
 using namespace mlpack::tree;
 
@@ -110,7 +111,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitMajorityClassTest)
 
   for (size_t i = 0; i < 500; ++i)
   {
-    split.Train(math::RandInt(0, 10), 1);
+    split.Train(mlpack::math::RandInt(0, 10), 1);
     BOOST_REQUIRE_EQUAL(split.MajorityClass(), 1);
   }
 }
@@ -123,11 +124,11 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitHarderMajorityClassTest)
   // Ten categories, three classes.
   HoeffdingCategoricalSplit<GiniImpurity> split(10, 3);
 
-  split.Train(math::RandInt(0, 10), 1);
+  split.Train(mlpack::math::RandInt(0, 10), 1);
   for (size_t i = 0; i < 250; ++i)
   {
-    split.Train(math::RandInt(0, 10), 1);
-    split.Train(math::RandInt(0, 10), 2);
+    split.Train(mlpack::math::RandInt(0, 10), 1);
+    split.Train(mlpack::math::RandInt(0, 10), 2);
     BOOST_REQUIRE_EQUAL(split.MajorityClass(), 1);
   }
 }
@@ -182,10 +183,10 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitSplitTest)
   HoeffdingCategoricalSplit<GiniImpurity> split(3, 3); // 3 categories.
 
   // No training is necessary because we can just call CreateChildren().
-  std::vector<StreamingDecisionTree<HoeffdingSplit>> children;
+  std::vector<StreamingDecisionTree<HoeffdingSplit<>>> children;
   data::DatasetInfo info;
   info.MapString("hello", 0); // Make dimension 0 categorical.
-  HoeffdingCategoricalSplit<GiniImpurity>::SplitInfo splitInfo;
+  HoeffdingCategoricalSplit<GiniImpurity>::SplitInfo splitInfo(3);
 
   // Create the children.
   split.CreateChildren(children, info, splitInfo);
