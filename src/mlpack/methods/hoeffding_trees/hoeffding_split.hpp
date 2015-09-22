@@ -34,6 +34,9 @@ class HoeffdingSplit
   // 0 if split should not happen; number of splits otherwise.
   size_t SplitCheck();
 
+  //! Get the splitting dimension (size_t(-1) if no split).
+  size_t SplitDimension() const { return splitDimension; }
+
   // Return index that we should go towards.
   template<typename VecType>
   size_t CalculateDirection(const VecType& point) const;
