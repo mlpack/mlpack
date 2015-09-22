@@ -821,7 +821,7 @@ BOOST_AUTO_TEST_CASE(DatasetInfoTest)
   // Do all types default to numeric?
   for (size_t i = 0; i < 100; ++i)
   {
-    BOOST_REQUIRE_EQUAL((Datatype) di.Type(i), Datatype::numeric);
+    BOOST_REQUIRE(di.Type(i) == Datatype::numeric);
     BOOST_REQUIRE_EQUAL(di.NumMappings(i), 0);
   }
 
@@ -839,12 +839,12 @@ BOOST_AUTO_TEST_CASE(DatasetInfoTest)
   {
     if (i == 3)
     {
-      BOOST_REQUIRE_EQUAL((Datatype) di.Type(i), Datatype::categorical);
+      BOOST_REQUIRE(di.Type(i) == Datatype::categorical);
       BOOST_REQUIRE_EQUAL(di.NumMappings(i), 3);
     }
     else
     {
-      BOOST_REQUIRE_EQUAL((Datatype) di.Type(i), Datatype::numeric);
+      BOOST_REQUIRE(di.Type(i) == Datatype::numeric);
       BOOST_REQUIRE_EQUAL(di.NumMappings(i), 0);
     }
   }
@@ -894,7 +894,7 @@ BOOST_AUTO_TEST_CASE(RegularCSVDatasetInfoLoad)
 
     // Check that all dimensions are numeric.
     for (size_t i = 0; i < two.n_rows; ++i)
-      BOOST_REQUIRE_EQUAL((Datatype) info.Type(i), Datatype::numeric);
+      BOOST_REQUIRE(info.Type(i) == Datatype::numeric);
   }
 }
 
@@ -934,7 +934,7 @@ BOOST_AUTO_TEST_CASE(NontransposedCSVDatasetInfoLoad)
 
     // Check that all dimensions are numeric.
     for (size_t i = 0; i < two.n_rows; ++i)
-      BOOST_REQUIRE_EQUAL((Datatype) info.Type(i), Datatype::numeric);
+      BOOST_REQUIRE(info.Type(i) == Datatype::numeric);
   }
 }
 
@@ -984,9 +984,9 @@ BOOST_AUTO_TEST_CASE(CategoricalCSVLoadTest)
   BOOST_REQUIRE_EQUAL(matrix(1, 6), 14);
   BOOST_REQUIRE_EQUAL(matrix(2, 6), 3);
 
-  BOOST_REQUIRE_EQUAL((Datatype) info.Type(0), Datatype::numeric);
-  BOOST_REQUIRE_EQUAL((Datatype) info.Type(1), Datatype::numeric);
-  BOOST_REQUIRE_EQUAL((Datatype) info.Type(2), Datatype::categorical);
+  BOOST_REQUIRE(info.Type(0) == Datatype::numeric);
+  BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
+  BOOST_REQUIRE(info.Type(2) == Datatype::categorical);
 
   BOOST_REQUIRE_EQUAL(info.MapString("hello", 2), 0);
   BOOST_REQUIRE_EQUAL(info.MapString("goodbye", 2), 1);
@@ -1044,13 +1044,13 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest)
   BOOST_REQUIRE_EQUAL(matrix(6, 1), 1);
   BOOST_REQUIRE_EQUAL(matrix(6, 2), 2);
 
-  BOOST_REQUIRE_EQUAL((Datatype) info.Type(0), Datatype::categorical);
-  BOOST_REQUIRE_EQUAL((Datatype) info.Type(1), Datatype::categorical);
-  BOOST_REQUIRE_EQUAL((Datatype) info.Type(2), Datatype::categorical);
-  BOOST_REQUIRE_EQUAL((Datatype) info.Type(3), Datatype::categorical);
-  BOOST_REQUIRE_EQUAL((Datatype) info.Type(4), Datatype::categorical);
-  BOOST_REQUIRE_EQUAL((Datatype) info.Type(5), Datatype::numeric);
-  BOOST_REQUIRE_EQUAL((Datatype) info.Type(6), Datatype::categorical);
+  BOOST_REQUIRE(info.Type(0) == Datatype::categorical);
+  BOOST_REQUIRE(info.Type(1) == Datatype::categorical);
+  BOOST_REQUIRE(info.Type(2) == Datatype::categorical);
+  BOOST_REQUIRE(info.Type(3) == Datatype::categorical);
+  BOOST_REQUIRE(info.Type(4) == Datatype::categorical);
+  BOOST_REQUIRE(info.Type(5) == Datatype::numeric);
+  BOOST_REQUIRE(info.Type(6) == Datatype::categorical);
 
   BOOST_REQUIRE_EQUAL(info.MapString("1", 0), 0);
   BOOST_REQUIRE_EQUAL(info.MapString("2", 0), 1);
