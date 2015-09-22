@@ -86,7 +86,7 @@ size_t HoeffdingSplit<
   // Calculate epsilon, the value we need things to be greater than.
   const double rSquared = std::pow(FitnessFunction::Range(numClasses), 2.0);
   const double epsilon = std::sqrt(rSquared *
-      std::log(1.0 / successProbability) / (2 * numSamples));
+      std::log(1.0 / (1.0 - successProbability)) / (2 * numSamples));
 
   arma::vec gains(categoricalSplits.size() + numericSplits.size());
   for (size_t i = 0; i < categoricalSplits.size(); ++i)
