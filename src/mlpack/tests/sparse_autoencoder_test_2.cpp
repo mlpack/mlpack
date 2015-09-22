@@ -27,7 +27,7 @@ using SAEF = ann::SparseAutoencoderFunction<FSigmoidLayer, FSigmoidLayer>;
 //sparse autoencoder function greedy
 using SAEFG = ann::SparseAutoencoderFunction<FSigmoidLayer, FSigmoidLayer, std::true_type>;
 
-BOOST_AUTO_TEST_SUITE(SparseAutoencoderTest);
+BOOST_AUTO_TEST_SUITE(SparseAutoencoderTest2);
 
 BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionEvaluate)
 {
