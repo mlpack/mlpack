@@ -5,8 +5,6 @@
  * Test the SparseAutoencoder class.
  */
 
-#define BOOST_TEST_MODULE SparseAutoencoder
-
 #include <mlpack/methods/ann/sparse_autoencoder_function.hpp>
 #include <mlpack/methods/ann/activation_functions/lazy_logistic_function.hpp>
 
@@ -14,7 +12,7 @@
 #include <mlpack/methods/sparse_autoencoder/sparse_autoencoder.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
 
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
 
 using namespace mlpack;
