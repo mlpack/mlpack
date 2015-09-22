@@ -3,6 +3,8 @@
 
 #include <mlpack/core.hpp>
 
+#include <type_traits>
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -53,8 +55,14 @@ namespace ann /** Artificial Neural Network. */ {
  *             << "trained model is " << out << "." << std::endl;
  *}
  * @endcode
+ * @tparam HiddenLayer the layer type of the HiddenLayer
+ * @tparam OutputLayer the layer type of the HiddenLayer
+ * @tparam Greedy If it is true_type, the function Gradient will\n
+ * recalculate part of the calculation done in the function Evaluate\n
+ * and vice versa.By default it is false_type
  */
-template<typename HiddenLayer, typename OutputLayer>
+template<typename HiddenLayer, typename OutputLayer,
+         typename Greedy = std::false_type>
 class SparseAutoencoderFunction
 {
 public:
@@ -179,6 +187,39 @@ public:
     }
 
 private:
+    void EvalParams(arma::mat const &parameters, size_t l1, size_t l2, size_t l3,
+                    std::true_type /* unused */)
+    {
+        // w1, w2, b1 and b2 are not extracted separately, 'parameters' is directly
+        // used in their place to avoid copying data. The following representations
+        // are used:
+        // w1 <- parameters.submat(0, 0, l1-1, l2-1)
+        // w2 <- parameters.submat(l1, 0, l3-1, l2-1).t()
+        // b1 <- parameters.submat(0, l2, l1-1, l2)
+        // b2 <- parameters.submat(l3, 0, l3, l2-1).t()
+
+        // Compute activations of the hidden and output layers.
+        hiddenLayerFunc.Forward(parameters.submat(0, 0, l1 - 1, l2 - 1) * data +
+                                arma::repmat(parameters.submat(0, l2, l1 - 1, l2), 1, data.n_cols),
+                                hiddenLayer);
+
+        outputLayerFunc.Forward(parameters.submat(l1, 0, l3 - 1, l2 - 1).t() * hiddenLayer +
+                                arma::repmat(parameters.submat(l3, 0, l3, l2 - 1).t(), 1, data.n_cols),
+                                outputLayer);
+
+        // Average activations of the hidden layer.
+        rhoCap = arma::sum(hiddenLayer, 1) / static_cast<double>(data.n_cols);
+        // Difference between the reconstructed data and the original data.
+        diff = outputLayer - data;
+    }
+
+    void EvalParams(arma::mat const& /* unused */, size_t /* unused */,
+                    size_t /* unused */, size_t /* unused */,
+                    std::false_type)
+    {
+
+    }
+
     //! The matrix of data points.
     const arma::mat& data;
     //! Intial parameter vector.
@@ -208,8 +249,8 @@ private:
     OutputLayer outputLayerFunc;
 };
 
-template<typename HiddenLayer, typename OutputLayer>
-SparseAutoencoderFunction<HiddenLayer, OutputLayer>::
+template<typename HiddenLayer, typename OutputLayer, typename Greedy>
+SparseAutoencoderFunction<HiddenLayer, OutputLayer, Greedy>::
 SparseAutoencoderFunction(const arma::mat& data,
                           const size_t visibleSize,
                           const size_t hiddenSize,
@@ -232,8 +273,8 @@ SparseAutoencoderFunction(const arma::mat& data,
   * [-r, r] where 'r' is decided using the sizes of the visible and hidden
   * layers. The biases b1, b2 are initialized to 0.
   */
-template<typename HiddenLayer, typename OutputLayer>
-const arma::mat SparseAutoencoderFunction<HiddenLayer, OutputLayer>::
+template<typename HiddenLayer, typename OutputLayer, typename Greedy>
+const arma::mat SparseAutoencoderFunction<HiddenLayer, OutputLayer, Greedy>::
 InitializeWeights()
 {
     // The module uses a matrix to store the parameters, its structure looks like:
@@ -270,8 +311,8 @@ InitializeWeights()
 
 /** Evaluates the objective function given the parameters.
   */
-template<typename HiddenLayer, typename OutputLayer>
-double SparseAutoencoderFunction<HiddenLayer, OutputLayer>::
+template<typename HiddenLayer, typename OutputLayer, typename Greedy>
+double SparseAutoencoderFunction<HiddenLayer, OutputLayer, Greedy>::
 Evaluate(const arma::mat& parameters)
 {
     // The objective function is the average squared reconstruction error of the
@@ -287,27 +328,7 @@ Evaluate(const arma::mat& parameters)
     const size_t l2 = visibleSize;
     const size_t l3 = 2 * hiddenSize;
 
-    // w1, w2, b1 and b2 are not extracted separately, 'parameters' is directly
-    // used in their place to avoid copying data. The following representations
-    // are used:
-    // w1 <- parameters.submat(0, 0, l1-1, l2-1)
-    // w2 <- parameters.submat(l1, 0, l3-1, l2-1).t()
-    // b1 <- parameters.submat(0, l2, l1-1, l2)
-    // b2 <- parameters.submat(l3, 0, l3, l2-1).t()
-
-    // Compute activations of the hidden and output layers.
-    hiddenLayerFunc.Forward(parameters.submat(0, 0, l1 - 1, l2 - 1) * data +
-                            arma::repmat(parameters.submat(0, l2, l1 - 1, l2), 1, data.n_cols),
-                            hiddenLayer);
-
-    outputLayerFunc.Forward(parameters.submat(l1, 0, l3 - 1, l2 - 1).t() * hiddenLayer +
-                            arma::repmat(parameters.submat(l3, 0, l3, l2 - 1).t(), 1, data.n_cols),
-                            outputLayer);
-
-    // Average activations of the hidden layer.
-    rhoCap = arma::sum(hiddenLayer, 1) / static_cast<double>(data.n_cols);
-    // Difference between the reconstructed data and the original data.
-    diff = outputLayer - data;
+    EvalParams(parameters, l1, l2, l3, std::true_type());
 
     // Calculate squared L2-norms of w1 and w2.
     const double wL2SquaredNorm = arma::accu(parameters.submat(0, 0, l3 - 1, l2 - 1) %
@@ -330,8 +351,8 @@ Evaluate(const arma::mat& parameters)
 
 /** Calculates and stores the gradient values given a set of parameters.
   */
-template<typename HiddenLayer, typename OutputLayer>
-void SparseAutoencoderFunction<HiddenLayer, OutputLayer>::
+template<typename HiddenLayer, typename OutputLayer, typename Greedy>
+void SparseAutoencoderFunction<HiddenLayer, OutputLayer, Greedy>::
 Gradient(const arma::mat& parameters,
          arma::mat& gradient)
 {
@@ -346,13 +367,7 @@ Gradient(const arma::mat& parameters,
     const size_t l2 = visibleSize;
     const size_t l3 = 2 * hiddenSize;
 
-    // w1, w2, b1 and b2 are not extracted separately, 'parameters' is directly
-    // used in their place to avoid copying data. The following representations
-    // are used:
-    // w1 <- parameters.submat(0, 0, l1-1, l2-1)
-    // w2 <- parameters.submat(l1, 0, l3-1, l2-1).t()
-    // b1 <- parameters.submat(0, l2, l1-1, l2)
-    // b2 <- parameters.submat(l3, 0, l3, l2-1).t()
+    EvalParams(parameters, l1, l2, l3, Greedy());
 
     // The delta vector for the output layer is given by diff * f'(z), where z is
     // the preactivation and f is the activation function. The derivative of the
