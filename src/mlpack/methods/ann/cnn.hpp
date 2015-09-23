@@ -73,7 +73,7 @@ class CNN
     void FeedBackward(const InputType& /* unused */, const ErrorType& error)
     {
       Backward(error, network);
-      UpdateGradients(network);
+      UpdateGradients<0, std::tuple_size<LayerTypes>::value - 1>(network);
     }
 
     /**
@@ -81,7 +81,7 @@ class CNN
      */
     void ApplyGradients()
     {
-      ApplyGradients(network);
+      ApplyGradients<0, std::tuple_size<LayerTypes>::value - 1>(network);
 
       // Reset the overall error.
       trainError = 0;
@@ -165,7 +165,7 @@ class CNN
 
     template<typename T>
     typename std::enable_if<
-        not HasDeterministicCheck<T, bool&(T::*)(void)>::value, void>::type
+         !HasDeterministicCheck<T, bool&(T::*)(void)>::value, void>::type
     ResetDeterministic(T& /* unused */) { /* Nothing to do here */ }
 
     /**
@@ -294,18 +294,18 @@ class CNN
      * The general case peels off the first type and recurses, as usual with
      * variadic function templates.
      */
-    template<size_t I = 0, typename... Tp>
-    typename std::enable_if<I == (sizeof...(Tp) - 1), void>::type
+    template<size_t I = 0, size_t Max, typename... Tp>
+    typename std::enable_if<I == Max, void>::type
     UpdateGradients(std::tuple<Tp...>& /* unused */) { }
 
-    template<size_t I = 0, typename... Tp>
-    typename std::enable_if<I < (sizeof...(Tp) - 1), void>::type
+    template<size_t I = 0, size_t Max, typename... Tp>
+    typename std::enable_if<I < Max, void>::type
     UpdateGradients(std::tuple<Tp...>& t)
     {
       Update(std::get<I>(t), std::get<I>(t).OutputParameter(),
           std::get<I + 1>(t).Delta());
 
-      UpdateGradients<I + 1, Tp...>(t);
+      UpdateGradients<I + 1, Max, Tp...>(t);
     }
 
     template<typename T, typename P, typename D>
@@ -319,7 +319,7 @@ class CNN
 
     template<typename T, typename P, typename D>
     typename std::enable_if<
-        not HasGradientCheck<T, void(T::*)(const P&, D&)>::value, void>::type
+         !HasGradientCheck<T, void(T::*)(const P&, D&)>::value, void>::type
     Update(T& /* unused */, P& /* unused */, D& /* unused */)
     {
       /* Nothing to do here */
@@ -332,21 +332,21 @@ class CNN
      * The general case peels off the first type and recurses, as usual with
      * variadic function templates.
      */
-    template<size_t I = 0, typename... Tp>
-    typename std::enable_if<I == (sizeof...(Tp) - 1), void>::type
+    template<size_t I = 0, size_t Max, typename... Tp>
+    typename std::enable_if<I == Max, void>::type
     ApplyGradients(std::tuple<Tp...>& /* unused */)
     {
       /* Nothing to do here */
     }
 
-    template<size_t I = 0, typename... Tp>
-    typename std::enable_if<I < (sizeof...(Tp) - 1), void>::type
+    template<size_t I = 0, size_t Max, typename... Tp>
+    typename std::enable_if<I < Max, void>::type
     ApplyGradients(std::tuple<Tp...>& t)
     {
       Apply(std::get<I>(t), std::get<I>(t).OutputParameter(),
           std::get<I + 1>(t).Delta());
 
-      ApplyGradients<I + 1, Tp...>(t);
+      ApplyGradients<I + 1, Max, Tp...>(t);
     }
 
     template<typename T, typename P, typename D>
@@ -360,7 +360,7 @@ class CNN
 
     template<typename T, typename P, typename D>
     typename std::enable_if<
-        not HasGradientCheck<T, void(T::*)(const P&, D&)>::value, void>::type
+         !HasGradientCheck<T, void(T::*)(const P&, D&)>::value, void>::type
     Apply(T& /* unused */, P& /* unused */, D& /* unused */)
     {
       /* Nothing to do here */
