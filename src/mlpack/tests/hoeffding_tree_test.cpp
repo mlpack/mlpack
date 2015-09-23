@@ -392,9 +392,9 @@ BOOST_AUTO_TEST_CASE(StreamingDecisionTreeSimpleDatasetTest)
   // Now train two streaming decision trees; one on the whole dataset, and one
   // on streaming data.
   StreamingDecisionTree<HoeffdingSplit<>, arma::Mat<size_t>>
-      batchTree(dataset, info, labels, 2);
+      batchTree(dataset, info, labels, 3);
   StreamingDecisionTree<HoeffdingSplit<>, arma::Mat<size_t>>
-      streamTree(info, 3, 2);
+      streamTree(info, 3, 3);
   for (size_t i = 0; i < 9000; ++i)
     streamTree.Train(dataset.col(i), labels[i]);
 
