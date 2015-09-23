@@ -381,12 +381,12 @@ BOOST_AUTO_TEST_CASE(StreamingDecisionTreeSimpleDatasetTest)
     dataset(0, i + 1) = mlpack::math::RandInt(7);
     dataset(1, i + 1) = 2;
     dataset(2, i + 1) = mlpack::math::RandInt(2);
-    labels(i) = 1;
+    labels(i + 1) = 1;
 
     dataset(0, i + 2) = mlpack::math::RandInt(7);
     dataset(1, i + 2) = 1;
     dataset(2, i + 2) = mlpack::math::RandInt(2);
-    labels(i) = 2;
+    labels(i + 2) = 2;
   }
 
   // Now train two streaming decision trees; one on the whole dataset, and one
