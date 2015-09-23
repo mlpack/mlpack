@@ -330,12 +330,12 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitAlmostPerfectSplit)
   // Feed samples.
   for (size_t i = 0; i < 500; ++i)
   {
-    if (math::Random() <= 0.9)
+    if (mlpack::math::Random() <= 0.9)
       split.Train(arma::Col<size_t>("0 0"), 0);
     else
       split.Train(arma::Col<size_t>("1 0"), 0);
 
-    if (math::Random() <= 0.9)
+    if (mlpack::math::Random() <= 0.9)
       split.Train(arma::Col<size_t>("1 1"), 1);
     else
       split.Train(arma::Col<size_t>("0 1"), 1);
