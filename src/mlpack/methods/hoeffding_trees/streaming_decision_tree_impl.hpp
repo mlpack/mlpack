@@ -17,16 +17,19 @@ template<typename SplitType, typename MatType>
 StreamingDecisionTree<SplitType, MatType>::StreamingDecisionTree(
     const MatType& data,
     const data::DatasetInfo& datasetInfo,
-    const arma::Row<size_t>& labels) :
-    split(0, 0, datasetInfo, 0)
+    const arma::Row<size_t>& labels,
+    const size_t numClasses) :
+    split(data.n_rows, numClasses, datasetInfo, 0.95)
 {
   Train(data, labels);
 }
 
 template<typename SplitType, typename MatType>
 StreamingDecisionTree<SplitType, MatType>::StreamingDecisionTree(
-    const data::DatasetInfo& datasetInfo) :
-    split(0, 0, datasetInfo, 0)
+    const data::DatasetInfo& datasetInfo,
+    const size_t dimensionality,
+    const size_t numClasses) :
+    split(dimensionality, numClasses, datasetInfo, 0.95)
 {
   // No training.  Anything else to do...?
 }

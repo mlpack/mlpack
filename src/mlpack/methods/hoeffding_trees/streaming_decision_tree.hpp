@@ -21,9 +21,12 @@ class StreamingDecisionTree
  public:
   StreamingDecisionTree(const MatType& data,
                         const data::DatasetInfo& datasetInfo,
-                        const arma::Row<size_t>& labels);
+                        const arma::Row<size_t>& labels,
+                        const size_t numClasses);
 
-  StreamingDecisionTree(const data::DatasetInfo& datasetInfo);
+  StreamingDecisionTree(const data::DatasetInfo& datasetInfo,
+                        const size_t dimensionality,
+                        const size_t numClasses);
 
   StreamingDecisionTree(const StreamingDecisionTree& other);
 
@@ -31,6 +34,8 @@ class StreamingDecisionTree
   StreamingDecisionTree& Child(const size_t i) { return children[i]; }
   const StreamingDecisionTree& Child(const size_t i) const { return children[i];
 }
+
+  const SplitType& Split() const { return split; }
 
   template<typename VecType>
   void Train(const VecType& data, const size_t label);

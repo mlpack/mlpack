@@ -347,4 +347,76 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitAlmostPerfectSplit)
   BOOST_REQUIRE_EQUAL(split.SplitDimension(), 1);
 }
 
+/**
+ * Build a decision tree on a dataset with two meaningless dimensions and ensure
+ * that it can properly classify all of the training points.  (The dataset is
+ * perfectly separable.)
+ */
+BOOST_AUTO_TEST_CASE(StreamingDecisionTreeSimpleDatasetTest)
+{
+  DatasetInfo info;
+  info.MapString("cat0", 0);
+  info.MapString("cat1", 0);
+  info.MapString("cat2", 0);
+  info.MapString("cat3", 0);
+  info.MapString("cat4", 0);
+  info.MapString("cat5", 0);
+  info.MapString("cat6", 0);
+  info.MapString("cat0", 1);
+  info.MapString("cat1", 1);
+  info.MapString("cat2", 1);
+  info.MapString("cat0", 2);
+  info.MapString("cat1", 2);
+
+  // Now generate data.
+  arma::Mat<size_t> dataset(3, 9000);
+  arma::Row<size_t> labels(9000);
+  for (size_t i = 0; i < 9000; i += 3)
+  {
+    dataset(0, i) = mlpack::math::RandInt(7);
+    dataset(1, i) = 0;
+    dataset(2, i) = mlpack::math::RandInt(2);
+    labels(i) = 0;
+
+    dataset(0, i + 1) = mlpack::math::RandInt(7);
+    dataset(1, i + 1) = 2;
+    dataset(2, i + 1) = mlpack::math::RandInt(2);
+    labels(i) = 1;
+
+    dataset(0, i + 2) = mlpack::math::RandInt(7);
+    dataset(1, i + 2) = 1;
+    dataset(2, i + 2) = mlpack::math::RandInt(2);
+    labels(i) = 2;
+  }
+
+  // Now train two streaming decision trees; one on the whole dataset, and one
+  // on streaming data.
+  StreamingDecisionTree<HoeffdingSplit<>, arma::Mat<size_t>>
+      batchTree(dataset, info, labels, 2);
+  StreamingDecisionTree<HoeffdingSplit<>, arma::Mat<size_t>>
+      streamTree(info, 3, 2);
+  for (size_t i = 0; i < 9000; ++i)
+    streamTree.Train(dataset.col(i), labels[i]);
+
+  // Each tree should have a single split.
+  BOOST_REQUIRE_EQUAL(batchTree.NumChildren(), 3);
+  BOOST_REQUIRE_EQUAL(streamTree.NumChildren(), 3);
+  BOOST_REQUIRE_EQUAL(batchTree.Split().SplitDimension(), 1);
+  BOOST_REQUIRE_EQUAL(streamTree.Split().SplitDimension(), 1);
+
+  // Now, classify all the points in the dataset.
+  arma::Row<size_t> batchLabels(9000);
+  arma::Row<size_t> streamLabels(9000);
+
+  streamTree.Classify(dataset, batchLabels);
+  for (size_t i = 0; i < 9000; ++i)
+    streamLabels[i] = batchTree.Classify(dataset.col(i));
+
+  for (size_t i = 0; i < 9000; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(labels[i], streamLabels[i]);
+    BOOST_REQUIRE_EQUAL(labels[i], batchLabels[i]);
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END();

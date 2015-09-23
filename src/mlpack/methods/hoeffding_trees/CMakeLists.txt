@@ -8,6 +8,7 @@ set(SOURCES
   hoeffding_numeric_split.hpp
   hoeffding_split.hpp
   hoeffding_split_impl.hpp
+  numeric_split_info.hpp
   streaming_decision_tree.hpp
   streaming_decision_tree_impl.hpp
 )

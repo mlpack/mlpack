@@ -194,12 +194,13 @@ void HoeffdingSplit<
 
   if (datasetInfo.Type(splitDimension) == data::Datatype::numeric)
   {
-    numericSplits[numericSplitIndex + 1].CreateChildren(children, numericSplit);
+    numericSplits[numericSplitIndex + 1].CreateChildren(children, datasetInfo,
+        numericSplit);
   }
   else if (datasetInfo.Type(splitDimension) == data::Datatype::categorical)
   {
     categoricalSplits[categoricalSplitIndex + 1].CreateChildren(children,
-        categoricalSplit);
+        datasetInfo, categoricalSplit);
   }
 }
 
