@@ -50,6 +50,7 @@ class HoeffdingCategoricalSplit
   template<typename StreamingDecisionTreeType>
   void CreateChildren(std::vector<StreamingDecisionTreeType>& children,
                       const data::DatasetInfo& datasetInfo,
+                      const size_t dimensionality,
                       SplitInfo& splitInfo);
 
   size_t MajorityClass() const;

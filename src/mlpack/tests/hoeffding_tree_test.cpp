@@ -212,7 +212,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitSplitTest)
   HoeffdingCategoricalSplit<GiniImpurity>::SplitInfo splitInfo(3);
 
   // Create the children.
-  split.CreateChildren(children, info, splitInfo);
+  split.CreateChildren(children, info, 3, splitInfo);
 
   BOOST_REQUIRE_EQUAL(children.size(), 3);
   BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(0), 0);

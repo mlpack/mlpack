@@ -30,6 +30,7 @@ class HoeffdingNumericSplit
   template<typename StreamingDecisionTreeType>
   void CreateChildren(std::vector<StreamingDecisionTreeType>& children,
                       const data::DatasetInfo& datasetInfo,
+                      const size_t dimensionality,
                       SplitInfo& splitInfo) { } // Nothing to do.
 
   size_t MajorityClass() const { return 0; } // Nothing yet.

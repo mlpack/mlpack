@@ -44,11 +44,12 @@ template<typename StreamingDecisionTreeType>
 void HoeffdingCategoricalSplit<FitnessFunction>::CreateChildren(
     std::vector<StreamingDecisionTreeType>& children,
     const data::DatasetInfo& datasetInfo,
+    const size_t dimensionality,
     SplitInfo& splitInfo)
 {
   // We'll make one child for each category.
   for (size_t i = 0; i < sufficientStatistics.n_cols; ++i)
-    children.push_back(StreamingDecisionTreeType(datasetInfo, 3,
+    children.push_back(StreamingDecisionTreeType(datasetInfo, dimensionality,
         sufficientStatistics.n_rows));
 
   // Create the according SplitInfo object.

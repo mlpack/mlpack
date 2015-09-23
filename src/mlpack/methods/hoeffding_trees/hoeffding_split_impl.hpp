@@ -199,15 +199,17 @@ void HoeffdingSplit<
       ++categoricalSplitIndex;
   }
 
+  // Create the children.
   if (datasetInfo.Type(splitDimension) == data::Datatype::numeric)
   {
     numericSplits[numericSplitIndex].CreateChildren(children, datasetInfo,
-        numericSplit);
+        numericSplits.size() + categoricalSplits.size(), numericSplit);
   }
   else if (datasetInfo.Type(splitDimension) == data::Datatype::categorical)
   {
     categoricalSplits[categoricalSplitIndex].CreateChildren(children,
-        datasetInfo, categoricalSplit);
+        datasetInfo, numericSplits.size() + categoricalSplits.size(),
+        categoricalSplit);
   }
 }
 
