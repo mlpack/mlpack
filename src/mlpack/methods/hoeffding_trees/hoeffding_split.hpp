@@ -55,6 +55,7 @@ class HoeffdingSplit
 
   size_t numSamples;
   size_t numClasses;
+  arma::Col<size_t> classCounts;
   const data::DatasetInfo& datasetInfo;
   double successProbability;
 

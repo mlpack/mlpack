@@ -47,18 +47,27 @@ template<typename VecType>
 void StreamingDecisionTree<SplitType, MatType>::Train(const VecType& data,
                                                       const size_t label)
 {
-  split.Train(data, label);
-
-  const size_t numChildren = split.SplitCheck();
-  if (numChildren > 0)
+  if (children.size() == 0)
   {
-    // We need to add a bunch of children.
-    // Delete children, if we have them.
-    if (children.size() > 0)
-      children.clear();
+    split.Train(data, label);
 
-    // The split knows how to add the children.
-    split.CreateChildren(children);
+    const size_t numChildren = split.SplitCheck();
+    if (numChildren > 0)
+    {
+      // We need to add a bunch of children.
+      // Delete children, if we have them.
+      if (children.size() > 0)
+        children.clear();
+
+      // The split knows how to add the children.
+      split.CreateChildren(children);
+    }
+  }
+  else
+  {
+    // We've already split this node.  But we need to train the child nodes.
+    size_t direction = split.CalculateDirection(data);
+    children[direction].Train(data, label);
   }
 }
 

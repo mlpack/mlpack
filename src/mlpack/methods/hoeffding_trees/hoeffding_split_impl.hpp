@@ -23,6 +23,7 @@ HoeffdingSplit<
                   const double successProbability) :
     numSamples(0),
     numClasses(numClasses),
+    classCounts(arma::zeros<arma::Col<size_t>>(numClasses)),
     datasetInfo(datasetInfo),
     successProbability(successProbability),
     splitDimension(size_t(-1)),
@@ -49,6 +50,12 @@ void HoeffdingSplit<
 {
   if (splitDimension == size_t(-1))
   {
+    // Update majority counts.
+    classCounts(label)++;
+    arma::uword tmp;
+    classCounts.max(tmp);
+    majorityClass = size_t(tmp);
+
     ++numSamples;
     size_t numericIndex = 0;
     size_t categoricalIndex = 0;
@@ -194,12 +201,12 @@ void HoeffdingSplit<
 
   if (datasetInfo.Type(splitDimension) == data::Datatype::numeric)
   {
-    numericSplits[numericSplitIndex + 1].CreateChildren(children, datasetInfo,
+    numericSplits[numericSplitIndex].CreateChildren(children, datasetInfo,
         numericSplit);
   }
   else if (datasetInfo.Type(splitDimension) == data::Datatype::categorical)
   {
-    categoricalSplits[categoricalSplitIndex + 1].CreateChildren(children,
+    categoricalSplits[categoricalSplitIndex].CreateChildren(children,
         datasetInfo, categoricalSplit);
   }
 }
