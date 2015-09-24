@@ -348,6 +348,32 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitAlmostPerfectSplit)
 }
 
 /**
+ * Test that the HoeffdingSplit class will not split if the two features are
+ * equally good.
+ */
+BOOST_AUTO_TEST_CASE(HoeffdingSplitEqualSplitTest)
+{
+  // Two categories and two dimensions.
+  data::DatasetInfo info;
+  info.MapString("cat0", 0);
+  info.MapString("cat1", 0);
+  info.MapString("cat0", 1);
+  info.MapString("cat1", 1);
+
+  HoeffdingSplit<> split(2, 2, info, 0.95);
+
+  // Feed samples.
+  for (size_t i = 0; i < 500; ++i)
+  {
+    split.Train(arma::Col<size_t>("0 0"), 0);
+    split.Train(arma::Col<size_t>("1 1"), 1);
+  }
+
+  // Ensure that splitting should not happen.
+  BOOST_REQUIRE_EQUAL(split.SplitCheck(), 0);
+}
+
+/**
  * Build a decision tree on a dataset with two meaningless dimensions and ensure
  * that it can properly classify all of the training points.  (The dataset is
  * perfectly separable.)
