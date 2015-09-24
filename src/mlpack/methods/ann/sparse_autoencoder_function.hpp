@@ -342,8 +342,8 @@ Evaluate(const arma::mat& parameters)
     // KL = sum_over_hSize(rho*log(rho/rhoCaq) + (1-rho)*log((1-rho)/(1-rhoCap)))
     const double sumOfSquaresError = 0.5 * arma::accu(diff % diff) / data.n_cols;
     const double weightDecay = 0.5 * lambda * wL2SquaredNorm;
-    const double klDivergence = beta * arma::accu(rho * arma::log(rho / rhoCap) + (1 - rho) *
-                                                  arma::log((1 - rho) / (1 - rhoCap)));
+    const double klDivergence = beta * arma::accu(rho * arma::trunc_log(rho / rhoCap) + (1 - rho) *
+                                                  arma::trunc_log((1 - rho) / (1 - rhoCap)));
 
     // The cost is the sum of the terms calculated above.
     return sumOfSquaresError + weightDecay + klDivergence;
@@ -377,7 +377,9 @@ Gradient(const arma::mat& parameters,
     // includes the KL divergence term, we adjust for that in the formula below.
     arma::mat delOut;
     outputLayerFunc.Backward(outputLayer, diff, delOut);
-    arma::mat const klDivGrad = beta * (-(rho / rhoCap) + (1 - rho) / (1 - rhoCap));
+
+    arma::mat klDivGrad = beta * (-(rho / rhoCap) + (1 - rho) / (1 - rhoCap));
+    klDivGrad.elem(arma::find_nonfinite(klDivGrad)).zeros();
     diff2 = parameters.submat(l1, 0, l3 - 1, l2 - 1) * delOut +
             arma::repmat(klDivGrad, 1, data.n_cols);
     arma::mat delHid;
