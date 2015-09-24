@@ -478,4 +478,50 @@ BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitPreBinningMajorityClassTest)
   }
 }
 
+/**
+ * Use a numeric feature that is bimodal (with a margin), and make sure that the
+ * HoeffdingNumericSplit bins it reasonably into two bins and returns sensible
+ * Gini impurity numbers.
+ */
+BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitBimodalTest)
+{
+  // 2 classes, 2 bins, 200 samples before binning.
+  HoeffdingNumericSplit<GiniImpurity> split(2, 2, 200);
+
+  for (size_t i = 0; i < 100; ++i)
+  {
+    split.Train(mlpack::math::Random() + 0.3, 0);
+    split.Train(-mlpack::math::Random() - 0.3, 1);
+  }
+
+  // Push the majority class to 1.
+  split.Train(-mlpack::math::Random() - 0.3, 1);
+  BOOST_REQUIRE_EQUAL(split.MajorityClass(), 1);
+
+  // Push the majority class back to 0.
+  split.Train(mlpack::math::Random() + 0.3, 0);
+  split.Train(mlpack::math::Random() + 0.3, 0);
+  BOOST_REQUIRE_EQUAL(split.MajorityClass(), 0);
+
+  // Now the binning should be complete, and so the impurity should be
+  // (0.5 * (1 - 0.5)) * 2 = 0.50 (it will be 0 in the two created children).
+  BOOST_REQUIRE_CLOSE(split.EvaluateFitnessFunction(), 0.50, 0.01);
+
+  // Make sure that if we do create children, that the correct number of
+  // children is created, and that the bins end up in the right place.
+  std::vector<StreamingDecisionTree<HoeffdingSplit<GiniImpurity,
+      HoeffdingNumericSplit<double>>>> children;
+  data::DatasetInfo datasetInfo; // All numeric features -- no change necessary.
+  NumericSplitInfo<> info;
+  split.CreateChildren(children, datasetInfo, 1, info);
+  BOOST_REQUIRE_EQUAL(children.size(), 2);
+
+  // Now check the split info.
+  for (size_t i = 0; i < 10; ++i)
+  {
+    BOOST_REQUIRE_NE(info.CalculateDirection(mlpack::math::Random() + 0.3),
+                     info.CalculateDirection(-mlpack::math::Random() - 0.3));
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END();

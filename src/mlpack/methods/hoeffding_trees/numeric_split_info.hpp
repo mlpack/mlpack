@@ -25,14 +25,14 @@ class NumericSplitInfo
   {
     // What bin does the point fall into?
     size_t bin = 0;
-    while (value > splitPoints[bin] && bin < splitPoints.n_elem - 1)
+    while (value > splitPoints[bin] && bin < splitPoints.n_elem)
       ++bin;
 
     return bin;
   }
 
  private:
-  arma::Col<size_t> splitPoints;
+  arma::Col<ObservationType> splitPoints;
 };
 
 } // namespace tree

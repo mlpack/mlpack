@@ -19,7 +19,6 @@ HoeffdingNumericSplit<FitnessFunction, ObservationType>::HoeffdingNumericSplit(
     const size_t observationsBeforeBinning) :
     observations(observationsBeforeBinning - 1),
     labels(observationsBeforeBinning - 1),
-    splitPoints(bins),
     bins(bins),
     observationsBeforeBinning(observationsBeforeBinning),
     samplesSeen(0),
@@ -54,8 +53,12 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::Train(
         max = observations[i];
     }
 
-    // Now split these.
-    splitPoints = arma::linspace<arma::Col<ObservationType>>(min, max, bins);
+    // Now split these.  We can't use linspace, because we don't want to include
+    // the endpoints.
+    splitPoints.resize(bins - 1);
+    const ObservationType binWidth = (max - min) / bins;
+    for (size_t i = 0; i < bins - 1; ++i)
+      splitPoints[i] = min + (i + 1) * binWidth;
     ++samplesSeen;
 
     // Now, add all of the points we've seen to the sufficient statistics.
