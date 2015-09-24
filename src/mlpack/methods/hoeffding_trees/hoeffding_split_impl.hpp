@@ -27,8 +27,8 @@ HoeffdingSplit<
     datasetInfo(datasetInfo),
     successProbability(successProbability),
     splitDimension(size_t(-1)),
-    numericSplit(),
-    categoricalSplit(0)
+    categoricalSplit(0),
+    numericSplit()
 {
   for (size_t i = 0; i < dimensionality; ++i)
   {
@@ -158,6 +158,8 @@ size_t HoeffdingSplit<
     return numericSplit.CalculateDirection(point[splitDimension]);
   else if (datasetInfo.Type(splitDimension) == data::Datatype::categorical)
     return categoricalSplit.CalculateDirection(point[splitDimension]);
+  else
+    return 0; // Not sure what to do here...
 }
 
 template<
@@ -170,7 +172,7 @@ size_t HoeffdingSplit<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
->::Classify(const VecType& point) const
+>::Classify(const VecType& /* point */) const
 {
   // We're a leaf (or being considered a leaf), so classify based on what we
   // know.
