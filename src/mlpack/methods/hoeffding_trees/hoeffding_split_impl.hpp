@@ -27,6 +27,7 @@ HoeffdingSplit<
     datasetInfo(datasetInfo),
     successProbability(successProbability),
     splitDimension(size_t(-1)),
+    numericSplit(),
     categoricalSplit(0)
 {
   for (size_t i = 0; i < dimensionality; ++i)

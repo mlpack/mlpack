@@ -417,9 +417,11 @@ BOOST_AUTO_TEST_CASE(StreamingDecisionTreeSimpleDatasetTest)
 
   // Now train two streaming decision trees; one on the whole dataset, and one
   // on streaming data.
-  StreamingDecisionTree<HoeffdingSplit<>, arma::Mat<size_t>>
+  StreamingDecisionTree<HoeffdingSplit<GiniImpurity,
+      HoeffdingNumericSplit<GiniImpurity, size_t>>, arma::Mat<size_t>>
       batchTree(dataset, info, labels, 3);
-  StreamingDecisionTree<HoeffdingSplit<>, arma::Mat<size_t>>
+  StreamingDecisionTree<HoeffdingSplit<GiniImpurity,
+      HoeffdingNumericSplit<GiniImpurity, size_t>>, arma::Mat<size_t>>
       streamTree(info, 3, 3);
   for (size_t i = 0; i < 9000; ++i)
     streamTree.Train(dataset.col(i), labels[i]);
@@ -442,6 +444,37 @@ BOOST_AUTO_TEST_CASE(StreamingDecisionTreeSimpleDatasetTest)
   {
     BOOST_REQUIRE_EQUAL(labels[i], streamLabels[i]);
     BOOST_REQUIRE_EQUAL(labels[i], batchLabels[i]);
+  }
+}
+
+/**
+ * Test that the HoeffdingNumericSplit class has a fitness function value of 0
+ * before it's seen enough points.
+ */
+BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitFitnessFunctionTest)
+{
+  HoeffdingNumericSplit<GiniImpurity> split(5, 10, 100);
+
+  // The first 99 iterations should not calculate anything.  The 100th is where
+  // the counting starts.
+  for (size_t i = 0; i < 99; ++i)
+  {
+    split.Train(mlpack::math::Random(), mlpack::math::RandInt(5));
+    BOOST_REQUIRE_SMALL(split.EvaluateFitnessFunction(), 1e-10);
+  }
+}
+
+/**
+ * Make sure the majority class is correct in the samples before binning.
+ */
+BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitPreBinningMajorityClassTest)
+{
+  HoeffdingNumericSplit<GiniImpurity> split(3, 10, 100);
+
+  for (size_t i = 0; i < 100; ++i)
+  {
+    split.Train(mlpack::math::Random(), 1);
+    BOOST_REQUIRE_EQUAL(split.MajorityClass(), 1);
   }
 }
 

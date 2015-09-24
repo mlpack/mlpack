@@ -6,6 +6,7 @@ set(SOURCES
   hoeffding_categorical_split.hpp
   hoeffding_categorical_split_impl.hpp
   hoeffding_numeric_split.hpp
+  hoeffding_numeric_split_impl.hpp
   hoeffding_split.hpp
   hoeffding_split_impl.hpp
   numeric_split_info.hpp

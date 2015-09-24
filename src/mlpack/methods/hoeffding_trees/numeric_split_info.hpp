@@ -12,14 +12,27 @@
 namespace mlpack {
 namespace tree {
 
-// This doesn't do anything yet.
+template<typename ObservationType = double>
 class NumericSplitInfo
 {
  public:
-  NumericSplitInfo() { }
+  NumericSplitInfo() { /* Nothing to do. */ }
+  NumericSplitInfo(arma::Col<ObservationType>& splitPoints) :
+      splitPoints(splitPoints) { /* Nothing to do. */ }
 
   template<typename eT>
-  static size_t CalculateDirection(const eT& /* value */) { return 0; }
+  size_t CalculateDirection(const eT& value) const
+  {
+    // What bin does the point fall into?
+    size_t bin = 0;
+    while (value > splitPoints[bin] && bin < splitPoints.n_elem - 1)
+      ++bin;
+
+    return bin;
+  }
+
+ private:
+  arma::Col<size_t> splitPoints;
 };
 
 } // namespace tree
