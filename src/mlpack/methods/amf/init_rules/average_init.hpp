@@ -68,6 +68,10 @@ class AverageInitialization
     W = W + avgV;
     H = H + avgV;
   }
+
+  //! Serialize the object (in this case, there is nothing to do).
+  template<typename Archive>
+  void Serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
 } // namespace amf

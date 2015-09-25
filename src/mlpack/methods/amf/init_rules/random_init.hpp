@@ -45,6 +45,10 @@ class RandomInitialization
     W.randu(n, r);
     H.randu(r, m);
   }
+
+  //! Serialize the object (in this case, there is nothing to serialize).
+  template<typename Archive>
+  void Serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
 } // namespace amf
