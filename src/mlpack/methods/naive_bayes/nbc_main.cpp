@@ -50,6 +50,7 @@ int main(int argc, char* argv[])
 
   // Normalize labels.
   Col<size_t> labels;
+  Row<size_t> labelst;
   vec mappings;
 
   // Did the user pass in labels?
@@ -76,6 +77,7 @@ int main(int argc, char* argv[])
     // Remove the label row.
     trainingData.shed_row(trainingData.n_rows - 1);
   }
+  labelst = labels.t();
 
   const string testingDataFilename = CLI::GetParam<std::string>("test_file");
   mat testingData;
@@ -90,21 +92,21 @@ int main(int argc, char* argv[])
 
   // Create and train the classifier.
   Timer::Start("training");
-  NaiveBayesClassifier<> nbc(trainingData, labels, mappings.n_elem,
+  NaiveBayesClassifier<> nbc(trainingData, labelst, mappings.n_elem,
       incrementalVariance);
   Timer::Stop("training");
 
   // Time the running of the Naive Bayes Classifier.
-  Col<size_t> results;
+  Row<size_t> results;
   Timer::Start("testing");
   nbc.Classify(testingData, results);
   Timer::Stop("testing");
 
   // Un-normalize labels to prepare output.
   vec rawResults;
-  data::RevertLabels(results, mappings, rawResults);
+  data::RevertLabels(results.t(), mappings, rawResults);
 
-  // Output results.  Don't transpose: one result per line.
+  // Output results.  Transpose: one result per line.
   const string outputFilename = CLI::GetParam<string>("output");
   data::Save(outputFilename, rawResults, true, false);
 }
