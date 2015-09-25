@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
   data::Load(trainResultFilename, trainRes, true);
 
   // Get the labels out.
-  arma::Col<size_t> labels(trainData.n_cols);
+  arma::Row<size_t> labels(trainData.n_cols);
   for (size_t i = 0; i < trainData.n_cols; ++i)
     labels[i] = trainData(trainData.n_rows - 1, i);
   trainData.shed_row(trainData.n_rows - 1);
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
 
   arma::mat testData;
   arma::Mat<size_t> testRes;
-  arma::Col<size_t> calcVec;
+  arma::Row<size_t> calcVec;
   data::Load(testFilename, testData, true);
   data::Load(testResultFilename, testRes, true);
 
@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
   data::Load(trainResultFilename, trainRes, true);
 
   // Get the labels out.
-  arma::Col<size_t> labels(trainData.n_cols);
+  arma::Row<size_t> labels(trainData.n_cols);
   for (size_t i = 0; i < trainData.n_cols; ++i)
     labels[i] = trainData(trainData.n_rows - 1, i);
   trainData.shed_row(trainData.n_rows - 1);
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
 
   arma::mat testData;
   arma::Mat<size_t> testRes;
-  arma::Col<size_t> calcVec;
+  arma::Row<size_t> calcVec;
   data::Load(testFilename, testData, true);
   data::Load(testResultFilename, testRes, true);
 
