@@ -161,6 +161,123 @@ BOOST_AUTO_TEST_CASE(SingleTreeUnmapTest)
 }
 
 /**
+ * Test that an empty AllkNN object will throw exceptions when Search() is
+ * called.
+ */
+BOOST_AUTO_TEST_CASE(EmptySearchTest)
+{
+  AllkNN empty;
+
+  arma::mat dataset = arma::randu<arma::mat>(5, 100);
+  AllkNN::Tree queryTree(dataset);
+  arma::Mat<size_t> neighbors;
+  arma::mat distances;
+
+  BOOST_REQUIRE_THROW(empty.Search(dataset, 5, neighbors, distances),
+      std::invalid_argument);
+  BOOST_REQUIRE_THROW(empty.Search(5, neighbors, distances),
+      std::invalid_argument);
+  BOOST_REQUIRE_THROW(empty.Search(&queryTree, 5, neighbors, distances),
+      std::invalid_argument);
+}
+
+/**
+ * Test that when training is performed, the results are the same.
+ */
+BOOST_AUTO_TEST_CASE(TrainTest)
+{
+  AllkNN empty;
+
+  arma::mat dataset = arma::randu<arma::mat>(5, 100);
+  AllkNN baseline(dataset);
+
+  arma::Mat<size_t> neighbors, baselineNeighbors;
+  arma::mat distances, baselineDistances;
+
+  empty.Train(dataset);
+
+  empty.Search(5, neighbors, distances);
+  baseline.Search(5, baselineNeighbors, baselineDistances);
+
+  BOOST_REQUIRE_EQUAL(neighbors.n_rows, baselineNeighbors.n_rows);
+  BOOST_REQUIRE_EQUAL(neighbors.n_cols, baselineNeighbors.n_cols);
+  BOOST_REQUIRE_EQUAL(distances.n_rows, baselineDistances.n_rows);
+  BOOST_REQUIRE_EQUAL(distances.n_cols, baselineDistances.n_cols);
+
+  for (size_t i = 0; i < distances.n_elem; ++i)
+  {
+    if (std::abs(baselineDistances[i]) < 1e-5)
+      BOOST_REQUIRE_SMALL(distances[i], 1e-5);
+    else
+      BOOST_REQUIRE_CLOSE(distances[i], baselineDistances[i], 1e-5);
+
+    BOOST_REQUIRE_EQUAL(neighbors[i], baselineNeighbors[i]);
+  }
+}
+
+/**
+ * Test that when training is performed with a tree, the results are the same.
+ */
+BOOST_AUTO_TEST_CASE(TrainTreeTest)
+{
+  AllkNN empty;
+
+  arma::mat dataset = arma::randu<arma::mat>(5, 100);
+  AllkNN baseline(dataset);
+
+  arma::Mat<size_t> neighbors, baselineNeighbors;
+  arma::mat distances, baselineDistances;
+
+  std::vector<size_t> oldFromNewReferences;
+  AllkNN::Tree tree(dataset, oldFromNewReferences);
+  empty.Train(&tree);
+
+  empty.Search(5, neighbors, distances);
+  baseline.Search(5, baselineNeighbors, baselineDistances);
+
+  BOOST_REQUIRE_EQUAL(neighbors.n_rows, baselineNeighbors.n_rows);
+  BOOST_REQUIRE_EQUAL(neighbors.n_cols, baselineNeighbors.n_cols);
+  BOOST_REQUIRE_EQUAL(distances.n_rows, baselineDistances.n_rows);
+  BOOST_REQUIRE_EQUAL(distances.n_cols, baselineDistances.n_cols);
+
+  // We have to unmap the results.
+  arma::mat tmpDistances(distances.n_rows, distances.n_cols);
+  arma::Mat<size_t> tmpNeighbors(neighbors.n_rows, neighbors.n_cols);
+  for (size_t i = 0; i < distances.n_cols; ++i)
+  {
+    tmpDistances.col(oldFromNewReferences[i]) = distances.col(i);
+    for (size_t j = 0; j < distances.n_rows; ++j)
+    {
+      tmpNeighbors(j, oldFromNewReferences[i]) =
+          oldFromNewReferences[neighbors(j, i)];
+    }
+  }
+
+  for (size_t i = 0; i < distances.n_elem; ++i)
+  {
+    if (std::abs(baselineDistances[i]) < 1e-5)
+      BOOST_REQUIRE_SMALL(tmpDistances[i], 1e-5);
+    else
+      BOOST_REQUIRE_CLOSE(tmpDistances[i], baselineDistances[i], 1e-5);
+
+    BOOST_REQUIRE_EQUAL(tmpNeighbors[i], baselineNeighbors[i]);
+  }
+}
+
+/**
+ * Test that training with a tree throws an exception when in naive mode.
+ */
+BOOST_AUTO_TEST_CASE(NaiveTrainTreeTest)
+{
+  AllkNN empty(true);
+
+  arma::mat dataset = arma::randu<arma::mat>(5, 100);
+  AllkNN::Tree tree(dataset);
+
+  BOOST_REQUIRE_THROW(empty.Train(&tree), std::invalid_argument);
+}
+
+/**
  * Simple nearest-neighbors test with small, synthetic dataset.  This is an
  * exhaustive test, which checks that each method for performing the calculation
  * (dual-tree, single-tree, naive) produces the correct results.  An
