@@ -24,6 +24,7 @@
 
 #include <mlpack/methods/perceptron/perceptron.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
@@ -743,6 +744,33 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   BOOST_REQUIRE_CLOSE(lr.Lambda(), lrXml.Lambda(), 1e-5);
   BOOST_REQUIRE_CLOSE(lr.Lambda(), lrText.Lambda(), 1e-5);
   BOOST_REQUIRE_CLOSE(lr.Lambda(), lrBinary.Lambda(), 1e-5);
+}
+
+BOOST_AUTO_TEST_CASE(AllkNNTest)
+{
+  using neighbor::AllkNN;
+  arma::mat dataset = arma::randu<arma::mat>(5, 2000);
+/*
+  AllkNN allknn(dataset, false, false);
+
+  AllkNN knnXml, knnText, knnBinary;
+
+  SerializeObjectAll(allknn, knnXml, knnText, knnBinary);
+
+  // Now run nearest neighbor and make sure the results are the same.
+  arma::mat querySet = arma::randu<arma::mat>(5, 1000);
+
+  arma::mat distances, xmlDistances, textDistances, binaryDistances;
+  arma::Mat<size_t> neighbors, xmlNeighbors, textNeighbors, binaryNeighbors;
+
+  allknn.Search(querySet, 5, neighbors, distances);
+  knnXml.Search(querySet, 5, xmlNeighbors, xmlDistances);
+  knnText.Search(querySet, 5, textNeighbors, textDistances);
+  knnBinary.Search(querySet, 5, binaryNeighbors, binaryDistances);
+
+  CheckMatrices(distances, xmlDistances, textDistances, binaryDistances);
+  CheckMatrices(neighbors, xmlNeighbors, textNeighbors, binaryNeighbors);
+*/
 }
 
 BOOST_AUTO_TEST_SUITE_END();
