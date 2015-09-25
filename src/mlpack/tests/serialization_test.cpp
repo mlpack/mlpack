@@ -307,6 +307,33 @@ void CheckMatrices(const mat& x,
   }
 }
 
+void CheckMatrices(const Mat<size_t>& x,
+                   const Mat<size_t>& xmlX,
+                   const Mat<size_t>& textX,
+                   const Mat<size_t>& binaryX)
+{
+  // First check dimensions.
+  BOOST_REQUIRE_EQUAL(x.n_rows, xmlX.n_rows);
+  BOOST_REQUIRE_EQUAL(x.n_rows, textX.n_rows);
+  BOOST_REQUIRE_EQUAL(x.n_rows, binaryX.n_rows);
+
+  BOOST_REQUIRE_EQUAL(x.n_cols, xmlX.n_cols);
+  BOOST_REQUIRE_EQUAL(x.n_cols, textX.n_cols);
+  BOOST_REQUIRE_EQUAL(x.n_cols, binaryX.n_cols);
+
+  BOOST_REQUIRE_EQUAL(x.n_elem, xmlX.n_elem);
+  BOOST_REQUIRE_EQUAL(x.n_elem, textX.n_elem);
+  BOOST_REQUIRE_EQUAL(x.n_elem, binaryX.n_elem);
+
+  // Now check elements.
+  for (size_t i = 0; i < x.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(x[i], xmlX[i]);
+    BOOST_REQUIRE_EQUAL(x[i], textX[i]);
+    BOOST_REQUIRE_EQUAL(x[i], binaryX[i]);
+  }
+}
+
 // Now, test mlpack objects.
 BOOST_AUTO_TEST_CASE(DiscreteDistributionTest)
 {
@@ -750,7 +777,7 @@ BOOST_AUTO_TEST_CASE(AllkNNTest)
 {
   using neighbor::AllkNN;
   arma::mat dataset = arma::randu<arma::mat>(5, 2000);
-/*
+
   AllkNN allknn(dataset, false, false);
 
   AllkNN knnXml, knnText, knnBinary;
@@ -770,7 +797,6 @@ BOOST_AUTO_TEST_CASE(AllkNNTest)
 
   CheckMatrices(distances, xmlDistances, textDistances, binaryDistances);
   CheckMatrices(neighbors, xmlNeighbors, textNeighbors, binaryNeighbors);
-*/
 }
 
 BOOST_AUTO_TEST_SUITE_END();
