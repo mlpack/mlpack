@@ -586,7 +586,8 @@ void BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
               SplitType<BoundType<MetricType>, MatType>& splitter)
 {
   // We need to expand the bounds of this node properly.
-  bound |= dataset->cols(begin, begin + count - 1);
+  if (count > 0)
+    bound |= dataset->cols(begin, begin + count - 1);
 
   // Calculate the furthest descendant distance.
   furthestDescendantDistance = 0.5 * bound.Diameter();
@@ -643,7 +644,8 @@ SplitNode(std::vector<size_t>& oldFromNew,
 {
   // This should be a single function for Bound.
   // We need to expand the bounds of this node properly.
-  bound |= dataset->cols(begin, begin + count - 1);
+  if (count > 0)
+    bound |= dataset->cols(begin, begin + count - 1);
 
   // Calculate the furthest descendant distance.
   furthestDescendantDistance = 0.5 * bound.Diameter();
