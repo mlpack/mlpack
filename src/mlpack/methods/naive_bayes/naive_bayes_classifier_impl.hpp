@@ -146,9 +146,11 @@ void NaiveBayesClassifier<MatType>::Train(const VecType& point,
 
   arma::vec delta = point - means.col(label);
   means.col(label) += delta / probabilities[label];
-  variances.col(label) *= (probabilities[label] - 1) / probabilities[label];
-  variances.col(label) += (1 / probabilities[label]) *
-      (delta % (point - means.col(label)));
+  if (probabilities[label] > 2)
+    variances.col(label) *= (probabilities[label] - 2);
+  variances.col(label) += (delta % (point - means.col(label)));
+  if (probabilities[label] > 1)
+    variances.col(label) /= probabilities[label] - 1;
 
   trainingPoints++;
   probabilities /= trainingPoints;
