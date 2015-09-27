@@ -15,13 +15,18 @@ namespace regression {
 
 template<template<typename> class OptimizerType>
 SoftmaxRegression<OptimizerType>::
-SoftmaxRegression() :
-  inputSize{0},
-  numClasses{0},
+SoftmaxRegression(const size_t inputSize,
+                  const size_t numClasses,
+                  const bool fitIntercept) :
+  inputSize{inputSize},
+  numClasses{numClasses},
   lambda{0.0001},
-  fitIntercept{false}
+  fitIntercept{fitIntercept}
 {
-
+  SoftmaxRegressionFunction regressor(arma::mat(), labels,
+                                      inputSize, numClasses,
+                                      lambda, fitIntercept);
+  parameters = regressor.GetInitialPoint();
 }
 
 template<template<typename> class OptimizerType>

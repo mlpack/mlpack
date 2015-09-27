@@ -63,11 +63,17 @@ class SoftmaxRegression
  public:
   /**
    * Initialize the SoftmaxRegression without performing training.
-   * inputSize, numClasses will be zero, lambda is 0.0001, fitIntercept is false.
+   * Default value of lambda is 0.0001.
    * Be sure to use Train() before calling Predict() or ComputeAccuracy(),
    * otherwise the results may be meaningless.
+   *
+   * @param inputSize Size of the input feature vector.
+   * @param numClasses Number of classes for classification.
+   * @param fitIntercept add intercept term or not.
    */
-  SoftmaxRegression();
+  SoftmaxRegression(const size_t inputSize,
+                    const size_t numClasses,
+                    const bool fitIntercept = false);
 
   /**
    * Construct the SoftmaxRegression class with the provided data and labels.
