@@ -4,12 +4,10 @@
  *
  * Test the SparseAutoencoder class.
  */
-
-#include <mlpack/methods/ann/sparse_autoencoder_function.hpp>
+#include <mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp>
 #include <mlpack/methods/ann/activation_functions/lazy_logistic_function.hpp>
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/sparse_autoencoder/sparse_autoencoder.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -21,9 +19,9 @@ using namespace arma;
 using FSigmoidLayer = ann::SigmoidLayer<ann::LazyLogisticFunction>;
 
 //sparse autoencoder function
-using SAEF = ann::SparseAutoencoderFunction<FSigmoidLayer, FSigmoidLayer>;
+using SAEF = nn::SparseAutoencoderFunction<FSigmoidLayer, FSigmoidLayer>;
 //sparse autoencoder function greedy
-using SAEFG = ann::SparseAutoencoderFunction<FSigmoidLayer, FSigmoidLayer, std::true_type>;
+using SAEFG = nn::SparseAutoencoderFunction<FSigmoidLayer, FSigmoidLayer, std::true_type>;
 
 BOOST_AUTO_TEST_SUITE(SparseAutoencoderTest2);
 
