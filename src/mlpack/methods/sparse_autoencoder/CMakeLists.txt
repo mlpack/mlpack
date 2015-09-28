@@ -4,7 +4,7 @@ set(SOURCES
   sparse_autoencoder.hpp
   sparse_autoencoder_impl.hpp
   sparse_autoencoder_function.hpp
-  sparse_autoencoder_function.cpp
+  sparse_autoencoder_function_impl.hpp
 )
 
 # Add directory name to sources.
