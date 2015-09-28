@@ -145,7 +145,7 @@ int main(int argc, char* argv[])
     if (!computeModel)
     {
       Timer::Start("load_model");
-      lr = LinearRegression(modelName);
+      //lr = LinearRegression(modelName);
       Timer::Stop("load_model");
     }
 

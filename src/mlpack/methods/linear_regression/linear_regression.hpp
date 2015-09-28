@@ -25,23 +25,16 @@ class LinearRegression
    * Creates the model.
    *
    * @param predictors X, matrix of data points to create B with.
-   * @param responses y, the measured data for each point in X
-   * @param lambda regularization constant
-   * @param intercept include intercept?
-   * @param weights observation weights
+   * @param responses y, the measured data for each point in X.
+   * @param lambda Regularization constant for ridge regression.
+   * @param intercept Whether or not to include an intercept term.
+   * @param weights Observation weights (for boosting).
    */
   LinearRegression(const arma::mat& predictors,
                    const arma::vec& responses,
                    const double lambda = 0,
                    const bool intercept = true,
                    const arma::vec& weights = arma::vec());
-
-  /**
-   * Initialize the model from a file.
-   *
-   * @param filename the name of the file to load the model from.
-   */
-  LinearRegression(const std::string& filename);
 
   /**
    * Copy constructor.
@@ -51,9 +44,28 @@ class LinearRegression
   LinearRegression(const LinearRegression& linearRegression);
 
   /**
-   * Empty constructor.
+   * Empty constructor.  This gives a non-working model, so make sure Train() is
+   * called (or make sure the model parameters are set) before calling
+   * Predict()!
    */
-  LinearRegression() { }
+  LinearRegression() : lambda(0.0), intercept(true) { }
+
+  /**
+   * Train the LinearRegression model on the given data.  Careful!  This will
+   * completely ignore and overwrite the existing model.  This particular
+   * implementation does not have an incremental training algorithm.  To set the
+   * regularization parameter lambda, call Lambda() or set a different value in
+   * the constructor.
+   *
+   * @param predictors X, the matrix of data points to train the model on.
+   * @param responses y, the vector of responses to each data point.
+   * @param intercept Whether or not to fit an intercept term.
+   * @param weights Observation weights (for boosting).
+   */
+  void Train(const arma::mat& predictors,
+             const arma::vec& responses,
+             const bool intercept = true,
+             const arma::vec& weights = arma::vec());
 
   /**
    * Calculate y_i for each data point in points.
@@ -92,6 +104,9 @@ class LinearRegression
   double Lambda() const { return lambda; }
   //! Modify the Tikhonov regularization parameter for ridge regression.
   double& Lambda() { return lambda; }
+
+  //! Return whether or not an intercept term is used in the model.
+  bool Intercept() const { return intercept; }
 
   /**
    * Serialize the model.
