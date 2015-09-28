@@ -353,8 +353,17 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTrainTest)
     labels[i] = 0.0;
   for (size_t i = 500; i < 1000; ++i)
     labels[i] = 1.0;
-  SoftmaxRegression<> sr(dataset, labels, dataset.n_rows, 2);
+
+
+  // This should be the same as the default parameters given by
+  // SoftmaxRegression.
+  SoftmaxRegressionFunction srf(dataset, labels, dataset.n_rows, 2, 0.0001,
+      false);
+  L_BFGS<SoftmaxRegressionFunction> lbfgs(srf);
+  SoftmaxRegression<> sr(lbfgs);
+
   SoftmaxRegression<> sr2(dataset.n_rows, 2);
+  sr2.Parameters() = srf.GetInitialPoint(); // Start from the same place.
   sr2.Train(dataset, labels, 2);
 
   // Ensure that the parameters are the same.
@@ -362,10 +371,10 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTrainTest)
   BOOST_REQUIRE_EQUAL(sr.Parameters().n_cols, sr2.Parameters().n_cols);
   for (size_t i = 0; i < sr.Parameters().n_elem; ++i)
   {
-    if (std::abs(sr.Parameters()[i]) < 1e-5)
-      BOOST_REQUIRE_SMALL(sr2.Parameters()[i], 1e-5);
+    if (std::abs(sr.Parameters()[i]) < 1e-4)
+      BOOST_REQUIRE_SMALL(sr2.Parameters()[i], 1e-4);
     else
-      BOOST_REQUIRE_CLOSE(sr.Parameters()[i], sr2.Parameters()[i], 1e-5);
+      BOOST_REQUIRE_CLOSE(sr.Parameters()[i], sr2.Parameters()[i], 1e-4);
   }
 }
 
@@ -381,22 +390,22 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionOptimizerTrainTest)
 
   SoftmaxRegressionFunction srf(dataset, labels, dataset.n_rows, 2, 0.01, true);
   L_BFGS<SoftmaxRegressionFunction> lbfgs(srf);
-
   SoftmaxRegression<> sr(lbfgs);
-  SoftmaxRegression<> sr2(dataset.n_rows, 2);
-  sr2.Train(lbfgs);
+
+  SoftmaxRegression<> sr2(dataset.n_rows, 2, true);
+  L_BFGS<SoftmaxRegressionFunction> lbfgs2(srf);
+  sr2.Train(lbfgs2);
 
   // Ensure that the parameters are the same.
   BOOST_REQUIRE_EQUAL(sr.Parameters().n_rows, sr2.Parameters().n_rows);
   BOOST_REQUIRE_EQUAL(sr.Parameters().n_cols, sr2.Parameters().n_cols);
   for (size_t i = 0; i < sr.Parameters().n_elem; ++i)
   {
-    if (std::abs(sr.Parameters()[i]) < 1e-5)
-      BOOST_REQUIRE_SMALL(sr2.Parameters()[i], 1e-5);
+    if (std::abs(sr.Parameters()[i]) < 0.01)
+      BOOST_REQUIRE_SMALL(sr2.Parameters()[i], 0.01);
     else
-      BOOST_REQUIRE_CLOSE(sr.Parameters()[i], sr2.Parameters()[i], 1e-5);
+      BOOST_REQUIRE_CLOSE(sr.Parameters()[i], sr2.Parameters()[i], 0.01);
   }
 }
-
 
 BOOST_AUTO_TEST_SUITE_END();
