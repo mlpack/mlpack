@@ -23,7 +23,7 @@ SoftmaxRegression(const size_t inputSize,
   lambda{0.0001},
   fitIntercept{fitIntercept}
 {
-  SoftmaxRegressionFunction regressor(arma::mat(), labels,
+  SoftmaxRegressionFunction regressor(arma::mat(), 1,
                                       inputSize, numClasses,
                                       lambda, fitIntercept);
   parameters = regressor.GetInitialPoint();
