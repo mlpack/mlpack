@@ -80,25 +80,41 @@ class SoftmaxRegressionFunction
   void Gradient(const arma::mat& parameters, arma::mat& gradient) const;
 
   //! Return the initial point for the optimization.
-  const arma::mat& GetInitialPoint() const { return initialPoint; }
+  const arma::mat& GetInitialPoint() const {
+    return initialPoint;
+  }
 
   //! Sets the size of the input vector.
-  size_t& InputSize() { return inputSize; }
+  size_t& InputSize() {
+    return inputSize;
+  }
   //! Gets the size of the input vector.
-  size_t InputSize() const { return inputSize; }
+  size_t InputSize() const {
+    return inputSize;
+  }
 
   //! Sets the number of classes.
-  size_t& NumClasses() { return numClasses; }
+  size_t& NumClasses() {
+    return numClasses;
+  }
   //! Gets the number of classes.
-  size_t NumClasses() const { return numClasses; }
+  size_t NumClasses() const {
+    return numClasses;
+  }
 
   //! Sets the regularization parameter.
-  double& Lambda() { return lambda; }
+  double& Lambda() {
+    return lambda;
+  }
   //! Gets the regularization parameter.
-  double Lambda() const { return lambda; }
+  double Lambda() const {
+    return lambda;
+  }
 
   //! Gets the intercept flag.
-  bool FitIntercept() const { return fitIntercept; }
+  bool FitIntercept() const {
+    return fitIntercept;
+  }
 
  private:
   //! Training data matrix.
