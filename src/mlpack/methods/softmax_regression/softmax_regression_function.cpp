@@ -15,11 +15,11 @@ SoftmaxRegressionFunction::SoftmaxRegressionFunction(const arma::mat& data,
                                                      const size_t numClasses,
                                                      const double lambda,
                                                      const bool fitIntercept) :
-    data(data),
-    inputSize(inputSize),
-    numClasses(numClasses),
-    lambda(lambda),
-    fitIntercept(fitIntercept)
+  data(data),
+  inputSize(inputSize),
+  numClasses(numClasses),
+  lambda(lambda),
+  fitIntercept(fitIntercept)
 {
   // Intialize the parameters to suitable values.
   initialPoint = InitializeWeights();
@@ -87,7 +87,7 @@ void SoftmaxRegressionFunction::GetGroundTruthMatrix(const arma::vec& labels,
  * it should consider the parameters.cols(0) intercept term.
  */
 void SoftmaxRegressionFunction::GetProbabilitiesMatrix(
-    const arma::mat& parameters, arma::mat& probabilities) const
+  const arma::mat& parameters, arma::mat& probabilities) const
 {
   arma::mat hypothesis;
 
@@ -100,7 +100,7 @@ void SoftmaxRegressionFunction::GetProbabilitiesMatrix(
     // Since the cost of join maybe high due to the copy of original data,
     // split the hypothesis computation to two components.
     hypothesis = arma::exp(arma::repmat(parameters.col(0), 1, data.n_cols) +
-        parameters.cols(1, parameters.n_cols - 1) * data);
+                           parameters.cols(1, parameters.n_cols - 1) * data);
   }
   else
   {
@@ -139,7 +139,7 @@ double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters) const
   double logLikelihood, weightDecay, cost;
 
   logLikelihood = arma::accu(groundTruth % arma::log(probabilities)) /
-      data.n_cols;
+                  data.n_cols;
   weightDecay = 0.5 * lambda * arma::accu(parameters % parameters);
 
   // The cost is the sum of the negative log likelihood and the regularization
@@ -172,15 +172,15 @@ void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
     // the cost of building matrix [1; data].
     arma::mat inner = probabilities - groundTruth;
     gradient.col(0) =
-        inner * arma::ones<arma::mat>(data.n_cols, 1) / data.n_cols +
-        lambda * parameters.col(0);
+      inner * arma::ones<arma::mat>(data.n_cols, 1) / data.n_cols +
+      lambda * parameters.col(0);
     gradient.cols(1, parameters.n_cols - 1) =
-        inner * data.t() / data.n_cols +
-        lambda * parameters.cols(1, parameters.n_cols - 1);
+      inner * data.t() / data.n_cols +
+      lambda * parameters.cols(1, parameters.n_cols - 1);
   }
   else
   {
     gradient = (probabilities - groundTruth) * data.t() / data.n_cols +
-        lambda * parameters;
+               lambda * parameters;
   }
 }
