@@ -57,10 +57,34 @@ namespace regression {
 
 template<
   template<typename> class OptimizerType = mlpack::optimization::L_BFGS
->
+  >
 class SoftmaxRegression
 {
  public:
+  /**
+   * Initialize the SoftmaxRegression without performing training.
+   * Default value of lambda is 0.0001.
+   * Be sure to use Train() before calling Predict() or ComputeAccuracy(),
+   * otherwise the results may be meaningless.
+   *
+   * @param inputSize Size of the input feature vector.
+   * @param numClasses Number of classes for classification.
+   * @param fitIntercept add intercept term or not.
+   */
+  SoftmaxRegression(const size_t inputSize,
+                    const size_t numClasses,
+                    const bool fitIntercept = false);
+
+  /**
+   * Construct the SoftmaxRegression class with the provided data and labels.
+   * This will train the model.
+   *
+   * @param fileName name of the files saving the model contents
+   * @param name name of the structure to be save
+   * @exception If the file cannot be load, the exception will thrown
+   */
+  SoftmaxRegression(const std::string &fileName,
+                    const std::string& name);
 
   /**
    * Construct the SoftmaxRegression class with the provided data and labels.
@@ -68,7 +92,7 @@ class SoftmaxRegression
    * passed, which controls the amount of L2-regularization in the objective
    * function. By default, the model takes a small value.
    *
-   * @param data Input training features.
+   * @param data Input training features. Each column associate with one sample
    * @param labels Labels associated with the feature data.
    * @param inputSize Size of the input feature vector.
    * @param numClasses Number of classes for classification.
@@ -113,23 +137,84 @@ class SoftmaxRegression
    */
   double ComputeAccuracy(const arma::mat& testData, const arma::vec& labels);
 
+  /**
+   * Train the softmax regression model with the given optimizer.
+   * The optimizer should hold an instantiated
+   * SoftmaxRegressionFunction object for the function to operate upon. This
+   * option should be preferred when the optimizer options are to be changed.
+   * @param optimizer Instantiated optimizer with instantiated error function.
+   * @return Objective value of the final point.
+   */
+  double Train(OptimizerType<SoftmaxRegressionFunction>& optimizer);
+
+  /**
+   * Train the softmax regression with the given training data.
+   * @param data Input data with each column as one example.
+   * @param labels Labels associated with the feature data.
+   * @param numClasses Number of classes for classification.
+   * @return Objective value of the final point.
+   */
+  double Train(const arma::mat &data, const arma::vec& labels,
+               const size_t numClasses);
+
   //! Sets the size of the input vector.
-  size_t& InputSize() { return inputSize; }
+  size_t& InputSize() {
+    return inputSize;
+  }
   //! Gets the size of the input vector.
-  size_t InputSize() const { return inputSize; }
+  size_t InputSize() const {
+    return inputSize;
+  }
 
   //! Sets the number of classes.
-  size_t& NumClasses() { return numClasses; }
+  size_t& NumClasses() {
+    return numClasses;
+  }
   //! Gets the number of classes.
-  size_t NumClasses() const { return numClasses; }
+  size_t NumClasses() const {
+    return numClasses;
+  }
 
   //! Sets the regularization parameter.
-  double& Lambda() { return lambda; }
+  double& Lambda() {
+    return lambda;
+  }
   //! Gets the regularization parameter.
-  double Lambda() const { return lambda; }
+  double Lambda() const {
+    return lambda;
+  }
 
   //! Gets the intercept term flag.  We can't change this after training.
-  bool FitIntercept() const { return fitIntercept; }
+  bool FitIntercept() const {
+    return fitIntercept;
+  }
+
+  //! get the training parameters
+  arma::mat& Parameters()
+  {
+    return parameters;
+  }
+
+  //! get the training parameters
+  const arma::mat& Parameters() const
+  {
+    return parameters;
+  }
+
+  /**
+   * Serialize the SparseAutoencoder
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    using mlpack::data::CreateNVP;
+
+    ar & CreateNVP(parameters, "parameters");
+    ar & CreateNVP(inputSize, "inputSize");
+    ar & CreateNVP(numClasses, "numClasses");
+    ar & CreateNVP(lambda, "lambda");
+    ar & CreateNVP(fitIntercept, "fitIntercept");
+  }
 
  private:
   //! Parameters after optimization.

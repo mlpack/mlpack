@@ -14,47 +14,59 @@ namespace mlpack {
 namespace regression {
 
 template<template<typename> class OptimizerType>
+SoftmaxRegression<OptimizerType>::
+SoftmaxRegression(const size_t inputSize,
+                  const size_t numClasses,
+                  const bool fitIntercept) :
+  inputSize{inputSize},
+  numClasses{numClasses},
+  lambda{0.0001},
+  fitIntercept{fitIntercept}
+{
+  SoftmaxRegressionFunction regressor(arma::mat(), 1,
+                                      inputSize, numClasses,
+                                      lambda, fitIntercept);
+  parameters = regressor.GetInitialPoint();
+}
+
+template<template<typename> class OptimizerType>
+SoftmaxRegression<OptimizerType>::
+SoftmaxRegression(const std::string &fileName,
+                  const std::string& name)
+{
+  data::Load(fileName, name, *this, true);
+}
+
+template<template<typename> class OptimizerType>
 SoftmaxRegression<OptimizerType>::SoftmaxRegression(const arma::mat& data,
                                                     const arma::vec& labels,
                                                     const size_t inputSize,
                                                     const size_t numClasses,
                                                     const double lambda,
                                                     const bool fitIntercept) :
-    inputSize(inputSize),
-    numClasses(numClasses),
-    lambda(lambda),
-    fitIntercept(fitIntercept)
+  inputSize{inputSize},
+  numClasses{numClasses},
+  lambda{lambda},
+  fitIntercept{fitIntercept}
 {
   SoftmaxRegressionFunction regressor(data, labels, inputSize, numClasses,
                                       lambda, fitIntercept);
   OptimizerType<SoftmaxRegressionFunction> optimizer(regressor);
 
   parameters = regressor.GetInitialPoint();
-
-  // Train the model.
-  Timer::Start("softmax_regression_optimization");
-  const double out = optimizer.Optimize(parameters);
-  Timer::Stop("softmax_regression_optimization");
-
-  Log::Info << "SoftmaxRegression::SoftmaxRegression(): final objective of "
-      << "trained model is " << out << "." << std::endl;
+  Train(optimizer);
 }
 
 template<template<typename> class OptimizerType>
 SoftmaxRegression<OptimizerType>::SoftmaxRegression(
-    OptimizerType<SoftmaxRegressionFunction>& optimizer) :
-    parameters(optimizer.Function().GetInitialPoint()),
-    inputSize(optimizer.Function().InputSize()),
-    numClasses(optimizer.Function().NumClasses()),
-    lambda(optimizer.Function().Lambda())
+  OptimizerType<SoftmaxRegressionFunction>& optimizer) :
+  parameters(optimizer.Function().GetInitialPoint()),
+  inputSize{optimizer.Function().InputSize()},
+  numClasses{optimizer.Function().NumClasses()},
+  lambda{optimizer.Function().Lambda()},
+  fitIntercept{optimizer.Function().FitIntercept()}
 {
-  // Train the model.
-  Timer::Start("softmax_regression_optimization");
-  const double out = optimizer.Optimize(parameters);
-  Timer::Stop("softmax_regression_optimization");
-
-  Log::Info << "SoftmaxRegression::SoftmaxRegression(): final objective of "
-      << "trained model is " << out << "." << std::endl;
+  Train(optimizer);
 }
 
 template<template<typename> class OptimizerType>
@@ -72,8 +84,8 @@ void SoftmaxRegression<OptimizerType>::Predict(const arma::mat& testData,
     // Since the cost of join maybe high due to the copy of original data,
     // split the hypothesis computation to two components.
     hypothesis = arma::exp(
-        arma::repmat(parameters.col(0), 1, testData.n_cols) +
-        parameters.cols(1, parameters.n_cols - 1) * testData);
+      arma::repmat(parameters.col(0), 1, testData.n_cols) +
+      parameters.cols(1, parameters.n_cols - 1) * testData);
   }
   else
   {
@@ -97,7 +109,7 @@ void SoftmaxRegression<OptimizerType>::Predict(const arma::mat& testData,
       if(probabilities(j, i) > maxProbability)
       {
         maxProbability = probabilities(j, i);
-        predictions(i) = j;
+        predictions(i) = static_cast<double>(j);
       }
     }
 
@@ -108,8 +120,8 @@ void SoftmaxRegression<OptimizerType>::Predict(const arma::mat& testData,
 
 template<template<typename> class OptimizerType>
 double SoftmaxRegression<OptimizerType>::ComputeAccuracy(
-    const arma::mat& testData,
-    const arma::vec& labels)
+  const arma::mat& testData,
+  const arma::vec& labels)
 {
   arma::vec predictions;
 
@@ -124,6 +136,33 @@ double SoftmaxRegression<OptimizerType>::ComputeAccuracy(
 
   // Return percentage accuracy.
   return (count * 100.0) / predictions.n_elem;
+}
+
+template<template<typename> class OptimizerType>
+double SoftmaxRegression<OptimizerType>::
+Train(OptimizerType<SoftmaxRegressionFunction>& optimizer)
+{
+  // Train the model.
+  Timer::Start("softmax_regression_optimization");
+  const double out = optimizer.Optimize(parameters);
+  Timer::Stop("softmax_regression_optimization");
+
+  Log::Info << "SoftmaxRegression::SoftmaxRegression(): final objective of "
+            << "trained model is " << out << "." << std::endl;
+
+  return out;
+}
+
+template<template<typename> class OptimizerType>
+double SoftmaxRegression<OptimizerType>::
+Train(const arma::mat &data, const arma::vec& labels,
+      const size_t numClasses)
+{
+  SoftmaxRegressionFunction regressor(data, labels, data.n_rows, numClasses,
+                                      lambda, fitIntercept);
+  OptimizerType<SoftmaxRegressionFunction> optimizer(regressor);
+
+  return Train(optimizer);
 }
 
 }; // namespace regression
