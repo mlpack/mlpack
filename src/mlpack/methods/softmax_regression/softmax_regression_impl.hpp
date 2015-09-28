@@ -18,23 +18,15 @@ SoftmaxRegression<OptimizerType>::
 SoftmaxRegression(const size_t inputSize,
                   const size_t numClasses,
                   const bool fitIntercept) :
-  inputSize{inputSize},
-  numClasses{numClasses},
-  lambda{0.0001},
-  fitIntercept{fitIntercept}
+    inputSize(inputSize),
+    numClasses(numClasses),
+    lambda(0.0001),
+    fitIntercept(fitIntercept)
 {
   SoftmaxRegressionFunction regressor(arma::mat(), 1,
                                       inputSize, numClasses,
                                       lambda, fitIntercept);
   parameters = regressor.GetInitialPoint();
-}
-
-template<template<typename> class OptimizerType>
-SoftmaxRegression<OptimizerType>::
-SoftmaxRegression(const std::string &fileName,
-                  const std::string& name)
-{
-  data::Load(fileName, name, *this, true);
 }
 
 template<template<typename> class OptimizerType>
@@ -44,10 +36,10 @@ SoftmaxRegression<OptimizerType>::SoftmaxRegression(const arma::mat& data,
                                                     const size_t numClasses,
                                                     const double lambda,
                                                     const bool fitIntercept) :
-  inputSize{inputSize},
-  numClasses{numClasses},
-  lambda{lambda},
-  fitIntercept{fitIntercept}
+    inputSize(inputSize),
+    numClasses(numClasses),
+    lambda(lambda),
+    fitIntercept(fitIntercept)
 {
   SoftmaxRegressionFunction regressor(data, labels, inputSize, numClasses,
                                       lambda, fitIntercept);
@@ -59,12 +51,12 @@ SoftmaxRegression<OptimizerType>::SoftmaxRegression(const arma::mat& data,
 
 template<template<typename> class OptimizerType>
 SoftmaxRegression<OptimizerType>::SoftmaxRegression(
-  OptimizerType<SoftmaxRegressionFunction>& optimizer) :
-  parameters(optimizer.Function().GetInitialPoint()),
-  inputSize{optimizer.Function().InputSize()},
-  numClasses{optimizer.Function().NumClasses()},
-  lambda{optimizer.Function().Lambda()},
-  fitIntercept{optimizer.Function().FitIntercept()}
+    OptimizerType<SoftmaxRegressionFunction>& optimizer) :
+    parameters(optimizer.Function().GetInitialPoint()),
+    inputSize(optimizer.Function().InputSize()),
+    numClasses(optimizer.Function().NumClasses()),
+    lambda(optimizer.Function().Lambda()),
+    fitIntercept(optimizer.Function().FitIntercept())
 {
   Train(optimizer);
 }
@@ -120,8 +112,8 @@ void SoftmaxRegression<OptimizerType>::Predict(const arma::mat& testData,
 
 template<template<typename> class OptimizerType>
 double SoftmaxRegression<OptimizerType>::ComputeAccuracy(
-  const arma::mat& testData,
-  const arma::vec& labels)
+    const arma::mat& testData,
+    const arma::vec& labels)
 {
   arma::vec predictions;
 
@@ -130,8 +122,8 @@ double SoftmaxRegression<OptimizerType>::ComputeAccuracy(
 
   // Increment count for every correctly predicted label.
   size_t count = 0;
-  for(size_t i = 0; i < predictions.n_elem; i++)
-    if(predictions(i) == labels(i))
+  for (size_t i = 0; i < predictions.n_elem; i++)
+    if (predictions(i) == labels(i))
       count++;
 
   // Return percentage accuracy.
@@ -139,8 +131,8 @@ double SoftmaxRegression<OptimizerType>::ComputeAccuracy(
 }
 
 template<template<typename> class OptimizerType>
-double SoftmaxRegression<OptimizerType>::
-Train(OptimizerType<SoftmaxRegressionFunction>& optimizer)
+double SoftmaxRegression<OptimizerType>::Train(
+    OptimizerType<SoftmaxRegressionFunction>& optimizer)
 {
   // Train the model.
   Timer::Start("softmax_regression_optimization");
@@ -154,9 +146,9 @@ Train(OptimizerType<SoftmaxRegressionFunction>& optimizer)
 }
 
 template<template<typename> class OptimizerType>
-double SoftmaxRegression<OptimizerType>::
-Train(const arma::mat &data, const arma::vec& labels,
-      const size_t numClasses)
+double SoftmaxRegression<OptimizerType>::Train(const arma::mat& data,
+                                               const arma::vec& labels,
+                                               const size_t numClasses)
 {
   SoftmaxRegressionFunction regressor(data, labels, data.n_rows, numClasses,
                                       lambda, fitIntercept);
@@ -165,7 +157,7 @@ Train(const arma::mat &data, const arma::vec& labels,
   return Train(optimizer);
 }
 
-}; // namespace regression
-}; // namespace mlpack
+} // namespace regression
+} // namespace mlpack
 
 #endif

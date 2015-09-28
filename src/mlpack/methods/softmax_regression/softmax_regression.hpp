@@ -54,18 +54,16 @@ namespace regression {
  * regressor2.Predict(test_data, predictions2);
  * @endcode
  */
-
 template<
   template<typename> class OptimizerType = mlpack::optimization::L_BFGS
-  >
+>
 class SoftmaxRegression
 {
  public:
   /**
-   * Initialize the SoftmaxRegression without performing training.
-   * Default value of lambda is 0.0001.
-   * Be sure to use Train() before calling Predict() or ComputeAccuracy(),
-   * otherwise the results may be meaningless.
+   * Initialize the SoftmaxRegression without performing training.  Default
+   * value of lambda is 0.0001.  Be sure to use Train() before calling Predict()
+   * or ComputeAccuracy(), otherwise the results may be meaningless.
    *
    * @param inputSize Size of the input feature vector.
    * @param numClasses Number of classes for classification.
@@ -74,17 +72,6 @@ class SoftmaxRegression
   SoftmaxRegression(const size_t inputSize,
                     const size_t numClasses,
                     const bool fitIntercept = false);
-
-  /**
-   * Construct the SoftmaxRegression class with the provided data and labels.
-   * This will train the model.
-   *
-   * @param fileName name of the files saving the model contents
-   * @param name name of the structure to be save
-   * @exception If the file cannot be load, the exception will thrown
-   */
-  SoftmaxRegression(const std::string &fileName,
-                    const std::string& name);
 
   /**
    * Construct the SoftmaxRegression class with the provided data and labels.
@@ -158,51 +145,30 @@ class SoftmaxRegression
                const size_t numClasses);
 
   //! Sets the size of the input vector.
-  size_t& InputSize() {
-    return inputSize;
-  }
+  size_t& InputSize() { return inputSize; }
   //! Gets the size of the input vector.
-  size_t InputSize() const {
-    return inputSize;
-  }
+  size_t InputSize() const { return inputSize; }
 
   //! Sets the number of classes.
-  size_t& NumClasses() {
-    return numClasses;
-  }
+  size_t& NumClasses() { return numClasses; }
   //! Gets the number of classes.
-  size_t NumClasses() const {
-    return numClasses;
-  }
+  size_t NumClasses() const { return numClasses; }
 
   //! Sets the regularization parameter.
-  double& Lambda() {
-    return lambda;
-  }
+  double& Lambda() { return lambda; }
   //! Gets the regularization parameter.
-  double Lambda() const {
-    return lambda;
-  }
+  double Lambda() const { return lambda; }
 
   //! Gets the intercept term flag.  We can't change this after training.
-  bool FitIntercept() const {
-    return fitIntercept;
-  }
+  bool FitIntercept() const { return fitIntercept; }
 
-  //! get the training parameters
-  arma::mat& Parameters()
-  {
-    return parameters;
-  }
-
-  //! get the training parameters
-  const arma::mat& Parameters() const
-  {
-    return parameters;
-  }
+  //! Get the model parameters.
+  arma::mat& Parameters() { return parameters; }
+  //! Get the model parameters.
+  const arma::mat& Parameters() const { return parameters; }
 
   /**
-   * Serialize the SparseAutoencoder
+   * Serialize the SoftmaxRegression model. 
    */
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
@@ -229,8 +195,8 @@ class SoftmaxRegression
   bool fitIntercept;
 };
 
-}; // namespace regression
-}; // namespace mlpack
+} // namespace regression
+} // namespace mlpack
 
 // Include implementation.
 #include "softmax_regression_impl.hpp"

@@ -15,11 +15,11 @@ SoftmaxRegressionFunction::SoftmaxRegressionFunction(const arma::mat& data,
                                                      const size_t numClasses,
                                                      const double lambda,
                                                      const bool fitIntercept) :
-  data(data),
-  inputSize(inputSize),
-  numClasses(numClasses),
-  lambda(lambda),
-  fitIntercept(fitIntercept)
+    data(data),
+    inputSize(inputSize),
+    numClasses(numClasses),
+    lambda(lambda),
+    fitIntercept(fitIntercept)
 {
   // Intialize the parameters to suitable values.
   initialPoint = InitializeWeights();
@@ -87,7 +87,8 @@ void SoftmaxRegressionFunction::GetGroundTruthMatrix(const arma::vec& labels,
  * it should consider the parameters.cols(0) intercept term.
  */
 void SoftmaxRegressionFunction::GetProbabilitiesMatrix(
-  const arma::mat& parameters, arma::mat& probabilities) const
+    const arma::mat& parameters, 
+    arma::mat& probabilities) const
 {
   arma::mat hypothesis;
 
