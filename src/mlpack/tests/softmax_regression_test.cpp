@@ -13,6 +13,7 @@
 using namespace mlpack;
 using namespace mlpack::regression;
 using namespace mlpack::distribution;
+using namespace mlpack::optimization;
 
 BOOST_AUTO_TEST_SUITE(SoftmaxRegressionTest);
 
@@ -341,5 +342,61 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionMultipleClasses)
   const double testAcc = sr.ComputeAccuracy(data, labels);
   BOOST_REQUIRE_CLOSE(testAcc, 100.0, 2.0);
 }
+
+BOOST_AUTO_TEST_CASE(SoftmaxRegressionTrainTest)
+{
+  // Make sure a SoftmaxRegression object trained with Train() operates the same
+  // as a SoftmaxRegression object trained in the constructor.
+  arma::mat dataset = arma::randu<arma::mat>(5, 1000);
+  arma::vec labels(1000);
+  for (size_t i = 0; i < 500; ++i)
+    labels[i] = 0.0;
+  for (size_t i = 500; i < 1000; ++i)
+    labels[i] = 1.0;
+  SoftmaxRegression<> sr(dataset, labels, dataset.n_rows, 2);
+  SoftmaxRegression<> sr2(dataset.n_rows, 2);
+  sr2.Train(dataset, labels, 2);
+
+  // Ensure that the parameters are the same.
+  BOOST_REQUIRE_EQUAL(sr.Parameters().n_rows, sr2.Parameters().n_rows);
+  BOOST_REQUIRE_EQUAL(sr.Parameters().n_cols, sr2.Parameters().n_cols);
+  for (size_t i = 0; i < sr.Parameters().n_elem; ++i)
+  {
+    if (std::abs(sr.Parameters()[i]) < 1e-5)
+      BOOST_REQUIRE_SMALL(sr2.Parameters()[i], 1e-5);
+    else
+      BOOST_REQUIRE_CLOSE(sr.Parameters()[i], sr2.Parameters()[i], 1e-5);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(SoftmaxRegressionOptimizerTrainTest)
+{
+  // The same as the previous test, just passing in an instantiated optimizer.
+  arma::mat dataset = arma::randu<arma::mat>(5, 1000);
+  arma::vec labels(1000);
+  for (size_t i = 0; i < 500; ++i)
+    labels[i] = 0.0;
+  for (size_t i = 500; i < 1000; ++i)
+    labels[i] = 1.0;
+
+  SoftmaxRegressionFunction srf(dataset, labels, dataset.n_rows, 2, 0.01, true);
+  L_BFGS<SoftmaxRegressionFunction> lbfgs(srf);
+
+  SoftmaxRegression<> sr(lbfgs);
+  SoftmaxRegression<> sr2(dataset.n_rows, 2);
+  sr2.Train(lbfgs);
+
+  // Ensure that the parameters are the same.
+  BOOST_REQUIRE_EQUAL(sr.Parameters().n_rows, sr2.Parameters().n_rows);
+  BOOST_REQUIRE_EQUAL(sr.Parameters().n_cols, sr2.Parameters().n_cols);
+  for (size_t i = 0; i < sr.Parameters().n_elem; ++i)
+  {
+    if (std::abs(sr.Parameters()[i]) < 1e-5)
+      BOOST_REQUIRE_SMALL(sr2.Parameters()[i], 1e-5);
+    else
+      BOOST_REQUIRE_CLOSE(sr.Parameters()[i], sr2.Parameters()[i], 1e-5);
+  }
+}
+
 
 BOOST_AUTO_TEST_SUITE_END();
