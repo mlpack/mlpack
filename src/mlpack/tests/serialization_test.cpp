@@ -805,13 +805,13 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTest)
   using regression::SoftmaxRegression;
 
   arma::mat dataset = arma::randu<arma::mat>(5, 1000);
-  arma::vec labels(1000);
+  arma::Row<size_t> labels(1000);
   for (size_t i = 0; i < 500; ++i)
-    labels[i] = 0.0;
+    labels[i] = 0;
   for (size_t i = 500; i < 1000; ++i)
-    labels[i] = 1.0;
+    labels[i] = 1;
 
-  SoftmaxRegression<> sr(dataset, labels, dataset.n_rows, 2);
+  SoftmaxRegression<> sr(dataset, labels, 2);
 
   SoftmaxRegression<> srXml(dataset.n_rows, 2);
   SoftmaxRegression<> srText(dataset.n_rows, 2);
