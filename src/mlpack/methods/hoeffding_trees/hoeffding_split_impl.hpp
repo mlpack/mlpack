@@ -35,7 +35,8 @@ HoeffdingSplit<
     if (datasetInfo.Type(i) == data::Datatype::categorical)
       categoricalSplits.push_back(
           CategoricalSplitType(datasetInfo.NumMappings(i), numClasses));
-    // else, numeric splits (not yet!)
+    else
+      numericSplits.push_back(NumericSplitType(numClasses));
   }
 }
 

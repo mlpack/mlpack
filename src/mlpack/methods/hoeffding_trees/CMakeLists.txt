@@ -22,3 +22,10 @@ endforeach()
 # Append sources (with directory name) to list of all MLPACK sources (used at
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+
+add_executable(streaming_decision_tree
+  streaming_decision_tree_main.cpp
+)
+target_link_libraries(streaming_decision_tree
+  mlpack
+)
