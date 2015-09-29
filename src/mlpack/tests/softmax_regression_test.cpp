@@ -29,12 +29,12 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionEvaluate)
   data.randu(inputSize, points);
 
   // Create random class labels.
-  arma::vec labels(points);
+  arma::Row<size_t> labels(points);
   for(size_t i = 0; i < points; i++)
     labels(i) = math::RandInt(0, numClasses);
 
   // Create a SoftmaxRegressionFunction. Regularization term ignored.
-  SoftmaxRegressionFunction srf(data, labels, inputSize, numClasses, 0);
+  SoftmaxRegressionFunction srf(data, labels, numClasses, 0);
 
   // Run a number of trials.
   for(size_t i = 0; i < trials; i++)
@@ -74,14 +74,14 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionRegularizationEvaluate)
   data.randu(inputSize, points);
 
   // Create random class labels.
-  arma::vec labels(points);
+  arma::Row<size_t> labels(points);
   for(size_t i = 0; i < points; i++)
     labels(i) = math::RandInt(0, numClasses);
 
   // 3 objects for comparing regularization costs.
-  SoftmaxRegressionFunction srfNoReg(data, labels, inputSize, numClasses, 0);
-  SoftmaxRegressionFunction srfSmallReg(data, labels, inputSize, numClasses, 1);
-  SoftmaxRegressionFunction srfBigReg(data, labels, inputSize, numClasses, 20);
+  SoftmaxRegressionFunction srfNoReg(data, labels, numClasses, 0);
+  SoftmaxRegressionFunction srfSmallReg(data, labels, numClasses, 1);
+  SoftmaxRegressionFunction srfBigReg(data, labels, numClasses, 20);
 
   // Run a number of trials.
   for (size_t i = 0; i < trials; i++)
@@ -115,14 +115,14 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionGradient)
   data.randu(inputSize, points);
 
   // Create random class labels.
-  arma::vec labels(points);
+  arma::Row<size_t> labels(points);
   for(size_t i = 0; i < points; i++)
     labels(i) = math::RandInt(0, numClasses);
 
   // 2 objects for 2 terms in the cost function. Each term contributes towards
   // the gradient and thus need to be checked independently.
-  SoftmaxRegressionFunction srf1(data, labels, inputSize, numClasses, 0);
-  SoftmaxRegressionFunction srf2(data, labels, inputSize, numClasses, 20);
+  SoftmaxRegressionFunction srf1(data, labels, numClasses, 0);
+  SoftmaxRegressionFunction srf2(data, labels, numClasses, 20);
 
   // Create a random set of parameters.
   arma::mat parameters;
@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
   GaussianDistribution g2(arma::vec("4.0 3.0 4.0"), arma::eye<arma::mat>(3, 3));
 
   arma::mat data(inputSize, points);
-  arma::vec labels(points);
+  arma::Row<size_t> labels(points);
 
   for (size_t i = 0; i < points/2; i++)
   {
@@ -193,7 +193,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
   }
 
   // Train softmax regression object.
-  SoftmaxRegression<> sr(data, labels, inputSize, numClasses, lambda);
+  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
 
   // Compare training accuracy to 100.
   const double acc = sr.ComputeAccuracy(data, labels);
@@ -224,20 +224,20 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFitIntercept)
   GaussianDistribution g2(arma::vec("9.0 9.0 9.0"), arma::eye<arma::mat>(3, 3));
 
   arma::mat data(3, 1000);
-  arma::vec responses(1000);
+  arma::Row<size_t> responses(1000);
   for (size_t i = 0; i < 500; ++i)
   {
     data.col(i) = g1.Random();
     responses[i] = 0;
   }
-  for (size_t i = 501; i < 1000; ++i)
+  for (size_t i = 500; i < 1000; ++i)
   {
     data.col(i) = g2.Random();
     responses[i] = 1;
   }
 
   // Now train a logistic regression object on it.
-  SoftmaxRegression<> lr(data, responses, 3, 2, 0.01, true);
+  SoftmaxRegression<> lr(data, responses, 2, 0.01, true);
 
   // Ensure that the error is close to zero.
   const double acc = lr.ComputeAccuracy(data, responses);
@@ -249,7 +249,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFitIntercept)
     data.col(i) = g1.Random();
     responses[i] = 0;
   }
-  for (size_t i = 501; i < 1000; ++i)
+  for (size_t i = 500; i < 1000; ++i)
   {
     data.col(i) = g2.Random();
     responses[i] = 1;
@@ -276,7 +276,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionMultipleClasses)
   GaussianDistribution g5(arma::vec("1.0 0.0 1.0 8.0 3.0"), identity);
 
   arma::mat data(inputSize, points);
-  arma::vec labels(points);
+  arma::Row<size_t> labels(points);
 
   for (size_t i = 0; i < points/5; i++)
   {
@@ -305,7 +305,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionMultipleClasses)
   }
 
   // Train softmax regression object.
-  SoftmaxRegression<> sr(data, labels, inputSize, numClasses, lambda);
+  SoftmaxRegression<> sr(data, labels, numClasses, lambda);
 
   // Compare training accuracy to 100.
   const double acc = sr.ComputeAccuracy(data, labels);
@@ -348,17 +348,16 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTrainTest)
   // Make sure a SoftmaxRegression object trained with Train() operates the same
   // as a SoftmaxRegression object trained in the constructor.
   arma::mat dataset = arma::randu<arma::mat>(5, 1000);
-  arma::vec labels(1000);
+  arma::Row<size_t> labels(1000);
   for (size_t i = 0; i < 500; ++i)
-    labels[i] = 0.0;
+    labels[i] = size_t(0.0);
   for (size_t i = 500; i < 1000; ++i)
-    labels[i] = 1.0;
+    labels[i] = size_t(1.0);
 
 
   // This should be the same as the default parameters given by
   // SoftmaxRegression.
-  SoftmaxRegressionFunction srf(dataset, labels, dataset.n_rows, 2, 0.0001,
-      false);
+  SoftmaxRegressionFunction srf(dataset, labels, 2, 0.0001, false);
   L_BFGS<SoftmaxRegressionFunction> lbfgs(srf);
   SoftmaxRegression<> sr(lbfgs);
 
@@ -382,13 +381,13 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionOptimizerTrainTest)
 {
   // The same as the previous test, just passing in an instantiated optimizer.
   arma::mat dataset = arma::randu<arma::mat>(5, 1000);
-  arma::vec labels(1000);
+  arma::Row<size_t> labels(1000);
   for (size_t i = 0; i < 500; ++i)
-    labels[i] = 0.0;
+    labels[i] = size_t(0.0);
   for (size_t i = 500; i < 1000; ++i)
-    labels[i] = 1.0;
+    labels[i] = size_t(1.0);
 
-  SoftmaxRegressionFunction srf(dataset, labels, dataset.n_rows, 2, 0.01, true);
+  SoftmaxRegressionFunction srf(dataset, labels, 2, 0.01, true);
   L_BFGS<SoftmaxRegressionFunction> lbfgs(srf);
   SoftmaxRegression<> sr(lbfgs);
 
@@ -406,6 +405,6 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionOptimizerTrainTest)
     else
       BOOST_REQUIRE_CLOSE(sr.Parameters()[i], sr2.Parameters()[i], 0.01);
   }
-}
+}//*/
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -87,8 +87,7 @@ class SoftmaxRegression
    * @param fitIntercept add intercept term or not.
    */
   SoftmaxRegression(const arma::mat& data,
-                    const arma::vec& labels,
-                    const size_t inputSize,
+                    const arma::Row<size_t>& labels,
                     const size_t numClasses,
                     const double lambda = 0.0001,
                     const bool fitIntercept = false);
@@ -122,7 +121,7 @@ class SoftmaxRegression
    * @param testData Matrix of data points using which predictions are made.
    * @param labels Vector of labels associated with the data.
    */
-  double ComputeAccuracy(const arma::mat& testData, const arma::vec& labels);
+  double ComputeAccuracy(const arma::mat& testData, const arma::Row<size_t>& labels);
 
   /**
    * Train the softmax regression model with the given optimizer.
@@ -141,13 +140,8 @@ class SoftmaxRegression
    * @param numClasses Number of classes for classification.
    * @return Objective value of the final point.
    */
-  double Train(const arma::mat &data, const arma::vec& labels,
-               const size_t numClasses);
-
-  //! Sets the size of the input vector.
-  size_t& InputSize() { return inputSize; }
-  //! Gets the size of the input vector.
-  size_t InputSize() const { return inputSize; }
+  double Train(const arma::mat &data, const arma::Row<size_t>& labels,
+               const size_t numClasses); 
 
   //! Sets the number of classes.
   size_t& NumClasses() { return numClasses; }
@@ -175,8 +169,7 @@ class SoftmaxRegression
   {
     using mlpack::data::CreateNVP;
 
-    ar & CreateNVP(parameters, "parameters");
-    ar & CreateNVP(inputSize, "inputSize");
+    ar & CreateNVP(parameters, "parameters");   
     ar & CreateNVP(numClasses, "numClasses");
     ar & CreateNVP(lambda, "lambda");
     ar & CreateNVP(fitIntercept, "fitIntercept");
@@ -184,9 +177,7 @@ class SoftmaxRegression
 
  private:
   //! Parameters after optimization.
-  arma::mat parameters;
-  //! Size of input feature vector.
-  size_t inputSize;
+  arma::mat parameters;  
   //! Number of classes.
   size_t numClasses;
   //! L2-regularization constant.

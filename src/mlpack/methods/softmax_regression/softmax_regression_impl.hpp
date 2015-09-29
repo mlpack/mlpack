@@ -17,33 +17,26 @@ template<template<typename> class OptimizerType>
 SoftmaxRegression<OptimizerType>::
 SoftmaxRegression(const size_t inputSize,
                   const size_t numClasses,
-                  const bool fitIntercept) :
-    inputSize(inputSize),
+                  const bool fitIntercept) :    
     numClasses(numClasses),
     lambda(0.0001),
     fitIntercept(fitIntercept)
-{
-  arma::mat tmp;
-  arma::vec tmplabels;
-  SoftmaxRegressionFunction regressor(tmp, tmplabels,
-                                      inputSize, numClasses,
-                                      lambda, fitIntercept);
-  parameters = regressor.GetInitialPoint();
+{  
+  parameters = SoftmaxRegressionFunction::InitializeWeights(inputSize, numClasses,
+                                                            fitIntercept);
 }
 
 template<template<typename> class OptimizerType>
 SoftmaxRegression<OptimizerType>::SoftmaxRegression(const arma::mat& data,
-                                                    const arma::vec& labels,
-                                                    const size_t inputSize,
+                                                    const arma::Row<size_t>& labels,
                                                     const size_t numClasses,
                                                     const double lambda,
-                                                    const bool fitIntercept) :
-    inputSize(inputSize),
+                                                    const bool fitIntercept) :    
     numClasses(numClasses),
     lambda(lambda),
     fitIntercept(fitIntercept)
 {
-  SoftmaxRegressionFunction regressor(data, labels, inputSize, numClasses,
+  SoftmaxRegressionFunction regressor(data, labels, numClasses,
                                       lambda, fitIntercept);
   OptimizerType<SoftmaxRegressionFunction> optimizer(regressor);
 
@@ -54,8 +47,7 @@ SoftmaxRegression<OptimizerType>::SoftmaxRegression(const arma::mat& data,
 template<template<typename> class OptimizerType>
 SoftmaxRegression<OptimizerType>::SoftmaxRegression(
     OptimizerType<SoftmaxRegressionFunction>& optimizer) :
-    parameters(optimizer.Function().GetInitialPoint()),
-    inputSize(optimizer.Function().InputSize()),
+    parameters(optimizer.Function().GetInitialPoint()),    
     numClasses(optimizer.Function().NumClasses()),
     lambda(optimizer.Function().Lambda()),
     fitIntercept(optimizer.Function().FitIntercept())
@@ -115,7 +107,7 @@ void SoftmaxRegression<OptimizerType>::Predict(const arma::mat& testData,
 template<template<typename> class OptimizerType>
 double SoftmaxRegression<OptimizerType>::ComputeAccuracy(
     const arma::mat& testData,
-    const arma::vec& labels)
+    const arma::Row<size_t>& labels)
 {
   arma::vec predictions;
 
@@ -149,10 +141,10 @@ double SoftmaxRegression<OptimizerType>::Train(
 
 template<template<typename> class OptimizerType>
 double SoftmaxRegression<OptimizerType>::Train(const arma::mat& data,
-                                               const arma::vec& labels,
+                                               const arma::Row<size_t>& labels,
                                                const size_t numClasses)
 {
-  SoftmaxRegressionFunction regressor(data, labels, data.n_rows, numClasses,
+  SoftmaxRegressionFunction regressor(data, labels, numClasses,
                                       lambda, fitIntercept);
   OptimizerType<SoftmaxRegressionFunction> optimizer(regressor);
 

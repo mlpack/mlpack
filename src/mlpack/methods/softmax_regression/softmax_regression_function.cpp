@@ -10,13 +10,11 @@ using namespace mlpack;
 using namespace mlpack::regression;
 
 SoftmaxRegressionFunction::SoftmaxRegressionFunction(const arma::mat& data,
-                                                     const arma::vec& labels,
-                                                     const size_t inputSize,
+                                                     const arma::Row<size_t>& labels,
                                                      const size_t numClasses,
                                                      const double lambda,
                                                      const bool fitIntercept) :
-    data(data),
-    inputSize(inputSize),
+    data(data),    
     numClasses(numClasses),
     lambda(lambda),
     fitIntercept(fitIntercept)
@@ -34,18 +32,26 @@ SoftmaxRegressionFunction::SoftmaxRegressionFunction(const arma::mat& data,
  * lead to each class output being the same.
  */
 const arma::mat SoftmaxRegressionFunction::InitializeWeights()
-{
-  // Initialize values to 0.005 * r. 'r' is a matrix of random values taken from
-  // a Gaussian distribution with mean zero and variance one.
-  // If the fitIntercept flag is true, parameters.col(0) is the intercept.
-  arma::mat parameters;
-  if (fitIntercept)
-    parameters.randn(numClasses, inputSize + 1);
-  else
-    parameters.randn(numClasses, inputSize);
-  parameters = 0.005 * parameters;
+{    
+  return InitializeWeights(data.n_rows, numClasses, fitIntercept);
+}
 
-  return parameters;
+const arma::mat SoftmaxRegressionFunction::
+InitializeWeights(const size_t featureSize,
+                  const size_t numClasses,
+                  const bool fitIntercept)
+{
+    // Initialize values to 0.005 * r. 'r' is a matrix of random values taken from
+    // a Gaussian distribution with mean zero and variance one.
+    // If the fitIntercept flag is true, parameters.col(0) is the intercept.
+    arma::mat parameters;
+    if (fitIntercept)
+      parameters.randn(numClasses, featureSize + 1);
+    else
+      parameters.randn(numClasses, featureSize);
+    parameters = 0.005 * parameters;
+
+    return parameters;
 }
 
 /**
@@ -53,7 +59,7 @@ const arma::mat SoftmaxRegressionFunction::InitializeWeights()
  * labels. The output is in the form of a matrix, which leads to simpler
  * calculations in the Evaluate() and Gradient() methods.
  */
-void SoftmaxRegressionFunction::GetGroundTruthMatrix(const arma::vec& labels,
+void SoftmaxRegressionFunction::GetGroundTruthMatrix(const arma::Row<size_t>& labels,
                                                      arma::sp_mat& groundTruth)
 {
   // Calculate the ground truth matrix according to the labels passed. The
@@ -69,7 +75,7 @@ void SoftmaxRegressionFunction::GetGroundTruthMatrix(const arma::vec& labels,
   // number of cumulative entries made uptil that column.
   for(size_t i = 0; i < labels.n_elem; i++)
   {
-    rowPointers(i) = labels(i, 0);
+    rowPointers(i) = labels(i);
     colPointers(i+1) = i + 1;
   }
 
