@@ -505,7 +505,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitBimodalTest)
 
   // Now the binning should be complete, and so the impurity should be
   // (0.5 * (1 - 0.5)) * 2 = 0.50 (it will be 0 in the two created children).
-  BOOST_REQUIRE_CLOSE(split.EvaluateFitnessFunction(), 0.50, 0.01);
+  BOOST_REQUIRE_CLOSE(split.EvaluateFitnessFunction(), 0.50, 0.03);
 
   // Make sure that if we do create children, that the correct number of
   // children is created, and that the bins end up in the right place.
