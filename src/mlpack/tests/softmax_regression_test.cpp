@@ -394,6 +394,7 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionOptimizerTrainTest)
 
   SoftmaxRegression<> sr2(dataset.n_rows, 2, true);
   L_BFGS<SoftmaxRegressionFunction> lbfgs2(srf);
+  sr2.Parameters() = srf.GetInitialPoint();
   sr2.Train(lbfgs2);
 
   // Ensure that the parameters are the same.
@@ -401,10 +402,10 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionOptimizerTrainTest)
   BOOST_REQUIRE_EQUAL(sr.Parameters().n_cols, sr2.Parameters().n_cols);
   for (size_t i = 0; i < sr.Parameters().n_elem; ++i)
   {
-    if (std::abs(sr.Parameters()[i]) < 0.01)
-      BOOST_REQUIRE_SMALL(sr2.Parameters()[i], 0.01);
+    if (std::abs(sr.Parameters()[i]) < 1e-5)
+      BOOST_REQUIRE_SMALL(sr2.Parameters()[i], 1e-5);
     else
-      BOOST_REQUIRE_CLOSE(sr.Parameters()[i], sr2.Parameters()[i], 0.01);
+      BOOST_REQUIRE_CLOSE(sr.Parameters()[i], sr2.Parameters()[i], 1e-5);
   }
 }
 
