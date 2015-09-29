@@ -33,10 +33,18 @@ HoeffdingSplit<
   for (size_t i = 0; i < dimensionality; ++i)
   {
     if (datasetInfo.Type(i) == data::Datatype::categorical)
+    {
       categoricalSplits.push_back(
           CategoricalSplitType(datasetInfo.NumMappings(i), numClasses));
+      dimensionMappings[i] = std::make_pair(data::Datatype::categorical,
+          categoricalSplits.size() - 1);
+    }
     else
+    {
       numericSplits.push_back(NumericSplitType(numClasses));
+      dimensionMappings[i] = std::make_pair(data::Datatype::numeric,
+          numericSplits.size() - 1);
+    }
   }
 }
 
@@ -98,8 +106,15 @@ size_t HoeffdingSplit<
       std::log(1.0 / (1.0 - successProbability)) / (2 * numSamples));
 
   arma::vec gains(categoricalSplits.size() + numericSplits.size());
-  for (size_t i = 0; i < categoricalSplits.size(); ++i)
-    gains[i] = categoricalSplits[i].EvaluateFitnessFunction();
+  for (size_t i = 0; i < gains.n_elem; ++i)
+  {
+    size_t type = dimensionMappings[i].first;
+    size_t index = dimensionMappings[i].second;
+    if (type == data::Datatype::categorical)
+      gains[i] = categoricalSplits[index].EvaluateFitnessFunction();
+    else if (type == data::Datatype::numeric)
+      gains[i] = numericSplits[index].EvaluateFitnessFunction();
+  }
 
   // Now find the largest and second-largest.
   double largest = -DBL_MAX;
@@ -132,8 +147,8 @@ size_t HoeffdingSplit<
     }
     else
     {
-      majorityClass = 0;
-      return 0; // I have no idea what to do yet.
+      majorityClass = numericSplits[largestIndex].MajorityClass();
+      return numericSplits[largestIndex].Bins();
     }
   }
   else

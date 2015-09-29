@@ -53,6 +53,8 @@ class HoeffdingSplit
   std::vector<NumericSplitType> numericSplits;
   std::vector<CategoricalSplitType> categoricalSplits;
 
+  std::unordered_map<size_t, std::pair<size_t, size_t>> dimensionMappings;
+
   size_t numSamples;
   size_t numClasses;
   arma::Col<size_t> classCounts;

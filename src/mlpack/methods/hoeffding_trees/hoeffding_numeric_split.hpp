@@ -64,6 +64,8 @@ class HoeffdingNumericSplit
 
   size_t MajorityClass() const;
 
+  size_t Bins() const { return bins; }
+
  private:
   // Cache the values of the points seen before we make bins.
   arma::Col<ObservationType> observations;
