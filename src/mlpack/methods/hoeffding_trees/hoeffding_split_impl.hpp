@@ -20,9 +20,11 @@ HoeffdingSplit<
 >::HoeffdingSplit(const size_t dimensionality,
                   const size_t numClasses,
                   const data::DatasetInfo& datasetInfo,
-                  const double successProbability) :
+                  const double successProbability,
+                  const size_t maxSamples) :
     numSamples(0),
     numClasses(numClasses),
+    maxSamples(maxSamples),
     classCounts(arma::zeros<arma::Col<size_t>>(numClasses)),
     datasetInfo(datasetInfo),
     successProbability(successProbability),
@@ -110,6 +112,7 @@ size_t HoeffdingSplit<
   {
     size_t type = dimensionMappings[i].first;
     size_t index = dimensionMappings[i].second;
+    Log::Warn << "Evaluate fitness function for dimension " << i << ".\n";
     if (type == data::Datatype::categorical)
       gains[i] = categoricalSplits[index].EvaluateFitnessFunction();
     else if (type == data::Datatype::numeric)
@@ -134,8 +137,10 @@ size_t HoeffdingSplit<
     }
   }
 
+  Log::Warn << "Split check (" << numSamples << "): largest " << largest << ", "
+      << "second largest " << secondLargest << ", epsilon " << epsilon << ".\n";
   // Are these far enough apart to split?
-  if (largest - secondLargest > epsilon)
+  if (largest - secondLargest > epsilon || numSamples > maxSamples)
   {
     // Split!
     splitDimension = largestIndex;
@@ -219,16 +224,17 @@ void HoeffdingSplit<
   }
 
   // Create the children.
-  if (datasetInfo.Type(splitDimension) == data::Datatype::numeric)
+  if (dimensionMappings[splitDimension].first == data::Datatype::categorical)
   {
-    numericSplits[numericSplitIndex].CreateChildren(children, datasetInfo,
-        numericSplits.size() + categoricalSplits.size(), numericSplit);
-  }
-  else if (datasetInfo.Type(splitDimension) == data::Datatype::categorical)
-  {
-    categoricalSplits[categoricalSplitIndex].CreateChildren(children,
-        datasetInfo, numericSplits.size() + categoricalSplits.size(),
+    categoricalSplits[dimensionMappings[splitDimension].second].CreateChildren(
+        children, datasetInfo, numericSplits.size() + categoricalSplits.size(),
         categoricalSplit);
+  }
+  else if (dimensionMappings[splitDimension].first == data::Datatype::numeric)
+  {
+    numericSplits[dimensionMappings[splitDimension].second].CreateChildren(
+        children, datasetInfo, numericSplits.size() + categoricalSplits.size(),
+        numericSplit);
   }
 }
 

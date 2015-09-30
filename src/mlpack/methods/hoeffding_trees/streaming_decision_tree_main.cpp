@@ -17,6 +17,10 @@ using namespace mlpack::data;
 PARAM_STRING_REQ("training_file", "Training dataset file.", "t");
 PARAM_STRING("labels_file", "Labels for training dataset.", "l", "");
 
+PARAM_DOUBLE("confidence", "Confidence before splitting (between 0 and 1).",
+    "c", 0.95);
+
+
 int main(int argc, char** argv)
 {
   CLI::ParseCommandLine(argc, argv);
@@ -27,6 +31,9 @@ int main(int argc, char** argv)
   arma::mat trainingSet;
   DatasetInfo datasetInfo;
   data::Load(trainingFile, trainingSet, datasetInfo, true);
+  for (size_t i = 0; i < trainingSet.n_rows; ++i)
+    Log::Info << datasetInfo.NumMappings(i) << " mappings in dimension " << i <<
+".\n";
 
   arma::Col<size_t> labelsIn;
   data::Load(labelsFile, labelsIn, true, false);
@@ -54,4 +61,15 @@ int main(int argc, char** argv)
     for (size_t i = 0; i < node->NumChildren(); ++i)
       stack.push(&node->Child(i));
   }
+
+  // Check the accuracy on the training set.
+  arma::Row<size_t> predictedLabels;
+  tree.Classify(trainingSet, predictedLabels);
+
+  size_t correct = 0;
+  for (size_t i = 0; i < predictedLabels.n_elem; ++i)
+    if (labels[i] == predictedLabels[i])
+      ++correct;
+
+  Log::Info << correct << " correct out of " << predictedLabels.n_elem << ".\n";
 }

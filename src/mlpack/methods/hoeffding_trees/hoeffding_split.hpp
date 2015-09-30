@@ -26,7 +26,8 @@ class HoeffdingSplit
   HoeffdingSplit(const size_t dimensionality,
                  const size_t numClasses,
                  const data::DatasetInfo& datasetInfo,
-                 const double successProbability);
+                 const double successProbability,
+                 const size_t maxSamples);
 
   template<typename VecType>
   void Train(const VecType& point, const size_t label);
@@ -57,6 +58,7 @@ class HoeffdingSplit
 
   size_t numSamples;
   size_t numClasses;
+  size_t maxSamples;
   arma::Col<size_t> classCounts;
   const data::DatasetInfo& datasetInfo;
   double successProbability;

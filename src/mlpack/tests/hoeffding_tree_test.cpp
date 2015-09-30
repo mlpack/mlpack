@@ -238,7 +238,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitNoSplitTest)
   info.MapString("cat1", 2);
   info.MapString("cat2", 2);
 
-  HoeffdingSplit<> split(3, 2, info, 0.95);
+  HoeffdingSplit<> split(3, 2, info, 0.95, 5000);
 
   // Feed it samples.
   for (size_t i = 0; i < 1000; ++i)
@@ -269,7 +269,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitEasySplitTest)
   info.MapString("cat1", 0);
   info.MapString("cat0", 1);
 
-  HoeffdingSplit<> split(2, 2, info, 0.95);
+  HoeffdingSplit<> split(2, 2, info, 0.95, 5000);
 
   // Feed samples from each class.
   for (size_t i = 0; i < 500; ++i)
@@ -297,7 +297,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitProbability1SplitTest)
   info.MapString("cat1", 0);
   info.MapString("cat0", 1);
 
-  HoeffdingSplit<> split(2, 2, info, 1.0);
+  HoeffdingSplit<> split(2, 2, info, 1.0, 5000);
 
   // Feed samples from each class.
   for (size_t i = 0; i < 5000; ++i)
@@ -325,7 +325,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitAlmostPerfectSplit)
   info.MapString("cat0", 1);
   info.MapString("cat1", 1);
 
-  HoeffdingSplit<> split(2, 2, info, 0.95);
+  HoeffdingSplit<> split(2, 2, info, 0.95, 5000);
 
   // Feed samples.
   for (size_t i = 0; i < 500; ++i)
@@ -360,7 +360,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitEqualSplitTest)
   info.MapString("cat0", 1);
   info.MapString("cat1", 1);
 
-  HoeffdingSplit<> split(2, 2, info, 0.95);
+  HoeffdingSplit<> split(2, 2, info, 0.95, 5000);
 
   // Feed samples.
   for (size_t i = 0; i < 500; ++i)

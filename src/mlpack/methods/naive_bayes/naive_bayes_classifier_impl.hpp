@@ -98,6 +98,10 @@ NaiveBayesClassifier<MatType>::NaiveBayesClassifier(
       variances[i] = 1e-50;
 
   probabilities /= data.n_cols;
+
+  Log::Info << "probabilities:\n" << probabilities.t();
+  Log::Info << "means:\n" << means.t();
+  Log::Info << "variances:\n" << variances.t();
 }
 
 template<typename MatType>

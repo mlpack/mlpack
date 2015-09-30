@@ -86,6 +86,7 @@ template<typename FitnessFunction, typename ObservationType>
 double HoeffdingNumericSplit<FitnessFunction, ObservationType>::
     EvaluateFitnessFunction() const
 {
+  Log::Debug << sufficientStatistics.t();
   if (samplesSeen < observationsBeforeBinning)
     return 0.0;
   else

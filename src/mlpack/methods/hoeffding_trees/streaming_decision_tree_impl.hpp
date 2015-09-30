@@ -19,7 +19,7 @@ StreamingDecisionTree<SplitType, MatType>::StreamingDecisionTree(
     const data::DatasetInfo& datasetInfo,
     const arma::Row<size_t>& labels,
     const size_t numClasses) :
-    split(data.n_rows, numClasses, datasetInfo, 0.95)
+    split(data.n_rows, numClasses, datasetInfo, 0.95, 5000)
 {
   Train(data, labels);
 }
@@ -29,7 +29,7 @@ StreamingDecisionTree<SplitType, MatType>::StreamingDecisionTree(
     const data::DatasetInfo& datasetInfo,
     const size_t dimensionality,
     const size_t numClasses) :
-    split(dimensionality, numClasses, datasetInfo, 0.95)
+    split(dimensionality, numClasses, datasetInfo, 0.95, 5000)
 {
   // No training.  Anything else to do...?
 }
@@ -103,6 +103,7 @@ void StreamingDecisionTree<SplitType, MatType>::Classify(
     const MatType& data,
     arma::Row<size_t>& predictions)
 {
+  predictions.set_size(data.n_cols);
   for (size_t i = 0; i < data.n_cols; ++i)
     predictions[i] = Classify(data.col(i));
 }
