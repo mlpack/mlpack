@@ -55,12 +55,9 @@ class HoeffdingNumericSplit
 
   double EvaluateFitnessFunction() const;
 
-  // Does nothing for now.
-  template<typename StreamingDecisionTreeType>
-  void CreateChildren(std::vector<StreamingDecisionTreeType>& children,
-                      const data::DatasetInfo& datasetInfo,
-                      const size_t dimensionality,
-                      SplitInfo& splitInfo);
+  // Return the majority class of each child to be created, if a split on this
+  // dimension was performed.  Also create the split object.
+  void Split(arma::Col<size_t>& childMajorities, SplitInfo& splitInfo) const;
 
   size_t MajorityClass() const;
 

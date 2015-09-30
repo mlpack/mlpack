@@ -19,8 +19,9 @@ StreamingDecisionTree<SplitType, MatType>::StreamingDecisionTree(
     const data::DatasetInfo& datasetInfo,
     const arma::Row<size_t>& labels,
     const size_t numClasses,
-    const double confidence) :
-    split(data.n_rows, numClasses, datasetInfo, confidence, 1500)
+    const double confidence,
+    const size_t numSamples) :
+    split(data.n_rows, numClasses, datasetInfo, confidence, numSamples)
 {
   Train(data, labels);
 }
@@ -30,8 +31,9 @@ StreamingDecisionTree<SplitType, MatType>::StreamingDecisionTree(
     const data::DatasetInfo& datasetInfo,
     const size_t dimensionality,
     const size_t numClasses,
-    const double confidence) :
-    split(dimensionality, numClasses, datasetInfo, confidence, 1500)
+    const double confidence,
+    const size_t numSamples) :
+    split(dimensionality, numClasses, datasetInfo, confidence, numSamples)
 {
   // No training.  Anything else to do...?
 }

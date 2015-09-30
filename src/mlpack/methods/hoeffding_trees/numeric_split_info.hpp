@@ -17,7 +17,7 @@ class NumericSplitInfo
 {
  public:
   NumericSplitInfo() { /* Nothing to do. */ }
-  NumericSplitInfo(arma::Col<ObservationType>& splitPoints) :
+  NumericSplitInfo(const arma::Col<ObservationType>& splitPoints) :
       splitPoints(splitPoints) { /* Nothing to do. */ }
 
   template<typename eT>

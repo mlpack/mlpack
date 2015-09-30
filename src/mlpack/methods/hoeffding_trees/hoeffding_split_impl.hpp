@@ -209,29 +209,26 @@ void HoeffdingSplit<
     CategoricalSplitType
 >::CreateChildren(std::vector<StreamingDecisionTreeType>& children)
 {
-  // We already know what the splitDimension will be.
-  size_t numericSplitIndex = 0;
-  size_t categoricalSplitIndex = 0;
-  for (size_t i = 0; i < splitDimension; ++i)
-  {
-    if (datasetInfo.Type(i) == data::Datatype::numeric)
-      ++numericSplitIndex;
-    if (datasetInfo.Type(i) == data::Datatype::categorical)
-      ++categoricalSplitIndex;
-  }
-
   // Create the children.
+  arma::Col<size_t> childMajorities;
   if (dimensionMappings[splitDimension].first == data::Datatype::categorical)
   {
-    categoricalSplits[dimensionMappings[splitDimension].second].CreateChildren(
-        children, datasetInfo, numericSplits.size() + categoricalSplits.size(),
-        categoricalSplit);
+    categoricalSplits[dimensionMappings[splitDimension].second].Split(
+        childMajorities, categoricalSplit);
   }
   else if (dimensionMappings[splitDimension].first == data::Datatype::numeric)
   {
-    numericSplits[dimensionMappings[splitDimension].second].CreateChildren(
-        children, datasetInfo, numericSplits.size() + categoricalSplits.size(),
-        numericSplit);
+    numericSplits[dimensionMappings[splitDimension].second].Split(
+        childMajorities, numericSplit);
+  }
+
+  // We already know what the splitDimension will be.
+  const size_t dimensionality = numericSplits.size() + categoricalSplits.size();
+  for (size_t i = 0; i < childMajorities.n_elem; ++i)
+  {
+    children.push_back(StreamingDecisionTreeType(datasetInfo, dimensionality,
+        classCounts.n_elem, successProbability, numSamples));
+    children[i].MajorityClass() = childMajorities[i];
   }
 }
 

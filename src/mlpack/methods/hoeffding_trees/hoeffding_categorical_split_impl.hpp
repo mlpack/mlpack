@@ -41,17 +41,18 @@ double HoeffdingCategoricalSplit<FitnessFunction>::EvaluateFitnessFunction()
 }
 
 template<typename FitnessFunction>
-template<typename StreamingDecisionTreeType>
-void HoeffdingCategoricalSplit<FitnessFunction>::CreateChildren(
-    std::vector<StreamingDecisionTreeType>& children,
-    const data::DatasetInfo& datasetInfo,
-    const size_t dimensionality,
+void HoeffdingCategoricalSplit<FitnessFunction>::Split(
+    arma::Col<size_t>& childMajorities,
     SplitInfo& splitInfo)
 {
   // We'll make one child for each category.
+  childMajorities.set_size(sufficientStatistics.n_cols);
   for (size_t i = 0; i < sufficientStatistics.n_cols; ++i)
-    children.push_back(StreamingDecisionTreeType(datasetInfo, dimensionality,
-        sufficientStatistics.n_rows));
+  {
+    arma::uword maxIndex;
+    sufficientStatistics.col(i).max(maxIndex);
+    childMajorities[i] = size_t(maxIndex);
+  }
 
   // Create the according SplitInfo object.
   splitInfo = SplitInfo(sufficientStatistics.n_cols);

@@ -23,12 +23,14 @@ class StreamingDecisionTree
                         const data::DatasetInfo& datasetInfo,
                         const arma::Row<size_t>& labels,
                         const size_t numClasses,
-                        const double confidence = 0.95);
+                        const double confidence = 0.95,
+                        const size_t numSamples = 5000);
 
   StreamingDecisionTree(const data::DatasetInfo& datasetInfo,
                         const size_t dimensionality,
                         const size_t numClasses,
-                        const double confidence = 0.95);
+                        const double confidence = 0.95,
+                        const size_t numSamples = 5000);
 
   StreamingDecisionTree(const StreamingDecisionTree& other);
 

@@ -19,6 +19,8 @@ PARAM_STRING("labels_file", "Labels for training dataset.", "l", "");
 
 PARAM_DOUBLE("confidence", "Confidence before splitting (between 0 and 1).",
     "c", 0.95);
+PARAM_INT("max_samples", "Maximum number of samples before splitting.", "m",
+    5000);
 
 
 int main(int argc, char** argv)
@@ -28,6 +30,7 @@ int main(int argc, char** argv)
   const string trainingFile = CLI::GetParam<string>("training_file");
   const string labelsFile = CLI::GetParam<string>("labels_file");
   const double confidence = CLI::GetParam<double>("confidence");
+  const size_t maxSamples = (size_t) CLI::GetParam<int>("max_samples");
 
   arma::mat trainingSet;
   DatasetInfo datasetInfo;
@@ -42,7 +45,7 @@ int main(int argc, char** argv)
 
   // Now create the decision tree.
   StreamingDecisionTree<HoeffdingSplit<>> tree(trainingSet, datasetInfo, labels,
-      max(labels) + 1, confidence);
+      max(labels) + 1, confidence, maxSamples);
 
   // Great.  Good job team.
   std::stack<StreamingDecisionTree<HoeffdingSplit<>>*> stack;

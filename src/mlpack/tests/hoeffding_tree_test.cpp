@@ -212,9 +212,10 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitSplitTest)
   HoeffdingCategoricalSplit<GiniImpurity>::SplitInfo splitInfo(3);
 
   // Create the children.
-  split.CreateChildren(children, info, 3, splitInfo);
+  arma::Col<size_t> childMajorities;
+  split.Split(childMajorities, splitInfo);
 
-  BOOST_REQUIRE_EQUAL(children.size(), 3);
+  BOOST_REQUIRE_EQUAL(childMajorities.n_elem, 3);
   BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(0), 0);
   BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(1), 1);
   BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(2), 2);
@@ -509,12 +510,10 @@ BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitBimodalTest)
 
   // Make sure that if we do create children, that the correct number of
   // children is created, and that the bins end up in the right place.
-  std::vector<StreamingDecisionTree<HoeffdingSplit<GiniImpurity,
-      HoeffdingNumericSplit<double>>>> children;
-  data::DatasetInfo datasetInfo; // All numeric features -- no change necessary.
   NumericSplitInfo<> info;
-  split.CreateChildren(children, datasetInfo, 1, info);
-  BOOST_REQUIRE_EQUAL(children.size(), 2);
+  arma::Col<size_t> childMajorities;
+  split.Split(childMajorities, info);
+  BOOST_REQUIRE_EQUAL(childMajorities.n_elem, 2);
 
   // Now check the split info.
   for (size_t i = 0; i < 10; ++i)

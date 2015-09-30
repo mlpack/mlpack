@@ -94,23 +94,16 @@ double HoeffdingNumericSplit<FitnessFunction, ObservationType>::
 }
 
 template<typename FitnessFunction, typename ObservationType>
-template<typename StreamingDecisionTreeType>
-void HoeffdingNumericSplit<FitnessFunction, ObservationType>::CreateChildren(
-    std::vector<StreamingDecisionTreeType>& children,
-    const data::DatasetInfo& datasetInfo,
-    const size_t dimensionality,
-    SplitInfo& splitInfo)
+void HoeffdingNumericSplit<FitnessFunction, ObservationType>::Split(
+    arma::Col<size_t>& childMajorities,
+    SplitInfo& splitInfo) const
 {
-  // We'll make one child for each bin.
+  childMajorities.set_size(sufficientStatistics.n_cols);
   for (size_t i = 0; i < sufficientStatistics.n_cols; ++i)
   {
-    // We need to set the majority class for the child, too.
-    children.push_back(StreamingDecisionTreeType(datasetInfo, dimensionality,
-        sufficientStatistics.n_rows));
-
-    arma::uword majorityClass;
-    sufficientStatistics.col(i).max(majorityClass);
-    children[i].MajorityClass() = majorityClass;
+    arma::uword maxIndex;
+    sufficientStatistics.col(i).max(maxIndex);
+    childMajorities[i] = size_t(maxIndex);
   }
 
   // Create the SplitInfo object.
