@@ -34,8 +34,18 @@ SparseAutoencoderFunction(const arma::mat& data,
  * layers. The biases b1, b2 are initialized to 0.
  */
 template<typename HiddenLayer, typename OutputLayer, typename Greedy>
-const arma::mat SparseAutoencoderFunction<HiddenLayer, OutputLayer, Greedy>::
+const arma::mat& SparseAutoencoderFunction<HiddenLayer, OutputLayer, Greedy>::
 InitializeWeights()
+{
+  InitializeWeights(initialPoint, visibleSize, hiddenSize);
+  return initialPoint;
+}
+
+template<typename HiddenLayer, typename OutputLayer, typename Greedy>
+void SparseAutoencoderFunction<HiddenLayer, OutputLayer, Greedy>::
+InitializeWeights(arma::mat &weights,
+                  const size_t visibleSize,
+                  const size_t hiddenSize)
 {
   // The module uses a matrix to store the parameters, its structure looks like:
   //          vSize   1
@@ -53,20 +63,28 @@ InitializeWeights()
 
   // Initialize w1 and w2 to random values in the range [0, 1], then set b1 and
   // b2 to 0.
-  arma::mat parameters;
-  parameters.randu(2 * hiddenSize + 1, visibleSize + 1);
-  parameters.row(2 * hiddenSize).zeros();
-  parameters.col(visibleSize).zeros();
+  weights.randu(2 * hiddenSize + 1, visibleSize + 1);
+  weights.row(2 * hiddenSize).zeros();
+  weights.col(visibleSize).zeros();
 
   // Decide the parameter 'r' depending on the size of the visible and hidden
   // layers. The formula used is r = sqrt(6) / sqrt(vSize + hSize + 1).
   const double range = sqrt(6) / sqrt(visibleSize + hiddenSize + 1);
 
   //Shift range of w1 and w2 values from [0, 1] to [-r, r].
-  parameters.submat(0, 0, 2 * hiddenSize - 1, visibleSize - 1) = 2 * range *
-                                                                 (parameters.submat(0, 0, 2 * hiddenSize - 1, visibleSize - 1) - 0.5);
+  weights.submat(0, 0, 2 * hiddenSize - 1, visibleSize - 1) = 2 * range *
+                                                              (weights.submat(0, 0, 2 * hiddenSize - 1, visibleSize - 1) - 0.5);
+}
 
-  return parameters;
+template<typename HiddenLayer, typename OutputLayer, typename Greedy>
+arma::mat SparseAutoencoderFunction<HiddenLayer, OutputLayer, Greedy>::
+InitializeWeights(const size_t visibleSize,
+                  const size_t hiddenSize)
+{
+  arma::mat weights;
+  InitializeWeights(weigths, visibleSize, hiddenSize);
+
+  return weights;
 }
 
 /** Evaluates the objective function given the parameters.
@@ -139,7 +157,7 @@ Gradient(const arma::mat& parameters,
   outputLayerFunc.Backward(outputLayer, diff, delOut);
 
   arma::mat klDivGrad = beta * (-(rho / rhoCap) + (1 - rho) / (1 - rhoCap));
-  //klDivGrad.elem(arma::find_nonfinite(klDivGrad)).zeros();
+  klDivGrad.elem(arma::find_nonfinite(klDivGrad)).zeros();
   diff2 = parameters.submat(l1, 0, l3 - 1, l2 - 1) * delOut +
           arma::repmat(klDivGrad, 1, data.n_cols);
   arma::mat delHid;

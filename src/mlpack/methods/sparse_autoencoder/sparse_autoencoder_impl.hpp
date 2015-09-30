@@ -16,24 +16,14 @@ namespace nn {
 template<typename HiddenLayer, typename OutputLayer,
          template<typename> class OptimizerType>
 SparseAutoencoder<HiddenLayer, OutputLayer, OptimizerType>::
-SparseAutoencoder(const std::string &fileName,
-                  const std::string& name)
-{
-  mlpack::data::Load(fileName, name,
-                     *this, true);
-}
-
-template<typename HiddenLayer, typename OutputLayer,
-         template<typename> class OptimizerType>
-SparseAutoencoder<HiddenLayer, OutputLayer, OptimizerType>::
 SparseAutoencoder(size_t visibleSize, size_t hiddenSize) :
-  parameters(hiddenSize * 2 + 1, visibleSize + 1),
   visibleSize{visibleSize},
   hiddenSize{hiddenSize},
   lambda{0.0001},
   beta{3},
   rho{0.01}
 {
+  InitializeWeights(parameters, visibleSize, hiddenSize);
 }
 
 template<typename HiddenLayer, typename OutputLayer,
@@ -82,7 +72,7 @@ Train(arma::mat const &data, size_t hiddenSize)
   SAEF encoderFunction(data, data.n_rows, hiddenSize,
                        lambda, beta, rho);
   OptimizerType<SAEF> optimizer(encoderFunction);
-  Train(optimizer);
+  return Train(optimizer);
 }
 
 template<typename HiddenLayer, typename OutputLayer,

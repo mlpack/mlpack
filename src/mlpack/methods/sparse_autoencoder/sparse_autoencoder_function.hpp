@@ -96,7 +96,26 @@ class SparseAutoencoderFunction
                             const double rho = 0.01);
 
   //! Initializes the parameters of the model to suitable values.
-  const arma::mat InitializeWeights();
+  const arma::mat& InitializeWeights();
+
+  /**
+   * Initializes the parameters of the model to suitable values.
+   * @param weights weights want to initialize
+   * @param visibleSize Size of input vector expected at the visible layer.
+   * @param hiddenSize Size of input vector expected at the hidden layer.
+   */
+  static void InitializeWeights(arma::mat &weights,
+                                const size_t visibleSize,
+                                const size_t hiddenSize);
+
+  /**
+   * Initializes the parameters of the model to suitable values.
+   * @param visibleSize Size of input vector expected at the visible layer.
+   * @param hiddenSize Size of input vector expected at the hidden layer.
+   * @param weights after initialize
+   */
+  static arma::mat InitializeWeights(const size_t visibleSize,
+                                     const size_t hiddenSize);
 
   /**
    * Evaluates the objective function of the sparse autoencoder model using the

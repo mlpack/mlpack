@@ -78,17 +78,6 @@ class SparseAutoencoder
 {
  public:
   /**
-   * Construct the sparse autoencoder model with the given files.This
-   * will not train the model.
-   *
-   * @param fileName name of the files saving the model contents
-   * @param name name of the structure to be save
-   * @exception If the file cannot be load, the exception will thrown
-   */
-  SparseAutoencoder(const std::string &fileName,
-                    const std::string& name);
-
-  /**
    * Initialize the sparse autoencoder without performing training. The
    * Parameters(vector of w1,w2,b1,b2) will be initialize to zero.
    * lambda will be 0.0001, beta is 3 and rho is 0.01. Be sure to use
