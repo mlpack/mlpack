@@ -49,6 +49,20 @@ class SoftmaxRegressionFunction
                                            const bool fitIntercept = false);
 
   /**
+   * Initialize Softmax Regression weights(trainable parameters) with
+   * the given parameters.
+   * @paaram weights weights want to initialize
+   * @param featureSize The features size of the training set
+   * @param numClasses Number of classes for classification.
+   * @param fitIntercept Intercept term flag.
+   * @return weights after initialize
+   */
+  static void InitializeWeights(arma::mat &weights,
+                                const size_t featureSize,
+                                const size_t numClasses,
+                                const bool fitIntercept = false);
+
+  /**
    * Constructs the ground truth label matrix with the passed labels.
    *
    * @param labels Labels associated with the training data.
@@ -98,7 +112,8 @@ class SoftmaxRegressionFunction
   size_t NumClasses() const { return numClasses; }
 
   //! Gets the features size of the training data
-  size_t FeatureSize() const { return data.n_rows; }
+  size_t FeatureSize() const
+  { return initialPoint.n_rows; }
 
   //! Sets the regularization parameter.
   double& Lambda() { return lambda; }

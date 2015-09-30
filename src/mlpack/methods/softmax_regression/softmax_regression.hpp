@@ -161,6 +161,10 @@ class SoftmaxRegression
   //! Get the model parameters.
   const arma::mat& Parameters() const { return parameters; }
 
+  //! Gets the features size of the training data
+  size_t FeatureSize() const
+  { return parameters.n_rows; }
+
   /**
    * Serialize the SoftmaxRegression model. 
    */

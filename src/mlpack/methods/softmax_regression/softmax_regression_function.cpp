@@ -40,18 +40,26 @@ const arma::mat SoftmaxRegressionFunction::
 InitializeWeights(const size_t featureSize,
                   const size_t numClasses,
                   const bool fitIntercept)
-{
-    // Initialize values to 0.005 * r. 'r' is a matrix of random values taken from
-    // a Gaussian distribution with mean zero and variance one.
-    // If the fitIntercept flag is true, parameters.col(0) is the intercept.
+{    
     arma::mat parameters;
-    if (fitIntercept)
-      parameters.randn(numClasses, featureSize + 1);
-    else
-      parameters.randn(numClasses, featureSize);
-    parameters = 0.005 * parameters;
-
+    InitializeWeights(parameters, featureSize, numClasses, fitIntercept);
     return parameters;
+}
+
+void SoftmaxRegressionFunction::
+InitializeWeights(arma::mat &weights,
+                  const size_t featureSize,
+                  const size_t numClasses,
+                  const bool fitIntercept)
+{
+  // Initialize values to 0.005 * r. 'r' is a matrix of random values taken from
+  // a Gaussian distribution with mean zero and variance one.
+  // If the fitIntercept flag is true, parameters.col(0) is the intercept.
+  if (fitIntercept)
+    weights.randn(numClasses, featureSize + 1);
+  else
+    weights.randn(numClasses, featureSize);
+  weights *= 0.005;
 }
 
 /**
