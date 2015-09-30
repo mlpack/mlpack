@@ -38,8 +38,10 @@ class HoeffdingSplit
   //! Get the splitting dimension (size_t(-1) if no split).
   size_t SplitDimension() const { return splitDimension; }
 
+  //! Get the majority class.
+  size_t MajorityClass() const;
   //! Modify the majority class.
-  size_t& MajorityClass() { return majorityClass; }
+  size_t& MajorityClass();
 
   // Return index that we should go towards.
   template<typename VecType>
@@ -62,7 +64,6 @@ class HoeffdingSplit
   size_t numSamples;
   size_t numClasses;
   size_t maxSamples;
-  arma::Col<size_t> classCounts;
   const data::DatasetInfo& datasetInfo;
   double successProbability;
 

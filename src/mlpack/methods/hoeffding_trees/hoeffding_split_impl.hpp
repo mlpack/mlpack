@@ -25,7 +25,6 @@ HoeffdingSplit<
     numSamples(0),
     numClasses(numClasses),
     maxSamples(maxSamples),
-    classCounts(arma::zeros<arma::Col<size_t>>(numClasses)),
     datasetInfo(datasetInfo),
     successProbability(successProbability),
     splitDimension(size_t(-1)),
@@ -62,12 +61,6 @@ void HoeffdingSplit<
 {
   if (splitDimension == size_t(-1))
   {
-    // Update majority counts.
-    classCounts(label)++;
-    arma::uword tmp;
-    classCounts.max(tmp);
-    majorityClass = size_t(tmp);
-
     ++numSamples;
     size_t numericIndex = 0;
     size_t categoricalIndex = 0;
@@ -164,6 +157,45 @@ template<
     typename NumericSplitType,
     typename CategoricalSplitType
 >
+size_t HoeffdingSplit<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::MajorityClass() const
+{
+  // If the node is not split yet, we have to grab the majority class from any
+  // of the structures figuring out what to split on.
+  if (splitDimension == size_t(-1))
+  {
+    // Grab majority class from splits.
+    if (categoricalSplits.size() > 0)
+      majorityClass = categoricalSplits[0].MajorityClass();
+    else
+      majorityClass = numericSplits[0].MajorityClass();
+  }
+
+  return majorityClass;
+}
+
+template<
+    typename FitnessFunction,
+    typename NumericSplitType,
+    typename CategoricalSplitType
+>
+size_t& HoeffdingSplit<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::MajorityClass()
+{
+  return majorityClass;
+}
+
+template<
+    typename FitnessFunction,
+    typename NumericSplitType,
+    typename CategoricalSplitType
+>
 template<typename VecType>
 size_t HoeffdingSplit<
     FitnessFunction,
@@ -227,7 +259,7 @@ void HoeffdingSplit<
   for (size_t i = 0; i < childMajorities.n_elem; ++i)
   {
     children.push_back(StreamingDecisionTreeType(datasetInfo, dimensionality,
-        classCounts.n_elem, successProbability, numSamples));
+        numClasses, successProbability, numSamples));
     children[i].MajorityClass() = childMajorities[i];
   }
 }
