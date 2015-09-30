@@ -23,7 +23,8 @@ SparseAutoencoder(size_t visibleSize, size_t hiddenSize) :
   beta{3},
   rho{0.01}
 {
-  InitializeWeights(parameters, visibleSize, hiddenSize);
+  using func = SparseAutoencoderFunction<HiddenLayer, OutputLayer>;
+  func::InitializeWeights(parameters, visibleSize, hiddenSize);
 }
 
 template<typename HiddenLayer, typename OutputLayer,
