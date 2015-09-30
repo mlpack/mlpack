@@ -112,7 +112,6 @@ size_t HoeffdingSplit<
   {
     size_t type = dimensionMappings[i].first;
     size_t index = dimensionMappings[i].second;
-    Log::Warn << "Evaluate fitness function for dimension " << i << ".\n";
     if (type == data::Datatype::categorical)
       gains[i] = categoricalSplits[index].EvaluateFitnessFunction();
     else if (type == data::Datatype::numeric)
@@ -137,8 +136,6 @@ size_t HoeffdingSplit<
     }
   }
 
-  Log::Warn << "Split check (" << numSamples << "): largest " << largest << ", "
-      << "second largest " << secondLargest << ", epsilon " << epsilon << ".\n";
   // Are these far enough apart to split?
   if (largest - secondLargest > epsilon || numSamples > maxSamples)
   {

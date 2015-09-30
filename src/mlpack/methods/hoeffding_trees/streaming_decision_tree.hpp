@@ -22,11 +22,13 @@ class StreamingDecisionTree
   StreamingDecisionTree(const MatType& data,
                         const data::DatasetInfo& datasetInfo,
                         const arma::Row<size_t>& labels,
-                        const size_t numClasses);
+                        const size_t numClasses,
+                        const double confidence = 0.95);
 
   StreamingDecisionTree(const data::DatasetInfo& datasetInfo,
                         const size_t dimensionality,
-                        const size_t numClasses);
+                        const size_t numClasses,
+                        const double confidence = 0.95);
 
   StreamingDecisionTree(const StreamingDecisionTree& other);
 
@@ -46,6 +48,8 @@ class StreamingDecisionTree
   size_t Classify(const VecType& data);
 
   void Classify(const MatType& data, arma::Row<size_t>& predictions);
+
+  size_t& MajorityClass() { return split.MajorityClass(); }
 
   // How do we encode the actual split itself?
 

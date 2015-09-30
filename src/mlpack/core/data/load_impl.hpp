@@ -369,11 +369,11 @@ bool Load(const std::string& filename,
         eT val = eT(0);
         token >> val;
 
-//        if (token.fail())
+        if (token.fail())
         {
           // Conversion failed; but it may be a NaN or inf.  Armadillo has
           // convenient functions to check.
-//          if (!arma::diskio::convert_naninf(val, token.str()))
+          if (!arma::diskio::convert_naninf(val, token.str()))
           {
             // We need to perform a mapping.
             const size_t dim = (transpose) ? col : row;

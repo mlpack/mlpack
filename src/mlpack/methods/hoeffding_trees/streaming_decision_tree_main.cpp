@@ -27,6 +27,7 @@ int main(int argc, char** argv)
 
   const string trainingFile = CLI::GetParam<string>("training_file");
   const string labelsFile = CLI::GetParam<string>("labels_file");
+  const double confidence = CLI::GetParam<double>("confidence");
 
   arma::mat trainingSet;
   DatasetInfo datasetInfo;
@@ -41,26 +42,22 @@ int main(int argc, char** argv)
 
   // Now create the decision tree.
   StreamingDecisionTree<HoeffdingSplit<>> tree(trainingSet, datasetInfo, labels,
-      max(labels) + 1);
+      max(labels) + 1, confidence);
 
   // Great.  Good job team.
   std::stack<StreamingDecisionTree<HoeffdingSplit<>>*> stack;
   stack.push(&tree);
+  size_t nodes = 0;
   while (!stack.empty())
   {
     StreamingDecisionTree<HoeffdingSplit<>>* node = stack.top();
     stack.pop();
-
-    Log::Info << "Node:\n";
-    Log::Info << "  split dimension " << node->Split().SplitDimension()
-        << ".\n";
-    Log::Info << "  majority class " << node->Split().Classify(arma::vec())
-        << ".\n";
-    Log::Info << "  children " << node->NumChildren() << ".\n";
+    ++nodes;
 
     for (size_t i = 0; i < node->NumChildren(); ++i)
       stack.push(&node->Child(i));
   }
+  Log::Info << nodes << " nodes in tree.\n";
 
   // Check the accuracy on the training set.
   arma::Row<size_t> predictedLabels;
@@ -70,6 +67,9 @@ int main(int argc, char** argv)
   for (size_t i = 0; i < predictedLabels.n_elem; ++i)
     if (labels[i] == predictedLabels[i])
       ++correct;
+    else if (predictedLabels[i] > 10)
+      Log::Warn << "Invalid label " << predictedLabels[i] << " for point " << i
+          << "!\n";
 
   Log::Info << correct << " correct out of " << predictedLabels.n_elem << ".\n";
 }

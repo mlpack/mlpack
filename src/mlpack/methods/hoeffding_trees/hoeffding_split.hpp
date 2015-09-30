@@ -38,6 +38,9 @@ class HoeffdingSplit
   //! Get the splitting dimension (size_t(-1) if no split).
   size_t SplitDimension() const { return splitDimension; }
 
+  //! Modify the majority class.
+  size_t& MajorityClass() { return majorityClass; }
+
   // Return index that we should go towards.
   template<typename VecType>
   size_t CalculateDirection(const VecType& point) const;

@@ -103,8 +103,15 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::CreateChildren(
 {
   // We'll make one child for each bin.
   for (size_t i = 0; i < sufficientStatistics.n_cols; ++i)
+  {
+    // We need to set the majority class for the child, too.
     children.push_back(StreamingDecisionTreeType(datasetInfo, dimensionality,
         sufficientStatistics.n_rows));
+
+    arma::uword majorityClass;
+    sufficientStatistics.col(i).max(majorityClass);
+    children[i].MajorityClass() = majorityClass;
+  }
 
   // Create the SplitInfo object.
   splitInfo = SplitInfo(splitPoints);
