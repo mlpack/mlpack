@@ -23,10 +23,10 @@ HoeffdingSplit<
                   const double successProbability,
                   const size_t maxSamples,
                   std::unordered_map<size_t, std::pair<size_t, size_t>>*
-                      dimensionMappings) :
-    dimensionMappings((dimensionMappings != NULL) ? dimensionMappings :
+                      dimensionMappingsIn) :
+    dimensionMappings((dimensionMappingsIn != NULL) ? dimensionMappingsIn :
         new std::unordered_map<size_t, std::pair<size_t, size_t>>()),
-    ownsMappings(dimensionMappings == NULL),
+    ownsMappings(dimensionMappingsIn == NULL),
     numSamples(0),
     numClasses(numClasses),
     maxSamples(maxSamples),
@@ -45,13 +45,13 @@ HoeffdingSplit<
       {
         categoricalSplits.push_back(
             CategoricalSplitType(datasetInfo.NumMappings(i), numClasses));
-        dimensionMappings->at(i) = std::make_pair(data::Datatype::categorical,
+        (*dimensionMappings)[i] = std::make_pair(data::Datatype::categorical,
             categoricalSplits.size() - 1);
       }
       else
       {
         numericSplits.push_back(NumericSplitType(numClasses));
-        dimensionMappings->at(i) = std::make_pair(data::Datatype::numeric,
+        (*dimensionMappings)[i] = std::make_pair(data::Datatype::numeric,
             numericSplits.size() - 1);
       }
     }
