@@ -9,12 +9,13 @@
 using namespace mlpack;
 using namespace mlpack::regression;
 
-SoftmaxRegressionFunction::SoftmaxRegressionFunction(const arma::mat& data,
-                                                     const arma::Row<size_t>& labels,
-                                                     const size_t numClasses,
-                                                     const double lambda,
-                                                     const bool fitIntercept) :
-    data(data),    
+SoftmaxRegressionFunction::SoftmaxRegressionFunction(
+    const arma::mat& data,
+    const arma::Row<size_t>& labels,
+    const size_t numClasses,
+    const double lambda,
+    const bool fitIntercept) :
+    data(data),
     numClasses(numClasses),
     lambda(lambda),
     fitIntercept(fitIntercept)
@@ -32,25 +33,25 @@ SoftmaxRegressionFunction::SoftmaxRegressionFunction(const arma::mat& data,
  * lead to each class output being the same.
  */
 const arma::mat SoftmaxRegressionFunction::InitializeWeights()
-{    
+{
   return InitializeWeights(data.n_rows, numClasses, fitIntercept);
 }
 
-const arma::mat SoftmaxRegressionFunction::
-InitializeWeights(const size_t featureSize,
-                  const size_t numClasses,
-                  const bool fitIntercept)
-{    
+const arma::mat SoftmaxRegressionFunction::InitializeWeights(
+    const size_t featureSize,
+    const size_t numClasses,
+    const bool fitIntercept)
+{
     arma::mat parameters;
     InitializeWeights(parameters, featureSize, numClasses, fitIntercept);
     return parameters;
 }
 
-void SoftmaxRegressionFunction::
-InitializeWeights(arma::mat &weights,
-                  const size_t featureSize,
-                  const size_t numClasses,
-                  const bool fitIntercept)
+void SoftmaxRegressionFunction::InitializeWeights(
+    arma::mat &weights,
+    const size_t featureSize,
+    const size_t numClasses,
+    const bool fitIntercept)
 {
   // Initialize values to 0.005 * r. 'r' is a matrix of random values taken from
   // a Gaussian distribution with mean zero and variance one.
@@ -101,7 +102,7 @@ void SoftmaxRegressionFunction::GetGroundTruthMatrix(const arma::Row<size_t>& la
  * it should consider the parameters.cols(0) intercept term.
  */
 void SoftmaxRegressionFunction::GetProbabilitiesMatrix(
-    const arma::mat& parameters, 
+    const arma::mat& parameters,
     arma::mat& probabilities) const
 {
   arma::mat hypothesis;

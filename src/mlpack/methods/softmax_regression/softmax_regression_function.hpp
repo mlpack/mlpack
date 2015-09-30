@@ -37,25 +37,26 @@ class SoftmaxRegressionFunction
   const arma::mat InitializeWeights();
 
   /**
-   * Initialize Softmax Regression weights(trainable parameters) with
-   * the given parameters.
-   * @param featureSize The features size of the training set
+   * Initialize Softmax Regression weights (trainable parameters) with the given
+   * parameters.
+   *
+   * @param featureSize The number of features in the training set.
    * @param numClasses Number of classes for classification.
-   * @param fitIntercept Intercept term flag.
-   * @return weights after initialize
+   * @param fitIntercept If true, an intercept is fitted.
+   * @return Initialized model weights.
    */
   static const arma::mat InitializeWeights(const size_t featureSize,
                                            const size_t numClasses,
                                            const bool fitIntercept = false);
 
   /**
-   * Initialize Softmax Regression weights(trainable parameters) with
-   * the given parameters.
-   * @paaram weights weights want to initialize
-   * @param featureSize The features size of the training set
+   * Initialize Softmax Regression weights (trainable parameters) with the given
+   * parameters.
+   *
+   * @param weights This will be filled with the initialized model weights.
+   * @param featureSize The number of features in the training set.
    * @param numClasses Number of classes for classification.
    * @param fitIntercept Intercept term flag.
-   * @return weights after initialize
    */
   static void InitializeWeights(arma::mat &weights,
                                 const size_t featureSize,
@@ -106,15 +107,17 @@ class SoftmaxRegressionFunction
   void Gradient(const arma::mat& parameters, arma::mat& gradient) const;
 
   //! Return the initial point for the optimization.
-  const arma::mat& GetInitialPoint() const { return initialPoint; }  
+  const arma::mat& GetInitialPoint() const { return initialPoint; }
 
   //! Gets the number of classes.
   size_t NumClasses() const { return numClasses; }
 
   //! Gets the features size of the training data
   size_t FeatureSize() const
-  { return fitIntercept ? initialPoint.n_cols - 1 :
-                          initialPoint.n_cols; }
+  {
+    return fitIntercept ? initialPoint.n_cols - 1 :
+                          initialPoint.n_cols;
+  }
 
   //! Sets the regularization parameter.
   double& Lambda() { return lambda; }
