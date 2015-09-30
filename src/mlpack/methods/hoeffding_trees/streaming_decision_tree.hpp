@@ -30,7 +30,9 @@ class StreamingDecisionTree
                         const size_t dimensionality,
                         const size_t numClasses,
                         const double confidence = 0.95,
-                        const size_t numSamples = 5000);
+                        const size_t numSamples = 5000,
+                        std::unordered_map<size_t, std::pair<size_t, size_t>>*
+                            dimensionMappings = NULL);
 
   StreamingDecisionTree(const StreamingDecisionTree& other);
 

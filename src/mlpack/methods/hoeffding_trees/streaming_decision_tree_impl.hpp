@@ -32,8 +32,10 @@ StreamingDecisionTree<SplitType, MatType>::StreamingDecisionTree(
     const size_t dimensionality,
     const size_t numClasses,
     const double confidence,
-    const size_t numSamples) :
-    split(dimensionality, numClasses, datasetInfo, confidence, numSamples)
+    const size_t numSamples,
+    std::unordered_map<size_t, std::pair<size_t, size_t>>* dimensionMappings) :
+    split(dimensionality, numClasses, datasetInfo, confidence, numSamples,
+        dimensionMappings)
 {
   // No training.  Anything else to do...?
 }

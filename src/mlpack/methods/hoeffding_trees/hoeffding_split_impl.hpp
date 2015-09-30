@@ -21,7 +21,12 @@ HoeffdingSplit<
                   const size_t numClasses,
                   const data::DatasetInfo& datasetInfo,
                   const double successProbability,
-                  const size_t maxSamples) :
+                  const size_t maxSamples,
+                  std::unordered_map<size_t, std::pair<size_t, size_t>>*
+                      dimensionMappings) :
+    dimensionMappings((dimensionMappings != NULL) ? dimensionMappings :
+        new std::unordered_map<size_t, std::pair<size_t, size_t>>()),
+    ownsMappings(dimensionMappings == NULL),
     numSamples(0),
     numClasses(numClasses),
     maxSamples(maxSamples),
@@ -31,22 +36,51 @@ HoeffdingSplit<
     categoricalSplit(0),
     numericSplit()
 {
-  for (size_t i = 0; i < dimensionality; ++i)
+  // Do we need to generate the mappings too?
+  if (ownsMappings)
   {
-    if (datasetInfo.Type(i) == data::Datatype::categorical)
+    for (size_t i = 0; i < dimensionality; ++i)
     {
-      categoricalSplits.push_back(
-          CategoricalSplitType(datasetInfo.NumMappings(i), numClasses));
-      dimensionMappings[i] = std::make_pair(data::Datatype::categorical,
-          categoricalSplits.size() - 1);
-    }
-    else
-    {
-      numericSplits.push_back(NumericSplitType(numClasses));
-      dimensionMappings[i] = std::make_pair(data::Datatype::numeric,
-          numericSplits.size() - 1);
+      if (datasetInfo.Type(i) == data::Datatype::categorical)
+      {
+        categoricalSplits.push_back(
+            CategoricalSplitType(datasetInfo.NumMappings(i), numClasses));
+        dimensionMappings->at(i) = std::make_pair(data::Datatype::categorical,
+            categoricalSplits.size() - 1);
+      }
+      else
+      {
+        numericSplits.push_back(NumericSplitType(numClasses));
+        dimensionMappings->at(i) = std::make_pair(data::Datatype::numeric,
+            numericSplits.size() - 1);
+      }
     }
   }
+  else
+  {
+    for (size_t i = 0; i < dimensionality; ++i)
+    {
+      if (datasetInfo.Type(i) == data::Datatype::categorical)
+      {
+        categoricalSplits.push_back(
+            CategoricalSplitType(datasetInfo.NumMappings(i), numClasses));
+      }
+      else
+      {
+        numericSplits.push_back(NumericSplitType(numClasses));
+      }
+    }
+  }
+}
+
+template<typename FitnessFunction,
+         typename NumericSplitType,
+         typename CategoricalSplitType>
+HoeffdingSplit<FitnessFunction, NumericSplitType, CategoricalSplitType>::
+    ~HoeffdingSplit()
+{
+  if (ownsMappings)
+    delete dimensionMappings;
 }
 
 template<typename FitnessFunction,
@@ -103,8 +137,8 @@ size_t HoeffdingSplit<
   arma::vec gains(categoricalSplits.size() + numericSplits.size());
   for (size_t i = 0; i < gains.n_elem; ++i)
   {
-    size_t type = dimensionMappings[i].first;
-    size_t index = dimensionMappings[i].second;
+    size_t type = dimensionMappings->at(i).first;
+    size_t index = dimensionMappings->at(i).second;
     if (type == data::Datatype::categorical)
       gains[i] = categoricalSplits[index].EvaluateFitnessFunction();
     else if (type == data::Datatype::numeric)
@@ -243,14 +277,16 @@ void HoeffdingSplit<
 {
   // Create the children.
   arma::Col<size_t> childMajorities;
-  if (dimensionMappings[splitDimension].first == data::Datatype::categorical)
+  if (dimensionMappings->at(splitDimension).first ==
+      data::Datatype::categorical)
   {
-    categoricalSplits[dimensionMappings[splitDimension].second].Split(
+    categoricalSplits[dimensionMappings->at(splitDimension).second].Split(
         childMajorities, categoricalSplit);
   }
-  else if (dimensionMappings[splitDimension].first == data::Datatype::numeric)
+  else if (dimensionMappings->at(splitDimension).first ==
+           data::Datatype::numeric)
   {
-    numericSplits[dimensionMappings[splitDimension].second].Split(
+    numericSplits[dimensionMappings->at(splitDimension).second].Split(
         childMajorities, numericSplit);
   }
 
@@ -259,9 +295,13 @@ void HoeffdingSplit<
   for (size_t i = 0; i < childMajorities.n_elem; ++i)
   {
     children.push_back(StreamingDecisionTreeType(datasetInfo, dimensionality,
-        numClasses, successProbability, numSamples));
+        numClasses, successProbability, numSamples, dimensionMappings));
     children[i].MajorityClass() = childMajorities[i];
   }
+
+  // Eliminate now-unnecessary split information.
+  numericSplits.clear();
+  categoricalSplits.clear();
 }
 
 } // namespace tree

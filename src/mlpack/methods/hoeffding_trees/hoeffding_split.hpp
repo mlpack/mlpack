@@ -27,7 +27,11 @@ class HoeffdingSplit
                  const size_t numClasses,
                  const data::DatasetInfo& datasetInfo,
                  const double successProbability,
-                 const size_t maxSamples);
+                 const size_t maxSamples,
+                 std::unordered_map<size_t, std::pair<size_t, size_t>>*
+                     dimensionMappings = NULL);
+
+  ~HoeffdingSplit();
 
   template<typename VecType>
   void Train(const VecType& point, const size_t label);
@@ -59,7 +63,10 @@ class HoeffdingSplit
   std::vector<NumericSplitType> numericSplits;
   std::vector<CategoricalSplitType> categoricalSplits;
 
-  std::unordered_map<size_t, std::pair<size_t, size_t>> dimensionMappings;
+  // This structure is owned by this node only if it is the root of the tree.
+  std::unordered_map<size_t, std::pair<size_t, size_t>>* dimensionMappings;
+  // Indicates whether or not we own the mappings.
+  bool ownsMappings;
 
   size_t numSamples;
   size_t numClasses;
