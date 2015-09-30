@@ -51,6 +51,13 @@ class HoeffdingCategoricalSplit
 
   size_t MajorityClass() const;
 
+  //! Serialize the categorical split.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(sufficientStatistics, "sufficientStatistics");
+  }
+
  private:
   arma::Mat<size_t> sufficientStatistics;
 };

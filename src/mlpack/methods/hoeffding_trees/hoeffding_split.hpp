@@ -58,6 +58,10 @@ class HoeffdingSplit
   template<typename StreamingDecisionTreeType>
   void CreateChildren(std::vector<StreamingDecisionTreeType>& children);
 
+  //! Serialize the split.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
+
  private:
   // We need to keep some information for before we have split.
   std::vector<NumericSplitType> numericSplits;

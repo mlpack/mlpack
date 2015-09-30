@@ -31,6 +31,13 @@ class NumericSplitInfo
     return bin;
   }
 
+  //! Serialize the split (save/load the split points).
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(splitPoints, "splitPoints");
+  }
+
  private:
   arma::Col<ObservationType> splitPoints;
 };

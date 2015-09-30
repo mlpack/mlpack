@@ -139,6 +139,47 @@ size_t HoeffdingNumericSplit<FitnessFunction, ObservationType>::
   }
 }
 
+template<typename FitnessFunction, typename ObservationType>
+template<typename Archive>
+void HoeffdingNumericSplit<FitnessFunction, ObservationType>::Serialize(
+    Archive& ar,
+    const unsigned int /* version */)
+{
+  using data::CreateNVP;
+
+  ar & CreateNVP(samplesSeen, "samplesSeen");
+  ar & CreateNVP(observationsBeforeBinning, "observationsBeforeBinning");
+  ar & CreateNVP(bins, "bins");
+
+  if (samplesSeen > observationsBeforeBinning)
+  {
+    // The binning has happened, so we only need to save the resulting bins.
+    ar & CreateNVP(splitPoints, "splitPoints");
+    ar & CreateNVP(sufficientStatistics, "sufficientStatistics");
+
+    if (Archive::is_loading::value)
+    {
+      // Clean other objects.
+      observations.clear();
+      labels.clear();
+    }
+  }
+  else
+  {
+    // The binning has not happened yet, so we only need to save the information
+    // required before binning.
+    ar & CreateNVP(observations, "observations");
+    ar & CreateNVP(labels, "labels");
+
+    if (Archive::is_loading::value)
+    {
+      // Clean other objects.
+      splitPoints.clear();
+      sufficientStatistics.clear();
+    }
+  }
+}
+
 } // namespace tree
 } // namespace mlpack
 

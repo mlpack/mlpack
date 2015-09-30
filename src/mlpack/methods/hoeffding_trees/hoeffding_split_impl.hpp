@@ -304,6 +304,68 @@ void HoeffdingSplit<
   categoricalSplits.clear();
 }
 
+template<
+    typename FitnessFunction,
+    typename NumericSplitType,
+    typename CategoricalSplitType
+>
+template<typename Archive>
+void HoeffdingSplit<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::Serialize(Archive& ar, const unsigned int /* version */)
+{
+  using data::CreateNVP;
+
+  ar & CreateNVP(splitDimension, "splitDimension");
+  ar & CreateNVP(dimensionMappings, "dimensionMappings");
+  // What to do here about ownership...?
+  if (Archive::is_loading::value)
+    ownsMappings = true;
+
+  // Depending on whether or not we have split yet, we may need to save
+  // different things.
+  if (splitDimension == size_t(-1))
+  {
+    // We have not yet split.  So we have to serialize the splits.
+    ar & CreateNVP(numericSplits, "numericSplits");
+    ar & CreateNVP(categoricalSplits, "categoricalSplits");
+
+    ar & CreateNVP(numSamples, "numSamples");
+    ar & CreateNVP(numClasses, "numClasses");
+    ar & CreateNVP(maxSamples, "maxSamples");
+    ar & CreateNVP(successProbability, "successProbability");
+
+    if (Archive::is_loading::value)
+    {
+      // Clear things we don't need.
+      majorityClass = 0;
+      categoricalSplit = CategoricalSplitType::SplitInfo();
+      numericSplit = NumericSplitType::SplitInfo();
+    }
+  }
+  else
+  {
+    // We have split, so we only need to cache the numeric and categorical
+    // split.
+    ar & CreateNVP(categoricalSplit, "categoricalSplit");
+    ar & CreateNVP(numericSplit, "numericSplit");
+    ar & CreateNVP(majorityClass, "majorityClass");
+
+    if (Archive::is_loading::value)
+    {
+      numericSplits.clear();
+      categoricalSplits.clear();
+
+      numSamples = 0;
+      numClasses = 0;
+      maxSamples = 0;
+      successProbability = 0.0;
+    }
+  }
+}
+
 } // namespace tree
 } // namespace mlpack
 

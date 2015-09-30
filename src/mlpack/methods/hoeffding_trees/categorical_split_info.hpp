@@ -24,6 +24,10 @@ class CategoricalSplitInfo
     // range [0, categories).
     return size_t(value);
   }
+
+  //! Serialize the object.  (Nothing needs to be saved.)
+  template<typename Archive>
+  void Serialize(Archive& /* ar */, const unsigned int /* version */) { }
 };
 
 } // namespace tree

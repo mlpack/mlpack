@@ -46,8 +46,10 @@ int main(int argc, char** argv)
   arma::Row<size_t> labels = labelsIn.t();
 
   // Now create the decision tree.
+  Timer::Start("tree_training");
   StreamingDecisionTree<HoeffdingSplit<>> tree(trainingSet, datasetInfo, labels,
       max(labels) + 1, confidence, maxSamples);
+  Timer::Stop("tree_training");
 
   // Great.  Good job team.
   std::stack<StreamingDecisionTree<HoeffdingSplit<>>*> stack;
@@ -65,8 +67,10 @@ int main(int argc, char** argv)
   Log::Info << nodes << " nodes in tree.\n";
 
   // Check the accuracy on the training set.
+  Timer::Start("tree_testing");
   arma::Row<size_t> predictedLabels;
   tree.Classify(trainingSet, predictedLabels);
+  Timer::Stop("tree_testing");
 
   size_t correct = 0;
   for (size_t i = 0; i < predictedLabels.n_elem; ++i)

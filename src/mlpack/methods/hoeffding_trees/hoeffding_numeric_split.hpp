@@ -63,6 +63,9 @@ class HoeffdingNumericSplit
 
   size_t Bins() const { return bins; }
 
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
+
  private:
   // Cache the values of the points seen before we make bins.
   arma::Col<ObservationType> observations;
