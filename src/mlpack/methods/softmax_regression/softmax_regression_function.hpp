@@ -113,7 +113,8 @@ class SoftmaxRegressionFunction
 
   //! Gets the features size of the training data
   size_t FeatureSize() const
-  { return initialPoint.n_rows; }
+  { return fitIntercept ? initialPoint.n_cols - 1 :
+                          initialPoint.n_cols; }
 
   //! Sets the regularization parameter.
   double& Lambda() { return lambda; }

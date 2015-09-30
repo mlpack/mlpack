@@ -163,7 +163,8 @@ class SoftmaxRegression
 
   //! Gets the features size of the training data
   size_t FeatureSize() const
-  { return parameters.n_rows; }
+  { return fitIntercept ? parameters.n_cols - 1 :
+                          parameters.n_cols; }
 
   /**
    * Serialize the SoftmaxRegression model. 
