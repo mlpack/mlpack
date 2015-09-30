@@ -22,6 +22,8 @@ PARAM_DOUBLE("confidence", "Confidence before splitting (between 0 and 1).",
 PARAM_INT("max_samples", "Maximum number of samples before splitting.", "m",
     5000);
 
+PARAM_STRING("test_file", "File of testing data.", "T", "");
+
 
 int main(int argc, char** argv)
 {
