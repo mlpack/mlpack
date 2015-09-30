@@ -297,7 +297,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitProbability1SplitTest)
   info.MapString("cat1", 0);
   info.MapString("cat0", 1);
 
-  HoeffdingSplit<> split(2, 2, info, 1.0, 5000);
+  HoeffdingSplit<> split(2, 2, info, 1.0, 12000);
 
   // Feed samples from each class.
   for (size_t i = 0; i < 5000; ++i)
