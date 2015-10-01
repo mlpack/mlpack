@@ -688,6 +688,10 @@ BOOST_AUTO_TEST_CASE(BinarySpaceTreeOverwriteTest)
   CheckTrees(tree, xmlTree, textTree, binaryTree);
 }
 
+/**
+ * Test serialization of the HoeffdingNumericSplit object after binning has
+ * occured.
+ */
 BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitTest)
 {
   using namespace mlpack::tree;
@@ -749,6 +753,10 @@ BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitTest)
   }
 }
 
+/**
+ * Make sure serialization of the HoeffdingNumericSplit object before binning
+ * occurs is successful.
+ */
 BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitBeforeBinningTest)
 {
   using namespace mlpack::tree;
@@ -775,6 +783,55 @@ BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitBeforeBinningTest)
   BOOST_REQUIRE_SMALL(textSplit.EvaluateFitnessFunction(), 1e-5);
   BOOST_REQUIRE_SMALL(xmlSplit.EvaluateFitnessFunction(), 1e-5);
   BOOST_REQUIRE_SMALL(binarySplit.EvaluateFitnessFunction(), 1e-5);
+}
+
+/**
+ * Make sure the HoeffdingCategoricalSplit object serializes correctly.
+ */
+BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitTest)
+{
+  using namespace mlpack::tree;
+
+  HoeffdingCategoricalSplit<GiniImpurity> split(10, 3);
+  for (size_t i = 0; i < 50; ++i)
+    split.Train(mlpack::math::RandInt(10), mlpack::math::RandInt(3));
+
+  HoeffdingCategoricalSplit<GiniImpurity> xmlSplit(3, 7);
+  HoeffdingCategoricalSplit<GiniImpurity> binarySplit(4, 11);
+  HoeffdingCategoricalSplit<GiniImpurity> textSplit(2, 2);
+  for (size_t i = 0; i < 10; ++i)
+    textSplit.Train(mlpack::math::RandInt(2), mlpack::math::RandInt(2));
+
+  SerializeObjectAll(split, xmlSplit, textSplit, binarySplit);
+
+  BOOST_REQUIRE_EQUAL(split.MajorityClass(), xmlSplit.MajorityClass());
+  BOOST_REQUIRE_EQUAL(split.MajorityClass(), textSplit.MajorityClass());
+  BOOST_REQUIRE_EQUAL(split.MajorityClass(), binarySplit.MajorityClass());
+
+  BOOST_REQUIRE_CLOSE(split.EvaluateFitnessFunction(),
+                      xmlSplit.EvaluateFitnessFunction(), 1e-5);
+  BOOST_REQUIRE_CLOSE(split.EvaluateFitnessFunction(),
+                      textSplit.EvaluateFitnessFunction(), 1e-5);
+  BOOST_REQUIRE_CLOSE(split.EvaluateFitnessFunction(),
+                      binarySplit.EvaluateFitnessFunction(), 1e-5);
+
+  arma::Col<size_t> children, xmlChildren, textChildren, binaryChildren;
+  CategoricalSplitInfo splitInfo(1); // I don't care about this.
+
+  split.Split(children, splitInfo);
+  xmlSplit.Split(xmlChildren, splitInfo);
+  binarySplit.Split(binaryChildren, splitInfo);
+  textSplit.Split(textChildren, splitInfo);
+
+  BOOST_REQUIRE_EQUAL(children.size(), xmlChildren.size());
+  BOOST_REQUIRE_EQUAL(children.size(), textChildren.size());
+  BOOST_REQUIRE_EQUAL(children.size(), binaryChildren.size());
+  for (size_t i = 0; i < children.size(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(children[i], xmlChildren[i]);
+    BOOST_REQUIRE_EQUAL(children[i], textChildren[i]);
+    BOOST_REQUIRE_EQUAL(children[i], binaryChildren[i]);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();
