@@ -19,8 +19,10 @@ PARAM_STRING("labels_file", "Labels for training dataset.", "l", "");
 
 PARAM_DOUBLE("confidence", "Confidence before splitting (between 0 and 1).",
     "c", 0.95);
-PARAM_INT("max_samples", "Maximum number of samples before splitting.", "m",
+PARAM_INT("max_samples", "Maximum number of samples before splitting.", "n",
     5000);
+
+PARAM_STRING("model_file", "File to save trained tree to.", "m", "");
 
 PARAM_STRING("test_file", "File of testing data.", "T", "");
 
@@ -81,4 +83,7 @@ int main(int argc, char** argv)
           << "!\n";
 
   Log::Info << correct << " correct out of " << predictedLabels.n_elem << ".\n";
+
+  const string modelFile = CLI::GetParam<string>("model_file");
+  //data::Save(modelFile, "streamingDecisionTree", tree, true);
 }
