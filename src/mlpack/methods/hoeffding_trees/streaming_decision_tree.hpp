@@ -42,6 +42,7 @@ class StreamingDecisionTree
 }
 
   const SplitType& Split() const { return split; }
+  SplitType& Split() { return split; }
 
   template<typename VecType>
   void Train(const VecType& data, const size_t label);
@@ -64,7 +65,20 @@ class StreamingDecisionTree
   {
     ar & data::CreateNVP(split, "split");
 
-    //ar & data::CreateNVP(children, "children");
+    size_t numChildren;
+    if (Archive::is_saving::value)
+      numChildren = children.size();
+    ar & data::CreateNVP(numChildren, "numChildren");
+    if (Archive::is_loading::value)
+      children.resize(numChildren, StreamingDecisionTree(data::DatasetInfo(), 0,
+          0));
+
+    for (size_t i = 0; i < numChildren; ++i)
+    {
+      std::ostringstream name;
+      name << "child" << i;
+      ar & data::CreateNVP(children[i], name.str());
+    }
   }
 
  private:
