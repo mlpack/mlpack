@@ -51,6 +51,9 @@
 // defined, but we still need to define it (as nothing) so that the mlpack
 // serialization shim compiles.
 #include <boost/serialization/serialization.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/unordered_map.hpp>
 #ifndef BOOST_PFTO
   #define BOOST_PFTO
 #endif
