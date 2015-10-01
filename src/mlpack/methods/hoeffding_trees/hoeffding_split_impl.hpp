@@ -341,8 +341,8 @@ void HoeffdingSplit<
     {
       // Clear things we don't need.
       majorityClass = 0;
-      categoricalSplit = CategoricalSplitType::SplitInfo();
-      numericSplit = NumericSplitType::SplitInfo();
+      categoricalSplit = typename CategoricalSplitType::SplitInfo(numClasses);
+      numericSplit = typename NumericSplitType::SplitInfo();
     }
   }
   else
