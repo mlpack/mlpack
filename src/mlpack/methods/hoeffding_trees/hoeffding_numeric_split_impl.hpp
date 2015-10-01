@@ -86,7 +86,6 @@ template<typename FitnessFunction, typename ObservationType>
 double HoeffdingNumericSplit<FitnessFunction, ObservationType>::
     EvaluateFitnessFunction() const
 {
-  Log::Debug << sufficientStatistics.t();
   if (samplesSeen < observationsBeforeBinning)
     return 0.0;
   else
@@ -151,7 +150,7 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::Serialize(
   ar & CreateNVP(observationsBeforeBinning, "observationsBeforeBinning");
   ar & CreateNVP(bins, "bins");
 
-  if (samplesSeen > observationsBeforeBinning)
+  if (samplesSeen >= observationsBeforeBinning)
   {
     // The binning has happened, so we only need to save the resulting bins.
     ar & CreateNVP(splitPoints, "splitPoints");
