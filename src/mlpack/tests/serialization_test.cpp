@@ -834,4 +834,55 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitTest)
   }
 }
 
+/**
+ * Make sure the HoeffdingSplit object serializes correctly before a split has
+ * occured.
+ */
+BOOST_AUTO_TEST_CASE(HoeffdingSplitTest)
+{
+  data::DatasetInfo info;
+  info.MapString("0", 2); // Dimension 1 is categorical.
+  info.MapString("1", 2);
+  HoeffdingSplit<> split(5, 2, info, 0.99, 15000);
+
+  // Train for 2 samples.
+  split.Train(arma::vec("0.3 0.4 1 0.6 0.7"), 0);
+  split.Train(arma::vec("-0.3 0.0 0 0.7 0.8"), 1);
+
+  data::DatasetInfo wrongInfo;
+  wrongInfo.MapString("1", 1);
+  HoeffdingSplit<> xmlSplit(3, 7, wrongInfo, 0.1, 10);
+
+  // Force the binarySplit to split.
+  data::DatasetInfo binaryInfo;
+  binaryInfo.MapString("cat0", 0);
+  binaryInfo.MapString("cat1", 0);
+  binaryInfo.MapString("cat0", 1);
+
+  HoeffdingSplit<> binarySplit(2, 2, info, 0.95, 5000);
+
+  // Feed samples from each class.
+  for (size_t i = 0; i < 500; ++i)
+  {
+    binarySplit.Train(arma::Col<size_t>("0 0"), 0);
+    binarySplit.Train(arma::Col<size_t>("1 0"), 1);
+  }
+
+  HoeffdingSplit<> textSplit(10, 11, wrongInfo, 0.75, 1000);
+
+  SerializeObjectAll(split, xmlSplit, textSplit, binarySplit);
+
+  BOOST_REQUIRE_EQUAL(split.SplitDimension(), xmlSplit.SplitDimension());
+  BOOST_REQUIRE_EQUAL(split.SplitDimension(), binarySplit.SplitDimension());
+  BOOST_REQUIRE_EQUAL(split.SplitDimension(), textSplit.SplitDimension());
+
+  BOOST_REQUIRE_EQUAL(split.MajorityClass(), xmlSplit.MajorityClass());
+  BOOST_REQUIRE_EQUAL(split.MajorityClass(), binarySplit.MajorityClass());
+  BOOST_REQUIRE_EQUAL(split.MajorityClass(), textSplit.MajorityClass());
+
+  BOOST_REQUIRE_EQUAL(split.SplitCheck(), xmlSplit.SplitCheck());
+  BOOST_REQUIRE_EQUAL(split.SplitCheck(), binarySplit.SplitCheck());
+  BOOST_REQUIRE_EQUAL(split.SplitCheck(), textSplit.SplitCheck());
+}
+
 BOOST_AUTO_TEST_SUITE_END();
