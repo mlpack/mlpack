@@ -57,6 +57,12 @@ class DatasetInfo
 
   size_t NumMappings(const size_t dimension) const;
 
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(maps, "maps");
+  }
+
  private:
   // Map entries will only exist for dimensions that are categorical.
   std::unordered_map<size_t, std::pair<boost::bimap<std::string, size_t>,
