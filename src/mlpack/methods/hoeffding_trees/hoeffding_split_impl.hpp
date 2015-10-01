@@ -294,8 +294,8 @@ void HoeffdingSplit<
   const size_t dimensionality = numericSplits.size() + categoricalSplits.size();
   for (size_t i = 0; i < childMajorities.n_elem; ++i)
   {
-    children.push_back(StreamingDecisionTreeType(datasetInfo, dimensionality,
-        numClasses, successProbability, numSamples, dimensionMappings));
+    children.push_back(StreamingDecisionTreeType(*datasetInfo, dimensionality,
+        numClasses, successProbability, maxSamples, dimensionMappings));
     children[i].MajorityClass() = childMajorities[i];
   }
 
