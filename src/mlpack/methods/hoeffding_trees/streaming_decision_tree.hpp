@@ -59,6 +59,14 @@ class StreamingDecisionTree
 
   // that's just a split dimension and a rule (categorical or numeric)
 
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */)
+  {
+    ar & data::CreateNVP(split, "split");
+
+    //ar & data::CreateNVP(children, "children");
+  }
+
  private:
   std::vector<StreamingDecisionTree> children;
 
