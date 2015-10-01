@@ -75,7 +75,7 @@ class HoeffdingSplit
   size_t numSamples;
   size_t numClasses;
   size_t maxSamples;
-  const data::DatasetInfo& datasetInfo;
+  data::DatasetInfo* datasetInfo;
   double successProbability;
 
   // And we need to keep some information for after we have split.

@@ -30,7 +30,7 @@ HoeffdingSplit<
     numSamples(0),
     numClasses(numClasses),
     maxSamples(maxSamples),
-    datasetInfo(datasetInfo),
+    datasetInfo(const_cast<data::DatasetInfo*>(&datasetInfo)),
     successProbability(successProbability),
     splitDimension(size_t(-1)),
     categoricalSplit(0),
@@ -100,9 +100,9 @@ void HoeffdingSplit<
     size_t categoricalIndex = 0;
     for (size_t i = 0; i < point.n_rows; ++i)
     {
-      if (datasetInfo.Type(i) == data::Datatype::categorical)
+      if (datasetInfo->Type(i) == data::Datatype::categorical)
         categoricalSplits[categoricalIndex++].Train(point[i], label);
-      else if (datasetInfo.Type(i) == data::Datatype::numeric)
+      else if (datasetInfo->Type(i) == data::Datatype::numeric)
         numericSplits[numericIndex++].Train(point[i], label);
     }
   }
@@ -168,11 +168,11 @@ size_t HoeffdingSplit<
   {
     // Split!
     splitDimension = largestIndex;
-    if (datasetInfo.Type(largestIndex) == data::Datatype::categorical)
+    if (datasetInfo->Type(largestIndex) == data::Datatype::categorical)
     {
       // I don't know if this should be here.
       majorityClass = categoricalSplits[largestIndex].MajorityClass();
-      return datasetInfo.NumMappings(largestIndex);
+      return datasetInfo->NumMappings(largestIndex);
     }
     else
     {
@@ -238,9 +238,9 @@ size_t HoeffdingSplit<
 >::CalculateDirection(const VecType& point) const
 {
   // Don't call this before the node is split...
-  if (datasetInfo.Type(splitDimension) == data::Datatype::numeric)
+  if (datasetInfo->Type(splitDimension) == data::Datatype::numeric)
     return numericSplit.CalculateDirection(point[splitDimension]);
-  else if (datasetInfo.Type(splitDimension) == data::Datatype::categorical)
+  else if (datasetInfo->Type(splitDimension) == data::Datatype::categorical)
     return categoricalSplit.CalculateDirection(point[splitDimension]);
   else
     return 0; // Not sure what to do here...
@@ -320,9 +320,8 @@ void HoeffdingSplit<
 
   ar & CreateNVP(splitDimension, "splitDimension");
   ar & CreateNVP(dimensionMappings, "dimensionMappings");
-  // What to do here about ownership...?
-  if (Archive::is_loading::value)
-    ownsMappings = true;
+  ar & CreateNVP(ownsMappings, "ownsMappings");
+  ar & CreateNVP(datasetInfo, "datasetInfo");
 
   // Depending on whether or not we have split yet, we may need to save
   // different things.
@@ -367,6 +366,7 @@ void HoeffdingSplit<
         name << "numericSplit" << i;
         ar & CreateNVP(numericSplits[i], name.str());
       }
+
 
       splits = categoricalSplits.size();
       ar & CreateNVP(splits, "numCategoricalSplits");
