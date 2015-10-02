@@ -12,6 +12,7 @@ set(SOURCES
   numeric_split_info.hpp
   streaming_decision_tree.hpp
   streaming_decision_tree_impl.hpp
+  typedef.hpp
 )
 
 # Add directory name to sources.
