@@ -25,6 +25,7 @@
 #include <mlpack/methods/perceptron/perceptron.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+#include <mlpack/methods/softmax_regression/softmax_regression.hpp>
 #include <mlpack/methods/det/dtree.hpp>
 
 using namespace mlpack;
@@ -800,6 +801,29 @@ BOOST_AUTO_TEST_CASE(AllkNNTest)
   CheckMatrices(neighbors, xmlNeighbors, textNeighbors, binaryNeighbors);
 }
 
+BOOST_AUTO_TEST_CASE(SoftmaxRegressionTest)
+{
+  using regression::SoftmaxRegression;
+
+  arma::mat dataset = arma::randu<arma::mat>(5, 1000);
+  arma::Row<size_t> labels(1000);
+  for (size_t i = 0; i < 500; ++i)
+    labels[i] = 0;
+  for (size_t i = 500; i < 1000; ++i)
+    labels[i] = 1;
+
+  SoftmaxRegression<> sr(dataset, labels, 2);
+
+  SoftmaxRegression<> srXml(dataset.n_rows, 2);
+  SoftmaxRegression<> srText(dataset.n_rows, 2);
+  SoftmaxRegression<> srBinary(dataset.n_rows, 2);
+
+  SerializeObjectAll(sr, srXml, srText, srBinary);
+
+  CheckMatrices(sr.Parameters(), srXml.Parameters(), srText.Parameters(),
+      srBinary.Parameters());
+}
+
 BOOST_AUTO_TEST_CASE(DETTest)
 {
   using det::DTree;
@@ -1011,6 +1035,5 @@ BOOST_AUTO_TEST_CASE(DETTest)
       }
     }
   }
-}
 
 BOOST_AUTO_TEST_SUITE_END();
