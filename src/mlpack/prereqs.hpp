@@ -53,7 +53,11 @@
 #include <boost/serialization/serialization.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>
-#include <boost/serialization/unordered_map.hpp>
+#if BOOST_VERSION < 105500 // Old versions don't have unordered_map support.
+  #include "core/boost_backport/unordered_map.hpp"
+#else
+  #include <boost/serialization/unordered_map.hpp>
+#endif
 #ifndef BOOST_PFTO
   #define BOOST_PFTO
 #endif
