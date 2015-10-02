@@ -105,6 +105,24 @@ size_t StreamingDecisionTree<SplitType, MatType>::Classify(const VecType& data)
 }
 
 template<typename SplitType, typename MatType>
+template<typename VecType>
+void StreamingDecisionTree<SplitType, MatType>::Classify(
+    const VecType& data,
+    size_t& prediction,
+    double& probability)
+{
+  if (children.size() == 0)
+  {
+    split.Classify(data, prediction, probability);
+  }
+  else
+  {
+    const size_t direction = split.CalculateDirection(data);
+    children[direction].Classify(data, prediction, probability);
+  }
+}
+
+template<typename SplitType, typename MatType>
 void StreamingDecisionTree<SplitType, MatType>::Classify(
     const MatType& data,
     arma::Row<size_t>& predictions)
@@ -112,6 +130,18 @@ void StreamingDecisionTree<SplitType, MatType>::Classify(
   predictions.set_size(data.n_cols);
   for (size_t i = 0; i < data.n_cols; ++i)
     predictions[i] = Classify(data.col(i));
+}
+
+template<typename SplitType, typename MatType>
+void StreamingDecisionTree<SplitType, MatType>::Classify(
+    const MatType& data,
+    arma::Row<size_t>& predictions,
+    arma::rowvec& probabilities)
+{
+  predictions.set_size(data.n_cols);
+  probabilities.set_size(data.n_cols);
+  for (size_t i = 0; i < data.n_cols; ++i)
+    Classify(data.col(i), predictions[i], probabilities[i]);
 }
 
 } // namespace tree

@@ -50,6 +50,7 @@ class HoeffdingCategoricalSplit
   void Split(arma::Col<size_t>& childMajorities, SplitInfo& splitInfo);
 
   size_t MajorityClass() const;
+  double MajorityProbability() const;
 
   //! Serialize the categorical split.
   template<typename Archive>

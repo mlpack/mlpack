@@ -55,6 +55,10 @@ class HoeffdingSplit
   template<typename VecType>
   size_t Classify(const VecType& point) const;
 
+  template<typename VecType>
+  void Classify(const VecType& point, size_t& prediction, double& probability)
+      const;
+
   template<typename StreamingDecisionTreeType>
   void CreateChildren(std::vector<StreamingDecisionTreeType>& children);
 
@@ -81,6 +85,7 @@ class HoeffdingSplit
   // And we need to keep some information for after we have split.
   size_t splitDimension;
   size_t majorityClass;
+  double majorityProbability;
   typename CategoricalSplitType::SplitInfo categoricalSplit; // In case it's categorical.
   typename NumericSplitType::SplitInfo numericSplit; // In case it's numeric.
 };

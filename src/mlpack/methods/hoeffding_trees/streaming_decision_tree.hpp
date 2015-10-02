@@ -52,7 +52,14 @@ class StreamingDecisionTree
   template<typename VecType>
   size_t Classify(const VecType& data);
 
+  template<typename VecType>
+  void Classify(const VecType& data, size_t& prediction, double& probability);
+
   void Classify(const MatType& data, arma::Row<size_t>& predictions);
+
+  void Classify(const MatType& data,
+                arma::Row<size_t>& predictions,
+                arma::rowvec& probabilities);
 
   size_t& MajorityClass() { return split.MajorityClass(); }
 

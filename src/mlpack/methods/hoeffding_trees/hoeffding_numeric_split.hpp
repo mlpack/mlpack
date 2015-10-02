@@ -60,6 +60,7 @@ class HoeffdingNumericSplit
   void Split(arma::Col<size_t>& childMajorities, SplitInfo& splitInfo) const;
 
   size_t MajorityClass() const;
+  double MajorityProbability() const;
 
   size_t Bins() const { return bins; }
 

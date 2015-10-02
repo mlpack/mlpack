@@ -130,12 +130,38 @@ size_t HoeffdingNumericSplit<FitnessFunction, ObservationType>::
   {
     // We've calculated the bins, so we can just sum over the sufficient
     // statistics.
-    arma::Col<size_t> classCounts = sum(sufficientStatistics, 1);
+    arma::Col<size_t> classCounts = arma::sum(sufficientStatistics, 1);
 
     arma::uword maxIndex;
     classCounts.max(maxIndex);
     return size_t(maxIndex);
   }
+}
+
+template<typename FitnessFunction, typename ObservationType>
+double HoeffdingNumericSplit<FitnessFunction, ObservationType>::
+    MajorityProbability() const
+{
+  // If we haven't yet determined the bins, we must calculate this by hand.
+  if (samplesSeen < observationsBeforeBinning)
+  {
+    arma::Col<size_t> classes(sufficientStatistics.n_rows);
+    classes.zeros();
+
+    for (size_t i = 0; i < samplesSeen; ++i)
+      classes[labels[i]]++;
+
+    return double(classes.max()) / double(arma::accu(classes));
+  }
+  else
+  {
+    // We've calculated the bins, so we can just sum over the sufficient
+    // statistics.
+    arma::Col<size_t> classCounts = arma::sum(sufficientStatistics, 1);
+
+    return double(classCounts.max()) / double(arma::sum(classCounts));
+  }
+
 }
 
 template<typename FitnessFunction, typename ObservationType>

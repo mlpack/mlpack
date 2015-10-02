@@ -108,9 +108,15 @@ void HoeffdingSplit<
 
     // Grab majority class from splits.
     if (categoricalSplits.size() > 0)
+    {
       majorityClass = categoricalSplits[0].MajorityClass();
+      majorityProbability = categoricalSplits[0].MajorityProbability();
+    }
     else
+    {
       majorityClass = numericSplits[0].MajorityClass();
+      majorityProbability = numericSplits[0].MajorityProbability();
+    }
   }
   else
   {
@@ -256,6 +262,24 @@ size_t HoeffdingSplit<
   // We're a leaf (or being considered a leaf), so classify based on what we
   // know.
   return majorityClass;
+}
+
+template<
+    typename FitnessFunction,
+    typename NumericSplitType,
+    typename CategoricalSplitType
+>
+template<typename VecType>
+void HoeffdingSplit<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::Classify(const VecType& /* point */,
+            size_t& prediction,
+            double& probability) const
+{
+  prediction = majorityClass;
+  probability = majorityProbability;
 }
 
 template<
