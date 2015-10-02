@@ -342,6 +342,7 @@ void HoeffdingSplit<
   ar & CreateNVP(ownsMappings, "ownsMappings");
   ar & CreateNVP(datasetInfo, "datasetInfo");
   ar & CreateNVP(majorityClass, "majorityClass");
+  ar & CreateNVP(majorityProbability, "majorityProbability");
 
   // Depending on whether or not we have split yet, we may need to save
   // different things.

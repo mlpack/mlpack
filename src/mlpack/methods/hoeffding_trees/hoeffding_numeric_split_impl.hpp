@@ -24,7 +24,8 @@ HoeffdingNumericSplit<FitnessFunction, ObservationType>::HoeffdingNumericSplit(
     samplesSeen(0),
     sufficientStatistics(arma::zeros<arma::Mat<size_t>>(numClasses, bins))
 {
-  // Nothing to do.
+  observations.zeros();
+  labels.zeros();
 }
 
 template<typename FitnessFunction, typename ObservationType>

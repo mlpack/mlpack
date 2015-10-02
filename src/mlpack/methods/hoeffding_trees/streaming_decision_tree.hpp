@@ -70,14 +70,12 @@ class StreamingDecisionTree
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
   {
-    std::cout << "serialize split\n";
     ar & data::CreateNVP(split, "split");
 
     size_t numChildren;
     if (Archive::is_saving::value)
       numChildren = children.size();
     ar & data::CreateNVP(numChildren, "numChildren");
-    std::cout << "serialize " << numChildren << " children\n";
     if (Archive::is_loading::value)
       children.resize(numChildren, StreamingDecisionTree(data::DatasetInfo(), 0,
           0));
@@ -86,9 +84,7 @@ class StreamingDecisionTree
     {
       std::ostringstream name;
       name << "child" << i;
-      std::cout << "try to deserialize " << name.str() << "\n";
       ar & data::CreateNVP(children[i], name.str());
-      std::cout << "serialized " << name.str() << "\n";
     }
   }
 
