@@ -105,6 +105,12 @@ void HoeffdingSplit<
       else if (datasetInfo->Type(i) == data::Datatype::numeric)
         numericSplits[numericIndex++].Train(point[i], label);
     }
+
+    // Grab majority class from splits.
+    if (categoricalSplits.size() > 0)
+      majorityClass = categoricalSplits[0].MajorityClass();
+    else
+      majorityClass = numericSplits[0].MajorityClass();
   }
   else
   {
@@ -197,17 +203,6 @@ size_t HoeffdingSplit<
     CategoricalSplitType
 >::MajorityClass() const
 {
-  // If the node is not split yet, we have to grab the majority class from any
-  // of the structures figuring out what to split on.
-  if (splitDimension == size_t(-1))
-  {
-    // Grab majority class from splits.
-    if (categoricalSplits.size() > 0)
-      majorityClass = categoricalSplits[0].MajorityClass();
-    else
-      majorityClass = numericSplits[0].MajorityClass();
-  }
-
   return majorityClass;
 }
 
@@ -322,6 +317,7 @@ void HoeffdingSplit<
   ar & CreateNVP(dimensionMappings, "dimensionMappings");
   ar & CreateNVP(ownsMappings, "ownsMappings");
   ar & CreateNVP(datasetInfo, "datasetInfo");
+  ar & CreateNVP(majorityClass, "majorityClass");
 
   // Depending on whether or not we have split yet, we may need to save
   // different things.
@@ -381,7 +377,6 @@ void HoeffdingSplit<
     if (Archive::is_loading::value)
     {
       // Clear things we don't need.
-      majorityClass = 0;
       categoricalSplit = typename CategoricalSplitType::SplitInfo(numClasses);
       numericSplit = typename NumericSplitType::SplitInfo();
     }
@@ -392,7 +387,6 @@ void HoeffdingSplit<
     // split.
     ar & CreateNVP(categoricalSplit, "categoricalSplit");
     ar & CreateNVP(numericSplit, "numericSplit");
-    ar & CreateNVP(majorityClass, "majorityClass");
 
     if (Archive::is_loading::value)
     {
