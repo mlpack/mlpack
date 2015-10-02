@@ -101,7 +101,7 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::Split(
   for (size_t i = 0; i < sufficientStatistics.n_cols; ++i)
   {
     arma::uword maxIndex;
-    sufficientStatistics.col(i).max(maxIndex);
+    sufficientStatistics.unsafe_col(i).max(maxIndex);
     childMajorities[i] = size_t(maxIndex);
   }
 
