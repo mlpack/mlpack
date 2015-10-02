@@ -85,5 +85,5 @@ int main(int argc, char** argv)
   Log::Info << correct << " correct out of " << predictedLabels.n_elem << ".\n";
 
   const string modelFile = CLI::GetParam<string>("model_file");
-  //data::Save(modelFile, "streamingDecisionTree", tree, true);
+  data::Save(modelFile, "streamingDecisionTree", tree, true);
 }
