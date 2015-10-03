@@ -1035,5 +1035,6 @@ BOOST_AUTO_TEST_CASE(DETTest)
       }
     }
   }
+}
 
 BOOST_AUTO_TEST_SUITE_END();
