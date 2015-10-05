@@ -197,6 +197,18 @@ BinarySpaceTree(
     parentDistance(0), // Parent distance for the root is 0: it has no parent.
     dataset(std::move(data))
 {
+  // Initialize the oldFromNew vector correctly.
+  oldFromNew.resize(data.n_cols);
+  for (size_t i = 0; i < data.n_cols; i++)
+    oldFromNew[i] = i; // Fill with unharmed indices.
+
+  // Now do the actual splitting.
+  SplitType<BoundType<MetricType>, MatType> splitter;
+  SplitNode(oldFromNew, maxLeafSize, splitter);
+
+  // Create the statistic depending on if we are a leaf or not.
+  stat = StatisticType(*this);
+
   // Map the newFromOld indices correctly.
   newFromOld.resize(data.n_cols);
   for (size_t i = 0; i < data.n_cols; i++)
