@@ -39,7 +39,7 @@ void BinaryNumericSplit<FitnessFunction, ObservationType>::Train(
 
 template<typename FitnessFunction, typename ObservationType>
 double BinaryNumericSplit<FitnessFunction, ObservationType>::
-    EvaluateFitnessFunction() const
+    EvaluateFitnessFunction()
 {
   // Unfortunately, we have to iterate over the map.
   bestSplit = std::numeric_limits<ObservationType>::min();
@@ -51,7 +51,7 @@ double BinaryNumericSplit<FitnessFunction, ObservationType>::
 
   double bestValue = FitnessFunction::Evaluate(counts);
 
-  for (std::multimap<ObservationType, size_t>::const_iterator it =
+  for (typename std::multimap<ObservationType, size_t>::const_iterator it =
       sortedElements.begin(); it != sortedElements.end(); ++it)
   {
     // Move the point to the right side of the split.
@@ -75,7 +75,7 @@ double BinaryNumericSplit<FitnessFunction, ObservationType>::
 template<typename FitnessFunction, typename ObservationType>
 void BinaryNumericSplit<FitnessFunction, ObservationType>::Split(
     arma::Col<size_t>& childMajorities,
-    SplitInfo& splitInfo) const
+    SplitInfo& splitInfo)
 {
   if (!isAccurate)
     EvaluateFitnessFunction();
@@ -87,8 +87,8 @@ void BinaryNumericSplit<FitnessFunction, ObservationType>::Split(
   counts.col(0).zeros();
   counts.col(1) = classCounts;
 
-  for (std::multimap<ObservationType, size_t>::const_iterator it =
-      sortedElements.begin(); (*it).second <= bestValue; ++it)
+  for (typename std::multimap<ObservationType, size_t>::const_iterator it =
+      sortedElements.begin(); (*it).second <= bestSplit; ++it)
   {
     // Move the point to the correct side of the split.
     --counts((*it).second, 1);

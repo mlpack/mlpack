@@ -1,6 +1,8 @@
 # Define the files we need to compile
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
+  binary_numeric_split.hpp
+  binary_numeric_split_impl.hpp
   categorical_split_info.hpp
   gini_impurity.hpp
   hoeffding_categorical_split.hpp

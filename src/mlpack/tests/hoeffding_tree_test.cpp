@@ -9,6 +9,7 @@
 #include <mlpack/methods/hoeffding_trees/gini_impurity.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_split.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp>
+#include <mlpack/methods/hoeffding_trees/binary_numeric_split.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -520,6 +521,28 @@ BOOST_AUTO_TEST_CASE(HoeffdingNumericSplitBimodalTest)
   {
     BOOST_REQUIRE_NE(info.CalculateDirection(mlpack::math::Random() + 0.3),
                      info.CalculateDirection(-mlpack::math::Random() - 0.3));
+  }
+}
+
+/**
+ * Create a BinaryNumericSplit object, feed it a bunch of samples where anything
+ * less than 1.0 is class 0 and anything greater is class 1.  Then make sure it
+ * can perform a perfect split.
+ */
+BOOST_AUTO_TEST_CASE(BinaryNumericSplitSimpleSplitTest)
+{
+  BinaryNumericSplit<GiniImpurity> split(2); // 2 classes.
+
+  // Feed it samples.
+  for (size_t i = 0; i < 500; ++i)
+  {
+    split.Train(mlpack::math::Random(), 0);
+    split.Train(mlpack::math::Random() + 1.0, 1);
+
+    // Now ensure the fitness function gives good gain.
+    // The Gini impurity for the unsplit node is 2 * (0.5^2) = 0.5, and the Gini
+    // impurity for the children is 0.
+    BOOST_REQUIRE_CLOSE(split.EvaluateFitnessFunction(), 0.5, 1e-5);
   }
 }
 

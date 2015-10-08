@@ -43,9 +43,9 @@ class BinaryNumericSplit
 
   void Train(ObservationType value, const size_t label);
 
-  double EvaluateFitnessFunction() const;
+  double EvaluateFitnessFunction();
 
-  void Split(arma::Col<size_t>& childMajorities, SplitInfo& splitInfo) const;
+  void Split(arma::Col<size_t>& childMajorities, SplitInfo& splitInfo);
 
   size_t MajorityClass() const;
   double MajorityProbability() const;
