@@ -36,7 +36,6 @@ template<typename FitnessFunction>
 double HoeffdingCategoricalSplit<FitnessFunction>::EvaluateFitnessFunction()
     const
 {
-  Log::Debug << sufficientStatistics.t();
   return FitnessFunction::Evaluate(sufficientStatistics);
 }
 
