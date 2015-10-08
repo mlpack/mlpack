@@ -544,6 +544,52 @@ BOOST_AUTO_TEST_CASE(BinaryNumericSplitSimpleSplitTest)
     // impurity for the children is 0.
     BOOST_REQUIRE_CLOSE(split.EvaluateFitnessFunction(), 0.5, 1e-5);
   }
+
+  // Now, when we ask it to split, ensure that the split value is reasonable.
+  arma::Col<size_t> childMajorities;
+  NumericSplitInfo<> splitInfo;
+  split.Split(childMajorities, splitInfo);
+
+  BOOST_REQUIRE_EQUAL(childMajorities[0], 0);
+  BOOST_REQUIRE_EQUAL(childMajorities[1], 1);
+  BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(0.5), 0);
+  BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(1.5), 1);
+  BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(0.0), 0);
+  BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(-1.0), 0);
+  BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(0.9), 0);
+  BOOST_REQUIRE_EQUAL(splitInfo.CalculateDirection(1.1), 1);
+}
+
+/**
+ * Create a BinaryNumericSplit object, feed it samples in the same way as
+ * before, but with four classes.
+ */
+BOOST_AUTO_TEST_CASE(BinaryNumericSplitSimpleFourClassSplitTest)
+{
+  BinaryNumericSplit<GiniImpurity> split(4); // 4 classes.
+
+  // Feed it samples.
+  for (size_t i = 0; i < 250; ++i)
+  {
+    split.Train(mlpack::math::Random(), 0);
+    split.Train(mlpack::math::Random() + 2.0, 1);
+    split.Train(mlpack::math::Random() - 1.0, 2);
+    split.Train(mlpack::math::Random() + 1.0, 3);
+
+    // The same as the previous test, but with four classes: 4 * (0.25 * 0.75) =
+    // 0.75.  We can only split in one place, though, which will give one
+    // perfect child, giving a gain of 0.75 - 3 * (1/3 * 2/3) = 0.25.
+    BOOST_REQUIRE_CLOSE(split.EvaluateFitnessFunction(), 0.25, 1e-5);
+  }
+
+  // Now, when we ask it to split, ensure that the split value is reasonable.
+  arma::Col<size_t> childMajorities;
+  NumericSplitInfo<> splitInfo;
+  split.Split(childMajorities, splitInfo);
+
+  // We don't really care where it splits -- it can split anywhere.  But it has
+  // to split in only two directions.
+  BOOST_REQUIRE_EQUAL(childMajorities.n_elem, 2);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -59,7 +59,6 @@ double BinaryNumericSplit<FitnessFunction, ObservationType>::
     ++counts((*it).second, 0);
 
     // TODO: skip ahead if the next value is the same.
-
     double value = FitnessFunction::Evaluate(counts);
     if (value > bestValue)
     {
@@ -88,7 +87,7 @@ void BinaryNumericSplit<FitnessFunction, ObservationType>::Split(
   counts.col(1) = classCounts;
 
   for (typename std::multimap<ObservationType, size_t>::const_iterator it =
-      sortedElements.begin(); (*it).second <= bestSplit; ++it)
+      sortedElements.begin(); (*it).first <= bestSplit; ++it)
   {
     // Move the point to the correct side of the split.
     --counts((*it).second, 1);
