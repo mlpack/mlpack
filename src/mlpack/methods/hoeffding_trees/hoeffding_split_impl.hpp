@@ -189,7 +189,7 @@ size_t HoeffdingSplit<
     else
     {
       majorityClass = numericSplits[largestIndex].MajorityClass();
-      return numericSplits[largestIndex].Bins();
+      return numericSplits[largestIndex].NumChildren();
     }
   }
   else

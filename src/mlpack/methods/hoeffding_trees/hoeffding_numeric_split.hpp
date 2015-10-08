@@ -64,6 +64,9 @@ class HoeffdingNumericSplit
 
   size_t Bins() const { return bins; }
 
+  // Return the number of children if this node splits on this feature.
+  size_t NumChildren() const { return bins; }
+
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 

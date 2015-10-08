@@ -53,6 +53,9 @@ class BinaryNumericSplit
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
+  // Return the number of children if this node were to split on this feature.
+  size_t NumChildren() const { return 2; }
+
  private:
   // All we need is ordered access.
   std::multimap<ObservationType, size_t> sortedElements;
