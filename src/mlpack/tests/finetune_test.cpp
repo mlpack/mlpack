@@ -77,9 +77,7 @@ struct TestData
             paramsPtr.emplace_back(&params[i]);
         }
 
-        finetune = std::make_unique<FineTuneFunc>(inputsPtr,
-                                                  paramsPtr,
-                                                  *sm);
+        finetune.reset(new FineTuneFunc(inputsPtr, paramsPtr, *sm));
     }
 
     size_t TotalEncoderSize() const
