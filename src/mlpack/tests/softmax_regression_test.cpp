@@ -127,6 +127,8 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionFunctionGradient)
   // Create a random set of parameters.
   arma::mat parameters;
   parameters.randu(numClasses, inputSize);
+  srf1.Evaluate(parameters);
+  srf2.Evaluate(parameters);
 
   // Get gradients for the current parameters.
   arma::mat gradient1, gradient2;
