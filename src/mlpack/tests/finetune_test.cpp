@@ -63,7 +63,7 @@ struct TestData
         arma::Row<size_t> labels(2);
         labels(0) = 0;
         labels(1) = 1;
-        sm = std::make_unique<SoftmaxRegressionFunction>(inputs[2], labels, 2);
+        sm.reset(new SoftmaxRegressionFunction(inputs[2], labels, 2));
 
         params.emplace_back(arma::randu<arma::mat>(5,4));
         params.emplace_back(arma::randu<arma::mat>(5,3));
@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE(FinetuneTestSoftmaxGradient)
     testdata.finetune->Gradient(initialPoint, gradient);
 
     auto softmaxGradientCheck = [&testdata]
-            (auto &theta, size_t row, size_t col)
+            (arma::mat &theta, size_t row, size_t col)
     {
         double const Epsillon = 1e-5;
         auto const OriginValue = theta(row, col);
