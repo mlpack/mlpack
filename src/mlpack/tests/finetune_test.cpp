@@ -1,5 +1,4 @@
 #include <mlpack/core.hpp>
-#include <mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp>
 #include <mlpack/methods/softmax_regression/softmax_regression_function.hpp>
 
 #include <mlpack/methods/finetune/finetune.hpp>
@@ -59,17 +58,15 @@ struct TestData
     {
         inputs.emplace_back(arma::randu<arma::mat>(3, 2));
         inputs.emplace_back(arma::randu<arma::mat>(2, 2));
-        inputs.emplace_back(arma::randu<arma::mat>(2, 2));
-        nn::SparseAutoencoderFunction<> sae1(inputs[0], 3, 2);
-        nn::SparseAutoencoderFunction<> sae2(inputs[1], 2, 2);
+        inputs.emplace_back(arma::randu<arma::mat>(2, 2));        
 
         arma::Row<size_t> labels(2);
         labels(0) = 0;
         labels(1) = 1;
         sm = std::make_unique<SoftmaxRegressionFunction>(inputs[2], labels, 2);
 
-        params.emplace_back(sae1.GetInitialPoint());
-        params.emplace_back(sae2.GetInitialPoint());
+        params.emplace_back(arma::randu<arma::mat>(5,4));
+        params.emplace_back(arma::randu<arma::mat>(5,3));
         params.emplace_back(sm->GetInitialPoint());
 
         initialize_last_col(params[0]);
