@@ -93,7 +93,7 @@ class SoftmaxRegressionFunction
    *
    * @param parameters Current values of the model parameters.
    */
-  double Evaluate(const arma::mat& parameters) const;
+  double Evaluate(const arma::mat& parameters);
 
   /**
    * Evaluates the gradient values of the objective function given the current
@@ -108,6 +108,9 @@ class SoftmaxRegressionFunction
 
   //! Return the initial point for the optimization.
   const arma::mat& GetInitialPoint() const { return initialPoint; }
+
+  //! Gets the probabilities.
+  const arma::mat& Probabilities() const { return probabilities; }
 
   //! Gets the number of classes.
   size_t NumClasses() const { return numClasses; }
@@ -127,6 +130,8 @@ class SoftmaxRegressionFunction
   //! Gets the intercept flag.
   bool FitIntercept() const { return fitIntercept; }
 
+  arma::sp_mat const& GroundTruth() const {return groundTruth;}
+
  private:
   //! Training data matrix.
   const arma::mat& data;
@@ -134,6 +139,8 @@ class SoftmaxRegressionFunction
   arma::sp_mat groundTruth;
   //! Initial parameter point.
   arma::mat initialPoint;
+  //! Probability matrix
+  arma::mat probabilities;
   //! Number of classes.
   size_t numClasses;
   //! L2-regularization constant.

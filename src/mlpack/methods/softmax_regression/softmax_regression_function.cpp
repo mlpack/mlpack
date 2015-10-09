@@ -130,7 +130,7 @@ void SoftmaxRegressionFunction::GetProbabilitiesMatrix(
 /**
  * Evaluates the objective function given the parameters.
  */
-double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters) const
+double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters)
 {
   // The objective function is the negative log likelihood of the model
   // calculated over all the training examples. Mathematically it is as follows:
@@ -147,9 +147,9 @@ double SoftmaxRegressionFunction::Evaluate(const arma::mat& parameters) const
   // p_j = exp(theta_j' * x_i) / sum(exp(theta_k' * x_i))
   // The sum is calculated over all the classes.
   // x_i is the input vector for a particular training example.
-  // theta_j is the parameter vector associated with a particular class.
-  arma::mat probabilities;
+  // theta_j is the parameter vector associated with a particular class.  
   GetProbabilitiesMatrix(parameters, probabilities);
+  //std::cout<<"size of prob : "<<arma::size(probabilities)<<"\n";
 
   // Calculate the log likelihood and regularization terms.
   double logLikelihood, weightDecay, cost;
@@ -177,8 +177,8 @@ void SoftmaxRegressionFunction::Gradient(const arma::mat& parameters,
   // The sum is calculated over all the classes.
   // x_i is the input vector for a particular training example.
   // theta_j is the parameter vector associated with a particular class.
-  arma::mat probabilities;
-  GetProbabilitiesMatrix(parameters, probabilities);
+  //arma::mat probabilities;
+  //GetProbabilitiesMatrix(parameters, probabilities);
 
   // Calculate the parameter gradients.
   gradient.set_size(parameters.n_rows, parameters.n_cols);
