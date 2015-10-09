@@ -35,7 +35,8 @@ InitializeWeights()
     arma::mat const &initialMatrix = *paramArray[paramArray.size() - 1];
     initialPoint.set_size(LayerTypesParamSize +
                           initialMatrix.n_elem, 1);
-    softmaxParameters.set_size(arma::size(initialMatrix));
+    softmaxParameters.set_size(initialMatrix.n_rows,
+                               initialMatrix.n_cols);
     FlattenLayerParams();
 
     std::copy(std::begin(initialMatrix), std::end(initialMatrix),
