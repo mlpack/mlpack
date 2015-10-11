@@ -27,7 +27,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     const MatType& dataset,
     const double base,
     MetricType* metric) :
-    dataset(dataset),
+    dataset(&dataset),
     point(RootPointPolicy::ChooseRoot(dataset)),
     scale(INT_MAX),
     base(base),
@@ -36,6 +36,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     parentDistance(0),
     furthestDescendantDistance(0),
     localMetric(metric == NULL),
+    localDataset(false),
     metric(metric),
     distanceComps(0)
 {
@@ -114,7 +115,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     const MatType& dataset,
     MetricType& metric,
     const double base) :
-    dataset(dataset),
+    dataset(&dataset),
     point(RootPointPolicy::ChooseRoot(dataset)),
     scale(INT_MAX),
     base(base),
@@ -123,6 +124,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     parentDistance(0),
     furthestDescendantDistance(0),
     localMetric(false),
+    localDataset(false),
     metric(&metric),
     distanceComps(0)
 {
@@ -207,7 +209,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     size_t& farSetSize,
     size_t& usedSetSize,
     MetricType& metric) :
-    dataset(dataset),
+    dataset(&dataset),
     point(pointIndex),
     scale(scale),
     base(base),
@@ -216,6 +218,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     parentDistance(parentDistance),
     furthestDescendantDistance(0),
     localMetric(false),
+    localDataset(false),
     metric(&metric),
     distanceComps(0)
 {
@@ -251,7 +254,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     const double parentDistance,
     const double furthestDescendantDistance,
     MetricType* metric) :
-    dataset(dataset),
+    dataset(&dataset),
     point(pointIndex),
     scale(scale),
     base(base),
@@ -260,6 +263,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     parentDistance(parentDistance),
     furthestDescendantDistance(furthestDescendantDistance),
     localMetric(metric == NULL),
+    localDataset(false),
     metric(metric),
     distanceComps(0)
 {
@@ -279,7 +283,7 @@ template<
 >
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     const CoverTree& other) :
-    dataset(other.dataset),
+    dataset((other.parent == NULL) ? new MatType(*other.dataset) : NULL),
     point(other.point),
     scale(other.scale),
     base(other.base),
@@ -289,6 +293,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     parentDistance(other.parentDistance),
     furthestDescendantDistance(other.furthestDescendantDistance),
     localMetric(false),
+    localDataset(other.parent == NULL),
     metric(other.metric),
     distanceComps(0)
 {
@@ -297,6 +302,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   {
     children.push_back(new CoverTree(other.Child(i)));
     children[i]->Parent() = this;
+    children[i]->dataset = this->dataset;
   }
 }
 
@@ -315,6 +321,10 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::~CoverTree()
   // Delete the local metric, if necessary.
   if (localMetric)
     delete metric;
+
+  // Delete the local dataset, if necessary.
+  if (localDataset)
+    delete dataset;
 }
 
 //! Return the number of descendant points.
@@ -373,7 +383,7 @@ double CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     MinDistance(const CoverTree* other) const
 {
   // Every cover tree node will contain points up to base^(scale + 1) away.
-  return std::max(metric->Evaluate(dataset.col(point),
+  return std::max(metric->Evaluate(dataset->col(point),
       other->Dataset().col(other->Point())) -
       furthestDescendantDistance - other->FurthestDescendantDistance(), 0.0);
 }
@@ -401,7 +411,7 @@ template<
 double CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     MinDistance(const arma::vec& other) const
 {
-  return std::max(metric->Evaluate(dataset.col(point), other) -
+  return std::max(metric->Evaluate(dataset->col(point), other) -
       furthestDescendantDistance, 0.0);
 }
 
@@ -426,7 +436,7 @@ template<
 double CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     MaxDistance(const CoverTree* other) const
 {
-  return metric->Evaluate(dataset.col(point),
+  return metric->Evaluate(dataset->col(point),
       other->Dataset().col(other->Point())) +
       furthestDescendantDistance + other->FurthestDescendantDistance();
 }
@@ -454,7 +464,7 @@ template<
 double CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     MaxDistance(const arma::vec& other) const
 {
-  return metric->Evaluate(dataset.col(point), other) +
+  return metric->Evaluate(dataset->col(point), other) +
       furthestDescendantDistance;
 }
 
@@ -480,7 +490,7 @@ template<
 math::Range CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     RangeDistance(const CoverTree* other) const
 {
-  const double distance = metric->Evaluate(dataset.col(point),
+  const double distance = metric->Evaluate(dataset->col(point),
       other->Dataset().col(other->Point()));
 
   math::Range result;
@@ -523,7 +533,7 @@ template<
 math::Range CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
     RangeDistance(const arma::vec& other) const
 {
-  const double distance = metric->Evaluate(dataset.col(point), other);
+  const double distance = metric->Evaluate(dataset->col(point), other);
 
   return math::Range(distance - furthestDescendantDistance,
                      distance + furthestDescendantDistance);
@@ -575,7 +585,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
     // Make the self child at the lowest possible level.
     // This should not modify farSetSize or usedSetSize.
     size_t tempSize = 0;
-    children.push_back(new CoverTree(dataset, base, point, INT_MIN, this, 0,
+    children.push_back(new CoverTree(*dataset, base, point, INT_MIN, this, 0,
         indices, distances, 0, tempSize, usedSetSize, *metric));
     distanceComps += children.back()->DistanceComps();
 
@@ -583,7 +593,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
     for (size_t i = 0; i < nearSetSize; ++i)
     {
       // farSetSize and usedSetSize will not be modified.
-      children.push_back(new CoverTree(dataset, base, indices[i],
+      children.push_back(new CoverTree(*dataset, base, indices[i],
           INT_MIN, this, distances[i], indices, distances, 0, tempSize,
           usedSetSize, *metric));
       distanceComps += children.back()->DistanceComps();
@@ -615,7 +625,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
   // Build the self child (recursively).
   size_t childFarSetSize = nearSetSize - childNearSetSize;
   size_t childUsedSetSize = 0;
-  children.push_back(new CoverTree(dataset, base, point, nextScale, this, 0,
+  children.push_back(new CoverTree(*dataset, base, point, nextScale, this, 0,
       indices, distances, childNearSetSize, childFarSetSize, childUsedSetSize,
       *metric));
   // Don't double-count the self-child (so, subtract one).
@@ -673,7 +683,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
     if ((nearSetSize == 1) && (farSetSize == 0))
     {
       size_t childNearSetSize = 0;
-      children.push_back(new CoverTree(dataset, base, indices[0], nextScale,
+      children.push_back(new CoverTree(*dataset, base, indices[0], nextScale,
           this, distances[0], indices, distances, childNearSetSize, farSetSize,
           usedSetSize, *metric));
       distanceComps += children.back()->DistanceComps();
@@ -715,7 +725,7 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CreateChildren(
 
     // Build this child (recursively).
     childUsedSetSize = 1; // Mark self point as used.
-    children.push_back(new CoverTree(dataset, base, indices[0], nextScale,
+    children.push_back(new CoverTree(*dataset, base, indices[0], nextScale,
         this, distances[0], childIndices, childDistances, childNearSetSize,
         childFarSetSize, childUsedSetSize, *metric));
     numDescendants += children.back()->NumDescendants();
@@ -816,8 +826,8 @@ void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
   distanceComps += pointSetSize;
   for (size_t i = 0; i < pointSetSize; ++i)
   {
-    distances[i] = metric->Evaluate(dataset.col(pointIndex),
-        dataset.col(indices[i]));
+    distances[i] = metric->Evaluate(dataset->col(pointIndex),
+        dataset->col(indices[i]));
   }
 }
 
@@ -1125,7 +1135,7 @@ std::string CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
 {
   std::ostringstream convert;
   convert << "CoverTree [" << this << "]" << std::endl;
-  convert << "  dataset: " << &dataset << std::endl;
+  convert << "  dataset: " << dataset << std::endl;
   convert << "  point: " << point << std::endl;
   convert << "  scale: " << scale << std::endl;
   convert << "  base: " << base << std::endl;

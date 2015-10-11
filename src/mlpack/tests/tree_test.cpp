@@ -1831,8 +1831,9 @@ BOOST_AUTO_TEST_CASE(CoverTreeCopyConstructor)
 
   TreeType d = c;
 
-  // Check that everything is the same.
-  BOOST_REQUIRE_EQUAL(c.Dataset().memptr(), d.Dataset().memptr());
+  // Check that everything is the same, except the dataset, which should have
+  // been copied.
+  BOOST_REQUIRE_NE(c.Dataset().memptr(), d.Dataset().memptr());
   BOOST_REQUIRE_CLOSE(c.Base(), d.Base(), 1e-50);
   BOOST_REQUIRE_EQUAL(c.Point(), d.Point());
   BOOST_REQUIRE_EQUAL(c.Scale(), d.Scale());
@@ -1850,8 +1851,9 @@ BOOST_AUTO_TEST_CASE(CoverTreeCopyConstructor)
   BOOST_REQUIRE_EQUAL(d.Child(1).Parent(), &d);
 
   // Check that the children are okay.
-  BOOST_REQUIRE_EQUAL(c.Child(0).Dataset().memptr(),
-                      d.Child(0).Dataset().memptr());
+  BOOST_REQUIRE_NE(c.Child(0).Dataset().memptr(),
+                   d.Child(0).Dataset().memptr());
+  BOOST_REQUIRE_EQUAL(c.Child(0).Dataset().memptr(), c.Dataset().memptr());
   BOOST_REQUIRE_CLOSE(c.Child(0).Base(), d.Child(0).Base(), 1e-50);
   BOOST_REQUIRE_EQUAL(c.Child(0).Point(), d.Child(0).Point());
   BOOST_REQUIRE_EQUAL(c.Child(0).Scale(), d.Child(0).Scale());
@@ -1860,8 +1862,9 @@ BOOST_AUTO_TEST_CASE(CoverTreeCopyConstructor)
                       d.Child(0).FurthestDescendantDistance());
   BOOST_REQUIRE_EQUAL(c.Child(0).NumChildren(), d.Child(0).NumChildren());
 
-  BOOST_REQUIRE_EQUAL(c.Child(1).Dataset().memptr(),
-                      d.Child(1).Dataset().memptr());
+  BOOST_REQUIRE_NE(c.Child(1).Dataset().memptr(),
+                   d.Child(1).Dataset().memptr());
+  BOOST_REQUIRE_EQUAL(c.Child(1).Dataset().memptr(), c.Dataset().memptr());
   BOOST_REQUIRE_CLOSE(c.Child(1).Base(), d.Child(1).Base(), 1e-50);
   BOOST_REQUIRE_EQUAL(c.Child(1).Point(), d.Child(1).Point());
   BOOST_REQUIRE_EQUAL(c.Child(1).Scale(), d.Child(1).Scale());
