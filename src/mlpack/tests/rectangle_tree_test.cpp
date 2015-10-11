@@ -467,12 +467,16 @@ BOOST_AUTO_TEST_CASE(PointDynamicAdd)
       arma::mat> TreeType;
   TreeType tree(dataset, 20, 6, 5, 2, 0);
 
-  // Add numIter new points to the dataset.
+  // Add numIter new points to the dataset.  The tree copies the dataset, so we
+  // must modify both the original dataset and the one that the tree holds.
+  // (This API is clunky.  It should be redone sometime.)
+  tree.Dataset().reshape(8, 1000 + numIter);
   dataset.reshape(8, 1000 + numIter);
   arma::mat tmpData;
   tmpData.randu(8, numIter);
   for (int i = 0; i < numIter; i++)
   {
+    tree.Dataset().col(1000 + i) = tmpData.col(i);
     dataset.col(1000 + i) = tmpData.col(i);
     tree.InsertPoint(1000 + i);
   }

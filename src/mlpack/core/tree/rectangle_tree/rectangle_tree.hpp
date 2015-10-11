@@ -24,8 +24,7 @@ namespace tree /** Trees and tree-building procedures. */ {
  * the constructor with the dataset to build the tree on, and the entire tree
  * will be built.
  *
- * This tree does allow growth, so you can add and delete nodes
- * from it.
+ * This tree does allow growth, so you can add and delete nodes from it.
  *
  * @tparam MetricType This *must* be EuclideanDistance, but the template
  *     parameter is required to satisfy the TreeType API.
@@ -98,7 +97,10 @@ class RectangleTree
   //! The discance to the furthest descendant, cached to speed things up.
   double furthestDescendantDistance;
   //! The dataset.
-  const MatType& dataset;
+  const MatType* dataset;
+  //! Whether or not we are responsible for deleting the dataset.  This is
+  //! probably not aligned well...
+  bool ownsDataset;
   //! The mapping to the dataset
   std::vector<size_t> points;
   //! The local dataset
@@ -154,6 +156,14 @@ class RectangleTree
    * @param deepCopy If false, the children are not recursively copied.
    */
   RectangleTree(const RectangleTree& other, const bool deepCopy = true);
+
+  /**
+   * Construct the tree from a boost::serialization archive.
+   */
+  template<typename Archive>
+  RectangleTree(
+      Archive& ar,
+      const typename boost::enable_if<typename Archive::is_loading>::type* = 0);
 
   /**
    * Deletes this node, deallocating the memory for the children and calling
@@ -307,9 +317,9 @@ class RectangleTree
   RectangleTree*& Parent() { return parent; }
 
   //! Get the dataset which the tree is built on.
-  const MatType& Dataset() const { return dataset; }
+  const MatType& Dataset() const { return *dataset; }
   //! Modify the dataset which the tree is built on.  Be careful!
-  MatType& Dataset() { return const_cast<MatType&>(dataset); }
+  MatType& Dataset() { return const_cast<MatType&>(*dataset); }
 
   //! Get the points vector for this node.
   const std::vector<size_t>& Points() const { return points; }
@@ -510,6 +520,18 @@ class RectangleTree
    * @param relevels Vector to track which levels have been inserted to.
    */
   void SplitNode(std::vector<bool>& relevels);
+
+ protected:
+  /**
+   * A default constructor.  This is meant to only be used with
+   * boost::serialization, which is allowed with the friend declaration below.
+   * This does not return a valid tree!  This method must be protected, so that
+   * the serialization shim can work with the default constructor.
+   */
+  RectangleTree();
+
+  //! Friend access is given for the default constructor.
+  friend class boost::serialization::access;
 
  public:
   /**
