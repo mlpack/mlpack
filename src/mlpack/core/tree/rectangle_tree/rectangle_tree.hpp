@@ -452,9 +452,9 @@ class RectangleTree
 
   //! Return the minimum and maximum distance to another point.
   template<typename VecType>
-  math::Range
-  RangeDistance(const VecType& point,
-                typename boost::enable_if<IsVector<VecType> >::type* = 0) const
+  math::Range RangeDistance(
+      const VecType& point,
+      typename boost::enable_if<IsVector<VecType> >::type* = 0) const
   {
     return bound.RangeDistance(point);
   }
