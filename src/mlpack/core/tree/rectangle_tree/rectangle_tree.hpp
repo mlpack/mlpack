@@ -18,8 +18,6 @@
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
-using bound::HRectBound;
-
 /**
  * A rectangle type tree tree, such as an R-tree or X-tree.  Once the
  * bound and type of dataset is defined, the tree will construct itself.  Call
@@ -90,7 +88,7 @@ class RectangleTree
   //! The minimum leaf size.
   size_t minLeafSize;
   //! The bound object for this node.
-  HRectBound<metric::EuclideanDistance> bound;
+  bound::HRectBound<metric::EuclideanDistance> bound;
   //! Any extra data contained in the node.
   StatisticType stat;
   //! A struct to store the "split history" for X trees.
@@ -266,9 +264,9 @@ class RectangleTree
   RectangleTree* FindByBeginCount(size_t begin, size_t count);
 
   //! Return the bound object for this node.
-  const HRectBound<MetricType>& Bound() const { return bound; }
+  const bound::HRectBound<MetricType>& Bound() const { return bound; }
   //! Modify the bound object for this node.
-  HRectBound<MetricType>& Bound() { return bound; }
+  bound::HRectBound<MetricType>& Bound() { return bound; }
 
   //! Return the statistic object for this node.
   const StatisticType& Stat() const { return stat; }
@@ -492,7 +490,7 @@ class RectangleTree
    */
   RectangleTree(const size_t begin,
                 const size_t count,
-                HRectBound<MetricType> bound,
+                bound::HRectBound<MetricType> bound,
                 StatisticType stat,
                 const int maxLeafSize = 20) :
       begin(begin),
@@ -545,7 +543,7 @@ class RectangleTree
    *      shrinking.
    * @return true if the bound needed to be changed, false if it did not.
    */
-  bool ShrinkBoundForBound(const HRectBound<MetricType>& changedBound);
+  bool ShrinkBoundForBound(const bound::HRectBound<MetricType>& changedBound);
 
   /**
    * Make an exact copy of this node, pointers and everything.

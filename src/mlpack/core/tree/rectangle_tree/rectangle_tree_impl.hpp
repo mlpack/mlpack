@@ -820,7 +820,7 @@ template<typename MetricType,
          typename SplitType,
          typename DescentType>
 bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
-    ShrinkBoundForBound(const HRectBound<MetricType>& /* b */)
+    ShrinkBoundForBound(const bound::HRectBound<MetricType>& /* b */)
 {
   // Using the sum is safe since none of the dimensions can increase.
   double sum = 0;
