@@ -21,6 +21,7 @@
 #include <mlpack/core/tree/hrectbound.hpp>
 #include <mlpack/core/metrics/mahalanobis_distance.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
+#include <mlpack/core/tree/cover_tree.hpp>
 
 #include <mlpack/methods/perceptron/perceptron.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
@@ -713,13 +714,119 @@ BOOST_AUTO_TEST_CASE(BinarySpaceTreeOverwriteTest)
   typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
   TreeType tree(data);
 
-  TreeType xmlTree(tree);
-  TreeType textTree(tree);
-  TreeType binaryTree(tree);
+  arma::mat otherData;
+  otherData.randu(5, 50);
+  TreeType xmlTree(otherData);
+  TreeType textTree(xmlTree);
+  TreeType binaryTree(xmlTree);
 
   SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
 
   CheckTrees(tree, xmlTree, textTree, binaryTree);
+}
+
+BOOST_AUTO_TEST_CASE(CoverTreeTest)
+{
+  arma::mat data;
+  data.randu(3, 100);
+  typedef StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>
+      TreeType;
+  TreeType tree(data);
+
+  TreeType* xmlTree;
+  TreeType* textTree;
+  TreeType* binaryTree;
+
+  SerializePointerObjectAll(&tree, xmlTree, textTree, binaryTree);
+
+  CheckTrees(tree, *xmlTree, *textTree, *binaryTree);
+
+  // Also check a few other things.
+  std::stack<TreeType*> stack, xmlStack, textStack, binaryStack;
+  stack.push(&tree);
+  xmlStack.push(xmlTree);
+  textStack.push(textTree);
+  binaryStack.push(binaryTree);
+  while (!stack.empty())
+  {
+    TreeType* node = stack.top();
+    TreeType* xmlNode = xmlStack.top();
+    TreeType* textNode = textStack.top();
+    TreeType* binaryNode = binaryStack.top();
+    stack.pop();
+    xmlStack.pop();
+    textStack.pop();
+    binaryStack.pop();
+
+    BOOST_REQUIRE_EQUAL(node->Scale(), xmlNode->Scale());
+    BOOST_REQUIRE_EQUAL(node->Scale(), textNode->Scale());
+    BOOST_REQUIRE_EQUAL(node->Scale(), binaryNode->Scale());
+
+    BOOST_REQUIRE_CLOSE(node->Base(), xmlNode->Base(), 1e-5);
+    BOOST_REQUIRE_CLOSE(node->Base(), textNode->Base(), 1e-5);
+    BOOST_REQUIRE_CLOSE(node->Base(), binaryNode->Base(), 1e-5);
+
+    for (size_t i = 0; i < node->NumChildren(); ++i)
+    {
+      stack.push(&node->Child(i));
+      xmlStack.push(&xmlNode->Child(i));
+      textStack.push(&textNode->Child(i));
+      binaryStack.push(&binaryNode->Child(i));
+    }
+  }
+}
+
+BOOST_AUTO_TEST_CASE(CoverTreeOverwriteTest)
+{
+  arma::mat data;
+  data.randu(3, 100);
+  typedef StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>
+      TreeType;
+  TreeType tree(data);
+
+  arma::mat otherData;
+  otherData.randu(5, 50);
+  TreeType xmlTree(otherData);
+  TreeType textTree(xmlTree);
+  TreeType binaryTree(xmlTree);
+
+  SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
+
+  CheckTrees(tree, xmlTree, textTree, binaryTree);
+
+  // Also check a few other things.
+  std::stack<TreeType*> stack, xmlStack, textStack, binaryStack;
+  stack.push(&tree);
+  xmlStack.push(&xmlTree);
+  textStack.push(&textTree);
+  binaryStack.push(&binaryTree);
+  while (!stack.empty())
+  {
+    TreeType* node = stack.top();
+    TreeType* xmlNode = xmlStack.top();
+    TreeType* textNode = textStack.top();
+    TreeType* binaryNode = binaryStack.top();
+    stack.pop();
+    xmlStack.pop();
+    textStack.pop();
+    binaryStack.pop();
+
+    BOOST_REQUIRE_EQUAL(node->Scale(), xmlNode->Scale());
+    BOOST_REQUIRE_EQUAL(node->Scale(), textNode->Scale());
+    BOOST_REQUIRE_EQUAL(node->Scale(), binaryNode->Scale());
+
+    BOOST_REQUIRE_CLOSE(node->Base(), xmlNode->Base(), 1e-5);
+    BOOST_REQUIRE_CLOSE(node->Base(), textNode->Base(), 1e-5);
+    BOOST_REQUIRE_CLOSE(node->Base(), binaryNode->Base(), 1e-5);
+
+    for (size_t i = 0; i < node->NumChildren(); ++i)
+    {
+      stack.push(&node->Child(i));
+      xmlStack.push(&xmlNode->Child(i));
+      textStack.push(&textNode->Child(i));
+      binaryStack.push(&binaryNode->Child(i));
+    }
+  }
 }
 
 BOOST_AUTO_TEST_CASE(PerceptronTest)

@@ -306,6 +306,24 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   }
 }
 
+// Construct from a boost::serialization archive.
+template<
+    typename MetricType,
+    typename StatisticType,
+    typename MatType,
+    typename RootPointPolicy
+>
+template<typename Archive>
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
+    Archive& ar,
+    const typename boost::enable_if<typename Archive::is_loading>::type*) :
+    CoverTree() // Create an empty CoverTree.
+{
+  // Now, serialize to our empty tree.
+  ar >> data::CreateNVP(*this, "tree");
+}
+
+
 template<
     typename MetricType,
     typename StatisticType,
@@ -1122,6 +1140,31 @@ inline void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
 }
 
 /**
+ * Default constructor, only for use with boost::serialization.
+ */
+template<
+    typename MetricType,
+    typename StatisticType,
+    typename MatType,
+    typename RootPointPolicy
+>
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree() :
+    dataset(NULL),
+    point(0),
+    scale(INT_MIN),
+    base(0.0),
+    numDescendants(0),
+    parent(NULL),
+    parentDistance(0.0),
+    furthestDescendantDistance(0.0),
+    localMetric(false),
+    localDataset(false),
+    metric(NULL)
+{
+  // Nothing to do.
+}
+
+/**
  * Returns a string representation of this object.
  */
 template<
@@ -1156,7 +1199,95 @@ std::string CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::
   return convert.str();
 }
 
-}; // namespace tree
-}; // namespace mlpack
+/**
+ * Serialize to/from a boost::serialization archive.
+ */
+template<
+    typename MetricType,
+    typename StatisticType,
+    typename MatType,
+    typename RootPointPolicy
+>
+template<typename Archive>
+void CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::Serialize(
+    Archive& ar,
+    const unsigned int /* version */)
+{
+  using data::CreateNVP;
+
+  // If we're loading, and we have children, they need to be deleted.  We may
+  // also need to delete the local metric and dataset.
+  if (Archive::is_loading::value)
+  {
+    for (size_t i = 0; i < children.size(); ++i)
+      delete children[i];
+
+    if (localMetric && metric)
+      delete metric;
+    if (localDataset && dataset)
+      delete dataset;
+  }
+
+  ar & CreateNVP(dataset, "dataset");
+  ar & CreateNVP(point, "point");
+  ar & CreateNVP(scale, "scale");
+  ar & CreateNVP(base, "base");
+  ar & CreateNVP(stat, "stat");
+  ar & CreateNVP(numDescendants, "numDescendants");
+  ar & CreateNVP(parent, "parent");
+  ar & CreateNVP(parentDistance, "parentDistance");
+  ar & CreateNVP(furthestDescendantDistance, "furthestDescendantDistance");
+  ar & CreateNVP(metric, "metric");
+
+  if (Archive::is_loading::value && parent == NULL)
+  {
+    localMetric = true;
+    localDataset = true;
+  }
+
+  // Lastly, serialize the children.
+  size_t numChildren = children.size();
+  ar & CreateNVP(numChildren, "numChildren");
+  if (Archive::is_loading::value)
+    children.resize(numChildren);
+  for (size_t i = 0; i < numChildren; ++i)
+  {
+    std::ostringstream oss;
+    oss << "child" << i;
+    ar & CreateNVP(children[i], oss.str());
+  }
+
+  // Due to quirks of boost::serialization, if a tree is saved as an object and
+  // not a pointer, the first level of the tree will be duplicated on load.
+  // Therefore, if we are the root of the tree, then we need to make sure our
+  // children's parent links are correct, and delete the duplicated node if
+  // necessary.
+  if (Archive::is_loading::value)
+  {
+    // Look through each child individually.
+    for (size_t i = 0; i < children.size(); ++i)
+    {
+      if (children[i]->Parent() != this)
+      {
+        // Disallow the duplicate parent from deleting anything.  But only
+        // delete the parent if this is the first child (we are assuming that
+        // each of the other children has the same incorrect parent).
+        if (i == 0)
+        {
+          children[i]->Parent()->localMetric = false;
+          children[i]->Parent()->localDataset = false;
+          children[i]->Parent()->children.clear();
+          delete children[i]->Parent();
+        }
+
+        // Fix the child's parent link.
+        children[i]->Parent() = this;
+      }
+    }
+  }
+}
+
+} // namespace tree
+} // namespace mlpack
 
 #endif

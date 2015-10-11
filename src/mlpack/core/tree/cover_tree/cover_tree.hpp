@@ -198,6 +198,14 @@ class CoverTree
   CoverTree(const CoverTree& other);
 
   /**
+   * Create a cover tree from a boost::serialization archive.
+   */
+  template<typename Archive>
+  CoverTree(
+      Archive& ar,
+      const typename boost::enable_if<typename Archive::is_loading>::type* = 0);
+
+  /**
    * Delete this cover tree node and its children.
    */
   ~CoverTree();
@@ -457,6 +465,18 @@ class CoverTree
    */
   void RemoveNewImplicitNodes();
 
+ protected:
+  /**
+   * A default constructor.  This is meant to only be used with
+   * boost::serialization, which is allowed with the friend declaration below.
+   * This does not return a valid tree!  This method must be protected, so that
+   * the serialization shim can work with the default constructor.
+   */
+  CoverTree();
+
+  //! Friend access is given for the default constructor.
+  friend class boost::serialization::access;
+
  public:
   /**
    * Returns a string representation of this object.
@@ -476,8 +496,8 @@ class CoverTree
   size_t distanceComps;
 };
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 // Include implementation.
 #include "cover_tree_impl.hpp"
