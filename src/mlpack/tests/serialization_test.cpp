@@ -22,6 +22,7 @@
 #include <mlpack/core/metrics/mahalanobis_distance.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
+#include <mlpack/core/tree/rectangle_tree.hpp>
 
 #include <mlpack/methods/perceptron/perceptron.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
@@ -610,6 +611,8 @@ void CheckTrees(TreeType& tree,
                 TreeType& binaryTree)
 {
   const typename TreeType::Mat* dataset = &tree.Dataset();
+  std::cout << "check tree node " << tree.NumChildren() << " desc " <<
+tree.NumDescendants() << ".\n";
 
   // Make sure that the data matrices are the same.
   if (tree.Parent() == NULL)
@@ -631,6 +634,9 @@ void CheckTrees(TreeType& tree,
   BOOST_REQUIRE_EQUAL(tree.NumChildren(), binaryTree.NumChildren());
 
   // Make sure the number of descendants is the same.
+  std::cout << "xmltree numdesc\n";
+  const size_t numDesc = binaryTree.NumDescendants();
+  std::cout << "xmltree numdesc done.\n";
   BOOST_REQUIRE_EQUAL(tree.NumDescendants(), xmlTree.NumDescendants());
   BOOST_REQUIRE_EQUAL(tree.NumDescendants(), textTree.NumDescendants());
   BOOST_REQUIRE_EQUAL(tree.NumDescendants(), binaryTree.NumDescendants());
@@ -826,6 +832,117 @@ BOOST_AUTO_TEST_CASE(CoverTreeOverwriteTest)
       textStack.push(&textNode->Child(i));
       binaryStack.push(&binaryNode->Child(i));
     }
+  }
+}
+
+BOOST_AUTO_TEST_CASE(RectangleTreeTest)
+{
+  arma::mat data;
+  data.randu(3, 1000);
+  typedef RTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  TreeType tree(data);
+
+  TreeType* xmlTree;
+  TreeType* textTree;
+  TreeType* binaryTree;
+
+  SerializePointerObjectAll(&tree, xmlTree, textTree, binaryTree);
+  std::cout << "serialization complete\n";
+
+  CheckTrees(tree, *xmlTree, *textTree, *binaryTree);
+
+  // Check a few other things too.
+  std::stack<TreeType*> stack, xmlStack, textStack, binaryStack;
+  stack.push(&tree);
+  xmlStack.push(xmlTree);
+  textStack.push(textTree);
+  binaryStack.push(binaryTree);
+  while (!stack.empty())
+  {
+    // Check more things...
+    TreeType* node = stack.top();
+    TreeType* xmlNode = xmlStack.top();
+    TreeType* textNode = textStack.top();
+    TreeType* binaryNode = binaryStack.top();
+    stack.pop();
+    xmlStack.pop();
+    textStack.pop();
+    binaryStack.pop();
+
+    CheckMatrices(node->LocalDataset(), xmlNode->LocalDataset(),
+        textNode->LocalDataset(), binaryNode->LocalDataset());
+
+    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), xmlNode->MaxLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), textNode->MaxLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), binaryNode->MaxLeafSize());
+
+    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), xmlNode->MinLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), textNode->MinLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), binaryNode->MinLeafSize());
+
+    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), xmlNode->MaxNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), textNode->MaxNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), binaryNode->MaxNumChildren());
+
+    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), xmlNode->MinNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), textNode->MinNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), binaryNode->MinNumChildren());
+  }
+}
+
+BOOST_AUTO_TEST_CASE(RectangleTreeOverwriteTest)
+{
+  arma::mat data;
+  data.randu(3, 1000);
+  typedef RTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  TreeType tree(data);
+
+  arma::mat otherData;
+  otherData.randu(5, 50);
+  TreeType xmlTree(otherData);
+  TreeType textTree(otherData);
+  TreeType binaryTree(textTree);
+
+  SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
+
+  CheckTrees(tree, xmlTree, textTree, binaryTree);
+
+  // Check a few other things too.
+  std::stack<TreeType*> stack, xmlStack, textStack, binaryStack;
+  stack.push(&tree);
+  xmlStack.push(&xmlTree);
+  textStack.push(&textTree);
+  binaryStack.push(&binaryTree);
+  while (!stack.empty())
+  {
+    // Check more things...
+    TreeType* node = stack.top();
+    TreeType* xmlNode = xmlStack.top();
+    TreeType* textNode = textStack.top();
+    TreeType* binaryNode = binaryStack.top();
+    stack.pop();
+    xmlStack.pop();
+    textStack.pop();
+    binaryStack.pop();
+
+    CheckMatrices(node->LocalDataset(), xmlNode->LocalDataset(),
+        textNode->LocalDataset(), binaryNode->LocalDataset());
+
+    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), xmlNode->MaxLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), textNode->MaxLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), binaryNode->MaxLeafSize());
+
+    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), xmlNode->MinLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), textNode->MinLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), binaryNode->MinLeafSize());
+
+    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), xmlNode->MaxNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), textNode->MaxNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), binaryNode->MaxNumChildren());
+
+    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), xmlNode->MinNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), textNode->MinNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), binaryNode->MinNumChildren());
   }
 }
 

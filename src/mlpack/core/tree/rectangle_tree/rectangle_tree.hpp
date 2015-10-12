@@ -61,6 +61,13 @@ class RectangleTree
       for (int i = 0; i < dim; i++)
         history[i] = false;
     }
+
+    template<typename Archive>
+    void Serialize(Archive& ar, const unsigned int /* version */)
+    {
+      ar & data::CreateNVP(lastDimension, "lastDimension");
+      ar & data::CreateNVP(history, "history");
+    }
   } SplitHistoryStruct;
 
  private:
@@ -576,6 +583,12 @@ class RectangleTree
    * Returns a string representation of this object.
    */
   std::string ToString() const;
+
+  /**
+   * Serialize the tree.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
 };
 
 } // namespace tree

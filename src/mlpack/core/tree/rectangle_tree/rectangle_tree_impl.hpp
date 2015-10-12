@@ -540,6 +540,8 @@ template<typename MetricType,
 inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
                             DescentType>::NumDescendants() const
 {
+  std::cout << "NumDescendants() [" << this << "], with " << numChildren 
+      << "children.\n";
   if (numChildren == 0)
   {
     return count;
@@ -548,8 +550,10 @@ inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
   {
     size_t n = 0;
     for (size_t i = 0; i < numChildren; i++)
+    {
+      std::cout << "child " << i << ": " << children[i] << ".\n";
       n += children[i]->NumDescendants();
-
+    }
     return n;
   }
 }
@@ -632,6 +636,7 @@ RectangleTree() :
     count(0),
     maxLeafSize(0),
     minLeafSize(0),
+    splitHistory(0),
     parentDistance(0.0),
     furthestDescendantDistance(0.0),
     dataset(NULL),
@@ -928,6 +933,106 @@ std::string RectangleTree<MetricType, StatisticType, MatType, SplitType,
       convert << children[i]->ToString();
 
   return convert.str();
+}
+
+/**
+ * Serialize the tree.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+template<typename Archive>
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+    Serialize(Archive& ar,
+              const unsigned int /* version */)
+{
+  using data::CreateNVP;
+
+  // Clean up memory, if necessary.
+  if (Archive::is_loading::value)
+  {
+    for (size_t i = 0; i < numChildren; i++)
+      delete children[i];
+    children.clear();
+
+    if (ownsDataset && dataset)
+      delete dataset;
+
+    if (localDataset)
+      delete localDataset;
+  }
+
+  ar & CreateNVP(maxNumChildren, "maxNumChildren");
+  ar & CreateNVP(minNumChildren, "minNumChildren");
+  ar & CreateNVP(numChildren, "numChildren");
+  ar & CreateNVP(parent, "parent");
+  ar & CreateNVP(begin, "begin");
+  ar & CreateNVP(count, "count");
+  ar & CreateNVP(maxLeafSize, "maxLeafSize");
+  ar & CreateNVP(minLeafSize, "minLeafSize");
+  ar & CreateNVP(bound, "bound");
+  ar & CreateNVP(stat, "stat");
+  ar & CreateNVP(splitHistory, "splitHistory");
+  ar & CreateNVP(parentDistance, "parentDistance");
+  ar & CreateNVP(furthestDescendantDistance, "furthestDescendantDistance");
+  ar & CreateNVP(dataset, "dataset");
+
+  // If we are loading and we are the root, we own the dataset.
+  if (Archive::is_loading::value && parent == NULL)
+    ownsDataset = true;
+
+  ar & CreateNVP(points, "points");
+  ar & CreateNVP(localDataset, "localDataset");
+
+  // Because 'children' holds mlpack types (that have Serialize()), we can't use
+  // the std::vector serialization.
+  if (Archive::is_loading::value)
+    children.resize(numChildren);
+  for (size_t i = 0; i < numChildren; ++i)
+  {
+    std::ostringstream oss;
+    oss << "child" << i;
+    ar & CreateNVP(children[i], oss.str());
+  }
+
+
+  // Due to quirks of boost::serialization, if a tree is saved as an object and
+  // not a pointer, the first level of the tree will be duplicated on load.
+  // Therefore, if we are the root of the tree, then we need to make sure our
+  // children's parent links are correct, and delete the duplicated node if
+  // necessary.
+  if (Archive::is_loading::value)
+  {
+    // Look through each child individually.
+    for (size_t i = 0; i < children.size(); ++i)
+    {
+      if (children[i]->Parent() != this)
+      {
+        // Disallow the duplicate parent from deleting anything.  But only
+        // delete the parent if this is the first child (we are assuming that
+        // each of the other children has the same incorrect parent).
+        if (i == 0)
+        {
+          children[i]->Parent()->ownsDataset = false;
+          children[i]->Parent()->children.clear();
+          delete children[i]->Parent();
+        }
+
+        // Fix the child's parent link.
+        children[i]->Parent() = this;
+      }
+    }
+  }
+
+  if (Archive::is_loading::value)
+  {
+    std::cout << "loaded node " << this << " with " << numChildren << " (" <<
+        children.size() << ") children\n";
+    for (size_t i = 0; i < numChildren; ++i)
+      std::cout << "child " << i << ": " << children[i] << ".\n";
+  }
 }
 
 } // namespace tree
