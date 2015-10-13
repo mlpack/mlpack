@@ -27,7 +27,7 @@ template <
   typename LayerTypes,
   typename OutputLayerType,
   class PerformanceFunction = CrossEntropyErrorFunction<>
-  >
+>
 class FFN
 {
  public:
@@ -124,7 +124,8 @@ class FFN
   }
 
   //! Get the error of the network.
-  double Error() const {
+  double Error() const
+  {
     return trainError;
   }
 
@@ -137,17 +138,16 @@ class FFN
    * case peels off the first type and recurses, as usual with
    * variadic function templates.
    */
-  template<size_t I = 0, typename ... Tp>
-  typename std::enable_if<I == sizeof ... (Tp), void>::type
-  ResetParameter(std::tuple<Tp ...>& /* unused */) { /* Nothing to do here */
-  }
+  template<size_t I = 0, typename... Tp>
+  typename std::enable_if<I == sizeof...(Tp), void>::type
+  ResetParameter(std::tuple<Tp...>& /* unused */) { /* Nothing to do here */ }
 
-  template<size_t I = 0, typename ... Tp>
-  typename std::enable_if<I < sizeof ... (Tp), void>::type
-  ResetParameter(std::tuple<Tp ...>& t)
+  template<size_t I = 0, typename... Tp>
+  typename std::enable_if<I < sizeof...(Tp), void>::type
+  ResetParameter(std::tuple<Tp...>& t)
   {
     ResetDeterministic(std::get<I>(t));
-    ResetParameter<I + 1, Tp ...>(t);
+    ResetParameter<I + 1, Tp...>(t);
   }
 
   /**
@@ -160,7 +160,7 @@ class FFN
    */
   template<typename T>
   typename std::enable_if<
-    HasDeterministicCheck<T, bool& (T::*)(void)>::value, void>::type
+      HasDeterministicCheck<T, bool&(T::*)(void)>::value, void>::type
   ResetDeterministic(T& t)
   {
     t.Deterministic() = deterministic;
@@ -168,9 +168,8 @@ class FFN
 
   template<typename T>
   typename std::enable_if<
-    !HasDeterministicCheck<T, bool& (T::*)(void)>::value, void>::type
-  ResetDeterministic(T& /* unused */) { /* Nothing to do here */
-  }
+      !HasDeterministicCheck<T, bool&(T::*)(void)>::value, void>::type
+  ResetDeterministic(T& /* unused */) { /* Nothing to do here */ }
 
   /**
    * Run a single iteration of the feed forward algorithm, using the given
@@ -182,32 +181,32 @@ class FFN
    * layer, and one for the general case which peels off the first type
    * and recurses, as usual with variadic function templates.
    */
-  template<size_t I = 0, typename DataType, typename ... Tp>
-  void Forward(const DataType& input, std::tuple<Tp ...>& t)
+  template<size_t I = 0, typename DataType, typename... Tp>
+  void Forward(const DataType& input, std::tuple<Tp...>& t)
   {
     std::get<I>(t).InputParameter() = input;
 
     std::get<I>(t).Forward(std::get<I>(t).InputParameter(),
                            std::get<I>(t).OutputParameter());
 
-    ForwardTail<I + 1, Tp ...>(t);
+    ForwardTail<I + 1, Tp...>(t);
   }
 
-  template<size_t I = 1, typename ... Tp>
-  typename std::enable_if<I == sizeof ... (Tp), void>::type
-  ForwardTail(std::tuple<Tp ...>& /* unused */)
+  template<size_t I = 1, typename... Tp>
+  typename std::enable_if<I == sizeof...(Tp), void>::type
+  ForwardTail(std::tuple<Tp...>& /* unused */)
   {
     LinkParameter(network);
   }
 
-  template<size_t I = 1, typename ... Tp>
-  typename std::enable_if<I < sizeof ... (Tp), void>::type
-  ForwardTail(std::tuple<Tp ...>& t)
+  template<size_t I = 1, typename... Tp>
+  typename std::enable_if<I < sizeof...(Tp), void>::type
+  ForwardTail(std::tuple<Tp...>& t)
   {
     std::get<I>(t).Forward(std::get<I - 1>(t).OutputParameter(),
                            std::get<I>(t).OutputParameter());
 
-    ForwardTail<I + 1, Tp ...>(t);
+    ForwardTail<I + 1, Tp...>(t);
   }
 
   /**
@@ -217,40 +216,39 @@ class FFN
    * case peels off the first type and recurses, as usual with
    * variadic function templates.
    */
-  template<size_t I = 1, typename ... Tp>
-  typename std::enable_if<I == sizeof ... (Tp), void>::type
-  LinkParameter(std::tuple<Tp ...>& /* unused */) { /* Nothing to do here */
-  }
+  template<size_t I = 1, typename... Tp>
+  typename std::enable_if<I == sizeof...(Tp), void>::type
+  LinkParameter(std::tuple<Tp ...>& /* unused */) { /* Nothing to do here */ }
 
-  template<size_t I = 1, typename ... Tp>
-  typename std::enable_if<I < sizeof ... (Tp), void>::type
-  LinkParameter(std::tuple<Tp ...>& t)
+  template<size_t I = 1, typename... Tp>
+  typename std::enable_if<I < sizeof...(Tp), void>::type
+  LinkParameter(std::tuple<Tp...>& t)
   {
     if (!LayerTraits<typename std::remove_reference<
-                       decltype(std::get<I>(t))>::type>::IsBiasLayer)
+        decltype(std::get<I>(t))>::type>::IsBiasLayer)
     {
       std::get<I>(t).InputParameter() = std::get<I - 1>(t).OutputParameter();
     }
 
-    LinkParameter<I + 1, Tp ...>(t);
+    LinkParameter<I + 1, Tp...>(t);
   }
 
   /*
    * Calculate the output error and update the overall error.
    */
-  template<typename DataType, typename ErrorType, typename ... Tp>
+  template<typename DataType, typename ErrorType, typename... Tp>
   double OutputError(const DataType& target,
                      ErrorType& error,
-                     const std::tuple<Tp ...>& t)
+                     const std::tuple<Tp...>& t)
   {
     // Calculate and store the output error.
     outputLayer.CalculateError(
-      std::get<sizeof ... (Tp) -1>(t).OutputParameter(), target, error);
+        std::get<sizeof...(Tp) - 1>(t).OutputParameter(), target, error);
 
     // Masures the network's performance with the specified performance
     // function.
     return PerformanceFunction::Error(
-      std::get<sizeof ... (Tp) -1>(t).OutputParameter(), target);
+        std::get<sizeof...(Tp) - 1>(t).OutputParameter(), target);
   }
 
   /**
@@ -263,33 +261,32 @@ class FFN
    * layer, and one for the general case which peels off the first type
    * and recurses, as usual with variadic function templates.
    */
-  template<size_t I = 1, typename DataType, typename ... Tp>
-  typename std::enable_if<I < (sizeof ... (Tp) -1), void>::type
+  template<size_t I = 1, typename DataType, typename... Tp>
+  typename std::enable_if<I < (sizeof...(Tp) - 1), void>::type
   Backward(const DataType& error, std::tuple<Tp ...>& t)
   {
-    std::get<sizeof ... (Tp) -I>(t).Backward(
-      std::get<sizeof ... (Tp) -I>(t).OutputParameter(), error,
-      std::get<sizeof ... (Tp) -I>(t).Delta());
+    std::get<sizeof...(Tp) - I>(t).Backward(
+        std::get<sizeof...(Tp) - I>(t).OutputParameter(), error,
+        std::get<sizeof...(Tp) - I>(t).Delta());
 
-    BackwardTail<I + 1, DataType, Tp ...>(error, t);
+    BackwardTail<I + 1, DataType, Tp...>(error, t);
   }
 
-  template<size_t I = 1, typename DataType, typename ... Tp>
-  typename std::enable_if<I == (sizeof ... (Tp)), void>::type
+  template<size_t I = 1, typename DataType, typename... Tp>
+  typename std::enable_if<I == (sizeof...(Tp)), void>::type
   BackwardTail(const DataType& /* unused */,
-               std::tuple<Tp ...>& /* unused */) {
-  }
+               std::tuple<Tp...>& /* unused */) { /* Nothing to do here */ }
 
-  template<size_t I = 1, typename DataType, typename ... Tp>
-  typename std::enable_if<I < (sizeof ... (Tp)), void>::type
-  BackwardTail(const DataType& error, std::tuple<Tp ...>& t)
+  template<size_t I = 1, typename DataType, typename... Tp>
+  typename std::enable_if<I < (sizeof...(Tp)), void>::type
+  BackwardTail(const DataType& error, std::tuple<Tp...>& t)
   {
-    std::get<sizeof ... (Tp) -I>(t).Backward(
-      std::get<sizeof ... (Tp) -I>(t).OutputParameter(),
-      std::get<sizeof ... (Tp) -I + 1>(t).Delta(),
-      std::get<sizeof ... (Tp) -I>(t).Delta());
+    std::get<sizeof...(Tp) - I>(t).Backward(
+        std::get<sizeof...(Tp) - I>(t).OutputParameter(),
+        std::get<sizeof...(Tp) - I + 1>(t).Delta(),
+        std::get<sizeof...(Tp) - I>(t).Delta());
 
-    BackwardTail<I + 1, DataType, Tp ...>(error, t);
+    BackwardTail<I + 1, DataType, Tp...>(error, t);
   }
 
   /**
@@ -300,24 +297,25 @@ class FFN
    * The general case peels off the first type and recurses, as usual with
    * variadic function templates.
    */
-  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1, typename ... Tp>
+  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1,
+      typename... Tp>
   typename std::enable_if<I == Max, void>::type
-  UpdateGradients(std::tuple<Tp ...>& /* unused */) {
-  }
+  UpdateGradients(std::tuple<Tp...>& /* unused */) { /* Nothing to do here */ }
 
-  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1, typename ... Tp>
+  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1,
+      typename... Tp>
   typename std::enable_if<I < Max, void>::type
-  UpdateGradients(std::tuple<Tp ...>& t)
+  UpdateGradients(std::tuple<Tp...>& t)
   {
     Update(std::get<I>(t), std::get<I>(t).OutputParameter(),
            std::get<I + 1>(t).Delta());
 
-    UpdateGradients<I + 1, Max, Tp ...>(t);
+    UpdateGradients<I + 1, Max, Tp...>(t);
   }
 
   template<typename T, typename P, typename D>
   typename std::enable_if<
-    HasGradientCheck<T, void (T::*)(const D&, P&)>::value, void>::type
+      HasGradientCheck<T, void(T::*)(const D&, P&)>::value, void>::type
   Update(T& t, P& /* unused */, D& delta)
   {
     t.Gradient(delta, t.Gradient());
@@ -326,7 +324,7 @@ class FFN
 
   template<typename T, typename P, typename D>
   typename std::enable_if<
-    !HasGradientCheck<T, void (T::*)(const P&, D&)>::value, void>::type
+      !HasGradientCheck<T, void(T::*)(const P&, D&)>::value, void>::type
   Update(T& /* unused */, P& /* unused */, D& /* unused */)
   {
     /* Nothing to do here */
@@ -339,26 +337,28 @@ class FFN
    * The general case peels off the first type and recurses, as usual with
    * variadic function templates.
    */
-  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1, typename ... Tp>
+  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1,
+      typename... Tp>
   typename std::enable_if<I == Max, void>::type
-  ApplyGradients(std::tuple<Tp ...>& /* unused */)
+  ApplyGradients(std::tuple<Tp...>& /* unused */)
   {
     /* Nothing to do here */
   }
 
-  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1, typename ... Tp>
+  template<size_t I = 0, size_t Max = std::tuple_size<LayerTypes>::value - 1,
+      typename... Tp>
   typename std::enable_if<I < Max, void>::type
-  ApplyGradients(std::tuple<Tp ...>& t)
+  ApplyGradients(std::tuple<Tp...>& t)
   {
     Apply(std::get<I>(t), std::get<I>(t).OutputParameter(),
           std::get<I + 1>(t).Delta());
 
-    ApplyGradients<I + 1, Max, Tp ...>(t);
+    ApplyGradients<I + 1, Max, Tp...>(t);
   }
 
   template<typename T, typename P, typename D>
   typename std::enable_if<
-    HasGradientCheck<T, void (T::*)(const D&, P&)>::value, void>::type
+      HasGradientCheck<T, void(T::*)(const D&, P&)>::value, void>::type
   Apply(T& t, P& /* unused */, D& /* unused */)
   {
     t.Optimizer().Optimize();
@@ -367,7 +367,7 @@ class FFN
 
   template<typename T, typename P, typename D>
   typename std::enable_if<
-    !HasGradientCheck<T, void (T::*)(const P&, D&)>::value, void>::type
+      !HasGradientCheck<T, void(T::*)(const P&, D&)>::value, void>::type
   Apply(T& /* unused */, P& /* unused */, D& /* unused */)
   {
     /* Nothing to do here */
@@ -376,12 +376,12 @@ class FFN
   /*
    * Calculate and store the output activation.
    */
-  template<typename DataType, typename ... Tp>
-  void OutputPrediction(DataType& output, std::tuple<Tp ...>& t)
+  template<typename DataType, typename... Tp>
+  void OutputPrediction(DataType& output, std::tuple<Tp...>& t)
   {
     // Calculate and store the output prediction.
-    outputLayer.OutputClass(std::get<sizeof ... (Tp) -1>(t).OutputParameter(),
-                            output);
+    outputLayer.OutputClass(std::get<sizeof...(Tp) - 1>(t).OutputParameter(),
+        output);
   }
 
   //! The layer modules used to build the network.
@@ -402,7 +402,7 @@ template <
   typename LayerTypes,
   typename OutputLayerType,
   class PerformanceFunction
-  >
+>
 class NetworkTraits<
     FFN<LayerTypes, OutputLayerType, PerformanceFunction> >
 {
