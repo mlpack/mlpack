@@ -867,9 +867,6 @@ BOOST_AUTO_TEST_CASE(RectangleTreeTest)
     textStack.pop();
     binaryStack.pop();
 
-    CheckMatrices(node->LocalDataset(), xmlNode->LocalDataset(),
-        textNode->LocalDataset(), binaryNode->LocalDataset());
-
     BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), xmlNode->MaxLeafSize());
     BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), textNode->MaxLeafSize());
     BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), binaryNode->MaxLeafSize());
@@ -926,9 +923,6 @@ BOOST_AUTO_TEST_CASE(RectangleTreeOverwriteTest)
     xmlStack.pop();
     textStack.pop();
     binaryStack.pop();
-
-    CheckMatrices(node->LocalDataset(), xmlNode->LocalDataset(),
-        textNode->LocalDataset(), binaryNode->LocalDataset());
 
     BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), xmlNode->MaxLeafSize());
     BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), textNode->MaxLeafSize());
