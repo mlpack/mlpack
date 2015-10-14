@@ -2,8 +2,9 @@
  * @file ada_delta.hpp
  * @author Marcus Edel
  *
- * Implmentation of the RmsProp optimizer. Adadelta is an optimizer that uses
- * the magnitude of recent gradients and steps to obtain an adaptive step rate.
+ * Implementation of the Adadelta optimizer. Adadelta is an optimizer that
+ * dynamically adapts over time using only first order information.
+ * Additionally, Adadelta requires no manual tuning of a learning rate.
  */
 #ifndef __MLPACK_METHODS_ANN_OPTIMIZER_ADA_DELTA_HPP
 #define __MLPACK_METHODS_ANN_OPTIMIZER_ADA_DELTA_HPP
@@ -14,18 +15,11 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Adadelta is an optimizer that uses the magnitude of recent gradients and
- * steps to obtain an adaptive step rate. In its basic form, given a step rate
- * \f$ \gamma \f$ and a decay term \f$ \alpha \f$ we perform the following
- * updates:
+ * Adadelta is an optimizer that uses two ideas to improve upon the two main
+ * drawbacks of the Adagrad method:
  *
- * \f{eqnarray*}{
- *  g_t &=& (1 - \gamma)f'(\Delta_t)^2 + \gamma g_{t - 1} \\
- *  \vec{\Delta} \Delta_t &=& \alpha \frac{\sqrt(s_{t-1} +
- *  \epsilon)}{\sqrt{g_t + \epsilon}} f'(\Delta_t) \\
- *  \Delta_{t + 1} &=& \Delta_t - \vec{\Delta} \Delta_t \\
- *  s_t &=& (1 - \gamma) \vec{\Delta} \Delta_t^2 + \gamma s_{t - 1}
- * \f}
+ *  - Accumulate Over Window
+ *  - Correct Units with Hessian Approximation
  *
  * For more information, see the following.
  *
@@ -46,8 +40,10 @@ class AdaDelta
    * Construct the AdaDelta optimizer with the given function and parameters.
    *
    * @param function Function to be optimized (minimized).
-   * @param rho Constant similar to that used in AdaDelta and Momentum methods.
-   * @param eps The eps coefficient to avoid division by zero.
+   * @param rho Constant interpolation parameter similar to that used in
+   *        Momentum methods.
+   * @param eps The eps coefficient to avoid division by zero (numerical
+   *        stability).
    */
   AdaDelta(DecomposableFunctionType& function,
           const double rho = 0.95,
@@ -60,7 +56,7 @@ class AdaDelta
   }
 
   /**
-   * Optimize the given function using RmsProp.
+   * Optimize the given function using AdaDelta.
    */
   void Optimize()
   {
@@ -110,8 +106,8 @@ class AdaDelta
    *
    * @param weights The weights that should be updated.
    * @param gradient The gradient used to update the weights.
-   * @param meanSquaredGradient The current mean squared gradient Dx
-   * @param meanSquaredGradientDx The current mean squared gradient.
+   * @param meanSquaredGradient The current mean squared gradient.
+   * @param meanSquaredGradientDx The current mean squared Dx gradient.
    */
   template<typename eT>
   void Optimize(arma::Cube<eT>& weights,
@@ -131,8 +127,8 @@ class AdaDelta
    *
    * @param weights The weights that should be updated.
    * @param gradient The gradient used to update the weights.
-   * @param meanSquaredGradient The current mean squared gradient Dx
-   * @param meanSquaredGradientDx The current mean squared gradient.
+   * @param meanSquaredGradient The current mean squared gradient.
+   * @param meanSquaredGradientDx The current mean squared Dx gradient.
    */
   template<typename eT>
   void Optimize(arma::Mat<eT>& weights,
@@ -157,7 +153,7 @@ class AdaDelta
   //! The instantiated function.
   DecomposableFunctionType& function;
 
-  //! The value used as learning rate.
+  //! The value used as interpolation parameter.
   const double rho;
 
   //! The value used as eps.
@@ -169,7 +165,7 @@ class AdaDelta
   //! The current mean squared gradient.
   DataType meanSquaredGradient;
 
-  //! The current mean squared gradient Dx
+  //! The current mean squared gradient.
   DataType meanSquaredGradientDx;
 }; // class AdaDelta
 
