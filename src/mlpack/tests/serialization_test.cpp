@@ -775,6 +775,10 @@ BOOST_AUTO_TEST_CASE(CoverTreeTest)
       binaryStack.push(&binaryNode->Child(i));
     }
   }
+
+  delete xmlTree;
+  delete textTree;
+  delete binaryTree;
 }
 
 BOOST_AUTO_TEST_CASE(CoverTreeOverwriteTest)
@@ -882,6 +886,10 @@ BOOST_AUTO_TEST_CASE(RectangleTreeTest)
     BOOST_REQUIRE_EQUAL(node->MinNumChildren(), textNode->MinNumChildren());
     BOOST_REQUIRE_EQUAL(node->MinNumChildren(), binaryNode->MinNumChildren());
   }
+
+  delete xmlTree;
+  delete textTree;
+  delete binaryTree;
 }
 
 BOOST_AUTO_TEST_CASE(RectangleTreeOverwriteTest)
