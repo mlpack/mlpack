@@ -611,8 +611,6 @@ void CheckTrees(TreeType& tree,
                 TreeType& binaryTree)
 {
   const typename TreeType::Mat* dataset = &tree.Dataset();
-  std::cout << "check tree node " << tree.NumChildren() << " desc " <<
-tree.NumDescendants() << ".\n";
 
   // Make sure that the data matrices are the same.
   if (tree.Parent() == NULL)
@@ -634,9 +632,6 @@ tree.NumDescendants() << ".\n";
   BOOST_REQUIRE_EQUAL(tree.NumChildren(), binaryTree.NumChildren());
 
   // Make sure the number of descendants is the same.
-  std::cout << "xmltree numdesc\n";
-  const size_t numDesc = binaryTree.NumDescendants();
-  std::cout << "xmltree numdesc done.\n";
   BOOST_REQUIRE_EQUAL(tree.NumDescendants(), xmlTree.NumDescendants());
   BOOST_REQUIRE_EQUAL(tree.NumDescendants(), textTree.NumDescendants());
   BOOST_REQUIRE_EQUAL(tree.NumDescendants(), binaryTree.NumDescendants());
@@ -847,7 +842,6 @@ BOOST_AUTO_TEST_CASE(RectangleTreeTest)
   TreeType* binaryTree;
 
   SerializePointerObjectAll(&tree, xmlTree, textTree, binaryTree);
-  std::cout << "serialization complete\n";
 
   CheckTrees(tree, *xmlTree, *textTree, *binaryTree);
 
