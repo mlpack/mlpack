@@ -540,7 +540,7 @@ template<typename MetricType,
 inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
                             DescentType>::NumDescendants() const
 {
-  std::cout << "NumDescendants() [" << this << "], with " << numChildren 
+  std::cout << "NumDescendants() [" << this << "], with " << numChildren
       << "children.\n";
   if (numChildren == 0)
   {
@@ -638,7 +638,6 @@ RectangleTree() :
     minLeafSize(0),
     splitHistory(0),
     parentDistance(0.0),
-    furthestDescendantDistance(0.0),
     dataset(NULL),
     ownsDataset(false),
     localDataset(NULL)
@@ -976,7 +975,6 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
   ar & CreateNVP(stat, "stat");
   ar & CreateNVP(splitHistory, "splitHistory");
   ar & CreateNVP(parentDistance, "parentDistance");
-  ar & CreateNVP(furthestDescendantDistance, "furthestDescendantDistance");
   ar & CreateNVP(dataset, "dataset");
 
   // If we are loading and we are the root, we own the dataset.

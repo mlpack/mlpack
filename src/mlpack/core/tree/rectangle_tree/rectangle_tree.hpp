@@ -101,8 +101,6 @@ class RectangleTree
   SplitHistoryStruct splitHistory;
   //! The distance from the centroid of this node to the centroid of the parent.
   double parentDistance;
-  //! The discance to the furthest descendant, cached to speed things up.
-  double furthestDescendantDistance;
   //! The dataset.
   const MatType* dataset;
   //! Whether or not we are responsible for deleting the dataset.  This is
