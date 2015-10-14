@@ -56,7 +56,7 @@ class RectangleTree
     int lastDimension;
     std::vector<bool> history;
 
-    SplitHistoryStruct(int dim) : history(dim)
+    SplitHistoryStruct(int dim) : lastDimension(0), history(dim)
     {
       for (int i = 0; i < dim; i++)
         history[i] = false;

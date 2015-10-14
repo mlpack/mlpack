@@ -44,7 +44,8 @@ RectangleTree(const MatType& data,
     dataset(new MatType(data)),
     ownsDataset(true),
     points(maxLeafSize + 1), // Add one to make splitting the node simpler.
-    localDataset(new MatType(data.n_rows, static_cast<int> (maxLeafSize) + 1))
+    localDataset(new MatType(arma::zeros<MatType>(data.n_rows,
+                                                  maxLeafSize + 1)))
 {
   stat = StatisticType(*this);
 
@@ -79,8 +80,8 @@ RectangleTree(
     dataset(&parentNode->Dataset()),
     ownsDataset(false),
     points(maxLeafSize + 1), // Add one to make splitting the node simpler.
-    localDataset(new MatType(static_cast<int> (parentNode->Bound().Dim()),
-                             static_cast<int> (maxLeafSize) + 1))
+    localDataset(new MatType(arma::zeros<MatType>(parentNode->Bound().Dim(),
+                                                  maxLeafSize + 1)))
 {
   stat = StatisticType(*this);
 }
