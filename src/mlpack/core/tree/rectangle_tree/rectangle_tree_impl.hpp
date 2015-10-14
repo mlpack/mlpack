@@ -540,8 +540,6 @@ template<typename MetricType,
 inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
                             DescentType>::NumDescendants() const
 {
-  std::cout << "NumDescendants() [" << this << "], with " << numChildren
-      << "children.\n";
   if (numChildren == 0)
   {
     return count;
@@ -550,10 +548,7 @@ inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
   {
     size_t n = 0;
     for (size_t i = 0; i < numChildren; i++)
-    {
-      std::cout << "child " << i << ": " << children[i] << ".\n";
       n += children[i]->NumDescendants();
-    }
     return n;
   }
 }
@@ -966,7 +961,21 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
   ar & CreateNVP(maxNumChildren, "maxNumChildren");
   ar & CreateNVP(minNumChildren, "minNumChildren");
   ar & CreateNVP(numChildren, "numChildren");
-  ar & CreateNVP(parent, "parent");
+
+  // Due to quirks of boost::serialization, depending on how the user serializes
+  // the tree, the root node may be duplicated.  Therefore we don't allow
+  // children of the root to serialize the parent, and we fix the parent link
+  // after serializing the children when loading below.
+  if (Archive::is_saving::value && parent != NULL && parent->Parent() == NULL)
+  {
+    RectangleTree* fakeParent = NULL;
+    ar & CreateNVP(fakeParent, "parent");
+  }
+  else
+  {
+    ar & CreateNVP(parent, "parent");
+  }
+
   ar & CreateNVP(begin, "begin");
   ar & CreateNVP(count, "count");
   ar & CreateNVP(maxLeafSize, "maxLeafSize");
@@ -995,41 +1004,15 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
     ar & CreateNVP(children[i], oss.str());
   }
 
-
-  // Due to quirks of boost::serialization, if a tree is saved as an object and
-  // not a pointer, the first level of the tree will be duplicated on load.
-  // Therefore, if we are the root of the tree, then we need to make sure our
-  // children's parent links are correct, and delete the duplicated node if
-  // necessary.
-  if (Archive::is_loading::value)
+  // Fix the parent links for the children, if necessary.
+  if (Archive::is_loading::value && parent == NULL)
   {
     // Look through each child individually.
     for (size_t i = 0; i < children.size(); ++i)
     {
-      if (children[i]->Parent() != this)
-      {
-        // Disallow the duplicate parent from deleting anything.  But only
-        // delete the parent if this is the first child (we are assuming that
-        // each of the other children has the same incorrect parent).
-        if (i == 0)
-        {
-          children[i]->Parent()->ownsDataset = false;
-          children[i]->Parent()->children.clear();
-          delete children[i]->Parent();
-        }
-
-        // Fix the child's parent link.
-        children[i]->Parent() = this;
-      }
+      children[i]->ownsDataset = false;
+      children[i]->Parent() = this;
     }
-  }
-
-  if (Archive::is_loading::value)
-  {
-    std::cout << "loaded node " << this << " with " << numChildren << " (" <<
-        children.size() << ") children\n";
-    for (size_t i = 0; i < numChildren; ++i)
-      std::cout << "child " << i << ": " << children[i] << ".\n";
   }
 }
 
