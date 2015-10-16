@@ -49,6 +49,7 @@ add_executable(mlpack_test
   range_search_test.cpp
   rectangle_tree_test.cpp
   regularized_svd_test.cpp
+  rmsprop_test.cpp
   sa_test.cpp
   sdp_primal_dual_test.cpp
   sgd_test.cpp
