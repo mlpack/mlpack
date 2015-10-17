@@ -816,7 +816,7 @@ BOOST_AUTO_TEST_CASE(LoadTextTest)
  */
 BOOST_AUTO_TEST_CASE(DatasetInfoTest)
 {
-  DatasetInfo di;
+  DatasetInfo di(100);
 
   // Do all types default to numeric?
   for (size_t i = 0; i < 100; ++i)

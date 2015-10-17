@@ -208,7 +208,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitSplitTest)
 
   // No training is necessary because we can just call CreateChildren().
   std::vector<StreamingDecisionTree<HoeffdingSplit<>>> children;
-  data::DatasetInfo info;
+  data::DatasetInfo info(3);
   info.MapString("hello", 0); // Make dimension 0 categorical.
   HoeffdingCategoricalSplit<GiniImpurity>::SplitInfo splitInfo(3);
 
@@ -229,7 +229,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitSplitTest)
 BOOST_AUTO_TEST_CASE(HoeffdingSplitNoSplitTest)
 {
   // Make all dimensions categorical.
-  data::DatasetInfo info;
+  data::DatasetInfo info(3);
   info.MapString("cat1", 0);
   info.MapString("cat2", 0);
   info.MapString("cat3", 0);
@@ -266,7 +266,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitEasySplitTest)
   // dimension, category 0 will only receive points with class 0, and category 1
   // will only receive points with class 1.  In the second dimension, all points
   // will have category 0 (so it is useless).
-  data::DatasetInfo info;
+  data::DatasetInfo info(2);
   info.MapString("cat0", 0);
   info.MapString("cat1", 0);
   info.MapString("cat0", 1);
@@ -294,7 +294,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitProbability1SplitTest)
   // dimension, category 0 will only receive points with class 0, and category 1
   // will only receive points with class 1.  In the second dimension, all points
   // will have category 0 (so it is useless).
-  data::DatasetInfo info;
+  data::DatasetInfo info(2);
   info.MapString("cat0", 0);
   info.MapString("cat1", 0);
   info.MapString("cat0", 1);
@@ -321,7 +321,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitProbability1SplitTest)
 BOOST_AUTO_TEST_CASE(HoeffdingSplitAlmostPerfectSplit)
 {
   // Two categories and two dimensions.
-  data::DatasetInfo info;
+  data::DatasetInfo info(2);
   info.MapString("cat0", 0);
   info.MapString("cat1", 0);
   info.MapString("cat0", 1);
@@ -356,7 +356,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitAlmostPerfectSplit)
 BOOST_AUTO_TEST_CASE(HoeffdingSplitEqualSplitTest)
 {
   // Two categories and two dimensions.
-  data::DatasetInfo info;
+  data::DatasetInfo info(2);
   info.MapString("cat0", 0);
   info.MapString("cat1", 0);
   info.MapString("cat0", 1);
@@ -382,7 +382,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitEqualSplitTest)
  */
 BOOST_AUTO_TEST_CASE(StreamingDecisionTreeSimpleDatasetTest)
 {
-  DatasetInfo info;
+  DatasetInfo info(3);
   info.MapString("cat0", 0);
   info.MapString("cat1", 0);
   info.MapString("cat2", 0);
@@ -601,7 +601,7 @@ BOOST_AUTO_TEST_CASE(NumericHoeffdingTreeTest)
   // Generate data.
   arma::mat dataset(3, 9000);
   arma::Row<size_t> labels(9000);
-  data::DatasetInfo info; // All features are numeric.
+  data::DatasetInfo info(3); // All features are numeric.
   for (size_t i = 0; i < 9000; i += 3)
   {
     dataset(0, i) = mlpack::math::Random();
@@ -669,7 +669,7 @@ BOOST_AUTO_TEST_CASE(BinaryNumericHoeffdingTreeTest)
   // Generate data.
   arma::mat dataset(4, 9000);
   arma::Row<size_t> labels(9000);
-  data::DatasetInfo info; // All features are numeric, except the fourth.
+  data::DatasetInfo info(4); // All features are numeric, except the fourth.
   info.MapString("0", 3);
   for (size_t i = 0; i < 9000; i += 3)
   {
