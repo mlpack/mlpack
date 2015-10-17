@@ -342,12 +342,12 @@ bool Load(const std::string& filename,
     if (transpose)
     {
       matrix.set_size(cols, rows);
-      info = DatasetInfo(rows);
+      info = DatasetInfo(cols);
     }
     else
     {
       matrix.set_size(rows, cols);
-      info = DatasetInfo(cols);
+      info = DatasetInfo(rows);
     }
 
     stream.close();
