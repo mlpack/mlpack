@@ -354,56 +354,46 @@ void HoeffdingSplit<
     ar & CreateNVP(maxSamples, "maxSamples");
     ar & CreateNVP(successProbability, "successProbability");
 
-    // This is hackish for now...
+    // Serialize the splits, but not if we haven't seen any samples yet (in
+    // which case we can just reinitialize).
     if (Archive::is_loading::value)
     {
-      size_t numNumeric;
-      ar & CreateNVP(numNumeric, "numNumericSplits");
-      numericSplits.resize(numNumeric, NumericSplitType(numClasses));
-      for (size_t i = 0; i < numNumeric; ++i)
+      // Re-initialize all of the splits.
+      numericSplits.clear();
+      categoricalSplits.clear();
+      for (size_t i = 0; i < datasetInfo->Dimensionality(); ++i)
       {
-        std::ostringstream name;
-        name << "numericSplit" << i;
-        ar & CreateNVP(numericSplits[i], name.str());
+        if (datasetInfo->Type(i) == data::Datatype::categorical)
+          categoricalSplits.push_back(CategoricalSplitType(
+              datasetInfo->NumMappings(i), numClasses));
+        else
+          numericSplits.push_back(NumericSplitType(numClasses));
       }
 
-      size_t numCategorical;
-      ar & CreateNVP(numCategorical, "numCategoricalSplits");
-      categoricalSplits.resize(numCategorical, CategoricalSplitType(1, 1));
-      for (size_t i = 0; i < numCategorical; ++i)
-      {
-        std::ostringstream name;
-        name << "categoricalSplit" << i;
-        ar & CreateNVP(categoricalSplits[i], name.str());
-      }
-    }
-    else
-    {
-      size_t splits = numericSplits.size();
-      ar & CreateNVP(splits, "numNumericSplits");
-      for (size_t i = 0; i < numericSplits.size(); ++i)
-      {
-        std::ostringstream name;
-        name << "numericSplit" << i;
-        ar & CreateNVP(numericSplits[i], name.str());
-      }
-
-
-      splits = categoricalSplits.size();
-      ar & CreateNVP(splits, "numCategoricalSplits");
-      for (size_t i = 0; i < categoricalSplits.size(); ++i)
-      {
-        std::ostringstream name;
-        name << "categoricalSplit" << i;
-        ar & CreateNVP(categoricalSplits[i], name.str());
-      }
-    }
-
-    if (Archive::is_loading::value)
-    {
       // Clear things we don't need.
       categoricalSplit = typename CategoricalSplitType::SplitInfo(numClasses);
       numericSplit = typename NumericSplitType::SplitInfo();
+    }
+
+    // There's no need to serialize if there's no information contained in the
+    // splits.
+    if (numSamples == 0)
+      return;
+
+    // Serialize numeric splits.
+    for (size_t i = 0; i < numericSplits.size(); ++i)
+    {
+      std::ostringstream name;
+      name << "numericSplit" << i;
+      ar & CreateNVP(numericSplits[i], name.str());
+    }
+
+    // Serialize categorical splits.
+    for (size_t i = 0; i < categoricalSplits.size(); ++i)
+    {
+      std::ostringstream name;
+      name << "categoricalSplit" << i;
+      ar & CreateNVP(categoricalSplits[i], name.str());
     }
   }
   else
