@@ -194,8 +194,22 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::Serialize(
   {
     // The binning has not happened yet, so we only need to save the information
     // required before binning.
-    ar & CreateNVP(observations, "observations");
-    ar & CreateNVP(labels, "labels");
+    if (Archive::is_loading::value)
+    {
+      observations.zeros(observationsBeforeBinning);
+      labels.zeros(observationsBeforeBinning);
+    }
+
+    for (size_t i = 0; i < samplesSeen; ++i)
+    {
+      std::ostringstream oss;
+      oss << "observation" << i;
+      ar & CreateNVP(observations[i], oss.str());
+
+      oss.clear();
+      oss << "label" << i;
+      ar & CreateNVP(labels[i], oss.str());
+    }
 
     if (Archive::is_loading::value)
     {
