@@ -340,9 +340,15 @@ bool Load(const std::string& filename,
 
     // Now we have the size.  So resize our matrix.
     if (transpose)
+    {
       matrix.set_size(cols, rows);
+      info = DatasetInfo(rows);
+    }
     else
+    {
       matrix.set_size(rows, cols);
+      info = DatasetInfo(cols);
+    }
 
     stream.close();
     stream.open(filename, std::fstream::in);

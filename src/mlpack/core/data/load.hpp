@@ -81,6 +81,9 @@ bool Load(const std::string& filename,
  * mlpack requires column-major matrices, this should be left at its default
  * value of 'true'.
  *
+ * The DatasetInfo object passed to this function will be re-created, so any
+ * mappings from previous loads will be lost.
+ *
  * @param filename Name of file to load.
  * @param matrix Matrix to load contents of file into.
  * @param info DatasetInfo object to populate with mappings and data types.
