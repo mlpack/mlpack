@@ -38,7 +38,7 @@ enum Datatype : bool /* bool is all the precision we need for two types */
 class DatasetInfo
 {
  public:
-  DatasetInfo();
+  DatasetInfo(const size_t dimensionality = 0);
 
   /**
    * Given the string and the dimension to which it belongs, return its numeric
@@ -54,19 +54,26 @@ class DatasetInfo
   const std::string& UnmapString(const size_t value, const size_t dimension);
 
   Datatype Type(const size_t dimension) const;
+  Datatype& Type(const size_t dimension);
 
   size_t NumMappings(const size_t dimension) const;
+
+  size_t Dimensionality() const;
 
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)
   {
+    ar & data::CreateNVP(types, "types");
     ar & data::CreateNVP(maps, "maps");
   }
 
  private:
+  std::vector<Datatype> types;
+
   // Map entries will only exist for dimensions that are categorical.
   std::unordered_map<size_t, std::pair<boost::bimap<std::string, size_t>,
       size_t>> maps;
+
 };
 
 } // namespace data

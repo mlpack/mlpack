@@ -13,7 +13,8 @@
 namespace mlpack {
 namespace data {
 
-inline DatasetInfo::DatasetInfo()
+inline DatasetInfo::DatasetInfo(const size_t dimensionality) :
+    types(dimensionality, Datatype::numeric)
 {
   // Nothing to initialize.
 }
@@ -30,6 +31,8 @@ inline size_t DatasetInfo::MapString(const std::string& string,
   {
     // This string does not exist yet.
     size_t& numMappings = maps[dimension].second;
+    if (numMappings == 0)
+      types[dimension] = Datatype::categorical;
     typedef boost::bimap<std::string, size_t>::value_type PairType;
     maps[dimension].first.insert(PairType(string, numMappings));
     return numMappings++;
@@ -61,13 +64,33 @@ inline const std::string& DatasetInfo::UnmapString(
 // Get the type of a particular dimension.
 inline Datatype DatasetInfo::Type(const size_t dimension) const
 {
-  return (maps.count(dimension) == 0) ? Datatype::numeric :
-      Datatype::categorical;
+  if (dimension >= types.size())
+  {
+    std::ostringstream oss;
+    oss << "requested type of dimension " << dimension << ", but dataset only "
+        << "has " << types.size() << " dimensions";
+    throw std::invalid_argument(oss.str());
+  }
+
+  return types[dimension];
+}
+
+inline Datatype& DatasetInfo::Type(const size_t dimension)
+{
+  if (dimension >= types.size())
+    types.resize(dimension + 1, Datatype::numeric);
+
+  return types[dimension];
 }
 
 inline size_t DatasetInfo::NumMappings(const size_t dimension) const
 {
   return (maps.count(dimension) == 0) ? 0 : maps.at(dimension).second;
+}
+
+inline size_t DatasetInfo::Dimensionality() const
+{
+  return types.size();
 }
 
 } // namespace data
