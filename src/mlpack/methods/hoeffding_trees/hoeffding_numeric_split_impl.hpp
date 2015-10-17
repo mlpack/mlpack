@@ -203,12 +203,12 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::Serialize(
     for (size_t i = 0; i < samplesSeen; ++i)
     {
       std::ostringstream oss;
-      oss << "observation" << i;
+      oss << "obs" << i;
       ar & CreateNVP(observations[i], oss.str());
 
-      oss.clear();
-      oss << "label" << i;
-      ar & CreateNVP(labels[i], oss.str());
+      std::ostringstream oss2;
+      oss2 << "label" << i;
+      ar & CreateNVP(labels[i], oss2.str());
     }
 
     if (Archive::is_loading::value)
