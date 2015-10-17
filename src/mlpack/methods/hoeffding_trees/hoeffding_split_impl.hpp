@@ -398,10 +398,11 @@ void HoeffdingSplit<
   }
   else
   {
-    // We have split, so we only need to cache the numeric and categorical
-    // split.
-    ar & CreateNVP(categoricalSplit, "categoricalSplit");
-    ar & CreateNVP(numericSplit, "numericSplit");
+    // We have split, so we only need to save the split.
+    if (datasetInfo->Type(splitDimension) == data::Datatype::categorical)
+      ar & CreateNVP(categoricalSplit, "categoricalSplit");
+    else
+      ar & CreateNVP(numericSplit, "numericSplit");
 
     if (Archive::is_loading::value)
     {
