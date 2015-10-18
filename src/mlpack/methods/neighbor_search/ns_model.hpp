@@ -1,0 +1,138 @@
+/**
+ * @file ns_model.hpp
+ * @author Ryan Curtin
+ *
+ * This is a model for nearest or furthest neighbor search.  It is useful in
+ * that it provides an easy way to serialize a model, abstracts away the
+ * different types of trees, and also reflects the NeighborSearch API and
+ * automatically directs to the right tree type.
+ */
+#ifndef __MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_HPP
+#define __MLPACK_METHODS_NEIGHBOR_SEARCH_NS_MODEL_HPP
+
+#include <mlpack/core/tree/binary_space_tree.hpp>
+#include <mlpack/core/tree/cover_tree.hpp>
+#include <mlpack/core/tree/rectangle_tree.hpp>
+
+#include "neighbor_search.hpp"
+
+namespace mlpack {
+namespace neighbor {
+
+template<typename SortPolicy>
+struct NSModelName
+{
+  const static constexpr char value[22] = "neighbor_search_model";
+};
+
+template<>
+struct NSModelName<NearestNeighborSort>
+{
+  const static constexpr char value[30] = "nearest_neighbor_search_model";
+};
+
+template<>
+struct NSModelName<FurthestNeighborSort>
+{
+  const static constexpr char value[31] = "furthest_neighbor_search_model";
+};
+
+template<typename SortPolicy>
+class NSModel
+{
+ public:
+  enum TreeTypes
+  {
+    KD_TREE,
+    COVER_TREE,
+    R_TREE,
+    R_STAR_TREE
+  };
+
+ private:
+  int treeType;
+  size_t leafSize;
+
+  // For random projections.
+  bool randomBasis;
+  arma::mat q;
+
+  // Mappings, in case they are necessary.
+  std::vector<size_t> oldFromNewReferences;
+
+  template<template<typename TreeMetricType,
+                    typename TreeStatType,
+                    typename TreeMatType> class TreeType>
+  using NSType = NeighborSearch<SortPolicy,
+                                metric::EuclideanDistance,
+                                arma::mat,
+                                TreeType>;
+
+  // Only one of these pointers will be non-NULL.
+  NSType<tree::KDTree>* kdTreeNS;
+  NSType<tree::StandardCoverTree>* coverTreeNS;
+  NSType<tree::RTree>* rTreeNS;
+  NSType<tree::RStarTree>* rStarTreeNS;
+
+  // This pointers is only non-null if we are using kd-trees and we built the
+  // tree ourselves (which only happens if BuildModel() is called).
+  typename NSType<tree::KDTree>::Tree* kdTree;
+
+ public:
+  /**
+   * Initialize the NSModel with the given type and whether or not a random
+   * basis should be used.
+   */
+  NSModel(int treeType = TreeTypes::KD_TREE, bool randomBasis = false);
+
+  //! Clean memory, if necessary.
+  ~NSModel();
+
+  //! Serialize the kNN model.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
+
+  //! Expose the dataset.
+  const arma::mat& Dataset() const;
+
+  //! Expose singleMode.
+  bool SingleMode() const;
+  bool& SingleMode();
+
+  bool Naive() const;
+  bool& Naive();
+
+  size_t LeafSize() const { return leafSize; }
+  size_t& LeafSize() { return leafSize; }
+
+  int TreeType() const { return treeType; }
+  int& TreeType() { return treeType; }
+
+  bool RandomBasis() const { return randomBasis; }
+  bool& RandomBasis() { return randomBasis; }
+
+  //! Build the reference tree.
+  void BuildModel(arma::mat& referenceSet,
+                  const size_t leafSize,
+                  const bool naive,
+                  const bool singleMode);
+
+  //! Perform neighbor search.  The query set will be reordered.
+  void Search(arma::mat& querySet,
+              const size_t k,
+              arma::Mat<size_t>& neighbors,
+              arma::mat& distances);
+
+  //! Perform neighbor search.
+  void Search(const size_t k,
+              arma::Mat<size_t>& neighbors,
+              arma::mat& distances);
+};
+
+} // namespace neighbor
+} // namespace mlpack
+
+// Include implementation.
+#include "ns_model_impl.hpp"
+
+#endif

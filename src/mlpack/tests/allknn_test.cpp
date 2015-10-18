@@ -6,6 +6,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/neighbor_search/neighbor_search.hpp>
 #include <mlpack/methods/neighbor_search/unmap.hpp>
+#include <mlpack/methods/neighbor_search/ns_model.hpp>
 #include <mlpack/core/tree/cover_tree.hpp>
 #include <mlpack/core/tree/example_tree.hpp>
 #include <boost/test/unit_test.hpp>
@@ -899,5 +900,124 @@ BOOST_AUTO_TEST_CASE(SparseAllkNNCoverTreeTest)
   }
 }
 */
+
+BOOST_AUTO_TEST_CASE(KNNModelTest)
+{
+  // Ensure that we can build an NSModel<NearestNeighborSearch> and get correct
+  // results.
+  typedef NSModel<NearestNeighborSort> KNNModel;
+
+  arma::mat queryData = arma::randu<arma::mat>(10, 100);
+  arma::mat referenceData = arma::randu<arma::mat>(10, 500);
+
+  // Build all the possible models.
+  KNNModel models[8];
+  models[0] = KNNModel(KNNModel::TreeTypes::KD_TREE, true);
+  models[1] = KNNModel(KNNModel::TreeTypes::KD_TREE, false);
+  models[2] = KNNModel(KNNModel::TreeTypes::COVER_TREE, true);
+  models[3] = KNNModel(KNNModel::TreeTypes::COVER_TREE, false);
+  models[4] = KNNModel(KNNModel::TreeTypes::R_TREE, true);
+  models[5] = KNNModel(KNNModel::TreeTypes::R_TREE, false);
+  models[6] = KNNModel(KNNModel::TreeTypes::R_STAR_TREE, true);
+  models[7] = KNNModel(KNNModel::TreeTypes::R_STAR_TREE, false);
+
+  for (size_t j = 0; j < 2; ++j)
+  {
+    // Get a baseline.
+    AllkNN knn(referenceData);
+    arma::Mat<size_t> baselineNeighbors;
+    arma::mat baselineDistances;
+    knn.Search(queryData, 3, baselineNeighbors, baselineDistances);
+
+    for (size_t i = 0; i < 8; ++i)
+    {
+      if (j == 0)
+        models[i].BuildModel(referenceData, 20, false, false);
+      if (j == 1)
+        models[i].BuildModel(referenceData, 20, false, true);
+      if (j == 2)
+        models[i].BuildModel(referenceData, 20, true, false);
+
+      arma::Mat<size_t> neighbors;
+      arma::mat distances;
+
+      models[i].Search(queryData, 3, neighbors, distances);
+
+      BOOST_REQUIRE_EQUAL(neighbors.n_rows, baselineNeighbors.n_rows);
+      BOOST_REQUIRE_EQUAL(neighbors.n_cols, baselineNeighbors.n_cols);
+      BOOST_REQUIRE_EQUAL(neighbors.n_elem, baselineNeighbors.n_elem);
+      BOOST_REQUIRE_EQUAL(distances.n_rows, baselineDistances.n_rows);
+      BOOST_REQUIRE_EQUAL(distances.n_cols, baselineDistances.n_cols);
+      BOOST_REQUIRE_EQUAL(distances.n_elem, baselineDistances.n_elem);
+      for (size_t i = 0; i < distances.n_elem; ++i)
+      {
+        BOOST_REQUIRE_EQUAL(neighbors[i], baselineNeighbors[i]);
+        if (std::abs(baselineDistances[i]) < 1e-5)
+          BOOST_REQUIRE_SMALL(distances[i], 1e-5);
+        else
+          BOOST_REQUIRE_CLOSE(distances[i], baselineDistances[i], 1e-5);
+      }
+    }
+  }
+}
+
+BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
+{
+  // Ensure that we can build an NSModel<NearestNeighborSearch> and get correct
+  // results, in the case where the reference set is the same as the query set.
+  typedef NSModel<NearestNeighborSort> KNNModel;
+
+  arma::mat referenceData = arma::randu<arma::mat>(10, 500);
+
+  // Build all the possible models.
+  KNNModel models[8];
+  models[0] = KNNModel(KNNModel::TreeTypes::KD_TREE, true);
+  models[1] = KNNModel(KNNModel::TreeTypes::KD_TREE, false);
+  models[2] = KNNModel(KNNModel::TreeTypes::COVER_TREE, true);
+  models[3] = KNNModel(KNNModel::TreeTypes::COVER_TREE, false);
+  models[4] = KNNModel(KNNModel::TreeTypes::R_TREE, true);
+  models[5] = KNNModel(KNNModel::TreeTypes::R_TREE, false);
+  models[6] = KNNModel(KNNModel::TreeTypes::R_STAR_TREE, true);
+  models[7] = KNNModel(KNNModel::TreeTypes::R_STAR_TREE, false);
+
+  for (size_t j = 0; j < 2; ++j)
+  {
+    // Get a baseline.
+    AllkNN knn(referenceData);
+    arma::Mat<size_t> baselineNeighbors;
+    arma::mat baselineDistances;
+    knn.Search(3, baselineNeighbors, baselineDistances);
+
+    for (size_t i = 0; i < 8; ++i)
+    {
+      if (j == 0)
+        models[i].BuildModel(referenceData, 20, false, false);
+      if (j == 1)
+        models[i].BuildModel(referenceData, 20, false, true);
+      if (j == 2)
+        models[i].BuildModel(referenceData, 20, true, false);
+
+      arma::Mat<size_t> neighbors;
+      arma::mat distances;
+
+      models[i].Search(3, neighbors, distances);
+
+      BOOST_REQUIRE_EQUAL(neighbors.n_rows, baselineNeighbors.n_rows);
+      BOOST_REQUIRE_EQUAL(neighbors.n_cols, baselineNeighbors.n_cols);
+      BOOST_REQUIRE_EQUAL(neighbors.n_elem, baselineNeighbors.n_elem);
+      BOOST_REQUIRE_EQUAL(distances.n_rows, baselineDistances.n_rows);
+      BOOST_REQUIRE_EQUAL(distances.n_cols, baselineDistances.n_cols);
+      BOOST_REQUIRE_EQUAL(distances.n_elem, baselineDistances.n_elem);
+      for (size_t i = 0; i < distances.n_elem; ++i)
+      {
+        BOOST_REQUIRE_EQUAL(neighbors[i], baselineNeighbors[i]);
+        if (std::abs(baselineDistances[i]) < 1e-5)
+          BOOST_REQUIRE_SMALL(distances[i], 1e-5);
+        else
+          BOOST_REQUIRE_CLOSE(distances[i], baselineDistances[i], 1e-5);
+      }
+    }
+  }
+}
 
 BOOST_AUTO_TEST_SUITE_END();
