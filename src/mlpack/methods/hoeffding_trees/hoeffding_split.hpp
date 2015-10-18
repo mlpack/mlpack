@@ -17,8 +17,10 @@ namespace mlpack {
 namespace tree {
 
 template<typename FitnessFunction = GiniImpurity,
-         typename NumericSplitType = HoeffdingNumericSplit<GiniImpurity>,
-         typename CategoricalSplitType = HoeffdingCategoricalSplit<GiniImpurity>
+         template<typename> class NumericSplitType =
+             HoeffdingDoubleNumericSplit,
+         template<typename> class CategoricalSplitType =
+             HoeffdingCategoricalSplit
 >
 class HoeffdingSplit
 {
@@ -68,8 +70,8 @@ class HoeffdingSplit
 
  private:
   // We need to keep some information for before we have split.
-  std::vector<NumericSplitType> numericSplits;
-  std::vector<CategoricalSplitType> categoricalSplits;
+  std::vector<NumericSplitType<FitnessFunction>> numericSplits;
+  std::vector<CategoricalSplitType<FitnessFunction>> categoricalSplits;
 
   // This structure is owned by this node only if it is the root of the tree.
   std::unordered_map<size_t, std::pair<size_t, size_t>>* dimensionMappings;
@@ -86,8 +88,10 @@ class HoeffdingSplit
   size_t splitDimension;
   size_t majorityClass;
   double majorityProbability;
-  typename CategoricalSplitType::SplitInfo categoricalSplit; // In case it's categorical.
-  typename NumericSplitType::SplitInfo numericSplit; // In case it's numeric.
+  // In case it's categorical.
+  typename CategoricalSplitType<FitnessFunction>::SplitInfo categoricalSplit;
+  // In case it's numeric.
+  typename NumericSplitType<FitnessFunction>::SplitInfo numericSplit;
 };
 
 } // namespace tree

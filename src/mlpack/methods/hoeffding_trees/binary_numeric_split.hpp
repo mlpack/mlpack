@@ -66,6 +66,10 @@ class BinaryNumericSplit
   ObservationType bestSplit;
 };
 
+// Convenience typedef.
+template<typename FitnessFunction>
+using BinaryDoubleNumericSplit = BinaryNumericSplit<FitnessFunction, double>;
+
 } // namespace tree
 } // namespace mlpack
 

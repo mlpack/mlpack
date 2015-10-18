@@ -83,6 +83,11 @@ class HoeffdingNumericSplit
   arma::Mat<size_t> sufficientStatistics;
 };
 
+// Convenience typedef.
+template<typename FitnessFunction>
+using HoeffdingDoubleNumericSplit = HoeffdingNumericSplit<FitnessFunction,
+    double>;
+
 } // namespace tree
 } // namespace mlpack
 

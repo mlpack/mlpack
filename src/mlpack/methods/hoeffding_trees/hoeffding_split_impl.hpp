@@ -11,8 +11,8 @@ namespace mlpack {
 namespace tree {
 
 template<typename FitnessFunction,
-         typename NumericSplitType,
-         typename CategoricalSplitType>
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType>
 HoeffdingSplit<
     FitnessFunction,
     NumericSplitType,
@@ -43,14 +43,14 @@ HoeffdingSplit<
     {
       if (datasetInfo.Type(i) == data::Datatype::categorical)
       {
-        categoricalSplits.push_back(
-            CategoricalSplitType(datasetInfo.NumMappings(i), numClasses));
+        categoricalSplits.push_back(CategoricalSplitType<FitnessFunction>(
+            datasetInfo.NumMappings(i), numClasses));
         (*dimensionMappings)[i] = std::make_pair(data::Datatype::categorical,
             categoricalSplits.size() - 1);
       }
       else
       {
-        numericSplits.push_back(NumericSplitType(numClasses));
+        numericSplits.push_back(NumericSplitType<FitnessFunction>(numClasses));
         (*dimensionMappings)[i] = std::make_pair(data::Datatype::numeric,
             numericSplits.size() - 1);
       }
@@ -62,20 +62,20 @@ HoeffdingSplit<
     {
       if (datasetInfo.Type(i) == data::Datatype::categorical)
       {
-        categoricalSplits.push_back(
-            CategoricalSplitType(datasetInfo.NumMappings(i), numClasses));
+        categoricalSplits.push_back(CategoricalSplitType<FitnessFunction>(
+            datasetInfo.NumMappings(i), numClasses));
       }
       else
       {
-        numericSplits.push_back(NumericSplitType(numClasses));
+        numericSplits.push_back(NumericSplitType<FitnessFunction>(numClasses));
       }
     }
   }
 }
 
 template<typename FitnessFunction,
-         typename NumericSplitType,
-         typename CategoricalSplitType>
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType>
 HoeffdingSplit<FitnessFunction, NumericSplitType, CategoricalSplitType>::
     ~HoeffdingSplit()
 {
@@ -84,8 +84,8 @@ HoeffdingSplit<FitnessFunction, NumericSplitType, CategoricalSplitType>::
 }
 
 template<typename FitnessFunction,
-         typename NumericSplitType,
-         typename CategoricalSplitType>
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType>
 template<typename VecType>
 void HoeffdingSplit<
     FitnessFunction,
@@ -126,8 +126,8 @@ void HoeffdingSplit<
 }
 
 template<typename FitnessFunction,
-         typename NumericSplitType,
-         typename CategoricalSplitType>
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType>
 size_t HoeffdingSplit<
     FitnessFunction,
     NumericSplitType,
@@ -200,8 +200,8 @@ size_t HoeffdingSplit<
 
 template<
     typename FitnessFunction,
-    typename NumericSplitType,
-    typename CategoricalSplitType
+    template<typename> class NumericSplitType,
+    template<typename> class CategoricalSplitType
 >
 size_t HoeffdingSplit<
     FitnessFunction,
@@ -214,8 +214,8 @@ size_t HoeffdingSplit<
 
 template<
     typename FitnessFunction,
-    typename NumericSplitType,
-    typename CategoricalSplitType
+    template<typename> class NumericSplitType,
+    template<typename> class CategoricalSplitType
 >
 size_t& HoeffdingSplit<
     FitnessFunction,
@@ -228,8 +228,8 @@ size_t& HoeffdingSplit<
 
 template<
     typename FitnessFunction,
-    typename NumericSplitType,
-    typename CategoricalSplitType
+    template<typename> class NumericSplitType,
+    template<typename> class CategoricalSplitType
 >
 template<typename VecType>
 size_t HoeffdingSplit<
@@ -249,8 +249,8 @@ size_t HoeffdingSplit<
 
 template<
     typename FitnessFunction,
-    typename NumericSplitType,
-    typename CategoricalSplitType
+    template<typename> class NumericSplitType,
+    template<typename> class CategoricalSplitType
 >
 template<typename VecType>
 size_t HoeffdingSplit<
@@ -266,8 +266,8 @@ size_t HoeffdingSplit<
 
 template<
     typename FitnessFunction,
-    typename NumericSplitType,
-    typename CategoricalSplitType
+    template<typename> class NumericSplitType,
+    template<typename> class CategoricalSplitType
 >
 template<typename VecType>
 void HoeffdingSplit<
@@ -284,8 +284,8 @@ void HoeffdingSplit<
 
 template<
     typename FitnessFunction,
-    typename NumericSplitType,
-    typename CategoricalSplitType
+    template<typename> class NumericSplitType,
+    template<typename> class CategoricalSplitType
 >
 template<typename StreamingDecisionTreeType>
 void HoeffdingSplit<
@@ -325,8 +325,8 @@ void HoeffdingSplit<
 
 template<
     typename FitnessFunction,
-    typename NumericSplitType,
-    typename CategoricalSplitType
+    template<typename> class NumericSplitType,
+    template<typename> class CategoricalSplitType
 >
 template<typename Archive>
 void HoeffdingSplit<
@@ -364,15 +364,17 @@ void HoeffdingSplit<
       for (size_t i = 0; i < datasetInfo->Dimensionality(); ++i)
       {
         if (datasetInfo->Type(i) == data::Datatype::categorical)
-          categoricalSplits.push_back(CategoricalSplitType(
+          categoricalSplits.push_back(CategoricalSplitType<FitnessFunction>(
               datasetInfo->NumMappings(i), numClasses));
         else
-          numericSplits.push_back(NumericSplitType(numClasses));
+          numericSplits.push_back(
+              NumericSplitType<FitnessFunction>(numClasses));
       }
 
       // Clear things we don't need.
-      categoricalSplit = typename CategoricalSplitType::SplitInfo(numClasses);
-      numericSplit = typename NumericSplitType::SplitInfo();
+      categoricalSplit = typename CategoricalSplitType<FitnessFunction>::
+          SplitInfo(numClasses);
+      numericSplit = typename NumericSplitType<FitnessFunction>::SplitInfo();
     }
 
     // There's no need to serialize if there's no information contained in the
