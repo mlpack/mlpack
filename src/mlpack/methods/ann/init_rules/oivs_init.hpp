@@ -64,10 +64,10 @@ class OivsInitialization
   OivsInitialization(const double epsilon = 0.1,
                      const int k = 5,
                      const double gamma = 0.9) :
-      epsilon(epsilon), k(k), gamma(gamma)
-  {
-    double b = std::abs(ActivationFunction::inv(1 - epsilon) -
-    ActivationFunction::inv(epsilon));
+      epsilon(epsilon), k(k), gamma(gamma),
+      b(std::abs(ActivationFunction::inv(1 - epsilon) -
+                 ActivationFunction::inv(epsilon)))
+  {    
   }
 
   /**
@@ -109,13 +109,16 @@ class OivsInitialization
 
  private:
   //! Parameter to control the activation region.
-  const double b;
+  const double epsilon;
 
   //! Parameter to control the activation region width.
   const int k;
 
   //! Parameter to define the uniform random range.
   const double gamma;
+
+  //! Parameter to control the activation region.
+  const double b;
 }; // class OivsInitialization
 
 
