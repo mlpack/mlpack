@@ -376,6 +376,41 @@ BinarySpaceTree(
 }
 
 /**
+ * Move constructor.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         template<typename BoundMetricType> class BoundType,
+         template<typename SplitBoundType, typename SplitMatType>
+             class SplitType>
+BinarySpaceTree<MetricType, StatisticType, MatType, BoundType, SplitType>::
+BinarySpaceTree(BinarySpaceTree&& other) :
+    left(other.left),
+    right(other.right),
+    parent(other.parent),
+    begin(other.begin),
+    count(other.count),
+    bound(std::move(other.bound)),
+    stat(std::move(other.stat)),
+    parentDistance(other.parentDistance),
+    furthestDescendantDistance(other.furthestDescendantDistance),
+    minimumBoundDistance(other.minimumBoundDistance),
+    dataset(other.dataset)
+{
+  // Now we are a clone of the other tree.  But we must also clear the other
+  // tree's contents, so it doesn't delete anything when it is destructed.
+  other.left = NULL;
+  other.right = NULL;
+  other.begin = 0;
+  other.count = 0;
+  other.parentDistance = 0.0;
+  other.furthestDescendantDistance = 0.0;
+  other.minimumBoundDistance = 0.0;
+  other.dataset = NULL;
+}
+
+/**
  * Initialize the tree from an archive.
  */
 template<typename MetricType,

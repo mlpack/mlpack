@@ -70,8 +70,11 @@ class BallBound
   //! Copy constructor. To prevent memory leaks.
   BallBound(const BallBound& other);
 
-  //! For the same reason as the Copy Constructor. To prevent memory leaks.
+  //! For the same reason as the copy constructor: to prevent memory leaks.
   BallBound& operator=(const BallBound& other);
+
+  //! Move constructor: take possession of another bound.
+  BallBound(BallBound&& other);
 
   //! Destructor to release allocated memory.
   ~BallBound();

@@ -69,6 +69,9 @@ class HRectBound
   //! Same as copy constructor; necessary to prevent memory leaks.
   HRectBound& operator=(const HRectBound& other);
 
+  //! Move constructor: take possession of another bound's information.
+  HRectBound(HRectBound&& other);
+
   //! Destructor: clean up memory.
   ~HRectBound();
 
