@@ -30,6 +30,7 @@ class HoeffdingSplit
                  const data::DatasetInfo& datasetInfo,
                  const double successProbability,
                  const size_t maxSamples,
+                 const size_t checkInterval,
                  std::unordered_map<size_t, std::pair<size_t, size_t>>*
                      dimensionMappings = NULL);
 
@@ -81,6 +82,7 @@ class HoeffdingSplit
   size_t numSamples;
   size_t numClasses;
   size_t maxSamples;
+  size_t checkInterval;
   data::DatasetInfo* datasetInfo;
   double successProbability;
 

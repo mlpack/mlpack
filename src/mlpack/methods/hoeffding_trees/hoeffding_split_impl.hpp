@@ -22,6 +22,7 @@ HoeffdingSplit<
                   const data::DatasetInfo& datasetInfo,
                   const double successProbability,
                   const size_t maxSamples,
+                  const size_t checkInterval,
                   std::unordered_map<size_t, std::pair<size_t, size_t>>*
                       dimensionMappingsIn) :
     dimensionMappings((dimensionMappingsIn != NULL) ? dimensionMappingsIn :
@@ -30,6 +31,7 @@ HoeffdingSplit<
     numSamples(0),
     numClasses(numClasses),
     maxSamples(maxSamples),
+    checkInterval(checkInterval),
     datasetInfo(const_cast<data::DatasetInfo*>(&datasetInfo)),
     successProbability(successProbability),
     splitDimension(size_t(-1)),
@@ -134,6 +136,10 @@ size_t HoeffdingSplit<
     CategoricalSplitType
 >::SplitCheck()
 {
+  // If we have not seen enough samples to check, don't check.
+  if (numSamples % checkInterval != 0)
+    return 0;
+
   // Do nothing if we've already split.
   if (splitDimension != size_t(-1))
     return 0;
@@ -314,7 +320,8 @@ void HoeffdingSplit<
   for (size_t i = 0; i < childMajorities.n_elem; ++i)
   {
     children.push_back(StreamingDecisionTreeType(*datasetInfo, dimensionality,
-        numClasses, successProbability, maxSamples, dimensionMappings));
+        numClasses, successProbability, maxSamples, checkInterval,
+        dimensionMappings));
     children[i].MajorityClass() = childMajorities[i];
   }
 

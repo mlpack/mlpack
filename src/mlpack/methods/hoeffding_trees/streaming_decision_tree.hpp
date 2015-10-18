@@ -24,13 +24,15 @@ class StreamingDecisionTree
                         const arma::Row<size_t>& labels,
                         const size_t numClasses,
                         const double confidence = 0.95,
-                        const size_t numSamples = 5000);
+                        const size_t numSamples = 5000,
+                        const size_t checkInterval = 100);
 
   StreamingDecisionTree(const data::DatasetInfo& datasetInfo,
                         const size_t dimensionality,
                         const size_t numClasses,
                         const double confidence = 0.95,
                         const size_t numSamples = 5000,
+                        const size_t checkInterval = 100,
                         std::unordered_map<size_t, std::pair<size_t, size_t>>*
                             dimensionMappings = NULL);
 
@@ -71,6 +73,7 @@ class StreamingDecisionTree
   void Serialize(Archive& ar, const unsigned int /* version */)
   {
     ar & data::CreateNVP(split, "split");
+    ar & data::CreateNVP(checkInterval, "checkInterval");
 
     size_t numChildren;
     if (Archive::is_saving::value)
@@ -90,6 +93,7 @@ class StreamingDecisionTree
 
  private:
   std::vector<StreamingDecisionTree> children;
+  size_t checkInterval;
 
   SplitType split;
 };
