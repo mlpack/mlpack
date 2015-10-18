@@ -28,7 +28,6 @@ struct IsLMetric
 };
 
 //! Specialization for IsLMetric when the argument is of type LMetric.
-template<>
 template<int Power, bool TakeRoot>
 struct IsLMetric<metric::LMetric<Power, TakeRoot>>
 {
