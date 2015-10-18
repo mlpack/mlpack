@@ -229,6 +229,9 @@ class NeighborSearch
   //! Modify whether or not search is done in single-tree mode.
   bool& SingleMode() { return singleMode; }
 
+  //! Access the reference dataset.
+  const MatType& ReferenceSet() const { return *referenceSet; }
+
   //! Serialize the NeighborSearch model.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
