@@ -3,6 +3,7 @@ add_executable(mlpack_test
   mlpack_test.cpp
   activation_functions_test.cpp
   adaboost_test.cpp
+  ada_delta_test.cpp
   allkfn_test.cpp
   allknn_test.cpp
   allkrann_search_test.cpp
