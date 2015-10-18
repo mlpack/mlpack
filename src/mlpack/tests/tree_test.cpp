@@ -120,6 +120,27 @@ BOOST_AUTO_TEST_CASE(HRectBoundClear)
   BOOST_REQUIRE_SMALL(b.MinWidth(), 1e-5);
 }
 
+BOOST_AUTO_TEST_CASE(HRectBoundMoveConstructor)
+{
+  HRectBound<EuclideanDistance> b(2);
+  b[0] = Range(0.0, 2.0);
+  b[1] = Range(2.0, 4.0);
+  b.MinWidth() = 1.0;
+
+  HRectBound<EuclideanDistance> b2(std::move(b));
+
+  BOOST_REQUIRE_EQUAL(b.Dim(), 0);
+  BOOST_REQUIRE_EQUAL(b2.Dim(), 2);
+
+  BOOST_REQUIRE_EQUAL(b.MinWidth(), 0.0);
+  BOOST_REQUIRE_EQUAL(b2.MinWidth(), 1.0);
+
+  BOOST_REQUIRE_SMALL(b2[0].Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(b2[0].Hi(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b2[1].Lo(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b2[1].Hi(), 4.0, 1e-5);
+}
+
 /**
  * Ensure that we get the correct center for our bound.
  */
@@ -662,6 +683,22 @@ BOOST_AUTO_TEST_CASE(TestBallBound)
   BOOST_REQUIRE_CLOSE(b2.MinDistance(b1.Center()), 1 - 0.4, 1e-5);
   BOOST_REQUIRE_CLOSE(b2.MaxDistance(b1.Center()), 1 + 0.4, 1e-5);
   BOOST_REQUIRE_CLOSE(b1.MaxDistance(b2.Center()), 1 + 0.3, 1e-5);
+}
+
+BOOST_AUTO_TEST_CASE(BallBoundMoveConstructor)
+{
+  BallBound<> b1(2.0, arma::vec("2 1 1"));
+  BallBound<> b2(std::move(b1));
+
+  BOOST_REQUIRE_EQUAL(b2.Dim(), 3);
+  BOOST_REQUIRE_EQUAL(b1.Dim(), 0);
+
+  BOOST_REQUIRE_CLOSE(b2.Center()[0], 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b2.Center()[1], 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b2.Center()[2], 1.0, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(b2.MinWidth(), 4.0, 1e-5);
+  BOOST_REQUIRE_SMALL(b1.MinWidth(), 1e-5);
 }
 
 /**
@@ -1526,6 +1563,18 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSparseKDTreeTest)
 
 #endif // Using Armadillo 3.4.
 #endif // ARMA_HAS_SPMAT
+
+BOOST_AUTO_TEST_CASE(BinarySpaceTreeMoveConstructorTest)
+{
+  arma::mat dataset(5, 1000);
+  dataset.randu();
+
+  BinarySpaceTree<EuclideanDistance> tree(dataset);
+  BinarySpaceTree<EuclideanDistance> tree2(std::move(tree));
+
+  BOOST_REQUIRE_EQUAL(tree.NumChildren(), 0);
+  BOOST_REQUIRE_EQUAL(tree2.NumChildren(), 2);
+}
 
 template<typename TreeType>
 void RecurseTreeCountLeaves(const TreeType& node, arma::vec& counts)
