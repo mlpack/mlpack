@@ -44,8 +44,9 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   if (localMetric)
     this->metric = new MetricType();
 
-  // If there is only one point in the dataset... uh, we're done.
-  if (dataset.n_cols == 1)
+  // If there is only one point or zero points in the dataset... uh, we're done.
+  // Technically, if the dataset has zero points, our node is not correct...
+  if (dataset.n_cols <= 1)
     return;
 
   // Kick off the building.  Create the indices array and the distances array.
@@ -128,8 +129,9 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     metric(&metric),
     distanceComps(0)
 {
-  // If there is only one point in the dataset, uh, we're done.
-  if (dataset.n_cols == 1)
+  // If there is only one point or zero points in the dataset... uh, we're done.
+  // Technically, if the dataset has zero points, our node is not correct...
+  if (dataset.n_cols <= 1)
     return;
 
   // Kick off the building.  Create the indices array and the distances array.
@@ -214,8 +216,9 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
   // We need to create a metric.  We'll just do it on the heap.
   this->metric = new MetricType();
 
-  // If there is only one point in the dataset... uh, we're done.
-  if (dataset->n_cols == 1)
+  // If there is only one point or zero points in the dataset... uh, we're done.
+  // Technically, if the dataset has zero points, our node is not correct...
+  if (dataset->n_cols <= 1)
     return;
 
   // Kick off the building.  Create the indices array and the distances array.
@@ -298,8 +301,9 @@ CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     metric(&metric),
     distanceComps(0)
 {
-  // If there is only one point in the dataset... uh, we're done.
-  if (dataset->n_cols == 1)
+  // If there is only one point or zero points in the dataset... uh, we're done.
+  // Technically, if the dataset has zero points, our node is not correct...
+  if (dataset->n_cols <= 1)
     return;
 
   // Kick off the building.  Create the indices array and the distances array.
