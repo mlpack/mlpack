@@ -765,7 +765,7 @@ BOOST_AUTO_TEST_CASE(DualCoverTreeTest)
 BOOST_AUTO_TEST_CASE(SingleBallTreeTest)
 {
   arma::mat data;
-  data.randu(75, 1000); // 75 dimensional, 1000 points.
+  data.randu(50, 300); // 50 dimensional, 300 points.
 
   typedef BallTree<EuclideanDistance, NeighborSearchStat<NearestNeighborSort>,
       arma::mat> TreeType;
@@ -832,9 +832,9 @@ BOOST_AUTO_TEST_CASE(SparseAllkNNKDTreeTest)
   // 70, the probability of all 70 dimensions being zero is 0.8^70 = 1.65e-7 in
   // the reference set and 0.9^70 = 6.27e-4 in the query set.
   arma::sp_mat queryDataset;
-  queryDataset.sprandu(70, 500, 0.2);
+  queryDataset.sprandu(70, 200, 0.2);
   arma::sp_mat referenceDataset;
-  referenceDataset.sprandu(70, 800, 0.1);
+  referenceDataset.sprandu(70, 500, 0.1);
   arma::mat denseQuery(queryDataset);
   arma::mat denseReference(referenceDataset);
 
@@ -907,8 +907,8 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
   // results.
   typedef NSModel<NearestNeighborSort> KNNModel;
 
-  arma::mat queryData = arma::randu<arma::mat>(10, 100);
-  arma::mat referenceData = arma::randu<arma::mat>(10, 500);
+  arma::mat queryData = arma::randu<arma::mat>(10, 50);
+  arma::mat referenceData = arma::randu<arma::mat>(10, 200);
 
   // Build all the possible models.
   KNNModel models[8];
@@ -967,7 +967,7 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
   // results, in the case where the reference set is the same as the query set.
   typedef NSModel<NearestNeighborSort> KNNModel;
 
-  arma::mat referenceData = arma::randu<arma::mat>(10, 500);
+  arma::mat referenceData = arma::randu<arma::mat>(10, 200);
 
   // Build all the possible models.
   KNNModel models[8];
