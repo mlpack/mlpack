@@ -83,7 +83,7 @@ RectangleTree(MatType&& data,
     dataset(new MatType(std::move(data))),
     ownsDataset(true),
     points(maxLeafSize + 1), // Add one to make splitting the node simpler.
-    localDataset(new MatType(arma::zeros<MatType>(data.n_rows,
+    localDataset(new MatType(arma::zeros<MatType>(dataset->n_rows,
                                                   maxLeafSize + 1)))
 {
   stat = StatisticType(*this);
@@ -91,7 +91,7 @@ RectangleTree(MatType&& data,
   // For now, just insert the points in order.
   RectangleTree* root = this;
 
-  for (size_t i = firstDataIndex; i < data.n_cols; i++)
+  for (size_t i = firstDataIndex; i < dataset->n_cols; i++)
     root->InsertPoint(i);
 }
 
