@@ -123,7 +123,7 @@ class NSModel
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
 
-  std::string TreeName(int treeType) const;
+  std::string TreeName() const;
 };
 
 } // namespace neighbor
