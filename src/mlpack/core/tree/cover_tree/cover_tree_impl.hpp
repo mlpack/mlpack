@@ -197,6 +197,175 @@ template<
     typename RootPointPolicy
 >
 CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
+    MatType&& data,
+    const double base) :
+    dataset(new MatType(std::move(data))),
+    point(RootPointPolicy::ChooseRoot(dataset)),
+    scale(INT_MAX),
+    base(base),
+    numDescendants(0),
+    parent(NULL),
+    parentDistance(0),
+    furthestDescendantDistance(0),
+    localMetric(true),
+    localDataset(true),
+    distanceComps(0)
+{
+  // We need to create a metric.  We'll just do it on the heap.
+  this->metric = new MetricType();
+
+  // If there is only one point in the dataset... uh, we're done.
+  if (dataset->n_cols == 1)
+    return;
+
+  // Kick off the building.  Create the indices array and the distances array.
+  arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
+      dataset->n_cols - 1, dataset->n_cols - 1);
+  // This is now [1 2 3 4 ... n].  We must be sure that our point does not
+  // occur.
+  if (point != 0)
+    indices[point - 1] = 0; // Put 0 back into the set; remove what was there.
+
+  arma::vec distances(dataset->n_cols - 1);
+
+  // Build the initial distances.
+  ComputeDistances(point, indices, distances, dataset->n_cols - 1);
+
+  // Create the children.
+  size_t farSetSize = 0;
+  size_t usedSetSize = 0;
+  CreateChildren(indices, distances, dataset->n_cols - 1, farSetSize,
+      usedSetSize);
+
+  // If we ended up creating only one child, remove the implicit node.
+  while (children.size() == 1)
+  {
+    // Prepare to delete the implicit child node.
+    CoverTree* old = children[0];
+
+    // Now take its children and set their parent correctly.
+    children.erase(children.begin());
+    for (size_t i = 0; i < old->NumChildren(); ++i)
+    {
+      children.push_back(&(old->Child(i)));
+
+      // Set its parent correctly, and rebuild the statistic.
+      old->Child(i).Parent() = this;
+      old->Child(i).Stat() = StatisticType(old->Child(i));
+    }
+
+    // Remove all the children so they don't get erased.
+    old->Children().clear();
+
+    // Reduce our own scale.
+    scale = old->Scale();
+
+    // Now delete it.
+    delete old;
+  }
+
+  // Use the furthest descendant distance to determine the scale of the root
+  // node.
+  scale = (int) ceil(log(furthestDescendantDistance) / log(base));
+
+  // Initialize statistic.
+  stat = StatisticType(*this);
+
+  Log::Info << distanceComps << " distance computations during tree "
+      << "construction." << std::endl;
+}
+
+template<
+    typename MetricType,
+    typename StatisticType,
+    typename MatType,
+    typename RootPointPolicy
+>
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
+    MatType&& data,
+    MetricType& metric,
+    const double base) :
+    dataset(new MatType(std::move(data))),
+    point(RootPointPolicy::ChooseRoot(dataset)),
+    scale(INT_MAX),
+    base(base),
+    numDescendants(0),
+    parent(NULL),
+    parentDistance(0),
+    furthestDescendantDistance(0),
+    localMetric(false),
+    localDataset(true),
+    metric(&metric),
+    distanceComps(0)
+{
+  // If there is only one point in the dataset... uh, we're done.
+  if (dataset->n_cols == 1)
+    return;
+
+  // Kick off the building.  Create the indices array and the distances array.
+  arma::Col<size_t> indices = arma::linspace<arma::Col<size_t> >(1,
+      dataset->n_cols - 1, dataset->n_cols - 1);
+  // This is now [1 2 3 4 ... n].  We must be sure that our point does not
+  // occur.
+  if (point != 0)
+    indices[point - 1] = 0; // Put 0 back into the set; remove what was there.
+
+  arma::vec distances(dataset->n_cols - 1);
+
+  // Build the initial distances.
+  ComputeDistances(point, indices, distances, dataset->n_cols - 1);
+
+  // Create the children.
+  size_t farSetSize = 0;
+  size_t usedSetSize = 0;
+  CreateChildren(indices, distances, dataset->n_cols - 1, farSetSize,
+      usedSetSize);
+
+  // If we ended up creating only one child, remove the implicit node.
+  while (children.size() == 1)
+  {
+    // Prepare to delete the implicit child node.
+    CoverTree* old = children[0];
+
+    // Now take its children and set their parent correctly.
+    children.erase(children.begin());
+    for (size_t i = 0; i < old->NumChildren(); ++i)
+    {
+      children.push_back(&(old->Child(i)));
+
+      // Set its parent correctly, and rebuild the statistic.
+      old->Child(i).Parent() = this;
+      old->Child(i).Stat() = StatisticType(old->Child(i));
+    }
+
+    // Remove all the children so they don't get erased.
+    old->Children().clear();
+
+    // Reduce our own scale.
+    scale = old->Scale();
+
+    // Now delete it.
+    delete old;
+  }
+
+  // Use the furthest descendant distance to determine the scale of the root
+  // node.
+  scale = (int) ceil(log(furthestDescendantDistance) / log(base));
+
+  // Initialize statistic.
+  stat = StatisticType(*this);
+
+  Log::Info << distanceComps << " distance computations during tree "
+      << "construction." << std::endl;
+}
+
+template<
+    typename MetricType,
+    typename StatisticType,
+    typename MatType,
+    typename RootPointPolicy
+>
+CoverTree<MetricType, StatisticType, MatType, RootPointPolicy>::CoverTree(
     const MatType& dataset,
     const double base,
     const size_t pointIndex,

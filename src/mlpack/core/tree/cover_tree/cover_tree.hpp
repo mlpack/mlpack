@@ -121,6 +121,28 @@ class CoverTree
             const double base = 2.0);
 
   /**
+   * Create the cover tree with the given dataset, taking ownership of the
+   * dataset.  Optionally, set the base.
+   *
+   * @param dataset Reference to the dataset to build a tree on.
+   * @param base Base to use during tree building (default 2.0).
+   */
+  CoverTree(MatType&& dataset,
+            const double base = 2.0);
+
+  /**
+   * Create the cover tree with the given dataset and the given instantiated
+   * metric, taking ownership of the dataset.  Optionally, set the base.
+   *
+   * @param dataset Reference to the dataset to build a tree on.
+   * @param metric Instantiated metric to use during tree building.
+   * @param base Base to use during tree building (default 2.0).
+   */
+  CoverTree(MatType&& dataset,
+            MetricType& metric,
+            const double base = 2.0);
+
+  /**
    * Construct a child cover tree node.  This constructor is not meant to be
    * used externally, but it could be used to insert another node into a tree.
    * This procedure uses only one vector for the near set, the far set, and the

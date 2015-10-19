@@ -1914,6 +1914,27 @@ BOOST_AUTO_TEST_CASE(CoverTreeCopyConstructor)
   BOOST_REQUIRE_EQUAL(c.Child(1).NumChildren(), d.Child(1).NumChildren());
 }
 
+BOOST_AUTO_TEST_CASE(CoverTreeMoveDatasetTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(3, 1000);
+  typedef StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>
+      TreeType;
+
+  TreeType t(std::move(dataset));
+
+  BOOST_REQUIRE_EQUAL(dataset.n_elem, 0);
+  BOOST_REQUIRE_EQUAL(t.Dataset().n_rows, 3);
+  BOOST_REQUIRE_EQUAL(t.Dataset().n_cols, 1000);
+
+  EuclideanDistance ed; // Test the other constructor.
+  dataset = arma::randu<arma::mat>(3, 1000);
+  TreeType t2(std::move(dataset), ed);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_elem, 0);
+  BOOST_REQUIRE_EQUAL(t2.Dataset().n_rows, 3);
+  BOOST_REQUIRE_EQUAL(t2.Dataset().n_cols, 1000);
+}
+
 /**
  * Make sure copy constructor works right for the binary space tree.
  */
