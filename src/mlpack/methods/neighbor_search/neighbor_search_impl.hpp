@@ -55,7 +55,7 @@ TreeType* BuildTree(
 template<typename MatType, typename TreeType>
 TreeType* BuildTree(
     MatType&& dataset,
-    std::vector<size_t>& oldFromNew,
+    std::vector<size_t>& /* oldFromNew */,
     typename boost::enable_if_c<
         tree::TreeTraits<TreeType>::RearrangesDataset == false, TreeType*
     >::type = 0)
