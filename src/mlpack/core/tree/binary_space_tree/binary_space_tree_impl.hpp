@@ -133,7 +133,7 @@ BinarySpaceTree(MatType&& data, const size_t maxLeafSize) :
     count(data.n_cols),
     bound(data.n_rows),
     parentDistance(0), // Parent distance for the root is 0: it has no parent.
-    dataset(std::move(data))
+    dataset(new MatType(std::move(data)))
 {
   // Do the actual splitting of this node.
   SplitType<BoundType<MetricType>, MatType> splitter;
@@ -161,7 +161,7 @@ BinarySpaceTree(
     count(data.n_cols),
     bound(data.n_rows),
     parentDistance(0), // Parent distance for the root is 0: it has no parent.
-    dataset(std::move(data))
+    dataset(new MatType(std::move(data)))
 {
   // Initialize oldFromNew correctly.
   oldFromNew.resize(data.n_cols);
@@ -195,7 +195,7 @@ BinarySpaceTree(
     count(data.n_cols),
     bound(data.n_rows),
     parentDistance(0), // Parent distance for the root is 0: it has no parent.
-    dataset(std::move(data))
+    dataset(new MatType(std::move(data)))
 {
   // Initialize the oldFromNew vector correctly.
   oldFromNew.resize(data.n_cols);
