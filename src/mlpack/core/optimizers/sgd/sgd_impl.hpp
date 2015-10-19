@@ -60,7 +60,7 @@ double SGD<DecomposableFunctionType>::Optimize(arma::mat& iterate)
       Log::Info << "SGD: iteration " << i << ", objective " << overallObjective
           << "." << std::endl;
 
-      if (overallObjective != overallObjective)
+      if (std::isnan(overallObjective))
       {
         Log::Warn << "SGD: converged to " << overallObjective << "; terminating"
             << " with failure.  Try a smaller step size?" << std::endl;
