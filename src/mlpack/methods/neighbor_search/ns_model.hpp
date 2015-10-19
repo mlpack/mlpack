@@ -120,6 +120,8 @@ class NSModel
   void Search(const size_t k,
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
+
+  std::string TreeName(int treeType) const;
 };
 
 } // namespace neighbor

@@ -49,7 +49,7 @@ NSModel<SortPolicy>::~NSModel()
 //! Serialize the kNN model.
 template<typename SortPolicy>
 template<typename Archive>
-void NSModel<SortPolicy>::Serialize(Archive& ar, 
+void NSModel<SortPolicy>::Serialize(Archive& ar,
                                     const unsigned int /* version */)
 {
   ar & data::CreateNVP(treeType, "treeType");
@@ -289,9 +289,9 @@ void NSModel<SortPolicy>::Search(arma::mat&& querySet,
 
   Log::Info << "Searching for " << k << " nearest neighbors with ";
   if (!Naive() && !SingleMode())
-    Log::Info << "dual-tree search..." << std::endl;
+    Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
   else if (!Naive())
-    Log::Info << "single-tree search..." << std::endl;
+    Log::Info << "single-tree " << TreeName() << " search..." << std::endl;
   else
     Log::Info << "brute-force (naive) search..." << std::endl;
 
@@ -351,9 +351,9 @@ void NSModel<SortPolicy>::Search(const size_t k,
 {
   Log::Info << "Searching for " << k << " nearest neighbors with ";
   if (!Naive() && !SingleMode())
-    Log::Info << "dual-tree search..." << std::endl;
+    Log::Info << "dual-tree " << TreeName() << " search..." << std::endl;
   else if (!Naive())
-    Log::Info << "single-tree search..." << std::endl;
+    Log::Info << "single-tree " << TreeName() << " search..." << std::endl;
   else
     Log::Info << "brute-force (naive) search..." << std::endl;
 
@@ -371,6 +371,25 @@ void NSModel<SortPolicy>::Search(const size_t k,
     case R_STAR_TREE:
       rStarTreeNS->Search(k, neighbors, distances);
       break;
+  }
+}
+
+//! Get the name of the tree type.
+template<typename SortPolicy>
+void NSModel<SortPolicy>::TreeName() const
+{
+  switch (treeType)
+  {
+    case KD_TREE:
+      return "kd-tree";
+    case COVER_TREE:
+      return "cover tree";
+    case R_TREE:
+      return "R tree";
+    case R_STAR_TREE:
+      return "R* tree";
+    default:
+      return "unknown tree";
   }
 }
 
