@@ -39,6 +39,30 @@ TreeType* BuildTree(
   return new TreeType(dataset);
 }
 
+//! Call the tree construct that does mapping.
+template<typename MatType, typename TreeType>
+TreeType* BuildTree(
+    MatType&& dataset,
+    std::vector<size_t>& oldFromNew,
+    typename boost::enable_if_c<
+        tree::TreeTraits<TreeType>::RearrangesDataset == true, TreeType*
+    >::type = 0)
+{
+  return new TreeType(std::move(dataset), oldFromNew);
+}
+
+//! Call the tree constructor that does not do mapping.
+template<typename MatType, typename TreeType>
+TreeType* BuildTree(
+    MatType&& dataset,
+    std::vector<size_t>& oldFromNew,
+    typename boost::enable_if_c<
+        tree::TreeTraits<TreeType>::RearrangesDataset == false, TreeType*
+    >::type = 0)
+{
+  return new TreeType(std::move(dataset));
+}
+
 // Construct the object.
 template<typename SortPolicy,
          typename MetricType,
@@ -59,6 +83,35 @@ NeighborSearch(const MatType& referenceSetIn,
     setOwner(false),
     naive(naive),
     singleMode(!naive && singleMode), // No single mode if naive.
+    metric(metric),
+    baseCases(0),
+    scores(0)
+{
+  // Nothing to do.
+}
+
+// Construct the object.
+template<typename SortPolicy,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class TraversalType>
+NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
+NeighborSearch(MatType&& referenceSetIn,
+               const bool naive,
+               const bool singleMode,
+               const MetricType metric) :
+    referenceTree(naive ? NULL :
+        BuildTree<MatType, Tree>(std::move(referenceSetIn),
+                                 oldFromNewReferences)),
+    referenceSet(naive ? new MatType(std::move(referenceSetIn)) :
+        &referenceTree->Dataset()),
+    treeOwner(!naive),
+    setOwner(naive),
+    naive(naive),
+    singleMode(!naive && singleMode),
     metric(metric),
     baseCases(0),
     scores(0)
@@ -149,18 +202,23 @@ template<typename SortPolicy,
 void NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
 Train(const MatType& referenceSet)
 {
+  // Clean up the old tree, if we built one.
+  if (treeOwner && referenceTree)
+    delete referenceTree;
+
   // We may need to rebuild the tree.
   if (!naive)
   {
-    if (treeOwner && referenceTree)
-      delete referenceTree;
-
     referenceTree = BuildTree<MatType, Tree>(referenceSet,
         oldFromNewReferences);
-
     treeOwner = true;
   }
+  else
+  {
+    treeOwner = false;
+  }
 
+  // Delete the old reference set, if we owned it.
   if (setOwner && this->referenceSet)
     delete this->referenceSet;
 
@@ -169,6 +227,48 @@ Train(const MatType& referenceSet)
   else
     this->referenceSet = &referenceSet;
   setOwner = false; // We don't own the set in either case.
+}
+
+template<typename SortPolicy,
+         typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType,
+         template<typename> class TraversalType>
+void NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
+Train(MatType&& referenceSetIn)
+{
+  // Clean up the old tree, if we built one.
+  if (treeOwner && referenceTree)
+    delete referenceTree;
+
+  // We may need to rebuild the tree.
+  if (!naive)
+  {
+    referenceTree = BuildTree<MatType, Tree>(std::move(referenceSetIn),
+        oldFromNewReferences);
+    treeOwner = true;
+  }
+  else
+  {
+    treeOwner = false;
+  }
+
+  // Delete the old reference set, if we owned it.
+  if (setOwner && referenceSet)
+    delete referenceSet;
+
+  if (!naive)
+  {
+    referenceSet = &referenceTree->Dataset();
+    setOwner = false;
+  }
+  else
+  {
+    referenceSet = new MatType(std::move(referenceSetIn));
+    setOwner = true;
+  }
 }
 
 template<typename SortPolicy,
