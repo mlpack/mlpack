@@ -164,8 +164,8 @@ BinarySpaceTree(
     dataset(new MatType(std::move(data)))
 {
   // Initialize oldFromNew correctly.
-  oldFromNew.resize(data.n_cols);
-  for (size_t i = 0; i < data.n_cols; i++)
+  oldFromNew.resize(dataset->n_cols);
+  for (size_t i = 0; i < dataset->n_cols; i++)
     oldFromNew[i] = i; // Fill with unharmed indices.
 
   // Now do the actual splitting.
@@ -198,8 +198,8 @@ BinarySpaceTree(
     dataset(new MatType(std::move(data)))
 {
   // Initialize the oldFromNew vector correctly.
-  oldFromNew.resize(data.n_cols);
-  for (size_t i = 0; i < data.n_cols; i++)
+  oldFromNew.resize(dataset->n_cols);
+  for (size_t i = 0; i < dataset->n_cols; i++)
     oldFromNew[i] = i; // Fill with unharmed indices.
 
   // Now do the actual splitting.
@@ -210,8 +210,8 @@ BinarySpaceTree(
   stat = StatisticType(*this);
 
   // Map the newFromOld indices correctly.
-  newFromOld.resize(data.n_cols);
-  for (size_t i = 0; i < data.n_cols; i++)
+  newFromOld.resize(dataset->n_cols);
+  for (size_t i = 0; i < dataset->n_cols; i++)
     newFromOld[oldFromNew[i]] = i;
 }
 
