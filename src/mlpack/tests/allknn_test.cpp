@@ -279,6 +279,70 @@ BOOST_AUTO_TEST_CASE(NaiveTrainTreeTest)
 }
 
 /**
+ * Test that the rvalue reference move constructor works.
+ */
+BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(3, 200);
+  arma::mat copy(dataset);
+
+  AllkNN moveknn(std::move(copy));
+  AllkNN allknn(dataset);
+
+  BOOST_REQUIRE_EQUAL(copy.n_elem, 0);
+  BOOST_REQUIRE_EQUAL(moveknn.ReferenceSet().n_rows, 3);
+  BOOST_REQUIRE_EQUAL(moveknn.ReferenceSet().n_cols, 200);
+
+  arma::mat moveDistances, distances;
+  arma::Mat<size_t> moveNeighbors, neighbors;
+
+  moveknn.Search(1, moveNeighbors, moveDistances);
+  allknn.Search(1, neighbors, distances);
+
+  BOOST_REQUIRE_EQUAL(moveNeighbors.n_rows, neighbors.n_rows);
+  BOOST_REQUIRE_EQUAL(moveNeighbors.n_cols, neighbors.n_cols);
+  BOOST_REQUIRE_EQUAL(moveDistances.n_rows, distances.n_rows);
+  BOOST_REQUIRE_EQUAL(moveDistances.n_cols, distances.n_cols);
+  for (size_t i = 0; i < moveDistances.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(moveNeighbors[i], neighbors[i]);
+    if (std::abs(distances[i] < 1e-5))
+      BOOST_REQUIRE_SMALL(moveDistances[i], 1e-5);
+    else
+      BOOST_REQUIRE_CLOSE(moveDistances[i], distances[i], 1e-5);
+  }
+}
+
+/**
+ * Test that the dataset can be retrained with the move Train() function.
+ */
+BOOST_AUTO_TEST_CASE(MoveTrainTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(3, 200);
+
+  // Do it in tree mode, and in naive mode.
+  AllkNN knn;
+  knn.Train(std::move(dataset));
+
+  arma::mat distances;
+  arma::Mat<size_t> neighbors;
+  knn.Search(1, neighbors, distances);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_elem, 0);
+  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 200);
+  BOOST_REQUIRE_EQUAL(distances.n_cols, 200);
+
+  dataset = arma::randu<arma::mat>(3, 300);
+  knn.Naive() = true;
+  knn.Train(std::move(dataset));
+  knn.Search(1, neighbors, distances);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_elem, 0);
+  BOOST_REQUIRE_EQUAL(neighbors.n_cols, 300);
+  BOOST_REQUIRE_EQUAL(distances.n_cols, 300);
+}
+
+/**
  * Simple nearest-neighbors test with small, synthetic dataset.  This is an
  * exhaustive test, which checks that each method for performing the calculation
  * (dual-tree, single-tree, naive) produces the correct results.  An
@@ -931,17 +995,20 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
 
     for (size_t i = 0; i < 8; ++i)
     {
+      // We only have std::move() constructors so make a copy of our data.
+      arma::mat referenceCopy(referenceData);
+      arma::mat queryCopy(queryData);
       if (j == 0)
-        models[i].BuildModel(referenceData, 20, false, false);
+        models[i].BuildModel(std::move(referenceCopy), 20, false, false);
       if (j == 1)
-        models[i].BuildModel(referenceData, 20, false, true);
+        models[i].BuildModel(std::move(referenceCopy), 20, false, true);
       if (j == 2)
-        models[i].BuildModel(referenceData, 20, true, false);
+        models[i].BuildModel(std::move(referenceCopy), 20, true, false);
 
       arma::Mat<size_t> neighbors;
       arma::mat distances;
 
-      models[i].Search(queryData, 3, neighbors, distances);
+      models[i].Search(std::move(queryCopy), 3, neighbors, distances);
 
       BOOST_REQUIRE_EQUAL(neighbors.n_rows, baselineNeighbors.n_rows);
       BOOST_REQUIRE_EQUAL(neighbors.n_cols, baselineNeighbors.n_cols);
@@ -990,12 +1057,14 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
 
     for (size_t i = 0; i < 8; ++i)
     {
+      // We only have a std::move() constructor... so copy the data.
+      arma::mat referenceCopy(referenceData);
       if (j == 0)
-        models[i].BuildModel(referenceData, 20, false, false);
+        models[i].BuildModel(std::move(referenceCopy), 20, false, false);
       if (j == 1)
-        models[i].BuildModel(referenceData, 20, false, true);
+        models[i].BuildModel(std::move(referenceCopy), 20, false, true);
       if (j == 2)
-        models[i].BuildModel(referenceData, 20, true, false);
+        models[i].BuildModel(std::move(referenceCopy), 20, true, false);
 
       arma::Mat<size_t> neighbors;
       arma::mat distances;
