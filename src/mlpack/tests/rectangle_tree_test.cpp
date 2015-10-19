@@ -823,4 +823,16 @@ BOOST_AUTO_TEST_CASE(RStarTreeSplitTest)
       0.9, 1e-15);
 }
 
+BOOST_AUTO_TEST_CASE(RectangleTreeMoveDatasetTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(3, 1000);
+  typedef RTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+
+  TreeType tree(std::move(dataset));
+
+  BOOST_REQUIRE_EQUAL(dataset.n_elem, 0);
+  BOOST_REQUIRE_EQUAL(tree.Dataset().n_rows, 3);
+  BOOST_REQUIRE_EQUAL(tree.Dataset().n_cols, 1000);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

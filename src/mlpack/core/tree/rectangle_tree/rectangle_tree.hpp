@@ -145,6 +145,27 @@ class RectangleTree
                 const size_t firstDataIndex = 0);
 
   /**
+   * Construct this as the root node of a rectangle tree type using the given
+   * dataset, and taking ownership of the given dataset.
+   *
+   * @param data Dataset from which to create the tree.
+   * @param maxLeafSize Maximum size of each leaf in the tree.
+   * @param minLeafSize Minimum size of each leaf in the tree.
+   * @param maxNumChildren The maximum number of child nodes a non-leaf node may
+   *      have.
+   * @param minNumChildren The minimum number of child nodes a non-leaf node may
+   *      have.
+   * @param firstDataIndex The index of the first data point.  UNUSED UNLESS WE
+   *      ADD SUPPORT FOR HAVING A "CENTERAL" DATA MATRIX.
+   */
+  RectangleTree(MatType&& data,
+                const size_t maxLeafSize = 20,
+                const size_t minLeafSize = 8,
+                const size_t maxNumChildren = 5,
+                const size_t minNumChildren = 2,
+                const size_t firstDataIndex = 0);
+
+  /**
    * Construct this as an empty node with the specified parent.  Copying the
    * parameters (maxLeafSize, minLeafSize, maxNumChildren, minNumChildren,
    * firstDataIndex) from the parent.

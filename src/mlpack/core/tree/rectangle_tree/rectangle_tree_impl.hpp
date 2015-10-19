@@ -62,6 +62,45 @@ template<typename MetricType,
          typename SplitType,
          typename DescentType>
 RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+RectangleTree(MatType&& data,
+              const size_t maxLeafSize,
+              const size_t minLeafSize,
+              const size_t maxNumChildren,
+              const size_t minNumChildren,
+              const size_t firstDataIndex) :
+    maxNumChildren(maxNumChildren),
+    minNumChildren(minNumChildren),
+    numChildren(0),
+    children(maxNumChildren + 1), // Add one to make splitting the node simpler.
+    parent(NULL),
+    begin(0),
+    count(0),
+    maxLeafSize(maxLeafSize),
+    minLeafSize(minLeafSize),
+    bound(data.n_rows),
+    splitHistory(bound.Dim()),
+    parentDistance(0),
+    dataset(new MatType(std::move(data))),
+    ownsDataset(true),
+    points(maxLeafSize + 1), // Add one to make splitting the node simpler.
+    localDataset(new MatType(arma::zeros<MatType>(data.n_rows,
+                                                  maxLeafSize + 1)))
+{
+  stat = StatisticType(*this);
+
+  // For now, just insert the points in order.
+  RectangleTree* root = this;
+
+  for (size_t i = firstDataIndex; i < data.n_cols; i++)
+    root->InsertPoint(i);
+}
+
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 RectangleTree(
     RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>*
         parentNode) :
