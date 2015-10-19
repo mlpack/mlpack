@@ -62,8 +62,8 @@ PARAM_INT("k", "Number of nearest neighbors to find.", "k", 0);
 
 // The user may specify the type of tree to use, and a few parameters for tree
 // building.
-PARAM_STRING("tree_type", "Type of tree to use: 'kd', 'cover', 'r', 'r-star'.",
-    "t", "kd");
+PARAM_STRING("tree_type", "Type of tree to use: 'kd', 'cover', 'r', 'r-star', "
+    "'ball'.", "t", "kd");
 PARAM_INT("leaf_size", "Leaf size for tree building (used for kd-trees, R "
     "trees, and R* trees).", "l", 20);
 PARAM_FLAG("random_basis", "Before tree-building, project the data onto a "
@@ -161,9 +161,11 @@ int main(int argc, char *argv[])
       tree = KNNModel::R_TREE;
     else if (treeType == "r-star")
       tree = KNNModel::R_STAR_TREE;
+    else if (treeType == "ball")
+      tree = KNNModel::BALL_TREE;
     else
       Log::Fatal << "Unknown tree type '" << treeType << "'; valid choices are "
-          << "'kd', 'cover', 'r', and 'r-star'." << endl;
+          << "'kd', 'cover', 'r', 'r-star', and 'ball'." << endl;
 
     knn.TreeType() = tree;
     knn.RandomBasis() = randomBasis;
@@ -172,7 +174,7 @@ int main(int argc, char *argv[])
     data::Load(referenceFile, referenceSet, true);
 
     Log::Info << "Loaded reference data from '" << referenceFile << "' ("
-        << referenceSet.n_rows << " x " << referenceSet.n_cols << ")." 
+        << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
         << endl;
 
     const size_t leafSize = (size_t) CLI::GetParam<int>("leaf_size");
