@@ -27,8 +27,7 @@ NSModel<SortPolicy>::NSModel(int treeType, bool randomBasis) :
     kdTreeNS(NULL),
     coverTreeNS(NULL),
     rTreeNS(NULL),
-    rStarTreeNS(NULL),
-    kdTree(NULL)
+    rStarTreeNS(NULL)
 {
   // Nothing to do.
 }
@@ -37,9 +36,6 @@ NSModel<SortPolicy>::NSModel(int treeType, bool randomBasis) :
 template<typename SortPolicy>
 NSModel<SortPolicy>::~NSModel()
 {
-  if (kdTree)
-    delete kdTree;
-
   if (kdTreeNS)
     delete kdTreeNS;
   if (coverTreeNS)
@@ -52,21 +48,17 @@ NSModel<SortPolicy>::~NSModel()
 
 //! Serialize the kNN model.
 template<typename SortPolicy>
-  template<typename Archive>
+template<typename Archive>
 void NSModel<SortPolicy>::Serialize(Archive& ar, 
                                     const unsigned int /* version */)
 {
   ar & data::CreateNVP(treeType, "treeType");
   ar & data::CreateNVP(randomBasis, "randomBasis");
   ar & data::CreateNVP(q, "q");
-  ar & data::CreateNVP(oldFromNewReferences, "oldFromNewReferences");
 
   // This should never happen, but just in case, be clean with memory.
   if (Archive::is_loading::value)
   {
-    if (kdTree)
-      delete kdTree;
-
     if (kdTreeNS)
       delete kdTreeNS;
     if (coverTreeNS)
@@ -77,8 +69,6 @@ void NSModel<SortPolicy>::Serialize(Archive& ar,
       delete rStarTreeNS;
 
     // Set all the pointers to NULL.
-    kdTree = NULL;
-
     kdTreeNS = NULL;
     coverTreeNS = NULL;
     rTreeNS = NULL;
@@ -86,7 +76,7 @@ void NSModel<SortPolicy>::Serialize(Archive& ar,
   }
 
   // We'll only need to serialize one of the kNN objects, based on the type.
-  const std::string& name = NSModelName<SortPolicy>::value;
+  const std::string& name = NSModelName<SortPolicy>::Name();
   switch (treeType)
   {
     case KD_TREE:
@@ -102,6 +92,21 @@ void NSModel<SortPolicy>::Serialize(Archive& ar,
       ar & data::CreateNVP(rStarTreeNS, name);
       break;
   }
+}
+
+template<typename SortPolicy>
+const arma::mat& NSModel<SortPolicy>::Dataset() const
+{
+  if (kdTreeNS)
+    return kdTreeNS->ReferenceSet();
+  else if (coverTreeNS)
+    return coverTreeNS->ReferenceSet();
+  else if (rTreeNS)
+    return rTreeNS->ReferenceSet();
+  else if (rStarTreeNS)
+    return rStarTreeNS->ReferenceSet();
+
+  throw std::runtime_error("no neighbor search model initialized");
 }
 
 //! Expose singleMode.
@@ -167,7 +172,7 @@ bool& NSModel<SortPolicy>::Naive()
 
 //! Build the reference tree.
 template<typename SortPolicy>
-void NSModel<SortPolicy>::BuildModel(arma::mat& referenceSet,
+void NSModel<SortPolicy>::BuildModel(arma::mat&& referenceSet,
                                      const size_t leafSize,
                                      const bool naive,
                                      const bool singleMode)
@@ -205,9 +210,6 @@ void NSModel<SortPolicy>::BuildModel(arma::mat& referenceSet,
   }
 
   // Clean memory, if necessary.
-  if (kdTree)
-    delete kdTree;
-
   if (kdTreeNS)
     delete kdTreeNS;
   if (coverTreeNS)
@@ -233,28 +235,37 @@ void NSModel<SortPolicy>::BuildModel(arma::mat& referenceSet,
       // If necessary, build the kd-tree.
       if (naive)
       {
-        kdTreeNS = new NSType<tree::KDTree>(referenceSet, naive, singleMode);
+        kdTreeNS = new NSType<tree::KDTree>(std::move(referenceSet), naive,
+            singleMode);
       }
       else
       {
-        kdTree = new typename NSType<tree::KDTree>::Tree(referenceSet,
+        std::vector<size_t> oldFromNewReferences;
+        typename NSType<tree::KDTree>::Tree* kdTree =
+            new typename NSType<tree::KDTree>::Tree(std::move(referenceSet),
             oldFromNewReferences, leafSize);
         kdTreeNS = new NSType<tree::KDTree>(kdTree, singleMode);
+
+        // Give the model ownership of the tree and the mappings.
+        kdTreeNS->treeOwner = true;
+        kdTreeNS->oldFromNewReferences = std::move(oldFromNewReferences);
       }
 
       break;
     case COVER_TREE:
       // If necessary, build the cover tree.
-      coverTreeNS = new NSType<tree::StandardCoverTree>(referenceSet,
-          singleMode);
+      coverTreeNS = new NSType<tree::StandardCoverTree>(std::move(referenceSet),
+          naive, singleMode);
       break;
     case R_TREE:
       // If necessary, build the R tree.
-      rTreeNS = new NSType<tree::RTree>(referenceSet, singleMode);
+      rTreeNS = new NSType<tree::RTree>(std::move(referenceSet), naive,
+          singleMode);
       break;
     case R_STAR_TREE:
       // If necessary, build the R* tree.
-      rStarTreeNS = new NSType<tree::RStarTree>(referenceSet, singleMode);
+      rStarTreeNS = new NSType<tree::RStarTree>(std::move(referenceSet), naive,
+          singleMode);
       break;
   }
 
@@ -267,7 +278,7 @@ void NSModel<SortPolicy>::BuildModel(arma::mat& referenceSet,
 
 //! Perform neighbor search.  The query set will be reordered.
 template<typename SortPolicy>
-void NSModel<SortPolicy>::Search(arma::mat& querySet,
+void NSModel<SortPolicy>::Search(arma::mat&& querySet,
                                  const size_t k,
                                  arma::Mat<size_t>& neighbors,
                                  arma::mat& distances)
@@ -293,7 +304,7 @@ void NSModel<SortPolicy>::Search(arma::mat& querySet,
         Timer::Start("tree_building");
         Log::Info << "Building query tree..." << std::endl;
         std::vector<size_t> oldFromNewQueries;
-        typename NSType<tree::KDTree>::Tree queryTree(querySet,
+        typename NSType<tree::KDTree>::Tree queryTree(std::move(querySet),
             oldFromNewQueries, leafSize);
         Log::Info << "Tree built." << std::endl;
         Timer::Stop("tree_building");
@@ -302,37 +313,19 @@ void NSModel<SortPolicy>::Search(arma::mat& querySet,
         arma::mat distancesOut;
         kdTreeNS->Search(&queryTree, k, neighborsOut, distancesOut);
 
-        // Unmap the results.
-        Unmap(neighborsOut, distancesOut, oldFromNewReferences,
-            oldFromNewQueries, neighbors, distances);
-      }
-      else if (kdTreeNS->SingleMode() && !kdTreeNS->Naive())
-      {
-        // Search without building a second tree.
-        arma::Mat<size_t> neighborsOut;
-        arma::mat distancesOut;
-        kdTreeNS->Search(querySet, k, neighborsOut, distancesOut);
-
-        Unmap(neighborsOut, distancesOut, oldFromNewReferences, neighbors,
-            distances);
+        // Unmap the query points.
+        distances.set_size(distancesOut.n_rows, distancesOut.n_cols);
+        neighbors.set_size(neighborsOut.n_rows, neighborsOut.n_cols);
+        for (size_t i = 0; i < neighborsOut.n_cols; ++i)
+        {
+          neighbors.col(oldFromNewQueries[i]) = neighborsOut.col(i);
+          distances.col(oldFromNewQueries[i]) = distancesOut.col(i);
+        }
       }
       else
       {
-        // Naive mode search.  No unmapping will be necessary... unless a tree
-        // has been built.
-        if (oldFromNewReferences.size() == 0)
-        {
-          kdTreeNS->Search(querySet, k, neighbors, distances);
-        }
-        else
-        {
-          arma::Mat<size_t> neighborsOut;
-          arma::mat distancesOut;
-          kdTreeNS->Search(querySet, k, neighborsOut, distancesOut);
-
-          Unmap(neighborsOut, distancesOut, oldFromNewReferences, neighbors,
-              distances);
-        }
+        // Search without building a second tree.
+        kdTreeNS->Search(querySet, k, neighbors, distances);
       }
       break;
     case COVER_TREE:
@@ -367,21 +360,7 @@ void NSModel<SortPolicy>::Search(const size_t k,
   switch (treeType)
   {
     case KD_TREE:
-      // If in dual-tree or single-tree mode, we'll have to do unmapping.  We
-      // also must do unmapping in naive mode, if a tree has been built on the
-      // data.
-      if (oldFromNewReferences.size() > 0) // Mapping has occured.
-      {
-        arma::Mat<size_t> neighborsOut;
-        arma::mat distancesOut;
-        kdTreeNS->Search(k, neighborsOut, distancesOut);
-        Unmap(neighborsOut, distancesOut, oldFromNewReferences,
-            oldFromNewReferences, neighbors, distances);
-      }
-      else
-      {
-        kdTreeNS->Search(k, neighbors, distances);
-      }
+      kdTreeNS->Search(k, neighbors, distances);
       break;
     case COVER_TREE:
       coverTreeNS->Search(k, neighbors, distances);

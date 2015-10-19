@@ -22,19 +22,19 @@ namespace neighbor {
 template<typename SortPolicy>
 struct NSModelName
 {
-  const static constexpr char value[22] = "neighbor_search_model";
+  static const std::string Name() { return "neighbor_search_model"; }
 };
 
 template<>
 struct NSModelName<NearestNeighborSort>
 {
-  const static constexpr char value[30] = "nearest_neighbor_search_model";
+  static const std::string Name() { return "nearest_neighbor_search_model"; }
 };
 
 template<>
 struct NSModelName<FurthestNeighborSort>
 {
-  const static constexpr char value[31] = "furthest_neighbor_search_model";
+  static const std::string Name() { return "furthest_neighbor_search_model"; }
 };
 
 template<typename SortPolicy>
@@ -57,9 +57,6 @@ class NSModel
   bool randomBasis;
   arma::mat q;
 
-  // Mappings, in case they are necessary.
-  std::vector<size_t> oldFromNewReferences;
-
   template<template<typename TreeMetricType,
                     typename TreeStatType,
                     typename TreeMatType> class TreeType>
@@ -73,10 +70,6 @@ class NSModel
   NSType<tree::StandardCoverTree>* coverTreeNS;
   NSType<tree::RTree>* rTreeNS;
   NSType<tree::RStarTree>* rStarTreeNS;
-
-  // This pointers is only non-null if we are using kd-trees and we built the
-  // tree ourselves (which only happens if BuildModel() is called).
-  typename NSType<tree::KDTree>::Tree* kdTree;
 
  public:
   /**
@@ -112,13 +105,13 @@ class NSModel
   bool& RandomBasis() { return randomBasis; }
 
   //! Build the reference tree.
-  void BuildModel(arma::mat& referenceSet,
+  void BuildModel(arma::mat&& referenceSet,
                   const size_t leafSize,
                   const bool naive,
                   const bool singleMode);
 
   //! Perform neighbor search.  The query set will be reordered.
-  void Search(arma::mat& querySet,
+  void Search(arma::mat&& querySet,
               const size_t k,
               arma::Mat<size_t>& neighbors,
               arma::mat& distances);
