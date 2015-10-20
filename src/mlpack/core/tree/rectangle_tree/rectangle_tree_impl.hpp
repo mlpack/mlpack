@@ -41,9 +41,11 @@ RectangleTree(const MatType& data,
     bound(data.n_rows),
     splitHistory(bound.Dim()),
     parentDistance(0),
-    dataset(data),
+    dataset(new MatType(data)),
+    ownsDataset(true),
     points(maxLeafSize + 1), // Add one to make splitting the node simpler.
-    localDataset(new MatType(data.n_rows, static_cast<int> (maxLeafSize) + 1))
+    localDataset(new MatType(arma::zeros<MatType>(data.n_rows,
+                                                  maxLeafSize + 1)))
 {
   stat = StatisticType(*this);
 
@@ -51,6 +53,45 @@ RectangleTree(const MatType& data,
   RectangleTree* root = this;
 
   for (size_t i = firstDataIndex; i < data.n_cols; i++)
+    root->InsertPoint(i);
+}
+
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+RectangleTree(MatType&& data,
+              const size_t maxLeafSize,
+              const size_t minLeafSize,
+              const size_t maxNumChildren,
+              const size_t minNumChildren,
+              const size_t firstDataIndex) :
+    maxNumChildren(maxNumChildren),
+    minNumChildren(minNumChildren),
+    numChildren(0),
+    children(maxNumChildren + 1), // Add one to make splitting the node simpler.
+    parent(NULL),
+    begin(0),
+    count(0),
+    maxLeafSize(maxLeafSize),
+    minLeafSize(minLeafSize),
+    bound(data.n_rows),
+    splitHistory(bound.Dim()),
+    parentDistance(0),
+    dataset(new MatType(std::move(data))),
+    ownsDataset(true),
+    points(maxLeafSize + 1), // Add one to make splitting the node simpler.
+    localDataset(new MatType(arma::zeros<MatType>(dataset->n_rows,
+                                                  maxLeafSize + 1)))
+{
+  stat = StatisticType(*this);
+
+  // For now, just insert the points in order.
+  RectangleTree* root = this;
+
+  for (size_t i = firstDataIndex; i < dataset->n_cols; i++)
     root->InsertPoint(i);
 }
 
@@ -75,10 +116,11 @@ RectangleTree(
     bound(parentNode->Bound().Dim()),
     splitHistory(bound.Dim()),
     parentDistance(0),
-    dataset(parentNode->Dataset()),
+    dataset(&parentNode->Dataset()),
+    ownsDataset(false),
     points(maxLeafSize + 1), // Add one to make splitting the node simpler.
-    localDataset(new MatType(static_cast<int> (parentNode->Bound().Dim()),
-                             static_cast<int> (maxLeafSize) + 1))
+    localDataset(new MatType(arma::zeros<MatType>(parentNode->Bound().Dim(),
+                                                  maxLeafSize + 1)))
 {
   stat = StatisticType(*this);
 }
@@ -108,7 +150,8 @@ RectangleTree(
     bound(other.bound),
     splitHistory(other.SplitHistory()),
     parentDistance(other.ParentDistance()),
-    dataset(other.dataset),
+    dataset(new MatType(*other.dataset)),
+    ownsDataset(true),
     points(other.Points()),
     localDataset(NULL)
 {
@@ -135,6 +178,25 @@ RectangleTree(
 }
 
 /**
+ * Construct the tree from a boost::serialization archive.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+template<typename Archive>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+RectangleTree(
+    Archive& ar,
+    const typename boost::enable_if<typename Archive::is_loading>::type*) :
+    RectangleTree() // Use default constructor.
+{
+  // Now serialize.
+  ar >> data::CreateNVP(*this, "tree");
+}
+
+/**
  * Deletes this node, deallocating the memory for the children and calling
  * their destructors in turn.  This will invalidate any pointers or references
  * to any nodes which are children of this one.
@@ -149,6 +211,9 @@ RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
 {
   for (size_t i = 0; i < numChildren; i++)
     delete children[i];
+
+  if (ownsDataset)
+    delete dataset;
 
   delete localDataset;
 }
@@ -201,7 +266,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
     InsertPoint(const size_t point)
 {
   // Expand the bound regardless of whether it is a leaf node.
-  bound |= dataset.col(point);
+  bound |= dataset->col(point);
 
   std::vector<bool> lvls(TreeDepth());
   for (size_t i = 0; i < lvls.size(); i++)
@@ -210,7 +275,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
   // If this is a leaf node, we stop here and add the point.
   if (numChildren == 0)
   {
-    localDataset->col(count) = dataset.col(point);
+    localDataset->col(count) = dataset->col(point);
     points[count++] = point;
     SplitNode(lvls);
     return;
@@ -219,7 +284,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
   // If it is not a leaf node, we use the DescentHeuristic to choose a child
   // to which we recurse.
   const size_t descentNode = DescentType::ChooseDescentNode(this,
-      dataset.col(point));
+      dataset->col(point));
   children[descentNode]->InsertPoint(point, lvls);
 }
 
@@ -238,12 +303,12 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
     InsertPoint(const size_t point, std::vector<bool>& relevels)
 {
   // Expand the bound regardless of whether it is a leaf node.
-  bound |= dataset.col(point);
+  bound |= dataset->col(point);
 
   // If this is a leaf node, we stop here and add the point.
   if (numChildren == 0)
   {
-    localDataset->col(count) = dataset.col(point);
+    localDataset->col(count) = dataset->col(point);
     points[count++] = point;
     SplitNode(relevels);
     return;
@@ -252,7 +317,7 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
   // If it is not a leaf node, we use the DescentHeuristic to choose a child
   // to which we recurse.
   const size_t descentNode = DescentType::ChooseDescentNode(this,
-      dataset.col(point));
+      dataset->col(point));
   children[descentNode]->InsertPoint(point, relevels);
 }
 
@@ -320,14 +385,14 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
         localDataset->col(i) = localDataset->col(--count); // Decrement count.
         points[i] = points[count];
         // This function wil ensure that minFill is satisfied.
-        CondenseTree(dataset.col(point), lvls, true);
+        CondenseTree(dataset->col(point), lvls, true);
         return true;
       }
     }
   }
 
   for (size_t i = 0; i < numChildren; i++)
-    if (children[i]->Bound().Contains(dataset.col(point)))
+    if (children[i]->Bound().Contains(dataset->col(point)))
       if (children[i]->DeletePoint(point, lvls))
         return true;
 
@@ -355,14 +420,14 @@ bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
         localDataset->col(i) = localDataset->col(--count);
         points[i] = points[count];
         // This function will ensure that minFill is satisfied.
-        CondenseTree(dataset.col(point), relevels, true);
+        CondenseTree(dataset->col(point), relevels, true);
         return true;
       }
     }
   }
 
   for (size_t i = 0; i < numChildren; i++)
-    if (children[i]->Bound().Contains(dataset.col(point)))
+    if (children[i]->Bound().Contains(dataset->col(point)))
       if (children[i]->DeletePoint(point, relevels))
         return true;
 
@@ -524,7 +589,6 @@ inline size_t RectangleTree<MetricType, StatisticType, MatType, SplitType,
     size_t n = 0;
     for (size_t i = 0; i < numChildren; i++)
       n += children[i]->NumDescendants();
-
     return n;
   }
 }
@@ -589,6 +653,31 @@ void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
     // takes care of this and of moving up the tree if necessary.
     SplitType::SplitNonLeafNode(this, relevels);
   }
+}
+
+//! Default constructor for boost::serialization.
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+RectangleTree() :
+    maxNumChildren(0), // Try to give sensible defaults, but it shouldn't matter
+    minNumChildren(0), // because this tree isn't valid anyway and is only used
+    numChildren(0),    // by boost::serialization.
+    parent(NULL),
+    begin(0),
+    count(0),
+    maxLeafSize(0),
+    minLeafSize(0),
+    splitHistory(0),
+    parentDistance(0.0),
+    dataset(NULL),
+    ownsDataset(false),
+    localDataset(NULL)
+{
+  // Nothing to do.
 }
 
 /**
@@ -820,7 +909,7 @@ template<typename MetricType,
          typename SplitType,
          typename DescentType>
 bool RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
-    ShrinkBoundForBound(const HRectBound<MetricType>& /* b */)
+    ShrinkBoundForBound(const bound::HRectBound<MetricType>& /* b */)
 {
   // Using the sum is safe since none of the dimensions can increase.
   double sum = 0;
@@ -878,6 +967,93 @@ std::string RectangleTree<MetricType, StatisticType, MatType, SplitType,
       convert << children[i]->ToString();
 
   return convert.str();
+}
+
+/**
+ * Serialize the tree.
+ */
+template<typename MetricType,
+         typename StatisticType,
+         typename MatType,
+         typename SplitType,
+         typename DescentType>
+template<typename Archive>
+void RectangleTree<MetricType, StatisticType, MatType, SplitType, DescentType>::
+    Serialize(Archive& ar,
+              const unsigned int /* version */)
+{
+  using data::CreateNVP;
+
+  // Clean up memory, if necessary.
+  if (Archive::is_loading::value)
+  {
+    for (size_t i = 0; i < numChildren; i++)
+      delete children[i];
+    children.clear();
+
+    if (ownsDataset && dataset)
+      delete dataset;
+
+    if (localDataset)
+      delete localDataset;
+  }
+
+  ar & CreateNVP(maxNumChildren, "maxNumChildren");
+  ar & CreateNVP(minNumChildren, "minNumChildren");
+  ar & CreateNVP(numChildren, "numChildren");
+
+  // Due to quirks of boost::serialization, depending on how the user serializes
+  // the tree, the root node may be duplicated.  Therefore we don't allow
+  // children of the root to serialize the parent, and we fix the parent link
+  // after serializing the children when loading below.
+  if (Archive::is_saving::value && parent != NULL && parent->Parent() == NULL)
+  {
+    RectangleTree* fakeParent = NULL;
+    ar & CreateNVP(fakeParent, "parent");
+  }
+  else
+  {
+    ar & CreateNVP(parent, "parent");
+  }
+
+  ar & CreateNVP(begin, "begin");
+  ar & CreateNVP(count, "count");
+  ar & CreateNVP(maxLeafSize, "maxLeafSize");
+  ar & CreateNVP(minLeafSize, "minLeafSize");
+  ar & CreateNVP(bound, "bound");
+  ar & CreateNVP(stat, "stat");
+  ar & CreateNVP(splitHistory, "splitHistory");
+  ar & CreateNVP(parentDistance, "parentDistance");
+  ar & CreateNVP(dataset, "dataset");
+
+  // If we are loading and we are the root, we own the dataset.
+  if (Archive::is_loading::value && parent == NULL)
+    ownsDataset = true;
+
+  ar & CreateNVP(points, "points");
+  ar & CreateNVP(localDataset, "localDataset");
+
+  // Because 'children' holds mlpack types (that have Serialize()), we can't use
+  // the std::vector serialization.
+  if (Archive::is_loading::value)
+    children.resize(numChildren);
+  for (size_t i = 0; i < numChildren; ++i)
+  {
+    std::ostringstream oss;
+    oss << "child" << i;
+    ar & CreateNVP(children[i], oss.str());
+  }
+
+  // Fix the parent links for the children, if necessary.
+  if (Archive::is_loading::value && parent == NULL)
+  {
+    // Look through each child individually.
+    for (size_t i = 0; i < children.size(); ++i)
+    {
+      children[i]->ownsDataset = false;
+      children[i]->Parent() = this;
+    }
+  }
 }
 
 } // namespace tree

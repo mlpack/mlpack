@@ -62,7 +62,7 @@ BallBound<VecType, TMetricType>::BallBound(const BallBound& other) :
     ownsMetric(false)
 { /* Nothing to do. */ }
 
-//! For the same reason as the Copy Constructor. To prevent memory leaks.
+//! For the same reason as the copy constructor: to prevent memory leaks.
 template<typename VecType, typename TMetricType>
 BallBound<VecType, TMetricType>& BallBound<VecType, TMetricType>::operator=(
     const BallBound& other)
@@ -71,6 +71,21 @@ BallBound<VecType, TMetricType>& BallBound<VecType, TMetricType>::operator=(
   center = other.center;
   metric = other.metric;
   ownsMetric = false;
+}
+
+//! Move constructor.
+template<typename VecType, typename TMetricType>
+BallBound<VecType, TMetricType>::BallBound(BallBound&& other) :
+    radius(other.radius),
+    center(other.center),
+    metric(other.metric),
+    ownsMetric(other.ownsMetric)
+{
+  // Fix the other bound.
+  other.radius = 0.0;
+  other.center = VecType();
+  other.metric = NULL;
+  other.ownsMetric = false;
 }
 
 //! Destructor to release allocated memory.

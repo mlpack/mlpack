@@ -22,26 +22,55 @@ namespace naive_bayes {
 template<typename MatType>
 NaiveBayesClassifier<MatType>::NaiveBayesClassifier(
     const MatType& data,
-    const arma::Col<size_t>& labels,
+    const arma::Row<size_t>& labels,
     const size_t classes,
-    const bool incrementalVariance)
+    const bool incremental) :
+    trainingPoints(0) // Set when we call Train().
 {
   const size_t dimensionality = data.n_rows;
 
-  // Update the variables according to the number of features and classes
-  // present in the data.
+  // Perform training, after initializing the model to 0 (that is, if Train()
+  // won't do that for us, which it won't if we're using the incremental
+  // algorithm).
+  if (incremental)
+  {
+    probabilities.zeros(classes);
+    means.zeros(dimensionality, classes);
+    variances.zeros(dimensionality, classes);
+  }
+  else
+  {
+    probabilities.set_size(classes);
+    means.set_size(dimensionality, classes);
+    variances.set_size(dimensionality, classes);
+  }
+  Train(data, labels, incremental);
+}
+
+template<typename MatType>
+NaiveBayesClassifier<MatType>::NaiveBayesClassifier(const size_t dimensionality,
+                                                    const size_t classes) :
+    trainingPoints(0)
+{
+  // Initialize model to 0.
   probabilities.zeros(classes);
   means.zeros(dimensionality, classes);
   variances.zeros(dimensionality, classes);
+}
 
-  Log::Info << "Training Naive Bayes classifier on " << data.n_cols
-      << " examples with " << dimensionality << " features each." << std::endl;
-
+template<typename MatType>
+void NaiveBayesClassifier<MatType>::Train(const MatType& data,
+                                          const arma::Row<size_t>& labels,
+                                          const bool incremental)
+{
   // Calculate the class probabilities as well as the sample mean and variance
   // for each of the features with respect to each of the labels.
-  if (incrementalVariance)
+  if (incremental)
   {
     // Use incremental algorithm.
+    // Fist, de-normalize probabilities.
+    probabilities *= trainingPoints;
+
     for (size_t j = 0; j < data.n_cols; ++j)
     {
       const size_t label = labels[j];
@@ -52,7 +81,7 @@ NaiveBayesClassifier<MatType>::NaiveBayesClassifier(
       variances.col(label) += delta % (data.col(j) - means.col(label));
     }
 
-    for (size_t i = 0; i < classes; ++i)
+    for (size_t i = 0; i < probabilities.n_elem; ++i)
     {
       if (probabilities[i] > 2)
         variances.col(i) /= (probabilities[i] - 1);
@@ -60,6 +89,11 @@ NaiveBayesClassifier<MatType>::NaiveBayesClassifier(
   }
   else
   {
+    // Set all parameters to zero
+    probabilities.zeros();
+    means.zeros();
+    variances.zeros();
+
     // Don't use incremental algorithm.  This is a two-pass algorithm.  It is
     // possible to calculate the means and variances using a faster one-pass
     // algorithm but there are some precision and stability issues.  If this is
@@ -75,7 +109,7 @@ NaiveBayesClassifier<MatType>::NaiveBayesClassifier(
     }
 
     // Normalize means.
-    for (size_t i = 0; i < classes; ++i)
+    for (size_t i = 0; i < probabilities.n_elem; ++i)
       if (probabilities[i] != 0.0)
         means.col(i) /= probabilities[i];
 
@@ -87,7 +121,7 @@ NaiveBayesClassifier<MatType>::NaiveBayesClassifier(
     }
 
     // Normalize variances.
-    for (size_t i = 0; i < classes; ++i)
+    for (size_t i = 0; i < probabilities.n_elem; ++i)
       if (probabilities[i] > 1)
         variances.col(i) /= (probabilities[i] - 1);
   }
@@ -98,11 +132,33 @@ NaiveBayesClassifier<MatType>::NaiveBayesClassifier(
       variances[i] = 1e-50;
 
   probabilities /= data.n_cols;
+  trainingPoints += data.n_cols;
+}
+
+template<typename MatType>
+template<typename VecType>
+void NaiveBayesClassifier<MatType>::Train(const VecType& point,
+                                          const size_t label)
+{
+  // We must use the incremental algorithm here.
+  probabilities *= trainingPoints;
+  probabilities[label]++;
+
+  arma::vec delta = point - means.col(label);
+  means.col(label) += delta / probabilities[label];
+  if (probabilities[label] > 2)
+    variances.col(label) *= (probabilities[label] - 2);
+  variances.col(label) += (delta % (point - means.col(label)));
+  if (probabilities[label] > 1)
+    variances.col(label) /= probabilities[label] - 1;
+
+  trainingPoints++;
+  probabilities /= trainingPoints;
 }
 
 template<typename MatType>
 void NaiveBayesClassifier<MatType>::Classify(const MatType& data,
-                                             arma::Col<size_t>& results)
+                                             arma::Row<size_t>& results)
 {
   // Check that the number of features in the test data is same as in the
   // training data.

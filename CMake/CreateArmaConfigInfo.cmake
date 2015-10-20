@@ -13,7 +13,12 @@ endif(EXISTS "${CMAKE_SOURCE_DIR}/src/mlpack/core/util/arma_config.hpp")
 # If we are using Armadillo 5+, ARMA_64BIT_WORD is implicitly enabled.
 set(ARMA_HAS_64BIT_WORD 0) # This may be unnecessary.
 if(NOT (${ARMADILLO_VERSION_MAJOR} LESS 5))
-  set(ARMA_HAS_64BIT_WORD 1)
+  # ARMA_64BIT_WORD is only set if we are on a 64-bit system.
+  if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(ARMA_HAS_64BIT_WORD 1)
+  else (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(ARMA_HAS_64BIT_WORD 0)
+  endif (CMAKE_SIZEOF_VOID_P EQUAL 8)
 else(NOT (${ARMADILLO_VERSION_MAJOR} LESS 5))
   # Otherwise, we'll need to open the config.hpp we are using and inspect the
   # setting of ARMA_64BIT_WORD.

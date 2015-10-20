@@ -18,6 +18,21 @@ LinearRegression::LinearRegression(const arma::mat& predictors,
     lambda(lambda),
     intercept(intercept)
 {
+  Train(predictors, responses, intercept, weights);
+}
+
+LinearRegression::LinearRegression(const LinearRegression& linearRegression) :
+    parameters(linearRegression.parameters),
+    lambda(linearRegression.lambda)
+{ /* Nothing to do. */ }
+
+void LinearRegression::Train(const arma::mat& predictors,
+                             const arma::vec& responses,
+                             const bool intercept,
+                             const arma::vec& weights)
+{
+  this->intercept = intercept;
+
   /*
    * We want to calculate the a_i coefficients of:
    * \sum_{i=0}^n (a_i * x_i^i)
@@ -31,18 +46,19 @@ LinearRegression::LinearRegression(const arma::mat& predictors,
 
   arma::mat p = predictors;
   arma::vec r = responses;
+
   // Here we add the row of ones to the predictors.
   // The intercept is not penalized. Add an "all ones" row to design and set
-  // intercept = false to get a penalized intercept
-  if(intercept)
+  // intercept = false to get a penalized intercept.
+  if (intercept)
   {
     p.insert_rows(0, arma::ones<arma::mat>(1,nCols));
   }
 
-   if(weights.n_elem > 0)
+  if (weights.n_elem > 0)
   {
     p = p * diagmat(sqrt(weights));
-    r =  sqrt(weights) % responses;
+    r = sqrt(weights) % responses;
   }
 
   if (lambda != 0.0)
@@ -52,8 +68,8 @@ LinearRegression::LinearRegression(const arma::mat& predictors,
     // more information.
     p.insert_cols(nCols, predictors.n_rows);
     p.submat(p.n_rows - predictors.n_rows, nCols, p.n_rows - 1, nCols +
-    predictors.n_rows - 1) = sqrt(lambda) * arma::eye<arma::mat>(predictors.n_rows,
-        predictors.n_rows);
+    predictors.n_rows - 1) = sqrt(lambda) *
+        arma::eye<arma::mat>(predictors.n_rows, predictors.n_rows);
   }
 
   // We compute the QR decomposition of the predictors.
@@ -76,19 +92,6 @@ LinearRegression::LinearRegression(const arma::mat& predictors,
     arma::solve(parameters, R, arma::trans(Q) * r);
   }
 }
-
-LinearRegression::LinearRegression(const std::string& filename) :
-    lambda(0.0)
-{
-  arma::mat parameter;
-  data::Load(filename, parameter, true);
-  parameters = parameter.unsafe_col(0);
-}
-
-LinearRegression::LinearRegression(const LinearRegression& linearRegression) :
-    parameters(linearRegression.parameters),
-    lambda(linearRegression.lambda)
-{ /* Nothing to do. */ }
 
 void LinearRegression::Predict(const arma::mat& points, arma::vec& predictions)
     const

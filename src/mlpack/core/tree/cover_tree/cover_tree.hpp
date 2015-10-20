@@ -121,6 +121,28 @@ class CoverTree
             const double base = 2.0);
 
   /**
+   * Create the cover tree with the given dataset, taking ownership of the
+   * dataset.  Optionally, set the base.
+   *
+   * @param dataset Reference to the dataset to build a tree on.
+   * @param base Base to use during tree building (default 2.0).
+   */
+  CoverTree(MatType&& dataset,
+            const double base = 2.0);
+
+  /**
+   * Create the cover tree with the given dataset and the given instantiated
+   * metric, taking ownership of the dataset.  Optionally, set the base.
+   *
+   * @param dataset Reference to the dataset to build a tree on.
+   * @param metric Instantiated metric to use during tree building.
+   * @param base Base to use during tree building (default 2.0).
+   */
+  CoverTree(MatType&& dataset,
+            MetricType& metric,
+            const double base = 2.0);
+
+  /**
    * Construct a child cover tree node.  This constructor is not meant to be
    * used externally, but it could be used to insert another node into a tree.
    * This procedure uses only one vector for the near set, the far set, and the
@@ -191,11 +213,19 @@ class CoverTree
 
   /**
    * Create a cover tree from another tree.  Be careful!  This may use a lot of
-   * memory and take a lot of time.
+   * memory and take a lot of time.  This will also make a copy of the dataset.
    *
    * @param other Cover tree to copy from.
    */
   CoverTree(const CoverTree& other);
+
+  /**
+   * Create a cover tree from a boost::serialization archive.
+   */
+  template<typename Archive>
+  CoverTree(
+      Archive& ar,
+      const typename boost::enable_if<typename Archive::is_loading>::type* = 0);
 
   /**
    * Delete this cover tree node and its children.
@@ -215,7 +245,7 @@ class CoverTree
   using BreadthFirstDualTreeTraverser = DualTreeTraverser<RuleType>;
 
   //! Get a reference to the dataset.
-  const MatType& Dataset() const { return dataset; }
+  const MatType& Dataset() const { return *dataset; }
 
   //! Get the index of the point which this node represents.
   size_t Point() const { return point; }
@@ -335,7 +365,7 @@ class CoverTree
   //! Get the center of the node and store it in the given vector.
   void Center(arma::vec& center) const
   {
-    center = arma::vec(dataset.col(point));
+    center = arma::vec(dataset->col(point));
   }
 
   //! Get the instantiated metric.
@@ -343,38 +373,29 @@ class CoverTree
 
  private:
   //! Reference to the matrix which this tree is built on.
-  const MatType& dataset;
-
+  const MatType* dataset;
   //! Index of the point in the matrix which this node represents.
   size_t point;
-
   //! The list of children; the first is the self-child.
   std::vector<CoverTree*> children;
-
   //! Scale level of the node.
   int scale;
-
   //! The base used to construct the tree.
   double base;
-
   //! The instantiated statistic.
   StatisticType stat;
-
   //! The number of descendant points.
   size_t numDescendants;
-
   //! The parent node (NULL if this is the root of the tree).
   CoverTree* parent;
-
   //! Distance to the parent.
   double parentDistance;
-
   //! Distance to the furthest descendant.
   double furthestDescendantDistance;
-
   //! Whether or not we need to destroy the metric in the destructor.
   bool localMetric;
-
+  //! If true, we own the dataset and need to destroy it in the destructor.
+  bool localDataset;
   //! The metric used for this tree.
   MetricType* metric;
 
@@ -466,11 +487,29 @@ class CoverTree
    */
   void RemoveNewImplicitNodes();
 
+ protected:
+  /**
+   * A default constructor.  This is meant to only be used with
+   * boost::serialization, which is allowed with the friend declaration below.
+   * This does not return a valid tree!  This method must be protected, so that
+   * the serialization shim can work with the default constructor.
+   */
+  CoverTree();
+
+  //! Friend access is given for the default constructor.
+  friend class boost::serialization::access;
+
  public:
   /**
    * Returns a string representation of this object.
    */
   std::string ToString() const;
+
+  /**
+   * Serialize the tree.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
 
   size_t DistanceComps() const { return distanceComps; }
   size_t& DistanceComps() { return distanceComps; }
@@ -479,8 +518,8 @@ class CoverTree
   size_t distanceComps;
 };
 
-}; // namespace tree
-}; // namespace mlpack
+} // namespace tree
+} // namespace mlpack
 
 // Include implementation.
 #include "cover_tree_impl.hpp"

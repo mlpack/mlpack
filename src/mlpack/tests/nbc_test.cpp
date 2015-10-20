@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
   data::Load(trainResultFilename, trainRes, true);
 
   // Get the labels out.
-  arma::Col<size_t> labels(trainData.n_cols);
+  arma::Row<size_t> labels(trainData.n_cols);
   for (size_t i = 0; i < trainData.n_cols; ++i)
     labels[i] = trainData(trainData.n_rows - 1, i);
   trainData.shed_row(trainData.n_rows - 1);
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierTest)
 
   arma::mat testData;
   arma::Mat<size_t> testRes;
-  arma::Col<size_t> calcVec;
+  arma::Row<size_t> calcVec;
   data::Load(testFilename, testData, true);
   data::Load(testResultFilename, testRes, true);
 
@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
   data::Load(trainResultFilename, trainRes, true);
 
   // Get the labels out.
-  arma::Col<size_t> labels(trainData.n_cols);
+  arma::Row<size_t> labels(trainData.n_cols);
   for (size_t i = 0; i < trainData.n_cols; ++i)
     labels[i] = trainData(trainData.n_rows - 1, i);
   trainData.shed_row(trainData.n_rows - 1);
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
 
   arma::mat testData;
   arma::Mat<size_t> testRes;
-  arma::Col<size_t> calcVec;
+  arma::Row<size_t> calcVec;
   data::Load(testFilename, testData, true);
   data::Load(testResultFilename, testRes, true);
 
@@ -120,6 +120,169 @@ BOOST_AUTO_TEST_CASE(NaiveBayesClassifierIncrementalTest)
 
   for (size_t i = 0; i < testData.n_cols; i++)
     BOOST_REQUIRE_EQUAL(testRes(i), calcVec(i));
+}
+
+/**
+ * Ensure that separate training gives the same model.
+ */
+BOOST_AUTO_TEST_CASE(SeparateTrainTest)
+{
+  const char* trainFilename = "trainSet.csv";
+  const char* trainResultFilename = "trainRes.csv";
+  size_t classes = 2;
+
+  arma::mat trainData, trainRes, calcMat;
+  data::Load(trainFilename, trainData, true);
+  data::Load(trainResultFilename, trainRes, true);
+
+  // Get the labels out.
+  arma::Row<size_t> labels(trainData.n_cols);
+  for (size_t i = 0; i < trainData.n_cols; ++i)
+    labels[i] = trainData(trainData.n_rows - 1, i);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  NaiveBayesClassifier<> nbc(trainData, labels, classes, true);
+  NaiveBayesClassifier<> nbcTrain(trainData.n_rows, classes);
+  nbcTrain.Train(trainData, labels, false);
+
+  BOOST_REQUIRE_EQUAL(nbc.Means().n_rows, nbcTrain.Means().n_rows);
+  BOOST_REQUIRE_EQUAL(nbc.Means().n_cols, nbcTrain.Means().n_cols);
+  BOOST_REQUIRE_EQUAL(nbc.Variances().n_rows, nbcTrain.Variances().n_rows);
+  BOOST_REQUIRE_EQUAL(nbc.Variances().n_cols, nbcTrain.Variances().n_cols);
+  BOOST_REQUIRE_EQUAL(nbc.Probabilities().n_elem,
+                      nbcTrain.Probabilities().n_elem);
+
+  for (size_t i = 0; i < nbc.Means().n_elem; ++i)
+  {
+    if (std::abs(nbc.Means()[i]) < 1e-5)
+      BOOST_REQUIRE_SMALL(nbcTrain.Means()[i], 1e-5);
+    else
+      BOOST_REQUIRE_CLOSE(nbc.Means()[i], nbcTrain.Means()[i], 1e-5);
+  }
+
+  for (size_t i = 0; i < nbc.Variances().n_elem; ++i)
+  {
+    if (std::abs(nbc.Variances()[i]) < 1e-5)
+      BOOST_REQUIRE_SMALL(nbcTrain.Variances()[i], 1e-5);
+    else
+      BOOST_REQUIRE_CLOSE(nbc.Variances()[i], nbcTrain.Variances()[i], 1e-5);
+  }
+
+  for (size_t i = 0; i < nbc.Probabilities().n_elem; ++i)
+  {
+    if (std::abs(nbc.Probabilities()[i]) < 1e-5)
+      BOOST_REQUIRE_SMALL(nbcTrain.Probabilities()[i], 1e-5);
+    else
+      BOOST_REQUIRE_CLOSE(nbc.Probabilities()[i], nbcTrain.Probabilities()[i],
+          1e-5);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(SeparateTrainIncrementalTest)
+{
+  const char* trainFilename = "trainSet.csv";
+  const char* trainResultFilename = "trainRes.csv";
+  size_t classes = 2;
+
+  arma::mat trainData, trainRes, calcMat;
+  data::Load(trainFilename, trainData, true);
+  data::Load(trainResultFilename, trainRes, true);
+
+  // Get the labels out.
+  arma::Row<size_t> labels(trainData.n_cols);
+  for (size_t i = 0; i < trainData.n_cols; ++i)
+    labels[i] = trainData(trainData.n_rows - 1, i);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  NaiveBayesClassifier<> nbc(trainData, labels, classes, true);
+  NaiveBayesClassifier<> nbcTrain(trainData.n_rows, classes);
+  nbcTrain.Train(trainData, labels, true);
+
+  BOOST_REQUIRE_EQUAL(nbc.Means().n_rows, nbcTrain.Means().n_rows);
+  BOOST_REQUIRE_EQUAL(nbc.Means().n_cols, nbcTrain.Means().n_cols);
+  BOOST_REQUIRE_EQUAL(nbc.Variances().n_rows, nbcTrain.Variances().n_rows);
+  BOOST_REQUIRE_EQUAL(nbc.Variances().n_cols, nbcTrain.Variances().n_cols);
+  BOOST_REQUIRE_EQUAL(nbc.Probabilities().n_elem,
+                      nbcTrain.Probabilities().n_elem);
+
+  for (size_t i = 0; i < nbc.Means().n_elem; ++i)
+  {
+    if (std::abs(nbc.Means()[i]) < 1e-5)
+      BOOST_REQUIRE_SMALL(nbcTrain.Means()[i], 1e-5);
+    else
+      BOOST_REQUIRE_CLOSE(nbc.Means()[i], nbcTrain.Means()[i], 1e-5);
+  }
+
+  for (size_t i = 0; i < nbc.Variances().n_elem; ++i)
+  {
+    if (std::abs(nbc.Variances()[i]) < 1e-5)
+      BOOST_REQUIRE_SMALL(nbcTrain.Variances()[i], 1e-5);
+    else
+      BOOST_REQUIRE_CLOSE(nbc.Variances()[i], nbcTrain.Variances()[i], 1e-5);
+  }
+
+  for (size_t i = 0; i < nbc.Probabilities().n_elem; ++i)
+  {
+    if (std::abs(nbc.Probabilities()[i]) < 1e-5)
+      BOOST_REQUIRE_SMALL(nbcTrain.Probabilities()[i], 1e-5);
+    else
+      BOOST_REQUIRE_CLOSE(nbc.Probabilities()[i], nbcTrain.Probabilities()[i],
+          1e-5);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(SeparateTrainIndividualIncrementalTest)
+{
+  const char* trainFilename = "trainSet.csv";
+  const char* trainResultFilename = "trainRes.csv";
+  size_t classes = 2;
+
+  arma::mat trainData, trainRes, calcMat;
+  data::Load(trainFilename, trainData, true);
+  data::Load(trainResultFilename, trainRes, true);
+
+  // Get the labels out.
+  arma::Row<size_t> labels(trainData.n_cols);
+  for (size_t i = 0; i < trainData.n_cols; ++i)
+    labels[i] = trainData(trainData.n_rows - 1, i);
+  trainData.shed_row(trainData.n_rows - 1);
+
+  NaiveBayesClassifier<> nbc(trainData, labels, classes, true);
+  NaiveBayesClassifier<> nbcTrain(trainData.n_rows, classes);
+  for (size_t i = 0; i < trainData.n_cols; ++i)
+    nbcTrain.Train(trainData.col(i), labels[i]);
+
+  BOOST_REQUIRE_EQUAL(nbc.Means().n_rows, nbcTrain.Means().n_rows);
+  BOOST_REQUIRE_EQUAL(nbc.Means().n_cols, nbcTrain.Means().n_cols);
+  BOOST_REQUIRE_EQUAL(nbc.Variances().n_rows, nbcTrain.Variances().n_rows);
+  BOOST_REQUIRE_EQUAL(nbc.Variances().n_cols, nbcTrain.Variances().n_cols);
+  BOOST_REQUIRE_EQUAL(nbc.Probabilities().n_elem,
+                      nbcTrain.Probabilities().n_elem);
+
+  for (size_t i = 0; i < nbc.Means().n_elem; ++i)
+  {
+    if (std::abs(nbc.Means()[i]) < 1e-5)
+      BOOST_REQUIRE_SMALL(nbcTrain.Means()[i], 1e-5);
+    else
+      BOOST_REQUIRE_CLOSE(nbc.Means()[i], nbcTrain.Means()[i], 1e-5);
+  }
+
+  for (size_t i = 0; i < nbc.Variances().n_elem; ++i)
+  {
+    if (std::abs(nbc.Variances()[i]) < 1e-5)
+      BOOST_REQUIRE_SMALL(nbcTrain.Variances()[i], 1e-5);
+    else
+      BOOST_REQUIRE_CLOSE(nbc.Variances()[i], nbcTrain.Variances()[i], 1e-5);
+  }
+
+  for (size_t i = 0; i < nbc.Probabilities().n_elem; ++i)
+  {
+    if (std::abs(nbc.Probabilities()[i]) < 1e-5)
+      BOOST_REQUIRE_SMALL(nbcTrain.Probabilities()[i], 1e-5);
+    else
+      BOOST_REQUIRE_CLOSE(nbc.Probabilities()[i], nbcTrain.Probabilities()[i],
+          1e-5);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

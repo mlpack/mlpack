@@ -21,9 +21,14 @@
 #include <mlpack/core/tree/hrectbound.hpp>
 #include <mlpack/core/metrics/mahalanobis_distance.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
+#include <mlpack/core/tree/cover_tree.hpp>
+#include <mlpack/core/tree/rectangle_tree.hpp>
 
 #include <mlpack/methods/perceptron/perceptron.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression.hpp>
+#include <mlpack/methods/neighbor_search/neighbor_search.hpp>
+#include <mlpack/methods/softmax_regression/softmax_regression.hpp>
+#include <mlpack/methods/det/dtree.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
@@ -303,6 +308,33 @@ void CheckMatrices(const mat& x,
       BOOST_REQUIRE_CLOSE(val, textX[i], 1e-8);
       BOOST_REQUIRE_CLOSE(val, binaryX[i], 1e-8);
     }
+  }
+}
+
+void CheckMatrices(const Mat<size_t>& x,
+                   const Mat<size_t>& xmlX,
+                   const Mat<size_t>& textX,
+                   const Mat<size_t>& binaryX)
+{
+  // First check dimensions.
+  BOOST_REQUIRE_EQUAL(x.n_rows, xmlX.n_rows);
+  BOOST_REQUIRE_EQUAL(x.n_rows, textX.n_rows);
+  BOOST_REQUIRE_EQUAL(x.n_rows, binaryX.n_rows);
+
+  BOOST_REQUIRE_EQUAL(x.n_cols, xmlX.n_cols);
+  BOOST_REQUIRE_EQUAL(x.n_cols, textX.n_cols);
+  BOOST_REQUIRE_EQUAL(x.n_cols, binaryX.n_cols);
+
+  BOOST_REQUIRE_EQUAL(x.n_elem, xmlX.n_elem);
+  BOOST_REQUIRE_EQUAL(x.n_elem, textX.n_elem);
+  BOOST_REQUIRE_EQUAL(x.n_elem, binaryX.n_elem);
+
+  // Now check elements.
+  for (size_t i = 0; i < x.n_elem; ++i)
+  {
+    BOOST_REQUIRE_EQUAL(x[i], xmlX[i]);
+    BOOST_REQUIRE_EQUAL(x[i], textX[i]);
+    BOOST_REQUIRE_EQUAL(x[i], binaryX[i]);
   }
 }
 
@@ -683,13 +715,231 @@ BOOST_AUTO_TEST_CASE(BinarySpaceTreeOverwriteTest)
   typedef KDTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
   TreeType tree(data);
 
-  TreeType xmlTree(tree);
-  TreeType textTree(tree);
-  TreeType binaryTree(tree);
+  arma::mat otherData;
+  otherData.randu(5, 50);
+  TreeType xmlTree(otherData);
+  TreeType textTree(xmlTree);
+  TreeType binaryTree(xmlTree);
 
   SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
 
   CheckTrees(tree, xmlTree, textTree, binaryTree);
+}
+
+BOOST_AUTO_TEST_CASE(CoverTreeTest)
+{
+  arma::mat data;
+  data.randu(3, 100);
+  typedef StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>
+      TreeType;
+  TreeType tree(data);
+
+  TreeType* xmlTree;
+  TreeType* textTree;
+  TreeType* binaryTree;
+
+  SerializePointerObjectAll(&tree, xmlTree, textTree, binaryTree);
+
+  CheckTrees(tree, *xmlTree, *textTree, *binaryTree);
+
+  // Also check a few other things.
+  std::stack<TreeType*> stack, xmlStack, textStack, binaryStack;
+  stack.push(&tree);
+  xmlStack.push(xmlTree);
+  textStack.push(textTree);
+  binaryStack.push(binaryTree);
+  while (!stack.empty())
+  {
+    TreeType* node = stack.top();
+    TreeType* xmlNode = xmlStack.top();
+    TreeType* textNode = textStack.top();
+    TreeType* binaryNode = binaryStack.top();
+    stack.pop();
+    xmlStack.pop();
+    textStack.pop();
+    binaryStack.pop();
+
+    BOOST_REQUIRE_EQUAL(node->Scale(), xmlNode->Scale());
+    BOOST_REQUIRE_EQUAL(node->Scale(), textNode->Scale());
+    BOOST_REQUIRE_EQUAL(node->Scale(), binaryNode->Scale());
+
+    BOOST_REQUIRE_CLOSE(node->Base(), xmlNode->Base(), 1e-5);
+    BOOST_REQUIRE_CLOSE(node->Base(), textNode->Base(), 1e-5);
+    BOOST_REQUIRE_CLOSE(node->Base(), binaryNode->Base(), 1e-5);
+
+    for (size_t i = 0; i < node->NumChildren(); ++i)
+    {
+      stack.push(&node->Child(i));
+      xmlStack.push(&xmlNode->Child(i));
+      textStack.push(&textNode->Child(i));
+      binaryStack.push(&binaryNode->Child(i));
+    }
+  }
+
+  delete xmlTree;
+  delete textTree;
+  delete binaryTree;
+}
+
+BOOST_AUTO_TEST_CASE(CoverTreeOverwriteTest)
+{
+  arma::mat data;
+  data.randu(3, 100);
+  typedef StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>
+      TreeType;
+  TreeType tree(data);
+
+  arma::mat otherData;
+  otherData.randu(5, 50);
+  TreeType xmlTree(otherData);
+  TreeType textTree(xmlTree);
+  TreeType binaryTree(xmlTree);
+
+  SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
+
+  CheckTrees(tree, xmlTree, textTree, binaryTree);
+
+  // Also check a few other things.
+  std::stack<TreeType*> stack, xmlStack, textStack, binaryStack;
+  stack.push(&tree);
+  xmlStack.push(&xmlTree);
+  textStack.push(&textTree);
+  binaryStack.push(&binaryTree);
+  while (!stack.empty())
+  {
+    TreeType* node = stack.top();
+    TreeType* xmlNode = xmlStack.top();
+    TreeType* textNode = textStack.top();
+    TreeType* binaryNode = binaryStack.top();
+    stack.pop();
+    xmlStack.pop();
+    textStack.pop();
+    binaryStack.pop();
+
+    BOOST_REQUIRE_EQUAL(node->Scale(), xmlNode->Scale());
+    BOOST_REQUIRE_EQUAL(node->Scale(), textNode->Scale());
+    BOOST_REQUIRE_EQUAL(node->Scale(), binaryNode->Scale());
+
+    BOOST_REQUIRE_CLOSE(node->Base(), xmlNode->Base(), 1e-5);
+    BOOST_REQUIRE_CLOSE(node->Base(), textNode->Base(), 1e-5);
+    BOOST_REQUIRE_CLOSE(node->Base(), binaryNode->Base(), 1e-5);
+
+    for (size_t i = 0; i < node->NumChildren(); ++i)
+    {
+      stack.push(&node->Child(i));
+      xmlStack.push(&xmlNode->Child(i));
+      textStack.push(&textNode->Child(i));
+      binaryStack.push(&binaryNode->Child(i));
+    }
+  }
+}
+
+BOOST_AUTO_TEST_CASE(RectangleTreeTest)
+{
+  arma::mat data;
+  data.randu(3, 1000);
+  typedef RTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  TreeType tree(data);
+
+  TreeType* xmlTree;
+  TreeType* textTree;
+  TreeType* binaryTree;
+
+  SerializePointerObjectAll(&tree, xmlTree, textTree, binaryTree);
+
+  CheckTrees(tree, *xmlTree, *textTree, *binaryTree);
+
+  // Check a few other things too.
+  std::stack<TreeType*> stack, xmlStack, textStack, binaryStack;
+  stack.push(&tree);
+  xmlStack.push(xmlTree);
+  textStack.push(textTree);
+  binaryStack.push(binaryTree);
+  while (!stack.empty())
+  {
+    // Check more things...
+    TreeType* node = stack.top();
+    TreeType* xmlNode = xmlStack.top();
+    TreeType* textNode = textStack.top();
+    TreeType* binaryNode = binaryStack.top();
+    stack.pop();
+    xmlStack.pop();
+    textStack.pop();
+    binaryStack.pop();
+
+    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), xmlNode->MaxLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), textNode->MaxLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), binaryNode->MaxLeafSize());
+
+    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), xmlNode->MinLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), textNode->MinLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), binaryNode->MinLeafSize());
+
+    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), xmlNode->MaxNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), textNode->MaxNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), binaryNode->MaxNumChildren());
+
+    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), xmlNode->MinNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), textNode->MinNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), binaryNode->MinNumChildren());
+  }
+
+  delete xmlTree;
+  delete textTree;
+  delete binaryTree;
+}
+
+BOOST_AUTO_TEST_CASE(RectangleTreeOverwriteTest)
+{
+  arma::mat data;
+  data.randu(3, 1000);
+  typedef RTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+  TreeType tree(data);
+
+  arma::mat otherData;
+  otherData.randu(5, 50);
+  TreeType xmlTree(otherData);
+  TreeType textTree(otherData);
+  TreeType binaryTree(textTree);
+
+  SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
+
+  CheckTrees(tree, xmlTree, textTree, binaryTree);
+
+  // Check a few other things too.
+  std::stack<TreeType*> stack, xmlStack, textStack, binaryStack;
+  stack.push(&tree);
+  xmlStack.push(&xmlTree);
+  textStack.push(&textTree);
+  binaryStack.push(&binaryTree);
+  while (!stack.empty())
+  {
+    // Check more things...
+    TreeType* node = stack.top();
+    TreeType* xmlNode = xmlStack.top();
+    TreeType* textNode = textStack.top();
+    TreeType* binaryNode = binaryStack.top();
+    stack.pop();
+    xmlStack.pop();
+    textStack.pop();
+    binaryStack.pop();
+
+    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), xmlNode->MaxLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), textNode->MaxLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MaxLeafSize(), binaryNode->MaxLeafSize());
+
+    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), xmlNode->MinLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), textNode->MinLeafSize());
+    BOOST_REQUIRE_EQUAL(node->MinLeafSize(), binaryNode->MinLeafSize());
+
+    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), xmlNode->MaxNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), textNode->MaxNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MaxNumChildren(), binaryNode->MaxNumChildren());
+
+    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), xmlNode->MinNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), textNode->MinNumChildren());
+    BOOST_REQUIRE_EQUAL(node->MinNumChildren(), binaryNode->MinNumChildren());
+  }
 }
 
 BOOST_AUTO_TEST_CASE(PerceptronTest)
@@ -743,6 +993,268 @@ BOOST_AUTO_TEST_CASE(LogisticRegressionTest)
   BOOST_REQUIRE_CLOSE(lr.Lambda(), lrXml.Lambda(), 1e-5);
   BOOST_REQUIRE_CLOSE(lr.Lambda(), lrText.Lambda(), 1e-5);
   BOOST_REQUIRE_CLOSE(lr.Lambda(), lrBinary.Lambda(), 1e-5);
+}
+
+BOOST_AUTO_TEST_CASE(AllkNNTest)
+{
+  using neighbor::AllkNN;
+  arma::mat dataset = arma::randu<arma::mat>(5, 2000);
+
+  AllkNN allknn(dataset, false, false);
+
+  AllkNN knnXml, knnText, knnBinary;
+
+  SerializeObjectAll(allknn, knnXml, knnText, knnBinary);
+
+  // Now run nearest neighbor and make sure the results are the same.
+  arma::mat querySet = arma::randu<arma::mat>(5, 1000);
+
+  arma::mat distances, xmlDistances, textDistances, binaryDistances;
+  arma::Mat<size_t> neighbors, xmlNeighbors, textNeighbors, binaryNeighbors;
+
+  allknn.Search(querySet, 5, neighbors, distances);
+  knnXml.Search(querySet, 5, xmlNeighbors, xmlDistances);
+  knnText.Search(querySet, 5, textNeighbors, textDistances);
+  knnBinary.Search(querySet, 5, binaryNeighbors, binaryDistances);
+
+  CheckMatrices(distances, xmlDistances, textDistances, binaryDistances);
+  CheckMatrices(neighbors, xmlNeighbors, textNeighbors, binaryNeighbors);
+}
+
+BOOST_AUTO_TEST_CASE(SoftmaxRegressionTest)
+{
+  using regression::SoftmaxRegression;
+
+  arma::mat dataset = arma::randu<arma::mat>(5, 1000);
+  arma::Row<size_t> labels(1000);
+  for (size_t i = 0; i < 500; ++i)
+    labels[i] = 0;
+  for (size_t i = 500; i < 1000; ++i)
+    labels[i] = 1;
+
+  SoftmaxRegression<> sr(dataset, labels, 2);
+
+  SoftmaxRegression<> srXml(dataset.n_rows, 2);
+  SoftmaxRegression<> srText(dataset.n_rows, 2);
+  SoftmaxRegression<> srBinary(dataset.n_rows, 2);
+
+  SerializeObjectAll(sr, srXml, srText, srBinary);
+
+  CheckMatrices(sr.Parameters(), srXml.Parameters(), srText.Parameters(),
+      srBinary.Parameters());
+}
+
+BOOST_AUTO_TEST_CASE(DETTest)
+{
+  using det::DTree;
+
+  // Create a density estimation tree on a random dataset.
+  arma::mat dataset = arma::randu<arma::mat>(25, 5000);
+
+  DTree tree(dataset);
+
+  arma::mat otherDataset = arma::randu<arma::mat>(5, 100);
+  DTree xmlTree, binaryTree, textTree(otherDataset);
+
+  SerializeObjectAll(tree, xmlTree, binaryTree, textTree);
+
+  std::stack<DTree*> stack, xmlStack, binaryStack, textStack;
+  stack.push(&tree);
+  xmlStack.push(&xmlTree);
+  binaryStack.push(&binaryTree);
+  textStack.push(&textTree);
+
+  while (!stack.empty())
+  {
+    // Get the top node from the stack.
+    DTree* node = stack.top();
+    DTree* xmlNode = xmlStack.top();
+    DTree* binaryNode = binaryStack.top();
+    DTree* textNode = textStack.top();
+
+    stack.pop();
+    xmlStack.pop();
+    binaryStack.pop();
+    textStack.pop();
+
+    // Check that all the members are the same.
+    BOOST_REQUIRE_EQUAL(node->Start(), xmlNode->Start());
+    BOOST_REQUIRE_EQUAL(node->Start(), binaryNode->Start());
+    BOOST_REQUIRE_EQUAL(node->Start(), textNode->Start());
+
+    BOOST_REQUIRE_EQUAL(node->End(), xmlNode->End());
+    BOOST_REQUIRE_EQUAL(node->End(), binaryNode->End());
+    BOOST_REQUIRE_EQUAL(node->End(), textNode->End());
+
+    BOOST_REQUIRE_EQUAL(node->SplitDim(), xmlNode->SplitDim());
+    BOOST_REQUIRE_EQUAL(node->SplitDim(), binaryNode->SplitDim());
+    BOOST_REQUIRE_EQUAL(node->SplitDim(), textNode->SplitDim());
+
+    if (std::abs(node->SplitValue()) < 1e-5)
+    {
+      BOOST_REQUIRE_SMALL(xmlNode->SplitValue(), 1e-5);
+      BOOST_REQUIRE_SMALL(binaryNode->SplitValue(), 1e-5);
+      BOOST_REQUIRE_SMALL(textNode->SplitValue(), 1e-5);
+    }
+    else
+    {
+      BOOST_REQUIRE_CLOSE(node->SplitValue(), xmlNode->SplitValue(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->SplitValue(), binaryNode->SplitValue(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->SplitValue(), textNode->SplitValue(), 1e-5);
+    }
+
+    if (std::abs(node->LogNegError()) < 1e-5)
+    {
+      BOOST_REQUIRE_SMALL(xmlNode->LogNegError(), 1e-5);
+      BOOST_REQUIRE_SMALL(binaryNode->LogNegError(), 1e-5);
+      BOOST_REQUIRE_SMALL(textNode->LogNegError(), 1e-5);
+    }
+    else
+    {
+      BOOST_REQUIRE_CLOSE(node->LogNegError(), xmlNode->LogNegError(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->LogNegError(), binaryNode->LogNegError(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->LogNegError(), textNode->LogNegError(), 1e-5);
+    }
+
+    if (std::abs(node->SubtreeLeavesLogNegError()) < 1e-5)
+    {
+      BOOST_REQUIRE_SMALL(xmlNode->SubtreeLeavesLogNegError(), 1e-5);
+      BOOST_REQUIRE_SMALL(binaryNode->SubtreeLeavesLogNegError(), 1e-5);
+      BOOST_REQUIRE_SMALL(textNode->SubtreeLeavesLogNegError(), 1e-5);
+    }
+    else
+    {
+      BOOST_REQUIRE_CLOSE(node->SubtreeLeavesLogNegError(),
+          xmlNode->SubtreeLeavesLogNegError(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->SubtreeLeavesLogNegError(),
+          binaryNode->SubtreeLeavesLogNegError(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->SubtreeLeavesLogNegError(),
+          textNode->SubtreeLeavesLogNegError(), 1e-5);
+    }
+
+    BOOST_REQUIRE_EQUAL(node->SubtreeLeaves(), xmlNode->SubtreeLeaves());
+    BOOST_REQUIRE_EQUAL(node->SubtreeLeaves(), binaryNode->SubtreeLeaves());
+    BOOST_REQUIRE_EQUAL(node->SubtreeLeaves(), textNode->SubtreeLeaves());
+
+    if (std::abs(node->Ratio()) < 1e-5)
+    {
+      BOOST_REQUIRE_SMALL(xmlNode->Ratio(), 1e-5);
+      BOOST_REQUIRE_SMALL(binaryNode->Ratio(), 1e-5);
+      BOOST_REQUIRE_SMALL(textNode->Ratio(), 1e-5);
+    }
+    else
+    {
+      BOOST_REQUIRE_CLOSE(node->Ratio(), xmlNode->Ratio(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->Ratio(), binaryNode->Ratio(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->Ratio(), textNode->Ratio(), 1e-5);
+    }
+
+    if (std::abs(node->LogVolume()) < 1e-5)
+    {
+      BOOST_REQUIRE_SMALL(xmlNode->LogVolume(), 1e-5);
+      BOOST_REQUIRE_SMALL(binaryNode->LogVolume(), 1e-5);
+      BOOST_REQUIRE_SMALL(textNode->LogVolume(), 1e-5);
+    }
+    else
+    {
+      BOOST_REQUIRE_CLOSE(node->LogVolume(), xmlNode->LogVolume(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->LogVolume(), binaryNode->LogVolume(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->LogVolume(), textNode->LogVolume(), 1e-5);
+    }
+
+    if (node->Left() == NULL)
+    {
+      BOOST_REQUIRE(xmlNode->Left() == NULL);
+      BOOST_REQUIRE(binaryNode->Left() == NULL);
+      BOOST_REQUIRE(textNode->Left() == NULL);
+    }
+    else
+    {
+      BOOST_REQUIRE(xmlNode->Left() != NULL);
+      BOOST_REQUIRE(binaryNode->Left() != NULL);
+      BOOST_REQUIRE(textNode->Left() != NULL);
+
+      // Push children onto stack.
+      stack.push(node->Left());
+      xmlStack.push(xmlNode->Left());
+      binaryStack.push(binaryNode->Left());
+      textStack.push(textNode->Left());
+    }
+
+    if (node->Right() == NULL)
+    {
+      BOOST_REQUIRE(xmlNode->Right() == NULL);
+      BOOST_REQUIRE(binaryNode->Right() == NULL);
+      BOOST_REQUIRE(textNode->Right() == NULL);
+    }
+    else
+    {
+      BOOST_REQUIRE(xmlNode->Right() != NULL);
+      BOOST_REQUIRE(binaryNode->Right() != NULL);
+      BOOST_REQUIRE(textNode->Right() != NULL);
+
+      // Push children onto stack.
+      stack.push(node->Right());
+      xmlStack.push(xmlNode->Right());
+      binaryStack.push(binaryNode->Right());
+      textStack.push(textNode->Right());
+    }
+
+    BOOST_REQUIRE_EQUAL(node->Root(), xmlNode->Root());
+    BOOST_REQUIRE_EQUAL(node->Root(), binaryNode->Root());
+    BOOST_REQUIRE_EQUAL(node->Root(), textNode->Root());
+
+    if (std::abs(node->AlphaUpper()) < 1e-5)
+    {
+      BOOST_REQUIRE_SMALL(xmlNode->AlphaUpper(), 1e-5);
+      BOOST_REQUIRE_SMALL(binaryNode->AlphaUpper(), 1e-5);
+      BOOST_REQUIRE_SMALL(textNode->AlphaUpper(), 1e-5);
+    }
+    else
+    {
+      BOOST_REQUIRE_CLOSE(node->AlphaUpper(), xmlNode->AlphaUpper(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->AlphaUpper(), binaryNode->AlphaUpper(), 1e-5);
+      BOOST_REQUIRE_CLOSE(node->AlphaUpper(), textNode->AlphaUpper(), 1e-5);
+    }
+
+    BOOST_REQUIRE_EQUAL(node->MaxVals().n_elem, xmlNode->MaxVals().n_elem);
+    BOOST_REQUIRE_EQUAL(node->MaxVals().n_elem, binaryNode->MaxVals().n_elem);
+    BOOST_REQUIRE_EQUAL(node->MaxVals().n_elem, textNode->MaxVals().n_elem);
+    for (size_t i = 0; i < node->MaxVals().n_elem; ++i)
+    {
+      if (std::abs(node->MaxVals()[i]) < 1e-5)
+      {
+        BOOST_REQUIRE_SMALL(xmlNode->MaxVals()[i], 1e-5);
+        BOOST_REQUIRE_SMALL(binaryNode->MaxVals()[i], 1e-5);
+        BOOST_REQUIRE_SMALL(textNode->MaxVals()[i], 1e-5);
+      }
+      else
+      {
+        BOOST_REQUIRE_CLOSE(node->MaxVals()[i], xmlNode->MaxVals()[i], 1e-5);
+        BOOST_REQUIRE_CLOSE(node->MaxVals()[i], binaryNode->MaxVals()[i], 1e-5);
+        BOOST_REQUIRE_CLOSE(node->MaxVals()[i], textNode->MaxVals()[i], 1e-5);
+      }
+    }
+
+    BOOST_REQUIRE_EQUAL(node->MinVals().n_elem, xmlNode->MinVals().n_elem);
+    BOOST_REQUIRE_EQUAL(node->MinVals().n_elem, binaryNode->MinVals().n_elem);
+    BOOST_REQUIRE_EQUAL(node->MinVals().n_elem, textNode->MinVals().n_elem);
+    for (size_t i = 0; i < node->MinVals().n_elem; ++i)
+    {
+      if (std::abs(node->MinVals()[i]) < 1e-5)
+      {
+        BOOST_REQUIRE_SMALL(xmlNode->MinVals()[i], 1e-5);
+        BOOST_REQUIRE_SMALL(binaryNode->MinVals()[i], 1e-5);
+        BOOST_REQUIRE_SMALL(textNode->MinVals()[i], 1e-5);
+      }
+      else
+      {
+        BOOST_REQUIRE_CLOSE(node->MinVals()[i], xmlNode->MinVals()[i], 1e-5);
+        BOOST_REQUIRE_CLOSE(node->MinVals()[i], binaryNode->MinVals()[i], 1e-5);
+        BOOST_REQUIRE_CLOSE(node->MinVals()[i], textNode->MinVals()[i], 1e-5);
+      }
+    }
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

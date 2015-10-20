@@ -26,6 +26,10 @@ namespace neighbor /** Neighbor-search routines.  These include
                     * all-nearest-neighbors and all-furthest-neighbors
                     * searches. */ {
 
+// Forward declaration.
+template<typename SortPolicy>
+class NSModel;
+
 /**
  * The NeighborSearch class is a template class for performing distance-based
  * neighbor searches.  It takes a query dataset and a reference dataset (or just
@@ -72,7 +76,8 @@ class NeighborSearch
    *
    * This method will copy the matrices to internal copies, which are rearranged
    * during tree-building.  You can avoid this extra copy by pre-constructing
-   * the trees and passing them using a diferent constructor.
+   * the trees and passing them using a different constructor, or by using the
+   * construct that takes an rvalue reference to the dataset.
    *
    * @param referenceSet Set of reference points.
    * @param naive If true, O(n^2) naive search will be used (as opposed to
@@ -82,6 +87,30 @@ class NeighborSearch
    * @param metric An optional instance of the MetricType class.
    */
   NeighborSearch(const MatType& referenceSet,
+                 const bool naive = false,
+                 const bool singleMode = false,
+                 const MetricType metric = MetricType());
+
+  /**
+   * Initialize the NeighborSearch object, taking ownership of the reference
+   * dataset (this is the dataset which is searched).  Optionally, perform the
+   * computation in naive mode or single-tree mode.  An initialized distance
+   * metric can be given, for cases where the metric has internal data (i.e. the
+   * distance::MahalanobisDistance class).
+   *
+   * This method will not copy the data matrix, but will take ownership of it,
+   * and depending on the type of tree used, may rearrange the points.  If you
+   * would rather a copy be made, consider using the construct that takes a
+   * const reference to the data instead.
+   *
+   * @param referenceSet Set of reference points.
+   * @param naive If true, O(n^2) naive search will be used (as opposed to
+   *      dual-tree search).  This overrides singleMode (if it is set to true).
+   * @param singleMode If true, single-tree search will be used (as opposed to
+   *      dual-tree search).
+   * @param metric An optional instance of the MetricType class.
+   */
+  NeighborSearch(MatType&& referenceSet,
                  const bool naive = false,
                  const bool singleMode = false,
                  const MetricType metric = MetricType());
@@ -116,10 +145,50 @@ class NeighborSearch
                  const MetricType metric = MetricType());
 
   /**
+   * Create a NeighborSearch object without any reference data.  If Search() is
+   * called before a reference set is set with Train(), an exception will be
+   * thrown.
+   *
+   * @param naive Whether to use naive search.
+   * @param singleMode Whether single-tree computation should be used (as
+   *      opposed to dual-tree computation).
+   * @param metric Instantiated metric.
+   */
+  NeighborSearch(const bool naive = false,
+                 const bool singleMode = false,
+                 const MetricType metric = MetricType());
+
+
+  /**
    * Delete the NeighborSearch object. The tree is the only member we are
    * responsible for deleting.  The others will take care of themselves.
    */
   ~NeighborSearch();
+
+  /**
+   * Set the reference set to a new reference set, and build a tree if
+   * necessary.  This method is called 'Train()' in order to match the rest of
+   * the mlpack abstractions, even though calling this "training" is maybe a bit
+   * of a stretch.
+   *
+   * @param referenceSet New set of reference data.
+   */
+  void Train(const MatType& referenceSet);
+
+  /**
+   * Set the reference set to a new reference set, taking ownership of the set,
+   * and build a tree if necessary.  This method is called 'Train()' in order to
+   * match the rest of the mlpack abstractions, even though calling this
+   * "training" is maybe a bit of a stretch.
+   *
+   * @param referenceSet New set of reference data.
+   */
+  void Train(MatType&& referenceSet);
+
+  /**
+   * Set the reference tree to a new reference tree.
+   */
+  void Train(Tree* referenceTree);
 
   /**
    * For each point in the query set, compute the nearest neighbors and store
@@ -182,16 +251,12 @@ class NeighborSearch
   //! Returns a string representation of this object.
   std::string ToString() const;
 
-  //! Return the total number of base case evaluations performed during
-  //! searches.
+  //! Return the total number of base case evaluations performed during the last
+  //! search.
   size_t BaseCases() const { return baseCases; }
-  //! Modify the total number of base case evaluations.
-  size_t& BaseCases() { return baseCases; }
 
-  //! Return the number of node combination scores during the search.
+  //! Return the number of node combination scores during the last search.
   size_t Scores() const { return scores; }
-  //! Modify the number of node combination scores.
-  size_t& Scores() { return scores; }
 
   //! Access whether or not search is done in naive linear scan mode.
   bool Naive() const { return naive; }
@@ -203,20 +268,29 @@ class NeighborSearch
   //! Modify whether or not search is done in single-tree mode.
   bool& SingleMode() { return singleMode; }
 
+  //! Access the reference dataset.
+  const MatType& ReferenceSet() const { return *referenceSet; }
+
+  //! Serialize the NeighborSearch model.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
+
  private:
   //! Permutations of reference points during tree building.
   std::vector<size_t> oldFromNewReferences;
   //! Pointer to the root of the reference tree.
   Tree* referenceTree;
-  //! Reference to reference dataset.
-  const MatType& referenceSet;
+  //! Reference dataset.  In some situations we may be the owner of this.
+  const MatType* referenceSet;
 
   //! If true, this object created the trees and is responsible for them.
   bool treeOwner;
+  //! If true, we own the reference set.
+  bool setOwner;
 
   //! Indicates if O(n^2) naive search is being used.
   bool naive;
-  //! Indicates if single-tree search is being used (opposed to dual-tree).
+  //! Indicates if single-tree search is being used (as opposed to dual-tree).
   bool singleMode;
 
   //! Instantiation of metric.
@@ -227,6 +301,8 @@ class NeighborSearch
   //! The total number of scores (applicable for non-naive search).
   size_t scores;
 
+  //! The NSModel class should have access to internal members.
+  friend class NSModel<SortPolicy>;
 }; // class NeighborSearch
 
 } // namespace neighbor

@@ -467,12 +467,16 @@ BOOST_AUTO_TEST_CASE(PointDynamicAdd)
       arma::mat> TreeType;
   TreeType tree(dataset, 20, 6, 5, 2, 0);
 
-  // Add numIter new points to the dataset.
+  // Add numIter new points to the dataset.  The tree copies the dataset, so we
+  // must modify both the original dataset and the one that the tree holds.
+  // (This API is clunky.  It should be redone sometime.)
+  tree.Dataset().reshape(8, 1000 + numIter);
   dataset.reshape(8, 1000 + numIter);
   arma::mat tmpData;
   tmpData.randu(8, numIter);
   for (int i = 0; i < numIter; i++)
   {
+    tree.Dataset().col(1000 + i) = tmpData.col(i);
     dataset.col(1000 + i) = tmpData.col(i);
     tree.InsertPoint(1000 + i);
   }
@@ -817,6 +821,18 @@ BOOST_AUTO_TEST_CASE(RStarTreeSplitTest)
   BOOST_REQUIRE_CLOSE(
       rTree.Children()[secondChild]->Children()[secondPrime]->Bound()[1].Hi(),
       0.9, 1e-15);
+}
+
+BOOST_AUTO_TEST_CASE(RectangleTreeMoveDatasetTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(3, 1000);
+  typedef RTree<EuclideanDistance, EmptyStatistic, arma::mat> TreeType;
+
+  TreeType tree(std::move(dataset));
+
+  BOOST_REQUIRE_EQUAL(dataset.n_elem, 0);
+  BOOST_REQUIRE_EQUAL(tree.Dataset().n_rows, 3);
+  BOOST_REQUIRE_EQUAL(tree.Dataset().n_cols, 1000);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

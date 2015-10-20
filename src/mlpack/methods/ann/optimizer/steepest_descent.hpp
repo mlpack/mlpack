@@ -2,7 +2,7 @@
  * @file steepest_descent.hpp
  * @author Marcus Edel
  *
- * Implmentation of the steepest descent optimizer. The method of steepest
+ * Implementation of the steepest descent optimizer. The method of steepest
  * descent, also called the gradient descent method, is used to find the
  * nearest local minimum of a function which the assumtion that the gradient of
  * the function can be computed.

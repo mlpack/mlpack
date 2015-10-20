@@ -38,7 +38,7 @@ inline HRectBound<MetricType>::HRectBound(const size_t dimension) :
     minWidth(0)
 { /* Nothing to do. */ }
 
-/***
+/**
  * Copy constructor necessary to prevent memory leaks.
  */
 template<typename MetricType>
@@ -52,7 +52,7 @@ inline HRectBound<MetricType>::HRectBound(const HRectBound& other) :
     bounds[i] = other[i];
 }
 
-/***
+/**
  * Same as the copy constructor.
  */
 template<typename MetricType>
@@ -76,6 +76,21 @@ inline HRectBound<MetricType>& HRectBound<MetricType>::operator=(
   minWidth = other.MinWidth();
 
   return *this;
+}
+
+/**
+ * Move constructor: take possession of another bound's information.
+ */
+template<typename MetricType>
+inline HRectBound<MetricType>::HRectBound(HRectBound&& other) :
+    dim(other.dim),
+    bounds(other.bounds),
+    minWidth(other.minWidth)
+{
+  // Fix the other bound.
+  other.dim = 0;
+  other.bounds = NULL;
+  other.minWidth = 0.0;
 }
 
 /**

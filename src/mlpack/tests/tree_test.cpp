@@ -120,6 +120,27 @@ BOOST_AUTO_TEST_CASE(HRectBoundClear)
   BOOST_REQUIRE_SMALL(b.MinWidth(), 1e-5);
 }
 
+BOOST_AUTO_TEST_CASE(HRectBoundMoveConstructor)
+{
+  HRectBound<EuclideanDistance> b(2);
+  b[0] = Range(0.0, 2.0);
+  b[1] = Range(2.0, 4.0);
+  b.MinWidth() = 1.0;
+
+  HRectBound<EuclideanDistance> b2(std::move(b));
+
+  BOOST_REQUIRE_EQUAL(b.Dim(), 0);
+  BOOST_REQUIRE_EQUAL(b2.Dim(), 2);
+
+  BOOST_REQUIRE_EQUAL(b.MinWidth(), 0.0);
+  BOOST_REQUIRE_EQUAL(b2.MinWidth(), 1.0);
+
+  BOOST_REQUIRE_SMALL(b2[0].Lo(), 1e-5);
+  BOOST_REQUIRE_CLOSE(b2[0].Hi(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b2[1].Lo(), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b2[1].Hi(), 4.0, 1e-5);
+}
+
 /**
  * Ensure that we get the correct center for our bound.
  */
@@ -662,6 +683,22 @@ BOOST_AUTO_TEST_CASE(TestBallBound)
   BOOST_REQUIRE_CLOSE(b2.MinDistance(b1.Center()), 1 - 0.4, 1e-5);
   BOOST_REQUIRE_CLOSE(b2.MaxDistance(b1.Center()), 1 + 0.4, 1e-5);
   BOOST_REQUIRE_CLOSE(b1.MaxDistance(b2.Center()), 1 + 0.3, 1e-5);
+}
+
+BOOST_AUTO_TEST_CASE(BallBoundMoveConstructor)
+{
+  BallBound<> b1(2.0, arma::vec("2 1 1"));
+  BallBound<> b2(std::move(b1));
+
+  BOOST_REQUIRE_EQUAL(b2.Dim(), 3);
+  BOOST_REQUIRE_EQUAL(b1.Dim(), 0);
+
+  BOOST_REQUIRE_CLOSE(b2.Center()[0], 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b2.Center()[1], 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b2.Center()[2], 1.0, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(b2.MinWidth(), 4.0, 1e-5);
+  BOOST_REQUIRE_SMALL(b1.MinWidth(), 1e-5);
 }
 
 /**
@@ -1433,12 +1470,6 @@ void GenerateVectorOfTree(TreeType* node,
   return;
 }
 
-#ifdef ARMA_HAS_SPMAT
-// Only run sparse tree tests if we are using Armadillo 3.6.  Armadillo 3.4 has
-// some bugs that cause the kd-tree splitting procedure to fail terribly.  Soon,
-// that version will be obsolete, though.
-#if !((ARMA_VERSION_MAJOR == 3) && (ARMA_VERSION_MINOR == 4))
-
 /**
  * Exhaustive sparse kd-tree test based on #125.
  *
@@ -1524,8 +1555,17 @@ BOOST_AUTO_TEST_CASE(ExhaustiveSparseKDTreeTest)
   TreeType root(dataset);
 }
 
-#endif // Using Armadillo 3.4.
-#endif // ARMA_HAS_SPMAT
+BOOST_AUTO_TEST_CASE(BinarySpaceTreeMoveConstructorTest)
+{
+  arma::mat dataset(5, 1000);
+  dataset.randu();
+
+  BinarySpaceTree<EuclideanDistance> tree(dataset);
+  BinarySpaceTree<EuclideanDistance> tree2(std::move(tree));
+
+  BOOST_REQUIRE_EQUAL(tree.NumChildren(), 0);
+  BOOST_REQUIRE_EQUAL(tree2.NumChildren(), 2);
+}
 
 template<typename TreeType>
 void RecurseTreeCountLeaves(const TreeType& node, arma::vec& counts)
@@ -1831,8 +1871,9 @@ BOOST_AUTO_TEST_CASE(CoverTreeCopyConstructor)
 
   TreeType d = c;
 
-  // Check that everything is the same.
-  BOOST_REQUIRE_EQUAL(c.Dataset().memptr(), d.Dataset().memptr());
+  // Check that everything is the same, except the dataset, which should have
+  // been copied.
+  BOOST_REQUIRE_NE(c.Dataset().memptr(), d.Dataset().memptr());
   BOOST_REQUIRE_CLOSE(c.Base(), d.Base(), 1e-50);
   BOOST_REQUIRE_EQUAL(c.Point(), d.Point());
   BOOST_REQUIRE_EQUAL(c.Scale(), d.Scale());
@@ -1850,8 +1891,9 @@ BOOST_AUTO_TEST_CASE(CoverTreeCopyConstructor)
   BOOST_REQUIRE_EQUAL(d.Child(1).Parent(), &d);
 
   // Check that the children are okay.
-  BOOST_REQUIRE_EQUAL(c.Child(0).Dataset().memptr(),
-                      d.Child(0).Dataset().memptr());
+  BOOST_REQUIRE_NE(c.Child(0).Dataset().memptr(),
+                   d.Child(0).Dataset().memptr());
+  BOOST_REQUIRE_EQUAL(c.Child(0).Dataset().memptr(), c.Dataset().memptr());
   BOOST_REQUIRE_CLOSE(c.Child(0).Base(), d.Child(0).Base(), 1e-50);
   BOOST_REQUIRE_EQUAL(c.Child(0).Point(), d.Child(0).Point());
   BOOST_REQUIRE_EQUAL(c.Child(0).Scale(), d.Child(0).Scale());
@@ -1860,8 +1902,9 @@ BOOST_AUTO_TEST_CASE(CoverTreeCopyConstructor)
                       d.Child(0).FurthestDescendantDistance());
   BOOST_REQUIRE_EQUAL(c.Child(0).NumChildren(), d.Child(0).NumChildren());
 
-  BOOST_REQUIRE_EQUAL(c.Child(1).Dataset().memptr(),
-                      d.Child(1).Dataset().memptr());
+  BOOST_REQUIRE_NE(c.Child(1).Dataset().memptr(),
+                   d.Child(1).Dataset().memptr());
+  BOOST_REQUIRE_EQUAL(c.Child(1).Dataset().memptr(), c.Dataset().memptr());
   BOOST_REQUIRE_CLOSE(c.Child(1).Base(), d.Child(1).Base(), 1e-50);
   BOOST_REQUIRE_EQUAL(c.Child(1).Point(), d.Child(1).Point());
   BOOST_REQUIRE_EQUAL(c.Child(1).Scale(), d.Child(1).Scale());
@@ -1869,6 +1912,27 @@ BOOST_AUTO_TEST_CASE(CoverTreeCopyConstructor)
   BOOST_REQUIRE_EQUAL(c.Child(1).FurthestDescendantDistance(),
                       d.Child(1).FurthestDescendantDistance());
   BOOST_REQUIRE_EQUAL(c.Child(1).NumChildren(), d.Child(1).NumChildren());
+}
+
+BOOST_AUTO_TEST_CASE(CoverTreeMoveDatasetTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(3, 1000);
+  typedef StandardCoverTree<EuclideanDistance, EmptyStatistic, arma::mat>
+      TreeType;
+
+  TreeType t(std::move(dataset));
+
+  BOOST_REQUIRE_EQUAL(dataset.n_elem, 0);
+  BOOST_REQUIRE_EQUAL(t.Dataset().n_rows, 3);
+  BOOST_REQUIRE_EQUAL(t.Dataset().n_cols, 1000);
+
+  EuclideanDistance ed; // Test the other constructor.
+  dataset = arma::randu<arma::mat>(3, 1000);
+  TreeType t2(std::move(dataset), ed);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_elem, 0);
+  BOOST_REQUIRE_EQUAL(t2.Dataset().n_rows, 3);
+  BOOST_REQUIRE_EQUAL(t2.Dataset().n_cols, 1000);
 }
 
 /**

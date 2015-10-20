@@ -173,4 +173,25 @@ BOOST_AUTO_TEST_CASE(RidgeRegressionTestCase)
     BOOST_REQUIRE_SMALL(predictions(i) - responses(i), .05);
 }
 
+/**
+ * Test that a LinearRegression model trained in the constructor and trained in
+ * the Train() method give the same model.
+ */
+BOOST_AUTO_TEST_CASE(LinearRegressionTrainTest)
+{
+  // Random dataset.
+  arma::mat dataset = arma::randu<arma::mat>(5, 1000);
+  arma::vec responses = arma::randu<arma::vec>(1000);
+
+  LinearRegression lr(dataset, responses, 0.3);
+  LinearRegression lrTrain;
+  lrTrain.Lambda() = 0.3;
+
+  lrTrain.Train(dataset, responses);
+
+  BOOST_REQUIRE_EQUAL(lr.Parameters().n_elem, lrTrain.Parameters().n_elem);
+  for (size_t i = 0; i < lr.Parameters().n_elem; ++i)
+    BOOST_REQUIRE_CLOSE(lr.Parameters()[i], lrTrain.Parameters()[i], 1e-5);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

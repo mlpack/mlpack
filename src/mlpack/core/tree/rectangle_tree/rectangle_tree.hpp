@@ -18,16 +18,13 @@
 namespace mlpack {
 namespace tree /** Trees and tree-building procedures. */ {
 
-using bound::HRectBound;
-
 /**
  * A rectangle type tree tree, such as an R-tree or X-tree.  Once the
  * bound and type of dataset is defined, the tree will construct itself.  Call
  * the constructor with the dataset to build the tree on, and the entire tree
  * will be built.
  *
- * This tree does allow growth, so you can add and delete nodes
- * from it.
+ * This tree does allow growth, so you can add and delete nodes from it.
  *
  * @tparam MetricType This *must* be EuclideanDistance, but the template
  *     parameter is required to satisfy the TreeType API.
@@ -59,10 +56,17 @@ class RectangleTree
     int lastDimension;
     std::vector<bool> history;
 
-    SplitHistoryStruct(int dim) : history(dim)
+    SplitHistoryStruct(int dim) : lastDimension(0), history(dim)
     {
       for (int i = 0; i < dim; i++)
         history[i] = false;
+    }
+
+    template<typename Archive>
+    void Serialize(Archive& ar, const unsigned int /* version */)
+    {
+      ar & data::CreateNVP(lastDimension, "lastDimension");
+      ar & data::CreateNVP(history, "history");
     }
   } SplitHistoryStruct;
 
@@ -90,17 +94,18 @@ class RectangleTree
   //! The minimum leaf size.
   size_t minLeafSize;
   //! The bound object for this node.
-  HRectBound<metric::EuclideanDistance> bound;
+  bound::HRectBound<metric::EuclideanDistance> bound;
   //! Any extra data contained in the node.
   StatisticType stat;
   //! A struct to store the "split history" for X trees.
   SplitHistoryStruct splitHistory;
   //! The distance from the centroid of this node to the centroid of the parent.
   double parentDistance;
-  //! The discance to the furthest descendant, cached to speed things up.
-  double furthestDescendantDistance;
   //! The dataset.
-  const MatType& dataset;
+  const MatType* dataset;
+  //! Whether or not we are responsible for deleting the dataset.  This is
+  //! probably not aligned well...
+  bool ownsDataset;
   //! The mapping to the dataset
   std::vector<size_t> points;
   //! The local dataset
@@ -140,6 +145,27 @@ class RectangleTree
                 const size_t firstDataIndex = 0);
 
   /**
+   * Construct this as the root node of a rectangle tree type using the given
+   * dataset, and taking ownership of the given dataset.
+   *
+   * @param data Dataset from which to create the tree.
+   * @param maxLeafSize Maximum size of each leaf in the tree.
+   * @param minLeafSize Minimum size of each leaf in the tree.
+   * @param maxNumChildren The maximum number of child nodes a non-leaf node may
+   *      have.
+   * @param minNumChildren The minimum number of child nodes a non-leaf node may
+   *      have.
+   * @param firstDataIndex The index of the first data point.  UNUSED UNLESS WE
+   *      ADD SUPPORT FOR HAVING A "CENTERAL" DATA MATRIX.
+   */
+  RectangleTree(MatType&& data,
+                const size_t maxLeafSize = 20,
+                const size_t minLeafSize = 8,
+                const size_t maxNumChildren = 5,
+                const size_t minNumChildren = 2,
+                const size_t firstDataIndex = 0);
+
+  /**
    * Construct this as an empty node with the specified parent.  Copying the
    * parameters (maxLeafSize, minLeafSize, maxNumChildren, minNumChildren,
    * firstDataIndex) from the parent.
@@ -156,6 +182,14 @@ class RectangleTree
    * @param deepCopy If false, the children are not recursively copied.
    */
   RectangleTree(const RectangleTree& other, const bool deepCopy = true);
+
+  /**
+   * Construct the tree from a boost::serialization archive.
+   */
+  template<typename Archive>
+  RectangleTree(
+      Archive& ar,
+      const typename boost::enable_if<typename Archive::is_loading>::type* = 0);
 
   /**
    * Deletes this node, deallocating the memory for the children and calling
@@ -266,9 +300,9 @@ class RectangleTree
   RectangleTree* FindByBeginCount(size_t begin, size_t count);
 
   //! Return the bound object for this node.
-  const HRectBound<MetricType>& Bound() const { return bound; }
+  const bound::HRectBound<MetricType>& Bound() const { return bound; }
   //! Modify the bound object for this node.
-  HRectBound<MetricType>& Bound() { return bound; }
+  bound::HRectBound<MetricType>& Bound() { return bound; }
 
   //! Return the statistic object for this node.
   const StatisticType& Stat() const { return stat; }
@@ -309,9 +343,9 @@ class RectangleTree
   RectangleTree*& Parent() { return parent; }
 
   //! Get the dataset which the tree is built on.
-  const MatType& Dataset() const { return dataset; }
+  const MatType& Dataset() const { return *dataset; }
   //! Modify the dataset which the tree is built on.  Be careful!
-  MatType& Dataset() { return const_cast<MatType&>(dataset); }
+  MatType& Dataset() { return const_cast<MatType&>(*dataset); }
 
   //! Get the points vector for this node.
   const std::vector<size_t>& Points() const { return points; }
@@ -454,9 +488,9 @@ class RectangleTree
 
   //! Return the minimum and maximum distance to another point.
   template<typename VecType>
-  math::Range
-  RangeDistance(const VecType& point,
-                typename boost::enable_if<IsVector<VecType> >::type* = 0) const
+  math::Range RangeDistance(
+      const VecType& point,
+      typename boost::enable_if<IsVector<VecType> >::type* = 0) const
   {
     return bound.RangeDistance(point);
   }
@@ -492,7 +526,7 @@ class RectangleTree
    */
   RectangleTree(const size_t begin,
                 const size_t count,
-                HRectBound<MetricType> bound,
+                bound::HRectBound<MetricType> bound,
                 StatisticType stat,
                 const int maxLeafSize = 20) :
       begin(begin),
@@ -512,6 +546,18 @@ class RectangleTree
    * @param relevels Vector to track which levels have been inserted to.
    */
   void SplitNode(std::vector<bool>& relevels);
+
+ protected:
+  /**
+   * A default constructor.  This is meant to only be used with
+   * boost::serialization, which is allowed with the friend declaration below.
+   * This does not return a valid tree!  This method must be protected, so that
+   * the serialization shim can work with the default constructor.
+   */
+  RectangleTree();
+
+  //! Friend access is given for the default constructor.
+  friend class boost::serialization::access;
 
  public:
   /**
@@ -545,7 +591,7 @@ class RectangleTree
    *      shrinking.
    * @return true if the bound needed to be changed, false if it did not.
    */
-  bool ShrinkBoundForBound(const HRectBound<MetricType>& changedBound);
+  bool ShrinkBoundForBound(const bound::HRectBound<MetricType>& changedBound);
 
   /**
    * Make an exact copy of this node, pointers and everything.
@@ -556,6 +602,12 @@ class RectangleTree
    * Returns a string representation of this object.
    */
   std::string ToString() const;
+
+  /**
+   * Serialize the tree.
+   */
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
 };
 
 } // namespace tree
