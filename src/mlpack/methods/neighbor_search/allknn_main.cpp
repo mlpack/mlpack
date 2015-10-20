@@ -111,8 +111,8 @@ int main(int argc, char *argv[])
       Log::Warn << "--random_basis (-R) will be ignored because "
           << "--input_model_file is specified." << endl;
     if (CLI::HasParam("naive"))
-      Log::Warn << "--naive (-N) will be ignored because --input_model_file "
-          << "is specified" << endl;
+      Log::Warn << "--naive (-N) will be ignored because --input_model_file is "
+          << "specified." << endl;
   }
 
   // The user should give something to do...
