@@ -1093,4 +1093,26 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
   }
 }
 
+/**
+ * If we search twice with the same reference tree, the bounds need to be reset
+ * before the second search.  This test ensures that that happens, by making
+ * sure the number of scores and base cases are equivalent for each search.
+ */
+BOOST_AUTO_TEST_CASE(DoubleReferenceSearchTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(5, 500);
+  AllkNN knn(std::move(dataset));
+
+  arma::mat distances, secondDistances;
+  arma::Mat<size_t> neighbors, secondNeighbors;
+  knn.Search(3, neighbors, distances);
+  size_t baseCases = knn.BaseCases();
+  size_t scores = knn.Scores();
+
+  knn.Search(3, secondNeighbors, secondDistances);
+
+  BOOST_REQUIRE_EQUAL(knn.BaseCases(), baseCases);
+  BOOST_REQUIRE_EQUAL(knn.Scores(), scores);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
