@@ -2,7 +2,7 @@
 #define __MLPACK_METHODS_ANN_SPARSE_AUTOENCODER_FUNCTION_HPP
 
 #include <mlpack/core.hpp>
-#include <mlpack/methods/ann/activation_functions/lazy_logistic_function.hpp>
+#include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
 
 #include <type_traits>
@@ -29,7 +29,7 @@ namespace nn /** Artificial Neural Network. */ {
  *   using namespace mlpack;
  *   using namespace arma;
  *
- *   using FSigmoidLayer = ann::SigmoidLayer<ann::LazyLogisticFunction>;
+ *   using FSigmoidLayer = ann::SigmoidLayer<ann::LogisticFunction>;
  *
  *   using SAEF = ann::SparseAutoencoderFunction<FSigmoidLayer, FSigmoidLayer>;
  *   //If you want to compare the performance with original class, replace
@@ -71,7 +71,7 @@ namespace nn /** Artificial Neural Network. */ {
  * recalculate part of the calculation done in the function Evaluate\n
  * and vice versa.By default it is false_type
  */
-template<typename HiddenLayer = ann::SigmoidLayer<ann::LazyLogisticFunction>,
+template<typename HiddenLayer = ann::SigmoidLayer<ann::LogisticFunction>,
          typename OutputLayer = HiddenLayer,
          typename Greedy = std::false_type>
 class SparseAutoencoderFunction
