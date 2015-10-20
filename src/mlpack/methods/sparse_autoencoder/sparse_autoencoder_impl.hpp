@@ -17,11 +17,11 @@ template<typename HiddenLayer, typename OutputLayer,
          template<typename> class OptimizerType>
 SparseAutoencoder<HiddenLayer, OutputLayer, OptimizerType>::
 SparseAutoencoder(size_t visibleSize, size_t hiddenSize) :
-  visibleSize{visibleSize},
-  hiddenSize{hiddenSize},
-  lambda{0.0001},
-  beta{3},
-  rho{0.01}
+    visibleSize{visibleSize},
+    hiddenSize{hiddenSize},
+    lambda{0.0001},
+    beta{3},
+    rho{0.01}
 {
   using func = SparseAutoencoderFunction<HiddenLayer, OutputLayer>;
   func::InitializeWeights(parameters, visibleSize, hiddenSize);
@@ -32,12 +32,12 @@ template<typename HiddenLayer, typename OutputLayer,
 template<typename SparseAutoEncoderFunc>
 SparseAutoencoder<HiddenLayer, OutputLayer, OptimizerType>::
 SparseAutoencoder(OptimizerType<SparseAutoEncoderFunc> &optimizer) :
-  parameters(optimizer.Function().GetInitialPoint()),
-  visibleSize{optimizer.Function().VisibleSize()},
-  hiddenSize{optimizer.Function().HiddenSize()},
-  lambda{optimizer.Function().Lambda()},
-  beta{optimizer.Function().Beta()},
-  rho{optimizer.Function().Rho()}
+    parameters(optimizer.Function().GetInitialPoint()),
+    visibleSize{optimizer.Function().VisibleSize()},
+    hiddenSize{optimizer.Function().HiddenSize()},
+    lambda{optimizer.Function().Lambda()},
+    beta{optimizer.Function().Beta()},
+    rho{optimizer.Function().Rho()}
 {
   Train(optimizer);
 }
@@ -51,11 +51,11 @@ SparseAutoencoder(const arma::mat& data,
                   double lambda,
                   double beta,
                   double rho) :
-  visibleSize{visibleSize},
-  hiddenSize{hiddenSize},
-  lambda{lambda},
-  beta{beta},
-  rho{rho}
+    visibleSize{visibleSize},
+    hiddenSize{hiddenSize},
+    lambda{lambda},
+    beta{beta},
+    rho{rho}
 {
   SAEF encoderFunction(data, visibleSize, hiddenSize,
                        lambda, beta, rho);

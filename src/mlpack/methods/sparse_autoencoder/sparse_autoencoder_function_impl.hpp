@@ -17,12 +17,12 @@ SparseAutoencoderFunction(const arma::mat& data,
                           const double lambda,
                           const double beta,
                           const double rho) :
-  data(data),
-  visibleSize(visibleSize),
-  hiddenSize(hiddenSize),
-  lambda(lambda),
-  beta(beta),
-  rho(rho)
+    data(data),
+    visibleSize(visibleSize),
+    hiddenSize(hiddenSize),
+    lambda(lambda),
+    beta(beta),
+    rho(rho)
 {
   // Initialize the parameters to suitable values.
   initialPoint = InitializeWeights();
