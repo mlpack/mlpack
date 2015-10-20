@@ -7,6 +7,8 @@ set(SOURCES
   format.hpp
   load.hpp
   load_impl.hpp
+  load_arff.hpp
+  load_arff_impl.hpp
   normalize_labels.hpp
   normalize_labels_impl.hpp
   save.hpp
