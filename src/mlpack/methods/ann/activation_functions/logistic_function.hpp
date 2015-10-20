@@ -53,10 +53,7 @@ class LogisticFunction
   template<typename InputVecType, typename OutputVecType>
   static void fn(const InputVecType& x, OutputVecType& y)
   {
-    y = x;
-
-    for (size_t i = 0; i < x.n_elem; i++)
-      y(i) = fn(x(i));
+    y = (1.0 / (1 + arma::exp(-x)));
   }
 
   /**
