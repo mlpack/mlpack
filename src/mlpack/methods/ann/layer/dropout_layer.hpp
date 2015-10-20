@@ -59,7 +59,7 @@ class DropoutLayer
                const bool rescale = true) :
       ratio(ratio),
       rescale(rescale),	  
-	  scale(1.0 / (1.0 - ratio))
+      scale(1.0 / (1.0 - ratio))
   {
     // Nothing to do here.
   }
