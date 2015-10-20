@@ -11,7 +11,7 @@
 #include <mlpack/core/optimizers/lbfgs/lbfgs.hpp>
 
 #include <mlpack/methods/ann/layer/base_layer.hpp>
-#include <mlpack/methods/ann/activation_functions/lazy_logistic_function.hpp>
+#include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 #include <mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp>
 
 namespace mlpack {
@@ -70,7 +70,7 @@ namespace nn {
  *     mlpack optimizer can be used here.
  */
 template<
-  typename HiddenLayer = ann::SigmoidLayer<ann::LazyLogisticFunction>,
+  typename HiddenLayer = ann::SigmoidLayer<ann::LogisticFunction>,
   typename OutputLayer = HiddenLayer,
   template<typename> class OptimizerType = mlpack::optimization::L_BFGS
   >
@@ -250,9 +250,8 @@ class SparseAutoencoder
     ar & CreateNVP(rho, "rho");
   }
 
- private:
-  using LSigmoidLayer = ann::SigmoidLayer<ann::LazyLogisticFunction>;
-  using SAEF = SparseAutoencoderFunction<LSigmoidLayer, LSigmoidLayer>;
+ private:  
+  using SAEF = SparseAutoencoderFunction<HiddenLayer, OutputLayer>;
 
   //! Parameters after optimization.
   arma::mat parameters;
