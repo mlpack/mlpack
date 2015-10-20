@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_SUITE(AdaDeltaTest);
 BOOST_AUTO_TEST_CASE(SimpleAdaDeltaTestFunction)
 {
   const size_t hiddenLayerSize = 10;
-  const size_t maxEpochs = 100;
+  const size_t maxEpochs = 300;
 
   // Load the dataset.
   arma::mat dataset, labels, labelsIdx;
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(SimpleAdaDeltaTestFunction)
     labels(labelsIdx(0, i), i) = 1;
 
   // Construct a feed forward network using the specified parameters.
-  RandomInitialization randInit(0.5, 0.5);
+  RandomInitialization randInit(0.1, 0.1);
 
   LinearLayer<AdaDelta, RandomInitialization> inputLayer(dataset.n_rows,
       hiddenLayerSize, randInit);
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(SimpleAdaDeltaTestFunction)
   BOOST_REQUIRE_GE(classificationError, 0.09);
 
   // Train the feed forward network.
-  Trainer<decltype(net)> trainer(net, maxEpochs, 1, 0.01);
+  Trainer<decltype(net)> trainer(net, maxEpochs, 1, 0.01, false);
   trainer.Train(dataset, labels, dataset, labels);
 
   // Evaluate the feed forward network.

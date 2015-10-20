@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(SimpleAdamTestFunction)
   BOOST_REQUIRE_GE(classificationError, 0.09);
 
   // Train the feed forward network.
-  Trainer<decltype(net)> trainer(net, maxEpochs, 1, 0.01);
+  Trainer<decltype(net)> trainer(net, maxEpochs, 1, 0.01, false);
   trainer.Train(dataset, labels, dataset, labels);
 
   // Evaluate the feed forward network.
