@@ -1093,4 +1093,56 @@ BOOST_AUTO_TEST_CASE(CategoricalNontransposedCSVLoadTest)
   remove("test.csv");
 }
 
+/**
+ * A simple ARFF load test.  Two attributes, both numeric.
+ */
+BOOST_AUTO_TEST_CASE(SimpleARFFTest)
+{
+  fstream f;
+  f.open("test.arff", fstream::out);
+  f << "@relation test" << endl;
+  f << endl;
+  f << "@attribute one NUMERIC" << endl;
+  f << "@attribute two NUMERIC" << endl;
+  f << endl;
+  f << "@data" << endl;
+  f << "1, 2" << endl;
+  f << "3, 4" << endl;
+  f << "5, 6" << endl;
+  f << "7, 8" << endl;
+  f.close();
+
+  arma::mat dataset;
+  DatasetInfo info;
+  data::Load("test.arff", dataset, info);
+
+  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 2);
+  BOOST_REQUIRE(info.Type(0) == Datatype::numeric);
+  BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, 2);
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, 4);
+
+  for (size_t i = 0; i < 8; ++i)
+    BOOST_REQUIRE_CLOSE(dataset[i], double(i + 1), 1e-5);
+}
+
+/**
+ * Another simple ARFF load test.  Three attributes, two categorical, one
+ * numeric.
+ */
+BOOST_AUTO_TEST_CASE(SimpleARFFCategoricalTest)
+{
+
+}
+
+/**
+ * A harder ARFF test, where we have each type of supported value, and some
+ * random whitespace too.
+ */
+BOOST_AUTO_TEST_CASE(HarderARFFTest)
+{
+
+}
+
 BOOST_AUTO_TEST_SUITE_END();
