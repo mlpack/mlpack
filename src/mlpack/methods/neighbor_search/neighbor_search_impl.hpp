@@ -85,7 +85,8 @@ NeighborSearch(const MatType& referenceSetIn,
     singleMode(!naive && singleMode), // No single mode if naive.
     metric(metric),
     baseCases(0),
-    scores(0)
+    scores(0),
+    treeNeedsReset(false)
 {
   // Nothing to do.
 }
@@ -114,7 +115,8 @@ NeighborSearch(MatType&& referenceSetIn,
     singleMode(!naive && singleMode),
     metric(metric),
     baseCases(0),
-    scores(0)
+    scores(0),
+    treeNeedsReset(false)
 {
   // Nothing to do.
 }
@@ -139,7 +141,8 @@ NeighborSearch(Tree* referenceTree,
     singleMode(singleMode),
     metric(metric),
     baseCases(0),
-    scores(0)
+    scores(0),
+    treeNeedsReset(false)
 {
   // Nothing else to initialize.
 }
@@ -164,7 +167,8 @@ NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
     singleMode(singleMode),
     metric(metric),
     baseCases(0),
-    scores(0)
+    scores(0),
+    treeNeedsReset(false)
 {
   // Build the tree on the empty dataset, if necessary.
   if (!naive)
@@ -619,6 +623,29 @@ Search(const size_t k,
   }
   else
   {
+    // The dual-tree monochromatic search case may require resetting the bounds
+    // in the tree.
+    if (treeNeedsReset)
+    {
+      std::stack<Tree*> nodes;
+      nodes.push(referenceTree);
+      while (!nodes.empty())
+      {
+        Tree* node = nodes.top();
+        nodes.pop();
+
+        // Reset bounds of this node.
+        node->Stat().FirstBound() = SortPolicy::WorstDistance();
+        node->Stat().SecondBound() = SortPolicy::WorstDistance();
+        node->Stat().Bound() = SortPolicy::WorstDistance();
+        node->Stat().LastDistance() = 0.0;
+
+        // Then add the children.
+        for (size_t i = 0; i < node->NumChildren(); ++i)
+          nodes.push(&node->Child(i));
+      }
+    }
+
     // Create the traverser.
     TraversalType<RuleType> traverser(rules);
 
@@ -629,6 +656,9 @@ Search(const size_t k,
 
     Log::Info << rules.Scores() << " node combinations were scored.\n";
     Log::Info << rules.BaseCases() << " base cases were calculated.\n";
+
+    // Next time we perform this search, we'll need to reset the tree.
+    treeNeedsReset = true;
   }
 
   Timer::Stop("computing_neighbors");
@@ -697,6 +727,7 @@ void NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
   // Serialize preferences for search.
   ar & CreateNVP(naive, "naive");
   ar & CreateNVP(singleMode, "singleMode");
+  ar & CreateNVP(treeNeedsReset, "treeNeedsReset");
 
   // If we are doing naive search, we serialize the dataset.  Otherwise we
   // serialize the tree.
@@ -751,6 +782,13 @@ void NeighborSearch<SortPolicy, MetricType, MatType, TreeType, TraversalType>::
       metric = referenceTree->Metric(); // Get the metric from the tree.
       setOwner = false;
     }
+  }
+
+  // Reset base cases and scores.
+  if (Archive::is_loading::value)
+  {
+    baseCases = 0;
+    scores = 0;
   }
 }
 

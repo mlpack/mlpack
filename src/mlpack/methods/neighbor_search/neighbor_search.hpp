@@ -301,6 +301,10 @@ class NeighborSearch
   //! The total number of scores (applicable for non-naive search).
   size_t scores;
 
+  //! If this is true, the reference tree bounds need to be reset on a call to
+  //! Search() without a query set.
+  bool treeNeedsReset;
+
   //! The NSModel class should have access to internal members.
   friend class NSModel<SortPolicy>;
 }; // class NeighborSearch
