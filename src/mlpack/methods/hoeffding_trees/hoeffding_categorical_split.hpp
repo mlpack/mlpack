@@ -52,6 +52,8 @@ class HoeffdingCategoricalSplit
   size_t MajorityClass() const;
   double MajorityProbability() const;
 
+  size_t NumChildren() const { return sufficientStatistics.n_cols; }
+
   //! Serialize the categorical split.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */)

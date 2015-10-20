@@ -180,16 +180,18 @@ size_t HoeffdingSplit<
   {
     // Split!
     splitDimension = largestIndex;
-    if (datasetInfo->Type(largestIndex) == data::Datatype::categorical)
+    const size_t type = dimensionMappings->at(largestIndex).first;
+    const size_t index = dimensionMappings->at(largestIndex).second;
+    if (type == data::Datatype::categorical)
     {
       // I don't know if this should be here.
-      majorityClass = categoricalSplits[largestIndex].MajorityClass();
-      return datasetInfo->NumMappings(largestIndex);
+      majorityClass = categoricalSplits[index].MajorityClass();
+      return categoricalSplits[index].NumChildren();
     }
     else
     {
-      majorityClass = numericSplits[largestIndex].MajorityClass();
-      return numericSplits[largestIndex].NumChildren();
+      majorityClass = numericSplits[index].MajorityClass();
+      return numericSplits[index].NumChildren();
     }
   }
   else
