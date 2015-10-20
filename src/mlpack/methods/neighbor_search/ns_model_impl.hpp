@@ -452,7 +452,7 @@ void NSModel<SortPolicy>::Search(const size_t k,
 
 //! Get the name of the tree type.
 template<typename SortPolicy>
-void NSModel<SortPolicy>::TreeName() const
+std::string NSModel<SortPolicy>::TreeName() const
 {
   switch (treeType)
   {
