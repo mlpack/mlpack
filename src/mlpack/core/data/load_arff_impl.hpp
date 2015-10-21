@@ -42,8 +42,8 @@ void LoadARFF(const std::string& filename,
     if (line[0] == '@')
     {
       typedef boost::tokenizer<boost::escaped_list_separator<char>> Tokenizer;
-      std::string spaces = " \t";
-      boost::escaped_list_separator<char> sep("\\", spaces, "\"{");
+      std::string separators = " \t\%"; // Split on comments too.
+      boost::escaped_list_separator<char> sep("\\", separators, "\"{");
       Tokenizer tok(line, sep);
       Tokenizer::iterator it = tok.begin();
 
