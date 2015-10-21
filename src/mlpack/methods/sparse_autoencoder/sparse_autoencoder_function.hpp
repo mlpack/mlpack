@@ -71,7 +71,7 @@ namespace nn /** Artificial Neural Network. */ {
  * recalculate part of the calculation done in the function Evaluate\n
  * and vice versa.By default it is false_type
  */
-template<typename HiddenLayer = ann::SigmoidLayer<ann::LogisticFunction>,
+template<typename HiddenLayer = ann::SigmoidLayer<nn::LogisticFunction>,
          typename OutputLayer = HiddenLayer,
          typename Greedy = std::false_type>
 class SparseAutoencoderFunction
@@ -93,7 +93,7 @@ class SparseAutoencoderFunction
                             const size_t hiddenSize,
                             const double lambda = 0.0001,
                             const double beta = 3,
-                            const double rho = 0.01);
+                            const double rho = 0.01); 
 
   //! Initializes the parameters of the model to suitable values.
   const arma::mat& InitializeWeights();
