@@ -96,7 +96,7 @@ using SigmoidLayer = BaseLayer<
  * RELU Layer using the rectifier activation function.
  */
 template <
-    class ActivationFunction = RectifierLayer,
+    class ActivationFunction = RectifierFunction,
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
