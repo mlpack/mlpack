@@ -1125,6 +1125,8 @@ BOOST_AUTO_TEST_CASE(SimpleARFFTest)
 
   for (size_t i = 0; i < 8; ++i)
     BOOST_REQUIRE_CLOSE(dataset[i], double(i + 1), 1e-5);
+
+  remove("test.arff");
 }
 
 /**
@@ -1133,7 +1135,54 @@ BOOST_AUTO_TEST_CASE(SimpleARFFTest)
  */
 BOOST_AUTO_TEST_CASE(SimpleARFFCategoricalTest)
 {
+  fstream f;
+  f.open("test.arff", fstream::out);
+  f << "@relation test" << endl;
+  f << endl;
+  f << "@attribute one STRING" << endl;
+  f << "@attribute two REAL" << endl;
+  f << endl;
+  f << "@attribute three STRING" << endl;
+  f << endl;
+  f << "\% a comment line " << endl;
+  f << endl;
+  f << "@data" << endl;
+  f << "hello, 1, moo" << endl;
+  f << "cheese, 2.34, goodbye" << endl;
+  f << "seven, 1.03e+5, moo" << endl;
+  f << "hello, -1.3, goodbye" << endl;
+  f.close();
 
+  arma::mat dataset;
+  DatasetInfo info;
+  data::Load("test.arff", dataset, info);
+
+  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 3);
+
+  BOOST_REQUIRE(info.Type(0) == Datatype::categorical);
+  BOOST_REQUIRE_EQUAL(info.NumMappings(0), 3);
+  BOOST_REQUIRE(info.Type(1) == Datatype::numeric);
+  BOOST_REQUIRE(info.Type(2) == Datatype::categorical);
+  BOOST_REQUIRE_EQUAL(info.NumMappings(2), 2);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, 3);
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, 4);
+
+  // The first dimension must all be different (except the ones that are the
+  // same).
+  BOOST_REQUIRE_EQUAL(dataset(0, 0), dataset(0, 3));
+  BOOST_REQUIRE_NE(dataset(0, 0), dataset(0, 1));
+  BOOST_REQUIRE_NE(dataset(0, 1), dataset(0, 2));
+  BOOST_REQUIRE_NE(dataset(0, 2), dataset(0, 0));
+
+  BOOST_REQUIRE_CLOSE(dataset(1, 0), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(1, 1), 2.34, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(1, 2), 1.03e5, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(1, 3), -1.3, 1e-5);
+
+  BOOST_REQUIRE_EQUAL(dataset(2, 0), dataset(2, 2));
+  BOOST_REQUIRE_EQUAL(dataset(2, 1), dataset(2, 3));
+  BOOST_REQUIRE_NE(dataset(2, 0), dataset(2, 1));
 }
 
 /**
