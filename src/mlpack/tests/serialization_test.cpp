@@ -850,7 +850,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitTest)
   data::DatasetInfo info;
   info.MapString("0", 2); // Dimension 1 is categorical.
   info.MapString("1", 2);
-  HoeffdingSplit<> split(5, 2, info, 0.99, 15000);
+  HoeffdingSplit<> split(5, 2, info, 0.99, 15000, 1);
 
   // Train for 2 samples.
   split.Train(arma::vec("0.3 0.4 1 0.6 0.7"), 0);
@@ -858,7 +858,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitTest)
 
   data::DatasetInfo wrongInfo;
   wrongInfo.MapString("1", 1);
-  HoeffdingSplit<> xmlSplit(3, 7, wrongInfo, 0.1, 10);
+  HoeffdingSplit<> xmlSplit(3, 7, wrongInfo, 0.1, 10, 1);
 
   // Force the binarySplit to split.
   data::DatasetInfo binaryInfo;
@@ -866,7 +866,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitTest)
   binaryInfo.MapString("cat1", 0);
   binaryInfo.MapString("cat0", 1);
 
-  HoeffdingSplit<> binarySplit(2, 2, info, 0.95, 5000);
+  HoeffdingSplit<> binarySplit(2, 2, info, 0.95, 5000, 1);
 
   // Feed samples from each class.
   for (size_t i = 0; i < 500; ++i)
@@ -875,7 +875,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitTest)
     binarySplit.Train(arma::Col<size_t>("1 0"), 1);
   }
 
-  HoeffdingSplit<> textSplit(10, 11, wrongInfo, 0.75, 1000);
+  HoeffdingSplit<> textSplit(10, 11, wrongInfo, 0.75, 1000, 1);
 
   SerializeObjectAll(split, xmlSplit, textSplit, binarySplit);
 
@@ -904,7 +904,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitAfterSplitTest)
   info.MapString("cat1", 0);
   info.MapString("cat0", 1);
 
-  HoeffdingSplit<> split(2, 2, info, 0.95, 5000);
+  HoeffdingSplit<> split(2, 2, info, 0.95, 5000, 1);
 
   // Feed samples from each class.
   for (size_t i = 0; i < 500; ++i)
@@ -916,18 +916,18 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitAfterSplitTest)
 
   data::DatasetInfo wrongInfo;
   wrongInfo.MapString("1", 1);
-  HoeffdingSplit<> xmlSplit(3, 7, wrongInfo, 0.1, 10);
+  HoeffdingSplit<> xmlSplit(3, 7, wrongInfo, 0.1, 10, 1);
 
   data::DatasetInfo binaryInfo;
   binaryInfo.MapString("0", 2); // Dimension 1 is categorical.
   binaryInfo.MapString("1", 2);
-  HoeffdingSplit<> binarySplit(5, 2, binaryInfo, 0.99, 15000);
+  HoeffdingSplit<> binarySplit(5, 2, binaryInfo, 0.99, 15000, 1);
 
   // Train for 2 samples.
   binarySplit.Train(arma::vec("0.3 0.4 1 0.6 0.7"), 0);
   binarySplit.Train(arma::vec("-0.3 0.0 0 0.7 0.8"), 1);
 
-  HoeffdingSplit<> textSplit(10, 11, wrongInfo, 0.75, 1000);
+  HoeffdingSplit<> textSplit(10, 11, wrongInfo, 0.75, 1000, 1);
 
   SerializeObjectAll(split, xmlSplit, textSplit, binarySplit);
 

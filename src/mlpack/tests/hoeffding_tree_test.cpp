@@ -240,7 +240,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitNoSplitTest)
   info.MapString("cat1", 2);
   info.MapString("cat2", 2);
 
-  HoeffdingSplit<> split(3, 2, info, 0.95, 5000);
+  HoeffdingSplit<> split(3, 2, info, 0.95, 5000, 1);
 
   // Feed it samples.
   for (size_t i = 0; i < 1000; ++i)
@@ -271,7 +271,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitEasySplitTest)
   info.MapString("cat1", 0);
   info.MapString("cat0", 1);
 
-  HoeffdingSplit<> split(2, 2, info, 0.95, 5000);
+  HoeffdingSplit<> split(2, 2, info, 0.95, 5000, 1);
 
   // Feed samples from each class.
   for (size_t i = 0; i < 500; ++i)
@@ -299,7 +299,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitProbability1SplitTest)
   info.MapString("cat1", 0);
   info.MapString("cat0", 1);
 
-  HoeffdingSplit<> split(2, 2, info, 1.0, 12000);
+  HoeffdingSplit<> split(2, 2, info, 1.0, 12000, 1);
 
   // Feed samples from each class.
   for (size_t i = 0; i < 5000; ++i)
@@ -327,7 +327,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitAlmostPerfectSplit)
   info.MapString("cat0", 1);
   info.MapString("cat1", 1);
 
-  HoeffdingSplit<> split(2, 2, info, 0.95, 5000);
+  HoeffdingSplit<> split(2, 2, info, 0.95, 5000, 1);
 
   // Feed samples.
   for (size_t i = 0; i < 500; ++i)
@@ -362,7 +362,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitEqualSplitTest)
   info.MapString("cat0", 1);
   info.MapString("cat1", 1);
 
-  HoeffdingSplit<> split(2, 2, info, 0.95, 5000);
+  HoeffdingSplit<> split(2, 2, info, 0.95, 5000, 1);
 
   // Feed samples.
   for (size_t i = 0; i < 500; ++i)
@@ -420,10 +420,10 @@ BOOST_AUTO_TEST_CASE(StreamingDecisionTreeSimpleDatasetTest)
   // Now train two streaming decision trees; one on the whole dataset, and one
   // on streaming data.
   StreamingDecisionTree<HoeffdingSplit<GiniImpurity,
-      HoeffdingNumericSplit<GiniImpurity, size_t>>, arma::Mat<size_t>>
+      HoeffdingDoubleNumericSplit>, arma::Mat<size_t>>
       batchTree(dataset, info, labels, 3);
   StreamingDecisionTree<HoeffdingSplit<GiniImpurity,
-      HoeffdingNumericSplit<GiniImpurity, size_t>>, arma::Mat<size_t>>
+      HoeffdingDoubleNumericSplit>, arma::Mat<size_t>>
       streamTree(info, 3, 3);
   for (size_t i = 0; i < 9000; ++i)
     streamTree.Train(dataset.col(i), labels[i]);
@@ -623,11 +623,10 @@ BOOST_AUTO_TEST_CASE(NumericHoeffdingTreeTest)
   // Now train two streaming decision trees; one on the whole dataset, and one
   // on streaming data.
   StreamingDecisionTree<HoeffdingSplit<GiniImpurity,
-      HoeffdingNumericSplit<GiniImpurity>>, arma::mat>
-      batchTree(dataset, info, labels, 3);
+      HoeffdingDoubleNumericSplit>, arma::mat> batchTree(dataset, info, labels,
+      3);
   StreamingDecisionTree<HoeffdingSplit<GiniImpurity,
-      HoeffdingNumericSplit<GiniImpurity>>, arma::mat>
-      streamTree(info, 3, 3);
+      HoeffdingDoubleNumericSplit>, arma::mat> streamTree(info, 3, 3);
   for (size_t i = 0; i < 9000; ++i)
     streamTree.Train(dataset.col(i), labels[i]);
 
@@ -694,12 +693,10 @@ BOOST_AUTO_TEST_CASE(BinaryNumericHoeffdingTreeTest)
 
   // Now train two streaming decision trees; one on the whole dataset, and one
   // on streaming data.
-  StreamingDecisionTree<HoeffdingSplit<GiniImpurity,
-      BinaryNumericSplit<GiniImpurity>>, arma::mat>
-      batchTree(dataset, info, labels, 3);
-  StreamingDecisionTree<HoeffdingSplit<GiniImpurity,
-      BinaryNumericSplit<GiniImpurity>>, arma::mat>
-      streamTree(info, 4, 3);
+  StreamingDecisionTree<HoeffdingSplit<GiniImpurity, BinaryDoubleNumericSplit>,
+      arma::mat> batchTree(dataset, info, labels, 3);
+  StreamingDecisionTree<HoeffdingSplit<GiniImpurity, BinaryDoubleNumericSplit>,
+      arma::mat> streamTree(info, 4, 3);
   for (size_t i = 0; i < 9000; ++i)
     streamTree.Train(dataset.col(i), labels[i]);
 
