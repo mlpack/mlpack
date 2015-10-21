@@ -1183,6 +1183,8 @@ BOOST_AUTO_TEST_CASE(SimpleARFFCategoricalTest)
   BOOST_REQUIRE_EQUAL(dataset(2, 0), dataset(2, 2));
   BOOST_REQUIRE_EQUAL(dataset(2, 1), dataset(2, 3));
   BOOST_REQUIRE_NE(dataset(2, 0), dataset(2, 1));
+
+  remove("test.arff");
 }
 
 /**
@@ -1191,7 +1193,64 @@ BOOST_AUTO_TEST_CASE(SimpleARFFCategoricalTest)
  */
 BOOST_AUTO_TEST_CASE(HarderARFFTest)
 {
+  fstream f;
+  f.open("test.arff", fstream::out);
+  f << "@relation    \t test" << endl;
+  f << endl;
+  f << endl;
+  f << "@attribute @@@@flfl numeric" << endl;
+  f << endl;
+  f << "\% comment" << endl;
+  f << "@attribute \"hello world\" string" << endl;
+  f << "@attribute 12345 integer" << endl;
+  f << "@attribute real real" << endl;
+  f << "@attribute \"blah blah blah     \t \" numeric \% comment" << endl;
+  f << "\% comment" << endl;
+  f << "@data" << endl;
+  f << "1, one, 3, 4.5, 6" << endl;
+  f << "2, two, 4, 5.5, 7 \% comment" << endl;
+  f << "3, \"three five, six\", 5, 6.5, 8" << endl;
+  f.close();
 
+  arma::mat dataset;
+  DatasetInfo info;
+  data::Load("test.arff", dataset, info);
+
+  BOOST_REQUIRE_EQUAL(info.Dimensionality(), 5);
+
+  BOOST_REQUIRE(info.Type(0) == Datatype::numeric);
+
+  BOOST_REQUIRE(info.Type(1) == Datatype::categorical);
+  BOOST_REQUIRE_EQUAL(info.NumMappings(1), 3);
+
+  BOOST_REQUIRE(info.Type(2) == Datatype::numeric);
+  BOOST_REQUIRE(info.Type(3) == Datatype::numeric);
+  BOOST_REQUIRE(info.Type(4) == Datatype::numeric);
+
+  BOOST_REQUIRE_EQUAL(dataset.n_rows, 5);
+  BOOST_REQUIRE_EQUAL(dataset.n_cols, 3);
+
+  BOOST_REQUIRE_CLOSE(dataset(0, 0), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(0, 1), 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(0, 2), 3.0, 1e-5);
+
+  BOOST_REQUIRE_NE(dataset(1, 0), dataset(1, 1));
+  BOOST_REQUIRE_NE(dataset(1, 1), dataset(1, 2));
+  BOOST_REQUIRE_NE(dataset(1, 0), dataset(1, 2));
+
+  BOOST_REQUIRE_CLOSE(dataset(2, 0), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(2, 1), 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(2, 2), 5.0, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(dataset(3, 0), 4.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(3, 1), 5.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(3, 2), 6.5, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(dataset(4, 0), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(4, 1), 7.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(dataset(4, 2), 8.0, 1e-5);
+
+  remove("test.arff");
 }
 
 BOOST_AUTO_TEST_SUITE_END();
