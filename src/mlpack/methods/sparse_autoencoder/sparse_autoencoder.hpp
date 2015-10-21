@@ -149,7 +149,7 @@ class SparseAutoencoder
    * @param data Matrix of the provided data.
    * @param features The hidden layer representation of the provided data.
    */
-  void GetNewFeatures(arma::mat& data, arma::mat& features);
+  void GetNewFeatures(const arma::mat& data, arma::mat& features) const;
 
   /**
    * Returns the elementwise sigmoid of the passed matrix, where the sigmoid

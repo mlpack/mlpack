@@ -16,7 +16,7 @@ namespace nn {
 template<typename HiddenLayer, typename OutputLayer,
          template<typename> class OptimizerType>
 SparseAutoencoder<HiddenLayer, OutputLayer, OptimizerType>::
-SparseAutoencoder(size_t visibleSize, size_t hiddenSize) :
+SparseAutoencoder(size_t visibleSize, size_t hiddenSize) :    
     visibleSize{visibleSize},
     hiddenSize{hiddenSize},
     lambda{0.0001},
@@ -95,15 +95,18 @@ Train(OptimizerType<SparseAutoEncoderFunc>& optimizer)
 template<typename HiddenLayer, typename OutputLayer,
          template<typename> class OptimizerType>
 void SparseAutoencoder<HiddenLayer, OutputLayer, OptimizerType>::
-GetNewFeatures(arma::mat& data,
-               arma::mat& features)
+GetNewFeatures(const arma::mat& data,
+               arma::mat& features) const
 {
   const size_t l1 = hiddenSize;
   const size_t l2 = visibleSize;
 
-  Sigmoid(parameters.submat(0, 0, l1 - 1, l2 - 1) * data +
-          arma::repmat(parameters.submat(0, l2, l1 - 1, l2), 1, data.n_cols),
-          features);
+  using ActivateFunction = typename HiddenLayer::ActivateFunction;
+
+  arma::mat const input = parameters.submat(0, 0, l1 - 1, l2 - 1) * data +
+                          arma::repmat(parameters.submat(0, l2, l1 - 1, l2),
+                                       1, data.n_cols);
+  ActivateFunction::fn(input, features);
 }
 
 }; // namespace nn
