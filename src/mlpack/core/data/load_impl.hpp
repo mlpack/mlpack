@@ -23,6 +23,8 @@
 
 #include "serialization_shim.hpp"
 
+#include "load_arff.hpp"
+
 namespace mlpack {
 namespace data {
 
@@ -430,6 +432,24 @@ bool Load(const std::string& filename,
       }
 
       ++row;
+    }
+  }
+  else if (extension == "arff")
+  {
+    try
+    {
+      LoadARFF(filename, matrix, info);
+
+      // We transpose by default.  So, un-transpose if necessary...
+      if (!transpose)
+        inplace_transpose(matrix);
+    }
+    catch (std::exception& e)
+    {
+      if (fatal)
+        Log::Fatal << e.what() << std::endl;
+      else
+        Log::Warn << e.what() << std::endl;
     }
   }
   else
