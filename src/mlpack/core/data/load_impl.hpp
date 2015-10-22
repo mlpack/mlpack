@@ -15,6 +15,7 @@
 #include <mlpack/core/util/timers.hpp>
 
 #include <boost/serialization/serialization.hpp>
+#include <boost/algorithm/string/trim.hpp>
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
@@ -91,8 +92,27 @@ bool Load(const std::string& filename,
     else if (loadType == arma::raw_ascii) // .csv file can be tsv.
     {
       if (extension == "csv")
-        Log::Warn << "'" << filename << "' is not a standard csv file."
-            << std::endl;
+      {
+        // We should issue a warning, but we don't want to issue the warning if
+        // there is only one column in the CSV (since there will be no commas
+        // anyway, and it will be detected as arma::raw_ascii).
+        const std::streampos pos = stream.tellg();
+        std::string line;
+        std::getline(stream, line, '\n');
+        boost::trim(line);
+
+        // Reset stream position.
+        stream.seekg(pos);
+
+        // If there are no spaces or whitespace in the line, then we shouldn't
+        // print the warning.
+        if ((line.find(' ') != std::string::npos) ||
+            (line.find('\t') != std::string::npos))
+        {
+          Log::Warn << "'" << filename << "' is not a standard csv file."
+              << std::endl;
+        }
+      }
       stringType = "raw ASCII formatted data";
     }
     else
