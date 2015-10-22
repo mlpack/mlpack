@@ -219,11 +219,14 @@ class RangeSearch
   std::vector<size_t> oldFromNewReferences;
   //! Reference tree.
   Tree* referenceTree;
-  //! Reference set (data should be accessed using this).
-  const MatType& referenceSet;
+  //! Reference set (data should be accessed using this).  In some situations we
+  //! may be the owner of this.
+  const MatType* referenceSet;
 
   //! If true, this object is responsible for deleting the trees.
   bool treeOwner;
+  //! If true, we own the reference set.
+  bool setOwner;
 
   //! If true, O(n^2) naive computation is used.
   bool naive;
