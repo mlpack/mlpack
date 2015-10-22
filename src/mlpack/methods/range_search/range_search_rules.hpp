@@ -101,6 +101,11 @@ class RangeSearchRules
   const TraversalInfoType& TraversalInfo() const { return traversalInfo; }
   TraversalInfoType& TraversalInfo() { return traversalInfo; }
 
+  //! Get the number of base cases.
+  size_t BaseCases() const { return baseCases; }
+  //! Get the number of scores (that is, calls to RangeDistance()).
+  size_t Scores() const { return scores; }
+
  private:
   //! The reference set.
   const arma::mat& referenceSet;
@@ -135,10 +140,15 @@ class RangeSearchRules
                  TreeType& referenceNode);
 
   TraversalInfoType traversalInfo;
+
+  //! The number of base cases.
+  size_t baseCases;
+  //! THe number of scores.
+  size_t scores;
 };
 
-}; // namespace range
-}; // namespace mlpack
+} // namespace range
+} // namespace mlpack
 
 // Include implementation.
 #include "range_search_rules_impl.hpp"

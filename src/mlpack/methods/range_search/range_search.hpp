@@ -199,6 +199,15 @@ class RangeSearch
               std::vector<std::vector<size_t>>& neighbors,
               std::vector<std::vector<double>>& distances);
 
+  //! Get the number of base cases during the last search.
+  size_t BaseCases() const { return baseCases; }
+  //! Get the number of scores during the last search.
+  size_t Scores() const { return scores; }
+
+  //! Serialize the model.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int version);
+
   //! Returns a string representation of this object.
   std::string ToString() const;
 
@@ -223,6 +232,11 @@ class RangeSearch
 
   //! Instantiated distance metric.
   MetricType metric;
+
+  //! The total number of base cases during the last search.
+  size_t baseCases;
+  //! The total number of scores during the last search.
+  size_t scores;
 };
 
 } // namespace range

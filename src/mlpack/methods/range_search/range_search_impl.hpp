@@ -55,7 +55,9 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
     treeOwner(!naive), // If in naive mode, we are not building any trees.
     naive(naive),
     singleMode(!naive && singleMode), // Naive overrides single mode.
-    metric(metric)
+    metric(metric),
+    baseCases(0),
+    scores(0)
 {
   // Nothing to do.
 }
@@ -136,6 +138,10 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
   // Create the helper object for the traversal.
   typedef RangeSearchRules<MetricType, Tree> RuleType;
 
+  // Reset counts.
+  baseCases = 0;
+  scores = 0;
+
   if (naive)
   {
     RuleType rules(referenceSet, querySet, range, *neighborPtr, *distancePtr,
@@ -145,6 +151,8 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     for (size_t i = 0; i < querySet.n_cols; ++i)
       for (size_t j = 0; j < referenceSet.n_cols; ++j)
         rules.BaseCase(i, j);
+
+    baseCases += (querySet.n_cols * referenceSet->n_cols);
   }
   else if (singleMode)
   {
@@ -156,6 +164,9 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     // Now have it traverse for each point.
     for (size_t i = 0; i < querySet.n_cols; ++i)
       traverser.Traverse(i, *referenceTree);
+
+    baseCases += rules.BaseCases();
+    scores += rules.Scores();
   }
   else // Dual-tree recursion.
   {
@@ -173,6 +184,9 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
 
     traverser.Traverse(*queryTree, *referenceTree);
+
+    baseCases += rules.BaseCases();
+    scores += rules.Scores();
 
     // Clean up tree memory.
     delete queryTree;
@@ -292,6 +306,9 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
 
   Timer::Stop("range_search/computing_neighbors");
 
+  baseCases = rules.BaseCases();
+  scores = rules.Scores();
+
   // Do we need to map indices?
   if (treeOwner && tree::TreeTraits<Tree>::RearrangesDataset)
   {
@@ -360,6 +377,9 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     // Now have it traverse for each point.
     for (size_t i = 0; i < referenceSet.n_cols; ++i)
       traverser.Traverse(i, *referenceTree);
+
+    baseCases = rules.BaseCases();
+    scores = rules.Scores();
   }
   else // Dual-tree recursion.
   {
@@ -367,6 +387,9 @@ void RangeSearch<MetricType, MatType, TreeType>::Search(
     typename Tree::template DualTreeTraverser<RuleType> traverser(rules);
 
     traverser.Traverse(*referenceTree, *referenceTree);
+
+    baseCases = rules.BaseCases();
+    scores = rules.Scores();
   }
 
   Timer::Stop("range_search/computing_neighbors");
