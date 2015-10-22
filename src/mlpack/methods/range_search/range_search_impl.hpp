@@ -76,7 +76,9 @@ RangeSearch<MetricType, MatType, TreeType>::RangeSearch(
     treeOwner(false),
     naive(false),
     singleMode(singleMode),
-    metric(metric)
+    metric(metric),
+    baseCases(0),
+    scores(0)
 {
   // Nothing else to initialize.
 }
