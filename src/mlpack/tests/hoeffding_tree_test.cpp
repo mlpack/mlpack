@@ -729,4 +729,42 @@ BOOST_AUTO_TEST_CASE(BinaryNumericHoeffdingTreeTest)
   BOOST_REQUIRE_GT(batchCorrect, 8550);
 }
 
+/**
+ * Test majority probabilities.
+ */
+BOOST_AUTO_TEST_CASE(MajorityProbabilityTest)
+{
+  data::DatasetInfo info(1);
+  StreamingDecisionTree<HoeffdingSplit<>> tree(info, 1, 3);
+
+  // Feed the tree a few samples.
+  tree.Train(arma::vec("1"), 0);
+  tree.Train(arma::vec("2"), 0);
+  tree.Train(arma::vec("3"), 0);
+
+  size_t prediction;
+  double probability;
+  tree.Classify(arma::vec("1"), prediction, probability);
+
+  BOOST_REQUIRE_EQUAL(prediction, 0);
+  BOOST_REQUIRE_CLOSE(probability, 1.0, 1e-5);
+
+  // Make it impure.
+  tree.Train(arma::vec("4"), 1);
+  tree.Classify(arma::vec("3"), prediction, probability);
+
+  BOOST_REQUIRE_EQUAL(prediction, 0);
+  BOOST_REQUIRE_CLOSE(probability, 0.75, 1e-5);
+
+  // Flip the majority class.
+  tree.Train(arma::vec("4"), 1);
+  tree.Train(arma::vec("4"), 1);
+  tree.Train(arma::vec("4"), 1);
+  tree.Train(arma::vec("4"), 1);
+  tree.Classify(arma::vec("3"), prediction, probability);
+
+  BOOST_REQUIRE_EQUAL(prediction, 1);
+  BOOST_REQUIRE_CLOSE(probability, 0.625, 1e-5);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
