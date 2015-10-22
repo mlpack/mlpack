@@ -6,8 +6,12 @@
  */
 #include <mlpack/core.hpp>
 
-#include <mlpack/methods/ann/init_rules/random_init.hpp>
+#include <mlpack/methods/ann/init_rules/kathirvalavakumar_subavathi_init.hpp>
+#include <mlpack/methods/ann/init_rules/nguyen_widrow_init.hpp>
+#include <mlpack/methods/ann/init_rules/oivs_init.hpp>
 #include <mlpack/methods/ann/init_rules/orthogonal_init.hpp>
+#include <mlpack/methods/ann/init_rules/random_init.hpp>
+#include <mlpack/methods/ann/init_rules/zero_init.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include "old_boost_test_definitions.hpp"
@@ -44,7 +48,7 @@ BOOST_AUTO_TEST_CASE(OrthogonalInitTest)
 
   for (size_t i = 0; i < weights.n_rows; i++)
     for (size_t j = 0; j < weights.n_cols; j++)
-        BOOST_REQUIRE_SMALL(weights.at(i, j) - orthogonalWeights.at(i, j), 1e-3);
+      BOOST_REQUIRE_SMALL(weights.at(i, j) - orthogonalWeights.at(i, j), 1e-3);
 
   orthogonalInit.Initialize(weights, 200, 100);
   weights = weights.t() * weights;
@@ -69,7 +73,53 @@ BOOST_AUTO_TEST_CASE(OrthogonalInitGainTest)
 
   for (size_t i = 0; i < weights.n_rows; i++)
     for (size_t j = 0; j < weights.n_cols; j++)
-        BOOST_REQUIRE_SMALL(weights.at(i, j) - orthogonalWeights.at(i, j), 1e-3);
+      BOOST_REQUIRE_SMALL(weights.at(i, j) - orthogonalWeights.at(i, j), 1e-3);
+}
+
+// Test the ZeroInitialization class. If you think about it, it's kind of
+// ridiculous to test the zero init rule. But at least we make sure it
+// builds without any problems.
+BOOST_AUTO_TEST_CASE(ZeroInitTest)
+{
+  arma::mat weights;
+  ZeroInitialization zeroInit;
+  zeroInit.Initialize(weights, 100, 100);
+
+  bool b = arma::all(arma::vectorise(weights) == 0);
+  BOOST_REQUIRE_EQUAL(b, 1);
+}
+
+// Test the KathirvalavakumarSubavathiInitialization class.
+BOOST_AUTO_TEST_CASE(KathirvalavakumarSubavathiInitTest)
+{
+  arma::mat data = arma::randu<arma::mat>(100, 1);
+
+  arma::mat weights;
+  KathirvalavakumarSubavathiInitialization kathirvalavakumarSubavathiInit(
+      data, 1.5);
+  kathirvalavakumarSubavathiInit.Initialize(weights, 100, 100);
+
+  BOOST_REQUIRE_EQUAL(1, 1);
+}
+
+// Test the NguyenWidrowInitialization class.
+BOOST_AUTO_TEST_CASE(NguyenWidrowInitTest)
+{
+  arma::mat weights;
+  NguyenWidrowInitialization nguyenWidrowInit;
+  nguyenWidrowInit.Initialize(weights, 100, 100);
+
+  BOOST_REQUIRE_EQUAL(1, 1);
+}
+
+// Test the OivsInitialization class.
+BOOST_AUTO_TEST_CASE(OivsInitTest)
+{
+  arma::mat weights;
+  OivsInitialization<> oivsInit;
+  oivsInit.Initialize(weights, 100, 100);
+
+  BOOST_REQUIRE_EQUAL(1, 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
