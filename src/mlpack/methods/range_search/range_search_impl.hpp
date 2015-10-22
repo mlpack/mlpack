@@ -436,6 +436,84 @@ template<typename MetricType,
          template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
+template<typename Archive>
+void RangeSearch<MetricType, MatType, TreeType>::Serialize(
+    Archive& ar,
+    const unsigned int /* version */)
+{
+  using data::CreateNVP;
+
+  // Serialize preferences for search.
+  ar & CreateNVP(naive, "naive");
+  ar & CreateNVP(singleMode, "singleMode");
+
+  // Reset base cases and scores if we are loading.
+  if (Archive::is_loading::value)
+  {
+    baseCases = 0;
+    scores = 0;
+  }
+
+  // If we are doing naive search, we serialize the dataset.  Otherwise we
+  // serialize the tree.
+  if (naive)
+  {
+    if (Archive::is_loading::value)
+    {
+      if (setOwner && referenceSet)
+        delete referenceSet;
+
+      setOwner = true;
+    }
+
+    ar & CreateNVP(referenceSet, "referenceSet");
+    ar & CreateNVP(metric, "metric");
+
+    // If we are loading, set the tree to NULL and clean up memory if necessary.
+    if (Archive::is_loading::value)
+    {
+      if (treeOwner && referenceTree)
+        delete referenceTree;
+
+      referenceTree = NULL;
+      oldFromNewReferences.clear();
+      treeOwner = false;
+    }
+  }
+  else
+  {
+    // Delete the current reference tree, if necessary and if we are loading.
+    if (Archive::is_loading::value)
+    {
+      if (treeOwner && referenceTree)
+        delete referenceTree;
+
+      // After we load the tree, we will own it.
+      treeOwner = true;
+    }
+
+    ar & CreateNVP(referenceTree, "referenceTree");
+    ar & CreateNVP(oldFromNewReferences, "oldFromNewReferences");
+
+    // If we are loading, set the dataset accordingly and clean up memory if
+    // necessary.
+    if (Archive::is_loading::value)
+    {
+      if (setOwner && referenceSet)
+        delete referenceSet;
+
+      referenceSet = &referenceTree->Dataset();
+      metric = referenceTree->Metric(); // Get the metric from the tree.
+      setOwner = false;
+    }
+  }
+}
+
+template<typename MetricType,
+         typename MatType,
+         template<typename TreeMetricType,
+                  typename TreeStatType,
+                  typename TreeMatType> class TreeType>
 std::string RangeSearch<MetricType, MatType, TreeType>::ToString() const
 {
   std::ostringstream convert;
