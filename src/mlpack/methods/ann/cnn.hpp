@@ -317,7 +317,7 @@ class CNN
 
   template<typename T, typename P, typename D>
   typename std::enable_if<
-      HasGradientCheck<T, void (T::*)(const D&, P&)>::value, void>::type
+      HasGradientCheck<T, void(T::*)(const D&, P&)>::value, void>::type
   Update(T& t, P& /* unused */, D& delta)
   {
     t.Gradient(delta, t.Gradient());
@@ -326,7 +326,7 @@ class CNN
 
   template<typename T, typename P, typename D>
   typename std::enable_if<
-      !HasGradientCheck<T, void (T::*)(const P&, D&)>::value, void>::type
+      !HasGradientCheck<T, void(T::*)(const P&, D&)>::value, void>::type
   Update(T& /* unused */, P& /* unused */, D& /* unused */)
   {
     /* Nothing to do here */
@@ -360,7 +360,7 @@ class CNN
 
   template<typename T, typename P, typename D>
   typename std::enable_if<
-      HasGradientCheck<T, void (T::*)(const D&, P&)>::value, void>::type
+      HasGradientCheck<T, void(T::*)(const D&, P&)>::value, void>::type
   Apply(T& t, P& /* unused */, D& /* unused */)
   {
     t.Optimizer().Optimize();
@@ -369,7 +369,7 @@ class CNN
 
   template<typename T, typename P, typename D>
   typename std::enable_if<
-      !HasGradientCheck<T, void (T::*)(const P&, D&)>::value, void>::type
+      !HasGradientCheck<T, void(T::*)(const P&, D&)>::value, void>::type
   Apply(T& /* unused */, P& /* unused */, D& /* unused */)
   {
     /* Nothing to do here */
