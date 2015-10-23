@@ -181,12 +181,12 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
 
-  for (size_t i = 0; i < points/2; i++)
+  for (size_t i = 0; i < points / 2; i++)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points/2; i < points; i++)
+  for (size_t i = points / 2; i < points; i++)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
@@ -200,12 +200,12 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionTwoClasses)
   BOOST_REQUIRE_CLOSE(acc, 100.0, 0.5);
 
   // Create test dataset.
-  for (size_t i = 0; i < points/2; i++)
+  for (size_t i = 0; i < points / 2; i++)
   {
     data.col(i) = g1.Random();
     labels(i) =  0;
   }
-  for (size_t i = points/2; i < points; i++)
+  for (size_t i = points / 2; i < points; i++)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
@@ -278,27 +278,27 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionMultipleClasses)
   arma::mat data(inputSize, points);
   arma::Row<size_t> labels(points);
 
-  for (size_t i = 0; i < points/5; i++)
+  for (size_t i = 0; i < points / 5; i++)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points/5; i < (2*points)/5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; i++)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2*points)/5; i < (3*points)/5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3*points)/5; i < (4*points)/5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4*points)/5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; i++)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -312,27 +312,27 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionMultipleClasses)
   BOOST_REQUIRE_CLOSE(acc, 100.0, 2.0);
 
   // Create test dataset.
-  for (size_t i = 0; i < points/5; i++)
+  for (size_t i = 0; i < points / 5; i++)
   {
     data.col(i) = g1.Random();
     labels(i) = 0;
   }
-  for (size_t i = points/5; i < (2*points)/5; i++)
+  for (size_t i = points / 5; i < (2 * points) / 5; i++)
   {
     data.col(i) = g2.Random();
     labels(i) = 1;
   }
-  for (size_t i = (2*points)/5; i < (3*points)/5; i++)
+  for (size_t i = (2 * points) / 5; i < (3 * points) / 5; i++)
   {
     data.col(i) = g3.Random();
     labels(i) = 2;
   }
-  for (size_t i = (3*points)/5; i < (4*points)/5; i++)
+  for (size_t i = (3 * points) / 5; i < (4 * points) / 5; i++)
   {
     data.col(i) = g4.Random();
     labels(i) = 3;
   }
-  for (size_t i = (4*points)/5; i < points; i++)
+  for (size_t i = (4 * points) / 5; i < points; i++)
   {
     data.col(i) = g5.Random();
     labels(i) = 4;
@@ -406,6 +406,6 @@ BOOST_AUTO_TEST_CASE(SoftmaxRegressionOptimizerTrainTest)
     else
       BOOST_REQUIRE_CLOSE(sr.Parameters()[i], sr2.Parameters()[i], 1e-5);
   }
-}//*/
+}
 
 BOOST_AUTO_TEST_SUITE_END();
