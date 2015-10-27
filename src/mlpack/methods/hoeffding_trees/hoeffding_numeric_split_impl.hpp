@@ -67,7 +67,7 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::Train(
     {
       // What bin does the point fall into?
       size_t bin = 0;
-      while (observations[i] > splitPoints[bin] && bin < bins - 1)
+      while (bin < bins - 1 && observations[i] > splitPoints[bin])
         ++bin;
 
       sufficientStatistics(labels[i], bin)++;
@@ -77,7 +77,7 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::Train(
   // If we've gotten to here, then we need to add the point to the sufficient
   // statistics.  What bin does the point fall into?
   size_t bin = 0;
-  while (value > splitPoints[bin] && bin < bins - 1)
+  while (bin < bins - 1 && value > splitPoints[bin])
     ++bin;
 
   sufficientStatistics(label, bin)++;

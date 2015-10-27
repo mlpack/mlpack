@@ -25,7 +25,7 @@ class NumericSplitInfo
   {
     // What bin does the point fall into?
     size_t bin = 0;
-    while (value > splitPoints[bin] && bin < splitPoints.n_elem)
+    while (bin < splitPoints.n_elem && value > splitPoints[bin])
       ++bin;
 
     return bin;
