@@ -32,7 +32,7 @@ HoeffdingSplit<
     numClasses(numClasses),
     maxSamples(maxSamples),
     checkInterval(checkInterval),
-    datasetInfo(const_cast<data::DatasetInfo*>(&datasetInfo)),
+    datasetInfo(&datasetInfo),
     successProbability(successProbability),
     splitDimension(size_t(-1)),
     categoricalSplit(0),
@@ -349,7 +349,15 @@ void HoeffdingSplit<
   ar & CreateNVP(splitDimension, "splitDimension");
   ar & CreateNVP(dimensionMappings, "dimensionMappings");
   ar & CreateNVP(ownsMappings, "ownsMappings");
-  ar & CreateNVP(datasetInfo, "datasetInfo");
+
+  // Special handling for const object.
+  data::DatasetInfo* d = NULL;
+  if (Archive::is_saving::value)
+    d = const_cast<data::DatasetInfo*>(datasetInfo);
+  ar & CreateNVP(d, "datasetInfo");
+  if (Archive::is_loading::value)
+    datasetInfo = d;
+
   ar & CreateNVP(majorityClass, "majorityClass");
   ar & CreateNVP(majorityProbability, "majorityProbability");
 
