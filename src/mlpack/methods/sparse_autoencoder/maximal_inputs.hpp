@@ -8,7 +8,8 @@ namespace nn {
 
 
 /**
- * Maximize the hidden units of the parameters
+ * Maximize the hidden units of the parameters, details are located at
+ * http://deeplearning.stanford.edu/wiki/index.php/Visualizing_a_Trained_Autoencoder
  * @param params The parameters want to maximize
  * @param output Parameters after maximize
  * @pre The layout of the parameters should be same as following
