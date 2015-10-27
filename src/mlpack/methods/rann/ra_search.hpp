@@ -295,11 +295,13 @@ class RASearch
   std::vector<size_t> oldFromNewReferences;
   //! Pointer to the root of the reference tree.
   Tree* referenceTree;
-  //! Reference dataset.
-  const MatType& referenceSet;
+  //! Reference dataset.  In some situations we may own this dataset.
+  const MatType* referenceSet;
 
   //! If true, this object created the trees and is responsible for them.
   bool treeOwner;
+  //! If true, we are responsible for deleting the dataset.
+  bool setOwner;
 
   //! Indicates if naive random sampling on the set is being used.
   bool naive;
