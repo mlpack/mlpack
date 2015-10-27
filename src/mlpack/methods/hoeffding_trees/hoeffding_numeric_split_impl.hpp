@@ -200,6 +200,12 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::Serialize(
       labels.zeros(observationsBeforeBinning);
     }
 
+    // Save the number of classes.
+    size_t numClasses;
+    if (Archive::is_saving::value)
+      numClasses = sufficientStatistics.n_rows;
+    ar & data::CreateNVP(numClasses, "numClasses");
+
     for (size_t i = 0; i < samplesSeen; ++i)
     {
       std::ostringstream oss;
@@ -215,7 +221,7 @@ void HoeffdingNumericSplit<FitnessFunction, ObservationType>::Serialize(
     {
       // Clean other objects.
       splitPoints.clear();
-      sufficientStatistics.clear();
+      sufficientStatistics.zeros(numClasses, bins);
     }
   }
 }
