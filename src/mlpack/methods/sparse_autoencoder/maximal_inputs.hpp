@@ -11,6 +11,16 @@ namespace nn {
  * Maximize the hidden units of the parameters
  * @param params The parameters want to maximize
  * @param output Parameters after maximize
+ * @pre The layout of the parameters should be same as following
+ * //          vSize   1
+ * //       |        |  |
+ * //  hSize|   w1   |b1|
+ * //       |________|__|
+ * //       |        |  |
+ * //  hSize|   w2'  |  |
+ * //       |________|__|
+ * //      1|   b2'  |  |
+ *
  * @code
  * arma::mat data; // Data matrix.
  * const size_t vSize = 64; // Size of visible layer, depends on the data.
