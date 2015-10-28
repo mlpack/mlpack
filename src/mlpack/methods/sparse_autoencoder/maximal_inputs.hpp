@@ -9,7 +9,9 @@ namespace nn {
 
 /**
  * Maximize the hidden units of the parameters, details are located at
- * http://deeplearning.stanford.edu/wiki/index.php/Visualizing_a_Trained_Autoencoder
+ * http://deeplearning.stanford.edu/wiki/index.php/Visualizing_a_Trained_Autoencoder.
+ * This function is based on the implementation(display_network.m) from the exercise of UFLDL.
+ * http://deeplearning.stanford.edu/wiki/index.php/Exercise:Sparse_Autoencoder
  * @param params The parameters want to maximize
  * @param output Parameters after maximize
  * @pre The layout of the parameters should be same as following
