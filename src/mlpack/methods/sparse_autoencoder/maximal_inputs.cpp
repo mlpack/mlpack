@@ -44,7 +44,7 @@ void VisualizeHiddenUnit(size_t rows, size_t cols,
 
 }
 
-void MaximalInputs(arma::mat const &parameters, arma::mat &output)
+void MaximalInputs(arma::mat const &parameters, arma::mat &output, double minRange, double maxRange)
 {
   arma::mat paramTemp(parameters.t());
   double const mean = arma::mean(arma::mean(paramTemp));
@@ -68,7 +68,7 @@ void MaximalInputs(arma::mat const &parameters, arma::mat &output)
   double const max = output.max();
   double const min = output.min();
   if((max - min) != 0) {
-    output = (output - min) / (max - min) * 255;
+    output = (output - min) / (max - min) * (maxRange - minRange) + minRange;
   }
 }
 

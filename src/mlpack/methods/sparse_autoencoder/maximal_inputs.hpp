@@ -14,6 +14,8 @@ namespace nn {
  * http://deeplearning.stanford.edu/wiki/index.php/Exercise:Sparse_Autoencoder
  * @param params The parameters want to maximize
  * @param output Parameters after maximize
+ * @param minRange minimum range of the output, default value is 0
+ * @param maxRange maximum range of the output, default value is 255
  * @pre 1 : The layout of the parameters should be same as following
  * //          vSize   1
  * //       |        |  |
@@ -44,7 +46,8 @@ namespace nn {
  * maximalInput.save("trained.pgm", arma::pgm_binary);
  * @endcode
  */
-void MaximalInputs(arma::mat const &parameters, arma::mat &output);
+void MaximalInputs(arma::mat const &parameters, arma::mat &output,
+                   double minRange = 0, double maxRange = 255);
 
 } // namespace nn
 } // namespace mlpack
