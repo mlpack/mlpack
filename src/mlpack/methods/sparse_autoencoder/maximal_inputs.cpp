@@ -46,7 +46,8 @@ void VisualizeHiddenUnit(size_t rows, size_t cols,
 
 void MaximalInputs(const arma::mat &parameters, arma::mat &output, double minRange, double maxRange)
 {
-  arma::mat paramTemp(parameters.t());
+  arma::mat paramTemp(parameters.submat(0, 0, (parameters.n_rows-1)/2 - 1,
+                                        parameters.n_cols - 2).t());
   double const mean = arma::mean(arma::mean(paramTemp));
   paramTemp -= mean;
 
