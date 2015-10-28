@@ -14,7 +14,7 @@ namespace nn {
  * http://deeplearning.stanford.edu/wiki/index.php/Exercise:Sparse_Autoencoder
  * @param params The parameters want to maximize
  * @param output Parameters after maximize
- * @pre The layout of the parameters should be same as following
+ * @pre 1 : The layout of the parameters should be same as following
  * //          vSize   1
  * //       |        |  |
  * //  hSize|   w1   |b1|
@@ -24,6 +24,7 @@ namespace nn {
  * //       |________|__|
  * //      1|   b2'  |  |
  *
+ * 2 : Square root of vSize must be interger and bigger than zero
  * @code
  * arma::mat data; // Data matrix.
  * const size_t vSize = 64; // Size of visible layer, depends on the data.
