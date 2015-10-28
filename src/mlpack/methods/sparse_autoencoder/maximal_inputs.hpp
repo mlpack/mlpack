@@ -46,7 +46,7 @@ namespace nn {
  * maximalInput.save("trained.pgm", arma::pgm_binary);
  * @endcode
  */
-void MaximalInputs(arma::mat const &parameters, arma::mat &output,
+void MaximalInputs(const arma::mat &parameters, arma::mat &output,
                    double minRange = 0, double maxRange = 255);
 
 } // namespace nn

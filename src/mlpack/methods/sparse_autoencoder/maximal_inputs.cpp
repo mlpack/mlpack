@@ -6,7 +6,7 @@ namespace nn {
 namespace {
 
 void VisualizeHiddenUnit(size_t rows, size_t cols,
-                         arma::mat const &input,
+                         const arma::mat &input,
                          arma::mat &output)
 {
   int const squareRows = static_cast<int>(std::sqrt(input.n_rows));
@@ -44,7 +44,7 @@ void VisualizeHiddenUnit(size_t rows, size_t cols,
 
 }
 
-void MaximalInputs(arma::mat const &parameters, arma::mat &output, double minRange, double maxRange)
+void MaximalInputs(const arma::mat &parameters, arma::mat &output, double minRange, double maxRange)
 {
   arma::mat paramTemp(parameters.t());
   double const mean = arma::mean(arma::mean(paramTemp));
