@@ -5,6 +5,7 @@ set(SOURCES
   softmax_regression_impl.hpp
   softmax_regression_function.hpp
   softmax_regression_function.cpp
+  softmax_main.cpp
 )
 
 # Add directory name to sources.
