@@ -277,14 +277,30 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionGradient)
 BOOST_AUTO_TEST_CASE(SparseAutoencoderMoveTest)
 {
   using SAE = mlpack::nn::SparseAutoencoder<>;
-  SAE sae1(2, 2);  
+
+  SAE sae1(2, 2);
+  sae1.Lambda(0.45);
+  sae1.Beta(0.33);
+  sae1.Rho(0.11);
+  const auto Params = sae1.Parameters();
+
   SAE sae2(std::move(sae1));
   BOOST_REQUIRE(sae1.Parameters().n_elem == 0);
-  BOOST_REQUIRE(sae1.VisibleSize(), sae2.VisibleSize());
-  BOOST_REQUIRE(sae1.HiddenSize(), sae2.HiddenSize());
+  BOOST_REQUIRE(sae1.VisibleSize() == sae2.VisibleSize());
+  BOOST_REQUIRE(sae1.HiddenSize() == sae2.HiddenSize());
   BOOST_REQUIRE_CLOSE(sae1.Lambda(), sae2.Lambda(), 1e-5);
   BOOST_REQUIRE_CLOSE(sae1.Beta(), sae2.Beta(), 1e-5);
   BOOST_REQUIRE_CLOSE(sae1.Rho(), sae2.Rho(), 1e-5);
+
+  const auto Params2 = sae2.Parameters();
+  auto func = [](double lhs, double rhs)
+  {
+    BOOST_REQUIRE_CLOSE(lhs, rhs, 1e-5);
+    return true;
+  };
+  std::equal(std::begin(Params), std::end(Params),
+             std::begin(Params2),
+             func);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
