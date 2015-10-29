@@ -4,6 +4,7 @@
  *
  * Test the SparseAutoencoder class.
  */
+#include <mlpack/methods/sparse_autoencoder/sparse_autoencoder.hpp>
 #include <mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp>
 #include <mlpack/methods/sparse_autoencoder/activation_functions/logistic_function.hpp>
 
@@ -271,6 +272,19 @@ BOOST_AUTO_TEST_CASE(SparseAutoencoderFunctionGradient)
       BOOST_REQUIRE_CLOSE(numGradient3, gradient3(i, j), 1e-2);
     }
   }
+}
+
+BOOST_AUTO_TEST_CASE(SparseAutoencoderMoveTest)
+{
+  using SAE = mlpack::nn::SparseAutoencoder<>;
+  SAE sae1(2, 2);  
+  SAE sae2(std::move(sae1));
+  BOOST_REQUIRE(sae1.Parameters().n_elem == 0);
+  BOOST_REQUIRE(sae1.VisibleSize(), sae2.VisibleSize());
+  BOOST_REQUIRE(sae1.HiddenSize(), sae2.HiddenSize());
+  BOOST_REQUIRE_CLOSE(sae1.Lambda(), sae2.Lambda(), 1e-5);
+  BOOST_REQUIRE_CLOSE(sae1.Beta(), sae2.Beta(), 1e-5);
+  BOOST_REQUIRE_CLOSE(sae1.Rho(), sae2.Rho(), 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END();
