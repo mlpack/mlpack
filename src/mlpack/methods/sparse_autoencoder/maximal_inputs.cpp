@@ -5,20 +5,20 @@ namespace nn {
 
 namespace {
 
-void VisualizeHiddenUnit(size_t rows, size_t cols,
+void VisualizeHiddenUnit(arma::uword rows, arma::uword cols,
                          const arma::mat &input,
                          arma::mat &output)
 {
-  int const squareRows = static_cast<int>(std::sqrt(input.n_rows));
-  int const buf = 1;
+  arma::uword const squareRows = static_cast<arma::uword>(std::sqrt(input.n_rows));
+  arma::uword const buf = 1;
 
-  int const offset = squareRows+buf;
+  arma::uword const offset = squareRows+buf;
   output.ones(buf+rows*(offset),
               buf+cols*(offset));
 
-  int k = 0;
-  for(int i = 0; i != rows; ++i) {
-    for(int j = 0; j != cols; ++j) {
+  arma::uword k = 0;
+  for(arma::uword i = 0; i != rows; ++i) {
+    for(arma::uword j = 0; j != cols; ++j) {
       if(k >= input.n_cols) {
         continue;
       }
@@ -51,16 +51,16 @@ void MaximalInputs(const arma::mat &parameters, arma::mat &output, double minRan
   double const mean = arma::mean(arma::mean(paramTemp));
   paramTemp -= mean;
 
-  int rows = 0, cols = 0;
+  arma::uword rows = 0, cols = 0;
   if(std::pow(std::floor(std::sqrt(paramTemp.n_cols)), 2) != paramTemp.n_cols) {
-    cols = (int)std::ceil(std::sqrt(paramTemp.n_cols));
+    cols = static_cast<arma::uword>(std::ceil(std::sqrt(paramTemp.n_cols)));
     while(paramTemp.n_cols % cols != 0 && cols < 1.2*std::sqrt(paramTemp.n_cols)) {
       ++cols;
     }
-    rows = static_cast<int>
+    rows = static_cast<arma::uword>
            (std::ceil(paramTemp.n_cols/static_cast<double>(cols)));
   }else{
-    cols = static_cast<int>(std::sqrt(paramTemp.n_cols));
+    cols = static_cast<arma::uword>(std::sqrt(paramTemp.n_cols));
     rows = cols;
   }
 
