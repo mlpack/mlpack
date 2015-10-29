@@ -77,6 +77,9 @@ template<
 class SparseAutoencoder
 {
  public:
+  using HidLayer = HiddenLayer;
+  using OutLayer = OutputLayer;
+ 
   /**
    * Initialize the sparse autoencoder without performing training. The
    * Parameters(vector of w1,w2,b1,b2) will be initialize to zero.
