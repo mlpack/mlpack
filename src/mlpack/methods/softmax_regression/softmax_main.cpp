@@ -10,8 +10,9 @@ PROGRAM_INFO("Softmax Regression", "This program performs softmax regression "
 
 // Required options.
 PARAM_STRING_REQ("input_data", "Input dataset to perform training on(read from files).", "i");
-PARAM_STRING_REQ("input_label", "Input labels to perform training"
-                                " on(read from files). The labels must specify by row", "l");
+PARAM_STRING_REQ("input_label",
+                 "Input labels to perform training"
+                 " on(read from files). The labels must order as a row", "l");
 
 // Output options.
 PARAM_STRING("output_file", "If specified, the trained results will write into this "
