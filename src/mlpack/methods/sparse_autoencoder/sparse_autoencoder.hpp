@@ -79,6 +79,9 @@ class SparseAutoencoder
  public:
   using HidLayer = HiddenLayer;
   using OutLayer = OutputLayer;
+  
+  SparseAutoencoder(SparseAutoencoder &&sae);
+  SparseAutoencoder& operator=(SparseAutoencoder &&sae);
  
   /**
    * Initialize the sparse autoencoder without performing training. The

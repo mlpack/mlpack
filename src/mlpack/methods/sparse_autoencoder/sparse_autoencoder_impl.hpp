@@ -16,6 +16,32 @@ namespace nn {
 template<typename HiddenLayer, typename OutputLayer,
          template<typename> class OptimizerType>
 SparseAutoencoder<HiddenLayer, OutputLayer, OptimizerType>::
+SparseAutoencoder(SparseAutoencoder &&sae)
+{
+  //implement move constructor by move assignment could be slower
+  //but this solution can save you from the troubles of duplicate codes
+  *this = std::move(sae);
+}
+
+template<typename HiddenLayer, typename OutputLayer,
+         template<typename> class OptimizerType>
+SparseAutoencoder<HiddenLayer, OutputLayer, OptimizerType>&
+SparseAutoencoder<HiddenLayer, OutputLayer, OptimizerType>::
+operator=(SparseAutoencoder &&sae)
+{
+  visibleSize = sae.visibleSize;
+  hiddenSize = sae.hiddenSize;
+  lambda = sae.lambda;
+  beta = sae.beta;
+  rho = sae.rho;
+  parameters.swap(sae.parameters);
+
+  return *this;
+}
+
+template<typename HiddenLayer, typename OutputLayer,
+         template<typename> class OptimizerType>
+SparseAutoencoder<HiddenLayer, OutputLayer, OptimizerType>::
 SparseAutoencoder(size_t visibleSize, size_t hiddenSize) :    
     visibleSize{visibleSize},
     hiddenSize{hiddenSize},
