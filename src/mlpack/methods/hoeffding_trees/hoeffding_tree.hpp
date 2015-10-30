@@ -72,7 +72,7 @@ class HoeffdingTree
    *      numeric and categorical split vectors.  If left NULL, a new one will
    *      be created.
    */
-  HoeffdingSplit(const size_t dimensionality,
+  HoeffdingTree(const size_t dimensionality,
                  const size_t numClasses,
                  const data::DatasetInfo& datasetInfo,
                  const double successProbability,
@@ -84,7 +84,7 @@ class HoeffdingTree
   /**
    * Clean up memory.
    */
-  ~HoeffdingSplit();
+  ~HoeffdingTree();
 
   /**
    * Train on a single point in streaming mode, with the given label.
