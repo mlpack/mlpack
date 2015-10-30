@@ -7,7 +7,7 @@
 #include <mlpack/core.hpp>
 #include <mlpack/methods/hoeffding_trees/streaming_decision_tree.hpp>
 #include <mlpack/methods/hoeffding_trees/gini_impurity.hpp>
-#include <mlpack/methods/hoeffding_trees/hoeffding_split.hpp>
+#include <mlpack/methods/hoeffding_trees/hoeffding_tree.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_categorical_split.hpp>
 #include <mlpack/methods/hoeffding_trees/binary_numeric_split.hpp>
 

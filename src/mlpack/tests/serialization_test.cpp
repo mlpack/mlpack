@@ -21,7 +21,7 @@
 #include <mlpack/core/tree/hrectbound.hpp>
 #include <mlpack/core/metrics/mahalanobis_distance.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
-#include <mlpack/methods/hoeffding_trees/hoeffding_split.hpp>
+#include <mlpack/methods/hoeffding_trees/hoeffding_tree.hpp>
 #include <mlpack/methods/hoeffding_trees/streaming_decision_tree.hpp>
 
 using namespace mlpack;
@@ -842,15 +842,15 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitTest)
 }
 
 /**
- * Make sure the HoeffdingSplit object serializes correctly before a split has
+ * Make sure the HoeffdingTree object serializes correctly before a split has
  * occured.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingSplitTest)
+BOOST_AUTO_TEST_CASE(HoeffdingTreeTest)
 {
   data::DatasetInfo info(5);
   info.MapString("0", 2); // Dimension 1 is categorical.
   info.MapString("1", 2);
-  HoeffdingSplit<> split(5, 2, info, 0.99, 15000, 1);
+  HoeffdingTree<> split(5, 2, info, 0.99, 15000, 1);
 
   // Train for 2 samples.
   split.Train(arma::vec("0.3 0.4 1 0.6 0.7"), 0);
@@ -858,7 +858,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitTest)
 
   data::DatasetInfo wrongInfo(3);
   wrongInfo.MapString("1", 1);
-  HoeffdingSplit<> xmlSplit(3, 7, wrongInfo, 0.1, 10, 1);
+  HoeffdingTree<> xmlSplit(3, 7, wrongInfo, 0.1, 10, 1);
 
   // Force the binarySplit to split.
   data::DatasetInfo binaryInfo(2);
@@ -866,7 +866,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitTest)
   binaryInfo.MapString("cat1", 0);
   binaryInfo.MapString("cat0", 1);
 
-  HoeffdingSplit<> binarySplit(2, 2, info, 0.95, 5000, 1);
+  HoeffdingTree<> binarySplit(2, 2, info, 0.95, 5000, 1);
 
   // Feed samples from each class.
   for (size_t i = 0; i < 500; ++i)
@@ -875,7 +875,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitTest)
     binarySplit.Train(arma::Col<size_t>("1 0"), 1);
   }
 
-  HoeffdingSplit<> textSplit(3, 11, wrongInfo, 0.75, 1000, 1);
+  HoeffdingTree<> textSplit(3, 11, wrongInfo, 0.75, 1000, 1);
 
   SerializeObjectAll(split, xmlSplit, textSplit, binarySplit);
 
@@ -893,10 +893,10 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitTest)
 }
 
 /**
- * Make sure the HoeffdingSplit object serializes correctly after a split has
+ * Make sure the HoeffdingTree object serializes correctly after a split has
  * occurred.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingSplitAfterSplitTest)
+BOOST_AUTO_TEST_CASE(HoeffdingTreeAfterSplitTest)
 {
   // Force the split to split.
   data::DatasetInfo info(2);
@@ -904,7 +904,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitAfterSplitTest)
   info.MapString("cat1", 0);
   info.MapString("cat0", 1);
 
-  HoeffdingSplit<> split(2, 2, info, 0.95, 5000, 1);
+  HoeffdingTree<> split(2, 2, info, 0.95, 5000, 1);
 
   // Feed samples from each class.
   for (size_t i = 0; i < 500; ++i)
@@ -916,18 +916,18 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitAfterSplitTest)
 
   data::DatasetInfo wrongInfo(3);
   wrongInfo.MapString("1", 1);
-  HoeffdingSplit<> xmlSplit(3, 7, wrongInfo, 0.1, 10, 1);
+  HoeffdingTree<> xmlSplit(3, 7, wrongInfo, 0.1, 10, 1);
 
   data::DatasetInfo binaryInfo(5);
   binaryInfo.MapString("0", 2); // Dimension 2 is categorical.
   binaryInfo.MapString("1", 2);
-  HoeffdingSplit<> binarySplit(5, 2, binaryInfo, 0.99, 15000, 1);
+  HoeffdingTree<> binarySplit(5, 2, binaryInfo, 0.99, 15000, 1);
 
   // Train for 2 samples.
   binarySplit.Train(arma::vec("0.3 0.4 1 0.6 0.7"), 0);
   binarySplit.Train(arma::vec("-0.3 0.0 0 0.7 0.8"), 1);
 
-  HoeffdingSplit<> textSplit(3, 11, wrongInfo, 0.75, 1000, 1);
+  HoeffdingTree<> textSplit(3, 11, wrongInfo, 0.75, 1000, 1);
 
   SerializeObjectAll(split, xmlSplit, textSplit, binarySplit);
 
@@ -958,10 +958,10 @@ BOOST_AUTO_TEST_CASE(EmptyStreamingDecisionTreeTest)
   using namespace mlpack::tree;
 
   data::DatasetInfo info(6);
-  StreamingDecisionTree<HoeffdingSplit<>> tree(info, 2, 2);
-  StreamingDecisionTree<HoeffdingSplit<>> xmlTree(info, 3, 3);
-  StreamingDecisionTree<HoeffdingSplit<>> binaryTree(info, 4, 4);
-  StreamingDecisionTree<HoeffdingSplit<>> textTree(info, 5, 5);
+  StreamingDecisionTree<HoeffdingTree<>> tree(info, 2, 2);
+  StreamingDecisionTree<HoeffdingTree<>> xmlTree(info, 3, 3);
+  StreamingDecisionTree<HoeffdingTree<>> binaryTree(info, 4, 4);
+  StreamingDecisionTree<HoeffdingTree<>> textTree(info, 5, 5);
 
   SerializeObjectAll(tree, xmlTree, binaryTree, textTree);
 
@@ -1001,14 +1001,14 @@ BOOST_AUTO_TEST_CASE(StreamingDecisionTreeTest)
   info.MapString("c", 1);
   info.MapString("d", 1);
 
-  StreamingDecisionTree<HoeffdingSplit<>> tree(dataset, info, labels, 2);
+  StreamingDecisionTree<HoeffdingTree<>> tree(dataset, info, labels, 2);
 
   data::DatasetInfo xmlInfo(1);
-  StreamingDecisionTree<HoeffdingSplit<>> xmlTree(xmlInfo, 1, 1);
+  StreamingDecisionTree<HoeffdingTree<>> xmlTree(xmlInfo, 1, 1);
   data::DatasetInfo binaryInfo(5);
-  StreamingDecisionTree<HoeffdingSplit<>> binaryTree(binaryInfo, 5, 6);
+  StreamingDecisionTree<HoeffdingTree<>> binaryTree(binaryInfo, 5, 6);
   data::DatasetInfo textInfo(7);
-  StreamingDecisionTree<HoeffdingSplit<>> textTree(textInfo, 7, 100);
+  StreamingDecisionTree<HoeffdingTree<>> textTree(textInfo, 7, 100);
 
   SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
 
