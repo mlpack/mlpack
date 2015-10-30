@@ -22,7 +22,7 @@ HoeffdingTree<
     NumericSplitType,
     CategoricalSplitType
 >::HoeffdingTree(const MatType& data,
-                 const arma::Col<size_t>& labels,
+                 const arma::Row<size_t>& labels,
                  const data::DatasetInfo& datasetInfo,
                  const size_t numClasses,
                  const bool batchTraining,
@@ -117,7 +117,7 @@ void HoeffdingTree<
     NumericSplitType,
     CategoricalSplitType
 >::Train(const MatType& data,
-         const arma::Col<size_t>& labels,
+         const arma::Row<size_t>& labels,
          const bool batchTraining)
 {
   // Not yet implemented.

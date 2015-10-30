@@ -76,7 +76,7 @@ class HoeffdingTree
    */
   template<typename MatType>
   HoeffdingTree(const MatType& data,
-                const arma::Col<size_t>& labels,
+                const arma::Row<size_t>& labels,
                 const data::DatasetInfo& datasetInfo,
                 const size_t numClasses,
                 const bool batchTraining = true,
@@ -124,7 +124,7 @@ class HoeffdingTree
    */
   template<typename MatType>
   void Train(const MatType& data,
-             const arma::Col<size_t>& labels,
+             const arma::Row<size_t>& labels,
              const bool batchTraining = true);
 
   /**
