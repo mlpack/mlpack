@@ -16,6 +16,26 @@ namespace tree {
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType>
+template<typename MatType>
+HoeffdingTree<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::HoeffdingTree(const MatType& data,
+                 const arma::Col<size_t>& labels,
+                 const data::DatasetInfo& datasetInfo,
+                 const size_t numClasses,
+                 const bool batchTraining,
+                 const double successProbability,
+                 const size_t maxSamples,
+                 const size_t checkInterval)
+{
+  // Not yet implemented.
+}
+
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType>
 HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
@@ -88,6 +108,23 @@ HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>::
     delete dimensionMappings;
 }
 
+//! Train on a set of points.
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType>
+template<typename MatType>
+void HoeffdingTree<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::Train(const MatType& data,
+         const arma::Col<size_t>& labels,
+         const bool batchTraining)
+{
+  // Not yet implemented.
+}
+
+//! Train on one point.
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType>

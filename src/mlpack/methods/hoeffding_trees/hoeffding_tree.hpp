@@ -56,10 +56,39 @@ class HoeffdingTree
 {
  public:
   /**
-   * Construct the Hoeffding split object with the given parameters.  The
-   * dimensionMappings parameter is only used if it is desired that this node
-   * does not create its own dimensionMappings object (for instance, if this is
-   * a child of another node in the tree).
+   * Construct the Hoeffding tree with the given parameters and given training
+   * data.  The tree may be trained either in batch mode (which looks at all
+   * points before splitting, and propagates these points to the created
+   * children for further training), or in streaming mode, where each point is
+   * only considered once.  (In general, batch mode will give better-performing
+   * trees, but will have higher memory and runtime costs for the same dataset.)
+   *
+   * @param data Dataset to train on.
+   * @param datasetInfo Information on the dataset (types of each feature).
+   * @param numClasses Number of classes in the dataset.
+   * @param batchTraining Whether or not to train in batch.
+   * @param successProbability Probability of success required in Hoeffding
+   *      bounds before a split can happen.
+   * @param maxSamples Maximum number of samples before a split is forced (0
+   *      never forces a split); ignored in batch training mode.
+   * @param checkInterval Number of samples required before each split; ignored
+   *      in batch training mode.
+   */
+  template<typename MatType>
+  HoeffdingTree(const MatType& data,
+                const arma::Col<size_t>& labels,
+                const data::DatasetInfo& datasetInfo,
+                const size_t numClasses,
+                const bool batchTraining = true,
+                const double successProbability = 0.95,
+                const size_t maxSamples = 0,
+                const size_t checkInterval = 100);
+
+  /**
+   * Construct the Hoeffding tree with the given parameters, but training on no
+   * data.  The dimensionMappings parameter is only used if it is desired that
+   * this node does not create its own dimensionMappings object (for instance,
+   * if this is a child of another node in the tree).
    *
    * @param dimensionality Dimensionality of the dataset.
    * @param numClasses Number of classes in the dataset.
@@ -73,18 +102,31 @@ class HoeffdingTree
    *      be created.
    */
   HoeffdingTree(const size_t dimensionality,
-                 const size_t numClasses,
-                 const data::DatasetInfo& datasetInfo,
-                 const double successProbability,
-                 const size_t maxSamples,
-                 const size_t checkInterval,
-                 std::unordered_map<size_t, std::pair<size_t, size_t>>*
-                     dimensionMappings = NULL);
+                const size_t numClasses,
+                const data::DatasetInfo& datasetInfo,
+                const double successProbability,
+                const size_t maxSamples,
+                const size_t checkInterval,
+                std::unordered_map<size_t, std::pair<size_t, size_t>>*
+                    dimensionMappings = NULL);
 
   /**
    * Clean up memory.
    */
   ~HoeffdingTree();
+
+  /**
+   * Train on a set of points, either in streaming mode or in batch mode, with
+   * the given labels.
+   *
+   * @param data Data points to train on.
+   * @param label Labels of data points.
+   * @param batchTraining If true, perform training in batch.
+   */
+  template<typename MatType>
+  void Train(const MatType& data,
+             const arma::Col<size_t>& labels,
+             const bool batchTraining = true);
 
   /**
    * Train on a single point in streaming mode, with the given label.
