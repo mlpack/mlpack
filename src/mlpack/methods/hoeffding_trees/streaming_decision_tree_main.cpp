@@ -66,10 +66,10 @@ int main(int argc, char** argv)
         << "specified too!" << endl;
 
   if (numericSplitStrategy == "domingos")
-    PerformActions<StreamingDecisionTree<HoeffdingSplit<GiniImpurity,
+    PerformActions<StreamingDecisionTree<HoeffdingTree<GiniImpurity,
         HoeffdingDoubleNumericSplit, HoeffdingCategoricalSplit>>>();
   else if (numericSplitStrategy == "binary")
-    PerformActions<StreamingDecisionTree<HoeffdingSplit<GiniImpurity,
+    PerformActions<StreamingDecisionTree<HoeffdingTree<GiniImpurity,
         BinaryDoubleNumericSplit, HoeffdingCategoricalSplit>>>();
   else
     Log::Fatal << "Unrecognized numeric split strategy ("

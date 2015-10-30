@@ -2,11 +2,11 @@
  * @file hoeffding_split.hpp
  * @author Ryan Curtin
  *
- * An implementation of the standard Hoeffding bound split by Pedro Domingos and
- * Geoff Hulten in ``Mining High-Speed Data Streams''.
+ * An implementation of the standard Hoeffding tree by Pedro Domingos and Geoff
+ * Hulten in ``Mining High-Speed Data Streams''.
  */
-#ifndef __MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_SPLIT_HPP
-#define __MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_SPLIT_HPP
+#ifndef __MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_TREE_HPP
+#define __MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_TREE_HPP
 
 #include <mlpack/core.hpp>
 #include "gini_impurity.hpp"
@@ -17,11 +17,22 @@ namespace mlpack {
 namespace tree {
 
 /**
- * The HoeffdingSplit object represents all of the necessary information for a
- * Hoeffding-bound-based decision tree.  (Perhaps, the whole thing should be
- * refactored so this class is called 'HoeffdingTree'.)  This class is able to
- * train on samples in streaming settings and batch settings, and perform splits
- * based on the Hoeffding bound.
+ * The HoeffdingTree object represents all of the necessary information for a
+ * Hoeffding-bound-based decision tree.  This class is able to train on samples
+ * in streaming settings and batch settings, and perform splits based on the
+ * Hoeffding bound.  The Hoeffding tree (also known as the "very fast decision
+ * tree" -- VFDT) is described in the following paper:
+ *
+ * @code
+ * @inproceedings{domingos2000mining,
+ *     title={{Mining High-Speed Data Streams}},
+ *     author={Domingos, P. and Hulten, G.},
+ *     year={2000},
+ *     booktitle={Proceedings of the Sixth ACM SIGKDD International Conference
+ *         on Knowledge Discovery and Data Mining (KDD '00)},
+ *     pages={71--80}
+ * }
+ * @endcode
  *
  * The class is modular, and takes three template parameters.  The first,
  * FitnessFunction, is the fitness function that should be used to determine
@@ -41,7 +52,7 @@ template<typename FitnessFunction = GiniImpurity,
          template<typename> class CategoricalSplitType =
              HoeffdingCategoricalSplit
 >
-class HoeffdingSplit
+class HoeffdingTree
 {
  public:
   /**
@@ -188,6 +199,6 @@ class HoeffdingSplit
 } // namespace tree
 } // namespace mlpack
 
-#include "hoeffding_split_impl.hpp"
+#include "hoeffding_tree_impl.hpp"
 
 #endif

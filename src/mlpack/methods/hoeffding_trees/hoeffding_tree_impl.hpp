@@ -2,10 +2,13 @@
  * @file hoeffding_split_impl.hpp
  * @author Ryan Curtin
  *
- * Implementation of the HoeffdingSplit class.
+ * Implementation of the HoeffdingTree class.
  */
-#ifndef __MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_SPLIT_IMPL_HPP
-#define __MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_SPLIT_IMPL_HPP
+#ifndef __MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_TREE_IMPL_HPP
+#define __MLPACK_METHODS_HOEFFDING_TREES_HOEFFDING_TREE_IMPL_HPP
+
+// In case it hasn't been included yet.
+#include "hoeffding_tree.hpp"
 
 namespace mlpack {
 namespace tree {
@@ -13,18 +16,18 @@ namespace tree {
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType>
-HoeffdingSplit<
+HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
->::HoeffdingSplit(const size_t dimensionality,
-                  const size_t numClasses,
-                  const data::DatasetInfo& datasetInfo,
-                  const double successProbability,
-                  const size_t maxSamples,
-                  const size_t checkInterval,
-                  std::unordered_map<size_t, std::pair<size_t, size_t>>*
-                      dimensionMappingsIn) :
+>::HoeffdingTree(const size_t dimensionality,
+                 const size_t numClasses,
+                 const data::DatasetInfo& datasetInfo,
+                 const double successProbability,
+                 const size_t maxSamples,
+                 const size_t checkInterval,
+                 std::unordered_map<size_t, std::pair<size_t, size_t>>*
+                     dimensionMappingsIn) :
     dimensionMappings((dimensionMappingsIn != NULL) ? dimensionMappingsIn :
         new std::unordered_map<size_t, std::pair<size_t, size_t>>()),
     ownsMappings(dimensionMappingsIn == NULL),
@@ -78,8 +81,8 @@ HoeffdingSplit<
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType>
-HoeffdingSplit<FitnessFunction, NumericSplitType, CategoricalSplitType>::
-    ~HoeffdingSplit()
+HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>::
+    ~HoeffdingTree()
 {
   if (ownsMappings)
     delete dimensionMappings;
@@ -89,7 +92,7 @@ template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType>
 template<typename VecType>
-void HoeffdingSplit<
+void HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
@@ -130,7 +133,7 @@ void HoeffdingSplit<
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType>
-size_t HoeffdingSplit<
+size_t HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
@@ -211,7 +214,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
 >
-size_t HoeffdingSplit<
+size_t HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
@@ -225,7 +228,7 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
 >
-size_t& HoeffdingSplit<
+size_t& HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
@@ -240,7 +243,7 @@ template<
     template<typename> class CategoricalSplitType
 >
 template<typename VecType>
-size_t HoeffdingSplit<
+size_t HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
@@ -261,7 +264,7 @@ template<
     template<typename> class CategoricalSplitType
 >
 template<typename VecType>
-size_t HoeffdingSplit<
+size_t HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
@@ -278,7 +281,7 @@ template<
     template<typename> class CategoricalSplitType
 >
 template<typename VecType>
-void HoeffdingSplit<
+void HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
@@ -296,7 +299,7 @@ template<
     template<typename> class CategoricalSplitType
 >
 template<typename StreamingDecisionTreeType>
-void HoeffdingSplit<
+void HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
@@ -338,7 +341,7 @@ template<
     template<typename> class CategoricalSplitType
 >
 template<typename Archive>
-void HoeffdingSplit<
+void HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType

@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitSplitTest)
   HoeffdingCategoricalSplit<GiniImpurity> split(3, 3); // 3 categories.
 
   // No training is necessary because we can just call CreateChildren().
-  std::vector<StreamingDecisionTree<HoeffdingSplit<>>> children;
+  std::vector<StreamingDecisionTree<HoeffdingTree<>>> children;
   data::DatasetInfo info(3);
   info.MapString("hello", 0); // Make dimension 0 categorical.
   HoeffdingCategoricalSplit<GiniImpurity>::SplitInfo splitInfo(3);
@@ -223,10 +223,10 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitSplitTest)
 }
 
 /**
- * If we feed the HoeffdingSplit a ton of points of the same class, it should
+ * If we feed the HoeffdingTree a ton of points of the same class, it should
  * not suggest that we split.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingSplitNoSplitTest)
+BOOST_AUTO_TEST_CASE(HoeffdingTreeNoSplitTest)
 {
   // Make all dimensions categorical.
   data::DatasetInfo info(3);
@@ -240,7 +240,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitNoSplitTest)
   info.MapString("cat1", 2);
   info.MapString("cat2", 2);
 
-  HoeffdingSplit<> split(3, 2, info, 0.95, 5000, 1);
+  HoeffdingTree<> split(3, 2, info, 0.95, 5000, 1);
 
   // Feed it samples.
   for (size_t i = 0; i < 1000; ++i)
@@ -257,10 +257,10 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitNoSplitTest)
 }
 
 /**
- * If we feed the HoeffdingSplit a ton of points of two different classes, it
+ * If we feed the HoeffdingTree a ton of points of two different classes, it
  * should very clearly suggest that we split (eventually).
  */
-BOOST_AUTO_TEST_CASE(HoeffdingSplitEasySplitTest)
+BOOST_AUTO_TEST_CASE(HoeffdingTreeEasySplitTest)
 {
   // It'll be a two-dimensional dataset with two categories each.  In the first
   // dimension, category 0 will only receive points with class 0, and category 1
@@ -271,7 +271,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitEasySplitTest)
   info.MapString("cat1", 0);
   info.MapString("cat0", 1);
 
-  HoeffdingSplit<> split(2, 2, info, 0.95, 5000, 1);
+  HoeffdingTree<> split(2, 2, info, 0.95, 5000, 1);
 
   // Feed samples from each class.
   for (size_t i = 0; i < 500; ++i)
@@ -288,7 +288,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitEasySplitTest)
 /**
  * If we force a success probability of 1, it should never split.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingSplitProbability1SplitTest)
+BOOST_AUTO_TEST_CASE(HoeffdingTreeProbability1SplitTest)
 {
   // It'll be a two-dimensional dataset with two categories each.  In the first
   // dimension, category 0 will only receive points with class 0, and category 1
@@ -299,7 +299,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitProbability1SplitTest)
   info.MapString("cat1", 0);
   info.MapString("cat0", 1);
 
-  HoeffdingSplit<> split(2, 2, info, 1.0, 12000, 1);
+  HoeffdingTree<> split(2, 2, info, 1.0, 12000, 1);
 
   // Feed samples from each class.
   for (size_t i = 0; i < 5000; ++i)
@@ -318,7 +318,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitProbability1SplitTest)
  * perfect classification, another gives almost perfect classification (with 10%
  * error).  Splits should occur after many samples.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingSplitAlmostPerfectSplit)
+BOOST_AUTO_TEST_CASE(HoeffdingTreeAlmostPerfectSplit)
 {
   // Two categories and two dimensions.
   data::DatasetInfo info(2);
@@ -327,7 +327,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitAlmostPerfectSplit)
   info.MapString("cat0", 1);
   info.MapString("cat1", 1);
 
-  HoeffdingSplit<> split(2, 2, info, 0.95, 5000, 1);
+  HoeffdingTree<> split(2, 2, info, 0.95, 5000, 1);
 
   // Feed samples.
   for (size_t i = 0; i < 500; ++i)
@@ -350,10 +350,10 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitAlmostPerfectSplit)
 }
 
 /**
- * Test that the HoeffdingSplit class will not split if the two features are
+ * Test that the HoeffdingTree class will not split if the two features are
  * equally good.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingSplitEqualSplitTest)
+BOOST_AUTO_TEST_CASE(HoeffdingTreeEqualSplitTest)
 {
   // Two categories and two dimensions.
   data::DatasetInfo info(2);
@@ -362,7 +362,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingSplitEqualSplitTest)
   info.MapString("cat0", 1);
   info.MapString("cat1", 1);
 
-  HoeffdingSplit<> split(2, 2, info, 0.95, 5000, 1);
+  HoeffdingTree<> split(2, 2, info, 0.95, 5000, 1);
 
   // Feed samples.
   for (size_t i = 0; i < 500; ++i)
@@ -419,10 +419,10 @@ BOOST_AUTO_TEST_CASE(StreamingDecisionTreeSimpleDatasetTest)
 
   // Now train two streaming decision trees; one on the whole dataset, and one
   // on streaming data.
-  StreamingDecisionTree<HoeffdingSplit<GiniImpurity,
+  StreamingDecisionTree<HoeffdingTree<GiniImpurity,
       HoeffdingDoubleNumericSplit>, arma::Mat<size_t>>
       batchTree(dataset, info, labels, 3);
-  StreamingDecisionTree<HoeffdingSplit<GiniImpurity,
+  StreamingDecisionTree<HoeffdingTree<GiniImpurity,
       HoeffdingDoubleNumericSplit>, arma::Mat<size_t>>
       streamTree(info, 3, 3);
   for (size_t i = 0; i < 9000; ++i)
@@ -622,10 +622,10 @@ BOOST_AUTO_TEST_CASE(NumericHoeffdingTreeTest)
 
   // Now train two streaming decision trees; one on the whole dataset, and one
   // on streaming data.
-  StreamingDecisionTree<HoeffdingSplit<GiniImpurity,
+  StreamingDecisionTree<HoeffdingTree<GiniImpurity,
       HoeffdingDoubleNumericSplit>, arma::mat> batchTree(dataset, info, labels,
       3);
-  StreamingDecisionTree<HoeffdingSplit<GiniImpurity,
+  StreamingDecisionTree<HoeffdingTree<GiniImpurity,
       HoeffdingDoubleNumericSplit>, arma::mat> streamTree(info, 3, 3);
   for (size_t i = 0; i < 9000; ++i)
     streamTree.Train(dataset.col(i), labels[i]);
@@ -693,9 +693,9 @@ BOOST_AUTO_TEST_CASE(BinaryNumericHoeffdingTreeTest)
 
   // Now train two streaming decision trees; one on the whole dataset, and one
   // on streaming data.
-  StreamingDecisionTree<HoeffdingSplit<GiniImpurity, BinaryDoubleNumericSplit>,
+  StreamingDecisionTree<HoeffdingTree<GiniImpurity, BinaryDoubleNumericSplit>,
       arma::mat> batchTree(dataset, info, labels, 3);
-  StreamingDecisionTree<HoeffdingSplit<GiniImpurity, BinaryDoubleNumericSplit>,
+  StreamingDecisionTree<HoeffdingTree<GiniImpurity, BinaryDoubleNumericSplit>,
       arma::mat> streamTree(info, 4, 3);
   for (size_t i = 0; i < 9000; ++i)
     streamTree.Train(dataset.col(i), labels[i]);
@@ -735,7 +735,7 @@ BOOST_AUTO_TEST_CASE(BinaryNumericHoeffdingTreeTest)
 BOOST_AUTO_TEST_CASE(MajorityProbabilityTest)
 {
   data::DatasetInfo info(1);
-  StreamingDecisionTree<HoeffdingSplit<>> tree(info, 1, 3);
+  StreamingDecisionTree<HoeffdingTree<>> tree(info, 1, 3);
 
   // Feed the tree a few samples.
   tree.Train(arma::vec("1"), 0);

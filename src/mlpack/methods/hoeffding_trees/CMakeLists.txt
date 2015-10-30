@@ -9,8 +9,8 @@ set(SOURCES
   hoeffding_categorical_split_impl.hpp
   hoeffding_numeric_split.hpp
   hoeffding_numeric_split_impl.hpp
-  hoeffding_split.hpp
-  hoeffding_split_impl.hpp
+  hoeffding_tree.hpp
+  hoeffding_tree_impl.hpp
   numeric_split_info.hpp
   streaming_decision_tree.hpp
   streaming_decision_tree_impl.hpp
