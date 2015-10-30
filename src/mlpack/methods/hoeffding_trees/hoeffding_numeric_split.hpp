@@ -39,51 +39,90 @@ namespace tree {
  * range is equally split into bins, and splitting proceeds in the same way as
  * with the categorical splits.  This is a simple and stupid strategy, so don't
  * expect it to be the best possible thing you can do.
+ *
+ * @tparam FitnessFunction Fitness function to use for calculating gain.
+ * @tparam ObservationType Type of observations in this dimension.
  */
 template<typename FitnessFunction,
          typename ObservationType = double>
 class HoeffdingNumericSplit
 {
  public:
+  //! The splitting information type required by the HoeffdingNumericSplit.
   typedef NumericSplitInfo<ObservationType> SplitInfo;
 
+  /**
+   * Create the HoeffdingNumericSplit class, and specify some basic parameters
+   * about how the binning should take place.
+   *
+   * @param numClasses Number of classes.
+   * @param bins Number of bins.
+   * @param observationsBeforeBinning Number of points to see before binning is
+   *      performed.
+   */
   HoeffdingNumericSplit(const size_t numClasses,
                         const size_t bins = 10,
                         const size_t observationsBeforeBinning = 100);
 
+  /**
+   * Train the HoeffdingNumericSplit on the given observed value (remember that
+   * this object only cares about the information for a single feature, not an
+   * entire point).
+   *
+   * @param value Value in the dimension that this HoeffdingNumericSplit refers
+   *      to.
+   * @param label Label of the given point.
+   */
   void Train(ObservationType value, const size_t label);
 
+  /**
+   * Evaluate the fitness function given what has been calculated so far.  In
+   * this case, if binning has not yet been performed, 0 will be returned (i.e.,
+   * no gain).
+   */
   double EvaluateFitnessFunction() const;
 
-  // Return the majority class of each child to be created, if a split on this
-  // dimension was performed.  Also create the split object.
-  void Split(arma::Col<size_t>& childMajorities, SplitInfo& splitInfo) const;
-
-  size_t MajorityClass() const;
-  double MajorityProbability() const;
-
-  size_t Bins() const { return bins; }
-
-  // Return the number of children if this node splits on this feature.
+  //! Return the number of children if this node splits on this feature.
   size_t NumChildren() const { return bins; }
 
+  /**
+   * Return the majority class of each child to be created, if a split on this
+   * dimension was performed.  Also create the split object.
+   */
+  void Split(arma::Col<size_t>& childMajorities, SplitInfo& splitInfo) const;
+
+  //! Return the majority class.
+  size_t MajorityClass() const;
+  //! Return the probability of the majority class.
+  double MajorityProbability() const;
+
+  //! Return the number of bins.
+  size_t Bins() const { return bins; }
+
+  //! Serialize the object.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
  private:
-  // Cache the values of the points seen before we make bins.
+  //! Before binning, this holds the points we have seen so far.
   arma::Col<ObservationType> observations;
+  //! This holds the labels of the points before binning.
   arma::Col<size_t> labels;
 
+  //! The split points for the binning (length bins - 1).
   arma::Col<ObservationType> splitPoints;
+  //! The number of bins.
   size_t bins;
+  //! The number of observations we must see before binning.
   size_t observationsBeforeBinning;
+  //! The number of samples we have seen so far.
   size_t samplesSeen;
 
+  //! After binning, this contains the sufficient statistics.
   arma::Mat<size_t> sufficientStatistics;
 };
 
-// Convenience typedef.
+//! Convenience typedef.
 template<typename FitnessFunction>
 using HoeffdingDoubleNumericSplit = HoeffdingNumericSplit<FitnessFunction,
     double>;

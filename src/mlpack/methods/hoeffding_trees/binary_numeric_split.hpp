@@ -31,39 +31,73 @@ namespace tree {
  * time, where n is the number of samples seen so far.  Every split with this
  * split type returns only two splits (greater than or equal to the split point,
  * and less than the split point).  The Train() function should take O(1) time.
+ *
+ * @tparam FitnessFunction Fitness function to use for calculating gain.
+ * @tparam ObservationType Type of observation used by this dimension.
  */
 template<typename FitnessFunction,
          typename ObservationType = double>
 class BinaryNumericSplit
 {
  public:
+  //! The splitting information required by the BinaryNumericSplit.
   typedef NumericSplitInfo<ObservationType> SplitInfo;
 
+  /**
+   * Create the BinaryNumericSplit object with the given number of classes.
+   *
+   * @param numClasses Number of classes in dataset.
+   */
   BinaryNumericSplit(const size_t numClasses);
 
+  /**
+   * Train on the given value with the given label.
+   *
+   * @param value The value to train on.
+   * @param label The label to train on.
+   */
   void Train(ObservationType value, const size_t label);
 
+  /**
+   * Given the points seen so far, evaluate the fitness function, returning the
+   * best possible gain of a binary split.  Note that this takes O(n) time,
+   * where n is the number of points seen so far.  So this may not exactly be
+   * fast...
+   */
   double EvaluateFitnessFunction();
-
-  void Split(arma::Col<size_t>& childMajorities, SplitInfo& splitInfo);
-
-  size_t MajorityClass() const;
-  double MajorityProbability() const;
-
-  template<typename Archive>
-  void Serialize(Archive& ar, const unsigned int /* version */);
 
   // Return the number of children if this node were to split on this feature.
   size_t NumChildren() const { return 2; }
 
- private:
-  // All we need is ordered access.
-  std::multimap<ObservationType, size_t> sortedElements;
+  /**
+   * Given that a split should happen, return the majority classes of the (two)
+   * children and an initialized SplitInfo object.
+   *
+   * @param childMajorities Majority classes of the children after the split.
+   * @param splitInfo Split information.
+   */
+  void Split(arma::Col<size_t>& childMajorities, SplitInfo& splitInfo);
 
+  //! The majority class of the points seen so far.
+  size_t MajorityClass() const;
+  //! The probability of the majority class given the points seen so far.
+  double MajorityProbability() const;
+
+  //! Serialize the object.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
+
+ private:
+  //! The elements seen so far, in sorted order.
+  std::multimap<ObservationType, size_t> sortedElements;
+  //! The classes we have seen so far (for majority calculations).
   arma::Col<size_t> classCounts;
 
-  bool isAccurate;
+  //! A cached best split point.
   ObservationType bestSplit;
+  //! If true, the cached best split point is accurate (that is, we have not
+  //! seen any more samples since we calculated it).
+  bool isAccurate;
 };
 
 // Convenience typedef.
