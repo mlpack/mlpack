@@ -101,9 +101,8 @@ class HoeffdingTree
    *      numeric and categorical split vectors.  If left NULL, a new one will
    *      be created.
    */
-  HoeffdingTree(const size_t dimensionality,
+  HoeffdingTree(const data::DatasetInfo& datasetInfo,
                 const size_t numClasses,
-                const data::DatasetInfo& datasetInfo,
                 const double successProbability,
                 const size_t maxSamples,
                 const size_t checkInterval,

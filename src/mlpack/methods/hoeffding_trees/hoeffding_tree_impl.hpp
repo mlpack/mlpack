@@ -40,9 +40,8 @@ HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
->::HoeffdingTree(const size_t dimensionality,
+>::HoeffdingTree(const data::DatasetInfo& datasetInfo,
                  const size_t numClasses,
-                 const data::DatasetInfo& datasetInfo,
                  const double successProbability,
                  const size_t maxSamples,
                  const size_t checkInterval,
@@ -64,7 +63,7 @@ HoeffdingTree<
   // Do we need to generate the mappings too?
   if (ownsMappings)
   {
-    for (size_t i = 0; i < dimensionality; ++i)
+    for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)
     {
       if (datasetInfo.Type(i) == data::Datatype::categorical)
       {
@@ -83,7 +82,7 @@ HoeffdingTree<
   }
   else
   {
-    for (size_t i = 0; i < dimensionality; ++i)
+    for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)
     {
       if (datasetInfo.Type(i) == data::Datatype::categorical)
       {
@@ -358,12 +357,10 @@ void HoeffdingTree<
   }
 
   // We already know what the splitDimension will be.
-  const size_t dimensionality = numericSplits.size() + categoricalSplits.size();
   for (size_t i = 0; i < childMajorities.n_elem; ++i)
   {
-    children.push_back(StreamingDecisionTreeType(*datasetInfo, dimensionality,
-        numClasses, successProbability, maxSamples, checkInterval,
-        dimensionMappings));
+    children.push_back(StreamingDecisionTreeType(*datasetInfo, numClasses,
+        successProbability, maxSamples, checkInterval, dimensionMappings);
     children[i].MajorityClass() = childMajorities[i];
   }
 
