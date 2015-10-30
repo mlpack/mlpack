@@ -34,7 +34,7 @@ class SteepestDescent
    * @param mom The momentum coefficient.
    */
   SteepestDescent(DecomposableFunctionType& function,
-                  const double lr = 1,
+                  const double lr = 0.5,
                   const double mom = 0) :
       function(function),
       lr(lr),
@@ -66,13 +66,12 @@ class SteepestDescent
   {
     if (gradient.n_elem != 0)
     {
-      DataType outputGradient;
-      function.Gradient(outputGradient);
+      DataType outputGradient = function.Gradient();
       gradient += outputGradient;
     }
     else
     {
-      function.Gradient(gradient);
+      gradient = function.Gradient();
     }
   }
 
