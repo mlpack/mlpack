@@ -17,8 +17,8 @@ template<typename FitnessFunction, typename ObservationType>
 BinaryNumericSplit<FitnessFunction, ObservationType>::BinaryNumericSplit(
     const size_t numClasses) :
     classCounts(numClasses),
-    isAccurate(true),
-    bestSplit(std::numeric_limits<ObservationType>::min())
+    bestSplit(std::numeric_limits<ObservationType>::min()),
+    isAccurate(true)
 {
   // Zero out class counts.
   classCounts.zeros();
