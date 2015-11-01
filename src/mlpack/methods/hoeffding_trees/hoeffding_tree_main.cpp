@@ -1,11 +1,10 @@
 /**
- * @file streaming_decision_tree_main.cpp
+ * @file hoeffding_tree_main.cpp
  * @author Ryan Curtin
  *
  * A command-line executable that can build a streaming decision tree.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/methods/hoeffding_trees/streaming_decision_tree.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_tree.hpp>
 #include <mlpack/methods/hoeffding_trees/binary_numeric_split.hpp>
 
@@ -66,11 +65,11 @@ int main(int argc, char** argv)
         << "specified too!" << endl;
 
   if (numericSplitStrategy == "domingos")
-    PerformActions<StreamingDecisionTree<HoeffdingTree<GiniImpurity,
-        HoeffdingDoubleNumericSplit, HoeffdingCategoricalSplit>>>();
+    PerformActions<HoeffdingTree<GiniImpurity, HoeffdingDoubleNumericSplit,
+        HoeffdingCategoricalSplit>>();
   else if (numericSplitStrategy == "binary")
-    PerformActions<StreamingDecisionTree<HoeffdingTree<GiniImpurity,
-        BinaryDoubleNumericSplit, HoeffdingCategoricalSplit>>>();
+    PerformActions<HoeffdingTree<GiniImpurity, BinaryDoubleNumericSplit,
+        HoeffdingCategoricalSplit>>();
   else
     Log::Fatal << "Unrecognized numeric split strategy ("
         << numericSplitStrategy << ")!  Must be 'domingos' or 'binary'."
