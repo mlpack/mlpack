@@ -38,6 +38,11 @@ enum Datatype : bool /* bool is all the precision we need for two types */
 class DatasetInfo
 {
  public:
+  /**
+   * Create the DatasetInfo object with the given dimensionality.  Note that the
+   * dimensionality cannot be changed later; you will have to create a new
+   * DatasetInfo object.
+   */
   DatasetInfo(const size_t dimensionality = 0);
 
   /**

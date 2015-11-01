@@ -13,6 +13,7 @@
 namespace mlpack {
 namespace data {
 
+// Default constructor.
 inline DatasetInfo::DatasetInfo(const size_t dimensionality) :
     types(dimensionality, Datatype::numeric)
 {
