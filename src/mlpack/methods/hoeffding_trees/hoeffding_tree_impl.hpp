@@ -22,15 +22,46 @@ HoeffdingTree<
     NumericSplitType,
     CategoricalSplitType
 >::HoeffdingTree(const MatType& data,
-                 const arma::Row<size_t>& labels,
                  const data::DatasetInfo& datasetInfo,
+                 const arma::Row<size_t>& labels,
                  const size_t numClasses,
                  const bool batchTraining,
                  const double successProbability,
                  const size_t maxSamples,
-                 const size_t checkInterval)
+                 const size_t checkInterval) :
+    dimensionMappings(new std::unordered_map<size_t,
+        std::pair<size_t, size_t>>()),
+    ownsMappings(true),
+    numSamples(0),
+    numClasses(numClasses),
+    maxSamples(maxSamples),
+    checkInterval(checkInterval),
+    datasetInfo(&datasetInfo),
+    successProbability(successProbability),
+    splitDimension(size_t(-1)),
+    categoricalSplit(0),
+    numericSplit()
 {
-  // Not yet implemented.
+  // Generate dimension mappings and create split objects.
+  for (size_t i = 0; i < datasetInfo.Dimensionality(); ++i)
+  {
+    if (datasetInfo.Type(i) == data::Datatype::categorical)
+    {
+      categoricalSplits.push_back(CategoricalSplitType<FitnessFunction>(
+          datasetInfo.NumMappings(i), numClasses));
+      (*dimensionMappings)[i] = std::make_pair(data::Datatype::categorical,
+          categoricalSplits.size() - 1);
+    }
+    else
+    {
+      numericSplits.push_back(NumericSplitType<FitnessFunction>(numClasses));
+      (*dimensionMappings)[i] = std::make_pair(data::Datatype::numeric,
+          numericSplits.size() - 1);
+    }
+  }
+
+  // Now train.
+  Train(data, labels, batchTraining);
 }
 
 template<typename FitnessFunction,
@@ -97,6 +128,33 @@ HoeffdingTree<
   }
 }
 
+// Copy constructor.
+template<typename FitnessFunction,
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType>
+HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>::
+    HoeffdingTree(const HoeffdingTree& other) :
+    numericSplits(other.numericSplits),
+    categoricalSplits(other.categoricalSplits),
+    dimensionMappings(new std::unordered_map<size_t,
+        std::pair<size_t, size_t>>(*other.dimensionMappings)),
+    ownsMappings(true),
+    numSamples(other.numSamples),
+    numClasses(other.numClasses),
+    maxSamples(other.maxSamples),
+    checkInterval(other.checkInterval),
+    datasetInfo(new data::DatasetInfo(*other.datasetInfo)),
+    successProbability(other.successProbability),
+    splitDimension(other.splitDimension),
+    majorityClass(other.majorityClass),
+    majorityProbability(other.majorityProbability),
+    categoricalSplit(other.categoricalSplit),
+    numericSplit(other.numericSplit),
+    children(other.children)
+{
+  // Nothing left to copy.
+}
+
 template<typename FitnessFunction,
          template<typename> class NumericSplitType,
          template<typename> class CategoricalSplitType>
@@ -121,6 +179,16 @@ void HoeffdingTree<
          const bool batchTraining)
 {
   // Not yet implemented.
+  if (batchTraining)
+  {
+    throw std::invalid_argument("batch training not yet implemented");
+  }
+  else
+  {
+    // We aren't training in batch mode; loop through the points.
+    for (size_t i = 0; i < data.n_cols; ++i)
+      Train(data.col(i), labels[i]);
+  }
 }
 
 //! Train on one point.
@@ -158,11 +226,25 @@ void HoeffdingTree<
       majorityClass = numericSplits[0].MajorityClass();
       majorityProbability = numericSplits[0].MajorityProbability();
     }
+
+    // Check for a split, if we should.
+    if (numSamples % checkInterval == 0)
+    {
+      const size_t numChildren = SplitCheck();
+      if (numChildren > 0)
+      {
+        // We need to add a bunch of children.
+        // Delete children, if we have them.
+        children.clear();
+        CreateChildren();
+      }
+    }
   }
   else
   {
-    // Already split.
-    // But we should probably pass it down anyway.
+    // Already split.  Pass the training point to the relevant child.
+    size_t direction = CalculateDirection(point);
+    children[direction].Train(point, label);
   }
 }
 
@@ -175,10 +257,6 @@ size_t HoeffdingTree<
     CategoricalSplitType
 >::SplitCheck()
 {
-  // If we have not seen enough samples to check, don't check.
-  if (numSamples % checkInterval != 0)
-    return 0;
-
   // Do nothing if we've already split.
   if (splitDimension != size_t(-1))
     return 0;
@@ -250,34 +328,6 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
 >
-size_t HoeffdingTree<
-    FitnessFunction,
-    NumericSplitType,
-    CategoricalSplitType
->::MajorityClass() const
-{
-  return majorityClass;
-}
-
-template<
-    typename FitnessFunction,
-    template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType
->
-size_t& HoeffdingTree<
-    FitnessFunction,
-    NumericSplitType,
-    CategoricalSplitType
->::MajorityClass()
-{
-  return majorityClass;
-}
-
-template<
-    typename FitnessFunction,
-    template<typename> class NumericSplitType,
-    template<typename> class CategoricalSplitType
->
 template<typename VecType>
 size_t HoeffdingTree<
     FitnessFunction,
@@ -304,11 +354,19 @@ size_t HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
->::Classify(const VecType& /* point */) const
+>::Classify(const VecType& point) const
 {
-  // We're a leaf (or being considered a leaf), so classify based on what we
-  // know.
-  return majorityClass;
+  if (children.size() == 0)
+  {
+    // If we're a leaf (or being considered a leaf), classify based on what we
+    // know.
+    return majorityClass;
+  }
+  else
+  {
+    // Otherwise, pass to the right child and let them classify.
+    return children[CalculateDirection(point)].Classify(point);
+  }
 }
 
 template<
@@ -321,12 +379,61 @@ void HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
->::Classify(const VecType& /* point */,
+>::Classify(const VecType& point,
             size_t& prediction,
             double& probability) const
 {
-  prediction = majorityClass;
-  probability = majorityProbability;
+  if (children.size() == 0)
+  {
+    // We are a leaf, so classify accordingly.
+    prediction = majorityClass;
+    probability = majorityProbability;
+  }
+  else
+  {
+    // Pass to the right child and let them do the classification.
+    children[CalculateDirection(point)].Classify(point, prediction,
+        probability);
+  }
+}
+
+//! Batch classification.
+template<
+    typename FitnessFunction,
+    template<typename> class NumericSplitType,
+    template<typename> class CategoricalSplitType
+>
+template<typename MatType>
+void HoeffdingTree<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::Classify(const MatType& data, arma::Row<size_t>& predictions) const
+{
+  predictions.set_size(data.n_cols);
+  for (size_t i = 0; i < data.n_cols; ++i)
+    predictions[i] = Classify(data.col(i));
+}
+
+//! Batch classification with probabilities.
+template<
+    typename FitnessFunction,
+    template<typename> class NumericSplitType,
+    template<typename> class CategoricalSplitType
+>
+template<typename MatType>
+void HoeffdingTree<
+    FitnessFunction,
+    NumericSplitType,
+    CategoricalSplitType
+>::Classify(const MatType& data,
+            arma::Row<size_t>& predictions,
+            arma::rowvec& probabilities) const
+{
+  predictions.set_size(data.n_cols);
+  probabilities.set_size(data.n_cols);
+  for (size_t i = 0; i < data.n_cols; ++i)
+    Classify(data.col(i), predictions[i], probabilities[i]);
 }
 
 template<
@@ -334,12 +441,11 @@ template<
     template<typename> class NumericSplitType,
     template<typename> class CategoricalSplitType
 >
-template<typename StreamingDecisionTreeType>
 void HoeffdingTree<
     FitnessFunction,
     NumericSplitType,
     CategoricalSplitType
->::CreateChildren(std::vector<StreamingDecisionTreeType>& children)
+>::CreateChildren()
 {
   // Create the children.
   arma::Col<size_t> childMajorities;
@@ -359,8 +465,8 @@ void HoeffdingTree<
   // We already know what the splitDimension will be.
   for (size_t i = 0; i < childMajorities.n_elem; ++i)
   {
-    children.push_back(StreamingDecisionTreeType(*datasetInfo, numClasses,
-        successProbability, maxSamples, checkInterval, dimensionMappings);
+    children.push_back(HoeffdingTree(*datasetInfo, numClasses,
+        successProbability, maxSamples, checkInterval, dimensionMappings));
     children[i].MajorityClass() = childMajorities[i];
   }
 
@@ -454,11 +560,26 @@ void HoeffdingTree<
   }
   else
   {
-    // We have split, so we only need to save the split.
+    // We have split, so we only need to save the split and the children.
     if (datasetInfo->Type(splitDimension) == data::Datatype::categorical)
       ar & CreateNVP(categoricalSplit, "categoricalSplit");
     else
       ar & CreateNVP(numericSplit, "numericSplit");
+
+    // Serialize the children, because we have split.
+    size_t numChildren;
+    if (Archive::is_saving::value)
+      numChildren = children.size();
+    ar & CreateNVP(numChildren, "numChildren");
+    if (Archive::is_loading::value) // If needed, allocate space.
+      children.resize(numChildren, HoeffdingTree(data::DatasetInfo(0), 0));
+
+    for (size_t i = 0; i < numChildren; ++i)
+    {
+      std::ostringstream name;
+      name << "child" << i;
+      ar & data::CreateNVP(children[i], name.str());
+    }
 
     if (Archive::is_loading::value)
     {

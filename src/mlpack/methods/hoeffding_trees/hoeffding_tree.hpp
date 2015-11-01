@@ -65,6 +65,7 @@ class HoeffdingTree
    *
    * @param data Dataset to train on.
    * @param datasetInfo Information on the dataset (types of each feature).
+   * @param labels Labels of each point in the dataset.
    * @param numClasses Number of classes in the dataset.
    * @param batchTraining Whether or not to train in batch.
    * @param successProbability Probability of success required in Hoeffding
@@ -76,8 +77,8 @@ class HoeffdingTree
    */
   template<typename MatType>
   HoeffdingTree(const MatType& data,
-                const arma::Row<size_t>& labels,
                 const data::DatasetInfo& datasetInfo,
+                const arma::Row<size_t>& labels,
                 const size_t numClasses,
                 const bool batchTraining = true,
                 const double successProbability = 0.95,
@@ -103,11 +104,19 @@ class HoeffdingTree
    */
   HoeffdingTree(const data::DatasetInfo& datasetInfo,
                 const size_t numClasses,
-                const double successProbability,
-                const size_t maxSamples,
-                const size_t checkInterval,
+                const double successProbability = 0.95,
+                const size_t maxSamples = 0,
+                const size_t checkInterval = 100,
                 std::unordered_map<size_t, std::pair<size_t, size_t>>*
                     dimensionMappings = NULL);
+
+  /**
+   * Copy another tree (warning: this will duplicate the tree entirely, and may
+   * use a lot of memory.  Make sure it's what you want before you do it).
+   *
+   * @param other Tree to copy.
+   */
+  HoeffdingTree(const HoeffdingTree& other);
 
   /**
    * Clean up memory.
@@ -147,9 +156,22 @@ class HoeffdingTree
   size_t SplitDimension() const { return splitDimension; }
 
   //! Get the majority class.
-  size_t MajorityClass() const;
+  size_t MajorityClass() const { return majorityClass; }
   //! Modify the majority class.
-  size_t& MajorityClass();
+  size_t& MajorityClass() { return majorityClass; }
+
+  //! Get the probability of the majority class (based on training samples).
+  double MajorityProbability() const { return majorityProbability; }
+  //! Modify the probability of the majority class.
+  double& MajorityProbability() { return majorityProbability; }
+
+  //! Get the number of children.
+  size_t NumChildren() const { return children.size(); }
+
+  //! Get a child.
+  const HoeffdingTree& Child(const size_t i) const { return children[i]; }
+  //! Modify a child.
+  HoeffdingTree& Child(const size_t i) { return children[i]; }
 
   /**
    * Given a point and that this node is not a leaf, calculate the index of the
@@ -187,10 +209,35 @@ class HoeffdingTree
       const;
 
   /**
+   * Classify the given points, using this node and the entire (sub)tree beneath
+   * it.  The predicted labels for each point are returned.
+   *
+   * @param data Points to classify.
+   * @param predictions Predicted labels for each point.
+   */
+  template<typename MatType>
+  void Classify(const MatType& data, arma::Row<size_t>& predictions) const;
+
+  /**
+   * Classify the given points, using this node and the entire (sub)tree beneath
+   * it.  The predicted labels for each point are returned, as well as an
+   * estimate of the probability that the prediction is correct for each point.
+   * This estimate is simply the MajorityProbability() for the leaf that each
+   * point bins to.
+   *
+   * @param data Points to classify.
+   * @param predictions Predicted labels for each point.
+   * @param probabilities Probability estimates for each predicted label.
+   */
+  template<typename MatType>
+  void Classify(const MatType& data,
+                arma::Row<size_t>& predictions,
+                arma::rowvec& probabilities) const;
+
+  /**
    * Given that this node should split, create the children.
    */
-  template<typename StreamingDecisionTreeType>
-  void CreateChildren(std::vector<StreamingDecisionTreeType>& children);
+  void CreateChildren();
 
   //! Serialize the split.
   template<typename Archive>
@@ -235,6 +282,8 @@ class HoeffdingTree
   typename CategoricalSplitType<FitnessFunction>::SplitInfo categoricalSplit;
   //! If the split is numeric, this holds the splitting information.
   typename NumericSplitType<FitnessFunction>::SplitInfo numericSplit;
+  //! If the split has occurred, these are the children.
+  std::vector<HoeffdingTree> children;
 };
 
 } // namespace tree
