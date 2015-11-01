@@ -12,8 +12,6 @@ set(SOURCES
   hoeffding_tree.hpp
   hoeffding_tree_impl.hpp
   numeric_split_info.hpp
-  streaming_decision_tree.hpp
-  streaming_decision_tree_impl.hpp
   typedef.hpp
 )
 
@@ -26,9 +24,9 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_executable(streaming_decision_tree
-  streaming_decision_tree_main.cpp
+add_executable(hoeffding_tree
+  hoeffding_tree_main.cpp
 )
-target_link_libraries(streaming_decision_tree
+target_link_libraries(hoeffding_tree
   mlpack
 )
