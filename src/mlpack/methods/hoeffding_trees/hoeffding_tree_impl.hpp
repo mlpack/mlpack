@@ -34,7 +34,7 @@ HoeffdingTree<
     ownsMappings(true),
     numSamples(0),
     numClasses(numClasses),
-    maxSamples(maxSamples),
+    maxSamples((maxSamples == 0) ? size_t(-1) : maxSamples),
     checkInterval(checkInterval),
     datasetInfo(&datasetInfo),
     ownsInfo(false),
@@ -84,7 +84,7 @@ HoeffdingTree<
     ownsMappings(dimensionMappingsIn == NULL),
     numSamples(0),
     numClasses(numClasses),
-    maxSamples(maxSamples),
+    maxSamples((maxSamples == 0) ? size_t(-1) : maxSamples),
     checkInterval(checkInterval),
     datasetInfo(&datasetInfo),
     ownsInfo(false),
@@ -183,7 +183,6 @@ void HoeffdingTree<
          const arma::Row<size_t>& labels,
          const bool batchTraining)
 {
-  // Not yet implemented.
   if (batchTraining)
   {
     // Pass all the points through the nodes, and then split only after that.
