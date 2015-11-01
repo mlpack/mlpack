@@ -37,6 +37,7 @@ HoeffdingTree<
     maxSamples(maxSamples),
     checkInterval(checkInterval),
     datasetInfo(&datasetInfo),
+    ownsInfo(false),
     successProbability(successProbability),
     splitDimension(size_t(-1)),
     categoricalSplit(0),
@@ -86,6 +87,7 @@ HoeffdingTree<
     maxSamples(maxSamples),
     checkInterval(checkInterval),
     datasetInfo(&datasetInfo),
+    ownsInfo(false),
     successProbability(successProbability),
     splitDimension(size_t(-1)),
     categoricalSplit(0),
@@ -144,6 +146,7 @@ HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>::
     maxSamples(other.maxSamples),
     checkInterval(other.checkInterval),
     datasetInfo(new data::DatasetInfo(*other.datasetInfo)),
+    ownsInfo(true),
     successProbability(other.successProbability),
     splitDimension(other.splitDimension),
     majorityClass(other.majorityClass),
@@ -163,6 +166,8 @@ HoeffdingTree<FitnessFunction, NumericSplitType, CategoricalSplitType>::
 {
   if (ownsMappings)
     delete dimensionMappings;
+  if (ownsInfo)
+    delete datasetInfo;
 }
 
 //! Train on a set of points.
@@ -499,7 +504,10 @@ void HoeffdingTree<
     d = const_cast<data::DatasetInfo*>(datasetInfo);
   ar & CreateNVP(d, "datasetInfo");
   if (Archive::is_loading::value)
+  {
     datasetInfo = d;
+    ownsInfo = true;
+  }
 
   ar & CreateNVP(majorityClass, "majorityClass");
   ar & CreateNVP(majorityProbability, "majorityProbability");

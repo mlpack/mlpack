@@ -264,8 +264,10 @@ class HoeffdingTree
   size_t maxSamples;
   //! The number of samples that should be seen before checking for a split.
   size_t checkInterval;
-  //! The dataset information.  (We don't own this.)
+  //! The dataset information.
   const data::DatasetInfo* datasetInfo;
+  //! Whether or not we own the dataset information.
+  bool ownsInfo;
   //! The required probability of success for a split to be performed.
   double successProbability;
 
