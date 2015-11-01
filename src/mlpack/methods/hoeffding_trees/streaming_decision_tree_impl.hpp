@@ -22,8 +22,7 @@ StreamingDecisionTree<SplitType, MatType>::StreamingDecisionTree(
     const double confidence,
     const size_t numSamples,
     const size_t checkInterval) :
-    split(data.n_rows, numClasses, datasetInfo, confidence, numSamples,
-        checkInterval)
+    split(datasetInfo, numClasses, confidence, numSamples, checkInterval)
 {
   Train(data, labels);
 }
@@ -68,7 +67,7 @@ void StreamingDecisionTree<SplitType, MatType>::Train(const VecType& data,
         children.clear();
 
       // The split knows how to add the children.
-      split.CreateChildren(children);
+      //split.CreateChildren(children);
     }
   }
   else
