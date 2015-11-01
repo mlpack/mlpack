@@ -22,7 +22,6 @@
 #include <mlpack/core/metrics/mahalanobis_distance.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
 #include <mlpack/methods/hoeffding_trees/hoeffding_tree.hpp>
-#include <mlpack/methods/hoeffding_trees/streaming_decision_tree.hpp>
 
 using namespace mlpack;
 using namespace mlpack::distribution;
@@ -845,12 +844,12 @@ BOOST_AUTO_TEST_CASE(HoeffdingCategoricalSplitTest)
  * Make sure the HoeffdingTree object serializes correctly before a split has
  * occured.
  */
-BOOST_AUTO_TEST_CASE(HoeffdingTreeTest)
+BOOST_AUTO_TEST_CASE(HoeffdingTreeBeforeSplitTest)
 {
   data::DatasetInfo info(5);
   info.MapString("0", 2); // Dimension 1 is categorical.
   info.MapString("1", 2);
-  HoeffdingTree<> split(5, 2, info, 0.99, 15000, 1);
+  HoeffdingTree<> split(info, 2, 0.99, 15000, 1);
 
   // Train for 2 samples.
   split.Train(arma::vec("0.3 0.4 1 0.6 0.7"), 0);
@@ -858,7 +857,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeTest)
 
   data::DatasetInfo wrongInfo(3);
   wrongInfo.MapString("1", 1);
-  HoeffdingTree<> xmlSplit(3, 7, wrongInfo, 0.1, 10, 1);
+  HoeffdingTree<> xmlSplit(wrongInfo, 7, 0.1, 10, 1);
 
   // Force the binarySplit to split.
   data::DatasetInfo binaryInfo(2);
@@ -866,7 +865,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeTest)
   binaryInfo.MapString("cat1", 0);
   binaryInfo.MapString("cat0", 1);
 
-  HoeffdingTree<> binarySplit(2, 2, info, 0.95, 5000, 1);
+  HoeffdingTree<> binarySplit(info, 2, 0.95, 5000, 1);
 
   // Feed samples from each class.
   for (size_t i = 0; i < 500; ++i)
@@ -875,7 +874,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeTest)
     binarySplit.Train(arma::Col<size_t>("1 0"), 1);
   }
 
-  HoeffdingTree<> textSplit(3, 11, wrongInfo, 0.75, 1000, 1);
+  HoeffdingTree<> textSplit(wrongInfo, 11, 0.75, 1000, 1);
 
   SerializeObjectAll(split, xmlSplit, textSplit, binarySplit);
 
@@ -904,7 +903,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeAfterSplitTest)
   info.MapString("cat1", 0);
   info.MapString("cat0", 1);
 
-  HoeffdingTree<> split(2, 2, info, 0.95, 5000, 1);
+  HoeffdingTree<> split(info, 2, 0.95, 5000, 1);
 
   // Feed samples from each class.
   for (size_t i = 0; i < 500; ++i)
@@ -912,22 +911,23 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeAfterSplitTest)
     split.Train(arma::Col<size_t>("0 0"), 0);
     split.Train(arma::Col<size_t>("1 0"), 1);
   }
-  BOOST_REQUIRE_EQUAL(split.SplitCheck(), 2);
+  // Ensure a split has happened.
+  BOOST_REQUIRE_NE(split.SplitDimension(), size_t(-1));
 
   data::DatasetInfo wrongInfo(3);
   wrongInfo.MapString("1", 1);
-  HoeffdingTree<> xmlSplit(3, 7, wrongInfo, 0.1, 10, 1);
+  HoeffdingTree<> xmlSplit(wrongInfo, 7, 0.1, 10, 1);
 
   data::DatasetInfo binaryInfo(5);
   binaryInfo.MapString("0", 2); // Dimension 2 is categorical.
   binaryInfo.MapString("1", 2);
-  HoeffdingTree<> binarySplit(5, 2, binaryInfo, 0.99, 15000, 1);
+  HoeffdingTree<> binarySplit(binaryInfo, 2, 0.99, 15000, 1);
 
   // Train for 2 samples.
   binarySplit.Train(arma::vec("0.3 0.4 1 0.6 0.7"), 0);
   binarySplit.Train(arma::vec("-0.3 0.0 0 0.7 0.8"), 1);
 
-  HoeffdingTree<> textSplit(3, 11, wrongInfo, 0.75, 1000, 1);
+  HoeffdingTree<> textSplit(wrongInfo, 11, 0.75, 1000, 1);
 
   SerializeObjectAll(split, xmlSplit, textSplit, binarySplit);
 
@@ -953,15 +953,15 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeAfterSplitTest)
       textSplit.CalculateDirection(arma::vec("0.3 0.4 1 0.6 0.7")));
 }
 
-BOOST_AUTO_TEST_CASE(EmptyStreamingDecisionTreeTest)
+BOOST_AUTO_TEST_CASE(EmptyHoeffdingTreeTest)
 {
   using namespace mlpack::tree;
 
   data::DatasetInfo info(6);
-  StreamingDecisionTree<HoeffdingTree<>> tree(info, 2, 2);
-  StreamingDecisionTree<HoeffdingTree<>> xmlTree(info, 3, 3);
-  StreamingDecisionTree<HoeffdingTree<>> binaryTree(info, 4, 4);
-  StreamingDecisionTree<HoeffdingTree<>> textTree(info, 5, 5);
+  HoeffdingTree<> tree(info, 2);
+  HoeffdingTree<> xmlTree(info, 3);
+  HoeffdingTree<> binaryTree(info, 4);
+  HoeffdingTree<> textTree(info, 5);
 
   SerializeObjectAll(tree, xmlTree, binaryTree, textTree);
 
@@ -975,7 +975,7 @@ BOOST_AUTO_TEST_CASE(EmptyStreamingDecisionTreeTest)
  * Build a Hoeffding tree, then save it and make sure other trees can classify
  * as effectively.
  */
-BOOST_AUTO_TEST_CASE(StreamingDecisionTreeTest)
+BOOST_AUTO_TEST_CASE(HoeffdingTreeTest)
 {
   using namespace mlpack::tree;
 
@@ -1001,14 +1001,14 @@ BOOST_AUTO_TEST_CASE(StreamingDecisionTreeTest)
   info.MapString("c", 1);
   info.MapString("d", 1);
 
-  StreamingDecisionTree<HoeffdingTree<>> tree(dataset, info, labels, 2);
+  HoeffdingTree<> tree(dataset, info, labels, 2, false /* no batch mode */);
 
   data::DatasetInfo xmlInfo(1);
-  StreamingDecisionTree<HoeffdingTree<>> xmlTree(xmlInfo, 1, 1);
+  HoeffdingTree<> xmlTree(xmlInfo, 1);
   data::DatasetInfo binaryInfo(5);
-  StreamingDecisionTree<HoeffdingTree<>> binaryTree(binaryInfo, 5, 6);
+  HoeffdingTree<> binaryTree(binaryInfo, 6);
   data::DatasetInfo textInfo(7);
-  StreamingDecisionTree<HoeffdingTree<>> textTree(textInfo, 7, 100);
+  HoeffdingTree<> textTree(textInfo, 100);
 
   SerializeObjectAll(tree, xmlTree, textTree, binaryTree);
 
@@ -1016,12 +1016,9 @@ BOOST_AUTO_TEST_CASE(StreamingDecisionTreeTest)
   BOOST_REQUIRE_EQUAL(tree.NumChildren(), textTree.NumChildren());
   BOOST_REQUIRE_EQUAL(tree.NumChildren(), binaryTree.NumChildren());
 
-  BOOST_REQUIRE_EQUAL(tree.Split().SplitDimension(),
-      xmlTree.Split().SplitDimension());
-  BOOST_REQUIRE_EQUAL(tree.Split().SplitDimension(),
-      textTree.Split().SplitDimension());
-  BOOST_REQUIRE_EQUAL(tree.Split().SplitDimension(),
-      binaryTree.Split().SplitDimension());
+  BOOST_REQUIRE_EQUAL(tree.SplitDimension(), xmlTree.SplitDimension());
+  BOOST_REQUIRE_EQUAL(tree.SplitDimension(), textTree.SplitDimension());
+  BOOST_REQUIRE_EQUAL(tree.SplitDimension(), binaryTree.SplitDimension());
 
   for (size_t i = 0; i < tree.NumChildren(); ++i)
   {
@@ -1030,23 +1027,23 @@ BOOST_AUTO_TEST_CASE(StreamingDecisionTreeTest)
     BOOST_REQUIRE_EQUAL(binaryTree.Child(i).NumChildren(), 0);
     BOOST_REQUIRE_EQUAL(textTree.Child(i).NumChildren(), 0);
 
-    BOOST_REQUIRE_EQUAL(tree.Child(i).Split().SplitDimension(),
-        xmlTree.Child(i).Split().SplitDimension());
-    BOOST_REQUIRE_EQUAL(tree.Child(i).Split().SplitDimension(),
-        textTree.Child(i).Split().SplitDimension());
-    BOOST_REQUIRE_EQUAL(tree.Child(i).Split().SplitDimension(),
-        binaryTree.Child(i).Split().SplitDimension());
+    BOOST_REQUIRE_EQUAL(tree.Child(i).SplitDimension(),
+        xmlTree.Child(i).SplitDimension());
+    BOOST_REQUIRE_EQUAL(tree.Child(i).SplitDimension(),
+        textTree.Child(i).SplitDimension());
+    BOOST_REQUIRE_EQUAL(tree.Child(i).SplitDimension(),
+        binaryTree.Child(i).SplitDimension());
 
-    BOOST_REQUIRE_EQUAL(tree.Child(i).Split().MajorityClass(),
-        xmlTree.Child(i).Split().MajorityClass());
-    BOOST_REQUIRE_EQUAL(tree.Child(i).Split().MajorityClass(),
-        textTree.Child(i).Split().MajorityClass());
-    BOOST_REQUIRE_EQUAL(tree.Child(i).Split().MajorityClass(),
-        binaryTree.Child(i).Split().MajorityClass());
+    BOOST_REQUIRE_EQUAL(tree.Child(i).MajorityClass(),
+        xmlTree.Child(i).MajorityClass());
+    BOOST_REQUIRE_EQUAL(tree.Child(i).MajorityClass(),
+        textTree.Child(i).MajorityClass());
+    BOOST_REQUIRE_EQUAL(tree.Child(i).MajorityClass(),
+        binaryTree.Child(i).MajorityClass());
   }
 
   // Check that predictions are the same.
-  arma::Row<size_t> predictions, xmlPredictions, binaryPredictions, 
+  arma::Row<size_t> predictions, xmlPredictions, binaryPredictions,
       textPredictions;
   tree.Classify(dataset, predictions);
   xmlTree.Classify(dataset, xmlPredictions);
