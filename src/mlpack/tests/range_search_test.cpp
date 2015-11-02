@@ -1043,4 +1043,27 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest2)
   }
 }
 
+/**
+ * Make sure that no results are returned when we build a range search object
+ * with no reference set.
+ */
+BOOST_AUTO_TEST_CASE(EmptySearchTest)
+{
+  RangeSearch<EuclideanDistance, arma::mat, KDTree> rs;
+
+  vector<vector<size_t>> neighbors;
+  vector<vector<double>> distances;
+
+  rs.Search(math::Range(0.0, 10.0), neighbors, distances);
+
+  BOOST_REQUIRE_EQUAL(neighbors.size(), 0);
+  BOOST_REQUIRE_EQUAL(distances.size(), 0);
+
+  // Now check with a query set.
+  arma::mat querySet = arma::randu<arma::mat>(3, 100);
+
+  BOOST_REQUIRE_THROW(rs.Search(querySet, math::Range(0.0, 10.0), neighbors,
+      distances), std::invalid_argument);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
