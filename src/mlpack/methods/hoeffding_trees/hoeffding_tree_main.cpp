@@ -32,6 +32,9 @@ PARAM_STRING("probabilities_file", "In addition to predicting labels, provide "
 
 PARAM_STRING("numeric_split_strategy", "The splitting strategy to use for "
     "numeric features: 'domingos' or 'binary'.", "N", "binary");
+PARAM_FLAG("batch_mode", "If true, samples will be considered in batch instead "
+    "of as a stream.  This generally results in better trees but at the cost of"
+    " memory usage and runtime.", "b");
 
 // Helper function for once we have chosen a tree type.
 template<typename TreeType>
@@ -64,6 +67,9 @@ int main(int argc, char** argv)
     Log::Fatal << "If --training_file is specified, --labels_file must be "
         << "specified too!" << endl;
 
+  if (trainingFile.empty() && CLI::HasParam("batch_mode"))
+    Log::Warn << "--batch_mode (-b) ignored; no training set provided." << endl;
+
   if (numericSplitStrategy == "domingos")
     PerformActions<HoeffdingTree<GiniImpurity, HoeffdingDoubleNumericSplit,
         HoeffdingCategoricalSplit>>();
@@ -89,6 +95,7 @@ void PerformActions()
   const string testFile = CLI::GetParam<string>("test_file");
   const string predictionsFile = CLI::GetParam<string>("predictions_file");
   const string probabilitiesFile = CLI::GetParam<string>("probabilities_file");
+  const bool batchTraining = CLI::HasParam("batch_mode");
 
   TreeType* tree = NULL;
   DatasetInfo datasetInfo;
@@ -107,7 +114,7 @@ void PerformActions()
     // Now create the decision tree.
     Timer::Start("tree_training");
     tree = new TreeType(trainingSet, datasetInfo, labels, max(labels) + 1,
-        confidence, maxSamples);
+        batchTraining, confidence, maxSamples);
     Timer::Stop("tree_training");
   }
   else
@@ -129,7 +136,7 @@ void PerformActions()
 
       // Now create the decision tree.
       Timer::Start("tree_training");
-      tree->Train(trainingSet, labels);
+      tree->Train(trainingSet, labels, batchTraining);
       Timer::Stop("tree_training");
     }
   }
