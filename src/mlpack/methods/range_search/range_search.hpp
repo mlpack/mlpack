@@ -16,6 +16,9 @@
 namespace mlpack {
 namespace range /** Range-search routines. */ {
 
+//! Forward declaration.
+class RSModel;
+
 /**
  * The RangeSearch class is a template class for performing range searches.  It
  * is implemented in the style of a generalized tree-independent dual-tree
@@ -316,6 +319,9 @@ class RangeSearch
   size_t baseCases;
   //! The total number of scores during the last search.
   size_t scores;
+
+  //! For access to mappings when building models.
+  friend RSModel;
 };
 
 } // namespace range
