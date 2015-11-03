@@ -1032,13 +1032,13 @@ BOOST_AUTO_TEST_CASE(DualBallTreeTest2)
     // Now compare the results.
     for (size_t i = 0; i < kdSorted.size(); ++i)
     {
+      BOOST_REQUIRE_EQUAL(kdSorted[i].size(), ballSorted[i].size());
       for (size_t j = 0; j < kdSorted[i].size(); ++j)
       {
         BOOST_REQUIRE_EQUAL(kdSorted[i][j].second, ballSorted[i][j].second);
         BOOST_REQUIRE_CLOSE(kdSorted[i][j].first, ballSorted[i][j].first,
             1e-5);
       }
-      BOOST_REQUIRE_EQUAL(kdSorted[i].size(), ballSorted[i].size());
     }
   }
 }
@@ -1064,6 +1064,181 @@ BOOST_AUTO_TEST_CASE(EmptySearchTest)
 
   BOOST_REQUIRE_THROW(rs.Search(querySet, math::Range(0.0, 10.0), neighbors,
       distances), std::invalid_argument);
+}
+
+/**
+ * Make sure things work right after Train() is called.
+ */
+BOOST_AUTO_TEST_CASE(TrainTest)
+{
+  RangeSearch<> empty;
+
+  arma::mat dataset = arma::randu<arma::mat>(5, 100);
+  RangeSearch<> baseline(dataset);
+
+  vector<vector<size_t>> neighbors, baselineNeighbors;
+  vector<vector<double>> distances, baselineDistances;
+
+  empty.Train(dataset);
+
+  empty.Search(math::Range(0.5, 0.7), neighbors, distances);
+  baseline.Search(math::Range(0.5, 0.7), baselineNeighbors, baselineDistances);
+
+  BOOST_REQUIRE_EQUAL(neighbors.size(), baselineNeighbors.size());
+  BOOST_REQUIRE_EQUAL(distances.size(), baselineDistances.size());
+
+  // Sort the results before comparing.
+  vector<vector<pair<double, size_t>>> sorted;
+  vector<vector<pair<double, size_t>>> baselineSorted;
+  SortResults(neighbors, distances, sorted);
+  SortResults(baselineNeighbors, baselineDistances, baselineSorted);
+
+  for (size_t i = 0; i < sorted.size(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(sorted[i].size(), baselineSorted[i].size());
+    for (size_t j = 0; j < sorted[i].size(); ++j)
+    {
+      BOOST_REQUIRE_EQUAL(sorted[i][j].second, baselineSorted[i][j].second);
+      BOOST_REQUIRE_CLOSE(sorted[i][j].first, baselineSorted[i][j].first, 1e-5);
+    }
+  }
+}
+
+/**
+ * Test training when a tree is given.
+ */
+BOOST_AUTO_TEST_CASE(TrainTreeTest)
+{
+  // Avoid mappings by using the cover tree.
+  typedef RangeSearch<EuclideanDistance, arma::mat, StandardCoverTree> RSType;
+  RSType empty;
+
+  arma::mat dataset = arma::randu<arma::mat>(5, 100);
+  RSType baseline(dataset);
+
+  vector<vector<size_t>> neighbors, baselineNeighbors;
+  vector<vector<double>> distances, baselineDistances;
+
+  RSType::Tree tree(dataset);
+  empty.Train(&tree);
+
+  empty.Search(math::Range(0.5, 0.7), neighbors, distances);
+  baseline.Search(math::Range(0.5, 0.7), baselineNeighbors, baselineDistances);
+
+  BOOST_REQUIRE_EQUAL(neighbors.size(), baselineNeighbors.size());
+  BOOST_REQUIRE_EQUAL(distances.size(), baselineDistances.size());
+
+  // Sort the results before comparing.
+  vector<vector<pair<double, size_t>>> sorted;
+  vector<vector<pair<double, size_t>>> baselineSorted;
+  SortResults(neighbors, distances, sorted);
+  SortResults(baselineNeighbors, baselineDistances, baselineSorted);
+
+  for (size_t i = 0; i < sorted.size(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(sorted[i].size(), baselineSorted[i].size());
+    for (size_t j = 0; j < sorted[i].size(); ++j)
+    {
+      BOOST_REQUIRE_EQUAL(sorted[i][j].second, baselineSorted[i][j].second);
+      BOOST_REQUIRE_CLOSE(sorted[i][j].first, baselineSorted[i][j].first, 1e-5);
+    }
+  }
+}
+
+/**
+ * Test that training with a tree throws an exception when in naive mode.
+ */
+BOOST_AUTO_TEST_CASE(NaiveTrainTreeTest)
+{
+  RangeSearch<> empty(true);
+
+  arma::mat dataset = arma::randu<arma::mat>(5, 100);
+  RangeSearch<>::Tree tree(dataset);
+
+  BOOST_REQUIRE_THROW(empty.Train(&tree), std::invalid_argument);
+}
+
+/**
+ * Test that the move constructor works.
+ */
+BOOST_AUTO_TEST_CASE(MoveConstructorTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(3, 100);
+  arma::mat copy(dataset);
+
+  RangeSearch<> movers(std::move(copy));
+  RangeSearch<> rs(dataset);
+
+  BOOST_REQUIRE_EQUAL(copy.n_elem, 0);
+  BOOST_REQUIRE_EQUAL(movers.ReferenceSet().n_rows, 3);
+  BOOST_REQUIRE_EQUAL(movers.ReferenceSet().n_cols, 100);
+
+  vector<vector<size_t>> moveNeighbors, neighbors;
+  vector<vector<double>> moveDistances, distances;
+
+  movers.Search(math::Range(0.5, 0.7), moveNeighbors, moveDistances);
+  rs.Search(math::Range(0.5, 0.7), neighbors, distances);
+
+  BOOST_REQUIRE_EQUAL(neighbors.size(), moveNeighbors.size());
+  BOOST_REQUIRE_EQUAL(distances.size(), moveDistances.size());
+
+  // Sort the results before comparing.
+  vector<vector<pair<double, size_t>>> sorted;
+  vector<vector<pair<double, size_t>>> moveSorted;
+  SortResults(neighbors, distances, sorted);
+  SortResults(moveNeighbors, moveDistances, moveSorted);
+
+  for (size_t i = 0; i < sorted.size(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(sorted[i].size(), moveSorted[i].size());
+    for (size_t j = 0; j < sorted[i].size(); ++j)
+    {
+      BOOST_REQUIRE_EQUAL(sorted[i][j].second, moveSorted[i][j].second);
+      BOOST_REQUIRE_CLOSE(sorted[i][j].first, moveSorted[i][j].first, 1e-5);
+    }
+  }
+}
+
+/**
+ * Test that the std::move() Train() function works.
+ */
+BOOST_AUTO_TEST_CASE(MoveTrainTest)
+{
+  arma::mat dataset = arma::randu<arma::mat>(3, 100);
+  arma::mat copy(dataset);
+
+  RangeSearch<> movers;
+  movers.Train(std::move(copy));
+  RangeSearch<> rs(dataset);
+
+  BOOST_REQUIRE_EQUAL(copy.n_elem, 0);
+  BOOST_REQUIRE_EQUAL(movers.ReferenceSet().n_rows, 3);
+  BOOST_REQUIRE_EQUAL(movers.ReferenceSet().n_cols, 100);
+
+  vector<vector<size_t>> moveNeighbors, neighbors;
+  vector<vector<double>> moveDistances, distances;
+
+  movers.Search(math::Range(0.5, 0.7), moveNeighbors, moveDistances);
+  rs.Search(math::Range(0.5, 0.7), neighbors, distances);
+
+  BOOST_REQUIRE_EQUAL(neighbors.size(), moveNeighbors.size());
+  BOOST_REQUIRE_EQUAL(distances.size(), moveDistances.size());
+
+  // Sort the results before comparing.
+  vector<vector<pair<double, size_t>>> sorted;
+  vector<vector<pair<double, size_t>>> moveSorted;
+  SortResults(neighbors, distances, sorted);
+  SortResults(moveNeighbors, moveDistances, moveSorted);
+
+  for (size_t i = 0; i < sorted.size(); ++i)
+  {
+    BOOST_REQUIRE_EQUAL(sorted[i].size(), moveSorted[i].size());
+    for (size_t j = 0; j < sorted[i].size(); ++j)
+    {
+      BOOST_REQUIRE_EQUAL(sorted[i][j].second, moveSorted[i][j].second);
+      BOOST_REQUIRE_CLOSE(sorted[i][j].first, moveSorted[i][j].first, 1e-5);
+    }
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END();
