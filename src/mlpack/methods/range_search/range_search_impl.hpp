@@ -189,7 +189,8 @@ void RangeSearch<MetricType, MatType, TreeType>::Train(
   // Rebuild the tree, if necessary.
   if (!naive)
   {
-    referenceTree = BuildTree<MatType>(referenceSet, oldFromNewReferences);
+    referenceTree = BuildTree<Tree>(const_cast<MatType&>(referenceSet),
+        oldFromNewReferences);
     treeOwner = true;
   }
   else
@@ -223,7 +224,7 @@ void RangeSearch<MetricType, MatType, TreeType>::Train(
   // We may need to rebuild the tree.
   if (!naive)
   {
-    referenceTree = BuildTree<MatType>(std::move(referenceSet),
+    referenceTree = BuildTree<Tree>(std::move(referenceSet),
         oldFromNewReferences);
     treeOwner = true;
   }
