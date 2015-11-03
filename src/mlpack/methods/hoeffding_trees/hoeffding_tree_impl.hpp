@@ -187,8 +187,12 @@ void HoeffdingTree<
   {
     // Pass all the points through the nodes, and then split only after that.
     checkInterval = data.n_cols; // Only split on the last sample.
+    // Don't split if there are fewer than five points.
+    size_t oldMaxSamples = maxSamples;
+    maxSamples = std::max(size_t(data.n_cols - 1), size_t(5));
     for (size_t i = 0; i < data.n_cols; ++i)
       Train(data.col(i), labels[i]);
+    maxSamples = oldMaxSamples;
 
     // Now, if we did split, find out which points go to which child, and
     // perform the same batch training.
@@ -215,6 +219,11 @@ void HoeffdingTree<
       // batch-mode training.
       for (size_t i = 0; i < children.size(); ++i)
       {
+        // If we don't have any points that go to the child in question, don't
+        // train that child.
+        if (counts[i] == 0)
+          continue;
+
         // The submatrix here is non-contiguous, but I think this will be faster
         // than copying the points to an ordered state.  We still have to
         // assemble the labels vector, though.
