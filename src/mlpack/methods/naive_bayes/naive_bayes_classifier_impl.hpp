@@ -189,7 +189,7 @@ void NaiveBayesClassifier<MatType>::Classify(const MatType& data,
       exponents(j) = std::exp(arma::accu(diffs.col(j) % rhs.unsafe_col(j)));
 
     testProbs.col(i) += log(pow(2 * M_PI, (double) data.n_rows / -2.0) *
-        pow(det(arma::diagmat(invVar.col(i))), -0.5) * exponents);
+        std::pow(arma::det(arma::diagmat(invVar.col(i))), -0.5) * exponents);
   }
 
   // Now calculate the label.
@@ -206,7 +206,17 @@ void NaiveBayesClassifier<MatType>::Classify(const MatType& data,
   return;
 }
 
-}; // namespace naive_bayes
-}; // namespace mlpack
+template<typename MatType>
+template<typename Archive>
+void NaiveBayesClassifier<MatType>::Serialize(Archive& ar,
+                                              const unsigned int /* version */)
+{
+  ar & data::CreateNVP(means, "means");
+  ar & data::CreateNVP(variances, "variances");
+  ar & data::CreateNVP(probabilities, "probabilities");
+}
+
+} // namespace naive_bayes
+} // namespace mlpack
 
 #endif
