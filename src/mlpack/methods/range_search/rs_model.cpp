@@ -168,8 +168,8 @@ void RSModel::Search(arma::mat&& querySet,
         distances.resize(queryTree.Dataset().n_cols);
         for (size_t i = 0; i < queryTree.Dataset().n_cols; ++i)
         {
-          neighbors[i] = neighborsOut[oldFromNewQueries[i]];
-          distances[i] = distancesOut[oldFromNewQueries[i]];
+          neighbors[oldFromNewQueries[i]] = neighborsOut[i];
+          distances[oldFromNewQueries[i]] = distancesOut[i];
         }
       }
       else
@@ -212,8 +212,8 @@ void RSModel::Search(arma::mat&& querySet,
         distances.resize(queryTree.Dataset().n_cols);
         for (size_t i = 0; i < queryTree.Dataset().n_cols; ++i)
         {
-          neighbors[i] = neighborsOut[oldFromNewQueries[i]];
-          distances[i] = distancesOut[oldFromNewQueries[i]];
+          neighbors[oldFromNewQueries[i]] = neighborsOut[i];
+          distances[oldFromNewQueries[i]] = distancesOut[i];
         }
       }
       else
