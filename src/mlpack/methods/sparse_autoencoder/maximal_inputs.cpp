@@ -5,71 +5,104 @@ namespace nn {
 
 namespace {
 
-void VisualizeHiddenUnit(arma::uword rows, arma::uword cols,
-                         const arma::mat &input,
-                         arma::mat &output)
+std::pair<arma::uword, arma::uword> GetSize(arma::mat const &input)
 {
-  arma::uword const squareRows = static_cast<arma::uword>(std::sqrt(input.n_rows));
-  arma::uword const buf = 1;
+  arma::uword rows = 0, cols = 0;
+  if(std::pow(std::floor(std::sqrt(input.n_cols)), 2) != input.n_cols)
+  {
+    cols = static_cast<arma::uword>(std::ceil(std::sqrt(input.n_cols)));
+    while(input.n_cols % cols != 0 && cols < 1.2*std::sqrt(input.n_cols))
+    {
+      ++cols;
+    }
+    rows = static_cast<arma::uword>
+           (std::ceil(input.n_cols/static_cast<double>(cols)));
+  }
+  else
+  {
+    cols = static_cast<arma::uword>(std::sqrt(input.n_cols));
+    rows = cols;
+  }
 
-  arma::uword const offset = squareRows+buf;
-  output.ones(buf+rows*(offset),
-              buf+cols*(offset));
+  return {rows, cols};
+}
 
-  arma::uword k = 0;
-  for(arma::uword i = 0; i != rows; ++i) {
-    for(arma::uword j = 0; j != cols; ++j) {
-      if(k >= input.n_cols) {
-        continue;
-      }
-      // Find the maximum element in this row.
-      const double max  = arma::max(arma::abs(input.col(k)));
-      // Now, copy the elements of the row to the output submatrix.
-      const arma::uword minRow = i * offset;
-      const arma::uword minCol = j * offset;
-      const arma::uword maxRow = i * offset + squareRows - 1;
-      const arma::uword maxCol = j * offset + squareRows - 1;
-      // Only divide by the max if it's not 0.
-      if (max != 0.0)
-        output.submat(minRow, minCol, maxRow, maxCol) =
-          arma::reshape(input.col(k), squareRows, squareRows) / max;
-      else
-        output.submat(minRow, minCol, maxRow, maxCol) =
-          arma::reshape(input.col(k), squareRows, squareRows);
-
-      ++k;
+void MaximizeHiddenUnit(arma::uword rows, arma::uword cols,
+                        const arma::mat &input,
+                        arma::mat &output)
+{
+  const arma::uword size = rows * cols;
+  output.set_size(input.n_rows, size);
+  for(arma::uword i = 0; i != size; ++i)
+  {
+    const double max  = arma::max(arma::abs(input.col(i)));
+    if (max != 0.0)
+    {
+      output.col(i) = input.col(i) / max;
+    }
+    else
+    {
+      output.col(i) = input.col(i);
     }
   }
 }
 
 }
 
-void MaximalInputs(const arma::mat &parameters, arma::mat &output, double minRange, double maxRange)
+
+
+std::pair<arma::uword, arma::uword> MaximalInputs(const arma::mat &parameters, arma::mat &output)
 {
   arma::mat paramTemp(parameters.submat(0, 0, (parameters.n_rows-1)/2 - 1,
                                         parameters.n_cols - 2).t());
   double const mean = arma::mean(arma::mean(paramTemp));
   paramTemp -= mean;
 
-  arma::uword rows = 0, cols = 0;
-  if(std::pow(std::floor(std::sqrt(paramTemp.n_cols)), 2) != paramTemp.n_cols) {
-    cols = static_cast<arma::uword>(std::ceil(std::sqrt(paramTemp.n_cols)));
-    while(paramTemp.n_cols % cols != 0 && cols < 1.2*std::sqrt(paramTemp.n_cols)) {
-      ++cols;
-    }
-    rows = static_cast<arma::uword>
-           (std::ceil(paramTemp.n_cols/static_cast<double>(cols)));
-  }else{
-    cols = static_cast<arma::uword>(std::sqrt(paramTemp.n_cols));
-    rows = cols;
+  const auto Size = GetSize(paramTemp);
+  MaximizeHiddenUnit(Size.first, Size.second, paramTemp, output);
+
+  return Size;
+}
+
+void ColumnsToBlocks(const arma::mat &maximalInputs,
+                     arma::mat &outputs, arma::uword rows, arma::uword cols,
+                     bool scale, double minRange,
+                     double maxRange)
+{
+  if(rows * cols != maximalInputs.n_cols)
+  {
+    throw std::range_error("rows * cols != maximalInputs.n_cols");
   }
 
-  VisualizeHiddenUnit(rows, cols, paramTemp, output);
+  arma::uword const squareRows = static_cast<arma::uword>(std::sqrt(maximalInputs.n_rows));
+  arma::uword const buf = 1;
 
-  double const max = output.max();
-  double const min = output.min();
-  if((max - min) != 0) {
-    output = (output - min) / (max - min) * (maxRange - minRange) + minRange;
+  arma::uword const offset = squareRows+buf;
+  outputs.ones(buf+rows*(offset),
+               buf+cols*(offset));
+
+  arma::uword k = 0;
+  for(arma::uword i = 0; i != rows; ++i) {
+    for(arma::uword j = 0; j != cols; ++j) {
+      // Now, copy the elements of the row to the output submatrix.
+      const arma::uword minRow = i * offset;
+      const arma::uword minCol = j * offset;
+      const arma::uword maxRow = i * offset + squareRows - 1;
+      const arma::uword maxCol = j * offset + squareRows - 1;
+
+      outputs.submat(minRow, minCol, maxRow, maxCol) =
+        arma::reshape(maximalInputs.col(k++), squareRows, squareRows);
+    }
+  }
+
+  if(scale)
+  {
+    const double max = outputs.max();
+    const double min = outputs.min();
+    if((max - min) != 0)
+    {
+      outputs = (outputs - min) / (max - min) * (maxRange - minRange) + minRange;
+    }
   }
 }
 
