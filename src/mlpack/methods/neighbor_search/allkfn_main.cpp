@@ -1,4 +1,5 @@
 /**
+w
  * @file allkfn_main.cpp
  * @author Ryan Curtin
  *
@@ -170,10 +171,9 @@ int main(int argc, char *argv[])
     data::Load(referenceFile, referenceSet, true);
 
     Log::Info << "Loaded reference data from '" << referenceFile << "' ("
-        << referenceSet.n_rows << " x " << referenceSet.n_cols << ")." << endl;
+        << referenceSet.n_rows << "x" << referenceSet.n_cols << ")." << endl;
 
-    const size_t leafSize = (size_t) lsInt;
-    kfn.BuildModel(std::move(referenceSet), leafSize, naive, singleMode);
+    kfn.BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode);
   }
   else
   {
@@ -186,12 +186,9 @@ int main(int argc, char *argv[])
         << endl;
 
     // Adjust singleMode and naive if necessary.
-    if (CLI::HasParam("single_mode"))
-      kfn.SingleMode() = true;
-    if (CLI::HasParam("naive"))
-      kfn.Naive() = true;
-    if (CLI::HasParam("leaf_size"))
-      kfn.LeafSize() = (size_t) lsInt;
+    kfn.SingleMode() = CLI::HasParam("single_mode");
+    kfn.Naive() = CLI::HasParam("naive");
+    kfn.LeafSize() = size_t(lsInt);
   }
 
   // Perform search, if desired.
@@ -205,7 +202,7 @@ int main(int argc, char *argv[])
     {
       data::Load(queryFile, queryData, true);
       Log::Info << "Loaded query data from '" << queryFile << "' ("
-          << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
+          << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 
     // Sanity check on k value: must be greater than 0, must be less than the

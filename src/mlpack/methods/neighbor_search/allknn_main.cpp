@@ -178,9 +178,7 @@ int main(int argc, char *argv[])
         << referenceSet.n_rows << " x " << referenceSet.n_cols << ")."
         << endl;
 
-    const size_t leafSize = (size_t) CLI::GetParam<int>("leaf_size");
-
-    knn.BuildModel(std::move(referenceSet), leafSize, naive, singleMode);
+    knn.BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode);
   }
   else
   {
@@ -193,12 +191,9 @@ int main(int argc, char *argv[])
         << endl;
 
     // Adjust singleMode and naive if necessary.
-    if (CLI::HasParam("single_mode"))
-      knn.SingleMode() = CLI::HasParam("single_mode");
-    if (CLI::HasParam("naive"))
-      knn.Naive() = CLI::HasParam("naive");
-    if (CLI::HasParam("leaf_size"))
-      knn.LeafSize() = (size_t) CLI::GetParam<int>("leaf_size");
+    knn.SingleMode() = CLI::HasParam("single_mode");
+    knn.Naive() = CLI::HasParam("naive");
+    knn.LeafSize() = size_t(lsInt);
   }
 
   // Perform search, if desired.
@@ -212,7 +207,7 @@ int main(int argc, char *argv[])
     {
       data::Load(queryFile, queryData, true);
       Log::Info << "Loaded query data from '" << queryFile << "' ("
-          << queryData.n_rows << " x " << queryData.n_cols << ")." << endl;
+          << queryData.n_rows << "x" << queryData.n_cols << ")." << endl;
     }
 
     // Sanity check on k value: must be greater than 0, must be less than the
