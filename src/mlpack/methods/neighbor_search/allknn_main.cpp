@@ -131,7 +131,8 @@ int main(int argc, char *argv[])
       !CLI::HasParam("k"))
     Log::Warn << "An output file for nearest neighbor search is given ("
         << "--neighbors_file or --distances_file), but nearest neighbor search "
-        << "is not being performed because k (--k) is not specified!" << endl;
+        << "is not being performed because k (--k) is not specified!  No "
+        << "results will be saved." << endl;
 
   // Sanity check on leaf size.
   const int lsInt = CLI::GetParam<int>("leaf_size");
