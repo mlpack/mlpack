@@ -8,6 +8,8 @@
 #ifndef __MLPACK_METHODS_HOEFFDING_SPLIT_BINARY_NUMERIC_SPLIT_HPP
 #define __MLPACK_METHODS_HOEFFDING_SPLIT_BINARY_NUMERIC_SPLIT_HPP
 
+#include "binary_numeric_split_info.hpp"
+
 namespace mlpack {
 namespace tree {
 
@@ -41,7 +43,7 @@ class BinaryNumericSplit
 {
  public:
   //! The splitting information required by the BinaryNumericSplit.
-  typedef NumericSplitInfo<ObservationType> SplitInfo;
+  typedef BinaryNumericSplitInfo<ObservationType> SplitInfo;
 
   /**
    * Create the BinaryNumericSplit object with the given number of classes.

@@ -51,20 +51,29 @@ double BinaryNumericSplit<FitnessFunction, ObservationType>::
 
   double bestValue = FitnessFunction::Evaluate(counts);
 
+  // Initialize to the first observation, so we don't calculate gain on the
+  // first iteration (it will be 0).
+  ObservationType lastObservation = (*sortedElements.begin()).first;
   for (typename std::multimap<ObservationType, size_t>::const_iterator it =
       sortedElements.begin(); it != sortedElements.end(); ++it)
   {
+    // If this value is the same as the last, or if this is the first value,
+    // don't calculate the gain.
+    if ((*it).first != lastObservation)
+    {
+      lastObservation = (*it).first;
+
+      const double value = FitnessFunction::Evaluate(counts);
+      if (value > bestValue)
+      {
+        bestValue = value;
+        bestSplit = (*it).first;
+      }
+    }
+
     // Move the point to the right side of the split.
     --counts((*it).second, 1);
     ++counts((*it).second, 0);
-
-    // TODO: skip ahead if the next value is the same.
-    const double value = FitnessFunction::Evaluate(counts);
-    if (value > bestValue)
-    {
-      bestValue = value;
-      bestSplit = (*it).first;
-    }
   }
 
   isAccurate = true;
@@ -86,12 +95,22 @@ void BinaryNumericSplit<FitnessFunction, ObservationType>::Split(
   counts.col(0).zeros();
   counts.col(1) = classCounts;
 
+  double min = DBL_MAX;
+  double max = -DBL_MAX;
   for (typename std::multimap<ObservationType, size_t>::const_iterator it =
-      sortedElements.begin(); (*it).first < bestSplit; ++it)
+      sortedElements.begin();// (*it).first < bestSplit; ++it)
+      it != sortedElements.end(); ++it)
   {
     // Move the point to the correct side of the split.
-    --counts((*it).second, 1);
-    ++counts((*it).second, 0);
+    if ((*it).first < bestSplit)
+    {
+      --counts((*it).second, 1);
+      ++counts((*it).second, 0);
+    }
+    if ((*it).first < min)
+      min = (*it).first;
+    if ((*it).first > max)
+      max = (*it).first;
   }
 
   // Calculate the majority classes of the children.
@@ -102,9 +121,7 @@ void BinaryNumericSplit<FitnessFunction, ObservationType>::Split(
   childMajorities[1] = size_t(maxIndex);
 
   // Create the according SplitInfo object.
-  arma::vec splitPoints(1);
-  splitPoints[0] = double(bestSplit);
-  splitInfo = SplitInfo(splitPoints);
+  splitInfo = SplitInfo(bestSplit);
 }
 
 template<typename FitnessFunction, typename ObservationType>
