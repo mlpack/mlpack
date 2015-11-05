@@ -427,7 +427,7 @@ BOOST_AUTO_TEST_CASE(HoeffdingTreeSimpleDatasetTest)
   typedef HoeffdingTree<GiniImpurity, HoeffdingSizeTNumericSplit,
       HoeffdingCategoricalSplit> TreeType;
   TreeType batchTree(dataset, info, labels, 3, false);
-  TreeType streamTree(info, 3, 3);
+  TreeType streamTree(info, 3);
   for (size_t i = 0; i < 9000; ++i)
     streamTree.Train(dataset.col(i), labels[i]);
 
@@ -550,7 +550,7 @@ BOOST_AUTO_TEST_CASE(BinaryNumericSplitSimpleSplitTest)
 
   // Now, when we ask it to split, ensure that the split value is reasonable.
   arma::Col<size_t> childMajorities;
-  NumericSplitInfo<> splitInfo;
+  BinaryNumericSplitInfo<> splitInfo;
   split.Split(childMajorities, splitInfo);
 
   BOOST_REQUIRE_EQUAL(childMajorities[0], 0);
@@ -587,7 +587,7 @@ BOOST_AUTO_TEST_CASE(BinaryNumericSplitSimpleFourClassSplitTest)
 
   // Now, when we ask it to split, ensure that the split value is reasonable.
   arma::Col<size_t> childMajorities;
-  NumericSplitInfo<> splitInfo;
+  BinaryNumericSplitInfo<> splitInfo;
   split.Split(childMajorities, splitInfo);
 
   // We don't really care where it splits -- it can split anywhere.  But it has
@@ -627,7 +627,7 @@ BOOST_AUTO_TEST_CASE(NumericHoeffdingTreeTest)
   // on streaming data.
   typedef HoeffdingTree<GiniImpurity, HoeffdingDoubleNumericSplit> TreeType;
   TreeType batchTree(dataset, info, labels, 3, false);
-  TreeType streamTree(info, 3, 3);
+  TreeType streamTree(info, 3);
   for (size_t i = 0; i < 9000; ++i)
     streamTree.Train(dataset.col(i), labels[i]);
 
@@ -696,7 +696,7 @@ BOOST_AUTO_TEST_CASE(BinaryNumericHoeffdingTreeTest)
   // on streaming data.
   typedef HoeffdingTree<GiniImpurity, BinaryDoubleNumericSplit> TreeType;
   TreeType batchTree(dataset, info, labels, 3, false);
-  TreeType streamTree(info, 4, 3);
+  TreeType streamTree(info, 3);
   for (size_t i = 0; i < 9000; ++i)
     streamTree.Train(dataset.col(i), labels[i]);
 
