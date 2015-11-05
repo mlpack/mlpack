@@ -3,6 +3,7 @@
 set(SOURCES
   binary_numeric_split.hpp
   binary_numeric_split_impl.hpp
+  binary_numeric_split_info.hpp
   categorical_split_info.hpp
   gini_impurity.hpp
   hoeffding_categorical_split.hpp
