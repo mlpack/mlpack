@@ -85,10 +85,10 @@ void ColumnsToBlocks(const arma::mat &maximalInputs,
   for(arma::uword i = 0; i != rows; ++i) {
     for(arma::uword j = 0; j != cols; ++j) {
       // Now, copy the elements of the row to the output submatrix.
-      const arma::uword minRow = i * offset;
-      const arma::uword minCol = j * offset;
-      const arma::uword maxRow = i * offset + squareRows - 1;
-      const arma::uword maxCol = j * offset + squareRows - 1;
+      const arma::uword minRow = buf + i * offset;
+      const arma::uword minCol = buf + j * offset;
+      const arma::uword maxRow = i * offset + squareRows;
+      const arma::uword maxCol = j * offset + squareRows;
 
       outputs.submat(minRow, minCol, maxRow, maxCol) =
         arma::reshape(maximalInputs.col(k++), squareRows, squareRows);
