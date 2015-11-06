@@ -80,6 +80,7 @@ void ColumnsToBlocks(const arma::mat &maximalInputs,
   arma::uword const offset = squareRows+buf;
   outputs.ones(buf+rows*(offset),
                buf+cols*(offset));
+  outputs *= -1;
 
   arma::uword k = 0;
   for(arma::uword i = 0; i != rows; ++i) {
