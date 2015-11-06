@@ -64,6 +64,10 @@ HAS_MEM_FUNC(Deterministic, HasDeterministicCheck);
 // RecurrentParameter() function.
 HAS_MEM_FUNC(RecurrentParameter, HasRecurrentParameterCheck);
 
+// This gives us a HasSeqLenCheck<T, U> type (where U is a function pointer) we
+// can use with SFINAE to catch when a type has a SeqLen() function.
+HAS_MEM_FUNC(SeqLen, HasSeqLenCheck);
+
 }; // namespace ann
 }; // namespace mlpack
 
