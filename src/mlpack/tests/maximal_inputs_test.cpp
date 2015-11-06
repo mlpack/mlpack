@@ -1,11 +1,9 @@
 /**
- * @file softmax_regression_test.cpp
- * @author Siddharth Agrawal
+ * @file MaximalInputs.cpp
+ * @author Ngap Wei Tham
  *
- * Test the SoftmaxRegression class.
+ * Test the MaximalInputs and ColumnsToBlocks functions.
  */
-#define BOOST_TEST_MODULE MaximalInputs
-
 #include <mlpack/core.hpp>
 #include <mlpack/methods/sparse_autoencoder/maximal_inputs.hpp>
 
