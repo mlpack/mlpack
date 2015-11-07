@@ -287,8 +287,8 @@ double DTree::Grow(arma::mat& data,
       logVolume += std::log(maxVals[i] - minVals[i]);
 
   // Check if node is large enough to split.
-  if ((size_t) (end - start) > maxLeafSize) {
-
+  if ((size_t) (end - start) > maxLeafSize)
+  {
     // Find the split.
     size_t dim;
     double splitValueTmp;

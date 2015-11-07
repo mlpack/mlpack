@@ -135,6 +135,10 @@ class NaiveBayesClassifier
   //! Modify the prior probabilities for each class.
   arma::vec& Probabilities() { return probabilities; }
 
+  //! Serialize the classifier.
+  template<typename Archive>
+  void Serialize(Archive& ar, const unsigned int /* version */);
+
  private:
   //! Sample mean for each class.
   MatType means;

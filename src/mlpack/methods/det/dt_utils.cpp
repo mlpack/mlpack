@@ -154,11 +154,13 @@ DTree* mlpack::det::Trainer(arma::mat& dataset,
     oldAlpha = alpha;
     alpha = dtree.PruneAndUpdate(oldAlpha, dataset.n_cols, useVolumeReg);
 
-    // Some sanity checks.
+    // Some sanity checks.  It seems that on some datasets, the error does not
+    // increase as the tree is pruned but instead stays the same---hence the
+    // "<=" in the final assert.
     Log::Assert((alpha < std::numeric_limits<double>::max()) ||
         (dtree.SubtreeLeaves() == 1));
     Log::Assert(alpha > oldAlpha);
-    Log::Assert(dtree.SubtreeLeavesLogNegError() < treeSeq.second);
+    Log::Assert(dtree.SubtreeLeavesLogNegError() <= treeSeq.second);
   }
 
   std::pair<double, double> treeSeq(oldAlpha,

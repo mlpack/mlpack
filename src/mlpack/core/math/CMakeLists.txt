@@ -7,6 +7,8 @@ set(SOURCES
   lin_alg.cpp
   random.hpp
   random.cpp
+  random_basis.hpp
+  random_basis.cpp
   range.hpp
   range_impl.hpp
   round.hpp

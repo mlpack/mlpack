@@ -162,6 +162,7 @@
 #include <mlpack/core/data/normalize_labels.hpp>
 #include <mlpack/core/math/clamp.hpp>
 #include <mlpack/core/math/random.hpp>
+#include <mlpack/core/math/random_basis.hpp>
 #include <mlpack/core/math/lin_alg.hpp>
 #include <mlpack/core/math/range.hpp>
 #include <mlpack/core/math/round.hpp>

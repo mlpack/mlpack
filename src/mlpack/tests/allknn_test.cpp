@@ -1018,13 +1018,13 @@ BOOST_AUTO_TEST_CASE(KNNModelTest)
       BOOST_REQUIRE_EQUAL(distances.n_rows, baselineDistances.n_rows);
       BOOST_REQUIRE_EQUAL(distances.n_cols, baselineDistances.n_cols);
       BOOST_REQUIRE_EQUAL(distances.n_elem, baselineDistances.n_elem);
-      for (size_t i = 0; i < distances.n_elem; ++i)
+      for (size_t k = 0; k < distances.n_elem; ++k)
       {
-        BOOST_REQUIRE_EQUAL(neighbors[i], baselineNeighbors[i]);
-        if (std::abs(baselineDistances[i]) < 1e-5)
-          BOOST_REQUIRE_SMALL(distances[i], 1e-5);
+        BOOST_REQUIRE_EQUAL(neighbors[k], baselineNeighbors[k]);
+        if (std::abs(baselineDistances[k]) < 1e-5)
+          BOOST_REQUIRE_SMALL(distances[k], 1e-5);
         else
-          BOOST_REQUIRE_CLOSE(distances[i], baselineDistances[i], 1e-5);
+          BOOST_REQUIRE_CLOSE(distances[k], baselineDistances[k], 1e-5);
       }
     }
   }
@@ -1081,13 +1081,13 @@ BOOST_AUTO_TEST_CASE(KNNModelMonochromaticTest)
       BOOST_REQUIRE_EQUAL(distances.n_rows, baselineDistances.n_rows);
       BOOST_REQUIRE_EQUAL(distances.n_cols, baselineDistances.n_cols);
       BOOST_REQUIRE_EQUAL(distances.n_elem, baselineDistances.n_elem);
-      for (size_t i = 0; i < distances.n_elem; ++i)
+      for (size_t k = 0; k < distances.n_elem; ++k)
       {
-        BOOST_REQUIRE_EQUAL(neighbors[i], baselineNeighbors[i]);
-        if (std::abs(baselineDistances[i]) < 1e-5)
-          BOOST_REQUIRE_SMALL(distances[i], 1e-5);
+        BOOST_REQUIRE_EQUAL(neighbors[k], baselineNeighbors[k]);
+        if (std::abs(baselineDistances[k]) < 1e-5)
+          BOOST_REQUIRE_SMALL(distances[k], 1e-5);
         else
-          BOOST_REQUIRE_CLOSE(distances[i], baselineDistances[i], 1e-5);
+          BOOST_REQUIRE_CLOSE(distances[k], baselineDistances[k], 1e-5);
       }
     }
   }

@@ -83,7 +83,7 @@ class NSModel
   //! Clean memory, if necessary.
   ~NSModel();
 
-  //! Serialize the kNN model.
+  //! Serialize the neighbor search model.
   template<typename Archive>
   void Serialize(Archive& ar, const unsigned int /* version */);
 
