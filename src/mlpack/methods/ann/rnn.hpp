@@ -100,7 +100,6 @@ class RNN
       LinkParameter(network);
       UpdateGradients<>(network);
 
-
       if (seqNum == 0) break;
     }
   }
@@ -229,6 +228,9 @@ class RNN
   {
     ResetDeterministic(std::get<I>(t));
     ResetSeqLen(std::get<I>(t));
+    ResetRecurrent(std::get<I>(t), std::get<I>(t).InputParameter());
+    std::get<I>(t).Delta().zeros();
+
     ResetParameter<I + 1, Tp...>(t);
   }
 
@@ -265,6 +267,26 @@ class RNN
   typename std::enable_if<
       !HasSeqLenCheck<T, size_t&(T::*)(void)>::value, void>::type
   ResetSeqLen(T& /* unused */) { /* Nothing to do here */ }
+
+  /**
+   * Distinguish between recurrent layer and non-recurrent layer when resetting
+   * the recurrent parameter.
+   */
+  template<typename T, typename P>
+  typename std::enable_if<
+      HasRecurrentParameterCheck<T, P&(T::*)()>::value, void>::type
+  ResetRecurrent(T& t, P& /* unused */)
+  {
+    t.RecurrentParameter().zeros();
+  }
+
+  template<typename T, typename P>
+  typename std::enable_if<
+      !HasRecurrentParameterCheck<T, P&(T::*)()>::value, void>::type
+  ResetRecurrent(T& /* unused */, P& /* unused */)
+  {
+    /* Nothing to do here */
+  }
 
   /**
    * Initialize the network by setting the input size and output size.
@@ -549,8 +571,10 @@ class RNN
 
   template<size_t I = 1, typename DataType, typename... Tp>
   typename std::enable_if<I == (sizeof...(Tp)), void>::type
-  BackwardTail(const DataType& /* unused */,
-               std::tuple<Tp...>& /* unused */) {  /* Nothing to do here */ }
+  BackwardTail(const DataType& /* unused */, std::tuple<Tp...>& /* unused */)
+  {
+    /* Nothing to do here */
+  }
 
   template<size_t I = 1, typename DataType, typename... Tp>
   typename std::enable_if<I < (sizeof...(Tp)), void>::type
