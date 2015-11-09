@@ -128,18 +128,17 @@ int main(int argc, char *argv[])
 
   LSHSearch<>* allkann;
 
-  if (CLI::GetParam<string>("query_file") != "")
-    allkann = new LSHSearch<>(referenceData, queryData, numProj, numTables,
-                              hashWidth, secondHashSize, bucketSize);
-  else
-    allkann = new LSHSearch<>(referenceData, numProj, numTables, hashWidth,
-                              secondHashSize, bucketSize);
+  allkann = new LSHSearch<>(referenceData, numProj, numTables, hashWidth,
+                            secondHashSize, bucketSize);
 
   Timer::Stop("hash_building");
 
   Log::Info << "Computing " << k << " distance approximate nearest neighbors "
       << endl;
-  allkann->Search(k, neighbors, distances);
+  if (CLI::HasParam("query_file"))
+    allkann->Search(queryData, k, neighbors, distances);
+  else
+    allkann->Search(k, neighbors, distances);
 
   Log::Info << "Neighbors computed." << endl;
 

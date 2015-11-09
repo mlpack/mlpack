@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
   //    projMat.randn(2, 3)
   //    COR.SOL.: Proj. Mat 1: [2.7020 0.0187 0.4355; 1.3692 0.6933 0.0416]
   //    COR.SOL.: Proj. Mat 2: [-0.3961 -0.2666 1.1001; 0.3895 -1.5118 -1.3964]
-  LSHSearch<> lsh_test(rdata, qdata, 3, 2, hashWidth, 11, 3);
+  LSHSearch<> lsh_test(rdata, 3, 2, hashWidth, 11, 3);
 //   LSHSearch<> lsh_test(rdata, qdata, 3, 2, 0.0, 11, 3);
 
   // Given this, the 'LSHSearch::bucketRowInHashTable' should be:
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(LSHSearchTest)
   arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  lsh_test.Search(2, neighbors, distances);
+  lsh_test.Search(qdata, 2, neighbors, distances);
 
   // The private function 'LSHSearch::ReturnIndicesFromTable(0, refInds)'
   // should hash the query 0 into the following buckets:
