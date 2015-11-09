@@ -72,6 +72,11 @@ class LSHSearch
             const size_t bucketSize = 500);
 
   /**
+   * Clean memory.
+   */
+  ~LSHSearch();
+
+  /**
    * Compute the nearest neighbors of the points in the given query set and
    * store the output in the given matrices.  The matrices will be set to the
    * size of n columns by k rows, where n is the number of points in the query
@@ -215,7 +220,9 @@ class LSHSearch
                       const double distance) const;
 
   //! Reference dataset.
-  const arma::mat& referenceSet;
+  const arma::mat* referenceSet;
+  //! If true, we own the reference set.
+  bool ownsSet;
 
   //! The number of projections.
   const size_t numProj;
