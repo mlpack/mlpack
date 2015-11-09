@@ -405,6 +405,7 @@ template<
 class LayerTraits<LSTMLayer<OptimizerType,
                             GateActivationFunction,
                             StateActivationFunction,
+                            OutputActivationFunction,
                             WeightInitRule,
                             InputDataType,
                             OutputDataType,
